@@ -5,73 +5,66 @@ cmake_minimum_required(VERSION 3.1)
 # ==============
 if (LIEF_EXAMPLES)
   file(GLOB_RECURSE SAMPLES_MACHO
-    "${LIEF_SAMPLES_DIRECTORY}/MachO/*.bin"
-    "${LIEF_SAMPLES_DIRECTORY}/MachO/*.dylib"
+       "${LIEF_SAMPLES_DIRECTORY}/MachO/*.bin"
+       "${LIEF_SAMPLES_DIRECTORY}/MachO/*.dylib"
   )
-
 
   foreach(MACHO_PATH ${SAMPLES_MACHO})
     get_filename_component(MACHO_NAME ${MACHO_PATH} NAME)
 
     if (LIEF_C_API)
-      add_test(
-        NAME EXAMPLES_C_macho_reader_${MACHO_NAME}
-        COMMAND ${LIEF_EXAMPLES_BINARY_DIR}/c/macho_reader
-        ${MACHO_PATH})
+      add_test(EXAMPLES_C_macho_reader_${MACHO_NAME}
+               ${LIEF_EXAMPLES_BINARY_DIR}/c/macho_reader ${MACHO_PATH})
     endif()
 
     # MachO Reader
-    add_test(
-      NAME EXAMPLES_CPP_macho_reader_${MACHO_NAME}
-      COMMAND ${LIEF_EXAMPLES_BINARY_DIR}/cpp/macho_reader
-      ${MACHO_PATH})
-
-
-    # MachO builder
-    #add_test(
-    #  NAME EXAMPLES_CPP_macho_builder_${MACHO_NAME}
-    #  COMMAND ${LIEF_EXAMPLES_BINARY_DIR}/cpp/macho_reader
-    #  ${MACHO_PATH})
+    add_test(EXAMPLES_CPP_macho_reader_${MACHO_NAME}
+             ${LIEF_EXAMPLES_BINARY_DIR}/cpp/macho_reader ${MACHO_PATH})
   endforeach()
 endif()
 
-# Python tests
-# ============
 if (PYTHON_TESTS_ENABLED)
-
-  ADD_PYTHON_TEST(UNITTEST_PYTHON_macho
+  add_test(UNITTEST_PYTHON_macho
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE}
-    "${CMAKE_CURRENT_SOURCE_DIR}/macho_tests.py")
+      ${CMAKE_CURRENT_SOURCE_DIR}/macho_tests.py)
 
-  ADD_PYTHON_TEST(UNITTEST_PYTHON_macho_dyld
+  add_test(UNITTEST_PYTHON_macho_dyld
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE}
-    "${CMAKE_CURRENT_SOURCE_DIR}/macho_dyld.py")
+      ${CMAKE_CURRENT_SOURCE_DIR}/macho_dyld.py)
 
-  ADD_PYTHON_TEST(UNITTEST_PYTHON_macho_relocation
+  add_test(UNITTEST_PYTHON_macho_relocation
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE}
-    "${CMAKE_CURRENT_SOURCE_DIR}/macho_relocations.py")
+      ${CMAKE_CURRENT_SOURCE_DIR}/macho_relocations.py)
 
-  ADD_PYTHON_TEST(UNITTEST_PYTHON_macho_opcodes
+  add_test(UNITTEST_PYTHON_macho_opcodes
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE}
-    "${CMAKE_CURRENT_SOURCE_DIR}/macho_opcodes.py")
+      ${CMAKE_CURRENT_SOURCE_DIR}/macho_opcodes.py)
 
-  ADD_PYTHON_TEST(UNITTEST_PYTHON_macho_builder
+  add_test(UNITTEST_PYTHON_macho_builder
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE}
-    "${CMAKE_CURRENT_SOURCE_DIR}/macho_builder.py")
+      ${CMAKE_CURRENT_SOURCE_DIR}/macho_builder.py)
 
-  ADD_PYTHON_TEST(UNITTEST_PYTHON_macho_fat_builder
+  add_test(UNITTEST_PYTHON_macho_fat_builder
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE}
-    "${CMAKE_CURRENT_SOURCE_DIR}/macho_fat_builder.py")
+      ${CMAKE_CURRENT_SOURCE_DIR}/macho_fat_builder.py)
 
-  ADD_PYTHON_TEST(EXAMPLE_PYTHON_macho_reader_ls
+  add_test(EXAMPLE_PYTHON_macho_reader_ls
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE}
-    "${LIEF_EXAMPLES_DIRECTORY}/python/macho_reader.py --all \
-    ${LIEF_SAMPLES_DIRECTORY}/MachO/MachO64_x86-64_binary_ls.bin")
+      ${LIEF_EXAMPLES_DIRECTORY}/python/macho_reader.py --all
+      ${LIEF_SAMPLES_DIRECTORY}/MachO/MachO64_x86-64_binary_ls.bin)
 
-  ADD_PYTHON_TEST(EXAMPLE_PYTHON_macho_reader_libc
+  add_test(EXAMPLE_PYTHON_macho_reader_libc
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE}
-    "${LIEF_EXAMPLES_DIRECTORY}/python/macho_reader.py --all \
-    ${LIEF_SAMPLES_DIRECTORY}/MachO/FAT_MachO_x86_x86-64_library_libc.dylib")
+      ${LIEF_EXAMPLES_DIRECTORY}/python/macho_reader.py --all
+      ${LIEF_SAMPLES_DIRECTORY}/MachO/FAT_MachO_x86_x86-64_library_libc.dylib)
 
 endif()
 

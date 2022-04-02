@@ -1,14 +1,6 @@
-cmake_minimum_required(VERSION 3.1)
-include(ExternalProject)
-
-# Python tests
-# ============
 if (PYTHON_TESTS_ENABLED)
-
-  # Unit tests
-  # ----------
-  ADD_PYTHON_TEST(UNITTEST_PYTHON_oat
+  add_test(UNITTEST_PYTHON_oat
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE}
-    "${CMAKE_CURRENT_SOURCE_DIR}/oat_test.py")
-
+      ${CMAKE_CURRENT_SOURCE_DIR}/oat_test.py)
 endif()

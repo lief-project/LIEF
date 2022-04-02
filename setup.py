@@ -261,11 +261,7 @@ class BuildLibrary(build_ext):
             targets['doc'] = "lief-doc"
 
         if platform.system() == "Windows":
-            build_cmd = ['cmake', '--build', '.', '--target', "lief_samples"] + build_args
-            #log.info(" ".join(build_cmd))
-
             if self.distribution.lief_test:
-                subprocess.check_call(['cmake', '--build', '.', '--target', "lief_samples"] + build_args, cwd=self.build_temp, env=env)
                 subprocess.check_call(configure_cmd, cwd=self.build_temp, env=env)
                 if build_with_ninja:
                     subprocess.check_call(['cmake', '--build', '.', '--target', "all"] + build_args, cwd=self.build_temp, env=env)
@@ -281,7 +277,6 @@ class BuildLibrary(build_ext):
         else:
             if build_with_ninja:
                 if self.distribution.lief_test:
-                    subprocess.check_call(['ninja', "lief_samples"], cwd=self.build_temp)
                     subprocess.check_call(configure_cmd, cwd=self.build_temp)
                     subprocess.check_call(['ninja'], cwd=self.build_temp)
                     subprocess.check_call(['ninja', "check-lief"], cwd=self.build_temp)
@@ -299,7 +294,6 @@ class BuildLibrary(build_ext):
             else:
                 log.info("Using {} jobs".format(jobs))
                 if self.distribution.lief_test:
-                    subprocess.check_call(['make', '-j', str(jobs), "lief_samples"], cwd=self.build_temp)
                     subprocess.check_call(configure_cmd, cwd=self.build_temp)
                     subprocess.check_call(['make', '-j', str(jobs), "all"], cwd=self.build_temp)
                     subprocess.check_call(['make', '-j', str(jobs), "check-lief"], cwd=self.build_temp)

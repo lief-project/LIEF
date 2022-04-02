@@ -1,30 +1,4 @@
-include(ProcessorCount)
-find_package(Git REQUIRED)
 enable_testing()
-
-# Tests samples
-# =============
-set(SAMPLES_GIT_URL "https://github.com/lief-project/samples.git" CACHE STRING "URL to tests samples")
-set(SAMPLES_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/lief-samples")
-set(SAMPLES_TAG master)
-
-ExternalProject_Add(lief_samples
-  PREFIX            ${SAMPLES_PREFIX}
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND     ""
-  INSTALL_COMMAND   ""
-  GIT_REPOSITORY    ${SAMPLES_GIT_URL}
-  GIT_SHALLOW       1
-  GIT_TAG           ${SAMPLES_TAG}
-  UPDATE_COMMAND    ${GIT_EXECUTABLE} pull
-)
-
-ExternalProject_Get_Property(lief_samples source_dir)
-set(LIEF_SAMPLES_DIRECTORY "${source_dir}" CACHE INTERNAL "Path to LIEF samples")
-message(STATUS "Samples directory: ${LIEF_SAMPLES_DIRECTORY}")
-
-# Tests options
-# =============
 
 if (NOT LIEF_ELF OR NOT LIEF_PE OR NOT LIEF_MACHO)
   message(FATAL_ERROR "Tests require all LIEF's modules activated" )
@@ -32,23 +6,12 @@ endif()
 
 set(LIEF_EXAMPLES_DIRECTORY  "${PROJECT_SOURCE_DIR}/examples")
 set(LIEF_EXAMPLES_BINARY_DIR "${PROJECT_BINARY_DIR}/examples")
-#set(LIEF_SAMPLES_DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/samples")
-
-if (MSVC)
-  configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils.py.in"
-    "${PROJECT_BINARY_DIR}/api/python/utils.py"
-    @ONLY)
+if(DEFINED ENV{LIEF_SAMPLES_DIR})
+  message(STATUS "LIEF Samples dir: $ENV{LIEF_SAMPLES_DIR}")
+  set(LIEF_SAMPLES_DIRECTORY $ENV{LIEF_SAMPLES_DIR})
 else()
-  configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/utils.py.in"
-    "${PROJECT_BINARY_DIR}/api/python/utils.py"
-    @ONLY)
+  message(FATAL_ERROR "The environement variable LIEF_SAMPLES_DIR is not set")
 endif()
-
-add_definitions(-DPATH_TO_CONFIG="${CMAKE_CURRENT_BINARY_DIR}")
-add_definitions(-DPATH_TO_SAMPLES="${LIEF_SAMPLES_DIRECTORY}")
-
 
 # Catch
 # =====
@@ -66,8 +29,6 @@ ExternalProject_Add(catch
 )
 ExternalProject_Get_Property(catch source_dir)
 set(CATCH_INCLUDE_DIR "${source_dir}" CACHE INTERNAL "Path to include folder for Catch")
-
-
 
 # Code covergage
 # ==============
@@ -135,8 +96,7 @@ if (MSVC)
   set_property(TARGET test_iterators PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
 endif()
 
-set_target_properties(
-  test_iterators
+set_target_properties(test_iterators
   PROPERTIES CXX_STANDARD           11
              CXX_STANDARD_REQUIRED  ON)
 
@@ -153,32 +113,20 @@ add_dependencies(test_iterators catch LIB_LIEF)
 
 target_link_libraries(test_iterators LIB_LIEF)
 
-add_test(test_iterators ${CMAKE_CURRENT_BINARY_DIR}/test_iterators)
+add_test(test_iterators
+         ${CMAKE_CURRENT_BINARY_DIR}/test_iterators)
 
 # Python
 # ======
+set(PYTHONENV )
 if(WIN32)
-  configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/run_python_test.bat.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/run_python_test.bat"
-  @ONLY)
+  set(_PYTHONENV "${PROJECT_BINARY_DIR}/api/python\;${PROJECT_SOURCE_DIR}/tests\;${CMAKE_LIBRARY_OUTPUT_DIRECTORY}\;${CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE}")
+  string(REPLACE "\\" "/" PYTHONENV ${_PYTHONENV})
 endif()
 
-macro(ADD_PYTHON_TEST name command)
 if(UNIX)
-  add_test(${name}
-      "bash"
-      "-c"
-      "PYTHONPATH=\"${PROJECT_BINARY_DIR}/api/python:${CMAKE_LIBRARY_OUTPUT_DIRECTORY}\" ${command} ${ARGN}")
+  set(PYTHONENV "${PROJECT_SOURCE_DIR}/tests:${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 endif()
-
-if(WIN32)
-   add_test(${name}
-      "${PROJECT_BINARY_DIR}/tests/run_python_test.bat"
-    "${command}"
-    "${ARGN}")
-endif()
-endmacro()
 
 if (LIEF_PYTHON_API)
   set(PYTHON_TESTS_ENABLED OFF)
@@ -192,49 +140,52 @@ if (LIEF_PYTHON_API)
   endif()
 
   if (PYTHON_TESTS_ENABLED)
-
-    # nm
-    # --
-    ADD_PYTHON_TEST(EXAMPLE_PYTHON_nm_elf
+    add_test(EXAMPLE_PYTHON_nm_elf
+      ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
       ${PYTHON_EXECUTABLE}
-      "${LIEF_EXAMPLES_DIRECTORY}/python/nm.py \
-      ${LIEF_SAMPLES_DIRECTORY}/MachO/MachO64_x86-64_binary_ls.bin")
+        ${LIEF_EXAMPLES_DIRECTORY}/python/nm.py
+        ${LIEF_SAMPLES_DIRECTORY}/ELF/ELF32_ARM_binary_ls.bin)
 
-    ADD_PYTHON_TEST(EXAMPLE_PYTHON_nm_pe
+    add_test(EXAMPLE_PYTHON_nm_macho
+      ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
       ${PYTHON_EXECUTABLE}
-      "${LIEF_EXAMPLES_DIRECTORY}/python/nm.py \
-      ${LIEF_SAMPLES_DIRECTORY}/PE/PE32_x86_binary_winhello-mingw.exe")
+        ${LIEF_EXAMPLES_DIRECTORY}/python/nm.py
+        ${LIEF_SAMPLES_DIRECTORY}/MachO/MachO64_x86-64_binary_ls.bin)
 
-    ADD_PYTHON_TEST(EXAMPLE_PYTHON_nm_macho
+    add_test(EXAMPLE_PYTHON_nm_pe
+      ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
       ${PYTHON_EXECUTABLE}
-      "${LIEF_EXAMPLES_DIRECTORY}/python/nm.py \
-      ${LIEF_SAMPLES_DIRECTORY}/ELF/ELF32_ARM_binary_ls.bin")
+        ${LIEF_EXAMPLES_DIRECTORY}/python/nm.py
+        ${LIEF_SAMPLES_DIRECTORY}/PE/PE32_x86_binary_winhello-mingw.exe)
 
-    # Abstract
-    # --------
-    ADD_PYTHON_TEST(EXAMPLE_PYTHON_abstract_reader_pe
+    add_test(EXAMPLE_PYTHON_abstract_reader_pe
+      ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
       ${PYTHON_EXECUTABLE}
-      "${LIEF_EXAMPLES_DIRECTORY}/python/abstract_reader.py \
-      ${LIEF_SAMPLES_DIRECTORY}/PE/PE32_x86_binary_cmd-upx.exe")
+        ${LIEF_EXAMPLES_DIRECTORY}/python/abstract_reader.py
+        ${LIEF_SAMPLES_DIRECTORY}/PE/PE32_x86_binary_cmd-upx.exe)
 
-    ADD_PYTHON_TEST(EXAMPLE_PYTHON_abstract_reader_elf
+    add_test(EXAMPLE_PYTHON_abstract_reader_elf
+      ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
       ${PYTHON_EXECUTABLE}
-      "${LIEF_EXAMPLES_DIRECTORY}/python/abstract_reader.py \
-      ${LIEF_SAMPLES_DIRECTORY}/ELF/ELF32_ARM_binary_ls.bin")
+        ${LIEF_EXAMPLES_DIRECTORY}/python/abstract_reader.py
+        ${LIEF_SAMPLES_DIRECTORY}/ELF/ELF32_ARM_binary_ls.bin)
 
-    ADD_PYTHON_TEST(EXAMPLE_PYTHON_abstract_reader_macho
+    add_test(EXAMPLE_PYTHON_abstract_reader_macho
+      ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
       ${PYTHON_EXECUTABLE}
-      "${LIEF_EXAMPLES_DIRECTORY}/python/abstract_reader.py \
-      ${LIEF_SAMPLES_DIRECTORY}/MachO/MachO64_x86-64_binary_id.bin")
+        ${LIEF_EXAMPLES_DIRECTORY}/python/abstract_reader.py
+        ${LIEF_SAMPLES_DIRECTORY}/MachO/MachO64_x86-64_binary_id.bin)
 
-    ADD_PYTHON_TEST(EXAMPLE_PYTHON_abstract_json
+    add_test(EXAMPLE_PYTHON_abstract_json
+      ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
       ${PYTHON_EXECUTABLE}
-      "${LIEF_EXAMPLES_DIRECTORY}/python/abstract_json.py \
-      ${LIEF_SAMPLES_DIRECTORY}/ELF/ELF64_x86-64_binary_ls.bin")
+        ${LIEF_EXAMPLES_DIRECTORY}/python/abstract_json.py
+        ${LIEF_SAMPLES_DIRECTORY}/ELF/ELF64_x86-64_binary_ls.bin)
 
-    ADD_PYTHON_TEST(UNITTEST_PYTHON_abstract
+    add_test(UNITTEST_PYTHON_abstract
+      ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
       ${PYTHON_EXECUTABLE}
-      "${CMAKE_CURRENT_SOURCE_DIR}/abstract/abstract_tests.py")
+        ${CMAKE_CURRENT_SOURCE_DIR}/abstract/abstract_tests.py)
   endif()
 
 
@@ -249,28 +200,10 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/pe")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/macho")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/api")
 
-# /!\ Bad Hack /!\
-add_dependencies(LIB_LIEF lief_samples)
-ProcessorCount(N)
-if(N EQUAL 0)
-  set(N 1)
-endif()
-
-
-if (CMAKE_CONFIGURATION_TYPES)
-    add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND}
-        --force-new-ctest-process --output-on-failure
-        --build-config "$<CONFIGURATION>")
-else()
-    add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND}
-        --force-new-ctest-process --output-on-failure)
-endif()
 if (CMAKE_CONFIGURATION_TYPES)
   add_custom_target(check-lief
-    COMMAND ${CMAKE_CTEST_COMMAND} --parallel 1 --output-on-failure --build-config "$<CONFIGURATION>"
-    DEPENDS lief_samples)
+    COMMAND ${CMAKE_CTEST_COMMAND} --parallel 1 --progress --output-on-failure --build-config "$<CONFIGURATION>")
 else()
   add_custom_target(check-lief
-    COMMAND ${CMAKE_CTEST_COMMAND} --parallel 1 --output-on-failure
-    DEPENDS lief_samples)
+    COMMAND ${CMAKE_CTEST_COMMAND} --parallel 1 --progress --output-on-failure)
 endif()

@@ -5,12 +5,21 @@ import platform
 import re
 import subprocess
 
+def lief_samples_dir() -> str:
+    dir = os.getenv("LIEF_SAMPLES_DIR", None)
+    if dir is None:
+        print("LIEF_SAMPES_DIR is not set", file=sys.stderr)
+        sys.exit(1)
+    if not os.path.isdir(dir):
+        print("{} is not a valid directory".format(dir), file=sys.stderr)
+        sys.exit(1)
+    return dir
+
 def get_sample(filename):
-    fullpath = os.path.join("@LIEF_SAMPLES_DIRECTORY@", filename)
+    fullpath = os.path.join(lief_samples_dir(), filename)
 
     assert os.path.exists(fullpath)
     assert os.path.isfile(fullpath)
-
     return fullpath
 
 def get_compiler():

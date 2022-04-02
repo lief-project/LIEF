@@ -1,99 +1,96 @@
-cmake_minimum_required(VERSION 3.1)
-include(ExternalProject)
-
-# Examples tests
-# ==============
 if (LIEF_EXAMPLES)
-
   file(GLOB_RECURSE SAMPLES_PE
-    "${LIEF_SAMPLES_DIRECTORY}/PE/*.exe"
-    "${LIEF_SAMPLES_DIRECTORY}/PE/*.dll")
+       "${LIEF_SAMPLES_DIRECTORY}/PE/*.exe"
+       "${LIEF_SAMPLES_DIRECTORY}/PE/*.dll")
 
   foreach(PE_PATH ${SAMPLES_PE})
     get_filename_component(PE_NAME ${PE_PATH} NAME)
-    # PE Reader
-    add_test(
-      NAME EXAMPLES_CPP_pe_reader_${PE_NAME}
-      COMMAND ${LIEF_EXAMPLES_BINARY_DIR}/cpp/pe_reader
-      ${PE_PATH})
+    add_test(EXAMPLES_CPP_pe_reader_${PE_NAME}
+             ${LIEF_EXAMPLES_BINARY_DIR}/cpp/pe_reader ${PE_PATH})
 
     if (LIEF_C_API)
-      add_test(
-        NAME EXAMPLES_C_pe_reader_${PE_NAME}
-        COMMAND ${LIEF_EXAMPLES_BINARY_DIR}/c/pe_reader
-        ${PE_PATH})
+      add_test(EXAMPLES_C_pe_reader_${PE_NAME}
+               ${LIEF_EXAMPLES_BINARY_DIR}/c/pe_reader ${PE_PATH})
     endif()
 
-
     if (PYTHON_TESTS_ENABLED)
-
-      ADD_PYTHON_TEST(EXAMPLE_PYTHON_pe_reader_${PE_NAME}
-        ${PYTHON_EXECUTABLE}
-        "${LIEF_EXAMPLES_DIRECTORY}/python/pe_reader.py --all \
-        ${PE_PATH}")
+      add_test(EXAMPLE_PYTHON_pe_reader_${PE_NAME}
+               ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
+               ${PYTHON_EXECUTABLE}
+                 ${LIEF_EXAMPLES_DIRECTORY}/python/pe_reader.py --all ${PE_PATH})
     endif()
   endforeach()
 endif()
 
-# Python tests
-# ============
 if (PYTHON_TESTS_ENABLED)
-
-  ADD_PYTHON_TEST(EXAMPLE_PYTHON_pe_reader_kernel32
+  add_test(EXAMPLE_PYTHON_pe_reader_kernel32
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE}
-    "${LIEF_EXAMPLES_DIRECTORY}/python/pe_reader.py \
-    ${LIEF_SAMPLES_DIRECTORY}/PE/PE32_x86_library_kernel32.dll")
+      ${LIEF_EXAMPLES_DIRECTORY}/python/pe_reader.py
+      ${LIEF_SAMPLES_DIRECTORY}/PE/PE32_x86_library_kernel32.dll)
 
-  ADD_PYTHON_TEST(PE_PYTHON_pe
+  add_test(PE_PYTHON_pe
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE}
-    "${CMAKE_CURRENT_SOURCE_DIR}/test_pe.py")
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_pe.py)
 
-  ADD_PYTHON_TEST(PE_PYTHON_parser
+  add_test(PE_PYTHON_parser
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE}
-    "${CMAKE_CURRENT_SOURCE_DIR}/test_parser.py")
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_parser.py)
 
-  ADD_PYTHON_TEST(PE_PYTHON_hooking
+  add_test(PE_PYTHON_hooking
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE}
-    "${CMAKE_CURRENT_SOURCE_DIR}/test_hooking.py")
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_hooking.py)
 
-  ADD_PYTHON_TEST(PE_PYTHON_resources
+  add_test(PE_PYTHON_resources
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE}
-    "${CMAKE_CURRENT_SOURCE_DIR}/test_resources.py")
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_resources.py)
 
-  ADD_PYTHON_TEST(PE_PYTHON_imphash
+  add_test(PE_PYTHON_imphash
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE}
-    "${CMAKE_CURRENT_SOURCE_DIR}/test_imphash.py")
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_imphash.py)
 
-  ADD_PYTHON_TEST(PE_PYTHON_builder
+  add_test(PE_PYTHON_builder
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE}
-    "${CMAKE_CURRENT_SOURCE_DIR}/test_builder.py")
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_builder.py)
 
-  ADD_PYTHON_TEST(PE_PYTHON_load_configuration
+  add_test(PE_PYTHON_load_configuration
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE}
-    "${CMAKE_CURRENT_SOURCE_DIR}/test_loadconfig.py")
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_loadconfig.py)
 
-  ADD_PYTHON_TEST(PE_PYTHON_forwarded_exports
+  add_test(PE_PYTHON_forwarded_exports
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE}
-    "${CMAKE_CURRENT_SOURCE_DIR}/test_forward_information.py")
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_forward_information.py)
 
-  ADD_PYTHON_TEST(PE_PYTHON_authenticode
+  add_test(PE_PYTHON_authenticode
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE}
-    "${CMAKE_CURRENT_SOURCE_DIR}/test_authenticode.py")
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_authenticode.py)
 
-  ADD_PYTHON_TEST(PE_PYTHON_delay_imports
+  add_test(PE_PYTHON_delay_imports
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE}
     "${CMAKE_CURRENT_SOURCE_DIR}/test_delay_imports.py")
 
-  ADD_PYTHON_TEST(EXAMPLE_PYTHON_pe_authenticode_reader
+  add_test(EXAMPLE_PYTHON_pe_authenticode_reader
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE}
-    "${LIEF_EXAMPLES_DIRECTORY}/python/authenticode/authenticode_reader.py \
-    --all --crt --hash --check --allow-expired --save test.p7b \
-    ${LIEF_SAMPLES_DIRECTORY}/PE/PE32_x86-64_binary_avast-free-antivirus-setup-online.exe")
+    ${LIEF_EXAMPLES_DIRECTORY}/python/authenticode/authenticode_reader.py
+      --all --crt --hash --check --allow-expired --save test.p7b
+      ${LIEF_SAMPLES_DIRECTORY}/PE/PE32_x86-64_binary_avast-free-antivirus-setup-online.exe)
 
-  ADD_PYTHON_TEST(EXAMPLE_PYTHON_pe_authenticode_api
+  add_test(EXAMPLE_PYTHON_pe_authenticode_api
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE}
-    "${LIEF_EXAMPLES_DIRECTORY}/python/authenticode/api_example.py \
-    ${LIEF_SAMPLES_DIRECTORY}/PE/PE32_x86-64_binary_avast-free-antivirus-setup-online.exe")
+      ${LIEF_EXAMPLES_DIRECTORY}/python/authenticode/api_example.py
+      ${LIEF_SAMPLES_DIRECTORY}/PE/PE32_x86-64_binary_avast-free-antivirus-setup-online.exe)
 
 endif()
 

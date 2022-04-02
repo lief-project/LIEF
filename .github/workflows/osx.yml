@@ -39,12 +39,15 @@ jobs:
         shell: bash
         if: matrix.python-version == '3.6'
         env:
+          LIEF_SAMPLES_DIR: "/tmp/samples"
           MACOSX_DEPLOYMENT_TARGET: "10.14"
           CCACHE_DIR: ~/.ccache
           CCACHE_MAXSIZE: 10.0G
           CCACHE_CPP2: 1
           CCACHE_COMPRESS: 1
         run: |
+          python -m pip install pytest requests
+          python tests/dl_samples.py ${LIEF_SAMPLES_DIR}
           python ./setup.py --ninja --lief-test build bdist_wheel --skip-build --plat-name=macosx_${MACOSX_DEPLOYMENT_TARGET}_x86_64
       - name: Build Python ${{ matrix.python-version }} wheel
         shell: bash

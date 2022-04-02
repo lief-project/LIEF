@@ -54,6 +54,9 @@ jobs:
       run: sccache --start-server
     - name: ⛓ Build Python ${{ matrix.python-version }} & Test
       run: |
+        SET LIEF_SAMPLES_DIR="%RUNNER_TEMP%/samples"
+        python -m pip install pytest requests
+        python tests/dl_samples.py %LIEF_SAMPLES_DIR%
         python ./setup.py --ninja --lief-test bdist_wheel
       shell: cmd
     - name: 📊 Print sccache stats
