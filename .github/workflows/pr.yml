@@ -69,9 +69,12 @@ jobs:
     - uses: ilammy/msvc-dev-cmd@v1
       with:
         toolset: "14.16"
+    - name: Set env variables
+      run: |
+        chcp 65001 #set code page to utf-8
+        echo ("LIEF_SAMPLES_DIR=" + $env:RUNNER_TEMP + "/samples") >> $env:GITHUB_ENV
     - name: Build and Test
       run: |
-        SET LIEF_SAMPLES_DIR="%RUNNER_TEMP%/samples"
         python -m pip install pytest requests
         python tests/dl_samples.py %LIEF_SAMPLES_DIR%
         python ./setup.py --ninja --lief-test bdist_wheel
