@@ -36,7 +36,7 @@ if (PYTHON_TESTS_ENABLED)
 
   add_test(PE_PYTHON_parser
     ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
-    ${PYTHON_EXECUTABLE}
+    ${PYTHON_EXECUTABLE} -m pytest
     ${CMAKE_CURRENT_SOURCE_DIR}/test_parser.py)
 
   add_test(PE_PYTHON_hooking
@@ -78,6 +78,11 @@ if (PYTHON_TESTS_ENABLED)
     ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE}
     "${CMAKE_CURRENT_SOURCE_DIR}/test_delay_imports.py")
+
+  add_test(PE_PYTHON_delay_imports
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
+    ${PYTHON_EXECUTABLE} -m pytest
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_res_fileinfo.py")
 
   add_test(EXAMPLE_PYTHON_pe_authenticode_reader
     ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"

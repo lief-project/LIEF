@@ -49,7 +49,7 @@ def has_recent_glibc() -> bool:
     """Check if we have at least GLIBC 2.17 (2012)"""
     try:
         out = subprocess.check_output(["ldd", "--version"]).decode("ascii")
-        version_str = re.search(" (\d\.\d+)\n", out).group(1)
+        version_str = re.search(r" (\d\.\d+)\n", out).group(1)
         major, minor = version_str.split(".")
     except (OSError, AttributeError):
         pass
