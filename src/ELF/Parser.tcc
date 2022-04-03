@@ -44,6 +44,7 @@
 
 #include "ELF/Structures.hpp"
 #include "ELF/DataHandler/Handler.hpp"
+#include "ELF/SizingInfo.hpp"
 
 #include "Object.tcc"
 
@@ -90,6 +91,7 @@ ok_error_t Parser::parse_binary() {
     const Elf_Off size   = seg_dyn->physical_size();
 
     parse_dynamic_entries<ELF_T>(offset, size);
+    binary_->sizing_info_->dynamic = size;
   }
 
 
@@ -123,6 +125,7 @@ ok_error_t Parser::parse_binary() {
       const uint64_t size            = dt_relasz->value();
       if (auto res = binary_->virtual_address_to_offset(virtual_address)) {
         parse_dynamic_relocations<ELF_T, typename ELF_T::Elf_Rela>(*res, size);
+        binary_->sizing_info_->rela = size;
       } else {
         LIEF_WARN("Can't convert DT_RELA.virtual_address into an offset (0x{:x})", virtual_address);
       }
@@ -141,6 +144,7 @@ ok_error_t Parser::parse_binary() {
       const uint64_t size            = dt_relsz->value();
       if (auto res = binary_->virtual_address_to_offset(virtual_address)) {
         parse_dynamic_relocations<ELF_T, typename ELF_T::Elf_Rel>(*res, size);
+        binary_->sizing_info_->rela = size;
       } else {
         LIEF_WARN("Can't convert DT_REL.virtual_address into an offset (0x{:x})", virtual_address);
       }
@@ -173,6 +177,7 @@ ok_error_t Parser::parse_binary() {
         auto parsing_result = type == DYNAMIC_TAGS::DT_RELA ?
                               parse_pltgot_relocations<ELF_T, typename ELF_T::Elf_Rela>(*res, size) :
                               parse_pltgot_relocations<ELF_T, typename ELF_T::Elf_Rel>(*res, size);
+        binary_->sizing_info_->jmprel = size;
       } else {
         LIEF_WARN("Can't convert DT_JMPREL.virtual_address into an offset (0x{:x})", virtual_address);
       }
@@ -185,6 +190,7 @@ ok_error_t Parser::parse_binary() {
     const uint64_t virtual_address = dt_versym->value();
     if (auto res = binary_->virtual_address_to_offset(virtual_address)) {
       parse_symbol_version(*res);
+      binary_->sizing_info_->versym = binary_->dynamic_symbols_.size() * sizeof(uint16_t);
     } else {
       LIEF_WARN("Can't convert DT_VERSYM.virtual_address into an offset (0x{:x})", virtual_address);
     }
@@ -882,6 +888,7 @@ ok_error_t Parser::parse_segments() {
           LIEF_ERR("Can't read the interpreter string");
         } else {
           binary_->interpreter_ = *interpreter;
+          binary_->sizing_info_->interpreter = read_size;
         }
       }
     } else {
@@ -1021,6 +1028,10 @@ ok_error_t Parser::parse_dynamic_symbols(uint64_t offset) {
       symbol->name(std::move(*name));
     }
     binary_->dynamic_symbols_.push_back(std::move(symbol));
+  }
+  binary_->sizing_info_->dynsym = binary_->dynamic_symbols_.size() * sizeof(Elf_Sym);
+  if (const auto* dt_strsz = binary_->get(DYNAMIC_TAGS::DT_STRSZ)) {
+    binary_->sizing_info_->dynstr = dt_strsz->value();
   }
   return ok();
 } // build_dynamic_sybols
@@ -1164,8 +1175,8 @@ ok_error_t Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
   // ====================
   if (DynamicEntry* dt_init_array = binary_->get(DYNAMIC_TAGS::DT_INIT_ARRAY)) {
     if (DynamicEntry* dt_init_arraysz = binary_->get(DYNAMIC_TAGS::DT_INIT_ARRAYSZ)) {
+      binary_->sizing_info_->init_array = dt_init_arraysz->value();
       std::vector<uint64_t>& array = dt_init_array->as<DynamicEntryArray>()->array();
-
       const auto nb_functions = static_cast<uint32_t>(dt_init_arraysz->value() / sizeof(uint__));
       if (auto offset = binary_->virtual_address_to_offset(dt_init_array->value())) {
         stream_->setpos(*offset);
@@ -1187,6 +1198,7 @@ ok_error_t Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
   // ====================
   if (DynamicEntry* dt_fini_array = binary_->get(DYNAMIC_TAGS::DT_FINI_ARRAY)) {
     if (DynamicEntry* dt_fini_arraysz = binary_->get(DYNAMIC_TAGS::DT_FINI_ARRAYSZ)) {
+      binary_->sizing_info_->fini_array = dt_fini_arraysz->value();
       std::vector<uint64_t>& array = dt_fini_array->as<DynamicEntryArray>()->array();
 
       const auto nb_functions = static_cast<uint32_t>(dt_fini_arraysz->value() / sizeof(uint__));
@@ -1210,6 +1222,7 @@ ok_error_t Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
   // =======================
   if (DynamicEntry* dt_preini_array = binary_->get(DYNAMIC_TAGS::DT_PREINIT_ARRAY)) {
     if (DynamicEntry* dt_preinit_arraysz = binary_->get(DYNAMIC_TAGS::DT_PREINIT_ARRAYSZ)) {
+      binary_->sizing_info_->preinit_array = dt_preinit_arraysz->value();
       std::vector<uint64_t>& array = dt_preini_array->as<DynamicEntryArray>()->array();
 
       const auto nb_functions = static_cast<uint32_t>(dt_preinit_arraysz->value() / sizeof(uint__));
@@ -1441,7 +1454,9 @@ ok_error_t Parser::parse_symbol_version_requirement(uint64_t offset, uint32_t nb
   // We mask the 15th (7FFF) bit because it sets if this symbol is a hidden on or not
   // but we don't care
   for (const std::unique_ptr<SymbolVersionRequirement>& svr : binary_->symbol_version_requirements_) {
+    binary_->sizing_info_->verneed += sizeof(Elf_Verneed);
     for (std::unique_ptr<SymbolVersionAuxRequirement>& svar : svr->aux_requirements_) {
+        binary_->sizing_info_->verneed += sizeof(Elf_Vernaux);
         for (const std::unique_ptr<SymbolVersion>& sv : binary_->symbol_version_table_) {
           if ((sv->value() & 0x7FFF) == svar->other()) {
             sv->symbol_aux_ = svar.get();
@@ -1507,7 +1522,9 @@ ok_error_t Parser::parse_symbol_version_definition(uint64_t offset, uint32_t nb_
   // We mask the 15th bit because it sets if this symbol is a hidden on or not
   // but we don't care
   for (std::unique_ptr<SymbolVersionDefinition>& svd : binary_->symbol_version_definition_) {
+    binary_->sizing_info_->verdef += sizeof(Elf_Verdef);
     for (std::unique_ptr<SymbolVersionAux>& sva : svd->symbol_version_aux_) {
+      binary_->sizing_info_->verdef += sizeof(Elf_Verdaux);
       for (std::unique_ptr<SymbolVersion>& sv : binary_->symbol_version_table_) {
         if (svd->ndx() > 1 && (sv->value() & 0x7FFF) == svd->ndx()) {
           sv->symbol_aux_ = sva.get();
@@ -1621,6 +1638,7 @@ ok_error_t Parser::parse_symbol_gnu_hash(uint64_t offset) {
     LIEF_ERR("GNU Hash, symndx corrupted");
   }
   binary_->gnu_hash_ = std::move(gnuhash);
+  binary_->sizing_info_->gnu_hash = stream_->pos() - offset;
   return ok();
 }
 

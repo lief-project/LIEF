@@ -494,6 +494,7 @@ ok_error_t Parser::parse_symbol_sysv_hash(uint64_t offset) {
   }
 
   binary_->sysv_hash_ = std::move(sysvhash);
+  binary_->sizing_info_->hash = stream_->pos() - offset;
   return ok();
 }
 

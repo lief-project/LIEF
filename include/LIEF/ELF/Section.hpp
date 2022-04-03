@@ -153,6 +153,15 @@ class LIEF_API Section : public LIEF::Section {
   it_segments       segments();
   it_const_segments segments() const;
 
+  inline Section& as_frame() {
+    is_frame_ = true;
+    return *this;
+  }
+
+  inline bool is_frame() const {
+    return is_frame_;
+  }
+
   void accept(Visitor& visitor) const override;
 
   Section& operator+=(ELF_SECTION_FLAGS c);
@@ -165,15 +174,16 @@ class LIEF_API Section : public LIEF::Section {
 
   private:
   span<uint8_t> writable_content();
-  ELF_SECTION_TYPES     type_;
-  uint64_t              flags_;
-  uint64_t              original_size_;
-  uint32_t              link_;
-  uint32_t              info_;
-  uint64_t              address_align_;
-  uint64_t              entry_size_;
+  ELF_SECTION_TYPES     type_ = ELF_SECTION_TYPES::SHT_PROGBITS;
+  uint64_t              flags_ = 0;
+  uint64_t              original_size_ = 0;
+  uint32_t              link_ = 0;
+  uint32_t              info_ = 0;
+  uint64_t              address_align_ = 0x1000;
+  uint64_t              entry_size_ = 0;
   segments_t            segments_;
-  DataHandler::Handler* datahandler_{nullptr};
+  bool                  is_frame_ = false;
+  DataHandler::Handler* datahandler_ = nullptr;
   std::vector<uint8_t>  content_c_;
 };
 

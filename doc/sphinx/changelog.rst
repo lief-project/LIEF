@@ -4,6 +4,27 @@ Changelog
 0.13.0 - Not Released Yet
 -------------------------
 
+:ELF:
+
+  * Add support for modifying section-less binaries. The ELF :class:`~lief.ELF.Section` objects gain
+    the :meth:`lief.ELF.Section.as_frame` method which defines the section as a *framed* section.
+
+    A framed section is a section that concretely does not wraps data and can be corrupted.
+
+    :Examples:
+
+      .. code-block:: python
+
+        elf = lief.parse("/bin/ssh")
+        text = elf.get_section(".text").as_frame()
+
+        # We can now corrupt all the fields of the section
+        text.offset  = 0xdeadc0de
+        text.size    = 0xffffff
+        text.address = 0x123
+
+        elf.write("/tmp/out")
+
 :General Design:
 
   * Remove the exceptions

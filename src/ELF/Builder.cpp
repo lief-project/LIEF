@@ -121,13 +121,6 @@ const std::vector<uint8_t>& Builder::get_build() {
   return ios_.raw();
 }
 
-
-Builder& Builder::force_relocations(bool flag) {
-  config_.force_relocations = flag;
-  return *this;
-}
-
-
 void Builder::write(const std::string& filename) const {
   std::ofstream output_file{filename, std::ios::out | std::ios::binary | std::ios::trunc};
   if (!output_file) {
@@ -141,7 +134,6 @@ void Builder::write(const std::string& filename) const {
 
 
 uint32_t Builder::sort_dynamic_symbols() {
-  static const std::string dynsym_section_name = ".dynsym";
   const auto it_begin = std::begin(binary_->dynamic_symbols_);
   const auto it_end = std::end(binary_->dynamic_symbols_);
 
@@ -152,14 +144,13 @@ uint32_t Builder::sort_dynamic_symbols() {
 
   const uint32_t first_non_local_symbol_index = std::distance(it_begin, it_first_non_local_symbol);
 
-  Section* section = binary_->get_section(dynsym_section_name);
-  if (section != nullptr) {
+  if (Section* section = binary_->get_section(".dynsym")) {
     if (section->information() != first_non_local_symbol_index) {
       // TODO: Erase null entries of dynamic symbol table and symbol version
       // table if information of .dynsym section is smaller than null entries
       // num.
       LIEF_DEBUG("information of {} section changes from {:d} to {:d}",
-                 dynsym_section_name, section->information(), first_non_local_symbol_index);
+                 section->name(), section->information(), first_non_local_symbol_index);
 
       section->information(first_non_local_symbol_index);
     }
@@ -277,29 +268,10 @@ ok_error_t Builder::build(const Note& note, std::set<Section*>& sections) {
       }
     } else /* We already handled this kind of note */ {
       section->virtual_address(0);
-      section-> size(section->size() + note.size());
+      section->size(section->size() + note.size());
     }
   }
   return ok();
-}
-
-
-Section* Builder::array_section(Binary& bin, uint64_t addr) {
-  static const std::set<ELF_SECTION_TYPES> ARRAY_TYPES = {
-    ELF_SECTION_TYPES::SHT_INIT_ARRAY,
-    ELF_SECTION_TYPES::SHT_FINI_ARRAY,
-    ELF_SECTION_TYPES::SHT_PREINIT_ARRAY,
-  };
-
-  for (std::unique_ptr<Section>& section : bin.sections_) {
-    if (section->virtual_address() <= addr &&
-        addr < (section->virtual_address() + section->size()) &&
-        ARRAY_TYPES.count(section->type()) > 0)
-    {
-      return section.get();
-    }
-  }
-  return nullptr;
 }
 
 }

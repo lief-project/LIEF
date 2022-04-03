@@ -50,6 +50,7 @@ class SymbolVersion;
 class SymbolVersionDefinition;
 class SymbolVersionRequirement;
 class SysvHash;
+struct sizing_info_t;
 
 //! Class which represents an ELF binary
 class LIEF_API Binary : public LIEF::Binary {
@@ -774,6 +775,7 @@ class LIEF_API Binary : public LIEF::Binary {
   std::vector<Symbol*> static_dyn_symbols() const;
 
   std::string shstrtab_name() const;
+  Section* add_frame_section(const Section& sec);
 
   LIEF::Binary::functions_t tor_functions(DYNAMIC_TAGS tag) const;
 
@@ -796,6 +798,7 @@ class LIEF_API Binary : public LIEF::Binary {
 
   std::string interpreter_;
   overlay_t overlay_;
+  std::unique_ptr<sizing_info_t> sizing_info_;
 };
 
 }

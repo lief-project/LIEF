@@ -57,6 +57,7 @@ class TestEquality32(TestCase):
         self.input = lief.parse(get_sample("ELF/ELF32_x86_binary_all.bin"))
 
         _, output = tempfile.mkstemp(prefix="all_bis")
+        print(output)
         self.input.write(output)
         self.output = lief.parse(output)
 

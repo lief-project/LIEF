@@ -398,17 +398,13 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
   template<class ELF_T>
   size_t dynamic_relocations_size() {
-    using Elf_Rela   = typename ELF_T::Elf_Rela;
-    using Elf_Rel    = typename ELF_T::Elf_Rel;
+    using Elf_Rela = typename ELF_T::Elf_Rela;
+    using Elf_Rel  = typename ELF_T::Elf_Rel;
     const Binary::it_dynamic_relocations& dyn_relocs = binary_->dynamic_relocations();
-    size_t computed_size = 0;
-    bool is_rela = binary_->has(DYNAMIC_TAGS::DT_RELA);
-    if (is_rela) {
-      computed_size += dyn_relocs.size() * sizeof(Elf_Rela);
-    } else {
-      computed_size += dyn_relocs.size() * sizeof(Elf_Rel);
-    }
 
+    const size_t computed_size = binary_->has(DYNAMIC_TAGS::DT_RELA) ?
+                                 dyn_relocs.size() * sizeof(Elf_Rela) :
+                                 dyn_relocs.size() * sizeof(Elf_Rel);
     return computed_size;
   }
 
@@ -739,8 +735,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       // Update .dynamic / PT_DYNAMIC
       // Update relocations associated with .init_array etc
       Segment* dynamic_segment = binary_->get(SEGMENT_TYPES::PT_DYNAMIC);
-      Section* dynamic_section = binary_->dynamic_section();
-      if (dynamic_segment == nullptr || dynamic_section == nullptr) {
+      if (dynamic_segment == nullptr) {
         LIEF_ERR("Can't find the dynamic section/segment");
         return make_error_code(lief_errors::file_format_error);
       }
@@ -758,10 +753,13 @@ class LIEF_LOCAL ExeLayout : public Layout {
       dynamic_segment->file_offset(offset_rw_base);
       dynamic_segment->physical_size(dynamic_size_);
 
-      dynamic_section->virtual_address(va_rw_base);
-      dynamic_section->size(dynamic_size_);
-      dynamic_section->offset(offset_rw_base);
-      dynamic_section->original_size_ = dynamic_size_;
+      if (Section* section = binary_->dynamic_section()) {
+        section->virtual_address(va_rw_base);
+        section->size(dynamic_size_);
+        section->offset(offset_rw_base);
+        section->original_size_ = dynamic_size_;
+      }
+
       va_rw_base += dynamic_size_;
     }
 
@@ -774,13 +772,6 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
-      Section* dyn_sym_section  = binary_->section_from_virtual_address(dt_symtab->value());
-
-      if (dyn_sym_section == nullptr) {
-        LIEF_ERR("Can't find the section associated with DT_SYMTAB");
-        return make_error_code(lief_errors::file_format_error);
-      }
-
       uint64_t offset_r_base = 0;
       if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
         offset_r_base = *res;
@@ -788,10 +779,13 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::build_error);
       }
 
-      dyn_sym_section->virtual_address(va_r_base);
-      dyn_sym_section->size(dynsym_size_);
-      dyn_sym_section->offset(offset_r_base);
-      dyn_sym_section->original_size_ = dynsym_size_;
+      if (Section* section  = binary_->section_from_virtual_address(dt_symtab->value())) {
+        section->virtual_address(va_r_base);
+        section->size(dynsym_size_);
+        section->offset(offset_r_base);
+        section->original_size_ = dynsym_size_;
+      }
+
       dt_symtab->value(va_r_base);
 
       va_r_base += dynsym_size_;
@@ -807,12 +801,6 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
-      Section* dyn_str_section = binary_->section_from_virtual_address(dt_strtab->value());
-
-      if (dyn_str_section == nullptr) {
-        LIEF_ERR("Can't find the .dynstr section");
-        return make_error_code(lief_errors::file_format_error);
-      }
       uint64_t offset_r_base = 0;
       if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
         offset_r_base = *res;
@@ -820,10 +808,12 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::build_error);
       }
 
-      dyn_str_section->virtual_address(va_r_base);
-      dyn_str_section->size(raw_dynstr_.size());
-      dyn_str_section->offset(offset_r_base);
-      dyn_str_section->original_size_ = raw_dynstr_.size();
+      if (Section* section = binary_->section_from_virtual_address(dt_strtab->value())) {
+        section->virtual_address(va_r_base);
+        section->size(raw_dynstr_.size());
+        section->offset(offset_r_base);
+        section->original_size_ = raw_dynstr_.size();
+      }
 
       dt_strtab->value(va_r_base);
       dt_strsize->value(raw_dynstr_.size());
@@ -839,13 +829,6 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
-      Section* versym_section = binary_->section_from_virtual_address(dt_versym->value());
-
-      if (versym_section == nullptr) {
-        LIEF_ERR("Can't find the section associated with DT_VERSYM");
-        return make_error_code(lief_errors::file_format_error);
-      }
-
       uint64_t offset_r_base = 0;
       if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
         offset_r_base = *res;
@@ -853,10 +836,13 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::build_error);
       }
 
-      versym_section->virtual_address(va_r_base);
-      versym_section->size(sver_size_);
-      versym_section->offset(offset_r_base);
-      versym_section->original_size_ = sver_size_;
+      if (Section* section = binary_->section_from_virtual_address(dt_versym->value())) {
+        section->virtual_address(va_r_base);
+        section->size(sver_size_);
+        section->offset(offset_r_base);
+        section->original_size_ = sver_size_;
+      }
+
       dt_versym->value(va_r_base);
 
       va_r_base += sver_size_;
@@ -870,13 +856,6 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
-      Section* verdef_section = binary_->section_from_virtual_address(dt_verdef->value());
-
-      if (verdef_section == nullptr) {
-        LIEF_ERR("Can't find the section associated with DT_VERDEF");
-        return make_error_code(lief_errors::file_format_error);
-      }
-
       uint64_t offset_r_base = 0;
       if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
         offset_r_base = *res;
@@ -884,10 +863,13 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::build_error);
       }
 
-      verdef_section->virtual_address(va_r_base);
-      verdef_section->size(sverd_size_);
-      verdef_section->offset(offset_r_base);
-      verdef_section->original_size_ = sverd_size_;
+      if (Section* section = binary_->section_from_virtual_address(dt_verdef->value())) {
+        section->virtual_address(va_r_base);
+        section->size(sverd_size_);
+        section->offset(offset_r_base);
+        section->original_size_ = sverd_size_;
+      }
+
       dt_verdef->value(va_r_base);
 
       va_r_base += sverd_size_;
@@ -901,13 +883,6 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
-      Section* verreq_section = binary_->section_from_virtual_address(dt_verreq->value());
-
-      if (verreq_section == nullptr) {
-        LIEF_ERR("Can't the section associated with DT_VERNEED");
-        return make_error_code(lief_errors::file_format_error);
-      }
-
       uint64_t offset_r_base = 0;
       if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
         offset_r_base = *res;
@@ -915,10 +890,13 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::build_error);
       }
 
-      verreq_section->virtual_address(va_r_base);
-      verreq_section->size(sverr_size_);
-      verreq_section->offset(offset_r_base);
-      verreq_section->original_size_ = sverr_size_;
+      if (Section* section = binary_->section_from_virtual_address(dt_verreq->value())) {
+        section->virtual_address(va_r_base);
+        section->size(sverr_size_);
+        section->offset(offset_r_base);
+        section->original_size_ = sverr_size_;
+      }
+
       dt_verreq->value(va_r_base);
 
       va_r_base += sverr_size_;
@@ -942,14 +920,6 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
-      Section* dyn_relocation_section = binary_->section_from_virtual_address(dt_reloc->value());
-
-      if (dyn_relocation_section == nullptr) {
-        LIEF_ERR("Can't find the section associated with DT_REL(A)");
-        return make_error_code(lief_errors::file_format_error);
-      }
-
-      LIEF_DEBUG("Update {}", dyn_relocation_section->name());
 
       uint64_t offset_r_base = 0;
       if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
@@ -957,10 +927,13 @@ class LIEF_LOCAL ExeLayout : public Layout {
       } else {
         return make_error_code(lief_errors::build_error);
       }
-      dyn_relocation_section->virtual_address(va_r_base);
-      dyn_relocation_section->size(dynamic_reloc_size_);
-      dyn_relocation_section->offset(offset_r_base);
-      dyn_relocation_section->original_size_ = dynamic_reloc_size_;
+
+      if (Section* section = binary_->section_from_virtual_address(dt_reloc->value())) {
+        section->virtual_address(va_r_base);
+        section->size(dynamic_reloc_size_);
+        section->offset(offset_r_base);
+        section->original_size_ = dynamic_reloc_size_;
+      }
 
       dt_reloc->value(va_r_base);
       dt_relocsz->value(dynamic_reloc_size_);
@@ -980,13 +953,6 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
-      Section* relocation_section = binary_->section_from_virtual_address(dt_reloc->value());
-
-      if (relocation_section == nullptr) {
-        LIEF_ERR("Can't find the section associated with DT_JMPREL");
-        return make_error_code(lief_errors::file_format_error);
-      }
-
       uint64_t offset_r_base = 0;
       if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
         offset_r_base = *res;
@@ -994,10 +960,13 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::build_error);
       }
 
-      relocation_section->virtual_address(va_r_base);
-      relocation_section->size(pltgot_reloc_size_);
-      relocation_section->offset(offset_r_base);
-      relocation_section->original_size_ = pltgot_reloc_size_;
+      if (Section* section = binary_->section_from_virtual_address(dt_reloc->value())) {
+        section->virtual_address(va_r_base);
+        section->size(pltgot_reloc_size_);
+        section->offset(offset_r_base);
+        section->original_size_ = pltgot_reloc_size_;
+      }
+
 
       dt_reloc->value(va_r_base);
       dt_relocsz->value(pltgot_reloc_size_);
@@ -1015,12 +984,6 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
-      Section* section = binary_->section_from_virtual_address(dt_gnu_hash->value());
-
-      if (section == nullptr) {
-        LIEF_ERR("Can't find the section associated with DT_GNU_HASH");
-        return make_error_code(lief_errors::file_format_error);
-      }
 
       uint64_t offset_r_base = 0;
       if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
@@ -1029,10 +992,12 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::build_error);
       }
 
-      section->virtual_address(va_r_base);
-      section->size(raw_gnu_hash_.size());
-      section->offset(offset_r_base);
-      section->original_size_ = raw_gnu_hash_.size();
+      if (Section* section = binary_->section_from_virtual_address(dt_gnu_hash->value())) {
+        section->virtual_address(va_r_base);
+        section->size(raw_gnu_hash_.size());
+        section->offset(offset_r_base);
+        section->original_size_ = raw_gnu_hash_.size();
+      }
 
       dt_gnu_hash->value(va_r_base);
       va_r_base += raw_gnu_hash_.size();
@@ -1047,12 +1012,6 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
-      Section* section = binary_->section_from_virtual_address(dt_hash->value());
-
-      if (section == nullptr) {
-        LIEF_ERR("Can't find the section associated with DT_HASH");
-        return make_error_code(lief_errors::file_format_error);
-      }
 
       uint64_t offset_r_base = 0;
       if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
@@ -1061,10 +1020,12 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::build_error);
       }
 
-      section->virtual_address(va_r_base);
-      section->size(sysv_size_);
-      section->offset(offset_r_base);
-      section->original_size_ = sysv_size_;
+      if (Section* section = binary_->section_from_virtual_address(dt_hash->value())) {
+        section->virtual_address(va_r_base);
+        section->size(sysv_size_);
+        section->offset(offset_r_base);
+        section->original_size_ = sysv_size_;
+      }
 
       dt_hash->value(va_r_base);
       va_r_base += sysv_size_;
@@ -1087,12 +1048,6 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
 
-      Section* init_array_section   = binary_->get(ELF_SECTION_TYPES::SHT_INIT_ARRAY);
-
-      if (init_array_section == nullptr) {
-        LIEF_ERR("Can't find .init_array section");
-        return make_error_code(lief_errors::file_format_error);
-      }
 
       // Update relocation range
       if (binary_->header().file_type() == E_TYPE::ET_DYN) {
@@ -1122,10 +1077,12 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::build_error);
       }
 
-      init_array_section->virtual_address(va_rw_base);
-      init_array_section->size(init_size_);
-      init_array_section->offset(offset_rw_base);
-      init_array_section->original_size_ = init_size_;
+      if (Section* section = binary_->get(ELF_SECTION_TYPES::SHT_INIT_ARRAY)) {
+        section->virtual_address(va_rw_base);
+        section->size(init_size_);
+        section->offset(offset_rw_base);
+        section->original_size_ = init_size_;
+      }
 
       dt_init_array->value(va_rw_base);
       dt_init_arraysz->value(init_size_);
@@ -1144,13 +1101,6 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
       if (dt_preinit_array == nullptr) {
         LIEF_ERR("Can't find DT_PREINIT_ARRAYSZ");
-        return make_error_code(lief_errors::file_format_error);
-      }
-
-      Section* preinit_array_section = binary_->get(ELF_SECTION_TYPES::SHT_PREINIT_ARRAY);
-
-      if (preinit_array_section == nullptr) {
-        LIEF_ERR("Can't find the section .preinit_array (SHT_PREINIT_ARRAY)");
         return make_error_code(lief_errors::file_format_error);
       }
 
@@ -1179,10 +1129,12 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::build_error);
       }
 
-      preinit_array_section->virtual_address(va_rw_base);
-      preinit_array_section->size(preinit_size_);
-      preinit_array_section->offset(offset_rw_base);
-      preinit_array_section->original_size_ = preinit_size_;
+      if (Section* section = binary_->get(ELF_SECTION_TYPES::SHT_PREINIT_ARRAY)) {
+        section->virtual_address(va_rw_base);
+        section->size(preinit_size_);
+        section->offset(offset_rw_base);
+        section->original_size_ = preinit_size_;
+      }
 
       dt_preinit_array->value(va_rw_base);
       dt_preinit_arraysz->value(preinit_size_);
@@ -1202,13 +1154,6 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
       if (dt_fini_arraysz == nullptr) {
         LIEF_ERR("Can't find DT_FINI_ARRAYSZ");
-        return make_error_code(lief_errors::file_format_error);
-      }
-
-      Section* fini_array_section = binary_->get(ELF_SECTION_TYPES::SHT_FINI_ARRAY);
-
-      if (fini_array_section == nullptr) {
-        LIEF_ERR("Can't find the section .fini_array (SHT_FINI_ARRAY)");
         return make_error_code(lief_errors::file_format_error);
       }
 
@@ -1238,10 +1183,12 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::build_error);
       }
 
-      fini_array_section->virtual_address(va_rw_base);
-      fini_array_section->size(fini_size_);
-      fini_array_section->offset(offset_rw_base);
-      fini_array_section->original_size_ = fini_size_;
+      if (Section* section = binary_->get(ELF_SECTION_TYPES::SHT_FINI_ARRAY)) {
+        section->virtual_address(va_rw_base);
+        section->size(fini_size_);
+        section->offset(offset_rw_base);
+        section->original_size_ = fini_size_;
+      }
 
       dt_fini_array->value(va_rw_base);
       dt_fini_arraysz->value(fini_size_);

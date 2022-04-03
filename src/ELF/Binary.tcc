@@ -327,15 +327,8 @@ Segment* Binary::add_segment<E_TYPE::ET_EXEC>(const Segment& segment, uint64_t b
   std::vector<uint8_t> content{content_ref.data(), std::end(content_ref)};
   auto new_segment = std::make_unique<Segment>(segment);
 
-  uint64_t last_offset_sections = std::accumulate(std::begin(sections_), std::end(sections_), 0,
-      [] (uint64_t offset, const std::unique_ptr<Section>& section) {
-        return std::max<uint64_t>(section->file_offset() + section->size(), offset);
-      });
-
-  uint64_t last_offset_segments = std::accumulate(std::begin(segments_), std::end(segments_), 0,
-      [] (uint64_t offset, const std::unique_ptr<Segment>& segment) {
-        return std::max<uint64_t>(segment->file_offset() + segment->physical_size(), offset);
-      });
+  uint64_t last_offset_sections = last_offset_section();
+  uint64_t last_offset_segments = last_offset_segment();
 
   uint64_t last_offset = std::max<uint64_t>(last_offset_sections, last_offset_segments);
 

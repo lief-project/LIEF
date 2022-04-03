@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
   //binary->get(LIEF::ELF::SEGMENT_TYPES::PT_GNU_RELRO).type(LIEF::ELF::SEGMENT_TYPES::PT_NULL);
   LIEF::ELF::Builder builder{*binary};
   LIEF::ELF::Builder::config_t config;
-  //config.force_relocations = true;
+  config.force_relocate = true;
 
   builder.set_config(config);
   builder.build();

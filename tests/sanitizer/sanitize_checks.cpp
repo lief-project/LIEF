@@ -40,7 +40,7 @@ void check(LIEF::ELF::Binary& bin) {
   std::stringstream ss;
   ss << bin;
   LIEF::ELF::Builder builder{bin};
-  builder.force_relocations();
+  builder.config().force_relocate = true;
   builder.build();
 }
 

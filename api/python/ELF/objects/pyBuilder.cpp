@@ -33,8 +33,24 @@ void create<Builder>(py::module& m) {
   py::class_<Builder::config_t>(builder, "config_t",
                                 "Interface to tweak the " RST_CLASS_REF(lief.ELF.Builder) "")
     .def(py::init<>())
-    .def_readwrite("force_relocations", &Builder::config_t::force_relocations,
-                   "Force to relocate all the ELF structures that can be relocated (mostly for testing)");
+    .def_readwrite("force_relocate", &Builder::config_t::force_relocate,
+                   "Force to relocate all the ELF structures that can be relocated (mostly for testing)")
+
+    .def_readwrite("dt_hash",         &Builder::config_t::dt_hash)
+    .def_readwrite("dyn_str",         &Builder::config_t::dyn_str)
+    .def_readwrite("dynamic_section", &Builder::config_t::dynamic_section)
+    .def_readwrite("fini_array",      &Builder::config_t::fini_array)
+    .def_readwrite("init_array",      &Builder::config_t::init_array)
+    .def_readwrite("interpreter",     &Builder::config_t::interpreter)
+    .def_readwrite("jmprel",          &Builder::config_t::jmprel)
+    .def_readwrite("notes",           &Builder::config_t::notes)
+    .def_readwrite("preinit_array",   &Builder::config_t::preinit_array)
+    .def_readwrite("rela",            &Builder::config_t::rela)
+    .def_readwrite("static_symtab",   &Builder::config_t::static_symtab)
+    .def_readwrite("sym_verdef",      &Builder::config_t::sym_verdef)
+    .def_readwrite("sym_verneed",     &Builder::config_t::sym_verneed)
+    .def_readwrite("sym_versym",      &Builder::config_t::sym_versym)
+    .def_readwrite("symtab",          &Builder::config_t::symtab);
 
   builder
     .def(py::init<Binary&>(),
@@ -45,14 +61,10 @@ void create<Builder>(py::module& m) {
         static_cast<void (Builder::*)(void)>(&Builder::build),
         "Perform the build of the provided ELF binary")
 
-    .def("set_config",
+    .def_property("config",
+        &Builder::config,
         &Builder::set_config,
-        "Tweak the ELF builder with the provided config parameter")
-
-    .def("force_relocations",
-        &Builder::force_relocations,
-        "Force relocating all the ELF characteristics supported by LIEF"
-        "flag"_a = true,
+        "Tweak the ELF builder with the provided config parameter",
         py::return_value_policy::reference_internal)
 
     .def("write",

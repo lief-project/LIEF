@@ -52,6 +52,13 @@ void create<Section>(py::module& m) {
     .def(py::init<>(),
         "Default constructor")
 
+    .def("as_frame",
+        &Section::as_frame,
+        py::return_value_policy::reference_internal)
+
+    .def_property_readonly("is_frame",
+        &Section::is_frame)
+
     .def(py::init<const std::string&, ELF_SECTION_TYPES>(),
         "Constructor from a name and a section type",
         "name"_a, "type"_a = ELF_SECTION_TYPES::SHT_PROGBITS)

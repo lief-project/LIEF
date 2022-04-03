@@ -59,9 +59,10 @@
 #include "LIEF/ELF/SymbolVersionRequirement.hpp"
 #include "LIEF/ELF/GnuHash.hpp"
 #include "LIEF/ELF/SysvHash.hpp"
-#include "ELF/DataHandler/Handler.hpp"
-
 #include "LIEF/ELF/hash.hpp"
+
+#include "ELF/DataHandler/Handler.hpp"
+#include "ELF/SizingInfo.hpp"
 
 #include "Binary.tcc"
 #include "Object.tcc"
@@ -69,7 +70,9 @@
 namespace LIEF {
 namespace ELF {
 
-Binary::Binary() {
+Binary::Binary() :
+  sizing_info_{std::make_unique<sizing_info_t>()}
+{
   format_ = LIEF::EXE_FORMATS::FORMAT_ELF;
 }
 
@@ -1060,6 +1063,9 @@ result<uint64_t> Binary::get_function_address(const std::string& func_name, bool
 }
 
 Section* Binary::add(const Section& section, bool loaded) {
+  if (section.is_frame()) {
+    return add_frame_section(section);
+  }
   if (loaded) {
     return add_section<true>(section);
   }
@@ -1067,6 +1073,12 @@ Section* Binary::add(const Section& section, bool loaded) {
 }
 
 
+Section* Binary::add_frame_section(const Section& sec) {
+  auto new_section = std::make_unique<Section>(sec);
+  this->header().numberof_sections(this->header().numberof_sections() + 1);
+  this->sections_.push_back(std::move(new_section));
+  return this->sections_.back().get();
+}
 
 bool Binary::is_pie() const {
   const auto it_segment = std::find_if(std::begin(segments_), std::end(segments_),
@@ -1900,6 +1912,9 @@ const SysvHash* Binary::sysv_hash() const {
 void Binary::shift_sections(uint64_t from, uint64_t shift) {
   LIEF_DEBUG("[+] Shift Sections");
   for (std::unique_ptr<Section>& section : sections_) {
+    if (section->is_frame()) {
+      continue;
+    }
     if (section->file_offset() >= from) {
       LIEF_DEBUG("[BEFORE] {}", *section);
       section->file_offset(section->file_offset() + shift);
@@ -2056,6 +2071,9 @@ void Binary::shift_relocations(uint64_t from, uint64_t shift) {
 uint64_t Binary::last_offset_section() const {
   return std::accumulate(std::begin(sections_), std::end(sections_), 0llu,
       [] (uint64_t offset, const std::unique_ptr<Section>& section) {
+        if (section->is_frame()) {
+          return offset;
+        }
         return std::max<uint64_t>(section->file_offset() + section->size(), offset);
       });
 }
@@ -2614,7 +2632,7 @@ uint64_t Binary::eof_offset() const {
   uint64_t last_offset_sections = 0;
 
   for (const std::unique_ptr<Section>& section : sections_) {
-    if (section->type() != LIEF::ELF::ELF_SECTION_TYPES::SHT_NOBITS) {
+    if (section->type() != LIEF::ELF::ELF_SECTION_TYPES::SHT_NOBITS && !section->is_frame()) {
       last_offset_sections = std::max<uint64_t>(section->file_offset() + section->size(), last_offset_sections);
     }
   }
@@ -2947,6 +2965,9 @@ uint64_t Binary::relocate_phdr_table_v2() {
 
   // Shift sections
   for (const std::unique_ptr<Section>& section : sections_) {
+    if (section->is_frame()) {
+      continue;
+    }
     if (section->file_offset() >= from && section->type() != ELF_SECTION_TYPES::SHT_NOBITS) {
       LIEF_DEBUG("[BEFORE] {}", *section);
       section->file_offset(section->file_offset() + shift);

@@ -47,6 +47,7 @@
 #include "LIEF/errors.hpp"
 
 #include "ELF/Structures.hpp"
+#include "ELF/SizingInfo.hpp"
 #include "Object.tcc"
 #include "ExeLayout.hpp"
 #include "ObjectFileLayout.hpp"
@@ -104,25 +105,26 @@ ok_error_t Builder::build_exe_lib() {
   layout->set_dyn_sym_idx(new_symndx);
 
   Segment* pt_interp = binary_->get(SEGMENT_TYPES::PT_INTERP);
-  if (pt_interp != nullptr) {
-    const size_t interpt_size = layout->interpreter_size<ELF_T>();
-    if (interpt_size > pt_interp->physical_size() || config_.force_relocations) {
-      LIEF_DEBUG("[-] Need to relocate .interp section (0x{:x} new bytes)",
-                 interpt_size - pt_interp->physical_size());
+  if (config_.interpreter) {
+    if (pt_interp != nullptr) {
+      const size_t interpt_size = layout->interpreter_size<ELF_T>();
+      const uint64_t osize = binary_->sizing_info_->interpreter;
+      if (interpt_size > osize || config_.force_relocate) {
+        LIEF_DEBUG("[-] Need to relocate .interp section (0x{:x} new bytes)", interpt_size - osize);
+        layout->relocate_interpreter(interpt_size);
+      } else { LIEF_DEBUG(".interp: -0x{:x} bytes", osize - interpt_size); }
+    } else if (!binary_->interpreter_.empty()) { // Directly access private field as we want to avoid
+                                                 // has_interpreter() check
+
+      // In this case, the original ELF file didn't have an interpreter
+      // and the user added one.
+      const size_t interpt_size = layout->interpreter_size<ELF_T>();
+      LIEF_DEBUG("[-] Need to create an .interp section / segment");
       layout->relocate_interpreter(interpt_size);
-    } else { LIEF_DEBUG(".interp: -0x{:x} bytes", pt_interp->physical_size() - interpt_size); }
-
-  } else if (!binary_->interpreter_.empty()) { // Access private field directly as we want to avoid
-                                               // has_interpreter() check
-
-    // In this case, the original ELF file didn't have an interpreter
-    // and the user added one.
-    const size_t interpt_size = layout->interpreter_size<ELF_T>();
-    LIEF_DEBUG("[-] Need to create an .interp section / segment");
-    layout->relocate_interpreter(interpt_size);
+    }
   }
 
-  if (binary_->has(SEGMENT_TYPES::PT_NOTE)) {
+  if (binary_->has(SEGMENT_TYPES::PT_NOTE) && config_.notes) {
     const size_t notes_size = layout->note_size<ELF_T>();
     std::vector<Segment*> note_segments;
     for (std::unique_ptr<Segment>& seg : binary_->segments_) {
@@ -141,259 +143,169 @@ ok_error_t Builder::build_exe_lib() {
 
     Segment& note_segment = *note_segments.back();
 
-    if (notes_size > note_segment.physical_size() || nb_segment_notes > 1 || config_.force_relocations) {
+    if (notes_size > note_segment.physical_size() || nb_segment_notes > 1 || config_.force_relocate) {
       LIEF_DEBUG("[-] Need to relocate .note.* segments (0x{:x} new bytes)",
           notes_size - note_segment.physical_size());
       layout->relocate_notes(true);
     } else { /*LIEF_DEBUG(".notes: -0x{:x} bytes", note_segment.physical_size() - notes_size);*/ }
   }
 
-  DynamicEntry* dt_gnu_hash = binary_->get(DYNAMIC_TAGS::DT_GNU_HASH);
-  if (dt_gnu_hash != nullptr) {
+  if (binary_->has(DYNAMIC_TAGS::DT_GNU_HASH) && config_.gnu_hash) {
     const size_t needed_size = layout->symbol_gnu_hash_size<ELF_T>();
-    const uint64_t addr = dt_gnu_hash->value();
-    Section* section = binary_->section_from_virtual_address(addr);
-    if (section != nullptr) {
-      if (needed_size > section->size() || config_.force_relocations) {
-        LIEF_DEBUG("[-] Need to relocate {} section (0x{:x} new bytes)",
-                   section->name(), needed_size - section->size());
-        layout->relocate_gnu_hash(true);
-      } else { LIEF_DEBUG("{}: -0x{:x} bytes", section->name(), section->size() - needed_size); }
-    } else {
-      build_opt_.gnu_hash = false;
-      LIEF_WARN("Can't find section associated with DT_GNU_HASH");
-    }
+    const uint64_t osize = binary_->sizing_info_->gnu_hash;
+    const bool should_relocate = needed_size > osize || config_.force_relocate;
+    if (should_relocate) {
+      LIEF_DEBUG("[-] Need to relocate DT_GNU_HASH (0x{:x} new bytes)", needed_size - osize);
+      layout->relocate_gnu_hash(true);
+    } else { LIEF_DEBUG("DT_GNU_HASH: -0x{:x} bytes", osize - needed_size); }
   }
 
-  DynamicEntry* dt_hash = binary_->get(DYNAMIC_TAGS::DT_HASH);
-  if (dt_hash != nullptr) {
+  if (binary_->has(DYNAMIC_TAGS::DT_HASH) && config_.dt_hash) {
     const size_t needed_size = layout->symbol_sysv_hash_size<ELF_T>();
-    const uint64_t addr = dt_hash->value();
-    Section* section = binary_->section_from_virtual_address(addr);
-    if (section != nullptr) {
-      if (needed_size > section->size() || config_.force_relocations) {
-        LIEF_DEBUG("[-] Need to relocate {} section (0x{:x} new bytes)",
-                   section->name(), needed_size - section->size());
-        layout->relocate_sysv_hash(needed_size);
-      } else { LIEF_DEBUG("{}: -0x{:x} bytes", section->name(), section->size() - needed_size); }
-    } else {
-      build_opt_.dt_hash = false;
-      LIEF_WARN("Can't find section associated with DT_HASH");
-    }
+    const uint64_t osize = binary_->sizing_info_->hash;
+    const bool should_relocate = needed_size > osize || config_.force_relocate;
+    if (should_relocate) {
+      LIEF_DEBUG("[-] Need to relocate DT_HASH (0x{:x} new bytes)", needed_size - osize);
+      layout->relocate_sysv_hash(needed_size);
+    } else { LIEF_DEBUG("DT_HASH: -0x{:x} bytes", osize - needed_size); }
   }
 
-  if (binary_->has(SEGMENT_TYPES::PT_DYNAMIC)) {
+  if (binary_->has(SEGMENT_TYPES::PT_DYNAMIC) && config_.dynamic_section) {
     const size_t dynamic_needed_size = layout->dynamic_size<ELF_T>();
-    Section* section = binary_->dynamic_section();
-    if (section == nullptr) {
-      LIEF_ERR("Can't find the .dynamic section");
-      return make_error_code(lief_errors::file_format_error);
-    }
-    if (dynamic_needed_size > section->size() || config_.force_relocations) {
-      LIEF_DEBUG("[-] Need to relocate .dynamic section (0x{:x} new bytes)",
-                 dynamic_needed_size - section->size());
+    const uint64_t osize = binary_->sizing_info_->dynamic;
+    const bool should_relocate = dynamic_needed_size > osize || config_.force_relocate;
+    if (should_relocate) {
+      LIEF_DEBUG("[-] Need to relocate .dynamic section (0x{:x} new bytes)", dynamic_needed_size - osize);
       layout->relocate_dynamic(dynamic_needed_size);
-    } else { LIEF_DEBUG("{}: -0x{:x} bytes", section->name(), section->size() - dynamic_needed_size); }
+    } else { LIEF_DEBUG("PT_DYNAMIC: -0x{:x} bytes", osize - dynamic_needed_size); }
   }
 
-  DynamicEntry* dt_rela = binary_->get(DYNAMIC_TAGS::DT_RELA);
-  DynamicEntry* dt_rel  = binary_->get(DYNAMIC_TAGS::DT_REL);
-
-  if (dt_rela != nullptr || dt_rel != nullptr) {
+  if (binary_->has(DYNAMIC_TAGS::DT_RELA) || binary_->has(DYNAMIC_TAGS::DT_REL)) {
     const size_t dyn_reloc_needed_size = layout->dynamic_relocations_size<ELF_T>();
-    uint64_t dt_reloc_addr = 0;
-    if (dt_rela != nullptr) {
-      dt_reloc_addr = dt_rela->value();
-    }
-    else if (dt_rel != nullptr) {
-      dt_reloc_addr = dt_rel->value();
-    }
-    else {
-      LIEF_ERR("Unsupported case");
-      return make_error_code(lief_errors::file_format_error);
-    }
-
-    Section* section = binary_->section_from_virtual_address(dt_reloc_addr);
-    if (section != nullptr) {
-      if (dyn_reloc_needed_size > section->size() || config_.force_relocations) {
-        LIEF_DEBUG("[-] Need to relocate {} section (0x{:x} new bytes)",
-                   section->name(), dyn_reloc_needed_size - section->size());
+    if (config_.rela) {
+      const uint64_t osize = binary_->sizing_info_->rela;
+      const bool should_relocate = dyn_reloc_needed_size > osize || config_.force_relocate;
+      if (should_relocate) {
+        LIEF_DEBUG("[-] Need to relocate DT_REL(A) (0x{:x} new bytes)", dyn_reloc_needed_size - osize);
         layout->relocate_dyn_reloc(dyn_reloc_needed_size);
-      } else { LIEF_DEBUG("{}: -0x{:x} bytes", section->name(), section->size() - dyn_reloc_needed_size); }
-    } else {
-      build_opt_.rela = false;
-      LIEF_WARN("Can't find the section associated with DT_RELA");
+      } else { LIEF_DEBUG("DT_REL(A): -0x{:x} bytes", osize - dyn_reloc_needed_size); }
     }
   }
 
-  DynamicEntry* dt_jmprel = binary_->get(DYNAMIC_TAGS::DT_JMPREL);
-  if (dt_jmprel != nullptr) {
+  if (config_.jmprel && binary_->has(DYNAMIC_TAGS::DT_JMPREL)) {
     const size_t plt_reloc_needed_size = layout->pltgot_relocations_size<ELF_T>();
-    const uint64_t dt_reloc_addr = dt_jmprel->value();
-    Section* section = binary_->section_from_virtual_address(dt_reloc_addr);
-    if (section != nullptr) {
-      if (plt_reloc_needed_size > section->size() || config_.force_relocations) {
-        LIEF_DEBUG("[-] Need to relocate {} section (0x{:x} new bytes)",
-                   section->name(), plt_reloc_needed_size - section->size());
-        layout->relocate_plt_reloc(plt_reloc_needed_size);
-      } else { LIEF_DEBUG("{}: -0x{:x} bytes", section->name(), section->size() - plt_reloc_needed_size); }
-    } else {
-      build_opt_.jmprel = false;
-      LIEF_WARN("Can't find section associated with DT_JMPREL");
-    }
+    const uint64_t osize = binary_->sizing_info_->jmprel;
+    const bool should_relocate = plt_reloc_needed_size > osize || config_.force_relocate;
+    if (should_relocate) {
+      LIEF_DEBUG("[-] Need to relocate DT_JMPREL section (0x{:x} new bytes)", plt_reloc_needed_size - osize);
+      layout->relocate_plt_reloc(plt_reloc_needed_size);
+    } else { LIEF_DEBUG("DT_JMPREL: -0x{:x} bytes", osize - plt_reloc_needed_size); }
   }
-  DynamicEntry* dt_strtab = binary_->get(DYNAMIC_TAGS::DT_STRTAB);
-  if (dt_strtab != nullptr) {
+
+  if (config_.dyn_str && binary_->has(DYNAMIC_TAGS::DT_STRTAB)) {
     const size_t needed_size = layout->dynstr_size<ELF_T>();
-    const uint64_t dyn_strtab_va = dt_strtab->value();
-    Section* section  = binary_->section_from_virtual_address(dyn_strtab_va);
-    if (section != nullptr) {
-      if (needed_size > section->size() || config_.force_relocations) {
-        LIEF_DEBUG("[-] Need to relocate .dynstr section (0x{:x} new bytes)",
-                   layout->dynstr_size<ELF_T>() - section->size());
-        layout->relocate_dynstr(true);
-      } else { LIEF_DEBUG("{}: -0x{:x} bytes", section->name(), section->size() - needed_size); }
-    } else {
-      build_opt_.dyn_str = false;
-      LIEF_WARN("Can't find section associated with DT_STRTAB");
-    }
+    const uint64_t osize  = binary_->sizing_info_->dynstr;
+    const bool should_relocate = needed_size > osize || config_.force_relocate;
+    if (should_relocate) {
+      LIEF_DEBUG("[-] Need to relocate DT_STRTAB (0x{:x} new bytes)", needed_size - osize);
+      layout->relocate_dynstr(true);
+    } else { LIEF_DEBUG("DT_STRTAB: -0x{:x} bytes", osize - needed_size); }
   }
 
-  DynamicEntry* dt_symtab = binary_->get(DYNAMIC_TAGS::DT_SYMTAB);
-  if (dt_symtab != nullptr) {
+  if (config_.symtab && binary_->has(DYNAMIC_TAGS::DT_SYMTAB)) {
     const size_t dynsym_needed_size = layout->dynsym_size<ELF_T>();
-    const uint64_t dyn_sym_va = dt_symtab->value();
-    Section* section  = binary_->section_from_virtual_address(dyn_sym_va);
-    if (section != nullptr) {
-      if (dynsym_needed_size > section->size() || config_.force_relocations) {
-          LIEF_DEBUG("[-] Need to relocate {} section (0x{:x} new bytes)",
-                     section->name(), dynsym_needed_size - section->size());
-        layout->relocate_dynsym(dynsym_needed_size);
-      } else { LIEF_DEBUG("{}: -0x{:x} bytes", section->name(), section->size() - dynsym_needed_size); }
-    } else {
-      build_opt_.symtab = false;
-      LIEF_WARN("Can't find section associated with DT_SYMTAB");
-    }
+    const uint64_t osize = binary_->sizing_info_->dynsym;
+    const bool should_relocate = dynsym_needed_size > osize || config_.force_relocate;
+    if (should_relocate) {
+      LIEF_DEBUG("[-] Need to relocate DT_SYMTAB (0x{:x} new bytes)", dynsym_needed_size - osize);
+      layout->relocate_dynsym(dynsym_needed_size);
+    } else { LIEF_DEBUG("DT_SYMTAB: -0x{:x} bytes", osize - dynsym_needed_size); }
   }
 
-  DynamicEntry* dt_init_array   = binary_->get(DYNAMIC_TAGS::DT_INIT_ARRAY);
-  DynamicEntry* dt_init_arraysz = binary_->get(DYNAMIC_TAGS::DT_INIT_ARRAYSZ);
-  if (dt_init_array != nullptr && dt_init_arraysz != nullptr) {
+  if (binary_->has(DYNAMIC_TAGS::DT_INIT_ARRAY) && binary_->has(DYNAMIC_TAGS::DT_INIT_ARRAYSZ) &&
+      config_.init_array)
+  {
     const size_t needed_size = layout->dynamic_arraysize<ELF_T>(DYNAMIC_TAGS::DT_INIT_ARRAY);
-    const uint64_t current_size = dt_init_arraysz->value();
-    Section* array_section = binary_->get(ELF_SECTION_TYPES::SHT_INIT_ARRAY);
-    if (array_section != nullptr) {
-      if (needed_size > array_section->size()) {
-        if (binary_->has_symbol("__libc_start_main")) {
-          LIEF_WARN("Relocating .init_array on Linux may corrupt the final binary");
-        }
-        LIEF_DEBUG("[-] Need to relocate {} (0x{:x} new bytes)",
-                   array_section->name(), current_size - needed_size);
-        layout->relocate_init_array(needed_size);
-      } else { LIEF_DEBUG("{}: -0x{:x} bytes", array_section->name(), array_section->size() - needed_size); }
-    } else {
-      build_opt_.init_array = false;
-    }
+    const uint64_t osize = binary_->sizing_info_->init_array;
+    const bool should_relocate = needed_size > osize;
+    if (should_relocate) {
+      if (binary_->has_symbol("__libc_start_main")) {
+        LIEF_WARN("Relocating DT_INIT_ARRAY on Linux may corrupt the final binary");
+      }
+      LIEF_DEBUG("[-] Need to relocate DT_INIT_ARRAY (0x{:x} new bytes)", osize - needed_size);
+      layout->relocate_init_array(needed_size);
+    } else { LIEF_DEBUG("DT_INIT_ARRAY: -0x{:x} bytes", osize - needed_size); }
   }
 
-  DynamicEntry* dt_preinit_array   = binary_->get(DYNAMIC_TAGS::DT_PREINIT_ARRAY);
-  DynamicEntry* dt_preinit_arraysz = binary_->get(DYNAMIC_TAGS::DT_PREINIT_ARRAYSZ);
-  if (dt_preinit_array != nullptr && dt_preinit_arraysz != nullptr) {
+  if (binary_->has(DYNAMIC_TAGS::DT_PREINIT_ARRAY) && binary_->has(DYNAMIC_TAGS::DT_PREINIT_ARRAYSZ) &&
+      config_.preinit_array)
+  {
     const size_t needed_size = layout->dynamic_arraysize<ELF_T>(DYNAMIC_TAGS::DT_PREINIT_ARRAY);
-    const uint64_t current_size = dt_preinit_arraysz->value();
-    Section* array_section   = binary_->get(ELF_SECTION_TYPES::SHT_PREINIT_ARRAY);
-    if (array_section != nullptr) {
-      if (needed_size > array_section->size()) {
-        LIEF_DEBUG("[-] Need to relocate {} (0x{:x} new bytes)",
-                   array_section->name(), current_size - needed_size);
-        layout->relocate_preinit_array(needed_size);
-      } else { LIEF_DEBUG("{}: -0x{:x} bytes", array_section->name(), array_section->size() - needed_size); }
-    } else {
-      build_opt_.preinit_array = false;
-    }
+    const uint64_t osize = binary_->sizing_info_->preinit_array;
+    const bool should_relocate = needed_size > osize;
+    if (should_relocate) {
+      LIEF_DEBUG("[-] Need to relocate DT_PREINIT_ARRAY (0x{:x} new bytes)", osize - needed_size);
+      layout->relocate_preinit_array(needed_size);
+    } else { LIEF_DEBUG("DT_PREINIT_ARRAY: -0x{:x} bytes", osize - needed_size); }
   }
 
-  DynamicEntry* dt_fini_array   = binary_->get(DYNAMIC_TAGS::DT_FINI_ARRAY);
-  DynamicEntry* dt_fini_arraysz = binary_->get(DYNAMIC_TAGS::DT_FINI_ARRAYSZ);
-  if (dt_fini_array != nullptr && dt_fini_arraysz != nullptr) {
-    const size_t needed_size = layout->dynamic_arraysize<ELF_T>(DYNAMIC_TAGS::DT_FINI_ARRAY);
-    const uint64_t current_size = dt_fini_arraysz->value();
-    Section* array_section = binary_->get(ELF_SECTION_TYPES::SHT_FINI_ARRAY);
-    if (array_section != nullptr) {
-      if (needed_size > array_section->size()) {
-        if (binary_->has_symbol("__libc_start_main")) {
-          LIEF_WARN("Relocating .init_array on Linux may corrupt the final binary");
-        }
-        LIEF_DEBUG("[-] Need to relocate {} (0x{:x} new bytes)",
-                   array_section->name(), current_size - needed_size);
-        layout->relocate_fini_array(needed_size);
-      } else { LIEF_DEBUG("{}: -0x{:x} bytes", array_section->name(), array_section->size() - needed_size); }
-    } else {
-      build_opt_.fini_array = false;
-    }
+  if (binary_->has(DYNAMIC_TAGS::DT_FINI_ARRAY) && binary_->has(DYNAMIC_TAGS::DT_FINI_ARRAYSZ) &&
+      config_.fini_array)
+  {
+    const size_t needed_size   = layout->dynamic_arraysize<ELF_T>(DYNAMIC_TAGS::DT_FINI_ARRAY);
+    const uint64_t osize       = binary_->sizing_info_->fini_array;
+    const bool should_relocate = needed_size > osize;
+    if (should_relocate) {
+      if (binary_->has_symbol("__libc_start_main")) {
+        LIEF_WARN("Relocating .fini_array on Linux may corrupt the final binary");
+      }
+      LIEF_DEBUG("[-] Need to relocate DT_FINI_ARRAY (0x{:x} new bytes)", osize - needed_size);
+      layout->relocate_fini_array(needed_size);
+    } else { LIEF_DEBUG("DT_FINI_ARRAY: -0x{:x} bytes", osize - needed_size); }
   }
-  DynamicEntry* dt_versym = binary_->get(DYNAMIC_TAGS::DT_VERSYM);
 
-  if (dt_versym != nullptr) {
+  if (binary_->has(DYNAMIC_TAGS::DT_VERSYM) && config_.sym_versym) {
     const size_t symver_needed_size = layout->symbol_version<ELF_T>();
-    const uint64_t sv_address = dt_versym->value();
-    Section* sv_section = binary_->section_from_virtual_address(sv_address);
-    if (sv_section != nullptr) {
-      if (symver_needed_size > sv_section->size() || config_.force_relocations) {
-        LIEF_DEBUG("[-] Need to relocate .gnu.version section (0x{:x} new bytes)",
-                   symver_needed_size - sv_section->size());
-        layout->relocate_symver(symver_needed_size);
-      } else { LIEF_DEBUG("{}: -0x{:x} bytes", sv_section->name(), sv_section->size() - symver_needed_size); }
-    } else {
-      build_opt_.sym_versym = false;
-    }
+    const uint64_t osize       = binary_->sizing_info_->versym;
+    const bool should_relocate = symver_needed_size > osize || config_.force_relocate;
+    if (should_relocate) {
+      LIEF_DEBUG("[-] Need to relocate DT_VERSYM (0x{:x} new bytes)", symver_needed_size - osize);
+      layout->relocate_symver(symver_needed_size);
+    } else { LIEF_DEBUG("DT_VERSYM: -0x{:x} bytes", osize - symver_needed_size); }
   }
 
-  DynamicEntry* dt_verdef = binary_->get(DYNAMIC_TAGS::DT_VERDEF);
-  if (dt_verdef != nullptr) {
+  if (binary_->has(DYNAMIC_TAGS::DT_VERDEF) && config_.sym_verdef) {
     const size_t symvdef_needed_size = layout->symbol_vdef_size<ELF_T>();
-    const uint64_t svd_address = dt_verdef->value();
-    Section* svdef_section = binary_->section_from_virtual_address(svd_address);
-    if (svdef_section != nullptr) {
-      if (symvdef_needed_size > svdef_section->size() || config_.force_relocations) {
-        LIEF_DEBUG("[-] Need to relocate .gnu.version_d section (0x{:x} new bytes)",
-                   symvdef_needed_size - svdef_section->size());
-        layout->relocate_symverd(symvdef_needed_size);
-      } else { LIEF_DEBUG("{}: -0x{:x} bytes", svdef_section->name(), svdef_section->size() - symvdef_needed_size); }
-    } else {
-      build_opt_.sym_verdef = false;
-    }
+    const uint64_t osize       = binary_->sizing_info_->verdef;
+    const bool should_relocate = symvdef_needed_size > osize || config_.force_relocate;
+    if (should_relocate) {
+      LIEF_DEBUG("[-] Need to relocate DT_VERDEF (0x{:x} new bytes)", symvdef_needed_size - osize);
+      layout->relocate_symverd(symvdef_needed_size);
+    } else { LIEF_DEBUG("DT_VERDEF: -0x{:x} bytes", osize - symvdef_needed_size); }
   }
 
-  DynamicEntry* dt_verneed = binary_->get(DYNAMIC_TAGS::DT_VERNEED);
-  if (dt_verneed != nullptr) {
+  if (binary_->has(DYNAMIC_TAGS::DT_VERNEED) && config_.sym_verneed) {
     const size_t symvreq_needed_size = layout->symbol_vreq_size<ELF_T>();
-    const uint64_t svr_address = dt_verneed->value();
-    Section* svreq_section = binary_->section_from_virtual_address(svr_address);
-    if (svreq_section != nullptr) {
-      if (symvreq_needed_size > svreq_section->size() || config_.force_relocations) {
-        LIEF_DEBUG("[-] Need to relocate .gnu.version_r section (0x{:x} new bytes)",
-                   symvreq_needed_size - svreq_section->size());
-        layout->relocate_symverr(symvreq_needed_size);
-      } else { LIEF_DEBUG("{}: -0x{:x} bytes", svreq_section->name(), svreq_section->size() - symvreq_needed_size); }
-    } else {
-      build_opt_.sym_verneed = false;
-      LIEF_WARN("Can't find section associated with DT_VERNEED");
-    }
+    const uint64_t osize       = binary_->sizing_info_->verneed;
+    const bool should_relocate = symvreq_needed_size > osize || config_.force_relocate;
+    if (should_relocate) {
+      LIEF_DEBUG("[-] Need to relocate DT_VERNEED (0x{:x} new bytes)", symvreq_needed_size - osize);
+      layout->relocate_symverr(symvreq_needed_size);
+    } else { LIEF_DEBUG("DT_VERNEED: -0x{:x} bytes", osize - symvreq_needed_size); }
   }
 
   const Header& header = binary_->header();
-  if (header.section_name_table_idx() > 0) {
+  if (header.section_name_table_idx() > 0 && !binary_->sections_.empty() ) {
     if (header.section_name_table_idx() >= binary_->sections_.size()) {
       LIEF_ERR("Section string table out of bound");
-      return ok();
-    }
-    std::unique_ptr<Section>& string_names_section = binary_->sections_[header.section_name_table_idx()];
-    const size_t shstr_size = layout->section_shstr_size();
-    if (shstr_size > string_names_section->size() || config_.force_relocations) {
-      LIEF_DEBUG("[-] Need to relocate '{}' section (0x{:x} new bytes)",
-                 string_names_section->name(), shstr_size - string_names_section->size());
-      layout->relocate_shstr(true);
+    } else {
+      std::unique_ptr<Section>& string_names_section = binary_->sections_[header.section_name_table_idx()];
+      const size_t shstr_size = layout->section_shstr_size();
+      if (shstr_size > string_names_section->size() || config_.force_relocate) {
+        LIEF_DEBUG("[-] Need to relocate '{}' section (0x{:x} new bytes)",
+                   string_names_section->name(), shstr_size - string_names_section->size());
+        layout->relocate_shstr(true);
+      }
     }
   }
 
@@ -415,7 +327,7 @@ ok_error_t Builder::build_exe_lib() {
       } else {
         Section& strtab = sections[strtab_idx];
         const size_t strtab_needed_size = layout->section_strtab_size();
-        if (strtab_needed_size > strtab.size() || config_.force_relocations) {
+        if (strtab_needed_size > strtab.size() || config_.force_relocate) {
           LIEF_DEBUG("[-] Need to relocate .strtab section (0x{:x} new bytes)",
                      strtab_needed_size - strtab.size());
           layout->relocate_strtab(layout->section_strtab_size());
@@ -428,7 +340,7 @@ ok_error_t Builder::build_exe_lib() {
 
   if (sec_symtab != nullptr) {
     const size_t needed_size = layout->static_sym_size<ELF_T>();
-    if (needed_size > sec_symtab->size() || config_.force_relocations) {
+    if (needed_size > sec_symtab->size() || config_.force_relocate) {
       LIEF_DEBUG("[-] Need to relocate '{}' section (0x{:x} new bytes)",
                  sec_symtab->name(), needed_size - sec_symtab->size());
       layout->relocate_symtab(needed_size);
@@ -453,78 +365,73 @@ ok_error_t Builder::build_exe_lib() {
   // and we have enough space to write ELF elements
   // ----------------------------------------------------------------
 
-  if (build_opt_.gnu_hash || build_opt_.dt_hash) {
+  if (config_.gnu_hash || config_.dt_hash) {
     LIEF_SW_START(sw);
     build_hash_table<ELF_T>();
     LIEF_SW_END("hast table built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
   }
 
-  dt_strtab = binary_->get(DYNAMIC_TAGS::DT_STRTAB);
-  if (build_opt_.dyn_str && dt_strtab != nullptr) {
-    const uint64_t dyn_strtab_va = dt_strtab->value();
-    Section* dyn_strtab_section  = binary_->section_from_virtual_address(dyn_strtab_va);
-    if (dyn_strtab_section == nullptr) {
-      LIEF_ERR("Can't find .dynstr section associated with the virtual address 0x{:x}", dyn_strtab_va);
-      return make_error_code(lief_errors::file_format_error);
+  if (config_.dyn_str) {
+    if (DynamicEntry* dt_strtab = binary_->get(DYNAMIC_TAGS::DT_STRTAB)) {
+      binary_->patch_address(dt_strtab->value(), layout->raw_dynstr());
     }
-    dyn_strtab_section->content(layout->raw_dynstr());
   }
 
-  if (build_opt_.interpreter && binary_->has(SEGMENT_TYPES::PT_INTERP)) {
+  if (config_.interpreter && binary_->has(SEGMENT_TYPES::PT_INTERP)) {
     LIEF_SW_START(sw);
     build_interpreter<ELF_T>();
     LIEF_SW_END(".interp built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
   }
 
-  if (build_opt_.notes && binary_->has(SEGMENT_TYPES::PT_NOTE)) {
+  if (config_.notes && binary_->has(SEGMENT_TYPES::PT_NOTE)) {
     LIEF_SW_START(sw);
     build_notes<ELF_T>();
     LIEF_SW_END(".note built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
   }
 
-  if (build_opt_.dynamic_section && binary_->has(SEGMENT_TYPES::PT_DYNAMIC)) {
+  if (config_.dynamic_section && binary_->has(SEGMENT_TYPES::PT_DYNAMIC)) {
     LIEF_SW_START(sw);
     build_dynamic_section<ELF_T>();
     LIEF_SW_END(".dynamic built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
   }
 
-  if (build_opt_.symtab && binary_->has(DYNAMIC_TAGS::DT_SYMTAB)) {
+  if (config_.symtab && binary_->has(DYNAMIC_TAGS::DT_SYMTAB)) {
     LIEF_SW_START(sw);
     build_dynamic_symbols<ELF_T>();
     LIEF_SW_END(".dynsym built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
   }
 
-  if (build_opt_.sym_versym && binary_->has(DYNAMIC_TAGS::DT_VERSYM)) {
+  if (config_.sym_versym && binary_->has(DYNAMIC_TAGS::DT_VERSYM)) {
     LIEF_SW_START(sw);
     build_symbol_version<ELF_T>();
     LIEF_SW_END(".gnu.version built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
   }
 
-  if (build_opt_.sym_verdef && binary_->has(DYNAMIC_TAGS::DT_VERDEF)) {
+  if (config_.sym_verdef && binary_->has(DYNAMIC_TAGS::DT_VERDEF)) {
     LIEF_SW_START(sw);
     build_symbol_definition<ELF_T>();
     LIEF_SW_END(".gnu.version_d built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
   }
 
-  if (build_opt_.sym_verneed && binary_->has(DYNAMIC_TAGS::DT_VERNEED)) {
+  if (config_.sym_verneed && binary_->has(DYNAMIC_TAGS::DT_VERNEED)) {
     LIEF_SW_START(sw);
     build_symbol_requirement<ELF_T>();
     LIEF_SW_END(".gnu.version_r built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
   }
 
-  if (build_opt_.rela) {
+  if (config_.rela) {
     LIEF_SW_START(sw);
     build_dynamic_relocations<ELF_T>();
     LIEF_SW_END(".rela.dyn built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
   }
 
-  if (build_opt_.jmprel) {
+  if (config_.jmprel) {
     LIEF_SW_START(sw);
     build_pltgot_relocations<ELF_T>();
     LIEF_SW_END(".rela.plt built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
   }
 
-  if (build_opt_.static_symtab && binary_->has(ELF_SECTION_TYPES::SHT_SYMTAB)) {
+  if (config_.static_symtab && binary_->has(ELF_SECTION_TYPES::SHT_SYMTAB)) {
     LIEF_SW_START(sw);
     build_static_symbols<ELF_T>();
     LIEF_SW_END(".symtab built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
@@ -629,7 +536,7 @@ ok_error_t Builder::build_relocatable() {
     }
     std::unique_ptr<Section>& string_names_section = binary_->sections_[header.section_name_table_idx()];
     const size_t shstr_size = layout->section_shstr_size();
-    if (shstr_size > string_names_section->size() || config_.force_relocations) {
+    if (shstr_size > string_names_section->size() || config_.force_relocate) {
       LIEF_DEBUG("[-] Need to relocate '{}' section (0x{:x} new bytes)",
                  string_names_section->name(), shstr_size - string_names_section->size());
       layout->relocate_section(*string_names_section, shstr_size);
@@ -640,7 +547,7 @@ ok_error_t Builder::build_relocatable() {
   Section* symtab = binary_->get(ELF_SECTION_TYPES::SHT_SYMTAB);
   if (symtab != nullptr) {
     const size_t needed_size = layout->symtab_size<ELF_T>();
-    if (needed_size > symtab->size() || config_.force_relocations) {
+    if (needed_size > symtab->size() || config_.force_relocate) {
       LIEF_DEBUG("[-] Need to relocate '{}' section (0x{:x} new bytes)",
                  symtab->name(), symtab->size() - needed_size);
       layout->relocate_section(*symtab, needed_size);
@@ -663,7 +570,7 @@ ok_error_t Builder::build_relocatable() {
     } else {
       Section& strtab = sections[strtab_idx];
       const size_t strtab_needed_size = layout->section_strtab_size();
-      if (strtab_needed_size > strtab.size() || config_.force_relocations) {
+      if (strtab_needed_size > strtab.size() || config_.force_relocate) {
         LIEF_DEBUG("[-] Need to relocate .strtab section (0x{:x} new bytes)",
                    strtab_needed_size - strtab.size());
         layout->relocate_section(strtab, strtab_needed_size);
@@ -824,19 +731,31 @@ ok_error_t Builder::build_sections() {
   using Elf_Word = typename ELF_T::Elf_Word;
 
   using Elf_Shdr = typename ELF_T::Elf_Shdr;
+
+  if (binary_->sections_.empty()) {
+    return ok();
+  }
+
+
   LIEF_DEBUG("[+] Build sections");
 
   const Header& header = binary_->header();
   const Elf_Off section_headers_offset = header.section_headers_offset();
+  if (section_headers_offset == 0) {
+    return ok();
+  }
 
-  std::unique_ptr<Section>& string_names_section = binary_->sections_[header.section_name_table_idx()];
-  string_names_section->content(layout_->raw_shstr());
+  if (header.section_name_table_idx() < binary_->sections_.size()) {
+    std::unique_ptr<Section>& string_names_section = binary_->sections_[header.section_name_table_idx()];
+    string_names_section->content(layout_->raw_shstr());
+  }
 
   const std::unordered_map<std::string, size_t>& shstr_map = layout_->shstr_map();
-  for (size_t i = 0; i < binary_->sections_.size(); i++) {
+  for (size_t i = 0; i < binary_->sections_.size(); ++i) {
     const std::unique_ptr<Section>& section = binary_->sections_[i];
-
-    if (section->size()        > 0 &&
+    LIEF_DEBUG("[FRAME  ] {}", section->is_frame());
+    if (!section->is_frame()       &&
+        section->size()        > 0 &&
         section->file_offset() > 0 &&
         // SHT_NOTBITS sections should not be considered.
         // Nevertheless, some (malformed or tricky) ELF binaries
@@ -1090,10 +1009,9 @@ ok_error_t Builder::build_dynamic_section() {
 
       case DYNAMIC_TAGS::DT_INIT_ARRAY:
         {
-          if (build_opt_.init_array) {
-            Section* array_section = binary_->get(ELF_SECTION_TYPES::SHT_INIT_ARRAY);
+          if (config_.init_array) {
             DynamicEntry* dt_array_size = binary_->get(DYNAMIC_TAGS::DT_INIT_ARRAYSZ);
-            if (array_section == nullptr || dt_array_size == nullptr) {
+            if (dt_array_size == nullptr) {
               LIEF_ERR("Can't find the DT_INIT_ARRAYSZ / .init_array");
               break;
             }
@@ -1106,17 +1024,16 @@ ok_error_t Builder::build_dynamic_section() {
             }
 
             dt_array_size->value(array_content.size());
-            array_section->content(std::move(array_content));
+            binary_->patch_address(entry->value(), array_content);
           }
           break;
         }
 
       case DYNAMIC_TAGS::DT_FINI_ARRAY:
         {
-          if (build_opt_.fini_array) {
-            Section* array_section = binary_->get(ELF_SECTION_TYPES::SHT_FINI_ARRAY);
+          if (config_.fini_array) {
             DynamicEntry* dt_array_size = binary_->get(DYNAMIC_TAGS::DT_FINI_ARRAYSZ);
-            if (array_section == nullptr || dt_array_size == nullptr) {
+            if (dt_array_size == nullptr) {
               LIEF_ERR("Can't find the DT_FINI_ARRAYSZ / .fini_array");
               break;
             }
@@ -1130,17 +1047,16 @@ ok_error_t Builder::build_dynamic_section() {
             }
 
             dt_array_size->value(array_content.size());
-            array_section->content(std::move(array_content));
+            binary_->patch_address(entry->value(), array_content);
           }
           break;
         }
 
       case DYNAMIC_TAGS::DT_PREINIT_ARRAY:
         {
-          if (build_opt_.fini_array) {
-            Section* array_section = binary_->get(ELF_SECTION_TYPES::SHT_PREINIT_ARRAY);
+          if (config_.fini_array) {
             DynamicEntry* dt_array_size = binary_->get(DYNAMIC_TAGS::DT_PREINIT_ARRAYSZ);
-            if (array_section == nullptr || dt_array_size == nullptr) {
+            if (dt_array_size == nullptr) {
               LIEF_ERR("Can't find the DT_PREINIT_ARRAYSZ / .preinit_array");
               break;
             }
@@ -1155,7 +1071,7 @@ ok_error_t Builder::build_dynamic_section() {
             }
 
             dt_array_size->value(array_content.size());
-            array_section->content(std::move(array_content));
+            binary_->patch_address(entry->value(), array_content);
           }
           break;
         }
@@ -1172,12 +1088,6 @@ ok_error_t Builder::build_dynamic_section() {
 
     dynamic_table_raw.write_conv<Elf_Dyn>(dynhdr);
   }
-  Section* dynamic = binary_->dynamic_section();
-  if (dynamic == nullptr) {
-    LIEF_ERR("Can't find the dynamic section");
-    return make_error_code(lief_errors::file_format_error);
-  }
-  dynamic->content(dynamic_table_raw.raw());
 
   // Update the PT_DYNAMIC segment
   Segment* dynamic_seg = binary_->get(SEGMENT_TYPES::PT_DYNAMIC);
@@ -1185,9 +1095,10 @@ ok_error_t Builder::build_dynamic_section() {
     LIEF_ERR("Can't find the PT_DYNAMIC segment");
     return make_error_code(lief_errors::file_format_error);
   }
-
-  dynamic_seg->physical_size(dynamic->size());
-  dynamic_seg->virtual_size(dynamic->size());
+  std::vector<uint8_t> raw = dynamic_table_raw.raw();
+  dynamic_seg->physical_size(raw.size());
+  dynamic_seg->virtual_size(raw.size());
+  dynamic_seg->content(std::move(raw));
   return ok();
 }
 
@@ -1195,9 +1106,9 @@ ok_error_t Builder::build_dynamic_section() {
 template<typename ELF_T>
 ok_error_t Builder::build_symbol_hash() {
   LIEF_DEBUG("== Build SYSV Hash ==");
-  Section* hash_section = binary_->get(ELF_SECTION_TYPES::SHT_HASH);
+  DynamicEntry* dt_hash = binary_->get(DYNAMIC_TAGS::DT_HASH);
 
-  if (hash_section == nullptr) {
+  if (dt_hash == nullptr) {
     LIEF_ERR("Can't find the SYSV hash section");
     return make_error_code(lief_errors::not_found);
   }
@@ -1259,8 +1170,7 @@ ok_error_t Builder::build_symbol_hash() {
       Convert::swap_endian(&new_hash_table_ptr[i]);
     }
   }
-
-  hash_section->content(std::move(new_hash_table));
+  binary_->patch_address(dt_hash->value(), std::move(new_hash_table));
   return ok();
 }
 
@@ -1268,20 +1178,19 @@ ok_error_t Builder::build_symbol_hash() {
 template<typename ELF_T>
 ok_error_t Builder::build_hash_table() {
   LIEF_DEBUG("== Build hash table ==");
-  Section* hash_sec = binary_->get(ELF_SECTION_TYPES::SHT_HASH);
-  Section* gnu_hash_sec = binary_->get(ELF_SECTION_TYPES::SHT_GNU_HASH);
+
   bool has_error = false;
-  if (build_opt_.dt_hash && hash_sec != nullptr) {
-    auto res = build_symbol_hash<ELF_T>();
-    if (!res) {
+  if (config_.dt_hash && binary_->has(DYNAMIC_TAGS::DT_HASH)) {
+    if (!build_symbol_hash<ELF_T>()) {
       LIEF_ERR("Building the new SYSV Hash section failed");
       has_error = true;
     }
   }
 
-  if (build_opt_.gnu_hash && gnu_hash_sec != nullptr) {
-    // The gnu hash table is already in Layout's cache
-    gnu_hash_sec->content(static_cast<ExeLayout*>(layout_.get())->raw_gnuhash());
+  if (config_.gnu_hash) {
+    if (const DynamicEntry* entry = binary_->get(DYNAMIC_TAGS::DT_GNU_HASH)) {
+      binary_->patch_address(entry->value(), static_cast<ExeLayout*>(layout_.get())->raw_gnuhash());
+    }
   }
   if (has_error) {
     return make_error_code(lief_errors::build_error);
@@ -1364,12 +1273,7 @@ ok_error_t Builder::build_dynamic_symbols() {
   }
   Elf_Addr symbol_table_va = dt_symtab->value();
 
-  // Find the section associated with the address
-  Section* symbol_table_section = binary_->section_from_virtual_address(symbol_table_va);
-  if (symbol_table_section == nullptr) {
-    LIEF_ERR("Can't find the section associated with DT_SYMTAB");
-    return make_error_code(lief_errors::not_found);
-  }
+
 
   // Build symbols
   vector_iostream symbol_table_raw(should_swap());
@@ -1396,7 +1300,7 @@ ok_error_t Builder::build_dynamic_symbols() {
 
     symbol_table_raw.write_conv(sym_header);
   }
-  symbol_table_section->content(std::move(symbol_table_raw.raw()));
+  binary_->patch_address(symbol_table_va, symbol_table_raw.raw());
   return ok();
 }
 
@@ -1515,11 +1419,6 @@ ok_error_t Builder::build_dynamic_relocations() {
     return make_error_code(lief_errors::not_found);
   }
 
-  Section* relocation_section = binary_->section_from_virtual_address(dt_reloc->value());
-  if (relocation_section == nullptr) {
-    LIEF_ERR("Unable to find the section associated with DT_REL(A)");
-    return make_error_code(lief_errors::not_found);
-  }
 
   vector_iostream content(should_swap());
   for (const Relocation& relocation : binary_->dynamic_relocations()) {
@@ -1571,10 +1470,7 @@ ok_error_t Builder::build_dynamic_relocations() {
       content.write_conv<Elf_Rel>(relhdr);
     }
   }
-
-  LIEF_DEBUG("Section associated with dynamic relocations: {} (is_rela: {})",
-              relocation_section->name(), is_rela);
-  relocation_section->content(std::move(content.raw()));
+  binary_->patch_address(dt_reloc->value(), content.raw());
   return ok();
 }
 
@@ -1608,12 +1504,6 @@ ok_error_t Builder::build_pltgot_relocations() {
 
   if (dt_pltrelsz == nullptr) {
     LIEF_ERR("Unable to find the DT_PLTRELSZ entry");
-    return make_error_code(lief_errors::not_found);
-  }
-
-  Section* relocation_section = binary_->section_from_virtual_address(dt_jmprel->value());
-  if (relocation_section == nullptr) {
-    LIEF_ERR("Can't find the section associated with DT_JMPREL");
     return make_error_code(lief_errors::not_found);
   }
 
@@ -1660,7 +1550,7 @@ ok_error_t Builder::build_pltgot_relocations() {
       content.write_conv<Elf_Rel>(relhdr);
     }
   }
-  relocation_section->content(std::move(content.raw()));
+  binary_->patch_address(dt_jmprel->value(), content.raw());
   return ok();
 }
 
@@ -1774,12 +1664,8 @@ ok_error_t Builder::build_symbol_requirement() {
     }
     ++svr_idx;
   }
-  Section* svr_sec = binary_->section_from_offset(svr_offset);
-  if (svr_sec == nullptr) {
-    LIEF_ERR("Can't find the section associated with DT_VERNEED");
-    return make_error_code(lief_errors::not_found);
-  }
-  svr_sec->content(std::move(svr_raw.raw()));
+
+  binary_->patch_address(svr_address, svr_raw.raw());
   return ok();
 }
 
@@ -1872,18 +1758,13 @@ ok_error_t Builder::build_symbol_definition() {
     ++svd_idx;
   }
 
-  Section* svc_sec = binary_->section_from_offset(svd_offset);
-  if (svc_sec == nullptr) {
-    LIEF_ERR("Can't find the section associated with the DT_VERDEF entry");
-    return make_error_code(lief_errors::not_found);
-  }
-  svc_sec->content(std::move(svd_raw.raw()));
+  binary_->patch_address(svd_va, svd_raw.raw());
   return ok();
 }
 
 template<typename ELF_T>
 ok_error_t Builder::build_interpreter() {
-  if (!build_opt_.interpreter) {
+  if (!config_.interpreter) {
     return ok();
   }
   LIEF_DEBUG("[+] Building Interpreter");
@@ -1900,7 +1781,7 @@ ok_error_t Builder::build_interpreter() {
 
 template<typename ELF_T>
 ok_error_t Builder::build_notes() {
-  if (!build_opt_.notes) {
+  if (!config_.notes) {
     return ok();
   }
 
@@ -1962,13 +1843,7 @@ ok_error_t Builder::build_symbol_version() {
     const uint16_t value = sv->value();
     sv_raw.write_conv<uint16_t>(value);
   }
-
-  Section* sv_section = binary_->section_from_virtual_address(sv_address);
-  if (sv_section == nullptr) {
-    LIEF_ERR("Can't find section associated with DT_VERSYM");
-    return make_error_code(lief_errors::not_found);
-  }
-  sv_section->content(std::move(sv_raw.raw()));
+  binary_->patch_address(sv_address, sv_raw.raw());
   return ok();
 }
 

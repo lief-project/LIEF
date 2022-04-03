@@ -58,7 +58,24 @@ class LIEF_API Builder {
 
   //! Configuration options to tweak the building process
   struct config_t {
-    bool force_relocations = false; /// Force to relocate all the ELF structures that can be relocated (mostly for testing)
+    bool dt_hash         = true;
+    bool dyn_str         = true;
+    bool dynamic_section = true;
+    bool fini_array      = true;
+    bool gnu_hash        = true;
+    bool init_array      = true;
+    bool interpreter     = true;
+    bool jmprel          = true;
+    bool notes           = true;
+    bool preinit_array   = true;
+    bool rela            = true;
+    bool static_symtab   = true;
+    bool sym_verdef      = true;
+    bool sym_verneed     = true;
+    bool sym_versym      = true;
+    bool symtab          = true;
+
+    bool force_relocate  = false; /// Force to relocating all the ELF structures that are supported by LIEF (mostly for testing)
   };
 
   Builder(Binary& binary);
@@ -75,8 +92,9 @@ class LIEF_API Builder {
     return *this;
   }
 
-  //! Force relocating all the ELF characteristics supported by LIEF.
-  Builder& force_relocations(bool flag = true);
+  inline config_t& config() {
+    return config_;
+  }
 
   //! Return the built ELF binary as a byte vector
   const std::vector<uint8_t>& get_build();
@@ -85,25 +103,6 @@ class LIEF_API Builder {
   void write(const std::string& filename) const;
 
   protected:
-  struct build_opt_t {
-    bool gnu_hash        = true;
-    bool dt_hash         = true;
-    bool rela            = true;
-    bool jmprel          = true;
-    bool dyn_str         = true;
-    bool symtab          = true;
-    bool static_symtab   = true;
-    bool sym_versym      = true;
-    bool sym_verdef      = true;
-    bool sym_verneed     = true;
-    bool dynamic_section = true;
-    bool init_array      = true;
-    bool preinit_array   = true;
-    bool fini_array      = true;
-    bool notes           = true;
-    bool interpreter     = true;
-  };
-
   template<typename ELF_T>
   ok_error_t build();
 
@@ -186,8 +185,6 @@ class LIEF_API Builder {
   template<class ELF_T>
   ok_error_t process_object_relocations();
 
-  static Section* array_section(Binary& bin, uint64_t addr);
-  build_opt_t build_opt_;
   config_t config_;
   mutable vector_iostream ios_;
   Binary* binary_{nullptr};

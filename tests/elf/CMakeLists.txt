@@ -187,6 +187,10 @@ if (PYTHON_TESTS_ENABLED)
     ${PYTHON_EXECUTABLE} -m pytest
       ${CMAKE_CURRENT_SOURCE_DIR}/test_empty_gnu_hash.py)
 
+  add_test(ELF_PYTHON_section_frame
+    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
+    ${PYTHON_EXECUTABLE} -m pytest
+      ${CMAKE_CURRENT_SOURCE_DIR}/test_section_frame.py)
 
   # Examples
   # --------

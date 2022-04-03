@@ -38,7 +38,7 @@ namespace LIEF {
 namespace ELF {
 
 Section::~Section() = default;
-
+Section::Section() = default;
 
 Section::Section(const details::Elf64_Shdr& header) :
   type_{static_cast<ELF_SECTION_TYPES>(header.sh_type)},
@@ -68,30 +68,9 @@ Section::Section(const details::Elf32_Shdr& header) :
   size_            = header.sh_size;
 }
 
-Section::Section() :
-  type_{ELF_SECTION_TYPES::SHT_PROGBITS},
-  flags_{0},
-  original_size_{0},
-  link_{0},
-  info_{0},
-  address_align_{0x1000},
-  entry_size_{0}
-{
-  virtual_address_ = 0;
-  offset_          = 0;
-  size_            = 0;
-}
-
-
 Section::Section(const std::string& name, ELF_SECTION_TYPES type) :
   LIEF::Section{name},
-  type_{type},
-  flags_{0},
-  original_size_{0},
-  link_{0},
-  info_{0},
-  address_align_{0x1000},
-  entry_size_{0}
+  type_{type}
 {}
 
 
@@ -118,6 +97,7 @@ Section::Section(const Section& other) :
   info_{other.info_},
   address_align_{other.address_align_},
   entry_size_{other.entry_size_},
+  is_frame_{other.is_frame_},
   content_c_{other.content_c_}
 {
 }
@@ -137,6 +117,7 @@ void Section::swap(Section& other) {
   std::swap(address_align_,  other.address_align_);
   std::swap(entry_size_,     other.entry_size_);
   std::swap(segments_,       other.segments_);
+  std::swap(is_frame_,       other.is_frame_);
   std::swap(datahandler_,    other.datahandler_);
   std::swap(content_c_,      other.content_c_);
 }
@@ -193,7 +174,7 @@ uint64_t Section::offset() const {
 
 
 void Section::size(uint64_t size) {
-  if (datahandler_ != nullptr) {
+  if (datahandler_ != nullptr && !is_frame()) {
     if (auto node = datahandler_->get(file_offset(), this->size(), DataHandler::Node::SECTION)) {
       node->size(size);
     } else {
@@ -207,7 +188,7 @@ void Section::size(uint64_t size) {
 
 
 void Section::offset(uint64_t offset) {
-  if (datahandler_ != nullptr) {
+  if (datahandler_ != nullptr && !is_frame()) {
     if (auto node = datahandler_->get(file_offset(), size(), DataHandler::Node::SECTION)) {
       node->offset(offset);
     } else {
@@ -220,7 +201,7 @@ void Section::offset(uint64_t offset) {
 }
 
 span<const uint8_t> Section::content() const {
-  if (size() == 0) {
+  if (size() == 0 || is_frame()) {
     return {};
   }
 
@@ -259,6 +240,10 @@ std::set<ELF_SECTION_FLAGS> Section::flags_list() const {
 }
 
 void Section::content(const std::vector<uint8_t>& data) {
+  if (is_frame()) {
+    return;
+  }
+
   if (!data.empty() && type() == ELF_SECTION_TYPES::SHT_NOBITS) {
     LIEF_INFO("You inserted 0x{:x} bytes in section '{}' which has SHT_NOBITS type",
               data.size(), name());
@@ -300,6 +285,9 @@ void Section::content(const std::vector<uint8_t>& data) {
 
 
 void Section::content(std::vector<uint8_t>&& data) {
+  if (is_frame()) {
+    return;
+  }
   if (!data.empty() && type() == ELF_SECTION_TYPES::SHT_NOBITS) {
     LIEF_INFO("You inserted 0x{:x} bytes in section '{}' which has SHT_NOBITS type",
               data.size(), name());
@@ -387,7 +375,9 @@ Section::it_const_segments Section::segments() const {
 
 
 Section& Section::clear(uint8_t value) {
-
+  if (is_frame()) {
+    return *this;
+  }
   if (datahandler_ == nullptr) {
     std::fill(std::begin(content_c_), std::end(content_c_), value);
     return *this;
@@ -437,6 +427,9 @@ bool Section::operator!=(const Section& rhs) const {
 
 
 span<uint8_t> Section::writable_content() {
+  if (is_frame()) {
+    return {};
+  }
   span<const uint8_t> ref = static_cast<const Section*>(this)->content();
   return {const_cast<uint8_t*>(ref.data()), ref.size()};
 }
