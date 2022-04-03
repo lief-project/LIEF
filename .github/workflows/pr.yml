@@ -1,11 +1,6 @@
 name: LIEF PR
 
-on:
-  push:
-    branches:
-      - 'improve/tests'
-  pull_request:
-  workflow_dispatch:
+on: [pull_request, workflow_dispatch]
 
 jobs:
   osx:
