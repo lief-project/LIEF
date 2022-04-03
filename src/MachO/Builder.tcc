@@ -78,7 +78,8 @@ ok_error_t Builder::build_segments() {
 
     const auto& content = segment.content();
     if (content.size() != segment.file_size()) {
-      LIEF_ERR("content.size() != segment.file_size()");
+      LIEF_ERR("{} content size and file_size are differents: 0x{:x} vs 0x{:x}",
+               segment.name(), content.size(), segment.file_size());
       return make_error_code(lief_errors::build_error);
     }
 

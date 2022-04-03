@@ -412,7 +412,14 @@ void SegmentCommand::content_resize(size_t size) {
 
 void SegmentCommand::content_insert(size_t where, size_t size) {
   update_data([] (std::vector<uint8_t>& inner_data, size_t w, size_t s) {
-                inner_data.insert(std::begin(inner_data) + w, s, 0);
+                if (s == 0) {
+                  return;
+                }
+                if (w < inner_data.size()) {
+                  inner_data.insert(std::begin(inner_data) + w, s, 0);
+                } else {
+                  inner_data.resize(inner_data.size() + w + s, 0);
+                }
               }, where, size);
 }
 
