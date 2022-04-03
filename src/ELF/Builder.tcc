@@ -1208,11 +1208,18 @@ ok_error_t Builder::build_symbol_hash() {
     return make_error_code(lief_errors::not_found);
   }
 
+
   uint32_t nbucket = sysv->nbucket();
   uint32_t nchain  = static_cast<ExeLayout*>(layout_.get())->sysv_nchain();
 
-  std::vector<uint8_t> new_hash_table((nbucket + nchain + 2) * sizeof(uint32_t), 0);
-  auto *const new_hash_table_ptr = reinterpret_cast<uint32_t*>(new_hash_table.data());
+  if (nbucket == 0) {
+    LIEF_ERR("sysv.nbucket is 0");
+    return make_error_code(lief_errors::build_error);
+  }
+
+  const size_t buckets_limits = nbucket + nchain + 2;
+  std::vector<uint8_t> new_hash_table(buckets_limits * sizeof(uint32_t), 0);
+  auto* new_hash_table_ptr = reinterpret_cast<uint32_t*>(new_hash_table.data());
 
   new_hash_table_ptr[0] = nbucket;
   new_hash_table_ptr[1] = nchain;
@@ -1221,15 +1228,16 @@ ok_error_t Builder::build_symbol_hash() {
   uint32_t* chain  = &new_hash_table_ptr[2 + nbucket];
   uint32_t idx = 0;
   for (const std::unique_ptr<Symbol>& symbol : binary_->dynamic_symbols_) {
-    uint32_t hash = 0;
+    uint32_t hash = binary_->type_ == ELF_CLASS::ELFCLASS32 ?
+                    hash32(symbol->name().c_str()) :
+                    hash64(symbol->name().c_str());
 
-    if (binary_->type_ == ELF_CLASS::ELFCLASS32) {
-      hash = hash32(symbol->name().c_str());
-    } else {
-      hash = hash64(symbol->name().c_str());
+    const size_t bucket_idx = hash % nbucket;
+    if (bucket_idx >= buckets_limits) {
+      LIEF_WARN("Bucket {} is out of range", bucket_idx);
+      continue;
     }
-
-    if (bucket[hash % nbucket] == 0) {
+    if (bucket[bucket_idx] == 0) {
       bucket[hash % nbucket] = idx;
     } else {
       uint32_t value = bucket[hash % nbucket];
@@ -1247,7 +1255,7 @@ ok_error_t Builder::build_symbol_hash() {
 
   // to be improved...?
   if (should_swap()) {
-    for (size_t i = 0; i < nbucket + nchain + 2; i++) {
+    for (size_t i = 0; i < buckets_limits; i++) {
       Convert::swap_endian(&new_hash_table_ptr[i]);
     }
   }
