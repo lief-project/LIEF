@@ -4,7 +4,7 @@ import stat
 import subprocess
 from random import shuffle
 
-from utils import get_sample
+from utils import get_sample, is_linux
 
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.DEBUG)
 
@@ -35,7 +35,9 @@ def test_frame(tmp_path):
 
     out.chmod(out.stat().st_mode | stat.S_IEXEC)
     assert len(new.dynamic_entries) == 27 # Make sure our modifications has been committed
-    assert isinstance(subprocess.run(out.as_posix(), check=True), subprocess.CompletedProcess)
+
+    if is_linux():
+        assert isinstance(subprocess.run(out.as_posix(), check=True), subprocess.CompletedProcess)
 
 def test_sectionless(tmp_path):
     elf: lief.ELF.Binary = lief.parse(get_sample("ELF/mbedtls_selftest.elf64"))
@@ -57,4 +59,6 @@ def test_sectionless(tmp_path):
 
     new = lief.parse(out.as_posix())
     assert len(new.dynamic_entries) == 27 # Make sure our modifications has been committed
-    assert isinstance(subprocess.run(out.as_posix(), check=True), subprocess.CompletedProcess)
+
+    if is_linux():
+        assert isinstance(subprocess.run(out.as_posix(), check=True), subprocess.CompletedProcess)
