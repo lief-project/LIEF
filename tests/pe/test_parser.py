@@ -327,6 +327,18 @@ def test_issue_exports():
     assert not exports.entries[6].is_extern
     assert exports.entries[6].function_rva == 0x203a0
 
+def test_issue_685():
+    """
+    https://github.com/lief-project/LIEF/issues/685
+    """
+
+    pe: lief.PE.Binary = lief.parse(get_sample("PE/2420feb9d03efc1aa07b4117390c29cd8fee826ea1b48fee89660d65a3a8ba2b.neut"))
+
+    exports = pe.get_export()
+
+    assert exports.name == "nmv.ocx"
+    assert exports.entries[0].name == "oplk"
+
 def test_rich_header():
     rheader = atapi.rich_header
     assert rheader.key == 0xa476a6e3

@@ -1,78 +1,68 @@
 #!/usr/bin/env python
 import sys
 import io
-import logging
-import unittest
 from io import open as io_open
-from unittest import TestCase
 
 import lief
 from utils import get_sample
 
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
-class TestPythonApi(TestCase):
+def test_io():
+    lspath = get_sample('ELF/ELF64_x86-64_binary_ls.bin')
 
-    def setUp(self):
-        self.logger = logging.getLogger(__name__)
+    ls = lief.parse(lspath)
+    assert ls.abstract.header is not None
 
-    def test_io(self):
-        lspath = get_sample('ELF/ELF64_x86-64_binary_ls.bin')
+    with io_open(lspath, 'r') as f:
+        ls = lief.parse(f)
+        assert ls.abstract.header is not None
 
-        ls = lief.parse(lspath)
-        self.assertIsNotNone(ls.abstract.header)
+    with io_open(lspath, 'rb') as f:
+        ls = lief.parse(f)
+        assert ls.abstract.header is not None
 
-        with io_open(lspath, 'r') as f:
-            ls = lief.parse(f)
-            self.assertIsNotNone(ls.abstract.header)
+    with io_open(lspath, 'rb') as f:
+        ls = lief.ELF.parse(f)
+        assert ls.abstract.header is not None
 
-        with io_open(lspath, 'rb') as f:
-            ls = lief.parse(f)
-            self.assertIsNotNone(ls.abstract.header)
+    with io_open(get_sample('PE/PE64_x86-64_binary_HelloWorld.exe'), 'rb') as f:
+        binary = lief.PE.parse(f)
+        assert binary.abstract.header is not None
 
-        with io_open(lspath, 'rb') as f:
-            ls = lief.ELF.parse(f)
-            self.assertIsNotNone(ls.abstract.header)
+    with io_open(get_sample('MachO/MachO64_x86-64_binary_dd.bin'), 'rb') as f:
+        binary = lief.MachO.parse(f)[0]
+        assert binary.abstract.header is not None
 
-        with io_open(get_sample('PE/PE64_x86-64_binary_HelloWorld.exe'), 'rb') as f:
-            binary = lief.PE.parse(f)
-            self.assertIsNotNone(binary.abstract.header)
+    with open(lspath, 'rb') as f:  # As bytes
+        ls = lief.parse(f.read())
+        assert ls.abstract.header is not None
 
-        with io_open(get_sample('MachO/MachO64_x86-64_binary_dd.bin'), 'rb') as f:
-            binary = lief.MachO.parse(f)[0]
-            self.assertIsNotNone(binary.abstract.header)
+    with open(lspath, 'rb') as f:  # As io.BufferedReader
+        ls = lief.parse(f)
+        assert ls.abstract.header is not None
 
-        with open(lspath, 'rb') as f:  # As bytes
-            ls = lief.parse(f.read())
-            self.assertIsNotNone(ls.abstract.header)
+    with open(lspath, 'rb') as f:  # As io.BytesIO object
+        bytes_stream = io.BytesIO(f.read())
+        assert bytes_stream is not None
 
-        with open(lspath, 'rb') as f:  # As io.BufferedReader
-            ls = lief.parse(f)
-            self.assertIsNotNone(ls.abstract.header)
+def test_platform():
+    if sys.platform.lower().startswith("linux"):
+        assert lief.current_platform() == lief.PLATFORMS.LINUX
 
-        with open(lspath, 'rb') as f:  # As io.BytesIO object
-            bytes_stream = io.BytesIO(f.read())
-            self.assertIsNotNone(bytes_stream)
+    if sys.platform.lower().startswith("darwin"):
+        assert lief.current_platform() == lief.PLATFORMS.OSX
 
-    def test_platform(self):
-        if sys.platform.lower().startswith("linux"):
-            self.assertEqual(lief.current_platform(), lief.PLATFORMS.LINUX)
+    if sys.platform.lower().startswith("win"):
+        assert lief.current_platform() == lief.PLATFORMS.WINDOWS
 
-        if sys.platform.lower().startswith("darwin"):
-            self.assertEqual(lief.current_platform(), lief.PLATFORMS.OSX)
+def test_issue_688():
+    """
+    https://github.com/lief-project/LIEF/issues/688
+    """
+    pe = lief.parse(get_sample("PE/9b58db32f6224e213cfd130d6cd7a18b2440332bfd99e0aef4313de8099fa955.neut"))
 
-        if sys.platform.lower().startswith("win"):
-            self.assertEqual(lief.current_platform(), lief.PLATFORMS.WINDOWS)
+    assert pe.resources_manager.dialogs[0].items[0] is not None
 
-
-
-if __name__ == '__main__':
-
-    root_logger = logging.getLogger()
-    root_logger.setLevel(logging.DEBUG)
-
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
-    root_logger.addHandler(ch)
-
-    unittest.main(verbosity=2)
+    i = pe.resources_manager.dialogs[0].items
+    assert i[0] is not None
