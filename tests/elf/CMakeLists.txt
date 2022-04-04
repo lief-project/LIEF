@@ -179,7 +179,7 @@ if (PYTHON_TESTS_ENABLED)
 
   add_test(ELF_PYTHON_issue_466
     ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
-    ${PYTHON_EXECUTABLE}
+    ${PYTHON_EXECUTABLE} -m pytest
       ${CMAKE_CURRENT_SOURCE_DIR}/test_466.py)
 
   add_test(ELF_PYTHON_empty_gnu_hash
