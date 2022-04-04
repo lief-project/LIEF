@@ -1606,6 +1606,21 @@ const Section* Binary::get_section(const std::string& name) const {
 }
 
 
+const Section* Binary::get_section(const std::string& segname, const std::string& secname) const {
+  if (const SegmentCommand* seg = get_segment(segname)) {
+    if (const Section* sec = seg->get_section(secname)) {
+      return sec;
+    }
+  }
+  return nullptr;
+}
+
+Section* Binary::get_section(const std::string& segname, const std::string& secname) {
+  return const_cast<Section*>(static_cast<const Binary*>(this)->get_section(segname, secname));
+}
+
+
+
 bool Binary::has_segment(const std::string& name) const {
   return get_segment(name) != nullptr;
 }

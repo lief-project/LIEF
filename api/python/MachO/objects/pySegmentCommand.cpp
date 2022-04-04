@@ -140,6 +140,14 @@ void create<SegmentCommand>(py::module& m) {
         "section"_a,
         py::return_value_policy::reference)
 
+    .def("get_section",
+        py::overload_cast<const std::string&>(&SegmentCommand::get_section),
+        R"delim(
+        Get the :class:`~lief.MachO.Section` with the given name
+        )delim",
+        "name"_a,
+        py::return_value_policy::reference_internal)
+
     .def("__eq__", &SegmentCommand::operator==)
     .def("__ne__", &SegmentCommand::operator!=)
     .def("__hash__",

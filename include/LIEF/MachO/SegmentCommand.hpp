@@ -129,6 +129,10 @@ class LIEF_API SegmentCommand : public LoadCommand {
   it_relocations relocations();
   it_const_relocations relocations() const;
 
+  //! Get the section with the given name
+  const Section* get_section(const std::string& name) const;
+  Section* get_section(const std::string& name);
+
   //! The raw content of this segment
   inline span<const uint8_t> content() const {
     return data_;

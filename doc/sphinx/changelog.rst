@@ -11,7 +11,7 @@ Changelog
 
     A framed section is a section that concretely does not wraps data and can be corrupted.
 
-    :Examples:
+    :Example:
 
       .. code-block:: python
 
@@ -24,6 +24,16 @@ Changelog
         text.address = 0x123
 
         elf.write("/tmp/out")
+
+:MachO:
+
+  * Add API to get a :class:`~lief.MachO.Section` from a specified segment's name and section's name.
+
+  : Example:
+
+    .. code-block:: python
+
+      sec = bin.get_section("__DATA", "__objc_metadata")
 
 :General Design:
 

@@ -23,49 +23,47 @@ if (LIEF_EXAMPLES)
   endforeach()
 endif()
 
-if (PYTHON_TESTS_ENABLED)
-  add_test(UNITTEST_PYTHON_macho
-    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
-    ${PYTHON_EXECUTABLE}
-      ${CMAKE_CURRENT_SOURCE_DIR}/macho_tests.py)
+add_test(UNITTEST_PYTHON_macho
+  ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
+  ${PYTHON_EXECUTABLE} -m pytest
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_generic.py)
 
-  add_test(UNITTEST_PYTHON_macho_dyld
-    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
-    ${PYTHON_EXECUTABLE}
-      ${CMAKE_CURRENT_SOURCE_DIR}/macho_dyld.py)
+add_test(UNITTEST_PYTHON_macho_dyld
+  ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
+  ${PYTHON_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/macho_dyld.py)
 
-  add_test(UNITTEST_PYTHON_macho_relocation
-    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
-    ${PYTHON_EXECUTABLE}
-      ${CMAKE_CURRENT_SOURCE_DIR}/macho_relocations.py)
+add_test(UNITTEST_PYTHON_macho_relocation
+  ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
+  ${PYTHON_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/macho_relocations.py)
 
-  add_test(UNITTEST_PYTHON_macho_opcodes
-    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
-    ${PYTHON_EXECUTABLE}
-      ${CMAKE_CURRENT_SOURCE_DIR}/macho_opcodes.py)
+add_test(UNITTEST_PYTHON_macho_opcodes
+  ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
+  ${PYTHON_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/macho_opcodes.py)
 
-  add_test(UNITTEST_PYTHON_macho_builder
-    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
-    ${PYTHON_EXECUTABLE}
-      ${CMAKE_CURRENT_SOURCE_DIR}/macho_builder.py)
+add_test(UNITTEST_PYTHON_macho_builder
+  ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
+  ${PYTHON_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/macho_builder.py)
 
-  add_test(UNITTEST_PYTHON_macho_fat_builder
-    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
-    ${PYTHON_EXECUTABLE}
-      ${CMAKE_CURRENT_SOURCE_DIR}/macho_fat_builder.py)
+add_test(UNITTEST_PYTHON_macho_fat_builder
+  ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
+  ${PYTHON_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/macho_fat_builder.py)
 
-  add_test(EXAMPLE_PYTHON_macho_reader_ls
-    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
-    ${PYTHON_EXECUTABLE}
-      ${LIEF_EXAMPLES_DIRECTORY}/python/macho_reader.py --all
-      ${LIEF_SAMPLES_DIRECTORY}/MachO/MachO64_x86-64_binary_ls.bin)
+add_test(EXAMPLE_PYTHON_macho_reader_ls
+  ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
+  ${PYTHON_EXECUTABLE}
+    ${LIEF_EXAMPLES_DIRECTORY}/python/macho_reader.py --all
+    ${LIEF_SAMPLES_DIRECTORY}/MachO/MachO64_x86-64_binary_ls.bin)
 
-  add_test(EXAMPLE_PYTHON_macho_reader_libc
-    ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
-    ${PYTHON_EXECUTABLE}
-      ${LIEF_EXAMPLES_DIRECTORY}/python/macho_reader.py --all
-      ${LIEF_SAMPLES_DIRECTORY}/MachO/FAT_MachO_x86_x86-64_library_libc.dylib)
+add_test(EXAMPLE_PYTHON_macho_reader_libc
+  ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
+  ${PYTHON_EXECUTABLE}
+    ${LIEF_EXAMPLES_DIRECTORY}/python/macho_reader.py --all
+    ${LIEF_SAMPLES_DIRECTORY}/MachO/FAT_MachO_x86_x86-64_library_libc.dylib)
 
-endif()
 
 

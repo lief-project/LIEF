@@ -523,6 +523,16 @@ void create<Binary>(py::module& m) {
         &Binary::functions,
         "Return list of **all** " RST_CLASS_REF(lief.Function) " found")
 
+    .def("get_section",
+        py::overload_cast<const std::string&, const std::string&>(&Binary::get_section),
+        R"delim(
+        Return the section from the segment with the name
+        given in the first parameter and with the section's name provided in the
+        second parameter. If the section cannot be found, it returns a nullptr
+        )delim",
+        "segname"_a, "secname"_a,
+        py::return_value_policy::reference_internal)
+
     .def("__getitem__",
         static_cast<LoadCommand* (Binary::*)(LOAD_COMMAND_TYPES)>(&Binary::operator[]),
         "",

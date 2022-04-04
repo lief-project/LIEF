@@ -423,6 +423,23 @@ void SegmentCommand::content_insert(size_t where, size_t size) {
               }, where, size);
 }
 
+const Section* SegmentCommand::get_section(const std::string& name) const {
+  const auto it = std::find_if(std::begin(sections_), std::end(sections_),
+      [&name] (const std::unique_ptr<Section>& sec) {
+        return sec->name() == name;
+      });
+
+  if (it == std::end(sections_)) {
+    return nullptr;
+  }
+
+  return it->get();
+}
+
+Section* SegmentCommand::get_section(const std::string& name) {
+  return const_cast<Section*>(static_cast<const SegmentCommand*>(this)->get_section(name));
+}
+
 
 void SegmentCommand::accept(Visitor& visitor) const {
   visitor.visit(*this);

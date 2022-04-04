@@ -214,3 +214,9 @@ def test_offset_to_va():
     assert large_bss.segment_from_offset(0x4001).name == "__DATA_CONST"
     assert large_bss.segment_from_offset(0xc000).name == "__LINKEDIT"
     assert large_bss.segment_from_offset(0xc001).name == "__LINKEDIT"
+
+
+def test_get_section():
+    sample = get_sample("MachO/MachO64_x86-64_binary_large-bss.bin")
+    macho = lief.parse(sample)
+    assert macho.get_section("__DATA_CONST", "__got") is not None
