@@ -3,12 +3,14 @@ import stat
 import re
 import subprocess
 from subprocess import Popen
+import pytest
 
 import lief
 import pathlib
 
 from utils import get_sample, has_recent_glibc, is_linux, is_x86_64
 
+@pytest.mark.skipif(not (is_linux() and is_x86_64() and has_recent_glibc()), reason="incompatible env")
 def test_freebl(tmp_path):
     tmp = pathlib.Path(tmp_path)
 
@@ -36,10 +38,9 @@ def test_freebl(tmp_path):
     output_ls.chmod(output_ls.stat().st_mode | stat.S_IEXEC)
     output_libfreebl3.chmod(output_libfreebl3.stat().st_mode | stat.S_IEXEC)
 
-    if is_linux() and is_x86_64() and has_recent_glibc():
-        with Popen([output_ls, "--version"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
-            stdout = proc.stdout.read()
-            print(stdout.decode("utf8"))
-            assert re.search(r'ls \(GNU coreutils\) ', stdout.decode("utf8")) is not None
-            proc.poll()
-            assert proc.returncode == 0
+    with Popen([output_ls, "--version"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
+        stdout = proc.stdout.read()
+        print(stdout.decode("utf8"))
+        assert re.search(r'ls \(GNU coreutils\) ', stdout.decode("utf8")) is not None
+        proc.poll()
+        assert proc.returncode == 0
