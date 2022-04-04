@@ -96,6 +96,9 @@ jobs:
            -v $GITHUB_WORKSPACE:/src \
            -v $HOME/.ccache:/ccache \
            liefproject/manylinux_2_24_x86_64 bash /src/scripts/docker/run_linux.sh
+          docker run --rm \
+           -v $GITHUB_WORKSPACE:/src \
+           liefproject/archlinux bash /src/scripts/docker/run_archlinux.sh
       - name: Build SDK
         shell: bash
         run: |

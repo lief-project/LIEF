@@ -4,6 +4,7 @@ import sys
 import platform
 import re
 import subprocess
+from typing import Tuple
 
 def lief_samples_dir() -> str:
     dir = os.getenv("LIEF_SAMPLES_DIR", None)
@@ -45,19 +46,20 @@ def is_aarch64() -> bool:
     machine = platform.machine().lower()
     return machine in ("aarch64", "arm64")
 
-def has_recent_glibc() -> bool:
-    """Check if we have at least GLIBC 2.17 (2012)"""
+def glibc_version() -> Tuple[int, int]:
     try:
         out = subprocess.check_output(["ldd", "--version"]).decode("ascii")
         version_str = re.search(r" (\d\.\d+)\n", out).group(1)
         major, minor = version_str.split(".")
+        return (int(major), int(minor))
     except (OSError, AttributeError):
-        pass
-    else:
-        if int(major) == 2 and int(minor) >= 17:
-            return True
+        return (0, 0)
 
-    return False
+
+def has_recent_glibc() -> bool:
+    """Check if we have at least GLIBC 2.17 (2012)"""
+    major, minor = glibc_version()
+    return major == 2 and minor >= 17
 
 def is_64bits_platform() -> bool:
     return sys.maxsize > 2**32

@@ -1,54 +1,243 @@
 #!/usr/bin/env python
-import itertools
-import logging
+import lief
+import math
 import os
-import random
+import pathlib
 import stat
 import subprocess
 import sys
-import tempfile
-import unittest
-from unittest import TestCase
+import pytest
 
-import lief
-from utils import get_sample
+from subprocess import Popen
+from utils import is_linux, glibc_version
 
-lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
+SAMPLE_DIR = pathlib.Path(os.getenv("LIEF_SAMPLES_DIR", ""))
 
-class TestBuilder(TestCase):
+OUTPUT = """
+In ctor
+In ctor2
+sum: 3
+In dtor2
+In dtor
+LOOKUP_RO[0]: 0
+LOOKUP_RO[1]: 11111111
+LOOKUP_RW[0]: 0
+LOOKUP_RW[1]: 11111111
+"""
 
-    def setUp(self):
-        self.logger = logging.getLogger(__name__)
+version = glibc_version()
+glibc_too_old = False
 
-    def test_simple(self):
-        binall = lief.parse(get_sample('ELF/ELF32_x86_binary_all.bin'))
+if version < (2, 32):
+    glibc_too_old = True
+    print(f"glibc version is too old: {version}")
 
-    def test_sectionless(self):
-        binall = lief.parse(get_sample('ELF/ELF64_x86-64_binary_rvs.bin'))
+def normalize(instr: str) -> str:
+    instr = instr.replace("\n", "").replace(" ", "").strip()
+    return instr
 
-    def test_library(self):
-        binall = lief.parse(get_sample('ELF/ELF64_x86-64_library_libadd.so'))
-
-    def test_object(self):
-        binall = lief.parse(get_sample('ELF/ELF64_x86-64_object_builder.o'))
-
-    def test_android(self):
-        binall = lief.parse(get_sample('ELF/ELF64_AArch64_piebinary_ndkr16.bin'))
-
-    def test_corrupted(self):
-        binall = lief.parse(get_sample('ELF/ELF32_x86_library_libshellx.so'))
-
-    def test_gcc(self):
-        binall = lief.parse(get_sample('ELF/ELF32_x86_binary_gcc.bin'))
+def convert_size(size_bytes):
+    if size_bytes == 0:
+        return "0B"
+    size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+    i = int(math.floor(math.log(size_bytes, 1024)))
+    p = math.pow(1024, i)
+    s = round(size_bytes / p, 2)
+    return "%s %s" % (s, size_name[i])
 
 
-if __name__ == '__main__':
+@pytest.mark.skipif(not is_linux() or glibc_too_old, reason="not linux or glibc too old")
+def test_force_relocate(tmp_path):
+    SKIP_LIST = {
+        "test.clang.gold.wronglinker.bin", "test.android.bin", "test.android.aarch64.bin",
+        "test.rust.bin", "test.go.pie.bin", "test.clang.lld.nolinker.bin", "test.dart.bin",
+        "test.clang.lld.tbss.tdata.nopie.bin", "test.go.static.bin"
+    }
+    BINS = SAMPLE_DIR / "ELF" / "batch-x86-64"
+    tmp = pathlib.Path(tmp_path)
+    for file in BINS.rglob("*.bin"):
+        if file.name in SKIP_LIST:
+            continue
+        print(f"Dealing with {file}")
+        if not file.exists():
+            print(f"{file} does not exist. Skipping ...", file=sys.stderr)
+            continue
+        elf: lief.ELF.Binary = lief.parse(file.as_posix())
+        fsize = file.stat().st_size
 
-    root_logger = logging.getLogger()
-    root_logger.setLevel(logging.DEBUG)
+        builder = lief.ELF.Builder(elf)
+        builder.config.force_relocate = True
+        builder.build()
 
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
-    root_logger.addHandler(ch)
+        out_path = tmp / file.name
 
-    unittest.main(verbosity=2)
+        print(f"File written in {out_path}")
+        builder.write(out_path.as_posix())
+
+        out_path.chmod(out_path.stat().st_mode | stat.S_IEXEC)
+        delta_size = out_path.stat().st_size - fsize
+        print(f"delta size: {convert_size(delta_size)}")
+
+        env = os.environ
+        with Popen(out_path.as_posix(), universal_newlines=True, env=env,
+                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
+            stdout = proc.stdout.read()
+            proc.poll()
+            assert normalize(OUTPUT) == normalize(stdout)
+
+
+@pytest.mark.skipif(not is_linux() or glibc_too_old, reason="not linux or glibc too old")
+def test_symtab(tmp_path):
+    """
+    Test that the ELF builder is able to manipulate the .symtab section
+    """
+    TARGETS = [
+        SAMPLE_DIR / "ELF" / "batch-x86-64" / "test.clang.debug.bin",
+        SAMPLE_DIR / "ELF" / "batch-x86-64" / "test.clang.stripped.bin",
+        SAMPLE_DIR / "ELF" / "batch-x86-64" / "test.gcc.stripped.bin",
+    ]
+    NB_SYMBOLS = 30
+    for TARGET in TARGETS:
+
+        tmp = pathlib.Path(tmp_path)
+        out_path = tmp / TARGET.name
+
+        elf: lief.ELF.Binary = lief.parse(TARGET.as_posix())
+
+        fsize = TARGET.stat().st_size
+        for i in range(NB_SYMBOLS):
+            sym = lief.ELF.Symbol()
+            sym.name = "test_sym_{:03}".format(i)
+            sym.value = 0x1000 + i
+            sym.type = lief.ELF.SYMBOL_TYPES.FUNC
+            sym.binding = lief.ELF.SYMBOL_BINDINGS.LOCAL
+            sym.visibility = lief.ELF.SYMBOL_VISIBILITY.DEFAULT
+            elf.add_static_symbol(sym)
+        elf.write(out_path.as_posix())
+
+        print(f"File written in {out_path}")
+        out_path.chmod(out_path.stat().st_mode | stat.S_IEXEC)
+        delta_size = out_path.stat().st_size - fsize
+        print(f"delta size: {convert_size(delta_size)}")
+
+        env = os.environ
+        with Popen(out_path.as_posix(), universal_newlines=True, env=env,
+                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
+            stdout = proc.stdout.read()
+            proc.poll()
+            assert normalize(OUTPUT) == normalize(stdout)
+
+
+        out = lief.parse(out_path.as_posix())
+        sym_names = [s.name for s in out.static_symbols]
+        assert "test_sym_029" in sym_names
+
+@pytest.mark.skipif(not is_linux() or glibc_too_old, reason="not linux or glibc too old")
+def test_add_interpreter(tmp_path):
+    TARGET = SAMPLE_DIR / "ELF" / "batch-x86-64" / "test.clang.lld.nolinker.bin"
+    tmp = pathlib.Path(tmp_path)
+    out_path = tmp / TARGET.name
+
+    elf: lief.ELF.Binary = lief.parse(TARGET.as_posix())
+    fsize = TARGET.stat().st_size
+
+    elf.interpreter = "/lib64/ld-linux-x86-64.so.2"
+
+    elf.write(out_path.as_posix())
+
+    print(f"File written in {out_path}")
+    out_path.chmod(out_path.stat().st_mode | stat.S_IEXEC)
+    delta_size = out_path.stat().st_size - fsize
+    print(f"delta size: {convert_size(delta_size)}")
+
+    env = os.environ
+    with Popen(out_path.as_posix(), universal_newlines=True, env=env,
+               stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
+        stdout = proc.stdout.read()
+        proc.poll()
+        assert normalize(OUTPUT) == normalize(stdout)
+
+@pytest.mark.skipif(not is_linux() or glibc_too_old, reason="not linux or glibc too old")
+def test_change_interpreter(tmp_path):
+    TARGET = SAMPLE_DIR / "ELF" / "batch-x86-64" / "test.clang.gold.wronglinker.bin"
+    tmp = pathlib.Path(tmp_path)
+    out_path = tmp / TARGET.name
+
+    elf: lief.ELF.Binary = lief.parse(TARGET.as_posix())
+    fsize = TARGET.stat().st_size
+
+    elf.interpreter = "/lib64/ld-linux-x86-64.so.2"
+
+    elf.write(out_path.as_posix())
+
+    print(f"File written in {out_path}")
+    out_path.chmod(out_path.stat().st_mode | stat.S_IEXEC)
+    delta_size = out_path.stat().st_size - fsize
+    print(f"delta size: {convert_size(delta_size)}")
+
+    env = os.environ
+    with Popen(out_path.as_posix(), universal_newlines=True, env=env,
+               stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
+        stdout = proc.stdout.read()
+        proc.poll()
+        assert normalize(OUTPUT) == normalize(stdout)
+
+
+@pytest.mark.skipif(not is_linux() or glibc_too_old, reason="not linux or glibc too old")
+def test_rust_files(tmp_path):
+    TARGET = SAMPLE_DIR / "ELF" / "batch-x86-64" / "test.rust.bin"
+    tmp = pathlib.Path(tmp_path)
+    out_path = tmp / TARGET.name
+
+    elf: lief.ELF.Binary = lief.parse(TARGET.as_posix())
+    fsize = TARGET.stat().st_size
+
+    builder = lief.ELF.Builder(elf)
+    builder.config.force_relocate = True
+    builder.build()
+
+    elf.write(out_path.as_posix())
+
+    print(f"File written in {out_path}")
+    out_path.chmod(out_path.stat().st_mode | stat.S_IEXEC)
+    delta_size = out_path.stat().st_size - fsize
+    print(f"delta size: {convert_size(delta_size)}")
+
+    env = os.environ
+    with Popen(out_path.as_posix(), universal_newlines=True, env=env,
+               stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
+        stdout = proc.stdout.read()
+        proc.poll()
+        assert "thisisthreadnumber9" in normalize(stdout)
+
+@pytest.mark.skipif(not is_linux() or glibc_too_old, reason="not linux or glibc too old")
+def test_go_files(tmp_path):
+    TARGETS = [
+        SAMPLE_DIR / "ELF" / "batch-x86-64" / "test.go.pie.bin",
+        SAMPLE_DIR / "ELF" / "batch-x86-64" / "test.go.static.bin",
+    ]
+    for TARGET in TARGETS:
+        tmp = pathlib.Path(tmp_path)
+        out_path = tmp / TARGET.name
+
+        elf: lief.ELF.Binary = lief.parse(TARGET.as_posix())
+        fsize = TARGET.stat().st_size
+
+        builder = lief.ELF.Builder(elf)
+        builder.config.force_relocate = True
+        builder.build()
+
+        elf.write(out_path.as_posix())
+
+        print(f"File written in {out_path}")
+        out_path.chmod(out_path.stat().st_mode | stat.S_IEXEC)
+        delta_size = out_path.stat().st_size - fsize
+        print(f"delta size: {convert_size(delta_size)}")
+
+        env = os.environ
+        with Popen(out_path.as_posix(), universal_newlines=True, env=env,
+                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
+            stdout = proc.stdout.read()
+            proc.poll()
+            assert "done" in normalize(stdout)
+
