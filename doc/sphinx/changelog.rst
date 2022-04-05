@@ -29,7 +29,7 @@ Changelog
 
   * Add API to get a :class:`~lief.MachO.Section` from a specified segment's name and section's name.
 
-  : Example:
+  :Example:
 
     .. code-block:: python
 
