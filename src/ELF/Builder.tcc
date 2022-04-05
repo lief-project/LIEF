@@ -1580,15 +1580,6 @@ ok_error_t Builder::build_symbol_requirement() {
   const Elf_Addr svr_address = dt_verneed->value();
   const auto svr_nb          = static_cast<uint32_t>(dt_verneednum->value());
 
-  Elf_Off svr_offset = 0;
-
-  if (auto offset = binary_->virtual_address_to_offset(svr_address)) {
-    svr_offset = *offset;
-  } else {
-    return make_error_code(lief_errors::conversion_error);
-  }
-
-
   if (svr_nb != binary_->symbol_version_requirements_.size()) {
     LIEF_WARN("The number of symbol version requirement "
               "entries in the binary differ from the value in DT_VERNEEDNUM");
@@ -1694,14 +1685,6 @@ ok_error_t Builder::build_symbol_definition() {
 
   const Elf_Addr svd_va    = dt_verdef->value();
   const uint32_t svd_nb    = dt_verdefnum->value();
-
-  Elf_Off svd_offset = 0;
-
-  if (auto offset = binary_->virtual_address_to_offset(svd_va)) {
-    svd_offset = *offset;
-  } else {
-    return make_error_code(lief_errors::conversion_error);
-  }
 
   if (svd_nb != binary_->symbol_version_definition_.size()) {
     LIEF_WARN("The number of symbol version definition entries "
