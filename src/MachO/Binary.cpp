@@ -1323,8 +1323,9 @@ size_t Binary::add_cached_segment(SegmentCommand& segment) {
     LIEF_DEBUG("No __LINKEDIT segment found!");
     segment.index_ = segments_.size();
     segments_.push_back(&segment);
+  } else {
+    segment.index_ = (*it_linkedit)->index();
   }
-  segment.index_ = (*it_linkedit)->index();
 
   // Update indexes
   for (auto it = it_linkedit; it != std::end(segments_); ++it) {
