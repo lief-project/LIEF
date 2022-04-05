@@ -20,6 +20,10 @@ void check(std::unique_ptr<LIEF::MachO::FatBinary> bin) {
   for (LIEF::MachO::Binary& fit : *bin) {
     ss << fit;
     {
+      for (size_t i = 0; i < 5; ++i) {
+        LIEF::MachO::SegmentCommand seg("__LIEF_" + std::to_string(i), std::vector<uint8_t>(0x345, 1));
+        fit.add(seg);
+      }
       auto target = &fit;
       if (auto* uuid = target->get(LIEF::MachO::LOAD_COMMAND_TYPES::LC_UUID)) {
         target->extend(*uuid, uuid->size() + 0x100);
