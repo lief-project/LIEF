@@ -1314,8 +1314,7 @@ LoadCommand* Binary::add(const SegmentCommand& segment) {
 }
 
 size_t Binary::add_cached_segment(SegmentCommand& segment) {
-  // The new segement should be put **befor** the __LINKEDIT
-  // segment
+  // The new segement should be put **before** the __LINKEDIT segment
   const auto it_linkedit = std::find_if(std::begin(segments_), std::end(segments_),
       [] (SegmentCommand* cmd) { return cmd->name() == "__LINKEDIT"; });
 
@@ -1325,13 +1324,14 @@ size_t Binary::add_cached_segment(SegmentCommand& segment) {
     segments_.push_back(&segment);
   } else {
     segment.index_ = (*it_linkedit)->index();
+
+    // Update indexes
+    for (auto it = it_linkedit; it != std::end(segments_); ++it) {
+      (*it)->index_++;
+    }
+    segments_.insert(it_linkedit, &segment);
   }
 
-  // Update indexes
-  for (auto it = it_linkedit; it != std::end(segments_); ++it) {
-    (*it)->index_++;
-  }
-  segments_.insert(it_linkedit, &segment);
   offset_seg_[segment.file_offset()] = &segment;
   segment.dyld_ = dyld_info();
   return segment.index();
