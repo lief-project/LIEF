@@ -38,7 +38,8 @@
 #include <LIEF/ELF/utils.hpp>
 #include <LIEF/iostream.hpp>
 #include <LIEF/errors.hpp>
-#include <ELF/Structures.hpp>
+#include "ELF/Structures.hpp"
+#include "internal_utils.hpp"
 
 #include "logging.hpp"
 #include "Layout.hpp"
@@ -122,11 +123,11 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
     // Dynamic symbols names
     size_t offset_counter = raw_dynstr.tellp();
-    std::vector<std::string> string_table_optimized =
-      Builder::optimize<Symbol, decltype(binary_->dynamic_symbols_)>(binary_->dynamic_symbols_,
-                                    [] (const std::unique_ptr<Symbol>& sym) { return sym->name(); },
-                                    offset_counter,
-                                    &offset_name_map_);
+    std::vector<std::string> string_table_optimized = optimize(binary_->dynamic_symbols_,
+                     [] (const std::unique_ptr<Symbol>& sym) {
+                       return sym->name();
+                     },
+                     offset_counter, &offset_name_map_);
     for (const std::string& name : string_table_optimized) {
       raw_dynstr.write(name);
     }

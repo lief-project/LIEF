@@ -161,11 +161,6 @@ class LIEF_API Builder {
   template<typename ELF_T>
   ok_error_t build_symbol_definition();
 
-  template<typename T, typename HANDLER>
-  static std::vector<std::string> optimize(const HANDLER& e,
-                                    std::function<std::string(const typename HANDLER::value_type&)> getter,
-                                    size_t& offset_counter,
-                                    std::unordered_map<std::string, size_t> *of_map_p=nullptr);
   template<typename ELF_T>
   ok_error_t build_symbol_version();
 
