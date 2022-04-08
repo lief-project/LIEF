@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.12.1 - Not Released Yet
--------------------------
+0.12.1 - April 08, 2022
+------------------------
 
 :ELF:
   * Fix section inclusion calculations (:pr:`692`)

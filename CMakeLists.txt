@@ -28,8 +28,8 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git"
   include(LIEFGit)
 else()
   set(LIEF_VERSION_MAJOR "0")
-  set(LIEF_VERSION_MINOR "13")
-  set(LIEF_VERSION_PATCH "0")
+  set(LIEF_VERSION_MINOR "12")
+  set(LIEF_VERSION_PATCH "1")
 endif()
 
 # LIEF Project
