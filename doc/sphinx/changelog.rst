@@ -39,21 +39,23 @@ Changelog
 
   * Remove the exceptions
 
-0.12.1 - Not Released Yet
--------------------------
+
+0.12.1 - April 08, 2022
+------------------------
+
+:ELF:
+  * Fix section inclusion calculations (:pr:`692`)
 
 :PE:
-  * Fix parsing regressions (:issue:`689`, :issue:`687`, :issue:`686`, :issue:`685`, :issue:`691`)
+  * Fix parsing regressions (:issue:`689`, :issue:`687`, :issue:`686`, :issue:`685`, :issue:`691`, :issue:`693`)
 
 :Compilation:
-
   * Nightly builds are now upload to Saleway's S3 server:
 
     - https://lief.s3-website.fr-par.scw.cloud/latest/lief
     - https://lief.s3-website.fr-par.scw.cloud/latest/sdk
 
   * Fix `GLIBCXX_USE_CXX11_ABI=1` ABI issue (see: :issue:`683`)
-
 
 0.12.0 - March 25, 2022
 -----------------------
