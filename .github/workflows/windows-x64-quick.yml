@@ -54,7 +54,7 @@ jobs:
       run: sccache --start-server
     - name: ⛓ Build Python ${{ matrix.python-version }} & Test
       run: |
-        python ./setup.py --ninja --lief-test bdist_wheel
+        python ./setup.py --ninja bdist_wheel
       shell: cmd
     - name: 📊 Print sccache stats
       run: sccache --show-stats

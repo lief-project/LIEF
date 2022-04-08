@@ -50,7 +50,7 @@ jobs:
            -e PYTHON_BINARY=/opt/python/cp37-cp37m/bin/python3.7 \
            -v $GITHUB_WORKSPACE:/src \
            -v $HOME/.ccache:/ccache \
-           liefproject/manylinux_2_24_x86_64 bash /src/scripts/docker/run_linux_test.sh
+           liefproject/manylinux_2_24_x86_64 bash /src/scripts/docker/run_linux.sh
       - name: Build Python 3.8 wheel
         shell: bash
         env:
