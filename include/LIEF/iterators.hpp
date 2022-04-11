@@ -46,13 +46,14 @@ using add_lvalue_reference_t = typename std::add_lvalue_reference<T>::type;
 //! Iterator which returns reference on container's values
 template<class T, typename U = typename decay_t<T>::value_type,
          class ITERATOR_T = typename decay_t<T>::iterator>
-class ref_iterator : public std::iterator<
-                     std::bidirectional_iterator_tag,
-                     decay_t<U>,
-                     ptrdiff_t,
-                     typename std::remove_pointer<U>::type*,
-                     typename std::remove_pointer<U>::type&> {
+class ref_iterator {
   public:
+  using iterator_category = std::bidirectional_iterator_tag;
+  using value_type = decay_t<U>;
+  using difference_type = ptrdiff_t;
+  using pointer = typename std::remove_pointer<U>::type*;
+  using reference = typename std::remove_pointer<U>::type&;
+                              
   using container_type = T;          // e.g. std::vector<Section*>&
   using DT_VAL         = U;          // e.g. Section*
   using DT             = decay_t<T>; // e.g. std::vector<Section>
@@ -263,14 +264,15 @@ using const_ref_iterator = ref_iterator<CT, U, typename decay_t<CT>::const_itera
 //! Iterator which return a ref on container's values given predicates
 template<class T, typename U = typename decay_t<T>::value_type,
          class ITERATOR_T = typename decay_t<T>::iterator>
-class filter_iterator : public std::iterator<
-                        std::forward_iterator_tag,
-                        decay_t<U>,
-                        ptrdiff_t,
-                        typename std::remove_pointer<U>::type*,
-                        typename std::remove_pointer<U>::type&> {
+class filter_iterator {
 
   public:
+  using iterator_category = std::forward_iterator_tag;
+  using value_type = decay_t<U>;
+  using difference_type = ptrdiff_t;
+  using pointer = typename std::remove_pointer<U>::type*;
+  using reference = typename std::remove_pointer<U>::type&;
+
   using container_type = T;
   using DT_VAL         = U;
   using DT        = decay_t<T>;
