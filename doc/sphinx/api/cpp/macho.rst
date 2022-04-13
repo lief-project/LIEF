@@ -105,6 +105,16 @@ Section
 
 ----------
 
+
+SegmentCommand
+**************
+
+.. doxygenclass:: LIEF::MachO::SegmentCommand
+   :project: lief
+
+
+----------
+
 Symbol
 ******
 
