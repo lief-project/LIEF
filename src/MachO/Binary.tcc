@@ -67,7 +67,18 @@ size_t Binary::count_commands() const {
         return T::classof(command.get());
       });
   return nb_cmd;
+}
 
+template<class CMD, class Func>
+Binary& Binary::for_commands(Func f) {
+  static_assert(std::is_base_of<LoadCommand, CMD>::value, "Require inheritance of 'LoadCommand'");
+  for (const std::unique_ptr<LoadCommand>& cmd : commands_) {
+    if (!CMD::classof(cmd.get())) {
+      continue;
+    }
+    f(*cmd->as<CMD>());
+  }
+  return *this;
 }
 
 template<class T>

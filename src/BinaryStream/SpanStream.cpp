@@ -28,9 +28,15 @@ SpanStream::SpanStream(span<const uint8_t> data) :
 }
 
 
+SpanStream::SpanStream(span<uint8_t> data) :
+  SpanStream(span<const uint8_t>(data.data(), data.size()))
+{}
+
 SpanStream::SpanStream(const std::vector<uint8_t>& data) :
   data_{data}
-{}
+{
+  stype_ = STREAM_TYPE::SPAN;
+}
 
 result<SpanStream> SpanStream::from_vector(const std::vector<uint8_t>& data) {
   return SpanStream{data};
@@ -53,6 +59,13 @@ result<SpanStream> SpanStream::slice(size_t offset, size_t size) const {
   return data_.subspan(offset, size);
 }
 
+result<SpanStream> SpanStream::slice(size_t offset) const {
+  if (offset > data_.size()) {
+    return make_error_code(lief_errors::read_out_of_bound);
+  }
+  return data_.subspan(offset, data_.size() - offset);
+}
+
 
 std::vector<uint8_t> SpanStream::content() const {
   return {std::begin(data_), std::end(data_)};
@@ -62,5 +75,7 @@ std::vector<uint8_t> SpanStream::content() const {
 bool SpanStream::classof(const BinaryStream& stream) {
   return stream.type() == STREAM_TYPE::SPAN;
 }
+
+SpanStream::~SpanStream() = default;
 }
 

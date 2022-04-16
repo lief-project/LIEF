@@ -533,5 +533,34 @@ const char* to_string(BuildToolVersion::TOOLS e) {
   return it == enumStrings.end() ? "UNKNOWN" : it->second;
 }
 
+const char* to_string(DYLD_CHAINED_PTR_FORMAT e) {
+  CONST_MAP(DYLD_CHAINED_PTR_FORMAT, const char*, 12) enumStrings {
+    { DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E,              "PTR_ARM64E"              },
+    { DYLD_CHAINED_PTR_FORMAT::PTR_64,                  "PTR_64"                  },
+    { DYLD_CHAINED_PTR_FORMAT::PTR_32,                  "PTR_32"                  },
+    { DYLD_CHAINED_PTR_FORMAT::PTR_32_CACHE,            "PTR_32_CACHE"            },
+    { DYLD_CHAINED_PTR_FORMAT::PTR_32_FIRMWARE,         "PTR_32_FIRMWARE"         },
+    { DYLD_CHAINED_PTR_FORMAT::PTR_64_OFFSET,           "PTR_64_OFFSET"           },
+    { DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_KERNEL,       "PTR_ARM64E_KERNEL"       },
+    { DYLD_CHAINED_PTR_FORMAT::PTR_64_KERNEL_CACHE,     "PTR_64_KERNEL_CACHE"     },
+    { DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_USERLAND,     "PTR_ARM64E_USERLAND"     },
+    { DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_FIRMWARE,     "PTR_ARM64E_FIRMWARE"     },
+    { DYLD_CHAINED_PTR_FORMAT::PTR_X86_64_KERNEL_CACHE, "PTR_X86_64_KERNEL_CACHE" },
+    { DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_USERLAND24,   "PTR_ARM64E_USERLAND24"   },
+  };
+  const auto it = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNKNOWN" : it->second;
+}
+
+const char* to_string(DYLD_CHAINED_FORMAT e) {
+  CONST_MAP(DYLD_CHAINED_FORMAT, const char*, 3) enumStrings {
+    { DYLD_CHAINED_FORMAT::IMPORT,          "IMPORT"          },
+    { DYLD_CHAINED_FORMAT::IMPORT_ADDEND,   "IMPORT_ADDEND"   },
+    { DYLD_CHAINED_FORMAT::IMPORT_ADDEND64, "IMPORT_ADDEND64" },
+  };
+  const auto it = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNKNOWN" : it->second;
+}
+
 }
 }

@@ -29,13 +29,14 @@
 #include "LIEF/iterators.hpp"
 
 namespace LIEF {
+class vector_iostream;
 class BinaryStream;
 namespace MachO {
 
 class Builder;
 class BinaryParser;
-class SegmentCommand;
-class BindingInfo;
+class LinkEdit;
+class DyldBindingInfo;
 class ExportInfo;
 
 namespace details {
@@ -48,25 +49,25 @@ class LIEF_API DyldInfo : public LoadCommand {
   friend class BinaryParser;
   friend class Binary;
   friend class Builder;
-  friend class SegmentCommand;
+  friend class LinkEdit;
 
   public:
   //! Tuple of ``offset`` and ``size``
   using info_t = std::pair<uint32_t, uint32_t>;
 
-  //! Internal container for storing BindingInfo
-  using binding_info_t = std::vector<std::unique_ptr<BindingInfo>>;
+  //! Internal container for storing DyldBindingInfo
+  using binding_info_t = std::vector<std::unique_ptr<DyldBindingInfo>>;
 
-  //! Iterator which outputs BindingInfo&
-  using it_binding_info = ref_iterator<binding_info_t&, BindingInfo*>;
+  //! Iterator which outputs DyldBindingInfo&
+  using it_binding_info = ref_iterator<binding_info_t&, DyldBindingInfo*>;
 
-  //! Iterator which outputs const BindingInfo&
-  using it_const_binding_info = const_ref_iterator<const binding_info_t&, BindingInfo*>;
+  //! Iterator which outputs const DyldBindingInfo&
+  using it_const_binding_info = const_ref_iterator<const binding_info_t&, DyldBindingInfo*>;
 
   //! Internal container for storing ExportInfo
   using export_info_t = std::vector<std::unique_ptr<ExportInfo>>;
 
-  //! Iterator which outputs const BindingInfo&
+  //! Iterator which outputs const ExportInfo&
   using it_export_info = ref_iterator<export_info_t&, ExportInfo*>;
 
   //! Iterator which outputs const ExportInfo&
@@ -265,6 +266,8 @@ class LIEF_API DyldInfo : public LoadCommand {
   void set_export_offset(uint32_t offset);
   void set_export_size(uint32_t size);
 
+  void add(std::unique_ptr<ExportInfo> info);
+
   bool operator==(const DyldInfo& rhs) const;
   bool operator!=(const DyldInfo& rhs) const;
 
@@ -275,22 +278,23 @@ class LIEF_API DyldInfo : public LoadCommand {
   static bool classof(const LoadCommand* cmd);
 
   private:
-  using bind_container_t = std::set<BindingInfo*, std::function<bool(BindingInfo*, BindingInfo*)>>;
+  using bind_container_t = std::set<DyldBindingInfo*, std::function<bool(DyldBindingInfo*, DyldBindingInfo*)>>;
 
   void show_bindings(std::ostream& os, span<const uint8_t> buffer, bool is_lazy = false) const;
 
   void show_trie(std::ostream& output, std::string output_prefix, BinaryStream& stream, uint64_t start, uint64_t end, const std::string& prefix) const;
 
-  LIEF_LOCAL DyldInfo& update_standard_bindings(const bind_container_t& bindings);
-  LIEF_LOCAL DyldInfo& update_standard_bindings_v1(const bind_container_t& bindings);
-  LIEF_LOCAL DyldInfo& update_standard_bindings_v2(const bind_container_t& bindings, std::vector<RelocationDyld*> rebases);
+  LIEF_LOCAL DyldInfo& update_standard_bindings(const bind_container_t& bindings, vector_iostream& stream);
+  LIEF_LOCAL DyldInfo& update_standard_bindings_v1(const bind_container_t& bindings, vector_iostream& stream);
+  LIEF_LOCAL DyldInfo& update_standard_bindings_v2(const bind_container_t& bindings,
+                                                   std::vector<RelocationDyld*> rebases, vector_iostream& stream);
 
-  LIEF_LOCAL DyldInfo& update_weak_bindings(const bind_container_t& bindings);
-  LIEF_LOCAL DyldInfo& update_lazy_bindings(const bind_container_t& bindings);
+  LIEF_LOCAL DyldInfo& update_weak_bindings(const bind_container_t& bindings, vector_iostream& stream);
+  LIEF_LOCAL DyldInfo& update_lazy_bindings(const bind_container_t& bindings, vector_iostream& stream);
 
-  LIEF_LOCAL DyldInfo& update_rebase_info();
-  LIEF_LOCAL DyldInfo& update_binding_info();
-  LIEF_LOCAL DyldInfo& update_export_trie();
+  LIEF_LOCAL DyldInfo& update_rebase_info(vector_iostream& stream);
+  LIEF_LOCAL DyldInfo& update_binding_info(vector_iostream& stream, details::dyld_info_command& cmd);
+  LIEF_LOCAL DyldInfo& update_export_trie(vector_iostream& stream);
 
   info_t   rebase_;
   span<uint8_t> rebase_opcodes_;

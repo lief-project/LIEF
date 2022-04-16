@@ -4,6 +4,8 @@ import sys
 import platform
 import re
 import subprocess
+import pathlib
+import stat
 from typing import Tuple
 
 def lief_samples_dir() -> str:
@@ -63,3 +65,24 @@ def has_recent_glibc() -> bool:
 
 def is_64bits_platform() -> bool:
     return sys.maxsize > 2**32
+
+def chmod_exe(path):
+    if isinstance(path, pathlib.Path):
+        path.chmod(path.stat().st_mode | stat.S_IEXEC)
+    elif isinstance(path, str):
+        os.chmod(path, os.stat(path).st_mode | stat.S_IEXEC)
+    return
+
+def sign(path):
+    """
+    Sign the binary with an ad-hoc signature
+    """
+    CMD = ["/usr/bin/codesign", "-vv", "--verbose", "--force", "-s", "-"]
+    CMD.append(path)
+    print("Signing {}".format(path))
+    with subprocess.Popen(CMD, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
+        stdout = proc.stdout.read().decode("utf8")
+        print(stdout)
+
+def is_github_ci() -> bool:
+    return os.getenv("GITHUB_ACTIONS", None) is not None

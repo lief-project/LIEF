@@ -27,6 +27,7 @@ class SpanStream : public BinaryStream {
   public:
   static result<SpanStream> from_vector(const std::vector<uint8_t>& data);
   SpanStream(span<const uint8_t> data);
+  SpanStream(span<uint8_t> data);
   SpanStream(const std::vector<uint8_t>& data);
   SpanStream() = delete;
 
@@ -43,13 +44,13 @@ class SpanStream : public BinaryStream {
   std::vector<uint8_t> content() const;
 
   result<SpanStream> slice(size_t offset, size_t size) const;
+  result<SpanStream> slice(size_t offset) const;
 
   static bool classof(const BinaryStream& stream);
+  ~SpanStream() override;
 
   protected:
   result<const void*> read_at(uint64_t offset, uint64_t size) const override;
-
-  protected:
   span<const uint8_t> data_;
 };
 }

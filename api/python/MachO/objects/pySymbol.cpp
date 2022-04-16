@@ -36,7 +36,7 @@ using setter_t = void (Symbol::*)(T);
 template<>
 void create<Symbol>(py::module& m) {
 
-  py::class_<Symbol, LIEF::Symbol>(m, "Symbol",
+  py::class_<Symbol, LIEF::Symbol> symbol(m, "Symbol",
       R"delim(
       Class that represents a Symbol in a Mach-O file.
 
@@ -45,7 +45,17 @@ void create<Symbol>(py::module& m) {
       1. The symbols command (LC_SYMTAB / SymbolCommand)
       2. The Dyld Export trie
       3. The Dyld Symbol bindings
-      )delim")
+      )delim");
+
+  py::enum_<Symbol::CATEGORY>(symbol, "TOOLS")
+    .value("NONE",           Symbol::CATEGORY::NONE)
+    .value("LOCAL",          Symbol::CATEGORY::LOCAL)
+    .value("EXTERNAL",       Symbol::CATEGORY::EXTERNAL)
+    .value("UNDEFINED",      Symbol::CATEGORY::UNDEFINED)
+    .value("INDIRECT_ABS",   Symbol::CATEGORY::INDIRECT_ABS)
+    .value("INDIRECT_LOCAL", Symbol::CATEGORY::INDIRECT_LOCAL);
+
+  symbol
     .def(py::init<>())
 
     .def_property_readonly("demangled_name",

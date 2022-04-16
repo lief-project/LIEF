@@ -15,7 +15,7 @@ Parser
 .. code-block:: python
 
   fatbinary_1 = lief.MachO.parse("/usr/bin/ls", config=lief.MachO.ParserConfig.deep)
-  # or
+  # or
   fatbinary_2 = lief.MachO.parse("/usr/bin/ls", config=lief.MachO.ParserConfig.quick)
 
 
@@ -239,11 +239,42 @@ Relocation Dyld
 
 ----------
 
+Relocation Fixup
+****************
+
+.. autoclass:: lief.MachO.RelocationFixup
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
 
 Binding Info
 ************
 
 .. autoclass:: lief.MachO.BindingInfo
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+Dyld Binding Info
+*****************
+
+.. autoclass:: lief.MachO.DyldBindingInfo
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
+Chained Binding Info
+********************
+
+.. autoclass:: lief.MachO.ChainedBindingInfo
   :members:
   :inherited-members:
   :undoc-members:
@@ -383,8 +414,65 @@ Fileset Command
 
 ----------
 
+DyldChainedFixups Command
+*************************
 
+.. autoclass:: lief.MachO.DyldChainedFixups
+   :members:
+   :inherited-members:
+   :undoc-members:
 
+----------
+
+DyldExportsTrie Command
+***********************
+
+.. autoclass:: lief.MachO.DyldExportsTrie
+   :members:
+   :inherited-members:
+   :undoc-members:
+
+----------
+
+Code Signature Dir Command
+**************************
+
+.. autoclass:: lief.MachO.CodeSignatureDir
+   :members:
+   :inherited-members:
+   :undoc-members:
+
+----------
+
+Two Level Hints
+***************
+
+.. autoclass:: lief.MachO.TwoLevelHints
+   :members:
+   :inherited-members:
+   :undoc-members:
+
+----------
+
+Linker Optimization Hint
+************************
+
+.. autoclass:: lief.MachO.LinkerOptHint
+   :members:
+   :inherited-members:
+   :undoc-members:
+
+----------
+
+Builder
+*******
+
+.. autoclass:: lief.MachO.Builder
+   :members:
+   :inherited-members:
+   :undoc-members:
+
+----------
 
 Enums
 *****
@@ -635,6 +723,22 @@ SECTION_FLAGS
 ~~~~~~~~~~~~~
 
 .. autoclass:: lief.MachO.SECTION_FLAGS
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+DYLD_CHAINED_FORMAT
+~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.MachO.DYLD_CHAINED_FORMAT
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+DYLD_CHAINED_PTR_FORMAT
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.MachO.DYLD_CHAINED_PTR_FORMAT
   :members:
   :inherited-members:
   :undoc-members:

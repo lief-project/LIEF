@@ -33,6 +33,7 @@ class BinaryParser;
 class BindingInfo;
 class ExportInfo;
 class DylibCommand;
+class Binary;
 
 namespace details {
 struct nlist_32;
@@ -48,8 +49,21 @@ struct nlist_64;
 class LIEF_API Symbol : public LIEF::Symbol {
 
   friend class BinaryParser;
+  friend class Binary;
 
   public:
+
+  //! Category of the symbol when the symbol comes from the `LC_SYMTAB` command.
+  //! The category is defined according to the `LC_DYSYMTAB` (DynamicSymbolCommand) command.
+  enum class CATEGORY {
+    NONE = 0,
+    LOCAL,
+    EXTERNAL,
+    UNDEFINED,
+
+    INDIRECT_ABS,
+    INDIRECT_LOCAL,
+  };
   Symbol();
 
   Symbol(const details::nlist_32& cmd);
@@ -109,6 +123,11 @@ class LIEF_API Symbol : public LIEF::Symbol {
   //! Return the origin of the symbol: from LC_SYMTAB command or from the Dyld information
   SYMBOL_ORIGINS origin() const;
 
+  //! Category of the symbol according to the `LC_DYSYMTAB` command
+  inline CATEGORY category() const {
+    return category_;
+  }
+
   void type(uint8_t type);
   void numberof_sections(uint8_t nbsections);
   void description(uint16_t desc);
@@ -120,7 +139,11 @@ class LIEF_API Symbol : public LIEF::Symbol {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Symbol& symbol);
 
+  static const Symbol& indirect_abs();
+  static const Symbol& indirect_local();
+
   private:
+  Symbol(CATEGORY cat);
   inline void library(DylibCommand& library) {
     this->library_ = &library;
   }
@@ -135,6 +158,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
   DylibCommand* library_ = nullptr;
 
   SYMBOL_ORIGINS origin_ = SYMBOL_ORIGINS::SYM_ORIGIN_UNKNOWN;
+  CATEGORY category_ = CATEGORY::NONE;
 };
 
 }

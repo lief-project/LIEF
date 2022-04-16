@@ -72,6 +72,12 @@ void create<FunctionStarts>(py::module& m) {
       "Add a new function",
       "address"_a)
 
+    .def_property_readonly("content",
+        [] (const FunctionStarts& self) {
+          span<const uint8_t> content = self.content();
+          return py::memoryview::from_memory(content.data(), content.size());
+        }, "The original content as a bytes stream")
+
     .def("__eq__", &FunctionStarts::operator==)
     .def("__ne__", &FunctionStarts::operator!=)
     .def("__hash__",

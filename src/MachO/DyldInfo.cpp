@@ -31,15 +31,17 @@
 
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/DyldInfo.hpp"
-#include "LIEF/MachO/BindingInfo.hpp"
+#include "LIEF/MachO/DyldBindingInfo.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/MachO/RelocationDyld.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/DylibCommand.hpp"
 
+#include "MachO/exports_trie.hpp"
 #include "MachO/Structures.hpp"
-#include "TrieNode.hpp"
+#include "MachO/TrieNode.hpp"
+
 #include "Object.tcc"
 
 namespace LIEF {
@@ -918,135 +920,7 @@ std::string DyldInfo::show_export_trie() const {
 void DyldInfo::show_trie(std::ostream& output, std::string output_prefix, BinaryStream& stream,
                          uint64_t start, uint64_t end, const std::string& prefix) const
 {
-
-  if (stream.pos() >= end) {
-    return;
-  }
-
-  if (start > stream.pos()) {
-    return;
-  }
-
-  uint8_t terminal_size = 0;
-  if (auto res = stream.read<uint8_t>()) {
-    terminal_size = *res;
-  } else {
-    LIEF_ERR("Can't read terminal size");
-    return;
-  }
-
-  uint64_t children_offset = stream.pos() + terminal_size;
-
-  if (terminal_size != 0) {
-    EXPORT_SYMBOL_FLAGS flags;
-    if (auto res = stream.read_uleb128()) {
-      flags = static_cast<EXPORT_SYMBOL_FLAGS>(*res);
-    } else {
-      LIEF_ERR("Can't read flags");
-      return;
-    }
-    uint64_t address = 0;
-    const std::string& symbol_name = prefix;
-    uint64_t ordinal = 0;
-    uint64_t other = 0;
-    std::string imported_name;
-
-    // REEXPORT
-    // ========
-    if (static_cast<uint8_t>(flags & EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_REEXPORT) != 0u) {
-      if (auto res = stream.read_uleb128()) {
-        ordinal = *res;
-      } else {
-        return;
-      }
-      if (auto res = stream.peek_string()) {
-        imported_name = std::move(*res);
-      } else {
-        return;
-      }
-      if (imported_name.empty()) {
-        imported_name = symbol_name;
-      }
-    } else {
-      if (auto res = stream.read_uleb128()) {
-        address = *res;
-      } else {
-        return;
-      }
-    }
-
-
-
-    // STUB_AND_RESOLVER
-    // =================
-    if (static_cast<uint8_t>(flags & EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER) != 0u) {
-      if (auto res = stream.read_uleb128()) {
-        other = *res;
-      } else {
-        return;
-      }
-    }
-
-    output << output_prefix;
-    output << symbol_name;
-    output << "{";
-    output << "addr: " << std::showbase << std::hex << address << ", ";
-    output << "flags: " << std::showbase << std::hex << static_cast<uint64_t>(flags);
-    if (static_cast<uint8_t>(flags & EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_REEXPORT) != 0u) {
-      output << ", ";
-      output << "re-exported from #" << std::dec << ordinal << " - " << imported_name;
-    }
-
-    if ((static_cast<uint8_t>(flags & EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER) != 0u) && other > 0) {
-      output << ", ";
-      output << "other:" << std::showbase << std::hex << other;
-    }
-
-    if (!binary_->has_symbol(symbol_name)) {
-      output << " [NOT REGISTRED]";
-    }
-
-    output << "}";
-    output << std::endl;
-
-  }
-  stream.setpos(children_offset);
-  uint32_t nb_children = 0;
-  if (auto res = stream.read_uleb128()) {
-    nb_children = *res;
-  } else {
-    return;
-  }
-
-  output_prefix += "    ";
-  for (size_t i = 0; i < nb_children; ++i) {
-    std::string suffix;
-    if (auto res = stream.read_string()) {
-      suffix = std::move(*res);
-    } else {
-      break;
-    }
-
-    std::string name = prefix + suffix;
-    uint32_t child_node_offet = 0;
-
-    if (auto res = stream.read_uleb128()) {
-      child_node_offet = *res;
-    } else {
-      break;
-    }
-
-    if (child_node_offet == 0) {
-      break;
-    }
-
-    output << output_prefix << name << "@off." << std::hex << std::showbase << stream.pos() << std::endl;
-
-    size_t current_pos = stream.pos();
-    stream.setpos(start + child_node_offet);
-    show_trie(output, output_prefix, stream, start, end, name);
-    stream.setpos(current_pos);
-  }
+  MachO::show_trie(output, output_prefix, stream, start, end, prefix);
 }
 
 void DyldInfo::export_trie(buffer_t raw) {
@@ -1146,7 +1020,7 @@ bool operator!=(uint8_t lhs, REBASE_OPCODES rhs) {
 }
 
 
-  DyldInfo& DyldInfo::update_rebase_info() {
+  DyldInfo& DyldInfo::update_rebase_info(vector_iostream& stream) {
     auto cmp = [] (const RelocationDyld* lhs, const RelocationDyld* rhs) {
       return *lhs < *rhs;
     };
@@ -1386,16 +1260,15 @@ bool operator!=(uint8_t lhs, REBASE_OPCODES rhs) {
     }
     raw_output.align(pint_size);
     if (raw_output.size() > rebase_opcodes_.size()) {
-      LIEF_ERR("The updated rebase opcodes don't fit in the allocated space");
-      return *this;
+      LIEF_INFO("New rebase opcodes are larger than the original ones: 0x{:06x} -> 0x{:06x}",
+                rebase_opcodes_.size(), raw_output.size());
     }
-    set_rebase_size(raw_output.size());
-    rebase_opcodes(std::move(raw_output.raw()));
+    stream.write(std::move(raw_output.raw()));
     return *this;
   }
 
-  DyldInfo& DyldInfo::update_binding_info() {
-    auto cmp = [] (const BindingInfo* lhs, const BindingInfo* rhs) {
+  DyldInfo& DyldInfo::update_binding_info(vector_iostream& stream, details::dyld_info_command& cmd) {
+    auto cmp = [] (const DyldBindingInfo* lhs, const DyldBindingInfo* rhs) {
       if (lhs->library_ordinal() != rhs->library_ordinal()) {
         return lhs->library_ordinal() < rhs->library_ordinal();
       }
@@ -1416,7 +1289,7 @@ bool operator!=(uint8_t lhs, REBASE_OPCODES rhs) {
 
     };
 
-    auto cmp_weak_binding = [] (const BindingInfo* lhs, const BindingInfo* rhs) {
+    auto cmp_weak_binding = [] (const DyldBindingInfo* lhs, const DyldBindingInfo* rhs) {
       if (lhs->has_symbol() && rhs->has_symbol()) {
         if (lhs->symbol()->name() != rhs->symbol()->name()) {
           return lhs->symbol()->name() < rhs->symbol()->name();
@@ -1433,7 +1306,7 @@ bool operator!=(uint8_t lhs, REBASE_OPCODES rhs) {
 
     };
 
-    auto cmp_lazy_binding = [] (const BindingInfo* lhs, const BindingInfo* rhs) {
+    auto cmp_lazy_binding = [] (const DyldBindingInfo* lhs, const DyldBindingInfo* rhs) {
       return lhs->address() < rhs->address();
     };
 
@@ -1442,7 +1315,7 @@ bool operator!=(uint8_t lhs, REBASE_OPCODES rhs) {
     DyldInfo::bind_container_t weak_binds(cmp_weak_binding);
     DyldInfo::bind_container_t lazy_binds(cmp_lazy_binding);
 
-    for (const std::unique_ptr<BindingInfo>& binfo : binding_info_) {
+    for (const std::unique_ptr<DyldBindingInfo>& binfo : binding_info_) {
       switch (binfo->binding_class()) {
         case BINDING_CLASS::BIND_CLASS_THREADED:
         case BINDING_CLASS::BIND_CLASS_STANDARD:
@@ -1464,20 +1337,38 @@ bool operator!=(uint8_t lhs, REBASE_OPCODES rhs) {
           }
       }
     }
-    {
-      LIEF_SW_START(sw);
-      update_standard_bindings(standard_binds);
-      LIEF_SW_END("update_standard_bindings(): {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
+
+    if (!standard_binds.empty()) {
+      cmd.bind_off = stream.size();
+      {
+        LIEF_SW_START(sw);
+        update_standard_bindings(standard_binds, stream);
+        LIEF_SW_END("update_standard_bindings(): {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
+      }
+      cmd.bind_size = stream.size() - cmd.bind_off;
+
+      // LIEF_DEBUG("LC_DYLD_INFO.bind_off : 0x{:06x} -> 0x{:06x}",
+      //            this->bind().first, cmd.bind_off);
+      // LIEF_DEBUG("LC_DYLD_INFO.bind_off : 0x{:06x} -> 0x{:06x}",
+      //            this->bind().second, cmd.bind_size);
     }
-    {
-      LIEF_SW_START(sw);
-      update_weak_bindings(weak_binds);
-      LIEF_SW_END("update_weak_bindings(): {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
+    if (!weak_binds.empty()) {
+      cmd.weak_bind_off = stream.size();
+      {
+        LIEF_SW_START(sw);
+        update_weak_bindings(weak_binds, stream);
+        LIEF_SW_END("update_weak_bindings(): {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
+      }
+      cmd.weak_bind_size = stream.size() - cmd.weak_bind_off;
     }
-    {
-      LIEF_SW_START(sw);
-      update_lazy_bindings(lazy_binds);
-      LIEF_SW_END("update_lazy_bindings(): {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
+    if (!lazy_binds.empty()) {
+      cmd.lazy_bind_off = stream.size();
+      {
+        LIEF_SW_START(sw);
+        update_lazy_bindings(lazy_binds, stream);
+        LIEF_SW_END("update_lazy_bindings(): {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
+      }
+      cmd.lazy_bind_size = stream.size() - cmd.lazy_bind_off;
     }
     return *this;
   }
@@ -1490,7 +1381,7 @@ bool operator!=(uint8_t lhs, REBASE_OPCODES rhs) {
     return lhs != static_cast<uint8_t>(rhs);
   }
 
-  DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindings) {
+  DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindings, vector_iostream& stream) {
     std::vector<details::binding_instruction> instructions;
 
     uint64_t current_segment_start = 0;
@@ -1504,7 +1395,7 @@ bool operator!=(uint8_t lhs, REBASE_OPCODES rhs) {
     const size_t pint_size = binary_->pointer_size();
 
 
-    for (BindingInfo* info : bindings) {
+    for (DyldBindingInfo* info : bindings) {
       Symbol* sym = info->symbol();
       if (sym != nullptr) {
         if (sym->name() != symbol_name) {
@@ -1731,18 +1622,17 @@ bool operator!=(uint8_t lhs, REBASE_OPCODES rhs) {
     }
     raw_output.align(pint_size);
     if (raw_output.size() > weak_bind_opcodes_.size()) {
-      LIEF_ERR("The updated weak bind opcodes don't fit in the allocated space");
-      return *this;
+      LIEF_INFO("New WEAK bind opcodes are larger than the original ones: 0x{:06x} -> 0x{:06x}",
+                weak_bind_opcodes_.size(), raw_output.size());
     }
-    set_weak_bind_size(raw_output.size());
-    weak_bind_opcodes(std::move(raw_output.raw()));
+    stream.write(std::move(raw_output.raw()));
     return *this;
   }
 
-  DyldInfo& DyldInfo::update_lazy_bindings(const DyldInfo::bind_container_t& bindings) {
+  DyldInfo& DyldInfo::update_lazy_bindings(const DyldInfo::bind_container_t& bindings, vector_iostream& stream) {
 
     vector_iostream raw_output;
-    for (BindingInfo* info : bindings) {
+    for (DyldBindingInfo* info : bindings) {
       SegmentCommand* segment = info->segment();
       if (segment == nullptr) {
         LIEF_ERR("No segment associated with the lazy binding info. Can't update");
@@ -1789,19 +1679,18 @@ bool operator!=(uint8_t lhs, REBASE_OPCODES rhs) {
     LIEF_DEBUG("size: 0x{:x} vs 0x{:x}", raw_output.size(), lazy_bind_opcodes_.size());
 
     if (raw_output.size() > lazy_bind_opcodes_.size()) {
-      LIEF_ERR("The updated lazy bind opcodes don't fit in the allocated space");
-      return *this;
+      LIEF_INFO("New LAZY bind opcodes are larger than the original ones: 0x{:06x} -> 0x{:06x}",
+                lazy_bind_opcodes_.size(), raw_output.size());
     }
-    set_lazy_bind_size(raw_output.size());
-    lazy_bind_opcodes(std::move(raw_output.raw()));
+    stream.write(std::move(raw_output.raw()));
     return *this;
   }
 
-  DyldInfo& DyldInfo::update_standard_bindings(const DyldInfo::bind_container_t& bindings) {
+  DyldInfo& DyldInfo::update_standard_bindings(const DyldInfo::bind_container_t& bindings, vector_iostream& stream) {
     switch (binding_encoding_version_) {
       case BINDING_ENCODING_VERSION::V1:
         {
-          update_standard_bindings_v1(bindings);
+          update_standard_bindings_v1(bindings, stream);
           break;
         }
 
@@ -1815,7 +1704,8 @@ bool operator!=(uint8_t lhs, REBASE_OPCODES rhs) {
               rebases.push_back(r->as<RelocationDyld>());
             }
           }
-          update_standard_bindings_v2(bindings, std::move(rebases));
+          LIEF_DEBUG("Bindings V2: #{} relocations", rebases.size());
+          update_standard_bindings_v2(bindings, std::move(rebases), stream);
           break;
         }
 
@@ -1831,7 +1721,7 @@ bool operator!=(uint8_t lhs, REBASE_OPCODES rhs) {
 
 
 
-  DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t& bindings) {
+  DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t& bindings, vector_iostream& stream) {
     // This function updates the standard bindings opcodes (i.e. not lazy and not weak)
     // The following code is mainly inspired from LinkEdit.hpp: BindingInfoAtom<A>::encodeV1()
 
@@ -1847,7 +1737,7 @@ bool operator!=(uint8_t lhs, REBASE_OPCODES rhs) {
     int64_t addend = 0;
     const size_t pint_size = binary_->pointer_size();
 
-    for (BindingInfo* info : bindings) {
+    for (DyldBindingInfo* info : bindings) {
       if (info->library_ordinal() != ordinal) {
         if (info->library_ordinal() <= 0) {
           instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_SPECIAL_IMM), info->library_ordinal());
@@ -2081,19 +1971,19 @@ bool operator!=(uint8_t lhs, REBASE_OPCODES rhs) {
     }
     raw_output.align(pint_size);
     if (raw_output.size() > bind_opcodes_.size()) {
-      LIEF_ERR("The updated regular bind opcodes don't fit in the allocated space");
-      return *this;
+      LIEF_INFO("New REGULAR bind opcodes are larger than the original ones: 0x{:06x} -> 0x{:06x}",
+                bind_opcodes_.size(), raw_output.size());
     }
-    set_bind_size(raw_output.size());
-    bind_opcodes(std::move(raw_output.raw()));
+    stream.write(std::move(raw_output.raw()));
     return *this;
   }
 
 
-  DyldInfo& DyldInfo::update_standard_bindings_v2(const DyldInfo::bind_container_t& bindings_set, std::vector<RelocationDyld*> rebases) {
+  DyldInfo& DyldInfo::update_standard_bindings_v2(const DyldInfo::bind_container_t& bindings_set,
+                                                  std::vector<RelocationDyld*> rebases, vector_iostream& stream) {
     // v2 encoding as defined in Linkedit.hpp - BindingInfoAtom<A>::encodeV2()
     // This encoding uses THREADED opcodes.
-    std::vector<BindingInfo*> bindings = {std::begin(bindings_set), std::end(bindings_set)};
+    std::vector<DyldBindingInfo*> bindings = {std::begin(bindings_set), std::end(bindings_set)};
 
     std::vector<details::binding_instruction> instructions;
     uint64_t current_segment_start = 0;
@@ -2107,7 +1997,7 @@ bool operator!=(uint8_t lhs, REBASE_OPCODES rhs) {
     auto num_bindings = static_cast<uint64_t>(-1);
     const size_t pint_size = binary_->pointer_size();
 
-    for (BindingInfo* info : bindings) {
+    for (DyldBindingInfo* info : bindings) {
       bool made_changes = false;
       const int32_t lib_ordinal = info->library_ordinal();
       if (ordinal != lib_ordinal) {
@@ -2204,7 +2094,7 @@ bool operator!=(uint8_t lhs, REBASE_OPCODES rhs) {
 
     for (int64_t entry_index : threaded_rebase_bind_indices) {
       RelocationDyld* rebase = nullptr;
-      BindingInfo* bind = nullptr;
+      DyldBindingInfo* bind = nullptr;
 
       uint64_t address = 0;
       SegmentCommand* segment = nullptr;
@@ -2387,83 +2277,27 @@ bool operator!=(uint8_t lhs, REBASE_OPCODES rhs) {
     raw_output.align(pint_size);
 
     if (raw_output.size() > bind_opcodes_.size()) {
-      LIEF_ERR("The updated regular bind opcodes don't fit in the allocated space");
-      return *this;
+      LIEF_INFO("New REGULAR V2 bind opcodes are larger than the original ones: 0x{:06x} -> 0x{:06x}",
+                bind_opcodes_.size(), raw_output.size());
     }
-    set_bind_size(raw_output.size());
-    bind_opcodes(std::move(raw_output.raw()));
-
+    stream.write(std::move(raw_output.raw()));
     return *this;
   }
 
 
-DyldInfo& DyldInfo::update_export_trie() {
-  auto cmp = [] (const ExportInfo* lhs, const ExportInfo* rhs) {
-    // see : https://github.com/aosm/ld64/blob/88428de93dab43bf5fc5baca9ee38226bc013269/src/abstraction/MachOTrie.hpp#L255-L261
-    return  lhs->node_offset() < rhs->node_offset();
-  };
-  using symbol_trie_container_t = std::set<ExportInfo*, decltype(cmp)>;
-
-  symbol_trie_container_t entries(cmp);
-  std::transform(std::begin(export_info_), std::end(export_info_),
-                 std::inserter(entries, std::begin(entries)),
-                 [] (const std::unique_ptr<ExportInfo>& info) {
-                   return info.get();
-                 });
-
-  std::unique_ptr<TrieNode> start = TrieNode::create("");
-  std::vector<std::unique_ptr<TrieNode>> nodes;
-
-  // Build the tree adding every symbole to the root.
-  TrieNode* start_ptr = start.get();
-  nodes.push_back(std::move(start));
-  for (ExportInfo* info : entries) {
-    start_ptr->add_symbol(*info, nodes);
-  }
-
-  // Perform a poor topological sort to have parents before childs in ordered_nodes
-  std::vector<TrieNode*> ordered_nodes;
-  for (ExportInfo* info : entries) {
-    start_ptr->add_ordered_nodes(*info, ordered_nodes);
-  }
-
-  bool more;
-  do {
-    uint32_t offset = 0;
-    more = false;
-    for (TrieNode* node : ordered_nodes) {
-      if (node->update_offset(offset)) {
-        more = true;
-      }
-    }
-  } while (more);
-
-
-  vector_iostream raw_output;
-  for (TrieNode* node : ordered_nodes) {
-    node->write(raw_output);
-  }
-
-
-  // TODO Improvement: Shift all the LC_COMMAND that
-  // follows the DYLD_INFO by "padding" because some
-  // Mach-O utilities perform checks on offsets:
-  // See: cctools-921/libstuff/checkout.c dyld_order:431
-  //
-  if (raw_output.size() < export_trie_.size()) {
-    const size_t padding = export_trie_.size() - raw_output.size();
-    raw_output.write(padding, 0);
-  }
-
-  raw_output.align(binary_->pointer_size());
-
+DyldInfo& DyldInfo::update_export_trie(vector_iostream& stream) {
+  std::vector<uint8_t> raw_output = create_trie(export_info_, binary_->pointer_size());
   if (raw_output.size() > export_trie_.size()) {
-    LIEF_ERR("The export trie don't fit in the allocated space");
-    return *this;
+    LIEF_INFO("New EXPORTS TRIE is larger than the original one: 0x{:06x} -> 0x{:06x}",
+              export_trie_.size(), raw_output.size());
   }
-  set_export_size(raw_output.size());
-  export_trie(std::move(raw_output.raw()));
+  stream.write(std::move(raw_output));
   return *this;
+}
+
+
+void DyldInfo::add(std::unique_ptr<ExportInfo> info) {
+  export_info_.push_back(std::move(info));
 }
 
 bool DyldInfo::classof(const LoadCommand* cmd) {

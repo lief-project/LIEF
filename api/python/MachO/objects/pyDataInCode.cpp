@@ -68,6 +68,13 @@ void create<DataInCode>(py::module& m) {
         "Add an new " RST_CLASS_REF(lief.MachO.DataCodeEntry) "",
         "entry"_a)
 
+    .def_property_readonly("content",
+        [] (const DataInCode& self) {
+          span<const uint8_t> content = self.content();
+          return py::memoryview::from_memory(content.data(), content.size());
+        }, "The original content as a bytes stream")
+
+
     .def("__eq__", &DataInCode::operator==)
     .def("__ne__", &DataInCode::operator!=)
     .def("__hash__",

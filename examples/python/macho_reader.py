@@ -56,10 +56,15 @@ def print_information(binary):
     format_str = "{:<30} {:<30}"
     format_hex = "{:<30} 0x{:<28x}"
     format_dec = "{:<30} {:<30d}"
+    header: lief.MachO.Header = binary.header
+    cpu = str(header.cpu_type).split('.')[-1]
+
+
     print(format_str.format("Name:",         binary.name))
     print(format_hex.format("Address base:", binary.imagebase))
     print(format_str.format("PIE:",          str(binary.is_pie)))
     print(format_str.format("NX:",           str(binary.has_nx)))
+    print(format_str.format("Arch:",         cpu))
     print("")
 
 @exceptions_handler(Exception)
@@ -543,8 +548,12 @@ def print_lazy_bind_opcodes(binary):
 @exceptions_handler(Exception)
 def print_export_trie(binary):
     print("== Export trie ==")
-
-    print(binary.dyld_info.show_export_trie)
+    if binary.has_dyld_info:
+        print(binary.dyld_info.show_export_trie)
+    if binary.has_dyld_exports_trie:
+        trie: lief.MachO.DyldExportsTrie = binary.dyld_exports_trie
+        print("Linkedit position: 0x{} (0x{:x} bytes)".format(trie.data_offset, trie.data_size))
+        print(trie.show_export_trie())
 
     print("")
 
@@ -695,6 +704,14 @@ def print_build_version(binary):
             tool_str = str(tool.tool).split(".")[-1]
             print("    {} - {}.{}.{}".format(tool_str, *tool.version))
 
+def print_chained_fixups(binary: lief.MachO.Binary):
+    if not binary.has_dyld_chained_fixups:
+        return
+    print("== Dyld Chained Fixups ==")
+    fixups: lief.MachO.DyldChainedFixups = binary.dyld_chained_fixups
+    print(fixups)
+
+
 def main():
     parser = argparse.ArgumentParser(usage='%(prog)s [options] <macho-file>')
     parser.add_argument('-a', '--all',
@@ -833,6 +850,14 @@ def main():
             action='store_true', dest='show_build_version',
             help='Show build version')
 
+    parser.add_argument('--chained-fixups',
+            action='store_true', dest='show_chained_fixups',
+            help='Show Dyld Chained Fixups')
+
+    parser.add_argument('--check-layout',
+            action='store_true', dest='check_layout',
+            help='Check the layout of the binary')
+
     parser.add_argument("binary",
             metavar="<macho-file>",
             help='Target Mach-O File')
@@ -877,15 +902,18 @@ def main():
 
     lief.logging.set_level(args.main_verbosity)
 
-    binaries = None
-    try:
-        binaries = MachO.parse(args.binary)
-    except lief.exception as e:
-        print(e)
+    binaries = MachO.parse(args.binary)
+    if binaries is None:
+        print("Can't parse {}".format(args.binary))
         sys.exit(1)
 
     if len(binaries) > 1:
         print("Fat Mach-O: {:d} binaries".format(len(binaries)))
+
+    if args.check_layout:
+        isok, err = MachO.check_layout(binaries)
+        if not isok:
+            print(err)
 
     for binary in binaries:
         print_information(binary)
@@ -974,7 +1002,7 @@ def main():
         if (args.show_lazy_bind_opcodes or args.show_opcodes) and binary.has_dyld_info:
             print_lazy_bind_opcodes(binary)
 
-        if (args.show_export_trie or args.show_opcodes) and binary.has_dyld_info:
+        if (args.show_export_trie or args.show_opcodes):
             print_export_trie(binary)
 
         if args.show_ctor or args.show_all:
@@ -988,6 +1016,10 @@ def main():
 
         if (args.show_build_version or args.show_all) and binary.has_build_version:
             print_build_version(binary)
+
+        if args.show_chained_fixups or args.show_all:
+            print_chained_fixups(binary)
+
 
     sys.exit(EXIT_STATUS)
 

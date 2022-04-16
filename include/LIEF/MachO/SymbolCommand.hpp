@@ -18,12 +18,15 @@
 #include <iostream>
 
 #include "LIEF/visibility.h"
-
 #include "LIEF/types.hpp"
+#include "LIEF/span.hpp"
+
 #include "LIEF/MachO/LoadCommand.hpp"
 
 namespace LIEF {
 namespace MachO {
+class BinaryParser;
+class LinkEdit;
 
 namespace details {
 struct symtab_command;
@@ -31,6 +34,9 @@ struct symtab_command;
 
 //! Class that represents the LC_SYMTAB command
 class LIEF_API SymbolCommand : public LoadCommand {
+  friend class BinaryParser;
+  friend class LinkEdit;
+
   public:
   SymbolCommand();
   SymbolCommand(const details::symtab_command& command);
@@ -59,6 +65,31 @@ class LIEF_API SymbolCommand : public LoadCommand {
   void strings_offset(uint32_t offset);
   void strings_size(uint32_t size);
 
+
+  inline span<const uint8_t> symbol_table() const {
+    return symbol_table_;
+  }
+
+  inline span<uint8_t> symbol_table() {
+    return symbol_table_;
+  }
+
+  inline span<const uint8_t> string_table() const {
+    return string_table_;
+  }
+
+  inline span<uint8_t> string_table() {
+    return string_table_;
+  }
+
+  inline uint32_t original_str_size() const {
+    return original_str_size_;
+  }
+
+  inline uint32_t original_nb_symbols() const {
+    return original_nb_symbols_;
+  }
+
   std::ostream& print(std::ostream& os) const override;
 
   void accept(Visitor& visitor) const override;
@@ -69,10 +100,16 @@ class LIEF_API SymbolCommand : public LoadCommand {
   static bool classof(const LoadCommand* cmd);
 
   private:
-  uint32_t symbolOffset_;
-  uint32_t numberOfSymbols_;
-  uint32_t stringsOffset_;
-  uint32_t stringsSize_;
+  uint32_t symbols_offset_ = 0;
+  uint32_t nb_symbols_     = 0;
+  uint32_t strings_offset_ = 0;
+  uint32_t strings_size_   = 0;
+
+  uint32_t original_str_size_   = 0;
+  uint32_t original_nb_symbols_ = 0;
+
+  span<uint8_t> symbol_table_;
+  span<uint8_t> string_table_;
 };
 
 }

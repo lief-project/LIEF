@@ -206,10 +206,13 @@ void Hash::visit(const RelocationDyld& rdyld) {
   visit(*rdyld.as<Relocation>());
 }
 
+void Hash::visit(const RelocationFixup& fixup) {
+  visit(*fixup.as<Relocation>());
+  process(fixup.target());
+}
+
 void Hash::visit(const BindingInfo& binding) {
 
-  process(binding.binding_class());
-  process(binding.binding_type());
   process(binding.library_ordinal());
   process(binding.addend());
   process(static_cast<size_t>(binding.is_weak_import()));
@@ -222,6 +225,24 @@ void Hash::visit(const BindingInfo& binding) {
   if (binding.has_library()) {
     process(*binding.library());
   }
+}
+
+void Hash::visit(const DyldBindingInfo& binding) {
+  visit(*binding.as<BindingInfo>());
+  process(binding.binding_class());
+  process(binding.binding_type());
+}
+
+void Hash::visit(const ChainedBindingInfo& binding) {
+  visit(*binding.as<BindingInfo>());
+  process(binding.format());
+}
+
+void Hash::visit(const DyldExportsTrie& trie) {
+  visit(*trie.as<LoadCommand>());
+  process(trie.data_offset());
+  process(trie.data_size());
+  process(trie.content());
 }
 
 void Hash::visit(const ExportInfo& einfo) {
@@ -315,6 +336,24 @@ void Hash::visit(const FilesetCommand& e) {
   process(e.virtual_address());
   process(e.file_offset());
 }
+
+void Hash::visit(const CodeSignatureDir& e) {
+  process(e.data_offset());
+  process(e.data_size());
+  process(e.content());
+}
+
+void Hash::visit(const TwoLevelHints& e) {
+  process(e.content());
+}
+
+void Hash::visit(const LinkerOptHint& e) {
+  process(e.data_offset());
+  process(e.data_size());
+  process(e.content());
+}
+
+
 
 
 

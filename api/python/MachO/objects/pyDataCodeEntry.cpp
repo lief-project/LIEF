@@ -48,6 +48,7 @@ void create<DataCodeEntry>(py::module& m) {
       )delim");
 
   cls
+    .def(py::init<uint32_t, uint32_t, DataCodeEntry::TYPES>())
     .def_property("offset",
         static_cast<getter_t<uint32_t>>(&DataCodeEntry::offset),
         static_cast<setter_t<uint32_t>>(&DataCodeEntry::offset),

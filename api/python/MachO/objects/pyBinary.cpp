@@ -278,12 +278,12 @@ void create<Binary>(py::module& m) {
 
     .def_property_readonly("has_code_signature_dir",
         &Binary::has_code_signature_dir,
-        "``True`` if the binary is signed (i.e. has a " RST_CLASS_REF(lief.MachO.CodeSignature) " command) "
+        "``True`` if the binary is signed (i.e. has a " RST_CLASS_REF(lief.MachO.CodeSignatureDir) " command) "
         "with the command LC_DYLIB_CODE_SIGN_DRS")
 
     .def_property_readonly("code_signature_dir",
-        static_cast<no_const_getter<CodeSignature*>>(&Binary::code_signature_dir),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.CodeSignature) " if any, or None",
+        static_cast<no_const_getter<CodeSignatureDir*>>(&Binary::code_signature_dir),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.CodeSignatureDir) " if any, or None",
         py::return_value_policy::reference)
 
     .def_property_readonly("has_data_in_code",
@@ -338,6 +338,43 @@ void create<Binary>(py::module& m) {
     .def_property_readonly("build_version",
         static_cast<no_const_getter<BuildVersion*>>(&Binary::build_version),
         "Return the binary's " RST_CLASS_REF(lief.MachO.BuildVersion) " if any, or None",
+        py::return_value_policy::reference)
+
+    .def_property_readonly("has_dyld_chained_fixups",
+        &Binary::has_dyld_chained_fixups,
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.DyldChainedFixups) " command")
+
+    .def_property_readonly("dyld_chained_fixups",
+        static_cast<no_const_getter<DyldChainedFixups*>>(&Binary::dyld_chained_fixups),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.DyldChainedFixups) " if any, or None",
+        py::return_value_policy::reference)
+
+    .def_property_readonly("has_dyld_exports_trie",
+        &Binary::has_dyld_exports_trie,
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.DyldExportsTrie) " command")
+
+    .def_property_readonly("dyld_exports_trie",
+        static_cast<no_const_getter<DyldExportsTrie*>>(&Binary::dyld_exports_trie),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.DyldExportsTrie) " if any, or None",
+        py::return_value_policy::reference)
+
+    .def_property_readonly("has_two_level_hints",
+        &Binary::has_two_level_hints,
+        "``True`` if the binary embeds the Two Level Hint command (" RST_CLASS_REF(lief.MachO.TwoLevelHints) ")")
+
+    .def_property_readonly("two_level_hints",
+        static_cast<no_const_getter<TwoLevelHints*>>(&Binary::two_level_hints),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.TwoLevelHints) " if any, or None",
+        py::return_value_policy::reference)
+
+
+    .def_property_readonly("has_linker_opt_hint",
+        &Binary::has_linker_opt_hint,
+        "``True`` if the binary embeds the Linker optimization hint command (" RST_CLASS_REF(lief.MachO.LinkerOptHint) ")")
+
+    .def_property_readonly("linker_opt_hint",
+        static_cast<no_const_getter<LinkerOptHint*>>(&Binary::linker_opt_hint),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.LinkerOptHint) " if any, or None",
         py::return_value_policy::reference)
 
     .def("virtual_address_to_offset",
@@ -532,6 +569,33 @@ void create<Binary>(py::module& m) {
         )delim",
         "segname"_a, "secname"_a,
         py::return_value_policy::reference_internal)
+
+    .def("shift",
+         &Binary::shift,
+         R"delim(
+         Shift the content located right after the Load commands table.
+         This operation can be used to add a new command
+         )delim",
+         "value"_a)
+
+    .def("shift_linkedit",
+         [] (Binary& self, size_t width) {
+           return error_or(&Binary::shift_linkedit, self, width);
+         },
+         "Shift the position on the __LINKEDIT data by `width`",
+         "value"_a)
+
+    .def("add_exported_function",
+        &Binary::add_exported_function,
+        "Add a new export in the binary",
+        "address"_a, "name"_a,
+        py::return_value_policy::reference)
+
+    .def("add_local_symbol",
+        &Binary::add_local_symbol,
+        "Add a new a new symbol in the LC_SYMTAB",
+        "address"_a, "name"_a,
+        py::return_value_policy::reference)
 
     .def("__getitem__",
         static_cast<LoadCommand* (Binary::*)(LOAD_COMMAND_TYPES)>(&Binary::operator[]),

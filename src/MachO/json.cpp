@@ -295,14 +295,16 @@ void JsonVisitor::visit(const RelocationDyld& rdyld) {
   visit(*rdyld.as<Relocation>());
 }
 
+void JsonVisitor::visit(const RelocationFixup& fixup) {
+  visit(*fixup.as<Relocation>());
+  node_["target"] = fixup.target();
+}
+
 void JsonVisitor::visit(const BindingInfo& binding) {
   node_["address"]         = binding.address();
-  node_["binding_class"]   = to_string(binding.binding_class());
-  node_["binding_type"]    = to_string(binding.binding_type());
   node_["library_ordinal"] = binding.library_ordinal();
   node_["addend"]          = binding.addend();
   node_["is_weak_import"]  = binding.is_weak_import();
-  node_["original_offset"] = binding.original_offset();
 
   if (binding.has_symbol()) {
     node_["symbol"] = binding.symbol()->name();
@@ -315,7 +317,24 @@ void JsonVisitor::visit(const BindingInfo& binding) {
   if (binding.has_library()) {
     node_["library"] = binding.library()->name();
   }
+}
 
+void JsonVisitor::visit(const DyldBindingInfo& binding) {
+  visit(*binding.as<BindingInfo>());
+  node_["binding_class"]   = to_string(binding.binding_class());
+  node_["binding_type"]    = to_string(binding.binding_type());
+  node_["original_offset"] = binding.original_offset();
+}
+
+void JsonVisitor::visit(const ChainedBindingInfo& binding) {
+  visit(*binding.as<BindingInfo>());
+  node_["format"] = to_string(binding.format());
+}
+
+void JsonVisitor::visit(const DyldExportsTrie& trie) {
+  visit(*trie.as<LoadCommand>());
+  node_["data_offset"] = trie.data_offset();
+  node_["data_size"]   = trie.data_size();
 }
 
 void JsonVisitor::visit(const ExportInfo& einfo) {
@@ -428,6 +447,23 @@ void JsonVisitor::visit(const FilesetCommand& e) {
   node_["name"]            = e.name();
   node_["file_offset"]     = e.file_offset();
   node_["virtual_address"] = e.virtual_address();
+}
+
+void JsonVisitor::visit(const CodeSignatureDir& e) {
+  node_["data_size"]   = e.data_size();
+  node_["data_offset"] = e.data_offset();
+}
+
+void JsonVisitor::visit(const LinkerOptHint& e) {
+  node_["data_size"]   = e.data_size();
+  node_["data_offset"] = e.data_offset();
+}
+
+void JsonVisitor::visit(const TwoLevelHints& e) {
+  auto it_hints = e.hints();
+  std::vector<uint32_t> hints = {std::begin(it_hints), std::end(it_hints)};
+  node_["offset"] = e.offset();
+  node_["hints"]  = hints;
 }
 
 

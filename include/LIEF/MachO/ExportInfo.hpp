@@ -30,6 +30,7 @@ namespace MachO {
 class BinaryParser;
 class Symbol;
 class DylibCommand;
+class Binary;
 
 //! Class that provides an interface over the Dyld export info
 //!
@@ -38,6 +39,7 @@ class DylibCommand;
 class LIEF_API ExportInfo : public Object {
 
   friend class BinaryParser;
+  friend class Binary;
 
   public:
   using flag_list_t = std::vector<EXPORT_SYMBOL_FLAGS>;

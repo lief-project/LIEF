@@ -42,8 +42,6 @@ class FatBinary;
 //! Non-fat binaries are considerated as a **fat** with
 //! only one architecture. This is why MachO::Parser::parse outputs
 //! a FatBinary object.
-//!
-//! @see MachO::Parser
 class LIEF_API Parser : public LIEF::Parser {
   public:
   friend struct ::Profiler;
@@ -74,6 +72,11 @@ class LIEF_API Parser : public LIEF::Parser {
   //! @param[in] conf       Parser configuration (Defaut: ParserConfig::deep)
   static std::unique_ptr<FatBinary> parse(const std::vector<uint8_t>& data,
                                           const std::string& name = "",
+                                          const ParserConfig& conf = ParserConfig::deep());
+
+
+  //! Parser a Mach-O binary from the provided BinaryStream.
+  static std::unique_ptr<FatBinary> parse(std::unique_ptr<BinaryStream> stream,
                                           const ParserConfig& conf = ParserConfig::deep());
 
   private:

@@ -38,38 +38,24 @@ namespace MachO {
 
 Builder::~Builder() = default;
 
-Builder::Builder(Binary& binary) :
-  binary_{&binary}
+Builder::Builder(Binary& binary, config_t config) :
+  binary_{&binary},
+  config_{std::move(config)}
 {
   raw_.reserve(binary_->original_size());
   binaries_.push_back(binary_);
-  build();
 }
 
-Builder::Builder(std::vector<Binary*> binaries) :
-  binaries_{std::move(binaries)}
-{
-  build_fat();
-}
+Builder::Builder(std::vector<Binary*> binaries, config_t config) :
+  binaries_{std::move(binaries)},
+  config_{std::move(config)}
+{}
 
-Builder::Builder(FatBinary& fat) {
-  binaries_.reserve(fat.binaries_.size());
-  std::transform(std::begin(fat.binaries_), std::end(fat.binaries_),
-                 std::back_inserter(binaries_),
-                 [] (const std::unique_ptr<Binary>& bin) {
-                   return bin.get();
-                 });
-  build_fat();
+ok_error_t Builder::build() {
+  return binary_->is64_ ?
+         build<details::MachO64>() :
+         build<details::MachO32>();
 }
-
-void Builder::build() {
-  if (binary_->is64_) {
-    build<details::MachO64>();
-  } else {
-    build<details::MachO32>();
-  }
-}
-
 
 template <typename T>
 ok_error_t Builder::build() {
@@ -80,91 +66,59 @@ ok_error_t Builder::build() {
 
   build_uuid();
 
+  if (config_.linkedit) {
+    build_linkedit<T>();
+  }
+
   for (std::unique_ptr<LoadCommand>& cmd : binary_->commands_) {
     if (DylibCommand::classof(cmd.get())) {
-      build<T>(cmd->as<DylibCommand>());
+      build<T>(*cmd->as<DylibCommand>());
       continue;
     }
 
     if (DylinkerCommand::classof(cmd.get())) {
-      build<T>(cmd->as<DylinkerCommand>());
+      build<T>(*cmd->as<DylinkerCommand>());
       continue;
     }
 
     if (VersionMin::classof(cmd.get())) {
-      build<T>(cmd->as<VersionMin>());
+      build<T>(*cmd->as<VersionMin>());
       continue;
     }
 
     if (SourceVersion::classof(cmd.get())) {
-      build<T>(cmd->as<SourceVersion>());
+      build<T>(*cmd->as<SourceVersion>());
       continue;
     }
 
     if (MainCommand::classof(cmd.get())) {
-      build<T>(cmd->as<MainCommand>());
-      continue;
-    }
-
-    if (DyldInfo::classof(cmd.get())) {
-      build<T>(cmd->as<DyldInfo>());
-      continue;
-    }
-
-    if (FunctionStarts::classof(cmd.get())) {
-      build<T>(cmd->as<FunctionStarts>());
-      continue;
-    }
-
-    if (SymbolCommand::classof(cmd.get())) {
-      build<T>(cmd->as<SymbolCommand>());
-      continue;
-    }
-
-    if (DynamicSymbolCommand::classof(cmd.get())) {
-      build<T>(cmd->as<DynamicSymbolCommand>());
-      continue;
-    }
-
-    if (DataInCode::classof(cmd.get())) {
-      build<T>(cmd->as<DataInCode>());
-      continue;
-    }
-
-    if (CodeSignature::classof(cmd.get())) {
-      build<T>(cmd->as<CodeSignature>());
-      continue;
-    }
-
-    if (SegmentSplitInfo::classof(cmd.get())) {
-      build<T>(cmd->as<SegmentSplitInfo>());
+      build<T>(*cmd->as<MainCommand>());
       continue;
     }
 
     if (SubFramework::classof(cmd.get())) {
-      build<T>(cmd->as<SubFramework>());
+      build<T>(*cmd->as<SubFramework>());
       continue;
     }
 
     if (DyldEnvironment::classof(cmd.get())) {
-      build<T>(cmd->as<DyldEnvironment>());
+      build<T>(*cmd->as<DyldEnvironment>());
       continue;
     }
 
     if (ThreadCommand::classof(cmd.get())) {
-      build<T>(cmd->as<ThreadCommand>());
+      build<T>(*cmd->as<ThreadCommand>());
       continue;
     }
 
     if (BuildVersion::classof(cmd.get())) {
-      build<T>(cmd->as<BuildVersion>());
+      build<T>(*cmd->as<BuildVersion>());
       continue;
     }
   }
 
   build_segments<T>();
   build_load_commands();
-  //build_symbols<T>();
 
   build_header();
   return ok();
@@ -175,17 +129,17 @@ ok_error_t Builder::build_fat() {
 
   // If there is only one binary don't build a FAT
   if (binaries_.size() == 1) {
-    Builder builder{*binaries_.back()};
-    raw_.write(builder.get_build());
-    return {};
+    raw_.write(build_raw(*binaries_.back(), config_));
+    return ok();
   }
+
   build_fat_header();
   constexpr auto fat_header_sz = sizeof(details::fat_header);
   constexpr auto fat_arch_sz   = sizeof(details::fat_arch);
   for (size_t i = 0; i < binaries_.size(); ++i) {
     auto* arch = reinterpret_cast<details::fat_arch*>(raw_.raw().data() + fat_header_sz + i * fat_arch_sz);
-    Builder builder{*binaries_[i]};
-    std::vector<uint8_t> raw = builder.get_build();
+    std::vector<uint8_t> raw = build_raw(*binaries_[i], config_);
+
     auto alignment = BinaryStream::swap_endian<uint32_t>(arch->align);
     uint32_t offset = align(raw_.size(), 1 << alignment);
 
@@ -274,9 +228,14 @@ ok_error_t Builder::build_load_commands() {
   }
 
   for (const SegmentCommand* segment : binary->segments_) {
-    span<const uint8_t> segment_content = segment->content();
-    raw_.seekp(segment->file_offset());
-    raw_.write(segment_content.data(), segment_content.size());
+    if (LinkEdit::segmentof(*segment) && config_.linkedit) {
+      raw_.seekp(linkedit_offset_);
+      raw_.write(linkedit_);
+    } else {
+      span<const uint8_t> segment_content = segment->content();
+      raw_.seekp(segment->file_offset());
+      raw_.write(segment_content.data(), segment_content.size());
+    }
   }
 
   //uint64_t loadCommandsOffset = raw_.size();
@@ -321,29 +280,86 @@ const std::vector<uint8_t>& Builder::get_build() {
   return raw_.raw();
 }
 
-
-void Builder::write(MachO::Binary& binary, const std::string& filename) {
-  Builder builder{binary};
-  builder.write(filename);
+ok_error_t Builder::write(Binary& binary, const std::string& filename) {
+  config_t config;
+  return write(binary, filename, std::move(config));
 }
 
-void Builder::write(FatBinary& fatbinary, const std::string& filename) {
-  Builder builder{fatbinary};
+ok_error_t Builder::write(Binary& binary, const std::string& filename, config_t config) {
+  Builder builder{binary, std::move(config)};
+  builder.build();
   builder.write(filename);
+  return ok();
 }
 
-void Builder::write(const std::string& filename) const {
+ok_error_t Builder::write(FatBinary& fat, const std::string& filename) {
+  config_t config;
+  return write(fat, filename, std::move(config));
+}
+
+ok_error_t Builder::write(FatBinary& fat, const std::string& filename, config_t config) {
+  std::vector<Binary*> binaries;
+  binaries.reserve(fat.binaries_.size());
+  std::transform(std::begin(fat.binaries_), std::end(fat.binaries_),
+                 std::back_inserter(binaries),
+                 [] (const std::unique_ptr<Binary>& bin) {
+                   return bin.get();
+                 });
+
+  Builder builder{std::move(binaries), std::move(config)};
+  builder.build_fat();
+  builder.write(filename);
+  return ok();
+}
+
+ok_error_t Builder::write(Binary& binary, std::vector<uint8_t>& out) {
+  config_t config;
+  return write(binary, out, config);
+}
+
+ok_error_t Builder::write(Binary& binary, std::vector<uint8_t>& out, config_t config) {
+  out = build_raw(binary, config);
+  return ok();
+}
+
+ok_error_t Builder::write(FatBinary& fat, std::vector<uint8_t>& out) {
+  config_t config;
+  return write(fat, out, config);
+}
+
+ok_error_t Builder::write(FatBinary& fat, std::vector<uint8_t>& out, config_t config) {
+  std::vector<Binary*> binaries;
+  binaries.reserve(fat.binaries_.size());
+  std::transform(std::begin(fat.binaries_), std::end(fat.binaries_),
+                 std::back_inserter(binaries),
+                 [] (const std::unique_ptr<Binary>& bin) {
+                   return bin.get();
+                 });
+
+  Builder builder{std::move(binaries), std::move(config)};
+  builder.build_fat();
+  out = builder.get_build();
+  return ok();
+}
+
+
+std::vector<uint8_t> Builder::build_raw(Binary& binary, config_t config) {
+  Builder builder{binary, std::move(config)};
+  builder.build();
+  return builder.get_build();
+}
+
+ok_error_t Builder::write(const std::string& filename) const {
   std::ofstream output_file{filename, std::ios::out | std::ios::binary | std::ios::trunc};
-  if (output_file) {
-    std::vector<uint8_t> content;
-    raw_.get(content);
-
-    std::copy(std::begin(content), std::end(content),
-              std::ostreambuf_iterator<char>(output_file));
-  } else {
-    LIEF_ERR("Fail to write binary file");
+  if (!output_file) {
+    LIEF_ERR("Can't write back the LIEF Mach-O object into '{}'", filename);
+    return make_error_code(lief_errors::build_error);
   }
 
+  std::vector<uint8_t> content;
+  raw_.move(content);
+  output_file.write(reinterpret_cast<const char*>(content.data()), content.size());
+  return ok();
 }
 
 }

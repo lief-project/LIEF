@@ -45,27 +45,18 @@ void create<BindingInfo>(py::module& m) {
       Class that provides an interface over an entry in DyldInfo structure
 
       This class does not represent a structure that exists in the Mach-O format
-      specifications but it provides a *view* on an entry of the Dyld binding opcodes.
+      specifications but it provides a *view* of a binding operation that is performed
+      by the Dyld binding bytecode (`LC_DYLD_INFO`) or the Dyld chained fixups (`DYLD_CHAINED_FIXUPS`)
+
+      See: :class:`~lief.MachO.ChainedBindingInfo`, :class:`~lief.MachO.DyldBindingInfo`
       )delim")
 
-    .def_property("binding_class",
-        static_cast<getter_t<BINDING_CLASS>>(&BindingInfo::binding_class),
-        static_cast<setter_t<BINDING_CLASS>>(&BindingInfo::binding_class),
-        "" RST_CLASS_REF(lief.MachO.BINDING_CLASS) " of the binding")
 
     .def_property("address",
         static_cast<getter_t<uint64_t>>(&BindingInfo::address),
         static_cast<setter_t<uint64_t>>(&BindingInfo::address),
         "Binding's address")
 
-    .def_property("binding_type",
-        static_cast<getter_t<BIND_TYPES>>(&BindingInfo::binding_type),
-        static_cast<setter_t<BIND_TYPES>>(&BindingInfo::binding_type),
-        R"delim(
-        :class:`~lief.MachO.BIND_TYPES` of the binding.
-
-        Usually, it is :attr:`~lief.MachO.BIND_TYPES.POINTER`.
-        )delim")
 
     .def_property("library_ordinal",
         static_cast<getter_t<int32_t>>(&BindingInfo::library_ordinal),
@@ -109,11 +100,6 @@ void create<BindingInfo>(py::module& m) {
         static_cast<Symbol* (BindingInfo::*)(void)>(&BindingInfo::symbol),
         "" RST_CLASS_REF(lief.MachO.Symbol) " associated with the binding if any, or None",
         py::return_value_policy::reference)
-
-    .def_property_readonly("original_offset",
-        &BindingInfo::original_offset,
-        "Original relative offset of the binding opcodes")
-
 
     .def("__eq__", &BindingInfo::operator==)
     .def("__ne__", &BindingInfo::operator!=)

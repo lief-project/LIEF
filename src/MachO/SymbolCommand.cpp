@@ -28,10 +28,10 @@ SymbolCommand::~SymbolCommand() = default;
 
 SymbolCommand::SymbolCommand(const details::symtab_command& cmd) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize},
-  symbolOffset_{cmd.symoff},
-  numberOfSymbols_{cmd.nsyms},
-  stringsOffset_{cmd.stroff},
-  stringsSize_{cmd.strsize}
+  symbols_offset_{cmd.symoff},
+  nb_symbols_{cmd.nsyms},
+  strings_offset_{cmd.stroff},
+  strings_size_{cmd.strsize}
 {}
 
 SymbolCommand* SymbolCommand::clone() const {
@@ -39,35 +39,35 @@ SymbolCommand* SymbolCommand::clone() const {
 }
 
 uint32_t SymbolCommand::symbol_offset() const {
-  return symbolOffset_;
+  return symbols_offset_;
 }
 
 uint32_t SymbolCommand::numberof_symbols() const {
-  return numberOfSymbols_;
+  return nb_symbols_;
 }
 
 uint32_t SymbolCommand::strings_offset() const {
-  return stringsOffset_;
+  return strings_offset_;
 }
 
 uint32_t SymbolCommand::strings_size() const {
-  return stringsSize_;
+  return strings_size_;
 }
 
 void SymbolCommand::symbol_offset(uint32_t offset) {
-  symbolOffset_ = offset;
+  symbols_offset_ = offset;
 }
 
 void SymbolCommand::numberof_symbols(uint32_t nb) {
-  numberOfSymbols_ = nb;
+  nb_symbols_ = nb;
 }
 
 void SymbolCommand::strings_offset(uint32_t offset) {
-  stringsOffset_ = offset;
+  strings_offset_ = offset;
 }
 
 void SymbolCommand::strings_size(uint32_t size) {
-  stringsSize_ = size;
+  strings_size_ = size;
 }
 
 void SymbolCommand::accept(Visitor& visitor) const {

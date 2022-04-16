@@ -78,6 +78,8 @@ class LIEF_API LoadCommand : public Object {
 
   void accept(Visitor& visitor) const override;
 
+  static bool is_linkedit_data(const LoadCommand& cmd);
+
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const LoadCommand& cmd);
 
   protected:

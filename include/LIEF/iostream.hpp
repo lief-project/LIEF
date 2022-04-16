@@ -43,6 +43,18 @@ class vector_iostream {
   vector_iostream& write(const std::string& s);
   vector_iostream& write(size_t count, uint8_t value);
   vector_iostream& write_sized_int(uint64_t value, size_t size);
+  vector_iostream& write(const vector_iostream& other);
+
+  template<class T, typename U = typename std::enable_if<!std::is_integral<T>::value>, T>
+  vector_iostream& write(const U& t) {
+    const auto pos = static_cast<size_t>(tellp());
+    if (raw_.size() < (pos + sizeof(T))) {
+      raw_.resize(pos + sizeof(T));
+    }
+    memcpy(raw_.data() + pos, &t, sizeof(T));
+    current_pos_ += sizeof(T);
+    return *this;
+  }
 
   template<typename T>
   vector_iostream& write_conv(const T& t);
@@ -67,6 +79,15 @@ class vector_iostream {
   vector_iostream& write(const std::array<T, size>& t) {
     for (T val : t) {
       write<T>(val);
+    }
+    return *this;
+  }
+
+
+  template<typename T>
+  vector_iostream& write(const std::vector<T>& elements) {
+    for (const T& e : elements) {
+      write(e);
     }
     return *this;
   }

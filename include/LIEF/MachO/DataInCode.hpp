@@ -22,6 +22,7 @@
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/span.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 #include "LIEF/MachO/DataCodeEntry.hpp"
@@ -29,6 +30,7 @@
 namespace LIEF {
 namespace MachO {
 class BinaryParser;
+class LinkEdit;
 
 namespace details {
 struct linkedit_data_command;
@@ -41,6 +43,7 @@ struct linkedit_data_command;
 //! @see DataCodeEntry
 class LIEF_API DataInCode : public LoadCommand {
   friend class BinaryParser;
+  friend class LinkEdit;
   public:
   using entries_t        = std::vector<DataCodeEntry>;
   using it_const_entries = const_ref_iterator<const entries_t&>;
@@ -71,6 +74,14 @@ class LIEF_API DataInCode : public LoadCommand {
   it_const_entries entries() const;
   it_entries entries();
 
+  inline span<uint8_t> content() {
+    return content_;
+  }
+
+  inline span<const uint8_t> content() const {
+    return content_;
+  }
+
   virtual ~DataInCode();
 
   bool operator==(const DataInCode& rhs) const;
@@ -83,9 +94,10 @@ class LIEF_API DataInCode : public LoadCommand {
   static bool classof(const LoadCommand* cmd);
 
   private:
-  uint32_t  data_offset_;
-  uint32_t  data_size_;
+  uint32_t  data_offset_ = 0;
+  uint32_t  data_size_   = 0;
   entries_t entries_;
+  span<uint8_t> content_;
 
 };
 

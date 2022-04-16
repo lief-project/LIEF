@@ -19,6 +19,18 @@
 
 #include "LIEF/MachO/LoadCommand.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
+
+#include "LIEF/MachO/DyldInfo.hpp"
+#include "LIEF/MachO/DyldExportsTrie.hpp"
+#include "LIEF/MachO/DyldChainedFixups.hpp"
+#include "LIEF/MachO/DynamicSymbolCommand.hpp"
+#include "LIEF/MachO/SegmentSplitInfo.hpp"
+#include "LIEF/MachO/FunctionStarts.hpp"
+#include "LIEF/MachO/DataInCode.hpp"
+#include "LIEF/MachO/SymbolCommand.hpp"
+#include "LIEF/MachO/CodeSignature.hpp"
+
+
 #include "MachO/Structures.hpp"
 
 namespace LIEF {
@@ -92,6 +104,20 @@ void LoadCommand::command_offset(uint64_t offset) {
 
 void LoadCommand::accept(Visitor& visitor) const {
   visitor.visit(*this);
+}
+
+
+bool LoadCommand::is_linkedit_data(const LoadCommand& cmd) {
+  if (DyldInfo::classof(&cmd))             return true;
+  if (DyldExportsTrie::classof(&cmd))      return true;
+  if (DyldChainedFixups::classof(&cmd))    return true;
+  if (DynamicSymbolCommand::classof(&cmd)) return true;
+  if (SegmentSplitInfo::classof(&cmd))     return true;
+  if (FunctionStarts::classof(&cmd))       return true;
+  if (DataInCode::classof(&cmd))           return true;
+  if (SymbolCommand::classof(&cmd))        return true;
+  if (CodeSignature::classof(&cmd))        return true;
+  return false;
 }
 
 bool LoadCommand::operator==(const LoadCommand& rhs) const {

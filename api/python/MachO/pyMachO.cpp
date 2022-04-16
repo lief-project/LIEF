@@ -46,6 +46,8 @@ void init_objects(py::module& m) {
   CREATE(DynamicSymbolCommand, m);
   CREATE(DylinkerCommand, m);
   CREATE(DyldInfo, m);
+  CREATE(DyldChainedFixups, m);
+  CREATE(DyldExportsTrie, m);
   CREATE(DylibCommand, m);
   CREATE(ThreadCommand, m);
   CREATE(RPathCommand, m);
@@ -53,10 +55,13 @@ void init_objects(py::module& m) {
   CREATE(Relocation, m);
   CREATE(RelocationObject, m);
   CREATE(RelocationDyld, m);
+  CREATE(RelocationFixup, m);
   CREATE(BindingInfo, m);
+  CREATE(DyldBindingInfo, m);
   CREATE(ExportInfo, m);
   CREATE(FunctionStarts, m);
   CREATE(CodeSignature, m);
+  CREATE(CodeSignatureDir, m);
   CREATE(DataInCode, m);
   CREATE(DataCodeEntry, m);
   CREATE(SourceVersion, m);
@@ -67,6 +72,10 @@ void init_objects(py::module& m) {
   CREATE(EncryptionInfo, m);
   CREATE(BuildVersion, m);
   CREATE(FilesetCommand, m);
+  CREATE(ChainedBindingInfo, m);
+  CREATE(TwoLevelHints, m);
+  CREATE(LinkerOptHint, m);
+  CREATE(Builder, m);
 }
 
 }

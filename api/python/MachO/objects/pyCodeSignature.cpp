@@ -48,13 +48,18 @@ void create<CodeSignature>(py::module& m) {
         static_cast<setter_t<uint32_t>>(&CodeSignature::data_size),
         "Size of the raw signature")
 
+    .def_property_readonly("content",
+        [] (const CodeSignature& self) {
+          span<const uint8_t> content = self.content();
+          return py::memoryview::from_memory(content.data(), content.size());
+        }, "The raw signature as a bytes stream")
+
     .def("__eq__", &CodeSignature::operator==)
     .def("__ne__", &CodeSignature::operator!=)
     .def("__hash__",
         [] (const CodeSignature& func) {
           return Hash::hash(func);
         })
-
 
     .def("__str__",
         [] (const CodeSignature& func)

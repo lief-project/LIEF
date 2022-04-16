@@ -91,6 +91,24 @@ std::unique_ptr<FatBinary> Parser::parse(const std::vector<uint8_t>& data,
   return std::unique_ptr<FatBinary>(new FatBinary{std::move(parser.binaries_)});
 }
 
+std::unique_ptr<FatBinary> Parser::parse(std::unique_ptr<BinaryStream> stream, const ParserConfig& conf) {
+  {
+    ScopedStream scoped(*stream, 0);
+    if (!is_macho(*stream)) {
+      return nullptr;
+    }
+  }
+
+  Parser parser;
+  parser.config_ = conf;
+  parser.stream_ = std::move(stream);
+
+  if (!parser.build()) {
+    return nullptr;
+  }
+
+  return std::unique_ptr<FatBinary>(new FatBinary{std::move(parser.binaries_)});
+}
 
 
 ok_error_t Parser::build_fat() {
@@ -121,8 +139,8 @@ ok_error_t Parser::build_fat() {
     const uint32_t size   = BinaryStream::swap_endian(arch.size);
 
     LIEF_DEBUG("Dealing with arch[{:d}]", i);
-    LIEF_DEBUG("    [{:d}].offset", offset);
-    LIEF_DEBUG("    [{:d}].size",   size);
+    LIEF_DEBUG("    [{:d}].offset: 0x{:06x}", i, offset);
+    LIEF_DEBUG("    [{:d}].size  : 0x{:06x}", i, size);
 
     std::vector<uint8_t> macho_data;
     if (!stream_->peek_data(macho_data, offset, size)) {

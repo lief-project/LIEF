@@ -34,30 +34,35 @@ namespace LIEF {
 namespace MachO {
 
 class BinaryParser;
-class Builder;
-class DyldInfo;
 class BuildVersion;
-class EncryptionInfo;
-class DyldEnvironment;
-class SubFramework;
-class SegmentSplitInfo;
-class DataInCode;
+class Builder;
 class CodeSignature;
-class RPathCommand;
-class ThreadCommand;
-class VersionMin;
-class SourceVersion;
-class FunctionStarts;
-class DynamicSymbolCommand;
-class MainCommand;
-class SymbolCommand;
-class Symbol;
-class UUIDCommand;
-class DylinkerCommand;
+class CodeSignatureDir;
+class DataInCode;
+class DyldChainedFixups;
+class DyldEnvironment;
+class DyldExportsTrie;
+class DyldInfo;
 class DylibCommand;
-class SegmentCommand;
-class LoadCommand;
+class DylinkerCommand;
+class DynamicSymbolCommand;
+class EncryptionInfo;
+class FunctionStarts;
 class Header;
+class LinkerOptHint;
+class LoadCommand;
+class MainCommand;
+class RPathCommand;
+class SegmentCommand;
+class SegmentSplitInfo;
+class SourceVersion;
+class SubFramework;
+class Symbol;
+class SymbolCommand;
+class ThreadCommand;
+class TwoLevelHints;
+class UUIDCommand;
+class VersionMin;
 
 //! Class which represents a MachO binary
 class LIEF_API Binary : public LIEF::Binary  {
@@ -67,7 +72,10 @@ class LIEF_API Binary : public LIEF::Binary  {
   friend class DyldInfo;
 
   public:
-  using range_t = std::pair<uint64_t, uint64_t>;
+  struct range_t {
+    uint64_t start = 0;
+    uint64_t end   = 0;
+  };
 
   //! Internal container for storing Mach-O LoadCommand
   using commands_t = std::vector<std::unique_ptr<LoadCommand>>;
@@ -509,9 +517,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! ``true`` if the binary is signed with the command `DYLIB_CODE_SIGN_DRS`
   bool has_code_signature_dir() const;
 
-  //! Return the MachO::CodeSignature if present, a nullptr otherwise.
-  CodeSignature* code_signature_dir();
-  const CodeSignature* code_signature_dir() const;
+  //! Return the MachO::CodeSignatureDir if present, a nullptr otherwise.
+  CodeSignatureDir* code_signature_dir();
+  const CodeSignatureDir* code_signature_dir() const;
 
   //! ``true`` if the binary has a MachO::DataInCode command.
   bool has_data_in_code() const;
@@ -548,12 +556,46 @@ class LIEF_API Binary : public LIEF::Binary  {
   DyldEnvironment* dyld_environment();
   const DyldEnvironment* dyld_environment() const;
 
-  //! ``true`` if the binary has Build Version command.
+  //! ``true`` if the binary has the BuildVersion command.
   bool has_build_version() const;
 
   //! Return the MachO::BuildVersion if present, a nullptr otherwise.
   BuildVersion* build_version();
   const BuildVersion* build_version() const;
+
+  //! ``true`` if the binary has the command LC_DYLD_CHAINED_FIXUPS.
+  bool has_dyld_chained_fixups() const;
+
+  //! Return the MachO::DyldChainedFixups if present, a nullptr otherwise.
+  DyldChainedFixups* dyld_chained_fixups();
+  const DyldChainedFixups* dyld_chained_fixups() const;
+
+  //! ``true`` if the binary has the command LC_DYLD_CHAINED_FIXUPS.
+  bool has_dyld_exports_trie() const;
+
+  //! Return the MachO::DyldChainedFixups if present, a nullptr otherwise.
+  DyldExportsTrie* dyld_exports_trie();
+  const DyldExportsTrie* dyld_exports_trie() const;
+
+  //! ``true`` if the binary has the command LC_TWO_LEVEL_HINTS.
+  bool has_two_level_hints() const;
+
+  //! Return the MachO::DyldChainedFixups if present, a nullptr otherwise.
+  TwoLevelHints* two_level_hints();
+  const TwoLevelHints* two_level_hints() const;
+
+  //! ``true`` if the binary has the command LC_LINKER_OPTIMIZATION_HINT.
+  bool has_linker_opt_hint() const;
+
+  //! Return the MachO::LinkerOptHint if present, a nullptr otherwise.
+  LinkerOptHint* linker_opt_hint();
+  const LinkerOptHint* linker_opt_hint() const;
+
+  //! Add a symbol in the export trie of the current binary
+  ExportInfo* add_exported_function(uint64_t address, const std::string& name);
+
+  //! Add a symbol in LC_SYMTAB command of the current binary
+  Symbol* add_local_symbol(uint64_t address, const std::string& name);
 
   template<class T>
   LIEF_LOCAL bool has_command() const;
@@ -565,7 +607,10 @@ class LIEF_API Binary : public LIEF::Binary  {
   LIEF_LOCAL const T* command() const;
 
   template<class T>
-  size_t count_commands() const;
+  LIEF_LOCAL size_t count_commands() const;
+
+  template<class CMD, class Func>
+  LIEF_LOCAL Binary& for_commands(Func f);
 
   LoadCommand*       operator[](LOAD_COMMAND_TYPES type);
   const LoadCommand* operator[](LOAD_COMMAND_TYPES type) const;
@@ -584,18 +629,23 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   ~Binary() override;
 
+  //! Shift the content located right after the Load commands table.
+  //! This operation can be used to add a new command
+  void shift(size_t value);
+
+  //! Shift the position on the __LINKEDIT data by `width`
+  ok_error_t shift_linkedit(size_t width);
+
   private:
   //! Default constructor
   Binary();
-
-  // Shift content next to LC table
-  void shift(size_t value);
 
   void shift_command(size_t width, size_t from_offset);
 
   //! Insert a Segment command in the cache field (segments_)
   //! and keep a consistent state of the indexes.
   size_t add_cached_segment(SegmentCommand& segment);
+  void refresh_seg_offset();
 
   template<class T>
   LIEF_LOCAL ok_error_t patch_relocation(Relocation& relocation, uint64_t from, uint64_t shift);

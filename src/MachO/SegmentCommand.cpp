@@ -29,126 +29,6 @@
 namespace LIEF {
 namespace MachO {
 
-/* The DyldInfo object has span fields (rebase_opcodes_, ...) that point to segment data.
- * When resizing the ``SegmentCommand.data_`` we can break this span as the internal buffer of ``data_``
- * might be relocated.
- *
- * The following helpers keep an internal consistent state of the data
- */
-
-inline ok_error_t update_span(span<uint8_t>& sp, uintptr_t original_data_addr,
-                              uintptr_t original_data_end, std::vector<uint8_t>& new_data)
-{
-  auto span_data_addr = reinterpret_cast<uintptr_t>(sp.data());
-  const bool is_encompassed = original_data_addr <= span_data_addr && span_data_addr < original_data_end;
-  if (!is_encompassed) {
-    return ok();
-  }
-
-  const uintptr_t original_size = original_data_end - original_data_addr;
-  /*
-   * Resize of the container without relocating
-   */
-  if (new_data.data() == sp.data() && new_data.size() >= original_size) {
-    return ok();
-  }
-
-  const uintptr_t delta = span_data_addr - original_data_addr;
-  const bool fit_in_data = delta < new_data.size() && (delta + original_size) <= new_data.size();
-  if (!fit_in_data) {
-    sp = {new_data.data(), static_cast<size_t>(0)};
-    return make_error_code(lief_errors::corrupted);
-  }
-
-  sp = {new_data.data() + delta, sp.size()};
-  return ok();
-}
-
-//! @param[in] offset    Offset where the insertion took place
-//! @param[in] size      Size of the inserted data
-inline ok_error_t update_span(span<uint8_t>& sp, uintptr_t original_data_addr, uintptr_t original_data_end,
-                        size_t offset, size_t size, std::vector<uint8_t>& new_data)
-{
-
-  const uintptr_t original_size = original_data_end - original_data_addr;
-  auto span_data_addr = reinterpret_cast<uintptr_t>(sp.data());
-  const bool is_encompassed = original_data_addr <= span_data_addr && span_data_addr < original_data_end;
-  if (!is_encompassed) {
-    return ok();
-  }
-  // Original relative offset of the span
-  const uintptr_t rel_offset = span_data_addr - original_data_addr;
-  uintptr_t delta_offset = 0;
-
-  // If the insertion took place BEFORE our span,
-  // we need to append the insertion size in the new span
-  if (offset <= rel_offset) {
-    delta_offset = size;
-  }
-
-  const uintptr_t delta_ptr = span_data_addr - original_data_addr;
-  const bool fit_in_data = (delta_ptr +  delta_offset)                  < new_data.size() &&
-                           (delta_ptr +  delta_offset + original_size) <= new_data.size();
-  if (!fit_in_data) {
-    sp = {new_data.data(), static_cast<size_t>(0)};
-    return make_error_code(lief_errors::corrupted);
-  }
-  sp = {new_data.data() + delta_ptr + delta_offset, sp.size()};
-  return ok();
-}
-
-template<typename Func>
-void SegmentCommand::update_data(Func f) {
-  const auto original_data_addr     = reinterpret_cast<uintptr_t>(data_.data());
-  const auto original_data_size     = static_cast<size_t>(data_.size());
-  const uintptr_t original_data_end = original_data_addr + original_data_size;
-  f(data_);
-  if (dyld_ != nullptr) {
-    if (!update_span(dyld_->rebase_opcodes_, original_data_addr, original_data_end, data_)) {
-      LIEF_WARN("Error while re-spanning rebase opcodes in segment {}", name_);
-    }
-    if (!update_span(dyld_->bind_opcodes_, original_data_addr, original_data_end, data_)) {
-      LIEF_WARN("Error while re-spanning bind opcodes in segment {}", name_);
-    }
-    if (!update_span(dyld_->weak_bind_opcodes_, original_data_addr, original_data_end, data_)) {
-      LIEF_WARN("Error while re-spanning weak bind opcodes in segment {}", name_);
-    }
-    if (!update_span(dyld_->lazy_bind_opcodes_, original_data_addr, original_data_end, data_)) {
-      LIEF_WARN("Error while re-spanning lazy bind opcodes in segment {}", name_);
-    }
-    if (!update_span(dyld_->export_trie_, original_data_addr, original_data_end, data_)) {
-      LIEF_WARN("Error while re-spanning the export trie in segment {}", name_);
-    }
-  }
-}
-
-template<typename Func>
-void SegmentCommand::update_data(Func f, size_t where, size_t size) {
-  const auto original_data_addr     = reinterpret_cast<uintptr_t>(data_.data());
-  const auto original_data_size     = static_cast<size_t>(data_.size());
-  const uintptr_t original_data_end = original_data_addr + original_data_size;
-  f(data_, where, size);
-  if (dyld_ != nullptr) {
-    if (!update_span(dyld_->rebase_opcodes_, original_data_addr, original_data_end, where, size, data_)) {
-      LIEF_WARN("Error while re-spanning rebase opcodes in segment {}", name_);
-    }
-    if (!update_span(dyld_->bind_opcodes_, original_data_addr, original_data_end, where, size, data_)) {
-      LIEF_WARN("Error while re-spanning bind opcodes in segment {}", name_);
-    }
-    if (!update_span(dyld_->weak_bind_opcodes_, original_data_addr, original_data_end, where, size, data_)) {
-      LIEF_WARN("Error while re-spanning weak bind opcodes in segment {}", name_);
-    }
-    if (!update_span(dyld_->lazy_bind_opcodes_, original_data_addr, original_data_end, where, size, data_)) {
-      LIEF_WARN("Error while re-spanning lazy bind opcodes in segment {}", name_);
-    }
-    if (!update_span(dyld_->export_trie_, original_data_addr, original_data_end, where, size, data_)) {
-      LIEF_WARN("Error while re-spanning the export trie in segment {}", name_);
-    }
-  }
-}
-
-
-
 SegmentCommand::SegmentCommand() = default;
 SegmentCommand::~SegmentCommand() = default;
 
@@ -231,7 +111,7 @@ void SegmentCommand::swap(SegmentCommand& other) {
   std::swap(data_,            other.data_);
   std::swap(sections_,        other.sections_);
   std::swap(relocations_,     other.relocations_);
-  std::swap(dyld_,            other.dyld_);
+  //std::swap(dyld_,            other.dyld_);
 }
 
 SegmentCommand* SegmentCommand::clone() const {
@@ -487,6 +367,14 @@ std::ostream& SegmentCommand::print(std::ostream& os) const {
   }
 
   return os;
+}
+
+void SegmentCommand::update_data(SegmentCommand::update_fnc_t f) {
+  f(data_);
+}
+
+void SegmentCommand::update_data(SegmentCommand::update_fnc_ws_t f, size_t where, size_t size) {
+  f(data_, where, size);
 }
 
 }

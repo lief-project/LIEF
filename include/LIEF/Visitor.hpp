@@ -163,7 +163,11 @@ LIEF_MACHO_FORWARD(Symbol)
 LIEF_MACHO_FORWARD(Relocation)
 LIEF_MACHO_FORWARD(RelocationObject)
 LIEF_MACHO_FORWARD(RelocationDyld)
+LIEF_MACHO_FORWARD(RelocationFixup)
 LIEF_MACHO_FORWARD(BindingInfo)
+LIEF_MACHO_FORWARD(DyldBindingInfo)
+LIEF_MACHO_FORWARD(DyldExportsTrie)
+LIEF_MACHO_FORWARD(ChainedBindingInfo)
 LIEF_MACHO_FORWARD(ExportInfo)
 LIEF_MACHO_FORWARD(FunctionStarts)
 LIEF_MACHO_FORWARD(CodeSignature)
@@ -178,6 +182,9 @@ LIEF_MACHO_FORWARD(EncryptionInfo)
 LIEF_MACHO_FORWARD(BuildVersion)
 LIEF_MACHO_FORWARD(BuildToolVersion)
 LIEF_MACHO_FORWARD(FilesetCommand)
+LIEF_MACHO_FORWARD(TwoLevelHints)
+LIEF_MACHO_FORWARD(CodeSignatureDir)
+LIEF_MACHO_FORWARD(LinkerOptHint)
 
 // OAT
 // ===============================
@@ -515,8 +522,20 @@ class LIEF_API Visitor {
   //! Method to visit a LIEF::MachO::RelocationDyld
   LIEF_MACHO_VISITABLE(RelocationDyld)
 
+  //! Method to visit a LIEF::MachO::RelocationFixup
+  LIEF_MACHO_VISITABLE(RelocationFixup)
+
   //! Method to visit a LIEF::MachO::BindingInfo
   LIEF_MACHO_VISITABLE(BindingInfo)
+
+  //! Method to visit a LIEF::MachO::DyldBindingInfo
+  LIEF_MACHO_VISITABLE(DyldBindingInfo)
+
+  //! Method to visit a LIEF::MachO::ChainedBindingInfo
+  LIEF_MACHO_VISITABLE(ChainedBindingInfo)
+
+  //! Method to visit a LIEF::MachO::DyldExportsTrie
+  LIEF_MACHO_VISITABLE(DyldExportsTrie)
 
   //! Method to visit a LIEF::MachO::ExportInfo
   LIEF_MACHO_VISITABLE(ExportInfo)
@@ -559,6 +578,15 @@ class LIEF_API Visitor {
 
   //! @brief Method to visit a LIEF::MachO:BuildToolVersion:
   LIEF_MACHO_VISITABLE(FilesetCommand)
+
+  //! Method to visit a LIEF::MachO::CodeSignatureDir
+  LIEF_MACHO_VISITABLE(CodeSignatureDir)
+
+  //! Method to visit a LIEF::MachO::TwoLevelHints
+  LIEF_MACHO_VISITABLE(TwoLevelHints)
+
+  //! Method to visit a LIEF::MachO::LinkerOptHint
+  LIEF_MACHO_VISITABLE(LinkerOptHint)
 
   // OAT part
   // ========

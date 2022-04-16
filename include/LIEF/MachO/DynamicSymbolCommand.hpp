@@ -16,6 +16,7 @@
 #ifndef LIEF_MACHO_DYNAMIC_SYMBOL_COMMAND_H_
 #define LIEF_MACHO_DYNAMIC_SYMBOL_COMMAND_H_
 #include <iostream>
+#include <set>
 
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"
@@ -24,15 +25,24 @@
 
 namespace LIEF {
 namespace MachO {
+class Symbol;
+class BinaryParser;
+class Builder;
+class Binary;
 
 namespace details {
 struct dysymtab_command;
 }
 
 //! Class that represents the LC_DYSYMTAB command.
+//!
 //! This command completes the LC_SYMTAB (SymbolCommand) to provide
 //! a better granularity over the symbols layout.
 class LIEF_API DynamicSymbolCommand : public LoadCommand {
+  friend class BinaryParser;
+  friend class Builder;
+  friend class Binary;
+
   public:
   DynamicSymbolCommand();
 
@@ -194,6 +204,8 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
 
   uint32_t local_relocation_offset_;
   uint32_t nb_local_relocations_;
+
+  std::vector<Symbol*> indirect_symbols_;
 };
 
 }

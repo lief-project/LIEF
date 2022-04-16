@@ -26,53 +26,25 @@
 namespace LIEF {
 namespace MachO {
 
-BindingInfo::~BindingInfo() = default;
-
 BindingInfo::BindingInfo() = default;
-
-BindingInfo::BindingInfo(BINDING_CLASS cls, BIND_TYPES type,
-    uint64_t address, int64_t addend, int32_t oridnal, bool is_weak, bool is_non_weak_definition,
-    uint64_t offset) :
-  class_{cls},
-  binding_type_{type},
-  library_ordinal_{oridnal},
-  addend_{addend},
-  is_weak_import_{is_weak},
-  is_non_weak_definition_{is_non_weak_definition},
-  address_{address},
-  offset_{offset}
-{}
-
-
-BindingInfo& BindingInfo::operator=(BindingInfo other) {
-  swap(other);
-  return *this;
-}
+BindingInfo::~BindingInfo() = default;
 
 BindingInfo::BindingInfo(const BindingInfo& other) :
   Object{other},
-  class_{other.class_},
-  binding_type_{other.binding_type_},
   library_ordinal_{other.library_ordinal_},
   addend_{other.addend_},
   is_weak_import_{other.is_weak_import_},
-  is_non_weak_definition_{other.is_non_weak_definition_},
-  address_{other.address_},
-  offset_{other.offset_}
+  address_{other.address_}
 {}
 
 void BindingInfo::swap(BindingInfo& other) {
-  std::swap(class_,                   other.class_);
-  std::swap(binding_type_,            other.binding_type_);
-  std::swap(segment_,                 other.segment_);
-  std::swap(symbol_,                  other.symbol_);
-  std::swap(library_ordinal_,         other.library_ordinal_);
-  std::swap(addend_,                  other.addend_);
-  std::swap(is_weak_import_,          other.is_weak_import_);
-  std::swap(is_non_weak_definition_,  other.is_non_weak_definition_);
-  std::swap(library_,                 other.library_);
-  std::swap(address_,                 other.address_);
-  std::swap(offset_,                  other.offset_);
+  std::swap(segment_,         other.segment_);
+  std::swap(symbol_,          other.symbol_);
+  std::swap(library_ordinal_, other.library_ordinal_);
+  std::swap(addend_,          other.addend_);
+  std::swap(is_weak_import_,  other.is_weak_import_);
+  std::swap(library_,         other.library_);
+  std::swap(address_,         other.address_);
 }
 
 
@@ -112,22 +84,6 @@ DylibCommand* BindingInfo::library() {
   return const_cast<DylibCommand*>(static_cast<const BindingInfo*>(this)->library());
 }
 
-BINDING_CLASS BindingInfo::binding_class() const {
-  return class_;
-}
-
-void BindingInfo::binding_class(BINDING_CLASS bind_class) {
-  class_ = bind_class;
-}
-
-BIND_TYPES BindingInfo::binding_type() const {
-  return binding_type_;
-}
-
-void BindingInfo::binding_type(BIND_TYPES type) {
-  binding_type_ = type;
-}
-
 int32_t BindingInfo::library_ordinal() const {
   return library_ordinal_;
 }
@@ -161,11 +117,6 @@ void BindingInfo::address(uint64_t addr) {
   address_ = addr;
 }
 
-
-uint64_t BindingInfo::original_offset() const {
-  return offset_;
-}
-
 void BindingInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
@@ -190,8 +141,6 @@ std::ostream& operator<<(std::ostream& os, const BindingInfo& binding_info) {
   os << std::hex;
   os << std::left;
 
-  os << std::setw(13) << "Class: " <<  to_string(binding_info.binding_class()) << std::endl;
-  os << std::setw(13) << "Type: " <<  to_string(binding_info.binding_type()) << std::endl;
   os << std::setw(13) << "Address: 0x" <<  std::hex << binding_info.address() << std::endl;
 
   if (binding_info.has_symbol()) {

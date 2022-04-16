@@ -65,6 +65,10 @@ Symbol::Symbol(const details::nlist_64& cmd) :
 }
 
 
+Symbol::Symbol(CATEGORY cat) :
+  category_{cat}
+{}
+
 void Symbol::swap(Symbol& other) {
   LIEF::Symbol::swap(other);
 
@@ -170,6 +174,17 @@ bool Symbol::operator==(const Symbol& rhs) const {
 
 bool Symbol::operator!=(const Symbol& rhs) const {
   return !(*this == rhs);
+}
+
+
+const Symbol& Symbol::indirect_abs() {
+  static Symbol abs(CATEGORY::INDIRECT_ABS);
+  return abs;
+}
+
+const Symbol& Symbol::indirect_local() {
+  static Symbol local(CATEGORY::INDIRECT_LOCAL);
+  return local;
 }
 
 

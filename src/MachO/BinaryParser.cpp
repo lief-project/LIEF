@@ -38,6 +38,7 @@
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
+#include "LIEF/MachO/DyldExportsTrie.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -89,7 +90,6 @@ std::unique_ptr<Binary> BinaryParser::parse(const std::vector<uint8_t>& data, ui
                                             const ParserConfig& conf)
 {
   if (!is_macho(data)) {
-    LIEF_ERR("{} is not a Mach-O file");
     return nullptr;
   }
 
@@ -133,7 +133,6 @@ std::unique_ptr<Binary> BinaryParser::parse(std::unique_ptr<BinaryStream> stream
 ok_error_t BinaryParser::init_and_parse() {
   LIEF_DEBUG("Parsing MachO");
   if (!stream_->can_read<uint32_t>()) {
-    LIEF_ERR("Can't read the MachO type");
     return make_error_code(lief_errors::read_error);
   }
   const auto type = static_cast<MACHO_TYPES>(*stream_->peek<uint32_t>());
@@ -147,7 +146,9 @@ ok_error_t BinaryParser::init_and_parse() {
 }
 
 
-ok_error_t BinaryParser::parse_export_trie(uint64_t start, uint64_t end, const std::string& prefix) {
+ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports, uint64_t start,
+                                           uint64_t end, const std::string& prefix)
+{
   if (stream_->pos() >= end) {
     return make_error_code(lief_errors::read_error);
   }
@@ -273,12 +274,8 @@ ok_error_t BinaryParser::parse_export_trie(uint64_t start, uint64_t end, const s
       }
       export_info->other_ = *other;
     }
-    DyldInfo* dyld_info = binary_->dyld_info();
-    if (dyld_info == nullptr) {
-      LIEF_ERR("Missing DyldInfo in the main bianry");
-      return make_error_code(lief_errors::not_found);
-    }
-    dyld_info->export_info_.push_back(std::move(export_info));
+
+    exports.push_back(std::move(export_info));
 
   }
   stream_->setpos(children_offset);
@@ -312,14 +309,51 @@ ok_error_t BinaryParser::parse_export_trie(uint64_t start, uint64_t end, const s
     visited_.insert(start + child_node_offet);
     size_t current_pos = stream_->pos();
     stream_->setpos(start + child_node_offet);
-    parse_export_trie(start, end, name);
+    parse_export_trie(exports, start, end, name);
     stream_->setpos(current_pos);
   }
   return ok();
 }
 
-ok_error_t BinaryParser::parse_dyldinfo_export() {
+ok_error_t BinaryParser::parse_dyld_exports() {
+  DyldExportsTrie* exports = binary_->dyld_exports_trie();
+  if (exports == nullptr) {
+    LIEF_ERR("Missing LC_DYLD_EXPORTS_TRIE in the main binary");
+    return make_error_code(lief_errors::not_found);
+  }
 
+  uint32_t offset = exports->data_offset();
+  uint32_t size   = exports->data_size();
+
+  if (offset == 0 || size == 0) {
+    return ok();
+  }
+
+  uint64_t end_offset = offset + size;
+
+  SegmentCommand* linkedit = binary_->segment_from_offset(offset);
+  if (linkedit == nullptr) {
+    LIEF_WARN("Can't find the segment that contains the export trie");
+    return make_error_code(lief_errors::not_found);
+  }
+
+  span<uint8_t> content = linkedit->writable_content();
+  const uint64_t rel_offset = offset - linkedit->file_offset();
+  if (rel_offset > content.size() || (rel_offset + size) > content.size()) {
+    LIEF_ERR("The export trie is out of bounds of the segment {}", linkedit->name());
+    return make_error_code(lief_errors::read_out_of_bound);
+  }
+
+  exports->content_ = content.subspan(rel_offset, size);
+
+  stream_->setpos(offset);
+  parse_export_trie(exports->export_info_, offset, end_offset, "");
+  return ok();
+
+}
+
+ok_error_t BinaryParser::parse_dyldinfo_export() {
+  LIEF_DEBUG("[+] LC_DYLD_INFO.exports");
   DyldInfo* dyldinfo = binary_->dyld_info();
   if (dyldinfo == nullptr) {
     LIEF_ERR("Missing DyldInfo in the main binary");
@@ -351,7 +385,7 @@ ok_error_t BinaryParser::parse_dyldinfo_export() {
   dyldinfo->export_trie_ = content.subspan(rel_offset, size);
 
   stream_->setpos(offset);
-  parse_export_trie(offset, end_offset, "");
+  parse_export_trie(dyldinfo->export_info_, offset, end_offset, "");
   return ok();
 }
 

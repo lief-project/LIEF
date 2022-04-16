@@ -49,6 +49,12 @@ void create<SegmentSplitInfo>(py::module& m) {
         static_cast<setter_t<uint32_t>>(&SegmentSplitInfo::data_size),
         "Size of the raw data")
 
+    .def_property_readonly("content",
+        [] (const SegmentSplitInfo& self) {
+          span<const uint8_t> content = self.content();
+          return py::memoryview::from_memory(content.data(), content.size());
+        }, "The original content as a bytes stream")
+
     .def("__eq__", &SegmentSplitInfo::operator==)
     .def("__ne__", &SegmentSplitInfo::operator!=)
     .def("__hash__",

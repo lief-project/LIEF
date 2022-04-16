@@ -16,6 +16,7 @@
 #include "pyMachO.hpp"
 
 #include "LIEF/MachO/utils.hpp"
+#include "LIEF/MachO/FatBinary.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -51,6 +52,18 @@ void init_utils(py::module& m) {
         },
         "Check the layout of the given Mach-O binary. It checks if it can be signed "
         "according to ``cctools-921/libstuff/checkout.c``",
+        "file"_a);
+
+    m.def("check_layout",
+        [] (const FatBinary& bin) {
+          std::string on_error;
+          bool is_valid = check_layout(bin, &on_error);
+          return std::pair<bool, std::string>{is_valid, on_error};
+        },
+        R"delim(
+        Check the layout of the given FAT Mach-O by checking individually the layout
+        of the binaries embedded in the FAT.
+        )delim",
         "file"_a);
 
 

@@ -38,6 +38,7 @@ class BinaryParser;
 //! @see:
 //!   * MachO::RelocationObject
 //!   * MachO::RelocationDyld
+//!   * MachO::RelocationFixup
 class LIEF_API Relocation : public LIEF::Relocation {
 
   friend class BinaryParser;

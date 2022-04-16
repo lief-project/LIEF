@@ -56,6 +56,8 @@ LIEF_API const char* to_string(EXPORT_SYMBOL_FLAGS e);
 LIEF_API const char* to_string(DataCodeEntry::TYPES e);
 LIEF_API const char* to_string(BuildVersion::PLATFORMS e);
 LIEF_API const char* to_string(BuildToolVersion::TOOLS e);
+LIEF_API const char* to_string(DYLD_CHAINED_PTR_FORMAT e);
+LIEF_API const char* to_string(DYLD_CHAINED_FORMAT e);
 
 
 } // namespace MachO

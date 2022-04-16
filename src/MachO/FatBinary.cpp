@@ -142,8 +142,9 @@ void FatBinary::write(const std::string& filename) {
 }
 
 std::vector<uint8_t> FatBinary::raw() {
-  Builder builder{*this};
-  return builder.get_build();
+  std::vector<uint8_t> buffer;
+  Builder::write(*this, buffer);
+  return buffer;
 }
 
 std::ostream& operator<<(std::ostream& os, const FatBinary& fatbinary) {

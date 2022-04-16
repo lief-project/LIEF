@@ -46,7 +46,11 @@ void create<DyldInfo>(py::module& m) {
       )delim");
 
   init_ref_iterator<DyldInfo::it_binding_info>(dyld, "it_binding_info");
-  init_ref_iterator<DyldInfo::it_export_info>(dyld, "it_export_info");
+
+
+  try {
+    init_ref_iterator<DyldInfo::it_export_info>(dyld, "it_export_info");
+  } catch (const std::runtime_error&) { }
 
   dyld
     .def_property("rebase",

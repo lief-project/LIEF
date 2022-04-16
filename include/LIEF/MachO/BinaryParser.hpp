@@ -34,13 +34,35 @@
 
 namespace LIEF {
 class BinaryStream;
+class SpanStream;
 
 namespace MachO {
-class Section;
-class Parser;
-struct ParserConfig;
+class CodeSignature;
+class CodeSignatureDir;
+class DataInCode;
+class DyldChainedFixups;
 class DylibCommand;
+class DynamicSymbolCommand;
+class ExportInfo;
+class FunctionStarts;
+class LinkerOptHint;
+class Parser;
+class Section;
+class SegmentCommand;
+class SegmentSplitInfo;
 class Symbol;
+class SymbolCommand;
+class TwoLevelHints;
+struct ParserConfig;
+
+
+namespace details {
+struct dyld_chained_starts_in_segment;
+struct dyld_chained_fixups_header;
+union dyld_chained_ptr_arm64e;
+union dyld_chained_ptr_generic64;
+union dyld_chained_ptr_generic32;
+}
 
 //! Class used to parse a **single** binary (i.e. non-FAT)
 //!
@@ -75,6 +97,7 @@ class LIEF_API BinaryParser : public LIEF::Parser {
   ~BinaryParser();
 
   private:
+  using exports_list_t = std::vector<std::unique_ptr<ExportInfo>>;
   BinaryParser();
 
   ok_error_t init_and_parse();
@@ -126,11 +149,85 @@ class LIEF_API BinaryParser : public LIEF::Parser {
   ok_error_t do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment_offset,
                        const it_opaque_segments segments);
 
+  /*
+   * This set of functions are related to the parsing of LC_DYLD_CHAINED_FIXUPS
+   */
+
+  template<class MACHO_T>
+  ok_error_t parse_chained_payload(SpanStream& stream);
+
+  template<class MACHO_T>
+  ok_error_t parse_chained_import(const details::dyld_chained_fixups_header& header,
+                                  SpanStream& stream, SpanStream& symbol_pool);
+  template<class MACHO_T>
+  ok_error_t parse_chained_fixup(const details::dyld_chained_fixups_header& header,
+                                 SpanStream& stream);
+
+  template<class MACHO_T>
+  ok_error_t parse_fixup_seg(SpanStream& stream, uint32_t seg_info_offset,
+                             uint64_t offset, uint32_t seg_idx);
+
+  template<class MACHO_T>
+  ok_error_t do_fixup(DYLD_CHAINED_FORMAT fmt, int32_t ord, const std::string& symbol_name,
+                      int64_t addend, bool is_weak);
+
+  template<class MACHO_T>
+  ok_error_t process_fixup(SegmentCommand& segment, uint64_t chain_offset,
+                           const details::dyld_chained_starts_in_segment& seg_info);
+
+  template<class MACHO_T>
+  result<uint64_t> next_chain(uint64_t chain_offset, const details::dyld_chained_starts_in_segment& seg_info);
+
+  template<class MACHO_T>
+  ok_error_t walk_chain(SegmentCommand& segment, uint64_t chain_offset,
+                        const details::dyld_chained_starts_in_segment& seg_info);
+
+  ok_error_t do_chained_fixup(SegmentCommand& segment, uint32_t chain_offset,
+                              const details::dyld_chained_starts_in_segment& seg_info,
+                              const details::dyld_chained_ptr_arm64e& fixup);
+
+  ok_error_t do_chained_fixup(SegmentCommand& segment, uint32_t chain_offset,
+                              const details::dyld_chained_starts_in_segment& seg_info,
+                              const details::dyld_chained_ptr_generic64& fixup);
+
+  ok_error_t do_chained_fixup(SegmentCommand& segment, uint32_t chain_offset,
+                              const details::dyld_chained_starts_in_segment& seg_info,
+                              const details::dyld_chained_ptr_generic32 & fixup);
+
+  template<class MACHO_T>
+  ok_error_t post_process(SymbolCommand& cmd);
+
+  template<class MACHO_T>
+  ok_error_t post_process(FunctionStarts& cmd);
+
+  template<class MACHO_T>
+  ok_error_t post_process(DataInCode& cmd);
+
+  template<class MACHO_T>
+  ok_error_t post_process(SegmentSplitInfo& cmd);
+
+  template<class MACHO_T>
+  ok_error_t post_process(DynamicSymbolCommand& cmd);
+
+  template<class MACHO_T>
+  ok_error_t post_process(LinkerOptHint& cmd);
+
+  template<class MACHO_T>
+  ok_error_t post_process(TwoLevelHints& cmd);
+
+  template<class MACHO_T>
+  ok_error_t post_process(CodeSignature& cmd);
+
+  template<class MACHO_T>
+  ok_error_t post_process(CodeSignatureDir& cmd);
+
   // Exports
   // -------
   ok_error_t parse_dyldinfo_export();
+  ok_error_t parse_dyld_exports();
 
-  ok_error_t parse_export_trie(uint64_t start, uint64_t end, const std::string& prefix);
+  ok_error_t parse_export_trie(exports_list_t& exports, uint64_t start,
+                               uint64_t end, const std::string& prefix);
 
   std::unique_ptr<BinaryStream>  stream_;
   std::unique_ptr<Binary>        binary_;
@@ -143,6 +240,9 @@ class LIEF_API BinaryParser : public LIEF::Parser {
 
   std::vector<DylibCommand*> binding_libs_;
   std::set<uint64_t> dyld_reloc_addrs_;
+
+  // Cache of DyldChainedFixups
+  DyldChainedFixups* chained_fixups_ = nullptr;
 };
 
 

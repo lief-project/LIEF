@@ -76,8 +76,7 @@ bool CodeSignature::operator!=(const CodeSignature& rhs) const {
 bool CodeSignature::classof(const LoadCommand* cmd) {
   // This must be sync with BinaryParser.tcc
   const LOAD_COMMAND_TYPES type = cmd->command();
-  return type == LOAD_COMMAND_TYPES::LC_DYLIB_CODE_SIGN_DRS ||
-         type == LOAD_COMMAND_TYPES::LC_CODE_SIGNATURE;
+  return type == LOAD_COMMAND_TYPES::LC_CODE_SIGNATURE;
 }
 
 

@@ -23,10 +23,13 @@
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"
 
+#include "LIEF/span.hpp"
 #include "LIEF/MachO/LoadCommand.hpp"
 
 namespace LIEF {
 namespace MachO {
+class BinaryParser;
+class LinkEdit;
 
 namespace details {
 struct linkedit_data_command;
@@ -37,6 +40,9 @@ struct linkedit_data_command;
 //!
 //! This command is an array of ULEB128 encoded values
 class LIEF_API FunctionStarts : public LoadCommand {
+  friend class BinaryParser;
+  friend class LinkEdit;
+
   public:
   FunctionStarts();
   FunctionStarts(const details::linkedit_data_command& cmd);
@@ -68,6 +74,14 @@ class LIEF_API FunctionStarts : public LoadCommand {
   void data_size(uint32_t size);
   void functions(const std::vector<uint64_t>& funcs);
 
+  inline span<const uint8_t> content() const {
+    return content_;
+  }
+
+  inline span<uint8_t> content() {
+    return content_;
+  }
+
   virtual ~FunctionStarts();
 
   bool operator==(const FunctionStarts& rhs) const;
@@ -79,9 +93,11 @@ class LIEF_API FunctionStarts : public LoadCommand {
 
   static bool classof(const LoadCommand* cmd);
 
+
   private:
-  uint32_t data_offset_;
-  uint32_t data_size_;
+  uint32_t data_offset_ = 0;
+  uint32_t data_size_ = 0;
+  span<uint8_t> content_;
   std::vector<uint64_t> functions_;
 };
 

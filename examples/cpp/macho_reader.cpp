@@ -71,7 +71,8 @@ int main(int argc, char **argv) {
     std::cerr << "Usage: " << argv[0] << " <MachO binary>" << '\n';
     return -1;
   }
-  std::unique_ptr<FatBinary> binaries{Parser::parse(argv[1])};
+  std::unique_ptr<FatBinary> binaries = Parser::parse(argv[1]);
+
   for (const Binary& binary : *binaries) {
     print_binary(binary);
     std::cout << '\n';

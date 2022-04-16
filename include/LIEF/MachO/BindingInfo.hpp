@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_MACHO_BINDING_INFO_COMMAND_H_
-#define LIEF_MACHO_BINDING_INFO_COMMAND_H_
+#ifndef LIEF_MACHO_BINDING_INFO_H
+#define LIEF_MACHO_BINDING_INFO_H
 #include <iostream>
 
 #include "LIEF/visibility.h"
@@ -23,7 +23,6 @@
 
 #include "LIEF/MachO/enums.hpp"
 
-
 namespace LIEF {
 namespace MachO {
 class DylibCommand;
@@ -31,24 +30,26 @@ class SegmentCommand;
 class Symbol;
 class BinaryParser;
 
-//! Class that provides an interface over an entry in DyldInfo structure
+//! Class that provides an interface over a *binding* operation.
 //!
 //! This class does not represent a structure that exists in the Mach-O format
-//! specifications but it provides a *view* on an entry of the Dyld binding opcodes.
+//! specifications but it provides a *view* of a binding operation that is performed
+//! by the Dyld binding bytecode (`LC_DYLD_INFO`) or the Dyld chained fixups (`DYLD_CHAINED_FIXUPS`)
+//!
+//! See: LIEF::MachO::ChainedBindingInfo, LIEF::MachO::DyldBindingInfo
 class LIEF_API BindingInfo : public Object {
 
   friend class BinaryParser;
 
   public:
-  BindingInfo();
-  BindingInfo(BINDING_CLASS cls, BIND_TYPES type,
-      uint64_t address,
-      int64_t addend = 0,
-      int32_t oridnal = 0,
-      bool is_weak = false,
-      bool is_non_weak_definition = false, uint64_t offset = 0);
+  enum class TYPES {
+    UNKNOWN = 0,
+    DYLD_INFO,  /// Binding associated with the Dyld info opcodes
+    CHAINED,    /// Binding associated with the chained fixups
+  };
 
-  BindingInfo& operator=(BindingInfo other);
+  BindingInfo();
+
   BindingInfo(const BindingInfo& other);
   void swap(BindingInfo& other);
 
@@ -77,16 +78,8 @@ class LIEF_API BindingInfo : public Object {
   Symbol*       symbol();
 
   //! Address of the binding
-  uint64_t address() const;
-  void address(uint64_t addr);
-
-  //! Class of the binding (weak, lazy, ...)
-  BINDING_CLASS binding_class() const;
-  void binding_class(BINDING_CLASS bind_class);
-
-  //! Type of the binding. Most of the times it's BIND_TYPES::BIND_TYPE_POINTER
-  BIND_TYPES binding_type() const;
-  void binding_type(BIND_TYPES type);
+  virtual uint64_t address() const;
+  virtual void address(uint64_t addr);
 
   int32_t library_ordinal() const;
   void library_ordinal(int32_t ordinal);
@@ -98,18 +91,11 @@ class LIEF_API BindingInfo : public Object {
   bool is_weak_import() const;
   void set_weak_import(bool val = true);
 
-  inline bool is_non_weak_definition() const {
-    return this->is_non_weak_definition_;
-  }
+  //! The type of the binding. This type provides the origin
+  //! of the binding (LC_DYLD_INFO or LC_DYLD_CHAINED_FIXUPS)
+  virtual TYPES type() const = 0;
 
-  inline void set_non_weak_definition(bool val) {
-    this->is_non_weak_definition_ = val;
-  }
-
-  //! Original relative offset of the binding opcodes
-  uint64_t original_offset() const;
-
-  virtual ~BindingInfo();
+  ~BindingInfo() override;
 
   bool operator==(const BindingInfo& rhs) const;
   bool operator!=(const BindingInfo& rhs) const;
@@ -118,18 +104,14 @@ class LIEF_API BindingInfo : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const BindingInfo& binding_info);
 
-  private:
-  BINDING_CLASS   class_ = BINDING_CLASS::BIND_CLASS_STANDARD;
-  BIND_TYPES      binding_type_ = BIND_TYPES::BIND_TYPE_POINTER;
+  protected:
   SegmentCommand* segment_ = nullptr;
   Symbol*         symbol_ = nullptr;
   int32_t         library_ordinal_ = 0;
   int64_t         addend_ = 0;
   bool            is_weak_import_ = false;
-  bool            is_non_weak_definition_ = false;
   DylibCommand*   library_ = nullptr;
   uint64_t        address_ = 0;
-  uint64_t        offset_ = 0;
 };
 
 }

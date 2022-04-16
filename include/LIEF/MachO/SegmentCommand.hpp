@@ -175,7 +175,7 @@ class LIEF_API SegmentCommand : public LoadCommand {
 
   static bool classof(const LoadCommand* cmd);
 
-  private:
+  protected:
   inline span<uint8_t> writable_content() {
     return data_;
   }
@@ -187,11 +187,11 @@ class LIEF_API SegmentCommand : public LoadCommand {
     content_resize(data_.size() + width);
   }
 
-  template<typename Func>
-  LIEF_LOCAL void update_data(Func f);
+  using update_fnc_t    = std::function<void(std::vector<uint8_t>&)>;
+  using update_fnc_ws_t = std::function<void(std::vector<uint8_t>&, size_t, size_t)>;
 
-  template<typename Func>
-  LIEF_LOCAL void update_data(Func f, size_t where, size_t size);
+  LIEF_LOCAL virtual void update_data(update_fnc_t f);
+  LIEF_LOCAL virtual void update_data(update_fnc_ws_t f, size_t where, size_t size);
 
   std::string name_;
   uint64_t virtual_address_ = 0;
@@ -206,8 +206,6 @@ class LIEF_API SegmentCommand : public LoadCommand {
   content_t data_;
   sections_t sections_;
   relocations_t relocations_;
-
-  DyldInfo* dyld_ = nullptr; //x-ref to keep the spans in a consistent state
 };
 
 }

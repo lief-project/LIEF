@@ -232,9 +232,14 @@ void vector_iostream::set_endian_swap(bool swap) {
 }
 
 vector_iostream& vector_iostream::write(size_t count, uint8_t value) {
-    raw_.insert(std::end(raw_), count, value);
-    current_pos_ += count;
-    return *this;
+  raw_.insert(std::end(raw_), count, value);
+  current_pos_ += count;
+  return *this;
+}
+
+
+vector_iostream& vector_iostream::write(const vector_iostream& other) {
+  return write(other.raw());
 }
 
 
