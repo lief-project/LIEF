@@ -192,7 +192,13 @@ class BinaryStream {
       if (dst == nullptr) {
         return make_error_code(lief_errors::read_error);
       }
+
       const void* ptr = *raw;
+
+      if (ptr == nullptr) {
+        return make_error_code(lief_errors::read_error);
+      }
+
       memcpy(dst, ptr, size);
       return ok();
     }
