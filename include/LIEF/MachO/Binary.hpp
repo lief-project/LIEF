@@ -52,6 +52,7 @@ class Header;
 class LinkerOptHint;
 class LoadCommand;
 class MainCommand;
+class Parser;
 class RPathCommand;
 class SegmentCommand;
 class SegmentSplitInfo;
@@ -67,6 +68,7 @@ class VersionMin;
 //! Class which represents a MachO binary
 class LIEF_API Binary : public LIEF::Binary  {
 
+  friend class Parser;
   friend class BinaryParser;
   friend class Builder;
   friend class DyldInfo;
@@ -636,6 +638,14 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Shift the position on the __LINKEDIT data by `width`
   ok_error_t shift_linkedit(size_t width);
 
+  //! If this Mach-O binary has been parsed from memory,
+  //! it returns the in-memory base address of this binary.
+  //!
+  //! Otherwise, it returns 0
+  inline uint64_t memory_base_address() const {
+    return in_memory_base_addr_;
+  }
+
   private:
   //! Default constructor
   Binary();
@@ -695,10 +705,10 @@ class LIEF_API Binary : public LIEF::Binary  {
   // offset_to_virtual_address
   std::map<uint64_t, SegmentCommand*> offset_seg_;
 
-
   protected:
   uint64_t fat_offset_ = 0;
   uint64_t fileset_offset_ = 0;
+  uint64_t in_memory_base_addr_ = 0;
 };
 
 } // namespace MachO
