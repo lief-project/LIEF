@@ -553,6 +553,12 @@ const SegmentCommand* Binary::segment_from_offset(uint64_t offset) const {
       return seg;
     }
   }
+
+  if (it == it_begin) {
+    /* It did not pass the first check */
+    return nullptr;
+  }
+
   --it;
 
   SegmentCommand* seg = it->second;
