@@ -498,13 +498,18 @@ ok_error_t BinaryParser::parse_load_commands() {
             }
             auto symbol = std::make_unique<Symbol>(*nlist);
             const uint32_t str_idx = nlist->n_strx;
-            if (str_idx > 0) {
-              if (auto name = stream_->peek_string_at(cmd->stroff + str_idx)) {
-                symbol->name(*name);
-                memoized_symbols_[*name] = symbol.get();
-              } else {
-                LIEF_WARN("Can't read symbol's name for nlist #{}", i);
+            const auto end_strings = cmd->stroff + cmd->strsize;
+            if (cmd->stroff + str_idx < end_strings) {
+              if (str_idx > 0) {
+                if (auto name = stream_->peek_string_at(cmd->stroff + str_idx)) {
+                  symbol->name(*name);
+                  memoized_symbols_[*name] = symbol.get();
+                } else {
+                  LIEF_WARN("Can't read symbol's name for nlist #{}", i);
+                }
               }
+            } else {
+              LIEF_ERR("nlist[{}].str_idx seems corrupted (0x{:08x})", j, str_idx);
             }
             memoized_symbols_by_address_[symbol->value()] = symbol.get();
             binary_->symbols_.push_back(std::move(symbol));
