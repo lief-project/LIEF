@@ -1449,7 +1449,12 @@ std::vector<uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_a
   const uint64_t offset = rva - section->virtual_address();
   uint64_t checked_size = size;
   if ((offset + checked_size) > content.size()) {
-    checked_size = checked_size - (offset + checked_size - content.size());
+    uint64_t delta_off = offset + checked_size - content.size();
+    if (checked_size < delta_off) {
+        LIEF_ERR("Can't access section data due to a section end overflow.");
+        return {};
+    }
+    checked_size = checked_size - delta_off;
   }
 
   return {content.data() + offset, content.data() + offset + checked_size};
