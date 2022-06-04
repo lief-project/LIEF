@@ -34,8 +34,8 @@ void check(std::unique_ptr<LIEF::MachO::FatBinary> bin) {
       target->remove_signature();
     }
     {
-      LIEF::MachO::Builder builder{fit};
-      builder.build();
+      std::vector<uint8_t> out;
+      LIEF::MachO::Builder::write(fit, out);
     }
   }
 }
