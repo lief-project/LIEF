@@ -312,9 +312,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Return the section from the segment with the name
   //! given in the first parameter and with the section's name provided in the
   //! second parameter. If the section cannot be found, it returns a nullptr
-  Section* get_section(const std::string& sgname, const std::string& secname);
+  Section* get_section(const std::string& segname, const std::string& secname);
 
-  const Section* get_section(const std::string& sgname, const std::string& secname) const;
+  const Section* get_section(const std::string& segname, const std::string& secname) const;
 
   //! Check if a segment with the given name exists
   bool has_segment(const std::string& name) const;
