@@ -39,6 +39,14 @@ Changelog
 
       sec = bin.get_section("__DATA", "__objc_metadata")
 
+  * Add API to remove a :class:`~lief.MachO.Section` from a specified segment's name and section's name.
+
+  :Example:
+
+    .. code-block:: python
+
+      sec = bin.remove_section("__DATA", "__objc_metadata")
+
 :General Design:
 
   * Remove the exceptions

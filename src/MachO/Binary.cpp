@@ -1329,6 +1329,22 @@ void Binary::remove_section(const std::string& name, bool clear) {
     return;
   }
 
+  remove_section(segment->name(), name, clear);
+}
+
+void Binary::remove_section(const std::string& segname, const std::string& secname, bool clear) {
+  Section* sec_to_delete = get_section(segname, secname);
+  if (sec_to_delete == nullptr) {
+    LIEF_ERR("Can't find section '{}' in segment '{}'", secname, segname);
+    return;
+  }
+  SegmentCommand* segment = sec_to_delete->segment();
+  if (segment == nullptr) {
+    LIEF_ERR("The section {} is in an inconsistent state (missing segment). Can't remove it",
+             sec_to_delete->name());
+    return;
+  }
+
   if (clear) {
     sec_to_delete->clear(0);
   }

@@ -300,6 +300,27 @@ def test_remove_section(tmp_path):
         print(stdout)
         assert re.search(r'Hello World', stdout) is not None
 
+def test_remove_section_with_segment_name(tmp_path):
+    bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_section_to_remove.bin"))
+    original = lief.parse(bin_path.as_posix())
+    output = f"{tmp_path}/{bin_path.name}"
+
+    original.remove_section("__DATA", "__to_remove")
+
+    original.write(output)
+    new = lief.parse(output)
+
+    checked, err = lief.MachO.check_layout(new)
+    assert checked, err
+
+    assert new.get_section("__DATA", "__to_remove") is None
+
+    if is_osx():
+        assert run_program(bin_path.as_posix())
+        stdout = run_program(output)
+
+        print(stdout)
+        assert re.search(r'Hello World', stdout) is not None
 
 def test_objc_arm64(tmp_path):
     bin_path = pathlib.Path(get_sample("MachO/test_objc_arm64.macho"))

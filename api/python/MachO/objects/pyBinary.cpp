@@ -475,6 +475,19 @@ void create<Binary>(py::module& m) {
         "Remove the " RST_CLASS_REF(lief.MachO.LoadCommand) " at the given ``index``",
         "index"_a)
 
+    .def("remove_section",
+        static_cast<void (Binary::*)(const std::string&, bool)>(&Binary::remove_section),
+        "Remove the section with the given name",
+        "name"_a, "clear"_a = false)
+
+    .def("remove_section",
+        py::overload_cast<const std::string&, const std::string&, bool>(&Binary::remove_section),
+        R"delim(
+        Remove the section from the segment with the name
+        given in the first parameter and with the section's name provided in the
+        second parameter.)delim",
+        "segname"_a, "secname"_a, "clear"_a = false)
+
     .def("remove_signature",
         static_cast<bool (Binary::*)(void)>(&Binary::remove_signature),
         "Remove the " RST_CLASS_REF(lief.MachO.CodeSignature) " (if any)")
