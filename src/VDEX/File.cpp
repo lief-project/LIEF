@@ -17,7 +17,10 @@
 #include "LIEF/VDEX/File.hpp"
 #include "LIEF/VDEX/hash.hpp"
 #include "LIEF/DEX/File.hpp"
+
+#if defined(LIEF_JSON_SUPPORT)
 #include "visitors/json.hpp"
+#endif
 
 namespace LIEF {
 namespace VDEX {
