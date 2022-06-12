@@ -271,6 +271,12 @@ class TestAuthenticode(TestCase):
         self.assertEqual(P, 0)
         self.assertEqual(Q, 0)
 
+    def test_issue_703(self):
+        sig: lief.PE.Signature = lief.PE.Signature.parse(get_sample("pkcs7/cert_issue_703.der"))
+        self.assertEqual(sig.certificates[0].issuer, "CN=TxExoTiQueMoDz\Tx ExoTiQueMoDz")
+        self.assertEqual(sig.certificates[0].subject, "CN=TxExoTiQueMoDz\Tx ExoTiQueMoDz")
+
+
 
 if __name__ == '__main__':
 

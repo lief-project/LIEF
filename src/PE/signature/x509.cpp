@@ -20,6 +20,7 @@
 #include <map>
 #include <fstream>
 
+#include <mbedtls/platform.h>
 #include "mbedtls/x509_crt.h"
 #include "mbedtls/asn1.h"
 #include "mbedtls/oid.h"
@@ -35,7 +36,7 @@
 #include "LIEF/utils.hpp"
 
 namespace {
-  // Copy this function from mbedtls sinc it is not exported
+  // Copy this function from mbedtls since it is not exported
   inline int x509_get_current_time( mbedtls_x509_time *now )
   {
       struct tm *lt, tm_buf;
@@ -58,6 +59,75 @@ namespace {
 
       return( ret );
   }
+
+/* mbedtls escapes non printable character with '?' which can be an issue as described
+ * in https://github.com/lief-project/LIEF/issues/703.
+ * As there is no way to programmatically tweak this behavior, here is a copy
+ * of the original function (from <src>/library/x509.c) which skips the non printable character.
+ * It seems that Windows follows this behavior as descbied in the Github's issue
+ */
+int lief_mbedtls_x509_dn_gets( char *buf, size_t size, const mbedtls_x509_name *dn )
+{
+    int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
+    size_t i, n;
+    unsigned char c, merge = 0;
+    const mbedtls_x509_name *name;
+    const char *short_name = NULL;
+    //char s[MBEDTLS_X509_MAX_DN_NAME_SIZE];
+    char *p;
+
+    //memset( s, 0, sizeof( s ) );
+
+    name = dn;
+    p = buf;
+    n = size;
+
+    while( name != NULL )
+    {
+        if( !name->oid.p )
+        {
+            name = name->next;
+            continue;
+        }
+
+        if( name != dn )
+        {
+            ret = mbedtls_snprintf( p, n, merge ? " + " : ", " );
+            MBEDTLS_X509_SAFE_SNPRINTF;
+        }
+
+        ret = mbedtls_oid_get_attr_short_name( &name->oid, &short_name );
+
+        if( ret == 0 )
+            ret = mbedtls_snprintf( p, n, "%s=", short_name );
+        else
+            ret = mbedtls_snprintf( p, n, "\?\?=" );
+        MBEDTLS_X509_SAFE_SNPRINTF;
+
+        std::string out;
+        out.reserve(200);
+        for( i = 0; i < name->val.len; i++ )
+        {
+            if( i >= MBEDTLS_X509_MAX_DN_NAME_SIZE - 1 )
+                break;
+
+            c = name->val.p[i];
+            if( c < 32 || c >= 127 )
+              continue;
+            //else s[i] = c;
+            out.push_back(c);
+        }
+        //s[i] = '\0';
+        ret = mbedtls_snprintf( p, n, "%s", out.c_str() );
+        MBEDTLS_X509_SAFE_SNPRINTF;
+
+        merge = name->private_next_merged;
+        name = name->next;
+    }
+
+    return( (int) ( size - n ) );
+}
+
 }
 
 
@@ -313,13 +383,13 @@ x509::date_t x509::valid_to() const {
 
 std::string x509::issuer() const {
   std::array<char, 1024> buffer;
-  mbedtls_x509_dn_gets(buffer.data(), buffer.size(), &x509_cert_->issuer);
+  lief_mbedtls_x509_dn_gets(buffer.data(), buffer.size(), &x509_cert_->issuer);
   return buffer.data();
 }
 
 std::string x509::subject() const {
   std::array<char, 1024> buffer;
-  mbedtls_x509_dn_gets(buffer.data(), buffer.size(), &x509_cert_->subject);
+  lief_mbedtls_x509_dn_gets(buffer.data(), buffer.size(), &x509_cert_->subject);
   return buffer.data();
 }
 
