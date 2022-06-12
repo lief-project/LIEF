@@ -97,7 +97,7 @@ variables (LIEF_USE_CRT_DEBUG, etc) instead.")
   endforeach(build_type)
 endmacro(choose_msvc_crt MSVC_CRT)
 
-string(TOUPPER ${CMAKE_BUILD_TYPE} build)
+string(TOUPPER "${CMAKE_BUILD_TYPE}" build)
 set(LIEF_CRT "/${LIEF_USE_CRT_${build}}")
 message(STATUS "LIEF_CRT: ${LIEF_CRT}")
 # List of valid CRTs for MSVC
