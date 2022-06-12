@@ -22,7 +22,10 @@
 #include "LIEF/OAT/Binary.hpp"
 #include "LIEF/OAT/hash.hpp"
 #include "logging.hpp"
+
+#if defined(LIEF_JSON_SUPPORT)
 #include "visitors/json.hpp"
+#endif
 
 
 namespace LIEF {

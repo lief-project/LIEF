@@ -23,7 +23,9 @@
 #include "LIEF/DEX/hash.hpp"
 #include "DEX/Structures.hpp"
 
+#if defined(LIEF_JSON_SUPPORT)
 #include "visitors/json.hpp"
+#endif
 
 namespace LIEF {
 namespace DEX {
