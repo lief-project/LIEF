@@ -54,7 +54,6 @@ constexpr uint32_t Parser::NB_MAX_CHAINS;
 constexpr uint32_t Parser::NB_MAX_DYNAMIC_ENTRIES;
 constexpr uint32_t Parser::NB_MAX_MASKWORD;
 constexpr uint32_t Parser::NB_MAX_RELOCATIONS;
-constexpr uint32_t Parser::NB_MAX_SECTION;
 constexpr uint32_t Parser::NB_MAX_SEGMENTS;
 constexpr uint32_t Parser::NB_MAX_SYMBOLS;
 constexpr uint32_t Parser::MAX_SEGMENT_SIZE;

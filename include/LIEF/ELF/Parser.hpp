@@ -47,7 +47,6 @@ class LIEF_API Parser : public LIEF::Parser {
   static constexpr uint32_t DELTA_NB_SYMBOLS       = 3000;
   static constexpr uint32_t NB_MAX_BUCKETS         = NB_MAX_SYMBOLS;
   static constexpr uint32_t NB_MAX_CHAINS          = 1000000;
-  static constexpr uint32_t NB_MAX_SECTION         = 10000;
   static constexpr uint32_t NB_MAX_SEGMENTS        = 10000;
   static constexpr uint32_t NB_MAX_RELOCATIONS     = 3000000;
   static constexpr uint32_t NB_MAX_DYNAMIC_ENTRIES = 1000;

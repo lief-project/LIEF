@@ -722,7 +722,7 @@ ok_error_t Parser::parse_sections() {
   LIEF_DEBUG("Parsing Section");
 
   const Elf_Off shdr_offset = binary_->header_.section_headers_offset();
-  const auto numberof_sections = std::min<uint32_t>(binary_->header_.numberof_sections(), Parser::NB_MAX_SECTION);
+  const auto numberof_sections = binary_->header_.numberof_sections();
 
   stream_->setpos(shdr_offset);
   std::unordered_map<Section*, size_t> sections_names;
