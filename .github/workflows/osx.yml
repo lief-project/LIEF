@@ -35,6 +35,10 @@ jobs:
           key: osx-${{ runner.os }}-${{ steps.get-date.outputs.date }}
           restore-keys: |
               osx-${{ runner.os }}-
+      - name: Upgrade pip
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
       - name: Build Python ${{ matrix.python-version }} wheel and Test
         shell: bash
         if: matrix.python-version == '3.6'
