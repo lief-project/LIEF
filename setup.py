@@ -12,7 +12,12 @@ from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext, copy_file
 from distutils import log
 
-from packaging import version
+try:
+    from packaging import version
+except ImportError:
+    # Fallback on the packaging embedded in setuptools.
+    # This is not the cleanest solution but it enables to avoid an extra dependency.
+    from setuptools._vendor.packaging import version
 
 MIN_SETUPTOOLS_VERSION = "31.0.0"
 assert (version.parse(setuptools.__version__) >= version.parse(MIN_SETUPTOOLS_VERSION)), \
