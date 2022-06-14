@@ -12,11 +12,11 @@ from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext, copy_file
 from distutils import log
 
-from distutils.version import LooseVersion
-
+from packaging import version
 
 MIN_SETUPTOOLS_VERSION = "31.0.0"
-assert (LooseVersion(setuptools.__version__) >= LooseVersion(MIN_SETUPTOOLS_VERSION)), "LIEF requires a setuptools version '{}' or higher (pip install setuptools --upgrade)".format(MIN_SETUPTOOLS_VERSION)
+assert (version.parse(setuptools.__version__) >= version.parse(MIN_SETUPTOOLS_VERSION)), \
+        "LIEF requires a setuptools version '{}' or higher (pip install setuptools --upgrade)".format(MIN_SETUPTOOLS_VERSION)
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 PACKAGE_NAME = "lief"
