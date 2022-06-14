@@ -1097,7 +1097,12 @@ bool Binary::has_nx() const {
                                        return segment->type() == SEGMENT_TYPES::PT_GNU_STACK;
                                      });
   if (it_stack == std::end(segments_)) {
-    return false;
+    if (header().machine_type() == ARCH::EM_PPC64) {
+      // The PPC64 ELF ABI has a non-executable stack by default.
+      return true;
+    } else {
+      return false;
+    }
   }
 
   return !(*it_stack)->has(ELF_SEGMENT_FLAGS::PF_X);
