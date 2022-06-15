@@ -95,10 +95,6 @@ void create<ResourceNode>(py::module& m) {
         "Delete the " RST_CLASS_REF(lief.PE.ResourceNode) " with the given :attr:`~lief.PE.ResourceNode.id` from childs",
         "id"_a)
 
-    .def("sort_by_id",
-        &ResourceNode::sort_by_id,
-        "Sort resource childs by ID")
-
     .def_property_readonly("depth",
         &ResourceNode::depth,
         "Current depth of the entry in the resource tree")

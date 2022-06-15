@@ -605,7 +605,6 @@ void ResourcesManager::add_icon(const ResourceIcon& icon) {
   new_icon_dir_node.add_child(new_icon_data_node);
 
   it_icon->add_child(new_icon_dir_node);
-  it_icon->sort_by_id();
 }
 
 
@@ -682,7 +681,6 @@ void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceI
   new_icon_dir_node.add_child(new_icon_data_node);
 
   it_icon->add_child(new_icon_dir_node);
-  it_icon->sort_by_id();
 }
 
 // Dialogs
