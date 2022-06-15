@@ -490,7 +490,6 @@ ok_error_t Builder::build(const OptionalHeader& optional_header) {
     build_optional_header<details::PE64>(optional_header);
   }
   return ok();
-;
 }
 
 
