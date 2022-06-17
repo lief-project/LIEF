@@ -7,6 +7,7 @@ import logging
 import tempfile
 import shutil
 import os
+import random
 import sys
 import stat
 import subprocess
@@ -387,10 +388,132 @@ class TestResource(TestCase):
 
             self.assertEqual(q.returncode, 0)
 
+    def test_resource_directory_add_directory_node(self):
+        sample_file = get_sample('PE/PE32_x86_binary_Notepad++.zip')
+        sample_dir  = os.path.join(self.tmp_dir, "Notepad++")
 
+        sample = os.path.join(sample_dir, "notepad++.exe")
 
+        zip_ref = zipfile.ZipFile(sample_file, 'r')
+        zip_ref.extractall(self.tmp_dir)
+        zip_ref.close()
 
+        for seed in (5, 20, 99):
+            app = lief.parse(sample)
+            self.assertEqual([child.id for child in app.resources.childs], [1, 2, 3, 4, 5, 6, 12, 14, 16, 24])
+            nodes = []
 
+            node = lief.PE.ResourceDirectory()
+            node.id = lief.PE.RESOURCE_TYPES.HTML
+            nodes.append(node)
+
+            node = lief.PE.ResourceDirectory()
+            node.id = lief.PE.RESOURCE_TYPES.RCDATA
+            nodes.append(node)
+
+            node = lief.PE.ResourceDirectory()
+            node.id = lief.PE.RESOURCE_TYPES.FONT
+            nodes.append(node)
+
+            # Deterministically shuffle the add order with the seed
+            random.Random(seed).shuffle(nodes)
+
+            for node in nodes:
+                new_node = app.resources.add_directory_node(node)
+                self.assertIsInstance(new_node, lief.PE.ResourceNode)
+
+            # Should be in sorted order by ID
+            self.assertEqual([child.id for child in app.resources.childs], [1, 2, 3, 4, 5, 6, 8, 10, 12, 14, 16, 23, 24])
+
+        for seed in (7, 23, 91):
+            app = lief.parse(sample)
+            self.assertNotIn(lief.PE.RESOURCE_TYPES.RCDATA.value, [child.id for child in app.resources.childs])
+
+            node = lief.PE.ResourceDirectory()
+            node.id = lief.PE.RESOURCE_TYPES.RCDATA
+            rcdata_node = app.resources.add_directory_node(node)
+            self.assertIsInstance(rcdata_node, lief.PE.ResourceNode)
+
+            self.assertEqual(len(rcdata_node.childs), 0)
+            nodes = []
+
+            node = lief.PE.ResourceDirectory()
+            node.id = 10
+            nodes.append(node)
+
+            node = lief.PE.ResourceDirectory()
+            node.name = "FOO"
+            node.id = 0x80000000
+            nodes.append(node)
+
+            node = lief.PE.ResourceDirectory()
+            node.id = 5
+            nodes.append(node)
+
+            node = lief.PE.ResourceDirectory()
+            node.id = 99
+            nodes.append(node)
+
+            node = lief.PE.ResourceDirectory()
+            node.name = "bar"
+            node.id = 0x80000000
+            nodes.append(node)
+
+            node = lief.PE.ResourceDirectory()
+            node.name = "foo"
+            node.id = 0x80000000
+            nodes.append(node)
+
+            # Deterministically shuffle the add order with the seed
+            random.Random(seed).shuffle(nodes)
+
+            for node in nodes:
+                new_node = rcdata_node.add_directory_node(node)
+                self.assertIsInstance(new_node, lief.PE.ResourceNode)
+
+            # Should be in sorted order with names first, then IDs
+            self.assertEqual([child.name or child.id for child in rcdata_node.childs], ["FOO", "bar", "foo", 5, 10, 99])
+
+    def test_resource_directory_add_data_node(self):
+        sample_file = get_sample('PE/PE32_x86_binary_Notepad++.zip')
+        sample_dir  = os.path.join(self.tmp_dir, "Notepad++")
+
+        sample = os.path.join(sample_dir, "notepad++.exe")
+
+        zip_ref = zipfile.ZipFile(sample_file, 'r')
+        zip_ref.extractall(self.tmp_dir)
+        zip_ref.close()
+
+        for seed in (7, 23, 91):
+            app = lief.parse(sample)
+            self.assertNotIn(lief.PE.RESOURCE_TYPES.RCDATA.value, [child.id for child in app.resources.childs])
+
+            node = lief.PE.ResourceDirectory()
+            node.id = lief.PE.RESOURCE_TYPES.RCDATA
+            rcdata_node = app.resources.add_directory_node(node)
+            self.assertIsInstance(rcdata_node, lief.PE.ResourceNode)
+
+            node = lief.PE.ResourceDirectory()
+            node.id = 10
+            lang_node = rcdata_node.add_directory_node(node)
+
+            self.assertEqual(len(lang_node.childs), 0)
+            nodes = []
+
+            for id_ in (1033, 44, 500, 0):
+                node = lief.PE.ResourceData()
+                node.id = id_
+                nodes.append(node)
+
+            # Deterministically shuffle the add order with the seed
+            random.Random(seed).shuffle(nodes)
+
+            for node in nodes:
+                new_node = lang_node.add_data_node(node)
+                self.assertIsInstance(new_node, lief.PE.ResourceNode)
+
+            # Should be in sorted order
+            self.assertEqual([child.name or child.id for child in lang_node.childs], [0, 44, 500, 1033])
 
     def tearDown(self):
         # Delete it

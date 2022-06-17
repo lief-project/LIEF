@@ -47,6 +47,11 @@ Changelog
 
       sec = bin.remove_section("__DATA", "__objc_metadata")
 
+:PE:
+
+  * Remove :meth:`lief.PE.ResourceNode.sort_by_id`
+  * Fix the ordering of childs of :class:`~lief.PE.ResourceNode`
+
 :General Design:
 
   * Remove the exceptions

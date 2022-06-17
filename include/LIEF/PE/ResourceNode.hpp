@@ -116,9 +116,6 @@ class LIEF_API ResourceNode : public Object {
   //! Delete the given node from the node's children
   void delete_child(const ResourceNode& node);
 
-  //! Sort the resource children by ID
-  void sort_by_id();
-
   void accept(Visitor& visitor) const override;
 
   bool operator==(const ResourceNode& rhs) const;
@@ -128,6 +125,7 @@ class LIEF_API ResourceNode : public Object {
 
   protected:
   ResourceNode();
+  childs_t::iterator insert_child(std::unique_ptr<ResourceNode> child);
   TYPE           type_ = TYPE::UNKNOWN;
   uint32_t       id_ = 0;
   std::u16string name_;

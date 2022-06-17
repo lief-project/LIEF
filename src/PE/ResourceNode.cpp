@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <algorithm>
+#include <cwctype>
 #include <sstream>
 #include <iomanip>
 
@@ -122,6 +124,8 @@ ResourceNode& ResourceNode::add_child(const ResourceDirectory& child) {
     } else {
       dir->numberof_id_entries(dir->numberof_id_entries() + 1);
     }
+
+    return **insert_child(std::move(new_node));
   }
 
   childs_.push_back(std::move(new_node));
@@ -142,6 +146,7 @@ ResourceNode& ResourceNode::add_child(const ResourceData& child) {
       dir->numberof_id_entries(dir->numberof_id_entries() + 1);
     }
 
+    return **insert_child(std::move(new_node));
   }
   childs_.push_back(std::move(new_node));
   return *childs_.back();
@@ -200,11 +205,28 @@ void ResourceNode::name(const std::u16string& name) {
 }
 
 
-void ResourceNode::sort_by_id() {
-  std::sort(std::begin(childs_), std::end(childs_),
+// This logic follows the description from the Microsoft documentation at
+// https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#resource-directory-table
+//
+// "(remember that all the Name entries precede all the ID entries for the table). All entries for the table
+// "are sorted in ascending order: the Name entries by case-sensitive string and the ID entries by numeric value."
+ResourceNode::childs_t::iterator ResourceNode::insert_child(std::unique_ptr<ResourceNode> child) {
+  const auto it = std::upper_bound(childs_.begin(), childs_.end(), child,
       [] (const std::unique_ptr<ResourceNode>& lhs, const std::unique_ptr<ResourceNode>& rhs) {
-        return lhs->id() < rhs->id();
+        if (lhs->has_name() && rhs->has_name()) {
+          // Case-sensitive string sort
+          return std::lexicographical_compare(
+              lhs->name().begin(), lhs->name().end(),
+              rhs->name().begin(), rhs->name().end());
+        } else if (!lhs->has_name() && !rhs->has_name()) {
+          return lhs->id() < rhs->id();
+        } else {
+          // Named entries come first
+          return lhs->has_name();
+        }
       });
+
+  return childs_.insert(it, std::move(child));
 }
 
 void ResourceNode::accept(Visitor& visitor) const {
