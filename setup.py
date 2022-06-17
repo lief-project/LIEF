@@ -227,7 +227,7 @@ class BuildLibrary(build_ext):
             ]
 
 
-        if platform.system() == "Windows":
+        if platform.system() == "Windows" and not sysconfig.get_platform().startswith("mingw"):
             from setuptools import msvc
 
             cmake_args += [
@@ -267,7 +267,7 @@ class BuildLibrary(build_ext):
         if self.distribution.doc:
             targets['doc'] = "lief-doc"
 
-        if platform.system() == "Windows":
+        if platform.system() == "Windows" and not sysconfig.get_platform().startswith("mingw"):
             if self.distribution.lief_test:
                 subprocess.check_call(configure_cmd, cwd=self.build_temp, env=env)
                 if build_with_ninja:
@@ -319,7 +319,7 @@ class BuildLibrary(build_ext):
         libsuffix = pylief_dst.split(".")[-1]
 
         pylief_path = os.path.join(cmake_library_output_directory, "{}.{}".format(PACKAGE_NAME, libsuffix))
-        if platform.system() == "Windows":
+        if platform.system() == "Windows" and not sysconfig.get_platform().startswith("mingw"):
             pylief_base = pathlib.Path(cmake_library_output_directory) / "Release" / "api" / "python"
             pylief_path = pylief_base / "Release" / "{}.{}".format(PACKAGE_NAME, libsuffix)
             if not pylief_path.is_file():
