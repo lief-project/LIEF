@@ -610,6 +610,10 @@ void create<Binary>(py::module& m) {
         "address"_a, "name"_a,
         py::return_value_policy::reference)
 
+    .def_property_readonly("page_size",
+        &Binary::page_size,
+        "Return the binary's page size")
+
     .def("__getitem__",
         static_cast<LoadCommand* (Binary::*)(LOAD_COMMAND_TYPES)>(&Binary::operator[]),
         "",

@@ -252,11 +252,6 @@ def test_issue_728():
     segment.add_section(lief.MachO.Section("__bar", [1, 2, 3]))
 
     for parsed in (x86_64_binary, arm64_binary):
-        if parsed.header.cpu_type == lief.MachO.CPU_TYPES.x86_64:
-            expected_virtual_size = 0x1000
-        elif parsed.header.cpu_type == lief.MachO.CPU_TYPES.ARM64:
-            expected_virtual_size = 0x4000
-
         new_segment = parsed.add(segment)
-        assert new_segment.virtual_size == expected_virtual_size
+        assert new_segment.virtual_size == parsed.page_size
 

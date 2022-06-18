@@ -655,7 +655,7 @@ class LIEF_API Binary : public LIEF::Binary  {
     return in_memory_base_addr_;
   }
 
-  uint32_t get_segment_alignment() const;
+  uint32_t page_size() const;
 
   private:
   //! Default constructor

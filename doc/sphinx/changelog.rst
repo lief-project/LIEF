@@ -47,6 +47,8 @@ Changelog
 
       sec = bin.remove_section("__DATA", "__objc_metadata")
 
+  * Add :attr:`lief.MachO.Binary.page_size`
+
 :PE:
 
   * Remove :meth:`lief.PE.ResourceNode.sort_by_id`

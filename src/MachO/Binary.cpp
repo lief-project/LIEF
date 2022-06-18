@@ -17,12 +17,6 @@
 #include <numeric>
 #include <sstream>
 
-#if defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
-#include <unistd.h>
-#else
-#define getpagesize() 0x1000
-#endif
-
 #include "logging.hpp"
 
 
@@ -700,7 +694,7 @@ ok_error_t Binary::shift_linkedit(size_t width) {
   return ok();
 }
 
-uint32_t Binary::get_segment_alignment() const {
+uint32_t Binary::page_size() const {
   const bool is_arm = header().cpu_type() == CPU_TYPES::CPU_TYPE_ARM ||
                       header().cpu_type() == CPU_TYPES::CPU_TYPE_ARM64;
   return is_arm ? 0x4000 : 0x1000;
@@ -1429,7 +1423,7 @@ Section* Binary::add_section(const SegmentCommand& segment, const Section& secti
   const size_t sec_size = is64_ ? sizeof(details::section_64) :
                                   sizeof(details::section_32);
   const size_t data_size = content.size();
-  const int32_t needed_size = align(sec_size + data_size, getpagesize());
+  const int32_t needed_size = align(sec_size + data_size, page_size());
   if (available_command_space_ < needed_size) {
     shift(needed_size);
     available_command_space_ += needed_size;
@@ -1523,7 +1517,7 @@ LoadCommand* Binary::add(const SegmentCommand& segment) {
    */
 
   LIEF_DEBUG("Adding the new segment '{}' ({} bytes)", segment.name(), segment.content().size());
-  const uint32_t alignment = get_segment_alignment();
+  const uint32_t alignment = page_size();
   const uint64_t new_fsize = align(segment.content().size(), alignment);
   SegmentCommand new_segment = segment;
 
@@ -1909,7 +1903,7 @@ uint64_t Binary::virtual_size() const {
     virtual_size = std::max(virtual_size, segment->virtual_address() + segment->virtual_size());
   }
   virtual_size -= imagebase();
-  virtual_size = align(virtual_size, static_cast<uint64_t>(getpagesize()));
+  virtual_size = align(virtual_size, static_cast<uint64_t>(page_size()));
   return virtual_size;
 }
 

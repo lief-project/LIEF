@@ -132,7 +132,7 @@ ok_error_t Builder::build_segments() {
     std::copy(seg_name.c_str(), seg_name.c_str() + segname_length,
               std::begin(segment_header.segname));
     if (LinkEdit::segmentof(segment) && config_.linkedit) {
-      segment_header.vmsize   = static_cast<uint__>(align(linkedit_.size(), binary->get_segment_alignment()));
+      segment_header.vmsize   = static_cast<uint__>(align(linkedit_.size(), binary->page_size()));
       segment_header.filesize = static_cast<uint__>(linkedit_.size());
     } else {
       segment_header.vmsize = static_cast<uint__>(segment.virtual_size());
