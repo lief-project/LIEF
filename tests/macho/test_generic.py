@@ -222,6 +222,28 @@ def test_get_section():
     assert macho.get_section("__DATA_CONST", "__got") is not None
 
 
+
+def test_segment_add_section():
+    binary = lief.parse(get_sample('MachO/MachO64_x86-64_binary_safaridriver.bin'))
+
+    section = lief.MachO.Section("__bar", [1, 2, 3])
+
+    existing_segment = binary.get_segment("__TEXT")
+    new_segment = lief.MachO.SegmentCommand("__FOO")
+
+    for segment in (existing_segment, new_segment):
+        assert not segment.has_section(section.name)
+        assert not segment.has(section)
+        assert segment.numberof_sections == len(segment.sections)
+
+        numberof_sections = segment.numberof_sections
+
+        section = segment.add_section(section)
+        assert segment.numberof_sections == numberof_sections + 1
+        assert segment.has_section(section.name)
+        assert segment.has(section)
+        assert section in segment.sections
+
 def test_issue_728():
     x86_64_binary = lief.parse(get_sample('MachO/MachO64_x86-64_binary_safaridriver.bin'))
     arm64_binary = lief.MachO.parse(get_sample('MachO/FAT_MachO_arm-arm64-binary-helloworld.bin')).take(lief.MachO.CPU_TYPES.ARM64)
@@ -237,3 +259,4 @@ def test_issue_728():
 
         new_segment = parsed.add(segment)
         assert new_segment.virtual_size == expected_virtual_size
+

@@ -259,6 +259,7 @@ Section& SegmentCommand::add_section(const Section& section) {
 
   file_size(data_.size());
   sections_.push_back(std::move(new_section));
+  numberof_sections(numberof_sections() + 1);
   return *sections_.back();
 }
 
