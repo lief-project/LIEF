@@ -1626,7 +1626,7 @@ ok_error_t Builder::build_symbol_definition() {
     header.vd_ndx     = static_cast<Elf_Half>(svd.ndx());
     header.vd_cnt     = static_cast<Elf_Half>(svas.size());
     header.vd_hash    = static_cast<Elf_Word>(svd.hash());
-    header.vd_aux     = static_cast<Elf_Word>(!svas.empty() > 0 ? sizeof(Elf_Verdef) : 0);
+    header.vd_aux     = static_cast<Elf_Word>(!svas.empty() ? sizeof(Elf_Verdef) : 0);
     header.vd_next    = static_cast<Elf_Word>(next_symbol_offset);
 
     svd_raw.write_conv<Elf_Verdef>(header);
