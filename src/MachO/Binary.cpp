@@ -700,6 +700,12 @@ ok_error_t Binary::shift_linkedit(size_t width) {
   return ok();
 }
 
+uint32_t Binary::get_segment_alignment() const {
+  const bool is_arm = header().cpu_type() == CPU_TYPES::CPU_TYPE_ARM ||
+                      header().cpu_type() == CPU_TYPES::CPU_TYPE_ARM64;
+  return is_arm ? 0x4000 : 0x1000;
+}
+
 void Binary::shift_command(size_t width, size_t from_offset) {
   const SegmentCommand* segment = segment_from_offset(from_offset);
 
@@ -1517,9 +1523,7 @@ LoadCommand* Binary::add(const SegmentCommand& segment) {
    */
 
   LIEF_DEBUG("Adding the new segment '{}' ({} bytes)", segment.name(), segment.content().size());
-  const bool is_arm = header().cpu_type() == CPU_TYPES::CPU_TYPE_ARM ||
-                      header().cpu_type() == CPU_TYPES::CPU_TYPE_ARM64;
-  const uint32_t alignment = is_arm ? 0x4000 : 0x1000;
+  const uint32_t alignment = get_segment_alignment();
   const uint64_t new_fsize = align(segment.content().size(), alignment);
   SegmentCommand new_segment = segment;
 

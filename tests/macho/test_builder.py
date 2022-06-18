@@ -533,3 +533,19 @@ def test_break(tmp_path):
             print(stdout)
             assert re.search(r'All tests PASS', stdout) is not None
 
+def test_issue_726(tmp_path):
+    for filename in ("MachO/mbedtls_selftest_arm64.bin", "MachO/mbedtls_selftest_x86_64.bin"):
+        bin_path = pathlib.Path(get_sample(filename))
+        original = lief.parse(bin_path.as_posix())
+        output = f"{tmp_path}/{bin_path.name}"
+
+        original.write(output)
+        new = lief.parse(output)
+
+        for parsed in (original, new):
+            if parsed.header.cpu_type == lief.MachO.CPU_TYPES.x86_64:
+                alignment = 0x1000
+            elif original.header.cpu_type == lief.MachO.CPU_TYPES.ARM64:
+                alignment = 0x4000
+
+            assert parsed.get_segment("__LINKEDIT").virtual_size % alignment == 0
