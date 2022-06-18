@@ -1621,7 +1621,7 @@ LoadCommand* Binary::add(const SegmentCommand& segment) {
   LIEF_DEBUG(" -> virtual address: 0x{:06x}", lnk_va);
 
   segment_added->virtual_address(lnk_va);
-  segment_added->virtual_size(segment_added->file_size());
+  segment_added->virtual_size(segment_added->virtual_size());
   size_t current_va = segment_added->virtual_address();
   for (Section& section : segment_added->sections()) {
     section.virtual_address(current_va);
