@@ -164,6 +164,8 @@ def test_add_section_id(tmp_path):
         section = lief.MachO.Section(f"__lief_{i}", [0x90] * 0x100)
         original.add_section(section)
 
+    assert original.virtual_size % original.page_size == 0
+
     original.write(output)
     new = lief.parse(output)
 
@@ -182,6 +184,7 @@ def test_add_section_ssh(tmp_path):
     bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_sshd.bin"))
     original = lief.parse(bin_path.as_posix())
     output = f"{tmp_path}/test_add_section_sshd.sshd.bin"
+    page_size = original.page_size
 
     # Add 3 section into __TEXT
     __text = original.get_segment("__TEXT")
@@ -189,6 +192,9 @@ def test_add_section_ssh(tmp_path):
         section = lief.MachO.Section(f"__text_{i}")
         section.content = [0xC3] * 0x100
         original.add_section(__text, section)
+
+    assert original.virtual_size % page_size == 0
+    assert __text.virtual_size % page_size == 0
 
     original.remove_signature()
     original.write(output)
@@ -543,9 +549,4 @@ def test_issue_726(tmp_path):
         new = lief.parse(output)
 
         for parsed in (original, new):
-            if parsed.header.cpu_type == lief.MachO.CPU_TYPES.x86_64:
-                alignment = 0x1000
-            elif original.header.cpu_type == lief.MachO.CPU_TYPES.ARM64:
-                alignment = 0x4000
-
-            assert parsed.get_segment("__LINKEDIT").virtual_size % alignment == 0
+            assert parsed.get_segment("__LINKEDIT").virtual_size % parsed.page_size == 0
