@@ -14,7 +14,7 @@ static const char BigObjMagic[] = {
   '\xaf', '\x20', '\xfa', '\xf6', '\x6a', '\xa4', '\xdc', '\xb8',
 };
 
-static const uint8_t DEFAULT_NUMBER_DATA_DIRECTORIES = 15;
+static const uint8_t DEFAULT_NUMBER_DATA_DIRECTORIES = 16;
 
 #pragma pack(push,1)
 struct pe_header {
