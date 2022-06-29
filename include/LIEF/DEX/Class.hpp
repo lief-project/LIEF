@@ -56,8 +56,8 @@ class LIEF_API Class : public Object {
   static std::string fullname_normalized(const std::string& pkg, const std::string& cls_name);
 
   Class();
-  Class(const Class&) = delete;
-  Class& operator=(const Class&) = delete;
+  Class(const Class&) = default;
+  Class& operator=(const Class&) = default;
 
   Class(std::string fullname, uint32_t access_flags = ACCESS_FLAGS::ACC_UNKNOWN,
         Class* parent = nullptr, std::string source_filename = "");
