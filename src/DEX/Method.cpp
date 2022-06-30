@@ -156,9 +156,10 @@ std::ostream& operator<<(std::ostream& os, const Method& method) {
   if (!flags_str.empty()) {
     os << flags_str << " ";
   }
-  os << proto->return_type()
-     << " "
-     << pretty_cls_name << "->" << method.name();
+  if (const auto* t = proto->return_type()) {
+    os << *t << " ";
+  }
+  os << pretty_cls_name << "->" << method.name();
 
   os << "(";
   for (size_t i = 0; i < ps.size(); ++i) {
