@@ -73,7 +73,7 @@ void create<Type>(py::module& m) {
 
             case Type::TYPES::CLASS:
               {
-                return py::cast(type.cls());
+                return py::cast(type.cls(), py::return_value_policy::reference);
               }
 
             case Type::TYPES::PRIMITIVE:
