@@ -566,6 +566,9 @@ Section* Binary::add_section<true>(const Section& section) {
   new_section->offset(segment_added->file_offset());
   new_section->original_size_ = segment_added->physical_size();
 
+  new_section->segments_.push_back(segment_added);
+  segment_added->sections_.push_back(new_section.get());
+
   header().numberof_sections(header().numberof_sections() + 1);
 
   Section* sec_ptr = new_section.get();
