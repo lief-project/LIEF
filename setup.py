@@ -282,21 +282,24 @@ class BuildLibrary(build_ext):
                 subprocess.check_call(['cmake', '--build', '.', '--target', targets['sdk']] + build_args, cwd=self.build_temp, env=env)
 
         else:
-            log.info(f"Using {jobs} jobs")
+            if self.parallel:
+                log.info(f"Using {jobs} jobs")
+
             if build_with_ninja:
+                jobs_opt = ["-j", str(jobs)] if self.parallel else []
                 if self.distribution.lief_test:
                     subprocess.check_call(configure_cmd, cwd=self.build_temp)
-                    subprocess.check_call(['ninja', '-j', str(jobs)], cwd=self.build_temp)
-                    subprocess.check_call(['ninja', '-j', str(jobs), "check-lief"], cwd=self.build_temp)
+                    subprocess.check_call(['ninja'] + jobs_opt, cwd=self.build_temp)
+                    subprocess.check_call(['ninja'] + jobs_opt + ["check-lief"], cwd=self.build_temp)
                 else:
-                    subprocess.check_call(['ninja', '-j', str(jobs), targets['python_bindings']], cwd=self.build_temp, env=env)
+                    subprocess.check_call(['ninja'] + jobs_opt + [targets['python_bindings']], cwd=self.build_temp, env=env)
 
                 if 'sdk' in targets:
-                    subprocess.check_call(['ninja', '-j', str(jobs), targets['sdk']], cwd=self.build_temp, env=env)
+                    subprocess.check_call(['ninja'] + jobs_opt + [targets['sdk']], cwd=self.build_temp, env=env)
 
                 if 'doc' in targets:
                     try:
-                        subprocess.check_call(['ninja', '-j', str(jobs), targets['doc']], cwd=self.build_temp, env=env)
+                        subprocess.check_call(['ninja'] + jobs_opt + [targets['doc']], cwd=self.build_temp, env=env)
                     except Exception as e:
                         log.error(f"Documentation failed: {e}")
             else:
