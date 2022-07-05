@@ -249,7 +249,7 @@ class BuildLibrary(build_ext):
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
 
-        log.info(f"Platform: {platform.system()}", )
+        log.info(f"Platform: %s", platform.system())
         log.info("Wheel library: %s", self.get_ext_fullname(ext.name))
 
         # 1. Configure
