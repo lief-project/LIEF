@@ -60,7 +60,7 @@ const char* to_string(VERSION e) {
 
 const char* to_string(ARCH e) {
   CONST_MAP(ARCH, const char*, 177) enumStrings {
-    { ARCH::EM_NONE,          "None" },
+    { ARCH::EM_NONE,          "NONE" },
     { ARCH::EM_M32,           "M32"},
     { ARCH::EM_SPARC,         "SPARC"},
     { ARCH::EM_386,           "i386"},
