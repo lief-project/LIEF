@@ -1311,24 +1311,24 @@ class LIEF_LOCAL ExeLayout : public Layout {
         if (binary_->has(type) && !has_section) {
           if (it_offset == std::end(notes_off_map_)) {
             LIEF_ERR("Can't find {}", to_string(type));
-            return make_error_code(lief_errors::file_format_error);
+          } else {
+            const size_t note_offset = it_offset->second;
+
+            const Note& note = *binary_->get(type);
+
+            Section section{section_name, ELF_SECTION_TYPES::SHT_NOTE};
+            section += ELF_SECTION_FLAGS::SHF_ALLOC;
+
+            Section* section_added = binary_->add(section, /*loaded */ false);
+            if (section_added == nullptr) {
+              LIEF_ERR("Can't add SHT_NOTE section");
+              return make_error_code(lief_errors::build_error);
+            }
+            section_added->offset(segment_note->file_offset() + note_offset);
+            section_added->size(note.size());
+            section.virtual_address(segment_note->virtual_address() + note_offset);
+            section_added->alignment(4);
           }
-          const size_t note_offset = it_offset->second;
-
-          const Note& note = *binary_->get(type);
-
-          Section section{section_name, ELF_SECTION_TYPES::SHT_NOTE};
-          section += ELF_SECTION_FLAGS::SHF_ALLOC;
-
-          Section* section_added = binary_->add(section, /*loaded */ false);
-          if (section_added == nullptr) {
-            LIEF_ERR("Can't add SHT_NOTE section");
-            return make_error_code(lief_errors::build_error);
-          }
-          section_added->offset(segment_note->file_offset() + note_offset);
-          section_added->size(note.size());
-          section.virtual_address(segment_note->virtual_address() + note_offset);
-          section_added->alignment(4);
         }
       }
     }
