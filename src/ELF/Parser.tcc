@@ -1526,7 +1526,7 @@ ok_error_t Parser::parse_symbol_version_definition(uint64_t offset, uint32_t nb_
     for (std::unique_ptr<SymbolVersionAux>& sva : svd->symbol_version_aux_) {
       binary_->sizing_info_->verdef += sizeof(Elf_Verdaux);
       for (std::unique_ptr<SymbolVersion>& sv : binary_->symbol_version_table_) {
-        if (svd->ndx() > 1 && (sv->value() & 0x7FFF) == svd->ndx()) {
+        if (svd->ndx() > 1 && (sv->value() & 0x7FFF) == svd->ndx() && !sv->symbol_aux_) {
           sv->symbol_aux_ = sva.get();
         }
       }
