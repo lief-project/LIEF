@@ -25,3 +25,8 @@ def test_non_pie():
     not_pie_path = get_sample('ELF/ELF32_x86_library_libshellx.so')
     not_pie = lief.parse(not_pie_path)
     assert not not_pie.is_pie
+
+def test_non_pie_bin():
+    path = get_sample('ELF/ELF64_x86-64_binary_ls.bin')
+    target = lief.parse(path)
+    assert not target.is_pie

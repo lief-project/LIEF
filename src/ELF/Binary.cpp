@@ -1085,6 +1085,10 @@ bool Binary::is_pie() const {
                                        [] (const std::unique_ptr<Segment>& entry) {
                                          return entry->type() == SEGMENT_TYPES::PT_INTERP;
                                        });
+  if (header().file_type() != E_TYPE::ET_DYN) {
+    return false;
+  }
+
   /* If the ELF binary uses an interpreter, then it is position
    * independant since the interpreter aims at loading the binary at a random base address
    */
@@ -1103,9 +1107,7 @@ bool Binary::is_pie() const {
    * 1. The binary embeds a PT_DYNAMIC segment
    * 2. The dynamic table contains a DT_FLAGS_1 set with PIE
    */
-  if (header().file_type() != E_TYPE::ET_DYN) {
-    return false;
-  }
+
 
   if (has(SEGMENT_TYPES::PT_DYNAMIC)) {
     if (const auto* flag = static_cast<const DynamicEntryFlags*>(get(DYNAMIC_TAGS::DT_FLAGS_1))) {
