@@ -6,6 +6,7 @@ Changelog
 
 :ELF:
 
+  * Handle binaries compiled with the `-static-pie` flag correctly (see: :issue:`747`)
   * Add support for modifying section-less binaries. The ELF :class:`~lief.ELF.Section` objects gain
     the :meth:`lief.ELF.Section.as_frame` method which defines the section as a *framed* section.
 

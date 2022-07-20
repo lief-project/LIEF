@@ -23,6 +23,7 @@ python -m pytest -rsx \
       /src/tests/elf/test_object_files.py \
       /src/tests/elf/test_section_frame.py \
       /src/tests/elf/test_466.py \
+      /src/tests/elf/test_747.py \
       /src/tests/elf/test_empty_gnu_hash.py
 
 
