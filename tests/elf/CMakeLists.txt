@@ -201,7 +201,7 @@ add_test(ELF_binary_size
 add_test(ELF_symbol_versions
   ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
   ${PYTHON_EXECUTABLE} -m pytest -rsx
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_symbol_versions.py.py)
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_symbol_versions.py)
 
 
 # Examples
