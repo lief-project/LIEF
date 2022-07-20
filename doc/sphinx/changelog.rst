@@ -6,6 +6,8 @@ Changelog
 
 :ELF:
 
+  * :github_user:`aeflores` fixed an issue when there are multiple versions associated with a symbol
+    (see: :issue:`749` for the details).
   * Handle binaries compiled with the `-static-pie` flag correctly (see: :issue:`747`)
   * Add support for modifying section-less binaries. The ELF :class:`~lief.ELF.Section` objects gain
     the :meth:`lief.ELF.Section.as_frame` method which defines the section as a *framed* section.
