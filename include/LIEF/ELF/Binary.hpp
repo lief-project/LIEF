@@ -565,6 +565,11 @@ class LIEF_API Binary : public LIEF::Binary {
   //! @param filename Path for the written ELF binary
   void write(const std::string& filename) override;
 
+  //! Reconstruct the binary object and write it in `os` stream
+  //!
+  //! @param Output stream for the written ELF binary
+  void write(std::ostream& os) override;
+
   //! Reconstruct the binary object and return its content as a byte vector
   std::vector<uint8_t> raw();
 

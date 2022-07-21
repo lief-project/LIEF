@@ -195,6 +195,7 @@ class LIEF_API Binary : public Object {
 
   //! Build & transform the Binary object representation into a *real* executable
   virtual void write(const std::string& name) = 0;
+  virtual void write(std::ostream& os) = 0;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Binary& binary);
 

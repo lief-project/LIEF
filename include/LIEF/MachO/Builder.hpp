@@ -73,19 +73,26 @@ class LIEF_API Builder {
   static ok_error_t write(Binary& binary, std::vector<uint8_t>& out);
   static ok_error_t write(Binary& binary, std::vector<uint8_t>& out, config_t config);
 
+  static ok_error_t write(Binary& binary, std::ostream& out);
+  static ok_error_t write(Binary& binary, std::ostream& out, config_t config);
+
   static ok_error_t write(FatBinary& fat, const std::string& filename);
   static ok_error_t write(FatBinary& fat, const std::string& filename, config_t config);
 
   static ok_error_t write(FatBinary& fat, std::vector<uint8_t>& out);
   static ok_error_t write(FatBinary& fat, std::vector<uint8_t>& out, config_t config);
 
+  static ok_error_t write(FatBinary& fat, std::ostream& out);
+  static ok_error_t write(FatBinary& fat, std::ostream& out, config_t config);
+  
   ~Builder();
   private:
   ok_error_t build();
 
   const std::vector<uint8_t>& get_build();
   ok_error_t write(const std::string& filename) const;
-
+  ok_error_t write(std::ostream& os) const;
+  
   Builder(Binary& binary, config_t config);
   Builder(std::vector<Binary*> binaries, config_t config);
 

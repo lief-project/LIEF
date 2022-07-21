@@ -92,6 +92,9 @@ class LIEF_API Builder {
 
   //! @brief Write the build result into the ``output`` file
   void write(const std::string& filename) const;
+  
+  //! @brief Write the build result into the ``os`` stream
+  void write(std::ostream& os) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Builder& b);
 

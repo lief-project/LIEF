@@ -1700,6 +1700,11 @@ void Binary::write(const std::string& filename) {
   builder.write(filename);
 }
 
+void Binary::write(std::ostream& os) {
+  Builder builder{ *this };
+  builder.build();
+  builder.write(os);
+}
 
 uint64_t Binary::entrypoint() const {
   return header().entrypoint();

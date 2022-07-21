@@ -127,11 +127,14 @@ void Builder::write(const std::string& filename) const {
     LIEF_ERR("Can't open {}!", filename);
     return;
   }
-  std::vector<uint8_t> content;
-  ios_.move(content);
-  output_file.write(reinterpret_cast<const char*>(content.data()), content.size());
+  write(output_file);
 }
 
+void Builder::write(std::ostream& os) const {
+  std::vector<uint8_t> content;
+  ios_.move(content);
+  os.write(reinterpret_cast<const char*>(content.data()), content.size());
+}
 
 uint32_t Builder::sort_dynamic_symbols() {
   const auto it_begin = std::begin(binary_->dynamic_symbols_);

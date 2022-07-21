@@ -86,21 +86,21 @@ Builder& Builder::build_dos_stub(bool flag) {
   return *this;
 }
 
-
 void Builder::write(const std::string& filename) const {
   std::ofstream output_file{filename, std::ios::out | std::ios::binary | std::ios::trunc};
   if (!output_file) {
     LIEF_ERR("Can't write in {}", filename);
     return;
   }
+  write(output_file);
+}
 
+void Builder::write(std::ostream& os) const {
   std::vector<uint8_t> content;
   ios_.get(content);
   std::copy(std::begin(content), std::end(content),
-            std::ostreambuf_iterator<char>(output_file));
-
+            std::ostreambuf_iterator<char>(os));
 }
-
 
 ok_error_t Builder::build() {
   LIEF_DEBUG("Build process started");
@@ -397,7 +397,7 @@ ok_error_t Builder::construct_resources(ResourceNode& node, std::vector<uint8_t>
 ok_error_t Builder::build_overlay() {
 
   const uint64_t last_section_offset = std::accumulate(
-      std::begin(binary_->sections_), std::end(binary_->sections_), 0,
+      std::begin(binary_->sections_), std::end(binary_->sections_), 0u,
       [] (uint64_t offset, const std::unique_ptr<Section>& section) {
         return std::max<uint64_t>(section->offset() + section->size(), offset);
       });

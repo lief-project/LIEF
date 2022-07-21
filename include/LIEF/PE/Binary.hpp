@@ -448,11 +448,17 @@ class LIEF_API Binary : public LIEF::Binary {
   // @deprecated This function will be removed in a future version of LIEF
   void hook_function(const std::string& library, const std::string& function, uint64_t address);
 
-  //! Reconstruct the binary object and write the raw PE in  `filename`
+  //! Reconstruct the binary object and write the raw PE in `filename`
   //!
   //! Rebuild a PE binary from the current Binary object.
   //! When rebuilding, import table and relocations are not rebuilt.
   void write(const std::string& filename) override;
+
+  //! Reconstruct the binary object and write the raw PE in `os` stream
+  //!
+  //! Rebuild a PE binary from the current Binary object.
+  //! When rebuilding, import table and relocations are not rebuilt.
+  void write(std::ostream& os) override;
 
   void accept(Visitor& visitor) const override;
 

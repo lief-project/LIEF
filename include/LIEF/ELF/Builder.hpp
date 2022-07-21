@@ -102,6 +102,9 @@ class LIEF_API Builder {
   //! Write the built ELF binary in the ``filename`` given in parameter
   void write(const std::string& filename) const;
 
+  //! Write the built ELF binary in the stream ``os`` given in parameter
+  void write(std::ostream& os) const;
+
   protected:
   template<typename ELF_T>
   ok_error_t build();

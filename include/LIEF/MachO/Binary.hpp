@@ -1,3 +1,4 @@
+
 /* Copyright 2017 - 2022 R. Thomas
  * Copyright 2017 - 2022 Quarkslab
  *
@@ -225,6 +226,11 @@ class LIEF_API Binary : public LIEF::Binary  {
   //!
   //! @param filename Path to write the reconstructed binary
   void write(const std::string& filename) override;
+
+  //! Reconstruct the binary object and write the result in the given `os` stream
+  //!
+  //! @param os Output stream to write the reconstructed binary
+  void write(std::ostream& os) override;
 
   //! Reconstruct the binary object and return its content as bytes
   std::vector<uint8_t> raw();

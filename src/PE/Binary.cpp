@@ -157,8 +157,10 @@ Binary::Binary(const std::string& name, PE_TYPE type) :
   optional_header().sizeof_image(virtual_size());
 }
 
-void Binary::write(const std::string& filename) {
-  Builder builder{*this};
+template<typename T>
+static void write_impl(Binary& binary, T&& dest)
+{
+  Builder builder{binary};
 
   builder.
     build_imports(false).
@@ -168,7 +170,15 @@ void Binary::write(const std::string& filename) {
     build_resources(true);
 
   builder.build();
-  builder.write(filename);
+  builder.write(dest);
+}
+
+void Binary::write(const std::string& filename) {
+  write_impl(*this, filename);
+}
+
+void Binary::write(std::ostream& os) {
+  write_impl(*this, os);
 }
 
 TLS& Binary::tls() {

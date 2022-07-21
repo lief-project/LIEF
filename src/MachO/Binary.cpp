@@ -463,6 +463,9 @@ void Binary::write(const std::string& filename) {
   Builder::write(*this, filename);
 }
 
+void Binary::write(std::ostream& os) {
+  Builder::write(*this, os);
+}
 
 const Section* Binary::section_from_offset(uint64_t offset) const {
   const auto it_section = std::find_if(
