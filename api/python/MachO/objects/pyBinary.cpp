@@ -424,7 +424,7 @@ void create<Binary>(py::module& m) {
         "address"_a)
 
     .def("write",
-        &Binary::write,
+        static_cast<void (Binary::*)(const std::string&)>(&Binary::write),
         "Rebuild the binary and write and write its content if the file given in parameter",
         "output"_a,
         py::return_value_policy::reference_internal)

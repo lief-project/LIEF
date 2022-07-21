@@ -1701,7 +1701,7 @@ void Binary::write(const std::string& filename) {
 }
 
 void Binary::write(std::ostream& os) {
-  Builder builder{ *this };
+  Builder builder{*this};
   builder.build();
   builder.write(os);
 }

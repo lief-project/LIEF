@@ -94,7 +94,7 @@ void create<Builder>(py::module& m) {
         py::return_value_policy::reference)
 
     .def("write",
-        &Builder::write,
+        static_cast<void (Builder::*)(const std::string&) const>(&Builder::write),
         "Write the build result into the ``output`` file",
         "output"_a)
 

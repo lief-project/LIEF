@@ -405,7 +405,7 @@ void create<Binary>(py::module& m) {
         "Remove all imported libraries")
 
     .def("write",
-        &Binary::write,
+        static_cast<void (Binary::*)(const std::string&)>(&Binary::write),
         "Build the binary and write the result to the given ``output`` file",
         "output_path"_a)
 

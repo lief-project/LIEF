@@ -500,7 +500,7 @@ void create<Binary>(py::module& m) {
         "permutation"_a)
 
     .def("write",
-        &Binary::write,
+        static_cast<void (Binary::*)(const std::string&)>(&Binary::write),
         "Rebuild the binary and write it in a file",
         "output"_a,
         py::return_value_policy::reference_internal)
