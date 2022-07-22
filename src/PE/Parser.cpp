@@ -1044,7 +1044,7 @@ ok_error_t Parser::parse_signature() {
 ok_error_t Parser::parse_overlay() {
   LIEF_DEBUG("== Parsing Overlay ==");
   const uint64_t last_section_offset = std::accumulate(
-      std::begin(binary_->sections_), std::end(binary_->sections_), 0,
+      std::begin(binary_->sections_), std::end(binary_->sections_), uint64_t{ 0u },
       [] (uint64_t offset, const std::unique_ptr<Section>& section) {
         return std::max<uint64_t>(section->offset() + section->size(), offset);
       });
