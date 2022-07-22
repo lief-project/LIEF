@@ -153,13 +153,12 @@ size_t Hash::hash(const std::vector<uint8_t>& raw) {
 size_t Hash::hash(const void* raw, size_t size) {
   const auto* start = reinterpret_cast<const uint8_t*>(raw);
 
-  std::vector<uint8_t> sha256(32, 0);
+  std::vector<uint8_t> sha256(32, 0u);
   mbedtls_sha256(start, size, sha256.data(), 0);
 
-  return std::accumulate(std::begin(sha256), std::end(sha256), 0,
+  return std::accumulate(std::begin(sha256), std::end(sha256), size_t{ 0u },
      [] (size_t v, uint8_t n) {
-        size_t r = v;
-        return (r << sizeof(uint8_t) * 8) | n;
+        return (v << sizeof(uint8_t) * 8u) | n;
      });
 }
 

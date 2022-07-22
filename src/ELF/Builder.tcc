@@ -1266,9 +1266,10 @@ ok_error_t Builder::build_section_relocations() {
       if (std::is_same<ELF_T, details::ELF32>::value) {
         info = (static_cast<Elf_Xword>(symidx) << 8) | reloc->type();
       } else {
-        info = (static_cast<Elf_Xword>(symidx) << 32) | (reloc->type() & 0xffffffffL);
+        // NOTE: To suppress a warning we require a cast here, this path is not constexpr but only uses Elf64_Xword
+        info = (static_cast<details::ELF64::Elf_Xword>(symidx) << 32) | (reloc->type() & 0xffffffffL);
       }
-
+      
       if (is_rela) {
         Elf_Rela relahdr;
         relahdr.r_offset = static_cast<Elf_Addr>(reloc->address());
@@ -1366,7 +1367,8 @@ ok_error_t Builder::build_dynamic_relocations() {
     if (std::is_same<ELF_T, details::ELF32>::value) {
       r_info = (static_cast<Elf_Xword>(info) << 8) | relocation.type();
     } else {
-      r_info = (static_cast<Elf_Xword>(info) << 32) | (relocation.type() & 0xffffffffL);
+      // NOTE: To suppress a warning we require a cast here, this path is not constexpr but only uses Elf64_Xword
+      r_info = (static_cast<details::ELF64::Elf_Xword>(info) << 32) | (relocation.type() & 0xffffffffL);
     }
 
 
@@ -1447,7 +1449,8 @@ ok_error_t Builder::build_pltgot_relocations() {
     if (std::is_same<ELF_T, details::ELF32>::value) {
       info = (static_cast<Elf_Xword>(idx) << 8) | relocation.type();
     } else {
-      info = (static_cast<Elf_Xword>(idx) << 32) | (relocation.type() & 0xffffffffL);
+      // NOTE: To suppress a warning we require a cast here, this path is not constexpr but only uses Elf64_Xword
+      info = (static_cast<details::ELF64::Elf_Xword>(idx) << 32) | (relocation.type() & 0xffffffffL);
     }
 
     if (is_rela) {

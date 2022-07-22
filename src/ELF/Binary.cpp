@@ -2127,8 +2127,8 @@ uint64_t Binary::last_offset_segment() const {
 
 uint64_t Binary::next_virtual_address() const {
 
-  uint64_t va = std::accumulate(std::begin(segments_), std::end(segments_), 0llu,
-            [] (uint32_t address, const std::unique_ptr<Segment>& segment) {
+  uint64_t va = std::accumulate(std::begin(segments_), std::end(segments_), uint64_t{ 0u },
+            [] (uint64_t address, const std::unique_ptr<Segment>& segment) {
               return std::max<uint64_t>(segment->virtual_address() + segment->virtual_size(), address);
             });
 

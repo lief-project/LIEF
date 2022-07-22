@@ -397,7 +397,7 @@ ok_error_t Builder::construct_resources(ResourceNode& node, std::vector<uint8_t>
 ok_error_t Builder::build_overlay() {
 
   const uint64_t last_section_offset = std::accumulate(
-      std::begin(binary_->sections_), std::end(binary_->sections_), 0u,
+      std::begin(binary_->sections_), std::end(binary_->sections_), uint64_t{ 0u },
       [] (uint64_t offset, const std::unique_ptr<Section>& section) {
         return std::max<uint64_t>(section->offset() + section->size(), offset);
       });
