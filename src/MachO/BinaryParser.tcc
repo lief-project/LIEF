@@ -3315,7 +3315,7 @@ ok_error_t BinaryParser::post_process(DynamicSymbolCommand& cmd) {
     }
 
     if (cmd.nb_external_define_symbols() > 0 &&
-        cmd.idx_external_define_symbol() <= isym  && isym < (cmd.idx_external_define_symbol() + cmd.nb_local_symbols()))
+        cmd.idx_external_define_symbol() <= isym  && isym < (cmd.idx_external_define_symbol() + cmd.nb_external_define_symbols()))
     {
       sym->category_ = Symbol::CATEGORY::EXTERNAL;
     }
