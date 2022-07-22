@@ -59,6 +59,8 @@ Changelog
 
 :General Design:
 
+  * :github_user:`ZehMatt` added the support to write LIEF binaries object through a `std::ostream` interface
+    (:commit:`9d55f538602989c69454639565910884c5c5ac7c`)
   * Remove the exceptions
 
 
