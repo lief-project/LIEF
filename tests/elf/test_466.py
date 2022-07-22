@@ -37,10 +37,7 @@ def test_freebl(tmp_path):
 
     output_ls.chmod(output_ls.stat().st_mode | stat.S_IEXEC)
     output_libfreebl3.chmod(output_libfreebl3.stat().st_mode | stat.S_IEXEC)
-
     with Popen([output_ls, "--version"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
         stdout = proc.stdout.read()
         print(stdout.decode("utf8"))
         assert re.search(r'ls \(GNU coreutils\) ', stdout.decode("utf8")) is not None
-        proc.poll()
-        assert proc.returncode == 0
