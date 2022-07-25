@@ -192,7 +192,7 @@ class TestResource(TestCase):
                 evince = lief.parse(fbytes)
         manager = evince.resources_manager
 
-        self.assertEqual(lief.hash(manager.manifest), 0x762c0ae9)
+        self.assertEqual(lief.hash(manager.manifest), 16239254889843919593)
         self.assertEqual(len(manager.dialogs), 15)
 
         dialog = manager.dialogs[0]

@@ -256,7 +256,7 @@ class TestTinyAArch64(TestCase):
         self.assertEqual(self.target.segments[0].physical_size, 0x17fffff2)
         self.assertEqual(len(self.target.segments[0].content), 84)
         if is_64bits_platform():
-            self.assertEqual(lief.hash(self.target.segments[0].content), 18446744073657409468)
+            self.assertEqual(lief.hash(self.target.segments[0].content), 2547808573126369212)
 
 
 class TestCorruptedIdentity(TestCase):
