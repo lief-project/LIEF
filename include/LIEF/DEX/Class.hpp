@@ -16,6 +16,8 @@
 #ifndef LIEF_DEX_CLASS_H_
 #define LIEF_DEX_CLASS_H_
 
+#include <climits>
+
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 #include "LIEF/iterators.hpp"
@@ -129,7 +131,7 @@ class LIEF_API Class : public Object {
   fields_t    fields_;
   std::string source_filename_;
 
-  uint32_t original_index_ = -1u;
+  uint32_t original_index_ = UINT_MAX;
 };
 
 } // Namespace DEX

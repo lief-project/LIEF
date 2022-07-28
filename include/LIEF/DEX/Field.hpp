@@ -15,6 +15,8 @@
 #ifndef LIEF_DEX_FIELD_H_
 #define LIEF_DEX_FIELD_H_
 
+#include <climits>
+
 #include "LIEF/DEX/enums.hpp"
 
 #include "LIEF/visibility.h"
@@ -84,7 +86,7 @@ class LIEF_API Field : public Object {
   Class* parent_ = nullptr;
   Type* type_ = nullptr;
   uint32_t access_flags_ = 0;
-  uint32_t original_index_ = -1u;
+  uint32_t original_index_ = UINT_MAX;
   bool is_static_ = false;
 };
 

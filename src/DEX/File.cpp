@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include <fstream>
+#include <climits>
 #include "logging.hpp"
 #include "LIEF/DEX/File.hpp"
 #include "LIEF/DEX/instructions.hpp"
@@ -88,7 +89,7 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
     while (inst_ptr < inst_end) {
       uint16_t dex_pc = (inst_ptr - inst_start) / sizeof(uint16_t);
       auto opcode = static_cast<OPCODES>(*inst_ptr);
-      uint32_t value = -1u;
+      uint32_t value = UINT_MAX;
 
       if (meth_info.find(dex_pc) != std::end(meth_info)) {
         value = meth_info[dex_pc];
