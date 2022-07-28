@@ -18,7 +18,7 @@ import zipfile
 from subprocess import Popen
 
 from unittest import TestCase
-from utils import get_sample
+from utils import get_sample, is_64bits_platform
 
 class TestResource(TestCase):
     def setUp(self):
@@ -192,7 +192,8 @@ class TestResource(TestCase):
                 evince = lief.parse(fbytes)
         manager = evince.resources_manager
 
-        self.assertEqual(lief.hash(manager.manifest), 16239254889843919593)
+        if is_64bits_platform():
+            self.assertEqual(lief.hash(manager.manifest), 16239254889843919593)
         self.assertEqual(len(manager.dialogs), 15)
 
         dialog = manager.dialogs[0]

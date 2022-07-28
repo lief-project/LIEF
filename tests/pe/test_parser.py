@@ -171,8 +171,8 @@ def test_sections():
     assert sections[0].numberof_line_numbers == 0x0
     assert int(sections[0].characteristics) == 0x68000020
     if is_64bits_platform():
-        assert lief.hash(list(sections[0].padding)) == 0xffffffffc691aee8
-        assert lief.hash(list(sections[0].content)) == 0x2023e2e
+        assert lief.hash(list(sections[0].padding)) == 16581494691545067240
+        assert lief.hash(list(sections[0].content)) == 12119947047017266734
 
     assert sections[1].name == ".rdata"
     assert sections[1].virtual_size == 0x2b4
@@ -186,8 +186,8 @@ def test_sections():
     assert int(sections[1].characteristics) == 0x48000040
 
     if is_64bits_platform():
-        assert lief.hash(list(sections[1].padding)) == 0xffffffffdc061565
-        assert lief.hash(list(sections[1].content)) == 0x7f4ae4d9
+        assert lief.hash(list(sections[1].padding)) == 13095545801059734885
+        assert lief.hash(list(sections[1].content)) == 6944188420063945945
 
     assert sections[2].name == ".data"
     assert sections[2].virtual_size == 0x114
@@ -201,8 +201,8 @@ def test_sections():
     assert int(sections[2].characteristics) == 0xc8000040
 
     if is_64bits_platform():
-        assert lief.hash(list(sections[2].padding)) == 0x391e5290
-        assert lief.hash(list(sections[2].content)) == 0x2109ac81
+        assert lief.hash(list(sections[2].padding)) == 16286773346125632144
+        assert lief.hash(list(sections[2].content)) == 7978755463523708033
 
     assert sections[3].name == ".pdata"
     assert sections[3].virtual_size == 0x1e0
@@ -216,8 +216,8 @@ def test_sections():
     assert int(sections[3].characteristics) == 0x48000040
 
     if is_64bits_platform():
-        assert lief.hash(list(sections[3].padding)) == 0xd5f2925
-        assert lief.hash(list(sections[3].content)) == 0x13f38a3e
+        assert lief.hash(list(sections[3].padding)) == 10388213471796734245
+        assert lief.hash(list(sections[3].content)) == 2565729174231943742
 
     assert sections[4].name == "INIT"
     assert sections[4].virtual_size == 0x42a
@@ -231,8 +231,8 @@ def test_sections():
     assert int(sections[4].characteristics) == 0xe2000020
 
     if is_64bits_platform():
-        assert lief.hash(list(sections[4].padding)) == 0xffffffff93471cc1
-        assert lief.hash(list(sections[4].content)) == 0xffffffffb3ea2b8b
+        assert lief.hash(list(sections[4].padding)) == 6267801405663681729
+        assert lief.hash(list(sections[4].content)) == 9792162199629343627
 
     assert sections[5].name == ".rsrc"
     assert sections[5].virtual_size == 0x3f0
@@ -246,8 +246,8 @@ def test_sections():
     assert int(sections[5].characteristics) == 0x42000040
 
     if is_64bits_platform():
-        assert lief.hash(list(sections[5].padding)) == 0x28ec37bb
-        assert lief.hash(list(sections[5].content)) == 0x65f49890
+        assert lief.hash(list(sections[5].padding)) == 2694043916712032187
+        assert lief.hash(list(sections[5].content)) == 17560174430803761296
 
 def test_tls():
     assert winhello64.has_tls
