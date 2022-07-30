@@ -464,15 +464,6 @@ endif()
 
 target_compile_definitions(LIB_LIEF PUBLIC -D_GLIBCXX_USE_CXX11_ABI=1)
 
-# Enable support for MD2 and MD4 for parsing the Authenticode sigs of older
-# executables. Also, some older signed executables use certs with the
-# SpcSpAgencyInfo Critical Extension, which mbed TLS doesn't support, so set
-# MBEDTLS_X509_ALLOW_UNSUPPORTED_CRITICAL_EXTENSION to have it skip this
-# extension.
-add_definitions(-DMBEDTLS_FS_IO -DMBEDTLS_PEM_PARSE_C -DMBEDTLS_BIGNUM_C
-                -DMBEDTLS_X509_CRT_PARSE_C -DMBEDTLS_PEM_WRITE_C
-                -DMBEDTLS_PKCS1_V15 -DMBEDTLS_PKCS1_V21)
-
 # LIEF Sanitizer options
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 set(SANITIZER_FLAGS -fno-omit-frame-pointer -g -O1)
