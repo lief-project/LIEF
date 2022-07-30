@@ -16,6 +16,7 @@
  */
 
 #include <utility>
+#include <climits>
 
 #include "LIEF/DEX/Class.hpp"
 #include "LIEF/DEX/hash.hpp"
@@ -30,7 +31,7 @@ Class::Class(std::string  fullname, uint32_t access_flags,
   access_flags_{access_flags},
   parent_{parent},
   source_filename_{std::move(source_filename)},
-  original_index_{-1u}
+  original_index_{UINT_MAX}
 {}
 
 std::string Class::package_normalized(const std::string& pkg) {

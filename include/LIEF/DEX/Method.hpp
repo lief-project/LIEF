@@ -16,6 +16,7 @@
 #ifndef LIEF_DEX_METHOD_H_
 #define LIEF_DEX_METHOD_H_
 
+#include <climits>
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
@@ -99,7 +100,7 @@ class LIEF_API Method : public Object {
   Class* parent_ = nullptr;
   Prototype* prototype_ = nullptr;
   uint32_t access_flags_ = ACCESS_FLAGS::ACC_UNKNOWN;
-  uint32_t original_index_ = -1u;
+  uint32_t original_index_ = UINT_MAX;
   bool is_virtual_ = false;
 
   uint64_t code_offset_ = 0;

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include <iomanip>
+#include <climits>
 
 #include "LIEF/exception.hpp"
 #include "LIEF/ELF/hash.hpp"
@@ -170,7 +171,7 @@ size_t Relocation::size() const {
         const auto it = relocation_x86_64_sizes.find(static_cast<RELOC_x86_64>(type()));
         if (it == std::end(relocation_x86_64_sizes)) {
           LIEF_ERR("{} - {}", to_string(architecture()), to_string(static_cast<RELOC_x86_64>(type())));
-          return -1u;
+          return SIZE_MAX;
         }
         return it->second;
       }
@@ -180,7 +181,7 @@ size_t Relocation::size() const {
         const auto it = relocation_i386_sizes.find(static_cast<RELOC_i386>(type()));
         if (it == std::end(relocation_i386_sizes)) {
           LIEF_ERR("{} - {}", to_string(architecture()), to_string(static_cast<RELOC_i386>(type())));
-          return -1u;
+          return SIZE_MAX;
         }
         return it->second;
       }
@@ -190,7 +191,7 @@ size_t Relocation::size() const {
         const auto it = relocation_ARM_sizes.find(static_cast<RELOC_ARM>(type()));
         if (it == std::end(relocation_ARM_sizes)) {
           LIEF_ERR("{} - {}", to_string(architecture()), to_string(static_cast<RELOC_ARM>(type())));
-          return -1u;
+          return SIZE_MAX;
         }
         return it->second;
       }
@@ -200,7 +201,7 @@ size_t Relocation::size() const {
         const auto it = relocation_AARCH64_sizes.find(static_cast<RELOC_AARCH64>(type()));
         if (it == std::end(relocation_AARCH64_sizes)) {
           LIEF_ERR("{} - {}", to_string(architecture()), to_string(static_cast<RELOC_AARCH64>(type())));
-          return -1u;
+          return SIZE_MAX;
         }
         return it->second;
       }
@@ -210,7 +211,7 @@ size_t Relocation::size() const {
         const auto it = relocation_MIPS_sizes.find(static_cast<RELOC_MIPS>(type()));
         if (it == std::end(relocation_MIPS_sizes)) {
           LIEF_ERR("{} - {}", to_string(architecture()), to_string(static_cast<RELOC_MIPS>(type())));
-          return -1u;
+          return SIZE_MAX;
         }
         return it->second;
       }
@@ -221,7 +222,7 @@ size_t Relocation::size() const {
         const auto it = relocation_PPC_sizes.find(static_cast<RELOC_POWERPC32>(type()));
         if (it == std::end(relocation_PPC_sizes)) {
           LIEF_ERR("{} - {}", to_string(architecture()), to_string(static_cast<RELOC_POWERPC32>(type())));
-          return -1u;
+          return SIZE_MAX;
         }
         return it->second;
       }
@@ -231,7 +232,7 @@ size_t Relocation::size() const {
         const auto it = relocation_PPC64_sizes.find(static_cast<RELOC_POWERPC64>(type()));
         if (it == std::end(relocation_PPC64_sizes)) {
           LIEF_ERR("{} - {}", to_string(architecture()), to_string(static_cast<RELOC_POWERPC64>(type())));
-          return -1u;
+          return SIZE_MAX;
         }
         return it->second;
       }
@@ -239,7 +240,7 @@ size_t Relocation::size() const {
     default:
       {
         LIEF_ERR("Architecture {} not implemented", to_string(architecture()));
-        return -1u;
+        return SIZE_MAX;
       }
   }
 

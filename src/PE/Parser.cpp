@@ -220,7 +220,7 @@ ok_error_t Parser::parse_sections() {
   const uint32_t opt_header_off  = pe_header_off + sizeof(details::pe_header);
   const uint32_t sections_offset = opt_header_off + binary_->header().sizeof_optional_header();
 
-  uint32_t first_section_offset = -1u;
+  uint32_t first_section_offset = UINT_MAX;
 
   uint32_t numberof_sections = binary_->header().numberof_sections();
   if (numberof_sections > NB_MAX_SECTIONS) {

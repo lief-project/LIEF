@@ -74,10 +74,10 @@ class LIEF_API BinaryParser : public LIEF::Parser {
   friend class MachO::Parser;
 
   //! Maximum number of relocations
-  constexpr static size_t MAX_RELOCATIONS = std::numeric_limits<uint16_t>::max();
+  constexpr static size_t MAX_RELOCATIONS = (std::numeric_limits<uint16_t>::max)();
 
   //! Maximum number of MachO LoadCommand
-  constexpr static size_t MAX_COMMANDS = std::numeric_limits<uint16_t>::max();
+  constexpr static size_t MAX_COMMANDS = (std::numeric_limits<uint16_t>::max)();
 
   public:
   static std::unique_ptr<Binary> parse(const std::string& file);
