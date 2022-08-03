@@ -187,7 +187,7 @@ bool Symbol::is_exported() const {
   bool is_exported = shndx() != static_cast<uint16_t>(SYMBOL_SECTION_INDEX::SHN_UNDEF);
 
   // An export must have an address
-  is_exported = is_exported && value() != 0;
+  is_exported = is_exported && (value() != 0 || (value() == 0 && size() > 0));
 
   // An export must be bind to GLOBAL or WEAK
   is_exported = is_exported && (binding() == SYMBOL_BINDINGS::STB_GLOBAL ||
