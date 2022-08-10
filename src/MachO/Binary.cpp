@@ -530,6 +530,10 @@ SegmentCommand* Binary::segment_from_virtual_address(uint64_t virtual_address) {
 }
 
 const SegmentCommand* Binary::segment_from_offset(uint64_t offset) const {
+  if (offset_seg_.empty()) {
+    return nullptr;
+  }
+
   const auto it_begin = std::begin(offset_seg_);
   if (offset < it_begin->first) {
     return nullptr;
@@ -1518,7 +1522,6 @@ LoadCommand* Binary::add(const SegmentCommand& segment) {
    * ```
    * Therefore, we must shift __LINKEDIT by at least 4 * 0x1000 for Mach-O files targeting ARM
    */
-
   LIEF_DEBUG("Adding the new segment '{}' ({} bytes)", segment.name(), segment.content().size());
   const uint32_t alignment = page_size();
   const uint64_t new_fsize = align(segment.content().size(), alignment);
@@ -1563,17 +1566,18 @@ LoadCommand* Binary::add(const SegmentCommand& segment) {
 
   const bool has_linkedit = it_linkedit != std::end(commands_);
 
-
   size_t pos = std::distance(std::begin(commands_), it_linkedit);
 
   LIEF_DEBUG(" -> index: {}", pos);
 
-  auto* segment_added = add(new_segment, pos)->as<SegmentCommand>();
+  auto* new_cmd = add(new_segment, pos);
 
-  if (segment_added == nullptr) {
+  if (new_cmd == nullptr) {
     LIEF_WARN("Fail to insert new '{}' segment", segment.name());
     return nullptr;
   }
+
+  auto* segment_added = new_cmd->as<SegmentCommand>();
 
   if (!has_linkedit) {
     /* If there are not __LINKEDIT segment we can point the Segment's content to the EOF
