@@ -38,7 +38,7 @@ void CorePrPsInfo::parse_() {
   const auto* info = reinterpret_cast<const Elf_Prpsinfo*>(desc.data());
 
   // parse info structure
-  file_name_ = info->pr_fname;
+  file_name_ = std::string(info->pr_fname, sizeof(info->pr_fname)).c_str();
   flags_     = info->pr_flag;
   uid_       = info->pr_uid;
   gid_       = info->pr_gid;
