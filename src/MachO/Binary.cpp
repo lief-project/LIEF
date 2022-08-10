@@ -523,6 +523,10 @@ SegmentCommand* Binary::segment_from_virtual_address(uint64_t virtual_address) {
 }
 
 const SegmentCommand* Binary::segment_from_offset(uint64_t offset) const {
+  if (offset_seg_.empty()) {
+    return nullptr;
+  }
+
   const auto it_begin = std::begin(offset_seg_);
   if (offset < it_begin->first) {
     return nullptr;
@@ -1244,7 +1248,6 @@ LoadCommand& Binary::add(const SegmentCommand& segment) {
   SegmentCommand new_segment = segment;
 
   range_t va_ranges  = this->va_ranges();
-
 
   if (new_segment.file_size() == 0) {
     const uint64_t new_size = segment.content().size();
