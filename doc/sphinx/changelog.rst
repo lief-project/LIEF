@@ -6,6 +6,7 @@ Changelog
 
 :ELF:
 
+  * Fix a heap overflow found by :github_user:`CCWANG19` (:issue:`763`)
   * :github_user:`aeflores` fixed an issue when there are multiple versions associated with a symbol
     (see: :issue:`749` for the details).
   * Handle binaries compiled with the `-static-pie` flag correctly (see: :issue:`747`)
@@ -30,6 +31,7 @@ Changelog
 
 :MachO:
 
+  * Fix a segfault when the Mach-O binary does not have segments (found by :github_user:`CCWANG19` via :issue:`764`)
   * Enable to create exports
   * Fix the layout of the binaries modified by LIEF such as they can be (re)signed.
   * Add support for `LC_DYLD_CHAINED_FIXUPS` and `LC_DYLD_EXPORTS_TRIE`
