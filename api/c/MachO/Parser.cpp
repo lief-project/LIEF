@@ -25,19 +25,21 @@ using namespace LIEF::MachO;
 
 Macho_Binary_t** macho_parse(const char *file) {
   FatBinary* fat = Parser::parse(file).release();
+  size_t nb_bin = fat->size();
 
   auto** c_macho_binaries = static_cast<Macho_Binary_t**>(
       malloc((fat->size() + 1) * sizeof(Macho_Binary_t**)));
 
-  for (size_t i = 0; i < fat->size(); ++i) {
-    Binary* binary = fat->at(i);
+  for (size_t i = 0; i < nb_bin; ++i) {
+    Binary* binary = fat->take(i).release();
     if (binary != nullptr) {
       c_macho_binaries[i] = static_cast<Macho_Binary_t*>(malloc(sizeof(Macho_Binary_t)));
       init_c_binary(c_macho_binaries[i], binary);
     }
   }
 
-  c_macho_binaries[fat->size()] = nullptr;
+  c_macho_binaries[nb_bin] = nullptr;
+  delete fat;
 
   return c_macho_binaries;
 }

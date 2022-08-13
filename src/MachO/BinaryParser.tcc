@@ -1004,6 +1004,7 @@ ok_error_t BinaryParser::parse_load_commands() {
     if (load_command != nullptr) {
       if (!stream_->peek_data(load_command->original_data_, loadcommands_offset, command->cmdsize)) {
         LIEF_ERR("Can't read the raw data of the load command");
+        load_command->size_ = 0;
       }
       load_command->command_offset(loadcommands_offset);
       binary_->commands_.push_back(std::move(load_command));
