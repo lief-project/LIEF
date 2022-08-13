@@ -584,7 +584,9 @@ void create<Binary>(py::module& m) {
         py::return_value_policy::reference_internal)
 
     .def("shift",
-         &Binary::shift,
+         [] (Binary& self, size_t width) {
+           return error_or(&Binary::shift, self, width);
+         },
          R"delim(
          Shift the content located right after the Load commands table.
          This operation can be used to add a new command
