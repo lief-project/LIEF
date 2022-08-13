@@ -66,7 +66,10 @@ void CoreFile::parse_() {
     if (!res_path) {
       break;
     }
-    files_[idx].path = std::move(*res_path);
+    std::string path = std::move(*res_path);
+    if (!path.empty()) {
+      files_[idx].path = std::move(path);
+    }
   }
 }
 
