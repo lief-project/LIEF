@@ -69,6 +69,8 @@ class LIEF_API FatBinary {
   it_binaries end();
   it_const_binaries end() const;
 
+  void release_all_binaries();
+
   //! Get a pointer to the last MachO::Binary object presents in this Fat Binary.
   //! It returns a nullptr if no binary are present.
   std::unique_ptr<Binary> pop_back();

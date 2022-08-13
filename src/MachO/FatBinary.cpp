@@ -147,6 +147,12 @@ std::vector<uint8_t> FatBinary::raw() {
   return buffer;
 }
 
+void FatBinary::release_all_binaries() {
+  for (auto& bin : binaries_) {
+    bin.release();
+  }
+}
+
 std::ostream& operator<<(std::ostream& os, const FatBinary& fatbinary) {
   for (const Binary& binary : fatbinary) {
     os << binary;
