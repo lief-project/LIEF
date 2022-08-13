@@ -940,7 +940,7 @@ void Binary::shift_command(size_t width, size_t from_offset) {
 }
 
 
-void Binary::shift(size_t value) {
+ok_error_t Binary::shift(size_t value) {
   Header& header = this->header();
 
   // Offset of the load commands table
@@ -964,7 +964,7 @@ void Binary::shift(size_t value) {
   SegmentCommand* load_cmd_segment = segment_from_offset(loadcommands_end);
   if (load_cmd_segment == nullptr) {
     LIEF_WARN("Can't find segment associated with last load command");
-    return;
+    return make_error_code(lief_errors::file_format_error);
   }
   LIEF_DEBUG("LC Table wrapped by {} / End offset: 0x{:x} (size: {:x})",
              load_cmd_segment->name(), loadcommands_end, load_cmd_segment->data_.size());
@@ -1016,6 +1016,7 @@ void Binary::shift(size_t value) {
     }
   }
   refresh_seg_offset();
+  return ok();
 }
 
 
@@ -1026,7 +1027,9 @@ LoadCommand* Binary::add(const LoadCommand& command) {
   // Check there is enough spaces between the load command table
   // and the raw content
   if (available_command_space_ < size_aligned) {
-    shift(shift_value);
+    if (!shift(shift_value)) {
+      return nullptr;
+    }
     available_command_space_ += shift_value;
     return add(command);
   }

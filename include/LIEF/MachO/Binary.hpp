@@ -648,7 +648,7 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   //! Shift the content located right after the Load commands table.
   //! This operation can be used to add a new command
-  void shift(size_t value);
+  ok_error_t shift(size_t value);
 
   //! Shift the position on the __LINKEDIT data by `width`
   ok_error_t shift_linkedit(size_t width);

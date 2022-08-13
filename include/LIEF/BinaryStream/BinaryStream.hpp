@@ -82,7 +82,10 @@ class BinaryStream {
     }
     // Even though offset + size < ... => offset < ...
     // the addition could overflow so it's worth checking both
-    const bool read_ok = offset <= this->size() && (offset + size) <= this->size();
+    const bool read_ok = offset <= this->size() && (offset + size) <= this->size()
+                                                /* Check for an overflow */
+                                                && (static_cast<int64_t>(offset) >= 0 && static_cast<int64_t>(size) >= 0)
+                                                && (static_cast<int64_t>(offset + size) >= 0);
     if (!read_ok) {
       return make_error_code(lief_errors::read_error);
     }
