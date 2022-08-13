@@ -9,8 +9,9 @@ import copy
 import distutils
 from pkg_resources import get_distribution
 from setuptools import setup, Extension
-from setuptools.command.build_ext import build_ext, copy_file
+from setuptools.command.build_ext import build_ext
 from distutils import log
+from shutil import copy2
 
 from distutils.version import LooseVersion
 
@@ -329,10 +330,9 @@ class BuildLibrary(build_ext):
         if not os.path.exists(self.build_lib):
             os.makedirs(self.build_lib)
 
-        log.info("Copying {} into {}".format(pylief_path, pylief_dst))
-        copy_file(
-                pylief_path, pylief_dst, verbose=self.verbose,
-                dry_run=self.dry_run)
+        log.info(f"Copying {pylief_path} into {pylief_dst}")
+        if not self.dry_run:
+            copy2(pylief_path, pylief_dst)
 
 
         # SDK
