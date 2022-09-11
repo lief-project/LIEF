@@ -29,7 +29,7 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git"
 else()
   set(LIEF_VERSION_MAJOR "0")
   set(LIEF_VERSION_MINOR "12")
-  set(LIEF_VERSION_PATCH "1")
+  set(LIEF_VERSION_PATCH "2")
 endif()
 
 # LIEF Project
