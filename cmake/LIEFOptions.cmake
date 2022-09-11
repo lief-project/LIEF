@@ -34,7 +34,7 @@ cmake_dependent_option(LIEF_OAT "Build LIEF with OAT module" ON
                        "LIEF_ELF;LIEF_DEX" OFF)
 
 # VDEX format depends on the DEX module
-cmake_dependent_option(LIEF_VDEX "Build LIEF with DEX module" ON
+cmake_dependent_option(LIEF_VDEX "Build LIEF with VDEX module" ON
                        "LIEF_DEX" OFF)
 
 # Sanitizer
