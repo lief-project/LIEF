@@ -667,7 +667,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Default constructor
   Binary();
 
-  void shift_command(size_t width, size_t from_offset);
+  void shift_command(size_t width, uint64_t from_offset);
 
   //! Insert a Segment command in the cache field (segments_)
   //! and keep a consistent state of the indexes.

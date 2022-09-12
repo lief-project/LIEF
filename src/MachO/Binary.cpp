@@ -707,11 +707,11 @@ uint32_t Binary::page_size() const {
   return is_arm ? 0x4000 : 0x1000;
 }
 
-void Binary::shift_command(size_t width, size_t from_offset) {
+void Binary::shift_command(size_t width, uint64_t from_offset) {
   const SegmentCommand* segment = segment_from_offset(from_offset);
 
-  size_t __text_base_addr = 0;
-  size_t virtual_address = 0;
+  uint64_t __text_base_addr = 0;
+  uint64_t virtual_address = 0;
 
   if (segment != nullptr) {
     virtual_address = segment->virtual_address() + from_offset;
@@ -1112,7 +1112,7 @@ LoadCommand* Binary::add(const LoadCommand& command, size_t index) {
 
   // Get offset of the LC border
   LoadCommand* cmd_border = commands_[index].get();
-  size_t border_off = cmd_border->command_offset();
+  uint64_t border_off = cmd_border->command_offset();
 
   std::unique_ptr<LoadCommand> copy{command.clone()};
   copy->command_offset(cmd_border->command_offset());
@@ -1175,7 +1175,7 @@ bool Binary::remove(const LoadCommand& command) {
     }
   }
 
-  const size_t cmd_rm_offset = cmd_rm->command_offset();
+  const uint64_t cmd_rm_offset = cmd_rm->command_offset();
   for (std::unique_ptr<LoadCommand>& cmd : commands_) {
     if (cmd->command_offset() >= cmd_rm_offset) {
       cmd->command_offset(cmd->command_offset() - cmd_rm->size());
@@ -1290,8 +1290,8 @@ bool Binary::extend_segment(const SegmentCommand& segment, size_t size) {
   }
 
   SegmentCommand* target_segment = *it_segment;
-  const size_t last_offset = target_segment->file_offset() + target_segment->file_size();
-  const size_t last_va     = target_segment->virtual_address() + target_segment->virtual_size();
+  const uint64_t last_offset = target_segment->file_offset() + target_segment->file_size();
+  const uint64_t last_va     = target_segment->virtual_address() + target_segment->virtual_size();
 
   const int32_t size_aligned = align(size, pointer_size());
 
@@ -1475,7 +1475,7 @@ Section* Binary::add_section(const SegmentCommand& segment, const Section& secti
   sections_.push_back(new_section.get());
 
   // Copy data to segment
-  const size_t relative_offset = new_section->offset() - target_segment->file_offset();
+  const uint64_t relative_offset = new_section->offset() - target_segment->file_offset();
 
   std::move(std::begin(content), std::end(content),
             std::begin(target_segment->data_) + relative_offset);
@@ -1591,7 +1591,7 @@ LoadCommand* Binary::add(const SegmentCommand& segment) {
     if (segment.virtual_address() == 0 && segment_added->virtual_size() != 0) {
       const uint64_t new_va = align(new_va_ranges.end, alignment);
       segment_added->virtual_address(new_va);
-      size_t current_va = segment_added->virtual_address();
+      uint64_t current_va = segment_added->virtual_address();
       for (Section& section : segment_added->sections()) {
         section.virtual_address(current_va);
         current_va += section.size();
@@ -1601,7 +1601,7 @@ LoadCommand* Binary::add(const SegmentCommand& segment) {
     if (segment.file_offset() == 0 && segment_added->virtual_size() != 0) {
       const uint64_t new_offset = align(new_off_ranges.end, alignment);
       segment_added->file_offset(new_offset);
-      size_t current_offset = new_offset;
+      uint64_t current_offset = new_offset;
       for (Section& section : segment_added->sections()) {
         section.offset(current_offset);
         current_offset += section.size();
@@ -1626,14 +1626,14 @@ LoadCommand* Binary::add(const SegmentCommand& segment) {
 
   segment_added->virtual_address(lnk_va);
   segment_added->virtual_size(segment_added->virtual_size());
-  size_t current_va = segment_added->virtual_address();
+  uint64_t current_va = segment_added->virtual_address();
   for (Section& section : segment_added->sections()) {
     section.virtual_address(current_va);
     current_va += section.size();
   }
 
   segment_added->file_offset(lnk_offset);
-  size_t current_offset = lnk_offset;
+  uint64_t current_offset = lnk_offset;
   for (Section& section : segment_added->sections()) {
     section.offset(current_offset);
     current_offset += section.size();
