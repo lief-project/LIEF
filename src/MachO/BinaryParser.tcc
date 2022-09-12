@@ -806,35 +806,39 @@ ok_error_t BinaryParser::parse_load_commands() {
             LIEF_ERR("Mach-O is corrupted with a FAT Mach-O inside a fileset ?");
             break;
           }
-
-
           try {
             /* TODO(romain): This part needs to be refactored
              * we should not have to make this kind construction and move
              * with the BinaryParser constructor
              */
             const size_t current_pos = stream_->pos();
+            if (!visited_.insert(cmd->fileoff).second) {
+              break;
+            }
+
             stream_->setpos(cmd->fileoff);
             BinaryParser bp;
-            bp.stream_ = std::move(stream_);
-            bp.config_ = config_;
+            bp.binary_  = std::unique_ptr<Binary>(new Binary{});
+            bp.stream_  = std::move(stream_);
+            bp.config_  = config_;
+            bp.visited_ = visited_;
+
             if (!bp.init_and_parse()) {
               LIEF_WARN("Parsing the Binary fileset raised error.");
             }
 
             stream_ = std::move(bp.stream_);
             stream_->setpos(current_pos);
+            visited_ = std::move(bp.visited_);
 
             if (bp.binary_ != nullptr) {
               std::unique_ptr<Binary> filset_bin = std::move(bp.binary_);
               filset_bin->name_ = *entry_name;
               binary_->filesets_.push_back(std::move(filset_bin));
             }
-
           } catch (const std::exception& e) {
             LIEF_DEBUG("{}", e.what());
           }
-
           break;
         }
 
