@@ -1634,6 +1634,10 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
             case BIND_SUBOPCODE_THREADED::BIND_SUBOPCODE_THREADED_APPLY:
               {
                 uint64_t delta = 0;
+                if (segment_idx >= segments.size()) {
+                  LIEF_ERR("Wrong index ({:d})", segment_idx);
+                  return make_error_code(lief_errors::corrupted);
+                }
                 const SegmentCommand& current_segment = segments[segment_idx];
                 do {
                   const uint64_t address = current_segment.virtual_address() + segment_offset;
