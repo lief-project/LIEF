@@ -540,7 +540,7 @@ const SegmentCommand* Binary::segment_from_offset(uint64_t offset) const {
   }
 
   auto it = offset_seg_.lower_bound(offset);
-  if (it->first == offset || it == it_begin) {
+  if (it != std::end(offset_seg_) && (it->first == offset || it == it_begin)) {
     SegmentCommand* seg = it->second;
     if (seg->file_offset() <= offset && offset < (seg->file_offset() + seg->file_size())) {
       return seg;
