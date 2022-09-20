@@ -349,10 +349,8 @@ class BuildLibrary(build_ext):
 
             sdk_path = str(sdk_path.pop())
             sdk_output = str(pathlib.Path(CURRENT_DIR) / "build")
-
-            copy_file(
-                sdk_path, sdk_output, verbose=self.verbose,
-                dry_run=self.dry_run)
+            if not self.dry_run:
+                copy2(sdk_path, sdk_output)
 
 def get_platform():
     out = get_platform_backup()
