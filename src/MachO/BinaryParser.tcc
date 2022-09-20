@@ -1691,12 +1691,19 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
               }
             case BIND_SUBOPCODE_THREADED::BIND_SUBOPCODE_THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB:
               {
+                // Maxium number of elements according to dyld's MachOAnalyzer.cpp
+                static constexpr size_t MAX_COUNT = 65535;
                 auto val = stream_->read_uleb128();
                 if (!val) {
                   LIEF_ERR("Can't read BIND_SUBOPCODE_THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB count");
                   break;
                 }
                 count = *val;
+                if (count > MAX_COUNT) {
+                  LIEF_ERR("BIND_SUBOPCODE_THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB"
+                           "count is too large ({})", count);
+                  break;
+                }
                 ordinal_table_size = count + 1; // the +1 comes from: 'ld64 wrote the wrong value here and we need to offset by 1 for now.'
                 use_threaded_rebase_bind = true;
                 ordinal_table.reserve(ordinal_table_size);
