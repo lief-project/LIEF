@@ -48,7 +48,8 @@ inline art_version_t version(BinaryStream& stream) {
     if (!are_digits) {
       return 0;
     }
-    return static_cast<art_version_t>(std::stoul(version.data()));
+    std::string version_str(std::begin(version), std::end(version));
+    return static_cast<art_version_t>(std::stoul(version_str));
   }
   return 0;
 }
