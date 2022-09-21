@@ -25,6 +25,7 @@
 #include "LIEF/visibility.h"
 
 namespace LIEF {
+class BinaryStream;
 namespace DEX {
 
 //! Check if the given file is a DEX.
@@ -38,6 +39,8 @@ LIEF_API dex_version_t version(const std::string& file);
 
 //! Return the DEX version of the raw data
 LIEF_API dex_version_t version(const std::vector<uint8_t>& raw);
+
+dex_version_t version(BinaryStream& stream);
 
 }
 }

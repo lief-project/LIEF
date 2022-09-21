@@ -15,8 +15,10 @@
  */
 #include <fstream>
 #include <climits>
+#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "logging.hpp"
 #include "LIEF/DEX/File.hpp"
+#include "LIEF/DEX/utils.hpp"
 #include "LIEF/DEX/instructions.hpp"
 #include "LIEF/DEX/Class.hpp"
 #include "LIEF/DEX/Method.hpp"
@@ -38,8 +40,9 @@ File::~File() = default;
 
 dex_version_t File::version() const {
   Header::magic_t m = header().magic();
-  const auto* version = reinterpret_cast<const char*>(m.data() + sizeof(details::magic));
-  return static_cast<dex_version_t>(std::stoul(version));
+  span<const uint8_t> data(m.data(), m.size());
+  SpanStream stream(data);
+  return DEX::version(stream);
 }
 
 std::string File::save(const std::string& path, bool deoptimize) const {
