@@ -497,7 +497,17 @@ void Parser::parse_class_data(uint32_t offset, Class& cls) {
     return;
   }
 
-  cls.methods_.reserve(*direct_methods_size + *virtual_methods_size);
+  const int64_t allocated_size = static_cast<int64_t>(*direct_methods_size) +
+                                 static_cast<int64_t>(*virtual_methods_size);
+  if (allocated_size < 0) {
+    return;
+  }
+
+  if (static_cast<size_t>(allocated_size) > this->file_->methods_.size()) {
+    return;
+  }
+
+  cls.methods_.reserve(allocated_size);
 
   // Static Fields
   // =============
