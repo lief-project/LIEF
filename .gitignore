@@ -1,0 +1,4 @@
+build/
+lief.cpython-310-x86_64-linux-gnu.so
+lief.egg-info/
+dist/
