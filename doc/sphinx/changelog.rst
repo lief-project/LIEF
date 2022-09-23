@@ -59,6 +59,10 @@ Changelog
   * Remove :meth:`lief.PE.ResourceNode.sort_by_id`
   * Fix the ordering of childs of :class:`~lief.PE.ResourceNode`
 
+:DEX:
+
+  * Fix multiple parsing issues raised by :github_user:`bladchan`
+
 :General Design:
 
   * :github_user:`ZehMatt` added the support to write LIEF binaries object through a `std::ostream` interface
