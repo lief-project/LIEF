@@ -19,6 +19,7 @@
 #include "logging.hpp"
 #include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/ChainedBindingInfo.hpp"
+#include "MachO/ChainedBindingInfoList.hpp"
 #include "MachO/ChainedFixup.hpp"
 
 namespace LIEF {

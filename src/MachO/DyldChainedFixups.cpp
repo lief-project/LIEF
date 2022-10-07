@@ -25,6 +25,8 @@
 
 #include "MachO/Structures.hpp"
 #include "MachO/ChainedFixup.hpp"
+#include "MachO/ChainedBindingInfoList.hpp"
+
 namespace LIEF {
 namespace MachO {
 DyldChainedFixups::~DyldChainedFixups() = default;

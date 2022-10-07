@@ -91,6 +91,7 @@ int main(int argc, char** argv) {
     LIEF_ERR("Usage: {} <binary>", argv[0]);
     return EXIT_FAILURE;
   }
+  LIEF::logging::set_level(LIEF::logging::LOG_WARN);
   const std::string path = argv[1];
 
   if (LIEF::ELF::is_elf(path)) {

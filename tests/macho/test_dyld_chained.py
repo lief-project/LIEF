@@ -21,7 +21,7 @@ def process_crypt_and_hash(path: str, delta: int = 0):
     assert dyld_chained.imports_format == lief.MachO.DYLD_CHAINED_FORMAT.IMPORT
 
     assert len(dyld_chained.chained_starts_in_segments) == 5
-    assert len(dyld_chained.bindings) == 40
+    assert len(dyld_chained.bindings) == 41
 
     start_in_segment = dyld_chained.chained_starts_in_segments[2]
     assert start_in_segment.offset == 24
@@ -236,3 +236,33 @@ def test_shift(tmp_path):
             stdout = proc.stdout.read()
             assert "CAMELLIA-256-CCM*-NO-TAG" in stdout
             assert "AES-128-CCM*-NO-TAG" in stdout
+
+def test_issue_804(tmp_path):
+    fat = lief.MachO.parse(get_sample('MachO/test_issue_804.bin'))
+    target = fat.take(lief.MachO.CPU_TYPES.ARM64)
+    bindings = target.dyld_chained_fixups.bindings
+
+    assert len(bindings) == 5
+
+    objc_nsobj = set(binding.address for binding in bindings if binding.symbol.name == "_OBJC_METACLASS_$_NSObject")
+    assert objc_nsobj == {0x0100008090, 0x0100008098}
+
+    output = f"{tmp_path}/test_issue_804.built"
+    target.write(output)
+
+    fat = lief.MachO.parse(output)
+    target = fat.take(lief.MachO.CPU_TYPES.ARM64)
+    bindings = target.dyld_chained_fixups.bindings
+
+    assert len(bindings) == 5
+
+    objc_nsobj = set(binding.address for binding in bindings if binding.symbol.name == "_OBJC_METACLASS_$_NSObject")
+    assert objc_nsobj == {0x0100008090, 0x0100008098}
+
+    if is_apple_m1():
+        chmod_exe(output)
+        sign(output)
+        with subprocess.Popen([output], universal_newlines=True,
+                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
+            stdout = proc.stdout.read()
+

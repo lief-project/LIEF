@@ -44,8 +44,9 @@ class LIEF_API BindingInfo : public Object {
   public:
   enum class TYPES {
     UNKNOWN = 0,
-    DYLD_INFO,  /// Binding associated with the Dyld info opcodes
-    CHAINED,    /// Binding associated with the chained fixups
+    DYLD_INFO,    /// Binding associated with the Dyld info opcodes
+    CHAINED,      /// Binding associated with the chained fixups
+    CHAINED_LIST, /// Internal use
   };
 
   BindingInfo();

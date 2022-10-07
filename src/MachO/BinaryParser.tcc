@@ -61,6 +61,7 @@
 
 #include "MachO/Structures.hpp"
 #include "MachO/ChainedFixup.hpp"
+#include "MachO/ChainedBindingInfoList.hpp"
 
 #include "Object.tcc"
 
@@ -2614,7 +2615,7 @@ template<class MACHO_T>
 ok_error_t BinaryParser::do_fixup(DYLD_CHAINED_FORMAT fmt, int32_t ord, const std::string& symbol_name,
                                   int64_t addend, bool is_weak)
 {
-  auto binding_info = std::make_unique<ChainedBindingInfo>(fmt, is_weak);
+  auto binding_info = std::make_unique<ChainedBindingInfoList>(fmt, is_weak);
   binding_info->addend_ = addend;
   binding_info->library_ordinal_ = ord;
   if (0 < ord && static_cast<size_t>(ord) <= binding_libs_.size()) {
@@ -2650,7 +2651,7 @@ ok_error_t BinaryParser::do_fixup(DYLD_CHAINED_FORMAT fmt, int32_t ord, const st
     symbol->binding_info_ = binding_info.get();
     binary_->symbols_.push_back(std::move(symbol));
   }
-  chained_fixups_->bindings_.push_back(std::move(binding_info));
+  chained_fixups_->internal_bindings_.push_back(std::move(binding_info));
   return ok();
 }
 
@@ -2927,21 +2928,29 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment, uint32_t chai
       uint32_t bind_ordinal = ptr_fmt == DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_USERLAND24 ?
                               fixup.auth_bind24.ordinal :
                               fixup.auth_bind.ordinal;
-      if (bind_ordinal >= chained_fixups_->bindings_.size()) {
-        LIEF_WARN("Out of range bind ordinal {} (max {})", bind_ordinal, chained_fixups_->bindings_.size());
+      if (bind_ordinal >= chained_fixups_->internal_bindings_.size()) {
+        LIEF_WARN("Out of range bind ordinal {} (max {})",
+                  bind_ordinal, chained_fixups_->internal_bindings_.size());
         return make_error_code(lief_errors::read_error);
       }
-      std::unique_ptr<ChainedBindingInfo>& binding = chained_fixups_->bindings_[bind_ordinal];
-      binding->offset_          = chain_offset;
-      binding->ptr_format_      = ptr_fmt;
-      binding->segment_         = &segment;
+      std::unique_ptr<ChainedBindingInfoList>& local_binding = chained_fixups_->internal_bindings_[bind_ordinal];
+      local_binding->segment_    = &segment;
+      local_binding->ptr_format_ = ptr_fmt;
+      local_binding->set(fixup.auth_bind);
+
+      chained_fixups_->all_bindings_.push_back(std::make_unique<ChainedBindingInfo>(*local_binding));
+      auto& binding_extra_info = chained_fixups_->all_bindings_.back();
+      copy_from(*binding_extra_info, *local_binding);
+
+      binding_extra_info->offset_ = chain_offset;
       /*
        * We use the BindingInfo::address_ to store the imagebase
        * to avoid creating a new attribute in ChainedBindingInfo
        */
-      binding->address_         = imagebase;
-      binding->set(fixup.auth_bind);
-      if (Symbol* sym = binding->symbol()) {
+      binding_extra_info->address_ = imagebase;
+      local_binding->elements_.push_back(binding_extra_info.get());
+
+      if (Symbol* sym = binding_extra_info->symbol()) {
         LIEF_DEBUG("{}[  BIND] {}@0x{:x}: {} / sign ext: {:x}",
                    DPREFIX, segment.name(), address, sym->name(), fixup.sign_extended_addend());
         return ok();
@@ -2984,24 +2993,31 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment, uint32_t chai
                               fixup.auth_bind24.ordinal :
                               fixup.auth_bind.ordinal;
 
-      if (bind_ordinal >= chained_fixups_->bindings_.size()) {
-        LIEF_WARN("Out of range bind ordinal {} (max {})", bind_ordinal, chained_fixups_->bindings_.size());
+      if (bind_ordinal >= chained_fixups_->internal_bindings_.size()) {
+        LIEF_WARN("Out of range bind ordinal {} (max {})",
+                  bind_ordinal, chained_fixups_->internal_bindings_.size());
         return make_error_code(lief_errors::read_error);
       }
 
-      std::unique_ptr<ChainedBindingInfo>& binding = chained_fixups_->bindings_[bind_ordinal];
-      binding->offset_          = chain_offset;
-      binding->ptr_format_      = ptr_fmt;
-      binding->segment_         = &segment;
+      std::unique_ptr<ChainedBindingInfoList>& local_binding = chained_fixups_->internal_bindings_[bind_ordinal];
+      local_binding->segment_    = &segment;
+      local_binding->ptr_format_ = ptr_fmt;
+      ptr_fmt == DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_USERLAND24 ?
+                 local_binding->set(fixup.auth_bind24) : local_binding->set(fixup.auth_bind);
+
+      chained_fixups_->all_bindings_.push_back(std::make_unique<ChainedBindingInfo>(*local_binding));
+      auto& binding_extra_info = chained_fixups_->all_bindings_.back();
+      copy_from(*binding_extra_info, *local_binding);
+
+      binding_extra_info->offset_ = chain_offset;
       /*
        * We use the BindingInfo::address_ to store the imagebase
        * to avoid creating a new attribute in ChainedBindingInfo
        */
-      binding->address_         = imagebase;
-      ptr_fmt == DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_USERLAND24 ?
-                 binding->set(fixup.auth_bind24) : binding->set(fixup.auth_bind);
+      binding_extra_info->address_ = imagebase;
+      local_binding->elements_.push_back(binding_extra_info.get());
 
-      if (Symbol* sym = binding->symbol()) {
+      if (Symbol* sym = binding_extra_info->symbol()) {
         LIEF_DEBUG("{}[  BIND] {}@0x{:x}: {} / sign ext: {:x}",
                    DPREFIX, segment.name(), address, sym->name(), fixup.sign_extended_addend());
         return ok();
@@ -3055,22 +3071,30 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment, uint32_t chai
   const uint64_t address = binary_->imagebase() + chain_offset;
   if (fixup.bind.bind > 0) {
     const uint64_t ordinal = fixup.bind.ordinal;
-    if (ordinal >= chained_fixups_->bindings_.size()) {
-      LIEF_WARN("Out of range bind ordinal {} (max {})", ordinal, chained_fixups_->bindings_.size());
+    if (ordinal >= chained_fixups_->internal_bindings_.size()) {
+      LIEF_WARN("Out of range bind ordinal {} (max {})",
+                ordinal, chained_fixups_->internal_bindings_.size());
       return make_error_code(lief_errors::read_error);
     }
-    std::unique_ptr<ChainedBindingInfo>& binding = chained_fixups_->bindings_[ordinal];
 
-    binding->offset_          = chain_offset;
-    binding->ptr_format_      = ptr_fmt;
-    binding->segment_         = &segment;
+    std::unique_ptr<ChainedBindingInfoList>& local_binding = chained_fixups_->internal_bindings_[ordinal];
+    local_binding->segment_    = &segment;
+    local_binding->ptr_format_ = ptr_fmt;
+    local_binding->set(fixup.bind);
+
+    chained_fixups_->all_bindings_.push_back(std::make_unique<ChainedBindingInfo>(*local_binding));
+    auto& binding_extra_info = chained_fixups_->all_bindings_.back();
+    copy_from(*binding_extra_info, *local_binding);
+
+    binding_extra_info->offset_ = chain_offset;
     /*
      * We use the BindingInfo::address_ to store the imagebase
      * to avoid creating a new attribute in ChainedBindingInfo
      */
-    binding->address_ = binary_->imagebase();
-    binding->set(fixup.bind);
-    if (Symbol* sym = binding->symbol()) {
+    binding_extra_info->address_ = binary_->imagebase();
+    local_binding->elements_.push_back(binding_extra_info.get());
+
+    if (Symbol* sym = binding_extra_info->symbol()) {
       LIEF_DEBUG("{}[  BIND] {}@0x{:x}: {} / sign ext: {:x}",
                  DPREFIX, segment.name(), address, sym->name(), fixup.sign_extended_addend());
       return ok();
@@ -3135,24 +3159,30 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment, uint32_t chai
   if (fixup.bind.bind > 0) {
     const uint64_t ordinal = fixup.bind.ordinal;
 
-    if (ordinal >= chained_fixups_->bindings_.size()) {
-      LIEF_WARN("Out of range bind ordinal {} (max {})", ordinal, chained_fixups_->bindings_.size());
+    if (ordinal >= chained_fixups_->internal_bindings_.size()) {
+      LIEF_WARN("Out of range bind ordinal {} (max {})",
+                ordinal, chained_fixups_->internal_bindings_.size());
       return make_error_code(lief_errors::read_error);
     }
 
-    std::unique_ptr<ChainedBindingInfo>& binding = chained_fixups_->bindings_[ordinal];
+    std::unique_ptr<ChainedBindingInfoList>& local_binding = chained_fixups_->internal_bindings_[ordinal];
+    local_binding->segment_    = &segment;
+    local_binding->ptr_format_ = ptr_fmt;
+    local_binding->set(fixup.bind);
 
-    binding->offset_          = chain_offset;
-    binding->ptr_format_      = ptr_fmt;
-    binding->segment_         = &segment;
+    chained_fixups_->all_bindings_.push_back(std::make_unique<ChainedBindingInfo>(*local_binding));
+    auto& binding_extra_info = chained_fixups_->all_bindings_.back();
+    copy_from(*binding_extra_info, *local_binding);
+
+    binding_extra_info->offset_ = chain_offset;
     /*
      * We use the BindingInfo::address_ to store the imagebase
      * to avoid creating a new attribute in ChainedBindingInfo
      */
-    binding->address_ = binary_->imagebase();
-    binding->set(fixup.bind);
+    binding_extra_info->address_ = binary_->imagebase();
+    local_binding->elements_.push_back(binding_extra_info.get());
 
-    if (Symbol* sym = binding->symbol()) {
+    if (Symbol* sym = binding_extra_info->symbol()) {
       LIEF_DEBUG("{}[  BIND] {}@0x{:x}: {} / sign ext: {:x}",
                  DPREFIX, segment.name(), address, sym->name(), fixup.bind.addend);
       return ok();
@@ -3524,9 +3554,16 @@ ok_error_t BinaryParser::post_process(TwoLevelHints& cmd) {
 }
 
 
-
-
-
+/* This method is needed since the C++ copy constructor of ChainedBindingInfo
+ * does not (on purpose) copy the pointers associated with the object.
+ * Thus we need this helper to maker sure that in the context on the parser,
+ * the pointers are correctly copied.
+ */
+void BinaryParser::copy_from(ChainedBindingInfo& to, ChainedBindingInfo& from) {
+  to.segment_ = from.segment_;
+  to.symbol_  = from.symbol_;
+  to.library_ = from.library_;
+}
 
 }
 }

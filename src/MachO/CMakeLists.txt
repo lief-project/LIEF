@@ -8,6 +8,7 @@ set(LIEF_MACHO_SRC
   "${CMAKE_CURRENT_LIST_DIR}/Builder.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Builder.tcc"
   "${CMAKE_CURRENT_LIST_DIR}/ChainedBindingInfo.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/ChainedBindingInfoList.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/ChainedFixup.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/CodeSignature.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/CodeSignatureDir.cpp"

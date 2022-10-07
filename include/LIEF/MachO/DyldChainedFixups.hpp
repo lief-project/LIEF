@@ -27,6 +27,7 @@ namespace MachO {
 class BinaryParser;
 class Builder;
 class ChainedBindingInfo;
+class ChainedBindingInfoList;
 class LinkEdit;
 
 namespace details {
@@ -114,12 +115,12 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
 
   //! Iterator over the bindings (ChainedBindingInfo) associated with this command
   inline it_binding_info bindings() {
-    return bindings_;
+    return all_bindings_;
   }
 
   //! Iterator over the bindings (ChainedBindingInfo) associated with this command
   inline it_const_binding_info bindings() const {
-    return bindings_;
+    return all_bindings_;
   }
 
   //! Iterator over the chained fixup metadata
@@ -195,7 +196,8 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
 
   chained_starts_in_segments_t chained_starts_in_segment_;
 
-  binding_info_t bindings_;
+  std::vector<std::unique_ptr<ChainedBindingInfoList>> internal_bindings_;
+  binding_info_t all_bindings_;
 };
 
 }
