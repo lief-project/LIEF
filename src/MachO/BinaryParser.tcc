@@ -936,6 +936,12 @@ ok_error_t BinaryParser::parse_load_commands() {
           LIEF_DEBUG("LC_DYLD_CHAINED_FIXUPS payload in '{}'", lnk->name());
           span<uint8_t> content = lnk->writable_content();
 
+          if (static_cast<int32_t>(chained->data_size()) < 0 ||
+              static_cast<int32_t>(chained->data_offset()) < 0) {
+            LIEF_WARN("LC_DYLD_CHAINED_FIXUPS payload is corrupted");
+            break;
+          }
+
           if ((chained->data_offset() + chained->data_size()) > (lnk->file_offset() + content.size())) {
             LIEF_WARN("LC_DYLD_CHAINED_FIXUPS payload does not fit in the '{}' segments",
                       lnk->name());
@@ -1152,6 +1158,12 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
 
   if (offset == 0 || size == 0) {
     return ok();
+  }
+
+  if (static_cast<int32_t>(offset) < 0 ||
+      static_cast<int32_t>(size)   < 0) {
+    LIEF_WARN("LC_DYLD_INFO.rebases payload is corrupted");
+    return make_error_code(lief_errors::read_out_of_bound);
   }
 
   SegmentCommand* linkedit = binary_->segment_from_offset(offset);
@@ -1386,6 +1398,12 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
 
   if (offset == 0 || size == 0) {
     return ok();
+  }
+
+  if (static_cast<int32_t>(offset) < 0 ||
+      static_cast<int32_t>(size)   < 0) {
+    LIEF_WARN("LC_DYLD_INFO.binding payload is corrupted");
+    return make_error_code(lief_errors::read_out_of_bound);
   }
 
   SegmentCommand* linkedit = binary_->segment_from_offset(offset);
@@ -1744,6 +1762,12 @@ ok_error_t BinaryParser::parse_dyldinfo_weak_bind() {
     return ok();
   }
 
+  if (static_cast<int32_t>(offset) < 0 ||
+      static_cast<int32_t>(size)   < 0) {
+    LIEF_WARN("LC_DYLD_INFO.weak_bind payload is corrupted");
+    return make_error_code(lief_errors::read_out_of_bound);
+  }
+
   SegmentCommand* linkedit = binary_->segment_from_offset(offset);
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the weak bind opcodes");
@@ -1985,6 +2009,12 @@ ok_error_t BinaryParser::parse_dyldinfo_lazy_bind() {
 
   if (offset == 0 || size == 0) {
     return ok();
+  }
+
+  if (static_cast<int32_t>(offset) < 0 ||
+      static_cast<int32_t>(size)   < 0) {
+    LIEF_WARN("LC_DYLD_INFO.lazy payload is corrupted");
+    return make_error_code(lief_errors::read_out_of_bound);
   }
 
   SegmentCommand* linkedit = binary_->segment_from_offset(offset);
