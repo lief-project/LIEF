@@ -43,7 +43,6 @@
 #include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 #include "LIEF/ELF/Note.hpp"
 
-#include "LIEF/ELF/Builder.hpp"
 #include "LIEF/errors.hpp"
 
 #include "ELF/Structures.hpp"
@@ -1004,13 +1003,22 @@ ok_error_t Builder::build_dynamic_section() {
     dynamic_table_raw.write_conv<Elf_Dyn>(dynhdr);
   }
 
+  std::vector<uint8_t> raw = dynamic_table_raw.raw();
+
+  // Update the dynamic section if present
+  Section* dynamic_section = binary_->get_section(".dynamic");
+  if(dynamic_section == nullptr) {
+    LIEF_INFO("Can't find the .dynamic section; will still try to update PT_DYNAMIC.");
+  } else {
+    dynamic_section->content(raw);
+  }
+
   // Update the PT_DYNAMIC segment
   Segment* dynamic_seg = binary_->get(SEGMENT_TYPES::PT_DYNAMIC);
   if (dynamic_seg == nullptr) {
     LIEF_ERR("Can't find the PT_DYNAMIC segment");
     return make_error_code(lief_errors::file_format_error);
   }
-  std::vector<uint8_t> raw = dynamic_table_raw.raw();
   dynamic_seg->physical_size(raw.size());
   dynamic_seg->virtual_size(raw.size());
   dynamic_seg->content(std::move(raw));
