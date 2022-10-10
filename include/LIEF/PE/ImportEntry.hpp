@@ -40,7 +40,9 @@ class LIEF_API ImportEntry : public LIEF::Symbol {
   public:
   ImportEntry();
   ImportEntry(uint64_t data, const std::string& name = "");
+  ImportEntry(uint64_t data, PE_TYPE type, const std::string& name);
   ImportEntry(const std::string& name);
+  ImportEntry(const std::string& name, PE_TYPE type);
   ImportEntry(const ImportEntry&);
   ImportEntry& operator=(const ImportEntry&);
   virtual ~ImportEntry();

@@ -37,9 +37,19 @@ ImportEntry::ImportEntry(uint64_t data, const std::string& name) :
   name_ = name;
 }
 
+ImportEntry::ImportEntry(uint64_t data, PE_TYPE type, const std::string& name) :
+  data_{data},
+  type_{type}
+{
+  name_ = name;
+}
 
 ImportEntry::ImportEntry(const std::string& name) :
   ImportEntry{0, name}
+{}
+
+ImportEntry::ImportEntry(const std::string& name, PE_TYPE type) :
+  ImportEntry{0, type, name}
 {}
 
 bool ImportEntry::is_ordinal() const {
