@@ -1,0 +1,4 @@
+build/
+*.so
+lief.egg-info/
+dist/
