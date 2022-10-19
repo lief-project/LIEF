@@ -277,13 +277,7 @@ ok_error_t Parser::parse_binary() {
     if (segment.type() != SEGMENT_TYPES::PT_NOTE) {
       continue;
     }
-
-    const uint64_t va = segment.virtual_address();
-    if (auto res = binary_->virtual_address_to_offset(va)) {
-      parse_notes(*res, segment.physical_size());
-    } else {
-      LIEF_WARN("Can't convert PT_NOTE.virtual_address into an offset (0x{:x})", va);
-    }
+    parse_notes(segment.file_offset(), segment.physical_size());
   }
 
   // Parse Note Sections
