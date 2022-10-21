@@ -51,6 +51,14 @@ void create<ImportEntry>(py::module& m) {
         "Constructor from a :attr:`~lief.PE.ImportEntry.data` and an optionally :attr:`~lief.PE.ImportEntry.name`",
         "data"_a, "name"_a = "")
 
+    .def(py::init<uint64_t, PE_TYPE, const std::string&>(),
+        "Constructor from a :attr:`~lief.PE.ImportEntry.data`, a :attr:`~lief.PE.ImportEntry.type` and an optional :attr:`~lief.PE.ImportEntry.name`",
+        "data"_a, "type"_a, "name"_a = "")
+
+    .def(py::init<const std::string&, PE_TYPE>(),
+        "Constructor from a :attr:`~lief.PE.ImportEntry.name`, and a :attr:`~lief.PE.ImportEntry.type`",
+        "name"_a, "type"_a)
+
     .def_property("name",
         [] (const ImportEntry& obj) {
           return safe_string_converter(obj.name());
