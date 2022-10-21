@@ -27,8 +27,8 @@ if (LIEF_EXTERNAL_PYBIND11)
   target_include_directories(lief_pybind11 SYSTEM INTERFACE ${PYBIND_INC_DIR} ${Python_INCLUDE_DIRS})
 else()
   find_package(PythonLibsNew MODULE REQUIRED)
-  set(PYBIND11_VERSION 2.8.1)
-  set(PYBIND11_SHA256 SHA256=90907e50b76c8e04f1b99e751958d18e72c4cffa750474b5395a93042035e4a3)
+  set(PYBIND11_VERSION 2.10.1)
+  set(PYBIND11_SHA256 SHA256=fcf94065efcfd0a7a828bacf118fa11c43f6390d0c805e3e6342ac119f2e9976)
   set(PYBIND11_URL "${THIRD_PARTY_DIRECTORY}/pybind11-${PYBIND11_VERSION}.zip" CACHE STRING "URL to the Pybind11 repo")
   ExternalProject_Add(lief_pybind11_project
     URL               ${PYBIND11_URL}
