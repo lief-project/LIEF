@@ -42,7 +42,7 @@ if (PYTHON_TESTS_ENABLED)
   add_test(PE_PYTHON_ordinal
     ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
     ${PYTHON_EXECUTABLE} -m pytest
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_ordinal.py)
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_ordinals.py)
 
   add_test(PE_PYTHON_hooking
     ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
