@@ -1239,6 +1239,11 @@ ok_error_t Builder::build_section_relocations() {
   auto* layout = static_cast<ObjectFileLayout*>(layout_.get());
 
   Binary::it_object_relocations object_relocations = binary_->object_relocations();
+  if (object_relocations.empty()) {
+    LIEF_ERR("Relocations are empty");
+    return make_error_code(lief_errors::not_found);
+  }
+
   const bool is_rela = object_relocations[0].is_rela();
   std::unordered_map<Section*, vector_iostream> section_content;
 
