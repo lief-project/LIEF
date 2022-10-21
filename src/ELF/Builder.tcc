@@ -1006,23 +1006,22 @@ ok_error_t Builder::build_dynamic_section() {
   std::vector<uint8_t> raw = dynamic_table_raw.raw();
 
   // Update the dynamic section if present
-  Section* dynamic_section = binary_->get_section(".dynamic");
-  if(dynamic_section == nullptr) {
-    LIEF_INFO("Can't find the .dynamic section; will still try to update PT_DYNAMIC.");
-  } else {
+  if (Section* dynamic_section = binary_->get_section(".dynamic")) {
     dynamic_section->content(raw);
+  } else {
+    LIEF_INFO("Can't find the .dynamic section; will still try to update PT_DYNAMIC.");
   }
 
   // Update the PT_DYNAMIC segment
-  Segment* dynamic_seg = binary_->get(SEGMENT_TYPES::PT_DYNAMIC);
-  if (dynamic_seg == nullptr) {
-    LIEF_ERR("Can't find the PT_DYNAMIC segment");
-    return make_error_code(lief_errors::file_format_error);
+  if (Segment* dynamic_seg = binary_->get(SEGMENT_TYPES::PT_DYNAMIC)) {
+    dynamic_seg->physical_size(raw.size());
+    dynamic_seg->virtual_size(raw.size());
+    dynamic_seg->content(std::move(raw));
+    return ok();
   }
-  dynamic_seg->physical_size(raw.size());
-  dynamic_seg->virtual_size(raw.size());
-  dynamic_seg->content(std::move(raw));
-  return ok();
+
+  LIEF_ERR("Can't find the PT_DYNAMIC segment");
+  return make_error_code(lief_errors::file_format_error);
 }
 
 
@@ -1277,7 +1276,7 @@ ok_error_t Builder::build_section_relocations() {
         // NOTE: To suppress a warning we require a cast here, this path is not constexpr but only uses Elf64_Xword
         info = (static_cast<details::ELF64::Elf_Xword>(symidx) << 32) | (reloc->type() & 0xffffffffL);
       }
-      
+
       if (is_rela) {
         Elf_Rela relahdr;
         relahdr.r_offset = static_cast<Elf_Addr>(reloc->address());
