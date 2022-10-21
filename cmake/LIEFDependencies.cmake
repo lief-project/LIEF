@@ -7,8 +7,8 @@ set(__add_lief_dependencies ON)
 # ----
 if(LIEF_ENABLE_JSON)
   if(NOT LIEF_OPT_NLOHMANN_JSON_EXTERNAL)
-    set(LIBJSON_VERSION 3.9.1)
-    set(LIBJSON_SHA256 SHA256=5db3b7b3356a0742e06b27b6ee744f8ee487ed9c0f8cf3f9778a2076e7a933ba)
+    set(LIBJSON_VERSION 3.11.2)
+    set(LIBJSON_SHA256 SHA256=62b1d12b8c7e4afcf96827d05426ca6d9184b9eefdfac512dd533726b98ad8f7)
     set(LIBJSON_URL "${THIRD_PARTY_DIRECTORY}/json-${LIBJSON_VERSION}.zip" CACHE STRING "URL to the JSON lib repo")
     ExternalProject_Add(lief_libjson
       URL               ${LIBJSON_URL}
@@ -32,8 +32,8 @@ endif()
 # mbed TLS
 # --------
 if(NOT LIEF_OPT_MBEDTLS_EXTERNAL)
-  set(MBED_TLS_VERSION 3.1.0)
-  set(MBED_TLS_SHA256 SHA256=8ec791eaed8332c50cade2bcc17b75ae5931ac00824a761b5aa4e7586645b72b)
+  set(MBED_TLS_VERSION 3.2.1)
+  set(MBED_TLS_SHA256 SHA256=efeac7fb687d19a7c7dc60f5e60265edd528244856cf3db2e2aecacece08b23f)
   set(MBED_TLS_URL "${THIRD_PARTY_DIRECTORY}/mbedtls-${MBED_TLS_VERSION}.zip" CACHE STRING "URL to MbedTLS")
   set(MBED_TLS_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/mbed_tls")
 
@@ -143,12 +143,13 @@ if(NOT LIEF_OPT_MBEDTLS_EXTERNAL)
     "${MBEDTLS_SOURCE_DIR}/library/net_sockets.c"
     "${MBEDTLS_SOURCE_DIR}/library/ssl_cache.c"
     "${MBEDTLS_SOURCE_DIR}/library/ssl_ciphersuites.c"
-    "${MBEDTLS_SOURCE_DIR}/library/ssl_cli.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_client.c"
     "${MBEDTLS_SOURCE_DIR}/library/ssl_cookie.c"
     "${MBEDTLS_SOURCE_DIR}/library/ssl_msg.c"
-    "${MBEDTLS_SOURCE_DIR}/library/ssl_srv.c"
     "${MBEDTLS_SOURCE_DIR}/library/ssl_ticket.c"
     "${MBEDTLS_SOURCE_DIR}/library/ssl_tls.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_tls12_client.c"
+    "${MBEDTLS_SOURCE_DIR}/library/ssl_tls12_server.c"
     "${MBEDTLS_SOURCE_DIR}/library/ssl_tls13_keys.c"
     "${MBEDTLS_SOURCE_DIR}/library/ssl_tls13_server.c"
     "${MBEDTLS_SOURCE_DIR}/library/ssl_tls13_client.c"
@@ -211,8 +212,8 @@ endif()
 # Boost leaf
 # ----------
 if(NOT LIEF_EXTERNAL_LEAF)
-  set(LEAF_VERSION a781140)
-  set(LEAF_SHA256 SHA256=af980c4b5288dd78f4ac47b42899cfeb47b335cd3191f8b3cd95b67be419b941)
+  set(LEAF_VERSION 1.81.0-prerelease)
+  set(LEAF_SHA256 SHA256=746903d23f8c6145db5b5ec51e4071740843868fd368cad54de06c7e835a6ebd)
   set(LEAF_URL "${THIRD_PARTY_DIRECTORY}/leaf-${LEAF_VERSION}.zip" CACHE STRING "URL to Leaf")
   ExternalProject_Add(lief_leaf # :)
     URL               ${LEAF_URL}
@@ -229,8 +230,8 @@ endif()
 # utfcpp
 # ------
 if(NOT LIEF_OPT_UTFCPP_EXTERNAL)
-  set(UTFCPP_VERSION 3.1.2) # Custom fix to remove use of SUBLANG_DEFAULT in common.hpp and all.hpp
-  set(UTFCPP_SHA256 SHA256=b77bff122a6d4f2a7a1ab409086bbb59bf899a2fdde12e1a85a4305fa91764c4)
+  set(UTFCPP_VERSION 3.2.1)
+  set(UTFCPP_SHA256 SHA256=04dacc4717d1ef9741f8254d1c56faf57a514684923ec35b2b98378ef016b87a)
   set(UTFCPP_URL "${THIRD_PARTY_DIRECTORY}/utfcpp-${UTFCPP_VERSION}.zip" CACHE STRING "URL to UTFCPP")
   ExternalProject_Add(lief_utfcpp
     URL               ${UTFCPP_URL}
@@ -247,8 +248,8 @@ endif()
 # https://github.com/tcbrindle/span
 # ---------------------------------
 if(NOT LIEF_EXTERNAL_SPAN)
-  set(TCB_SPAN_VERSION 427f6bd)
-  set(TCB_SPAN_SHA256 SHA256=3fde1bb8be41da080d10ad18b3b7a6b1045349dc8ae64fc4380b977478ec68d3)
+  set(TCB_SPAN_VERSION d6c6e30)
+  set(TCB_SPAN_SHA256 SHA256=c31fed99ea01526af28f26bb9b77a86d21e8964748708d57cf55a8813e883fe3)
   set(TCB_SPAN_URL "${THIRD_PARTY_DIRECTORY}/tcb-span-${TCB_SPAN_VERSION}.zip" CACHE STRING "URL to tcb/span")
   ExternalProject_Add(lief_span
     URL               ${TCB_SPAN_URL}
