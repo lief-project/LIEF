@@ -14,7 +14,10 @@ from unittest import TestCase
 import lief
 from utils import get_sample
 
-sys.set_int_max_str_digits(0)
+try:
+    sys.set_int_max_str_digits(0)
+except:
+    pass
 
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.WARNING)
 
