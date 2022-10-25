@@ -3067,7 +3067,11 @@ uint64_t Binary::relocate_phdr_table_v1() {
       continue;
     }
     Segment* adjacent = load_seg[i + 1];
-    const size_t gap = adjacent->file_offset() - (current->file_offset() + current->physical_size());
+    const int64_t gap = adjacent->file_offset() - (current->file_offset() + current->physical_size());
+    if (gap <= 0) {
+      continue;
+    }
+
     const size_t nb_seg_gap = gap / phdr_size;
     LIEF_DEBUG("Gap between {:d} <-> {:d}: {:x} ({:d} segments)", i, i + 1, gap, nb_seg_gap);
     if (nb_seg_gap > potential_size) {
@@ -3098,7 +3102,10 @@ uint64_t Binary::relocate_phdr_table_v1() {
 
   // Extend the segment that wraps the next PHDR table so that it is contiguous
   // with the next segment.
-  size_t delta = next_to_extend->file_offset() - (seg_to_extend->file_offset() + seg_to_extend->physical_size());
+  int64_t delta = next_to_extend->file_offset() - (seg_to_extend->file_offset() + seg_to_extend->physical_size());
+  if (delta <= 0) {
+    return 0;
+  }
   const size_t nb_segments = delta / phdr_size - header.numberof_segments();
   if (nb_segments < header.numberof_segments()) {
     LIEF_DEBUG("The layout of this binary does not enable to relocate the segment table (v1)\n"
