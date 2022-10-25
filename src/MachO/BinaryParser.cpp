@@ -53,12 +53,12 @@ std::unique_ptr<Binary> BinaryParser::parse(const std::string& file) {
 
 std::unique_ptr<Binary> BinaryParser::parse(const std::string& file, const ParserConfig& conf) {
   if (!is_macho(file)) {
-    LIEF_ERR("{} is not a Mach-O file");
+    LIEF_DEBUG("{} is not a Mach-O file", file);
     return nullptr;
   }
 
   if (!is_fat(file)) {
-    LIEF_ERR("{} is a Fat Mach-O file. Please use MachO::Parser::parse(...)");
+    LIEF_ERR("{} is a Fat Mach-O file. Please use MachO::Parser::parse(...)", file);
     return nullptr;
   }
 
