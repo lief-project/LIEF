@@ -1745,7 +1745,7 @@ std::ostream& Binary::print(std::ostream& os) const {
   if (has_debug()) {
     os << "Debug" << std::endl;
     os << "=====" << std::endl;
-    for (const Debug& debug : debug()) {
+    for (const Debug& debug : this->debug()) {
       os << debug << std::endl;
     }
     os << std::endl;
