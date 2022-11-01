@@ -1,19 +1,15 @@
 Changelog
 =========
 
+0.12.3 - November 1, 2022
+-------------------------
+
+- Fix security issues.
 
 0.12.2 - October 1, 2022
 ------------------------
 
 * Fix setuptools issue (:issue:`770`)
-
-:Dependencies:
-
-  * Move to `Pybind11 - 2.10.1 <https://pybind11.readthedocs.io/en/stable/changelog.html#version-2-10-1-oct-31-2022>`_
-  * Move to nlohmann/json 3.11.2
-  * Move to MbedTLS 3.2.1
-  * Move to utfcpp 3.2.1
-
 
 0.12.1 - April 08, 2022
 ------------------------
