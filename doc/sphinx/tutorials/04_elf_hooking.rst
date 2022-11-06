@@ -11,7 +11,7 @@ By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
 
 In the previous tutorial we saw how to swap symbols names from a shared library, we will now see the mechanism to hook a function in a shared library.
 
-The targeted library is the standard math library (``libm.so``) and we will insert a hook on the ``exp`` function so that :math:`exp(x) = x + 1`. The source code of the sample that uses this function is given in the following listing:
+The targeted library is the standard math library (``libm.so``) and we will insert a hook on the ``exp`` function so that :math:`\exp(x) = x + 1`. The source code of the sample that uses this function is given in the following listing:
 
 .. code-block:: cpp
 
