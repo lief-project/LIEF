@@ -3,7 +3,7 @@
 
 The objective of this tutorial is to hook a library function
 
-Scripts and materials are available here: `materials <https://github.com/lief-project/tutorials/tree/master/03_ELF_hooking>`_
+Scripts and materials are available here: `materials <https://github.com/lief-project/tutorials/tree/master/04_ELF_hooking>`_
 
 By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
 
