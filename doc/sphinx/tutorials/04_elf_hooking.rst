@@ -46,15 +46,33 @@ To inject this hook into the library, we use the :meth:`~lief.ELF.Binary.add` (s
 .. automethod:: lief.ELF.Binary.add
   :noindex:
 
-Once the stub is injected we just have to change the address of the ``exp`` symbol:
+First, we find the code for our hook function, and add it to the library:
 
 .. code-block:: python
+
+  import lief
+
+  libm = lief.parse("/usr/lib/libm.so.6")
+  hook = lief.parse("hook")
 
   exp_symbol  = libm.get_symbol("exp")
   hook_symbol = hook.get_symbol("hook")
 
-  exp_symbol.value = segment_added.virtual_address + hook_symbol.value
+  code_segment = hook.segment_from_virtual_address(hook_symbol.value)
+  segment_added = libm.add(code_segment)
 
+Once the stub is injected we just have to calculate the new address for the ``exp`` symbol, and update it:
+
+.. code-block:: python
+
+  new_address = segment_added.virtual_address + hook_symbol.value - code_segment.virtual_address
+  exp_symbol.value = new_address
+
+Finally, we write out the patched library to a file in the current folder:
+
+.. code-block:: python
+
+  libm.write("libm.so.6")
 
 To test the patched library:
 
