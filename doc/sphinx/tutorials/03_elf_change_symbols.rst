@@ -35,7 +35,7 @@ Imported and exported functions are abstracted by LIEF thus you can iterate over
 
 
 When analyzing a binary, imported function names are very helpful for the reverse engineering. One solution is to link statically the binary and the library.
-Another solution is to blow mind the reverser's mind by swapping these symbols.
+Another solution is to blow the reverser's mind by swapping these symbols. This is what we're going to do.
 
 Take a look at the following code:
 

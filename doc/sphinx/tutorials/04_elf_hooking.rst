@@ -3,7 +3,7 @@
 
 The objective of this tutorial is to hook a library function
 
-Scripts and materials are available here: `materials <https://github.com/lief-project/tutorials/tree/master/03_ELF_hooking>`_
+Scripts and materials are available here: `materials <https://github.com/lief-project/tutorials/tree/master/04_ELF_hooking>`_
 
 By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
 
@@ -11,7 +11,7 @@ By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
 
 In the previous tutorial we saw how to swap symbols names from a shared library, we will now see the mechanism to hook a function in a shared library.
 
-The targeted library is the standard math library (``libm.so``) and we will insert a hook on the ``exp`` function so that :math:`exp(x) = x + 1`. The source code of the sample that uses this function is given in the following listing:
+The targeted library is the standard math library (``libm.so``) and we will insert a hook on the ``exp`` function so that :math:`\exp(x) = x + 1`. The source code of the sample that uses this function is given in the following listing:
 
 .. code-block:: cpp
 
@@ -46,15 +46,33 @@ To inject this hook into the library, we use the :meth:`~lief.ELF.Binary.add` (s
 .. automethod:: lief.ELF.Binary.add
   :noindex:
 
-Once the stub is injected we just have to change the address of the ``exp`` symbol:
+First, we find the code for our hook function, and add it to the library:
 
 .. code-block:: python
+
+  import lief
+
+  libm = lief.parse("/usr/lib/libm.so.6")
+  hook = lief.parse("hook")
 
   exp_symbol  = libm.get_symbol("exp")
   hook_symbol = hook.get_symbol("hook")
 
-  exp_symbol.value = segment_added.virtual_address + hook_symbol.value
+  code_segment = hook.segment_from_virtual_address(hook_symbol.value)
+  segment_added = libm.add(code_segment)
 
+Once the stub is injected we just have to calculate the new address for the ``exp`` symbol, and update it:
+
+.. code-block:: python
+
+  new_address = segment_added.virtual_address + hook_symbol.value - code_segment.virtual_address
+  exp_symbol.value = new_address
+
+Finally, we write out the patched library to a file in the current folder:
+
+.. code-block:: python
+
+  libm.write("libm.so.6")
 
 To test the patched library:
 
@@ -62,7 +80,7 @@ To test the patched library:
 
   $ ./do_math.bin 1
   exp(1) = 2.718282
-  LD_LIBRARY_PATH=. ./do_math.bin 1
+  $ LD_LIBRARY_PATH=. ./do_math.bin 1
   exp(1) = 2.000000
 
 
