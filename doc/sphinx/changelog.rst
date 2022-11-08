@@ -87,6 +87,20 @@ Changelog
   * Move to utfcpp 3.2.1
 
 
+
+0.12.3 - November 1, 2022
+-------------------------
+
+This release contains several security fixes:
+
+  * [CVE-2022-38497] Fix ELF core parsing issue (:issue:`766` found by :github_user:`CCWANG19`)
+  * [CVE-2022-38306] Fix a heap overflow found by :github_user:`CCWANG19` (:issue:`763`)
+  * Fix a memory issue (found by :github_user:`bladchan` via :issue:`806`)
+  * [CVE-2022-40923] Fix parsing issue (:issue:`784` found by :github_user:`bladchan`)
+  * [CVE-2022-40922] Fix parsing issue (:issue:`781` found by :github_user:`bladchan`)
+  * [CVE-2022-38307] Fix a segfault when the Mach-O binary does not have segments (found by :github_user:`CCWANG19` via :issue:`764`)
+
+
 0.12.1 - April 08, 2022
 ------------------------
 
