@@ -367,7 +367,7 @@ ok_error_t Builder::build_exe_lib() {
   if (config_.gnu_hash || config_.dt_hash) {
     LIEF_SW_START(sw);
     build_hash_table<ELF_T>();
-    LIEF_SW_END("hast table built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
+    LIEF_SW_END("hash table built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
   }
 
   if (config_.dyn_str) {
