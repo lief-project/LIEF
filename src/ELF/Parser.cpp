@@ -504,13 +504,14 @@ ok_error_t Parser::parse_notes(uint64_t offset, uint64_t size) {
   uint64_t last_offset = offset + size;
 
   while(stream_->pos() < last_offset) {
+    const size_t pos = stream_->pos();
     auto res_namesz = stream_->read_conv<uint32_t>();
     if (!res_namesz) {
       break;
     }
 
     const auto namesz = *res_namesz;
-    LIEF_DEBUG("Name size: 0x{:x}", namesz);
+    LIEF_DEBUG("[0x{:06x}] Name size: 0x{:x}", pos, namesz);
 
     auto res_descz = stream_->read_conv<uint32_t>();
     if (!res_descz) {
@@ -531,15 +532,20 @@ ok_error_t Parser::parse_notes(uint64_t offset, uint64_t size) {
     if (namesz == 0) { // System reserves
       break;
     }
-
-    auto res_name = stream_->read_string(namesz);
-    if (!res_name) {
+    std::vector<uint8_t> name_buffer(namesz, 0);
+    if (!stream_->read_data(name_buffer, namesz)) {
       LIEF_ERR("Can't read note name");
       break;
     }
-    std::string name = std::move(*res_name);
 
+    std::string name(reinterpret_cast<const char*>(name_buffer.data()), name_buffer.size());
+    if (type != NOTE_TYPES::NT_GNU_BUILD_ATTRIBUTE_FUNC &&
+        type != NOTE_TYPES::NT_GNU_BUILD_ATTRIBUTE_OPEN)
+    {
+      name = name.c_str();
+    }
     LIEF_DEBUG("Name: {}", name);
+
     stream_->align(sizeof(uint32_t));
 
     std::vector<uint32_t> description;

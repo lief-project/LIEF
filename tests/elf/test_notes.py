@@ -126,6 +126,16 @@ class TestNotes(TestCase):
 
         self.safe_delete(output)
 
+    def test_issue_816(self):
+        _, output = tempfile.mkstemp(prefix="lief_notes_")
+        self.logger.info("Output will be: {}".format(output))
+
+        elf = lief.parse(get_sample('ELF/elf_notes_issue_816.bin'))
+        self.assertEqual(len(elf.notes), 40)
+
+        elf.write(output)
+        new = lief.parse(output)
+        self.assertEqual(len(new.notes), 40)
 
 if __name__ == '__main__':
 

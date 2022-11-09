@@ -939,13 +939,15 @@ enum class DYNSYM_COUNT_METHODS: size_t  {
 };
 
 enum class NOTE_TYPES: size_t  {
-  NT_UNKNOWN             = 0,
-  NT_GNU_ABI_TAG         = 1,
-  NT_GNU_HWCAP           = 2,
-  NT_GNU_BUILD_ID        = 3,
-  NT_GNU_GOLD_VERSION    = 4,
-  NT_GNU_PROPERTY_TYPE_0 = 5,
-  NT_CRASHPAD            = 0x4f464e49,
+  NT_UNKNOWN                  = 0,
+  NT_GNU_ABI_TAG              = 1,
+  NT_GNU_HWCAP                = 2,
+  NT_GNU_BUILD_ID             = 3,
+  NT_GNU_GOLD_VERSION         = 4,
+  NT_GNU_PROPERTY_TYPE_0      = 5,
+  NT_GNU_BUILD_ATTRIBUTE_OPEN = 0x100,
+  NT_GNU_BUILD_ATTRIBUTE_FUNC = 0x101,
+  NT_CRASHPAD                 = 0x4f464e49,
 };
 
 enum class NOTE_TYPES_CORE: size_t  {
@@ -994,18 +996,20 @@ enum class RELOCATION_PURPOSES: size_t  {
 using note_to_section_map_t = std::multimap<NOTE_TYPES, const char*>;
 
 static const note_to_section_map_t note_to_section_map = {
-  { NOTE_TYPES::NT_GNU_ABI_TAG,         ".note.ABI-tag"          },
-  { NOTE_TYPES::NT_GNU_ABI_TAG,         ".note.android.ident"    },
+  { NOTE_TYPES::NT_GNU_ABI_TAG,              ".note.ABI-tag"          },
+  { NOTE_TYPES::NT_GNU_ABI_TAG,              ".note.android.ident"    },
 
-  { NOTE_TYPES::NT_GNU_HWCAP,           ".note.gnu.hwcap"        },
-  { NOTE_TYPES::NT_GNU_BUILD_ID,        ".note.gnu.build-id"     },
-  { NOTE_TYPES::NT_GNU_BUILD_ID,        ".note.stapsdt"          }, // Alternative name
-  { NOTE_TYPES::NT_GNU_GOLD_VERSION,    ".note.gnu.gold-version" },
-  { NOTE_TYPES::NT_GNU_GOLD_VERSION,    ".note.go.buildid"       },
-  { NOTE_TYPES::NT_GNU_PROPERTY_TYPE_0, ".note.gnu.property"     },
-  { NOTE_TYPES::NT_CRASHPAD,            ".note.crashpad.info"    },
+  { NOTE_TYPES::NT_GNU_HWCAP,                ".note.gnu.hwcap"        },
+  { NOTE_TYPES::NT_GNU_BUILD_ID,             ".note.gnu.build-id"     },
+  { NOTE_TYPES::NT_GNU_BUILD_ID,             ".note.stapsdt"          }, // Alternative name
+  { NOTE_TYPES::NT_GNU_GOLD_VERSION,         ".note.gnu.gold-version" },
+  { NOTE_TYPES::NT_GNU_GOLD_VERSION,         ".note.go.buildid"       },
+  { NOTE_TYPES::NT_GNU_PROPERTY_TYPE_0,      ".note.gnu.property"     },
+  { NOTE_TYPES::NT_GNU_BUILD_ATTRIBUTE_OPEN, ".gnu.build.attributes"  },
+  { NOTE_TYPES::NT_GNU_BUILD_ATTRIBUTE_FUNC, ".gnu.build.attributes"  },
+  { NOTE_TYPES::NT_CRASHPAD,                 ".note.crashpad.info"    },
 
-  { NOTE_TYPES::NT_UNKNOWN,             ".note"                  },
+  { NOTE_TYPES::NT_UNKNOWN,                  ".note"                  },
 };
 
 

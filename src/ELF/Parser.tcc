@@ -286,7 +286,7 @@ ok_error_t Parser::parse_binary() {
     if (section.type() != ELF_SECTION_TYPES::SHT_NOTE) {
       continue;
     }
-
+    LIEF_DEBUG("Notes from section: {}", section.name());
     parse_notes(section.offset(), section.size());
   }
 
