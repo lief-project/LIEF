@@ -214,6 +214,8 @@ ok_error_t BinaryParser::parse_load_commands() {
   }
 
   uint32_t low_fileoff = -1U;
+  std::set<LOAD_COMMAND_TYPES> not_parsed;
+
   for (size_t i = 0; i < nbcmds; ++i) {
     const auto command = stream_->peek<details::load_command>(loadcommands_offset);
     if (!command) {
@@ -1011,7 +1013,9 @@ ok_error_t BinaryParser::parse_load_commands() {
 
       default:
         {
-          LIEF_WARN("Command '{}' not parsed!", to_string(static_cast<LOAD_COMMAND_TYPES>(command->cmd)));
+          if (not_parsed.insert(static_cast<LOAD_COMMAND_TYPES>(command->cmd)).second) {
+            LIEF_WARN("Command '{}' not parsed!", to_string(static_cast<LOAD_COMMAND_TYPES>(command->cmd)));
+          }
           load_command = std::make_unique<LoadCommand>(*command);
         }
     }
