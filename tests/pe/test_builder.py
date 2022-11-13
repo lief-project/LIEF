@@ -15,7 +15,7 @@ from utils import get_sample
 
 if sys.platform.startswith("win"):
     SEM_NOGPFAULTERRORBOX = 0x0002 # From MSDN
-    ctypes.windll.kernel32.SetErrorMode(SEM_NOGPFAULTERRORBOX);
+    ctypes.windll.kernel32.SetErrorMode(SEM_NOGPFAULTERRORBOX)
 
 def test_add_multiples_sections(tmp_path):
     sample_file = get_sample('PE/PE32_x86_binary_Notepad++.zip')
@@ -98,4 +98,3 @@ def test_imports_notepadpp(tmp_path):
         print(stdout.decode("utf8"))
 
         assert q.returncode == 0
-
