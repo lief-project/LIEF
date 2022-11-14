@@ -1,149 +1,97 @@
 #!/usr/bin/env python
-import itertools
-import logging
-import os
-import random
-import stat
-import subprocess
-import sys
-import tempfile
-import unittest
 from contextlib import redirect_stdout
 from io import StringIO
-from unittest import TestCase
+from pathlib import Path
 
 import lief
 from utils import get_sample
 
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
-class TestNotes(TestCase):
-    LOGGER = logging.getLogger(__name__)
+def test_change_note(tmp_path: Path):
+    etterlog = lief.parse(get_sample('ELF/ELF64_x86-64_binary_etterlog.bin'))
+    build_id = etterlog[lief.ELF.NOTE_TYPES.BUILD_ID]
 
-    def setUp(self):
-        self.logger = logging.getLogger(__name__)
+    new_desc = [i & 0xFF for i in range(500)]
+    build_id.description = new_desc
+    output = tmp_path / "etterlog"
+    etterlog.write(output.as_posix())
 
-    @staticmethod
-    def safe_delete(output):
-        if os.path.isfile(output):
-            try:
-                os.remove(output)
-                return True
-            except Exception as e:
-               TestNotes.LOGGER.error("Can't delete {} ({})".format(output, e))
-               return False
+    etterlog_updated = lief.parse(output.as_posix())
 
+    assert etterlog[lief.ELF.NOTE_TYPES.BUILD_ID] == etterlog_updated[lief.ELF.NOTE_TYPES.BUILD_ID]
 
-    def test_change_note(self):
-        _, output = tempfile.mkstemp(prefix="change_note_")
+def test_remove_note(tmp_path: Path):
+    etterlog = lief.parse(get_sample('ELF/ELF64_x86-64_binary_etterlog.bin'))
+    output = tmp_path / "etterlog"
+    print(output)
 
-        etterlog = lief.parse(get_sample('ELF/ELF64_x86-64_binary_etterlog.bin'))
-        build_id = etterlog[lief.ELF.NOTE_TYPES.BUILD_ID]
+    build_id = etterlog[lief.ELF.NOTE_TYPES.BUILD_ID]
+    assert build_id is not None
+    etterlog -= build_id
 
-        new_desc = [i & 0xFF for i in range(500)]
-        build_id.description = new_desc
+    etterlog.write(output.as_posix())
+    etterlog_updated = lief.parse(output.as_posix())
+    assert lief.ELF.NOTE_TYPES.BUILD_ID not in etterlog_updated
 
-        etterlog.write(output)
+def test_add_note(tmp_path: Path):
+    etterlog = lief.parse(get_sample('ELF/ELF64_x86-64_binary_etterlog.bin'))
+    output = tmp_path / "etterlog"
+    note = lief.ELF.Note("Foo", lief.ELF.NOTE_TYPES.GOLD_VERSION, [123])
 
-        etterlog_updated = lief.parse(output)
+    etterlog += note
 
-        self.assertEqual(etterlog[lief.ELF.NOTE_TYPES.BUILD_ID], etterlog_updated[lief.ELF.NOTE_TYPES.BUILD_ID])
-        self.safe_delete(output)
+    etterlog.write(output.as_posix())
 
+    etterlog_updated = lief.parse(output.as_posix())
 
-    def test_remove_note(self):
-        _, output = tempfile.mkstemp(prefix="remove_note_")
-        self.logger.info("Output will be: {}".format(output))
-
-        etterlog = lief.parse(get_sample('ELF/ELF64_x86-64_binary_etterlog.bin'))
-
-        build_id = etterlog[lief.ELF.NOTE_TYPES.BUILD_ID]
-
-        etterlog -= build_id
-
-        etterlog.write(output)
-
-        etterlog_updated = lief.parse(output)
-
-        self.assertNotIn(lief.ELF.NOTE_TYPES.BUILD_ID, etterlog_updated)
-
-        self.safe_delete(output)
-
-    def test_add_note(self):
-        _, output = tempfile.mkstemp(prefix="add_note_")
-        self.logger.info("Output will be: {}".format(output))
-
-        etterlog = lief.parse(get_sample('ELF/ELF64_x86-64_binary_etterlog.bin'))
-        note = lief.ELF.Note("Foo", lief.ELF.NOTE_TYPES.GOLD_VERSION, [123])
-
-        etterlog += note
-
-        etterlog.write(output)
-
-        etterlog_updated = lief.parse(output)
-
-        self.assertIn(lief.ELF.NOTE_TYPES.GOLD_VERSION, etterlog_updated)
-
-        self.safe_delete(output)
-
-        # The string printed is largely irrelevant, but running print ensures no regression occurs in a previous Note::dump segfault
-        # https://github.com/lief-project/LIEF/issues/300
-        with StringIO() as temp_stdout:
-            with redirect_stdout(temp_stdout):
-                print(etterlog)
+    assert lief.ELF.NOTE_TYPES.GOLD_VERSION in etterlog_updated
 
 
-    def test_android_note(self):
-        _, output = tempfile.mkstemp(prefix="android_note_")
-        self.logger.info("Output will be: {}".format(output))
+    # The string printed is largely irrelevant, but running print ensures no regression occurs in a previous Note::dump segfault
+    # https://github.com/lief-project/LIEF/issues/300
+    with StringIO() as temp_stdout:
+        with redirect_stdout(temp_stdout):
+            print(etterlog)
 
-        ndkr16 = lief.parse(get_sample('ELF/ELF64_AArch64_piebinary_ndkr16.bin'))
-        note = ndkr16.get(lief.ELF.NOTE_TYPES.ABI_TAG)
-        details = note.details
-        self.assertEqual(details.sdk_version, 21)
-        self.assertEqual(details.ndk_version[:4], "r16b")
-        self.assertEqual(details.ndk_build_number[:7], "4479499")
 
-        details.sdk_version = 15
-        details.ndk_version = "r15c"
-        details.ndk_build_number = "123456"
+def test_android_note(tmp_path: Path):
+    ndkr16 = lief.parse(get_sample('ELF/ELF64_AArch64_piebinary_ndkr16.bin'))
+    output = tmp_path / "etterlog"
 
-        note = ndkr16.get(lief.ELF.NOTE_TYPES.ABI_TAG).details
+    note = ndkr16.get(lief.ELF.NOTE_TYPES.ABI_TAG)
+    details = note.details
+    assert details.sdk_version == 21
+    assert details.ndk_version[:4] == "r16b"
+    assert details.ndk_build_number[:7] == "4479499"
 
-        self.assertEqual(note.sdk_version, 15)
-        self.assertEqual(note.ndk_version[:4], "r15c")
-        self.assertEqual(note.ndk_build_number[:6], "123456")
+    details.sdk_version = 15
+    details.ndk_version = "r15c"
+    details.ndk_build_number = "123456"
 
-        ndkr16.write(output)
+    note = ndkr16.get(lief.ELF.NOTE_TYPES.ABI_TAG).details
 
-        ndkr15 = lief.parse(output)
+    assert note.sdk_version == 15
+    assert note.ndk_version[:4] == "r15c"
+    assert note.ndk_build_number[:6] == "123456"
 
-        note = ndkr15.get(lief.ELF.NOTE_TYPES.ABI_TAG).details
+    ndkr16.write(output.as_posix())
 
-        self.assertEqual(note.sdk_version, 15)
-        self.assertEqual(note.ndk_version[:4], "r15c")
-        self.assertEqual(note.ndk_build_number[:6], "123456")
+    ndkr15 = lief.parse(output.as_posix())
 
-        self.safe_delete(output)
+    note = ndkr15.get(lief.ELF.NOTE_TYPES.ABI_TAG).details
 
-    def test_issue_816(self):
-        _, output = tempfile.mkstemp(prefix="lief_notes_")
-        self.logger.info("Output will be: {}".format(output))
+    assert note.sdk_version == 15
+    assert note.ndk_version[:4] == "r15c"
+    assert note.ndk_build_number[:6] == "123456"
 
-        elf = lief.parse(get_sample('ELF/elf_notes_issue_816.bin'))
-        self.assertEqual(len(elf.notes), 40)
 
-        elf.write(output)
-        new = lief.parse(output)
-        self.assertEqual(len(new.notes), 40)
+def test_issue_816(tmp_path: Path):
+    elf = lief.parse(get_sample('ELF/elf_notes_issue_816.bin'))
+    output = tmp_path / "elf_notes_issue_816"
 
-if __name__ == '__main__':
+    assert len(elf.notes) == 40
 
-    root_logger = logging.getLogger()
-    root_logger.setLevel(logging.DEBUG)
-
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
-    root_logger.addHandler(ch)
-
-    unittest.main(verbosity=2)
+    elf.write(output.as_posix())
+    new = lief.parse(output.as_posix())
+    assert len(new.notes) == 40

@@ -6,11 +6,12 @@ import stat
 import subprocess
 import sys
 import pytest
+from pathlib import Path
 
 from subprocess import Popen
 from utils import is_linux, glibc_version
 
-SAMPLE_DIR = pathlib.Path(os.getenv("LIEF_SAMPLES_DIR", ""))
+SAMPLE_DIR = Path(os.getenv("LIEF_SAMPLES_DIR", ""))
 
 OUTPUT = """
 In ctor
@@ -71,7 +72,7 @@ def test_force_relocate(tmp_path):
         builder.config.force_relocate = True
         builder.build()
 
-        out_path = tmp / file.name
+        out_path = tmp / Path(file.name).name
 
         print(f"File written in {out_path}")
         builder.write(out_path.as_posix())

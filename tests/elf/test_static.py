@@ -1,16 +1,13 @@
 #!/usr/bin/env python
-import logging
-import os
-import shutil
 import subprocess
-import sys
-import tempfile
-import unittest
+from pathlib import Path
 from subprocess import Popen
-from unittest import TestCase
+import pytest
 
 import lief
-from utils import get_compiler
+from utils import get_compiler, is_linux
+
+COMPILER = get_compiler()
 
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
@@ -38,120 +35,67 @@ int add(int a, int b) {
 }
 """
 
-class LibAddSample(object):
-    COUNT = 0
-    def __init__(self):
-        self.logger = logging.getLogger(__name__)
-        self.tmp_dir = tempfile.mkdtemp(suffix='_lief_sample_{:d}'.format(LibAddSample.COUNT))
-        self.logger.debug("temp dir: {}".format(self.tmp_dir))
+def compile_obj(out: Path, infile: Path):
+    cmd = [COMPILER, '-c', '-o', out, infile]
+    print("Compile 'binadd' with: {}".format(" ".join(map(str, cmd))))
 
-        LibAddSample.COUNT += 1
+    with Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=out.parent) as P:
+        stdout = P.stdout.read().decode('utf8')
+        print(stdout)
 
-        self.binadd_path = os.path.join(self.tmp_dir, "binadd.c")
-        self.add_c_path = os.path.join(self.tmp_dir, "add.c")
-        self.binadd_obj = os.path.join(self.tmp_dir, "binadd.o")
-        self.binadd_bin = os.path.join(self.tmp_dir, "binadd.exe")
-
-        self.compiler = get_compiler()
-        self.logger.debug("Compiler: {}".format(self.compiler))
-
-        with open(self.binadd_path, 'w') as f:
-            f.write(BINADD_C)
-
-        with open(self.add_c_path, 'w') as f:
-            f.write(ADD_C)
-
-        self._compile_objadd()
+def compile_bin(out: Path, obj: Path, add_c: Path):
+    cmd = [COMPILER, '-o', out, obj, add_c]
+    print("Compile 'binadd' with: {}".format(" ".join(map(str, cmd))))
+    with Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=out.parent) as P:
+        stdout = P.stdout.read().decode('utf8')
+        print(stdout)
 
 
-    def _compile_objadd(self):
-        if os.path.isfile(self.binadd_obj):
-            os.remove(self.binadd_obj)
+@pytest.mark.skipif(not is_linux(), reason="requires Linux")
+def test_write_object(tmp_path: Path):
+    binadd_c   = tmp_path / "binadd.c"
+    add_c      = tmp_path / "add.c"
+    binadd_o   = tmp_path / "binadd.o"
+    newfile_o  = tmp_path / "newfile.o"
+    binadd_bin = tmp_path / "binadd.bin"
 
-        cmd = [self.compiler, '-c', '-o', self.binadd_obj, self.binadd_path]
-        self.logger.debug("Compile 'binadd' with: {}".format(" ".join(cmd)))
-        p = Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        stdout, _ = p.communicate()
-        self.logger.debug(stdout)
+    binadd_c.write_text(BINADD_C)
+    add_c.write_text(ADD_C)
 
-    def compile_object_to_bin(self):
-        if os.path.isfile(self.binadd_bin):
-            os.remove(self.binadd_bin)
+    compile_obj(binadd_o, binadd_c)
 
-        cmd = [self.compiler, '-o', self.binadd_bin, self.binadd_obj, self.add_c_path]
-        self.logger.debug("Compile 'binadd' with: {}".format(" ".join(cmd)))
-        p = Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        stdout, _ = p.communicate()
-        self.logger.debug(stdout)
+    binadd = lief.parse(binadd_o.as_posix())
+    init_obj = [str(o).strip() for o in binadd.object_relocations]
 
-    @property
-    def binadd(self):
-        return self.binadd_bin
+    binadd.write(newfile_o.as_posix())
+    binadd = lief.parse(newfile_o.as_posix())
+    new_obj = [str(o).strip() for o in binadd.object_relocations]
 
-    @property
-    def objadd(self):
-        return self.binadd_obj
+    assert len(init_obj) == len(new_obj)
 
-    @property
-    def directory(self):
-        return self.tmp_dir
+    for new, old in zip(new_obj, init_obj):
+        assert new == old
 
-    def remove(self):
-        if os.path.isdir(self.directory):
-            shutil.rmtree(self.directory)
+    # Check it can still be compiled
+    compile_bin(binadd_bin, newfile_o, add_c)
+    assert subprocess.check_output([binadd_bin, "2", "3"]).decode('ascii', 'ignore') == \
+           'From myLIb, a + b = 5\n'
 
-    def __del__(self):
-        self.remove()
+@pytest.mark.skipif(not is_linux(), reason="requires Linux")
+def test_update_addend_object(tmp_path: Path):
+    binadd_c   = tmp_path / "binadd.c"
+    binadd_o   = tmp_path / "binadd.o"
+    newfile_o  = tmp_path / "newfile.o"
 
+    binadd_c.write_text(BINADD_C)
 
-class TestStatic(TestCase):
-    def setUp(self):
-        self.logger = logging.getLogger(__name__)
+    compile_obj(binadd_o, binadd_c)
+    binadd = lief.parse(binadd_o.as_posix())
+    reloc = next(o for o in binadd.object_relocations if o.symbol.name == "add")
 
+    reloc.addend = 0xABCD
+    binadd.write(newfile_o.as_posix())
+    binadd = lief.parse(newfile_o.as_posix())
+    reloc = next(o for o in binadd.object_relocations if o.symbol.name == "add")
 
-    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
-    def test_write_object(self):
-        sample = LibAddSample()
-        tmp_file = os.path.join(sample.directory, "newfile.o")
-        binadd = lief.parse(sample.objadd)
-        init_obj = [str(o).strip() for o in binadd.object_relocations]
-
-        binadd.write(tmp_file)
-        binadd = lief.parse(tmp_file)
-        new_obj = [str(o).strip() for o in binadd.object_relocations]
-
-        self.assertEqual(len(init_obj), len(new_obj))
-
-        for new, old in zip(new_obj, init_obj):
-            self.assertEqual(new, old)
-
-        # Check it can still be compiled
-        sample.compile_object_to_bin()
-        self.assertEqual(subprocess.check_output([sample.binadd_bin, "2", "3"]).decode('ascii', 'ignore'),
-                         'From myLIb, a + b = 5\n')
-
-    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
-    def test_update_addend_object(self):
-        sample = LibAddSample()
-        tmp_file = os.path.join(sample.directory, "newfile.o")
-        binadd = lief.parse(sample.objadd)
-        reloc = next(o for o in binadd.object_relocations if o.symbol.name == "add")
-
-        reloc.addend = 0xABCD
-        binadd.write(tmp_file)
-        binadd = lief.parse(tmp_file)
-        reloc = next(o for o in binadd.object_relocations if o.symbol.name == "add")
-
-        self.assertEqual(reloc.addend, 0xABCD)
-
-
-if __name__ == '__main__':
-
-    root_logger = logging.getLogger()
-    root_logger.setLevel(logging.DEBUG)
-
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
-    root_logger.addHandler(ch)
-
-    unittest.main(verbosity=2)
+    assert reloc.addend == 0xABCD

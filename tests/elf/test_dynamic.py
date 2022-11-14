@@ -1,23 +1,18 @@
 #!/usr/bin/env python
-import logging
 import os
-import re
-import shutil
 import stat
 import subprocess
-import sys
-import tempfile
-import unittest
+import pytest
 from subprocess import Popen
-from unittest import TestCase
+from typing import List
+from pathlib import Path
 
 import lief
-from utils import get_compiler, get_sample
+from utils import get_compiler, is_linux
 
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.WARNING)
 
-CURRENT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-STUB = lief.parse(os.path.join(CURRENT_DIRECTORY, "hello_lief.bin"))
+COMPILER = get_compiler()
 
 LIBADD_C = """\
 #include <stdlib.h>
@@ -48,276 +43,221 @@ int main(int argc, char **argv) {
   return 0;
 }
 """
-class LibAddSample(object):
-    COUNT = 0
-    def __init__(self, compile_libadd_extra_flags=[], compile_binadd_extra_flags=[]):
-        self.logger = logging.getLogger(__name__)
-        self.tmp_dir = tempfile.mkdtemp(suffix='_lief_sample_{:d}'.format(LibAddSample.COUNT))
-        self.logger.debug("temp dir: {}".format(self.tmp_dir))
-
-        LibAddSample.COUNT += 1
-
-        self.binadd_path = os.path.join(self.tmp_dir, "binadd.c")
-        self.libadd_path = os.path.join(self.tmp_dir, "libadd.c")
-
-        self.libadd_so  = os.path.join(self.tmp_dir, "libadd.so")
-        self.binadd_bin = os.path.join(self.tmp_dir, "binadd.bin")
-
-        self.compiler = get_compiler()
-        self.logger.debug("Compiler: {}".format(self.compiler))
-
-        with open(self.binadd_path, 'w') as f:
-            f.write(BINADD_C)
-
-        with open(self.libadd_path, 'w') as f:
-            f.write(LIBADD_C)
-
-        self._compile_libadd(compile_libadd_extra_flags)
-        self._compile_binadd(compile_binadd_extra_flags)
-
-
-    def _compile_libadd(self, extra_flags=[]):
-        if os.path.isfile(self.libadd_so):
-            os.remove(self.libadd_so)
-
-        CC_FLAGS = ['-fPIC', '-shared', '-Wl,-soname,libadd.so'] + extra_flags
-        cmd = [self.compiler, '-o', self.libadd_so] + CC_FLAGS + [self.libadd_path]
-        self.logger.debug("Compile 'libadd' with: {}".format(" ".join(cmd)))
-
-        p = Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-
-        stdout, _ = p.communicate()
-
-        self.logger.debug(stdout)
-
-
-    def _compile_binadd(self, extra_flags=[]):
-        if os.path.isfile(self.binadd_bin):
-            os.remove(self.binadd_bin)
-
-        # TODO(romain): without the -fPIC -pie it fails on manylinux2014-x86-64
-        # but it should be fixed with the new ELF builder
-        CC_FLAGS = ['-fPIC', '-pie', '-L', self.tmp_dir] + extra_flags
-        cmd = [self.compiler, '-o', self.binadd_bin] + CC_FLAGS + [self.binadd_path, '-ladd']
-        self.logger.debug("Compile 'binadd' with: {}".format(" ".join(cmd)))
-        p = Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        stdout, _ = p.communicate()
-        self.logger.debug(stdout)
-
-    @property
-    def libadd(self):
-        return self.libadd_so
-
-    @property
-    def binadd(self):
-        return self.binadd_bin
-
-    @property
-    def directory(self):
-        return self.tmp_dir
-
-    def remove(self):
-        if os.path.isdir(self.directory):
-            shutil.rmtree(self.directory)
-
-
-class TestDynamic(TestCase):
-    def setUp(self):
-        self.logger = logging.getLogger(__name__)
-
-    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
-    def test_add_dynamic_symbols(self):
-        self._test_add_dynamic_symbols("sysv", False)
-        self._test_add_dynamic_symbols("both", True)
-        self._test_add_dynamic_symbols("gnu", True)
-
-    def _test_add_dynamic_symbols(self, hash_style, symbol_sorted):
-        linkage_option = "-Wl,--hash-style={}".format(hash_style)
-        sample = LibAddSample([linkage_option], [linkage_option])
-        libadd = lief.parse(sample.libadd)
-        binadd = lief.parse(sample.binadd)
-        dynamic_symbols = list(libadd.dynamic_symbols)
-        for sym in dynamic_symbols:
-            libadd.add_dynamic_symbol(sym)
-        dynamic_section = libadd.get_section(".dynsym")
-        libadd.extend(dynamic_section, dynamic_section.entry_size * len(dynamic_symbols))
-        if hash_style != "gnu":
-            hash_section = libadd.get_section(".hash")
-            libadd.extend(hash_section, hash_section.entry_size * len(dynamic_symbols))
-        libadd.write(sample.libadd)
-
-        p = Popen([sample.binadd_bin, '1', '2'],
-                  stdout=subprocess.PIPE,
-                  stderr=subprocess.STDOUT,
-                  env={"LD_LIBRARY_PATH": sample.directory})
-        stdout, _ = p.communicate()
-        if p.returncode > 0:
-            self.logger.fatal(stdout.decode("utf8"))
-            self.assertEqual(p.returncode, 0)
-        self.logger.debug(stdout.decode("utf8"))
-        self.assertIsNotNone(re.search(r'From myLIb, a \+ b = 3', stdout.decode("utf8")))
 
-        libadd = lief.parse(sample.libadd)
-        dynamic_section = libadd.get_section(".dynsym")
-        # TODO: Size of libadd.dynamic_symbols is larger than  dynamic_symbols_size.
-        dynamic_symbols_size = int(dynamic_section.size / dynamic_section.entry_size)
-        dynamic_symbols = list(libadd.dynamic_symbols)[:dynamic_symbols_size]
-        if symbol_sorted:
-            first_not_null_symbol_index = dynamic_section.information
-            first_exported_symbol_index = next(
-                i for i, sym in enumerate(dynamic_symbols) if sym.shndx != 0)
-            self.assertTrue(all(map(
-                lambda sym: sym.shndx == 0 and sym.binding == lief.ELF.SYMBOL_BINDINGS.LOCAL,
-                        dynamic_symbols[:first_not_null_symbol_index])))
-            self.assertTrue(all(map(
-                lambda sym: sym.shndx == 0 and sym.binding != lief.ELF.SYMBOL_BINDINGS.LOCAL,
-                dynamic_symbols[first_not_null_symbol_index:first_exported_symbol_index])))
-            self.assertTrue(all(map(
-                lambda sym: sym.shndx != 0,
-                dynamic_symbols[first_exported_symbol_index:])))
 
-    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
-    def test_remove_library(self):
-        sample = LibAddSample()
-        libadd = lief.parse(sample.libadd)
-        binadd = lief.parse(sample.binadd)
+def compile_libadd(out: Path, infile: Path, extra_flags: List[str]):
+    CC_FLAGS = ['-fPIC', '-shared', '-Wl,-soname,libadd.so'] + extra_flags
+    cmd = [COMPILER, '-o', out] + CC_FLAGS + [infile]
+    print("Compile 'libadd' with: {}".format(" ".join(map(str, cmd))))
 
-        libadd_needed = binadd.get_library("libadd.so")
-        binadd -= libadd_needed
-        self.assertFalse(binadd.has_library("libadd.so"))
+    with Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=out.parent) as P:
+        stdout = P.stdout.read().decode('utf8')
+        print(stdout)
 
+def compile_binadd(out: Path, infile: Path, extra_flags: List[str]):
+    CC_FLAGS = ['-fPIC', '-pie', '-L', out.parent] + extra_flags
+    cmd = [COMPILER, '-o', out] + CC_FLAGS + [infile, '-ladd']
+    print("Compile 'libadd' with: {}".format(" ".join(map(str, cmd))))
 
-    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
-    def test_remove_tag(self):
-        sample = LibAddSample()
-        libadd = lief.parse(sample.libadd)
-        binadd = lief.parse(sample.binadd)
-        self.logger.debug("BEFORE")
-        list(map(lambda e : self.logger.debug(e), binadd.dynamic_entries))
-        self.logger.debug("")
-        binadd -= lief.ELF.DYNAMIC_TAGS.NEEDED
+    with Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=out.parent) as P:
+        stdout = P.stdout.read().decode('utf8')
+        print(stdout)
 
-        self.logger.debug("AFTER")
-        list(map(lambda e : self.logger.debug(e), binadd.dynamic_entries))
-        self.logger.debug("")
 
-        self.assertTrue(all(e.tag != lief.ELF.DYNAMIC_TAGS.NEEDED for e in binadd.dynamic_entries))
+@pytest.mark.skipif(not is_linux(), reason="requires Linux")
+@pytest.mark.parametrize("style", [
+    ("sysv", False),
+    ("both", True),
+    ("gnu",  True),
+])
+def test_add_dynamic_symbols(tmp_path: Path, style):
+    hash_style, symbol_sorted = style
+    link_opt = f"-Wl,--hash-style={hash_style}"
 
-    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
-    def test_runpath_api(self):
-        sample = LibAddSample()
-        libadd = lief.parse(sample.libadd)
-        binadd = lief.parse(sample.binadd)
+    binadd_c = tmp_path / "binadd.c"
+    libadd_c = tmp_path / "libadd.c"
 
-        rpath = lief.ELF.DynamicEntryRunPath()
-        rpath = binadd.add(rpath)
-        self.logger.debug(rpath)
-        rpath += "/tmp"
+    binadd_bin = tmp_path / "binadd.bin"
+    libadd_so  = tmp_path / "libadd.so"
 
-        self.logger.debug(rpath)
+    binadd_c.write_text(BINADD_C)
+    libadd_c.write_text(LIBADD_C)
 
-        self.assertEqual(rpath.paths, ["/tmp"])
-        self.assertEqual(rpath.runpath, "/tmp")
+    compile_libadd(libadd_so, libadd_c, [link_opt])
+    compile_binadd(binadd_bin, binadd_c, [link_opt])
 
-        rpath.insert(0, "/foo")
+    libadd = lief.parse(libadd_so.as_posix())
 
-        self.assertEqual(rpath.paths, ["/foo", "/tmp"])
-        self.assertEqual(rpath.runpath, "/foo:/tmp")
+    dynamic_symbols = list(libadd.dynamic_symbols)
+    for sym in dynamic_symbols:
+        libadd.add_dynamic_symbol(sym)
+    dynamic_section = libadd.get_section(".dynsym")
+    libadd.extend(dynamic_section, dynamic_section.entry_size * len(dynamic_symbols))
+    if hash_style != "gnu":
+        hash_section = libadd.get_section(".hash")
+        libadd.extend(hash_section, hash_section.entry_size * len(dynamic_symbols))
+    libadd.write(libadd_so.as_posix())
 
-        rpath.paths = ["/foo", "/tmp", "/bar"]
+    opt = {
+      'stdout': subprocess.PIPE,
+      'stderr': subprocess.STDOUT,
+      'env'   : {"LD_LIBRARY_PATH": tmp_path.as_posix()}
+    }
 
-        self.logger.debug(rpath)
+    with Popen([binadd_bin, '1', '2'], **opt) as P:
+        stdout = P.stdout.read().decode("utf8")
+        P.communicate()
+        assert P.returncode == 0
+        assert "From myLIb, a + b = 3" in stdout
 
-        self.assertEqual(rpath.paths, ["/foo", "/tmp", "/bar"])
-        self.assertEqual(rpath.runpath, "/foo:/tmp:/bar")
+    libadd = lief.parse(libadd_so.as_posix())
+    dynamic_section = libadd.get_section(".dynsym")
+    # TODO: Size of libadd.dynamic_symbols is larger than  dynamic_symbols_size.
+    dynamic_symbols_size = int(dynamic_section.size / dynamic_section.entry_size)
+    dynamic_symbols = list(libadd.dynamic_symbols)[:dynamic_symbols_size]
+    if symbol_sorted:
+        first_not_null_symbol_index = dynamic_section.information
+        first_exported_symbol_index = next(i for i, sym in enumerate(dynamic_symbols) if sym.shndx != 0)
 
-        rpath -= "/tmp"
+        assert all(map(lambda sym: sym.shndx == 0 and sym.binding == lief.ELF.SYMBOL_BINDINGS.LOCAL,
+                       dynamic_symbols[:first_not_null_symbol_index]))
 
-        self.logger.debug(rpath)
+        assert (all(map(lambda sym: sym.shndx == 0 and sym.binding != lief.ELF.SYMBOL_BINDINGS.LOCAL,
+                        dynamic_symbols[first_not_null_symbol_index:first_exported_symbol_index])))
 
-        self.assertEqual(rpath.runpath, "/foo:/bar")
+        assert (all(map(lambda sym: sym.shndx != 0, dynamic_symbols[first_exported_symbol_index:])))
 
-        rpath.remove("/foo").remove("/bar")
+@pytest.mark.skipif(not is_linux(), reason="requires Linux")
+def test_remove_library(tmp_path: Path):
+    binadd_c = tmp_path / "binadd.c"
+    libadd_c = tmp_path / "libadd.c"
 
-        self.logger.debug(rpath)
+    binadd_bin = tmp_path / "binadd.bin"
+    libadd_so  = tmp_path / "libadd.so"
 
-        self.assertEqual(rpath.runpath, "")
+    binadd_c.write_text(BINADD_C)
+    libadd_c.write_text(LIBADD_C)
 
-        self.logger.debug(rpath)
+    compile_libadd(libadd_so, libadd_c, [])
+    compile_binadd(binadd_bin, binadd_c, [])
 
+    binadd = lief.parse(binadd_bin.as_posix())
 
+    libadd_needed = binadd.get_library("libadd.so")
+    binadd -= libadd_needed
+    assert not binadd.has_library("libadd.so")
 
-    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
-    def test_change_libname(self):
-        sample = LibAddSample()
-        libadd = lief.parse(sample.libadd)
-        binadd = lief.parse(sample.binadd)
 
-        new_name = "libwhichhasalongverylongname.so"
+@pytest.mark.skipif(not is_linux(), reason="requires Linux")
+def test_remove_tag(tmp_path: Path):
+    binadd_c = tmp_path / "binadd.c"
+    libadd_c = tmp_path / "libadd.c"
 
+    binadd_bin = tmp_path / "binadd.bin"
+    libadd_so  = tmp_path / "libadd.so"
 
-        self.assertIn(lief.ELF.DYNAMIC_TAGS.SONAME, libadd)
+    binadd_c.write_text(BINADD_C)
+    libadd_c.write_text(LIBADD_C)
 
-        so_name = libadd[lief.ELF.DYNAMIC_TAGS.SONAME]
-        self.logger.debug("DT_SONAME: {}".format(so_name.name))
-        so_name.name = new_name
+    compile_libadd(libadd_so, libadd_c, [])
+    compile_binadd(binadd_bin, binadd_c, [])
 
-        libfoo_path = os.path.join(sample.directory, new_name)
-        self.logger.debug(libfoo_path)
-        libadd.write(libfoo_path)
+    binadd = lief.parse(binadd_bin.as_posix())
 
-        libfoo = lief.parse(libfoo_path)
+    binadd -= lief.ELF.DYNAMIC_TAGS.NEEDED
+    assert all(e.tag != lief.ELF.DYNAMIC_TAGS.NEEDED for e in binadd.dynamic_entries)
 
-        new_so_name = libadd[lief.ELF.DYNAMIC_TAGS.SONAME]
-        # Check builder did the job right
-        self.assertEqual(new_so_name.name, new_name)
+@pytest.mark.skipif(not is_linux(), reason="requires Linux")
+def test_runpath_api(tmp_path: Path):
+    binadd_c = tmp_path / "binadd.c"
+    libadd_c = tmp_path / "libadd.c"
 
-        libadd_needed = binadd.get_library("libadd.so")
-        libadd_needed.name = new_name
+    binadd_bin = tmp_path / "binadd.bin"
+    libadd_so  = tmp_path / "libadd.so"
 
-        # Add a RPATH entry
-        rpath = lief.ELF.DynamicEntryRunPath(sample.directory)
-        rpath = binadd.add(rpath)
-        self.logger.debug(rpath)
+    binadd_c.write_text(BINADD_C)
+    libadd_c.write_text(LIBADD_C)
 
-        new_binadd_path = os.path.join(sample.directory, "binadd_updated.bin")
-        self.logger.debug(new_binadd_path)
-        binadd.write(new_binadd_path)
+    compile_libadd(libadd_so, libadd_c, [])
+    compile_binadd(binadd_bin, binadd_c, [])
 
-        # Remove original binaries:
-        os.remove(sample.libadd)
-        os.remove(sample.binadd)
+    binadd = lief.parse(binadd_bin.as_posix())
 
-        # Run the new executable
-        st = os.stat(libfoo_path)
-        os.chmod(libfoo_path, st.st_mode | stat.S_IEXEC)
+    rpath = lief.ELF.DynamicEntryRunPath()
+    rpath = binadd.add(rpath)
+    rpath += "/tmp"
 
-        st = os.stat(new_binadd_path)
-        os.chmod(new_binadd_path, st.st_mode | stat.S_IEXEC)
+    assert rpath.paths == ["/tmp"]
+    assert rpath.runpath == "/tmp"
 
-        p = Popen([new_binadd_path, '1', '2'],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT)
-                #env={"LD_LIBRARY_PATH": sample.directory}) # Shouldn't be needed if RPATH inject succeed
-        stdout, _ = p.communicate()
-        if p.returncode > 0:
-            self.logger.fatal(stdout.decode("utf8"))
-            self.assertEqual(p.returncode, 0)
+    rpath.insert(0, "/foo")
 
-        self.logger.debug(stdout.decode("utf8"))
-        self.assertIsNotNone(re.search(r'From myLIb, a \+ b = 3', stdout.decode("utf8")))
+    assert rpath.paths == ["/foo", "/tmp"]
+    assert rpath.runpath == "/foo:/tmp"
 
-        sample.remove()
+    rpath.paths = ["/foo", "/tmp", "/bar"]
 
+    assert rpath.paths == ["/foo", "/tmp", "/bar"]
+    assert rpath.runpath == "/foo:/tmp:/bar"
 
+    rpath -= "/tmp"
+    assert rpath.runpath == "/foo:/bar"
 
-if __name__ == '__main__':
+    rpath.remove("/foo").remove("/bar")
+    assert rpath.runpath == ""
 
-    root_logger = logging.getLogger()
-    root_logger.setLevel(logging.DEBUG)
+@pytest.mark.skipif(not is_linux(), reason="requires Linux")
+def test_change_libname(tmp_path: Path):
+    binadd_c = tmp_path / "binadd.c"
+    libadd_c = tmp_path / "libadd.c"
 
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
-    root_logger.addHandler(ch)
+    binadd_bin = tmp_path / "binadd.bin"
+    libadd_so  = tmp_path / "libadd.so"
 
-    unittest.main(verbosity=2)
+    binadd_c.write_text(BINADD_C)
+    libadd_c.write_text(LIBADD_C)
+
+    compile_libadd(libadd_so, libadd_c, [])
+    compile_binadd(binadd_bin, binadd_c, [])
+
+    libadd = lief.parse(libadd_so.as_posix())
+    binadd = lief.parse(binadd_bin.as_posix())
+
+    new_name = "libwhichhasalongverylongname.so"
+
+    assert lief.ELF.DYNAMIC_TAGS.SONAME in libadd
+
+    libadd[lief.ELF.DYNAMIC_TAGS.SONAME].name = new_name
+
+    libfoo_path = tmp_path / new_name
+    libadd.write(libfoo_path.as_posix())
+
+    libfoo = lief.parse(libfoo_path.as_posix())
+
+    new_so_name = libfoo[lief.ELF.DYNAMIC_TAGS.SONAME]
+    # Check builder did the job right
+    assert new_so_name.name == new_name
+
+    libadd_needed = binadd.get_library("libadd.so")
+    libadd_needed.name = new_name
+
+    # Add a RPATH entry
+    rpath = lief.ELF.DynamicEntryRunPath(tmp_path.as_posix())
+    rpath = binadd.add(rpath)
+
+    new_binadd_path = tmp_path / "binadd_updated.bin"
+    binadd.write(new_binadd_path.as_posix())
+
+    # Run the new executable
+    st = os.stat(libfoo_path)
+    os.chmod(libfoo_path, st.st_mode | stat.S_IEXEC)
+
+    st = os.stat(new_binadd_path)
+    os.chmod(new_binadd_path, st.st_mode | stat.S_IEXEC)
+
+    with Popen([new_binadd_path, '1', '2'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
+        stdout = P.stdout.read().decode("utf8")
+        P.communicate()
+        print(stdout)
+        assert P.returncode == 0
+        assert "From myLIb, a + b = 3" in stdout
