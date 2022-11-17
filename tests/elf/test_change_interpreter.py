@@ -12,6 +12,7 @@ from utils import is_linux
 
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
+@pytest.mark.skipif(not is_linux(), reason="requires Linux")
 @pytest.mark.parametrize("target", [
     '/bin/ls',      '/usr/bin/ls',
     '/usr/bin/ssh', '/usr/bin/nm',

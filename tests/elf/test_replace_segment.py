@@ -75,6 +75,7 @@ def test_gcc(tmp_path: Path):
             print(stdout)
             assert re.search(r'LIEF is Working', stdout) is not None
 
+@pytest.mark.skipif(not is_linux(), reason="requires Linux")
 @pytest.mark.skipif(not Path('/usr/bin/ssh').is_file(), reason="missing '/usr/bin/ssh'")
 def test_ssh(tmp_path: Path):
     stub = None
