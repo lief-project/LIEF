@@ -14,7 +14,6 @@ from utils import get_sample, has_recent_glibc, is_linux, is_x86_64, is_aarch64
 is_updated_linux = pytest.mark.skipif(not (is_linux() and is_x86_64() and has_recent_glibc()),
                                       reason="needs a recent x86-64 Linux system")
 
-is_linux     = pytest.mark.skipif(not is_linux(),                   reason="needs a Linux system")
 is_linux_x64 = pytest.mark.skipif(not (is_linux() and is_x86_64()), reason="needs a Linux x86-64")
 
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
@@ -95,7 +94,7 @@ def test_static(tmp_path: Path):
         assert re.search(r'LIEF is Working', stdout) is not None
 
 
-@is_linux
+@pytest.mark.skipif(not is_linux(), reason="needs a Linux system")
 @pytest.mark.parametrize("binpath", [
     '/usr/bin/ls',      '/bin/ls',
     '/usr/bin/ssh',     '/usr/bin/nm',
