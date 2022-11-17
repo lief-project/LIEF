@@ -35,7 +35,7 @@ def test_issue_671(tmp_path: Path):
         st = os.stat(output)
         os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-        with Popen(output, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
+        with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
             stdout = P.stdout.read().decode("utf8")
             print(stdout)
             assert len(stdout) > 0
@@ -68,7 +68,7 @@ def test_all(tmp_path: Path):
         st = os.stat(output)
         os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-        with Popen(output, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
+        with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
             stdout = P.stdout.read().decode("utf8")
             print(stdout)
             assert len(stdout) > 0

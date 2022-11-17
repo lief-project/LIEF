@@ -11,6 +11,9 @@ import lief
 
 from utils import get_compiler, is_aarch64, is_x86_64, is_linux
 
+if not is_linux():
+    pytest.skip("requires Linux", allow_module_level=True)
+
 CURRENT_DIRECTORY = Path(__file__).parent
 STUB_FILE = None
 if is_x86_64():

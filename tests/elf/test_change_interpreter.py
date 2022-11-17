@@ -36,7 +36,7 @@ def test_change_interpreter(tmp_path: Path, target):
         st = os.stat(output)
         os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-        with Popen(output, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
+        with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
             stdout = P.stdout.read().decode("utf8")
             print(stdout)
             P.communicate()

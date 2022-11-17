@@ -96,6 +96,11 @@ jobs:
            -v $GITHUB_WORKSPACE:/src \
            -v $HOME/.ccache:/ccache \
            liefproject/manylinux_2_24_x86_64 bash /src/scripts/docker/run_linux.sh
+      - name: Test LIEF on Archlinux
+        shell: bash
+        env:
+          PYTHON_VERSION: 310
+        run: |
           docker run --rm \
            -v $GITHUB_WORKSPACE:/src \
            liefproject/archlinux bash /src/scripts/docker/run_archlinux.sh

@@ -41,7 +41,7 @@ def test_simple(tmp_path: Path):
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-    with Popen(output, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
+    with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
         stdout = P.stdout.read().decode("utf8")
         print(stdout)
         assert re.search(r'LIEF is Working', stdout) is not None
@@ -65,7 +65,7 @@ def test_gcc(tmp_path: Path):
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-    with Popen(output, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
+    with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
         stdout = P.stdout.read().decode("utf8")
         print(stdout)
         assert re.search(r'LIEF is Working', stdout) is not None
@@ -89,7 +89,7 @@ def test_static(tmp_path: Path):
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-    with Popen(output, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
+    with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
         stdout = P.stdout.read().decode("utf8")
         print(stdout)
         assert re.search(r'LIEF is Working', stdout) is not None
@@ -136,7 +136,7 @@ def test_add_segment(tmp_path: Path, binpath):
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-    with Popen(output, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
+    with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
         stdout = P.stdout.read().decode("utf8")
         print(stdout)
         assert re.search(r'LIEF is Working', stdout) is not None

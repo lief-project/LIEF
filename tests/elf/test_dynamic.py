@@ -10,6 +10,9 @@ from pathlib import Path
 import lief
 from utils import get_compiler, is_linux
 
+if not is_linux():
+    pytest.skip("requires Linux", allow_module_level=True)
+
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.WARNING)
 
 COMPILER = get_compiler()

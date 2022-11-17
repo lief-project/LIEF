@@ -7,6 +7,9 @@ import pytest
 import lief
 from utils import get_compiler, is_linux
 
+if not is_linux():
+    pytest.skip("requires Linux", allow_module_level=True)
+
 COMPILER = get_compiler()
 
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
