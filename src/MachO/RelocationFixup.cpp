@@ -32,13 +32,13 @@ inline uint64_t unpack_target(const details::dyld_chained_ptr_64_rebase& rebase)
   details::dyld_chained_ptr_generic64 value;
   value.rebase = rebase;
   return value.unpack_target();
-};
+}
 
 inline uint64_t unpack_target(const details::dyld_chained_ptr_arm64e_rebase& rebase) {
   details::dyld_chained_ptr_arm64e value;
   value.rebase = rebase;
   return value.unpack_target();
-};
+}
 
 RelocationFixup::~RelocationFixup() {
   switch (rtypes_) {
