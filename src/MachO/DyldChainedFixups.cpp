@@ -41,6 +41,7 @@ DyldChainedFixups& DyldChainedFixups::operator=(const DyldChainedFixups& other) 
 }
 
 DyldChainedFixups::DyldChainedFixups(const DyldChainedFixups& other) :
+  LoadCommand::LoadCommand(other),
   data_offset_{other.data_offset_},
   data_size_{other.data_size_}
 {}
