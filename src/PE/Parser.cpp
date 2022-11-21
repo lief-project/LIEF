@@ -803,7 +803,7 @@ inline result<uint32_t> name_table_value(BinaryStream& stream,
 ok_error_t Parser::parse_exports() {
   LIEF_DEBUG("== Parsing exports ==");
   static constexpr uint32_t NB_ENTRIES_LIMIT   = 0x1000000;
-  static constexpr size_t MAX_EXPORT_NAME_SIZE = 3000; // Because of C++ mangling
+  static constexpr size_t MAX_EXPORT_NAME_SIZE = 4096; // Because of C++ mangling
 
   struct range_t {
     uint32_t start;
