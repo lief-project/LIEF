@@ -1824,17 +1824,20 @@ result<uint64_t> Binary::virtual_address_to_offset(uint64_t virtual_address) con
 result<uint64_t> Binary::offset_to_virtual_address(uint64_t offset, uint64_t slide) const {
   const SegmentCommand* segment = segment_from_offset(offset);
   if (segment == nullptr) {
-    return offset + slide;
+    return slide + offset;
   }
-  const uint64_t base_address = segment->virtual_address() - segment->file_offset();
-  if (slide > 0) {
-    const uint64_t base = imagebase();
-    if (base == 0) {
-      return slide + offset;
-    }
-    return (base_address - base) + offset + slide;
+  const uint64_t delta = segment->virtual_address() - segment->file_offset();
+  const uint64_t imgbase = imagebase();
+
+  if (slide == 0) {
+    return delta + offset;
   }
-  return base_address + offset;
+
+  if (imgbase == 0) {
+    return slide +
+           segment->virtual_address() + (offset - segment->file_offset());
+  }
+  return (segment->virtual_address() - imgbase) + slide + (offset - segment->file_offset());
 }
 
 bool Binary::disable_pie() {
