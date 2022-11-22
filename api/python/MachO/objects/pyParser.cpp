@@ -52,49 +52,57 @@ void create<Parser>(py::module& m) {
     "config"_a = ParserConfig::quick(),
     py::return_value_policy::take_ownership);
 
+  m.def("parse_from_memory",
+    static_cast<std::unique_ptr<FatBinary> (*) (uintptr_t, const ParserConfig&)>(&MachO::Parser::parse_from_memory),
+    R"delim(
+    Parse the Mach-O binary from the address given in the first parameter
+    )delim",
+    "address"_a,
+    "config"_a = ParserConfig::deep(),
+    py::return_value_policy::take_ownership);
 
-    m.def("parse",
-      [] (py::object byteio, std::string name, const ParserConfig& config) {
-        const auto& io = py::module::import("io");
-        const auto& RawIOBase = io.attr("RawIOBase");
-        const auto& BufferedIOBase = io.attr("BufferedIOBase");
-        const auto& TextIOBase = io.attr("TextIOBase");
+  m.def("parse",
+    [] (py::object byteio, std::string name, const ParserConfig& config) {
+      const auto& io = py::module::import("io");
+      const auto& RawIOBase = io.attr("RawIOBase");
+      const auto& BufferedIOBase = io.attr("BufferedIOBase");
+      const auto& TextIOBase = io.attr("TextIOBase");
 
-        py::object rawio;
+      py::object rawio;
 
 
-        if (py::isinstance(byteio, RawIOBase)) {
-          rawio = byteio;
-        }
+      if (py::isinstance(byteio, RawIOBase)) {
+        rawio = byteio;
+      }
 
-        else if (py::isinstance(byteio, BufferedIOBase)) {
-          rawio = byteio.attr("raw");
-        }
+      else if (py::isinstance(byteio, BufferedIOBase)) {
+        rawio = byteio.attr("raw");
+      }
 
-        else if (py::isinstance(byteio, TextIOBase)) {
-          rawio = byteio.attr("buffer").attr("raw");
-        }
+      else if (py::isinstance(byteio, TextIOBase)) {
+        rawio = byteio.attr("buffer").attr("raw");
+      }
 
-        else {
-          throw py::type_error(py::repr(byteio).cast<std::string>().c_str());
-        }
+      else {
+        throw py::type_error(py::repr(byteio).cast<std::string>().c_str());
+      }
 
-        std::string raw_str = static_cast<py::bytes>(rawio.attr("readall")());
-        std::vector<uint8_t> raw = {
-          std::make_move_iterator(std::begin(raw_str)),
-          std::make_move_iterator(std::end(raw_str))};
+      std::string raw_str = static_cast<py::bytes>(rawio.attr("readall")());
+      std::vector<uint8_t> raw = {
+        std::make_move_iterator(std::begin(raw_str)),
+        std::make_move_iterator(std::end(raw_str))};
 
-        return LIEF::MachO::Parser::parse(std::move(raw), name, config);
-      },
-      R"delim(
-      Parse the given binary from a Python IO interface and return a :class:`~lief.MachO.FatBinary` object
+      return LIEF::MachO::Parser::parse(std::move(raw), name, config);
+    },
+    R"delim(
+    Parse the given binary from a Python IO interface and return a :class:`~lief.MachO.FatBinary` object
 
-      One can configure the parsing with the ``config`` parameter. See :class:`~lief.MachO.ParserConfig`
-      )delim",
-      "io"_a,
-      "name"_a = "",
-      "config"_a = ParserConfig::quick(),
-      py::return_value_policy::take_ownership);
+    One can configure the parsing with the ``config`` parameter. See :class:`~lief.MachO.ParserConfig`
+    )delim",
+    "io"_a,
+    "name"_a = "",
+    "config"_a = ParserConfig::quick(),
+    py::return_value_policy::take_ownership);
 }
 
 }

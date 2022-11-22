@@ -26,12 +26,19 @@
 
 #include "LIEF/exception.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
+#include "LIEF/BinaryStream/MemoryStream.hpp"
 
 #include "LIEF/MachO/FatBinary.hpp"
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/Parser.hpp"
+#include "LIEF/MachO/DyldInfo.hpp"
+#include "LIEF/MachO/DyldBindingInfo.hpp"
 #include "LIEF/MachO/BinaryParser.hpp"
 #include "LIEF/MachO/utils.hpp"
+#include "LIEF/MachO/Relocation.hpp"
+#include "LIEF/MachO/RelocationFixup.hpp"
+#include "LIEF/MachO/RelocationDyld.hpp"
+#include "LIEF/MachO/BindingInfo.hpp"
 #include "MachO/Structures.hpp"
 
 namespace LIEF {
@@ -110,6 +117,37 @@ std::unique_ptr<FatBinary> Parser::parse(std::unique_ptr<BinaryStream> stream, c
   return std::unique_ptr<FatBinary>(new FatBinary{std::move(parser.binaries_)});
 }
 
+std::unique_ptr<FatBinary> Parser::parse_from_memory(uintptr_t address, size_t size, const ParserConfig& conf) {
+  if (conf.fix_from_memory && (!conf.parse_dyld_rebases || !conf.parse_dyld_rebases)) {
+    LIEF_WARN("fix_from_memory requires both: parse_dyld_rebases and parse_dyld_rebases");
+    return nullptr;
+  }
+  Parser parser;
+  parser.stream_ = std::make_unique<MemoryStream>(address, size);
+  parser.config_ = conf;
+  if (!parser.build()) {
+    LIEF_WARN("Errors when parsing the Mach-O at the address 0x{:x} (size: 0{:x})", address, size);
+  }
+  if (parser.binaries_.empty()) {
+    return nullptr;
+  }
+
+  for (std::unique_ptr<Binary>& bin : parser.binaries_) {
+    bin->in_memory_base_addr_ = address;
+  }
+
+  if (parser.config_.fix_from_memory) {
+    parser.undo_reloc_bindings(address);
+  }
+  return std::unique_ptr<FatBinary>(new FatBinary{std::move(parser.binaries_)});
+}
+
+std::unique_ptr<FatBinary> Parser::parse_from_memory(uintptr_t address, const ParserConfig& conf) {
+  static constexpr size_t MAX_SIZE = std::numeric_limits<size_t>::max() << 2;
+  return parse_from_memory(address, MAX_SIZE, conf);
+}
+
+
 
 ok_error_t Parser::build_fat() {
   static constexpr size_t MAX_FAT_ARCH = 10;
@@ -178,6 +216,36 @@ ok_error_t Parser::build() {
     binaries_.push_back(std::move(bin));
   }
 
+  return ok();
+}
+
+ok_error_t Parser::undo_reloc_bindings(uintptr_t base_address) {
+  if (!config_.fix_from_memory) {
+    return ok();
+  }
+  for (std::unique_ptr<Binary>& bin : binaries_) {
+    for (Relocation& reloc : bin->relocations()) {
+      if (RelocationFixup::classof(reloc)) {
+        auto& fixup = static_cast<RelocationFixup&>(reloc);
+      }
+      else if (RelocationDyld::classof(reloc)) {
+        std::vector<uint8_t> content = bin->get_content_from_virtual_address(reloc.address(), sizeof(uintptr_t));
+        if (content.empty() || content.size() != sizeof(uintptr_t)) {
+          LIEF_WARN("Can't access relocation data @0x{:x}", reloc.address());
+          continue;
+        }
+        const auto value = *reinterpret_cast<const uintptr_t*>(content.data());
+        bin->patch_address(reloc.address(), value - base_address + bin->imagebase(), sizeof(uintptr_t));
+      }
+    }
+    if (const DyldInfo* info = bin->dyld_info()) {
+      for (const DyldBindingInfo& bindinfo : info->bindings()) {
+        if (bindinfo.binding_class() == BINDING_CLASS::BIND_CLASS_STANDARD) {
+          bin->patch_address(bindinfo.address(), 0, sizeof(uintptr_t));
+        }
+      }
+    }
+  }
   return ok();
 }
 

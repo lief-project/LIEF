@@ -40,7 +40,16 @@ void create<ParserConfig>(py::module& m) {
     .def_readwrite("parse_dyld_rebases", &ParserConfig::parse_dyld_rebases,
                    "Parse the Dyld rebase opcodes")
 
-    .def("full_dyldinfo",  &ParserConfig::full_dyldinfo,
+    .def_readwrite("fix_from_memory", &ParserConfig::fix_from_memory,
+                   R"delim(
+                   When parsing Mach-O from memory, this option
+                   can be used to *undo* relocations and symbols bindings.
+
+                   When activated, this option requires parse_dyld_bindings
+                   and parse_dyld_rebases to be enabled.
+                   )delim")
+
+    .def("full_dyldinfo", &ParserConfig::full_dyldinfo,
          R"delim(
          If ``flag`` is set to ``true``, Exports, Bindings and Rebases opcodes are parsed.
 

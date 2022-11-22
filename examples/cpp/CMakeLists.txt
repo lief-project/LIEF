@@ -68,6 +68,24 @@ if (LIEF_DEX)
   set(LIEF_CPP_EXAMPLES ${LIEF_CPP_EXAMPLES} ${LIEF_DEX_CPP_EXAMPLES})
 endif()
 
+if(APPLE)
+  add_executable(macho_from_memory "macho_from_memory.cpp")
+  set_target_properties(
+    macho_from_memory
+    PROPERTIES POSITION_INDEPENDENT_CODE ON
+               CXX_STANDARD              11
+               CXX_STANDARD_REQUIRED     ON)
+
+  target_link_libraries(macho_from_memory PUBLIC LIB_LIEF)
+  add_custom_command(
+    TARGET macho_from_memory
+    COMMENT "Strip $<TARGET_FILE:macho_from_memory>"
+    POST_BUILD
+    COMMAND ${CMAKE_STRIP} -x -S $<TARGET_FILE:macho_from_memory>
+  )
+endif()
+
+
 foreach(example ${LIEF_CPP_EXAMPLES})
   string(REGEX REPLACE ".cpp\$" "" output_name "${example}")
   add_executable("${output_name}" "${example}")

@@ -39,6 +39,13 @@ struct LIEF_API ParserConfig {
   bool parse_dyld_exports  = true; ///< Parse the Dyld export trie
   bool parse_dyld_bindings = true; ///< Parse the Dyld binding opcodes
   bool parse_dyld_rebases  = true; ///< Parse the Dyld rebase opcodes
+
+  /// When parsing Mach-O from memory, this option
+  /// can be used to *undo* relocations and symbols bindings.
+  ///
+  /// When activated, this option requires parse_dyld_bindings
+  /// and parse_dyld_rebases to be enabled.
+  bool fix_from_memory = false;
 };
 
 }

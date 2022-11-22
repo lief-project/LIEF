@@ -28,6 +28,7 @@ ParserConfig ParserConfig::deep() {
   conf.parse_dyld_exports  = true;
   conf.parse_dyld_bindings = true;
   conf.parse_dyld_rebases  = true;
+  conf.fix_from_memory     = true;
   return conf;
 }
 
@@ -36,6 +37,7 @@ ParserConfig ParserConfig::quick() {
   conf.parse_dyld_exports  = false;
   conf.parse_dyld_bindings = false;
   conf.parse_dyld_rebases  = false;
+  conf.fix_from_memory     = false;
   return conf;
 }
 

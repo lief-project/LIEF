@@ -33,6 +33,7 @@ Changelog
 
 :MachO:
 
+  * Add support for parsing Mach-O in memory
   * Fix a memory issue (found by :github_user:`bladchan` via :issue:`806`)
   * [CVE-2022-40923] Fix parsing issue (:issue:`784` found by :github_user:`bladchan`)
   * [CVE-2022-40922] Fix parsing issue (:issue:`781` found by :github_user:`bladchan`)

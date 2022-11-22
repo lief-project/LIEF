@@ -20,6 +20,7 @@
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/BinaryStream/MemoryStream.hpp"
 
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/BinaryParser.hpp"
@@ -213,6 +214,8 @@ ok_error_t BinaryParser::parse_load_commands() {
     LIEF_WARN("Only the first #{:d} will be parsed", nbcmds);
   }
 
+  // Base address of the MachO file that is
+  // set as soon as we can
   uint32_t low_fileoff = -1U;
   std::set<LOAD_COMMAND_TYPES> not_parsed;
 
@@ -254,9 +257,22 @@ ok_error_t BinaryParser::parse_load_commands() {
           binary_->offset_seg_[segment->file_offset()] = segment;
           binary_->segments_.push_back(segment);
 
+          if (MemoryStream::classof(*stream_)) {
+            // Link the memory stream with our
+            // binary object so that is can translate virtual address to offset
+            static_cast<MemoryStream&>(*stream_).binary(*binary_);
+          }
+
           if (segment->file_size() > 0) {
-            if (!stream_->peek_data(segment->data_, segment->file_offset(), segment->file_size())) {
-              LIEF_ERR("Segment {}: content corrupted!", segment->name());
+            if (MemoryStream::classof(*stream_)) {
+              auto& memstream = static_cast<MemoryStream&>(*stream_);
+              uintptr_t address = memstream.base_address() + segment->virtual_address();
+              const auto* p = reinterpret_cast<const uint8_t*>(address);
+              segment->data_ = {p, p + segment->file_size()};
+            } else {
+              if (!stream_->peek_data(segment->data_, segment->file_offset(), segment->file_size())) {
+                LIEF_ERR("Segment {}: content corrupted!", segment->name());
+              }
             }
           }
 
