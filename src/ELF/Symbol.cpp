@@ -276,7 +276,7 @@ std::ostream& operator<<(std::ostream& os, const Symbol& entry) {
      << std::setw(10) << entry.size();
 
   if (entry.has_version()) {
-    os << std::setw(10) << entry.symbol_version();
+    os << std::setw(10) << *entry.symbol_version();
   }
 
   return os;
