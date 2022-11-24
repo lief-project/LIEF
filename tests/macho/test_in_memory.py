@@ -7,8 +7,10 @@ import subprocess
 from subprocess import Popen
 import ctypes
 
-if not is_osx():
-    pytest.skip("requires OSX", allow_module_level=True)
+
+pytest.skip("not supported yet", allow_module_level=True)
+#if not is_osx():
+#    pytest.skip("requires OSX", allow_module_level=True)
 
 LIB_TEST = r"""\
 #include <stdio.h>
