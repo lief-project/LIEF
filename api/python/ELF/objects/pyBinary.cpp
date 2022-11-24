@@ -591,6 +591,14 @@ void create<Binary>(py::module& m) {
         static_cast<void(Binary::*)(Symbol* s)>(&Binary::remove_static_symbol),
         "Remove the given " RST_CLASS_REF(lief.ELF.Symbol) " from the ``.symtab`` section")
 
+    .def("remove_dynamic_symbol",
+        static_cast<void(Binary::*)(Symbol*)>(&Binary::remove_dynamic_symbol),
+        "Remove the given " RST_CLASS_REF(lief.ELF.Symbol) " from the ``.dynsym`` section")
+
+    .def("remove_dynamic_symbol",
+        static_cast<void(Binary::*)(const std::string&)>(&Binary::remove_dynamic_symbol),
+        "Remove the " RST_CLASS_REF(lief.ELF.Symbol) " with the name given in parameter from the ``.dynsym`` section")
+
     .def("add_exported_function",
         &Binary::add_exported_function,
         "Create a symbol for the function at the given ``address`` and create an export",
