@@ -70,6 +70,16 @@
 namespace LIEF {
 namespace ELF {
 
+
+inline size_t get_relocation_sizeof(const Binary& bin, const Relocation& R) {
+  const bool is64    = (bin.type() == ELF_CLASS::ELFCLASS64);
+  const bool is_rela = R.is_rela();
+
+  return is64 ?
+         (is_rela ? sizeof(details::Elf64_Rela) : sizeof(details::Elf64_Rel)) :
+         (is_rela ? sizeof(details::Elf32_Rela) : sizeof(details::Elf32_Rel));
+}
+
 Binary::Binary() :
   sizing_info_{std::make_unique<sizing_info_t>()}
 {
@@ -695,7 +705,6 @@ void Binary::remove_dynamic_symbol(Symbol* symbol) {
     return;
   }
 
-
   // Update relocations
   auto it_relocation = std::find_if(std::begin(relocations_), std::end(relocations_),
       [symbol] (const std::unique_ptr<Relocation>& relocation) {
@@ -704,9 +713,32 @@ void Binary::remove_dynamic_symbol(Symbol* symbol) {
       });
 
   if (it_relocation != std::end(relocations_)) {
-    relocations_.erase(it_relocation);
+    Relocation& R = **it_relocation;
+    /* That's the tricky part:
+     *
+     * If we remove the JUMP_SLOT relocation associated with the symbols,
+     * it will break the lazy resolution process.
+     *
+     * Let's consider the following relocations:
+     * [0] 0201018 R_X86_64_JUMP_SLO puts
+     * [1] 0201020 R_X86_64_JUMP_SLO printf
+     *
+     * Which are associated with these resolving stubs:
+     *
+     * push    0 // Index of puts in the relocations table
+     * jmp     <resolver>
+     *
+     * push    1 // Index of printf in the relocation table
+     * jmp     <resolver>
+     *
+     * If we remove 'puts' from the relocation table, 'printf' is shifted
+     * to the index 0 and the index in the resolving stub is corrupted (push 1).
+     * Thus for the general case, we can't "shrink" the relocation table.
+     * Instead, unbinding the 'symbol' from the relocation does not break the layout
+     * while still removing the symbol.
+     */
+    R.symbol(nullptr);
   }
-
 
   it_relocation = std::find_if(std::begin(relocations_), std::end(relocations_),
       [symbol] (const std::unique_ptr<Relocation>& relocation) {
@@ -715,6 +747,19 @@ void Binary::remove_dynamic_symbol(Symbol* symbol) {
       });
 
   if (it_relocation != std::end(relocations_)) {
+    const size_t rel_sizeof = get_relocation_sizeof(*this, **it_relocation);
+    if (auto* DT = get(DYNAMIC_TAGS::DT_RELASZ)) {
+      const uint64_t sizes = DT->value();
+      if (sizes >= rel_sizeof) {
+        DT->value(sizes - rel_sizeof);
+      }
+    }
+    else if (auto* DT = get(DYNAMIC_TAGS::DT_RELSZ)) {
+      const uint64_t sizes = DT->value();
+      if (sizes >= rel_sizeof) {
+        DT->value(sizes - rel_sizeof);
+      }
+    }
     relocations_.erase(it_relocation);
   }
 
@@ -812,23 +857,7 @@ Relocation& Binary::add_pltgot_relocation(const Relocation& relocation) {
   }
 
   // Update the Dynamic Section
-  const bool is_rela = relocation.is_rela();
-  const bool is64    = (type() == ELF_CLASS::ELFCLASS64);
-
-  size_t reloc_size = 0;
-  if (is_rela) {
-    if (is64) {
-      reloc_size = sizeof(details::Elf64_Rela);
-    } else {
-      reloc_size = sizeof(details::Elf32_Rela);
-    }
-  } else {
-    if (is64) {
-      reloc_size = sizeof(details::Elf64_Rel);
-    } else {
-      reloc_size = sizeof(details::Elf32_Rel);
-    }
-  }
+  size_t reloc_size = get_relocation_sizeof(*this, relocation);
 
   DynamicEntry* dt_sz = get(DYNAMIC_TAGS::DT_PLTRELSZ);
   if (dt_sz != nullptr && has(DYNAMIC_TAGS::DT_JMPREL)) {
@@ -3383,8 +3412,9 @@ std::ostream& Binary::print(std::ostream& os) const {
   return os;
 }
 
-
-
 Binary::~Binary() = default;
+
+
+
 }
 }

@@ -1317,6 +1317,16 @@ ok_error_t Builder::build_dynamic_relocations() {
 
   Binary::it_dynamic_relocations dynamic_relocations = binary_->dynamic_relocations();
   if (dynamic_relocations.empty()) {
+    if (auto* DT = binary_->get(DYNAMIC_TAGS::DT_REL)) {
+      if (auto* sec = binary_->section_from_virtual_address(DT->value())) {
+        sec->size(0);
+      }
+    }
+    if (auto* DT = binary_->get(DYNAMIC_TAGS::DT_RELA)) {
+      if (auto* sec = binary_->section_from_virtual_address(DT->value())) {
+        sec->size(0);
+      }
+    }
     return ok();
   }
 
@@ -1414,6 +1424,11 @@ ok_error_t Builder::build_pltgot_relocations() {
 
   Binary::it_pltgot_relocations pltgot_relocations = binary_->pltgot_relocations();
   if (pltgot_relocations.empty()) {
+    if (auto* DT = binary_->get(DYNAMIC_TAGS::DT_JMPREL)) {
+      if (auto* sec = binary_->section_from_virtual_address(DT->value())) {
+        sec->size(0);
+      }
+    }
     return ok();
   }
 
