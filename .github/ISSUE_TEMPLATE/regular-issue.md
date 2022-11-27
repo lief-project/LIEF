@@ -1,6 +1,6 @@
 ---
-name: Bug report
-about: Create a report to help us improve
+name: Regular Issue
+about: You identified a bug or a problem in LIEF
 title: ''
 labels: ''
 assignees: romainthomas
@@ -14,7 +14,7 @@ A clear and concise description of what the bug is.
 Steps to reproduce the behavior:
 
 **Expected behavior**
-A clear and concise description of what you expected to happen.
+A clear and concise description of what you expected to happen (if applicable)
 
 **Environment (please complete the following information):**
  - System and Version : [e.g. Ubuntu 16.04]
