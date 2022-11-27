@@ -1,4 +1,4 @@
-hangelog
+Changelog
 =========
 
 0.13.0 - Not Released Yet
