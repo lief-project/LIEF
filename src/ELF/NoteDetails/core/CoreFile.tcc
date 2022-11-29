@@ -32,6 +32,7 @@ namespace ELF {
 
 template <typename ELF_T>
 void CoreFile::parse_() {
+  static constexpr auto MAX_ENTRIES = 6000;
   using Elf_Addr  = typename ELF_T::Elf_Addr;
   using Elf_FileEntry  = typename ELF_T::Elf_FileEntry;
 
@@ -50,7 +51,13 @@ void CoreFile::parse_() {
     return;
   }
 
+  if (count > MAX_ENTRIES) {
+    LIEF_ERR("Too many entries ({} while limited at {})", count, MAX_ENTRIES);
+    return;
+  }
+
   page_size_ = *res_page_size;
+  files_.resize(count);
 
   for (uint32_t idx = 0; idx < count; idx++) {
     auto res_entry = stream.read_conv<Elf_FileEntry>();
@@ -58,7 +65,7 @@ void CoreFile::parse_() {
       break;
     }
     const auto entry = *res_entry;
-    files_.push_back({entry.start, entry.end, entry.file_ofs, {}});
+    files_[idx] = {entry.start, entry.end, entry.file_ofs, {}};
   }
 
   for (uint32_t idx = 0; idx < count; idx++) {
