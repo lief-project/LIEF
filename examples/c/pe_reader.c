@@ -14,6 +14,10 @@ int main(int argc, char **argv) {
 
   Pe_Binary_t *pe_binary = pe_parse(argv[1]);
 
+  if (pe_binary == NULL) {
+    return EXIT_FAILURE;
+  }
+
   fprintf(stdout, "Binary Name: %s\n", pe_binary->name);
 
   Pe_DosHeader_t dos_header = pe_binary->dos_header;

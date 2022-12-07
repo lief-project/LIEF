@@ -14,6 +14,11 @@ int main(int argc, char **argv) {
   }
 
   Elf_Binary_t *elf_binary = elf_parse(argv[1]);
+
+  if (elf_binary == NULL) {
+    return EXIT_FAILURE;
+  }
+  
   fprintf(stdout, "Binary Name: %s\n", elf_binary->name);
   fprintf(stdout, "Interpreter: %s\n", elf_binary->interpreter);
 

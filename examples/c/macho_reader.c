@@ -146,6 +146,11 @@ int main(int argc, char **argv) {
   }
 
   Macho_Binary_t** macho_binaries = macho_parse(argv[1]);
+
+  if (macho_binaries == NULL) {
+    return EXIT_FAILURE;
+  }
+  
   for (idx = 0; macho_binaries[idx] != NULL; ++idx) {
     print_binary(macho_binaries[idx]);
   }
