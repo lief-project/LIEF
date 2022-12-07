@@ -1484,22 +1484,22 @@ bool Binary::has_nx() const {
 // Overlay
 // =======
 
-const std::vector<uint8_t>& Binary::overlay() const {
+span<const uint8_t> Binary::overlay() const {
   return overlay_;
 }
 
-std::vector<uint8_t>& Binary::overlay() {
+span<uint8_t> Binary::overlay() {
   return overlay_;
 }
 
 // Dos stub
 // ========
 
-const std::vector<uint8_t>& Binary::dos_stub() const {
+span<const uint8_t> Binary::dos_stub() const {
   return dos_stub_;
 }
 
-std::vector<uint8_t>& Binary::dos_stub() {
+span<uint8_t> Binary::dos_stub() {
   return dos_stub_;
 }
 

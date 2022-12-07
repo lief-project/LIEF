@@ -19,6 +19,7 @@
 #include <vector>
 #include <iostream>
 
+#include "LIEF/span.hpp"
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
@@ -95,7 +96,7 @@ class LIEF_API TLS : public Object {
   uint32_t characteristics() const;
 
   //! The data template content
-  const std::vector<uint8_t>& data_template() const;
+  span<const uint8_t> data_template() const;
 
   //! True if there is a data directory associated with this entry
   bool has_data_directory() const;

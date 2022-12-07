@@ -21,9 +21,21 @@
 #include <algorithm>
 #include <unordered_map>
 
+#include "LIEF/span.hpp"
+
 
 namespace LIEF {
 std::string printable_string(const std::string& str);
+
+template<class T>
+inline std::vector<T> as_vector(span<T> s) {
+  return std::vector<T>(s.begin(), s.end());
+}
+
+template<class T>
+inline std::vector<T> as_vector(span<const T> s) {
+  return std::vector<T>(s.begin(), s.end());
+}
 
 template<typename HANDLER>
 std::vector<std::string> optimize(const HANDLER& container,

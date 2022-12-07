@@ -95,7 +95,7 @@ uint32_t ResourceIcon::size() const {
   return pixels_.size();
 }
 
-const std::vector<uint8_t>& ResourceIcon::pixels() const {
+span<const uint8_t> ResourceIcon::pixels() const {
   return pixels_;
 }
 
@@ -157,7 +157,7 @@ void ResourceIcon::save(const std::string& filename) const {
   icon_header.size        = static_cast<uint32_t>(size());
   icon_header.offset      = sizeof(details::pe_resource_icon_dir) + sizeof(details::pe_icon_header);
 
-  const std::vector<uint8_t>& pixels = this->pixels();
+  span<const uint8_t> pixels = this->pixels();
 
   std::copy(
       reinterpret_cast<const uint8_t*>(&dir_header),
@@ -169,10 +169,8 @@ void ResourceIcon::save(const std::string& filename) const {
       reinterpret_cast<const uint8_t*>(&icon_header) + sizeof(details::pe_icon_header),
       icon.data() + sizeof(details::pe_resource_icon_dir));
 
-  std::copy(
-      std::begin(pixels),
-      std::end(pixels),
-      icon.data() + sizeof(details::pe_resource_icon_dir) + sizeof(details::pe_icon_header));
+  std::copy(std::begin(pixels), std::end(pixels),
+            icon.data() + sizeof(details::pe_resource_icon_dir) + sizeof(details::pe_icon_header));
 
 
   std::ofstream output_file{filename, std::ios::out | std::ios::binary | std::ios::trunc};

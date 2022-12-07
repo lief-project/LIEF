@@ -21,6 +21,7 @@
 
 #include "LIEF/visibility.h"
 
+#include "LIEF/span.hpp"
 #include "LIEF/Object.hpp"
 
 #include "LIEF/PE/enums.hpp"
@@ -79,7 +80,7 @@ class LIEF_API ResourceIcon : public Object {
   uint32_t size() const;
 
   //! Pixels of the image (as bytes)
-  const std::vector<uint8_t>& pixels() const;
+  span<const uint8_t> pixels() const;
 
   void id(uint32_t id);
   void lang(RESOURCE_LANGS lang);

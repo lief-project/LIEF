@@ -511,7 +511,7 @@ ok_error_t Builder::build_tls() {
     return make_error_code(lief_errors::not_found);
   }
   {
-    const std::vector<uint8_t>& data_template = tls_obj.data_template();
+    span<const uint8_t> data_template = tls_obj.data_template();
     const uint64_t size_needed = data_template.size();
 
     if (section_rawdata == tls_section) {
@@ -524,7 +524,7 @@ ok_error_t Builder::build_tls() {
     } else {
       const uint64_t relative_offset = offset_rawdata - section_rawdata->offset();
       span<uint8_t> section_data = section_rawdata->writable_content();
-      const std::vector<uint8_t>& data_template = tls_obj.data_template();
+      span<const uint8_t> data_template = tls_obj.data_template();
       if ((relative_offset + size_needed) > section_data.size()) {
         return make_error_code(lief_errors::build_error);
       }

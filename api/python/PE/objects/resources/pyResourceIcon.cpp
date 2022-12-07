@@ -80,7 +80,10 @@ void create<ResourceIcon>(py::module& m) {
         "Bits per pixel")
 
     .def_property("pixels",
-        static_cast<getter_t<const std::vector<uint8_t>&>>(&ResourceIcon::pixels),
+        [] (ResourceIcon& self) {
+          span<const uint8_t> content = self.pixels();
+          return py::memoryview::from_memory(content.data(), content.size());
+        },
         static_cast<setter_t<const std::vector<uint8_t>&>>(&ResourceIcon::pixels))
 
     .def("save",

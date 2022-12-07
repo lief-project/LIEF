@@ -362,12 +362,12 @@ class LIEF_API Binary : public LIEF::Binary {
   LoadConfiguration* load_configuration();
 
   //! Return the overlay content
-  const std::vector<uint8_t>& overlay() const;
-  std::vector<uint8_t>&       overlay();
+  span<const uint8_t> overlay() const;
+  span<uint8_t>       overlay();
 
   //! Return the DOS stub content
-  const std::vector<uint8_t>& dos_stub() const;
-  std::vector<uint8_t>&       dos_stub();
+  span<const uint8_t> dos_stub() const;
+  span<uint8_t>       dos_stub();
 
   //! Update the DOS stub content
   void dos_stub(const std::vector<uint8_t>& content);

@@ -120,7 +120,7 @@ Section* TLS::section() {
 }
 
 
-const std::vector<uint8_t>& TLS::data_template() const {
+span<const uint8_t> TLS::data_template() const {
   return data_template_;
 }
 

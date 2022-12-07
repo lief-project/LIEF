@@ -110,7 +110,10 @@ void create<TLS>(py::module& m) {
         )delim")
 
     .def_property("data_template",
-        static_cast<getter_t<const std::vector<uint8_t>&>>(&TLS::data_template),
+        [] (const TLS& self) {
+          span<const uint8_t> content = self.data_template();
+          return py::memoryview::from_memory(content.data(), content.size());
+        },
         static_cast<setter_t<const std::vector<uint8_t>&>>(&TLS::data_template),
         "The data template content")
 

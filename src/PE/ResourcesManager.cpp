@@ -20,6 +20,7 @@
 #include <utility>
 
 #include "logging.hpp"
+#include "internal_utils.hpp"
 
 #include "LIEF/exception.hpp"
 #include "LIEF/PE/hash.hpp"
@@ -593,7 +594,7 @@ void ResourcesManager::add_icon(const ResourceIcon& icon) {
   ResourceDirectory new_icon_dir_node;
   new_icon_dir_node.id(new_id);
 
-  ResourceData new_icon_data_node{icon.pixels(), 0};
+  ResourceData new_icon_data_node{as_vector(icon.pixels()), 0};
   new_icon_data_node.id(static_cast<int>(icon.sublang()) << 10 | static_cast<int>(icon.lang()));
   new_icon_dir_node.add_child(new_icon_data_node);
 
@@ -670,7 +671,7 @@ void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceI
   ResourceDirectory new_icon_dir_node;
   new_icon_dir_node.id(newone.id());
 
-  ResourceData new_icon_data_node{newone.pixels(), 0};
+  ResourceData new_icon_data_node{as_vector(newone.pixels()), 0};
   new_icon_data_node.id(static_cast<int>(newone.sublang()) << 10 | static_cast<int>(newone.lang()));
   new_icon_dir_node.add_child(new_icon_data_node);
 
