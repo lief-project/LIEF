@@ -20,6 +20,7 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/PE/ResourceNode.hpp"
+#include "LIEF/span.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -50,7 +51,8 @@ class LIEF_API ResourceData : public ResourceNode {
   uint32_t code_page() const;
 
   //! Resource content
-  const std::vector<uint8_t>& content() const;
+  span<const uint8_t> content() const;
+  span<uint8_t> content();
 
   //! Reserved value. Should be ``0``
   uint32_t reserved() const;

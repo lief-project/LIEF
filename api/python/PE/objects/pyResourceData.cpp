@@ -52,7 +52,10 @@ void create<ResourceData>(py::module& m) {
         )delim")
 
     .def_property("content",
-        static_cast<getter_t<const std::vector<uint8_t>&>>(&ResourceData::content),
+        [] (const ResourceData& self) {
+          span<const uint8_t> content = self.content();
+          return py::memoryview::from_memory(content.data(), content.size());
+        },
         static_cast<setter_t<const std::vector<uint8_t>&>>(&ResourceData::content),
         "Resource content")
 

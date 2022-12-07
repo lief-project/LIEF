@@ -383,7 +383,7 @@ ok_error_t Builder::construct_resources(ResourceNode& node, std::vector<uint8_t>
               content->data() + *offset_header);
 
     *offset_header += sizeof(details::pe_resource_directory_table);
-    const std::vector<uint8_t>& resource_content = rsrc_data.content();
+    span<const uint8_t> resource_content = rsrc_data.content();
 
     std::copy(std::begin(resource_content), std::end(resource_content),
               content->data() + *offset_data);

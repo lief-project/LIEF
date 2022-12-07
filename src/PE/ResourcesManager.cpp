@@ -346,7 +346,7 @@ std::string ResourcesManager::manifest() const {
     return "";
   }
   const auto& manifest_data = static_cast<const ResourceData&>(manifest_node);
-  const std::vector<uint8_t>& content = manifest_data.content();
+  span<const uint8_t> content = manifest_data.content();
   return std::string{std::begin(content), std::end(content)};
 }
 
@@ -403,13 +403,12 @@ result<ResourceVersion> ResourcesManager::version() const {
   }
 
   const auto& version_node = static_cast<const ResourceData&>(childs_l2[0]);
-  const std::vector<uint8_t>& content = version_node.content();
+  span<const uint8_t> content = version_node.content();
 
   ResourceVersion version;
-  if (auto stream = SpanStream::from_vector(content)) {
-    if (auto version = ResourcesParser::parse_vs_versioninfo(*stream)) {
-      return *version;
-    }
+  SpanStream stream(content);
+  if (auto version = ResourcesParser::parse_vs_versioninfo(stream)) {
+    return *version;
   }
   return make_error_code(lief_errors::corrupted);
 }
@@ -446,19 +445,13 @@ ResourcesManager::it_const_icons ResourcesManager::icons() const {
       const auto& icon_group_node = static_cast<const ResourceData&>(grp_icon_lvl3);
       const uint32_t id = icon_group_node.id();
 
-      const std::vector<uint8_t>& icon_group_content = icon_group_node.content();
+      span<const uint8_t> icon_group_content = icon_group_node.content();
       if (icon_group_content.empty()) {
         LIEF_INFO("Group icon is empty");
         continue;
       }
 
-      auto res_span = SpanStream::from_vector(icon_group_content);
-      if (!res_span) {
-        LIEF_WARN("Can't create a SpanStream from the content of the node id: {}", id);
-        continue;
-      }
-
-      SpanStream stream = std::move(*res_span);
+      SpanStream stream(icon_group_content);
       details::pe_resource_icon_dir group_icon_header;
       if (auto res = stream.read<details::pe_resource_icon_dir>()) {
         group_icon_header = *res;
@@ -510,8 +503,8 @@ ResourcesManager::it_const_icons ResourcesManager::icons() const {
           LIEF_WARN("Expecting a Data node for node id: {}", icon_node.id());
           continue;
         }
-        const std::vector<uint8_t>& pixels = static_cast<const ResourceData&>(icon_node).content();
-        icon.pixels_ = pixels;
+        span<const uint8_t> pixels = static_cast<const ResourceData&>(icon_node).content();
+        icon.pixels_ = std::vector<uint8_t>(std::begin(pixels), std::end(pixels));
         icons.push_back(std::move(icon));
       }
     }
@@ -570,7 +563,8 @@ void ResourcesManager::add_icon(const ResourceIcon& icon) {
     return;
   }
   auto& icon_group_node = reinterpret_cast<ResourceData&>(childs_l2[0]);
-  std::vector<uint8_t> icon_group_content = icon_group_node.content();
+  span<uint8_t> icon_group_content = icon_group_node.content();
+  std::vector<uint8_t> buffer(icon_group_content.begin(), icon_group_content.end());
 
   auto* group_icon_header = reinterpret_cast<details::pe_resource_icon_dir*>(icon_group_content.data());
 
@@ -585,16 +579,15 @@ void ResourcesManager::add_icon(const ResourceIcon& icon) {
   new_icon_header.size        = icon.size();
   new_icon_header.ID          = new_id;
 
-  icon_group_content.insert(
-      std::begin(icon_group_content) +
-      sizeof(details::pe_resource_icon_dir) +
-      group_icon_header->count * sizeof(details::pe_resource_icon_group),
-      reinterpret_cast<uint8_t*>(&new_icon_header),
-      reinterpret_cast<uint8_t*>(&new_icon_header) + sizeof(details::pe_resource_icon_group));
+  const auto pos = std::begin(buffer) +
+                   sizeof(details::pe_resource_icon_dir) + group_icon_header->count * sizeof(details::pe_resource_icon_group);
+
+  buffer.insert(pos, reinterpret_cast<uint8_t*>(&new_icon_header),
+                     reinterpret_cast<uint8_t*>(&new_icon_header) + sizeof(details::pe_resource_icon_group));
 
   group_icon_header->count++;
 
-  icon_group_node.content(icon_group_content);
+  icon_group_node.content(std::move(buffer));
 
   // Add to the ICON list
   ResourceDirectory new_icon_dir_node;
@@ -639,7 +632,8 @@ void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceI
       }
       auto& icon_group_node = reinterpret_cast<ResourceData&>(grp_icon_lvl3);
 
-      std::vector<uint8_t> icon_group_content = icon_group_node.content();
+      span<uint8_t> icon_group_content = icon_group_node.content();
+      std::vector<uint8_t> buffer = std::vector<uint8_t>(icon_group_content.begin(), icon_group_content.end());
 
       auto* group_icon_header = reinterpret_cast<details::pe_resource_icon_dir*>(icon_group_content.data());
       for (size_t i = 0; i < group_icon_header->count; ++i) {
@@ -666,7 +660,7 @@ void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceI
         LIEF_ERR("Unable to find the group associated with the original icon");
         return;
       }
-      icon_group_node.content(icon_group_content);
+      icon_group_node.content(std::move(buffer));
     }
   }
 
@@ -723,11 +717,10 @@ ResourcesManager::it_const_dialogs ResourcesManager::dialogs() const {
       }
 
       const auto& data_node = static_cast<const ResourceData&>(langs[j]);
-      const std::vector<uint8_t>& content = data_node.content();
-      if (auto stream = SpanStream::from_vector(content)) {
-        if (!ResourcesParser::parse_dialogs(dialogs, data_node, *stream)) {
-          LIEF_INFO("Parsing resources dialogs #{}->{} finished with errors", i, j);
-        }
+      span<const uint8_t> content = data_node.content();
+      SpanStream stream(content);
+      if (!ResourcesParser::parse_dialogs(dialogs, data_node, stream)) {
+        LIEF_INFO("Parsing resources dialogs #{}->{} finished with errors", i, j);
       }
     }
   }
@@ -756,20 +749,15 @@ ResourcesManager::it_const_strings_table ResourcesManager::string_table() const 
         continue;
       }
       const auto& string_table_node = static_cast<const ResourceData&>(child_l2);
-      const std::vector<uint8_t>& content = string_table_node.content();
+      span<const uint8_t> content = string_table_node.content();
       if (content.empty()) {
         LIEF_ERR("String table content is empty");
         continue;
       }
 
-      auto stream_res = SpanStream::from_vector(content);
-      if (!stream_res) {
-        LIEF_INFO("Can't create a SpanStream for the string resource node");
-        continue;
-      }
-      SpanStream stream = std::move(*stream_res);
-
+      SpanStream stream(content);
       stream.setpos(0);
+
       LIEF_DEBUG("Will parse content with the size {}", stream.size());
       while (stream) {
         uint16_t len = 0;
@@ -813,7 +801,7 @@ std::vector<std::string> ResourcesManager::html() const {
       }
       const auto& html_node = static_cast<const ResourceData&>(child_l2);
 
-      const std::vector<uint8_t>& content = html_node.content();
+      span<const uint8_t> content = html_node.content();
       if (content.empty()) {
         LIEF_ERR("html content is empty");
         continue;
@@ -849,17 +837,13 @@ ResourcesManager::it_const_accelerators ResourcesManager::accelerator() const {
       }
       const auto& accelerator_node = static_cast<const ResourceData&>(child_l2);
 
-      const std::vector<uint8_t>& content = accelerator_node.content();
+      span<const uint8_t> content = accelerator_node.content();
       if (content.empty()) {
         LIEF_INFO("Accelerator content is empty");
         continue;
       }
-      auto res_span = SpanStream::from_vector(content);
-      if (!res_span) {
-        LIEF_ERR("Can't create a span stream for node id: {}", accelerator_node.id());
-        return accelerator;
-      }
-      SpanStream stream = std::move(*res_span);
+
+      SpanStream stream(content);
       while (stream) {
         auto res_entry = stream.read<details::pe_resource_acceltableentry>();
         if (!res_entry) {

@@ -66,11 +66,13 @@ uint32_t ResourceData::code_page() const {
   return code_page_;
 }
 
-
-const std::vector<uint8_t>& ResourceData::content() const {
+span<const uint8_t> ResourceData::content() const {
   return content_;
 }
 
+span<uint8_t> ResourceData::content() {
+  return content_;
+}
 
 uint32_t ResourceData::reserved() const {
   return reserved_;
