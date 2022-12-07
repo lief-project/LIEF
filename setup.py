@@ -56,6 +56,7 @@ class LiefDistribution(setuptools.Distribution):
 
         ('spdlog-dir=', None, 'Path to the directory that contains spdlogConfig.cmake'),
         ('lief-config-extra=', None, "Extra CMake config options (list delimited with ';')"),
+        ('osx-arch=', None, 'Architecture when cross-compiling for OSX'),
     ]
 
     def __init__(self, attrs=None):
@@ -82,6 +83,7 @@ class LiefDistribution(setuptools.Distribution):
 
         self.spdlog_dir = None
         self.lief_config_extra = None
+        self.osx_arch = None
         super().__init__(attrs)
 
 
@@ -141,6 +143,9 @@ class BuildLibrary(build_ext):
             f'-DPYTHON_EXECUTABLE={sys.executable}',
             '-DLIEF_PYTHON_API=on',
         ]
+
+        if self.distribution.osx_arch is not None:
+            cmake_args += [f'-DCMAKE_OSX_ARCHITECTURES={self.distribution.osx_arch}']
 
         # LIEF options
         # ============
@@ -226,7 +231,6 @@ class BuildLibrary(build_ext):
             cmake_args += [
                 f'-DCMAKE_C_FLAGS={c_flags}',
             ]
-
 
         if platform.system() == "Windows" and not sysconfig.get_platform().startswith("mingw"):
             from setuptools import msvc
