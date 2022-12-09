@@ -60,7 +60,7 @@ inline std::string to_lower(std::string str) {
   return lower;
 }
 
-inline bool is_pe(BinaryStream& stream) {
+bool is_pe(BinaryStream& stream) {
   using signature_t = std::array<char, sizeof(details::PE_Magic)>;
   stream.setpos(0);
   if (auto dos_header = stream.read<details::pe_dos_header>()) {

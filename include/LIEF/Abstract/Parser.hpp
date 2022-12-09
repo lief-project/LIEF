@@ -25,6 +25,7 @@
 struct Profiler;
 
 namespace LIEF {
+class BinaryStream;
 class Binary;
 
 //! Main interface to parse an executable regardless of its format
@@ -44,6 +45,12 @@ class LIEF_API Parser {
   //! @warning If the target file is a FAT Mach-O, it will return the **last** one
   //! @see LIEF::MachO::Parser::parse
   static std::unique_ptr<Binary> parse(const std::vector<uint8_t>& raw, const std::string& name = "");
+
+  //! @brief Construct an LIEF::Binary from the given stream
+  //!
+  //! @warning If the target file is a FAT Mach-O, it will return the **last** one
+  //! @see LIEF::MachO::Parser::parse
+  static std::unique_ptr<Binary> parse(std::unique_ptr<BinaryStream> stream, const std::string& name = "");
 
   protected:
   Parser(const std::string& file);

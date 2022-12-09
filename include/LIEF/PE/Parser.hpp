@@ -81,12 +81,16 @@ class LIEF_API Parser : public LIEF::Parser {
   //! Parse a PE binary from a data buffer
   static std::unique_ptr<Binary> parse(std::vector<uint8_t> data, const std::string& name = "");
 
+  //! Parse a PE binary from the given BinaryStream
+  static std::unique_ptr<Binary> parse(std::unique_ptr<BinaryStream> stream, const std::string& name = "");
+
   Parser& operator=(const Parser& copy) = delete;
   Parser(const Parser& copy)            = delete;
 
   private:
   Parser(const std::string& file);
   Parser(std::vector<uint8_t> data);
+  Parser(std::unique_ptr<BinaryStream> stream);
 
   ~Parser();
   Parser();

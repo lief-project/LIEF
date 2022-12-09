@@ -80,7 +80,6 @@ std::unique_ptr<Binary> Parser::parse(const std::string& filename) {
 
   LIEF_ERR("Unknown format");
   return nullptr;
-
 }
 
 std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& raw, const std::string& name) {
@@ -118,6 +117,36 @@ std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& raw, const std
   LIEF_ERR("Unknown format");
   return nullptr;
 
+}
+
+std::unique_ptr<Binary> Parser::parse(std::unique_ptr<BinaryStream> stream, const std::string& name) {
+
+#if defined(LIEF_ELF_SUPPORT)
+  if (ELF::is_elf(*stream)) {
+    return ELF::Parser::parse(std::move(stream), name);
+  }
+#endif
+
+
+#if defined(LIEF_PE_SUPPORT)
+  if (PE::is_pe(*stream)) {
+     return PE::Parser::parse(std::move(stream), name);
+  }
+#endif
+
+#if defined(LIEF_MACHO_SUPPORT)
+  if (MachO::is_macho(*stream)) {
+    // For fat binary we take the last one...
+    std::unique_ptr<MachO::FatBinary> fat = MachO::Parser::parse(std::move(stream));
+    if (fat != nullptr) {
+      return fat->pop_back();
+    }
+    return nullptr;
+  }
+#endif
+
+  LIEF_ERR("Unknown format");
+  return nullptr;
 }
 
 Parser::Parser(const std::string& filename) :

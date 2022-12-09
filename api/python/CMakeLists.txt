@@ -63,6 +63,7 @@ set(LIEF_PYTHON_BASIC_SRC
   "${CMAKE_CURRENT_SOURCE_DIR}/pyObject.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/pyErr.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/encoding.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/PyIOStream.cpp"
 )
 
 list(APPEND LIEF_PYTHON_BASIC_SRC
@@ -78,6 +79,7 @@ set(LIEF_PYTHON_BASIC_HDR
   "${CMAKE_CURRENT_SOURCE_DIR}/pyLIEF.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/enums_wrapper.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/encoding.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/PyIOStream.hpp"
 )
 
 set(LIEF_PYTHON_HDR
@@ -157,7 +159,7 @@ ADD_FLAG_IF_SUPPORTED("-Wno-macro-redefined"         NO_MACRO_REDEFINED)
 ADD_FLAG_IF_SUPPORTED("-Wno-deprecated-declarations" NO_DEPRECATED_DECLARATIONS)
 
 set_target_properties(pyLIEF PROPERTIES PREFIX "" OUTPUT_NAME "lief")
-target_link_libraries(pyLIEF PRIVATE lief_pybind11)
+target_link_libraries(pyLIEF PRIVATE lief_pybind11 lief_spdlog)
 
 if(APPLE)
     set_target_properties(pyLIEF PROPERTIES

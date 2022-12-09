@@ -23,7 +23,12 @@
 #include "LIEF/visibility.h"
 
 namespace LIEF {
+class BinaryStream;
+
 namespace ELF {
+
+//! @brief Check if given stream wraps an ELF file
+LIEF_API bool is_elf(BinaryStream& stream);
 
 //! @brief Check if the given file is an ELF one.
 LIEF_API bool is_elf(const std::string& file);

@@ -71,6 +71,12 @@ Parser::Parser(const std::vector<uint8_t>& data, DYNSYM_COUNT_METHODS count_mtd)
   count_mtd_{count_mtd}
 {}
 
+Parser::Parser(std::unique_ptr<BinaryStream> stream, DYNSYM_COUNT_METHODS count_mtd) :
+  stream_{std::move(stream)},
+  binary_{new Binary{}},
+  count_mtd_{count_mtd}
+{}
+
 Parser::Parser(const std::string& file, DYNSYM_COUNT_METHODS count_mtd) :
   binary_{new Binary{}},
   count_mtd_{count_mtd}
@@ -350,6 +356,17 @@ std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& data,
   }
 
   Parser parser{data, count_mtd};
+  parser.init(name);
+  return std::move(parser.binary_);
+}
+
+std::unique_ptr<Binary> Parser::parse(std::unique_ptr<BinaryStream> stream,
+                                      const std::string& name, DYNSYM_COUNT_METHODS count_mtd) {
+  if (!is_elf(*stream)) {
+    return nullptr;
+  }
+
+  Parser parser{std::move(stream), count_mtd};
   parser.init(name);
   return std::move(parser.binary_);
 }

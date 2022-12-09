@@ -15,6 +15,9 @@
  */
 #include "pyAbstract.hpp"
 
+#include "PyIOStream.hpp"
+#include "logging.hpp"
+
 #include "LIEF/Abstract/Parser.hpp"
 
 #include <string>
@@ -81,77 +84,25 @@ void create<Parser>(py::module& m) {
       "filepath"_a,
       py::return_value_policy::take_ownership);
 
-  m.def("parse",
-      [](const std::vector<uint8_t>& raw, const std::string& name) {
-        std::unique_ptr<Binary> binary;
-        std::exception_ptr ep;
-        Py_BEGIN_ALLOW_THREADS
-        try {
-          binary = Parser::parse(raw, name);
-        } catch (...) {
-          ep = std::current_exception();
-        }
-        Py_END_ALLOW_THREADS
-        if (ep) std::rethrow_exception(ep);
-        return binary;
-      },
-      R"delim(
-      Parse a binary supported by LIEF from the given list of bytes and return either:
-
-      - :class:`lief.ELF.Binary`
-      - :class:`lief.PE.Binary`
-      - :class:`lief.MachO.Binary`
-
-      depending on the given binary format.
-      )delim",
-      "raw"_a, "name"_a = "",
-      py::return_value_policy::take_ownership);
-
-
 
   m.def("parse",
-      [] (py::object byteio, const std::string& name) {
-        const auto& io = py::module::import("io");
-        const auto& RawIOBase = io.attr("RawIOBase");
-        const auto& BufferedIOBase = io.attr("BufferedIOBase");
-        const auto& TextIOBase = io.attr("TextIOBase");
-
-        py::object rawio;
-
-
-        if (py::isinstance(byteio, RawIOBase)) {
-          rawio = byteio;
+      [] (py::object byteio, const std::string& name) -> py::object {
+        if (auto stream = PyIOStream::from_python(byteio)) {
+          auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
+          py::object binary;
+          std::exception_ptr ep;
+          Py_BEGIN_ALLOW_THREADS
+          try {
+            binary = py::cast(Parser::parse(std::move(ptr)));
+          } catch (...) {
+            ep = std::current_exception();
+          }
+          Py_END_ALLOW_THREADS
+          if (ep) std::rethrow_exception(ep);
+          return binary;
         }
-
-        else if (py::isinstance(byteio, BufferedIOBase)) {
-          rawio = byteio.attr("raw");
-        }
-
-        else if (py::isinstance(byteio, TextIOBase)) {
-          rawio = byteio.attr("buffer").attr("raw");
-        }
-
-        else {
-          throw py::type_error(py::repr(byteio).cast<std::string>().c_str());
-        }
-
-        std::string raw_str = static_cast<py::bytes>(rawio.attr("readall")());
-        std::vector<uint8_t> raw = {
-          std::make_move_iterator(std::begin(raw_str)),
-          std::make_move_iterator(std::end(raw_str))
-        };
-
-        std::unique_ptr<Binary> binary;
-        std::exception_ptr ep;
-        Py_BEGIN_ALLOW_THREADS
-        try {
-          binary = Parser::parse(std::move(raw), name);
-        } catch (...) {
-          ep = std::current_exception();
-        }
-        Py_END_ALLOW_THREADS
-        if (ep) std::rethrow_exception(ep);
-        return binary;
+        LIEF_ERR("Can't create a LIEF stream interface over the provided io");
+        return py::none();
       },
       R"delim(
       Parse a binary supported by LIEF from the given Python IO interface and return either:

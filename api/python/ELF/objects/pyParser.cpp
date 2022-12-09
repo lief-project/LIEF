@@ -15,6 +15,10 @@
  */
 #include "pyELF.hpp"
 
+#include "logging.hpp"
+
+#include "PyIOStream.hpp"
+
 #include "LIEF/ELF/Parser.hpp"
 #include "LIEF/ELF/Binary.hpp"
 
@@ -54,37 +58,13 @@ void create<Parser>(py::module& m) {
 
 
   m.def("parse",
-      [] (py::object byteio, const std::string& name, DYNSYM_COUNT_METHODS count) {
-        const auto& io = py::module::import("io");
-        const auto& RawIOBase = io.attr("RawIOBase");
-        const auto& BufferedIOBase = io.attr("BufferedIOBase");
-        const auto& TextIOBase = io.attr("TextIOBase");
-
-        py::object rawio;
-
-
-        if (py::isinstance(byteio, RawIOBase)) {
-          rawio = byteio;
+      [] (py::object byteio, const std::string& name, DYNSYM_COUNT_METHODS count) -> py::object {
+        if (auto stream = PyIOStream::from_python(byteio)) {
+          auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
+          return py::cast(ELF::Parser::parse(std::move(ptr), name, count));
         }
-
-        else if (py::isinstance(byteio, BufferedIOBase)) {
-          rawio = byteio.attr("raw");
-        }
-
-        else if (py::isinstance(byteio, TextIOBase)) {
-          rawio = byteio.attr("buffer").attr("raw");
-        }
-
-        else {
-          throw py::type_error(py::repr(byteio).cast<std::string>().c_str());
-        }
-
-        std::string raw_str = static_cast<py::bytes>(rawio.attr("readall")());
-        std::vector<uint8_t> raw = {
-          std::make_move_iterator(std::begin(raw_str)),
-          std::make_move_iterator(std::end(raw_str))};
-
-        return LIEF::ELF::Parser::parse(std::move(raw), name, count);
+        LIEF_ERR("Can't create a LIEF stream interface over the provided io");
+        return py::none();
       },
       R"delim(
       Parse the ELF binary from a Python IO stream and return a :class:`lief.ELF.Binary` object

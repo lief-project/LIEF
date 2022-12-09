@@ -86,7 +86,11 @@ Parser::Parser(const std::string& file) :
 }
 
 Parser::Parser(std::vector<uint8_t> data) :
-  stream_{std::make_unique<VectorStream>(std::move(data))}
+  Parser{std::make_unique<VectorStream>(std::move(data))}
+{}
+
+
+Parser::Parser(std::unique_ptr<BinaryStream> stream) : stream_{std::move(stream)}
 {}
 
 
@@ -1123,6 +1127,16 @@ std::unique_ptr<Binary> Parser::parse(std::vector<uint8_t> data, const std::stri
     return nullptr;
   }
   Parser parser{std::move(data)};
+  parser.init(name);
+  return std::move(parser.binary_);
+}
+
+std::unique_ptr<Binary> Parser::parse(std::unique_ptr<BinaryStream> stream, const std::string& name) {
+  if (!is_pe(*stream)) {
+    return nullptr;
+  }
+
+  Parser parser{std::move(stream)};
   parser.init(name);
   return std::move(parser.binary_);
 }

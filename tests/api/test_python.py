@@ -14,7 +14,7 @@ def test_io():
     ls = lief.parse(lspath)
     assert ls.abstract.header is not None
 
-    with io_open(lspath, 'r') as f:
+    with io_open(lspath, 'rb') as f:
         ls = lief.parse(f)
         assert ls.abstract.header is not None
 

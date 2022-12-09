@@ -29,7 +29,7 @@
 namespace LIEF {
 namespace ELF {
 
-inline bool is_elf(BinaryStream& stream) {
+bool is_elf(BinaryStream& stream) {
   using magic_t = std::array<char, sizeof(details::ElfMagic)>;
   stream.setpos(0);
   if (auto res = stream.peek<magic_t>()) {
