@@ -45,8 +45,7 @@ int main(int argc, char **argv) {
   fprintf(stdout, "Name string table idx: %d\n",      header.name_string_table_idx);
 
   Elf_Section_t** sections = elf_binary->sections;
-  /*for (size_t i = 0; sections[i] != NULL; ++i) {*/
-  for (i = 0; i < header.numberof_sections; ++i) {
+  for (i = 0; i < header.numberof_sections && sections[i] != NULL; ++i) {
     Elf_Section_t* section = sections[i];
     fprintf(stdout, ""
         "%-20s "
