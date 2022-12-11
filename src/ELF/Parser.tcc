@@ -782,6 +782,7 @@ ok_error_t Parser::parse_sections() {
         }
       }
     }
+    sections_idx_[i] = section.get();
     sections_names[section.get()] = shdr->sh_name;
     binary_->sections_.push_back(std::move(section));
   }
@@ -966,6 +967,14 @@ ok_error_t Parser::parse_static_symbols(uint64_t offset, uint32_t nb_symbols,
       symbol->name(std::move(*symbol_name));
     } else {
       LIEF_ERR("Can't read the symbol's name for symbol #{}", i);
+    }
+    const uint16_t sec_idx = symbol->section_idx();
+    if (sec_idx != static_cast<uint16_t>(SYMBOL_SECTION_INDEX::SHN_ABS) &&
+        sec_idx != static_cast<uint16_t>(SYMBOL_SECTION_INDEX::SHN_UNDEF))  {
+      auto it_section = sections_idx_.find(sec_idx);
+      if (it_section != std::end(sections_idx_)) {
+        symbol->section_ = it_section->second;
+      }
     }
     binary_->static_symbols_.push_back(std::move(symbol));
   }

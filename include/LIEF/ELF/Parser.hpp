@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_ELF_PARSER_H_
 #define LIEF_ELF_PARSER_H_
+#include <unordered_map>
 
 #include "LIEF/visibility.h"
 #include "LIEF/utils.hpp"
@@ -247,6 +248,14 @@ class LIEF_API Parser : public LIEF::Parser {
   std::unique_ptr<Binary>       binary_;
   ELF_CLASS                     type_ = ELF_CLASS::ELFCLASSNONE;
   DYNSYM_COUNT_METHODS          count_mtd_ = DYNSYM_COUNT_METHODS::COUNT_AUTO;
+  /*
+   * parse_sections() may skip some sections so that
+   * binary_->sections_ is not contiguous based on the index of the sections.
+   *
+   * On the other hand, we need these indexes to bind symbols that
+   * reference sections. That's why we have this unordered_map.
+   */
+  std::unordered_map<size_t, Section*> sections_idx_;
 };
 
 } // namespace ELF

@@ -110,3 +110,15 @@ def test_notes():
     assert notes[0].name == "GNU"
     assert notes[0].type == lief.ELF.NOTE_TYPES.ABI_TAG
     assert notes[0].details.version == [3, 2, 0]
+
+def test_symbols_sections():
+    """
+    Related to this issue: https://github.com/lief-project/LIEF/issues/841
+    """
+    elf = lief.parse(get_sample('ELF/ELF64_x86-64_binary_all.bin'))
+    main = elf.get_static_symbol("main")
+    assert main.section is not None
+    assert main.section.name == ".text"
+
+    assert elf.get_static_symbol("__gmon_start__").section is None
+    assert elf.get_static_symbol("_fini").section.name == ".fini"

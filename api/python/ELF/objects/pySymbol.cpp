@@ -117,6 +117,14 @@ void create<Symbol>(py::module& m) {
         )delim",
         py::return_value_policy::reference_internal)
 
+    .def_property_readonly("section",
+        &Symbol::section,
+        R"delim(
+        Return the section (:class:`~lief.ELF.Section`) associated with this symbol
+        if any. Otherwise, return None.
+        )delim",
+        py::return_value_policy::reference)
+
     .def_property_readonly("is_static",
         &Symbol::is_static,
         "True if the symbol is a static one (i.e. from the ``.symtab`` section")
