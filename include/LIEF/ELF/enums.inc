@@ -751,7 +751,10 @@ enum _LIEF_EN(DYNAMIC_TAGS) {
   _LIEF_EI(DT_RELR)                       = 0x6FFFE000, /**< The offset of new relr relocation data (Android specific). */
   _LIEF_EI(DT_RELRSZ)                     = 0x6FFFE001, /**< The size of nre relr relocation data in bytes (Android specific). */
   _LIEF_EI(DT_RELRENT)                    = 0x6FFFE003, /**< The size of a new relr relocation entry (Android specific). */
-  _LIEF_EI(DT_RELRCOUNT)                  = 0x6FFFE005 /**< Specifies the relative count of new relr relocation entries (Android specific). */
+  _LIEF_EI(DT_RELRCOUNT)                  = 0x6FFFE005, /**< Specifies the relative count of new relr relocation entries (Android specific). */
+
+  /* Fix https://github.com/lief-project/LIEF/issues/843. */
+  _LIEF_EI(DT_UNDEFINED)                  = 0xffffffff00000000 /**< Marks size of dynamic table entry tags. */
 };
 
 /** DT_FLAGS and DT_FLAGS_1 values. */
