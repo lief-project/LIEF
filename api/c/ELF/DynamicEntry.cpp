@@ -162,9 +162,9 @@ void init_c_dynamic_entries(Elf_Binary_t* c_binary, Binary* binary) {
         {
           c_binary->dynamic_entries[i] =
             static_cast<Elf_DynamicEntry_t*>(malloc(sizeof(Elf_DynamicEntry_t)));
-          c_binary->dynamic_entries[i]->tag   = static_cast<enum LIEF_ELF_DYNAMIC_TAGS>(entry.tag());
+          c_binary->dynamic_entries[i]->tag = static_cast<uint64_t>(entry.tag());
           c_binary->dynamic_entries[i]->value = entry.value();
-
+          break;
         }
     }
   }

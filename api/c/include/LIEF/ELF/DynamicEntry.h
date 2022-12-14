@@ -34,44 +34,44 @@ extern "C" {
 #endif
 
 struct Elf_DynamicEntry_t {
-  enum LIEF_ELF_DYNAMIC_TAGS tag;
-  uint64_t          value;
+  uint64_t tag;
+  uint64_t value;
 };
 
 struct Elf_DynamicEntry_Library_t {
-  enum LIEF_ELF_DYNAMIC_TAGS tag;
-  uint64_t          value;
-  const char*       name;
+  uint64_t    tag;
+  uint64_t    value;
+  const char* name;
 };
 
 struct Elf_DynamicEntry_SharedObject_t {
-  enum LIEF_ELF_DYNAMIC_TAGS tag;
-  uint64_t          value;
-  const char*       name;
+  uint64_t    tag;
+  uint64_t    value;
+  const char* name;
 };
 
 struct Elf_DynamicEntry_Array_t {
-  enum LIEF_ELF_DYNAMIC_TAGS tag;
-  uint64_t          value;
-  uint64_t*         array;
+  uint64_t  tag;
+  uint64_t  value;
+  uint64_t* array;
 };
 
 struct Elf_DynamicEntry_Rpath_t {
-  enum LIEF_ELF_DYNAMIC_TAGS tag;
-  uint64_t          value;
-  const char*       rpath;
+  uint64_t    tag;
+  uint64_t    value;
+  const char* rpath;
 };
 
 struct Elf_DynamicEntry_RunPath_t {
-  enum LIEF_ELF_DYNAMIC_TAGS tag;
-  uint64_t          value;
-  const char*       runpath;
+  uint64_t tag;
+  uint64_t value;
+  const char* runpath;
 };
 
 
 struct Elf_DynamicEntry_Flags_t {
-  enum LIEF_ELF_DYNAMIC_TAGS    tag;
-  uint64_t             value;
+  uint64_t tag;
+  uint64_t value;
   enum LIEF_ELF_DYNAMIC_FLAGS   *flags;
   enum LIEF_ELF_DYNAMIC_FLAGS_1 *flags_1;
 };
