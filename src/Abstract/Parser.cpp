@@ -18,6 +18,7 @@
 
 #include "logging.hpp"
 #include "LIEF/Abstract/Parser.hpp"
+#include "LIEF/BinaryStream/BinaryStream.hpp"
 
 #include "LIEF/OAT.hpp"
 
