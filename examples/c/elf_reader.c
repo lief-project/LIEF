@@ -169,7 +169,7 @@ int main(int argc, char **argv) {
         segment->size,
         segment->alignment
         );
-    if (segment->size > 3) {
+    if (segment->size > 3 && segment->content != NULL) {
       fprintf(stdout, "content[0..3]: %02x %02x %02x\n",
           segment->content[0], segment->content[1], segment->content[2]);
     }
