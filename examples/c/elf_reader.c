@@ -68,7 +68,7 @@ int main(int argc, char **argv) {
         section->entry_size,
         section->entropy
         );
-    if (section->size > 3) {
+    if (section->size > 3 && section->content != NULL) {
       fprintf(stdout, "content[0..3]: %02x %02x %02x\n",
           section->content[0], section->content[1], section->content[2]);
     }
