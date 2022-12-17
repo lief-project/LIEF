@@ -194,6 +194,11 @@ span<const uint8_t> Segment::content() const {
 
   const uint8_t* ptr = binary_content.data() + node.offset();
 
+  /* node.size() overflow */
+  if (node.offset() + node.size() < node.offset()) {
+    return {};
+  }
+
   if ((node.offset() + node.size()) >= size) {
     if ((node.offset() + handler_size()) <= size) {
       return {ptr, static_cast<size_t>(handler_size())};
