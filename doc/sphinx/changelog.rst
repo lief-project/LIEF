@@ -6,6 +6,7 @@ Changelog
 
 :ELF:
 
+  * Fix overflow issue in segments (c.f. :issue:`845` found by :github_user:`liyansong2018`)
   * Fix missing relationship between symbols and sections (c.f. :issue:`841`)
   * Fix coredump parsing issue (c.f. :issue:`830` found by :github_user:`Lan1keA`)
   * Fix and (re)enable removing dynamic symbols (c.f. :issue:`828`)
