@@ -28,9 +28,6 @@ void init_c_sections(Elf_Binary_t* c_binary, Binary* binary) {
     Section& b_section = sections[i];
     c_binary->sections[i] = static_cast<Elf_Section_t*>(malloc(sizeof(Elf_Section_t)));
     span<const uint8_t> section_content = b_section.content();
-    auto* content = static_cast<uint8_t*>(malloc(section_content.size() * sizeof(uint8_t)));
-    std::copy(std::begin(section_content), std::end(section_content),
-              content);
 
     c_binary->sections[i]->name            = b_section.fullname().c_str();
     c_binary->sections[i]->flags           = b_section.flags();
@@ -42,9 +39,10 @@ void init_c_sections(Elf_Binary_t* c_binary, Binary* binary) {
     c_binary->sections[i]->info            = b_section.information();
     c_binary->sections[i]->alignment       = b_section.alignment();
     c_binary->sections[i]->entry_size      = b_section.entry_size();
-    c_binary->sections[i]->content         = content;
     c_binary->sections[i]->size            = section_content.size();
     c_binary->sections[i]->entropy         = b_section.entropy();
+    c_binary->sections[i]->content         = !section_content.empty() ?
+                                             const_cast<uint8_t*>(section_content.data()) : nullptr;
   }
   c_binary->sections[sections.size()] = nullptr;
 
@@ -56,7 +54,6 @@ void destroy_sections(Elf_Binary_t* c_binary) {
 
   Elf_Section_t **sections = c_binary->sections;
   for (size_t idx = 0; sections[idx] != nullptr; ++idx) {
-    free(sections[idx]->content);
     free(sections[idx]);
   }
   free(c_binary->sections);
