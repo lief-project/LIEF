@@ -52,3 +52,11 @@ def test_corrupted_identity():
     """
     target = lief.parse(get_sample('ELF/hello_ei_data.elf'))
     assert len(target.segments) == 10
+
+def test_issue_845():
+    """
+    https://github.com/lief-project/LIEF/issues/845
+    """
+    target = lief.parse(get_sample('ELF/issue_845.elf'))
+    assert len(target.segments) > 1
+    assert len(target.segments[1].content) == 0
