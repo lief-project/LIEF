@@ -36,10 +36,8 @@ void init_c_segments(Elf_Binary_t* c_binary, Binary* binary) {
     c_binary->segments[i]->offset          = segment.file_offset();
     c_binary->segments[i]->alignment       = segment.alignment();
     c_binary->segments[i]->size            = segment_content.size();
-
-    if (!segment_content.empty()) {
-      c_binary->segments[i]->content = const_cast<uint8_t*>(segment_content.data());
-    }
+    c_binary->segments[i]->content         = !segment_content.empty() ?
+                                             const_cast<uint8_t*>(segment_content.data()) : nullptr;
   }
 
   c_binary->segments[segments.size()] = nullptr;
