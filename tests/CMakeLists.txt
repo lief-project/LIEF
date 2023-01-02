@@ -92,10 +92,6 @@ endif()
 # =====
 add_executable(test_iterators "${CMAKE_CURRENT_SOURCE_DIR}/test_iterators.cpp")
 
-if (MSVC)
-  set_property(TARGET test_iterators PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
-endif()
-
 set_target_properties(test_iterators
   PROPERTIES CXX_STANDARD           11
              CXX_STANDARD_REQUIRED  ON)

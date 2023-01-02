@@ -66,10 +66,6 @@ endif()
 # ==================
 add_executable(HelloLIEF main.cpp)
 
-if(MSVC)
-  set_property(TARGET HelloLIEF PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
-endif()
-
 # Enable C++11
 set_property(TARGET HelloLIEF
              PROPERTY CXX_STANDARD           11
