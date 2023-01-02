@@ -294,7 +294,7 @@ void Parser::parse_header() {
   const auto oat_hdr = std::move(*res_oat_hdr);
   oat.header_ = &oat_hdr;
   LIEF_DEBUG("Nb dex files: #{:d}", oat.header_.nb_dex_files());
-  LIEF_DEBUG("OAT version: {}", oat_hdr.oat_version);
+  //LIEF_DEBUG("OAT version: {}", oat_hdr.oat_version);
 
   parse_header_keys<OAT_T>();
 }
