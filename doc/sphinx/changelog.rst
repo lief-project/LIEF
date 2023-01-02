@@ -88,6 +88,7 @@ Changelog
 
 :Dependencies:
 
+  * Move to spdlog 1.11.0
   * Move to `Pybind11 - 2.10.1 <https://pybind11.readthedocs.io/en/stable/changelog.html#version-2-10-1-oct-31-2022>`_
   * Move to nlohmann/json 3.11.2
   * Move to MbedTLS 3.2.1
