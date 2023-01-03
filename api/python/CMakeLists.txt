@@ -142,10 +142,6 @@ set_target_properties(pyLIEF PROPERTIES
   C_VISIBILITY_PRESET          hidden
 )
 
-if (MSVC)
-  set_property(TARGET pyLIEF PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
-endif()
-
 set_target_properties(pyLIEF PROPERTIES PYTHON_VERSION ${PYTHON_VERSION})
 set(PYLIEF_DEPS_LIBRARIES LIB_LIEF)
 

@@ -93,11 +93,6 @@ foreach(example ${LIEF_CPP_EXAMPLES})
   # Don't use default include dir
   set_property(TARGET "${output_name}" PROPERTY INCLUDE_DIRECTORIES "")
 
-  if (MSVC)
-    set_property(TARGET "${output_name}" PROPERTY LINK_FLAGS /NODEFAULTLIB:MSVCRT)
-    target_compile_options("${output_name}" PUBLIC ${LIEF_CRT})
-  endif()
-
   set_target_properties(
     ${output_name}
     PROPERTIES POSITION_INDEPENDENT_CODE ON

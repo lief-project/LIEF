@@ -1,24 +1,18 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.15)
 
 # Avoid warning about DOWNLOAD_EXTRACT_TIMESTAMP in CMake 3.24:
 if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
   cmake_policy(SET CMP0135 NEW)
 endif()
 
+# Enable https://cmake.org/cmake/help/latest/prop_tgt/MSVC_RUNTIME_LIBRARY.html
+cmake_policy(SET CMP0091 NEW)
+
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Modules
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 
-set(IS_WIN_CROSS_COMPILE 0)
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows" AND CMAKE_CROSSCOMPILING)
-  set(IS_WIN_CROSS_COMPILE 1)
-endif()
-
-
-if(WIN32 OR ${IS_WIN_CROSS_COMPILE})
-  include(ChooseMSVCCRT)
-endif()
 include(CheckCXXCompilerFlag)
 include(CheckCCompilerFlag)
 include(ExternalProject)
@@ -43,6 +37,36 @@ project(
   LIEF
   VERSION ${LIEF_VERSION_MAJOR}.${LIEF_VERSION_MINOR}.${LIEF_VERSION_PATCH})
 message(STATUS "${PROJECT_NAME} ${PROJECT_VERSION}")
+
+# Select the MSVC runtime based on the LIEF_USE_CRT_XXX variable
+if(MSVC)
+  foreach(build_type ${CMAKE_CONFIGURATION_TYPES} ${CMAKE_BUILD_TYPE})
+    string(TOUPPER "${build_type}" build)
+    if(DEFINED "LIEF_USE_CRT_${build}")
+      set(runtime "${LIEF_USE_CRT_${build}}")
+      if(build_type STREQUAL Debug)
+        set(default_runtime MDd)
+      else()
+        set(default_runtime MD)
+      endif()
+      if(runtime AND NOT "${runtime}" STREQUAL "${default_runtime}")
+        if(runtime STREQUAL "MT")
+          set(runtime_library "MultiThreaded")
+        elseif(runtime STREQUAL "MD")
+          set(runtime_library "MultiThreadedDLL")
+        elseif(runtime STREQUAL "MTd")
+          set(runtime_library "MultiThreadedDebug")
+        elseif(runtime STREQUAL "MDd")
+          set(runtime_library "MultiThreadedDebugDLL")
+        else()
+          message(FATAL_ERROR "Unsupported value LIEF_USE_CRT_${build}=${runtime}")
+        endif()
+        message(STATUS "LIEF_CRT_${build}: ${runtime}")
+        set(CMAKE_MSVC_RUNTIME_LIBRARY "${CMAKE_MSVC_RUNTIME_LIBRARY}$<$<CONFIG:${build_type}>:${runtime_library}>")
+      endif()
+    endif()
+  endforeach()
+endif()
 
 # LIEF options
 # =============
@@ -214,9 +238,8 @@ if(WINDOWS AND BUILD_SHARED_LIBS)
   target_link_libraries(LIB_LIEF ws2_32)
 endif()
 
-if(MSVC OR ${IS_WIN_CROSS_COMPILE})
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /bigobj")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+if(MSVC)
+  add_compile_options(/bigobj)
 endif()
 
 if(CMAKE_BUILD_TYPE MATCHES Debug AND WINDOWS)
