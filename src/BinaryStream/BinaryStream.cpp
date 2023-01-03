@@ -133,7 +133,7 @@ result<int64_t> BinaryStream::read_dwarf_encoded(uint8_t encoding) const {
 result<uint64_t> BinaryStream::read_uleb128() const {
   uint64_t value = 0;
   unsigned shift = 0;
-  result<uint8_t> byte_read;
+  result<uint8_t> byte_read = 0;
   do {
     byte_read = read<uint8_t>();
     if (!byte_read) {
@@ -149,7 +149,7 @@ result<uint64_t> BinaryStream::read_uleb128() const {
 result<uint64_t> BinaryStream::read_sleb128() const {
   int64_t  value = 0;
   unsigned shift = 0;
-  result<uint8_t> byte_read;
+  result<uint8_t> byte_read = 0;
   do {
     byte_read = read<uint8_t>();
     if (!byte_read) {
@@ -222,7 +222,7 @@ result<std::u16string> BinaryStream::read_u16string() const {
 result<std::u16string> BinaryStream::peek_u16string() const {
   std::u16string u16_str;
   u16_str.reserve(10);
-  result<char16_t> c = '\0';
+  result<char16_t> c = char16_t{0};
   size_t off = pos();
 
   if (!can_read<char16_t>()) {
