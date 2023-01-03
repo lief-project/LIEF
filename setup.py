@@ -3,28 +3,18 @@ import sys
 import platform
 import subprocess
 import setuptools
-import pathlib
 import sysconfig
 import copy
 import distutils
+from pathlib import Path
 from pkg_resources import get_distribution
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 from distutils import log
 from shutil import copy2
 
-try:
-    from packaging import version
-except ImportError:
-    # Fallback on the packaging embedded in setuptools.
-    # This is not the cleanest solution but it enables to avoid an extra dependency.
-    from setuptools._vendor.packaging import version
 
-MIN_SETUPTOOLS_VERSION = "31.0.0"
-assert (version.parse(setuptools.__version__) >= version.parse(MIN_SETUPTOOLS_VERSION)), \
-        f"LIEF requires a setuptools version '{MIN_SETUPTOOLS_VERSION}' or higher (pip install setuptools --upgrade)"
-
-CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
+CURRENT_DIR = Path(__file__).parent
 PACKAGE_NAME = "lief"
 
 get_config_var_backup  = sysconfig.get_config_var
@@ -90,7 +80,7 @@ class LiefDistribution(setuptools.Distribution):
 class Module(Extension):
     def __init__(self, name, sourcedir='', *args, **kwargs):
         Extension.__init__(self, name, sources=[])
-        self.sourcedir = os.path.abspath(os.path.join(CURRENT_DIR))
+        self.sourcedir = CURRENT_DIR.resolve().absolute().as_posix()
 
 
 class BuildLibrary(build_ext):
@@ -254,7 +244,7 @@ class BuildLibrary(build_ext):
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
 
-        log.info(f"Platform: %s", platform.system())
+        log.info("Platform: %s", platform.system())
         log.info("Wheel library: %s", self.get_ext_fullname(ext.name))
 
         # 1. Configure
@@ -326,12 +316,12 @@ class BuildLibrary(build_ext):
         pylief_dst  = os.path.join(self.build_lib, self.get_ext_filename(self.get_ext_fullname(ext.name)))
         libsuffix = pylief_dst.split(".")[-1]
 
-        pylief_path = os.path.join(cmake_library_output_directory, "{}.{}".format(PACKAGE_NAME, libsuffix))
+        pylief_path = os.path.join(cmake_library_output_directory, f"{PACKAGE_NAME}.{libsuffix}")
         if platform.system() == "Windows" and not sysconfig.get_platform().startswith("mingw"):
-            pylief_base = pathlib.Path(cmake_library_output_directory) / "Release" / "api" / "python"
-            pylief_path = pylief_base / "Release" / "{}.{}".format(PACKAGE_NAME, libsuffix)
+            pylief_base = Path(cmake_library_output_directory) / "Release" / "api" / "python"
+            pylief_path = pylief_base / "Release" / f"{PACKAGE_NAME}.{libsuffix}"
             if not pylief_path.is_file():
-                pylief_path = pylief_base / "{}.{}".format(PACKAGE_NAME, libsuffix)
+                pylief_path = pylief_base / f"{PACKAGE_NAME}.{libsuffix}"
 
             pylief_path = pylief_path.as_posix()
 
@@ -346,13 +336,13 @@ class BuildLibrary(build_ext):
         # SDK
         # ===
         if self.distribution.sdk:
-            sdk_path = list(pathlib.Path(self.build_temp).rglob(f"LIEF-*.{self.sdk_suffix()}"))
+            sdk_path = list(Path(self.build_temp).rglob(f"LIEF-*.{self.sdk_suffix()}"))
             if len(sdk_path) == 0:
                 log.error("Unable to find SDK archive")
                 sys.exit(1)
 
             sdk_path = str(sdk_path.pop())
-            sdk_output = str(pathlib.Path(CURRENT_DIR) / "build")
+            sdk_output = str(CURRENT_DIR / "build")
             if not self.dry_run:
                 copy2(sdk_path, sdk_output)
 
@@ -457,16 +447,15 @@ def check_if_tagged() -> bool:
     output = subprocess.check_output(is_tagged_cmd.split()).decode('utf-8').strip()
     return output != ""
 
-def get_pkg_info_version(pkg_info_file):
+def get_pkg_info_version():
     pkg = get_distribution(PACKAGE_NAME)
     return pkg.version
 
-
 def get_version() -> str:
     version   = "0.13.0"
-    pkg_info  = os.path.join(CURRENT_DIR, "{}.egg-info".format(PACKAGE_NAME), "PKG-INFO")
-    git_dir   = os.path.join(CURRENT_DIR, ".git")
-    if os.path.isdir(git_dir):
+    pkg_info  = CURRENT_DIR / f"{PACKAGE_NAME}.egg-info" / "PKG-INFO"
+    git_dir   = CURRENT_DIR / ".git"
+    if git_dir.is_dir():
         is_tagged = False
         try:
             is_tagged = check_if_tagged()
@@ -478,8 +467,8 @@ def get_version() -> str:
         except Exception:
             pass
 
-    if os.path.isfile(pkg_info):
-        return get_pkg_info_version(pkg_info)
+    if pkg_info.is_file():
+        return get_pkg_info_version()
 
     return version
 
