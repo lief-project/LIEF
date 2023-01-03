@@ -26,7 +26,7 @@ jobs:
         run: |
           mkdir -p ~/.ccache
       - name: ccache cache files
-        uses: actions/cache@v1.1.0
+        uses: actions/cache@v3
         with:
           path: ~/.ccache
           key: ios-${{ runner.os }}-${{ steps.get-date.outputs.date }}

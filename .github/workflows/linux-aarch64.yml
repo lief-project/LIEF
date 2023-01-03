@@ -17,7 +17,7 @@ jobs:
           echo "::set-output name=date::$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")"
         shell: bash
       - name: ccache cache files
-        uses: actions/cache@v1.1.0
+        uses: actions/cache@v3
         with:
           path: ~/.ccache
           key: linux-aarch64-${{ runner.os }}-${{ steps.get-date.outputs.date }}

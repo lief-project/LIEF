@@ -43,7 +43,7 @@ jobs:
         echo "::set-output name=date::$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")"
       shell: bash
     - name: Save sccache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       continue-on-error: false
       with:
         path: "C:\\Users\\runner\\AppData\\Local\\Mozilla\\sccache"
