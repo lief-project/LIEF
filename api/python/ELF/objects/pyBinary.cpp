@@ -346,7 +346,7 @@ void create<Binary>(py::module& m) {
 
     .def("has",
         static_cast<bool (Binary::*)(ELF_SECTION_TYPES) const>(&Binary::has),
-        "Check if a " RST_CLASS_REF(lief.ELF.Section) " of *type* (" RST_CLASS_REF(lief.ELF.ECTION_TYPES) ") exists",
+        "Check if a " RST_CLASS_REF(lief.ELF.Section) " of *type* (" RST_CLASS_REF(lief.ELF.SECTION_TYPES) ") exists",
         "type"_a)
 
     .def("patch_pltgot",
