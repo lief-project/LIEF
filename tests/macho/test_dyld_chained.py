@@ -266,3 +266,30 @@ def test_issue_804(tmp_path):
                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
             stdout = proc.stdout.read()
 
+
+def test_issue_853(tmp_path):
+    ios14 = lief.parse(get_sample('MachO/issue_853_classes_14.bin'))
+
+    relocations = ios14.relocations
+    assert len(relocations) == 31
+    assert all(0 < (r.target - ios14.imagebase) and (r.target - ios14.imagebase) < ios14.imagebase for r in relocations)
+
+    output = f"{tmp_path}/test_issue_853_ios14.bin"
+    ios14.write(output)
+
+    ios14_built = lief.parse(output)
+    assert len(ios14_built.relocations) == 31
+    assert ios14_built.relocations[0].target == 0x100007ea8
+
+    ios15 = lief.parse(get_sample('MachO/issue_853_classes_15.bin'))
+
+    relocations = ios15.relocations
+    assert len(relocations) == 31
+    assert all(0 < (r.target - ios15.imagebase) and (r.target - ios15.imagebase) < ios15.imagebase for r in relocations)
+
+    output = f"{tmp_path}/test_issue_853_ios15.bin"
+    ios15.write(output)
+
+    ios15_built = lief.parse(output)
+    assert len(ios15_built.relocations) == 31
+    assert ios15_built.relocations[0].target == 0x100007ea8

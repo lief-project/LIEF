@@ -157,7 +157,9 @@ uint64_t RelocationFixup::target() const {
 
     case REBASE_TYPES::PTR64_REBASE:
       {
-        return imagebase_ + unpack_target(*p64_rebase_);
+        return ptr_fmt_ == DYLD_CHAINED_PTR_FORMAT::PTR_64 ?
+                                        unpack_target(*p64_rebase_) :
+                           imagebase_ + unpack_target(*p64_rebase_);
       }
 
     case REBASE_TYPES::PTR32_REBASE:
@@ -202,7 +204,7 @@ void RelocationFixup::target(uint64_t target) {
     case REBASE_TYPES::PTR64_REBASE:
       {
         uint64_t rel_target = target;
-        if (rel_target >= imagebase_) {
+        if (ptr_fmt_ == DYLD_CHAINED_PTR_FORMAT::PTR_64_OFFSET && rel_target >= imagebase_) {
           rel_target -= imagebase_;
         }
         pack_target(*p64_rebase_, rel_target);

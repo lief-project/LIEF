@@ -2953,8 +2953,8 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment, uint32_t chai
   static constexpr const char DPREFIX[] = "          ";
   const auto ptr_fmt = static_cast<DYLD_CHAINED_PTR_FORMAT>(seg_info.pointer_format);
   const uint64_t imagebase = binary_->imagebase();
-  const uint64_t address = imagebase + chain_offset;
 
+  const uint64_t address = imagebase + chain_offset;
   if (fixup.auth_rebase.auth) {
     if (fixup.auth_bind.bind) {
       uint32_t bind_ordinal = ptr_fmt == DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_USERLAND24 ?
@@ -3063,8 +3063,9 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment, uint32_t chai
 
   // See comment for: dyld_chained_ptr_generic64
   const uint64_t target = ptr_fmt == DYLD_CHAINED_PTR_FORMAT::PTR_64 ?
-                          fixup.unpack_target() + binary_->imagebase() :
-                          fixup.unpack_target() + binary_->imagebase();
+                          fixup.unpack_target() :
+                          fixup.unpack_target() + imagebase;
+
   auto reloc = std::make_unique<RelocationFixup>(ptr_fmt, imagebase);
   reloc->set(fixup.rebase);
   reloc->architecture_ = binary_->header().cpu_type();
@@ -3099,8 +3100,9 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment, uint32_t chai
 {
   static constexpr const char DPREFIX[] = "          ";
   const auto ptr_fmt = static_cast<DYLD_CHAINED_PTR_FORMAT>(seg_info.pointer_format);
+  const uint64_t imagebase = binary_->imagebase();
 
-  const uint64_t address = binary_->imagebase() + chain_offset;
+  const uint64_t address = imagebase + chain_offset;
   if (fixup.bind.bind > 0) {
     const uint64_t ordinal = fixup.bind.ordinal;
     if (ordinal >= chained_fixups_->internal_bindings_.size()) {
@@ -3123,7 +3125,7 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment, uint32_t chai
      * We use the BindingInfo::address_ to store the imagebase
      * to avoid creating a new attribute in ChainedBindingInfo
      */
-    binding_extra_info->address_ = binary_->imagebase();
+    binding_extra_info->address_ = imagebase;
     local_binding->elements_.push_back(binding_extra_info.get());
 
     if (Symbol* sym = binding_extra_info->symbol()) {
@@ -3152,9 +3154,9 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment, uint32_t chai
    * Not sure if it really matters in our case
    */
   const uint64_t target = ptr_fmt == DYLD_CHAINED_PTR_FORMAT::PTR_64 ?
-                          fixup.unpack_target() + binary_->imagebase() :
-                          fixup.unpack_target() + binary_->imagebase();
-  auto reloc = std::make_unique<RelocationFixup>(ptr_fmt, binary_->imagebase());
+                          fixup.unpack_target() :
+                          fixup.unpack_target() + imagebase;
+  auto reloc = std::make_unique<RelocationFixup>(ptr_fmt, imagebase);
   reloc->set(fixup.rebase);
   reloc->architecture_ = binary_->header().cpu_type();
   reloc->segment_      = &segment;
@@ -3186,8 +3188,9 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment, uint32_t chai
 {
   static constexpr const char DPREFIX[] = "          ";
   const auto ptr_fmt = static_cast<DYLD_CHAINED_PTR_FORMAT>(seg_info.pointer_format);
+  const uint64_t imagebase = binary_->imagebase();
 
-  const uint64_t address = binary_->imagebase() + chain_offset;
+  const uint64_t address = imagebase + chain_offset;
   if (fixup.bind.bind > 0) {
     const uint64_t ordinal = fixup.bind.ordinal;
 
@@ -3211,7 +3214,7 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment, uint32_t chai
      * We use the BindingInfo::address_ to store the imagebase
      * to avoid creating a new attribute in ChainedBindingInfo
      */
-    binding_extra_info->address_ = binary_->imagebase();
+    binding_extra_info->address_ = imagebase;
     local_binding->elements_.push_back(binding_extra_info.get());
 
     if (Symbol* sym = binding_extra_info->symbol()) {
@@ -3238,7 +3241,7 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment, uint32_t chai
     reloc = std::make_unique<RelocationFixup>(ptr_fmt, fake_bias);
     reloc->set(fake_fixup);
   } else {
-    reloc = std::make_unique<RelocationFixup>(ptr_fmt, binary_->imagebase());
+    reloc = std::make_unique<RelocationFixup>(ptr_fmt, imagebase);
     reloc->set(fixup.rebase);
   }
 
