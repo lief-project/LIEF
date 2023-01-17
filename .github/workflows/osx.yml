@@ -77,7 +77,7 @@ jobs:
         shell: bash
         if: matrix.python-version != '3.6' && matrix.python-version != '3.7' && matrix.python-version != '3.8'
         env:
-          MACOSX_DEPLOYMENT_TARGET: "10.14"
+          MACOSX_DEPLOYMENT_TARGET: "11.0"
           CCACHE_DIR: ~/.ccache
           CCACHE_MAXSIZE: 10.0G
           CCACHE_CPP2: 1
