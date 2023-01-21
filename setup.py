@@ -318,8 +318,9 @@ class BuildLibrary(build_ext):
 
         pylief_path = os.path.join(cmake_library_output_directory, f"{PACKAGE_NAME}.{libsuffix}")
         if platform.system() == "Windows" and not sysconfig.get_platform().startswith("mingw"):
-            pylief_base = Path(cmake_library_output_directory) / "Release" / "api" / "python"
-            pylief_path = pylief_base / "Release" / f"{PACKAGE_NAME}.{libsuffix}"
+            msbuild_suffix = "Debug" if self.debug else "Release"
+            pylief_base = Path(cmake_library_output_directory) / msbuild_suffix / "api" / "python"
+            pylief_path = pylief_base / msbuild_suffix / f"{PACKAGE_NAME}.{libsuffix}"
             if not pylief_path.is_file():
                 pylief_path = pylief_base / f"{PACKAGE_NAME}.{libsuffix}"
 
