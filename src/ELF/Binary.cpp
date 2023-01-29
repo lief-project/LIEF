@@ -1729,8 +1729,23 @@ void Binary::write(const std::string& filename) {
   builder.write(filename);
 }
 
+
+void Binary::write(const std::string& filename, Builder::config_t config) {
+  Builder builder{*this};
+  builder.set_config(std::move(config));
+  builder.build();
+  builder.write(filename);
+}
+
 void Binary::write(std::ostream& os) {
   Builder builder{*this};
+  builder.build();
+  builder.write(os);
+}
+
+void Binary::write(std::ostream& os, Builder::config_t config) {
+  Builder builder{*this};
+  builder.set_config(std::move(config));
   builder.build();
   builder.write(os);
 }

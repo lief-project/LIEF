@@ -26,6 +26,7 @@
 #include "LIEF/Abstract/Binary.hpp"
 
 #include "LIEF/ELF/Header.hpp"
+#include "LIEF/ELF/Builder.hpp"
 
 namespace LIEF {
 //! Namespace related to the LIEF's ELF module
@@ -34,7 +35,6 @@ namespace DataHandler {
 class Handler;
 }
 
-class Builder;
 class DynamicEntry;
 class ExeLayout;
 class GnuHash;
@@ -565,10 +565,22 @@ class LIEF_API Binary : public LIEF::Binary {
   //! @param filename Path for the written ELF binary
   void write(const std::string& filename) override;
 
+  //! Reconstruct the binary object with the given config and write it in `filename`
+  //!
+  //! @param filename Path for the written ELF binary
+  //! @param config   Builder configuration
+  void write(const std::string& filename, Builder::config_t config);
+
   //! Reconstruct the binary object and write it in `os` stream
   //!
-  //! @param Output stream for the written ELF binary
+  //! @param os Output stream for the written ELF binary
   void write(std::ostream& os) override;
+
+  //! Reconstruct the binary object with the given config and write it in `os` stream
+  //!
+  //! @param os     Output stream for the written ELF binary
+  //! @param config Builder configuration
+  void write(std::ostream& os, Builder::config_t config);
 
   //! Reconstruct the binary object and return its content as a byte vector
   std::vector<uint8_t> raw();

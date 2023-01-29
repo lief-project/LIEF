@@ -505,6 +505,12 @@ void create<Binary>(py::module& m) {
         "output"_a,
         py::return_value_policy::reference_internal)
 
+    .def("write",
+        static_cast<void (Binary::*)(const std::string&, Builder::config_t)>(&Binary::write),
+        "Rebuild the binary with the given configuration and write it in a file",
+        "output"_a, "config"_a,
+        py::return_value_policy::reference_internal)
+
     .def_property_readonly("last_offset_section",
         &Binary::last_offset_section,
         "Return the last offset used in binary according to **sections table**")
