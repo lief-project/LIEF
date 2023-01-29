@@ -66,7 +66,7 @@ class LIEF_API Builder {
     bool init_array      = true;
     bool interpreter     = true;
     bool jmprel          = true;
-    bool notes           = true;
+    bool notes           = false; /// Disable note building since it can break the default layout
     bool preinit_array   = true;
     bool rela            = true;
     bool static_symtab   = true;
