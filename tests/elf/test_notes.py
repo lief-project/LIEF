@@ -8,6 +8,9 @@ from utils import get_sample
 
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
+config = lief.ELF.Builder.config_t()
+config.notes = True;
+
 def test_change_note(tmp_path: Path):
     etterlog = lief.parse(get_sample('ELF/ELF64_x86-64_binary_etterlog.bin'))
     build_id = etterlog[lief.ELF.NOTE_TYPES.BUILD_ID]
@@ -15,7 +18,7 @@ def test_change_note(tmp_path: Path):
     new_desc = [i & 0xFF for i in range(500)]
     build_id.description = new_desc
     output = tmp_path / "etterlog"
-    etterlog.write(output.as_posix())
+    etterlog.write(output.as_posix(), config)
 
     etterlog_updated = lief.parse(output.as_posix())
 
@@ -30,7 +33,7 @@ def test_remove_note(tmp_path: Path):
     assert build_id is not None
     etterlog -= build_id
 
-    etterlog.write(output.as_posix())
+    etterlog.write(output.as_posix(), config)
     etterlog_updated = lief.parse(output.as_posix())
     assert lief.ELF.NOTE_TYPES.BUILD_ID not in etterlog_updated
 
@@ -41,7 +44,7 @@ def test_add_note(tmp_path: Path):
 
     etterlog += note
 
-    etterlog.write(output.as_posix())
+    etterlog.write(output.as_posix(), config)
 
     etterlog_updated = lief.parse(output.as_posix())
 
@@ -75,7 +78,7 @@ def test_android_note(tmp_path: Path):
     assert note.ndk_version[:4] == "r15c"
     assert note.ndk_build_number[:6] == "123456"
 
-    ndkr16.write(output.as_posix())
+    ndkr16.write(output.as_posix(), config)
 
     ndkr15 = lief.parse(output.as_posix())
 
@@ -92,6 +95,6 @@ def test_issue_816(tmp_path: Path):
 
     assert len(elf.notes) == 40
 
-    elf.write(output.as_posix())
+    elf.write(output.as_posix(), config)
     new = lief.parse(output.as_posix())
     assert len(new.notes) == 40
