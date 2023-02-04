@@ -1,7 +1,7 @@
 03 - Play with ELF symbols
 --------------------------
 
-In this tutorial we will see how to modify dynamic symbols in both a binary and a library.
+In this tutorial, we will see how to modify dynamic symbols in both an executable and a library.
 
 Scripts and materials are available here: `materials <https://github.com/lief-project/tutorials/tree/master/03_ELF_change_symbols>`_
 
@@ -10,19 +10,22 @@ By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
 
 -----
 
-When a binary is linked against a library, the library needed is stored in a ``DT_NEEDED`` entry from the
-dynamic table and the needed functions needed are registered in the dynamic symbols table with the following attributes:
+When a library is dynamically linked to an executable, the required library is referenced in a ``DT_NEEDED`` entry in the
+dynamic table (``PT_DYNAMIC``).
+
+In addition, the functions imported from this library are referenced in the dynamic symbols table with the following attributes:
 
 * :attr:`~lief.ELF.Symbol.value` set to ``0``
 * :attr:`~lief.ELF.Symbol.type` set to :attr:`~lief.ELF.SYMBOL_TYPES.FUNC`
 
-Similarly, when a library exports functions it has a ``DT_SONAME`` entry in the dynamic table and the functions
+Similarly, when a library exports functions it has a ``DT_SONAME`` entry in the dynamic table, and the functions
 exported are registered in the dynamic symbols table with the following attributes:
 
 * :attr:`~lief.ELF.Symbol.value` set to address of the function in the library
 * :attr:`~lief.ELF.Symbol.type` set to :attr:`~lief.ELF.SYMBOL_TYPES.FUNC`
 
-Imported and exported functions are abstracted by LIEF thus you can iterate over these elements with :attr:`~lief.Binary.exported_functions` and :attr:`~lief.Binary.imported_functions`
+Imported and exported functions are abstracted in LIEF and one can iterate over these elements through
+the properties: :attr:`~lief.Binary.exported_functions` and :attr:`~lief.Binary.imported_functions`
 
 .. code-block:: python
 
@@ -34,10 +37,11 @@ Imported and exported functions are abstracted by LIEF thus you can iterate over
   print(library.exported_functions)
 
 
-When analyzing a binary, imported function names are very helpful for the reverse engineering. One solution is to link statically the binary and the library.
-Another solution is to blow the reverser's mind by swapping these symbols. This is what we're going to do.
+When analyzing a binary, the imported functions can leak information about the underlying functionalities of the binary.
+To avoid leaking the imported symbols, one solution could consist in statically linking the library with the executable.
+Another solution is to blow the reverser's mind by swapping these symbols which is the purpose of this tutorial:
 
-Take a look at the following code:
+Let's consider the following code:
 
 .. code-block:: C
 
@@ -62,7 +66,7 @@ Take a look at the following code:
     return EXIT_SUCCESS;
   }
 
-Basically, this program takes an integer as argument and performs some computation on this value.
+Basically, this program takes an integer as a parameter and performs some computation on this value.
 
 .. code-block:: console
 
@@ -74,40 +78,38 @@ Basically, this program takes an integer as argument and performs some computati
   :align: center
 
 
+The ``pow`` and ``log`` functions are located in the ``libm.so.6`` library.
+Using LIEF, we can swap this function **name** with other functions **name**.
+For instance, let's swap ``pow`` and ``log`` with ``cos`` and ``sin``:
 
-The ``pow`` and ``log`` functions are located in the ``libm.so.6`` library. One interesting trick to do with LIEF is
-to swap this function **name** with other functions **name**. In this tutorial we will swap them with ``cos`` and ``sin`` functions.
-
-First we have to load both the library and the binary:
+First, we have to load both the library and the executable:
 
 .. code-block:: python
 
   #!/usr/bin/env python3
   import lief
 
-
   hashme = lief.parse("hashme")
   libm  = lief.parse("/usr/lib/libm.so.6")
+  # Note: the path to libm.so.6 might be different on your system.
 
-Then when change the name of the two imported functions in the **binary**:
-
+Then, we can change the name of the two imported functions in the **executable**:
 
 .. code-block:: python
 
-  hashme_pow_sym = next(filter(lambda e : e.name == "pow", my_binary.imported_symbols))
-  hashme_log_sym = next(filter(lambda e : e.name == "log", my_binary.imported_symbols))
+  hashme_pow_sym = next(filter(lambda e : e.name == "pow", hashme.imported_symbols))
+  hashme_log_sym = next(filter(lambda e : e.name == "log", hashme.imported_symbols))
 
   hashme_pow_sym.name = "cos"
   hashme_log_sym.name = "sin"
 
 
-finally we swap ``log`` with ``sin`` and ``pow`` with ``cos`` in the **library** and we rebuild the two objects:
+And we need to do the same in the library: the ``log`` symbol's name is swapped with ``sin`` and ``pow`` with ``cos``:
 
 .. code-block:: python
 
   #!/usr/bin/env python3
   import lief
-
 
   hashme = lief.parse("hashme")
   libm  = lief.parse("/usr/lib/libm.so.6")
@@ -120,8 +122,8 @@ finally we swap ``log`` with ``sin`` and ``pow`` with ``cos`` in the **library**
       symbol_b.name = symbol_a.name
       symbol_a.name = b_name
 
-  hashme_pow_sym = next(filter(lambda e : e.name == "pow", my_binary.imported_symbols))
-  hashme_log_sym = next(filter(lambda e : e.name == "log", my_binary.imported_symbols))
+  hashme_pow_sym = next(filter(lambda e : e.name == "pow", hashme.imported_symbols))
+  hashme_log_sym = next(filter(lambda e : e.name == "log", hashme.imported_symbols))
 
   hashme_pow_sym.name = "cos"
   hashme_log_sym.name = "sin"
@@ -138,16 +140,16 @@ finally we swap ``log`` with ``sin`` and ``pow`` with ``cos`` in the **library**
   :align: center
 
 
-With this script, we built a modified ``libm`` in our current directory and we have to force the Linux loader to use this one when executing ``binary.obf``.
-To do so we export ``LD_LIBRARY_PATH`` to the current directory:
+At this point, we have a modified version of ``libm.so`` in the same directory as ``hashme.obf``.
+To force loading this modified version of ``libm.so``, we can set the environment variable ``LD_LIBRARY_PATH``:
 
 .. code-block:: console
 
   $ LD_LIBRARY_PATH=. hashme.obf 123
   228886645.836282
 
-If we omit it, it will use the default ``libm`` and hash computation will be done with ``sin`` and ``cos``:
-
+Without this environment variable, the Linux loader would resolve ``libm.so`` with the original path and the
+computation would be done with ``sin`` and ``cos``:
 
 .. code-block:: console
 
@@ -155,21 +157,6 @@ If we omit it, it will use the default ``libm`` and hash computation will be don
   -0.557978
 
 
-One real use case could be to swap symbols in cryptographic libraries like OpenSSL. For example ``EVP_DecryptInit`` and ``EVP_EncryptInit`` have the same prototype so we could swap them.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+One other more realistic use case could consist in swapping symbols in cryptographic libraries like OpenSSL.
+For instance, ``EVP_DecryptInit`` and ``EVP_EncryptInit`` have the same prototype and could be swapped.
 
