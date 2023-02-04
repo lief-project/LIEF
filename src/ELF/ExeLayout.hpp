@@ -255,7 +255,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       return 0;
     }
     nchain_ = sysv_hash->nchain();
-    if (nchain_ < binary_->dynamic_symbols_.size()) {
+    if (nchain_ != binary_->dynamic_symbols_.size()) {
       LIEF_DEBUG("nchain of .hash section changes from {:d} to {:d}",
                  nchain_, binary_->dynamic_symbols_.size());
       nchain_ = binary_->dynamic_symbols_.size();
