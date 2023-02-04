@@ -35,9 +35,11 @@ using setter_t = void (MapList::*)(T);
 template<>
 void create<MapList>(py::module& m) {
 
-  init_ref_iterator<MapList::it_items_t>(m, "lief.DEX.MapList.it_items_t");
+  py::class_<MapList, LIEF::Object> map_list(m, "MapList", "DEX MapList representation");
 
-  py::class_<MapList, LIEF::Object>(m, "MapList", "DEX MapList representation")
+  init_ref_iterator<MapList::it_items_t>(map_list, "it_items_t");
+
+  map_list
     .def_property_readonly("items",
         static_cast<no_const_getter_t<MapList::it_items_t>>(&MapList::items),
         "Iterator over " RST_CLASS_REF(lief.DEX.MapItem) "")

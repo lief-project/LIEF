@@ -647,7 +647,7 @@ void create<Binary>(py::module& m) {
 
     .def_property_readonly("eof_offset",
         &Binary::eof_offset,
-        "Return the last offset used by the ELF binary according to both: the sections table "
+        "Return the last offset used by the ELF binary according to both, the sections table "
         "and the segments table.")
 
     .def_property_readonly("has_overlay",

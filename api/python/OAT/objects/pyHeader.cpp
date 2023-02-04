@@ -100,7 +100,7 @@ void create<Header>(py::module& m) {
 
     .def_property_readonly("magic",
         static_cast<getter_t<Header::magic_t>>(&Header::magic),
-        "Magic number: ``oat\\x0A``")
+        "Magic number which shoud be ``oat\\x0A``")
 
     .def_property_readonly("version",
         static_cast<getter_t<oat_version_t>>(&Header::version),

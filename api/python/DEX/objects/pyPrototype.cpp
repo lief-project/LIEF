@@ -35,9 +35,12 @@ using setter_t = void (Prototype::*)(T);
 template<>
 void create<Prototype>(py::module& m) {
 
-  init_ref_iterator<Prototype::it_params>(m, "lief.DEX.Prototype.it_params");
 
-  py::class_<Prototype, LIEF::Object>(m, "Prototype", "DEX Prototype representation")
+  py::class_<Prototype, LIEF::Object> proto(m, "Prototype", "DEX Prototype representation");
+
+  init_ref_iterator<Prototype::it_params>(proto, "it_params");
+
+  proto
     .def_property_readonly("return_type",
         static_cast<no_const_getter_t<Type*>>(&Prototype::return_type),
         "" RST_CLASS_REF(lief.DEX.Type) " returned",

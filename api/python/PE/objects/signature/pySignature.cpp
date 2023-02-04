@@ -148,7 +148,7 @@ void create<Signature>(py::module& m) {
 
     .def_property_readonly("signers",
         &Signature::signers,
-        "Return an iterator over the signers: " RST_CLASS_REF(lief.PE.SignerInfo) "",
+        "Return an iterator over the signers (" RST_CLASS_REF(lief.PE.SignerInfo) ")",
         py::return_value_policy::reference)
 
     .def("find_crt",

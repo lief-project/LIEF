@@ -54,6 +54,10 @@ void create<Binary>(py::module& m) {
   init_ref_iterator<Binary::it_libraries>(bin, "it_libraries");
   init_ref_iterator<Binary::it_relocations>(bin, "it_relocations");
 
+  py::class_<Binary::range_t>(bin, "range_t")
+    .def_readwrite("start", &Binary::range_t::start)
+    .def_readwrite("end",   &Binary::range_t::end);
+
   // --> Already registered with FatMachO (same container)
   //init_ref_iterator<Binary::it_fileset_binaries>(bin, "it_fileset_binaries");
 

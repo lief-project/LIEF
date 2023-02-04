@@ -40,6 +40,39 @@ template<>
 void create<CoreAuxv>(py::module& m) {
 
   py::class_<CoreAuxv, NoteDetails> cls(m, "CoreAuxv");
+  LIEF::enum_<AUX_TYPE>(cls, "TYPES")
+    .value(PY_ENUM(AUX_TYPE::AT_NULL))
+    .value(PY_ENUM(AUX_TYPE::AT_IGNORE))
+    .value(PY_ENUM(AUX_TYPE::AT_EXECFD))
+    .value(PY_ENUM(AUX_TYPE::AT_PHDR))
+    .value(PY_ENUM(AUX_TYPE::AT_PHENT))
+    .value(PY_ENUM(AUX_TYPE::AT_PHNUM))
+    .value(PY_ENUM(AUX_TYPE::AT_PAGESZ))
+    .value(PY_ENUM(AUX_TYPE::AT_BASE))
+    .value(PY_ENUM(AUX_TYPE::AT_FLAGS))
+    .value(PY_ENUM(AUX_TYPE::AT_ENTRY))
+    .value(PY_ENUM(AUX_TYPE::AT_NOTELF))
+    .value(PY_ENUM(AUX_TYPE::AT_UID))
+    .value(PY_ENUM(AUX_TYPE::AT_EUID))
+    .value(PY_ENUM(AUX_TYPE::AT_GID))
+    .value(PY_ENUM(AUX_TYPE::AT_EGID))
+    .value(PY_ENUM(AUX_TYPE::AT_CLKTCK))
+    .value(PY_ENUM(AUX_TYPE::AT_PLATFORM))
+    .value(PY_ENUM(AUX_TYPE::AT_HWCAP))
+    .value(PY_ENUM(AUX_TYPE::AT_HWCAP2))
+    .value(PY_ENUM(AUX_TYPE::AT_FPUCW))
+    .value(PY_ENUM(AUX_TYPE::AT_DCACHEBSIZE))
+    .value(PY_ENUM(AUX_TYPE::AT_ICACHEBSIZE))
+    .value(PY_ENUM(AUX_TYPE::AT_UCACHEBSIZE))
+    .value(PY_ENUM(AUX_TYPE::AT_IGNOREPPC))
+    .value(PY_ENUM(AUX_TYPE::AT_SECURE))
+    .value(PY_ENUM(AUX_TYPE::AT_BASE_PLATFORM))
+    .value(PY_ENUM(AUX_TYPE::AT_RANDOM))
+    .value(PY_ENUM(AUX_TYPE::AT_EXECFN))
+    .value(PY_ENUM(AUX_TYPE::AT_SYSINFO))
+    .value(PY_ENUM(AUX_TYPE::AT_SYSINFO_EHDR))
+    .value(PY_ENUM(AUX_TYPE::AT_L1I_CACHESHAPE))
+    .value(PY_ENUM(AUX_TYPE::AT_L1D_CACHESHAPE));
 
   cls
     .def_property("values",
@@ -101,39 +134,7 @@ void create<CoreAuxv>(py::module& m) {
         });
 
 
-  LIEF::enum_<AUX_TYPE>(cls, "TYPES")
-    .value(PY_ENUM(AUX_TYPE::AT_NULL))
-    .value(PY_ENUM(AUX_TYPE::AT_IGNORE))
-    .value(PY_ENUM(AUX_TYPE::AT_EXECFD))
-    .value(PY_ENUM(AUX_TYPE::AT_PHDR))
-    .value(PY_ENUM(AUX_TYPE::AT_PHENT))
-    .value(PY_ENUM(AUX_TYPE::AT_PHNUM))
-    .value(PY_ENUM(AUX_TYPE::AT_PAGESZ))
-    .value(PY_ENUM(AUX_TYPE::AT_BASE))
-    .value(PY_ENUM(AUX_TYPE::AT_FLAGS))
-    .value(PY_ENUM(AUX_TYPE::AT_ENTRY))
-    .value(PY_ENUM(AUX_TYPE::AT_NOTELF))
-    .value(PY_ENUM(AUX_TYPE::AT_UID))
-    .value(PY_ENUM(AUX_TYPE::AT_EUID))
-    .value(PY_ENUM(AUX_TYPE::AT_GID))
-    .value(PY_ENUM(AUX_TYPE::AT_EGID))
-    .value(PY_ENUM(AUX_TYPE::AT_CLKTCK))
-    .value(PY_ENUM(AUX_TYPE::AT_PLATFORM))
-    .value(PY_ENUM(AUX_TYPE::AT_HWCAP))
-    .value(PY_ENUM(AUX_TYPE::AT_HWCAP2))
-    .value(PY_ENUM(AUX_TYPE::AT_FPUCW))
-    .value(PY_ENUM(AUX_TYPE::AT_DCACHEBSIZE))
-    .value(PY_ENUM(AUX_TYPE::AT_ICACHEBSIZE))
-    .value(PY_ENUM(AUX_TYPE::AT_UCACHEBSIZE))
-    .value(PY_ENUM(AUX_TYPE::AT_IGNOREPPC))
-    .value(PY_ENUM(AUX_TYPE::AT_SECURE))
-    .value(PY_ENUM(AUX_TYPE::AT_BASE_PLATFORM))
-    .value(PY_ENUM(AUX_TYPE::AT_RANDOM))
-    .value(PY_ENUM(AUX_TYPE::AT_EXECFN))
-    .value(PY_ENUM(AUX_TYPE::AT_SYSINFO))
-    .value(PY_ENUM(AUX_TYPE::AT_SYSINFO_EHDR))
-    .value(PY_ENUM(AUX_TYPE::AT_L1I_CACHESHAPE))
-    .value(PY_ENUM(AUX_TYPE::AT_L1D_CACHESHAPE));
+
 
 
 }

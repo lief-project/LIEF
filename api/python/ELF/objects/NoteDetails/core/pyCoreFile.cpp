@@ -34,10 +34,11 @@ using setter_t = void (CoreFile::*)(T);
 template<>
 void create<CoreFile>(py::module& m) {
 
-  py::bind_vector<CoreFile::files_t>(m, "CoreFile.files_t");
 
-  py::class_<CoreFile, NoteDetails>(m, "CoreFile")
+  py::class_<CoreFile, NoteDetails> cls(m, "CoreFile");
+  py::bind_vector<CoreFile::files_t>(cls, "files_t");
 
+  cls
     .def_property("files",
         static_cast<getter_t<const CoreFile::files_t&>>(&CoreFile::files),
         static_cast<setter_t<const CoreFile::files_t&>>(&CoreFile::files),

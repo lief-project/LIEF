@@ -88,7 +88,7 @@ void init_utils(py::module& m) {
 
       "The ``strict`` boolean parameter enables to throw a " RST_CLASS_REF(lief.not_found) " exception "
       "if the ordinal can't be resolved. Otherwise it skips the entry.",
-      "import"_a, "strict"_a = false, "use_std"_a = false,
+      "imp"_a, "strict"_a = false, "use_std"_a = false,
       py::return_value_policy::copy);
 }
 

@@ -50,7 +50,7 @@ void create<Header>(py::module& m) {
     .def_property("identity_data",
         static_cast<getter_t<ELF_DATA>>(&Header::identity_data),
         static_cast<setter_t<ELF_DATA>>(&Header::identity_data),
-        "Specify the data encoding: " RST_CLASS_REF(lief.ELF.ELF_DATA) "."
+        "Specify the data encoding (" RST_CLASS_REF(lief.ELF.ELF_DATA) ")"
         )
 
     .def_property("identity_version",

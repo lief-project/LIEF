@@ -24,17 +24,17 @@ void init_utils(py::module& m) {
 
   m.def("is_oat",
       static_cast<bool (*)(const LIEF::ELF::Binary&)>(&is_oat),
-      "Check if the " RST_CLASS_REF(lief.ELF.Binary) " given in parameter is a OAT one",
+      "Check if the " RST_CLASS_REF(lief.ELF.Binary) " given in parameter is an OAT",
       "binary"_a);
 
   m.def("is_oat",
       static_cast<bool (*)(const std::string&)>(&is_oat),
-      "Check if the **file** given in parameter is a OAT one",
+      "Check if the **file** given in parameter is an OAT",
       "path"_a);
 
   m.def("is_oat",
       static_cast<bool (*)(const std::vector<uint8_t>&)>(&is_oat),
-      "Check if the **raw data** given in parameter is a OAT one",
+      "Check if the **raw data** given in parameter is an OAT",
       "raw"_a);
 
 

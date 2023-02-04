@@ -45,7 +45,7 @@ void create<CorePrStatus>(py::module& m) {
     .def_readwrite("sec",  &CorePrStatus::timeval_t::sec)
     .def_readwrite("usec", &CorePrStatus::timeval_t::usec);
 
-  py::class_<CorePrStatus::siginfo_t>(cls, "siginfo")
+  py::class_<CorePrStatus::siginfo_t>(cls, "siginfo_t")
     .def_readwrite("sicode", &CorePrStatus::siginfo_t::si_code)
     .def_readwrite("errno",  &CorePrStatus::siginfo_t::si_errno)
     .def_readwrite("signo",  &CorePrStatus::siginfo_t::si_signo);

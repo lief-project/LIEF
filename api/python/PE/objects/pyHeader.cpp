@@ -47,7 +47,7 @@ void create<Header>(py::module& m) {
     .def_property("machine",
         static_cast<getter_t<MACHINE_TYPES>>(&Header::machine),
         static_cast<setter_t<MACHINE_TYPES>>(&Header::machine),
-        "The target machine architecture: " RST_CLASS_REF(lief.PE.MACHINE_TYPES) "")
+        "The target machine architecture (" RST_CLASS_REF(lief.PE.MACHINE_TYPES) ")")
 
     .def_property("numberof_sections",
         static_cast<getter_t<uint16_t>>(&Header::numberof_sections),

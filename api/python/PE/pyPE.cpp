@@ -34,8 +34,8 @@ void init_python_module(py::module& m) {
 
 
   // Opaque containers
-  py::bind_vector<std::vector<LangCodeItem>>(m, "ListLangCodeItem");
-  py::bind_map<dict_langcode_item>(m, "DictStringVersion");
+  py::bind_vector<std::vector<LangCodeItem>>(LIEF_PE_module, "ListLangCodeItem");
+  py::bind_map<dict_langcode_item>(LIEF_PE_module, "DictStringVersion");
 }
 
 void init_objects(py::module& m) {

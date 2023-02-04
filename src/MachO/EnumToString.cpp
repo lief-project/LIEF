@@ -317,16 +317,16 @@ const char* to_string(PPC_RELOCATION e) {
 
 const char* to_string(ARM_RELOCATION e) {
   CONST_MAP(ARM_RELOCATION, const char*, 10) enumStrings {
-    { ARM_RELOCATION::ARM_RELOC_VANILLA,        "VANILLA"        },
-    { ARM_RELOCATION::ARM_RELOC_PAIR,           "PAIR"           },
-    { ARM_RELOCATION::ARM_RELOC_SECTDIFF,       "SECTDIFF"       },
-    { ARM_RELOCATION::ARM_RELOC_LOCAL_SECTDIFF, "LOCAL_SECTDIFF" },
-    { ARM_RELOCATION::ARM_RELOC_PB_LA_PTR,      "PB_LA_PTR"      },
-    { ARM_RELOCATION::ARM_RELOC_BR24,           "BR24"           },
-    { ARM_RELOCATION::ARM_THUMB_RELOC_BR22,     "RELOC_BR22"     },
-    { ARM_RELOCATION::ARM_THUMB_32BIT_BRANCH,   "32BIT_BRANCH"   },
-    { ARM_RELOCATION::ARM_RELOC_HALF,           "HALF"           },
-    { ARM_RELOCATION::ARM_RELOC_HALF_SECTDIFF,  "HALF_SECTDIFF"  },
+    { ARM_RELOCATION::ARM_RELOC_VANILLA,        "VANILLA"             },
+    { ARM_RELOCATION::ARM_RELOC_PAIR,           "PAIR"                },
+    { ARM_RELOCATION::ARM_RELOC_SECTDIFF,       "SECTDIFF"            },
+    { ARM_RELOCATION::ARM_RELOC_LOCAL_SECTDIFF, "LOCAL_SECTDIFF"      },
+    { ARM_RELOCATION::ARM_RELOC_PB_LA_PTR,      "PB_LA_PTR"           },
+    { ARM_RELOCATION::ARM_RELOC_BR24,           "BR24"                },
+    { ARM_RELOCATION::ARM_THUMB_RELOC_BR22,     "THUMB_RELOC_BR22"    },
+    { ARM_RELOCATION::ARM_THUMB_32BIT_BRANCH,   "THUMB_32BIT_BRANCH"  },
+    { ARM_RELOCATION::ARM_RELOC_HALF,           "HALF"                },
+    { ARM_RELOCATION::ARM_RELOC_HALF_SECTDIFF,  "HALF_SECTDIFF"       },
   };
   const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;
@@ -352,10 +352,11 @@ const char* to_string(ARM64_RELOCATION e) {
 }
 
 const char* to_string(RELOCATION_ORIGINS e) {
-  CONST_MAP(RELOCATION_ORIGINS, const char*, 3) enumStrings {
-    { RELOCATION_ORIGINS::ORIGIN_UNKNOWN,     "UNKNOWN"     },
-    { RELOCATION_ORIGINS::ORIGIN_DYLDINFO,    "DYLDINFO"    },
-    { RELOCATION_ORIGINS::ORIGIN_RELOC_TABLE, "RELOC_TABLE" },
+  CONST_MAP(RELOCATION_ORIGINS, const char*, 4) enumStrings {
+    { RELOCATION_ORIGINS::ORIGIN_UNKNOWN,        "UNKNOWN"        },
+    { RELOCATION_ORIGINS::ORIGIN_DYLDINFO,       "DYLDINFO"       },
+    { RELOCATION_ORIGINS::ORIGIN_RELOC_TABLE,    "RELOC_TABLE"    },
+    { RELOCATION_ORIGINS::ORIGIN_CHAINED_FIXUPS, "CHAINED_FIXUPS" },
   };
   const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;

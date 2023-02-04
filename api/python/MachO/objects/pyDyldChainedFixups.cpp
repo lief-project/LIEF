@@ -112,7 +112,7 @@ void create<DyldChainedFixups>(py::module& m) {
 
     .def_property_readonly("chained_starts_in_segments",
         py::overload_cast<>(&DyldChainedFixups::chained_starts_in_segments),
-        "Iterator over the chained fixup metadata: " RST_CLASS_REF(lief.MachO.DyldChainedFixups.chained_starts_in_segment) "")
+        "Iterator over the chained fixup metadata, " RST_CLASS_REF(lief.MachO.DyldChainedFixups.chained_starts_in_segment) "")
 
     .def_property("fixups_version",
         py::overload_cast<>(&DyldChainedFixups::fixups_version, py::const_),
