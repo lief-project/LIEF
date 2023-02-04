@@ -470,6 +470,10 @@ endif()
 
 target_link_libraries(LIB_LIEF PRIVATE lief_spdlog)
 
+if(ANDROID AND BUILD_SHARED_LIBS AND LIEF_LOGGING)
+  target_link_libraries(LIB_LIEF PUBLIC log)
+endif()
+
 # Flags definition
 # ----------------
 
