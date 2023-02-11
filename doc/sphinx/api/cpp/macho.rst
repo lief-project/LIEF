@@ -200,15 +200,6 @@ Relocation Dyld
 
 ----------
 
-Relocation Dyld
-***************
-
-.. doxygenclass:: LIEF::MachO::RelocationDyld
-   :project: lief
-
-----------
-
-
 Relocation Fixup
 ****************
 
