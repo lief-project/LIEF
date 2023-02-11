@@ -66,6 +66,7 @@ Changelog
 
 :PE:
 
+  * The *hooking* feature
   * The Python API now returns `bytes` objects instead of `List[int]`
   * Remove :meth:`lief.PE.ResourceNode.sort_by_id`
   * Fix the ordering of childs of :class:`~lief.PE.ResourceNode`
