@@ -396,16 +396,6 @@ void create<Binary>(py::module& m) {
         "Remove the " RST_CLASS_REF(lief.PE.Import) " from the given name",
         "import_name"_a)
 
-    .def("hook_function",
-        static_cast<void (Binary::*)(const std::string&, uint64_t)>(&Binary::hook_function),
-        "**DEPRECATED**",
-        "function_name"_a, "hook_address"_a)
-
-    .def("hook_function",
-        static_cast<void (Binary::*)(const std::string&, const std::string&, uint64_t)>(&Binary::hook_function),
-        "**DEPRECATED**",
-        "library_name"_a, "function_name"_a, "hook_address"_a)
-
     .def("remove_all_libraries",
         &Binary::remove_all_libraries,
         "Remove all imported libraries")

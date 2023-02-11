@@ -1320,25 +1320,6 @@ LIEF::Header Binary::get_abstract_header() const {
 }
 
 
-
-void Binary::hook_function(const std::string& function, uint64_t address) {
-
-  for (const Import& import : imports_) {
-    for (const ImportEntry& import_entry : import.entries()) {
-      if (import_entry.name() == function) {
-        return hook_function(import.name(), function, address);
-      }
-    }
-  }
-
-  LIEF_WARN("Unable to find library associated with function '{}'", function);
-}
-
-
-void Binary::hook_function(const std::string& library, const std::string& function, uint64_t address) {
-  hooks_[library][function] = address;
-}
-
 // LIEF Interface
 // ==============
 uint64_t Binary::entrypoint() const {

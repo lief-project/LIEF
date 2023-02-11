@@ -254,12 +254,7 @@ void Builder::build_import_table() {
       if (patch_imports_) {
         std::vector<uint8_t> instructions;
         uint64_t address = binary_->optional_header().imagebase() + import_section->virtual_address() + iat_offset;
-        if (binary_->hooks_.count(import_name) > 0 && binary_->hooks_[import_name].count(entry.name())) {
-          address = binary_->hooks_[import_name][entry.name()];
-          instructions = Builder::build_jmp_hook<PE_T>(binary_->optional_header().imagebase() + import_section->virtual_address() + trampolines_offset, address);
-        } else {
-          instructions = Builder::build_jmp<PE_T>(binary_->optional_header().imagebase() + import_section->virtual_address() + trampolines_offset, address);
-        }
+        instructions = Builder::build_jmp<PE_T>(binary_->optional_header().imagebase() + import_section->virtual_address() + trampolines_offset, address);
         std::copy(
             std::begin(instructions),
             std::end(instructions),

@@ -1,5 +1,9 @@
-06 - PE Hooking
----------------
+06 - PE Hooking (Deprecated)
+----------------------------
+
+.. warning::
+
+  This tutorial is no longer working as the PE hooking functions has been removed from LIEF.
 
 The objective of this tutorial is show how we can hook imported functions
 
@@ -10,7 +14,7 @@ By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
 
 ------
 
-The targeted binary is a simple ``PE64`` *HelloWorld* which prints the first argument on in the console:
+The targeted binary is a simple ``PE64`` *HelloWorld* which prints the first argument in the console:
 
 .. code-block:: cpp
 

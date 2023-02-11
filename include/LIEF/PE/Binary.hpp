@@ -441,13 +441,6 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Remove all libraries in the binary
   void remove_all_libraries();
 
-  // @deprecated This function will be removed in a future version of LIEF
-  void hook_function(const std::string& function, uint64_t address);
-
-
-  // @deprecated This function will be removed in a future version of LIEF
-  void hook_function(const std::string& library, const std::string& function, uint64_t address);
-
   //! Reconstruct the binary object and write the raw PE in `filename`
   //!
   //! Rebuild a PE binary from the current Binary object.
@@ -574,7 +567,6 @@ class LIEF_API Binary : public LIEF::Binary {
   std::vector<uint8_t> section_offset_padding_;
 
   std::unique_ptr<LoadConfiguration> load_configuration_;
-  std::map<std::string, std::map<std::string, uint64_t>> hooks_; // Deprecated
 };
 
 }
