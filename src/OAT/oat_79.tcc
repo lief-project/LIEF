@@ -96,6 +96,10 @@ void Parser::parse_dex_files<details::OAT79_t>() {
   }
 
   for (size_t i = 0; i < nb_dex_files; ++i) {
+    if (i >= oat.oat_dex_files_.size()) {
+      LIEF_WARN("DEX file #{} is out of bound", i);
+      break;
+    }
     uint64_t offset = oat.oat_dex_files_[i]->dex_offset();
 
     LIEF_DEBUG("Dealing with DEX file #{:d} at offset 0x{:x}", i, offset);
@@ -105,7 +109,6 @@ void Parser::parse_dex_files<details::OAT79_t>() {
       break;
     }
     const auto dex_hdr = *res_dex_hdr;
-
 
     std::vector<uint8_t> data_v;
     const auto* data = stream_->peek_array<uint8_t>(offset, dex_hdr.file_size);
