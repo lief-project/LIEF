@@ -70,6 +70,7 @@ Changelog
   * The Python API now returns `bytes` objects instead of `List[int]`
   * Remove :meth:`lief.PE.ResourceNode.sort_by_id`
   * Fix the ordering of childs of :class:`~lief.PE.ResourceNode`
+  * Remove deprecated functions related to PE hooking.
 
 :DEX:
 
@@ -86,6 +87,10 @@ Changelog
     (:commit:`9d55f538602989c69454639565910884c5c5ac7c`)
   * Remove the exceptions
 
+:Python Bindings:
+
+  * Move to a build system compliant with ``pyproject.toml``
+  * Provide typing stubs
 
 :Dependencies:
 
