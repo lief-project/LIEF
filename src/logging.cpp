@@ -160,6 +160,34 @@ void set_level(LOGGING_LEVEL level) {
   Logger::set_level(level);
 }
 
+
+void log(LOGGING_LEVEL level, const std::string& msg) {
+  switch (level) {
+    case LOGGING_LEVEL::LOG_TRACE:
+    case LOGGING_LEVEL::LOG_DEBUG:
+      {
+        LIEF_DEBUG("{}", msg);
+        break;
+      }
+    case LOGGING_LEVEL::LOG_INFO:
+      {
+        LIEF_INFO("{}", msg);
+        break;
+      }
+    case LOGGING_LEVEL::LOG_WARN:
+      {
+        LIEF_WARN("{}", msg);
+        break;
+      }
+    case LOGGING_LEVEL::LOG_CRITICAL:
+    case LOGGING_LEVEL::LOG_ERR:
+      {
+        LIEF_ERR("{}", msg);
+        break;
+      }
+  }
+}
+
 }
 }
 

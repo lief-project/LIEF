@@ -4,7 +4,7 @@ import pathlib
 import lief
 from utils import get_sample, is_osx
 
-from test_builder import run_program
+from .test_builder import run_program
 
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 

@@ -1,0 +1,32 @@
+[lief.build]
+type          = "Release"
+cache         = true
+ninja         = true
+parallel-jobs = 0
+
+[lief.formats]
+elf     = true
+pe      = true
+macho   = true
+android = true
+art     = true
+vdex    = true
+oat     = true
+dex     = true
+
+[lief.features]
+json    = true
+frozen  = true
+
+[lief.logging]
+enabled = true
+debug   = false
+
+#[lief.cross-compilation]
+#osx-arch = "arm64"
+
+#[lief.third-party]
+#spdlog  = "/path/to/spdlog-install"
+
+
+

@@ -8,7 +8,7 @@ import pytest
 from subprocess import Popen
 from utils import is_osx, get_sample, is_apple_m1
 
-from test_builder import run_program
+from .test_builder import run_program
 
 LIBRARY_CODE = r"""\
 #include <stdio.h>

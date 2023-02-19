@@ -6,12 +6,7 @@ endif()
 
 set(LIEF_EXAMPLES_DIRECTORY  "${PROJECT_SOURCE_DIR}/examples")
 set(LIEF_EXAMPLES_BINARY_DIR "${PROJECT_BINARY_DIR}/examples")
-if(DEFINED ENV{LIEF_SAMPLES_DIR})
-  message(STATUS "LIEF Samples dir: $ENV{LIEF_SAMPLES_DIR}")
-  set(LIEF_SAMPLES_DIRECTORY $ENV{LIEF_SAMPLES_DIR})
-else()
-  message(FATAL_ERROR "The environement variable LIEF_SAMPLES_DIR is not set")
-endif()
+
 
 # Catch
 # =====
@@ -111,92 +106,6 @@ target_link_libraries(test_iterators LIB_LIEF)
 
 add_test(test_iterators
          ${CMAKE_CURRENT_BINARY_DIR}/test_iterators)
-
-# Python
-# ======
-set(PYTHONENV )
-if(WIN32)
-  set(_PYTHONENV "${PROJECT_BINARY_DIR}/api/python\;${PROJECT_SOURCE_DIR}/tests\;${CMAKE_LIBRARY_OUTPUT_DIRECTORY}\;${CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE}")
-  string(REPLACE "\\" "/" PYTHONENV ${_PYTHONENV})
-  string(REPLACE "\\" "/" LIEF_EXAMPLES_BINARY_DIR ${LIEF_EXAMPLES_BINARY_DIR})
-  string(REPLACE "\\" "/" LIEF_EXAMPLES_DIRECTORY ${LIEF_EXAMPLES_DIRECTORY})
-endif()
-
-if(UNIX)
-  set(PYTHONENV "${PROJECT_SOURCE_DIR}/tests:${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
-endif()
-
-if (LIEF_PYTHON_API)
-  set(PYTHON_TESTS_ENABLED OFF)
-  get_target_property(PYTHON_VERSION pyLIEF PYTHON_VERSION)
-  find_package(PythonInterp ${PYTHON_VERSION})
-
-  message(STATUS "Python executable: ${PYTHON_EXECUTABLE}")
-
-  if (PYTHONINTERP_FOUND)
-    set(PYTHON_TESTS_ENABLED ON)
-  endif()
-
-  if (PYTHON_TESTS_ENABLED)
-    add_test(EXAMPLE_PYTHON_nm_elf
-      ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
-      ${PYTHON_EXECUTABLE}
-        ${LIEF_EXAMPLES_DIRECTORY}/python/nm.py
-        ${LIEF_SAMPLES_DIRECTORY}/ELF/ELF32_ARM_binary_ls.bin)
-
-    add_test(EXAMPLE_PYTHON_nm_macho
-      ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
-      ${PYTHON_EXECUTABLE}
-        ${LIEF_EXAMPLES_DIRECTORY}/python/nm.py
-        ${LIEF_SAMPLES_DIRECTORY}/MachO/MachO64_x86-64_binary_ls.bin)
-
-    add_test(EXAMPLE_PYTHON_nm_pe
-      ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
-      ${PYTHON_EXECUTABLE}
-        ${LIEF_EXAMPLES_DIRECTORY}/python/nm.py
-        ${LIEF_SAMPLES_DIRECTORY}/PE/PE32_x86_binary_winhello-mingw.exe)
-
-    add_test(EXAMPLE_PYTHON_abstract_reader_pe
-      ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
-      ${PYTHON_EXECUTABLE}
-        ${LIEF_EXAMPLES_DIRECTORY}/python/abstract_reader.py
-        ${LIEF_SAMPLES_DIRECTORY}/PE/PE32_x86_binary_cmd-upx.exe)
-
-    add_test(EXAMPLE_PYTHON_abstract_reader_elf
-      ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
-      ${PYTHON_EXECUTABLE}
-        ${LIEF_EXAMPLES_DIRECTORY}/python/abstract_reader.py
-        ${LIEF_SAMPLES_DIRECTORY}/ELF/ELF32_ARM_binary_ls.bin)
-
-    add_test(EXAMPLE_PYTHON_abstract_reader_macho
-      ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
-      ${PYTHON_EXECUTABLE}
-        ${LIEF_EXAMPLES_DIRECTORY}/python/abstract_reader.py
-        ${LIEF_SAMPLES_DIRECTORY}/MachO/MachO64_x86-64_binary_id.bin)
-
-    add_test(EXAMPLE_PYTHON_abstract_json
-      ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
-      ${PYTHON_EXECUTABLE}
-        ${LIEF_EXAMPLES_DIRECTORY}/python/abstract_json.py
-        ${LIEF_SAMPLES_DIRECTORY}/ELF/ELF64_x86-64_binary_ls.bin)
-
-    add_test(UNITTEST_PYTHON_abstract
-      ${CMAKE_COMMAND} -E env "PYTHONPATH=${PYTHONENV}"
-      ${PYTHON_EXECUTABLE}
-        ${CMAKE_CURRENT_SOURCE_DIR}/abstract/abstract_tests.py)
-  endif()
-
-
-endif()
-
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/elf")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/vdex")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/art")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/dex")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/oat")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/pe")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/macho")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/api")
 
 if (CMAKE_CONFIGURATION_TYPES)
   add_custom_target(check-lief

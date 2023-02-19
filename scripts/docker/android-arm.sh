@@ -6,6 +6,8 @@ export LDFLAGS='-Wl,--gc-sections -Wl,--exclude-libs,ALL'
 
 ARCH_DIR="android-arm"
 
+git config --global --add safe.directory /work
+
 mkdir -p build/$ARCH_DIR/static-release && mkdir -p build/$ARCH_DIR/shared-release
 pushd build/$ARCH_DIR/shared-release
 

@@ -1,4 +1,5 @@
 build/
 *.so
+*.whl
 lief.egg-info/
 dist/

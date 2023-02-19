@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.1)
+find_package(Python COMPONENTS Interpreter Development.Module REQUIRED)
 
 # Avoid warning about DOWNLOAD_EXTRACT_TIMESTAMP in CMake 3.24:
 if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
@@ -55,31 +56,31 @@ message(STATUS "Python interpreter: ${PYTHON_EXECUTABLE}")
 
 # Define source files
 set(LIEF_PYTHON_BASIC_SRC
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyLIEF.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyUtils.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyExceptions.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyLogger.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyHash.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyObject.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyErr.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/encoding.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/PyIOStream.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyLIEF.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyUtils.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyExceptions.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyLogger.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyHash.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyObject.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyErr.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/encoding.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/PyIOStream.cpp"
 )
 
 list(APPEND LIEF_PYTHON_BASIC_SRC
-     "${CMAKE_CURRENT_SOURCE_DIR}/pyJson.cpp")
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/pyJson.cpp")
 
 set(LIEF_PYTHON_SRC
   ${LIEF_PYTHON_BASIC_SRC}
 )
 
 set(LIEF_PYTHON_BASIC_HDR
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyErr.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyIterators.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyLIEF.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/enums_wrapper.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/encoding.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/PyIOStream.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyErr.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyIterators.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyLIEF.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/enums_wrapper.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/encoding.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/PyIOStream.hpp"
 )
 
 set(LIEF_PYTHON_HDR
@@ -91,45 +92,44 @@ source_group("Header Files" FILES ${LIEF_PYTHON_BASIC_HDR})
 add_library(pyLIEF SHARED ${LIEF_PYTHON_SRC} ${LIEF_PYTHON_HDR})
 
 target_include_directories(pyLIEF PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}/"
-  "${CMAKE_CURRENT_SOURCE_DIR}/../../src"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
 
 target_include_directories(pyLIEF SYSTEM PRIVATE
   "${PYTHON_INCLUDE_DIR}"
   "${PYBIND11_SOURCE_DIR}/include")
 
-include("${CMAKE_CURRENT_SOURCE_DIR}/Abstract/CMakeLists.txt")
+include("${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/CMakeLists.txt")
 
 if(LIEF_ELF)
-  include("${CMAKE_CURRENT_SOURCE_DIR}/ELF/CMakeLists.txt")
+  include("${CMAKE_CURRENT_SOURCE_DIR}/src/ELF/CMakeLists.txt")
 endif()
 
 if(LIEF_PE)
-  include("${CMAKE_CURRENT_SOURCE_DIR}/PE/CMakeLists.txt")
+  include("${CMAKE_CURRENT_SOURCE_DIR}/src/PE/CMakeLists.txt")
 endif()
 
 if(LIEF_MACHO)
-  include("${CMAKE_CURRENT_SOURCE_DIR}/MachO/CMakeLists.txt")
+  include("${CMAKE_CURRENT_SOURCE_DIR}/src/MachO/CMakeLists.txt")
 endif()
 
 if(LIEF_OAT)
-  include("${CMAKE_CURRENT_SOURCE_DIR}/OAT/CMakeLists.txt")
+  include("${CMAKE_CURRENT_SOURCE_DIR}/src/OAT/CMakeLists.txt")
 endif()
 
 if(LIEF_DEX)
-  include("${CMAKE_CURRENT_SOURCE_DIR}/DEX/CMakeLists.txt")
+  include("${CMAKE_CURRENT_SOURCE_DIR}/src/DEX/CMakeLists.txt")
 endif()
 
 if(LIEF_VDEX)
-  include("${CMAKE_CURRENT_SOURCE_DIR}/VDEX/CMakeLists.txt")
+  include("${CMAKE_CURRENT_SOURCE_DIR}/src/VDEX/CMakeLists.txt")
 endif()
 
 if(LIEF_ART)
-  include("${CMAKE_CURRENT_SOURCE_DIR}/ART/CMakeLists.txt")
+  include("${CMAKE_CURRENT_SOURCE_DIR}/src/ART/CMakeLists.txt")
 endif()
 
-include("${CMAKE_CURRENT_SOURCE_DIR}/platforms/CMakeLists.txt")
+include("${CMAKE_CURRENT_SOURCE_DIR}/src/platforms/CMakeLists.txt")
 
 
 target_compile_features(pyLIEF PRIVATE cxx_attribute_deprecated)

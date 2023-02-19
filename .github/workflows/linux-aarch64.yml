@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.7, 3.8, 3.9]
+        python-version: [3.8, 3.9, '3.10', '3.11']
     steps:
       - uses: actions/checkout@v2
         with:
@@ -27,13 +27,13 @@ jobs:
         if: matrix.python-version == '3.9'
         shell: bash
         run: |
-          docker run \
-           -e CCACHE_COMPRESS=1 \
-           -e CCACHE_MAXSIZE=10.0G \
-           -e CCACHE_CPP2=1 \
-           -e CCACHE_DIR=/ccache \
-           -v $GITHUB_WORKSPACE:/work \
-           -v $HOME/.ccache:/ccache \
+          docker run                                                                        \
+           -e CCACHE_COMPRESS=1                                                             \
+           -e CCACHE_MAXSIZE=10.0G                                                          \
+           -e CCACHE_CPP2=1                                                                 \
+           -e CCACHE_DIR=/ccache                                                            \
+           -v $GITHUB_WORKSPACE:/work                                                       \
+           -v $HOME/.ccache:/ccache                                                         \
           --rm liefproject/manylinux2014-aarch64 bash /work/scripts/docker/linux-aarch64.sh
       - name: Build Python ${{ matrix.python-version }} wheel
         shell: bash
@@ -41,14 +41,14 @@ jobs:
           PYTHON_VERSION: ${{ matrix.python-version }}
         run: |
           PYTHON_VERSION2=$(echo "${PYTHON_VERSION}" | sed 's/\.//') # Transform 3.8 -> 38
-          docker run \
-           -e CCACHE_COMPRESS=1 \
-           -e CCACHE_MAXSIZE=10.0G \
-           -e CCACHE_CPP2=1 \
-           -e CCACHE_DIR=/ccache \
+          docker run                                                                                          \
+           -e CCACHE_COMPRESS=1                                                                               \
+           -e CCACHE_MAXSIZE=10.0G                                                                            \
+           -e CCACHE_CPP2=1                                                                                   \
+           -e CCACHE_DIR=/ccache                                                                              \
            -e PYTHON_BINARY=/opt/python/cp${PYTHON_VERSION2}-cp${PYTHON_VERSION2}/bin/python${PYTHON_VERSION} \
-           -v $GITHUB_WORKSPACE:/work \
-           -v $HOME/.ccache:/ccache \
+           -v $GITHUB_WORKSPACE:/work                                                                         \
+           -v $HOME/.ccache:/ccache                                                                           \
           --rm liefproject/manylinux2014-aarch64 bash /work/scripts/docker/manylinux2014-aarch64.sh
       - name: 'Upload SDK Artifact'
         if: matrix.python-version == '3.9'
@@ -69,15 +69,15 @@ jobs:
           LIEF_S3_SECRET: ${{ secrets.LIEF_S3_SECRET }}
         shell: bash
         run: |
-          docker run \
-            -v $GITHUB_WORKSPACE:/src \
-            -e GITHUB_ACTIONS="true" \
-            -e GITHUB_WORKSPACE=$GITHUB_WORKSPACE \
-            -e GITHUB_REF=$GITHUB_REF \
-            -e GITHUB_REPOSITORY=$GITHUB_REPOSITORY \
-            -e LIEF_S3_KEY=$LIEF_S3_KEY \
-            -e LIEF_S3_SECRET=$LIEF_S3_SECRET \
-            --rm \
+          docker run                                          \
+            -v $GITHUB_WORKSPACE:/src                         \
+            -e GITHUB_ACTIONS="true"                          \
+            -e GITHUB_WORKSPACE=$GITHUB_WORKSPACE             \
+            -e GITHUB_REF=$GITHUB_REF                         \
+            -e GITHUB_REPOSITORY=$GITHUB_REPOSITORY           \
+            -e LIEF_S3_KEY=$LIEF_S3_KEY                       \
+            -e LIEF_S3_SECRET=$LIEF_S3_SECRET                 \
+            --rm                                              \
             liefproject/deploy python3 /src/.github/deploy.py
 
 

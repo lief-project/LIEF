@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools", "wheel", "tomli"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lief"
+authors = [
+    {name = "Romain Thomas", email = "contact@lief.re"},
+]
+description = "Library to instrument executable formats"
+requires-python = ">=3.8"
+keywords = ["parser", "elf", "pe", "macho", "reverse-engineering"]
+license = {text = "Apache License 2.0"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: C++",
+    "Topic :: Software Development :: Libraries",
+]
+dynamic = ["version", "readme"]
+
+[project.urls]
+homepage = "https://lief-project.github.io/"
+documentation = "https://lief-project.github.io/doc/latest/"
+repository = "https://github.com/lief-project/LIEF"
+changelog = "https://lief-project.github.io/doc/latest/changelog.html"
+Funding = "https://lief-project.github.io/about"
+Tracker = "https://github.com/lief-project/LIEF/issues"

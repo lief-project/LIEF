@@ -14,7 +14,7 @@ jobs:
     runs-on: windows-2019
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9, '3.10', '3.11.0']
+        python-version: [3.8, 3.9, '3.10', '3.11.0']
       fail-fast: false
     env:
       SCCACHE_CACHE_SIZE: 2G
@@ -61,16 +61,20 @@ jobs:
         python -m pip install --upgrade pip
       shell: cmd
     - name: ⛓ Build Python ${{ matrix.python-version }} & Test
-      if: matrix.python-version == 3.6
+      if: matrix.python-version == 3.8
       run: |
         python -m pip install pytest requests
         python tests/dl_samples.py %LIEF_SAMPLES_DIR%
-        python ./setup.py --ninja --lief-test bdist_wheel
+        python -m pip -vv wheel --wheel-dir=dist/ api/python
+        python -m pip -vv install api/python
+        python ./tests/run_pytest.py
+        python ./scripts/windows/run_ctest.py ./api/python/build/temp.win-amd64-cpython-38/Release
+        python ./tests/run_tools_check.py ./api/python/build/temp.win-amd64-cpython-38/Release
       shell: cmd
     - name: ❱ Build Python ${{ matrix.python-version }}
-      if: matrix.python-version != 3.6
+      if: matrix.python-version != 3.8
       run: |
-        python ./setup.py --ninja bdist_wheel
+        python -m pip -vv wheel --wheel-dir=dist/ api/python
       shell: cmd
     - name: ❱ Build SDK
       if: matrix.python-version == 3.9

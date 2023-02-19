@@ -16,6 +16,7 @@ CFLAGS='-ffunction-sections -fdata-sections -static-libgcc -static-libstdc++'
 export LDFLAGS='-Wl,--gc-sections -Wl,--exclude-libs,ALL'
 
 ARCH_DIR="linux-aarch64"
+git config --global --add safe.directory /work
 
 mkdir -p build/$ARCH_DIR/static-release && mkdir -p build/$ARCH_DIR/shared-release
 pushd build/$ARCH_DIR/shared-release

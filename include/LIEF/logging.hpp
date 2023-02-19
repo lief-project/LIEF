@@ -19,6 +19,8 @@
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"
 
+#include <string>
+
 namespace LIEF {
 namespace logging {
 
@@ -47,6 +49,9 @@ LIEF_API void enable();
 
 //! Change the logging level (**hierarchical**)
 LIEF_API void set_level(LOGGING_LEVEL level);
+
+//! Log a message with the LIEF's logger
+LIEF_API void log(LOGGING_LEVEL level, const std::string& msg);
 
 }
 }

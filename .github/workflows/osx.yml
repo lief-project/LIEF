@@ -6,7 +6,7 @@ jobs:
     runs-on: macos-11.0
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9, '3.10', '3.11.0']
+        python-version: [3.8, 3.9, '3.10', '3.11.0']
     steps:
       - uses: actions/checkout@v2
         with:
@@ -38,13 +38,13 @@ jobs:
       - name: Upgrade pip
         shell: bash
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip setuptools
       #
-      # Run LIEF tests on Python 3.6 (only)
+      # Run LIEF tests on Python 3.8 (only)
       # ========================================
-      - name: Build Python ${{ matrix.python-version }} wheel and Test
+      - name: Build Python ${{ matrix.python-version }} wheel & test
         shell: bash
-        if: matrix.python-version == '3.6'
+        if: matrix.python-version == '3.8'
         env:
           LIEF_SAMPLES_DIR: "/tmp/samples"
           MACOSX_DEPLOYMENT_TARGET: "10.14"
@@ -55,13 +55,16 @@ jobs:
         run: |
           python -m pip install pytest requests
           python tests/dl_samples.py ${LIEF_SAMPLES_DIR}
-          python ./setup.py --ninja --lief-test build bdist_wheel --skip-build --plat-name=macosx_${MACOSX_DEPLOYMENT_TARGET}_x86_64
-      #
-      # Otherwiste, only compile for the wheel
-      # ========================================
+          python -m pip -vv wheel --wheel-dir=dist/ api/python
+          python -m pip -vv install api/python
+          python ./tests/run_pytest.py
+          cmake -S . -B ./api/python/build/temp.macosx-10.15-x86_64-cpython-38 -DLIEF_TESTS=on
+          ninja -C ./api/python/build/temp.macosx-10.15-x86_64-cpython-38
+          python ./tests/run_tools_check.py ./api/python/build/temp.macosx-10.15-x86_64-cpython-38
+          ctest --output-on-failure --test-dir ./api/python/build/temp.macosx-10.15-x86_64-cpython-38
       - name: Build Python ${{ matrix.python-version }} wheel (x86-64)
         shell: bash
-        if: matrix.python-version != '3.6'
+        if: matrix.python-version != '3.8'
         env:
           MACOSX_DEPLOYMENT_TARGET: "10.14"
           CCACHE_DIR: ~/.ccache
@@ -69,13 +72,13 @@ jobs:
           CCACHE_CPP2: 1
           CCACHE_COMPRESS: 1
         run: |
-          python ./setup.py --ninja build --build-temp=/tmp/x86_64 bdist_wheel --skip-build --plat-name=macosx_${MACOSX_DEPLOYMENT_TARGET}_x86_64
+          python -m pip wheel --wheel-dir=dist/ api/python
       #
-      # Compile for Apple M1 for Python >= 3.9
-      # ========================================
+      # cross-compile for Apple M1 for Python >= 3.9
+      # ============================================
       - name: Build Python ${{ matrix.python-version }} wheel (arm64)
         shell: bash
-        if: matrix.python-version != '3.6' && matrix.python-version != '3.7' && matrix.python-version != '3.8'
+        if: matrix.python-version != '3.8'
         env:
           MACOSX_DEPLOYMENT_TARGET: "11.0"
           CCACHE_DIR: ~/.ccache
@@ -83,13 +86,14 @@ jobs:
           CCACHE_CPP2: 1
           CCACHE_COMPRESS: 1
         run: |
-          python ./setup.py --ninja --osx-arch=arm64 build --build-temp=/tmp/arm64 bdist_wheel --skip-build --plat-name=macosx_${MACOSX_DEPLOYMENT_TARGET}_arm64
+          PYLIEF_CONF="$(pwd)/scripts/osx/config-xcompile-arm64.toml" \
+          python -m pip -vv wheel --wheel-dir=dist/ api/python
       #
       # Build the SDK while running with Python 3.9 (only once)
       # =======================================================
       - name: Build SDK
         shell: bash
-        if: matrix.python-version == '3.9' # Build the SDk only with Python 3.9
+        if: matrix.python-version == '3.9' # Build the SDD only with Python 3.9
         env:
           MACOSX_DEPLOYMENT_TARGET: "10.14"
           CCACHE_DIR: ~/.ccache

@@ -7,7 +7,7 @@ import sys
 import pytest
 from utils import is_osx, get_sample, is_apple_m1, is_github_ci
 
-from test_builder import run_program
+from .test_builder import run_program
 
 def patch(tmp_path: str, bin_path: pathlib.Path) -> str:
     original = lief.parse(bin_path.as_posix())

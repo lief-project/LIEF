@@ -1,4 +1,3 @@
-
 name: LIEF Windows x86
 
 on:
@@ -6,15 +5,15 @@ on:
     branches:
       - 'master'
       - 'release-**'
+      - 'devel'
     tags:
       - '**'
-
 jobs:
   build:
     runs-on: windows-2019
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9, '3.10', '3.11.0']
+        python-version: [3.8, 3.9, '3.10', '3.11.0']
       fail-fast: false
     env:
       SCCACHE_CACHE_SIZE: 2G
@@ -24,7 +23,7 @@ jobs:
       with:
         fetch-depth: 0
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
         architecture: x86
@@ -56,21 +55,27 @@ jobs:
       run: |
         chcp 65001 #set code page to utf-8
         echo ("LIEF_SAMPLES_DIR=" + $env:RUNNER_TEMP + "/samples") >> $env:GITHUB_ENV
+    - name: Set env variables
+      run: |
+        chcp 65001 #set code page to utf-8
+        echo ("PYLIEF_CONF=" + $env:GITHUB_WORKSPACE + "/scripts/windows/config-win32.toml") >> $env:GITHUB_ENV
     - name: Upgrade pip
       run: |
         python -m pip install --upgrade pip
       shell: cmd
     - name: ⛓ Build Python ${{ matrix.python-version }} & Test
-      if: matrix.python-version == 3.6
+      if: matrix.python-version == 3.8
       run: |
         python -m pip install pytest requests
         python tests/dl_samples.py %LIEF_SAMPLES_DIR%
-        python ./setup.py --ninja --lief-test bdist_wheel --plat-name=win32
+        python -m pip -vv wheel --wheel-dir=dist/ api/python
+        python -m pip -vv install api/python
+        python ./tests/run_pytest.py
       shell: cmd
     - name: ❱ Build Python ${{ matrix.python-version }}
-      if: matrix.python-version != 3.6
+      if: matrix.python-version != 3.8
       run: |
-        python ./setup.py --ninja bdist_wheel --plat-name=win32
+        python -m pip -vv wheel --wheel-dir=dist/ api/python
       shell: cmd
     - name: ❱ Build SDK
       if: matrix.python-version == 3.9

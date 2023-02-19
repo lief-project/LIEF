@@ -13,7 +13,6 @@ from setuptools.command.build_ext import build_ext
 from distutils import log
 from shutil import copy2
 
-
 CURRENT_DIR = Path(__file__).parent
 PACKAGE_NAME = "lief"
 
@@ -478,6 +477,15 @@ print(version)
 cmdclass = {
     'build_ext': BuildLibrary,
 }
+
+print("""\
+======================================================================
+WARNING:
+This setup.py is deprecated, please consider using api/python/setup.py:
+
+$ python -m pip install api/python
+======================================================================
+""", file=sys.stderr)
 
 setup(
     distclass=LiefDistribution,

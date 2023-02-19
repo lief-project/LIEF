@@ -7,13 +7,13 @@ jobs:
     runs-on: macos-11.0
     strategy:
       matrix:
-        python-version: [3.9]
+        python-version: [3.10]
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install system dependencies
@@ -27,7 +27,8 @@ jobs:
         run: |
           python -m pip install pytest requests
           python tests/dl_samples.py ${LIEF_SAMPLES_DIR}
-          python ./setup.py --ninja --lief-test bdist_wheel
+          python -m pip -vv install api/python
+          python ./tests/run_pytest.py
   linux:
     runs-on: ubuntu-latest
     steps:
@@ -37,22 +38,22 @@ jobs:
       - name: Build & Test
         shell: bash
         env:
-          PYTHON_VERSION: 37
+          PYTHON_VERSION: 39
         run: |
           docker run --rm \
            -e PYTHON_VERSION=$PYTHON_VERSION \
-           -e PYTHON_BINARY=/opt/python/cp37-cp37m/bin/python3.7 \
+           -e PYTHON_BINARY=/opt/python/cp39-cp39/bin/python3.9 \
            -v $GITHUB_WORKSPACE:/src \
            liefproject/manylinux_2_24_x86_64 bash /src/scripts/docker/run_linux_test.sh
   windows:
     runs-on: windows-latest
     strategy:
       matrix:
-        python-version: [3.8]
+        python-version: [3.9]
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
         architecture: x64
@@ -72,7 +73,8 @@ jobs:
       run: |
         python -m pip install pytest requests
         python tests/dl_samples.py %LIEF_SAMPLES_DIR%
-        python ./setup.py --ninja --lief-test bdist_wheel
+        python -m pip -vv install api/python
+        python ./tests/run_pytest.py
       shell: cmd
 
 

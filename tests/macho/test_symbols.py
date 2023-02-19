@@ -5,7 +5,7 @@ import re
 import sys
 from utils import is_osx, get_sample, is_apple_m1
 
-from test_builder import run_program
+from .test_builder import run_program
 
 def test_unexport(tmp_path):
     bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_sym2remove.bin"))
