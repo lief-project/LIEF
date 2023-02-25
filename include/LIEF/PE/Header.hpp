@@ -17,7 +17,7 @@
 #define LIEF_PE_HEADER_H_
 #include <array>
 #include <set>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"

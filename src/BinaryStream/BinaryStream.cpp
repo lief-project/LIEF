@@ -28,7 +28,7 @@
 #include <iomanip>
 #include <sstream>
 #include <algorithm>
-#include <iostream>
+#include <ostream>
 #include <climits>
 
 #define TMPL_DECL(T) template T BinaryStream::swap_endian<T>(T u)

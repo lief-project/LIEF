@@ -17,7 +17,7 @@
 #define LIEF_PE_TLS_H_
 
 #include <vector>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/span.hpp"
 #include "LIEF/Object.hpp"

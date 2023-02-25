@@ -17,7 +17,7 @@
 #define LIEF_MACHO_DATA_IN_CODE_COMMAND_H_
 #include <string>
 #include <vector>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"

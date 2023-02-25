@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_ASSOCIATIVE_ITERATORS_H_
 #define LIEF_ASSOCIATIVE_ITERATORS_H_
-#include <iostream>
+#include <ostream>
 #include <cmath>
 #include <cassert>
 #include <iterator>

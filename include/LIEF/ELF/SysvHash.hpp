@@ -17,7 +17,7 @@
 #define LIEF_ELF_SYSV_HASH_H_
 
 #include <vector>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"

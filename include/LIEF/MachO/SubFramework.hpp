@@ -16,7 +16,7 @@
 #ifndef LIEF_MACHO_SUB_FRAMEWORK_H_
 #define LIEF_MACHO_SUB_FRAMEWORK_H_
 #include <string>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"

@@ -16,7 +16,7 @@
 #ifndef LIEF_PE_EXPORT_H_
 #define LIEF_PE_EXPORT_H_
 
-#include <iostream>
+#include <ostream>
 #include <string>
 
 #include "LIEF/Object.hpp"

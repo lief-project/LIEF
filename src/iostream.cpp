@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include <iterator>
-#include <iostream>
+#include <ostream>
 #include "LIEF/iostream.hpp"
 
 namespace LIEF {

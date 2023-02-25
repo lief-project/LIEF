@@ -16,7 +16,7 @@
 #ifndef LIEF_MACHO_DYLD_ENVIROMENT_COMMAND_H_
 #define LIEF_MACHO_DYLD_ENVIROMENT_COMMAND_H_
 #include <string>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"

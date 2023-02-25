@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_OAT_BINARY_H_
 #define LIEF_OAT_BINARY_H_
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/visibility.h"
 

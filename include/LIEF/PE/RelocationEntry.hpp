@@ -17,7 +17,7 @@
 #define LIEF_PE_RELOCATION_ENTRY_H_
 
 #include <string>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/Abstract/Relocation.hpp"
 

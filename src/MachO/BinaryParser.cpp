@@ -15,7 +15,7 @@
  */
 #include <fstream>
 #include <iterator>
-#include <iostream>
+#include <ostream>
 #include <algorithm>
 #include <memory>
 #include <stdexcept>

@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_PE_RESOURCE_LANG_CODE_ITEM_H_
 #define LIEF_PE_RESOURCE_LANG_CODE_ITEM_H_
-#include <iostream>
+#include <ostream>
 #include <sstream>
 #include <vector>
 #include <unordered_map>

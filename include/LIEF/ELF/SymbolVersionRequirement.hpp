@@ -17,7 +17,7 @@
 #define LIEF_ELF_SYMBOL_VERSION_REQUIREMENTS_H_
 
 #include <string>
-#include <iostream>
+#include <ostream>
 #include <vector>
 #include <memory>
 

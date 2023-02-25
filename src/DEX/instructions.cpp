@@ -18,7 +18,7 @@
 #include "LIEF/DEX/instructions.hpp"
 
 #include <algorithm>
-#include <iostream>
+#include <ostream>
 #include <map>
 #include <climits>
 

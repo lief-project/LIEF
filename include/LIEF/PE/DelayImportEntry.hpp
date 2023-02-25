@@ -16,7 +16,7 @@
 #ifndef LIEF_PE_DELAY_IMPORT_ENTRY_H
 #define LIEF_PE_DELAY_IMPORT_ENTRY_H
 #include <string>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"

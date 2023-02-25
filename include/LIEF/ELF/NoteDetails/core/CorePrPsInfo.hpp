@@ -17,7 +17,7 @@
 #define LIEF_ELF_CORE_PSINFO_H_
 
 #include <vector>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"

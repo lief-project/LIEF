@@ -18,7 +18,7 @@
 
 #include <string>
 #include <vector>
-#include <iostream>
+#include <ostream>
 #include <memory>
 
 #include "LIEF/Object.hpp"

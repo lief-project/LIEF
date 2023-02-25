@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_MACHO_VERSION_MIN_COMMAND_H_
 #define LIEF_MACHO_VERSION_MIN_COMMAND_H_
-#include <iostream>
+#include <ostream>
 #include <array>
 
 #include "LIEF/visibility.h"

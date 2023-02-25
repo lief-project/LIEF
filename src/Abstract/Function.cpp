@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include <algorithm>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/Abstract/Function.hpp"
 

@@ -16,7 +16,7 @@
  */
 #ifndef LIEF_ITERATORS_H_
 #define LIEF_ITERATORS_H_
-#include <iostream>
+#include <ostream>
 #include <cmath>
 #include <cstddef>
 #include <cassert>

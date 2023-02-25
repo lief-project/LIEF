@@ -16,7 +16,7 @@
 #ifndef LIEF_ELF_HEADER_H_
 #define LIEF_ELF_HEADER_H_
 
-#include <iostream>
+#include <ostream>
 #include <array>
 #include <vector>
 

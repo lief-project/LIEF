@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_MACHO_RELOCATION_OBJECT_COMMAND_H_
 #define LIEF_MACHO_RELOCATION_OBJECT_COMMAND_H_
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"

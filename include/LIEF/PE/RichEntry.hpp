@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_PE_RICH_ENTRY_H_
 #define LIEF_PE_RICH_ENTRY_H_
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"

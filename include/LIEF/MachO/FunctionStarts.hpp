@@ -17,7 +17,7 @@
 #define LIEF_MACHO_FUNCTION_STARTS_COMMAND_H_
 #include <string>
 #include <vector>
-#include <iostream>
+#include <ostream>
 #include <array>
 
 #include "LIEF/visibility.h"

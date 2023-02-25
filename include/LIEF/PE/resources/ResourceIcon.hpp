@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_PE_RESOURCE_ICON_H_
 #define LIEF_PE_RESOURCE_ICON_H_
-#include <iostream>
+#include <ostream>
 #include <sstream>
 #include <climits>
 

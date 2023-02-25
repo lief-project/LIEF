@@ -17,7 +17,7 @@
 #define LIEF_PE_DELAY_IMPORT_H
 
 #include <string>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/types.hpp"

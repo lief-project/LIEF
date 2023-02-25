@@ -17,7 +17,7 @@
 #define LIEF_PE_EXPORT_ENTRY_H_
 
 #include <string>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"

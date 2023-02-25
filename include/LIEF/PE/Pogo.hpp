@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_PE_POGO_H_
 #define LIEF_PE_POGO_H_
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"

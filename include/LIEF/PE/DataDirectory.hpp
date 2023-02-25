@@ -17,7 +17,7 @@
 #define LIEF_PE_DATADIRECTORY_H_
 
 #include <memory>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"

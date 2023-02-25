@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_MACHO_DATA_CODE_ENTRY_H_
 #define LIEF_MACHO_DATA_CODE_ENTRY_H_
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"

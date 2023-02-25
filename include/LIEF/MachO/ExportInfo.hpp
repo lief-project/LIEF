@@ -16,7 +16,7 @@
 #ifndef LIEF_MACHO_EXPORT_INFO_COMMAND_H_
 #define LIEF_MACHO_EXPORT_INFO_COMMAND_H_
 #include <vector>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"

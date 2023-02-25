@@ -16,7 +16,7 @@
 #ifndef LIEF_MACHO_TWO_LEVEL_HINTS_H
 #define LIEF_MACHO_TWO_LEVEL_HINTS_H
 #include <vector>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"

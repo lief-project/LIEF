@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_PE_CODE_VIEW_PDB_H_
 #define LIEF_PE_CODE_VIEW_PDB_H_
-#include <iostream>
+#include <ostream>
 #include <array>
 
 #include "LIEF/Object.hpp"

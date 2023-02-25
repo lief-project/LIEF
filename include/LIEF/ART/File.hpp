@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_ART_FILE_H_
 #define LIEF_ART_FILE_H_
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/ART/Header.hpp"
 

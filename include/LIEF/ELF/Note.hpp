@@ -17,7 +17,7 @@
 #define LIEF_ELF_NOTE_H_
 
 #include <vector>
-#include <iostream>
+#include <ostream>
 #include <memory>
 
 #include "LIEF/Object.hpp"

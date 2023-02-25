@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iostream>
+#include <ostream>
 #include <iomanip>
 #include <algorithm>
 #include <iterator>

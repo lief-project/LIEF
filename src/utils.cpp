@@ -15,13 +15,13 @@
  */
 #include <iomanip>
 #include <sstream>
-#include <iostream>
+#include <ostream>
 #include <algorithm>
 #include <functional>
 
 #include <locale>
 #include <iterator>
-#include <iostream>
+#include <ostream>
 #include <string>
 #include <numeric>
 

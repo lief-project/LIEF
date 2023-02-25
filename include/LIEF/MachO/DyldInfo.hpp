@@ -17,7 +17,7 @@
 #define LIEF_MACHO_DYLD_INFO_COMMAND_H_
 #include <string>
 #include <vector>
-#include <iostream>
+#include <ostream>
 #include <memory>
 
 #include "LIEF/visibility.h"

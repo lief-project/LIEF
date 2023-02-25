@@ -16,7 +16,7 @@
 #ifndef LIEF_MACHO_RPATH_COMMAND_H_
 #define LIEF_MACHO_RPATH_COMMAND_H_
 #include <string>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"

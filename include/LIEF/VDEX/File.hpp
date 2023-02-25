@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_VDEX_FILE_H_
 #define LIEF_VDEX_FILE_H_
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/VDEX/Header.hpp"
 #include "LIEF/VDEX/type_traits.hpp"

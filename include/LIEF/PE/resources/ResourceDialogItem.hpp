@@ -16,7 +16,7 @@
  */
 #ifndef LIEF_PE_RESOURCE_DIALOG_ITEM_H_
 #define LIEF_PE_RESOURCE_DIALOG_ITEM_H_
-#include <iostream>
+#include <ostream>
 #include <sstream>
 #include <set>
 

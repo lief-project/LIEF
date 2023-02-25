@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 #include <iterator>
-#include <iostream>
+#include <ostream>
 #include <ostream>
 #include <sstream>
 #include <algorithm>

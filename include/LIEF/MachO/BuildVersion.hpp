@@ -16,7 +16,7 @@
 #ifndef LIEF_MACHO_BUILD_VERSION_COMMAND_H_
 #define LIEF_MACHO_BUILD_VERSION_COMMAND_H_
 #include <vector>
-#include <iostream>
+#include <ostream>
 #include <array>
 
 #include "LIEF/visibility.h"

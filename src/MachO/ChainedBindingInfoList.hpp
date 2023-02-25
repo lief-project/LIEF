@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_MACHO_CHAINED_BINDING_INFO_LIST_H
 #define LIEF_MACHO_CHAINED_BINDING_INFO_LIST_H
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"

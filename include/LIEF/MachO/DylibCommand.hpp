@@ -17,7 +17,7 @@
 #define LIEF_MACHO_DYLIB_COMMAND_H_
 #include <array>
 #include <string>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"

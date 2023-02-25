@@ -17,7 +17,7 @@
 #define LIEF_PE_DEBUG_H_
 
 #include <string>
-#include <iostream>
+#include <ostream>
 #include <memory>
 
 #include "LIEF/Object.hpp"

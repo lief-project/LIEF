@@ -17,7 +17,7 @@
 #include <regex>
 #include <fstream>
 #include <iterator>
-#include <iostream>
+#include <ostream>
 #include <algorithm>
 #include <stdexcept>
 #include <functional>

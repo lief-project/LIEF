@@ -15,7 +15,7 @@
  */
 #include <fstream>
 #include <iterator>
-#include <iostream>
+#include <ostream>
 #include <string>
 #include <numeric>
 

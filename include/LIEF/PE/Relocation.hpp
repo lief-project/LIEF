@@ -16,7 +16,7 @@
 #ifndef LIEF_PE_RELOCATION_H_
 #define LIEF_PE_RELOCATION_H_
 #include <vector>
-#include <iostream>
+#include <ostream>
 #include <memory>
 
 #include "LIEF/Object.hpp"

@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_MACHO_EXPORTS_TRIE_H
 #define LIEF_MACHO_EXPORTS_TRIE_H
-#include <iostream>
+#include <ostream>
 #include <vector>
 #include <string>
 #include <memory>

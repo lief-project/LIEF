@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_PE_RESOURCE_FIXED_FILE_INFO_H_
 #define LIEF_PE_RESOURCE_FIXED_FILE_INFO_H_
-#include <iostream>
+#include <ostream>
 #include <sstream>
 
 #include "LIEF/visibility.h"

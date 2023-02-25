@@ -16,7 +16,7 @@
 #ifndef LIEF_MACHO_LINKER_OPT_HINT_COMMAND_H
 #define LIEF_MACHO_LINKER_OPT_HINT_COMMAND_H
 #include <vector>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"

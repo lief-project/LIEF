@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include <array>
-#include <iostream>
+#include <ostream>
 #include <algorithm>
 #include <cmath>
 #include <iomanip>

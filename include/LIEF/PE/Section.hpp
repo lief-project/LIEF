@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_PE_SECTION_H_
 #define LIEF_PE_SECTION_H_
-#include <iostream>
+#include <ostream>
 #include <vector>
 #include <string>
 #include <set>

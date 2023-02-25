@@ -16,7 +16,7 @@
 #ifndef LIEF_MACHO_SEGMENT_SPLIT_INFO_H_
 #define LIEF_MACHO_SEGMENT_SPLIT_INFO_H_
 #include <vector>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"

@@ -18,7 +18,7 @@
 
 #include <string>
 #include <vector>
-#include <iostream>
+#include <ostream>
 #include <set>
 
 #include "LIEF/visibility.h"

@@ -21,7 +21,7 @@
 #include <array>
 #include <string>
 #include <functional>
-#include <iostream>
+#include <ostream>
 #include <utility>
 
 #include "LIEF/config.h"

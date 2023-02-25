@@ -17,7 +17,7 @@
 #define LIEF_ELF_SYMBOL_VERSION_AUX_H_
 
 #include <string>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"

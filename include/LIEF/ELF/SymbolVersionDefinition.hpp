@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_ELF_SYMBOL_VERSION_DEFINITION_H_
 #define LIEF_ELF_SYMBOL_VERSION_DEFINITION_H_
-#include <iostream>
+#include <ostream>
 #include <memory>
 
 #include "LIEF/Object.hpp"

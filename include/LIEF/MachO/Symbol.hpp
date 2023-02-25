@@ -16,7 +16,7 @@
 #ifndef LIEF_MACHO_SYMBOL_H_
 #define LIEF_MACHO_SYMBOL_H_
 
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"

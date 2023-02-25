@@ -18,7 +18,7 @@
 
 #include <string>
 #include <map>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"

@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_MACHO_BINDING_INFO_H
 #define LIEF_MACHO_BINDING_INFO_H
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"

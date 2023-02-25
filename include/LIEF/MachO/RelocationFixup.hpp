@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_MACHO_RELOCATION_FIXUP_H
 #define LIEF_MACHO_RELOCATION_FIXUP_H
-#include <iostream>
+#include <ostream>
 #include <memory>
 
 #include "LIEF/visibility.h"

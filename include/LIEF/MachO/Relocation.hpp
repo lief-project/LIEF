@@ -17,7 +17,7 @@
 #define LIEF_MACHO_RELOCATION_COMMAND_H_
 #include <string>
 #include <vector>
-#include <iostream>
+#include <ostream>
 #include <array>
 
 #include "LIEF/Abstract/Relocation.hpp"

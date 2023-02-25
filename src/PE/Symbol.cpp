@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 #include <algorithm>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/exception.hpp"

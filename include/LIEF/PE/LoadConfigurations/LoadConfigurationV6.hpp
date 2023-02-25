@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_PE_LOAD_CONFIGURATION_V6_H_
 #define LIEF_PE_LOAD_CONFIGURATION_V6_H_
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/visibility.h"
 

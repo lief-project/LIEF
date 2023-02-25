@@ -16,7 +16,7 @@
 #ifndef LIEF_MACHO_HEADER_H_
 #define LIEF_MACHO_HEADER_H_
 
-#include <iostream>
+#include <ostream>
 #include <set>
 
 #include "LIEF/Object.hpp"

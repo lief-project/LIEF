@@ -17,7 +17,7 @@
 #define LIEF_ELF_SYMBOL_VERSION_AUX_REQUIREMENT_H_
 
 #include <string>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"

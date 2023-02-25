@@ -16,7 +16,7 @@
 #ifndef LIEF_PE_DOS_HEADER_H_
 #define LIEF_PE_DOS_HEADER_H_
 #include <array>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"

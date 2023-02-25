@@ -17,7 +17,7 @@
 #define LIEF_PE_IMPORT_H_
 
 #include <string>
-#include <iostream>
+#include <ostream>
 
 #include "LIEF/errors.hpp"
 #include "LIEF/Object.hpp"

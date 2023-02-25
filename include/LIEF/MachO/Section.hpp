@@ -17,7 +17,7 @@
 #define LIEF_MACHO_SECTION_H_
 #include <string>
 #include <vector>
-#include <iostream>
+#include <ostream>
 #include <set>
 #include <memory>
 
