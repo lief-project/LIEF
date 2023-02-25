@@ -1,7 +1,7 @@
 About
 =====
 
-The purpose of this project is to provide a cross platform library which can parse, modify and
+The purpose of this project is to provide a cross platform library that can parse, modify and
 abstract ELF, PE and MachO formats.
 
 Main features:
@@ -31,7 +31,7 @@ To install nightly build:
 
 .. code-block:: console
 
-   $ pip install [--user] --index-url  https://lief-project.github.io/packages lief
+   $ pip install [--user] --index-url https://lief.s3-website.fr-par.scw.cloud/latest lief
 
 
 Getting started
@@ -114,10 +114,10 @@ C (Limited API)
 Documentation
 =============
 
-* `Main documentation <https://lief.quarkslab.com/doc/latest/index.html>`_
-* `Tutorial <https://lief.quarkslab.com/doc/latest/tutorials/index.html>`_
-* `API <https://lief.quarkslab.com/doc/latest/api/index.html>`_
-* `Doxygen <https://lief.quarkslab.com/doc/latest/doxygen/index.html>`_
+* `Main documentation <https://lief-project.github.io/doc/latest/index.html>`_
+* `Tutorial <https://lief-project.github.io/doc/latest/tutorials/index.html>`_
+* `API <https://lief-project.github.io/doc/latest/api/index.html>`_
+* `Doxygen <https://lief-project.github.io/doc/latest/doxygen/index.html>`_
 
 Contact
 =======
@@ -133,4 +133,4 @@ Romain Thomas `@rh0main <https://twitter.com/rh0main>`_ - `Quarkslab <https://ww
 
 ----
 
-LIEF is provided under the `Apache 2.0 license <https://github.com/lief-project/LIEF/blob/0.10.1/LICENSE>`_
+LIEF is provided under the `Apache 2.0 license <https://github.com/lief-project/LIEF/blob/0.12.3/LICENSE>`_
