@@ -641,7 +641,7 @@ endif()
 # Find Package Config
 # ======================
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR/cmake/LIEFConfig.cmake.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/LIEFConfig.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/LIEFConfig.cmake
   @ONLY)
 
