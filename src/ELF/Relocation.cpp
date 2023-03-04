@@ -16,7 +16,7 @@
 #include <iomanip>
 #include <climits>
 
-#include "LIEF/exception.hpp"
+
 #include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/Relocation.hpp"

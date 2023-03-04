@@ -17,7 +17,7 @@
 #include <fstream>
 #include <iterator>
 
-#include "LIEF/exception.hpp"
+
 
 #include "LIEF/PE/hash.hpp"
 

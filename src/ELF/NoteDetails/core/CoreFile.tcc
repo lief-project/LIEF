@@ -18,7 +18,7 @@
 #include <limits>
 
 #include "logging.hpp"
-#include "LIEF/exception.hpp"
+
 #include "LIEF/utils.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/iostream.hpp"

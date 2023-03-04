@@ -53,10 +53,7 @@ if (NOT MSVC)
   ADD_FLAG_IF_SUPPORTED("-Wall"                     WALL)
   ADD_FLAG_IF_SUPPORTED("-Wextra"                   WEXTRA)
   ADD_FLAG_IF_SUPPORTED("-Wpedantic"                WPEDANTIC)
-  ADD_FLAG_IF_SUPPORTED("-fno-stack-protector"      NO_STACK_PROTECTOR)
   ADD_FLAG_IF_SUPPORTED("-fomit-frame-pointer"      OMIT_FRAME_POINTER)
-  ADD_FLAG_IF_SUPPORTED("-fno-strict-aliasing"      NO_STRICT_ALIASING)
-  ADD_FLAG_IF_SUPPORTED("-fexceptions"              EXCEPTION)
   ADD_FLAG_IF_SUPPORTED("-Wno-expansion-to-defined" NO_EXPANSION_TO_DEFINED)
 
   # Promote this warning into an error as Leaf error management

@@ -18,6 +18,7 @@
 #include "LIEF/PE/hash.hpp"
 
 #include "LIEF/utils.hpp"
+#include "logging.hpp"
 
 #include "LIEF/PE/resources/ResourceStringFileInfo.hpp"
 
@@ -34,7 +35,7 @@ ResourceStringFileInfo::ResourceStringFileInfo(uint16_t type, std::u16string key
 {}
 
 ResourceStringFileInfo::ResourceStringFileInfo() :
-  key_{u8tou16("StringFileInfo")}
+  key_{*u8tou16("StringFileInfo")}
 {}
 
 
@@ -64,7 +65,11 @@ void ResourceStringFileInfo::key(const std::u16string& key) {
 }
 
 void ResourceStringFileInfo::key(const std::string& key) {
-  key_ = u8tou16(key);
+  if (auto res = u8tou16(key)) {
+    key_ = std::move(*res);
+  } else {
+    LIEF_WARN("{} can't be converted in a UTF-16 string", key);
+  }
 }
 
 void ResourceStringFileInfo::langcode_items(const std::vector<LangCodeItem>& items) {

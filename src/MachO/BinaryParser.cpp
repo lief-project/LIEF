@@ -24,7 +24,7 @@
 #include "BinaryParser.tcc"
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
-#include "LIEF/exception.hpp"
+
 
 #include "LIEF/MachO/BinaryParser.hpp"
 

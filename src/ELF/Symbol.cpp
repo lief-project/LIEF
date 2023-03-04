@@ -20,7 +20,7 @@
   #include <cxxabi.h>
 #endif
 
-#include "LIEF/exception.hpp"
+
 
 #include "LIEF/ELF/hash.hpp"
 

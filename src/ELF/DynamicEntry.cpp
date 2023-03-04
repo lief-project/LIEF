@@ -16,7 +16,7 @@
 #include <stdexcept>
 #include <iomanip>
 
-#include "LIEF/exception.hpp"
+
 #include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/DynamicEntry.hpp"

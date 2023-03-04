@@ -344,7 +344,8 @@ result<std::string> BinaryStream::read_mutf8(size_t maxsize) const {
         return !utf8::internal::is_code_point_valid(c);
       }, '.');
 
-  utf8::utf32to8(std::begin(u32str), std::end(u32str), std::back_inserter(u8str));
+  utf8::unchecked::utf32to8(std::begin(u32str), std::end(u32str),
+                            std::back_inserter(u8str));
   return u8str;
 }
 

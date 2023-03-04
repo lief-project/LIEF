@@ -19,7 +19,7 @@
 
 #include "logging.hpp"
 
-#include "LIEF/exception.hpp"
+
 
 #include "LIEF/ELF/hash.hpp"
 

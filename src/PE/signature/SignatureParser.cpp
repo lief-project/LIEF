@@ -23,7 +23,7 @@
 #include <mbedtls/x509_crt.h>
 
 #include "LIEF/utils.hpp"
-#include "LIEF/exception.hpp"
+
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
 
@@ -1008,12 +1008,7 @@ result<std::string> SignatureParser::parse_spc_string(VectorStream& stream) {
 
     stream.set_endian_swap(false);
 
-    try {
-      return u16tou8(*progname);
-    } catch (const utf8::exception&) {
-      LIEF_INFO("Error while converting utf-8 spc-string.program-name to utf16");
-      return make_error_code(lief_errors::conversion_error);
-    }
+    return u16tou8(*progname);
   }
   if ((choice = stream.asn1_read_tag(MBEDTLS_ASN1_CONTEXT_SPECIFIC | 1))) {
     LIEF_DEBUG("SpcString: ASCII choice");

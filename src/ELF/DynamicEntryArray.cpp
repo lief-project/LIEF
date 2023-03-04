@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include "LIEF/ELF/DynamicEntryArray.hpp"
-#include "LIEF/exception.hpp"
+
 #include "logging.hpp"
 
 #include <numeric>

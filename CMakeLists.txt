@@ -137,7 +137,6 @@ set(LIBLIEF_SOURCE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/src/errors.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/hash_stream.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/logging.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/exception.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/iostream.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/utils.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/internal_utils.cpp"
@@ -159,7 +158,6 @@ set(LIEF_INC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/span.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/ELF.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/Abstract.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/exception.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/iostream.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/iterators.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/LIEF.hpp"
@@ -294,10 +292,11 @@ endif()
 # =====================
 
 target_compile_definitions(LIB_LIEF PRIVATE SPDLOG_DISABLE_DEFAULT_LOGGER
+                                            SPDLOG_NO_EXCEPTIONS
                                             SPDLOG_FUNCTION=)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
-  target_compile_definitions(LIB_LIEF PRIVATE SPDLOG_NO_EXCEPTIONS SPDLOG_NO_THREAD_ID)
+  target_compile_definitions(LIB_LIEF PRIVATE SPDLOG_NO_THREAD_ID)
 endif()
 
 # Frozen Configuration

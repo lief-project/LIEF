@@ -20,7 +20,7 @@
 #include <algorithm>
 #include <utility>
 
-#include "LIEF/exception.hpp"
+
 #include "LIEF/utils.hpp"
 
 #include "logging.hpp"

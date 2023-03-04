@@ -27,7 +27,7 @@
 #include "frozen.hpp"
 #include "mbedtls/md5.h"
 
-#include "LIEF/exception.hpp"
+
 
 #include "LIEF/PE/utils.hpp"
 #define LIEF_PE_FORCE_UNDEF

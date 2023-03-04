@@ -23,7 +23,7 @@
 
 #include "frozen.hpp"
 
-#include "LIEF/exception.hpp"
+
 
 #include "LIEF/MachO/hash.hpp"
 

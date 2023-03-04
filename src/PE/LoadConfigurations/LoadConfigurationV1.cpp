@@ -17,7 +17,7 @@
 #include <numeric>
 
 #include "LIEF/PE/hash.hpp"
-#include "LIEF/exception.hpp"
+
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/LoadConfigurations.hpp"
 

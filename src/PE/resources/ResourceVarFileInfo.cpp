@@ -18,6 +18,7 @@
 #include <numeric>
 
 #include "LIEF/PE/hash.hpp"
+#include "logging.hpp"
 
 #include "LIEF/utils.hpp"
 #include "LIEF/PE/EnumToString.hpp"
@@ -39,7 +40,7 @@ ResourceVarFileInfo::ResourceVarFileInfo(uint16_t type, std::u16string key) :
 {}
 
 ResourceVarFileInfo::ResourceVarFileInfo() :
-  key_{u8tou16("VarFileInfo")}
+  key_{*u8tou16("VarFileInfo")}
 {}
 
 
@@ -64,7 +65,10 @@ void ResourceVarFileInfo::key(const std::u16string& key) {
 }
 
 void ResourceVarFileInfo::key(const std::string& key) {
-  this->key(u8tou16(key));
+  if (auto res = u8tou16(key)) {
+    return this->key(std::move(*res));
+  }
+  LIEF_WARN("{} can't be converted to a UTF-16 string", key);
 }
 
 std::vector<uint32_t>& ResourceVarFileInfo::translations() {

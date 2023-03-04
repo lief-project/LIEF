@@ -24,7 +24,7 @@
 #include <type_traits>
 
 #include "LIEF/iterators.hpp"
-#include "LIEF/exception.hpp"
+
 
 namespace LIEF {
 

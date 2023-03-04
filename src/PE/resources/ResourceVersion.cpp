@@ -16,7 +16,8 @@
 
 #include <iomanip>
 
-#include "LIEF/exception.hpp"
+#include "logging.hpp"
+
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/utils.hpp"
 
@@ -69,7 +70,7 @@ ResourceVersion& ResourceVersion::operator=(const ResourceVersion& other) {
 
 ResourceVersion::ResourceVersion() :
   type_{0},
-  key_{u8tou16("VS_VERSION_INFO")}
+  key_{*u8tou16("VS_VERSION_INFO")}
 {}
 
 uint16_t ResourceVersion::type() const {
@@ -125,7 +126,10 @@ void ResourceVersion::key(const std::u16string& key) {
 }
 
 void ResourceVersion::key(const std::string& key) {
-  this->key(u8tou16(key));
+  if (auto res = u8tou16(key)) {
+    return this->key(std::move(*res));
+  }
+  LIEF_WARN("{} can't be converted to a UTF-16 string", key);
 }
 
 void ResourceVersion::fixed_file_info(const ResourceFixedFileInfo& fixed_file_info) {

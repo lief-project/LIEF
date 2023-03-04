@@ -66,7 +66,7 @@
 #include "LIEF/MachO/hash.hpp"
 #include "MachO/Structures.hpp"
 
-#include "LIEF/exception.hpp"
+
 
 namespace LIEF {
 namespace MachO {

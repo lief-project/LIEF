@@ -16,7 +16,7 @@
 #include <iomanip>
 
 #include "LIEF/PE/hash.hpp"
-#include "LIEF/exception.hpp"
+
 #include "LIEF/iostream.hpp"
 
 #include "LIEF/PE/LoadConfigurations.hpp"

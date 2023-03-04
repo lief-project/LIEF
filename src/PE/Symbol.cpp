@@ -18,7 +18,7 @@
 #include <ostream>
 
 #include "LIEF/PE/hash.hpp"
-#include "LIEF/exception.hpp"
+
 
 #include "LIEF/PE/Symbol.hpp"
 #include "LIEF/PE/Section.hpp"

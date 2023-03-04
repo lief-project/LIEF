@@ -67,9 +67,6 @@ PYBIND11_MODULE(_lief, LIEF_module) {
 
   init_LIEF_Logger(LIEF_module);
 
-  // Init custom LIEF exceptions
-  init_LIEF_exceptions(LIEF_module);
-
   // Init the LIEF module
   LIEF::init_python_module(LIEF_module);
 

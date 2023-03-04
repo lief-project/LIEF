@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include "LIEF/Abstract/Binary.hpp"
-#include "LIEF/exception.hpp"
+
 #include "LIEF/config.h"
 #include "logging.hpp"
 

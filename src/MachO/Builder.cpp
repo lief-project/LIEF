@@ -21,7 +21,7 @@
 
 #include "logging.hpp"
 
-#include "LIEF/exception.hpp"
+
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 
 #include "LIEF/MachO/Builder.hpp"

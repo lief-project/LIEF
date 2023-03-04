@@ -18,7 +18,7 @@
 #include <sstream>
 #include <algorithm>
 
-#include "LIEF/exception.hpp"
+
 #include "LIEF/utils.hpp"
 
 #include "logging.hpp"

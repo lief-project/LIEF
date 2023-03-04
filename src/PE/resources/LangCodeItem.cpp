@@ -16,7 +16,7 @@
 #include <iomanip>
 
 #include "logging.hpp"
-#include "LIEF/exception.hpp"
+
 
 #include "LIEF/PE/hash.hpp"
 
@@ -39,7 +39,7 @@ LangCodeItem::LangCodeItem(uint16_t type, std::u16string key) :
 {}
 
 LangCodeItem::LangCodeItem() :
-  key_{u8tou16("040c04B0")}
+  key_{*u8tou16("040c04B0")}
 {}
 
 uint16_t LangCodeItem::type() const {
@@ -102,22 +102,27 @@ void LangCodeItem::key(const std::u16string& key) {
 }
 
 void LangCodeItem::key(const std::string& key) {
-  key_ = u8tou16(key);
+  if (auto res = u8tou16(key)) {
+    key_ = std::move(*res);
+  } else {
+    LIEF_WARN("{} can't be converted to a UTF-16 string", key);
+  }
 }
 
 void LangCodeItem::code_page(CODE_PAGES code_page) {
   //TODO: Check
   std::stringstream ss;
   ss << std::setfill('0') << std::setw(sizeof(uint16_t) * 2) << std::hex << static_cast<uint16_t>(code_page);
-  std::u16string cp = u8tou16(ss.str());
-  std::u16string key = this->key();
-  key.replace(4, 4, cp);
-  this->key(key);
-
+  if (auto res = u8tou16(ss.str())) {
+    std::u16string key = this->key();
+    key.replace(4, 4, std::move(*res));
+    this->key(key);
+  } else {
+    LIEF_WARN("Code page error");
+  }
 }
 
 void LangCodeItem::lang(RESOURCE_LANGS lang) {
-  //TODO: Check
   uint64_t lang_id = std::stoul(u16tou8(key().substr(0, 4)), nullptr, 16);
   lang_id &= ~static_cast<uint64_t>(0x3ff);
   lang_id |= static_cast<uint16_t>(lang);
@@ -125,11 +130,13 @@ void LangCodeItem::lang(RESOURCE_LANGS lang) {
   std::stringstream ss;
   ss << std::setfill('0') << std::setw(sizeof(uint16_t) * 2) << std::hex << static_cast<uint16_t>(lang_id);
 
-  std::u16string langid = u8tou16(ss.str());
-  std::u16string key = this->key();
-  key.replace(0, 4, langid);
-  this->key(key);
-
+  if (auto res = u8tou16(ss.str())) {
+    std::u16string key = this->key();
+    key.replace(0, 4, std::move(*res));
+    this->key(key);
+  } else {
+    LIEF_WARN("lang error");
+  }
 }
 
 void LangCodeItem::sublang(RESOURCE_SUBLANGS lang) {
@@ -144,10 +151,13 @@ void LangCodeItem::sublang(RESOURCE_SUBLANGS lang) {
   std::stringstream ss;
   ss << std::setfill('0') << std::setw(sizeof(uint16_t) * 2) << std::hex << static_cast<uint16_t>(lang_id);
 
-  std::u16string langid = u8tou16(ss.str());
-  std::u16string key = this->key();
-  key.replace(0, 4, langid);
-  this->key(key);
+  if (auto res = u8tou16(ss.str())) {
+    std::u16string key = this->key();
+    key.replace(0, 4, std::move(*res));
+    this->key(key);
+  } else {
+    LIEF_WARN("lang error");
+  }
 }
 
 

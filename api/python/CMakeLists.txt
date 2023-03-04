@@ -58,7 +58,6 @@ message(STATUS "Python interpreter: ${PYTHON_EXECUTABLE}")
 set(LIEF_PYTHON_BASIC_SRC
   "${CMAKE_CURRENT_SOURCE_DIR}/src/pyLIEF.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/pyUtils.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyExceptions.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/pyLogger.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/pyHash.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/pyObject.cpp"

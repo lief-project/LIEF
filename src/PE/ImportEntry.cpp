@@ -16,7 +16,7 @@
 #include <iomanip>
 
 #include "LIEF/PE/hash.hpp"
-#include "LIEF/exception.hpp"
+
 
 #include "LIEF/PE/ImportEntry.hpp"
 #include "logging.hpp"

@@ -23,7 +23,7 @@
 #include "logging.hpp"
 #include "hash_stream.hpp"
 
-#include "LIEF/exception.hpp"
+
 #include "LIEF/utils.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/iostream.hpp"

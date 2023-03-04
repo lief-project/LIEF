@@ -21,7 +21,7 @@
 
 #include "frozen.hpp"
 
-#include "LIEF/exception.hpp"
+
 #include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/Header.hpp"

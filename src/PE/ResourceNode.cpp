@@ -197,7 +197,10 @@ void ResourceNode::id(uint32_t id) {
 }
 
 void ResourceNode::name(const std::string& name) {
-  this->name(u8tou16(name));
+  if (auto res = u8tou16(name)) {
+    return this->name(std::move(*res));
+  }
+  LIEF_WARN("{} can't be converted to a UTF-16 string", name);
 }
 
 void ResourceNode::name(const std::u16string& name) {

@@ -21,6 +21,8 @@
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
+#include "LIEF/errors.hpp"
+
 
 namespace LIEF {
 inline uint64_t align(uint64_t value, uint64_t align_on) {
@@ -72,11 +74,11 @@ constexpr size_t operator ""_GB(unsigned long long gbs)
 }
 
 
-//! @brief Convert a UTF-16 string to a UTF-8 one
+//! Convert a UTF-16 string to a UTF-8 one
 LIEF_API std::string u16tou8(const std::u16string& string, bool remove_null_char = false);
 
-//! @brief Convert a UTF-8 string to a UTF-16 one
-LIEF_API std::u16string u8tou16(const std::string& string);
+//! Convert a UTF-8 string to a UTF-16 one
+LIEF_API result<std::u16string> u8tou16(const std::string& string);
 
 LIEF_API std::string hex_str(uint8_t c);
 

@@ -31,7 +31,7 @@
 #include "logging.hpp"
 #include "LIEF/utils.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
-#include "LIEF/exception.hpp"
+
 namespace LIEF {
 
 VectorStream::VectorStream(VectorStream&& other) = default;

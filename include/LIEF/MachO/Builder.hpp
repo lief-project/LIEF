@@ -25,7 +25,7 @@
 
 #include "LIEF/errors.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/exception.hpp"
+
 #include "LIEF/iostream.hpp"
 
 struct Profiler;

@@ -26,7 +26,6 @@
 #include <type_traits>
 #include <vector>
 
-#include "LIEF/exception.hpp"
 
 namespace LIEF {
 
@@ -53,7 +52,7 @@ class ref_iterator {
   using difference_type = ptrdiff_t;
   using pointer = typename std::remove_pointer<U>::type*;
   using reference = typename std::remove_pointer<U>::type&;
-                              
+
   using container_type = T;          // e.g. std::vector<Section*>&
   using DT_VAL         = U;          // e.g. Section*
   using DT             = decay_t<T>; // e.g. std::vector<Section>

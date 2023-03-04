@@ -28,6 +28,8 @@
 #include <spdlog/fmt/fmt.h>
 
 #include "LIEF/utils.hpp"
+#include "LIEF/errors.hpp"
+
 #include "third-party/utfcpp.hpp"
 
 namespace LIEF {
@@ -45,7 +47,27 @@ std::vector<uint8_t> uencode(uint64_t value) {
   return result;
 }
 
+}
 
+
+template <typename octet_iterator>
+result<uint32_t> next(octet_iterator& it, octet_iterator end) {
+  using namespace utf8;
+  uint32_t cp = 0;
+  internal::utf_error err_code = internal::validate_next(it, end, cp);
+  switch (err_code) {
+    case internal::UTF8_OK :
+      break;
+    case internal::NOT_ENOUGH_ROOM :
+      return make_error_code(lief_errors::data_too_large);
+    case internal::INVALID_LEAD :
+    case internal::INCOMPLETE_SEQUENCE :
+    case internal::OVERLONG_SEQUENCE :
+      return make_error_code(lief_errors::read_error);
+    case internal::INVALID_CODE_POINT :
+      return make_error_code(lief_errors::read_error);
+  }
+  return cp;
 }
 
 std::string u16tou8(const std::u16string& string, bool remove_null_char) {
@@ -54,7 +76,7 @@ std::string u16tou8(const std::u16string& string, bool remove_null_char) {
   std::u16string clean_string;
   std::copy_if(std::begin(string), std::end(string),
                std::back_inserter(clean_string),
-              utf8::internal::is_code_point_valid<char16_t>);
+               utf8::internal::is_code_point_valid<char16_t>);
 
   utf8::unchecked::utf16to8(std::begin(clean_string), std::end(clean_string),
                             std::back_inserter(name));
@@ -65,9 +87,24 @@ std::string u16tou8(const std::u16string& string, bool remove_null_char) {
   return name;
 }
 
-std::u16string u8tou16(const std::string& string) {
+result<std::u16string> u8tou16(const std::string& string) {
   std::u16string name;
-  utf8::utf8to16(std::begin(string), std::end(string), std::back_inserter(name));
+  auto start = string.begin();
+  auto end   = string.end();
+  auto res   = std::back_inserter(name);
+  while (start < end) {
+    auto cp = next(start, end);
+    if (!cp) {
+      return make_error_code(lief_errors::conversion_error);
+    }
+    uint32_t cp_val = *cp;
+    if (cp_val > 0xffff) {
+      *res++ = static_cast<uint16_t>((cp_val >> 10)   + utf8::internal::LEAD_OFFSET);
+      *res++ = static_cast<uint16_t>((cp_val & 0x3ff) + utf8::internal::TRAIL_SURROGATE_MIN);
+    } else {
+      *res++ = static_cast<uint16_t>(cp_val);
+    }
+  }
   return name;
 }
 

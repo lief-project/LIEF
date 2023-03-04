@@ -25,7 +25,7 @@
 
 #include "logging.hpp"
 
-#include "LIEF/exception.hpp"
+
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "LIEF/BinaryStream/VectorStream.hpp"

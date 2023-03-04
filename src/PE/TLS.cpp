@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/exception.hpp"
+
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/TLS.hpp"

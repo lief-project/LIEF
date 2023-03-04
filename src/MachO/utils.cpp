@@ -43,7 +43,7 @@
 
 #include "MachO/Structures.hpp"
 
-#include "LIEF/exception.hpp"
+
 #include "LIEF/BinaryStream/FileStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
 #include "logging.hpp"

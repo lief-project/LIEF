@@ -20,7 +20,7 @@
 #include <functional>
 #include <numeric>
 #include "logging.hpp"
-#include "LIEF/exception.hpp"
+
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/utils.hpp"
 

@@ -21,7 +21,7 @@
 #include <functional>
 #include <map>
 
-#include "LIEF/exception.hpp"
+
 #include "LIEF/utils.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/ELF/Builder.hpp"

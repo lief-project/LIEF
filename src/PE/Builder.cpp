@@ -22,7 +22,7 @@
 #include "logging.hpp"
 
 #include "third-party/utfcpp.hpp"
-#include "LIEF/exception.hpp"
+
 
 #include "LIEF/PE/Builder.hpp"
 #include "LIEF/PE/ResourceData.hpp"

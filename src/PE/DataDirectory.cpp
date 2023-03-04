@@ -17,7 +17,7 @@
 #include <iomanip>
 
 #include "LIEF/PE/hash.hpp"
-#include "LIEF/exception.hpp"
+
 
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/DataDirectory.hpp"

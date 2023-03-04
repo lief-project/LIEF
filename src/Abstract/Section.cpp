@@ -22,7 +22,7 @@
 
 #include "logging.hpp"
 #include "LIEF/Abstract/hash.hpp"
-#include "LIEF/exception.hpp"
+
 
 #include "LIEF/Abstract/Section.hpp"
 

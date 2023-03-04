@@ -42,7 +42,6 @@ using namespace pybind11::literals;
 
 void init_LIEF_Object_class(py::module&);
 void init_LIEF_Logger(py::module&);
-void init_LIEF_exceptions(py::module&);
 void init_LIEF_module(py::module&);
 void init_hash_functions(py::module&);
 

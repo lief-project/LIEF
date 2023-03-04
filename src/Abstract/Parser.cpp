@@ -41,7 +41,7 @@
 #include "LIEF/MachO/Binary.hpp"
 #endif
 
-#include "LIEF/exception.hpp"
+
 
 namespace LIEF {
 Parser::~Parser() = default;

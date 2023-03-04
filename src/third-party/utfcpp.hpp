@@ -17,9 +17,9 @@
 #include "LIEF/config.h"
 
 #ifndef LIEF_EXTERNAL_UTF8CPP
-#include <internal/utfcpp/utf8.h>
+#include <internal/utfcpp/utf8/unchecked.h>
 #else
-#include <utf8.h>
+#include <utf8/unchecked.h>
 #endif
 
 #endif

@@ -21,7 +21,7 @@
 #include <numeric>
 
 #include "logging.hpp"
-#include "LIEF/exception.hpp"
+
 
 #include "LIEF/PE/hash.hpp"
 
