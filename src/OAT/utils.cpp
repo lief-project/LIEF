@@ -21,6 +21,7 @@
 #include "LIEF/ELF/Parser.hpp"
 #include "LIEF/ELF/Symbol.hpp"
 #include "LIEF/ELF/utils.hpp"
+#include "frozen.hpp"
 
 namespace LIEF {
 namespace OAT {
@@ -89,7 +90,7 @@ oat_version_t version(const ELF::Binary& elf) {
 }
 
 Android::ANDROID_VERSIONS android_version(oat_version_t version) {
-  static const std::map<oat_version_t, Android::ANDROID_VERSIONS> oat2android {
+  CONST_MAP(oat_version_t, Android::ANDROID_VERSIONS, 6) oat2android {
     { 64,  Android::ANDROID_VERSIONS::VERSION_601 },
     { 79,  Android::ANDROID_VERSIONS::VERSION_700 },
     { 88,  Android::ANDROID_VERSIONS::VERSION_712 },
@@ -99,7 +100,8 @@ Android::ANDROID_VERSIONS android_version(oat_version_t version) {
 
   };
   auto   it  = oat2android.lower_bound(version);
-  return it == oat2android.end() ? Android::ANDROID_VERSIONS::VERSION_UNKNOWN : it->second;
+  return it == oat2android.end() ?
+               Android::ANDROID_VERSIONS::VERSION_UNKNOWN : it->second;
 }
 
 
@@ -107,9 +109,3 @@ Android::ANDROID_VERSIONS android_version(oat_version_t version) {
 
 } // namespace OAT
 } // namespace LIEF
-
-
-
-
-
-

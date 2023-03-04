@@ -27,6 +27,7 @@
 #include "LIEF/PE/ImportEntry.hpp"
 
 #include "internal_utils.hpp"
+#include "frozen.hpp"
 #include "PE/Structures.hpp"
 #include "LoadConfigurations/LoadConfigurations.tcc"
 #include "LIEF/PE/Parser.hpp"
@@ -611,6 +612,31 @@ ok_error_t Parser::parse_load_config() {
   using load_configuration_v6_t = typename PE_T::load_configuration_v6_t;
   using load_configuration_v7_t = typename PE_T::load_configuration_v7_t;
 
+  CONST_MAP(WIN_VERSION, size_t, 9) PE32_LOAD_CONFIGURATION_SIZES = {
+    {WIN_VERSION::WIN_UNKNOWN,   sizeof(details::PE32::load_configuration_t)},
+    {WIN_VERSION::WIN_SEH,       sizeof(details::PE32::load_configuration_v0_t)},
+    {WIN_VERSION::WIN8_1,        sizeof(details::PE32::load_configuration_v1_t)},
+    {WIN_VERSION::WIN10_0_9879,  sizeof(details::PE32::load_configuration_v2_t)},
+    {WIN_VERSION::WIN10_0_14286, sizeof(details::PE32::load_configuration_v3_t)},
+    {WIN_VERSION::WIN10_0_14383, sizeof(details::PE32::load_configuration_v4_t)},
+    {WIN_VERSION::WIN10_0_14901, sizeof(details::PE32::load_configuration_v5_t)},
+    {WIN_VERSION::WIN10_0_15002, sizeof(details::PE32::load_configuration_v6_t)},
+    {WIN_VERSION::WIN10_0_16237, sizeof(details::PE32::load_configuration_v7_t)},
+  };
+
+  CONST_MAP(WIN_VERSION, size_t, 9) PE64_LOAD_CONFIGURATION_SIZES = {
+    {WIN_VERSION::WIN_UNKNOWN,   sizeof(details::PE64::load_configuration_t)},
+    {WIN_VERSION::WIN_SEH,       sizeof(details::PE64::load_configuration_v0_t)},
+    {WIN_VERSION::WIN8_1,        sizeof(details::PE64::load_configuration_v1_t)},
+    {WIN_VERSION::WIN10_0_9879,  sizeof(details::PE64::load_configuration_v2_t)},
+    {WIN_VERSION::WIN10_0_14286, sizeof(details::PE64::load_configuration_v3_t)},
+    {WIN_VERSION::WIN10_0_14383, sizeof(details::PE64::load_configuration_v4_t)},
+    {WIN_VERSION::WIN10_0_14901, sizeof(details::PE64::load_configuration_v5_t)},
+    {WIN_VERSION::WIN10_0_15002, sizeof(details::PE64::load_configuration_v6_t)},
+    {WIN_VERSION::WIN10_0_16237, sizeof(details::PE64::load_configuration_v7_t)},
+  };
+
+
   LIEF_DEBUG("[+] Parsing Load Config");
 
   const uint32_t ldc_rva = binary_->data_directory(DATA_DIRECTORY::LOAD_CONFIG_TABLE).RVA();
@@ -623,9 +649,17 @@ ok_error_t Parser::parse_load_config() {
   size_t current_size = 0;
   WIN_VERSION version_found = WIN_VERSION::WIN_UNKNOWN;
 
-  for (const auto& p : PE_T::load_configuration_sizes) {
-    if (p.second > current_size && p.second <= *size) {
-      std::tie(version_found, current_size) = p;
+  if /* constexpr */(std::is_same<PE_T, details::PE32>::value) {
+    for (const auto& p : PE32_LOAD_CONFIGURATION_SIZES) {
+      if (p.second > current_size && p.second <= *size) {
+        std::tie(version_found, current_size) = p;
+      }
+    }
+  } else {
+    for (const auto& p : PE64_LOAD_CONFIGURATION_SIZES) {
+      if (p.second > current_size && p.second <= *size) {
+        std::tie(version_found, current_size) = p;
+      }
     }
   }
 

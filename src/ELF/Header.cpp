@@ -33,32 +33,6 @@
 namespace LIEF {
 namespace ELF {
 
-static const std::map<ARCH, Header::abstract_architecture_t> arch_elf_to_lief {
-  {ARCH::EM_NONE,      {ARCH_NONE,  {}}},
-  {ARCH::EM_X86_64,    {ARCH_X86,   {MODE_64}}},
-  {ARCH::EM_ARM,       {ARCH_ARM,   {MODE_32}}},
-  {ARCH::EM_AARCH64,   {ARCH_ARM64, {MODE_64}}},
-  {ARCH::EM_386,       {ARCH_X86,   {MODE_32}}},
-  {ARCH::EM_IA_64,     {ARCH_INTEL, {MODE_64}}},
-  {ARCH::EM_MIPS,      {ARCH_MIPS,  {MODE_32}}},
-  {ARCH::EM_PPC,       {ARCH_PPC,   {MODE_32}}},
-  {ARCH::EM_PPC64,     {ARCH_PPC,   {MODE_64}}},
-  {ARCH::EM_RISCV,     {ARCH_RISCV, {MODE_64}}},
-};
-
-static const std::map<E_TYPE, OBJECT_TYPES> obj_elf_to_lief {
-  {E_TYPE::ET_EXEC, OBJECT_TYPES::TYPE_EXECUTABLE},
-  {E_TYPE::ET_DYN,  OBJECT_TYPES::TYPE_LIBRARY},
-  {E_TYPE::ET_REL,  OBJECT_TYPES::TYPE_OBJECT},
-};
-
-static const std::map<ELF_DATA, ENDIANNESS> endi_elf_to_lief {
-  {ELF_DATA::ELFDATANONE, ENDIANNESS::ENDIAN_NONE},
-  {ELF_DATA::ELFDATA2LSB, ENDIANNESS::ENDIAN_LITTLE},
-  {ELF_DATA::ELFDATA2MSB, ENDIANNESS::ENDIAN_BIG},
-};
-
-
 Header& Header::operator=(const Header&) = default;
 Header::Header(const Header&)            = default;
 Header::~Header()                    = default;
@@ -133,6 +107,11 @@ ARCH Header::machine_type() const {
 }
 
 OBJECT_TYPES Header::abstract_object_type() const {
+  CONST_MAP(E_TYPE, OBJECT_TYPES, 3) obj_elf_to_lief {
+    {E_TYPE::ET_EXEC, OBJECT_TYPES::TYPE_EXECUTABLE},
+    {E_TYPE::ET_DYN,  OBJECT_TYPES::TYPE_LIBRARY},
+    {E_TYPE::ET_REL,  OBJECT_TYPES::TYPE_OBJECT},
+  };
   const auto it = obj_elf_to_lief.find(file_type());
   if (it == std::end(obj_elf_to_lief)) {
     LIEF_ERR("File type {} is not abstracted by LIEF", to_string(file_type()));
@@ -143,6 +122,19 @@ OBJECT_TYPES Header::abstract_object_type() const {
 
 
 Header::abstract_architecture_t Header::abstract_architecture() const {
+  static std::unordered_map<ARCH, abstract_architecture_t> arch_elf_to_lief {
+    {ARCH::EM_NONE,      {ARCH_NONE,  {}}},
+    {ARCH::EM_X86_64,    {ARCH_X86,   {MODE_64}}},
+    {ARCH::EM_ARM,       {ARCH_ARM,   {MODE_32}}},
+    {ARCH::EM_AARCH64,   {ARCH_ARM64, {MODE_64}}},
+    {ARCH::EM_386,       {ARCH_X86,   {MODE_32}}},
+    {ARCH::EM_IA_64,     {ARCH_INTEL, {MODE_64}}},
+    {ARCH::EM_MIPS,      {ARCH_MIPS,  {MODE_32}}},
+    {ARCH::EM_PPC,       {ARCH_PPC,   {MODE_32}}},
+    {ARCH::EM_PPC64,     {ARCH_PPC,   {MODE_64}}},
+    {ARCH::EM_RISCV,     {ARCH_RISCV, {MODE_64}}},
+  };
+
   const auto it = arch_elf_to_lief.find(machine_type());
   if (it == std::end(arch_elf_to_lief)) {
     LIEF_ERR("{} is not supported!", to_string(machine_type()));
@@ -153,6 +145,11 @@ Header::abstract_architecture_t Header::abstract_architecture() const {
 
 
 ENDIANNESS Header::abstract_endianness() const {
+  CONST_MAP(ELF_DATA, ENDIANNESS, 3) endi_elf_to_lief {
+    {ELF_DATA::ELFDATANONE, ENDIANNESS::ENDIAN_NONE},
+    {ELF_DATA::ELFDATA2LSB, ENDIANNESS::ENDIAN_LITTLE},
+    {ELF_DATA::ELFDATA2MSB, ENDIANNESS::ENDIAN_BIG},
+  };
   const auto it = endi_elf_to_lief.find(identity_data());
   if (it == std::end(endi_elf_to_lief)) {
     LIEF_ERR("This endianness can't be abstracted");

@@ -44,6 +44,8 @@
 #include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 #include "LIEF/ELF/Note.hpp"
 
+#include "notes_utils.hpp"
+
 #include "Builder.tcc"
 
 #include "ExeLayout.hpp"
@@ -212,7 +214,7 @@ ok_error_t Builder::build(const Note& note, std::set<Section*>& sections) {
     LIEF_ERR("Can't find the PT_NOTE segment");
     return make_error_code(lief_errors::not_found);
   }
-
+  const auto& note_to_section_map = get_note_to_section();
   auto range_secname = note_to_section_map.equal_range(note.type());
 
   const bool known_section = (range_secname.first != range_secname.second);

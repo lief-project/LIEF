@@ -13,25 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_RELOCATION_SIZES_H_
-#define LIEF_ELF_RELOCATION_SIZES_H_
-
-#include <cstdint>
-
+#ifndef LIEF_ELF_NOTES_UTILS_H
+#define LIEF_ELF_NOTES_UTILS_H
 #include "LIEF/ELF/enums.hpp"
+
+#include <map>
 
 namespace LIEF {
 namespace ELF {
+using note_to_section_map_t = std::multimap<NOTE_TYPES, const char*>;
 
-int32_t get_reloc_size(RELOC_x86_64 R);
-int32_t get_reloc_size(RELOC_i386 R);
-int32_t get_reloc_size(RELOC_ARM R);
-int32_t get_reloc_size(RELOC_AARCH64 R);
-int32_t get_reloc_size(RELOC_POWERPC32 R);
-int32_t get_reloc_size(RELOC_POWERPC64 R);
-int32_t get_reloc_size(RELOC_MIPS R);
+const note_to_section_map_t& get_note_to_section();
 
 }
 }
-
 #endif

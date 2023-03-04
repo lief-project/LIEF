@@ -21,6 +21,8 @@
 #include <iterator>
 #include <string>
 
+#include "frozen.hpp"
+
 #include "LIEF/exception.hpp"
 
 #include "LIEF/MachO/hash.hpp"
@@ -31,35 +33,6 @@
 
 namespace LIEF {
 namespace MachO {
-
-static const std::map<CPU_TYPES, std::pair<ARCHITECTURES, std::set<MODES>>> arch_macho_to_lief {
-  {CPU_TYPES::CPU_TYPE_ANY,       {ARCH_NONE,  {}}},
-  {CPU_TYPES::CPU_TYPE_X86_64,    {ARCH_X86,   {MODE_64}}},
-  {CPU_TYPES::CPU_TYPE_ARM,       {ARCH_ARM,   {MODE_32}}},
-  {CPU_TYPES::CPU_TYPE_ARM64,     {ARCH_ARM64, {MODE_64}}},
-  {CPU_TYPES::CPU_TYPE_X86,       {ARCH_X86,   {MODE_32}}},
-  {CPU_TYPES::CPU_TYPE_SPARC,     {ARCH_SPARC, {}}},
-  {CPU_TYPES::CPU_TYPE_POWERPC,   {ARCH_PPC,   {MODE_32}}},
-  {CPU_TYPES::CPU_TYPE_POWERPC64, {ARCH_PPC,   {MODE_64}}},
-};
-
-static const std::map<FILE_TYPES, OBJECT_TYPES> obj_macho_to_lief {
-  {FILE_TYPES::MH_EXECUTE, OBJECT_TYPES::TYPE_EXECUTABLE},
-  {FILE_TYPES::MH_DYLIB,   OBJECT_TYPES::TYPE_LIBRARY},
-  {FILE_TYPES::MH_OBJECT,  OBJECT_TYPES::TYPE_OBJECT},
-};
-
-static const std::map<CPU_TYPES, ENDIANNESS> endi_macho_to_lief {
-  {CPU_TYPES::CPU_TYPE_X86,       ENDIANNESS::ENDIAN_LITTLE},
-  {CPU_TYPES::CPU_TYPE_I386,      ENDIANNESS::ENDIAN_LITTLE},
-  {CPU_TYPES::CPU_TYPE_X86_64,    ENDIANNESS::ENDIAN_LITTLE},
-  {CPU_TYPES::CPU_TYPE_ARM,       ENDIANNESS::ENDIAN_LITTLE},
-  {CPU_TYPES::CPU_TYPE_ARM64,     ENDIANNESS::ENDIAN_LITTLE},
-  {CPU_TYPES::CPU_TYPE_SPARC,     ENDIANNESS::ENDIAN_BIG},
-  {CPU_TYPES::CPU_TYPE_POWERPC,   ENDIANNESS::ENDIAN_BIG},
-  {CPU_TYPES::CPU_TYPE_POWERPC64, ENDIANNESS::ENDIAN_BIG},
-};
-
 
 Header::Header() = default;
 Header& Header::operator=(const Header&) = default;
@@ -121,8 +94,19 @@ uint32_t Header::reserved() const {
 }
 
 std::pair<ARCHITECTURES, std::set<MODES>> Header::abstract_architecture() const {
-  auto it = arch_macho_to_lief.find(cpu_type());
-  if (it == std::end(arch_macho_to_lief)) {
+  using modes_t = std::pair<ARCHITECTURES, std::set<MODES>>;
+  static const std::map<CPU_TYPES, modes_t> ARCH_MACHO_TO_LIEF {
+    {CPU_TYPES::CPU_TYPE_ANY,       {ARCH_NONE,  {}}},
+    {CPU_TYPES::CPU_TYPE_X86_64,    {ARCH_X86,   {MODE_64}}},
+    {CPU_TYPES::CPU_TYPE_ARM,       {ARCH_ARM,   {MODE_32}}},
+    {CPU_TYPES::CPU_TYPE_ARM64,     {ARCH_ARM64, {MODE_64}}},
+    {CPU_TYPES::CPU_TYPE_X86,       {ARCH_X86,   {MODE_32}}},
+    {CPU_TYPES::CPU_TYPE_SPARC,     {ARCH_SPARC, {}}},
+    {CPU_TYPES::CPU_TYPE_POWERPC,   {ARCH_PPC,   {MODE_32}}},
+    {CPU_TYPES::CPU_TYPE_POWERPC64, {ARCH_PPC,   {MODE_64}}},
+  };
+  auto it = ARCH_MACHO_TO_LIEF.find(cpu_type());
+  if (it == std::end(ARCH_MACHO_TO_LIEF)) {
     return {ARCHITECTURES::ARCH_NONE, {}};
   }
   return it->second;
@@ -130,15 +114,33 @@ std::pair<ARCHITECTURES, std::set<MODES>> Header::abstract_architecture() const 
 
 
 OBJECT_TYPES Header::abstract_object_type() const {
-  auto it = obj_macho_to_lief.find(file_type());
-  if (it == std::end(obj_macho_to_lief)) {
+  CONST_MAP(FILE_TYPES, OBJECT_TYPES, 3) OBJ_MACHO_TO_LIEF {
+    {FILE_TYPES::MH_EXECUTE, OBJECT_TYPES::TYPE_EXECUTABLE},
+    {FILE_TYPES::MH_DYLIB,   OBJECT_TYPES::TYPE_LIBRARY},
+    {FILE_TYPES::MH_OBJECT,  OBJECT_TYPES::TYPE_OBJECT},
+  };
+  auto it = OBJ_MACHO_TO_LIEF.find(file_type());
+  if (it == std::end(OBJ_MACHO_TO_LIEF)) {
     return OBJECT_TYPES::TYPE_NONE;
   }
   return it->second;
 }
 
 ENDIANNESS Header::abstract_endianness() const {
-  ENDIANNESS e = endi_macho_to_lief.at(cpu_type());
+  CONST_MAP(CPU_TYPES, ENDIANNESS, 8) ENDI_MACHO_TO_LIEF {
+    {CPU_TYPES::CPU_TYPE_X86,       ENDIANNESS::ENDIAN_LITTLE},
+    {CPU_TYPES::CPU_TYPE_I386,      ENDIANNESS::ENDIAN_LITTLE},
+    {CPU_TYPES::CPU_TYPE_X86_64,    ENDIANNESS::ENDIAN_LITTLE},
+    {CPU_TYPES::CPU_TYPE_ARM,       ENDIANNESS::ENDIAN_LITTLE},
+    {CPU_TYPES::CPU_TYPE_ARM64,     ENDIANNESS::ENDIAN_LITTLE},
+    {CPU_TYPES::CPU_TYPE_SPARC,     ENDIANNESS::ENDIAN_BIG},
+    {CPU_TYPES::CPU_TYPE_POWERPC,   ENDIANNESS::ENDIAN_BIG},
+    {CPU_TYPES::CPU_TYPE_POWERPC64, ENDIANNESS::ENDIAN_BIG},
+  };
+  auto it = ENDI_MACHO_TO_LIEF.find(cpu_type());
+  if (it == std::end(ENDI_MACHO_TO_LIEF)) {
+    return ENDIANNESS::ENDIAN_NONE;
+  }
   auto not_endianness = [] (ENDIANNESS endian) {
     return endian == ENDIAN_LITTLE ? ENDIAN_BIG : ENDIAN_LITTLE;
   };
@@ -146,9 +148,9 @@ ENDIANNESS Header::abstract_endianness() const {
       magic() == MACHO_TYPES::MH_CIGAM_64 ||
       magic() == MACHO_TYPES::FAT_CIGAM)
   {
-    return not_endianness(e);
+    return not_endianness(it->second);
   }
-  return e;
+  return it->second;
 }
 
 

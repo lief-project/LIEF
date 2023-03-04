@@ -168,73 +168,80 @@ size_t Relocation::size() const {
  switch (architecture()) {
     case ARCH::EM_X86_64:
       {
-        const auto it = relocation_x86_64_sizes.find(static_cast<RELOC_x86_64>(type()));
-        if (it == std::end(relocation_x86_64_sizes)) {
-          LIEF_ERR("{} - {}", to_string(architecture()), to_string(static_cast<RELOC_x86_64>(type())));
+        const auto rtype = static_cast<RELOC_x86_64>(type());
+        const int32_t size = get_reloc_size(rtype);
+        if (size < 0) {
+          LIEF_ERR("{} - {}", to_string(architecture()), to_string(rtype));
           return SIZE_MAX;
         }
-        return it->second;
+        return size;
       }
 
     case ARCH::EM_386:
       {
-        const auto it = relocation_i386_sizes.find(static_cast<RELOC_i386>(type()));
-        if (it == std::end(relocation_i386_sizes)) {
-          LIEF_ERR("{} - {}", to_string(architecture()), to_string(static_cast<RELOC_i386>(type())));
+        const auto rtype = static_cast<RELOC_i386>(type());
+        const int32_t size = get_reloc_size(rtype);
+        if (size < 0) {
+          LIEF_ERR("{} - {}", to_string(architecture()), to_string(rtype));
           return SIZE_MAX;
         }
-        return it->second;
+        return size;
       }
 
     case ARCH::EM_ARM:
       {
-        const auto it = relocation_ARM_sizes.find(static_cast<RELOC_ARM>(type()));
-        if (it == std::end(relocation_ARM_sizes)) {
-          LIEF_ERR("{} - {}", to_string(architecture()), to_string(static_cast<RELOC_ARM>(type())));
+        const auto rtype = static_cast<RELOC_ARM>(type());
+        const int32_t size = get_reloc_size(rtype);
+        if (size < 0) {
+          LIEF_ERR("{} - {}", to_string(architecture()), to_string(rtype));
           return SIZE_MAX;
         }
-        return it->second;
+        return size;
       }
 
     case ARCH::EM_AARCH64:
       {
-        const auto it = relocation_AARCH64_sizes.find(static_cast<RELOC_AARCH64>(type()));
-        if (it == std::end(relocation_AARCH64_sizes)) {
-          LIEF_ERR("{} - {}", to_string(architecture()), to_string(static_cast<RELOC_AARCH64>(type())));
+        const auto rtype = static_cast<RELOC_AARCH64>(type());
+        const int32_t size = get_reloc_size(rtype);
+        if (size < 0) {
+          LIEF_ERR("{} - {}", to_string(architecture()), to_string(rtype));
           return SIZE_MAX;
         }
-        return it->second;
+        return size;
       }
 
     case ARCH::EM_MIPS:
       {
-        const auto it = relocation_MIPS_sizes.find(static_cast<RELOC_MIPS>(type()));
-        if (it == std::end(relocation_MIPS_sizes)) {
-          LIEF_ERR("{} - {}", to_string(architecture()), to_string(static_cast<RELOC_MIPS>(type())));
+        const auto rtype = static_cast<RELOC_MIPS>(type());
+        const int32_t size = get_reloc_size(rtype);
+        if (size < 0) {
+          LIEF_ERR("{} - {}", to_string(architecture()), to_string(rtype));
           return SIZE_MAX;
         }
-        return it->second;
+        return size;
       }
 
 
     case ARCH::EM_PPC:
       {
-        const auto it = relocation_PPC_sizes.find(static_cast<RELOC_POWERPC32>(type()));
-        if (it == std::end(relocation_PPC_sizes)) {
-          LIEF_ERR("{} - {}", to_string(architecture()), to_string(static_cast<RELOC_POWERPC32>(type())));
+        const auto rtype = static_cast<RELOC_POWERPC32>(type());
+        const int32_t size = get_reloc_size(rtype);
+        if (size < 0) {
+          LIEF_ERR("{} - {}", to_string(architecture()), to_string(rtype));
           return SIZE_MAX;
         }
-        return it->second;
+        return size;
       }
 
     case ARCH::EM_PPC64:
       {
-        const auto it = relocation_PPC64_sizes.find(static_cast<RELOC_POWERPC64>(type()));
-        if (it == std::end(relocation_PPC64_sizes)) {
-          LIEF_ERR("{} - {}", to_string(architecture()), to_string(static_cast<RELOC_POWERPC64>(type())));
+        const auto rtype = static_cast<RELOC_POWERPC64>(type());
+        const int32_t size = get_reloc_size(rtype);
+        if (size < 0) {
+          LIEF_ERR("{} - {}", to_string(architecture()), to_string(rtype));
           return SIZE_MAX;
         }
-        return it->second;
+        return size;
       }
 
     default:

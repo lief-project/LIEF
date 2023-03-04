@@ -38,11 +38,13 @@
 #include <LIEF/ELF/utils.hpp>
 #include <LIEF/iostream.hpp>
 #include <LIEF/errors.hpp>
+
 #include "ELF/Structures.hpp"
 #include "internal_utils.hpp"
-
+#include "notes_utils.hpp"
 #include "logging.hpp"
 #include "Layout.hpp"
+
 namespace LIEF {
 namespace ELF {
 
@@ -1274,6 +1276,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     const Segment* segment_note = binary_->get(SEGMENT_TYPES::PT_NOTE);
     if (segment_note != nullptr) {
       using value_t = typename note_to_section_map_t::value_type;
+      const note_to_section_map_t& note_to_section_map = get_note_to_section();
       for (const Note& note : binary_->notes()) {
         auto range_secname = note_to_section_map.equal_range(note.type());
         const bool known_section = (range_secname.first != range_secname.second);

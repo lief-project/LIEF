@@ -17,7 +17,6 @@
 #define LIEF_ELF_ENUMS_H_
 #include "LIEF/enums.hpp"
 #include "LIEF/ELF/undef.h"
-#include <map>
 #include <cstdint>
 #include <cstddef>
 
@@ -991,27 +990,6 @@ enum class RELOCATION_PURPOSES: size_t  {
   RELOC_PURPOSE_DYNAMIC = 2,
   RELOC_PURPOSE_OBJECT  = 3,
 };
-
-
-using note_to_section_map_t = std::multimap<NOTE_TYPES, const char*>;
-
-static const note_to_section_map_t note_to_section_map = {
-  { NOTE_TYPES::NT_GNU_ABI_TAG,              ".note.ABI-tag"          },
-  { NOTE_TYPES::NT_GNU_ABI_TAG,              ".note.android.ident"    },
-
-  { NOTE_TYPES::NT_GNU_HWCAP,                ".note.gnu.hwcap"        },
-  { NOTE_TYPES::NT_GNU_BUILD_ID,             ".note.gnu.build-id"     },
-  { NOTE_TYPES::NT_GNU_BUILD_ID,             ".note.stapsdt"          }, // Alternative name
-  { NOTE_TYPES::NT_GNU_GOLD_VERSION,         ".note.gnu.gold-version" },
-  { NOTE_TYPES::NT_GNU_GOLD_VERSION,         ".note.go.buildid"       },
-  { NOTE_TYPES::NT_GNU_PROPERTY_TYPE_0,      ".note.gnu.property"     },
-  { NOTE_TYPES::NT_GNU_BUILD_ATTRIBUTE_OPEN, ".gnu.build.attributes"  },
-  { NOTE_TYPES::NT_GNU_BUILD_ATTRIBUTE_FUNC, ".gnu.build.attributes"  },
-  { NOTE_TYPES::NT_CRASHPAD,                 ".note.crashpad.info"    },
-
-  { NOTE_TYPES::NT_UNKNOWN,                  ".note"                  },
-};
-
 
 }
 }

@@ -329,8 +329,6 @@ class PE32 {
     static_assert(sizeof(load_configuration_v5_t) == 0x90, "");
     static_assert(sizeof(load_configuration_v6_t) == 0x98, "");
     //static_assert(sizeof(LoadConfiguration_V7) == 0xA0, "");
-
-    static const std::map<WIN_VERSION, size_t> load_configuration_sizes;
  };
 
 

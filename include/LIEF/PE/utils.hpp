@@ -21,8 +21,6 @@
 #include "LIEF/PE/enums.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
-#include "LIEF/errors.hpp"
-
 
 namespace LIEF {
 class BinaryStream;

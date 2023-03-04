@@ -24,6 +24,7 @@
 #include <string>
 
 #include "logging.hpp"
+#include "frozen.hpp"
 #include "mbedtls/md5.h"
 
 #include "LIEF/exception.hpp"
@@ -280,6 +281,36 @@ std::string get_imphash(const Binary& binary, IMPHASH_MODE mode) {
 }
 
 result<Import> resolve_ordinals(const Import& import, bool strict, bool use_std) {
+  static const std::unordered_map<std::string, const char* (*)(uint32_t)>
+  ordinals_library_tables =
+  {
+    { "kernel32.dll",   &kernel32_dll_lookup },
+    { "ntdll.dll",      &ntdll_dll_lookup    },
+    { "advapi32.dll",   &advapi32_dll_lookup },
+    { "msvcp110.dll",   &msvcp110_dll_lookup },
+    { "msvcp120.dll",   &msvcp120_dll_lookup },
+    { "msvcr100.dll",   &msvcr100_dll_lookup },
+    { "msvcr110.dll",   &msvcr110_dll_lookup },
+    { "msvcr120.dll",   &msvcr120_dll_lookup },
+    { "user32.dll",     &user32_dll_lookup   },
+    { "comctl32.dll",   &comctl32_dll_lookup },
+    { "ws2_32.dll",     &ws2_32_dll_lookup   },
+    { "shcore.dll",     &shcore_dll_lookup   },
+    { "oleaut32.dll",   &oleaut32_dll_lookup },
+    { "mfc42u.dll",     &mfc42u_dll_lookup   },
+    { "shlwapi.dll",    &shlwapi_dll_lookup  },
+    { "gdi32.dll",      &gdi32_dll_lookup    },
+    { "shell32.dll",    &shell32_dll_lookup  },
+  };
+
+  static const std::unordered_map<std::string, const char* (*)(uint32_t)>
+  imphashstd_ordinals_library_tables =
+  {
+    { "ws2_32.dll",     &ws2_32_dll_lookup   },
+    { "wsock32.dll",    &ws2_32_dll_lookup   },
+    { "oleaut32.dll",   &oleaut32_dll_lookup },
+  };
+
   using ordinal_resolver_t = const char*(*)(uint32_t);
 
   Import::it_const_entries entries = import.entries();
@@ -294,8 +325,8 @@ result<Import> resolve_ordinals(const Import& import, bool strict, bool use_std)
 
   ordinal_resolver_t ordinal_resolver = nullptr;
   if (use_std) {
-    auto it = imphashstd::ordinals_library_tables.find(name);
-    if (it != std::end(imphashstd::ordinals_library_tables)) {
+    auto it = imphashstd_ordinals_library_tables.find(name);
+    if (it != std::end(imphashstd_ordinals_library_tables)) {
       ordinal_resolver = it->second;
     }
   } else {
