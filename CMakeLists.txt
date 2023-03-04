@@ -361,7 +361,7 @@ list(APPEND LIEF_PUBLIC_INCLUDE_DIR
 list(APPEND LIEF_PRIVATE_INCLUDE_DIR "${LIEF_PUBLIC_INCLUDE_DIR}"
      "${CMAKE_CURRENT_SOURCE_DIR}/src" "${CMAKE_CURRENT_BINARY_DIR}")
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/LIEF.pc.in ${CMAKE_CURRENT_BINARY_DIR}/LIEF.pc
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/LIEF.pc.in ${CMAKE_CURRENT_BINARY_DIR}/LIEF.pc
                @ONLY)
 
 target_include_directories(LIB_LIEF
@@ -641,7 +641,7 @@ endif()
 # Find Package Config
 # ======================
 configure_file(
-  LIEFConfig.cmake.in
+  ${CMAKE_CURRENT_SOURCE_DIR/cmake/LIEFConfig.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/LIEFConfig.cmake
   @ONLY)
 
