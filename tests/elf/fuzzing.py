@@ -5,31 +5,44 @@ import lief
 import os
 import shutil
 import argparse
+from pathlib import Path
 from utils import is_linux, is_x86_64
 
 def generate_samples(melkor, seed='/usr/bin/ls', nb=100):
     cmd = [melkor, '-A', seed, '-n', str(nb), '-q']
-    output_dir = "orcs_{}".format(os.path.basename(seed))
-    output_dir = os.path.join(os.path.dirname(melkor), output_dir)
 
-    if os.path.exists(output_dir) and os.path.isdir(output_dir):
+    seed_path = Path(seed)
+    melkor_path = Path(melkor).parent
+    if not seed_path.is_file():
+        print(f"{seed} does not exist!")
+        sys.exit(1)
+
+    output_dir = melkor_path / f"orcs_{seed_path.name}"
+    print(f"Files are generated in {output_dir}")
+
+    if output_dir.is_dir():
         shutil.rmtree(output_dir)
-    p = subprocess.Popen(cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE, cwd = os.path.dirname(melkor))
+
+    print("Running: {} (cwd={})".format(" ".join(cmd), melkor_path.parent))
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE,
+                              cwd=melkor_path)
     out, err = p.communicate()
 
     return output_dir
 
 def fuzz(melkor, seed, nb):
-    outputdir = generate_samples(melkor, seed, nb)
-    for _, __, filesname in os.walk(outputdir):
-        for file in filesname:
-            filepath = os.path.join(outputdir, file)
-            if lief.is_elf(filepath):
-                print("Try to parse {}".format(filepath))
-                try:
-                    b = lief.parse(filepath)
-                except lief.exception as e:
-                    pass
+    lief.logging.disable()
+    print(f"Generating #{nb} samples for {seed}")
+    outputdir: Path = generate_samples(melkor, seed, nb)
+    print(outputdir)
+    for file in outputdir.iterdir():
+
+        if not lief.is_elf(file.as_posix()):
+            continue
+
+        print("Try to parse {}".format(file.as_posix()))
+        lief.parse(file.as_posix())
 
 
 if __name__ == '__main__':
