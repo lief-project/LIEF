@@ -187,6 +187,21 @@ ok_error_t Handler::make_hole(uint64_t offset, uint64_t size) {
 
 
 ok_error_t Handler::reserve(uint64_t offset, uint64_t size) {
+  static constexpr auto MAX_MEMORY_SIZE = 6_GB;
+  const auto full_size = static_cast<int64_t>(offset) +
+                         static_cast<int64_t>(size);
+  if (full_size < 0) {
+    return make_error_code(lief_errors::corrupted);
+  }
+
+  if (static_cast<uint64_t>(full_size) > data_.max_size()) {
+    return make_error_code(lief_errors::corrupted);
+  }
+
+  if (static_cast<uint64_t>(full_size) > MAX_MEMORY_SIZE) {
+    return make_error_code(lief_errors::corrupted);
+  }
+
   const bool must_resize = data_.size() < (offset + size);
   if (!must_resize) {
     return ok();

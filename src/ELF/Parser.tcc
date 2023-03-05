@@ -749,7 +749,12 @@ ok_error_t Parser::parse_sections() {
 
     // Only if it contains data (with bits)
     if (section->size() > 0 && access_content) {
-      uint64_t read_size = section->size();
+      int64_t read_size = section->size();
+      if (static_cast<int32_t>(read_size) < 0 ) {
+        LIEF_WARN("Section #{} is {} bytes large. Only the first {} bytes will be taken into account",
+                  i, read_size, Parser::MAX_SECTION_SIZE);
+        read_size = Parser::MAX_SECTION_SIZE;
+      }
       if (read_size > Parser::MAX_SECTION_SIZE) {
         LIEF_WARN("Section #{} is {} bytes large. Only the first {} bytes will be taken into account",
                   i, read_size, Parser::MAX_SECTION_SIZE);
