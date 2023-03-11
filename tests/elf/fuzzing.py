@@ -41,14 +41,15 @@ def fuzz(melkor, seed, nb):
         if not lief.is_elf(file.as_posix()):
             continue
 
-        print("Try to parse {}".format(file.as_posix()))
+        print(f"Tring to parse {file!s}")
         lief.parse(file.as_posix())
 
 
 if __name__ == '__main__':
 
     if not is_linux() and not is_x86_64():
-        print("Melkor fuzzing is currently only supported on Linux x86-64", file=sys.stderr)
+        print("Melkor fuzzing is currently only supported on Linux x86-64",
+              file=sys.stderr)
         sys.exit(0)
 
     parser = argparse.ArgumentParser(description = "LIEF ELF Fuzzer")

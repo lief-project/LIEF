@@ -32,7 +32,7 @@ PYTHONPATH=tests/ $PYTHON_BINARY tests/elf/fuzzing.py                           
 
 PYTHONPATH=tests/ $PYTHON_BINARY tests/elf/fuzzing.py                                    \
                   ${BUILD_DIR}/tests/Melkor/src/MELKOR/melkor                            \
-                  --input-seed ${LIEF_SAMPLES_DIR}/ELF/ELF32_ARM_binary_ls.bin -n 100
+                  --input-seed ${LIEF_SAMPLES_DIR}/ELF/ELF64_x86-64_binary_openssl.bin -n 100
 
 PYTHONPATH=tests/ $PYTHON_BINARY tests/elf/fuzzing.py                                    \
                   ${BUILD_DIR}/tests/Melkor/src/MELKOR/melkor                            \
