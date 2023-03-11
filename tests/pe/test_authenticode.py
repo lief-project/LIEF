@@ -67,9 +67,9 @@ def test_api():
     assert cert_signer.issuer == "C=US, O=DigiCert Inc, OU=www.digicert.com, CN=DigiCert SHA2 Assured ID Code Signing CA"
     assert cert_signer.subject == "C=CZ, L=Praha, O=Avast Software s.r.o., OU=RE stapler cistodc, CN=Avast Software s.r.o."
 
-    assert cert_ca.verify(cert_signer) == lief.PE.x509.VERIFICATION_FLAGS.OK
+    assert cert_ca.verify(cert_signer) == lief.PE.x509.VERIFICATION_FLAGS.BADCERT_EXPIRED
     assert cert_ca.verify(cert_ca) == lief.PE.x509.VERIFICATION_FLAGS.BADCERT_NOT_TRUSTED
-    assert cert_signer.is_trusted_by([cert_ca]) == lief.PE.x509.VERIFICATION_FLAGS.OK
+    assert cert_signer.is_trusted_by([cert_ca]) == lief.PE.x509.VERIFICATION_FLAGS.BADCERT_EXPIRED
 
     ca_bundles = lief.PE.x509.parse(get_sample("pkcs7/windows-ca-bundle.pem"))
     assert cert_ca.is_trusted_by(ca_bundles) == lief.PE.x509.VERIFICATION_FLAGS.OK
