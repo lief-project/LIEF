@@ -26,6 +26,7 @@
 
 #include "LIEF/utils.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/iostream.hpp"
 
 #include "LIEF/Abstract/Relocation.hpp"
@@ -1420,7 +1421,7 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value,
   }
 }
 
-std::vector<uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_address,
+span<const uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_address,
     uint64_t size, LIEF::Binary::VA_TYPES addr_type) const {
 
   uint64_t rva = virtual_address;
@@ -1449,7 +1450,7 @@ std::vector<uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_a
     checked_size = checked_size - delta_off;
   }
 
-  return {content.data() + offset, content.data() + offset + checked_size};
+  return {content.data() + offset, checked_size};
 
 }
 
@@ -1559,8 +1560,8 @@ LIEF::Binary::functions_t Binary::exception_functions() const {
 
 
   const DataDirectory& exception_dir = data_directory(DATA_DIRECTORY::EXCEPTION_TABLE);
-  std::vector<uint8_t> exception_data = get_content_from_virtual_address(exception_dir.RVA(), exception_dir.size());
-  VectorStream vs{std::move(exception_data)};
+  span<const uint8_t> exception_data = get_content_from_virtual_address(exception_dir.RVA(), exception_dir.size());
+  SpanStream vs{exception_data};
   const size_t nb_entries = vs.size() / sizeof(details::pe_exception_entry_x64); // TODO: Handle other architectures
 
   for (size_t i = 0; i < nb_entries; ++i) {

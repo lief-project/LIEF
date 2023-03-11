@@ -24,6 +24,7 @@
 #include "LIEF/Object.hpp"
 #include "LIEF/iterators.hpp"
 #include "LIEF/errors.hpp"
+#include "LIEF/span.hpp"
 
 #include "LIEF/Abstract/Header.hpp"
 #include "LIEF/Abstract/Function.hpp"
@@ -160,8 +161,9 @@ class LIEF_API Binary : public Object {
                              VA_TYPES addr_type = VA_TYPES::AUTO) = 0;
 
   //! Return the content located at the given virtual address
-  virtual std::vector<uint8_t> get_content_from_virtual_address(uint64_t virtual_address,
-                                        uint64_t size, VA_TYPES addr_type = VA_TYPES::AUTO) const = 0;
+  virtual span<const uint8_t>
+    get_content_from_virtual_address(uint64_t virtual_address, uint64_t size,
+                                     VA_TYPES addr_type = VA_TYPES::AUTO) const = 0;
 
   //! Change the binary's name
   void name(const std::string& name);

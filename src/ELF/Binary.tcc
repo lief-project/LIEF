@@ -623,13 +623,14 @@ void Binary::fix_got_entries(uint64_t from, uint64_t shift) {
     return;
   }
   const uint64_t addr = dt_pltgot->value();
-  std::vector<uint8_t> content = get_content_from_virtual_address(addr, 3 * sizeof(ptr_t));
+  span<const uint8_t> content = get_content_from_virtual_address(addr, 3 * sizeof(ptr_t));
+  std::vector<uint8_t> content_vec(content.begin(), content.end());
   if (content.size() != 3 * sizeof(ptr_t)) {
     LIEF_ERR("Cant't read got entries!");
     return;
   }
 
-  auto got = reinterpret_cast<ptr_t*>(content.data());
+  auto got = reinterpret_cast<ptr_t*>(content_vec.data());
   if (got[0] > 0 && got[0] > from) { // Offset to the dynamic section
     got[0] += shift;
   }
@@ -637,7 +638,7 @@ void Binary::fix_got_entries(uint64_t from, uint64_t shift) {
   if (got[1] > 0 && got[1] > from) { // Prelinked value (unlikely?)
     got[1] += shift;
   }
-  patch_address(addr, content);
+  patch_address(addr, content_vec);
 }
 
 }

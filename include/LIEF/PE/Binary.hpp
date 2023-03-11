@@ -478,8 +478,9 @@ class LIEF_API Binary : public LIEF::Binary {
   //! @param[in] virtual_address    Virtual address of the data to retrieve
   //! @param[in] size               Size in bytes of the data to retrieve
   //! @param[in] addr_type          Type of the Virtual address: VA or RVA. Default: Auto
-  std::vector<uint8_t> get_content_from_virtual_address(uint64_t virtual_address, uint64_t size,
-      LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) const override;
+  span<const uint8_t> get_content_from_virtual_address(
+      uint64_t virtual_address, uint64_t size,
+      Binary::VA_TYPES addr_type = Binary::VA_TYPES::AUTO) const override;
 
   //! Return the binary's entrypoint (It is the same value as OptionalHeader::addressof_entrypoint
   uint64_t entrypoint() const override;

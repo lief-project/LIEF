@@ -229,7 +229,7 @@ ok_error_t Parser::undo_reloc_bindings(uintptr_t base_address) {
         auto& fixup = static_cast<RelocationFixup&>(reloc);
       }
       else if (RelocationDyld::classof(reloc)) {
-        std::vector<uint8_t> content = bin->get_content_from_virtual_address(reloc.address(), sizeof(uintptr_t));
+        span<const uint8_t> content = bin->get_content_from_virtual_address(reloc.address(), sizeof(uintptr_t));
         if (content.empty() || content.size() != sizeof(uintptr_t)) {
           LIEF_WARN("Can't access relocation data @0x{:x}", reloc.address());
           continue;

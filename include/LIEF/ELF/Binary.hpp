@@ -662,8 +662,8 @@ class LIEF_API Binary : public LIEF::Binary {
   bool has(ELF_SECTION_TYPES type) const;
 
   //! Return the content located at virtual address
-  std::vector<uint8_t> get_content_from_virtual_address(uint64_t virtual_address, uint64_t size,
-                            LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) const override;
+  span<const uint8_t> get_content_from_virtual_address(uint64_t virtual_address, uint64_t size,
+                                     Binary::VA_TYPES addr_type = Binary::VA_TYPES::AUTO) const override;
 
   //! Method associated with the visitor pattern.
   void accept(LIEF::Visitor& visitor) const override;

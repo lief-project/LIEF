@@ -63,8 +63,11 @@ void Parser::parse_binary<details::OAT64_t>() {
   if (oat_data != nullptr) {
     raw_oat.reserve(oat_data->size());
 
-    const std::vector<uint8_t>& raw_data = oat.get_content_from_virtual_address(oat_data->value(), oat_data->size());
-    std::move(std::begin(raw_data), std::end(raw_data), std::back_inserter(raw_oat));
+    span<const uint8_t> raw_data =
+      oat.get_content_from_virtual_address(oat_data->value(), oat_data->size());
+
+    std::copy(std::begin(raw_data), std::end(raw_data),
+              std::back_inserter(raw_oat));
 
     data_address_ = oat_data->value();
     data_size_    = oat_data->size();
@@ -76,14 +79,16 @@ void Parser::parse_binary<details::OAT64_t>() {
     exec_start_ = oat_exec->value();
     exec_size_  = oat_exec->size();
 
-    const std::vector<uint8_t>& raw_oatexec = oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
+    span<const uint8_t> raw_oatexec =
+      oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
 
     uint32_t padding = exec_start_ - (data_address_ + data_size_);
 
     raw_oat.reserve(raw_oat.size() + oat_exec->size() + padding);
     raw_oat.insert(std::end(raw_oat), padding, 0);
 
-    std::move(std::begin(raw_oatexec), std::end(raw_oatexec), std::back_inserter(raw_oat));
+    std::copy(std::begin(raw_oatexec), std::end(raw_oatexec),
+              std::back_inserter(raw_oat));
   }
 
   uint32_t padding = align(raw_oat.size(), sizeof(uint32_t) * 8) - raw_oat.size();
@@ -105,8 +110,10 @@ void Parser::parse_binary<details::OAT79_t>() {
   if (oat_data != nullptr) {
     raw_oat.reserve(oat_data->size());
 
-    const std::vector<uint8_t>& raw_data = oat.get_content_from_virtual_address(oat_data->value(), oat_data->size());
-    std::move(std::begin(raw_data), std::end(raw_data), std::back_inserter(raw_oat));
+    span<const uint8_t> raw_data =
+      oat.get_content_from_virtual_address(oat_data->value(), oat_data->size());
+    std::move(std::begin(raw_data), std::end(raw_data),
+              std::back_inserter(raw_oat));
 
     data_address_ = oat_data->value();
     data_size_    = oat_data->size();
@@ -118,14 +125,16 @@ void Parser::parse_binary<details::OAT79_t>() {
     exec_start_ = oat_exec->value();
     exec_size_  = oat_exec->size();
 
-    const std::vector<uint8_t>& raw_oatexec = oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
+    span<const uint8_t> raw_oatexec =
+      oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
 
     uint32_t padding = exec_start_ - (data_address_ + data_size_);
 
     raw_oat.reserve(raw_oat.size() + oat_exec->size() + padding);
     raw_oat.insert(std::end(raw_oat), padding, 0);
 
-    std::move(std::begin(raw_oatexec), std::end(raw_oatexec), std::back_inserter(raw_oat));
+    std::copy(std::begin(raw_oatexec), std::end(raw_oatexec),
+              std::back_inserter(raw_oat));
   }
 
   uint32_t padding = align(raw_oat.size(), sizeof(uint32_t) * 8) - raw_oat.size();
@@ -149,8 +158,10 @@ void Parser::parse_binary<details::OAT88_t>() {
   if (oat_data != nullptr) {
     raw_oat.reserve(oat_data->size());
 
-    const std::vector<uint8_t>& raw_data = oat.get_content_from_virtual_address(oat_data->value(), oat_data->size());
-    std::move(std::begin(raw_data), std::end(raw_data), std::back_inserter(raw_oat));
+    span<const uint8_t> raw_data =
+      oat.get_content_from_virtual_address(oat_data->value(), oat_data->size());
+    std::copy(std::begin(raw_data), std::end(raw_data),
+              std::back_inserter(raw_oat));
 
     data_address_ = oat_data->value();
     data_size_    = oat_data->size();
@@ -161,14 +172,16 @@ void Parser::parse_binary<details::OAT88_t>() {
     exec_start_ = oat_exec->value();
     exec_size_  = oat_exec->size();
 
-    const std::vector<uint8_t>& raw_oatexec = oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
+    span<const uint8_t> raw_oatexec =
+      oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
 
     uint32_t padding = exec_start_ - (data_address_ + data_size_);
 
     raw_oat.reserve(raw_oat.size() + oat_exec->size() + padding);
     raw_oat.insert(std::end(raw_oat), padding, 0);
 
-    std::move(std::begin(raw_oatexec), std::end(raw_oatexec), std::back_inserter(raw_oat));
+    std::copy(std::begin(raw_oatexec), std::end(raw_oatexec),
+              std::back_inserter(raw_oat));
   }
 
   uint32_t padding = align(raw_oat.size(), sizeof(uint32_t) * 8) - raw_oat.size();
@@ -192,8 +205,10 @@ void Parser::parse_binary<details::OAT124_t>() {
   if (oat_data != nullptr) {
     raw_oat.reserve(oat_data->size());
 
-    const std::vector<uint8_t>& raw_data = oat.get_content_from_virtual_address(oat_data->value(), oat_data->size());
-    std::move(std::begin(raw_data), std::end(raw_data), std::back_inserter(raw_oat));
+    span<const uint8_t> raw_data =
+      oat.get_content_from_virtual_address(oat_data->value(), oat_data->size());
+    std::copy(std::begin(raw_data), std::end(raw_data),
+              std::back_inserter(raw_oat));
 
     data_address_ = oat_data->value();
     data_size_    = oat_data->size();
@@ -204,14 +219,16 @@ void Parser::parse_binary<details::OAT124_t>() {
     exec_start_ = oat_exec->value();
     exec_size_  = oat_exec->size();
 
-    const std::vector<uint8_t>& raw_oatexec = oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
+    span<const uint8_t> raw_oatexec =
+      oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
 
     uint32_t padding = exec_start_ - (data_address_ + data_size_);
 
     raw_oat.reserve(raw_oat.size() + oat_exec->size() + padding);
     raw_oat.insert(std::end(raw_oat), padding, 0);
 
-    std::move(std::begin(raw_oatexec), std::end(raw_oatexec), std::back_inserter(raw_oat));
+    std::copy(std::begin(raw_oatexec), std::end(raw_oatexec),
+              std::back_inserter(raw_oat));
   }
 
   uint32_t padding = align(raw_oat.size(), sizeof(uint32_t) * 8) - raw_oat.size();
@@ -235,8 +252,10 @@ void Parser::parse_binary<details::OAT131_t>() {
   if (oat_data != nullptr) {
     raw_oat.reserve(oat_data->size());
 
-    const std::vector<uint8_t>& raw_data = oat.get_content_from_virtual_address(oat_data->value(), oat_data->size());
-    std::move(std::begin(raw_data), std::end(raw_data), std::back_inserter(raw_oat));
+    span<const uint8_t> raw_data =
+      oat.get_content_from_virtual_address(oat_data->value(), oat_data->size());
+    std::copy(std::begin(raw_data), std::end(raw_data),
+              std::back_inserter(raw_oat));
 
     data_address_ = oat_data->value();
     data_size_    = oat_data->size();
@@ -247,14 +266,16 @@ void Parser::parse_binary<details::OAT131_t>() {
     exec_start_ = oat_exec->value();
     exec_size_  = oat_exec->size();
 
-    const std::vector<uint8_t>& raw_oatexec = oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
+    span<const uint8_t> raw_oatexec =
+      oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
 
     uint32_t padding = exec_start_ - (data_address_ + data_size_);
 
     raw_oat.reserve(raw_oat.size() + oat_exec->size() + padding);
     raw_oat.insert(std::end(raw_oat), padding, 0);
 
-    std::move(std::begin(raw_oatexec), std::end(raw_oatexec), std::back_inserter(raw_oat));
+    std::copy(std::begin(raw_oatexec), std::end(raw_oatexec),
+              std::back_inserter(raw_oat));
   }
 
   uint32_t padding = align(raw_oat.size(), sizeof(uint32_t) * 8) - raw_oat.size();

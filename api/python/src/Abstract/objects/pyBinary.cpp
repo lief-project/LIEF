@@ -172,15 +172,18 @@ void create<Binary>(py::module& m) {
 
 
    .def("get_content_from_virtual_address",
-        &Binary::get_content_from_virtual_address,
-        R"delim(
-        Return the content located at the provided virtual address.
-        The virtual address is specified in the first argument and size to read (in bytes) in the second.
+       [] (const Binary& self, uint64_t va, size_t size, Binary::VA_TYPES type) {
+        span<const uint8_t> content = self.get_content_from_virtual_address(va, size, type);
+        return py::memoryview::from_memory(content.data(), content.size());
+       },
+       R"delim(
+       Return the content located at the provided virtual address.
+       The virtual address is specified in the first argument and size to read (in bytes) in the second.
 
-        If the underlying binary is a PE, one can specify if the virtual address is a :attr:`~lief.Binary.VA_TYPES.RVA` or
-        a :attr:`~lief.Binary.VA_TYPES.VA`. By default, it is set to :attr:`~lief.Binary.VA_TYPES.AUTO`.
-        )delim",
-        "virtual_address"_a, "size"_a, "va_type"_a = Binary::VA_TYPES::AUTO)
+       If the underlying binary is a PE, one can specify if the virtual address is a :attr:`~lief.Binary.VA_TYPES.RVA` or
+       a :attr:`~lief.Binary.VA_TYPES.VA`. By default, it is set to :attr:`~lief.Binary.VA_TYPES.AUTO`.
+       )delim",
+       "virtual_address"_a, "size"_a, "va_type"_a = Binary::VA_TYPES::AUTO)
 
     .def_property_readonly("abstract",
         [m] (py::object& self) {

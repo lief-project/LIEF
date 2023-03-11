@@ -47,7 +47,8 @@ bool is_oat(const std::vector<uint8_t>& raw) {
 
 bool is_oat(const ELF::Binary& elf) {
   if (const auto* oatdata = elf.get_dynamic_symbol("oatdata")) {
-    const std::vector<uint8_t>& header = elf.get_content_from_virtual_address(oatdata->value(), sizeof(details::oat_magic));
+    span<const uint8_t> header =
+      elf.get_content_from_virtual_address(oatdata->value(), sizeof(details::oat_magic));
     return std::equal(std::begin(header), std::end(header),
                       std::begin(details::oat_magic));
 
@@ -80,7 +81,10 @@ oat_version_t version(const std::vector<uint8_t>& raw) {
 
 oat_version_t version(const ELF::Binary& elf) {
   if (const auto* oatdata = elf.get_dynamic_symbol("oatdata")) {
-    const std::vector<uint8_t>& header = elf.get_content_from_virtual_address(oatdata->value() + sizeof(details::oat_magic), sizeof(details::oat_version));
+    span<const uint8_t> header =
+      elf.get_content_from_virtual_address(oatdata->value() + sizeof(details::oat_magic),
+                                           sizeof(details::oat_version));
+
     if (header.size() != sizeof(details::oat_version)) {
       return 0;
     }
