@@ -186,7 +186,7 @@ span<const uint8_t> Binary::get_content_from_virtual_address(
     checked_size = checked_size - (offset + checked_size - content.size());
   }
 
-  return {content.data() + offset, checked_size};
+  return {content.data() + offset, static_cast<size_t>(checked_size)};
 }
 
 
