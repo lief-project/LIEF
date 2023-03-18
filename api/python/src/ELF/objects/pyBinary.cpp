@@ -79,7 +79,7 @@ void create<Binary>(py::module& m) {
            The new segments table is relocated right after the first bss-like
            segments.
            )delim")
-    .value("FILE_END", Binary::PHDR_RELOC::FILE_END,
+    .value("FILE_END", Binary::PHDR_RELOC::BINARY_END,
            R"delim(
            The new segments table is relocated at the end of the binary.
            )delim")

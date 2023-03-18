@@ -2774,7 +2774,7 @@ uint64_t Binary::relocate_phdr_table(PHDR_RELOC type) {
       return relocate_phdr_table_v1();
     case PHDR_RELOC::BSS_END:
       return relocate_phdr_table_v2();
-    case PHDR_RELOC::FILE_END:
+    case PHDR_RELOC::BINARY_END:
       return relocate_phdr_table_v3();
     case PHDR_RELOC::AUTO:
     default:

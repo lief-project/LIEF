@@ -212,7 +212,7 @@ class LIEF_API Binary : public LIEF::Binary {
     /**
      * The new segments table is relocated at the end of the binary.
      */
-    FILE_END,
+    BINARY_END,
     /**
      * The new segments table is relocated between two LOAD segments.
      * This kind of relocation is only doable when there is an alignment
