@@ -61,8 +61,34 @@ void create<Binary>(py::module& m) {
   init_ref_iterator<Binary::it_dynamic_symbols>(bin,  "it_symbols");        // For it_dynamic_symbols / it_static_symbols
   init_ref_iterator<Binary::it_exported_symbols>(bin, "it_filter_symbols"); // For it_imported_symbols
 
-
-
+  py::enum_<Binary::PHDR_RELOC>(bin, "PHDR_RELOC", R"delim(
+    This enum describes the different ways to relocate the segments table.
+    )delim")
+    .value("AUTO", Binary::PHDR_RELOC::AUTO,
+           R"delim(
+           Defer the choice of the layout to LIEF.
+           )delim")
+    .value("PIE_SHIFT", Binary::PHDR_RELOC::PIE_SHIFT,
+           R"delim(
+           The content of the binary right after the segments table is shifted
+           and the relocations are updated accordingly.
+           This kind of shift only works with PIE binaries.
+           )delim")
+    .value("BSS_END", Binary::PHDR_RELOC::BSS_END,
+           R"delim(
+           The new segments table is relocated right after the first bss-like
+           segments.
+           )delim")
+    .value("FILE_END", Binary::PHDR_RELOC::FILE_END,
+           R"delim(
+           The new segments table is relocated at the end of the binary.
+           )delim")
+    .value("SEGMENT_GAP", Binary::PHDR_RELOC::SEGMENT_GAP,
+           R"delim(
+           The new segments table is relocated between two LOAD segments.
+           This kind of relocation is only doable when there is an alignment
+           enforcement.
+           )delim");
 
   bin
     .def_property_readonly("type",
@@ -658,6 +684,18 @@ void create<Binary>(py::module& m) {
         static_cast<getter_t<const Binary::overlay_t&>>(&Binary::overlay),
         static_cast<setter_t<Binary::overlay_t>>(&Binary::overlay),
         "Overlay data that are not a part of the ELF format")
+
+    .def("relocate_phdr_table",
+         &Binary::relocate_phdr_table,
+         R"delim(
+         Force relocating the segments table in a specific way
+         (see: :class:`~lief.ELF.Binary.PHDR_RELOC`).
+
+         This function can be used to enforce a specific relocation of the
+         segments table. Upon successful relocation, the function returns
+         the offset of the relocated segments table. Otherwise, if the function
+         fails, it returns 0
+         )delim", "type"_a = Binary::PHDR_RELOC::AUTO)
 
     .def(py::self += Segment())
     .def(py::self += Section())

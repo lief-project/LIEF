@@ -188,6 +188,40 @@ class LIEF_API Binary : public LIEF::Binary {
   using it_const_sections = const_ref_iterator<const sections_t&, const Section*>;
 
   public:
+  /**
+   * This enum describes the different ways to relocate the segments table.
+   */
+  enum PHDR_RELOC {
+    /**
+     * Defer the choice of the layout to LIEF.
+     */
+    AUTO = 0,
+
+    /**
+     * The content of the binary right after the segments table is shifted
+     * and the relocations are updated accordingly.
+     * This kind of shift only works with PIE binaries.
+     */
+    PIE_SHIFT,
+
+    /**
+     * The new segments table is relocated right after the first bss-like
+     * segment.
+     */
+    BSS_END,
+    /**
+     * The new segments table is relocated at the end of the binary.
+     */
+    FILE_END,
+    /**
+     * The new segments table is relocated between two LOAD segments.
+     * This kind of relocation is only doable when there is an alignment
+     * enforcement.
+     */
+    SEGMENT_GAP,
+  };
+
+  public:
   Binary& operator=(const Binary& ) = delete;
   Binary(const Binary& copy) = delete;
 
@@ -703,6 +737,16 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Function to set the overlay
   void overlay(overlay_t overlay);
 
+  //! Force relocating the segments table in a specific way.
+  //!
+  //! This function can be used to enforce a specific relocation of the
+  //! segments table.
+  //!
+  //! @param[in] type The relocation type to apply
+  //! @return The offset of the new segments table or 0 if it fails with
+  //!         the given method.
+  uint64_t relocate_phdr_table(PHDR_RELOC type);
+
   size_t hash(const std::string& name);
 
   ~Binary() override;
@@ -779,10 +823,11 @@ class LIEF_API Binary : public LIEF::Binary {
   template<E_TYPE OBJECT_TYPE, bool note = false>
   Segment* add_segment(const Segment& segment, uint64_t base);
 
-  uint64_t relocate_phdr_table();
+  uint64_t relocate_phdr_table_auto();
   uint64_t relocate_phdr_table_pie();
   uint64_t relocate_phdr_table_v1();
   uint64_t relocate_phdr_table_v2();
+  uint64_t relocate_phdr_table_v3();
 
   template<SEGMENT_TYPES PT>
   Segment* extend_segment(const Segment& segment, uint64_t size);

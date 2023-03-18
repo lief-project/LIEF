@@ -2766,7 +2766,28 @@ std::string Binary::shstrtab_name() const {
   return ".shstrtab";
 }
 
-uint64_t Binary::relocate_phdr_table() {
+uint64_t Binary::relocate_phdr_table(PHDR_RELOC type) {
+  switch (type) {
+    case PHDR_RELOC::PIE_SHIFT:
+      return relocate_phdr_table_pie();
+    case PHDR_RELOC::SEGMENT_GAP:
+      return relocate_phdr_table_v1();
+    case PHDR_RELOC::BSS_END:
+      return relocate_phdr_table_v2();
+    case PHDR_RELOC::FILE_END:
+      return relocate_phdr_table_v3();
+    case PHDR_RELOC::AUTO:
+    default:
+      return relocate_phdr_table_auto();
+  }
+}
+
+uint64_t Binary::relocate_phdr_table_auto() {
+  if (phdr_reloc_info_.new_offset > 0) {
+    // Already relocated
+    return phdr_reloc_info_.new_offset;
+  }
+
   uint64_t offset = 0;
   if (header_.file_type() == E_TYPE::ET_DYN) {
     offset = relocate_phdr_table_pie();
@@ -2777,11 +2798,24 @@ uint64_t Binary::relocate_phdr_table() {
     }
   }
 
+  /* This is typically static binaries */
+  const bool is_valid_for_v3 = header_.file_type() == E_TYPE::ET_EXEC &&
+                               get(SEGMENT_TYPES::PT_PHDR)   == nullptr &&
+                               get(SEGMENT_TYPES::PT_INTERP) == nullptr;
+  if (is_valid_for_v3) {
+    LIEF_DEBUG("Try v3 relocator");
+    offset = relocate_phdr_table_v3();
+    if (offset > 0) {
+      return offset;
+    }
+  }
+
   LIEF_DEBUG("Try v1 relocator");
   if ((offset = relocate_phdr_table_v1()) == 0) {
     LIEF_DEBUG("Try v2 relocator");
     if ((offset = relocate_phdr_table_v2()) == 0) {
-      LIEF_ERR("Can't relocate the phdr table for this binary. Please consider to open an issue");
+      LIEF_ERR("Can't relocate the phdr table for this binary. "
+                "Please consider opening an issue");
       return 0;
     }
   }
@@ -2875,13 +2909,89 @@ uint64_t Binary::relocate_phdr_table_pie() {
 }
 
 /*
- * This function relocates the phdr table in the case
- * where:
+ * This function relocates the segments table AT THE END of the binary.
+ * It only works if the binary is not PIE and does not contain a PHDR segment.
+ * In addition, it requires to expand the bss-like segments so it might
+ * strongly increase the final size of the binary.
+ */
+uint64_t Binary::relocate_phdr_table_v3() {
+  // Reserve space for 10 user's segments
+  static constexpr size_t USER_SEGMENTS = 10;
+
+  if (phdr_reloc_info_.new_offset > 0) {
+    return phdr_reloc_info_.new_offset;
+  }
+
+  LIEF_DEBUG("Running v3 (file end) PHDR relocator");
+
+  Header& header = this->header();
+
+  const uint64_t phdr_size = type() == ELF_CLASS::ELFCLASS32 ?
+                                       sizeof(details::ELF32::Elf_Phdr) :
+                                       sizeof(details::ELF64::Elf_Phdr);
+
+  const uint64_t last_offset = virtual_size();
+
+  LIEF_DEBUG("Moving segment table at the end of the binary (0x{:010x})",
+             last_offset);
+
+  phdr_reloc_info_.new_offset = last_offset;
+  header.program_headers_offset(last_offset);
+
+  const size_t new_segtbl_sz = (header.numberof_segments() + USER_SEGMENTS) * phdr_size;
+
+  uint64_t sections_tbl_off = header.section_headers_offset() + new_segtbl_sz;
+
+  header.section_headers_offset(sections_tbl_off);
+
+  auto alloc = datahandler_->make_hole(phdr_reloc_info_.new_offset,
+                                       new_segtbl_sz);
+
+  if (!alloc) {
+    LIEF_ERR("Allocation failed");
+    return 0;
+  }
+
+  // Add a segment that wraps this new PHDR
+  auto phdr_load_segment = std::make_unique<Segment>();
+  phdr_load_segment->type(SEGMENT_TYPES::PT_LOAD);
+  phdr_load_segment->file_offset(phdr_reloc_info_.new_offset);
+  phdr_load_segment->physical_size(new_segtbl_sz);
+  phdr_load_segment->virtual_size(new_segtbl_sz);
+  phdr_load_segment->virtual_address(imagebase() + phdr_reloc_info_.new_offset);
+  phdr_load_segment->physical_address(phdr_load_segment->virtual_address());
+  phdr_load_segment->alignment(0x1000);
+  phdr_load_segment->add(ELF_SEGMENT_FLAGS::PF_R);
+  phdr_load_segment->datahandler_ = datahandler_.get();
+
+  DataHandler::Node new_node{phdr_reloc_info_.new_offset, new_segtbl_sz,
+                             DataHandler::Node::SEGMENT};
+  datahandler_->add(std::move(new_node));
+
+
+  const auto it_new_place = std::find_if(
+      segments_.rbegin(), segments_.rend(),
+      [] (const auto& s) { return s->type() == SEGMENT_TYPES::PT_LOAD; });
+
+  if (it_new_place == segments_.rend()) {
+    segments_.push_back(std::move(phdr_load_segment));
+  } else {
+    const size_t idx = std::distance(std::begin(segments_), it_new_place.base());
+    segments_.insert(std::begin(segments_) + idx,
+                     std::move(phdr_load_segment));
+  }
+
+  phdr_reloc_info_.nb_segments = USER_SEGMENTS - /* For the PHDR LOAD */ 1;
+  return phdr_reloc_info_.new_offset;
+}
+
+/*
+ * This function relocates the phdr table in the case where:
  *  1. The binary is NOT pie
  *  2. There is no gap between two adjacent segments (cf. relocate_phdr_table_v1)
  *
  * It performs the following modifications:
- *  1. Expand the bss section such as virtual size == file size
+ *  1. Expand the .bss section such as virtual size == file size
  *  2. Relocate the phdr table right after the (expanded) bss section
  *  3. Add a LOAD segment to wrap the new phdr location
  *
@@ -2893,6 +3003,8 @@ uint64_t Binary::relocate_phdr_table_v2() {
   if (phdr_reloc_info_.new_offset > 0) {
     return phdr_reloc_info_.new_offset;
   }
+
+  LIEF_DEBUG("Running v2 PHDR relocator");
 
   Header& header = this->header();
 
@@ -3073,6 +3185,8 @@ uint64_t Binary::relocate_phdr_table_v1() {
     return phdr_reloc_info_.new_offset;
   }
 
+  LIEF_DEBUG("Running v1 (gap) PHDR relocator");
+
   Header& header = this->header();
 
   const uint64_t phdr_size = type() == ELF_CLASS::ELFCLASS32 ?
@@ -3152,8 +3266,8 @@ uint64_t Binary::relocate_phdr_table_v1() {
   }
   const size_t nb_segments = delta / phdr_size - header.numberof_segments();
   if (nb_segments < header.numberof_segments()) {
-    LIEF_DEBUG("The layout of this binary does not enable to relocate the segment table (v1)\n"
-               "We would need at least {} segments while only {} are available",
+    LIEF_DEBUG("The layout of this binary does not enable relocating the segment table (v1)\n"
+               "We would need at least {} segments while only {} are available.",
                header.numberof_segments(), nb_segments);
     phdr_reloc_info_.clear();
     return 0;

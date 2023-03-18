@@ -35,6 +35,29 @@ Changelog
 
         elf.write("/tmp/out")
 
+  * Add API to precisely define how the the segments table should be relocated.
+    One might want to enforce a certain ELF layout while adding sections/ segments.
+    It is now possible to call the method: :meth:`~lief.ELF.Binary.relocate_phdr_table`
+    to define how the segments table shoud be relocated for welcoming the
+    new sections/segments:
+
+    .. code-block:: python
+
+      elf = lief.parse("...")
+      # Enforce a specific relocation type:
+      # The new segments table will be shift at the end
+      # of the file
+      elf.relocate_phdr_table(Binary.PHDR_RELOC.FILE_END)
+
+      # Add sections/segments
+      # [...]
+      elf.write("out.elf")
+
+    See:
+
+      - :meth:`lief.ELF.Binary.relocate_phdr_table`
+      - :class:`lief.ELF.Binary.PHDR_RELOC`
+
 :MachO:
 
   * Add support for parsing Mach-O in memory
