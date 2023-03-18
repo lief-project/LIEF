@@ -76,6 +76,9 @@ Logging
 .. doxygenfunction:: LIEF::logging::set_level
    :project: lief
 
+.. doxygenfunction:: LIEF::logging::set_path
+   :project: lief
+
 Logging levels
 ~~~~~~~~~~~~~~
 

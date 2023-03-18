@@ -38,6 +38,8 @@ Logging
 
 .. autofunction:: lief.logging.disable
 
+.. autofunction:: lief.logging.set_path
+
 
 Logging levels
 ~~~~~~~~~~~~~~

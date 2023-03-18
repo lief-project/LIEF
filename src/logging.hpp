@@ -68,6 +68,8 @@ class Logger {
   //! @brief Change the logging level (**hierarchical**)
   static void set_level(LOGGING_LEVEL level);
 
+  static Logger& set_log_path(const std::string& path);
+
   template <typename... Args>
   static void trace(const char *fmt, const Args &... args) {
     if /* constexpr */ (lief_logging_support && lief_logging_debug) {
@@ -106,6 +108,7 @@ class Logger {
   ~Logger();
   private:
   Logger();
+  Logger(const std::string& filepath);
   Logger(Logger&&);
   Logger& operator=(Logger&&);
 

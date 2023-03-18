@@ -57,6 +57,14 @@ Logger::Logger() {
   }
 }
 
+
+Logger::Logger(const std::string& filepath) {
+  sink_ = spdlog::basic_logger_mt("LIEF", filepath, /* truncate */ true);
+  sink_->set_level(spdlog::level::warn);
+  sink_->set_pattern("%v");
+  sink_->flush_on(spdlog::level::warn);
+}
+
 Logger& Logger::instance() {
   if (instance_ == nullptr) {
     instance_ = new Logger{};
@@ -68,6 +76,22 @@ Logger& Logger::instance() {
 
 void Logger::destroy() {
   delete instance_;
+}
+
+Logger& Logger::set_log_path(const std::string& path) {
+  if (instance_ == nullptr) {
+    instance_ = new Logger{path};
+    std::atexit(destroy);
+    return *instance_;
+  }
+  auto& logger = Logger::instance();
+  spdlog::details::registry::instance().drop("LIEF");
+  logger.sink_ = spdlog::basic_logger_mt("LIEF", path,
+                                         /*truncate=*/true);
+  logger.sink_->set_pattern("%v");
+  logger.sink_->set_level(spdlog::level::warn);
+  logger.sink_->flush_on(spdlog::level::warn);
+  return logger;
 }
 
 const char* to_string(LOGGING_LEVEL e) {
@@ -160,6 +184,9 @@ void set_level(LOGGING_LEVEL level) {
   Logger::set_level(level);
 }
 
+void set_path(const std::string& path) {
+  Logger::set_log_path(path);
+}
 
 void log(LOGGING_LEVEL level, const std::string& msg) {
   switch (level) {

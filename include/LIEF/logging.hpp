@@ -26,8 +26,7 @@ namespace logging {
 
 //! **Hierarchical** logging level
 //!
-//! From a given level set, all levels below this
-//! level are enabled
+//! From a given level set, all levels below this ! level are enabled
 //!
 //! For example, if LOG_INFO is enabled then LOG_WARN, LOG_ERR are also enabled
 enum LOGGING_LEVEL {
@@ -49,6 +48,9 @@ LIEF_API void enable();
 
 //! Change the logging level (**hierarchical**)
 LIEF_API void set_level(LOGGING_LEVEL level);
+
+//! Change the logger as a file-base logging and set its path
+LIEF_API void set_path(const std::string& path);
 
 //! Log a message with the LIEF's logger
 LIEF_API void log(LOGGING_LEVEL level, const std::string& msg);

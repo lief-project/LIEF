@@ -20,26 +20,38 @@
 #define PY_ENUM(x) LIEF::logging::to_string(x), x
 
 void init_LIEF_Logger(py::module& m) {
+  using namespace LIEF;
+
   py::module logging = m.def_submodule("logging");
 
-  py::enum_<LIEF::logging::LOGGING_LEVEL>(logging, "LOGGING_LEVEL")
-    .value(PY_ENUM(LIEF::logging::LOGGING_LEVEL::LOG_TRACE))
-    .value(PY_ENUM(LIEF::logging::LOGGING_LEVEL::LOG_DEBUG))
-    .value(PY_ENUM(LIEF::logging::LOGGING_LEVEL::LOG_CRITICAL))
-    .value(PY_ENUM(LIEF::logging::LOGGING_LEVEL::LOG_ERR))
-    .value(PY_ENUM(LIEF::logging::LOGGING_LEVEL::LOG_WARN))
-    .value(PY_ENUM(LIEF::logging::LOGGING_LEVEL::LOG_INFO));
+  py::enum_<logging::LOGGING_LEVEL>(logging, "LOGGING_LEVEL")
+    .value(PY_ENUM(logging::LOGGING_LEVEL::LOG_TRACE))
+    .value(PY_ENUM(logging::LOGGING_LEVEL::LOG_DEBUG))
+    .value(PY_ENUM(logging::LOGGING_LEVEL::LOG_CRITICAL))
+    .value(PY_ENUM(logging::LOGGING_LEVEL::LOG_ERR))
+    .value(PY_ENUM(logging::LOGGING_LEVEL::LOG_WARN))
+    .value(PY_ENUM(logging::LOGGING_LEVEL::LOG_INFO));
 
   logging.def("disable",
-      &LIEF::logging::disable,
+      &logging::disable,
       "Disable the logger globally");
 
   logging.def("enable",
-      &LIEF::logging::enable,
+      &logging::enable,
       "Enable the logger globally");
 
   logging.def("set_level",
-      &LIEF::logging::set_level,
+      &logging::set_level,
       "Change logging level",
       "level"_a);
+
+  logging.def("set_path",
+      &logging::set_path,
+      "Change the logger as a file-base logging and set its path",
+      "path"_a);
+
+  logging.def("log",
+      &logging::log,
+      "Log a message with the LIEF's logger",
+      "level"_a, "msg"_a);
 }
