@@ -26,7 +26,7 @@
 
 #include "LIEF/Abstract/Parser.hpp"
 #include "LIEF/PE/enums.hpp"
-
+#include "LIEF/PE/Exception.hpp"
 struct Profiler;
 
 namespace LIEF {
@@ -102,6 +102,9 @@ class LIEF_API Parser : public LIEF::Parser {
 
   ok_error_t parse_exports();
   ok_error_t parse_sections();
+
+  ok_error_t parse_exception_unwind(uint64_t unwind_info_rva, Exception& exception);
+  ok_error_t parse_exceptions();
 
   template<typename PE_T>
   ok_error_t parse_headers();

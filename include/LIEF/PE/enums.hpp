@@ -1325,6 +1325,12 @@ enum class SIG_ATTRIBUTE_TYPES {
   PKCS9_SIGNING_TIME,
 };
 
+enum class UNWIND_HANDLE_TYPE :uint8_t {
+  FLAG_INVALID = 0x0,
+  FLAG_EHANDLER = 0x1,
+  FLAG_UHANDLER = 0x2,
+  FLAG_CHAININFO = 0x4,
+};
 
 static const RESOURCE_TYPES resource_types_array[] = {
   RESOURCE_TYPES::CURSOR,

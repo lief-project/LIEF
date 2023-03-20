@@ -20,5 +20,18 @@
 namespace LIEF {
 namespace Convert {
   // TODO: Implement endian convert
+template<>
+void swap_endian<LIEF::PE::details::pe_unwind_info>(LIEF::PE::details::pe_unwind_info*) {
+
+}
+template<>
+void swap_endian<LIEF::PE::details::pe_unwind_code>(LIEF::PE::details::pe_unwind_code*) {
+
+}
+template<>
+void swap_endian<LIEF::PE::details::pe_exception_entry_x64>(LIEF::PE::details::pe_exception_entry_x64*) {
+
+}
+
 }
 }

@@ -25,6 +25,7 @@
 #include "LIEF/PE/Import.hpp"
 #include "LIEF/PE/DelayImport.hpp"
 #include "LIEF/PE/TLS.hpp"
+#include "LIEF/PE/Exception.hpp"
 #include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/Debug.hpp"
 #include "LIEF/PE/Symbol.hpp"
@@ -77,6 +78,8 @@ class LIEF_API Binary : public LIEF::Binary {
 
   //! Internal container for storing PE's Import
   using imports_t = std::vector<Import>;
+
+  using exceptions_t = std::vector<Exception>;
 
   //! Iterator that output Import&
   using it_imports = ref_iterator<imports_t&>;
@@ -285,6 +288,8 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Return the Export object
   Export& get_export();
   const Export& get_export() const;
+
+  Exception get_exception(uint64_t address);
 
   //! Return binary Symbols
   std::vector<Symbol>& symbols();
@@ -561,6 +566,7 @@ class LIEF_API Binary : public LIEF::Binary {
   imports_t            imports_;
   delay_imports_t      delay_imports_;
   Export               export_;
+  exceptions_t         exceptions_;
   debug_entries_t      debug_;
   uint64_t overlay_offset_ = 0;
   std::vector<uint8_t> overlay_;

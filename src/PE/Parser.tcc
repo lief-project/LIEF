@@ -167,6 +167,12 @@ ok_error_t Parser::parse_data_directories() {
     parse_exports();
   }
 
+  // Exceptions
+  if (binary_->data_directory(DATA_DIRECTORY::EXCEPTION_TABLE).RVA() > 0) {
+    LIEF_DEBUG("[+] Processing Exceptions");
+    parse_exceptions();
+  }
+
   // Signature
   if (binary_->data_directory(DATA_DIRECTORY::CERTIFICATE_TABLE).RVA() > 0) {
     parse_signature();

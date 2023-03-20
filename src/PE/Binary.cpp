@@ -881,6 +881,17 @@ const Export& Binary::get_export() const {
   return export_;
 }
 
+// Exception
+Exception Binary::get_exception(uint64_t address)
+{
+  for (const auto& x : exceptions_)
+    if (x.address() <= address && x.address() + x.size() >= address)
+      return x;
+  return Exception(address,address);
+}
+
+
+
 /////////////////////////////////////
 //
 // Methods to manage Resources

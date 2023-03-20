@@ -497,4 +497,20 @@ struct pe_exception_entry_arm {
   uint32_t data;
 };
 
+struct pe_unwind_info
+{
+  uint8_t Version:3;
+  uint8_t Flags:5;
+  uint8_t prolog_size;
+  uint8_t unwind_codes_count;
+  uint8_t frame_register:4;
+  uint8_t frame_register_offset:4;
+};
+
+struct pe_unwind_code
+{
+  uint8_t offset;
+  uint8_t opcode:4;
+  uint8_t info:4;
+};
 #pragma pack(pop)

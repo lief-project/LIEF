@@ -974,6 +974,166 @@ ok_error_t Parser::parse_exports() {
   return ok();
 }
 
+ok_error_t Parser::parse_exception_unwind(uint64_t unwind_info_rva,Exception& exception)
+{
+  auto unwind_offset = binary_->rva_to_offset(unwind_info_rva);
+  stream_->setpos(unwind_offset);
+  auto unwind_ = stream_->read_conv<details::pe_unwind_info>();
+  for (size_t uc_index = 0; uc_index < unwind_->unwind_codes_count;) {
+    auto uc = stream_->read_conv<details::pe_unwind_code>();
+    details::unwind_info info;
+    info.offset = uc->offset;
+    switch (uc->opcode) {
+    case details::unwind_code_opcode::UWOP_PUSH_NONVOL: {
+      info.operation = details::unwind_operation::push;
+      info.reg = uc->info;
+      ++uc_index;
+      break;
+    }
+    case details::UWOP_ALLOC_SMALL: {
+      info.operation = details::unwind_operation::alloc;
+      info.reg = details::unwind_info_reg::x86_64_RSP;
+      info.reg_offset = uc->info * 8 + 8;
+      ++uc_index;
+      break;
+    }
+    case details::UWOP_ALLOC_LARGE: {
+      info.operation = details::unwind_operation::alloc;
+      info.reg = details::unwind_info_reg::x86_64_RSP;
+      switch (uc->info)
+      {
+      case 0:
+        if (uc_index + 1 >= unwind_->unwind_codes_count)
+          LIEF_ERR("PE exception unwind_info {:0x} unwind_code {} overflow", unwind_info_rva, uc_index);
+        info.reg_offset = (*stream_->read_conv<uint16_t>()) * 8;
+        uc_index += 2;
+        break;
+      case 1:
+        if (uc_index + 2 >= unwind_->unwind_codes_count)
+          LIEF_ERR("PE exception unwind_info {:0x} unwind_code {} overflow", unwind_info_rva, uc_index);
+        info.reg_offset = *stream_->read_conv<uint32_t>();
+        uc_index += 3;
+        break;
+      default:
+        LIEF_ERR("PE exception unwind_info {:0x} unwind_code {} UWOP_ALLOC_LARGE unknow info {}", unwind_info_rva, uc_index, uc->info);
+        break;
+      }
+      break;
+    }
+    case details::UWOP_SET_FPREG: {
+      info.operation = details::unwind_operation::frame;
+      info.reg = unwind_->frame_register;
+      info.reg_offset = unwind_->frame_register_offset * 16;
+      uc_index += 1;
+      break;
+    }
+    case details::UWOP_SAVE_NONVOL: {
+      info.operation = details::unwind_operation::mov;
+      info.reg = uc->info;
+      if (uc_index + 1 >= unwind_->unwind_codes_count)
+        LIEF_ERR("PE exception unwind_info {:0x} unwind_code {} overflow", unwind_info_rva, uc_index);
+      info.reg_offset = (*stream_->read_conv<uint16_t>()) * 8;
+      uc_index += 2;
+      break;
+    }
+    case details::UWOP_SAVE_NONVOL_FAR: {
+      info.operation = details::unwind_operation::mov;
+      info.reg = uc->info;
+      if (uc_index + 2 >= unwind_->unwind_codes_count)
+        LIEF_ERR("PE exception unwind_info {:0x} unwind_code {} overflow", unwind_info_rva, uc_index);
+      info.reg_offset = *stream_->read_conv<uint32_t>();
+      uc_index += 3;
+      break;
+    }
+    case details::UWOP_SAVE_XMM128: {
+      info.operation = details::unwind_operation::mov;
+      info.reg = uc->info + details::unwind_info_reg::x86_64_XMM0;
+      if (uc_index + 1 >= unwind_->unwind_codes_count)
+        LIEF_ERR("PE exception unwind_info {:0x} unwind_code {} overflow", unwind_info_rva, uc_index);
+      info.reg_offset = *stream_->read_conv<uint16_t>() * 16;
+      uc_index += 2;
+      break;
+    }
+    case details::UWOP_SAVE_XMM128_FAR: {
+      info.operation = details::unwind_operation::mov;
+      info.reg = uc->info + details::unwind_info_reg::x86_64_XMM0;
+      if (uc_index + 2 >= unwind_->unwind_codes_count)
+        LIEF_ERR("PE exception unwind_info {:0x} unwind_code {} overflow", unwind_info_rva, uc_index);
+      info.reg_offset = *stream_->read_conv<uint32_t>();
+      uc_index += 3;
+      break;
+    }
+    case details::UWOP_PUSH_MACHFRAME: {
+      // todo
+      LIEF_WARN("PE exception unwind_info {:0x} unwind_code {} unrealized operation: UWOP_PUSH_MACHFRAME {}", unwind_info_rva, uc_index, uc->opcode);
+      uc_index += 1;
+      continue;
+      break;
+    }
+    case details::UWOP_EPILOG:
+    {
+      uc_index += 1;
+      continue;
+      break;
+    }
+    default:
+      LIEF_ERR("PE exception unwind_info {:0x} unwind_code {} unknow operation {}", unwind_info_rva, uc_index, uc->opcode);
+      continue;
+      break;
+    }
+    exception.unwind.unwinds_.push_back(info);
+  }
+
+  auto vari_info_rva = unwind_info_rva + sizeof(details::pe_unwind_info) +
+    unwind_->unwind_codes_count * sizeof(uint16_t) +
+    (unwind_->unwind_codes_count & 1) * sizeof(uint16_t);
+  auto vari_info_offset = binary_->rva_to_offset(vari_info_rva);
+
+  auto handle_flag = static_cast<UNWIND_HANDLE_TYPE>(unwind_->Flags);
+  if (handle_flag != UNWIND_HANDLE_TYPE::FLAG_INVALID) {
+    if (handle_flag == UNWIND_HANDLE_TYPE::FLAG_CHAININFO) {
+      auto chain_exception = stream_->peek_conv<details::pe_exception_entry_x64>(vari_info_offset);
+      parse_exception_unwind(chain_exception->unwind_info_rva, exception);
+    }
+    else {
+      if (static_cast<uint8_t>(handle_flag) & static_cast<uint8_t>(UNWIND_HANDLE_TYPE::FLAG_EHANDLER)) {
+        exception.handle_flag.push_back(details::exception_handle_flag::exception_handle);
+      }
+      if (static_cast<uint8_t>(handle_flag) & static_cast<uint8_t>(UNWIND_HANDLE_TYPE::FLAG_UHANDLER)) {
+        exception.handle_flag.push_back(details::exception_handle_flag::exception_handle);
+      }
+      exception.handle_rva = *stream_->peek_conv<uint32_t>(vari_info_offset);
+      exception.info_rva = vari_info_rva + sizeof(uint32_t);
+    }
+  }
+
+
+
+  return ok();
+}
+
+ok_error_t Parser::parse_exceptions()
+{
+
+  const DataDirectory& exception_dir = binary_->data_directory(DATA_DIRECTORY::EXCEPTION_TABLE);
+  uint32_t exceptions_rva = exception_dir.RVA();
+  uint32_t exceptions_size = exception_dir.size();
+  uint32_t exceptions_offset = binary_->rva_to_offset(exceptions_rva);
+  uint32_t exceptions_num = exceptions_size / sizeof(details::pe_exception_entry_x64);
+  auto exception_entries = stream_->peek_conv_array<details::pe_exception_entry_x64>(exceptions_offset,exceptions_num);
+
+  Exception::exceptions_t exceptions;
+
+  for (size_t i = 0; i < exceptions_num; ++i) {
+
+    Exception exception(exception_entries[i].address_start_rva, exception_entries[i].address_end_rva);
+    parse_exception_unwind(exception_entries[i].unwind_info_rva, exception);
+    binary_->exceptions_.push_back(std::move(exception));
+  }
+  return ok();
+}
+
+
 ok_error_t Parser::parse_signature() {
   LIEF_DEBUG("== Parsing signature ==");
   static constexpr size_t SIZEOF_HEADER = 8;
