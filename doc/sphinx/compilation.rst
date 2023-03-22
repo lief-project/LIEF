@@ -184,7 +184,7 @@ As a result, LIEF can be, for instance, compiled with the following configuratio
    with a provided version of MbedTLS.
 
 .. [#ref_issue] https://github.com/lief-project/LIEF/issues/605
-.. [#ref_vcpk] https://github.com/microsoft/vcpkg/blob/master/docs/maintainers/maintainer-guide.md#do-not-use-vendored-dependencies
+.. [#ref_vcpk] https://learn.microsoft.com/en-us/vcpkg/contributing/maintainer-guide#do-not-use-vendored-dependencies
 
 Continuous Integration
 ----------------------
