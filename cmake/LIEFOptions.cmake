@@ -84,6 +84,9 @@ endif()
 cmake_dependent_option(LIEF_OPT_FROZEN_EXTERNAL "Use an external provided version of Frozen" OFF
                        "_LIEF_USE_FROZEN" OFF)
 
+# This option enables the install target in the cmake
+option(LIEF_INSTALL "Generate the install target." ON)
+
 set(LIEF_ELF_SUPPORT 0)
 set(LIEF_PE_SUPPORT 0)
 set(LIEF_MACHO_SUPPORT 0)
