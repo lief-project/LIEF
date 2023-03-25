@@ -637,18 +637,6 @@ if(LIEF_DOC)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/doc)
 endif()
 
-# Find Package Config
-# ======================
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/LIEFConfig.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/LIEFConfig.cmake
-  @ONLY)
-
-write_basic_package_version_file(
-  ${CMAKE_CURRENT_BINARY_DIR}/LIEFConfigVersion.cmake
-  VERSION ${PROJECT_VERSION}
-  COMPATIBILITY AnyNewerVersion)
-
 # Post-build operations
 # ======================
 if(BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Release")
@@ -671,84 +659,101 @@ if(BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Release")
   endif()
 endif()
 
-# Install Prefix
-# ======================
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND UNIX)
-  if(UNIX AND NOT APPLE)
-    set(CMAKE_INSTALL_PREFIX
-        "/usr"
-        CACHE PATH "Install path prefix prepended on to install directories."
-              FORCE)
-  elseif(APPLE)
-    set(CMAKE_INSTALL_PREFIX
-        "/usr/local"
-        CACHE PATH "" FORCE)
-  endif()
-endif()
+# Generate install target and package
+# =======================================
+if (LIEF_INSTALL)
 
-# Installation
-# ======================
+  # Find Package Config
+  # ======================
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/LIEFConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/LIEFConfig.cmake
+    @ONLY)
 
-if(UNIX)
-  include(GNUInstallDirs)
-  set(CMAKE_INSTALL_LIBDIR "lib")
-else()
-  if(WIN32)
-      set(CMAKE_INSTALL_LIBDIR      "lib")
-      set(CMAKE_INSTALL_DATADIR     "share")
-      set(CMAKE_INSTALL_INCLUDEDIR  "include")
-      set(CMAKE_INSTALL_BINDIR      "bin")
-      set(CMAKE_INSTALL_DATAROOTDIR "share")
-      message(STATUS "Setting installation destination on Windows to: ${CMAKE_INSTALL_PREFIX}")
-    else()
-      message(FATAL_ERROR "System not UNIX nor WIN32 - not implemented yet")
+  write_basic_package_version_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/LIEFConfigVersion.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY AnyNewerVersion)
+
+  # Install Prefix
+  # ======================
+  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND UNIX)
+    if(UNIX AND NOT APPLE)
+      set(CMAKE_INSTALL_PREFIX
+          "/usr"
+          CACHE PATH "Install path prefix prepended on to install directories."
+                FORCE)
+    elseif(APPLE)
+      set(CMAKE_INSTALL_PREFIX
+          "/usr/local"
+          CACHE PATH "" FORCE)
     endif()
+  endif()
+
+  # Installation
+  # ======================
+
+  if(UNIX)
+    include(GNUInstallDirs)
+    set(CMAKE_INSTALL_LIBDIR "lib")
+  else()
+    if(WIN32)
+        set(CMAKE_INSTALL_LIBDIR      "lib")
+        set(CMAKE_INSTALL_DATADIR     "share")
+        set(CMAKE_INSTALL_INCLUDEDIR  "include")
+        set(CMAKE_INSTALL_BINDIR      "bin")
+        set(CMAKE_INSTALL_DATAROOTDIR "share")
+        message(STATUS "Setting installation destination on Windows to: ${CMAKE_INSTALL_PREFIX}")
+      else()
+        message(FATAL_ERROR "System not UNIX nor WIN32 - not implemented yet")
+      endif()
+  endif()
+
+  install(
+    TARGETS LIB_LIEF lief_spdlog
+    EXPORT LIEFExport
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT libraries
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+  install(
+    DIRECTORY ${LIEF_PUBLIC_INCLUDE_DIR}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    COMPONENT headers
+    FILES_MATCHING
+    REGEX "(.*).(hpp|h|def|inc)$")
+
+  install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/LIEFConfig.cmake
+          ${CMAKE_CURRENT_BINARY_DIR}/LIEFConfigVersion.cmake
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/LIEF/cmake
+    COMPONENT config)
+
+  install(
+    FILES       ${CMAKE_CURRENT_BINARY_DIR}/LIEF.pc
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+    COMPONENT   libraries)
+
+  if(BUILD_SHARED_LIBS)
+    set(lib_type shared)
+  else()
+    set(lib_type static)
+  endif()
+
+  install(
+    EXPORT LIEFExport
+    NAMESPACE LIEF::
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/LIEF/cmake
+    FILE LIEFExport-${lib_type}.cmake
+    COMPONENT config)
+
+  export(
+    EXPORT LIEFExport
+    NAMESPACE LIEF::
+    FILE LIEFExport-${lib_type}.cmake)
+
+  # Package
+  # ======================
+  add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/package")
 endif()
-
-install(
-  TARGETS LIB_LIEF lief_spdlog
-  EXPORT LIEFExport
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT libraries
-  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-
-install(
-  DIRECTORY ${LIEF_PUBLIC_INCLUDE_DIR}
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-  COMPONENT headers
-  FILES_MATCHING
-  REGEX "(.*).(hpp|h|def|inc)$")
-
-install(
-  FILES ${CMAKE_CURRENT_BINARY_DIR}/LIEFConfig.cmake
-        ${CMAKE_CURRENT_BINARY_DIR}/LIEFConfigVersion.cmake
-  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/LIEF/cmake
-  COMPONENT config)
-
-install(
-  FILES       ${CMAKE_CURRENT_BINARY_DIR}/LIEF.pc
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-  COMPONENT   libraries)
-
-if(BUILD_SHARED_LIBS)
-  set(lib_type shared)
-else()
-  set(lib_type static)
-endif()
-
-install(
-  EXPORT LIEFExport
-  NAMESPACE LIEF::
-  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/LIEF/cmake
-  FILE LIEFExport-${lib_type}.cmake
-  COMPONENT config)
-
-export(
-  EXPORT LIEFExport
-  NAMESPACE LIEF::
-  FILE LIEFExport-${lib_type}.cmake)
-
-# Package
-# ======================
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/package")
