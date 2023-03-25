@@ -592,7 +592,10 @@ if(LIEF_COVERAGE)
   target_link_libraries(LIB_LIEF gcov)
 endif()
 
-set_target_properties(LIB_LIEF PROPERTIES OUTPUT_NAME LIEF EXPORT_NAME LIEF CLEAN_DIRECT_OUTPUT 1)
+set_target_properties(LIB_LIEF PROPERTIES
+                      OUTPUT_NAME LIEF
+                      EXPORT_NAME LIEF
+                      CLEAN_DIRECT_OUTPUT 1)
 
 
 # Set a default build type if none was specified

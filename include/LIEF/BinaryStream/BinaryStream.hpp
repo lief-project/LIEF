@@ -140,10 +140,12 @@ class BinaryStream {
 
   /* Functions that are endianness aware */
   template<class T>
-  typename std::enable_if<std::is_integral<T>::value, result<T>>::type peek_conv() const;
+  typename std::enable_if<std::is_integral<T>::value, result<T>>::type
+  peek_conv() const;
 
   template<class T>
-  typename std::enable_if<!std::is_integral<T>::value, result<T>>::type peek_conv() const;
+  typename std::enable_if<!std::is_integral<T>::value, result<T>>::type
+  peek_conv() const;
 
   template<class T>
   result<T> peek_conv(size_t offset) const;
@@ -329,19 +331,18 @@ result<T> BinaryStream::read_conv() const {
 }
 
 template<class T>
-typename std::enable_if<std::is_integral<T>::value, result<T>>::type BinaryStream::peek_conv() const {
+typename std::enable_if<std::is_integral<T>::value, result<T>>::type
+BinaryStream::peek_conv() const {
   T ret;
   if (auto res = peek_in(&ret, pos(), sizeof(T))) {
-    if (endian_swap_) {
-      return swap_endian<T>(ret);
-    }
-    return ret;
+    return endian_swap_ ? swap_endian<T>(ret) : ret;
   }
   return make_error_code(lief_errors::read_error);
 }
 
 template<class T>
-typename std::enable_if<!std::is_integral<T>::value, result<T>>::type BinaryStream::peek_conv() const {
+typename std::enable_if<!std::is_integral<T>::value, result<T>>::type
+BinaryStream::peek_conv() const {
   T ret;
   if (auto res = peek_in(&ret, pos(), sizeof(T))) {
     if (endian_swap_) {
