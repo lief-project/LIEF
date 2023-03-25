@@ -6,10 +6,6 @@ import lief.Android # type: ignore
 import lief.DEX # type: ignore
 import lief.ELF # type: ignore
 import lief.OAT # type: ignore
-import lief.OAT.Binary # type: ignore
-import lief.OAT.Class # type: ignore
-import lief.OAT.Header # type: ignore
-import lief.OAT.Header.it_key_values_t # type: ignore
 
 class Binary(lief.ELF.Binary):
     class it_classes:

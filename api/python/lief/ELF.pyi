@@ -3,15 +3,6 @@ from typing import Any, ClassVar, Dict, Iterable, Iterator, List, Set
 from typing import overload
 import lief # type: ignore
 import lief.ELF # type: ignore
-import lief.ELF.Binary # type: ignore
-import lief.ELF.Builder # type: ignore
-import lief.ELF.CoreAuxv # type: ignore
-import lief.ELF.CoreFile # type: ignore
-import lief.ELF.CorePrStatus # type: ignore
-import lief.ELF.Section # type: ignore
-import lief.ELF.Segment # type: ignore
-import lief.ELF.SymbolVersionDefinition # type: ignore
-import lief.ELF.SymbolVersionRequirement # type: ignore
 
 class ARCH:
     __members__: ClassVar[dict] = ...  # read-only
@@ -2399,8 +2390,8 @@ class VERSION:
     def value(self) -> int: ...
 
 @overload
-def parse(filename: str, dynsym_count_method: lief.ELF.DYNSYM_COUNT_METHODS = ...) -> lief.ELF.Binary: ...
+def parse(filename: str, dynsym_count_method: lief.ELF.DYNSYM_COUNT_METHODS = ...) -> lief.ELF.Binary | None: ...
 @overload
-def parse(raw: List[int], name: str = ..., dynsym_count_method: lief.ELF.DYNSYM_COUNT_METHODS = ...) -> lief.ELF.Binary: ...
+def parse(raw: List[int], name: str = ..., dynsym_count_method: lief.ELF.DYNSYM_COUNT_METHODS = ...) -> lief.ELF.Binary | None: ...
 @overload
-def parse(io: object, name: str = ..., dynsym_count_method: lief.ELF.DYNSYM_COUNT_METHODS = ...) -> object: ...
+def parse(io: object, name: str = ..., dynsym_count_method: lief.ELF.DYNSYM_COUNT_METHODS = ...) -> lief.ELF.Binary | None: ...

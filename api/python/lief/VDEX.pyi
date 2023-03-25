@@ -3,7 +3,7 @@ from typing import List
 from typing import overload
 import lief # type: ignore
 import lief.Android # type: ignore
-import lief.OAT.Binary # type: ignore
+import lief.OAT # type: ignore
 import lief.VDEX # type: ignore
 
 class File(lief.Object):

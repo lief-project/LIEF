@@ -3,12 +3,6 @@ from typing import Any, ClassVar, Iterator, List, Tuple
 from typing import overload
 import lief # type: ignore
 import lief.DEX # type: ignore
-import lief.DEX.Class # type: ignore
-import lief.DEX.File # type: ignore
-import lief.DEX.MapItem # type: ignore
-import lief.DEX.MapList # type: ignore
-import lief.DEX.Prototype # type: ignore
-import lief.DEX.Type # type: ignore
 
 class ACCESS_FLAGS:
     __members__: ClassVar[dict] = ...  # read-only

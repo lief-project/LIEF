@@ -1,10 +1,8 @@
 from typing import Any, ClassVar, Iterator, List, Set
 
+from . import ART, Android, DEX, ELF, MachO, OAT, PE, VDEX, logging # type: ignore
 from typing import overload
 import lief # type: ignore
-import lief.Binary # type: ignore
-import lief.ELF # type: ignore
-import lief.Function # type: ignore
 
 class ARCHITECTURES:
     __members__: ClassVar[dict] = ...  # read-only
