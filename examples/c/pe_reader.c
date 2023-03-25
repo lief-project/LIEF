@@ -99,7 +99,8 @@ int main(int argc, char **argv) {
   fprintf(stdout, "\nDataDirectories\n");
   fprintf(stdout,   "===============\n");
   Pe_DataDirectory_t** data_directories = pe_binary->data_directories;
-  for (size_t i = 0; data_directories[i] != NULL; ++i) {
+  size_t i = 0;
+  for  (i = 0; data_directories[i] != NULL; ++i) {
     fprintf(stdout, "RVA 0x%"  PRIx32 "\n", data_directories[i]->rva);
     fprintf(stdout, "Size 0x%" PRIx32 "\n", data_directories[i]->size);
   }
@@ -108,7 +109,7 @@ int main(int argc, char **argv) {
   fprintf(stdout,   "========\n");
 
   Pe_Section_t** sections = pe_binary->sections;
-  for (size_t i = 0; sections[i] != NULL; ++i) {
+  for (i = 0; sections[i] != NULL; ++i) {
     Pe_Section_t* section = sections[i];
     fprintf(stdout, ""
         "%-20s "
@@ -143,12 +144,13 @@ int main(int argc, char **argv) {
   fprintf(stdout,   "========\n");
   Pe_Import_t** imports = pe_binary->imports;
   if (imports != NULL) {
-    for (size_t i = 0; imports[i] != NULL; ++i) {
+    for (i = 0; imports[i] != NULL; ++i) {
       fprintf(stdout, "Name: %s\n", imports[i]->name);
       Pe_ImportEntry_t** entries = imports[i]->entries;
-      for (size_t i = 0; entries[i] != NULL; ++i) {
-        if (entries[i]->name != NULL) {
-          fprintf(stdout, "   %s\n", entries[i]->name);
+      size_t j = 0;
+      for (j = 0; entries[j] != NULL; ++j) {
+        if (entries[j]->name != NULL) {
+          fprintf(stdout, "   %s\n", entries[j]->name);
         }
       }
 
