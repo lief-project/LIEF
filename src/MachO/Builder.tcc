@@ -386,9 +386,7 @@ ok_error_t Builder::build(DyldInfo& dyld_info) {
     LIEF_DEBUG("linkedit_.size(): {:x}", linkedit_.size());
     raw_cmd.rebase_off = linkedit_.size();
     {
-      LIEF_SW_START(sw);
       dyld_info.update_rebase_info(linkedit_);
-      LIEF_SW_END("update_rebase_info(): {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
     }
     raw_cmd.rebase_size = linkedit_.size() - raw_cmd.rebase_off;
     if (raw_cmd.rebase_size > 0) {
@@ -402,9 +400,7 @@ ok_error_t Builder::build(DyldInfo& dyld_info) {
                dyld_info.rebase().second, raw_cmd.rebase_size);
   }
   {
-    LIEF_SW_START(sw);
     dyld_info.update_binding_info(linkedit_, raw_cmd);
-    LIEF_SW_END("update_binding_info(): {}", duration_cast<std::chrono::seconds>(sw.elapsed()));
     if (raw_cmd.bind_size > 0) {
       raw_cmd.bind_off += linkedit_offset_;
 
@@ -438,9 +434,7 @@ ok_error_t Builder::build(DyldInfo& dyld_info) {
   {
     raw_cmd.export_off = linkedit_.size();
     {
-      LIEF_SW_START(sw);
       dyld_info.update_export_trie(linkedit_);
-      LIEF_SW_END("update_export_trie(): {}", sw.elapsed());
     }
     raw_cmd.export_size = linkedit_.size() - raw_cmd.export_off;
     if (raw_cmd.export_size > 0) {

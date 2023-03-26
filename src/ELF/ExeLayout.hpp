@@ -81,7 +81,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     if (!raw_dynstr_.empty()) {
       return raw_dynstr_.size();
     }
-    LIEF_SW_START(sw);
+
     // Start with dynamic entries: NEEDED / SONAME etc
     vector_iostream raw_dynstr;
     raw_dynstr.write<uint8_t>(0);
@@ -177,7 +177,6 @@ class LIEF_LOCAL ExeLayout : public Layout {
       }
     }
     raw_dynstr.move(raw_dynstr_);
-    LIEF_SW_END(".dynstr values computed in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
     return raw_dynstr_.size();
   }
 

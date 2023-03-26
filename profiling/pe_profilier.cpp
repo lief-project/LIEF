@@ -1,12 +1,9 @@
 #include <LIEF/LIEF.hpp>
 #include <filesystem>
-void process_file(const std::filesystem::path& target) {
-  LIEF::MachO::ParserConfig config;
-  config.parse_dyld_rebases = false;
-  config.parse_dyld_exports = false;
-  config.parse_dyld_bindings = false;
-  auto binary = LIEF::MachO::Parser::parse(target, config);
+#include <iostream>
 
+void process_file(const std::filesystem::path& target) {
+  LIEF::PE::Parser::parse(target);
 }
 
 void process_dir(const std::filesystem::path& target) {
@@ -14,7 +11,7 @@ void process_dir(const std::filesystem::path& target) {
     if (e.is_directory()) {
       process_dir(e.path());
     }
-    else if (e.is_regular_file() && LIEF::MachO::is_macho(e.path())) {
+    else if (e.is_regular_file() && LIEF::PE::is_pe(e.path())) {
       process_file(e.path());
     }
   }

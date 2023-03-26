@@ -1341,9 +1341,7 @@ bool operator!=(uint8_t lhs, REBASE_OPCODES rhs) {
     if (!standard_binds.empty()) {
       cmd.bind_off = stream.size();
       {
-        LIEF_SW_START(sw);
         update_standard_bindings(standard_binds, stream);
-        LIEF_SW_END("update_standard_bindings(): {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
       }
       cmd.bind_size = stream.size() - cmd.bind_off;
 
@@ -1355,18 +1353,14 @@ bool operator!=(uint8_t lhs, REBASE_OPCODES rhs) {
     if (!weak_binds.empty()) {
       cmd.weak_bind_off = stream.size();
       {
-        LIEF_SW_START(sw);
         update_weak_bindings(weak_binds, stream);
-        LIEF_SW_END("update_weak_bindings(): {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
       }
       cmd.weak_bind_size = stream.size() - cmd.weak_bind_off;
     }
     if (!lazy_binds.empty()) {
       cmd.lazy_bind_off = stream.size();
       {
-        LIEF_SW_START(sw);
         update_lazy_bindings(lazy_binds, stream);
-        LIEF_SW_END("update_lazy_bindings(): {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
       }
       cmd.lazy_bind_size = stream.size() - cmd.lazy_bind_off;
     }

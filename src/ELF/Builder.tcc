@@ -365,9 +365,7 @@ ok_error_t Builder::build_exe_lib() {
   // ----------------------------------------------------------------
 
   if (config_.gnu_hash || config_.dt_hash) {
-    LIEF_SW_START(sw);
     build_hash_table<ELF_T>();
-    LIEF_SW_END("hash table built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
   }
 
   if (config_.dyn_str) {
@@ -377,63 +375,43 @@ ok_error_t Builder::build_exe_lib() {
   }
 
   if (config_.interpreter && binary_->has(SEGMENT_TYPES::PT_INTERP)) {
-    LIEF_SW_START(sw);
     build_interpreter<ELF_T>();
-    LIEF_SW_END(".interp built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
   }
 
   if (config_.notes && binary_->has(SEGMENT_TYPES::PT_NOTE)) {
-    LIEF_SW_START(sw);
     build_notes<ELF_T>();
-    LIEF_SW_END(".note built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
   }
 
   if (config_.dynamic_section && binary_->has(SEGMENT_TYPES::PT_DYNAMIC)) {
-    LIEF_SW_START(sw);
     build_dynamic_section<ELF_T>();
-    LIEF_SW_END(".dynamic built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
   }
 
   if (config_.symtab && binary_->has(DYNAMIC_TAGS::DT_SYMTAB)) {
-    LIEF_SW_START(sw);
     build_dynamic_symbols<ELF_T>();
-    LIEF_SW_END(".dynsym built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
   }
 
   if (config_.sym_versym && binary_->has(DYNAMIC_TAGS::DT_VERSYM)) {
-    LIEF_SW_START(sw);
     build_symbol_version<ELF_T>();
-    LIEF_SW_END(".gnu.version built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
   }
 
   if (config_.sym_verdef && binary_->has(DYNAMIC_TAGS::DT_VERDEF)) {
-    LIEF_SW_START(sw);
     build_symbol_definition<ELF_T>();
-    LIEF_SW_END(".gnu.version_d built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
   }
 
   if (config_.sym_verneed && binary_->has(DYNAMIC_TAGS::DT_VERNEED)) {
-    LIEF_SW_START(sw);
     build_symbol_requirement<ELF_T>();
-    LIEF_SW_END(".gnu.version_r built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
   }
 
   if (config_.rela) {
-    LIEF_SW_START(sw);
     build_dynamic_relocations<ELF_T>();
-    LIEF_SW_END(".rela.dyn built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
   }
 
   if (config_.jmprel) {
-    LIEF_SW_START(sw);
     build_pltgot_relocations<ELF_T>();
-    LIEF_SW_END(".rela.plt built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
   }
 
   if (config_.static_symtab && binary_->has(ELF_SECTION_TYPES::SHT_SYMTAB)) {
-    LIEF_SW_START(sw);
     build_static_symbols<ELF_T>();
-    LIEF_SW_END(".symtab built in {}", duration_cast<std::chrono::milliseconds>(sw.elapsed()));
   }
 
   // Build sections

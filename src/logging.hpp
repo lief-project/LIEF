@@ -23,19 +23,14 @@
 #include "LIEF/config.h"
 
 #include <spdlog/spdlog.h>
-#include <spdlog/stopwatch.h>
 #include <spdlog/fmt/ostr.h>
 #include <spdlog/fmt/fmt.h>
-#include <spdlog/fmt/chrono.h>
 
 #define LIEF_TRACE(...) LIEF::logging::Logger::trace(__VA_ARGS__)
 #define LIEF_DEBUG(...) LIEF::logging::Logger::debug(__VA_ARGS__)
 #define LIEF_INFO(...)  LIEF::logging::Logger::info(__VA_ARGS__)
 #define LIEF_WARN(...)  LIEF::logging::Logger::warn(__VA_ARGS__)
 #define LIEF_ERR(...)   LIEF::logging::Logger::err(__VA_ARGS__)
-
-#define LIEF_SW_START(X) spdlog::stopwatch X;
-#define LIEF_SW_END(...) LIEF_INFO(__VA_ARGS__);
 
 #define CHECK(X, ...)        \
   do {                       \
@@ -44,9 +39,6 @@
     }                        \
   } while (false)
 
-
-using std::chrono::duration_cast;
-using std::chrono::milliseconds;
 
 namespace LIEF {
 namespace logging {
