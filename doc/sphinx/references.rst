@@ -20,7 +20,7 @@ Blog Posts & White Papers
 * 2018-09-07: `Using a non-system glibc <https://www.ayrx.me/using-a-non-system-libc>`_ by `Ayrx <https://www.ayrx.me/>`_
 * 2018-07-02: `PWN problem patch method commonly used in competition  <http://p4nda.top/2018/07/02/patch-in-pwn/>`_
 * 2018-05-03: `When SideChannelMarvels meet LIEF  <https://blog.quarkslab.com/when-sidechannelmarvels-meet-lief.html>`_
-* 2018-03-11: `Fuzzing Arbitrary Functions in ELF Binaries <https://blahcat.github.io/2018/03/11/fuzzing-arbitrary-functions-in-elf-binaries/>`_
+* 2018-03-11: `Fuzzing Arbitrary Functions in ELF Binaries <https://blahcat.github.io/posts/2018/03/11/fuzzing-arbitrary-functions-in-elf-binaries.html/>`_
 * 2018-02-01: `Dissecting Mobile Native Code Packers Case Study <https://blog.zimperium.com/dissecting-mobile-native-code-packers-case-study/>`_
 * 2017-11-02: `Have Fun With LIEF and Executable Formats  <https://blog.quarkslab.com/have-fun-with-lief-and-executable-formats.html>`_
 * 2017-04-04: `LIEF Library to Instrument Executable Formats  <https://blog.quarkslab.com/lief-library-to-instrument-executable-formats.html>`_

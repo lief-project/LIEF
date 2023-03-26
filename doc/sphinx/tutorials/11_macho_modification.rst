@@ -393,7 +393,7 @@ You can also check other tools such as optool [2]_ or insert_dylib [3]_
 
 .. rubric:: References
 
-.. [1] http://romainthomas.fr/slides/18-06-Recon18-Formats-Instrumentation.pdf
+.. [1] https://www.romainthomas.fr/publication/static-instrumentation/
 
 .. [2] https://github.com/alexzielenski/optool
 
