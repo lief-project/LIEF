@@ -955,10 +955,12 @@ ok_error_t Parser::parse_dynamic_relocations(uint64_t relocations_offset, uint64
 template<typename ELF_T>
 ok_error_t Parser::parse_static_symbols(uint64_t offset, uint32_t nb_symbols,
                                         const Section& string_section) {
-
   using Elf_Sym = typename ELF_T::Elf_Sym;
+  static constexpr size_t MAX_RESERVED_SYMBOLS = 10000;
   LIEF_DEBUG("== Parsing static symbols ==");
-  binary_->static_symbols_.reserve(nb_symbols);
+
+  size_t nb_reserved = std::min<size_t>(nb_symbols, MAX_RESERVED_SYMBOLS);
+  binary_->static_symbols_.reserve(nb_reserved);
 
   stream_->setpos(offset);
   for (uint32_t i = 0; i < nb_symbols; ++i) {
@@ -991,6 +993,7 @@ template<typename ELF_T>
 ok_error_t Parser::parse_dynamic_symbols(uint64_t offset) {
   using Elf_Sym = typename ELF_T::Elf_Sym;
   using Elf_Off = typename ELF_T::Elf_Off;
+  static constexpr size_t MAX_RESERVED_SYMBOLS = 10000;
 
   LIEF_DEBUG("== Parsing dynamics symbols ==");
 
@@ -1014,7 +1017,8 @@ ok_error_t Parser::parse_dynamic_symbols(uint64_t offset) {
     return make_error_code(lief_errors::parsing_error);
   }
 
-  binary_->dynamic_symbols_.reserve(nb_symbols);
+  size_t nb_reserved = std::min<size_t>(nb_symbols, MAX_RESERVED_SYMBOLS);
+  binary_->dynamic_symbols_.reserve(nb_reserved);
   stream_->setpos(dynamic_symbols_offset);
 
   for (size_t i = 0; i < nb_symbols; ++i) {
