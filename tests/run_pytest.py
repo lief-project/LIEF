@@ -12,6 +12,6 @@ pytest.main([
     (CWD / "dex"),
     (CWD / "art"),
     (CWD / "api"),
-    #(CWD / "abstract"),
+    (CWD / "abstract"),
     "--verbose"
 ])
