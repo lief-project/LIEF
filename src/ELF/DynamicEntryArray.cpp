@@ -17,6 +17,7 @@
 
 #include "logging.hpp"
 
+#include <algorithm>
 #include <numeric>
 #include <sstream>
 #include <iomanip>

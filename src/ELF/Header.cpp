@@ -18,6 +18,7 @@
 #include <iomanip>
 #include <sstream>
 #include <numeric>
+#include <algorithm>
 
 #include "frozen.hpp"
 

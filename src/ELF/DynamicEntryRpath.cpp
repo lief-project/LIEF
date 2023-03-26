@@ -16,6 +16,7 @@
 #include "LIEF/ELF/DynamicEntryRpath.hpp"
 #include "logging.hpp"
 
+#include <algorithm>
 #include <iomanip>
 #include <numeric>
 #include <sstream>
