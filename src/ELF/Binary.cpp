@@ -531,7 +531,7 @@ Binary::string_list_t Binary::strings(size_t min_size) const {
   current.reserve(100);
 
   for (size_t i = 0; i < data.size(); ++i) {
-    char c = static_cast<char>(data[i]);
+    uint8_t c = data[i];
 
     // Terminator
     if (c == '\0') {
@@ -550,7 +550,7 @@ Binary::string_list_t Binary::strings(size_t min_size) const {
       continue;
     }
 
-    current.push_back(c);
+    current.push_back(static_cast<char>(c));
   }
 
 
