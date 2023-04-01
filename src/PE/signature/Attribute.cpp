@@ -15,6 +15,7 @@
  */
 #include <iosfwd>
 #include <string>
+#include <ostream>
 
 #include "LIEF/Visitor.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"

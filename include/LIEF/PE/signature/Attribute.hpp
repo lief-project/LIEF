@@ -16,6 +16,8 @@
 #ifndef LIEF_PE_ATTRIBUTES_H_
 #define LIEF_PE_ATTRIBUTES_H_
 #include <memory>
+#include <string>
+
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
