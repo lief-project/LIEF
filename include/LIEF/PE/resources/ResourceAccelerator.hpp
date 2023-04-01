@@ -17,6 +17,10 @@
 #ifndef LIEF_PE_RESOURCE_ACCELERATOR_H_
 #define LIEF_PE_RESOURCE_ACCELERATOR_H_
 
+#include <string>
+#include <set>
+#include <ostream>
+
 #include "LIEF/visibility.h"
 
 #include "LIEF/Object.hpp"
