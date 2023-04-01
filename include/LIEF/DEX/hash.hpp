@@ -18,10 +18,22 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/hash.hpp"
-#include "LIEF/DEX.hpp"
 
 namespace LIEF {
+class Object;
+
 namespace DEX {
+
+class Class;
+class Field;
+class File;
+class Header;
+class MapItem;
+class MapList;
+class Method;
+class Prototype;
+class CodeInfo;
+class Type;
 
 //! Class which implements a visitor to compute
 //! a **deterministic** hash for LIEF DEX objects

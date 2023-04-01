@@ -21,7 +21,6 @@
 #include "LIEF/types.h"
 
 #include "LIEF/PE/enums.h"
-#include "LIEF/PE/ImportEntry.h"
 
 /**  @defgroup pe_import_entry_c_api Import Entry
  *  @ingroup pe_c_api

@@ -18,9 +18,12 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/hash.hpp"
-#include "LIEF/Abstract.hpp"
 
 namespace LIEF {
+class Binary;
+class Header;
+class Relocation;
+class Object;
 
 class LIEF_API AbstractHash : public LIEF::Hash {
   public:

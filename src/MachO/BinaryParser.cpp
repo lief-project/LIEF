@@ -13,12 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <fstream>
-#include <iterator>
-#include <ostream>
 #include <algorithm>
 #include <memory>
-#include <stdexcept>
 
 #include "logging.hpp"
 #include "BinaryParser.tcc"
@@ -29,14 +25,8 @@
 #include "LIEF/MachO/BinaryParser.hpp"
 
 #include "LIEF/MachO/utils.hpp"
-#include "LIEF/MachO/Header.hpp"
-#include "LIEF/MachO/LoadCommand.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
-#include "LIEF/MachO/Section.hpp"
-#include "LIEF/MachO/UUIDCommand.hpp"
-#include "LIEF/MachO/SymbolCommand.hpp"
 #include "LIEF/MachO/Symbol.hpp"
-#include "LIEF/MachO/EnumToString.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/MachO/DyldExportsTrie.hpp"
 

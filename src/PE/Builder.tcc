@@ -15,6 +15,7 @@
  */
 
 #include "LIEF/PE/Builder.hpp"
+#include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/ImportEntry.hpp"
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/DataDirectory.hpp"

@@ -20,7 +20,8 @@
 #include <string>
 #include <vector>
 #include <utility>
-#include <utility>
+#include <array>
+
 #include "LIEF/iterators.hpp"
 #include "LIEF/OAT/type_traits.hpp"
 #include "LIEF/OAT/enums.hpp"

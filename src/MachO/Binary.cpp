@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 #include <algorithm>
-#include <numeric>
 #include <sstream>
 
 #include "logging.hpp"
@@ -23,12 +22,11 @@
 #include "Object.tcc"
 #include "Binary.tcc"
 
+#include "LIEF/Visitor.hpp"
 #include "LIEF/utils.hpp"
-#include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "LIEF/MachO/Binary.hpp"
-#include "LIEF/MachO/BindingInfo.hpp"
 #include "LIEF/MachO/Builder.hpp"
 #include "LIEF/MachO/ChainedBindingInfo.hpp"
 #include "LIEF/MachO/CodeSignature.hpp"
@@ -43,7 +41,6 @@
 #include "LIEF/MachO/DylinkerCommand.hpp"
 #include "LIEF/MachO/DynamicSymbolCommand.hpp"
 #include "LIEF/MachO/EncryptionInfo.hpp"
-#include "LIEF/MachO/EnumToString.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
@@ -60,13 +57,11 @@
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/SymbolCommand.hpp"
 #include "LIEF/MachO/ThreadCommand.hpp"
+#include "LIEF/MachO/BuildVersion.hpp"
 #include "LIEF/MachO/TwoLevelHints.hpp"
 #include "LIEF/MachO/UUIDCommand.hpp"
 #include "LIEF/MachO/VersionMin.hpp"
-#include "LIEF/MachO/hash.hpp"
 #include "MachO/Structures.hpp"
-
-
 
 namespace LIEF {
 namespace MachO {

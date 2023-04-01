@@ -18,6 +18,7 @@
 #include "LIEF/DEX/hash.hpp"
 #include "LIEF/DEX/enums.hpp"
 #include "LIEF/DEX/EnumToString.hpp"
+#include "LIEF/DEX/Method.hpp"
 
 #include <numeric>
 #include <utility>

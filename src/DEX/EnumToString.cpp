@@ -15,7 +15,6 @@
  */
 #include "LIEF/DEX/EnumToString.hpp"
 #include "frozen.hpp"
-#include <map>
 
 namespace LIEF {
 namespace DEX {

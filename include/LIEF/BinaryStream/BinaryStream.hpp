@@ -17,11 +17,11 @@
 #define LIEF_BINARY_STREAM_H_
 
 #include <cstdint>
-#include <climits>
 #include <vector>
-#include <istream>
-#include <utility>
 #include <memory>
+#include <cstring>
+#include <string>
+#include <type_traits>
 #include <algorithm>
 
 #include "LIEF/BinaryStream/Convert.hpp"

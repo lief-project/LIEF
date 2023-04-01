@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 #include <iomanip>
-#include <climits>
-
 
 #include "LIEF/ELF/hash.hpp"
 

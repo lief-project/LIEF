@@ -16,15 +16,10 @@
 
 #include "LIEF/PE/signature/RsaInfo.hpp"
 
-#include <algorithm>
-#include <fstream>
-
-#include <mbedtls/x509.h>
-#include <mbedtls/asn1.h>
-#include <mbedtls/oid.h>
+#include <mbedtls/bignum.h>
+#include <mbedtls/md.h>
 #include <mbedtls/rsa.h>
-#include <mbedtls/pk.h>
-
+#include <utility>
 
 namespace LIEF {
 namespace PE {

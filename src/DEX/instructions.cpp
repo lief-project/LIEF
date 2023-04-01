@@ -18,9 +18,7 @@
 #include "LIEF/DEX/instructions.hpp"
 
 #include <algorithm>
-#include <ostream>
 #include <map>
-#include <climits>
 
 namespace LIEF {
 namespace DEX {

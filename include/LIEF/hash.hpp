@@ -17,6 +17,7 @@
 #define LIEF_HASH_H_
 
 #include <ostream>
+#include <vector>
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"

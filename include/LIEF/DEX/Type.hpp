@@ -16,12 +16,17 @@
 #ifndef LIEF_DEX_TYPE_H_
 #define LIEF_DEX_TYPE_H_
 
+#include <vector>
+#include <string>
+#include <ostream>
+
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 
 namespace LIEF {
 namespace DEX {
 class Parser;
+class Class;
 
 //! Class which represents a DEX type as described in the
 //! format specifications: https://source.android.com/devices/tech/dalvik/dex-format#typedescriptor

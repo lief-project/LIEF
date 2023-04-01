@@ -20,7 +20,6 @@
 
 #include "LIEF/OAT/Parser.hpp"
 #include "LIEF/OAT/Binary.hpp"
-#include "LIEF/OAT/Method.hpp"
 #include "LIEF/OAT/utils.hpp"
 
 #include "LIEF/VDEX/utils.hpp"

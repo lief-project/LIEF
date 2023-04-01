@@ -18,8 +18,6 @@
 
 #include "frozen.hpp"
 
-#include <map>
-
 namespace LIEF {
 namespace OAT {
 

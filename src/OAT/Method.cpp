@@ -18,6 +18,8 @@
 
 #include "LIEF/OAT/Method.hpp"
 #include "LIEF/OAT/hash.hpp"
+#include "LIEF/OAT/Class.hpp"
+#include "LIEF/DEX/Method.hpp"
 
 namespace LIEF {
 namespace OAT {

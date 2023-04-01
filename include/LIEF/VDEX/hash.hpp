@@ -18,10 +18,11 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/hash.hpp"
-#include "LIEF/VDEX.hpp"
 
 namespace LIEF {
 namespace VDEX {
+class File;
+class Header;
 
 class LIEF_API Hash : public LIEF::Hash {
   public:

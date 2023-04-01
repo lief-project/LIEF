@@ -29,6 +29,7 @@ class Builder;
 class ChainedBindingInfo;
 class ChainedBindingInfoList;
 class LinkEdit;
+class SegmentCommand;
 
 namespace details {
 struct linkedit_data_command;

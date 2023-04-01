@@ -13,11 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <numeric>
-
 #include "LIEF/DEX/MapItem.hpp"
 #include "LIEF/DEX/hash.hpp"
-#include "logging.hpp"
 
 #include "LIEF/DEX/EnumToString.hpp"
 

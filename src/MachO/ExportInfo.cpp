@@ -15,9 +15,9 @@
  */
 #include <numeric>
 #include <iomanip>
+#include <algorithm>
 
 #include "LIEF/MachO/hash.hpp"
-#include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/MachO/EnumToString.hpp"

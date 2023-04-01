@@ -12,10 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/BinaryStream/Convert.hpp"
-#include "LIEF/BinaryStream/BinaryStream.hpp"
-#include "MachO/Structures.hpp"
-
 namespace LIEF {
 namespace Convert {
 }

@@ -16,7 +16,6 @@
 #include "LIEF/ELF/EnumToString.hpp"
 #include "LIEF/ELF/NoteDetails/core/CorePrStatus.hpp"
 #include "frozen.hpp"
-#include <map>
 
 namespace LIEF {
 namespace ELF {

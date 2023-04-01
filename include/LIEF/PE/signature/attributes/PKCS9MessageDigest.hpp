@@ -20,6 +20,8 @@
 #include "LIEF/errors.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
 
+#include <vector>
+
 namespace LIEF {
 class VectorStream;
 namespace PE {

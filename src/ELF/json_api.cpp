@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 #include "LIEF/config.h"
-#include "logging.hpp"
-#include "LIEF/ELF.hpp"
 
 #if LIEF_JSON_SUPPORT
 #include "ELF/json_internal.hpp"

@@ -16,6 +16,9 @@
 #ifndef LIEF_OAT_METHOD_H_
 #define LIEF_OAT_METHOD_H_
 
+#include <vector>
+#include <string>
+#include <ostream>
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 #include "LIEF/DEX/deopt.hpp"

@@ -18,8 +18,8 @@
 #include <memory>
 
 #include "LIEF/visibility.h"
-#include "LIEF/errors.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
+#include "LIEF/PE/signature/types.hpp"
 
 
 namespace LIEF {

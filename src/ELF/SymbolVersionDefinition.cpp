@@ -16,12 +16,11 @@
 #include <ostream>
 #include <iomanip>
 #include <algorithm>
-#include <iterator>
 
 #include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/SymbolVersionDefinition.hpp"
-#include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
+#include "LIEF/ELF/SymbolVersionAux.hpp"
 #include "ELF/Structures.hpp"
 
 namespace LIEF {

@@ -16,6 +16,7 @@
 #include <iomanip>
 #include <numeric>
 
+#include "LIEF/Visitor.hpp"
 #include "LIEF/Abstract/Header.hpp"
 #include "LIEF/Abstract/EnumToString.hpp"
 

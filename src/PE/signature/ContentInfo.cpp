@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-
-#include "LIEF/PE/signature/OIDToString.hpp"
+#include "LIEF/Visitor.hpp"
 #include "LIEF/PE/signature/ContentInfo.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/utils.hpp"

@@ -17,7 +17,6 @@
 #define LIEF_ABSTRACT_BINARY_H_
 
 #include <vector>
-#include <memory>
 
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"

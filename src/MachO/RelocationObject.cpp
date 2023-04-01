@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <numeric>
-#include <iomanip>
 #include "logging.hpp"
 
 #include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/RelocationObject.hpp"
-#include "LIEF/MachO/EnumToString.hpp"
 #include "LIEF/MachO/Section.hpp"
 #include "MachO/Structures.hpp"
 

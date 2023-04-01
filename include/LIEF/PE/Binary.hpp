@@ -28,6 +28,7 @@
 #include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/Debug.hpp"
 #include "LIEF/PE/Symbol.hpp"
+#include "LIEF/PE/ResourcesManager.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
 
 #include "LIEF/Abstract/Binary.hpp"
@@ -40,6 +41,11 @@ namespace LIEF {
 namespace PE {
 class Parser;
 class Builder;
+class ResourceNode;
+class ResourceData;
+class ResourceDirectory;
+class LoadConfiguration;
+class Relocation;
 
 //! Class which represents a PE binary
 //! This is the main interface to manage and modify a PE executable

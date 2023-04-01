@@ -17,10 +17,8 @@
 #define LIEF_PE_ATTRIBUTES_PKCS9_COUNTER_SIG_H_
 
 #include "LIEF/visibility.h"
-#include "LIEF/errors.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/SignerInfo.hpp"
-#include "LIEF/PE/signature/types.hpp"
 
 namespace LIEF {
 class VectorStream;

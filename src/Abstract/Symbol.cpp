@@ -15,7 +15,7 @@
  */
 #include <algorithm>
 #include <ostream>
-
+#include "LIEF/Visitor.hpp"
 #include "LIEF/Abstract/Symbol.hpp"
 
 namespace LIEF {

@@ -17,8 +17,6 @@
 
 #include "LIEF/PE/hash.hpp"
 
-#include "LIEF/iostream.hpp"
-
 #include "LIEF/PE/LoadConfigurations.hpp"
 
 namespace LIEF {

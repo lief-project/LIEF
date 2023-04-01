@@ -16,6 +16,7 @@
 
 #include "LIEF/DEX/Type.hpp"
 #include "LIEF/DEX/hash.hpp"
+#include "LIEF/DEX/Class.hpp"
 #include "logging.hpp"
 
 namespace LIEF {

@@ -15,6 +15,9 @@
  */
 #include "LIEF/PE/signature/attributes/ContentType.hpp"
 #include "LIEF/PE/signature/OIDToString.hpp"
+#include "LIEF/PE/signature/Attribute.hpp"
+
+#include "LIEF/Visitor.hpp"
 
 namespace LIEF {
 namespace PE {

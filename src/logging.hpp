@@ -16,9 +16,7 @@
 #ifndef LIEF_PRIVATE_LOGGING_H_
 #define LIEF_PRIVATE_LOGGING_H_
 #include <memory>
-#include <chrono>
 #include "LIEF/logging.hpp" // Public interface
-#include "LIEF/visibility.h"
 #include "LIEF/types.hpp"
 #include "LIEF/config.h"
 

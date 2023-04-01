@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 #include <algorithm>
-#include <cwctype>
 #include <sstream>
 #include <iomanip>
 

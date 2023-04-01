@@ -18,10 +18,13 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/hash.hpp"
-#include "LIEF/ART.hpp"
 
 namespace LIEF {
+class Object;
+
 namespace ART {
+class File;
+class Header;
 
 class LIEF_API Hash : public LIEF::Hash {
   public:

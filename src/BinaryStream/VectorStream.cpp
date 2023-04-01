@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 #include <array>
-#include <iterator>
 #include <vector>
 #include <string>
 #include <fstream>
-#include <cassert>
-#include <sstream>
 #include <algorithm>
 
 #include <mbedtls/platform.h>
@@ -29,7 +26,6 @@
 #include <mbedtls/x509_crt.h>
 
 #include "logging.hpp"
-#include "LIEF/utils.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
 
 namespace LIEF {

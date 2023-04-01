@@ -16,14 +16,19 @@
 #ifndef LIEF_OAT_DEXFILE_H_
 #define LIEF_OAT_DEXFILE_H_
 
-#include "LIEF/OAT/type_traits.hpp"
+#include <string>
+#include <vector>
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 
-#include "LIEF/DEX.hpp"
-
 namespace LIEF {
+class Visitor;
+
+namespace DEX {
+class File;
+}
+
 namespace OAT {
 class Parser;
 

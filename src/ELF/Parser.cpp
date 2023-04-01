@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 #include <memory>
-#include <regex>
-#include <fstream>
 #include <iterator>
-#include <ostream>
 #include <algorithm>
-#include <stdexcept>
-#include <functional>
 
 #include "logging.hpp"
 
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
-#include "LIEF/BinaryStream/FileStream.hpp"
 
 #include "LIEF/ELF/utils.hpp"
 #include "LIEF/ELF/Parser.hpp"
@@ -38,7 +32,6 @@
 #include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/SysvHash.hpp"
 #include "LIEF/ELF/NoteDetails/AndroidNote.hpp"
-#include "LIEF/ELF/NoteDetails/Core.hpp"
 
 #include "ELF/DataHandler/Handler.hpp"
 

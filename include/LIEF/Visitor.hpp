@@ -17,19 +17,10 @@
 #ifndef LIEF_VISITOR_H_
 #define LIEF_VISITOR_H_
 #include <set>
-#include <vector>
-#include <array>
-#include <string>
-#include <functional>
-#include <ostream>
 #include <utility>
-
-#include "LIEF/config.h"
+#include <cstddef>
 
 #include "LIEF/visibility.h"
-
-#include "LIEF/PE/signature/types.hpp"
-
 #include "LIEF/visitor_macros.hpp"
 
 

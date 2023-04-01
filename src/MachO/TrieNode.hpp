@@ -20,13 +20,12 @@
 #include <memory>
 
 #include "LIEF/visibility.h"
-#include "LIEF/MachO/ExportInfo.hpp"
-#include "LIEF/iostream.hpp"
-
 
 namespace LIEF {
+class vector_iostream;
 namespace MachO {
 class TrieNode;
+class ExportInfo;
 
 class LIEF_LOCAL TrieEdge {
   public:

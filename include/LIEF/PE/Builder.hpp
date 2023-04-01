@@ -21,7 +21,6 @@
 #include <vector>
 #include <iterator>
 #include <ostream>
-#include <ostream>
 #include <sstream>
 #include <algorithm>
 #include <iomanip>
@@ -30,18 +29,21 @@
 #include "LIEF/utils.hpp"
 #include "LIEF/iostream.hpp"
 
-#include "LIEF/PE/Binary.hpp"
 #include "LIEF/errors.hpp"
-
-struct Profiler;
 
 namespace LIEF {
 namespace PE {
+class Binary;
+class ResourceNode;
+class DosHeader;
+class Header;
+class OptionalHeader;
+class DataDirectory;
+class Section;
 
 //! Class that is used to rebuild a raw PE binary from a PE::Binary object
 class LIEF_API Builder {
   public:
-  friend struct ::Profiler;
 
   Builder() = delete;
   Builder(Binary& binary);
@@ -92,7 +94,7 @@ class LIEF_API Builder {
 
   //! @brief Write the build result into the ``output`` file
   void write(const std::string& filename) const;
-  
+
   //! @brief Write the build result into the ``os`` stream
   void write(std::ostream& os) const;
 

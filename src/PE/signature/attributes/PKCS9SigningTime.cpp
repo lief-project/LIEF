@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include <spdlog/fmt/fmt.h>
+#include "LIEF/Visitor.hpp"
 #include "LIEF/PE/signature/attributes/PKCS9SigningTime.hpp"
 namespace LIEF {
 namespace PE {

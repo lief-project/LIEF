@@ -17,6 +17,7 @@
 #define LIEF_PE_X509_H_
 #include <array>
 #include <memory>
+#include <vector>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"

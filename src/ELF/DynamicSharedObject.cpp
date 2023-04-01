@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "LIEF/ELF/DynamicSharedObject.hpp"
+#include "LIEF/Visitor.hpp"
 
 #include <iomanip>
 #include <utility>

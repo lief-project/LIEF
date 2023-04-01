@@ -17,7 +17,6 @@
 #include <iterator>
 #include <numeric>
 #include <sstream>
-#include <map>
 #include <cctype>
 
 #include "LIEF/DWARF/enums.hpp"
@@ -28,14 +27,10 @@
 #define getpagesize() 0x1000
 #endif
 
-#include <stdexcept>
-
 #include "logging.hpp"
-
 
 #include "LIEF/utils.hpp"
 
-#include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "LIEF/ELF/utils.hpp"

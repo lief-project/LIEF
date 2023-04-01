@@ -16,6 +16,8 @@
 #ifndef LIEF_PE_CONTENT_INFO_H_
 #define LIEF_PE_CONTENT_INFO_H_
 
+#include <vector>
+
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 

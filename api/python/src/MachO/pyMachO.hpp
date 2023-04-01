@@ -19,6 +19,14 @@
 #include "LIEF/MachO/Parser.hpp"
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/Builder.hpp"
+#include "LIEF/MachO/BindingInfo.hpp"
+#include "LIEF/MachO/ChainedBindingInfo.hpp"
+#include "LIEF/MachO/DataInCode.hpp"
+#include "LIEF/MachO/DyldBindingInfo.hpp"
+#include "LIEF/MachO/FilesetCommand.hpp"
+#include "LIEF/MachO/RelocationDyld.hpp"
+#include "LIEF/MachO/RelocationFixup.hpp"
+#include "LIEF/MachO/RelocationObject.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl_bind.h>

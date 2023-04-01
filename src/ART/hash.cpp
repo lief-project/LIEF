@@ -15,7 +15,8 @@
  */
 
 #include "LIEF/ART/hash.hpp"
-#include "LIEF/ART.hpp"
+#include "LIEF/ART/File.hpp"
+#include "LIEF/ART/Header.hpp"
 
 namespace LIEF {
 namespace ART {

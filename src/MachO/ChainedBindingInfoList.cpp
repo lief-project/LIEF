@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <numeric>
-#include <iomanip>
-
-#include "logging.hpp"
-#include "LIEF/MachO/hash.hpp"
 #include "ChainedBindingInfoList.hpp"
 #include "MachO/ChainedFixup.hpp"
+#include "LIEF/MachO/BindingInfo.hpp"
+#include "LIEF/MachO/ChainedBindingInfo.hpp"
 
 namespace LIEF {
 namespace MachO {

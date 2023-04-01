@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <numeric>
-#include <iomanip>
 #include <utility>
 
 #include "LIEF/MachO/FatBinary.hpp"

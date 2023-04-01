@@ -15,11 +15,12 @@
  */
 #ifndef LIEF_VISITABLE_H_
 #define LIEF_VISITABLE_H_
-
-#include "LIEF/Visitor.hpp"
+#include <type_traits>
 #include "LIEF/visibility.h"
 
 namespace LIEF {
+
+class Visitor;
 
 class LIEF_API Object {
 

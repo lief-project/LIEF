@@ -20,7 +20,6 @@
 #include "LIEF/utils.hpp"
 
 #include "LIEF/PE/hash.hpp"
-#include "LIEF/PE/EnumToString.hpp"
 
 #include "LIEF/PE/resources/ResourceStringTable.hpp"
 

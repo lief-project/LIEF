@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 #include "LIEF/PE/signature/attributes/PKCS9CounterSignature.hpp"
+#include "LIEF/Visitor.hpp"
+
 #include <sstream>
 namespace LIEF {
 namespace PE {

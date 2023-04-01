@@ -15,17 +15,18 @@
  */
 #ifndef LIEF_DEX_CODE_INFO_H_
 #define LIEF_DEX_CODE_INFO_H_
+
+#include <ostream>
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
-
 
 namespace LIEF {
 namespace DEX {
 namespace details {
 struct code_item;
 }
+
 class Parser;
-class Method;
 
 class LIEF_API CodeInfo : public Object {
   friend class Parser;

@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <numeric>
-
 #include "LIEF/DEX/MapList.hpp"
 #include "LIEF/DEX/hash.hpp"
 #include "logging.hpp"

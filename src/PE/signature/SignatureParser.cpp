@@ -18,8 +18,6 @@
 #include <fstream>
 #include <memory>
 
-#include <mbedtls/platform.h>
-#include <mbedtls/oid.h>
 #include <mbedtls/x509_crt.h>
 
 #include "LIEF/utils.hpp"
@@ -45,9 +43,7 @@
 
 #include "LIEF/PE/signature/OIDToString.hpp"
 
-#include "third-party/utfcpp.hpp"
 #include "logging.hpp"
-#include "pkcs7.h"
 
 namespace LIEF {
 namespace PE {

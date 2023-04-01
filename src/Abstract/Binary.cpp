@@ -15,10 +15,9 @@
  */
 #include "LIEF/Abstract/Binary.hpp"
 
-#include "LIEF/config.h"
+#include "LIEF/Visitor.hpp"
 #include "logging.hpp"
 
-#include "LIEF/Abstract/Relocation.hpp"
 #include "LIEF/Abstract/Section.hpp"
 #include "LIEF/Abstract/Symbol.hpp"
 

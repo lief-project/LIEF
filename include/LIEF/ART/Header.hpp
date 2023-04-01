@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_ART_HEADER_H_
 #define LIEF_ART_HEADER_H_
+#include <array>
 
 #include "LIEF/ART/types.hpp"
 #include "LIEF/ART/enums.hpp"

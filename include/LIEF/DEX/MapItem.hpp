@@ -16,6 +16,8 @@
 #ifndef LIEF_MAP_ITEM_H_
 #define LIEF_MAP_ITEM_H_
 
+#include <ostream>
+
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 

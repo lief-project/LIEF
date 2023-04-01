@@ -15,13 +15,9 @@
  */
 #ifndef LIEF_MACHO_CHAINED_BINDING_INFO_LIST_H
 #define LIEF_MACHO_CHAINED_BINDING_INFO_LIST_H
-#include <ostream>
 
-#include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
+#include <vector>
 #include "LIEF/MachO/ChainedBindingInfo.hpp"
-
-#include "LIEF/MachO/enums.hpp"
 
 namespace LIEF {
 namespace MachO {

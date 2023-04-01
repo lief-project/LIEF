@@ -24,6 +24,7 @@
 #include "LIEF/DEX/MapList.hpp"
 #include "LIEF/DEX/instructions.hpp"
 #include "LIEF/DEX/deopt.hpp"
+#include "LIEF/DEX/types.hpp"
 
 namespace LIEF {
 namespace DEX {
@@ -32,6 +33,7 @@ class Class;
 class Method;
 class Type;
 class Prototype;
+class Field;
 
 //! Class that represents a DEX file
 class LIEF_API File : public Object {

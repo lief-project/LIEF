@@ -15,12 +15,10 @@
  */
 #include <iomanip>
 #include <sstream>
-#include <numeric>
 #include <utility>
 
 #include "LIEF/PE/hash.hpp"
 
-#include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/PogoEntry.hpp"
 
 namespace LIEF {

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 #include "LIEF/ELF/DynamicEntryArray.hpp"
+#include "LIEF/Visitor.hpp"
 
 #include "logging.hpp"
 
 #include <algorithm>
 #include <numeric>
 #include <sstream>
-#include <iomanip>
 #include <utility>
 
 namespace LIEF {

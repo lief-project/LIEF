@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <numeric>
 #include <iomanip>
 #include <sstream>
 
 #include "LIEF/PE/hash.hpp"
 
-#include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/CodeIntegrity.hpp"
 #include "PE/Structures.hpp"
 

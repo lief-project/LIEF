@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 #include <iomanip>
-#include <numeric>
 #include <sstream>
-#include <algorithm>
-
-
-#include "LIEF/utils.hpp"
 
 #include "LIEF/ELF/hash.hpp"
 

@@ -19,6 +19,8 @@
 #include <climits>
 
 #include "LIEF/DEX/Class.hpp"
+#include "LIEF/DEX/Field.hpp"
+#include "LIEF/DEX/Method.hpp"
 #include "LIEF/DEX/hash.hpp"
 
 namespace LIEF {

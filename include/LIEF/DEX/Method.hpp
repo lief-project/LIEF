@@ -17,6 +17,7 @@
 #define LIEF_DEX_METHOD_H_
 
 #include <climits>
+#include <vector>
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"

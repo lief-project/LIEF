@@ -13,19 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-#include <numeric>
 #include <sstream>
-#include <algorithm>
-
-
-#include "LIEF/utils.hpp"
-
-#include "logging.hpp"
 
 #include "LIEF/ELF/hash.hpp"
-
-#include "LIEF/ELF/EnumToString.hpp"
 
 #include "LIEF/ELF/NoteDetails.hpp"
 #include "LIEF/ELF/Note.hpp"

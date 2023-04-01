@@ -49,6 +49,7 @@ class Symbol;
 class SymbolVersion;
 class SymbolVersionDefinition;
 class SymbolVersionRequirement;
+class DynamicEntryLibrary;
 class SysvHash;
 struct sizing_info_t;
 

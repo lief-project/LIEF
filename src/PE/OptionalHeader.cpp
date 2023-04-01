@@ -15,6 +15,7 @@
  */
 #include <numeric>
 #include <iomanip>
+#include <algorithm>
 
 #include "LIEF/utils.hpp"
 

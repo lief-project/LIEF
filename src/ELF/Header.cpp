@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 #include <set>
-#include <map>
 #include <iomanip>
 #include <sstream>
 #include <numeric>

@@ -18,9 +18,7 @@
 #include <sstream>
 
 #include "LIEF/ELF/hash.hpp"
-#include "LIEF/ELF/EnumToString.hpp"
 
-#include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/Binary.hpp"
 #include "ELF/Structures.hpp"
 
@@ -28,6 +26,7 @@
 
 namespace LIEF {
 namespace ELF {
+class Note;
 
 CoreFile::CoreFile(Note& note):
   NoteDetails::NoteDetails{note}

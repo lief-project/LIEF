@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "LIEF/ELF/DynamicEntryRunPath.hpp"
+#include "LIEF/Visitor.hpp"
 #include "logging.hpp"
 
 #include <algorithm>

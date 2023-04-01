@@ -15,6 +15,7 @@
  */
 #include <iomanip>
 #include <numeric>
+#include <algorithm>
 
 #include "LIEF/PE/hash.hpp"
 

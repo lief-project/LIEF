@@ -15,6 +15,7 @@
  */
 #include <sstream>
 
+#include "LIEF/Visitor.hpp"
 #include "LIEF/PE/signature/attributes/MsSpcNestedSignature.hpp"
 
 namespace LIEF {

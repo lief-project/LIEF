@@ -18,7 +18,6 @@
 
 #include "VDEX/Structures.hpp"
 
-#include <numeric>
 #include <sstream>
 #include <iomanip>
 

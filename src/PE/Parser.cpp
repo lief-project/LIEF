@@ -13,26 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <fstream>
 #include <iterator>
-#include <ostream>
 #include <string>
 #include <numeric>
-
-#include <mbedtls/platform.h>
-#include <mbedtls/oid.h>
-#include <mbedtls/x509_crt.h>
-
 #include "logging.hpp"
 
 
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
-#include "LIEF/Abstract/Relocation.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
 #include "LIEF/PE/signature/SignatureParser.hpp"
-#include "LIEF/PE/signature/OIDToString.hpp"
 #include "LIEF/PE/CodeViewPDB.hpp"
 #include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/utils.hpp"
@@ -49,12 +40,9 @@
 #include "LIEF/PE/Relocation.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"
 #include "LIEF/PE/Symbol.hpp"
-#include "LIEF/PE/Import.hpp"
-#include "LIEF/PE/ImportEntry.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 
 #include "internal_utils.hpp"
-#include "signature/pkcs7.h"
 #include "Parser.tcc"
 
 // Issue with VS2017

@@ -16,6 +16,7 @@
 #ifndef LIEF_ABSTRACT_FUNCTION_H_
 #define LIEF_ABSTRACT_FUNCTION_H_
 
+#include <vector>
 #include <string>
 #include <set>
 

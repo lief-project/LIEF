@@ -23,8 +23,6 @@
 #include "LIEF/PE/ResourcesManager.hpp"
 #include "LIEF/PE/ResourceData.hpp"
 #include "LIEF/PE/resources/LangCodeItem.hpp"
-#include "LIEF/PE/resources/ResourceStringTable.hpp"
-#include "LIEF/PE/resources/ResourceAccelerator.hpp"
 #include "LIEF/PE/resources/ResourceStringFileInfo.hpp"
 #include "LIEF/PE/resources/ResourceVarFileInfo.hpp"
 #include "LIEF/PE/resources/ResourceFixedFileInfo.hpp"

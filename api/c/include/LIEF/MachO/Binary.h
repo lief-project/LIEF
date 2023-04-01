@@ -24,7 +24,7 @@
  *  @{
  */
 
-#include <stddef.h>
+#include <stdint.h>
 
 #include "LIEF/visibility.h"
 
@@ -33,7 +33,6 @@
 #include "LIEF/MachO/Symbol.h"
 #include "LIEF/MachO/Section.h"
 #include "LIEF/MachO/Segment.h"
-#include "LIEF/MachO/enums.h"
 
 #ifdef __cplusplus
 extern "C" {

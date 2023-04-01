@@ -20,6 +20,7 @@
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
+#include "LIEF/PE/PogoEntry.hpp"
 
 #include "LIEF/PE/enums.hpp"
 

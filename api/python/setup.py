@@ -78,6 +78,12 @@ class Config:
             "-DLIEF_DISABLE_FROZEN={}".format("OFF" if self._config["lief"]["features"]["frozen"] else "ON"),
         ]
 
+        if "include-what-you-use" in self._config["lief"]["build"]:
+            value = self._config["lief"]["build"]["include-what-you-use"]
+            opt.append(f"-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE={value}")
+        else:
+            opt.append("-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=''")
+
         cxx_flags = os.getenv("CXXFLAGS", None)
         c_flags = os.getenv("CFLAGS", None)
 

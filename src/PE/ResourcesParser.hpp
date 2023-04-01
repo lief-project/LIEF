@@ -15,14 +15,16 @@
  */
 #ifndef LIEF_PE_RESOURCES_PARSER_H
 #define LIEF_PE_RESOURCES_PARSER_H
+#include <vector>
 #include "LIEF/errors.hpp"
-#include "LIEF/PE/resources/ResourceVersion.hpp"
+
 namespace LIEF {
 class BinaryStream;
 namespace PE {
 class ResourceVersion;
 class LangCodeItem;
 class ResourceData;
+class ResourceDialog;
 
 struct ResourcesParser {
   //! Parse the resource version structure described by:

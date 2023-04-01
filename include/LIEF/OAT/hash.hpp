@@ -18,10 +18,16 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/hash.hpp"
-#include "LIEF/OAT.hpp"
 
 namespace LIEF {
+class Object;
 namespace OAT {
+
+class Binary;
+class Class;
+class DexFile;
+class Header;
+class Method;
 
 class LIEF_API Hash : public LIEF::Hash {
   public:

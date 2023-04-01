@@ -20,7 +20,12 @@
 #include "LIEF/Abstract/Parser.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 
-#include "LIEF/OAT.hpp"
+
+#if defined(LIEF_OAT_SUPPORT)
+#include "LIEF/OAT/Binary.hpp"
+#include "LIEF/OAT/Parser.hpp"
+#include "LIEF/OAT/utils.hpp"
+#endif
 
 #if defined(LIEF_ELF_SUPPORT)
 #include "LIEF/ELF/utils.hpp"

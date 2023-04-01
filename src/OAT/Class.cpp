@@ -18,9 +18,9 @@
 #include <climits>
 
 #include "LIEF/OAT/Class.hpp"
-#include "LIEF/OAT/Method.hpp"
 #include "LIEF/OAT/hash.hpp"
 #include "LIEF/OAT/EnumToString.hpp"
+#include "LIEF/DEX/Method.hpp"
 
 #include "LIEF/DEX/Class.hpp"
 

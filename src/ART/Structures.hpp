@@ -16,9 +16,6 @@
 #ifndef LIEF_ART_STRUCTURES_H_
 #define LIEF_ART_STRUCTURES_H_
 
-#include <cstring>
-#include <tuple>
-
 #include "LIEF/types.hpp"
 #include "LIEF/ART/enums.hpp"
 #include "LIEF/ART/types.hpp"

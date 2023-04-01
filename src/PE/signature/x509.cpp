@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 #include <cstring>
-#include <iomanip>
-#include <numeric>
-#include <sstream>
 #include <map>
 #include <fstream>
 
@@ -29,12 +26,11 @@
 #include "logging.hpp"
 #include "frozen.hpp"
 
-#include "LIEF/PE/signature/OIDToString.hpp"
+#include "LIEF/Visitor.hpp"
+
 #include "LIEF/PE/signature/x509.hpp"
 #include "LIEF/PE/signature/RsaInfo.hpp"
 #include "LIEF/PE/EnumToString.hpp"
-
-#include "LIEF/utils.hpp"
 
 namespace {
   // Copy this function from mbedtls since it is not exported

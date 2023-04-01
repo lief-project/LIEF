@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-#include <iterator>
-
 #include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"

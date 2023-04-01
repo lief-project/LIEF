@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <stdexcept>
 #include <iomanip>
 #include <algorithm>
 #include <numeric>
-#include <functional>
 #include <iterator>
 
 #include "LIEF/ELF/Parser.hpp"

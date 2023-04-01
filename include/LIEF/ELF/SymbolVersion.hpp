@@ -24,6 +24,7 @@ namespace LIEF {
 namespace ELF {
 class Parser;
 class SymbolVersionAux;
+class SymbolVersionAuxRequirement;
 
 //! Class which represents an entry defined in the ``DT_VERSYM``
 //! dynamic entry

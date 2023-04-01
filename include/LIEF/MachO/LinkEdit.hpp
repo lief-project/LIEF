@@ -42,6 +42,8 @@ class FunctionStarts;
 class LinkerOptHint;
 class SymbolCommand;
 class TwoLevelHints;
+class SegmentSplitInfo;
+class CodeSignature;
 
 class LIEF_API LinkEdit : public SegmentCommand {
 

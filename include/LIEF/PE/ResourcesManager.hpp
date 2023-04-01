@@ -34,6 +34,7 @@ namespace LIEF {
 class VectorStream;
 
 namespace PE {
+class ResourceNode;
 
 //! The Resource Manager provides an enhanced API to manipulate the resource tree.
 class LIEF_API ResourcesManager : public Object {

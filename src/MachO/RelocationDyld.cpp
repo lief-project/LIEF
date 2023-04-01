@@ -13,12 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <numeric>
-#include <iomanip>
-
 #include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/RelocationDyld.hpp"
-#include "LIEF/MachO/EnumToString.hpp"
 
 namespace LIEF {
 namespace MachO {

@@ -15,7 +15,7 @@
  */
 #include <numeric>
 #include <sstream>
-#include <iomanip>
+#include "LIEF/Visitor.hpp"
 
 #include "LIEF/ELF/DynamicEntryFlags.hpp"
 #include "LIEF/ELF/EnumToString.hpp"

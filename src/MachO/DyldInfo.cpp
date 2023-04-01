@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <numeric>
 #include <iomanip>
 #include <sstream>
 #include "logging.hpp"
@@ -21,7 +20,6 @@
 
 #include "LIEF/Abstract/Binary.hpp"
 
-#include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "LIEF/MachO/hash.hpp"
@@ -40,7 +38,6 @@
 
 #include "MachO/exports_trie.hpp"
 #include "MachO/Structures.hpp"
-#include "MachO/TrieNode.hpp"
 
 #include "Object.tcc"
 

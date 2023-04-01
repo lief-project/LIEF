@@ -24,11 +24,13 @@
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
+#include "LIEF/PE/ImportEntry.hpp"
 
 namespace LIEF {
 namespace PE {
 class Parser;
 class Builder;
+class DataDirectory;
 
 namespace details {
 struct pe_import;

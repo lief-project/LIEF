@@ -16,9 +16,6 @@
 #ifndef LIEF_VISITOR_JSONS_H_
 #define LIEF_VISITOR_JSONS_H_
 
-#include "LIEF/config.h"
-
-#include "LIEF/visibility.h"
 #include "LIEF/Visitor.hpp"
 
 #ifndef LIEF_NLOHMANN_JSON_EXTERNAL

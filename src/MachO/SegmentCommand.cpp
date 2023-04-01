@@ -17,13 +17,11 @@
 #include <memory>
 
 #include "logging.hpp"
-#include "LIEF/errors.hpp"
 #include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/Section.hpp"
-#include "LIEF/MachO/Relocation.hpp"
-#include "LIEF/MachO/DyldInfo.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
+#include "LIEF/MachO/Relocation.hpp"
 #include "MachO/Structures.hpp"
 
 namespace LIEF {

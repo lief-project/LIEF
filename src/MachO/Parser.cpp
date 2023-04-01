@@ -13,14 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <fstream>
-#include <iterator>
-#include <ostream>
 #include <algorithm>
 #include <memory>
-#include <regex>
-#include <stdexcept>
-#include <functional>
 
 #include "logging.hpp"
 
@@ -38,7 +32,6 @@
 #include "LIEF/MachO/Relocation.hpp"
 #include "LIEF/MachO/RelocationFixup.hpp"
 #include "LIEF/MachO/RelocationDyld.hpp"
-#include "LIEF/MachO/BindingInfo.hpp"
 #include "MachO/Structures.hpp"
 
 namespace LIEF {

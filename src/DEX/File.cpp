@@ -24,6 +24,8 @@
 #include "LIEF/DEX/Method.hpp"
 #include "LIEF/DEX/Prototype.hpp"
 #include "LIEF/DEX/hash.hpp"
+#include "LIEF/DEX/Type.hpp"
+#include "LIEF/DEX/Field.hpp"
 #include "DEX/Structures.hpp"
 
 #if defined(LIEF_JSON_SUPPORT)

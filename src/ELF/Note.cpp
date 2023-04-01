@@ -23,8 +23,6 @@
 
 #include "LIEF/utils.hpp"
 
-#include "logging.hpp"
-
 #include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/EnumToString.hpp"

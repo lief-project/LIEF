@@ -17,7 +17,7 @@
 #include <numeric>
 #include <sstream>
 #include <utility>
-
+#include "LIEF/Visitor.hpp"
 #include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/utils.hpp"

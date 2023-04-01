@@ -15,21 +15,14 @@
  */
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/DWARF/enums.hpp"
-#include "LIEF/utils.hpp"
 #include "third-party/utfcpp.hpp"
-#include <mbedtls/platform.h>
-#include <mbedtls/asn1.h>
-#include <mbedtls/error.h>
-#include <mbedtls/oid.h>
+
+#include <mbedtls/x509.h>
 #include <mbedtls/x509_crt.h>
 
 #include "intmem.h"
 
-#include <iomanip>
-#include <sstream>
 #include <algorithm>
-#include <ostream>
-#include <climits>
 
 #define TMPL_DECL(T) template T BinaryStream::swap_endian<T>(T u)
 

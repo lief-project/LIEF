@@ -15,6 +15,7 @@
  */
 #include "LIEF/OAT/Method.hpp"
 #include "LIEF/OAT/hash.hpp"
+#include "LIEF/DEX/Method.hpp"
 
 #include "pyOAT.hpp"
 

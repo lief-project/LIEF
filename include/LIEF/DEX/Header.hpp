@@ -17,12 +17,17 @@
 #ifndef LIEF_DEX_HEADER_H_
 #define LIEF_DEX_HEADER_H_
 
-#include "LIEF/DEX/types.hpp"
+#include <array>
+#include <utility>
+#include <cstdint>
+#include <ostream>
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 
 namespace LIEF {
+class Visitor;
+
 namespace DEX {
 class Parser;
 

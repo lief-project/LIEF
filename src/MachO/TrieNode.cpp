@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 #include "TrieNode.hpp"
+#include "logging.hpp"
 
 #include <utility>
+
 #include "LIEF/MachO/Symbol.hpp"
-#include "LIEF/iostream.hpp"
-#include "logging.hpp"
+#include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/MachO/enums.hpp"
+#include "LIEF/iostream.hpp"
 
 namespace LIEF {
 namespace MachO {

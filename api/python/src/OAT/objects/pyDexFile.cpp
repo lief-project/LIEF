@@ -15,6 +15,7 @@
  */
 #include "LIEF/OAT/DexFile.hpp"
 #include "LIEF/OAT/hash.hpp"
+#include "LIEF/DEX/File.hpp"
 
 #include "pyOAT.hpp"
 

@@ -17,8 +17,6 @@
 #include <iomanip>
 #include <sstream>
 
-#include "logging.hpp"
-
 #include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/Note.hpp"

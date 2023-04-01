@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 #include <algorithm>
-#include <fstream>
 #include <iterator>
-#include <stdexcept>
 #include <vector>
 
 #include "LIEF/BinaryStream/FileStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
-#include "logging.hpp"
 
 #include "LIEF/ELF/utils.hpp"
 #include "ELF/Structures.hpp"

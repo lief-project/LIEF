@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
 #include <fstream>
 
 #include "logging.hpp"
 
 #include "LIEF/utils.hpp"
+#include "LIEF/Visitor.hpp"
 
 #include "LIEF/PE/signature/Signature.hpp"
 #include "LIEF/PE/signature/OIDToString.hpp"
@@ -27,16 +27,11 @@
 #include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/attributes.hpp"
 
-#include <mbedtls/asn1write.h>
-
 #include <mbedtls/sha512.h>
 #include <mbedtls/sha256.h>
 #include <mbedtls/sha1.h>
 
 #include <mbedtls/md5.h>
-
-#include "mbedtls/x509_crt.h"
-#include "mbedtls/x509.h"
 
 #include "frozen.hpp"
 

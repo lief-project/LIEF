@@ -16,10 +16,12 @@
 #ifndef LIEF_PE_ATTRIBUTES_GENERIC_TYPE_H_
 #define LIEF_PE_ATTRIBUTES_GENERIC_TYPE_H_
 #include <memory>
+#include <vector>
 
 #include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
+#include "LIEF/PE/signature/types.hpp"
 
 
 namespace LIEF {

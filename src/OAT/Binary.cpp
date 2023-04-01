@@ -15,13 +15,16 @@
  */
 #include <fstream>
 
-#include "LIEF/VDEX.hpp"
 #include "LIEF/VDEX/File.hpp"
 #include "LIEF/DEX/File.hpp"
+#include "LIEF/DEX/Class.hpp"
 
 #include "LIEF/OAT/Binary.hpp"
 #include "LIEF/OAT/hash.hpp"
-#include "logging.hpp"
+#include "LIEF/OAT/Class.hpp"
+#include "LIEF/OAT/Method.hpp"
+#include "LIEF/OAT/DexFile.hpp"
+
 
 #if defined(LIEF_JSON_SUPPORT)
 #include "visitors/json.hpp"

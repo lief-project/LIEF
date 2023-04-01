@@ -16,10 +16,7 @@
 #ifndef LIEF_ELF_DYNAMIC_ENTRY_ARRAY_H_
 #define LIEF_ELF_DYNAMIC_ENTRY_ARRAY_H_
 
-#include <string>
-
 #include "LIEF/visibility.h"
-
 #include "LIEF/ELF/DynamicEntry.hpp"
 
 namespace LIEF {

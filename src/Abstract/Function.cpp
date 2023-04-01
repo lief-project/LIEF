@@ -15,6 +15,7 @@
  */
 #include <algorithm>
 #include <ostream>
+#include "LIEF/Visitor.hpp"
 
 #include "LIEF/Abstract/Function.hpp"
 

@@ -19,7 +19,6 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/hash.hpp"
-#include "LIEF/Abstract/hash.hpp"
 
 namespace LIEF {
 namespace PE {

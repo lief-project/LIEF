@@ -14,20 +14,10 @@
  * limitations under the License.
  */
 #include <algorithm>
-#include <fstream>
 #include <iterator>
-#include <exception>
-#include <string>
-#include <numeric>
-#include <iomanip>
-#include <sstream>
-#include <string>
 
 #include "logging.hpp"
-#include "frozen.hpp"
 #include "mbedtls/md5.h"
-
-
 
 #include "LIEF/PE/utils.hpp"
 #define LIEF_PE_FORCE_UNDEF
@@ -35,13 +25,11 @@
 #include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/Import.hpp"
 #include "LIEF/PE/ImportEntry.hpp"
-#include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/BinaryStream/FileStream.hpp"
 #include "PE/Structures.hpp"
 
 #include "LIEF/utils.hpp"
-
 
 #include "utils/ordinals_lookup_tables/libraries_table.hpp"
 #include "utils/ordinals_lookup_tables_std/libraries_table.hpp"

@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <stdexcept>
 #include <iomanip>
 
-
+#include "LIEF/Visitor.hpp"
 #include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/DynamicEntry.hpp"

@@ -13,12 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <numeric>
-
 #include "LIEF/DEX/Prototype.hpp"
 #include "LIEF/DEX/Type.hpp"
 #include "LIEF/DEX/hash.hpp"
-#include "logging.hpp"
 
 namespace LIEF {
 namespace DEX {

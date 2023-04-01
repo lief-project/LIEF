@@ -15,8 +15,9 @@
  */
 
 #include "LIEF/VDEX/hash.hpp"
-#include "LIEF/VDEX.hpp"
+#include "LIEF/VDEX/File.hpp"
 #include "LIEF/DEX/hash.hpp"
+#include "LIEF/DEX/File.hpp"
 
 namespace LIEF {
 namespace VDEX {

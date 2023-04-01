@@ -19,7 +19,6 @@
 #include "LIEF/utils.hpp"
 
 #include <numeric>
-#include <sstream>
 #include <iomanip>
 
 #define PRINT_FIELD(name,attr) \

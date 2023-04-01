@@ -30,6 +30,7 @@ namespace PE {
 
 class Parser;
 class Builder;
+class RelocationEntry;
 
 namespace details {
 struct pe_base_relocation_block;

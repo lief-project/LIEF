@@ -16,6 +16,7 @@
 #ifndef LIEF_MACHO_DYLD_INFO_COMMAND_H_
 #define LIEF_MACHO_DYLD_INFO_COMMAND_H_
 #include <string>
+#include <set>
 #include <vector>
 #include <ostream>
 #include <memory>
@@ -33,11 +34,13 @@ class vector_iostream;
 class BinaryStream;
 namespace MachO {
 
-class Builder;
+class Binary;
 class BinaryParser;
-class LinkEdit;
+class Builder;
 class DyldBindingInfo;
 class ExportInfo;
+class LinkEdit;
+class RelocationDyld;
 
 namespace details {
 struct dyld_info_command;

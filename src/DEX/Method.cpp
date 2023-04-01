@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include "logging.hpp"
 #include "LIEF/DEX/Method.hpp"
 #include "LIEF/DEX/Prototype.hpp"
 #include "LIEF/DEX/Class.hpp"

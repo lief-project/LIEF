@@ -15,6 +15,7 @@
  */
 #include "LIEF/PE/EnumToString.hpp"
 #include "PE/Structures.hpp"
+#include "LIEF/PE/enums.hpp"
 
 #include "frozen.hpp"
 

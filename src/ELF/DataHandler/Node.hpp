@@ -16,8 +16,6 @@
 #ifndef ELF_DATA_HANDLER_NODE_H_
 #define ELF_DATA_HANDLER_NODE_H_
 
-#include <vector>
-
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
