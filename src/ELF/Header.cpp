@@ -609,8 +609,8 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr)
   os << std::setw(33) << std::setfill(' ') << "Machine type:"              << to_string(hdr.machine_type()) << std::endl;
   os << std::setw(33) << std::setfill(' ') << "File type:"                 << to_string(hdr.file_type()) << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Object file version:"       << to_string(hdr.object_file_version()) << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Entry Point:"               << "0x" << hdr.entrypoint() << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Program header offset:"     << "0x" << hdr.program_headers_offset() << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "Entry Point:"               << std::hex << "0x" << hdr.entrypoint() << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "Program header offset:"     << std::hex << "0x" << hdr.program_headers_offset() << std::endl << std::dec;
   os << std::setw(33) << std::setfill(' ') << "Section header offset:"     << hdr.section_headers_offset() << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Processor Flag:"            << hdr.processor_flag() << " " << processor_flags_str << std::endl;
   os << std::setw(33) << std::setfill(' ') << "Header size:"               << hdr.header_size() << std::endl;
