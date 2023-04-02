@@ -76,14 +76,42 @@ void create<Section>(py::module& m) {
         "Section's entropy")
 
     .def("search",
-        static_cast<size_t (Section::*)(uint64_t, size_t, size_t) const>(&Section::search),
+        [] (const Section& self, uint64_t number, size_t pos, size_t size) -> py::object {
+          size_t res = self.search(number, pos, size);
+          if (res == Section::npos) {
+            return py::none();
+          }
+          return py::cast(res);
+        },
         "Look for **integer** within the current section",
         "number"_a, "pos"_a = 0, "size"_a = 0)
 
     .def("search",
-        static_cast<size_t (Section::*)(const std::string&, size_t) const>(&Section::search),
+        [] (const Section& self, const std::string& str, size_t pos) -> py::object {
+          size_t res = self.search(str, pos);
+          if (res == Section::npos) {
+            return py::none();
+          }
+          return py::cast(res);
+        },
         "Look for **string** within the current section",
         "str"_a, "pos"_a = 0)
+
+    .def("search",
+        [] (const Section& self, py::bytes bytes, size_t pos) -> py::object {
+          std::string raw_str = bytes;
+          std::vector<uint8_t> raw = {
+            std::make_move_iterator(std::begin(raw_str)),
+            std::make_move_iterator(std::end(raw_str))
+          };
+          size_t res = self.search(raw, pos);
+          if (res == Section::npos) {
+            return py::none();
+          }
+          return py::cast(res);
+        },
+        "Look for the given bytes within the current section",
+        "bytes"_a, "pos"_a = 0)
 
     .def("search_all",
         static_cast<std::vector<size_t> (Section::*)(uint64_t, size_t) const>(&Section::search_all),
