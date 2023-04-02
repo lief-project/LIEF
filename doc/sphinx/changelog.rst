@@ -114,7 +114,8 @@ Changelog
 :Python Bindings:
 
   * Move to a build system compliant with ``pyproject.toml``
-  * Provide typing stubs
+  * Provide typing stubs: :issue:`650`
+  * PyPI releases no longer provide source distribution (`sdist`)
 
 :Dependencies:
 

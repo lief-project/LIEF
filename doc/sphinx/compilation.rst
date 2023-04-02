@@ -49,20 +49,59 @@ Libraries only (SDK)
 
 
 
-Library and Python bindings
----------------------------
+Python bindings
+---------------
+
+.. note::
+
+  Since LIEF 0.13.0 the `setup.py` has moved from the project root directory
+  to the `api/python` directory.
 
 .. code-block:: console
 
   $ git clone https://github.com/lief-project/LIEF.git
-  $ cd LIEF
-  $ python ./setup.py [--ninja] build install [--user]
+  $ cd LIEF/api/python
+  $ python ./setup.py build install [--user]
+  # Or
+  $ pip install [-e] .
 
 .. note::
 
   You can speed-up the compilation by installing `ccache <https://ccache.dev/>`_ or `sccache <https://github.com/mozilla/sccache>`_
 
-If you want to enable tests, you can add ``--lief-test`` after ``setup.py``.
+**Before LIEF 0.13.0**, we could tweak the compilation of the Python bindings
+through command line options:
+
+.. code-block:: console
+
+  $ python ./setup.py --lief-no-dex --lief-no-vdex --lief-no-oat [...]
+
+This interface had the drawback to produce long commands and using `setup.py`
+options is even more complicated with `pip install` approach.
+
+Since LIEF 0.13.0, the options of the Python bindings are now defined in a `config-default.toml`
+next to the `setup.py` file. This `.toml` file can be used to configure the different options
+of LIEF and its Python binding:
+
+.. code-block:: toml
+
+  [lief.build]
+  type          = "Release"
+  cache         = true
+  ninja         = true
+  parallel-jobs = 0
+
+  [lief.formats]
+  elf     = true
+  pe      = false
+  macho   = true
+  ...
+
+One can also provide a custom configuration file through the `PYLIEF_CONF` environment variable:
+
+.. code-block:: console
+
+   $ PYLIEF_CONF=/tmp/my-custom.toml pip install .
 
 .. _lief_debug:
 
@@ -76,12 +115,13 @@ by setting either ``RelWithDebInfo`` or ``Debug`` during the cmake's configurati
 
    $ cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo [...] ..
 
-On the other hand, Python bindings can also be compiled with debug information by using
-the ``--debug`` flag:
+On the other hand, Python bindings can also be compiled with debug information
+by changing the `type` in the section `[lief.build]` of `config-default.toml`:
 
-.. code-block:: console
+.. code-block:: toml
 
-   $ python ./setup.py build --debug
+  [lief.build]
+  type = "RelWithDebInfo"
 
 
 .. note::
@@ -90,10 +130,22 @@ the ``--debug`` flag:
 
   .. code-block:: console
 
-   $ python ./setup [--ninja] build --debug develop --user
+    $ PYLIEF_CONF=~/lief-debug.toml python ./setup build develop --user
+
+  With `lief-debug.toml` set to:
+
+  .. code-block:: toml
+
+    [lief.build]
+    type = "RelWithDebInfo"
+    ...
+
+    [lief.logging]
+    enabled = true
+    debug   = true
 
   Compared to the ``install`` command, ``develop`` creates a ``.egg-link``
-  that links to the native LIEF library currently presents in you build directory.
+  that links to the native LIEF library currently presents in your build directory.
 
   The ``--user`` flag is used to avoid creating the ``.egg-link`` system-wide (i.e. ``/usr/lib/python3.9/site-packages``).
   Instead, it links the ``.egg-link`` in the user's local dir (e.g. ``~/.local/lib/python3.9/site-packages``)
@@ -189,13 +241,13 @@ As a result, LIEF can be, for instance, compiled with the following configuratio
 Continuous Integration
 ----------------------
 
-LIEF uses different CI (Github Action, AppVeyor, ...) to test and release nightly builds. The configuration
-of these CI can also be a good source of information for the compilation process.
-In particular, `scripts/docker/travis-linux-sdk.sh <https://github.com/lief-project/LIEF/blob/master/scripts/docker/travis-linux-sdk.sh>`_
+LIEF uses CI Github Action to test and release nightly builds. The configuration
+of this CI can also be a good source of information for the compilation process.
+In particular, `scripts/docker/run_linux_sdk <https://github.com/lief-project/LIEF/blob/master/scripts/docker/run_linux_sdk.sh>`_
 contains the build process to generate the **Linux x86-64 SDK**.
 
-The ``build_script`` section of `.appveyor.yml <https://github.com/lief-project/LIEF/blob/master/.appveyor.yml>`_
-contains the logic for generating **Windows Python wheels and the SDK**.
+On Windows, the SDK is built with the following Python script:
+`scripts/windows/package_sdk.py <https://github.com/lief-project/LIEF/blob/master/scripts/windows/package_sdk.py>`_
 
 For **OSX & iOS**, the CI configs `.github/workflows/ios.yml <https://github.com/lief-project/LIEF/blob/master/.github/workflows/ios.yml>`_
 and `.github/workflows/osx.yml <https://github.com/lief-project/LIEF/blob/master/.github/workflows/osx.yml>`_
@@ -208,7 +260,6 @@ CMake Options
 
 Docker
 ------
-
 
 See `liefproject <https://hub.docker.com/u/liefproject>`_ on Dockerhub
 
