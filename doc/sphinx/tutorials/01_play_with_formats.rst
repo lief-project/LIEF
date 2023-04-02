@@ -23,33 +23,33 @@ We start by the ``ELF`` format. To create an :class:`.ELF.Binary` from a file we
   import lief
   binary = lief.parse("/bin/ls")
 
-Once the ELF file has been parsed, we can access to its :class:`~lief.ELF.Header`:
+Once the ELF file has been parsed, we can access its :class:`~lief.ELF.Header`:
 
 .. code-block:: python
 
   header = binary.header
 
-Change the entry point and the target architecture (:class:`~lief.ELF.ARCH`)
+Change the entry point and the target architecture (:class:`~lief.ELF.ARCH`):
 
 .. code-block:: python
 
   header.entrypoint = 0x123
   header.machine_type = lief.ELF.ARCH.AARCH64
 
-and then rebuild it:
+and then commit these changes into a new ELF binary:
 
 .. code-block:: python
 
   binary.write("ls.modified")
 
-We can also iterate over binary :class:`~lief.ELF.Section`\s as follows:
+We can also iterate over the :class:`~lief.ELF.Section`\s as follows:
 
 .. code-block:: python
 
   for section in binary.sections:
     print(section.name) # section's name
-    print(section.size) # section's size
-    print(len(section.content)) # Should match the previous print
+    print(section.size) # section's size
+    print(len(section.content)) # Should match the previous print
 
 
 To modify the content of the ``.text`` section:
@@ -72,7 +72,7 @@ As for the ``ELF`` part, we can use the :func:`lief.parse` or :func:`lief.PE.par
   binary = lief.parse("C:\\Windows\\explorer.exe")
 
 
-To access to the different PE headers (:class:`~lief.PE.DosHeader`, :class:`~lief.PE.Header` and :class:`~lief.PE.OptionalHeader`):
+To access the different PE headers (:class:`~lief.PE.DosHeader`, :class:`~lief.PE.Header` and :class:`~lief.PE.OptionalHeader`):
 
 .. code-block:: python
 
@@ -80,14 +80,24 @@ To access to the different PE headers (:class:`~lief.PE.DosHeader`, :class:`~lie
   print(binary.header)
   print(binary.optional_header)
 
-One can also access to the imported functions using two methods. The abstract one which will the use the LIEF abstract layer:
+One can also access the imported functions in two ways:
+
+1. Using the *abstract* layer
+2. Using the PE definition
 
 .. code-block:: python
 
+  # Using the abstract layer
   for func in binary.imported_functions:
     print(func)
 
-To have a better granularity on the location of the imported function in libraries or to access to other fields of the PE imports:
+  # Using the PE definition
+  for func in binary.imports:
+    print(func)
+
+To have a better granularity on the location of the imported functions in
+libraries or to access to other fields of the PE imports, we can process the
+imports as follows:
 
 .. code-block:: python
 
@@ -97,28 +107,3 @@ To have a better granularity on the location of the imported function in librari
       if not func.is_ordinal:
         print(func.name)
       print(func.iat_address)
-
-LIEF enables to modify all the properties of the :class:`~lief.PE.Import` and :class:`~lief.PE.ImportEntry` but to take account of the modification, the :class:`~lief.PE.Builder` must be
-configured as follow:
-
-.. code-block:: python
-
-  builder = lief.PE.Builder(binary)
-  builder.build_imports(True)
-  builder.patch_imports(True)
-
-  builder.build()
-  builder.write("result.exe")
-
-
-
-
-
-
-
-
-
-
-
-
-

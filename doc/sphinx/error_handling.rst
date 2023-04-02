@@ -3,9 +3,9 @@
 Error Handling
 ==============
 
-Currently, LIEF manages the errors using two mechanisms:
+LIEF manages the errors using
 
-1. The exceptions (widely used)
+1. The exceptions (removed in LIEF 0.13.0)
 2. `Boost's LEAF <https://www.boost.org/doc/libs/1_75_0/libs/leaf/doc/html/index.html>`_
 
 It turns out that using the C++ exceptions (and the RTTI) were not the better design choice as LIEF (as a

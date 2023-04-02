@@ -114,7 +114,7 @@ The following snippet retrieves the :attr:`~lief.PE.RESOURCE_TYPES.MANIFEST` ele
   ...
 
 
-As manipulating a tree is not very convenient, LIEF includes a :class:`~lief.PE.ResourcesManager` which provides an enhanced API to manipulate binary resources
+As manipulating a tree is not very convenient, LIEF exposes a :class:`~lief.PE.ResourcesManager` which provides an enhanced API to manipulate binary resources
 
 
 Resource Manager
@@ -263,8 +263,6 @@ After the switch:
 .. figure:: ../_static/tutorial/07/mfc_modified.png
   :scale: 90 %
   :align: center
-
-
 
 .. rubric:: References
 

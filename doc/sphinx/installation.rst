@@ -10,11 +10,24 @@ For each platform supported by LIEF there is an SDK that contains:
 * Headers
 * Examples
 
-Nightly build can be downloaded on: https://lief-project.github.io/packages/sdk while releases are available
+Nightly build can be downloaded on: https://lief.s3-website.fr-par.scw.cloud/latest/sdk  while releases are available
 on Github release page: https://github.com/lief-project/LIEF/releases.
 
 Python
 ------
+
+.. _v12-label:
+
+Since 0.12.0
+************
+
+Since LIEF v0.12.0 the Python nightly wheels have moved to Scalway S3.
+They can be installed through:
+
+.. code-block:: console
+
+  $ pip install [--user] --index-url https://lief.s3-website.fr-par.scw.cloud/latest lief
+
 
 .. _v10-label:
 

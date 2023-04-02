@@ -34,7 +34,7 @@ Python
   binary = lief.parse("/usr/bin/ls")
   print(binary)
 
-  # PE
+  # PE
   binary = lief.parse("C:\\Windows\\explorer.exe")
   print(binary)
 
@@ -124,21 +124,4 @@ C
 
 
 C API documentation is available here: :ref:`c-api-ref`
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -10,7 +10,7 @@ By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
 
 -----
 
-When a library is dynamically linked to an executable, the required library is referenced in a ``DT_NEEDED`` entry in the
+When a library is dynamically linked to an executable, the required libraries are referenced in the ``DT_NEEDED`` entries within the
 dynamic table (``PT_DYNAMIC``).
 
 In addition, the functions imported from this library are referenced in the dynamic symbols table with the following attributes:
@@ -18,10 +18,10 @@ In addition, the functions imported from this library are referenced in the dyna
 * :attr:`~lief.ELF.Symbol.value` set to ``0``
 * :attr:`~lief.ELF.Symbol.type` set to :attr:`~lief.ELF.SYMBOL_TYPES.FUNC`
 
-Similarly, when a library exports functions it has a ``DT_SONAME`` entry in the dynamic table, and the functions
-exported are registered in the dynamic symbols table with the following attributes:
+Similarly, when a library exports functions the exported functions
+are registered in the dynamic symbols table with the following attributes:
 
-* :attr:`~lief.ELF.Symbol.value` set to address of the function in the library
+* :attr:`~lief.ELF.Symbol.value` set to the address of the function in the library
 * :attr:`~lief.ELF.Symbol.type` set to :attr:`~lief.ELF.SYMBOL_TYPES.FUNC`
 
 Imported and exported functions are abstracted in LIEF and one can iterate over these elements through
@@ -37,9 +37,9 @@ the properties: :attr:`~lief.Binary.exported_functions` and :attr:`~lief.Binary.
   print(library.exported_functions)
 
 
-When analyzing a binary, the imported functions can leak information about the underlying functionalities of the binary.
-To avoid leaking the imported symbols, one solution could consist in statically linking the library with the executable.
-Another solution is to blow the reverser's mind by swapping these symbols which is the purpose of this tutorial:
+When analyzing a binary, the imported functions can reveal information about the underlying functionalities of the binary.
+To avoid revealing the imported symbols, one solution could consist in statically linking the library with the executable.
+Another solution is to blow the reverser's mind by swapping these symbols which is the purpose of this tutorial.
 
 Let's consider the following code:
 

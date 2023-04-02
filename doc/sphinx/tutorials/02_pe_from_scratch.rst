@@ -12,7 +12,8 @@ By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
 
 ----------
 
-LIEF enables to create simple PE from scratch. The aim of this tutorial is to create an executable which pop a ``MessageBoxA`` with "Hello Word"
+LIEF enables creating a simple PE from scratch.
+The aim of this tutorial is to create an executable which shows a "Hello Word" ``MessageBoxA``.
 
 First, we have to create a :class:`~lief.PE.Binary` :
 
