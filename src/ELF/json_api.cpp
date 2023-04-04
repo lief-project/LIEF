@@ -17,6 +17,9 @@
 
 #if LIEF_JSON_SUPPORT
 #include "ELF/json_internal.hpp"
+#else /* JSON not enabled */
+#include "logging.hpp"
+#include "LIEF/json.hpp"
 #endif
 
 namespace LIEF {
