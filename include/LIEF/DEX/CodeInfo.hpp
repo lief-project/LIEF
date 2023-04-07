@@ -16,7 +16,9 @@
 #ifndef LIEF_DEX_CODE_INFO_H_
 #define LIEF_DEX_CODE_INFO_H_
 
+#include <cstdint>
 #include <ostream>
+
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 

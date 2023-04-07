@@ -14,6 +14,8 @@
  */
 #ifndef LIEF_ELF_LAYOUT_H_
 #define LIEF_ELF_LAYOUT_H_
+
+#include <cstdint>
 #include <unordered_map>
 #include <string>
 #include <vector>
