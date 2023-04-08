@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_RELOCATION_H_
-#define LIEF_PE_RELOCATION_H_
+#ifndef LIEF_PE_RELOCATION_H
+#define LIEF_PE_RELOCATION_H
 #include <vector>
 #include <ostream>
 #include <memory>
@@ -87,4 +87,4 @@ class LIEF_API Relocation : public Object {
 
 }
 }
-#endif /* RELOCATION_H_ */
+#endif /* RELOCATION_H */

@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_TO_JSON_H_
-#define LIEF_TO_JSON_H_
+#ifndef LIEF_TO_JSON_H
+#define LIEF_TO_JSON_H
 
 #include "LIEF/config.h"
 

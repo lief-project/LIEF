@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_CORE_FILE_H_
-#define LIEF_ELF_CORE_FILE_H_
+#ifndef LIEF_ELF_CORE_FILE_H
+#define LIEF_ELF_CORE_FILE_H
 
 #include <vector>
 #include <ostream>

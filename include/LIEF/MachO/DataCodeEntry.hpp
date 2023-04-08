@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_MACHO_DATA_CODE_ENTRY_H_
-#define LIEF_MACHO_DATA_CODE_ENTRY_H_
+#ifndef LIEF_MACHO_DATA_CODE_ENTRY_H
+#define LIEF_MACHO_DATA_CODE_ENTRY_H
 #include <ostream>
 
 #include "LIEF/visibility.h"

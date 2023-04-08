@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_MACHO_LINK_EDIT_H_
-#define LIEF_MACHO_LINK_EDIT_H_
+#ifndef LIEF_MACHO_LINK_EDIT_H
+#define LIEF_MACHO_LINK_EDIT_H
 
 #include <string>
 #include <vector>

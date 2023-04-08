@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_OAT_UTILS_H_
-#define LIEF_OAT_UTILS_H_
+#ifndef LIEF_OAT_UTILS_H
+#define LIEF_OAT_UTILS_H
 
 #include <string>
 #include <vector>

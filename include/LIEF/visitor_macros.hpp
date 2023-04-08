@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_VISITOR_MACROS_H_
-#define LIEF_VISITOR_MACROS_H_
+#ifndef LIEF_VISITOR_MACROS_H
+#define LIEF_VISITOR_MACROS_H
 #include "LIEF/config.h"
 
 // PE Support

@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_RESOURCE_ACCELERATOR_H_
-#define LIEF_PE_RESOURCE_ACCELERATOR_H_
+#ifndef LIEF_PE_RESOURCE_ACCELERATOR_H
+#define LIEF_PE_RESOURCE_ACCELERATOR_H
 
 #include <string>
 #include <set>

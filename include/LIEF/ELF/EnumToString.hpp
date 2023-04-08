@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef ELF_ENUM_TO_STRING_H_
-#define ELF_ENUM_TO_STRING_H_
+#ifndef ELF_ENUM_TO_STRING_H
+#define ELF_ENUM_TO_STRING_H
 #include "LIEF/visibility.h"
 #include "LIEF/ELF/enums.hpp"
 

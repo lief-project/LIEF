@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_MACHO_UNDEF_H_
-#define LIEF_MACHO_UNDEF_H_
+#ifndef LIEF_MACHO_UNDEF_H
+#define LIEF_MACHO_UNDEF_H
 
 #ifdef MH_MAGIC
 #pragma message("LIEF will disable #define enums. Please use LIEF_MACHO_XXXX or LIEF::MACHO::XXXX instead!")

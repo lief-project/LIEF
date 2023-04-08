@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_TYPES_H_
-#define LIEF_TYPES_H_
+#ifndef LIEF_TYPES_H
+#define LIEF_TYPES_H
 #include <stdint.h>
 #include <inttypes.h>
 #include <cstddef>

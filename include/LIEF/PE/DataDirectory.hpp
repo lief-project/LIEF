@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_DATADIRECTORY_H_
-#define LIEF_PE_DATADIRECTORY_H_
+#ifndef LIEF_PE_DATADIRECTORY_H
+#define LIEF_PE_DATADIRECTORY_H
 
 #include <memory>
 #include <ostream>
@@ -89,4 +89,4 @@ class LIEF_API DataDirectory : public Object {
 }
 }
 
-#endif /* LIEF_PE_DATADIRECTORY_H_ */
+#endif /* LIEF_PE_DATADIRECTORY_H */

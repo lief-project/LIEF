@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_MAP_ITEM_H_
-#define LIEF_MAP_ITEM_H_
+#ifndef LIEF_MAP_ITEM_H
+#define LIEF_MAP_ITEM_H
 
 #include <ostream>
 

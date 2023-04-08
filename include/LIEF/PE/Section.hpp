@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_SECTION_H_
-#define LIEF_PE_SECTION_H_
+#ifndef LIEF_PE_SECTION_H
+#define LIEF_PE_SECTION_H
 #include <ostream>
 #include <vector>
 #include <string>
@@ -155,4 +155,4 @@ class LIEF_API Section : public LIEF::Section {
 
 } // namespace PE
 } // namespace LIEF
-#endif /* _PE_SECTION_H_ */
+#endif /* _PE_SECTION_H */

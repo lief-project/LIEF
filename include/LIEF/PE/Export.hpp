@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_EXPORT_H_
-#define LIEF_PE_EXPORT_H_
+#ifndef LIEF_PE_EXPORT_H
+#define LIEF_PE_EXPORT_H
 
 #include <ostream>
 #include <string>
@@ -103,4 +103,4 @@ class LIEF_API Export : public Object {
 }
 }
 
-#endif /* PE_EXPORT_H_ */
+#endif /* PE_EXPORT_H */

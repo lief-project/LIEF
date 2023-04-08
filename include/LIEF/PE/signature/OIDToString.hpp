@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_OID_TO_STRING_H_
-#define LIEF_PE_OID_TO_STRING_H_
+#ifndef LIEF_PE_OID_TO_STRING_H
+#define LIEF_PE_OID_TO_STRING_H
 #include "LIEF/visibility.h"
 #include "LIEF/PE/signature/types.hpp"
 

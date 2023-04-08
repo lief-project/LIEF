@@ -12,8 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_LEAF_H_
-#define LIEF_LEAF_H_
+#ifndef LIEF_LEAF_H
+#define LIEF_LEAF_H
 #include "LIEF/config.h"
 
 // LEAF raises warnings which pollute the LIEF's warning

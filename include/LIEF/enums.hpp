@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ENUMS_H_
-#define LIEF_ENUMS_H_
+#ifndef LIEF_ENUMS_H
+#define LIEF_ENUMS_H
 #include <type_traits>
 
 #define _LIEF_EN(N) class N : size_t

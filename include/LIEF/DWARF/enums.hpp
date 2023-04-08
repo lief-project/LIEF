@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_DWARF_ENUMS_H_
-#define LIEF_DWARF_ENUMS_H_
+#ifndef LIEF_DWARF_ENUMS_H
+#define LIEF_DWARF_ENUMS_H
 
 namespace LIEF {
 namespace DWARF {

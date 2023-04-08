@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_MACHO_BINARY_PARSER_H_
-#define LIEF_MACHO_BINARY_PARSER_H_
+#ifndef LIEF_MACHO_BINARY_PARSER_H
+#define LIEF_MACHO_BINARY_PARSER_H
 #include <memory>
 #include <string>
 #include <vector>

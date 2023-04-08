@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_SIGNATURE_RSA_INFO_H_
-#define LIEF_PE_SIGNATURE_RSA_INFO_H_
+#ifndef LIEF_PE_SIGNATURE_RSA_INFO_H
+#define LIEF_PE_SIGNATURE_RSA_INFO_H
 #include <vector>
 #include <ostream>
 

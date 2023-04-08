@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_JSON_H_
-#define LIEF_PE_JSON_H_
+#ifndef LIEF_PE_JSON_H
+#define LIEF_PE_JSON_H
 
 #include "LIEF/visibility.h"
 #include <string>

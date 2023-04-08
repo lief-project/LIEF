@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_RESOURCE_DATA_H_
-#define LIEF_PE_RESOURCE_DATA_H_
+#ifndef LIEF_PE_RESOURCE_DATA_H
+#define LIEF_PE_RESOURCE_DATA_H
 
 #include <vector>
 
@@ -83,4 +83,4 @@ class LIEF_API ResourceData : public ResourceNode {
 
 } // namespace PE
 } // namepsace LIEF
-#endif /* RESOURCEDATA_H_ */
+#endif /* RESOURCEDATA_H */

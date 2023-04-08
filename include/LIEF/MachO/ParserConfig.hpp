@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_MACHO_PARSER_CONFIG_H_
-#define LIEF_MACHO_PARSER_CONFIG_H_
+#ifndef LIEF_MACHO_PARSER_CONFIG_H
+#define LIEF_MACHO_PARSER_CONFIG_H
 #include "LIEF/visibility.h"
 
 namespace LIEF {

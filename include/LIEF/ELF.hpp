@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_H_
-#define LIEF_ELF_H_
+#ifndef LIEF_ELF_H
+#define LIEF_ELF_H
 #include "LIEF/config.h"
 
 #if defined(LIEF_ELF_SUPPORT)

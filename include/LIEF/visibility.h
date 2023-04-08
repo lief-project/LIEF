@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef LIEF_SYMBOL_VISIBILITY_H_
-#define LIEF_SYMBOL_VISIBILITY_H_
+#ifndef LIEF_SYMBOL_VISIBILITY_H
+#define LIEF_SYMBOL_VISIBILITY_H
 
 // Thanks to https://github.com/aguinet/dragonffi/blob/40f3fecb9530a2ef840f63882c5284ea5e8dc9e8/include/dffi/exports.h
 #if defined _WIN32 || defined __CYGWIN__

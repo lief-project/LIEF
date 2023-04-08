@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_MACHO_SUB_FRAMEWORK_H_
-#define LIEF_MACHO_SUB_FRAMEWORK_H_
+#ifndef LIEF_MACHO_SUB_FRAMEWORK_H
+#define LIEF_MACHO_SUB_FRAMEWORK_H
 #include <string>
 #include <ostream>
 

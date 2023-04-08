@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_DYNAMIC_ENTRY_LIBRARY_H_
-#define LIEF_ELF_DYNAMIC_ENTRY_LIBRARY_H_
+#ifndef LIEF_ELF_DYNAMIC_ENTRY_LIBRARY_H
+#define LIEF_ELF_DYNAMIC_ENTRY_LIBRARY_H
 
 #include <string>
 #include <ostream>
