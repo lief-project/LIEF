@@ -12,8 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_UTFCPP_H_
-#define LIEF_UTFCPP_H_
+#ifndef LIEF_UTFCPP_H
+#define LIEF_UTFCPP_H
 #include "LIEF/config.h"
 
 #ifndef LIEF_EXTERNAL_UTF8CPP

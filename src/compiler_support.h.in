@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_COMPILER_SUPPORT_H_
-#define LIEF_COMPILER_SUPPORT_H_
+#ifndef LIEF_COMPILER_SUPPORT_H
+#define LIEF_COMPILER_SUPPORT_H
 
 #define LIEF_SUPPORT_CXX11 @LIEF_SUPPORT_CXX11@
 #define LIEF_SUPPORT_CXX14 @LIEF_SUPPORT_CXX14@

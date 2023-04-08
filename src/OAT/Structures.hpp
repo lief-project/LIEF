@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_OAT_STRUCTURES_H_
-#define LIEF_OAT_STRUCTURES_H_
+#ifndef LIEF_OAT_STRUCTURES_H
+#define LIEF_OAT_STRUCTURES_H
 
 #include <cstring>
 #include <tuple>
