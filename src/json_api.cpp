@@ -45,6 +45,8 @@
   #if defined(LIEF_VDEX_SUPPORT)
     #include "VDEX/json_internal.hpp"
   #endif
+#else
+  #include "logging.hpp"
 #endif // LIEF_JSON_SUPPORT
 
 namespace LIEF {
