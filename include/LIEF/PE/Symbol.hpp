@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_SYMBOLS_H_
-#define LIEF_PE_SYMBOLS_H_
+#ifndef LIEF_PE_SYMBOLS_H
+#define LIEF_PE_SYMBOLS_H
 
 #include <string>
 #include <vector>
@@ -85,4 +85,4 @@ class LIEF_API Symbol : public LIEF::Symbol {
 
 } // namespace PE
 } // namespace LIEF
-#endif /* SYMBOLS_H_ */
+#endif /* SYMBOLS_H */

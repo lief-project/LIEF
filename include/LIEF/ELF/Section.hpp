@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_SECTION_H_
-#define LIEF_ELF_SECTION_H_
+#ifndef LIEF_ELF_SECTION_H
+#define LIEF_ELF_SECTION_H
 
 #include <string>
 #include <vector>
@@ -189,4 +189,4 @@ class LIEF_API Section : public LIEF::Section {
 
 }
 }
-#endif /* _ELF_SECTION_H_ */
+#endif /* _ELF_SECTION_H */

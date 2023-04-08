@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_LOAD_CONFIGURATIONS_H_
-#define LIEF_PE_LOAD_CONFIGURATIONS_H_
+#ifndef LIEF_PE_LOAD_CONFIGURATIONS_H
+#define LIEF_PE_LOAD_CONFIGURATIONS_H
 
 #include "LIEF/PE/LoadConfigurations/LoadConfigurationV7.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfigurationV6.hpp"

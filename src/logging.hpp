@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PRIVATE_LOGGING_H_
-#define LIEF_PRIVATE_LOGGING_H_
+#ifndef LIEF_PRIVATE_LOGGING_H
+#define LIEF_PRIVATE_LOGGING_H
 #include <memory>
 #include "LIEF/logging.hpp" // Public interface
 #include "LIEF/types.hpp"

@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_RESOURCE_NODE_H_
-#define LIEF_PE_RESOURCE_NODE_H_
+#ifndef LIEF_PE_RESOURCE_NODE_H
+#define LIEF_PE_RESOURCE_NODE_H
 #include <string>
 #include <vector>
 #include <memory>
@@ -134,4 +134,4 @@ class LIEF_API ResourceNode : public Object {
 };
 }
 }
-#endif /* RESOURCENODE_H_ */
+#endif /* RESOURCENODE_H */

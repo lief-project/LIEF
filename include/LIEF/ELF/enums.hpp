@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_ENUMS_H_
-#define LIEF_ELF_ENUMS_H_
+#ifndef LIEF_ELF_ENUMS_H
+#define LIEF_ELF_ENUMS_H
 #include "LIEF/enums.hpp"
 #include "LIEF/ELF/undef.h"
 #include <cstdint>

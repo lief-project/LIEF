@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ABSTRACT_BUILDER_H_
-#define LIEF_ABSTRACT_BUILDER_H_
+#ifndef LIEF_ABSTRACT_BUILDER_H
+#define LIEF_ABSTRACT_BUILDER_H
 
 #include <string>
 #include <memory>
 #include <vector>
 
 #include "LIEF/visibility.h"
-
-struct Profiler;
 
 namespace LIEF {
 class BinaryStream;
@@ -31,8 +29,6 @@ class Binary;
 //! Main interface to parse an executable regardless of its format
 class LIEF_API Parser {
   public:
-  friend struct ::Profiler;
-
   //! Construct an LIEF::Binary from the given filename
   //!
   //! @warning If the target file is a FAT Mach-O, it will return the **last** one

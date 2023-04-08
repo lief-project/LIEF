@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_VDEX_PARSER_H_
-#define LIEF_VDEX_PARSER_H_
+#ifndef LIEF_VDEX_PARSER_H
+#define LIEF_VDEX_PARSER_H
 
 
 #include <memory>
@@ -25,16 +25,12 @@
 
 #include "LIEF/VDEX/File.hpp"
 
-struct Profiler;
-
 namespace LIEF {
 namespace VDEX {
 
 //! @brief Class which parse an VDEX file and transform into a VDEX::File object
 class LIEF_API Parser {
   public:
-  friend struct ::Profiler;
-
   static std::unique_ptr<File> parse(const std::string& file);
   static std::unique_ptr<File> parse(const std::vector<uint8_t>& data, const std::string& name = "");
 

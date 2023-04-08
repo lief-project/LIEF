@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_FROZEN_H_
-#define LIEF_FROZEN_H_
+#ifndef LIEF_FROZEN_H
+#define LIEF_FROZEN_H
 #include "LIEF/config.h"
 #include "compiler_support.h"
 

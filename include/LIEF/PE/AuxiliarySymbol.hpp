@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_AUXILIARY_SYMBOL_H_
-#define LIEF_PE_AUXILIARY_SYMBOL_H_
+#ifndef LIEF_PE_AUXILIARY_SYMBOL_H
+#define LIEF_PE_AUXILIARY_SYMBOL_H
 
 #include "LIEF/visibility.h"
 namespace LIEF {

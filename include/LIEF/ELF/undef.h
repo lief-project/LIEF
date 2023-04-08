@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_UNDEF_H_
-#define LIEF_ELF_UNDEF_H_
+#ifndef LIEF_ELF_UNDEF_H
+#define LIEF_ELF_UNDEF_H
 
 #ifdef PT_LOAD
 #pragma message("LIEF will disable #define enums. Please use LIEF_ELF_XXXX or LIEF::ELF::XXXX instead!")

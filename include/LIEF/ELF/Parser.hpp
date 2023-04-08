@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_PARSER_H_
-#define LIEF_ELF_PARSER_H_
+#ifndef LIEF_ELF_PARSER_H
+#define LIEF_ELF_PARSER_H
 #include <unordered_map>
 
 #include "LIEF/visibility.h"
@@ -23,8 +23,6 @@
 #include "LIEF/Abstract/Parser.hpp"
 #include "LIEF/errors.hpp"
 #include "LIEF/ELF/enums.hpp"
-
-struct Profiler;
 
 namespace LIEF {
 class BinaryStream;
@@ -42,8 +40,6 @@ class Segment;
 class LIEF_API Parser : public LIEF::Parser {
   friend class OAT::Parser;
   public:
-  friend struct ::Profiler;
-
   static constexpr uint32_t NB_MAX_SYMBOLS         = 1000000;
   static constexpr uint32_t DELTA_NB_SYMBOLS       = 3000;
   static constexpr uint32_t NB_MAX_BUCKETS         = NB_MAX_SYMBOLS;

@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_OSTREAM_H_
-#define LIEF_OSTREAM_H_
+#ifndef LIEF_OSTREAM_H
+#define LIEF_OSTREAM_H
 #include <istream>
 #include <streambuf>
 #include <cstdint>

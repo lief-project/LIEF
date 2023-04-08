@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_BINARY_STREAM_H_
-#define LIEF_BINARY_STREAM_H_
+#ifndef LIEF_BINARY_STREAM_H
+#define LIEF_BINARY_STREAM_H
 
 #include <cstdint>
 #include <vector>

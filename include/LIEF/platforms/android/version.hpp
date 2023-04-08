@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PLATFORMS_ANDROID_VERSIONS_H_
-#define LIEF_PLATFORMS_ANDROID_VERSIONS_H_
+#ifndef LIEF_PLATFORMS_ANDROID_VERSIONS_H
+#define LIEF_PLATFORMS_ANDROID_VERSIONS_H
 #include "LIEF/visibility.h"
 
 namespace LIEF {

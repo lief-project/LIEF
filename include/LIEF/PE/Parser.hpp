@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_PARSER_H_
-#define LIEF_PE_PARSER_H_
+#ifndef LIEF_PE_PARSER_H
+#define LIEF_PE_PARSER_H
 
 #include <set>
 #include <string>
@@ -26,8 +26,6 @@
 
 #include "LIEF/Abstract/Parser.hpp"
 #include "LIEF/PE/enums.hpp"
-
-struct Profiler;
 
 namespace LIEF {
 class BinaryStream;
@@ -46,7 +44,6 @@ struct pe_resource_directory_table;
 //! Parser::parse should be used to get a LIEF::PE::Binary
 class LIEF_API Parser : public LIEF::Parser {
   public:
-  friend struct ::Profiler;
 
   //! Maximum size of the data read
   static constexpr size_t MAX_DATA_SIZE = 3_GB;

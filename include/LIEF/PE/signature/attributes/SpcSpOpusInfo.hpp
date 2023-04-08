@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_ATTRIBUTES_SPC_SP_OPUS_INFO_H_
-#define LIEF_PE_ATTRIBUTES_SPC_SP_OPUS_INFO_H_
+#ifndef LIEF_PE_ATTRIBUTES_SPC_SP_OPUS_INFO_H
+#define LIEF_PE_ATTRIBUTES_SPC_SP_OPUS_INFO_H
 #include <memory>
 
 #include "LIEF/visibility.h"

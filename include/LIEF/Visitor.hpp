@@ -14,8 +14,8 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-#ifndef LIEF_VISITOR_H_
-#define LIEF_VISITOR_H_
+#ifndef LIEF_VISITOR_H
+#define LIEF_VISITOR_H
 #include <set>
 #include <utility>
 #include <cstddef>

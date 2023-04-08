@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ART_PARSER_H_
-#define LIEF_ART_PARSER_H_
+#ifndef LIEF_ART_PARSER_H
+#define LIEF_ART_PARSER_H
 #include <memory>
 #include <vector>
 
 #include "LIEF/ART/types.hpp"
 #include "LIEF/visibility.h"
-
-struct Profiler;
 
 namespace LIEF {
 class BinaryStream;
@@ -32,7 +30,6 @@ class File;
 //! @brief Class which parses an ART file and transform into a ART::File object
 class LIEF_API Parser {
   public:
-  friend struct ::Profiler;
   static std::unique_ptr<File> parse(const std::string& file);
   static std::unique_ptr<File> parse(std::vector<uint8_t> data, const std::string& name = "");
 

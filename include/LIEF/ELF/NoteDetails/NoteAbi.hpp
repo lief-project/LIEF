@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_NOTE_DETAILS_ABI_H_
-#define LIEF_ELF_NOTE_DETAILS_ABI_H_
+#ifndef LIEF_ELF_NOTE_DETAILS_ABI_H
+#define LIEF_ELF_NOTE_DETAILS_ABI_H
 
 #include <vector>
 #include <ostream>

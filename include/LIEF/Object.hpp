@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_VISITABLE_H_
-#define LIEF_VISITABLE_H_
+#ifndef LIEF_VISITABLE_H
+#define LIEF_VISITABLE_H
 #include <type_traits>
 #include "LIEF/visibility.h"
 

@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_MACHO_PARSER_H_
-#define LIEF_MACHO_PARSER_H_
+#ifndef LIEF_MACHO_PARSER_H
+#define LIEF_MACHO_PARSER_H
 #include <string>
 #include <vector>
 #include <memory>
@@ -26,8 +26,6 @@
 #include "LIEF/Abstract/Parser.hpp"
 
 #include "LIEF/MachO/ParserConfig.hpp"
-
-struct Profiler;
 
 namespace LIEF {
 class BinaryStream;
@@ -44,7 +42,6 @@ class FatBinary;
 //! a FatBinary object.
 class LIEF_API Parser : public LIEF::Parser {
   public:
-  friend struct ::Profiler;
   Parser& operator=(const Parser& copy) = delete;
   Parser(const Parser& copy)            = delete;
 

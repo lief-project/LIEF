@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_DEX_PARSER_H_
-#define LIEF_DEX_PARSER_H_
+#ifndef LIEF_DEX_PARSER_H
+#define LIEF_DEX_PARSER_H
 
 #include <memory>
 
@@ -23,8 +23,6 @@
 #include "LIEF/BinaryStream/VectorStream.hpp"
 
 #include "LIEF/DEX/File.hpp"
-
-struct Profiler;
 
 namespace LIEF {
 namespace DEX {
@@ -35,7 +33,7 @@ class Field;
 //! Class which parses a DEX file to produce a DEX::File object
 class LIEF_API Parser {
   public:
-  friend struct ::Profiler;
+
   //! Parse the DEX file from the file path given in parameter
   static std::unique_ptr<File> parse(const std::string& file);
   static std::unique_ptr<File> parse(std::vector<uint8_t> data, const std::string& name = "");

@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_VERSION_H_
-#define LIEF_VERSION_H_
+#ifndef LIEF_VERSION_H
+#define LIEF_VERSION_H
 
 #if defined(NDEBUG)
   #define LIEF_NAME "@PROJECT_NAME@"

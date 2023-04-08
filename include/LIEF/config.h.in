@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef LIEF_CONFIG_H_
-#define LIEF_CONFIG_H_
+#ifndef LIEF_CONFIG_H
+#define LIEF_CONFIG_H
 
 // Main formats
 #cmakedefine LIEF_PE_SUPPORT       @LIEF_PE_SUPPORT@

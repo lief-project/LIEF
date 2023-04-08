@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PKCS7_H_
-#define LIEF_PKCS7_H_
+#ifndef LIEF_PKCS7_H
+#define LIEF_PKCS7_H
 
 #include "mbedtls/oid.h"
 

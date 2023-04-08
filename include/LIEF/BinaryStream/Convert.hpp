@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_CONVERT_H_
-#define LIEF_CONVERT_H_
+#ifndef LIEF_CONVERT_H
+#define LIEF_CONVERT_H
 namespace LIEF {
 namespace Convert {
 
@@ -24,4 +24,4 @@ void swap_endian(T*);
 }
 }
 
-#endif // LIEF_CONVERT_H_
+#endif // LIEF_CONVERT_H

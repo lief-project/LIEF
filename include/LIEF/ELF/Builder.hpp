@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_BUIDLER_H_
-#define LIEF_ELF_BUIDLER_H_
+#ifndef LIEF_ELF_BUIDLER_H
+#define LIEF_ELF_BUIDLER_H
 
 #include <vector>
 #include <memory>
@@ -31,8 +31,6 @@
 #include "LIEF/ELF/enums.hpp"
 
 #include "LIEF/ELF/enums.hpp"
-
-struct Profiler;
 
 namespace LIEF {
 namespace ELF {
@@ -53,9 +51,8 @@ class LIEF_API Builder {
   friend class ObjectFileLayout;
   friend class Layout;
   friend class ExeLayout;
-  public:
-  friend struct ::Profiler;
 
+  public:
   //! Configuration options to tweak the building process
   struct config_t {
     bool dt_hash         = true;

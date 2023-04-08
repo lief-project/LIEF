@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_SYMBOL_H_
-#define LIEF_ELF_SYMBOL_H_
+#ifndef LIEF_ELF_SYMBOL_H
+#define LIEF_ELF_SYMBOL_H
 
 #include <string>
 #include <vector>
@@ -166,4 +166,4 @@ class LIEF_API Symbol : public LIEF::Symbol {
 };
 }
 }
-#endif /* _ELF_SYMBOL_H_ */
+#endif /* _ELF_SYMBOL_H */

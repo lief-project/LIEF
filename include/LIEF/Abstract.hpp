@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ABSTRACT_H_
-#define LIEF_ABSTRACT_H_
+#ifndef LIEF_ABSTRACT_H
+#define LIEF_ABSTRACT_H
 
 #include <LIEF/Abstract/Binary.hpp>
 #include <LIEF/Abstract/enums.hpp>

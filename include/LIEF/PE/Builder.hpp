@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_BUILDER_H_
-#define LIEF_PE_BUILDER_H_
+#ifndef LIEF_PE_BUILDER_H
+#define LIEF_PE_BUILDER_H
 
 #include <cstring>
 #include <string>

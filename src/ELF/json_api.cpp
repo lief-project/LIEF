@@ -15,11 +15,14 @@
  */
 #include "LIEF/config.h"
 
-#if LIEF_JSON_SUPPORT
-#include "ELF/json_internal.hpp"
+#if defined(LIEF_JSON_SUPPORT)
+  #include "ELF/json_internal.hpp"
+#else
+  #include "logging.hpp"
 #endif
 
 namespace LIEF {
+class Object;
 namespace ELF {
 
 std::string to_json(const Object& v) {

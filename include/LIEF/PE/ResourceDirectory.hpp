@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_RESOURCE_DIRECTORY_H_
-#define LIEF_PE_RESOURCE_DIRECTORY_H_
+#ifndef LIEF_PE_RESOURCE_DIRECTORY_H
+#define LIEF_PE_RESOURCE_DIRECTORY_H
 
 #include <string>
 #include <list>
@@ -102,4 +102,4 @@ class LIEF_API ResourceDirectory : public ResourceNode {
 };
 }
 }
-#endif /* RESOURCEDIRECTORY_H_ */
+#endif /* RESOURCEDIRECTORY_H */

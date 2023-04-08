@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_RELOCATION_H_
-#define LIEF_ELF_RELOCATION_H_
+#ifndef LIEF_ELF_RELOCATION_H
+#define LIEF_ELF_RELOCATION_H
 
 #include <string>
 #include <map>
@@ -153,4 +153,4 @@ class LIEF_API Relocation : public LIEF::Relocation {
 
 }
 }
-#endif /* _ELF_RELOCATION_H_ */
+#endif /* _ELF_RELOCATION_H */

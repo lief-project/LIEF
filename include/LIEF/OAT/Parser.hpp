@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_OAT_PARSER_H_
-#define LIEF_OAT_PARSER_H_
+#ifndef LIEF_OAT_PARSER_H
+#define LIEF_OAT_PARSER_H
 #include <memory>
 
 #include "LIEF/visibility.h"
 #include "LIEF/ELF/Parser.hpp"
-
-struct Profiler;
 
 namespace LIEF {
 
@@ -39,7 +37,6 @@ class Class;
 //! Class to parse an OAT file to produce an OAT::Binary
 class LIEF_API Parser : public LIEF::ELF::Parser {
   public:
-  friend struct ::Profiler;
   //! Parse an OAT file
   static std::unique_ptr<Binary> parse(const std::string& oat_file);
   static std::unique_ptr<Binary> parse(const std::string& oat_file, const std::string& vdex_file);
@@ -94,9 +91,6 @@ class LIEF_API Parser : public LIEF::ELF::Parser {
   uint64_t exec_start_ = 0;
   uint64_t exec_size_ = 0;
 };
-
-
-
 
 } // namespace OAT
 } // namespace LIEF

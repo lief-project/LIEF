@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_LOAD_CONFIGURATION_V3_H_
-#define LIEF_PE_LOAD_CONFIGURATION_V3_H_
+#ifndef LIEF_PE_LOAD_CONFIGURATION_V3_H
+#define LIEF_PE_LOAD_CONFIGURATION_V3_H
 #include <ostream>
 
 #include "LIEF/visibility.h"

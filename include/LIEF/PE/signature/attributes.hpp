@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_SIGNATURE_ATTRIBUTES_H_
-#define LIEF_PE_SIGNATURE_ATTRIBUTES_H_
+#ifndef LIEF_PE_SIGNATURE_ATTRIBUTES_H
+#define LIEF_PE_SIGNATURE_ATTRIBUTES_H
 #include "LIEF/PE/signature/attributes/ContentType.hpp"
 #include "LIEF/PE/signature/attributes/GenericType.hpp"
 #include "LIEF/PE/signature/attributes/MsCounterSign.hpp"

@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_VISITOR_JSONS_H_
-#define LIEF_VISITOR_JSONS_H_
+#ifndef LIEF_VISITOR_JSONS_H
+#define LIEF_VISITOR_JSONS_H
 
 #include "LIEF/Visitor.hpp"
 

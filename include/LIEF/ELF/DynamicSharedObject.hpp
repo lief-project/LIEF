@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_DYNAMIC_SHARED_OBJECT_H_
-#define LIEF_ELF_DYNAMIC_SHARED_OBJECT_H_
+#ifndef LIEF_ELF_DYNAMIC_SHARED_OBJECT_H
+#define LIEF_ELF_DYNAMIC_SHARED_OBJECT_H
 
 #include <string>
 

@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ART_FILE_H_
-#define LIEF_ART_FILE_H_
+#ifndef LIEF_ART_FILE_H
+#define LIEF_ART_FILE_H
 #include <ostream>
 
 #include "LIEF/ART/Header.hpp"
