@@ -24,8 +24,6 @@
 
 #include "LIEF/DEX/File.hpp"
 
-struct Profiler;
-
 namespace LIEF {
 namespace DEX {
 class Class;
@@ -35,7 +33,7 @@ class Field;
 //! Class which parses a DEX file to produce a DEX::File object
 class LIEF_API Parser {
   public:
-  friend struct ::Profiler;
+
   //! Parse the DEX file from the file path given in parameter
   static std::unique_ptr<File> parse(const std::string& file);
   static std::unique_ptr<File> parse(std::vector<uint8_t> data, const std::string& name = "");

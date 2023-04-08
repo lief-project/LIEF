@@ -22,8 +22,6 @@
 
 #include "LIEF/visibility.h"
 
-struct Profiler;
-
 namespace LIEF {
 class BinaryStream;
 class Binary;
@@ -31,8 +29,6 @@ class Binary;
 //! Main interface to parse an executable regardless of its format
 class LIEF_API Parser {
   public:
-  friend struct ::Profiler;
-
   //! Construct an LIEF::Binary from the given filename
   //!
   //! @warning If the target file is a FAT Mach-O, it will return the **last** one

@@ -32,8 +32,6 @@
 
 #include "LIEF/ELF/enums.hpp"
 
-struct Profiler;
-
 namespace LIEF {
 namespace ELF {
 class Binary;
@@ -53,9 +51,8 @@ class LIEF_API Builder {
   friend class ObjectFileLayout;
   friend class Layout;
   friend class ExeLayout;
-  public:
-  friend struct ::Profiler;
 
+  public:
   //! Configuration options to tweak the building process
   struct config_t {
     bool dt_hash         = true;

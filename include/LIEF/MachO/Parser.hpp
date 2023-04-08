@@ -27,8 +27,6 @@
 
 #include "LIEF/MachO/ParserConfig.hpp"
 
-struct Profiler;
-
 namespace LIEF {
 class BinaryStream;
 
@@ -44,7 +42,6 @@ class FatBinary;
 //! a FatBinary object.
 class LIEF_API Parser : public LIEF::Parser {
   public:
-  friend struct ::Profiler;
   Parser& operator=(const Parser& copy) = delete;
   Parser(const Parser& copy)            = delete;
 

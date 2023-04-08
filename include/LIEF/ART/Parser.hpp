@@ -21,8 +21,6 @@
 #include "LIEF/ART/types.hpp"
 #include "LIEF/visibility.h"
 
-struct Profiler;
-
 namespace LIEF {
 class BinaryStream;
 namespace ART {
@@ -32,7 +30,6 @@ class File;
 //! @brief Class which parses an ART file and transform into a ART::File object
 class LIEF_API Parser {
   public:
-  friend struct ::Profiler;
   static std::unique_ptr<File> parse(const std::string& file);
   static std::unique_ptr<File> parse(std::vector<uint8_t> data, const std::string& name = "");
 
