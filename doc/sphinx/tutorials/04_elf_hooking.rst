@@ -61,12 +61,20 @@ First, we find the code for our hook function, and add it to the library:
   code_segment = hook.segment_from_virtual_address(hook_symbol.value)
   segment_added = libm.add(code_segment)
 
-Once the stub is injected we just have to calculate the new address for the ``exp`` symbol, and update it:
+Once the stub is injected we have to calculate the new address for the ``exp`` symbol, and update it:
 
 .. code-block:: python
 
   new_address = segment_added.virtual_address + hook_symbol.value - code_segment.virtual_address
   exp_symbol.value = new_address
+  exp_symbol.type  = lief.ELF.SYMBOL_TYPES.FUNC  # it might have been GNU_IFUNC
+
+Note that we have to update symbol's type to be regular `FUNC` because on many
+distributions `libm.so` is built with automatic hardware detection and exposes
+symbols as `GNU_IFUNC`__ that has different dynamic binding protocol compared
+to regular functions.
+
+__ https://sourceware.org/glibc/wiki/GNU_IFUNC
 
 Finally, we write out the patched library to a file in the current folder:
 
