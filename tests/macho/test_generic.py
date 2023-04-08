@@ -48,6 +48,13 @@ def test_rpath_cmd():
     rpathmacho = lief.parse(get_sample('MachO/MachO64_x86-64_binary_rpathtest.bin'))
     assert rpathmacho.rpath.path == "@executable_path/../lib"
 
+def test_rpaths():
+    macho = lief.parse(get_sample('MachO/rpath_291.bin'))
+    assert len(macho.rpaths) == 2
+
+    assert macho.rpaths[0].path == "/tmp"
+    assert macho.rpaths[1].path == "/var"
+
 def test_relocations():
     helloworld = lief.parse(get_sample('MachO/MachO64_x86-64_object_HelloWorld64.o'))
 

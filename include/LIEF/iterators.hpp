@@ -229,7 +229,7 @@ class ref_iterator {
   typename std::enable_if<std::is_pointer<V>::value, add_const_t<ref_t>>::type
   operator*() const {
     assert(*it_ && "integrity error: nullptr");
-    return const_cast<add_const_t<ref_t>>(**it_);
+    return const_cast<add_const_t<ref_t>>(static_cast<ref_t>(**it_));
   }
 
   template<typename V = DT_VAL>
@@ -395,7 +395,7 @@ class filter_iterator {
   typename std::enable_if<std::is_pointer<V>::value, add_const_t<ref_t>>::type
   operator*() const {
     assert(*it_ && "integrity error: nullptr");
-    return const_cast<add_const_t<ref_t>>(**it_);
+    return const_cast<add_const_t<ref_t>>(static_cast<ref_t>(**it_));
   }
 
   template<typename V = DT_VAL>

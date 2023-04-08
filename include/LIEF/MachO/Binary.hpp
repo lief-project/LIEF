@@ -164,6 +164,11 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Iterator which outputs const Relocation&
   using it_const_relocations = const_ref_iterator<const relocations_t&, const Relocation*>;
 
+  //! Iterator which outputs RPathCommand&
+  using it_rpaths = filter_iterator<commands_t&, RPathCommand*>;
+
+  //! Iterator which outputs const RPathCommand&
+  using it_const_rpaths = const_filter_iterator<const commands_t&, const RPathCommand*>;
 
   public:
   Binary(const Binary&) = delete;
@@ -513,6 +518,10 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Return the MachO::RPathCommand command if present, a nullptr otherwise.
   RPathCommand* rpath();
   const RPathCommand* rpath() const;
+
+  //! Iterator over **all** the MachO::RPathCommand commands.
+  it_rpaths rpaths();
+  it_const_rpaths rpaths() const;
 
   //! ``true`` if the binary has a MachO::SymbolCommand command.
   bool has_symbol_command() const;

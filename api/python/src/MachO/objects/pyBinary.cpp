@@ -53,6 +53,7 @@ void create<Binary>(py::module& m) {
   init_ref_iterator<Binary::it_segments>(bin, "it_segments");
   init_ref_iterator<Binary::it_libraries>(bin, "it_libraries");
   init_ref_iterator<Binary::it_relocations>(bin, "it_relocations");
+  init_ref_iterator<Binary::it_rpaths>(bin, "it_rpaths");
 
   py::class_<Binary::range_t>(bin, "range_t")
     .def_readwrite("start", &Binary::range_t::start)
@@ -252,6 +253,11 @@ void create<Binary>(py::module& m) {
         static_cast<no_const_getter<RPathCommand*>>(&Binary::rpath),
         "Return the binary's " RST_CLASS_REF(lief.MachO.RPathCommand) " if any, or None",
         py::return_value_policy::reference)
+
+    .def_property_readonly("rpaths",
+        static_cast<no_const_getter<Binary::it_rpaths>>(&Binary::rpaths),
+        "Return an iterator over the binary's " RST_CLASS_REF(lief.MachO.RPathCommand) "",
+        py::return_value_policy::reference_internal)
 
     .def_property_readonly("has_symbol_command",
         &Binary::has_symbol_command,

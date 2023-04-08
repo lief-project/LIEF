@@ -2276,6 +2276,18 @@ const RPathCommand* Binary::rpath() const {
   return command<RPathCommand>();
 }
 
+Binary::it_rpaths Binary::rpaths() {
+  return {commands_, [] (const std::unique_ptr<LoadCommand>& cmd) {
+    return RPathCommand::classof(cmd.get());
+  }};
+}
+
+Binary::it_const_rpaths Binary::rpaths() const {
+  return {commands_, [] (const std::unique_ptr<LoadCommand>& cmd) {
+    return RPathCommand::classof(cmd.get());
+  }};
+}
+
 // SymbolCommand command
 // +++++++++++++++++++++
 bool Binary::has_symbol_command() const {

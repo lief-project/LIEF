@@ -60,6 +60,7 @@ Changelog
 
 :MachO:
 
+  * Add :attr:`~lief.MachO.Binary.rpaths` iterator (:issue:`291`)
   * Add support for parsing Mach-O in memory
   * Fix a memory issue (found by :github_user:`bladchan` via :issue:`806`)
   * [CVE-2022-40923] Fix parsing issue (:issue:`784` found by :github_user:`bladchan`)
