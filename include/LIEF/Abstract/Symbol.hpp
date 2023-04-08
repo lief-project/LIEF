@@ -16,6 +16,7 @@
 #ifndef LIEF_ABSTRACT_SYMBOLS_H
 #define LIEF_ABSTRACT_SYMBOLS_H
 
+#include <cstdint>
 #include <string>
 
 #include "LIEF/Object.hpp"

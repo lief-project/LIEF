@@ -16,6 +16,7 @@
 #ifndef LIEF_MAP_ITEM_H
 #define LIEF_MAP_ITEM_H
 
+#include <cstdint>
 #include <ostream>
 
 #include "LIEF/visibility.h"

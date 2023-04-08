@@ -16,6 +16,7 @@
 #ifndef LIEF_OAT_DEXFILE_H
 #define LIEF_OAT_DEXFILE_H
 
+#include <cstdint>
 #include <string>
 #include <vector>
 
