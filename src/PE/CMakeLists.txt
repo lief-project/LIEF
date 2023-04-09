@@ -48,36 +48,6 @@ set(LIEF_PE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/utils.cpp"
 )
 
-set(LIEF_PE_LOAD_CONFIGURATION_SRC
-  "${CMAKE_CURRENT_LIST_DIR}/LoadConfigurations/LoadConfigurations.tcc"
-
-  "${CMAKE_CURRENT_LIST_DIR}/LoadConfigurations/LoadConfiguration.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/LoadConfigurations/LoadConfiguration.tcc"
-
-  "${CMAKE_CURRENT_LIST_DIR}/LoadConfigurations/LoadConfigurationV0.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/LoadConfigurations/LoadConfigurationV0.tcc"
-
-  "${CMAKE_CURRENT_LIST_DIR}/LoadConfigurations/LoadConfigurationV1.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/LoadConfigurations/LoadConfigurationV1.tcc"
-
-  "${CMAKE_CURRENT_LIST_DIR}/LoadConfigurations/LoadConfigurationV2.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/LoadConfigurations/LoadConfigurationV2.tcc"
-
-  "${CMAKE_CURRENT_LIST_DIR}/LoadConfigurations/LoadConfigurationV3.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/LoadConfigurations/LoadConfigurationV3.tcc"
-
-  "${CMAKE_CURRENT_LIST_DIR}/LoadConfigurations/LoadConfigurationV4.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/LoadConfigurations/LoadConfigurationV4.tcc"
-
-  "${CMAKE_CURRENT_LIST_DIR}/LoadConfigurations/LoadConfigurationV5.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/LoadConfigurations/LoadConfigurationV5.tcc"
-
-  "${CMAKE_CURRENT_LIST_DIR}/LoadConfigurations/LoadConfigurationV6.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/LoadConfigurations/LoadConfigurationV6.tcc"
-
-  "${CMAKE_CURRENT_LIST_DIR}/LoadConfigurations/LoadConfigurationV7.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/LoadConfigurations/LoadConfigurationV7.tcc"
-)
 
 set(LIEF_PE_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/AuxiliarySymbol.hpp"
@@ -118,18 +88,6 @@ set(LIEF_PE_INCLUDE_FILES
 )
 
 
-set(LIEF_PE_LOAD_CONFIGURATION_INCLUDE
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/LoadConfigurations/LoadConfigurationV0.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/LoadConfigurations/LoadConfigurationV1.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/LoadConfigurations/LoadConfigurationV2.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/LoadConfigurations/LoadConfigurationV3.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/LoadConfigurations/LoadConfigurationV4.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/LoadConfigurations/LoadConfigurationV5.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/LoadConfigurations/LoadConfigurationV6.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/LoadConfigurations/LoadConfigurationV7.hpp"
-)
-
 set(LIEF_PE_RESOURCES_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceVersion.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceDialog.hpp"
@@ -168,10 +126,8 @@ list(APPEND LIEF_PE_INCLUDE_FILES ${LIEF_PE_HASH_HDR})
 
 
 source_group("Source Files\\PE"                                FILES ${LIEF_PE_SRC})
-source_group("Source Files\\PE\\Load Configure"                FILES ${LIEF_PE_LOAD_CONFIGURATION_SRC})
 source_group("Header Files\\PE"                                FILES ${LIEF_PE_INCLUDE_FILES})
 source_group("Header Files\\PE\\resources"                     FILES ${LIEF_PE_RESOURCES_INCLUDE_FILES})
-source_group("Header Files\\PE\\Load Configuration"            FILES ${LIEF_PE_LOAD_CONFIGURATION_INCLUDE})
 source_group("Header Files\\PE\\utils\\Ordinals Lookup Tables" FILES ${LIEF_PE_UTILS_INCLUDE_FILES})
 
 if (LIEF_PE)
@@ -181,9 +137,8 @@ if (LIEF_PE)
     ${LIEF_PE_SIG_INCLUDE_FILES}
     ${LIEF_PE_RESOURCES_INCLUDE_FILES}
     ${LIEF_PE_UTILS_INCLUDE_FILES}
-    ${LIEF_PE_LOAD_CONFIGURATION_SRC}
-    ${LIEF_PE_LOAD_CONFIGURATION_INCLUDE}
   )
 endif()
 
 include("${CMAKE_CURRENT_LIST_DIR}/signature/CMakeLists.txt")
+include("${CMAKE_CURRENT_LIST_DIR}/LoadConfigurations/CMakeLists.txt")

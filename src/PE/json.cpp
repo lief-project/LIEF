@@ -1024,12 +1024,33 @@ void JsonVisitor::visit(const LoadConfigurationV6& config) {
 }
 
 void JsonVisitor::visit(const LoadConfigurationV7& config) {
-
   node_["reserved3"]                = config.reserved3();
   node_["addressof_unicode_string"] = config.addressof_unicode_string();
   visit(static_cast<const LoadConfigurationV6&>(config));
 }
 
+void JsonVisitor::visit(const LoadConfigurationV8& config) {
+  node_["volatile_metadata_pointer"] = config.volatile_metadata_pointer();
+  visit(static_cast<const LoadConfigurationV7&>(config));
+}
+
+void JsonVisitor::visit(const LoadConfigurationV9& config) {
+  node_["guard_eh_continuation_table"] = config.guard_eh_continuation_table();
+  node_["guard_eh_continuation_count"] = config.guard_eh_continuation_count();
+  visit(static_cast<const LoadConfigurationV8&>(config));
+}
+
+void JsonVisitor::visit(const LoadConfigurationV10& config) {
+  node_["guard_xfg_check_function_pointer"] = config.guard_xfg_check_function_pointer();
+  node_["guard_xfg_dispatch_function_pointer"] = config.guard_xfg_dispatch_function_pointer();
+  node_["guard_xfg_table_dispatch_function_pointer"] = config.guard_xfg_table_dispatch_function_pointer();
+  visit(static_cast<const LoadConfigurationV9&>(config));
+}
+
+void JsonVisitor::visit(const LoadConfigurationV11& config) {
+  node_["cast_guard_os_determined_failure_mode"] = config.cast_guard_os_determined_failure_mode();
+  visit(static_cast<const LoadConfigurationV10&>(config));
+}
 
 void JsonVisitor::visit(const Pogo& pogo) {
 

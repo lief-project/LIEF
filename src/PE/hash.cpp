@@ -622,6 +622,28 @@ void Hash::visit(const LoadConfigurationV7& config) {
   process(config.addressof_unicode_string());
 }
 
+void Hash::visit(const LoadConfigurationV8& config) {
+  process(*config.as<LoadConfigurationV7>());
+  process(config.volatile_metadata_pointer());
+}
+
+void Hash::visit(const LoadConfigurationV9& config) {
+  process(*config.as<LoadConfigurationV8>());
+  process(config.guard_eh_continuation_table());
+  process(config.guard_eh_continuation_count());
+}
+
+void Hash::visit(const LoadConfigurationV10& config) {
+  process(*config.as<LoadConfigurationV9>());
+  process(config.guard_xfg_check_function_pointer());
+  process(config.guard_xfg_dispatch_function_pointer());
+  process(config.guard_xfg_table_dispatch_function_pointer());
+}
+
+void Hash::visit(const LoadConfigurationV11& config) {
+  process(*config.as<LoadConfigurationV10>());
+  process(config.cast_guard_os_determined_failure_mode());
+}
 
 void Hash::visit(const Pogo& pogo) {
   Pogo::it_const_entries entries = pogo.entries();

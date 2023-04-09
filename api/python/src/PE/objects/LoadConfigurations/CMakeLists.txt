@@ -8,6 +8,10 @@ set(LIEF_PYTHON_PE_LOAD_CONFIGURE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/pyLoadConfigurationV5.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/pyLoadConfigurationV6.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/pyLoadConfigurationV7.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/pyLoadConfigurationV8.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/pyLoadConfigurationV9.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/pyLoadConfigurationV10.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/pyLoadConfigurationV11.cpp"
 )
 
 source_group("Source Files\\PE\\Load Configuration" FILES ${LIEF_PYTHON_PE_LOAD_CONFIGURE_SRC})

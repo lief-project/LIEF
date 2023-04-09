@@ -611,8 +611,12 @@ ok_error_t Parser::parse_load_config() {
   using load_configuration_v5_t = typename PE_T::load_configuration_v5_t;
   using load_configuration_v6_t = typename PE_T::load_configuration_v6_t;
   using load_configuration_v7_t = typename PE_T::load_configuration_v7_t;
+  using load_configuration_v8_t = typename PE_T::load_configuration_v8_t;
+  using load_configuration_v9_t = typename PE_T::load_configuration_v9_t;
+  using load_configuration_v10_t = typename PE_T::load_configuration_v10_t;
+  using load_configuration_v11_t = typename PE_T::load_configuration_v11_t;
 
-  CONST_MAP(WIN_VERSION, size_t, 9) PE32_LOAD_CONFIGURATION_SIZES = {
+  CONST_MAP(WIN_VERSION, size_t, 13) PE32_LOAD_CONFIGURATION_SIZES = {
     {WIN_VERSION::WIN_UNKNOWN,   sizeof(details::PE32::load_configuration_t)},
     {WIN_VERSION::WIN_SEH,       sizeof(details::PE32::load_configuration_v0_t)},
     {WIN_VERSION::WIN8_1,        sizeof(details::PE32::load_configuration_v1_t)},
@@ -622,9 +626,13 @@ ok_error_t Parser::parse_load_config() {
     {WIN_VERSION::WIN10_0_14901, sizeof(details::PE32::load_configuration_v5_t)},
     {WIN_VERSION::WIN10_0_15002, sizeof(details::PE32::load_configuration_v6_t)},
     {WIN_VERSION::WIN10_0_16237, sizeof(details::PE32::load_configuration_v7_t)},
+    {WIN_VERSION::WIN10_0_18362, sizeof(details::PE32::load_configuration_v8_t)},
+    {WIN_VERSION::WIN10_0_19534, sizeof(details::PE32::load_configuration_v9_t)},
+    {WIN_VERSION::WIN10_0_MSVC_2019, sizeof(details::PE32::load_configuration_v10_t)},
+    {WIN_VERSION::WIN10_0_MSVC_2019_16, sizeof(details::PE32::load_configuration_v11_t)},
   };
 
-  CONST_MAP(WIN_VERSION, size_t, 9) PE64_LOAD_CONFIGURATION_SIZES = {
+  CONST_MAP(WIN_VERSION, size_t, 13) PE64_LOAD_CONFIGURATION_SIZES = {
     {WIN_VERSION::WIN_UNKNOWN,   sizeof(details::PE64::load_configuration_t)},
     {WIN_VERSION::WIN_SEH,       sizeof(details::PE64::load_configuration_v0_t)},
     {WIN_VERSION::WIN8_1,        sizeof(details::PE64::load_configuration_v1_t)},
@@ -634,6 +642,10 @@ ok_error_t Parser::parse_load_config() {
     {WIN_VERSION::WIN10_0_14901, sizeof(details::PE64::load_configuration_v5_t)},
     {WIN_VERSION::WIN10_0_15002, sizeof(details::PE64::load_configuration_v6_t)},
     {WIN_VERSION::WIN10_0_16237, sizeof(details::PE64::load_configuration_v7_t)},
+    {WIN_VERSION::WIN10_0_18362, sizeof(details::PE64::load_configuration_v8_t)},
+    {WIN_VERSION::WIN10_0_19534, sizeof(details::PE64::load_configuration_v9_t)},
+    {WIN_VERSION::WIN10_0_MSVC_2019, sizeof(details::PE64::load_configuration_v10_t)},
+    {WIN_VERSION::WIN10_0_MSVC_2019_16, sizeof(details::PE64::load_configuration_v11_t)},
   };
 
 
@@ -642,33 +654,35 @@ ok_error_t Parser::parse_load_config() {
   const uint32_t ldc_rva = binary_->data_directory(DATA_DIRECTORY::LOAD_CONFIG_TABLE).RVA();
   const uint64_t offset  = binary_->rva_to_offset(ldc_rva);
 
-  const auto size = stream_->peek<uint32_t>(offset);
-  if (!size) {
+  const auto res = stream_->peek<uint32_t>(offset);
+  if (!res) {
     return make_error_code(lief_errors::read_error);
   }
+
+  const uint32_t size = std::move(*res);
   size_t current_size = 0;
   WIN_VERSION version_found = WIN_VERSION::WIN_UNKNOWN;
 
   if /* constexpr */(std::is_same<PE_T, details::PE32>::value) {
     for (const auto& p : PE32_LOAD_CONFIGURATION_SIZES) {
-      if (p.second > current_size && p.second <= *size) {
+      if (current_size < p.second && p.second <= size) {
         std::tie(version_found, current_size) = p;
       }
     }
   } else {
     for (const auto& p : PE64_LOAD_CONFIGURATION_SIZES) {
-      if (p.second > current_size && p.second <= *size) {
+      if (current_size < p.second && p.second <= size) {
         std::tie(version_found, current_size) = p;
       }
     }
   }
 
-  LIEF_DEBUG("Version found: {} (size: 0x{:x})", to_string(version_found), *size);
+  LIEF_DEBUG("Version found: {} (size: 0x{:x})", to_string(version_found), size);
   std::unique_ptr<LoadConfiguration> ld_conf;
 
   switch (version_found) {
 
-    case WIN_VERSION::WIN_SEH:
+    case LoadConfigurationV0::VERSION:
       {
         if (const auto header = stream_->peek<load_configuration_v0_t>(offset)) {
           ld_conf = std::make_unique<LoadConfigurationV0>(*header);
@@ -676,7 +690,7 @@ ok_error_t Parser::parse_load_config() {
         break;
       }
 
-    case WIN_VERSION::WIN8_1:
+    case LoadConfigurationV1::VERSION:
       {
         if (const auto header = stream_->peek<load_configuration_v1_t>(offset)) {
           ld_conf = std::make_unique<LoadConfigurationV1>(*header);
@@ -684,7 +698,7 @@ ok_error_t Parser::parse_load_config() {
         break;
       }
 
-    case WIN_VERSION::WIN10_0_9879:
+    case LoadConfigurationV2::VERSION:
       {
         if (const auto header = stream_->peek<load_configuration_v2_t>(offset)) {
           ld_conf = std::make_unique<LoadConfigurationV2>(*header);
@@ -692,7 +706,7 @@ ok_error_t Parser::parse_load_config() {
         break;
       }
 
-    case WIN_VERSION::WIN10_0_14286:
+    case LoadConfigurationV3::VERSION:
       {
         if (const auto header = stream_->peek<load_configuration_v3_t>(offset)) {
           ld_conf = std::make_unique<LoadConfigurationV3>(*header);
@@ -700,7 +714,7 @@ ok_error_t Parser::parse_load_config() {
         break;
       }
 
-    case WIN_VERSION::WIN10_0_14383:
+    case LoadConfigurationV4::VERSION:
       {
         if (const auto header = stream_->peek<load_configuration_v4_t>(offset)) {
           ld_conf = std::make_unique<LoadConfigurationV4>(*header);
@@ -708,7 +722,7 @@ ok_error_t Parser::parse_load_config() {
         break;
       }
 
-    case WIN_VERSION::WIN10_0_14901:
+    case LoadConfigurationV5::VERSION:
       {
         if (const auto header = stream_->peek<load_configuration_v5_t>(offset)) {
           ld_conf = std::make_unique<LoadConfigurationV5>(*header);
@@ -716,7 +730,7 @@ ok_error_t Parser::parse_load_config() {
         break;
       }
 
-    case WIN_VERSION::WIN10_0_15002:
+    case LoadConfigurationV6::VERSION:
       {
         if (const auto header = stream_->peek<load_configuration_v6_t>(offset)) {
           ld_conf = std::make_unique<LoadConfigurationV6>(*header);
@@ -724,10 +738,42 @@ ok_error_t Parser::parse_load_config() {
         break;
       }
 
-    case WIN_VERSION::WIN10_0_16237:
+    case LoadConfigurationV7::VERSION:
       {
         if (const auto header = stream_->peek<load_configuration_v7_t>(offset)) {
           ld_conf = std::make_unique<LoadConfigurationV7>(*header);
+        }
+        break;
+      }
+
+    case LoadConfigurationV8::VERSION:
+      {
+        if (const auto header = stream_->peek<load_configuration_v8_t>(offset)) {
+          ld_conf = std::make_unique<LoadConfigurationV8>(*header);
+        }
+        break;
+      }
+
+    case LoadConfigurationV9::VERSION:
+      {
+        if (const auto header = stream_->peek<load_configuration_v9_t>(offset)) {
+          ld_conf = std::make_unique<LoadConfigurationV9>(*header);
+        }
+        break;
+      }
+
+    case LoadConfigurationV10::VERSION:
+      {
+        if (const auto header = stream_->peek<load_configuration_v10_t>(offset)) {
+          ld_conf = std::make_unique<LoadConfigurationV10>(*header);
+        }
+        break;
+      }
+
+    case LoadConfigurationV11::VERSION:
+      {
+        if (const auto header = stream_->peek<load_configuration_v11_t>(offset)) {
+          ld_conf = std::make_unique<LoadConfigurationV11>(*header);
         }
         break;
       }

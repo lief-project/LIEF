@@ -1090,7 +1090,7 @@ const char* to_string(CODE_PAGES e) {
 
 
 const char* to_string(WIN_VERSION e) {
-  CONST_MAP(WIN_VERSION, const char*, 9) enumStrings {
+  CONST_MAP(WIN_VERSION, const char*, 13) enumStrings {
     { WIN_VERSION::WIN_UNKNOWN,   "UNKNOWN"       },
     { WIN_VERSION::WIN_SEH,       "SEH"           },
     { WIN_VERSION::WIN8_1,        "WIN_8_1"       },
@@ -1100,6 +1100,10 @@ const char* to_string(WIN_VERSION e) {
     { WIN_VERSION::WIN10_0_14901, "WIN10_0_14901" },
     { WIN_VERSION::WIN10_0_15002, "WIN10_0_15002" },
     { WIN_VERSION::WIN10_0_16237, "WIN10_0_16237" },
+    { WIN_VERSION::WIN10_0_18362, "WIN10_0_18362" },
+    { WIN_VERSION::WIN10_0_19534, "WIN10_0_19534" },
+    { WIN_VERSION::WIN10_0_MSVC_2019, "WIN10_0_MSVC_2019" },
+    { WIN_VERSION::WIN10_0_MSVC_2019_16, "WIN10_0_MSVC_2019_16" },
   };
   const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;

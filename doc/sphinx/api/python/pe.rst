@@ -642,6 +642,42 @@ Load Configuration V7
   :show-inheritance:
   :undoc-members:
 
+Load Configuration V8
+~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.PE.LoadConfigurationV8
+  :members:
+  :show-inheritance:
+  :undoc-members:
+
+Load Configuration V9
+~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.PE.LoadConfigurationV9
+  :members:
+  :show-inheritance:
+  :undoc-members:
+
+Load Configuration V10
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.PE.LoadConfigurationV10
+  :members:
+  :show-inheritance:
+  :undoc-members:
+
+Load Configuration V11
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.PE.LoadConfigurationV11
+  :members:
+  :show-inheritance:
+  :undoc-members:
+
+
+
+
+
 
 Utilities
 *********

@@ -902,7 +902,11 @@ void init_enums(py::module& m) {
     .value(PY_ENUM(WIN_VERSION::WIN10_0_14383))
     .value(PY_ENUM(WIN_VERSION::WIN10_0_14901))
     .value(PY_ENUM(WIN_VERSION::WIN10_0_15002))
-    .value(PY_ENUM(WIN_VERSION::WIN10_0_16237));
+    .value(PY_ENUM(WIN_VERSION::WIN10_0_16237))
+    .value(PY_ENUM(WIN_VERSION::WIN10_0_18362))
+    .value(PY_ENUM(WIN_VERSION::WIN10_0_19534))
+    .value(PY_ENUM(WIN_VERSION::WIN10_0_MSVC_2019))
+    .value(PY_ENUM(WIN_VERSION::WIN10_0_MSVC_2019_16));
 
   LIEF::enum_<GUARD_CF_FLAGS>(m, "GUARD_CF_FLAGS", py::arithmetic())
     .value(PY_ENUM(GUARD_CF_FLAGS::GCF_NONE))

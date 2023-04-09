@@ -110,6 +110,10 @@ SPECIALIZE_CREATE(LoadConfigurationV4);
 SPECIALIZE_CREATE(LoadConfigurationV5);
 SPECIALIZE_CREATE(LoadConfigurationV6);
 SPECIALIZE_CREATE(LoadConfigurationV7);
+SPECIALIZE_CREATE(LoadConfigurationV8);
+SPECIALIZE_CREATE(LoadConfigurationV9);
+SPECIALIZE_CREATE(LoadConfigurationV10);
+SPECIALIZE_CREATE(LoadConfigurationV11);
 
 SPECIALIZE_CREATE(ResourcesManager);
 

@@ -532,6 +532,30 @@ Load Configuration V7
 .. doxygenclass:: LIEF::PE::LoadConfigurationV7
   :project: lief
 
+Load Configuration V8
+~~~~~~~~~~~~~~~~~~~~~
+
+.. doxygenclass:: LIEF::PE::LoadConfigurationV8
+  :project: lief
+
+Load Configuration V9
+~~~~~~~~~~~~~~~~~~~~~
+
+.. doxygenclass:: LIEF::PE::LoadConfigurationV9
+  :project: lief
+
+Load Configuration V10
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. doxygenclass:: LIEF::PE::LoadConfigurationV10
+  :project: lief
+
+Load Configuration V11
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. doxygenclass:: LIEF::PE::LoadConfigurationV11
+  :project: lief
+
 -------------------
 
 Utilities

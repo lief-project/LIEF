@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LoadConfiguration.tcc"
-#include "LoadConfigurationV0.tcc"
-#include "LoadConfigurationV1.tcc"
-#include "LoadConfigurationV2.tcc"
-#include "LoadConfigurationV3.tcc"
-#include "LoadConfigurationV4.tcc"
-#include "LoadConfigurationV5.tcc"
-#include "LoadConfigurationV6.tcc"
-#include "LoadConfigurationV7.tcc"
-#include "LoadConfigurationV8.tcc"
-#include "LoadConfigurationV9.tcc"
-#include "LoadConfigurationV10.tcc"
-#include "LoadConfigurationV11.tcc"
+namespace LIEF {
+namespace PE {
+
+template<class T>
+LoadConfigurationV10::LoadConfigurationV10(const details::load_configuration_v10<T>& header) :
+  LoadConfigurationV9{static_cast<const details::load_configuration_v9<T>&>(header)},
+  guard_xfg_check_function_pointer_{header.GuardXFGCheckFunctionPointer},
+  guard_xfg_dispatch_function_pointer_{header.GuardXFGDispatchFunctionPointer},
+  guard_xfg_table_dispatch_function_pointer_{header.GuardXFGTableDispatchFunctionPointer}
+{
+}
+
+
+} // namespace PE
+} // namespace LIEF
+

@@ -94,6 +94,7 @@ Changelog
   * Remove :meth:`lief.PE.ResourceNode.sort_by_id`
   * Fix the ordering of children of :class:`~lief.PE.ResourceNode`
   * Remove deprecated functions related to PE hooking.
+  * Add support for new PE LoadConfiguration structures.
 
 :DEX:
 

@@ -103,6 +103,10 @@ void init_objects(py::module& m) {
   CREATE(LoadConfigurationV5, m);
   CREATE(LoadConfigurationV6, m);
   CREATE(LoadConfigurationV7, m);
+  CREATE(LoadConfigurationV8, m);
+  CREATE(LoadConfigurationV9, m);
+  CREATE(LoadConfigurationV10, m);
+  CREATE(LoadConfigurationV11, m);
 
   CREATE(Binary, m);
   CREATE(Builder, m);

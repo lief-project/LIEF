@@ -75,3 +75,37 @@ def test_winapp():
     assert lconf.guard_rf_verify_stackpointer_function_pointer == 0x140012030
     assert lconf.hotpatch_table_offset == 0
 
+
+def test_v8():
+    pe = lief.parse(get_sample('PE/ANCUtility.dll'))
+    assert pe.has_configuration
+
+    lconf = pe.load_configuration
+
+    assert lconf.version == lief.PE.WIN_VERSION.WIN10_0_18362
+    assert isinstance(lconf, lief.PE.LoadConfigurationV8)
+    assert lconf.volatile_metadata_pointer == 0
+
+def test_v9():
+    pe = lief.parse(get_sample('PE/ucrtbase.dll'))
+    assert pe.has_configuration
+
+    lconf = pe.load_configuration
+
+    assert lconf.version == lief.PE.WIN_VERSION.WIN10_0_19534
+    assert isinstance(lconf, lief.PE.LoadConfigurationV9)
+    assert lconf.guard_eh_continuation_table == 0x1800b9770
+    assert lconf.guard_eh_continuation_count == 34
+
+def test_v11():
+    pe = lief.parse(get_sample('PE/hostfxr.dll'))
+    assert pe.has_configuration
+
+    lconf = pe.load_configuration
+
+    assert lconf.version == lief.PE.WIN_VERSION.WIN10_0_MSVC_2019_16
+    assert isinstance(lconf, lief.PE.LoadConfigurationV11)
+    assert lconf.guard_xfg_check_function_pointer == 0x1800414d8
+    assert lconf.guard_xfg_dispatch_function_pointer == 0x1800414e8
+    assert lconf.guard_xfg_table_dispatch_function_pointer == 0x1800414f0
+    assert lconf.cast_guard_os_determined_failure_mode == 0x180057e18

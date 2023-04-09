@@ -88,6 +88,10 @@ class LoadConfigurationV4;
 class LoadConfigurationV5;
 class LoadConfigurationV6;
 class LoadConfigurationV7;
+class LoadConfigurationV8;
+class LoadConfigurationV9;
+class LoadConfigurationV10;
+class LoadConfigurationV11;
 class Pogo;
 class PogoEntry;
 
@@ -158,6 +162,10 @@ class JsonVisitor : public LIEF::JsonVisitor {
   void visit(const LoadConfigurationV5& config)           override;
   void visit(const LoadConfigurationV6& config)           override;
   void visit(const LoadConfigurationV7& config)           override;
+  void visit(const LoadConfigurationV8& config)           override;
+  void visit(const LoadConfigurationV9& config)           override;
+  void visit(const LoadConfigurationV10& config)          override;
+  void visit(const LoadConfigurationV11& config)          override;
 
   void visit(const Pogo& pogo)        override;
   void visit(const PogoEntry& entry)  override;

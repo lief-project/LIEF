@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LoadConfiguration.tcc"
-#include "LoadConfigurationV0.tcc"
-#include "LoadConfigurationV1.tcc"
-#include "LoadConfigurationV2.tcc"
-#include "LoadConfigurationV3.tcc"
-#include "LoadConfigurationV4.tcc"
-#include "LoadConfigurationV5.tcc"
-#include "LoadConfigurationV6.tcc"
-#include "LoadConfigurationV7.tcc"
-#include "LoadConfigurationV8.tcc"
-#include "LoadConfigurationV9.tcc"
-#include "LoadConfigurationV10.tcc"
-#include "LoadConfigurationV11.tcc"
+namespace LIEF {
+namespace PE {
+
+template<class T>
+LoadConfigurationV11::LoadConfigurationV11(const details::load_configuration_v11<T>& header) :
+  LoadConfigurationV10{static_cast<const details::load_configuration_v10<T>&>(header)},
+  cast_guard_os_determined_failure_mode_{header.CastGuardOsDeterminedFailureMode}
+{
+}
+
+
+} // namespace PE
+} // namespace LIEF
+
