@@ -129,6 +129,14 @@ Section* Relocation::section() {
   return const_cast<Section*>(static_cast<const Relocation*>(this)->section());
 }
 
+const Section* Relocation::symbol_table() const {
+  return symbol_table_;
+}
+
+Section* Relocation::symbol_table() {
+  return const_cast<Section*>(static_cast<const Relocation*>(this)->symbol_table());
+}
+
 bool Relocation::is_rela() const {
   return isRela_;
 }

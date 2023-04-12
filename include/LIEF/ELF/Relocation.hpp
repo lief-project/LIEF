@@ -119,10 +119,15 @@ class LIEF_API Relocation : public LIEF::Relocation {
   //! True if the relocation has an associated section
   bool has_section() const;
 
-  //! Section associated with this relocation.
-  //! If no section is tied to this relocation, it returns a nullptr
+  //! The section to which the relocation applies.
+  //! If no section to which the relocation applies is associtated to this relocation, it returns a nullptr
   Section*       section();
   const Section* section() const;
+
+  //! The associated symbol table.
+  //! If no symbol table section is associated with this relocation, it returns a nullptr
+  Section*       symbol_table();
+  const Section* symbol_table() const;
 
   void addend(int64_t addend);
   void type(uint32_t type);
@@ -130,6 +135,7 @@ class LIEF_API Relocation : public LIEF::Relocation {
   void info(uint32_t v);
   void symbol(Symbol* symbol);
   void section(Section* section);
+  void symbol_table(Section* section);
 
   void accept(Visitor& visitor) const override;
 
@@ -146,6 +152,7 @@ class LIEF_API Relocation : public LIEF::Relocation {
   ARCH                architecture_ = ARCH::EM_NONE;
   RELOCATION_PURPOSES purpose_ = RELOCATION_PURPOSES::RELOC_PURPOSE_NONE;
   Section*            section_{nullptr};
+  Section*            symbol_table_{nullptr};
   uint32_t            info_ = 0;
 };
 
