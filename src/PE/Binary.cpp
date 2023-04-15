@@ -1100,7 +1100,7 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
         LIEF_DEBUG("Add [0x{:x}, 0x{:x}]", overlay_offset_, overlay_offset_ + start_cert_offset);
         LIEF_DEBUG("Add [0x{:x}, 0x{:x}]",
                    overlay_offset_ + end_cert_offset,
-                   overlay_offset_ + overlay_.size() - end_cert_offset);
+                   overlay_offset_ + end_cert_offset + overlay_.size() - end_cert_offset);
         ios
           .write(overlay_.data(), start_cert_offset)
           .write(overlay_.data() + end_cert_offset, overlay_.size() - end_cert_offset);
