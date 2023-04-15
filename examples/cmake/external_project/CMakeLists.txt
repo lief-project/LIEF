@@ -13,7 +13,7 @@ set(LIEF_INSTALL_DIR  "${LIEF_PREFIX}/install")
 set(LIEF_GIT_URL "https://github.com/lief-project/LIEF.git")
 
 # LIEF's version to be used (can be 'master')
-set(LIEF_VERSION 0.12.0)
+set(LIEF_VERSION 0.13.0)
 
 # LIEF compilation config
 set(LIEF_CMAKE_ARGS

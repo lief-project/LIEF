@@ -187,7 +187,7 @@ class Versioning:
     IS_TAGGED_CMD   = '{git} tag --list --points-at=HEAD'
     FMT_DEV         = '{tag}.dev0'
     FMT_TAGGED      = '{tag}'
-    DEFAULT_VERSION = "0.13.0"
+    DEFAULT_VERSION = "0.14.0"
 
     def __init__(self):
         self._git = which("git")

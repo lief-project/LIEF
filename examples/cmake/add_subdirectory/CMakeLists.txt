@@ -36,7 +36,7 @@ else()
   set(LIEF_GIT_URL "https://github.com/lief-project/LIEF.git")
 
   # LIEF's version to be used (can be 'master')
-  set(LIEF_VERSION 0.12.0)
+  set(LIEF_VERSION 0.13.0)
 
   include(FetchContent)
   FetchContent_Declare(LIEF
