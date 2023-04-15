@@ -659,8 +659,8 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::file_format_error);
       }
       std::unique_ptr<Section>& string_names_section = binary_->sections_[hdr.section_name_table_idx()];
-      binary_->remove(*string_names_section, /* clear */ true);
       std::string sec_name = binary_->shstrtab_name();
+      binary_->remove(*string_names_section, /* clear */ true);
       Section sec_str_section(sec_name, ELF_SECTION_TYPES::SHT_STRTAB);
       sec_str_section.content(std::vector<uint8_t>(raw_shstrtab_.size()));
       binary_->add(sec_str_section, /* loaded */ false);
