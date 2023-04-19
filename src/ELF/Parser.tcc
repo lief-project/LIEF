@@ -1352,7 +1352,7 @@ ok_error_t Parser::parse_section_relocations(const Section& section) {
   }
 
   Section* symbol_table = nullptr;
-  if (section.link() > 0 and section.link() < binary_->sections_.size()) {
+  if (section.link() > 0 && section.link() < binary_->sections_.size()) {
     const size_t sh_link = section.link();
     symbol_table = binary_->sections_[sh_link].get();
   }
@@ -1381,11 +1381,20 @@ ok_error_t Parser::parse_section_relocations(const Section& section) {
     }
 
     const auto idx  = static_cast<uint32_t>(rel_hdr->r_info >> shift);
-    if (idx > 0 && idx < binary_->dynamic_symbols_.size() && (symbol_table == nullptr || symbol_table->type() == LIEF::ELF::ELF_SECTION_TYPES::SHT_DYNSYM)) {
+
+    const bool is_from_dynsym = idx > 0 && idx < binary_->dynamic_symbols_.size() &&
+               (symbol_table == nullptr ||
+                symbol_table->type() == ELF_SECTION_TYPES::SHT_DYNSYM);
+
+    const bool is_from_symtab = idx < binary_->static_symbols_.size() &&
+                                (symbol_table == nullptr ||
+                                 symbol_table->type() == ELF_SECTION_TYPES::SHT_SYMTAB);
+    if (is_from_dynsym) {
       reloc->symbol_ = binary_->dynamic_symbols_[idx].get();
-    } else if (idx < binary_->static_symbols_.size() && (symbol_table == nullptr || symbol_table->type() == LIEF::ELF::ELF_SECTION_TYPES::SHT_SYMTAB)) {
+    } else if (is_from_symtab) {
       reloc->symbol_ = binary_->static_symbols_[idx].get();
     }
+
     if (reloc_hash.insert(reloc.get()).second) {
       binary_->relocations_.push_back(std::move(reloc));
     }
