@@ -705,11 +705,13 @@ Binary::it_const_relocations Binary::relocations() const {
 Relocation& Binary::add_relocation(const Relocation& relocation) {
   auto newone = std::make_unique<Relocation>(relocation);
   relocations_.push_back(std::move(newone));
+  this->has_relocations_ = !this->relocations_.empty();
   return *relocations_.back();
 }
 
 void Binary::remove_all_relocations() {
   relocations_.clear();
+  this->has_relocations_ = !this->relocations_.empty();
 }
 
 
