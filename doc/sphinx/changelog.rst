@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.14.0 - Not Released Yet
+-------------------------
+
+:ELF:
+
+  * Fix relocation issue when using `-Wl,--emit-relocs` (c.f. :issue:`897` / :pr:`898` by :github_user:`adamjseitz`)
+
 0.13.0 - April 9, 2023
 ----------------------
 

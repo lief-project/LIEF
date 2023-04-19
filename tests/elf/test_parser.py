@@ -60,3 +60,16 @@ def test_issue_845():
     target = lief.parse(get_sample('ELF/issue_845.elf'))
     assert len(target.segments) > 1
     assert len(target.segments[1].content) == 0
+
+def test_issue_897():
+    """
+    Issue #897 / PR: #898
+    """
+    target = lief.parse(get_sample('ELF/test_897.elf'))
+    rel1 = target.get_relocation(0x1b39)
+    assert rel1.symbol.name == "__init_array_start"
+    assert rel1.symbol_table.name == ".symtab"
+
+    rel2 = target.get_relocation(0x1b50)
+    assert rel2.symbol.name == "__init_array_end"
+    assert rel2.symbol_table.name == ".symtab"

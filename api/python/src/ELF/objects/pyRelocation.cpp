@@ -106,6 +106,13 @@ void create<Relocation>(py::module& m) {
         )delim",
         py::return_value_policy::reference)
 
+    .def_property_readonly("symbol_table",
+      static_cast<Section* (Relocation::*)(void)>(&Relocation::symbol_table),
+      R"delim(
+      the symbol table :class:`~lief.ELF.Section` which the relocation references
+      )delim",
+      py::return_value_policy::reference)
+
     .def_property_readonly("is_rela",
       static_cast<getter_t<bool>>(&Relocation::is_rela),
       "``True`` if the relocation **uses** the :attr:`~lief.ELF.Relocation.addend` proprety")
