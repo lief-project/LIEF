@@ -1342,21 +1342,20 @@ ok_error_t Parser::parse_section_relocations(const Section& section) {
                 std::is_same<REL_T, Elf_Rela>::value, "REL_T must be Elf_Rel || Elf_Rela");
 
   // A relocation section can reference two other sections: a symbol table,
-  // identified by the sh_info section header entry, and a section to modify,
-  // identified by the sh_link
-  // BUT: in practice sh_info and sh_link are inverted
+  // identified by the sh_link section header entry, and a section to modify,
+  // identified by the sh_info
+  // See Figure 4-12 in https://refspecs.linuxbase.org/elf/gabi4+/ch4.sheader.html#sh_link
   Section* applies_to = nullptr;
   const size_t sh_info = section.information();
   if (sh_info > 0 && sh_info < binary_->sections_.size()) {
     applies_to = binary_->sections_[sh_info].get();
   }
 
-  // FIXME: Use it
-  // Section* section_associated = nullptr;
-  // if (section.link() > 0 and section.link() < binary_->sections_.size()) {
-  //   const size_t sh_link = section.link();
-  //   section_associated = binary_->sections_[sh_link];
-  // }
+  Section* symbol_table = nullptr;
+  if (section.link() > 0 && section.link() < binary_->sections_.size()) {
+    const size_t sh_link = section.link();
+    symbol_table = binary_->sections_[sh_link].get();
+  }
 
   const uint64_t offset_relocations = section.file_offset();
   const uint8_t shift = std::is_same<ELF_T, details::ELF32>::value ? 8 : 32;
@@ -1375,17 +1374,27 @@ ok_error_t Parser::parse_section_relocations(const Section& section) {
     auto reloc = std::make_unique<Relocation>(*rel_hdr);
     reloc->architecture_ = binary_->header_.machine_type();
     reloc->section_      = applies_to;
+    reloc->symbol_table_ = symbol_table;
     if (binary_->header().file_type() == ELF::E_TYPE::ET_REL &&
         binary_->segments().size() == 0) {
       reloc->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_OBJECT);
     }
 
     const auto idx  = static_cast<uint32_t>(rel_hdr->r_info >> shift);
-    if (idx > 0 && idx < binary_->dynamic_symbols_.size()) {
+
+    const bool is_from_dynsym = idx > 0 && idx < binary_->dynamic_symbols_.size() &&
+               (symbol_table == nullptr ||
+                symbol_table->type() == ELF_SECTION_TYPES::SHT_DYNSYM);
+
+    const bool is_from_symtab = idx < binary_->static_symbols_.size() &&
+                                (symbol_table == nullptr ||
+                                 symbol_table->type() == ELF_SECTION_TYPES::SHT_SYMTAB);
+    if (is_from_dynsym) {
       reloc->symbol_ = binary_->dynamic_symbols_[idx].get();
-    } else if (idx < binary_->static_symbols_.size()) {
+    } else if (is_from_symtab) {
       reloc->symbol_ = binary_->static_symbols_[idx].get();
     }
+
     if (reloc_hash.insert(reloc.get()).second) {
       binary_->relocations_.push_back(std::move(reloc));
     }
