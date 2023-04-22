@@ -288,6 +288,14 @@ class BuildLibrary(build_ext):
                         version_fixed = sys.version.lower().replace("amd64", "")
                         sys.version = version_fixed
                         sys.platform = "win32"
+        import platform as _platform
+        if not _platform.machine() in sysconfig.get_platform(): # cross-compilation
+            cross_platform = sysconfig.get_platform().split('-') #manylinux2014-aarch64 -> ['manylinux2014', 'aarch64']
+            if len(cross_platform) != 2 or not "linux " in cross_platform[0]: # focus on Linux
+                report("Using platform: ", cross_platform[0] + cross_platform[1])
+                # set SETUPTOOLS_EXT_SUFFIX for cross arch compilation
+                # .cpython-38-x86_64-linux-gnu.so -> .cpython-38-aarch64-linux-gnu.so
+                os.environ["SETUPTOOLS_EXT_SUFFIX"] = sysconfig.get_config_var('EXT_SUFFIX').replace(_platform.machine(),cross_platform[1])
 
     def build_extension(self, ext):
         build_temp   = Path(self.build_temp)
