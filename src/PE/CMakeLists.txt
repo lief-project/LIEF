@@ -34,17 +34,6 @@ set(LIEF_PE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/Section.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Symbol.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/TLS.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/resources/LangCodeItem.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceAccelerator.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceDialog.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceDialogItem.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceFixedFileInfo.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceIcon.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceStringFileInfo.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceStringTable.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceVarFileInfo.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceVersion.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/resources/ResourceVersion.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/utils.cpp"
 )
 
@@ -87,19 +76,6 @@ set(LIEF_PE_INCLUDE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/ResourcesParser.hpp"
 )
 
-
-set(LIEF_PE_RESOURCES_INCLUDE_FILES
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceVersion.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceDialog.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceDialogItem.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceVersion.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceFixedFileInfo.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceVarFileInfo.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceStringFileInfo.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/LangCodeItem.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/resources/ResourceIcon.hpp"
-)
-
 set(LIEF_PE_UTILS_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/src/PE/utils/ordinals_lookup_tables/libraries_table.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/PE/utils/ordinals_lookup_tables/kernel32_dll_lookup.hpp"
@@ -127,7 +103,6 @@ list(APPEND LIEF_PE_INCLUDE_FILES ${LIEF_PE_HASH_HDR})
 
 source_group("Source Files\\PE"                                FILES ${LIEF_PE_SRC})
 source_group("Header Files\\PE"                                FILES ${LIEF_PE_INCLUDE_FILES})
-source_group("Header Files\\PE\\resources"                     FILES ${LIEF_PE_RESOURCES_INCLUDE_FILES})
 source_group("Header Files\\PE\\utils\\Ordinals Lookup Tables" FILES ${LIEF_PE_UTILS_INCLUDE_FILES})
 
 if (LIEF_PE)
@@ -142,3 +117,4 @@ endif()
 
 include("${CMAKE_CURRENT_LIST_DIR}/signature/CMakeLists.txt")
 include("${CMAKE_CURRENT_LIST_DIR}/LoadConfigurations/CMakeLists.txt")
+include("${CMAKE_CURRENT_LIST_DIR}/resources/CMakeLists.txt")
