@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
 
   builder.build();
   builder.write(argv[2]);
-  std::cout << binary->name() << '\n';
+  std::cout << argv[1] << '\n';
 
   return 0;
 }

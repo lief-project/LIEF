@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
 
   binary->functions();
 
-  std::cout << "Binary: " << binary->name() << '\n';
+  std::cout << "Binary: " << argv[1] << '\n';
   std::cout << "Interpreter: " << binary->interpreter() << '\n';
   std::cout << "== Header ==" << '\n';
   std::cout << binary->header() << '\n';
