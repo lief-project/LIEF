@@ -8,6 +8,33 @@ Changelog
 
   * Fix relocation issue when using `-Wl,--emit-relocs` (c.f. :issue:`897` / :pr:`898` by :github_user:`adamjseitz`)
 
+:MachO:
+
+  * The *fileset name* is now stored in :attr:`lief.MachO.Binary.fileset_name`
+    (instead of `lief.MachO.Binary.name`)
+
+:PE:
+
+  * Add a :class:`lief.PE.ParserConfig` interface that can be used to tweak
+    which parts of the PE format should be parsed (:issue:`839`).
+
+    :Example:
+
+      .. code-block:: python
+
+        config = lief.PE.ParserConfig()
+
+        # Skip parsing PE authenticode
+        config.parse_signature = False
+
+        pe = lief.PE.parse("pe.exe", config)
+
+:General Design:
+
+  * Remove the `lief.Binary.name` attribute
+
+
+
 0.13.0 - April 9, 2023
 ----------------------
 

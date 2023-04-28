@@ -39,6 +39,7 @@ void init_python_module(py::module& m) {
 }
 
 void init_objects(py::module& m) {
+  CREATE(ParserConfig, m);
   CREATE(Parser, m);
 
   CREATE(DosHeader, m);

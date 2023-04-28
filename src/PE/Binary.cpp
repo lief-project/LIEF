@@ -61,11 +61,10 @@ PE_TYPE Binary::type() const {
   return type_;
 }
 
-Binary::Binary(const std::string& name, PE_TYPE type) :
+Binary::Binary(PE_TYPE type) :
   type_{type}
 {
   format_ = LIEF::EXE_FORMATS::FORMAT_PE;
-  name_ = name;
   Header& hdr = header();
   size_t sizeof_headers = dos_header().addressof_new_exeheader() +
                           sizeof(details::pe_header) +

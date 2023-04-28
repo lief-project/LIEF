@@ -28,7 +28,7 @@ template<>
 void create<Parser>(py::module& m) {
 
   m.def("parse",
-      [] (py::bytes bytes, const std::string& name) {
+      [] (py::bytes bytes) {
         std::string raw_str = bytes;
         std::vector<uint8_t> raw = {
           std::make_move_iterator(std::begin(raw_str)),
@@ -38,7 +38,7 @@ void create<Parser>(py::module& m) {
         std::exception_ptr ep;
         Py_BEGIN_ALLOW_THREADS
         try {
-          binary = Parser::parse(std::move(raw), name);
+          binary = Parser::parse(std::move(raw));
         } catch (...) {
           ep = std::current_exception();
         }
@@ -55,7 +55,7 @@ void create<Parser>(py::module& m) {
 
       depending on the given binary format.
       )delim",
-      "raw"_a, "name"_a = "",
+      "raw"_a,
       py::return_value_policy::take_ownership);
 
   m.def("parse",
@@ -86,7 +86,7 @@ void create<Parser>(py::module& m) {
 
 
   m.def("parse",
-      [] (py::object byteio, const std::string& name) -> py::object {
+      [] (py::object byteio) -> py::object {
         if (auto stream = PyIOStream::from_python(byteio)) {
           auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
           py::object binary;
@@ -113,7 +113,7 @@ void create<Parser>(py::module& m) {
 
       depending on the given binary format.
       )delim",
-      "io"_a, "name"_a = "",
+      "io"_a,
       py::return_value_policy::take_ownership);
 }
 }

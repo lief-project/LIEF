@@ -420,7 +420,6 @@ def test_relocations():
 
 
 def test_symbols():
-
     symbols = winhello64.symbols
     assert len(symbols) == 1097
 
@@ -434,3 +433,20 @@ def test_symbols():
 def test_checksum():
     assert atapi.optional_header.computed_checksum      == atapi.optional_header.checksum
     assert winhello64.optional_header.computed_checksum == winhello64.optional_header.checksum
+
+
+def test_config():
+
+    config = lief.PE.ParserConfig()
+    config.parse_signature = False
+    config.parse_imports = False
+    config.parse_rsrc = False
+    config.parse_reloc = False
+
+    fpath = get_sample("PE/PE32_x86-64_binary_avast-free-antivirus-setup-online.exe")
+    avast = lief.PE.parse(fpath, config)
+
+    assert len(avast.imports) == 0
+    assert len(avast.relocations) == 0
+    assert len(avast.signatures) == 0
+    assert avast.resources is None

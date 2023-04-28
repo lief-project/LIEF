@@ -149,7 +149,6 @@ void JsonVisitor::visit(const SegmentCommand& segment) {
   }
 
   visit(*segment.as<LoadCommand>());
-  node_["name"]              = segment.name();
   node_["virtual_address"]   = segment.virtual_address();
   node_["virtual_size"]      = segment.virtual_size();
   node_["file_size"]         = segment.file_size();

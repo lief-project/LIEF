@@ -10,7 +10,7 @@ def test_without_imports():
     """
     By convention if a binary hasn't import, imphash is '0'
     """
-    binary = lief.PE.Binary("test_imphash", lief.PE.PE_TYPE.PE32)
+    binary = lief.PE.Binary(lief.PE.PE_TYPE.PE32)
 
     assert int(lief.PE.get_imphash(binary), 16) == 0
 
@@ -18,8 +18,8 @@ def test_casse():
     """
     Test that casse doesn't change the hash
     """
-    binary_lhs = lief.PE.Binary("test_imphash_lhs", lief.PE.PE_TYPE.PE32)
-    binary_rhs = lief.PE.Binary("test_imphash_rhs", lief.PE.PE_TYPE.PE32)
+    binary_lhs = lief.PE.Binary(lief.PE.PE_TYPE.PE32)
+    binary_rhs = lief.PE.Binary(lief.PE.PE_TYPE.PE32)
 
     kernel32_lhs = binary_lhs.add_library("KERNEL32.dll")
     kernel32_lhs.add_entry("CreateMutexA")
@@ -34,8 +34,8 @@ def test_order():
     """
     Test that import order doesn't change the hash
     """
-    binary_lhs = lief.PE.Binary("test_imphash_lhs", lief.PE.PE_TYPE.PE32)
-    binary_rhs = lief.PE.Binary("test_imphash_rhs", lief.PE.PE_TYPE.PE32)
+    binary_lhs = lief.PE.Binary(lief.PE.PE_TYPE.PE32)
+    binary_rhs = lief.PE.Binary(lief.PE.PE_TYPE.PE32)
     fonctions = ["GetStringTypeW", "LCMapStringW", "GetCommandLineA", "TerminateProcess"]
 
     kernel32_lhs = binary_lhs.add_library("kernel32.dll")
@@ -54,8 +54,8 @@ def test_ordinal():
     """
     Test import by ordinal
     """
-    binary_lhs = lief.PE.Binary("test_imphash_lhs", lief.PE.PE_TYPE.PE32)
-    binary_rhs = lief.PE.Binary("test_imphash_lhs", lief.PE.PE_TYPE.PE32)
+    binary_lhs = lief.PE.Binary(lief.PE.PE_TYPE.PE32)
+    binary_rhs = lief.PE.Binary(lief.PE.PE_TYPE.PE32)
 
     fonctions = [
             "GetStringTypeW",
@@ -82,8 +82,8 @@ def test_order_2():
     """
     Test that import order doesn't change the hash (More complex)
     """
-    binary_lhs = lief.PE.Binary("test_imphash_lhs", lief.PE.PE_TYPE.PE32)
-    binary_rhs = lief.PE.Binary("test_imphash_rhs", lief.PE.PE_TYPE.PE32)
+    binary_lhs = lief.PE.Binary(lief.PE.PE_TYPE.PE32)
+    binary_rhs = lief.PE.Binary(lief.PE.PE_TYPE.PE32)
 
 
     libraries = {
@@ -133,8 +133,8 @@ def test_different():
     Check that different imports have different hashes
     """
 
-    binary_lhs = lief.PE.Binary("test_imphash_lhs", lief.PE.PE_TYPE.PE32)
-    binary_rhs = lief.PE.Binary("test_imphash_rhs", lief.PE.PE_TYPE.PE32)
+    binary_lhs = lief.PE.Binary(lief.PE.PE_TYPE.PE32)
+    binary_rhs = lief.PE.Binary(lief.PE.PE_TYPE.PE32)
 
 
     libraries = {

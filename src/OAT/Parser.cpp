@@ -43,7 +43,7 @@ std::unique_ptr<Binary> Parser::parse(const std::string& oat_file) {
   }
 
   Parser parser{oat_file};
-  parser.init(oat_file);
+  parser.init();
 
   std::unique_ptr<Binary> oat_binary{static_cast<Binary*>(parser.binary_.release())};
   return oat_binary;
@@ -65,15 +65,15 @@ std::unique_ptr<Binary> Parser::parse(const std::string& oat_file, const std::st
   } else {
     LIEF_WARN("Can't parse the VDEX file '{}'", vdex_file);
   }
-  parser.init(oat_file);
+  parser.init();
   std::unique_ptr<Binary> oat_binary{static_cast<Binary*>(parser.binary_.release())};
   return oat_binary;
 
 }
 
-std::unique_ptr<Binary> Parser::parse(std::vector<uint8_t> data, const std::string& name) {
+std::unique_ptr<Binary> Parser::parse(std::vector<uint8_t> data) {
   Parser parser{std::move(data)};
-  parser.init(name);
+  parser.init();
   std::unique_ptr<Binary> oat_binary{static_cast<Binary*>(parser.binary_.release())};
   return oat_binary;
 }
@@ -103,9 +103,8 @@ void Parser::set_vdex(std::unique_ptr<VDEX::File> file) {
 }
 
 
-void Parser::init(const std::string& name) {
-  LIEF_DEBUG("Parsing {}", name);
-  ELF::Parser::init(name);
+void Parser::init() {
+  ELF::Parser::init();
   oat_version_t version = OAT::version(oat_binary());
   Binary& oat_bin = oat_binary();
   oat_bin.vdex_ = std::move(vdex_file_);

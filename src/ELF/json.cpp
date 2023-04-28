@@ -120,7 +120,6 @@ void JsonVisitor::visit(const Binary& binary) {
     notes.emplace_back(visitor.get());
   }
 
-  node_["name"]         = binary.name();
   node_["entrypoint"]   = binary.entrypoint();
   node_["imagebase"]    = binary.imagebase();
   node_["virtual_size"] = binary.virtual_size();

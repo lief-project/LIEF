@@ -6,6 +6,11 @@ Parser
 
 .. autofunction:: lief.PE.parse
 
+.. autoclass:: lief.PE.ParserConfig
+  :members:
+  :inherited-members:
+  :undoc-members:
+
 
 Binary
 ******

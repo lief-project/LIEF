@@ -62,7 +62,6 @@ std::unique_ptr<Binary> BinaryParser::parse(const std::string& file, const Parse
   parser.config_ = conf;
   parser.stream_ = std::make_unique<VectorStream>(std::move(*stream));
   parser.binary_ = std::unique_ptr<Binary>(new Binary{});
-  parser.binary_->name_ = file;
   parser.binary_->fat_offset_ = 0;
 
   if(!parser.init_and_parse()) {

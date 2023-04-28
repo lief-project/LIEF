@@ -71,11 +71,6 @@ void create<Binary>(py::module& m) {
         &Binary::has_nx,
         "Check if the binary has ``NX`` protection (non executable stack)")
 
-    .def_property("name",
-        static_cast<getter_t<const std::string&>>(&Binary::name),
-        static_cast<setter_t<const std::string&>>(&Binary::name),
-        "Binary's name")
-
     .def_property_readonly("header",
         &Binary::header,
         "Binary's abstract header (" RST_CLASS_REF(lief.Header) ")")

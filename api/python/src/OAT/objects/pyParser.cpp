@@ -39,14 +39,14 @@ void create<Parser>(py::module& m) {
     py::return_value_policy::take_ownership);
 
   m.def("parse",
-    static_cast<std::unique_ptr<Binary> (*) (std::vector<uint8_t>, const std::string&)>(&Parser::parse),
+    static_cast<std::unique_ptr<Binary> (*) (std::vector<uint8_t>)>(&Parser::parse),
     "Parse the given raw data and return a " RST_CLASS_REF(lief.OAT.Binary) " object",
-    "raw"_a, "name"_a = "",
+    "raw"_a,
     py::return_value_policy::take_ownership);
 
 
   m.def("parse",
-      [] (py::object byteio, const std::string& name) {
+      [] (py::object byteio) {
         const auto& io = py::module::import("io");
         const auto& RawIOBase = io.attr("RawIOBase");
         const auto& BufferedIOBase = io.attr("BufferedIOBase");
@@ -76,9 +76,9 @@ void create<Parser>(py::module& m) {
           std::make_move_iterator(std::begin(raw_str)),
           std::make_move_iterator(std::end(raw_str))};
 
-        return LIEF::OAT::Parser::parse(std::move(raw), name);
+        return LIEF::OAT::Parser::parse(std::move(raw));
       },
-      "io"_a, "name"_a = "",
+      "io"_a,
       py::return_value_policy::take_ownership);
 }
 }

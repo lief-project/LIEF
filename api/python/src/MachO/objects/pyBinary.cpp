@@ -128,6 +128,10 @@ void create<Binary>(py::module& m) {
         &Binary::has_filesets,
         "Return ``True`` if the binary has filesets")
 
+    .def_property_readonly("fileset_name",
+        &Binary::fileset_name,
+        "Name associated with the LC_FILESET_ENTRY binary")
+
     .def_property_readonly("imagebase",
         &Binary::imagebase,
         R"delim(

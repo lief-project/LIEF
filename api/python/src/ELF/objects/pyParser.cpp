@@ -43,7 +43,7 @@ void create<Parser>(py::module& m) {
     py::return_value_policy::take_ownership);
 
   m.def("parse",
-    static_cast<std::unique_ptr<Binary>(*)(const std::vector<uint8_t>&, const std::string&, DYNSYM_COUNT_METHODS)>(&Parser::parse),
+    static_cast<std::unique_ptr<Binary>(*)(const std::vector<uint8_t>&, DYNSYM_COUNT_METHODS)>(&Parser::parse),
     R"delim(
     Parse the ELF binary from the given **list of bytes** and return a :class:`lief.ELF.Binary` object
 
@@ -52,15 +52,15 @@ void create<Parser>(py::module& m) {
     :attr:`lief.ELF.DYNSYM_COUNT_METHODS.COUNT_AUTO`
     )delim",
 
-    "raw"_a, "name"_a = "", "dynsym_count_method"_a = DYNSYM_COUNT_METHODS::COUNT_AUTO,
+    "raw"_a, "dynsym_count_method"_a = DYNSYM_COUNT_METHODS::COUNT_AUTO,
     py::return_value_policy::take_ownership);
 
 
   m.def("parse",
-      [] (py::object byteio, const std::string& name, DYNSYM_COUNT_METHODS count) -> py::object {
+      [] (py::object byteio, DYNSYM_COUNT_METHODS count) -> py::object {
         if (auto stream = PyIOStream::from_python(byteio)) {
           auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
-          return py::cast(ELF::Parser::parse(std::move(ptr), name, count));
+          return py::cast(ELF::Parser::parse(std::move(ptr), count));
         }
         logging::log(logging::LOG_ERR, "Can't create a LIEF stream interface over the provided io");
         return py::none();
@@ -72,7 +72,7 @@ void create<Parser>(py::module& m) {
       (:class:`lief.ELF.lief.ELF.DYNSYM_COUNT_METHODS`). By default, the value is set to
       :attr:`lief.ELF.lief.ELF.DYNSYM_COUNT_METHODS.COUNT_AUTO`
       )delim",
-      "io"_a, "name"_a = "", "dynsym_count_method"_a = DYNSYM_COUNT_METHODS::COUNT_AUTO,
+      "io"_a, "dynsym_count_method"_a = DYNSYM_COUNT_METHODS::COUNT_AUTO,
       py::return_value_policy::take_ownership);
 }
 }

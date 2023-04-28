@@ -54,7 +54,8 @@ Parser::Parser(const std::string& file, const ParserConfig& conf) :
 }
 
 
-std::unique_ptr<FatBinary> Parser::parse(const std::string& filename, const ParserConfig& conf) {
+std::unique_ptr<FatBinary> Parser::parse(const std::string& filename,
+                                         const ParserConfig& conf) {
   if (!is_macho(filename)) {
     LIEF_ERR("{} is not a MachO file", filename);
     return nullptr;
@@ -62,9 +63,6 @@ std::unique_ptr<FatBinary> Parser::parse(const std::string& filename, const Pars
 
   Parser parser{filename, conf};
   parser.build();
-  for (std::unique_ptr<Binary>& binary : parser.binaries_) {
-    binary->name(filename);
-  }
   return std::unique_ptr<FatBinary>(new FatBinary{std::move(parser.binaries_)});
 }
 
@@ -76,7 +74,7 @@ Parser::Parser(std::vector<uint8_t> data, const ParserConfig& conf) :
 
 
 std::unique_ptr<FatBinary> Parser::parse(const std::vector<uint8_t>& data,
-                                         const std::string& name, const ParserConfig& conf) {
+                                         const ParserConfig& conf) {
   if (!is_macho(data)) {
     LIEF_ERR("The provided data seem not being related to a MachO binary");
     return nullptr;
@@ -84,14 +82,11 @@ std::unique_ptr<FatBinary> Parser::parse(const std::vector<uint8_t>& data,
 
   Parser parser{data, conf};
   parser.build();
-
-  for (std::unique_ptr<Binary>& binary : parser.binaries_) {
-    binary->name(name);
-  }
   return std::unique_ptr<FatBinary>(new FatBinary{std::move(parser.binaries_)});
 }
 
-std::unique_ptr<FatBinary> Parser::parse(std::unique_ptr<BinaryStream> stream, const ParserConfig& conf) {
+std::unique_ptr<FatBinary> Parser::parse(std::unique_ptr<BinaryStream> stream,
+                                         const ParserConfig& conf) {
   {
     ScopedStream scoped(*stream, 0);
     if (!is_macho(*stream)) {
@@ -139,8 +134,6 @@ std::unique_ptr<FatBinary> Parser::parse_from_memory(uintptr_t address, const Pa
   static constexpr size_t MAX_SIZE = std::numeric_limits<size_t>::max() << 2;
   return parse_from_memory(address, MAX_SIZE, conf);
 }
-
-
 
 ok_error_t Parser::build_fat() {
   static constexpr size_t MAX_FAT_ARCH = 10;

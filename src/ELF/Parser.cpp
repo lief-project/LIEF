@@ -290,8 +290,7 @@ ELF_CLASS determine_elf_class(BinaryStream& stream) {
 }
 
 
-ok_error_t Parser::init(const std::string& name) {
-  LIEF_DEBUG("Parsing binary: {}", name);
+ok_error_t Parser::init() {
 
   if (stream_ == nullptr) {
     LIEF_ERR("Stream not properly initialized");
@@ -299,7 +298,7 @@ ok_error_t Parser::init(const std::string& name) {
   }
 
   binary_->original_size_ = binary_size_;
-  binary_->name(name);
+
   auto res = DataHandler::Handler::from_stream(stream_);
   if (!res) {
     LIEF_ERR("The provided stream is not supported by the ELF DataHandler");
@@ -338,29 +337,29 @@ std::unique_ptr<Binary> Parser::parse(const std::string& filename, DYNSYM_COUNT_
   }
 
   Parser parser{filename, count_mtd};
-  parser.init(filename);
+  parser.init();
   return std::move(parser.binary_);
 }
 
 std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& data,
-                                      const std::string& name, DYNSYM_COUNT_METHODS count_mtd) {
+                                      DYNSYM_COUNT_METHODS count_mtd) {
   if (!is_elf(data)) {
     return nullptr;
   }
 
   Parser parser{data, count_mtd};
-  parser.init(name);
+  parser.init();
   return std::move(parser.binary_);
 }
 
 std::unique_ptr<Binary> Parser::parse(std::unique_ptr<BinaryStream> stream,
-                                      const std::string& name, DYNSYM_COUNT_METHODS count_mtd) {
+                                      DYNSYM_COUNT_METHODS count_mtd) {
   if (!is_elf(*stream)) {
     return nullptr;
   }
 
   Parser parser{std::move(stream), count_mtd};
-  parser.init(name);
+  parser.init();
   return std::move(parser.binary_);
 }
 

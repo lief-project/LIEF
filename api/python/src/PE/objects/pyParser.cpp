@@ -28,29 +28,29 @@ template<>
 void create<Parser>(py::module& m) {
 
     m.def("parse",
-      static_cast<std::unique_ptr<Binary> (*) (const std::string&)>(&Parser::parse),
+      static_cast<std::unique_ptr<Binary> (*) (const std::string&, const ParserConfig&)>(&Parser::parse),
       "Parse the PE binary from the given **file path** and return a " RST_CLASS_REF(lief.PE.Binary) " object",
-      "filename"_a,
+      "filename"_a, "config"_a = ParserConfig::all(),
       py::return_value_policy::take_ownership);
 
     m.def("parse",
-      static_cast<std::unique_ptr<Binary> (*) (std::vector<uint8_t>, const std::string&)>(&Parser::parse),
+      static_cast<std::unique_ptr<Binary> (*) (std::vector<uint8_t>, const ParserConfig&)>(&Parser::parse),
       "Parse the PE binary from the given **list of bytes** and return a :class:`lief.PE.Binary` object",
-      "raw"_a, "name"_a = "",
+      "raw"_a, "config"_a = ParserConfig::all(),
       py::return_value_policy::take_ownership);
 
 
     m.def("parse",
-      [] (py::object byteio, const std::string& name) -> py::object {
+      [] (py::object byteio, const ParserConfig&) -> py::object {
         if (auto stream = PyIOStream::from_python(byteio)) {
           auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
-          return py::cast(PE::Parser::parse(std::move(ptr), name));
+          return py::cast(PE::Parser::parse(std::move(ptr)));
         }
         logging::log(logging::LOG_ERR, "Can't create a LIEF stream interface over the provided io");
         return py::none();
       },
       "Parse the PE binary from the given Python IO interface and return a :class:`lief.PE.Binary` object",
-      "io"_a, "name"_a = "",
+      "io"_a, "config"_a = ParserConfig::all(),
       py::return_value_policy::take_ownership);
 }
 

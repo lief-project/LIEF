@@ -118,11 +118,10 @@ class LIEF_API Binary : public Object {
   //! Binary's entrypoint (if any)
   virtual uint64_t entrypoint() const = 0;
 
-  //! Binary's name
-  const std::string& name() const;
-
   //! Binary's original size
-  uint64_t original_size() const;
+  uint64_t original_size() const {
+    return original_size_;
+  }
 
   //! Return the functions exported by the binary
   functions_t exported_functions() const;
@@ -164,15 +163,14 @@ class LIEF_API Binary : public Object {
     get_content_from_virtual_address(uint64_t virtual_address, uint64_t size,
                                      VA_TYPES addr_type = VA_TYPES::AUTO) const = 0;
 
-  //! Change the binary's name
-  void name(const std::string& name);
-
   //! @brief Change binary's original size.
   //!
   //! @warning
   //! This function should be used carefully as some optimizations
   //! can be performed with this value
-  void original_size(uint64_t size);
+  void original_size(uint64_t size) {
+    original_size_ = size;
+  }
 
   //! Check if the binary is position independent
   virtual bool is_pie() const = 0;
@@ -202,7 +200,6 @@ class LIEF_API Binary : public Object {
 
   protected:
   EXE_FORMATS format_ = EXE_FORMATS::FORMAT_UNKNOWN;
-  std::string name_;
 
   uint64_t original_size_ = 0;
 

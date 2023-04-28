@@ -41,7 +41,7 @@ class LIEF_API Parser : public LIEF::ELF::Parser {
   static std::unique_ptr<Binary> parse(const std::string& oat_file);
   static std::unique_ptr<Binary> parse(const std::string& oat_file, const std::string& vdex_file);
 
-  static std::unique_ptr<Binary> parse(std::vector<uint8_t> data, const std::string& name = "");
+  static std::unique_ptr<Binary> parse(std::vector<uint8_t> data);
 
   Parser& operator=(const Parser& copy) = delete;
   Parser(const Parser& copy)            = delete;
@@ -50,7 +50,7 @@ class LIEF_API Parser : public LIEF::ELF::Parser {
   Parser();
   Parser(const std::string& oat_file);
   Parser(std::vector<uint8_t> data);
-  ~Parser();
+  ~Parser() override;
 
   inline Binary& oat_binary() {
     // The type of the parent binary_ is guaranteed by the constructor
@@ -81,7 +81,7 @@ class LIEF_API Parser : public LIEF::ELF::Parser {
   template<typename OAT_T>
   void parse_oat_methods(uint64_t methods_offsets, Class& clazz, const DEX::Class& dex_class);
 
-  void init(const std::string& name = "");
+  void init();
 
   std::unique_ptr<LIEF::VDEX::File> vdex_file_;
 

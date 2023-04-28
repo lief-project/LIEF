@@ -45,7 +45,7 @@ class LIEF_API Parser : public LIEF::Parser {
   Parser& operator=(const Parser& copy) = delete;
   Parser(const Parser& copy)            = delete;
 
-  ~Parser();
+  ~Parser() override;
 
   //! Parse a Mach-O file from the path provided by the ``filename``
   //! parameter
@@ -65,10 +65,8 @@ class LIEF_API Parser : public LIEF::Parser {
   //! of the parser
   //!
   //! @param[in] data       Mach-O file as a vector of bytes
-  //! @param[in] name       A name for the Mach-O file
   //! @param[in] conf       Parser configuration (Defaut: ParserConfig::deep)
   static std::unique_ptr<FatBinary> parse(const std::vector<uint8_t>& data,
-                                          const std::string& name = "",
                                           const ParserConfig& conf = ParserConfig::deep());
 
 

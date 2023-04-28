@@ -1,6 +1,18 @@
 PE
 --
 
+Parser
+******
+
+.. doxygenclass:: LIEF::PE::Parser
+   :project: lief
+
+.. doxygenstruct:: LIEF::PE::ParserConfig
+   :project: lief
+
+----------
+
+
 Binary
 ******
 

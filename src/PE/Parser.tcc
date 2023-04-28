@@ -153,7 +153,7 @@ ok_error_t Parser::parse_data_directories() {
 
   // Import Table
   DataDirectory& import_data_dir = binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE);
-  if (import_data_dir.RVA() > 0) {
+  if (import_data_dir.RVA() > 0 && config_.parse_imports) {
     LIEF_DEBUG("Processing Import Table");
     if (import_data_dir.has_section()) {
       import_data_dir.section()->add_type(PE_SECTION_TYPES::IMPORT);
@@ -162,13 +162,15 @@ ok_error_t Parser::parse_data_directories() {
   }
 
   // Exports
-  if (binary_->data_directory(DATA_DIRECTORY::EXPORT_TABLE).RVA() > 0) {
+  if (binary_->data_directory(DATA_DIRECTORY::EXPORT_TABLE).RVA() > 0 &&
+      config_.parse_exports) {
     LIEF_DEBUG("[+] Processing Exports");
     parse_exports();
   }
 
   // Signature
-  if (binary_->data_directory(DATA_DIRECTORY::CERTIFICATE_TABLE).RVA() > 0) {
+  if (binary_->data_directory(DATA_DIRECTORY::CERTIFICATE_TABLE).RVA() > 0 &&
+      config_.parse_signature) {
     parse_signature();
   }
 
@@ -196,7 +198,7 @@ ok_error_t Parser::parse_data_directories() {
 
   {
     DataDirectory& reloc_data_dir = binary_->data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE);
-    if (reloc_data_dir.RVA() > 0) {
+    if (reloc_data_dir.RVA() > 0 && config_.parse_reloc) {
       LIEF_DEBUG("Processing Relocations");
       if (reloc_data_dir.has_section()) {
         reloc_data_dir.section()->add_type(PE_SECTION_TYPES::RELOCATION);
@@ -217,7 +219,7 @@ ok_error_t Parser::parse_data_directories() {
   }
   {
     DataDirectory& res_data_dir = binary_->data_directory(DATA_DIRECTORY::RESOURCE_TABLE);
-    if (res_data_dir.RVA() > 0) {
+    if (res_data_dir.RVA() > 0 && config_.parse_rsrc) {
       LIEF_DEBUG("Processing Resources");
       if (res_data_dir.has_section()) {
         res_data_dir.section()->add_type(PE_SECTION_TYPES::RESOURCE);

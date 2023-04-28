@@ -67,7 +67,6 @@ void AbstractJsonVisitor::visit(const Binary& binary) {
   }
 
 
-  node_["name"]               = binary.name();
   node_["entrypoint"]         = binary.entrypoint();
   node_["format"]             = to_string(binary.format());
   node_["original_size"]      = binary.original_size();

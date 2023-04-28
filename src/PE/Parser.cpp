@@ -62,7 +62,6 @@ constexpr size_t Parser::MAX_DATA_SIZE;
 Parser::~Parser() = default;
 Parser::Parser() = default;
 
-
 Parser::Parser(const std::string& file) :
   LIEF::Parser{file}
 {
@@ -78,11 +77,12 @@ Parser::Parser(std::vector<uint8_t> data) :
 {}
 
 
-Parser::Parser(std::unique_ptr<BinaryStream> stream) : stream_{std::move(stream)}
+Parser::Parser(std::unique_ptr<BinaryStream> stream)
+  : stream_{std::move(stream)}
 {}
 
 
-void Parser::init(const std::string& name) {
+void Parser::init(const ParserConfig& config) {
   stream_->setpos(0);
   auto type = get_type_from_stream(*stream_);
   if (!type) {
@@ -91,8 +91,8 @@ void Parser::init(const std::string& name) {
   }
   type_   = type.value();
   binary_ = std::unique_ptr<Binary>(new Binary{});
-  binary_->name(name);
   binary_->type_ = type_;
+  config_ = config;
 
   if (type_ == PE_TYPE::PE32) {
     parse<details::PE32>();
@@ -1100,32 +1100,35 @@ result<uint32_t> Parser::checksum() {
 //
 // Return the Binary constructed
 //
-std::unique_ptr<Binary> Parser::parse(const std::string& filename) {
+std::unique_ptr<Binary> Parser::parse(const std::string& filename,
+                                      const ParserConfig& conf) {
   if (!is_pe(filename)) {
     return nullptr;
   }
   Parser parser{filename};
-  parser.init(filename);
+  parser.init(conf);
   return std::move(parser.binary_);
 }
 
 
-std::unique_ptr<Binary> Parser::parse(std::vector<uint8_t> data, const std::string& name) {
+std::unique_ptr<Binary> Parser::parse(std::vector<uint8_t> data,
+                                      const ParserConfig& conf) {
   if (!is_pe(data)) {
     return nullptr;
   }
   Parser parser{std::move(data)};
-  parser.init(name);
+  parser.init(conf);
   return std::move(parser.binary_);
 }
 
-std::unique_ptr<Binary> Parser::parse(std::unique_ptr<BinaryStream> stream, const std::string& name) {
+std::unique_ptr<Binary> Parser::parse(std::unique_ptr<BinaryStream> stream,
+                                      const ParserConfig& conf) {
   if (!is_pe(*stream)) {
     return nullptr;
   }
 
   Parser parser{std::move(stream)};
-  parser.init(name);
+  parser.init(conf);
   return std::move(parser.binary_);
 }
 

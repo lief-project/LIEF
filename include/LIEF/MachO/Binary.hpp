@@ -657,6 +657,11 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! ``true`` if the binary has a LOAD_COMMAND_TYPES::LC_FILESET_ENTRY command
   bool has_filesets() const;
 
+  //! Name associated with the LC_FILESET_ENTRY binary
+  const std::string& fileset_name() const {
+    return fileset_name_;
+  }
+
   ~Binary() override;
 
   //! Shift the content located right after the Load commands table.
@@ -739,6 +744,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   uint64_t fat_offset_ = 0;
   uint64_t fileset_offset_ = 0;
   uint64_t in_memory_base_addr_ = 0;
+  std::string fileset_name_;
 };
 
 } // namespace MachO

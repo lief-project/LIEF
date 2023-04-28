@@ -135,7 +135,7 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Iterator that outputs const Signature&
   using it_const_signatures = const_ref_iterator<const signatures_t&>;
 
-  Binary(const std::string& name, PE_TYPE type);
+  Binary(PE_TYPE type);
 
   ~Binary() override;
 

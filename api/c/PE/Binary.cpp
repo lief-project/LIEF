@@ -34,7 +34,6 @@ namespace LIEF {
 namespace PE {
 
 void init_c_binary(Pe_Binary_t* c_binary, Binary* binary) {
-  c_binary->name    = binary->name().c_str();
   c_binary->handler = reinterpret_cast<void*>(binary);
 
   init_c_dos_header(c_binary, binary);

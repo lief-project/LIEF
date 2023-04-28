@@ -32,7 +32,6 @@ namespace MachO {
 void init_c_binary(Macho_Binary_t* c_binary, Binary* binary) {
 
   c_binary->handler = reinterpret_cast<void*>(binary);
-  c_binary->name    = binary->name().c_str();
   c_binary->imagebase = binary->imagebase();
   init_c_header(c_binary, binary);
   init_c_commands(c_binary, binary);

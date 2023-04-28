@@ -1,8 +1,8 @@
 MachO
 -----
 
-Parsers
-*******
+Parser
+******
 
 .. doxygenclass:: LIEF::MachO::Parser
    :project: lief

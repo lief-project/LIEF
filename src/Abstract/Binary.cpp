@@ -121,26 +121,6 @@ void Binary::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-const std::string& Binary::name() const {
-  return name_;
-}
-
-
-uint64_t Binary::original_size() const {
-  return original_size_;
-}
-
-
-void Binary::name(const std::string& name) {
-  name_ = name;
-}
-
-
-void Binary::original_size(uint64_t size) {
-  original_size_ = size;
-}
-
-
 std::ostream& Binary::print(std::ostream& os) const {
   return os;
 }

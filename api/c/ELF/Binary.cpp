@@ -36,7 +36,6 @@ namespace LIEF {
 namespace ELF {
 void init_c_binary(Elf_Binary_t* c_binary, Binary* binary) {
   c_binary->handler     = reinterpret_cast<void*>(binary);
-  c_binary->name        = binary->name().c_str();
   c_binary->type        = static_cast<enum LIEF_ELF_ELF_CLASS>(binary->type());
   c_binary->interpreter = nullptr;
   if (binary->has_interpreter()) {

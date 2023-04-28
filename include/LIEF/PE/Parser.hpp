@@ -26,6 +26,7 @@
 
 #include "LIEF/Abstract/Parser.hpp"
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/PE/ParserConfig.hpp"
 
 namespace LIEF {
 class BinaryStream;
@@ -73,13 +74,16 @@ class LIEF_API Parser : public LIEF::Parser {
 
   public:
   //! Parse a PE binary from the given filename
-  static std::unique_ptr<Binary> parse(const std::string& filename);
+  static std::unique_ptr<Binary> parse(const std::string& filename,
+                                       const ParserConfig& conf = ParserConfig::all());
 
   //! Parse a PE binary from a data buffer
-  static std::unique_ptr<Binary> parse(std::vector<uint8_t> data, const std::string& name = "");
+  static std::unique_ptr<Binary> parse(std::vector<uint8_t> data,
+                                       const ParserConfig& conf = ParserConfig::all());
 
   //! Parse a PE binary from the given BinaryStream
-  static std::unique_ptr<Binary> parse(std::unique_ptr<BinaryStream> stream, const std::string& name = "");
+  static std::unique_ptr<Binary> parse(std::unique_ptr<BinaryStream> stream,
+                                       const ParserConfig& conf = ParserConfig::all());
 
   Parser& operator=(const Parser& copy) = delete;
   Parser(const Parser& copy)            = delete;
@@ -92,7 +96,7 @@ class LIEF_API Parser : public LIEF::Parser {
   ~Parser();
   Parser();
 
-  void init(const std::string& name = "");
+  void init(const ParserConfig& config);
 
   template<typename PE_T>
   ok_error_t parse();
@@ -148,6 +152,7 @@ class LIEF_API Parser : public LIEF::Parser {
   std::unique_ptr<Binary> binary_;
   std::set<uint32_t> resource_visited_;
   std::unique_ptr<BinaryStream> stream_;
+  ParserConfig config_;
 };
 
 

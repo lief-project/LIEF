@@ -44,14 +44,13 @@ void create<Parser>(py::module& m) {
 
 
   m.def("parse",
-    static_cast<std::unique_ptr<FatBinary> (*) (const std::vector<uint8_t>&, const std::string&, const ParserConfig&)>(&LIEF::MachO::Parser::parse),
+    static_cast<std::unique_ptr<FatBinary> (*) (const std::vector<uint8_t>&, const ParserConfig&)>(&LIEF::MachO::Parser::parse),
     R"delim(
     Parse the given binary (from raw bytes) and return a :class:`~lief.MachO.FatBinary` object
 
     One can configure the parsing with the ``config`` parameter. See :class:`~lief.MachO.ParserConfig`
     )delim",
     "raw"_a,
-    "name"_a = "",
     "config"_a = ParserConfig::quick(),
     py::return_value_policy::take_ownership);
 
@@ -65,7 +64,7 @@ void create<Parser>(py::module& m) {
     py::return_value_policy::take_ownership);
 
   m.def("parse",
-    [] (py::object byteio, std::string name, const ParserConfig& config) -> py::object {
+    [] (py::object byteio, const ParserConfig& config) -> py::object {
       if (auto stream = PyIOStream::from_python(byteio)) {
         auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
         return py::cast(MachO::Parser::parse(std::move(ptr), config));
@@ -79,7 +78,6 @@ void create<Parser>(py::module& m) {
     One can configure the parsing with the ``config`` parameter. See :class:`~lief.MachO.ParserConfig`
     )delim",
     "io"_a,
-    "name"_a = "",
     "config"_a = ParserConfig::quick(),
     py::return_value_policy::take_ownership);
 }

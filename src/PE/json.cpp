@@ -46,7 +46,6 @@ std::string escape_non_ascii(const std::string& s) {
 }
 
 void JsonVisitor::visit(const Binary& binary) {
-  node_["name"]         = binary.name();
   node_["entrypoint"]   = binary.entrypoint();
   node_["virtual_size"] = binary.virtual_size();
 

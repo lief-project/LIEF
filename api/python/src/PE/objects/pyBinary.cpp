@@ -58,8 +58,8 @@ void create<Binary>(py::module& m) {
   init_ref_iterator<Binary::it_const_signatures>(bin, "it_const_signatures");
 
   bin
-    .def(py::init<const std::string&, PE_TYPE>(),
-         "name"_a, "type"_a)
+    .def(py::init<PE_TYPE>(),
+         "type"_a)
 
     .def_property_readonly("sections",
         static_cast<no_const_getter<Binary::it_sections>>(&Binary::sections),

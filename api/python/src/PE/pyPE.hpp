@@ -44,6 +44,7 @@ void init_objects(py::module&);
 void init_enums(py::module&);
 void init_utils(py::module&);
 
+SPECIALIZE_CREATE(ParserConfig);
 SPECIALIZE_CREATE(Parser);
 
 SPECIALIZE_CREATE(Binary);

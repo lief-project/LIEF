@@ -89,31 +89,31 @@ std::unique_ptr<Binary> Parser::parse(const std::string& filename) {
   return nullptr;
 }
 
-std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& raw, const std::string& name) {
+std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& raw) {
 
 #if defined(LIEF_OAT_SUPPORT)
   if (OAT::is_oat(raw)) {
-    return OAT::Parser::parse(raw, name);
+    return OAT::Parser::parse(raw);
   }
 #endif
 
 #if defined(LIEF_ELF_SUPPORT)
   if (ELF::is_elf(raw)) {
-    return ELF::Parser::parse(raw, name);
+    return ELF::Parser::parse(raw);
   }
 #endif
 
 
 #if defined(LIEF_PE_SUPPORT)
   if (PE::is_pe(raw)) {
-     return PE::Parser::parse(raw, name);
+     return PE::Parser::parse(raw);
   }
 #endif
 
 #if defined(LIEF_MACHO_SUPPORT)
   if (MachO::is_macho(raw)) {
     // For fat binary we take the last one...
-    std::unique_ptr<MachO::FatBinary> fat = MachO::Parser::parse(raw, name);
+    std::unique_ptr<MachO::FatBinary> fat = MachO::Parser::parse(raw);
     if (fat != nullptr) {
       return fat->pop_back();
     }
@@ -126,18 +126,18 @@ std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& raw, const std
 
 }
 
-std::unique_ptr<Binary> Parser::parse(std::unique_ptr<BinaryStream> stream, const std::string& name) {
+std::unique_ptr<Binary> Parser::parse(std::unique_ptr<BinaryStream> stream) {
 
 #if defined(LIEF_ELF_SUPPORT)
   if (ELF::is_elf(*stream)) {
-    return ELF::Parser::parse(std::move(stream), name);
+    return ELF::Parser::parse(std::move(stream));
   }
 #endif
 
 
 #if defined(LIEF_PE_SUPPORT)
   if (PE::is_pe(*stream)) {
-     return PE::Parser::parse(std::move(stream), name);
+     return PE::Parser::parse(std::move(stream));
   }
 #endif
 
@@ -156,9 +156,7 @@ std::unique_ptr<Binary> Parser::parse(std::unique_ptr<BinaryStream> stream, cons
   return nullptr;
 }
 
-Parser::Parser(const std::string& filename) :
-  binary_name_{filename}
-{
+Parser::Parser(const std::string& filename) {
   std::ifstream file(filename, std::ios::in | std::ios::binary);
 
   if (!file) {
