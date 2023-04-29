@@ -60,7 +60,6 @@ def print_information(binary):
     cpu = str(header.cpu_type).split('.')[-1]
 
 
-    print(format_str.format("Name:",         binary.name))
     print(format_hex.format("Address base:", binary.imagebase))
     print(format_str.format("PIE:",          str(binary.is_pie)))
     print(format_str.format("NX:",           str(binary.has_nx)))

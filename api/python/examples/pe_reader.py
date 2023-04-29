@@ -41,7 +41,6 @@ def print_information(binary):
     print("== Information ==\n")
     format_str = "{:<30} {:<30}"
     format_hex = "{:<30} 0x{:<28x}"
-    print(format_str.format("Name:",         binary.name))
     print(format_hex.format("Virtual size:", binary.virtual_size))
     print(format_str.format("Imphash:",      PE.get_imphash(binary)))
     print(format_str.format("PIE:",          str(binary.is_pie)))
