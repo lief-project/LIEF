@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include <iomanip>
-
+#include "LIEF/utils.hpp"
 #include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/DylinkerCommand.hpp"
@@ -31,6 +31,14 @@ DylinkerCommand::~DylinkerCommand() = default;
 DylinkerCommand::DylinkerCommand(const details::dylinker_command& cmd) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize}
 {}
+
+DylinkerCommand::DylinkerCommand(std::string name) :
+  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(LIEF::MachO::LOAD_COMMAND_TYPES::LC_LOAD_DYLINKER),
+                           static_cast<uint32_t>(align(sizeof(details::dylinker_command) + name.size() + 1, sizeof(uint64_t)))},
+  name_{name}
+{
+  this->data(LoadCommand::raw_t(size(), 0));
+}
 
 DylinkerCommand* DylinkerCommand::clone() const {
   return new DylinkerCommand(*this);
