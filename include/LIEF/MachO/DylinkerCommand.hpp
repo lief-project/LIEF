@@ -37,6 +37,7 @@ class LIEF_API DylinkerCommand : public LoadCommand {
   public:
   DylinkerCommand();
   DylinkerCommand(const details::dylinker_command& cmd);
+  DylinkerCommand(std::string name);
 
   DylinkerCommand& operator=(const DylinkerCommand& copy);
   DylinkerCommand(const DylinkerCommand& copy);

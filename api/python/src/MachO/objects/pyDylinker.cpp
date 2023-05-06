@@ -41,6 +41,7 @@ void create<DylinkerCommand>(py::module& m) {
       Class that represents the Mach-O linker, also named loader
       Most of the time, :attr:`~lief.MachO.DylinkerCommand.name` returns ``/usr/lib/dyld``
       )delim")
+    .def(py::init<const std::string&>())
 
     .def_property("name",
         static_cast<getter_t<const std::string&>>(&DylinkerCommand::name),
