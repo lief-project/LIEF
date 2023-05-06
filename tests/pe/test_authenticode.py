@@ -209,11 +209,11 @@ def test_ms_spc_nested_signature():
     assert nvidia_cert.subject == "C=US, ST=California, L=Santa Clara, O=NVIDIA Corporation, OU=IT-MIS, CN=NVIDIA Corporation"
     assert nvidia_cert.serial_number == from_hex("62:E7:45:E9:21:65:21:3C:97:1F:5C:49:0A:EA:12:A5")
 
-    assert self_signed_ca.issuer == "C=US, O=VeriSign, Inc., OU=VeriSign Trust Network, OU=(c) 2008 VeriSign, Inc. - For authorized use only, CN=VeriSign Universal Root Certification Authority"
-    assert self_signed_ca.subject == "C=US, O=VeriSign, Inc., OU=VeriSign Trust Network, OU=(c) 2008 VeriSign, Inc. - For authorized use only, CN=VeriSign Universal Root Certification Authority"
+    assert self_signed_ca.issuer == "C=US, O=VeriSign\\, Inc., OU=VeriSign Trust Network, OU=(c) 2008 VeriSign\\, Inc. - For authorized use only, CN=VeriSign Universal Root Certification Authority"
+    assert self_signed_ca.subject == "C=US, O=VeriSign\\, Inc., OU=VeriSign Trust Network, OU=(c) 2008 VeriSign\\, Inc. - For authorized use only, CN=VeriSign Universal Root Certification Authority"
     assert self_signed_ca.serial_number == from_hex("40:1A:C4:64:21:B3:13:21:03:0E:BB:E4:12:1A:C5:1D")
 
-    assert signer_cert.issuer == "C=US, O=VeriSign, Inc., OU=VeriSign Trust Network, OU=(c) 2008 VeriSign, Inc. - For authorized use only, CN=VeriSign Universal Root Certification Authority"
+    assert signer_cert.issuer == "C=US, O=VeriSign\\, Inc., OU=VeriSign Trust Network, OU=(c) 2008 VeriSign\\, Inc. - For authorized use only, CN=VeriSign Universal Root Certification Authority"
     assert signer_cert.subject == "C=US, O=Symantec Corporation, OU=Symantec Trust Network, CN=Symantec Class 3 SHA256 Code Signing CA - G2"
     assert signer_cert.serial_number == from_hex("7C:1B:35:35:4A:E7:DB:74:E7:41:5F:11:69:CA:6B:A8")
 
@@ -264,5 +264,9 @@ def test_rsa_info():
 
 def test_issue_703():
     sig: lief.PE.Signature = lief.PE.Signature.parse(get_sample("pkcs7/cert_issue_703.der"))
-    assert sig.certificates[0].issuer == "CN=TxExoTiQueMoDz\\Tx ExoTiQueMoDz"
-    assert sig.certificates[0].subject == "CN=TxExoTiQueMoDz\\Tx ExoTiQueMoDz"
+    assert sig.certificates[0].issuer == "CN=TxExoTiQueMoDz\\\\Tx ExoTiQueMoDz"
+    assert sig.certificates[0].subject == "CN=TxExoTiQueMoDz\\\\Tx ExoTiQueMoDz"
+
+def test_issue_912():
+    steam = lief.PE.parse(get_sample("PE/steam.exe"))
+    assert steam.verify_signature() == lief.PE.Signature.VERIFICATION_FLAGS.OK

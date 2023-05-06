@@ -109,6 +109,15 @@ int lief_mbedtls_x509_dn_gets( char *buf, size_t size, const mbedtls_x509_name *
                 break;
 
             c = name->val.p[i];
+
+            // Special characters requiring escaping, RFC 1779
+            if( c && strchr( ",=+<>#;\"\\", c ) )
+            {
+                if( i + 1 >= MBEDTLS_X509_MAX_DN_NAME_SIZE - 1 )
+                  break;
+                out.push_back('\\');
+            }
+
             if( c < 32 || c >= 127 )
               continue;
             //else s[i] = c;
