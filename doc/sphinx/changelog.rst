@@ -15,6 +15,7 @@ Changelog
 
 :PE:
 
+  * Fix PE authenticode verification issue in the case of special characters (:issue:`912`)
   * Add a :class:`lief.PE.ParserConfig` interface that can be used to tweak
     which parts of the PE format should be parsed (:issue:`839`).
 
