@@ -16,6 +16,7 @@
 #define LIEF_DEX_FIELD_H
 
 #include <climits>
+#include <cstdint>
 
 #include "LIEF/DEX/enums.hpp"
 
