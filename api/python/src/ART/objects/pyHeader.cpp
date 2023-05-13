@@ -18,6 +18,8 @@
 
 #include "pyART.hpp"
 
+#include <sstream>
+
 namespace LIEF {
 namespace ART {
 

@@ -58,9 +58,8 @@ cmake_dependent_option(LIEF_INSTALL_COMPILED_EXAMPLES "Install LIEF Compiled exa
 option(LIEF_EXTERNAL_SPDLOG OFF)
 
 # This option enables to provide an external
-# version of Boost Leaf (e.g. present on the system)
-option(LIEF_OPT_EXTERNAL_LEAF OFF)
-set(LIEF_EXTERNAL_LEAF_DIR )
+# version of TartanLlama/expected  (e.g. present on the system)
+option(LIEF_OPT_EXTERNAL_EXPECTED OFF)
 
 # This option enables to provide an external version of utf8cpp
 option(LIEF_OPT_UTFCPP_EXTERNAL OFF)
@@ -103,7 +102,7 @@ set(LIEF_LOGGING_DEBUG_SUPPORT 0)
 set(LIEF_FROZEN_ENABLED 0)
 set(LIEF_EXTERNAL_FROZEN 0)
 
-set(LIEF_EXTERNAL_LEAF 0)
+set(LIEF_EXTERNAL_EXPECTED 0)
 set(LIEF_EXTERNAL_UTF8CPP 0)
 set(LIEF_EXTERNAL_MBEDTLS 0)
 set(LIEF_EXTERNAL_SPAN 0)
@@ -159,8 +158,8 @@ if(NOT LIEF_DISABLE_FROZEN)
   endif()
 endif()
 
-if(LIEF_OPT_EXTERNAL_LEAF)
-  set(LIEF_EXTERNAL_LEAF 1)
+if(LIEF_OPT_EXTERNAL_EXPECTED)
+  set(LIEF_EXTERNAL_EXPECTED 1)
 endif()
 
 if(LIEF_OPT_UTFCPP_EXTERNAL)

@@ -159,7 +159,7 @@ result<std::string> VectorStream::asn1_read_oid() {
 
   auto len = asn1_read_tag(MBEDTLS_ASN1_OID);
   if (!len) {
-    return len.error();
+    return make_error_code(len.error());
   }
 
   buf.len = len.value();
@@ -228,7 +228,7 @@ result<std::vector<uint8_t>> VectorStream::asn1_read_bitstring() {
 result<std::vector<uint8_t>> VectorStream::asn1_read_octet_string() {
   auto tag = asn1_read_tag(MBEDTLS_ASN1_OCTET_STRING);
   if (!tag) {
-    return tag.error();
+    return make_error_code(tag.error());
   }
   std::vector<uint8_t> raw = {p(), p() + tag.value()};
   increment_pos(tag.value());
@@ -265,7 +265,7 @@ result<std::string> VectorStream::x509_read_names() {
                            MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
   if (!tag) {
     LIEF_INFO("Wrong tag: 0x{:x} for x509_read_names (pos: {:d})", *peek<uint8_t>(), pos());
-    return tag.error();
+    return make_error_code(tag.error());
   }
 
   const uint8_t* cur_p = p();

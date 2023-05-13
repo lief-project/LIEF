@@ -18,6 +18,8 @@
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/utils.hpp"
 
+#include <ostream>
+
 namespace LIEF {
 namespace PE {
 

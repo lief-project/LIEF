@@ -89,7 +89,7 @@ ok_error_t Parser::parse_headers() {
   auto dos_hdr = stream_->peek<details::pe_dos_header>(0);
   if (!dos_hdr) {
     LIEF_ERR("Can't read the Dos Header");
-    return dos_hdr.error();
+    return make_error_code(dos_hdr.error());
   }
 
   binary_->dos_header_ = *dos_hdr;
@@ -99,7 +99,7 @@ ok_error_t Parser::parse_headers() {
     auto pe_header = stream_->peek<details::pe_header>(addr_new_exe);
     if (!pe_header) {
       LIEF_ERR("Can't read the PE header");
-      return pe_header.error();
+      return make_error_code(pe_header.error());
     }
     binary_->header_ = *pe_header;
   }
@@ -109,7 +109,7 @@ ok_error_t Parser::parse_headers() {
     auto opt_header = stream_->peek<pe_optional_header>(offset);
     if (!opt_header) {
       LIEF_ERR("Can't read the optional header");
-      return opt_header.error();
+      return make_error_code(opt_header.error());
     }
     binary_->optional_header_ = *opt_header;
   }
@@ -234,7 +234,7 @@ ok_error_t Parser::parse_data_directories() {
       auto is_ok = parse_delay_imports<PE_T>();
       if (!is_ok) {
         LIEF_WARN("The parsing of delay imports has failed or is incomplete ('{}')",
-                  get_error(is_ok).message());
+                  to_string(get_error(is_ok)));
       }
     }
   }
@@ -397,7 +397,7 @@ ok_error_t Parser::parse_delay_names_table(DelayImport& import, uint32_t names_o
     entry_val = *res;
   } else {
     LIEF_ERR("Can't read delay_imports.names_table[0]");
-    return res.error();
+    return make_error_code(res.error());
   }
 
   while (names_offset > 0 && entry_val > 0) {
@@ -523,7 +523,7 @@ ok_error_t Parser::parse_delay_imports() {
       auto is_ok = parse_delay_names_table<PE_T>(import, names_offset);
       if (!is_ok) {
         LIEF_WARN("[!] Delay imports names table parsed with errors ('{}')",
-                  get_error(is_ok).message());
+                  to_string(get_error(is_ok)));
       }
     }
 

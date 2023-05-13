@@ -208,23 +208,22 @@ if (LIEF_SUPPORT_CXX14 AND NOT LIEF_DISABLE_FROZEN)
   endif()
 endif()
 
-
-# Boost leaf
+# expected
 # ----------
-if(NOT LIEF_EXTERNAL_LEAF)
-  set(LEAF_VERSION 1.81.0)
-  set(LEAF_SHA256 SHA256=7974ad4d440114e1affd40067166a319cb5ea7309e03bf6622f20bc012ec46fc)
-  set(LEAF_URL "${THIRD_PARTY_DIRECTORY}/leaf-${LEAF_VERSION}.zip" CACHE STRING "URL to Leaf")
-  ExternalProject_Add(lief_leaf # :)
-    URL               ${LEAF_URL}
-    URL_HASH          ${LEAF_SHA256}
+if(NOT LIEF_EXTERNAL_EXPECTED)
+  set(EXPECTED_VERSION 1.1.0)
+  set(EXPECTED_SHA256 SHA256=4b2a347cf5450e99f7624247f7d78f86f3adb5e6acd33ce307094e9507615b78)
+  set(EXPECTED_URL "${THIRD_PARTY_DIRECTORY}/expected-${EXPECTED_VERSION}.zip" CACHE STRING "URL to Expected")
+  ExternalProject_Add(lief_expected
+    URL               ${EXPECTED_URL}
+    URL_HASH          ${EXPECTED_SHA256}
     CONFIGURE_COMMAND ""
     BUILD_COMMAND     ""
     UPDATE_COMMAND    ""
     INSTALL_COMMAND   "")
 
-  ExternalProject_get_property(lief_leaf SOURCE_DIR)
-  set(LEAF_SRC_DIR "${SOURCE_DIR}")
+  ExternalProject_get_property(lief_expected SOURCE_DIR)
+  set(EXPECTED_SRC_DIR "${SOURCE_DIR}")
 endif()
 
 # utfcpp

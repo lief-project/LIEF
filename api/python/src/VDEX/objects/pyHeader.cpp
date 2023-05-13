@@ -18,6 +18,8 @@
 
 #include "pyVDEX.hpp"
 
+#include <sstream>
+
 namespace LIEF {
 namespace VDEX {
 

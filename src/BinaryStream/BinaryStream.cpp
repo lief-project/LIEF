@@ -164,7 +164,7 @@ result<uint64_t> BinaryStream::read_sleb128() const {
 result<std::string> BinaryStream::read_string(size_t maxsize) const {
   result<std::string> str = peek_string(maxsize);
   if (!str) {
-    return str.error();
+    return str;
   }
   increment_pos(str->size() + 1); // +1 for'\0'
   return str;
@@ -184,7 +184,7 @@ result<std::string> BinaryStream::peek_string(size_t maxsize) const {
   do {
     c = peek<char>(off);
     if (!c) {
-      return c.error();
+      return make_error_code(c.error());
     }
     off += sizeof(char);
     str_result.push_back(*c);
@@ -206,7 +206,7 @@ result<std::string> BinaryStream::peek_string_at(size_t offset, size_t maxsize) 
 result<std::u16string> BinaryStream::read_u16string() const {
   result<std::u16string> str = peek_u16string();
   if (!str) {
-    return str.error();
+    return str;
   }
   increment_pos((str->size() + 1) * sizeof(uint16_t)); // +1 for'\0'
   return str.value();
@@ -225,7 +225,7 @@ result<std::u16string> BinaryStream::peek_u16string() const {
   do {
     c = peek<char16_t>(off);
     if (!c) {
-      return c.error();
+      return make_error_code(c.error());
     }
     off += sizeof(char16_t);
     u16_str.push_back(*c);
@@ -288,7 +288,7 @@ result<std::string> BinaryStream::read_mutf8(size_t maxsize) const {
   for (size_t i = 0; i < maxsize; ++i) {
     result<uint8_t> res_a = read<char>();
     if (!res_a) {
-      return res_a.error();
+      return make_error_code(res_a.error());
     }
     uint8_t a = *res_a;
 
@@ -301,7 +301,7 @@ result<std::string> BinaryStream::read_mutf8(size_t maxsize) const {
 
       result<uint8_t> res_b = read<int8_t>();
       if (!res_b) {
-        return res_b.error();
+        return make_error_code(res_b.error());
       }
       uint8_t b = *res_b & 0xFF;
 
@@ -313,10 +313,10 @@ result<std::string> BinaryStream::read_mutf8(size_t maxsize) const {
         result<uint8_t> res_b = read<uint8_t>();
         result<uint8_t> res_c = read<uint8_t>();
         if (!res_b) {
-          return res_b.error();
+          return make_error_code(res_b.error());
         }
         if (!res_c) {
-          return res_c.error();
+          return make_error_code(res_c.error());
         }
         uint8_t b = *res_b;
         uint8_t c = *res_c;

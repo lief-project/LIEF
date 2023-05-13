@@ -92,7 +92,7 @@ ok_error_t Binary::patch_relocation(Relocation& relocation, uint64_t from, uint6
   }
   auto offset = virtual_address_to_offset(relocation.address());
   if (!offset) {
-    return offset.error();
+    return make_error_code(offset.error());
   }
   uint64_t relative_offset = *offset - segment->file_offset();
   span<uint8_t> segment_content = segment->writable_content();

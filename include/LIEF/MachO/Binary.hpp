@@ -19,6 +19,7 @@
 
 #include <vector>
 #include <map>
+#include <memory>
 
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"

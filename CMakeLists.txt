@@ -399,28 +399,27 @@ if(LIEF_FROZEN_ENABLED)
   endif()
 endif()
 
+
 # =======================================
-# Leaf
+# Expected
 # =======================================
-if(LIEF_EXTERNAL_LEAF)
-  message(STATUS "Using external LEAF version")
-  if(LIEF_EXTERNAL_LEAF_DIR)
-    message(STATUS "External LEAF include dir: ${LIEF_EXTERNAL_LEAF_DIR}")
-    target_include_directories(LIB_LIEF SYSTEM PUBLIC
-                               "$<BUILD_INTERFACE:${LIEF_EXTERNAL_LEAF_DIR}>")
-  endif()
+if(LIEF_EXTERNAL_EXPECTED)
+  message(STATUS "Using external Expected version")
+  find_package(tl-expected REQUIRED)
+  target_link_libraries(LIB_LIEF PUBLIC tl::expected)
 else()
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/leaf.hpp
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/expected.hpp
     COMMAND
       ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/
     COMMAND
-      ${CMAKE_COMMAND} -E copy_directory ${LEAF_SRC_DIR}/
+      ${CMAKE_COMMAND} -E copy_directory ${EXPECTED_SRC_DIR}/include/tl/
       ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/
-    DEPENDS lief_leaf)
+    DEPENDS lief_expected)
 
   target_sources(LIB_LIEF PRIVATE
-    ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/leaf.hpp)
+    ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/expected.hpp)
 endif()
+
 
 # =======================================
 # utfcpp

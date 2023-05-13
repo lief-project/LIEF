@@ -56,7 +56,7 @@ if (NOT MSVC)
   ADD_FLAG_IF_SUPPORTED("-fomit-frame-pointer"      OMIT_FRAME_POINTER)
   ADD_FLAG_IF_SUPPORTED("-Wno-expansion-to-defined" NO_EXPANSION_TO_DEFINED)
 
-  # Promote this warning into an error as Leaf error management
+  # Promote this warning into an error as error management
   # where the result is 'result<void>' might miss the "return {}"
   ADD_FLAG_IF_SUPPORTED("-Werror=return-type" ERR_RET_TYPE)
 

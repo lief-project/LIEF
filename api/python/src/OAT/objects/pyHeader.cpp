@@ -18,6 +18,8 @@
 
 #include "pyOAT.hpp"
 
+#include <sstream>
+
 namespace LIEF {
 namespace OAT {
 

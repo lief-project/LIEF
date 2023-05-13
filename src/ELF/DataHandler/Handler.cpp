@@ -131,7 +131,7 @@ bool Handler::has(uint64_t offset, uint64_t size, Node::Type type) {
   return it_node != std::end(nodes_);
 }
 
-result<Node&> Handler::get(uint64_t offset, uint64_t size, Node::Type type) {
+result<Handler::ref_t<Node>> Handler::get(uint64_t offset, uint64_t size, Node::Type type) {
   Node tmp{offset, size, type};
 
   const auto it_node = std::find_if(std::begin(nodes_), std::end(nodes_),
@@ -177,7 +177,7 @@ Node& Handler::add(const Node& node) {
 ok_error_t Handler::make_hole(uint64_t offset, uint64_t size) {
   auto res = reserve(offset, size);
   if (!res) {
-    return res.error();
+    return res;
   }
   data_.insert(std::begin(data_) + offset, size, 0);
   return ok();

@@ -310,7 +310,7 @@ ok_error_t Parser::init() {
   auto res_ident = stream_->peek<Header::identity_t>();
   if (!res_ident) {
     LIEF_ERR("Can't read ELF identity. Nothing to parse");
-    return res_ident.error();
+    return make_error_code(res_ident.error());
   }
   stream_->set_endian_swap(should_swap());
 

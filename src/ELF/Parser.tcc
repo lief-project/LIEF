@@ -607,7 +607,7 @@ result<uint32_t> Parser::nb_dynsym_sysv_hash() const {
   if (auto res = binary_->virtual_address_to_offset(dyn_hash->value())) {
     sysv_hash_offset = *res;
   } else {
-    return res.error();
+    return make_error_code(res.error());
   }
 
   // From the doc: 'so nchain should equal the number of symbol table entries.'
@@ -635,7 +635,7 @@ result<uint32_t> Parser::nb_dynsym_gnu_hash() const {
   if (auto res = binary_->virtual_address_to_offset(dyn_hash->value())) {
     gnu_hash_offset = *res;
   } else {
-    return res.error();
+    return make_error_code(res.error());
   }
 
   stream_->setpos(gnu_hash_offset);

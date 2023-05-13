@@ -248,7 +248,7 @@ template<class T>
 result<T> BinaryStream::read() const {
   result<T> tmp = this->peek<T>();
   if (!tmp) {
-    return tmp.error();
+    return tmp;
   }
   this->increment_pos(sizeof(T));
   return tmp;
@@ -324,7 +324,7 @@ template<class T>
 result<T> BinaryStream::read_conv() const {
   result<T> tmp = this->peek_conv<T>();
   if (!tmp) {
-    return tmp.error();
+    return tmp;
   }
   this->increment_pos(sizeof(T));
   return tmp;

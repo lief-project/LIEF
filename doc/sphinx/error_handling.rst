@@ -6,15 +6,17 @@ Error Handling
 LIEF manages the errors using
 
 1. The exceptions (removed in LIEF 0.13.0)
-2. `Boost's LEAF <https://www.boost.org/doc/libs/1_75_0/libs/leaf/doc/html/index.html>`_
+2. `std::expected (tl::expected) <https://github.com/TartanLlama/expected>`_
 
 It turns out that using the C++ exceptions (and the RTTI) were not the better design choice as LIEF (as a
 library) can be used in ``-fno-exceptions`` context. This is why we are slowly moving to the second mechanism
 which is based on the ``ResultOrError`` idiom. We can find this kind idiom in LLVM with `llvm::ErrorOr <https://llvm.org/doxygen/classllvm_1_1ErrorOr.html>`_,
-in Rust with `std::result <https://doc.rust-lang.org/std/result/>`_ and in `Boost LEAF <https://www.boost.org/doc/libs/1_75_0/libs/leaf/doc/html/index.html>`_.
-We based our implementation from Boost LEAF as can be integrated smoothly in LIEF.
+in Rust with `std::result <https://doc.rust-lang.org/std/result/>`_.
+LIEF is using a `std::expected`-like to handle errors. Since this interface is
+only available in C++23, we rely on `TartanLlama/expected <https://github.com/TartanLlama/expected>`_ which
+provides this interface for C++11/C++17.
 
-Basically, the LIEF functions that use this idiom return a :cpp:type:`LIEF::result` which wraps the effective
+Basically, LIEF functions that use this idiom return a :cpp:type:`LIEF::result` which wraps the effective
 result or an error.
 
 The user can process this result as follows:

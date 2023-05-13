@@ -20,6 +20,8 @@
 
 #include "pyDEX.hpp"
 
+#include <sstream>
+
 #define PY_ENUM(x) to_string(x), x
 
 namespace LIEF {

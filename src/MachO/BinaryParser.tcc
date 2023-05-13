@@ -2350,7 +2350,8 @@ ok_error_t BinaryParser::parse_chained_payload(SpanStream& stream) {
   if (auto res = stream.peek<details::dyld_chained_fixups_header>()) {
     header = *res;
   } else {
-    LIEF_WARN("Can't read dyld_chained_fixups_header: {}", get_error(res).message());
+    LIEF_WARN("Can't read dyld_chained_fixups_header: {}",
+              to_string(get_error(res)));
     return make_error_code(lief_errors::read_error);
   }
 
@@ -2416,14 +2417,16 @@ ok_error_t BinaryParser::parse_chained_import(const details::dyld_chained_fixups
           if (auto res = stream.read<details::dyld_chained_import>()) {
             import = *res;
           } else {
-            LIEF_WARN("Can't read dyld_chained_import #{}: {}", i, get_error(res).message());
+            LIEF_WARN("Can't read dyld_chained_import #{}: {}", i,
+                      to_string(get_error(res)));
             break;
           }
           LIEF_DEBUG("dyld chained import[{}]", i);
           if (auto res = symbol_pool.peek_string_at(import.name_offset)) {
             symbol_name = std::move(*res);
           } else {
-            LIEF_WARN("Can't read dyld_chained_import.name #{}: {}", i, get_error(res).message());
+            LIEF_WARN("Can't read dyld_chained_import.name #{}: {}", i,
+                      to_string(get_error(res)));
             break;
           }
           int32_t lib_ordinal = 0;
@@ -2446,13 +2449,15 @@ ok_error_t BinaryParser::parse_chained_import(const details::dyld_chained_fixups
           if (auto res = stream.read<details::dyld_chained_import_addend>()) {
             import = *res;
           } else {
-            LIEF_WARN("Can't read dyld_chained_import_addend #{}: {}", i, get_error(res).message());
+            LIEF_WARN("Can't read dyld_chained_import_addend #{}: {}", i,
+                      to_string(get_error(res)));
             break;
           }
           if (auto res = symbol_pool.peek_string_at(import.name_offset)) {
             symbol_name = std::move(*res);
           } else {
-            LIEF_WARN("Can't read dyld_chained_import_addend.name #{}: {}", i, get_error(res).message());
+            LIEF_WARN("Can't read dyld_chained_import_addend.name #{}: {}", i,
+                      to_string(get_error(res)));
             break;
           }
           int32_t lib_ordinal = 0;
@@ -2475,13 +2480,15 @@ ok_error_t BinaryParser::parse_chained_import(const details::dyld_chained_fixups
           if (auto res = stream.read<details::dyld_chained_import_addend64>()) {
             import = *res;
           } else {
-            LIEF_WARN("Can't read dyld_chained_import_addend64 #{}: {}", i, get_error(res).message());
+            LIEF_WARN("Can't read dyld_chained_import_addend64 #{}: {}", i,
+                      to_string(get_error(res)));
             break;
           }
           if (auto res = symbol_pool.peek_string_at(import.name_offset)) {
             symbol_name = std::move(*res);
           } else {
-            LIEF_WARN("Can't read dyld_chained_import_addend64.name #{}: {}", i, get_error(res).message());
+            LIEF_WARN("Can't read dyld_chained_import_addend64.name #{}: {}", i,
+                      to_string(get_error(res)));
             break;
           }
           int32_t lib_ordinal = 0;
@@ -2512,8 +2519,9 @@ ok_error_t BinaryParser::parse_chained_fixup(const details::dyld_chained_fixups_
   if (auto res = stream.read<details::dyld_chained_starts_in_image>()) {
     starts = *res;
   } else {
-    LIEF_WARN("Can't read dyld_chained_starts_in_image: {}", get_error(res).message());
-    return res.error();
+    LIEF_WARN("Can't read dyld_chained_starts_in_image: {}",
+              to_string(get_error(res)));
+    return make_error_code(res.error());
   }
 
   LIEF_DEBUG("chained starts in image");
@@ -2532,7 +2540,7 @@ ok_error_t BinaryParser::parse_chained_fixup(const details::dyld_chained_fixups_
       seg_info_offset = *res;
     } else {
       LIEF_WARN("Can't read dyld_chained_starts_in_image.seg_info_offset[#{}]: {}",
-                seg_idx, get_error(res).message());
+                seg_idx, to_string(get_error(res)));
       break;
     }
 
@@ -2565,14 +2573,15 @@ ok_error_t BinaryParser::parse_fixup_seg(SpanStream& stream, uint32_t seg_info_o
   if (auto res = stream.peek<decltype(seg_info)>(offset)) {
     seg_info = *res;
   } else {
-    LIEF_WARN("Can't read dyld_chained_starts_in_segment for #{}: {}", seg_idx, get_error(res).message());
-    return res.error();
+    LIEF_WARN("Can't read dyld_chained_starts_in_segment for #{}: {}", seg_idx,
+              to_string(get_error(res)));
+    return make_error_code(res.error());
   }
   auto res_seg_stream = stream.slice(offset);
   if (!res_seg_stream) {
     LIEF_ERR("Can't slice dyld_chained_starts_in_segment #{}: {}",
-              seg_idx, get_error(res_seg_stream).message());
-    return res_seg_stream.error();
+              seg_idx, to_string(get_error(res_seg_stream)));
+    return make_error_code(res_seg_stream.error());
   }
   SpanStream seg_stream = std::move(*res_seg_stream);
   seg_stream.read<details::dyld_chained_starts_in_segment>();
@@ -2758,7 +2767,7 @@ result<uint64_t> BinaryParser::next_chain(uint64_t chain_offset,
           chain = *res;
         } else {
           LIEF_ERR("Can't read the dyld chain at 0x{:x}", chain_offset);
-          return res.error();
+          return make_error_code(res.error());
         }
 
         if (chain.rebase.next == 0) {
@@ -2775,7 +2784,7 @@ result<uint64_t> BinaryParser::next_chain(uint64_t chain_offset,
           chain = *res;
         } else {
           LIEF_ERR("Can't read the dyld chain at 0x{:x}", chain_offset);
-          return res.error();
+          return make_error_code(res.error());
         }
 
         if (chain.rebase.next == 0) {
@@ -2790,7 +2799,7 @@ result<uint64_t> BinaryParser::next_chain(uint64_t chain_offset,
           chain = *res;
         } else {
           LIEF_ERR("Can't read the dyld chain at 0x{:x}", chain_offset);
-          return res.error();
+          return make_error_code(res.error());
         }
 
         if (chain.rebase.next == 0) {
@@ -2825,7 +2834,7 @@ result<uint64_t> BinaryParser::next_chain(uint64_t chain_offset,
           chain = *res;
         } else {
           LIEF_ERR("Can't read the dyld chain at 0x{:x}", chain_offset);
-          return res.error();
+          return make_error_code(res.error());
         }
 
         if (chain.next == 0) {
@@ -2841,7 +2850,7 @@ result<uint64_t> BinaryParser::next_chain(uint64_t chain_offset,
           chain = *res;
         } else {
           LIEF_ERR("Can't read the dyld chain at 0x{:x}", chain_offset);
-          return res.error();
+          return make_error_code(res.error());
         }
 
         if (chain.next == 0) {
@@ -2877,13 +2886,13 @@ ok_error_t BinaryParser::process_fixup(SegmentCommand& segment, uint64_t chain_o
           fixup = *res;
         } else {
           LIEF_ERR("Can't read the dyld chain at 0x{:x}", chain_offset);
-          return res.error();
+          return make_error_code(res.error());
         }
 
         auto is_ok = do_chained_fixup(segment, chain_offset, seg_info, fixup);
         if (!is_ok) {
           LIEF_WARN("Can't process the fixup {} - 0x{:x}", segment.name(), chain_offset);
-          return is_ok.error();
+          return make_error_code(is_ok.error());
         }
         return ok();
       }
@@ -2895,12 +2904,12 @@ ok_error_t BinaryParser::process_fixup(SegmentCommand& segment, uint64_t chain_o
           fixup = *res;
         } else {
           LIEF_ERR("Can't read the dyld chain at 0x{:x}", chain_offset);
-          return res.error();
+          return make_error_code(res.error());
         }
         auto is_ok = do_chained_fixup(segment, chain_offset, seg_info, fixup);
         if (!is_ok) {
           LIEF_WARN("Can't process the fixup {} - 0x{:x}", segment.name(), chain_offset);
-          return is_ok.error();
+          return make_error_code(is_ok.error());
         }
         return ok();
       }
@@ -2911,12 +2920,12 @@ ok_error_t BinaryParser::process_fixup(SegmentCommand& segment, uint64_t chain_o
           fixup = *res;
         } else {
           LIEF_ERR("Can't read the dyld chain at 0x{:x}", chain_offset);
-          return res.error();
+          return make_error_code(res.error());
         }
         auto is_ok = do_chained_fixup(segment, chain_offset, seg_info, fixup);
         if (!is_ok) {
           LIEF_WARN("Can't process the fixup {} - 0x{:x}", segment.name(), chain_offset);
-          return is_ok.error();
+          return make_error_code(is_ok.error());
         }
         return ok();
       }

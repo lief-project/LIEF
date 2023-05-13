@@ -128,21 +128,20 @@ endif()
 
 # Attach location of public interface libraries that don't have
 # their own CMake config that would otherwise be found using `find_dependency`
-
 # Header-only library can be found relatively easily
-if(@LIEF_EXTERNAL_LEAF@)
-  find_path(BOOST_LEAF_INCLUDE_DIR boost/leaf.hpp)
-  if(NOT BOOST_LEAF_INCLUDE_DIR)
-    set(LIEF_NOT_FOUND_MESSAGE "Could not find include directory with 'boost/leaf.hpp'. Consider setting `BOOST_LEAF_INCLUDE_DIR` during CMake configuration")
+
+if(@LIEF_EXTERNAL_EXPECTED@)
+  find_path(TL_EXPECTED_INCLUDE_DIR tl/expected.hpp)
+  if(NOT TL_EXPECTED_INCLUDE_DIR)
+    set(LIEF_NOT_FOUND_MESSAGE "Could not find include directory with 'tl/expected.hpp'. Consider setting `TL_EXPECTED_INCLUDE_DIR` during CMake configuration")
     set(LIEF_FOUND FALSE)
     return()
   endif()
   set_property(TARGET LIEF::LIEF APPEND PROPERTY
-    INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${BOOST_LEAF_INCLUDE_DIR}"
+    INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${TL_EXPECTED_INCLUDE_DIR}"
   )
 endif()
 
-# Header-only library can be found relatively easily
 if(@LIEF_EXTERNAL_SPAN@)
   find_path(TCB_SPAN_INCLUDE_DIR tcb/span.hpp)
   if(NOT TCB_SPAN_INCLUDE_DIR)

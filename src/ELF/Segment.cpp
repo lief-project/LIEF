@@ -220,7 +220,8 @@ size_t Segment::get_content_size() const {
     LIEF_ERR("Can't find the node");
     return 0;
   }
-  return res->size();
+  DataHandler::Node& node = res.value();
+  return node.size();
 }
 
 template<typename T> T Segment::get_content_value(size_t offset) const {
@@ -230,14 +231,15 @@ template<typename T> T Segment::get_content_value(size_t offset) const {
                to_string(type()), virtual_address());
     memcpy(&ret, content_c_.data() + offset, sizeof(T));
   } else {
-    auto node = datahandler_->get(file_offset(), handler_size(), DataHandler::Node::SEGMENT);
-    if (!node) {
+    auto res = datahandler_->get(file_offset(), handler_size(), DataHandler::Node::SEGMENT);
+    if (!res) {
       LIEF_ERR("Can't find the node associated with this segment");
       memset(&ret, 0, sizeof(T));
       return ret;
     }
     const std::vector<uint8_t>& binary_content = datahandler_->content();
-    memcpy(&ret, binary_content.data() + node->offset() + offset, sizeof(T));
+    DataHandler::Node& node = res.value();
+    memcpy(&ret, binary_content.data() + node.offset() + offset, sizeof(T));
   }
   return ret;
 }
@@ -336,7 +338,7 @@ void Segment::file_offset(uint64_t file_offset) {
   if (datahandler_ != nullptr) {
     auto res = datahandler_->get(this->file_offset(), handler_size(), DataHandler::Node::SEGMENT);
     if (res) {
-      res->offset(file_offset);
+      res->get().offset(file_offset);
     } else {
       LIEF_ERR("Can't find the node. The file offset can't be updated");
       return;
@@ -360,7 +362,7 @@ void Segment::physical_size(uint64_t physical_size) {
   if (datahandler_ != nullptr) {
     auto node = datahandler_->get(file_offset(), handler_size(), DataHandler::Node::SEGMENT);
     if (node) {
-      node->size(physical_size);
+      node->get().size(physical_size);
       handler_size_ = physical_size;
     } else {
       LIEF_ERR("Can't find the node. The physical size can't be updated");

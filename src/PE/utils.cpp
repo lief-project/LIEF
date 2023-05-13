@@ -88,7 +88,7 @@ result<PE_TYPE> get_type_from_stream(BinaryStream& stream) {
   auto dos_hdr = stream.read<details::pe_dos_header>();
   if (!dos_hdr) {
     LIEF_ERR("Can't read the DOS Header structure");
-    return dos_hdr.error();
+    return make_error_code(dos_hdr.error());
   }
   stream.setpos(dos_hdr->AddressOfNewExeHeader);
   if (!stream.can_read<details::pe_header>()) {
@@ -99,7 +99,7 @@ result<PE_TYPE> get_type_from_stream(BinaryStream& stream) {
   auto header = stream.read<details::pe_header>();
   if (!header) {
     LIEF_ERR("Can't read the PE header");
-    return header.error();
+    return make_error_code(header.error());
   }
 
   const size_t sizeof_opt_header = header->SizeOfOptionalHeader;
@@ -111,7 +111,7 @@ result<PE_TYPE> get_type_from_stream(BinaryStream& stream) {
   auto opt_hdr = stream.read<details::pe32_optional_header>();
   if (!opt_hdr) {
     LIEF_ERR("Can't read the PE optional header");
-    return opt_hdr.error();
+    return make_error_code(opt_hdr.error());
   }
   const auto type = static_cast<PE_TYPE>(opt_hdr->Magic);
   stream.setpos(cpos); // Restore the original position

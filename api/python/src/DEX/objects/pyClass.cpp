@@ -19,6 +19,8 @@
 #include "pyIterators.hpp"
 #include "pyDEX.hpp"
 
+#include <sstream>
+
 namespace LIEF {
 namespace DEX {
 

@@ -174,7 +174,7 @@ uint64_t Section::offset() const {
 void Section::size(uint64_t size) {
   if (datahandler_ != nullptr && !is_frame()) {
     if (auto node = datahandler_->get(file_offset(), this->size(), DataHandler::Node::SECTION)) {
-      node->size(size);
+      node->get().size(size);
     } else {
       if (type() != ELF_SECTION_TYPES::SHT_NOBITS) {
         LIEF_ERR("Node not found. Can't resize the section {}", name());
@@ -188,7 +188,7 @@ void Section::size(uint64_t size) {
 void Section::offset(uint64_t offset) {
   if (datahandler_ != nullptr && !is_frame()) {
     if (auto node = datahandler_->get(file_offset(), size(), DataHandler::Node::SECTION)) {
-      node->offset(offset);
+      node->get().offset(offset);
     } else {
       if (type() != ELF_SECTION_TYPES::SHT_NOBITS) {
         LIEF_WARN("Node not found. Can't change the offset of the section {}", name());

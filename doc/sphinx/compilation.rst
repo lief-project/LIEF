@@ -166,7 +166,7 @@ LIEF but it is not required to use LIEF. ``external`` means that it is required 
 +-----------------------------------+--------------+--------------------------------------------+
 | `tcb/span <span_ref>`_            | ``external`` | C++11 span interface                       |
 +-----------------------------------+--------------+--------------------------------------------+
-| `Boost Leaf <leaf_ref>`_          | ``external`` | Error handling (see: :ref:`err_handling` ) |
+| `TL Expected <tl_ref>`_           | ``external`` | Error handling (see: :ref:`err_handling` ) |
 +-----------------------------------+--------------+--------------------------------------------+
 | `spdlog <spdlog_ref>`_            | ``internal`` | Logging                                    |
 +-----------------------------------+--------------+--------------------------------------------+
@@ -185,10 +185,10 @@ LIEF but it is not required to use LIEF. ``external`` means that it is required 
 | `Melkor ELF Fuzzer <melkor_ref>`_ | ``internal`` | ELF Fuzzing                                |
 +-----------------------------------+--------------+--------------------------------------------+
 
+.. _tl_ref: https://github.com/TartanLlama/expected
 .. _span_ref: https://github.com/tcbrindle/span
 .. _spdlog_ref: https://github.com/gabime/spdlog
-.. _mbedtls_ref: https://github.com/ARMmbed/mbedtls
-.. _leaf_ref: https://github.com/boostorg/leaf
+.. _mbedtls_ref: https://github.com/Mbed-TLS/mbedtls
 .. _utfcpp_ref: https://github.com/nemtrif/utfcpp
 .. _json_ref: https://github.com/nlohmann/json
 .. _pybind11_ref: https://github.com/pybind/pybind11
@@ -204,18 +204,16 @@ To address this requirement, the user can control the integration of LIEF's depe
 cmake's options:
 
   * ``LIEF_OPT_NLOHMANN_JSON_EXTERNAL``
-  * ``LIEF_OPT_EXTERNAL_LEAF`` / ``LIEF_EXTERNAL_LEAF_DIR``
   * ``LIEF_OPT_UTFCPP_EXTERNAL``
   * ``LIEF_OPT_MBEDTLS_EXTERNAL``
   * ``LIEF_EXTERNAL_SPDLOG``
   * ``LIEF_OPT_FROZEN_EXTERNAL``
   * ``LIEF_OPT_EXTERNAL_SPAN/LIEF_EXTERNAL_SPAN_DIR``
+  * ``LIEF_OPT_EXTERNAL_EXPECTED``
   * ``LIEF_OPT_PYBIND11_EXTERNAL``
 
 By setting these flags, LIEF resolves the dependencies with CMake ``find_package(...)`` which
-is aware of ``<DEPS>_DIR`` to find the package. Boost's Leaf does not provide
-CMake files that can be resolved with ``find_package`` so the user can provide ``LIEF_EXTERNAL_LEAF_DIR`` instead,
-which must point to the directory that contains ``boost/leaf``.
+is aware of ``<DEPS>_DIR`` to find the package.
 
 As a result, LIEF can be, for instance, compiled with the following configuration:
 
@@ -225,9 +223,7 @@ As a result, LIEF can be, for instance, compiled with the following configuratio
               -DLIEF_OPT_NLOHMANN_JSON_EXTERNAL=ON \
               -Dnlohmann_json_DIR=/lief-third-party/json/install/lib/cmake/nlohmann_json \
               -DLIEF_OPT_MBEDTLS_EXTERNAL=on \
-              -DMbedTLS_DIR=/lief-third-party/mbedtls/install/cmake \
-              -DLIEF_OPT_EXTERNAL_LEAF=on \
-              -DLIEF_EXTERNAL_LEAF_DIR=/lief-third-party/leaf/include/cmake
+              -DMbedTLS_DIR=/lief-third-party/mbedtls/install/cmake
 
 .. warning::
 

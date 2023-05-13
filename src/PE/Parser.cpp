@@ -153,8 +153,6 @@ ok_error_t Parser::parse_rich_header() {
   std::vector<uint32_t> values;
   values.reserve(dos_stub.size() / sizeof(uint32_t));
 
-  result<uint32_t> res_count = 0;
-  result<uint32_t> res_value = 0;
   uint32_t count = 0;
   uint32_t value;
 
@@ -499,7 +497,7 @@ ok_error_t Parser::parse_string_table() {
 
   auto res_size = stream_->peek<uint32_t>(string_table_offset);
   if (!res_size) {
-    return res_size.error();
+    return make_error_code(res_size.error());
   }
 
   auto size = *res_size;
@@ -668,7 +666,7 @@ ok_error_t Parser::parse_debug_code_view(Debug& debug_info) {
   const uint32_t debug_off = debug_info.pointerto_rawdata();
   auto res_sig = stream_->peek<uint32_t>(debug_off);
   if (!res_sig) {
-    return res_sig.error();
+    return make_error_code(res_sig.error());
   }
 
   const auto signature = static_cast<CODE_VIEW_SIGNATURES>(*res_sig);
@@ -708,7 +706,7 @@ ok_error_t Parser::parse_debug_pogo(Debug& debug_info) {
 
   auto res_sig = stream_->peek<uint32_t>(debug_off);
   if (!res_sig) {
-    return res_sig.error();
+    return make_error_code(res_sig.error());
   }
   const auto signature = static_cast<POGO_SIGNATURES>(*res_sig);
 
@@ -985,7 +983,7 @@ ok_error_t Parser::parse_signature() {
     if (auto res = stream_->read<uint32_t>()) {
       length = *res;
     } else {
-      return res.error();
+      return make_error_code(res.error());
     }
 
     if (length <= SIZEOF_HEADER) {

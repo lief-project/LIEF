@@ -20,6 +20,7 @@
 
 #include <numeric>
 #include <iomanip>
+#include <sstream>
 
 #define PRINT_FIELD(name,attr) \
   os << std::setw(WIDTH) << std::setfill(' ') << name << std::hex << attr << std::endl
