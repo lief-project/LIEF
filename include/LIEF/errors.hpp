@@ -54,7 +54,7 @@ inline tl::unexpected<lief_errors> make_error_code(lief_errors e) {
 namespace LIEF {
 //! Wrapper that contains an Object (``T``) or an error
 //!
-//! The LEAF implementation exposes the method ``value()`` to access the underlying object (if no error)
+//! The tl/expected implementation exposes the method ``value()`` to access the underlying object (if no error)
 //!
 //! Typical usage is:
 //!
@@ -67,7 +67,7 @@ namespace LIEF {
 //! }
 //! \endcode
 //!
-//! See https://boostorg.github.io/leaf/ for more details
+//! See https://tl.tartanllama.xyz/en/latest/api/expected.html for more details
 template<typename T>
 using result = tl::expected<T, lief_errors>;
 
