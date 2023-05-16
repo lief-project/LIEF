@@ -16,7 +16,7 @@
 #ifndef C_LIEF_ELF_H_
 #define C_LIEF_ELF_H_
 
-//! @defgroup elf_c_api ELF C API
+/** @defgroup elf_c_api ELF C API */
 
 #include "LIEF/ELF/Binary.h"
 #include "LIEF/ELF/Symbol.h"

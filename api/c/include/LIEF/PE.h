@@ -16,7 +16,7 @@
 #ifndef C_LIEF_PE_H_
 #define C_LIEF_PE_H_
 
-//! @defgroup pe_c_api PE C API
+/** @defgroup pe_c_api PE C API */
 
 #include "LIEF/PE/Binary.h"
 #include "LIEF/PE/EnumToString.h"
