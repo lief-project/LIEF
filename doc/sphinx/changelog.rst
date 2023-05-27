@@ -1,6 +1,21 @@
 Changelog
 =========
 
+0.13.1 - May 28, 2023
+----------------------
+
+:PE:
+
+  * Fix PE signature verification issue (:issue:`912`)
+
+:Misc:
+
+  * Fix mypy stubs (:issue:`909`)
+  * Fix missing include (:issue:`918`)
+  * Fix C99 comments (:issue:`904`)
+  * Fix AArch64 docker image (:issue:`904`)
+
+
 0.13.0 - April 9, 2023
 ----------------------
 
