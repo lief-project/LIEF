@@ -1,12 +1,12 @@
 
 
 enum _LIEF_EN_2(MACHO_TYPES, uint32_t) {
-  _LIEF_EI(MH_MAGIC)    = 0xFEEDFACEu, ///< 32-bit big-endian magic
-  _LIEF_EI(MH_CIGAM)    = 0xCEFAEDFEu, ///< 32-bit little-endian magic
-  _LIEF_EI(MH_MAGIC_64) = 0xFEEDFACFu, ///< 64-bit big-endian magic
-  _LIEF_EI(MH_CIGAM_64) = 0xCFFAEDFEu, ///< 64-bit little-endian magic
-  _LIEF_EI(FAT_MAGIC)   = 0xCAFEBABEu, ///< big-endian fat magic
-  _LIEF_EI(FAT_CIGAM)   = 0xBEBAFECAu  ///< little-endian fat magic
+  _LIEF_EI(MH_MAGIC)    = 0xFEEDFACEu, /**< 32-bit big-endian magic */
+  _LIEF_EI(MH_CIGAM)    = 0xCEFAEDFEu, /**< 32-bit little-endian magic */
+  _LIEF_EI(MH_MAGIC_64) = 0xFEEDFACFu, /**< 64-bit big-endian magic */
+  _LIEF_EI(MH_CIGAM_64) = 0xCFFAEDFEu, /**< 64-bit little-endian magic */
+  _LIEF_EI(FAT_MAGIC)   = 0xCAFEBABEu, /**< big-endian fat magic */
+  _LIEF_EI(FAT_CIGAM)   = 0xBEBAFECAu  /**< little-endian fat magic */
 };
 
 enum _LIEF_EN(FILE_TYPES) {
@@ -55,7 +55,7 @@ enum _LIEF_EN(HEADER_FLAGS) {
 
 
 enum _LIEF_EN(LOAD_COMMAND_TYPES) {
-  // Constants for the "cmd" field in llvm::MachO::load_command
+  /* Constants for the "cmd" field in llvm::MachO::load_command */
   _LIEF_EI(LC_SEGMENT)                  = 0x00000001u,
   _LIEF_EI(LC_SYMTAB)                   = 0x00000002u,
   _LIEF_EI(LC_SYMSEG)                   = 0x00000003u,
@@ -114,86 +114,88 @@ enum _LIEF_EN(LOAD_COMMAND_TYPES) {
 
 
 enum {
-    // Flags for the "cmd" field in llvm::MachO::load_command
+    /* Flags for the "cmd" field in llvm::MachO::load_command */
     _LIEF_EI(LC_REQ_DYLD)    = 0x80000000u
   };
 
 
 enum _LIEF_EN(MACHO_SEGMENTS_FLAGS) {
-  // Constant bits for the "flags" field in llvm::MachO::segment_command
-  _LIEF_EI(SG_HIGHVM)              = 0x1u, ///< The file contents for this segment are for the high part of the virtual memory space; the low part is zero filled (for stacks in core files).
-  _LIEF_EI(SG_FVMLIB)              = 0x2u, ///< this segment is the VM that is allocated by a fixed VM library, for overlap checking in the link editor.
-  _LIEF_EI(SG_NORELOC)             = 0x4u, ///< This segment has nothing that was relocated in it and nothing relocated to it. It may be safely replaced without relocation.
+  /* Constant bits for the "flags" field in llvm::MachO::segment_command */
+  _LIEF_EI(SG_HIGHVM)              = 0x1u, /**< The file contents for this segment are for the high part of the virtual memory space; the low part is zero filled (for stacks in core files). */
+  _LIEF_EI(SG_FVMLIB)              = 0x2u, /**< this segment is the VM that is allocated by a fixed VM library, for overlap checking in the link editor. */
+  _LIEF_EI(SG_NORELOC)             = 0x4u, /**< This segment has nothing that was relocated in it and nothing relocated to it. It may be safely replaced without relocation. */
   _LIEF_EI(SG_PROTECTED_VERSION_1) = 0x8u,
 };
 
 enum _LIEF_EN(SECTION_FLAGS_HELPER)  {
-  // Constant masks for the "flags" field in llvm::MachO::section and
-  // llvm::MachO::section_64
-  _LIEF_EI(SECTION_TYPE_MASK)      = 0x000000ffu, // SECTION_TYPE
-  _LIEF_EI(SECTION_FLAGS_MASK)     = 0xffffff00u, // SECTION_ATTRIBUTES
-  _LIEF_EI(SECTION_FLAGS_USR_MASK) = 0xff000000u, // SECTION_ATTRIBUTES_USR
-  _LIEF_EI(SECTION_FLAGS_SYS_MASK) = 0x00ffff00u  // SECTION_ATTRIBUTES_SYS
+  /* Constant masks for the "flags" field in llvm::MachO::section and */
+  /* llvm::MachO::section_64 */
+  _LIEF_EI(SECTION_TYPE_MASK)      = 0x000000ffu, /* SECTION_TYPE */
+  _LIEF_EI(SECTION_FLAGS_MASK)     = 0xffffff00u, /* SECTION_ATTRIBUTES */
+  _LIEF_EI(SECTION_FLAGS_USR_MASK) = 0xff000000u, /* SECTION_ATTRIBUTES_USR */
+  _LIEF_EI(SECTION_FLAGS_SYS_MASK) = 0x00ffff00u  /* SECTION_ATTRIBUTES_SYS */
 };
 
-//! @brief These are the section type and attributes fields.  A MachO section can
-//! have only one Type, but can have any of the attributes specified.
+/**
+ * @brief These are the section type and attributes fields. A MachO section can
+ * have only one Type, but can have any of the attributes specified.
+ */
 enum _LIEF_EN(MACHO_SECTION_TYPES) {
-  // Constant masks for the "flags[7:0]" field in llvm::MachO::section and
-  // llvm::MachO::section_64 (mask "flags" with SECTION_TYPE)
-  _LIEF_EI(S_REGULAR)                             = 0x00u, ///< Regular section.
-  _LIEF_EI(S_ZEROFILL)                            = 0x01u, ///< Zero fill on demand section.
-  _LIEF_EI(S_CSTRING_LITERALS)                    = 0x02u, ///< Section with literal C strings.
-  _LIEF_EI(S_4BYTE_LITERALS)                      = 0x03u, ///< Section with 4 byte literals.
-  _LIEF_EI(S_8BYTE_LITERALS)                      = 0x04u, ///< Section with 8 byte literals.
-  _LIEF_EI(S_LITERAL_POINTERS)                    = 0x05u, ///< Section with pointers to literals.
-  _LIEF_EI(S_NON_LAZY_SYMBOL_POINTERS)            = 0x06u, ///< Section with non-lazy symbol pointers.
-  _LIEF_EI(S_LAZY_SYMBOL_POINTERS)                = 0x07u, ///< Section with lazy symbol pointers.
-  _LIEF_EI(S_SYMBOL_STUBS)                        = 0x08u, ///< Section with symbol stubs, byte size of stub in the Reserved2 field.
-  _LIEF_EI(S_MOD_INIT_FUNC_POINTERS)              = 0x09u, ///< Section with only function pointers for initialization.
-  _LIEF_EI(S_MOD_TERM_FUNC_POINTERS)              = 0x0au, ///< Section with only function pointers for termination.
-  _LIEF_EI(S_COALESCED)                           = 0x0bu, ///< Section contains symbols that are to be coalesced.
-  _LIEF_EI(S_GB_ZEROFILL)                         = 0x0cu, ///< Zero fill on demand section (that can be larger than 4 gigabytes).
-  _LIEF_EI(S_INTERPOSING)                         = 0x0du, ///< Section with only pairs of function pointers for interposing.
-  _LIEF_EI(S_16BYTE_LITERALS)                     = 0x0eu, ///< Section with only 16 byte literals.
-  _LIEF_EI(S_DTRACE_DOF)                          = 0x0fu, ///< Section contains DTrace Object Format.
-  _LIEF_EI(S_LAZY_DYLIB_SYMBOL_POINTERS)          = 0x10u, ///< Section with lazy symbol pointers to lazy loaded dylibs.
-  _LIEF_EI(S_THREAD_LOCAL_REGULAR)                = 0x11u, ///< Thread local data section.
-  _LIEF_EI(S_THREAD_LOCAL_ZEROFILL)               = 0x12u, ///< Thread local zerofill section.
-  _LIEF_EI(S_THREAD_LOCAL_VARIABLES)              = 0x13u, ///< Section with thread local variable structure data.
-  _LIEF_EI(S_THREAD_LOCAL_VARIABLE_POINTERS)      = 0x14u, ///< Section with pointers to thread local structures.
-  _LIEF_EI(S_THREAD_LOCAL_INIT_FUNCTION_POINTERS) = 0x15u, ///< Section with thread local variable initialization pointers to functions.
+  /* Constant masks for the "flags[7:0]" field in llvm::MachO::section and */
+  /* llvm::MachO::section_64 (mask "flags" with SECTION_TYPE) */
+  _LIEF_EI(S_REGULAR)                             = 0x00u, /**< Regular section. */
+  _LIEF_EI(S_ZEROFILL)                            = 0x01u, /**< Zero fill on demand section. */
+  _LIEF_EI(S_CSTRING_LITERALS)                    = 0x02u, /**< Section with literal C strings. */
+  _LIEF_EI(S_4BYTE_LITERALS)                      = 0x03u, /**< Section with 4 byte literals. */
+  _LIEF_EI(S_8BYTE_LITERALS)                      = 0x04u, /**< Section with 8 byte literals. */
+  _LIEF_EI(S_LITERAL_POINTERS)                    = 0x05u, /**< Section with pointers to literals. */
+  _LIEF_EI(S_NON_LAZY_SYMBOL_POINTERS)            = 0x06u, /**< Section with non-lazy symbol pointers. */
+  _LIEF_EI(S_LAZY_SYMBOL_POINTERS)                = 0x07u, /**< Section with lazy symbol pointers. */
+  _LIEF_EI(S_SYMBOL_STUBS)                        = 0x08u, /**< Section with symbol stubs, byte size of stub in the Reserved2 field. */
+  _LIEF_EI(S_MOD_INIT_FUNC_POINTERS)              = 0x09u, /**< Section with only function pointers for initialization. */
+  _LIEF_EI(S_MOD_TERM_FUNC_POINTERS)              = 0x0au, /**< Section with only function pointers for termination. */
+  _LIEF_EI(S_COALESCED)                           = 0x0bu, /**< Section contains symbols that are to be coalesced. */
+  _LIEF_EI(S_GB_ZEROFILL)                         = 0x0cu, /**< Zero fill on demand section (that can be larger than 4 gigabytes). */
+  _LIEF_EI(S_INTERPOSING)                         = 0x0du, /**< Section with only pairs of function pointers for interposing. */
+  _LIEF_EI(S_16BYTE_LITERALS)                     = 0x0eu, /**< Section with only 16 byte literals. */
+  _LIEF_EI(S_DTRACE_DOF)                          = 0x0fu, /**< Section contains DTrace Object Format. */
+  _LIEF_EI(S_LAZY_DYLIB_SYMBOL_POINTERS)          = 0x10u, /**< Section with lazy symbol pointers to lazy loaded dylibs. */
+  _LIEF_EI(S_THREAD_LOCAL_REGULAR)                = 0x11u, /**< Thread local data section. */
+  _LIEF_EI(S_THREAD_LOCAL_ZEROFILL)               = 0x12u, /**< Thread local zerofill section. */
+  _LIEF_EI(S_THREAD_LOCAL_VARIABLES)              = 0x13u, /**< Section with thread local variable structure data. */
+  _LIEF_EI(S_THREAD_LOCAL_VARIABLE_POINTERS)      = 0x14u, /**< Section with pointers to thread local structures. */
+  _LIEF_EI(S_THREAD_LOCAL_INIT_FUNCTION_POINTERS) = 0x15u, /**< Section with thread local variable initialization pointers to functions. */
 
-  _LIEF_EI(LAST_KNOWN_SECTION_TYPE) = 0x15u, //S_THREAD_LOCAL_INIT_FUNCTION_POINTERS
+  _LIEF_EI(LAST_KNOWN_SECTION_TYPE) = 0x15u, /* S_THREAD_LOCAL_INIT_FUNCTION_POINTERS */
 };
 
 enum _LIEF_EN(MACHO_SECTION_FLAGS) {
 
-  // Constant masks for the "flags[31:24]" field in llvm::MachO::section and
-  // llvm::MachO::section_64 (mask "flags" with SECTION_ATTRIBUTES_USR)
-  _LIEF_EI(S_ATTR_PURE_INSTRUCTIONS)   = 0x80000000u, ///< Section contains only true machine instructions
-  _LIEF_EI(S_ATTR_NO_TOC)              = 0x40000000u, ///< Section contains coalesced symbols that are not to be in a ranlib table of contents.
-  _LIEF_EI(S_ATTR_STRIP_STATIC_SYMS)   = 0x20000000u, ///< Ok to strip static symbols in this section in files with the MY_DYLDLINK flag.
-  _LIEF_EI(S_ATTR_NO_DEAD_STRIP)       = 0x10000000u, ///< No dead stripping.
-  _LIEF_EI(S_ATTR_LIVE_SUPPORT)        = 0x08000000u, ///< Blocks are live if they reference live blocks.
-  _LIEF_EI(S_ATTR_SELF_MODIFYING_CODE) = 0x04000000u, ///< Used with i386 code stubs written on by dyld
-  _LIEF_EI(S_ATTR_DEBUG)               = 0x02000000u, ///< A debug section.
+  /* Constant masks for the "flags[31:24]" field in llvm::MachO::section and */
+  /* llvm::MachO::section_64 (mask "flags" with SECTION_ATTRIBUTES_USR) */
+  _LIEF_EI(S_ATTR_PURE_INSTRUCTIONS)   = 0x80000000u, /**< Section contains only true machine instructions */
+  _LIEF_EI(S_ATTR_NO_TOC)              = 0x40000000u, /**< Section contains coalesced symbols that are not to be in a ranlib table of contents. */
+  _LIEF_EI(S_ATTR_STRIP_STATIC_SYMS)   = 0x20000000u, /**< Ok to strip static symbols in this section in files with the MY_DYLDLINK flag. */
+  _LIEF_EI(S_ATTR_NO_DEAD_STRIP)       = 0x10000000u, /**< No dead stripping. */
+  _LIEF_EI(S_ATTR_LIVE_SUPPORT)        = 0x08000000u, /**< Blocks are live if they reference live blocks. */
+  _LIEF_EI(S_ATTR_SELF_MODIFYING_CODE) = 0x04000000u, /**< Used with i386 code stubs written on by dyld */
+  _LIEF_EI(S_ATTR_DEBUG)               = 0x02000000u, /**< A debug section. */
 
-  // Constant masks for the "flags[23:8]" field in llvm::MachO::section and
-  // llvm::MachO::section_64 (mask "flags" with SECTION_ATTRIBUTES_SYS)
-  _LIEF_EI(S_ATTR_SOME_INSTRUCTIONS)   = 0x00000400u, ///< Section contains some machine instructions.
-  _LIEF_EI(S_ATTR_EXT_RELOC)           = 0x00000200u, ///< Section has external relocation entries.
-  _LIEF_EI(S_ATTR_LOC_RELOC)           = 0x00000100u, ///< Section has local relocation entries.
+  /* Constant masks for the "flags[23:8]" field in llvm::MachO::section and */
+  /* llvm::MachO::section_64 (mask "flags" with SECTION_ATTRIBUTES_SYS) */
+  _LIEF_EI(S_ATTR_SOME_INSTRUCTIONS)   = 0x00000400u, /**< Section contains some machine instructions. */
+  _LIEF_EI(S_ATTR_EXT_RELOC)           = 0x00000200u, /**< Section has external relocation entries. */
+  _LIEF_EI(S_ATTR_LOC_RELOC)           = 0x00000100u, /**< Section has local relocation entries. */
 
-  // Constant masks for the value of an indirect symbol in an indirect
-  // symbol table
+  /* Constant masks for the value of an indirect symbol in an indirect */
+  /* symbol table */
   _LIEF_EI(INDIRECT_SYMBOL_LOCAL) = 0x80000000u,
   _LIEF_EI(INDIRECT_SYMBOL_ABS)   = 0x40000000u
 };
 
 
 enum _LIEF_EN(DataRegionType) {
-  // Constants for the "kind" field in a data_in_code_entry structure
+  /* Constants for the "kind" field in a data_in_code_entry structure */
   _LIEF_EI(DICE_KIND_DATA)             = 1u,
   _LIEF_EI(DICE_KIND_JUMP_TABLE8)      = 2u,
   _LIEF_EI(DICE_KIND_JUMP_TABLE16)     = 3u,
@@ -214,23 +216,24 @@ enum {
 };
 
 
-//! @brief Opcodes used by Dyld info to rebase a Mach-O image
+/** @brief Opcodes used by Dyld info to rebase a Mach-O image */
 enum _LIEF_EN_2(REBASE_OPCODES, uint8_t) {
-  _LIEF_EI(REBASE_OPCODE_DONE)                               = 0x00u, ///< It's finished
-  _LIEF_EI(REBASE_OPCODE_SET_TYPE_IMM)                       = 0x10u, ///< Set type to immediate (lower 4-bits). Used for ordinal numbers from 0-15
-  _LIEF_EI(REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB)        = 0x20u, ///< Set segment's index to immediate (lower 4-bits) and segment's offset to following ULEB128 encoding.
-  _LIEF_EI(REBASE_OPCODE_ADD_ADDR_ULEB)                      = 0x30u, ///< Add segment's offset with the following ULEB128 encoding.
-  _LIEF_EI(REBASE_OPCODE_ADD_ADDR_IMM_SCALED)                = 0x40u, ///< Add segment's offset with immediate scaling
-  _LIEF_EI(REBASE_OPCODE_DO_REBASE_IMM_TIMES)                = 0x50u, ///< Rebase in the range of ``[segment's offset; segment's offset + immediate * sizeof(ptr)]``
-  _LIEF_EI(REBASE_OPCODE_DO_REBASE_ULEB_TIMES)               = 0x60u, ///< Same as REBASE_OPCODE_DO_REBASE_IMM_TIMES but *immediate* is replaced with ULEB128 value
-  _LIEF_EI(REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB)            = 0x70u, ///< Rebase and increment segment's offset with following ULEB128 encoding + pointer's size
-  _LIEF_EI(REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB) = 0x80u  ///< Rebase and skip several bytes
+  _LIEF_EI(REBASE_OPCODE_DONE)                               = 0x00u, /**< It's finished */
+  _LIEF_EI(REBASE_OPCODE_SET_TYPE_IMM)                       = 0x10u, /**< Set type to immediate (lower 4-bits). Used for ordinal numbers from 0-15 */
+  _LIEF_EI(REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB)        = 0x20u, /**< Set segment's index to immediate (lower 4-bits) and segment's offset to following ULEB128 encoding. */
+  _LIEF_EI(REBASE_OPCODE_ADD_ADDR_ULEB)                      = 0x30u, /**< Add segment's offset with the following ULEB128 encoding. */
+  _LIEF_EI(REBASE_OPCODE_ADD_ADDR_IMM_SCALED)                = 0x40u, /**< Add segment's offset with immediate scaling */
+  _LIEF_EI(REBASE_OPCODE_DO_REBASE_IMM_TIMES)                = 0x50u, /**< Rebase in the range of ``[segment's offset; segment's offset + immediate * sizeof(ptr)]`` */
+  _LIEF_EI(REBASE_OPCODE_DO_REBASE_ULEB_TIMES)               = 0x60u, /**< Same as REBASE_OPCODE_DO_REBASE_IMM_TIMES but *immediate* is replaced with ULEB128 value */
+  _LIEF_EI(REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB)            = 0x70u, /**< Rebase and increment segment's offset with following ULEB128 encoding + pointer's size */
+  _LIEF_EI(REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB) = 0x80u  /**< Rebase and skip several bytes */
 };
 
 
-//! @brief Within the dyld_info_command there are
-//! differents area of binding. These enums
-//! tag these area
+/**
+ * Within the dyld_info_command there are
+ * differents area of binding. These enums tag these areas.
+ */
 enum _LIEF_EN(BINDING_CLASS) {
   _LIEF_EI(BIND_CLASS_WEAK)     = 1u,
   _LIEF_EI(BIND_CLASS_LAZY)     = 2u,
@@ -259,21 +262,21 @@ enum {
   _LIEF_EI(BIND_IMMEDIATE_MASK)                   = 0x0Fu
 };
 
-//! @brief Opcodes used by Dyld info to bind symbols
+/** Opcodes used by Dyld info to bind symbols */
 enum _LIEF_EN_2(BIND_OPCODES, uint8_t) {
-  _LIEF_EI(BIND_OPCODE_DONE)                             = 0x00u, ///< It's finished
-  _LIEF_EI(BIND_OPCODE_SET_DYLIB_ORDINAL_IMM)            = 0x10u, ///< Set ordinal to immediate (lower 4-bits). Used for ordinal numbers from 0-15
-  _LIEF_EI(BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB)           = 0x20u, ///< Set ordinal to following ULEB128 encoding. Used for ordinal numbers from 16+
-  _LIEF_EI(BIND_OPCODE_SET_DYLIB_SPECIAL_IMM)            = 0x30u, ///< Set ordinal, with 0 or negative number as immediate. the value is sign extended.
-  _LIEF_EI(BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM)    = 0x40u, ///< Set the following symbol (NULL-terminated char*).
-  _LIEF_EI(BIND_OPCODE_SET_TYPE_IMM)                     = 0x50u, ///< Set the type to immediate (lower 4-bits). See BIND_TYPES
-  _LIEF_EI(BIND_OPCODE_SET_ADDEND_SLEB)                  = 0x60u, ///< Set the addend field to the following SLEB128 encoding.
-  _LIEF_EI(BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB)      = 0x70u, ///< Set Segment to immediate value, and address to the following SLEB128 encoding
-  _LIEF_EI(BIND_OPCODE_ADD_ADDR_ULEB)                    = 0x80u, ///< Set the address field to the following SLEB128 encoding.
-  _LIEF_EI(BIND_OPCODE_DO_BIND)                          = 0x90u, ///< Perform binding of current table row
-  _LIEF_EI(BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB)            = 0xA0u, ///< Perform binding, also add following ULEB128 as address
-  _LIEF_EI(BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED)      = 0xB0u, ///< Perform binding, also add immediate (lower 4-bits) using scaling
-  _LIEF_EI(BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB) = 0xC0u, ///< Perform binding for several symbols (as following ULEB128), and skip several bytes.
+  _LIEF_EI(BIND_OPCODE_DONE)                             = 0x00u, /**< It's finished */
+  _LIEF_EI(BIND_OPCODE_SET_DYLIB_ORDINAL_IMM)            = 0x10u, /**< Set ordinal to immediate (lower 4-bits). Used for ordinal numbers from 0-15 */
+  _LIEF_EI(BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB)           = 0x20u, /**< Set ordinal to following ULEB128 encoding. Used for ordinal numbers from 16+ */
+  _LIEF_EI(BIND_OPCODE_SET_DYLIB_SPECIAL_IMM)            = 0x30u, /**< Set ordinal, with 0 or negative number as immediate. the value is sign extended. */
+  _LIEF_EI(BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM)    = 0x40u, /**< Set the following symbol (NULL-terminated char*). */
+  _LIEF_EI(BIND_OPCODE_SET_TYPE_IMM)                     = 0x50u, /**< Set the type to immediate (lower 4-bits). See BIND_TYPES */
+  _LIEF_EI(BIND_OPCODE_SET_ADDEND_SLEB)                  = 0x60u, /**< Set the addend field to the following SLEB128 encoding. */
+  _LIEF_EI(BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB)      = 0x70u, /**< Set Segment to immediate value, and address to the following SLEB128 encoding */
+  _LIEF_EI(BIND_OPCODE_ADD_ADDR_ULEB)                    = 0x80u, /**< Set the address field to the following SLEB128 encoding. */
+  _LIEF_EI(BIND_OPCODE_DO_BIND)                          = 0x90u, /**< Perform binding of current table row */
+  _LIEF_EI(BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB)            = 0xA0u, /**< Perform binding, also add following ULEB128 as address */
+  _LIEF_EI(BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED)      = 0xB0u, /**< Perform binding, also add immediate (lower 4-bits) using scaling */
+  _LIEF_EI(BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB) = 0xC0u, /**< Perform binding for several symbols (as following ULEB128), and skip several bytes. */
   _LIEF_EI(BIND_OPCODE_THREADED)                         = 0xD0u,
 
   _LIEF_EI(BIND_OPCODE_THREADED_APPLY)                            = 0xD0u | 0x01u,
@@ -286,7 +289,7 @@ enum _LIEF_EN_2(BIND_SUBOPCODE_THREADED, uint8_t) {
 };
 
 enum _LIEF_EN(EXPORT_SYMBOL_FLAGS) {
-  _LIEF_EI(EXPORT_SYMBOL_FLAGS_KIND_MASK)           = 0x03u, ///< Mask to access to EXPORT_SYMBOL_KINDS
+  _LIEF_EI(EXPORT_SYMBOL_FLAGS_KIND_MASK)           = 0x03u, /**< Mask to access to EXPORT_SYMBOL_KINDS */
   _LIEF_EI(EXPORT_SYMBOL_FLAGS_WEAK_DEFINITION)     = 0x04u,
   _LIEF_EI(EXPORT_SYMBOL_FLAGS_REEXPORT)            = 0x08u,
   _LIEF_EI(EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER)   = 0x10u
@@ -299,41 +302,40 @@ enum _LIEF_EN(EXPORT_SYMBOL_KINDS) {
 };
 
 enum _LIEF_EN(MACHO_SYMBOL_TYPES) {
-  _LIEF_EI(N_STAB) = 0xe0, ///< The symbol is symbolic debugging table
-  _LIEF_EI(N_PEXT) = 0x10, ///< Limited global scope symbol.
-  _LIEF_EI(N_TYPE) = 0x0e, ///< Define the type of the symbol. @see N_LIST_TYPES
-  _LIEF_EI(N_EXT)  = 0x01  ///< External symbol, a symbol that is either defined outside this file or that is defined in this file but can be referenced by other files.
+  _LIEF_EI(N_STAB) = 0xe0, /**< The symbol is symbolic debugging table */
+  _LIEF_EI(N_PEXT) = 0x10, /**< Limited global scope symbol. */
+  _LIEF_EI(N_TYPE) = 0x0e, /**< Define the type of the symbol. @see N_LIST_TYPES */
+  _LIEF_EI(N_EXT)  = 0x01  /**< External symbol, a symbol that is either defined outside this file or that is defined in this file but can be referenced by other files. */
 };
 
-//! @brief Constants for the "n_type & SYMBOL_TYPES::N_TYPE" in nlist
-//! @see nlist
+/** Constants for the "n_type & SYMBOL_TYPES::N_TYPE" in nlist. @see nlist */
 enum _LIEF_EN(N_LIST_TYPES) {
-  _LIEF_EI(N_UNDF) = 0x0u, ///< The symbol is undefined. It is referenced in a different module.
-  _LIEF_EI(N_ABS)  = 0x2u, ///< The symbol is absolute. The linker doesn't update his value.
-  _LIEF_EI(N_SECT) = 0xeu, ///< The symbol is defined in the section number given in nlist_base.n_sect .
-  _LIEF_EI(N_PBUD) = 0xcu, ///< The symbol is undefined and the image is using a prebound value for the symbol. Set the n_sect field to NO_SECT .
-  _LIEF_EI(N_INDR) = 0xau  ///< The symbol is defined to be the same as another symbol. The n_value field is an index into the string table specifying the name of the other symbol. When that symbol is linked, both this and the other symbol point to the same defined type and value.
+  _LIEF_EI(N_UNDF) = 0x0u, /**< The symbol is undefined. It is referenced in a different module. */
+  _LIEF_EI(N_ABS)  = 0x2u, /**< The symbol is absolute. The linker doesn't update his value. */
+  _LIEF_EI(N_SECT) = 0xeu, /**< The symbol is defined in the section number given in nlist_base.n_sect . */
+  _LIEF_EI(N_PBUD) = 0xcu, /**< The symbol is undefined and the image is using a prebound value for the symbol. Set the n_sect field to NO_SECT . */
+  _LIEF_EI(N_INDR) = 0xau  /**< The symbol is defined to be the same as another symbol. The n_value field is an index into the string table specifying the name of the other symbol. When that symbol is linked, both this and the other symbol point to the same defined type and value. */
 };
 
 enum _LIEF_EN(SectionOrdinal) {
-  // Constants for the "n_sect" field in llvm::MachO::nlist and
-  // llvm::MachO::nlist_64
+  /* Constants for the "n_sect" field in llvm::MachO::nlist and */
+  /* llvm::MachO::nlist_64 */
   _LIEF_EI(NO_SECT)  = 0u,
   _LIEF_EI(MAX_SECT) = 0xffu
 };
 
 enum _LIEF_EN(SYMBOL_DESCRIPTIONS) {
 
-  // The low 3 bits are the for the REFERENCE_TYPE.
+  /* The low 3 bits are the for the REFERENCE_TYPE. */
   _LIEF_EI(REFERENCE_TYPE)                            = 0x7,
-  _LIEF_EI(REFERENCE_FLAG_UNDEFINED_NON_LAZY)         = 0, ///< Reference to an external non-lazy (data) symbol.
-  _LIEF_EI(REFERENCE_FLAG_UNDEFINED_LAZY)             = 1, ///< Reference to an external lazy symbol - that is, to a function call.
-  _LIEF_EI(REFERENCE_FLAG_DEFINED)                    = 2, ///< Defined in this module.
-  _LIEF_EI(REFERENCE_FLAG_PRIVATE_DEFINED)            = 3, ///< Defined in this module and is visible only to modules within this shared library.
-  _LIEF_EI(REFERENCE_FLAG_PRIVATE_UNDEFINED_NON_LAZY) = 4, ///< Defined in another module in this file, is a non-lazy (data) symbol, and is visible only to modules within this shared library.
-  _LIEF_EI(REFERENCE_FLAG_PRIVATE_UNDEFINED_LAZY)     = 5, ///< Defined in another module in this file, is a lazy (function) symbol, and is visible only to modules within this shared library.
+  _LIEF_EI(REFERENCE_FLAG_UNDEFINED_NON_LAZY)         = 0, /**< Reference to an external non-lazy (data) symbol. */
+  _LIEF_EI(REFERENCE_FLAG_UNDEFINED_LAZY)             = 1, /**< Reference to an external lazy symbol - that is, to a function call. */
+  _LIEF_EI(REFERENCE_FLAG_DEFINED)                    = 2, /**< Defined in this module. */
+  _LIEF_EI(REFERENCE_FLAG_PRIVATE_DEFINED)            = 3, /**< Defined in this module and is visible only to modules within this shared library. */
+  _LIEF_EI(REFERENCE_FLAG_PRIVATE_UNDEFINED_NON_LAZY) = 4, /**< Defined in another module in this file, is a non-lazy (data) symbol, and is visible only to modules within this shared library. */
+  _LIEF_EI(REFERENCE_FLAG_PRIVATE_UNDEFINED_LAZY)     = 5, /**< Defined in another module in this file, is a lazy (function) symbol, and is visible only to modules within this shared library. */
 
-  // Flag bits (some overlap with the library ordinal bits).
+  /* Flag bits (some overlap with the library ordinal bits). */
   _LIEF_EI(N_ARM_THUMB_DEF)        = 0x0008u,
   _LIEF_EI(REFERENCED_DYNAMICALLY) = 0x0010u,
   _LIEF_EI(N_NO_DEAD_STRIP)        = 0x0020u,
@@ -342,8 +344,8 @@ enum _LIEF_EN(SYMBOL_DESCRIPTIONS) {
   _LIEF_EI(N_SYMBOL_RESOLVER)      = 0x0100u,
   _LIEF_EI(N_ALT_ENTRY)            = 0x0200u,
 
-  // For undefined symbols coming from libraries, see GET_LIBRARY_ORDINAL()
-  // as these are in the top 8 bits.
+  /* For undefined symbols coming from libraries, see GET_LIBRARY_ORDINAL() */
+  /* as these are in the top 8 bits. */
   _LIEF_EI(SELF_LIBRARY_ORDINAL)   = 0x0,
   _LIEF_EI(MAX_LIBRARY_ORDINAL)    = 0xfd,
   _LIEF_EI(DYNAMIC_LOOKUP_ORDINAL) = 0xfe,
@@ -351,8 +353,8 @@ enum _LIEF_EN(SYMBOL_DESCRIPTIONS) {
 };
 
 enum _LIEF_EN(StabType) {
-  // Constant values for the "n_type" field in llvm::MachO::nlist and
-  // llvm::MachO::nlist_64 when "(n_type & N_STAB) != 0"
+  /* Constant values for the "n_type" field in llvm::MachO::nlist and */
+  /* llvm::MachO::nlist_64 when "(n_type & N_STAB) != 0" */
   _LIEF_EI(N_GSYM)    = 0x20u,
   _LIEF_EI(N_FNAME)   = 0x22u,
   _LIEF_EI(N_FUN)     = 0x24u,
@@ -388,12 +390,12 @@ enum _LIEF_EN(StabType) {
 
 
 enum {
-  // Constant values for the r_symbolnum field in an
-  // llvm::MachO::relocation_info structure when r_extern is 0.
+  /* Constant values for the r_symbolnum field in an */
+  /* llvm::MachO::relocation_info structure when r_extern is 0. */
   _LIEF_EI(R_ABS) = 0,
 
-  // Constant bits for the r_address field in an
-  // llvm::MachO::relocation_info structure.
+  /* Constant bits for the r_address field in an */
+  /* llvm::MachO::relocation_info structure. */
   _LIEF_EI(R_SCATTERED) = 0x80000000
 };
 
@@ -407,7 +409,7 @@ enum _LIEF_EN(RELOCATION_ORIGINS) {
 enum _LIEF_EN(SYMBOL_ORIGINS) {
   _LIEF_EI(SYM_ORIGIN_UNKNOWN)     = 0,
   _LIEF_EI(SYM_ORIGIN_DYLD_EXPORT) = 1,
-  _LIEF_EI(SYM_ORIGIN_DYLD_BIND)   = 2, /// The symbol comes from the binding opcodes
+  _LIEF_EI(SYM_ORIGIN_DYLD_BIND)   = 2, /**< The symbol comes from the binding opcodes */
   _LIEF_EI(SYM_ORIGIN_LC_SYMTAB)   = 3,
 };
 
@@ -463,7 +465,7 @@ enum _LIEF_EN(ARM_RELOCATION) {
   _LIEF_EI(ARM_RELOC_PB_LA_PTR)          = 4,
   _LIEF_EI(ARM_RELOC_BR24)               = 5,
   _LIEF_EI(ARM_THUMB_RELOC_BR22)         = 6,
-  _LIEF_EI(ARM_THUMB_32BIT_BRANCH)       = 7, // obsolete
+  _LIEF_EI(ARM_THUMB_32BIT_BRANCH)       = 7, /* obsolete */
   _LIEF_EI(ARM_RELOC_HALF)               = 8,
   _LIEF_EI(ARM_RELOC_HALF_SECTDIFF)      = 9,
 };
@@ -483,54 +485,53 @@ enum _LIEF_EN(ARM64_RELOCATION) {
   _LIEF_EI(ARM64_RELOC_ADDEND)              = 10, /**< Must be followed by ARM64_RELOCATION::ARM64_RELOC_PAGE21 or ARM64_RELOCATION::ARM64_RELOC_PAGEOFF12. */
 };
 
-//! Values for segment_command.initprot.
-//! From <mach/vm_prot.h>
+/** Values for segment_command.initprot (From <mach/vm_prot.h>). */
 enum _LIEF_EN(VM_PROTECTIONS) {
-  _LIEF_EI(VM_PROT_READ)    = 0x1, ///< Reading data within the segment is allowed
-  _LIEF_EI(VM_PROT_WRITE)   = 0x2, ///< Writing data within the segment is allowed
-  _LIEF_EI(VM_PROT_EXECUTE) = 0x4, ///< Executing data within the segment is allowed
+  _LIEF_EI(VM_PROT_READ)    = 0x1, /**< Reading data within the segment is allowed */
+  _LIEF_EI(VM_PROT_WRITE)   = 0x2, /**< Writing data within the segment is allowed */
+  _LIEF_EI(VM_PROT_EXECUTE) = 0x4, /**< Executing data within the segment is allowed */
 };
 
 
-// Enums from <mach/machine.h>
+/* Enums from <mach/machine.h> */
 enum {
-  // Capability bits used in the definition of cpu_type.
-  _LIEF_EI(CPU_ARCH_MASK)  = 0xff000000,   // Mask for architecture bits
-  _LIEF_EI(CPU_ARCH_ABI64) = 0x01000000    // 64 bit ABI
+  /* Capability bits used in the definition of cpu_type. */
+  _LIEF_EI(CPU_ARCH_MASK)  = 0xff000000,   /* Mask for architecture bits */
+  _LIEF_EI(CPU_ARCH_ABI64) = 0x01000000    /* 64 bit ABI */
 };
 
-// Constants for the cputype field.
+/* Constants for the cputype field. */
 enum _LIEF_EN_2(CPU_TYPES, int) {
   _LIEF_EI(CPU_TYPE_ANY)       = -1,
   _LIEF_EI(CPU_TYPE_X86)       = 7,
-  _LIEF_EI(CPU_TYPE_I386)      = 7,              // CPU_TYPE_X86,
-  _LIEF_EI(CPU_TYPE_X86_64)    = 7 | 0x01000000, // CPU_TYPE_X86 | CPU_ARCH_ABI64,
+  _LIEF_EI(CPU_TYPE_I386)      = 7,              /* CPU_TYPE_X86, */
+  _LIEF_EI(CPU_TYPE_X86_64)    = 7 | 0x01000000, /* CPU_TYPE_X86 | CPU_ARCH_ABI64, */
 /* _LIEF_EI(CPU_TYPE_MIPS)      = 8, */
-  _LIEF_EI(CPU_TYPE_MC98000)   = 10, // Old Motorola PowerPC
+  _LIEF_EI(CPU_TYPE_MC98000)   = 10, /* Old Motorola PowerPC */
   _LIEF_EI(CPU_TYPE_ARM)       = 12,
-  _LIEF_EI(CPU_TYPE_ARM64)     = 12 | 0x01000000, // CPU_TYPE_ARM | CPU_ARCH_ABI64,
+  _LIEF_EI(CPU_TYPE_ARM64)     = 12 | 0x01000000, /* CPU_TYPE_ARM | CPU_ARCH_ABI64, */
   _LIEF_EI(CPU_TYPE_SPARC)     = 14,
   _LIEF_EI(CPU_TYPE_POWERPC)   = 18,
-  _LIEF_EI(CPU_TYPE_POWERPC64) = 18 | 0x01000000, // CPU_TYPE_POWERPC | CPU_ARCH_ABI64
+  _LIEF_EI(CPU_TYPE_POWERPC64) = 18 | 0x01000000, /* CPU_TYPE_POWERPC | CPU_ARCH_ABI64 */
 };
 
 enum {
-  // Capability bits used in the definition of cpusubtype.
-  _LIEF_EI(CPU_SUBTYPE_MASK)  = 0xff000000,   // Mask for architecture bits
-  _LIEF_EI(CPU_SUBTYPE_LIB64) = 0x80000000,   // 64 bit libraries
+  /* Capability bits used in the definition of cpusubtype. */
+  _LIEF_EI(CPU_SUBTYPE_MASK)  = 0xff000000,   /* Mask for architecture bits */
+  _LIEF_EI(CPU_SUBTYPE_LIB64) = 0x80000000,   /* 64 bit libraries */
 
-  // Special CPU subtype constants.
+  /* Special CPU subtype constants. */
   _LIEF_EI(CPU_SUBTYPE_MULTIPLE) = ~0u
 };
 
-// Constants for the cpusubtype field.
+/* Constants for the cpusubtype field. */
 enum _LIEF_EN(CPU_SUBTYPES_X86) {
   _LIEF_EI(CPU_SUBTYPE_I386_ALL)       = 3,
   _LIEF_EI(CPU_SUBTYPE_386)            = 3,
   _LIEF_EI(CPU_SUBTYPE_486)            = 4,
   _LIEF_EI(CPU_SUBTYPE_486SX)          = 0x84,
   _LIEF_EI(CPU_SUBTYPE_586)            = 5,
-  _LIEF_EI(CPU_SUBTYPE_PENT)           = 5, // CPU_SUBTYPE_586,
+  _LIEF_EI(CPU_SUBTYPE_PENT)           = 5, /* CPU_SUBTYPE_586, */
   _LIEF_EI(CPU_SUBTYPE_PENTPRO)        = 0x16,
   _LIEF_EI(CPU_SUBTYPE_PENTII_M3)      = 0x36,
   _LIEF_EI(CPU_SUBTYPE_PENTII_M5)      = 0x56,
@@ -567,7 +568,7 @@ enum _LIEF_EN(CPU_SUBTYPES_ARM) {
   _LIEF_EI(CPU_SUBTYPE_ARM_V5TEJ)   = 7,
   _LIEF_EI(CPU_SUBTYPE_ARM_XSCALE)  = 8,
   _LIEF_EI(CPU_SUBTYPE_ARM_V7)      = 9,
-  //  unused  _LIEF_EI(ARM_V7F)     = 10,
+  /*  unused  _LIEF_EI(ARM_V7F)     = 10, */
   _LIEF_EI(CPU_SUBTYPE_ARM_V7S)     = 11,
   _LIEF_EI(CPU_SUBTYPE_ARM_V7K)     = 12,
   _LIEF_EI(CPU_SUBTYPE_ARM_V6M)     = 14,
@@ -598,8 +599,8 @@ enum _LIEF_EN(CPU_SUBTYPES_POWERPC) {
   _LIEF_EI(CPU_SUBTYPE_POWERPC_7450)  = 11,
   _LIEF_EI(CPU_SUBTYPE_POWERPC_970)   = 100,
 
-  _LIEF_EI(CPU_SUBTYPE_MC980000_ALL)  = 0, //CPU_SUBTYPE_POWERPC_ALL,
-  _LIEF_EI(CPU_SUBTYPE_MC98601)       = 1, //CPU_SUBTYPE_POWERPC_601
+  _LIEF_EI(CPU_SUBTYPE_MC980000_ALL)  = 0, /* CPU_SUBTYPE_POWERPC_ALL, */
+  _LIEF_EI(CPU_SUBTYPE_MC98601)       = 1, /* CPU_SUBTYPE_POWERPC_601 */
 };
 
 
