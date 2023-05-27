@@ -15,7 +15,6 @@ Changelog
 
 :PE:
 
-  * Fix PE authenticode verification issue in the case of special characters (:issue:`912`)
   * Add a :class:`lief.PE.ParserConfig` interface that can be used to tweak
     which parts of the PE format should be parsed (:issue:`839`).
 
@@ -33,6 +32,21 @@ Changelog
 :General Design:
 
   * Remove the `lief.Binary.name` attribute
+
+
+0.13.1 - May 28, 2023
+----------------------
+
+:PE:
+
+  * Fix PE authenticode verification issue in the case of special characters (:issue:`912`)
+
+:Misc:
+
+  * Fix mypy stubs (:issue:`909`)
+  * Fix missing include (:issue:`918`)
+  * Fix C99 comments (:issue:`904`)
+  * Fix AArch64 docker image (:issue:`904`)
 
 
 
