@@ -13,8 +13,8 @@
 
 set -ex
 
-export CXXFLAGS='-ffunction-sections -fdata-sections -fvisibility-inlines-hidden -static-libstdc++ -static-libgcc'
-export CFLAGS='-ffunction-sections -fdata-sections -static-libstdc++ -static-libgcc'
+export CXXFLAGS='-ffunction-sections -fdata-sections -fvisibility-inlines-hidden -static-libgcc'
+export CFLAGS='-ffunction-sections -fdata-sections -static-libgcc'
 export LDFLAGS='-Wl,--gc-sections'
 export _PYTHON_HOST_PLATFORM="manylinux2014-aarch64"
 export SETUPTOOLS_EXT_SUFFIX=$($PYTHON_BINARY -c "import sysconfig;print(sysconfig.get_config_var('EXT_SUFFIX').replace('x86_64', 'aarch64'))")
