@@ -99,6 +99,7 @@ ELF_DATA determine_elf_endianess(ARCH machine) {
     case ARCH::EM_386: // x86
     case ARCH::EM_X86_64:
     case ARCH::EM_IA_64:
+    case ARCH::EM_LOONGARCH:
       {
         return ELF_DATA::ELFDATA2LSB;
       }

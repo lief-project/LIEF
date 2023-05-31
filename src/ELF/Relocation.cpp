@@ -250,6 +250,17 @@ size_t Relocation::size() const {
         return size;
       }
 
+    case ARCH::EM_LOONGARCH:
+      {
+        const auto rtype = static_cast<RELOC_LOONGARCH>(type());
+        const int32_t size = get_reloc_size(rtype);
+        if (size < 0) {
+          LIEF_ERR("{} - {}", to_string(architecture()), to_string(rtype));
+          return SIZE_MAX;
+        }
+        return size;
+      }
+
     default:
       {
         LIEF_ERR("Architecture {} not implemented", to_string(architecture()));
@@ -360,6 +371,12 @@ std::ostream& operator<<(std::ostream& os, const Relocation& entry) {
     case ARCH::EM_PPC64:
       {
         relocation_type = to_string(static_cast<RELOC_POWERPC64>(entry.type()));
+        break;
+      }
+
+    case ARCH::EM_LOONGARCH:
+      {
+        relocation_type = to_string(static_cast<RELOC_LOONGARCH>(entry.type()));
         break;
       }
 

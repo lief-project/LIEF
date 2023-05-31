@@ -133,6 +133,7 @@ Header::abstract_architecture_t Header::abstract_architecture() const {
     {ARCH::EM_PPC,       {ARCH_PPC,   {MODE_32}}},
     {ARCH::EM_PPC64,     {ARCH_PPC,   {MODE_64}}},
     {ARCH::EM_RISCV,     {ARCH_RISCV, {MODE_64}}},
+    {ARCH::EM_LOONGARCH, {ARCH_LOONGARCH, {MODE_64}}},
   };
 
   const auto it = arch_elf_to_lief.find(machine_type());
@@ -363,6 +364,26 @@ Header::hexagon_flags_list_t Header::hexagon_flags_list() const {
 
 }
 
+bool Header::has(LOONGARCH_EFLAGS f) const {
+  if (machine_type() != ARCH::EM_LOONGARCH) {
+    return false;
+  }
+
+  return (processor_flag() & static_cast<uint32_t>(f)) > 0;
+}
+
+Header::loongarch_flags_list_t Header::loongarch_flags_list() const {
+  loongarch_flags_list_t flags;
+
+  std::copy_if(
+      std::begin(details::loongarch_eflags_array),
+      std::end(details::loongarch_eflags_array),
+      std::inserter(flags, std::begin(flags)),
+      [this] (LOONGARCH_EFLAGS f) { return has(f); });
+
+  return flags;
+
+}
 
 uint32_t Header::header_size() const {
   return header_size_;
@@ -594,6 +615,16 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr)
      std::begin(flags),
      std::end(flags), std::string{},
      [] (const std::string& a, MIPS_EFLAGS b) {
+         return a.empty() ? to_string(b) : a + " " + to_string(b);
+     });
+  }
+
+  if (hdr.machine_type() == ARCH::EM_LOONGARCH) {
+    const Header::loongarch_flags_list_t& flags = hdr.loongarch_flags_list();
+    processor_flags_str = std::accumulate(
+     std::begin(flags),
+     std::end(flags), std::string{},
+     [] (const std::string& a, LOONGARCH_EFLAGS b) {
          return a.empty() ? to_string(b) : a + " " + to_string(b);
      });
   }

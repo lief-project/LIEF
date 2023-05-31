@@ -89,6 +89,7 @@ class LIEF_API Relocation : public LIEF::Relocation {
   //! * RELOC_HEXAGON
   //! * RELOC_SYSTEMZ
   //! * RELOC_SPARC
+  //! * RELOC_LOONGARCH
   uint32_t type() const;
 
   //! Check if the relocation uses the explicit addend() field (this is usually the case for 64 bits binaries)

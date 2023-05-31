@@ -56,6 +56,8 @@ LIEF_API const char* to_string(PPC64_EFLAGS e);
 LIEF_API const char* to_string(ARM_EFLAGS e);
 LIEF_API const char* to_string(MIPS_EFLAGS e);
 LIEF_API const char* to_string(HEXAGON_EFLAGS e);
+LIEF_API const char* to_string(LOONGARCH_EFLAGS e);
+LIEF_API const char* to_string(RELOC_LOONGARCH e);
 
 
 

@@ -158,6 +158,12 @@ void create<Header>(py::module& m) {
         ":attr:`~lief.ELF.Header.processor_flag`",
         py::return_value_policy::reference_internal)
 
+    .def_property_readonly("loongarch_flags_list",
+        &Header::loongarch_flags_list,
+        "Return a list of " RST_CLASS_REF(lief.ELF.LOONGARCH_EFLAGS) " present in "
+        ":attr:`~lief.ELF.Header.processor_flag`",
+        py::return_value_policy::reference_internal)
+
     .def_property("header_size",
         static_cast<getter_t<uint32_t>>(&Header::header_size),
         static_cast<setter_t<uint32_t>>(&Header::header_size),
@@ -228,6 +234,11 @@ void create<Header>(py::module& m) {
     .def("__contains__",
         static_cast<bool (Header::*)(HEXAGON_EFLAGS) const>(&Header::has),
         "Check if the given " RST_CLASS_REF(lief.ELF.HEXAGON_EFLAGS) " is present in "
+        ":attr:`~lief.ELF.Header.processor_flag`")
+
+    .def("__contains__",
+        static_cast<bool (Header::*)(LOONGARCH_EFLAGS) const>(&Header::has),
+        "Check if the given " RST_CLASS_REF(lief.ELF.LOONGARCH_EFLAGS) " is present in "
         ":attr:`~lief.ELF.Header.processor_flag`")
 
     .def("__str__",
