@@ -437,39 +437,50 @@ result<uint32_t> Parser::get_numberof_dynamic_symbols(DYNSYM_COUNT_METHODS mtd) 
     case DYNSYM_COUNT_METHODS::COUNT_AUTO:
     default:
       {
-        uint32_t nb_dynsym     = 0;
-        uint32_t nb_dynsym_tmp = 0;
+        uint32_t nb_reloc   = 0;
+        uint32_t nb_section = 0;
+        uint32_t nb_hash    = 0;
 
-        auto res = get_numberof_dynamic_symbols<ELF_T>(DYNSYM_COUNT_METHODS::COUNT_RELOCATIONS);
-        if (res) {
-          nb_dynsym = res.value();
-        }
-        res = get_numberof_dynamic_symbols<ELF_T>(DYNSYM_COUNT_METHODS::COUNT_SECTION);
-        if (res) {
-          nb_dynsym_tmp = res.value();
+        if (auto res = get_numberof_dynamic_symbols<ELF_T>(DYNSYM_COUNT_METHODS::COUNT_RELOCATIONS)) {
+          nb_reloc = *res;
         }
 
-        if (nb_dynsym_tmp < Parser::NB_MAX_SYMBOLS &&
-            nb_dynsym_tmp > nb_dynsym              &&
-            (nb_dynsym_tmp - nb_dynsym) < Parser::DELTA_NB_SYMBOLS)
+        if (auto res = get_numberof_dynamic_symbols<ELF_T>(DYNSYM_COUNT_METHODS::COUNT_SECTION)) {
+          nb_section = *res;
+        }
+
+        if (auto res = get_numberof_dynamic_symbols<ELF_T>(DYNSYM_COUNT_METHODS::COUNT_HASH)) {
+          nb_hash = *res;
+        }
+
+        LIEF_DEBUG("#dynsym.reloc: {}",   nb_reloc);
+        LIEF_DEBUG("#dynsym.section: {}", nb_section);
+        LIEF_DEBUG("#dynsym.hash: {}",    nb_hash);
+
+        if (nb_hash > 0 && nb_section == nb_hash) {
+          return nb_hash;
+        }
+
+        uint32_t candidate = nb_reloc;
+        if (nb_section < Parser::NB_MAX_SYMBOLS &&
+            nb_section > nb_reloc               &&
+            (nb_section - nb_reloc) < Parser::DELTA_NB_SYMBOLS)
         {
-          nb_dynsym = nb_dynsym_tmp;
+          candidate = nb_section;
         }
 
-        res = get_numberof_dynamic_symbols<ELF_T>(DYNSYM_COUNT_METHODS::COUNT_HASH);
-        if (!res) {
-          // Fail to get number of symbols from the hash table
-          return nb_dynsym;
+        if (nb_hash == 0) {
+          return candidate;
         }
 
-        nb_dynsym_tmp = res.value();
-        if (nb_dynsym_tmp < Parser::NB_MAX_SYMBOLS &&
-            nb_dynsym_tmp > nb_dynsym              &&
-            (nb_dynsym_tmp - nb_dynsym) < Parser::DELTA_NB_SYMBOLS)
+        if (nb_hash < Parser::NB_MAX_SYMBOLS &&
+            nb_hash > candidate              &&
+            (nb_hash - candidate) < Parser::DELTA_NB_SYMBOLS)
         {
-          nb_dynsym = nb_dynsym_tmp;
+          candidate = nb_hash;
         }
-        return nb_dynsym;
+
+        return candidate;
       }
   }
 }

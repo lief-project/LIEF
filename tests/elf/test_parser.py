@@ -10,6 +10,14 @@ def test_symbol_count():
     assert len(gcc2.symbols) == 158
     assert len(gcc3.symbols) == 158
 
+def test_issue_922():
+    libcrypto_path = get_sample('ELF/libcrypto.so')
+    auto = lief.ELF.parse(libcrypto_path)
+    assert len(auto.symbols) == 14757
+
+    section = lief.ELF.parse(libcrypto_path, lief.ELF.DYNSYM_COUNT_METHODS.SECTION)
+    assert len(section.symbols) == 14757
+
 def test_tiny():
     tiny = lief.parse(get_sample('ELF/ELF32_x86_binary_tiny01.bin'))
     assert len(tiny.segments) == 1

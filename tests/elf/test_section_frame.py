@@ -41,6 +41,9 @@ def test_frame(tmp_path):
 
 def test_sectionless(tmp_path):
     elf: lief.ELF.Binary = lief.parse(get_sample("ELF/mbedtls_selftest.elf64"))
+
+    assert len(elf.dynamic_symbols) == 40
+
     header: lief.ELF.Header = elf.header
 
     header.numberof_sections     = 0
@@ -51,6 +54,8 @@ def test_sectionless(tmp_path):
 
     sectionless = lief.parse(out.as_posix())
     out = pathlib.Path(tmp_path) / "mbedtls_selftest.sectionless.built"
+
+    assert len(sectionless.dynamic_symbols) == 40
 
     sectionless.add_library(sectionless.libraries[0])
     sectionless.write(out.as_posix())
