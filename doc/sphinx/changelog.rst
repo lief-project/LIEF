@@ -7,6 +7,7 @@ Changelog
 :ELF:
 
   * Fix relocation issue when using `-Wl,--emit-relocs` (c.f. :issue:`897` / :pr:`898` by :github_user:`adamjseitz`)
+  * Improve the computation of the dynamic symbols thanks to :github_user:`adamjseitz` (c.f. :issue:`922`)
 
 :MachO:
 
