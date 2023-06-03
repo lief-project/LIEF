@@ -12,7 +12,7 @@ set -ex
 #
 
 CXXFLAGS='-ffunction-sections -fdata-sections -fvisibility-inlines-hidden -static-libgcc -static-libstdc++'
-CFLAGS='-ffunction-sections -fdata-sections -static-libgcc -static-libstdc++'
+CFLAGS='-ffunction-sections -fdata-sections -static-libgcc'
 export LDFLAGS='-Wl,--gc-sections -Wl,--exclude-libs,ALL'
 
 ARCH_DIR="linux-aarch64"
