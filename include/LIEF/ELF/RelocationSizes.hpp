@@ -30,6 +30,7 @@ int32_t get_reloc_size(RELOC_AARCH64 R);
 int32_t get_reloc_size(RELOC_POWERPC32 R);
 int32_t get_reloc_size(RELOC_POWERPC64 R);
 int32_t get_reloc_size(RELOC_MIPS R);
+int32_t get_reloc_size(RELOC_LOONGARCH R);
 
 }
 }

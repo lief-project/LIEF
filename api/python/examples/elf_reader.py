@@ -71,6 +71,9 @@ def print_header(binary):
 
     if header.machine_type == lief.ELF.ARCH.HEXAGON:
         eflags_str = " - ".join([str(s).split(".")[-1] for s in header.hexagon_flags_list])
+
+    if header.machine_type == lief.ELF.ARCH.LOONGARCH:
+        eflags_str = " - ".join([str(s).split(".")[-1] for s in header.loongarch_flags_list])
     print(identity)
     print(format_ide.format("Magic:",                 identity[0], identity[1], identity[2], identity[3]))
     print(format_str.format("Class:",                 str(header.identity_class).split(".")[-1]))

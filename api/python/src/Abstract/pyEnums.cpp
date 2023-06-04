@@ -44,7 +44,8 @@ void init_enums(py::module& m) {
     .value(PY_ENUM(ARCHITECTURES::ARCH_SYSZ))
     .value(PY_ENUM(ARCHITECTURES::ARCH_XCORE))
     .value(PY_ENUM(ARCHITECTURES::ARCH_INTEL))
-    .value(PY_ENUM(ARCHITECTURES::ARCH_RISCV));
+    .value(PY_ENUM(ARCHITECTURES::ARCH_RISCV))
+    .value(PY_ENUM(ARCHITECTURES::ARCH_LOONGARCH));
 
   py::enum_<MODES>(m, "MODES")
     .value(PY_ENUM(MODES::MODE_NONE))

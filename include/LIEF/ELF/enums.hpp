@@ -247,7 +247,8 @@ enum class ARCH: size_t  {
   EM_CSR_KALIMBA   = 219, /**< CSR Kalimba architecture family */
   EM_AMDGPU        = 224, /**< AMD GPU architecture */
   EM_RISCV         = 243, /**< RISC-V */
-  EM_BPF           = 247  /**< eBPF Filter */
+  EM_BPF           = 247,  /**< eBPF Filter */
+  EM_LOONGARCH     = 258  /**< LoongArch */
 };
 
 
@@ -344,6 +345,11 @@ enum class RELOC_SYSTEMZ: size_t  {
 /* ELF Relocation type for Sparc. */
 enum class RELOC_SPARC: size_t  {
   #include "LIEF/ELF/Relocations/Sparc.def"
+};
+
+/* ELF Relocation types for LoongArch. */
+enum class RELOC_LOONGARCH: size_t  {
+  #include "LIEF/ELF/Relocations/LoongArch.def"
 };
 
 #undef ELF_RELOC
@@ -449,7 +455,12 @@ enum class HEXAGON_EFLAGS: size_t  {
   EF_HEXAGON_ISA_V5       = 0x00000040    /* Hexagon V5 ISA */
 };
 
-
+/* LoongArch Specific e_flags */
+enum class LOONGARCH_EFLAGS: size_t  {
+  EF_LOONGARCH_ABI_SOFT_FLOAT    = 0x1,
+  EF_LOONGARCH_ABI_SINGLE_FLOAT  = 0x2,
+  EF_LOONGARCH_ABI_DOUBLE_FLOAT  = 0x3
+};
 
 
 /** Special section indices. */
@@ -998,6 +1009,7 @@ ENABLE_BITMASK_OPERATORS(LIEF::ELF::ELF_SEGMENT_FLAGS)
 ENABLE_BITMASK_OPERATORS(LIEF::ELF::ARM_EFLAGS)
 ENABLE_BITMASK_OPERATORS(LIEF::ELF::MIPS_EFLAGS)
 ENABLE_BITMASK_OPERATORS(LIEF::ELF::HEXAGON_EFLAGS)
+ENABLE_BITMASK_OPERATORS(LIEF::ELF::LOONGARCH_EFLAGS)
 ENABLE_BITMASK_OPERATORS(LIEF::ELF::ELF_SECTION_FLAGS)
 ENABLE_BITMASK_OPERATORS(LIEF::ELF::DYNAMIC_FLAGS)
 ENABLE_BITMASK_OPERATORS(LIEF::ELF::DYNAMIC_FLAGS_1)

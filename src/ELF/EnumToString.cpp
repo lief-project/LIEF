@@ -58,7 +58,7 @@ const char* to_string(VERSION e) {
 
 
 const char* to_string(ARCH e) {
-  CONST_MAP(ARCH, const char*, 177) enumStrings {
+  CONST_MAP(ARCH, const char*, 178) enumStrings {
     { ARCH::EM_NONE,          "NONE" },
     { ARCH::EM_M32,           "M32"},
     { ARCH::EM_SPARC,         "SPARC"},
@@ -235,7 +235,8 @@ const char* to_string(ARCH e) {
     { ARCH::EM_CSR_KALIMBA,   "CSR_KALIMBA"},
     { ARCH::EM_AMDGPU,        "AMDGPU"},
     { ARCH::EM_RISCV,         "RISCV"},
-    { ARCH::EM_BPF,           "BPF"}
+    { ARCH::EM_BPF,           "BPF"},
+    { ARCH::EM_LOONGARCH,     "LOONGARCH"}
   };
   const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
@@ -1126,6 +1127,102 @@ const char* to_string(RELOC_MIPS e) {
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
+const char* to_string(RELOC_LOONGARCH e) {
+  CONST_MAP(RELOC_LOONGARCH, const char*, 89) enumStrings {
+    { RELOC_LOONGARCH::R_LARCH_NONE,                           "LARCH_NONE"         },
+    { RELOC_LOONGARCH::R_LARCH_32,                             "LARCH_32"           },
+    { RELOC_LOONGARCH::R_LARCH_64,                             "LARCH_64"           },
+    { RELOC_LOONGARCH::R_LARCH_RELATIVE,                       "LARCH_RELATIVE"     },
+    { RELOC_LOONGARCH::R_LARCH_COPY,                           "LARCH_COPY"         },
+    { RELOC_LOONGARCH::R_LARCH_JUMP_SLOT,                      "LARCH_JUMP_SLOT"    },
+    { RELOC_LOONGARCH::R_LARCH_TLS_DTPMOD32,                   "LARCH_TLS_DTPMOD32" },
+    { RELOC_LOONGARCH::R_LARCH_TLS_DTPMOD64,                   "LARCH_TLS_DTPMOD64" },
+    { RELOC_LOONGARCH::R_LARCH_TLS_DTPREL32,                   "LARCH_TLS_DTPREL32" },
+    { RELOC_LOONGARCH::R_LARCH_TLS_DTPREL64,                   "LARCH_TLS_DTPREL64" },
+    { RELOC_LOONGARCH::R_LARCH_TLS_TPREL32,                    "LARCH_TLS_TPREL32"  },
+    { RELOC_LOONGARCH::R_LARCH_TLS_TPREL64,                    "LARCH_TLS_TPREL64"  },
+    { RELOC_LOONGARCH::R_LARCH_IRELATIVE,                      "LARCH_IRELATIVE"    },
+    { RELOC_LOONGARCH::R_LARCH_MARK_LA,                        "LARCH_MARK_LA"      },
+    { RELOC_LOONGARCH::R_LARCH_MARK_PCREL,                     "LARCH_MARK_PCREL"   },
+    { RELOC_LOONGARCH::R_LARCH_SOP_PUSH_PCREL,                 "LARCH_SOP_PUSH_PCREL" },
+    { RELOC_LOONGARCH::R_LARCH_SOP_PUSH_ABSOLUTE,              "LARCH_SOP_PUSH_ABSOLUTE" },
+    { RELOC_LOONGARCH::R_LARCH_SOP_PUSH_DUP,                   "LARCH_SOP_PUSH_DUP" },
+    { RELOC_LOONGARCH::R_LARCH_SOP_PUSH_GPREL,                 "LARCH_SOP_PUSH_GPREL" },
+    { RELOC_LOONGARCH::R_LARCH_SOP_PUSH_TLS_TPREL,             "LARCH_SOP_PUSH_TLS_TPREL" },
+    { RELOC_LOONGARCH::R_LARCH_SOP_PUSH_TLS_GOT,               "LARCH_SOP_PUSH_TLS_GOT" },
+    { RELOC_LOONGARCH::R_LARCH_SOP_PUSH_TLS_GD,                "LARCH_SOP_PUSH_TLS_GD" },
+    { RELOC_LOONGARCH::R_LARCH_SOP_PUSH_PLT_PCREL,             "LARCH_SOP_PUSH_PLT_PCREL" },
+    { RELOC_LOONGARCH::R_LARCH_SOP_ASSERT,                     "LARCH_SOP_ASSERT"   },
+    { RELOC_LOONGARCH::R_LARCH_SOP_NOT,                        "LARCH_SOP_NOT"      },
+    { RELOC_LOONGARCH::R_LARCH_SOP_SUB,                        "LARCH_SOP_SUB"      },
+    { RELOC_LOONGARCH::R_LARCH_SOP_SL,                         "LARCH_SOP_SL"       },
+    { RELOC_LOONGARCH::R_LARCH_SOP_SR,                         "LARCH_SOP_SR"       },
+    { RELOC_LOONGARCH::R_LARCH_SOP_ADD,                        "LARCH_SOP_ADD"      },
+    { RELOC_LOONGARCH::R_LARCH_SOP_AND,                        "LARCH_SOP_AND"      },
+    { RELOC_LOONGARCH::R_LARCH_SOP_IF_ELSE,                    "LARCH_SOP_IF_ELSE"  },
+    { RELOC_LOONGARCH::R_LARCH_SOP_POP_32_S_10_5,              "LARCH_SOP_POP_32_S_10_5" },
+    { RELOC_LOONGARCH::R_LARCH_SOP_POP_32_U_10_12,             "LARCH_SOP_POP_32_U_10_12" },
+    { RELOC_LOONGARCH::R_LARCH_SOP_POP_32_S_10_12,             "LARCH_SOP_POP_32_S_10_12" },
+    { RELOC_LOONGARCH::R_LARCH_SOP_POP_32_S_10_16,             "LARCH_SOP_POP_32_S_10_16" },
+    { RELOC_LOONGARCH::R_LARCH_SOP_POP_32_S_10_16_S2,          "LARCH_SOP_POP_32_S_10_16_S2" },
+    { RELOC_LOONGARCH::R_LARCH_SOP_POP_32_S_5_20,              "LARCH_SOP_POP_32_S_5_20" },
+    { RELOC_LOONGARCH::R_LARCH_SOP_POP_32_S_0_5_10_16_S2,      "LARCH_SOP_POP_32_S_0_5_10_16_S2" },
+    { RELOC_LOONGARCH::R_LARCH_SOP_POP_32_S_0_10_10_16_S2,     "LARCH_SOP_POP_32_S_0_10_10_16_S2" },
+    { RELOC_LOONGARCH::R_LARCH_SOP_POP_32_U,                   "LARCH_SOP_POP_32_U" },
+    { RELOC_LOONGARCH::R_LARCH_ADD8,                           "LARCH_ADD8"         },
+    { RELOC_LOONGARCH::R_LARCH_ADD16,                          "LARCH_ADD16"        },
+    { RELOC_LOONGARCH::R_LARCH_ADD24,                          "LARCH_ADD24"        },
+    { RELOC_LOONGARCH::R_LARCH_ADD32,                          "LARCH_ADD32"        },
+    { RELOC_LOONGARCH::R_LARCH_ADD64,                          "LARCH_ADD64"        },
+    { RELOC_LOONGARCH::R_LARCH_SUB8,                           "LARCH_SUB8"         },
+    { RELOC_LOONGARCH::R_LARCH_SUB16,                          "LARCH_SUB16"        },
+    { RELOC_LOONGARCH::R_LARCH_SUB24,                          "LARCH_SUB24"        },
+    { RELOC_LOONGARCH::R_LARCH_SUB32,                          "LARCH_SUB32"        },
+    { RELOC_LOONGARCH::R_LARCH_SUB64,                          "LARCH_SUB64"        },
+    { RELOC_LOONGARCH::R_LARCH_GNU_VTINHERIT,                  "LARCH_GNU_VTINHERIT" },
+    { RELOC_LOONGARCH::R_LARCH_GNU_VTENTRY,                    "LARCH_GNU_VTENTRY"  },
+    { RELOC_LOONGARCH::R_LARCH_B16,                            "LARCH_B16"          },
+    { RELOC_LOONGARCH::R_LARCH_B21,                            "LARCH_B21"          },
+    { RELOC_LOONGARCH::R_LARCH_B26,                            "LARCH_B26"          },
+    { RELOC_LOONGARCH::R_LARCH_ABS_HI20,                       "LARCH_ABS_HI20"     },
+    { RELOC_LOONGARCH::R_LARCH_ABS_LO12,                       "LARCH_ABS_LO12"     },
+    { RELOC_LOONGARCH::R_LARCH_ABS64_LO20,                     "LARCH_ABS64_LO20"   },
+    { RELOC_LOONGARCH::R_LARCH_ABS64_HI12,                     "LARCH_ABS64_HI12"   },
+    { RELOC_LOONGARCH::R_LARCH_PCALA_HI20,                     "LARCH_PCALA_HI20"   },
+    { RELOC_LOONGARCH::R_LARCH_PCALA_LO12,                     "LARCH_PCALA_LO12"   },
+    { RELOC_LOONGARCH::R_LARCH_PCALA64_LO20,                   "LARCH_PCALA64_LO20" },
+    { RELOC_LOONGARCH::R_LARCH_PCALA64_HI12,                   "LARCH_PCALA64_HI12" },
+    { RELOC_LOONGARCH::R_LARCH_GOT_PC_HI20,                    "LARCH_GOT_PC_HI20"  },
+    { RELOC_LOONGARCH::R_LARCH_GOT_PC_LO12,                    "LARCH_GOT_PC_LO12"  },
+    { RELOC_LOONGARCH::R_LARCH_GOT64_PC_LO20,                  "LARCH_GOT64_PC_LO20" },
+    { RELOC_LOONGARCH::R_LARCH_GOT64_PC_HI12,                  "LARCH_GOT64_PC_HI12" },
+    { RELOC_LOONGARCH::R_LARCH_GOT_HI20,                       "LARCH_GOT_HI20"     },
+    { RELOC_LOONGARCH::R_LARCH_GOT_LO12,                       "LARCH_GOT_LO12"     },
+    { RELOC_LOONGARCH::R_LARCH_GOT64_LO20,                     "LARCH_GOT64_LO20"   },
+    { RELOC_LOONGARCH::R_LARCH_GOT64_HI12,                     "LARCH_GOT64_HI12"   },
+    { RELOC_LOONGARCH::R_LARCH_TLS_LE_HI20,                    "LARCH_TLS_LE_HI20"  },
+    { RELOC_LOONGARCH::R_LARCH_TLS_LE_LO12,                    "LARCH_TLS_LE_LO12"  },
+    { RELOC_LOONGARCH::R_LARCH_TLS_LE64_LO20,                  "LARCH_TLS_LE64_LO20" },
+    { RELOC_LOONGARCH::R_LARCH_TLS_LE64_HI12,                  "LARCH_TLS_LE64_HI12" },
+    { RELOC_LOONGARCH::R_LARCH_TLS_IE_PC_HI20,                 "LARCH_TLS_IE_PC_HI20" },
+    { RELOC_LOONGARCH::R_LARCH_TLS_IE_PC_LO12,                 "LARCH_TLS_IE_PC_LO12" },
+    { RELOC_LOONGARCH::R_LARCH_TLS_IE64_PC_LO20,               "LARCH_TLS_IE64_PC_LO20" },
+    { RELOC_LOONGARCH::R_LARCH_TLS_IE64_PC_HI12,               "LARCH_TLS_IE64_PC_HI12" },
+    { RELOC_LOONGARCH::R_LARCH_TLS_IE_HI20,                    "LARCH_TLS_IE_HI20"  },
+    { RELOC_LOONGARCH::R_LARCH_TLS_IE_LO12,                    "LARCH_TLS_IE_LO12"  },
+    { RELOC_LOONGARCH::R_LARCH_TLS_IE64_LO20,                  "LARCH_TLS_IE64_LO20" },
+    { RELOC_LOONGARCH::R_LARCH_TLS_IE64_HI12,                  "LARCH_TLS_IE64_HI12" },
+    { RELOC_LOONGARCH::R_LARCH_TLS_LD_PC_HI20,                 "LARCH_TLS_LD_PC_HI20" },
+    { RELOC_LOONGARCH::R_LARCH_TLS_LD_HI20,                    "LARCH_TLS_LD_HI20"  },
+    { RELOC_LOONGARCH::R_LARCH_TLS_GD_PC_HI20,                 "LARCH_TLS_GD_PC_HI20" },
+    { RELOC_LOONGARCH::R_LARCH_TLS_GD_HI20,                    "LARCH_TLS_GD_HI20"  },
+    { RELOC_LOONGARCH::R_LARCH_32_PCREL,                       "LARCH_32_PCREL"     },
+    { RELOC_LOONGARCH::R_LARCH_RELAX,                          "LARCH_RELAX"        },
+  };
+  const auto it = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNDEFINED" : it->second;
+}
+
 const char* to_string(ELF_CLASS e) {
   CONST_MAP(ELF_CLASS, const char*, 3) enumStrings {
     { ELF_CLASS::ELFCLASSNONE, "NONE"},
@@ -1362,6 +1459,17 @@ const char* to_string(HEXAGON_EFLAGS e) {
     { HEXAGON_EFLAGS::EF_HEXAGON_ISA_V3,    "ISA_V3"   },
     { HEXAGON_EFLAGS::EF_HEXAGON_ISA_V4,    "ISA_V4"   },
     { HEXAGON_EFLAGS::EF_HEXAGON_ISA_V5,    "ISA_V5"   },
+  };
+
+  const auto it = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNDEFINED" : it->second;
+}
+
+const char* to_string(LOONGARCH_EFLAGS e) {
+  CONST_MAP(LOONGARCH_EFLAGS, const char*, 3) enumStrings {
+    { LOONGARCH_EFLAGS::EF_LOONGARCH_ABI_SOFT_FLOAT,     "ABI_SOFT_FLOAT" },
+    { LOONGARCH_EFLAGS::EF_LOONGARCH_ABI_SINGLE_FLOAT,   "ABI_SINGLE_FLOAT" },
+    { LOONGARCH_EFLAGS::EF_LOONGARCH_ABI_DOUBLE_FLOAT,   "ABI_DOUBLE_FLOAT" },
   };
 
   const auto it = enumStrings.find(e);

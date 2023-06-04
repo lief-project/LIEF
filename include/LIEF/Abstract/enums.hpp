@@ -48,6 +48,7 @@ enum ARCHITECTURES {
   ARCH_XCORE = 8,
   ARCH_INTEL = 9,
   ARCH_RISCV = 10,
+  ARCH_LOONGARCH = 11,
 };
 
 enum MODES {

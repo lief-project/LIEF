@@ -50,6 +50,7 @@ class LIEF_API Header : public Object {
   using mips_flags_list_t    = flags_list_t<MIPS_EFLAGS>;
   using hexagon_flags_list_t = flags_list_t<HEXAGON_EFLAGS>;
   using ppc64_flags_list_t   = flags_list_t<PPC64_EFLAGS>;
+  using loongarch_flags_list_t   = flags_list_t<LOONGARCH_EFLAGS>;
 
   public:
   Header();
@@ -116,6 +117,12 @@ class LIEF_API Header : public Object {
 
   //! Return a list of HEXAGON_EFLAGS present in processor_flag()
   hexagon_flags_list_t hexagon_flags_list() const;
+
+  //! Check if the given flag is present in processor_flag()
+  bool has(LOONGARCH_EFLAGS f) const;
+
+  //! Return a list of LOONGARCH_EFLAGS present in processor_flag()
+  loongarch_flags_list_t loongarch_flags_list() const;
 
   //! Size of the current header
   //!

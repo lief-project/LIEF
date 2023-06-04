@@ -222,7 +222,8 @@ enum _LIEF_EN(ARCH) {
   _LIEF_EI(EM_CSR_KALIMBA)   = 219, /**< CSR Kalimba architecture family */
   _LIEF_EI(EM_AMDGPU)        = 224, /**< AMD GPU architecture */
   _LIEF_EI(EM_RISCV)         = 243, /**< RISC-V */
-  _LIEF_EI(EM_BPF)           = 247  /**< eBPF Filter */
+  _LIEF_EI(EM_BPF)           = 247, /**< eBPF Filter */
+  _LIEF_EI(EM_LOONGARCH)     = 258  /**< LoongArch */
 };
 
 
@@ -319,6 +320,11 @@ enum _LIEF_EN(RELOC_SYSTEMZ) {
 /* ELF Relocation type for Sparc. */
 enum _LIEF_EN(RELOC_SPARC) {
   #include "LIEF/ELF/Relocations/Sparc.def"
+};
+
+/* ELF Relocation types for LoongArch. */
+enum _LIEF_EN(RELOC_LOONGARCH) {
+  #include "LIEF/ELF/Relocations/LoongArch.def"
 };
 
 #undef ELF_RELOC
@@ -425,7 +431,12 @@ enum _LIEF_EN(HEXAGON_EFLAGS) {
 };
 
 
-
+/* LoongArch Specific e_flags */
+enum _LIEF_EN(LOONGARCH_EFLAGS) {
+  _LIEF_EI(EF_LOONGARCH_ABI_SOFT_FLOAT)        = 0x1,
+  _LIEF_EI(EF_LOONGARCH_ABI_SINGLE_FLOAT)      = 0x2,
+  _LIEF_EI(EF_LOONGARCH_ABI_DOUBLE_FLOAT)      = 0x3
+};
 
 /** Special section indices. */
 enum _LIEF_EN(SYMBOL_SECTION_INDEX) {
