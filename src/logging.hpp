@@ -41,7 +41,6 @@
 namespace LIEF {
 namespace logging {
 
-// TODO(romain): Update when moving to C++17
 class Logger {
   public:
   Logger(const Logger&) = delete;
@@ -62,35 +61,35 @@ class Logger {
 
   template <typename... Args>
   static void trace(const char *fmt, const Args &... args) {
-    if /* constexpr */ (lief_logging_support && lief_logging_debug) {
+    if constexpr (lief_logging_support && lief_logging_debug) {
       Logger::instance().sink_->trace(fmt, args...);
     }
   }
 
   template <typename... Args>
   static void debug(const char *fmt, const Args &... args) {
-    if /* constexpr */ (lief_logging_support && lief_logging_debug) {
+    if constexpr (lief_logging_support && lief_logging_debug) {
       Logger::instance().sink_->debug(fmt, args...);
     }
   }
 
   template <typename... Args>
   static void info(const char *fmt, const Args &... args) {
-    if /* constexpr */ (lief_logging_support) {
+    if constexpr (lief_logging_support) {
       Logger::instance().sink_->info(fmt, args...);
     }
   }
 
   template <typename... Args>
   static void err(const char *fmt, const Args &... args) {
-    if /* constexpr */ (lief_logging_support) {
+    if constexpr (lief_logging_support) {
       Logger::instance().sink_->error(fmt, args...);
     }
   }
 
   template <typename... Args>
   static void warn(const char *fmt, const Args &... args) {
-    if /* constexpr */ (lief_logging_support) {
+    if constexpr (lief_logging_support) {
       Logger::instance().sink_->warn(fmt, args...);
     }
   }
@@ -103,7 +102,7 @@ class Logger {
   Logger& operator=(Logger&&);
 
   static void destroy();
-  /* inline */ static Logger* instance_;
+  static inline Logger* instance_ = nullptr;
   std::shared_ptr<spdlog::logger> sink_;
 };
 

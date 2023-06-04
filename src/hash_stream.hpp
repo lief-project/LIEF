@@ -19,6 +19,9 @@
 #include <string>
 #include <array>
 #include <memory>
+#include <type_traits>
+
+#include "LIEF/span.hpp"
 
 namespace LIEF {
 class hashstream {
@@ -48,19 +51,30 @@ class hashstream {
 
   hashstream& align(size_t size, uint8_t val = 0);
 
-  template<class Integer, typename = typename std::enable_if<std::is_integral<Integer>::value>>
+  template<typename T>
+  hashstream& write(span<const T> s) {
+    static_assert(std::is_same_v<T, uint8_t> || std::is_same_v<T, char>, "Require an integer");
+    write(reinterpret_cast<const uint8_t*>(s.data()), s.size());
+    return *this;
+  }
+
+  template<class Integer>
   hashstream& write(Integer integer) {
+    static_assert(std::is_integral<Integer>::value, "Require an integer");
     const auto* int_p = reinterpret_cast<const uint8_t*>(&integer);
     return write(int_p, sizeof(Integer));
   }
 
   template<typename T, size_t size, typename = typename std::enable_if<std::is_integral<T>::value>>
   hashstream& write(const std::array<T, size>& t) {
+    static_assert(std::is_integral<T>::value, "Require an integer");
     for (T val : t) {
       write<T>(val);
     }
     return *this;
   }
+
+
 
   hashstream& get(std::vector<uint8_t>& c);
   hashstream& flush();

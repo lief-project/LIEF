@@ -135,7 +135,7 @@ target_compile_features(pyLIEF PRIVATE cxx_attribute_deprecated)
 
 set_target_properties(pyLIEF PROPERTIES
   POSITION_INDEPENDENT_CODE    ON
-  CXX_STANDARD                 14
+  CXX_STANDARD                 17
   CXX_STANDARD_REQUIRED        ON
   CXX_VISIBILITY_PRESET        hidden
   C_VISIBILITY_PRESET          hidden

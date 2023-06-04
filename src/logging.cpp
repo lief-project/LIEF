@@ -28,15 +28,13 @@
 namespace LIEF {
 namespace logging {
 
-Logger* Logger::instance_ = nullptr;
-
 Logger::Logger(Logger&&) = default;
 Logger& Logger::operator=(Logger&&) = default;
 Logger::~Logger() = default;
 
 Logger::Logger() {
-  if /* constexpr */ (lief_logging_support) {
-    if /* constexpr */ (current_platform() == PLATFORMS::ANDROID_PLAT) {
+  if constexpr (lief_logging_support) {
+    if constexpr (current_platform() == PLATFORMS::ANDROID_PLAT) {
       #if defined(__ANDROID__)
       sink_ = spdlog::android_logger_mt("LIEF", "lief");
       #else
@@ -109,19 +107,19 @@ const char* to_string(LOGGING_LEVEL e) {
 
 
 void Logger::disable() {
-  if /* constexpr */ (lief_logging_support) {
+  if constexpr (lief_logging_support) {
     Logger::instance().sink_->set_level(spdlog::level::off);
   }
 }
 
 void Logger::enable() {
-  if /* constexpr */ (lief_logging_support) {
+  if constexpr (lief_logging_support) {
     Logger::instance().sink_->set_level(spdlog::level::warn);
   }
 }
 
 void Logger::set_level(LOGGING_LEVEL level) {
-  if /* constexpr */ (!lief_logging_support) {
+  if constexpr (!lief_logging_support) {
     return;
   }
   switch (level) {

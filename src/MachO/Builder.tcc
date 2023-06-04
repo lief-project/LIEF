@@ -194,7 +194,8 @@ ok_error_t Builder::build_segments() {
       header.flags     = static_cast<uint32_t>(section.raw_flags());
       header.reserved1 = static_cast<uint32_t>(section.reserved1());
       header.reserved2 = static_cast<uint32_t>(section.reserved2());
-      if (std::is_same<section_t, details::section_64>::value) { // TODO: Move to if constexpr when LIEF will use C++17
+
+      if constexpr (std::is_same_v<section_t, details::section_64>) {
         reinterpret_cast<details::section_64*>(&header)->reserved3 = static_cast<uint32_t>(section.reserved3());
       }
 

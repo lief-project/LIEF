@@ -479,7 +479,7 @@ endif()
 set_target_properties(
   LIB_LIEF
   PROPERTIES POSITION_INDEPENDENT_CODE ON
-             CXX_STANDARD              11
+             CXX_STANDARD              17
              CXX_STANDARD_REQUIRED     ON
              CXX_VISIBILITY_PRESET     hidden
              C_VISIBILITY_PRESET       hidden)

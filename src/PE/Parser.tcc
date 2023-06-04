@@ -665,7 +665,7 @@ ok_error_t Parser::parse_load_config() {
   size_t current_size = 0;
   WIN_VERSION version_found = WIN_VERSION::WIN_UNKNOWN;
 
-  if /* constexpr */(std::is_same<PE_T, details::PE32>::value) {
+  if (std::is_same<PE_T, details::PE32>::value) {
     for (const auto& p : PE32_LOAD_CONFIGURATION_SIZES) {
       if (current_size < p.second && p.second <= size) {
         std::tie(version_found, current_size) = p;

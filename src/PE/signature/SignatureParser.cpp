@@ -503,7 +503,7 @@ result<SignatureParser::x509_certificates_t> SignatureParser::parse_certificates
     }
     std::unique_ptr<mbedtls_x509_crt> cert_p = std::move(cert.value());
 
-    if /* constexpr */(lief_logging_debug) {
+    if constexpr (lief_logging_debug) {
       std::array<char, 1024> buffer = {0};
       mbedtls_x509_crt_info(buffer.data(), buffer.size(), "", cert_p.get());
       LIEF_DEBUG("\n{}\n", buffer.data());
