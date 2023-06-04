@@ -6,9 +6,9 @@ Compilation
 
 To compile **LIEF**, you need at least the following requirements:
 
-- C++14 compiler (GCC, Clang, MSVC..)
+- C++17 compiler (GCC, Clang, MSVC..)
 - CMake
-- Python >= 3.6 (for the bindings)
+- Python >= 3.8 (for the bindings)
 
 To build the documentation:
 
@@ -29,7 +29,7 @@ Libraries only (SDK)
   $ cd LIEF
   $ mkdir build
   $ cd build
-  $ cmake -DLIEF_PYTHON_API=off -DCMAKE_BUILD_TYPE=Release ..
+  $ cmake -DCMAKE_BUILD_TYPE=Release ..
   $ cmake --build . --target LIB_LIEF --config Release
 
 .. warning::
@@ -262,7 +262,3 @@ See `liefproject <https://hub.docker.com/u/liefproject>`_ on Dockerhub
 .. container:: strike
 
   See the `Dockerlief <https://github.com/lief-project/Dockerlief>`_ repo.
-
-
-
-
