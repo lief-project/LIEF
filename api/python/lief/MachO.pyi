@@ -668,7 +668,7 @@ class DylibCommand(LoadCommand):
 
 class DylinkerCommand(LoadCommand):
     name: str
-    def __init__(self, *args, **kwargs) -> None: ...
+    def __init__(self, arg0: str) -> None: ...
 
 class DynamicSymbolCommand(LoadCommand):
     external_reference_symbol_offset: int
