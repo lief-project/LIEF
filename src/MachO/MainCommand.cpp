@@ -36,6 +36,14 @@ MainCommand::MainCommand(const details::entry_point_command& cmd) :
   stack_size_{cmd.stacksize}
 {}
 
+MainCommand::MainCommand(uint64_t entrypoint, uint64_t stacksize) :
+  LoadCommand::LoadCommand{LOAD_COMMAND_TYPES::LC_MAIN, sizeof(details::entry_point_command)},
+  entrypoint_{entrypoint},
+  stack_size_{stacksize}
+{
+  this->data(LoadCommand::raw_t(size(), 0));
+}
+
 MainCommand* MainCommand::clone() const {
   return new MainCommand(*this);
 }

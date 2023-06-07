@@ -41,6 +41,7 @@ void create<MainCommand>(py::module& m) {
       Class that represent the LC_MAIN command. This kind
       of command can be used to determine the entrypoint of an executable
       )delim")
+    .def(py::init<uint64_t, uint64_t>())
 
     .def_property("entrypoint",
         static_cast<getter_t<uint64_t>>(&MainCommand::entrypoint),
