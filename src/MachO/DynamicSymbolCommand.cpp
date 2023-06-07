@@ -53,6 +53,13 @@ DynamicSymbolCommand::DynamicSymbolCommand() :
   nb_local_relocations_{0}
 {}
 
+DynamicSymbolCommand DynamicSymbolCommand::createForPython() {
+  auto cmd = DynamicSymbolCommand();
+  cmd.size(sizeof(details::dysymtab_command));
+  cmd.data(LoadCommand::raw_t(cmd.size(), 0));
+  return cmd;
+}
+
 DynamicSymbolCommand::DynamicSymbolCommand(const details::dysymtab_command& cmd) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize},
 
@@ -320,4 +327,3 @@ std::ostream& DynamicSymbolCommand::print(std::ostream& os) const {
 
 }
 }
-

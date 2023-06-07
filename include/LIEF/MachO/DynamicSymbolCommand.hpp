@@ -48,6 +48,8 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
 
   DynamicSymbolCommand(const details::dysymtab_command& cmd);
 
+  static DynamicSymbolCommand createForPython();
+
   DynamicSymbolCommand& operator=(const DynamicSymbolCommand& copy);
   DynamicSymbolCommand(const DynamicSymbolCommand& copy);
 
