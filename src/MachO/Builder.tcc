@@ -557,11 +557,6 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
   std::memset(&symtab, 0, sizeof(details::symtab_command));
   DynamicSymbolCommand* dynsym = binary_->dynamic_symbol_command();
 
-  if (dynsym == nullptr) {
-    LIEF_ERR("Can't rebuild LC_SYMTAB: LC_DYSYMTAB not found");
-    return make_error_code(lief_errors::not_found);
-  }
-
   /* 1. Fille the n_list table */ {
     for (Symbol& s : binary_->symbols()) {
       if (s.origin() != SYMBOL_ORIGINS::SYM_ORIGIN_LC_SYMTAB) {
@@ -606,32 +601,44 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
 
     size_t isym = 0;
     /* Local Symbols */ {
-      dynsym->idx_local_symbol(isym);
+      if (dynsym != nullptr) {
+        dynsym->idx_local_symbol(isym);
+      }
       for (Symbol* sym : local_syms) {
         indirect_symbols[sym] = isym;
         write_symbol<T>(nlist_table, *sym, offset_name_map);
         ++isym;
       }
-      dynsym->nb_local_symbols(local_syms.size());
+      if (dynsym != nullptr) {
+        dynsym->nb_local_symbols(local_syms.size());
+      }
     }
 
     /* External Symbols */ {
-      dynsym->idx_external_define_symbol(isym);
+      if (dynsym != nullptr) {
+        dynsym->idx_external_define_symbol(isym);
+      }
       for (Symbol* sym : ext_syms)   {
         indirect_symbols[sym] = isym;
         write_symbol<T>(nlist_table, *sym, offset_name_map);
         ++isym;
       }
-      dynsym->nb_external_define_symbols(ext_syms.size());
+      if (dynsym != nullptr) {
+        dynsym->nb_external_define_symbols(ext_syms.size());
+      }
     }
     /* Undefined Symbols */ {
-      dynsym->idx_undefined_symbol(isym);
+      if (dynsym != nullptr) {
+        dynsym->idx_undefined_symbol(isym);
+      }
       for (Symbol* sym : undef_syms) {
         indirect_symbols[sym] = isym;
         write_symbol<T>(nlist_table, *sym, offset_name_map);
         ++isym;
       }
-      dynsym->nb_undefined_symbols(undef_syms.size());
+      if (dynsym != nullptr) {
+        dynsym->nb_undefined_symbols(undef_syms.size());
+      }
     }
 
     /* The other symbols [...] */ {
@@ -661,7 +668,7 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
   /*
    * Indirect symbol table
    */
-  {
+  if (dynsym != nullptr) {
     LIEF_DEBUG("LC_DYSYMTAB.indirectsymoff: 0x{:06x} -> 0x{:x}",
                dynsym->indirect_symbol_offset(), linkedit_offset_ + linkedit_.size());
     dynsym->indirect_symbol_offset(linkedit_offset_ + linkedit_.size());
@@ -687,7 +694,7 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
         LIEF_ERR("Can't find the symbol index");
       }
     }
-    LIEF_DEBUG("LC_SYMTAB.nindirectsyms:    0x{:06x} -> 0x{:x}",
+    LIEF_DEBUG("LC_DYSYMTAB.nindirectsyms:    0x{:06x} -> 0x{:x}",
                dynsym->nb_indirect_symbols(), count);
     dynsym->nb_indirect_symbols(count);
   }
