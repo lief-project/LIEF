@@ -45,6 +45,7 @@ void create<ThreadCommand>(py::module& m) {
       Generally speaking, this command aims at defining the original state
       of the main thread which includes the registers' values
       )delim")
+    .def(py::init<uint32_t, uint32_t, CPU_TYPES>())
 
     .def_property("flavor",
         static_cast<getter_t<uint32_t>>(&ThreadCommand::flavor),
