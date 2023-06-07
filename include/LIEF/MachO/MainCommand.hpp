@@ -35,6 +35,7 @@ class LIEF_API MainCommand : public LoadCommand {
   public:
   MainCommand();
   MainCommand(const details::entry_point_command& cmd);
+  MainCommand(uint64_t entrypoint, uint64_t stacksize);
 
   MainCommand& operator=(const MainCommand& copy);
   MainCommand(const MainCommand& copy);
