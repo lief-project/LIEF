@@ -66,6 +66,10 @@ class LIEF_API ResourceData : public ResourceNode {
   void content(const std::vector<uint8_t>& content);
   void reserved(uint32_t value);
 
+  static bool classof(const ResourceNode* node) {
+    return node->is_data();
+  }
+
   void accept(Visitor& visitor) const override;
 
   bool operator==(const ResourceData& rhs) const;

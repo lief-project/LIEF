@@ -84,6 +84,10 @@ class LIEF_API ResourceDirectory : public ResourceNode {
   void numberof_name_entries(uint16_t numberof_name_entries);
   void numberof_id_entries(uint16_t numberof_id_entries);
 
+  static bool classof(const ResourceNode* node) {
+    return node->is_directory();
+  }
+
   void accept(Visitor& visitor) const override;
 
   bool operator==(const ResourceDirectory& rhs) const;
