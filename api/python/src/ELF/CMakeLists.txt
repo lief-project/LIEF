@@ -17,6 +17,7 @@ set(LIEF_PYTHON_ELF_SRC
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyRelocation.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyDynamicSharedObject.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyParser.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/objects/pyParserConfig.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyDynamicEntryLibrary.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pySymbol.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/objects/pyGnuHash.cpp"

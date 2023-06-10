@@ -31,6 +31,7 @@
 namespace LIEF {
 namespace ELF {
 
+struct ParserConfig;
 class Parser;
 class Binary;
 class Header;
@@ -71,6 +72,7 @@ void init_python_module(py::module& m);
 void init_objects(py::module&);
 void init_enums(py::module&);
 
+SPECIALIZE_CREATE(ParserConfig);
 SPECIALIZE_CREATE(Parser);
 SPECIALIZE_CREATE(Binary);
 SPECIALIZE_CREATE(Header);

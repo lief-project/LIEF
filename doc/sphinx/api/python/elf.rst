@@ -6,6 +6,12 @@ Parser
 
 .. autofunction:: lief.ELF.parse
 
+.. autoclass:: lief.ELF.ParserConfig
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+
 ----------
 
 Binary

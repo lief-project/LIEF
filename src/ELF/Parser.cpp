@@ -58,21 +58,21 @@ constexpr const char AndroidNote::NAME[];
 Parser::~Parser() = default;
 Parser::Parser()  = default;
 
-Parser::Parser(const std::vector<uint8_t>& data, DYNSYM_COUNT_METHODS count_mtd) :
+Parser::Parser(const std::vector<uint8_t>& data, ParserConfig conf) :
   stream_{std::make_unique<VectorStream>(data)},
   binary_{new Binary{}},
-  count_mtd_{count_mtd}
+  config_{std::move(conf)}
 {}
 
-Parser::Parser(std::unique_ptr<BinaryStream> stream, DYNSYM_COUNT_METHODS count_mtd) :
+Parser::Parser(std::unique_ptr<BinaryStream> stream, ParserConfig conf) :
   stream_{std::move(stream)},
   binary_{new Binary{}},
-  count_mtd_{count_mtd}
+  config_{std::move(conf)}
 {}
 
-Parser::Parser(const std::string& file, DYNSYM_COUNT_METHODS count_mtd) :
+Parser::Parser(const std::string& file, ParserConfig conf) :
   binary_{new Binary{}},
-  count_mtd_{count_mtd}
+  config_{std::move(conf)}
 {
   if (auto s = VectorStream::from_file(file)) {
     stream_ = std::make_unique<VectorStream>(std::move(*s));
@@ -332,34 +332,35 @@ ok_error_t Parser::init() {
   return ok();
 }
 
-std::unique_ptr<Binary> Parser::parse(const std::string& filename, DYNSYM_COUNT_METHODS count_mtd) {
+std::unique_ptr<Binary> Parser::parse(const std::string& filename,
+                                      const ParserConfig& conf) {
   if (!is_elf(filename)) {
     return nullptr;
   }
 
-  Parser parser{filename, count_mtd};
+  Parser parser{filename, conf};
   parser.init();
   return std::move(parser.binary_);
 }
 
 std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& data,
-                                      DYNSYM_COUNT_METHODS count_mtd) {
+                                      const ParserConfig& conf) {
   if (!is_elf(data)) {
     return nullptr;
   }
 
-  Parser parser{data, count_mtd};
+  Parser parser{data, conf};
   parser.init();
   return std::move(parser.binary_);
 }
 
 std::unique_ptr<Binary> Parser::parse(std::unique_ptr<BinaryStream> stream,
-                                      DYNSYM_COUNT_METHODS count_mtd) {
+                                      const ParserConfig& conf) {
   if (!is_elf(*stream)) {
     return nullptr;
   }
 
-  Parser parser{std::move(stream), count_mtd};
+  Parser parser{std::move(stream), conf};
   parser.init();
   return std::move(parser.binary_);
 }

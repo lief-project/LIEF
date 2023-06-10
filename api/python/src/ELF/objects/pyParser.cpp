@@ -31,36 +31,35 @@ void create<Parser>(py::module& m) {
 
   // Parser (Parser)
   m.def("parse",
-    static_cast<std::unique_ptr<Binary> (*) (const std::string&, DYNSYM_COUNT_METHODS)>(&Parser::parse),
+    py::overload_cast<const std::string&, const ParserConfig&>(&Parser::parse),
     R"delim(
     Parse the ELF binary from the given **file path** and return a :class:`lief.ELF.Binary` object
 
-    For *weird* binaries (e.g sectionless) you can choose the method to use to count dynamic symbols
-    (:class:`lief.ELF.DYNSYM_COUNT_METHODS`). By default, the value is set to
-    :attr:`lief.ELF.DYNSYM_COUNT_METHODS.COUNT_AUTO`
+    The second argument is an optional configuration (:class:`~lief.ELF.ParserConfig`)
+    that can be used to define which part(s) of the ELF should be parsed or skipped.
+
     )delim",
-    "filename"_a, "dynsym_count_method"_a = DYNSYM_COUNT_METHODS::COUNT_AUTO,
+    "filename"_a, "config"_a = ParserConfig::all(),
     py::return_value_policy::take_ownership);
 
   m.def("parse",
-    static_cast<std::unique_ptr<Binary>(*)(const std::vector<uint8_t>&, DYNSYM_COUNT_METHODS)>(&Parser::parse),
+    py::overload_cast<const std::vector<uint8_t>&, const ParserConfig&>(&Parser::parse),
     R"delim(
     Parse the ELF binary from the given **list of bytes** and return a :class:`lief.ELF.Binary` object
 
-    For *weird* binaries (e.g sectionless) you can choose the method to use to count dynamic symbols
-    (:class:`lief.ELF.DYNSYM_COUNT_METHODS`). By default, the value is set to
-    :attr:`lief.ELF.DYNSYM_COUNT_METHODS.COUNT_AUTO`
+    The second argument is an optional configuration (:class:`~lief.ELF.ParserConfig`)
+    that can be used to define which part(s) of the ELF should be parsed or skipped.
     )delim",
 
-    "raw"_a, "dynsym_count_method"_a = DYNSYM_COUNT_METHODS::COUNT_AUTO,
+    "raw"_a, "config"_a = ParserConfig::all(),
     py::return_value_policy::take_ownership);
 
 
   m.def("parse",
-      [] (py::object byteio, DYNSYM_COUNT_METHODS count) -> py::object {
+      [] (py::object byteio, const ParserConfig& config) -> py::object {
         if (auto stream = PyIOStream::from_python(byteio)) {
           auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
-          return py::cast(ELF::Parser::parse(std::move(ptr), count));
+          return py::cast(ELF::Parser::parse(std::move(ptr), config));
         }
         logging::log(logging::LOG_ERR, "Can't create a LIEF stream interface over the provided io");
         return py::none();
@@ -68,11 +67,10 @@ void create<Parser>(py::module& m) {
       R"delim(
       Parse the ELF binary from a Python IO stream and return a :class:`lief.ELF.Binary` object
 
-      For *weird* binaries (e.g sectionless) you can choose the method to use to count dynamic symbols
-      (:class:`lief.ELF.lief.ELF.DYNSYM_COUNT_METHODS`). By default, the value is set to
-      :attr:`lief.ELF.lief.ELF.DYNSYM_COUNT_METHODS.COUNT_AUTO`
+      The second argument is an optional configuration (:class:`~lief.ELF.ParserConfig`)
+      that can be used to define which part(s) of the ELF should be parsed or skipped.
       )delim",
-      "io"_a, "dynsym_count_method"_a = DYNSYM_COUNT_METHODS::COUNT_AUTO,
+      "io"_a, "config"_a = ParserConfig::all(),
       py::return_value_policy::take_ownership);
 }
 }

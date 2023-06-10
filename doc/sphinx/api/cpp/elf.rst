@@ -7,7 +7,8 @@ Parser
 .. doxygenclass:: LIEF::ELF::Parser
    :project: lief
 
-
+.. doxygenstruct:: LIEF::ELF::ParserConfig
+   :project: lief
 
 ----------
 

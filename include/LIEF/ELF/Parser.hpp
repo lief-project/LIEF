@@ -24,6 +24,8 @@
 #include "LIEF/errors.hpp"
 #include "LIEF/ELF/enums.hpp"
 
+#include "LIEF/ELF/ParserConfig.hpp"
+
 namespace LIEF {
 class BinaryStream;
 
@@ -56,51 +58,43 @@ class LIEF_API Parser : public LIEF::Parser {
   //!
   //! For weird binaries (e.g. sectionless) you can choose which method to use for counting dynamic symbols
   //!
-  //! @param[in] file      Path to the ELF binary
-  //! @param[in] count_mtd Method used to count dynamic symbols.
-  //!                      Default: LIEF::ELF::DYNSYM_COUNT_METHODS::COUNT_AUTO
+  //! @param[in] file Path to the ELF binary
+  //! @param[in] conf Optional configuration for the parser
   //!
-  //! @return LIEF::ELF::Binary
+  //! @return LIEF::ELF::Binary as a `unique_ptr`
   static std::unique_ptr<Binary> parse(const std::string& file,
-                                       DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO);
+                                       const ParserConfig& conf = ParserConfig::all());
 
   //! Parse the given raw data as an ELF binary and return a LIEF::ELF::Binary object
   //!
   //! For weird binaries (e.g. sectionless) you can choose which method use to count dynamic symbols
   //!
-  //! @param[in] data      Raw ELF
-  //! @param[in] count_mtd Method used to count dynamic symbols.
-  //                       Default: LIEF::ELF::DYNSYM_COUNT_METHODS::COUNT_AUTO
+  //! @param[in] data Raw ELF as a std::vector of uint8_t
+  //! @param[in] conf Optional configuration for the parser
   //!
   //! @return LIEF::ELF::Binary
   static std::unique_ptr<Binary> parse(const std::vector<uint8_t>& data,
-                                       DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO);
+                                       const ParserConfig& conf = ParserConfig::all());
 
   //! Parse the ELF binary from the given stream and return a LIEF::ELF::Binary object
   //!
   //! For weird binaries (e.g. sectionless) you can choose which method use to count dynamic symbols
   //!
-  //! @param[in] stream    The stream which wraps the ELF binary
-  //! @param[in] count_mtd Method used to count dynamic symbols.
-  //                       Default: LIEF::ELF::DYNSYM_COUNT_METHODS::COUNT_AUTO
+  //! @param[in] stream  The stream which wraps the ELF binary
+  //! @param[in] conf    Optional configuration for the parser
   //!
   //! @return LIEF::ELF::Binary
   static std::unique_ptr<Binary> parse(std::unique_ptr<BinaryStream> stream,
-                                       DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO);
+                                       const ParserConfig& conf = ParserConfig::all());
 
   Parser& operator=(const Parser&) = delete;
   Parser(const Parser&)            = delete;
 
   protected:
   Parser();
-  Parser(std::unique_ptr<BinaryStream> stream,
-         DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO);
-
-  Parser(const std::string& file,
-         DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO);
-
-  Parser(const std::vector<uint8_t>& data,
-         DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO);
+  Parser(std::unique_ptr<BinaryStream> stream, ParserConfig config);
+  Parser(const std::string& file, ParserConfig config);
+  Parser(const std::vector<uint8_t>& data, ParserConfig config);
 
   ~Parser() override;
 
@@ -241,7 +235,7 @@ class LIEF_API Parser : public LIEF::Parser {
   std::unique_ptr<BinaryStream> stream_;
   std::unique_ptr<Binary>       binary_;
   ELF_CLASS                     type_ = ELF_CLASS::ELFCLASSNONE;
-  DYNSYM_COUNT_METHODS          count_mtd_ = DYNSYM_COUNT_METHODS::COUNT_AUTO;
+  ParserConfig                  config_;
   /*
    * parse_sections() may skip some sections so that
    * binary_->sections_ is not contiguous based on the index of the sections.

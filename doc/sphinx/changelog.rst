@@ -10,6 +10,21 @@ Changelog
   * Improve the computation of the dynamic symbols thanks to :github_user:`adamjseitz` (c.f. :issue:`922`)
   * Add support for the LoongArch architecture thanks to :github_user:`loongson-zn` (c.f. :pr:`921`)
 
+  * Add a :class:`lief.ELF.ParserConfig` interface that can be used to tweak
+    which parts of the ELF format should be parsed.
+
+    :Example:
+
+      .. code-block:: python
+
+        config = lief.ELF.ParserConfig()
+
+        # Skip parsing static and dynamic symbols
+        config.parse_static_symbols = False
+        config.parse_dyn_symbols = False
+
+        elf = lief.ELF.parse("target.elf", config)
+
 :MachO:
 
   * The *fileset name* is now stored in :attr:`lief.MachO.Binary.fileset_name`
