@@ -254,9 +254,6 @@ if(BUILD_SHARED_LIBS OR LIEF_FORCE_API_EXPORTS)
 else()
   target_compile_definitions(LIB_LIEF PRIVATE -DLIEF_STATIC)
 endif()
-if(LIEF_SUPPORT_CXX14)
-  target_compile_features(LIB_LIEF PRIVATE cxx_std_14)
-endif()
 
 # Abstract part
 include("${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/CMakeLists.txt")
@@ -299,10 +296,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
   target_compile_definitions(LIB_LIEF PRIVATE SPDLOG_NO_THREAD_ID)
 endif()
 
-# Frozen Configuration
-# ====================
-if(LIEF_FROZEN_ENABLED)
-endif()
 
 # OAT part
 # ========
