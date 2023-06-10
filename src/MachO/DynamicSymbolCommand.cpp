@@ -24,41 +24,9 @@ namespace LIEF {
 namespace MachO {
 
 DynamicSymbolCommand::DynamicSymbolCommand() :
-  LoadCommand::LoadCommand{LOAD_COMMAND_TYPES::LC_DYSYMTAB, 0},
-  idx_local_symbol_{0},
-  nb_local_symbols_{0},
-
-  idx_external_define_symbol_{0},
-  nb_external_define_symbols_{0},
-
-  idx_undefined_symbol_{0},
-  nb_undefined_symbols_{0},
-
-  toc_offset_{0},
-  nb_toc_{0},
-
-  module_table_offset_{0},
-  nb_module_table_{0},
-
-  external_reference_symbol_offset_{0},
-  nb_external_reference_symbols_{0},
-
-  indirect_sym_offset_{0},
-  nb_indirect_symbols_{0},
-
-  external_relocation_offset_{0},
-  nb_external_relocations_{0},
-
-  local_relocation_offset_{0},
-  nb_local_relocations_{0}
+  LoadCommand::LoadCommand{LOAD_COMMAND_TYPES::LC_DYSYMTAB,
+                           sizeof(details::dysymtab_command)}
 {}
-
-DynamicSymbolCommand DynamicSymbolCommand::createForPython() {
-  auto cmd = DynamicSymbolCommand();
-  cmd.size(sizeof(details::dysymtab_command));
-  cmd.data(LoadCommand::raw_t(cmd.size(), 0));
-  return cmd;
-}
 
 DynamicSymbolCommand::DynamicSymbolCommand(const details::dysymtab_command& cmd) :
   LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize},
