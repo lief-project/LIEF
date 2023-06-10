@@ -36,7 +36,7 @@
   </a>
   &nbsp;
   <a href="https://twitter.com/LIEF_project">
-   <img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/lief_project?color=1da1f2&label=Follow&logo=twitter&logoColor=white&style=flat-square">
+   <img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/lief_project">
   </a>
 </p>
 
@@ -113,7 +113,7 @@ pip install [--user] --index-url https://lief.s3-website.fr-par.scw.cloud/latest
 - **Nightly**:
   * SDK: https://lief.s3-website.fr-par.scw.cloud/latest/sdk
   * Python Wheels: https://lief.s3-website.fr-par.scw.cloud/latest/lief
-- **v0.13.0**: https://github.com/lief-project/LIEF/releases/tag/0.13.0
+- **v0.13.1**: https://github.com/lief-project/LIEF/releases/tag/0.13.1
 
 Here are guides to install or integrate LIEF:
 
