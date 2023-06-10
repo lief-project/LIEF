@@ -945,7 +945,7 @@ class MACHO_TYPES:
 class MainCommand(LoadCommand):
     entrypoint: int
     stack_size: int
-    def __init__(self, *args, **kwargs) -> None: ...
+    def __init__(self, arg0: int, arg1: int) -> None: ...
 
 class PPC_RELOCATION:
     __members__: ClassVar[dict] = ...  # read-only
@@ -1257,7 +1257,7 @@ class ThreadCommand(LoadCommand):
     count: int
     flavor: int
     state: List[int]
-    def __init__(self, *args, **kwargs) -> None: ...
+    def __init__(self, arg0: int, arg1: int, arg2: lief.MachO.CPU_TYPES) -> None: ...
     @property
     def pc(self) -> int: ...
 
