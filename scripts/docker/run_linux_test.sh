@@ -40,4 +40,4 @@ PYTHONPATH=tests/ $PYTHON_BINARY tests/elf/fuzzing.py                           
 
 find wheel_stage -iname "*-cp${PYTHON_VERSION}-*" -exec auditwheel repair -w dist {} \;
 
-chown -R 1000:1000 build dist wheel_stage
+chown -R 1000:1000 api/python/build dist wheel_stage
