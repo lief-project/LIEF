@@ -38,6 +38,6 @@ PYTHONPATH=tests/ $PYTHON_BINARY tests/elf/fuzzing.py                           
                   ${BUILD_DIR}/tests/Melkor/src/MELKOR/melkor                            \
                   --input-seed ${LIEF_SAMPLES_DIR}/ELF/ELF64_x86-64_binary_nm.bin -n 100
 
-find wheel_stage -iname "*-cp${PYTHON_VERSION}-*" -exec auditwheel repair -w dist --plat manylinux_2_24_x86_64 {} \;
+find wheel_stage -iname "*-cp${PYTHON_VERSION}-*" -exec auditwheel repair -w dist {} \;
 
-chown -R 1000:1000 build dist wheel_stage || true
+chown -R 1000:1000 build dist wheel_stage

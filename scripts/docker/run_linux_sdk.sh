@@ -38,6 +38,6 @@ popd
 /bin/mv build/linux-x86-64/*.tar.gz build/
 ls -alh build
 
-chown -R 1000:1000 build || true
-chown -R 1000:1000 dist || true
-chown -R 1000:1000 wheel_stage || true
+chown -R 1000:1000 build
+chown -R 1000:1000 dist
+chown -R 1000:1000 wheel_stage

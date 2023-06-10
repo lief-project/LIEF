@@ -1,7 +1,10 @@
 import lief
 from utils import get_sample
 
-TARGET = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_rvs.bin'), lief.ELF.DYNSYM_COUNT_METHODS.HASH)
+config = lief.ELF.ParserConfig()
+config.count_mtd = lief.ELF.DYNSYM_COUNT_METHODS.HASH
+
+TARGET = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_rvs.bin'), config)
 
 def test_symbols():
     symbols = TARGET.dynamic_symbols

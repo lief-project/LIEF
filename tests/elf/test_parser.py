@@ -2,9 +2,13 @@ import lief
 from utils import get_sample, is_64bits_platform
 
 def test_symbol_count():
-    gcc1 = lief.ELF.parse(get_sample('ELF/ELF32_x86_binary_gcc.bin'), lief.ELF.DYNSYM_COUNT_METHODS.HASH)
-    gcc2 = lief.ELF.parse(get_sample('ELF/ELF32_x86_binary_gcc.bin'), lief.ELF.DYNSYM_COUNT_METHODS.SECTION)
-    gcc3 = lief.ELF.parse(get_sample('ELF/ELF32_x86_binary_gcc.bin'), lief.ELF.DYNSYM_COUNT_METHODS.RELOCATIONS)
+    config = lief.ELF.ParserConfig()
+    config.count_mtd = lief.ELF.DYNSYM_COUNT_METHODS.HASH
+    gcc1 = lief.ELF.parse(get_sample('ELF/ELF32_x86_binary_gcc.bin'), config)
+    config.count_mtd = lief.ELF.DYNSYM_COUNT_METHODS.SECTION
+    gcc2 = lief.ELF.parse(get_sample('ELF/ELF32_x86_binary_gcc.bin'), config)
+    config.count_mtd = lief.ELF.DYNSYM_COUNT_METHODS.RELOCATIONS
+    gcc3 = lief.ELF.parse(get_sample('ELF/ELF32_x86_binary_gcc.bin'), config)
 
     assert len(gcc1.symbols) == 158
     assert len(gcc2.symbols) == 158
@@ -15,7 +19,9 @@ def test_issue_922():
     auto = lief.ELF.parse(libcrypto_path)
     assert len(auto.symbols) == 14757
 
-    section = lief.ELF.parse(libcrypto_path, lief.ELF.DYNSYM_COUNT_METHODS.SECTION)
+    config = lief.ELF.ParserConfig()
+    config.count_mtd = lief.ELF.DYNSYM_COUNT_METHODS.SECTION
+    section = lief.ELF.parse(libcrypto_path, config)
     assert len(section.symbols) == 14757
 
 def test_tiny():
