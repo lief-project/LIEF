@@ -3,8 +3,8 @@
 </p>
 
 <p align="center">
-  <a href="https://gitter.im/lief-project">
-    <img src="https://img.shields.io/gitter/room/gitterHQ/gitter.svg?style=flat-square">
+  <a href="https://discord.gg/7hRFGWYedu">
+    <img src="https://img.shields.io/discord/1117013848914931762">
   </a>
   &nbsp;
   <a href="https://github.com/lief-project/LIEF/actions?query=workflow%3A%22Linux+x86-64%22">
@@ -197,7 +197,7 @@ int main(int argc, char** argv) {
 ## Contact
 
 * **Mail**: contact at lief re
-* **Gitter**: [lief-project](https://gitter.im/lief-project)
+* **Discord**: [LIEF](https://discord.gg/7hRFGWYedu)
 
 ## About
 
