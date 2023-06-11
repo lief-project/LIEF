@@ -134,12 +134,12 @@ class LIEF_API SegmentCommand : public LoadCommand {
   Section* get_section(const std::string& name);
 
   //! The raw content of this segment
-  inline span<const uint8_t> content() const {
+  span<const uint8_t> content() const {
     return data_;
   }
 
   //! The original index of this segment
-  inline int8_t index() const {
+  int8_t index() const {
     return this->index_;
   }
 
@@ -176,14 +176,14 @@ class LIEF_API SegmentCommand : public LoadCommand {
   static bool classof(const LoadCommand* cmd);
 
   protected:
-  inline span<uint8_t> writable_content() {
+  span<uint8_t> writable_content() {
     return data_;
   }
 
   void content_resize(size_t size);
   void content_insert(size_t where, size_t size);
 
-  inline void content_extend(size_t width) {
+  void content_extend(size_t width) {
     content_resize(data_.size() + width);
   }
 

@@ -676,7 +676,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! it returns the in-memory base address of this binary.
   //!
   //! Otherwise, it returns 0
-  inline uint64_t memory_base_address() const {
+  uint64_t memory_base_address() const {
     return in_memory_base_addr_;
   }
 
@@ -704,15 +704,15 @@ class LIEF_API Binary : public LIEF::Binary  {
   LIEF::Binary::functions_t get_abstract_imported_functions() const override;
   std::vector<std::string>  get_abstract_imported_libraries() const override;
 
-  inline relocations_t& relocations_list() {
+  relocations_t& relocations_list() {
     return this->relocations_;
   }
 
-  inline const relocations_t& relocations_list() const {
+  const relocations_t& relocations_list() const {
     return this->relocations_;
   }
 
-  inline size_t pointer_size() const {
+  size_t pointer_size() const {
     return this->is64_ ? sizeof(uint64_t) : sizeof(uint32_t);
   }
 

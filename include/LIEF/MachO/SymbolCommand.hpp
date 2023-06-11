@@ -66,27 +66,27 @@ class LIEF_API SymbolCommand : public LoadCommand {
   void strings_size(uint32_t size);
 
 
-  inline span<const uint8_t> symbol_table() const {
+  span<const uint8_t> symbol_table() const {
     return symbol_table_;
   }
 
-  inline span<uint8_t> symbol_table() {
+  span<uint8_t> symbol_table() {
     return symbol_table_;
   }
 
-  inline span<const uint8_t> string_table() const {
+  span<const uint8_t> string_table() const {
     return string_table_;
   }
 
-  inline span<uint8_t> string_table() {
+  span<uint8_t> string_table() {
     return string_table_;
   }
 
-  inline uint32_t original_str_size() const {
+  uint32_t original_str_size() const {
     return original_str_size_;
   }
 
-  inline uint32_t original_nb_symbols() const {
+  uint32_t original_nb_symbols() const {
     return original_nb_symbols_;
   }
 

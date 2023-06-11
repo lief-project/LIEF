@@ -36,38 +36,38 @@ class VectorStream : public BinaryStream {
   VectorStream(VectorStream&& other);
   VectorStream& operator=(VectorStream&& other);
 
-  inline uint64_t size() const override {
+  uint64_t size() const override {
     return size_;
   }
 
   const std::vector<uint8_t>& content() const;
 
-  inline std::vector<uint8_t>&& move_content() {
+  std::vector<uint8_t>&& move_content() {
     size_ = 0;
     return std::move(binary_);
   }
 
-  inline uint8_t* p() {
+  uint8_t* p() {
     return this->binary_.data() + this->pos();
   }
 
-  inline const uint8_t* p() const {
+  const uint8_t* p() const {
     return this->binary_.data() + this->pos();
   }
 
-  inline uint8_t* start() {
+  uint8_t* start() {
     return this->binary_.data();
   }
 
-  inline const uint8_t* start() const {
+  const uint8_t* start() const {
     return this->binary_.data();
   }
 
-  inline uint8_t* end() {
+  uint8_t* end() {
     return this->binary_.data() + this->binary_.size();
   }
 
-  inline const uint8_t* end() const {
+  const uint8_t* end() const {
     return this->binary_.data() + this->binary_.size();
   }
 

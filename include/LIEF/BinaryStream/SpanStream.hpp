@@ -37,7 +37,7 @@ class SpanStream : public BinaryStream {
   SpanStream(SpanStream&& other);
   SpanStream& operator=(SpanStream&& other);
 
-  inline uint64_t size() const override {
+  uint64_t size() const override {
     return data_.size();
   }
 

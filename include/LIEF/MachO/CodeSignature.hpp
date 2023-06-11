@@ -58,11 +58,11 @@ class LIEF_API CodeSignature : public LoadCommand {
   void data_offset(uint32_t offset);
   void data_size(uint32_t size);
 
-  inline span<uint8_t> content() {
+  span<uint8_t> content() {
     return content_;
   }
 
-  inline span<const uint8_t> content() const {
+  span<const uint8_t> content() const {
     return content_;
   }
 

@@ -789,7 +789,7 @@ class LIEF_API Binary : public LIEF::Binary {
   struct phdr_relocation_info_t {
     uint64_t new_offset = 0;
     size_t nb_segments = 0;
-    inline void clear() {
+    void clear() {
       new_offset = 0;
       nb_segments = 0;
     }

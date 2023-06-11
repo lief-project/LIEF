@@ -83,25 +83,25 @@ class LIEF_API ContentInfo : public Object {
 
   //! Return the OID that describes the content wrapped by this object.
   //! It should match SPC_INDIRECT_DATA_OBJID (1.3.6.1.4.1.311.2.1.4)
-  inline oid_t content_type() const {
+  oid_t content_type() const {
     return content_type_;
   }
 
   //! Digest used to hash the file
   //!
   //! It should match LIEF::PE::SignerInfo::digest_algorithm
-  inline ALGORITHMS digest_algorithm() const {
+  ALGORITHMS digest_algorithm() const {
     return digest_algorithm_;
   }
 
   //! PE's authentihash
   //!
   //! @see LIEF::PE::Binary::authentihash
-  inline const std::vector<uint8_t>& digest() const {
+  const std::vector<uint8_t>& digest() const {
     return digest_;
   }
 
-  inline const std::string& file() const {
+  const std::string& file() const {
     return file_;
   }
 

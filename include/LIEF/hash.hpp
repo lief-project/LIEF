@@ -42,7 +42,9 @@ class LIEF_API Hash : public Visitor {
 
   // combine two elements to produce a size_t.
   template<typename U = size_t>
-  static inline size_t combine(size_t lhs, U rhs);
+  static size_t combine(size_t lhs, U rhs) {
+    return (lhs ^ rhs) + 0x9e3779b9 + (lhs << 6) + (rhs >> 2);
+  }
 
   public:
   using Visitor::visit;
@@ -107,12 +109,6 @@ class LIEF_API Hash : public Visitor {
   size_t value_;
 
 };
-
-template<typename U>
-size_t Hash::combine(size_t lhs, U rhs) {
-  return (lhs ^ rhs) + 0x9e3779b9 + (lhs << 6) + (rhs >> 2);
-}
-
 
 template<class H>
 size_t Hash::hash(const Object& obj) {

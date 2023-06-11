@@ -62,11 +62,11 @@ class LIEF_API FilesetCommand : public LoadCommand {
 
   //! Return a pointer on the LIEF::MachO::Binary associated
   //! with this entry
-  inline const Binary* binary() const {
+  const Binary* binary() const {
     return binary_;
   }
 
-  inline Binary* binary() {
+  Binary* binary() {
     return binary_;
   }
 

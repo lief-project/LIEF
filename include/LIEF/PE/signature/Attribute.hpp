@@ -43,7 +43,7 @@ class LIEF_API Attribute : public Object {
   virtual std::unique_ptr<Attribute> clone() const = 0;
 
   //! Concrete type of the attribute
-  inline virtual SIG_ATTRIBUTE_TYPES type() const {
+  virtual SIG_ATTRIBUTE_TYPES type() const {
     return type_;
   }
 

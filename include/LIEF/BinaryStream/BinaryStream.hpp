@@ -50,7 +50,7 @@ class BinaryStream {
   virtual ~BinaryStream();
   virtual uint64_t size() const = 0;
 
-  inline STREAM_TYPE type() const {
+  STREAM_TYPE type() const {
     return stype_;
   }
 
@@ -73,7 +73,7 @@ class BinaryStream {
   result<std::u16string> peek_u16string_at(size_t offset, size_t length) const;
 
 
-  virtual inline ok_error_t peek_data(std::vector<uint8_t>& container,
+  virtual ok_error_t peek_data(std::vector<uint8_t>& container,
                                       uint64_t offset, uint64_t size)
   {
 
@@ -96,7 +96,7 @@ class BinaryStream {
     return make_error_code(lief_errors::read_error);
   }
 
-  virtual inline ok_error_t read_data(std::vector<uint8_t>& container, uint64_t size) {
+  virtual ok_error_t read_data(std::vector<uint8_t>& container, uint64_t size) {
     if (!peek_data(container, pos(), size)) {
       return make_error_code(lief_errors::read_error);
     }
@@ -186,13 +186,13 @@ class BinaryStream {
                        [] (uint8_t x) { return x == 0; });
   }
 
-  inline bool should_swap() const {
+  bool should_swap() const {
     return endian_swap_;
   }
 
   protected:
   virtual result<const void*> read_at(uint64_t offset, uint64_t size) const = 0;
-  inline virtual ok_error_t peek_in(void* dst, uint64_t offset, uint64_t size) const {
+  virtual ok_error_t peek_in(void* dst, uint64_t offset, uint64_t size) const {
     if (auto raw = read_at(offset, size)) {
       if (dst == nullptr) {
         return make_error_code(lief_errors::read_error);
@@ -234,7 +234,7 @@ class ScopedStream {
     stream_{stream}
   {}
 
-  inline ~ScopedStream() {
+  ~ScopedStream() {
     stream_.setpos(pos_);
   }
 

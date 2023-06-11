@@ -16,6 +16,7 @@
 #ifndef LIEF_ELF_SYSV_HASH_H
 #define LIEF_ELF_SYSV_HASH_H
 
+#include <cstdint>
 #include <vector>
 #include <ostream>
 
@@ -62,7 +63,7 @@ class LIEF_API SysvHash : public Object {
   //! @brief Chains values
   const std::vector<uint32_t>& chains() const;
 
-  inline void nchain(uint32_t nb) {
+  void nchain(uint32_t nb) {
     chains_.resize(nb);
   }
 

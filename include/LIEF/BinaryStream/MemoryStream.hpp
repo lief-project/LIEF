@@ -35,19 +35,19 @@ class MemoryStream : public BinaryStream {
   MemoryStream(MemoryStream&&);
   MemoryStream& operator=(MemoryStream&&);
 
-  inline uintptr_t base_address() const {
+  uintptr_t base_address() const {
     return this->baseaddr_;
   }
 
-  inline uint64_t end() const {
+  uint64_t end() const {
     return this->baseaddr_ + this->size_;
   }
 
-  inline void binary(Binary& bin) {
+  void binary(Binary& bin) {
     this->binary_ = &bin;
   }
 
-  inline Binary* binary() {
+  Binary* binary() {
     return this->binary_;
   }
 

@@ -72,7 +72,7 @@ class LIEF_API RelocationFixup : public Relocation {
   //! should be RELOCATION_ORIGINS::ORIGIN_CHAINED_FIXUPS
   RELOCATION_ORIGINS origin() const override;
 
-  inline DYLD_CHAINED_PTR_FORMAT ptr_format() const {
+  DYLD_CHAINED_PTR_FORMAT ptr_format() const {
     return ptr_fmt_;
   }
 
@@ -85,11 +85,11 @@ class LIEF_API RelocationFixup : public Relocation {
   //! Not relevant for this kind of relocation
   void pc_relative(bool) override;
 
-  inline uint32_t offset() const {
+  uint32_t offset() const {
     return offset_;
   }
 
-  inline void offset(uint32_t offset) {
+  void offset(uint32_t offset) {
     offset_ = offset;
   }
 

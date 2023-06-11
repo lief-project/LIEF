@@ -71,7 +71,7 @@ class LIEF_API DyldExportsTrie : public LoadCommand {
   void data_offset(uint32_t offset);
   void data_size(uint32_t size);
 
-  inline span<const uint8_t> content() const {
+  span<const uint8_t> content() const {
     return content_;
   }
 

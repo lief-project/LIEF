@@ -65,15 +65,15 @@ class LIEF_API ExportEntry : public LIEF::Symbol {
   void address(uint32_t address);
   void is_extern(bool is_extern);
 
-  inline uint64_t value() const override {
+  uint64_t value() const override {
     return address();
   }
 
-  inline void value(uint64_t value) override {
+  void value(uint64_t value) override {
     address(static_cast<uint32_t>(value));
   }
 
-  inline void set_forward_info(std::string lib, std::string function)  {
+  void set_forward_info(std::string lib, std::string function)  {
     forward_info_.library =  std::move(lib);
     forward_info_.function = std::move(function);
   }

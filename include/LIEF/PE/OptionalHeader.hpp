@@ -139,7 +139,7 @@ class LIEF_API OptionalHeader : public Object {
   //! after the compilation.
   //!
   //! This value is computed by LIEF when parsing the PE binary.
-  inline uint32_t computed_checksum() const {
+  uint32_t computed_checksum() const {
     return computed_checksum_;
   }
 

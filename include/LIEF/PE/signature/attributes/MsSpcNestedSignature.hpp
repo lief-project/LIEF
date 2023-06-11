@@ -52,7 +52,7 @@ class LIEF_API MsSpcNestedSignature : public Attribute {
   std::unique_ptr<Attribute> clone() const override;
 
   //! Underlying Signature object
-  inline const Signature& sig() const {
+  const Signature& sig() const {
     return sig_;
   }
 

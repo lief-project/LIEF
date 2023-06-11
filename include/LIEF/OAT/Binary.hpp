@@ -105,7 +105,7 @@ class LIEF_API Binary : public ELF::Binary {
 
   std::string dex2dex_json_info();
 
-  inline bool has_vdex() const {
+  bool has_vdex() const {
     return vdex_ != nullptr;
   }
 

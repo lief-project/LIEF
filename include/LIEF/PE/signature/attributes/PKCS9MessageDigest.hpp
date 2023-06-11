@@ -58,7 +58,7 @@ class LIEF_API PKCS9MessageDigest : public Attribute {
   std::unique_ptr<Attribute> clone() const override;
 
   //! Message digeset as a blob of bytes as described in the RFC
-  inline const std::vector<uint8_t>& digest() const {
+  const std::vector<uint8_t>& digest() const {
     return digest_;
   }
 

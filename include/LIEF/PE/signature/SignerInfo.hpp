@@ -84,12 +84,12 @@ class LIEF_API SignerInfo : public Object {
   //! @see
   //! LIEF::PE::x509::serial_number
   //! SignerInfo::issuer
-  inline const std::vector<uint8_t>& serial_number() const {
+  const std::vector<uint8_t>& serial_number() const {
     return serialno_;
   }
 
   //! Return the x509::issuer used by this signer
-  inline const std::string& issuer() const {
+  const std::string& issuer() const {
     return issuer_;
   };
 
@@ -133,12 +133,12 @@ class LIEF_API SignerInfo : public Object {
   const Attribute* get_unauth_attribute(PE::SIG_ATTRIBUTE_TYPES type) const;
 
   //! x509 certificate used by this signer. If it can't be found, it returns a nullptr
-  inline const x509* cert() const {
+  const x509* cert() const {
     return cert_.get();
   }
 
   //! x509 certificate used by this signer. If it can't be found, it returns a nullptr
-  inline x509* cert() {
+  x509* cert() {
     return cert_.get();
   }
 

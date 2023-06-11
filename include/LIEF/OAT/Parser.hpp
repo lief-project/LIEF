@@ -52,7 +52,7 @@ class LIEF_API Parser : public LIEF::ELF::Parser {
   Parser(std::vector<uint8_t> data);
   ~Parser() override;
 
-  inline Binary& oat_binary() {
+  Binary& oat_binary() {
     // The type of the parent binary_ is guaranteed by the constructor
     return *reinterpret_cast<Binary*>(binary_.get());
   }

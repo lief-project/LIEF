@@ -1285,7 +1285,7 @@ enum class PE_TYPE : uint16_t {
 };
 
 //! Cryptography algorithms
-enum class ALGORITHMS {
+enum class ALGORITHMS : uint32_t {
   UNKNOWN = 0,
   SHA_512,
   SHA_384,
@@ -1312,7 +1312,7 @@ enum class ALGORITHMS {
 };
 
 //! Typed enum for LIEF::PE::Attribute
-enum class SIG_ATTRIBUTE_TYPES {
+enum class SIG_ATTRIBUTE_TYPES : uint32_t {
   UNKNOWN = 0,
   CONTENT_TYPE,
   GENERIC_TYPE,

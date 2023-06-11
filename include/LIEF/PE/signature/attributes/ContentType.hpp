@@ -49,7 +49,7 @@ class LIEF_API ContentType : public Attribute {
   ContentType& operator=(const ContentType&);
 
   //! OID as described in RFC #2985
-  inline const oid_t& oid() const {
+  const oid_t& oid() const {
     return oid_;
   }
 

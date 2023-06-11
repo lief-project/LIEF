@@ -98,7 +98,7 @@ class LIEF_API Signature : public Object {
   //! Algorithm used to *digest* the file.
   //!
   //! It should match SignerInfo::digest_algorithm
-  inline ALGORITHMS digest_algorithm() const {
+  ALGORITHMS digest_algorithm() const {
     return digest_algorithm_;
   }
 

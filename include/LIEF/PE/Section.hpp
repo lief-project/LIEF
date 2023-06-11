@@ -68,7 +68,7 @@ class LIEF_API Section : public LIEF::Section {
   span<const uint8_t> content() const override;
 
   //! Content of the section's padding area
-  inline const std::vector<uint8_t>& padding() const {
+  const std::vector<uint8_t>& padding() const {
     return padding_;
   }
 
@@ -138,7 +138,7 @@ class LIEF_API Section : public LIEF::Section {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Section& section);
 
   private:
-  inline span<uint8_t> writable_content() {
+  span<uint8_t> writable_content() {
     return content_;
   }
 

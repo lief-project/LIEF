@@ -56,7 +56,7 @@ class LIEF_API PKCS9AtSequenceNumber : public Attribute {
   std::unique_ptr<Attribute> clone() const override;
 
   //! Number as described in the RFC
-  inline uint32_t number() const {
+  uint32_t number() const {
     return number_;
   }
 

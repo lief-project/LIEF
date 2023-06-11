@@ -74,11 +74,11 @@ class LIEF_API FunctionStarts : public LoadCommand {
   void data_size(uint32_t size);
   void functions(const std::vector<uint64_t>& funcs);
 
-  inline span<const uint8_t> content() const {
+  span<const uint8_t> content() const {
     return content_;
   }
 
-  inline span<uint8_t> content() {
+  span<uint8_t> content() {
     return content_;
   }
 

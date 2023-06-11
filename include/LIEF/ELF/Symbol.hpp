@@ -118,7 +118,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
   void information(uint8_t info);
   void shndx(uint16_t idx);
 
-  inline void shndx(SYMBOL_SECTION_INDEX idx) {
+  void shndx(SYMBOL_SECTION_INDEX idx) {
     this->shndx_ = static_cast<uint16_t>(idx);
   }
 
@@ -135,17 +135,17 @@ class LIEF_API Symbol : public LIEF::Symbol {
   void set_imported(bool flag = true);
 
   //! True if the symbol is a static one
-  inline bool is_static() const {
+  bool is_static() const {
     return this->binding() == SYMBOL_BINDINGS::STB_GLOBAL;
   }
 
   //! True if the symbol represent a function
-  inline bool is_function() const {
+  bool is_function() const {
     return this->type() == ELF_SYMBOL_TYPES::STT_FUNC;
   }
 
   //! True if the symbol represent a variable
-  inline bool is_variable() const {
+  bool is_variable() const {
     return this->type() == ELF_SYMBOL_TYPES::STT_OBJECT;
   }
 

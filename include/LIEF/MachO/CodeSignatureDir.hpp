@@ -50,28 +50,28 @@ class LIEF_API CodeSignatureDir : public LoadCommand {
   CodeSignatureDir* clone() const override;
 
   //! Offset in the binary where the signature starts
-  inline uint32_t data_offset() const {
+  uint32_t data_offset() const {
     return data_offset_;
   }
 
   //! Size of the raw signature
-  inline uint32_t data_size() const {
+  uint32_t data_size() const {
     return data_size_;
   }
 
-  inline void data_offset(uint32_t offset) {
+  void data_offset(uint32_t offset) {
     data_offset_ = offset;
   }
 
-  inline void data_size(uint32_t size) {
+  void data_size(uint32_t size) {
     data_size_ = size;
   }
 
-  inline span<const uint8_t> content() const {
+  span<const uint8_t> content() const {
     return content_;
   }
 
-  inline span<uint8_t> content() {
+  span<uint8_t> content() {
     return content_;
   }
 

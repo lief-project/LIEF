@@ -112,11 +112,11 @@ class LIEF_API Symbol : public LIEF::Symbol {
 
   //! Return the library in which the symbol is defined.
   //! It returns a null pointer if the library can't be resolved
-  inline const DylibCommand* library() const {
+  const DylibCommand* library() const {
     return library_;
   }
 
-  inline DylibCommand* library() {
+  DylibCommand* library() {
     return library_;
   }
 
@@ -124,7 +124,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
   SYMBOL_ORIGINS origin() const;
 
   //! Category of the symbol according to the `LC_DYSYMTAB` command
-  inline CATEGORY category() const {
+  CATEGORY category() const {
     return category_;
   }
 
@@ -144,7 +144,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
 
   private:
   Symbol(CATEGORY cat);
-  inline void library(DylibCommand& library) {
+  void library(DylibCommand& library) {
     this->library_ = &library;
   }
 

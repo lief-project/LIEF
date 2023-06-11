@@ -55,12 +55,12 @@ class LIEF_API SpcSpOpusInfo : public Attribute {
   std::unique_ptr<Attribute> clone() const override;
 
   //! Program description provided by the publisher
-  inline const std::string& program_name() const {
+  const std::string& program_name() const {
     return program_name_;
   }
 
   //! Other information such as an url
-  inline const std::string& more_info() const {
+  const std::string& more_info() const {
     return more_info_;
   }
 

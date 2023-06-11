@@ -62,21 +62,21 @@ class LIEF_API ChainedBindingInfo : public BindingInfo {
   void swap(ChainedBindingInfo& other);
 
   //! Format of the imports
-  inline DYLD_CHAINED_FORMAT format() const {
+  DYLD_CHAINED_FORMAT format() const {
     return format_;
   }
 
   //! Format of the pointer
-  inline DYLD_CHAINED_PTR_FORMAT ptr_format() const {
+  DYLD_CHAINED_PTR_FORMAT ptr_format() const {
     return ptr_format_;
   }
 
   //! Original offset in the chain of this binding
-  inline uint32_t offset() const {
+  uint32_t offset() const {
     return offset_;
   }
 
-  inline void offset(uint32_t offset) {
+  void offset(uint32_t offset) {
     offset_ = offset;
   }
 
@@ -85,7 +85,7 @@ class LIEF_API ChainedBindingInfo : public BindingInfo {
 
   uint64_t sign_extended_addend() const;
 
-  inline BindingInfo::TYPES type() const override {
+  BindingInfo::TYPES type() const override {
     return BindingInfo::TYPES::CHAINED;
   }
 

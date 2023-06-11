@@ -74,11 +74,11 @@ class LIEF_API DataInCode : public LoadCommand {
   it_const_entries entries() const;
   it_entries entries();
 
-  inline span<uint8_t> content() {
+  span<uint8_t> content() {
     return content_;
   }
 
-  inline span<const uint8_t> content() const {
+  span<const uint8_t> content() const {
     return content_;
   }
 

@@ -153,12 +153,12 @@ class LIEF_API Section : public LIEF::Section {
   it_segments       segments();
   it_const_segments segments() const;
 
-  inline Section& as_frame() {
+  Section& as_frame() {
     is_frame_ = true;
     return *this;
   }
 
-  inline bool is_frame() const {
+  bool is_frame() const {
     return is_frame_;
   }
 

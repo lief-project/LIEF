@@ -84,12 +84,12 @@ class LIEF_API Builder {
   void build();
 
   //! Tweak the ELF builder with the provided config parameter
-  inline Builder& set_config(config_t conf) {
+  Builder& set_config(config_t conf) {
     config_ = std::move(conf);
     return *this;
   }
 
-  inline config_t& config() {
+  config_t& config() {
     return config_;
   }
 
