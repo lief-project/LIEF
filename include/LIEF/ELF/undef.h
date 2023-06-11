@@ -646,6 +646,7 @@
 #undef DF_1_SYMINTPOSE
 #undef DF_1_GLOBAUDIT
 #undef DF_1_SINGLETON
+#undef DF_1_PIE
 
 #undef RHF_NONE
 #undef RHF_QUICKSTART
@@ -683,6 +684,15 @@
 #undef COUNT_HASH
 #undef COUNT_RELOCATIONS
 
+#undef NT_ARM_VFP
+#undef NT_ARM_TLS
+#undef NT_ARM_HW_BREAK
+#undef NT_ARM_HW_WATCH
+#undef NT_ARM_SYSTEM_CALL
+#undef NT_ARM_SVE
+
+#undef NT_386_TLS
+#undef NT_386_IOPERM
 
 #undef NT_UNKNOWN
 #undef NT_GNU_ABI_TAG
