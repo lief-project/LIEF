@@ -71,6 +71,7 @@ jobs:
         python -m pip -vv wheel --wheel-dir=dist/ api/python
         python -m pip -vv install api/python
         python ./tests/run_pytest.py
+        python ./scripts/windows/run_ctest.py ./api/python/build/temp.win32-cpython-38/Release
       shell: cmd
     - name: ❱ Build Python ${{ matrix.python-version }}
       if: matrix.python-version != 3.8
