@@ -119,9 +119,9 @@ bool Section::is_type(PE_SECTION_TYPES type) const {
 
 
 void Section::name(const std::string& name) {
-  if (name.size() > details::STRUCT_SIZES::NameSize) {
-    LIEF_ERR("The max size of a section's name is {} vs {d}",
-             details::STRUCT_SIZES::NameSize, name.size());
+  if (name.size() > details::sizes::SECTION_NAME) {
+    LIEF_ERR("The max size of a section's name is {} vs {}",
+             details::sizes::SECTION_NAME, name.size());
     return;
   }
   name_ = name;

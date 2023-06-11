@@ -31,21 +31,19 @@ namespace PE {
 namespace details {
 
 //! Sizes in bytes of various things in the COFF format.
-namespace STRUCT_SIZES {
-  enum {
-    Header16Size                  = 20,
-    Header32Size                  = 56,
-    NameSize                      = 8,
-    Symbol16Size                  = 18,
-    Symbol32Size                  = 20,
-    SectionSize                   = 40,
-    RelocationSize                = 10,
-    BaseRelocationBlockSize       = 8,
-    ImportDirectoryTableEntrySize = 20,
-    ResourceDirectoryTableSize    = 16,
-    ResourceDirectoryEntriesSize  = 8,
-    ResourceDataEntrySize         = 16
-  };
+namespace sizes {
+  static constexpr size_t HEADER_16                    = 20;
+  static constexpr size_t HEADER_32                    = 56;
+  static constexpr size_t SECTION_NAME                 = 8;
+  static constexpr size_t SYMBOL_16                    = 18;
+  static constexpr size_t SYMBOL_32                    = 20;
+  static constexpr size_t SECTION                      = 40;
+  static constexpr size_t RELOCATION                   = 10;
+  static constexpr size_t BASE_RELOCATION_BLOCK        = 8;
+  static constexpr size_t IMPORT_DIRECTORY_TABLE_ENTRY = 20;
+  static constexpr size_t RESOURCE_DIRECTORY_TABLE     = 16;
+  static constexpr size_t RESOURCE_DIRECTORY_ENTRIES   = 8;
+  static constexpr size_t RESOURCE_DATA_ENTRY          = 16;
 }
 
 struct delay_imports {
@@ -400,7 +398,7 @@ class PE64 {
 }
 
 
-} // end namesapce ELF
+} // end namesapce PE
 }
 
 #endif

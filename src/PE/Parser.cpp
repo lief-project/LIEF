@@ -493,7 +493,7 @@ ok_error_t Parser::parse_string_table() {
   LIEF_DEBUG("== Parsing string table ==");
   uint32_t string_table_offset =
     binary_->header().pointerto_symbol_table() +
-    binary_->header().numberof_symbols() * details::STRUCT_SIZES::Symbol16Size;
+    binary_->header().numberof_symbols() * details::sizes::SYMBOL_16;
 
   auto res_size = stream_->peek<uint32_t>(string_table_offset);
   if (!res_size) {
@@ -547,7 +547,7 @@ ok_error_t Parser::parse_symbols() {
     } else {
       uint64_t offset_name =
         binary_->header().pointerto_symbol_table() +
-        binary_->header().numberof_symbols() * details::STRUCT_SIZES::Symbol16Size +
+        binary_->header().numberof_symbols() * details::sizes::SYMBOL_16 +
         raw_symbol.Name.Name.Offset;
       auto res_string = stream_->peek_string_at(offset_name, stream_max_size - offset_name);
       if (res_string) {
@@ -600,10 +600,10 @@ ok_error_t Parser::parse_symbols() {
         LIEF_DEBUG("Format 5");
       }
 
-      current_offset += details::STRUCT_SIZES::Symbol16Size;
+      current_offset += details::sizes::SYMBOL_16;
     }
 
-    current_offset += details::STRUCT_SIZES::Symbol16Size;
+    current_offset += details::sizes::SYMBOL_16;
     idx += 1 + raw_symbol.NumberOfAuxSymbols;
     binary_->symbols_.push_back(std::move(symbol));
   }
