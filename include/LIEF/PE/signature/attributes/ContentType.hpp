@@ -58,6 +58,10 @@ class LIEF_API ContentType : public Attribute {
 
   std::unique_ptr<Attribute> clone() const override;
 
+  static bool classof(const Attribute* attr) {
+    return attr->type() == SIG_ATTRIBUTE_TYPES::CONTENT_TYPE;
+  }
+
   void accept(Visitor& visitor) const override;
   virtual ~ContentType();
 

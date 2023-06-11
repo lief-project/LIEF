@@ -62,6 +62,10 @@ class LIEF_API GenericType : public Attribute {
 
   virtual ~GenericType();
 
+  static bool classof(const Attribute* attr) {
+    return attr->type() == SIG_ATTRIBUTE_TYPES::GENERIC_TYPE;
+  }
+
   private:
   oid_t oid_;
   std::vector<uint8_t> raw_;

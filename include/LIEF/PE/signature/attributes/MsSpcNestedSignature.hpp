@@ -61,6 +61,10 @@ class LIEF_API MsSpcNestedSignature : public Attribute {
 
   void accept(Visitor& visitor) const override;
 
+  static bool classof(const Attribute* attr) {
+    return attr->type() == SIG_ATTRIBUTE_TYPES::MS_SPC_NESTED_SIGN;
+  }
+
   virtual ~MsSpcNestedSignature();
 
   private:

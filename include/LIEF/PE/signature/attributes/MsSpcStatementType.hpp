@@ -60,6 +60,10 @@ class LIEF_API MsSpcStatementType : public Attribute {
   //! Print information about the attribute
   std::string print() const override;
 
+  static bool classof(const Attribute* attr) {
+    return attr->type() == SIG_ATTRIBUTE_TYPES::MS_SPC_STATEMENT_TYPE;
+  }
+
   void accept(Visitor& visitor) const override;
   virtual ~MsSpcStatementType();
 

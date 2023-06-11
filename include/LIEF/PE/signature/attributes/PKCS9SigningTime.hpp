@@ -68,6 +68,10 @@ class LIEF_API PKCS9SigningTime : public Attribute {
 
   std::unique_ptr<Attribute> clone() const override;
 
+  static bool classof(const Attribute* attr) {
+    return attr->type() == SIG_ATTRIBUTE_TYPES::PKCS9_SIGNING_TIME;
+  }
+
   void accept(Visitor& visitor) const override;
   virtual ~PKCS9SigningTime();
 

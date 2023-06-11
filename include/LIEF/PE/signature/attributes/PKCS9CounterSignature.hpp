@@ -60,6 +60,10 @@ class LIEF_API PKCS9CounterSignature : public Attribute {
   //! Print information about the attribute
   std::string print() const override;
 
+  static bool classof(const Attribute* attr) {
+    return attr->type() == SIG_ATTRIBUTE_TYPES::PKCS9_COUNTER_SIGNATURE;
+  }
+
   void accept(Visitor& visitor) const override;
 
   virtual ~PKCS9CounterSignature();

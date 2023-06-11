@@ -65,6 +65,10 @@ class LIEF_API PKCS9MessageDigest : public Attribute {
   //! Print information about the attribute
   std::string print() const override;
 
+  static bool classof(const Attribute* attr) {
+    return attr->type() == SIG_ATTRIBUTE_TYPES::PKCS9_MESSAGE_DIGEST;
+  }
+
   void accept(Visitor& visitor) const override;
 
   virtual ~PKCS9MessageDigest();

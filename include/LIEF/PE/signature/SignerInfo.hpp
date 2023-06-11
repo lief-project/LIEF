@@ -91,7 +91,7 @@ class LIEF_API SignerInfo : public Object {
   //! Return the x509::issuer used by this signer
   const std::string& issuer() const {
     return issuer_;
-  };
+  }
 
   //! Algorithm (OID) used to hash the file.
   //!

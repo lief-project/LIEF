@@ -67,6 +67,10 @@ class LIEF_API SpcSpOpusInfo : public Attribute {
   //! Print information about the attribute
   std::string print() const override;
 
+  static bool classof(const Attribute* attr) {
+    return attr->type() == SIG_ATTRIBUTE_TYPES::SPC_SP_OPUS_INFO;
+  }
+
   void accept(Visitor& visitor) const override;
 
   virtual ~SpcSpOpusInfo();
