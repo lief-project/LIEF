@@ -62,6 +62,10 @@ class LIEF_API LoadConfigurationV9 : public LoadConfigurationV8 {
     guard_eh_continuation_count_ = value;
   }
 
+  static bool classof(const LoadConfiguration* config) {
+    return config->version() == VERSION;
+  }
+
   ~LoadConfigurationV9() override;
 
   void accept(Visitor& visitor) const override;

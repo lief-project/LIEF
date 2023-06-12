@@ -54,6 +54,10 @@ class LIEF_API LoadConfigurationV8 : public LoadConfigurationV7 {
     volatile_metadata_pointer_ = value;
   }
 
+  static bool classof(const LoadConfiguration* config) {
+    return config->version() == VERSION;
+  }
+
   ~LoadConfigurationV8() override;
 
   void accept(Visitor& visitor) const override;

@@ -49,6 +49,10 @@ class LIEF_API LoadConfigurationV2 : public LoadConfigurationV1 {
   const CodeIntegrity& code_integrity() const;
   CodeIntegrity& code_integrity();
 
+  static bool classof(const LoadConfiguration* config) {
+    return config->version() == VERSION;
+  }
+
   virtual ~LoadConfigurationV2();
 
   void accept(Visitor& visitor) const override;

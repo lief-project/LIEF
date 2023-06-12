@@ -54,6 +54,10 @@ class LIEF_API LoadConfigurationV6 : public LoadConfigurationV5 {
   void guard_rf_verify_stackpointer_function_pointer(uint64_t value);
   void hotpatch_table_offset(uint32_t value);
 
+  static bool classof(const LoadConfiguration* config) {
+    return config->version() == VERSION;
+  }
+
   virtual ~LoadConfigurationV6();
 
   void accept(Visitor& visitor) const override;

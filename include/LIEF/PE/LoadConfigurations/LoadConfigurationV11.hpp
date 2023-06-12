@@ -54,6 +54,10 @@ class LIEF_API LoadConfigurationV11 : public LoadConfigurationV10 {
     cast_guard_os_determined_failure_mode_ = value;
   }
 
+  static bool classof(const LoadConfiguration* config) {
+    return config->version() == VERSION;
+  }
+
   ~LoadConfigurationV11() override;
 
   void accept(Visitor& visitor) const override;

@@ -55,6 +55,11 @@ class LIEF_API LoadConfigurationV0 : public LoadConfiguration {
 
   virtual ~LoadConfigurationV0();
 
+
+  static bool classof(const LoadConfiguration* config) {
+    return config->version() == VERSION;
+  }
+
   void accept(Visitor& visitor) const override;
 
   bool operator==(const LoadConfigurationV0& rhs) const;

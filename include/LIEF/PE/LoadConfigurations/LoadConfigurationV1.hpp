@@ -82,6 +82,10 @@ class LIEF_API LoadConfigurationV1 : public LoadConfigurationV0 {
   void guard_cf_function_count(uint64_t guard_cf_function_count);
   void guard_flags(GUARD_CF_FLAGS guard_flags);
 
+  static bool classof(const LoadConfiguration* config) {
+    return config->version() == VERSION;
+  }
+
   virtual ~LoadConfigurationV1();
 
   void accept(Visitor& visitor) const override;

@@ -63,6 +63,10 @@ class LIEF_API LoadConfigurationV3 : public LoadConfigurationV2 {
   void guard_long_jump_target_table(uint64_t value);
   void guard_long_jump_target_count(uint64_t value);
 
+  static bool classof(const LoadConfiguration* config) {
+    return config->version() == VERSION;
+  }
+
   virtual ~LoadConfigurationV3();
 
   void accept(Visitor& visitor) const override;

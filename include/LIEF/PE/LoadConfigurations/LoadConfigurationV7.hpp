@@ -50,6 +50,10 @@ class LIEF_API LoadConfigurationV7 : public LoadConfigurationV6 {
   void reserved3(uint32_t value);
   void addressof_unicode_string(uint64_t value);
 
+  static bool classof(const LoadConfiguration* config) {
+    return config->version() == VERSION;
+  }
+
   virtual ~LoadConfigurationV7();
 
   void accept(Visitor& visitor) const override;

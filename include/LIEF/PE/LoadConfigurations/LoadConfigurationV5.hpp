@@ -65,6 +65,10 @@ class LIEF_API LoadConfigurationV5 : public LoadConfigurationV4 {
   void dynamic_value_reloctable_section(uint16_t value);
   void reserved2(uint16_t value);
 
+  static bool classof(const LoadConfiguration* config) {
+    return config->version() == VERSION;
+  }
+
   virtual ~LoadConfigurationV5();
 
   void accept(Visitor& visitor) const override;

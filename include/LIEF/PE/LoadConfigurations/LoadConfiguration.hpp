@@ -156,6 +156,12 @@ class LIEF_API LoadConfiguration : public Object {
 
   virtual ~LoadConfiguration();
 
+  static bool classof(const LoadConfiguration* /*config*/) {
+    // This is the base class, thus all the other
+    // classes can be safely casted into this one.
+    return true;
+  }
+
   void accept(Visitor& visitor) const override;
 
   bool operator==(const LoadConfiguration& rhs) const;

@@ -70,6 +70,10 @@ class LIEF_API LoadConfigurationV10 : public LoadConfigurationV9 {
     guard_xfg_table_dispatch_function_pointer_ = value;
   }
 
+  static bool classof(const LoadConfiguration* config) {
+    return config->version() == VERSION;
+  }
+
   ~LoadConfigurationV10() override;
 
   void accept(Visitor& visitor) const override;

@@ -55,6 +55,10 @@ class LIEF_API LoadConfigurationV4 : public LoadConfigurationV3 {
   void dynamic_value_reloc_table(uint64_t value);
   void hybrid_metadata_pointer(uint64_t value);
 
+  static bool classof(const LoadConfiguration* config) {
+    return config->version() == VERSION;
+  }
+
   virtual ~LoadConfigurationV4();
 
   void accept(Visitor& visitor) const override;
