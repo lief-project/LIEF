@@ -98,7 +98,7 @@ jobs:
     - name: 🛑 Stop sccache server
       run: sccache --stop-server || true
     - name: Setup WSL
-      uses: Vampire/setup-wsl@v1
+      uses: Vampire/setup-wsl@v2
       with:
         distribution: Debian
         use-cache: 'true'
