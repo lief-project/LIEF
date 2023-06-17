@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.13.2 - June 17, 2023
+----------------------
+
+:PE:
+
+    * Fix authenticode inconsitency (:issue:`932`)
+    * Fix missing undef (:pr:`929`)
+
+
 0.13.1 - May 28, 2023
 ----------------------
 
