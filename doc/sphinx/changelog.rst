@@ -51,6 +51,16 @@ Changelog
   * Remove the `lief.Binary.name` attribute
   * LIEF is now compiled with C++17 (the API remains C++11 compliant)
 
+0.13.2 - June 17, 2023
+----------------------
+
+:PE:
+
+  Fix authenticode inconsitency (:issue:`932`)
+
+:ELF:
+
+     Fix missing undef (:issue:`929`)
 
 0.13.1 - May 28, 2023
 ----------------------
