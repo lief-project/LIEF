@@ -12,7 +12,7 @@ Changelog
 
   * Fix mypy stubs (:issue:`909`)
   * Fix missing include (:issue:`918`)
-  * Fix C99 comments (:issue:`904`)
+  * Fix C99 comments (:issue:`916`)
   * Fix AArch64 docker image (:issue:`904`)
 
 
