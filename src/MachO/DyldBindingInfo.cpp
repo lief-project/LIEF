@@ -22,7 +22,6 @@ namespace MachO {
 DyldBindingInfo::~DyldBindingInfo() = default;
 DyldBindingInfo::DyldBindingInfo() = default;
 
-DyldBindingInfo& DyldBindingInfo::operator=(DyldBindingInfo&&) = default;
 DyldBindingInfo::DyldBindingInfo(DyldBindingInfo&&) = default;
 DyldBindingInfo::DyldBindingInfo(const DyldBindingInfo& other) = default;
 

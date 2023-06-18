@@ -46,7 +46,6 @@ class LIEF_API DyldBindingInfo : public BindingInfo {
   DyldBindingInfo& operator=(DyldBindingInfo other);
   DyldBindingInfo(const DyldBindingInfo& other);
 
-  DyldBindingInfo& operator=(DyldBindingInfo&&);
   DyldBindingInfo(DyldBindingInfo&&);
 
   void swap(DyldBindingInfo& other);

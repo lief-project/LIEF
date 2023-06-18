@@ -21,7 +21,6 @@ namespace LIEF {
 namespace MachO {
 
 ChainedBindingInfo::ChainedBindingInfo(ChainedBindingInfo&&) = default;
-ChainedBindingInfo& ChainedBindingInfo::operator=(ChainedBindingInfo&&) = default;
 ChainedBindingInfo::ChainedBindingInfo(const ChainedBindingInfo& other) :
   BindingInfo(other),
   format_{other.format_},
