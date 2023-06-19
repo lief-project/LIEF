@@ -8,10 +8,10 @@ SAMPLE_DIR=/tmp/samples
 ASAN_OPT="log_path=${LOG_DIR}"
 mkdir -p ${LOG_DIR}
 
-cmake -B ${BUILD_DIR} -S ${SRC_DIR} -GNinja \
-      -DLIEF_ASAN=ON -DLIEF_LOGGING=on -DLIEF_LOGGING_DEBUG=on \
-      -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-      -DCMAKE_CXX_COMPILER=/usr/bin/clang++-13 -DCMAKE_C_COMPILER=/usr/bin/clang-13
+cmake -B ${BUILD_DIR} -S ${SRC_DIR} -GNinja                                   \
+      -DLIEF_ASAN=ON -DLIEF_LOGGING=on -DLIEF_LOGGING_DEBUG=on                \
+      -DCMAKE_BUILD_TYPE=RelWithDebInfo                                       \
+      -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -DCMAKE_C_COMPILER=/usr/bin/clang
 
 ninja -C ${BUILD_DIR} sanitize_checks
 cd ${BUILD_DIR}
