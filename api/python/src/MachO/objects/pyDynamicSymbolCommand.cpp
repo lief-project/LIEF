@@ -46,6 +46,8 @@ void create<DynamicSymbolCommand>(py::module& m) {
       a better granularity over the symbols layout.
       )delim")
 
+    .def(py::init<>())
+
     .def_property("idx_local_symbol",
       static_cast<getter_t<uint32_t>>(&DynamicSymbolCommand::idx_local_symbol),
       static_cast<setter_t<uint32_t>>(&DynamicSymbolCommand::idx_local_symbol),
