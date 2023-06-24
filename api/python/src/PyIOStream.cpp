@@ -41,41 +41,34 @@ result<PyIOStream> PyIOStream::from_python(py::object object) {
     return make_error_code(lief_errors::read_error);
   }
 
-  return PyIOStream(object);
-}
-
-PyIOStream::PyIOStream(py::object io) : io_{io} {
   static constexpr int PY_SEEK_SET = 0;
   static constexpr int PY_SEEK_END = 2;
-  auto seek = io.attr("seek");
+  auto seek = object.attr("seek");
   seek(0, PY_SEEK_SET);
   seek(0, PY_SEEK_END);
-  const size_t size = io.attr("tell")().cast<size_t>();
-  data_.resize(size);
+  const size_t size = object.attr("tell")().cast<size_t>();
+  std::vector<uint8_t> data;
+  data.resize(size);
 
   seek(0, PY_SEEK_SET);
-  if (py::hasattr(io_, "readinto")) {
-    auto view = py::memoryview::from_memory(data_.data(), size);
-    io_.attr("readinto")(view);
+  if (py::hasattr(object, "readinto")) {
+    auto view = py::memoryview::from_memory(data.data(), size);
+    object.attr("readinto")(view);
   }
-  else if (py::hasattr(io_, "read")) {
-    py::bytes content = io_.attr("read")(size);
+  else if (py::hasattr(object, "read")) {
+    py::bytes content = object.attr("read")(size);
     std::string buffer = std::move(content);
-    std::move(std::begin(buffer), std::end(buffer), data_.data());
+    std::move(std::begin(buffer), std::end(buffer), data.data());
   }
   seek(0, PY_SEEK_SET);
+
+  return PyIOStream(object, std::move(data));
 }
 
-result<const void*> PyIOStream::read_at(uint64_t offset, uint64_t size) const {
-  const uint64_t stream_size = this->size();
-  if (offset > stream_size || (offset + size) > stream_size) {
-    size_t out_size = (offset + size) - stream_size;
-    //logging::log(logging::LOGGING_LEVEL::LOG_DEBUG,
-    //    "Can't read #{:d} bytes at 0x{:04x} (0x{:x} bytes out of bound)", size, offset, out_size);
-    return make_error_code(lief_errors::read_error);
-  }
-  return data_.data() + offset;
-}
+PyIOStream::PyIOStream(py::object io, std::vector<uint8_t> data) :
+  VectorStream(std::move(data)),
+  io_{io}
+{}
 
 
 PyIOStream::~PyIOStream() = default;

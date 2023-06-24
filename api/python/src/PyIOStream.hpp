@@ -20,11 +20,11 @@
 #include <vector>
 
 #include "LIEF/errors.hpp"
-#include "LIEF/BinaryStream/BinaryStream.hpp"
+#include "LIEF/BinaryStream/VectorStream.hpp"
 #include "pyLIEF.hpp"
 
 namespace LIEF {
-class PyIOStream : public BinaryStream {
+class PyIOStream : public VectorStream {
   public:
   static result<PyIOStream> from_python(py::object object);
   PyIOStream() = delete;
@@ -35,19 +35,11 @@ class PyIOStream : public BinaryStream {
   PyIOStream(PyIOStream&& other);
   PyIOStream& operator=(PyIOStream&& other);
 
-  inline uint64_t size() const override {
-    return data_.size();
-  }
-
   ~PyIOStream() override;
 
   protected:
-  PyIOStream(py::object io);
-  //ok_error_t peek_in(void* dst, uint64_t offset, uint64_t size) const override;
-
-  result<const void*> read_at(uint64_t offset, uint64_t size) const override;
+  PyIOStream(py::object io, std::vector<uint8_t> data);
   py::object io_;
-  std::vector<uint8_t> data_;
 };
 }
 

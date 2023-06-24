@@ -39,8 +39,9 @@ def test_io():
         assert ls.abstract.header is not None
 
     with open(lspath, 'rb') as f:  # As io.BufferedReader
-        ls = lief.parse(f)
+        ls: lief.ELF.Binary  = lief.parse(f)
         assert ls.abstract.header is not None
+        assert len(ls.sections) > 0
 
     with open(lspath, 'rb') as f:  # As io.BytesIO object
         bytes_stream = io.BytesIO(f.read())
