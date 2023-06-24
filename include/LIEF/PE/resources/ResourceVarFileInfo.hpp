@@ -17,6 +17,8 @@
 #define LIEF_PE_RESOURCE_VAR_FILE_INFO_H
 #include <ostream>
 #include <sstream>
+#include <cstdint>
+#include <vector>
 
 #include "LIEF/visibility.h"
 

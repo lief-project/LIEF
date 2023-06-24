@@ -18,6 +18,7 @@
 #include <ostream>
 #include <sstream>
 #include <climits>
+#include <vector>
 
 #include "LIEF/visibility.h"
 
@@ -116,12 +117,7 @@ class LIEF_API ResourceIcon : public Object {
   RESOURCE_LANGS       lang_ = RESOURCE_LANGS::LANG_NEUTRAL;
   RESOURCE_SUBLANGS    sublang_ = RESOURCE_SUBLANGS::SUBLANG_DEFAULT;
   std::vector<uint8_t> pixels_;
-
-
 };
-
-
-
 
 }
 }
