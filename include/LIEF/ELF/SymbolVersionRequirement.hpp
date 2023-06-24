@@ -28,6 +28,7 @@
 namespace LIEF {
 namespace ELF {
 class Parser;
+class SymbolVersionAuxRequirement;
 
 namespace details {
 struct Elf64_Verneed;

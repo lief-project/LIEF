@@ -18,6 +18,7 @@
 
 #include <string>
 #include <ostream>
+#include <cstdint>
 
 #include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"

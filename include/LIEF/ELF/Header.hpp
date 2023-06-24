@@ -19,6 +19,7 @@
 #include <ostream>
 #include <array>
 #include <vector>
+#include <set>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"

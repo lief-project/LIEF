@@ -27,6 +27,7 @@
 namespace LIEF {
 namespace ELF {
 
+class SymbolVersionAux;
 class Parser;
 
 namespace details {
