@@ -84,6 +84,18 @@ class Config:
         else:
             opt.append("-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=''")
 
+        if "cxx_flags" in self._config["lief"]["build"]:
+            value = self._config["lief"]["build"]["cxx_flags"]
+            opt.append(f"-DCMAKE_CXX_FLAGS={value}")
+        else:
+            opt.append("-DCMAKE_CXX_FLAGS=''")
+
+        if "c_flags" in self._config["lief"]["build"]:
+            value = self._config["lief"]["build"]["c_flags"]
+            opt.append(f"-DCMAKE_C_FLAGS={value}")
+        else:
+            opt.append("-DCMAKE_C_FLAGS=''")
+
         cxx_flags = os.getenv("CXXFLAGS", None)
         c_flags = os.getenv("CFLAGS", None)
 
