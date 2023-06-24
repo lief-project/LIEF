@@ -28,17 +28,6 @@
 #include "pyLIEF.hpp"
 
 void init_utils_functions(py::module& m) {
-
-
-  m.def("shell",
-    [] (void) {
-      const auto& InteractiveShellEmbed = py::module::import("IPython").attr("terminal").attr("embed").attr("InteractiveShellEmbed");
-      const auto& ipshell = InteractiveShellEmbed("banner1"_a = "Dropping into IPython", "exit_msg"_a = "Leaving Interpreter, back to program.");
-      return ipshell();
-    },
-    "Drop into an IPython Interpreter");
-
-
   m.def("demangle", [] (const std::string& name) -> py::object {
   #if defined(__unix__)
     int status;
@@ -55,12 +44,6 @@ void init_utils_functions(py::module& m) {
   #endif
   });
 
-  m.def("breakp",
-      [] (void) {
-        py::object set_trace = py::module::import("pdb").attr("set_trace");
-        return set_trace();
-      },
-      "Trigger 'pdb.set_trace()'");
 
 #if defined(LIEF_PE_SUPPORT)
     m.def("is_pe",
