@@ -48,12 +48,15 @@ def randomize(binary, output):
 
     binary.write(output)
 
-if __name__ == '__main__':
+def main():
     if len(sys.argv) != 3:
         print("Usage:", sys.argv[0], "<elf binary> <output binary>")
         sys.exit(-1)
 
     binary = lief.parse(sys.argv[1])
     randomize(binary, sys.argv[2])
+
+if __name__ == '__main__':
+    main()
 
 

@@ -13,8 +13,7 @@ def bin2lib(binary, address, output, name=""):
     print(function)
     binary.write(output)
 
-
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description="")
 
     parser.add_argument("--name", "-n", default="", help="Name of the function to create")
@@ -27,3 +26,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     binary = lief.parse(args.binary)
     bin2lib(binary, args.address, args.output, name=args.name)
+
+if __name__ == "__main__":
+    main()

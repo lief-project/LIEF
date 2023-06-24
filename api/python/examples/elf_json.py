@@ -6,7 +6,7 @@
 # Print information about a ELF binary in the JSON format
 #
 # python elf_json.py /bin/ls
-#  
+#
 # {
 #   "dynamic_entries": [
 #        {
@@ -19,7 +19,7 @@
 #            "tag": "NEEDED",
 #            "value": 74
 #        },
-# ...
+# ...
 
 
 import argparse
