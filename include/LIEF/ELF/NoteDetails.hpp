@@ -17,6 +17,7 @@
 #define LIEF_ELF_NOTE_DETAILS_H
 
 #include <vector>
+#include <cstdint>
 #include <ostream>
 
 #include "LIEF/Object.hpp"
