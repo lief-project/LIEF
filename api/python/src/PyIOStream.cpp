@@ -36,17 +36,6 @@ result<PyIOStream> PyIOStream::from_python(py::object object) {
     return make_error_code(lief_errors::read_error);
   }
 
-  if (!py::hasattr(object, "tell")) {
-    logging::log(logging::LOGGING_LEVEL::LOG_ERR, "The provided io object does not implement tell() from io.IOBase");
-    return make_error_code(lief_errors::read_error);
-  }
-
-  if (!py::hasattr(object, "seek")) {
-    logging::log(logging::LOGGING_LEVEL::LOG_ERR, "The provided io object does not implement tell() from io.IOBase");
-    return make_error_code(lief_errors::read_error);
-  }
-
-
   if (!py::hasattr(object, "read") && !py::hasattr(object, "readinto")) {
     logging::log(logging::LOGGING_LEVEL::LOG_ERR, "The provided io object does not implement read() or readinto()");
     return make_error_code(lief_errors::read_error);
