@@ -60,7 +60,6 @@ result<PyIOStream> PyIOStream::from_python(py::object object) {
     std::string buffer = std::move(content);
     std::move(std::begin(buffer), std::end(buffer), data.data());
   }
-  seek(0, PY_SEEK_SET);
 
   return PyIOStream(object, std::move(data));
 }
