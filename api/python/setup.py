@@ -15,6 +15,7 @@ CURRENT_DIR     = Path(__file__).parent
 LIEF_DIR        = (CURRENT_DIR / ".." / "..").absolute().resolve()
 PACKAGE_NAME    = "lief"
 PYLIEF_CONF_ENV = "PYLIEF_CONF"
+DEFAULT_TARGET  = "pyLIEF"
 
 ENV = os.environ
 
@@ -30,8 +31,8 @@ class Config:
         if "cross-compilation" in self._config["lief"]:
             cross_conf = self._config["lief"]["cross-compilation"]
             if "platform" in cross_conf:
-                platform = cross_conf["platform"]
-                if os.name == "nt" and platform == "win32":
+                platform_build = cross_conf["platform"]
+                if os.name == "nt" and platform_build == "win32":
                     ENV["VSCMD_ARG_TGT_ARCH"] = "x86"
                     os.environ["VSCMD_ARG_TGT_ARCH"] = "x86"
 
@@ -56,7 +57,6 @@ class Config:
             f'-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={output}',
             "-DLIEF_USE_CCACHE={}".format("ON" if self._config["lief"]["build"]["cache"] else "OFF"),
         ] + [
-            "-DLIEF_FORCE_API_EXPORTS=ON",
             "-DLIEF_PYTHON_API=on",
             f"-DPYTHON_EXECUTABLE={sys.executable}",
         ] + [
@@ -84,17 +84,27 @@ class Config:
         else:
             opt.append("-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=''")
 
-        if "cxx_flags" in self._config["lief"]["build"]:
-            value = self._config["lief"]["build"]["cxx_flags"]
+        if "cxx-flags" in self._config["lief"]["build"]:
+            value = self._config["lief"]["build"]["cxx-flags"]
             opt.append(f"-DCMAKE_CXX_FLAGS={value}")
         else:
             opt.append("-DCMAKE_CXX_FLAGS=''")
 
-        if "c_flags" in self._config["lief"]["build"]:
-            value = self._config["lief"]["build"]["c_flags"]
+        if "c-flags" in self._config["lief"]["build"]:
+            value = self._config["lief"]["build"]["c-flags"]
             opt.append(f"-DCMAKE_C_FLAGS={value}")
         else:
             opt.append("-DCMAKE_C_FLAGS=''")
+
+        if "extra-cmake-opt" in self._config["lief"]["build"]:
+            value = self._config["lief"]["build"]["extra-cmake-opt"]
+            if isinstance(value, str):
+                opt.append(value)
+            elif hasattr(value, "__iter__"):
+                opt.extend(value)
+            else:
+                print(f"Unsupported opt: {value} ({type(value)})")
+                sys.exit(1)
 
         cxx_flags = os.getenv("CXXFLAGS", None)
         c_flags = os.getenv("CFLAGS", None)
@@ -163,6 +173,19 @@ class Config:
             return []
         return []
 
+    def _get_targets(self) -> List[str]:
+        targets = [DEFAULT_TARGET]
+        if "extra-targets" in self._config["lief"]["build"]:
+            extra = self._config["lief"]["build"]["extra-targets"]
+            if isinstance(extra, str):
+                targets.append(extra)
+            elif hasattr(extra, "__iter__"):
+                targets.extend(extra)
+            else:
+                print(f"Unsupported opt: {targets} ({type(targets)})")
+                sys.exit(1)
+        return targets
+
     def get_target_osx_arch(self) -> str:
         if "cross-compilation" in self._config["lief"]:
             cross_conf = self._config["lief"]["cross-compilation"]
@@ -173,25 +196,14 @@ class Config:
 
     def _use_ninja(self) -> bool:
         return self._config['lief']['build']['ninja']
-
-    def _win_compile_cmd(self):
+    def get_compile_cmd(self):
+        config = self._config['lief']['build']['type']
         return [
             'cmake',
             '--build', '.',
-            '--target', 'pyLIEF',
-            '--config', self._config['lief']['build']['type'],
-        ]
-
-    def _unix_compile_cmd(self):
-        gen  = which("ninja") if self._use_ninja() else which("make")
-        return [gen] + self._get_jobs() + ["pyLIEF"]
-
-    def get_compile_cmd(self):
-        if Config.is_windows():
-            return self._win_compile_cmd()
-
-        return self._unix_compile_cmd()
-
+            '--target'] + self._get_targets() + [
+            '--config', config,
+        ] + self._get_jobs()
 
 class Versioning:
     COMMAND         = '{git} describe --tags --long --dirty'
@@ -330,7 +342,7 @@ class BuildLibrary(build_ext):
         subprocess.check_call(configure_cmd, **cmake_subprocess_args)
 
         compile_cmd = cmake_conf.get_compile_cmd()
-        report(" ".join(configure_cmd))
+        report("Compile with:"," ".join(compile_cmd))
         subprocess.check_call(compile_cmd, **cmake_subprocess_args)
 
         pylief_dst  = build_lib / self.get_ext_filename(self.get_ext_fullname(ext.name))
