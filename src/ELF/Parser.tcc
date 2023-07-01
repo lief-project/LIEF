@@ -316,7 +316,9 @@ ok_error_t Parser::parse_binary() {
     link_symbol_version();
   }
 
-  parse_overlay();
+  if (config_.parse_overlay) {
+    parse_overlay();
+  }
   return ok();
 }
 

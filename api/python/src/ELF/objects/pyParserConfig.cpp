@@ -40,7 +40,9 @@ void create<ParserConfig>(py::module& m) {
     .def_readwrite("parse_symbol_versions", &ParserConfig::parse_symbol_versions,
                    "Whether versioning symbols should be parsed")
     .def_readwrite("parse_notes", &ParserConfig::parse_notes,
-                   "Whether ELF notes  information should be parsed")
+                   "Whether ELF notes information should be parsed")
+    .def_readwrite("parse_overlay", &ParserConfig::parse_overlay,
+                   "Whether the overlay data should be parsed")
     .def_readwrite("count_mtd", &ParserConfig::count_mtd,
                    R"delim(
                    The :class:`~lief.ELF.DYNSYM_COUNT_METHODS` to use for counting the dynamic symbols

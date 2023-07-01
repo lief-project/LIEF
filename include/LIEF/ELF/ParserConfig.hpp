@@ -34,6 +34,7 @@ struct LIEF_API ParserConfig {
   bool parse_static_symbols  = true; ///< Whether debug symbols (those from `.symtab`) should be parsed
   bool parse_symbol_versions = true; ///< Whether versioning symbols should be parsed
   bool parse_notes           = true; ///< Whether ELF notes  information should be parsed
+  bool parse_overlay         = true; ///< Whether the overlay data should be parsed
 
   /** The method used to count the number of dynamic symbols */
   DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO;
