@@ -30,8 +30,10 @@
 
 namespace LIEF {
 namespace MachO {
-
 class BinaryParser;
+class Section;
+class SegmentCommand;
+class Symbol;
 
 //! Class that represents a Mach-O relocation
 //!
