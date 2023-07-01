@@ -80,7 +80,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
   //! it does not exist.
   Section* section();
 
-  //! This member have slightly different interpretations:
+  //! This member has slightly different interpretations:
   //!   * In relocatable files, `value` holds alignment constraints for a symbol for which section index
   //!     is SHN_COMMON
   //!   * In relocatable files, `value` holds a section offset for a defined symbol. That is, `value` is an
@@ -88,14 +88,18 @@ class LIEF_API Symbol : public LIEF::Symbol {
   //!   * In executable and shared object files, `value` holds a virtual address. To make these files's
   //!     symbols more useful for the dynamic linker, the section offset (file interpretation) gives way to
   //!     a virtual address (memory interpretation) for which the section number is irrelevant.
-  //uint64_t value() const;
+  uint64_t value() const override {
+    return value_;
+  }
 
   //! Symbol size
   //!
   //! Many symbols have associated sizes. For example, a data object's size is the number of
   //! bytes contained in the object. This member holds `0` if the symbol has no size or
   //! an unknown size.
-  //uint64_t size() const;
+  uint64_t size() const override {
+    return size_;
+  }
 
   //! @see Symbol::section_idx
   uint16_t shndx() const;
@@ -117,6 +121,14 @@ class LIEF_API Symbol : public LIEF::Symbol {
   void visibility(ELF_SYMBOL_VISIBILITY visibility);
   void information(uint8_t info);
   void shndx(uint16_t idx);
+
+  void value(uint64_t value) override {
+    value_ = value;
+  }
+
+  void size(uint64_t size) override {
+    size_ = size;
+  }
 
   void shndx(SYMBOL_SECTION_INDEX idx) {
     this->shndx_ = static_cast<uint16_t>(idx);
