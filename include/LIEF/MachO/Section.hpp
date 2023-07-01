@@ -35,6 +35,7 @@ namespace MachO {
 class BinaryParser;
 class SegmentCommand;
 class Binary;
+class Relocation;
 
 namespace details {
 struct section_32;
