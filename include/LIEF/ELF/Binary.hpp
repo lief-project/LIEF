@@ -601,16 +601,25 @@ class LIEF_API Binary : public LIEF::Binary {
 
   //! Reconstruct the binary object and write it in `filename`
   //!
+  //! This function assumes that the layout of the current ELF binary is correct
+  //! (i.e. the binary can run).
+  //!
   //! @param filename Path for the written ELF binary
   void write(const std::string& filename) override;
 
   //! Reconstruct the binary object with the given config and write it in `filename`
+  //!
+  //! This function assumes that the layout of the current ELF binary is correct
+  //! (i.e. the binary can run).
   //!
   //! @param filename Path for the written ELF binary
   //! @param config   Builder configuration
   void write(const std::string& filename, Builder::config_t config);
 
   //! Reconstruct the binary object and write it in `os` stream
+  //!
+  //! This function assumes that the layout of the current ELF binary is correct
+  //! (i.e. the binary can run).
   //!
   //! @param os Output stream for the written ELF binary
   void write(std::ostream& os) override;

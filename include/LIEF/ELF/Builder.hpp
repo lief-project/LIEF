@@ -47,6 +47,9 @@ class Layout;
 class Relocation;
 
 //! Class which takes an ELF::Binary object and reconstructs a valid binary
+//!
+//! This interface assumes that the layout of input ELF binary is correct (i.e.
+//! the binary can run).
 class LIEF_API Builder {
   friend class ObjectFileLayout;
   friend class Layout;
