@@ -246,7 +246,7 @@ class GithubDeploy:
         return os.getenv("GITHUB_WORKSPACE", "")
 
     def is_main_branch(self, name: str) -> bool:
-        return False
+        return name in self._main_branches
 
     def deploy(self, directories: list[str]):
         s3dir = None
