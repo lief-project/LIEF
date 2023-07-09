@@ -15,6 +15,8 @@
  */
 #ifndef LIEF_VDEX_HEADER_H
 #define LIEF_VDEX_HEADER_H
+#include <ostream>
+#include <array>
 
 #include "LIEF/VDEX/type_traits.hpp"
 #include "LIEF/visibility.h"

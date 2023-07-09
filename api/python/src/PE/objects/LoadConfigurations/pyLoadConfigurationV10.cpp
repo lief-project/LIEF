@@ -13,55 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/LoadConfigurations.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-
-namespace LIEF {
-namespace PE {
+namespace LIEF::PE::py {
 
 template<>
-void create<LoadConfigurationV10>(py::module& m) {
-  py::class_<LoadConfigurationV10, LoadConfigurationV9>(m, "LoadConfigurationV10")
-    .def(py::init<>())
+void create<LoadConfigurationV10>(nb::module_& m) {
+  nb::class_<LoadConfigurationV10, LoadConfigurationV9>(m, "LoadConfigurationV10")
+    .def(nb::init<>())
 
-    .def_property("guard_xfg_check_function_pointer",
-        py::overload_cast<>(&LoadConfigurationV10::guard_xfg_check_function_pointer, py::const_),
-        py::overload_cast<uint64_t>(&LoadConfigurationV10::guard_xfg_check_function_pointer),
-        "")
+    .def_prop_rw("guard_xfg_check_function_pointer",
+        nb::overload_cast<>(&LoadConfigurationV10::guard_xfg_check_function_pointer, nb::const_),
+        nb::overload_cast<uint64_t>(&LoadConfigurationV10::guard_xfg_check_function_pointer),
+        ""_doc)
 
-    .def_property("guard_xfg_dispatch_function_pointer",
-        py::overload_cast<>(&LoadConfigurationV10::guard_xfg_dispatch_function_pointer, py::const_),
-        py::overload_cast<uint64_t>(&LoadConfigurationV10::guard_xfg_dispatch_function_pointer),
-        "")
+    .def_prop_rw("guard_xfg_dispatch_function_pointer",
+        nb::overload_cast<>(&LoadConfigurationV10::guard_xfg_dispatch_function_pointer, nb::const_),
+        nb::overload_cast<uint64_t>(&LoadConfigurationV10::guard_xfg_dispatch_function_pointer),
+        ""_doc)
 
-    .def_property("guard_xfg_table_dispatch_function_pointer",
-        py::overload_cast<>(&LoadConfigurationV10::guard_xfg_table_dispatch_function_pointer, py::const_),
-        py::overload_cast<uint64_t>(&LoadConfigurationV10::guard_xfg_table_dispatch_function_pointer),
-        "")
+    .def_prop_rw("guard_xfg_table_dispatch_function_pointer",
+        nb::overload_cast<>(&LoadConfigurationV10::guard_xfg_table_dispatch_function_pointer, nb::const_),
+        nb::overload_cast<uint64_t>(&LoadConfigurationV10::guard_xfg_table_dispatch_function_pointer),
+        ""_doc)
 
-
-    .def("__eq__", &LoadConfigurationV10::operator==)
-    .def("__ne__", &LoadConfigurationV10::operator!=)
-    .def("__hash__",
-        [] (const LoadConfigurationV10& config) {
-          return Hash::hash(config);
-        })
-
-
-    .def("__str__", [] (const LoadConfigurationV10& config)
-        {
-          std::ostringstream stream;
-          stream << config;
-          std::string str = stream.str();
-          return str;
-        });
-}
-
+    LIEF_DEFAULT_STR(LoadConfigurationV10);
 }
 }

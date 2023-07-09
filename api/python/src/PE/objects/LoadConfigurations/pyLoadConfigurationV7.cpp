@@ -13,56 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/LoadConfigurations.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (LoadConfigurationV7::*)(void) const;
-
-template<class T>
-using setter_t = void (LoadConfigurationV7::*)(T);
+namespace LIEF::PE::py {
 
 template<>
-void create<LoadConfigurationV7>(py::module& m) {
-  py::class_<LoadConfigurationV7, LoadConfigurationV6>(m, "LoadConfigurationV7")
-    .def(py::init<>())
+void create<LoadConfigurationV7>(nb::module_& m) {
+  nb::class_<LoadConfigurationV7, LoadConfigurationV6>(m, "LoadConfigurationV7")
+    .def(nb::init<>())
 
-    .def_property("reserved3",
-        static_cast<getter_t<uint32_t>>(&LoadConfigurationV7::reserved3),
-        static_cast<setter_t<uint32_t>>(&LoadConfigurationV7::reserved3),
-        "")
+    .def_prop_rw("reserved3",
+        nb::overload_cast<>(&LoadConfigurationV7::reserved3, nb::const_),
+        nb::overload_cast<uint32_t>(&LoadConfigurationV7::reserved3))
 
-    .def_property("addressof_unicode_string",
-        static_cast<getter_t<uint64_t>>(&LoadConfigurationV7::addressof_unicode_string),
-        static_cast<setter_t<uint64_t>>(&LoadConfigurationV7::addressof_unicode_string),
-        "")
+    .def_prop_rw("addressof_unicode_string",
+        nb::overload_cast<>(&LoadConfigurationV7::addressof_unicode_string, nb::const_),
+        nb::overload_cast<uint64_t>(&LoadConfigurationV7::addressof_unicode_string))
 
-
-    .def("__eq__", &LoadConfigurationV7::operator==)
-    .def("__ne__", &LoadConfigurationV7::operator!=)
-    .def("__hash__",
-        [] (const LoadConfigurationV7& config) {
-          return Hash::hash(config);
-        })
-
-
-    .def("__str__", [] (const LoadConfigurationV7& config)
-        {
-          std::ostringstream stream;
-          stream << config;
-          std::string str = stream.str();
-          return str;
-        });
-}
-
+    LIEF_DEFAULT_STR(LoadConfigurationV7);
 }
 }

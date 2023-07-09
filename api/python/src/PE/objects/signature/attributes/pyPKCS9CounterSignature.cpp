@@ -13,28 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
 
-#include "LIEF/PE/hash.hpp"
-#include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/attributes/PKCS9CounterSignature.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (PKCS9CounterSignature::*)(void) const;
-
-template<class T>
-using setter_t = void (PKCS9CounterSignature::*)(T);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<PKCS9CounterSignature>(py::module& m) {
-  py::class_<PKCS9CounterSignature, Attribute>(m, "PKCS9CounterSignature",
+void create<PKCS9CounterSignature>(nb::module_& m) {
+  nb::class_<PKCS9CounterSignature, Attribute>(m, "PKCS9CounterSignature",
     R"delim(
     Interface over the structure described by the OID ``1.2.840.113549.1.9.6`` (PKCS #9)
 
@@ -48,19 +39,11 @@ void create<PKCS9CounterSignature>(py::module& m) {
           ID pkcs-9-at-counterSignature
         }
 
-    )delim")
-    .def_property_readonly("signer",
+    )delim"_doc)
+    .def_prop_ro("signer",
         &PKCS9CounterSignature::signer,
-        "Return the " RST_CLASS_REF(lief.PE.SignerInfo) " as described in the RFC #2985",
-        py::return_value_policy::reference)
-
-    .def("__hash__",
-        [] (const PKCS9CounterSignature& obj) {
-          return Hash::hash(obj);
-        })
-
-    .def("__str__", &PKCS9CounterSignature::print);
+        "Return the " RST_CLASS_REF(lief.PE.SignerInfo) " as described in the RFC #2985"_doc,
+        nb::rv_policy::reference_internal);
 }
 
-}
 }

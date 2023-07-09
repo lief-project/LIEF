@@ -1,0 +1,256 @@
+name: LIEF Windows
+on:
+  push:
+    branches:
+      - 'master'
+      - 'release-**'
+    tags:
+      - '**'
+
+env:
+  python-test-version: '3.10'
+  python-version: '3.9'
+
+jobs:
+  build-sdk:
+    runs-on: windows-2019
+    strategy:
+      matrix:
+        arch: ['x64', 'x86']
+      fail-fast: false
+    env:
+      SCCACHE_CACHE_SIZE: 2G
+      SCCACHE_DIR: ${{ vars.SCCACHE_DIR }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.python-version }}
+          architecture: ${{ matrix.arch }}
+      - name: Install system dependencies
+        run: |
+          choco install ninja
+          choco install sccache
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          toolset: "14.16"
+      - name: Get Date
+        id: get-date
+        run: |
+          echo "date=$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")" >> $GITHUB_OUTPUT
+        shell: bash
+      - name: Setup sccache
+        uses: actions/cache@v3
+        continue-on-error: false
+        with:
+          path: ${{ vars.SCCACHE_DIR }}
+          key: ${{ runner.os }}-${{ matrix.arch }}-sccache-sdk-${{ steps.get-date.outputs.date }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.arch }}-sccache-sdk
+      - name: Start sccache server
+        run: sccache --start-server
+      - name: Build SDK
+        run: |
+          python ./scripts/windows/package_sdk.py
+      - name: 'Upload SDK artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-${{ matrix.arch }}-sdk
+          path: build/*.zip
+          retention-days: 3
+      - name: 'Upload install artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-${{ matrix.arch }}-install
+          path: ${{ runner.temp }}/lief-install
+          retention-days: 1
+      - name: sccache stats
+        run: sccache --show-stats
+      - name: stop sccache server
+        run: sccache --stop-server || true
+  tests:
+    runs-on: windows-2019
+    if: "!contains(github.event.commits[0].message, '[skip-test]')"
+    strategy:
+      matrix:
+        arch: ['x64']
+      fail-fast: false
+    env:
+      SCCACHE_CACHE_SIZE: 2G
+      SCCACHE_DIR: ${{ vars.SCCACHE_DIR }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up Python ${{ env.python-test-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.python-test-version }}
+          architecture: ${{ matrix.arch }}
+      - name: Install system dependencies
+        run: |
+          choco install ninja
+          choco install sccache
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          toolset: "14.16"
+      - name: Get Date
+        id: get-date
+        run: |
+          echo "date=$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")" >> $GITHUB_OUTPUT
+        shell: bash
+      - name: Setup sccache
+        uses: actions/cache@v3
+        continue-on-error: false
+        with:
+          path: ${{ vars.SCCACHE_DIR }}
+          key: ${{ runner.os }}-${{ matrix.arch }}-sccache-test-${{ steps.get-date.outputs.date }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.arch }}-sccache-test
+      - name: Start sccache server
+        run: sccache --start-server
+      - name: Set arch specific env
+        if: matrix.arch == 'x64'
+        run: |
+          echo "ARCH=x64" >> $env:GITHUB_ENV
+      - name: Set arch specific env
+        if: matrix.arch == 'x86'
+        run: |
+          echo "ARCH=x86" >> $env:GITHUB_ENV
+      - name: Set Python config (${{ matrix.arch }})
+        run: |
+          echo ("PYLIEF_CONF=" + $env:GITHUB_WORKSPACE + "/scripts/windows/py-" + $env:ARCH + "-test.toml") >> $env:GITHUB_ENV
+      - name: Set env variables
+        run: |
+          chcp 65001 #set code page to utf-8
+          echo ("LIEF_SAMPLES_DIR=" + $env:RUNNER_TEMP + "/samples") >> $env:GITHUB_ENV
+          echo ("BUILD_DIR=" + $env:RUNNER_TEMP + "/lief-build") >> $env:GITHUB_ENV
+      - name: Build Python ${{ env.python-test-version }}
+        run: |
+          python -m pip install pytest requests
+          python tests/dl_samples.py %LIEF_SAMPLES_DIR%
+          cd api/python
+          python ./setup.py build                          ^
+                            --build-base=%BUILD_DIR%/base  ^
+                            --build-temp=%BUILD_DIR%/temp  ^
+                            install --user
+        shell: cmd
+      - name: Run tests
+        run: |
+          cd %GITHUB_WORKSPACE%
+          python tests/run_pytest.py
+          ctest --output-on-failure --test-dir %BUILD_DIR%/temp/Release
+        shell: cmd
+      - name: sccache stats
+        run: sccache --show-stats
+      - name: stop sccache server
+        run: sccache --stop-server || true
+  wheels:
+    runs-on: windows-2019
+    needs: build-sdk
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, '3.10', '3.11', '3.12-dev']
+        arch: ['x86', 'x64']
+      fail-fast: false
+    env:
+      SCCACHE_CACHE_SIZE: 2G
+      SCCACHE_DIR: ${{ vars.SCCACHE_DIR }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: ${{ matrix.arch }}
+      - name: Install system dependencies
+        run: |
+          choco install ninja
+          choco install sccache
+          python -m pip install --upgrade pip setuptools
+          python -m pip install wheel mako
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          toolset: "14.16"
+      - name: Get Date
+        id: get-date
+        run: |
+          echo "date=$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")" >> $GITHUB_OUTPUT
+        shell: bash
+      - name: Save sccache
+        uses: actions/cache@v3
+        continue-on-error: false
+        with:
+          path: ${{ vars.SCCACHE_DIR }}
+          key: ${{ runner.os }}-${{ matrix.arch }}-sccache-${{ matrix.python-version }}-${{ steps.get-date.outputs.date }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.arch }}-sccache-${{ matrix.python-version }}
+      - name: Download LIEF install dir
+        uses: actions/download-artifact@v3
+        with:
+          name: windows-${{ matrix.arch }}-install
+          path: ~/lief-${{ matrix.arch }}-install
+      - name: Start sccache server
+        run: sccache --start-server
+      - name: Upgrade pip
+        run: |
+          python -m pip install --upgrade pip
+        shell: cmd
+      - name: Set arch specific env
+        if: matrix.arch == 'x64'
+        run: |
+          echo "ARCH=x64" >> $env:GITHUB_ENV
+      - name: Set arch specific env
+        if: matrix.arch == 'x86'
+        run: |
+          echo "ARCH=x86" >> $env:GITHUB_ENV
+      - name: Set Python config (${{ matrix.arch }})
+        run: |
+          echo ("PYLIEF_CONF=" + $env:GITHUB_WORKSPACE + "/scripts/windows/py-" + $env:ARCH + ".toml") >> $env:GITHUB_ENV
+      - name: Set env variables
+        run: |
+          chcp 65001 #set code page to utf-8
+      - name: Build Python ${{ matrix.python-version }}
+        run: |
+          python -m pip -vv wheel --wheel-dir=dist/ api/python
+        shell: cmd
+      - name: 'Upload Python artifacts [${{ matrix.python-version }}]'
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-${{ matrix.arch }}-wheel-${{ matrix.python-version }}
+          path: dist/*.whl
+          retention-days: 3
+  deploy:
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    needs: [build-sdk, wheels]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: ${{ runner.temp }}/artifacts
+      - name: Deploy
+        env:
+          LIEF_S3_KEY: ${{ secrets.LIEF_S3_KEY }}
+          LIEF_S3_SECRET: ${{ secrets.LIEF_S3_SECRET }}
+        shell: bash
+        run: |
+          docker run --rm                                     \
+            -v $GITHUB_WORKSPACE:/src                         \
+            -v $RUNNER_TEMP:/runner_tmp                       \
+            -e GITHUB_ACTIONS="true"                          \
+            -e GITHUB_WORKSPACE=$GITHUB_WORKSPACE             \
+            -e GITHUB_REF=$GITHUB_REF                         \
+            -e GITHUB_REPOSITORY=$GITHUB_REPOSITORY           \
+            -e LIEF_S3_KEY=$LIEF_S3_KEY                       \
+            -e LIEF_S3_SECRET=$LIEF_S3_SECRET                 \
+            liefproject/deploy python3 /src/.github/deploy.py /runner_tmp/artifacts
+

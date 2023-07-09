@@ -15,101 +15,79 @@
  */
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 
-#include "pyELF.hpp"
+#include "ELF/pyELF.hpp"
 
-#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/GnuHash.hpp"
 
-namespace LIEF {
-namespace ELF {
-
-template<class T>
-using getter_t = T (GnuHash::*)(void) const;
-
-template<class T>
-using setter_t = void (GnuHash::*)(T);
-
+namespace LIEF::ELF::py {
 
 template<>
-void create<GnuHash>(py::module& m) {
-  py::class_<GnuHash, LIEF::Object>(m, "GnuHash",
+void create<GnuHash>(nb::module_& m) {
+  nb::class_<GnuHash, LIEF::Object>(m, "GnuHash",
       R"delim(
       Class which provides a view over the GNU Hash implementation.
       Most of the fields are read-only since the values are re-computed by the :class:`lief.ELF.Builder`.
-      )delim")
-    .def(py::init<>())
+      )delim"_doc)
+    .def(nb::init<>())
 
-    .def_property_readonly("nb_buckets",
+    .def_prop_ro("nb_buckets",
       &GnuHash::nb_buckets,
-      "Return the number of buckets")
+      "Return the number of buckets"_doc)
 
-    .def_property_readonly("symbol_index",
+    .def_prop_ro("symbol_index",
       &GnuHash::symbol_index,
-      "Index of the first symbol in the dynamic symbols table which is accessible with the hash table")
+      "Index of the first symbol in the dynamic symbols table which is accessible with the hash table"_doc)
 
-    .def_property_readonly("shift2",
+    .def_prop_ro("shift2",
       &GnuHash::shift2,
-      "Shift count used in the bloom filter")
+      "Shift count used in the bloom filter"_doc)
 
-    .def_property_readonly("bloom_filters",
+    .def_prop_ro("bloom_filters",
       &GnuHash::bloom_filters,
-      "Bloom filters",
-      py::return_value_policy::reference_internal)
+      "Bloom filters"_doc,
+      nb::rv_policy::reference_internal)
 
-    .def_property_readonly("buckets",
+    .def_prop_ro("buckets",
       &GnuHash::buckets,
-      "hash buckets",
-      py::return_value_policy::reference_internal)
+      "hash buckets"_doc,
+      nb::rv_policy::reference_internal)
 
-    .def_property_readonly("hash_values",
+    .def_prop_ro("hash_values",
       &GnuHash::hash_values,
-      "Hash values",
-      py::return_value_policy::reference_internal)
+      "Hash values"_doc,
+      nb::rv_policy::reference_internal)
 
     .def("check_bloom_filter",
         &GnuHash::check_bloom_filter,
-        "Check if the given hash pass the bloom filter",
+        "Check if the given hash pass the bloom filter"_doc,
         "hash"_a)
 
     .def("check_bucket",
         &GnuHash::check_bucket,
-        "Check if the given hash pass the bucket filter",
+        "Check if the given hash pass the bucket filter"_doc,
         "hash"_a)
 
     .def("check",
-        static_cast<bool(GnuHash::*)(const std::string&) const>(&GnuHash::check),
+        nb::overload_cast<const std::string&>(&GnuHash::check, nb::const_),
         "Check if the symbol *probably* exists. If "
         "the returned value is ``false`` you can assume at ``100%`` that "
         "the symbol with the given name doesn't exists. If ``true`` you can't "
-        "do any assumption ",
+        "do any assumption "_doc,
         "symbol_name"_a)
 
     .def("check",
-        static_cast<bool(GnuHash::*)(uint32_t) const>(&GnuHash::check),
+        nb::overload_cast<uint32_t>(&GnuHash::check, nb::const_),
         "Check if the symbol associated with the given *probably* exists. If "
         "the returned value is ``false`` you can assume at ``100%`` that "
         "the symbol doesn't exists. If ``true`` you can't "
-        "do any assumption",
+        "do any assumption"_doc,
         "hash_value"_a)
 
-    .def("__eq__", &GnuHash::operator==)
-    .def("__ne__", &GnuHash::operator!=)
-    .def("__hash__",
-        [] (const GnuHash& gnuhash) {
-          return Hash::hash(gnuhash);
-        })
-
-    .def("__str__",
-        [] (const GnuHash& gnuhash)
-        {
-          std::ostringstream stream;
-          stream << gnuhash;
-          std::string str = stream.str();
-          return str;
-        });
+    LIEF_DEFAULT_STR(LIEF::ELF::GnuHash);
 }
 
-}
 }
 

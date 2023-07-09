@@ -14,77 +14,52 @@
  * limitations under the License.
  */
 #include "LIEF/OAT/Method.hpp"
-#include "LIEF/OAT/hash.hpp"
+#include "LIEF/OAT/Class.hpp"
 #include "LIEF/DEX/Method.hpp"
 
-#include "pyOAT.hpp"
+#include "OAT/pyOAT.hpp"
 
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 
-namespace LIEF {
-namespace OAT {
-
-template<class T>
-using getter_t = T (Method::*)(void) const;
-
-template<class T>
-using setter_t = void (Method::*)(T);
-
-template<class T>
-using no_const_getter = T (Method::*)(void);
+namespace LIEF::OAT::py {
 
 template<>
-void create<Method>(py::module& m) {
+void create<Method>(nb::module_& m) {
 
-  py::class_<Method, LIEF::Object>(m, "Method", "OAT Method representation")
-    .def(py::init<>())
+  nb::class_<Method, Object>(m, "Method", "OAT Method representation"_doc)
+    .def(nb::init<>())
 
-    .def_property_readonly("name",
-        &Method::name,
-        "Method's name")
+    .def_prop_ro("name", &Method::name,
+        "Method's name"_doc)
 
-    .def_property_readonly("oat_class",
-        static_cast<no_const_getter<Class*>>(&Method::oat_class),
-        "" RST_CLASS_REF(lief.OAT.Class) " associated with the method (or None)",
-        py::return_value_policy::reference)
+    .def_prop_ro("oat_class",
+        nb::overload_cast<>(&Method::oat_class),
+        "" RST_CLASS_REF(lief.OAT.Class) " associated with the method (or None)"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("dex_method",
-        static_cast<no_const_getter<LIEF::DEX::Method*>>(&Method::dex_method),
-        "Mirrored " RST_CLASS_REF(lief.DEX.Method) " associated with the OAT method (or None)",
-        py::return_value_policy::reference)
+    .def_prop_ro("dex_method",
+        nb::overload_cast<>(&Method::dex_method),
+        "Mirrored " RST_CLASS_REF(lief.DEX.Method) " associated with the OAT method (or None)"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_dex_method",
+    .def_prop_ro("has_dex_method",
         &Method::has_dex_method,
-        "Check if a  " RST_CLASS_REF(lief.DEX.Method) " is associated with the OAT method",
-        py::return_value_policy::reference)
+        "Check if a  " RST_CLASS_REF(lief.DEX.Method) " is associated with the OAT method"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("is_dex2dex_optimized",
-        &Method::is_dex2dex_optimized,
-        "True if the optimization is **DEX**")
+    .def_prop_ro("is_dex2dex_optimized", &Method::is_dex2dex_optimized,
+        "True if the optimization is **DEX**"_doc)
 
-    .def_property_readonly("is_compiled",
-        &Method::is_compiled,
-        "True if the optimization is **native**")
+    .def_prop_ro("is_compiled", &Method::is_compiled,
+        "True if the optimization is **native**"_doc)
 
-    .def_property("quick_code",
-        static_cast<getter_t<const Method::quick_code_t&>>(&Method::quick_code),
-        static_cast<setter_t<const Method::quick_code_t&>>(&Method::quick_code),
-        "Quick code associated with the method")
+    .def_prop_rw("quick_code",
+        nb::overload_cast<>(&Method::quick_code, nb::const_),
+        nb::overload_cast<const Method::quick_code_t&>(&Method::quick_code),
+        "Quick code associated with the method"_doc)
 
-    .def("__eq__", &Method::operator==)
-    .def("__ne__", &Method::operator!=)
-    .def("__hash__",
-        [] (const Method& method) {
-          return Hash::hash(method);
-        })
-
-    .def("__str__",
-        [] (const Method& method) {
-          std::ostringstream stream;
-          stream << method;
-          return stream.str();
-        });
-}
-
+    LIEF_DEFAULT_STR(Method);
 }
 }

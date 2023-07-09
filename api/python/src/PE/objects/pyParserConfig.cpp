@@ -14,45 +14,44 @@
  * limitations under the License.
  */
 #include <string>
+#include <nanobind/stl/string.h>
 
 #include "LIEF/PE/ParserConfig.hpp"
 
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
 
-namespace LIEF {
-namespace PE {
+namespace LIEF::PE::py {
 
 template<>
-void create<ParserConfig>(py::module& m) {
+void create<ParserConfig>(nb::module_& m) {
 
-  py::class_<ParserConfig>(m, "ParserConfig",
+  nb::class_<ParserConfig>(m, "ParserConfig",
       R"delim(
       This class is used to tweak the PE Parser (:class:`~lief.PE.Parser`)
-      )delim")
+      )delim"_doc)
 
-    .def(py::init<>())
-    .def_readwrite("parse_signature", &ParserConfig::parse_signature,
-                   "Parse PE Authenticode signature")
+    .def(nb::init<>())
+    .def_rw("parse_signature", &ParserConfig::parse_signature,
+            "Parse PE Authenticode signature"_doc)
 
-    .def_readwrite("parse_exports", &ParserConfig::parse_exports,
-                   "Parse PE Exports Directory")
+    .def_rw("parse_exports", &ParserConfig::parse_exports,
+            "Parse PE Exports Directory"_doc)
 
-    .def_readwrite("parse_imports", &ParserConfig::parse_imports,
-                   "Parse PE Import Directory")
+    .def_rw("parse_imports", &ParserConfig::parse_imports,
+            "Parse PE Import Directory"_doc)
 
-    .def_readwrite("parse_rsrc", &ParserConfig::parse_rsrc,
-                   "Parse PE resources tree")
+    .def_rw("parse_rsrc", &ParserConfig::parse_rsrc,
+            "Parse PE resources tree"_doc)
 
-    .def_readwrite("parse_reloc", &ParserConfig::parse_reloc,
-                   "Parse PE relocations")
+    .def_rw("parse_reloc", &ParserConfig::parse_reloc,
+             "Parse PE relocations"_doc)
 
-    .def_property_readonly_static("all",
-      [] (py::object /* self */) { return ParserConfig::all(); },
+    .def_prop_ro_static("all",
+      [] (const nb::object& /* self */) { return ParserConfig::all(); },
       R"delim(
       Return a parser configuration such as all the objects supported by LIEF are parsed
-      )delim");
+      )delim"_doc);
 
 }
 
-}
 }

@@ -14,52 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/resources/ResourceStringTable.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/extra/stl/u16string.h>
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (ResourceStringTable::*)(void) const;
-
-template<class T>
-using setter_t = void (ResourceStringTable::*)(T);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<ResourceStringTable>(py::module& m) {
-  py::class_<ResourceStringTable, LIEF::Object>(m, "ResourceStringTable")
+void create<ResourceStringTable>(nb::module_& m) {
+  nb::class_<ResourceStringTable, LIEF::Object>(m, "ResourceStringTable")
 
-    .def_property_readonly("length",
-      static_cast<getter_t<int16_t>>(&ResourceStringTable::length),
-      "The size of the string, not including length field itself.")
+    .def_prop_ro("length",
+      nb::overload_cast<>(&ResourceStringTable::length, nb::const_),
+      "The size of the string, not including length field itself."_doc)
 
-    .def_property_readonly("name",
-      static_cast<getter_t<const std::u16string&>>(&ResourceStringTable::name),
-      "The variable-length Unicode string data, word-aligned."
-    )
+    .def_prop_ro("name",
+      nb::overload_cast<>(&ResourceStringTable::name, nb::const_),
+      "The variable-length Unicode string data, word-aligned."_doc)
 
-    .def("__eq__", &ResourceStringTable::operator==)
-    .def("__ne__", &ResourceStringTable::operator!=)
-    .def("__hash__",
-        [] (const ResourceStringTable& string_table) {
-          return Hash::hash(string_table);
-        })
-
-    .def("__str__",
-        [] (const ResourceStringTable& string_table) {
-          std::ostringstream stream;
-          stream << string_table;
-          std::string str = stream.str();
-          return str;
-        });
-}
-
+    LIEF_DEFAULT_STR(LIEF::PE::ResourceStringTable);
 }
 }

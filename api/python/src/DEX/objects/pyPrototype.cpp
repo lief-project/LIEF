@@ -14,56 +14,37 @@
  * limitations under the License.
  */
 #include "LIEF/DEX/Prototype.hpp"
-#include "LIEF/DEX/hash.hpp"
+#include "LIEF/DEX/Type.hpp"
 
-#include "pyDEX.hpp"
-#include "pyIterators.hpp"
+#include "DEX/pyDEX.hpp"
+#include "pyIterator.hpp"
 
-namespace LIEF {
-namespace DEX {
+#include <string>
+#include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 
-template<class T>
-using getter_t = T (Prototype::*)(void) const;
-
-template<class T>
-using no_const_getter_t = T (Prototype::*)(void);
-
-template<class T>
-using setter_t = void (Prototype::*)(T);
-
+namespace LIEF::DEX::py {
 
 template<>
-void create<Prototype>(py::module& m) {
+void create<Prototype>(nb::module_& m) {
+  using namespace LIEF::py;
 
-
-  py::class_<Prototype, LIEF::Object> proto(m, "Prototype", "DEX Prototype representation");
+  nb::class_<Prototype, LIEF::Object> proto(m, "Prototype",
+      "DEX Prototype representation"_doc);
 
   init_ref_iterator<Prototype::it_params>(proto, "it_params");
 
   proto
-    .def_property_readonly("return_type",
-        static_cast<no_const_getter_t<Type*>>(&Prototype::return_type),
-        "" RST_CLASS_REF(lief.DEX.Type) " returned",
-        py::return_value_policy::reference)
+    .def_prop_ro("return_type",
+        nb::overload_cast<>(&Prototype::return_type, nb::const_),
+        "" RST_CLASS_REF(lief.DEX.Type) " returned"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("parameters_type",
-        static_cast<no_const_getter_t<Prototype::it_params>>(&Prototype::parameters_type),
-        "Iterator over parameters  " RST_CLASS_REF(lief.DEX.Type) "")
+    .def_prop_ro("parameters_type",
+        nb::overload_cast<>(&Prototype::parameters_type),
+        "Iterator over parameters  " RST_CLASS_REF(lief.DEX.Type) ""_doc)
 
-    .def("__eq__", &Prototype::operator==)
-    .def("__ne__", &Prototype::operator!=)
-    .def("__hash__",
-        [] (const Prototype& ptype) {
-          return Hash::hash(ptype);
-        })
-
-    .def("__str__",
-        [] (const Prototype& ptype) {
-          std::ostringstream stream;
-          stream << ptype;
-          return stream.str();
-        });
-}
-
+    LIEF_DEFAULT_STR(Prototype);
 }
 }

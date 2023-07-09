@@ -13,62 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/LoadConfigurations.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (LoadConfigurationV6::*)(void) const;
-
-template<class T>
-using setter_t = void (LoadConfigurationV6::*)(T);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<LoadConfigurationV6>(py::module& m) {
-  py::class_<LoadConfigurationV6, LoadConfigurationV5>(m, "LoadConfigurationV6",
+void create<LoadConfigurationV6>(nb::module_& m) {
+  nb::class_<LoadConfigurationV6, LoadConfigurationV5>(m, "LoadConfigurationV6",
     R"delim(
     :class:`~lief.PE.LoadConfigurationV5` enhanced with Hotpatch and improved RFG.
 
     It is associated with the :class:`~lief.PE.WIN_VERSION` set to :attr:`~lief.PE.WIN_VERSION.WIN10_0_15002`
-    )delim")
+    )delim"_doc)
 
-    .def(py::init<>())
+    .def(nb::init<>())
 
-    .def_property("guard_rf_verify_stackpointer_function_pointer",
-        static_cast<getter_t<uint64_t>>(&LoadConfigurationV6::guard_rf_verify_stackpointer_function_pointer),
-        static_cast<setter_t<uint64_t>>(&LoadConfigurationV6::guard_rf_verify_stackpointer_function_pointer),
-        "VA of the Function verifying the stack pointer")
+    .def_prop_rw("guard_rf_verify_stackpointer_function_pointer",
+        nb::overload_cast<>(&LoadConfigurationV6::guard_rf_verify_stackpointer_function_pointer, nb::const_),
+        nb::overload_cast<uint64_t>(&LoadConfigurationV6::guard_rf_verify_stackpointer_function_pointer),
+        "VA of the Function verifying the stack pointer"_doc)
 
-    .def_property("hotpatch_table_offset",
-        static_cast<getter_t<uint32_t>>(&LoadConfigurationV6::hotpatch_table_offset),
-        static_cast<setter_t<uint32_t>>(&LoadConfigurationV6::hotpatch_table_offset),
-        "Offset to the *hotpatch* table")
+    .def_prop_rw("hotpatch_table_offset",
+        nb::overload_cast<>(&LoadConfigurationV6::hotpatch_table_offset, nb::const_),
+        nb::overload_cast<uint32_t>(&LoadConfigurationV6::hotpatch_table_offset),
+        "Offset to the *hotpatch* table"_doc)
 
-
-    .def("__eq__", &LoadConfigurationV6::operator==)
-    .def("__ne__", &LoadConfigurationV6::operator!=)
-    .def("__hash__",
-        [] (const LoadConfigurationV6& config) {
-          return Hash::hash(config);
-        })
-
-
-    .def("__str__", [] (const LoadConfigurationV6& config)
-        {
-          std::ostringstream stream;
-          stream << config;
-          std::string str = stream.str();
-          return str;
-        });
+    LIEF_DEFAULT_STR(LIEF::PE::LoadConfigurationV6);
 }
 
-}
 }

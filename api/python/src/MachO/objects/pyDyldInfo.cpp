@@ -13,49 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/DyldInfo.hpp"
+#include "LIEF/MachO/ExportInfo.hpp"
+#include "LIEF/MachO/DyldBindingInfo.hpp"
 
-#include "pyIterators.hpp"
-#include "pyMachO.hpp"
+#include "pyIterator.hpp"
+#include "nanobind/extra/memoryview.hpp"
 
-namespace LIEF {
-namespace MachO {
+#include "MachO/pyMachO.hpp"
 
-template<class T>
-using getter_t = T (DyldInfo::*)(void) const;
-
-template<class T>
-using setter_t = void (DyldInfo::*)(T);
-
-template<class T>
-using no_const_getter = T (DyldInfo::*)(void);
-
+namespace LIEF::MachO::py {
 
 template<>
-void create<DyldInfo>(py::module& m) {
+void create<DyldInfo>(nb::module_& m) {
+  using namespace LIEF::py;
 
-  py::class_<DyldInfo, LoadCommand> dyld(m, "DyldInfo",
+  nb::class_<DyldInfo, LoadCommand> dyld(m, "DyldInfo",
       R"delim(
       Class that represents the LC_DYLD_INFO and LC_DYLD_INFO_ONLY commands
-      )delim");
+      )delim"_doc);
 
   init_ref_iterator<DyldInfo::it_binding_info>(dyld, "it_binding_info");
-
 
   try {
     init_ref_iterator<DyldInfo::it_export_info>(dyld, "it_export_info");
   } catch (const std::runtime_error&) { }
 
   dyld
-    .def_property("rebase",
-        static_cast<getter_t<const LIEF::MachO::DyldInfo::info_t&>>(&DyldInfo::rebase),
-        static_cast<setter_t<const LIEF::MachO::DyldInfo::info_t&>>(&DyldInfo::rebase),
+    .def_prop_rw("rebase",
+        nb::overload_cast<>(&DyldInfo::rebase, nb::const_),
+        nb::overload_cast<const LIEF::MachO::DyldInfo::info_t&>(&DyldInfo::rebase),
         R"delim(
         *Rebase* information as a tuple ``(offset, size)``
 
@@ -72,23 +63,23 @@ void create<DyldInfo>(py::module& m) {
         .. seealso::
 
             ``/usr/include/mach-o/loader.h``
-        )delim")
+        )delim"_doc)
 
-    .def_property("rebase_opcodes",
+    .def_prop_rw("rebase_opcodes",
         [] (const DyldInfo& self) {
-          span<const uint8_t> content = self.rebase_opcodes();
-          return py::memoryview::from_memory(content.data(), content.size());
+          const span<const uint8_t> content = self.rebase_opcodes();
+          return nb::memoryview::from_memory(content.data(), content.size());
         },
-        static_cast<setter_t<buffer_t>>(&DyldInfo::rebase_opcodes),
-        "Return the rebase's opcodes as ``list`` of bytes")
+        nb::overload_cast<buffer_t>(&DyldInfo::rebase_opcodes),
+        "Return the rebase's opcodes as ``list`` of bytes"_doc)
 
-    .def_property_readonly("show_rebases_opcodes",
+    .def_prop_ro("show_rebases_opcodes",
         &DyldInfo::show_rebases_opcodes,
-        "Return the rebase opcodes in a humman-readable way")
+        "Return the rebase opcodes in a humman-readable way"_doc)
 
-    .def_property("bind",
-        static_cast<getter_t<const LIEF::MachO::DyldInfo::info_t&>>(&DyldInfo::bind),
-        static_cast<setter_t<const LIEF::MachO::DyldInfo::info_t&>>(&DyldInfo::bind),
+    .def_prop_rw("bind",
+        nb::overload_cast<>(&DyldInfo::bind, nb::const_),
+        nb::overload_cast<const LIEF::MachO::DyldInfo::info_t&>(&DyldInfo::bind),
         R"delim(
         *Bind* information as a tuple ``(offset, size)``
 
@@ -104,25 +95,23 @@ void create<DyldInfo>(py::module& m) {
         .. seealso::
 
             ``/usr/include/mach-o/loader.h``
-        )delim")
+        )delim"_doc)
 
-
-    .def_property("bind_opcodes",
+    .def_prop_rw("bind_opcodes",
         [] (const DyldInfo& self) {
-          span<const uint8_t> content = self.bind_opcodes();
-          return py::memoryview::from_memory(content.data(), content.size());
+          const span<const uint8_t> content = self.bind_opcodes();
+          return nb::memoryview::from_memory(content.data(), content.size());
         },
-        static_cast<setter_t<buffer_t>>(&DyldInfo::bind_opcodes),
-        "Return the binding's opcodes as ``list`` of bytes")
+        nb::overload_cast<buffer_t>(&DyldInfo::bind_opcodes),
+        "Return the binding's opcodes as ``list`` of bytes"_doc)
 
-    .def_property_readonly("show_bind_opcodes",
+    .def_prop_ro("show_bind_opcodes",
         &DyldInfo::show_bind_opcodes,
         "Return the bind opcodes in a humman-readable way")
 
-
-    .def_property("weak_bind",
-        static_cast<getter_t<const LIEF::MachO::DyldInfo::info_t&>>(&DyldInfo::weak_bind),
-        static_cast<setter_t<const LIEF::MachO::DyldInfo::info_t&>>(&DyldInfo::weak_bind),
+    .def_prop_rw("weak_bind",
+        nb::overload_cast<>(&DyldInfo::weak_bind, nb::const_),
+        nb::overload_cast<const LIEF::MachO::DyldInfo::info_t&>(&DyldInfo::weak_bind),
         R"delim(
         *Weak Bind* information as a tuple ``(offset, size)``
 
@@ -143,24 +132,23 @@ void create<DyldInfo>(py::module& m) {
         .. seealso::
 
             ``/usr/include/mach-o/loader.h``
-        )delim")
+        )delim"_doc)
 
-
-    .def_property("weak_bind_opcodes",
+    .def_prop_rw("weak_bind_opcodes",
         [] (const DyldInfo& self) {
-          span<const uint8_t> content = self.weak_bind_opcodes();
-          return py::memoryview::from_memory(content.data(), content.size());
+          const span<const uint8_t> content = self.weak_bind_opcodes();
+          return nb::memoryview::from_memory(content.data(), content.size());
         },
-        static_cast<setter_t<buffer_t>>(&DyldInfo::weak_bind_opcodes),
-        "Return **Weak** binding's opcodes as ``list`` of bytes")
+        nb::overload_cast<buffer_t>(&DyldInfo::weak_bind_opcodes),
+        "Return **Weak** binding's opcodes as ``list`` of bytes"_doc)
 
-    .def_property_readonly("show_weak_bind_opcodes",
+    .def_prop_ro("show_weak_bind_opcodes",
         &DyldInfo::show_weak_bind_opcodes,
         "Return the weak bind opcodes in a humman-readable way")
 
-    .def_property("lazy_bind",
-        static_cast<getter_t<const LIEF::MachO::DyldInfo::info_t&>>(&DyldInfo::lazy_bind),
-        static_cast<setter_t<const LIEF::MachO::DyldInfo::info_t&>>(&DyldInfo::lazy_bind),
+    .def_prop_rw("lazy_bind",
+        nb::overload_cast<>(&DyldInfo::lazy_bind, nb::const_),
+        nb::overload_cast<const LIEF::MachO::DyldInfo::info_t&>(&DyldInfo::lazy_bind),
         R"delim(
         *Lazy Bind* information as a tuple ``(offset, size)``
 
@@ -176,30 +164,29 @@ void create<DyldInfo>(py::module& m) {
         .. seealso::
 
             ``/usr/include/mach-o/loader.h``
-        )delim")
+        )delim"_doc)
 
-
-    .def_property("lazy_bind_opcodes",
+    .def_prop_rw("lazy_bind_opcodes",
         [] (const DyldInfo& self) {
-          span<const uint8_t> content = self.lazy_bind_opcodes();
-          return py::memoryview::from_memory(content.data(), content.size());
+          const span<const uint8_t> content = self.lazy_bind_opcodes();
+          return nb::memoryview::from_memory(content.data(), content.size());
         },
-        static_cast<setter_t<buffer_t>>(&DyldInfo::lazy_bind_opcodes),
-        "Return **lazy** binding's opcodes as ``list`` of bytes")
+        nb::overload_cast<buffer_t>(&DyldInfo::lazy_bind_opcodes),
+        "Return **lazy** binding's opcodes as ``list`` of bytes"_doc)
 
-    .def_property_readonly("show_lazy_bind_opcodes",
+    .def_prop_ro("show_lazy_bind_opcodes",
         &DyldInfo::show_lazy_bind_opcodes,
-        "Return the weak bind opcodes in a humman-readable way",
-        py::return_value_policy::reference_internal)
+        "Return the weak bind opcodes in a humman-readable way"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("bindings",
-        static_cast<no_const_getter<DyldInfo::it_binding_info>>(&DyldInfo::bindings),
-        "Return an iterator over Dyld's " RST_CLASS_REF(lief.MachO.BindingInfo) "",
-        py::return_value_policy::reference_internal)
+    .def_prop_ro("bindings",
+        nb::overload_cast<>(&DyldInfo::bindings),
+        "Return an iterator over Dyld's " RST_CLASS_REF(lief.MachO.BindingInfo) ""_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property("export_info",
-        static_cast<getter_t<const LIEF::MachO::DyldInfo::info_t&>>(&DyldInfo::export_info),
-        static_cast<setter_t<const LIEF::MachO::DyldInfo::info_t&>>(&DyldInfo::export_info),
+    .def_prop_rw("export_info",
+        nb::overload_cast<>(&DyldInfo::export_info, nb::const_),
+        nb::overload_cast<const LIEF::MachO::DyldInfo::info_t&>(&DyldInfo::export_info),
         R"delim(
         *Export* information as a tuple ``(offset, size)``
 
@@ -230,88 +217,56 @@ void create<DyldInfo>(py::module& m) {
         .. seealso::
 
             ``/usr/include/mach-o/loader.h``
-        )delim")
+        )delim"_doc)
 
-
-    .def_property("export_trie",
+    .def_prop_rw("export_trie",
         [] (const DyldInfo& self) {
-          span<const uint8_t> content = self.export_trie();
-          return py::memoryview::from_memory(content.data(), content.size());
+          const span<const uint8_t> content = self.export_trie();
+          return nb::memoryview::from_memory(content.data(), content.size());
         },
-        static_cast<setter_t<buffer_t>>(&DyldInfo::export_trie),
-        "Return Export's trie as ``list`` of bytes")
+        nb::overload_cast<buffer_t>(&DyldInfo::export_trie),
+        "Return Export's trie as ``list`` of bytes"_doc)
 
-    .def_property_readonly("exports",
-        static_cast<no_const_getter<DyldInfo::it_export_info>>(&DyldInfo::exports),
-        "Return an iterator over Dyld's " RST_CLASS_REF(lief.MachO.ExportInfo) "",
-        py::return_value_policy::reference_internal)
+    .def_prop_ro("exports",
+        nb::overload_cast<>(&DyldInfo::exports),
+        "Return an iterator over Dyld's " RST_CLASS_REF(lief.MachO.ExportInfo) ""_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("show_export_trie",
+    .def_prop_ro("show_export_trie",
         &DyldInfo::show_export_trie,
-        "Return the export trie in a humman-readable way",
-        py::return_value_policy::reference_internal)
+        "Return the export trie in a humman-readable way"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def("set_rebase_offset",
-        &DyldInfo::set_rebase_offset,
-        "offset"_a)
+    .def("set_rebase_offset", &DyldInfo::set_rebase_offset,
+         "offset"_a)
 
-    .def("set_rebase_size",
-        &DyldInfo::set_rebase_size,
-        "size"_a)
+    .def("set_rebase_size", &DyldInfo::set_rebase_size,
+         "size"_a)
 
+    .def("set_bind_offset", &DyldInfo::set_bind_offset,
+         "offset"_a)
 
-    .def("set_bind_offset",
-        &DyldInfo::set_bind_offset,
-        "offset"_a)
+    .def("set_bind_size", &DyldInfo::set_bind_size,
+         "size"_a)
 
-    .def("set_bind_size",
-        &DyldInfo::set_bind_size,
-        "size"_a)
+    .def("set_weak_bind_offset", &DyldInfo::set_weak_bind_offset,
+         "offset"_a)
 
+    .def("set_weak_bind_size", &DyldInfo::set_weak_bind_size,
+         "size"_a)
 
-    .def("set_weak_bind_offset",
-        &DyldInfo::set_weak_bind_offset,
-        "offset"_a)
+    .def("set_lazy_bind_offset", &DyldInfo::set_lazy_bind_offset,
+         "offset"_a)
 
-    .def("set_weak_bind_size",
-        &DyldInfo::set_weak_bind_size,
-        "size"_a)
+    .def("set_lazy_bind_size", &DyldInfo::set_lazy_bind_size,
+         "size"_a)
 
+    .def("set_export_offset", &DyldInfo::set_export_offset,
+         "offset"_a)
 
-    .def("set_lazy_bind_offset",
-        &DyldInfo::set_lazy_bind_offset,
-        "offset"_a)
+    .def("set_export_size", &DyldInfo::set_export_size,
+         "size"_a)
 
-    .def("set_lazy_bind_size",
-        &DyldInfo::set_lazy_bind_size,
-        "size"_a)
-
-
-    .def("set_export_offset",
-        &DyldInfo::set_export_offset,
-        "offset"_a)
-
-    .def("set_export_size",
-        &DyldInfo::set_export_size,
-        "size"_a)
-
-    .def("__eq__", &DyldInfo::operator==)
-    .def("__ne__", &DyldInfo::operator!=)
-    .def("__hash__",
-        [] (const DyldInfo& info) {
-          return Hash::hash(info);
-        })
-
-
-    .def("__str__",
-        [] (const DyldInfo& info) {
-          std::ostringstream stream;
-          stream << info;
-          std::string str = stream.str();
-          return str;
-        });
-
-}
-
+    LIEF_DEFAULT_STR(DyldInfo);
 }
 }

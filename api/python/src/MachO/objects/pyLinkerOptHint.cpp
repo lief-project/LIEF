@@ -13,59 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
+#include "nanobind/extra/memoryview.hpp"
 
-namespace LIEF {
-namespace MachO {
+namespace LIEF::MachO::py {
 
 template<>
-void create<LinkerOptHint>(py::module& m) {
+void create<LinkerOptHint>(nb::module_& m) {
 
-  py::class_<LinkerOptHint, LoadCommand>(m, "LinkerOptHint",
+  nb::class_<LinkerOptHint, LoadCommand>(m, "LinkerOptHint",
     R"delim(
     Class which represents the `LC_LINKER_OPTIMIZATION_HINT` command
-    )delim")
+    )delim"_doc)
 
-    .def_property("data_offset",
-        py::overload_cast<>(&LinkerOptHint::data_offset, py::const_),
-        py::overload_cast<uint32_t>(&LinkerOptHint::data_offset),
-        "Offset in the binary where the payload starts")
+    .def_prop_rw("data_offset",
+        nb::overload_cast<>(&LinkerOptHint::data_offset, nb::const_),
+        nb::overload_cast<uint32_t>(&LinkerOptHint::data_offset),
+        "Offset in the binary where the payload starts"_doc)
 
-    .def_property("data_size",
-        py::overload_cast<>(&LinkerOptHint::data_offset, py::const_),
-        py::overload_cast<uint32_t>(&LinkerOptHint::data_offset),
-        "Size of the raw payload")
+    .def_prop_rw("data_size",
+        nb::overload_cast<>(&LinkerOptHint::data_offset, nb::const_),
+        nb::overload_cast<uint32_t>(&LinkerOptHint::data_offset),
+        "Size of the raw payload"_doc)
 
-    .def_property_readonly("content",
+    .def_prop_ro("content",
         [] (const LinkerOptHint& self) {
-          span<const uint8_t> content = self.content();
-          return py::memoryview::from_memory(content.data(), content.size());
-        }, "The raw payload")
+          const span<const uint8_t> content = self.content();
+          return nb::memoryview::from_memory(content.data(), content.size());
+        }, "The raw payload"_doc)
 
-    .def("__eq__", &LinkerOptHint::operator==)
-    .def("__ne__", &LinkerOptHint::operator!=)
-    .def("__hash__",
-        [] (const LinkerOptHint& opt) {
-          return Hash::hash(opt);
-        })
-
-    .def("__str__",
-        [] (const LinkerOptHint& opt)
-        {
-          std::ostringstream stream;
-          stream << opt;
-          return stream.str();
-        });
-
+    LIEF_DEFAULT_STR(LinkerOptHint);
 }
 
-}
 }

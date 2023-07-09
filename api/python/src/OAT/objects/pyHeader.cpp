@@ -14,54 +14,43 @@
  * limitations under the License.
  */
 #include "LIEF/OAT/Header.hpp"
-#include "LIEF/OAT/hash.hpp"
 
-#include "pyOAT.hpp"
+#include "OAT/pyOAT.hpp"
 
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
+#include <nanobind/stl/array.h>
+#include <nanobind/stl/pair.h>
 
-namespace LIEF {
-namespace OAT {
-
-template<class T>
-using getter_t = T (Header::*)(void) const;
-
-template<class T>
-using setter_t = void (Header::*)(T);
-
-template<class T>
-using no_const_getter = T (Header::*)(void);
+namespace LIEF::OAT::py {
 
 template<>
-void create<Header>(py::module& m) {
+void create<Header>(nb::module_& m) {
 
-  py::class_<Header, LIEF::Object> hdr(m, "Header", "OAT Header representation");
-  py::class_<Header::it_key_values_t> it_key_values_t(hdr, "it_key_values_t");
+  nb::class_<Header, Object> hdr(m, "Header", "OAT Header representation"_doc);
+  nb::class_<Header::it_key_values_t> it_key_values_t(hdr, "it_key_values_t");
 
-  py::class_<Header::it_key_values_t::value_type>(it_key_values_t, "value_type")
-    .def_property_readonly("key",
-        [] (Header::it_key_values_t::reference p) {
-          return p.first;
-        }, py::return_value_policy::reference_internal)
-
-    .def_property("value",
-        [] (Header::it_key_values_t::reference p) {
-         return p.second;
+  nb::class_<Header::element_t>(hdr, "element_t")
+    .def_rw("key", &Header::element_t::key)
+    .def_prop_rw("value",
+        [] (const Header::element_t& self) {
+          return self.value;
         },
-        [] (Header::it_key_values_t::reference p, const std::string& value) {
-          std::string& ref_value = p.second;
-          ref_value = value;
-        },
-        py::return_value_policy::reference_internal);
+        [] (const Header::element_t& self, const std::string& value) {
+          *self.value = value;
+        }, nb::rv_policy::reference_internal);
+
 
   it_key_values_t
     .def("__getitem__",
-        [] (Header::it_key_values_t& v, size_t i) -> Header::it_key_values_t::value_type {
-            if (i >= v.size())
-                throw py::index_error();
+        [] (Header::it_key_values_t& v, size_t i) {
+            if (i >= v.size()) {
+              throw nb::index_error();
+            }
             return v[i];
         },
-        py::return_value_policy::reference_internal)
+        nb::rv_policy::reference_internal)
 
     .def("__len__",
         [](Header::it_key_values_t& v) {
@@ -69,137 +58,114 @@ void create<Header>(py::module& m) {
         })
 
     .def("__iter__",
-        [](Header::it_key_values_t& v) -> Header::it_key_values_t {
+        [](Header::it_key_values_t& v) {
           return std::begin(v);
-        }, py::return_value_policy::reference_internal)
+        }, nb::rv_policy::reference_internal)
 
     .def("__next__",
-        [] (Header::it_key_values_t& v) -> Header::it_key_values_t::value_type {
+        [] (Header::it_key_values_t& v) {
           if (v == std::end(v)) {
-            throw py::stop_iteration();
+            throw nb::stop_iteration();
           }
           return *(v++);
 
-    }, py::return_value_policy::reference_internal);
+    }, nb::rv_policy::reference_internal);
 
   hdr
-    .def(py::init<>())
+    .def(nb::init<>())
 
-    .def_property_readonly("key_values",
-        static_cast<no_const_getter<Header::it_key_values_t>>(&Header::key_values),
-        "Configuration used for the ``dex2oat`` transformation",
-        py::return_value_policy::reference_internal)
+    .def_prop_ro("key_values", nb::overload_cast<>(&Header::key_values),
+        "Configuration used for the ``dex2oat`` transformation"_doc,
+        nb::keep_alive<0, 1>())
 
-    .def_property_readonly("keys",
-        &Header::keys,
-        "List of " RST_CLASS_REF(lief.OAT.HEADER_KEYS) " present",
-        py::return_value_policy::reference_internal)
+    .def_prop_ro("keys", &Header::keys,
+        "List of " RST_CLASS_REF(lief.OAT.HEADER_KEYS) " present"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("values",
-        &Header::values,
-        "List of values associated with " RST_ATTR_REF(lief.OAT.Header.keys) "",
-        py::return_value_policy::move)
+    .def_prop_ro("values", &Header::values,
+        "List of values associated with " RST_ATTR_REF(lief.OAT.Header.keys) ""_doc,
+        nb::rv_policy::move)
 
-    .def_property_readonly("magic",
-        static_cast<getter_t<Header::magic_t>>(&Header::magic),
-        "Magic number which shoud be ``oat\\x0A``")
+    .def_prop_ro("magic", nb::overload_cast<>(&Header::magic, nb::const_),
+        R"delim(Magic number which shoud be ``oat\x0A``)delim"_doc)
 
-    .def_property_readonly("version",
-        static_cast<getter_t<oat_version_t>>(&Header::version),
-        "Underlying version of the OAT file")
+    .def_prop_ro("version", nb::overload_cast<>(&Header::version, nb::const_),
+        "Underlying version of the OAT file"_doc)
 
-    .def_property_readonly("checksum",
-        static_cast<getter_t<uint32_t>>(&Header::checksum),
-        "Checksum of the OAT file")
+    .def_prop_ro("checksum", nb::overload_cast<>(&Header::checksum, nb::const_),
+        "Checksum of the OAT file"_doc)
 
-    .def_property_readonly("instruction_set",
-        static_cast<getter_t<INSTRUCTION_SETS>>(&Header::instruction_set),
-        "List of " RST_CLASS_REF(lief.OAT.INSTRUCTION_SETS) "")
+    .def_prop_ro("instruction_set",
+        nb::overload_cast<>(&Header::instruction_set, nb::const_),
+        "List of " RST_CLASS_REF(lief.OAT.INSTRUCTION_SETS) ""_doc)
 
-    .def_property_readonly("nb_dex_files",
-        static_cast<getter_t<uint32_t>>(&Header::nb_dex_files),
-        "Number of " RST_CLASS_REF_FULL(lief.DEX.File) " registred in the current OAT")
+    .def_prop_ro("nb_dex_files",
+        nb::overload_cast<>(&Header::nb_dex_files, nb::const_),
+        "Number of " RST_CLASS_REF_FULL(lief.DEX.File) " registred in the current OAT"_doc)
 
-    .def_property_readonly("oat_dex_files_offset",
-        static_cast<getter_t<uint32_t>>(&Header::oat_dex_files_offset),
-        "Offset to the raw " RST_CLASS_REF_FULL(lief.OAT.DexFile) "\n\n"
-        ".. warning::\n\n"
-        "\tThis attribute is only relevant for OAT for which the version is above 131")
+    .def_prop_ro("oat_dex_files_offset",
+        nb::overload_cast<>(&Header::oat_dex_files_offset, nb::const_),
+        R"delim(
+        Offset to the raw  :class:`lief.OAT.Dexfile`
 
-    .def_property_readonly("executable_offset",
-        static_cast<getter_t<uint32_t>>(&Header::executable_offset))
+        .. warning::
 
-    .def_property_readonly("i2i_bridge_offset",
-        static_cast<getter_t<uint32_t>>(&Header::i2i_bridge_offset))
+            This attribute is only relevant for OAT for which the version is above 131
+        )delim"_doc)
 
-    .def_property_readonly("i2c_code_bridge_offset",
-        static_cast<getter_t<uint32_t>>(&Header::i2c_code_bridge_offset))
+    .def_prop_ro("executable_offset",
+        nb::overload_cast<>(&Header::executable_offset, nb::const_))
 
-    .def_property_readonly("jni_dlsym_lookup_offset",
-        static_cast<getter_t<uint32_t>>(&Header::jni_dlsym_lookup_offset))
+    .def_prop_ro("i2i_bridge_offset",
+        nb::overload_cast<>(&Header::i2i_bridge_offset, nb::const_))
 
-    .def_property_readonly("quick_generic_jni_trampoline_offset",
-        static_cast<getter_t<uint32_t>>(&Header::quick_generic_jni_trampoline_offset))
+    .def_prop_ro("i2c_code_bridge_offset",
+        nb::overload_cast<>(&Header::i2c_code_bridge_offset, nb::const_))
 
-    .def_property_readonly("quick_imt_conflict_trampoline_offset",
-        static_cast<getter_t<uint32_t>>(&Header::quick_imt_conflict_trampoline_offset))
+    .def_prop_ro("jni_dlsym_lookup_offset",
+        nb::overload_cast<>(&Header::jni_dlsym_lookup_offset, nb::const_))
 
-    .def_property_readonly("quick_resolution_trampoline_offset",
-        static_cast<getter_t<uint32_t>>(&Header::quick_resolution_trampoline_offset))
+    .def_prop_ro("quick_generic_jni_trampoline_offset",
+        nb::overload_cast<>(&Header::quick_generic_jni_trampoline_offset, nb::const_))
 
-    .def_property_readonly("quick_to_interpreter_bridge_offset",
-        static_cast<getter_t<uint32_t>>(&Header::quick_to_interpreter_bridge_offset))
+    .def_prop_ro("quick_imt_conflict_trampoline_offset",
+        nb::overload_cast<>(&Header::quick_imt_conflict_trampoline_offset, nb::const_))
 
-    .def_property_readonly("image_patch_delta",
-        static_cast<getter_t<int32_t>>(&Header::image_patch_delta))
+    .def_prop_ro("quick_resolution_trampoline_offset",
+        nb::overload_cast<>(&Header::quick_resolution_trampoline_offset, nb::const_))
 
-    .def_property_readonly("image_file_location_oat_checksum",
-        static_cast<getter_t<uint32_t>>(&Header::image_file_location_oat_checksum))
+    .def_prop_ro("quick_to_interpreter_bridge_offset",
+        nb::overload_cast<>(&Header::quick_to_interpreter_bridge_offset, nb::const_))
 
-    .def_property_readonly("image_file_location_oat_data_begin",
-        static_cast<getter_t<uint32_t>>(&Header::image_file_location_oat_data_begin))
+    .def_prop_ro("image_patch_delta",
+        nb::overload_cast<>(&Header::image_patch_delta, nb::const_))
 
-    .def_property_readonly("key_value_size",
-        static_cast<getter_t<uint32_t>>(&Header::key_value_size))
+    .def_prop_ro("image_file_location_oat_checksum",
+        nb::overload_cast<>(&Header::image_file_location_oat_checksum, nb::const_))
 
-    .def("get",
-        static_cast<const std::string* (Header::*)(HEADER_KEYS) const>(&Header::get),
-        "key"_a,
-        py::return_value_policy::reference)
+    .def_prop_ro("image_file_location_oat_data_begin",
+        nb::overload_cast<>(&Header::image_file_location_oat_data_begin, nb::const_))
 
+    .def_prop_ro("key_value_size",
+        nb::overload_cast<>(&Header::key_value_size, nb::const_))
+
+    .def("get", nb::overload_cast<HEADER_KEYS>(&Header::get),
+        "key"_a, nb::rv_policy::reference_internal)
 
     .def("set",
-        static_cast<Header& (Header::*)(HEADER_KEYS, const std::string&)>(&Header::set),
-        "key"_a, "value"_a,
-        py::return_value_policy::reference)
+        nb::overload_cast<HEADER_KEYS, const std::string&>(&Header::set),
+        "key"_a, "value"_a, nb::rv_policy::reference_internal)
 
     .def("__getitem__",
-        static_cast<const std::string* (Header::*)(HEADER_KEYS) const>(&Header::operator[]),
-        "",
-        py::return_value_policy::reference)
+        nb::overload_cast<HEADER_KEYS>(&Header::operator[]),
+        nb::rv_policy::reference_internal)
 
     .def("__setitem__",
-        static_cast<Header& (Header::*)(HEADER_KEYS, const std::string&)>(&Header::set),
-        "",
-        py::return_value_policy::reference)
+        nb::overload_cast<HEADER_KEYS, const std::string&>(&Header::set),
+        nb::rv_policy::reference_internal)
 
-
-    .def("__eq__", &Header::operator==)
-    .def("__ne__", &Header::operator!=)
-    .def("__hash__",
-        [] (const Header& header) {
-          return Hash::hash(header);
-        })
-
-
-
-    .def("__str__",
-        [] (const Header& header) {
-          std::ostringstream stream;
-          stream << header;
-          return stream.str();
-        });
-}
+    LIEF_DEFAULT_STR(Header);
 
 }
+
 }

@@ -17,24 +17,16 @@
 #include <string>
 #include <sstream>
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/DelayImportEntry.hpp"
 
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
+#include "pySafeString.hpp"
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (DelayImportEntry::*)() const;
-
-template<class T>
-using setter_t = void (DelayImportEntry::*)(T);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<DelayImportEntry>(py::module& m) {
-  py::class_<DelayImportEntry, LIEF::Symbol>(m, "DelayImportEntry",
+void create<DelayImportEntry>(nb::module_& m) {
+  nb::class_<DelayImportEntry, LIEF::Symbol>(m, "DelayImportEntry",
       R"delim(
       Class that represents an entry (i.e. a delay import) in the delay import table (:class:`~lief.PE.DelayImport`).
 
@@ -43,52 +35,41 @@ void create<DelayImportEntry>(py::module& m) {
 
       The meaning of :attr:`lief.Symbol.value` for this PE object is the address (as an RVA) in the IAT
       where the resolution should take place
-      )delim")
-    .def(py::init<>())
+      )delim"_doc)
+    .def(nb::init<>())
 
-    .def_property("name",
+    .def_prop_rw("name",
         [] (const DelayImportEntry& obj) {
-          return safe_string_converter(obj.name());
+          return LIEF::py::safe_string(obj.name());
         },
-        static_cast<setter_t<const std::string&>>(&DelayImportEntry::name),
-        "Delay import name if not ordinal")
+        nb::overload_cast<const std::string&>(&DelayImportEntry::name),
+        "Delay import name if not ordinal"_doc)
 
-    .def_property("data",
-        static_cast<getter_t<uint64_t>>(&DelayImportEntry::data),
-        static_cast<setter_t<uint64_t>>(&DelayImportEntry::data),
-        "Raw value")
+    .def_prop_rw("data",
+        nb::overload_cast<>(&DelayImportEntry::data, nb::const_),
+        nb::overload_cast<uint64_t>(&DelayImportEntry::data),
+        "Raw value"_doc)
 
-    .def_property_readonly("is_ordinal",
+    .def_prop_ro("is_ordinal",
         &DelayImportEntry::is_ordinal,
-        "``True`` if it is an import by ordinal")
+        "``True`` if it is an import by ordinal"_doc)
 
-    .def_property_readonly("ordinal",
+    .def_prop_ro("ordinal",
         &DelayImportEntry::ordinal,
-        "Ordinal value (if any). See: :attr:`~lief.PE.DelayImportEntry.is_ordinal`")
+        "Ordinal value (if any). See: :attr:`~lief.PE.DelayImportEntry.is_ordinal`"_doc)
 
-    .def_property_readonly("hint",
+    .def_prop_ro("hint",
         &DelayImportEntry::hint,
-        "Index into the :attr:`lief.PE.Export.entries` that is used to speed-up the symbol resolution")
+        "Index into the :attr:`lief.PE.Export.entries` that is used to speed-up the symbol resolution"_doc)
 
-    .def_property_readonly("iat_value",
+    .def_prop_ro("iat_value",
         &DelayImportEntry::iat_value,
         R"delim(
         Value of the current entry in the delay-loaded import address table.
         See: :attr:`~DelayImportEntry.iat`
-        )delim")
+        )delim"_doc)
 
-    .def("__eq__", &DelayImportEntry::operator==)
-    .def("__ne__", &DelayImportEntry::operator!=)
-    .def("__hash__",
-        [] (const DelayImportEntry& import_entry) {
-          return Hash::hash(import_entry);
-        })
+    LIEF_DEFAULT_STR(LIEF::PE::DelayImportEntry);
 
-    .def("__str__", [] (const DelayImportEntry& importEntry) {
-          std::ostringstream stream;
-          stream << importEntry;
-          return stream.str();
-        });
-}
 }
 }

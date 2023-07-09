@@ -15,90 +15,60 @@
  */
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-#include "pyELF.hpp"
+#include "ELF/pyELF.hpp"
 
-#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
 
-namespace LIEF {
-namespace ELF {
-
-template<class T>
-using getter_t = T (CorePrPsInfo::*)(void) const;
-
-template<class T>
-using setter_t = void (CorePrPsInfo::*)(T);
+namespace LIEF::ELF::py {
 
 template<>
-void create<CorePrPsInfo>(py::module& m) {
+void create<CorePrPsInfo>(nb::module_& m) {
 
-  py::class_<CorePrPsInfo, NoteDetails>(m, "CorePrPsInfo")
+  nb::class_<CorePrPsInfo, NoteDetails>(m, "CorePrPsInfo")
 
-    .def_property("file_name",
-        static_cast<getter_t<std::string>>(&CorePrPsInfo::file_name),
-        static_cast<setter_t<const std::string&>>(&CorePrPsInfo::file_name),
-        "Process file name"
-        )
+    .def_prop_rw("file_name",
+        nb::overload_cast<>(&CorePrPsInfo::file_name, nb::const_),
+        nb::overload_cast<const std::string&>(&CorePrPsInfo::file_name),
+        "Process file name"_doc)
 
-    .def_property("flags",
-        static_cast<getter_t<uint64_t>>(&CorePrPsInfo::flags),
-        static_cast<setter_t<uint64_t>>(&CorePrPsInfo::flags),
-        "Process flags"
-        )
+    .def_prop_rw("flags",
+        nb::overload_cast<>(&CorePrPsInfo::flags, nb::const_),
+        nb::overload_cast<uint64_t>(&CorePrPsInfo::flags),
+        "Process flags"_doc)
 
-    .def_property("uid",
-        static_cast<getter_t<uint32_t>>(&CorePrPsInfo::uid),
-        static_cast<setter_t<uint32_t>>(&CorePrPsInfo::uid),
-        "Process User ID"
-        )
+    .def_prop_rw("uid",
+        nb::overload_cast<>(&CorePrPsInfo::uid, nb::const_),
+        nb::overload_cast<uint32_t>(&CorePrPsInfo::uid),
+        "Process User ID"_doc)
 
-    .def_property("gid",
-        static_cast<getter_t<uint32_t>>(&CorePrPsInfo::gid),
-        static_cast<setter_t<uint32_t>>(&CorePrPsInfo::gid),
-        "Process Group ID"
-        )
+    .def_prop_rw("gid",
+        nb::overload_cast<>(&CorePrPsInfo::gid, nb::const_),
+        nb::overload_cast<uint32_t>(&CorePrPsInfo::gid),
+        "Process Group ID"_doc)
 
-    .def_property("pid",
-        static_cast<getter_t<int32_t>>(&CorePrPsInfo::pid),
-        static_cast<setter_t<int32_t>>(&CorePrPsInfo::pid),
-        "Process ID"
-        )
+    .def_prop_rw("pid",
+        nb::overload_cast<>(&CorePrPsInfo::pid, nb::const_),
+        nb::overload_cast<int32_t>(&CorePrPsInfo::pid),
+        "Process ID"_doc)
 
-    .def_property("ppid",
-        static_cast<getter_t<int32_t>>(&CorePrPsInfo::ppid),
-        static_cast<setter_t<int32_t>>(&CorePrPsInfo::ppid),
-        "Process parent ID"
-        )
+    .def_prop_rw("ppid",
+        nb::overload_cast<>(&CorePrPsInfo::ppid, nb::const_),
+        nb::overload_cast<int32_t>(&CorePrPsInfo::ppid),
+        "Process parent ID"_doc)
 
-    .def_property("pgrp",
-        static_cast<getter_t<int32_t>>(&CorePrPsInfo::pgrp),
-        static_cast<setter_t<int32_t>>(&CorePrPsInfo::pgrp),
-        "Process session group ID"
-        )
+    .def_prop_rw("pgrp",
+        nb::overload_cast<>(&CorePrPsInfo::pgrp, nb::const_),
+        nb::overload_cast<int32_t>(&CorePrPsInfo::pgrp),
+        "Process session group ID"_doc)
 
-    .def_property("sid",
-        static_cast<getter_t<int32_t>>(&CorePrPsInfo::sid),
-        static_cast<setter_t<int32_t>>(&CorePrPsInfo::sid),
-        "Process session ID"
-        )
+    .def_prop_rw("sid",
+        nb::overload_cast<>(&CorePrPsInfo::sid, nb::const_),
+        nb::overload_cast<int32_t>(&CorePrPsInfo::sid),
+        "Process session ID"_doc)
 
-    .def("__eq__", &CorePrPsInfo::operator==)
-    .def("__ne__", &CorePrPsInfo::operator!=)
-    .def("__hash__",
-        [] (const CorePrPsInfo& note) {
-          return Hash::hash(note);
-        })
-
-    .def("__str__",
-        [] (const CorePrPsInfo& note)
-        {
-          std::ostringstream stream;
-          stream << note;
-          std::string str = stream.str();
-          return str;
-        });
+    LIEF_DEFAULT_STR(LIEF::ELF::CorePrPsInfo);
 }
 
-}
 }

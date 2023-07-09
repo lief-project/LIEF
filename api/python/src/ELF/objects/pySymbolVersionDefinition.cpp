@@ -15,74 +15,50 @@
  */
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-#include "pyIterators.hpp"
-#include "pyELF.hpp"
+#include "pyIterator.hpp"
+#include "ELF/pyELF.hpp"
 
-#include "LIEF/ELF/hash.hpp"
+#include "LIEF/ELF/SymbolVersionAux.hpp"
 #include "LIEF/ELF/SymbolVersionDefinition.hpp"
 
-namespace LIEF {
-namespace ELF {
-
-template<class T>
-using getter_t = T (SymbolVersionDefinition::*)(void) const;
-
-template<class T>
-using setter_t = void (SymbolVersionDefinition::*)(T);
-
-template<class T>
-using no_const_getter = T (SymbolVersionDefinition::*)(void);
-
+namespace LIEF::ELF::py {
 
 template<>
-void create<SymbolVersionDefinition>(py::module& m) {
+void create<SymbolVersionDefinition>(nb::module_& m) {
+  using namespace LIEF::py;
 
-  py::class_<SymbolVersionDefinition, LIEF::Object> sym_ver_def(m, "SymbolVersionDefinition",
-      "Class which represents an entry defined in ``DT_VERDEF`` or ``.gnu.version_d``");
+  nb::class_<SymbolVersionDefinition, LIEF::Object> sym_ver_def(m, "SymbolVersionDefinition",
+      "Class which represents an entry defined in ``DT_VERDEF`` or ``.gnu.version_d``"_doc);
 
   init_ref_iterator<SymbolVersionDefinition::it_version_aux>(sym_ver_def, "it_version_aux");
   sym_ver_def
-    .def_property("version",
-        static_cast<getter_t<uint16_t>>(&SymbolVersionDefinition::version),
-        static_cast<setter_t<uint16_t>>(&SymbolVersionDefinition::version),
+    .def_prop_rw("version",
+        nb::overload_cast<>(&SymbolVersionDefinition::version, nb::const_),
+        nb::overload_cast<uint16_t>(&SymbolVersionDefinition::version),
         R"delim(
         Version revision. Should be 1
 
         This field should always have the value ``1``. It will be changed
         if the versioning implementation has to be changed in an incompatible way.
-        )delim")
+        )delim"_doc)
 
-    .def_property("flags",
-        static_cast<getter_t<uint16_t>>(&SymbolVersionDefinition::flags),
-        static_cast<setter_t<uint16_t>>(&SymbolVersionDefinition::flags),
-        "Version information")
+    .def_prop_rw("flags",
+        nb::overload_cast<>(&SymbolVersionDefinition::flags, nb::const_),
+        nb::overload_cast<uint16_t>(&SymbolVersionDefinition::flags),
+        "Version information"_doc)
 
-    .def_property("hash",
-        static_cast<getter_t<uint32_t>>(&SymbolVersionDefinition::hash),
-        static_cast<setter_t<uint32_t>>(&SymbolVersionDefinition::hash),
-        "Hash value of the symbol's name (using ELF hash function)")
+    .def_prop_rw("hash",
+        nb::overload_cast<>(&SymbolVersionDefinition::hash, nb::const_),
+        nb::overload_cast<uint32_t>(&SymbolVersionDefinition::hash),
+        "Hash value of the symbol's name (using ELF hash function)"_doc)
 
-    .def_property_readonly("auxiliary_symbols",
-        static_cast<no_const_getter<SymbolVersionDefinition::it_version_aux>>(&SymbolVersionDefinition::symbols_aux),
-        py::return_value_policy::reference_internal)
+    .def_prop_ro("auxiliary_symbols",
+        nb::overload_cast<>(&SymbolVersionDefinition::symbols_aux),
+        nb::rv_policy::reference_internal)
 
-    .def("__eq__", &SymbolVersionDefinition::operator==)
-    .def("__ne__", &SymbolVersionDefinition::operator!=)
-    .def("__hash__",
-        [] (const SymbolVersionDefinition& svd) {
-          return Hash::hash(svd);
-        })
-
-    .def("__str__",
-        [] (const SymbolVersionDefinition& svd)
-        {
-          std::ostringstream stream;
-          stream << svd;
-          std::string str =  stream.str();
-          return str;
-        });
+    LIEF_DEFAULT_STR(LIEF::ELF::SymbolVersionDefinition);
 }
 
-}
 }

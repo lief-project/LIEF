@@ -15,41 +15,31 @@
  */
 #include <string>
 #include <sstream>
-#include <vector>
+#include <nanobind/stl/string.h>
 
-#include "pyELF.hpp"
+#include "ELF/pyELF.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
 
-namespace LIEF {
-namespace ELF {
+namespace LIEF::ELF::py {
 
 template<>
-void create<CoreFileEntry>(py::module& m) {
+void create<CoreFileEntry>(nb::module_& m) {
 
-  py::class_<CoreFileEntry>(m, "CoreFileEntry")
+  nb::class_<CoreFileEntry>(m, "CoreFileEntry")
 
-    .def_readwrite("start", &CoreFileEntry::start,
-      "Start address of mapped file")
+    .def_rw("start", &CoreFileEntry::start,
+      "Start address of mapped file"_doc)
 
-    .def_readwrite("end", &CoreFileEntry::end,
-      "End address of mapped file")
+    .def_rw("end", &CoreFileEntry::end,
+      "End address of mapped file"_doc)
 
-    .def_readwrite("file_ofs", &CoreFileEntry::file_ofs,
-      "Offset (in core) of mapped file")
+    .def_rw("file_ofs", &CoreFileEntry::file_ofs,
+      "Offset (in core) of mapped file"_doc)
 
-    .def_readwrite("path", &CoreFileEntry::path,
-      "Path of mapped file")
+    .def_rw("path", &CoreFileEntry::path,
+      "Path of mapped file"_doc)
 
-
-    .def("__str__",
-        [] (const CoreFileEntry& entry)
-        {
-          std::ostringstream stream;
-          stream << entry;
-          return stream.str();
-        });
-
+    LIEF_DEFAULT_STR(LIEF::ELF::CoreFileEntry);
 }
 
-}
 }

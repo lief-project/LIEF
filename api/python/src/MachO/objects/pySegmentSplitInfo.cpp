@@ -13,65 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
 
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
+#include "nanobind/extra/memoryview.hpp"
 
-namespace LIEF {
-namespace MachO {
-
-template<class T>
-using getter_t = T (SegmentSplitInfo::*)(void) const;
-
-template<class T>
-using setter_t = void (SegmentSplitInfo::*)(T);
-
+namespace LIEF::MachO::py {
 
 template<>
-void create<SegmentSplitInfo>(py::module& m) {
+void create<SegmentSplitInfo>(nb::module_& m) {
 
-  py::class_<SegmentSplitInfo, LoadCommand>(m, "SegmentSplitInfo",
-      "Class that represents the LOAD_COMMAND_TYPES::LC_SEGMENT_SPLIT_INFO command")
+  nb::class_<SegmentSplitInfo, LoadCommand>(m, "SegmentSplitInfo",
+      "Class that represents the LOAD_COMMAND_TYPES::LC_SEGMENT_SPLIT_INFO command"_doc)
 
-    .def_property("data_offset",
-        static_cast<getter_t<uint32_t>>(&SegmentSplitInfo::data_offset),
-        static_cast<setter_t<uint32_t>>(&SegmentSplitInfo::data_offset),
-        "Offset in the binary where the data start")
+    .def_prop_rw("data_offset",
+        nb::overload_cast<>(&SegmentSplitInfo::data_offset, nb::const_),
+        nb::overload_cast<uint32_t>(&SegmentSplitInfo::data_offset),
+        "Offset in the binary where the data start"_doc)
 
-    .def_property("data_size",
-        static_cast<getter_t<uint32_t>>(&SegmentSplitInfo::data_size),
-        static_cast<setter_t<uint32_t>>(&SegmentSplitInfo::data_size),
-        "Size of the raw data")
+    .def_prop_rw("data_size",
+        nb::overload_cast<>(&SegmentSplitInfo::data_size, nb::const_),
+        nb::overload_cast<uint32_t>(&SegmentSplitInfo::data_size),
+        "Size of the raw data"_doc)
 
-    .def_property_readonly("content",
+    .def_prop_ro("content",
         [] (const SegmentSplitInfo& self) {
-          span<const uint8_t> content = self.content();
-          return py::memoryview::from_memory(content.data(), content.size());
-        }, "The original content as a bytes stream")
+          const span<const uint8_t> content = self.content();
+          return nb::memoryview::from_memory(content.data(), content.size());
+        }, "The original content as a bytes stream"_doc)
 
-    .def("__eq__", &SegmentSplitInfo::operator==)
-    .def("__ne__", &SegmentSplitInfo::operator!=)
-    .def("__hash__",
-        [] (const SegmentSplitInfo& func) {
-          return Hash::hash(func);
-        })
-
-
-    .def("__str__",
-        [] (const SegmentSplitInfo& func)
-        {
-          std::ostringstream stream;
-          stream << func;
-          std::string str = stream.str();
-          return str;
-        });
-}
+    LIEF_DEFAULT_STR(SegmentSplitInfo);
 
 }
 }

@@ -4,7 +4,7 @@ VDEX
 Utilities
 *********
 
-.. autofunction:: lief.VDEX.is_vdex
+.. autofunction:: lief.is_vdex
 
 .. autofunction:: lief.VDEX.version
 

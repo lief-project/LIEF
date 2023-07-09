@@ -37,10 +37,17 @@ class LIEF_API Header : public Object {
   friend class Parser;
 
   public:
+  struct element_t {
+    element_t(HEADER_KEYS key, const std::string& value) :
+      key(key), value(const_cast<std::string*>(&value)) {}
+
+    HEADER_KEYS key;
+    std::string* value = nullptr;
+  };
   using magic_t               = std::array<uint8_t, 4>; // oat\n
   using key_values_t          = std::map<HEADER_KEYS, std::string>;
-  using it_key_values_t       = ref_iterator< std::vector< std::pair<HEADER_KEYS, std::reference_wrapper<std::string>> > >;
-  using it_const_key_values_t = const_ref_iterator<std::vector<std::pair<HEADER_KEYS, std::string>>>;
+  using it_key_values_t       = ref_iterator<std::vector<element_t>>;
+  using it_const_key_values_t = const_ref_iterator<std::vector<element_t>>;
 
   //! @brief Iterator type over
   using keys_t   = std::vector<HEADER_KEYS>;

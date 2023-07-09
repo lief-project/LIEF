@@ -13,49 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/LoadConfigurations.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-
-namespace LIEF {
-namespace PE {
+namespace LIEF::PE::py {
 
 template<>
-void create<LoadConfigurationV9>(py::module& m) {
-  py::class_<LoadConfigurationV9, LoadConfigurationV8>(m, "LoadConfigurationV9")
-    .def(py::init<>())
+void create<LoadConfigurationV9>(nb::module_& m) {
+  nb::class_<LoadConfigurationV9, LoadConfigurationV8>(m, "LoadConfigurationV9")
+    .def(nb::init<>())
 
-    .def_property("guard_eh_continuation_table",
-        py::overload_cast<>(&LoadConfigurationV9::guard_eh_continuation_table, py::const_),
-        py::overload_cast<uint64_t>(&LoadConfigurationV9::guard_eh_continuation_table),
-        "")
+    .def_prop_rw("guard_eh_continuation_table",
+        nb::overload_cast<>(&LoadConfigurationV9::guard_eh_continuation_table, nb::const_),
+        nb::overload_cast<uint64_t>(&LoadConfigurationV9::guard_eh_continuation_table))
 
-    .def_property("guard_eh_continuation_count",
-        py::overload_cast<>(&LoadConfigurationV9::guard_eh_continuation_count, py::const_),
-        py::overload_cast<uint64_t>(&LoadConfigurationV9::guard_eh_continuation_count),
-        "")
+    .def_prop_rw("guard_eh_continuation_count",
+        nb::overload_cast<>(&LoadConfigurationV9::guard_eh_continuation_count, nb::const_),
+        nb::overload_cast<uint64_t>(&LoadConfigurationV9::guard_eh_continuation_count))
 
-    .def("__eq__", &LoadConfigurationV9::operator==)
-    .def("__ne__", &LoadConfigurationV9::operator!=)
-    .def("__hash__",
-        [] (const LoadConfigurationV9& config) {
-          return Hash::hash(config);
-        })
-
-
-    .def("__str__", [] (const LoadConfigurationV9& config)
-        {
-          std::ostringstream stream;
-          stream << config;
-          std::string str = stream.str();
-          return str;
-        });
+    LIEF_DEFAULT_STR(LoadConfigurationV9);
 }
 
-}
 }

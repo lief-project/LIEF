@@ -13,28 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
 
-#include "LIEF/PE/hash.hpp"
-#include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/attributes/MsSpcNestedSignature.hpp"
 
 #include <string>
 #include <sstream>
 
-namespace LIEF {
-namespace PE {
+#include <nanobind/stl/string.h>
 
-template<class T>
-using getter_t = T (MsSpcNestedSignature::*)(void) const;
-
-template<class T>
-using setter_t = void (MsSpcNestedSignature::*)(T);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<MsSpcNestedSignature>(py::module& m) {
-  py::class_<MsSpcNestedSignature, Attribute>(m, "MsSpcNestedSignature",
+void create<MsSpcNestedSignature>(nb::module_& m) {
+  nb::class_<MsSpcNestedSignature, Attribute>(m, "MsSpcNestedSignature",
     R"delim(
     Interface over the structure described by the OID ``1.3.6.1.4.1.311.2.4.1``
 
@@ -45,19 +37,10 @@ void create<MsSpcNestedSignature>(py::module& m) {
         MsSpcNestedSignature ::= SET OF SignedData
 
     With ``SignedData``, the structure described in PKCS #7 RFC (See: :class:`lief.PE.Signature`)
-    )delim")
-    .def_property_readonly("signature",
-        &MsSpcNestedSignature::sig,
-        "Underlying " RST_CLASS_REF(lief.PE.Signature) " object",
-        py::return_value_policy::reference)
-
-    .def("__hash__",
-        [] (const MsSpcNestedSignature& obj) {
-          return Hash::hash(obj);
-        })
-
-    .def("__str__", &MsSpcNestedSignature::print);
+    )delim"_doc)
+    .def_prop_ro("signature", &MsSpcNestedSignature::sig,
+        "Underlying " RST_CLASS_REF(lief.PE.Signature) " object"_doc,
+        nb::rv_policy::reference_internal);
 }
 
-}
 }

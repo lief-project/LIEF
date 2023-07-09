@@ -13,45 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/CodeView.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/array.h>
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (CodeView::*)(void) const;
-
-template<class T>
-using setter_t = void (CodeView::*)(T);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<CodeView>(py::module& m) {
-  py::class_<CodeView, LIEF::Object>(m, "CodeView")
-    .def_property_readonly("cv_signature",
-        static_cast<getter_t<CODE_VIEW_SIGNATURES>>(&CodeView::cv_signature),
-        "Type of the code view (" RST_CLASS_REF(lief.PE.CODE_VIEW_SIGNATURES) ")")
+void create<CodeView>(nb::module_& m) {
+  nb::class_<CodeView, LIEF::Object>(m, "CodeView")
+    .def_prop_ro("cv_signature",
+        nb::overload_cast<>(&CodeView::cv_signature, nb::const_),
+        "Type of the code view (" RST_CLASS_REF(lief.PE.CODE_VIEW_SIGNATURES) ")"_doc)
 
-    .def("__eq__", &CodeView::operator==)
-    .def("__ne__", &CodeView::operator!=)
-    .def("__hash__",
-        [] (const CodeView& codeview) {
-          return Hash::hash(codeview);
-        })
-
-    .def("__str__", [] (const CodeView& cv)
-        {
-          std::ostringstream stream;
-          stream << cv;
-          return stream.str();
-        });
+    LIEF_DEFAULT_STR(LIEF::PE::CodeView);
 }
 
-}
 }

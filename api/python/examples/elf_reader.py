@@ -254,13 +254,13 @@ def print_relocations(binary, relocations):
     for relocation in relocations:
         type = str(relocation.type)
         if binary.header.machine_type == ELF.ARCH.x86_64:
-            type = str(ELF.RELOCATION_X86_64(relocation.type))
+            type = str(relocation.type)
         elif binary.header.machine_type == ELF.ARCH.i386:
-            type = str(ELF.RELOCATION_i386(relocation.type))
+            type = str(relocation.type)
         elif binary.header.machine_type == ELF.ARCH.ARM:
-            type = str(ELF.RELOCATION_ARM(relocation.type))
+            type = str(relocation.type)
         elif binary.header.machine_type == ELF.ARCH.AARCH64:
-            type = str(ELF.RELOCATION_AARCH64(relocation.type))
+            type = str(relocation.type)
 
         symbol_name = ""
         if relocation.has_symbol:

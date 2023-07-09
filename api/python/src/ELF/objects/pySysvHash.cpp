@@ -15,25 +15,18 @@
  */
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 
-#include "pyELF.hpp"
+#include "ELF/pyELF.hpp"
 
-#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/SysvHash.hpp"
 
-namespace LIEF {
-namespace ELF {
-
-template<class T>
-using getter_t = T (SysvHash::*)() const;
-
-template<class T>
-using setter_t = void (SysvHash::*)(T);
+namespace LIEF::ELF::py {
 
 template<>
-void create<SysvHash>(py::module& m) {
-
-  py::class_<SysvHash, LIEF::Object>(m, "SysvHash",
+void create<SysvHash>(nb::module_& m) {
+  nb::class_<SysvHash, LIEF::Object>(m, "SysvHash",
     R"delim(
     Class which represents the SYSV hash for the symbols resolution
 
@@ -41,48 +34,28 @@ void create<SysvHash>(py::module& m) {
 
       * http://www.linker-aliens.org/blogs/ali/entry/gnu_hash_elf_sections/
       * https://docs.oracle.com/cd/E23824_01/html/819-0690/chapter6-48031.html
-    )delim")
-    .def(py::init<>())
+    )delim"_doc)
+    .def(nb::init<>())
 
-    .def_property_readonly("nbucket",
+    .def_prop_ro("nbucket",
       &SysvHash::nbucket,
-      "Return the number of buckets")
+      "Return the number of buckets"_doc)
 
-    .def_property("nchain",
-      static_cast<getter_t<uint32_t>>(&SysvHash::nchain),
-      static_cast<setter_t<uint32_t>>(&SysvHash::nchain),
-      "Return the number of *chains* (symbol table index)")
+    .def_prop_rw("nchain",
+      nb::overload_cast<>(&SysvHash::nchain, nb::const_),
+      nb::overload_cast<uint32_t>(&SysvHash::nchain),
+      "Return the number of *chains* (symbol table index)"_doc)
 
-    .def_property_readonly("buckets",
+    .def_prop_ro("buckets",
       &SysvHash::buckets,
-      "Buckets values",
-      py::return_value_policy::reference_internal)
+      "Buckets values"_doc,
+      nb::rv_policy::reference_internal)
 
-    .def_property_readonly("chains",
+    .def_prop_ro("chains",
       &SysvHash::chains,
-      "Chains values",
-      py::return_value_policy::reference_internal)
+      "Chains values"_doc,
+      nb::rv_policy::reference_internal)
 
-    .def("__eq__", &SysvHash::operator==)
-    .def("__ne__", &SysvHash::operator!=)
-    .def("__hash__",
-        [] (const SysvHash& sysvhash) {
-          return Hash::hash(sysvhash);
-        })
-
-
-    .def("__str__",
-        [] (const SysvHash& sysvhash)
-        {
-          std::ostringstream stream;
-          stream << sysvhash;
-          std::string str = stream.str();
-          return str;
-        });
-
-
-
-}
-
+    LIEF_DEFAULT_STR(LIEF::ELF::SysvHash);
 }
 }

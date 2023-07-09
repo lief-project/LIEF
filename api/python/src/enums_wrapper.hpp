@@ -13,32 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef PY_LIEF_ENUMS_WRAPPER_H_
-#define PY_LIEF_ENUMS_WRAPPER_H_
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
+#ifndef PY_LIEF_ENUMS_WRAPPER_H
+#define PY_LIEF_ENUMS_WRAPPER_H
+#include <nanobind/nanobind.h>
+#include <LIEF/logging.hpp>
 
 #include "LIEF/visibility.h"
-
-namespace py = pybind11;
 
 namespace LIEF {
 
 template <class Type>
-class LIEF_LOCAL enum_ : public pybind11::enum_<Type> {
+class LIEF_LOCAL enum_ : public nanobind::enum_<Type> {
   public:
-  using py::enum_<Type>::def;
-  using py::enum_<Type>::def_property_readonly_static;
-  using Scalar = typename py::enum_<Type>::Scalar;
+  using nanobind::enum_<Type>::def;
+  using nanobind::enum_<Type>::def_static;
+  using Scalar = typename std::underlying_type_t<Type>;
+  using nanobind::class_<Type>::def_prop_ro;
 
   template <typename... Extra>
-  enum_(const py::handle &scope, const char *name, const Extra&... extra) :
-    py::enum_<Type>{scope, name, extra...}
+  enum_(const nanobind::handle &scope, const char *name, const Extra&... extra) :
+    nanobind::enum_<Type>{scope, name, extra...}
   {
-    constexpr bool is_arithmetic = py::detail::any_of<std::is_same<py::arithmetic, Extra>...>::value;
+    constexpr bool is_arithmetic = (std::is_same_v<nanobind::is_arithmetic, Extra> || ...);
+    /* These are methods not (yet?) implemented in nanobind */
+    /* ------------------------------------------------------------------------*/
+    def_prop_ro("value", [] (const Type &value) { return (Scalar) value; },
+        "The underlying integer value");
+    def_static("from_value", [] (Scalar i) { return static_cast<Type>(i); });
+    /* ------------------------------------------------------------------------*/
     def("__eq__", [](const Type &value, Scalar value2) { return (Scalar) value == value2; });
     def("__ne__", [](const Type &value, Scalar value2) { return (Scalar) value != value2; });
-    if (is_arithmetic) {
+    if constexpr (is_arithmetic) {
       def("__lt__", [](const Type &value, Scalar value2) { return (Scalar) value < value2; });
       def("__gt__", [](const Type &value, Scalar value2) { return (Scalar) value > value2; });
       def("__le__", [](const Type &value, Scalar value2) { return (Scalar) value <= value2; });
@@ -51,7 +56,7 @@ class LIEF_LOCAL enum_ : public pybind11::enum_<Type> {
       def("__ror__", [](const Type &value, Scalar value2) { return (Scalar) value | value2; });
       def("__rxor__", [](const Type &value, Scalar value2) { return (Scalar) value ^ value2; });
       def("__and__", [](const Type &value, const Type &value2) { return (Scalar) value & (Scalar) value2; });
-      def("__or__", [](const Type &value, const Type &value2) { return (Scalar) value | (Scalar) value2; });
+      def("__or__", [](const Type &value, const Type &value2) { return Type((Scalar) value | (Scalar) value2); });
       def("__xor__", [](const Type &value, const Type &value2) { return (Scalar) value ^ (Scalar) value2; });
     }
   }

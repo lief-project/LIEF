@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef PY_LIEF_PLATFORM_H_
-#define PY_LIEF_PLATFORM_H_
+#ifndef PY_LIEF_PLATFORM_H
+#define PY_LIEF_PLATFORM_H
 
-#include "LIEF/platforms.hpp"
-#include "pyLIEF.hpp"
+namespace nanobind {
+class module_;
+}
 
-namespace LIEF {
-
-void init_python_platforms(py::module&);
-
+namespace LIEF::py {
+void init_platforms(nanobind::module_&);
 }
 
 #endif

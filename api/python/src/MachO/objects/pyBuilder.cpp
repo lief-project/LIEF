@@ -14,33 +14,35 @@
  * limitations under the License.
  */
 
-
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
 #include "pyErr.hpp"
 
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/FatBinary.hpp"
 #include "LIEF/MachO/Builder.hpp"
 
-namespace LIEF {
-namespace MachO {
+#include <nanobind/stl/string.h>
+
+namespace LIEF::MachO::py {
 
 template<>
-void create<Builder>(py::module& m) {
-  py::class_<Builder> builder(m, "Builder",
+void create<Builder>(nb::module_& m) {
+  using namespace LIEF::py;
+
+  nb::class_<Builder> builder(m, "Builder",
       R"delim(
       Class used to reconstruct a Mach-O binary from its object representation
-      )delim");
+      )delim"_doc);
 
-  py::class_<Builder::config_t>(builder, "config_t",
-                                "Interface to tweak the " RST_CLASS_REF(lief.MachO.Builder) "")
-    .def(py::init<>())
-    .def_readwrite("linkedit", &Builder::config_t::linkedit);
+  nb::class_<Builder::config_t>(builder, "config_t",
+                                "Interface to tweak the " RST_CLASS_REF(lief.MachO.Builder) ""_doc)
+    .def(nb::init<>())
+    .def_rw("linkedit", &Builder::config_t::linkedit);
 
   builder
     .def_static("write",
                 [] (Binary& bin, const std::string& out) {
-                  auto target = py::overload_cast<Binary&, const std::string&>(&Builder::write);
+                  auto target = nb::overload_cast<Binary&, const std::string&>(&Builder::write);
                   return error_or(target, bin, out);
                 },
                 R"delim(
@@ -48,7 +50,7 @@ void create<Builder>(py::module& m) {
                 "binary"_a, "output"_a)
     .def_static("write",
                 [] (Binary& bin, const std::string& out, Builder::config_t config) {
-                  auto target = py::overload_cast<Binary&, const std::string&, Builder::config_t>(&Builder::write);
+                  auto target = nb::overload_cast<Binary&, const std::string&, Builder::config_t>(&Builder::write);
                   return error_or(target, bin, out, config);
                 },
                 R"delim(
@@ -56,7 +58,7 @@ void create<Builder>(py::module& m) {
                 "binary"_a, "output"_a, "config"_a)
     .def_static("write",
                 [] (FatBinary& fat, const std::string& out) {
-                  auto target = py::overload_cast<FatBinary&, const std::string&>(&Builder::write);
+                  auto target = nb::overload_cast<FatBinary&, const std::string&>(&Builder::write);
                   return error_or(target, fat, out);
                 },
                 R"delim(
@@ -64,12 +66,11 @@ void create<Builder>(py::module& m) {
                 "fat_binary"_a, "output"_a)
     .def_static("write",
                 [] (FatBinary& fat, const std::string& out, Builder::config_t config) {
-                  auto target = py::overload_cast<FatBinary&, const std::string&, Builder::config_t>(&Builder::write);
+                  auto target = nb::overload_cast<FatBinary&, const std::string&, Builder::config_t>(&Builder::write);
                   return error_or(target, fat, out, config);
                 },
                 R"delim(
                 )delim",
                 "fat_binary"_a, "output"_a, "config"_a);
-}
 }
 }

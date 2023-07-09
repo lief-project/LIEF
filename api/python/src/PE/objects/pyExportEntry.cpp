@@ -13,86 +13,60 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
+#include "pySafeString.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/ExportEntry.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (ExportEntry::*)(void) const;
-
-template<class T>
-using setter_t = void (ExportEntry::*)(T);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<ExportEntry>(py::module& m) {
-  py::class_<ExportEntry, LIEF::Symbol> export_entry(m, "ExportEntry",
+void create<ExportEntry>(nb::module_& m) {
+  nb::class_<ExportEntry, LIEF::Symbol> export_entry(m, "ExportEntry",
       R"delim(
       Class which represents a PE Export entry (cf. :class:`lief.PE.Export`)
-      )delim");
+      )delim"_doc);
 
-  py::class_<ExportEntry::forward_information_t>(export_entry, "forward_information_t")
-    .def_readwrite("library", &ExportEntry::forward_information_t::library)
-    .def_readwrite("function", &ExportEntry::forward_information_t::function)
-
-    .def("__str__", [] (const ExportEntry::forward_information_t& info)
-        {
-          std::ostringstream stream;
-          stream << info;
-          return  stream.str();
-        });
+  nb::class_<ExportEntry::forward_information_t>(export_entry, "forward_information_t")
+    .def_rw("library", &ExportEntry::forward_information_t::library)
+    .def_rw("function", &ExportEntry::forward_information_t::function)
+    LIEF_DEFAULT_STR(LIEF::PE::ExportEntry::forward_information_t);
 
   export_entry
-    .def(py::init<>())
+    .def(nb::init<>())
 
-    .def_property("name",
+    .def_prop_rw("name",
         [] (const ExportEntry& obj) {
-          return safe_string_converter(obj.name());
+          return LIEF::py::safe_string(obj.name());
         },
-        static_cast<setter_t<const std::string&>>(&ExportEntry::name))
+        nb::overload_cast<const std::string&>(&ExportEntry::name))
 
-    .def_property("ordinal",
-        static_cast<getter_t<uint16_t>>(&ExportEntry::ordinal),
-        static_cast<setter_t<uint16_t>>(&ExportEntry::ordinal))
+    .def_prop_rw("ordinal",
+        nb::overload_cast<>(&ExportEntry::ordinal, nb::const_),
+        nb::overload_cast<uint16_t>(&ExportEntry::ordinal))
 
-    .def_property("address",
-        static_cast<getter_t<uint32_t>>(&ExportEntry::address),
-        static_cast<setter_t<uint32_t>>(&ExportEntry::address))
+    .def_prop_rw("address",
+        nb::overload_cast<>(&ExportEntry::address, nb::const_),
+        nb::overload_cast<uint32_t>(&ExportEntry::address))
 
-    .def_property("is_extern",
-        static_cast<getter_t<bool>>(&ExportEntry::is_extern),
-        static_cast<setter_t<bool>>(&ExportEntry::is_extern))
+    .def_prop_rw("is_extern",
+        nb::overload_cast<>(&ExportEntry::is_extern, nb::const_),
+        nb::overload_cast<bool>(&ExportEntry::is_extern))
 
-    .def_property_readonly("is_forwarded",
+    .def_prop_ro("is_forwarded",
         &ExportEntry::is_forwarded)
 
-    .def_property_readonly("forward_information",
+    .def_prop_ro("forward_information",
         &ExportEntry::forward_information)
 
-    .def_property_readonly("function_rva",
+    .def_prop_ro("function_rva",
         &ExportEntry::function_rva)
 
-    .def("__eq__", &ExportEntry::operator==)
-    .def("__ne__", &ExportEntry::operator!=)
-    .def("__hash__",
-        [] (const ExportEntry& export_entry) {
-          return Hash::hash(export_entry);
-        })
+    LIEF_DEFAULT_STR(LIEF::PE::ExportEntry);
 
-    .def("__str__", [] (const ExportEntry& entry)
-        {
-          std::ostringstream stream;
-          stream << entry;
-          std::string str = stream.str();
-          return str;
-        });
-}
 }
 }

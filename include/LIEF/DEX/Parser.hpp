@@ -17,18 +17,22 @@
 #define LIEF_DEX_PARSER_H
 
 #include <memory>
+#include <vector>
+#include <string>
+#include <unordered_map>
 
 #include "LIEF/visibility.h"
-
-#include "LIEF/BinaryStream/VectorStream.hpp"
-
-#include "LIEF/DEX/File.hpp"
+#include "LIEF/DEX/types.hpp"
 
 namespace LIEF {
+class VectorStream;
+
 namespace DEX {
 class Class;
 class Method;
 class Field;
+class File;
+class Type;
 
 //! Class which parses a DEX file to produce a DEX::File object
 class LIEF_API Parser {
@@ -114,9 +118,6 @@ class LIEF_API Parser {
 
   std::unique_ptr<VectorStream> stream_;
 };
-
-
-
 
 } // namespace DEX
 } // namespace LIEF

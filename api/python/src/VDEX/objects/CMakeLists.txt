@@ -1,0 +1,7 @@
+set(LIEF_PYTHON_VDEX_OBJ_SRC
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyHeader.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyParser.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyFile.cpp"
+)
+
+target_sources(pyLIEF PRIVATE ${LIEF_PYTHON_VDEX_OBJ_SRC})

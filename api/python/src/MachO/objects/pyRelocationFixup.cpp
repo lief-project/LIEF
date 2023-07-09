@@ -13,30 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/RelocationFixup.hpp"
 
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
 
-namespace LIEF {
-namespace MachO {
-
-template<class T>
-using getter_t = T (RelocationFixup::*)() const;
-
-template<class T>
-using setter_t = void (RelocationFixup::*)(T);
-
+namespace LIEF::MachO::py {
 
 template<>
-void create<RelocationFixup>(py::module& m) {
-
-  py::class_<RelocationFixup, Relocation>(m, "RelocationFixup",
+void create<RelocationFixup>(nb::module_& m) {
+  nb::class_<RelocationFixup, Relocation>(m, "RelocationFixup",
       R"delim(
       Class that represents a rebase relocation found in the LC_DYLD_CHAINED_FIXUPS command.
 
@@ -50,27 +39,13 @@ void create<RelocationFixup>(py::module& m) {
 
       If the Mach-O loader chooses another base address (like 0x7ff100000), it must set
       `0x10000d270` to `0x7ff1073a8`.
-      )delim")
+      )delim"_doc)
 
-    .def_property("target",
-        py::overload_cast<>(&RelocationFixup::target, py::const_),
-        py::overload_cast<uint64_t>(&RelocationFixup::target))
+    .def_prop_rw("target",
+        nb::overload_cast<>(&RelocationFixup::target, nb::const_),
+        nb::overload_cast<uint64_t>(&RelocationFixup::target))
 
-    .def("__eq__", &RelocationFixup::operator==)
-    .def("__ne__", &RelocationFixup::operator!=)
-    .def("__hash__",
-        [] (const RelocationFixup& relocation) {
-          return Hash::hash(relocation);
-        })
-
-    .def("__str__",
-        [] (const RelocationFixup& relocation) {
-          std::ostringstream stream;
-          std::string str = stream.str();
-          return stream.str();
-        });
-
-}
+    LIEF_DEFAULT_STR(RelocationFixup);
 
 }
 }

@@ -13,52 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-
+#include "ELF/pyELF.hpp"
 #include "LIEF/ELF/ParserConfig.hpp"
 
-#include "pyELF.hpp"
-
-namespace LIEF {
-namespace ELF {
+namespace LIEF::ELF::py {
 
 template<>
-void create<ParserConfig>(py::module& m) {
+void create<ParserConfig>(nb::module_& m) {
 
-  py::class_<ParserConfig>(m, "ParserConfig",
+  nb::class_<ParserConfig>(m, "ParserConfig",
       R"delim(
-      This class is used to tweak the ELF Parser (:class:`~lief.ELF.Parser`)
-      )delim")
+      This class is used to tweak the ELF Parser
+      )delim"_doc)
 
-    .def(py::init<>())
-    .def_readwrite("parse_relocations", &ParserConfig::parse_relocations,
-                   "Whether relocations (including plt-like relocations) should be parsed.")
-    .def_readwrite("parse_dyn_symbols", &ParserConfig::parse_dyn_symbols,
-                   "Whether dynamic symbols (those from `.dynsym`) should be parsed")
-    .def_readwrite("parse_static_symbols", &ParserConfig::parse_static_symbols,
-                   "Whether debug symbols (those from `.symtab`) should be parsed")
-    .def_readwrite("parse_symbol_versions", &ParserConfig::parse_symbol_versions,
-                   "Whether versioning symbols should be parsed")
-    .def_readwrite("parse_notes", &ParserConfig::parse_notes,
-                   "Whether ELF notes information should be parsed")
-    .def_readwrite("parse_overlay", &ParserConfig::parse_overlay,
-                   "Whether the overlay data should be parsed")
-    .def_readwrite("count_mtd", &ParserConfig::count_mtd,
-                   R"delim(
-                   The :class:`~lief.ELF.DYNSYM_COUNT_METHODS` to use for counting the dynamic symbols
+    .def(nb::init<>())
+    .def_rw("parse_relocations", &ParserConfig::parse_relocations,
+            "Whether relocations (including plt-like relocations) should be parsed."_doc)
+    .def_rw("parse_dyn_symbols", &ParserConfig::parse_dyn_symbols,
+            "Whether dynamic symbols (those from `.dynsym`) should be parsed"_doc)
+    .def_rw("parse_static_symbols", &ParserConfig::parse_static_symbols,
+            "Whether debug symbols (those from `.symtab`) should be parsed"_doc)
+    .def_rw("parse_symbol_versions", &ParserConfig::parse_symbol_versions,
+            "Whether versioning symbols should be parsed"_doc)
+    .def_rw("parse_notes", &ParserConfig::parse_notes,
+            "Whether ELF notes  information should be parsed"_doc)
+    .def_rw("parse_overlay", &ParserConfig::parse_overlay,
+            "Whether the overlay data should be parsed")
+    .def_rw("count_mtd", &ParserConfig::count_mtd,
+            R"delim(
+            The :class:`~lief.ELF.DYNSYM_COUNT_METHODS` to use for counting the dynamic symbols
 
-                   For *weird* binaries (e.g sectionless) you can choose the method for counting dynamic symbols
-                   (:class:`lief.ELF.DYNSYM_COUNT_METHODS`). By default, the value is set to
-                   :attr:`lief.ELF.DYNSYM_COUNT_METHODS.COUNT_AUTO`
-                   )delim")
+            For *weird* binaries (e.g sectionless) you can choose the method for counting dynamic symbols
+            (:class:`lief.ELF.DYNSYM_COUNT_METHODS`). By default, the value is set to
+            :attr:`lief.ELF.DYNSYM_COUNT_METHODS.COUNT_AUTO`
+            )delim"_doc)
 
-    .def_property_readonly_static("all",
-      [] (py::object /* self */) { return ParserConfig::all(); },
+    .def_prop_ro_static("all",
+      [] (const nb::object& /* self */) { return ParserConfig::all(); },
       R"delim(
       Return a parser configuration such as all the objects supported by LIEF are parsed
-      )delim");
-
+      )delim"_doc);
 }
 
 }
-}
+

@@ -14,95 +14,70 @@
  * limitations under the License.
  */
 #include "LIEF/OAT/Class.hpp"
-#include "LIEF/OAT/hash.hpp"
+#include "LIEF/OAT/Method.hpp"
+#include "LIEF/DEX/Method.hpp"
 
-#include "pyIterators.hpp"
-#include "pyOAT.hpp"
+#include "pyIterator.hpp"
+#include "OAT/pyOAT.hpp"
 
-namespace LIEF {
-namespace OAT {
+#include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 
-template<class T>
-using getter_t = T (Class::*)(void) const;
-
-template<class T>
-using setter_t = void (Class::*)(T);
-
-template<class T>
-using no_const_getter = T (Class::*)(void);
+namespace LIEF::OAT::py {
 
 template<>
-void create<Class>(py::module& m) {
+void create<Class>(nb::module_& m) {
+  using namespace LIEF::py;
 
-  py::class_<Class, LIEF::Object> cls(m, "Class", "OAT Class representation");
+  nb::class_<Class, Object> cls(m, "Class", "OAT Class representation"_doc);
 
   init_ref_iterator<Class::it_methods>(cls, "it_methods");
 
   cls
-    .def(py::init<>())
+    .def(nb::init<>())
 
-    .def("has_dex_class",
-        &Class::has_dex_class,
+    .def("has_dex_class", &Class::has_dex_class,
         "True if a " RST_CLASS_REF_FULL(lief.DEX.Class) " object "
-        "is associated with this **OAT** Class")
+        "is associated with this **OAT** Class"_doc)
 
-    .def_property_readonly("status",
-        &Class::status,
-        "Class " RST_CLASS_REF(lief.OAT.OAT_CLASS_STATUS) "")
+    .def_prop_ro("status", &Class::status,
+        "Class " RST_CLASS_REF(lief.OAT.OAT_CLASS_STATUS) ""_doc)
 
-    .def_property_readonly("type",
-        &Class::type,
+    .def_prop_ro("type", &Class::type,
         "Information (" RST_CLASS_REF(lief.OAT.OAT_CLASS_TYPES) ") about how methods "
-        "are optimized")
+        "are optimized"_doc)
 
-    .def_property_readonly("fullname",
-        &Class::fullname,
-        "Class mangled name (e.g. ``Lcom/android/MyActivity;``)")
+    .def_prop_ro("fullname", &Class::fullname,
+        "Class mangled name (e.g. ``Lcom/android/MyActivity;``)"_doc)
 
-    .def_property_readonly("index",
-        &Class::index,
-        "Index the **DEX** classes pool (" RST_ATTR_REF_FULL(lief.DEX.File.classes) ")")
+    .def_prop_ro("index", &Class::index,
+        "Index the **DEX** classes pool (" RST_ATTR_REF_FULL(lief.DEX.File.classes) ")"_doc)
 
-    .def_property_readonly("methods",
-        static_cast<no_const_getter<Class::it_methods>>(&Class::methods),
-        "Iterator over " RST_CLASS_REF_FULL(lief.OAT.Method) "")
+    .def_prop_ro("methods", nb::overload_cast<>(&Class::methods),
+        "Iterator over " RST_CLASS_REF_FULL(lief.OAT.Method) ""_doc)
 
-    .def_property_readonly("bitmap",
-        &Class::bitmap,
+    .def_prop_ro("bitmap", &Class::bitmap,
         "Bitmap information used to quickly find which methods are "
-        "optimized")
+        "optimized"_doc)
 
     .def("is_quickened",
-        static_cast<bool(Class::*)(const LIEF::DEX::Method&) const>(&Class::is_quickened),
-        "Check if the given " RST_CLASS_REF_FULL(lief.DEX.Method) " is compiled into native code",
+        nb::overload_cast<const LIEF::DEX::Method&>(&Class::is_quickened, nb::const_),
+        "Check if the given " RST_CLASS_REF_FULL(lief.DEX.Method) " is compiled into native code"_doc,
         "dex_method"_a)
 
     .def("is_quickened",
-        static_cast<bool(Class::*)(uint32_t relative_index) const>(&Class::is_quickened),
-        "Check if the Method at the given index is compiled into native code",
+        nb::overload_cast<uint32_t>(&Class::is_quickened, nb::const_),
+        "Check if the Method at the given index is compiled into native code"_doc,
         "method_index"_a)
 
     .def("method_offsets_index",
-        static_cast<uint32_t(Class::*)(const LIEF::DEX::Method&) const>(&Class::method_offsets_index))
+        nb::overload_cast<const DEX::Method&>(&Class::method_offsets_index, nb::const_))
 
     .def("method_offsets_index",
-        static_cast<uint32_t(Class::*)(uint32_t relative_index) const>(&Class::method_offsets_index))
+        nb::overload_cast<uint32_t>(&Class::method_offsets_index, nb::const_))
 
-    .def("__eq__", &Class::operator==)
-    .def("__ne__", &Class::operator!=)
-    .def("__hash__",
-        [] (const Class& cls) {
-          return Hash::hash(cls);
-        })
-
-    .def("__str__",
-        [] (const Class& cls) {
-          std::ostringstream stream;
-          stream << cls;
-          return stream.str();
-        });
+    LIEF_DEFAULT_STR(Class);
 }
 
-
-}
 }

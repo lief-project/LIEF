@@ -14,34 +14,24 @@
  * limitations under the License.
  */
 #include "LIEF/DEX/MapItem.hpp"
-#include "LIEF/DEX/hash.hpp"
 #include "LIEF/DEX/EnumToString.hpp"
 
-#include "pyDEX.hpp"
+#include "DEX/pyDEX.hpp"
+#include "enums_wrapper.hpp"
 
 #include <sstream>
 
-namespace LIEF {
-namespace DEX {
-
 #define PY_ENUM(x) to_string(x), x
 
-template<class T>
-using getter_t = T (MapItem::*)(void) const;
-
-template<class T>
-using no_const_getter_t = T (MapItem::*)(void);
-
-template<class T>
-using setter_t = void (MapItem::*)(T);
-
+namespace LIEF::DEX::py {
 
 template<>
-void create<MapItem>(py::module& m) {
+void create<MapItem>(nb::module_& m) {
 
-  py::class_<MapItem, LIEF::Object> mapitem(m, "MapItem", "DEX MapItem representation");
+  nb::class_<MapItem, LIEF::Object> mapitem(m, "MapItem",
+      "DEX MapItem representation"_doc);
 
-  py::enum_<MapItem::TYPES>(mapitem, "TYPES")
+  enum_<MapItem::TYPES>(mapitem, "TYPES")
     .value(PY_ENUM(LIEF::DEX::MapItem::TYPES::HEADER))
     .value(PY_ENUM(LIEF::DEX::MapItem::TYPES::STRING_ID))
     .value(PY_ENUM(LIEF::DEX::MapItem::TYPES::TYPE_ID))
@@ -64,32 +54,19 @@ void create<MapItem>(py::module& m) {
     .value(PY_ENUM(LIEF::DEX::MapItem::TYPES::ANNOTATIONS_DIRECTORY));
 
     mapitem
-    .def_property_readonly("type",
-        static_cast<getter_t<MapItem::TYPES>>(&MapItem::type),
-        "" RST_CLASS_REF(lief.DEX.MapItem.TYPES) " of the item")
+    .def_prop_ro("type",
+        nb::overload_cast<>(&MapItem::type, nb::const_),
+        "" RST_CLASS_REF(lief.DEX.MapItem.TYPES) " of the item"_doc)
 
-    .def_property_readonly("offset",
-        static_cast<getter_t<uint32_t>>(&MapItem::offset),
-        "Offset from the start of the file to the items in question")
+    .def_prop_ro("offset",
+        nb::overload_cast<>(&MapItem::offset, nb::const_),
+        "Offset from the start of the file to the items in question"_doc)
 
-    .def_property_readonly("size",
-        static_cast<getter_t<uint32_t>>(&MapItem::size),
-        "count of the number of items to be found at the indicated offset")
+    .def_prop_ro("size",
+        nb::overload_cast<>(&MapItem::size, nb::const_),
+        "count of the number of items to be found at the indicated offset"_doc)
 
-    .def("__eq__", &MapItem::operator==)
-    .def("__ne__", &MapItem::operator!=)
-    .def("__hash__",
-        [] (const MapItem& mlist) {
-          return Hash::hash(mlist);
-        })
-
-    .def("__str__",
-        [] (const MapItem& mlist) {
-          std::ostringstream stream;
-          stream << mlist;
-          return stream.str();
-        });
+    LIEF_DEFAULT_STR(MapItem);
 }
 
-}
 }

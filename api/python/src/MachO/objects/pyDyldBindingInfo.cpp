@@ -13,30 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/DyldBindingInfo.hpp"
 
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
 
-namespace LIEF {
-namespace MachO {
-
-template<class T>
-using getter_t = T (DyldBindingInfo::*)() const;
-
-template<class T>
-using setter_t = void (DyldBindingInfo::*)(T);
-
+namespace LIEF::MachO::py {
 
 template<>
-void create<DyldBindingInfo>(py::module& m) {
-
-  py::class_<DyldBindingInfo, BindingInfo>(m, "DyldBindingInfo",
+void create<DyldBindingInfo>(nb::module_& m) {
+  nb::class_<DyldBindingInfo, BindingInfo>(m, "DyldBindingInfo",
       R"delim(
       This class represents a symbol binding operation associated with
       the LC_DYLD_INFO bytecode.
@@ -45,42 +34,27 @@ void create<DyldBindingInfo>(py::module& m) {
       specifications but it provides a *view* on an entry of the Dyld binding opcodes.
 
       See also: :class:`~lief.MachO.BindingInfo`
-      )delim")
+      )delim"_doc)
 
-    .def_property("binding_class",
-        static_cast<getter_t<BINDING_CLASS>>(&DyldBindingInfo::binding_class),
-        static_cast<setter_t<BINDING_CLASS>>(&DyldBindingInfo::binding_class),
-        "" RST_CLASS_REF(lief.MachO.BINDING_CLASS) " of the binding")
+    .def_prop_rw("binding_class",
+        nb::overload_cast<>(&DyldBindingInfo::binding_class, nb::const_),
+        nb::overload_cast<BINDING_CLASS>(&DyldBindingInfo::binding_class),
+        "" RST_CLASS_REF(lief.MachO.BINDING_CLASS) " of the binding"_doc)
 
-    .def_property("binding_type",
-        static_cast<getter_t<BIND_TYPES>>(&DyldBindingInfo::binding_type),
-        static_cast<setter_t<BIND_TYPES>>(&DyldBindingInfo::binding_type),
+    .def_prop_rw("binding_type",
+        nb::overload_cast<>(&DyldBindingInfo::binding_type, nb::const_),
+        nb::overload_cast<BIND_TYPES>(&DyldBindingInfo::binding_type),
         R"delim(
         :class:`~lief.MachO.BIND_TYPES` of the binding.
 
         Usually, it is :attr:`~lief.MachO.BIND_TYPES.POINTER`.
-        )delim")
+        )delim"_doc)
 
 
-    .def_property_readonly("original_offset",
-        &DyldBindingInfo::original_offset,
-        "Original relative offset of the binding opcodes")
+    .def_prop_ro("original_offset", &DyldBindingInfo::original_offset,
+        "Original relative offset of the binding opcodes"_doc)
 
-    .def("__eq__", &DyldBindingInfo::operator==)
-    .def("__ne__", &DyldBindingInfo::operator!=)
-    .def("__hash__",
-        [] (const DyldBindingInfo& info) {
-          return Hash::hash(info);
-        })
-
-    .def("__str__",
-        [] (const DyldBindingInfo& info) {
-          std::ostringstream stream;
-          std::string str = stream.str();
-          return stream.str();
-        });
-
+    LIEF_DEFAULT_STR(DyldBindingInfo);
 }
 
-}
 }

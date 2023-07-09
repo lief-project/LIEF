@@ -13,36 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (Attribute::*)(void) const;
-
-template<class T>
-using setter_t = void (Attribute::*)(T);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<Attribute>(py::module& m) {
-  py::class_<Attribute, Object>(m, "Attribute", "Interface over PKCS #7 attribute")
-    .def_property_readonly("type",
+void create<Attribute>(nb::module_& m) {
+  nb::class_<Attribute, Object>(m, "Attribute", "Interface over PKCS #7 attribute"_doc)
+    .def_prop_ro("type",
         &Attribute::type,
-        "Concrete type (" RST_CLASS_REF(lief.PE.SIG_ATTRIBUTE_TYPES) ") of the attribute")
+        "Concrete type (" RST_CLASS_REF(lief.PE.SIG_ATTRIBUTE_TYPES) ") of the attribute"_doc)
 
-    .def("__str__", [] (const Attribute& attr)
-        {
-          return attr.print();
-        });
-}
-
+    LIEF_DEFAULT_STR(Attribute);
 }
 }

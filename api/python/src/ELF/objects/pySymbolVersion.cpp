@@ -13,48 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyELF.hpp"
+#include "ELF/pyELF.hpp"
 
 #include "LIEF/ELF/SymbolVersion.hpp"
-#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/SymbolVersionAux.hpp"
 #include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-namespace LIEF {
-namespace ELF {
-
-template<class T>
-using getter_t = T (SymbolVersion::*)(void) const;
-
-template<class T>
-using setter_t = void (SymbolVersion::*)(T);
-
+namespace LIEF::ELF::py {
 
 template<>
-void create<SymbolVersion>(py::module& m) {
+void create<SymbolVersion>(nb::module_& m) {
+  nb::class_<SymbolVersion, LIEF::Object>(m, "SymbolVersion")
+    .def(nb::init<>(),"Default constructor")
+    .def(nb::init<uint16_t>(), "Constructor from :attr:`~lief.SymbolVersion.value`"_doc)
 
-  py::class_<SymbolVersion, LIEF::Object>(m, "SymbolVersion")
-    .def(py::init<>(),"Default constructor")
-    .def(py::init<uint16_t>(), "Constructor from :attr:`~lief.SymbolVersion.value`")
-
-    .def_property_readonly_static("local",
-        [] (const py::object&) {
+    .def_prop_ro_static("local",
+        [] (const nb::object&) {
           return SymbolVersion::local();
         },
-        "Generate a *local* " RST_CLASS_REF(lief.ELF.SymbolVersion) "")
+        "Generate a *local* " RST_CLASS_REF(lief.ELF.SymbolVersion) ""_doc)
 
-    .def_property_readonly_static("global_",
-        [] (const py::object&) {
+    .def_prop_ro_static("global_",
+        [] (const nb::object&) {
           return SymbolVersion::global();
         },
-        "Generate a *global* " RST_CLASS_REF(lief.ELF.SymbolVersion) "")
+        "Generate a *global* " RST_CLASS_REF(lief.ELF.SymbolVersion) ""_doc)
 
-    .def_property("value",
-        static_cast<getter_t<uint16_t>>(&SymbolVersion::value),
-        static_cast<setter_t<uint16_t>>(&SymbolVersion::value),
+    .def_prop_rw("value",
+        nb::overload_cast<>(&SymbolVersion::value, nb::const_),
+        nb::overload_cast<uint16_t>(&SymbolVersion::value),
         R"delim(
         Value associated with the symbol.
 
@@ -65,16 +56,16 @@ void create<SymbolVersion>(py::module& m) {
 
         All other values are used for versions in the own object or in any of
         the dependencies. This is the version the symbol is tight to.
-        )delim")
+        )delim"_doc)
 
-    .def_property_readonly("has_auxiliary_version",
+    .def_prop_ro("has_auxiliary_version",
         &SymbolVersion::has_auxiliary_version,
-        "Check if this symbols has a " RST_CLASS_REF(lief.ELF.SymbolVersionAux) "")
+        "Check if this symbols has a " RST_CLASS_REF(lief.ELF.SymbolVersionAux) ""_doc)
 
-    .def_property(
+    .def_prop_rw(
         "symbol_version_auxiliary",
-        static_cast<SymbolVersionAux* (SymbolVersion::*)(void)>(&SymbolVersion::symbol_version_auxiliary),
-        static_cast<void (SymbolVersion::*)(SymbolVersionAuxRequirement&)>(&SymbolVersion::symbol_version_auxiliary),
+        nb::overload_cast<>(&SymbolVersion::symbol_version_auxiliary),
+        nb::overload_cast<SymbolVersionAuxRequirement&>(&SymbolVersion::symbol_version_auxiliary),
         R"delim(
         Return the :class:`~lief.ELF.SymbolVersionAux` associated with this version or None if not present.
 
@@ -82,26 +73,10 @@ void create<SymbolVersion>(py::module& m) {
         must already exist in the :class:`~lief.ELF.SymbolVersionRequirement`. Once can use
         :meth:`~lief.ELF.SymbolVersionAuxRequirement.add_aux_requirement` to add a new
         :class:`~lief.ELF.SymbolVersionAuxRequirement`.
-        )delim",
-        py::return_value_policy::reference_internal)
+        )delim"_doc,
+        nb::rv_policy::reference_internal)
 
-
-    .def("__eq__", &SymbolVersion::operator==)
-    .def("__ne__", &SymbolVersion::operator!=)
-    .def("__hash__",
-        [] (const SymbolVersion& sv) {
-          return Hash::hash(sv);
-        })
-
-    .def("__str__",
-        [] (const SymbolVersion& symbolVersion)
-        {
-          std::ostringstream stream;
-          stream << symbolVersion;
-          std::string str =  stream.str();
-          return str;
-        });
-}
+    LIEF_DEFAULT_STR(LIEF::ELF::SymbolVersion);
 
 }
 }

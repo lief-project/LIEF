@@ -13,23 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyOAT.hpp"
+#include "OAT/pyOAT.hpp"
 #include "LIEF/OAT/enums.hpp"
 #include "LIEF/OAT/EnumToString.hpp"
 
 #define PY_ENUM(x) to_string(x), x
 
-namespace LIEF {
-namespace OAT {
+namespace LIEF::OAT::py {
 
-void init_enums(py::module& m) {
+void init_enums(nb::module_& m) {
 
-  py::enum_<OAT_CLASS_TYPES>(m, "OAT_CLASS_TYPES")
+  nb::enum_<OAT_CLASS_TYPES>(m, "OAT_CLASS_TYPES")
     .value(PY_ENUM(OAT_CLASS_TYPES::OAT_CLASS_ALL_COMPILED))
     .value(PY_ENUM(OAT_CLASS_TYPES::OAT_CLASS_SOME_COMPILED))
     .value(PY_ENUM(OAT_CLASS_TYPES::OAT_CLASS_NONE_COMPILED));
 
-  py::enum_<OAT_CLASS_STATUS>(m, "OAT_CLASS_STATUS")
+  nb::enum_<OAT_CLASS_STATUS>(m, "OAT_CLASS_STATUS")
     .value(PY_ENUM(OAT_CLASS_STATUS::STATUS_RETIRED))
     .value(PY_ENUM(OAT_CLASS_STATUS::STATUS_ERROR))
     .value(PY_ENUM(OAT_CLASS_STATUS::STATUS_NOTREADY))
@@ -44,7 +43,7 @@ void init_enums(py::module& m) {
     .value(PY_ENUM(OAT_CLASS_STATUS::STATUS_INITIALIZING))
     .value(PY_ENUM(OAT_CLASS_STATUS::STATUS_INITIALIZED));
 
-  py::enum_<HEADER_KEYS>(m, "HEADER_KEYS")
+  nb::enum_<HEADER_KEYS>(m, "HEADER_KEYS")
     .value(PY_ENUM(HEADER_KEYS::KEY_IMAGE_LOCATION))
     .value(PY_ENUM(HEADER_KEYS::KEY_DEX2OAT_CMD_LINE))
     .value(PY_ENUM(HEADER_KEYS::KEY_DEX2OAT_HOST))
@@ -58,7 +57,7 @@ void init_enums(py::module& m) {
     .value(PY_ENUM(HEADER_KEYS::KEY_CONCURRENT_COPYING));
 
 
-  py::enum_<INSTRUCTION_SETS>(m, "INSTRUCTION_SETS")
+  nb::enum_<INSTRUCTION_SETS>(m, "INSTRUCTION_SETS")
     .value(PY_ENUM(INSTRUCTION_SETS::INST_SET_NONE))
     .value(PY_ENUM(INSTRUCTION_SETS::INST_SET_ARM))
     .value(PY_ENUM(INSTRUCTION_SETS::INST_SET_ARM_64))
@@ -67,8 +66,5 @@ void init_enums(py::module& m) {
     .value(PY_ENUM(INSTRUCTION_SETS::INST_SET_X86_64))
     .value(PY_ENUM(INSTRUCTION_SETS::INST_SET_MIPS))
     .value(PY_ENUM(INSTRUCTION_SETS::INST_SET_MIPS_64));
-
-}
-
 }
 }

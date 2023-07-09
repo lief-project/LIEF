@@ -21,6 +21,15 @@ export SETUPTOOLS_EXT_SUFFIX=$($PYTHON_BINARY -c "import sysconfig;print(sysconf
 
 git config --global --add safe.directory /work
 
-$PYTHON_BINARY -m pip -vv wheel --wheel-dir=dist/ api/python
+BUILD_DIR=/tmp/lief-build
+$PYTHON_BINARY -m pip install tomli
 
-chown -R 1000:1000 /work/dist /work/api/python/build || true
+
+pushd /work/api/python
+PYLIEF_CONF=/work/scripts/docker/pylinux-aarch64.toml \
+$PYTHON_BINARY ./setup.py build --build-base=${BUILD_DIR}/base \
+                                --build-temp=${BUILD_DIR}/temp \
+                          bdist_wheel --bdist-dir=${BUILD_DIR}/bdist \
+                                      --dist-dir=/work/dist
+popd
+chown -R 1000:1000 /work/dist || true

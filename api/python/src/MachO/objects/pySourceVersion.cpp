@@ -13,59 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/array.h>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/SourceVersion.hpp"
 
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
 
-namespace LIEF {
-namespace MachO {
-
-template<class T>
-using getter_t = T (SourceVersion::*)(void) const;
-
-template<class T>
-using setter_t = void (SourceVersion::*)(T);
-
+namespace LIEF::MachO::py {
 
 template<>
-void create<SourceVersion>(py::module& m) {
+void create<SourceVersion>(nb::module_& m) {
 
-  py::class_<SourceVersion, LoadCommand>(m, "SourceVersion",
+  nb::class_<SourceVersion, LoadCommand>(m, "SourceVersion",
       R"delim(
       Class that represents the MachO LOAD_COMMAND_TYPES::LC_SOURCE_VERSION
       This command is used to provide the *version* of the sources used to build the binary
-      )delim")
+      )delim"_doc)
 
-    .def_property("version",
-        static_cast<getter_t<const SourceVersion::version_t&>>(&SourceVersion::version),
-        static_cast<setter_t<const SourceVersion::version_t&>>(&SourceVersion::version),
-        "Version as a tuple of **5** integers",
-        py::return_value_policy::reference_internal)
+    .def_prop_rw("version",
+        nb::overload_cast<>(&SourceVersion::version, nb::const_),
+        nb::overload_cast<const SourceVersion::version_t&>(&SourceVersion::version),
+        "Version as a tuple of **5** integers"_doc,
+        nb::rv_policy::reference_internal)
 
-
-    .def("__eq__", &SourceVersion::operator==)
-    .def("__ne__", &SourceVersion::operator!=)
-    .def("__hash__",
-        [] (const SourceVersion& version) {
-          return Hash::hash(version);
-        })
-
-
-    .def("__str__",
-        [] (const SourceVersion& version)
-        {
-          std::ostringstream stream;
-          stream << version;
-          std::string str = stream.str();
-          return str;
-        });
+    LIEF_DEFAULT_STR(SourceVersion);
 }
 
-}
 }

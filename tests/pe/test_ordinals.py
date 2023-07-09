@@ -38,3 +38,11 @@ def test_add_ordinal(tmp_path, test_exe):
     first_ord = next(iter([e for e in new_lib.entries if e.is_ordinal]))
     assert first_ord is not None
     assert first_ord.ordinal == ordinal_val
+
+
+def test_resolve_ordinal():
+    pe = lief.PE.parse(get_sample("PE/PE64_x86-64_binary_mfc-application.exe"))
+    imp = pe.get_import("OLEAUT32.dll")
+    new_imp: lief.PE.Import = lief.PE.resolve_ordinals(imp)
+    assert new_imp.entries[0].name == "SysAllocString"
+    assert new_imp.entries[1].name == "VariantClear"

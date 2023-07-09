@@ -13,128 +13,112 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/DynamicSymbolCommand.hpp"
 
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
 
-namespace LIEF {
-namespace MachO {
-
-template<class T>
-using getter_t = T (DynamicSymbolCommand::*)(void) const;
-
-template<class T>
-using setter_t = void (DynamicSymbolCommand::*)(T);
-
-template<class T>
-using no_const_getter = T (DynamicSymbolCommand::*)(void);
-
+namespace LIEF::MachO::py {
 
 template<>
-void create<DynamicSymbolCommand>(py::module& m) {
-
-  py::class_<DynamicSymbolCommand, LoadCommand>(m, "DynamicSymbolCommand",
+void create<DynamicSymbolCommand>(nb::module_& m) {
+  nb::class_<DynamicSymbolCommand, LoadCommand>(m, "DynamicSymbolCommand",
       R"delim(
       Class that represents the LC_DYSYMTAB command.
       This command completes the LC_SYMTAB (SymbolCommand) to provide
       a better granularity over the symbols layout.
-      )delim")
+      )delim"_doc)
 
-    .def(py::init<>())
-
-    .def_property("idx_local_symbol",
-      static_cast<getter_t<uint32_t>>(&DynamicSymbolCommand::idx_local_symbol),
-      static_cast<setter_t<uint32_t>>(&DynamicSymbolCommand::idx_local_symbol),
-      "Index of the first symbol in the group of local symbols."
+    .def_prop_rw("idx_local_symbol",
+      nb::overload_cast<>(&DynamicSymbolCommand::idx_local_symbol, nb::const_),
+      nb::overload_cast<uint32_t>(&DynamicSymbolCommand::idx_local_symbol),
+      "Index of the first symbol in the group of local symbols."_doc
     )
 
-    .def_property("nb_local_symbols",
-      static_cast<getter_t<uint32_t>>(&DynamicSymbolCommand::nb_local_symbols),
-      static_cast<setter_t<uint32_t>>(&DynamicSymbolCommand::nb_local_symbols),
-      "Number of symbols in the group of local symbols."
+    .def_prop_rw("nb_local_symbols",
+      nb::overload_cast<>(&DynamicSymbolCommand::nb_local_symbols, nb::const_),
+      nb::overload_cast<uint32_t>(&DynamicSymbolCommand::nb_local_symbols),
+      "Number of symbols in the group of local symbols."_doc
     )
 
-    .def_property("idx_external_define_symbol",
-      static_cast<getter_t<uint32_t>>(&DynamicSymbolCommand::idx_external_define_symbol),
-      static_cast<setter_t<uint32_t>>(&DynamicSymbolCommand::idx_external_define_symbol),
-      "Index of the first symbol in the group of defined external symbols."
+    .def_prop_rw("idx_external_define_symbol",
+      nb::overload_cast<>(&DynamicSymbolCommand::idx_external_define_symbol, nb::const_),
+      nb::overload_cast<uint32_t>(&DynamicSymbolCommand::idx_external_define_symbol),
+      "Index of the first symbol in the group of defined external symbols."_doc
     )
 
-    .def_property("nb_external_define_symbols",
-      static_cast<getter_t<uint32_t>>(&DynamicSymbolCommand::nb_external_define_symbols),
-      static_cast<setter_t<uint32_t>>(&DynamicSymbolCommand::nb_external_define_symbols),
-      "Number of symbols in the group of defined external symbols."
+    .def_prop_rw("nb_external_define_symbols",
+      nb::overload_cast<>(&DynamicSymbolCommand::nb_external_define_symbols, nb::const_),
+      nb::overload_cast<uint32_t>(&DynamicSymbolCommand::nb_external_define_symbols),
+      "Number of symbols in the group of defined external symbols."_doc
     )
 
-    .def_property("idx_undefined_symbol",
-      static_cast<getter_t<uint32_t>>(&DynamicSymbolCommand::idx_undefined_symbol),
-      static_cast<setter_t<uint32_t>>(&DynamicSymbolCommand::idx_undefined_symbol),
-      "Index of the first symbol in the group of undefined external symbols."
+    .def_prop_rw("idx_undefined_symbol",
+      nb::overload_cast<>(&DynamicSymbolCommand::idx_undefined_symbol, nb::const_),
+      nb::overload_cast<uint32_t>(&DynamicSymbolCommand::idx_undefined_symbol),
+      "Index of the first symbol in the group of undefined external symbols."_doc
     )
 
-    .def_property("nb_undefined_symbols",
-      static_cast<getter_t<uint32_t>>(&DynamicSymbolCommand::nb_undefined_symbols),
-      static_cast<setter_t<uint32_t>>(&DynamicSymbolCommand::nb_undefined_symbols),
-      "Number of symbols in the group of undefined external symbols."
+    .def_prop_rw("nb_undefined_symbols",
+      nb::overload_cast<>(&DynamicSymbolCommand::nb_undefined_symbols, nb::const_),
+      nb::overload_cast<uint32_t>(&DynamicSymbolCommand::nb_undefined_symbols),
+      "Number of symbols in the group of undefined external symbols."_doc
     )
 
-    .def_property("toc_offset",
-      static_cast<getter_t<uint32_t>>(&DynamicSymbolCommand::toc_offset),
-      static_cast<setter_t<uint32_t>>(&DynamicSymbolCommand::toc_offset),
+    .def_prop_rw("toc_offset",
+      nb::overload_cast<>(&DynamicSymbolCommand::toc_offset, nb::const_),
+      nb::overload_cast<uint32_t>(&DynamicSymbolCommand::toc_offset),
       R"delim(
       Byte offset from the start of the file to the table of contents data.
       Table of content is used by legacy Mach-O loader and this field should be set to 0
-      )delim")
+      )delim"_doc)
 
-    .def_property("nb_toc",
-      static_cast<getter_t<uint32_t>>(&DynamicSymbolCommand::nb_toc),
-      static_cast<setter_t<uint32_t>>(&DynamicSymbolCommand::nb_toc),
+    .def_prop_rw("nb_toc",
+      nb::overload_cast<>(&DynamicSymbolCommand::nb_toc, nb::const_),
+      nb::overload_cast<uint32_t>(&DynamicSymbolCommand::nb_toc),
       R"delim(
       Number of entries in the table of contents
       Should be set to 0 on recent Mach-O
-      )delim")
+      )delim"_doc)
 
-    .def_property("module_table_offset",
-      static_cast<getter_t<uint32_t>>(&DynamicSymbolCommand::module_table_offset),
-      static_cast<setter_t<uint32_t>>(&DynamicSymbolCommand::module_table_offset),
+    .def_prop_rw("module_table_offset",
+      nb::overload_cast<>(&DynamicSymbolCommand::module_table_offset, nb::const_),
+      nb::overload_cast<uint32_t>(&DynamicSymbolCommand::module_table_offset),
       R"delim(
       Byte offset from the start of the file to the module table data.
       This field seems unused by recent Mach-O loader and should be set to 0
-      )delim")
+      )delim"_doc)
 
-    .def_property("nb_module_table",
-      static_cast<getter_t<uint32_t>>(&DynamicSymbolCommand::nb_module_table),
-      static_cast<setter_t<uint32_t>>(&DynamicSymbolCommand::nb_module_table),
+    .def_prop_rw("nb_module_table",
+      nb::overload_cast<>(&DynamicSymbolCommand::nb_module_table, nb::const_),
+      nb::overload_cast<uint32_t>(&DynamicSymbolCommand::nb_module_table),
       R"delim(
       Number of entries in the module table.
       This field seems unused by recent Mach-O loader and should be set to 0.
-      )delim")
+      )delim"_doc)
 
-    .def_property("external_reference_symbol_offset",
-      static_cast<getter_t<uint32_t>>(&DynamicSymbolCommand::external_reference_symbol_offset),
-      static_cast<setter_t<uint32_t>>(&DynamicSymbolCommand::external_reference_symbol_offset),
+    .def_prop_rw("external_reference_symbol_offset",
+      nb::overload_cast<>(&DynamicSymbolCommand::external_reference_symbol_offset, nb::const_),
+      nb::overload_cast<uint32_t>(&DynamicSymbolCommand::external_reference_symbol_offset),
       R"delim(
       Byte offset from the start of the file to the external reference table data.
       This field seems unused by recent Mach-O loader and should be set to 0
-      )delim")
+      )delim"_doc)
 
-    .def_property("nb_external_reference_symbols",
-      static_cast<getter_t<uint32_t>>(&DynamicSymbolCommand::nb_external_reference_symbols),
-      static_cast<setter_t<uint32_t>>(&DynamicSymbolCommand::nb_external_reference_symbols),
+    .def_prop_rw("nb_external_reference_symbols",
+      nb::overload_cast<>(&DynamicSymbolCommand::nb_external_reference_symbols, nb::const_),
+      nb::overload_cast<uint32_t>(&DynamicSymbolCommand::nb_external_reference_symbols),
       R"delim(
       Number of entries in the external reference table.
       This field seems unused by recent Mach-O loader and should be set to 0.
-      )delim")
+      )delim"_doc)
 
-    .def_property("indirect_symbol_offset",
-      static_cast<getter_t<uint32_t>>(&DynamicSymbolCommand::indirect_symbol_offset),
-      static_cast<setter_t<uint32_t>>(&DynamicSymbolCommand::indirect_symbol_offset),
+    .def_prop_rw("indirect_symbol_offset",
+      nb::overload_cast<>(&DynamicSymbolCommand::indirect_symbol_offset, nb::const_),
+      nb::overload_cast<uint32_t>(&DynamicSymbolCommand::indirect_symbol_offset),
       R"delim(
       Byte offset from the start of the file to the indirect symbol table data.
 
@@ -145,62 +129,45 @@ void create<DynamicSymbolCommand>(py::module& m) {
 
         * ``dyld-519.2.1/src/ImageLoaderMachOCompressed.cpp``
         * ``dyld-519.2.1/src/ImageLoaderMachOClassic.cpp``
-      )delim")
+      )delim"_doc)
 
-    .def_property("nb_indirect_symbols",
-      static_cast<getter_t<uint32_t>>(&DynamicSymbolCommand::nb_indirect_symbols),
-      static_cast<setter_t<uint32_t>>(&DynamicSymbolCommand::nb_indirect_symbols),
-      "Number of entries in the indirect symbol table.")
+    .def_prop_rw("nb_indirect_symbols",
+      nb::overload_cast<>(&DynamicSymbolCommand::nb_indirect_symbols, nb::const_),
+      nb::overload_cast<uint32_t>(&DynamicSymbolCommand::nb_indirect_symbols),
+      "Number of entries in the indirect symbol table."_doc)
 
-    .def_property("external_relocation_offset",
-      static_cast<getter_t<uint32_t>>(&DynamicSymbolCommand::external_relocation_offset),
-      static_cast<setter_t<uint32_t>>(&DynamicSymbolCommand::external_relocation_offset),
+    .def_prop_rw("external_relocation_offset",
+      nb::overload_cast<>(&DynamicSymbolCommand::external_relocation_offset, nb::const_),
+      nb::overload_cast<uint32_t>(&DynamicSymbolCommand::external_relocation_offset),
       R"delim(
       Byte offset from the start of the file to the module table data.
       This field seems unused by recent Mach-O loader and should be set to 0
-      )delim")
+      )delim"_doc)
 
-    .def_property("nb_external_relocations",
-      static_cast<getter_t<uint32_t>>(&DynamicSymbolCommand::nb_external_relocations),
-      static_cast<setter_t<uint32_t>>(&DynamicSymbolCommand::nb_external_relocations),
+    .def_prop_rw("nb_external_relocations",
+      nb::overload_cast<>(&DynamicSymbolCommand::nb_external_relocations, nb::const_),
+      nb::overload_cast<uint32_t>(&DynamicSymbolCommand::nb_external_relocations),
       R"delim(
       Number of entries in the external relocation table.
       This field seems unused by recent Mach-O loader and should be set to 0
-      )delim")
+      )delim"_doc)
 
-    .def_property("local_relocation_offset",
-      static_cast<getter_t<uint32_t>>(&DynamicSymbolCommand::local_relocation_offset),
-      static_cast<setter_t<uint32_t>>(&DynamicSymbolCommand::local_relocation_offset),
+    .def_prop_rw("local_relocation_offset",
+      nb::overload_cast<>(&DynamicSymbolCommand::local_relocation_offset, nb::const_),
+      nb::overload_cast<uint32_t>(&DynamicSymbolCommand::local_relocation_offset),
       R"delim(
       Byte offset from the start of the file to the local relocation table data.
       This field seems unused by recent Mach-O loader and should be set to 0
-      )delim")
+      )delim"_doc)
 
-    .def_property("nb_local_relocations",
-      static_cast<getter_t<uint32_t>>(&DynamicSymbolCommand::nb_local_relocations),
-      static_cast<setter_t<uint32_t>>(&DynamicSymbolCommand::nb_local_relocations),
+    .def_prop_rw("nb_local_relocations",
+      nb::overload_cast<>(&DynamicSymbolCommand::nb_local_relocations, nb::const_),
+      nb::overload_cast<uint32_t>(&DynamicSymbolCommand::nb_local_relocations),
       R"delim(
       Number of entries in the local relocation table.
       This field seems unused by recent Mach-O loader and should be set to 0
-      )delim")
+      )delim"_doc)
 
-    .def("__eq__", &DynamicSymbolCommand::operator==)
-    .def("__ne__", &DynamicSymbolCommand::operator!=)
-    .def("__hash__",
-        [] (const DynamicSymbolCommand& cmd) {
-          return Hash::hash(cmd);
-        })
-
-
-    .def("__str__",
-        [] (const DynamicSymbolCommand& info)
-        {
-          std::ostringstream stream;
-          stream << info;
-          return stream.str();
-        });
-
-}
-
+    LIEF_DEFAULT_STR(DynamicSymbolCommand);
 }
 }

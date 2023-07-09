@@ -29,7 +29,7 @@ def test_freebl(tmp_path):
 
     ls.add_library("libfreebl3.so")
 
-    ls         += lief.ELF.DynamicEntryRunPath("$ORIGIN")
+    ls += lief.ELF.DynamicEntryRunPath("$ORIGIN")
     libfreebl3 += lief.ELF.DynamicEntryRunPath("$ORIGIN")
 
     ls.write(output_ls.as_posix())

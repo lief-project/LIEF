@@ -27,6 +27,7 @@ def test_rpath():
     rpath = rpath.pop()
 
     assert rpath.name == "/usr/lib"
+    assert rpath.rpath == rpath.name
 
 def test_runpath():
     etterlog = lief.parse(get_sample('ELF/ELF64_x86-64_binary_systemd-resolve.bin'))
@@ -146,6 +147,12 @@ def test_symbols_access():
     assert all(s in symbols for s in dynamic_symbols)
     assert all(s in symbols for s in static_symbols)
 
+def test_strings():
+    hello = lief.parse(get_sample('ELF/ELF64_x86-64_binary_all.bin'))
+
+    assert len(hello.strings) > 0
+    assert "add_1" in hello.strings
+
 def test_relocation_size():
     aarch64_toybox = lief.parse(get_sample('ELF/ELF64_AARCH64_piebinary_toybox.pie'))
     arm_ls         = lief.parse(get_sample('ELF/ELF32_ARM_binary_ls.bin'))
@@ -153,48 +160,48 @@ def test_relocation_size():
     x86_64_ls      = lief.parse(get_sample('ELF/ELF64_x86-64_binary_ld.bin'))
 
     for r in itertools.chain(aarch64_toybox.dynamic_relocations, aarch64_toybox.pltgot_relocations):
-        if lief.ELF.RELOCATION_AARCH64(r.type) == lief.ELF.RELOCATION_AARCH64.RELATIVE:
+        if r.type == lief.ELF.RELOCATION_AARCH64.RELATIVE:
             assert r.size == 64
 
-        if lief.ELF.RELOCATION_AARCH64(r.type) == lief.ELF.RELOCATION_AARCH64.GLOB_DAT:
+        if r.type == lief.ELF.RELOCATION_AARCH64.GLOB_DAT:
             assert r.size == 64
 
-        if lief.ELF.RELOCATION_AARCH64(r.type) == lief.ELF.RELOCATION_AARCH64.JUMP_SLOT:
+        if r.type == lief.ELF.RELOCATION_AARCH64.JUMP_SLOT:
             assert r.size == 64
 
     for r in itertools.chain(arm_ls.dynamic_relocations, arm_ls.pltgot_relocations):
-        if lief.ELF.RELOCATION_ARM(r.type) == lief.ELF.RELOCATION_ARM.RELATIVE:
+        if r.type == lief.ELF.RELOCATION_ARM.RELATIVE:
             assert r.size == 32
 
-        if lief.ELF.RELOCATION_ARM(r.type) == lief.ELF.RELOCATION_ARM.GLOB_DAT:
+        if r.type == lief.ELF.RELOCATION_ARM.GLOB_DAT:
             assert r.size == 32
 
-        if lief.ELF.RELOCATION_ARM(r.type) == lief.ELF.RELOCATION_ARM.ABS32:
+        if r.type == lief.ELF.RELOCATION_ARM.ABS32:
             assert r.size == 32
 
-        if lief.ELF.RELOCATION_ARM(r.type) == lief.ELF.RELOCATION_ARM.JUMP_SLOT:
+        if r.type == lief.ELF.RELOCATION_ARM.JUMP_SLOT:
             assert r.size == 32
 
 
     for r in itertools.chain(x86_ls.dynamic_relocations, x86_ls.pltgot_relocations):
-        if lief.ELF.RELOCATION_i386(r.type) == lief.ELF.RELOCATION_i386.GLOB_DAT:
+        if r.type == lief.ELF.RELOCATION_i386.GLOB_DAT:
             assert r.size == 32
 
-        if lief.ELF.RELOCATION_i386(r.type) == lief.ELF.RELOCATION_i386.COPY:
+        if r.type == lief.ELF.RELOCATION_i386.COPY:
             assert r.size == 32
 
-        if lief.ELF.RELOCATION_i386(r.type) == lief.ELF.RELOCATION_i386.JUMP_SLOT:
+        if r.type == lief.ELF.RELOCATION_i386.JUMP_SLOT:
             assert r.size == 32
 
 
     for r in itertools.chain(x86_64_ls.dynamic_relocations, x86_64_ls.pltgot_relocations):
-        if lief.ELF.RELOCATION_X86_64(r.type) == lief.ELF.RELOCATION_X86_64.GLOB_DAT:
+        if r.type == lief.ELF.RELOCATION_X86_64.GLOB_DAT:
             assert r.size == 64
 
-        if lief.ELF.RELOCATION_X86_64(r.type) == lief.ELF.RELOCATION_X86_64.COPY:
+        if r.type == lief.ELF.RELOCATION_X86_64.COPY:
             assert r.size == 32
 
-        if lief.ELF.RELOCATION_X86_64(r.type) == lief.ELF.RELOCATION_X86_64.JUMP_SLOT:
+        if r.type == lief.ELF.RELOCATION_X86_64.JUMP_SLOT:
             assert r.size == 64
 
 def test_sectionless():
@@ -261,3 +268,19 @@ def test_misc():
 
     assert ld.has_section_with_offset(text.offset + 10)
     assert ld.has_section_with_va(text.virtual_address + 10)
+
+    assert lief.ELF.Segment.from_raw(b"") == lief.lief_errors.corrupted
+
+    raw = """
+    06 00 00 00 04 00 00 00 40 00 00 00 00 00 00 00
+    40 00 00 00 00 00 00 00 40 00 00 00 00 00 00 00
+    d8 02 00 00 00 00 00 00 d8 02 00 00 00 00 00 00
+    08 00 00 00 00 00 00 00
+    """
+    raw = raw.replace("\n", "") \
+             .replace("  ", " ") \
+             .replace("  ", " ").strip()
+    hexdigits = raw.split(" ")
+    raw = bytes(int(c, 16) for c in hexdigits)
+
+    assert isinstance(lief.ELF.Segment.from_raw(raw), lief.ELF.Segment)

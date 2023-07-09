@@ -13,41 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyVDEX.hpp"
+#include "VDEX/pyVDEX.hpp"
 
 #include "LIEF/VDEX/utils.hpp"
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 
-namespace LIEF {
-namespace VDEX {
+namespace LIEF::VDEX::py {
 
-void init_utils(py::module& m) {
+void init_utils(nb::module_& m) {
+  nb::module_ lief_mod = nb::module_::import_(LIEF_MOD_NAME);
 
-  m.def("is_vdex",
-      static_cast<bool (*)(const std::string&)>(&is_vdex),
-      "Check if the **file** given in parameter is an VDEX",
+  lief_mod.def("is_vdex", nb::overload_cast<const std::string&>(&is_vdex),
+      "Check if the **file** given in parameter is an VDEX"_doc,
       "path"_a);
 
-  m.def("is_vdex",
-      static_cast<bool (*)(const std::vector<uint8_t>&)>(&is_vdex),
-      "Check if the **raw data** given in parameter is a VDEX",
+  lief_mod.def("is_vdex", nb::overload_cast<const std::vector<uint8_t>&>(&is_vdex),
+      "Check if the **raw data** given in parameter is a VDEX"_doc,
       "raw"_a);
 
-  m.def("version",
-      static_cast<vdex_version_t (*)(const std::string&)>(&version),
-      "Return the VDEX version of the **file** given in parameter",
+  m.def("version", nb::overload_cast<const std::string&>(&version),
+      "Return the VDEX version of the **file** given in parameter"_doc,
       "file"_a);
 
-  m.def("version",
-      static_cast<vdex_version_t (*)(const std::vector<uint8_t>&)>(&version),
-      "Return the VDEX version of the **raw data** given in parameter",
+  m.def("version", nb::overload_cast<const std::vector<uint8_t>&>(&version),
+      "Return the VDEX version of the **raw data** given in parameter"_doc,
       "raw"_a);
 
   m.def("android_version",
       &android_version,
-      "Return the " RST_CLASS_REF(lief.Android.ANDROID_VERSIONS) " associated with the given VDEX version ",
+      "Return the " RST_CLASS_REF(lief.Android.ANDROID_VERSIONS) " associated with the given VDEX version"_doc,
       "vdex_version"_a);
 }
 
-}
 }
 

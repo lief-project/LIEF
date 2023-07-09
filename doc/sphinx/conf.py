@@ -1,12 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# LIEF documentation build configuration file
-
+import sys
+import re
 import lief
 import os
 import pathlib
 from docutils import nodes
+import inspect
+from sphinx.util import logging
+from sphinx.util.inspect import (
+    evaluate_signature,
+    getdoc,
+    object_description,
+    safe_getattr,
+    stringify_signature,
+    signature_from_str
+)
+
+RE_INST = re.compile(r"\s=\s<.*\sobject\sat[^>]*>")
 
 GENERATE_DOXYGEN = False
 DOXYGEN_XML_PATH = None
@@ -48,6 +59,7 @@ if GENERATE_DOXYGEN:
         "lief": DOXYGEN_XML_PATH,
     }
 
+logger = logging.getLogger("lief-doc")
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -66,12 +78,27 @@ commit  = lief.__commit__
 
 language = "en"
 autoclass_content = 'both'
+autodoc_default_options = {
+    'exclude-members': '@entries'
+}
 
 if GENERATE_DOXYGEN:
     breathe_default_members = ('members', 'protected-members', 'undoc-members')
     breathe_show_enumvalue_initializer = True
 
-exclude_patterns = []
+#exclude_patterns = [
+#    "tutorials/*.rst",
+#    "changelog.rst",
+#    "formats/*.rst",
+#    "api/python/abstract.rst",
+#    "api/c/*.rst",
+#    "api/cpp/*.rst",
+#    "api/python/pe.rst",
+#    "api/python/macho.rst",
+#    "api/python/oat.rst",
+#    "api/python/vdex.rst",
+#    "api/python/dex.rst",
+#]
 
 # -- Options for HTML output ----------------------------------------------
 def commit_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
@@ -80,13 +107,11 @@ def commit_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
 
     return [commit_link], []
 
-
 def pr_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
     pr_link = nodes.reference(
             "", '#' + text, refuri="https://github.com/lief-project/LIEF/pull/{}".format(text), **options)
 
     return [pr_link], []
-
 
 def issue_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
     issue_link = nodes.reference(
@@ -100,6 +125,123 @@ def github_user(name, rawtext, text, lineno, inliner, options={}, content=[]):
 
     return [issue_link], []
 
+def clean_nanobind_typehint(typehint: str) -> str:
+    typehint = RE_INST.sub("", typehint)
+    typehint = typehint.replace("_lief.", "")
+    return typehint
+
+def process_function_signature(signature: inspect.Signature, has_overload: bool):
+    args = "(*args)"
+    if not has_overload:
+        args_str = []
+        for name, hint in signature.parameters.items():
+            if hint.annotation == inspect.Parameter.empty:
+                args_str.append(name)
+            else:
+                args_str.append(f"{name}: {hint.annotation}")
+
+        args = "(" + ",".join(args_str) + ")"
+
+    if signature.return_annotation == inspect.Parameter.empty:
+        return args, None
+
+    return args, signature.return_annotation
+
+def process_property(name: str, obj, options, signature: str,
+                     return_annotation: str):
+    """
+    Get the nanobind typehint for a property
+    """
+    if not hasattr(obj, "fget"):
+        return signature, return_annotation
+
+    fget = getattr(obj, "fget")
+    typestr = getdoc(fget)
+    if typestr is None:
+        return signature, return_annotation
+
+    lines = typestr.splitlines()
+
+    if len(lines) == 0:
+        return signature, return_annotation
+
+    try:
+        hint = clean_nanobind_typehint(lines[0])
+        sig = signature_from_str(hint)
+        return_annotation = sig.return_annotation
+        if return_annotation == inspect.Parameter.empty:
+            logger.warn(f"Can't generate annotation for {name}")
+            return_annotation = None
+
+        return "()", return_annotation
+    except Exception:
+        logger.warn(f"Error with {name}: {lines[0]}")
+
+    return signature, return_annotation
+
+
+def process_function(name: str, obj, options, signature: str,
+                     return_annotation: str):
+    """
+    Get the nanobind typehint for a function
+    """
+    typestr = getdoc(obj)
+    if typestr is None:
+        return signature, return_annotation
+
+    lines = typestr.splitlines()
+
+    if len(lines) == 0:
+        return signature, return_annotation
+
+    empty_idx = 0
+    try:
+        empty_idx = lines.index('')
+    except ValueError:
+        pass
+
+    is_overloaded = empty_idx > 1
+
+    rettypes = set()
+    arg = None
+    for idx, line in enumerate(lines):
+        if len(line) == 0:
+            break
+        try:
+            hint = clean_nanobind_typehint(line)
+            signature = signature_from_str(hint)
+            arg, ret = process_function_signature(signature, is_overloaded)
+            rettypes.add(str(ret))
+        except Exception as e:
+            logger.warn(f"Error with {name}: {line} ({e})")
+
+    if len(rettypes) == 0 or arg is None:
+        return signature, return_annotation
+
+    if len(rettypes) == 1:
+        return arg, rettypes.pop()
+
+    return arg, " | ".join(rettypes)
+
+def _on_process_signature(app, what: str, name: str, obj: Any,
+                          options, signature: str, return_annotation: str):
+
+    # autodoc is great for auto generating documentation of regular packages
+    # but it has some limitation (like the properties) for native Python
+    # bindings.
+    #
+    # This event listener generate the type hint for our nanobind-based bindings
+    if what == "property":
+        return process_property(name, obj, options, signature, return_annotation)
+    elif what == "function":
+        return process_function(name, obj, options, signature, return_annotation)
+    elif what == "attribute":
+        if hasattr(obj, "__call__"):
+            return process_function(name, obj, options, signature, return_annotation)
+
+    return signature, return_annotation
+
+
 def setup(app):
     app.add_css_file('css/custom.css')  # may also be an URL
 
@@ -107,6 +249,8 @@ def setup(app):
     app.add_role('pr', pr_role)
     app.add_role('issue', issue_role)
     app.add_role('github_user', github_user)
+
+    app.connect('autodoc-process-signature', _on_process_signature)
 
 linkcheck_request_headers = {
     "*": {
@@ -129,10 +273,10 @@ if not USE_RTD_THEME:
     html_context    = sphinx_lief.get_html_context()
     html_theme      = "sphinx_lief"
     html_base_url   = "https://lief-project.github.io/"
-    base_url        = "{}/doc/{}".format(html_base_url, endpoint)
+    base_url        = f"{html_base_url}/doc/{endpoint}"
     html_theme_options = {
         "commit": commit,
-        "base_url": "{}/".format(base_url),
+        "base_url": f"{base_url}/",
         "repo_url": "https://github.com/lief-project/LIEF/",
         "repo_name": "LIEF",
         "html_minify": True,
@@ -150,12 +294,12 @@ if not USE_RTD_THEME:
                 "title": "Home"
             },
             {
-                "href": "{}/blog".format(html_base_url),
+                "href": f"{html_base_url}/blog",
                 "internal": False,
                 "title": "Blog"
             },
             {
-                "href": "{}/download".format(html_base_url),
+                "href": f"{html_base_url}/download",
                 "internal": False,
                 "title": "Download"
             },
@@ -166,12 +310,12 @@ if not USE_RTD_THEME:
                 "subnav": [
                     {
                         "title": "Doxygen",
-                        "href": "{}/doxygen".format(base_url),
+                        "href": f"{base_url}/doxygen",
                     },
                 ]
             },
             {
-                "href": "{}/about".format(html_base_url),
+                "href": f"{html_base_url}/about",
                 "internal": False,
                 "title": "About",
             },

@@ -50,6 +50,11 @@ Changelog
 
   * Remove the `lief.Binary.name` attribute
   * LIEF is now compiled with C++17 (the API remains C++11 compliant)
+  * Switch to `nanobind <https://nanobind.readthedocs.io/en/latest/>`_ for the
+    Python bindings.
+  * CI are now more efficient
+  * The Python documentation for properties now contains the type of the
+    property.
 
 0.13.2 - June 17, 2023
 ----------------------

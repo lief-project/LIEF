@@ -13,97 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef PY_LIEF_MACHO_H_
-#define PY_LIEF_MACHO_H_
-
-#include "LIEF/MachO/Parser.hpp"
-#include "LIEF/MachO/Binary.hpp"
-#include "LIEF/MachO/Builder.hpp"
-#include "LIEF/MachO/BindingInfo.hpp"
-#include "LIEF/MachO/ChainedBindingInfo.hpp"
-#include "LIEF/MachO/DataInCode.hpp"
-#include "LIEF/MachO/DyldBindingInfo.hpp"
-#include "LIEF/MachO/FilesetCommand.hpp"
-#include "LIEF/MachO/RelocationDyld.hpp"
-#include "LIEF/MachO/RelocationFixup.hpp"
-#include "LIEF/MachO/RelocationObject.hpp"
-
-#include <pybind11/pybind11.h>
-#include <pybind11/stl_bind.h>
-
+#ifndef PY_LIEF_MACHO_H
+#define PY_LIEF_MACHO_H
 #include "pyLIEF.hpp"
 
-#define SPECIALIZE_CREATE(X)      \
-  template<>                      \
-  void create<X>(py::module&)
-
-#define CREATE(X,Y) create<X>(Y)
-
-
-namespace LIEF {
-namespace MachO {
-
+namespace LIEF::MachO::py {
 template<class T>
-void create(py::module&);
+void create(nb::module_&);
 
-void init_python_module(py::module& m);
-void init_objects(py::module&);
-void init_enums(py::module&);
-void init_utils(py::module&);
-
-
-SPECIALIZE_CREATE(Parser);
-SPECIALIZE_CREATE(ParserConfig);
-
-SPECIALIZE_CREATE(Binary);
-SPECIALIZE_CREATE(BindingInfo);
-SPECIALIZE_CREATE(BuildVersion);
-SPECIALIZE_CREATE(ChainedBindingInfo);
-SPECIALIZE_CREATE(CodeSignature);
-SPECIALIZE_CREATE(CodeSignatureDir);
-SPECIALIZE_CREATE(DataCodeEntry);
-SPECIALIZE_CREATE(DataInCode);
-SPECIALIZE_CREATE(DyldBindingInfo);
-SPECIALIZE_CREATE(DyldChainedFixups);
-SPECIALIZE_CREATE(DyldEnvironment);
-SPECIALIZE_CREATE(DyldExportsTrie);
-SPECIALIZE_CREATE(DyldInfo);
-SPECIALIZE_CREATE(DylibCommand);
-SPECIALIZE_CREATE(DylinkerCommand);
-SPECIALIZE_CREATE(DynamicSymbolCommand);
-SPECIALIZE_CREATE(EncryptionInfo);
-SPECIALIZE_CREATE(ExportInfo);
-SPECIALIZE_CREATE(FatBinary);
-SPECIALIZE_CREATE(FilesetCommand);
-SPECIALIZE_CREATE(FunctionStarts);
-SPECIALIZE_CREATE(Header);
-SPECIALIZE_CREATE(LinkerOptHint);
-SPECIALIZE_CREATE(LoadCommand);
-SPECIALIZE_CREATE(MainCommand);
-SPECIALIZE_CREATE(RPathCommand);
-SPECIALIZE_CREATE(Relocation);
-SPECIALIZE_CREATE(RelocationDyld);
-SPECIALIZE_CREATE(RelocationFixup);
-SPECIALIZE_CREATE(RelocationObject);
-SPECIALIZE_CREATE(Section);
-SPECIALIZE_CREATE(SegmentCommand);
-SPECIALIZE_CREATE(SegmentSplitInfo);
-SPECIALIZE_CREATE(SourceVersion);
-SPECIALIZE_CREATE(SubFramework);
-SPECIALIZE_CREATE(Symbol);
-SPECIALIZE_CREATE(SymbolCommand);
-SPECIALIZE_CREATE(ThreadCommand);
-SPECIALIZE_CREATE(TwoLevelHints);
-SPECIALIZE_CREATE(UUIDCommand);
-SPECIALIZE_CREATE(VersionMin);
-SPECIALIZE_CREATE(Builder);
-
+void init_utils(nb::module_&);
 }
-}
-
-
-// Opaque containers
-PYBIND11_MAKE_OPAQUE(std::vector<LIEF::MachO::Binary*>)
-
-
 #endif

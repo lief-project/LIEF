@@ -15,59 +15,34 @@
  */
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-#include "pyELF.hpp"
+#include "ELF/pyELF.hpp"
 
-#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreSigInfo.hpp"
 
-
-namespace LIEF {
-namespace ELF {
-
-template<class T>
-using getter_t = T (CoreSigInfo::*)(void) const;
-
-template<class T>
-using setter_t = void (CoreSigInfo::*)(T);
+namespace LIEF::ELF::py {
 
 template<>
-void create<CoreSigInfo>(py::module& m) {
+void create<CoreSigInfo>(nb::module_& m) {
 
-  py::class_<CoreSigInfo, NoteDetails>(m, "CoreSigInfo")
+  nb::class_<CoreSigInfo, NoteDetails>(m, "CoreSigInfo")
 
-    .def_property("signo",
-        static_cast<getter_t<int32_t>>(&CoreSigInfo::signo),
-        static_cast<setter_t<int32_t>>(&CoreSigInfo::signo),
-        "Signal number")
+    .def_prop_rw("signo",
+        nb::overload_cast<>(&CoreSigInfo::signo, nb::const_),
+        nb::overload_cast<int32_t>(&CoreSigInfo::signo),
+        "Signal number"_doc)
 
-    .def_property("sigcode",
-        static_cast<getter_t<int32_t>>(&CoreSigInfo::sigcode),
-        static_cast<setter_t<int32_t>>(&CoreSigInfo::sigcode),
-        "Signal code")
+    .def_prop_rw("sigcode",
+        nb::overload_cast<>(&CoreSigInfo::sigcode, nb::const_),
+        nb::overload_cast<int32_t>(&CoreSigInfo::sigcode),
+        "Signal code"_doc)
 
-    .def_property("sigerrno",
-        static_cast<getter_t<int32_t>>(&CoreSigInfo::sigerrno),
-        static_cast<setter_t<int32_t>>(&CoreSigInfo::sigerrno),
-        "If non-zero, an errno value associated with this signal")
+    .def_prop_rw("sigerrno",
+        nb::overload_cast<>(&CoreSigInfo::sigerrno, nb::const_),
+        nb::overload_cast<int32_t>(&CoreSigInfo::sigerrno),
+        "If non-zero, an errno value associated with this signal"_doc)
 
-    .def("__eq__", &CoreSigInfo::operator==)
-    .def("__ne__", &CoreSigInfo::operator!=)
-    .def("__hash__",
-        [] (const CoreSigInfo& note) {
-          return Hash::hash(note);
-        })
-
-    .def("__str__",
-        [] (const CoreSigInfo& note)
-        {
-          std::ostringstream stream;
-          stream << note;
-          std::string str = stream.str();
-          return str;
-        });
-
-
+    LIEF_DEFAULT_STR(LIEF::ELF::CoreSigInfo);
 }
-} // namespace ELF
-} // namespace LIEF
+}

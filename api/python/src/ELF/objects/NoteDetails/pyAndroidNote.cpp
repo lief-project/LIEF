@@ -15,60 +15,33 @@
  */
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-#include "pyELF.hpp"
+#include "ELF/pyELF.hpp"
 
-#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/NoteDetails/AndroidNote.hpp"
 
-namespace LIEF {
-namespace ELF {
-
-template<class T>
-using getter_t = T (AndroidNote::*)(void) const;
-
-template<class T>
-using setter_t = void (AndroidNote::*)(T);
+namespace LIEF::ELF::py {
 
 template<>
-void create<AndroidNote>(py::module& m) {
+void create<AndroidNote>(nb::module_& m) {
+  nb::class_<AndroidNote, NoteDetails>(m, "AndroidNote")
+    .def_prop_rw("sdk_version",
+        nb::overload_cast<>(&AndroidNote::sdk_version, nb::const_),
+        nb::overload_cast<uint32_t>(&AndroidNote::sdk_version),
+        "Target SDK platform"_doc)
 
-  py::class_<AndroidNote, NoteDetails>(m, "AndroidNote")
+    .def_prop_rw("ndk_version",
+        nb::overload_cast<>(&AndroidNote::ndk_version, nb::const_),
+        nb::overload_cast<const std::string&>(&AndroidNote::ndk_version),
+        "Android NDK version used to build the current binary"_doc)
 
-    .def_property("sdk_version",
-        static_cast<getter_t<uint32_t>>(&AndroidNote::sdk_version),
-        static_cast<setter_t<uint32_t>>(&AndroidNote::sdk_version),
-        "Target SDK platform"
-        )
+    .def_prop_rw("ndk_build_number",
+        nb::overload_cast<>(&AndroidNote::ndk_build_number, nb::const_),
+        nb::overload_cast<const std::string&>(&AndroidNote::ndk_build_number),
+        "Android NDK build number"_doc)
 
-    .def_property("ndk_version",
-        static_cast<getter_t<std::string>>(&AndroidNote::ndk_version),
-        static_cast<setter_t<const std::string&>>(&AndroidNote::ndk_version),
-        "Android NDK version used to build the current binary"
-        )
-
-    .def_property("ndk_build_number",
-        static_cast<getter_t<std::string>>(&AndroidNote::ndk_build_number),
-        static_cast<setter_t<const std::string&>>(&AndroidNote::ndk_build_number),
-        "Android NDK build number"
-        )
-
-    .def("__eq__", &AndroidNote::operator==)
-    .def("__ne__", &AndroidNote::operator!=)
-    .def("__hash__",
-        [] (const AndroidNote& note) {
-          return Hash::hash(note);
-        })
-
-    .def("__str__",
-        [] (const AndroidNote& note)
-        {
-          std::ostringstream stream;
-          stream << note;
-          std::string str = stream.str();
-          return str;
-        });
+    LIEF_DEFAULT_STR(LIEF::ELF::AndroidNote);
 }
 
-}
 }

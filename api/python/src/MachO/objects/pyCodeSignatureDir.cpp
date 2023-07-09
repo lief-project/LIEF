@@ -21,48 +21,31 @@
 #include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/CodeSignatureDir.hpp"
 
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
+#include "nanobind/extra/memoryview.hpp"
 
-namespace LIEF {
-namespace MachO {
+namespace LIEF::MachO::py {
 
 template<>
-void create<CodeSignatureDir>(py::module& m) {
+void create<CodeSignatureDir>(nb::module_& m) {
 
-  py::class_<CodeSignatureDir, LoadCommand>(m, "CodeSignatureDir")
+  nb::class_<CodeSignatureDir, LoadCommand>(m, "CodeSignatureDir")
+    .def_prop_rw("data_offset",
+        nb::overload_cast<>(&CodeSignatureDir::data_offset, nb::const_),
+        nb::overload_cast<uint32_t>(&CodeSignatureDir::data_offset),
+        "Offset in the binary where the signature starts"_doc)
 
-    .def_property("data_offset",
-        py::overload_cast<>(&CodeSignatureDir::data_offset, py::const_),
-        py::overload_cast<uint32_t>(&CodeSignatureDir::data_offset),
-        "Offset in the binary where the signature starts")
+    .def_prop_rw("data_size",
+        nb::overload_cast<>(&CodeSignatureDir::data_offset, nb::const_),
+        nb::overload_cast<uint32_t>(&CodeSignatureDir::data_offset),
+        "Size of the raw signature"_doc)
 
-    .def_property("data_size",
-        py::overload_cast<>(&CodeSignatureDir::data_offset, py::const_),
-        py::overload_cast<uint32_t>(&CodeSignatureDir::data_offset),
-        "Size of the raw signature")
-
-    .def_property_readonly("content",
+    .def_prop_ro("content",
         [] (const CodeSignatureDir& self) {
-          span<const uint8_t> content = self.content();
-          return py::memoryview::from_memory(content.data(), content.size());
-        }, "The raw signature as a bytes stream")
+          const span<const uint8_t> content = self.content();
+          return nb::memoryview::from_memory(content.data(), content.size());
+        }, "The raw signature as a bytes stream"_doc)
 
-    .def("__eq__", &CodeSignatureDir::operator==)
-    .def("__ne__", &CodeSignatureDir::operator!=)
-    .def("__hash__",
-        [] (const CodeSignatureDir& sig) {
-          return Hash::hash(sig);
-        })
-
-    .def("__str__",
-        [] (const CodeSignatureDir& dir)
-        {
-          std::ostringstream stream;
-          stream << dir;
-          return stream.str();
-        });
-
-}
-
+  LIEF_DEFAULT_STR(CodeSignatureDir);
 }
 }

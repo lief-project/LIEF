@@ -4,7 +4,7 @@ ART
 Utilities
 *********
 
-.. autofunction:: lief.ART.is_art
+.. autofunction:: lief.is_art
 
 .. autofunction:: lief.ART.version
 

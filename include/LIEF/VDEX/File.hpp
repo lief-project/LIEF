@@ -22,6 +22,10 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
+#include "LIEF/iterators.hpp"
+
+#include <vector>
+#include <memory>
 
 namespace LIEF {
 namespace DEX {

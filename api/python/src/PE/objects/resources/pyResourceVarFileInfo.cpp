@@ -13,72 +13,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/resources/ResourceVarFileInfo.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
+#include <nanobind/extra/stl/u16string.h>
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (ResourceVarFileInfo::*)(void) const;
-
-template<class T>
-using setter_t = void (ResourceVarFileInfo::*)(T);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<ResourceVarFileInfo>(py::module& m) {
-  py::class_<ResourceVarFileInfo, LIEF::Object>(m, "ResourceVarFileInfo",
-      "This object describes information about languages supported by the application")
+void create<ResourceVarFileInfo>(nb::module_& m) {
+  nb::class_<ResourceVarFileInfo, LIEF::Object>(m, "ResourceVarFileInfo",
+      "This object describes information about languages supported by the application"_doc)
 
-    .def_property("type",
-        static_cast<getter_t<uint16_t>>(&ResourceVarFileInfo::type),
-        static_cast<setter_t<uint16_t>>(&ResourceVarFileInfo::type),
+    .def_prop_rw("type",
+        nb::overload_cast<>(&ResourceVarFileInfo::type, nb::const_),
+        nb::overload_cast<uint16_t>(&ResourceVarFileInfo::type),
         R"delim(
         The type of data in the version resource
 
           * ``1`` if it contains text data
           * ``0`` if it contains binary data
-        )delim")
+        )delim"_doc)
 
 
-    .def_property("key",
-        static_cast<getter_t<const std::u16string&>>(&ResourceVarFileInfo::key),
-        static_cast<setter_t<const std::string&>>(&ResourceVarFileInfo::key),
-        "Signature of the structure. Must be ``VarFileInfo``")
+    .def_prop_rw("key",
+        nb::overload_cast<>(&ResourceVarFileInfo::key, nb::const_),
+        nb::overload_cast<const std::string&>(&ResourceVarFileInfo::key),
+        "Signature of the structure. Must be ``VarFileInfo``"_doc)
 
-    .def_property("translations",
-        static_cast<std::vector<uint32_t>& (ResourceVarFileInfo::*)(void)>(&ResourceVarFileInfo::translations),
-        static_cast<setter_t<const std::vector<uint32_t>&>>(&ResourceVarFileInfo::translations),
+    .def_prop_rw("translations",
+        nb::overload_cast<>(&ResourceVarFileInfo::translations),
+        nb::overload_cast<const std::vector<uint32_t>&>(&ResourceVarFileInfo::translations),
         R"delim(
         List of languages that the application supports
 
         The **least** significant 16-bits  must contain a Microsoft language identifier,
         and the **most** significant 16-bits must contain the :class:`~lief.PE.CODE_PAGES`
         Either **most** or **least** 16-bits can be zero, indicating that the file is language or code page independent.
-        )delim")
+        )delim"_doc)
 
-    .def("__eq__", &ResourceVarFileInfo::operator==)
-    .def("__ne__", &ResourceVarFileInfo::operator!=)
-    .def("__hash__",
-        [] (const ResourceVarFileInfo& var_file_info) {
-          return Hash::hash(var_file_info);
-        })
-
-    .def("__str__",
-        [] (const ResourceVarFileInfo& var_file_info) {
-          std::ostringstream stream;
-          stream << var_file_info;
-          std::string str = stream.str();
-          return str;
-        });
+    LIEF_DEFAULT_STR(LIEF::PE::ResourceVarFileInfo);
 }
 
-}
 }
 

@@ -15,70 +15,42 @@
  */
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/SymbolCommand.hpp"
 
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
 
-namespace LIEF {
-namespace MachO {
-
-template<class T>
-using getter_t = T (SymbolCommand::*)(void) const;
-
-template<class T>
-using setter_t = void (SymbolCommand::*)(T);
-
+namespace LIEF::MachO::py {
 
 template<>
-void create<SymbolCommand>(py::module& m) {
+void create<SymbolCommand>(nb::module_& m) {
 
-  py::class_<SymbolCommand, LoadCommand>(m, "SymbolCommand",
-      R"delim(
-      Class that represents the LC_SYMTAB command
-      )delim")
-    .def(py::init<>())
+  nb::class_<SymbolCommand, LoadCommand>(m, "SymbolCommand",
+      R"delim(Class that represents the LC_SYMTAB command)delim"_doc)
+    .def(nb::init<>())
 
-    .def_property("symbol_offset",
-        static_cast<getter_t<uint32_t>>(&SymbolCommand::symbol_offset),
-        static_cast<setter_t<uint32_t>>(&SymbolCommand::symbol_offset),
-        "Offset from the start of the file to the n_list associated with the command")
+    .def_prop_rw("symbol_offset",
+        nb::overload_cast<>(&SymbolCommand::symbol_offset, nb::const_),
+        nb::overload_cast<uint32_t>(&SymbolCommand::symbol_offset),
+        "Offset from the start of the file to the n_list associated with the command"_doc)
 
-    .def_property("numberof_symbols",
-        static_cast<getter_t<uint32_t>>(&SymbolCommand::numberof_symbols),
-        static_cast<setter_t<uint32_t>>(&SymbolCommand::numberof_symbols),
-        "Number of symbols registered")
+    .def_prop_rw("numberof_symbols",
+        nb::overload_cast<>(&SymbolCommand::numberof_symbols, nb::const_),
+        nb::overload_cast<uint32_t>(&SymbolCommand::numberof_symbols),
+        "Number of symbols registered"_doc)
 
-    .def_property("strings_offset",
-        static_cast<getter_t<uint32_t>>(&SymbolCommand::strings_offset),
-        static_cast<setter_t<uint32_t>>(&SymbolCommand::strings_offset),
-        "Offset from the start of the file to the string table")
+    .def_prop_rw("strings_offset",
+        nb::overload_cast<>(&SymbolCommand::strings_offset, nb::const_),
+        nb::overload_cast<uint32_t>(&SymbolCommand::strings_offset),
+        "Offset from the start of the file to the string table"_doc)
 
-    .def_property("strings_size",
-        static_cast<getter_t<uint32_t>>(&SymbolCommand::strings_size),
-        static_cast<setter_t<uint32_t>>(&SymbolCommand::strings_size),
-        "Size of the size string table")
+    .def_prop_rw("strings_size",
+        nb::overload_cast<>(&SymbolCommand::strings_size, nb::const_),
+        nb::overload_cast<uint32_t>(&SymbolCommand::strings_size),
+        "Size of the size string table"_doc)
 
-
-    .def("__eq__", &SymbolCommand::operator==)
-    .def("__ne__", &SymbolCommand::operator!=)
-    .def("__hash__",
-        [] (const SymbolCommand& symbolcmd) {
-          return Hash::hash(symbolcmd);
-        })
-
-    .def("__str__",
-        [] (const SymbolCommand& symbolcmd)
-        {
-          std::ostringstream stream;
-          stream << symbolcmd;
-          std::string str =  stream.str();
-          return str;
-        });
-
-}
-
+    LIEF_DEFAULT_STR(SymbolCommand);
 }
 }
 

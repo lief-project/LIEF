@@ -13,52 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyELF.hpp"
+#include "ELF/pyELF.hpp"
+#include "pySafeString.hpp"
 
-#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/SymbolVersionAux.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-namespace LIEF {
-namespace ELF {
-
-template<class T>
-using getter_t = T (SymbolVersionAux::*)(void) const;
-
-template<class T>
-using setter_t = void (SymbolVersionAux::*)(T);
+namespace LIEF::ELF::py {
 
 template<>
-void create<SymbolVersionAux>(py::module& m) {
+void create<SymbolVersionAux>(nb::module_& m) {
+  nb::class_<SymbolVersionAux, LIEF::Object>(m, "SymbolVersionAux",
+      "Class which represents an Auxiliary Symbol version"_doc)
 
-  py::class_<SymbolVersionAux, LIEF::Object>(m, "SymbolVersionAux",
-      "Class which represents an Auxiliary Symbol version")
-
-    .def_property("name",
+    .def_prop_rw("name",
         [] (const SymbolVersionAux& obj) {
-          return safe_string_converter(obj.name());
+          return LIEF::py::safe_string(obj.name());
         },
-        static_cast<setter_t<const std::string&>>(&SymbolVersionAux::name),
-        "Symbol's name (e.g. ``GLIBC_2.2.5``)")
+        nb::overload_cast<const std::string&>(&SymbolVersionAux::name),
+        "Symbol's name (e.g. ``GLIBC_2.2.5``)"_doc)
 
-    .def("__eq__", &SymbolVersionAux::operator==)
-    .def("__ne__", &SymbolVersionAux::operator!=)
-    .def("__hash__",
-        [] (const SymbolVersionAux& sva) {
-          return Hash::hash(sva);
-        })
-
-    .def("__str__",
-        [] (const SymbolVersionAux& symbolVersionAux)
-        {
-          std::ostringstream stream;
-          stream << symbolVersionAux;
-          std::string str =  stream.str();
-          return str;
-        });
-}
-
+    LIEF_DEFAULT_STR(LIEF::ELF::SymbolVersionAux);
 }
 }

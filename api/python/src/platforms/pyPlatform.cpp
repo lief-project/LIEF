@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPlatform.hpp"
+#include "platforms/pyPlatform.hpp"
+#include "LIEF/platforms.hpp"
 #include "enums_wrapper.hpp"
+#include "pyLIEF.hpp"
+#include "platforms/android/pyAndroid.hpp"
 
-namespace LIEF {
+namespace LIEF::py {
 
-void init_python_platforms(py::module& m) {
+void init_platforms(nb::module_& m) {
   LIEF::enum_<PLATFORMS>(m, "PLATFORMS")
     .value("UNKNOWN", PLATFORMS::UNKNOWN)
     .value("LINUX",   PLATFORMS::LINUX)
@@ -28,8 +31,9 @@ void init_python_platforms(py::module& m) {
     .value("OSX",     PLATFORMS::OSX);
 
   m.def("current_platform", &current_platform,
-      "Return the current plaform (Linux, Windows, ...) as a :attr:`lief.PLATFORMS` enum");
+      "Return the current plaform (Linux, Windows, ...) as a :attr:`lief.PLATFORMS` enum"_doc);
 
+  LIEF::Android::py::init_module(m);
 }
 
 }

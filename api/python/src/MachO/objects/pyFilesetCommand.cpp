@@ -13,72 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/FilesetCommand.hpp"
+#include "LIEF/MachO/Binary.hpp"
 
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
 
-namespace LIEF {
-namespace MachO {
-
-template<class T>
-using getter_t = T (FilesetCommand::*)(void) const;
-
-template<class T>
-using setter_t = void (FilesetCommand::*)(T);
-
-template<class T>
-using no_const_getter_t = T (FilesetCommand::*)();
-
-
+namespace LIEF::MachO::py {
 
 template<>
-void create<FilesetCommand>(py::module& m) {
+void create<FilesetCommand>(nb::module_& m) {
+  nb::class_<FilesetCommand, LoadCommand>(m, "FilesetCommand",
+     "Class associated with the LC_FILESET_ENTRY commands"_doc)
+    .def_prop_rw("name",
+        nb::overload_cast<>(&FilesetCommand::name, nb::const_),
+        nb::overload_cast<const std::string&>(&FilesetCommand::name),
+        "Name of the underlying MachO binary"_doc)
 
-  py::class_<FilesetCommand, LoadCommand>(m, "FilesetCommand",
-     "Class associated with the LC_FILESET_ENTRY commands")
-    .def_property("name",
-        static_cast<getter_t<const std::string&>>(&FilesetCommand::name),
-        static_cast<setter_t<const std::string&>>(&FilesetCommand::name),
-        "Name of the underlying MachO binary")
+    .def_prop_rw("virtual_address",
+        nb::overload_cast<>(&FilesetCommand::virtual_address, nb::const_),
+        nb::overload_cast<uint64_t>(&FilesetCommand::virtual_address),
+        "Memory address where the MachO file should be mapped"_doc)
 
-    .def_property("virtual_address",
-        static_cast<getter_t<uint64_t>>(&FilesetCommand::virtual_address),
-        static_cast<setter_t<uint64_t>>(&FilesetCommand::virtual_address),
-        "Memory address where the MachO file should be mapped")
+    .def_prop_rw("file_offset",
+        nb::overload_cast<>(&FilesetCommand::file_offset, nb::const_),
+        nb::overload_cast<uint64_t>(&FilesetCommand::file_offset),
+        "Original offset in the kernel cache"_doc)
 
-    .def_property("file_offset",
-        static_cast<getter_t<uint64_t>>(&FilesetCommand::file_offset),
-        static_cast<setter_t<uint64_t>>(&FilesetCommand::file_offset),
-        "Original offset in the kernel cache")
+    .def_prop_ro("binary",
+        nb::overload_cast<>(&FilesetCommand::binary, nb::const_),
+        "Return the " RST_CLASS_REF(lief.MachO.Binary) " object associated with the entry"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("binary",
-        static_cast<no_const_getter_t<Binary*>>(&FilesetCommand::binary),
-        "Return the " RST_CLASS_REF(lief.MachO.Binary) " object associated with the entry",
-        py::return_value_policy::reference)
-
-    .def("__eq__", &FilesetCommand::operator==)
-    .def("__ne__", &FilesetCommand::operator!=)
-    .def("__hash__",
-        [] (const FilesetCommand& main) {
-          return Hash::hash(main);
-        })
-
-
-    .def("__str__",
-        [] (const FilesetCommand& main)
-        {
-          std::ostringstream stream;
-          stream << main;
-          return stream.str();
-        });
-
-}
-
+    LIEF_DEFAULT_STR(FilesetCommand);
 }
 }

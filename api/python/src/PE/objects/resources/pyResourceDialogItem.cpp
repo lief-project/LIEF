@@ -13,89 +13,68 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/resources/ResourceDialogItem.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-namespace LIEF {
-namespace PE {
+#include "nanobind/extra/stl/u16string.h"
 
-template<class T>
-using getter_t = T (ResourceDialogItem::*)(void) const;
-
-template<class T>
-using setter_t = void (ResourceDialogItem::*)(T);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<ResourceDialogItem>(py::module& m) {
-  py::class_<ResourceDialogItem, LIEF::Object>(m, "ResourceDialogItem",
+void create<ResourceDialogItem>(nb::module_& m) {
+  nb::class_<ResourceDialogItem, LIEF::Object>(m, "ResourceDialogItem",
       R"delim(
       This class represents an item in the :class:`lief.PE.ResourceDialog`
-      )delim")
+      )delim"_doc)
 
-    .def_property_readonly("is_extended",
+    .def_prop_ro("is_extended",
         &ResourceDialogItem::is_extended,
-        "``True`` if the control is an extended one")
+        "``True`` if the control is an extended one"_doc)
 
-    .def_property_readonly("help_id",
-        static_cast<getter_t<uint32_t>>(&ResourceDialogItem::help_id),
-        "The help context identifier for the control")
+    .def_prop_ro("help_id",
+        nb::overload_cast<>(&ResourceDialogItem::help_id, nb::const_),
+        "The help context identifier for the control"_doc)
 
-    .def_property_readonly("extended_style",
-        static_cast<getter_t<uint32_t>>(&ResourceDialogItem::extended_style),
-        "The extended styles for the window")
+    .def_prop_ro("extended_style",
+        nb::overload_cast<>(&ResourceDialogItem::extended_style, nb::const_),
+        "The extended styles for the window"_doc)
 
-    .def_property_readonly("style",
-        static_cast<getter_t<uint32_t>>(&ResourceDialogItem::style),
+    .def_prop_ro("style",
+        nb::overload_cast<>(&ResourceDialogItem::style, nb::const_),
         "The style of the control. This member can be a combination of "
         "" RST_CLASS_REF(lief.PE.WINDOW_STYLES) "  values "
-        "and one or more of the control style values.")
+        "and one or more of the control style values."_doc)
 
-    .def_property_readonly("x",
-        static_cast<getter_t<int16_t>>(&ResourceDialogItem::x),
-        "The x-coordinate, in dialog box units, of the upper-left corner of the control")
+    .def_prop_ro("x",
+        nb::overload_cast<>(&ResourceDialogItem::x, nb::const_),
+        "The x-coordinate, in dialog box units, of the upper-left corner of the control"_doc)
 
-    .def_property_readonly("y",
-        static_cast<getter_t<int16_t>>(&ResourceDialogItem::y),
-        "The y-coordinate, in dialog box units, of the upper-left corner of the control")
+    .def_prop_ro("y",
+        nb::overload_cast<>(&ResourceDialogItem::y, nb::const_),
+        "The y-coordinate, in dialog box units, of the upper-left corner of the control"_doc)
 
-    .def_property_readonly("cx",
-        static_cast<getter_t<int16_t>>(&ResourceDialogItem::cx),
-        "The width, in dialog box units, of the control")
+    .def_prop_ro("cx",
+        nb::overload_cast<>(&ResourceDialogItem::cx, nb::const_),
+        "The width, in dialog box units, of the control"_doc)
 
-    .def_property_readonly("cy",
-        static_cast<getter_t<int16_t>>(&ResourceDialogItem::cy),
-        "The height, in dialog box units, of the control")
+    .def_prop_ro("cy",
+        nb::overload_cast<>(&ResourceDialogItem::cy, nb::const_),
+        "The height, in dialog box units, of the control"_doc)
 
-    .def_property_readonly("id",
-        static_cast<getter_t<uint32_t>>(&ResourceDialogItem::id),
-        "The control identifier")
+    .def_prop_ro("id",
+        nb::overload_cast<>(&ResourceDialogItem::id, nb::const_),
+        "The control identifier"_doc)
 
-    .def_property_readonly("title",
-        static_cast<getter_t<const std::u16string&>>(&ResourceDialogItem::title),
-        "Initial text of the control")
+    .def_prop_ro("title",
+        nb::overload_cast<>(&ResourceDialogItem::title, nb::const_),
+        "Initial text of the control"_doc)
 
-    .def("__eq__", &ResourceDialogItem::operator==)
-    .def("__ne__", &ResourceDialogItem::operator!=)
-    .def("__hash__",
-        [] (const ResourceDialogItem& dialog) {
-          return Hash::hash(dialog);
-        })
-
-    .def("__str__",
-        [] (const ResourceDialogItem& dialog_item) {
-          std::ostringstream stream;
-          stream << dialog_item;
-          std::string str = stream.str();
-          return str;
-        });
-}
-
+    LIEF_DEFAULT_STR(LIEF::PE::ResourceDialogItem);
 }
 }
 

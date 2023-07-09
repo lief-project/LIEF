@@ -13,44 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/LoadConfigurations.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-
-namespace LIEF {
-namespace PE {
+namespace LIEF::PE::py {
 
 template<>
-void create<LoadConfigurationV11>(py::module& m) {
-  py::class_<LoadConfigurationV11, LoadConfigurationV10>(m, "LoadConfigurationV11")
-    .def(py::init<>())
+void create<LoadConfigurationV11>(nb::module_& m) {
+  nb::class_<LoadConfigurationV11, LoadConfigurationV10>(m, "LoadConfigurationV11")
+    .def(nb::init<>())
 
-    .def_property("cast_guard_os_determined_failure_mode",
-        py::overload_cast<>(&LoadConfigurationV11::cast_guard_os_determined_failure_mode, py::const_),
-        py::overload_cast<uint64_t>(&LoadConfigurationV11::cast_guard_os_determined_failure_mode),
-        "")
+    .def_prop_rw("cast_guard_os_determined_failure_mode",
+        nb::overload_cast<>(&LoadConfigurationV11::cast_guard_os_determined_failure_mode, nb::const_),
+        nb::overload_cast<uint64_t>(&LoadConfigurationV11::cast_guard_os_determined_failure_mode),
+        ""_doc)
 
-    .def("__eq__", &LoadConfigurationV11::operator==)
-    .def("__ne__", &LoadConfigurationV11::operator!=)
-    .def("__hash__",
-        [] (const LoadConfigurationV11& config) {
-          return Hash::hash(config);
-        })
-
-
-    .def("__str__", [] (const LoadConfigurationV11& config)
-        {
-          std::ostringstream stream;
-          stream << config;
-          std::string str = stream.str();
-          return str;
-        });
-}
-
+    LIEF_DEFAULT_STR(LoadConfigurationV11);
 }
 }

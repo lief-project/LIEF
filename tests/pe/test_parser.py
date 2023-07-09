@@ -1,8 +1,9 @@
 import lief
+import hashlib
 from utils import get_sample, is_64bits_platform
 
-winhello64 = lief.parse(get_sample('PE/PE64_x86-64_binary_winhello64-mingw.exe'))
-atapi      = lief.parse(get_sample('PE/PE64_x86-64_atapi.sys'))
+winhello64 = lief.PE.parse(get_sample('PE/PE64_x86-64_binary_winhello64-mingw.exe'))
+atapi      = lief.PE.parse(get_sample('PE/PE64_x86-64_atapi.sys'))
 
 def test_dos_header():
     dos_header: lief.PE.DosHeader = atapi.dos_header
@@ -24,6 +25,8 @@ def test_dos_header():
     assert dos_header.oem_info == 0x0
     assert dos_header.overlay_number == 0x0
     assert dos_header.used_bytes_in_the_last_page == 0x90
+
+    assert hashlib.sha256(atapi.dos_stub).hexdigest() == "2e6296653faf1fd51d875fab7e08c38f06f9a7eccb718c569dee5e3041075a6a"
 
 def test_header():
     header: lief.PE.Header = atapi.header
@@ -261,6 +264,7 @@ def test_tls():
     assert tls.characteristics == 0
     assert tls.addressof_raw_data, (0x40a000 == 0x40a060)
     assert tls.section.name == ".tls"
+    assert hashlib.sha256(tls.data_template).hexdigest() == "ffb6b993bf4ae7ec095d4aeba45ac7e9973e16c17077058260f3f4eb0487d07e"
 
 def test_imports():
     imports  = winhello64.imports
@@ -434,7 +438,6 @@ def test_checksum():
     assert atapi.optional_header.computed_checksum      == atapi.optional_header.checksum
     assert winhello64.optional_header.computed_checksum == winhello64.optional_header.checksum
 
-
 def test_config():
 
     config = lief.PE.ParserConfig()
@@ -450,3 +453,8 @@ def test_config():
     assert len(avast.relocations) == 0
     assert len(avast.signatures) == 0
     assert avast.resources is None
+
+def test_overlay():
+    pe = lief.PE.parse(get_sample("PE/PE32_x86_binary_KMSpico_setup_MALWARE.exe"))
+    assert len(pe.overlay) == 3073728
+    assert hashlib.sha256(pe.overlay).hexdigest() == "01c0472ead112b44dca6996c9fae47e0d6870e61792ef606ea47067932115d01"

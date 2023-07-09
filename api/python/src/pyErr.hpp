@@ -13,36 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef PY_LIEF_ERR_H_
-#define PY_LIEF_ERR_H_
-#include <pybind11/pybind11.h>
+#ifndef PY_LIEF_ERROR_H
+#define PY_LIEF_ERROR_H
+
+#include <nanobind/nanobind.h>
 #include "LIEF/errors.hpp"
 
-namespace py = pybind11;
 
-
+namespace LIEF::py {
 template <class Func, typename... Ts,
           std::enable_if_t<!std::is_member_pointer<std::decay_t<Func>>{}, int> = 0>
-py::object error_or(Func f, Ts&&... args) {
+nanobind::object error_or(Func f, Ts&&... args) {
+  namespace nb = nanobind;
   auto&& ret = f(std::forward<Ts>(args)...);
   if (!ret) {
-    return py::cast(LIEF::as_lief_err(ret));
+    return nb::cast(as_lief_err(ret));
   }
-  return py::cast(ret.value());
+  return nb::cast(ret.value());
 }
-
 
 template <class Func, typename... Ts,
           std::enable_if_t<std::is_member_pointer<std::decay_t<Func>>{}, int> = 0>
-py::object error_or(Func f, Ts&&... args) {
+nanobind::object error_or(Func f, Ts&&... args) {
+  namespace nb = nanobind;
   auto&& ret = std::mem_fn(f)(std::forward<Ts>(args)...);
   if (!ret) {
-    return py::cast(LIEF::as_lief_err(ret));
+    return nb::cast(LIEF::as_lief_err(ret));
   }
-  return py::cast(ret.value());
+  return nb::cast(ret.value());
 }
 
-
-void init_LIEF_errors(py::module&);
+void init_errors(nanobind::module_&);
+}
 
 #endif

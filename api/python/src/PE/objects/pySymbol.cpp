@@ -1,3 +1,4 @@
+
 /* Copyright 2017 - 2023 R. Thomas
  * Copyright 2017 - 2023 Quarkslab
  *
@@ -13,78 +14,54 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/Symbol.hpp"
+#include "LIEF/PE/Section.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/extra/stl/wstring.h>
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (Symbol::*)(void) const;
-
-template<class T>
-using setter_t = void (Symbol::*)(T);
-
-template<class T>
-using no_const_getter = T (Symbol::*)(void);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<Symbol>(py::module& m) {
-  py::class_<Symbol, LIEF::Symbol>(m, "Symbol")
-    .def(py::init<>())
+void create<Symbol>(nb::module_& m) {
+  nb::class_<Symbol, LIEF::Symbol>(m, "Symbol")
+    .def(nb::init<>())
 
-    .def_property("name",
-        static_cast<getter_t<std::wstring>>      (&Symbol::wname),
-        static_cast<setter_t<const std::string&>>(&Symbol::name))
+    .def_prop_rw("name",
+        nb::overload_cast<>(&Symbol::wname, nb::const_),
+        nb::overload_cast<const std::string&>(&Symbol::name))
 
-    .def_property_readonly("section_number",
+    .def_prop_ro("section_number",
         &Symbol::section_number)
 
-    .def_property_readonly("type",
+    .def_prop_ro("type",
         &Symbol::type)
 
-    .def_property_readonly("base_type",
+    .def_prop_ro("base_type",
         &Symbol::base_type)
 
-    .def_property_readonly("complex_type",
+    .def_prop_ro("complex_type",
         &Symbol::complex_type)
 
-    .def_property_readonly("storage_class",
+    .def_prop_ro("storage_class",
         &Symbol::storage_class)
 
-    .def_property_readonly("numberof_aux_symbols",
+    .def_prop_ro("numberof_aux_symbols",
         &Symbol::numberof_aux_symbols)
 
-    .def_property_readonly("section",
-        static_cast<no_const_getter<Section*>>(&Symbol::section),
-        py::return_value_policy::reference)
+    .def_prop_ro("section",
+        nb::overload_cast<>(&Symbol::section),
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_section",
+    .def_prop_ro("has_section",
         &Symbol::has_section,
-        "``True`` if symbols are located in a section")
+        "``True`` if symbols are located in a section"_doc)
 
-    .def("__eq__", &Symbol::operator==)
-    .def("__ne__", &Symbol::operator!=)
-    .def("__hash__",
-        [] (const Symbol& symbol) {
-          return Hash::hash(symbol);
-        })
-
-
-    .def("__str__", [] (const Symbol& symbol)
-        {
-          std::ostringstream stream;
-          stream << symbol;
-          std::string str = stream.str();
-          return str;
-        });
+    LIEF_DEFAULT_STR(LIEF::PE::Symbol);
 }
 
-}
 }

@@ -13,30 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/SubFramework.hpp"
 
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
 
-namespace LIEF {
-namespace MachO {
-
-template<class T>
-using getter_t = T (SubFramework::*)(void) const;
-
-template<class T>
-using setter_t = void (SubFramework::*)(T);
-
+namespace LIEF::MachO::py {
 
 template<>
-void create<SubFramework>(py::module& m) {
+void create<SubFramework>(nb::module_& m) {
 
-  py::class_<SubFramework, LoadCommand>(m, "SubFramework",
+  nb::class_<SubFramework, LoadCommand>(m, "SubFramework",
       R"delim(
       Class that represents the SubFramework command.
       Accodring to the Mach-O ``loader.h`` documentation:
@@ -50,31 +40,13 @@ void create<SubFramework>(py::module& m) {
       > editor produces an error and states to link against the umbrella framework.
       > The name of the umbrella framework for subframeworks is recorded in the
       > following structure.
-      )delim")
+      )delim"_doc)
 
-    .def_property("umbrella",
-        static_cast<getter_t<const std::string&>>(&SubFramework::umbrella),
-        static_cast<setter_t<const std::string&>>(&SubFramework::umbrella),
-        "Name of the umbrella framework")
+    .def_prop_rw("umbrella",
+        nb::overload_cast<>(&SubFramework::umbrella, nb::const_),
+        nb::overload_cast<const std::string&>(&SubFramework::umbrella),
+        "Name of the umbrella framework"_doc)
 
-    .def("__eq__", &SubFramework::operator==)
-    .def("__ne__", &SubFramework::operator!=)
-    .def("__hash__",
-        [] (const SubFramework& func) {
-          return Hash::hash(func);
-        })
-
-
-    .def("__str__",
-        [] (const SubFramework& func)
-        {
-          std::ostringstream stream;
-          stream << func;
-          std::string str = stream.str();
-          return str;
-        });
-
-}
-
+    LIEF_DEFAULT_STR(SubFramework);
 }
 }

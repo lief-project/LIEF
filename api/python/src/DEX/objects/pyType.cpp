@@ -14,41 +14,33 @@
  * limitations under the License.
  */
 #include "LIEF/DEX/Type.hpp"
-#include "LIEF/DEX/hash.hpp"
+#include "LIEF/DEX/Class.hpp"
 
 #include "LIEF/DEX/EnumToString.hpp"
 
-#include "pyDEX.hpp"
+#include "DEX/pyDEX.hpp"
 
 #include <sstream>
+#include <string>
+#include <nanobind/stl/string.h>
 
 #define PY_ENUM(x) to_string(x), x
 
-namespace LIEF {
-namespace DEX {
-
-template<class T>
-using getter_t = T (Type::*)(void) const;
-
-template<class T>
-using no_const_getter_t = T (Type::*)(void);
-
-template<class T>
-using setter_t = void (Type::*)(T);
-
+namespace LIEF::DEX::py {
 
 template<>
-void create<Type>(py::module& m) {
+void create<Type>(nb::module_& m) {
 
-  py::class_<Type, LIEF::Object> pytype(m, "Type", "DEX Type representation");
+  nb::class_<Type, LIEF::Object> pytype(m, "Type",
+      "DEX Type representation"_doc);
 
-  py::enum_<Type::TYPES>(pytype, "TYPES")
+  nb::enum_<Type::TYPES>(pytype, "TYPES")
     .value(PY_ENUM(Type::TYPES::UNKNOWN))
     .value(PY_ENUM(Type::TYPES::ARRAY))
     .value(PY_ENUM(Type::TYPES::PRIMITIVE))
     .value(PY_ENUM(Type::TYPES::CLASS));
 
-  py::enum_<Type::PRIMITIVES>(pytype, "PRIMITIVES")
+  nb::enum_<Type::PRIMITIVES>(pytype, "PRIMITIVES")
     .value(PY_ENUM(Type::PRIMITIVES::VOID_T))
     .value(PY_ENUM(Type::PRIMITIVES::BOOLEAN))
     .value(PY_ENUM(Type::PRIMITIVES::BYTE))
@@ -59,69 +51,52 @@ void create<Type>(py::module& m) {
     .value(PY_ENUM(Type::PRIMITIVES::FLOAT))
     .value(PY_ENUM(Type::PRIMITIVES::DOUBLE));
 
-
   pytype
-    .def_property_readonly("type",
-        &Type::type,
-        "" RST_CLASS_REF(lief.DEX.Type.TYPES) " of this object")
+    .def_prop_ro("type", &Type::type,
+        "" RST_CLASS_REF(lief.DEX.Type.TYPES) " of this object"_doc)
 
-    .def_property_readonly("value",
-        [] (Type& type) -> py::object {
+    .def_prop_ro("value",
+        [] (Type& type) -> nb::object {
           switch (type.type()) {
             case Type::TYPES::ARRAY:
               {
-                return py::cast(type.array());
+                return nb::cast(type.array());
               }
 
             case Type::TYPES::CLASS:
               {
-                return py::cast(type.cls(), py::return_value_policy::reference);
+                return nb::cast(type.cls(), nb::rv_policy::reference_internal);
               }
 
             case Type::TYPES::PRIMITIVE:
               {
-                return py::cast(type.primitive());
+                return nb::cast(type.primitive());
               }
 
             case Type::TYPES::UNKNOWN:
             default:
               {
-                return py::none{};
+                return nb::none();
               }
           }
         },
         "Depending on the " RST_CLASS_REF(lief.DEX.Type.TYPES) ", return "
-        " " RST_CLASS_REF(lief.DEX.Class) " or " RST_CLASS_REF(lief.DEX.Type.PRIMITIVES) " or array",
-        py::return_value_policy::reference)
+        " " RST_CLASS_REF(lief.DEX.Class) " or " RST_CLASS_REF(lief.DEX.Type.PRIMITIVES) " or array"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("dim",
+    .def_prop_ro("dim",
         &Type::dim,
         "If the current type is an array, return its dimension otherwise 0")
 
-    .def_property_readonly("underlying_array_type",
-        static_cast<no_const_getter_t<Type&>>(&Type::underlying_array_type),
-        "Underlying type of the array",
-        py::return_value_policy::reference)
+    .def_prop_ro("underlying_array_type",
+        nb::overload_cast<>(&Type::underlying_array_type, nb::const_),
+        "Underlying type of the array"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_static("pretty_name",
-        &Type::pretty_name,
-        "Pretty name of primitives",
+    .def_static("pretty_name", &Type::pretty_name,
+        "Pretty name of primitives"_doc,
         "primitive"_a)
 
-    .def("__eq__", &Type::operator==)
-    .def("__ne__", &Type::operator!=)
-    .def("__hash__",
-        [] (const Type& type) {
-          return Hash::hash(type);
-        })
-
-    .def("__str__",
-        [] (const Type& type) {
-          std::ostringstream stream;
-          stream << type;
-          return stream.str();
-        });
-}
-
+    LIEF_DEFAULT_STR(Type);
 }
 }

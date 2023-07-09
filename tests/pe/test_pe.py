@@ -51,6 +51,7 @@ def test_code_view_pdb():
         'timestamp': 1459952944,
         'type': 'CODEVIEW'
     }
+    assert print(code_view) is None
 
 def test_remove_section(tmp_path):
     path = get_sample('PE/PE64_x86-64_remove_section.exe')
@@ -118,4 +119,11 @@ def test_sections():
     assert pe.sections[0].name == ".text"
     assert pe.sections[0].fullname.encode("utf8") == b".text\x00\x00\x00"
 
+def test_utils():
+    assert lief.PE.get_type(get_sample("PE/PE32_x86_binary_PGO-LTCG.exe")) == lief.PE.PE_TYPE.PE32
+    assert lief.PE.get_type(get_sample("ELF/ELF_Core_issue_808.core")) == lief.lief_errors.file_format_error
+
+    with open(get_sample("PE/PE32_x86_binary_PGO-LTCG.exe"), "rb") as f:
+        buffer = list(f.read())
+        assert lief.PE.get_type(buffer) == lief.PE.PE_TYPE.PE32
 

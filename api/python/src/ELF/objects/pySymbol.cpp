@@ -13,75 +13,65 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyELF.hpp"
-#include "pyIterators.hpp"
+#include "ELF/pyELF.hpp"
+#include "pyIterator.hpp"
 
 #include "LIEF/ELF/Symbol.hpp"
 #include "LIEF/ELF/SymbolVersion.hpp"
-
-#include "LIEF/ELF/hash.hpp"
-#include "LIEF/Abstract/Symbol.hpp"
-
+#include "LIEF/ELF/Section.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-namespace LIEF {
-namespace ELF {
-
-template<class T>
-using getter_t = T (Symbol::*)(void) const;
-
-template<class T>
-using setter_t = void (Symbol::*)(T);
-
+namespace LIEF::ELF::py {
 
 template<>
-void create<Symbol>(py::module& m) {
+void create<Symbol>(nb::module_& m) {
 
-  py::class_<Symbol, LIEF::Symbol>(m, "Symbol",
+  nb::class_<Symbol, LIEF::Symbol>(m, "Symbol",
     R"delim(
     "Class which represents an ELF symbol"
     )delim")
-    .def(py::init<>())
-    .def_property_readonly("demangled_name",
+    .def(nb::init<>())
+    .def_prop_ro("demangled_name",
         &Symbol::demangled_name,
-        "Symbol's name demangled or an empty string if the demangling is not possible/failed")
+        "Symbol's name demangled or an empty string if the demangling is not possible/failed"_doc)
 
-    .def_property("type",
-        static_cast<getter_t<ELF_SYMBOL_TYPES>>(&Symbol::type),
-        static_cast<setter_t<ELF_SYMBOL_TYPES>>(&Symbol::type),
+    .def_prop_rw("type",
+        nb::overload_cast<>(&Symbol::type, nb::const_),
+        nb::overload_cast<ELF_SYMBOL_TYPES>(&Symbol::type),
         "The symbol's type provides a general classification for the associated entity. "
-        "See: " RST_CLASS_REF(lief.ELF.SYMBOL_TYPES) "")
+        "See: " RST_CLASS_REF(lief.ELF.SYMBOL_TYPES) ""_doc)
 
-    .def_property("binding",
-        static_cast<getter_t<SYMBOL_BINDINGS>>(&Symbol::binding),
-        static_cast<setter_t<SYMBOL_BINDINGS>>(&Symbol::binding),
+    .def_prop_rw("binding",
+        nb::overload_cast<>(&Symbol::binding, nb::const_),
+        nb::overload_cast<SYMBOL_BINDINGS>(&Symbol::binding),
         "A symbol's binding determines the linkage visibility and behavior. "
-        "See " RST_CLASS_REF(lief.ELF.SYMBOL_BINDINGS) "")
+        "See " RST_CLASS_REF(lief.ELF.SYMBOL_BINDINGS) ""_doc)
 
-    .def_property("information",
-        static_cast<getter_t<uint8_t>>(&Symbol::information),
-        static_cast<setter_t<uint8_t>>(&Symbol::information),
-        "This property specifies the symbol's type and binding attributes")
+    .def_prop_rw("information",
+        nb::overload_cast<>(&Symbol::information, nb::const_),
+        nb::overload_cast<uint8_t>(&Symbol::information),
+        "This property specifies the symbol's type and binding attributes"_doc)
 
-    .def_property("other",
-        static_cast<getter_t<uint8_t>>(&Symbol::other),
-        static_cast<setter_t<uint8_t>>(&Symbol::other),
-        "Alias for " RST_ATTR_REF(lief.ELF.Symbol.visibility) "")
+    .def_prop_rw("other",
+        nb::overload_cast<>(&Symbol::other, nb::const_),
+        nb::overload_cast<uint8_t>(&Symbol::other),
+        "Alias for " RST_ATTR_REF(lief.ELF.Symbol.visibility) ""_doc)
 
-    .def_property("visibility",
-        static_cast<getter_t<ELF_SYMBOL_VISIBILITY>>(&Symbol::visibility),
-        static_cast<setter_t<ELF_SYMBOL_VISIBILITY>>(&Symbol::visibility),
+    .def_prop_rw("visibility",
+        nb::overload_cast<>(&Symbol::visibility, nb::const_),
+        nb::overload_cast<ELF_SYMBOL_VISIBILITY>(&Symbol::visibility),
         R"delim(
         Symbol :class:`~lief.ELF.SYMBOL_VISIBILITY`.
         It's basically an alias on :attr:`~lief.ELF.Symbol.other`
-        )delim")
+        )delim"_doc)
 
-    .def_property("value", // Even though it is already defined in the base class (Abstract/Symbol)
+    .def_prop_rw("value", // Even though it is already defined in the base class (Abstract/Symbol)
                            // We keep the definition to provide a dedicated documentation
-        static_cast<getter_t<uint64_t>>(&Symbol::value),
-        static_cast<setter_t<uint64_t>>(&Symbol::value),
+        nb::overload_cast<>(&Symbol::value, nb::const_),
+        nb::overload_cast<uint64_t>(&Symbol::value),
         R"delim(
         This member has different menaing depending on the symbol's type and the type of the ELF file (library, object, ...)
 
@@ -90,76 +80,62 @@ void create<Symbol>(py::module& m) {
         - In relocatable files, can also contain a section's offset for a defined symbol.
           That is, `value` is an offset from the beginning of the section associated with this symbol.
         - In executable and libraries, this property contains a virtual address.
-        )delim")
+        )delim"_doc)
 
-    .def_property("size",
-        static_cast<getter_t<uint64_t>>(&Symbol::size),
-        static_cast<setter_t<uint64_t>>(&Symbol::size),
+    .def_prop_rw("size",
+        nb::overload_cast<>(&Symbol::size, nb::const_),
+        nb::overload_cast<uint64_t>(&Symbol::size),
         "Many symbols have associated sizes. For example, a data object's size is the number of "
         "bytes contained in the object. This member holds `0` if the symbol has no size or "
-        "an unknown size.")
+        "an unknown size."_doc)
 
-    .def_property("shndx",
-        static_cast<getter_t<uint16_t>>(&Symbol::shndx),
-        static_cast<setter_t<uint16_t>>(&Symbol::shndx),
-        "Section index associated with the symbol")
+    .def_prop_rw("shndx",
+        nb::overload_cast<>(&Symbol::shndx, nb::const_),
+        nb::overload_cast<uint16_t>(&Symbol::shndx),
+        "Section index associated with the symbol"_doc)
 
-    .def_property_readonly("has_version",
+    .def_prop_ro("has_version",
         &Symbol::has_version,
-        "Check if this symbols has a " RST_CLASS_REF(lief.ELF.SymbolVersion) "")
+        "Check if this symbols has a " RST_CLASS_REF(lief.ELF.SymbolVersion) ""_doc)
 
-    .def_property_readonly("symbol_version",
-        static_cast<SymbolVersion* (Symbol::*)(void)>(&Symbol::symbol_version),
+    .def_prop_ro("symbol_version",
+        nb::overload_cast<>(&Symbol::symbol_version),
         R"delim(
         Return the :class:`~lief.ELF.SymbolVersion` associated with this symbol
 
         It returns None if no version is tied to this symbol.
-        )delim",
-        py::return_value_policy::reference_internal)
+        )delim"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("section",
+    .def_prop_ro("section",
         &Symbol::section,
         R"delim(
         Return the section (:class:`~lief.ELF.Section`) associated with this symbol
         if any. Otherwise, return None.
-        )delim",
-        py::return_value_policy::reference)
+        )delim"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("is_static",
+    .def_prop_ro("is_static",
         &Symbol::is_static,
-        "True if the symbol is a static one (i.e. from the ``.symtab`` section")
+        "True if the symbol is a static one (i.e. from the ``.symtab`` section"_doc)
 
-    .def_property_readonly("is_function",
+    .def_prop_ro("is_function",
         &Symbol::is_function,
-        "True if the symbol is a function")
+        "True if the symbol is a function"_doc)
 
-    .def_property_readonly("is_variable",
+    .def_prop_ro("is_variable",
         &Symbol::is_variable,
-        "True if the symbol is a variable")
+        "True if the symbol is a variable"_doc)
 
-    .def_property("exported",
+    .def_prop_rw("exported",
         &Symbol::is_exported, &Symbol::set_exported,
-        "Whether the symbol is **exported**")
+        "Whether the symbol is **exported**"_doc)
 
-    .def_property("imported",
+    .def_prop_rw("imported",
         &Symbol::is_imported, &Symbol::set_imported,
-        "Whether the symbol is **imported**")
+        "Whether the symbol is **imported**"_doc)
 
-    .def("__eq__", &Symbol::operator==)
-    .def("__ne__", &Symbol::operator!=)
-    .def("__hash__",
-        [] (const Symbol& symbol) {
-          return Hash::hash(symbol);
-        })
-
-
-    .def("__str__",
-      [] (const Symbol& symbol) {
-        std::ostringstream stream;
-        stream << symbol;
-        return stream.str();
-      });
+    LIEF_DEFAULT_STR(LIEF::ELF::Symbol);
 }
 
-}
 }

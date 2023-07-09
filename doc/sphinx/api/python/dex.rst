@@ -4,7 +4,7 @@ DEX
 Utilities
 *********
 
-.. autofunction:: lief.DEX.is_dex
+.. autofunction:: lief.is_dex
 
 .. autofunction:: lief.DEX.version
 

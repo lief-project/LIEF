@@ -15,33 +15,28 @@
  */
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 
 #include "enums_wrapper.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
 #include "LIEF/PE/signature/SignatureParser.hpp"
 
 #define LIEF_PE_FORCE_UNDEF
 #include "LIEF/PE/undef.h"
-#include "pyPE.hpp"
-#include "pyIterators.hpp"
+#include "PE/pyPE.hpp"
+#include "pyIterator.hpp"
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (Signature::*)(void) const;
-
-template<class T>
-using setter_t = void (Signature::*)(T);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<Signature>(py::module& m) {
+void create<Signature>(nb::module_& m) {
+  using namespace LIEF::py;
 
-  py::class_<Signature, LIEF::Object> signature(m, "Signature");
-  LIEF::enum_<Signature::VERIFICATION_FLAGS> verif_flags_enums(signature, "VERIFICATION_FLAGS", py::arithmetic());
+  nb::class_<Signature, LIEF::Object> signature(m, "Signature");
+  enum_<Signature::VERIFICATION_FLAGS> verif_flags_enums
+    (signature, "VERIFICATION_FLAGS", nb::is_arithmetic());
   verif_flags_enums
     .value("OK",                            Signature::VERIFICATION_FLAGS::OK)
     .value("INVALID_SIGNER",                Signature::VERIFICATION_FLAGS::INVALID_SIGNER)
@@ -57,128 +52,135 @@ void create<Signature>(py::module& m) {
     .value("CERT_EXPIRED",                  Signature::VERIFICATION_FLAGS::CERT_EXPIRED)
     .value("CERT_FUTURE",                   Signature::VERIFICATION_FLAGS::CERT_FUTURE);
 
-  py::dict verif_flags_entries = verif_flags_enums.attr("__entries");
   verif_flags_enums
-    .def("__str__", [verif_flags_entries] (const Signature::VERIFICATION_FLAGS& flags) {
+    .def("__str__", [] (nb::object& self) {
+        auto flags = nb::cast<Signature::VERIFICATION_FLAGS>(self);
+        const nb::dict verif_flags_entries = self.attr("@entries");
         if (flags == Signature::VERIFICATION_FLAGS::OK) {
           return Signature::flag_to_string(flags);
         }
+
         std::string flags_str;
         for (const auto& item : verif_flags_entries) {
-          Signature::VERIFICATION_FLAGS flag = item.second[py::int_(0)].cast<Signature::VERIFICATION_FLAGS>();
+          const auto& [value, info] = item;
+          auto enum_value = nb::cast<uint64_t>(value);
+          auto name = nb::cast<std::string>(info[0]);
+          auto flag = nb::cast<Signature::VERIFICATION_FLAGS>(info[2]);
+
+          //auto flag = nb::cast<Signature::VERIFICATION_FLAGS>(item.second[nb::int_(0)]);
           if ((flags & flag) == flag && flag != Signature::VERIFICATION_FLAGS::OK) {
             if (!flags_str.empty()) {
               flags_str += " | ";
             }
-            flags_str += "VERIFICATION_FLAGS." + Signature::flag_to_string(flag);
+            flags_str += "VERIFICATION_FLAGS." + name;
           }
         }
         return flags_str;
-    }, py::prepend{});
+    });
 
-  LIEF::enum_<Signature::VERIFICATION_CHECKS>(signature, "VERIFICATION_CHECKS", py::arithmetic(),
+  enum_<Signature::VERIFICATION_CHECKS>(signature, "VERIFICATION_CHECKS", nb::is_arithmetic(),
     R"delim(
     Flags to tweak the verification process of the signature
     See :meth:`lief.PE.Signature.check` and :meth:`lief.PE.Binary.verify_signature`
-    )delim")
+    )delim"_doc)
     .value("DEFAULT", Signature::VERIFICATION_CHECKS::DEFAULT,
-           "Default behavior that tries to follow the Microsoft verification process as close as possible")
+           "Default behavior that tries to follow the Microsoft verification process as close as possible"_doc)
 
     .value("HASH_ONLY", Signature::VERIFICATION_CHECKS::HASH_ONLY,
            R"delim(
            Only check that :meth:`lief.PE.Binary.authentihash` matches :attr:`lief.PE.ContentInfo.digest`
            regardless of the signature's validity
-           )delim")
+           )delim"_doc)
 
     .value("LIFETIME_SIGNING", Signature::VERIFICATION_CHECKS::LIFETIME_SIGNING,
            R"delim(
            Same semantic as `WTD_LIFETIME_SIGNING_FLAG <https://docs.microsoft.com/en-us/windows/win32/api/wintrust/ns-wintrust-wintrust_data#WTD_LIFETIME_SIGNING_FLAG>`_
-           )delim")
+           )delim"_doc)
 
     .value("SKIP_CERT_TIME", Signature::VERIFICATION_CHECKS::SKIP_CERT_TIME,
            R"delim(
            Skip the verification of the certificates time validities so that even though
            a certificate expired, it returns :attr:`lief.PE.Signature.VERIFICATION_FLAGS.OK`
-           )delim");
+           )delim"_doc);
 
   init_ref_iterator<Signature::it_const_crt>(signature, "it_const_crt");
   init_ref_iterator<Signature::it_const_signers_t>(signature, "it_const_signers_t");
 
   signature
     .def_static("parse",
-        [] (const std::string& path) -> py::object {
+        [] (const std::string& path) -> nb::object {
           auto sig = SignatureParser::parse(path);
           if (!sig) {
-            return py::none();
+            return nb::none();
           }
-          return py::cast(sig.value());
+          return nb::cast(sig.value());
         },
-        "Parse the DER PKCS #7 signature from the file path given in the first parameter",
+        "Parse the DER PKCS #7 signature from the file path given in the first parameter"_doc,
         "path"_a)
 
     .def_static("parse",
-        [] (const std::vector<uint8_t>& raw, bool skip_header) -> py::object {
+        [] (const std::vector<uint8_t>& raw, bool skip_header) -> nb::object {
           auto sig = SignatureParser::parse(raw, skip_header);
           if (!sig) {
-            return py::none();
+            return nb::none();
           }
-          return py::cast(sig.value());
+          return nb::cast(sig.value());
         },
-        "Parse the raw (DER) PKCS #7 signature given in the first parameter",
+        "Parse the raw (DER) PKCS #7 signature given in the first parameter"_doc,
         "raw"_a, "skip_header"_a = false)
 
-    .def_property_readonly("version",
+    .def_prop_ro("version",
         &Signature::version,
-        "Version of the signature. It should be 1")
+        "Version of the signature. It should be 1"_doc)
 
-    .def_property_readonly("digest_algorithm",
+    .def_prop_ro("digest_algorithm",
         &Signature::digest_algorithm,
         "Return the algorithm (" RST_CLASS_REF(lief.PE.ALGORITHMS) ") \
-        used to sign the content of " RST_CLASS_REF(lief.PE.ContentInfo) "")
+        used to sign the content of " RST_CLASS_REF(lief.PE.ContentInfo) ""_doc)
 
-    .def_property_readonly("content_info",
+    .def_prop_ro("content_info",
         &Signature::content_info,
-        "Return the " RST_CLASS_REF(lief.PE.ContentInfo) "",
-        py::return_value_policy::reference)
+        "Return the " RST_CLASS_REF(lief.PE.ContentInfo) ""_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("certificates",
+    .def_prop_ro("certificates",
         &Signature::certificates,
-        "Return an iterator over " RST_CLASS_REF(lief.PE.x509) " certificates",
-        py::return_value_policy::reference)
+        "Return an iterator over " RST_CLASS_REF(lief.PE.x509) " certificates"_doc,
+        nb::keep_alive<0, 1>())
 
-    .def_property_readonly("signers",
+    .def_prop_ro("signers",
         &Signature::signers,
-        "Return an iterator over the signers (" RST_CLASS_REF(lief.PE.SignerInfo) ")",
-        py::return_value_policy::reference)
+        "Return an iterator over the signers (" RST_CLASS_REF(lief.PE.SignerInfo) ")"_doc,
+        nb::keep_alive<0, 1>())
 
     .def("find_crt",
-        static_cast<const x509*(Signature::*)(const std::vector<uint8_t>&) const>(&Signature::find_crt),
-        "Find the " RST_CLASS_REF(lief.PE.x509) " certificate according to its serial number",
-        py::return_value_policy::reference,
+        nb::overload_cast<const std::vector<uint8_t>&>(&Signature::find_crt, nb::const_),
+        "Find the " RST_CLASS_REF(lief.PE.x509) " certificate according to its serial number"_doc,
+        nb::rv_policy::reference,
         "serialno"_a)
 
     .def("find_crt_subject",
-        static_cast<const x509*(Signature::*)(const std::string&) const>(&Signature::find_crt_subject),
-        "Find the " RST_CLASS_REF(lief.PE.x509) " certificate according to its subject",
-        py::return_value_policy::reference,
+        nb::overload_cast<const std::string&>(&Signature::find_crt_subject, nb::const_),
+        "Find the " RST_CLASS_REF(lief.PE.x509) " certificate according to its subject"_doc,
+        nb::rv_policy::reference,
         "subject"_a)
 
     .def("find_crt_subject",
-        static_cast<const x509*(Signature::*)(const std::string&, const std::vector<uint8_t>&) const>(&Signature::find_crt_subject),
-        "Find the " RST_CLASS_REF(lief.PE.x509) " certificate according to its subject **AND** its serial number",
-        py::return_value_policy::reference,
+        nb::overload_cast<const std::string&, const std::vector<uint8_t>&>(&Signature::find_crt_subject, nb::const_),
+        "Find the " RST_CLASS_REF(lief.PE.x509) " certificate according to its subject **AND** its serial number"_doc,
+        nb::rv_policy::reference,
         "subject"_a, "serialno"_a)
 
     .def("find_crt_issuer",
-        static_cast<const x509*(Signature::*)(const std::string&) const>(&Signature::find_crt_issuer),
-        "Find the " RST_CLASS_REF(lief.PE.x509) " certificate according to its issuer",
-        py::return_value_policy::reference,
+        nb::overload_cast<const std::string&>(&Signature::find_crt_issuer, nb::const_),
+        "Find the " RST_CLASS_REF(lief.PE.x509) " certificate according to its issuer"_doc,
+        nb::rv_policy::reference,
         "issuer"_a)
 
     .def("find_crt_issuer",
-        static_cast<const x509*(Signature::*)(const std::string&, const std::vector<uint8_t>&) const>(&Signature::find_crt_issuer),
-        "Find the " RST_CLASS_REF(lief.PE.x509) " certificate according to its issuer **AND** its serial number",
-        py::return_value_policy::reference,
+        nb::overload_cast<const std::string&, const std::vector<uint8_t>&>(&Signature::find_crt_issuer, nb::const_),
+        "Find the " RST_CLASS_REF(lief.PE.x509) " certificate according to its issuer **AND** its serial number"_doc,
+        nb::rv_policy::reference,
         "issuer"_a, "serialno"_a)
 
     .def("check",
@@ -210,32 +212,19 @@ void create<Signature>(py::module& m) {
 
         See: :class:`lief.PE.Signature.VERIFICATION_CHECKS` to tweak the behavior
 
-        )delim",
+        )delim"_doc,
         "checks"_a = Signature::VERIFICATION_CHECKS::DEFAULT
     )
 
-    .def_property_readonly("raw_der",
+    .def_prop_ro("raw_der",
         [] (const Signature& sig) {
           const std::vector<uint8_t>& raw = sig.raw_der();
-          return py::bytes(reinterpret_cast<const char*>(raw.data()), raw.size());
+          return nb::bytes(reinterpret_cast<const char*>(raw.data()), raw.size());
         },
-        "Return the raw original signature as a byte object",
-        py::return_value_policy::reference_internal)
+        "Return the raw original signature as a byte object"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def("__hash__",
-        [] (const Signature& obj) {
-          return Hash::hash(obj);
-        })
-
-    .def("__str__",
-        [] (const Signature& signature)
-        {
-          std::ostringstream stream;
-          stream << signature;
-          return stream.str();
-        });
+    LIEF_DEFAULT_STR(Signature);
 }
 
 }
-}
-

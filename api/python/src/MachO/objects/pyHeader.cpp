@@ -15,121 +15,97 @@
  */
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/set.h>
+#include <nanobind/operators.h>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/Header.hpp"
 
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
 
-namespace LIEF {
-namespace MachO {
-
-template<class T>
-using getter_t = T (Header::*)(void) const;
-
-template<class T>
-using setter_t = void (Header::*)(T);
-
+namespace LIEF::MachO::py {
 
 template<>
-void create<Header>(py::module& m) {
+void create<Header>(nb::module_& m) {
 
-  py::class_<Header, LIEF::Object>(m, "Header",
-      "Class that represents the Mach-O header")
-    .def(py::init<>())
+  nb::class_<Header, LIEF::Object>(m, "Header",
+      "Class that represents the Mach-O header"_doc)
+    .def(nb::init<>())
 
-    .def_property("magic",
-        static_cast<getter_t<MACHO_TYPES>>(&Header::magic),
-        static_cast<setter_t<MACHO_TYPES>>(&Header::magic),
+    .def_prop_rw("magic",
+        nb::overload_cast<>(&Header::magic, nb::const_),
+        nb::overload_cast<MACHO_TYPES>(&Header::magic),
         R"delim(
         The Mach-O magic bytes. These bytes determine whether it is
         a 32 bits Mach-O, a 64 bits Mach-O files etc.
-        )delim")
+        )delim"_doc)
 
-    .def_property("cpu_type",
-        static_cast<getter_t<CPU_TYPES>>(&Header::cpu_type),
-        static_cast<setter_t<CPU_TYPES>>(&Header::cpu_type),
-        "Target CPU ( " RST_CLASS_REF(lief.MachO.CPU_TYPES) ")")
+    .def_prop_rw("cpu_type",
+        nb::overload_cast<>(&Header::cpu_type, nb::const_),
+        nb::overload_cast<CPU_TYPES>(&Header::cpu_type),
+        "Target CPU ( " RST_CLASS_REF(lief.MachO.CPU_TYPES) ")"_doc)
 
-    .def_property("cpu_subtype",
-        static_cast<getter_t<uint32_t>>(&Header::cpu_subtype),
-        static_cast<setter_t<uint32_t>>(&Header::cpu_subtype),
+    .def_prop_rw("cpu_subtype",
+        nb::overload_cast<>(&Header::cpu_subtype, nb::const_),
+        nb::overload_cast<uint32_t>(&Header::cpu_subtype),
         R"delim(
         Return the CPU subtype supported by the Mach-O binary.
         For ARM architectures, this value could represent the minimum version
         for which the Mach-O binary has been compiled for.
-        )delim")
+        )delim"_doc)
 
-    .def_property("file_type",
-        static_cast<getter_t<FILE_TYPES>>(&Header::file_type),
-        static_cast<setter_t<FILE_TYPES>>(&Header::file_type),
-        "Binary's type ( " RST_CLASS_REF(lief.MachO.FILE_TYPES) ")")
+    .def_prop_rw("file_type",
+        nb::overload_cast<>(&Header::file_type, nb::const_),
+        nb::overload_cast<FILE_TYPES>(&Header::file_type),
+        "Binary's type ( " RST_CLASS_REF(lief.MachO.FILE_TYPES) ")"_doc)
 
-    .def_property("flags",
-        static_cast<getter_t<uint32_t>>(&Header::flags),
-        static_cast<setter_t<uint32_t>>(&Header::flags),
-        "Binary's flags ( " RST_CLASS_REF(lief.MachO.HEADER_FLAGS) ")")
+    .def_prop_rw("flags",
+        nb::overload_cast<>(&Header::flags, nb::const_),
+        nb::overload_cast<uint32_t>(&Header::flags),
+        "Binary's flags ( " RST_CLASS_REF(lief.MachO.HEADER_FLAGS) ")"_doc)
 
-    .def_property("nb_cmds",
-        static_cast<getter_t<uint32_t>>(&Header::nb_cmds),
-        static_cast<setter_t<uint32_t>>(&Header::nb_cmds),
-        "Number of " RST_CLASS_REF(lief.MachO.LoadCommand) "")
+    .def_prop_rw("nb_cmds",
+        nb::overload_cast<>(&Header::nb_cmds, nb::const_),
+        nb::overload_cast<uint32_t>(&Header::nb_cmds),
+        "Number of " RST_CLASS_REF(lief.MachO.LoadCommand) ""_doc)
 
-    .def_property("sizeof_cmds",
-        static_cast<getter_t<uint32_t>>(&Header::sizeof_cmds),
-        static_cast<setter_t<uint32_t>>(&Header::sizeof_cmds),
-        "Size of all " RST_CLASS_REF(lief.MachO.LoadCommand) "")
+    .def_prop_rw("sizeof_cmds",
+        nb::overload_cast<>(&Header::sizeof_cmds, nb::const_),
+        nb::overload_cast<uint32_t>(&Header::sizeof_cmds),
+        "Size of all " RST_CLASS_REF(lief.MachO.LoadCommand) ""_doc)
 
-    .def_property("reserved",
-        static_cast<getter_t<uint32_t>>(&Header::reserved),
-        static_cast<setter_t<uint32_t>>(&Header::reserved),
-        "According to the official documentation, a reserved value")
+    .def_prop_rw("reserved",
+        nb::overload_cast<>(&Header::reserved, nb::const_),
+        nb::overload_cast<uint32_t>(&Header::reserved),
+        "According to the official documentation, a reserved value"_doc)
 
-    .def_property_readonly("flags_list",
+    .def_prop_ro("flags_list",
         &Header::flags_list,
-        "" RST_CLASS_REF(lief.PE.HEADER_FLAGS) " as a list")
+        "" RST_CLASS_REF(lief.PE.HEADER_FLAGS) " as a list"_doc)
 
     .def("add",
-        static_cast<void (Header::*)(HEADER_FLAGS)>(&Header::add),
-        "Add the given " RST_CLASS_REF(lief.MachO.HEADER_FLAGS) "",
+        nb::overload_cast<HEADER_FLAGS>(&Header::add),
+        "Add the given " RST_CLASS_REF(lief.MachO.HEADER_FLAGS) ""_doc,
         "flag"_a)
 
     .def("remove",
-        static_cast<void (Header::*)(HEADER_FLAGS)>(&Header::remove),
-        "Remove the given " RST_CLASS_REF(lief.MachO.HEADER_FLAGS) "",
+        nb::overload_cast<HEADER_FLAGS>(&Header::remove),
+        "Remove the given " RST_CLASS_REF(lief.MachO.HEADER_FLAGS) ""_doc,
         "flag"_a)
 
     .def("has",
-        static_cast<bool (Header::*)(HEADER_FLAGS) const>(&Header::has),
+        nb::overload_cast<HEADER_FLAGS>(&Header::has, nb::const_),
         "``True`` if the given " RST_CLASS_REF(lief.MachO.HEADER_FLAGS) " is in the "
-        ":attr:`~lief.MachO.Header.flags`",
+        ":attr:`~lief.MachO.Header.flags`"_doc,
         "flag"_a)
 
-
-    .def("__eq__", &Header::operator==)
-    .def("__ne__", &Header::operator!=)
-    .def("__hash__",
-        [] (const Header& header) {
-          return Hash::hash(header);
-        })
-
-    .def(py::self += HEADER_FLAGS())
-    .def(py::self -= HEADER_FLAGS())
+    .def(nb::self += HEADER_FLAGS(), nb::rv_policy::reference_internal)
+    .def(nb::self -= HEADER_FLAGS(), nb::rv_policy::reference_internal)
 
     .def("__contains__",
-        static_cast<bool (Header::*)(HEADER_FLAGS) const>(&Header::has),
-        "Check if the given " RST_CLASS_REF(lief.MachO.HEADER_FLAGS) " is present")
+        nb::overload_cast<HEADER_FLAGS>(&Header::has, nb::const_),
+        "Check if the given " RST_CLASS_REF(lief.MachO.HEADER_FLAGS) " is present"_doc)
 
-
-    .def("__str__",
-        [] (const Header& header)
-        {
-          std::ostringstream stream;
-          stream << header;
-          std::string str =  stream.str();
-          return str;
-        });
-}
-
+    LIEF_DEFAULT_STR(Header);
 }
 }

@@ -15,98 +15,72 @@
  */
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 
-#include "pyELF.hpp"
+#include "ELF/pyELF.hpp"
 
-#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/NoteDetails.hpp"
 
-namespace LIEF {
-namespace ELF {
-
-template<class T>
-using getter_t = T (Note::*)(void) const;
-
-template<class T>
-using setter_t = void (Note::*)(T);
-
+namespace LIEF::ELF::py {
 
 template<>
-void create<Note>(py::module& m) {
-
-  py::class_<Note, LIEF::Object>(m, "Note",
+void create<Note>(nb::module_& m) {
+  nb::class_<Note, LIEF::Object>(m, "Note",
       R"delim(
       Class which represents an ELF note.
-      )delim")
+      )delim"_doc)
 
-    .def(py::init<>(),
+    .def(nb::init<>(),
         "Default constructor")
 
-    .def(py::init<const std::string&, NOTE_TYPES, const std::vector<uint8_t>&>(),
-        "Constructor from a ``name``, ``type`` and ``description``",
+    .def(nb::init<const std::string&, NOTE_TYPES, const std::vector<uint8_t>&>(),
+        "Constructor from a ``name``, ``type`` and ``description``"_doc,
         "name"_a, "type"_a, "description"_a)
 
-    .def_property_readonly("details",
-        static_cast<NoteDetails& (Note::*)(void)>(&Note::details),
-        "Parse the given note description and return a " RST_CLASS_REF(lief.ELF.NoteDetails) " object",
-        py::return_value_policy::reference_internal)
+    .def_prop_ro("details",
+        nb::overload_cast<>(&Note::details),
+        "Parse the given note description and return a " RST_CLASS_REF(lief.ELF.NoteDetails) " object"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property("name",
-        static_cast<getter_t<const std::string&>>(&Note::name),
-        static_cast<setter_t<const std::string&>>(&Note::name),
-        "Return the *name* of the note (Usually the owner)."
-        )
+    .def_prop_rw("name",
+        nb::overload_cast<>(&Note::name, nb::const_),
+        nb::overload_cast<const std::string&>(&Note::name),
+        "Return the *name* of the note (Usually the owner)."_doc)
 
-    .def_property("type",
-        static_cast<getter_t<NOTE_TYPES>>(&Note::type),
-        static_cast<setter_t<NOTE_TYPES>>(&Note::type),
-        "Return the type of the note. It can be one of the " RST_CLASS_REF(lief.ELF.NOTE_TYPES) " values"
-        )
+    .def_prop_rw("type",
+        nb::overload_cast<>(&Note::type, nb::const_),
+        nb::overload_cast<NOTE_TYPES>(&Note::type),
+        "Return the type of the note. It can be one of the " RST_CLASS_REF(lief.ELF.NOTE_TYPES) " values"_doc)
 
-    .def_property("type_core",
-        static_cast<getter_t<NOTE_TYPES_CORE>>(&Note::type_core),
-        static_cast<setter_t<NOTE_TYPES_CORE>>(&Note::type_core),
-        "Return the type of the note for ELF Core (ET_CORE). It Can be one of the " RST_CLASS_REF(lief.ELF.NOTE_TYPES_CORE) " values"
-        )
+    .def_prop_rw("type_core",
+        nb::overload_cast<>(&Note::type_core, nb::const_),
+        nb::overload_cast<NOTE_TYPES_CORE>(&Note::type_core),
+        "Return the type of the note for ELF Core (ET_CORE). It Can be one of the " RST_CLASS_REF(lief.ELF.NOTE_TYPES_CORE) " values"_doc)
 
-    .def_property("description",
-        static_cast<getter_t<const Note::description_t&>>(&Note::description),
-        static_cast<setter_t<const Note::description_t&>>(&Note::description),
-        "Return the description associated with the note"
-        )
+    .def_prop_rw("description",
+        nb::overload_cast<>(&Note::description, nb::const_),
+        nb::overload_cast<const Note::description_t&>(&Note::description),
+        "Return the description associated with the note"_doc)
 
-    .def_property_readonly("is_core",
+    .def_prop_ro("is_core",
         &Note::is_core,
-        "True if the note is associated with a coredump")
+        "True if the note is associated with a coredump"_doc)
 
-    .def_property_readonly("is_android",
+    .def_prop_ro("is_android",
         &Note::is_android,
         R"delim(
         True if the current note is specific to Android.
 
         If true, :attr:`lief.Note.details` returns a reference to the :class:`~lief.ELF.AndroidNote` object
-        )delim")
+        )delim"_doc)
 
-    .def_property_readonly("size",
-        &Note::size,
-        "Size of the **raw** note")
+    .def_prop_ro("size", &Note::size,
+        "Size of the **raw** note"_doc)
 
-    .def("__eq__", &Note::operator==)
-    .def("__ne__", &Note::operator!=)
-    .def("__hash__",
-        [] (const Note& note) {
-          return Hash::hash(note);
-        })
-
-    .def("__str__",
-        [] (const Note& note)
-        {
-          std::ostringstream stream;
-          stream << note;
-          std::string str = stream.str();
-          return str;
-        });
+    LIEF_DEFAULT_STR(LIEF::ELF::Note);
 }
 
 }
-}
+

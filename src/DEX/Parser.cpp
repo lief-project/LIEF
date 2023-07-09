@@ -18,7 +18,11 @@
 
 #include "logging.hpp"
 
+#include <LIEF/BinaryStream/VectorStream.hpp>
+
 #include "LIEF/DEX/Parser.hpp"
+#include "LIEF/DEX/File.hpp"
+#include "LIEF/DEX/Type.hpp"
 #include "LIEF/DEX/utils.hpp"
 #include "DEX/Structures.hpp"
 

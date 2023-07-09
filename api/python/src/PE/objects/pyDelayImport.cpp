@@ -13,100 +13,88 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
-#include "pyIterators.hpp"
+#include "PE/pyPE.hpp"
+#include "pyIterator.hpp"
+#include "pySafeString.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/DelayImport.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (DelayImport::*)() const;
-
-template<class T>
-using setter_t = void (DelayImport::*)(T);
-
-template<class T>
-using no_const_getter = T (DelayImport::*)();
-
-template<class T, class P>
-using no_const_func = T (DelayImport::*)(P);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<DelayImport>(py::module& m) {
-  py::class_<DelayImport, LIEF::Object> imp(m, "DelayImport",
+void create<DelayImport>(nb::module_& m) {
+  using namespace LIEF::py;
+  nb::class_<DelayImport, LIEF::Object> imp(m, "DelayImport",
       R"delim(
       Class that represents a PE delay import
-      )delim");
+      )delim"_doc);
 
   init_ref_iterator<DelayImport::it_entries>(imp, "it_entries");
 
   imp
-    .def(py::init<const std::string&>(),
-        "Constructor from a library name",
+    .def(nb::init<const std::string&>(),
+        "Constructor from a library name"_doc,
         "library_name"_a)
 
-    .def_property_readonly("entries",
-        static_cast<no_const_getter<DelayImport::it_entries>>(&DelayImport::entries),
-        "Iterator over the " RST_CLASS_REF(lief.PE.DelayImportEntry) " (functions)",
-        py::return_value_policy::reference)
+    .def_prop_ro("entries",
+        nb::overload_cast<>(&DelayImport::entries),
+        "Iterator over the " RST_CLASS_REF(lief.PE.DelayImportEntry) " (functions)"_doc,
+        nb::keep_alive<0, 1>())
 
-    .def_property("name",
+    .def_prop_rw("name",
         [] (const DelayImport& obj) {
-          return safe_string_converter(obj.name());
+          return safe_string(obj.name());
         },
-        static_cast<setter_t<std::string>>(&DelayImport::name),
-        "Library name (e.g. ``kernel32.dll``)",
-        py::return_value_policy::reference_internal)
+        nb::overload_cast<std::string>(&DelayImport::name),
+        "Library name (e.g. ``kernel32.dll``)"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property("attribute",
-        static_cast<getter_t<uint32_t>>(&DelayImport::attribute),
-        static_cast<setter_t<uint32_t>>(&DelayImport::attribute),
+    .def_prop_rw("attribute",
+        nb::overload_cast<>(&DelayImport::attribute, nb::const_),
+        nb::overload_cast<uint32_t>(&DelayImport::attribute),
         R"delim(
         Reserved and **should** be zero according to the PE specifications
-        )delim")
+        )delim"_doc)
 
-    .def_property("handle",
-        static_cast<getter_t<uint32_t>>(&DelayImport::handle),
-        static_cast<setter_t<uint32_t>>(&DelayImport::handle),
+    .def_prop_rw("handle",
+        nb::overload_cast<>(&DelayImport::handle, nb::const_),
+        nb::overload_cast<uint32_t>(&DelayImport::handle),
         R"delim(
         The RVA of the module handle (in the ``.data`` section)
         It is used for storage by the routine that is supplied to manage delay-loading.
-        )delim")
+        )delim"_doc)
 
-    .def_property("iat",
-        static_cast<getter_t<uint32_t>>(&DelayImport::iat),
-        static_cast<setter_t<uint32_t>>(&DelayImport::iat),
+    .def_prop_rw("iat",
+        nb::overload_cast<>(&DelayImport::iat, nb::const_),
+        nb::overload_cast<uint32_t>(&DelayImport::iat),
         R"delim(
         RVA of the delay-load import address table.
-        )delim")
+        )delim"_doc)
 
-    .def_property("names_table",
-        static_cast<getter_t<uint32_t>>(&DelayImport::names_table),
-        static_cast<setter_t<uint32_t>>(&DelayImport::names_table),
+    .def_prop_rw("names_table",
+        nb::overload_cast<>(&DelayImport::names_table, nb::const_),
+        nb::overload_cast<uint32_t>(&DelayImport::names_table),
         R"delim(
         RVA of the delay-load import names table.
         The content of this table has the layout as the Import lookup table
-        )delim")
+        )delim"_doc)
 
-    .def_property("biat",
-        static_cast<getter_t<uint32_t>>(&DelayImport::biat),
-        static_cast<setter_t<uint32_t>>(&DelayImport::biat),
+    .def_prop_rw("biat",
+        nb::overload_cast<>(&DelayImport::biat, nb::const_),
+        nb::overload_cast<uint32_t>(&DelayImport::biat),
         R"delim(
         RVA of the **bound** delay-load import address table or 0
         if the table does not exist.
-        )delim")
+        )delim"_doc)
 
 
-    .def_property("uiat",
-        static_cast<getter_t<uint32_t>>(&DelayImport::uiat),
-        static_cast<setter_t<uint32_t>>(&DelayImport::uiat),
+    .def_prop_rw("uiat",
+        nb::overload_cast<>(&DelayImport::uiat, nb::const_),
+        nb::overload_cast<uint32_t>(&DelayImport::uiat),
         R"delim(
         RVA of the **unload** delay-load import address table or 0
         if the table does not exist.
@@ -114,30 +102,15 @@ void create<DelayImport>(py::module& m) {
         According to the PE specifications, this table is an
         exact copy of the delay import address table that can be
         used to to restore the original IAT the case of unloading.
-        )delim")
+        )delim"_doc)
 
-    .def_property("timestamp",
-        static_cast<getter_t<uint32_t>>(&DelayImport::timestamp),
-        static_cast<setter_t<uint32_t>>(&DelayImport::timestamp),
+    .def_prop_rw("timestamp",
+        nb::overload_cast<>(&DelayImport::timestamp, nb::const_),
+        nb::overload_cast<uint32_t>(&DelayImport::timestamp),
         R"delim(
         The timestamp of the DLL to which this image has been bound.
-        )delim")
+        )delim"_doc)
 
-    .def("__eq__", &DelayImport::operator==)
-    .def("__ne__", &DelayImport::operator!=)
-    .def("__hash__",
-        [] (const DelayImport& import) {
-          return Hash::hash(import);
-        })
-
-
-    .def("__str__", [] (const DelayImport& import)
-        {
-          std::ostringstream stream;
-          stream << import;
-          std::string str = stream.str();
-          return str;
-        });
-}
+    LIEF_DEFAULT_STR(LIEF::PE::DelayImport);
 }
 }

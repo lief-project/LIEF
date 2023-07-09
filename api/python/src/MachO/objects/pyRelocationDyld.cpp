@@ -13,30 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/RelocationDyld.hpp"
 
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
 
-namespace LIEF {
-namespace MachO {
-
-template<class T>
-using getter_t = T (RelocationDyld::*)(void) const;
-
-template<class T>
-using setter_t = void (RelocationDyld::*)(T);
-
+namespace LIEF::MachO::py {
 
 template<>
-void create<RelocationDyld>(py::module& m) {
+void create<RelocationDyld>(nb::module_& m) {
 
-  py::class_<RelocationDyld, Relocation>(m, "RelocationDyld",
+  nb::class_<RelocationDyld, Relocation>(m, "RelocationDyld",
       R"delim(
       Class that represents a relocation found in the :class:`~lief.MachO.DyldInfo` structure.
 
@@ -44,29 +34,15 @@ void create<RelocationDyld>(py::module& m) {
       it provides a convenient interface for the :attr:`lief.MachO.DyldInfo.rebase` values
 
       See also: :class:`~lief.MachO.RelocationObject`
-      )delim")
+      )delim"_doc)
 
     .def("__le__", &RelocationDyld::operator<=)
     .def("__lt__", &RelocationDyld::operator<)
     .def("__ge__", &RelocationDyld::operator>=)
     .def("__gt__", &RelocationDyld::operator>)
-    .def("__eq__", &RelocationDyld::operator==)
-    .def("__ne__", &RelocationDyld::operator!=)
-    .def("__hash__",
-        [] (const RelocationDyld& relocation) {
-          return Hash::hash(relocation);
-        })
 
-    .def("__str__",
-        [] (const RelocationDyld& relocation)
-        {
-          std::ostringstream stream;
-          stream << relocation;
-          std::string str = stream.str();
-          return str;
-        });
+    LIEF_DEFAULT_STR(RelocationDyld);
 
-}
 
 }
 }

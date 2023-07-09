@@ -13,62 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/LoadConfigurations.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (LoadConfigurationV0::*)(void) const;
-
-template<class T>
-using setter_t = void (LoadConfigurationV0::*)(T);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<LoadConfigurationV0>(py::module& m) {
-  py::class_<LoadConfigurationV0, LoadConfiguration>(m, "LoadConfigurationV0",
+void create<LoadConfigurationV0>(nb::module_& m) {
+  nb::class_<LoadConfigurationV0, LoadConfiguration>(m, "LoadConfigurationV0",
     R"delim(
     :class:`~lief.PE.LoadConfiguration` enhanced with SEH.
     It is associated with the :class:`~lief.PE.WIN_VERSION`: :attr:`~lief.PE.WIN_VERSION.SEH`
-    )delim")
+    )delim"_doc)
 
-    .def(py::init<>())
+    .def(nb::init<>())
 
-    .def_property("se_handler_table",
-        static_cast<getter_t<uint64_t>>(&LoadConfigurationV0::se_handler_table),
-        static_cast<setter_t<uint64_t>>(&LoadConfigurationV0::se_handler_table),
+    .def_prop_rw("se_handler_table",
+        nb::overload_cast<>(&LoadConfigurationV0::se_handler_table, nb::const_),
+        nb::overload_cast<uint64_t>(&LoadConfigurationV0::se_handler_table),
         "The VA of the sorted table of RVAs of each valid, unique "
-        "SE handler in the image.")
+        "SE handler in the image."_doc)
 
-    .def_property("se_handler_count",
-        static_cast<getter_t<uint64_t>>(&LoadConfigurationV0::se_handler_count),
-        static_cast<setter_t<uint64_t>>(&LoadConfigurationV0::se_handler_count),
-        "The count of unique handlers in the table.")
+    .def_prop_rw("se_handler_count",
+        nb::overload_cast<>(&LoadConfigurationV0::se_handler_count, nb::const_),
+        nb::overload_cast<uint64_t>(&LoadConfigurationV0::se_handler_count),
+        "The count of unique handlers in the table."_doc)
 
-
-    .def("__eq__", &LoadConfigurationV0::operator==)
-    .def("__ne__", &LoadConfigurationV0::operator!=)
-    .def("__hash__",
-        [] (const LoadConfigurationV0& config) {
-          return Hash::hash(config);
-        })
-
-
-    .def("__str__", [] (const LoadConfigurationV0& config)
-        {
-          std::ostringstream stream;
-          stream << config;
-          std::string str = stream.str();
-          return str;
-        });
+    LIEF_DEFAULT_STR(LIEF::PE::LoadConfigurationV0);
 }
 
-}
 }

@@ -13,19 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef PY_LIEF_ANDROID_H_
-#define PY_LIEF_ANDROID_H_
+#ifndef PY_LIEF_ANDROID_H
+#define PY_LIEF_ANDROID_H
 
-#include "LIEF/platforms/android.hpp"
-#include "pyLIEF.hpp"
-
-namespace LIEF {
-namespace Android {
-
-void init_python_module(py::module&);
-void init_versions(py::module&);
-
+namespace nanobind {
+class module_;
 }
+
+namespace LIEF::Android::py {
+void init_module(nanobind::module_&);
 }
 
 #endif

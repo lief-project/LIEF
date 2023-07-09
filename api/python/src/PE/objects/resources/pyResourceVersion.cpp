@@ -13,61 +13,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/resources/ResourceVersion.hpp"
+#include "LIEF/PE/resources/ResourceVarFileInfo.hpp"
+#include "LIEF/PE/resources/ResourceStringFileInfo.hpp"
+#include "LIEF/PE/resources/ResourceFixedFileInfo.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/extra/stl/u16string.h>
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (ResourceVersion::*)(void) const;
-
-template<class T>
-using setter_t = void (ResourceVersion::*)(T);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<ResourceVersion>(py::module& m) {
-  py::class_<ResourceVersion, LIEF::Object>(m, "ResourceVersion",
+void create<ResourceVersion>(nb::module_& m) {
+  nb::class_<ResourceVersion, LIEF::Object>(m, "ResourceVersion",
       R"delim(
       Class that represents the data associated with the ``RT_VERSION`` entry
 
       See: `VS_VERSIONINFO <https://docs.microsoft.com/en-us/windows/win32/menurc/vs-versioninfo>`_
-      )delim")
+      )delim"_doc)
 
-    .def_property("type",
-        static_cast<getter_t<uint16_t>>(&ResourceVersion::type),
-        static_cast<setter_t<uint16_t>>(&ResourceVersion::type),
+    .def_prop_rw("type",
+        nb::overload_cast<>(&ResourceVersion::type, nb::const_),
+        nb::overload_cast<uint16_t>(&ResourceVersion::type),
         R"delim(
         The type of data in the version resource
           * ``1`` if it contains text data
           * ``0`` if it contains binary data
-        )delim")
+        )delim"_doc)
 
+    .def_prop_rw("key",
+        nb::overload_cast<>(&ResourceVersion::key, nb::const_),
+        nb::overload_cast<const std::string&>(&ResourceVersion::key),
+        "Signature of the structure. Must be ``VS_VERSION_INFO``"_doc)
 
-    .def_property("key",
-        static_cast<getter_t<const std::u16string&>>(&ResourceVersion::key),
-        static_cast<setter_t<const std::string&>>(&ResourceVersion::key),
-        "Signature of the structure. Must be ``VS_VERSION_INFO``")
-
-    .def_property("fixed_file_info",
-        static_cast<getter_t<const ResourceFixedFileInfo*>>(&ResourceVersion::fixed_file_info),
-        static_cast<setter_t<const ResourceFixedFileInfo&>>(&ResourceVersion::fixed_file_info),
+    .def_prop_rw("fixed_file_info",
+        nb::overload_cast<>(&ResourceVersion::fixed_file_info, nb::const_),
+        nb::overload_cast<const ResourceFixedFileInfo&>(&ResourceVersion::fixed_file_info),
         R"delim(
         :class:`~lief.PE.ResourceFixedFileInfo` associated with the version (if any).
         This object describes various information about the application's version.
 
         If not present, this property is set to None
-        )delim")
+        )delim"_doc)
 
-    .def_property("string_file_info",
-        static_cast<getter_t<const ResourceStringFileInfo*>>(&ResourceVersion::string_file_info),
-        static_cast<setter_t<const ResourceStringFileInfo&>>(&ResourceVersion::string_file_info),
+    .def_prop_rw("string_file_info",
+        nb::overload_cast<>(&ResourceVersion::string_file_info, nb::const_),
+        nb::overload_cast<const ResourceStringFileInfo&>(&ResourceVersion::string_file_info),
         R"delim(
         :class:`~lief.PE.ResourceStringFileInfo` associated with the version (if any)
         This object describes various information about the application's version.
@@ -75,59 +70,45 @@ void create<ResourceVersion>(py::module& m) {
 
         If the current :class:`~lief.PE.ResourceVersion` does not use :class:`~lief.PE.ResourceStringFileInfo`,
         it returns None.
-        )delim")
+        )delim"_doc)
 
-    .def_property("var_file_info",
-        static_cast<getter_t<const ResourceVarFileInfo*>>(&ResourceVersion::var_file_info),
-        static_cast<setter_t<const ResourceVarFileInfo&>>(&ResourceVersion::var_file_info),
+    .def_prop_rw("var_file_info",
+        nb::overload_cast<>(&ResourceVersion::var_file_info, nb::const_),
+        nb::overload_cast<const ResourceVarFileInfo&>(&ResourceVersion::var_file_info),
         R"delim(
         :class:`~lief.PE.ResourceVarFileInfo` associated with the version (if any)
         This object describes information about languages supported by the application.
 
         If the current :class:`~lief.PE.ResourceVersion` does not use :class:`~lief.PE.ResourceVarFileInfo`,
         it returns None.
-        )delim")
+        )delim"_doc)
 
-    .def_property_readonly("has_fixed_file_info",
+    .def_prop_ro("has_fixed_file_info",
         &ResourceVersion::has_fixed_file_info,
-        "``True`` if the version contains a " RST_CLASS_REF(lief.PE.ResourceFixedFileInfo) "")
+        "``True`` if the version contains a " RST_CLASS_REF(lief.PE.ResourceFixedFileInfo) ""_doc)
 
-    .def_property_readonly("has_string_file_info",
+    .def_prop_ro("has_string_file_info",
         &ResourceVersion::has_string_file_info,
-        "``True`` if the version contains a " RST_CLASS_REF(lief.PE.ResourceStringFileInfo) "")
+        "``True`` if the version contains a " RST_CLASS_REF(lief.PE.ResourceStringFileInfo) ""_doc)
 
-    .def_property_readonly("has_var_file_info",
+    .def_prop_ro("has_var_file_info",
         &ResourceVersion::has_var_file_info,
-        "``True`` if the version contains a " RST_CLASS_REF(lief.PE.ResourceVarFileInfo) "")
+        "``True`` if the version contains a " RST_CLASS_REF(lief.PE.ResourceVarFileInfo) ""_doc)
 
     .def("remove_fixed_file_info",
         &ResourceVersion::remove_fixed_file_info,
-        "Remove the " RST_CLASS_REF(lief.PE.ResourceFixedFileInfo) " from the version")
+        "Remove the " RST_CLASS_REF(lief.PE.ResourceFixedFileInfo) " from the version"_doc)
 
     .def("remove_string_file_info",
         &ResourceVersion::remove_string_file_info,
-        "Remove the " RST_CLASS_REF(lief.PE.ResourceStringFileInfo) " from the version")
+        "Remove the " RST_CLASS_REF(lief.PE.ResourceStringFileInfo) " from the version"_doc)
 
     .def("remove_var_file_info",
         &ResourceVersion::remove_var_file_info,
-        "Remove the " RST_CLASS_REF(lief.PE.ResourceVarFileInfo) " from the version")
+        "Remove the " RST_CLASS_REF(lief.PE.ResourceVarFileInfo) " from the version"_doc)
 
-    .def("__eq__", &ResourceVersion::operator==)
-    .def("__ne__", &ResourceVersion::operator!=)
-    .def("__hash__",
-        [] (const ResourceVersion& version) {
-          return Hash::hash(version);
-        })
-
-    .def("__str__",
-        [] (const ResourceVersion& version) {
-          std::ostringstream stream;
-          stream << version;
-          std::string str = stream.str();
-          return str;
-        });
+    LIEF_DEFAULT_STR(LIEF::PE::ResourceVersion);
 }
 
-}
 }
 

@@ -1,3 +1,4 @@
+
 /* Copyright 2017 - 2023 R. Thomas
  * Copyright 2017 - 2023 Quarkslab
  *
@@ -15,45 +16,19 @@
  */
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-#include "pyELF.hpp"
+#include "ELF/pyELF.hpp"
 
-#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/NoteDetails.hpp"
 
-namespace LIEF {
-namespace ELF {
-
-template<class T>
-using getter_t = T (NoteDetails::*)(void) const;
-
-template<class T>
-using setter_t = void (NoteDetails::*)(T);
-
+namespace LIEF::ELF::py {
 
 template<>
-void create<NoteDetails>(py::module& m) {
-
-  py::class_<NoteDetails, LIEF::Object>(m, "NoteDetails")
-    .def(py::init<>(),
-        "Default ctor")
-
-    .def("__eq__", &NoteDetails::operator==)
-    .def("__ne__", &NoteDetails::operator!=)
-    .def("__hash__",
-        [] (const NoteDetails& note) {
-          return Hash::hash(note);
-        })
-
-    .def("__str__",
-        [] (const NoteDetails& note)
-        {
-          std::ostringstream stream;
-          stream << note;
-          std::string str = stream.str();
-          return str;
-        });
+void create<NoteDetails>(nb::module_& m) {
+  nb::class_<NoteDetails, LIEF::Object>(m, "NoteDetails")
+    LIEF_DEFAULT_STR(LIEF::ELF::NoteDetails);
 }
 
 }
-}
+

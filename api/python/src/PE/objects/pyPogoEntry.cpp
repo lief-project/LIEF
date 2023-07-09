@@ -13,58 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
+#include "pySafeString.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/PogoEntry.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (PogoEntry::*)(void) const;
-
-template<class T>
-using setter_t = void (PogoEntry::*)(T);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<PogoEntry>(py::module& m) {
-  py::class_<PogoEntry, LIEF::Object>(m, "PogoEntry")
-    .def(py::init<>())
+void create<PogoEntry>(nb::module_& m) {
+  nb::class_<PogoEntry, LIEF::Object>(m, "PogoEntry")
+    .def(nb::init<>())
 
-    .def_property("name",
+    .def_prop_rw("name",
         [] (const PogoEntry& obj) {
-          return safe_string_converter(obj.name());
+          return LIEF::py::safe_string(obj.name());
         },
-        static_cast<setter_t<const std::string&>>(&PogoEntry::name))
+        nb::overload_cast<const std::string&>(&PogoEntry::name))
 
-    .def_property("start_rva",
-        static_cast<getter_t<uint32_t>>(&PogoEntry::start_rva),
-        static_cast<setter_t<uint32_t>>(&PogoEntry::start_rva))
+    .def_prop_rw("start_rva",
+        nb::overload_cast<>(&PogoEntry::start_rva, nb::const_),
+        nb::overload_cast<uint32_t>(&PogoEntry::start_rva))
 
-    .def_property("size",
-        static_cast<getter_t<uint32_t>>(&PogoEntry::size),
-        static_cast<setter_t<uint32_t>>(&PogoEntry::size))
+    .def_prop_rw("size",
+        nb::overload_cast<>(&PogoEntry::size, nb::const_),
+        nb::overload_cast<uint32_t>(&PogoEntry::size))
 
-
-    .def("__eq__", &PogoEntry::operator==)
-    .def("__ne__", &PogoEntry::operator!=)
-    .def("__hash__",
-        [] (const PogoEntry& pogo_entry) {
-          return Hash::hash(pogo_entry);
-        })
-
-    .def("__str__", [] (const PogoEntry& entry)
-        {
-          std::ostringstream stream;
-          stream << entry;
-          std::string str = stream.str();
-          return str;
-        });
-}
+    LIEF_DEFAULT_STR(LIEF::PE::PogoEntry);
 }
 }

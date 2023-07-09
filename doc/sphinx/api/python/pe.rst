@@ -679,16 +679,11 @@ Load Configuration V11
   :show-inheritance:
   :undoc-members:
 
-
-
-
-
-
 Utilities
 *********
 
 
-.. autofunction:: lief.PE.is_pe
+.. autofunction:: lief.is_pe
 
 .. autofunction:: lief.PE.get_type
 

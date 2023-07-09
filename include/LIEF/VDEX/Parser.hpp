@@ -16,23 +16,24 @@
 #ifndef LIEF_VDEX_PARSER_H
 #define LIEF_VDEX_PARSER_H
 
-
 #include <memory>
+#include <vector>
+#include <string>
 
+#include "LIEF/VDEX/type_traits.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/BinaryStream/VectorStream.hpp"
-
-#include "LIEF/VDEX/File.hpp"
-
 namespace LIEF {
+class VectorStream;
 namespace VDEX {
+class File;
 
 //! @brief Class which parse an VDEX file and transform into a VDEX::File object
 class LIEF_API Parser {
   public:
   static std::unique_ptr<File> parse(const std::string& file);
-  static std::unique_ptr<File> parse(const std::vector<uint8_t>& data, const std::string& name = "");
+  static std::unique_ptr<File> parse(const std::vector<uint8_t>& data,
+                                     const std::string& name = "");
 
   Parser& operator=(const Parser& copy) = delete;
   Parser(const Parser& copy)            = delete;
@@ -66,9 +67,6 @@ class LIEF_API Parser {
   LIEF::VDEX::File* file_ = nullptr;
   std::unique_ptr<VectorStream> stream_;
 };
-
-
-
 
 } // namespace VDEX
 } // namespace LIEF

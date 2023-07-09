@@ -42,7 +42,7 @@ LIEF_API vdex_version_t version(const std::string& file);
 LIEF_API vdex_version_t version(const std::vector<uint8_t>& raw);
 
 //! @brief Return the ANDROID_VERSIONS associated with the given VDEX version
-LIEF_API LIEF::Android::ANDROID_VERSIONS android_version(vdex_version_t version);
+LIEF_API Android::ANDROID_VERSIONS android_version(vdex_version_t version);
 
 }
 }

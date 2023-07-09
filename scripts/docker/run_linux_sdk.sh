@@ -6,30 +6,22 @@ export CFLAGS='-ffunction-sections -fdata-sections -static-libstdc++ -static-lib
 export LDFLAGS='-Wl,--gc-sections -Wl,--exclude-libs,ALL'
 
 mkdir -p build/linux-x86-64/static-release && mkdir -p build/linux-x86-64/shared-release
-pushd build/linux-x86-64/shared-release
 
-cmake ../../.. -GNinja \
-  -DCMAKE_LINK_WHAT_YOU_USE=on \
-  -DBUILD_SHARED_LIBS=on \
-  -DLIEF_PYTHON_API=off \
-  -DLIEF_INSTALL_COMPILED_EXAMPLES=off \
+cmake -S /src -B build/linux-x86-64/shared-release -GNinja \
+  -DCMAKE_LINK_WHAT_YOU_USE=on                             \
+  -DBUILD_SHARED_LIBS=on                                   \
+  -DLIEF_INSTALL_COMPILED_EXAMPLES=off                     \
   -DCMAKE_BUILD_TYPE=Release
 
-ninja
-
-popd
-pushd build/linux-x86-64/static-release
-
-cmake ../../.. -GNinja \
-  -DCMAKE_LINK_WHAT_YOU_USE=on \
-  -DBUILD_SHARED_LIBS=off \
-  -DLIEF_PYTHON_API=off \
-  -DLIEF_INSTALL_COMPILED_EXAMPLES=on \
+cmake -S /src -B build/linux-x86-64/static-release -GNinja \
+  -DCMAKE_LINK_WHAT_YOU_USE=on                             \
+  -DBUILD_SHARED_LIBS=off                                  \
+  -DLIEF_INSTALL_COMPILED_EXAMPLES=on                      \
+  -DCMAKE_INSTALL_PREFIX=/install                          \
   -DCMAKE_BUILD_TYPE=Release
 
-ninja
-
-popd
+cmake --build build/linux-x86-64/shared-release --target all
+cmake --build build/linux-x86-64/static-release --target install
 
 pushd build/linux-x86-64
 cpack --config ../../cmake/cpack.config.cmake
@@ -39,5 +31,3 @@ popd
 ls -alh build
 
 chown -R 1000:1000 build
-chown -R 1000:1000 dist
-chown -R 1000:1000 wheel_stage

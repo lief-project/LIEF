@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 import sys
+import pytest
 import io
 from io import open as io_open
 
 import lief
-from utils import get_sample
+from utils import get_sample, is_x86_64
 
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
@@ -47,6 +48,57 @@ def test_io():
         bytes_stream = io.BytesIO(f.read())
         assert bytes_stream is not None
 
+def test_wrong_io():
+    class Wrong1:
+        pass
+
+    class Wrong2(io.IOBase):
+        pass
+
+    class Wrong3(io.IOBase):
+        def tell(self):
+            return 0
+
+    class Wrong4(io.IOBase):
+        def tell(self):
+            return 0
+
+        def seek(self, pos):
+            return 0
+
+    class Wrong5(io.IOBase):
+        def tell(self):
+            return 0
+
+        def seek(self, p0, p1):
+            return 0
+
+        def read(self):
+            return None
+
+        def readinto(self, size):
+            return None
+
+    wrong = Wrong1()
+    out = lief.parse(wrong)
+    assert out is None
+
+    wrong = Wrong2()
+    out = lief.parse(wrong)
+    assert out is None
+
+    wrong = Wrong3()
+    out = lief.parse(wrong)
+    assert out is None
+
+    wrong = Wrong4()
+    out = lief.parse(wrong)
+    assert out is None
+
+    wrong = Wrong5()
+    out = lief.parse(wrong)
+    assert out is None
+
 def test_platform():
     if sys.platform.lower().startswith("linux"):
         assert lief.current_platform() == lief.PLATFORMS.LINUX
@@ -67,3 +119,31 @@ def test_issue_688():
 
     i = pe.resources_manager.dialogs[0].items
     assert i[0] is not None
+
+
+def test_hash():
+    if is_x86_64():
+        assert lief.hash(b"foo") == 17981288402089600942
+
+def test_iterator():
+    mfc_path = get_sample('PE/PE64_x86-64_binary_mfc-application.exe')
+    mfc = lief.parse(mfc_path)
+    items = mfc.resources_manager.dialogs[0].items
+    assert len(items) > 0
+    assert items[0] is not None
+
+    assert next(items) is not None
+    with pytest.raises(StopIteration) as e_info:
+        for i in range(100):
+            next(items)
+
+    with pytest.raises(IndexError) as e_info:
+           items[100]
+
+
+def test_abstract_concrete():
+    pe = lief.parse(get_sample('PE/PE64_x86-64_binary_HelloWorld.exe'))
+    assert type(pe) == lief.PE.Binary
+    abstract = pe.abstract
+    assert type(abstract) == lief.Binary
+    assert type(abstract.concrete) == lief.PE.Binary

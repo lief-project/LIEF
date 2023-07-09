@@ -13,65 +13,65 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyELF.hpp"
+#include "ELF/pyELF.hpp"
 
-#include "PyIOStream.hpp"
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
+#include <nanobind/stl/unique_ptr.h>
+
+#include "pyIOStream.hpp"
 #include "LIEF/logging.hpp"
 
 #include "LIEF/ELF/Parser.hpp"
 #include "LIEF/ELF/Binary.hpp"
 
-#include <string>
-
-namespace LIEF {
-namespace ELF {
+namespace LIEF::ELF::py {
 
 template<>
-void create<Parser>(py::module& m) {
+void create<Parser>(nb::module_& m) {
+  using namespace LIEF::py;
 
-  // Parser (Parser)
   m.def("parse",
-    py::overload_cast<const std::string&, const ParserConfig&>(&Parser::parse),
+    nb::overload_cast<const std::string&, const ParserConfig&>(&Parser::parse),
     R"delim(
     Parse the ELF binary from the given **file path** and return a :class:`lief.ELF.Binary` object
 
     The second argument is an optional configuration (:class:`~lief.ELF.ParserConfig`)
     that can be used to define which part(s) of the ELF should be parsed or skipped.
 
-    )delim",
+    )delim"_doc,
     "filename"_a, "config"_a = ParserConfig::all(),
-    py::return_value_policy::take_ownership);
+    nb::rv_policy::take_ownership);
 
   m.def("parse",
-    py::overload_cast<const std::vector<uint8_t>&, const ParserConfig&>(&Parser::parse),
+    nb::overload_cast<const std::vector<uint8_t>&, const ParserConfig&>(&Parser::parse),
     R"delim(
     Parse the ELF binary from the given **list of bytes** and return a :class:`lief.ELF.Binary` object
 
     The second argument is an optional configuration (:class:`~lief.ELF.ParserConfig`)
     that can be used to define which part(s) of the ELF should be parsed or skipped.
-    )delim",
+    )delim"_doc,
 
     "raw"_a, "config"_a = ParserConfig::all(),
-    py::return_value_policy::take_ownership);
+    nb::rv_policy::take_ownership);
 
 
   m.def("parse",
-      [] (py::object byteio, const ParserConfig& config) -> py::object {
-        if (auto stream = PyIOStream::from_python(byteio)) {
+      [] (nb::object byteio, const ParserConfig& config) -> nb::object {
+        if (auto stream = PyIOStream::from_python(std::move(byteio))) {
           auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
-          return py::cast(ELF::Parser::parse(std::move(ptr), config));
+          return nb::cast(ELF::Parser::parse(std::move(ptr), config));
         }
         logging::log(logging::LOG_ERR, "Can't create a LIEF stream interface over the provided io");
-        return py::none();
+        return nb::none();
       },
       R"delim(
       Parse the ELF binary from a Python IO stream and return a :class:`lief.ELF.Binary` object
 
       The second argument is an optional configuration (:class:`~lief.ELF.ParserConfig`)
       that can be used to define which part(s) of the ELF should be parsed or skipped.
-      )delim",
+      )delim"_doc,
       "io"_a, "config"_a = ParserConfig::all(),
-      py::return_value_policy::take_ownership);
-}
+      nb::rv_policy::take_ownership);
 }
 }

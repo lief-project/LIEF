@@ -1,0 +1,17 @@
+set(LIEF_PYTHON_DEX_OBJ_SRC
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyHeader.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyParser.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyFile.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyClass.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyField.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyMethod.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyCodeInfo.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyMapList.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyMapItem.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyType.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyPrototype.cpp"
+)
+
+target_sources(pyLIEF PRIVATE ${LIEF_PYTHON_DEX_OBJ_SRC})
+
+

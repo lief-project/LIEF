@@ -16,61 +16,38 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <nanobind/stl/string.h>
+#include <nanobind/make_iterator.h>
+#include <nanobind/stl/bind_vector.h>
 
-#include "pyELF.hpp"
+#include "ELF/pyELF.hpp"
 
-#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
 
-namespace LIEF {
-namespace ELF {
-
-template<class T>
-using getter_t = T (CoreFile::*)(void) const;
-
-template<class T>
-using setter_t = void (CoreFile::*)(T);
+namespace LIEF::ELF::py {
 
 template<>
-void create<CoreFile>(py::module& m) {
+void create<CoreFile>(nb::module_& m) {
 
-
-  py::class_<CoreFile, NoteDetails> cls(m, "CoreFile");
-  py::bind_vector<CoreFile::files_t>(cls, "files_t");
+  nb::class_<CoreFile, NoteDetails> cls(m, "CoreFile");
+  nb::bind_vector<CoreFile::files_t>(cls, "files_t");
 
   cls
-    .def_property("files",
-        static_cast<getter_t<const CoreFile::files_t&>>(&CoreFile::files),
-        static_cast<setter_t<const CoreFile::files_t&>>(&CoreFile::files),
-        "List of files mapped in core. (list of " RST_CLASS_REF(lief.ELF.CoreFileEntry) ")")
+    .def_prop_rw("files",
+        nb::overload_cast<>(&CoreFile::files, nb::const_),
+        nb::overload_cast<const CoreFile::files_t&>(&CoreFile::files),
+        "List of files mapped in core. (list of " RST_CLASS_REF(lief.ELF.CoreFileEntry) ")"_doc)
 
     .def("__len__",
         &CoreFile::count,
-        "Number of files mapped in core"
-        )
+        "Number of files mapped in core"_doc)
 
     .def("__iter__",
-        [] (const CoreFile& f) {
-          return py::make_iterator(std::begin(f), std::end(f));
-        },
-        py::keep_alive<0, 1>())
+        [&m] (const CoreFile& f) {
+          return nb::make_iterator(nanobind::type<CoreFile>(), "corefile_it",
+                                   std::begin(f), std::end(f));
+        }, nb::keep_alive<0, 1>())
 
-    .def("__eq__", &CoreFile::operator==)
-    .def("__ne__", &CoreFile::operator!=)
-    .def("__hash__",
-        [] (const CoreFile& note) {
-          return Hash::hash(note);
-        })
-
-    .def("__str__",
-        [] (const CoreFile& note)
-        {
-          std::ostringstream stream;
-          stream << note;
-          std::string str = stream.str();
-          return str;
-        });
-}
-
+    LIEF_DEFAULT_STR(LIEF::ELF::CoreFile);
 }
 }

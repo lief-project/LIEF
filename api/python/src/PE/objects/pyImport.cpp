@@ -13,97 +13,87 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
-#include "pyIterators.hpp"
+#include "PE/pyPE.hpp"
+#include "pyIterator.hpp"
 #include "pyErr.hpp"
+#include "pySafeString.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/Import.hpp"
+#include "LIEF/PE/DataDirectory.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (Import::*)(void) const;
-
-template<class T>
-using setter_t = void (Import::*)(T);
-
-template<class T>
-using no_const_getter = T (Import::*)(void);
-
-template<class T, class P>
-using no_const_func = T (Import::*)(P);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<Import>(py::module& m) {
-  py::class_<Import, LIEF::Object> imp(m, "Import",
+void create<Import>(nb::module_& m) {
+  using namespace LIEF::py;
+
+  nb::class_<Import, LIEF::Object> imp(m, "Import",
       R"delim(
       Class that represents a PE import
-      )delim");
+      )delim"_doc);
 
   init_ref_iterator<Import::it_entries>(imp, "it_entries");
 
   imp
-    .def(py::init<>(),
-        "Default constructor")
+    .def(nb::init<>(),
+        "Default constructor"_doc)
 
-    .def(py::init<const std::string&>(),
-        "Constructor from a library name",
+    .def(nb::init<const std::string&>(),
+        "Constructor from a library name"_doc,
         "library_name"_a)
 
-    .def_property_readonly("forwarder_chain",
+    .def_prop_ro("forwarder_chain",
         &Import::forwarder_chain,
-        "The index of the first forwarder reference")
+        "The index of the first forwarder reference"_doc)
 
-    .def_property_readonly("timedatestamp",
+    .def_prop_ro("timedatestamp",
         &Import::timedatestamp,
         R"delim(
         The stamp that is set to zero until the image is bound.
 
         After the image is bound, this field is set to the time/data stamp of the DLL
-        )delim")
+        )delim"_doc)
 
-    .def_property_readonly("entries",
-        static_cast<no_const_getter<Import::it_entries>>(&Import::entries),
-        "Iterator over the " RST_CLASS_REF(lief.PE.ImportEntry) " (functions)",
-        py::return_value_policy::reference)
+    .def_prop_ro("entries",
+        nb::overload_cast<>(&Import::entries),
+        "Iterator over the " RST_CLASS_REF(lief.PE.ImportEntry) " (functions)"_doc,
+        nb::keep_alive<1, 0>())
 
-    .def_property("name",
+    .def_prop_rw("name",
         [] (const Import& obj) {
-          return safe_string_converter(obj.name());
+          return safe_string(obj.name());
         },
-        static_cast<setter_t<const std::string&>>(&Import::name),
-        "Library name (e.g. ``kernel32.dll``)",
-        py::return_value_policy::reference)
+        nb::overload_cast<const std::string&>(&Import::name),
+        "Library name (e.g. ``kernel32.dll``)"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("directory",
-        static_cast<no_const_getter<DataDirectory*>>(&Import::directory),
+    .def_prop_ro("directory",
+        nb::overload_cast<>(&Import::directory),
         R"delim(
         Return the :class:`~lief.PE.DataDirectory` associated with this import.
 
         It should be the one at index :attr:`lief.PE.DATA_DIRECTORY.IMPORT_TABLE`.
         It can return None if the Import directory can't be resolved.
-        )delim",
-        py::return_value_policy::reference)
+        )delim"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("iat_directory",
-        static_cast<no_const_getter<DataDirectory*>>(&Import::iat_directory),
+    .def_prop_ro("iat_directory",
+        nb::overload_cast<>(&Import::iat_directory),
         R"delim(
         Return the :class:`~lief.PE.DataDirectory` associated with the ``IAT`` table.
 
         It should be the one at index :attr:`lief.PE.DATA_DIRECTORY.IAT`. It can
         return None if the IAT directory can't be resolved.
-        )delim",
-        py::return_value_policy::reference)
+        )delim"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property("import_address_table_rva",
-        static_cast<getter_t<uint32_t>>(&Import::import_address_table_rva),
-        static_cast<setter_t<uint32_t>>(&Import::import_address_table_rva),
+    .def_prop_rw("import_address_table_rva",
+        nb::overload_cast<>(&Import::import_address_table_rva, nb::const_),
+        nb::overload_cast<uint32_t>(&Import::import_address_table_rva),
         R"delim(
         The RVA of the import address table (``IAT``). The content of this
         table is **identical** to the content of the Import Lookup Table (``ILT``)
@@ -112,58 +102,43 @@ void create<Import>(py::module& m) {
         .. warning::
 
             This address could change when re-building the binary
-        )delim")
+        )delim"_doc)
 
-    .def_property("import_lookup_table_rva",
-        static_cast<getter_t<uint32_t>>(&Import::import_lookup_table_rva),
-        static_cast<setter_t<uint32_t>>(&Import::import_lookup_table_rva),
+    .def_prop_rw("import_lookup_table_rva",
+        nb::overload_cast<>(&Import::import_lookup_table_rva, nb::const_),
+        nb::overload_cast<uint32_t>(&Import::import_lookup_table_rva),
         R"delim(
         The RVA of the import lookup table. This table
         contains the :attr:`~lief.PE.ImportEntry.name` or the :attr:`~lief.PE.ImportEntry.ordinal`
         for all the imports.
-        )delim")
+        )delim"_doc)
 
     .def("get_function_rva_from_iat",
         [] (const Import& self, const std::string& name) {
           return error_or(&Import::get_function_rva_from_iat, self, name);
         },
-        "Return the relative virtual address of the given function within the *Import Address Table*",
+        "Return the relative virtual address of the given function within the *Import Address Table*"_doc,
         "function_name"_a)
 
     .def("add_entry",
-        static_cast<ImportEntry& (Import::*)(const ImportEntry&)>(&Import::add_entry),
-        "Add an " RST_CLASS_REF(lief.PE.ImportEntry) " (function) to the current import",
+        nb::overload_cast<const ImportEntry&>(&Import::add_entry),
+        "Add an " RST_CLASS_REF(lief.PE.ImportEntry) " (function) to the current import"_doc,
         "entry"_a,
-        py::return_value_policy::reference)
+        nb::rv_policy::reference_internal)
 
     .def("add_entry",
-        static_cast<ImportEntry& (Import::*)(const std::string&)>(&Import::add_entry),
-        "Add an " RST_CLASS_REF(lief.PE.ImportEntry) " (function) to the current import",
+        nb::overload_cast<const std::string&>(&Import::add_entry),
+        "Add an " RST_CLASS_REF(lief.PE.ImportEntry) " (function) to the current import"_doc,
         "function_name"_a,
-        py::return_value_policy::reference)
+        nb::rv_policy::reference_internal)
 
     .def("get_entry",
-      static_cast<no_const_func<ImportEntry*, const std::string&>>(&Import::get_entry),
-      "Return the " RST_CLASS_REF(lief.PE.ImportEntry) " with the given name or None if not found",
+      nb::overload_cast<const std::string&>(&Import::get_entry),
+      "Return the " RST_CLASS_REF(lief.PE.ImportEntry) " with the given name or None if not found"_doc,
       "function_name"_a,
-      py::return_value_policy::reference)
+      nb::rv_policy::reference_internal)
 
+    LIEF_DEFAULT_STR(LIEF::PE::Import);
 
-    .def("__eq__", &Import::operator==)
-    .def("__ne__", &Import::operator!=)
-    .def("__hash__",
-        [] (const Import& import) {
-          return Hash::hash(import);
-        })
-
-
-    .def("__str__", [] (const Import& import)
-        {
-          std::ostringstream stream;
-          stream << import;
-          std::string str = stream.str();
-          return str;
-        });
-}
 }
 }

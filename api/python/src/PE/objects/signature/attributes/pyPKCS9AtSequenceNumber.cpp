@@ -13,28 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
 
-#include "LIEF/PE/hash.hpp"
-#include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/attributes/PKCS9AtSequenceNumber.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (PKCS9AtSequenceNumber::*)(void) const;
-
-template<class T>
-using setter_t = void (PKCS9AtSequenceNumber::*)(T);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<PKCS9AtSequenceNumber>(py::module& m) {
-  py::class_<PKCS9AtSequenceNumber, Attribute>(m, "PKCS9AtSequenceNumber",
+void create<PKCS9AtSequenceNumber>(nb::module_& m) {
+  nb::class_<PKCS9AtSequenceNumber, Attribute>(m, "PKCS9AtSequenceNumber",
     R"delim(
     Interface over the structure described by the OID ``1.2.840.113549.1.9.25.4`` (PKCS #9)
 
@@ -52,19 +43,10 @@ void create<PKCS9AtSequenceNumber>(py::module& m) {
 
         SequenceNumber ::= INTEGER (1..MAX)
 
-    )delim")
+    )delim"_doc)
 
-    .def_property_readonly("number",
+    .def_prop_ro("number",
         &PKCS9AtSequenceNumber::number,
-        "Number as described in the RFC")
-
-    .def("__hash__",
-        [] (const PKCS9AtSequenceNumber& obj) {
-          return Hash::hash(obj);
-        })
-
-    .def("__str__", &PKCS9AtSequenceNumber::print);
-}
-
+        "Number as described in the RFC"_doc);
 }
 }

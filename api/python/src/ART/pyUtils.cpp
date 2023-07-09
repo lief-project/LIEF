@@ -13,42 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyART.hpp"
+#include "ART/pyART.hpp"
 
 #include "LIEF/ART/utils.hpp"
 
-namespace LIEF {
-namespace ART {
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 
-void init_utils(py::module& m) {
+namespace LIEF::ART::py {
 
-  m.def("is_art",
-      static_cast<bool (*)(const std::string&)>(&is_art),
-      "Check if the **file** given in parameter is an ART",
+void init_utils(nb::module_& m) {
+
+  nb::module_ lief_mod = nb::module_::import_(LIEF_MOD_NAME);
+
+  lief_mod.def("is_art",
+      nb::overload_cast<const std::string&>(&is_art),
+      "Check if the **file** given in parameter is an ART"_doc,
       "path"_a);
 
-  m.def("is_art",
-      static_cast<bool (*)(const std::vector<uint8_t>&)>(&is_art),
-      "Check if the **raw data** given in parameter is a ART",
+  lief_mod.def("is_art",
+      nb::overload_cast<const std::vector<uint8_t>&>(&is_art),
+      "Check if the **raw data** given in parameter is a ART"_doc,
       "raw"_a);
 
   m.def("version",
-      static_cast<art_version_t (*)(const std::string&)>(&version),
-      "Return the ART version of the **file** given in parameter",
+      nb::overload_cast<const std::string&>(&version),
+      "Return the ART version of the **file** given in parameter"_doc,
       "file"_a);
 
   m.def("version",
-      static_cast<art_version_t (*)(const std::vector<uint8_t>&)>(&version),
-      "Return the ART version of the **raw data** given in parameter",
+      nb::overload_cast<const std::vector<uint8_t>&>(&version),
+      "Return the ART version of the **raw data** given in parameter"_doc,
       "raw"_a);
 
 
   m.def("android_version",
       &android_version,
-      "Return the " RST_CLASS_REF(lief.Android.ANDROID_VERSIONS) " associated with the given ART version ",
+      "Return the " RST_CLASS_REF(lief.Android.ANDROID_VERSIONS) " associated with the given ART version "_doc,
       "art_version"_a);
 }
 
-}
 }
 

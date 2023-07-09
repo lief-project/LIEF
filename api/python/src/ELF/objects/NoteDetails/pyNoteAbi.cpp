@@ -15,52 +15,27 @@
  */
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/array.h>
 
-#include "pyELF.hpp"
+#include "ELF/pyELF.hpp"
 
-#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
 
-namespace LIEF {
-namespace ELF {
-
-template<class T>
-using getter_t = T (NoteAbi::*)(void) const;
-
-template<class T>
-using setter_t = void (NoteAbi::*)(T);
+namespace LIEF::ELF::py {
 
 template<>
-void create<NoteAbi>(py::module& m) {
+void create<NoteAbi>(nb::module_& m) {
+  nb::class_<NoteAbi, NoteDetails>(m, "NoteAbi")
 
-  py::class_<NoteAbi, NoteDetails>(m, "NoteAbi")
+    .def_prop_ro("abi",
+        nb::overload_cast<>(&NoteAbi::abi, nb::const_),
+        "Return the target " RST_CLASS_REF(lief.ELF.NOTE_ABIS) ""_doc)
 
-    .def_property_readonly("abi",
-        static_cast<getter_t<NOTE_ABIS>>(&NoteAbi::abi),
-        "Return the target " RST_CLASS_REF(lief.ELF.NOTE_ABIS) ""
-        )
+    .def_prop_ro("version",
+        nb::overload_cast<>(&NoteAbi::version, nb::const_),
+        "Return the target version as ``(Major, Minor, Patch)``"_doc)
 
-    .def_property_readonly("version",
-        static_cast<getter_t<NoteAbi::version_t>>(&NoteAbi::version),
-        "Return the target version as ``(Major, Minor, Patch)``"
-        )
-
-    .def("__eq__", &NoteAbi::operator==)
-    .def("__ne__", &NoteAbi::operator!=)
-    .def("__hash__",
-        [] (const NoteAbi& note) {
-          return Hash::hash(note);
-        })
-
-    .def("__str__",
-        [] (const NoteAbi& note)
-        {
-          std::ostringstream stream;
-          stream << note;
-          std::string str = stream.str();
-          return str;
-        });
-}
-
+    LIEF_DEFAULT_STR(LIEF::ELF::NoteAbi);
 }
 }

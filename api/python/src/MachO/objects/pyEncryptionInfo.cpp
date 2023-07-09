@@ -13,71 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/EncryptionInfo.hpp"
 
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
 
-namespace LIEF {
-namespace MachO {
-
-template<class T>
-using getter_t = T (EncryptionInfo::*)(void) const;
-
-template<class T>
-using setter_t = void (EncryptionInfo::*)(T);
-
+namespace LIEF::MachO::py {
 
 template<>
-void create<EncryptionInfo>(py::module& m) {
+void create<EncryptionInfo>(nb::module_& m) {
 
-  py::class_<EncryptionInfo, LoadCommand>(m, "EncryptionInfo",
+  nb::class_<EncryptionInfo, LoadCommand>(m, "EncryptionInfo",
       R"delim(
       Class that represents the LC_ENCRYPTION_INFO / LC_ENCRYPTION_INFO_64 commands
 
       The encryption info is usually present in Mach-O executables that
       target iOS to encrypt some sections of the binary
-      )delim")
+      )delim"_doc)
 
-    .def_property("crypt_offset",
-        static_cast<getter_t<uint32_t>>(&EncryptionInfo::crypt_offset),
-        static_cast<setter_t<uint32_t>>(&EncryptionInfo::crypt_offset),
-        "File offset of encrypted range")
+    .def_prop_rw("crypt_offset",
+        nb::overload_cast<>(&EncryptionInfo::crypt_offset, nb::const_),
+        nb::overload_cast<uint32_t>(&EncryptionInfo::crypt_offset),
+        "File offset of encrypted range"_doc)
 
-    .def_property("crypt_size",
-        static_cast<getter_t<uint32_t>>(&EncryptionInfo::crypt_size),
-        static_cast<setter_t<uint32_t>>(&EncryptionInfo::crypt_size),
-        "File size of encrypted range")
+    .def_prop_rw("crypt_size",
+        nb::overload_cast<>(&EncryptionInfo::crypt_size, nb::const_),
+        nb::overload_cast<uint32_t>(&EncryptionInfo::crypt_size),
+        "File size of encrypted range"_doc)
 
-    .def_property("crypt_id",
-        static_cast<getter_t<uint32_t>>(&EncryptionInfo::crypt_id),
-        static_cast<setter_t<uint32_t>>(&EncryptionInfo::crypt_id),
-        "The encryption system. 0 means no encrypted")
+    .def_prop_rw("crypt_id",
+        nb::overload_cast<>(&EncryptionInfo::crypt_id, nb::const_),
+        nb::overload_cast<uint32_t>(&EncryptionInfo::crypt_id),
+        "The encryption system. 0 means no encrypted"_doc)
 
-
-
-    .def("__eq__", &EncryptionInfo::operator==)
-    .def("__ne__", &EncryptionInfo::operator!=)
-    .def("__hash__",
-        [] (const EncryptionInfo& uuid) {
-          return Hash::hash(uuid);
-        })
-
-
-    .def("__str__",
-        [] (const EncryptionInfo& uuid)
-        {
-          std::ostringstream stream;
-          stream << uuid;
-          std::string str = stream.str();
-          return str;
-        });
-}
+    LIEF_DEFAULT_STR(EncryptionInfo);
 
 }
 }

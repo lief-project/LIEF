@@ -13,37 +13,61 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
+#include <string>
+#include <sstream>
+#include <nanobind/stl/vector.h>
+#include <nanobind/stl/string.h>
 
-#include "LIEF/Abstract/Binary.hpp"
 #include "LIEF/MachO/Binary.hpp"
-#include "LIEF/MachO/Symbol.hpp"
+#include "LIEF/MachO/BuildVersion.hpp"
+#include "LIEF/MachO/Builder.hpp"
+#include "LIEF/MachO/ChainedBindingInfo.hpp"
+#include "LIEF/MachO/CodeSignature.hpp"
+#include "LIEF/MachO/CodeSignatureDir.hpp"
+#include "LIEF/MachO/DataInCode.hpp"
+#include "LIEF/MachO/DyldBindingInfo.hpp"
+#include "LIEF/MachO/DyldChainedFixups.hpp"
+#include "LIEF/MachO/DyldEnvironment.hpp"
+#include "LIEF/MachO/DyldExportsTrie.hpp"
+#include "LIEF/MachO/DyldInfo.hpp"
+#include "LIEF/MachO/DylibCommand.hpp"
+#include "LIEF/MachO/DylinkerCommand.hpp"
+#include "LIEF/MachO/DynamicSymbolCommand.hpp"
+#include "LIEF/MachO/EncryptionInfo.hpp"
+#include "LIEF/MachO/ExportInfo.hpp"
+#include "LIEF/MachO/FunctionStarts.hpp"
+#include "LIEF/MachO/LinkEdit.hpp"
+#include "LIEF/MachO/LinkerOptHint.hpp"
+#include "LIEF/MachO/MainCommand.hpp"
+#include "LIEF/MachO/RPathCommand.hpp"
+#include "LIEF/MachO/Relocation.hpp"
+#include "LIEF/MachO/RelocationFixup.hpp"
 #include "LIEF/MachO/Section.hpp"
-
-#include "LIEF/MachO/hash.hpp"
+#include "LIEF/MachO/SegmentCommand.hpp"
+#include "LIEF/MachO/SegmentSplitInfo.hpp"
+#include "LIEF/MachO/SourceVersion.hpp"
+#include "LIEF/MachO/SubFramework.hpp"
+#include "LIEF/MachO/Symbol.hpp"
+#include "LIEF/MachO/SymbolCommand.hpp"
+#include "LIEF/MachO/ThreadCommand.hpp"
+#include "LIEF/MachO/TwoLevelHints.hpp"
+#include "LIEF/MachO/UUIDCommand.hpp"
+#include "LIEF/MachO/VersionMin.hpp"
 
 #include "pyErr.hpp"
-#include "pyMachO.hpp"
-#include "pyIterators.hpp"
+#include "MachO/pyMachO.hpp"
+#include "pyIterator.hpp"
 
-namespace LIEF {
-namespace MachO {
-
-template<class T>
-using no_const_getter = T (Binary::*)(void);
-
-template<class T, class P>
-using no_const_func = T (Binary::*)(P);
-
+namespace LIEF::MachO::py {
 
 template<>
-void create<Binary>(py::module& m) {
+void create<Binary>(nb::module_& m) {
+  using namespace LIEF::py;
 
-
-  py::class_<Binary, LIEF::Binary> bin(m, "Binary",
+  nb::class_<Binary, LIEF::Binary> bin(m, "Binary",
       R"delim(
       Class which represents a MachO binary
-      )delim");
+      )delim"_doc);
 
   init_ref_iterator<Binary::it_commands>(bin, "it_commands");
 
@@ -55,378 +79,377 @@ void create<Binary>(py::module& m) {
   init_ref_iterator<Binary::it_relocations>(bin, "it_relocations");
   init_ref_iterator<Binary::it_rpaths>(bin, "it_rpaths");
 
-  py::class_<Binary::range_t>(bin, "range_t")
-    .def_readwrite("start", &Binary::range_t::start)
-    .def_readwrite("end",   &Binary::range_t::end);
+  nb::class_<Binary::range_t>(bin, "range_t")
+    .def_rw("start", &Binary::range_t::start)
+    .def_rw("end",   &Binary::range_t::end);
 
   // --> Already registered with FatMachO (same container)
   //init_ref_iterator<Binary::it_fileset_binaries>(bin, "it_fileset_binaries");
 
   bin
-    .def_property_readonly("header",
-        static_cast<no_const_getter<Header&>>(&Binary::header),
-        "Return binary's " RST_CLASS_REF(lief.MachO.Header) "",
-        py::return_value_policy::reference_internal)
+    .def_prop_ro("header",
+        nb::overload_cast<>(&Binary::header),
+        "Return binary's " RST_CLASS_REF(lief.MachO.Header) ""_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("sections",
-        static_cast<no_const_getter<Binary::it_sections>>(&Binary::sections),
-        "Return an iterator over the binary's " RST_CLASS_REF(lief.MachO.Section) "",
-        py::return_value_policy::reference_internal)
+    .def_prop_ro("sections",
+        nb::overload_cast<>(&Binary::sections),
+        "Return an iterator over the binary's " RST_CLASS_REF(lief.MachO.Section) ""_doc,
+        nb::keep_alive<0, 1>())
 
-    .def_property_readonly("relocations",
-        static_cast<no_const_getter<Binary::it_relocations>>(&Binary::relocations),
-        "Return an iterator over binary's " RST_CLASS_REF(lief.MachO.Relocation) "",
-        py::return_value_policy::reference_internal)
+    .def_prop_ro("relocations",
+        nb::overload_cast<>(&Binary::relocations),
+        "Return an iterator over binary's " RST_CLASS_REF(lief.MachO.Relocation) ""_doc,
+        nb::keep_alive<0, 1>())
 
-    .def_property_readonly("segments",
-        static_cast<no_const_getter<Binary::it_segments>>(&Binary::segments),
-        "Return an iterator over the binary's " RST_CLASS_REF(lief.MachO.SegmentCommand) "",
-        py::return_value_policy::reference_internal)
+    .def_prop_ro("segments",
+        nb::overload_cast<>(&Binary::segments),
+        "Return an iterator over the binary's " RST_CLASS_REF(lief.MachO.SegmentCommand) ""_doc,
+        nb::keep_alive<0, 1>())
 
-    .def_property_readonly("libraries",
-        static_cast<no_const_getter<Binary::it_libraries>>(&Binary::libraries),
-        "Return an iterator over the binary's " RST_CLASS_REF(lief.MachO.DylibCommand) "",
-        py::return_value_policy::reference_internal)
+    .def_prop_ro("libraries",
+        nb::overload_cast<>(&Binary::libraries),
+        "Return an iterator over the binary's " RST_CLASS_REF(lief.MachO.DylibCommand) ""_doc,
+        nb::keep_alive<0, 1>())
 
-    .def_property_readonly("symbols",
-        static_cast<no_const_getter<Binary::it_symbols>>(&Binary::symbols),
-        "Return an iterator over the binary's " RST_CLASS_REF(lief.MachO.Symbol) "",
-        py::return_value_policy::reference_internal)
+    .def_prop_ro("symbols",
+        nb::overload_cast<>(&Binary::symbols),
+        "Return an iterator over the binary's " RST_CLASS_REF(lief.MachO.Symbol) ""_doc,
+        nb::keep_alive<0, 1>())
 
     .def("has_symbol",
         &Binary::has_symbol,
-        "Check if a " RST_CLASS_REF(lief.MachO.Symbol) " with the given name exists",
+        "Check if a " RST_CLASS_REF(lief.MachO.Symbol) " with the given name exists"_doc,
         "name"_a)
 
     .def("get_symbol",
-        static_cast<no_const_func<Symbol*, const std::string&>>(&Binary::get_symbol),
-        "Return the " RST_CLASS_REF(lief.MachO.Symbol) " from the given name",
+        nb::overload_cast<const std::string&>(&Binary::get_symbol),
+        "Return the " RST_CLASS_REF(lief.MachO.Symbol) " from the given name"_doc,
         "name"_a,
-        py::return_value_policy::reference)
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("imported_symbols",
-        static_cast<no_const_getter<Binary::it_imported_symbols>>(&Binary::imported_symbols),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.Symbol) " which are imported",
-        py::return_value_policy::reference_internal)
+    .def_prop_ro("imported_symbols",
+        nb::overload_cast<>(&Binary::imported_symbols),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.Symbol) " which are imported"_doc,
+        nb::keep_alive<0, 1>())
 
-    .def_property_readonly("exported_symbols",
-        static_cast<no_const_getter<Binary::it_exported_symbols>>(&Binary::exported_symbols),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.Symbol) " which are exported",
-        py::return_value_policy::reference_internal)
+    .def_prop_ro("exported_symbols",
+        nb::overload_cast<>(&Binary::exported_symbols),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.Symbol) " which are exported"_doc,
+        nb::keep_alive<0, 1>())
 
-    .def_property_readonly("commands",
-        static_cast<no_const_getter<Binary::it_commands>>(&Binary::commands),
-        "Return an iterator over the binary's " RST_CLASS_REF(lief.MachO.Command) "",
-        py::return_value_policy::reference_internal)
+    .def_prop_ro("commands",
+        nb::overload_cast<>(&Binary::commands),
+        "Return an iterator over the binary's " RST_CLASS_REF(lief.MachO.Command) ""_doc,
+        nb::keep_alive<0, 1>())
 
-    .def_property_readonly("filesets",
-        static_cast<no_const_getter<Binary::it_fileset_binaries>>(&Binary::filesets),
-        "Return binary's " RST_CLASS_REF(lief.MachO.Filesets) "",
-        py::return_value_policy::reference_internal)
+    .def_prop_ro("filesets",
+        nb::overload_cast<>(&Binary::filesets),
+        "Return binary's " RST_CLASS_REF(lief.MachO.Filesets) ""_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_filesets",
+    .def_prop_ro("has_filesets",
         &Binary::has_filesets,
-        "Return ``True`` if the binary has filesets")
+        "Return ``True`` if the binary has filesets"_doc)
 
-    .def_property_readonly("fileset_name",
+    .def_prop_ro("fileset_name",
         &Binary::fileset_name,
-        "Name associated with the LC_FILESET_ENTRY binary")
+        "Name associated with the LC_FILESET_ENTRY binary"_doc)
 
-    .def_property_readonly("imagebase",
+    .def_prop_ro("imagebase",
         &Binary::imagebase,
         R"delim(
         Return the binary's ``imagebase`` which is the base address
         where segments are mapped (without the ASLR). ``0`` if not relevant.
-        )delim")
+        )delim"_doc)
 
-    .def_property_readonly("virtual_size",
+    .def_prop_ro("virtual_size",
         &Binary::virtual_size,
-        "Binary's memory size when mapped")
+        "Binary's memory size when mapped"_doc)
 
-    .def_property_readonly("fat_offset",
+    .def_prop_ro("fat_offset",
         &Binary::fat_offset,
-        "Return binary's *fat offset*. ``0`` if not relevant.",
-        py::return_value_policy::copy)
+        "Return binary's *fat offset*. ``0`` if not relevant."_doc,
+        nb::rv_policy::copy)
 
     .def("section_from_offset",
-        static_cast<Section* (Binary::*)(uint64_t)>(&Binary::section_from_offset),
-        "Return the " RST_CLASS_REF(lief.MachO.Section) " which encompasses the offset",
-        py::return_value_policy::reference)
+        nb::overload_cast<uint64_t>(&Binary::section_from_offset),
+        "Return the " RST_CLASS_REF(lief.MachO.Section) " which encompasses the offset"_doc,
+        nb::rv_policy::reference_internal)
 
     .def("section_from_virtual_address",
-        static_cast<Section* (Binary::*)(uint64_t)>(&Binary::section_from_virtual_address),
-        "Return the " RST_CLASS_REF(lief.MachO.Section) " which encompasses the virtual address",
-        py::return_value_policy::reference)
+        nb::overload_cast<uint64_t>(&Binary::section_from_virtual_address),
+        "Return the " RST_CLASS_REF(lief.MachO.Section) " which encompasses the virtual address"_doc,
+        nb::rv_policy::reference_internal)
 
     .def("segment_from_offset",
-        static_cast<SegmentCommand* (Binary::*)(uint64_t)>(&Binary::segment_from_offset),
-        "Return the " RST_CLASS_REF(lief.MachO.SegmentCommand) " which encompasses the offset",
-        py::return_value_policy::reference)
+        nb::overload_cast<uint64_t>(&Binary::segment_from_offset),
+        "Return the " RST_CLASS_REF(lief.MachO.SegmentCommand) " which encompasses the offset"_doc,
+        nb::rv_policy::reference_internal)
 
     .def("segment_from_virtual_address",
-        static_cast<SegmentCommand* (Binary::*)(uint64_t)>(&Binary::segment_from_virtual_address),
-        "Return the " RST_CLASS_REF(lief.MachO.SegmentCommand) " which encompasses the virtual address",
-        py::return_value_policy::reference)
+        nb::overload_cast<uint64_t>(&Binary::segment_from_virtual_address),
+        "Return the " RST_CLASS_REF(lief.MachO.SegmentCommand) " which encompasses the virtual address"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_entrypoint",
+    .def_prop_ro("has_entrypoint",
         &Binary::has_entrypoint,
         R"delim(
         ``True`` if the binary has an entrypoint.
 
         Basically for libraries it will return ``false``
-        )delim")
+        )delim"_doc)
 
-
-    .def_property_readonly("has_uuid",
+    .def_prop_ro("has_uuid",
         &Binary::has_uuid,
-        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.UUIDCommand) " command.")
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.UUIDCommand) " command."_doc)
 
-    .def_property_readonly("uuid",
-        static_cast<no_const_getter<UUIDCommand*>>(&Binary::uuid),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.UUIDCommand) " if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("uuid",
+        nb::overload_cast<>(&Binary::uuid),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.UUIDCommand) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_main_command",
+    .def_prop_ro("has_main_command",
         &Binary::has_main_command,
-        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.MainCommand) " command.")
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.MainCommand) " command."_doc)
 
-    .def_property_readonly("main_command",
-        static_cast<no_const_getter<MainCommand*>>(&Binary::main_command),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.MainCommand) " if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("main_command",
+        nb::overload_cast<>(&Binary::main_command),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.MainCommand) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_dylinker",
+    .def_prop_ro("has_dylinker",
         &Binary::has_dylinker,
-        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.DylinkerCommand) " command.")
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.DylinkerCommand) " command."_doc)
 
-    .def_property_readonly("dylinker",
-        static_cast<no_const_getter<DylinkerCommand*>>(&Binary::dylinker),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.DylinkerCommand) " if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("dylinker",
+        nb::overload_cast<>(&Binary::dylinker),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.DylinkerCommand) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_dyld_info",
+    .def_prop_ro("has_dyld_info",
         &Binary::has_dyld_info,
-        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.DyldInfo) " command.")
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.DyldInfo) " command."_doc)
 
-    .def_property_readonly("dyld_info",
-        static_cast<no_const_getter<DyldInfo*>>(&Binary::dyld_info),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.DyldInfo) " if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("dyld_info",
+        nb::overload_cast<>(&Binary::dyld_info),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.DyldInfo) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_function_starts",
+    .def_prop_ro("has_function_starts",
         &Binary::has_function_starts,
-        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.FunctionStarts) " command.")
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.FunctionStarts) " command."_doc)
 
-    .def_property_readonly("function_starts",
-        static_cast<no_const_getter<FunctionStarts*>>(&Binary::function_starts),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.FunctionStarts) " if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("function_starts",
+        nb::overload_cast<>(&Binary::function_starts),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.FunctionStarts) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_source_version",
+    .def_prop_ro("has_source_version",
         &Binary::has_source_version,
-        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.SourceVersion) " command.")
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.SourceVersion) " command."_doc)
 
-    .def_property_readonly("source_version",
-        static_cast<no_const_getter<SourceVersion*>>(&Binary::source_version),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.SourceVersion) " if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("source_version",
+        nb::overload_cast<>(&Binary::source_version),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.SourceVersion) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_version_min",
+    .def_prop_ro("has_version_min",
         &Binary::has_version_min,
-        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.VersionMin) " command.")
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.VersionMin) " command."_doc)
 
-    .def_property_readonly("version_min",
-        static_cast<no_const_getter<VersionMin*>>(&Binary::version_min),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.VersionMin) " if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("version_min",
+        nb::overload_cast<>(&Binary::version_min),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.VersionMin) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_thread_command",
+    .def_prop_ro("has_thread_command",
         &Binary::has_thread_command,
-        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.ThreadCommand) " command.")
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.ThreadCommand) " command."_doc)
 
-    .def_property_readonly("thread_command",
-        static_cast<no_const_getter<ThreadCommand*>>(&Binary::thread_command),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.ThreadCommand) " if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("thread_command",
+        nb::overload_cast<>(&Binary::thread_command),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.ThreadCommand) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_rpath",
+    .def_prop_ro("has_rpath",
         &Binary::has_rpath,
-        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.RPathCommand) " command.")
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.RPathCommand) " command."_doc)
 
-    .def_property_readonly("rpath",
-        static_cast<no_const_getter<RPathCommand*>>(&Binary::rpath),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.RPathCommand) " if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("rpath",
+        nb::overload_cast<>(&Binary::rpath),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.RPathCommand) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("rpaths",
-        static_cast<no_const_getter<Binary::it_rpaths>>(&Binary::rpaths),
-        "Return an iterator over the binary's " RST_CLASS_REF(lief.MachO.RPathCommand) "",
-        py::return_value_policy::reference_internal)
+    .def_prop_ro("rpaths",
+        nb::overload_cast<>(&Binary::rpaths),
+        "Return an iterator over the binary's " RST_CLASS_REF(lief.MachO.RPathCommand) ""_doc,
+        nb::keep_alive<0, 1>())
 
-    .def_property_readonly("has_symbol_command",
+    .def_prop_ro("has_symbol_command",
         &Binary::has_symbol_command,
-        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.SymbolCommand) " command.")
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.SymbolCommand) " command."_doc)
 
-    .def_property_readonly("symbol_command",
-        static_cast<no_const_getter<SymbolCommand*>>(&Binary::symbol_command),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.SymbolCommand) " if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("symbol_command",
+        nb::overload_cast<>(&Binary::symbol_command),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.SymbolCommand) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_dynamic_symbol_command",
+    .def_prop_ro("has_dynamic_symbol_command",
         &Binary::has_dynamic_symbol_command,
-        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.DynamicSymbolCommand) " command.")
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.DynamicSymbolCommand) " command."_doc)
 
-    .def_property_readonly("dynamic_symbol_command",
-        static_cast<no_const_getter<DynamicSymbolCommand*>>(&Binary::dynamic_symbol_command),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.DynamicSymbolCommand) " if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("dynamic_symbol_command",
+        nb::overload_cast<>(&Binary::dynamic_symbol_command),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.DynamicSymbolCommand) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_code_signature",
+    .def_prop_ro("has_code_signature",
         &Binary::has_code_signature,
-        "``True`` if the binary is signed (i.e. has a " RST_CLASS_REF(lief.MachO.CodeSignature) " command)")
+        "``True`` if the binary is signed (i.e. has a " RST_CLASS_REF(lief.MachO.CodeSignature) " command)"_doc)
 
-    .def_property_readonly("code_signature",
-        static_cast<no_const_getter<CodeSignature*>>(&Binary::code_signature),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.CodeSignature) " if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("code_signature",
+        nb::overload_cast<>(&Binary::code_signature),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.CodeSignature) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_code_signature_dir",
+    .def_prop_ro("has_code_signature_dir",
         &Binary::has_code_signature_dir,
         "``True`` if the binary is signed (i.e. has a " RST_CLASS_REF(lief.MachO.CodeSignatureDir) " command) "
-        "with the command LC_DYLIB_CODE_SIGN_DRS")
+        "with the command LC_DYLIB_CODE_SIGN_DRS"_doc)
 
-    .def_property_readonly("code_signature_dir",
-        static_cast<no_const_getter<CodeSignatureDir*>>(&Binary::code_signature_dir),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.CodeSignatureDir) " if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("code_signature_dir",
+        nb::overload_cast<>(&Binary::code_signature_dir),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.CodeSignatureDir) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_data_in_code",
+    .def_prop_ro("has_data_in_code",
         &Binary::has_data_in_code,
-        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.DataInCode) " command")
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.DataInCode) " command"_doc)
 
-    .def_property_readonly("data_in_code",
-        static_cast<no_const_getter<DataInCode*>>(&Binary::data_in_code),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.DataInCode) " if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("data_in_code",
+        nb::overload_cast<>(&Binary::data_in_code),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.DataInCode) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_segment_split_info",
+    .def_prop_ro("has_segment_split_info",
         &Binary::has_segment_split_info,
-        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.SegmentSplitInfo) " command")
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.SegmentSplitInfo) " command"_doc)
 
-    .def_property_readonly("segment_split_info",
-        static_cast<no_const_getter<SegmentSplitInfo*>>(&Binary::segment_split_info),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.SegmentSplitInfo) " if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("segment_split_info",
+        nb::overload_cast<>(&Binary::segment_split_info),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.SegmentSplitInfo) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_sub_framework",
+    .def_prop_ro("has_sub_framework",
         &Binary::has_sub_framework,
-        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.SubFramework) " command")
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.SubFramework) " command"_doc)
 
-    .def_property_readonly("sub_framework",
-        static_cast<no_const_getter<SubFramework*>>(&Binary::sub_framework),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.SubFramework) " if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("sub_framework",
+        nb::overload_cast<>(&Binary::sub_framework),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.SubFramework) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_dyld_environment",
+    .def_prop_ro("has_dyld_environment",
         &Binary::has_dyld_environment,
-        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.DyldEnvironment) " command")
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.DyldEnvironment) " command"_doc)
 
-    .def_property_readonly("dyld_environment",
-        static_cast<no_const_getter<DyldEnvironment*>>(&Binary::dyld_environment),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.DyldEnvironment) " if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("dyld_environment",
+        nb::overload_cast<>(&Binary::dyld_environment),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.DyldEnvironment) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_encryption_info",
+    .def_prop_ro("has_encryption_info",
         &Binary::has_encryption_info,
-        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.EncryptionInfo) " command")
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.EncryptionInfo) " command"_doc)
 
-    .def_property_readonly("encryption_info",
-        static_cast<no_const_getter<EncryptionInfo*>>(&Binary::encryption_info),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.EncryptionInfo) " if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("encryption_info",
+        nb::overload_cast<>(&Binary::encryption_info),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.EncryptionInfo) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_build_version",
+    .def_prop_ro("has_build_version",
         &Binary::has_build_version,
-        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.BuildVersion) " command")
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.BuildVersion) " command"_doc)
 
-    .def_property_readonly("build_version",
-        static_cast<no_const_getter<BuildVersion*>>(&Binary::build_version),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.BuildVersion) " if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("build_version",
+        nb::overload_cast<>(&Binary::build_version),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.BuildVersion) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_dyld_chained_fixups",
+    .def_prop_ro("has_dyld_chained_fixups",
         &Binary::has_dyld_chained_fixups,
-        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.DyldChainedFixups) " command")
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.DyldChainedFixups) " command"_doc)
 
-    .def_property_readonly("dyld_chained_fixups",
-        static_cast<no_const_getter<DyldChainedFixups*>>(&Binary::dyld_chained_fixups),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.DyldChainedFixups) " if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("dyld_chained_fixups",
+        nb::overload_cast<>(&Binary::dyld_chained_fixups),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.DyldChainedFixups) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_dyld_exports_trie",
+    .def_prop_ro("has_dyld_exports_trie",
         &Binary::has_dyld_exports_trie,
-        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.DyldExportsTrie) " command")
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.DyldExportsTrie) " command"_doc)
 
-    .def_property_readonly("dyld_exports_trie",
-        static_cast<no_const_getter<DyldExportsTrie*>>(&Binary::dyld_exports_trie),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.DyldExportsTrie) " if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("dyld_exports_trie",
+        nb::overload_cast<>(&Binary::dyld_exports_trie),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.DyldExportsTrie) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_two_level_hints",
+    .def_prop_ro("has_two_level_hints",
         &Binary::has_two_level_hints,
-        "``True`` if the binary embeds the Two Level Hint command (" RST_CLASS_REF(lief.MachO.TwoLevelHints) ")")
+        "``True`` if the binary embeds the Two Level Hint command (" RST_CLASS_REF(lief.MachO.TwoLevelHints) ")"_doc)
 
-    .def_property_readonly("two_level_hints",
-        static_cast<no_const_getter<TwoLevelHints*>>(&Binary::two_level_hints),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.TwoLevelHints) " if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("two_level_hints",
+        nb::overload_cast<>(&Binary::two_level_hints),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.TwoLevelHints) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
 
-    .def_property_readonly("has_linker_opt_hint",
+    .def_prop_ro("has_linker_opt_hint",
         &Binary::has_linker_opt_hint,
-        "``True`` if the binary embeds the Linker optimization hint command (" RST_CLASS_REF(lief.MachO.LinkerOptHint) ")")
+        "``True`` if the binary embeds the Linker optimization hint command (" RST_CLASS_REF(lief.MachO.LinkerOptHint) ")"_doc)
 
-    .def_property_readonly("linker_opt_hint",
-        static_cast<no_const_getter<LinkerOptHint*>>(&Binary::linker_opt_hint),
-        "Return the binary's " RST_CLASS_REF(lief.MachO.LinkerOptHint) " if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("linker_opt_hint",
+        nb::overload_cast<>(&Binary::linker_opt_hint),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.LinkerOptHint) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
     .def("virtual_address_to_offset",
         [] (const Binary& self, uint64_t va) {
           return error_or(&Binary::virtual_address_to_offset, self, va);
         },
-        "Convert the virtual address to an offset in the binary",
+        "Convert the virtual address to an offset in the binary"_doc,
         "virtual_address"_a)
 
     .def("has_section",
         &Binary::has_section,
-        "Check if a section with the given name exists",
+        "Check if a section with the given name exists"_doc,
         "name"_a)
 
     .def("get_section",
-        static_cast<Section* (Binary::*)(const std::string&)>(&Binary::get_section),
-        "Return the section from the given name or None if the section does not exist",
+        nb::overload_cast<const std::string&>(&Binary::get_section),
+        "Return the section from the given name or None if the section does not exist"_doc,
         "name"_a,
-        py::return_value_policy::reference)
+        nb::rv_policy::reference_internal)
 
     .def("has_segment",
         &Binary::has_segment,
-        "Check if a " RST_CLASS_REF(lief.MachO.SegmentCommand) "  with the given name exists",
+        "Check if a " RST_CLASS_REF(lief.MachO.SegmentCommand) "  with the given name exists"_doc,
         "name"_a)
 
     .def("get_segment",
-        static_cast<SegmentCommand* (Binary::*)(const std::string&)>(&Binary::get_segment),
-        "Return the " RST_CLASS_REF(lief.MachO.SegmentCommand) " from the given name",
+        nb::overload_cast<const std::string&>(&Binary::get_segment),
+        "Return the " RST_CLASS_REF(lief.MachO.SegmentCommand) " from the given name"_doc,
         "name"_a,
-        py::return_value_policy::reference)
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("va_ranges",
+    .def_prop_ro("va_ranges",
         &Binary::va_ranges,
-        "Return the range of virtual addresses as a tuple ``(va_start, va_end)``")
+        "Return the range of virtual addresses as a tuple ``(va_start, va_end)``"_doc)
 
-    .def_property_readonly("off_ranges",
+    .def_prop_ro("off_ranges",
         &Binary::off_ranges,
-        "Return the range of offsets as a tuple ``(off_start, off_end)``")
+        "Return the range of offsets as a tuple ``(off_start, off_end)``"_doc)
 
     .def("is_valid_addr",
         &Binary::is_valid_addr,
@@ -434,168 +457,159 @@ void create<Binary>(py::module& m) {
         Check if the given address is encompassed between the range of virtual addresses.
 
         See: :attr:`~lief.MachO.Binary.va_ranges`
-        )delim",
+        )delim"_doc,
         "address"_a)
 
     .def("write",
-        static_cast<void (Binary::*)(const std::string&)>(&Binary::write),
-        "Rebuild the binary and write and write its content if the file given in parameter",
+        nb::overload_cast<const std::string&>(&Binary::write),
+        "Rebuild the binary and write and write its content if the file given in parameter"_doc,
         "output"_a,
-        py::return_value_policy::reference_internal)
+        nb::rv_policy::reference_internal)
 
     .def("add",
-        static_cast<LoadCommand* (Binary::*)(const DylibCommand&)>(&Binary::add),
-        "Add a new " RST_CLASS_REF(lief.MachO.DylibCommand) "",
+        nb::overload_cast<const DylibCommand&>(&Binary::add),
+        "Add a new " RST_CLASS_REF(lief.MachO.DylibCommand) ""_doc,
         "dylib_command"_a,
-        py::return_value_policy::reference)
+        nb::rv_policy::reference_internal)
 
     .def("add",
-        static_cast<LoadCommand* (Binary::*)(const SegmentCommand&)>(&Binary::add),
-        "Add a new " RST_CLASS_REF(lief.MachO.SegmentCommand) "",
+        nb::overload_cast<const SegmentCommand&>(&Binary::add),
+        "Add a new " RST_CLASS_REF(lief.MachO.SegmentCommand) ""_doc,
         "segment"_a,
-        py::return_value_policy::reference)
+        nb::rv_policy::reference_internal)
 
     .def("add",
-        static_cast<LoadCommand* (Binary::*)(const LoadCommand&)>(&Binary::add),
-        "Add a new " RST_CLASS_REF(lief.MachO.LoadCommand) "",
+        nb::overload_cast<const LoadCommand&>(&Binary::add),
+        "Add a new " RST_CLASS_REF(lief.MachO.LoadCommand) ""_doc,
         "load_command"_a,
-        py::return_value_policy::reference)
+        nb::rv_policy::reference_internal)
 
     .def("add",
-        static_cast<LoadCommand* (Binary::*)(const LoadCommand&, size_t)>(&Binary::add),
-        "Add a new " RST_CLASS_REF(lief.MachO.LoadCommand) " at ``index``",
+        nb::overload_cast<const LoadCommand&, size_t>(&Binary::add),
+        "Add a new " RST_CLASS_REF(lief.MachO.LoadCommand) " at ``index``"_doc,
         "load_command"_a, "index"_a,
-        py::return_value_policy::reference)
-
+        nb::rv_policy::reference_internal)
 
     .def("remove",
-        static_cast<bool (Binary::*)(const LoadCommand&)>(&Binary::remove),
-        "Remove a " RST_CLASS_REF(lief.MachO.LoadCommand) "",
+        nb::overload_cast<const LoadCommand&>(&Binary::remove),
+        "Remove a " RST_CLASS_REF(lief.MachO.LoadCommand) ""_doc,
         "load_command"_a)
 
     .def("remove",
-        static_cast<bool (Binary::*)(LOAD_COMMAND_TYPES)>(&Binary::remove),
+        nb::overload_cast<LOAD_COMMAND_TYPES>(&Binary::remove),
         "Remove **all** the " RST_CLASS_REF(lief.MachO.LoadCommand) " having the given "
-        "" RST_CLASS_REF(lief.MachO.LOAD_COMMAND_TYPES) "",
+        "" RST_CLASS_REF(lief.MachO.LOAD_COMMAND_TYPES) ""_doc,
         "type"_a)
 
     .def("remove",
-        static_cast<bool (Binary::*)(const Symbol&)>(&Binary::remove),
-        "Remove the given " RST_CLASS_REF(lief.MachO.Symbol)"",
+        nb::overload_cast<const Symbol&>(&Binary::remove),
+        "Remove the given " RST_CLASS_REF(lief.MachO.Symbol)""_doc,
         "symbol"_a)
 
     .def("remove_command",
-        static_cast<bool (Binary::*)(size_t)>(&Binary::remove_command),
-        "Remove the " RST_CLASS_REF(lief.MachO.LoadCommand) " at the given ``index``",
+        nb::overload_cast<size_t>(&Binary::remove_command),
+        "Remove the " RST_CLASS_REF(lief.MachO.LoadCommand) " at the given ``index``"_doc,
         "index"_a)
 
     .def("remove_section",
-        static_cast<void (Binary::*)(const std::string&, bool)>(&Binary::remove_section),
-        "Remove the section with the given name",
+        nb::overload_cast<const std::string&, bool>(&Binary::remove_section),
+        "Remove the section with the given name"_doc,
         "name"_a, "clear"_a = false)
 
     .def("remove_section",
-        py::overload_cast<const std::string&, const std::string&, bool>(&Binary::remove_section),
+        nb::overload_cast<const std::string&, const std::string&, bool>(&Binary::remove_section),
         R"delim(
         Remove the section from the segment with the name
         given in the first parameter and with the section's name provided in the
-        second parameter.)delim",
+        second parameter.)delim"_doc,
         "segname"_a, "secname"_a, "clear"_a = false)
 
     .def("remove_signature",
-        static_cast<bool (Binary::*)(void)>(&Binary::remove_signature),
-        "Remove the " RST_CLASS_REF(lief.MachO.CodeSignature) " (if any)")
+        nb::overload_cast<>(&Binary::remove_signature),
+        "Remove the " RST_CLASS_REF(lief.MachO.CodeSignature) " (if any)"_doc)
 
     .def("remove_symbol",
-        static_cast<bool (Binary::*)(const std::string&)>(&Binary::remove_symbol),
-        "Remove all symbol(s) with the given name",
+        nb::overload_cast<const std::string&>(&Binary::remove_symbol),
+        "Remove all symbol(s) with the given name"_doc,
         "name"_a)
 
     .def("can_remove",
-        static_cast<bool (Binary::*)(const Symbol&) const>(&Binary::can_remove),
-        "Check if the given symbol can be safely removed.",
+        nb::overload_cast<const Symbol&>(&Binary::can_remove, nb::const_),
+        "Check if the given symbol can be safely removed."_doc,
         "symbol"_a)
 
     .def("can_remove_symbol",
-        static_cast<bool (Binary::*)(const std::string&) const>(&Binary::can_remove_symbol),
-        "Check if the given symbol name can be safely removed.",
+        nb::overload_cast<const std::string&>(&Binary::can_remove_symbol, nb::const_),
+        "Check if the given symbol name can be safely removed."_doc,
         "symbol_name"_a)
 
     .def("unexport",
-        static_cast<bool (Binary::*)(const std::string&)>(&Binary::unexport),
-        "Remove the symbol from the export table",
+        nb::overload_cast<const std::string&>(&Binary::unexport),
+        "Remove the symbol from the export table"_doc,
         "name"_a)
 
     .def("unexport",
-        static_cast<bool (Binary::*)(const Symbol&)>(&Binary::unexport),
-        "Remove the symbol from the export table",
+        nb::overload_cast<const Symbol&>(&Binary::unexport),
+        "Remove the symbol from the export table"_doc,
         "symbol"_a)
 
     .def("extend",
-        static_cast<bool (Binary::*)(const LoadCommand&, uint64_t)>(&Binary::extend),
-        "Extend a " RST_CLASS_REF(lief.MachO.LoadCommand) " by ``size``",
+        nb::overload_cast<const LoadCommand&, uint64_t>(&Binary::extend),
+        "Extend a " RST_CLASS_REF(lief.MachO.LoadCommand) " by ``size``"_doc,
         "load_command"_a, "size"_a)
 
     .def("extend_segment",
-        static_cast<bool (Binary::*)(const SegmentCommand&, size_t)>(&Binary::extend_segment),
-        "Extend the **content** of the given " RST_CLASS_REF(lief.MachO.SegmentCommand) " by ``size``",
+        nb::overload_cast<const SegmentCommand&, size_t>(&Binary::extend_segment),
+        "Extend the **content** of the given " RST_CLASS_REF(lief.MachO.SegmentCommand) " by ``size``"_doc,
         "segment_command"_a, "size"_a)
 
     .def("add_section",
-        static_cast<Section* (Binary::*)(const SegmentCommand&, const Section&)>(&Binary::add_section),
-        "Add a new " RST_CLASS_REF(lief.MachO.Section) " in the given " RST_CLASS_REF(lief.MachO.SegmentCommand) "",
+        nb::overload_cast<const SegmentCommand&, const Section&>(&Binary::add_section),
+        "Add a new " RST_CLASS_REF(lief.MachO.Section) " in the given " RST_CLASS_REF(lief.MachO.SegmentCommand) ""_doc,
         "segment"_a, "section"_a,
-        py::return_value_policy::reference)
+        nb::rv_policy::reference_internal)
 
     .def("add_section",
-        static_cast<Section* (Binary::*)(const Section&)>(&Binary::add_section),
-        "Add a new " RST_CLASS_REF(lief.MachO.Section) " within the ``__TEXT`` segment",
+        nb::overload_cast<const Section&>(&Binary::add_section),
+        "Add a new " RST_CLASS_REF(lief.MachO.Section) " within the ``__TEXT`` segment"_doc,
         "section"_a,
-        py::return_value_policy::reference)
-
-
-    .def("add_section",
-        static_cast<Section* (Binary::*)(const SegmentCommand&, const Section&)>(&Binary::add_section),
-        "Add a new " RST_CLASS_REF(lief.MachO.Section) " in the given " RST_CLASS_REF(lief.MachO.SegmentCommand) "",
-        "section"_a, "section"_a,
-        py::return_value_policy::reference)
+        nb::rv_policy::reference_internal)
 
     .def("add_library",
-        static_cast<LoadCommand* (Binary::*)(const std::string&)>(&Binary::add_library),
-        "Add a new library dependency",
+        nb::overload_cast<const std::string&>(&Binary::add_library),
+        "Add a new library dependency"_doc,
         "library_name"_a,
-        py::return_value_policy::reference)
+        nb::rv_policy::reference_internal)
 
     .def("get",
-        static_cast<LoadCommand* (Binary::*)(LOAD_COMMAND_TYPES)>(&Binary::get),
+        nb::overload_cast<LOAD_COMMAND_TYPES>(&Binary::get),
         "Return the **first** " RST_CLASS_REF(lief.MachO.LoadCommand) " having the given "
-        "" RST_CLASS_REF(lief.MachO.LOAD_COMMAND_TYPES) " or None if it is not present.",
-        "type"_a,
-        py::return_value_policy::reference)
+        "" RST_CLASS_REF(lief.MachO.LOAD_COMMAND_TYPES) " or None if it is not present."_doc,
+        "type"_a, nb::rv_policy::reference_internal)
 
     .def("has",
-        static_cast<bool(Binary::*)(LOAD_COMMAND_TYPES) const>(&Binary::has),
+        nb::overload_cast<LOAD_COMMAND_TYPES>(&Binary::has, nb::const_),
         "Check if the current binary has a " RST_CLASS_REF(lief.MachO.LoadCommand) " with the given "
-        "" RST_CLASS_REF(lief.MachO.LOAD_COMMAND_TYPES) "",
+        "" RST_CLASS_REF(lief.MachO.LOAD_COMMAND_TYPES) ""_doc,
         "type"_a)
 
-    .def_property_readonly("unwind_functions",
+    .def_prop_ro("unwind_functions",
         &Binary::unwind_functions,
-        "Return list of " RST_CLASS_REF(lief.Function) " found in the ``__unwind_info`` section")
+        "Return list of " RST_CLASS_REF(lief.Function) " found in the ``__unwind_info`` section"_doc)
 
-    .def_property_readonly("functions",
+    .def_prop_ro("functions",
         &Binary::functions,
-        "Return list of **all** " RST_CLASS_REF(lief.Function) " found")
+        "Return list of **all** " RST_CLASS_REF(lief.Function) " found"_doc)
 
     .def("get_section",
-        py::overload_cast<const std::string&, const std::string&>(&Binary::get_section),
+        nb::overload_cast<const std::string&, const std::string&>(&Binary::get_section),
         R"delim(
         Return the section from the segment with the name
         given in the first parameter and with the section's name provided in the
         second parameter. If the section cannot be found, it returns a nullptr
-        )delim",
+        )delim"_doc,
         "segname"_a, "secname"_a,
-        py::return_value_policy::reference_internal)
+        nb::rv_policy::reference_internal)
 
     .def("shift",
          [] (Binary& self, size_t width) {
@@ -604,51 +618,40 @@ void create<Binary>(py::module& m) {
          R"delim(
          Shift the content located right after the Load commands table.
          This operation can be used to add a new command
-         )delim",
+         )delim"_doc,
          "value"_a)
 
     .def("shift_linkedit",
          [] (Binary& self, size_t width) {
            return error_or(&Binary::shift_linkedit, self, width);
          },
-         "Shift the position on the __LINKEDIT data by `width`",
+         "Shift the position on the __LINKEDIT data by `width`"_doc,
          "value"_a)
 
     .def("add_exported_function",
         &Binary::add_exported_function,
-        "Add a new export in the binary",
+        "Add a new export in the binary"_doc,
         "address"_a, "name"_a,
-        py::return_value_policy::reference)
+        nb::rv_policy::reference_internal)
 
     .def("add_local_symbol",
         &Binary::add_local_symbol,
-        "Add a new a new symbol in the LC_SYMTAB",
+        "Add a new a new symbol in the LC_SYMTAB"_doc,
         "address"_a, "name"_a,
-        py::return_value_policy::reference)
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("page_size",
+    .def_prop_ro("page_size",
         &Binary::page_size,
-        "Return the binary's page size")
+        "Return the binary's page size"_doc)
 
     .def("__getitem__",
-        static_cast<LoadCommand* (Binary::*)(LOAD_COMMAND_TYPES)>(&Binary::operator[]),
-        "",
-        py::return_value_policy::reference)
+        nb::overload_cast<LOAD_COMMAND_TYPES>(&Binary::operator[]),
+        nb::rv_policy::reference_internal)
 
     .def("__contains__",
-        static_cast<bool(Binary::*)(LOAD_COMMAND_TYPES) const>(&Binary::has))
+        nb::overload_cast<LOAD_COMMAND_TYPES>(&Binary::has, nb::const_))
 
-
-    .def("__str__",
-        [] (const Binary& binary)
-        {
-          std::ostringstream stream;
-          stream << binary;
-          std::string str = stream.str();
-          return str;
-        });
-}
-
+    LIEF_DEFAULT_STR(Binary);
 }
 }
 

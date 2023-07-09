@@ -15,67 +15,45 @@
  */
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include "nanobind/extra/memoryview.hpp"
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/LoadCommand.hpp"
 
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
 
-namespace LIEF {
-namespace MachO {
-
-template<class T>
-using getter_t = T (LoadCommand::*)(void) const;
-
-template<class T>
-using setter_t = void (LoadCommand::*)(T);
-
+namespace LIEF::MachO::py {
 
 template<>
-void create<LoadCommand>(py::module& m) {
+void create<LoadCommand>(nb::module_& m) {
 
-  py::class_<LoadCommand, LIEF::Object>(m, "LoadCommand",
-      "Based class for the Mach-O load commands")
-    .def(py::init<>())
+  nb::class_<LoadCommand, LIEF::Object>(m, "LoadCommand",
+      "Based class for the Mach-O load commands"_doc)
+    .def(nb::init<>())
 
-    .def_property("command",
-        static_cast<getter_t<LOAD_COMMAND_TYPES>>(&LoadCommand::command),
-        static_cast<setter_t<LOAD_COMMAND_TYPES>>(&LoadCommand::command),
-        "Command type ( " RST_CLASS_REF(lief.MachO.LOAD_COMMAND_TYPES) ")"
-        )
+    .def_prop_rw("command",
+        nb::overload_cast<>(&LoadCommand::command, nb::const_),
+        nb::overload_cast<LOAD_COMMAND_TYPES>(&LoadCommand::command),
+        "Command type ( " RST_CLASS_REF(lief.MachO.LOAD_COMMAND_TYPES) ")"_doc)
 
-    .def_property("size",
-        static_cast<getter_t<uint32_t>>(&LoadCommand::size),
-        static_cast<setter_t<uint32_t>>(&LoadCommand::size),
-        "Size of the command (should be greather than ``sizeof(load_command)``)")
+    .def_prop_rw("size",
+        nb::overload_cast<>(&LoadCommand::size, nb::const_),
+        nb::overload_cast<uint32_t>(&LoadCommand::size),
+        "Size of the command (should be greather than ``sizeof(load_command)``)"_doc)
 
-    .def_property("data",
-        static_cast<getter_t<const LoadCommand::raw_t&>>(&LoadCommand::data),
-        static_cast<setter_t<const LoadCommand::raw_t&>>(&LoadCommand::data),
-        "Command's data")
+    .def_prop_rw("data",
+        [] (const LoadCommand& cmd) {
+          const LoadCommand::raw_t& content = cmd.data();
+          return nb::memoryview::from_memory(content.data(), content.size());
+        },
+        nb::overload_cast<const LoadCommand::raw_t&>(&LoadCommand::data),
+        "Command's data"_doc)
 
-    .def_property("command_offset",
-        static_cast<getter_t<uint64_t>>(&LoadCommand::command_offset),
-        static_cast<setter_t<uint64_t>>(&LoadCommand::command_offset),
-        "Offset of the command within the *Load Command Table*")
+    .def_prop_rw("command_offset",
+        nb::overload_cast<>(&LoadCommand::command_offset, nb::const_),
+        nb::overload_cast<uint64_t>(&LoadCommand::command_offset),
+        "Offset of the command within the *Load Command Table*"_doc)
 
-    .def("__eq__", &LoadCommand::operator==)
-    .def("__ne__", &LoadCommand::operator!=)
-    .def("__hash__",
-        [] (const LoadCommand& load_command) {
-          return Hash::hash(load_command);
-        })
-
-    .def("__str__",
-        [] (const LoadCommand& command)
-        {
-          std::ostringstream stream;
-          stream << command;
-          std::string str = stream.str();
-          return str;
-        });
-}
-
-
+    LIEF_DEFAULT_STR(LoadCommand);
 }
 }

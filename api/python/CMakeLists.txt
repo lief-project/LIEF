@@ -1,15 +1,24 @@
-cmake_minimum_required(VERSION 3.1)
-find_package(Python COMPONENTS Interpreter Development.Module REQUIRED)
+find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
+
+if (LIEF_PY_LIEF_EXT)
+  find_package(LIEF REQUIRED COMPONENTS STATIC)
+  message(STATUS "Using pre-installed version of LIEF")
+  set(LIEF_TARGET LIEF::LIEF)
+else()
+  set(LIEF_TARGET LIB_LIEF)
+endif()
+
+include(FetchContent)
 
 # Avoid warning about DOWNLOAD_EXTRACT_TIMESTAMP in CMake 3.24:
 if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
   cmake_policy(SET CMP0135 NEW)
 endif()
 
+
 include(ExternalProject)
 include(CheckCXXCompilerFlag)
 include(CheckCCompilerFlag)
-
 
 macro(ADD_FLAG_IF_SUPPORTED flag name)
   CHECK_C_COMPILER_FLAG("${flag}"   "C_SUPPORTS_${name}")
@@ -24,114 +33,83 @@ macro(ADD_FLAG_IF_SUPPORTED flag name)
   endif()
 endmacro()
 
-add_library(lief_pybind11 INTERFACE)
-
-if (LIEF_EXTERNAL_PYBIND11)
-  find_package(pybind11 REQUIRED)
-  find_package(PythonLibsNew MODULE REQUIRED)
-  target_link_libraries(lief_pybind11 INTERFACE pybind11::module)
-  get_target_property(PYBIND_INC_DIR pybind11::module INTERFACE_INCLUDE_DIRECTORIES)
-  target_include_directories(lief_pybind11 SYSTEM INTERFACE ${PYBIND_INC_DIR} ${Python_INCLUDE_DIRS})
+if (LIEF_EXTERNAL_NANOBINDS)
+  find_package(nanobind REQUIRED)
 else()
-  find_package(PythonLibsNew MODULE REQUIRED)
-  set(PYBIND11_VERSION 2.10.1)
-  set(PYBIND11_SHA256 SHA256=fcf94065efcfd0a7a828bacf118fa11c43f6390d0c805e3e6342ac119f2e9976)
-  set(PYBIND11_URL "${THIRD_PARTY_DIRECTORY}/pybind11-${PYBIND11_VERSION}.zip" CACHE STRING "URL to the Pybind11 repo")
-  ExternalProject_Add(lief_pybind11_project
-    URL               ${PYBIND11_URL}
-    URL_HASH          ${PYBIND11_SHA256}
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND     ""
-    INSTALL_COMMAND   "")
-  add_dependencies(lief_pybind11 lief_pybind11_project)
-  ExternalProject_get_property(lief_pybind11_project SOURCE_DIR)
-  target_include_directories(lief_pybind11 SYSTEM INTERFACE "${SOURCE_DIR}/include")
+  set(NANOBIND_VERSION 1c462d6)
+  set(NANOBIND_SHA256 SHA256=84e8334c97aa870fa5531108f945b77c24ad30addf09f9cb40c04ffc1f6f757b)
+  set(NANOBIND_URL "${THIRD_PARTY_DIRECTORY}/nanobind-${NANOBIND_VERSION}.zip" CACHE STRING "URL to the Nanobind")
+  FetchContent_Declare(nanobind
+    URL        ${NANOBIND_URL}
+    URL_HASH   ${NANOBIND_SHA256}
+  )
+  FetchContent_Populate(nanobind)
+  find_package(nanobind REQUIRED PATHS ${nanobind_SOURCE_DIR}/cmake NO_DEFAULT_PATH)
 endif()
 
-message(STATUS "Python version:     ${PYTHON_VERSION}")
-message(STATUS "Python lib:         ${PYTHON_LIBRARY}")
-message(STATUS "Python include:     ${PYTHON_INCLUDE_DIR}")
-message(STATUS "Python interpreter: ${PYTHON_EXECUTABLE}")
-
-
-# Define source files
-set(LIEF_PYTHON_BASIC_SRC
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyLIEF.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyUtils.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyLogger.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyHash.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyObject.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyErr.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/encoding.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/PyIOStream.cpp"
-)
-
-list(APPEND LIEF_PYTHON_BASIC_SRC
-     "${CMAKE_CURRENT_SOURCE_DIR}/src/pyJson.cpp")
+message(STATUS "Python version:     ${Python_VERSION}")
+message(STATUS "Python lib:         ${Python_LIBRARIES}")
+message(STATUS "Python include:     ${Python_INCLUDE_DIRS}")
+message(STATUS "Python interpreter: ${Python_EXECUTABLE}")
 
 set(LIEF_PYTHON_SRC
-  ${LIEF_PYTHON_BASIC_SRC}
-)
-
-set(LIEF_PYTHON_BASIC_HDR
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyErr.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyIterators.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyLIEF.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/enums_wrapper.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/encoding.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/PyIOStream.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyLIEF.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/pySafeString.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyErr.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyIOStream.cpp"
 )
 
 set(LIEF_PYTHON_HDR
-  ${LIEF_PYTHON_BASIC_HDR}
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyLIEF.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyErr.hpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/pySafeString.hpp"
 )
 
-source_group("Header Files" FILES ${LIEF_PYTHON_BASIC_HDR})
+nanobind_add_module(
+  pyLIEF
+  NB_STATIC
 
-add_library(pyLIEF SHARED ${LIEF_PYTHON_SRC} ${LIEF_PYTHON_HDR})
+  ${LIEF_PYTHON_SRC}
+  ${LIEF_PYTHON_HDR}
+
+  # Do not default to -Os
+  NOMINSIZE
+)
 
 target_include_directories(pyLIEF PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
 
-target_include_directories(pyLIEF SYSTEM PRIVATE
-  "${PYTHON_INCLUDE_DIR}"
-  "${PYBIND11_SOURCE_DIR}/include")
-
-include("${CMAKE_CURRENT_SOURCE_DIR}/src/Abstract/CMakeLists.txt")
+add_subdirectory(src/Abstract)
+add_subdirectory(src/platforms)
 
 if(LIEF_ELF)
-  include("${CMAKE_CURRENT_SOURCE_DIR}/src/ELF/CMakeLists.txt")
+  add_subdirectory(src/ELF)
 endif()
 
 if(LIEF_PE)
-  include("${CMAKE_CURRENT_SOURCE_DIR}/src/PE/CMakeLists.txt")
+  add_subdirectory(src/PE)
 endif()
 
 if(LIEF_MACHO)
-  include("${CMAKE_CURRENT_SOURCE_DIR}/src/MachO/CMakeLists.txt")
+  add_subdirectory(src/MachO)
 endif()
 
 if(LIEF_OAT)
-  include("${CMAKE_CURRENT_SOURCE_DIR}/src/OAT/CMakeLists.txt")
+  add_subdirectory(src/OAT)
 endif()
 
 if(LIEF_DEX)
-  include("${CMAKE_CURRENT_SOURCE_DIR}/src/DEX/CMakeLists.txt")
+  add_subdirectory(src/DEX)
 endif()
 
 if(LIEF_VDEX)
-  include("${CMAKE_CURRENT_SOURCE_DIR}/src/VDEX/CMakeLists.txt")
+  add_subdirectory(src/VDEX)
 endif()
 
 if(LIEF_ART)
-  include("${CMAKE_CURRENT_SOURCE_DIR}/src/ART/CMakeLists.txt")
+  add_subdirectory(src/ART)
 endif()
-
-include("${CMAKE_CURRENT_SOURCE_DIR}/src/platforms/CMakeLists.txt")
-
-
-target_compile_features(pyLIEF PRIVATE cxx_attribute_deprecated)
 
 set_target_properties(pyLIEF PROPERTIES
   POSITION_INDEPENDENT_CODE    ON
@@ -139,28 +117,18 @@ set_target_properties(pyLIEF PROPERTIES
   CXX_STANDARD_REQUIRED        ON
   CXX_VISIBILITY_PRESET        hidden
   C_VISIBILITY_PRESET          hidden
+  PREFIX                       ""
+  OUTPUT_NAME                  "lief"
 )
 
-set_target_properties(pyLIEF PROPERTIES PYTHON_VERSION ${PYTHON_VERSION})
-set(PYLIEF_DEPS_LIBRARIES LIB_LIEF)
-
-if(LIEF_COVERAGE)
-  target_compile_options(pyLIEF PRIVATE -g -O0 --coverage -fprofile-arcs -ftest-coverage)
-  set(PYLIEF_DEPS_LIBRARIES ${PYLIEF_DEPS_LIBRARIES} gcov)
-endif()
-
-
-ADD_FLAG_IF_SUPPORTED("-Wno-macro-redefined"         NO_MACRO_REDEFINED)
-ADD_FLAG_IF_SUPPORTED("-Wno-deprecated-declarations" NO_DEPRECATED_DECLARATIONS)
-
-set_target_properties(pyLIEF PROPERTIES PREFIX "" OUTPUT_NAME "lief")
-target_link_libraries(pyLIEF PRIVATE lief_pybind11 lief_spdlog)
+set_target_properties(pyLIEF PROPERTIES PYTHON_VERSION ${Python_VERSION})
+target_link_libraries(pyLIEF PUBLIC ${LIEF_TARGET})
 
 if(APPLE)
-    set_target_properties(pyLIEF PROPERTIES
-      MACOSX_RPATH     ON
-      LINK_FLAGS       "-undefined dynamic_lookup "
-    )
+  set_target_properties(pyLIEF PROPERTIES
+    MACOSX_RPATH     ON
+    LINK_FLAGS       "-undefined dynamic_lookup "
+  )
 endif()
 
 set_target_properties(pyLIEF PROPERTIES PREFIX "")
@@ -175,24 +143,19 @@ get_target_property(suffix pyLIEF SUFFIX)
 set(LIEF_LIBRARY_NAME "lief${suffix}")
 
 if (WIN32)
-  set(PYLIEF_DEPS_LIBRARIES ${PYLIEF_DEPS_LIBRARIES} ${PYTHON_LIBRARIES})
+  target_link_libraries(pyLIEF PUBLIC ${PYTHON_LIBRARIES})
 endif()
 
-target_link_libraries(pyLIEF PUBLIC ${PYLIEF_DEPS_LIBRARIES})
-
-
 if (CMAKE_BUILD_TYPE MATCHES Release AND UNIX AND NOT APPLE)
-    add_custom_command(
-      TARGET pyLIEF
-      COMMENT "Strip LIEF Python bindings"
-      POST_BUILD
-      COMMAND ${CMAKE_STRIP} --strip-all $<TARGET_FILE:pyLIEF>
-    )
+  add_custom_command(TARGET pyLIEF
+    COMMENT "Strip LIEF Python bindings"
+    POST_BUILD
+    COMMAND ${CMAKE_STRIP} --strip-all $<TARGET_FILE:pyLIEF>
+  )
 endif()
 
 if (CMAKE_BUILD_TYPE MATCHES Release AND APPLE)
-  add_custom_command(
-    TARGET pyLIEF
+  add_custom_command(TARGET pyLIEF
     COMMENT "Strip LIEF Python bindings"
     POST_BUILD
     COMMAND ${CMAKE_STRIP} -x -S $<TARGET_FILE:pyLIEF>
@@ -200,12 +163,12 @@ if (CMAKE_BUILD_TYPE MATCHES Release AND APPLE)
 endif()
 
 add_custom_command(TARGET pyLIEF POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:pyLIEF> ${PROJECT_BINARY_DIR}/api/python/lief
+  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:pyLIEF> ${PROJECT_BINARY_DIR}/api/python/lief
 )
 
 if (MSVC)
   add_custom_command(TARGET pyLIEF POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:pyLIEF> ${CMAKE_CURRENT_BINARY_DIR}
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:pyLIEF> ${CMAKE_CURRENT_BINARY_DIR}
   )
 endif()
 

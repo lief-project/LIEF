@@ -14,32 +14,24 @@
  * limitations under the License.
  */
 #include "LIEF/OAT/Binary.hpp"
-#include "LIEF/OAT/hash.hpp"
+#include "LIEF/OAT/Class.hpp"
+#include "LIEF/OAT/Method.hpp"
+#include "LIEF/OAT/DexFile.hpp"
+#include "LIEF/DEX/File.hpp"
 #include "LIEF/ELF/Binary.hpp"
-#include "pyIterators.hpp"
+#include "pyIterator.hpp"
 
-#include "pyOAT.hpp"
+#include "OAT/pyOAT.hpp"
 
-namespace LIEF {
-namespace OAT {
+#include <sstream>
+#include <nanobind/stl/string.h>
 
-template<class T>
-using no_const_getter = T (Binary::*)();
-
-template<class T, class P>
-using no_const_func = T (Binary::*)(P);
-
-template<class T>
-using getter_t = T (Binary::*)() const;
-
-template<class T>
-using setter_t = void (Binary::*)(T);
-
+namespace LIEF::OAT::py {
 template<>
-void create<Binary>(py::module& m) {
+void create<Binary>(nb::module_& m) {
+  using namespace LIEF::py;
 
-  // Binary object
-  py::class_<Binary, ELF::Binary> bin(m, "Binary", "OAT binary representation");
+  nb::class_<Binary, ELF::Binary> bin(m, "Binary", "OAT binary representation"_doc);
 
   init_ref_iterator<Binary::it_dex_files>(bin, "it_dex_files");
   init_ref_iterator<Binary::it_oat_dex_files>(bin, "it_oat_dex_files");
@@ -47,63 +39,46 @@ void create<Binary>(py::module& m) {
   init_ref_iterator<Binary::it_methods>(bin, "it_methods");
 
   bin
-    .def_property_readonly("header",
-        static_cast<no_const_getter<Header&>>(&Binary::header),
-        "Return the OAT " RST_CLASS_REF(lief.OAT.Header) "",
-        py::return_value_policy::reference)
+    .def_prop_ro("header",
+        nb::overload_cast<>(&Binary::header),
+        "Return the OAT " RST_CLASS_REF(lief.OAT.Header) ""_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("dex_files",
-        static_cast<no_const_getter<Binary::it_dex_files>>(&Binary::dex_files),
-        "Return an iterator over " RST_CLASS_REF(lief.DEX.File) "")
+    .def_prop_ro("dex_files",
+        nb::overload_cast<>(&Binary::dex_files),
+        "Return an iterator over " RST_CLASS_REF(lief.DEX.File) ""_doc,
+        nb::keep_alive<0, 1>())
 
-    .def_property_readonly("oat_dex_files",
-        static_cast<no_const_getter<Binary::it_oat_dex_files>>(&Binary::oat_dex_files),
-        "Return an iterator over " RST_CLASS_REF(lief.OAT.DexFile) "")
+    .def_prop_ro("oat_dex_files",
+        nb::overload_cast<>(&Binary::oat_dex_files),
+        "Return an iterator over " RST_CLASS_REF(lief.OAT.DexFile) ""_doc,
+        nb::keep_alive<0, 1>())
 
-    .def_property_readonly("classes",
-        static_cast<no_const_getter<Binary::it_classes>>(&Binary::classes),
-        "Return an iterator over " RST_CLASS_REF(lief.OAT.Class) "",
-        py::return_value_policy::reference)
+    .def_prop_ro("classes",
+        nb::overload_cast<>(&Binary::classes),
+        "Return an iterator over " RST_CLASS_REF(lief.OAT.Class) ""_doc,
+        nb::keep_alive<0, 1>())
 
-    .def_property_readonly("methods",
-        static_cast<no_const_getter<Binary::it_methods>>(&Binary::methods),
-        "Return an iterator over " RST_CLASS_REF(lief.OAT.Method) "",
-        py::return_value_policy::reference)
+    .def_prop_ro("methods",
+        nb::overload_cast<>(&Binary::methods),
+        "Return an iterator over " RST_CLASS_REF(lief.OAT.Method) ""_doc,
+        nb::keep_alive<0, 1>())
 
-    .def_property_readonly("has_class",
-        &Binary::has_class,
-        "Check if the class if the given name is present in the current OAT binary")
-
-    .def("get_class",
-        static_cast<no_const_func<Class*, const std::string&>>(&Binary::get_class),
-        "Return the " RST_CLASS_REF(lief.OAT.Class) " from its name",
-        "class_name"_a,
-        py::return_value_policy::reference)
+    .def_prop_ro("has_class", &Binary::has_class,
+        "Check if the class if the given name is present in the current OAT binary"_doc)
 
     .def("get_class",
-        static_cast<no_const_func<Class*, size_t>>(&Binary::get_class),
-        "Return the " RST_CLASS_REF(lief.OAT.Class) " from its **index**",
-        "class_index"_a,
-        py::return_value_policy::reference)
+        nb::overload_cast<const std::string&>(&Binary::get_class),
+        "Return the " RST_CLASS_REF(lief.OAT.Class) " from its name"_doc,
+        "class_name"_a, nb::rv_policy::reference_internal)
 
-    .def_property_readonly("dex2dex_json_info",
-        &Binary::dex2dex_json_info)
+    .def("get_class",
+        nb::overload_cast<size_t>(&Binary::get_class),
+        "Return the " RST_CLASS_REF(lief.OAT.Class) " from its **index**"_doc,
+        "class_index"_a, nb::rv_policy::reference_internal)
 
-    .def("__eq__", &Binary::operator==)
-    .def("__ne__", &Binary::operator!=)
-    .def("__hash__",
-        [] (const Binary& bin) {
-          return Hash::hash(bin);
-        })
-
-    .def("__str__",
-        [] (const Binary& binary)
-        {
-          std::ostringstream stream;
-          stream << binary;
-          return stream.str();
-        });
+    .def_prop_ro("dex2dex_json_info", &Binary::dex2dex_json_info)
+    LIEF_DEFAULT_STR(Binary);
 }
 
-}
 }

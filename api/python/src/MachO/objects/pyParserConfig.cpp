@@ -17,37 +17,36 @@
 
 #include "LIEF/MachO/ParserConfig.hpp"
 
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
 
-namespace LIEF {
-namespace MachO {
+namespace LIEF::MachO::py {
 
 template<>
-void create<ParserConfig>(py::module& m) {
+void create<ParserConfig>(nb::module_& m) {
 
-  py::class_<ParserConfig>(m, "ParserConfig",
+  nb::class_<ParserConfig>(m, "ParserConfig",
       R"delim(
       This class is used to tweak the MachO Parser (:class:`~lief.MachO.Parser`)
-      )delim")
+      )delim"_doc)
 
-    .def(py::init<>())
-    .def_readwrite("parse_dyld_exports", &ParserConfig::parse_dyld_exports,
-                   "Parse the Dyld export trie")
+    .def(nb::init<>())
+    .def_rw("parse_dyld_exports", &ParserConfig::parse_dyld_exports,
+            "Parse the Dyld export trie"_doc)
 
-    .def_readwrite("parse_dyld_bindings", &ParserConfig::parse_dyld_bindings,
-                   "Parse the Dyld binding opcodes")
+    .def_rw("parse_dyld_bindings", &ParserConfig::parse_dyld_bindings,
+            "Parse the Dyld binding opcodes"_doc)
 
-    .def_readwrite("parse_dyld_rebases", &ParserConfig::parse_dyld_rebases,
-                   "Parse the Dyld rebase opcodes")
+    .def_rw("parse_dyld_rebases", &ParserConfig::parse_dyld_rebases,
+            "Parse the Dyld rebase opcodes"_doc)
 
-    .def_readwrite("fix_from_memory", &ParserConfig::fix_from_memory,
-                   R"delim(
-                   When parsing Mach-O from memory, this option
-                   can be used to *undo* relocations and symbols bindings.
+    .def_rw("fix_from_memory", &ParserConfig::fix_from_memory,
+            R"delim(
+            When parsing Mach-O from memory, this option
+            can be used to *undo* relocations and symbols bindings.
 
-                   When activated, this option requires parse_dyld_bindings
-                   and parse_dyld_rebases to be enabled.
-                   )delim")
+            When activated, this option requires parse_dyld_bindings
+            and parse_dyld_rebases to be enabled.
+            )delim"_doc)
 
     .def("full_dyldinfo", &ParserConfig::full_dyldinfo,
          R"delim(
@@ -56,21 +55,18 @@ void create<ParserConfig>(py::module& m) {
          .. warning::
 
             Enabling this flag can slow down the parsing
-         )delim",
-         "flag"_a)
+         )delim"_doc, "flag"_a)
 
-    .def_property_readonly_static("deep",
-      [] (py::object /* self */) { return ParserConfig::deep(); },
+    .def_prop_ro_static("deep",
+      [] (const nb::object& /* self */) { return ParserConfig::deep(); },
       R"delim(
       Return a parser configuration such as all the objects supported by LIEF are parsed
-      )delim")
+      )delim"_doc)
 
-    .def_property_readonly_static("quick",
-      [] (py::object /* self */) { return ParserConfig::quick(); },
+    .def_prop_ro_static("quick",
+      [] (const nb::object& /* self */) { return ParserConfig::quick(); },
       R"delim(
       Return a configuration to parse the most important MachO structures
-      )delim");
-}
-
+      )delim"_doc);
 }
 }

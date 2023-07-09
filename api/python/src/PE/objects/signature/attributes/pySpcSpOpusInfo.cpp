@@ -13,28 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
+#include "pySafeString.hpp"
 
-#include "LIEF/PE/hash.hpp"
-#include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/attributes/SpcSpOpusInfo.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (SpcSpOpusInfo::*)(void) const;
-
-template<class T>
-using setter_t = void (SpcSpOpusInfo::*)(T);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<SpcSpOpusInfo>(py::module& m) {
-  py::class_<SpcSpOpusInfo, Attribute>(m, "SpcSpOpusInfo",
+void create<SpcSpOpusInfo>(nb::module_& m) {
+  nb::class_<SpcSpOpusInfo, Attribute>(m, "SpcSpOpusInfo",
     R"delim(
     Interface over the structure described by the OID ``1.3.6.1.4.1.311.2.1.12``
     The internal structure is described in the official document: `Windows Authenticode Portable Executable Signature Format <http://download.microsoft.com/download/9/c/5/9c5b2167-8017-4bae-9fde-d599bac8184a/Authenticode_PE.docx>`_
@@ -45,25 +37,17 @@ void create<SpcSpOpusInfo>(py::module& m) {
             programName  [0] EXPLICIT SpcString OPTIONAL,
             moreInfo     [1] EXPLICIT SpcLink OPTIONAL
         }
-    )delim"
+    )delim"_doc
   )
-    .def_property_readonly("program_name",
+    .def_prop_ro("program_name",
         [] (const SpcSpOpusInfo& info) {
-          return safe_string_converter(info.program_name());
-        }, "Program description provided by the publisher")
+          return LIEF::py::safe_string(info.program_name());
+        }, "Program description provided by the publisher"_doc)
 
-    .def_property_readonly("more_info",
+    .def_prop_ro("more_info",
         [] (const SpcSpOpusInfo& info) {
-          return safe_string_converter(info.more_info());
-        }, "Other information such as an URL")
-
-    .def("__hash__",
-        [] (const SpcSpOpusInfo& obj) {
-          return Hash::hash(obj);
-        })
-
-    .def("__str__", &SpcSpOpusInfo::print);
+          return LIEF::py::safe_string(info.more_info());
+        }, "Other information such as an URL"_doc);
 }
 
-}
 }

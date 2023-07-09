@@ -14,67 +14,47 @@
  * limitations under the License.
  */
 #include "LIEF/VDEX/Header.hpp"
-#include "LIEF/VDEX/hash.hpp"
 
-#include "pyVDEX.hpp"
+#include "VDEX/pyVDEX.hpp"
 
+#include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/array.h>
 
-namespace LIEF {
-namespace VDEX {
-
-template<class T>
-using getter_t = T (Header::*)(void) const;
-
-template<class T>
-using setter_t = void (Header::*)(T);
+namespace LIEF::VDEX::py {
 
 template<>
-void create<Header>(py::module& m) {
+void create<Header>(nb::module_& m) {
 
-  py::class_<Header, LIEF::Object>(m, "Header", "VDEX Header representation")
+  nb::class_<Header, Object>(m, "Header", "VDEX Header representation"_doc)
 
-    .def_property_readonly("magic",
-        static_cast<getter_t<Header::magic_t>>(&Header::magic),
-        "Magic value used to identify VDEX")
+    .def_prop_ro("magic",
+        nb::overload_cast<>(&Header::magic, nb::const_),
+        "Magic value used to identify VDEX"_doc)
 
-    .def_property_readonly("version",
-        static_cast<getter_t<vdex_version_t>>(&Header::version),
-        "VDEX version number")
+    .def_prop_ro("version",
+        nb::overload_cast<>(&Header::version, nb::const_),
+        "VDEX version number"_doc)
 
-    .def_property_readonly("nb_dex_files",
-        static_cast<getter_t<uint32_t>>(&Header::nb_dex_files),
-        "Number of " RST_CLASS_REF(lief.DEX.File) " files registered")
+    .def_prop_ro("nb_dex_files",
+        nb::overload_cast<>(&Header::nb_dex_files, nb::const_),
+        "Number of " RST_CLASS_REF(lief.DEX.File) " files registered"_doc)
 
-    .def_property_readonly("dex_size",
-        static_cast<getter_t<uint32_t>>(&Header::dex_size),
-        "Size of **all** " RST_CLASS_REF(lief.DEX.File) "")
+    .def_prop_ro("dex_size",
+        nb::overload_cast<>(&Header::dex_size, nb::const_),
+        "Size of **all** " RST_CLASS_REF(lief.DEX.File) ""_doc)
 
-    .def_property_readonly("verifier_deps_size",
-        static_cast<getter_t<uint32_t>>(&Header::verifier_deps_size),
-        "Size of verifier deps section")
+    .def_prop_ro("verifier_deps_size",
+        nb::overload_cast<>(&Header::verifier_deps_size, nb::const_),
+        "Size of verifier deps section"_doc)
 
-    .def_property_readonly("quickening_info_size",
-        static_cast<getter_t<uint32_t>>(&Header::quickening_info_size),
-        "Size of quickening info section")
+    .def_prop_ro("quickening_info_size",
+        nb::overload_cast<>(&Header::quickening_info_size, nb::const_),
+        "Size of quickening info section"_doc)
 
-    .def("__eq__", &Header::operator==)
-    .def("__ne__", &Header::operator!=)
-    .def("__hash__",
-        [] (const Header& header) {
-          return Hash::hash(header);
-        })
+    LIEF_DEFAULT_STR(Header);
 
-    .def("__str__",
-        [] (const Header& header)
-        {
-          std::ostringstream stream;
-          stream << header;
-          std::string str =  stream.str();
-          return str;
-        });
 }
 
 }
-}
-

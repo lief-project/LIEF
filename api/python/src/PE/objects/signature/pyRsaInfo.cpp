@@ -13,81 +13,67 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
+#include "PE/pyPE.hpp"
 
 #include "LIEF/PE/signature/RsaInfo.hpp"
 
-#include "pyPE.hpp"
+#include <string>
+#include <sstream>
+#include <nanobind/stl/string.h>
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (RsaInfo::*)(void) const;
-
-template<class T>
-using setter_t = void (RsaInfo::*)(T);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<RsaInfo>(py::module& m) {
+void create<RsaInfo>(nb::module_& m) {
 
-  py::class_<RsaInfo>(m, "RsaInfo", "Object representing a RSA key")
-    .def_property_readonly("has_public_key",
+  nb::class_<RsaInfo>(m, "RsaInfo", "Object representing a RSA key")
+    .def_prop_ro("has_public_key",
         &RsaInfo::has_public_key,
-        "True if it embeds a public key")
+        "True if it embeds a public key"_doc)
 
-    .def_property_readonly("has_private_key",
+    .def_prop_ro("has_private_key",
         &RsaInfo::has_private_key,
-        "True if it embeds a private key")
+        "True if it embeds a private key"_doc)
 
-    .def_property_readonly("N",
+    .def_prop_ro("N",
         [] (const RsaInfo& info) {
           const std::vector<uint8_t>& data = info.N();
-          return py::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+          return nb::bytes(reinterpret_cast<const char*>(data.data()), data.size());
         },
-        "RSA public modulus (in bytes)")
+        "RSA public modulus (in bytes)"_doc)
 
-    .def_property_readonly("E",
+    .def_prop_ro("E",
         [] (const RsaInfo& info) {
           const std::vector<uint8_t>& data = info.E();
-          return py::bytes(reinterpret_cast<const char*>(data.data()), data.size());
-        }, "RSA public exponent (in bytes)")
+          return nb::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+        }, "RSA public exponent (in bytes)"_doc)
 
-    .def_property_readonly("D",
+    .def_prop_ro("D",
         [] (const RsaInfo& info) {
           const std::vector<uint8_t>& data = info.D();
-          return py::bytes(reinterpret_cast<const char*>(data.data()), data.size());
-        }, "RSA private exponent (in bytes)")
+          return nb::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+        }, "RSA private exponent (in bytes)"_doc)
 
-    .def_property_readonly("P",
+    .def_prop_ro("P",
         [] (const RsaInfo& info) {
           const std::vector<uint8_t>& data = info.P();
-          return py::bytes(reinterpret_cast<const char*>(data.data()), data.size());
-        }, "First prime factor (in bytes)")
+          return nb::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+        }, "First prime factor (in bytes)"_doc)
 
-    .def_property_readonly("Q",
+    .def_prop_ro("Q",
         [] (const RsaInfo& info) {
           const std::vector<uint8_t>& data = info.Q();
-          return py::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+          return nb::bytes(reinterpret_cast<const char*>(data.data()), data.size());
         }, "Second prime factor (in bytes)")
 
-    .def_property_readonly("key_size",
-        &RsaInfo::key_size, "Size of the public modulus in bits")
+    .def_prop_ro("key_size",
+        &RsaInfo::key_size, "Size of the public modulus in bits"_doc)
 
-    .def_property_readonly("__len__",
+    .def_prop_ro("__len__",
         &RsaInfo::key_size)
 
-    .def("__str__",
-        [] (const RsaInfo& info)
-        {
-          std::ostringstream stream;
-          stream << info;
-          return safe_string_converter(stream.str());
-        });
+    LIEF_DEFAULT_STR(RsaInfo);
 }
 
-}
 }
 

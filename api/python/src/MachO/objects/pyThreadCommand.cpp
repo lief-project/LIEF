@@ -13,43 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/ThreadCommand.hpp"
 
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
 
-namespace LIEF {
-namespace MachO {
-
-template<class T>
-using getter_t = T (ThreadCommand::*)(void) const;
-
-template<class T>
-using setter_t = void (ThreadCommand::*)(T);
-
-
+namespace LIEF::MachO::py {
 
 template<>
-void create<ThreadCommand>(py::module& m) {
+void create<ThreadCommand>(nb::module_& m) {
 
-  py::class_<ThreadCommand, LoadCommand>(m, "ThreadCommand",
+  nb::class_<ThreadCommand, LoadCommand>(m, "ThreadCommand",
       R"delim(
       Class that represents the LC_THREAD / LC_UNIXTHREAD commands and that
       can be used to get the binary entrypoint when the LC_MAIN (MainCommand) is not present
 
       Generally speaking, this command aims at defining the original state
       of the main thread which includes the registers' values
-      )delim")
-    .def(py::init<uint32_t, uint32_t, CPU_TYPES>())
+      )delim"_doc)
+    .def(nb::init<uint32_t, uint32_t, CPU_TYPES>())
 
-    .def_property("flavor",
-        static_cast<getter_t<uint32_t>>(&ThreadCommand::flavor),
-        static_cast<setter_t<uint32_t>>(&ThreadCommand::flavor),
+    .def_prop_rw("flavor",
+        nb::overload_cast<>(&ThreadCommand::flavor, nb::const_),
+        nb::overload_cast<uint32_t>(&ThreadCommand::flavor),
         R"delim(
         Integer that defines a special *flavor* for the thread.
 
@@ -58,59 +48,41 @@ void create<ThreadCommand>(py::module& m) {
 
         - xnu/osfmk/mach/arm/thread_status.h  for the ARM/AArch64 architectures
         - xnu/osfmk/mach/i386/thread_status.h for the x86/x86-64 architectures
-        )delim")
+        )delim"_doc)
 
 
-    .def_property("state",
-        static_cast<getter_t<const std::vector<uint8_t>&>>(&ThreadCommand::state),
-        static_cast<setter_t<const std::vector<uint8_t>&>>(&ThreadCommand::state),
+    .def_prop_rw("state",
+        nb::overload_cast<>(&ThreadCommand::state, nb::const_),
+        nb::overload_cast<const std::vector<uint8_t>&>(&ThreadCommand::state),
         R"delim(
         The actual thread state as a vector of bytes. Depending on the architecture(),
         these data can be casted into x86_thread_state_t, x86_thread_state64_t, ...
-        )delim")
+        )delim"_doc)
 
 
-    .def_property("count",
-        static_cast<getter_t<uint32_t>>(&ThreadCommand::count),
-        static_cast<setter_t<uint32_t>>(&ThreadCommand::count),
+    .def_prop_rw("count",
+        nb::overload_cast<>(&ThreadCommand::count, nb::const_),
+        nb::overload_cast<uint32_t>(&ThreadCommand::count),
         R"delim(
         Size of the thread state data with 32-bits alignment.
 
         This value should match len(:attr:`~lief.MachO.ThreadCommand.state`)
-        )delim")
+        )delim"_doc)
 
-    .def_property_readonly("pc",
-        static_cast<getter_t<uint64_t>>(&ThreadCommand::pc),
+    .def_prop_ro("pc",
+        nb::overload_cast<>(&ThreadCommand::pc, nb::const_),
         R"delim(
         Return the initial Program Counter regardless of the underlying architecture.
         This value, when non null, can be used to determine the binary's entrypoint.
 
         Underneath, it works by looking for the PC register value in the :attr:`~lief.MachO.ThreadCommand.state` data
-        )delim")
+        )delim"_doc)
 
-    .def_property("architecture",
-        static_cast<getter_t<CPU_TYPES>>(&ThreadCommand::architecture),
-        static_cast<setter_t<CPU_TYPES>>(&ThreadCommand::architecture),
-        "The CPU architecture that is targeted by this ThreadCommand")
+    .def_prop_rw("architecture",
+        nb::overload_cast<>(&ThreadCommand::architecture, nb::const_),
+        nb::overload_cast<CPU_TYPES>(&ThreadCommand::architecture),
+        "The CPU architecture that is targeted by this ThreadCommand"_doc)
 
-    .def("__eq__", &ThreadCommand::operator==)
-    .def("__ne__", &ThreadCommand::operator!=)
-    .def("__hash__",
-        [] (const ThreadCommand& thread) {
-          return LIEF::Hash::hash(thread);
-        })
-
-
-    .def("__str__",
-        [] (const ThreadCommand& thread)
-        {
-          std::ostringstream stream;
-          stream << thread;
-          std::string str = stream.str();
-          return str;
-        });
-
-}
-
+    LIEF_DEFAULT_STR(ThreadCommand);
 }
 }

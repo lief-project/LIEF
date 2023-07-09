@@ -7,57 +7,6 @@ endif()
 set(LIEF_EXAMPLES_DIRECTORY  "${PROJECT_SOURCE_DIR}/examples")
 set(LIEF_EXAMPLES_BINARY_DIR "${PROJECT_BINARY_DIR}/examples")
 
-
-# Catch
-# =====
-set(CATCH_VERSION 2.13.8)
-set(CATCH_SHA256 SHA256=532f163e4f2db66dae33f1d0a279e8d9befec8bc6cca60d7b82155f7d06bd89c)
-set(CATCH_URL "${THIRD_PARTY_DIRECTORY}/Catch2-${CATCH_VERSION}.zip" CACHE STRING "URL to the Catch repo")
-
-ExternalProject_Add(catch
-    PREFIX         ${CATCH_PREFIX}
-    URL            ${CATCH_URL}
-    URL_HASH       ${CATCH_SHA256}
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
-)
-ExternalProject_Get_Property(catch source_dir)
-set(CATCH_INCLUDE_DIR "${source_dir}" CACHE INTERNAL "Path to include folder for Catch")
-
-# Code covergage
-# ==============
-if(LIEF_COVERAGE)
-  find_program(GCOV_PATH gcov)
-  find_program(LCOV_PATH lcov)
-  find_program(GENHTML_PATH genhtml)
-  find_program(GCOVR_PATH gcovr PATHS ${CMAKE_SOURCE_DIR}/tests)
-
-  set(output_name "lief_coverage")
-  set(coverage_info "${CMAKE_BINARY_DIR}/${output_name}.info")
-  set(coverage_cleaned "${coverage_info}.cleaned")
-
-  add_custom_target(lief_coverage
-
-    # Cleanup lcov
-    ${LCOV_PATH} --zerocounters --directory .
-
-    # Run tests
-    COMMAND make check-lief
-    #COMMAND ctest -R test_iterators
-
-    # Capturing lcov counters and generating report
-    COMMAND ${LCOV_PATH} --directory . --capture --output-file ${coverage_info}
-    COMMAND ${LCOV_PATH} --remove ${coverage_info} 'utf8/*' 'filesystem/*' 'libjson/*' 'tests/*' '/usr/*' 'pybind11/*' '*mbedtls*' rang_cpp_color/* easyloggingpp/* -output-file ${coverage_cleaned}
-    COMMAND ${GENHTML_PATH} -o ${output_name} ${coverage_cleaned}
-    #COMMAND ${CMAKE_COMMAND} -E remove ${coverage_info} ${coverage_cleaned}
-
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-  )
-
-endif()
-
-
 # Fuzzing
 # =======
 if(UNIX AND NOT APPLE)
@@ -83,29 +32,7 @@ if(UNIX AND NOT APPLE)
   message(STATUS "${MELKOR_BINARY}")
 endif()
 
-# Tests
-# =====
-add_executable(test_iterators "${CMAKE_CURRENT_SOURCE_DIR}/test_iterators.cpp")
-
-set_target_properties(test_iterators
-  PROPERTIES CXX_STANDARD           11
-             CXX_STANDARD_REQUIRED  ON)
-
-target_include_directories(test_iterators PUBLIC
-  $<TARGET_PROPERTY:LIB_LIEF,INCLUDE_DIRECTORIES>
-  ${CATCH_INCLUDE_DIR})
-
-if (LIEF_COVERAGE)
-  target_compile_options(test_iterators PRIVATE -g -O0 --coverage -fprofile-arcs -ftest-coverage)
-  target_link_libraries(test_iterators gcov)
-endif()
-
-add_dependencies(test_iterators catch LIB_LIEF)
-
-target_link_libraries(test_iterators LIB_LIEF)
-
-add_test(test_iterators
-         ${CMAKE_CURRENT_BINARY_DIR}/test_iterators)
+add_subdirectory(unittests)
 
 if (CMAKE_CONFIGURATION_TYPES)
   add_custom_target(check-lief

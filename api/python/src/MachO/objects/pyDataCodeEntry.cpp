@@ -17,73 +17,27 @@
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/DataCodeEntry.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
 
 #include "enums_wrapper.hpp"
 
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
 
 #define PY_ENUM(x) LIEF::MachO::to_string(x), x
 
-namespace LIEF {
-namespace MachO {
-
-template<class T>
-using getter_t = T (DataCodeEntry::*)(void) const;
-
-template<class T>
-using setter_t = void (DataCodeEntry::*)(T);
-
+namespace LIEF::MachO::py {
 
 template<>
-void create<DataCodeEntry>(py::module& m) {
-
-
-  py::class_<DataCodeEntry, LIEF::Object> cls(m, "DataCodeEntry",
+void create<DataCodeEntry>(nb::module_& m) {
+  nb::class_<DataCodeEntry, Object> cls(m, "DataCodeEntry",
       R"delim(
       Interface over an entry in the :class:`~lief.MachO.DataInCode` command
-      )delim");
+      )delim"_doc);
 
-  cls
-    .def(py::init<uint32_t, uint32_t, DataCodeEntry::TYPES>())
-    .def_property("offset",
-        static_cast<getter_t<uint32_t>>(&DataCodeEntry::offset),
-        static_cast<setter_t<uint32_t>>(&DataCodeEntry::offset),
-        "Offset of the data")
-
-    .def_property("length",
-        static_cast<getter_t<uint16_t>>(&DataCodeEntry::length),
-        static_cast<setter_t<uint16_t>>(&DataCodeEntry::length),
-        "Length of the data")
-
-    .def_property("type",
-        static_cast<getter_t<DataCodeEntry::TYPES>>(&DataCodeEntry::type),
-        static_cast<setter_t<DataCodeEntry::TYPES>>(&DataCodeEntry::type),
-        "Type of the data (" RST_CLASS_REF(lief.MachO.DataCodeEntry.TYPES) "")
-
-
-    .def("__eq__", &DataCodeEntry::operator==)
-    .def("__ne__", &DataCodeEntry::operator!=)
-    .def("__hash__",
-        [] (const DataCodeEntry& func) {
-          return Hash::hash(func);
-        })
-
-
-    .def("__str__",
-        [] (const DataCodeEntry& func)
-        {
-          std::ostringstream stream;
-          stream << func;
-          std::string str = stream.str();
-          return str;
-        });
-
-
-  LIEF::enum_<DataCodeEntry::TYPES>(cls, "TYPES")
+  enum_<DataCodeEntry::TYPES>(cls, "TYPES")
     .value(PY_ENUM(DataCodeEntry::TYPES::UNKNOWN))
     .value(PY_ENUM(DataCodeEntry::TYPES::DATA))
     .value(PY_ENUM(DataCodeEntry::TYPES::JUMP_TABLE_8))
@@ -91,7 +45,28 @@ void create<DataCodeEntry>(py::module& m) {
     .value(PY_ENUM(DataCodeEntry::TYPES::JUMP_TABLE_32))
     .value(PY_ENUM(DataCodeEntry::TYPES::ABS_JUMP_TABLE_32));
 
-}
+  cls
+    // TODO(romain):
+    //.def(nb::init<uint32_t, uint32_t, DataCodeEntry::TYPES>())
+    .def_prop_rw("offset",
+        nb::overload_cast<>(&DataCodeEntry::offset, nb::const_),
+        nb::overload_cast<uint32_t>(&DataCodeEntry::offset),
+        "Offset of the data"_doc)
+
+    .def_prop_rw("length",
+        nb::overload_cast<>(&DataCodeEntry::length, nb::const_),
+        nb::overload_cast<uint16_t>(&DataCodeEntry::length),
+        "Length of the data"_doc)
+
+    .def_prop_rw("type",
+        nb::overload_cast<>(&DataCodeEntry::type, nb::const_),
+        nb::overload_cast<DataCodeEntry::TYPES>(&DataCodeEntry::type),
+        "Type of the data (" RST_CLASS_REF(lief.MachO.DataCodeEntry.TYPES) ""_doc)
+
+    LIEF_DEFAULT_STR(DataCodeEntry);
+
+
 
 }
+
 }

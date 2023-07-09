@@ -10,7 +10,6 @@ option(LIEF_PYTHON_API                 "Enable Python Bindings"                 
 option(LIEF_C_API                      "C API"                                      ON)
 option(LIEF_EXAMPLES                   "Build LIEF C++ examples"                    ON)
 option(LIEF_FORCE32                    "Force build LIEF 32 bits version"           OFF)
-option(LIEF_COVERAGE                   "Perform code coverage"                      OFF)
 option(LIEF_USE_CCACHE                 "Use ccache to speed up compilation"         ON)
 option(LIEF_EXTRA_WARNINGS             "Enable extra warning from the compiler"     OFF)
 option(LIEF_LOGGING                    "Enable logging"                             ON)
@@ -18,6 +17,7 @@ option(LIEF_LOGGING_DEBUG              "Enable debug logging"                   
 option(LIEF_ENABLE_JSON                "Enable JSON-related APIs"                   ON)
 option(LIEF_OPT_NLOHMANN_JSON_EXTERNAL "Use nlohmann/json externaly"                OFF)
 option(LIEF_FORCE_API_EXPORTS          "Force exports of API symbols"               OFF)
+option(LIEF_PY_LIEF_EXT "Use a pre-installed version of LIEF for the bindings" OFF)
 
 option(LIEF_DISABLE_FROZEN "Disable Frozen even if it is supported"     OFF)
 

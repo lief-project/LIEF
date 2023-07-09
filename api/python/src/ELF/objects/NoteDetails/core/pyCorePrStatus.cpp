@@ -15,165 +15,141 @@
  */
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/map.h>
 
-#include "pyELF.hpp"
+#include "ELF/pyELF.hpp"
 
-#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/NoteDetails/core/CorePrStatus.hpp"
 
 #include "LIEF/ELF/EnumToString.hpp"
-
 #include "enums_wrapper.hpp"
 
 #define PY_ENUM(x) LIEF::ELF::to_string(x), x
 
-namespace LIEF {
-namespace ELF {
-
-template<class T>
-using getter_t = T (CorePrStatus::*)(void) const;
-
-template<class T>
-using setter_t = void (CorePrStatus::*)(T);
+namespace LIEF::ELF::py {
 
 template<>
-void create<CorePrStatus>(py::module& m) {
+void create<CorePrStatus>(nb::module_& m) {
 
-  py::class_<CorePrStatus, NoteDetails> cls(m, "CorePrStatus");
+  nb::class_<CorePrStatus, NoteDetails> cls(m, "CorePrStatus");
 
-  py::class_<CorePrStatus::timeval_t>(cls, "timeval")
-    .def_readwrite("sec",  &CorePrStatus::timeval_t::sec)
-    .def_readwrite("usec", &CorePrStatus::timeval_t::usec);
+  nb::class_<CorePrStatus::timeval_t>(cls, "timeval")
+    .def_rw("sec",  &CorePrStatus::timeval_t::sec)
+    .def_rw("usec", &CorePrStatus::timeval_t::usec);
 
-  py::class_<CorePrStatus::siginfo_t>(cls, "siginfo_t")
-    .def_readwrite("sicode", &CorePrStatus::siginfo_t::si_code)
-    .def_readwrite("errno",  &CorePrStatus::siginfo_t::si_errno)
-    .def_readwrite("signo",  &CorePrStatus::siginfo_t::si_signo);
+  nb::class_<CorePrStatus::siginfo_t>(cls, "siginfo_t")
+    .def_rw("sicode", &CorePrStatus::siginfo_t::si_code)
+    .def_rw("errno",  &CorePrStatus::siginfo_t::si_errno)
+    .def_rw("signo",  &CorePrStatus::siginfo_t::si_signo);
 
   cls
-    .def_property("siginfo",
-        static_cast<getter_t<const CorePrStatus::siginfo_t&>>(&CorePrStatus::siginfo),
-        static_cast<setter_t<const CorePrStatus::siginfo_t&>>(&CorePrStatus::siginfo),
-        "Info associated with the signal")
+    .def_prop_rw("siginfo",
+        nb::overload_cast<>(&CorePrStatus::siginfo, nb::const_),
+        nb::overload_cast<const CorePrStatus::siginfo_t&>(&CorePrStatus::siginfo),
+        "Info associated with the signal"_doc)
 
-    .def_property("current_sig",
-        static_cast<getter_t<uint16_t>>(&CorePrStatus::current_sig),
-        static_cast<setter_t<uint16_t>>(&CorePrStatus::current_sig),
-        "Current Signal")
+    .def_prop_rw("current_sig",
+        nb::overload_cast<>(&CorePrStatus::current_sig, nb::const_),
+        nb::overload_cast<uint16_t>(&CorePrStatus::current_sig),
+        "Current Signal"_doc)
 
-    .def_property("sigpend",
-        static_cast<getter_t<uint64_t>>(&CorePrStatus::sigpend),
-        static_cast<setter_t<uint64_t>>(&CorePrStatus::sigpend),
-        "Set of pending signals")
+    .def_prop_rw("sigpend",
+        nb::overload_cast<>(&CorePrStatus::sigpend, nb::const_),
+        nb::overload_cast<uint64_t>(&CorePrStatus::sigpend),
+        "Set of pending signals"_doc)
 
-    .def_property("sighold",
-        static_cast<getter_t<uint64_t>>(&CorePrStatus::sighold),
-        static_cast<setter_t<uint64_t>>(&CorePrStatus::sighold),
-        "Set of held signals")
+    .def_prop_rw("sighold",
+        nb::overload_cast<>(&CorePrStatus::sighold, nb::const_),
+        nb::overload_cast<uint64_t>(&CorePrStatus::sighold),
+        "Set of held signals"_doc)
 
-    .def_property("pid",
-        static_cast<getter_t<int32_t>>(&CorePrStatus::pid),
-        static_cast<setter_t<int32_t>>(&CorePrStatus::pid),
-        "Process ID")
+    .def_prop_rw("pid",
+        nb::overload_cast<>(&CorePrStatus::pid, nb::const_),
+        nb::overload_cast<int32_t>(&CorePrStatus::pid),
+        "Process ID"_doc)
 
-    .def_property("ppid",
-        static_cast<getter_t<int32_t>>(&CorePrStatus::ppid),
-        static_cast<setter_t<int32_t>>(&CorePrStatus::ppid),
-        "Process parent ID")
+    .def_prop_rw("ppid",
+        nb::overload_cast<>(&CorePrStatus::ppid, nb::const_),
+        nb::overload_cast<int32_t>(&CorePrStatus::ppid),
+        "Process parent ID"_doc)
 
-    .def_property("pgrp",
-        static_cast<getter_t<int32_t>>(&CorePrStatus::pgrp),
-        static_cast<setter_t<int32_t>>(&CorePrStatus::pgrp),
-        "Process group ID")
+    .def_prop_rw("pgrp",
+        nb::overload_cast<>(&CorePrStatus::pgrp, nb::const_),
+        nb::overload_cast<int32_t>(&CorePrStatus::pgrp),
+        "Process group ID"_doc)
 
-    .def_property("sid",
-        static_cast<getter_t<int32_t>>(&CorePrStatus::sid),
-        static_cast<setter_t<int32_t>>(&CorePrStatus::sid),
-        "Process session ID")
+    .def_prop_rw("sid",
+        nb::overload_cast<>(&CorePrStatus::sid, nb::const_),
+        nb::overload_cast<int32_t>(&CorePrStatus::sid),
+        "Process session ID"_doc)
 
-    .def_property("utime",
-        static_cast<getter_t<CorePrStatus::timeval_t>>(&CorePrStatus::utime),
-        static_cast<setter_t<CorePrStatus::timeval_t>>(&CorePrStatus::utime),
-        "User time (" RST_CLASS_REF(lief.ELF.CorePrStatus.timeval) ")")
+    .def_prop_rw("utime",
+        nb::overload_cast<>(&CorePrStatus::utime, nb::const_),
+        nb::overload_cast<CorePrStatus::timeval_t>(&CorePrStatus::utime),
+        "User time (" RST_CLASS_REF(lief.ELF.CorePrStatus.timeval) ")"_doc)
 
-    .def_property("utime",
-        static_cast<getter_t<CorePrStatus::timeval_t>>(&CorePrStatus::utime),
-        static_cast<setter_t<CorePrStatus::timeval_t>>(&CorePrStatus::utime),
-        "User time (" RST_CLASS_REF(lief.ELF.CorePrStatus.timeval) ")")
+    .def_prop_rw("utime",
+        nb::overload_cast<>(&CorePrStatus::utime, nb::const_),
+        nb::overload_cast<CorePrStatus::timeval_t>(&CorePrStatus::utime),
+        "User time (" RST_CLASS_REF(lief.ELF.CorePrStatus.timeval) ")"_doc)
 
-    .def_property("stime",
-        static_cast<getter_t<CorePrStatus::timeval_t>>(&CorePrStatus::stime),
-        static_cast<setter_t<CorePrStatus::timeval_t>>(&CorePrStatus::stime),
-        "System time (" RST_CLASS_REF(lief.ELF.CorePrStatus.timeval) ")")
+    .def_prop_rw("stime",
+        nb::overload_cast<>(&CorePrStatus::stime, nb::const_),
+        nb::overload_cast<CorePrStatus::timeval_t>(&CorePrStatus::stime),
+        "System time (" RST_CLASS_REF(lief.ELF.CorePrStatus.timeval) ")"_doc)
 
-    .def_property("cutime",
-        static_cast<getter_t<CorePrStatus::timeval_t>>(&CorePrStatus::cutime),
-        static_cast<setter_t<CorePrStatus::timeval_t>>(&CorePrStatus::cutime),
-        "Cumulative user time (" RST_CLASS_REF(lief.ELF.CorePrStatus.timeval) ")")
+    .def_prop_rw("cutime",
+        nb::overload_cast<>(&CorePrStatus::cutime, nb::const_),
+        nb::overload_cast<CorePrStatus::timeval_t>(&CorePrStatus::cutime),
+        "Cumulative user time (" RST_CLASS_REF(lief.ELF.CorePrStatus.timeval) ")"_doc)
 
-    .def_property("cstime",
-        static_cast<getter_t<CorePrStatus::timeval_t>>(&CorePrStatus::cstime),
-        static_cast<setter_t<CorePrStatus::timeval_t>>(&CorePrStatus::cstime),
-        "Cumulative system time (" RST_CLASS_REF(lief.ELF.CorePrStatus.timeval) ")")
+    .def_prop_rw("cstime",
+        nb::overload_cast<>(&CorePrStatus::cstime, nb::const_),
+        nb::overload_cast<CorePrStatus::timeval_t>(&CorePrStatus::cstime),
+        "Cumulative system time (" RST_CLASS_REF(lief.ELF.CorePrStatus.timeval) ")"_doc)
 
-    .def_property("register_context",
-        static_cast<getter_t<const CorePrStatus::reg_context_t&>>(&CorePrStatus::reg_context),
-        static_cast<setter_t<const CorePrStatus::reg_context_t&>>(&CorePrStatus::reg_context),
+    .def_prop_rw("register_context",
+        nb::overload_cast<>(&CorePrStatus::reg_context, nb::const_),
+        nb::overload_cast<const CorePrStatus::reg_context_t&>(&CorePrStatus::reg_context),
         "Current registers state as a dictionary where the keys are "
-        RST_CLASS_REF(lief.ELF.CorePrStatus.REGISTERS) " and the values the register's value")
+        RST_CLASS_REF(lief.ELF.CorePrStatus.REGISTERS) " and the values the register's value"_doc)
 
     .def("get",
-        [] (const CorePrStatus& status, CorePrStatus::REGISTERS reg) -> py::object {
+        [] (const CorePrStatus& status, CorePrStatus::REGISTERS reg) -> nb::object {
           bool error;
-          uint64_t val = status.get(reg, &error);
+          const uint64_t val = status.get(reg, &error);
           if (error) {
-            return py::none();
+            return nb::none();
           }
-          return py::int_(val);
+          return nb::int_(val);
         },
-        "Return the register value",
+        "Return the register value"_doc,
         "register"_a)
 
     .def("set",
         &CorePrStatus::set,
-        "Set register value",
+        "Set register value"_doc,
         "register"_a, "value"_a)
 
     .def("has",
         &CorePrStatus::has,
-        "Check if a value is associated with the given register",
+        "Check if a value is associated with the given register"_doc,
         "register"_a)
 
     .def("__getitem__",
         &CorePrStatus::operator[],
-        "",
-        py::return_value_policy::copy)
+        nb::rv_policy::copy)
 
     .def("__setitem__",
         [] (CorePrStatus& status, CorePrStatus::REGISTERS reg, uint64_t val) {
           status.set(reg, val);
-        },
-        "")
-
-    .def("__contains__",
-        &CorePrStatus::has,
-        "")
-
-    .def("__eq__", &CorePrStatus::operator==)
-    .def("__ne__", &CorePrStatus::operator!=)
-    .def("__hash__",
-        [] (const CorePrStatus& note) {
-          return Hash::hash(note);
         })
 
-    .def("__str__",
-        [] (const CorePrStatus& note)
-        {
-          std::ostringstream stream;
-          stream << note;
-          std::string str = stream.str();
-          return str;
-        });
+    .def("__contains__",
+        &CorePrStatus::has)
+
+    LIEF_DEFAULT_STR(LIEF::ELF::CorePrStatus);
 
 
   LIEF::enum_<CorePrStatus::REGISTERS>(cls, "REGISTERS")
@@ -271,7 +247,5 @@ void create<CorePrStatus>(py::module& m) {
     .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X31))
     .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_PC))
     .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64__));
-
 }
-} // namespace ELF
-} // namespace LIEF
+}

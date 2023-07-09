@@ -13,104 +13,79 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyELF.hpp"
+#include <string>
+#include <sstream>
 
-#include "LIEF/ELF/hash.hpp"
+#include <nanobind/operators.h>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/set.h>
+
+#include "ELF/pyELF.hpp"
 
 #include "LIEF/ELF/DynamicEntryFlags.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
 
-#include <string>
-#include <sstream>
-
-namespace LIEF {
-namespace ELF {
-
-template<class T>
-using getter_t = T (DynamicEntryFlags::*)(void) const;
-
-template<class T>
-using setter_t = void (DynamicEntryFlags::*)(T);
-
+namespace LIEF::ELF::py {
 
 template<>
-void create<DynamicEntryFlags>(py::module& m) {
+void create<DynamicEntryFlags>(nb::module_& m) {
+  nb::class_<DynamicEntryFlags, DynamicEntry>(m, "DynamicEntryFlags")
+    .def(nb::init<>())
 
-  py::class_<DynamicEntryFlags, DynamicEntry>(m, "DynamicEntryFlags")
-    .def(py::init<>())
-
-    .def(py::init<DYNAMIC_TAGS, uint64_t>(),
-        "Constructor with " RST_CLASS_REF(lief.ELF.DYNAMIC_TAGS) " and value",
+    .def(nb::init<DYNAMIC_TAGS, uint64_t>(),
+        "Constructor with " RST_CLASS_REF(lief.ELF.DYNAMIC_TAGS) " and value"_doc,
         "tag"_a, "value"_a)
 
-    .def_property_readonly("flags",
+    .def_prop_ro("flags",
         &DynamicEntryFlags::flags,
-        "Return list of " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS) " or " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS_1) " (integer)",
-        py::return_value_policy::move)
+        "Return list of " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS) " or " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS_1) " (integer)"_doc,
+        nb::rv_policy::move)
 
     .def("has",
-        static_cast<bool (DynamicEntryFlags::*)(DYNAMIC_FLAGS) const>(&DynamicEntryFlags::has),
-        "Check if this entry contains the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS) "",
+        nb::overload_cast<DYNAMIC_FLAGS>(&DynamicEntryFlags::has, nb::const_),
+        "Check if this entry contains the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS) ""_doc,
         "flag"_a)
 
     .def("has",
-        static_cast<bool (DynamicEntryFlags::*)(DYNAMIC_FLAGS_1) const>(&DynamicEntryFlags::has),
-        "Check if this entry contains the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS_1) "",
+        nb::overload_cast<DYNAMIC_FLAGS_1>(&DynamicEntryFlags::has, nb::const_),
+        "Check if this entry contains the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS_1) ""_doc,
         "flag"_a)
 
     .def("add",
-        static_cast<void (DynamicEntryFlags::*)(DYNAMIC_FLAGS)>(&DynamicEntryFlags::add),
-        "Add the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS) "",
+        nb::overload_cast<DYNAMIC_FLAGS>(&DynamicEntryFlags::add),
+        "Add the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS) ""_doc,
         "flag"_a)
 
     .def("add",
-        static_cast<void (DynamicEntryFlags::*)(DYNAMIC_FLAGS_1)>(&DynamicEntryFlags::add),
-        "Add the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS_1) "",
+        nb::overload_cast<DYNAMIC_FLAGS_1>(&DynamicEntryFlags::add),
+        "Add the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS_1) ""_doc,
         "flag"_a)
 
     .def("remove",
-        static_cast<void (DynamicEntryFlags::*)(DYNAMIC_FLAGS)>(&DynamicEntryFlags::remove),
-        "Remove the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS) "",
+        nb::overload_cast<DYNAMIC_FLAGS>(&DynamicEntryFlags::remove),
+        "Remove the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS) ""_doc,
         "flag"_a)
 
     .def("remove",
-        static_cast<void (DynamicEntryFlags::*)(DYNAMIC_FLAGS_1)>(&DynamicEntryFlags::remove),
-        "Remove the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS_1) "",
+        nb::overload_cast<DYNAMIC_FLAGS_1>(&DynamicEntryFlags::remove),
+        "Remove the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS_1) ""_doc,
         "flag"_a)
 
+    .def(nb::self += DYNAMIC_FLAGS())
+    .def(nb::self += DYNAMIC_FLAGS_1())
 
-    .def("__eq__", &DynamicEntryFlags::operator==)
-    .def("__ne__", &DynamicEntryFlags::operator!=)
-    .def("__hash__",
-        [] (const DynamicEntryFlags& entry) {
-          return Hash::hash(entry);
-        })
-
-    .def(py::self += DYNAMIC_FLAGS())
-    .def(py::self += DYNAMIC_FLAGS_1())
-
-
-    .def(py::self -= DYNAMIC_FLAGS())
-    .def(py::self -= DYNAMIC_FLAGS_1())
+    .def(nb::self -= DYNAMIC_FLAGS())
+    .def(nb::self -= DYNAMIC_FLAGS_1())
 
     .def("__contains__",
-        static_cast<bool (DynamicEntryFlags::*)(DYNAMIC_FLAGS) const>(&DynamicEntryFlags::has),
-        "Check if the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS) " is present")
+        nb::overload_cast<DYNAMIC_FLAGS>(&DynamicEntryFlags::has, nb::const_),
+        "Check if the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS) " is present"_doc)
 
     .def("__contains__",
-        static_cast<bool (DynamicEntryFlags::*)(DYNAMIC_FLAGS_1) const>(&DynamicEntryFlags::has),
-        "Check if the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS_1) " is present")
+        nb::overload_cast<DYNAMIC_FLAGS_1>(&DynamicEntryFlags::has, nb::const_),
+        "Check if the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS_1) " is present"_doc)
 
-
-    .def("__str__",
-        [] (const DynamicEntryFlags& entry)
-        {
-          std::ostringstream stream;
-          stream << entry;
-          std::string str =  stream.str();
-          return str;
-        });
+    LIEF_DEFAULT_STR(LIEF::ELF::DynamicEntryFlags);
 }
 
-}
 }

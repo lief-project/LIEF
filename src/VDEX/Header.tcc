@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 #include <string>
+#include "LIEF/VDEX/Header.hpp"
+
 namespace LIEF {
 namespace VDEX {
 

@@ -76,8 +76,8 @@ void JsonVisitor::visit(const Header& header) {
 
   node_["keys_values"] = std::vector<json>{};
   for (const auto& key_val : header.key_values()) {
-    std::string k = to_string(key_val.first);
-    node_["keys_values"].emplace_back(std::make_pair(k, key_val.second));
+    std::string k = to_string(key_val.key);
+    node_["keys_values"].emplace_back(std::make_pair(k, *key_val.value));
   }
 }
 

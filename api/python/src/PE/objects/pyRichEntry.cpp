@@ -13,68 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/RichEntry.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (RichEntry::*)(void) const;
-
-template<class T>
-using setter_t = void (RichEntry::*)(T);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<RichEntry>(py::module& m) {
-  py::class_<RichEntry, LIEF::Object>(m, "RichEntry",
+void create<RichEntry>(nb::module_& m) {
+  nb::class_<RichEntry, LIEF::Object>(m, "RichEntry",
       R"delim(
       Class which represents an entry associated to the RichHeader
-      )delim")
-    .def(py::init<>())
-    .def(py::init<uint16_t, uint16_t, uint32_t>(),
+      )delim"_doc)
+    .def(nb::init<>())
+    .def(nb::init<uint16_t, uint16_t, uint32_t>(),
         "Contructor from "
         ":attr:`~lief.PE.RichEntry.id`, "
         ":attr:`~lief.PE.RichEntry.build_id` and "
-        ":attr:`~lief.PE.RichEntry.count`",
+        ":attr:`~lief.PE.RichEntry.count`"_doc,
         "id"_a, "build_id"_a, "count"_a)
 
-    .def_property("id",
-        static_cast<getter_t<uint16_t>>(&RichEntry::id),
-        static_cast<setter_t<uint16_t>>(&RichEntry::id),
-        "Type of the entry")
+    .def_prop_rw("id",
+        nb::overload_cast<>(&RichEntry::id, nb::const_),
+        nb::overload_cast<uint16_t>(&RichEntry::id),
+        "Type of the entry"_doc)
 
-    .def_property("build_id",
-        static_cast<getter_t<uint16_t>>(&RichEntry::build_id),
-        static_cast<setter_t<uint16_t>>(&RichEntry::build_id),
-        "Builder number of the tool (if any)")
+    .def_prop_rw("build_id",
+        nb::overload_cast<>(&RichEntry::build_id, nb::const_),
+        nb::overload_cast<uint16_t>(&RichEntry::build_id),
+        "Builder number of the tool (if any)"_doc)
 
-    .def_property("count",
-        static_cast<getter_t<uint32_t>>(&RichEntry::count),
-        static_cast<setter_t<uint32_t>>(&RichEntry::count),
-        "*Occurrence* count")
+    .def_prop_rw("count",
+        nb::overload_cast<>(&RichEntry::count, nb::const_),
+        nb::overload_cast<uint32_t>(&RichEntry::count),
+        "*Occurrence* count"_doc)
 
-    .def("__eq__", &RichEntry::operator==)
-    .def("__ne__", &RichEntry::operator!=)
-    .def("__hash__",
-        [] (const RichEntry& entry) {
-          return Hash::hash(entry);
-        })
-
-    .def("__str__", [] (const RichEntry& entry)
-        {
-          std::ostringstream stream;
-          stream << entry;
-          std::string str = stream.str();
-          return str;
-        });
+    LIEF_DEFAULT_STR(RichEntry);
 }
 
-}
 }

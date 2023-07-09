@@ -13,28 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
 
-#include "LIEF/PE/hash.hpp"
-#include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/attributes/MsSpcStatementType.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (MsSpcStatementType::*)(void) const;
-
-template<class T>
-using setter_t = void (MsSpcStatementType::*)(T);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<MsSpcStatementType>(py::module& m) {
-  py::class_<MsSpcStatementType, Attribute>(m, "MsSpcStatementType",
+void create<MsSpcStatementType>(nb::module_& m) {
+  nb::class_<MsSpcStatementType, Attribute>(m, "MsSpcStatementType",
     R"delim(
     Interface over the structure described by the OID ``1.3.6.1.4.1.311.2.1.11``
 
@@ -45,9 +36,9 @@ void create<MsSpcStatementType>(py::module& m) {
 
         SpcStatementType ::= SEQUENCE of OBJECT IDENTIFIER
 
-    )delim")
+    )delim"_doc)
 
-    .def_property_readonly("oid",
+    .def_prop_ro("oid",
         &MsSpcStatementType::oid,
         R"delim(
         According to the documentation:
@@ -57,15 +48,6 @@ void create<MsSpcStatementType>(py::module& m) {
           The SpcStatementType MUST contain one Object Identifier with either
           the value ``1.3.6.1.4.1.311.2.1.21 (SPC_INDIVIDUAL_SP_KEY_PURPOSE_OBJID)`` or
           ``1.3.6.1.4.1.311.2.1.22 (SPC_COMMERCIAL_SP_KEY_PURPOSE_OBJID)``.
-        )delim")
-
-    .def("__hash__",
-        [] (const MsSpcStatementType& obj) {
-          return Hash::hash(obj);
-        })
-
-    .def("__str__", &MsSpcStatementType::print);
-}
-
+        )delim"_doc);
 }
 }

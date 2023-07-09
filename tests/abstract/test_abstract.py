@@ -1,63 +1,95 @@
-
 import lief
 from utils import get_sample
 
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
 def test_endianness():
-    binary = lief.parse(get_sample('ELF/ELF32_x86_binary_ls.bin')).abstract
+    elf = lief.parse(get_sample('ELF/ELF32_x86_binary_ls.bin'))
+    binary = elf.abstract
     header = binary.header
 
     assert header.endianness == lief.ENDIANNESS.LITTLE
 
-    binary = lief.parse(get_sample('MachO/MachO64_x86-64_binary_id.bin')).abstract
+    macho = lief.parse(get_sample('MachO/MachO64_x86-64_binary_id.bin'))
+    binary = macho.abstract
     header = binary.header
 
     header.endianness == lief.ENDIANNESS.LITTLE
 
-    binary = lief.parse(get_sample('PE/PE64_x86-64_binary_ConsoleApplication1.exe')).abstract
+    pe = lief.parse(get_sample('PE/PE64_x86-64_binary_ConsoleApplication1.exe'))
+    binary = pe.abstract
     header = binary.header
 
     header.endianness == lief.ENDIANNESS.LITTLE
 
 
 def test_format():
-    binary = lief.parse(get_sample('ELF/ELF32_x86_binary_ls.bin')).abstract
-    binary.format == lief.EXE_FORMATS.ELF
+    binary = lief.parse(get_sample('ELF/ELF32_x86_binary_ls.bin'))
+    binary.abstract.format == lief.EXE_FORMATS.ELF
 
-    binary = lief.parse(get_sample('MachO/MachO64_x86-64_binary_id.bin')).abstract
-    binary.format == lief.EXE_FORMATS.MACHO
+    binary = lief.parse(get_sample('MachO/MachO64_x86-64_binary_id.bin'))
+    binary.abstract.format == lief.EXE_FORMATS.MACHO
 
-    binary = lief.parse(get_sample('PE/PE64_x86-64_binary_ConsoleApplication1.exe')).abstract
-    binary.format == lief.EXE_FORMATS.PE
+    binary = lief.parse(get_sample('PE/PE64_x86-64_binary_ConsoleApplication1.exe'))
+    binary.abstract.format == lief.EXE_FORMATS.PE
 
 def test_pie():
-    binary = lief.parse(get_sample('ELF/ELF32_ARM_binary-pie_ls.bin')).abstract
-    assert binary.is_pie
+    binary = lief.parse(get_sample('ELF/ELF32_ARM_binary-pie_ls.bin'))
+    assert binary.abstract.is_pie
 
-    binary = lief.parse(get_sample('MachO/MachO64_x86-64_binary_nm.bin')).abstract
-    assert binary.is_pie
+    binary = lief.parse(get_sample('MachO/MachO64_x86-64_binary_nm.bin'))
+    assert binary.abstract.is_pie
 
-    binary = lief.parse(get_sample('PE/PE32_x86_binary_cmd.exe')).abstract
-    assert binary.is_pie
+    binary = lief.parse(get_sample('PE/PE32_x86_binary_cmd.exe'))
+    assert binary.abstract.is_pie
 
-    binary = lief.parse(get_sample('ELF/ELF64_x86-64_binary_ls.bin')).abstract
-    assert not binary.is_pie
+    binary = lief.parse(get_sample('ELF/ELF64_x86-64_binary_ls.bin'))
+    assert not binary.abstract.is_pie
 
 
 def test_ctor():
-    binary = lief.parse(get_sample('PE/PE32_x86_binary_winhello-mingw.exe')).abstract
+    pe = lief.parse(get_sample('PE/PE32_x86_binary_winhello-mingw.exe'))
+    binary = pe.abstract
     assert [f.address for f in binary.ctor_functions] == [0x4018e0, 0x401890]
     assert binary.imagebase == 0x400000
 
-    binary = lief.parse(get_sample('MachO/MachO64_x86-64_binary_all.bin')).abstract
+    macho = lief.parse(get_sample('MachO/MachO64_x86-64_binary_all.bin'))
+    binary = macho.abstract
     assert [f.address for f in binary.ctor_functions] == [0x100000dd0]
     assert binary.imagebase == 0x100000000
 
-    binary = lief.parse(get_sample('ELF/ELF64_x86-64_binary_gcc.bin')).abstract
+    elf = lief.parse(get_sample('ELF/ELF64_x86-64_binary_gcc.bin'))
+    binary = elf.abstract
     assert [f.address for f in binary.ctor_functions] == [4206768, 4206416, 4203936]
     assert binary.imagebase == 0x400000
     assert binary.offset_to_virtual_address(0xd4f38) == 0x6d4f38
 
-    binary = lief.parse(get_sample('MachO/MachO64_x86-64_binary_sshd.bin')).abstract
+    macho = lief.parse(get_sample('MachO/MachO64_x86-64_binary_sshd.bin'))
+    binary = macho.abstract
     assert binary.offset_to_virtual_address(0x18f001) == 0x10019a001
+
+
+def test_search():
+    binary: lief.ELF.Binary = lief.parse(get_sample('ELF/ELF64_x86-64_binary_gcc.bin'))
+    text = binary.get_section(".text")
+
+    pattern = b"USH\x89\xfbH\x83\xec\x18H\x89\x14$\x89t$"
+    assert text.search(pattern, 0) == 0
+    assert text.search(pattern, 4) is None
+    assert text.search(0x4885c0, 3) is None
+    assert text.search(0x90c35f41, 4) == 22796
+
+    rodata = binary.get_section(".rodata")
+    assert rodata.search("kernel-address") == 4
+    assert rodata.search("foobar") is None
+
+def test_content():
+    binary: lief.ELF.Binary = lief.parse(get_sample('ELF/ELF64_x86-64_binary_gcc.bin'))
+    assert bytes(binary.abstract.get_content_from_virtual_address(0x0046d000, 0x8)) \
+            == b'AWAVA\x89\xffA'
+
+def test_function():
+    binary: lief.ELF.Binary = lief.parse(get_sample('ELF/ELF64_x86-64_library_libadd.so'))
+    assert binary.get_function_address("foo") == lief.lief_errors.not_found
+    assert binary.get_function_address("add") == 0x6a0
+

@@ -13,65 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
 
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
 
-namespace LIEF {
-namespace MachO {
-
-template<class T>
-using getter_t = T (MainCommand::*)(void) const;
-
-template<class T>
-using setter_t = void (MainCommand::*)(T);
-
+namespace LIEF::MachO::py {
 
 template<>
-void create<MainCommand>(py::module& m) {
+void create<MainCommand>(nb::module_& m) {
 
-  py::class_<MainCommand, LoadCommand>(m, "MainCommand",
+  nb::class_<MainCommand, LoadCommand>(m, "MainCommand",
       R"delim(
       Class that represent the LC_MAIN command. This kind
       of command can be used to determine the entrypoint of an executable
-      )delim")
-    .def(py::init<uint64_t, uint64_t>())
+      )delim"_doc)
+    .def(nb::init<uint64_t, uint64_t>())
 
-    .def_property("entrypoint",
-        static_cast<getter_t<uint64_t>>(&MainCommand::entrypoint),
-        static_cast<setter_t<uint64_t>>(&MainCommand::entrypoint),
-        "Offset of the *main* function relative to the ``__TEXT`` segment")
+    .def_prop_rw("entrypoint",
+        nb::overload_cast<>(&MainCommand::entrypoint, nb::const_),
+        nb::overload_cast<uint64_t>(&MainCommand::entrypoint),
+        "Offset of the *main* function relative to the ``__TEXT`` segment"_doc)
 
-    .def_property("stack_size",
-        static_cast<getter_t<uint64_t>>(&MainCommand::stack_size),
-        static_cast<setter_t<uint64_t>>(&MainCommand::stack_size),
-        "The initial stack size (if not 0)")
+    .def_prop_rw("stack_size",
+        nb::overload_cast<>(&MainCommand::stack_size, nb::const_),
+        nb::overload_cast<uint64_t>(&MainCommand::stack_size),
+        "The initial stack size (if not 0)"_doc)
 
-
-    .def("__eq__", &MainCommand::operator==)
-    .def("__ne__", &MainCommand::operator!=)
-    .def("__hash__",
-        [] (const MainCommand& main) {
-          return Hash::hash(main);
-        })
-
-
-    .def("__str__",
-        [] (const MainCommand& main)
-        {
-          std::ostringstream stream;
-          stream << main;
-          std::string str = stream.str();
-          return str;
-        });
-
-}
+    LIEF_DEFAULT_STR(MainCommand);
 
 }
 }

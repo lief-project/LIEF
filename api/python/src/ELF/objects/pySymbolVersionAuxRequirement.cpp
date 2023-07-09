@@ -13,66 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyELF.hpp"
+#include "ELF/pyELF.hpp"
 
-#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-namespace LIEF {
-namespace ELF {
-
-template<class T>
-using getter_t = T (SymbolVersionAuxRequirement::*)(void) const;
-
-template<class T>
-using setter_t = void (SymbolVersionAuxRequirement::*)(T);
-
+namespace LIEF::ELF::py {
 
 template<>
-void create<SymbolVersionAuxRequirement>(py::module& m) {
-  py::class_<SymbolVersionAuxRequirement, SymbolVersionAux>(m, "SymbolVersionAuxRequirement")
-    .def(py::init<>(),"Default constructor")
+void create<SymbolVersionAuxRequirement>(nb::module_& m) {
+  nb::class_<SymbolVersionAuxRequirement, SymbolVersionAux>(m, "SymbolVersionAuxRequirement")
+    .def(nb::init<>(),"Default constructor"_doc)
 
-    .def_property("hash",
-        static_cast<getter_t<uint32_t>>(&SymbolVersionAuxRequirement::hash),
-        static_cast<setter_t<uint32_t>>(&SymbolVersionAuxRequirement::hash),
-        "Hash value of the dependency name (use ELF hashing function)")
+    .def_prop_rw("hash",
+        nb::overload_cast<>(&SymbolVersionAuxRequirement::hash, nb::const_),
+        nb::overload_cast<uint32_t>(&SymbolVersionAuxRequirement::hash),
+        "Hash value of the dependency name (use ELF hashing function)"_doc)
 
-    .def_property("flags",
-        static_cast<getter_t<uint16_t>>(&SymbolVersionAuxRequirement::flags),
-        static_cast<setter_t<uint16_t>>(&SymbolVersionAuxRequirement::flags),
-        "Bitmask of flags")
+    .def_prop_rw("flags",
+        nb::overload_cast<>(&SymbolVersionAuxRequirement::flags, nb::const_),
+        nb::overload_cast<uint16_t>(&SymbolVersionAuxRequirement::flags),
+        "Bitmask of flags"_doc)
 
-    .def_property("other",
-        static_cast<getter_t<uint16_t>>(&SymbolVersionAuxRequirement::other),
-        static_cast<setter_t<uint16_t>>(&SymbolVersionAuxRequirement::other),
+    .def_prop_rw("other",
+        nb::overload_cast<>(&SymbolVersionAuxRequirement::other, nb::const_),
+        nb::overload_cast<uint16_t>(&SymbolVersionAuxRequirement::other),
         R"delim(
         It returns the unique version index for the file which is used in the
         version symbol table. If the highest bit (bit 15) is set this
         is a hidden symbol which cannot be referenced from outside the
         object.
-        )delim")
+        )delim"_doc)
 
-
-    .def("__eq__", &SymbolVersionAuxRequirement::operator==)
-    .def("__ne__", &SymbolVersionAuxRequirement::operator!=)
-    .def("__hash__",
-        [] (const SymbolVersionAuxRequirement& svar) {
-          return Hash::hash(svar);
-        })
-
-    .def("__str__",
-        [] (const SymbolVersionAuxRequirement& symbolVersionAux)
-        {
-          std::ostringstream stream;
-          stream << symbolVersionAux;
-          std::string str =  stream.str();
-          return str;
-        });
-}
+    LIEF_DEFAULT_STR(LIEF::ELF::SymbolVersionAuxRequirement);
 
 }
 }

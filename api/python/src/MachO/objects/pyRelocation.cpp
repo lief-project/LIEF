@@ -13,43 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/Relocation.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
 
-namespace LIEF {
-namespace MachO {
-
-template<class T>
-using getter_t = T (Relocation::*)(void) const;
-
-template<class T>
-using setter_t = void (Relocation::*)(T);
-
+namespace LIEF::MachO::py {
 
 template<>
-void create<Relocation>(py::module& m) {
+void create<Relocation>(nb::module_& m) {
 
-  py::class_<Relocation, LIEF::Relocation>(m, "Relocation",
+  nb::class_<Relocation, LIEF::Relocation>(m, "Relocation",
       R"delim(
       It extends the LIEF :class:`lief.Relocation` abstract class and it is sub-classed by
 
       1. :class:`~lief.MachO.RelocationObject`
       2. :class:`~lief.MachO.RelocationDyld`
-      )delim")
+      )delim"_doc)
 
-    .def_property("address",
-        static_cast<getter_t<uint64_t>>(&Relocation::address),
-        static_cast<setter_t<uint64_t>>(&Relocation::address),
+    .def_prop_rw("address",
+        static_cast<uint64_t(MachO::Relocation::*)() const>(&MachO::Relocation::address),
+        static_cast<void(MachO::Relocation::*)(uint64_t)>(&MachO::Relocation::address),
         R"delim(
         For :attr:`~lief.MachO.FILE_TYPES.OBJECT` or (:attr:`~lief.MachO.Relocation.origin` is :attr:`~lief.MachO.RELOCATION_ORIGINS.RELOC_TABLE`) this is an "
         offset from the start of the :class:`~lief.MachO.Section`
@@ -58,22 +48,50 @@ void create<Relocation>(py::module& m) {
         For :attr:`~lief.MachO.FILE_TYPES.EXECUTE` / :attr:`~lief.MachO.FILE_TYPES.DYLIB` or
         (:attr:`~lief.MachO.Relocation.origin` is :attr:`~lief.MachO.RELOCATION_ORIGINS.DYLDINFO`)
         this is a :attr:`~lief.MachO.SegmentCommand.virtual_address`.
-        )delim")
+        )delim"_doc)
 
-    .def_property("pc_relative",
-        static_cast<getter_t<bool>>(&Relocation::is_pc_relative),
-        static_cast<setter_t<bool>>(&Relocation::pc_relative),
+    .def_prop_rw("pc_relative",
+        nb::overload_cast<>(&Relocation::is_pc_relative, nb::const_),
+        nb::overload_cast<bool>(&Relocation::pc_relative),
         R"delim(
         Indicates whether the item containing the address to be
         relocated is part of a CPU instruction that uses PC-relative addressing.
 
         For addresses contained in PC-relative instructions, the CPU adds the address of
         the instruction to the address contained in the instruction.
-        )delim")
+        )delim"_doc)
 
-    .def_property("type",
-        static_cast<getter_t<uint8_t>>(&Relocation::type),
-        static_cast<setter_t<uint8_t>>(&Relocation::type),
+    .def_prop_rw("type",
+        [] (const Relocation& reloc) -> nb::object {
+          if (reloc.origin() == RELOCATION_ORIGINS::ORIGIN_DYLDINFO) {
+            return nb::cast(REBASE_TYPES(reloc.type()));
+          }
+
+          if (reloc.origin() == RELOCATION_ORIGINS::ORIGIN_RELOC_TABLE) {
+            switch (reloc.architecture()) {
+              case CPU_TYPES::CPU_TYPE_X86:
+                return nb::cast(X86_RELOCATION(reloc.type()));
+
+              case CPU_TYPES::CPU_TYPE_X86_64:
+                return nb::cast(X86_64_RELOCATION(reloc.type()));
+
+              case CPU_TYPES::CPU_TYPE_ARM:
+                return nb::cast(ARM_RELOCATION(reloc.type()));
+
+              case CPU_TYPES::CPU_TYPE_ARM64:
+                return nb::cast(ARM64_RELOCATION(reloc.type()));
+
+              case CPU_TYPES::CPU_TYPE_POWERPC:
+                return nb::cast(PPC_RELOCATION(reloc.type()));
+
+              default:
+                return nb::cast(reloc.type());
+            }
+          }
+
+          return nb::cast(reloc.type());
+        },
+        nb::overload_cast<uint8_t>(&Relocation::type),
         R"delim(
         Type of the relocation according to the :attr:`~lief.MachO.Relocation.architecture` and/or :attr:`~lief.MachO.Relocation.origin`
 
@@ -89,67 +107,47 @@ void create<Relocation>(py::module& m) {
 
         If :attr:`~lief.MachO.Relocation.origin` is :attr:`~lief.MachO.RELOCATION_ORIGINS.DYLDINFO`,
         the value is associated with :class:`~lief.MachO.REBASE_TYPES`.
-        )delim")
+        )delim"_doc)
 
-    .def_property_readonly("architecture",
+    .def_prop_ro("architecture",
         &Relocation::architecture,
-        "" RST_CLASS_REF(lief.MachO.CPU_TYPES) " of the relocation")
+        "" RST_CLASS_REF(lief.MachO.CPU_TYPES) " of the relocation"_doc)
 
-    .def_property_readonly("has_symbol",
+    .def_prop_ro("has_symbol",
         &Relocation::has_symbol,
-        "``True`` if the relocation has a " RST_CLASS_REF(lief.MachO.Symbol) " associated with")
+        "``True`` if the relocation has a " RST_CLASS_REF(lief.MachO.Symbol) " associated with"_doc)
 
-    .def_property_readonly("symbol",
-        static_cast<Symbol* (Relocation::*)(void)>(&Relocation::symbol),
-        "" RST_CLASS_REF(lief.MachO.Symbol) " associated with the relocation if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("symbol",
+        nb::overload_cast<>(&Relocation::symbol),
+        "" RST_CLASS_REF(lief.MachO.Symbol) " associated with the relocation if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("has_section",
+    .def_prop_ro("has_section",
         &Relocation::has_section,
-        "``True`` if the relocation has a " RST_CLASS_REF(lief.MachO.Section) " associated with")
+        "``True`` if the relocation has a " RST_CLASS_REF(lief.MachO.Section) " associated with"_doc)
 
-    .def_property_readonly("section",
-        static_cast<Section* (Relocation::*)(void)>(&Relocation::section),
-        "" RST_CLASS_REF(lief.MachO.Section) " associated with the relocation if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("section",
+        nb::overload_cast<>(&Relocation::section),
+        "" RST_CLASS_REF(lief.MachO.Section) " associated with the relocation if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
 
-    .def_property_readonly("origin",
-        &Relocation::origin,
+    .def_prop_ro("origin", &Relocation::origin,
         R"delim(
         :class:`~lief.MachO.RELOCATION_ORIGINS` of the relocation
 
         * For :attr:`~lief.MachO.FILE_TYPES.OBJECT` file it should be :attr:`~lief.MachO.RELOCATION_ORIGINS.RELOC_TABLE`
         * For :attr:`~lief.MachO.FILE_TYPES.EXECUTE` or :attr:`~lief.MachO.FILE_TYPES.DYLIB` it should be :attr:`~lief.MachO.RELOCATION_ORIGINS.DYLDINFO`")
-        )delim")
+        )delim"_doc)
 
-    .def_property_readonly("has_segment",
-        &Relocation::has_segment,
-        "``True`` if the relocation has a " RST_CLASS_REF(lief.MachO.SegmentCommand) " associated with")
+    .def_prop_ro("has_segment", &Relocation::has_segment,
+        "``True`` if the relocation has a " RST_CLASS_REF(lief.MachO.SegmentCommand) " associated with"_doc)
 
-    .def_property_readonly("segment",
-        static_cast<SegmentCommand* (Relocation::*)(void)>(&Relocation::segment),
-        "" RST_CLASS_REF(lief.MachO.SegmentCommand) " associated with the relocation if any, or None",
-        py::return_value_policy::reference)
+    .def_prop_ro("segment",
+        nb::overload_cast<>(&Relocation::segment),
+        "" RST_CLASS_REF(lief.MachO.SegmentCommand) " associated with the relocation if any, or None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def("__eq__", &Relocation::operator==)
-    .def("__ne__", &Relocation::operator!=)
-    .def("__hash__",
-        [] (const Relocation& relocation) {
-          return Hash::hash(relocation);
-        })
-
-
-    .def("__str__",
-        [] (const Relocation& relocation)
-        {
-          std::ostringstream stream;
-          stream << relocation;
-          std::string str = stream.str();
-          return str;
-        });
-
-}
-
+    LIEF_DEFAULT_STR(Relocation);
 }
 }

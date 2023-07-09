@@ -1,0 +1,9 @@
+[lief.s3]
+region = "fr-par"
+bucket = "lief"
+endpoint = "https://s3.fr-par.scw.cloud"
+
+[lief.deploy]
+branches = ["master", "deploy", "devel", "nb/ci"]
+main-branches = ["master", "main"]
+default-dir = "latest"

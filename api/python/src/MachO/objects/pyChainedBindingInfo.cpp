@@ -17,19 +17,17 @@
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/ChainedBindingInfo.hpp"
 
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
 
-namespace LIEF {
-namespace MachO {
+namespace LIEF::MachO::py {
 
 template<>
-void create<ChainedBindingInfo>(py::module& m) {
-
-  py::class_<ChainedBindingInfo, BindingInfo>(m, "ChainedBindingInfo",
+void create<ChainedBindingInfo>(nb::module_& m) {
+  nb::class_<ChainedBindingInfo, BindingInfo>(m, "ChainedBindingInfo",
       R"delim(
       This class represents a symbol binding operation associated with
       the LC_DYLD_CHAINED_FIXUPS command.
@@ -38,44 +36,24 @@ void create<ChainedBindingInfo>(py::module& m) {
       specifications but it provides a *view* on an entry.
 
       See also: :class:`~lief.MachO.BindingInfo`
-      )delim")
+      )delim"_doc)
 
-    .def_property_readonly("format",
-                           &ChainedBindingInfo::format,
-                           R"delim(
-                           :class:`~lief.MachO.DYLD_CHAINED_FORMAT` of the import
-                           )delim")
+    .def_prop_ro("format", &ChainedBindingInfo::format,
+        R"delim(:class:`~lief.MachO.DYLD_CHAINED_FORMAT` of the import)delim"_doc)
 
-    .def_property_readonly("ptr_format",
-                           &ChainedBindingInfo::ptr_format,
-                           R"delim(
-                           :class:`~lief.MachO.DYLD_CHAINED_PTR_FORMAT` of the import
-                           )delim")
+    .def_prop_ro("ptr_format", &ChainedBindingInfo::ptr_format,
+        R"delim(:class:`~lief.MachO.DYLD_CHAINED_PTR_FORMAT` of the import)delim"_doc)
 
-    .def_property("offset",
-                  py::overload_cast<>(&ChainedBindingInfo::offset, py::const_),
-                  py::overload_cast<uint32_t>(&ChainedBindingInfo::offset),
-                  R"delim(
-                  Offset of the entry in the chained fixups
-                  )delim")
+    .def_prop_rw("offset",
+        nb::overload_cast<>(&ChainedBindingInfo::offset, nb::const_),
+        nb::overload_cast<uint32_t>(&ChainedBindingInfo::offset),
+        R"delim(Offset of the entry in the chained fixups)delim"_doc)
 
-    .def_property_readonly("sign_extended_addend", &ChainedBindingInfo::sign_extended_addend)
+    .def_prop_ro("sign_extended_addend",
+        &ChainedBindingInfo::sign_extended_addend)
 
-    .def("__eq__", &ChainedBindingInfo::operator==)
-    .def("__ne__", &ChainedBindingInfo::operator!=)
-    .def("__hash__",
-        [] (const ChainedBindingInfo& info) {
-          return Hash::hash(info);
-        })
-
-    .def("__str__",
-        [] (const ChainedBindingInfo& info) {
-          std::ostringstream stream;
-          std::string str = stream.str();
-          return stream.str();
-        });
+    LIEF_DEFAULT_STR(ChainedBindingInfo);
 
 }
 
-}
 }

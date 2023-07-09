@@ -14,89 +14,59 @@
  * limitations under the License.
  */
 #include "LIEF/DEX/Method.hpp"
-#include "LIEF/DEX/hash.hpp"
+#include "LIEF/DEX/Prototype.hpp"
+#include "LIEF/DEX/Class.hpp"
 
-#include "pyDEX.hpp"
+#include "DEX/pyDEX.hpp"
 
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 
-namespace LIEF {
-namespace DEX {
-
-template<class T>
-using getter_t = T (Method::*)(void) const;
-
-template<class T>
-using no_const_getter_t = T (Method::*)(void);
-
-template<class T>
-using setter_t = void (Method::*)(T);
-
+namespace LIEF::DEX::py {
 
 template<>
-void create<Method>(py::module& m) {
+void create<Method>(nb::module_& m) {
 
-  py::class_<Method, LIEF::Object>(m, "Method", "DEX Method representation")
-    .def_property_readonly("name",
-        &Method::name,
-        "Method's name")
+  nb::class_<Method, LIEF::Object>(m, "Method", "DEX Method representation"_doc)
+    .def_prop_ro("name", &Method::name,
+        "Method's name"_doc)
 
-    .def_property_readonly("index",
-        &Method::index,
-        "Original DEX file index of the method")
+    .def_prop_ro("index", &Method::index,
+        "Original DEX file index of the method"_doc)
 
-    .def_property_readonly("has_class",
-        &Method::has_class,
-        "True if a class is associated with this method")
+    .def_prop_ro("has_class", &Method::has_class,
+        "True if a class is associated with this method"_doc)
 
-    .def_property_readonly("cls",
-        static_cast<no_const_getter_t<Class*>>(&Method::cls),
-        "" RST_CLASS_REF(lief.DEX.Class) " associated with this method")
+    .def_prop_ro("cls", nb::overload_cast<>(&Method::cls, nb::const_),
+        "" RST_CLASS_REF(lief.DEX.Class) " associated with this method"_doc)
 
-    .def_property_readonly("code_offset",
-        static_cast<getter_t<uint64_t>>(&Method::code_offset),
-        "Offset to the Dalvik Bytecode")
+    .def_prop_ro("code_offset", nb::overload_cast<>(&Method::code_offset, nb::const_),
+        "Offset to the Dalvik Bytecode"_doc)
 
-    .def_property_readonly("bytecode",
-        static_cast<getter_t<const Method::bytecode_t&>>(&Method::bytecode),
-        "Dalvik Bytecode as a list of bytes")
+    .def_prop_ro("bytecode", nb::overload_cast<>(&Method::bytecode, nb::const_),
+        "Dalvik Bytecode as a list of bytes"_doc)
 
-    .def_property_readonly("is_virtual",
-        &Method::is_virtual,
-        "True if the method is a virtual (not **private**, **static**, **final**, **constructor**)")
+    .def_prop_ro("is_virtual", &Method::is_virtual,
+        "True if the method is a virtual (not **private**, **static**, **final**, **constructor**)"_doc)
 
-    .def_property_readonly("prototype",
-        static_cast<no_const_getter_t<Prototype*>>(&Method::prototype),
-        "" RST_CLASS_REF(lief.DEX.Prototype) " of this method")
+    .def_prop_ro("prototype",
+        nb::overload_cast<>(&Method::prototype, nb::const_),
+        "" RST_CLASS_REF(lief.DEX.Prototype) " of this method"_doc)
 
-    .def_property_readonly("access_flags",
-        static_cast<getter_t<Method::access_flags_list_t>>(&Method::access_flags),
-        "List of " RST_CLASS_REF(lief.DEX.ACCESS_FLAGS) "")
+    .def_prop_ro("access_flags",
+        nb::overload_cast<>(&Method::access_flags, nb::const_),
+        "List of " RST_CLASS_REF(lief.DEX.ACCESS_FLAGS) ""_doc)
 
-    .def("has",
-        static_cast<bool(Method::*)(ACCESS_FLAGS) const>(&Method::has),
-        "Check if the given " RST_CLASS_REF(lief.DEX.ACCESS_FLAGS) " is present",
+    .def("has", nb::overload_cast<ACCESS_FLAGS>(&Method::has, nb::const_),
+        "Check if the given " RST_CLASS_REF(lief.DEX.ACCESS_FLAGS) " is present"_doc,
         "flag"_a)
 
-    .def("insert_dex2dex_info",
-        &Method::insert_dex2dex_info,
-        "Insert de-optimization information",
+    .def("insert_dex2dex_info", &Method::insert_dex2dex_info,
+        "Insert de-optimization information"_doc,
         "pc"_a, "index"_a)
 
-    .def("__eq__", &Method::operator==)
-    .def("__ne__", &Method::operator!=)
-    .def("__hash__",
-        [] (const Method& cls) {
-          return Hash::hash(cls);
-        })
-
-    .def("__str__",
-        [] (const Method& cls) {
-          std::ostringstream stream;
-          stream << cls;
-          return stream.str();
-        });
+    LIEF_DEFAULT_STR(Method);
 }
 
-}
 }

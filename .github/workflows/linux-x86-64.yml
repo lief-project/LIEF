@@ -17,102 +17,20 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.ccache
-          key: linux-x86-64-${{ runner.os }}-${{ steps.get-date.outputs.date }}
+          key: linux-x86-64-${{ runner.os }}-sdk-${{ steps.get-date.outputs.date }}
           restore-keys: |
-              linux-x86-64-${{ runner.os }}-
-      - name: Build Python 3.8 wheel & test
-        shell: bash
-        env:
-          PYTHON_VERSION: 38
-        run: |
-          docker run --rm                                                               \
-           -e CCACHE_COMPRESS=1                                                         \
-           -e CCACHE_MAXSIZE=10.0G                                                      \
-           -e CCACHE_CPP2=1                                                             \
-           -e CCACHE_DIR=/ccache                                                        \
-           -e PYTHON_VERSION=$PYTHON_VERSION                                            \
-           -e PYTHON_BINARY=/opt/python/cp38-cp38/bin/python3.8                         \
-           -v $GITHUB_WORKSPACE:/src                                                    \
-           -v $HOME/.ccache:/ccache                                                     \
-           liefproject/manylinux_2_28_x86_64 bash /src/scripts/docker/run_linux_test.sh
-      - name: Build Python 3.9 wheel
-        shell: bash
-        env:
-          PYTHON_VERSION: 39
-        run: |
-          docker run --rm                                                          \
-           -e CCACHE_COMPRESS=1                                                    \
-           -e CCACHE_MAXSIZE=10.0G                                                 \
-           -e CCACHE_CPP2=1                                                        \
-           -e CCACHE_DIR=/ccache                                                   \
-           -e PYTHON_VERSION=$PYTHON_VERSION                                       \
-           -e PYTHON_BINARY=/opt/python/cp39-cp39/bin/python3.9                    \
-           -v $GITHUB_WORKSPACE:/src                                               \
-           -v $HOME/.ccache:/ccache                                                \
-           liefproject/manylinux_2_28_x86_64 bash /src/scripts/docker/run_linux.sh
-      - name: Build Python 3.10 wheel
-        shell: bash
-        env:
-          PYTHON_VERSION: 310
-        run: |
-          docker run --rm                                                          \
-           -e CCACHE_COMPRESS=1                                                    \
-           -e CCACHE_MAXSIZE=10.0G                                                 \
-           -e CCACHE_CPP2=1                                                        \
-           -e CCACHE_DIR=/ccache                                                   \
-           -e PYTHON_VERSION=$PYTHON_VERSION                                       \
-           -e PYTHON_BINARY=/opt/python/cp310-cp310/bin/python3.10                 \
-           -v $GITHUB_WORKSPACE:/src                                               \
-           -v $HOME/.ccache:/ccache                                                \
-           liefproject/manylinux_2_28_x86_64 bash /src/scripts/docker/run_linux.sh
-      - name: Test LIEF on Archlinux
-        shell: bash
-        env:
-          PYTHON_VERSION: 310
-        run: |
-          docker run --rm \
-           -v $GITHUB_WORKSPACE:/src \
-           liefproject/archlinux bash /src/scripts/docker/run_archlinux.sh
-      - name: Build Python 3.11 wheel
-        shell: bash
-        env:
-          PYTHON_VERSION: 311
-        run: |
-          docker run --rm                                                          \
-           -e CCACHE_COMPRESS=1                                                    \
-           -e CCACHE_MAXSIZE=10.0G                                                 \
-           -e CCACHE_CPP2=1                                                        \
-           -e CCACHE_DIR=/ccache                                                   \
-           -e PYTHON_VERSION=$PYTHON_VERSION                                       \
-           -e PYTHON_BINARY=/opt/python/cp311-cp311/bin/python3.11                 \
-           -v $GITHUB_WORKSPACE:/src                                               \
-           -v $HOME/.ccache:/ccache                                                \
-           liefproject/manylinux_2_28_x86_64 bash /src/scripts/docker/run_linux.sh
-      - name: Build Python 3.12 wheel
-        shell: bash
-        env:
-          PYTHON_VERSION: 312
-        run: |
-          docker run --rm                                                          \
-           -e CCACHE_COMPRESS=1                                                    \
-           -e CCACHE_MAXSIZE=10.0G                                                 \
-           -e CCACHE_CPP2=1                                                        \
-           -e CCACHE_DIR=/ccache                                                   \
-           -e PYTHON_VERSION=$PYTHON_VERSION                                       \
-           -e PYTHON_BINARY=/opt/python/cp312-cp312/bin/python3.12                 \
-           -v $GITHUB_WORKSPACE:/src                                               \
-           -v $HOME/.ccache:/ccache                                                \
-           liefproject/manylinux_2_28_x86_64 bash /src/scripts/docker/run_linux.sh
+              linux-x86-64-${{ runner.os }}-sdk
       - name: Build SDK
         shell: bash
         run: |
-          docker run --name lief_sdk --rm                                               \
-            -e PYTHON_BINARY=/opt/python/cp39-cp39/bin/python3.9                        \
-            -e CCACHE_COMPRESS=1                                                        \
-            -e CCACHE_MAXSIZE=10.0G                                                     \
-            -e CCACHE_DIR=/ccache                                                       \
-            -v $GITHUB_WORKSPACE:/src                                                   \
-            -v $HOME/.ccache:/ccache                                                    \
+          mkdir -p $RUNNER_TEMP/lief-install
+          docker run --name lief_sdk --rm                        \
+            -e CCACHE_COMPRESS=1                                 \
+            -e CCACHE_MAXSIZE=10.0G                              \
+            -e CCACHE_DIR=/ccache                                \
+            -v $GITHUB_WORKSPACE:/src                            \
+            -v $RUNNER_TEMP/lief-install:/install                       \
+            -v $HOME/.ccache:/ccache                             \
             liefproject/manylinux_2_28_x86_64 bash /src/scripts/docker/run_linux_sdk.sh
       - name: 'Upload SDK Artifact'
         uses: actions/upload-artifact@v3
@@ -120,40 +38,141 @@ jobs:
           name: linux-x86-64-sdk
           path: build/*.tar.gz
           retention-days: 3
-      - name: 'Upload SDK Artifact'
+      - name: 'Upload Install Artifact'
         uses: actions/upload-artifact@v3
         with:
-          name: linux-x86-64-python-wheel
+          name: linux-x86-64-install
+          path: ${{ runner.temp }}/lief-install
+          retention-days: 1
+  testing:
+    if: "!contains(github.event.commits[0].message, '[skip-test]')"
+    runs-on: ubuntu-latest
+    needs: linux-sdk
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Get Date
+        id: get-date
+        run: |
+          echo "date=$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")" >> $GITHUB_OUTPUT
+        shell: bash
+      - name: ccache cache files
+        uses: actions/cache@v3
+        with:
+          path: ~/.ccache
+          key: linux-x86-64-${{ runner.os }}-test-${{ steps.get-date.outputs.date }}
+          restore-keys: |
+              linux-x86-64-${{ runner.os }}-test
+      - name: Python 3.8 -- Wheel & Test
+        shell: bash
+        env:
+          PYTHON_VERSION: 38
+        run: |
+          docker run --rm                                       \
+           -e CCACHE_COMPRESS=1                                 \
+           -e CCACHE_MAXSIZE=10.0G                              \
+           -e CCACHE_CPP2=1                                     \
+           -e CCACHE_DIR=/ccache                                \
+           -e PYTHON_VERSION=$PYTHON_VERSION                    \
+           -e PYTHON_BINARY=/opt/python/cp38-cp38/bin/python3.8 \
+           -v $GITHUB_WORKSPACE:/src                            \
+           -v $HOME/.ccache:/ccache                             \
+           liefproject/manylinux_2_28_x86_64 bash /src/scripts/docker/run_linux_test.sh
+  pywheels:
+    runs-on: ubuntu-latest
+    needs: linux-sdk
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Get Date
+        id: get-date
+        run: |
+          echo "date=$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")" >> $GITHUB_OUTPUT
+        shell: bash
+      - name: ccache cache files
+        uses: actions/cache@v3
+        with:
+          path: ~/.ccache
+          key: linux-x86-64-${{ runner.os }}-${{ matrix.python-version }}-${{ steps.get-date.outputs.date }}
+          restore-keys: |
+              linux-x86-64-${{ runner.os }}-${{ matrix.python-version }}
+      - name: Download LIEF install dir
+        uses: actions/download-artifact@v3
+        with:
+          name: linux-x86-64-install
+          path: ${{ runner.temp }}/lief-install
+      - name: Python ${{ matrix.python-version }} -- Wheel
+        shell: bash
+        env:
+          PYTHON_VERSION: ${{ matrix.python-version }}
+        run: |
+          PYTHON_VERSION_ALT=$(echo "${PYTHON_VERSION}" | sed 's/\.//') # Transform 3.8 -> 38
+          docker run --rm                                       \
+           -e CCACHE_COMPRESS=1                                 \
+           -e CCACHE_MAXSIZE=10.0G                              \
+           -e CCACHE_CPP2=1                                     \
+           -e CCACHE_DIR=/ccache                                \
+           -e PYTHON_VERSION=$PYTHON_VERSION_ALT                    \
+           -e PYTHON_BINARY=/opt/python/cp${PYTHON_VERSION_ALT}-cp${PYTHON_VERSION_ALT}/bin/python${PYTHON_VERSION} \
+           -v $GITHUB_WORKSPACE:/src                            \
+           -v $HOME/.ccache:/ccache                             \
+           -v $RUNNER_TEMP/lief-install:/install                       \
+           liefproject/manylinux_2_28_x86_64 bash /src/scripts/docker/run_linux.sh
+      - name: 'Artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux-x86-64-python${{ matrix.python-version }}-wheel
           path: dist/*.whl
           retention-days: 3
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ always() }}
+    needs: [linux-sdk, pywheels]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: ${{ runner.temp }}/artifacts
+      - name: Display artifacts
+        run: ls -R
+        working-directory: ${{ runner.temp }}/artifacts
       - name: Deploy
         env:
           LIEF_S3_KEY: ${{ secrets.LIEF_S3_KEY }}
           LIEF_S3_SECRET: ${{ secrets.LIEF_S3_SECRET }}
         shell: bash
         run: |
-          docker run                                          \
+          docker run --rm                                     \
             -v $GITHUB_WORKSPACE:/src                         \
+            -v $RUNNER_TEMP:/runner_tmp                       \
             -e GITHUB_ACTIONS="true"                          \
             -e GITHUB_WORKSPACE=$GITHUB_WORKSPACE             \
             -e GITHUB_REF=$GITHUB_REF                         \
             -e GITHUB_REPOSITORY=$GITHUB_REPOSITORY           \
             -e LIEF_S3_KEY=$LIEF_S3_KEY                       \
             -e LIEF_S3_SECRET=$LIEF_S3_SECRET                 \
-            --rm                                              \
-            liefproject/deploy python3 /src/.github/deploy.py
+            liefproject/deploy python3 /src/.github/deploy.py /runner_tmp/artifacts
+  documentation:
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    container:
+      image: liefproject/manylinux_2_28_x86_64
+      env:
+        CIRCLE_CI_URL: "https://circleci.com/api/v2/project/gh/lief-project/doc/pipeline"
+        CIRCLE_CI_TOKEN: ${{ secrets.CIRCLE_CI_TOKEN }}
+    steps:
       - name: Trigger documentation
         if: github.ref == 'refs/heads/master'
-        env:
-          CIRCLE_CI_TOKEN: ${{ secrets.CIRCLE_CI_TOKEN }}
-        shell: bash
         run: |
-          docker run --rm \
-            -e CIRCLE_CI_TOKEN=$CIRCLE_CI_TOKEN \
-            liefproject/manylinux_2_28_x86_64 \
-            bash -c "curl --request POST --url https://circleci.com/api/v2/project/gh/lief-project/doc/pipeline --header 'Circle-Token: ${CIRCLE_CI_TOKEN}' --header 'content-type: application/json'";
-
-
-
-
-
+          curl --request POST --url ${CIRCLE_CI_URL}       \
+               --header "Circle-Token: ${CIRCLE_CI_TOKEN}" \
+               --header 'content-type: application/json'   \
+               --data '{"parameters":{"lief-branch":"master"}}'

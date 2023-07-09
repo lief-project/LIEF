@@ -13,158 +13,134 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/LoadConfigurations.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (LoadConfiguration::*)(void) const;
-
-template<class T>
-using setter_t = void (LoadConfiguration::*)(T);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<LoadConfiguration>(py::module& m) {
-  py::class_<LoadConfiguration, LIEF::Object>(m, "LoadConfiguration",
+void create<LoadConfiguration>(nb::module_& m) {
+  nb::class_<LoadConfiguration, LIEF::Object>(m, "LoadConfiguration",
     R"delim(
     Class that represents the default PE's ``LoadConfiguration``
     It's the base class for any future versions of the structure
-    )delim")
-    .def(py::init<>())
+    )delim"_doc)
+    .def(nb::init<>())
 
-    .def_property_readonly("version",
+    .def_prop_ro("version",
         &LoadConfiguration::version,
-        "(SDK) Version of the structure. (" RST_CLASS_REF(lief.PE.WIN_VERSION) ")")
+        "(SDK) Version of the structure. (" RST_CLASS_REF(lief.PE.WIN_VERSION) ")"_doc)
 
-    .def_property("characteristics",
-        static_cast<getter_t<uint32_t>>(&LoadConfiguration::characteristics),
-        static_cast<setter_t<uint32_t>>(&LoadConfiguration::characteristics),
-        "Characteristics of the structure.")
+    .def_prop_rw("characteristics",
+        nb::overload_cast<>(&LoadConfiguration::characteristics, nb::const_),
+        nb::overload_cast<uint32_t>(&LoadConfiguration::characteristics),
+        "Characteristics of the structure."_doc)
 
-    .def_property_readonly("size",
-        static_cast<getter_t<uint32_t>>(&LoadConfiguration::size),
-        "Size of the structure which is an alias for " RST_ATTR_REF(lief.PE.LoadConfiguration.characteristics) "")
+    .def_prop_ro("size",
+        nb::overload_cast<>(&LoadConfiguration::size, nb::const_),
+        "Size of the structure which is an alias for " RST_ATTR_REF(lief.PE.LoadConfiguration.characteristics) ""_doc)
 
-    .def_property("timedatestamp",
-        static_cast<getter_t<uint32_t>>(&LoadConfiguration::timedatestamp),
-        static_cast<setter_t<uint32_t>>(&LoadConfiguration::timedatestamp),
-        "Date and time stamp value")
+    .def_prop_rw("timedatestamp",
+        nb::overload_cast<>(&LoadConfiguration::timedatestamp, nb::const_),
+        nb::overload_cast<uint32_t>(&LoadConfiguration::timedatestamp),
+        "Date and time stamp value"_doc)
 
-    .def_property("major_version",
-        static_cast<getter_t<uint16_t>>(&LoadConfiguration::major_version),
-        static_cast<setter_t<uint16_t>>(&LoadConfiguration::major_version),
-        "Major Version")
+    .def_prop_rw("major_version",
+        nb::overload_cast<>(&LoadConfiguration::major_version, nb::const_),
+        nb::overload_cast<uint16_t>(&LoadConfiguration::major_version),
+        "Major Version"_doc)
 
-    .def_property("minor_version",
-        static_cast<getter_t<uint16_t>>(&LoadConfiguration::minor_version),
-        static_cast<setter_t<uint16_t>>(&LoadConfiguration::minor_version),
-        "Minor version")
+    .def_prop_rw("minor_version",
+        nb::overload_cast<>(&LoadConfiguration::minor_version, nb::const_),
+        nb::overload_cast<uint16_t>(&LoadConfiguration::minor_version),
+        "Minor version"_doc)
 
-    .def_property("global_flags_clear",
-        static_cast<getter_t<uint32_t>>(&LoadConfiguration::global_flags_clear),
-        static_cast<setter_t<uint32_t>>(&LoadConfiguration::global_flags_clear),
-        "The global loader flags to clear for this process as the loader start the process.")
+    .def_prop_rw("global_flags_clear",
+        nb::overload_cast<>(&LoadConfiguration::global_flags_clear, nb::const_),
+        nb::overload_cast<uint32_t>(&LoadConfiguration::global_flags_clear),
+        "The global loader flags to clear for this process as the loader start the process."_doc)
 
-    .def_property("global_flags_set",
-        static_cast<getter_t<uint32_t>>(&LoadConfiguration::global_flags_set),
-        static_cast<setter_t<uint32_t>>(&LoadConfiguration::global_flags_set),
-        "The global loader flags to set for this process as the loader starts the process.")
+    .def_prop_rw("global_flags_set",
+        nb::overload_cast<>(&LoadConfiguration::global_flags_set, nb::const_),
+        nb::overload_cast<uint32_t>(&LoadConfiguration::global_flags_set),
+        "The global loader flags to set for this process as the loader starts the process."_doc)
 
-    .def_property("critical_section_default_timeout",
-        static_cast<getter_t<uint32_t>>(&LoadConfiguration::critical_section_default_timeout),
-        static_cast<setter_t<uint32_t>>(&LoadConfiguration::critical_section_default_timeout),
-        "The default timeout value to use for is process’s critical sections that are abandoned.")
+    .def_prop_rw("critical_section_default_timeout",
+        nb::overload_cast<>(&LoadConfiguration::critical_section_default_timeout, nb::const_),
+        nb::overload_cast<uint32_t>(&LoadConfiguration::critical_section_default_timeout),
+        "The default timeout value to use for is process’s critical sections that are abandoned."_doc)
 
-    .def_property("decommit_free_block_threshold",
-        static_cast<getter_t<uint64_t>>(&LoadConfiguration::decommit_free_block_threshold),
-        static_cast<setter_t<uint64_t>>(&LoadConfiguration::decommit_free_block_threshold),
-        "Memory that must be freed before it is returned to the system, in bytes.")
+    .def_prop_rw("decommit_free_block_threshold",
+        nb::overload_cast<>(&LoadConfiguration::decommit_free_block_threshold, nb::const_),
+        nb::overload_cast<uint64_t>(&LoadConfiguration::decommit_free_block_threshold),
+        "Memory that must be freed before it is returned to the system, in bytes."_doc)
 
-    .def_property("decommit_total_free_threshold",
-        static_cast<getter_t<uint64_t>>(&LoadConfiguration::decommit_total_free_threshold),
-        static_cast<setter_t<uint64_t>>(&LoadConfiguration::decommit_total_free_threshold),
-        "Total amount of free memory, in bytes")
+    .def_prop_rw("decommit_total_free_threshold",
+        nb::overload_cast<>(&LoadConfiguration::decommit_total_free_threshold, nb::const_),
+        nb::overload_cast<uint64_t>(&LoadConfiguration::decommit_total_free_threshold),
+        "Total amount of free memory, in bytes"_doc)
 
-    .def_property("lock_prefix_table",
-        static_cast<getter_t<uint64_t>>(&LoadConfiguration::lock_prefix_table),
-        static_cast<setter_t<uint64_t>>(&LoadConfiguration::lock_prefix_table),
+    .def_prop_rw("lock_prefix_table",
+        nb::overload_cast<>(&LoadConfiguration::lock_prefix_table, nb::const_),
+        nb::overload_cast<uint64_t>(&LoadConfiguration::lock_prefix_table),
         "The **VA** of a list of addresses where the ``LOCK`` prefix "
-        "is used so that they can be replaced with ``NOP`` on single processor machines.")
+        "is used so that they can be replaced with ``NOP`` on single processor machines."_doc)
 
-    .def_property("maximum_allocation_size",
-        static_cast<getter_t<uint64_t>>(&LoadConfiguration::maximum_allocation_size),
-        static_cast<setter_t<uint64_t>>(&LoadConfiguration::maximum_allocation_size),
-        "Maximum allocation size, in bytes.")
+    .def_prop_rw("maximum_allocation_size",
+        nb::overload_cast<>(&LoadConfiguration::maximum_allocation_size, nb::const_),
+        nb::overload_cast<uint64_t>(&LoadConfiguration::maximum_allocation_size),
+        "Maximum allocation size, in bytes."_doc)
 
-    .def_property("virtual_memory_threshold",
-        static_cast<getter_t<uint64_t>>(&LoadConfiguration::virtual_memory_threshold),
-        static_cast<setter_t<uint64_t>>(&LoadConfiguration::virtual_memory_threshold),
-        "Maximum virtual memory size, in bytes.")
+    .def_prop_rw("virtual_memory_threshold",
+        nb::overload_cast<>(&LoadConfiguration::virtual_memory_threshold, nb::const_),
+        nb::overload_cast<uint64_t>(&LoadConfiguration::virtual_memory_threshold),
+        "Maximum virtual memory size, in bytes."_doc)
 
-    .def_property("process_affinity_mask",
-        static_cast<getter_t<uint64_t>>(&LoadConfiguration::process_affinity_mask),
-        static_cast<setter_t<uint64_t>>(&LoadConfiguration::process_affinity_mask),
+    .def_prop_rw("process_affinity_mask",
+        nb::overload_cast<>(&LoadConfiguration::process_affinity_mask, nb::const_),
+        nb::overload_cast<uint64_t>(&LoadConfiguration::process_affinity_mask),
         "Setting this field to a non-zero value is equivalent to calling "
-        "``SetProcessAffinityMask`` with this value during process startup (.exe only)")
+        "``SetProcessAffinityMask`` with this value during process startup (.exe only)"_doc)
 
-    .def_property("process_heap_flags",
-        static_cast<getter_t<uint32_t>>(&LoadConfiguration::process_heap_flags),
-        static_cast<setter_t<uint32_t>>(&LoadConfiguration::process_heap_flags),
+    .def_prop_rw("process_heap_flags",
+        nb::overload_cast<>(&LoadConfiguration::process_heap_flags, nb::const_),
+        nb::overload_cast<uint32_t>(&LoadConfiguration::process_heap_flags),
         R"delim(
         Process heap flags that correspond to the first argument of the ``HeapCreate``
         function. These flags apply to the process heap that is created during process startup.
-        )delim")
+        )delim"_doc)
 
-    .def_property("csd_version",
-        static_cast<getter_t<uint16_t>>(&LoadConfiguration::csd_version),
-        static_cast<setter_t<uint16_t>>(&LoadConfiguration::csd_version),
-        "The service pack version identifier.")
+    .def_prop_rw("csd_version",
+        nb::overload_cast<>(&LoadConfiguration::csd_version, nb::const_),
+        nb::overload_cast<uint16_t>(&LoadConfiguration::csd_version),
+        "The service pack version identifier."_doc)
 
-    .def_property("reserved1",
-        static_cast<getter_t<uint16_t>>(&LoadConfiguration::reserved1),
-        static_cast<setter_t<uint16_t>>(&LoadConfiguration::reserved1),
-        "Must be zero.")
+    .def_prop_rw("reserved1",
+        nb::overload_cast<>(&LoadConfiguration::reserved1, nb::const_),
+        nb::overload_cast<uint16_t>(&LoadConfiguration::reserved1),
+        "Must be zero."_doc)
 
-    .def_property("dependent_load_flags",
-        static_cast<getter_t<uint16_t>>(&LoadConfiguration::dependent_load_flags),
-        static_cast<setter_t<uint16_t>>(&LoadConfiguration::dependent_load_flags),
+    .def_prop_rw("dependent_load_flags",
+        nb::overload_cast<>(&LoadConfiguration::dependent_load_flags, nb::const_),
+        nb::overload_cast<uint16_t>(&LoadConfiguration::dependent_load_flags),
         "On recent the version of the structure, Microsoft renamed reserved1 to DependentLoadFlags. "
-        "This is an alias for " RST_ATTR_REF(lief.PE.LoadConfiguration.reserved1) "")
+        "This is an alias for " RST_ATTR_REF(lief.PE.LoadConfiguration.reserved1) ""_doc)
 
-    .def_property("editlist",
-        static_cast<getter_t<uint32_t>>(&LoadConfiguration::editlist),
-        static_cast<setter_t<uint32_t>>(&LoadConfiguration::editlist),
-        "Reserved for use by the system.")
+    .def_prop_rw("editlist",
+        nb::overload_cast<>(&LoadConfiguration::editlist, nb::const_),
+        nb::overload_cast<uint32_t>(&LoadConfiguration::editlist),
+        "Reserved for use by the system."_doc)
 
-    .def_property("security_cookie",
-        static_cast<getter_t<uint32_t>>(&LoadConfiguration::security_cookie),
-        static_cast<setter_t<uint32_t>>(&LoadConfiguration::security_cookie),
-        "A pointer to a cookie that is used by Visual C++ or GS implementation.")
+    .def_prop_rw("security_cookie",
+        nb::overload_cast<>(&LoadConfiguration::security_cookie, nb::const_),
+        nb::overload_cast<uint32_t>(&LoadConfiguration::security_cookie),
+        "A pointer to a cookie that is used by Visual C++ or GS implementation."_doc)
 
-    .def("__eq__", &LoadConfiguration::operator==)
-    .def("__ne__", &LoadConfiguration::operator!=)
-    .def("__hash__",
-        [] (const LoadConfiguration& config) {
-          return Hash::hash(config);
-        })
-
-
-    .def("__str__", [] (const LoadConfiguration& config)
-        {
-          std::ostringstream stream;
-          stream << config;
-          std::string str = stream.str();
-          return str;
-        });
-}
-
+    LIEF_DEFAULT_STR(LIEF::PE::LoadConfiguration);
 }
 }

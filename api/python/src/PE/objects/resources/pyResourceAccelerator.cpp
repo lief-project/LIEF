@@ -14,54 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include <sstream>
+#include <string>
+#include <nanobind/stl/string.h>
 
-#include "LIEF/PE/hash.hpp"
+#include "PE/pyPE.hpp"
+
 #include "LIEF/PE/resources/ResourceAccelerator.hpp"
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (ResourceAccelerator::*)(void) const;
-
-template<class T>
-using setter_t = void (ResourceAccelerator::*)(T);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<ResourceAccelerator>(py::module& m) {
-  py::class_<ResourceAccelerator, LIEF::Object>(m, "ResourceAccelerator")
+void create<ResourceAccelerator>(nb::module_& m) {
+  nb::class_<ResourceAccelerator, LIEF::Object>(m, "ResourceAccelerator")
 
-    .def_property_readonly("flags",
-      static_cast<getter_t<int16_t>>(&ResourceAccelerator::flags),
-      "Describe the keyboard accelerator characteristics.")
+    .def_prop_ro("flags",
+      nb::overload_cast<>(&ResourceAccelerator::flags, nb::const_),
+      "Describe the keyboard accelerator characteristics."_doc)
 
-    .def_property_readonly("ansi",
-      static_cast<getter_t<int16_t>>(&ResourceAccelerator::ansi),
-      "An ANSI character value or a virtual-key code that identifies the accelerator key.")
+    .def_prop_ro("ansi",
+      nb::overload_cast<>(&ResourceAccelerator::ansi, nb::const_),
+      "An ANSI character value or a virtual-key code that identifies the accelerator key."_doc)
 
-    .def_property_readonly("id",
-      static_cast<getter_t<uint16_t>>(&ResourceAccelerator::id),
-      "An identifier for the keyboard accelerator.")
+    .def_prop_ro("id",
+      nb::overload_cast<>(&ResourceAccelerator::id, nb::const_),
+      "An identifier for the keyboard accelerator."_doc)
 
-    .def_property_readonly("padding",
-      static_cast<getter_t<int16_t>>(&ResourceAccelerator::padding),
-      "The number of bytes inserted to ensure that the structure is aligned on a DWORD boundary.")
+    .def_prop_ro("padding",
+      nb::overload_cast<>(&ResourceAccelerator::padding, nb::const_),
+      "The number of bytes inserted to ensure that the structure is aligned on a DWORD boundary."_doc)
 
-    .def("__eq__", &ResourceAccelerator::operator==)
-    .def("__ne__", &ResourceAccelerator::operator!=)
-    .def("__hash__",
-      [] (const ResourceAccelerator& acc) {
-        return Hash::hash(acc);
-      })
-
-    .def("__str__",
-      [] (const ResourceAccelerator& acc) {
-        std::ostringstream stream;
-        stream << acc;
-        return stream.str();
-      });
-}
+    LIEF_DEFAULT_STR(LIEF::PE::ResourceAccelerator);
 }
 }

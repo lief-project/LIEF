@@ -35,11 +35,12 @@ class Binary;
 class Class;
 
 //! Class to parse an OAT file to produce an OAT::Binary
-class LIEF_API Parser : public LIEF::ELF::Parser {
+class LIEF_API Parser : public ELF::Parser {
   public:
   //! Parse an OAT file
   static std::unique_ptr<Binary> parse(const std::string& oat_file);
-  static std::unique_ptr<Binary> parse(const std::string& oat_file, const std::string& vdex_file);
+  static std::unique_ptr<Binary> parse(const std::string& oat_file,
+                                       const std::string& vdex_file);
 
   static std::unique_ptr<Binary> parse(std::vector<uint8_t> data);
 

@@ -13,62 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyELF.hpp"
+#include <string>
+#include <sstream>
+#include <nanobind/stl/string.h>
 
-#include "LIEF/ELF/hash.hpp"
+#include "ELF/pyELF.hpp"
+#include "pySafeString.hpp"
 
 #include "LIEF/ELF/DynamicSharedObject.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
 
-#include <string>
-#include <sstream>
-
-namespace LIEF {
-namespace ELF {
-
-template<class T>
-using getter_t = T (DynamicSharedObject::*)(void) const;
-
-template<class T>
-using setter_t = void (DynamicSharedObject::*)(T);
-
+namespace LIEF::ELF::py {
 
 template<>
-void create<DynamicSharedObject>(py::module& m) {
-
-  py::class_<DynamicSharedObject, DynamicEntry>(m, "DynamicSharedObject",
+void create<DynamicSharedObject>(nb::module_& m) {
+  nb::class_<DynamicSharedObject, DynamicEntry>(m, "DynamicSharedObject",
       R"delim(
       Class which represents a ``DT_SONAME`` entry in the dynamic table
       This kind of entry is usually used no name the original library.
 
       This entry is not present for executable.
-      )delim")
+      )delim"_doc)
 
-    .def(py::init<const std::string &>(),
-        "Constructor from library name",
+    .def(nb::init<const std::string &>(),
+        "Constructor from library name"_doc,
         "library_name"_a)
 
-    .def_property("name",
+    .def_prop_rw("name",
         [] (const DynamicSharedObject& obj) {
-          return safe_string_converter(obj.name());
+          return LIEF::py::safe_string(obj.name());
         },
-        static_cast<setter_t<const std::string&>>(&DynamicSharedObject::name),
-        "Return the library name")
+        nb::overload_cast<const std::string&>(&DynamicSharedObject::name),
+        "Return the library name"_doc)
 
-    .def("__eq__", &DynamicSharedObject::operator==)
-    .def("__ne__", &DynamicSharedObject::operator!=)
-    .def("__hash__",
-        [] (const DynamicSharedObject& entry) {
-          return Hash::hash(entry);
-        })
-
-    .def("__str__",
-        [] (const DynamicSharedObject& dynamicSharedObject) {
-          std::ostringstream stream;
-          stream << dynamicSharedObject;
-          return stream.str();
-        });
+    LIEF_DEFAULT_STR(LIEF::ELF::DynamicSharedObject);
 }
 
-}
 }

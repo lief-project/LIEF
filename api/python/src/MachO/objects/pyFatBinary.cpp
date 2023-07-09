@@ -13,78 +13,66 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
+#include <string>
+#include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
+#include <nanobind/stl/unique_ptr.h>
 
 #include "LIEF/MachO/FatBinary.hpp"
+#include "LIEF/MachO/Binary.hpp"
 
-#include "pyIterators.hpp"
-#include "pyMachO.hpp"
+#include "pyIterator.hpp"
+#include "MachO/pyMachO.hpp"
 
-
-namespace LIEF {
-namespace MachO {
+namespace LIEF::MachO::py {
 
 template<>
-void create<FatBinary>(py::module& m) {
+void create<FatBinary>(nb::module_& m) {
+  using namespace LIEF::py;
 
-
-  py::class_<FatBinary> fat(m, "FatBinary",
+  nb::class_<FatBinary> fat(m, "FatBinary",
       R"delim(
       Class which represent a Mach-O (fat) binary
       This object is also used for representing Mach-O binaries that are **NOT FAT**
-      )delim");
+      )delim"_doc);
 
     init_ref_iterator<FatBinary::it_binaries>(fat, "it_binaries");
 
   fat
-    .def_property_readonly("size",
-      &FatBinary::size,
-      "Number of " RST_CLASS_REF(lief.MachO.Binary) " registred")
+    .def_prop_ro("size", &FatBinary::size,
+      "Number of " RST_CLASS_REF(lief.MachO.Binary) " registred"_doc)
 
     .def("at",
-      static_cast<Binary* (FatBinary::*)(size_t)>(&FatBinary::at),
-      "Return the " RST_CLASS_REF(lief.MachO.Binary) " at the given index or None if it is not present",
+      nb::overload_cast<size_t>(&FatBinary::at),
+      "Return the " RST_CLASS_REF(lief.MachO.Binary) " at the given index or None if it is not present"_doc,
       "index"_a,
-      py::return_value_policy::reference_internal)
+      nb::rv_policy::reference_internal)
 
     .def("take",
-        static_cast<std::unique_ptr<Binary>(FatBinary::*)(CPU_TYPES)>(&FatBinary::take),
+        nb::overload_cast<CPU_TYPES>(&FatBinary::take),
         "Return the " RST_CLASS_REF(lief.MachO.Binary) " that matches the "
-        "given " RST_CLASS_REF(lief.MachO.CPU_TYPES) "",
-        "cpu"_a,
-        py::return_value_policy::take_ownership)
+        "given " RST_CLASS_REF(lief.MachO.CPU_TYPES) ""_doc,
+        "cpu"_a, nb::rv_policy::take_ownership)
 
-    .def("write",
-        &FatBinary::write,
-        "Build a Mach-O universal binary",
+    .def("write", &FatBinary::write,
+        "Build a Mach-O universal binary"_doc,
         "filename"_a)
 
-    .def("raw",
-        &FatBinary::raw,
-        "Build a Mach-O universal binary and return its bytes")
+    .def("raw", &FatBinary::raw,
+        "Build a Mach-O universal binary and return its bytes"_doc)
 
-    .def("__len__",
-        &FatBinary::size)
+    .def("__len__", &FatBinary::size)
 
     .def("__getitem__",
-        static_cast<Binary* (FatBinary::*)(size_t)>(&FatBinary::operator[]),
-        "",
-        py::return_value_policy::reference_internal)
+        nb::overload_cast<size_t>(&FatBinary::operator[]),
+        nb::rv_policy::reference_internal)
 
     .def("__iter__",
-        static_cast<FatBinary::it_binaries (FatBinary::*)(void)>(&FatBinary::begin),
-        py::return_value_policy::reference_internal)
+        nb::overload_cast<>(&FatBinary::begin),
+        nb::rv_policy::reference_internal)
 
-    .def("__str__",
-        [] (const FatBinary& fat_binary)
-        {
-          std::ostringstream stream;
-          stream << fat_binary;
-          std::string str = stream.str();
-          return str;
-        });
-
-}
+    LIEF_DEFAULT_STR(FatBinary);
 
 }
 }

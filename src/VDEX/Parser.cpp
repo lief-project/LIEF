@@ -19,7 +19,11 @@
 #include "logging.hpp"
 
 #include "LIEF/VDEX/Parser.hpp"
+#include "LIEF/VDEX/File.hpp"
 #include "LIEF/VDEX/utils.hpp"
+
+#include "LIEF/BinaryStream/VectorStream.hpp"
+
 #include "VDEX/Structures.hpp"
 
 #include "Header.tcc"

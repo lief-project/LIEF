@@ -1,6 +1,5 @@
 /* Copyright 2017 - 2023 R. Thomas
  * Copyright 2017 - 2023 Quarkslab
- * Copyright 2017 - 2021 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,119 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef PY_LIEF_PE_H_
-#define PY_LIEF_PE_H_
-
-#include <pybind11/pybind11.h>
-#include <pybind11/stl_bind.h>
-
-#include <map>
-#include <string>
-
-#include "LIEF/PE.hpp"
-
+#ifndef PY_LIEF_PE_H
+#define PY_LIEF_PE_H
 #include "pyLIEF.hpp"
 
-#define SPECIALIZE_CREATE(X)      \
-  template<>                      \
-  void create<X>(py::module&)
-
-#define CREATE(X,Y) create<X>(Y)
-
-namespace LIEF {
-namespace PE {
-
+namespace LIEF::PE::py {
 template<class T>
-void create(py::module&);
+void create(nb::module_&);
 
-void init_python_module(py::module& m);
-void init_objects(py::module&);
-void init_enums(py::module&);
-void init_utils(py::module&);
-
-SPECIALIZE_CREATE(ParserConfig);
-SPECIALIZE_CREATE(Parser);
-
-SPECIALIZE_CREATE(Binary);
-SPECIALIZE_CREATE(DosHeader);
-SPECIALIZE_CREATE(Header);
-SPECIALIZE_CREATE(OptionalHeader);
-SPECIALIZE_CREATE(RichHeader);
-SPECIALIZE_CREATE(RichEntry);
-SPECIALIZE_CREATE(DataDirectory);
-SPECIALIZE_CREATE(Section);
-SPECIALIZE_CREATE(Relocation);
-SPECIALIZE_CREATE(RelocationEntry);
-SPECIALIZE_CREATE(Export);
-SPECIALIZE_CREATE(ExportEntry);
-SPECIALIZE_CREATE(TLS);
-SPECIALIZE_CREATE(Symbol);
-SPECIALIZE_CREATE(Debug);
-SPECIALIZE_CREATE(CodeView);
-SPECIALIZE_CREATE(CodeViewPDB);
-SPECIALIZE_CREATE(Pogo);
-SPECIALIZE_CREATE(PogoEntry);
-SPECIALIZE_CREATE(Import);
-SPECIALIZE_CREATE(ImportEntry);
-SPECIALIZE_CREATE(DelayImport);
-SPECIALIZE_CREATE(DelayImportEntry);
-SPECIALIZE_CREATE(ResourceNode);
-SPECIALIZE_CREATE(ResourceData);
-SPECIALIZE_CREATE(ResourceDirectory);
-SPECIALIZE_CREATE(ResourcesManager);
-SPECIALIZE_CREATE(ResourceVersion);
-SPECIALIZE_CREATE(ResourceStringFileInfo);
-SPECIALIZE_CREATE(ResourceFixedFileInfo);
-SPECIALIZE_CREATE(ResourceVarFileInfo);
-SPECIALIZE_CREATE(LangCodeItem);
-SPECIALIZE_CREATE(ResourceIcon);
-SPECIALIZE_CREATE(ResourceStringTable);
-SPECIALIZE_CREATE(ResourceDialog);
-SPECIALIZE_CREATE(ResourceDialogItem);
-SPECIALIZE_CREATE(ResourceAccelerator);
-
-SPECIALIZE_CREATE(Signature);
-SPECIALIZE_CREATE(RsaInfo);
-SPECIALIZE_CREATE(x509);
-SPECIALIZE_CREATE(SignerInfo);
-SPECIALIZE_CREATE(Attribute);
-SPECIALIZE_CREATE(ContentInfo);
-SPECIALIZE_CREATE(ContentType);
-SPECIALIZE_CREATE(GenericType);
-SPECIALIZE_CREATE(MsSpcNestedSignature);
-SPECIALIZE_CREATE(MsSpcStatementType);
-SPECIALIZE_CREATE(PKCS9AtSequenceNumber);
-SPECIALIZE_CREATE(PKCS9CounterSignature);
-SPECIALIZE_CREATE(PKCS9MessageDigest);
-SPECIALIZE_CREATE(PKCS9SigningTime);
-SPECIALIZE_CREATE(SpcSpOpusInfo);
-
-SPECIALIZE_CREATE(CodeIntegrity);
-SPECIALIZE_CREATE(LoadConfiguration);
-SPECIALIZE_CREATE(LoadConfigurationV0);
-SPECIALIZE_CREATE(LoadConfigurationV1);
-SPECIALIZE_CREATE(LoadConfigurationV2);
-SPECIALIZE_CREATE(LoadConfigurationV3);
-SPECIALIZE_CREATE(LoadConfigurationV4);
-SPECIALIZE_CREATE(LoadConfigurationV5);
-SPECIALIZE_CREATE(LoadConfigurationV6);
-SPECIALIZE_CREATE(LoadConfigurationV7);
-SPECIALIZE_CREATE(LoadConfigurationV8);
-SPECIALIZE_CREATE(LoadConfigurationV9);
-SPECIALIZE_CREATE(LoadConfigurationV10);
-SPECIALIZE_CREATE(LoadConfigurationV11);
-
-SPECIALIZE_CREATE(ResourcesManager);
-
-SPECIALIZE_CREATE(Builder);
-
+void init_utils(nb::module_&);
 }
-}
-
-
-// Opaque containers
-PYBIND11_MAKE_OPAQUE(std::vector<LIEF::PE::LangCodeItem>)
-using dict_langcode_item = std::map<std::u16string, std::u16string>;
-PYBIND11_MAKE_OPAQUE(dict_langcode_item)
-
 #endif

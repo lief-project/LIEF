@@ -13,49 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
 
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
+#include "nanobind/extra/memoryview.hpp"
 
-namespace LIEF {
-namespace MachO {
-
-template<class T>
-using getter_t = T (FunctionStarts::*)(void) const;
-
-template<class T>
-using setter_t = void (FunctionStarts::*)(T);
-
+namespace LIEF::MachO::py {
 
 template<>
-void create<FunctionStarts>(py::module& m) {
-
-  py::class_<FunctionStarts, LoadCommand>(m, "FunctionStarts",
+void create<FunctionStarts>(nb::module_& m) {
+  nb::class_<FunctionStarts, LoadCommand>(m, "FunctionStarts",
       R"delim(
       Class which represents the LC_FUNCTION_STARTS command
 
       This command is an array of ULEB128 encoded values
-      )delim")
+      )delim"_doc)
 
-    .def_property("data_offset",
-        static_cast<getter_t<uint32_t>>(&FunctionStarts::data_offset),
-        static_cast<setter_t<uint32_t>>(&FunctionStarts::data_offset),
-        "Offset in the binary where *start functions* are located")
+    .def_prop_rw("data_offset",
+        nb::overload_cast<>(&FunctionStarts::data_offset, nb::const_),
+        nb::overload_cast<uint32_t>(&FunctionStarts::data_offset),
+        "Offset in the binary where *start functions* are located"_doc)
 
-    .def_property("data_size",
-        static_cast<getter_t<uint32_t>>(&FunctionStarts::data_size),
-        static_cast<setter_t<uint32_t>>(&FunctionStarts::data_size),
-        "Size of the functions list in the binary")
+    .def_prop_rw("data_size",
+        nb::overload_cast<>(&FunctionStarts::data_size, nb::const_),
+        nb::overload_cast<uint32_t>(&FunctionStarts::data_size),
+        "Size of the functions list in the binary"_doc)
 
-    .def_property("functions",
-        static_cast<getter_t<const std::vector<uint64_t>&>>(&FunctionStarts::functions),
-        static_cast<setter_t<const std::vector<uint64_t>&>>(&FunctionStarts::functions),
+    .def_prop_rw("functions",
+        nb::overload_cast<>(&FunctionStarts::functions, nb::const_),
+        nb::overload_cast<const std::vector<uint64_t>&>(&FunctionStarts::functions),
         R"delim(
         Addresses of every function entry point in the executable
 
@@ -64,38 +55,20 @@ void create<FunctionStarts>(py::module& m) {
         .. warning::
 
           The address is relative to the ``__TEXT`` segment
-        )delim",
-        py::return_value_policy::reference_internal)
+        )delim"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def("add_function",
-      &FunctionStarts::add_function,
-      "Add a new function",
+    .def("add_function", &FunctionStarts::add_function,
+      "Add a new function"_doc,
       "address"_a)
 
-    .def_property_readonly("content",
+    .def_prop_ro("content",
         [] (const FunctionStarts& self) {
-          span<const uint8_t> content = self.content();
-          return py::memoryview::from_memory(content.data(), content.size());
-        }, "The original content as a bytes stream")
+          const span<const uint8_t> content = self.content();
+          return nb::memoryview::from_memory(content.data(), content.size());
+        }, "The original content as a bytes stream"_doc)
 
-    .def("__eq__", &FunctionStarts::operator==)
-    .def("__ne__", &FunctionStarts::operator!=)
-    .def("__hash__",
-        [] (const FunctionStarts& func) {
-          return Hash::hash(func);
-        })
-
-
-    .def("__str__",
-        [] (const FunctionStarts& func)
-        {
-          std::ostringstream stream;
-          stream << func;
-          std::string str = stream.str();
-          return str;
-        });
-
-}
+  LIEF_DEFAULT_STR(FunctionStarts);
 
 }
 }

@@ -5,8 +5,18 @@ export CXXFLAGS='-ffunction-sections -fdata-sections -fvisibility-inlines-hidden
 export CFLAGS='-ffunction-sections -fdata-sections -static-libgcc'
 export LDFLAGS='-Wl,--gc-sections -Wl,--strip-all'
 
-$PYTHON_BINARY -m pip -vv wheel --wheel-dir=wheel_stage api/python
+BUILD_DIR=/tmp/lief-build
 
-find wheel_stage -iname "*-cp${PYTHON_VERSION}-*" -exec auditwheel repair -w dist {} \;
+$PYTHON_BINARY -m pip install tomli
 
-chown -R 1000:1000 api/python/build dist wheel_stage
+pushd /src/api/python
+PYLIEF_CONF=/src/scripts/docker/pylinux-x64.toml \
+$PYTHON_BINARY ./setup.py build --build-base=${BUILD_DIR}/base \
+                                --build-temp=${BUILD_DIR}/temp \
+                          bdist_wheel --bdist-dir=${BUILD_DIR}/bdist \
+                                      --dist-dir=/src/wheel_stage
+popd
+
+find /src/wheel_stage -iname "*-cp${PYTHON_VERSION}-*" -exec auditwheel repair -w /src/dist {} \;
+
+chown -R 1000:1000 /src/dist /src/wheel_stage

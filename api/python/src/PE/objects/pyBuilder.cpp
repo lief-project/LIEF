@@ -13,106 +13,92 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
 
+#include "pyErr.hpp"
 #include "LIEF/PE/Builder.hpp"
+#include "LIEF/PE/Binary.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 
-//template<typename Fn, typename... Args,
-//        std::enable_if_t<std::is_member_pointer<std::decay_t<Fn>>{}, int> = 0 >
-//constexpr decltype(auto) my_invoke(Fn&& f, Args&&... args)
-//    noexcept(noexcept(std::mem_fn(f)(std::forward<Args>(args)...)))
-//{
-//    return std::mem_fn(f)(std::forward<Args>(args)...);
-//}
-
-namespace LIEF {
-namespace PE {
+namespace LIEF::PE::py {
 
 template<>
-void create<Builder>(py::module& m) {
+void create<Builder>(nb::module_& m) {
+  using namespace LIEF::py;
 
-  py::class_<Builder>(m, "Builder",
+  nb::class_<Builder>(m, "Builder",
       R"delim(
       Class that is used to rebuild a raw PE binary from a PE::Binary object
-      )delim")
+      )delim"_doc)
 
-    .def(py::init<Binary&>(),
-        "Constructor that takes a " RST_CLASS_REF(lief.PE.Binary) "",
+    .def(nb::init<Binary&>(),
+        "Constructor that takes a " RST_CLASS_REF(lief.PE.Binary) ""_doc,
         "pe_binary"_a)
 
     .def("build",
-        [] (Builder& self) -> py::object {
+        [] (Builder& self) -> nb::object {
           return error_or(static_cast<ok_error_t(Builder::*)()>(&Builder::build), self);
         },
-        "Perform the build process")
+        "Perform the build process"_doc)
 
     .def("build_imports",
         &Builder::build_imports,
-        "Rebuild the import table into another section",
-        py::arg("enable") = true,
-        py::return_value_policy::reference)
+        "Rebuild the import table into another section"_doc,
+        nb::arg("enable") = true,
+        nb::rv_policy::reference_internal)
 
     .def("patch_imports",
         &Builder::patch_imports,
         "Patch the original import table in order to redirect functions to "
         "the new import table.\n\n"
-        "This setting should be used with ``build_imports`` set to ``True``",
-        py::arg("enable") = true,
-        py::return_value_policy::reference)
+        "This setting should be used with ``build_imports`` set to ``True``"_doc,
+        nb::arg("enable") = true,
+        nb::rv_policy::reference_internal)
 
     .def("build_relocations",
         &Builder::build_relocations,
-        "Rebuild the relocation table in another section",
-        py::arg("enable") = true,
-        py::return_value_policy::reference)
+        "Rebuild the relocation table in another section"_doc,
+        nb::arg("enable") = true,
+        nb::rv_policy::reference_internal)
 
     .def("build_tls",
         static_cast<Builder& (Builder::*)(bool)>(&Builder::build_tls),
-        "Rebuild TLS object in another section",
-        py::arg("enable") = true,
-        py::return_value_policy::reference)
+        "Rebuild TLS object in another section"_doc,
+        nb::arg("enable") = true,
+        nb::rv_policy::reference_internal)
 
     .def("build_resources",
         static_cast<Builder& (Builder::*)(bool)>(&Builder::build_resources),
-        "Rebuid the resources in another section",
-        py::arg("enable") = true,
-        py::return_value_policy::reference)
+        "Rebuid the resources in another section"_doc,
+        nb::arg("enable") = true,
+        nb::rv_policy::reference_internal)
 
     .def("build_overlay",
         static_cast<Builder& (Builder::*)(bool)>(&Builder::build_overlay),
-        "Rebuild the binary's overlay",
-        py::arg("enable") = true,
-        py::return_value_policy::reference)
+        "Rebuild the binary's overlay"_doc,
+        nb::arg("enable") = true,
+        nb::rv_policy::reference_internal)
 
     .def("build_dos_stub",
         static_cast<Builder& (Builder::*)(bool)>(&Builder::build_dos_stub),
-        "Rebuild the DOS stub",
-        py::arg("enable") = true,
-        py::return_value_policy::reference)
+        "Rebuild the DOS stub"_doc,
+        nb::arg("enable") = true,
+        nb::rv_policy::reference_internal)
 
     .def("write",
         static_cast<void (Builder::*)(const std::string&) const>(&Builder::write),
-        "Write the build result into the ``output`` file",
+        "Write the build result into the ``output`` file"_doc,
         "output"_a)
 
     .def("get_build",
         &Builder::get_build,
-        "Return the build result as a ``list`` of bytes",
-        py::return_value_policy::reference_internal)
+        "Return the build result as a ``list`` of bytes"_doc,
+        nb::rv_policy::reference_internal)
 
-
-    .def("__str__",
-        [] (const Builder& builder) {
-          std::ostringstream stream;
-          stream << builder;
-          std::string str = stream.str();
-          return str;
-        });
-
-}
-
+    LIEF_DEFAULT_STR(LIEF::PE::Builder);
 }
 }

@@ -4,7 +4,7 @@ OAT
 Utilities
 *********
 
-.. autofunction:: lief.OAT.is_oat
+.. autofunction:: lief.is_oat
 
 .. autofunction:: lief.OAT.version
 

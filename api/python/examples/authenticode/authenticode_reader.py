@@ -257,7 +257,7 @@ def main():
     args = parser.parse_args()
     lief.logging.set_level(args.main_verbosity)
 
-    if lief.PE.is_pe(args.file):
+    if lief.is_pe(args.file):
         binary = None
         try:
             binary: lief.PE.Binary = lief.PE.parse(args.file)

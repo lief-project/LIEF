@@ -14,44 +14,19 @@
  * limitations under the License.
  */
 #include "LIEF/DEX/CodeInfo.hpp"
-#include "LIEF/DEX/hash.hpp"
 
-#include "pyDEX.hpp"
+#include "DEX/pyDEX.hpp"
 
+#include <string>
 #include <sstream>
 
-namespace LIEF {
-namespace DEX {
-
-template<class T>
-using getter_t = T (CodeInfo::*)(void) const;
-
-template<class T>
-using no_const_getter_t = T (CodeInfo::*)(void);
-
-template<class T>
-using setter_t = void (CodeInfo::*)(T);
-
+namespace LIEF::DEX::py {
 
 template<>
-void create<CodeInfo>(py::module& m) {
+void create<CodeInfo>(nb::module_& m) {
 
-  py::class_<CodeInfo, LIEF::Object>(m, "CodeInfo", "DEX CodeInfo representation")
-
-    .def("__eq__", &CodeInfo::operator==)
-    .def("__ne__", &CodeInfo::operator!=)
-    .def("__hash__",
-        [] (const CodeInfo& cinfo) {
-          return Hash::hash(cinfo);
-        })
-
-    .def("__str__",
-        [] (const CodeInfo& cinfo) {
-          std::ostringstream stream;
-          stream << cinfo;
-          return stream.str();
-        });
-}
+  nb::class_<CodeInfo, LIEF::Object>(m, "CodeInfo", "DEX CodeInfo representation"_doc)
+    LIEF_DEFAULT_STR(CodeInfo);
 
 }
 }

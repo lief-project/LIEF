@@ -13,30 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
-
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/signature/SignerInfo.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
+#include "LIEF/PE/signature/x509.hpp"
 
-#include "pyPE.hpp"
-#include "pyIterators.hpp"
+#include "PE/pyPE.hpp"
+#include "pyIterator.hpp"
+#include "pySafeString.hpp"
 
-namespace LIEF {
-namespace PE {
+#include <string>
+#include <sstream>
+#include <nanobind/stl/string.h>
 
-template<class T>
-using getter_t = T (SignerInfo::*)(void) const;
-
-template<class T>
-using setter_t = void (SignerInfo::*)(T);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<SignerInfo>(py::module& m) {
+void create<SignerInfo>(nb::module_& m) {
+  using namespace LIEF::py;
 
-  py::class_<SignerInfo, LIEF::Object> signer(m, "SignerInfo",
+  nb::class_<SignerInfo, LIEF::Object> signer(m, "SignerInfo",
     R"delim(
     SignerInfo as described in the `RFC 2315 #Section 9.2 <https://tools.ietf.org/html/rfc2315#section-9.2>`_
 
@@ -53,58 +48,57 @@ void create<SignerInfo>(py::module& m) {
       }
 
       EncryptedDigest ::= OCTET STRING
-    )delim");
-
+    )delim"_doc);
 
   init_ref_iterator<SignerInfo::it_const_attributes_t>(signer, "it_const_attributes_t");
 
   signer
-    .def_property_readonly("version",
+    .def_prop_ro("version",
         &SignerInfo::version,
-        "Should be 1")
+        "Should be 1"_doc)
 
-    .def_property_readonly("serial_number",
-        [] (const SignerInfo& info) -> py::bytes {
+    .def_prop_ro("serial_number",
+        [] (const SignerInfo& info) -> nb::bytes {
           const std::vector<uint8_t>& data = info.serial_number();
-          return py::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+          return nb::bytes(reinterpret_cast<const char*>(data.data()), data.size());
         },
-        "The X509 serial number used to sign the signed-data (see: :attr:`lief.PE.x509.serial_number`)")
+        "The X509 serial number used to sign the signed-data (see: :attr:`lief.PE.x509.serial_number`)"_doc)
 
-    .def_property_readonly("issuer",
+    .def_prop_ro("issuer",
         [] (const SignerInfo& object) {
-          return safe_string_converter(object.issuer());
+          return safe_string(object.issuer());
         },
-        "The X509 issuer used to sign the signed-data (see: :attr:`lief.PE.x509.issuer`)",
-        py::return_value_policy::copy)
+        "The X509 issuer used to sign the signed-data (see: :attr:`lief.PE.x509.issuer`)"_doc,
+        nb::rv_policy::copy)
 
-    .def_property_readonly("digest_algorithm",
+    .def_prop_ro("digest_algorithm",
         &SignerInfo::digest_algorithm,
         "Algorithm (" RST_CLASS_REF(lief.PE.ALGORITHMS) ") used to hash the file. "
         "This value should match " RST_ATTR_REF_FULL(ContentInfo.digest_algorithm) " "
-        "and " RST_ATTR_REF_FULL(Signature.digest_algorithm) "")
+        "and " RST_ATTR_REF_FULL(Signature.digest_algorithm) ""_doc)
 
-    .def_property_readonly("encryption_algorithm",
+    .def_prop_ro("encryption_algorithm",
         &SignerInfo::encryption_algorithm,
-        "Return algorithm (" RST_CLASS_REF(lief.PE.ALGORITHMS) ") used to encrypt the digest")
+        "Return algorithm (" RST_CLASS_REF(lief.PE.ALGORITHMS) ") used to encrypt the digest"_doc)
 
-    .def_property_readonly("encrypted_digest",
+    .def_prop_ro("encrypted_digest",
         [] (const SignerInfo& info) {
           const std::vector<uint8_t>& data = info.encrypted_digest();
-          return py::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+          return nb::bytes(reinterpret_cast<const char*>(data.data()), data.size());
         },
-        "Return the signature created by the signing certificate's private key")
+        "Return the signature created by the signing certificate's private key"_doc)
 
-    .def_property_readonly("authenticated_attributes",
+    .def_prop_ro("authenticated_attributes",
         &SignerInfo::authenticated_attributes,
         "Return an iterator over the authenticated attributes ("
-        "" RST_CLASS_REF(lief.PE.Attribute) ")",
-        py::return_value_policy::reference)
+        "" RST_CLASS_REF(lief.PE.Attribute) ")"_doc,
+        nb::keep_alive<0, 1>())
 
-    .def_property_readonly("unauthenticated_attributes",
+    .def_prop_ro("unauthenticated_attributes",
         &SignerInfo::unauthenticated_attributes,
         "Return an iterator over the unauthenticated attributes ("
-        "" RST_CLASS_REF(lief.PE.Attribute) ")",
-        py::return_value_policy::reference)
+        "" RST_CLASS_REF(lief.PE.Attribute) ")"_doc,
+        nb::keep_alive<0, 1>())
 
     .def("get_attribute",
         &SignerInfo::get_attribute,
@@ -113,9 +107,8 @@ void create<SignerInfo>(py::module& m) {
         given :class:`lief.PE.SIG_ATTRIBUTE_TYPES`
         It returns **the first** entry that matches the given type. If it can't be
         found, it returns None
-        )delim",
-        "type"_a,
-        py::return_value_policy::reference)
+        )delim"_doc,
+        "type"_a, nb::rv_policy::reference_internal)
 
     .def("get_auth_attribute",
         &SignerInfo::get_auth_attribute,
@@ -124,9 +117,8 @@ void create<SignerInfo>(py::module& m) {
         given :class:`lief.PE.SIG_ATTRIBUTE_TYPES`
         It returns **the first** entry that matches the given type. If it can't be
         found, it returns None
-        )delim",
-        "type"_a,
-        py::return_value_policy::reference)
+        )delim"_doc,
+        "type"_a, nb::rv_policy::reference_internal)
 
     .def("get_unauth_attribute",
         &SignerInfo::get_unauth_attribute,
@@ -135,31 +127,16 @@ void create<SignerInfo>(py::module& m) {
         given :class:`lief.PE.SIG_ATTRIBUTE_TYPES`
         It returns **the first** entry that matches the given type. If it can't be
         found, it returns a nullptr
-        )delim",
-        "type"_a,
-        py::return_value_policy::reference)
+        )delim"_doc,
+        "type"_a, nb::rv_policy::reference_internal)
 
-    .def_property_readonly("cert",
-        static_cast<x509*(SignerInfo::*)()>(&SignerInfo::cert),
-        "" RST_CLASS_REF(lief.PE.x509) " certificate used by this signer. If it can't be found, it returns None",
-        py::return_value_policy::reference)
+    .def_prop_ro("cert",
+        nb::overload_cast<>(&SignerInfo::cert),
+        "" RST_CLASS_REF(lief.PE.x509) " certificate used by this signer. If it can't be found, it returns None"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def("__hash__",
-        [] (const SignerInfo& obj) {
-          return Hash::hash(obj);
-        })
-
-    .def("__str__",
-        [] (const SignerInfo& signer_info)
-        {
-          std::ostringstream stream;
-          stream << signer_info;
-          std::string str =  stream.str();
-          return str;
-        });
-
+      LIEF_DEFAULT_STR(SignerInfo);
 }
 
-}
 }
 

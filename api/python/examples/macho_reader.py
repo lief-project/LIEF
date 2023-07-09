@@ -598,26 +598,11 @@ def print_relocations(binary):
 
     for reloc in binary.relocations:
         type_str = ""
-        if reloc.origin == lief.MachO.RELOCATION_ORIGINS.DYLDINFO:
-            type_str = str(lief.MachO.REBASE_TYPES(reloc.type)).split(".")[-1]
-
-        if reloc.origin == lief.MachO.RELOCATION_ORIGINS.RELOC_TABLE:
-            if reloc.architecture == MachO.CPU_TYPES.x86:
-                type_str = str(MachO.X86_RELOCATION(reloc.type))
-
-            if reloc.architecture == MachO.CPU_TYPES.x86_64:
-                type_str = str(MachO.X86_64_RELOCATION(reloc.type))
-
-            if reloc.architecture == MachO.CPU_TYPES.ARM:
-                type_str = str(MachO.ARM_RELOCATION(reloc.type))
-
-            if reloc.architecture == MachO.CPU_TYPES.ARM64:
-                type_str = str(MachO.ARM64_RELOCATION(reloc.type))
-
-            if reloc.architecture == MachO.CPU_TYPES.POWERPC:
-                type_str = str(MachO.PPC_RELOCATION(reloc.type))
-
-            type_str = type_str.split(".")[-1]
+        rtype = reloc.type
+        if isinstance(rtype, int):
+            type_str = str(rtype)
+        else:
+            type_str = str(rtype).split(".")[-1]
 
         symbol_name = ""
         if reloc.has_symbol:
@@ -1019,9 +1004,6 @@ def main():
         if args.show_chained_fixups or args.show_all:
             print_chained_fixups(binary)
 
-
-    sys.exit(EXIT_STATUS)
-
-
 if __name__ == "__main__":
     main()
+    sys.exit(EXIT_STATUS)

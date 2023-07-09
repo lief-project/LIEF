@@ -8,6 +8,14 @@ import pathlib
 import stat
 from typing import Tuple
 
+import importlib.util
+
+def import_from_file(module_name: str, file_path: pathlib.Path):
+    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
 def lief_samples_dir() -> str:
     dir = os.getenv("LIEF_SAMPLES_DIR", None)
     if dir is None:

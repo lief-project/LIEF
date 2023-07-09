@@ -13,100 +13,80 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
+#include "nanobind/extra/memoryview.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/resources/ResourceIcon.hpp"
 
+#include <vector>
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_t = T (ResourceIcon::*)(void) const;
-
-template<class T>
-using setter_t = void (ResourceIcon::*)(T);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<ResourceIcon>(py::module& m) {
-  py::class_<ResourceIcon, LIEF::Object>(m, "ResourceIcon")
-    .def_property("id",
-        static_cast<getter_t<uint32_t>>(&ResourceIcon::id),
-        static_cast<setter_t<uint32_t>>(&ResourceIcon::id),
-        "Id associated with the icon")
+void create<ResourceIcon>(nb::module_& m) {
+  nb::class_<ResourceIcon, LIEF::Object>(m, "ResourceIcon")
+    .def_prop_rw("id",
+        nb::overload_cast<>(&ResourceIcon::id, nb::const_),
+        nb::overload_cast<uint32_t>(&ResourceIcon::id),
+        "Id associated with the icon"_doc)
 
-    .def_property("lang",
-        static_cast<getter_t<RESOURCE_LANGS>>(&ResourceIcon::lang),
-        static_cast<setter_t<RESOURCE_LANGS>>(&ResourceIcon::lang),
-        "Language (" RST_CLASS_REF(lief.PE.RESOURCE_LANGS) ") associated with the icon")
+    .def_prop_rw("lang",
+        nb::overload_cast<>(&ResourceIcon::lang, nb::const_),
+        nb::overload_cast<RESOURCE_LANGS>(&ResourceIcon::lang),
+        "Language (" RST_CLASS_REF(lief.PE.RESOURCE_LANGS) ") associated with the icon"_doc)
 
-    .def_property("sublang",
-        static_cast<getter_t<RESOURCE_SUBLANGS>>(&ResourceIcon::sublang),
-        static_cast<setter_t<RESOURCE_SUBLANGS>>(&ResourceIcon::sublang),
-        "Sub language (" RST_CLASS_REF(lief.PE.RESOURCE_SUBLANGS) ") associated with the icon")
+    .def_prop_rw("sublang",
+        nb::overload_cast<>(&ResourceIcon::sublang, nb::const_),
+        nb::overload_cast<RESOURCE_SUBLANGS>(&ResourceIcon::sublang),
+        "Sub language (" RST_CLASS_REF(lief.PE.RESOURCE_SUBLANGS) ") associated with the icon"_doc)
 
-    .def_property("width",
-        static_cast<getter_t<uint8_t>>(&ResourceIcon::width),
-        static_cast<setter_t<uint8_t>>(&ResourceIcon::width),
-        "Width in pixels of the image")
+    .def_prop_rw("width",
+        nb::overload_cast<>(&ResourceIcon::width, nb::const_),
+        nb::overload_cast<uint8_t>(&ResourceIcon::width),
+        "Width in pixels of the image"_doc)
 
-    .def_property("height",
-        static_cast<getter_t<uint8_t>>(&ResourceIcon::height),
-        static_cast<setter_t<uint8_t>>(&ResourceIcon::height),
-        "Height in pixels of the image")
+    .def_prop_rw("height",
+        nb::overload_cast<>(&ResourceIcon::height, nb::const_),
+        nb::overload_cast<uint8_t>(&ResourceIcon::height),
+        "Height in pixels of the image"_doc)
 
-    .def_property("color_count",
-        static_cast<getter_t<uint8_t>>(&ResourceIcon::color_count),
-        static_cast<setter_t<uint8_t>>(&ResourceIcon::color_count),
-        "Number of colors in image (0 if >=8bpp)")
+    .def_prop_rw("color_count",
+        nb::overload_cast<>(&ResourceIcon::color_count, nb::const_),
+        nb::overload_cast<uint8_t>(&ResourceIcon::color_count),
+        "Number of colors in image (0 if >=8bpp)"_doc)
 
-    .def_property("reserved",
-        static_cast<getter_t<uint8_t>>(&ResourceIcon::reserved),
-        static_cast<setter_t<uint8_t>>(&ResourceIcon::reserved),
-        "Reserved (must be 0)")
+    .def_prop_rw("reserved",
+        nb::overload_cast<>(&ResourceIcon::reserved, nb::const_),
+        nb::overload_cast<uint8_t>(&ResourceIcon::reserved),
+        "Reserved (must be 0)"_doc)
 
-    .def_property("planes",
-        static_cast<getter_t<uint16_t>>(&ResourceIcon::planes),
-        static_cast<setter_t<uint16_t>>(&ResourceIcon::planes),
-        "Color Planes")
+    .def_prop_rw("planes",
+        nb::overload_cast<>(&ResourceIcon::planes, nb::const_),
+        nb::overload_cast<uint16_t>(&ResourceIcon::planes),
+        "Color Planes"_doc)
 
-    .def_property("bit_count",
-        static_cast<getter_t<uint16_t>>(&ResourceIcon::bit_count),
-        static_cast<setter_t<uint16_t>>(&ResourceIcon::bit_count),
-        "Bits per pixel")
+    .def_prop_rw("bit_count",
+        nb::overload_cast<>(&ResourceIcon::bit_count, nb::const_),
+        nb::overload_cast<uint16_t>(&ResourceIcon::bit_count),
+        "Bits per pixel"_doc)
 
-    .def_property("pixels",
+    .def_prop_rw("pixels",
         [] (ResourceIcon& self) {
-          span<const uint8_t> content = self.pixels();
-          return py::memoryview::from_memory(content.data(), content.size());
+          const span<const uint8_t> content = self.pixels();
+          return nb::memoryview::from_memory(content.data(), content.size());
         },
-        static_cast<setter_t<const std::vector<uint8_t>&>>(&ResourceIcon::pixels))
+        nb::overload_cast<const std::vector<uint8_t>&>(&ResourceIcon::pixels))
 
     .def("save",
         &ResourceIcon::save,
-        "Save the icon to the given filepath",
+        "Save the icon to the given filepath"_doc,
         "filepath"_a)
 
-    .def("__eq__", &ResourceIcon::operator==)
-    .def("__ne__", &ResourceIcon::operator!=)
-    .def("__hash__",
-        [] (const ResourceIcon& icon) {
-          return Hash::hash(icon);
-        })
-
-    .def("__str__",
-        [] (const ResourceIcon& icon) {
-          std::ostringstream stream;
-          stream << icon;
-          std::string str = stream.str();
-          return str;
-        });
+    LIEF_DEFAULT_STR(LIEF::PE::ResourceIcon);
 }
 
-}
 }
 

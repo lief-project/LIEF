@@ -15,31 +15,24 @@
  */
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/map.h>
 
-#include "pyELF.hpp"
+#include "ELF/pyELF.hpp"
 
-#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreAuxv.hpp"
-
 #include "LIEF/ELF/EnumToString.hpp"
 
 #include "enums_wrapper.hpp"
 
 #define PY_ENUM(x) LIEF::ELF::to_string(x), x
 
-namespace LIEF {
-namespace ELF {
-
-template<class T>
-using getter_t = T (CoreAuxv::*)(void) const;
-
-template<class T>
-using setter_t = void (CoreAuxv::*)(T);
+namespace LIEF::ELF::py {
 
 template<>
-void create<CoreAuxv>(py::module& m) {
+void create<CoreAuxv>(nb::module_& m) {
 
-  py::class_<CoreAuxv, NoteDetails> cls(m, "CoreAuxv");
+  nb::class_<CoreAuxv, NoteDetails> cls(m, "CoreAuxv");
   LIEF::enum_<AUX_TYPE>(cls, "TYPES")
     .value(PY_ENUM(AUX_TYPE::AT_NULL))
     .value(PY_ENUM(AUX_TYPE::AT_IGNORE))
@@ -75,68 +68,44 @@ void create<CoreAuxv>(py::module& m) {
     .value(PY_ENUM(AUX_TYPE::AT_L1D_CACHESHAPE));
 
   cls
-    .def_property("values",
-        static_cast<getter_t<const CoreAuxv::val_context_t&>>(&CoreAuxv::values),
-        static_cast<setter_t<const CoreAuxv::val_context_t&>>(&CoreAuxv::values),
-        "Current values as a dictionarry for which keys are AUXV types")
+    .def_prop_rw("values",
+        nb::overload_cast<>(&CoreAuxv::values, nb::const_),
+        nb::overload_cast<const CoreAuxv::val_context_t&>(&CoreAuxv::values),
+        "Current values as a dictionary for which keys are AUXV types"_doc)
 
     .def("get",
-        [] (const CoreAuxv& status, AUX_TYPE atype) -> py::object {
+        [] (const CoreAuxv& status, AUX_TYPE atype) -> nb::object {
           bool error;
-          uint64_t val = status.get(atype, &error);
+          const uint64_t val = status.get(atype, &error);
           if (error) {
-            return py::none();
+            return nb::none();
           }
-          return py::int_(val);
+          return nb::int_(val);
         },
-        "Return the type value",
+        "Return the type value"_doc,
         "type"_a)
 
     .def("set",
         &CoreAuxv::set,
-        "Set type value",
+        "Set type value"_doc,
         "type"_a, "value"_a)
 
     .def("has",
         &CoreAuxv::has,
-        "Check if a value is associated with the given type",
+        "Check if a value is associated with the given type"_doc,
         "type"_a)
 
     .def("__getitem__",
         &CoreAuxv::operator[],
-        "",
-        py::return_value_policy::copy)
+        nb::rv_policy::copy)
 
     .def("__setitem__",
         [] (CoreAuxv& status, AUX_TYPE atype, uint64_t val) {
           status.set(atype, val);
-        },
-        "")
-
-    .def("__contains__",
-        &CoreAuxv::has,
-        "")
-
-    .def("__eq__", &CoreAuxv::operator==)
-    .def("__ne__", &CoreAuxv::operator!=)
-    .def("__hash__",
-        [] (const CoreAuxv& note) {
-          return Hash::hash(note);
         })
 
-    .def("__str__",
-        [] (const CoreAuxv& note)
-        {
-          std::ostringstream stream;
-          stream << note;
-          std::string str = stream.str();
-          return str;
-        });
+    .def("__contains__", &CoreAuxv::has)
 
-
-
-
-
+    LIEF_DEFAULT_STR(LIEF::ELF::CoreAuxv);
 }
-} // namespace ELF
-} // namespace LIEF
+}

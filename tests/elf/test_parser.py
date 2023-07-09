@@ -24,6 +24,8 @@ def test_issue_922():
     section = lief.ELF.parse(libcrypto_path, config)
     assert len(section.symbols) == 14757
 
+    assert section.virtual_address_to_offset(1000000000000) == lief.lief_errors.conversion_error
+
 def test_tiny():
     tiny = lief.parse(get_sample('ELF/ELF32_x86_binary_tiny01.bin'))
     assert len(tiny.segments) == 1
@@ -67,6 +69,14 @@ def test_corrupted_identity():
     target = lief.parse(get_sample('ELF/hello_ei_data.elf'))
     assert len(target.segments) == 10
 
+
+def test_identity():
+    target = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_all.bin'))
+    target.header.identity = "foo"
+    # TODO(romain)
+    #target.header.identity = b"foo"
+    #target.header.identity = [1, 2, 3]
+
 def test_issue_845():
     """
     https://github.com/lief-project/LIEF/issues/845
@@ -87,3 +97,12 @@ def test_issue_897():
     rel2 = target.get_relocation(0x1b50)
     assert rel2.symbol.name == "__init_array_end"
     assert rel2.symbol_table.name == ".symtab"
+
+
+def test_io():
+    class Wrong:
+        pass
+    wrong_io = Wrong()
+    assert lief.ELF.parse(wrong_io) is None
+    with open(get_sample('ELF/test_897.elf'), "rb") as f:
+        assert lief.ELF.parse(f) is not None

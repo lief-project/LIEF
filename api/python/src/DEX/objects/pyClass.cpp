@@ -13,31 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/DEX/Class.hpp"
-#include "LIEF/DEX/hash.hpp"
 
-#include "pyIterators.hpp"
-#include "pyDEX.hpp"
+#include "DEX/pyDEX.hpp"
+
+#include "LIEF/DEX/Class.hpp"
+#include "LIEF/DEX/Field.hpp"
+#include "LIEF/DEX/Method.hpp"
+
+#include "pyIterator.hpp"
 
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
+#include <nanobind/stl/unordered_map.h>
 
-namespace LIEF {
-namespace DEX {
-
-template<class T>
-using getter_t = T (Class::*)(void) const;
-
-template<class T>
-using no_const_getter_t = T (Class::*)(void);
-
-template<class T>
-using setter_t = void (Class::*)(T);
-
+namespace LIEF::DEX::py {
 
 template<>
-void create<Class>(py::module& m) {
+void create<Class>(nb::module_& m) {
+  using namespace LIEF::py;
 
-  py::class_<Class, LIEF::Object> cls(m, "Class", "DEX Class representation");
+  nb::class_<Class, LIEF::Object> cls(m, "Class", "DEX Class representation"_doc);
 
   init_ref_iterator<Class::it_methods>(cls, "it_methods");
   init_ref_iterator<Class::it_fields>(cls, "it_fields");
@@ -46,84 +42,55 @@ void create<Class>(py::module& m) {
   init_ref_iterator<Class::it_named_fields>(cls, "it_named_fields");
 
   cls
-    .def_property_readonly("fullname",
-        &Class::fullname,
-        "Mangled class name (e.g. ``Lcom/example/android/MyActivity;``)")
+    .def_prop_ro("fullname", &Class::fullname,
+        "Mangled class name (e.g. ``Lcom/example/android/MyActivity;``)"_doc)
 
-    .def_property_readonly("pretty_name",
-        &Class::pretty_name,
-        "Demangled class name (e.g. ``com.example.android.MyActivity``)")
+    .def_prop_ro("pretty_name", &Class::pretty_name,
+        "Demangled class name (e.g. ``com.example.android.MyActivity``)"_doc)
 
-    .def_property_readonly("name",
-        &Class::name,
-        "Class name (e.g. ``MyActivity``)")
+    .def_prop_ro("name", &Class::name,
+        "Class name (e.g. ``MyActivity``)"_doc)
 
-    .def_property_readonly("source_filename",
-        &Class::source_filename,
-        "Original filename")
+    .def_prop_ro("source_filename", &Class::source_filename,
+        "Original filename"_doc)
 
-    .def_property_readonly("package_name",
-        &Class::package_name,
-        "Package Name (e.g. ``com.example.android``)")
+    .def_prop_ro("package_name", &Class::package_name,
+        "Package Name (e.g. ``com.example.android``)"_doc)
 
-    .def_property_readonly("has_parent",
-        &Class::has_parent,
-        "True if the current class extends another one")
+    .def_prop_ro("has_parent", &Class::has_parent,
+        "True if the current class extends another one"_doc)
 
-    .def_property_readonly("parent",
-        static_cast<no_const_getter_t<Class*>>(&Class::parent),
-        "" RST_CLASS_REF(lief.DEX.Class) " parent class")
+    .def_prop_ro("parent", nb::overload_cast<>(&Class::parent),
+        "" RST_CLASS_REF(lief.DEX.Class) " parent class"_doc)
 
-    .def_property_readonly("methods",
-        static_cast<no_const_getter_t<Class::it_methods>>(&Class::methods),
-        "Iterator over " RST_CLASS_REF(lief.DEX.Method) " implemented in this class")
+    .def_prop_ro("methods", nb::overload_cast<>(&Class::methods),
+        "Iterator over " RST_CLASS_REF(lief.DEX.Method) " implemented in this class"_doc)
 
-    .def("get_method",
-        static_cast<Class::it_named_methods(Class::*)(const std::string&)>(&Class::methods),
-        "Iterator over " RST_CLASS_REF(lief.DEX.Method) " (s) having the given name",
+    .def("get_method", nb::overload_cast<const std::string&>(&Class::methods),
+        "Iterator over " RST_CLASS_REF(lief.DEX.Method) " (s) having the given name"_doc,
         "name"_a)
 
-    .def_property_readonly("fields",
-        static_cast<no_const_getter_t<Class::it_fields>>(&Class::fields),
-        "Iterator over " RST_CLASS_REF(lief.DEX.Field) " in this class")
+    .def_prop_ro("fields", nb::overload_cast<>(&Class::fields),
+        "Iterator over " RST_CLASS_REF(lief.DEX.Field) " in this class"_doc)
 
-    .def("get_field",
-        static_cast<Class::it_named_fields(Class::*)(const std::string&)>(&Class::fields),
-        "Iterator over " RST_CLASS_REF(lief.DEX.Field) " (s) having the given name",
+    .def("get_field", nb::overload_cast<const std::string&>(&Class::fields),
+        "Iterator over " RST_CLASS_REF(lief.DEX.Field) " (s) having the given name"_doc,
         "name"_a)
 
-    .def_property_readonly("access_flags",
-        static_cast<getter_t<Class::access_flags_list_t>>(&Class::access_flags),
-        "List of " RST_CLASS_REF(lief.DEX.ACCESS_FLAGS) "")
+    .def_prop_ro("access_flags",
+        nb::overload_cast<>(&Class::access_flags, nb::const_),
+        "List of " RST_CLASS_REF(lief.DEX.ACCESS_FLAGS) ""_doc)
 
-    .def_property_readonly("dex2dex_info",
-        &Class::dex2dex_info,
-        "De-optimize information")
+    .def_prop_ro("dex2dex_info", &Class::dex2dex_info,
+        "De-optimize information"_doc)
 
-    .def_property_readonly("index",
-        &Class::index,
-        "Original index in the DEX class pool")
+    .def_prop_ro("index", &Class::index,
+        "Original index in the DEX class pool"_doc)
 
-    .def("has",
-        static_cast<bool(Class::*)(ACCESS_FLAGS) const>(&Class::has),
-        "Check if the given " RST_CLASS_REF(lief.DEX.ACCESS_FLAGS) " is present",
+    .def("has", nb::overload_cast<ACCESS_FLAGS>(&Class::has, nb::const_),
+        "Check if the given " RST_CLASS_REF(lief.DEX.ACCESS_FLAGS) " is present"_doc,
         "flag"_a)
 
-
-    .def("__eq__", &Class::operator==)
-    .def("__ne__", &Class::operator!=)
-    .def("__hash__",
-        [] (const Class& cls) {
-          return Hash::hash(cls);
-        })
-
-    .def("__str__",
-        [] (const Class& cls) {
-          std::ostringstream stream;
-          stream << cls;
-          return stream.str();
-        });
-}
-
+    LIEF_DEFAULT_STR(Class);
 }
 }

@@ -13,51 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/TwoLevelHints.hpp"
 
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
+#include "nanobind/extra/memoryview.hpp"
+#include "pyIterator.hpp"
 
-namespace LIEF {
-namespace MachO {
-
+namespace LIEF::MachO::py {
 template<>
-void create<TwoLevelHints>(py::module& m) {
+void create<TwoLevelHints>(nb::module_& m) {
+  using namespace LIEF::py;
 
-  py::class_<TwoLevelHints, LoadCommand> cmd(m, "TwoLevelHints",
-    R"delim(
-    Class which represents the `LC_TWOLEVEL_HINTS` command
-    )delim");
+  nb::class_<TwoLevelHints, LoadCommand> cmd(m, "TwoLevelHints",
+    R"delim(Class which represents the `LC_TWOLEVEL_HINTS` command)delim"_doc);
+
+  init_ref_iterator<TwoLevelHints::it_hints_t>(cmd, "it_hints_t");
 
   cmd
-    .def_property_readonly("hints",
-        py::overload_cast<>(&TwoLevelHints::hints))
-    .def_property_readonly("content",
+    .def_prop_ro("hints", nb::overload_cast<>(&TwoLevelHints::hints))
+    .def_prop_ro("content",
         [] (const TwoLevelHints& self) {
-          span<const uint8_t> content = self.content();
-          return py::memoryview::from_memory(content.data(), content.size());
-        }, "The original content as a bytes stream")
+          const span<const uint8_t> content = self.content();
+          return nb::memoryview::from_memory(content.data(), content.size());
+        }, "The original content as a bytes stream"_doc)
 
-    .def("__eq__", &TwoLevelHints::operator==)
-    .def("__ne__", &TwoLevelHints::operator!=)
-    .def("__hash__",
-        [] (const TwoLevelHints& two) {
-          return Hash::hash(two);
-        })
-
-    .def("__str__",
-        [] (const TwoLevelHints& two) {
-          std::ostringstream stream;
-          stream << two;
-          return stream.str();
-        });
-
-}
+  LIEF_DEFAULT_STR(TwoLevelHints);
 
 }
 }

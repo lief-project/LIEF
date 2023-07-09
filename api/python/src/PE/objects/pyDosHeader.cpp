@@ -13,121 +13,94 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/DosHeader.hpp"
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-namespace LIEF {
-namespace PE {
-
-template<class T>
-using getter_abs_t = T (DosHeader::*)(void) const;
-
-template<class T>
-using setter_abs_t = void (DosHeader::*)(T);
-
-using getter_t = getter_abs_t<uint16_t>;
-using setter_t = setter_abs_t<uint16_t>;
-
+namespace LIEF::PE::py {
 
 template<>
-void create<DosHeader>(py::module& m) {
-  py::class_<DosHeader, LIEF::Object>(m, "DosHeader",
+void create<DosHeader>(nb::module_& m) {
+  nb::class_<DosHeader, LIEF::Object>(m, "DosHeader",
       R"delim(
       Class which represents the DosHeader, the **first** structure presents at the beginning of a PE file.
 
       Most of the attributes of this structures are not relevant, except :attr:`~lief.PE.DosHeader.addressof_new_exeheader`
-      )delim")
-    .def(py::init<>())
-    .def_property("magic",
-        static_cast<getter_t>(&DosHeader::magic),
-        static_cast<setter_t>(&DosHeader::magic))
+      )delim"_doc)
+    .def(nb::init<>())
+    .def_prop_rw("magic",
+        nb::overload_cast<>(&DosHeader::magic, nb::const_),
+        nb::overload_cast<uint16_t>(&DosHeader::magic))
 
-    .def_property("used_bytes_in_the_last_page",
-        static_cast<getter_t>(&DosHeader::used_bytes_in_the_last_page),
-        static_cast<setter_t>(&DosHeader::used_bytes_in_the_last_page))
+    .def_prop_rw("used_bytes_in_the_last_page",
+        nb::overload_cast<>(&DosHeader::used_bytes_in_the_last_page, nb::const_),
+        nb::overload_cast<uint16_t>(&DosHeader::used_bytes_in_the_last_page))
 
-    .def_property("file_size_in_pages",
-        static_cast<getter_t>(&DosHeader::file_size_in_pages),
-        static_cast<setter_t>(&DosHeader::file_size_in_pages))
+    .def_prop_rw("file_size_in_pages",
+        nb::overload_cast<>(&DosHeader::file_size_in_pages, nb::const_),
+        nb::overload_cast<uint16_t>(&DosHeader::file_size_in_pages))
 
-    .def_property("numberof_relocation",
-        static_cast<getter_t>(&DosHeader::numberof_relocation),
-        static_cast<setter_t>(&DosHeader::numberof_relocation))
+    .def_prop_rw("numberof_relocation",
+        nb::overload_cast<>(&DosHeader::numberof_relocation, nb::const_),
+        nb::overload_cast<uint16_t>(&DosHeader::numberof_relocation))
 
-    .def_property("header_size_in_paragraphs",
-        static_cast<getter_t>(&DosHeader::header_size_in_paragraphs),
-        static_cast<setter_t>(&DosHeader::header_size_in_paragraphs))
+    .def_prop_rw("header_size_in_paragraphs",
+        nb::overload_cast<>(&DosHeader::header_size_in_paragraphs, nb::const_),
+        nb::overload_cast<uint16_t>(&DosHeader::header_size_in_paragraphs))
 
-    .def_property("minimum_extra_paragraphs",
-        static_cast<getter_t>(&DosHeader::minimum_extra_paragraphs),
-        static_cast<setter_t>(&DosHeader::minimum_extra_paragraphs))
+    .def_prop_rw("minimum_extra_paragraphs",
+        nb::overload_cast<>(&DosHeader::minimum_extra_paragraphs, nb::const_),
+        nb::overload_cast<uint16_t>(&DosHeader::minimum_extra_paragraphs))
 
-    .def_property("maximum_extra_paragraphs",
-        static_cast<getter_t>(&DosHeader::maximum_extra_paragraphs),
-        static_cast<setter_t>(&DosHeader::maximum_extra_paragraphs))
+    .def_prop_rw("maximum_extra_paragraphs",
+        nb::overload_cast<>(&DosHeader::maximum_extra_paragraphs, nb::const_),
+        nb::overload_cast<uint16_t>(&DosHeader::maximum_extra_paragraphs))
 
-    .def_property("initial_relative_ss",
-        static_cast<getter_t>(&DosHeader::initial_relative_ss),
-        static_cast<setter_t>(&DosHeader::initial_relative_ss))
+    .def_prop_rw("initial_relative_ss",
+        nb::overload_cast<>(&DosHeader::initial_relative_ss, nb::const_),
+        nb::overload_cast<uint16_t>(&DosHeader::initial_relative_ss))
 
-    .def_property("initial_sp",
-        static_cast<getter_t>(&DosHeader::initial_sp),
-        static_cast<setter_t>(&DosHeader::initial_sp))
+    .def_prop_rw("initial_sp",
+        nb::overload_cast<>(&DosHeader::initial_sp, nb::const_),
+        nb::overload_cast<uint16_t>(&DosHeader::initial_sp))
 
-    .def_property("checksum",
-        static_cast<getter_t>(&DosHeader::checksum),
-        static_cast<setter_t>(&DosHeader::checksum))
+    .def_prop_rw("checksum",
+        nb::overload_cast<>(&DosHeader::checksum, nb::const_),
+        nb::overload_cast<uint16_t>(&DosHeader::checksum))
 
-    .def_property("initial_ip",
-        static_cast<getter_t>(&DosHeader::initial_ip),
-        static_cast<setter_t>(&DosHeader::initial_ip))
+    .def_prop_rw("initial_ip",
+        nb::overload_cast<>(&DosHeader::initial_ip, nb::const_),
+        nb::overload_cast<uint16_t>(&DosHeader::initial_ip))
 
-    .def_property("initial_relative_cs",
-        static_cast<getter_t>(&DosHeader::initial_relative_cs),
-        static_cast<setter_t>(&DosHeader::initial_relative_cs))
+    .def_prop_rw("initial_relative_cs",
+        nb::overload_cast<>(&DosHeader::initial_relative_cs, nb::const_),
+        nb::overload_cast<uint16_t>(&DosHeader::initial_relative_cs))
 
-    .def_property("addressof_relocation_table",
-        static_cast<getter_t>(&DosHeader::addressof_relocation_table),
-        static_cast<setter_t>(&DosHeader::addressof_relocation_table))
+    .def_prop_rw("addressof_relocation_table",
+        nb::overload_cast<>(&DosHeader::addressof_relocation_table, nb::const_),
+        nb::overload_cast<uint16_t>(&DosHeader::addressof_relocation_table))
 
-    .def_property("overlay_number",
-        static_cast<getter_t>(&DosHeader::overlay_number),
-        static_cast<setter_t>(&DosHeader::overlay_number))
+    .def_prop_rw("overlay_number",
+        nb::overload_cast<>(&DosHeader::overlay_number, nb::const_),
+        nb::overload_cast<uint16_t>(&DosHeader::overlay_number))
 
-    .def_property("oem_id",
-        static_cast<getter_t>(&DosHeader::oem_id),
-        static_cast<setter_t>(&DosHeader::oem_id))
+    .def_prop_rw("oem_id",
+        nb::overload_cast<>(&DosHeader::oem_id, nb::const_),
+        nb::overload_cast<uint16_t>(&DosHeader::oem_id))
 
-    .def_property("oem_info",
-        static_cast<getter_t>(&DosHeader::oem_info),
-        static_cast<setter_t>(&DosHeader::oem_info))
+    .def_prop_rw("oem_info",
+        nb::overload_cast<>(&DosHeader::oem_info, nb::const_),
+        nb::overload_cast<uint16_t>(&DosHeader::oem_info))
 
-    .def_property("addressof_new_exeheader",
-        static_cast<getter_abs_t<uint32_t>>(&DosHeader::addressof_new_exeheader),
-        static_cast<setter_abs_t<uint32_t>>(&DosHeader::addressof_new_exeheader))
+    .def_prop_rw("addressof_new_exeheader",
+        nb::overload_cast<>(&DosHeader::addressof_new_exeheader, nb::const_),
+        nb::overload_cast<uint32_t>(&DosHeader::addressof_new_exeheader))
 
-
-    .def("__eq__", &DosHeader::operator==)
-    .def("__ne__", &DosHeader::operator!=)
-    .def("__hash__",
-        [] (const DosHeader& dos_header) {
-          return Hash::hash(dos_header);
-        })
-
-    .def("__str__", [] (const DosHeader& header)
-        {
-          std::ostringstream stream;
-          stream << header;
-          std::string str = stream.str();
-          return str;
-        });
-
+    LIEF_DEFAULT_STR(LIEF::PE::DosHeader);
 }
 
-}
 }

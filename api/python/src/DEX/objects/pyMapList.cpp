@@ -14,65 +14,43 @@
  * limitations under the License.
  */
 #include "LIEF/DEX/MapList.hpp"
-#include "LIEF/DEX/hash.hpp"
 
-#include "pyDEX.hpp"
-#include "pyIterators.hpp"
+#include "DEX/pyDEX.hpp"
+#include "pyIterator.hpp"
 
-namespace LIEF {
-namespace DEX {
+#include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 
-template<class T>
-using getter_t = T (MapList::*)(void) const;
-
-template<class T>
-using no_const_getter_t = T (MapList::*)(void);
-
-template<class T>
-using setter_t = void (MapList::*)(T);
-
+namespace LIEF::DEX::py {
 
 template<>
-void create<MapList>(py::module& m) {
+void create<MapList>(nb::module_& m) {
+  using namespace LIEF::py;
 
-  py::class_<MapList, LIEF::Object> map_list(m, "MapList", "DEX MapList representation");
+  nb::class_<MapList, LIEF::Object> map_list(m, "MapList",
+      "DEX MapList representation"_doc);
 
   init_ref_iterator<MapList::it_items_t>(map_list, "it_items_t");
 
   map_list
-    .def_property_readonly("items",
-        static_cast<no_const_getter_t<MapList::it_items_t>>(&MapList::items),
-        "Iterator over " RST_CLASS_REF(lief.DEX.MapItem) "")
+    .def_prop_ro("items", nb::overload_cast<>(&MapList::items),
+        "Iterator over " RST_CLASS_REF(lief.DEX.MapItem) ""_doc)
 
-    .def("has",
-        &MapList::has,
-        "Check if the given " RST_CLASS_REF(lief.DEX.MapItem.TYPES) " is present",
+    .def("has", &MapList::has,
+        "Check if the given " RST_CLASS_REF(lief.DEX.MapItem.TYPES) " is present"_doc,
         "type"_a)
 
-    .def("get",
-        static_cast<MapItem&(MapList::*)(MapItem::TYPES)>(&MapList::get),
-        "Return the " RST_CLASS_REF(lief.DEX.MapItem.TYPES) " from "
-        "the given " RST_CLASS_REF(lief.DEX.MapItem.TYPES) "",
-        "type"_a,
-        py::return_value_policy::reference)
+    .def("get", nb::overload_cast<MapItem::TYPES>(&MapList::get),
+        R"delim(
+        Return the :class:`~lief.DEX.MapItem` from the given
+        :class:`~lief.DEX.MapItem.TYPES`
+        )delim"_doc, "type"_a, nb::rv_policy::reference_internal)
 
     .def("__getitem__",
-        static_cast<MapItem&(MapList::*)(MapItem::TYPES)>(&MapList::get))
+        nb::overload_cast<MapItem::TYPES>(&MapList::get))
 
-    .def("__eq__", &MapList::operator==)
-    .def("__ne__", &MapList::operator!=)
-    .def("__hash__",
-        [] (const MapList& mlist) {
-          return Hash::hash(mlist);
-        })
-
-    .def("__str__",
-        [] (const MapList& mlist) {
-          std::ostringstream stream;
-          stream << mlist;
-          return stream.str();
-        });
-}
+    LIEF_DEFAULT_STR(MapList);
 
 }
 }

@@ -50,40 +50,60 @@ class Config:
     def build_type(self) -> str:
         return self._config['lief']['build']['type']
 
-    def gen_cmake_option(self, output: str) -> List[str]:
-        cfg = self.build_type()
-        opt = [
-            f"-DCMAKE_BUILD_TYPE={cfg}",
+    def get_lief_format_opt(self):
+        opt = self._config["lief"]["formats"]
+        return (
+            "-DLIEF_ELF={}".format("ON" if opt["elf"] else "OFF"),
+            "-DLIEF_PE={}".format("ON" if opt["pe"] else "OFF"),
+            "-DLIEF_MACHO={}".format("ON" if opt["macho"] else "OFF"),
+            "-DLIEF_DEX={}".format("ON" if opt["dex"] else "OFF"),
+            "-DLIEF_ART={}".format("ON" if opt["art"] else "OFF"),
+            "-DLIEF_OAT={}".format("ON" if opt["oat"] else "OFF"),
+            "-DLIEF_VDEX={}".format("ON" if opt["vdex"] else "OFF"),
+        )
+
+    def get_lief_logging_opt(self):
+        opt = self._config["lief"]["logging"]
+        return (
+            "-DLIEF_LOGGING={}".format("ON" if opt["enabled"] else "OFF"),
+            "-DLIEF_LOGGING_DEBUG={}".format("ON" if opt["debug"] else "OFF"),
+        )
+
+    def get_python_opt(self):
+        config = ["-DLIEF_PYTHON_API=on"]
+        interpreter = Path(sys.executable)
+        base = sysconfig.get_config_var("base")
+        if base is not None:
+            config += [f"-DPython_ROOT_DIR={base}"]
+
+        config += [
+            f"-DPython_EXECUTABLE={interpreter.as_posix()}",
+        ]
+        return config
+
+    def get_generic_opt(self, output: str):
+        return (
+            f"-DCMAKE_BUILD_TYPE={self.build_type()}",
             f'-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={output}',
             "-DLIEF_USE_CCACHE={}".format("ON" if self._config["lief"]["build"]["cache"] else "OFF"),
-        ] + [
-            "-DLIEF_PYTHON_API=on",
-            f"-DPYTHON_EXECUTABLE={sys.executable}",
-        ] + [
-            "-DLIEF_ELF={}".format("ON" if self._config["lief"]["formats"]["elf"] else "OFF"),
-            "-DLIEF_PE={}".format("ON" if self._config["lief"]["formats"]["pe"] else "OFF"),
-            "-DLIEF_MACHO={}".format("ON" if self._config["lief"]["formats"]["macho"] else "OFF"),
-            "-DLIEF_DEX={}".format("ON" if self._config["lief"]["formats"]["dex"] else "OFF"),
-            "-DLIEF_ART={}".format("ON" if self._config["lief"]["formats"]["art"] else "OFF"),
-            "-DLIEF_OAT={}".format("ON" if self._config["lief"]["formats"]["oat"] else "OFF"),
-            "-DLIEF_VDEX={}".format("ON" if self._config["lief"]["formats"]["vdex"] else "OFF"),
-        ] + [
-            "-DLIEF_LOGGING={}".format("ON" if self._config["lief"]["logging"]["enabled"] else "OFF"),
-            "-DLIEF_LOGGING_DEBUG={}".format("ON" if self._config["lief"]["logging"]["debug"] else "OFF"),
-        ] + [
-            "-DLIEF_ENABLE_JSON={}".format("ON" if self._config["lief"]["features"]["json"] else "OFF"),
-            "-DLIEF_DISABLE_FROZEN={}".format("OFF" if self._config["lief"]["features"]["frozen"] else "ON"),
-        ] + [
-            "-DLIEF_ENABLE_JSON={}".format("ON" if self._config["lief"]["features"]["json"] else "OFF"),
-            "-DLIEF_DISABLE_FROZEN={}".format("OFF" if self._config["lief"]["features"]["frozen"] else "ON"),
-        ]
+        )
 
+    def get_feat_opt(self):
+        opt = self._config["lief"]["features"]
+        return (
+            "-DLIEF_ENABLE_JSON={}".format("ON" if opt["json"] else "OFF"),
+            "-DLIEF_DISABLE_FROZEN={}".format("OFF" if opt["frozen"] else "ON"),
+        )
+
+    def get_iwyu_opt(self):
         if "include-what-you-use" in self._config["lief"]["build"]:
             value = self._config["lief"]["build"]["include-what-you-use"]
-            opt.append(f"-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE={value}")
+            return (f"-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE={value}", )
         else:
-            opt.append("-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=''")
+            return ("-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=''", )
 
+    def get_flags_opt(self):
+        opt = []
         if "cxx-flags" in self._config["lief"]["build"]:
             value = self._config["lief"]["build"]["cxx-flags"]
             opt.append(f"-DCMAKE_CXX_FLAGS={value}")
@@ -96,16 +116,6 @@ class Config:
         else:
             opt.append("-DCMAKE_C_FLAGS=''")
 
-        if "extra-cmake-opt" in self._config["lief"]["build"]:
-            value = self._config["lief"]["build"]["extra-cmake-opt"]
-            if isinstance(value, str):
-                opt.append(value)
-            elif hasattr(value, "__iter__"):
-                opt.extend(value)
-            else:
-                print(f"Unsupported opt: {value} ({type(value)})")
-                sys.exit(1)
-
         cxx_flags = os.getenv("CXXFLAGS", None)
         c_flags = os.getenv("CFLAGS", None)
 
@@ -115,12 +125,85 @@ class Config:
         if c_flags is not None:
             opt.append(f'-DCMAKE_C_FLAGS={c_flags}')
 
+        return opt
+
+    def get_cmake_extra_opt(self):
+        opt = []
+        if "extra-cmake-opt" in self._config["lief"]["build"]:
+            value = self._config["lief"]["build"]["extra-cmake-opt"]
+            if isinstance(value, str):
+                opt.append(value)
+            elif hasattr(value, "__iter__"):
+                opt.extend(value)
+            else:
+                print(f"Unsupported opt: {value} ({type(value)})")
+                sys.exit(1)
+        return opt
+
+
+    def get_third_party_opt(self) -> List[str]:
+        if "third-party" not in self._config["lief"]:
+            return []
+
+        cmake_opt = []
+        tp_conf = self._config["lief"]["third-party"]
+        if "spdlog" in tp_conf:
+            cmake_opt += [
+                "-DLIEF_EXTERNAL_SPDLOG=ON",
+                "-Dspdlog_DIR={}".format(tp_conf["spdlog"])
+            ]
+        return cmake_opt
+
+    def get_cross_compile_opt(self) -> List[str]:
+        if "cross-compilation" not in self._config["lief"]:
+            return []
+
+        cmake_opt = []
+        cross_conf = self._config["lief"]["cross-compilation"]
+        if "osx-arch" in cross_conf:
+            cmake_opt += [
+                f'-DCMAKE_OSX_ARCHITECTURES={cross_conf["osx-arch"]}'
+            ]
+        return cmake_opt
+
+    def get_pre_compile_opt(self):
+        install_path = self._config["lief"]["build"].get("lief-install-dir", None)
+        if install_path is None:
+            return []
+        install_path = Path(install_path).expanduser().resolve().absolute()
+
+        if not install_path.is_dir():
+            report(f"{install_path} is not a valid directory")
+            return []
+
+        cmake_dir = install_path / "share" / "LIEF" / "cmake"
+        if not (cmake_dir / "LIEFConfig.cmake").is_file():
+            report(f"Missing LIEFConfig.cmake in {cmake_dir}")
+            return []
+
+        return (
+            "-DLIEF_PY_LIEF_EXT=on",
+            "-DLIEF_INSTALL=off",
+            f"-DLIEF_DIR={cmake_dir}",
+        )
+
+    def gen_cmake_option(self, output: str) -> List[str]:
+        cfg = self.build_type()
+        opt = [
+            *self.get_generic_opt(output),
+            *self.get_python_opt(),
+            *self.get_lief_format_opt(),
+            *self.get_feat_opt(),
+            *self.get_iwyu_opt(),
+            *self.get_flags_opt(),
+            *self.get_third_party_opt(),
+            *self.get_pre_compile_opt(),
+            *self.get_cross_compile_opt(),
+            *self.get_cmake_extra_opt()
+        ]
+
         if self._use_ninja():
             opt = ["-G", "Ninja"] + opt
-
-
-        opt += self._get_third_party_opt()
-        opt += self._get_cross_compile_opt()
 
         if Config.is_windows():
             is64 = sys.maxsize > 2**32
@@ -140,30 +223,6 @@ class Config:
 
         return opt
 
-    def _get_third_party_opt(self) -> List[str]:
-        if "third-party" not in self._config["lief"]:
-            return []
-
-        cmake_opt = []
-        tp_conf = self._config["lief"]["third-party"]
-        if "spdlog" in tp_conf:
-            cmake_opt += [
-                "-DLIEF_EXTERNAL_SPDLOG=ON",
-                "-Dspdlog_DIR={}".format(tp_conf["spdlog"])
-            ]
-        return cmake_opt
-
-    def _get_cross_compile_opt(self) -> List[str]:
-        if "cross-compilation" not in self._config["lief"]:
-            return []
-
-        cmake_opt = []
-        cross_conf = self._config["lief"]["cross-compilation"]
-        if "osx-arch" in cross_conf:
-            cmake_opt += [
-                f'-DCMAKE_OSX_ARCHITECTURES={cross_conf["osx-arch"]}'
-            ]
-        return cmake_opt
 
     def _get_jobs(self) -> List[str]:
         if "parallel-jobs" in self._config["lief"]["build"]:
@@ -196,6 +255,7 @@ class Config:
 
     def _use_ninja(self) -> bool:
         return self._config['lief']['build']['ninja']
+
     def get_compile_cmd(self):
         config = self._config['lief']['build']['type']
         return [

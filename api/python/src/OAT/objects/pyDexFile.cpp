@@ -14,68 +14,43 @@
  * limitations under the License.
  */
 #include "LIEF/OAT/DexFile.hpp"
-#include "LIEF/OAT/hash.hpp"
 #include "LIEF/DEX/File.hpp"
 
-#include "pyOAT.hpp"
+#include "OAT/pyOAT.hpp"
 
 #include <sstream>
+#include <nanobind/stl/string.h>
 
-namespace LIEF {
-namespace OAT {
-
-template<class T>
-using getter_t = T (DexFile::*)(void) const;
-
-template<class T>
-using setter_t = void (DexFile::*)(T);
-
-template<class T>
-using no_const_getter = T (DexFile::*)(void);
-
+namespace LIEF::OAT::py {
 template<>
-void create<DexFile>(py::module& m) {
+void create<DexFile>(nb::module_& m) {
 
-  py::class_<DexFile, LIEF::Object>(m, "DexFile", "OAT DexFile representation")
-    .def(py::init<>())
+  nb::class_<DexFile, Object>(m, "DexFile", "OAT DexFile representation"_doc)
+    .def(nb::init<>())
 
-    .def_property("location",
-        static_cast<getter_t<const std::string&>>(&DexFile::location),
-        static_cast<setter_t<const std::string&>>(&DexFile::location),
-        "Original location of the DEX file")
+    .def_prop_rw("location",
+        nb::overload_cast<>(&DexFile::location, nb::const_),
+        nb::overload_cast<const std::string&>(&DexFile::location),
+        "Original location of the DEX file"_doc)
 
-    .def_property("checksum",
-        static_cast<getter_t<uint32_t>>(&DexFile::checksum),
-        static_cast<setter_t<uint32_t>>(&DexFile::checksum),
-        "Checksum of the underlying DEX file")
+    .def_prop_rw("checksum",
+        nb::overload_cast<>(&DexFile::checksum, nb::const_),
+        nb::overload_cast<uint32_t>(&DexFile::checksum),
+        "Checksum of the underlying DEX file"_doc)
 
-    .def_property("dex_offset",
-        static_cast<getter_t<uint32_t>>(&DexFile::dex_offset),
-        static_cast<setter_t<uint32_t>>(&DexFile::dex_offset),
-        "Offset to the raw " RST_CLASS_REF_FULL(lief.DEX.File) "")
+    .def_prop_rw("dex_offset",
+        nb::overload_cast<>(&DexFile::dex_offset, nb::const_),
+        nb::overload_cast<uint32_t>(&DexFile::dex_offset),
+        "Offset to the raw " RST_CLASS_REF_FULL(lief.DEX.File) ""_doc)
 
-    .def_property_readonly("has_dex_file",
+    .def_prop_ro("has_dex_file",
         &DexFile::has_dex_file,
-        "Check if the " RST_CLASS_REF_FULL(lief.DEX.File) " is present")
+        "Check if the " RST_CLASS_REF_FULL(lief.DEX.File) " is present"_doc)
 
-    .def_property_readonly("dex_file",
-        static_cast<no_const_getter<LIEF::DEX::File*>>(&DexFile::dex_file),
-        "Associated " RST_CLASS_REF_FULL(lief.DEX.File) "")
+    .def_prop_ro("dex_file", nb::overload_cast<>(&DexFile::dex_file),
+        "Associated " RST_CLASS_REF_FULL(lief.DEX.File) ""_doc)
 
-    .def("__eq__", &DexFile::operator==)
-    .def("__ne__", &DexFile::operator!=)
-    .def("__hash__",
-        [] (const DexFile& dex_file) {
-          return Hash::hash(dex_file);
-        })
-
-    .def("__str__",
-        [] (const DexFile& dexfile) {
-          std::ostringstream stream;
-          stream << dexfile;
-          return stream.str();
-        });
-}
+    LIEF_DEFAULT_STR(DexFile);
 
 }
 }

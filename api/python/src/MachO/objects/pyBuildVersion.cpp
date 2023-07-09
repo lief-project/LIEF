@@ -17,63 +17,42 @@
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/array.h>
+#include <nanobind/stl/vector.h>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/BuildVersion.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
 
 #include "enums_wrapper.hpp"
 
-#include "pyMachO.hpp"
+#include "MachO/pyMachO.hpp"
 
 #define PY_ENUM(x) LIEF::MachO::to_string(x), x
 
-namespace LIEF {
-namespace MachO {
-
-template<class T>
-using getter_t = T (BuildVersion::*)(void) const;
-
-template<class T>
-using setter_t = void (BuildVersion::*)(T);
-
-
+namespace LIEF::MachO::py {
 template<>
-void create<BuildVersion>(py::module& m) {
+void create<BuildVersion>(nb::module_& m) {
 
-  py::class_<BuildVersion, LoadCommand> cls(m, "BuildVersion");
-  py::class_<BuildToolVersion, LIEF::Object> tool_version_cls(m, "BuildToolVersion",
+  nb::class_<BuildVersion, LoadCommand> cls(m, "BuildVersion");
+  nb::class_<BuildToolVersion, Object> tool_version_cls(m, "BuildToolVersion",
       R"delim(
-      Class that represents a tool's version that was involved in the build of the binary
-      )delim");
-
+      Class that represents a tool's version that was involved in the build
+      of the binary
+      )delim"_doc);
 
   // Build Tool Version
   // ==================
   tool_version_cls
-    .def_property_readonly("tool",
+    .def_prop_ro("tool",
         &BuildToolVersion::tool,
-        "" RST_CLASS_REF(.BuildVersion.TOOLS) " type")
+        "" RST_CLASS_REF(.BuildVersion.TOOLS) " type"_doc)
 
-    .def_property_readonly("version",
+    .def_prop_ro("version",
         &BuildToolVersion::version,
-        "Version of the tool")
+        "Version of the tool"_doc)
 
-    .def("__eq__", &BuildToolVersion::operator==)
-    .def("__ne__", &BuildToolVersion::operator!=)
-    .def("__hash__",
-        [] (const BuildToolVersion& version) {
-          return Hash::hash(version);
-        })
-
-    .def("__str__",
-        [] (const BuildToolVersion& version)
-        {
-          std::ostringstream stream;
-          stream << version;
-          return stream.str();
-        });
-
+    LIEF_DEFAULT_STR(BuildToolVersion);
 
   LIEF::enum_<BuildToolVersion::TOOLS>(tool_version_cls, "TOOLS")
     .value(PY_ENUM(BuildToolVersion::TOOLS::UNKNOWN))
@@ -82,43 +61,29 @@ void create<BuildVersion>(py::module& m) {
     .value(PY_ENUM(BuildToolVersion::TOOLS::LD));
 
   cls
+    .def_prop_rw("platform",
+        nb::overload_cast<>(&BuildVersion::platform, nb::const_),
+        nb::overload_cast<BuildVersion::PLATFORMS>(&BuildVersion::platform),
+        "Target " RST_CLASS_REF(.BuildVersion.PLATFORMS) ""_doc)
 
-    .def_property("platform",
-        static_cast<getter_t<BuildVersion::PLATFORMS>>(&BuildVersion::platform),
-        static_cast<setter_t<BuildVersion::PLATFORMS>>(&BuildVersion::platform),
-        "Target " RST_CLASS_REF(.BuildVersion.PLATFORMS) "")
+    .def_prop_rw("minos",
+        nb::overload_cast<>(&BuildVersion::minos, nb::const_),
+        nb::overload_cast<BuildVersion::version_t>(&BuildVersion::minos),
+        "Minimal OS version on which this binary was built to run"_doc)
 
-    .def_property("minos",
-        static_cast<getter_t<BuildVersion::version_t>>(&BuildVersion::minos),
-        static_cast<setter_t<BuildVersion::version_t>>(&BuildVersion::minos),
-        "Minimal OS version on which this binary was built to run")
+    .def_prop_rw("sdk",
+        nb::overload_cast<>(&BuildVersion::sdk, nb::const_),
+        nb::overload_cast<BuildVersion::version_t>(&BuildVersion::sdk),
+        "SDK Version"_doc)
 
-    .def_property("sdk",
-        static_cast<getter_t<BuildVersion::version_t>>(&BuildVersion::sdk),
-        static_cast<setter_t<BuildVersion::version_t>>(&BuildVersion::sdk),
-        "SDK Version")
+    .def_prop_ro("tools",
+        nb::overload_cast<>(&BuildVersion::tools, nb::const_),
+        "List of " RST_CLASS_REF(BuildToolVersion) " used when while this binary"_doc)
 
-    .def_property_readonly("tools",
-        static_cast<getter_t<BuildVersion::tools_list_t>>(&BuildVersion::tools),
-        "List of " RST_CLASS_REF(BuildToolVersion) " used when while this binary")
-
-    .def("__eq__", &BuildVersion::operator==)
-    .def("__ne__", &BuildVersion::operator!=)
-    .def("__hash__",
-        [] (const BuildVersion& version) {
-          return Hash::hash(version);
-        })
-
-    .def("__str__",
-        [] (const BuildVersion& version)
-        {
-          std::ostringstream stream;
-          stream << version;
-          return stream.str();
-        });
+    LIEF_DEFAULT_STR(BuildVersion);
 
 
-  LIEF::enum_<BuildVersion::PLATFORMS>(cls, "PLATFORMS")
+  enum_<BuildVersion::PLATFORMS>(cls, "PLATFORMS")
     .value(PY_ENUM(BuildVersion::PLATFORMS::UNKNOWN))
     .value(PY_ENUM(BuildVersion::PLATFORMS::MACOS))
     .value(PY_ENUM(BuildVersion::PLATFORMS::IOS))
@@ -127,5 +92,4 @@ void create<BuildVersion>(py::module& m) {
 
 }
 
-}
 }

@@ -15,13 +15,20 @@
  */
 #ifndef LIEF_VDEX_TYPE_TRAITS_H
 #define LIEF_VDEX_TYPE_TRAITS_H
-#include "LIEF/OAT/Binary.hpp"
+#include <cstdint>
+#include <unordered_map>
+#include <LIEF/DEX/deopt.hpp>
 
 namespace LIEF {
+namespace DEX {
+class File;
+} // namespace DEX
+
 namespace VDEX {
 using vdex_version_t = uint32_t;
-using dex2dex_info_t = LIEF::OAT::Binary::dex2dex_info_t;
-}
-}
+using dex2dex_info_t = std::unordered_map<const DEX::File*, DEX::dex2dex_info_t>;
+} // namespace VDEX
+} // namespace LIEF
+
 
 #endif

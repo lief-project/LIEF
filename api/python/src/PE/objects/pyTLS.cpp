@@ -13,58 +13,54 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyPE.hpp"
+#include "PE/pyPE.hpp"
 
-#include "LIEF/PE/hash.hpp"
+#include "nanobind/extra/memoryview.hpp"
+
 #include "LIEF/PE/TLS.hpp"
+#include "LIEF/PE/Section.hpp"
+#include "LIEF/PE/DataDirectory.hpp"
 
 #include <string>
 #include <sstream>
 
-namespace LIEF {
-namespace PE {
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
+#include <nanobind/stl/pair.h>
 
-template<class T>
-using getter_t = T (TLS::*)(void) const;
-
-template<class T>
-using setter_t = void (TLS::*)(T);
-
-template<class T>
-using no_const_getter = T (TLS::*)(void);
-
+namespace LIEF::PE::py {
 
 template<>
-void create<TLS>(py::module& m) {
-  py::class_<TLS, LIEF::Object>(m, "TLS",
+void create<TLS>(nb::module_& m) {
+  nb::class_<TLS, LIEF::Object>(m, "TLS",
       R"delim(
       Class which represents the PE Thread Local Storage.
       This PE structure is also used to implement binary/library constructors.
-      )delim")
-    .def(py::init<>(),
-        "Default constructor")
+      )delim"_doc)
+    .def(nb::init<>(),
+        "Default constructor"_doc)
 
-    .def_property("callbacks",
-        static_cast<getter_t<const std::vector<uint64_t>&>>(&TLS::callbacks),
-        static_cast<setter_t<const std::vector<uint64_t>&>>(&TLS::callbacks),
+    .def_prop_rw("callbacks",
+        nb::overload_cast<>(&TLS::callbacks, nb::const_),
+        nb::overload_cast<const std::vector<uint64_t>&>(&TLS::callbacks),
         R"delim(
         List of the callback associated with the current TLS.
 
         These functions are called before any other functions of the PE binary.
-        )delim")
+        )delim"_doc)
 
-    .def_property("addressof_index",
-        static_cast<getter_t<uint64_t>>(&TLS::addressof_index),
-        static_cast<setter_t<uint64_t>>(&TLS::addressof_index),
+    .def_prop_rw("addressof_index",
+        nb::overload_cast<>(&TLS::addressof_index, nb::const_),
+        nb::overload_cast<uint64_t>(&TLS::addressof_index),
         R"delim(
         The location to receive the TLS index, which the loader assigns.
         This location is in an ordinary data section, so it can be given a symbolic name that is accessible
         to the program.
-        )delim")
+        )delim"_doc)
 
-    .def_property("addressof_callbacks",
-        static_cast<getter_t<uint64_t>>(&TLS::addressof_callbacks),
-        static_cast<setter_t<uint64_t>>(&TLS::addressof_callbacks),
+    .def_prop_rw("addressof_callbacks",
+        nb::overload_cast<>(&TLS::addressof_callbacks, nb::const_),
+        nb::overload_cast<uint64_t>(&TLS::addressof_callbacks),
         R"delim(
         The pointer to an array of TLS callback functions.
 
@@ -72,31 +68,31 @@ void create<TLS>(py::module& m) {
         is supported, this field points to 4 bytes set to zero.
 
         See: :attr:`~lief.PE.TLS.callbacks`
-        )delim")
+        )delim"_doc)
 
-    .def_property("sizeof_zero_fill",
-        static_cast<getter_t<uint32_t>>(&TLS::sizeof_zero_fill),
-        static_cast<setter_t<uint32_t>>(&TLS::sizeof_zero_fill),
+    .def_prop_rw("sizeof_zero_fill",
+        nb::overload_cast<>(&TLS::sizeof_zero_fill, nb::const_),
+        nb::overload_cast<uint32_t>(&TLS::sizeof_zero_fill),
         R"delim(
         The size in bytes of the template, beyond the initialized data delimited by
         the :attr:`~lief.PE.TLS.addressof_raw_data` fields.
         The total template size should be the same as the total size of TLS data in the image file.
         The zero fill is the amount of data that comes after the initialized nonzero data.
-        )delim")
+        )delim"_doc)
 
 
-    .def_property("characteristics",
-        static_cast<getter_t<uint32_t>>(&TLS::characteristics),
-        static_cast<setter_t<uint32_t>>(&TLS::characteristics),
+    .def_prop_rw("characteristics",
+        nb::overload_cast<>(&TLS::characteristics, nb::const_),
+        nb::overload_cast<uint32_t>(&TLS::characteristics),
         R"delim(
         The four bits [23:20] describe alignment info.
         Possible values are those defined as IMAGE_SCN_ALIGN_*, which are also used to
         describe alignment of section in object files. The other 28 bits are reserved for future use.
-        )delim")
+        )delim"_doc)
 
-    .def_property("addressof_raw_data",
-        static_cast<getter_t<std::pair<uint64_t, uint64_t>>>(&TLS::addressof_raw_data),
-        static_cast<setter_t<std::pair<uint64_t, uint64_t>>>(&TLS::addressof_raw_data),
+    .def_prop_rw("addressof_raw_data",
+        nb::overload_cast<>(&TLS::addressof_raw_data, nb::const_),
+        nb::overload_cast<std::pair<uint64_t, uint64_t>>(&TLS::addressof_raw_data),
         R"delim(
         Tuple ``(start address, end address)`` of the TLS template.
         The template is a block of data that is used to initialize TLS data.
@@ -107,50 +103,34 @@ void create<TLS>(py::module& m) {
 
           These addresses are not RVA. It is addresses for which there should be a base
           relocation in the ``.reloc`` section.
-        )delim")
+        )delim"_doc)
 
-    .def_property("data_template",
+    .def_prop_rw("data_template",
         [] (const TLS& self) {
-          span<const uint8_t> content = self.data_template();
-          return py::memoryview::from_memory(content.data(), content.size());
+          const span<const uint8_t> content = self.data_template();
+          return nb::memoryview::from_memory(content.data(), content.size());
         },
-        static_cast<setter_t<const std::vector<uint8_t>&>>(&TLS::data_template),
-        "The data template content")
+        nb::overload_cast<const std::vector<uint8_t>&>(&TLS::data_template),
+        "The data template content"_doc)
 
-    .def_property_readonly("has_section",
+    .def_prop_ro("has_section",
         &TLS::has_section,
-        "``True`` if there is a " RST_CLASS_REF(lief.PE.Section) " associated with the TLS object")
+        "``True`` if there is a " RST_CLASS_REF(lief.PE.Section) " associated with the TLS object"_doc)
 
-    .def_property_readonly("has_data_directory",
+    .def_prop_ro("has_data_directory",
         &TLS::has_data_directory,
-        "``True`` if there is a " RST_CLASS_REF(lief.PE.DataDirectory) " associated with the TLS object")
+        "``True`` if there is a " RST_CLASS_REF(lief.PE.DataDirectory) " associated with the TLS object"_doc)
 
-    .def_property_readonly("directory",
-        static_cast<no_const_getter<DataDirectory*>>(&TLS::directory),
-        "" RST_CLASS_REF(lief.PE.DataDirectory) " associated with the TLS object (or None if not linked)",
-        py::return_value_policy::reference)
+    .def_prop_ro("directory",
+        nb::overload_cast<>(&TLS::directory),
+        "" RST_CLASS_REF(lief.PE.DataDirectory) " associated with the TLS object (or None if not linked)"_doc,
+        nb::rv_policy::reference_internal)
 
-    .def_property_readonly("section",
-        static_cast<no_const_getter<Section*>>(&TLS::section),
-        "" RST_CLASS_REF(lief.PE.Section) " associated with the TLS object (or None if not linked)",
-        py::return_value_policy::reference)
+    .def_prop_ro("section",
+        nb::overload_cast<>(&TLS::section),
+        "" RST_CLASS_REF(lief.PE.Section) " associated with the TLS object (or None if not linked)"_doc,
+        nb::rv_policy::reference_internal)
 
-
-    .def("__eq__", &TLS::operator==)
-    .def("__ne__", &TLS::operator!=)
-    .def("__hash__",
-        [] (const TLS& tls) {
-          return Hash::hash(tls);
-        })
-
-    .def("__str__", [] (const TLS& tls)
-        {
-          std::ostringstream stream;
-          stream << tls;
-          std::string str = stream.str();
-          return str;
-        });
-}
-
+    LIEF_DEFAULT_STR(LIEF::PE::TLS);
 }
 }
