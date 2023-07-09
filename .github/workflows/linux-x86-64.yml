@@ -47,7 +47,6 @@ jobs:
   testing:
     if: "!contains(github.event.commits[0].message, '[skip-test]')"
     runs-on: ubuntu-latest
-    needs: linux-sdk
     steps:
       - uses: actions/checkout@v3
         with:
