@@ -126,7 +126,7 @@ class S3Manager:
         logger.info("Processing directory: %s", directory)
         for item in directory.iterdir():
             if item.is_dir() and recurse:
-                if maxdepth > 0 and depth > maxdepth:
+                if 0 < maxdepth < depth:
                     logger.debug("Maximum iteration depth reached")
                 else:
                     self.process_sdk_wheels(item, maxdepth, depth + 1, recurse)
@@ -149,7 +149,7 @@ class S3Manager:
                                            skiplist=("index.html", ))
 
         sdk_index = self.generate_index(self.s3_lief_sdk, DEFAULT_TEMPLATE,
-                                       skiplist=("index.html", ))
+                                        skiplist=("index.html", ))
 
         self.push_content(wheels_index, f"{self.s3_lief_wheel}/index.html")
         self.push_content(sdk_index, f"{self.s3_lief_sdk}/index.html")
@@ -163,7 +163,7 @@ class S3Manager:
             return []
         return self.s3().Bucket(self._s3_bucket).objects.filter(Prefix=dirname)
 
-    def generate_index(self, dirname: str, template: str, skiplist = None):
+    def generate_index(self, dirname: str, template: str, skiplist=None):
         files = self.s3_list(dirname)
         selected_files = []
         for s3_object in files:
@@ -190,16 +190,16 @@ class GithubDeploy:
         with open(config_file, "rb") as f:
             toml_config = tomli.load(f)
 
-        if not "lief" in toml_config:
+        if "lief" not in toml_config:
             logger.warning("Missing lief entries in '%s'", config_file)
             return None
         lief_conf = toml_config["lief"]
 
-        if not "s3" in lief_conf:
+        if "s3" not in lief_conf:
             logger.warning("Missing lief.s3 entries in '%s'", config_file)
             return None
 
-        if not "deploy" in lief_conf:
+        if "deploy" not in lief_conf:
             logger.warning("Missing lief.deploy entries in '%s'", config_file)
             return None
 
