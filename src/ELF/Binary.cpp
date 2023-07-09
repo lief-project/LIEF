@@ -3207,7 +3207,7 @@ uint64_t Binary::relocate_phdr_table_v1() {
   const size_t nb_loads = load_seg.size();
 
   // This function requires to have at least 2 segments
-  if (nb_loads == 1) {
+  if (nb_loads <= 1) {
     return 0;
   }
 
