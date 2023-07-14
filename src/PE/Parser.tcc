@@ -152,85 +152,82 @@ ok_error_t Parser::parse_data_directories() {
   }
 
   // Import Table
-  DataDirectory& import_data_dir = binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE);
-  if (import_data_dir.RVA() > 0 && config_.parse_imports) {
-    LIEF_DEBUG("Processing Import Table");
-    if (import_data_dir.has_section()) {
-      import_data_dir.section()->add_type(PE_SECTION_TYPES::IMPORT);
+  if (DataDirectory* import_data_dir = binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE)) {
+    if (import_data_dir->RVA() > 0 && config_.parse_imports)
+    {
+      LIEF_DEBUG("Processing Import Table");
+      if (Section* section = import_data_dir->section()) {
+        section->add_type(PE_SECTION_TYPES::IMPORT);
+      }
+      parse_import_table<PE_T>();
     }
-    parse_import_table<PE_T>();
   }
 
   // Exports
-  if (binary_->data_directory(DATA_DIRECTORY::EXPORT_TABLE).RVA() > 0 &&
-      config_.parse_exports) {
-    LIEF_DEBUG("[+] Processing Exports");
-    parse_exports();
+  if (const DataDirectory* export_dir = binary_->data_directory(DATA_DIRECTORY::EXPORT_TABLE)) {
+    if (export_dir->RVA() > 0 && config_.parse_exports) {
+      LIEF_DEBUG("[+] Processing Exports");
+      parse_exports();
+    }
   }
 
   // Signature
-  if (binary_->data_directory(DATA_DIRECTORY::CERTIFICATE_TABLE).RVA() > 0 &&
-      config_.parse_signature) {
-    parse_signature();
+  if (const DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::CERTIFICATE_TABLE)) {
+    if (dir->RVA() > 0 && config_.parse_signature) {
+      parse_signature();
+    }
   }
 
-  {
-    DataDirectory& tls_data_dir = binary_->data_directory(DATA_DIRECTORY::TLS_TABLE);
-    if (tls_data_dir.RVA() > 0) {
-      LIEF_DEBUG("Processing TLS");
-      if (tls_data_dir.has_section()) {
-        tls_data_dir.section()->add_type(PE_SECTION_TYPES::TLS);
+  if (DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::TLS_TABLE)) {
+    if (dir->RVA() > 0) {
+      if (Section* sec = dir->section()) {
+        sec->add_type(PE_SECTION_TYPES::TLS);
       }
       parse_tls<PE_T>();
     }
   }
 
-  {
-    DataDirectory& load_config_data_dir = binary_->data_directory(DATA_DIRECTORY::LOAD_CONFIG_TABLE);
-    if (load_config_data_dir.RVA() > 0) {
+  if (DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::LOAD_CONFIG_TABLE)) {
+    if (dir->RVA() > 0) {
       LIEF_DEBUG("Processing LoadConfiguration");
-      if (load_config_data_dir.has_section()) {
-        load_config_data_dir.section()->add_type(PE_SECTION_TYPES::LOAD_CONFIG);
+      if (Section* sec = dir->section()) {
+        sec->add_type(PE_SECTION_TYPES::LOAD_CONFIG);
       }
       parse_load_config<PE_T>();
     }
   }
 
-  {
-    DataDirectory& reloc_data_dir = binary_->data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE);
-    if (reloc_data_dir.RVA() > 0 && config_.parse_reloc) {
+  if (DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE)) {
+    if (dir->RVA() > 0 && config_.parse_reloc) {
       LIEF_DEBUG("Processing Relocations");
-      if (reloc_data_dir.has_section()) {
-        reloc_data_dir.section()->add_type(PE_SECTION_TYPES::RELOCATION);
+      if (Section* sec = dir->section()) {
+        sec->add_type(PE_SECTION_TYPES::RELOCATION);
       }
       parse_relocations();
     }
   }
 
-  {
-    DataDirectory& debug_data_dir = binary_->data_directory(DATA_DIRECTORY::DEBUG);
-    if (debug_data_dir.RVA() > 0) {
-      LIEF_DEBUG("Processing Debug");
-      if (debug_data_dir.has_section()) {
-        debug_data_dir.section()->add_type(PE_SECTION_TYPES::DEBUG);
+  if (DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::DEBUG)) {
+    if (dir->RVA() > 0) {
+      if (Section* sec = dir->section()) {
+        sec->add_type(PE_SECTION_TYPES::DEBUG);
       }
       parse_debug();
     }
   }
-  {
-    DataDirectory& res_data_dir = binary_->data_directory(DATA_DIRECTORY::RESOURCE_TABLE);
-    if (res_data_dir.RVA() > 0 && config_.parse_rsrc) {
+
+  if (DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::RESOURCE_TABLE)) {
+    if (dir->RVA() > 0 && config_.parse_rsrc) {
       LIEF_DEBUG("Processing Resources");
-      if (res_data_dir.has_section()) {
-        res_data_dir.section()->add_type(PE_SECTION_TYPES::RESOURCE);
+      if (Section* sec = dir->section()) {
+        sec->add_type(PE_SECTION_TYPES::RESOURCE);
       }
       parse_resources();
     }
   }
 
-  {
-    DataDirectory& delay_imports = binary_->data_directory(DATA_DIRECTORY::DELAY_IMPORT_DESCRIPTOR);
-    if (delay_imports.RVA() > 0) {
+  if (DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::DELAY_IMPORT_DESCRIPTOR)) {
+    if (dir->RVA() > 0) {
       auto is_ok = parse_delay_imports<PE_T>();
       if (!is_ok) {
         LIEF_WARN("The parsing of delay imports has failed or is incomplete ('{}')",
@@ -245,12 +242,16 @@ ok_error_t Parser::parse_data_directories() {
 template<typename PE_T>
 ok_error_t Parser::parse_import_table() {
   using uint__ = typename PE_T::uint;
-  DataDirectory& import_dir = binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE);
-  DataDirectory& iat_dir    = binary_->data_directory(DATA_DIRECTORY::IAT);
+  DataDirectory* import_dir = binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE);
+  DataDirectory* iat_dir    = binary_->data_directory(DATA_DIRECTORY::IAT);
 
-  const uint32_t import_rva    = import_dir.RVA();
+  if (import_dir == nullptr || iat_dir == nullptr) {
+    return make_error_code(lief_errors::not_found);
+  }
+
+  const uint32_t import_rva    = import_dir->RVA();
   const uint64_t import_offset = binary_->rva_to_offset(import_rva);
-  const size_t   import_end    = import_offset + import_dir.size();
+  const size_t   import_end    = import_offset + import_dir->size();
 
   stream_->setpos(import_offset);
   result<details::pe_import> imp_res;
@@ -262,8 +263,8 @@ ok_error_t Parser::parse_import_table() {
     }
 
     Import import           = raw_imp;
-    import.directory_       = &import_dir;
-    import.iat_directory_   = &iat_dir;
+    import.directory_       = import_dir;
+    import.iat_directory_   = iat_dir;
     import.type_            = type_;
 
     if (import.name_RVA_ == 0) {
@@ -454,9 +455,13 @@ ok_error_t Parser::parse_delay_imports() {
   LIEF_DEBUG("[>] Parsing the Delay Import Table");
   std::string dll_name;
 
-  const DataDirectory& dir = binary_->data_directory(DATA_DIRECTORY::DELAY_IMPORT_DESCRIPTOR);
-  const uint64_t size = dir.size();
-  uint64_t offset = binary_->rva_to_offset(dir.RVA());
+  const DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::DELAY_IMPORT_DESCRIPTOR);
+  if (dir == nullptr) {
+    return make_error_code(lief_errors::not_found);
+  }
+
+  const uint64_t size = dir->size();
+  uint64_t offset = binary_->rva_to_offset(dir->RVA());
   const uint64_t delay_end = offset + size;
 
   stream_->setpos(offset);
@@ -541,7 +546,11 @@ ok_error_t Parser::parse_tls() {
 
   LIEF_DEBUG("[+] Parsing TLS");
 
-  const uint32_t tls_rva = binary_->data_directory(DATA_DIRECTORY::TLS_TABLE).RVA();
+  DataDirectory* tls_dir = binary_->data_directory(DATA_DIRECTORY::TLS_TABLE);
+  if (tls_dir == nullptr) {
+    return make_error_code(lief_errors::not_found);
+  }
+  const uint32_t tls_rva = tls_dir->RVA();
   const uint64_t offset  = binary_->rva_to_offset(tls_rva);
 
   stream_->setpos(offset);
@@ -552,8 +561,7 @@ ok_error_t Parser::parse_tls() {
     return make_error_code(lief_errors::read_error);
   }
 
-  binary_->tls_ = *tls_header;
-  TLS& tls = binary_->tls_;
+  auto tls = std::make_unique<TLS>(*tls_header);
 
   const uint64_t imagebase = binary_->optional_header().imagebase();
 
@@ -569,14 +577,14 @@ ok_error_t Parser::parse_tls() {
     if (size_to_read > Parser::MAX_DATA_SIZE) {
       LIEF_DEBUG("TLS's template is too large!");
     } else {
-      if (!stream_->peek_data(tls.data_template_, start_template_offset, size_to_read)) {
+      if (!stream_->peek_data(tls->data_template_, start_template_offset, size_to_read)) {
         LIEF_WARN("TLS's template corrupted");
       }
     }
   }
 
-  if (tls.addressof_callbacks() > imagebase) {
-    uint64_t callbacks_offset = binary_->rva_to_offset(tls.addressof_callbacks() - imagebase);
+  if (tls->addressof_callbacks() > imagebase) {
+    uint64_t callbacks_offset = binary_->rva_to_offset(tls->addressof_callbacks() - imagebase);
     stream_->setpos(callbacks_offset);
     size_t count = 0;
     while (count++ < Parser::MAX_TLS_CALLBACKS) {
@@ -590,14 +598,13 @@ ok_error_t Parser::parse_tls() {
       if (static_cast<uint32_t>(callback_rva) == 0) {
         break;
       }
-      tls.callbacks_.push_back(callback_rva);
+      tls->callbacks_.push_back(callback_rva);
     }
   }
 
-  tls.directory_ = &(binary_->data_directory(DATA_DIRECTORY::TLS_TABLE));
-  tls.section_   = tls.directory_->section();
-
-  binary_->has_tls_ = true;
+  tls->directory_ = tls_dir;
+  tls->section_   = tls_dir->section();
+  binary_->tls_ = std::move(tls);
   return ok();
 }
 
@@ -650,10 +657,13 @@ ok_error_t Parser::parse_load_config() {
     {WIN_VERSION::WIN10_0_MSVC_2019_16, sizeof(details::PE64::load_configuration_v11_t)},
   };
 
-
   LIEF_DEBUG("[+] Parsing Load Config");
 
-  const uint32_t ldc_rva = binary_->data_directory(DATA_DIRECTORY::LOAD_CONFIG_TABLE).RVA();
+  DataDirectory* load_config_dir = binary_->data_directory(DATA_DIRECTORY::LOAD_CONFIG_TABLE);
+  if (load_config_dir == nullptr) {
+    return make_error_code(lief_errors::not_found);
+  }
+  const uint32_t ldc_rva = load_config_dir->RVA();
   const uint64_t offset  = binary_->rva_to_offset(ldc_rva);
 
   const auto res = stream_->peek<uint32_t>(offset);
@@ -665,16 +675,18 @@ ok_error_t Parser::parse_load_config() {
   size_t current_size = 0;
   WIN_VERSION version_found = WIN_VERSION::WIN_UNKNOWN;
 
-  if (std::is_same<PE_T, details::PE32>::value) {
-    for (const auto& p : PE32_LOAD_CONFIGURATION_SIZES) {
-      if (current_size < p.second && p.second <= size) {
-        std::tie(version_found, current_size) = p;
+  if constexpr (std::is_same_v<PE_T, details::PE32>) {
+    for (const auto& [version, sz] : PE32_LOAD_CONFIGURATION_SIZES) {
+      if (current_size < sz && sz <= size) {
+        version_found = version;
+        current_size = sz;
       }
     }
   } else {
-    for (const auto& p : PE64_LOAD_CONFIGURATION_SIZES) {
-      if (current_size < p.second && p.second <= size) {
-        std::tie(version_found, current_size) = p;
+    for (const auto& [version, sz] : PE64_LOAD_CONFIGURATION_SIZES) {
+      if (current_size < sz && sz <= size) {
+        version_found = version;
+        current_size = sz;
       }
     }
   }

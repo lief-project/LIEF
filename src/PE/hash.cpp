@@ -44,16 +44,16 @@ void Hash::visit(const Binary& binary) {
     process(std::begin(binary.debug()), std::end(binary.debug()));
   }
 
-  if (binary.has_exports()) {
-    process(binary.get_export());
+  if (const Export* exp = binary.get_export()) {
+    process(*exp);
   }
 
-  if (binary.has_tls()) {
-    process(binary.tls());
+  if (const TLS* tls_obj = binary.tls()) {
+    process(*tls_obj);
   }
 
-  if (binary.has_rich_header()) {
-    process(binary.rich_header());
+  if (const RichHeader* rheader = binary.rich_header()) {
+    process(*rheader);
   }
 
 }

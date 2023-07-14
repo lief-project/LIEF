@@ -24,23 +24,26 @@
 #include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
 #include "LIEF/PE/signature/SignatureParser.hpp"
-#include "LIEF/PE/CodeViewPDB.hpp"
-#include "LIEF/PE/Parser.hpp"
-#include "LIEF/PE/utils.hpp"
-#include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/CodeViewPDB.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
-#include "LIEF/PE/ResourceData.hpp"
-#include "LIEF/PE/ResourceDirectory.hpp"
-#include "LIEF/PE/ResourceNode.hpp"
+#include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/ExportEntry.hpp"
+#include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/Pogo.hpp"
 #include "LIEF/PE/PogoEntry.hpp"
 #include "LIEF/PE/Relocation.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"
+#include "LIEF/PE/ResourceData.hpp"
+#include "LIEF/PE/ResourceDirectory.hpp"
+#include "LIEF/PE/ResourceNode.hpp"
+#include "LIEF/PE/RichHeader.hpp"
+#include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/Symbol.hpp"
-#include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/PE/TLS.hpp"
+#include "LIEF/PE/utils.hpp"
 
 #include "internal_utils.hpp"
 #include "Parser.tcc"
@@ -135,17 +138,18 @@ ok_error_t Parser::parse_rich_header() {
     LIEF_DEBUG("Rich header not found!");
     return ok();
   }
+  auto rich_header = std::make_unique<RichHeader>();
 
   const uint64_t end_offset_rich_header = std::distance(std::begin(dos_stub), it_rich);
   LIEF_DEBUG("Offset to rich header: 0x{:x}", end_offset_rich_header);
 
   if (auto res_xor_key = stream.peek<uint32_t>(end_offset_rich_header + sizeof(details::Rich_Magic))) {
-    binary_->rich_header().key(*res_xor_key);
+    rich_header->key(*res_xor_key);
   } else {
     return make_error_code(lief_errors::read_error);
   }
 
-  const uint32_t xor_key = binary_->rich_header().key();
+  const uint32_t xor_key = rich_header->key();
   LIEF_DEBUG("XOR key: 0x{:x}", xor_key);
 
   int64_t curent_offset = end_offset_rich_header - sizeof(details::Rich_Magic);
@@ -190,10 +194,10 @@ ok_error_t Parser::parse_rich_header() {
     LIEF_DEBUG("Build Number: 0x{:04x}", build_number);
     LIEF_DEBUG("Count:        0x{:d}", count);
 
-    binary_->rich_header().add_entry(id, build_number, count);
+    rich_header->add_entry(id, build_number, count);
   }
 
-  binary_->has_rich_header_ = true;
+  binary_->rich_header_ = std::move(rich_header);
   return ok();
 }
 
@@ -297,10 +301,14 @@ ok_error_t Parser::parse_relocations() {
   static constexpr size_t MAX_RELOCATION_ENTRIES = 100000;
   LIEF_DEBUG("== Parsing relocations ==");
 
-  const uint32_t offset = binary_->rva_to_offset(
-      binary_->data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE).RVA());
+  const DataDirectory* reloc_dir = binary_->data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE);
 
-  const uint32_t max_size = binary_->data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE).size();
+  if (reloc_dir == nullptr) {
+    return make_error_code(lief_errors::not_found);
+  }
+
+  const uint32_t offset = binary_->rva_to_offset(reloc_dir->RVA());
+  const uint32_t max_size = reloc_dir->size();
   const uint32_t max_offset = offset + max_size;
 
   auto res_relocation_headers = stream_->peek<details::pe_base_relocation_block>(offset);
@@ -359,8 +367,13 @@ ok_error_t Parser::parse_relocations() {
 //
 ok_error_t Parser::parse_resources() {
   LIEF_DEBUG("== Parsing resources ==");
+  const DataDirectory* res_dir = binary_->data_directory(DATA_DIRECTORY::RESOURCE_TABLE);
 
-  const uint32_t resources_rva = binary_->data_directory(DATA_DIRECTORY::RESOURCE_TABLE).RVA();
+  if (res_dir == nullptr) {
+    return make_error_code(lief_errors::not_found);
+  }
+
+  const uint32_t resources_rva = res_dir->RVA();
   LIEF_DEBUG("Resources RVA: 0x{:04x}", resources_rva);
 
   const uint32_t offset = binary_->rva_to_offset(resources_rva);
@@ -618,12 +631,15 @@ ok_error_t Parser::parse_symbols() {
 
 ok_error_t Parser::parse_debug() {
   LIEF_DEBUG("== Parsing Debug ==");
-
   binary_->has_debug_ = true;
+  DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::DEBUG);
+  if (dir == nullptr) {
+    return make_error_code(lief_errors::not_found);
+  }
 
-  uint32_t debug_rva    = binary_->data_directory(DATA_DIRECTORY::DEBUG).RVA();
+  uint32_t debug_rva    = dir->RVA();
   uint32_t debug_offset = binary_->rva_to_offset(debug_rva);
-  uint32_t debug_size   = binary_->data_directory(DATA_DIRECTORY::DEBUG).size();
+  uint32_t debug_size   = dir->size();
 
   for (size_t i = 0; (i + 1) * sizeof(details::pe_debug) <= debug_size; i++) {
     auto res_debug_struct = stream_->peek<details::pe_debug>(debug_offset + i * sizeof(details::pe_debug));
@@ -795,10 +811,14 @@ ok_error_t Parser::parse_exports() {
     uint32_t start;
     uint32_t end;
   };
-  const DataDirectory& export_dir = binary_->data_directory(DATA_DIRECTORY::EXPORT_TABLE);
+  const DataDirectory* export_dir = binary_->data_directory(DATA_DIRECTORY::EXPORT_TABLE);
 
-  uint32_t exports_rva    = export_dir.RVA();
-  uint32_t exports_size   = export_dir.size();
+  if (export_dir == nullptr) {
+    return make_error_code(lief_errors::not_found);
+  }
+
+  uint32_t exports_rva    = export_dir->RVA();
+  uint32_t exports_size   = export_dir->size();
   uint32_t exports_offset = binary_->rva_to_offset(exports_rva);
   range_t range = {exports_rva, exports_rva + exports_size};
 
@@ -811,13 +831,13 @@ ok_error_t Parser::parse_exports() {
     return make_error_code(lief_errors::read_error);
   }
 
-  Export export_object = export_dir_tbl;
+  auto export_object = std::make_unique<Export>(export_dir_tbl);
   uint32_t name_offset = binary_->rva_to_offset(export_dir_tbl.NameRVA);
   if (auto res_name = stream_->peek_string_at(name_offset, Parser::MAX_DLL_NAME_SIZE)) {
     std::string name = *res_name;
     if (Parser::is_valid_dll_name(name)) {
-      export_object.name_ = std::move(name);
-      LIEF_DEBUG("Export name {}@0x{:x}", export_object.name_, name_offset);
+      export_object->name_ = std::move(name);
+      LIEF_DEBUG("Export name {}@0x{:x}", export_object->name_, name_offset);
     } else {
       // Empty export names are not allowed
       if (name.empty()) {
@@ -951,12 +971,11 @@ ok_error_t Parser::parse_exports() {
 
   for (ExportEntry& entry : export_entries) {
     if (corrupted_entries.count(entry.ordinal()) == 0) {
-      export_object.entries_.push_back(std::move(entry));
+      export_object->entries_.push_back(std::move(entry));
     }
   }
 
   binary_->export_ = std::move(export_object);
-  binary_->has_exports_ = true;
   return ok();
 }
 
@@ -966,8 +985,13 @@ ok_error_t Parser::parse_signature() {
 
   /*** /!\ In this data directory, RVA is used as an **OFFSET** /!\ ****/
   /*********************************************************************/
-  const uint32_t signature_offset  = binary_->data_directory(DATA_DIRECTORY::CERTIFICATE_TABLE).RVA();
-  const uint32_t signature_size    = binary_->data_directory(DATA_DIRECTORY::CERTIFICATE_TABLE).size();
+  const DataDirectory* cert_dir = binary_->data_directory(DATA_DIRECTORY::CERTIFICATE_TABLE);
+  if (cert_dir == nullptr) {
+    return make_error_code(lief_errors::not_found);
+  }
+
+  const uint32_t signature_offset  = cert_dir->RVA();
+  const uint32_t signature_size    = cert_dir->size();
   const uint64_t end_p = signature_offset + signature_size;
   LIEF_DEBUG("Signature Offset: 0x{:04x}", signature_offset);
   LIEF_DEBUG("Signature Size:   0x{:04x}", signature_size);

@@ -31,19 +31,23 @@
 #include "LIEF/PE/Builder.hpp"
 #define LIEF_PE_FORCE_UNDEF
 #include "LIEF/PE/undef.h"
-#include "LIEF/PE/utils.hpp"
-#include "LIEF/PE/EnumToString.hpp"
-#include "LIEF/PE/ResourceDirectory.hpp"
-#include "LIEF/PE/ResourceData.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
-#include "LIEF/PE/Section.hpp"
+#include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/PE/Export.hpp"
+#include "LIEF/PE/ExportEntry.hpp"
+#include "LIEF/PE/ImportEntry.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
 #include "LIEF/PE/Relocation.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"
-#include "LIEF/PE/ImportEntry.hpp"
-#include "LIEF/PE/ExportEntry.hpp"
+#include "LIEF/PE/ResourceData.hpp"
+#include "LIEF/PE/ResourceDirectory.hpp"
 #include "LIEF/PE/ResourcesManager.hpp"
+#include "LIEF/PE/RichHeader.hpp"
+#include "LIEF/PE/RichEntry.hpp"
+#include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/Symbol.hpp"
-#include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
+#include "LIEF/PE/TLS.hpp"
+#include "LIEF/PE/utils.hpp"
 #include "PE/Structures.hpp"
 
 #include "frozen.hpp"
@@ -136,18 +140,8 @@ void Binary::write(std::ostream& os) {
   write_impl(*this, os);
 }
 
-TLS& Binary::tls() {
-  return const_cast<TLS&>(static_cast<const Binary*>(this)->tls());
-}
-
-
-const TLS& Binary::tls() const {
-  return tls_;
-}
-
 void Binary::tls(const TLS& tls) {
-  tls_ = tls;
-  has_tls_ = true;
+  tls_ = std::make_unique<TLS>(tls);
 }
 
 uint64_t Binary::va_to_offset(uint64_t VA) {
@@ -253,18 +247,16 @@ Section* Binary::section_from_rva(uint64_t virtual_address) {
 
 
 
-DataDirectory& Binary::data_directory(DATA_DIRECTORY index) {
-  return const_cast<DataDirectory&>(static_cast<const Binary*>(this)->data_directory(index));
+DataDirectory* Binary::data_directory(DATA_DIRECTORY index) {
+  return const_cast<DataDirectory*>(static_cast<const Binary*>(this)->data_directory(index));
 }
 
-const DataDirectory& Binary::data_directory(DATA_DIRECTORY index) const {
-  static const DataDirectory NONE;
+const DataDirectory* Binary::data_directory(DATA_DIRECTORY index) const {
   if (static_cast<size_t>(index) < data_directories_.size() &&
       data_directories_[static_cast<size_t>(index)] != nullptr) {
-    return *data_directories_[static_cast<size_t>(index)];
+    return data_directories_[static_cast<size_t>(index)].get();
   }
-  LIEF_ERR("Index out of bound");
-  return NONE;
+  return nullptr;
 }
 
 
@@ -274,14 +266,6 @@ bool Binary::has(DATA_DIRECTORY index) const {
                                   return d->type() == index;
                                });
   return it != std::end(data_directories_);
-}
-
-bool Binary::has_rich_header() const {
-  return has_rich_header_;
-}
-
-bool Binary::has_tls() const {
-  return has_tls_;
 }
 
 bool Binary::has_imports() const {
@@ -340,8 +324,10 @@ LIEF::Binary::symbols_t Binary::get_abstract_symbols() {
     lief_symbols.push_back(&s);
   }
 
-  for (ExportEntry& exp : export_.entries()) {
-    lief_symbols.push_back(&exp);
+  if (Export* exp = get_export()) {
+    for (ExportEntry& entry : exp->entries()) {
+      lief_symbols.push_back(&entry);
+    }
   }
 
   for (Import& imp : imports_) {
@@ -404,8 +390,10 @@ const Section* Binary::import_section() const {
   if (!has_imports()) {
     return nullptr;
   }
-  const DataDirectory& import_directory = data_directory(DATA_DIRECTORY::IMPORT_TABLE);
-  return import_directory.section();
+  if (const DataDirectory* import_directory = data_directory(DATA_DIRECTORY::IMPORT_TABLE)) {
+    return import_directory->section();
+  }
+  return nullptr;
 }
 
 
@@ -636,34 +624,33 @@ Section* Binary::add_section(const Section& section, PE_SECTION_TYPES type) {
 
 
   if (type == PE_SECTION_TYPES::IMPORT) {
-
     new_section->add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_READ);
     new_section->add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_EXECUTE);
     new_section->add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_WRITE);
 
-    data_directory(DATA_DIRECTORY::IMPORT_TABLE).RVA(new_section->virtual_address());
-    data_directory(DATA_DIRECTORY::IMPORT_TABLE).size(new_section->sizeof_raw_data());
-    data_directory(DATA_DIRECTORY::IMPORT_TABLE).section_ = new_section.get();
-    data_directory(DATA_DIRECTORY::IAT).RVA(0);
-    data_directory(DATA_DIRECTORY::IAT).size(0);
+    data_directory(DATA_DIRECTORY::IMPORT_TABLE)->RVA(new_section->virtual_address());
+    data_directory(DATA_DIRECTORY::IMPORT_TABLE)->size(new_section->sizeof_raw_data());
+    data_directory(DATA_DIRECTORY::IMPORT_TABLE)->section_ = new_section.get();
+    data_directory(DATA_DIRECTORY::IAT)->RVA(0);
+    data_directory(DATA_DIRECTORY::IAT)->size(0);
   }
 
   if (type == PE_SECTION_TYPES::RELOCATION) {
-    data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE).RVA(new_section->virtual_address());
-    data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE).size(new_section->virtual_size());
-    data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE).section_ = new_section.get();
+    data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE)->RVA(new_section->virtual_address());
+    data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE)->size(new_section->virtual_size());
+    data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE)->section_ = new_section.get();
   }
 
   if (type == PE_SECTION_TYPES::RESOURCE) {
-    data_directory(DATA_DIRECTORY::RESOURCE_TABLE).RVA(new_section->virtual_address());
-    data_directory(DATA_DIRECTORY::RESOURCE_TABLE).size(new_section->size());
-    data_directory(DATA_DIRECTORY::RESOURCE_TABLE).section_ = new_section.get();
+    data_directory(DATA_DIRECTORY::RESOURCE_TABLE)->RVA(new_section->virtual_address());
+    data_directory(DATA_DIRECTORY::RESOURCE_TABLE)->size(new_section->size());
+    data_directory(DATA_DIRECTORY::RESOURCE_TABLE)->section_ = new_section.get();
   }
 
   if (type == PE_SECTION_TYPES::TLS) {
-    data_directory(DATA_DIRECTORY::TLS_TABLE).RVA(new_section->virtual_address());
-    data_directory(DATA_DIRECTORY::TLS_TABLE).size(new_section->size());
-    data_directory(DATA_DIRECTORY::TLS_TABLE).section_ = new_section.get();
+    data_directory(DATA_DIRECTORY::TLS_TABLE)->RVA(new_section->virtual_address());
+    data_directory(DATA_DIRECTORY::TLS_TABLE)->size(new_section->size());
+    data_directory(DATA_DIRECTORY::TLS_TABLE)->section_ = new_section.get();
   }
 
 
@@ -867,15 +854,6 @@ const Import* Binary::get_import(const std::string& import_name) const {
   return &*it_import;
 }
 
-
-Export& Binary::get_export() {
-  return const_cast<Export&>(static_cast<const Binary*>(this)->get_export());
-}
-
-
-const Export& Binary::get_export() const {
-  return export_;
-}
 
 /////////////////////////////////////
 //
@@ -1092,11 +1070,16 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
     position = sec->offset() + content.size() + pad.size();
   }
   if (!overlay_.empty()) {
-    const DataDirectory& cert_dir = data_directory(DATA_DIRECTORY::CERTIFICATE_TABLE);
-    LIEF_DEBUG("Add overlay and omit 0x{:08x} - 0x{:08x}", cert_dir.RVA(), cert_dir.RVA() + cert_dir.size());
-    if (cert_dir.RVA() > 0 && cert_dir.size() > 0 && cert_dir.RVA() >= overlay_offset_) {
-      const uint64_t start_cert_offset = cert_dir.RVA() - overlay_offset_;
-      const uint64_t end_cert_offset   = start_cert_offset + cert_dir.size();
+    const DataDirectory* cert_dir = data_directory(DATA_DIRECTORY::CERTIFICATE_TABLE);
+    if (cert_dir == nullptr) {
+      LIEF_ERR("Can't find the data directory for CERTIFICATE_TABLE");
+      return {};
+    }
+    LIEF_DEBUG("Add overlay and omit 0x{:08x} - 0x{:08x}",
+               cert_dir->RVA(), cert_dir->RVA() + cert_dir->size());
+    if (cert_dir->RVA() > 0 && cert_dir->size() > 0 && cert_dir->RVA() >= overlay_offset_) {
+      const uint64_t start_cert_offset = cert_dir->RVA() - overlay_offset_;
+      const uint64_t end_cert_offset   = start_cert_offset + cert_dir->size();
       if (end_cert_offset <= overlay_.size()) {
         LIEF_DEBUG("Add [0x{:x}, 0x{:x}]", overlay_offset_, overlay_offset_ + start_cert_offset);
         LIEF_DEBUG("Add [0x{:x}, 0x{:x}]",
@@ -1183,8 +1166,8 @@ const std::vector<Symbol>& Binary::symbols() const {
 
 LIEF::Binary::functions_t Binary::get_abstract_exported_functions() const {
   LIEF::Binary::functions_t result;
-  if (has_exports()) {
-    for (const ExportEntry& entry : get_export().entries()) {
+  if (const Export* exp = get_export()) {
+    for (const ExportEntry& entry : exp->entries()) {
       const std::string& name = entry.name();
       if(!name.empty()) {
         result.emplace_back(name, entry.address(), Function::flags_list_t{Function::FLAGS::EXPORTED});
@@ -1485,19 +1468,8 @@ void Binary::dos_stub(const std::vector<uint8_t>& content) {
   dos_stub_ = content;
 }
 
-// Rich Header
-// -----------
-RichHeader& Binary::rich_header() {
-  return rich_header_;
-}
-
-const RichHeader& Binary::rich_header() const {
-  return rich_header_;
-}
-
 void Binary::rich_header(const RichHeader& rich_header) {
-  rich_header_ = rich_header;
-  has_rich_header_ = true;
+  rich_header_ = std::make_unique<RichHeader>(rich_header);
 }
 
 // Resource manager
@@ -1513,8 +1485,8 @@ result<ResourcesManager> Binary::resources_manager() const {
 LIEF::Binary::functions_t Binary::ctor_functions() const {
   LIEF::Binary::functions_t functions;
 
-  if (has_tls()) {
-    const std::vector<uint64_t>& clbs = tls().callbacks();
+  if (const TLS* tls_obj = tls()) {
+    const std::vector<uint64_t>& clbs = tls_obj->callbacks();
     for (size_t i = 0; i < clbs.size(); ++i) {
       functions.emplace_back("tls_" + std::to_string(i), clbs[i],
                              Function::flags_list_t{Function::FLAGS::CONSTRUCTOR});
@@ -1554,9 +1526,11 @@ LIEF::Binary::functions_t Binary::exception_functions() const {
     return functions;
   }
 
-
-  const DataDirectory& exception_dir = data_directory(DATA_DIRECTORY::EXCEPTION_TABLE);
-  span<const uint8_t> exception_data = get_content_from_virtual_address(exception_dir.RVA(), exception_dir.size());
+  const DataDirectory* exception_dir = data_directory(DATA_DIRECTORY::EXCEPTION_TABLE);
+  if (exception_dir == nullptr) {
+    return functions;
+  }
+  span<const uint8_t> exception_data = get_content_from_virtual_address(exception_dir->RVA(), exception_dir->size());
   SpanStream vs{exception_data};
   const size_t nb_entries = vs.size() / sizeof(details::pe_exception_entry_x64); // TODO: Handle other architectures
 
@@ -1642,10 +1616,10 @@ std::ostream& Binary::print(std::ostream& os) const {
   os << std::endl;
 
 
-  if (has_rich_header()) {
+  if (const RichHeader* rheader = rich_header()) {
     os << "Rich Header" << std::endl;
     os << "===========" << std::endl;
-    os << rich_header() << std::endl;
+    os << *rheader << std::endl;
     os << std::endl;
   }
 
@@ -1682,10 +1656,10 @@ std::ostream& Binary::print(std::ostream& os) const {
   os << std::endl;
 
 
-  if (has_tls()) {
+  if (const TLS* tls_obj = tls()) {
     os << "TLS" << std::endl;
     os << "===" << std::endl;
-    os << tls() << std::endl;
+    os << *tls_obj << std::endl;
     os << std::endl;
   }
 
@@ -1739,10 +1713,10 @@ std::ostream& Binary::print(std::ostream& os) const {
   }
 
 
-  if (has_exports()) {
+  if (const Export* exp = get_export()) {
     os << "Export" << std::endl;
     os << "======" << std::endl;
-    os << get_export() << std::endl;
+    os << *exp << std::endl;
     os << std::endl;
   }
 

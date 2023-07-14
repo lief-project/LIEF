@@ -19,6 +19,7 @@
 #include "LIEF/PE/ImportEntry.hpp"
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
+#include "LIEF/PE/TLS.hpp"
 #include "PE/Structures.hpp"
 
 #include "logging.hpp"
@@ -179,7 +180,7 @@ void Builder::build_import_table() {
   }
 
   // As add_section will change DATA_DIRECTORY::IMPORT_TABLE we have to save it before
-  uint32_t offset_imports  = binary_->rva_to_offset(binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE).RVA());
+  uint32_t offset_imports  = binary_->rva_to_offset(binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE)->RVA());
   Section* import_section = binary_->add_section(new_import_section, PE_SECTION_TYPES::IMPORT);
   if (import_section == nullptr) {
     return;
@@ -340,8 +341,8 @@ void Builder::build_import_table() {
 
   // Update IAT data directory
   const auto rva = static_cast<uint32_t>(import_section->virtual_address() + iat_offset);
-  binary_->data_directory(DATA_DIRECTORY::IAT).RVA(rva);
-  binary_->data_directory(DATA_DIRECTORY::IAT).size(functions_name_offset - iat_offset + 1);
+  binary_->data_directory(DATA_DIRECTORY::IAT)->RVA(rva);
+  binary_->data_directory(DATA_DIRECTORY::IAT)->size(functions_name_offset - iat_offset + 1);
 }
 
 template<typename PE_T>
@@ -410,7 +411,7 @@ ok_error_t Builder::build_tls() {
   Section *tls_section = nullptr;
 
   pe_tls tls_raw;
-  const TLS& tls_obj = binary_->tls();
+  const TLS* tls_obj = binary_->tls();
 
   // No .tls section register in the binary. We have to create it
   if (it_tls == std::end(binary_->sections_)) {
@@ -418,17 +419,17 @@ ok_error_t Builder::build_tls() {
     new_section.characteristics(0xC0300040);
     uint64_t tls_section_size = sizeof(pe_tls);
 
-    const uint64_t offset_callbacks = binary_->va_to_offset(tls_obj.addressof_callbacks());
-    const uint64_t offset_rawdata   = binary_->va_to_offset(tls_obj.addressof_raw_data().first);
+    const uint64_t offset_callbacks = binary_->va_to_offset(tls_obj->addressof_callbacks());
+    const uint64_t offset_rawdata   = binary_->va_to_offset(tls_obj->addressof_raw_data().first);
 
     Section* callbacks_sec = binary_->section_from_offset(offset_callbacks);
     if (callbacks_sec == nullptr) {
-      tls_section_size += tls_obj.callbacks().size() * sizeof(uint__);
+      tls_section_size += tls_obj->callbacks().size() * sizeof(uint__);
     }
 
     Section* data_sec = binary_->section_from_offset(offset_rawdata);
     if (data_sec == nullptr) {
-      tls_section_size += tls_obj.data_template().size();
+      tls_section_size += tls_obj->data_template().size();
     }
 
     tls_section_size = align(tls_section_size, binary_->optional_header().file_alignment());
@@ -443,12 +444,12 @@ ok_error_t Builder::build_tls() {
     tls_section = it_tls->get();
   }
 
-  tls_raw.RawDataStartVA    = static_cast<uint__>(tls_obj.addressof_raw_data().first);
-  tls_raw.RawDataEndVA      = static_cast<uint__>(tls_obj.addressof_raw_data().second);
-  tls_raw.AddressOfIndex    = static_cast<uint__>(tls_obj.addressof_index());
-  tls_raw.AddressOfCallback = static_cast<uint__>(tls_obj.addressof_callbacks());
-  tls_raw.SizeOfZeroFill    = static_cast<uint32_t>(tls_obj.sizeof_zero_fill());
-  tls_raw.Characteristics   = static_cast<uint32_t>(tls_obj.characteristics());
+  tls_raw.RawDataStartVA    = static_cast<uint__>(tls_obj->addressof_raw_data().first);
+  tls_raw.RawDataEndVA      = static_cast<uint__>(tls_obj->addressof_raw_data().second);
+  tls_raw.AddressOfIndex    = static_cast<uint__>(tls_obj->addressof_index());
+  tls_raw.AddressOfCallback = static_cast<uint__>(tls_obj->addressof_callbacks());
+  tls_raw.SizeOfZeroFill    = static_cast<uint32_t>(tls_obj->sizeof_zero_fill());
+  tls_raw.Characteristics   = static_cast<uint32_t>(tls_obj->characteristics());
 
   std::vector<uint8_t> data(sizeof(pe_tls), 0);
 
@@ -456,15 +457,15 @@ ok_error_t Builder::build_tls() {
       reinterpret_cast<uint8_t*>(&tls_raw), reinterpret_cast<uint8_t*>(&tls_raw) + sizeof(pe_tls),
       data.data());
 
-  const uint64_t offset_callbacks = binary_->va_to_offset(tls_obj.addressof_callbacks());
-  const uint64_t offset_rawdata   = binary_->va_to_offset(tls_obj.addressof_raw_data().first);
+  const uint64_t offset_callbacks = binary_->va_to_offset(tls_obj->addressof_callbacks());
+  const uint64_t offset_rawdata   = binary_->va_to_offset(tls_obj->addressof_raw_data().first);
   Section* section_callbacks = binary_->section_from_offset(offset_callbacks);
   if (section_callbacks == nullptr) {
     LIEF_ERR("Can't find the section which holds callbacks.");
     return make_error_code(lief_errors::not_found);
   }
 
-  const uint64_t size_needed = (tls_obj.callbacks().size()) * sizeof(uint__);
+  const uint64_t size_needed = (tls_obj->callbacks().size()) * sizeof(uint__);
 
   if (section_callbacks == tls_section) {
     // Case where the section where callbacks are located is the same
@@ -472,7 +473,7 @@ ok_error_t Builder::build_tls() {
 
     uint64_t relative_offset = offset_callbacks - tls_section->offset();
 
-    for (uint__ callback : tls_obj.callbacks()) {
+    for (uint__ callback : tls_obj->callbacks()) {
       data.insert(std::begin(data) + relative_offset,
                   reinterpret_cast<uint8_t*>(&callback),
                   reinterpret_cast<uint8_t*>(&callback) + sizeof(uint__));
@@ -493,7 +494,7 @@ ok_error_t Builder::build_tls() {
       return make_error_code(lief_errors::build_error);
     }
 
-    for (uint__ callback : tls_obj.callbacks()) {
+    for (uint__ callback : tls_obj->callbacks()) {
       memcpy(callback_data.data() + relative_offset, &callback, sizeof(uint__));
       relative_offset += sizeof(uint__);
     }
@@ -507,7 +508,7 @@ ok_error_t Builder::build_tls() {
     return make_error_code(lief_errors::not_found);
   }
   {
-    span<const uint8_t> data_template = tls_obj.data_template();
+    span<const uint8_t> data_template = tls_obj->data_template();
     const uint64_t size_needed = data_template.size();
 
     if (section_rawdata == tls_section) {
@@ -520,7 +521,7 @@ ok_error_t Builder::build_tls() {
     } else {
       const uint64_t relative_offset = offset_rawdata - section_rawdata->offset();
       span<uint8_t> section_data = section_rawdata->writable_content();
-      span<const uint8_t> data_template = tls_obj.data_template();
+      span<const uint8_t> data_template = tls_obj->data_template();
       if ((relative_offset + size_needed) > section_data.size()) {
         return make_error_code(lief_errors::build_error);
       }

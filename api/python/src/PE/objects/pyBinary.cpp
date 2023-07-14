@@ -20,6 +20,9 @@
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/ResourceNode.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
+#include "LIEF/PE/TLS.hpp"
+#include "LIEF/PE/Export.hpp"
+#include "LIEF/PE/RichHeader.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
 
 #include "PE/pyPE.hpp"

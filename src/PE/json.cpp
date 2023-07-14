@@ -54,9 +54,9 @@ void JsonVisitor::visit(const Binary& binary) {
   dos_header_visitor(binary.dos_header());
 
   // Rich Header
-  if (binary.has_rich_header()) {
+  if (const RichHeader* rheader = binary.rich_header()) {
     JsonVisitor visitor;
-    visitor(binary.rich_header());
+    visitor(*rheader);
     node_["rich_header"] = visitor.get();
   }
 
@@ -103,17 +103,17 @@ void JsonVisitor::visit(const Binary& binary) {
   }
 
   // TLS
-  if (binary.has_tls()) {
+  if (const TLS* tls_object = binary.tls()) {
     JsonVisitor visitor;
-    visitor(binary.tls());
+    visitor(*tls_object);
     node_["tls"] = visitor.get();
   }
 
 
   // Exports
-  if (binary.has_exports()) {
+  if (const Export* exp = binary.get_export()) {
     JsonVisitor visitor;
-    visitor(binary.get_export());
+    visitor(*exp);
     node_["export"] = visitor.get();
   }
 

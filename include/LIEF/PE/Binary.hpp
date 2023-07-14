@@ -21,11 +21,8 @@
 #include "LIEF/PE/Header.hpp"
 #include "LIEF/PE/OptionalHeader.hpp"
 #include "LIEF/PE/DosHeader.hpp"
-#include "LIEF/PE/RichHeader.hpp"
 #include "LIEF/PE/Import.hpp"
 #include "LIEF/PE/DelayImport.hpp"
-#include "LIEF/PE/TLS.hpp"
-#include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/Debug.hpp"
 #include "LIEF/PE/Symbol.hpp"
 #include "LIEF/PE/ResourcesManager.hpp"
@@ -46,6 +43,9 @@ class ResourceData;
 class ResourceDirectory;
 class LoadConfiguration;
 class Relocation;
+class TLS;
+class Export;
+class RichHeader;
 
 //! Class which represents a PE binary
 //! This is the main interface to manage and modify a PE executable
@@ -199,14 +199,21 @@ class LIEF_API Binary : public LIEF::Binary {
   uint32_t sizeof_headers() const;
 
   //! Return a reference to the TLS object
-  TLS& tls();
-  const TLS& tls() const;
+  TLS* tls() {
+    return tls_.get();
+  }
+
+  const TLS* tls() const {
+    return tls_.get();
+  }
 
   //! Set a TLS object in the current Binary
   void tls(const TLS& tls);
 
   //! Check if the current binary has a TLS object
-  bool has_tls() const;
+  bool has_tls() const {
+    return tls_ != nullptr;
+  }
 
   //! Check if the current binary contains imports
   //!
@@ -289,8 +296,13 @@ class LIEF_API Binary : public LIEF::Binary {
   uint32_t predict_function_rva(const std::string& library, const std::string& function);
 
   //! Return the Export object
-  Export& get_export();
-  const Export& get_export() const;
+  Export* get_export() {
+    return export_.get();
+  }
+
+  const Export* get_export() const {
+    return export_.get();
+  }
 
   //! Return binary Symbols
   std::vector<Symbol>& symbols();
@@ -352,8 +364,8 @@ class LIEF_API Binary : public LIEF::Binary {
   it_const_data_directories data_directories() const;
 
   //! Return the DataDirectory with the given type (or index)
-  DataDirectory& data_directory(DATA_DIRECTORY index);
-  const DataDirectory& data_directory(DATA_DIRECTORY index) const;
+  DataDirectory* data_directory(DATA_DIRECTORY index);
+  const DataDirectory* data_directory(DATA_DIRECTORY index) const;
 
   //! Check if the current binary has the given DATA_DIRECTORY
   bool has(DATA_DIRECTORY index) const;
@@ -382,14 +394,21 @@ class LIEF_API Binary : public LIEF::Binary {
   // -----------
 
   //! Return a reference to the RichHeader object
-  RichHeader& rich_header();
-  const RichHeader& rich_header() const;
+  RichHeader* rich_header() {
+    return rich_header_.get();
+  }
+
+  const RichHeader* rich_header() const {
+    return rich_header_.get();
+  }
 
   //! Set a RichHeader object in the current Binary
   void rich_header(const RichHeader& rich_header);
 
   //! Check if the current binary has a RichHeader object
-  bool has_rich_header() const;
+  bool has_rich_header() const {
+    return rich_header_ != nullptr;
+  }
 
   //! Return an iterator over the binary imports
   it_imports       imports();
@@ -539,7 +558,6 @@ class LIEF_API Binary : public LIEF::Binary {
 
   PE_TYPE        type_ = PE_TYPE::PE32_PLUS;
   DosHeader      dos_header_;
-  RichHeader     rich_header_;
   Header         header_;
   OptionalHeader optional_header_;
 
@@ -556,23 +574,24 @@ class LIEF_API Binary : public LIEF::Binary {
   bool has_configuration_ = false;
   bool is_reproducible_build_ = false;
 
-  signatures_t         signatures_;
-  TLS                  tls_;
+  signatures_t signatures_;
   sections_t           sections_;
   data_directories_t   data_directories_;
   symbols_t            symbols_;
   strings_table_t      strings_table_;
   relocations_t        relocations_;
-  std::unique_ptr<ResourceNode> resources_;
   imports_t            imports_;
   delay_imports_t      delay_imports_;
-  Export               export_;
   debug_entries_t      debug_;
   uint64_t overlay_offset_ = 0;
   std::vector<uint8_t> overlay_;
   std::vector<uint8_t> dos_stub_;
   std::vector<uint8_t> section_offset_padding_;
 
+  std::unique_ptr<RichHeader> rich_header_;
+  std::unique_ptr<Export> export_;
+  std::unique_ptr<ResourceNode> resources_;
+  std::unique_ptr<TLS> tls_;
   std::unique_ptr<LoadConfiguration> load_configuration_;
 };
 
