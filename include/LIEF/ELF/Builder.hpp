@@ -56,22 +56,22 @@ class LIEF_API Builder {
   public:
   //! Configuration options to tweak the building process
   struct config_t {
-    bool dt_hash         = true;
-    bool dyn_str         = true;
-    bool dynamic_section = true;
-    bool fini_array      = true;
-    bool gnu_hash        = true;
-    bool init_array      = true;
-    bool interpreter     = true;
-    bool jmprel          = true;
+    bool dt_hash         = true;  /// Rebuild DT_HASH
+    bool dyn_str         = true;  /// Rebuild DT_STRTAB
+    bool dynamic_section = true;  /// Rebuild PT_DYNAMIC segment
+    bool fini_array      = true;  /// Rebuild DT_FINI_ARRAY
+    bool gnu_hash        = true;  /// Rebuild DT_GNU_HASH
+    bool init_array      = true;  /// Rebuild DT_INIT_ARRAY
+    bool interpreter     = true;  /// Rebuild PT_INTERPRETER
+    bool jmprel          = true;  /// Rebuild DT_JMPREL
     bool notes           = false; /// Disable note building since it can break the default layout
-    bool preinit_array   = true;
-    bool rela            = true;
-    bool static_symtab   = true;
-    bool sym_verdef      = true;
-    bool sym_verneed     = true;
-    bool sym_versym      = true;
-    bool symtab          = true;
+    bool preinit_array   = true;  /// Rebuild DT_PREINIT_ARRAY
+    bool rela            = true;  /// Rebuild DT_REL[A]
+    bool static_symtab   = true;  /// Rebuild `.symtab`
+    bool sym_verdef      = true;  /// Rebuild DT_VERDEF
+    bool sym_verneed     = true;  /// Rebuild DT_VERNEED
+    bool sym_versym      = true;  /// Rebuild DT_VERSYM
+    bool symtab          = true;  /// Rebuild DT_SYMTAB
 
     bool force_relocate  = false; /// Force to relocating all the ELF structures that are supported by LIEF (mostly for testing)
   };
