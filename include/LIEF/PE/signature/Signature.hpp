@@ -153,7 +153,7 @@ class LIEF_API Signature : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  virtual ~Signature();
+  ~Signature() override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Signature& signature);
 

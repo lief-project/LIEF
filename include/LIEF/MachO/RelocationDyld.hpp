@@ -42,7 +42,7 @@ class LIEF_API RelocationDyld : public Relocation {
   RelocationDyld& operator=(const RelocationDyld&);
   RelocationDyld(const RelocationDyld&);
 
-  virtual ~RelocationDyld();
+  ~RelocationDyld() override;
 
   Relocation* clone() const override;
 

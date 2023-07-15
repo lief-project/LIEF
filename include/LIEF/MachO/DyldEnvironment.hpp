@@ -42,7 +42,7 @@ class LIEF_API DyldEnvironment : public LoadCommand {
 
   DyldEnvironment* clone() const override;
 
-  virtual ~DyldEnvironment();
+  ~DyldEnvironment() override;
 
   std::ostream& print(std::ostream& os) const override;
 

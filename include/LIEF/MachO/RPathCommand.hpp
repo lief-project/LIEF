@@ -44,7 +44,7 @@ class LIEF_API RPathCommand : public LoadCommand {
 
   RPathCommand* clone() const override;
 
-  virtual ~RPathCommand();
+  ~RPathCommand() override;
 
   //! The rpath value as a string
   const std::string& path() const;

@@ -42,7 +42,7 @@ class LIEF_API MainCommand : public LoadCommand {
 
   MainCommand* clone() const override;
 
-  virtual ~MainCommand();
+  ~MainCommand() override;
 
   //! Offset of the *main* function relative to the ``__TEXT``
   //! segment

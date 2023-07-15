@@ -66,7 +66,7 @@ class LIEF_API Function : public Symbol {
   Function(const std::string& name, uint64_t address, const flags_list_t& flags);
   Function(const Function&);
   Function& operator=(const Function&);
-  virtual ~Function();
+  ~Function() override;
 
   //! List of FLAGS
   flags_list_t flags() const;

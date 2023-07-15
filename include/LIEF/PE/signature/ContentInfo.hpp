@@ -107,7 +107,7 @@ class LIEF_API ContentInfo : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  virtual ~ContentInfo();
+  ~ContentInfo() override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ContentInfo& content_info);
 

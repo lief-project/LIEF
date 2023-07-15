@@ -70,7 +70,7 @@ class LIEF_API DexFile : public Object {
   bool operator==(const DexFile& rhs) const;
   bool operator!=(const DexFile& rhs) const;
 
-  virtual ~DexFile();
+  ~DexFile() override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const DexFile& dex_file);
 

@@ -41,7 +41,7 @@ class LIEF_API AbstractHash : public LIEF::Hash {
   void visit(const Relocation& relocation) override;
   void visit(const Function& function)     override;
 
-  virtual ~AbstractHash();
+  ~AbstractHash() override;
 };
 
 }

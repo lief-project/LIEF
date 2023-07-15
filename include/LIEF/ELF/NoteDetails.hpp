@@ -45,7 +45,7 @@ class LIEF_API NoteDetails : public Object {
   NoteDetails(Note& note);
 
   public:
-  virtual ~NoteDetails();
+  ~NoteDetails() override;
 
   virtual NoteDetails* clone() const;
 

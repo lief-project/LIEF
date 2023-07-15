@@ -43,7 +43,7 @@ class LIEF_API UUIDCommand : public LoadCommand {
 
   UUIDCommand* clone() const override;
 
-  virtual ~UUIDCommand();
+  ~UUIDCommand() override;
 
   //! The UUID as a 16-bytes array
   uuid_t uuid() const;

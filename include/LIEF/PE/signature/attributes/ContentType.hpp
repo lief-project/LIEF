@@ -63,7 +63,7 @@ class LIEF_API ContentType : public Attribute {
   }
 
   void accept(Visitor& visitor) const override;
-  virtual ~ContentType();
+  ~ContentType() override;
 
   private:
   oid_t oid_;

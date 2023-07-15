@@ -77,7 +77,7 @@ class LIEF_API Field : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Field& mtd);
 
-  virtual ~Field();
+  ~Field() override;
 
   private:
   void set_static(bool v);

@@ -154,7 +154,7 @@ class LIEF_API LoadConfiguration : public Object {
   void editlist(uint32_t editlist);
   void security_cookie(uint32_t security_cookie);
 
-  virtual ~LoadConfiguration();
+  ~LoadConfiguration() override;
 
   static bool classof(const LoadConfiguration* /*config*/) {
     // This is the base class, thus all the other

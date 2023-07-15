@@ -82,7 +82,7 @@ class LIEF_API FunctionStarts : public LoadCommand {
     return content_;
   }
 
-  virtual ~FunctionStarts();
+  ~FunctionStarts() override;
 
   bool operator==(const FunctionStarts& rhs) const;
   bool operator!=(const FunctionStarts& rhs) const;

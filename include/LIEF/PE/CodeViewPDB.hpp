@@ -58,7 +58,7 @@ class LIEF_API CodeViewPDB : public CodeView {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const CodeViewPDB& entry);
 
-  virtual ~CodeViewPDB();
+  ~CodeViewPDB() override;
 
   private:
   signature_t signature_;

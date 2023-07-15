@@ -83,7 +83,7 @@ class LIEF_API CorePrPsInfo : public NoteDetails {
 
   void accept(Visitor& visitor) const override;
 
-  virtual ~CorePrPsInfo();
+  ~CorePrPsInfo() override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const CorePrPsInfo& note);
 

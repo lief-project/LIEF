@@ -54,7 +54,7 @@ class LIEF_API Note : public Object {
   Note& operator=(Note copy);
   Note(const Note& copy);
 
-  virtual ~Note();
+  ~Note() override;
 
   //! Return the *name* of the note
   const std::string& name() const;

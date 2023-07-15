@@ -61,7 +61,7 @@ class LIEF_API Header : public Object {
   Header& operator=(const Header&);
   Header(const Header&);
 
-  virtual ~Header();
+  ~Header() override;
 
   //! Define the object file type. (e.g. executable, library...)
   E_TYPE file_type() const;

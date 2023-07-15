@@ -42,7 +42,7 @@ class LIEF_API ResourceData : public ResourceNode {
   ResourceData& operator=(ResourceData other);
   void swap(ResourceData& other);
 
-  virtual ~ResourceData();
+  ~ResourceData() override;
 
   ResourceData* clone() const override;
 

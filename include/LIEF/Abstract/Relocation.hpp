@@ -16,6 +16,8 @@
 #ifndef LIEF_ABSTRACT_RELOCATION_H
 #define LIEF_ABSTRACT_RELOCATION_H
 
+#include <ostream>
+
 #include "LIEF/types.hpp"
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
@@ -30,7 +32,7 @@ class LIEF_API Relocation : public Object {
   //! Constructor from a relocation's address and size
   Relocation(uint64_t address, uint8_t size);
 
-  virtual ~Relocation();
+  ~Relocation() override;
 
   Relocation& operator=(const Relocation&);
   Relocation(const Relocation&);

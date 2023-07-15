@@ -62,7 +62,7 @@ class LIEF_API DataCodeEntry : public LIEF::Object {
   void length(uint16_t length);
   void type(TYPES type);
 
-  virtual ~DataCodeEntry();
+  ~DataCodeEntry() override;
 
   bool operator==(const DataCodeEntry& rhs) const;
   bool operator!=(const DataCodeEntry& rhs) const;

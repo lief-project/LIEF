@@ -83,7 +83,7 @@ class LIEF_API MapItem : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const MapItem& item);
 
-  virtual ~MapItem();
+  ~MapItem() override;
 
   private:
   TYPES    type_;

@@ -60,7 +60,7 @@ class LIEF_API SegmentSplitInfo : public LoadCommand {
     return content_;
   }
 
-  virtual ~SegmentSplitInfo();
+  ~SegmentSplitInfo() override;
 
   bool operator==(const SegmentSplitInfo& rhs) const;
   bool operator!=(const SegmentSplitInfo& rhs) const;

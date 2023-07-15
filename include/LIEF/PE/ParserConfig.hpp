@@ -23,7 +23,7 @@ namespace PE {
 //! This structure is used to tweak the PE Parser (PE::Parser)
 struct LIEF_API ParserConfig {
   static ParserConfig all() {
-    static ParserConfig DEFAULT;
+    static const ParserConfig DEFAULT;
     return DEFAULT;
   }
 

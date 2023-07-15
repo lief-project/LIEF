@@ -61,7 +61,7 @@ class LIEF_API Pogo : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Pogo& entry);
 
-  virtual ~Pogo();
+  ~Pogo() override;
 
   protected:
   POGO_SIGNATURES signature_ = POGO_SIGNATURES::POGO_UNKNOWN;

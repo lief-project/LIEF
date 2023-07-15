@@ -683,7 +683,7 @@ void Visitor::operator()(Arg1&& arg1, Args&&... args) {
 
 template<class T>
 void Visitor::dispatch(const T& obj) {
-  size_t hash = reinterpret_cast<size_t>(&obj);
+  auto hash = reinterpret_cast<size_t>(&obj);
   if (visited_.find(hash) != std::end(visited_)) {
     // Already visited
     return;

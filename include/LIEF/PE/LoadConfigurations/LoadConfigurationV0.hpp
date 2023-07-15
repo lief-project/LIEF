@@ -53,7 +53,7 @@ class LIEF_API LoadConfigurationV0 : public LoadConfiguration {
   void se_handler_table(uint64_t se_handler_table);
   void se_handler_count(uint64_t se_handler_count);
 
-  virtual ~LoadConfigurationV0();
+  ~LoadConfigurationV0() override;
 
 
   static bool classof(const LoadConfiguration* config) {

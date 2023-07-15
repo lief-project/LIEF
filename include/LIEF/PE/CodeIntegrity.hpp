@@ -16,6 +16,7 @@
 #ifndef LIEF_PE_CODE_INTEGRITY_H
 #define LIEF_PE_CODE_INTEGRITY_H
 #include <ostream>
+#include <cstdint>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
@@ -31,7 +32,7 @@ class LIEF_API CodeIntegrity : public Object {
   static constexpr size_t PRINT_WIDTH = 20;
   CodeIntegrity();
   CodeIntegrity(const details::pe_code_integrity& header);
-  virtual ~CodeIntegrity();
+  ~CodeIntegrity() override;
 
   CodeIntegrity& operator=(const CodeIntegrity&);
   CodeIntegrity(const CodeIntegrity&);

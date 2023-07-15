@@ -97,7 +97,7 @@ class LIEF_API Type : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Type& type);
 
-  virtual ~Type();
+  ~Type() override;
 
   private:
   void parse(const std::string& type);

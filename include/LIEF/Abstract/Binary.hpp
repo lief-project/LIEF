@@ -78,7 +78,7 @@ class LIEF_API Binary : public Object {
 
   public:
   Binary();
-  virtual ~Binary();
+  ~Binary() override;
 
   Binary& operator=(const Binary&);
   Binary(const Binary&);

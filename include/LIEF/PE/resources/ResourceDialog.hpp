@@ -61,7 +61,7 @@ class LIEF_API ResourceDialog : public Object {
   ResourceDialog(const ResourceDialog&);
   ResourceDialog& operator=(const ResourceDialog&);
 
-  virtual ~ResourceDialog();
+  ~ResourceDialog() override;
 
   //! ``true`` if the dialog is an extended one
   bool is_extended() const;

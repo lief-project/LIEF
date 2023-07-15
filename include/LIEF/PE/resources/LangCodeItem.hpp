@@ -48,7 +48,7 @@ class LIEF_API LangCodeItem : public Object {
 
   LangCodeItem(const LangCodeItem&);
   LangCodeItem& operator=(const LangCodeItem&);
-  virtual ~LangCodeItem();
+  ~LangCodeItem() override;
 
   //! The type of data in the version resource
   //! * ``1`` if it contains text data

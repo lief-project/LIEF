@@ -51,7 +51,7 @@ class LIEF_API ExportEntry : public LIEF::Symbol {
               uint16_t ordinal, uint32_t function_rva);
   ExportEntry(const ExportEntry&);
   ExportEntry& operator=(const ExportEntry&);
-  virtual ~ExportEntry();
+  ~ExportEntry() override;
 
   uint16_t           ordinal() const;
   uint32_t           address() const;

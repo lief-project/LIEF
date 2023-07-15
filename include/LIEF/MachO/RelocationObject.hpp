@@ -51,7 +51,7 @@ class LIEF_API RelocationObject : public Relocation {
 
   void swap(RelocationObject& other);
 
-  virtual ~RelocationObject();
+  ~RelocationObject() override;
 
   RelocationObject* clone() const override;
 

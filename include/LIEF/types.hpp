@@ -15,8 +15,8 @@
  */
 #ifndef LIEF_TYPES_H
 #define LIEF_TYPES_H
-#include <stdint.h>
-#include <inttypes.h>
+#include <cstdint>
+#include <cinttypes>
 #include <cstddef>
 
 #if defined(_MSC_VER)

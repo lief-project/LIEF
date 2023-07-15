@@ -33,7 +33,7 @@ class LIEF_API Symbol : public Object {
   Symbol(std::string name, uint64_t value, uint64_t size);
   Symbol(const Symbol&);
   Symbol& operator=(const Symbol&);
-  virtual ~Symbol();
+  ~Symbol() override;
 
   void swap(Symbol& other);
 

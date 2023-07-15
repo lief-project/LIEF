@@ -270,3 +270,8 @@ def test_issue_703():
 def test_issue_912():
     steam = lief.PE.parse(get_sample("PE/steam.exe"))
     assert steam.verify_signature() == lief.PE.Signature.VERIFICATION_FLAGS.OK
+
+def test_verification_flags_str():
+    flag = lief.PE.Signature.VERIFICATION_FLAGS.BAD_DIGEST | \
+           lief.PE.Signature.VERIFICATION_FLAGS.CERT_FUTURE
+    assert str(flag) == "VERIFICATION_FLAGS.BAD_DIGEST | VERIFICATION_FLAGS.CERT_FUTURE"

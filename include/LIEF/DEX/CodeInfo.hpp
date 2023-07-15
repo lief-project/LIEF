@@ -45,7 +45,7 @@ class LIEF_API CodeInfo : public Object {
   bool operator==(const CodeInfo& rhs) const;
   bool operator!=(const CodeInfo& rhs) const;
 
-  virtual ~CodeInfo();
+  ~CodeInfo() override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const CodeInfo& cinfo);
 

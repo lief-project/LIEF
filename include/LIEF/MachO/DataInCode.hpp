@@ -82,7 +82,7 @@ class LIEF_API DataInCode : public LoadCommand {
     return content_;
   }
 
-  virtual ~DataInCode();
+  ~DataInCode() override;
 
   bool operator==(const DataInCode& rhs) const;
   bool operator!=(const DataInCode& rhs) const;

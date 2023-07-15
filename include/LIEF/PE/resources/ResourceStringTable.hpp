@@ -36,7 +36,7 @@ class LIEF_API ResourceStringTable : public Object {
 
   ResourceStringTable& operator=(const ResourceStringTable&);
 
-  virtual ~ResourceStringTable();
+  ~ResourceStringTable() override;
 
   void accept(Visitor& visitor) const override;
 

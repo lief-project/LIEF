@@ -103,7 +103,7 @@ class LIEF_API Hash : public Visitor {
   }
 
   size_t value() const;
-  virtual ~Hash();
+  ~Hash() override;
 
   protected:
   size_t value_;

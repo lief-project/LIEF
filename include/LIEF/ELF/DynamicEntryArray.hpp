@@ -71,7 +71,7 @@ class LIEF_API DynamicEntryArray : public DynamicEntry {
 
   std::ostream& print(std::ostream& os) const override;
 
-  virtual ~DynamicEntryArray();
+  ~DynamicEntryArray() override;
 
   static bool classof(const DynamicEntry* entry);
 

@@ -61,7 +61,7 @@ class LIEF_API ResourceNode : public Object {
 
   void swap(ResourceNode& other);
 
-  virtual ~ResourceNode();
+  ~ResourceNode() override;
 
   virtual ResourceNode* clone() const = 0;
 

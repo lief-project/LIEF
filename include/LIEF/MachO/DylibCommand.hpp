@@ -86,7 +86,7 @@ class LIEF_API DylibCommand : public LoadCommand {
   DylibCommand& operator=(const DylibCommand& copy);
   DylibCommand(const DylibCommand& copy);
 
-  virtual ~DylibCommand();
+  ~DylibCommand() override;
 
   DylibCommand* clone() const override;
 

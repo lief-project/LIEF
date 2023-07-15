@@ -45,7 +45,7 @@ class LIEF_API RichHeader : public Object {
   RichHeader();
   RichHeader(const RichHeader&);
   RichHeader& operator=(const RichHeader&);
-  virtual ~RichHeader();
+  ~RichHeader() override;
 
   //! Key used to encode the header (xor operation)
   uint32_t key() const;

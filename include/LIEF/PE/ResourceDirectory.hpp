@@ -48,7 +48,7 @@ class LIEF_API ResourceDirectory : public ResourceNode {
 
   void swap(ResourceDirectory& other);
 
-  virtual ~ResourceDirectory();
+  ~ResourceDirectory() override;
 
   ResourceDirectory* clone() const override;
 

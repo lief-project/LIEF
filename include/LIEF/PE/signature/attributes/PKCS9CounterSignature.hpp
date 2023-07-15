@@ -66,7 +66,7 @@ class LIEF_API PKCS9CounterSignature : public Attribute {
 
   void accept(Visitor& visitor) const override;
 
-  virtual ~PKCS9CounterSignature();
+  ~PKCS9CounterSignature() override;
 
   private:
   SignerInfo signer_;

@@ -93,7 +93,7 @@ class LIEF_API DyldInfo : public LoadCommand {
 
   DyldInfo* clone() const override;
 
-  virtual ~DyldInfo();
+  ~DyldInfo() override;
 
   //! *Rebase* information
   //!

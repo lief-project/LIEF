@@ -65,7 +65,7 @@ class LIEF_API MsSpcNestedSignature : public Attribute {
     return attr->type() == SIG_ATTRIBUTE_TYPES::MS_SPC_NESTED_SIGN;
   }
 
-  virtual ~MsSpcNestedSignature();
+  ~MsSpcNestedSignature() override;
 
   private:
   Signature sig_;

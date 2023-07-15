@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_PE_DOS_HEADER_H
 #define LIEF_PE_DOS_HEADER_H
+#include <cstdint>
 #include <array>
 #include <ostream>
 
@@ -41,7 +42,7 @@ class LIEF_API DosHeader : public Object {
   DosHeader();
   DosHeader(const DosHeader&);
   DosHeader& operator=(const DosHeader&);
-  virtual ~DosHeader();
+  ~DosHeader() override;
 
   //! Magic bytes identifying a DOS/PE binary
   uint16_t magic() const;

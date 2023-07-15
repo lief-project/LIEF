@@ -53,7 +53,7 @@ class LIEF_API Prototype : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Prototype& type);
 
-  virtual ~Prototype();
+  ~Prototype() override;
 
   private:
   Type* return_type_ = nullptr;

@@ -17,11 +17,10 @@
 #define LIEF_MACHO_BUIDLER_H
 
 #include <algorithm>
-#include <vector>
-#include <vector>
-#include <memory>
 #include <functional>
+#include <memory>
 #include <unordered_map>
+#include <vector>
 
 #include "LIEF/errors.hpp"
 #include "LIEF/visibility.h"
@@ -63,6 +62,8 @@ class LIEF_API Builder {
     bool linkedit = true;
   };
 
+  Builder() = delete;
+
   static ok_error_t write(Binary& binary, const std::string& filename);
   static ok_error_t write(Binary& binary, const std::string& filename, config_t config);
 
@@ -91,8 +92,6 @@ class LIEF_API Builder {
 
   Builder(Binary& binary, config_t config);
   Builder(std::vector<Binary*> binaries, config_t config);
-
-  Builder() = delete;
 
   static std::vector<uint8_t> build_raw(Binary& binary, config_t config);
   static std::vector<uint8_t> build_raw(FatBinary& binary, config_t config);

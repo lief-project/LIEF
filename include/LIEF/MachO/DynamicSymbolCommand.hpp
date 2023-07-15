@@ -53,7 +53,7 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
 
   DynamicSymbolCommand* clone() const override;
 
-  virtual ~DynamicSymbolCommand();
+  ~DynamicSymbolCommand() override;
 
   void accept(Visitor& visitor) const override;
 

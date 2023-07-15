@@ -82,7 +82,7 @@ class LIEF_API Class : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Class& cls);
 
-  virtual ~Class();
+  ~Class() override;
 
   private:
 

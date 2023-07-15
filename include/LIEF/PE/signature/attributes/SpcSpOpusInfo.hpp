@@ -73,7 +73,7 @@ class LIEF_API SpcSpOpusInfo : public Attribute {
 
   void accept(Visitor& visitor) const override;
 
-  virtual ~SpcSpOpusInfo();
+  ~SpcSpOpusInfo() override;
 
   private:
   std::string program_name_;

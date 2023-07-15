@@ -45,7 +45,7 @@ class LIEF_API ImportEntry : public LIEF::Symbol {
   ImportEntry(const std::string& name, PE_TYPE type);
   ImportEntry(const ImportEntry&);
   ImportEntry& operator=(const ImportEntry&);
-  virtual ~ImportEntry();
+  ~ImportEntry() override;
 
   //!``True`` if it is an import by ordinal
   bool is_ordinal() const;

@@ -31,7 +31,7 @@ class LIEF_API Header : public Object {
   Header();
   Header(const Header&);
   Header& operator=(const Header&);
-  virtual ~Header();
+  ~Header() override;
 
 
   ARCHITECTURES          architecture() const;

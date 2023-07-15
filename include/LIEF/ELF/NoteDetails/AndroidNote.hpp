@@ -80,7 +80,7 @@ class LIEF_API AndroidNote : public NoteDetails {
 
   void accept(Visitor& visitor) const override;
 
-  virtual ~AndroidNote();
+  ~AndroidNote() override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const AndroidNote& note);
 

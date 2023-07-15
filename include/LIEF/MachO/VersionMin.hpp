@@ -45,7 +45,7 @@ class LIEF_API VersionMin : public LoadCommand {
 
   VersionMin* clone() const override;
 
-  virtual ~VersionMin();
+  ~VersionMin() override;
 
   //! Return the version as an array
   const version_t& version() const;

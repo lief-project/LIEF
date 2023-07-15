@@ -143,13 +143,13 @@ class LIEF_API SignerInfo : public Object {
   }
 
   //! Raw blob that is signed by the signer certificate
-  const std::vector<uint8_t> raw_auth_data() const {
+  const std::vector<uint8_t>& raw_auth_data() const {
     return raw_auth_data_;
   }
 
   void accept(Visitor& visitor) const override;
 
-  virtual ~SignerInfo();
+  ~SignerInfo() override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const SignerInfo& signer_info);
 

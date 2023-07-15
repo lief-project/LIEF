@@ -60,17 +60,17 @@ inline uint64_t round<uint64_t>(uint64_t x) {
 
 constexpr size_t operator ""_KB(unsigned long long kbs)
 {
-    return 1024 * kbs;
+    return 1024LLU * kbs;
 }
 
 constexpr size_t operator ""_MB(unsigned long long mbs)
 {
-    return 1024 * 1024 * mbs;
+    return 1024LLU * 1024LLU * mbs;
 }
 
 constexpr size_t operator ""_GB(unsigned long long gbs)
 {
-    return 1024 * 1024 * 1024 * gbs;
+    return 1024LLU * 1024LLU * 1024LLU * gbs;
 }
 
 

@@ -26,7 +26,7 @@ struct LIEF_API ParserConfig {
   //! This returns a ParserConfig object configured to process all the ELF
   //! elements.
   static ParserConfig all() {
-    static ParserConfig DEFAULT;
+    static const ParserConfig DEFAULT;
     return DEFAULT;
   }
   bool parse_relocations     = true; ///< Whether relocations (including plt-like relocations) should be parsed.

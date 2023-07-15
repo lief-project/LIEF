@@ -52,7 +52,7 @@ class LIEF_API Relocation : public Object {
   Relocation(const Relocation& other);
   Relocation& operator=(Relocation other);
   Relocation(const details::pe_base_relocation_block& header);
-  virtual ~Relocation();
+  ~Relocation() override;
 
   void swap(Relocation& other);
 

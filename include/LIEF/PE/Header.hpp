@@ -37,7 +37,7 @@ class LIEF_API Header : public Object {
   using signature_t = std::array<uint8_t, /* PE Magic */ 4>;
   Header();
   Header(const details::pe_header& header);
-  virtual ~Header();
+  ~Header() override;
 
   Header& operator=(const Header&);
   Header(const Header&);

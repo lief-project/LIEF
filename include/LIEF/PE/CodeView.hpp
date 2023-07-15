@@ -45,7 +45,7 @@ class LIEF_API CodeView : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const CodeView& entry);
 
-  virtual ~CodeView();
+  ~CodeView() override;
 
   protected:
   CODE_VIEW_SIGNATURES cv_signature_;

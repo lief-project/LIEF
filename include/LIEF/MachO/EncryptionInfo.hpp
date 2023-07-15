@@ -41,7 +41,7 @@ class LIEF_API EncryptionInfo : public LoadCommand {
   EncryptionInfo& operator=(const EncryptionInfo& copy);
   EncryptionInfo(const EncryptionInfo& copy);
 
-  virtual ~EncryptionInfo();
+  ~EncryptionInfo() override;
 
   //! The beginning of the encrypted area
   uint32_t crypt_offset() const;

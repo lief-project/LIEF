@@ -51,7 +51,6 @@
 #include "LIEF/PE/Symbol.hpp"
 #include "LIEF/PE/Relocation.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"
-#include "LIEF/PE/Symbol.hpp"
 #include "LIEF/PE/Builder.hpp"
 #include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/Debug.hpp"

@@ -79,7 +79,7 @@ class LIEF_API Method : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Method& meth);
 
-  virtual ~Method();
+  ~Method() override;
 
   private:
   DEX::Method* dex_method_ = nullptr;

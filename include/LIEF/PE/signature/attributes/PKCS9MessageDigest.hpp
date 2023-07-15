@@ -71,7 +71,7 @@ class LIEF_API PKCS9MessageDigest : public Attribute {
 
   void accept(Visitor& visitor) const override;
 
-  virtual ~PKCS9MessageDigest();
+  ~PKCS9MessageDigest() override;
 
   private:
   std::vector<uint8_t> digest_;

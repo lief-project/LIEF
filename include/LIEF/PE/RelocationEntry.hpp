@@ -48,7 +48,7 @@ class LIEF_API RelocationEntry : public LIEF::Relocation {
   RelocationEntry& operator=(RelocationEntry other);
   RelocationEntry(uint16_t data);
   RelocationEntry(uint16_t position, RELOCATIONS_BASE_TYPES type);
-  virtual ~RelocationEntry();
+  ~RelocationEntry() override;
 
   void swap(RelocationEntry& other);
 

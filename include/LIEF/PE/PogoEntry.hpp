@@ -41,7 +41,7 @@ class LIEF_API PogoEntry : public Object {
   PogoEntry(uint32_t start_rva, uint32_t size, std::string  name);
 
   PogoEntry& operator=(const PogoEntry&);
-  virtual ~PogoEntry();
+  ~PogoEntry() override;
 
   uint32_t start_rva() const;
   uint32_t size() const;

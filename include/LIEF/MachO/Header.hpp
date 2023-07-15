@@ -47,7 +47,7 @@ class LIEF_API Header : public Object {
   Header& operator=(const Header& copy);
   Header(const Header& copy);
 
-  virtual ~Header();
+  ~Header() override;
 
   //! The Mach-O magic bytes. These bytes determine whether it is
   //! a 32 bits Mach-O, a 64 bits Mach-O files etc.

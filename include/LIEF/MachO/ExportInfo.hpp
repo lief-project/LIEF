@@ -91,7 +91,7 @@ class LIEF_API ExportInfo : public Object {
   DylibCommand* alias_library();
   const DylibCommand* alias_library() const;
 
-  virtual ~ExportInfo();
+  ~ExportInfo() override;
 
   bool operator==(const ExportInfo& rhs) const;
   bool operator!=(const ExportInfo& rhs) const;

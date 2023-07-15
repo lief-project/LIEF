@@ -181,7 +181,7 @@ class LIEF_API x509 : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  virtual ~x509();
+  ~x509() override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const x509& x509_cert);
 

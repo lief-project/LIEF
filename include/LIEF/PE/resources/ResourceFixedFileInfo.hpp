@@ -41,7 +41,7 @@ class LIEF_API ResourceFixedFileInfo : public Object {
 
   ResourceFixedFileInfo(const ResourceFixedFileInfo&);
   ResourceFixedFileInfo& operator=(const ResourceFixedFileInfo&);
-  virtual ~ResourceFixedFileInfo();
+  ~ResourceFixedFileInfo() override;
 
   //! Must be set to ``0xFEEF04BD``
   uint32_t signature() const;

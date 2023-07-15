@@ -52,7 +52,7 @@ class LIEF_API Attribute : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  virtual ~Attribute();
+  ~Attribute() override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Attribute& Attribute);
 

@@ -50,7 +50,7 @@ class LIEF_API Debug : public Object {
 
   void swap(Debug& other);
 
-  virtual ~Debug();
+  ~Debug() override;
 
   //! Reserved should be 0
   uint32_t characteristics() const;

@@ -65,7 +65,7 @@ class LIEF_API Header : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Header& header);
 
-  virtual ~Header();
+  ~Header() override;
 
   private:
   magic_t magic_;

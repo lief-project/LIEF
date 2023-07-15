@@ -46,7 +46,7 @@ class LIEF_API SymbolCommand : public LoadCommand {
 
   SymbolCommand* clone() const override;
 
-  virtual ~SymbolCommand();
+  ~SymbolCommand() override;
 
   //! Offset from the start of the file to the n_list associated with the command
   uint32_t symbol_offset() const;

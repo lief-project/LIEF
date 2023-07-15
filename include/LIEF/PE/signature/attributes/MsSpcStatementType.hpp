@@ -65,7 +65,7 @@ class LIEF_API MsSpcStatementType : public Attribute {
   }
 
   void accept(Visitor& visitor) const override;
-  virtual ~MsSpcStatementType();
+  ~MsSpcStatementType() override;
 
   private:
   oid_t oid_;

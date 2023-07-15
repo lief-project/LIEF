@@ -66,7 +66,7 @@ class LIEF_API ResourcesManager : public Object {
   ResourcesManager(ResourcesManager&&);
   ResourcesManager& operator=(ResourcesManager&&);
 
-  virtual ~ResourcesManager();
+  ~ResourcesManager() override;
 
   //! Return the ResourceNode associated with the given LIEF::PE::RESOURCE_TYPES
   //! or a nullptr if not found;

@@ -14,7 +14,7 @@
  */
 #ifndef LIEF_PE_ENUMS_H
 #define LIEF_PE_ENUMS_H
-#include <inttypes.h>
+#include <cinttypes>
 #include <cstddef>
 #include "LIEF/enums.hpp"
 #define LIEF_PE_FORCE_UNDEF

@@ -47,7 +47,7 @@ class LIEF_API SymbolVersionRequirement : public Object {
   SymbolVersionRequirement();
   SymbolVersionRequirement(const details::Elf64_Verneed& header);
   SymbolVersionRequirement(const details::Elf32_Verneed& header);
-  virtual ~SymbolVersionRequirement();
+  ~SymbolVersionRequirement() override;
 
   SymbolVersionRequirement& operator=(SymbolVersionRequirement other);
   SymbolVersionRequirement(const SymbolVersionRequirement& other);

@@ -68,7 +68,7 @@ class LIEF_API File : public Object {
   bool operator==(const File& rhs) const;
   bool operator!=(const File& rhs) const;
 
-  virtual ~File();
+  ~File() override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const File& vdex_file);
 

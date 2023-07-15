@@ -39,7 +39,7 @@ class LIEF_API OptionalHeader : public Object {
   OptionalHeader();
   OptionalHeader(const details::pe32_optional_header& header);
   OptionalHeader(const details::pe64_optional_header& header);
-  virtual ~OptionalHeader();
+  ~OptionalHeader() override;
 
   OptionalHeader& operator=(const OptionalHeader&);
   OptionalHeader(const OptionalHeader&);

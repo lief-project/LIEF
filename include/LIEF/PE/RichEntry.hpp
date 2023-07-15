@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_PE_RICH_ENTRY_H
 #define LIEF_PE_RICH_ENTRY_H
+#include <cstdint>
 #include <ostream>
 
 #include "LIEF/Object.hpp"
@@ -31,7 +32,7 @@ class LIEF_API RichEntry : public Object {
   RichEntry(uint16_t id, uint16_t build_id, uint32_t count);
   RichEntry(const RichEntry&);
   RichEntry& operator=(const RichEntry&);
-  virtual ~RichEntry();
+  ~RichEntry() override;
 
   //! Entry type
   uint16_t id() const;

@@ -68,7 +68,7 @@ class LIEF_API PKCS9AtSequenceNumber : public Attribute {
   }
 
   void accept(Visitor& visitor) const override;
-  virtual ~PKCS9AtSequenceNumber();
+  ~PKCS9AtSequenceNumber() override;
 
   private:
   uint32_t number_;

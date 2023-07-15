@@ -93,7 +93,7 @@ class LIEF_API Parser : public LIEF::Parser {
   Parser(std::vector<uint8_t> data);
   Parser(std::unique_ptr<BinaryStream> stream);
 
-  ~Parser();
+  ~Parser() override;
   Parser();
 
   void init(const ParserConfig& config);

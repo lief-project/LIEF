@@ -52,7 +52,7 @@ class LIEF_API LoadCommand : public Object {
   void swap(LoadCommand& other);
   virtual LoadCommand* clone() const;
 
-  virtual ~LoadCommand();
+  ~LoadCommand() override;
 
   //! Command type
   LOAD_COMMAND_TYPES command() const;

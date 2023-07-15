@@ -16,6 +16,7 @@
 #ifndef LIEF_ELF_SYMBOL_VERSION_H
 #define LIEF_ELF_SYMBOL_VERSION_H
 #include <ostream>
+#include <cstdint>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
@@ -41,7 +42,7 @@ class LIEF_API SymbolVersion : public Object {
   //! Generate a *global* SymbolVersion
   static SymbolVersion global();
 
-  virtual ~SymbolVersion();
+  ~SymbolVersion() override;
 
   SymbolVersion& operator=(const SymbolVersion&);
   SymbolVersion(const SymbolVersion&);

@@ -46,7 +46,7 @@ class LIEF_API ResourceStringFileInfo : public Object {
   ResourceStringFileInfo(uint16_t type, std::u16string key);
   ResourceStringFileInfo(const ResourceStringFileInfo&);
   ResourceStringFileInfo& operator=(const ResourceStringFileInfo&);
-  virtual ~ResourceStringFileInfo();
+  ~ResourceStringFileInfo() override;
 
   //! The type of data in the version resource
   //! * ``1`` if it contains text data

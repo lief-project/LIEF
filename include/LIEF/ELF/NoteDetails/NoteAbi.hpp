@@ -18,6 +18,7 @@
 
 #include <vector>
 #include <ostream>
+#include <array>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
@@ -72,7 +73,7 @@ class LIEF_API NoteAbi : public NoteDetails {
 
   void accept(Visitor& visitor) const override;
 
-  virtual ~NoteAbi();
+  ~NoteAbi() override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const NoteAbi& note);
 

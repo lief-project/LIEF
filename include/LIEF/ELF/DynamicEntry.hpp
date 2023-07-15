@@ -44,7 +44,7 @@ class LIEF_API DynamicEntry : public Object {
 
   DynamicEntry& operator=(const DynamicEntry&);
   DynamicEntry(const DynamicEntry&);
-  virtual ~DynamicEntry();
+  ~DynamicEntry() override;
 
   //! Tag of the current entry. The most common tags are:
   //! DT_NEEDED, DT_INIT, ...

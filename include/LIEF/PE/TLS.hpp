@@ -50,7 +50,7 @@ class LIEF_API TLS : public Object {
   TLS();
   TLS(const details::pe32_tls& header);
   TLS(const details::pe64_tls& header);
-  virtual ~TLS();
+  ~TLS() override;
 
   TLS(const TLS& copy);
   TLS& operator=(TLS copy);

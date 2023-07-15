@@ -48,7 +48,7 @@ class LIEF_API ResourceIcon : public Object {
   ResourceIcon(const ResourceIcon&);
   ResourceIcon& operator=(const ResourceIcon&);
 
-  virtual ~ResourceIcon();
+  ~ResourceIcon() override;
 
   //! Id associated with the icon
   uint32_t id() const;

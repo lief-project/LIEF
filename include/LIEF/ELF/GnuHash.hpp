@@ -18,6 +18,7 @@
 
 #include <vector>
 #include <ostream>
+#include <cstdint>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"

@@ -269,7 +269,7 @@ result<T> BinaryStream::peek() const {
 
 template<class T>
 result<T> BinaryStream::peek(size_t offset) const {
-  size_t saved_offset = this->pos();
+  const size_t saved_offset = this->pos();
   this->setpos(offset);
   result<T> r = this->peek<T>();
   this->setpos(saved_offset);
@@ -288,7 +288,7 @@ const T* BinaryStream::peek_array(size_t size) const {
 
 template<class T>
 const T* BinaryStream::peek_array(size_t offset, size_t size) const {
-  size_t saved_offset = this->pos();
+  const size_t saved_offset = this->pos();
   this->setpos(offset);
   const T* r = this->peek_array<T>(size);
   this->setpos(saved_offset);
@@ -356,7 +356,7 @@ BinaryStream::peek_conv() const {
 
 template<class T>
 result<T> BinaryStream::peek_conv(size_t offset) const {
-  size_t saved_offset = this->pos();
+  const size_t saved_offset = this->pos();
   this->setpos(offset);
   result<T> r = this->peek_conv<T>();
   this->setpos(saved_offset);

@@ -60,7 +60,7 @@ class LIEF_API GenericType : public Attribute {
 
   void accept(Visitor& visitor) const override;
 
-  virtual ~GenericType();
+  ~GenericType() override;
 
   static bool classof(const Attribute* attr) {
     return attr->type() == SIG_ATTRIBUTE_TYPES::GENERIC_TYPE;

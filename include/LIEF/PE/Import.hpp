@@ -50,7 +50,7 @@ class LIEF_API Import : public Object {
   Import(const details::pe_import& import);
   Import(std::string name);
   Import();
-  virtual ~Import();
+  ~Import() override;
 
   Import(const Import& other);
   Import& operator=(Import other);

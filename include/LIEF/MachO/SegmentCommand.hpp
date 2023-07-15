@@ -88,7 +88,7 @@ class LIEF_API SegmentCommand : public LoadCommand {
 
   SegmentCommand* clone() const override;
 
-  virtual ~SegmentCommand();
+  ~SegmentCommand() override;
 
   //! Name of the segment (e.g. ``__TEXT``)
   const std::string& name() const;

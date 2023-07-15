@@ -78,7 +78,7 @@ class LIEF_API CoreFile : public NoteDetails {
 
   void accept(Visitor& visitor) const override;
 
-  virtual ~CoreFile();
+  ~CoreFile() override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const CoreFile& note);
 

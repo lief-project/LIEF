@@ -91,7 +91,7 @@ class LIEF_API Method : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Method& mtd);
 
-  virtual ~Method();
+  ~Method() override;
 
   private:
   void set_virtual(bool v);

@@ -65,7 +65,7 @@ class LIEF_API CoreSigInfo : public NoteDetails {
 
   void accept(Visitor& visitor) const override;
 
-  virtual ~CoreSigInfo();
+  ~CoreSigInfo() override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const CoreSigInfo& note);
 

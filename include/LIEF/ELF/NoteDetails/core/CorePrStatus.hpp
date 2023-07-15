@@ -178,7 +178,7 @@ class LIEF_API CorePrStatus : public NoteDetails {
 
   void accept(Visitor& visitor) const override;
 
-  virtual ~CorePrStatus();
+  ~CorePrStatus() override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const CorePrStatus& note);
 

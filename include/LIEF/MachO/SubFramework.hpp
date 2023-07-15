@@ -59,7 +59,7 @@ class LIEF_API SubFramework : public LoadCommand {
   const std::string& umbrella() const;
   void umbrella(const std::string& u);
 
-  virtual ~SubFramework();
+  ~SubFramework() override;
 
   bool operator==(const SubFramework& rhs) const;
   bool operator!=(const SubFramework& rhs) const;

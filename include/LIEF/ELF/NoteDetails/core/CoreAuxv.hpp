@@ -71,7 +71,7 @@ class LIEF_API CoreAuxv : public NoteDetails {
 
   void accept(Visitor& visitor) const override;
 
-  virtual ~CoreAuxv();
+  ~CoreAuxv() override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const CoreAuxv& note);
 

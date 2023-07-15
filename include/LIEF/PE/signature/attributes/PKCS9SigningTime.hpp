@@ -73,7 +73,7 @@ class LIEF_API PKCS9SigningTime : public Attribute {
   }
 
   void accept(Visitor& visitor) const override;
-  virtual ~PKCS9SigningTime();
+  ~PKCS9SigningTime() override;
 
   private:
   time_t time_;

@@ -17,19 +17,17 @@
 #ifndef LIEF_ELF_BUIDLER_H
 #define LIEF_ELF_BUIDLER_H
 
-#include <vector>
-#include <memory>
-#include <string>
-#include <set>
-#include <unordered_map>
 #include <functional>
+#include <memory>
+#include <set>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 #include "LIEF/errors.hpp"
 
 #include "LIEF/visibility.h"
 #include "LIEF/iostream.hpp"
-#include "LIEF/ELF/enums.hpp"
-
 #include "LIEF/ELF/enums.hpp"
 
 namespace LIEF {

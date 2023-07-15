@@ -43,7 +43,7 @@ class LIEF_API SymbolVersionAuxRequirement : public SymbolVersionAux {
   SymbolVersionAuxRequirement& operator=(const SymbolVersionAuxRequirement&);
   SymbolVersionAuxRequirement(const SymbolVersionAuxRequirement&);
 
-  virtual ~SymbolVersionAuxRequirement();
+  ~SymbolVersionAuxRequirement() override;
 
   //! Hash value of the dependency name (use ELF hashing function)
   uint32_t hash() const;

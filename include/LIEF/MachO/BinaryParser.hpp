@@ -95,7 +95,7 @@ class LIEF_API BinaryParser : public LIEF::Parser {
   BinaryParser& operator=(const BinaryParser& copy) = delete;
   BinaryParser(const BinaryParser& copy) = delete;
 
-  ~BinaryParser();
+  ~BinaryParser() override;
 
   private:
   using exports_list_t = std::vector<std::unique_ptr<ExportInfo>>;
@@ -148,7 +148,7 @@ class LIEF_API BinaryParser : public LIEF::Parser {
 
   template<class MACHO_T>
   ok_error_t do_rebase(uint8_t type, uint8_t segment_idx, uint64_t segment_offset,
-                       const it_opaque_segments segments);
+                       it_opaque_segments segments);
 
   /*
    * This set of functions are related to the parsing of LC_DYLD_CHAINED_FIXUPS

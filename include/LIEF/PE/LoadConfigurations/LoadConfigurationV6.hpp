@@ -58,7 +58,7 @@ class LIEF_API LoadConfigurationV6 : public LoadConfigurationV5 {
     return config->version() == VERSION;
   }
 
-  virtual ~LoadConfigurationV6();
+  ~LoadConfigurationV6() override;
 
   void accept(Visitor& visitor) const override;
 

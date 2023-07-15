@@ -49,7 +49,7 @@ class LIEF_API Export : public Object {
   Export(const details::pe_export_directory_table& header);
   Export(const Export&);
   Export& operator=(const Export&);
-  virtual ~Export();
+  ~Export() override;
 
   //! According to the PE specifications this value is reserved
   //! and should be set to 0

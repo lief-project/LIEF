@@ -49,7 +49,7 @@ class LIEF_API FilesetCommand : public LoadCommand {
 
   FilesetCommand* clone() const override;
 
-  virtual ~FilesetCommand();
+  ~FilesetCommand() override;
 
   //! Name of the underlying MachO binary (e.g. ``com.apple.security.quarantine``)
   const std::string& name() const;

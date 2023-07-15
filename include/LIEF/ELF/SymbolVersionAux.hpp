@@ -32,7 +32,7 @@ class LIEF_API SymbolVersionAux : public Object {
   public:
   SymbolVersionAux(std::string name);
   SymbolVersionAux();
-  virtual ~SymbolVersionAux();
+  ~SymbolVersionAux() override;
 
   SymbolVersionAux& operator=(const SymbolVersionAux&);
   SymbolVersionAux(const SymbolVersionAux&);

@@ -50,7 +50,7 @@ class LIEF_API ResourceDialogItem : public Object {
   ResourceDialogItem(const ResourceDialogItem&);
   ResourceDialogItem& operator=(const ResourceDialogItem&);
 
-  virtual ~ResourceDialogItem();
+  ~ResourceDialogItem() override;
 
   //! ``True`` if the control is an extended one
   bool is_extended() const;

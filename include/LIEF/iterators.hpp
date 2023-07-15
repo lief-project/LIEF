@@ -75,7 +75,7 @@ class ref_iterator {
   }
 
 
-  ref_iterator operator=(ref_iterator other) {
+  ref_iterator& operator=(ref_iterator other) {
     swap(other);
     return *this;
   }
@@ -136,7 +136,7 @@ class ref_iterator {
   add_const_t<ref_t> operator[](size_t n) const {
     assert(n < size() && "integrity error: out of bound");
 
-    ref_iterator* no_const_this = const_cast<ref_iterator*>(this);
+    auto* no_const_this = const_cast<ref_iterator*>(this);
 
     typename ref_iterator::difference_type saved_dist = std::distance(std::begin(no_const_this->container_), no_const_this->it_);
     no_const_this->it_ = std::begin(no_const_this->container_);
@@ -251,7 +251,7 @@ class ref_iterator {
   protected:
   T container_;
   ITERATOR_T it_;
-  typename ref_iterator::difference_type distance_;
+  typename ref_iterator::difference_type distance_{};
 };
 
 
@@ -333,7 +333,7 @@ class filter_iterator {
     std::advance(it_, distance_);
   }
 
-  filter_iterator operator=(filter_iterator other) {
+  filter_iterator& operator=(filter_iterator other) {
     swap(other);
     return *this;
   }

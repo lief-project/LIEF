@@ -46,7 +46,7 @@ class LIEF_API SymbolVersionDefinition : public Object {
   SymbolVersionDefinition();
   SymbolVersionDefinition(const details::Elf64_Verdef& header);
   SymbolVersionDefinition(const details::Elf32_Verdef& header);
-  virtual ~SymbolVersionDefinition();
+  ~SymbolVersionDefinition() override;
 
   SymbolVersionDefinition& operator=(SymbolVersionDefinition other);
   SymbolVersionDefinition(const SymbolVersionDefinition& other);

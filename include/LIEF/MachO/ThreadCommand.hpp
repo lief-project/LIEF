@@ -50,7 +50,7 @@ class LIEF_API ThreadCommand : public LoadCommand {
 
   ThreadCommand* clone() const override;
 
-  virtual ~ThreadCommand();
+  ~ThreadCommand() override;
 
   //! Integer that defines a special *flavor* for the thread.
   //!

@@ -50,7 +50,7 @@ class LIEF_API DataDirectory : public Object {
   DataDirectory(const DataDirectory& other);
   DataDirectory& operator=(DataDirectory other);
   void swap(DataDirectory& other);
-  virtual ~DataDirectory();
+  ~DataDirectory() override;
 
   //! The relative virtual address of the content of this data
   //! directory

@@ -42,7 +42,7 @@ class LIEF_API ResourceVersion : public Object {
   public:
   ResourceVersion(const ResourceVersion&);
   ResourceVersion& operator=(const ResourceVersion&);
-  virtual ~ResourceVersion();
+  ~ResourceVersion() override;
 
   //! The type of data in the version resource
   //! * ``1`` if it contains text data

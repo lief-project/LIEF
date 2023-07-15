@@ -34,7 +34,7 @@ class LIEF_API Section : public Object {
   Section();
   Section(std::string name);
 
-  virtual ~Section();
+  ~Section() override;
 
   Section& operator=(const Section&);
   Section(const Section&);

@@ -46,7 +46,7 @@ class LIEF_API ResourceAccelerator : public Object {
   ResourceAccelerator(const ResourceAccelerator&);
   ResourceAccelerator& operator=(const ResourceAccelerator&);
 
-  virtual ~ResourceAccelerator();
+  ~ResourceAccelerator() override;
 
   std::set<ACCELERATOR_FLAGS> flags_list() const;
   std::string ansi_str() const;
