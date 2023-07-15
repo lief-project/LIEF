@@ -24,20 +24,17 @@
 namespace LIEF::OAT::py {
 
 void init_utils(nb::module_& m) {
-
-  nb::module_ lief_mod = nb::module_::import_(LIEF_MOD_NAME);
-
-  lief_mod.def("is_oat",
+  lief_mod->def("is_oat",
       nb::overload_cast<const ELF::Binary&>(&is_oat),
       "Check if the " RST_CLASS_REF(lief.ELF.Binary) " given in parameter is an OAT"_doc,
       "binary"_a);
 
-  lief_mod.def("is_oat",
+  lief_mod->def("is_oat",
       nb::overload_cast<const std::string&>(&is_oat),
       "Check if the **file** given in parameter is an OAT"_doc,
       "path"_a);
 
-  lief_mod.def("is_oat",
+  lief_mod->def("is_oat",
       nb::overload_cast<const std::vector<uint8_t>&>(&is_oat),
       "Check if the **raw data** given in parameter is an OAT"_doc,
       "raw"_a);

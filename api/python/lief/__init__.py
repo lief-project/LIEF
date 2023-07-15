@@ -11,5 +11,3 @@ if len(__path__) > 0 and __path__[0] not in sys.path:
         candidate = getattr(_lief, attr)
         if type(candidate) is type(_lief):
             sys.modules.setdefault(f"lief.{attr}", candidate)
-
-

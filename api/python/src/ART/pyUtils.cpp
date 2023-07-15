@@ -23,15 +23,12 @@
 namespace LIEF::ART::py {
 
 void init_utils(nb::module_& m) {
-
-  nb::module_ lief_mod = nb::module_::import_(LIEF_MOD_NAME);
-
-  lief_mod.def("is_art",
+  lief_mod->def("is_art",
       nb::overload_cast<const std::string&>(&is_art),
       "Check if the **file** given in parameter is an ART"_doc,
       "path"_a);
 
-  lief_mod.def("is_art",
+  lief_mod->def("is_art",
       nb::overload_cast<const std::vector<uint8_t>&>(&is_art),
       "Check if the **raw data** given in parameter is a ART"_doc,
       "raw"_a);

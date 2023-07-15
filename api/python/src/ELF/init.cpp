@@ -92,14 +92,12 @@ void init_objects(nb::module_& m) {
 }
 
 inline void init_utils(nb::module_&) {
-  nb::module_ lief_mod = nb::module_::import_(LIEF_MOD_NAME);
-
-  lief_mod.def("is_elf",
+  lief_mod->def("is_elf",
       nb::overload_cast<const std::string&>(&is_elf),
       "Check if the given file is an ``ELF``",
       "filename"_a);
 
-  lief_mod.def("is_elf",
+  lief_mod->def("is_elf",
       nb::overload_cast<const std::vector<uint8_t>&>(&is_elf),
       "Check if the given raw data is an ``ELF``",
       "raw"_a);

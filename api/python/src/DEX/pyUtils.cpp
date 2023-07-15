@@ -23,15 +23,12 @@
 namespace LIEF::DEX::py {
 
 void init_utils(nb::module_& m) {
-
-  nb::module_ lief_mod = nb::module_::import_(LIEF_MOD_NAME);
-
-  lief_mod.def("is_dex",
+  lief_mod->def("is_dex",
       nb::overload_cast<const std::string&>(&is_dex),
       "Check if the **file** given in parameter is a DEX"_doc,
       "path"_a);
 
-  lief_mod.def("is_dex",
+  lief_mod->def("is_dex",
       nb::overload_cast<const std::vector<uint8_t>&>(&is_dex),
       "Check if the **raw data** given in parameter is a DEX"_doc,
       "raw"_a);

@@ -58,6 +58,7 @@
   #include "ART/init.hpp"
 #endif
 
+nb::module_* lief_mod = nullptr;
 
 namespace LIEF::py {
 void init_object(nb::module_& m) {
@@ -127,6 +128,7 @@ void init_json(nb::module_& m) {
 }
 
 NB_MODULE(_lief, m) {
+  lief_mod = &m;
   m.attr("__version__")   = nb::str(LIEF_VERSION);
   m.attr("__tag__")       = nb::str(LIEF_TAG);
   m.attr("__commit__")    = nb::str(LIEF_COMMIT);

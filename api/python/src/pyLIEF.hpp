@@ -43,6 +43,8 @@ constexpr const char* operator "" _doc(const char* value, size_t) {
 
 namespace nb = nanobind;
 
+extern nb::module_* lief_mod;
+
 using namespace nb::literals;
 
 #endif

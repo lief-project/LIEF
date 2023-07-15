@@ -29,7 +29,6 @@ namespace LIEF::PE::py {
 
 void init_utils(nb::module_& m) {
   using namespace LIEF::py;
-  nb::module_ lief_mod = nb::module_::import_(LIEF_MOD_NAME);
 
   nb::enum_<IMPHASH_MODE>(m, "IMPHASH_MODE",
       "Enum to define the behavior of :func:`~lief.PE.get_imphash`"_doc)
@@ -41,12 +40,12 @@ void init_utils(nb::module_& m) {
   m.def("oid_to_string", &oid_to_string,
         "Convert an OID to a human-readable string"_doc);
 
-  lief_mod.def("is_pe",
+  lief_mod->def("is_pe",
       nb::overload_cast<const std::string&>(&is_pe),
       "Check if the given file is a ``PE``"_doc,
       "file"_a);
 
-  lief_mod.def("is_pe",
+  lief_mod->def("is_pe",
       nb::overload_cast<const std::vector<uint8_t>&>(&is_pe),
       "Check if the given raw data is a ``PE``"_doc,
       "raw"_a);

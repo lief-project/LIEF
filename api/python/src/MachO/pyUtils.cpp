@@ -25,14 +25,12 @@
 namespace LIEF::MachO::py {
 
 void init_utils(nb::module_& m) {
-  nb::module_ lief_mod = nb::module_::import_(LIEF_MOD_NAME);
-
-  lief_mod.def("is_macho",
+  lief_mod->def("is_macho",
       nb::overload_cast<const std::string&>(&is_macho),
       "Check if the given file is a ``MachO`` (from filename)"_doc,
       "filename"_a);
 
-  lief_mod.def("is_macho",
+  lief_mod->def("is_macho",
       nb::overload_cast<const std::vector<uint8_t>&>(&is_macho),
       "Check if the given raw data is a ``MachO``"_doc,
       "raw"_a);
