@@ -28,10 +28,10 @@ TEST_CASE("lief.test.utils", "[lief][test][utils]") {
   }
 
   SECTION("round") {
-    REQUIRE(round(1) == 1);
-    REQUIRE(round(0x99) == 0x100);
-    REQUIRE(round(0x10000) == 0x10000);
-    REQUIRE(round(std::numeric_limits<uint16_t>::max() - 1) == 0x10000);
+    REQUIRE(LIEF::round(1) == 1);
+    REQUIRE(LIEF::round(0x99) == 0x100);
+    REQUIRE(LIEF::round(0x10000) == 0x10000);
+    REQUIRE(LIEF::round(std::numeric_limits<uint16_t>::max() - 1) == 0x10000);
   }
 
   SECTION("size_literal") {
