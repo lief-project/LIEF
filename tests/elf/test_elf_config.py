@@ -61,3 +61,14 @@ def test_config_3():
     assert len(elf.static_symbols) > 0
     assert len(elf.symbols_version) == 0
     assert len(elf.notes) == 0
+
+def test_config_no_overlay():
+    config = lief.ELF.ParserConfig()
+
+    config.parse_overlay = False
+    fpath = get_sample("ELF/batch-x86-64/test.dart.bin")
+    assert len(lief.parse(fpath).overlay) > 0
+    elf = lief.ELF.parse(fpath)
+    assert elf.has_overlay
+    elf = lief.ELF.parse(fpath, config)
+    assert len(elf.overlay) == 0

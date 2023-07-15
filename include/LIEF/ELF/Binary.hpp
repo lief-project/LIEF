@@ -63,7 +63,6 @@ class LIEF_API Binary : public LIEF::Binary {
 
   public:
   using string_list_t  = std::vector<std::string>;
-  using overlay_t      = std::vector<uint8_t>;
 
   //! Internal container for storing notes
   using notes_t = std::vector<std::unique_ptr<Note>>;
@@ -743,13 +742,15 @@ class LIEF_API Binary : public LIEF::Binary {
   uint64_t eof_offset() const;
 
   //! True if data are present at the end of the binary
-  bool has_overlay() const;
+  bool has_overlay() const {
+    return !overlay_.empty();
+  }
 
   //! Overlay data (if any)
-  const overlay_t& overlay() const;
+  span<const uint8_t> overlay() const;
 
   //! Function to set the overlay
-  void overlay(overlay_t overlay);
+  void overlay(std::vector<uint8_t> overlay);
 
   //! Force relocating the segments table in a specific way.
   //!
@@ -873,7 +874,7 @@ class LIEF_API Binary : public LIEF::Binary {
   phdr_relocation_info_t phdr_reloc_info_;
 
   std::string interpreter_;
-  overlay_t overlay_;
+  std::vector<uint8_t> overlay_;
   std::unique_ptr<sizing_info_t> sizing_info_;
 };
 

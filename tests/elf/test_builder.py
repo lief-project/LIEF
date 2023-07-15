@@ -7,9 +7,10 @@ import stat
 import subprocess
 import sys
 import pytest
+from pathlib import Path
 
 from subprocess import Popen
-from utils import is_linux, glibc_version
+from utils import is_linux, glibc_version, get_sample
 
 SAMPLE_DIR = pathlib.Path(os.getenv("LIEF_SAMPLES_DIR", ""))
 
@@ -240,4 +241,3 @@ def test_go_files(tmp_path):
             stdout = proc.stdout.read()
             proc.poll()
             assert "done" in normalize(stdout)
-

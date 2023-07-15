@@ -26,7 +26,7 @@ jobs:
           LIEF_SAMPLES_DIR: "/tmp/samples"
           BUILD_DIR: "/tmp/lief-build"
         run: |
-          python -m pip install pytest requests
+          python -m pip install -r tests/requirements.txt
           python tests/dl_samples.py ${LIEF_SAMPLES_DIR}
           cd api/python
           PYLIEF_CONF=${GITHUB_WORKSPACE}/scripts/osx/osx-testing-x64.toml \
@@ -78,7 +78,7 @@ jobs:
         echo ("PYLIEF_CONF=" + $env:GITHUB_WORKSPACE + "/scripts/windows/py-x64-test.toml") >> $env:GITHUB_ENV
     - name: Build Python ${{ env.python-win-version }}
       run: |
-        python -m pip install pytest requests
+        python -m pip install -r tests/requirements.txt
         python tests/dl_samples.py %LIEF_SAMPLES_DIR%
         cd api/python
         python ./setup.py build                          ^

@@ -19,6 +19,7 @@
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
+#include "nanobind/extra/memoryview.hpp"
 
 #include "ELF/pyELF.hpp"
 
@@ -692,8 +693,15 @@ void create<Binary>(nb::module_& m) {
         "True if data are appended to the end of the binary"_doc)
 
     .def_prop_rw("overlay",
-        nb::overload_cast<>(&Binary::overlay, nb::const_),
-        nb::overload_cast<Binary::overlay_t>(&Binary::overlay),
+        [] (const Binary& self) {
+          const span<const uint8_t> overlay = self.overlay();
+          return nb::memoryview::from_memory(overlay.data(), overlay.size());
+        },
+        [] (Binary& self, nb::bytes& bytes) {
+          const auto* ptr = reinterpret_cast<const uint8_t*>(bytes.c_str());
+          std::vector<uint8_t> buffer(ptr, ptr + bytes.size());
+          self.overlay(std::move(buffer));
+        },
         "Overlay data that are not a part of the ELF format"_doc)
 
     .def("relocate_phdr_table",

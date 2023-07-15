@@ -105,7 +105,7 @@ jobs:
           CCACHE_CPP2: 1
           CCACHE_COMPRESS: 1
         run: |
-          python -m pip install pytest requests
+          python -m pip install -r tests/requirements.txt
           python tests/dl_samples.py ${LIEF_SAMPLES_DIR}
           cd api/python
           PYLIEF_CONF=${GITHUB_WORKSPACE}/scripts/osx/osx-testing-x64.toml \

@@ -1759,7 +1759,7 @@ ok_error_t Builder::build_overlay() {
   if (binary_->overlay_.empty()) {
     return ok();
   }
-  const Binary::overlay_t& overlay = binary_->overlay();
+  const span<const uint8_t> overlay = binary_->overlay();
   const uint64_t last_offset = binary_->eof_offset();
 
   if (last_offset > 0) {

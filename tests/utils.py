@@ -19,7 +19,7 @@ def import_from_file(module_name: str, file_path: pathlib.Path):
 def lief_samples_dir() -> str:
     dir = os.getenv("LIEF_SAMPLES_DIR", None)
     if dir is None:
-        print("LIEF_SAMPES_DIR is not set", file=sys.stderr)
+        print("LIEF_SAMPLES_DIR is not set", file=sys.stderr)
         sys.exit(1)
     if not os.path.isdir(dir):
         print("{} is not a valid directory".format(dir), file=sys.stderr)

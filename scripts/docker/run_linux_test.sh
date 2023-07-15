@@ -7,7 +7,7 @@ export LDFLAGS='-Wl,--gc-sections'
 
 BUILD_DIR=/tmp/lief-build
 
-$PYTHON_BINARY -m pip install pytest requests
+$PYTHON_BINARY -m pip install -r /src/tests/requirements.txt
 
 mkdir -p ${LIEF_SAMPLES_DIR}
 

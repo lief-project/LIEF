@@ -12,7 +12,13 @@ FetchContent_MakeAvailable(Catch2)
 
 add_executable(unittests
   "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/test_iterators.cpp")
+  "${CMAKE_CURRENT_SOURCE_DIR}/utils.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/test_iterators.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/test_enums.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/test_utils.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/test_hash.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/test_binarystream.cpp"
+)
 
 set_target_properties(unittests
   PROPERTIES CXX_STANDARD           17

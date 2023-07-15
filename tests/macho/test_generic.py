@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import lief
 from utils import get_sample
+import hashlib
 
 def test_function_starts():
     dd = lief.parse(get_sample('MachO/MachO64_x86-64_binary_dd.bin'))
@@ -19,8 +20,8 @@ def test_function_starts():
     ]
 
     assert dd.function_starts.data_offset == 21168
-    assert dd.function_starts.data_size ==   48
-    text_segment = list(filter(lambda e : e.name == "__TEXT", dd.segments))[0]
+    assert dd.function_starts.data_size == 48
+    text_segment = list(filter(lambda e: e.name == "__TEXT", dd.segments))[0]
     functions_dd = map(text_segment.virtual_address .__add__, dd.function_starts.functions)
 
     assert functions == list(functions_dd)
@@ -262,3 +263,16 @@ def test_issue_728():
         new_segment = parsed.add(segment)
         assert new_segment.virtual_size == parsed.page_size
 
+def test_twolevel_hints():
+    sample = lief.MachO.parse(get_sample("MachO/ios1-expr.bin"))[0]
+    tw_hints: lief.MachO.TwoLevelHints = sample[lief.MachO.LOAD_COMMAND_TYPES.TWOLEVEL_HINTS]
+    assert tw_hints is not None
+    print(tw_hints)
+    hints = tw_hints.hints
+    assert len(hints) == 26
+    print(hints[0])
+    assert sum(hints) == 10854400
+    assert hints[0] == 54528
+    assert hashlib.sha256(tw_hints.data).hexdigest() == "e44cef3a83eb89954557a9ad2a36ebf4794ce0385da5a39381fdadc3e6037beb"
+    assert tw_hints.command_offset == 1552
+    print(lief.to_json(tw_hints))

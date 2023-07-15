@@ -1882,7 +1882,6 @@ Section* Binary::get(ELF_SECTION_TYPES type) {
   return const_cast<Section*>(static_cast<const Binary*>(this)->get(type));
 }
 
-
 bool Binary::has(SEGMENT_TYPES type) const {
   return get(type) != nullptr;
 }
@@ -1894,8 +1893,6 @@ bool Binary::has(NOTE_TYPES type) const {
 bool Binary::has(ELF_SECTION_TYPES type) const {
   return get(type) != nullptr;
 }
-
-
 
 void Binary::permute_dynamic_symbols(const std::vector<size_t>& permutation) {
   std::set<size_t> done;
@@ -2739,15 +2736,11 @@ uint64_t Binary::eof_offset() const {
 }
 
 
-bool Binary::has_overlay() const {
-  return !overlay_.empty();
-}
-
-const Binary::overlay_t& Binary::overlay() const {
+span<const uint8_t> Binary::overlay() const {
   return overlay_;
 }
 
-void Binary::overlay(Binary::overlay_t overlay) {
+void Binary::overlay(std::vector<uint8_t> overlay) {
   overlay_ = std::move(overlay);
 }
 
@@ -3537,8 +3530,6 @@ std::ostream& Binary::print(std::ostream& os) const {
 }
 
 Binary::~Binary() = default;
-
-
 
 }
 }
