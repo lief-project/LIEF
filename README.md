@@ -7,28 +7,28 @@
     <img src="https://img.shields.io/discord/1117013848914931762">
   </a>
   &nbsp;
-  <a href="https://github.com/lief-project/LIEF/actions?query=workflow%3A%22Linux+x86-64%22">
+  <a href="https://github.com/lief-project/LIEF/actions/workflows/linux-x86-64.yml">
     <img alt="Linux x86-64 CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/linux-x86-64.yml?branch=master&label=Linux%20x86-64&logo=github">
   </a>
   &nbsp;
-  <a href="https://github.com/lief-project/LIEF/actions?query=workflow%3A%22Linux+AArch64%22">
+  <a href="https://github.com/lief-project/LIEF/actions/workflows/linux-aarch64.yml">
     <img alt="Linux AArch64 CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/linux-aarch64.yml?branch=master&label=Linux%20AArch64&logo=github">
   </a>
   &nbsp;
-  <a href="https://github.com/lief-project/LIEF/actions?query=workflow%3AAndroid">
+  <a href="https://github.com/lief-project/LIEF/actions/workflows/android.yml">
     <img alt="Android CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/android.yml?branch=master&label=Android&logo=github">
   </a>
   &nbsp;
-  <a href="https://github.com/lief-project/LIEF/actions?query=workflow%3AmacOS">
+  <a href="https://github.com/lief-project/LIEF/actions/workflows/osx.yml">
     <img alt="macOS CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/osx.yml?branch=master&label=macOS&logo=github">
   </a>
   &nbsp;
-  <a href="https://github.com/lief-project/LIEF/actions?query=workflow%3AiOS">
+  <a href="https://github.com/lief-project/LIEF/actions/workflows/ios.yml">
     <img alt="iOS CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/ios.yml?branch=master&label=iOS&logo=github">
   </a>
   &nbsp;
-  <a href="https://github.com/lief-project/LIEF/actions/workflows/windows-x64-all.yml">
-    <img alt="Windows CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/windows-x64-all.yml?branch=master&label=Windows&logo=github">
+  <a href="https://github.com/lief-project/LIEF/actions/workflows/windows-all.yml">
+    <img alt="Windows CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/windows-all.yml?branch=master&label=Windows&logo=github">
   </a>
   &nbsp;
   <a href="https://github.com/lief-project/LIEF/releases">
@@ -44,7 +44,7 @@
 <p align="center">
   <a href="https://lief-project.github.io/blog/"><b>Blog</b></a> •
   <a href="https://lief-project.github.io/doc/latest/index.html"><b>Documentation</b></a> •
-  <a href="#about-A"><b>About</b></a>
+  <a href="#user-content-about-1"><b>About</b></a>
 </p>
 <br />
 
