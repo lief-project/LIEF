@@ -40,6 +40,7 @@ template<typename PE_T>
 ok_error_t Parser::parse() {
 
   if (!parse_headers<PE_T>()) {
+    LIEF_WARN("Fail to parse regular PE headers");
     return make_error_code(lief_errors::parsing_error);
   }
 
@@ -49,30 +50,24 @@ ok_error_t Parser::parse() {
     binary_->optional_header_.computed_checksum_ = *opt_chksum;
   }
 
-  LIEF_DEBUG("[+] Processing DOS stub & Rich header");
-
   if (!parse_dos_stub()) {
-    LIEF_WARN("Fail to parse the DOS Stub");
+    LIEF_WARN("Fail to parse DOS Stub");
   }
 
   if (!parse_rich_header()) {
-    LIEF_WARN("Fail to parse the rich header");
+    LIEF_WARN("Fail to parse rich header");
   }
-
-  LIEF_DEBUG("[+] Processing sections");
 
   if (!parse_sections()) {
-    LIEF_WARN("Fail to parse the sections");
+    LIEF_WARN("Fail to parse sections");
   }
 
-  LIEF_DEBUG("[+] Processing data directories");
-
   if (!parse_data_directories<PE_T>()) {
-    LIEF_WARN("Fail to parse the data directories");
+    LIEF_WARN("Fail to parse data directories");
   }
 
   if (!parse_symbols()) {
-    LIEF_WARN("Fail to parse the symbols");
+    LIEF_WARN("Fail to parse symbols");
   }
 
   if (!parse_overlay()) {
@@ -88,7 +83,7 @@ ok_error_t Parser::parse_headers() {
 
   auto dos_hdr = stream_->peek<details::pe_dos_header>(0);
   if (!dos_hdr) {
-    LIEF_ERR("Can't read the Dos Header");
+    LIEF_ERR("Can't read the DOS Header");
     return make_error_code(dos_hdr.error());
   }
 
@@ -166,7 +161,7 @@ ok_error_t Parser::parse_data_directories() {
   // Exports
   if (const DataDirectory* export_dir = binary_->data_directory(DATA_DIRECTORY::EXPORT_TABLE)) {
     if (export_dir->RVA() > 0 && config_.parse_exports) {
-      LIEF_DEBUG("[+] Processing Exports");
+      LIEF_DEBUG("Parsing Exports");
       parse_exports();
     }
   }
@@ -189,7 +184,7 @@ ok_error_t Parser::parse_data_directories() {
 
   if (DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::LOAD_CONFIG_TABLE)) {
     if (dir->RVA() > 0) {
-      LIEF_DEBUG("Processing LoadConfiguration");
+      LIEF_DEBUG("Parsing LoadConfiguration");
       if (Section* sec = dir->section()) {
         sec->add_type(PE_SECTION_TYPES::LOAD_CONFIG);
       }
@@ -199,7 +194,7 @@ ok_error_t Parser::parse_data_directories() {
 
   if (DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE)) {
     if (dir->RVA() > 0 && config_.parse_reloc) {
-      LIEF_DEBUG("Processing Relocations");
+      LIEF_DEBUG("Parsing Relocations");
       if (Section* sec = dir->section()) {
         sec->add_type(PE_SECTION_TYPES::RELOCATION);
       }
@@ -218,7 +213,7 @@ ok_error_t Parser::parse_data_directories() {
 
   if (DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::RESOURCE_TABLE)) {
     if (dir->RVA() > 0 && config_.parse_rsrc) {
-      LIEF_DEBUG("Processing Resources");
+      LIEF_DEBUG("Parsing Resources");
       if (Section* sec = dir->section()) {
         sec->add_type(PE_SECTION_TYPES::RESOURCE);
       }
@@ -452,7 +447,7 @@ ok_error_t Parser::parse_delay_names_table(DelayImport& import, uint32_t names_o
 
 template<typename PE_T>
 ok_error_t Parser::parse_delay_imports() {
-  LIEF_DEBUG("[>] Parsing the Delay Import Table");
+  LIEF_DEBUG("Parsing Delay Import Table");
   std::string dll_name;
 
   const DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::DELAY_IMPORT_DESCRIPTOR);
@@ -527,7 +522,7 @@ ok_error_t Parser::parse_delay_imports() {
     if (names_offset > 0) {
       auto is_ok = parse_delay_names_table<PE_T>(import, names_offset);
       if (!is_ok) {
-        LIEF_WARN("[!] Delay imports names table parsed with errors ('{}')",
+        LIEF_WARN("Delay imports names table parsed with errors ('{}')",
                   to_string(get_error(is_ok)));
       }
     }
@@ -544,7 +539,7 @@ ok_error_t Parser::parse_tls() {
   using pe_tls = typename PE_T::pe_tls;
   using uint__ = typename PE_T::uint;
 
-  LIEF_DEBUG("[+] Parsing TLS");
+  LIEF_DEBUG("Parsing TLS");
 
   DataDirectory* tls_dir = binary_->data_directory(DATA_DIRECTORY::TLS_TABLE);
   if (tls_dir == nullptr) {

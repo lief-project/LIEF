@@ -271,8 +271,9 @@ ok_error_t Parser::parse_sections() {
       }
       uint64_t padding_to_read = padding_size + hole_size;
       if (padding_to_read > Parser::MAX_PADDING_SIZE) {
-        LIEF_WARN("The padding size of section '{}' is huge. Only the first {} bytes will be taken"
-                  " into account", section->name(), Parser::MAX_PADDING_SIZE);
+        LIEF_WARN("The padding size of section '{}' is huge. "
+                  "Only the first {} bytes will be taken "
+                  "into account", section->name(), Parser::MAX_PADDING_SIZE);
         padding_to_read = Parser::MAX_PADDING_SIZE;
       }
 
@@ -294,12 +295,9 @@ ok_error_t Parser::parse_sections() {
 }
 
 
-//
-// parse relocations
-//
 ok_error_t Parser::parse_relocations() {
   static constexpr size_t MAX_RELOCATION_ENTRIES = 100000;
-  LIEF_DEBUG("== Parsing relocations ==");
+  LIEF_DEBUG("Parsing relocations");
 
   const DataDirectory* reloc_dir = binary_->data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE);
 
@@ -361,12 +359,8 @@ ok_error_t Parser::parse_relocations() {
   return ok();
 }
 
-
-//
-// parse ressources
-//
 ok_error_t Parser::parse_resources() {
-  LIEF_DEBUG("== Parsing resources ==");
+  LIEF_DEBUG("Parsing resources");
   const DataDirectory* res_dir = binary_->data_directory(DATA_DIRECTORY::RESOURCE_TABLE);
 
   if (res_dir == nullptr) {
@@ -389,13 +383,11 @@ ok_error_t Parser::parse_resources() {
   return ok();
 }
 
-
-//
-// parse the resources tree
-//
-std::unique_ptr<ResourceNode> Parser::parse_resource_node(const details::pe_resource_directory_table& directory_table,
-                                          uint32_t base_offset, uint32_t current_offset, uint32_t depth) {
-
+std::unique_ptr<ResourceNode>
+Parser::parse_resource_node(const details::pe_resource_directory_table& directory_table,
+                            uint32_t base_offset, uint32_t current_offset,
+                            uint32_t depth)
+{
   const uint32_t numberof_ID_entries   = directory_table.NumberOfIDEntries;
   const uint32_t numberof_name_entries = directory_table.NumberOfNameEntries;
 
@@ -499,11 +491,8 @@ std::unique_ptr<ResourceNode> Parser::parse_resource_node(const details::pe_reso
   return directory;
 }
 
-//
-// parse string table
-//
 ok_error_t Parser::parse_string_table() {
-  LIEF_DEBUG("== Parsing string table ==");
+  LIEF_DEBUG("Parsing string table");
   uint32_t string_table_offset =
     binary_->header().pointerto_symbol_table() +
     binary_->header().numberof_symbols() * details::sizes::SYMBOL_16;
@@ -533,11 +522,8 @@ ok_error_t Parser::parse_string_table() {
 }
 
 
-//
-// parse Symbols
-//
 ok_error_t Parser::parse_symbols() {
-  LIEF_DEBUG("== Parsing symbols ==");
+  LIEF_DEBUG("Parsing symbols");
   uint32_t symbol_table_offset = binary_->header().pointerto_symbol_table();
   uint32_t nb_symbols          = binary_->header().numberof_symbols();
   uint32_t current_offset      = symbol_table_offset;
@@ -625,12 +611,8 @@ ok_error_t Parser::parse_symbols() {
 }
 
 
-//
-// parse Debug
-//
-
 ok_error_t Parser::parse_debug() {
-  LIEF_DEBUG("== Parsing Debug ==");
+  LIEF_DEBUG("Parsing debug directory");
   binary_->has_debug_ = true;
   DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::DEBUG);
   if (dir == nullptr) {
@@ -715,7 +697,7 @@ ok_error_t Parser::parse_debug_code_view(Debug& debug_info) {
 }
 
 ok_error_t Parser::parse_debug_pogo(Debug& debug_info) {
-  LIEF_DEBUG("== Parsing Debug POGO ==");
+  LIEF_DEBUG("Debug POGO");
 
   const uint32_t debug_size = debug_info.sizeof_data();
   const uint32_t debug_off  = debug_info.pointerto_rawdata();
@@ -799,11 +781,8 @@ inline result<uint32_t> name_table_value(BinaryStream& stream,
 }
 
 
-//
-// Parse Export
-//
 ok_error_t Parser::parse_exports() {
-  LIEF_DEBUG("== Parsing exports ==");
+  LIEF_DEBUG("Parsing exports");
   static constexpr uint32_t NB_ENTRIES_LIMIT   = 0x1000000;
   static constexpr size_t MAX_EXPORT_NAME_SIZE = 4096; // Because of C++ mangling
 
@@ -980,7 +959,7 @@ ok_error_t Parser::parse_exports() {
 }
 
 ok_error_t Parser::parse_signature() {
-  LIEF_DEBUG("== Parsing signature ==");
+  LIEF_DEBUG("Parsing signature");
   static constexpr size_t SIZEOF_HEADER = 8;
 
   /*** /!\ In this data directory, RVA is used as an **OFFSET** /!\ ****/
@@ -1052,7 +1031,7 @@ ok_error_t Parser::parse_signature() {
 
 
 ok_error_t Parser::parse_overlay() {
-  LIEF_DEBUG("== Parsing Overlay ==");
+  LIEF_DEBUG("Parsing Overlay");
   const uint64_t last_section_offset = std::accumulate(
       std::begin(binary_->sections_), std::end(binary_->sections_), uint64_t{ 0u },
       [] (uint64_t offset, const std::unique_ptr<Section>& section) {
@@ -1119,9 +1098,6 @@ result<uint32_t> Parser::checksum() {
   return static_cast<uint32_t>(partial_sum_res) + file_length;
 }
 
-//
-// Return the Binary constructed
-//
 std::unique_ptr<Binary> Parser::parse(const std::string& filename,
                                       const ParserConfig& conf) {
   if (!is_pe(filename)) {
@@ -1131,7 +1107,6 @@ std::unique_ptr<Binary> Parser::parse(const std::string& filename,
   parser.init(conf);
   return std::move(parser.binary_);
 }
-
 
 std::unique_ptr<Binary> Parser::parse(std::vector<uint8_t> data,
                                       const ParserConfig& conf) {
