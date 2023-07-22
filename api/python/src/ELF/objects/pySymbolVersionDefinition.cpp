@@ -58,7 +58,7 @@ void create<SymbolVersionDefinition>(nb::module_& m) {
         nb::overload_cast<>(&SymbolVersionDefinition::symbols_aux),
         nb::rv_policy::reference_internal)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::SymbolVersionDefinition);
+    LIEF_DEFAULT_STR(SymbolVersionDefinition);
 }
 
 }

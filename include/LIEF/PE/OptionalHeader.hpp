@@ -220,8 +220,6 @@ class LIEF_API OptionalHeader : public Object {
   OptionalHeader& operator+=(DLL_CHARACTERISTICS c);
   OptionalHeader& operator-=(DLL_CHARACTERISTICS c);
 
-  bool operator==(const OptionalHeader& rhs) const;
-  bool operator!=(const OptionalHeader& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const OptionalHeader& entry);
 

@@ -75,8 +75,6 @@ class LIEF_API DelayImportEntry : public LIEF::Symbol {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const DelayImportEntry& rhs) const;
-  bool operator!=(const DelayImportEntry& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const DelayImportEntry& entry);
 

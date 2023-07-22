@@ -18,6 +18,7 @@ add_executable(unittests
   "${CMAKE_CURRENT_SOURCE_DIR}/test_utils.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/test_hash.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/test_binarystream.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/test_pe.cpp"
 )
 
 set_target_properties(unittests

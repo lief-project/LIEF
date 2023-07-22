@@ -72,8 +72,6 @@ class LIEF_API Field : public Object {
   //! ACCESS_FLAGS as a list
   access_flags_list_t access_flags() const;
 
-  bool operator==(const Field& rhs) const;
-  bool operator!=(const Field& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Field& mtd);
 

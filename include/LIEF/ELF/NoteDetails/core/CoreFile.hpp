@@ -71,8 +71,6 @@ class LIEF_API CoreFile : public NoteDetails {
 
   void files(const files_t&);
 
-  bool operator==(const CoreFile& rhs) const;
-  bool operator!=(const CoreFile& rhs) const;
 
   void dump(std::ostream& os) const override;
 

@@ -63,8 +63,6 @@ class LIEF_API SymbolVersionAuxRequirement : public SymbolVersionAux {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const SymbolVersionAuxRequirement& rhs) const;
-  bool operator!=(const SymbolVersionAuxRequirement& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const SymbolVersionAuxRequirement& symAux);
 

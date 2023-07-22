@@ -67,8 +67,6 @@ class LIEF_API SysvHash : public Object {
     chains_.resize(nb);
   }
 
-  bool operator==(const SysvHash& rhs) const;
-  bool operator!=(const SysvHash& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

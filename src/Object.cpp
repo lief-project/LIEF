@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 #include "LIEF/Object.hpp"
+#include "LIEF/hash.hpp"
 
 namespace LIEF {
 Object::Object() = default;
 Object::Object(const Object&) = default;
 Object& Object::operator=(const Object&) = default;
 Object::~Object() = default;
+
+bool Object::operator==(const Object& other) const {
+  if (this == &other) {
+    return true;
+  }
+
+  return hash(*this) == hash(other);
+}
+
 }

@@ -62,8 +62,6 @@ class LIEF_API SegmentSplitInfo : public LoadCommand {
 
   ~SegmentSplitInfo() override;
 
-  bool operator==(const SegmentSplitInfo& rhs) const;
-  bool operator!=(const SegmentSplitInfo& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

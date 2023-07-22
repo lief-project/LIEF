@@ -44,18 +44,7 @@ void CodeSignatureDir::accept(Visitor& visitor) const {
 }
 
 
-bool CodeSignatureDir::operator==(const CodeSignatureDir& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool CodeSignatureDir::operator!=(const CodeSignatureDir& rhs) const {
-  return !(*this == rhs);
-}
 
 bool CodeSignatureDir::classof(const LoadCommand* cmd) {
   // This must be sync with BinaryParser.tcc

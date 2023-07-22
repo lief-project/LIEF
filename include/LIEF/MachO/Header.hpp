@@ -107,8 +107,6 @@ class LIEF_API Header : public Object {
   Header& operator+=(HEADER_FLAGS c);
   Header& operator-=(HEADER_FLAGS c);
 
-  bool operator==(const Header& rhs) const;
-  bool operator!=(const Header& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

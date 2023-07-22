@@ -74,7 +74,8 @@ void create<LoadConfigurationV1>(nb::module_& m) {
     .def("__contains__",
         nb::overload_cast<GUARD_CF_FLAGS>(&LoadConfigurationV1::has, nb::const_))
 
-    LIEF_DEFAULT_STR(LIEF::PE::LoadConfigurationV1);
+    LIEF_COPYABLE(LoadConfigurationV1)
+    LIEF_DEFAULT_STR(LoadConfigurationV1);
 }
 
 }

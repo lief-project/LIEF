@@ -120,18 +120,7 @@ bool LoadCommand::is_linkedit_data(const LoadCommand& cmd) {
   return false;
 }
 
-bool LoadCommand::operator==(const LoadCommand& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool LoadCommand::operator!=(const LoadCommand& rhs) const {
-  return !(*this == rhs);
-}
 
 std::ostream& LoadCommand::print(std::ostream& os) const {
   os << std::hex;

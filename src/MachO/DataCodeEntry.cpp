@@ -76,18 +76,7 @@ void DataCodeEntry::accept(Visitor& visitor) const {
 }
 
 
-bool DataCodeEntry::operator==(const DataCodeEntry& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool DataCodeEntry::operator!=(const DataCodeEntry& rhs) const {
-  return !(*this == rhs);
-}
 
 std::ostream& operator<<(std::ostream& os, const DataCodeEntry& entry) {
   os << std::hex;

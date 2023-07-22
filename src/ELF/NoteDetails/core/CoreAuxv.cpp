@@ -82,18 +82,7 @@ void CoreAuxv::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-bool CoreAuxv::operator==(const CoreAuxv& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool CoreAuxv::operator!=(const CoreAuxv& rhs) const {
-  return !(*this == rhs);
-}
 
 uint64_t& CoreAuxv::operator[](LIEF::ELF::AUX_TYPE atype) {
   return ctx_[atype];

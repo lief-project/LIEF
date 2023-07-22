@@ -74,8 +74,6 @@ class LIEF_API TwoLevelHints : public LoadCommand {
 
   ~TwoLevelHints() override;
 
-  bool operator==(const TwoLevelHints& rhs) const;
-  bool operator!=(const TwoLevelHints& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

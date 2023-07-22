@@ -39,7 +39,7 @@ void create<CoreFileEntry>(nb::module_& m) {
     .def_rw("path", &CoreFileEntry::path,
       "Path of mapped file"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::CoreFileEntry);
+    LIEF_DEFAULT_STR(CoreFileEntry);
 }
 
 }

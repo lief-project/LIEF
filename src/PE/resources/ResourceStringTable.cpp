@@ -51,16 +51,7 @@ void ResourceStringTable::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-bool ResourceStringTable::operator==(const ResourceStringTable& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  return Hash::hash(*this) == Hash::hash(rhs);
-}
 
-bool ResourceStringTable::operator!=(const ResourceStringTable& rhs) const {
-  return !(*this == rhs);
-}
 
 
 std::ostream& operator<<(std::ostream& os, const ResourceStringTable& string_table) {

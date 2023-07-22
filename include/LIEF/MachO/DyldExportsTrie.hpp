@@ -86,8 +86,6 @@ class LIEF_API DyldExportsTrie : public LoadCommand {
   //! See also: LIEF::MachO::Binary::add_exported_function
   void add(std::unique_ptr<ExportInfo> info);
 
-  bool operator==(const DyldExportsTrie& rhs) const;
-  bool operator!=(const DyldExportsTrie& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

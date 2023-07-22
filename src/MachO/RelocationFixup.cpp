@@ -110,18 +110,7 @@ void RelocationFixup::accept(Visitor& visitor) const {
 }
 
 
-bool RelocationFixup::operator==(const RelocationFixup& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool RelocationFixup::operator!=(const RelocationFixup& rhs) const {
-  return !(*this == rhs);
-}
 
 
 bool RelocationFixup::classof(const Relocation& r) {

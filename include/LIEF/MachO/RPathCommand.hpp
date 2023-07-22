@@ -50,8 +50,6 @@ class LIEF_API RPathCommand : public LoadCommand {
   const std::string& path() const;
   void path(const std::string& path);
 
-  bool operator==(const RPathCommand& rhs) const;
-  bool operator!=(const RPathCommand& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

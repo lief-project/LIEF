@@ -483,18 +483,7 @@ OptionalHeader& OptionalHeader::operator-=(DLL_CHARACTERISTICS c) {
   return *this;
 }
 
-bool OptionalHeader::operator==(const OptionalHeader& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool OptionalHeader::operator!=(const OptionalHeader& rhs) const {
-  return !(*this == rhs);
-}
 
 
 std::ostream& operator<<(std::ostream& os, const OptionalHeader& entry) {

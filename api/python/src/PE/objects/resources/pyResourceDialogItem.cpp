@@ -74,7 +74,7 @@ void create<ResourceDialogItem>(nb::module_& m) {
         nb::overload_cast<>(&ResourceDialogItem::title, nb::const_),
         "Initial text of the control"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::ResourceDialogItem);
+    LIEF_DEFAULT_STR(ResourceDialogItem);
 }
 }
 

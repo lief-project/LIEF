@@ -37,26 +37,26 @@ def test_change_icons(tmp_path):
     for i in range(min(len(mfc_icons), len(cmd_icons))):
         mfc_resources_manger.change_icon(mfc_icons[i], cmd_icons[i])
 
-
     output = tmp_path / "mfc_test_change_icon.exe"
     builder = lief.PE.Builder(mfc)
     builder.build_resources(True)
     builder.build()
     builder.write(output.as_posix())
 
-    if sys.platform.startswith("win"):
-        subprocess_flags = 0x8000000 # win32con.CREATE_NO_WINDOW?
-        p = Popen(["START", output.as_posix()], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, creationflags=subprocess_flags)
-        time.sleep(3)
-        q = Popen(["taskkill", "/im", "mfc_test_change_icon.exe"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-
-        stdout, _ = p.communicate()
-        print(stdout.decode("utf8"))
-
-        stdout, _ = q.communicate()
-        print(stdout.decode("utf8"))
-
-        assert q.returncode == 0
+    if is_windows():
+        popen_args = {
+            "universal_newlines": True,
+            "shell": True,
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.STDOUT,
+            "creationflags": 0x8000000  # win32con.CREATE_NO_WINDOW
+        }
+        with Popen(["START", output.as_posix()], **popen_args):
+            time.sleep(3)
+            with Popen(["taskkill", "/im", output.name], **popen_args) as kproc:
+                stdout, _ = kproc.communicate()
+                print(stdout)
+                assert kproc.returncode == 0
 
 
 def test_resource_string_table():
@@ -256,18 +256,19 @@ def test_mfc_resource_builder(tmp_path):
     os.chmod(output, st.st_mode | stat.S_IEXEC)
 
     if sys.platform.startswith("win"):
-        subprocess_flags = 0x8000000 # win32con.CREATE_NO_WINDOW?
-        p = Popen(["START", output.as_posix()], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, creationflags=subprocess_flags)
-        time.sleep(3)
-        q = Popen(["taskkill", "/im", "mfc_test_rsrc.exe"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-
-        stdout, _ = p.communicate()
-        print(stdout.decode("utf8"))
-
-        stdout, _ = q.communicate()
-        print(stdout.decode("utf8"))
-
-        assert q.returncode == 0
+        popen_args = {
+            "universal_newlines": True,
+            "shell": True,
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.STDOUT,
+            "creationflags": 0x8000000 # win32con.CREATE_NO_WINDOW
+        }
+        with Popen(["START", output.as_posix()], **popen_args):
+            time.sleep(3)
+            with Popen(["taskkill", "/im", output.name], **popen_args) as kproc:
+                stdout, _ = kproc.communicate()
+                print(stdout)
+                assert kproc.returncode == 0
 
 
 #def test_evince_resource_builder(self):
@@ -326,19 +327,19 @@ def test_notepadpp_resource_builder(tmp_path):
     os.chmod(output, st.st_mode | stat.S_IEXEC)
 
     if sys.platform.startswith("win"):
-        subprocess_flags = 0x8000000 # win32con.CREATE_NO_WINDOW?
-        p = Popen(["START", output.as_posix()], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, creationflags=subprocess_flags)
-        time.sleep(3)
-        q = Popen(["taskkill", "/im", "notepad++_rsrc.exe"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-
-        stdout, _ = p.communicate()
-        print(stdout.decode("utf8"))
-
-        stdout, _ = q.communicate()
-        print(stdout.decode("utf8"))
-
-        assert q.returncode == 0
-
+        popen_args = {
+            "universal_newlines": True,
+            "shell": True,
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.STDOUT,
+            "creationflags": 0x8000000 # win32con.CREATE_NO_WINDOW
+        }
+        with Popen(["START", output.as_posix()], **popen_args):
+            time.sleep(3)
+            with Popen(["taskkill", "/im", output.name], **popen_args) as kproc:
+                stdout, _ = kproc.communicate()
+                print(stdout)
+                assert kproc.returncode == 0
 
 def test_filezilla_resource_builder(tmp_path):
     sample_file = get_sample('PE/PE64_x86-64_binary_FileZilla.zip')
@@ -361,18 +362,19 @@ def test_filezilla_resource_builder(tmp_path):
     os.chmod(output, st.st_mode | stat.S_IEXEC)
 
     if sys.platform.startswith("win"):
-        subprocess_flags = 0x8000000 # win32con.CREATE_NO_WINDOW?
-        p = Popen(["START", output.as_posix()], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, creationflags=subprocess_flags)
-        time.sleep(3)
-        q = Popen(["taskkill", "/im", "filezilla_rsrc.exe"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-
-        stdout, _ = p.communicate()
-        print(stdout.decode("utf8"))
-
-        stdout, _ = q.communicate()
-        print(stdout.decode("utf8"))
-
-        assert q.returncode == 0
+        popen_args = {
+            "universal_newlines": True,
+            "shell": True,
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.STDOUT,
+            "creationflags": 0x8000000 # win32con.CREATE_NO_WINDOW
+        }
+        with Popen(["START", output.as_posix()], **popen_args):
+            time.sleep(3)
+            with Popen(["taskkill", "/im", output.name], **popen_args) as kproc:
+                stdout, _ = kproc.communicate()
+                print(stdout)
+                assert kproc.returncode == 0
 
 def test_resource_directory_add_directory_node(tmp_path):
     sample_file = get_sample('PE/PE32_x86_binary_Notepad++.zip')
@@ -499,3 +501,47 @@ def test_resource_directory_add_data_node(tmp_path):
         # Should be in sorted order
         assert [child.name or child.id for child in lang_node.childs] == [0, 44, 500, 1033]
 
+def test_nodes(tmp_path):
+    sample_path = get_sample('PE/PE64_x86-64_binary_mfc-application.exe')
+    output      = tmp_path / "mfc_test_rsrc.exe"
+
+    mfc = lief.PE.parse(sample_path)
+    assert mfc.resources is not None
+    node = mfc.resources
+
+    assert mfc.resources_manager == lief.PE.ResourcesManager(mfc.resources)
+
+    assert isinstance(node, lief.PE.ResourceDirectory)
+    assert node.depth == 0
+    assert len(node.childs) == 10
+    assert node.name == ""
+    assert node.is_directory
+    assert not node.is_data
+    assert not node.has_name
+    node.delete_child(1000000)
+    node.name = "Hello"
+    assert node.name == "Hello"
+    assert node.copy() == node
+    assert hash(node.copy()) == hash(node)
+    print(node)
+
+    # Find data node
+    current = node
+    while not current.is_data:
+        if len(current.childs) == 0:
+            break
+        for child in current.childs:
+            current = child
+            break
+
+    assert current is not None
+    assert isinstance(current, lief.PE.ResourceData)
+    assert current.is_data
+    data_node: lief.PE.ResourceData = current
+    print(data_node)
+    assert data_node.reserved == 0
+    assert data_node.offset == 204224
+    assert data_node.code_page == 0
+    assert len(data_node.content) == 1064
+    assert data_node.copy() == data_node
+    assert hash(data_node.copy()) == hash(data_node)

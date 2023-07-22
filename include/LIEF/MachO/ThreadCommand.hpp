@@ -84,8 +84,6 @@ class LIEF_API ThreadCommand : public LoadCommand {
   void count(uint32_t count);
   void architecture(CPU_TYPES arch);
 
-  bool operator==(const ThreadCommand& rhs) const;
-  bool operator!=(const ThreadCommand& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

@@ -79,7 +79,7 @@ void create<Note>(nb::module_& m) {
     .def_prop_ro("size", &Note::size,
         "Size of the **raw** note"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::Note);
+    LIEF_DEFAULT_STR(Note);
 }
 
 }

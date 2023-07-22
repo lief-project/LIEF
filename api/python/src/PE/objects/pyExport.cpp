@@ -43,7 +43,7 @@ void create<Export>(nb::module_& m) {
         [] (const Export& obj) {
           return safe_string(obj.name());
         },
-        nb::overload_cast<const std::string&>(&Export::name),
+        nb::overload_cast<std::string>(&Export::name),
         "The name of the library exported (e.g. ``KERNEL32.dll``)"_doc)
 
     .def_prop_rw("export_flags",
@@ -76,7 +76,8 @@ void create<Export>(nb::module_& m) {
         "Iterator over the " RST_CLASS_REF(lief.PE.ExportEntry) ""_doc,
         nb::rv_policy::reference_internal)
 
-    LIEF_DEFAULT_STR(LIEF::PE::Export);
+    LIEF_COPYABLE(Export)
+    LIEF_DEFAULT_STR(Export);
 }
 
 }

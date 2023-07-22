@@ -73,8 +73,6 @@ class LIEF_API AndroidNote : public NoteDetails {
   void ndk_version(const std::string& ndk_version);
   void ndk_build_number(const std::string& ndk_build_number);
 
-  bool operator==(const AndroidNote& rhs) const;
-  bool operator!=(const AndroidNote& rhs) const;
 
   void dump(std::ostream& os) const override;
 

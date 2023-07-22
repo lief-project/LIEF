@@ -124,7 +124,7 @@ void create<ResourceFixedFileInfo>(nb::module_& m) {
         nb::overload_cast<uint32_t>(&ResourceFixedFileInfo::file_date_LS),
         "The **least** significant 32 bits of the file's 64-bit binary creation date and time stamp"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::ResourceFixedFileInfo);
+    LIEF_DEFAULT_STR(ResourceFixedFileInfo);
 
 }
 

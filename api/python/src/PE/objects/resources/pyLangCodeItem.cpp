@@ -93,7 +93,7 @@ void create<LangCodeItem>(nb::module_& m) {
         },
         nb::overload_cast<const LangCodeItem::items_t&>(&LangCodeItem::items))
 
-    LIEF_DEFAULT_STR(LIEF::PE::LangCodeItem);
+    LIEF_DEFAULT_STR(LangCodeItem);
 }
 
 }

@@ -36,6 +36,7 @@ void create<LoadConfigurationV7>(nb::module_& m) {
         nb::overload_cast<>(&LoadConfigurationV7::addressof_unicode_string, nb::const_),
         nb::overload_cast<uint64_t>(&LoadConfigurationV7::addressof_unicode_string))
 
+    LIEF_COPYABLE(LoadConfigurationV7)
     LIEF_DEFAULT_STR(LoadConfigurationV7);
 }
 }

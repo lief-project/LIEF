@@ -46,11 +46,15 @@ void init_ref_iterator(nanobind::handle& m, const char* it_name) {
         })
 
     .def("__getitem__",
-        [](T& v, size_t i) -> typename T::reference {
-            if (i >= v.size()) {
-              throw nb::index_error();
-            }
-            return v[i];
+        [] (T& v, Py_ssize_t i) -> typename T::reference {
+          const size_t size = v.size();
+          if (i < 0) {
+            i += static_cast<Py_ssize_t>(size);
+          }
+          if (i < 0 || static_cast<size_t>(i) >= size) {
+            throw nb::index_error();
+          }
+          return v[i];
         },
         nb::rv_policy::reference_internal)
 

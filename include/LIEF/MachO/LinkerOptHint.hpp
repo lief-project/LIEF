@@ -78,8 +78,6 @@ class LIEF_API LinkerOptHint : public LoadCommand {
 
   ~LinkerOptHint() override;
 
-  bool operator==(const LinkerOptHint& rhs) const;
-  bool operator!=(const LinkerOptHint& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

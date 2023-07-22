@@ -223,7 +223,7 @@ void create<Header>(nb::module_& m) {
         "Check if the given " RST_CLASS_REF(lief.ELF.LOONGARCH_EFLAGS) " is present in "
         ":attr:`~lief.ELF.Header.processor_flag`"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::Header);
+    LIEF_DEFAULT_STR(Header);
 }
 
 }

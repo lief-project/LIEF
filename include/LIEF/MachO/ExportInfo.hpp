@@ -93,8 +93,6 @@ class LIEF_API ExportInfo : public Object {
 
   ~ExportInfo() override;
 
-  bool operator==(const ExportInfo& rhs) const;
-  bool operator!=(const ExportInfo& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

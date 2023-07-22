@@ -86,8 +86,6 @@ class LIEF_API Method : public Object {
   //! ACCESS_FLAGS as an std::set
   access_flags_list_t access_flags() const;
 
-  bool operator==(const Method& rhs) const;
-  bool operator!=(const Method& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Method& mtd);
 

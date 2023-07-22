@@ -26,30 +26,28 @@
 
 
 namespace LIEF {
-LIEF_API size_t hash(const Object& v);
-LIEF_API size_t hash(const std::vector<uint8_t>& raw);
-LIEF_API size_t hash(span<const uint8_t> raw);
+
 
 class LIEF_API Hash : public Visitor {
-
   public:
+  using value_type = size_t;
   template<class H = Hash>
-  static size_t hash(const Object& obj);
+  static value_type hash(const Object& obj);
 
-  static size_t hash(const std::vector<uint8_t>& raw);
-  static size_t hash(span<const uint8_t> raw);
-  static size_t hash(const void* raw, size_t size);
+  static value_type hash(const std::vector<uint8_t>& raw);
+  static value_type hash(span<const uint8_t> raw);
+  static value_type hash(const void* raw, size_t size);
 
   // combine two elements to produce a size_t.
-  template<typename U = size_t>
-  static size_t combine(size_t lhs, U rhs) {
+  template<typename U = value_type>
+  static value_type combine(value_type lhs, U rhs) {
     return (lhs ^ rhs) + 0x9e3779b9 + (lhs << 6) + (rhs >> 2);
   }
 
   public:
   using Visitor::visit;
   Hash();
-  Hash(size_t init_value);
+  Hash(value_type init_value);
 
   virtual Hash& process(const Object& obj);
   virtual Hash& process(size_t integer);
@@ -60,7 +58,7 @@ class LIEF_API Hash : public Visitor {
 
   template<class T, typename = typename std::enable_if<std::is_enum<T>::value>::type>
   Hash& process(T v) {
-    return process(static_cast<size_t>(v));
+    return process(static_cast<value_type>(v));
   }
 
   template<class It>
@@ -102,19 +100,26 @@ class LIEF_API Hash : public Visitor {
     return *this;
   }
 
-  size_t value() const;
+  value_type value() const {
+    return value_;
+  }
+
   ~Hash() override;
 
   protected:
-  size_t value_;
+  value_type value_ = 0;
 
 };
 
-template<class H>
-size_t Hash::hash(const Object& obj) {
-  H h;
-  obj.accept(h);
-  return h.value();
+LIEF_API Hash::value_type hash(const Object& v);
+LIEF_API Hash::value_type hash(const std::vector<uint8_t>& raw);
+LIEF_API Hash::value_type hash(span<const uint8_t> raw);
+
+template<class Hasher>
+Hash::value_type Hash::hash(const Object& obj) {
+  Hasher hasher;
+  obj.accept(hasher);
+  return hasher.value();
 }
 
 }

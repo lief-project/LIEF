@@ -52,7 +52,7 @@ void create<DynamicEntry>(nb::module_& m) {
         It can be an offset, an index, a flag, ...
         )delim"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::DynamicEntry);
+    LIEF_DEFAULT_STR(DynamicEntry);
 }
 
 }

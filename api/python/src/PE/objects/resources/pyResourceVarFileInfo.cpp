@@ -57,7 +57,7 @@ void create<ResourceVarFileInfo>(nb::module_& m) {
         Either **most** or **least** 16-bits can be zero, indicating that the file is language or code page independent.
         )delim"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::ResourceVarFileInfo);
+    LIEF_DEFAULT_STR(ResourceVarFileInfo);
 }
 
 }

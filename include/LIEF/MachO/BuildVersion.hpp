@@ -60,8 +60,6 @@ class LIEF_API BuildToolVersion : public LIEF::Object {
 
   ~BuildToolVersion() override;
 
-  bool operator==(const BuildToolVersion& rhs) const;
-  bool operator!=(const BuildToolVersion& rhs) const;
 
   void accept(Visitor& visitor) const override;
 
@@ -112,8 +110,6 @@ class LIEF_API BuildVersion : public LoadCommand {
 
   ~BuildVersion() override;
 
-  bool operator==(const BuildVersion& rhs) const;
-  bool operator!=(const BuildVersion& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

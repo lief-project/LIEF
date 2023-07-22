@@ -85,7 +85,7 @@ void create<DynamicEntryFlags>(nb::module_& m) {
         nb::overload_cast<DYNAMIC_FLAGS_1>(&DynamicEntryFlags::has, nb::const_),
         "Check if the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS_1) " is present"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::DynamicEntryFlags);
+    LIEF_DEFAULT_STR(DynamicEntryFlags);
 }
 
 }

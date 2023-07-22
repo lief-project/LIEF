@@ -41,7 +41,7 @@ void create<CodeViewPDB>(nb::module_& m) {
         nb::overload_cast<>(&CodeViewPDB::filename, nb::const_),
         nb::overload_cast<const std::string&>(&CodeViewPDB::filename))
 
-    LIEF_DEFAULT_STR(LIEF::PE::CodeViewPDB);
+    LIEF_DEFAULT_STR(CodeViewPDB);
 }
 
 }

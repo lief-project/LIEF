@@ -135,7 +135,7 @@ void create<Symbol>(nb::module_& m) {
         &Symbol::is_imported, &Symbol::set_imported,
         "Whether the symbol is **imported**"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::Symbol);
+    LIEF_DEFAULT_STR(Symbol);
 }
 
 }

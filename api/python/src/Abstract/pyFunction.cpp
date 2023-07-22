@@ -63,7 +63,7 @@ void create<Function>(nb::module_& m) {
         nb::overload_cast<uint64_t>(&Function::address),
         "Function's address"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::Function);
+    LIEF_DEFAULT_STR(Function);
 
 }
 }

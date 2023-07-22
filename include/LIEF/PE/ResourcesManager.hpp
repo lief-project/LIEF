@@ -149,8 +149,6 @@ class LIEF_API ResourcesManager : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const ResourcesManager& rhs) const;
-  bool operator!=(const ResourcesManager& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourcesManager& m);
 

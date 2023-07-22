@@ -48,6 +48,6 @@ void create<Symbol>(nb::module_& m) {
         nb::overload_cast<uint64_t>(&Symbol::size),
         "Symbol's size"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::Symbol);
+    LIEF_DEFAULT_STR(Symbol);
 }
 }

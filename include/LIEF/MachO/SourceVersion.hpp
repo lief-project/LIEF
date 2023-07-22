@@ -52,8 +52,6 @@ class LIEF_API SourceVersion : public LoadCommand {
   const SourceVersion::version_t& version() const;
   void version(const SourceVersion::version_t& version);
 
-  bool operator==(const SourceVersion& rhs) const;
-  bool operator!=(const SourceVersion& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

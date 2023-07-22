@@ -79,8 +79,6 @@ class LIEF_API RelocationEntry : public LIEF::Relocation {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const RelocationEntry& rhs) const;
-  bool operator!=(const RelocationEntry& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const RelocationEntry& entry);
 

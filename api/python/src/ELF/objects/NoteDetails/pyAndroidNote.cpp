@@ -41,7 +41,7 @@ void create<AndroidNote>(nb::module_& m) {
         nb::overload_cast<const std::string&>(&AndroidNote::ndk_build_number),
         "Android NDK build number"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::AndroidNote);
+    LIEF_DEFAULT_STR(AndroidNote);
 }
 
 }

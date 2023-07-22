@@ -63,8 +63,6 @@ class LIEF_API LinkEdit : public SegmentCommand {
 
   ~LinkEdit() override;
 
-  bool operator==(const SegmentCommand& rhs) const;
-  bool operator!=(const SegmentCommand& rhs) const;
 
   static bool classof(const LoadCommand* cmd);
   static bool segmentof(const SegmentCommand& segment);

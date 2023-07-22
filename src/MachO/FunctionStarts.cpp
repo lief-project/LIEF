@@ -75,18 +75,7 @@ void FunctionStarts::accept(Visitor& visitor) const {
 }
 
 
-bool FunctionStarts::operator==(const FunctionStarts& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool FunctionStarts::operator!=(const FunctionStarts& rhs) const {
-  return !(*this == rhs);
-}
 
 bool FunctionStarts::classof(const LoadCommand* cmd) {
   // This must be sync with BinaryParser.tcc

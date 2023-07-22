@@ -29,7 +29,7 @@ template<>
 void create<RichHeader>(nb::module_& m) {
   using namespace LIEF::py;
 
-  nb::class_<RichHeader> rich(m, "RichHeader",
+  nb::class_<RichHeader, Object> rich(m, "RichHeader",
       R"delim(
       Class which represents the not-so-documented rich header
 
@@ -82,15 +82,13 @@ void create<RichHeader>(nb::module_& m) {
         the raw bytes of the structure with the provided xor-key.
 
         You can access the decoded data's structure with the `xor_key` set to 0
-        )delim"_doc,
-        "xor_key"_a)
+        )delim"_doc, "xor_key"_a)
 
     .def("hash",
         nb::overload_cast<ALGORITHMS>(&RichHeader::hash, nb::const_),
         R"delim(
         Compute the hash of the decoded rich header structure with the given hash :class:`~lief.PE.ALGORITHMS`
-        )delim"_doc,
-        "algo"_a)
+        )delim"_doc, "algo"_a)
 
     .def("hash",
         nb::overload_cast<ALGORITHMS, uint32_t>(&RichHeader::hash, nb::const_),
@@ -100,6 +98,7 @@ void create<RichHeader>(nb::module_& m) {
         )delim"_doc,
         "algo"_a, "xor_key"_a)
 
+    LIEF_COPYABLE(RichHeader)
     LIEF_DEFAULT_STR(RichHeader);
 }
 

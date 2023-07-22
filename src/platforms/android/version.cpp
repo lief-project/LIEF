@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 #include "LIEF/platforms/android/version.hpp"
-#include <map>
+#include "frozen.hpp"
 namespace LIEF {
 namespace Android {
 
 const char* code_name(ANDROID_VERSIONS version) {
-  const std::map<ANDROID_VERSIONS, const char*> version2code {
+  CONST_MAP(ANDROID_VERSIONS, const char*, 8) version2code {
     { ANDROID_VERSIONS::VERSION_UNKNOWN,  "UNKNOWN"     },
     { ANDROID_VERSIONS::VERSION_601,      "Marshmallow" },
     { ANDROID_VERSIONS::VERSION_700,      "Nougat"      },
@@ -28,14 +28,13 @@ const char* code_name(ANDROID_VERSIONS version) {
     { ANDROID_VERSIONS::VERSION_800,      "Oreo"        },
     { ANDROID_VERSIONS::VERSION_810,      "Oreo"        },
     { ANDROID_VERSIONS::VERSION_900,      "Pie"        },
-
   };
   auto   it  = version2code.find(version);
   return it == version2code.end() ? "UNDEFINED" : it->second;
 }
 
 const char* version_string(ANDROID_VERSIONS version) {
-  const std::map<ANDROID_VERSIONS, const char*> version2code {
+  CONST_MAP(ANDROID_VERSIONS, const char*, 8) version2code {
     { ANDROID_VERSIONS::VERSION_UNKNOWN,  "UNKNOWN" },
     { ANDROID_VERSIONS::VERSION_601,      "6.0.1"   },
     { ANDROID_VERSIONS::VERSION_700,      "7.0.0"   },
@@ -51,7 +50,7 @@ const char* version_string(ANDROID_VERSIONS version) {
 }
 
 const char* to_string(ANDROID_VERSIONS version) {
-  const std::map<ANDROID_VERSIONS, const char*> enumStrings {
+  CONST_MAP(ANDROID_VERSIONS, const char*, 8) enumStrings {
     { ANDROID_VERSIONS::VERSION_UNKNOWN,  "UNKNOWN"     },
     { ANDROID_VERSIONS::VERSION_601,      "VERSION_601" },
     { ANDROID_VERSIONS::VERSION_700,      "VERSION_700" },

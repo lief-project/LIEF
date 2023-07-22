@@ -56,7 +56,7 @@ void create<SymbolVersionRequirement>(nb::module_& m) {
         static_cast<SymbolVersionAuxRequirement& (SymbolVersionRequirement::*)(const SymbolVersionAuxRequirement&)>(&SymbolVersionRequirement::add_aux_requirement),
         "Add an auxiliary version requirement to the existing entries"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::SymbolVersionRequirement);
+    LIEF_DEFAULT_STR(SymbolVersionRequirement);
 }
 
 }

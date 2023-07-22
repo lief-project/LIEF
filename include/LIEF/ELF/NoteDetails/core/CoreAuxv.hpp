@@ -62,8 +62,6 @@ class LIEF_API CoreAuxv : public NoteDetails {
 
   bool set(AUX_TYPE atype, uint64_t value);
 
-  bool operator==(const CoreAuxv& rhs) const;
-  bool operator!=(const CoreAuxv& rhs) const;
 
   uint64_t& operator[](AUX_TYPE atype);
 

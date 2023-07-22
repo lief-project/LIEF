@@ -149,7 +149,7 @@ void create<CorePrStatus>(nb::module_& m) {
     .def("__contains__",
         &CorePrStatus::has)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::CorePrStatus);
+    LIEF_DEFAULT_STR(CorePrStatus);
 
 
   LIEF::enum_<CorePrStatus::REGISTERS>(cls, "REGISTERS")

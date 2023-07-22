@@ -234,18 +234,7 @@ void Note::accept(Visitor& visitor) const {
 }
 
 
-bool Note::operator==(const Note& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool Note::operator!=(const Note& rhs) const {
-  return !(*this == rhs);
-}
 
 
 void Note::dump(std::ostream& os) const {

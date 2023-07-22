@@ -76,8 +76,6 @@ class LIEF_API CorePrPsInfo : public NoteDetails {
   void pgrp(int32_t);
   void sid(int32_t);
 
-  bool operator==(const CorePrPsInfo& rhs) const;
-  bool operator!=(const CorePrPsInfo& rhs) const;
 
   void dump(std::ostream& os) const override;
 

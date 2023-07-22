@@ -37,6 +37,16 @@
           return stream.str();       \
         })
 
+#define LIEF_COPYABLE(OBJ) \
+    .def("copy", [] (OBJ& self) { return OBJ(self); },       \
+        "Duplicate the current instance of this object"_doc, \
+        nb::rv_policy::move)
+
+#define LIEF_CLONABLE(OBJ) \
+    .def("copy", [] (OBJ& self) {return self->clone(); },    \
+        "Duplicate the current instance of this object"_doc, \
+        nb::rv_policy::take_ownership)
+
 constexpr const char* operator "" _doc(const char* value, size_t) {
   return value;
 }

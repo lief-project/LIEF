@@ -288,6 +288,7 @@ void create<OptionalHeader>(nb::module_& m) {
         nb::overload_cast<DLL_CHARACTERISTICS>(&OptionalHeader::has, nb::const_),
         "Check if the given " RST_CLASS_REF(lief.PE.DLL_CHARACTERISTICS) " is present"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::OptionalHeader);
+    LIEF_COPYABLE(OptionalHeader)
+    LIEF_DEFAULT_STR(OptionalHeader);
 }
 }

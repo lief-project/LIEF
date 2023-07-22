@@ -73,8 +73,6 @@ class LIEF_API LoadCommand : public Object {
 
   virtual std::ostream& print(std::ostream& os) const;
 
-  bool operator==(const LoadCommand& rhs) const;
-  bool operator!=(const LoadCommand& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

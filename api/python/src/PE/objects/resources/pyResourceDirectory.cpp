@@ -67,7 +67,7 @@ void create<ResourceDirectory>(nb::module_& m) {
         "following the Name entries that use numeric IDs for "
         "Type, Name, or Language entries."_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::ResourceDirectory);
+    LIEF_DEFAULT_STR(ResourceDirectory);
 }
 
 }

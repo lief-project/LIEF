@@ -61,7 +61,7 @@ void create<Symbol>(nb::module_& m) {
         &Symbol::has_section,
         "``True`` if symbols are located in a section"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::Symbol);
+    LIEF_DEFAULT_STR(Symbol);
 }
 
 }

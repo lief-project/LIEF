@@ -42,8 +42,6 @@ class LIEF_API CodeInfo : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const CodeInfo& rhs) const;
-  bool operator!=(const CodeInfo& rhs) const;
 
   ~CodeInfo() override;
 

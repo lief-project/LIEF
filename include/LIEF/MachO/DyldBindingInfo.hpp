@@ -75,8 +75,6 @@ class LIEF_API DyldBindingInfo : public BindingInfo {
 
   ~DyldBindingInfo() override;
 
-  bool operator==(const DyldBindingInfo& rhs) const;
-  bool operator!=(const DyldBindingInfo& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

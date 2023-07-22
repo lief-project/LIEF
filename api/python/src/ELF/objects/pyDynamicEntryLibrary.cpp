@@ -45,7 +45,7 @@ void create<DynamicEntryLibrary>(nb::module_& m) {
         nb::overload_cast<const std::string&>(&DynamicEntryLibrary::name),
         "Library associated with this entry (e.g. ``libc.so.6``)"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::DynamicEntryLibrary);
+    LIEF_DEFAULT_STR(DynamicEntryLibrary);
 }
 
 }

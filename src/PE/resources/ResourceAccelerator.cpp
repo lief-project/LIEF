@@ -45,18 +45,7 @@ void ResourceAccelerator::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-bool ResourceAccelerator::operator==(const ResourceAccelerator& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  const auto hash_lhs = Hash::hash(*this);
-  const auto hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool ResourceAccelerator::operator!=(const ResourceAccelerator& rhs) const {
-  return !(*this == rhs);
-}
 
 std::ostream& operator<<(std::ostream& os, const ResourceAccelerator& acc) {
   os << "flags: ";

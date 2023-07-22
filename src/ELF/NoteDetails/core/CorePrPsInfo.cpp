@@ -123,18 +123,7 @@ void CorePrPsInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-bool CorePrPsInfo::operator==(const CorePrPsInfo& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool CorePrPsInfo::operator!=(const CorePrPsInfo& rhs) const {
-  return !(*this == rhs);
-}
 
 void CorePrPsInfo::dump(std::ostream& os) const {
   os << std::left;

@@ -62,18 +62,7 @@ void Relocation::accept(Visitor& visitor) const {
 }
 
 
-bool Relocation::operator==(const Relocation& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = AbstractHash::hash(*this);
-  size_t hash_rhs = AbstractHash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool Relocation::operator!=(const Relocation& rhs) const {
-  return !(*this == rhs);
-}
 
 
 bool Relocation::operator<(const Relocation& rhs) const {

@@ -98,7 +98,7 @@ void create<Debug>(nb::module_& m) {
         )delim"_doc,
         nb::rv_policy::reference_internal)
 
-    LIEF_DEFAULT_STR(LIEF::PE::Debug);
+    LIEF_DEFAULT_STR(Debug);
 }
 
 }

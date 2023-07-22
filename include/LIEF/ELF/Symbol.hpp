@@ -163,8 +163,6 @@ class LIEF_API Symbol : public LIEF::Symbol {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const Symbol& rhs) const;
-  bool operator!=(const Symbol& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Symbol& entry);
 

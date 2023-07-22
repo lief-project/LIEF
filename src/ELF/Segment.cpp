@@ -433,18 +433,7 @@ Segment& Segment::operator-=(ELF_SEGMENT_FLAGS flag) {
   return *this;
 }
 
-bool Segment::operator==(const Segment& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool Segment::operator!=(const Segment& rhs) const {
-  return !(*this == rhs);
-}
 
 
 span<uint8_t> Segment::writable_content() {

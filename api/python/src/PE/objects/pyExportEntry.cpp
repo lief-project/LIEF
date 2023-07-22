@@ -34,7 +34,7 @@ void create<ExportEntry>(nb::module_& m) {
   nb::class_<ExportEntry::forward_information_t>(export_entry, "forward_information_t")
     .def_rw("library", &ExportEntry::forward_information_t::library)
     .def_rw("function", &ExportEntry::forward_information_t::function)
-    LIEF_DEFAULT_STR(LIEF::PE::ExportEntry::forward_information_t);
+    LIEF_DEFAULT_STR(ExportEntry::forward_information_t);
 
   export_entry
     .def(nb::init<>())
@@ -66,7 +66,7 @@ void create<ExportEntry>(nb::module_& m) {
     .def_prop_ro("function_rva",
         &ExportEntry::function_rva)
 
-    LIEF_DEFAULT_STR(LIEF::PE::ExportEntry);
+    LIEF_DEFAULT_STR(ExportEntry);
 
 }
 }

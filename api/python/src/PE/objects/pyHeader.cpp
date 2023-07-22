@@ -112,6 +112,7 @@ void create<Header>(nb::module_& m) {
         &Header::characteristics_list,
         "Return the " RST_CLASS_REF(lief.PE.HEADER_CHARACTERISTICS) " as a ``list``"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::Header);
+    LIEF_COPYABLE(Header)
+    LIEF_DEFAULT_STR(Header);
 }
 }

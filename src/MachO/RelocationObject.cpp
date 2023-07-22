@@ -129,18 +129,7 @@ void RelocationObject::accept(Visitor& visitor) const {
 }
 
 
-bool RelocationObject::operator==(const RelocationObject& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool RelocationObject::operator!=(const RelocationObject& rhs) const {
-  return !(*this == rhs);
-}
 
 
 bool RelocationObject::classof(const Relocation& r) {

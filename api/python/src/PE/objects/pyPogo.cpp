@@ -42,6 +42,7 @@ void create<Pogo>(nb::module_& m) {
         nb::overload_cast<>(&Pogo::signature, nb::const_),
         "Type of the pogo (" RST_CLASS_REF(lief.PE.POGO_SIGNATURES) ")"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::Pogo);
+    LIEF_COPYABLE(Pogo)
+    LIEF_DEFAULT_STR(Pogo);
 }
 }

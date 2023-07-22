@@ -40,7 +40,6 @@ class LIEF_API Export : public Object {
   friend class Parser;
 
   public:
-
   using entries_t        = std::vector<ExportEntry>;
   using it_entries       = ref_iterator<entries_t&>;
   using it_const_entries = const_ref_iterator<const entries_t&>;
@@ -53,50 +52,79 @@ class LIEF_API Export : public Object {
 
   //! According to the PE specifications this value is reserved
   //! and should be set to 0
-  uint32_t export_flags() const;
+  uint32_t export_flags() const {
+    return export_flags_;
+  }
 
   //! The time and date that the export data was created
-  uint32_t timestamp() const;
+  uint32_t timestamp() const {
+    return timestamp_;
+  }
 
   //! The major version number (can be user-defined)
-  uint16_t major_version() const;
+  uint16_t major_version() const {
+    return major_version_;
+  }
 
   //! The minor version number (can be user-defined)
-  uint16_t minor_version() const;
+  uint16_t minor_version() const {
+    return minor_version_;
+  }
 
   //! The starting number for the exports. Usually this value is set
   //! to 1
-  uint32_t ordinal_base() const;
+  uint32_t ordinal_base() const {
+    return ordinal_base_;
+  }
 
   //! The name of the library exported (e.g. ``KERNEL32.dll``)
-  const std::string& name() const;
+  const std::string& name() const {
+    return name_;
+  }
 
   //! Iterator over the ExportEntry
-  it_entries entries();
-  it_const_entries entries() const;
+  it_entries entries() {
+    return entries_;
+  }
 
-  void export_flags(uint32_t flags);
-  void timestamp(uint32_t timestamp);
-  void major_version(uint16_t major_version);
-  void minor_version(uint16_t minor_version);
-  void ordinal_base(uint32_t ordinal_base);
-  void name(const std::string& name);
+  it_const_entries entries() const {
+    return entries_;
+  }
+
+  void export_flags(uint32_t flags) {
+    export_flags_ = flags;
+  }
+  void timestamp(uint32_t timestamp) {
+    timestamp_ = timestamp;
+  }
+
+  void major_version(uint16_t major_version) {
+    major_version_ = major_version;
+  }
+
+  void minor_version(uint16_t minor_version) {
+    minor_version_ = minor_version;
+  }
+  void ordinal_base(uint32_t ordinal_base) {
+    ordinal_base_ = ordinal_base;
+  }
+
+  void name(std::string name) {
+    name_ = std::move(name);
+  }
 
   void accept(Visitor& visitor) const override;
-
-  bool operator==(const Export& rhs) const;
-  bool operator!=(const Export& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Export& exp);
 
   private:
-  uint32_t    exportFlags_;
-  uint32_t    timestamp_;
-  uint16_t    majorVersion_;
-  uint16_t    minorVersion_;
-  uint32_t    ordinalBase_;
+  uint32_t export_flags_ = 0;
+  uint32_t timestamp_ = 0;
+  uint16_t major_version_ = 0;
+  uint16_t minor_version_ = 0;
+  uint32_t ordinal_base_ = 0;
+  entries_t entries_;
   std::string name_;
-  entries_t   entries_;
 
 };
 

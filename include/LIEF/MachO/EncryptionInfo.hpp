@@ -56,8 +56,6 @@ class LIEF_API EncryptionInfo : public LoadCommand {
   void crypt_size(uint32_t size);
   void crypt_id(uint32_t id);
 
-  bool operator==(const EncryptionInfo& rhs) const;
-  bool operator!=(const EncryptionInfo& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

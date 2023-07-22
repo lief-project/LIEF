@@ -48,6 +48,6 @@ void create<CoreFile>(nb::module_& m) {
                                    std::begin(f), std::end(f));
         }, nb::keep_alive<0, 1>())
 
-    LIEF_DEFAULT_STR(LIEF::ELF::CoreFile);
+    LIEF_DEFAULT_STR(CoreFile);
 }
 }

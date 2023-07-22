@@ -52,18 +52,7 @@ void UUIDCommand::accept(Visitor& visitor) const {
 }
 
 
-bool UUIDCommand::operator==(const UUIDCommand& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool UUIDCommand::operator!=(const UUIDCommand& rhs) const {
-  return !(*this == rhs);
-}
 
 bool UUIDCommand::classof(const LoadCommand* cmd) {
   // This must be sync with BinaryParser.tcc

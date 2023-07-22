@@ -49,18 +49,7 @@ void SubFramework::accept(Visitor& visitor) const {
 }
 
 
-bool SubFramework::operator==(const SubFramework& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool SubFramework::operator!=(const SubFramework& rhs) const {
-  return !(*this == rhs);
-}
 
 
 bool SubFramework::classof(const LoadCommand* cmd) {

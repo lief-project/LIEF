@@ -41,18 +41,7 @@ void PogoEntry::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-bool PogoEntry::operator==(const PogoEntry& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool PogoEntry::operator!=(const PogoEntry& rhs) const {
-  return !(*this == rhs);
-}
 
 uint32_t PogoEntry::start_rva() const {
   return start_rva_;

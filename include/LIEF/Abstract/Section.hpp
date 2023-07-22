@@ -92,8 +92,6 @@ class LIEF_API Section : public Object {
   //! @brief Method so that the ``visitor`` can visit us
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const Section& rhs) const;
-  bool operator!=(const Section& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Section& entry);
 

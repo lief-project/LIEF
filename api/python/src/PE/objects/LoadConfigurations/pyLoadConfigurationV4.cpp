@@ -45,6 +45,7 @@ void create<LoadConfigurationV4>(nb::module_& m) {
         nb::overload_cast<>(&LoadConfigurationV4::hybrid_metadata_pointer, nb::const_),
         nb::overload_cast<uint64_t>(&LoadConfigurationV4::hybrid_metadata_pointer))
 
-    LIEF_DEFAULT_STR(LIEF::PE::LoadConfigurationV4);
+    LIEF_COPYABLE(LoadConfigurationV4)
+    LIEF_DEFAULT_STR(LoadConfigurationV4);
 }
 }

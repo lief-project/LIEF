@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-import lief
-import os
-import sys
-import stat
-import subprocess
 import ctypes
 import json
+import lief
+import os
+import pytest
+import stat
+import subprocess
+import sys
 
 from subprocess import Popen
 
@@ -41,7 +41,7 @@ def test_code_view_pdb():
         'code_view': {
             'age': 1,
             'cv_signature': 'PDB_70',
-            'filename': 'c:\\users\\romain\\documents\\visual studio 2015\\Projects\\HelloWorld\\x64\\Release\\ConsoleApplication1.pdb',
+            'filename': r'c:\users\romain\documents\visual studio 2015\Projects\HelloWorld\x64\Release\ConsoleApplication1.pdb',
             'signature': [245, 217, 227, 182, 71, 113, 1, 79, 162, 3, 170, 71, 124, 74, 186, 84]
         },
         'major_version': 0,
@@ -111,6 +111,8 @@ def test_pgo():
     assert pogo_entries[23].start_rva == 0x8200
     assert pogo_entries[23].size == 820
 
+    assert pogo.copy() == pogo
+
 
 def test_sections():
     path = get_sample("PE/PE32_x86_binary_PGO-LTCG.exe")
@@ -118,6 +120,11 @@ def test_sections():
     assert pe.get_section(".text") is not None
     assert pe.sections[0].name == ".text"
     assert pe.sections[0].fullname.encode("utf8") == b".text\x00\x00\x00"
+    text = pe.sections[0]
+    assert text.copy() == text
+    text.name = ".foo"
+    assert text.name == ".foo"
+    print(text)
 
 def test_utils():
     assert lief.PE.get_type(get_sample("PE/PE32_x86_binary_PGO-LTCG.exe")) == lief.PE.PE_TYPE.PE32
@@ -127,3 +134,15 @@ def test_utils():
         buffer = list(f.read())
         assert lief.PE.get_type(buffer) == lief.PE.PE_TYPE.PE32
 
+@pytest.mark.parametrize("pe_file", [
+    "PE/AcRes.dll",
+    "PE/test.delay.exe",
+    "PE/AppVClient.exe",
+])
+def test_json(pe_file):
+    pe = lief.PE.parse(get_sample(pe_file))
+    print(pe)
+    out = lief.to_json(pe)
+    assert out is not None
+    assert len(out) > 0
+    assert json.loads(out) is not None

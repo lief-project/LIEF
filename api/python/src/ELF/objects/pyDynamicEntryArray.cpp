@@ -81,7 +81,7 @@ void create<DynamicEntryArray>(nb::module_& m) {
     .def("__len__",
         &DynamicEntryArray::size)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::DynamicEntryArray);
+    LIEF_DEFAULT_STR(DynamicEntryArray);
 }
 
 }

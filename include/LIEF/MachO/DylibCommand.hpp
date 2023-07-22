@@ -109,8 +109,6 @@ class LIEF_API DylibCommand : public LoadCommand {
 
   std::ostream& print(std::ostream& os) const override;
 
-  bool operator==(const DylibCommand& rhs) const;
-  bool operator!=(const DylibCommand& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

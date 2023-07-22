@@ -330,18 +330,7 @@ void Section::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-bool Section::operator==(const Section& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool Section::operator!=(const Section& rhs) const {
-  return !(*this == rhs);
-}
 
 
 std::ostream& operator<<(std::ostream& os, const Section& section) {

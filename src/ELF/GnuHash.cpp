@@ -110,18 +110,7 @@ bool GnuHash::check(uint32_t hash) const {
   return true;
 }
 
-bool GnuHash::operator==(const GnuHash& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool GnuHash::operator!=(const GnuHash& rhs) const {
-  return !(*this == rhs);
-}
 
 void GnuHash::accept(Visitor& visitor) const {
   visitor.visit(*this);

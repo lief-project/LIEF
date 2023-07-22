@@ -54,7 +54,8 @@ void create<LoadConfigurationV3>(nb::module_& m) {
         nb::overload_cast<uint64_t>(&LoadConfigurationV3::guard_long_jump_target_count),
         "Number of entries in the :attr:`~lief.PE.guard_address_taken_iat_entry_table`"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::LoadConfigurationV3);
+    LIEF_COPYABLE(LoadConfigurationV3)
+    LIEF_DEFAULT_STR(LoadConfigurationV3);
 
 }
 

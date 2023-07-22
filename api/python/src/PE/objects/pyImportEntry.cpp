@@ -84,6 +84,7 @@ void create<ImportEntry>(nb::module_& m) {
         &ImportEntry::iat_address,
         "**Original** address of the entry in the Import Address Table"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::ImportEntry);
+    LIEF_COPYABLE(ImportEntry)
+    LIEF_DEFAULT_STR(ImportEntry);
 }
 }

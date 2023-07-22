@@ -36,6 +36,7 @@ void create<LoadConfigurationV9>(nb::module_& m) {
         nb::overload_cast<>(&LoadConfigurationV9::guard_eh_continuation_count, nb::const_),
         nb::overload_cast<uint64_t>(&LoadConfigurationV9::guard_eh_continuation_count))
 
+    LIEF_COPYABLE(LoadConfigurationV9)
     LIEF_DEFAULT_STR(LoadConfigurationV9);
 }
 

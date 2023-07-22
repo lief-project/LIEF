@@ -66,8 +66,6 @@ class LIEF_API NoteAbi : public NoteDetails {
   //! @brief Return the target ABI. Require a NT_GNU_ABI_TAG type
   NOTE_ABIS abi() const;
 
-  bool operator==(const NoteAbi& rhs) const;
-  bool operator!=(const NoteAbi& rhs) const;
 
   void dump(std::ostream& os) const override;
 

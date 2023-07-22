@@ -50,8 +50,6 @@ class LIEF_API Relocation : public Object {
   //! Method so that the ``visitor`` can visit us
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const Relocation& rhs) const;
-  bool operator!=(const Relocation& rhs) const;
 
   //! Comparaison based on the Relocation's **address**
   virtual bool operator<(const Relocation& rhs) const;

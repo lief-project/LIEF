@@ -123,8 +123,6 @@ class LIEF_API TLS : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const TLS& rhs) const;
-  bool operator!=(const TLS& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const TLS& entry);
 

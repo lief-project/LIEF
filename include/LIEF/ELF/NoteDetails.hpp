@@ -53,8 +53,6 @@ class LIEF_API NoteDetails : public Object {
 
   virtual void dump(std::ostream& os) const;
 
-  bool operator==(const NoteDetails& rhs) const;
-  bool operator!=(const NoteDetails& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

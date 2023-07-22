@@ -107,7 +107,7 @@ void create<ResourceVersion>(nb::module_& m) {
         &ResourceVersion::remove_var_file_info,
         "Remove the " RST_CLASS_REF(lief.PE.ResourceVarFileInfo) " from the version"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::ResourceVersion);
+    LIEF_DEFAULT_STR(ResourceVersion);
 }
 
 }

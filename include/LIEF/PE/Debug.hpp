@@ -97,8 +97,6 @@ class LIEF_API Debug : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const Debug& rhs) const;
-  bool operator!=(const Debug& rhs) const;
 
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Debug& entry);

@@ -271,8 +271,6 @@ class LIEF_API DyldInfo : public LoadCommand {
 
   void add(std::unique_ptr<ExportInfo> info);
 
-  bool operator==(const DyldInfo& rhs) const;
-  bool operator!=(const DyldInfo& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

@@ -51,8 +51,6 @@ class LIEF_API DyldEnvironment : public LoadCommand {
 
   void value(const std::string& values);
 
-  bool operator==(const DyldEnvironment& rhs) const;
-  bool operator!=(const DyldEnvironment& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

@@ -71,18 +71,7 @@ void CoreSigInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-bool CoreSigInfo::operator==(const CoreSigInfo& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool CoreSigInfo::operator!=(const CoreSigInfo& rhs) const {
-  return !(*this == rhs);
-}
 
 void CoreSigInfo::dump(std::ostream& os) const {
   static constexpr size_t WIDTH = 16;

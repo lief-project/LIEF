@@ -66,7 +66,7 @@ class VersionMin;
 //! a **deterministic** hash for LIEF MachO objects
 class LIEF_API Hash : public LIEF::Hash {
   public:
-  static size_t hash(const Object& obj);
+  static LIEF::Hash::value_type hash(const Object& obj);
 
   public:
   using LIEF::Hash::Hash;

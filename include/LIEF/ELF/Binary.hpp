@@ -768,8 +768,6 @@ class LIEF_API Binary : public LIEF::Binary {
 
   std::ostream& print(std::ostream& os) const override;
 
-  bool operator==(const Binary& rhs) const;
-  bool operator!=(const Binary& rhs) const;
 
 
   Binary& operator+=(const DynamicEntry& entry);

@@ -36,6 +36,6 @@ void create<NoteAbi>(nb::module_& m) {
         nb::overload_cast<>(&NoteAbi::version, nb::const_),
         "Return the target version as ``(Major, Minor, Patch)``"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::NoteAbi);
+    LIEF_DEFAULT_STR(NoteAbi);
 }
 }

@@ -87,8 +87,6 @@ class LIEF_API LangCodeItem : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const LangCodeItem& rhs) const;
-  bool operator!=(const LangCodeItem& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const LangCodeItem& item);
 

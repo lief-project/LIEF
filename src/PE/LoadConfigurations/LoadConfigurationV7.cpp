@@ -56,18 +56,7 @@ void LoadConfigurationV7::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-bool LoadConfigurationV7::operator==(const LoadConfigurationV7& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool LoadConfigurationV7::operator!=(const LoadConfigurationV7& rhs) const {
-  return !(*this == rhs);
-}
 
 std::ostream& LoadConfigurationV7::print(std::ostream& os) const {
   LoadConfigurationV6::print(os);

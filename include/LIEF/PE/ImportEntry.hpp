@@ -74,8 +74,6 @@ class LIEF_API ImportEntry : public LIEF::Symbol {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const ImportEntry& rhs) const;
-  bool operator!=(const ImportEntry& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ImportEntry& entry);
 

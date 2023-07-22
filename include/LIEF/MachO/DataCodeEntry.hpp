@@ -64,8 +64,6 @@ class LIEF_API DataCodeEntry : public LIEF::Object {
 
   ~DataCodeEntry() override;
 
-  bool operator==(const DataCodeEntry& rhs) const;
-  bool operator!=(const DataCodeEntry& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

@@ -43,6 +43,7 @@ void create<ResourcesManager>(nb::module_& m) {
   init_ref_iterator<ResourcesManager::it_const_accelerators>(manager, "it_const_accelerators");
 
   manager
+    .def(nb::init<ResourceNode&>(), nb::keep_alive<0, 1>())
     .def_prop_ro("has_manifest",
         &ResourcesManager::has_manifest,
         "``True`` if the resources contain a Manifest element"_doc)
@@ -142,6 +143,6 @@ void create<ResourcesManager>(nb::module_& m) {
       "type"_a,
       nb::rv_policy::reference_internal)
 
-    LIEF_DEFAULT_STR(LIEF::PE::ResourcesManager);
+    LIEF_DEFAULT_STR(ResourcesManager);
 }
 }

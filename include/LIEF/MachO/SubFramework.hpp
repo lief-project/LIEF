@@ -61,8 +61,6 @@ class LIEF_API SubFramework : public LoadCommand {
 
   ~SubFramework() override;
 
-  bool operator==(const SubFramework& rhs) const;
-  bool operator!=(const SubFramework& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

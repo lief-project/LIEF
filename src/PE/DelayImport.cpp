@@ -144,18 +144,7 @@ void DelayImport::timestamp(uint32_t value) {
   timestamp_ = value;
 }
 
-bool DelayImport::operator==(const DelayImport& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool DelayImport::operator!=(const DelayImport& rhs) const {
-  return !(*this == rhs);
-}
 
 std::ostream& operator<<(std::ostream& os, const DelayImport& entry) {
   os << fmt::format("{:<20}: #{} imports", entry.name(), entry.entries().size());

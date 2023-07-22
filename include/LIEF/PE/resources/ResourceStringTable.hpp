@@ -46,8 +46,6 @@ class LIEF_API ResourceStringTable : public Object {
   //! The variable-length Unicode string data, word-aligned.
   const std::u16string& name() const;
 
-  bool operator==(const ResourceStringTable& rhs) const;
-  bool operator!=(const ResourceStringTable& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceStringTable& string_table);
 

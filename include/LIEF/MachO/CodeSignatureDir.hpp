@@ -77,8 +77,6 @@ class LIEF_API CodeSignatureDir : public LoadCommand {
 
   ~CodeSignatureDir() override;
 
-  bool operator==(const CodeSignatureDir& rhs) const;
-  bool operator!=(const CodeSignatureDir& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

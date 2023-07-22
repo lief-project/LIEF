@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef ELF_DATA_HANDLER_HANDLER_H_
-#define ELF_DATA_HANDLER_HANDLER_H_
+#ifndef LIEF_ELF_DATA_HANDLER
+#define LIEF_ELF_DATA_HANDLER
 #include <vector>
 #include <functional>
+#include <memory>
 
 #include "LIEF/visibility.h"
 #include "LIEF/utils.hpp"

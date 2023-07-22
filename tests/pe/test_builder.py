@@ -43,20 +43,22 @@ def test_add_multiples_sections(tmp_path):
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-    if sys.platform.startswith("win"):
-        subprocess_flags = 0x8000000 # win32con.CREATE_NO_WINDOW?
-        p = Popen(["START", output.as_posix()], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, creationflags=subprocess_flags)
-        time.sleep(3)
-        q = Popen(["taskkill", "/im", "notepad++_sections.exe"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-
-        stdout, _ = p.communicate()
-        print(stdout.decode("utf8"))
-
-        stdout, _ = q.communicate()
-        print(stdout.decode("utf8"))
-
-        assert q.returncode == 0
-
+    if is_windows():
+        popen_args = {
+            "universal_newlines": True,
+            "shell": True,
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.STDOUT,
+            "creationflags": 0x8000000  # win32con.CREATE_NO_WINDOW
+        }
+        with Popen(["START", output.as_posix()], **popen_args) as proc:
+            time.sleep(3)
+            with Popen(["taskkill", "/im", output.name], **popen_args) as kproc:
+                stdout, _ = proc.communicate()
+                print(stdout)
+                stdout, _ = kproc.communicate()
+                print(stdout)
+                assert kproc.returncode == 0
 
 def test_imports_notepadpp(tmp_path):
     sample_file = get_sample('PE/PE32_x86_binary_Notepad++.zip')
@@ -85,16 +87,19 @@ def test_imports_notepadpp(tmp_path):
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-    if sys.platform.startswith("win"):
-        subprocess_flags = 0x8000000 # win32con.CREATE_NO_WINDOW?
-        p = Popen(["START", output.as_posix()], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, creationflags=subprocess_flags)
-        time.sleep(3)
-        q = Popen(["taskkill", "/im", "notepad++_imports.exe"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-
-        stdout, _ = p.communicate()
-        print(stdout.decode("utf8"))
-
-        stdout, _ = q.communicate()
-        print(stdout.decode("utf8"))
-
-        assert q.returncode == 0
+    if is_windows():
+        popen_args = {
+            "universal_newlines": True,
+            "shell": True,
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.STDOUT,
+            "creationflags": 0x8000000  # win32con.CREATE_NO_WINDOW
+        }
+        with Popen(["START", output.as_posix()], **popen_args) as proc:
+            time.sleep(3)
+            with Popen(["taskkill", "/im", output.name], **popen_args) as kproc:
+                stdout, _ = proc.communicate()
+                print(stdout)
+                stdout, _ = kproc.communicate()
+                print(stdout)
+                assert kproc.returncode == 0

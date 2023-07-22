@@ -220,18 +220,7 @@ void Section::clear(uint8_t c) {
   std::fill(std::begin(content_), std::end(content_), c);
 }
 
-bool Section::operator==(const Section& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool Section::operator!=(const Section& rhs) const {
-  return !(*this == rhs);
-}
 
 
 std::ostream& operator<<(std::ostream& os, const Section& section) {

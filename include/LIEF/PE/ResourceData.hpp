@@ -72,8 +72,6 @@ class LIEF_API ResourceData : public ResourceNode {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const ResourceData& rhs) const;
-  bool operator!=(const ResourceData& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceData& data);
 

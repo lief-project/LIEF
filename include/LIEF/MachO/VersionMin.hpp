@@ -55,8 +55,6 @@ class LIEF_API VersionMin : public LoadCommand {
   const version_t& sdk() const;
   void sdk(const version_t& sdk);
 
-  bool operator==(const VersionMin& rhs) const;
-  bool operator!=(const VersionMin& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

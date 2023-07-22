@@ -96,8 +96,6 @@ class LIEF_API GnuHash : public Object {
   //! do any assumption
   bool check(uint32_t hash) const;
 
-  bool operator==(const GnuHash& rhs) const;
-  bool operator!=(const GnuHash& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

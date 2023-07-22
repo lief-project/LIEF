@@ -59,8 +59,6 @@ class LIEF_API RelocationDyld : public Relocation {
 
   void pc_relative(bool val) override;
 
-  bool operator==(const RelocationDyld& rhs) const;
-  bool operator!=(const RelocationDyld& rhs) const;
 
   bool operator<(const RelocationDyld& rhs) const;
   bool operator>=(const RelocationDyld& rhs) const;

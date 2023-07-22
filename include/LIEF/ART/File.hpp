@@ -38,8 +38,6 @@ class LIEF_API File : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const File& rhs) const;
-  bool operator!=(const File& rhs) const;
 
   ~File() override;
 

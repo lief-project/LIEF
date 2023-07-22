@@ -138,7 +138,7 @@ void create<Import>(nb::module_& m) {
       "function_name"_a,
       nb::rv_policy::reference_internal)
 
-    LIEF_DEFAULT_STR(LIEF::PE::Import);
+    LIEF_DEFAULT_STR(Import);
 
 }
 }

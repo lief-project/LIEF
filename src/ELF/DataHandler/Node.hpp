@@ -13,35 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef ELF_DATA_HANDLER_NODE_H_
-#define ELF_DATA_HANDLER_NODE_H_
+#ifndef LIEF_ELF_DATA_HANDLER_NODE_H
+#define LIEF_ELF_DATA_HANDLER_NODE_H
 
 #include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
-namespace DataHandler {
-class LIEF_API Node {
+namespace LIEF::ELF::DataHandler {
+
+class LIEF_LOCAL Node {
   public:
   enum Type : uint8_t {
     SECTION = 0,
     SEGMENT = 1,
     UNKNOWN = 2
   };
-  Node();
-  Node(uint64_t offset, uint64_t size, Type type);
+  Node() = default;
+  Node(uint64_t offset, uint64_t size, Type type) :
+    size_{size}, offset_{offset}, type_{type}
+  {}
 
-  Node& operator=(const Node&);
-  Node(const Node&);
+  Node& operator=(const Node&) = default;
+  Node(const Node&) = default;
 
-  uint64_t size() const;
-  uint64_t offset() const;
-  Type     type() const;
+  uint64_t size() const {
+    return size_;
+  }
+  uint64_t offset() const {
+    return offset_;
+  }
 
-  void size(uint64_t size);
-  void type(Type type);
-  void offset(uint64_t offset);
+  Type type() const {
+    return type_;
+  }
+
+  void size(uint64_t size) {
+    size_ = size;
+  }
+
+  void type(Type type) {
+    type_ = type;
+  }
+
+  void offset(uint64_t offset) {
+    offset_ = offset;
+  }
 
   bool operator==(const Node& rhs) const;
   bool operator!=(const Node& rhs) const;
@@ -51,16 +67,14 @@ class LIEF_API Node {
 
   bool operator>(const Node& rhs) const;
   bool operator>=(const Node& rhs) const;
-  ~Node();
+  ~Node() = default;
 
   private:
   uint64_t size_ = 0;
   uint64_t offset_ = 0;
-  Type     type_ = Type::UNKNOWN;
+  Type type_ = Type::UNKNOWN;
 };
 
-} // namespace DataHandler
-} // namespace ELF
-} // namespace LIEF
+} // namespace LIEF::ELF::DataHandler
 
 #endif

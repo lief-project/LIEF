@@ -95,8 +95,6 @@ class LIEF_API ResourceVersion : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const ResourceVersion& rhs) const;
-  bool operator!=(const ResourceVersion& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceVersion& version);
 

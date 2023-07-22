@@ -178,18 +178,7 @@ void Debug::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-bool Debug::operator==(const Debug& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool Debug::operator!=(const Debug& rhs) const {
-  return !(*this == rhs);
-}
 
 
 std::ostream& operator<<(std::ostream& os, const Debug& entry) {

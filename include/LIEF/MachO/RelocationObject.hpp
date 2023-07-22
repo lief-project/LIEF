@@ -86,8 +86,6 @@ class LIEF_API RelocationObject : public Relocation {
 
   void value(int32_t value);
 
-  bool operator==(const RelocationObject& rhs) const;
-  bool operator!=(const RelocationObject& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

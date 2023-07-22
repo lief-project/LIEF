@@ -17,6 +17,7 @@
 #define LIEF_PE_RICH_ENTRY_H
 #include <cstdint>
 #include <ostream>
+#include <cstdint>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
@@ -48,9 +49,6 @@ class LIEF_API RichEntry : public Object {
   void count(uint32_t count);
 
   void accept(Visitor& visitor) const override;
-
-  bool operator==(const RichEntry& rhs) const;
-  bool operator!=(const RichEntry& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const RichEntry& rich_entry);
 

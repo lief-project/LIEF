@@ -166,8 +166,6 @@ class LIEF_API CorePrStatus : public NoteDetails {
 
   bool set(REGISTERS reg, uint64_t value);
 
-  bool operator==(const CorePrStatus& rhs) const;
-  bool operator!=(const CorePrStatus& rhs) const;
 
   uint64_t& operator[](REGISTERS reg);
 

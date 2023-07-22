@@ -90,8 +90,6 @@ class LIEF_API ResourceDirectory : public ResourceNode {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const ResourceDirectory& rhs) const;
-  bool operator!=(const ResourceDirectory& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceDirectory& directory);
 

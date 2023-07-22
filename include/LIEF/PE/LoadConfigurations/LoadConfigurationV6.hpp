@@ -62,8 +62,6 @@ class LIEF_API LoadConfigurationV6 : public LoadConfigurationV5 {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const LoadConfigurationV6& rhs) const;
-  bool operator!=(const LoadConfigurationV6& rhs) const;
 
   std::ostream& print(std::ostream& os) const override;
 

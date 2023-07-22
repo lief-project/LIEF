@@ -94,6 +94,6 @@ void create<ResourceNode>(nb::module_& m) {
         &ResourceNode::depth,
         "Current depth of the entry in the resource tree"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::ResourceNode);
+    LIEF_DEFAULT_STR(ResourceNode);
 }
 }

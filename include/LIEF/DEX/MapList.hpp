@@ -69,8 +69,6 @@ class LIEF_API MapList : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const MapList& rhs) const;
-  bool operator!=(const MapList& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const MapList& mtd);
 

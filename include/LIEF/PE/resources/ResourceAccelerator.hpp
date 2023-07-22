@@ -65,8 +65,6 @@ class LIEF_API ResourceAccelerator : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const ResourceAccelerator& rhs) const;
-  bool operator!=(const ResourceAccelerator& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceAccelerator& acc);
 

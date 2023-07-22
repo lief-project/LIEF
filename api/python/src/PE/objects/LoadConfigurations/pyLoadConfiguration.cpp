@@ -141,6 +141,7 @@ void create<LoadConfiguration>(nb::module_& m) {
         nb::overload_cast<uint32_t>(&LoadConfiguration::security_cookie),
         "A pointer to a cookie that is used by Visual C++ or GS implementation."_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::LoadConfiguration);
+    LIEF_COPYABLE(LoadConfiguration)
+    LIEF_DEFAULT_STR(LoadConfiguration);
 }
 }

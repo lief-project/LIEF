@@ -59,18 +59,7 @@ void CodeSignature::accept(Visitor& visitor) const {
 }
 
 
-bool CodeSignature::operator==(const CodeSignature& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool CodeSignature::operator!=(const CodeSignature& rhs) const {
-  return !(*this == rhs);
-}
 
 bool CodeSignature::classof(const LoadCommand* cmd) {
   // This must be sync with BinaryParser.tcc

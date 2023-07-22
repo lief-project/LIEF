@@ -51,14 +51,19 @@ def test_simple():
     assert user32.uiat == 0
     assert user32.timestamp == 0
     assert len(user32.entries) == 1
+    assert user32.copy() == user32
 
     messageboxa = user32.entries[0]
+    assert messageboxa.copy() == messageboxa
+    assert messageboxa.copy().copy() != user32
 
+    assert messageboxa.ordinal == 0x3f72
     assert messageboxa.name == "MessageBoxA"
     assert messageboxa.value == 0x25d40
     assert messageboxa.iat_value == 0x0300905a4d
     assert messageboxa.data == 0x23f72
     assert messageboxa.hint == 0x285
+    print(messageboxa)
 
 def test_cmd():
     """

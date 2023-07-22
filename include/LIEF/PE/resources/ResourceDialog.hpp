@@ -151,8 +151,6 @@ class LIEF_API ResourceDialog : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const ResourceDialog& rhs) const;
-  bool operator!=(const ResourceDialog& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceDialog& dialog);
 

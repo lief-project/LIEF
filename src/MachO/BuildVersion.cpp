@@ -44,18 +44,7 @@ BuildToolVersion::version_t BuildToolVersion::version() const {
 
 BuildToolVersion::~BuildToolVersion() = default;
 
-bool BuildToolVersion::operator==(const BuildToolVersion& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool BuildToolVersion::operator!=(const BuildToolVersion& rhs) const {
-  return !(*this == rhs);
-}
 
 void BuildToolVersion::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -138,18 +127,7 @@ void BuildVersion::accept(Visitor& visitor) const {
 }
 
 
-bool BuildVersion::operator==(const BuildVersion& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool BuildVersion::operator!=(const BuildVersion& rhs) const {
-  return !(*this == rhs);
-}
 
 bool BuildVersion::classof(const LoadCommand* cmd) {
   // This must be sync with BinaryParser.tcc

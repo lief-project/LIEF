@@ -131,6 +131,7 @@ void create<TLS>(nb::module_& m) {
         "" RST_CLASS_REF(lief.PE.Section) " associated with the TLS object (or None if not linked)"_doc,
         nb::rv_policy::reference_internal)
 
-    LIEF_DEFAULT_STR(LIEF::PE::TLS);
+    LIEF_COPYABLE(TLS)
+    LIEF_DEFAULT_STR(TLS);
 }
 }

@@ -224,19 +224,7 @@ void CorePrStatus::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-bool CorePrStatus::operator==(const CorePrStatus& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
 
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
-
-bool CorePrStatus::operator!=(const CorePrStatus& rhs) const {
-  return !(*this == rhs);
-}
 
 uint64_t& CorePrStatus::operator[](REGISTERS reg) {
   return ctx_[reg];

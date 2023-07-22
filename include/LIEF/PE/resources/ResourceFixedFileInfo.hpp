@@ -113,8 +113,6 @@ class LIEF_API ResourceFixedFileInfo : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const ResourceFixedFileInfo& rhs) const;
-  bool operator!=(const ResourceFixedFileInfo& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceFixedFileInfo& fixed_info);
 

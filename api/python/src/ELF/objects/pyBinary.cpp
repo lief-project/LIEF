@@ -759,7 +759,7 @@ void create<Binary>(nb::module_& m) {
         nb::overload_cast<ELF_SECTION_TYPES>(&Binary::has, nb::const_),
         "Check if the " RST_CLASS_REF(lief.ELF.Section) " associated with the given " RST_CLASS_REF(lief.ELF.SECTION_TYPES) " exists"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::Binary);
+    LIEF_DEFAULT_STR(Binary);
 
 }
 }

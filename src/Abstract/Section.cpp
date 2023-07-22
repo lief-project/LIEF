@@ -202,18 +202,7 @@ void Section::accept(Visitor& visitor) const {
 }
 
 
-bool Section::operator==(const Section& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = AbstractHash::hash(*this);
-  size_t hash_rhs = AbstractHash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool Section::operator!=(const Section& rhs) const {
-  return !(*this == rhs);
-}
 
 std::ostream& operator<<(std::ostream& os, const Section& entry) {
   os << std::hex;

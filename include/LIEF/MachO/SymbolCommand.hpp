@@ -94,8 +94,6 @@ class LIEF_API SymbolCommand : public LoadCommand {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const SymbolCommand& rhs) const;
-  bool operator!=(const SymbolCommand& rhs) const;
 
   static bool classof(const LoadCommand* cmd);
 

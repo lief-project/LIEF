@@ -79,8 +79,6 @@ class LIEF_API SymbolVersionDefinition : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const SymbolVersionDefinition& rhs) const;
-  bool operator!=(const SymbolVersionDefinition& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const SymbolVersionDefinition& sym);
 

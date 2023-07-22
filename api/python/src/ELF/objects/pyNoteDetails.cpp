@@ -27,7 +27,7 @@ namespace LIEF::ELF::py {
 template<>
 void create<NoteDetails>(nb::module_& m) {
   nb::class_<NoteDetails, LIEF::Object>(m, "NoteDetails")
-    LIEF_DEFAULT_STR(LIEF::ELF::NoteDetails);
+    LIEF_DEFAULT_STR(NoteDetails);
 }
 
 }

@@ -53,8 +53,6 @@ class LIEF_API CodeViewPDB : public CodeView {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const CodeViewPDB& rhs) const;
-  bool operator!=(const CodeViewPDB& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const CodeViewPDB& entry);
 

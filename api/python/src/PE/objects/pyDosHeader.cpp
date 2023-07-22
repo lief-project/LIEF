@@ -100,7 +100,8 @@ void create<DosHeader>(nb::module_& m) {
         nb::overload_cast<>(&DosHeader::addressof_new_exeheader, nb::const_),
         nb::overload_cast<uint32_t>(&DosHeader::addressof_new_exeheader))
 
-    LIEF_DEFAULT_STR(LIEF::PE::DosHeader);
+    LIEF_COPYABLE(DosHeader)
+    LIEF_DEFAULT_STR(DosHeader);
 }
 
 }

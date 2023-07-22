@@ -36,6 +36,6 @@ void create<SymbolVersionAux>(nb::module_& m) {
         nb::overload_cast<const std::string&>(&SymbolVersionAux::name),
         "Symbol's name (e.g. ``GLIBC_2.2.5``)"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::SymbolVersionAux);
+    LIEF_DEFAULT_STR(SymbolVersionAux);
 }
 }

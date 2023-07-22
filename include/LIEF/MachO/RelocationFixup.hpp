@@ -99,8 +99,6 @@ class LIEF_API RelocationFixup : public Relocation {
   //! Changing the address means changing the offset
   void address(uint64_t address) override;
 
-  bool operator==(const RelocationFixup& rhs) const;
-  bool operator!=(const RelocationFixup& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

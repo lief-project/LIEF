@@ -99,6 +99,6 @@ void create<Builder>(nb::module_& m) {
         "Return the build result as a ``list`` of bytes"_doc,
         nb::rv_policy::reference_internal)
 
-    LIEF_DEFAULT_STR(LIEF::PE::Builder);
+    LIEF_DEFAULT_STR(Builder);
 }
 }

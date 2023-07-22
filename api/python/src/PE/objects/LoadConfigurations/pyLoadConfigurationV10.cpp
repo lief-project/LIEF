@@ -43,6 +43,7 @@ void create<LoadConfigurationV10>(nb::module_& m) {
         nb::overload_cast<uint64_t>(&LoadConfigurationV10::guard_xfg_table_dispatch_function_pointer),
         ""_doc)
 
+    LIEF_COPYABLE(LoadConfigurationV10)
     LIEF_DEFAULT_STR(LoadConfigurationV10);
 }
 }

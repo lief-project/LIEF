@@ -146,8 +146,6 @@ class LIEF_API Segment : public Object {
   Segment& operator+=(ELF_SEGMENT_FLAGS flag);
   Segment& operator-=(ELF_SEGMENT_FLAGS flag);
 
-  bool operator==(const Segment& rhs) const;
-  bool operator!=(const Segment& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Segment& segment);
 

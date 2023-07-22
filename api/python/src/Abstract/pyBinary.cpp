@@ -226,7 +226,7 @@ void create<Binary>(nb::module_& m) {
         &Binary::imagebase,
         "Default image base (i.e. if the ASLR is not enabled)"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::Binary);
+    LIEF_DEFAULT_STR(Binary);
 
 }
 }

@@ -114,7 +114,7 @@ void create<Relocation>(nb::module_& m) {
       &Relocation::is_rel,
       "``True`` if the relocation **doesn't use** the :attr:`~lief.ELF.Relocation.addend` proprety"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::Relocation);
+    LIEF_DEFAULT_STR(Relocation);
 }
 
 }

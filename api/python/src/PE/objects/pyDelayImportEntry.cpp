@@ -16,6 +16,7 @@
 
 #include <string>
 #include <sstream>
+#include <nanobind/stl/string.h>
 
 #include "LIEF/PE/DelayImportEntry.hpp"
 
@@ -69,7 +70,8 @@ void create<DelayImportEntry>(nb::module_& m) {
         See: :attr:`~DelayImportEntry.iat`
         )delim"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::DelayImportEntry);
+    LIEF_COPYABLE(DelayImportEntry)
+    LIEF_DEFAULT_STR(DelayImportEntry);
 
 }
 }

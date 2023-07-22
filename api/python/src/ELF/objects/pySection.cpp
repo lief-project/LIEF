@@ -164,7 +164,7 @@ void create<Section>(nb::module_& m) {
         "Check if the given " RST_CLASS_REF(lief.ELF.Segment) " is present "
         "in :attr:`~lief.ELF.Section.segments`"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::Section);
+    LIEF_DEFAULT_STR(Section);
 }
 
 

@@ -68,7 +68,7 @@ void create<CorePrPsInfo>(nb::module_& m) {
         nb::overload_cast<int32_t>(&CorePrPsInfo::sid),
         "Process session ID"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::CorePrPsInfo);
+    LIEF_DEFAULT_STR(CorePrPsInfo);
 }
 
 }

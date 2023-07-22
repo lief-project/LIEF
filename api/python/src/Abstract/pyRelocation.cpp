@@ -41,6 +41,6 @@ void create<Relocation>(nb::module_& m) {
         nb::overload_cast<size_t>(&Relocation::size),
         "Relocation's size (in **bits**)"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::Relocation);
+    LIEF_DEFAULT_STR(Relocation);
 }
 }

@@ -43,6 +43,6 @@ void create<CoreSigInfo>(nb::module_& m) {
         nb::overload_cast<int32_t>(&CoreSigInfo::sigerrno),
         "If non-zero, an errno value associated with this signal"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::CoreSigInfo);
+    LIEF_DEFAULT_STR(CoreSigInfo);
 }
 }

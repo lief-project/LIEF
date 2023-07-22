@@ -43,6 +43,6 @@ void create<PogoEntry>(nb::module_& m) {
         nb::overload_cast<>(&PogoEntry::size, nb::const_),
         nb::overload_cast<uint32_t>(&PogoEntry::size))
 
-    LIEF_DEFAULT_STR(LIEF::PE::PogoEntry);
+    LIEF_DEFAULT_STR(PogoEntry);
 }
 }

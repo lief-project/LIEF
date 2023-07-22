@@ -59,7 +59,8 @@ void create<LoadConfigurationV5>(nb::module_& m) {
         nb::overload_cast<uint16_t>(&LoadConfigurationV5::reserved2),
         "Must be zero"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::LoadConfigurationV5);
+    LIEF_COPYABLE(LoadConfigurationV5)
+    LIEF_DEFAULT_STR(LoadConfigurationV5);
 }
 
 }

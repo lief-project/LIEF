@@ -67,8 +67,6 @@ class LIEF_API DexFile : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const DexFile& rhs) const;
-  bool operator!=(const DexFile& rhs) const;
 
   ~DexFile() override;
 

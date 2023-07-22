@@ -46,7 +46,7 @@ void create<DynamicSharedObject>(nb::module_& m) {
         nb::overload_cast<const std::string&>(&DynamicSharedObject::name),
         "Return the library name"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::DynamicSharedObject);
+    LIEF_DEFAULT_STR(DynamicSharedObject);
 }
 
 }

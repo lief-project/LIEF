@@ -53,8 +53,6 @@ class LIEF_API PogoEntry : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const PogoEntry& rhs) const;
-  bool operator!=(const PogoEntry& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const PogoEntry& entry);
 

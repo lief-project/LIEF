@@ -54,8 +54,6 @@ class LIEF_API CodeIntegrity : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const CodeIntegrity& rhs) const;
-  bool operator!=(const CodeIntegrity& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const CodeIntegrity& entry);
 

@@ -37,6 +37,6 @@ void create<ResourceStringTable>(nb::module_& m) {
       nb::overload_cast<>(&ResourceStringTable::name, nb::const_),
       "The variable-length Unicode string data, word-aligned."_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::ResourceStringTable);
+    LIEF_DEFAULT_STR(ResourceStringTable);
 }
 }

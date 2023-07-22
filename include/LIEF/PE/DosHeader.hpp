@@ -89,8 +89,6 @@ class LIEF_API DosHeader : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const DosHeader& rhs) const;
-  bool operator!=(const DosHeader& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const DosHeader& entry);
 

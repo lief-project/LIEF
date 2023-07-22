@@ -166,8 +166,6 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
   DYLD_CHAINED_FORMAT imports_format() const { return imports_format_; }
   void imports_format(DYLD_CHAINED_FORMAT fmt) { imports_format_ = fmt; }
 
-  bool operator==(const DyldChainedFixups& rhs) const;
-  bool operator!=(const DyldChainedFixups& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

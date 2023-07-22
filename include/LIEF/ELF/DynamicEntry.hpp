@@ -63,8 +63,6 @@ class LIEF_API DynamicEntry : public Object {
 
   virtual std::ostream& print(std::ostream& os) const;
 
-  bool operator==(const DynamicEntry& rhs) const;
-  bool operator!=(const DynamicEntry& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const DynamicEntry& entry);
 

@@ -90,8 +90,6 @@ class LIEF_API ChainedBindingInfo : public BindingInfo {
 
   ~ChainedBindingInfo() override;
 
-  bool operator==(const ChainedBindingInfo& rhs) const;
-  bool operator!=(const ChainedBindingInfo& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

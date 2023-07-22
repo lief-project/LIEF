@@ -48,7 +48,7 @@ void create<CodeIntegrity>(nb::module_& m) {
         nb::overload_cast<uint32_t>(&CodeIntegrity::reserved),
         "Additional bitmask to be defined later"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::CodeIntegrity);
+    LIEF_DEFAULT_STR(CodeIntegrity);
 }
 
 }

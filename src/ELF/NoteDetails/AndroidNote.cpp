@@ -130,18 +130,7 @@ void AndroidNote::accept(Visitor& visitor) const {
 }
 
 
-bool AndroidNote::operator==(const AndroidNote& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool AndroidNote::operator!=(const AndroidNote& rhs) const {
-  return !(*this == rhs);
-}
 
 void AndroidNote::dump(std::ostream& os) const {
   os << std::setw(33) << std::setfill(' ') << "SDK Version: " << std::dec << sdk_version() << std::endl;

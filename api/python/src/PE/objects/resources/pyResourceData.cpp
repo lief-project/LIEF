@@ -67,6 +67,6 @@ void create<ResourceData>(nb::module_& m) {
             This value can change when re-building the resource table
         )delim"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::ResourceData);
+    LIEF_DEFAULT_STR(ResourceData);
 }
 }

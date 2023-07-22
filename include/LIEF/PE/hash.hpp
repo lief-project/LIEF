@@ -94,12 +94,13 @@ class PogoEntry;
 //! a **deterministic** hash for LIEF PE objects
 class LIEF_API Hash : public LIEF::Hash {
   public:
-  static size_t hash(const Object& obj);
+  static LIEF::Hash::value_type hash(const Object& obj);
 
   public:
   using LIEF::Hash::Hash;
   using LIEF::Hash::hash;
   using LIEF::Hash::visit;
+  using LIEF::Hash::process;
 
   public:
   void visit(const Binary& Binary)                        override;

@@ -44,7 +44,8 @@ void create<LoadConfigurationV0>(nb::module_& m) {
         nb::overload_cast<uint64_t>(&LoadConfigurationV0::se_handler_count),
         "The count of unique handlers in the table."_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::LoadConfigurationV0);
+    LIEF_COPYABLE(LoadConfigurationV0)
+    LIEF_DEFAULT_STR(LoadConfigurationV0);
 }
 
 }

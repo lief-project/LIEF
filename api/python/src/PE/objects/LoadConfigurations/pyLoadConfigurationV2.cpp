@@ -38,7 +38,8 @@ void create<LoadConfigurationV2>(nb::module_& m) {
         "" RST_CLASS_REF(lief.PE.CodeIntegrity) " object"_doc,
         nb::rv_policy::reference_internal)
 
-    LIEF_DEFAULT_STR(LIEF::PE::LoadConfigurationV2);
+    LIEF_COPYABLE(LoadConfigurationV2)
+    LIEF_DEFAULT_STR(LoadConfigurationV2);
 }
 
 }

@@ -105,18 +105,7 @@ void ImportEntry::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-bool ImportEntry::operator==(const ImportEntry& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool ImportEntry::operator!=(const ImportEntry& rhs) const {
-  return !(*this == rhs);
-}
 
 
 std::ostream& operator<<(std::ostream& os, const ImportEntry& entry) {

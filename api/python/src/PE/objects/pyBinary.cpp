@@ -406,7 +406,7 @@ void create<Binary>(nb::module_& m) {
         "Build the binary and write the result to the given ``output`` file"_doc,
         "output_path"_a)
 
-    LIEF_DEFAULT_STR(LIEF::PE::Binary);
+    LIEF_DEFAULT_STR(Binary);
 
 }
 

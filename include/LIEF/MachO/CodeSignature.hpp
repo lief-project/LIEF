@@ -68,8 +68,6 @@ class LIEF_API CodeSignature : public LoadCommand {
 
   ~CodeSignature() override;
 
-  bool operator==(const CodeSignature& rhs) const;
-  bool operator!=(const CodeSignature& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

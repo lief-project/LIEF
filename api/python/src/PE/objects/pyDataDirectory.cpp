@@ -26,7 +26,7 @@ namespace LIEF::PE::py {
 
 template<>
 void create<DataDirectory>(nb::module_& m) {
-  nb::class_<DataDirectory, LIEF::Object>(m, "DataDirectory",
+  nb::class_<DataDirectory, Object>(m, "DataDirectory",
       R"delim(
       Class that represents a PE data directory entry
       )delim"_doc)
@@ -55,6 +55,7 @@ void create<DataDirectory>(nb::module_& m) {
         &DataDirectory::has_section,
         "``True`` if the current data directory is tied to a " RST_CLASS_REF(lief.PE.Section) ""_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::DataDirectory);
+    LIEF_COPYABLE(DataDirectory)
+    LIEF_DEFAULT_STR(DataDirectory);
 }
 }

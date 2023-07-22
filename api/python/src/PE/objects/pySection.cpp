@@ -126,7 +126,8 @@ void create<Section>(nb::module_& m) {
         },
         "Section padding content as bytes"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::Section);
+    LIEF_COPYABLE(Section)
+    LIEF_DEFAULT_STR(Section);
 }
 
 }

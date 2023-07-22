@@ -76,8 +76,6 @@ class LIEF_API FilesetCommand : public LoadCommand {
 
   std::ostream& print(std::ostream& os) const override;
 
-  bool operator==(const FilesetCommand& rhs) const;
-  bool operator!=(const FilesetCommand& rhs) const;
 
   static bool classof(const LoadCommand* cmd);
 

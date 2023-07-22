@@ -126,7 +126,7 @@ void create<Section>(nb::module_& m) {
         "Look for all **strings** within the current section"_doc,
         "str"_a)
 
-    LIEF_DEFAULT_STR(LIEF::Section);
+    LIEF_DEFAULT_STR(Section);
 
 }
 }

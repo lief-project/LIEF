@@ -8,6 +8,8 @@ atapi      = lief.PE.parse(get_sample('PE/PE64_x86-64_atapi.sys'))
 def test_dos_header():
     dos_header: lief.PE.DosHeader = atapi.dos_header
 
+    assert dos_header.copy() == dos_header
+
     assert dos_header.addressof_new_exeheader == 0xd8
     assert dos_header.addressof_relocation_table == 0x40
     assert dos_header.checksum == 0x0
@@ -31,6 +33,7 @@ def test_dos_header():
 def test_header():
     header: lief.PE.Header = atapi.header
 
+    assert header.copy() == header
     assert header.numberof_sections == 0x6
     assert header.numberof_symbols == 0x0
     assert header.pointerto_symbol_table == 0x0
@@ -38,14 +41,22 @@ def test_header():
     assert header.sizeof_optional_header == 0xf0
     assert header.time_date_stamps == 0x4a5bc113
     assert header.machine == lief.PE.MACHINE_TYPES.AMD64
-    assert header.characteristics_list == {lief.PE.HEADER_CHARACTERISTICS.LARGE_ADDRESS_AWARE, lief.PE.HEADER_CHARACTERISTICS.EXECUTABLE_IMAGE}
+    assert (header.characteristics_list ==
+            {lief.PE.HEADER_CHARACTERISTICS.LARGE_ADDRESS_AWARE,
+             lief.PE.HEADER_CHARACTERISTICS.EXECUTABLE_IMAGE})
+    print(header)
+    assert header.copy() == header
 
 
 def test_optional_header():
     header: lief.PE.OptionalHeader = atapi.optional_header
+    print(header)
+
+    assert header.copy() == header
 
     assert header.addressof_entrypoint == 0x7064
     assert header.baseof_code == 0x1000
+    assert header.baseof_data == 0
     assert header.checksum == 0x65bb
     assert header.dll_characteristics == 0x0
     assert header.file_alignment == 0x200
@@ -148,6 +159,9 @@ def test_data_directories():
     assert dirs[15].size == 0x0
     assert not dirs[15].has_section
 
+    assert dirs[1].copy() == dirs[1]
+    print(dirs[1])
+
 def test_sections():
     sections = winhello64.sections
 
@@ -237,6 +251,7 @@ def test_sections():
         assert lief.hash(list(sections[4].padding)) == 6267801405663681729
         assert lief.hash(list(sections[4].content)) == 9792162199629343627
 
+    assert sections[5].copy() == sections[5]
     assert sections[5].name == ".rsrc"
     assert sections[5].virtual_size == 0x3f0
     assert sections[5].virtual_address == 0x8000
@@ -247,6 +262,14 @@ def test_sections():
     assert sections[5].numberof_relocations == 0x0
     assert sections[5].numberof_line_numbers == 0x0
     assert int(sections[5].characteristics) == 0x42000040
+
+    # make sure we can't write more than the size of a name
+    custom_section = lief.PE.Section(".test")
+    custom_section.name = 'a' * 30
+    custom_section.content = [1] * 10
+    assert custom_section.content[0] == 1
+    assert custom_section.name == ".test"
+
 
     if is_64bits_platform():
         assert lief.hash(list(sections[5].padding)) == 2694043916712032187
@@ -264,6 +287,11 @@ def test_tls():
     assert tls.characteristics == 0
     assert tls.addressof_raw_data, (0x40a000 == 0x40a060)
     assert tls.section.name == ".tls"
+    assert tls.copy() == tls
+    print(tls)
+
+    assert tls.directory is not None
+    assert tls.directory.type == lief.PE.DATA_DIRECTORY.TLS_TABLE
     assert hashlib.sha256(tls.data_template).hexdigest() == "ffb6b993bf4ae7ec095d4aeba45ac7e9973e16c17077058260f3f4eb0487d07e"
 
 def test_imports():
@@ -283,6 +311,10 @@ def test_imports():
     assert entry_12.hint == 0x34b
     assert entry_12.iat_value == 0x84ba
     assert entry_12.iat_address == 0x825c
+    assert kernel32.get_entry("DoesNotExist") is None
+    assert kernel32.get_entry("LeaveCriticalSection") == entry_12
+    assert kernel32.get_entry("LeaveCriticalSection") != kernel32.entries[11].copy()
+    assert kernel32.get_function_rva_from_iat("LeaveCriticalSection") == 96
 
     msvcrt = imports[1]
     assert msvcrt.name == "msvcrt.dll"
@@ -296,6 +328,11 @@ def test_imports():
     assert entry_0.hint == 55
     assert entry_0.iat_value == 0x85ca
     assert entry_0.iat_address == 0x82cc
+
+    assert msvcrt.directory == winhello64.data_directory(lief.PE.DATA_DIRECTORY.IMPORT_TABLE)
+    assert msvcrt.iat_directory == winhello64.data_directory(lief.PE.DATA_DIRECTORY.IAT)
+    assert msvcrt.get_function_rva_from_iat("") == lief.lief_errors.not_found
+    assert msvcrt.get_function_rva_from_iat("__C_specific_handler") == 0
 
 def test_issue_imports():
     pe: lief.PE.Binary = lief.parse(get_sample("PE/abdce8577b46e4e23346f06ba8b9ab05cf47e92aec7e615c04436301355cd86d.pe"))
@@ -331,17 +368,28 @@ def test_issue_exports():
     assert not exports.entries[6].is_extern
     assert exports.entries[6].function_rva == 0x203a0
 
+    assert exports.entries[6].value == 0x203a0
+
+    entry = exports.entries[6]
+    assert not entry.is_forwarded
+    assert entry.forward_information.function == ""
+    assert entry.forward_information.library == ""
+
+    assert exports.copy() == exports
+
 def test_issue_685():
     """
     https://github.com/lief-project/LIEF/issues/685
     """
 
-    pe: lief.PE.Binary = lief.parse(get_sample("PE/2420feb9d03efc1aa07b4117390c29cd8fee826ea1b48fee89660d65a3a8ba2b.neut"))
+    pe = lief.PE.parse(get_sample("PE/2420feb9d03efc1aa07b4117390c29cd8fee826ea1b48fee89660d65a3a8ba2b.neut"))
 
     exports = pe.get_export()
 
     assert exports.name == "nmv.ocx"
     assert exports.entries[0].name == "oplk"
+
+    entry = exports.entries[0]
 
 def test_rich_header():
     rheader = atapi.rich_header
@@ -356,16 +404,23 @@ def test_rich_header():
     assert entry_4.build_id == 0x7809
     assert entry_4.count == 1
     hex_val = bytes(rheader.raw(rheader.key)).hex()
-    assert hex_val == "a7c718f7e3a676a4e3a676a4e3a676a4" \
-                      "eadee5a4e6a676a4e3a677a4fba676a4" \
-                      "eadee3a4e2a676a4eadef5a4e0a676a4" \
-                      "eadeffa4e1a676a4eadee2a4e2a676a4" \
-                      "eadee7a4e2a676a452696368e3a676a4"
+    assert hex_val == ("a7c718f7e3a676a4e3a676a4e3a676a4"
+                       "eadee5a4e6a676a4e3a677a4fba676a4"
+                       "eadee3a4e2a676a4eadef5a4e0a676a4"
+                       "eadeffa4e1a676a4eadee2a4e2a676a4"
+                       "eadee7a4e2a676a452696368e3a676a4")
 
     sha256 = bytes(rheader.hash(lief.PE.ALGORITHMS.SHA_256, rheader.key)).hex()
     assert sha256 == "1bda7d55023ff27b0ea1c9f56d53ca77ca4264ac58fdee8daac58cdc060bf2da"
 
-
+    assert rheader.copy() == rheader
+    print(rheader)
+    new_entry = lief.PE.RichEntry(1, 2, 3)
+    print(new_entry)
+    rheader.add_entry(new_entry)
+    assert rheader.entries[-1] == new_entry
+    assert rheader.entries[-1].copy() == new_entry
+    assert lief.PE.RichEntry() == lief.PE.RichEntry(0, 0, 0)
 
 def test_relocations():
     pe: lief.PE.Binary = lief.parse(get_sample("PE/PE64_x86-64_binary_mfc-application.exe"))
@@ -375,6 +430,8 @@ def test_relocations():
     assert len(relocations[0].entries) == 88
     relocation = relocations[0]
 
+    assert relocation.entries[46].size == 64
+    assert relocation.entries[46].address == 0xdeb8
     assert relocation.entries[46].data == 0xaeb8
     assert relocation.entries[46].position == 0xeb8
     assert relocation.entries[46].type == lief.PE.RELOCATIONS_BASE_TYPES.DIR64
@@ -422,6 +479,27 @@ def test_relocations():
     assert relocation.entries[52].position == 0x7f8
     assert relocation.entries[52].type == lief.PE.RELOCATIONS_BASE_TYPES.DIR64
 
+    r1 = lief.PE.RelocationEntry()
+    r1.position = 0x123
+    r1.type = lief.PE.RELOCATIONS_BASE_TYPES.LOW
+
+    assert r1.address == r1.position
+    assert r1.size == 16
+
+    r2 = lief.PE.RelocationEntry()
+    r2.type = lief.PE.RELOCATIONS_BASE_TYPES.HIGHLOW
+    assert r2.size == 32
+
+    r3 = lief.PE.RelocationEntry()
+    r3.type = lief.PE.RELOCATIONS_BASE_TYPES.ABSOLUTE
+    assert r3.size == 0
+    r3.data = 0xBAAA
+    assert r3.position == 0xAAA
+    assert r3.type == 0xB
+    assert r2 != r3
+
+    assert relocation.copy() == relocation
+
 
 def test_symbols():
     symbols = winhello64.symbols
@@ -435,7 +513,7 @@ def test_symbols():
 
 
 def test_checksum():
-    assert atapi.optional_header.computed_checksum      == atapi.optional_header.checksum
+    assert atapi.optional_header.computed_checksum == atapi.optional_header.checksum
     assert winhello64.optional_header.computed_checksum == winhello64.optional_header.checksum
 
 def test_config():

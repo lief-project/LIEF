@@ -20,7 +20,7 @@
 #include "LIEF/iostream.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 
-
+#include "frozen.hpp"
 #include "logging.hpp"
 
 #define LIEF_PE_FORCE_UNDEF
@@ -38,22 +38,6 @@ RichHeader& RichHeader::operator=(const RichHeader&) = default;
 
 RichHeader::RichHeader() = default;
 
-uint32_t RichHeader::key() const {
-  return key_;
-}
-
-RichHeader::it_entries RichHeader::entries() {
-  return entries_;
-}
-
-RichHeader::it_const_entries RichHeader::entries() const {
-  return entries_;
-}
-
-void RichHeader::key(uint32_t key) {
-  key_ = key;
-}
-
 void RichHeader::add_entry(const RichEntry& entry) {
   entries_.push_back(entry);
 }
@@ -64,10 +48,6 @@ void RichHeader::add_entry(uint16_t id, uint16_t build_id, uint32_t count) {
 
 void RichHeader::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
-}
-
-std::vector<uint8_t> RichHeader::raw() const {
-  return raw(0);
 }
 
 std::vector<uint8_t> RichHeader::raw(uint32_t xor_key) const {
@@ -98,13 +78,8 @@ std::vector<uint8_t> RichHeader::raw(uint32_t xor_key) const {
   return wstream.raw();
 }
 
-
-std::vector<uint8_t> RichHeader::hash(ALGORITHMS algo) const {
-  return hash(algo, 0);
-}
-
 std::vector<uint8_t> RichHeader::hash(ALGORITHMS algo, uint32_t xor_key) const {
-  static const std::map<ALGORITHMS, hashstream::HASH> HMAP = {
+  CONST_MAP(ALGORITHMS, hashstream::HASH, 5) HMAP = {
     {ALGORITHMS::MD5,     hashstream::HASH::MD5},
     {ALGORITHMS::SHA_1,   hashstream::HASH::SHA1},
     {ALGORITHMS::SHA_256, hashstream::HASH::SHA256},
@@ -124,20 +99,6 @@ std::vector<uint8_t> RichHeader::hash(ALGORITHMS algo, uint32_t xor_key) const {
   hs.write(clear_raw.data(), clear_raw.size());
   return hs.raw();
 }
-
-bool RichHeader::operator==(const RichHeader& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
-
-bool RichHeader::operator!=(const RichHeader& rhs) const {
-  return !(*this == rhs);
-}
-
 
 std::ostream& operator<<(std::ostream& os, const RichHeader& rich_header) {
   os << "Key: " << std::hex << rich_header.key() << std::endl;

@@ -158,7 +158,7 @@ void create<ResourceDialog>(nb::module_& m) {
         nb::overload_cast<RESOURCE_SUBLANGS>(&ResourceDialog::sub_lang),
         "Secondary " RST_CLASS_REF(lief.PE.RESOURCE_SUBLANGS) " associated with the dialog"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::ResourceDialog);
+    LIEF_DEFAULT_STR(ResourceDialog);
 }
 }
 

@@ -49,8 +49,6 @@ class LIEF_API UUIDCommand : public LoadCommand {
   uuid_t uuid() const;
   void   uuid(const uuid_t& uuid);
 
-  bool operator==(const UUIDCommand& rhs) const;
-  bool operator!=(const UUIDCommand& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

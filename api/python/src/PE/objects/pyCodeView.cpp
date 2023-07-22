@@ -31,7 +31,7 @@ void create<CodeView>(nb::module_& m) {
         nb::overload_cast<>(&CodeView::cv_signature, nb::const_),
         "Type of the code view (" RST_CLASS_REF(lief.PE.CODE_VIEW_SIGNATURES) ")"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::CodeView);
+    LIEF_DEFAULT_STR(CodeView);
 }
 
 }

@@ -53,8 +53,6 @@ class LIEF_API DylinkerCommand : public LoadCommand {
 
   void name(const std::string& name);
 
-  bool operator==(const DylinkerCommand& rhs) const;
-  bool operator!=(const DylinkerCommand& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

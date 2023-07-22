@@ -75,8 +75,6 @@ class LIEF_API DataDirectory : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const DataDirectory& rhs) const;
-  bool operator!=(const DataDirectory& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const DataDirectory& entry);
 

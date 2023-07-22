@@ -54,8 +54,6 @@ class LIEF_API MainCommand : public LoadCommand {
   void entrypoint(uint64_t entrypoint);
   void stack_size(uint64_t stacksize);
 
-  bool operator==(const MainCommand& rhs) const;
-  bool operator!=(const MainCommand& rhs) const;
 
   std::ostream& print(std::ostream& os) const override;
 

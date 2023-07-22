@@ -56,6 +56,6 @@ void create<SysvHash>(nb::module_& m) {
       "Chains values"_doc,
       nb::rv_policy::reference_internal)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::SysvHash);
+    LIEF_DEFAULT_STR(SysvHash);
 }
 }

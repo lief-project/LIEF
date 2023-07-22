@@ -33,6 +33,7 @@ void create<LoadConfigurationV8>(nb::module_& m) {
         nb::overload_cast<uint64_t>(&LoadConfigurationV8::volatile_metadata_pointer),
         "")
 
+    LIEF_COPYABLE(LoadConfigurationV8)
     LIEF_DEFAULT_STR(LoadConfigurationV8);
 }
 

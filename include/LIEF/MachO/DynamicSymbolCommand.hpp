@@ -57,8 +57,6 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const DynamicSymbolCommand& rhs) const;
-  bool operator!=(const DynamicSymbolCommand& rhs) const;
 
   std::ostream& print(std::ostream& os) const override;
 

@@ -11,6 +11,11 @@ def test_basic():
     exports = sample.get_export()
     forwarded_exports = [exp for exp in exports.entries if exp.is_forwarded]
     assert len(forwarded_exports) == 82
+
+    print(exports)
+    print(exports.entries[0])
+    print(forwarded_exports)
+
     # Test JSON Serialization
     json_serialized = json.loads(lief.to_json(forwarded_exports[0]))
 

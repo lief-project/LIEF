@@ -48,7 +48,7 @@ void create<SymbolVersionAuxRequirement>(nb::module_& m) {
         object.
         )delim"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::SymbolVersionAuxRequirement);
+    LIEF_DEFAULT_STR(SymbolVersionAuxRequirement);
 
 }
 }

@@ -73,8 +73,6 @@ class LIEF_API ResourceStringFileInfo : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const ResourceStringFileInfo& rhs) const;
-  bool operator!=(const ResourceStringFileInfo& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceStringFileInfo& string_file_info);
 

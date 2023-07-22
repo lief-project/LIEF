@@ -84,18 +84,7 @@ void ResourceVarFileInfo::accept(Visitor& visitor) const {
 }
 
 
-bool ResourceVarFileInfo::operator==(const ResourceVarFileInfo& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool ResourceVarFileInfo::operator!=(const ResourceVarFileInfo& rhs) const {
-  return !(*this == rhs);
-}
 
 std::ostream& operator<<(std::ostream& os, const ResourceVarFileInfo& entry) {
 

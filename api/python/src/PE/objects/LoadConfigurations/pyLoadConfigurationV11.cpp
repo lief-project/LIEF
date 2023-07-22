@@ -33,6 +33,7 @@ void create<LoadConfigurationV11>(nb::module_& m) {
         nb::overload_cast<uint64_t>(&LoadConfigurationV11::cast_guard_os_determined_failure_mode),
         ""_doc)
 
+    LIEF_COPYABLE(LoadConfigurationV11)
     LIEF_DEFAULT_STR(LoadConfigurationV11);
 }
 }

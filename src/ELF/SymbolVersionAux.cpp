@@ -44,18 +44,7 @@ void SymbolVersionAux::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-bool SymbolVersionAux::operator==(const SymbolVersionAux& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool SymbolVersionAux::operator!=(const SymbolVersionAux& rhs) const {
-  return !(*this == rhs);
-}
 
 
 

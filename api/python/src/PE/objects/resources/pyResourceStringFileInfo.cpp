@@ -59,7 +59,7 @@ void create<ResourceStringFileInfo>(nb::module_& m) {
         for displaying the ``key: value`` of :attr:`~lief.PE.LangCodeItem.items`
         )delim"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::ResourceStringFileInfo);
+    LIEF_DEFAULT_STR(ResourceStringFileInfo);
 }
 }
 

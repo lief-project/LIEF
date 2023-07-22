@@ -53,6 +53,6 @@ void create<RelocationEntry>(nb::module_& m) {
         nb::overload_cast<RELOCATIONS_BASE_TYPES>(&RelocationEntry::type),
         "Type of the relocation (see: " RST_CLASS_REF(lief.PE.RELOCATIONS_BASE_TYPES) ")"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::RelocationEntry);
+    LIEF_DEFAULT_STR(RelocationEntry);
 }
 }

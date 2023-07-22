@@ -52,18 +52,7 @@ void MapItem::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-bool MapItem::operator==(const MapItem& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool MapItem::operator!=(const MapItem& rhs) const {
-  return !(*this == rhs);
-}
 
 std::ostream& operator<<(std::ostream& os, const MapItem& mitem) {
   os << to_string(mitem.type())

@@ -80,8 +80,6 @@ class LIEF_API ExportEntry : public LIEF::Symbol {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const ExportEntry& rhs) const;
-  bool operator!=(const ExportEntry& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ExportEntry& exportEntry);
 

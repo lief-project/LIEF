@@ -108,8 +108,6 @@ class LIEF_API DelayImport : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const DelayImport& rhs) const;
-  bool operator!=(const DelayImport& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const DelayImport& entry);
 

@@ -166,8 +166,6 @@ class LIEF_API SegmentCommand : public LoadCommand {
   //! Check if the current segment embeds the given section name
   bool has_section(const std::string& section_name) const;
 
-  bool operator==(const SegmentCommand& rhs) const;
-  bool operator!=(const SegmentCommand& rhs) const;
 
   std::ostream& print(std::ostream& os) const override;
 

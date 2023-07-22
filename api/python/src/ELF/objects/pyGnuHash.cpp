@@ -86,7 +86,7 @@ void create<GnuHash>(nb::module_& m) {
         "do any assumption"_doc,
         "hash_value"_a)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::GnuHash);
+    LIEF_DEFAULT_STR(GnuHash);
 }
 
 }

@@ -76,7 +76,7 @@ void create<SymbolVersion>(nb::module_& m) {
         )delim"_doc,
         nb::rv_policy::reference_internal)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::SymbolVersion);
+    LIEF_DEFAULT_STR(SymbolVersion);
 
 }
 }

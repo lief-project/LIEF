@@ -51,8 +51,8 @@
 
 namespace LIEF {
 
-size_t hash(const Object& v) {
-  size_t value = 0;
+Hash::value_type hash(const Object& v) {
+  Hash::value_type value = 0;
 
 #if defined(LIEF_PE_SUPPORT)
   value = Hash::combine(value, Hash::hash<PE::Hash>(v));
@@ -83,37 +83,30 @@ size_t hash(const Object& v) {
 #endif
 
   return value;
-
 }
 
-size_t hash(const std::vector<uint8_t>& raw) {
+Hash::value_type hash(const std::vector<uint8_t>& raw) {
   return Hash::hash(raw);
 }
 
-size_t hash(span<const uint8_t> raw) {
+Hash::value_type hash(span<const uint8_t> raw) {
   return Hash::hash(raw);
 }
 
 Hash::~Hash() = default;
+Hash::Hash() = default;
 
-Hash::Hash() :
-  value_{0}
-{}
-
-Hash::Hash(size_t init_value) :
+Hash::Hash(Hash::value_type init_value) :
   value_{init_value}
 {}
 
-
 Hash& Hash::process(const Object& obj) {
-  Hash hasher;
-  obj.accept(hasher);
-  value_ = combine(value_, hasher.value());
+  value_ = combine(value_, LIEF::hash(obj));
   return *this;
 }
 
 Hash& Hash::process(size_t integer) {
-  value_ = combine(value_, std::hash<size_t>{}(integer));
+  value_ = combine(value_, std::hash<Hash::value_type>{}(integer));
   return *this;
 }
 
@@ -121,7 +114,6 @@ Hash& Hash::process(const std::string& str) {
   value_ = combine(value_, std::hash<std::string>{}(str));
   return *this;
 }
-
 
 Hash& Hash::process(const std::u16string& str) {
   value_ = combine(value_, std::hash<std::u16string>{}(str));
@@ -138,19 +130,14 @@ Hash& Hash::process(span<const uint8_t> raw) {
   return *this;
 }
 
-size_t Hash::value() const {
-  return value_;
-}
-
-
 // Static methods
 // ==============
-size_t Hash::hash(const std::vector<uint8_t>& raw) {
+Hash::value_type Hash::hash(const std::vector<uint8_t>& raw) {
   return hash(raw.data(), raw.size());
 }
 
 
-size_t Hash::hash(const void* raw, size_t size) {
+Hash::value_type Hash::hash(const void* raw, size_t size) {
   const auto* start = reinterpret_cast<const uint8_t*>(raw);
 
   std::vector<uint8_t> sha256(32, 0u);
@@ -162,8 +149,7 @@ size_t Hash::hash(const void* raw, size_t size) {
      });
 }
 
-
-size_t Hash::hash(span<const uint8_t> raw) {
+Hash::value_type Hash::hash(span<const uint8_t> raw) {
   return hash(raw.data(), raw.size());
 }
 

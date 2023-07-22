@@ -82,8 +82,9 @@ void Hash::visit(const DosHeader& dos_header) {
 }
 
 void Hash::visit(const RichHeader& rich_header) {
+  RichHeader::it_const_entries entries = rich_header.entries();
   process(rich_header.key());
-  process(std::begin(rich_header.entries()), std::end(rich_header.entries()));
+  process(entries.begin(), entries.end());
 }
 
 void Hash::visit(const RichEntry& rich_entry) {
@@ -203,7 +204,6 @@ void Hash::visit(const TLS& tls) {
 }
 
 void Hash::visit(const Symbol& symbol) {
-
   process(symbol.name());
   process(symbol.value());
   process(symbol.size());
@@ -244,7 +244,6 @@ void Hash::visit(const CodeViewPDB& cvpdb) {
 }
 
 void Hash::visit(const Import& import) {
-
   process(import.forwarder_chain());
   process(import.timedatestamp());
   process(import.import_address_table_rva());
@@ -263,6 +262,8 @@ void Hash::visit(const ImportEntry& import_entry) {
 
 
 void Hash::visit(const DelayImport& import) {
+  DelayImport::it_const_entries entries = import.entries();
+
   process(import.attribute());
   process(import.name());
   process(import.handle());
@@ -271,6 +272,7 @@ void Hash::visit(const DelayImport& import) {
   process(import.biat());
   process(import.uiat());
   process(import.timestamp());
+  process(entries.begin(), entries.end());
 }
 
 void Hash::visit(const DelayImportEntry& import_entry) {
@@ -280,7 +282,6 @@ void Hash::visit(const DelayImportEntry& import_entry) {
 }
 
 void Hash::visit(const ResourceNode& resource_node) {
-
   process(resource_node.id());
   if (resource_node.has_name()) {
     process(resource_node.name());
@@ -290,13 +291,13 @@ void Hash::visit(const ResourceNode& resource_node) {
 }
 
 void Hash::visit(const ResourceData& resource_data) {
-  process(*resource_data.as<ResourceNode>());
+  visit(*resource_data.as<ResourceNode>());
   process(resource_data.code_page());
   process(resource_data.content());
 }
 
 void Hash::visit(const ResourceDirectory& resource_directory) {
-  process(*resource_directory.as<ResourceNode>());
+  visit(*resource_directory.as<ResourceNode>());
   process(resource_directory.characteristics());
   process(resource_directory.time_date_stamp());
   process(resource_directory.major_version());
@@ -307,7 +308,6 @@ void Hash::visit(const ResourceDirectory& resource_directory) {
 
 
 void Hash::visit(const ResourcesManager& resources_manager) {
-
   if (resources_manager.has_manifest()) {
     process(resources_manager.manifest());
   }
@@ -328,14 +328,12 @@ void Hash::visit(const ResourcesManager& resources_manager) {
 }
 
 void Hash::visit(const ResourceStringFileInfo& resource_sfi) {
-
   process(resource_sfi.type());
   process(resource_sfi.key());
   process(std::begin(resource_sfi.langcode_items()), std::end(resource_sfi.langcode_items()));
 }
 
 void Hash::visit(const ResourceFixedFileInfo& resource_ffi) {
-
   process(resource_ffi.signature());
   process(resource_ffi.struct_version());
   process(resource_ffi.file_version_MS());
@@ -352,14 +350,12 @@ void Hash::visit(const ResourceFixedFileInfo& resource_ffi) {
 }
 
 void Hash::visit(const ResourceVarFileInfo& resource_vfi) {
-
   process(resource_vfi.type());
   process(resource_vfi.key());
   process(resource_vfi.translations());
 }
 
 void Hash::visit(const LangCodeItem& resource_lci) {
-
   process(resource_lci.type());
   process(resource_lci.key());
   for (const std::pair<const std::u16string, std::u16string>& p : resource_lci.items()) {
@@ -370,7 +366,6 @@ void Hash::visit(const LangCodeItem& resource_lci) {
 
 
 void Hash::visit(const ResourceVersion& resource_version) {
-
   process(resource_version.type());
   process(resource_version.key());
 
@@ -389,7 +384,6 @@ void Hash::visit(const ResourceVersion& resource_version) {
 }
 
 void Hash::visit(const ResourceIcon& resource_icon) {
-
   if (resource_icon.id() != static_cast<uint32_t>(-1)) {
     process(resource_icon.id());
   }
@@ -406,7 +400,6 @@ void Hash::visit(const ResourceIcon& resource_icon) {
 }
 
 void Hash::visit(const ResourceDialog& dialog) {
-
   process(dialog.x());
   process(dialog.y());
   process(dialog.cx());
@@ -476,7 +469,6 @@ void Hash::visit(const x509& x509) {
 }
 
 void Hash::visit(const SignerInfo& signerinfo) {
-
   process(signerinfo.version());
   process(signerinfo.serial_number());
   process(signerinfo.issuer());
@@ -567,14 +559,13 @@ void Hash::visit(const LoadConfiguration& config) {
 }
 
 void Hash::visit(const LoadConfigurationV0& config) {
-  process(*config.as<LoadConfiguration>());
+  visit(*config.as<LoadConfiguration>());
   process(config.se_handler_table());
   process(config.se_handler_count());
 }
 
 void Hash::visit(const LoadConfigurationV1& config) {
-
-  process(*config.as<LoadConfigurationV0>());
+  visit(*config.as<LoadConfigurationV0>());
   process(config.guard_cf_check_function_pointer());
   process(config.guard_cf_dispatch_function_pointer());
   process(config.guard_cf_function_table());
@@ -583,13 +574,12 @@ void Hash::visit(const LoadConfigurationV1& config) {
 }
 
 void Hash::visit(const LoadConfigurationV2& config) {
-
-  process(*config.as<LoadConfigurationV1>());
+  visit(*config.as<LoadConfigurationV1>());
   process(config.code_integrity());
 }
 
 void Hash::visit(const LoadConfigurationV3& config) {
-  process(*config.as<LoadConfigurationV2>());
+  visit(*config.as<LoadConfigurationV2>());
   process(config.guard_address_taken_iat_entry_table());
   process(config.guard_address_taken_iat_entry_count());
   process(config.guard_long_jump_target_table());
@@ -597,13 +587,13 @@ void Hash::visit(const LoadConfigurationV3& config) {
 }
 
 void Hash::visit(const LoadConfigurationV4& config) {
-  process(*config.as<LoadConfigurationV3>());
+  visit(*config.as<LoadConfigurationV3>());
   process(config.dynamic_value_reloc_table());
   process(config.hybrid_metadata_pointer());
 }
 
 void Hash::visit(const LoadConfigurationV5& config) {
-  process(*config.as<LoadConfigurationV4>());
+  visit(*config.as<LoadConfigurationV4>());
   process(config.guard_rf_failure_routine());
   process(config.guard_rf_failure_routine_function_pointer());
   process(config.dynamic_value_reloctable_offset());
@@ -611,37 +601,37 @@ void Hash::visit(const LoadConfigurationV5& config) {
 }
 
 void Hash::visit(const LoadConfigurationV6& config) {
-  process(*config.as<LoadConfigurationV5>());
+  visit(*config.as<LoadConfigurationV5>());
   process(config.guard_rf_verify_stackpointer_function_pointer());
   process(config.hotpatch_table_offset());
 }
 
 void Hash::visit(const LoadConfigurationV7& config) {
-  process(*config.as<LoadConfigurationV6>());
+  visit(*config.as<LoadConfigurationV6>());
   process(config.reserved3());
   process(config.addressof_unicode_string());
 }
 
 void Hash::visit(const LoadConfigurationV8& config) {
-  process(*config.as<LoadConfigurationV7>());
+  visit(*config.as<LoadConfigurationV7>());
   process(config.volatile_metadata_pointer());
 }
 
 void Hash::visit(const LoadConfigurationV9& config) {
-  process(*config.as<LoadConfigurationV8>());
+  visit(*config.as<LoadConfigurationV8>());
   process(config.guard_eh_continuation_table());
   process(config.guard_eh_continuation_count());
 }
 
 void Hash::visit(const LoadConfigurationV10& config) {
-  process(*config.as<LoadConfigurationV9>());
+  visit(*config.as<LoadConfigurationV9>());
   process(config.guard_xfg_check_function_pointer());
   process(config.guard_xfg_dispatch_function_pointer());
   process(config.guard_xfg_table_dispatch_function_pointer());
 }
 
 void Hash::visit(const LoadConfigurationV11& config) {
-  process(*config.as<LoadConfigurationV10>());
+  visit(*config.as<LoadConfigurationV10>());
   process(config.cast_guard_os_determined_failure_mode());
 }
 

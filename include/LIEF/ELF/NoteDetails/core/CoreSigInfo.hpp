@@ -58,8 +58,6 @@ class LIEF_API CoreSigInfo : public NoteDetails {
   void sigcode(int32_t sigcode);
   void sigerrno(int32_t sigerrno);
 
-  bool operator==(const CoreSigInfo& rhs) const;
-  bool operator!=(const CoreSigInfo& rhs) const;
 
   void dump(std::ostream& os) const override;
 

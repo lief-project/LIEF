@@ -85,7 +85,7 @@ void create<ResourceIcon>(nb::module_& m) {
         "Save the icon to the given filepath"_doc,
         "filepath"_a)
 
-    LIEF_DEFAULT_STR(LIEF::PE::ResourceIcon);
+    LIEF_DEFAULT_STR(ResourceIcon);
 }
 
 }

@@ -109,8 +109,6 @@ class LIEF_API Binary : public ELF::Binary {
     return vdex_ != nullptr;
   }
 
-  bool operator==(const Binary& rhs) const;
-  bool operator!=(const Binary& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

@@ -119,3 +119,5 @@ def test_v11():
     assert lconf.cast_guard_os_determined_failure_mode == 0x180057e18
 
     assert print(lconf) is None
+
+    assert lconf.copy() == lconf

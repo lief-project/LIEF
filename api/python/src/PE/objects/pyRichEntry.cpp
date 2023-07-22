@@ -25,7 +25,7 @@ namespace LIEF::PE::py {
 
 template<>
 void create<RichEntry>(nb::module_& m) {
-  nb::class_<RichEntry, LIEF::Object>(m, "RichEntry",
+  nb::class_<RichEntry, Object>(m, "RichEntry",
       R"delim(
       Class which represents an entry associated to the RichHeader
       )delim"_doc)
@@ -52,6 +52,7 @@ void create<RichEntry>(nb::module_& m) {
         nb::overload_cast<uint32_t>(&RichEntry::count),
         "*Occurrence* count"_doc)
 
+    LIEF_COPYABLE(RichEntry)
     LIEF_DEFAULT_STR(RichEntry);
 }
 

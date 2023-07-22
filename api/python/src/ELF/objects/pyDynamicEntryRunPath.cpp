@@ -84,7 +84,7 @@ void create<DynamicEntryRunPath>(nb::module_& m) {
     .def(nb::self += std::string())
     .def(nb::self -= std::string())
 
-    LIEF_DEFAULT_STR(LIEF::ELF::DynamicEntryRunPath);
+    LIEF_DEFAULT_STR(DynamicEntryRunPath);
 }
 
 }

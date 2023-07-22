@@ -92,8 +92,6 @@ class LIEF_API Note : public Object {
 
   virtual void dump(std::ostream& os) const;
 
-  bool operator==(const Note& rhs) const;
-  bool operator!=(const Note& rhs) const;
 
   void swap(Note& other);
 

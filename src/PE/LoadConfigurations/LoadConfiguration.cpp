@@ -216,18 +216,7 @@ void LoadConfiguration::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-bool LoadConfiguration::operator==(const LoadConfiguration& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool LoadConfiguration::operator!=(const LoadConfiguration& rhs) const {
-  return !(*this == rhs);
-}
 
 std::ostream& LoadConfiguration::print(std::ostream& os) const {
   os << std::hex << std::left << std::showbase;

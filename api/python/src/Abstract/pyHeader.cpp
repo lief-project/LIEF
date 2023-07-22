@@ -67,6 +67,6 @@ void create<Header>(nb::module_& m) {
         &Header::is_64,
         "``True`` if the binary targets a ``64-bits`` architecture"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::Header);
+    LIEF_DEFAULT_STR(Header);
 }
 }

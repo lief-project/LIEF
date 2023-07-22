@@ -527,8 +527,6 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Functions found in the Exception table directory
   LIEF::Binary::functions_t exception_functions() const;
 
-  bool operator==(const Binary& rhs) const;
-  bool operator!=(const Binary& rhs) const;
 
   std::ostream& print(std::ostream& os) const override;
 

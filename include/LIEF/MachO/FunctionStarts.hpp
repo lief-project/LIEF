@@ -84,8 +84,6 @@ class LIEF_API FunctionStarts : public LoadCommand {
 
   ~FunctionStarts() override;
 
-  bool operator==(const FunctionStarts& rhs) const;
-  bool operator!=(const FunctionStarts& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

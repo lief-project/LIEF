@@ -101,8 +101,6 @@ class LIEF_API ResourceIcon : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const ResourceIcon& rhs) const;
-  bool operator!=(const ResourceIcon& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceIcon& entry);
 

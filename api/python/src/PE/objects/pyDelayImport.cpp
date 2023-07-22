@@ -111,6 +111,7 @@ void create<DelayImport>(nb::module_& m) {
         The timestamp of the DLL to which this image has been bound.
         )delim"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::DelayImport);
+    LIEF_COPYABLE(DelayImport)
+    LIEF_DEFAULT_STR(DelayImport);
 }
 }

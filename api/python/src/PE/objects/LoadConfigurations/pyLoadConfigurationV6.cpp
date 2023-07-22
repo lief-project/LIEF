@@ -44,7 +44,8 @@ void create<LoadConfigurationV6>(nb::module_& m) {
         nb::overload_cast<uint32_t>(&LoadConfigurationV6::hotpatch_table_offset),
         "Offset to the *hotpatch* table"_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::LoadConfigurationV6);
+    LIEF_COPYABLE(LoadConfigurationV6)
+    LIEF_DEFAULT_STR(LoadConfigurationV6);
 }
 
 }

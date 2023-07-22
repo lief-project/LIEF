@@ -211,18 +211,7 @@ void Type::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-bool Type::operator==(const Type& rhs) const {
-  if (this == &rhs) {
-    return true;
-  }
-  size_t hash_lhs = Hash::hash(*this);
-  size_t hash_rhs = Hash::hash(rhs);
-  return hash_lhs == hash_rhs;
-}
 
-bool Type::operator!=(const Type& rhs) const {
-  return !(*this == rhs);
-}
 
 std::ostream& operator<<(std::ostream& os, const Type& type) {
   switch (type.type()) {

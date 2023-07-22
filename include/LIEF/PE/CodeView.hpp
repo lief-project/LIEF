@@ -40,8 +40,6 @@ class LIEF_API CodeView : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const CodeView& rhs) const;
-  bool operator!=(const CodeView& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const CodeView& entry);
 

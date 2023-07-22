@@ -112,8 +112,6 @@ class LIEF_API Relocation : public LIEF::Relocation {
   virtual void pc_relative(bool val) = 0;
   virtual void type(uint8_t type);
 
-  bool operator==(const Relocation& rhs) const;
-  bool operator!=(const Relocation& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

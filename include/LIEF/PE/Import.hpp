@@ -121,8 +121,6 @@ class LIEF_API Import : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const Import& rhs) const;
-  bool operator!=(const Import& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Import& entry);
 

@@ -106,6 +106,6 @@ void create<CoreAuxv>(nb::module_& m) {
 
     .def("__contains__", &CoreAuxv::has)
 
-    LIEF_DEFAULT_STR(LIEF::ELF::CoreAuxv);
+    LIEF_DEFAULT_STR(CoreAuxv);
 }
 }

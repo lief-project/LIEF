@@ -167,8 +167,6 @@ class LIEF_API Section : public LIEF::Section {
   Section& operator+=(ELF_SECTION_FLAGS c);
   Section& operator-=(ELF_SECTION_FLAGS c);
 
-  bool operator==(const Section& rhs) const;
-  bool operator!=(const Section& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Section& section);
 

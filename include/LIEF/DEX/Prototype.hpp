@@ -48,8 +48,6 @@ class LIEF_API Prototype : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  bool operator==(const Prototype& rhs) const;
-  bool operator!=(const Prototype& rhs) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Prototype& type);
 

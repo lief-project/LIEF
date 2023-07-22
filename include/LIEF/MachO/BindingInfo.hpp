@@ -98,8 +98,6 @@ class LIEF_API BindingInfo : public Object {
 
   ~BindingInfo() override;
 
-  bool operator==(const BindingInfo& rhs) const;
-  bool operator!=(const BindingInfo& rhs) const;
 
   void accept(Visitor& visitor) const override;
 

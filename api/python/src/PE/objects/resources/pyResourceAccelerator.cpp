@@ -44,6 +44,6 @@ void create<ResourceAccelerator>(nb::module_& m) {
       nb::overload_cast<>(&ResourceAccelerator::padding, nb::const_),
       "The number of bytes inserted to ensure that the structure is aligned on a DWORD boundary."_doc)
 
-    LIEF_DEFAULT_STR(LIEF::PE::ResourceAccelerator);
+    LIEF_DEFAULT_STR(ResourceAccelerator);
 }
 }
