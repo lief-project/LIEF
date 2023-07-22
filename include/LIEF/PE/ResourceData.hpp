@@ -44,7 +44,9 @@ class LIEF_API ResourceData : public ResourceNode {
 
   ~ResourceData() override;
 
-  ResourceData* clone() const override;
+  std::unique_ptr<ResourceNode> clone() const override {
+    return std::unique_ptr<ResourceNode>{new ResourceData{*this}};
+  }
 
   //! Return the code page that is used to decode code point
   //! values within the resource data. Typically, the code page is the Unicode code page.

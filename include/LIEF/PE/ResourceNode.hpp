@@ -63,7 +63,7 @@ class LIEF_API ResourceNode : public Object {
 
   ~ResourceNode() override;
 
-  virtual ResourceNode* clone() const = 0;
+  virtual std::unique_ptr<ResourceNode> clone() const = 0;
 
   //! Integer that identifies the Type, Name, or Language ID of the entry
   //! depending on its depth in the tree

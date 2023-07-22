@@ -69,11 +69,6 @@ ResourceDirectory::ResourceDirectory(const details::pe_resource_directory_table&
   type_ = ResourceNode::TYPE::DIRECTORY;
 }
 
-ResourceDirectory* ResourceDirectory::clone() const {
-  return new ResourceDirectory{*this};
-}
-
-
 uint32_t ResourceDirectory::characteristics() const {
   return characteristics_;
 }

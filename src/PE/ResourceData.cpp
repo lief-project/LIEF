@@ -35,10 +35,6 @@ ResourceData::ResourceData(const ResourceData& other) :
   reserved_{other.reserved_}
 {}
 
-ResourceData* ResourceData::clone() const {
-  return new ResourceData{*this};
-}
-
 void ResourceData::swap(ResourceData& other) {
   ResourceNode::swap(other);
 
