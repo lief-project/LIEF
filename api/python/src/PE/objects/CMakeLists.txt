@@ -12,11 +12,6 @@ set(LIEF_PYTHON_PE_OBJECT_SRC
   "${CMAKE_CURRENT_SOURCE_DIR}/pyRelocationEntry.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/pyResourcesManager.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/pyHeader.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyDebug.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyCodeView.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyCodeViewPDB.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyPogo.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyPogoEntry.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/pySection.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/pyExport.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/pyImport.cpp"
@@ -34,4 +29,5 @@ target_sources(pyLIEF PRIVATE ${LIEF_PYTHON_PE_OBJECT_SRC})
 add_subdirectory(resources)
 add_subdirectory(signature)
 add_subdirectory(LoadConfigurations)
+add_subdirectory(debug)
 

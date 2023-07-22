@@ -15,7 +15,7 @@
  */
 #include "PE/pyPE.hpp"
 
-#include "LIEF/PE/CodeViewPDB.hpp"
+#include "LIEF/PE/debug/CodeViewPDB.hpp"
 
 #include <string>
 #include <sstream>
@@ -26,8 +26,22 @@ namespace LIEF::PE::py {
 
 template<>
 void create<CodeViewPDB>(nb::module_& m) {
-  nb::class_<CodeViewPDB, CodeView>(m, "CodeViewPDB")
+  nb::class_<CodeViewPDB, CodeView>(m, "CodeViewPDB",
+    R"delim(CodeView PDB specialization)delim"_doc)
     .def(nb::init<>())
+
+    .def_prop_ro("parent",
+        [] (nb::object& self) -> nb::object {
+          auto* ab = nb::cast<CodeViewPDB*>(self);
+          const nb::handle base_type = nb::type<CodeView>();
+          nb::object py_inst = nb::inst_reference(base_type, ab, self);
+          nb::inst_set_state(py_inst, /*ready=*/true, /*destruct=*/false);
+          return py_inst;
+        },
+        R"delim(
+        Return a reference to the parent :class:`lief.PE.CodeView`
+        )delim"_doc,
+        nb::rv_policy::reference_internal)
 
     .def_prop_rw("signature",
         nb::overload_cast<>(&CodeViewPDB::signature, nb::const_),
@@ -39,7 +53,8 @@ void create<CodeViewPDB>(nb::module_& m) {
 
     .def_prop_rw("filename",
         nb::overload_cast<>(&CodeViewPDB::filename, nb::const_),
-        nb::overload_cast<const std::string&>(&CodeViewPDB::filename))
+        nb::overload_cast<const std::string&>(&CodeViewPDB::filename),
+        "Original pdb path")
 
     LIEF_DEFAULT_STR(CodeViewPDB);
 }

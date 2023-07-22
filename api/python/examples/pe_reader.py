@@ -271,19 +271,20 @@ def print_debug(binary):
         print(format_hex.format("Address of raw data:", debug.addressof_rawdata))
         print(format_hex.format("Pointer to raw data:", debug.pointerto_rawdata))
 
-        if debug.has_code_view:
-            code_view = debug.code_view
+        if isinstance(debug, lief.PE.CodeViewPDB):
+            code_view: lief.PE.CodeViewPDB = debug
             cv_signature = code_view.cv_signature
-
-            if cv_signature in (lief.PE.CODE_VIEW_SIGNATURES.PDB_70, lief.PE.CODE_VIEW_SIGNATURES.PDB_70):
-                sig_str = " ".join(map(lambda e : "{:02x}".format(e), code_view.signature))
-                print(format_str.format("Code View Signature:", str(cv_signature).split(".")[-1]))
-                print(format_str.format("Signature:", sig_str))
-                print(format_dec.format("Age:", code_view.age))
-                print(format_str.format("Filename:", code_view.filename))
-
-        if debug.has_pogo:
-            pogo = debug.pogo
+            sig_str = " ".join(map(lambda e : "{:02x}".format(e), code_view.signature))
+            print(format_str.format("Code View Signature:", str(cv_signature).split(".")[-1]))
+            print(format_str.format("Signature:", sig_str))
+            print(format_dec.format("Age:", code_view.age))
+            print(format_str.format("Filename:", code_view.filename))
+        elif isinstance(debug, lief.PE.CodeView):
+            code_view: lief.PE.CodeView = debug
+            cv_signature = code_view.cv_signature
+            print(format_str.format("Code View Signature:", str(cv_signature).split(".")[-1]))
+        elif isinstance(debug, lief.PE.Pogo):
+            pogo: lief.PE.Pogo = debug
             sig_str = str(pogo.signature).split(".")[-1]
             print(format_str.format("Signature:", sig_str))
             print("Entries:")
@@ -291,7 +292,6 @@ def print_debug(binary):
                 print("    {:<20} 0x{:x} ({:d})".format(entry.name, entry.start_rva, entry.size))
 
         print("\n")
-
 
 @exceptions_handler(Exception)
 def print_signature(binary):

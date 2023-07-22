@@ -14,35 +14,37 @@
  * limitations under the License.
  */
 #include "PE/pyPE.hpp"
-#include "pySafeString.hpp"
 
-#include "LIEF/PE/PogoEntry.hpp"
+#include "LIEF/PE/debug/CodeView.hpp"
+#include "enums_wrapper.hpp"
 
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/array.h>
+
+#define PY_ENUM(x) to_string(x), x
 
 namespace LIEF::PE::py {
 
 template<>
-void create<PogoEntry>(nb::module_& m) {
-  nb::class_<PogoEntry, LIEF::Object>(m, "PogoEntry")
+void create<CodeView>(nb::module_& m) {
+  nb::class_<CodeView, Debug> cv(m, "CodeView");
+
+  enum_<CodeView::SIGNATURES>(cv, "SIGNATURES")
+    .value(PY_ENUM(CodeView::SIGNATURES::UNKNOWN))
+    .value(PY_ENUM(CodeView::SIGNATURES::PDB_70))
+    .value(PY_ENUM(CodeView::SIGNATURES::PDB_20))
+    .value(PY_ENUM(CodeView::SIGNATURES::CV_50))
+    .value(PY_ENUM(CodeView::SIGNATURES::CV_41));
+  cv
     .def(nb::init<>())
+    .def(nb::init<CodeView::SIGNATURES>())
+    .def_prop_ro("cv_signature",
+        nb::overload_cast<>(&CodeView::signature, nb::const_),
+        "Type of the code view (" RST_CLASS_REF(lief.PE.CodeView.SIGNATURES) ")"_doc)
 
-    .def_prop_rw("name",
-        [] (const PogoEntry& obj) {
-          return LIEF::py::safe_string(obj.name());
-        },
-        nb::overload_cast<const std::string&>(&PogoEntry::name))
-
-    .def_prop_rw("start_rva",
-        nb::overload_cast<>(&PogoEntry::start_rva, nb::const_),
-        nb::overload_cast<uint32_t>(&PogoEntry::start_rva))
-
-    .def_prop_rw("size",
-        nb::overload_cast<>(&PogoEntry::size, nb::const_),
-        nb::overload_cast<uint32_t>(&PogoEntry::size))
-
-    LIEF_DEFAULT_STR(PogoEntry);
+    LIEF_DEFAULT_STR(CodeView);
 }
+
 }

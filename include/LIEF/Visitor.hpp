@@ -93,6 +93,8 @@ LIEF_PE_FORWARD(CodeIntegrity)
 LIEF_PE_FORWARD(LoadConfiguration)
 LIEF_PE_FORWARD(LoadConfigurationV0)
 LIEF_PE_FORWARD(LoadConfigurationV1)
+LIEF_PE_FORWARD(LoadConfigurationV10)
+LIEF_PE_FORWARD(LoadConfigurationV11)
 LIEF_PE_FORWARD(LoadConfigurationV2)
 LIEF_PE_FORWARD(LoadConfigurationV3)
 LIEF_PE_FORWARD(LoadConfigurationV4)
@@ -101,10 +103,9 @@ LIEF_PE_FORWARD(LoadConfigurationV6)
 LIEF_PE_FORWARD(LoadConfigurationV7)
 LIEF_PE_FORWARD(LoadConfigurationV8)
 LIEF_PE_FORWARD(LoadConfigurationV9)
-LIEF_PE_FORWARD(LoadConfigurationV10)
-LIEF_PE_FORWARD(LoadConfigurationV11)
 LIEF_PE_FORWARD(Pogo)
 LIEF_PE_FORWARD(PogoEntry)
+LIEF_PE_FORWARD(Repro)
 
 // ELF
 // ==================================
@@ -475,6 +476,9 @@ class LIEF_API Visitor {
 
   //! Method to visit a LIEF::PE::PogoEntry
   LIEF_PE_VISITABLE(PogoEntry)
+
+  //! Method to visit a LIEF::PE::Repro
+  LIEF_PE_VISITABLE(Repro)
 
   // MachO part
   // ==========

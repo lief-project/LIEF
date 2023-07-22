@@ -273,7 +273,7 @@ struct pe_pdb_70 {
   uint32_t cv_signature;
   uint8_t  signature[16];
   uint32_t age;
-  char*    filename;
+  //char*    filename;
 };
 
 struct pe_pdb_20 {
@@ -281,13 +281,13 @@ struct pe_pdb_20 {
   uint32_t offset;
   uint32_t signature;
   uint32_t age;
-  char*    filename;
+  //char*    filename;
 };
 
 struct pe_pogo {
   uint32_t start_rva;
   uint32_t size;
-  char     name[1];
+  //char     name[1];
 };
 
 

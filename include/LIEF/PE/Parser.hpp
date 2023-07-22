@@ -39,6 +39,7 @@ class DelayImport;
 
 namespace details {
 struct pe_resource_directory_table;
+struct pe_debug;
 }
 
 //! Main interface to parse PE binaries. In particular the **static** functions:
@@ -123,8 +124,10 @@ class LIEF_API Parser : public LIEF::Parser {
 
   ok_error_t parse_export_table();
   ok_error_t parse_debug();
-  ok_error_t parse_debug_code_view(Debug& debug_info);
-  ok_error_t parse_debug_pogo(Debug& debug_info);
+
+  std::unique_ptr<Debug> parse_code_view(const details::pe_debug& debug_info);
+  std::unique_ptr<Debug> parse_pogo(const details::pe_debug& debug_info);
+  std::unique_ptr<Debug> parse_repro(const details::pe_debug& debug_info);
 
   template<typename PE_T>
   ok_error_t parse_tls();

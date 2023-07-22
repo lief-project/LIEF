@@ -411,7 +411,6 @@ void JsonVisitor::visit(const Symbol& symbol) {
 }
 
 void JsonVisitor::visit(const Debug& debug) {
-
   node_["characteristics"]   = debug.characteristics();
   node_["timestamp"]         = debug.timestamp();
   node_["major_version"]     = debug.major_version();
@@ -420,29 +419,14 @@ void JsonVisitor::visit(const Debug& debug) {
   node_["sizeof_data"]       = debug.sizeof_data();
   node_["addressof_rawdata"] = debug.addressof_rawdata();
   node_["pointerto_rawdata"] = debug.pointerto_rawdata();
-
-  if (debug.has_code_view()) {
-    JsonVisitor codeview_visitor;
-    const CodeView* codeview = debug.code_view();
-    codeview->accept(codeview_visitor);
-    node_["code_view"] = codeview_visitor.get();
-  }
-
-  if (debug.has_pogo()) {
-    JsonVisitor pogo_visitor;
-    const Pogo* pogo = debug.pogo();
-    pogo->accept(pogo_visitor);
-    node_["pogo"] = pogo_visitor.get();
-  }
 }
 
 void JsonVisitor::visit(const CodeView& cv) {
-
-  node_["cv_signature"] = to_string(cv.cv_signature());
+  visit(static_cast<const Debug&>(cv));
+  node_["cv_signature"] = to_string(cv.signature());
 }
 
 void JsonVisitor::visit(const CodeViewPDB& cvpdb) {
-
   visit(static_cast<const CodeView&>(cvpdb));
   node_["signature"] = cvpdb.signature();
   node_["age"]       = cvpdb.age();
@@ -1052,7 +1036,7 @@ void JsonVisitor::visit(const LoadConfigurationV11& config) {
 }
 
 void JsonVisitor::visit(const Pogo& pogo) {
-
+  visit(*pogo.as<Debug>());
   node_["signature"] = to_string(pogo.signature());
 
   std::vector<json> entries;
@@ -1065,24 +1049,28 @@ void JsonVisitor::visit(const Pogo& pogo) {
 }
 
 void JsonVisitor::visit(const PogoEntry& entry) {
-
   node_["name"]      = entry.name();
   node_["start_rva"] = entry.start_rva();
   node_["size"]      = entry.size();
 }
 
+void JsonVisitor::visit(const Repro& repro) {
+  visit(*repro.as<Debug>());
+  node_["hash"] = repro.hash();
+}
+
 
 // LIEF Abstract
 void JsonVisitor::visit(const LIEF::Binary& binary) {
-  visit(reinterpret_cast<const LIEF::PE::Binary&>(binary));
+  visit(static_cast<const LIEF::PE::Binary&>(binary));
 }
 
 void JsonVisitor::visit(const LIEF::Symbol& symbol) {
-  visit(reinterpret_cast<const LIEF::PE::Symbol&>(symbol));
+  visit(static_cast<const LIEF::PE::Symbol&>(symbol));
 }
 
 void JsonVisitor::visit(const LIEF::Section& section) {
-  visit(reinterpret_cast<const LIEF::PE::Section&>(section));
+  visit(static_cast<const LIEF::PE::Section&>(section));
 }
 
 } // namespace PE

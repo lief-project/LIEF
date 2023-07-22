@@ -16,42 +16,6 @@ if is_windows():
     SEM_NOGPFAULTERRORBOX = 0x0002  # From MSDN
     ctypes.windll.kernel32.SetErrorMode(SEM_NOGPFAULTERRORBOX)
 
-def test_code_view_pdb():
-    path = get_sample('PE/PE64_x86-64_binary_ConsoleApplication1.exe')
-    sample = lief.parse(path)
-
-    assert sample.has_debug
-
-    debug_code_view = list(filter(lambda deb: deb.has_code_view, sample.debug))
-    assert len(debug_code_view) == 1
-
-    debug = debug_code_view[0]
-    code_view = debug.code_view
-
-    assert code_view.cv_signature == lief.PE.CODE_VIEW_SIGNATURES.PDB_70
-    assert code_view.signature == [245, 217, 227, 182, 71, 113, 1, 79, 162, 3, 170, 71, 124, 74, 186, 84]
-    assert code_view.age == 1
-    assert code_view.filename == r"c:\users\romain\documents\visual studio 2015\Projects\HelloWorld\x64\Release\ConsoleApplication1.pdb"
-
-    json_view = json.loads(lief.to_json(debug))
-    assert json_view == {
-        'addressof_rawdata': 8996,
-        'characteristics': 0,
-        'code_view': {
-            'age': 1,
-            'cv_signature': 'PDB_70',
-            'filename': r'c:\users\romain\documents\visual studio 2015\Projects\HelloWorld\x64\Release\ConsoleApplication1.pdb',
-            'signature': [245, 217, 227, 182, 71, 113, 1, 79, 162, 3, 170, 71, 124, 74, 186, 84]
-        },
-        'major_version': 0,
-        'minor_version': 0,
-        'pointerto_rawdata': 5412,
-        'sizeof_data': 125,
-        'timestamp': 1459952944,
-        'type': 'CODEVIEW'
-    }
-    assert print(code_view) is None
-
 def test_remove_section(tmp_path):
     path = get_sample('PE/PE64_x86-64_remove_section.exe')
     sample = lief.parse(path)
@@ -93,29 +57,6 @@ def test_unwind():
     assert functions[-1].address == 163896
     assert functions[-1].size == 54
     assert functions[-1].name == ""
-
-def test_pgo():
-    path   = get_sample("PE/PE32_x86_binary_PGO-LTCG.exe")
-    sample = lief.parse(path)
-
-    debugs = sample.debug
-    assert len(debugs) == 3
-
-    debug_entry = debugs[2]
-
-    assert debug_entry.has_pogo
-    pogo = debug_entry.pogo
-    assert pogo.signature == lief.PE.POGO_SIGNATURES.LCTG
-
-    pogo_entries = pogo.entries
-    assert len(pogo_entries) == 33
-
-    assert pogo_entries[23].name == ".xdata$x"
-    assert pogo_entries[23].start_rva == 0x8200
-    assert pogo_entries[23].size == 820
-
-    assert pogo.copy() == pogo
-
 
 def test_sections():
     path = get_sample("PE/PE32_x86_binary_PGO-LTCG.exe")

@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_POGO_ENTRY_H
-#define LIEF_PE_POGO_ENTRY_H
-#include <string>
+#ifndef LIEF_PE_DEBUG_POGO_ENTRY_H
+#define LIEF_PE_DEBUG_POGO_ENTRY_H
 #include <ostream>
+#include <cstdint>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
-
-#include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -30,36 +28,56 @@ class Builder;
 class Parser;
 
 class LIEF_API PogoEntry : public Object {
-
   friend class Builder;
   friend class Parser;
 
   public:
-
   PogoEntry();
   PogoEntry(const PogoEntry&);
-  PogoEntry(uint32_t start_rva, uint32_t size, std::string  name);
+  PogoEntry(uint32_t start_rva, uint32_t size, std::string name) :
+    start_rva_{start_rva},
+    size_{size},
+    name_{std::move(name)}
+  {}
+
+  PogoEntry(uint32_t start_rva, uint32_t size) :
+    PogoEntry{start_rva, size, ""}
+  {}
 
   PogoEntry& operator=(const PogoEntry&);
   ~PogoEntry() override;
 
-  uint32_t start_rva() const;
-  uint32_t size() const;
-  const std::string& name() const;
+  uint32_t start_rva() const {
+    return start_rva_;
+  }
 
-  void start_rva(uint32_t start_rva);
-  void size(uint32_t size);
-  void name(const std::string& name);
+  uint32_t size() const {
+    return size_;
+  }
+
+  const std::string& name() const {
+    return name_;
+  }
+
+  void start_rva(uint32_t start_rva) {
+    start_rva_ = start_rva;
+  }
+
+  void size(uint32_t size) {
+    size_ = size;
+  }
+
+  void name(std::string name) {
+    name_ = std::move(name);
+  }
 
   void accept(Visitor& visitor) const override;
 
-
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const PogoEntry& entry);
 
-
   protected:
-  uint32_t start_rva_;
-  uint32_t size_;
+  uint32_t start_rva_ = 0;
+  uint32_t size_ = 0;
   std::string name_;
 };
 

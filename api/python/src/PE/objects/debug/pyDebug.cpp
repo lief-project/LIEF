@@ -16,18 +16,48 @@
 #include "PE/pyPE.hpp"
 
 #include "LIEF/PE/Debug.hpp"
-#include "LIEF/PE/Pogo.hpp"
-#include "LIEF/PE/CodeView.hpp"
+
+#include "enums_wrapper.hpp"
 
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/unique_ptr.h>
+
+#define PY_ENUM(x) to_string(x), x
 
 namespace LIEF::PE::py {
 
 template<>
 void create<Debug>(nb::module_& m) {
-  nb::class_<Debug, LIEF::Object>(m, "Debug")
+  nb::class_<Debug, LIEF::Object> debug(m, "Debug",
+    R"delim(
+    This class represents a generic entry in the debug data directory.
+    For known types, this class is extended to provide a dedicated API
+    (see: ! CodeCodeView)
+    )delim"_doc);
+
+  enum_<Debug::TYPES>(debug, "TYPES", "The entry types")
+    .value(PY_ENUM(Debug::TYPES::UNKNOWN))
+    .value(PY_ENUM(Debug::TYPES::COFF), "COFF debug information"_doc)
+    .value(PY_ENUM(Debug::TYPES::CODEVIEW), "CodeView debug information (pdb & cie)"_doc)
+    .value(PY_ENUM(Debug::TYPES::FPO), "Frame pointer omission information"_doc)
+    .value(PY_ENUM(Debug::TYPES::MISC), "CodeView Debug Information"_doc)
+    .value(PY_ENUM(Debug::TYPES::EXCEPTION), "A copy of .pdata section."_doc)
+    .value(PY_ENUM(Debug::TYPES::FIXUP), "Reserved"_doc)
+    .value(PY_ENUM(Debug::TYPES::OMAP_TO_SRC), "The mapping from an RVA in image to an RVA in source image."_doc)
+    .value(PY_ENUM(Debug::TYPES::OMAP_FROM_SRC), "The mapping from an RVA in source image to an RVA in image."_doc)
+    .value(PY_ENUM(Debug::TYPES::BORLAND), "Reserved for Borland."_doc)
+    .value(PY_ENUM(Debug::TYPES::RESERVED10), "Reserved"_doc)
+    .value(PY_ENUM(Debug::TYPES::CLSID), "Reserved"_doc)
+    .value(PY_ENUM(Debug::TYPES::VC_FEATURE))
+    .value(PY_ENUM(Debug::TYPES::POGO), "Profile Guided Optimization metadata"_doc)
+    .value(PY_ENUM(Debug::TYPES::ILTCG))
+    .value(PY_ENUM(Debug::TYPES::MPX))
+    .value(PY_ENUM(Debug::TYPES::REPRO), "PE determinism or reproducibility"_doc)
+    .value(PY_ENUM(Debug::TYPES::EX_DLLCHARACTERISTICS));
+
+  debug
     .def(nb::init<>())
 
     .def_prop_rw("characteristics",
@@ -50,10 +80,9 @@ void create<Debug>(nb::module_& m) {
         nb::overload_cast<uint16_t>(&Debug::minor_version),
         "The minor version number of the debug data format."_doc)
 
-    .def_prop_rw("type",
+    .def_prop_ro("type",
         nb::overload_cast<>(&Debug::type, nb::const_),
-        nb::overload_cast<DEBUG_TYPES>(&Debug::type),
-        "The format (" RST_CLASS_REF(lief.PE.DEBUG_TYPES) ") of the debugging information"_doc)
+        "The format (" RST_CLASS_REF(lief.PE.Debug.TYPES) ") of the debugging information"_doc)
 
     .def_prop_rw("sizeof_data",
         nb::overload_cast<>(&Debug::sizeof_data, nb::const_),
@@ -70,34 +99,7 @@ void create<Debug>(nb::module_& m) {
         nb::overload_cast<uint32_t>(&Debug::pointerto_rawdata),
         "File offset of the debug data"_doc)
 
-    .def_prop_ro("has_code_view",
-        &Debug::has_code_view,
-        "Whether or not a code view is present"_doc)
-
-    .def_prop_ro("code_view",
-        nb::overload_cast<>(&Debug::code_view),
-        R"delim(
-        Return an object which subclass :class:`~lief.PE.CodeView` representing the code view"
-        The subclassed object can be one of:
-
-            * :class:`~lief.PE.CodeViewPDB`
-
-        If a code view is not present, it is set to None
-        )delim"_doc,
-        nb::rv_policy::reference_internal)
-
-    .def_prop_ro("has_pogo",
-        &Debug::has_pogo,
-        "Whether or not a pogo is present"_doc)
-
-    .def_prop_ro("pogo",
-        nb::overload_cast<>(&Debug::pogo),
-        R"delim(
-        Return an object which subclasses :class:`~lief.PE.Pogo` representing the pogo entry.
-        It returns None if not present.
-        )delim"_doc,
-        nb::rv_policy::reference_internal)
-
+    LIEF_CLONABLE(Debug)
     LIEF_DEFAULT_STR(Debug);
 }
 

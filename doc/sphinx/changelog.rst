@@ -32,6 +32,12 @@ Changelog
 
 :PE:
 
+  * Refactoring of the Debug directory processing:
+    - :class:`lief.PE.Debug` is now the root class of:
+      1. :class:`lief.PE.CodeView` / :class:`lief.PE.CodeView`
+      2. :class:`lief.PE.Pogo`
+      3. :class:`lief.PE.Repro`
+    - The parsing logic has been cleaned and the tests updated.
   * Add a :class:`lief.PE.ParserConfig` interface that can be used to tweak
     which parts of the PE format should be parsed (:issue:`839`).
 
@@ -52,7 +58,7 @@ Changelog
   * LIEF is now compiled with C++17 (the API remains C++11 compliant)
   * Switch to `nanobind <https://nanobind.readthedocs.io/en/latest/>`_ for the
     Python bindings.
-  * CI are now more efficient
+  * CI are now more efficient.
   * The Python documentation for properties now contains the type of the
     property.
 

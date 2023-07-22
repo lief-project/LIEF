@@ -309,22 +309,6 @@ enum class DEBUG_TYPES: size_t  {
 };
 
 
-//! Code view signatures
-//! @see: http://llvm.org/doxygen/CVDebugRecord_8h_source.html
-enum class CODE_VIEW_SIGNATURES: size_t  {
-  CVS_UNKNOWN = 0,
-  CVS_PDB_70 = 0x53445352, // RSDS
-  CVS_PDB_20 = 0x3031424e, // NB10
-  CVS_CV_50  = 0x3131424e, // NB11
-  CVS_CV_41  = 0x3930424e, // NB09
-};
-
-enum class POGO_SIGNATURES: size_t  {
-  POGO_UNKNOWN = 0,
-  POGO_LCTG    = 0x4C544347,  // LCTG
-  POGO_PGI     = 0x50474900 , // PGI\0
-};
-
 enum class ImportType: size_t  {
   IMPORT_CODE  = 0,
   IMPORT_DATA  = 1,

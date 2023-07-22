@@ -13,25 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "PE/pyPE.hpp"
+#include "LIEF/PE/debug/Repro.hpp"
+#include "LIEF/Visitor.hpp"
 
-#include "LIEF/PE/CodeView.hpp"
+#include <spdlog/fmt/fmt.h>
+#include <spdlog/fmt/ranges.h>
 
-#include <string>
-#include <sstream>
-#include <nanobind/stl/string.h>
-#include <nanobind/stl/array.h>
+namespace LIEF {
+namespace PE {
 
-namespace LIEF::PE::py {
+Repro::Repro(const Repro&) = default;
+Repro& Repro::operator=(const Repro&) = default;
+Repro::~Repro() = default;
 
-template<>
-void create<CodeView>(nb::module_& m) {
-  nb::class_<CodeView, LIEF::Object>(m, "CodeView")
-    .def_prop_ro("cv_signature",
-        nb::overload_cast<>(&CodeView::cv_signature, nb::const_),
-        "Type of the code view (" RST_CLASS_REF(lief.PE.CODE_VIEW_SIGNATURES) ")"_doc)
-
-    LIEF_DEFAULT_STR(CodeView);
+void Repro::accept(Visitor& visitor) const {
+  visitor.visit(*this);
 }
 
+std::ostream& operator<<(std::ostream& os, const Repro& entry) {
+  os << fmt::format("Hash: {}", entry.hash());
+  return os;
 }
+
+} // namespace PE
+} // namespace LIEF

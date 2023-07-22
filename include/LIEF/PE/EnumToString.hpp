@@ -30,9 +30,7 @@ enum class ACCELERATOR_FLAGS : size_t;
 enum class ACCELERATOR_VK_CODES : size_t;
 enum class ALGORITHMS : uint32_t;
 enum class CODE_PAGES : size_t;
-enum class CODE_VIEW_SIGNATURES : size_t;
 enum class DATA_DIRECTORY : size_t;
-enum class DEBUG_TYPES : size_t;
 enum class DIALOG_BOX_STYLES : size_t;
 enum class DLL_CHARACTERISTICS : size_t;
 enum class EXTENDED_WINDOW_STYLES : size_t;
@@ -45,7 +43,6 @@ enum class HEADER_CHARACTERISTICS : size_t;
 enum class MACHINE_TYPES : size_t;
 enum class PE_SECTION_TYPES : uint8_t;
 enum class PE_TYPE : uint16_t;
-enum class POGO_SIGNATURES : size_t;
 enum class RELOCATIONS_AMD64 : size_t;
 enum class RELOCATIONS_ARM : size_t;
 enum class RELOCATIONS_BASE_TYPES : size_t;
@@ -81,10 +78,6 @@ LIEF_API const char* to_string(RELOCATIONS_BASE_TYPES e);
 LIEF_API const char* to_string(RELOCATIONS_I386 e);
 LIEF_API const char* to_string(RELOCATIONS_AMD64 e);
 LIEF_API const char* to_string(RELOCATIONS_ARM e);
-
-LIEF_API const char* to_string(DEBUG_TYPES e);
-LIEF_API const char* to_string(CODE_VIEW_SIGNATURES e);
-LIEF_API const char* to_string(POGO_SIGNATURES e);
 
 LIEF_API const char* to_string(RESOURCE_TYPES e);
 LIEF_API const char* to_string(RESOURCE_LANGS e);

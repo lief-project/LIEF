@@ -481,6 +481,7 @@ Pogo
 
 ----------
 
+
 Pogo Entry
 **************
 
@@ -488,6 +489,15 @@ Pogo Entry
   :project: lief
 
 ----------
+
+Repro
+*****
+
+.. doxygenclass:: LIEF::PE::Repro
+  :project: lief
+
+----------
+
 
 Load Configuration
 ******************

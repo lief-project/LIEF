@@ -17,12 +17,10 @@
 #define LIEF_PE_POGO_H
 #include <ostream>
 
-#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
-#include "LIEF/PE/PogoEntry.hpp"
-
-#include "LIEF/PE/enums.hpp"
+#include "LIEF/PE/debug/Debug.hpp"
+#include "LIEF/PE/debug/PogoEntry.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -30,7 +28,9 @@ namespace PE {
 class Builder;
 class Parser;
 
-class LIEF_API Pogo : public Object {
+//! This class represents a *Profile Guided Optimization* entry from the
+//! debug directory (``IMAGE_DEBUG_TYPE_POGO``).
+class LIEF_API Pogo : public Debug {
 
   friend class Builder;
   friend class Parser;
@@ -40,31 +40,60 @@ class LIEF_API Pogo : public Object {
   using it_entries       = ref_iterator<entries_t&>;
   using it_const_entries = const_ref_iterator<const entries_t&>;
 
-  Pogo();
-  Pogo(POGO_SIGNATURES signature, std::vector<PogoEntry> entries);
+  enum class SIGNATURES {
+    UNKNOWN = 0x0fffffff,
+    ZERO    = 0x00000000,
+    LCTG    = 0x4C544347, // LCTG
+    PGI     = 0x50474900, // PGI\0
+  };
 
+  Pogo();
+  Pogo(SIGNATURES sig) :
+    Debug{Debug::TYPES::POGO},
+    sig_{sig}
+  {}
+
+  Pogo(const details::pe_debug& debug, SIGNATURES sig);
   Pogo(const Pogo&);
   Pogo& operator=(const Pogo&);
 
-  virtual Pogo* clone() const;
+  std::unique_ptr<Debug> clone() const override {
+    return std::unique_ptr<Debug>(new Pogo(*this));
+  }
 
-  POGO_SIGNATURES  signature() const;
-  it_entries       entries();
-  it_const_entries entries() const;
+  SIGNATURES signature() const {
+    return sig_;
+  }
 
-  void signature(POGO_SIGNATURES signature);
+  //! An iterator over the different POGO elements
+  it_entries entries() {
+    return entries_;
+  }
+
+  it_const_entries entries() const {
+    return entries_;
+  }
+
+  void add(PogoEntry entry) {
+    entries_.push_back(std::move(entry));
+  }
+
+  static bool classof(const Debug* debug) {
+    return debug->type() == Debug::TYPES::POGO;
+  }
 
   void accept(Visitor& visitor) const override;
-
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Pogo& entry);
 
   ~Pogo() override;
 
   protected:
-  POGO_SIGNATURES signature_ = POGO_SIGNATURES::POGO_UNKNOWN;
+  SIGNATURES sig_ = SIGNATURES::UNKNOWN;
   entries_t entries_;
 };
+
+LIEF_API const char* to_string(Pogo::SIGNATURES e);
 
 } // Namespace PE
 } // Namespace LIEF

@@ -89,6 +89,7 @@ class LoadConfigurationV10;
 class LoadConfigurationV11;
 class Pogo;
 class PogoEntry;
+class Repro;
 
 //! Class which implements a visitor to compute
 //! a **deterministic** hash for LIEF PE objects
@@ -170,6 +171,7 @@ class LIEF_API Hash : public LIEF::Hash {
 
   void visit(const Pogo& pogo)        override;
   void visit(const PogoEntry& entry)  override;
+  void visit(const Repro& entry)      override;
 
   ~Hash() override;
 };

@@ -3,11 +3,8 @@ set(LIEF_PE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/Builder.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Builder.tcc"
   "${CMAKE_CURRENT_LIST_DIR}/CodeIntegrity.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/CodeView.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/CodeViewPDB.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Convert.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DataDirectory.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/Debug.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DelayImport.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DelayImportEntry.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/DosHeader.cpp"
@@ -20,8 +17,6 @@ set(LIEF_PE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/OptionalHeader.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Parser.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Parser.tcc"
-  "${CMAKE_CURRENT_LIST_DIR}/Pogo.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/PogoEntry.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/Relocation.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/RelocationEntry.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/ResourceData.cpp"
@@ -43,8 +38,6 @@ set(LIEF_PE_INCLUDE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/Binary.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/Builder.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/CodeIntegrity.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/CodeView.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/CodeViewPDB.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/DataDirectory.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/Debug.hpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/PE/DelayImport.hpp"
@@ -118,3 +111,4 @@ endif()
 include("${CMAKE_CURRENT_LIST_DIR}/signature/CMakeLists.txt")
 include("${CMAKE_CURRENT_LIST_DIR}/LoadConfigurations/CMakeLists.txt")
 include("${CMAKE_CURRENT_LIST_DIR}/resources/CMakeLists.txt")
+include("${CMAKE_CURRENT_LIST_DIR}/debug/CMakeLists.txt")

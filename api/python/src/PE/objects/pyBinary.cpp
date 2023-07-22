@@ -21,6 +21,7 @@
 #include "LIEF/PE/ResourceNode.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
 #include "LIEF/PE/TLS.hpp"
+#include "LIEF/PE/Debug.hpp"
 #include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/RichHeader.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
@@ -57,6 +58,7 @@ void create<Binary>(nb::module_& m) {
   init_ref_iterator<Binary::it_delay_imports>(bin, "it_delay_imports");
   init_ref_iterator<Binary::it_symbols>(bin, "it_symbols");
   init_ref_iterator<Binary::it_const_signatures>(bin, "it_const_signatures");
+  init_ref_iterator<Binary::it_debug_entries>(bin, "it_debug");
 
   bin
     .def(nb::init<PE_TYPE>(),

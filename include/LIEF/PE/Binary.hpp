@@ -23,7 +23,6 @@
 #include "LIEF/PE/DosHeader.hpp"
 #include "LIEF/PE/Import.hpp"
 #include "LIEF/PE/DelayImport.hpp"
-#include "LIEF/PE/Debug.hpp"
 #include "LIEF/PE/Symbol.hpp"
 #include "LIEF/PE/ResourcesManager.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
@@ -36,6 +35,7 @@ namespace LIEF {
 
 //! Namespace related to the LIEF's PE module
 namespace PE {
+class Debug;
 class Parser;
 class Builder;
 class ResourceNode;
@@ -100,13 +100,13 @@ class LIEF_API Binary : public LIEF::Binary {
   using it_const_delay_imports = const_ref_iterator<const delay_imports_t&>;
 
   //! Internal container for storing Debug information
-  using debug_entries_t = std::vector<Debug>;
+  using debug_entries_t = std::vector<std::unique_ptr<Debug>>;
 
   //! Iterator that outputs Debug&
-  using it_debug_entries = ref_iterator<debug_entries_t&>;
+  using it_debug_entries = ref_iterator<debug_entries_t&, Debug*>;
 
   //! Iterator that outputs const Debug&
-  using it_const_debug_entries = const_ref_iterator<const debug_entries_t&>;
+  using it_const_debug_entries = const_ref_iterator<const debug_entries_t&, const Debug*>;
 
   //! Internal container for storing COFF Symbols
   using symbols_t = std::vector<Symbol>;
@@ -241,15 +241,17 @@ class LIEF_API Binary : public LIEF::Binary {
   //! @see Relocation
   bool has_relocations() const;
 
-  //! Check if the current binary has debugs
-  bool has_debug() const;
+  //! Check if the current binary contains debug information
+  bool has_debug() const {
+    return !debug_.empty();
+  }
 
   //! Check if the current binary has a load configuration
   bool has_configuration() const;
 
   //! Check if the current binary is *reproducible build*, replacing timestamps by a compile hash.
   //!
-  //! @see Debug
+  //! @see Repro
   bool is_reproducible_build() const;
 
   //! Return an iterator over the Signature object(s) if the binary is signed
@@ -370,9 +372,9 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Check if the current binary has the given DATA_DIRECTORY
   bool has(DATA_DIRECTORY index) const;
 
-  //! Return the debug_entries_t object
-  debug_entries_t& debug();
-  const debug_entries_t& debug() const;
+  //! Return an iterator over the Debug entries
+  it_debug_entries debug();
+  const it_const_debug_entries debug() const;
 
   //! Retrun the LoadConfiguration object or a nullptr
   //! if the binary does not use the LoadConfiguration
@@ -568,9 +570,7 @@ class LIEF_API Binary : public LIEF::Binary {
   bool has_resources_ = false;
   bool has_exceptions_ = false;
   bool has_relocations_ = false;
-  bool has_debug_ = false;
   bool has_configuration_ = false;
-  bool is_reproducible_build_ = false;
 
   signatures_t signatures_;
   sections_t           sections_;

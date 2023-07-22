@@ -32,6 +32,7 @@
 #define LIEF_PE_FORCE_UNDEF
 #include "LIEF/PE/undef.h"
 #include "LIEF/PE/DataDirectory.hpp"
+#include "LIEF/PE/Debug.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/ExportEntry.hpp"
@@ -292,12 +293,12 @@ bool Binary::has_relocations() const {
   return has_relocations_;
 }
 
-bool Binary::has_debug() const {
-  return has_debug_;
-}
-
 bool Binary::is_reproducible_build() const {
-  return is_reproducible_build_;
+  auto it = std::find_if(debug_.begin(), debug_.end(),
+      [] (const std::unique_ptr<Debug>& dbg) {
+        return Repro::classof(dbg.get());
+      });
+  return it != debug_.end();
 }
 
 bool Binary::has_configuration() const {
@@ -893,12 +894,12 @@ Binary::it_const_data_directories Binary::data_directories() const {
 }
 
 
-Binary::debug_entries_t& Binary::debug() {
-  return const_cast<debug_entries_t&>(static_cast<const Binary*>(this)->debug());
+Binary::it_debug_entries Binary::debug() {
+  return debug_;
 }
 
 
-const Binary::debug_entries_t& Binary::debug() const {
+const Binary::it_const_debug_entries Binary::debug() const {
   return debug_;
 }
 

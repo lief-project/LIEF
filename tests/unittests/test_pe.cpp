@@ -15,9 +15,14 @@
  */
 #include <catch2/catch_session.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_string.hpp>
 
 #include "LIEF/hash.hpp"
 #include "LIEF/PE/Parser.hpp"
+#include "LIEF/PE/debug/Debug.hpp"
+#include "LIEF/PE/debug/CodeViewPDB.hpp"
+#include "LIEF/PE/debug/Pogo.hpp"
+#include "LIEF/PE/debug/Repro.hpp"
 #include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/ResourceData.hpp"
 #include "LIEF/PE/ResourceNode.hpp"
@@ -26,6 +31,8 @@
 #include "utils.hpp"
 
 using namespace LIEF;
+using namespace std::string_literals;
+using Catch::Matchers::Equals;
 
 TEST_CASE("lief.test.pe", "[lief][test][pe]") {
   SECTION("parser") {
@@ -64,6 +71,29 @@ TEST_CASE("lief.test.pe", "[lief][test][pe]") {
       auto clone = std::unique_ptr<ResourceNode>(data_node.clone());
       REQUIRE(*clone == data_node);
     }
+  }
+
+  SECTION("debug") {
+    PE::Debug Wrong(static_cast<PE::Debug::TYPES>(-1));
+    REQUIRE_THAT(to_string(Wrong.type()), Equals("UNKNOWN"));
+
+    REQUIRE(!PE::CodeViewPDB::classof(&Wrong));
+    REQUIRE(!PE::Pogo::classof(&Wrong));
+
+    PE::CodeView CV(PE::CodeView::SIGNATURES::CV_50);
+    REQUIRE(PE::CodeView::classof(&CV));
+    REQUIRE(!PE::CodeViewPDB::classof(&CV));
+    {
+      PE::Pogo Default;
+      REQUIRE(PE::Pogo::classof(&Default));
+
+      PE::Pogo PG(PE::Pogo::SIGNATURES::UNKNOWN);
+      REQUIRE(!PE::CodeViewPDB::classof(&PG));
+      REQUIRE(PE::Pogo::classof(&PG));
+    }
+
+    PE::Repro repro;
+    REQUIRE(PE::Repro::classof(&repro));
   }
 }
 

@@ -25,15 +25,16 @@
 #include "LIEF/PE/signature/Signature.hpp"
 #include "LIEF/PE/signature/SignatureParser.hpp"
 #include "LIEF/PE/Binary.hpp"
-#include "LIEF/PE/CodeViewPDB.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/ExportEntry.hpp"
 #include "LIEF/PE/Parser.hpp"
-#include "LIEF/PE/Pogo.hpp"
-#include "LIEF/PE/PogoEntry.hpp"
+#include "LIEF/PE/debug/CodeViewPDB.hpp"
+#include "LIEF/PE/debug/Pogo.hpp"
+#include "LIEF/PE/debug/Repro.hpp"
+#include "LIEF/PE/debug/PogoEntry.hpp"
 #include "LIEF/PE/Relocation.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"
 #include "LIEF/PE/ResourceData.hpp"
@@ -613,138 +614,170 @@ ok_error_t Parser::parse_symbols() {
 
 ok_error_t Parser::parse_debug() {
   LIEF_DEBUG("Parsing debug directory");
-  binary_->has_debug_ = true;
+
   DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::DEBUG);
   if (dir == nullptr) {
     return make_error_code(lief_errors::not_found);
   }
 
-  uint32_t debug_rva    = dir->RVA();
-  uint32_t debug_offset = binary_->rva_to_offset(debug_rva);
-  uint32_t debug_size   = dir->size();
+  const uint32_t debug_rva = dir->RVA();
+  uint32_t debug_off       = binary_->rva_to_offset(debug_rva);
+  const uint32_t debug_sz  = dir->size();
+  const uint32_t debug_end = debug_off + debug_sz;
 
-  for (size_t i = 0; (i + 1) * sizeof(details::pe_debug) <= debug_size; i++) {
-    auto res_debug_struct = stream_->peek<details::pe_debug>(debug_offset + i * sizeof(details::pe_debug));
-    if (!res_debug_struct) {
+  stream_->setpos(debug_off);
+  while (stream_->pos() < debug_end) {
+    auto res = stream_->read<details::pe_debug>();
+    if (!res) {
       break;
     }
-    binary_->debug_.push_back(*res_debug_struct);
-
-    DEBUG_TYPES type = binary_->debug().back().type();
-
+    const auto type = static_cast<Debug::TYPES>(res->Type);
+    LIEF_DEBUG("Type is: {}", to_string(type));
     switch (type) {
-      case DEBUG_TYPES::IMAGE_DEBUG_TYPE_CODEVIEW:
+      case Debug::TYPES::CODEVIEW:
         {
-          parse_debug_code_view(binary_->debug().back());
+          if (std::unique_ptr<Debug> cv = parse_code_view(*res)) {
+            binary_->debug_.push_back(std::move(cv));
+          } else {
+            LIEF_WARN("Can't parse PE CodeView");
+          }
           break;
         }
 
-      case DEBUG_TYPES::IMAGE_DEBUG_TYPE_POGO:
+      case Debug::TYPES::POGO:
         {
-          parse_debug_pogo(binary_->debug().back());
+          if (std::unique_ptr<Debug> pogo = parse_pogo(*res)) {
+            binary_->debug_.push_back(std::move(pogo));
+          } else {
+            LIEF_WARN("Can't parse PE POGO");
+          }
           break;
         }
 
-      case DEBUG_TYPES::IMAGE_DEBUG_TYPE_REPRO:
+      case Debug::TYPES::REPRO:
         {
-          binary_->is_reproducible_build_ = true;
+          if (std::unique_ptr<Debug> repro = parse_repro(*res)) {
+            binary_->debug_.push_back(std::move(repro));
+          } else {
+            LIEF_WARN("Can't parse PE Repro");
+          }
           break;
         }
 
       default:
-        {}
+        {
+          binary_->debug_.push_back(std::make_unique<Debug>(*res));
+          break;
+        }
     }
   }
   return ok();
 }
 
-ok_error_t Parser::parse_debug_code_view(Debug& debug_info) {
+std::unique_ptr<Debug> Parser::parse_code_view(const details::pe_debug& debug_info) {
   LIEF_DEBUG("Parsing Debug Code View");
+  const uint32_t debug_off = debug_info.PointerToRawData;
 
-  const uint32_t debug_off = debug_info.pointerto_rawdata();
-  auto res_sig = stream_->peek<uint32_t>(debug_off);
+  ScopedStream sscoped(*stream_, debug_off);
+
+  auto res_sig = sscoped->peek<uint32_t>(debug_off);
   if (!res_sig) {
-    return make_error_code(res_sig.error());
+    return nullptr;
   }
 
-  const auto signature = static_cast<CODE_VIEW_SIGNATURES>(*res_sig);
+  const auto signature = static_cast<CodeView::SIGNATURES>(*res_sig);
+  auto default_value = std::make_unique<CodeView>(debug_info, signature);
 
   switch (signature) {
-    case CODE_VIEW_SIGNATURES::CVS_PDB_70:
+    case CodeView::SIGNATURES::PDB_70:
       {
-        const auto pdb_s = stream_->peek<details::pe_pdb_70>(debug_off);
+        const auto pdb_s = sscoped->read<details::pe_pdb_70>();
         if (!pdb_s) {
-          break;
+          return default_value;
         }
 
-        CodeViewPDB::signature_t sig;
-        std::move(std::begin(pdb_s->signature), std::end(pdb_s->signature), std::begin(sig));
-
-        auto res_path = stream_->peek_string_at(debug_off + offsetof(details::pe_pdb_70, filename));
-        if (res_path) {
-          auto codeview = std::make_unique<CodeViewPDB>(CodeViewPDB::from_pdb70(sig, pdb_s->age, *res_path));
-          debug_info.code_view_ = std::move(codeview);
+        auto cv_pdb70 = std::make_unique<CodeViewPDB>(debug_info, *pdb_s);
+        if (auto fname = stream_->read_string()) {
+          cv_pdb70->filename(std::move(*fname));
         }
-        break;
+        return cv_pdb70;
       }
 
     default:
       {
-        LIEF_INFO("Signature {} is not implemented yet!", to_string(signature));
+        LIEF_INFO("CodeView signature '{}' is not implemented yet!",
+                  to_string(signature));
       }
   }
-  return ok();
+  return default_value;
 }
 
-ok_error_t Parser::parse_debug_pogo(Debug& debug_info) {
-  LIEF_DEBUG("Debug POGO");
+std::unique_ptr<Debug> Parser::parse_pogo(const details::pe_debug& debug_info) {
+  LIEF_DEBUG("Parsing POGO");
+  const uint32_t debug_size = debug_info.SizeOfData;
+  const uint32_t debug_off  = debug_info.PointerToRawData;
+  const uint32_t debug_end  = debug_off + debug_size;
 
-  const uint32_t debug_size = debug_info.sizeof_data();
-  const uint32_t debug_off  = debug_info.pointerto_rawdata();
+  ScopedStream sscoped(*stream_, debug_off);
 
-  auto res_sig = stream_->peek<uint32_t>(debug_off);
+  auto res_sig = sscoped->read<uint32_t>();
   if (!res_sig) {
-    return make_error_code(res_sig.error());
+    return nullptr;
   }
-  const auto signature = static_cast<POGO_SIGNATURES>(*res_sig);
+
+  const auto signature = static_cast<Pogo::SIGNATURES>(*res_sig);
+  auto pogo = std::make_unique<Pogo>(debug_info, signature);
 
   switch (signature) {
-    case POGO_SIGNATURES::POGO_LCTG:
+    case Pogo::SIGNATURES::ZERO: // zero-signature may contain valid entries
+    case Pogo::SIGNATURES::LCTG:
       {
-        auto pogo_object = std::make_unique<Pogo>();
-        pogo_object->signature_ = signature;
-
-        uint32_t offset = sizeof(uint32_t);
-        while (offset + sizeof(details::pe_pogo) < debug_size) {
-          auto res_pogo = stream_->peek<details::pe_pogo>(debug_off + offset);
-          auto res_name = stream_->peek_string_at(debug_off + offset + offsetof(details::pe_pogo, name));
-          if (!res_pogo || !res_name) {
+        while (sscoped->pos() < debug_end) {
+          auto raw = sscoped->read<details::pe_pogo>();
+          if (!raw) {
             break;
           }
 
-          PogoEntry entry;
+          PogoEntry entry{raw->start_rva, raw->size};
+          if (auto name = sscoped->read_string()) {
+            entry.name(std::move(*name));
+          }
 
-          entry.start_rva_ = res_pogo->start_rva;
-          entry.size_      = res_pogo->size;
-          entry.name_      = std::move(*res_name);
-
-          // pogo entries are 4-bytes aligned
-          offset += offsetof(details::pe_pogo, name) + entry.name_.length() + 1;
-          offset += ((4 - offset) % 4);
-
-          pogo_object->entries_.push_back(std::move(entry));
+          pogo->add(std::move(entry));
+          sscoped->align(4);
         }
 
-        debug_info.pogo_ = std::move(pogo_object);
-        break;
+        return pogo;
       }
 
+    case Pogo::SIGNATURES::UNKNOWN:
     default:
       {
         LIEF_INFO("PGO with signature 0x{:x} is not implemented yet!", *res_sig);
       }
   }
-  return ok();
+  return pogo;
+}
+
+std::unique_ptr<Debug> Parser::parse_repro(const details::pe_debug& debug_info) {
+  LIEF_DEBUG("Parsing Debug Repro");
+  const uint32_t debug_size = debug_info.SizeOfData;
+  const uint32_t debug_off  = debug_info.PointerToRawData;
+  const uint32_t debug_end  = debug_off + debug_size;
+  ScopedStream sscoped(*stream_, debug_off);
+
+  auto res_size = sscoped->read<uint32_t>();
+  if (!res_size) {
+    return nullptr;
+  }
+  LIEF_DEBUG("Size: 0x{:x}", *res_size);
+
+  std::vector<uint8_t> hash;
+  if (!sscoped->read_data(hash, *res_size)) {
+    LIEF_INFO("Can't read debug reproducible build hash");
+  }
+
+  return std::make_unique<Repro>(debug_info, std::move(hash));
 }
 
 

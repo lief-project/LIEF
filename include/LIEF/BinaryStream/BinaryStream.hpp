@@ -238,6 +238,10 @@ class ScopedStream {
     stream_.setpos(pos_);
   }
 
+  BinaryStream* operator->() {
+    return &stream_;
+  }
+
   private:
   uint64_t pos_ = 0;
   BinaryStream& stream_;

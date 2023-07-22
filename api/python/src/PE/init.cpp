@@ -17,19 +17,22 @@
 #include "PE/enums.hpp"
 #include "PE/pyPE.hpp"
 
+#include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/CodeIntegrity.hpp"
+#include "LIEF/PE/Export.hpp"
+#include "LIEF/PE/LoadConfigurations.hpp"
 #include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/ParserConfig.hpp"
-#include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"
-#include "LIEF/PE/CodeViewPDB.hpp"
-#include "LIEF/PE/TLS.hpp"
 #include "LIEF/PE/RichHeader.hpp"
-#include "LIEF/PE/Export.hpp"
-#include "LIEF/PE/PogoEntry.hpp"
-#include "LIEF/PE/CodeIntegrity.hpp"
+#include "LIEF/PE/TLS.hpp"
+#include "LIEF/PE/debug/CodeView.hpp"
+#include "LIEF/PE/debug/Repro.hpp"
+#include "LIEF/PE/debug/CodeViewPDB.hpp"
+#include "LIEF/PE/debug/Pogo.hpp"
+#include "LIEF/PE/debug/PogoEntry.hpp"
 #include "LIEF/PE/resources/LangCodeItem.hpp"
 #include "LIEF/PE/signature/attributes.hpp"
-#include "LIEF/PE/LoadConfigurations.hpp"
 #define CREATE(X,Y) create<X>(Y)
 
 namespace LIEF::PE::py {
@@ -65,6 +68,16 @@ void init_load_configs(nb::module_& m) {
   CREATE(LoadConfigurationV9, m);
   CREATE(LoadConfigurationV10, m);
   CREATE(LoadConfigurationV11, m);
+}
+
+
+void init_debug(nb::module_& m) {
+  CREATE(Debug, m);
+  CREATE(CodeView, m);
+  CREATE(CodeViewPDB, m);
+  CREATE(Repro, m);
+  CREATE(Pogo, m);
+  CREATE(PogoEntry, m);
 }
 
 void init_signature(nb::module_& m) {
@@ -103,16 +116,12 @@ void init_objects(nb::module_& m) {
   CREATE(ExportEntry, m);
   CREATE(TLS, m);
   CREATE(Symbol, m);
-  CREATE(Debug, m);
-  CREATE(CodeView, m);
-  CREATE(CodeViewPDB, m);
-  CREATE(Pogo, m);
-  CREATE(PogoEntry, m);
   CREATE(Import, m);
   CREATE(ImportEntry, m);
   CREATE(DelayImport, m);
   CREATE(DelayImportEntry, m);
   {
+    init_debug(m);
     init_resources(m);
     init_signature(m);
     init_load_configs(m);

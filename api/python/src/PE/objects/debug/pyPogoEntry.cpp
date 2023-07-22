@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 #include "PE/pyPE.hpp"
-#include "pyIterator.hpp"
+#include "pySafeString.hpp"
 
-#include "LIEF/PE/Pogo.hpp"
+#include "LIEF/PE/debug/PogoEntry.hpp"
 
 #include <string>
 #include <sstream>
@@ -25,24 +25,25 @@
 namespace LIEF::PE::py {
 
 template<>
-void create<Pogo>(nb::module_& m) {
-  using namespace LIEF::py;
-  nb::class_<Pogo, LIEF::Object> pogo(m, "Pogo");
-
-  init_ref_iterator<Pogo::it_entries>(pogo, "it_entries");
-
-  pogo
+void create<PogoEntry>(nb::module_& m) {
+  nb::class_<PogoEntry, Object>(m, "PogoEntry")
     .def(nb::init<>())
 
-    .def_prop_ro("entries",
-        nb::overload_cast<>(&Pogo::entries),
-        nb::rv_policy::reference_internal)
+    .def_prop_rw("name",
+        [] (const PogoEntry& obj) {
+          return LIEF::py::safe_string(obj.name());
+        },
+        nb::overload_cast<std::string>(&PogoEntry::name))
 
-    .def_prop_ro("signature",
-        nb::overload_cast<>(&Pogo::signature, nb::const_),
-        "Type of the pogo (" RST_CLASS_REF(lief.PE.POGO_SIGNATURES) ")"_doc)
+    .def_prop_rw("start_rva",
+        nb::overload_cast<>(&PogoEntry::start_rva, nb::const_),
+        nb::overload_cast<uint32_t>(&PogoEntry::start_rva))
 
-    LIEF_COPYABLE(Pogo)
-    LIEF_DEFAULT_STR(Pogo);
+    .def_prop_rw("size",
+        nb::overload_cast<>(&PogoEntry::size, nb::const_),
+        nb::overload_cast<uint32_t>(&PogoEntry::size))
+
+    LIEF_COPYABLE(PogoEntry)
+    LIEF_DEFAULT_STR(PogoEntry);
 }
 }

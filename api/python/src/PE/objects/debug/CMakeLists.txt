@@ -1,0 +1,10 @@
+set(LIEF_PYTHON_PE_DGB_SRC
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyDebug.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyCodeView.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyCodeViewPDB.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyPogo.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyPogoEntry.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyRepro.cpp"
+)
+
+target_sources(pyLIEF PRIVATE "${LIEF_PYTHON_PE_DGB_SRC}")

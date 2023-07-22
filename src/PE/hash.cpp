@@ -225,15 +225,11 @@ void Hash::visit(const Debug& debug) {
   process(debug.sizeof_data());
   process(debug.addressof_rawdata());
   process(debug.pointerto_rawdata());
-
-  if (debug.has_code_view()) {
-    debug.code_view()->accept(*this);
-  }
-
 }
 
 void Hash::visit(const CodeView& cv) {
-  process(cv.cv_signature());
+  visit(*cv.as<Debug>());
+  process(cv.signature());
 }
 
 void Hash::visit(const CodeViewPDB& cvpdb) {
@@ -637,6 +633,7 @@ void Hash::visit(const LoadConfigurationV11& config) {
 
 void Hash::visit(const Pogo& pogo) {
   Pogo::it_const_entries entries = pogo.entries();
+  visit(*pogo.as<Debug>());
   process(pogo.signature());
   process(std::begin(entries), std::end(entries));
 }
@@ -646,6 +643,11 @@ void Hash::visit(const PogoEntry& entry) {
   process(entry.name());
   process(entry.start_rva());
   process(entry.size());
+}
+
+void Hash::visit(const Repro& repro) {
+  visit(*repro.as<Debug>());
+  process(repro.hash());
 }
 
 } // namespace PE
