@@ -45,6 +45,9 @@ def is_linux() -> bool:
 def is_osx() -> bool:
     return sys.platform.startswith("darwin")
 
+def is_windows() -> bool:
+    return sys.platform.startswith("win")
+
 def is_x86_64() -> bool:
     machine = platform.machine().lower()
     return machine in ("x86_64", "amd64")

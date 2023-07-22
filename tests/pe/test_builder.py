@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import lief
 import os
-import sys
 import stat
 import subprocess
 import time
@@ -11,10 +10,10 @@ import zipfile
 
 from subprocess import Popen
 
-from utils import get_sample
+from utils import get_sample, is_windows
 
-if sys.platform.startswith("win"):
-    SEM_NOGPFAULTERRORBOX = 0x0002 # From MSDN
+if is_windows():
+    SEM_NOGPFAULTERRORBOX = 0x0002  # From MSDN
     ctypes.windll.kernel32.SetErrorMode(SEM_NOGPFAULTERRORBOX)
 
 def test_add_multiples_sections(tmp_path):
@@ -27,11 +26,11 @@ def test_add_multiples_sections(tmp_path):
     with zipfile.ZipFile(sample_file, 'r') as zip_ref:
         zip_ref.extractall(tmp_path)
 
-    notepadpp = lief.parse(sample.as_posix())
+    notepadpp = lief.PE.parse(sample.as_posix())
 
     # Add 20 sections to the binary
     for i in range(20):
-        section = lief.PE.Section(".section_{}".format(i))
+        section = lief.PE.Section(f".section_{i}")
         section.content = [i & 0xFF for i in range(0x200)]
         notepadpp.add_section(section)
 

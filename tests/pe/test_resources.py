@@ -12,7 +12,7 @@ import zipfile
 
 from subprocess import Popen
 
-from utils import get_sample, is_64bits_platform
+from utils import get_sample, is_64bits_platform, is_windows
 
 def test_change_icons(tmp_path):
     mfc_path = get_sample('PE/PE64_x86-64_binary_mfc-application.exe')
@@ -24,11 +24,11 @@ def test_change_icons(tmp_path):
     cmd_resources_manger = cmd.resources_manager
 
     if not mfc_resources_manger.has_icons:
-        print("'{}' has no manifest. Abort!".format(mfc.name))
+        print(f"'{mfc_path.name}' has no manifest. Abort!")
         sys.exit(1)
 
     if not cmd_resources_manger.has_icons:
-        print("'{}' has no manifest. Abort!".format(mfc.name))
+        print(f"'{mfc_path.name}' has no manifest. Abort!")
         sys.exit(1)
 
     mfc_icons = mfc_resources_manger.icons

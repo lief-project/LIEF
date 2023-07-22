@@ -7,14 +7,13 @@ import os
 import pytest
 import stat
 import subprocess
-import sys
 
 from subprocess import Popen
 
-from utils import get_sample
+from utils import get_sample, is_windows
 
-if sys.platform.startswith("win"):
-    SEM_NOGPFAULTERRORBOX = 0x0002 # From MSDN
+if is_windows():
+    SEM_NOGPFAULTERRORBOX = 0x0002  # From MSDN
     ctypes.windll.kernel32.SetErrorMode(SEM_NOGPFAULTERRORBOX)
 
 def test_code_view_pdb():
@@ -65,14 +64,18 @@ def test_remove_section(tmp_path):
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-    if sys.platform.startswith("win"):
-        subprocess_flags = 0x8000000 # win32con.CREATE_NO_WINDOW?
-        p = Popen([output.as_posix()], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, creationflags=subprocess_flags)
-
-        stdout, _ = p.communicate()
-        stdout = stdout.decode("utf8")
-        print(stdout)
-        assert "Hello World" in stdout
+    if is_windows():
+        popen_args = {
+            "shell": True,
+            "universal_newlines": True,
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.STDOUT,
+            "creationflags": 0x8000000  # win32con.CREATE_NO_WINDOW
+        }
+        with Popen([output.as_posix()], **popen_args) as proc:
+            stdout, _ = proc.communicate()
+            print(stdout)
+            assert "Hello World" in stdout
 
 def test_unwind():
 
