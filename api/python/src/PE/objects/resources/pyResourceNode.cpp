@@ -26,6 +26,7 @@
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/unique_ptr.h>
 
 namespace LIEF::PE::py {
 
@@ -94,6 +95,7 @@ void create<ResourceNode>(nb::module_& m) {
         &ResourceNode::depth,
         "Current depth of the entry in the resource tree"_doc)
 
+    LIEF_CLONABLE(ResourceNode)
     LIEF_DEFAULT_STR(ResourceNode);
 }
 }
