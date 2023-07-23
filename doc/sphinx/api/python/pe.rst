@@ -573,6 +573,15 @@ Pogo Entry
 
 ----------
 
+Repro
+*****
+
+.. autoclass:: lief.PE.Repro
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
 
 Load Configuration
 ******************
@@ -831,16 +840,6 @@ RELOCATIONS_BASE_TYPES
 
 ----------
 
-DEBUG_TYPES
-~~~~~~~~~~~
-
-.. autoclass:: lief.PE.DEBUG_TYPES
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-----------
-
 RESOURCE_TYPES
 ~~~~~~~~~~~~~~
 
@@ -978,24 +977,6 @@ GUARD_CF_FLAGS
 
 
 ----------
-
-CODE_VIEW_SIGNATURES
-~~~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.CODE_VIEW_SIGNATURES
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-
-POGO_SIGNATURES
-~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.POGO_SIGNATURES
-  :members:
-  :inherited-members:
-  :undoc-members:
-
 
 ALGORITHMS
 ~~~~~~~~~~
