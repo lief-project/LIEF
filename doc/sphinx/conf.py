@@ -241,6 +241,14 @@ def _on_process_signature(app, what: str, name: str, obj: Any,
 
     return signature, return_annotation
 
+def _autodoc_process_docstring(app, what, name, obj, options, lines: list[str]):
+    if len(lines) > 2 or len(lines) == 0:
+        return
+    line = lines[0]
+
+    if line.startswith("(self)"):
+        lines[:] = []
+    return
 
 def setup(app):
     app.add_css_file('css/custom.css')  # may also be an URL
@@ -251,6 +259,7 @@ def setup(app):
     app.add_role('github_user', github_user)
 
     app.connect('autodoc-process-signature', _on_process_signature)
+    app.connect('autodoc-process-docstring', _autodoc_process_docstring)
 
 linkcheck_request_headers = {
     "*": {
