@@ -59,11 +59,11 @@ class LIEF_API CodeViewPDB : public CodeView {
     age_ = age;
   }
 
-  void signature(signature_t sig) {
-    signature_ = std::move(sig);
+  void signature(const signature_t& sig) {
+    signature_ = sig;
   }
 
-  void filename(const std::string& filename) {
+  void filename(std::string filename) {
     filename_ = std::move(filename);
   }
 

@@ -193,7 +193,7 @@ std::string get_imphash_std(const Binary& binary) {
       if (!entries_string.empty()) {
         entries_string += ',';
       }
-      entries_string += name + '.' + funcname;
+      entries_string.append(name).append(".").append(funcname);
     }
     if (!first_entry) {
       lstr += ',';
@@ -236,9 +236,13 @@ std::string get_imphash_lief(const Binary& binary) {
     std::string entries_string;
     for (const ImportEntry& e : resolved.entries()) {
       if (e.is_ordinal()) {
-        entries_string += name_without_ext + ".#" + std::to_string(e.ordinal());
+        entries_string.append(name_without_ext)
+                      .append(".#")
+                      .append(std::to_string(e.ordinal()));
       } else {
-        entries_string += name_without_ext + "." + e.name();
+        entries_string.append(name_without_ext)
+                      .append(".")
+                      .append(e.name());
       }
     }
     import_list += to_lower(entries_string);

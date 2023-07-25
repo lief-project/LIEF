@@ -17,7 +17,6 @@
 #define LIEF_PE_RICH_ENTRY_H
 #include <cstdint>
 #include <ostream>
-#include <cstdint>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"

@@ -577,7 +577,7 @@ Section* Binary::add_section(const Section& section, PE_SECTION_TYPES type) {
 
 
   // Compute new section Virtual address
-  const uint64_t section_align = static_cast<uint64_t>(optional_header().section_alignment());
+  const auto section_align = static_cast<uint64_t>(optional_header().section_alignment());
   const uint64_t new_section_va = align(std::accumulate(
       std::begin(sections_), std::end(sections_), section_align,
       [] (uint64_t va, const std::unique_ptr<Section>& s) {
@@ -821,7 +821,7 @@ uint32_t Binary::predict_function_rva(const std::string& library, const std::str
 
 
   // We assume the the idata section will be the last section
-  const uint64_t section_align = static_cast<uint64_t>(optional_header().section_alignment());
+  const auto section_align = static_cast<uint64_t>(optional_header().section_alignment());
   const uint64_t next_virtual_address = align(std::accumulate(
       std::begin(sections_),
       std::end(sections_), section_align,

@@ -45,7 +45,7 @@ void create<CodeViewPDB>(nb::module_& m) {
 
     .def_prop_rw("signature",
         nb::overload_cast<>(&CodeViewPDB::signature, nb::const_),
-        nb::overload_cast<CodeViewPDB::signature_t>(&CodeViewPDB::signature))
+        nb::overload_cast<const CodeViewPDB::signature_t&>(&CodeViewPDB::signature))
 
     .def_prop_rw("age",
         nb::overload_cast<>(&CodeViewPDB::age, nb::const_),
@@ -53,7 +53,7 @@ void create<CodeViewPDB>(nb::module_& m) {
 
     .def_prop_rw("filename",
         nb::overload_cast<>(&CodeViewPDB::filename, nb::const_),
-        nb::overload_cast<const std::string&>(&CodeViewPDB::filename),
+        nb::overload_cast<std::string>(&CodeViewPDB::filename),
         "Original pdb path")
 
     LIEF_DEFAULT_STR(CodeViewPDB);

@@ -12,8 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_EXE_LAYOUT_H_
-#define LIEF_ELF_EXE_LAYOUT_H_
+#ifndef LIEF_ELF_EXE_LAYOUT_H
+#define LIEF_ELF_EXE_LAYOUT_H
 #include <LIEF/types.hpp>
 #include <LIEF/visibility.h>
 #include <LIEF/ELF/Binary.hpp>
@@ -194,12 +194,12 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
   template<class ELF_T>
   size_t dynamic_arraysize(DYNAMIC_TAGS tag) {
-    using uint__ = typename ELF_T::uint;
+    using uint = typename ELF_T::uint;
     DynamicEntry* entry = binary_->get(tag);
     if (entry == nullptr || !DynamicEntryArray::classof(entry)) {
       return 0;
     }
-    return entry->as<const DynamicEntryArray&>()->size() * sizeof(uint__);
+    return entry->as<const DynamicEntryArray&>()->size() * sizeof(uint);
   }
 
   template<class ELF_T>
@@ -280,7 +280,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     //
     // See also:
     // * p.9, https://www.akkadia.org/drepper/dsohowto.pdf
-    using uint__ = typename ELF_T::uint;
+    using uint = typename ELF_T::uint;
     if (!raw_gnu_hash_.empty()) {
       return raw_gnu_hash_.size();
     }
@@ -327,7 +327,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     vector_iostream raw_gnuhash;
     raw_gnuhash.reserve(
         4 * sizeof(uint32_t) +          // header
-        maskwords * sizeof(uint__) +    // bloom filters
+        maskwords * sizeof(uint) +    // bloom filters
         nb_buckets * sizeof(uint32_t) + // buckets
         (dynamic_symbols.size() - symndx) * sizeof(uint32_t)); // hash values
 
@@ -341,14 +341,14 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
     // Compute Bloom filters
     // =================================
-    std::vector<uint__> bloom_filters(maskwords, 0);
-    size_t C = sizeof(uint__) * 8; // 32 for ELF, 64 for ELF64
+    std::vector<uint> bloom_filters(maskwords, 0);
+    size_t C = sizeof(uint) * 8; // 32 for ELF, 64 for ELF64
 
     for (size_t i = symndx; i < dynamic_symbols.size(); ++i) {
       const uint32_t hash = dl_new_hash(dynamic_symbols[i].name().c_str());
       const size_t pos = (hash / C) & (gnu_hash->maskwords() - 1);
-      uint__ V = (static_cast<uint__>(1) << (hash % C)) |
-                 (static_cast<uint__>(1) << ((hash >> gnu_hash->shift2()) % C));
+      uint V = (static_cast<uint>(1) << (hash % C)) |
+               (static_cast<uint>(1) << ((hash >> gnu_hash->shift2()) % C));
       bloom_filters[pos] |= V;
     }
     for (size_t idx = 0; idx < bloom_filters.size(); ++idx) {
@@ -559,7 +559,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       interp_segment.type(SEGMENT_TYPES::PT_INTERP);
       interp_segment.add(ELF_SEGMENT_FLAGS::PF_R);
       interp_segment.content(std::vector<uint8_t>(interp_size_));
-      if (auto interp = binary_->add(interp_segment)) {
+      if (Segment* interp = binary_->add(interp_segment)) {
         LIEF_DEBUG("Interp Segment: 0x{:x}:0x{:x}", interp->virtual_address(), interp->virtual_size());
       } else {
         LIEF_ERR("Can't add a new PT_INTERP");
@@ -685,7 +685,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
       Section* section = nullptr;
       Segment::it_sections sections = pt_interp->sections();
-      if (sections.size() > 0) {
+      if (!sections.empty()) {
         section = &sections[0];
       }
       pt_interp->virtual_address(va_r_base);
@@ -1042,7 +1042,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
         LIEF_ERR("DT_INIT_ARRAY not found");
         return make_error_code(lief_errors::file_format_error);
       }
-      DynamicEntryArray* dt_init_array = raw_dt_init->as<DynamicEntryArray>();
+      auto* dt_init_array = raw_dt_init->as<DynamicEntryArray>();
       DynamicEntry* dt_init_arraysz = binary_->get(DYNAMIC_TAGS::DT_INIT_ARRAYSZ);
 
       if (dt_init_arraysz == nullptr) {
@@ -1098,7 +1098,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
         LIEF_ERR("DT_PREINIT_ARRAY not found");
         return make_error_code(lief_errors::file_format_error);
       }
-      DynamicEntryArray* dt_preinit_array = raw_dt_preinit->as<DynamicEntryArray>();
+      auto* dt_preinit_array = raw_dt_preinit->as<DynamicEntryArray>();
       DynamicEntry* dt_preinit_arraysz = binary_->get(DYNAMIC_TAGS::DT_PREINIT_ARRAYSZ);
 
       if (dt_preinit_array == nullptr) {
@@ -1151,7 +1151,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
         LIEF_ERR("DT_FINI_ARRAY not found");
         return make_error_code(lief_errors::file_format_error);
       }
-      DynamicEntryArray* dt_fini_array = raw_dt_fini->as<DynamicEntryArray>();
+      auto* dt_fini_array = raw_dt_fini->as<DynamicEntryArray>();
       DynamicEntry* dt_fini_arraysz = binary_->get(DYNAMIC_TAGS::DT_FINI_ARRAYSZ);
 
       if (dt_fini_arraysz == nullptr) {

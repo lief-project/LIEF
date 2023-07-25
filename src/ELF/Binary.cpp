@@ -1144,21 +1144,16 @@ bool Binary::is_pie() const {
 
 
 bool Binary::has_nx() const {
-  const auto it_stack = std::find_if(std::begin(segments_), std::end(segments_),
-                                     [] (const std::unique_ptr<Segment>& segment) {
-                                       return segment->type() == SEGMENT_TYPES::PT_GNU_STACK;
-                                     });
-  if (it_stack == std::end(segments_)) {
-    if (header().machine_type() == ARCH::EM_PPC64) {
-      // The PPC64 ELF ABI has a non-executable stack by default.
-      return true;
-    } else {
-      return false;
-    }
+  if (const Segment* gnu_stack = get(SEGMENT_TYPES::PT_GNU_STACK)) {
+    return gnu_stack->has(ELF_SEGMENT_FLAGS::PF_X);
   }
 
-  return !(*it_stack)->has(ELF_SEGMENT_FLAGS::PF_X);
+  if (header().machine_type() == ARCH::EM_PPC64) {
+    // The PPC64 ELF ABI has a non-executable stack by default.
+    return true;
+  }
 
+  return false;
 }
 
 Segment* Binary::add(const Segment& segment, uint64_t base) {

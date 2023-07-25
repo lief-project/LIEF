@@ -33,6 +33,8 @@ class LIEF_API PogoEntry : public Object {
 
   public:
   PogoEntry();
+  PogoEntry(PogoEntry&& other);
+  PogoEntry& operator=(PogoEntry&& other);
   PogoEntry(const PogoEntry&);
   PogoEntry(uint32_t start_rva, uint32_t size, std::string name) :
     start_rva_{start_rva},

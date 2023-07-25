@@ -514,7 +514,7 @@ void JsonVisitor::visit(const ResourceNode& resource_node) {
     node_["name"] = u16tou8(resource_node.name());
   }
 
-  if (resource_node.childs().size() > 0) {
+  if (!resource_node.childs().empty()) {
     std::vector<json> childs;
     for (const ResourceNode& rsrc : resource_node.childs()) {
       JsonVisitor visitor;
@@ -542,7 +542,7 @@ void JsonVisitor::visit(const ResourceDirectory& resource_directory) {
   node_["numberof_name_entries"] = resource_directory.numberof_name_entries();
   node_["numberof_id_entries"]   = resource_directory.numberof_id_entries();
 
-  if (resource_directory.childs().size() > 0) {
+  if (!resource_directory.childs().empty()) {
     std::vector<json> childs;
     for (const ResourceNode& rsrc : resource_directory.childs()) {
       JsonVisitor visitor;

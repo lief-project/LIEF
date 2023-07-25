@@ -242,6 +242,14 @@ class ScopedStream {
     return &stream_;
   }
 
+  BinaryStream& operator*() {
+    return stream_;
+  }
+
+  const BinaryStream& operator*() const {
+    return stream_;
+  }
+
   private:
   uint64_t pos_ = 0;
   BinaryStream& stream_;

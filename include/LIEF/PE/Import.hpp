@@ -53,8 +53,9 @@ class LIEF_API Import : public Object {
   ~Import() override;
 
   Import(const Import& other);
-  Import& operator=(Import other);
-  void swap(Import& other);
+  Import(Import&& other);
+  Import& operator=(Import&& other);
+  Import& operator=(const Import& other);
 
   //! The index of the first forwarder reference
   uint32_t forwarder_chain() const;

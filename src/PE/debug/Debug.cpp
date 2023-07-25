@@ -39,7 +39,7 @@ Debug::Debug(const details::pe_debug& debug_s) :
 {}
 
 std::unique_ptr<Debug> Debug::clone() const {
-  return std::unique_ptr<Debug>(new Debug(*this));
+  return std::make_unique<Debug>(*this);
 }
 
 void Debug::accept(Visitor& visitor) const {

@@ -99,10 +99,10 @@ size_t Layout::section_shstr_size() {
 
   if (!binary_->static_symbols_.empty()) {
     if (binary_->get(ELF_SECTION_TYPES::SHT_SYMTAB) == nullptr) {
-      sec_names.push_back(".symtab");
+      sec_names.emplace_back(".symtab");
     }
     if (binary_->get(ELF_SECTION_TYPES::SHT_SYMTAB) == nullptr) {
-      sec_names.push_back(".strtab");
+      sec_names.emplace_back(".strtab");
     }
   }
 

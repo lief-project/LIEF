@@ -12,8 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_OBJECT_FILE_LAYOUT_H_
-#define LIEF_ELF_OBJECT_FILE_LAYOUT_H_
+#ifndef LIEF_ELF_OBJECT_FILE_LAYOUT_H
+#define LIEF_ELF_OBJECT_FILE_LAYOUT_H
+
 #include <LIEF/types.hpp>
 #include <LIEF/visibility.h>
 #include <LIEF/ELF/Binary.hpp>

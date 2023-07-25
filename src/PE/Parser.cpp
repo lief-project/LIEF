@@ -28,7 +28,6 @@
 #include "LIEF/PE/DataDirectory.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/Export.hpp"
-#include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/ExportEntry.hpp"
 #include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/debug/CodeViewPDB.hpp"
@@ -57,11 +56,6 @@
 
 namespace LIEF {
 namespace PE {
-
-constexpr size_t Parser::MAX_PADDING_SIZE;
-constexpr size_t Parser::MAX_TLS_CALLBACKS;
-constexpr size_t Parser::MAX_DLL_NAME_SIZE;
-constexpr size_t Parser::MAX_DATA_SIZE;
 
 Parser::~Parser() = default;
 Parser::Parser() = default;
@@ -130,10 +124,10 @@ ok_error_t Parser::parse_rich_header() {
   LIEF_DEBUG("Parsing rich header");
   span<const uint8_t> dos_stub = binary_->dos_stub();
 
-  SpanStream stream(dos_stub);
+  const SpanStream stream(dos_stub);
 
-  const auto it_rich = std::search(std::begin(dos_stub), std::end(dos_stub),
-                                   std::begin(details::Rich_Magic), std::end(details::Rich_Magic));
+  const auto* it_rich = std::search(std::begin(dos_stub), std::end(dos_stub),
+                                    std::begin(details::Rich_Magic), std::end(details::Rich_Magic));
 
   if (it_rich == std::end(dos_stub)) {
     LIEF_DEBUG("Rich header not found!");
@@ -188,8 +182,8 @@ ok_error_t Parser::parse_rich_header() {
       break;
     }
 
-    uint16_t build_number = value & 0xFFFF;
-    uint16_t id           = (value >> 16) & 0xFFFF;
+    const uint16_t build_number = value & 0xFFFF;
+    const uint16_t id           = (value >> 16) & 0xFFFF;
 
     LIEF_DEBUG("ID:           0x{:04x}", id);
     LIEF_DEBUG("Build Number: 0x{:04x}", build_number);
@@ -231,7 +225,7 @@ ok_error_t Parser::parse_sections() {
     }
     auto section = std::make_unique<Section>(raw_sec);
     uint32_t size_to_read = 0;
-    uint32_t offset = raw_sec.PointerToRawData;
+    const uint32_t offset = raw_sec.PointerToRawData;
     if (offset > 0) {
       first_section_offset = std::min(first_section_offset, offset);
     }
@@ -241,7 +235,7 @@ ok_error_t Parser::parse_sections() {
                    raw_sec.SizeOfRawData;
 
     if ((offset + size_to_read) > stream_->size()) {
-      uint32_t delta = (offset + size_to_read) - stream_->size();
+      const uint32_t delta = (offset + size_to_read) - stream_->size();
       size_to_read = size_to_read - delta;
     }
 
@@ -1090,17 +1084,17 @@ result<uint32_t> Parser::checksum() {
    * (re)compute the checksum specified in OptionalHeader::CheckSum
    */
   ScopedStream chk_stream(*stream_, 0);
-  const uint32_t padding = stream_->size() % sizeof(uint16_t);
+  const uint32_t padding = chk_stream->size() % sizeof(uint16_t);
 
   LIEF_DEBUG("padding: {}", padding);
 
   uint32_t partial_sum = 0;
-  const uint64_t file_length = stream_->size();
+  const uint64_t file_length = chk_stream->size();
   uint64_t nb_chunk = (file_length + 1) >> 1; // Number of uint16_t chunks
 
-  while (*stream_) {
+  while (*chk_stream) {
     uint16_t chunk = 0;
-    if (auto res = stream_->read<uint16_t>()) {
+    if (auto res = chk_stream->read<uint16_t>()) {
       chunk = *res;
     } else {
       break;
@@ -1111,21 +1105,21 @@ result<uint32_t> Parser::checksum() {
   }
 
   if (nb_chunk > 0) {
-    if (auto res = stream_->read<uint8_t>()) {
+    if (auto res = chk_stream->read<uint8_t>()) {
       partial_sum += *res;
       partial_sum = (partial_sum >> 16) + (partial_sum & 0xffff);
     }
   }
 
   auto partial_sum_res = static_cast<uint16_t>(((partial_sum >> 16) + partial_sum) & 0xffff);
-  uint32_t binary_checksum = binary_->optional_header().checksum();
-  uint32_t adjust_sum_lsb = binary_checksum & 0xFFFF;
-  uint32_t adjust_sum_msb = binary_checksum >> 16;
+  const uint32_t binary_checksum = binary_->optional_header().checksum();
+  const uint32_t adjust_sum_lsb = binary_checksum & 0xFFFF;
+  const uint32_t adjust_sum_msb = binary_checksum >> 16;
 
-  partial_sum_res -= (partial_sum_res < adjust_sum_lsb);
+  partial_sum_res -= static_cast<int>(partial_sum_res < adjust_sum_lsb);
   partial_sum_res -= adjust_sum_lsb;
 
-  partial_sum_res -= (partial_sum_res < adjust_sum_msb);
+  partial_sum_res -= static_cast<int>(partial_sum_res < adjust_sum_msb);
   partial_sum_res -= adjust_sum_msb;
 
   return static_cast<uint32_t>(partial_sum_res) + file_length;

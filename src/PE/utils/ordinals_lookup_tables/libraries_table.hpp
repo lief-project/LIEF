@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_UTILS_LIBRARY_TABLE_H_
-#define LIEF_PE_UTILS_LIBRARY_TABLE_H_
-
-#include <unordered_map>
+#ifndef LIEF_PE_UTILS_LIBRARY_TABLE_H
+#define LIEF_PE_UTILS_LIBRARY_TABLE_H
 
 #include "kernel32_dll_lookup.hpp"
 #include "ntdll_dll_lookup.hpp"

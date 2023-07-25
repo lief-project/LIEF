@@ -87,7 +87,7 @@ std::vector<uint8_t> RichHeader::hash(ALGORITHMS algo, uint32_t xor_key) const {
     {ALGORITHMS::SHA_512, hashstream::HASH::SHA512},
   };
 
-  auto it_hash = HMAP.find(algo);
+  const auto it_hash = HMAP.find(algo);
   if (it_hash == std::end(HMAP)) {
     LIEF_WARN("Unsupported hash algorithm: {}", to_string(algo));
     return {};

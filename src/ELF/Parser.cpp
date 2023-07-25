@@ -19,7 +19,6 @@
 
 #include "logging.hpp"
 
-
 #include "LIEF/BinaryStream/VectorStream.hpp"
 
 #include "LIEF/ELF/utils.hpp"
@@ -39,21 +38,6 @@
 
 namespace LIEF {
 namespace ELF {
-
-constexpr uint32_t Parser::DELTA_NB_SYMBOLS;
-constexpr uint32_t Parser::MAX_NOTE_DESCRIPTION;
-constexpr uint32_t Parser::NB_MAX_BUCKETS;
-constexpr uint32_t Parser::NB_MAX_CHAINS;
-constexpr uint32_t Parser::NB_MAX_DYNAMIC_ENTRIES;
-constexpr uint32_t Parser::NB_MAX_MASKWORD;
-constexpr uint32_t Parser::NB_MAX_RELOCATIONS;
-constexpr uint32_t Parser::NB_MAX_SEGMENTS;
-constexpr uint32_t Parser::NB_MAX_SYMBOLS;
-constexpr uint32_t Parser::MAX_SEGMENT_SIZE;
-constexpr uint32_t Parser::MAX_SECTION_SIZE;
-
-constexpr const char AndroidNote::NAME[];
-
 
 Parser::~Parser() = default;
 Parser::Parser()  = default;

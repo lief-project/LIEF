@@ -477,10 +477,10 @@ std::ostream& operator<<(std::ostream& os, const ELF::Segment& segment) {
      << std::setw(10) << segment.alignment()
      << std::endl;
 
-  if (segment.sections().size() > 0) {
+  if (!segment.sections().empty()) {
     os << "Sections in this segment :" << std::endl;
     for (const Section& section : segment.sections()) {
-      os << "\t" << section.name() << std::endl;
+      os << "  " << section.name() << std::endl;
     }
   }
   return os;

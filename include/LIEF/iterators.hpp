@@ -60,8 +60,7 @@ class ref_iterator {
   using pointer_t      = typename ref_iterator::pointer;
 
   ref_iterator(T container) :
-    container_{std::forward<T>(container)},
-    distance_{0}
+    container_{std::forward<T>(container)}
   {
     it_ = std::begin(container_);
   }
@@ -280,10 +279,8 @@ class filter_iterator {
   using filter_t  = std::function<bool (const typename DT::value_type&)>;
 
   filter_iterator(T container, filter_t filter) :
-    size_c_{0},
     container_{std::forward<T>(container)},
-    filters_{},
-    distance_{0}
+    filters_{}
   {
 
     it_ = std::begin(container_);
@@ -299,10 +296,8 @@ class filter_iterator {
   }
 
   filter_iterator(T container, const std::vector<filter_t>& filters) :
-    size_c_{0},
     container_{std::forward<T>(container)},
-    filters_{filters},
-    distance_{0}
+    filters_{filters}
   {
 
     it_ = std::begin(container_);
@@ -315,16 +310,13 @@ class filter_iterator {
   }
 
   filter_iterator(T container) :
-    size_c_{0},
     container_{std::forward<T>(container)},
-    filters_{},
-    distance_{0}
+    filters_{}
   {
     it_ = std::begin(container_);
   }
 
   filter_iterator(const filter_iterator& copy) :
-    size_c_{0},
     container_{copy.container_},
     it_{std::begin(container_)},
     filters_{copy.filters_},
@@ -429,7 +421,7 @@ class filter_iterator {
   }
 
   size_t size() const {
-    if (filters_.size() == 0) {
+    if (filters_.empty()) {
       return container_.size();
     }
 
@@ -476,11 +468,11 @@ class filter_iterator {
   }
 
 
-  mutable size_t size_c_;
+  mutable size_t size_c_ = 0;
   T container_;
   ITERATOR_T it_;
   std::vector<filter_t> filters_;
-  typename filter_iterator::difference_type distance_;
+  typename filter_iterator::difference_type distance_ = 0;
 };
 
 //! Iterator which return a const ref on container's values given predicates
