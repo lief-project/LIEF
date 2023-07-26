@@ -350,7 +350,6 @@ ok_error_t Parser::parse_relocations() {
     res_relocation_headers = stream_->peek<details::pe_base_relocation_block>(current_offset);
   }
 
-  binary_->has_relocations_ = true;
   return ok();
 }
 
@@ -373,8 +372,7 @@ ok_error_t Parser::parse_resources() {
     return make_error_code(lief_errors::read_error);
   }
 
-  binary_->resources_     = parse_resource_node(*res_directory_table, offset, offset);
-  binary_->has_resources_ = binary_->resources_ != nullptr;
+  binary_->resources_ = parse_resource_node(*res_directory_table, offset, offset);
   return ok();
 }
 

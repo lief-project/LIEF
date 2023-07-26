@@ -345,19 +345,19 @@ class PE32 {
     using load_configuration_v10_t = load_configuration_v10<uint32_t>;
     using load_configuration_v11_t = load_configuration_v11<uint32_t>;
 
-    static_assert(sizeof(load_configuration_t)     == 0x40, "");
-    static_assert(sizeof(load_configuration_v0_t)  == 0x48, "");
-    static_assert(sizeof(load_configuration_v1_t)  == 0x5c, "");
-    static_assert(sizeof(load_configuration_v2_t)  == 0x68, "");
-    static_assert(sizeof(load_configuration_v3_t)  == 0x78, "");
-    static_assert(sizeof(load_configuration_v4_t)  == 0x80, "");
-    static_assert(sizeof(load_configuration_v5_t)  == 0x90, "");
-    static_assert(sizeof(load_configuration_v6_t)  == 0x98, "");
-    static_assert(sizeof(load_configuration_v7_t)  == 0xA0, "");
-    static_assert(sizeof(load_configuration_v8_t)  == 0xA4, "");
-    static_assert(sizeof(load_configuration_v9_t)  == 0xAC, "");
-    static_assert(sizeof(load_configuration_v10_t) == 0xB8, "");
-    static_assert(sizeof(load_configuration_v11_t) == 0xBC, "");
+    static_assert(sizeof(load_configuration_t)     == 0x40);
+    static_assert(sizeof(load_configuration_v0_t)  == 0x48);
+    static_assert(sizeof(load_configuration_v1_t)  == 0x5c);
+    static_assert(sizeof(load_configuration_v2_t)  == 0x68);
+    static_assert(sizeof(load_configuration_v3_t)  == 0x78);
+    static_assert(sizeof(load_configuration_v4_t)  == 0x80);
+    static_assert(sizeof(load_configuration_v5_t)  == 0x90);
+    static_assert(sizeof(load_configuration_v6_t)  == 0x98);
+    static_assert(sizeof(load_configuration_v7_t)  == 0xA0);
+    static_assert(sizeof(load_configuration_v8_t)  == 0xA4);
+    static_assert(sizeof(load_configuration_v9_t)  == 0xAC);
+    static_assert(sizeof(load_configuration_v10_t) == 0xB8);
+    static_assert(sizeof(load_configuration_v11_t) == 0xBC);
  };
 
 

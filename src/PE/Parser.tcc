@@ -378,7 +378,6 @@ ok_error_t Parser::parse_import_table() {
     binary_->imports_.push_back(std::move(import));
   }
 
-  binary_->has_imports_ = !binary_->imports_.empty();
   return ok();
 }
 
@@ -796,7 +795,6 @@ ok_error_t Parser::parse_load_config() {
       }
   }
 
-  binary_->has_configuration_  = ld_conf != nullptr;
   binary_->load_configuration_ = std::move(ld_conf);
   return ok();
 }

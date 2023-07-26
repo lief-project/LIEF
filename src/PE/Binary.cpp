@@ -62,10 +62,6 @@ Binary::Binary() {
   format_ = LIEF::EXE_FORMATS::FORMAT_PE;
 }
 
-PE_TYPE Binary::type() const {
-  return type_;
-}
-
 Binary::Binary(PE_TYPE type) :
   type_{type}
 {
@@ -152,10 +148,6 @@ uint64_t Binary::va_to_offset(uint64_t VA) {
   return rva_to_offset(rva);
 }
 
-uint64_t Binary::imagebase() const {
-  return optional_header().imagebase();
-}
-
 result<uint64_t> Binary::offset_to_virtual_address(uint64_t offset, uint64_t slide) const {
   const auto it_section = std::find_if(std::begin(sections_), std::end(sections_),
       [offset] (const std::unique_ptr<Section>& section) {
@@ -238,15 +230,12 @@ const Section* Binary::section_from_rva(uint64_t virtual_address) const {
     return nullptr;
   }
 
-
   return it_section->get();
 }
 
 Section* Binary::section_from_rva(uint64_t virtual_address) {
   return const_cast<Section*>(static_cast<const Binary*>(this)->section_from_rva(virtual_address));
 }
-
-
 
 DataDirectory* Binary::data_directory(DATA_DIRECTORY index) {
   return const_cast<DataDirectory*>(static_cast<const Binary*>(this)->data_directory(index));
@@ -260,60 +249,16 @@ const DataDirectory* Binary::data_directory(DATA_DIRECTORY index) const {
   return nullptr;
 }
 
-
-bool Binary::has(DATA_DIRECTORY index) const {
-  const auto it = std::find_if(std::begin(data_directories_), std::end(data_directories_),
-                               [index] (const std::unique_ptr<DataDirectory>& d) {
-                                  return d->type() == index;
-                               });
-  return it != std::end(data_directories_);
-}
-
-bool Binary::has_imports() const {
-  return has_imports_;
-}
-
-bool Binary::has_signatures() const {
-  return !signatures_.empty();
-}
-
-bool Binary::has_exports() const {
-  return has_exports_;
-}
-
-bool Binary::has_resources() const {
-  return has_resources_ && resources_ != nullptr;
-}
-
 bool Binary::has_exceptions() const {
   return has(DATA_DIRECTORY::EXCEPTION_TABLE);
 }
 
-bool Binary::has_relocations() const {
-  return has_relocations_;
-}
-
 bool Binary::is_reproducible_build() const {
-  auto it = std::find_if(debug_.begin(), debug_.end(),
+  const auto it = std::find_if(debug_.begin(), debug_.end(),
       [] (const std::unique_ptr<Debug>& dbg) {
         return Repro::classof(dbg.get());
       });
   return it != debug_.end();
-}
-
-bool Binary::has_configuration() const {
-  return has_configuration_ && load_configuration_ != nullptr;
-}
-
-const LoadConfiguration* Binary::load_configuration() const {
-  if (!has_configuration()) {
-    return nullptr;
-  }
-  return load_configuration_.get();
-}
-
-LoadConfiguration* Binary::load_configuration() {
-  return const_cast<LoadConfiguration*>(static_cast<const Binary*>(this)->load_configuration());
 }
 
 //
@@ -346,17 +291,6 @@ LIEF::Binary::symbols_t Binary::get_abstract_symbols() {
 }
 
 
-// Sections
-// ========
-
-Binary::it_sections Binary::sections() {
-  return sections_;
-}
-
-
-Binary::it_const_sections Binary::sections() const {
-  return sections_;
-}
 
 LIEF::Binary::sections_t Binary::get_abstract_sections() {
   LIEF::Binary::sections_t secs;
@@ -402,55 +336,13 @@ Section* Binary::import_section() {
   return const_cast<Section*>(static_cast<const Binary*>(this)->import_section());
 }
 
-// Headers
-// =======
-
-// Dos Header
-// ----------
-DosHeader& Binary::dos_header() {
-  return const_cast<DosHeader&>(static_cast<const Binary*>(this)->dos_header());
-}
-
-
-const DosHeader& Binary::dos_header() const {
-  return dos_header_;
-}
-
-
-// Standard header
-// ---------------
-Header& Binary::header() {
-  return const_cast<Header&>(static_cast<const Binary*>(this)->header());
-}
-
-
-const Header& Binary::header() const {
-  return header_;
-}
-
-// Optional Header
-// ---------------
-const OptionalHeader& Binary::optional_header() const {
-  return optional_header_;
-}
-
-
-OptionalHeader& Binary::optional_header() {
-  return const_cast<OptionalHeader&>(static_cast<const Binary*>(this)->optional_header());
-}
-
-
-
 
 uint64_t Binary::virtual_size() const {
   uint64_t size = 0;
   size += dos_header().addressof_new_exeheader();
   size += sizeof(details::pe_header);
-  if (type_ == PE_TYPE::PE32) {
-    size += sizeof(details::pe32_optional_header);
-  } else {
-    size += sizeof(details::pe64_optional_header);
-  }
+  size += (type_ == PE_TYPE::PE32) ? sizeof(details::pe32_optional_header) :
+                                     sizeof(details::pe64_optional_header);
   for (const std::unique_ptr<Section>& section : sections_) {
     size = std::max(size, section->virtual_address() + section->virtual_size());
   }
@@ -673,32 +565,14 @@ Section* Binary::add_section(const Section& section, PE_SECTION_TYPES type) {
 }
 
 
-//////////////////////////////////
-//
-// Methods to manage relocations
-//
-//////////////////////////////////
-
-Binary::it_relocations Binary::relocations() {
-  return relocations_;
-}
-
-
-Binary::it_const_relocations Binary::relocations() const {
-  return relocations_;
-}
-
-
 Relocation& Binary::add_relocation(const Relocation& relocation) {
   auto newone = std::make_unique<Relocation>(relocation);
   relocations_.push_back(std::move(newone));
-  this->has_relocations_ = !this->relocations_.empty();
   return *relocations_.back();
 }
 
 void Binary::remove_all_relocations() {
   relocations_.clear();
-  this->has_relocations_ = !this->relocations_.empty();
 }
 
 
@@ -710,17 +584,6 @@ LIEF::Binary::relocations_t Binary::get_abstract_relocations() {
     }
   }
   return abstract_relocs;
-}
-
-// Imports
-// =======
-
-Binary::it_imports Binary::imports() {
-  return imports_;
-}
-
-Binary::it_const_imports Binary::imports() const {
-  return imports_;
 }
 
 ImportEntry* Binary::add_import_function(const std::string& library, const std::string& function) {
@@ -740,9 +603,6 @@ ImportEntry* Binary::add_import_function(const std::string& library, const std::
 
 Import& Binary::add_library(const std::string& name) {
   imports_.emplace_back(name);
-  if (!imports_.empty()) {
-    has_imports_ = true;
-  }
   return imports_.back();
 }
 
@@ -832,12 +692,6 @@ uint32_t Binary::predict_function_rva(const std::string& library, const std::str
   return next_virtual_address + address;
 }
 
-
-bool Binary::has_import(const std::string& import_name) const {
-  return get_import(import_name) != nullptr;
-}
-
-
 Import* Binary::get_import(const std::string& import_name) {
   return const_cast<Import*>(static_cast<const Binary*>(this)->get_import(import_name));
 }
@@ -855,63 +709,14 @@ const Import* Binary::get_import(const std::string& import_name) const {
   return &*it_import;
 }
 
-
-/////////////////////////////////////
-//
-// Methods to manage Resources
-//
-/////////////////////////////////////
-
 void Binary::set_resources(const ResourceDirectory& resource) {
   resources_ = std::make_unique<ResourceDirectory>(resource);
 }
-
 
 void Binary::set_resources(const ResourceData& resource) {
   resources_ = std::make_unique<ResourceData>(resource);
 }
 
-ResourceNode* Binary::resources() {
-  return const_cast<ResourceNode*>(static_cast<const Binary*>(this)->resources());
-}
-
-const ResourceNode* Binary::resources() const {
-  return resources_.get();
-}
-
-
-/////////////////////////////////////
-//
-// Methods to manage DataDirectories
-//
-/////////////////////////////////////
-Binary::it_data_directories Binary::data_directories() {
-  return data_directories_;
-}
-
-Binary::it_const_data_directories Binary::data_directories() const {
-  return data_directories_;
-}
-
-
-Binary::it_debug_entries Binary::debug() {
-  return debug_;
-}
-
-
-const Binary::it_const_debug_entries Binary::debug() const {
-  return debug_;
-}
-
-/////////////////////
-//
-// Various methods
-//
-/////////////////////
-
-Binary::it_const_signatures Binary::signatures() const {
-  return signatures_;
-}
 
 std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
   static const std::map<ALGORITHMS, hashstream::HASH> HMAP = {
@@ -1442,29 +1247,6 @@ bool Binary::has_nx() const {
   return optional_header().has(DLL_CHARACTERISTICS::IMAGE_DLL_CHARACTERISTICS_NX_COMPAT);
 }
 
-// Overlay
-// =======
-
-span<const uint8_t> Binary::overlay() const {
-  return overlay_;
-}
-
-span<uint8_t> Binary::overlay() {
-  return overlay_;
-}
-
-// Dos stub
-// ========
-
-span<const uint8_t> Binary::dos_stub() const {
-  return dos_stub_;
-}
-
-span<uint8_t> Binary::dos_stub() {
-  return dos_stub_;
-}
-
-
 void Binary::dos_stub(const std::vector<uint8_t>& content) {
   dos_stub_ = content;
 }
@@ -1477,7 +1259,7 @@ void Binary::rich_header(const RichHeader& rich_header) {
 // ===============
 
 result<ResourcesManager> Binary::resources_manager() const {
-  if (resources_ == nullptr || !has_resources()) {
+  if (resources_ == nullptr) {
     return make_error_code(lief_errors::not_found);
   }
   return ResourcesManager{*resources_};
@@ -1553,21 +1335,6 @@ LIEF::Binary::functions_t Binary::exception_functions() const {
 }
 
 
-// Delay Imports
-// ========================================================
-bool Binary::has_delay_imports() const {
-  return !delay_imports_.empty();
-}
-
-Binary::it_delay_imports Binary::delay_imports() {
-  return delay_imports_;
-}
-
-Binary::it_const_delay_imports Binary::delay_imports() const {
-  return delay_imports_;
-}
-
-
 DelayImport* Binary::get_delay_import(const std::string& import_name) {
   return const_cast<DelayImport*>(static_cast<const Binary*>(this)->get_delay_import(import_name));
 }
@@ -1585,17 +1352,9 @@ const DelayImport* Binary::get_delay_import(const std::string& import_name) cons
   return &*it_import;
 }
 
-bool Binary::has_delay_import(const std::string& import_name) const {
-  return get_delay_import(import_name) != nullptr;
-}
-
 void Binary::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
-
-
-
-
 
 std::ostream& Binary::print(std::ostream& os) const {
 
