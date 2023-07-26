@@ -22,11 +22,11 @@ set_target_properties(macho_profiler
                                  CXX_STANDARD              17
                                  CXX_STANDARD_REQUIRED     ON)
 
-add_executable(pe_profilier pe_profilier.cpp)
-target_compile_options(pe_profilier PUBLIC ${PROFILING_FLAGS})
-target_link_libraries(pe_profilier PRIVATE LIB_LIEF)
+add_executable(pe_profiler pe_profilier.cpp)
+target_compile_options(pe_profiler PUBLIC ${PROFILING_FLAGS})
+target_link_libraries(pe_profiler PRIVATE LIB_LIEF)
 
-set_target_properties(pe_profilier
+set_target_properties(pe_profiler
                       PROPERTIES POSITION_INDEPENDENT_CODE ON
                                  CXX_STANDARD              17
                                  CXX_STANDARD_REQUIRED     ON)
