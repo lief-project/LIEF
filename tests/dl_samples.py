@@ -20,13 +20,13 @@ def hsize(num, suffix="B"):
 def mb(value: int) -> float:
     return round(value / (1024 * 1024), 3)
 
-def download(dst: Path, use_progress_bar: bool = True):
+def download(url: str, dst: Path, use_progress_bar: bool = True):
     out = dst / "samples.zip"
     if out.is_file():
         print(f"{out} already exists")
         return out
-    print(f"Downloading {URL} in {out} ...")
-    with requests.get(URL, stream=True, timeout=TIMEOUT) as r:
+    print(f"Downloading {url} in {out} ...")
+    with requests.get(url, stream=True, timeout=TIMEOUT) as r:
         r.raise_for_status()
         size = int(r.headers['Content-Length'].strip())
         pbar = progressbar.ProgressBar(maxval=mb(size))
@@ -46,8 +46,10 @@ def download(dst: Path, use_progress_bar: bool = True):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("dst_dir", nargs='?')
+    parser.add_argument("--url", default=URL)
     parser.add_argument("--no-progressbar", action="store_true", default=False)
+
+    parser.add_argument("dst_dir", nargs='?')
 
     args = parser.parse_args()
     dst_dir = args.dst_dir
@@ -62,7 +64,8 @@ def main():
 
     use_progress_bar: bool = not args.no_progressbar
     try:
-        zip_samples = download(dst_dir_path, use_progress_bar=use_progress_bar)
+        zip_samples = download(args.url, dst_dir_path,
+                               use_progress_bar=use_progress_bar)
 
         with zipfile.ZipFile(zip_samples) as zfile:
             zfile.extractall(path=dst_dir_path)
