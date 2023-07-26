@@ -57,3 +57,21 @@ jobs:
       - name: Running LIEF coverage [regular]
         if: "github.event.name != 'workflow_dispatch'"
         run: ./lief-tidy latest
+  memory-profiler:
+    runs-on: ubuntu-latest
+    container:
+      image: liefproject/code-check
+      env:
+        LIEF_S3_KEY: ${{ secrets.LIEF_S3_KEY }}
+        LIEF_S3_SECRET: ${{ secrets.LIEF_S3_SECRET }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: lief-project/code-check
+          token: ${{ secrets.LIEF_CLONE_TOKEN }}
+      - name: Running LIEF memory profiler [workflow dispatch]
+        if: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.job == 'all' ||  github.event.inputs.job == 'memprof') }}
+        run: ./lief-memory-profile --branch ${{ github.event.inputs.branch }}
+      - name: Running LIEF memory profiler [regular]
+        if: "github.event.name != 'workflow_dispatch'"
+        run: ./lief-memory-profile
