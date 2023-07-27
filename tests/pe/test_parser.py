@@ -285,7 +285,7 @@ def test_tls():
     assert tls.addressof_index == 0x4075fc
     assert tls.sizeof_zero_fill == 0
     assert tls.characteristics == 0
-    assert tls.addressof_raw_data, (0x40a000 == 0x40a060)
+    assert tls.addressof_raw_data == (0x40a000, 0x40a060)
     assert tls.section.name == ".tls"
     assert tls.copy() == tls
     print(tls)
