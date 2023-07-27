@@ -52,7 +52,7 @@ int main(int argc, char **argv) {
   Pe_Header_t header = pe_binary->header;
   fprintf(stdout, "Header\n");
   fprintf(stdout, "======\n");
-  fprintf(stdout, "Machine: %s\n",                   MACHINE_TYPES_to_string(header.machine));
+  fprintf(stdout, "Machine: %s\n",                   lief_pe_header_machine_str(header.machine));
   fprintf(stdout, "Number of sections: %d\n",        header.numberof_sections);
   fprintf(stdout, "Timestamp: 0x%x\n",               header.time_date_stamp);
   fprintf(stdout, "Pointer to symbol table: 0x%x\n", header.pointerto_symbol_table);

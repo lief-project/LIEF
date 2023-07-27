@@ -32,11 +32,18 @@ void init_c_header(Pe_Binary_t* c_binary, Binary* binary) {
   c_binary->header.sizeof_optional_header = header.sizeof_optional_header();
   c_binary->header.characteristics        = static_cast<uint16_t>(header.characteristics());
 
-  std::copy(
-      std::begin(signature),
-      std::end(signature),
-      c_binary->header.signature);
+  std::copy(std::begin(signature), std::end(signature),
+            c_binary->header.signature);
 }
 
 }
 }
+
+const char* lief_pe_header_machine_str(enum LIEF_PE_MACHINE_TYPES e) {
+  return LIEF::PE::to_string(static_cast<LIEF::PE::Header::MACHINE_TYPES>(e));
+}
+
+const char* lief_pe_header_characteristics_str(enum LIEF_PE_HEADER_CHARACTERISTICS e) {
+  return LIEF::PE::to_string(static_cast<LIEF::PE::Header::CHARACTERISTICS>(e));
+}
+

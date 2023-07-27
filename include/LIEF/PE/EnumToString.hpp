@@ -38,8 +38,6 @@ enum class FIXED_VERSION_FILE_SUB_TYPES : size_t;
 enum class FIXED_VERSION_FILE_TYPES : size_t;
 enum class FIXED_VERSION_OS : size_t;
 enum class GUARD_CF_FLAGS : size_t;
-enum class HEADER_CHARACTERISTICS : size_t;
-enum class MACHINE_TYPES : size_t;
 enum class PE_SECTION_TYPES : uint8_t;
 enum class PE_TYPE : uint16_t;
 enum class RELOCATIONS_AMD64 : size_t;
@@ -59,9 +57,6 @@ enum class WIN_VERSION : size_t;
 
 LIEF_API const char* to_string(PE_TYPE e);
 LIEF_API const char* to_string(DATA_DIRECTORY e);
-
-LIEF_API const char* to_string(MACHINE_TYPES e);
-LIEF_API const char* to_string(HEADER_CHARACTERISTICS e);
 
 LIEF_API const char* to_string(SECTION_CHARACTERISTICS e);
 LIEF_API const char* to_string(PE_SECTION_TYPES e);

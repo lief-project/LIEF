@@ -251,8 +251,5 @@ const char* to_string(OptionalHeader::SUBSYSTEM e) {
   return it == enumStrings.end() ? "UNKNOWN" : it->second;
 }
 
-
-
-
 }
 }

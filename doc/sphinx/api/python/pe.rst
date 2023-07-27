@@ -719,26 +719,6 @@ PE_TYPE
 
 ----------
 
-MACHINE_TYPES
-~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.MACHINE_TYPES
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-----------
-
-HEADER_CHARACTERISTICS
-~~~~~~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.HEADER_CHARACTERISTICS
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-----------
-
 DATA_DIRECTORY
 ~~~~~~~~~~~~~~
 

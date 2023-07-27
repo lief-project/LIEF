@@ -31,8 +31,20 @@ Changelog
     (instead of `lief.MachO.Binary.name`)
 
 :PE:
+  * ``MACHINE_TYPES`` and ``HEADER_CHARACTERISTICS`` are now scoped within the
+    :class:`~lief.PE.Header` class instead of being globally defined:
+
+    .. code-block:: python
+
+      # Before
+      lief.PE.MACHINE_TYPES.AMD64
+      # Now:
+      lief.PE.Header.MACHINE_TYPES.AMD64
+
+  * :attr:`lief.PE.Header.characteristics` now returns a
+    `list`/`std::vector` instead of a ``set``.
   * :attr:`lief.PE.OptionalHeader.dll_characteristics_lists` now returns a
-    `list`/`std::vector` instead of a set
+    ``list``/``std::vector`` instead of a ``set``.
   * ``SUBSYSTEM`` and ``DLL_CHARACTERISTICS`` are now scoped within the
     :class:`~lief.PE.OptionalHeader` class instead of being globally defined:
 
@@ -40,7 +52,7 @@ Changelog
 
       # Before
       lief.PE.SUBSYSTEM.NATIVE
-      # After:
+      # Now:
       lief.PE.OptionalHeader.SUBSYSTEM.NATIVE
   * :attr:`lief.PE.DosHeader.used_bytes_in_the_last_page` has been renamed in
     :attr:`lief.PE.DosHeader.used_bytes_in_last_page`

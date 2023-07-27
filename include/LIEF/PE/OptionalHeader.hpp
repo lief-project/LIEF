@@ -445,8 +445,8 @@ class LIEF_API OptionalHeader : public Object {
   uint32_t  computed_checksum_ = 0;
 };
 
-const char* to_string(OptionalHeader::DLL_CHARACTERISTICS);
-const char* to_string(OptionalHeader::SUBSYSTEM);
+LIEF_API const char* to_string(OptionalHeader::DLL_CHARACTERISTICS);
+LIEF_API const char* to_string(OptionalHeader::SUBSYSTEM);
 
 }
 }

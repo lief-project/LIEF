@@ -32,7 +32,7 @@ def test_dos_header():
     print(dos_header)
 
 def test_header():
-    header: lief.PE.Header = atapi.header
+    header = atapi.header
 
     assert header.copy() == header
     assert header.numberof_sections == 0x6
@@ -41,10 +41,11 @@ def test_header():
     assert header.signature == [80, 69, 0, 0]
     assert header.sizeof_optional_header == 0xf0
     assert header.time_date_stamps == 0x4a5bc113
-    assert header.machine == lief.PE.MACHINE_TYPES.AMD64
-    assert (header.characteristics_list ==
-            {lief.PE.HEADER_CHARACTERISTICS.LARGE_ADDRESS_AWARE,
-             lief.PE.HEADER_CHARACTERISTICS.EXECUTABLE_IMAGE})
+    assert header.machine == lief.PE.Header.MACHINE_TYPES.AMD64
+    assert header.characteristics_list == [
+            lief.PE.Header.CHARACTERISTICS.EXECUTABLE_IMAGE,
+            lief.PE.Header.CHARACTERISTICS.LARGE_ADDRESS_AWARE,
+            ]
     print(header)
     assert header.copy() == header
 

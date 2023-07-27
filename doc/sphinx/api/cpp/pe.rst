@@ -612,12 +612,6 @@ Utilities
 Enums
 *****
 
-.. doxygenenum:: LIEF::PE::MACHINE_TYPES
-   :project: lief
-
-.. doxygenenum:: LIEF::PE::HEADER_CHARACTERISTICS
-   :project: lief
-
 .. doxygenenum:: LIEF::PE::SYMBOL_STORAGE_CLASS
    :project: lief
 

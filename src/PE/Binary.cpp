@@ -61,6 +61,7 @@ Binary::~Binary() = default;
 Binary::Binary() :
   LIEF::Binary{EXE_FORMATS::FORMAT_PE},
   dos_header_{DosHeader::create(PE_TYPE::PE32)},
+  header_{Header::create(PE_TYPE::PE32)},
   optional_header_{OptionalHeader::create(PE_TYPE::PE32)}
 {}
 
@@ -68,6 +69,7 @@ Binary::Binary(PE_TYPE type) :
   LIEF::Binary{EXE_FORMATS::FORMAT_PE},
   type_{type},
   dos_header_{DosHeader::create(type)},
+  header_{Header::create(type)},
   optional_header_{OptionalHeader::create(type)}
 {
   Header& hdr = header();
@@ -75,20 +77,13 @@ Binary::Binary(PE_TYPE type) :
                           sizeof(details::pe_header) +
                           sizeof(details::pe_data_directory) * details::DEFAULT_NUMBER_DATA_DIRECTORIES;
   if (type == PE_TYPE::PE32) {
-    hdr.machine(MACHINE_TYPES::IMAGE_FILE_MACHINE_I386);
-
-    hdr.sizeof_optional_header(sizeof(details::pe32_optional_header) +
-                               details::DEFAULT_NUMBER_DATA_DIRECTORIES * sizeof(details::pe_data_directory));
-    hdr.add_characteristic(HEADER_CHARACTERISTICS::IMAGE_FILE_32BIT_MACHINE);
-
+    hdr.machine(Header::MACHINE_TYPES::I386);
+    hdr.add_characteristic(Header::CHARACTERISTICS::NEED_32BIT_MACHINE);
     sizeof_headers += sizeof(details::pe32_optional_header);
     available_sections_space_ = (0x200 - /* sizeof headers */ sizeof_headers) / sizeof(details::pe_section);
   } else {
-    hdr.machine(MACHINE_TYPES::IMAGE_FILE_MACHINE_AMD64);
-    hdr.sizeof_optional_header(sizeof(details::pe64_optional_header) +
-                               details::DEFAULT_NUMBER_DATA_DIRECTORIES * sizeof(details::pe_data_directory));
-    hdr.add_characteristic(HEADER_CHARACTERISTICS::IMAGE_FILE_LARGE_ADDRESS_AWARE);
-
+    hdr.machine(Header::MACHINE_TYPES::AMD64);
+    hdr.add_characteristic(Header::CHARACTERISTICS::LARGE_ADDRESS_AWARE);
     sizeof_headers += sizeof(details::pe64_optional_header);
     available_sections_space_ = (0x200 - /* sizeof headers */ sizeof_headers) / sizeof(details::pe_section);
   }
@@ -1032,46 +1027,46 @@ std::vector<std::string> Binary::get_abstract_imported_libraries() const {
 LIEF::Header Binary::get_abstract_header() const {
   LIEF::Header header;
   using modes_t = std::pair<ARCHITECTURES, std::set<MODES>>;
-  static const std::unordered_map<MACHINE_TYPES, modes_t> ARCH_PE_TO_LIEF {
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_UNKNOWN,   {ARCH_NONE,  {}}},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_AMD64,     {ARCH_X86,   {MODE_64}}},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_ARM,       {ARCH_ARM,   {MODE_32}}}, // MODE_LITTLE_ENDIAN
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_ARMNT,     {ARCH_ARM,   {MODE_32, MODE_V7, MODE_THUMB}}},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_ARM64,     {ARCH_ARM64, {MODE_64, MODE_V8}}},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_I386,      {ARCH_X86,   {MODE_32}}},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_IA64,      {ARCH_INTEL, {MODE_64}}},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_THUMB,     {ARCH_ARM,   {MODE_32, MODE_THUMB}}},
+  static const std::unordered_map<Header::MACHINE_TYPES, modes_t> ARCH_PE_TO_LIEF {
+    {Header::MACHINE_TYPES::UNKNOWN,   {ARCH_NONE,  {}}},
+    {Header::MACHINE_TYPES::AMD64,     {ARCH_X86,   {MODE_64}}},
+    {Header::MACHINE_TYPES::ARM,       {ARCH_ARM,   {MODE_32}}}, // MODE_LITTLE_ENDIAN
+    {Header::MACHINE_TYPES::ARMNT,     {ARCH_ARM,   {MODE_32, MODE_V7, MODE_THUMB}}},
+    {Header::MACHINE_TYPES::ARM64,     {ARCH_ARM64, {MODE_64, MODE_V8}}},
+    {Header::MACHINE_TYPES::I386,      {ARCH_X86,   {MODE_32}}},
+    {Header::MACHINE_TYPES::IA64,      {ARCH_INTEL, {MODE_64}}},
+    {Header::MACHINE_TYPES::THUMB,     {ARCH_ARM,   {MODE_32, MODE_THUMB}}},
   };
 
-  CONST_MAP(MACHINE_TYPES, ENDIANNESS, 25) arch_pe_to_endi_lief {
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_UNKNOWN,   ENDIANNESS::ENDIAN_NONE},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_AM33,      ENDIANNESS::ENDIAN_NONE},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_AMD64,     ENDIANNESS::ENDIAN_LITTLE},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_ARM,       ENDIANNESS::ENDIAN_LITTLE},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_ARMNT,     ENDIANNESS::ENDIAN_LITTLE},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_ARM64,     ENDIANNESS::ENDIAN_LITTLE},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_EBC,       ENDIANNESS::ENDIAN_NONE},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_I386,      ENDIANNESS::ENDIAN_LITTLE},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_IA64,      ENDIANNESS::ENDIAN_LITTLE},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_M32R,      ENDIANNESS::ENDIAN_LITTLE},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_MIPS16,    ENDIANNESS::ENDIAN_BIG},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_MIPSFPU,   ENDIANNESS::ENDIAN_BIG},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_MIPSFPU16, ENDIANNESS::ENDIAN_BIG},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_POWERPC,   ENDIANNESS::ENDIAN_LITTLE},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_POWERPCFP, ENDIANNESS::ENDIAN_LITTLE},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_R4000,     ENDIANNESS::ENDIAN_LITTLE},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_RISCV32,   ENDIANNESS::ENDIAN_LITTLE},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_RISCV64,   ENDIANNESS::ENDIAN_LITTLE},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_RISCV128,  ENDIANNESS::ENDIAN_LITTLE},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_SH3,       ENDIANNESS::ENDIAN_NONE},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_SH3DSP,    ENDIANNESS::ENDIAN_NONE},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_SH4,       ENDIANNESS::ENDIAN_NONE},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_SH5,       ENDIANNESS::ENDIAN_NONE},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_THUMB,     ENDIANNESS::ENDIAN_LITTLE},
-    {MACHINE_TYPES::IMAGE_FILE_MACHINE_WCEMIPSV2, ENDIANNESS::ENDIAN_LITTLE},
+  CONST_MAP(Header::MACHINE_TYPES, ENDIANNESS, 25) arch_pe_to_endi_lief {
+    {Header::MACHINE_TYPES::UNKNOWN,   ENDIANNESS::ENDIAN_NONE},
+    {Header::MACHINE_TYPES::AM33,      ENDIANNESS::ENDIAN_NONE},
+    {Header::MACHINE_TYPES::AMD64,     ENDIANNESS::ENDIAN_LITTLE},
+    {Header::MACHINE_TYPES::ARM,       ENDIANNESS::ENDIAN_LITTLE},
+    {Header::MACHINE_TYPES::ARMNT,     ENDIANNESS::ENDIAN_LITTLE},
+    {Header::MACHINE_TYPES::ARM64,     ENDIANNESS::ENDIAN_LITTLE},
+    {Header::MACHINE_TYPES::EBC,       ENDIANNESS::ENDIAN_NONE},
+    {Header::MACHINE_TYPES::I386,      ENDIANNESS::ENDIAN_LITTLE},
+    {Header::MACHINE_TYPES::IA64,      ENDIANNESS::ENDIAN_LITTLE},
+    {Header::MACHINE_TYPES::M32R,      ENDIANNESS::ENDIAN_LITTLE},
+    {Header::MACHINE_TYPES::MIPS16,    ENDIANNESS::ENDIAN_BIG},
+    {Header::MACHINE_TYPES::MIPSFPU,   ENDIANNESS::ENDIAN_BIG},
+    {Header::MACHINE_TYPES::MIPSFPU16, ENDIANNESS::ENDIAN_BIG},
+    {Header::MACHINE_TYPES::POWERPC,   ENDIANNESS::ENDIAN_LITTLE},
+    {Header::MACHINE_TYPES::POWERPCFP, ENDIANNESS::ENDIAN_LITTLE},
+    {Header::MACHINE_TYPES::R4000,     ENDIANNESS::ENDIAN_LITTLE},
+    {Header::MACHINE_TYPES::RISCV32,   ENDIANNESS::ENDIAN_LITTLE},
+    {Header::MACHINE_TYPES::RISCV64,   ENDIANNESS::ENDIAN_LITTLE},
+    {Header::MACHINE_TYPES::RISCV128,  ENDIANNESS::ENDIAN_LITTLE},
+    {Header::MACHINE_TYPES::SH3,       ENDIANNESS::ENDIAN_NONE},
+    {Header::MACHINE_TYPES::SH3DSP,    ENDIANNESS::ENDIAN_NONE},
+    {Header::MACHINE_TYPES::SH4,       ENDIANNESS::ENDIAN_NONE},
+    {Header::MACHINE_TYPES::SH5,       ENDIANNESS::ENDIAN_NONE},
+    {Header::MACHINE_TYPES::THUMB,     ENDIANNESS::ENDIAN_LITTLE},
+    {Header::MACHINE_TYPES::WCEMIPSV2, ENDIANNESS::ENDIAN_LITTLE},
   };
 
-  const MACHINE_TYPES machine = this->header().machine();
+  const Header::MACHINE_TYPES machine = this->header().machine();
   auto it_arch = ARCH_PE_TO_LIEF.find(machine);
   if (it_arch == std::end(ARCH_PE_TO_LIEF)) {
     LIEF_ERR("Can't abstract the architecture {}", to_string(machine));
@@ -1086,9 +1081,9 @@ LIEF::Header Binary::get_abstract_header() const {
 
   header.entrypoint(entrypoint());
 
-  if (this->header().has_characteristic(HEADER_CHARACTERISTICS::IMAGE_FILE_DLL)) {
+  if (this->header().has_characteristic(Header::CHARACTERISTICS::DLL)) {
     header.object_type(OBJECT_TYPES::TYPE_LIBRARY);
-  } else if (this->header().has_characteristic(HEADER_CHARACTERISTICS::IMAGE_FILE_EXECUTABLE_IMAGE)) {
+  } else if (this->header().has_characteristic(Header::CHARACTERISTICS::EXECUTABLE_IMAGE)) {
     header.object_type(OBJECT_TYPES::TYPE_EXECUTABLE);
   } else {
     header.object_type(OBJECT_TYPES::TYPE_NONE);

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "PE/pyPE.hpp"
+#include "enums_wrapper.hpp"
 
 #include "LIEF/PE/Header.hpp"
 
@@ -21,17 +22,62 @@
 #include <sstream>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/array.h>
-#include <nanobind/stl/set.h>
+#include <nanobind/stl/vector.h>
+
+#define PY_ENUM(x) to_string(x), x
 
 namespace LIEF::PE::py {
 
 template<>
 void create<Header>(nb::module_& m) {
-  nb::class_<Header, LIEF::Object>(m, "Header",
+  nb::class_<Header, Object> hdr(m, "Header",
       R"delim(
       Class that represents the PE header (which follows the :class:`lief.PE.DosHeader`)
-      )delim"_doc)
-    .def(nb::init<>())
+      )delim"_doc);
+
+  enum_<Header::MACHINE_TYPES>(hdr, "MACHINE_TYPES")
+    .value(PY_ENUM(Header::MACHINE_TYPES::UNKNOWN))
+    .value(PY_ENUM(Header::MACHINE_TYPES::AM33))
+    .value(PY_ENUM(Header::MACHINE_TYPES::AMD64))
+    .value(PY_ENUM(Header::MACHINE_TYPES::ARM))
+    .value(PY_ENUM(Header::MACHINE_TYPES::ARMNT))
+    .value(PY_ENUM(Header::MACHINE_TYPES::ARM64))
+    .value(PY_ENUM(Header::MACHINE_TYPES::EBC))
+    .value(PY_ENUM(Header::MACHINE_TYPES::I386))
+    .value(PY_ENUM(Header::MACHINE_TYPES::IA64))
+    .value(PY_ENUM(Header::MACHINE_TYPES::M32R))
+    .value(PY_ENUM(Header::MACHINE_TYPES::MIPS16))
+    .value(PY_ENUM(Header::MACHINE_TYPES::MIPSFPU))
+    .value(PY_ENUM(Header::MACHINE_TYPES::MIPSFPU16))
+    .value(PY_ENUM(Header::MACHINE_TYPES::POWERPC))
+    .value(PY_ENUM(Header::MACHINE_TYPES::POWERPCFP))
+    .value(PY_ENUM(Header::MACHINE_TYPES::R4000))
+    .value(PY_ENUM(Header::MACHINE_TYPES::SH3))
+    .value(PY_ENUM(Header::MACHINE_TYPES::SH3DSP))
+    .value(PY_ENUM(Header::MACHINE_TYPES::SH4))
+    .value(PY_ENUM(Header::MACHINE_TYPES::SH5))
+    .value(PY_ENUM(Header::MACHINE_TYPES::THUMB))
+    .value(PY_ENUM(Header::MACHINE_TYPES::WCEMIPSV2));
+
+  enum_<Header::CHARACTERISTICS>(hdr, "CHARACTERISTICS", nb::is_arithmetic())
+    .value(PY_ENUM(Header::CHARACTERISTICS::RELOCS_STRIPPED))
+    .value(PY_ENUM(Header::CHARACTERISTICS::EXECUTABLE_IMAGE))
+    .value(PY_ENUM(Header::CHARACTERISTICS::LINE_NUMS_STRIPPED))
+    .value(PY_ENUM(Header::CHARACTERISTICS::LOCAL_SYMS_STRIPPED))
+    .value(PY_ENUM(Header::CHARACTERISTICS::AGGRESSIVE_WS_TRIM))
+    .value(PY_ENUM(Header::CHARACTERISTICS::LARGE_ADDRESS_AWARE))
+    .value(PY_ENUM(Header::CHARACTERISTICS::BYTES_REVERSED_LO))
+    .value(PY_ENUM(Header::CHARACTERISTICS::NEED_32BIT_MACHINE))
+    .value(PY_ENUM(Header::CHARACTERISTICS::DEBUG_STRIPPED))
+    .value(PY_ENUM(Header::CHARACTERISTICS::REMOVABLE_RUN_FROM_SWAP))
+    .value(PY_ENUM(Header::CHARACTERISTICS::NET_RUN_FROM_SWAP))
+    .value(PY_ENUM(Header::CHARACTERISTICS::SYSTEM))
+    .value(PY_ENUM(Header::CHARACTERISTICS::DLL))
+    .value(PY_ENUM(Header::CHARACTERISTICS::UP_SYSTEM_ONLY))
+    .value(PY_ENUM(Header::CHARACTERISTICS::BYTES_REVERSED_HI));
+
+  hdr
+    .def_static("create", &Header::create, "type"_a)
 
     .def_prop_rw("signature",
         nb::overload_cast<>(&Header::signature, nb::const_),
@@ -42,8 +88,8 @@ void create<Header>(nb::module_& m) {
 
     .def_prop_rw("machine",
         nb::overload_cast<>(&Header::machine, nb::const_),
-        nb::overload_cast<MACHINE_TYPES>(&Header::machine),
-        "The target machine architecture (" RST_CLASS_REF(lief.PE.MACHINE_TYPES) ")"_doc)
+        nb::overload_cast<Header::MACHINE_TYPES>(&Header::machine),
+        "The target machine architecture (" RST_CLASS_REF(lief.PE.Header.MACHINE_TYPES) ")"_doc)
 
     .def_prop_rw("numberof_sections",
         nb::overload_cast<>(&Header::numberof_sections, nb::const_),
@@ -91,26 +137,26 @@ void create<Header>(nb::module_& m) {
     .def_prop_rw("characteristics",
         nb::overload_cast<>(&Header::characteristics, nb::const_),
         nb::overload_cast<>(&Header::characteristics, nb::const_),
-        "The " RST_CLASS_REF(lief.PE.HEADER_CHARACTERISTICS) " that indicate the attributes of the file."_doc)
+        "The " RST_CLASS_REF(lief.PE.Header.CHARACTERISTICS) " that indicate the attributes of the file."_doc)
 
     .def("has_characteristic",
         &Header::has_characteristic,
-        "``True`` if the header has the given " RST_CLASS_REF(lief.PE.HEADER_CHARACTERISTICS) ""_doc,
+        "``True`` if the header has the given " RST_CLASS_REF(lief.PE.Header.CHARACTERISTICS) ""_doc,
         "characteristic"_a)
 
     .def("add_characteristic",
         &Header::add_characteristic,
-        "Add the given " RST_CLASS_REF(lief.PE.HEADER_CHARACTERISTICS) " to the header"_doc,
+        "Add the given " RST_CLASS_REF(lief.PE.Header.CHARACTERISTICS) " to the header"_doc,
         "characteristic"_a)
 
     .def("remove_characteristic",
         &Header::remove_characteristic,
-        "Remove the given " RST_CLASS_REF(lief.PE.HEADER_CHARACTERISTICS) " from the header"_doc,
+        "Remove the given " RST_CLASS_REF(lief.PE.Header.CHARACTERISTICS) " from the header"_doc,
         "characteristic"_a)
 
     .def_prop_ro("characteristics_list",
         &Header::characteristics_list,
-        "Return the " RST_CLASS_REF(lief.PE.HEADER_CHARACTERISTICS) " as a ``list``"_doc)
+        "Return the " RST_CLASS_REF(lief.PE.Header.CHARACTERISTICS) " as a ``list``"_doc)
 
     LIEF_COPYABLE(Header)
     LIEF_DEFAULT_STR(Header);
