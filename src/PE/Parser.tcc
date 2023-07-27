@@ -236,7 +236,7 @@ ok_error_t Parser::parse_data_directories() {
 
 template<typename PE_T>
 ok_error_t Parser::parse_import_table() {
-  using uint__ = typename PE_T::uint;
+  using uint = typename PE_T::uint;
   DataDirectory* import_dir = binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE);
   DataDirectory* iat_dir    = binary_->data_directory(DATA_DIRECTORY::IAT);
 
@@ -299,21 +299,21 @@ ok_error_t Parser::parse_import_table() {
                           binary_->rva_to_offset(import.import_address_table_rva()) :
                           0;
 
-    uint__ IAT = 0;
-    uint__ table = 0;
+    uint IAT = 0;
+    uint table = 0;
 
     if (IAT_offset > 0) {
-      if (auto res_iat = stream_->peek<uint__>(IAT_offset)) {
+      if (auto res_iat = stream_->peek<uint>(IAT_offset)) {
         IAT   = *res_iat;
         table = IAT;
-        IAT_offset += sizeof(uint__);
+        IAT_offset += sizeof(uint);
       }
     }
 
     if (LT_offset > 0) {
-      if (auto res_lt = stream_->peek<uint__>(LT_offset)) {
+      if (auto res_lt = stream_->peek<uint>(LT_offset)) {
         table      = *res_lt;
-        LT_offset += sizeof(uint__);
+        LT_offset += sizeof(uint);
       }
     }
 
@@ -324,7 +324,7 @@ ok_error_t Parser::parse_import_table() {
       entry.iat_value_ = IAT;
       entry.data_      = table > 0 ? table : IAT; // In some cases, ILT can be corrupted
       entry.type_      = type_;
-      entry.rva_       = import.import_address_table_RVA_ + sizeof(uint__) * (idx++);
+      entry.rva_       = import.import_address_table_RVA_ + sizeof(uint) * (idx++);
 
       if (!entry.is_ordinal()) {
         const size_t hint_off = binary_->rva_to_offset(entry.hint_name_rva());
@@ -352,9 +352,9 @@ ok_error_t Parser::parse_import_table() {
       }
 
       if (IAT_offset > 0) {
-        if (auto iat = stream_->peek<uint__>(IAT_offset)) {
+        if (auto iat = stream_->peek<uint>(IAT_offset)) {
           IAT = *iat;
-          IAT_offset += sizeof(uint__);
+          IAT_offset += sizeof(uint);
         } else {
           LIEF_ERR("Can't read the IAT value at 0x{:x}", IAT_offset);
           IAT = 0;
@@ -364,9 +364,9 @@ ok_error_t Parser::parse_import_table() {
       }
 
       if (LT_offset > 0) {
-        if (auto lt = stream_->peek<uint__>(LT_offset)) {
+        if (auto lt = stream_->peek<uint>(LT_offset)) {
           table = *lt;
-          LT_offset += sizeof(uint__);
+          LT_offset += sizeof(uint);
         } else {
           LIEF_ERR("Can't read the Lookup Table value at 0x{:x}", LT_offset);
           table = 0;
@@ -384,11 +384,11 @@ ok_error_t Parser::parse_import_table() {
 
 template<class PE_T>
 ok_error_t Parser::parse_delay_names_table(DelayImport& import, uint32_t names_offset) {
-  using uint__ = typename PE_T::uint;
+  using uint = typename PE_T::uint;
   ScopedStream nstream(*stream_, names_offset);
 
-  uint__ entry_val = 0;
-  if (auto res = stream_->read<uint__>()) {
+  uint entry_val = 0;
+  if (auto res = stream_->read<uint>()) {
     entry_val = *res;
   } else {
     LIEF_ERR("Can't read delay_imports.names_table[0]");
@@ -398,9 +398,9 @@ ok_error_t Parser::parse_delay_names_table(DelayImport& import, uint32_t names_o
   while (names_offset > 0 && entry_val > 0) {
     DelayImportEntry entry{entry_val, type_};
     // Index of the current entry (-1 as we start with a read())
-    const size_t index = (stream_->pos() - names_offset) / sizeof(uint__) - 1;
-    const uint32_t iat = index * sizeof(uint__);
-    if (auto res = stream_->peek<uint__>(iat)) {
+    const size_t index = (stream_->pos() - names_offset) / sizeof(uint) - 1;
+    const uint32_t iat = index * sizeof(uint);
+    if (auto res = stream_->peek<uint>(iat)) {
       entry.value_ = import.iat() + iat;
       entry.iat_value_  = *res;
       LIEF_DEBUG("  [{}].iat : 0x{:010x}", index, entry.iat_value_);
@@ -434,7 +434,7 @@ ok_error_t Parser::parse_delay_names_table(DelayImport& import, uint32_t names_o
       import.entries_.push_back(std::move(entry));
     }
 
-    if (auto res = stream_->read<uint__>()) {
+    if (auto res = stream_->read<uint>()) {
       entry_val = *res;
     } else {
       LIEF_ERR("Can't read the Name offset value at 0x{:x}", stream_->pos());
@@ -536,7 +536,7 @@ ok_error_t Parser::parse_delay_imports() {
 template<typename PE_T>
 ok_error_t Parser::parse_tls() {
   using pe_tls = typename PE_T::pe_tls;
-  using uint__ = typename PE_T::uint;
+  using uint = typename PE_T::uint;
 
   LIEF_DEBUG("Parsing TLS");
 
@@ -563,8 +563,8 @@ ok_error_t Parser::parse_tls() {
     const uint64_t start_data_rva = tls_header->RawDataStartVA - imagebase;
     const uint64_t stop_data_rva  = tls_header->RawDataEndVA - imagebase;
 
-    const uint__ start_template_offset  = binary_->rva_to_offset(start_data_rva);
-    const uint__ end_template_offset    = binary_->rva_to_offset(stop_data_rva);
+    const uint start_template_offset = binary_->rva_to_offset(start_data_rva);
+    const uint end_template_offset   = binary_->rva_to_offset(stop_data_rva);
 
     const size_t size_to_read = end_template_offset - start_template_offset;
 
@@ -582,7 +582,7 @@ ok_error_t Parser::parse_tls() {
     stream_->setpos(callbacks_offset);
     size_t count = 0;
     while (count++ < Parser::MAX_TLS_CALLBACKS) {
-      auto res_callback_rva = stream_->read<uint__>();
+      auto res_callback_rva = stream_->read<uint>();
       if (!res_callback_rva) {
         break;
       }
