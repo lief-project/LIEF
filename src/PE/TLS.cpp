@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 #include <iomanip>
+#include "LIEF/Visitor.hpp"
 
-
-
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/TLS.hpp"
 #include "LIEF/PE/Section.hpp"
 #include "PE/Structures.hpp"
+
+#include "spdlog/fmt/fmt.h"
 
 namespace LIEF {
 namespace PE {
@@ -29,160 +29,53 @@ TLS::~TLS() = default;
 TLS::TLS() = default;
 
 TLS::TLS(const TLS& copy) = default;
+TLS& TLS::operator=(const TLS& copy) = default;
+TLS::TLS(TLS&& other) = default;
+TLS& TLS::operator=(TLS&& other) = default;;
 
-TLS& TLS::operator=(TLS copy) {
-  swap(copy);
-  return *this;
-}
-
-void TLS::swap(TLS& other) {
-  std::swap(callbacks_,           other.callbacks_);
-  std::swap(VAOfRawData_,         other.VAOfRawData_);
-  std::swap(addressof_index_,     other.addressof_index_);
-  std::swap(addressof_callbacks_, other.addressof_callbacks_);
-  std::swap(sizeof_zero_fill_,    other.sizeof_zero_fill_);
-  std::swap(characteristics_,     other.characteristics_);
-  std::swap(directory_,           other.directory_);
-  std::swap(section_,             other.section_);
-  std::swap(data_template_,       other.data_template_);
-}
 
 TLS::TLS(const details::pe32_tls& header) :
-  VAOfRawData_{header.RawDataStartVA, header.RawDataEndVA},
+  va_rawdata_{header.RawDataStartVA, header.RawDataEndVA},
   addressof_index_{header.AddressOfIndex},
   addressof_callbacks_{header.AddressOfCallback},
   sizeof_zero_fill_{header.SizeOfZeroFill},
   characteristics_{header.Characteristics}
 {}
-
 
 TLS::TLS(const details::pe64_tls& header) :
-  VAOfRawData_{header.RawDataStartVA, header.RawDataEndVA},
+  va_rawdata_{header.RawDataStartVA, header.RawDataEndVA},
   addressof_index_{header.AddressOfIndex},
   addressof_callbacks_{header.AddressOfCallback},
   sizeof_zero_fill_{header.SizeOfZeroFill},
   characteristics_{header.Characteristics}
 {}
-
-const std::vector<uint64_t>& TLS::callbacks() const {
-  return callbacks_;
-}
-
-
-std::pair<uint64_t, uint64_t> TLS::addressof_raw_data() const {
-  return VAOfRawData_;
-}
-
-uint64_t TLS::addressof_index() const {
-  return addressof_index_;
-}
-
-
-uint64_t TLS::addressof_callbacks() const {
-  return addressof_callbacks_;
-}
-
-
-uint32_t TLS::sizeof_zero_fill() const {
-  return sizeof_zero_fill_;
-}
-
-
-uint32_t TLS::characteristics() const {
-  return characteristics_;
-}
-
-
-bool TLS::has_data_directory() const {
-  return directory_ != nullptr;
-}
-
-const DataDirectory* TLS::directory() const {
-  return directory_;
-}
-
-DataDirectory* TLS::directory() {
-  return const_cast<DataDirectory*>(static_cast<const TLS*>(this)->directory());
-}
-
-
-bool TLS::has_section() const {
-  return section_ != nullptr;
-}
-
-
-const Section* TLS::section() const {
-  return section_;
-}
-
-Section* TLS::section() {
-  return const_cast<Section*>(static_cast<const TLS*>(this)->section());
-}
-
-
-span<const uint8_t> TLS::data_template() const {
-  return data_template_;
-}
-
-
-void TLS::callbacks(const std::vector<uint64_t>& callbacks) {
-  callbacks_ = callbacks;
-}
-
-
-void TLS::addressof_raw_data(std::pair<uint64_t, uint64_t> VAOfRawData) {
-  VAOfRawData_ = VAOfRawData;
-}
-
-
-void TLS::addressof_index(uint64_t addressOfIndex) {
-  addressof_index_ = addressOfIndex;
-}
-
-
-void TLS::addressof_callbacks(uint64_t addressOfCallbacks) {
-  addressof_callbacks_ = addressOfCallbacks;
-}
-
-
-void TLS::sizeof_zero_fill(uint32_t sizeOfZeroFill) {
-  sizeof_zero_fill_ = sizeOfZeroFill;
-}
-
-
-void TLS::characteristics(uint32_t characteristics) {
-  characteristics_ = characteristics;
-}
-
-
-void TLS::data_template(const std::vector<uint8_t>& dataTemplate) {
-  data_template_ = dataTemplate;
-}
-
 
 void TLS::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
-
 std::ostream& operator<<(std::ostream& os, const TLS& entry) {
-  os << std::hex;
-  os << std::setw(40) << std::left << std::setfill(' ') << "Address Of Index: "                     << entry.addressof_index()        << std::endl;
-  os << std::setw(40) << std::left << std::setfill(' ') << "Address Of Callbacks: "                 << entry.addressof_callbacks()    << std::endl;
 
-  for (uint64_t value : entry.callbacks()) {
-    os << "\t - " << value << std::endl;
+  os << fmt::format("Address of index:     0x{:x}\n", entry.addressof_index())
+     << fmt::format("Address of callbacks: 0x{:x}\n", entry.addressof_callbacks())
+     << fmt::format("Address of raw data:  0x{:x}-0x{:x}\n",
+                    entry.addressof_raw_data().first,
+                    entry.addressof_raw_data().second)
+     << fmt::format("Size of zerofill:     0x{:x}\n", entry.sizeof_zero_fill());
+
+  if (const Section* section = entry.section()) {
+    os << fmt::format("Section:              '{}'\n", section->name());
   }
 
-  os << std::setw(40) << std::left << std::setfill(' ') << "Virtual Address of RawData (start): "   << entry.addressof_raw_data().first     << std::endl;
-  os << std::setw(40) << std::left << std::setfill(' ') << "Virtual Address of RawData (end): "     << entry.addressof_raw_data().second    << std::endl;
-  os << std::setw(40) << std::left << std::setfill(' ') << "Size Of Zero Fill: "                    << entry.sizeof_zero_fill()        << std::endl;
+  if (const std::vector<uint64_t>& cbk = entry.callbacks(); !cbk.empty()) {
+    std::vector<std::string> formated;
+    formated.reserve(cbk.size());
+    std::transform(cbk.begin(), cbk.end(), std::back_inserter(formated),
+                   [] (uint64_t addr) { return fmt::format("0x{:04x}", addr); });
 
-  if (entry.has_section()) {
-    os << std::setw(40) << std::left << std::setfill(' ') << "Associated section: "                 << entry.section()->name() << std::endl;
+    os << fmt::format("Callbacks:            {}", fmt::join(formated, ", "));
   }
+
   return os;
 }
 
