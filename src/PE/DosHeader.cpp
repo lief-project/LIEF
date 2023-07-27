@@ -15,10 +15,13 @@
  */
 #include <iomanip>
 
-#include "LIEF/PE/hash.hpp"
+#include "LIEF/Visitor.hpp"
 
 #include "LIEF/PE/DosHeader.hpp"
 #include "PE/Structures.hpp"
+
+#include "spdlog/fmt/fmt.h"
+#include "spdlog/fmt/ranges.h"
 
 namespace LIEF {
 namespace PE {
@@ -27,246 +30,38 @@ DosHeader::~DosHeader() = default;
 DosHeader::DosHeader(const DosHeader&) = default;
 DosHeader& DosHeader::operator=(const DosHeader&) = default;
 
-DosHeader::DosHeader() :
-  magic_{0x5a4d},
-  usedBytesInTheLastPage_{144},
-  fileSizeInPages_{3},
-  numberOfRelocation_{0},
-  headerSizeInParagraphs_{4},
-  minimumExtraParagraphs_{0},
-  maximumExtraParagraphs_{0xFFFF},
-  initialRelativeSS_{0},
-  initialSP_{0xb8},
-  checksum_{0},
-  initialIP_{0},
-  initialRelativeCS_{0},
-  addressOfRelocationTable_{0x40},
-  overlayNumber_{0},
-  reserved_{0},
-  oEMid_{0},
-  oEMinfo_{0},
-  reserved2_{0},
-  addressOfNewExeHeader_{0xF0} // or 0xE8
-{}
+DosHeader::DosHeader(DosHeader&&) = default;
+DosHeader& DosHeader::operator=(DosHeader&&) = default;
+
+DosHeader::DosHeader() = default;
 
 DosHeader::DosHeader(const details::pe_dos_header& header) :
   magic_{header.Magic},
-  usedBytesInTheLastPage_{header.UsedBytesInTheLastPage},
-  fileSizeInPages_{header.FileSizeInPages},
-  numberOfRelocation_{header.NumberOfRelocationItems},
-  headerSizeInParagraphs_{header.HeaderSizeInParagraphs},
-  minimumExtraParagraphs_{header.MinimumExtraParagraphs},
-  maximumExtraParagraphs_{header.MaximumExtraParagraphs},
-  initialRelativeSS_{header.InitialRelativeSS},
-  initialSP_{header.InitialSP},
+  used_bytes_in_last_page_{header.UsedBytesInTheLastPage},
+  file_sz_in_pages_{header.FileSizeInPages},
+  nb_relocations_{header.NumberOfRelocationItems},
+  header_sz_in_paragraphs_{header.HeaderSizeInParagraphs},
+  min_extra_paragraphs_{header.MinimumExtraParagraphs},
+  max_extra_paragraphs_{header.MaximumExtraParagraphs},
+  init_relative_ss_{header.InitialRelativeSS},
+  init_sp_{header.InitialSP},
   checksum_{header.Checksum},
-  initialIP_{header.InitialIP},
-  initialRelativeCS_{header.InitialRelativeCS},
-  addressOfRelocationTable_{header.AddressOfRelocationTable},
-  overlayNumber_{header.OverlayNumber},
-  oEMid_{header.OEMid},
-  oEMinfo_{header.OEMinfo},
-  addressOfNewExeHeader_{header.AddressOfNewExeHeader}
+  init_ip_{header.InitialIP},
+  init_rel_cs_{header.InitialRelativeCS},
+  addr_reloc_table_{header.AddressOfRelocationTable},
+  overlay_number_{header.OverlayNumber},
+  oem_id_{header.OEMid},
+  oem_info_{header.OEMinfo},
+  addr_new_exe_header_{header.AddressOfNewExeHeader}
 {
   std::copy(
       reinterpret_cast<const uint16_t*>(header.Reserved),
-      reinterpret_cast<const uint16_t*>(header.Reserved)  + 4,
+      reinterpret_cast<const uint16_t*>(header.Reserved) + sizeof(reserved_t),
       std::begin(reserved_));
   std::copy(
       reinterpret_cast<const uint16_t*>(header.Reserved2),
-      reinterpret_cast<const uint16_t*>(header.Reserved2) + 10,
+      reinterpret_cast<const uint16_t*>(header.Reserved2) + sizeof(reserved2_t),
       std::begin(reserved2_));
-}
-
-
-uint16_t DosHeader::magic() const {
-  return magic_;
-}
-
-
-uint16_t DosHeader::used_bytes_in_the_last_page() const {
-  return usedBytesInTheLastPage_;
-}
-
-
-uint16_t DosHeader::file_size_in_pages() const {
-  return fileSizeInPages_;
-}
-
-
-uint16_t DosHeader::numberof_relocation() const {
-  return numberOfRelocation_;
-}
-
-
-uint16_t DosHeader::header_size_in_paragraphs() const {
-  return headerSizeInParagraphs_;
-}
-
-
-uint16_t DosHeader::minimum_extra_paragraphs() const {
-  return minimumExtraParagraphs_;
-}
-
-
-uint16_t DosHeader::maximum_extra_paragraphs() const {
-  return maximumExtraParagraphs_;
-}
-
-
-uint16_t DosHeader::initial_relative_ss() const {
-  return initialRelativeSS_;
-}
-
-
-uint16_t DosHeader::initial_sp() const {
-  return initialSP_;
-}
-
-
-uint16_t DosHeader::checksum() const {
-  return checksum_;
-}
-
-
-uint16_t DosHeader::initial_ip() const {
-  return initialIP_;
-}
-
-
-uint16_t DosHeader::initial_relative_cs() const {
-  return initialRelativeCS_;
-}
-
-
-uint16_t DosHeader::addressof_relocation_table() const {
-  return addressOfRelocationTable_;
-}
-
-
-uint16_t DosHeader::overlay_number() const {
-  return overlayNumber_;
-}
-
-
-std::array<uint16_t, 4> DosHeader::reserved() const {
-  return reserved_;
-}
-
-
-uint16_t DosHeader::oem_id() const {
-  return oEMid_;
-}
-
-
-uint16_t DosHeader::oem_info() const {
-  return oEMinfo_;
-}
-
-
-std::array<uint16_t, 10> DosHeader::reserved2() const {
-  return reserved2_;
-}
-
-
-uint32_t DosHeader::addressof_new_exeheader() const {
-  return addressOfNewExeHeader_;
-}
-
-
-
-void DosHeader::magic(uint16_t magic) {
-  magic_ = magic;
-}
-
-
-void DosHeader::used_bytes_in_the_last_page(uint16_t usedBytesInTheLastPage) {
-  usedBytesInTheLastPage_ = usedBytesInTheLastPage;
-}
-
-
-void DosHeader::file_size_in_pages(uint16_t fileSizeInPages) {
-  fileSizeInPages_ = fileSizeInPages;
-}
-
-
-void DosHeader::numberof_relocation(uint16_t numberOfRelocation) {
-  numberOfRelocation_ = numberOfRelocation;
-}
-
-
-void DosHeader::header_size_in_paragraphs(uint16_t headerSizeInParagraphs) {
-  headerSizeInParagraphs_ = headerSizeInParagraphs;
-}
-
-
-void DosHeader::minimum_extra_paragraphs(uint16_t minimumExtraParagraphs) {
-  minimumExtraParagraphs_ = minimumExtraParagraphs;
-}
-
-
-void DosHeader::maximum_extra_paragraphs(uint16_t maximumExtraParagraphs) {
-  maximumExtraParagraphs_ = maximumExtraParagraphs;
-}
-
-
-void DosHeader::initial_relative_ss(uint16_t initialRelativeSS) {
-  initialRelativeSS_ = initialRelativeSS;
-}
-
-
-void DosHeader::initial_sp(uint16_t initialSP) {
-  initialSP_ = initialSP;
-}
-
-
-void DosHeader::checksum(uint16_t checksum) {
-  checksum_ = checksum;
-}
-
-
-void DosHeader::initial_ip(uint16_t initialIP) {
-  initialIP_ = initialIP;
-}
-
-
-void DosHeader::initial_relative_cs(uint16_t initialRelativeCS) {
-  initialRelativeCS_ = initialRelativeCS;
-}
-
-
-void DosHeader::addressof_relocation_table(uint16_t addressOfRelocationTable) {
-  addressOfRelocationTable_ = addressOfRelocationTable;
-}
-
-
-void DosHeader::overlay_number(uint16_t overlayNumber) {
-  overlayNumber_ = overlayNumber;
-}
-
-
-void DosHeader::reserved(const std::array<uint16_t, 4>& reserved) {
-  reserved_ = reserved;
-}
-
-
-void DosHeader::oem_id(uint16_t oEMid) {
-  oEMid_ = oEMid;
-}
-
-
-void DosHeader::oem_info(uint16_t oEMinfo) {
-  oEMinfo_ = oEMinfo;
-}
-
-
-void DosHeader::reserved2(const std::array<uint16_t, 10>& reserved2) {
-  reserved2_ = reserved2;
-}
-
-
-void DosHeader::addressof_new_exeheader(uint32_t addressOfNewExeHeader) {
-  addressOfNewExeHeader_ = addressOfNewExeHeader;
 }
 
 void DosHeader::accept(LIEF::Visitor& visitor) const {
@@ -274,27 +69,39 @@ void DosHeader::accept(LIEF::Visitor& visitor) const {
 }
 
 
-
+DosHeader DosHeader::create(PE_TYPE type) {
+  DosHeader hdr;
+  hdr.magic(DosHeader::MAGIC);
+  hdr.header_size_in_paragraphs(4);
+  hdr.addressof_relocation_table(0x40);
+  hdr.file_size_in_pages(3);
+  hdr.maximum_extra_paragraphs(0xff);
+  hdr.initial_sp(0xb8);
+  hdr.used_bytes_in_last_page(0x90);
+  hdr.addressof_new_exeheader(type == PE_TYPE::PE32 ? 0xe8 : 0xf0);
+  return hdr;
+}
 
 std::ostream& operator<<(std::ostream& os, const DosHeader& entry) {
-  os << std::hex;
-  os << std::setw(30) << std::left << std::setfill(' ') << "Magic: "                       << entry.magic_                    << std::endl;
-  os << std::setw(30) << std::left << std::setfill(' ') << "Used Bytes In The LastPage: "  << entry.usedBytesInTheLastPage_   << std::endl;
-  os << std::setw(30) << std::left << std::setfill(' ') << "File Size In Pages: "          << entry.fileSizeInPages_          << std::endl;
-  os << std::setw(30) << std::left << std::setfill(' ') << "Number Of Relocation: "        << entry.numberOfRelocation_       << std::endl;
-  os << std::setw(30) << std::left << std::setfill(' ') << "Header Size In Paragraphs: "   << entry.headerSizeInParagraphs_   << std::endl;
-  os << std::setw(30) << std::left << std::setfill(' ') << "Minimum Extra Paragraphs: "    << entry.minimumExtraParagraphs_   << std::endl;
-  os << std::setw(30) << std::left << std::setfill(' ') << "Maximum Extra Paragraphs: "    << entry.maximumExtraParagraphs_   << std::endl;
-  os << std::setw(30) << std::left << std::setfill(' ') << "Initial Relative SS: "         << entry.initialRelativeSS_        << std::endl;
-  os << std::setw(30) << std::left << std::setfill(' ') << "Initial SP: "                  << entry.initialSP_                << std::endl;
-  os << std::setw(30) << std::left << std::setfill(' ') << "Checksum: "                    << entry.checksum_                 << std::endl;
-  os << std::setw(30) << std::left << std::setfill(' ') << "Initial IP: "                  << entry.initialIP_                << std::endl;
-  os << std::setw(30) << std::left << std::setfill(' ') << "Initial Relative CS: "         << entry.initialRelativeCS_        << std::endl;
-  os << std::setw(30) << std::left << std::setfill(' ') << "Address Of Relocation Table: " << entry.addressOfRelocationTable_ << std::endl;
-  os << std::setw(30) << std::left << std::setfill(' ') << "Overlay Number: "              << entry.overlayNumber_            << std::endl;
-  os << std::setw(30) << std::left << std::setfill(' ') << "OEM id: "                      << entry.oEMid_                    << std::endl;
-  os << std::setw(30) << std::left << std::setfill(' ') << "OEM info: "                    << entry.oEMinfo_                  << std::endl;
-  os << std::setw(30) << std::left << std::setfill(' ') << "Address Of New Exe Header: "   << entry.addressOfNewExeHeader_    << std::endl;
+  os << fmt::format("Magic:                       0x{:x}\n", entry.magic())
+     << fmt::format("Used bytes in last page:     0x{:x}\n", entry.used_bytes_in_last_page())
+     << fmt::format("File size in pages:          0x{:x}\n", entry.file_size_in_pages())
+     << fmt::format("Number of relocation:        0x{:x}\n", entry.numberof_relocation())
+     << fmt::format("Header size in paragraphs:   0x{:x}\n", entry.header_size_in_paragraphs())
+     << fmt::format("Min extra paragraphs:        0x{:x}\n", entry.minimum_extra_paragraphs())
+     << fmt::format("Max extra paragraphs:        0x{:x}\n", entry.maximum_extra_paragraphs())
+     << fmt::format("Initial relative SS:         0x{:x}\n", entry.initial_relative_ss())
+     << fmt::format("Initial SP:                  0x{:x}\n", entry.initial_sp())
+     << fmt::format("Checksum:                    0x{:x}\n", entry.checksum())
+     << fmt::format("Initial IP:                  0x{:x}\n", entry.initial_ip())
+     << fmt::format("Initial relative CS:         0x{:x}\n", entry.initial_relative_cs())
+     << fmt::format("Address of relocation table: 0x{:x}\n", entry.addressof_relocation_table())
+     << fmt::format("Overlay number:              0x{:x}\n", entry.overlay_number())
+     << fmt::format("OEM id:                      0x{:x}\n", entry.oem_id())
+     << fmt::format("OEM info:                    0x{:x}\n", entry.oem_info())
+     << fmt::format("Address of new exe-header:   0x{:x}\n", entry.addressof_new_exeheader())
+     << fmt::format("Reserved1:                   {}\n", entry.reserved())
+     << fmt::format("Reserved2:                   {}\n", entry.reserved2());
   return os;
 }
 

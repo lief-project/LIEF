@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
 
   fprintf(stdout, "DosHeader\n");
   fprintf(stdout, "=========\n");
-  fprintf(stdout, "Used bytes in the last page: 0x%x\n",   dos_header.used_bytes_in_the_last_page);
+  fprintf(stdout, "Used bytes in the last page: 0x%x\n",   dos_header.used_bytes_in_last_page);
   fprintf(stdout, "File size in pages: 0x%x\n",            dos_header.file_size_in_pages);
   fprintf(stdout, "Number of relocations: 0x%x\n",         dos_header.numberof_relocation);
   fprintf(stdout, "Header size in paragraphs: 0x%x\n",     dos_header.header_size_in_paragraphs);

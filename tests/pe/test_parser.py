@@ -26,9 +26,10 @@ def test_dos_header():
     assert dos_header.oem_id == 0x0
     assert dos_header.oem_info == 0x0
     assert dos_header.overlay_number == 0x0
-    assert dos_header.used_bytes_in_the_last_page == 0x90
+    assert dos_header.used_bytes_in_last_page == 0x90
 
     assert hashlib.sha256(atapi.dos_stub).hexdigest() == "2e6296653faf1fd51d875fab7e08c38f06f9a7eccb718c569dee5e3041075a6a"
+    print(dos_header)
 
 def test_header():
     header: lief.PE.Header = atapi.header

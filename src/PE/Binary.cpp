@@ -58,14 +58,16 @@ namespace PE {
 
 Binary::~Binary() = default;
 
-Binary::Binary() {
-  format_ = LIEF::EXE_FORMATS::FORMAT_PE;
-}
+Binary::Binary() :
+  LIEF::Binary{EXE_FORMATS::FORMAT_PE},
+  dos_header_{DosHeader::create(PE_TYPE::PE32)}
+{}
 
 Binary::Binary(PE_TYPE type) :
-  type_{type}
+  LIEF::Binary{EXE_FORMATS::FORMAT_PE},
+  type_{type},
+  dos_header_{DosHeader::create(type)}
 {
-  format_ = LIEF::EXE_FORMATS::FORMAT_PE;
   Header& hdr = header();
   size_t sizeof_headers = dos_header().addressof_new_exeheader() +
                           sizeof(details::pe_header) +
@@ -737,7 +739,7 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
   //vector_iostream ios;
   ios // Hash dos header
     .write(dos_header_.magic())
-    .write(dos_header_.used_bytes_in_the_last_page())
+    .write(dos_header_.used_bytes_in_last_page())
     .write(dos_header_.file_size_in_pages())
     .write(dos_header_.numberof_relocation())
     .write(dos_header_.header_size_in_paragraphs())

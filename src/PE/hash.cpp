@@ -61,7 +61,7 @@ void Hash::visit(const Binary& binary) {
 
 void Hash::visit(const DosHeader& dos_header) {
   process(dos_header.magic());
-  process(dos_header.used_bytes_in_the_last_page());
+  process(dos_header.used_bytes_in_last_page());
   process(dos_header.file_size_in_pages());
   process(dos_header.numberof_relocation());
   process(dos_header.header_size_in_paragraphs());

@@ -31,14 +31,15 @@ void create<DosHeader>(nb::module_& m) {
 
       Most of the attributes of this structures are not relevant, except :attr:`~lief.PE.DosHeader.addressof_new_exeheader`
       )delim"_doc)
-    .def(nb::init<>())
+    .def_static("create", &DosHeader::create, nb::rv_policy::move)
+
     .def_prop_rw("magic",
         nb::overload_cast<>(&DosHeader::magic, nb::const_),
         nb::overload_cast<uint16_t>(&DosHeader::magic))
 
-    .def_prop_rw("used_bytes_in_the_last_page",
-        nb::overload_cast<>(&DosHeader::used_bytes_in_the_last_page, nb::const_),
-        nb::overload_cast<uint16_t>(&DosHeader::used_bytes_in_the_last_page))
+    .def_prop_rw("used_bytes_in_last_page",
+        nb::overload_cast<>(&DosHeader::used_bytes_in_last_page, nb::const_),
+        nb::overload_cast<uint16_t>(&DosHeader::used_bytes_in_last_page))
 
     .def_prop_rw("file_size_in_pages",
         nb::overload_cast<>(&DosHeader::file_size_in_pages, nb::const_),

@@ -78,6 +78,10 @@ class LIEF_API Binary : public Object {
 
   public:
   Binary();
+  Binary(EXE_FORMATS fmt) :
+    format_{fmt}
+  {}
+
   ~Binary() override;
 
   Binary& operator=(const Binary&);

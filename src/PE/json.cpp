@@ -201,7 +201,7 @@ void JsonVisitor::visit(const Binary& binary) {
 
 void JsonVisitor::visit(const DosHeader& dos_header) {
   node_["magic"]                       = dos_header.magic();
-  node_["used_bytes_in_the_last_page"] = dos_header.used_bytes_in_the_last_page();
+  node_["used_bytes_in_last_page"]     = dos_header.used_bytes_in_last_page();
   node_["file_size_in_pages"]          = dos_header.file_size_in_pages();
   node_["numberof_relocation"]         = dos_header.numberof_relocation();
   node_["header_size_in_paragraphs"]   = dos_header.header_size_in_paragraphs();

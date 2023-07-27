@@ -417,7 +417,7 @@ ok_error_t Builder::build(const DosHeader& dos_header) {
   std::memset(&raw_dos_header, 0, sizeof(details::pe_dos_header));
 
   raw_dos_header.Magic                     = static_cast<uint16_t>(dos_header.magic());
-  raw_dos_header.UsedBytesInTheLastPage    = static_cast<uint16_t>(dos_header.used_bytes_in_the_last_page());
+  raw_dos_header.UsedBytesInTheLastPage    = static_cast<uint16_t>(dos_header.used_bytes_in_last_page());
   raw_dos_header.FileSizeInPages           = static_cast<uint16_t>(dos_header.file_size_in_pages());
   raw_dos_header.NumberOfRelocationItems   = static_cast<uint16_t>(dos_header.numberof_relocation());
   raw_dos_header.HeaderSizeInParagraphs    = static_cast<uint16_t>(dos_header.header_size_in_paragraphs());

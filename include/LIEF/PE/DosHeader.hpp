@@ -25,6 +25,8 @@
 namespace LIEF {
 namespace PE {
 
+enum class PE_TYPE : uint16_t;
+
 namespace details {
 struct pe_dos_header;
 }
@@ -38,80 +40,199 @@ class LIEF_API DosHeader : public Object {
   using reserved_t  = std::array<uint16_t, 4>;
   using reserved2_t = std::array<uint16_t, 10>;
 
+  static constexpr uint16_t MAGIC = 0x5a4d; // MZ
+
   DosHeader(const details::pe_dos_header& header);
-  DosHeader();
   DosHeader(const DosHeader&);
   DosHeader& operator=(const DosHeader&);
+
+  DosHeader(DosHeader&&);
+  DosHeader& operator=(DosHeader&&);
+
   ~DosHeader() override;
 
   //! Magic bytes identifying a DOS/PE binary
-  uint16_t magic() const;
-  uint16_t used_bytes_in_the_last_page() const;
-  uint16_t file_size_in_pages() const;
-  uint16_t numberof_relocation() const;
-  uint16_t header_size_in_paragraphs() const;
-  uint16_t minimum_extra_paragraphs() const;
-  uint16_t maximum_extra_paragraphs() const;
-  uint16_t initial_relative_ss() const;
-  uint16_t initial_sp() const;
-  uint16_t checksum() const;
-  uint16_t initial_ip() const;
-  uint16_t initial_relative_cs() const;
-  uint16_t addressof_relocation_table() const;
-  uint16_t overlay_number() const;
-  reserved_t  reserved() const;
-  uint16_t oem_id() const;
-  uint16_t oem_info() const;
-  reserved2_t reserved2() const;
+  uint16_t magic() const {
+    return magic_;
+  }
 
-  //! It returns the offset to the PE::Header structure.
-  uint32_t addressof_new_exeheader() const;
+  uint16_t used_bytes_in_last_page() const {
+    return used_bytes_in_last_page_;
+  }
 
-  void magic(uint16_t magic);
-  void used_bytes_in_the_last_page(uint16_t usedBytesInTheLastPage);
-  void file_size_in_pages(uint16_t fileSizeInPages);
-  void numberof_relocation(uint16_t numberOfRelocation);
-  void header_size_in_paragraphs(uint16_t headerSizeInParagraphs);
-  void minimum_extra_paragraphs(uint16_t minimumExtraParagraphs);
-  void maximum_extra_paragraphs(uint16_t maximumExtraParagraphs);
-  void initial_relative_ss(uint16_t initialRelativeSS);
-  void initial_sp(uint16_t initialSP);
-  void checksum(uint16_t checksum);
-  void initial_ip(uint16_t initialIP);
-  void initial_relative_cs(uint16_t initialRelativeCS);
-  void addressof_relocation_table(uint16_t addressOfRelocationTable);
-  void overlay_number(uint16_t overlayNumber);
-  void reserved(const reserved_t& reserved);
-  void oem_id(uint16_t oEMid);
-  void oem_info(uint16_t oEMinfo);
-  void reserved2(const reserved2_t& reserved2);
-  void addressof_new_exeheader(uint32_t addressOfNewExeHeader);
+  uint16_t file_size_in_pages() const {
+    return file_sz_in_pages_;
+  }
+
+  uint16_t numberof_relocation() const {
+    return nb_relocations_;
+  }
+
+  uint16_t header_size_in_paragraphs() const {
+    return header_sz_in_paragraphs_;
+  }
+
+  uint16_t minimum_extra_paragraphs() const {
+    return min_extra_paragraphs_;
+  }
+
+  uint16_t maximum_extra_paragraphs() const {
+    return max_extra_paragraphs_;
+  }
+
+  uint16_t initial_relative_ss() const {
+    return init_relative_ss_;
+  }
+
+  uint16_t initial_sp() const {
+    return init_sp_;
+  }
+
+  uint16_t checksum() const {
+    return checksum_;
+  }
+
+  uint16_t initial_ip() const {
+    return init_ip_;
+  }
+
+  uint16_t initial_relative_cs() const {
+    return init_rel_cs_;
+  }
+
+  uint16_t addressof_relocation_table() const {
+    return addr_reloc_table_;
+  }
+
+  uint16_t overlay_number() const {
+    return overlay_number_;
+  }
+
+  const reserved_t& reserved() const {
+    return reserved_;
+  }
+
+  uint16_t oem_id() const {
+    return oem_id_;
+  }
+
+  uint16_t oem_info() const {
+    return oem_info_;
+  }
+
+  const reserved2_t& reserved2() const {
+    return reserved2_;
+  }
+
+  //! Return the offset to the PE::Header structure.
+  uint32_t addressof_new_exeheader() const {
+    return addr_new_exe_header_;
+  }
+
+  void magic(uint16_t magic) {
+    magic_ = magic;
+  }
+
+  void used_bytes_in_last_page(uint16_t value) {
+    used_bytes_in_last_page_ = value;
+  }
+
+  void file_size_in_pages(uint16_t value) {
+    file_sz_in_pages_ = value;
+  }
+
+  void numberof_relocation(uint16_t value) {
+    nb_relocations_ = value;
+  }
+
+  void header_size_in_paragraphs(uint16_t value) {
+    header_sz_in_paragraphs_ = value;
+  }
+
+  void minimum_extra_paragraphs(uint16_t value) {
+    min_extra_paragraphs_ = value;
+  }
+
+  void maximum_extra_paragraphs(uint16_t value) {
+    max_extra_paragraphs_ = value;
+  }
+
+  void initial_relative_ss(uint16_t value) {
+    init_relative_ss_ = value;
+  }
+
+  void initial_sp(uint16_t value) {
+    init_sp_ = value;
+  }
+
+  void checksum(uint16_t value) {
+    checksum_ = value;
+  }
+
+  void initial_ip(uint16_t value) {
+    init_ip_ = value;
+  }
+
+  void initial_relative_cs(uint16_t value) {
+    init_rel_cs_ = value;
+  }
+
+  void addressof_relocation_table(uint16_t value) {
+    addr_reloc_table_ = value;
+  }
+
+  void overlay_number(uint16_t value) {
+    overlay_number_ = value;
+  }
+
+  void reserved(const reserved_t& reserved) {
+    reserved_ = reserved;
+  }
+
+  void oem_id(uint16_t value) {
+    oem_id_ = value;
+  }
+
+  void oem_info(uint16_t value) {
+    oem_info_ = value;
+  }
+
+  void reserved2(const reserved2_t& reserved2) {
+    reserved2_ = reserved2;
+  }
+
+  void addressof_new_exeheader(uint32_t value) {
+    addr_new_exe_header_ = value;
+  }
 
   void accept(Visitor& visitor) const override;
 
-
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const DosHeader& entry);
 
+  static DosHeader create(PE_TYPE type);
+
   private:
-  uint16_t    magic_;
-  uint16_t    usedBytesInTheLastPage_;
-  uint16_t    fileSizeInPages_;
-  uint16_t    numberOfRelocation_;
-  uint16_t    headerSizeInParagraphs_;
-  uint16_t    minimumExtraParagraphs_;
-  uint16_t    maximumExtraParagraphs_;
-  uint16_t    initialRelativeSS_;
-  uint16_t    initialSP_;
-  uint16_t    checksum_;
-  uint16_t    initialIP_;
-  uint16_t    initialRelativeCS_;
-  uint16_t    addressOfRelocationTable_;
-  uint16_t    overlayNumber_;
+  DosHeader();
+
+  uint16_t    magic_ = 0;
+  uint16_t    used_bytes_in_last_page_ = 0;
+  uint16_t    file_sz_in_pages_ = 0;
+  uint16_t    nb_relocations_ = 0;
+  uint16_t    header_sz_in_paragraphs_ = 0;
+  uint16_t    min_extra_paragraphs_ = 0;
+  uint16_t    max_extra_paragraphs_ = 0;
+  uint16_t    init_relative_ss_ = 0;
+  uint16_t    init_sp_ = 0;
+  uint16_t    checksum_ = 0;
+  uint16_t    init_ip_ = 0;
+  uint16_t    init_rel_cs_ = 0;
+  uint16_t    addr_reloc_table_ = 0;
+  uint16_t    overlay_number_ = 0;
   reserved_t  reserved_;
-  uint16_t    oEMid_;
-  uint16_t    oEMinfo_;
+  uint16_t    oem_id_ = 0;
+  uint16_t    oem_info_ = 0;
   reserved2_t reserved2_;
-  uint32_t    addressOfNewExeHeader_;
+  uint32_t    addr_new_exe_header_ = 0;
 };
 }
 }

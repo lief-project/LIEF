@@ -58,7 +58,7 @@ def print_header(binary):
 
     print("== Dos Header ==")
     print(format_str.format("Magic:",                       str((dos_header.magic))))
-    print(format_dec.format("Used bytes in the last page:", dos_header.used_bytes_in_the_last_page))
+    print(format_dec.format("Used bytes in the last page:", dos_header.used_bytes_in_last_page))
     print(format_dec.format("File size in pages:",          dos_header.file_size_in_pages))
     print(format_dec.format("Number of relocations:",       dos_header.numberof_relocation))
     print(format_dec.format("Header size in paragraphs:",   dos_header.header_size_in_paragraphs))

@@ -18,7 +18,7 @@
 #include <inttypes.h>
 
 #include "LIEF/ELF/enums.h"
-/**  @defgroup pe_dos_header_c_api DosHeader
+/** @defgroup pe_dos_header_c_api DosHeader
  *  @ingroup pe_c_api
  *  @addtogroup pe_dos_header_c_api
  *  @brief Dos Header C API
@@ -32,7 +32,7 @@ extern "C" {
 
 struct Pe_DosHeader_t {
   uint16_t magic ;
-  uint16_t used_bytes_in_the_last_page;
+  uint16_t used_bytes_in_last_page;
   uint16_t file_size_in_pages;
   uint16_t numberof_relocation;
   uint16_t header_size_in_paragraphs;
