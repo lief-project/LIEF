@@ -11,7 +11,7 @@ Introduction
 ~~~~~~~~~~~~
 
 PE authenticode is the signature scheme used by Windows to sign and verify the integrity of PE executables.
-The signature is associated with the data directory :attr:`~lief.PE.DATA_DIRECTORY.CERTIFICATE_TABLE`
+The signature is associated with the data directory :attr:`~lief.PE.DataDirectory.TYPES.CERTIFICATE_TABLE`
 that is not always tied to a section (it implies that the signature is not necessarily mapped in memory).
 This signature is wrapped in a PKCS #7 container with custom object types as defined
 in the official documentation [#]_.

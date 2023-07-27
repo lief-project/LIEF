@@ -633,9 +633,6 @@ Enums
 .. doxygenenum:: LIEF::PE::RELOCATIONS_ARM
    :project: lief
 
-.. doxygenenum:: LIEF::PE::DATA_DIRECTORY
-   :project: lief
-
 .. doxygenenum:: LIEF::PE::RESOURCE_TYPES
    :project: lief
 

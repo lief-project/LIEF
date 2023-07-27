@@ -117,7 +117,7 @@ ok_error_t Parser::parse_data_directories() {
   using pe_optional_header = typename PE_T::pe_optional_header;
   const uint32_t directories_offset = binary_->dos_header().addressof_new_exeheader() +
                                       sizeof(details::pe_header) + sizeof(pe_optional_header);
-  const auto nbof_datadir = static_cast<uint32_t>(DATA_DIRECTORY::NUM_DATA_DIRECTORIES);
+  const auto nbof_datadir = DataDirectory::DEFAULT_NB;
   stream_->setpos(directories_offset);
 
   // WARNING: The PE specifications require that the data directory table ends
@@ -134,12 +134,12 @@ ok_error_t Parser::parse_data_directories() {
       LIEF_ERR("Can't read data directory at #{}", i);
       return make_error_code(lief_errors::read_error);
     }
-    const auto dir_type = static_cast<DATA_DIRECTORY>(i);
+    const auto dir_type = static_cast<DataDirectory::TYPES>(i);
     auto directory = std::make_unique<DataDirectory>(raw_dir, dir_type);
     if (directory->RVA() > 0) {
       const uint64_t offset = binary_->rva_to_offset(directory->RVA());
       directory->section_   = binary_->section_from_offset(offset);
-      if (directory->section_ == nullptr && dir_type != DATA_DIRECTORY::CERTIFICATE_TABLE) {
+      if (directory->section_ == nullptr && dir_type != DataDirectory::TYPES::CERTIFICATE_TABLE) {
         LIEF_WARN("Unable to find the section associated with {}", to_string(dir_type));
       }
     }
@@ -147,7 +147,7 @@ ok_error_t Parser::parse_data_directories() {
   }
 
   // Import Table
-  if (DataDirectory* import_data_dir = binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE)) {
+  if (DataDirectory* import_data_dir = binary_->data_directory(DataDirectory::TYPES::IMPORT_TABLE)) {
     if (import_data_dir->RVA() > 0 && config_.parse_imports)
     {
       LIEF_DEBUG("Processing Import Table");
@@ -159,7 +159,7 @@ ok_error_t Parser::parse_data_directories() {
   }
 
   // Exports
-  if (const DataDirectory* export_dir = binary_->data_directory(DATA_DIRECTORY::EXPORT_TABLE)) {
+  if (const DataDirectory* export_dir = binary_->data_directory(DataDirectory::TYPES::EXPORT_TABLE)) {
     if (export_dir->RVA() > 0 && config_.parse_exports) {
       LIEF_DEBUG("Parsing Exports");
       parse_exports();
@@ -167,13 +167,13 @@ ok_error_t Parser::parse_data_directories() {
   }
 
   // Signature
-  if (const DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::CERTIFICATE_TABLE)) {
+  if (const DataDirectory* dir = binary_->data_directory(DataDirectory::TYPES::CERTIFICATE_TABLE)) {
     if (dir->RVA() > 0 && config_.parse_signature) {
       parse_signature();
     }
   }
 
-  if (DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::TLS_TABLE)) {
+  if (DataDirectory* dir = binary_->data_directory(DataDirectory::TYPES::TLS_TABLE)) {
     if (dir->RVA() > 0) {
       if (Section* sec = dir->section()) {
         sec->add_type(PE_SECTION_TYPES::TLS);
@@ -182,7 +182,7 @@ ok_error_t Parser::parse_data_directories() {
     }
   }
 
-  if (DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::LOAD_CONFIG_TABLE)) {
+  if (DataDirectory* dir = binary_->data_directory(DataDirectory::TYPES::LOAD_CONFIG_TABLE)) {
     if (dir->RVA() > 0) {
       LIEF_DEBUG("Parsing LoadConfiguration");
       if (Section* sec = dir->section()) {
@@ -192,7 +192,7 @@ ok_error_t Parser::parse_data_directories() {
     }
   }
 
-  if (DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE)) {
+  if (DataDirectory* dir = binary_->data_directory(DataDirectory::TYPES::BASE_RELOCATION_TABLE)) {
     if (dir->RVA() > 0 && config_.parse_reloc) {
       LIEF_DEBUG("Parsing Relocations");
       if (Section* sec = dir->section()) {
@@ -202,7 +202,7 @@ ok_error_t Parser::parse_data_directories() {
     }
   }
 
-  if (DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::DEBUG)) {
+  if (DataDirectory* dir = binary_->data_directory(DataDirectory::TYPES::DEBUG)) {
     if (dir->RVA() > 0) {
       if (Section* sec = dir->section()) {
         sec->add_type(PE_SECTION_TYPES::DEBUG);
@@ -211,7 +211,7 @@ ok_error_t Parser::parse_data_directories() {
     }
   }
 
-  if (DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::RESOURCE_TABLE)) {
+  if (DataDirectory* dir = binary_->data_directory(DataDirectory::TYPES::RESOURCE_TABLE)) {
     if (dir->RVA() > 0 && config_.parse_rsrc) {
       LIEF_DEBUG("Parsing Resources");
       if (Section* sec = dir->section()) {
@@ -221,7 +221,7 @@ ok_error_t Parser::parse_data_directories() {
     }
   }
 
-  if (DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::DELAY_IMPORT_DESCRIPTOR)) {
+  if (DataDirectory* dir = binary_->data_directory(DataDirectory::TYPES::DELAY_IMPORT_DESCRIPTOR)) {
     if (dir->RVA() > 0) {
       auto is_ok = parse_delay_imports<PE_T>();
       if (!is_ok) {
@@ -237,8 +237,8 @@ ok_error_t Parser::parse_data_directories() {
 template<typename PE_T>
 ok_error_t Parser::parse_import_table() {
   using uint = typename PE_T::uint;
-  DataDirectory* import_dir = binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE);
-  DataDirectory* iat_dir    = binary_->data_directory(DATA_DIRECTORY::IAT);
+  DataDirectory* import_dir = binary_->data_directory(DataDirectory::TYPES::IMPORT_TABLE);
+  DataDirectory* iat_dir    = binary_->data_directory(DataDirectory::TYPES::IAT);
 
   if (import_dir == nullptr || iat_dir == nullptr) {
     return make_error_code(lief_errors::not_found);
@@ -449,7 +449,7 @@ ok_error_t Parser::parse_delay_imports() {
   LIEF_DEBUG("Parsing Delay Import Table");
   std::string dll_name;
 
-  const DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::DELAY_IMPORT_DESCRIPTOR);
+  const DataDirectory* dir = binary_->data_directory(DataDirectory::TYPES::DELAY_IMPORT_DESCRIPTOR);
   if (dir == nullptr) {
     return make_error_code(lief_errors::not_found);
   }
@@ -540,7 +540,7 @@ ok_error_t Parser::parse_tls() {
 
   LIEF_DEBUG("Parsing TLS");
 
-  DataDirectory* tls_dir = binary_->data_directory(DATA_DIRECTORY::TLS_TABLE);
+  DataDirectory* tls_dir = binary_->data_directory(DataDirectory::TYPES::TLS_TABLE);
   if (tls_dir == nullptr) {
     return make_error_code(lief_errors::not_found);
   }
@@ -653,7 +653,7 @@ ok_error_t Parser::parse_load_config() {
 
   LIEF_DEBUG("[+] Parsing Load Config");
 
-  DataDirectory* load_config_dir = binary_->data_directory(DATA_DIRECTORY::LOAD_CONFIG_TABLE);
+  DataDirectory* load_config_dir = binary_->data_directory(DataDirectory::TYPES::LOAD_CONFIG_TABLE);
   if (load_config_dir == nullptr) {
     return make_error_code(lief_errors::not_found);
   }

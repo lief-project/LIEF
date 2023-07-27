@@ -21,7 +21,7 @@ To retrieve the section in which resources are located, one can use the :attr:`~
 
   binary = lief.parse("C:\\Windows\\explorer.exe")
   if binary.has_resources:
-    rsrc_directory = binary.data_directory(lief.PE.DATA_DIRECTORY.RESOURCE_TABLE)
+    rsrc_directory = binary.data_directory(lief.PE.DataDirectory.TYPES.RESOURCE_TABLE)
     if rsrc_directory.has_section:
       print(rsrc_directory.section)
 

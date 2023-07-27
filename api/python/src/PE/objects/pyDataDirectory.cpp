@@ -17,19 +17,43 @@
 #include <sstream>
 #include <nanobind/stl/string.h>
 
+#include "enums_wrapper.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
 #include "LIEF/PE/Section.hpp"
 
 #include "PE/pyPE.hpp"
 
+#define PY_ENUM(x) to_string(x), x
+
 namespace LIEF::PE::py {
 
 template<>
 void create<DataDirectory>(nb::module_& m) {
-  nb::class_<DataDirectory, Object>(m, "DataDirectory",
+  nb::class_<DataDirectory, Object> data_dir(m, "DataDirectory",
       R"delim(
       Class that represents a PE data directory entry
-      )delim"_doc)
+      )delim"_doc);
+
+  enum_<DataDirectory::TYPES>(data_dir, "TYPES")
+    .value(PY_ENUM(DataDirectory::TYPES::EXPORT_TABLE))
+    .value(PY_ENUM(DataDirectory::TYPES::IMPORT_TABLE))
+    .value(PY_ENUM(DataDirectory::TYPES::RESOURCE_TABLE))
+    .value(PY_ENUM(DataDirectory::TYPES::EXCEPTION_TABLE))
+    .value(PY_ENUM(DataDirectory::TYPES::CERTIFICATE_TABLE))
+    .value(PY_ENUM(DataDirectory::TYPES::BASE_RELOCATION_TABLE))
+    .value(PY_ENUM(DataDirectory::TYPES::DEBUG))
+    .value(PY_ENUM(DataDirectory::TYPES::ARCHITECTURE))
+    .value(PY_ENUM(DataDirectory::TYPES::GLOBAL_PTR))
+    .value(PY_ENUM(DataDirectory::TYPES::TLS_TABLE))
+    .value(PY_ENUM(DataDirectory::TYPES::LOAD_CONFIG_TABLE))
+    .value(PY_ENUM(DataDirectory::TYPES::BOUND_IMPORT))
+    .value(PY_ENUM(DataDirectory::TYPES::IAT))
+    .value(PY_ENUM(DataDirectory::TYPES::DELAY_IMPORT_DESCRIPTOR))
+    .value(PY_ENUM(DataDirectory::TYPES::CLR_RUNTIME_HEADER))
+    .value(PY_ENUM(DataDirectory::TYPES::RESERVED))
+    .value(PY_ENUM(DataDirectory::TYPES::UNKNOWN));
+
+  data_dir
     .def(nb::init<>())
     .def_prop_rw("rva",
         nb::overload_cast<>(&DataDirectory::RVA, nb::const_),
@@ -48,7 +72,7 @@ void create<DataDirectory>(nb::module_& m) {
 
     .def_prop_ro("type",
         &DataDirectory::type,
-        "Type (" RST_CLASS_REF(lief.PE.DATA_DIRECTORY) ") of the current data directory"_doc,
+        "Type (" RST_CLASS_REF(lief.PE.DataDirectory.TYPES) ") of the current data directory"_doc,
         nb::rv_policy::reference_internal)
 
     .def_prop_ro("has_section",

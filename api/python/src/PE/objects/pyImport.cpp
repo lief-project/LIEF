@@ -76,7 +76,7 @@ void create<Import>(nb::module_& m) {
         R"delim(
         Return the :class:`~lief.PE.DataDirectory` associated with this import.
 
-        It should be the one at index :attr:`lief.PE.DATA_DIRECTORY.IMPORT_TABLE`.
+        It should be the one at index :attr:`lief.PE.DataDirectory.TYPES.IMPORT_TABLE`.
         It can return None if the Import directory can't be resolved.
         )delim"_doc,
         nb::rv_policy::reference_internal)
@@ -86,7 +86,7 @@ void create<Import>(nb::module_& m) {
         R"delim(
         Return the :class:`~lief.PE.DataDirectory` associated with the ``IAT`` table.
 
-        It should be the one at index :attr:`lief.PE.DATA_DIRECTORY.IAT`. It can
+        It should be the one at index :attr:`lief.PE.DataDirectory.TYPES.IAT`. It can
         return None if the IAT directory can't be resolved.
         )delim"_doc,
         nb::rv_policy::reference_internal)

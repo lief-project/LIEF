@@ -164,7 +164,7 @@ void Builder::build_import_table() {
   content.insert(std::end(content), content_size_aligned - content.size(), 0);
 
   // Create a new section to handle imports
-  Section new_import_section{".l" + std::to_string(static_cast<uint32_t>(DATA_DIRECTORY::IMPORT_TABLE))};
+  Section new_import_section{".l" + std::to_string(static_cast<uint32_t>(DataDirectory::TYPES::IMPORT_TABLE))};
   new_import_section.content(content);
 
   new_import_section.add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_CNT_CODE);
@@ -179,8 +179,8 @@ void Builder::build_import_table() {
     (*it_import_section)->remove_type(PE_SECTION_TYPES::IMPORT);
   }
 
-  // As add_section will change DATA_DIRECTORY::IMPORT_TABLE we have to save it before
-  uint32_t offset_imports  = binary_->rva_to_offset(binary_->data_directory(DATA_DIRECTORY::IMPORT_TABLE)->RVA());
+  // As add_section will change DataDirectory::TYPES::IMPORT_TABLE we have to save it before
+  uint32_t offset_imports  = binary_->rva_to_offset(binary_->data_directory(DataDirectory::TYPES::IMPORT_TABLE)->RVA());
   Section* import_section = binary_->add_section(new_import_section, PE_SECTION_TYPES::IMPORT);
   if (import_section == nullptr) {
     return;
@@ -341,8 +341,8 @@ void Builder::build_import_table() {
 
   // Update IAT data directory
   const auto rva = static_cast<uint32_t>(import_section->virtual_address() + iat_offset);
-  binary_->data_directory(DATA_DIRECTORY::IAT)->RVA(rva);
-  binary_->data_directory(DATA_DIRECTORY::IAT)->size(functions_name_offset - iat_offset + 1);
+  binary_->data_directory(DataDirectory::TYPES::IAT)->RVA(rva);
+  binary_->data_directory(DataDirectory::TYPES::IAT)->size(functions_name_offset - iat_offset + 1);
 }
 
 template<typename PE_T>
@@ -415,7 +415,7 @@ ok_error_t Builder::build_tls() {
 
   // No .tls section register in the binary. We have to create it
   if (it_tls == std::end(binary_->sections_)) {
-    Section new_section{".l" + std::to_string(static_cast<uint32_t>(DATA_DIRECTORY::TLS_TABLE))}; // .l9 -> lief.tls
+    Section new_section{".l" + std::to_string(static_cast<uint32_t>(DataDirectory::TYPES::TLS_TABLE))}; // .l9 -> lief.tls
     new_section.characteristics(0xC0300040);
     uint64_t tls_section_size = sizeof(pe_tls);
 

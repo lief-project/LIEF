@@ -160,26 +160,6 @@ enum _LIEF_EN(WeakExternalCharacteristics) {
 };
 
 
-enum _LIEF_EN(DATA_DIRECTORY) {
-  _LIEF_EI(EXPORT_TABLE)            = 0,
-  _LIEF_EI(IMPORT_TABLE)            = 1,
-  _LIEF_EI(RESOURCE_TABLE)          = 2,
-  _LIEF_EI(EXCEPTION_TABLE)         = 3,
-  _LIEF_EI(CERTIFICATE_TABLE)       = 4,
-  _LIEF_EI(BASE_RELOCATION_TABLE)   = 5,
-  _LIEF_EI(DEBUG)                   = 6,
-  _LIEF_EI(ARCHITECTURE)            = 7,
-  _LIEF_EI(GLOBAL_PTR)              = 8,
-  _LIEF_EI(TLS_TABLE)               = 9,
-  _LIEF_EI(LOAD_CONFIG_TABLE)       = 10,
-  _LIEF_EI(BOUND_IMPORT)            = 11,
-  _LIEF_EI(IAT)                     = 12,
-  _LIEF_EI(DELAY_IMPORT_DESCRIPTOR) = 13,
-  _LIEF_EI(CLR_RUNTIME_HEADER)      = 14,
-  _LIEF_EI(RESERVED)                = 15,
-
-  _LIEF_EI(NUM_DATA_DIRECTORIES)    = 16
-};
 
 enum _LIEF_EN(DEBUG_TYPES) {
   _LIEF_EI(IMAGE_DEBUG_TYPE_UNKNOWN)               = 0,

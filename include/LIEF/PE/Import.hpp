@@ -98,14 +98,14 @@ class LIEF_API Import : public Object {
   void name(const std::string& name);
 
   //! Return the PE::DataDirectory associated with this import.
-  //! It should be the one at index PE::DATA_DIRECTORY::IMPORT_TABLE
+  //! It should be the one at index PE::DataDirectory::TYPES::IMPORT_TABLE
   //!
   //! If the data directory can't be found, return a nullptr
   DataDirectory*       directory();
   const DataDirectory* directory() const;
 
   //! Return the PE::DataDirectory associated associated with the IAT.
-  //! It should be the one at index PE::DATA_DIRECTORY::IAT
+  //! It should be the one at index PE::DataDirectory::TYPES::IAT
   //!
   //! If the data directory can't be found, return a nullptr
   DataDirectory*       iat_directory();

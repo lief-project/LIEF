@@ -293,7 +293,7 @@ def test_tls():
     print(tls)
 
     assert tls.directory is not None
-    assert tls.directory.type == lief.PE.DATA_DIRECTORY.TLS_TABLE
+    assert tls.directory.type == lief.PE.DataDirectory.TYPES.TLS_TABLE
     assert hashlib.sha256(tls.data_template).hexdigest() == "ffb6b993bf4ae7ec095d4aeba45ac7e9973e16c17077058260f3f4eb0487d07e"
 
 def test_imports():
@@ -331,8 +331,8 @@ def test_imports():
     assert entry_0.iat_value == 0x85ca
     assert entry_0.iat_address == 0x82cc
 
-    assert msvcrt.directory == winhello64.data_directory(lief.PE.DATA_DIRECTORY.IMPORT_TABLE)
-    assert msvcrt.iat_directory == winhello64.data_directory(lief.PE.DATA_DIRECTORY.IAT)
+    assert msvcrt.directory == winhello64.data_directory(lief.PE.DataDirectory.TYPES.IMPORT_TABLE)
+    assert msvcrt.iat_directory == winhello64.data_directory(lief.PE.DataDirectory.TYPES.IAT)
     assert msvcrt.get_function_rva_from_iat("") == lief.lief_errors.not_found
     assert msvcrt.get_function_rva_from_iat("__C_specific_handler") == 0
 

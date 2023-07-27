@@ -719,16 +719,6 @@ PE_TYPE
 
 ----------
 
-DATA_DIRECTORY
-~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.DATA_DIRECTORY
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-----------
-
 SECTION_CHARACTERISTICS
 ~~~~~~~~~~~~~~~~~~~~~~~
 

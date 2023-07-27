@@ -24,6 +24,7 @@
 #include "LIEF/PE/Import.hpp"
 #include "LIEF/PE/DelayImport.hpp"
 #include "LIEF/PE/Symbol.hpp"
+#include "LIEF/PE/DataDirectory.hpp"
 #include "LIEF/PE/ResourcesManager.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
 
@@ -419,12 +420,12 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   //! Return the DataDirectory with the given type (or index)
-  DataDirectory* data_directory(DATA_DIRECTORY index);
-  const DataDirectory* data_directory(DATA_DIRECTORY index) const;
+  DataDirectory* data_directory(DataDirectory::TYPES type);
+  const DataDirectory* data_directory(DataDirectory::TYPES type) const;
 
-  //! Check if the current binary has the given DATA_DIRECTORY
-  bool has(DATA_DIRECTORY index) const {
-    return data_directory(index) != nullptr;
+  //! Check if the current binary has the given DataDirectory::TYPES
+  bool has(DataDirectory::TYPES type) const {
+    return data_directory(type) != nullptr;
   }
 
   //! Return an iterator over the Debug entries

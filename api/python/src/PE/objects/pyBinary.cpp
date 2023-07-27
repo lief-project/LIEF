@@ -316,8 +316,8 @@ void create<Binary>(nb::module_& m) {
         nb::keep_alive<0, 1>())
 
     .def("data_directory",
-        nb::overload_cast<DATA_DIRECTORY>(&Binary::data_directory),
-        "Return the " RST_CLASS_REF(lief.PE.DataDirectory) " object from the given " RST_CLASS_REF(lief.PE.DATA_DIRECTORY) " type"_doc,
+        nb::overload_cast<DataDirectory::TYPES>(&Binary::data_directory),
+        "Return the " RST_CLASS_REF(lief.PE.DataDirectory) " object from the given " RST_CLASS_REF(lief.PE.DataDirectory.TYPES) " type"_doc,
         "type"_a,
         nb::rv_policy::reference_internal)
 

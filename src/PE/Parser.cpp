@@ -294,7 +294,7 @@ ok_error_t Parser::parse_relocations() {
   static constexpr size_t MAX_RELOCATION_ENTRIES = 100000;
   LIEF_DEBUG("Parsing relocations");
 
-  const DataDirectory* reloc_dir = binary_->data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE);
+  const DataDirectory* reloc_dir = binary_->data_directory(DataDirectory::TYPES::BASE_RELOCATION_TABLE);
 
   if (reloc_dir == nullptr) {
     return make_error_code(lief_errors::not_found);
@@ -355,7 +355,7 @@ ok_error_t Parser::parse_relocations() {
 
 ok_error_t Parser::parse_resources() {
   LIEF_DEBUG("Parsing resources");
-  const DataDirectory* res_dir = binary_->data_directory(DATA_DIRECTORY::RESOURCE_TABLE);
+  const DataDirectory* res_dir = binary_->data_directory(DataDirectory::TYPES::RESOURCE_TABLE);
 
   if (res_dir == nullptr) {
     return make_error_code(lief_errors::not_found);
@@ -607,7 +607,7 @@ ok_error_t Parser::parse_symbols() {
 ok_error_t Parser::parse_debug() {
   LIEF_DEBUG("Parsing debug directory");
 
-  DataDirectory* dir = binary_->data_directory(DATA_DIRECTORY::DEBUG);
+  DataDirectory* dir = binary_->data_directory(DataDirectory::TYPES::DEBUG);
   if (dir == nullptr) {
     return make_error_code(lief_errors::not_found);
   }
@@ -815,7 +815,7 @@ ok_error_t Parser::parse_exports() {
     uint32_t start;
     uint32_t end;
   };
-  const DataDirectory* export_dir = binary_->data_directory(DATA_DIRECTORY::EXPORT_TABLE);
+  const DataDirectory* export_dir = binary_->data_directory(DataDirectory::TYPES::EXPORT_TABLE);
 
   if (export_dir == nullptr) {
     return make_error_code(lief_errors::not_found);
@@ -989,7 +989,7 @@ ok_error_t Parser::parse_signature() {
 
   /*** /!\ In this data directory, RVA is used as an **OFFSET** /!\ ****/
   /*********************************************************************/
-  const DataDirectory* cert_dir = binary_->data_directory(DATA_DIRECTORY::CERTIFICATE_TABLE);
+  const DataDirectory* cert_dir = binary_->data_directory(DataDirectory::TYPES::CERTIFICATE_TABLE);
   if (cert_dir == nullptr) {
     return make_error_code(lief_errors::not_found);
   }

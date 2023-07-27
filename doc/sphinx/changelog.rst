@@ -31,6 +31,16 @@ Changelog
     (instead of `lief.MachO.Binary.name`)
 
 :PE:
+  * ``DATA_DIRECTORY`` is now scoped within the
+    :class:`~lief.PE.DataDirectory` class instead of being globally defined:
+
+    .. code-block:: python
+
+      # Before
+      lief.PE.DATA_DIRECTORY.IAT
+      # Now:
+      lief.PE.DataDirectory.TYPES.IAT
+
   * ``MACHINE_TYPES`` and ``HEADER_CHARACTERISTICS`` are now scoped within the
     :class:`~lief.PE.Header` class instead of being globally defined:
 

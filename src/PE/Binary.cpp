@@ -75,7 +75,7 @@ Binary::Binary(PE_TYPE type) :
   Header& hdr = header();
   size_t sizeof_headers = dos_header().addressof_new_exeheader() +
                           sizeof(details::pe_header) +
-                          sizeof(details::pe_data_directory) * details::DEFAULT_NUMBER_DATA_DIRECTORIES;
+                          sizeof(details::pe_data_directory) * DataDirectory::DEFAULT_NB;
   if (type == PE_TYPE::PE32) {
     hdr.machine(Header::MACHINE_TYPES::I386);
     hdr.add_characteristic(Header::CHARACTERISTICS::NEED_32BIT_MACHINE);
@@ -89,22 +89,22 @@ Binary::Binary(PE_TYPE type) :
   }
 
   // Add data directories
-  data_directories_.push_back(std::make_unique<DataDirectory>(DATA_DIRECTORY::EXPORT_TABLE));
-  data_directories_.push_back(std::make_unique<DataDirectory>(DATA_DIRECTORY::IMPORT_TABLE));
-  data_directories_.push_back(std::make_unique<DataDirectory>(DATA_DIRECTORY::RESOURCE_TABLE));
-  data_directories_.push_back(std::make_unique<DataDirectory>(DATA_DIRECTORY::EXCEPTION_TABLE));
-  data_directories_.push_back(std::make_unique<DataDirectory>(DATA_DIRECTORY::CERTIFICATE_TABLE));
-  data_directories_.push_back(std::make_unique<DataDirectory>(DATA_DIRECTORY::BASE_RELOCATION_TABLE));
-  data_directories_.push_back(std::make_unique<DataDirectory>(DATA_DIRECTORY::DEBUG));
-  data_directories_.push_back(std::make_unique<DataDirectory>(DATA_DIRECTORY::ARCHITECTURE));
-  data_directories_.push_back(std::make_unique<DataDirectory>(DATA_DIRECTORY::GLOBAL_PTR));
-  data_directories_.push_back(std::make_unique<DataDirectory>(DATA_DIRECTORY::TLS_TABLE));
-  data_directories_.push_back(std::make_unique<DataDirectory>(DATA_DIRECTORY::LOAD_CONFIG_TABLE));
-  data_directories_.push_back(std::make_unique<DataDirectory>(DATA_DIRECTORY::BOUND_IMPORT));
-  data_directories_.push_back(std::make_unique<DataDirectory>(DATA_DIRECTORY::IAT));
-  data_directories_.push_back(std::make_unique<DataDirectory>(DATA_DIRECTORY::DELAY_IMPORT_DESCRIPTOR));
-  data_directories_.push_back(std::make_unique<DataDirectory>(DATA_DIRECTORY::CLR_RUNTIME_HEADER));
-  data_directories_.push_back(std::make_unique<DataDirectory>(DATA_DIRECTORY::RESERVED));
+  data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::EXPORT_TABLE));
+  data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::IMPORT_TABLE));
+  data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::RESOURCE_TABLE));
+  data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::EXCEPTION_TABLE));
+  data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::CERTIFICATE_TABLE));
+  data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::BASE_RELOCATION_TABLE));
+  data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::DEBUG));
+  data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::ARCHITECTURE));
+  data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::GLOBAL_PTR));
+  data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::TLS_TABLE));
+  data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::LOAD_CONFIG_TABLE));
+  data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::BOUND_IMPORT));
+  data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::IAT));
+  data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::DELAY_IMPORT_DESCRIPTOR));
+  data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::CLR_RUNTIME_HEADER));
+  data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::RESERVED));
 
   optional_header().sizeof_headers(this->sizeof_headers());
   optional_header().sizeof_image(virtual_size());
@@ -234,11 +234,11 @@ Section* Binary::section_from_rva(uint64_t virtual_address) {
   return const_cast<Section*>(static_cast<const Binary*>(this)->section_from_rva(virtual_address));
 }
 
-DataDirectory* Binary::data_directory(DATA_DIRECTORY index) {
+DataDirectory* Binary::data_directory(DataDirectory::TYPES index) {
   return const_cast<DataDirectory*>(static_cast<const Binary*>(this)->data_directory(index));
 }
 
-const DataDirectory* Binary::data_directory(DATA_DIRECTORY index) const {
+const DataDirectory* Binary::data_directory(DataDirectory::TYPES index) const {
   if (static_cast<size_t>(index) < data_directories_.size() &&
       data_directories_[static_cast<size_t>(index)] != nullptr) {
     return data_directories_[static_cast<size_t>(index)].get();
@@ -247,7 +247,7 @@ const DataDirectory* Binary::data_directory(DATA_DIRECTORY index) const {
 }
 
 bool Binary::has_exceptions() const {
-  return has(DATA_DIRECTORY::EXCEPTION_TABLE);
+  return has(DataDirectory::TYPES::EXCEPTION_TABLE);
 }
 
 bool Binary::is_reproducible_build() const {
@@ -322,7 +322,7 @@ const Section* Binary::import_section() const {
   if (!has_imports()) {
     return nullptr;
   }
-  if (const DataDirectory* import_directory = data_directory(DATA_DIRECTORY::IMPORT_TABLE)) {
+  if (const DataDirectory* import_directory = data_directory(DataDirectory::TYPES::IMPORT_TABLE)) {
     return import_directory->section();
   }
   return nullptr;
@@ -518,29 +518,29 @@ Section* Binary::add_section(const Section& section, PE_SECTION_TYPES type) {
     new_section->add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_EXECUTE);
     new_section->add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_MEM_WRITE);
 
-    data_directory(DATA_DIRECTORY::IMPORT_TABLE)->RVA(new_section->virtual_address());
-    data_directory(DATA_DIRECTORY::IMPORT_TABLE)->size(new_section->sizeof_raw_data());
-    data_directory(DATA_DIRECTORY::IMPORT_TABLE)->section_ = new_section.get();
-    data_directory(DATA_DIRECTORY::IAT)->RVA(0);
-    data_directory(DATA_DIRECTORY::IAT)->size(0);
+    data_directory(DataDirectory::TYPES::IMPORT_TABLE)->RVA(new_section->virtual_address());
+    data_directory(DataDirectory::TYPES::IMPORT_TABLE)->size(new_section->sizeof_raw_data());
+    data_directory(DataDirectory::TYPES::IMPORT_TABLE)->section_ = new_section.get();
+    data_directory(DataDirectory::TYPES::IAT)->RVA(0);
+    data_directory(DataDirectory::TYPES::IAT)->size(0);
   }
 
   if (type == PE_SECTION_TYPES::RELOCATION) {
-    data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE)->RVA(new_section->virtual_address());
-    data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE)->size(new_section->virtual_size());
-    data_directory(DATA_DIRECTORY::BASE_RELOCATION_TABLE)->section_ = new_section.get();
+    data_directory(DataDirectory::TYPES::BASE_RELOCATION_TABLE)->RVA(new_section->virtual_address());
+    data_directory(DataDirectory::TYPES::BASE_RELOCATION_TABLE)->size(new_section->virtual_size());
+    data_directory(DataDirectory::TYPES::BASE_RELOCATION_TABLE)->section_ = new_section.get();
   }
 
   if (type == PE_SECTION_TYPES::RESOURCE) {
-    data_directory(DATA_DIRECTORY::RESOURCE_TABLE)->RVA(new_section->virtual_address());
-    data_directory(DATA_DIRECTORY::RESOURCE_TABLE)->size(new_section->size());
-    data_directory(DATA_DIRECTORY::RESOURCE_TABLE)->section_ = new_section.get();
+    data_directory(DataDirectory::TYPES::RESOURCE_TABLE)->RVA(new_section->virtual_address());
+    data_directory(DataDirectory::TYPES::RESOURCE_TABLE)->size(new_section->size());
+    data_directory(DataDirectory::TYPES::RESOURCE_TABLE)->section_ = new_section.get();
   }
 
   if (type == PE_SECTION_TYPES::TLS) {
-    data_directory(DATA_DIRECTORY::TLS_TABLE)->RVA(new_section->virtual_address());
-    data_directory(DATA_DIRECTORY::TLS_TABLE)->size(new_section->size());
-    data_directory(DATA_DIRECTORY::TLS_TABLE)->section_ = new_section.get();
+    data_directory(DataDirectory::TYPES::TLS_TABLE)->RVA(new_section->virtual_address());
+    data_directory(DataDirectory::TYPES::TLS_TABLE)->size(new_section->size());
+    data_directory(DataDirectory::TYPES::TLS_TABLE)->section_ = new_section.get();
   }
 
 
@@ -801,7 +801,7 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
     .write(optional_header_.numberof_rva_and_size());
 
   for (const std::unique_ptr<DataDirectory>& dir : data_directories_) {
-    if (dir->type() == DATA_DIRECTORY::CERTIFICATE_TABLE) {
+    if (dir->type() == DataDirectory::TYPES::CERTIFICATE_TABLE) {
       continue;
     }
     ios
@@ -873,7 +873,7 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
     position = sec->offset() + content.size() + pad.size();
   }
   if (!overlay_.empty()) {
-    const DataDirectory* cert_dir = data_directory(DATA_DIRECTORY::CERTIFICATE_TABLE);
+    const DataDirectory* cert_dir = data_directory(DataDirectory::TYPES::CERTIFICATE_TABLE);
     if (cert_dir == nullptr) {
       LIEF_ERR("Can't find the data directory for CERTIFICATE_TABLE");
       return {};
@@ -1306,7 +1306,7 @@ LIEF::Binary::functions_t Binary::exception_functions() const {
     return functions;
   }
 
-  const DataDirectory* exception_dir = data_directory(DATA_DIRECTORY::EXCEPTION_TABLE);
+  const DataDirectory* exception_dir = data_directory(DataDirectory::TYPES::EXCEPTION_TABLE);
   if (exception_dir == nullptr) {
     return functions;
   }

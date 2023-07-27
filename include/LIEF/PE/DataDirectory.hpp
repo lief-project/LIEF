@@ -16,12 +16,11 @@
 #ifndef LIEF_PE_DATADIRECTORY_H
 #define LIEF_PE_DATADIRECTORY_H
 
-#include <memory>
+#include <cstdint>
 #include <ostream>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -43,47 +42,94 @@ class LIEF_API DataDirectory : public Object {
   friend class Binary;
 
   public:
+  static constexpr size_t DEFAULT_NB = 16;
+
+  enum class TYPES: size_t  {
+    EXPORT_TABLE = 0,
+    IMPORT_TABLE,
+    RESOURCE_TABLE,
+    EXCEPTION_TABLE,
+    CERTIFICATE_TABLE,
+    BASE_RELOCATION_TABLE,
+    DEBUG,
+    ARCHITECTURE,
+    GLOBAL_PTR,
+    TLS_TABLE,
+    LOAD_CONFIG_TABLE,
+    BOUND_IMPORT,
+    IAT,
+    DELAY_IMPORT_DESCRIPTOR,
+    CLR_RUNTIME_HEADER,
+    RESERVED,
+
+    UNKNOWN,
+  };
   DataDirectory();
-  DataDirectory(DATA_DIRECTORY type);
-  DataDirectory(const details::pe_data_directory& header, DATA_DIRECTORY type);
+  DataDirectory(TYPES type) :
+    type_{type}
+  {}
+
+  DataDirectory(const details::pe_data_directory& header, TYPES type);
 
   DataDirectory(const DataDirectory& other);
-  DataDirectory& operator=(DataDirectory other);
-  void swap(DataDirectory& other);
+  DataDirectory& operator=(const DataDirectory& other);
+
+  DataDirectory(DataDirectory&& other);
+  DataDirectory& operator=(DataDirectory&& other);
+
   ~DataDirectory() override;
 
   //! The relative virtual address of the content of this data
   //! directory
-  uint32_t RVA() const;
+  uint32_t RVA() const {
+    return rva_;
+  }
 
   //! The size of the content
-  uint32_t size() const;
+  uint32_t size() const {
+    return size_;
+  }
 
   //! Check if the content of this data directory is associated
   //! with a PE Cection
-  bool has_section() const;
+  bool has_section() const {
+    return section_ != nullptr;
+  }
 
   //! Section associated with the DataDirectory
-  Section* section();
-  const Section* section() const;
+  Section* section() {
+    return section_;
+  }
+  const Section* section() const {
+    return section_;
+  }
 
   //! Type of the data directory
-  DATA_DIRECTORY type() const;
+  TYPES type() const {
+    return type_;
+  }
 
-  void size(uint32_t size);
-  void RVA(uint32_t rva);
+  void size(uint32_t size) {
+    size_ = size;
+  }
+
+  void RVA(uint32_t rva) {
+    rva_ = rva;
+  }
 
   void accept(Visitor& visitor) const override;
-
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const DataDirectory& entry);
 
   private:
-  uint32_t       rva_ = 0;
-  uint32_t       size_ = 0;
-  DATA_DIRECTORY type_ = DATA_DIRECTORY::NUM_DATA_DIRECTORIES;
-  Section*       section_ = nullptr;
+  uint32_t rva_ = 0;
+  uint32_t size_ = 0;
+  TYPES type_ = TYPES::UNKNOWN;
+  Section* section_ = nullptr;
 };
+
+LIEF_API const char* to_string(DataDirectory::TYPES e);
+
 }
 }
 

@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_DATA_DIRECTORY_CPP_C_API_
-#define LIEF_PE_DATA_DIRECTORY_CPP_C_API_
+#ifndef LIEF_PE_DATA_DIRECTORY_CPP_C_API
+#define LIEF_PE_DATA_DIRECTORY_CPP_C_API
 
 #include "LIEF/PE/Binary.h"
 #include "LIEF/PE/Binary.hpp"

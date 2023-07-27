@@ -31,28 +31,6 @@ const char* to_string(PE_TYPE e) {
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
-const char* to_string(DATA_DIRECTORY e) {
-  CONST_MAP(DATA_DIRECTORY, const char*, 16) enumStrings {
-    { DATA_DIRECTORY::EXPORT_TABLE,            "EXPORT_TABLE" },
-    { DATA_DIRECTORY::IMPORT_TABLE,            "IMPORT_TABLE" },
-    { DATA_DIRECTORY::RESOURCE_TABLE,          "RESOURCE_TABLE" },
-    { DATA_DIRECTORY::EXCEPTION_TABLE,         "EXCEPTION_TABLE" },
-    { DATA_DIRECTORY::CERTIFICATE_TABLE,       "CERTIFICATE_TABLE" },
-    { DATA_DIRECTORY::BASE_RELOCATION_TABLE,   "BASE_RELOCATION_TABLE" },
-    { DATA_DIRECTORY::DEBUG,                   "DEBUG" },
-    { DATA_DIRECTORY::ARCHITECTURE,            "ARCHITECTURE" },
-    { DATA_DIRECTORY::GLOBAL_PTR,              "GLOBAL_PTR" },
-    { DATA_DIRECTORY::TLS_TABLE,               "TLS_TABLE" },
-    { DATA_DIRECTORY::LOAD_CONFIG_TABLE,       "LOAD_CONFIG_TABLE" },
-    { DATA_DIRECTORY::BOUND_IMPORT,            "BOUND_IMPORT" },
-    { DATA_DIRECTORY::IAT,                     "IAT" },
-    { DATA_DIRECTORY::DELAY_IMPORT_DESCRIPTOR, "DELAY_IMPORT_DESCRIPTOR" },
-    { DATA_DIRECTORY::CLR_RUNTIME_HEADER,      "CLR_RUNTIME_HEADER" },
-    { DATA_DIRECTORY::RESERVED,                "RESERVED" }
-  };
-  const auto it = enumStrings.find(e);
-  return it == enumStrings.end() ? "Out of range" : it->second;
-}
 
 const char* to_string(SECTION_CHARACTERISTICS e) {
   CONST_MAP(SECTION_CHARACTERISTICS, const char*, 35) enumStrings {

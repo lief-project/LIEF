@@ -14,104 +14,74 @@
  * limitations under the License.
  */
 #include <ostream>
-#include <iomanip>
 
-#include "LIEF/PE/hash.hpp"
-
-
+#include "LIEF/Visitor.hpp"
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
-#include "LIEF/PE/EnumToString.hpp"
 #include "PE/Structures.hpp"
 
+#include "frozen.hpp"
+
+#include <spdlog/fmt/fmt.h>
 
 namespace LIEF {
 namespace PE {
 
 DataDirectory::~DataDirectory() = default;
-
 DataDirectory::DataDirectory() = default;
 
+DataDirectory::DataDirectory(const DataDirectory& other) = default;
+DataDirectory& DataDirectory::operator=(const DataDirectory& other) = default;
 
-DataDirectory::DataDirectory(DATA_DIRECTORY type) :
-  type_{type}
-{}
+DataDirectory::DataDirectory(DataDirectory&& other) = default;
+DataDirectory& DataDirectory::operator=(DataDirectory&& other) = default;
 
-DataDirectory::DataDirectory(const details::pe_data_directory& header, DATA_DIRECTORY type) :
+DataDirectory::DataDirectory(const details::pe_data_directory& header,
+                             DataDirectory::TYPES type) :
   rva_{header.RelativeVirtualAddress},
   size_{header.Size},
   type_{type}
 {}
 
-DataDirectory::DataDirectory(const DataDirectory& other) = default;
-
-DataDirectory& DataDirectory::operator=(DataDirectory other) {
-  swap(other);
-  return *this;
-}
-
-void DataDirectory::swap(DataDirectory& other) {
-  std::swap(rva_,     other.rva_);
-  std::swap(size_,    other.size_);
-  std::swap(type_,    other.type_);
-  std::swap(section_, other.section_);
-}
-
-uint32_t DataDirectory::RVA() const {
-  return rva_;
-}
-
-
-uint32_t DataDirectory::size() const {
-  return size_;
-}
-
-
-bool DataDirectory::has_section() const {
-  return section_ != nullptr;
-}
-
-
-const Section* DataDirectory::section() const {
-  return section_;
-}
-
-Section* DataDirectory::section() {
-  return const_cast<Section*>(static_cast<const DataDirectory*>(this)->section());
-}
-
-DATA_DIRECTORY DataDirectory::type() const {
-  return type_;
-}
-
-void DataDirectory::RVA(uint32_t rva) {
-  rva_ = rva;
-}
-
-
-void DataDirectory::size(uint32_t size) {
-  size_ = size;
-}
-
 void DataDirectory::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
-
-
 std::ostream& operator<<(std::ostream& os, const DataDirectory& entry) {
-  os << std::hex;
-  os << "Data directory \"" << to_string(entry.type()) << "\"" << std::endl;
-  os << std::setw(10) << std::left << std::setfill(' ') << "RVA: 0x"  << entry.RVA()  << std::endl;
-  os << std::setw(10) << std::left << std::setfill(' ') << "Size: 0x" << entry.size() << std::endl;
-  if (entry.has_section()) {
-    os << std::setw(10) << std::left << std::setfill(' ') << "Section: " << entry.section()->name() << std::endl;
+  os << fmt::format("[{}] 0x{:04x} (0x{:04x} bytes)",
+                    to_string(entry.type()), entry.RVA(), entry.size());
+  if (const Section* section = entry.section()) {
+    os << fmt::format(" - '{}'", section->name());
   }
-
+  os << '\n';
   return os;
-
 }
+
+const char* to_string(DataDirectory::TYPES e) {
+  CONST_MAP(DataDirectory::TYPES, const char*, 17) enumStrings {
+    { DataDirectory::TYPES::EXPORT_TABLE,            "EXPORT_TABLE" },
+    { DataDirectory::TYPES::IMPORT_TABLE,            "IMPORT_TABLE" },
+    { DataDirectory::TYPES::RESOURCE_TABLE,          "RESOURCE_TABLE" },
+    { DataDirectory::TYPES::EXCEPTION_TABLE,         "EXCEPTION_TABLE" },
+    { DataDirectory::TYPES::CERTIFICATE_TABLE,       "CERTIFICATE_TABLE" },
+    { DataDirectory::TYPES::BASE_RELOCATION_TABLE,   "BASE_RELOCATION_TABLE" },
+    { DataDirectory::TYPES::DEBUG,                   "DEBUG" },
+    { DataDirectory::TYPES::ARCHITECTURE,            "ARCHITECTURE" },
+    { DataDirectory::TYPES::GLOBAL_PTR,              "GLOBAL_PTR" },
+    { DataDirectory::TYPES::TLS_TABLE,               "TLS_TABLE" },
+    { DataDirectory::TYPES::LOAD_CONFIG_TABLE,       "LOAD_CONFIG_TABLE" },
+    { DataDirectory::TYPES::BOUND_IMPORT,            "BOUND_IMPORT" },
+    { DataDirectory::TYPES::IAT,                     "IAT" },
+    { DataDirectory::TYPES::DELAY_IMPORT_DESCRIPTOR, "DELAY_IMPORT_DESCRIPTOR" },
+    { DataDirectory::TYPES::CLR_RUNTIME_HEADER,      "CLR_RUNTIME_HEADER" },
+    { DataDirectory::TYPES::RESERVED,                "RESERVED" },
+
+    { DataDirectory::TYPES::UNKNOWN,                 "UNKNOWN" }
+  };
+  const auto it = enumStrings.find(e);
+  return it == enumStrings.end() ? "UNKNOWN" : it->second;
+}
+
+
 }
 }

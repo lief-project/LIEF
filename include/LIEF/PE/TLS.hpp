@@ -119,7 +119,7 @@ class LIEF_API TLS : public Object {
   }
 
   //! Return the DataDirectory associated with this object or a nullptr
-  //! If it exists, its type should be DATA_DIRECTORY::TLS_TABLE
+  //! If it exists, its type should be DataDirectory::TYPES::TLS_TABLE
   DataDirectory* directory() {
     return directory_;
   }
