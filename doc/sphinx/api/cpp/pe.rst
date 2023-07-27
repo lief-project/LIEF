@@ -642,15 +642,6 @@ Enums
 .. doxygenenum:: LIEF::PE::DATA_DIRECTORY
    :project: lief
 
-.. doxygenenum:: LIEF::PE::SUBSYSTEM
-   :project: lief
-
-.. doxygenenum:: LIEF::PE::DLL_CHARACTERISTICS
-   :project: lief
-
-.. doxygenenum:: LIEF::PE::DEBUG_TYPES
-   :project: lief
-
 .. doxygenenum:: LIEF::PE::RESOURCE_TYPES
    :project: lief
 

@@ -50,7 +50,7 @@ def test_header():
 
 
 def test_optional_header():
-    header: lief.PE.OptionalHeader = atapi.optional_header
+    header = atapi.optional_header
     print(header)
 
     assert header.copy() == header
@@ -83,9 +83,9 @@ def test_optional_header():
     assert header.sizeof_stack_commit == 0x1000
     assert header.sizeof_stack_reserve == 0x40000
     assert header.sizeof_uninitialized_data == 0x0
-    assert header.subsystem == lief.PE.SUBSYSTEM.NATIVE
+    assert header.subsystem == lief.PE.OptionalHeader.SUBSYSTEM.NATIVE
     assert header.win32_version_value == 0x0
-
+    assert header.dll_characteristics_lists == []
 
 def test_data_directories():
     dirs = atapi.data_directories

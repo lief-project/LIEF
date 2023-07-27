@@ -31,13 +31,25 @@ Changelog
     (instead of `lief.MachO.Binary.name`)
 
 :PE:
+  * :attr:`lief.PE.OptionalHeader.dll_characteristics_lists` now returns a
+    `list`/`std::vector` instead of a set
+  * ``SUBSYSTEM`` and ``DLL_CHARACTERISTICS`` are now scoped within the
+    :class:`~lief.PE.OptionalHeader` class instead of being globally defined:
 
+    .. code-block:: python
+
+      # Before
+      lief.PE.SUBSYSTEM.NATIVE
+      # After:
+      lief.PE.OptionalHeader.SUBSYSTEM.NATIVE
+  * :attr:`lief.PE.DosHeader.used_bytes_in_the_last_page` has been renamed in
+    :attr:`lief.PE.DosHeader.used_bytes_in_last_page`
   * Refactoring of the Debug directory processing:
-    - :class:`lief.PE.Debug` is now the root class of:
-      1. :class:`lief.PE.CodeView` / :class:`lief.PE.CodeView`
-      2. :class:`lief.PE.Pogo`
-      3. :class:`lief.PE.Repro`
-    - The parsing logic has been cleaned and the tests updated.
+    :class:`lief.PE.Debug` is now the root class of:
+    :class:`lief.PE.CodeView` / :class:`lief.PE.CodeView`, :class:`lief.PE.Pogo`,
+    :class:`lief.PE.Repro`.
+
+    The parsing logic has been cleaned and the tests updated.
   * Add a :class:`lief.PE.ParserConfig` interface that can be used to tweak
     which parts of the PE format should be parsed (:issue:`839`).
 

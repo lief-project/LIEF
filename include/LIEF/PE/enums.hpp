@@ -254,61 +254,6 @@ enum class DATA_DIRECTORY: size_t  {
   NUM_DATA_DIRECTORIES    = 16
 };
 
-
-enum class SUBSYSTEM: size_t  {
-  IMAGE_SUBSYSTEM_UNKNOWN                  = 0,  ///< An unknown subsystem.
-  IMAGE_SUBSYSTEM_NATIVE                   = 1,  ///< Device drivers and native Windows processes
-  IMAGE_SUBSYSTEM_WINDOWS_GUI              = 2,  ///< The Windows GUI subsystem.
-  IMAGE_SUBSYSTEM_WINDOWS_CUI              = 3,  ///< The Windows character subsystem.
-  IMAGE_SUBSYSTEM_OS2_CUI                  = 5,  ///< The OS/2 character subsytem.
-  IMAGE_SUBSYSTEM_POSIX_CUI                = 7,  ///< The POSIX character subsystem.
-  IMAGE_SUBSYSTEM_NATIVE_WINDOWS           = 8,  ///< Native Windows 9x driver.
-  IMAGE_SUBSYSTEM_WINDOWS_CE_GUI           = 9,  ///< Windows CE.
-  IMAGE_SUBSYSTEM_EFI_APPLICATION          = 10, ///< An EFI application.
-  IMAGE_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER  = 11, ///< An EFI driver with boot services.
-  IMAGE_SUBSYSTEM_EFI_RUNTIME_DRIVER       = 12, ///< An EFI driver with run-time services.
-  IMAGE_SUBSYSTEM_EFI_ROM                  = 13, ///< An EFI ROM image.
-  IMAGE_SUBSYSTEM_XBOX                     = 14, ///< XBOX.
-  IMAGE_SUBSYSTEM_WINDOWS_BOOT_APPLICATION = 16  ///< A BCD application.
-};
-
-enum class DLL_CHARACTERISTICS: size_t  {
-  IMAGE_DLL_CHARACTERISTICS_HIGH_ENTROPY_VA       = 0x0020, ///< ASLR with 64 bit address space.
-  IMAGE_DLL_CHARACTERISTICS_DYNAMIC_BASE          = 0x0040, ///< DLL can be relocated at load time.
-  IMAGE_DLL_CHARACTERISTICS_FORCE_INTEGRITY       = 0x0080, ///< Code integrity checks are enforced.
-  IMAGE_DLL_CHARACTERISTICS_NX_COMPAT             = 0x0100, ///< Image is NX compatible.
-  IMAGE_DLL_CHARACTERISTICS_NO_ISOLATION          = 0x0200, ///< Isolation aware, but do not isolate the image.
-  IMAGE_DLL_CHARACTERISTICS_NO_SEH                = 0x0400, ///< Does not use structured exception handling (SEH). No SEH handler may be called in this image.
-  IMAGE_DLL_CHARACTERISTICS_NO_BIND               = 0x0800, ///< Do not bind the image.
-  IMAGE_DLL_CHARACTERISTICS_APPCONTAINER          = 0x1000, ///< Image should execute in an AppContainer.
-  IMAGE_DLL_CHARACTERISTICS_WDM_DRIVER            = 0x2000, ///< A WDM driver.
-  IMAGE_DLL_CHARACTERISTICS_GUARD_CF              = 0x4000, ///< Image supports Control Flow Guard.
-  IMAGE_DLL_CHARACTERISTICS_TERMINAL_SERVER_AWARE = 0x8000  ///< Terminal Server aware.
-};
-
-
-enum class DEBUG_TYPES: size_t  {
-  IMAGE_DEBUG_TYPE_UNKNOWN               = 0,
-  IMAGE_DEBUG_TYPE_COFF                  = 1, ///< COFF debug information
-  IMAGE_DEBUG_TYPE_CODEVIEW              = 2, ///< CodeView debug information (pdb & cie)
-  IMAGE_DEBUG_TYPE_FPO                   = 3, ///< Frame pointer omission information
-  IMAGE_DEBUG_TYPE_MISC                  = 4, ///< CodeView Debug Information
-  IMAGE_DEBUG_TYPE_EXCEPTION             = 5, ///< A copy of .pdata section.
-  IMAGE_DEBUG_TYPE_FIXUP                 = 6, ///< Reserved.
-  IMAGE_DEBUG_TYPE_OMAP_TO_SRC           = 7, ///< The mapping from an RVA in image to an RVA in source image.
-  IMAGE_DEBUG_TYPE_OMAP_FROM_SRC         = 8, ///< The mapping from an RVA in source image to an RVA in image.
-  IMAGE_DEBUG_TYPE_BORLAND               = 9, ///< Reserved for Borland.
-  IMAGE_DEBUG_TYPE_RESERVED10            = 10, ///< Reserved for future use.
-  IMAGE_DEBUG_TYPE_CLSID                 = 11,
-  IMAGE_DEBUG_TYPE_VC_FEATURE            = 12,
-  IMAGE_DEBUG_TYPE_POGO                  = 13,
-  IMAGE_DEBUG_TYPE_ILTCG                 = 14,
-  IMAGE_DEBUG_TYPE_MPX                   = 15,
-  IMAGE_DEBUG_TYPE_REPRO                 = 16,
-  IMAGE_DEBUG_TYPE_EX_DLLCHARACTERISTICS = 20,
-};
-
-
 enum class ImportType: size_t  {
   IMPORT_CODE  = 0,
   IMPORT_DATA  = 1,
@@ -1688,7 +1633,6 @@ static const GUARD_CF_FLAGS guard_cf_flags_array[] = {
 }
 
 ENABLE_BITMASK_OPERATORS(LIEF::PE::SECTION_CHARACTERISTICS)
-ENABLE_BITMASK_OPERATORS(LIEF::PE::DLL_CHARACTERISTICS)
 ENABLE_BITMASK_OPERATORS(LIEF::PE::HEADER_CHARACTERISTICS)
 ENABLE_BITMASK_OPERATORS(LIEF::PE::GUARD_CF_FLAGS)
 ENABLE_BITMASK_OPERATORS(LIEF::PE::ACCELERATOR_FLAGS)

@@ -230,39 +230,6 @@ enum _LIEF_EN(DATA_DIRECTORY) {
   _LIEF_EI(NUM_DATA_DIRECTORIES)    = 16
 };
 
-
-enum _LIEF_EN(SUBSYSTEM) {
-  _LIEF_EI(IMAGE_SUBSYSTEM_UNKNOWN)                  = 0,  /**< An unknown subsystem. */
-  _LIEF_EI(IMAGE_SUBSYSTEM_NATIVE)                   = 1,  /**< Device drivers and native Windows processes */
-  _LIEF_EI(IMAGE_SUBSYSTEM_WINDOWS_GUI)              = 2,  /**< The Windows GUI subsystem. */
-  _LIEF_EI(IMAGE_SUBSYSTEM_WINDOWS_CUI)              = 3,  /**< The Windows character subsystem. */
-  _LIEF_EI(IMAGE_SUBSYSTEM_OS2_CUI)                  = 5,  /**< The OS/2 character subsytem. */
-  _LIEF_EI(IMAGE_SUBSYSTEM_POSIX_CUI)                = 7,  /**< The POSIX character subsystem. */
-  _LIEF_EI(IMAGE_SUBSYSTEM_NATIVE_WINDOWS)           = 8,  /**< Native Windows 9x driver. */
-  _LIEF_EI(IMAGE_SUBSYSTEM_WINDOWS_CE_GUI)           = 9,  /**< Windows CE. */
-  _LIEF_EI(IMAGE_SUBSYSTEM_EFI_APPLICATION)          = 10, /**< An EFI application. */
-  _LIEF_EI(IMAGE_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER)  = 11, /**< An EFI driver with boot services. */
-  _LIEF_EI(IMAGE_SUBSYSTEM_EFI_RUNTIME_DRIVER)       = 12, /**< An EFI driver with run-time services. */
-  _LIEF_EI(IMAGE_SUBSYSTEM_EFI_ROM)                  = 13, /**< An EFI ROM image. */
-  _LIEF_EI(IMAGE_SUBSYSTEM_XBOX)                     = 14, /**< XBOX. */
-  _LIEF_EI(IMAGE_SUBSYSTEM_WINDOWS_BOOT_APPLICATION) = 16  /**< A BCD application. */
-};
-
-enum _LIEF_EN(DLL_CHARACTERISTICS) {
-  _LIEF_EI(IMAGE_DLL_CHARACTERISTICS_HIGH_ENTROPY_VA)       = 0x0020, /**< ASLR with 64 bit address space. */
-  _LIEF_EI(IMAGE_DLL_CHARACTERISTICS_DYNAMIC_BASE)          = 0x0040, /**< DLL can be relocated at load time. */
-  _LIEF_EI(IMAGE_DLL_CHARACTERISTICS_FORCE_INTEGRITY)       = 0x0080, /**< Code integrity checks are enforced. */
-  _LIEF_EI(IMAGE_DLL_CHARACTERISTICS_NX_COMPAT)             = 0x0100, /**< Image is NX compatible. */
-  _LIEF_EI(IMAGE_DLL_CHARACTERISTICS_NO_ISOLATION)          = 0x0200, /**< Isolation aware, but do not isolate the image. */
-  _LIEF_EI(IMAGE_DLL_CHARACTERISTICS_NO_SEH)                = 0x0400, /**< Does not use structured exception handling (SEH). No SEH handler may be called in this image. */
-  _LIEF_EI(IMAGE_DLL_CHARACTERISTICS_NO_BIND)               = 0x0800, /**< Do not bind the image. */
-  _LIEF_EI(IMAGE_DLL_CHARACTERISTICS_APPCONTAINER)          = 0x1000, /**< Image should execute in an AppContainer. */
-  _LIEF_EI(IMAGE_DLL_CHARACTERISTICS_WDM_DRIVER)            = 0x2000, /**< A WDM driver. */
-  _LIEF_EI(IMAGE_DLL_CHARACTERISTICS_GUARD_CF)              = 0x4000, /**< Image supports Control Flow Guard. */
-  _LIEF_EI(IMAGE_DLL_CHARACTERISTICS_TERMINAL_SERVER_AWARE) = 0x8000  /**< Terminal Server aware. */
-};
-
-
 enum _LIEF_EN(DEBUG_TYPES) {
   _LIEF_EI(IMAGE_DEBUG_TYPE_UNKNOWN)               = 0,
   _LIEF_EI(IMAGE_DEBUG_TYPE_COFF)                  = 1, /**< COFF debug information */

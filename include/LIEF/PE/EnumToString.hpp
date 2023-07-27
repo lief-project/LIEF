@@ -32,7 +32,6 @@ enum class ALGORITHMS : uint32_t;
 enum class CODE_PAGES : size_t;
 enum class DATA_DIRECTORY : size_t;
 enum class DIALOG_BOX_STYLES : size_t;
-enum class DLL_CHARACTERISTICS : size_t;
 enum class EXTENDED_WINDOW_STYLES : size_t;
 enum class FIXED_VERSION_FILE_FLAGS : size_t;
 enum class FIXED_VERSION_FILE_SUB_TYPES : size_t;
@@ -63,8 +62,6 @@ LIEF_API const char* to_string(DATA_DIRECTORY e);
 
 LIEF_API const char* to_string(MACHINE_TYPES e);
 LIEF_API const char* to_string(HEADER_CHARACTERISTICS e);
-LIEF_API const char* to_string(SUBSYSTEM e);
-LIEF_API const char* to_string(DLL_CHARACTERISTICS e);
 
 LIEF_API const char* to_string(SECTION_CHARACTERISTICS e);
 LIEF_API const char* to_string(PE_SECTION_TYPES e);

@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-
 #include "LIEF/Visitor.hpp"
 
 #include "LIEF/PE/DosHeader.hpp"

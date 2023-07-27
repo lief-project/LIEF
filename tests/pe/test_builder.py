@@ -72,10 +72,10 @@ def test_imports_notepadpp(tmp_path):
     notepadpp = lief.parse(sample.as_posix())
 
     # Disable ASLR
-    notepadpp.optional_header.dll_characteristics &= ~lief.PE.DLL_CHARACTERISTICS.DYNAMIC_BASE
+    notepadpp.optional_header.dll_characteristics &= ~lief.PE.OptionalHeader.DLL_CHARACTERISTICS.DYNAMIC_BASE
 
     # Disable NX protection
-    notepadpp.optional_header.dll_characteristics &= ~lief.PE.DLL_CHARACTERISTICS.NX_COMPAT
+    notepadpp.optional_header.dll_characteristics &= ~lief.PE.OptionalHeader.DLL_CHARACTERISTICS.NX_COMPAT
 
     builder = lief.PE.Builder(notepadpp)
     builder.build_imports(True).patch_imports(True)

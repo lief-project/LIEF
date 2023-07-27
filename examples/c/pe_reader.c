@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
   fprintf(stdout, "Size of image: 0x%x\n",                  optional_header.sizeof_image);
   fprintf(stdout, "Size of headers: 0x%x\n",                optional_header.sizeof_headers);
   fprintf(stdout, "Checksum: 0x%x\n",                       optional_header.checksum);
-  fprintf(stdout, "subsystem: %s\n",                        SUBSYSTEM_to_string(optional_header.subsystem));
+  fprintf(stdout, "subsystem: %s\n",                        lief_pe_subsytem_str(optional_header.subsystem));
   fprintf(stdout, "DLL characteristics: 0x%x\n",            optional_header.dll_characteristics);
   fprintf(stdout, "Size of stack reserve: 0x%" PRIx64 "\n", optional_header.sizeof_stack_reserve);
   fprintf(stdout, "Size of stack commit: 0x%" PRIx64 "\n",  optional_header.sizeof_stack_commit);

@@ -691,7 +691,6 @@ Load Configuration V11
 Utilities
 *********
 
-
 .. autofunction:: lief.is_pe
 
 .. autofunction:: lief.PE.get_type
@@ -740,30 +739,10 @@ HEADER_CHARACTERISTICS
 
 ----------
 
-SUBSYSTEM
-~~~~~~~~~
-
-.. autoclass:: lief.PE.SUBSYSTEM
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-----------
-
 DATA_DIRECTORY
 ~~~~~~~~~~~~~~
 
 .. autoclass:: lief.PE.DATA_DIRECTORY
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-----------
-
-DLL_CHARACTERISTICS
-~~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.DLL_CHARACTERISTICS
   :members:
   :inherited-members:
   :undoc-members:

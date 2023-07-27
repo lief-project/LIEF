@@ -60,13 +60,15 @@ Binary::~Binary() = default;
 
 Binary::Binary() :
   LIEF::Binary{EXE_FORMATS::FORMAT_PE},
-  dos_header_{DosHeader::create(PE_TYPE::PE32)}
+  dos_header_{DosHeader::create(PE_TYPE::PE32)},
+  optional_header_{OptionalHeader::create(PE_TYPE::PE32)}
 {}
 
 Binary::Binary(PE_TYPE type) :
   LIEF::Binary{EXE_FORMATS::FORMAT_PE},
   type_{type},
-  dos_header_{DosHeader::create(type)}
+  dos_header_{DosHeader::create(type)},
+  optional_header_{OptionalHeader::create(type)}
 {
   Header& hdr = header();
   size_t sizeof_headers = dos_header().addressof_new_exeheader() +
@@ -79,7 +81,6 @@ Binary::Binary(PE_TYPE type) :
                                details::DEFAULT_NUMBER_DATA_DIRECTORIES * sizeof(details::pe_data_directory));
     hdr.add_characteristic(HEADER_CHARACTERISTICS::IMAGE_FILE_32BIT_MACHINE);
 
-    optional_header().magic(PE_TYPE::PE32);
     sizeof_headers += sizeof(details::pe32_optional_header);
     available_sections_space_ = (0x200 - /* sizeof headers */ sizeof_headers) / sizeof(details::pe_section);
   } else {
@@ -90,7 +91,6 @@ Binary::Binary(PE_TYPE type) :
 
     sizeof_headers += sizeof(details::pe64_optional_header);
     available_sections_space_ = (0x200 - /* sizeof headers */ sizeof_headers) / sizeof(details::pe_section);
-    optional_header().magic(PE_TYPE::PE32_PLUS);
   }
 
   // Add data directories
@@ -1242,11 +1242,11 @@ span<const uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_ad
 }
 
 bool Binary::is_pie() const {
-  return optional_header().has(DLL_CHARACTERISTICS::IMAGE_DLL_CHARACTERISTICS_DYNAMIC_BASE);
+  return optional_header().has(OptionalHeader::DLL_CHARACTERISTICS::DYNAMIC_BASE);
 }
 
 bool Binary::has_nx() const {
-  return optional_header().has(DLL_CHARACTERISTICS::IMAGE_DLL_CHARACTERISTICS_NX_COMPAT);
+  return optional_header().has(OptionalHeader::DLL_CHARACTERISTICS::NX_COMPAT);
 }
 
 void Binary::dos_stub(const std::vector<uint8_t>& content) {
