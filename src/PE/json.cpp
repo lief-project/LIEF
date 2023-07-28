@@ -299,9 +299,8 @@ void JsonVisitor::visit(const DataDirectory& data_directory) {
 }
 
 void JsonVisitor::visit(const Section& section) {
-
   std::vector<json> characteristics;
-  for (SECTION_CHARACTERISTICS c : section.characteristics_list()) {
+  for (Section::CHARACTERISTICS c : section.characteristics_list()) {
     characteristics.emplace_back(to_string(c));
   }
 

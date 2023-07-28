@@ -31,6 +31,15 @@ Changelog
     (instead of `lief.MachO.Binary.name`)
 
 :PE:
+  * ``SECTION_CHARACTERISTICS`` is now scoped within the
+    :class:`~lief.PE.Section` class instead of being globally defined:
+
+    .. code-block:: python
+
+      # Before
+      lief.PE.SECTION_CHARACTERISTICS.CNT_CODE
+      # Now:
+      lief.PE.Section.CHARACTERISTICS.CNT_CODE
   * ``DATA_DIRECTORY`` is now scoped within the
     :class:`~lief.PE.DataDirectory` class instead of being globally defined:
 

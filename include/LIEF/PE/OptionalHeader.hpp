@@ -95,7 +95,7 @@ class LIEF_API OptionalHeader : public Object {
   }
 
   //! The size of the code ``.text`` section or the sum of
-  //! all the sections that contain code (ie. PE::Section with the flag SECTION_CHARACTERISTICS::IMAGE_SCN_CNT_CODE)
+  //! all the sections that contain code (ie. PE::Section with the flag Section::CHARACTERISTICS::CNT_CODE)
   uint32_t sizeof_code() const {
     return sizeof_code_;
   }
@@ -104,7 +104,7 @@ class LIEF_API OptionalHeader : public Object {
   //! If the initialized data are split across multiple sections, it is the sum of the sections.
   //!
   //! The sections associated with the initialized data are usually identified with the
-  //! flag SECTION_CHARACTERISTICS::IMAGE_SCN_CNT_INITIALIZED_DATA
+  //! flag Section::CHARACTERISTICS::CNT_INITIALIZED_DATA
   uint32_t sizeof_initialized_data() const {
     return sizeof_initialized_data_;
   }
@@ -113,7 +113,7 @@ class LIEF_API OptionalHeader : public Object {
   //! If the uninitialized data are split across multiple sections, it is the sum of the sections.
   //!
   //! The sections associated with the uninitialized data are usually identified with the
-  //! flag SECTION_CHARACTERISTICS::IMAGE_SCN_CNT_UNINITIALIZED_DATA
+  //! flag Section::CHARACTERISTICS::CNT_UNINITIALIZED_DATA
   uint32_t sizeof_uninitialized_data() const {
     return sizeof_uninitialized_data_;
   }

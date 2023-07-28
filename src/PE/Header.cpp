@@ -94,7 +94,6 @@ void Header::accept(LIEF::Visitor& visitor) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Header& entry) {
-
   const Header::signature_t& sig = entry.signature();
   const std::string& signature_str =
     fmt::format("{:02x} {:02x} {:02x} {:02x}",

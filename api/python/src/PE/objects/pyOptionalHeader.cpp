@@ -87,7 +87,8 @@ void create<OptionalHeader>(nb::module_& m) {
         nb::overload_cast<uint32_t>(&OptionalHeader::sizeof_code),
         R"delim(
         The size of the code ``.text`` section or the sum of
-        all the sections that contain code (ie. :class:`~lief.PE.Section` with the flag :attr:`~lief.PE.SECTION_CHARACTERISTICS.CNT_CODE`)
+        all the sections that contain code (ie. :class:`~lief.PE.Section` with
+        the flag :attr:`~lief.PE.Section.CHARACTERISTICS.CNT_CODE`)
         )delim"_doc)
 
     .def_prop_rw("sizeof_initialized_data",
@@ -98,7 +99,7 @@ void create<OptionalHeader>(nb::module_& m) {
         If the initialized data are split across multiple sections, it is the sum of the sections.
 
         The sections associated with the initialized data are usually identified with the
-        flag :attr:`~lief.PE.SECTION_CHARACTERISTICS.CNT_INITIALIZED_DATA`
+        flag :attr:`~lief.PE.Section.CHARACTERISTICS.CNT_INITIALIZED_DATA`
         )delim"_doc)
 
     .def_prop_rw("sizeof_uninitialized_data",
@@ -109,7 +110,7 @@ void create<OptionalHeader>(nb::module_& m) {
         If the uninitialized data are split across multiple sections, it is the sum of the sections.
 
         The sections associated with the uninitialized data are usually identified with the
-        flag :attr:`~lief.PE.SECTION_CHARACTERISTICS.CNT_UNINITIALIZED_DATA`
+        flag :attr:`~lief.PE.Section.CHARACTERISTICS.CNT_UNINITIALIZED_DATA`
         )delim"_doc)
 
     .def_prop_rw("addressof_entrypoint",

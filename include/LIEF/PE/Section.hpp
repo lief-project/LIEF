@@ -23,6 +23,7 @@
 #include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
 #include "LIEF/Abstract/Section.hpp"
+#include "LIEF/enums.hpp"
 #include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
@@ -45,6 +46,45 @@ class LIEF_API Section : public LIEF::Section {
 
   public:
   using LIEF::Section::name;
+  static constexpr size_t MAX_SECTION_NAME = 8;
+
+  enum class CHARACTERISTICS: size_t  {
+    TYPE_NO_PAD            = 0x00000008,
+    CNT_CODE               = 0x00000020,
+    CNT_INITIALIZED_DATA   = 0x00000040,
+    CNT_UNINITIALIZED_DATA = 0x00000080,
+    LNK_OTHER              = 0x00000100,
+    LNK_INFO               = 0x00000200,
+    LNK_REMOVE             = 0x00000800,
+    LNK_COMDAT             = 0x00001000,
+    GPREL                  = 0x00008000,
+    MEM_PURGEABLE          = 0x00010000,
+    MEM_16BIT              = 0x00020000,
+    MEM_LOCKED             = 0x00040000,
+    MEM_PRELOAD            = 0x00080000,
+    ALIGN_1BYTES           = 0x00100000,
+    ALIGN_2BYTES           = 0x00200000,
+    ALIGN_4BYTES           = 0x00300000,
+    ALIGN_8BYTES           = 0x00400000,
+    ALIGN_16BYTES          = 0x00500000,
+    ALIGN_32BYTES          = 0x00600000,
+    ALIGN_64BYTES          = 0x00700000,
+    ALIGN_128BYTES         = 0x00800000,
+    ALIGN_256BYTES         = 0x00900000,
+    ALIGN_512BYTES         = 0x00A00000,
+    ALIGN_1024BYTES        = 0x00B00000,
+    ALIGN_2048BYTES        = 0x00C00000,
+    ALIGN_4096BYTES        = 0x00D00000,
+    ALIGN_8192BYTES        = 0x00E00000,
+    LNK_NRELOC_OVFL        = 0x01000000,
+    MEM_DISCARDABLE        = 0x02000000,
+    MEM_NOT_CACHED         = 0x04000000,
+    MEM_NOT_PAGED          = 0x08000000,
+    MEM_SHARED             = 0x10000000,
+    MEM_EXECUTE            = 0x20000000,
+    MEM_READ               = 0x40000000,
+    MEM_WRITE              = 0x80000000
+  };
 
   Section(const details::pe_section& header);
   Section();
@@ -62,10 +102,14 @@ class LIEF_API Section : public LIEF::Section {
   //! Return the size of the data when mapped in memory
   //!
   //! If this value is greater than sizeof_raw_data, the section is zero-padded.
-  uint32_t virtual_size() const;
+  uint32_t virtual_size() const {
+    return virtual_size_;
+  }
 
   //! The actual content of the section
-  span<const uint8_t> content() const override;
+  span<const uint8_t> content() const override {
+    return content_;
+  }
 
   //! Content of the section's padding area
   const std::vector<uint8_t>& padding() const {
@@ -80,23 +124,33 @@ class LIEF_API Section : public LIEF::Section {
   //!
   //! For modern PE binaries, this value is usually set to 0 as the relocations are managed by
   //! PE::Relocation.
-  uint32_t pointerto_relocation() const;
+  uint32_t pointerto_relocation() const {
+    return pointer_to_relocations_;
+  }
 
   //! The file pointer to the beginning of line-number entries for the section.
   //! This is set to zero if there are no COFF line numbers. This value should be zero for an image because COFF
   //! debugging information is deprecated and modern debug information relies on the PDB files.
-  uint32_t pointerto_line_numbers() const;
+  uint32_t pointerto_line_numbers() const {
+    return pointer_to_linenumbers_;
+  }
 
   //! No longer used in recent PE binaries produced by Visual Studio
-  uint16_t numberof_relocations() const;
+  uint16_t numberof_relocations() const {
+    return number_of_relocations_;
+  }
 
   //! No longer used in recent PE binaries produced by Visual Studio
-  uint16_t numberof_line_numbers() const;
+  uint16_t numberof_line_numbers() const {
+    return number_of_linenumbers_;
+  }
 
   //! Characteristics of the section: it gives information about
   //! the permissions of the section when mapped. It can also provides
   //! information about the *purpose* of the section (contain code, BSS-like, ...)
-  uint32_t characteristics() const;
+  uint32_t characteristics() const {
+    return characteristics_;
+  }
 
   //! Deprecated do not use. It will likely change in a future release of LIEF
   bool is_type(PE_SECTION_TYPES type) const;
@@ -104,34 +158,61 @@ class LIEF_API Section : public LIEF::Section {
   //! Deprecated do not use. It will likely change in a future release of LIEF
   const std::set<PE_SECTION_TYPES>& types() const;
 
-  //! Check if the section has the given SECTION_CHARACTERISTICS
-  bool has_characteristic(SECTION_CHARACTERISTICS c) const;
+  //! Check if the section has the given CHARACTERISTICS
+  bool has_characteristic(CHARACTERISTICS c) const {
+    return (characteristics() & static_cast<size_t>(c)) > 0;
+  }
 
   //! List of the section characteristics as a std::set
-  std::set<SECTION_CHARACTERISTICS> characteristics_list() const;
+  std::vector<CHARACTERISTICS> characteristics_list() const;
 
   //! Fill the content of the section with the given ``char``
   void clear(uint8_t c);
-
-  void name(const std::string& name) override;
   void content(const std::vector<uint8_t>& data) override;
 
-  void virtual_size(uint32_t virtualSize);
-  void pointerto_raw_data(uint32_t pointerToRawData);
-  void pointerto_relocation(uint32_t pointerToRelocation);
-  void pointerto_line_numbers(uint32_t pointerToLineNumbers);
-  void numberof_relocations(uint16_t numberOfRelocations);
-  void numberof_line_numbers(uint16_t numberOfLineNumbers);
+  void name(const std::string& name) override;
+
+  void virtual_size(uint32_t virtual_sz) {
+    virtual_size_ = virtual_sz;
+  }
+
+  void pointerto_raw_data(uint32_t ptr);
+
+  void pointerto_relocation(uint32_t ptr) {
+    pointer_to_relocations_ = ptr;
+  }
+
+  void pointerto_line_numbers(uint32_t ptr) {
+    pointer_to_linenumbers_ = ptr;
+  }
+
+  void numberof_relocations(uint16_t nb) {
+    number_of_relocations_ = nb;
+  }
+
+  void numberof_line_numbers(uint16_t nb) {
+    number_of_linenumbers_ = nb;
+  }
+
   void sizeof_raw_data(uint32_t sizeOfRawData);
-  void characteristics(uint32_t characteristics);
+
+  void characteristics(uint32_t characteristics) {
+    characteristics_ = characteristics;
+  }
+
   void type(PE_SECTION_TYPES type);
   void add_type(PE_SECTION_TYPES type);
   void remove_type(PE_SECTION_TYPES type);
-  void add_characteristic(SECTION_CHARACTERISTICS characteristic);
-  void remove_characteristic(SECTION_CHARACTERISTICS characteristic);
+
+  void remove_characteristic(Section::CHARACTERISTICS characteristic) {
+    characteristics_ &= ~static_cast<size_t>(characteristic);
+  }
+
+  void add_characteristic(Section::CHARACTERISTICS characteristic) {
+    characteristics_ |= static_cast<size_t>(characteristic);
+  }
 
   void accept(Visitor& visitor) const override;
-
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Section& section);
 
@@ -151,6 +232,11 @@ class LIEF_API Section : public LIEF::Section {
   std::set<PE_SECTION_TYPES> types_ = {PE_SECTION_TYPES::UNKNOWN};
 };
 
+LIEF_API const char* to_string(Section::CHARACTERISTICS e);
+
 } // namespace PE
 } // namespace LIEF
-#endif /* _PE_SECTION_H */
+
+ENABLE_BITMASK_OPERATORS(LIEF::PE::Section::CHARACTERISTICS)
+
+#endif

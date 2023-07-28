@@ -719,16 +719,6 @@ PE_TYPE
 
 ----------
 
-SECTION_CHARACTERISTICS
-~~~~~~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.SECTION_CHARACTERISTICS
-  :members:
-  :inherited-members:
-  :undoc-members:
-
-----------
-
 SECTION_TYPES
 ~~~~~~~~~~~~~
 

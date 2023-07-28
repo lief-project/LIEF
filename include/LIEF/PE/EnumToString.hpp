@@ -46,7 +46,6 @@ enum class RELOCATIONS_I386 : size_t;
 enum class RESOURCE_LANGS : size_t;
 enum class RESOURCE_SUBLANGS : size_t;
 enum class RESOURCE_TYPES : size_t;
-enum class SECTION_CHARACTERISTICS : size_t;
 enum class SIG_ATTRIBUTE_TYPES : uint32_t;
 enum class SUBSYSTEM : size_t;
 enum class SYMBOL_BASE_TYPES : size_t;
@@ -56,7 +55,6 @@ enum class WIN_VERSION : size_t;
 
 LIEF_API const char* to_string(PE_TYPE e);
 
-LIEF_API const char* to_string(SECTION_CHARACTERISTICS e);
 LIEF_API const char* to_string(PE_SECTION_TYPES e);
 
 LIEF_API const char* to_string(SYMBOL_BASE_TYPES e);

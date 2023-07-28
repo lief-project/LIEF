@@ -167,7 +167,7 @@ void Builder::build_import_table() {
   Section new_import_section{".l" + std::to_string(static_cast<uint32_t>(DataDirectory::TYPES::IMPORT_TABLE))};
   new_import_section.content(content);
 
-  new_import_section.add_characteristic(SECTION_CHARACTERISTICS::IMAGE_SCN_CNT_CODE);
+  new_import_section.add_characteristic(Section::CHARACTERISTICS::CNT_CODE);
 
   const auto it_import_section = std::find_if(std::begin(binary_->sections_), std::end(binary_->sections_),
       [] (const std::unique_ptr<Section>& section) {
