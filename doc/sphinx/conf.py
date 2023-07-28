@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys
 import re
 import lief
 import os
@@ -9,11 +8,7 @@ from docutils import nodes
 import inspect
 from sphinx.util import logging
 from sphinx.util.inspect import (
-    evaluate_signature,
     getdoc,
-    object_description,
-    safe_getattr,
-    stringify_signature,
     signature_from_str
 )
 
@@ -66,6 +61,8 @@ templates_path = ['_templates']
 source_suffix = '.rst'
 
 master_doc = 'index'
+gh_org = "lief-project"
+gh_repo = "LIEF"
 
 project    = 'LIEF'
 html_title = "LIEF Documentation"
@@ -102,26 +99,29 @@ if GENERATE_DOXYGEN:
 
 # -- Options for HTML output ----------------------------------------------
 def commit_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
-    commit_link = nodes.reference(
-            "", text[:7], refuri="https://github.com/lief-project/LIEF/commit/{}".format(text), **options)
+    commit_link = nodes.reference("", text[:7],
+                                  refuri=f"https://github.com/{gh_org}/{gh_repo}/commit/{text}",
+                                  **options)
 
     return [commit_link], []
 
 def pr_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
-    pr_link = nodes.reference(
-            "", '#' + text, refuri="https://github.com/lief-project/LIEF/pull/{}".format(text), **options)
+    pr_link = nodes.reference("", '#' + text,
+                              refuri=f"https://github.com/{gh_org}/{gh_repo}/pull/{text}",
+                              **options)
 
     return [pr_link], []
 
 def issue_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
-    issue_link = nodes.reference(
-            "", '#' + text, refuri="https://github.com/lief-project/LIEF/issues/{}".format(text), **options)
+    issue_link = nodes.reference("", '#' + text,
+                                 refuri=f"https://github.com/{gh_org}/{gh_repo}/issues/{text}",
+                                 **options)
 
     return [issue_link], []
 
 def github_user(name, rawtext, text, lineno, inliner, options={}, content=[]):
-    issue_link = nodes.reference(
-            "", text, refuri="https://github.com/{}".format(text), **options)
+    issue_link = nodes.reference("", text, refuri=f"https://github.com/{text}",
+                                 **options)
 
     return [issue_link], []
 
@@ -175,7 +175,7 @@ def process_property(name: str, obj, options, signature: str,
 
         return "()", return_annotation
     except Exception:
-        logger.warn(f"Error with {name}: {lines[0]}")
+        logger.warning(f"Error with {name}: {lines[0]}")
 
     return signature, return_annotation
 
@@ -286,6 +286,7 @@ if not USE_RTD_THEME:
     html_theme_options = {
         "commit": commit,
         "base_url": f"{base_url}/",
+        "sponsor_link": "https://github.com/sponsors/lief-project/",
         "repo_url": "https://github.com/lief-project/LIEF/",
         "repo_name": "LIEF",
         "html_minify": True,
@@ -300,22 +301,26 @@ if not USE_RTD_THEME:
             {
                 "href": html_base_url,
                 "internal": False,
-                "title": "Home"
+                "title": "Home",
+                "icon": "fa-solid fa-house"
             },
             {
                 "href": f"{html_base_url}/blog",
                 "internal": False,
-                "title": "Blog"
+                "title": "Blog",
+                "icon": "fa-solid fa-rss"
             },
             {
                 "href": f"{html_base_url}/download",
                 "internal": False,
-                "title": "Download"
+                "title": "Download",
+                "icon": "fa-solid fa-download",
             },
             {
                 "href": "index",
                 "internal": True,
                 "title": "Documentation",
+                "icon": "fa-solid fa-book",
                 "subnav": [
                     {
                         "title": "Doxygen",
@@ -327,6 +332,7 @@ if not USE_RTD_THEME:
                 "href": f"{html_base_url}/about",
                 "internal": False,
                 "title": "About",
+                "icon": "fa-solid fa-bars-staggered"
             },
         ],
         "table_classes": ["plain"],
@@ -341,4 +347,3 @@ html_favicon     = '_static/favicon.ico'
 html_static_path = ['_static']
 
 htmlhelp_basename = 'LIEFdoc'
-
