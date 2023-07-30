@@ -20,7 +20,7 @@
 namespace LIEF {
 namespace PE {
 
-const char* mfc42u_dll_lookup(uint32_t i) {
+inline const char* mfc42u_dll_lookup(uint32_t i) {
   switch(i) {
   case 0x0005: return "?classCCachedDataPathProperty@CCachedDataPathProperty@@2UCRuntimeClass@@B";
   case 0x0006: return "?classCDataPathProperty@CDataPathProperty@@2UCRuntimeClass@@B";

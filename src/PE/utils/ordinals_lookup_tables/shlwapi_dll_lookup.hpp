@@ -20,7 +20,7 @@
 namespace LIEF {
 namespace PE {
 
-const char* shlwapi_dll_lookup(uint32_t i) {
+inline const char* shlwapi_dll_lookup(uint32_t i) {
   switch(i) {
   case 0x01f4: return "AssocCreate";
   case 0x01f5: return "AssocGetPerceivedType";

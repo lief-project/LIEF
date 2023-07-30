@@ -20,7 +20,7 @@
 namespace LIEF {
 namespace PE {
 
-const char* msvcrt_dll_lookup(uint32_t i) {
+inline const char* msvcrt_dll_lookup(uint32_t i) {
   switch(i) {
   case 0x0038: return "$I10_OUTPUT";
   case 0x0001: return "??0__non_rtti_object@@QAE@ABV0@@Z";

@@ -20,7 +20,7 @@
 namespace LIEF {
 namespace PE {
 
-const char* ws2_32_dll_lookup(uint32_t i) {
+inline const char* ws2_32_dll_lookup(uint32_t i) {
   switch(i) {
   case 0x001b: return "FreeAddrInfoW";
   case 0x0018: return "GetAddrInfoW";

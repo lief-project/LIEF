@@ -20,7 +20,7 @@
 namespace LIEF {
 namespace PE {
 
-const char* kernel32_dll_lookup(uint32_t i) {
+inline const char* kernel32_dll_lookup(uint32_t i) {
   switch(i) {
   case 0x0001: return "ActivateActCtx";
   case 0x0002: return "AddAtomA";

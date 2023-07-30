@@ -20,7 +20,7 @@
 namespace LIEF {
 namespace PE {
 
-const char* comctl32_dll_lookup(uint32_t i) {
+inline const char* comctl32_dll_lookup(uint32_t i) {
   switch(i) {
   case 0x0191: return "AddMRUStringW";
   case 0x00cf: return "AttachScrollBars";

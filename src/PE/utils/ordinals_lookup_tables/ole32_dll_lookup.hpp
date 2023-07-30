@@ -16,11 +16,12 @@
 #ifndef LIEF_PE_OLE32_DLL_LOOKUP_H_
 #define LIEF_PE_OLE32_DLL_LOOKUP_H_
 
+#include <cstdint>
 
 namespace LIEF {
 namespace PE {
 
-const char* ole32_dll_lookup(uint32_t i) {
+inline const char* ole32_dll_lookup(uint32_t i) {
   switch(i) {
   case 0x0002: return "BindMoniker";
   case 0x0003: return "CLIPFORMAT_UserFree";

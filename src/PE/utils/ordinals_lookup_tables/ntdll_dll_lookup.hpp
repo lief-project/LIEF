@@ -20,7 +20,7 @@
 namespace LIEF {
 namespace PE {
 
-const char* ntdll_dll_lookup(uint32_t i) {
+inline const char* ntdll_dll_lookup(uint32_t i) {
   switch(i) {
   case 0x0008: return "CsrAllocateCaptureBuffer";
   case 0x0009: return "CsrAllocateMessagePointer";

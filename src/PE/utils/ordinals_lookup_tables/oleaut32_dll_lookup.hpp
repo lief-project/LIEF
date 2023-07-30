@@ -20,7 +20,7 @@
 namespace LIEF {
 namespace PE {
 
-const char* oleaut32_dll_lookup(uint32_t i) {
+inline const char* oleaut32_dll_lookup(uint32_t i) {
   switch(i) {
   case 0x011e: return "BSTR_UserFree";
   case 0x011c: return "BSTR_UserMarshal";

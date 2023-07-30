@@ -20,7 +20,7 @@
 namespace LIEF {
 namespace PE {
 
-const char* msvcr100_dll_lookup(uint32_t i) {
+inline const char* msvcr100_dll_lookup(uint32_t i) {
   switch(i) {
   case 0x010f: return "$I10_OUTPUT";
   case 0x0001: return "??0?$_SpinWait@$00@details@Concurrency@@QAE@P6AXXZ@Z";

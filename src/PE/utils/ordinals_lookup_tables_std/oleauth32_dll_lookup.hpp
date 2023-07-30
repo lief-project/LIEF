@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_PE_OLEAUTH32_DLL_LOOKUP_STD_H_
-#define LIEF_PE_OLEAUTH32_DLL_LOOKUP_STD_H_
+#ifndef LIEF_PE_OLEAUTH32_DLL_LOOKUP_STD_H
+#define LIEF_PE_OLEAUTH32_DLL_LOOKUP_STD_H
 
 #include <cinttypes>
 
@@ -23,7 +23,7 @@ namespace PE {
 namespace imphashstd {
 
 // From pefile: https://github.com/erocarrera/pefile/blob/09264be6f731bf8578aee8638cc4046154e03abf/ordlookup/oleaut32.py
-const char* oleaut32_dll_lookup(uint32_t i) {
+inline const char* oleaut32_dll_lookup(uint32_t i) {
   switch(i) {
   case 0x0002: return "SysAllocString";
   case 0x0003: return "SysReAllocString";

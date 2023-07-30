@@ -20,7 +20,7 @@
 namespace LIEF {
 namespace PE {
 
-const char* msvcp110_dll_lookup(uint32_t i) {
+inline const char* msvcp110_dll_lookup(uint32_t i) {
   switch(i) {
   case 0x0001: return "??$_Getvals@_W@?$time_get@DV?$istreambuf_iterator@DU?$char_traits@D@std@@@std@@@std@@IEAAX_WAEBV_Locinfo@1@@Z";
   case 0x0002: return "??$_Getvals@_W@?$time_get@GV?$istreambuf_iterator@GU?$char_traits@G@std@@@std@@@std@@IEAAX_WAEBV_Locinfo@1@@Z";

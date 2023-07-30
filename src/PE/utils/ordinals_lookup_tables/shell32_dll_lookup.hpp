@@ -20,7 +20,7 @@
 namespace LIEF {
 namespace PE {
 
-const char* shell32_dll_lookup(uint32_t i) {
+inline const char* shell32_dll_lookup(uint32_t i) {
   switch(i) {
   case 0x00ff: return "AppCompat_RunDLLW";
   case 0x0107: return "AssocCreateForClasses";

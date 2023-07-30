@@ -20,7 +20,7 @@
 namespace LIEF {
 namespace PE {
 
-const char* advapi32_dll_lookup(uint32_t i) {
+inline const char* advapi32_dll_lookup(uint32_t i) {
   switch(i) {
   case 0x0002: return "A_SHAFinal";
   case 0x0003: return "A_SHAInit";

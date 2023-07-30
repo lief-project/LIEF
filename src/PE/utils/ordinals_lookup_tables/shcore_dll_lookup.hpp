@@ -20,7 +20,7 @@
 namespace LIEF {
 namespace PE {
 
-const char* shcore_dll_lookup(uint32_t i) {
+inline const char* shcore_dll_lookup(uint32_t i) {
   switch(i) {
   case 0x0002: return "CommandLineToArgvW";
   case 0x0003: return "CreateRandomAccessStreamOnFile";
