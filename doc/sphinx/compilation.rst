@@ -18,7 +18,7 @@ To build the documentation:
 
 .. note::
 
-  A compilation from scratch with all the options enabled can take ~30 minutes on a regular laptop.
+  A compilation from scratch with all the options enabled can take ~20 minutes on a regular laptop.
 
 Libraries only (SDK)
 --------------------
@@ -46,8 +46,6 @@ Libraries only (SDK)
 
       $ cmake -DCMAKE_BUILD_TYPE=Debug -DLIEF_USE_CRT_DEBUG=MTd ..
       $ cmake --build . --target LIB_LIEF --config Debug
-
-
 
 Python bindings
 ---------------
@@ -176,7 +174,7 @@ LIEF but it is not required to use LIEF. ``external`` means that it is required 
 +-----------------------------------+--------------+--------------------------------------------+
 | `json <json_ref>`_                | ``internal`` | Serialize LIEF's object into JSON          |
 +-----------------------------------+--------------+--------------------------------------------+
-| `pybind11 <pybind11_ref>`_        | ``internal`` | Python bindings                            |
+| `nanobind <nanobind_ref>`_        | ``internal`` | Python bindings                            |
 +-----------------------------------+--------------+--------------------------------------------+
 | `Frozen <frozen_ref>`_            | ``internal`` | ``constexpr`` containers                   |
 +-----------------------------------+--------------+--------------------------------------------+
@@ -191,7 +189,7 @@ LIEF but it is not required to use LIEF. ``external`` means that it is required 
 .. _mbedtls_ref: https://github.com/Mbed-TLS/mbedtls
 .. _utfcpp_ref: https://github.com/nemtrif/utfcpp
 .. _json_ref: https://github.com/nlohmann/json
-.. _pybind11_ref: https://github.com/pybind/pybind11
+.. _nanobind_ref: https://github.com/wjakob/nanobind
 .. _frozen_ref: https://github.com/serge-sans-paille/frozen
 .. _melkor_ref: https://github.com/IOActive/Melkor_ELF_Fuzzer
 
@@ -210,7 +208,7 @@ cmake's options:
   * ``LIEF_OPT_FROZEN_EXTERNAL``
   * ``LIEF_OPT_EXTERNAL_SPAN/LIEF_EXTERNAL_SPAN_DIR``
   * ``LIEF_OPT_EXTERNAL_EXPECTED``
-  * ``LIEF_OPT_PYBIND11_EXTERNAL``
+  * ``LIEF_OPT_NANOBIND_EXTERNAL``
 
 By setting these flags, LIEF resolves the dependencies with CMake ``find_package(...)`` which
 is aware of ``<DEPS>_DIR`` to find the package.
