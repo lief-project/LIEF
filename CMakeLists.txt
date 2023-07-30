@@ -110,6 +110,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
 endif()
 
 message(STATUS "CMAKE_CXX_FLAGS_RELEASE:           ${CMAKE_CXX_FLAGS_RELEASE}")
+message(STATUS "CMAKE_CXX_FLAGS_RELWITHDEBINFO:    ${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
+message(STATUS "CMAKE_CXX_FLAGS_DEBUG:             ${CMAKE_CXX_FLAGS_DEBUG}")
 message(STATUS "CMAKE_CXX_FLAGS:                   ${CMAKE_CXX_FLAGS}")
 message(STATUS "CMAKE_CXX_LINK_EXECUTABLE:         ${CMAKE_CXX_LINK_EXECUTABLE}")
 message(STATUS "CMAKE_CXX_LINK_FLAGS:              ${CMAKE_CXX_LINK_FLAGS}")
@@ -175,8 +177,6 @@ else()
   target_compile_definitions(LIB_LIEF PRIVATE -DLIEF_STATIC)
 endif()
 
-
-
 # Logging Configuration
 # =====================
 target_compile_definitions(LIB_LIEF PRIVATE SPDLOG_DISABLE_DEFAULT_LOGGER
@@ -195,13 +195,15 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/version.h.in"
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/config.h.in"
                "${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/config.h" @ONLY)
 
-list(APPEND LIEF_PUBLIC_INCLUDE_DIR
-     "${CMAKE_CURRENT_SOURCE_DIR}/include/"
-     "${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/"
-     "${CMAKE_CURRENT_BINARY_DIR}/include/")
+set(LIEF_PUBLIC_INCLUDE_DIR
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/
+    ${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/
+    ${CMAKE_CURRENT_BINARY_DIR}/include/)
 
-list(APPEND LIEF_PRIVATE_INCLUDE_DIR "${LIEF_PUBLIC_INCLUDE_DIR}"
-     "${CMAKE_CURRENT_SOURCE_DIR}/src" "${CMAKE_CURRENT_BINARY_DIR}")
+set(LIEF_PRIVATE_INCLUDE_DIR
+    ${LIEF_PUBLIC_INCLUDE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_BINARY_DIR})
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/LIEF.pc.in
                ${CMAKE_CURRENT_BINARY_DIR}/LIEF.pc @ONLY)
@@ -556,7 +558,5 @@ if(LIEF_INSTALL)
     NAMESPACE LIEF::
     FILE LIEFExport-${lib_type}.cmake)
 
-  # Package
-  # ======================
   add_subdirectory(package)
 endif()
