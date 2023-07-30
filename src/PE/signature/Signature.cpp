@@ -326,7 +326,7 @@ Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const
 
   // Copy authenticated attributes
   SignerInfo::it_const_attributes_t auth_attrs = signer.authenticated_attributes();
-  if (auth_attrs.size() > 0) {
+  if (!auth_attrs.empty()) {
 
     std::vector<uint8_t> auth_data = signer.raw_auth_data_;
     // According to the RFC:
@@ -523,9 +523,9 @@ inline void print_attr(SignerInfo::it_const_attributes_t& attrs, std::ostream& o
           const Signature& ct = nested_attr.sig();
           auto signers = ct.signers();
           auto crts = ct.certificates();
-          if (signers.size() > 0) {
+          if (!signers.empty()) {
             suffix = signers[0].issuer();
-          } else if (crts.size() > 0) {
+          } else if (!crts.empty()) {
             suffix = crts[0].issuer();
           }
           break;
@@ -598,13 +598,13 @@ std::ostream& operator<<(std::ostream& os, const Signature& signature) {
     os << fmt::format("Encryption:   {}\n", to_string(signer.encryption_algorithm()));
     os << fmt::format("Encrypted DG: {} ...\n", hex_dump(signer.encrypted_digest()).substr(0, 41));
     SignerInfo::it_const_attributes_t auth_attr = signer.authenticated_attributes();
-    if (auth_attr.size() > 0) {
+    if (!auth_attr.empty()) {
       os << fmt::format("#{:d} authenticated attributes:\n", auth_attr.size());
       print_attr(auth_attr, os);
     }
 
     SignerInfo::it_const_attributes_t unauth_attr = signer.unauthenticated_attributes();
-    if (unauth_attr.size() > 0) {
+    if (!unauth_attr.empty()) {
       os << fmt::format("#{:d} un-authenticated attributes:\n", unauth_attr.size());
       print_attr(unauth_attr, os);
     }

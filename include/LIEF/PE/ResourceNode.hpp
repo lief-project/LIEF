@@ -102,7 +102,10 @@ class LIEF_API ResourceNode : public Object {
 
   void id(uint32_t id);
   void name(const std::string& name);
-  void name(const std::u16string& name);
+
+  void name(std::u16string name) {
+    name_ = std::move(name);
+  }
 
   //! Add a ResourceDirectory to the current node
   ResourceNode& add_child(const ResourceDirectory& child);

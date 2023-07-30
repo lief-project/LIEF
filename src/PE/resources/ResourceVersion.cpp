@@ -121,10 +121,6 @@ void ResourceVersion::type(uint16_t type) {
   type_ = type;
 }
 
-void ResourceVersion::key(const std::u16string& key) {
-  key_ = key;
-}
-
 void ResourceVersion::key(const std::string& key) {
   if (auto res = u8tou16(key)) {
     return this->key(std::move(*res));

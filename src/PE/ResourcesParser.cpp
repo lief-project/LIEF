@@ -691,8 +691,7 @@ ok_error_t ResourcesParser::parse_tail_ext_dialog(ResourceDialog& dialog, Binary
   }
 
   if (auto res = stream.read<uint8_t>()) {
-    italic = *res;
-    dialog.italic_ = italic;
+    dialog.italic_ = static_cast<bool>(*res);
     LIEF_DEBUG("DLGTEMPLATEEX.italic: {}", italic);
   } else {
     LIEF_INFO("Can't read DLGTEMPLATEEX.italic");

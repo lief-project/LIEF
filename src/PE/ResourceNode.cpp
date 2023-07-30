@@ -202,10 +202,6 @@ void ResourceNode::name(const std::string& name) {
   LIEF_WARN("{} can't be converted to a UTF-16 string", name);
 }
 
-void ResourceNode::name(const std::u16string& name) {
-  name_ = name;
-}
-
 
 // This logic follows the description from the Microsoft documentation at
 // https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#resource-directory-table

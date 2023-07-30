@@ -81,7 +81,9 @@ class LIEF_API ResourceVersion : public Object {
 
   void type(uint16_t type);
 
-  void key(const std::u16string& key);
+  void key(std::u16string key) {
+    key_ = std::move(key);
+  }
   void key(const std::string& key);
 
   void fixed_file_info(const ResourceFixedFileInfo& fixed_file_info);
