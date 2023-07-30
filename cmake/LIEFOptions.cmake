@@ -80,6 +80,7 @@ set(_LIEF_USE_FROZEN ON)
 if(LIEF_DISABLE_FROZEN)
   set(_LIEF_USE_FROZEN OFF)
 endif()
+
 cmake_dependent_option(LIEF_OPT_FROZEN_EXTERNAL "Use an external provided version of Frozen" OFF
                        "_LIEF_USE_FROZEN" OFF)
 
