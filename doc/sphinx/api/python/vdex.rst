@@ -24,9 +24,6 @@ File
 ****
 
 .. autoclass:: lief.VDEX.File
-  :members:
-  :inherited-members:
-  :undoc-members:
 
 ----------
 
@@ -34,9 +31,6 @@ Header
 ******
 
 .. autoclass:: lief.VDEX.Header
-  :members:
-  :inherited-members:
-  :undoc-members:
 
 
 

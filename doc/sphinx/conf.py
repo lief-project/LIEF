@@ -76,7 +76,11 @@ commit  = lief.__commit__
 language = "en"
 autoclass_content = 'both'
 autodoc_default_options = {
-    'exclude-members': '@entries'
+    'exclude-members': '@entries',
+    'undoc-members': True,
+    'inherited-members': True,
+    'undoc-members': True,
+    'members': True,
 }
 
 if GENERATE_DOXYGEN:
