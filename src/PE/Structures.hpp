@@ -306,19 +306,19 @@ class PE64 {
     using load_configuration_v10_t = load_configuration_v10<uint64_t>;
     using load_configuration_v11_t = load_configuration_v11<uint64_t>;
 
-    static_assert(sizeof(load_configuration_t)     == 0x60,  "");
-    static_assert(sizeof(load_configuration_v0_t)  == 0x70,  "");
-    static_assert(sizeof(load_configuration_v1_t)  == 0x94,  "");
-    static_assert(sizeof(load_configuration_v2_t)  == 0xA0,  "");
-    static_assert(sizeof(load_configuration_v3_t)  == 0xC0,  "");
-    static_assert(sizeof(load_configuration_v4_t)  == 0xD0,  "");
-    static_assert(sizeof(load_configuration_v5_t)  == 0xE8,  "");
-    static_assert(sizeof(load_configuration_v6_t)  == 0xF4,  "");
-    static_assert(sizeof(load_configuration_v7_t)  == 0x100, "");
-    static_assert(sizeof(load_configuration_v8_t)  == 0x108, "");
-    static_assert(sizeof(load_configuration_v9_t)  == 0x118, "");
-    static_assert(sizeof(load_configuration_v10_t) == 0x130, "");
-    static_assert(sizeof(load_configuration_v11_t) == 0x138, "");
+    static_assert(sizeof(load_configuration_t)     == 0x60);
+    static_assert(sizeof(load_configuration_v0_t)  == 0x70);
+    static_assert(sizeof(load_configuration_v1_t)  == 0x94);
+    static_assert(sizeof(load_configuration_v2_t)  == 0xA0);
+    static_assert(sizeof(load_configuration_v3_t)  == 0xC0);
+    static_assert(sizeof(load_configuration_v4_t)  == 0xD0);
+    static_assert(sizeof(load_configuration_v5_t)  == 0xE8);
+    static_assert(sizeof(load_configuration_v6_t)  == 0xF4);
+    static_assert(sizeof(load_configuration_v7_t)  == 0x100);
+    static_assert(sizeof(load_configuration_v8_t)  == 0x108);
+    static_assert(sizeof(load_configuration_v9_t)  == 0x118);
+    static_assert(sizeof(load_configuration_v10_t) == 0x130);
+    static_assert(sizeof(load_configuration_v11_t) == 0x138);
 };
 }
 
