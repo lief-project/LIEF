@@ -481,9 +481,19 @@ void Hash::visit(const Attribute& attr) {
 
 void Hash::visit(const ContentInfo& info) {
   process(info.content_type());
-  process(info.digest_algorithm());
-  process(info.digest());
-  process(info.file());
+  info.value().accept(*this);
+}
+
+
+void Hash::visit(const GenericContent& content) {
+  process(content.raw());
+  process(content.oid());
+}
+
+void Hash::visit(const SpcIndirectData& content) {
+  process(content.file());
+  process(content.digest());
+  process(content.digest_algorithm());
 }
 
 

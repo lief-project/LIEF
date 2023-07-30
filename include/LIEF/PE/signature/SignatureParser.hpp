@@ -25,11 +25,14 @@
 #include "LIEF/PE/signature/OIDToString.hpp"
 
 namespace LIEF {
+class BinaryStream;
 class VectorStream;
 
 namespace PE {
 class Parser;
 class Attribute;
+class SpcIndirectData;
+class PKCS9TSTInfo;
 
 class LIEF_API SignatureParser {
   friend class Parser;
@@ -56,38 +59,42 @@ class LIEF_API SignatureParser {
   //! Parse a PKCS #7 signature given a raw blob
   static result<Signature> parse(std::vector<uint8_t> data, bool skip_header = false);
 
+  //! Parse a PKCS #7 signature given a BinaryStream
+  static result<Signature> parse(BinaryStream& stream, bool skip_header = false);
+
   //! Parse a PKCS #7 signature from a file path
   static result<Signature> parse(const std::string& path);
   SignatureParser(const SignatureParser&) = delete;
   SignatureParser& operator=(const SignatureParser&) = delete;
   private:
-  SignatureParser(std::vector<uint8_t> data);
+
   ~SignatureParser();
   SignatureParser();
 
-  result<Signature> parse_signature();
+  static result<Signature> parse_signature(BinaryStream& stream);
 
-  static result<ContentInfo> parse_content_info(VectorStream& stream, range_t& range);
-  static result<x509_certificates_t> parse_certificates(VectorStream& stream);
-  result<signer_infos_t> parse_signer_infos(VectorStream& stream);
-  result<attributes_t> parse_attributes(VectorStream& stream);
-  static result<std::unique_ptr<Attribute>> parse_content_type(VectorStream& stream);
+  static result<ContentInfo> parse_content_info(BinaryStream& stream, range_t& range);
+  static result<x509_certificates_t> parse_certificates(BinaryStream& stream);
+  static result<signer_infos_t> parse_signer_infos(BinaryStream& stream);
+  static result<attributes_t> parse_attributes(BinaryStream& stream);
+  static result<std::unique_ptr<Attribute>> parse_content_type(BinaryStream& stream);
 
-  result<signer_infos_t> parse_pkcs9_counter_sign(VectorStream& stream);
-  static result<std::vector<uint8_t>> parse_pkcs9_message_digest(VectorStream& stream);
-  static result<int32_t> parse_pkcs9_at_sequence_number(VectorStream& stream);
-  static result<time_t> parse_pkcs9_signing_time(VectorStream& stream);
+  static result<signer_infos_t> parse_pkcs9_counter_sign(BinaryStream& stream);
+  static result<std::vector<uint8_t>> parse_pkcs9_message_digest(BinaryStream& stream);
+  static result<int32_t> parse_pkcs9_at_sequence_number(BinaryStream& stream);
+  static result<time_t> parse_pkcs9_signing_time(BinaryStream& stream);
+  static result<std::unique_ptr<PKCS9TSTInfo>> parse_pkcs9_tstinfo(BinaryStream& stream);
 
-  static result<void> parse_ms_counter_sign(VectorStream& stream);
-  static result<Signature> parse_ms_spc_nested_signature(VectorStream& stream);
-  result<oid_t> parse_ms_spc_statement_type(VectorStream& stream);
+  static result<std::unique_ptr<Attribute>> parse_ms_counter_sign(BinaryStream& stream);
+  static result<Signature> parse_ms_spc_nested_signature(BinaryStream& stream);
+  static result<oid_t> parse_ms_spc_statement_type(BinaryStream& stream);
 
-  result<SpcSpOpusInfo> parse_spc_sp_opus_info(VectorStream& stream);
-  static result<std::string> parse_spc_string(VectorStream& stream);
-  static result<std::string> parse_spc_link(VectorStream& stream);
-  static result<SpcPeImageData> parse_spc_pe_image_data(VectorStream& stream);
-  size_t current_offset() const;
-  std::unique_ptr<VectorStream> stream_;
+  static result<SpcSpOpusInfo> parse_spc_sp_opus_info(BinaryStream& stream);
+  static result<std::string> parse_spc_string(BinaryStream& stream);
+  static result<std::string> parse_spc_link(BinaryStream& stream);
+  static result<SpcPeImageData> parse_spc_pe_image_data(BinaryStream& stream);
+  static result<std::unique_ptr<SpcIndirectData>> parse_spc_indirect_data(BinaryStream& stream, range_t& range);
+
 };
 
 }

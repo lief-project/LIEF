@@ -374,6 +374,9 @@ void create<Binary>(nb::module_& m) {
         "Return the overlay content as a ``list`` of bytes"_doc,
         nb::rv_policy::reference_internal)
 
+    .def_prop_ro("overlay_offset", &Binary::overlay_offset,
+                 "Return the original overlay offset")
+
     .def_prop_rw("dos_stub",
         [] (Binary& self) {
           const span<const uint8_t> content = self.dos_stub();

@@ -110,14 +110,21 @@ std::string hex_str(uint8_t c) {
   return ss.str();
 }
 
+template<class T>
+std::string hex_dump_impl(T data, const std::string& sep) {
+  std::vector<std::string> hexdigits;
+  hexdigits.reserve(data.size());
+  std::transform(data.begin(), data.end(), std::back_inserter(hexdigits),
+                 [] (uint8_t x) { return fmt::format("{:02x}", x); });
+  return fmt::to_string(fmt::join(hexdigits, sep));
+}
+
 std::string hex_dump(const std::vector<uint8_t>& data, const std::string& sep) {
+  return hex_dump_impl(data, sep);
+}
 
-  std::string hexstring = std::accumulate(std::begin(data), std::end(data), std::string{},
-     [sep] (const std::string& a, uint8_t b) {
-         return a.empty() ? fmt::format("{:02x}", b) : a + sep + fmt::format("{:02x}", b);
-     });
-
-  return hexstring;
+std::string hex_dump(span<const uint8_t> data, const std::string& sep) {
+  return hex_dump_impl(data, sep);
 }
 
 

@@ -456,6 +456,11 @@ class LIEF_API Binary : public LIEF::Binary {
     return overlay_;
   }
 
+  //! Return the original overlay offset
+  uint64_t overlay_offset() const {
+    return overlay_offset_;
+  }
+
   //! Return the DOS stub content
   span<const uint8_t> dos_stub() const {
     return dos_stub_;

@@ -997,6 +997,7 @@ ok_error_t Parser::parse_signature() {
   const uint32_t signature_offset  = cert_dir->RVA();
   const uint32_t signature_size    = cert_dir->size();
   const uint64_t end_p = signature_offset + signature_size;
+
   LIEF_DEBUG("Signature Offset: 0x{:04x}", signature_offset);
   LIEF_DEBUG("Signature Size:   0x{:04x}", signature_size);
 

@@ -27,15 +27,13 @@
 #include "LIEF/BinaryStream/Convert.hpp"
 #include "LIEF/errors.hpp"
 
-struct mbedtls_x509_crt;
-struct mbedtls_x509_time;
-
 namespace LIEF {
-
+class ASN1Reader;
 
 //! Class that is used to a read stream of data from different sources
 class BinaryStream {
   public:
+  friend class ASN1Reader;
   enum class STREAM_TYPE {
     UNKNOWN = 0,
     VECTOR,
@@ -165,20 +163,6 @@ class BinaryStream {
 
   void set_endian_swap(bool swap);
 
-  /* ASN.1 & X509 parsing functions */
-  virtual result<size_t>                             asn1_read_tag(int tag);
-  virtual result<size_t>                             asn1_read_len();
-  virtual result<std::string>                        asn1_read_alg();
-  virtual result<std::string>                        asn1_read_oid();
-  virtual result<int32_t>                            asn1_read_int();
-  virtual result<std::vector<uint8_t>>               asn1_read_bitstring();
-  virtual result<std::vector<uint8_t>>               asn1_read_octet_string();
-  virtual result<std::unique_ptr<mbedtls_x509_crt>>  asn1_read_cert();
-  virtual result<std::string>                        x509_read_names();
-  virtual result<std::vector<uint8_t>>               x509_read_serial();
-  virtual result<std::unique_ptr<mbedtls_x509_time>> x509_read_time();
-
-
   template<class T>
   static bool is_all_zero(const T& buffer) {
     const auto* ptr = reinterpret_cast<const uint8_t *const>(&buffer);
@@ -188,6 +172,30 @@ class BinaryStream {
 
   bool should_swap() const {
     return endian_swap_;
+  }
+
+  virtual const uint8_t* p() const  {
+    return nullptr;
+  }
+
+  virtual uint8_t* start() {
+    return const_cast<uint8_t*>(static_cast<const BinaryStream*>(this)->start());
+  }
+
+  virtual uint8_t* p() {
+    return const_cast<uint8_t*>(static_cast<const BinaryStream*>(this)->p());
+  }
+
+  virtual uint8_t* end() {
+    return const_cast<uint8_t*>(static_cast<const BinaryStream*>(this)->end());
+  }
+
+  virtual const uint8_t* start() const {
+    return nullptr;
+  }
+
+  virtual const uint8_t* end() const {
+    return nullptr;
   }
 
   protected:

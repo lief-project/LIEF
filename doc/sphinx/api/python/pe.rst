@@ -289,6 +289,27 @@ Signature SpcSpOpusInfo
 
 ----------
 
+Signature SpcIndirectData
+*************************
+
+.. autoclass:: lief.PE.SpcIndirectData
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
+
+Signature GenericType
+*********************
+
+.. autoclass:: lief.PE.GenericType
+  :members:
+  :inherited-members:
+  :undoc-members:
+
+----------
+
 
 RsaInfo
 *******

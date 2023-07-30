@@ -25,6 +25,10 @@ namespace LIEF {
 class Binary;
 class MemoryStream : public BinaryStream {
   public:
+  using BinaryStream::p;
+  using BinaryStream::end;
+  using BinaryStream::start;
+
   MemoryStream() = delete;
   MemoryStream(uintptr_t base_address);
   MemoryStream(uintptr_t base_address, uint64_t size);
@@ -39,8 +43,16 @@ class MemoryStream : public BinaryStream {
     return this->baseaddr_;
   }
 
-  uint64_t end() const {
-    return this->baseaddr_ + this->size_;
+  const uint8_t* p() const override {
+    return start() + pos();
+  }
+
+  const uint8_t* start() const override {
+    return reinterpret_cast<const uint8_t*>(baseaddr_);
+  }
+
+  const uint8_t* end() const override {
+    return start() + size_;
   }
 
   void binary(Binary& bin) {

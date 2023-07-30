@@ -24,20 +24,32 @@ namespace LIEF {
 namespace PE {
 
 ContentInfo::ContentInfo() = default;
-ContentInfo::ContentInfo(const ContentInfo&) = default;
-ContentInfo& ContentInfo::operator=(const ContentInfo&) = default;
 ContentInfo::~ContentInfo() = default;
 
+ContentInfo::Content::~Content() = default;
+
+ContentInfo::ContentInfo(ContentInfo&& other) = default;
+
+ContentInfo::ContentInfo(const ContentInfo& other) :
+  Object::Object(other),
+  value_{other.value_->clone()}
+{}
+
+ContentInfo& ContentInfo::operator=(ContentInfo other) {
+  swap(other);
+  return *this;
+}
+
+void ContentInfo::swap(ContentInfo& other) {
+  std::swap(value_, other.value_);
+}
 
 void ContentInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
 std::ostream& operator<<(std::ostream& os, const ContentInfo& content_info) {
-  os << "Authentihash: " << hex_dump(content_info.digest())
-     << "(" << to_string(content_info.digest_algorithm()) << ")\n";
-
+  content_info.value().print(os);
   return os;
 }
 

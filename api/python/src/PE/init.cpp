@@ -33,6 +33,9 @@
 #include "LIEF/PE/debug/PogoEntry.hpp"
 #include "LIEF/PE/resources/LangCodeItem.hpp"
 #include "LIEF/PE/signature/attributes.hpp"
+#include "LIEF/PE/signature/SpcIndirectData.hpp"
+#include "LIEF/PE/signature/GenericContent.hpp"
+
 #define CREATE(X,Y) create<X>(Y)
 
 namespace LIEF::PE::py {
@@ -85,6 +88,8 @@ void init_signature(nb::module_& m) {
   CREATE(RsaInfo, m);
   CREATE(x509, m);
   CREATE(ContentInfo, m);
+  CREATE(GenericContent, m);
+  CREATE(SpcIndirectData, m);
   CREATE(SignerInfo, m);
   CREATE(CodeIntegrity, m);
   CREATE(Attribute, m);

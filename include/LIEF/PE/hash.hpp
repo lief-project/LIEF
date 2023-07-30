@@ -143,6 +143,8 @@ class LIEF_API Hash : public LIEF::Hash {
   void visit(const x509& x509)                            override;
   void visit(const SignerInfo& signerinfo)                override;
   void visit(const ContentInfo& contentinfo)              override;
+  void visit(const GenericContent& content)               override;
+  void visit(const SpcIndirectData& content)              override;
   void visit(const Attribute& attr)                       override;
   void visit(const ContentType& attr)                     override;
   void visit(const GenericType& attr)                     override;

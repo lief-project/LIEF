@@ -38,7 +38,7 @@ TEST_CASE("lief.test.binarystream", "[lief][test][binarystream]") {
     REQUIRE(stream.binary() == nullptr);
     REQUIRE(stream.pos() == 0);
     REQUIRE(stream.size() == buffer.size());
-    REQUIRE(stream.end() == reinterpret_cast<uint64_t>(buffer.data() + buffer.size()));
+    REQUIRE(stream.end() == buffer.data() + buffer.size());
     REQUIRE(stream.peek<uint8_t>()  == 0x00);
     REQUIRE(stream.peek<uint8_t>(1) == 0x10);
     REQUIRE(stream.peek<uint8_t>(3) == 0x40);
@@ -70,9 +70,9 @@ TEST_CASE("lief.test.binarystream", "[lief][test][binarystream]") {
     REQUIRE(vs.p() == vs.content().data());
     REQUIRE(vs.start() == vs.p());
     REQUIRE(vs.end() == vs.content().data() + vs.content().size());
-    REQUIRE(static_cast<const VectorStream&>(vs).p() == static_cast<VectorStream&>(vs).p());
-    REQUIRE(static_cast<const VectorStream&>(vs).end() == static_cast<VectorStream&>(vs).end());
-    REQUIRE(static_cast<const VectorStream&>(vs).start() == static_cast<VectorStream&>(vs).start());
+    REQUIRE(static_cast<VectorStream&>(vs).p() == static_cast<const VectorStream&>(vs).p());
+    REQUIRE(static_cast<VectorStream&>(vs).end() == static_cast<const VectorStream&>(vs).end());
+    REQUIRE(static_cast<VectorStream&>(vs).start() == static_cast<const VectorStream&>(vs).start());
     vs.read<uint8_t>();
 
     REQUIRE(vs.p() != vs.content().data());

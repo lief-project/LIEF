@@ -17,6 +17,8 @@
 #define LIEF_PE_CONTENT_INFO_H
 
 #include <vector>
+#include <ostream>
+#include <memory>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
@@ -30,7 +32,8 @@ namespace PE {
 class Parser;
 class SignatureParser;
 
-/** ContentInfo as described in the RFC2315 (https://tools.ietf.org/html/rfc2315#section-7)
+/**
+ * ContentInfo as described in the RFC2315 (https://tools.ietf.org/html/rfc2315#section-7)
  *
  * ```text
  * ContentInfo ::= SEQUENCE {
@@ -43,6 +46,7 @@ class SignatureParser;
  *
  * In the case of PE signature, ContentType **must** be set to SPC_INDIRECT_DATA_OBJID
  * OID: ``1.3.6.1.4.1.311.2.1.4`` and content is defined by the structure: ``SpcIndirectDataContent``
+ *
  * ```text
  * SpcIndirectDataContent ::= SEQUENCE {
  *  data          SpcAttributeTypeAndOptionalValue,
@@ -77,32 +81,47 @@ class LIEF_API ContentInfo : public Object {
   friend class SignatureParser;
 
   public:
+  class Content : public Object {
+    public:
+    Content(oid_t oid) :
+      type_(std::move(oid))
+    {}
+
+    const oid_t& content_type() const {
+      return type_;
+    }
+
+    virtual std::unique_ptr<Content> clone() const = 0;
+    virtual void print(std::ostream& os) const = 0;
+
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Content& content) {
+      content.print(os);
+      return os;
+    }
+
+    ~Content() override;
+    private:
+    oid_t type_;
+  };
   ContentInfo();
-  ContentInfo(const ContentInfo&);
-  ContentInfo& operator=(const ContentInfo&);
+  ContentInfo(const ContentInfo& other);
+  ContentInfo(ContentInfo&& other);
+  ContentInfo& operator=(ContentInfo other);
+
+  void swap(ContentInfo& other);
 
   //! Return the OID that describes the content wrapped by this object.
   //! It should match SPC_INDIRECT_DATA_OBJID (1.3.6.1.4.1.311.2.1.4)
   oid_t content_type() const {
-    return content_type_;
+    return value_->content_type();
   }
 
-  //! Digest used to hash the file
-  //!
-  //! It should match LIEF::PE::SignerInfo::digest_algorithm
-  ALGORITHMS digest_algorithm() const {
-    return digest_algorithm_;
+  Content& value() {
+    return *value_;
   }
 
-  //! PE's authentihash
-  //!
-  //! @see LIEF::PE::Binary::authentihash
-  const std::vector<uint8_t>& digest() const {
-    return digest_;
-  }
-
-  const std::string& file() const {
-    return file_;
+  const Content& value() const {
+    return *value_;
   }
 
   void accept(Visitor& visitor) const override;
@@ -112,12 +131,7 @@ class LIEF_API ContentInfo : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ContentInfo& content_info);
 
   private:
-  oid_t content_type_;
-  std::string file_;
-  uint8_t flags_ = 0;
-  ALGORITHMS digest_algorithm_ = ALGORITHMS::UNKNOWN;
-  std::vector<uint8_t> digest_;
-
+  std::unique_ptr<Content> value_;
 };
 
 }

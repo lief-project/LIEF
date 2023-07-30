@@ -7,6 +7,8 @@ set(LIEF_PE_SIGNATURE_SRC
   "${CMAKE_CURRENT_LIST_DIR}/OIDToString.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/SignatureParser.cpp"
   "${CMAKE_CURRENT_LIST_DIR}/RsaInfo.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/GenericContent.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/SpcIndirectData.cpp"
 )
 
 

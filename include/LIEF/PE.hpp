@@ -59,12 +59,14 @@
 #include "LIEF/PE/AuxiliarySymbol.hpp"
 #include "LIEF/PE/CodeIntegrity.hpp"
 
-#include "LIEF/PE/signature/attributes.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/ContentInfo.hpp"
+#include "LIEF/PE/signature/GenericContent.hpp"
 #include "LIEF/PE/signature/OIDToString.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
 #include "LIEF/PE/signature/SignerInfo.hpp"
+#include "LIEF/PE/signature/SpcIndirectData.hpp"
+#include "LIEF/PE/signature/attributes.hpp"
 #include "LIEF/PE/signature/types.hpp"
 #include "LIEF/PE/signature/x509.hpp"
 

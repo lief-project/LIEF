@@ -26,7 +26,7 @@ namespace LIEF::PE::py {
 template<>
 void create<ContentInfo>(nb::module_& m) {
 
-  nb::class_<ContentInfo, LIEF::Object>(m, "ContentInfo",
+  nb::class_<ContentInfo, Object> info(m, "ContentInfo",
       R"delim(
       ContentInfo as described in the `RFC 2315 <https://tools.ietf.org/html/rfc2315#section-7>`_
 
@@ -69,25 +69,22 @@ void create<ContentInfo>(nb::module_& m) {
          algorithm  ObjectID,
          parameters [0] EXPLICIT ANY OPTIONAL
         }
-      )delim"_doc)
+      )delim"_doc);
 
+  nb::class_<ContentInfo::Content, Object>(info, "Content")
+    .def_prop_ro("content_type",
+        &ContentInfo::Content::content_type,
+        "OID of the content type. This value should match ``SPC_INDIRECT_DATA_OBJID``"_doc)
+    LIEF_CLONABLE(ContentInfo::Content);
+
+  info
     .def_prop_ro("content_type",
         &ContentInfo::content_type,
-        "OID of the content type. This value should match ``SPC_INDIRECT_DATA_OBJID``"_doc)
+        "An alias for :attr:`~.ContentInfo.content_type`"_doc)
+    .def_prop_ro("value", nb::overload_cast<>(&ContentInfo::value),
+                 nb::rv_policy::reference_internal)
 
-     .def_prop_ro("digest_algorithm",
-        &ContentInfo::digest_algorithm,
-        "Algorithm (" RST_CLASS_REF(lief.PE.ALGORITHMS) ") used to hash the file. "
-        "This value should match " RST_ATTR_REF_FULL(SignerInfo.digest_algorithm) " and "
-        "" RST_ATTR_REF_FULL(Signature.digest_algorithm) ""_doc)
-
-    .def_prop_ro("digest",
-        [] (const ContentInfo& info) -> nb::bytes {
-          const std::vector<uint8_t>& dg = info.digest();
-          return nb::bytes(reinterpret_cast<const char*>(dg.data()), dg.size());
-        },
-        "The digest as ``bytes``. It should match the binary :meth:`~lief.PE.Binary.authentihash`"_doc)
-
+    LIEF_COPYABLE(ContentInfo)
     LIEF_DEFAULT_STR(ContentInfo);
 }
 

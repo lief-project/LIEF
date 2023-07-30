@@ -77,6 +77,8 @@ LIEF_PE_FORWARD(Signature)
 LIEF_PE_FORWARD(x509)
 LIEF_PE_FORWARD(SignerInfo)
 LIEF_PE_FORWARD(ContentInfo)
+LIEF_PE_FORWARD(GenericContent)
+LIEF_PE_FORWARD(SpcIndirectData)
 LIEF_PE_FORWARD(Attribute)
 LIEF_PE_FORWARD(ContentType)
 LIEF_PE_FORWARD(GenericType)
@@ -401,6 +403,12 @@ class LIEF_API Visitor {
 
   //! Method to visit a LIEF::PE::ContentType
   LIEF_PE_VISITABLE(ContentType)
+
+  //! Method to visit a LIEF::PE::GenericContent
+  LIEF_PE_VISITABLE(GenericContent)
+
+  //! Method to visit a LIEF::PE::SpcIndirectData
+  LIEF_PE_VISITABLE(SpcIndirectData)
 
   //! Method to visit a LIEF::PE::GenericType
   LIEF_PE_VISITABLE(GenericType)

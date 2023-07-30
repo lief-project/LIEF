@@ -24,6 +24,10 @@
 namespace LIEF {
 class VectorStream : public BinaryStream {
   public:
+  using BinaryStream::p;
+  using BinaryStream::end;
+  using BinaryStream::start;
+
   static result<VectorStream> from_file(const std::string& file);
   VectorStream(std::vector<uint8_t> data);
 
@@ -47,41 +51,17 @@ class VectorStream : public BinaryStream {
     return std::move(binary_);
   }
 
-  uint8_t* p() {
+  const uint8_t* p() const override {
     return this->binary_.data() + this->pos();
   }
 
-  const uint8_t* p() const {
-    return this->binary_.data() + this->pos();
-  }
-
-  uint8_t* start() {
+  const uint8_t* start() const override {
     return this->binary_.data();
   }
 
-  const uint8_t* start() const {
-    return this->binary_.data();
-  }
-
-  uint8_t* end() {
+  const uint8_t* end() const override {
     return this->binary_.data() + this->binary_.size();
   }
-
-  const uint8_t* end() const {
-    return this->binary_.data() + this->binary_.size();
-  }
-
-  result<size_t> asn1_read_tag(int tag) override;
-  result<size_t> asn1_read_len() override;
-  result<std::string> asn1_read_alg() override;
-  result<std::string> asn1_read_oid() override;
-  result<int32_t> asn1_read_int() override;
-  result<std::vector<uint8_t>> asn1_read_bitstring() override;
-  result<std::vector<uint8_t>> asn1_read_octet_string() override;
-  result<std::unique_ptr<mbedtls_x509_crt>> asn1_read_cert() override;
-  result<std::string> x509_read_names() override;
-  result<std::vector<uint8_t>> x509_read_serial() override;
-  result<std::unique_ptr<mbedtls_x509_time>> x509_read_time() override;
 
   static bool classof(const BinaryStream& stream);
 

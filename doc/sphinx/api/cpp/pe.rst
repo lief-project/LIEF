@@ -277,6 +277,24 @@ Signature SpcSpOpusInfo
 
 ----------
 
+Signature SpcIndirectData
+*************************
+
+.. doxygenclass:: LIEF::PE::SpcIndirectData
+  :project: lief
+
+
+----------
+
+Signature GenericContent
+************************
+
+.. doxygenclass:: LIEF::PE::GenericContent
+  :project: lief
+
+
+----------
+
 
 RsaInfo
 *******

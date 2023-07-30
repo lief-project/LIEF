@@ -843,11 +843,18 @@ void JsonVisitor::visit(const SignerInfo& signerinfo) {
 }
 
 void JsonVisitor::visit(const ContentInfo& contentinfo) {
+  node_["content_type"] = contentinfo.content_type();
+  contentinfo.value().accept(*this);
+}
 
-  node_["content_type"]     = contentinfo.content_type();
-  node_["digest_algorithm"] = to_string(contentinfo.digest_algorithm());
-  node_["digest"]           = contentinfo.digest();
-  node_["file"]             = contentinfo.file();
+void JsonVisitor::visit(const GenericContent& content) {
+  node_["oid"] = content.oid();
+}
+
+void JsonVisitor::visit(const SpcIndirectData& content) {
+  node_["file"]             = content.file();
+  node_["digest"]           = content.digest();
+  node_["digest_algorithm"] = to_string(content.digest_algorithm());
 }
 
 void JsonVisitor::visit(const Attribute& auth) {

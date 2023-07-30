@@ -49,6 +49,7 @@
 #include "LIEF/PE/Symbol.hpp"
 #include "LIEF/PE/TLS.hpp"
 #include "LIEF/PE/utils.hpp"
+#include "LIEF/PE/signature/SpcIndirectData.hpp"
 #include "PE/Structures.hpp"
 
 #include "frozen.hpp"
@@ -942,10 +943,19 @@ Signature::VERIFICATION_FLAGS Binary::verify_signature(const Signature& sig, Sig
     }
   }
 
+  const ContentInfo::Content& content = sig.content_info().value();
+
+  if (!SpcIndirectData::classof(&content)) {
+    LIEF_INFO("Expecting SpcIndirectData");
+    flags |= Signature::VERIFICATION_FLAGS::CORRUPTED_CONTENT_INFO;
+    return flags;
+  }
+  const auto& spc_indirect_data = static_cast<const SpcIndirectData&>(content);
+
   // Check that the authentihash matches Content Info's digest
   const std::vector<uint8_t>& authhash = authentihash(sig.digest_algorithm());
-  const std::vector<uint8_t>& chash = sig.content_info().digest();
-  if (authhash != chash) {
+  const span<const uint8_t> chash = spc_indirect_data.digest();
+  if (authhash != std::vector<uint8_t>(chash.begin(), chash.end())) {
     LIEF_INFO("Authentihash and Content info's digest does not match:\n  {}\n  {}",
               hex_dump(authhash), hex_dump(chash));
     flags |= Signature::VERIFICATION_FLAGS::BAD_DIGEST;
@@ -953,7 +963,7 @@ Signature::VERIFICATION_FLAGS Binary::verify_signature(const Signature& sig, Sig
   if (flags != Signature::VERIFICATION_FLAGS::OK) {
     flags |= Signature::VERIFICATION_FLAGS::BAD_SIGNATURE;
   }
-return flags;
+  return flags;
 }
 
 

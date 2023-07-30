@@ -41,10 +41,11 @@ def test_api():
 
     # Verify ContentInfo
     content_info = sig.content_info
+    spc_indirect_data = content_info.value
 
     assert content_info.content_type == "1.3.6.1.4.1.311.2.1.4"
-    assert content_info.digest_algorithm == lief.PE.ALGORITHMS.SHA_256
-    assert content_info.digest == from_hex("a7:38:da:44:46:a4:e7:8a:b6:47:db:7e:53:42:7e:b0:79:61:c9:94:31:7f:4c:59:d7:ed:be:a5:cc:78:6d:80")
+    assert spc_indirect_data.digest_algorithm == lief.PE.ALGORITHMS.SHA_256
+    assert spc_indirect_data.digest == from_hex("a7:38:da:44:46:a4:e7:8a:b6:47:db:7e:53:42:7e:b0:79:61:c9:94:31:7f:4c:59:d7:ed:be:a5:cc:78:6d:80")
 
     # Verify embedded certificates
     certs = sig.certificates
@@ -123,6 +124,7 @@ def test_json_serialization():
     avast = lief.PE.parse(get_sample("PE/PE32_x86-64_binary_avast-free-antivirus-setup-online.exe"))
     with open(get_sample("PE/PE32_x86-64_binary_avast-free-antivirus-setup-online-signature.json"), "rb") as f:
         json_sig = json.load(f)
+    print(lief.to_json(avast.signatures[0]))
     assert json.loads(lief.to_json(avast.signatures[0])) == json_sig
 
 def test_fail():
@@ -196,10 +198,12 @@ def test_ms_spc_nested_signature():
     assert nested_sig.digest_algorithm == lief.PE.ALGORITHMS.SHA_256
 
     content_info = nested_sig.content_info
+    spc_indirect_data = content_info.value
+    print(spc_indirect_data)
 
-    assert content_info.content_type == "1.3.6.1.4.1.311.2.1.4"
-    assert content_info.digest_algorithm == lief.PE.ALGORITHMS.SHA_256
-    assert content_info.digest == from_hex("90:a4:df:36:26:df:d9:8d:6b:3b:1d:42:74:5b:94:54:c5:e2:30:2e:d2:f8:23:70:16:3f:1e:e6:dd:7d:8c:91")
+    assert spc_indirect_data.content_type == "1.3.6.1.4.1.311.2.1.4"
+    assert spc_indirect_data.digest_algorithm == lief.PE.ALGORITHMS.SHA_256
+    assert spc_indirect_data.digest == from_hex("90:a4:df:36:26:df:d9:8d:6b:3b:1d:42:74:5b:94:54:c5:e2:30:2e:d2:f8:23:70:16:3f:1e:e6:dd:7d:8c:91")
 
     certs = nested_sig.certificates
     assert len(certs) == 3
@@ -209,11 +213,11 @@ def test_ms_spc_nested_signature():
     assert nvidia_cert.subject == "C=US, ST=California, L=Santa Clara, O=NVIDIA Corporation, OU=IT-MIS, CN=NVIDIA Corporation"
     assert nvidia_cert.serial_number == from_hex("62:E7:45:E9:21:65:21:3C:97:1F:5C:49:0A:EA:12:A5")
 
-    assert self_signed_ca.issuer == "C=US, O=VeriSign\\, Inc., OU=VeriSign Trust Network, OU=(c) 2008 VeriSign\\, Inc. - For authorized use only, CN=VeriSign Universal Root Certification Authority"
-    assert self_signed_ca.subject == "C=US, O=VeriSign\\, Inc., OU=VeriSign Trust Network, OU=(c) 2008 VeriSign\\, Inc. - For authorized use only, CN=VeriSign Universal Root Certification Authority"
+    assert self_signed_ca.issuer == r"C=US, O=VeriSign\, Inc., OU=VeriSign Trust Network, OU=(c) 2008 VeriSign\, Inc. - For authorized use only, CN=VeriSign Universal Root Certification Authority"
+    assert self_signed_ca.subject == r"C=US, O=VeriSign\, Inc., OU=VeriSign Trust Network, OU=(c) 2008 VeriSign\, Inc. - For authorized use only, CN=VeriSign Universal Root Certification Authority"
     assert self_signed_ca.serial_number == from_hex("40:1A:C4:64:21:B3:13:21:03:0E:BB:E4:12:1A:C5:1D")
 
-    assert signer_cert.issuer == "C=US, O=VeriSign\\, Inc., OU=VeriSign Trust Network, OU=(c) 2008 VeriSign\\, Inc. - For authorized use only, CN=VeriSign Universal Root Certification Authority"
+    assert signer_cert.issuer == r"C=US, O=VeriSign\, Inc., OU=VeriSign Trust Network, OU=(c) 2008 VeriSign\, Inc. - For authorized use only, CN=VeriSign Universal Root Certification Authority"
     assert signer_cert.subject == "C=US, O=Symantec Corporation, OU=Symantec Trust Network, CN=Symantec Class 3 SHA256 Code Signing CA - G2"
     assert signer_cert.serial_number == from_hex("7C:1B:35:35:4A:E7:DB:74:E7:41:5F:11:69:CA:6B:A8")
 
@@ -232,6 +236,7 @@ def test_ms_spc_nested_signature():
     assert nested_sig.check() == lief.PE.Signature.VERIFICATION_FLAGS.OK
 
     signer = nested_sig.signers[0]
+    print(signer)
 
 def test_self_signed():
     selfsigned = lief.parse(get_sample("PE/PE32_x86-64_binary_self-signed.exe"))
