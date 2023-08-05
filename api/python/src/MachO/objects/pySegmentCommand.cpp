@@ -21,6 +21,7 @@
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/Relocation.hpp"
+#include "LIEF/MachO/LinkEdit.hpp"
 
 #include <string>
 #include <sstream>
@@ -32,6 +33,7 @@ namespace LIEF::MachO::py {
 template<>
 void create<SegmentCommand>(nb::module_& m) {
   using namespace LIEF::py;
+
 
   nb::class_<SegmentCommand, LoadCommand> seg_cmd(m, "SegmentCommand",
       R"delim(
@@ -142,6 +144,7 @@ void create<SegmentCommand>(nb::module_& m) {
         )delim"_doc, "name"_a, nb::rv_policy::reference_internal)
 
     LIEF_DEFAULT_STR(SegmentCommand);
+  nb::class_<LinkEdit, SegmentCommand>(m, "LinkEdit");
 }
 }
 
