@@ -162,11 +162,6 @@ if(MSVC)
   add_compile_options(/bigobj)
 endif()
 
-if(CMAKE_BUILD_TYPE MATCHES Debug AND WIN32)
-  add_definitions(-D_ITERATOR_DEBUG_LEVEL=0 -D_SECURE_SCL=0
-                  -D_HAS_ITERATOR_DEBUGGING=0)
-endif()
-
 if(CMAKE_BUILD_TYPE MATCHES Debug AND UNIX)
   target_compile_options(LIB_LIEF PRIVATE -g -O0)
 endif()
