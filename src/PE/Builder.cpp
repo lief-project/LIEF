@@ -450,7 +450,7 @@ ok_error_t Builder::build(const DosHeader& dos_header) {
     if (sizeof(details::pe_dos_header) + binary_->dos_stub().size() > dos_header.addressof_new_exeheader()) {
       LIEF_WARN("Inconsistent 'addressof_new_exeheader': 0x{:x}", dos_header.addressof_new_exeheader());
     }
-    ios_.write(binary_->dos_stub());
+    ios_.write(binary_->dos_stub().data(), binary_->dos_stub().size());
   }
 
   return ok();
