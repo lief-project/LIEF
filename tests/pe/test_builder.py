@@ -102,3 +102,16 @@ def test_imports_notepadpp(tmp_path):
                 stdout, _ = kproc.communicate()
                 print(stdout)
                 assert kproc.returncode == 0
+
+
+def test_issue_952(tmp_path):
+    pe = lief.PE.parse(get_sample("PE/PE32_x86_binary_HelloWorld.exe"))
+    stub = bytes(pe.dos_stub)
+    assert not all(x == 0 for x in stub)
+
+    out = tmp_path / "out.exe"
+    pe.write(out.as_posix())
+
+    new = lief.PE.parse(out.as_posix())
+    print(bytes(new.dos_stub))
+    assert bytes(new.dos_stub) == stub

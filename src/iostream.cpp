@@ -86,10 +86,6 @@ vector_iostream& vector_iostream::write(std::vector<uint8_t> s) {
   return *this;
 }
 
-vector_iostream& vector_iostream::write(span<const uint8_t> s) {
-  return write(s.data(), s.size());
-}
-
 vector_iostream& vector_iostream::write_sized_int(uint64_t value, size_t size) {
   const uint64_t stack_val = value;
   return write(reinterpret_cast<const uint8_t*>(&stack_val), size);
