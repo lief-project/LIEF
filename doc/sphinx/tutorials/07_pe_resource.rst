@@ -68,7 +68,7 @@ The following snippet retrieves the :attr:`~lief.PE.RESOURCE_TYPES.MANIFEST` ele
   root = filezilla.resources
 
   # First level => Type ((ResourceDirectory node)
-  manifest_node = next(iter(filter(lambda e : e.id == lief.PE.RESOURCE_TYPES.MANIFEST, root.childs)))
+  manifest_node = next(i for i in root.childs if i.id == lief.PE.RESOURCE_TYPES.MANIFEST)
   print(manifest_node)
 
   # Second level => ID (ResourceDirectory node)
