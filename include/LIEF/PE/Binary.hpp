@@ -660,8 +660,6 @@ class LIEF_API Binary : public LIEF::Binary {
 
   int32_t available_sections_space_ = 0;
 
-  bool has_exceptions_ = false;
-
   signatures_t signatures_;
   sections_t           sections_;
   data_directories_t   data_directories_;
