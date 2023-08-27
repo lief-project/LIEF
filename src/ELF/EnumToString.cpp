@@ -275,7 +275,7 @@ const char* to_string(SEGMENT_TYPES e) {
 }
 
 const char* to_string(DYNAMIC_TAGS e) {
-  CONST_MAP(DYNAMIC_TAGS, const char*, 97) enumStrings {
+  CONST_MAP(DYNAMIC_TAGS, const char*, 101) enumStrings {
     { DYNAMIC_TAGS::DT_NULL,                       "NULL"},
     { DYNAMIC_TAGS::DT_NEEDED,                     "NEEDED"},
     { DYNAMIC_TAGS::DT_PLTRELSZ,                   "PLTRELSZ"},
@@ -319,6 +319,10 @@ const char* to_string(DYNAMIC_TAGS e) {
     { DYNAMIC_TAGS::DT_VERDEFNUM,                  "VERDEFNUM"},
     { DYNAMIC_TAGS::DT_VERNEED,                    "VERNEED"},
     { DYNAMIC_TAGS::DT_VERNEEDNUM,                 "VERNEEDNUM"},
+    { DYNAMIC_TAGS::DT_SYMTAB_SHNDX,               "SYMTAB_SHNDX"},
+    { DYNAMIC_TAGS::DT_RELRSZ,                     "RELRSZ"},
+    { DYNAMIC_TAGS::DT_RELR,                       "RELR"},
+    { DYNAMIC_TAGS::DT_RELRENT,                    "RELRENT"},
     { DYNAMIC_TAGS::DT_MIPS_RLD_VERSION,           "MIPS_RLD_VERSION"},
     { DYNAMIC_TAGS::DT_MIPS_TIME_STAMP,            "MIPS_TIME_STAMP"},
     { DYNAMIC_TAGS::DT_MIPS_ICHECKSUM,             "MIPS_ICHECKSUM"},
@@ -370,10 +374,10 @@ const char* to_string(DYNAMIC_TAGS e) {
     { DYNAMIC_TAGS::DT_ANDROID_RELSZ,              "ANDROID_RELSZ"},
     { DYNAMIC_TAGS::DT_ANDROID_RELA,               "ANDROID_RELA"},
     { DYNAMIC_TAGS::DT_ANDROID_RELASZ,             "ANDROID_RELASZ"},
-    { DYNAMIC_TAGS::DT_RELR,                       "RELR"},
-    { DYNAMIC_TAGS::DT_RELRSZ,                     "RELRSZ"},
-    { DYNAMIC_TAGS::DT_RELRENT,                    "RELRENT"},
-    { DYNAMIC_TAGS::DT_RELRCOUNT,                  "RELRCOUNT"}
+    { DYNAMIC_TAGS::DT_ANDROID_RELR,               "ANDROID_RELR"},
+    { DYNAMIC_TAGS::DT_ANDROID_RELRSZ,             "ANDROID_RELRSZ"},
+    { DYNAMIC_TAGS::DT_ANDROID_RELRENT,            "ANDROID_RELRENT"},
+    { DYNAMIC_TAGS::DT_ANDROID_RELRCOUNT,          "ANDROID_RELRCOUNT"}
   };
   const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;

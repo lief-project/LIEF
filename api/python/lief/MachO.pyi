@@ -919,6 +919,9 @@ class LOAD_COMMAND_TYPES:
     @property
     def value(self) -> int: ...
 
+class LinkEdit(SegmentCommand):
+    def __init__(self, *args, **kwargs) -> None: ...
+
 class LinkerOptHint(LoadCommand):
     data_offset: int
     data_size: int

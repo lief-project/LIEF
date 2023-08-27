@@ -713,6 +713,10 @@ enum class DYNAMIC_TAGS: size_t  {
 
   DT_PREINIT_ARRAY              = 32,         /**< Pointer to array of preinit functions. */
   DT_PREINIT_ARRAYSZ            = 33,         /**< Size of the DT_PREINIT_ARRAY array. */
+  DT_SYMTAB_SHNDX               = 34,         /**< Address of SYMTAB_SHNDX section */
+  DT_RELRSZ                     = 35,         /**< Total size of RELR relative relocations */
+  DT_RELR                       = 36,         /**< Address of RELR relative relocations */
+  DT_RELRENT                    = 37,         /**< Size of one RELR relative relocaction */
 
   DT_LOOS                       = 0x60000000, /**< Start of environment specific tags. */
   DT_HIOS                       = 0x6FFFFFFF, /**< End of environment specific tags. */
@@ -784,10 +788,10 @@ enum class DYNAMIC_TAGS: size_t  {
   DT_ANDROID_RELSZ              = 0x60000010, /**< The size of packed relocation data in bytes (Android specific). */
   DT_ANDROID_RELA               = 0x60000011, /**< The offset of packed relocation data (Android specific). */
   DT_ANDROID_RELASZ             = 0x60000012, /**< The size of packed relocation data in bytes (Android specific). */
-  DT_RELR                       = 0x6FFFE000, /**< The offset of new relr relocation data (Android specific). */
-  DT_RELRSZ                     = 0x6FFFE001, /**< The size of nre relr relocation data in bytes (Android specific). */
-  DT_RELRENT                    = 0x6FFFE003, /**< The size of a new relr relocation entry (Android specific). */
-  DT_RELRCOUNT                  = 0x6FFFE005 /**< Specifies the relative count of new relr relocation entries (Android specific). */
+  DT_ANDROID_RELR               = 0x6FFFE000, /**< The offset of new relr relocation data (Android specific). */
+  DT_ANDROID_RELRSZ             = 0x6FFFE001, /**< The size of nre relr relocation data in bytes (Android specific). */
+  DT_ANDROID_RELRENT            = 0x6FFFE003, /**< The size of a new relr relocation entry (Android specific). */
+  DT_ANDROID_RELRCOUNT          = 0x6FFFE005  /**< Specifies the relative count of new relr relocation entries (Android specific). */
 };
 
 /** DT_FLAGS and DT_FLAGS_1 values. */

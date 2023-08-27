@@ -98,6 +98,11 @@ def test_issue_897():
     assert rel2.symbol.name == "__init_array_end"
     assert rel2.symbol_table.name == ".symtab"
 
+def test_issue_954():
+    target = lief.ELF.parse(get_sample('ELF/main.relr.elf'))
+    assert target.get(lief.ELF.DYNAMIC_TAGS.RELA) is not None
+    assert target.get(lief.ELF.DYNAMIC_TAGS.RELRSZ) is not None
+    assert target.get(lief.ELF.DYNAMIC_TAGS.RELRENT) is not None
 
 def test_io():
     class Wrong:
