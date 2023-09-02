@@ -1568,9 +1568,30 @@ const Segment* Binary::segment_from_virtual_address(uint64_t address) const {
 
 }
 
+Segment* Binary::segment_from_virtual_address(SEGMENT_TYPES type, uint64_t address) {
+  return const_cast<Segment*>(static_cast<const Binary*>(this)->segment_from_virtual_address(type, address));
+}
+
+const Segment* Binary::segment_from_virtual_address(SEGMENT_TYPES type, uint64_t address) const {
+  const auto it_segment = std::find_if(segments_.cbegin(), segments_.cend(),
+      [address, type] (const std::unique_ptr<Segment>& segment) {
+        return segment->type() == type &&
+               segment->virtual_address() <= address &&
+               address < (segment->virtual_address() + segment->virtual_size());
+      });
+
+  if (it_segment == segments_.cend()) {
+    return nullptr;
+  }
+
+  return it_segment->get();
+
+}
+
 Segment* Binary::segment_from_virtual_address(uint64_t address) {
   return const_cast<Segment*>(static_cast<const Binary*>(this)->segment_from_virtual_address(address));
 }
+
 
 
 const Segment* Binary::segment_from_offset(uint64_t offset) const {
@@ -2386,18 +2407,12 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
     return functions;
   }
 
-  const auto it_load_segment = std::find_if(std::begin(segments_), std::end(segments_),
-      [eh_frame_addr] (const std::unique_ptr<Segment>& s) {
-        return s->type() == SEGMENT_TYPES::PT_LOAD &&
-               s->virtual_address() <= eh_frame_addr &&
-               eh_frame_addr < (s->virtual_address() + s->virtual_size());
-      });
+  const Segment* load_segment = segment_from_virtual_address(SEGMENT_TYPES::PT_LOAD, eh_frame_addr);
 
-  if (it_load_segment == std::end(segments_)) {
+  if (load_segment == nullptr) {
     LIEF_ERR("Unable to find the LOAD segment associated with PT_GNU_EH_FRAME");
     return functions;
   }
-  const std::unique_ptr<Segment>& load_segment = *it_load_segment;
 
   const bool is64 = (type() == ELF_CLASS::ELFCLASS64);
   eh_frame_off = eh_frame_off - load_segment->file_offset();
@@ -2505,6 +2520,12 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
           break;
         }
     }
+
+    if (bias == 0) {
+      break;
+    }
+
+
     initial_location += bias;
     address          += bias;
 

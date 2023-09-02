@@ -671,6 +671,10 @@ class LIEF_API Binary : public LIEF::Binary {
   const Segment* segment_from_virtual_address(uint64_t address) const;
   Segment*       segment_from_virtual_address(uint64_t address);
 
+
+  const Segment* segment_from_virtual_address(SEGMENT_TYPES type, uint64_t address) const;
+  Segment*       segment_from_virtual_address(SEGMENT_TYPES type, uint64_t address);
+
   //! Return the ELF::Segment from the @p offset. Return a nullptr
   //! if a segment can't be found.
   const Segment* segment_from_offset(uint64_t offset) const;

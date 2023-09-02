@@ -104,6 +104,10 @@ def test_issue_954():
     assert target.get(lief.ELF.DYNAMIC_TAGS.RELRSZ) is not None
     assert target.get(lief.ELF.DYNAMIC_TAGS.RELRENT) is not None
 
+def test_issue_958():
+    target = lief.ELF.parse(get_sample('ELF/issue_958.elf'))
+    assert len(target.functions) == 2
+
 def test_io():
     class Wrong:
         pass
