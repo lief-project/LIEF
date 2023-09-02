@@ -37,6 +37,7 @@ namespace ELF {
 class Section;
 class Binary;
 class Segment;
+class Symbol;
 
 //! Class which parses and transforms an ELF file into a ELF::Binary object
 class LIEF_API Parser : public LIEF::Parser {
@@ -105,6 +106,8 @@ class LIEF_API Parser : public LIEF::Parser {
   // map, dynamic_symbol.version <----> symbol_version
   // symbol_version comes from symbol_version table
   void link_symbol_version();
+
+  ok_error_t link_symbol_section(Symbol& sym);
 
   template<typename ELF_T>
   ok_error_t parse_binary();

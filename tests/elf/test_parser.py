@@ -108,6 +108,18 @@ def test_issue_958():
     target = lief.ELF.parse(get_sample('ELF/issue_958.elf'))
     assert len(target.functions) == 2
 
+def test_issue_959():
+    target = lief.ELF.parse(get_sample('ELF/mbedtls_selftest.elf64'))
+    sym = target.get_symbol("mbedtls_hmac_drbg_random")
+    assert sym.shndx > 0
+    assert sym.section is not None
+    assert sym.section.name == ".text"
+
+    sym = target.get_symbol("stderr")
+    assert sym.shndx > 0
+    assert sym.section is not None
+    assert sym.section.name == ".bss"
+
 def test_io():
     class Wrong:
         pass

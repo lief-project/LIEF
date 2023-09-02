@@ -620,6 +620,22 @@ bool Parser::check_section_in_segment(const Section& section, const Segment& seg
   return false;
 }
 
+ok_error_t Parser::link_symbol_section(Symbol& sym) {
+  const uint16_t sec_idx = sym.section_idx();
+  if (sec_idx == static_cast<uint16_t>(SYMBOL_SECTION_INDEX::SHN_ABS) ||
+      sec_idx == static_cast<uint16_t>(SYMBOL_SECTION_INDEX::SHN_UNDEF)) {
+    // Nothing to bind
+    return ok();
+  }
+
+  auto it_section = sections_idx_.find(sec_idx);
+  if (it_section == std::end(sections_idx_)) {
+    return make_error_code(lief_errors::corrupted);
+  }
+
+  sym.section_ = it_section->second;
+  return ok();
+}
 
 
 
