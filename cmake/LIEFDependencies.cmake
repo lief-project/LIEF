@@ -37,20 +37,9 @@ if(NOT LIEF_OPT_MBEDTLS_EXTERNAL)
   set(MBED_TLS_URL "${THIRD_PARTY_DIRECTORY}/mbedtls-${MBED_TLS_VERSION}.zip" CACHE STRING "URL to MbedTLS")
   set(MBED_TLS_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/mbed_tls")
 
-
-  ExternalProject_Add(lief_mbed_tls
-    PREFIX            ${MBED_TLS_PREFIX}
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND     ""
-    INSTALL_COMMAND   ""
-    URL               ${MBED_TLS_URL}
-    URL_HASH          ${MBED_TLS_SHA256}
-    UPDATE_COMMAND    "" # repetitive update are a pain
-    BUILD_BYPRODUCTS  ${MBED_TLS_PREFIX})
-
-  ExternalProject_get_property(lief_mbed_tls SOURCE_DIR)
+  set(SOURCE_DIR mbed_src)
   set(MBEDTLS_SOURCE_DIR "${SOURCE_DIR}")
-  set(MBEDTLS_INCLUDE_DIRS "${MBEDTLS_SOURCE_DIR}/include")
+  set(MBEDTLS_INCLUDE_DIRS "${CMAKE_BINARY_DIR}/${SOURCE_DIR}/include;${CMAKE_BINARY_DIR}/${SOURCE_DIR}/library")
 
   set(mbedtls_src_crypto
     "${MBEDTLS_SOURCE_DIR}/library/aes.c"
@@ -155,6 +144,18 @@ if(NOT LIEF_OPT_MBEDTLS_EXTERNAL)
     "${MBEDTLS_SOURCE_DIR}/library/ssl_tls13_client.c"
     "${MBEDTLS_SOURCE_DIR}/library/ssl_tls13_generic.c"
   )
+
+  ExternalProject_Add(lief_mbed_tls
+    SOURCE_DIR        ${SOURCE_DIR}
+    PREFIX            ${MBED_TLS_PREFIX}
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND     ""
+    INSTALL_COMMAND   ""
+    URL               ${MBED_TLS_URL}
+    URL_HASH          ${MBED_TLS_SHA256}
+    UPDATE_COMMAND    "" # repetitive update are a pain
+    BUILD_BYPRODUCTS  ${mbedtls_src_crypto} ${mbedtls_src_x509} ${mbedtls_src_tls})
+
 endif()
 
 add_library(lief_spdlog INTERFACE)
