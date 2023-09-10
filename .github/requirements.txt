@@ -1,0 +1,7 @@
+setuptools
+boto3
+requests
+twine
+tomli
+mako
+wheel
