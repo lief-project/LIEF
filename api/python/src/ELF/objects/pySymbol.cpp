@@ -117,7 +117,7 @@ void create<Symbol>(nb::module_& m) {
 
     .def_prop_ro("is_static",
         &Symbol::is_static,
-        "True if the symbol is a static one (i.e. from the ``.symtab`` section"_doc)
+        "True if the symbol is a static visibility"_doc)
 
     .def_prop_ro("is_function",
         &Symbol::is_function,
