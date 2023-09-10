@@ -402,7 +402,7 @@ class BuildLibrary(build_ext):
         subprocess.check_call(configure_cmd, **cmake_subprocess_args)
 
         compile_cmd = cmake_conf.get_compile_cmd()
-        report("Compile with:"," ".join(compile_cmd))
+        report("Compile with:", " ".join(compile_cmd))
         subprocess.check_call(compile_cmd, **cmake_subprocess_args)
 
         pylief_dst  = build_lib / self.get_ext_filename(self.get_ext_fullname(ext.name))
