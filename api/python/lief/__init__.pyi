@@ -212,7 +212,7 @@ class Relocation(Object):
 
 class Section(Object):
     content: memoryview
-    name: object
+    name: str | bytes
     offset: int
     size: int
     virtual_address: int
