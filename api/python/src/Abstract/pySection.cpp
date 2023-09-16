@@ -42,7 +42,10 @@ void create<Section>(nb::module_& m) {
         "Section's name"_doc)
 
     .def_prop_ro("fullname",
-        &Section::fullname,
+        [] (const Section& obj) {
+          const std::string& fullname = obj.fullname();
+          return nb::bytes(fullname.data(), fullname.size());
+        },
         "Return the **fullname** of the section including the trailing bytes"_doc)
 
     .def_prop_rw("size",
