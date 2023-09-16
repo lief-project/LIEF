@@ -63,7 +63,7 @@ def test_sections():
     pe = lief.parse(path)
     assert pe.get_section(".text") is not None
     assert pe.sections[0].name == ".text"
-    assert pe.sections[0].fullname.encode("utf8") == b".text\x00\x00\x00"
+    assert pe.sections[0].fullname == b".text\x00\x00\x00"
     text = pe.sections[0]
     assert text.copy() == text
     text.name = ".foo"
