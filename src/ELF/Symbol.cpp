@@ -214,8 +214,9 @@ bool Symbol::is_imported() const {
   // An import must not be defined in a section
   bool is_imported = shndx() == static_cast<uint16_t>(SYMBOL_SECTION_INDEX::SHN_UNDEF);
 
-  // An import must not have an address
-  is_imported = is_imported && value() == 0;
+  // An import must not have an address but mips and powerpc put an addres for
+  // import function.
+  //is_imported = is_imported && value() == 0;
 
   // its name must not be empty
   is_imported = is_imported && !name().empty();
