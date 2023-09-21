@@ -45,6 +45,7 @@
 
 #include "pyIterator.hpp"
 #include "pyErr.hpp"
+#include "pySafeString.hpp"
 
 namespace LIEF::ELF::py {
 using namespace LIEF::py;
@@ -625,7 +626,17 @@ void create<Binary>(nb::module_& m) {
 
     .def_prop_ro("strings",
         [] (const Binary& bin) {
-          return bin.strings();
+        const std::vector<std::string>& elf_strings = bin.strings();
+        std::vector<nb::object>  elf_strings_encoded;
+        elf_strings_encoded.reserve(elf_strings.size());
+
+        std::transform(
+                std::begin(elf_strings),
+                std::end(elf_strings),
+                std::back_inserter(elf_strings_encoded),
+                &safe_string);
+
+        return elf_strings_encoded;
         },
         "Return list of strings used in the current ELF file.\n"
         "Basically this function looks for strings in the ``.roadata`` section"_doc,
