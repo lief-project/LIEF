@@ -42,7 +42,7 @@ void create<Symbol>(nb::module_& m) {
       3. The Dyld Symbol bindings
       )delim"_doc);
 
-  enum_<Symbol::CATEGORY>(symbol, "TOOLS")
+  enum_<Symbol::CATEGORY>(symbol, "CATEGORY")
     .value("NONE",           Symbol::CATEGORY::NONE)
     .value("LOCAL",          Symbol::CATEGORY::LOCAL)
     .value("EXTERNAL",       Symbol::CATEGORY::EXTERNAL)
@@ -56,6 +56,10 @@ void create<Symbol>(nb::module_& m) {
     .def_prop_ro("demangled_name",
         &Symbol::demangled_name,
         "Symbol's unmangled name"_doc)
+
+    .def_prop_ro("category",
+        &Symbol::category,
+        "Category of the symbol according to the `LC_DYSYMTAB` command"_doc)
 
     .def_prop_rw("type",
         nb::overload_cast<>(&Symbol::type, nb::const_),
