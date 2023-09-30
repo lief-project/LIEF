@@ -5,10 +5,10 @@ export CXXFLAGS='-ffunction-sections -fdata-sections -fvisibility-inlines-hidden
 export CFLAGS='-ffunction-sections -fdata-sections -static-libgcc'
 export LDFLAGS='-Wl,--gc-sections'
 
-BUILD_DIR=/tmp/lief-build
-export LIEF_BUILD_DIR="${BUILD_DIR}"
+export LIEF_BUILD_DIR="/tmp/lief-build"
 
 $PYTHON_BINARY -m pip install -r /src/tests/requirements.txt
+$PYTHON_BINARY -m pip install tomli pip wheel
 
 mkdir -p ${LIEF_SAMPLES_DIR}
 
@@ -23,21 +23,21 @@ popd
 
 # Run the Python test suite
 $PYTHON_BINARY tests/run_pytest.py
-$PYTHON_BINARY tests/run_tools_check.py ${BUILD_DIR}/temp
+$PYTHON_BINARY tests/run_tools_check.py ${LIEF_BUILD_DIR}/temp
 
-ctest --output-on-failure --test-dir ${BUILD_DIR}/temp
+ctest --output-on-failure --test-dir ${LIEF_BUILD_DIR}/temp
 
 # Fuzzing
 PYTHONPATH=tests/ $PYTHON_BINARY tests/elf/fuzzing.py                                    \
-                  ${BUILD_DIR}/temp/tests/Melkor/src/MELKOR/melkor                            \
+                  ${LIEF_BUILD_DIR}/temp/tests/Melkor/src/MELKOR/melkor                            \
                   --input-seed ${LIEF_SAMPLES_DIR}/ELF/ELF64_x86-64_binary_ls.bin -n 100
 
 PYTHONPATH=tests/ $PYTHON_BINARY tests/elf/fuzzing.py                                    \
-                  ${BUILD_DIR}/temp/tests/Melkor/src/MELKOR/melkor                            \
+                  ${LIEF_BUILD_DIR}/temp/tests/Melkor/src/MELKOR/melkor                            \
                   --input-seed ${LIEF_SAMPLES_DIR}/ELF/ELF64_x86-64_binary_openssl.bin -n 100
 
 PYTHONPATH=tests/ $PYTHON_BINARY tests/elf/fuzzing.py                                    \
-                  ${BUILD_DIR}/temp/tests/Melkor/src/MELKOR/melkor                            \
+                  ${LIEF_BUILD_DIR}/temp/tests/Melkor/src/MELKOR/melkor                            \
                   --input-seed ${LIEF_SAMPLES_DIR}/ELF/ELF64_x86-64_binary_nm.bin -n 100
 
 find /src/wheel_stage -iname "*-cp${PYTHON_VERSION}-*" -exec auditwheel repair -w /src/dist {} \;

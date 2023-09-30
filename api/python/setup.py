@@ -381,9 +381,9 @@ class BuildLibrary(build_ext):
 
     def build_extension(self, ext):
         if build_dir := cmake_conf.build_root_dir():
-            self.build_temp = (Path(build_dir) / "tmp").as_posix()
+            self.build_temp = (Path(build_dir) / "temp").as_posix()
         else:
-            self.build_temp = TemporaryDirectory(prefix="lief-tmp-").name
+            self.build_temp = TemporaryDirectory(prefix="lief-temp-").name
 
 
         if build_dir := cmake_conf.build_root_dir():

@@ -10,7 +10,7 @@ set -ex
 export LIEF_SAMPLES_DIR=/tmp/samples
 export PYTHONPATH="/src/tests:$PYTHONPATH"
 
-python -m pip install --upgrade pip
+python -m pip install --upgrade pip wheel
 python -m pip install pytest
 
 python -m pip install --no-index --find-links /src/dist lief

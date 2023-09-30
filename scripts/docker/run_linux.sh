@@ -5,13 +5,11 @@ export CXXFLAGS='-ffunction-sections -fdata-sections -fvisibility-inlines-hidden
 export CFLAGS='-ffunction-sections -fdata-sections -static-libgcc'
 export LDFLAGS='-Wl,--gc-sections -Wl,--strip-all'
 
-BUILD_DIR=/tmp/lief-build
-export LIEF_BUILD_DIR="${BUILD_DIR}"
+export LIEF_BUILD_DIR="/tmp/lief-build"
 
-$PYTHON_BINARY -m pip install tomli
+$PYTHON_BINARY -m pip install tomli pip wheel
 
 pushd /src/api/python
-
 export PYLIEF_CONF=/src/scripts/docker/pylinux-x64.toml \
 
 $PYTHON_BINARY -m pip -vvv wheel --no-build-isolation --wheel-dir=/src/wheel_stage .

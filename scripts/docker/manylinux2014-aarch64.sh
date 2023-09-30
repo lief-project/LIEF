@@ -24,7 +24,7 @@ git config --global --add safe.directory /work
 BUILD_DIR=/tmp/lief-build
 export LIEF_BUILD_DIR="${BUILD_DIR}"
 
-$PYTHON_BINARY -m pip install tomli
+$PYTHON_BINARY -m pip install tomli pip wheel
 
 pushd /work/api/python
 export PYLIEF_CONF=/work/scripts/docker/pylinux-aarch64.toml
