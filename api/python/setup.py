@@ -51,7 +51,7 @@ class Config:
     def build_type(self) -> str:
         return self._config['lief']['build']['type']
 
-    def build_root_dir(self) -> str | None:
+    def build_root_dir(self):
         if env_dir := os.getenv("LIEF_BUILD_DIR"):
             return env_dir
         return self._config['lief']['build'].get('dir', None)
