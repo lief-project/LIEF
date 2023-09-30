@@ -6,15 +6,16 @@ export CFLAGS='-ffunction-sections -fdata-sections -static-libgcc'
 export LDFLAGS='-Wl,--gc-sections -Wl,--strip-all'
 
 BUILD_DIR=/tmp/lief-build
+export LIEF_BUILD_DIR="${BUILD_DIR}"
 
 $PYTHON_BINARY -m pip install tomli
 
 pushd /src/api/python
-PYLIEF_CONF=/src/scripts/docker/pylinux-x64.toml \
-$PYTHON_BINARY ./setup.py build --build-base=${BUILD_DIR}/base \
-                                --build-temp=${BUILD_DIR}/temp \
-                          bdist_wheel --bdist-dir=${BUILD_DIR}/bdist \
-                                      --dist-dir=/src/wheel_stage
+
+export PYLIEF_CONF=/src/scripts/docker/pylinux-x64.toml \
+
+$PYTHON_BINARY -m pip -vvv wheel --no-build-isolation --wheel-dir=/src/wheel_stage .
+$PYTHON_BINARY -m pip -vvv install --user .
 popd
 
 find /src/wheel_stage -iname "*-cp${PYTHON_VERSION}-*" -exec auditwheel repair -w /src/dist {} \;

@@ -464,7 +464,7 @@ setup(
     distclass=LiefDistribution,
     scripts=['examples/elf_reader.py', 'examples/pe_reader.py', 'examples/macho_reader.py'],
     packages=["lief"],
-    package_data={"lief": ["py.typed", "*.pyi"]},
+    package_data={"lief": ["py.typed", "*.pyi", "*.so", "*.pyd"]},
     ext_modules=[Module("lief._lief")],
     cmdclass=cmdclass,
     version=version

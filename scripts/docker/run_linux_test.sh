@@ -6,6 +6,7 @@ export CFLAGS='-ffunction-sections -fdata-sections -static-libgcc'
 export LDFLAGS='-Wl,--gc-sections'
 
 BUILD_DIR=/tmp/lief-build
+export LIEF_BUILD_DIR="${BUILD_DIR}"
 
 $PYTHON_BINARY -m pip install -r /src/tests/requirements.txt
 
@@ -14,13 +15,10 @@ mkdir -p ${LIEF_SAMPLES_DIR}
 $PYTHON_BINARY tests/dl_samples.py ${LIEF_SAMPLES_DIR}
 
 pushd /src/api/python
-PYLIEF_CONF=/src/scripts/docker/pylinux-test-x64.toml \
-$PYTHON_BINARY ./setup.py build --build-base=${BUILD_DIR}/base \
-                                --build-temp=${BUILD_DIR}/temp \
-                          install --user                       \
-                          bdist_wheel --bdist-dir=${BUILD_DIR}/bdist \
-                                      --dist-dir=/src/wheel_stage
+export PYLIEF_CONF=/src/scripts/docker/pylinux-test-x64.toml
 
+$PYTHON_BINARY -m pip -vvv wheel --no-build-isolation --wheel-dir=/src/wheel_stage .
+$PYTHON_BINARY -m pip -vvv install --user .
 popd
 
 # Run the Python test suite

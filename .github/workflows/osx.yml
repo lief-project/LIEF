@@ -97,7 +97,7 @@ jobs:
         shell: bash
         env:
           LIEF_SAMPLES_DIR: "/tmp/samples"
-          BUILD_DIR: "/tmp/lief-build"
+          LIEF_BUILD_DIR: "/tmp/lief-build"
           MACOSX_TARGET: "11.7"
           MACOSX_DEPLOYMENT_TARGET: "11.0"
           CCACHE_DIR: ${{ runner.temp }}/.ccache
@@ -109,14 +109,11 @@ jobs:
           python tests/dl_samples.py ${LIEF_SAMPLES_DIR}
           cd api/python
           PYLIEF_CONF=${GITHUB_WORKSPACE}/scripts/osx/osx-testing-x64.toml \
-          python ./setup.py build                                          \
-                            --build-base=${BUILD_DIR}/base                 \
-                            --build-temp=${BUILD_DIR}/temp                 \
-                            install --user
+          python -m pip -vvv install --user .
           cd ${GITHUB_WORKSPACE}
           python tests/run_pytest.py
-          python tests/run_tools_check.py ${BUILD_DIR}/temp
-          ctest --output-on-failure --test-dir ${BUILD_DIR}/temp
+          python tests/run_tools_check.py ${LIEF_BUILD_DIR}/temp
+          ctest --output-on-failure --test-dir ${LIEF_BUILD_DIR}/temp
   wheels:
     runs-on: macos-11.0
     needs: osx-sdk
