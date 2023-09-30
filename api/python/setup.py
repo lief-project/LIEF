@@ -10,6 +10,7 @@ from pathlib import Path
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 from shutil import copy2, which
+from tempfile import TemporaryDirectory
 
 CURRENT_DIR     = Path(__file__).parent
 LIEF_DIR        = (CURRENT_DIR / ".." / "..").absolute().resolve()
@@ -22,7 +23,7 @@ ENV = os.environ
 cmake_conf = None
 
 def report(*args):
-    print(*args)
+    print(*args, file=sys.stderr)
 
 class Config:
     def __init__(self, config: dict):
@@ -49,6 +50,11 @@ class Config:
 
     def build_type(self) -> str:
         return self._config['lief']['build']['type']
+
+    def build_root_dir(self) -> str | None:
+        if env_dir := os.getenv("LIEF_BUILD_DIR"):
+            return env_dir
+        return self._config['lief']['build'].get('dir', None)
 
     def get_lief_format_opt(self):
         opt = self._config["lief"]["formats"]
@@ -374,11 +380,23 @@ class BuildLibrary(build_ext):
                         sys.platform = "win32"
 
     def build_extension(self, ext):
+        if build_dir := cmake_conf.build_root_dir():
+            self.build_temp = (Path(build_dir) / "tmp").as_posix()
+        else:
+            self.build_temp = TemporaryDirectory(prefix="lief-tmp-").name
+
+
+        if build_dir := cmake_conf.build_root_dir():
+            self.build_lib = (Path(build_dir) / "base").as_posix()
+        else:
+            self.build_lib = TemporaryDirectory(prefix="lief-base-").name
+
         build_temp   = Path(self.build_temp)
         build_lib    = Path(self.build_lib)
-        cmake_output = build_temp.parent.absolute()
 
+        cmake_output = build_temp.parent.absolute()
         cmake_bin = which("cmake")
+
         if cmake_bin is None:
             raise RuntimeError("Can't find cmake")
 
