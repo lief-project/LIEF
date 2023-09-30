@@ -5,10 +5,15 @@ import subprocess
 import sys
 import sysconfig
 import tomli
+from functools import lru_cache
 from typing import List, Optional
 from pathlib import Path
 from setuptools import setup, Extension
-from setuptools.command.build_ext import build_ext
+from setuptools.command.build_ext import build_ext as _build_ext
+from setuptools.command.build_py import build_py as _build_py
+from setuptools.command.egg_info import egg_info as _egg_info
+from setuptools.command.install_lib import install_lib as _install_lib
+from setuptools.command.install_scripts import install_scripts as _install_scripts
 from shutil import copy2, which
 from tempfile import TemporaryDirectory
 
@@ -51,6 +56,8 @@ class Config:
     def build_type(self) -> str:
         return self._config['lief']['build']['type']
 
+    @property
+    @lru_cache(maxsize=1)
     def build_root_dir(self):
         if env_dir := os.getenv("LIEF_BUILD_DIR"):
             return env_dir
@@ -271,6 +278,21 @@ class Config:
             '--config', config,
         ] + self._get_jobs()
 
+
+    @property
+    @lru_cache(maxsize=1)
+    def build_temp(self):
+        if build_dir := self.build_root_dir:
+            return (Path(build_dir) / "temp").as_posix()
+        return TemporaryDirectory(prefix="lief-temp-").name
+
+    @property
+    @lru_cache(maxsize=1)
+    def build_lib(self):
+        if build_dir := self.build_root_dir:
+            return (Path(build_dir) / "base").as_posix()
+        return TemporaryDirectory(prefix="lief-base-").name
+
 class Versioning:
     COMMAND         = '{git} describe --tags --long --dirty'
     GIT_BRANCH      = '{git} rev-parse --abbrev-ref HEAD'
@@ -347,7 +369,7 @@ class Module(Extension):
         Extension.__init__(self, name, sources=[])
         self.sourcedir = CURRENT_DIR.resolve().absolute().as_posix()
 
-class BuildLibrary(build_ext):
+class build_ext(_build_ext):
     def __init__(self, *args, **kwargs):
         self._fix_platform()
         super().__init__(*args, **kwargs)
@@ -380,16 +402,8 @@ class BuildLibrary(build_ext):
                         sys.platform = "win32"
 
     def build_extension(self, ext):
-        if build_dir := cmake_conf.build_root_dir():
-            self.build_temp = (Path(build_dir) / "temp").as_posix()
-        else:
-            self.build_temp = TemporaryDirectory(prefix="lief-temp-").name
-
-
-        if build_dir := cmake_conf.build_root_dir():
-            self.build_lib = (Path(build_dir) / "base").as_posix()
-        else:
-            self.build_lib = TemporaryDirectory(prefix="lief-base-").name
+        self.build_lib  = cmake_conf.build_lib
+        self.build_temp = cmake_conf.build_temp
 
         build_temp   = Path(self.build_temp)
         build_lib    = Path(self.build_lib)
@@ -437,11 +451,25 @@ class BuildLibrary(build_ext):
 
         dst = Path(pylief_dst)
         dst.parent.mkdir(exist_ok=True)
-
         report(f"Copying {pylief_path} into {pylief_dst}")
         if not self.dry_run:
             copy2(pylief_path, pylief_dst)
 
+class build_py(_build_py):
+    def finalize_options(self):
+        super().finalize_options()
+        self.build_lib = cmake_conf.build_lib
+
+class install_lib(_install_lib):
+    def finalize_options(self):
+        super().finalize_options()
+        self.build_dir = cmake_conf.build_lib
+
+class install_scripts(_install_scripts):
+    pass
+
+class egg_info(_egg_info):
+    pass
 
 versioning = Versioning()
 version = versioning.get_version()
@@ -453,7 +481,11 @@ conf_file = CURRENT_DIR / "config-default.toml" if conf_env is None else Path(co
 cmake_conf = Config.from_file(conf_file)
 
 cmdclass = {
-    'build_ext': BuildLibrary,
+    'build_ext': build_ext,
+    'build_py': build_py,
+    'egg_info': egg_info,
+    'install_lib': install_lib,
+    'install_scripts': install_scripts,
 }
 
 long_description = LIEF_DIR / "package" / "README.rst"
