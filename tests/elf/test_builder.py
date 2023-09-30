@@ -241,3 +241,20 @@ def test_go_files(tmp_path):
             stdout = proc.stdout.read()
             proc.poll()
             assert "done" in normalize(stdout)
+
+def test_issue_970(tmp_path: Path):
+    lib = lief.ELF.parse(get_sample("ELF/libcudart.so.12"))
+    out = tmp_path / "libcudart.so"
+
+    lib.write(out.as_posix())
+    new = lief.ELF.parse(out.as_posix())
+
+    assert len(new.symbols_version_definition) == 2
+    svd_0 = new.symbols_version_definition[0]
+    svd_1 = new.symbols_version_definition[1]
+
+    assert len(svd_0.auxiliary_symbols) == 1
+    assert len(svd_1.auxiliary_symbols) == 1
+
+    assert svd_0.auxiliary_symbols[0].name == "libcudart.so.12"
+    assert svd_1.auxiliary_symbols[0].name == "libcudart.so.12"

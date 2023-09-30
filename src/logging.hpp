@@ -38,6 +38,14 @@
   } while (false)
 
 
+#define CHECK_FATAL(X, ...)  \
+  do {                       \
+    if ((X)) {               \
+      LIEF_ERR(__VA_ARGS__); \
+      std::abort();          \
+    }                        \
+  } while (false)
+
 namespace LIEF {
 namespace logging {
 

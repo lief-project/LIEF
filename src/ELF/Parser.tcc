@@ -16,6 +16,7 @@
 #include <cctype>
 #include <memory>
 #include <unordered_set>
+#include "BinaryStream/BinaryStream.hpp"
 #include "logging.hpp"
 
 #include "LIEF/utils.hpp"
@@ -1517,11 +1518,12 @@ ok_error_t Parser::parse_symbol_version_definition(uint64_t offset, uint32_t nb_
   using Elf_Verdaux = typename ELF_T::Elf_Verdaux;
 
   const uint64_t string_offset = get_dynamic_string_table();
-  uint32_t next_symbol_offset = 0;
+  ScopedStream sscoped(*stream_, offset);
+  uint64_t def_size = 0;
 
   for (size_t i = 0; i < nb_entries; ++i) {
-    const uint64_t struct_offset = offset + next_symbol_offset;
-    const auto svd_header = stream_->peek_conv<Elf_Verdef>(struct_offset);
+    const auto svd_header = sscoped->peek_conv<Elf_Verdef>();
+    def_size = std::max(def_size, sscoped->pos() - offset + sizeof(Elf_Verdef));
     if (!svd_header) {
       break;
     }
@@ -1529,9 +1531,11 @@ ok_error_t Parser::parse_symbol_version_definition(uint64_t offset, uint32_t nb_
     auto symbol_version_definition = std::make_unique<SymbolVersionDefinition>(*svd_header);
     uint32_t nb_aux_symbols = svd_header->vd_cnt;
     uint32_t next_aux_offset = 0;
+
     for (size_t j = 0; j < nb_aux_symbols; ++j) {
-      const uint64_t struct_offset = offset + next_symbol_offset + svd_header->vd_aux + next_aux_offset;
-      const auto svda_header = stream_->peek_conv<Elf_Verdaux>(struct_offset);
+      ScopedStream aux_stream(*stream_, sscoped->pos() + svd_header->vd_aux);
+      const auto svda_header = aux_stream->peek_conv<Elf_Verdaux>();
+      def_size = std::max(def_size, aux_stream->pos() - offset + sizeof(Elf_Verdaux));
       if (!svda_header) {
         break;
       }
@@ -1547,7 +1551,7 @@ ok_error_t Parser::parse_symbol_version_definition(uint64_t offset, uint32_t nb_
       if (svda_header->vda_next == 0) {
         break;
       }
-
+      aux_stream->increment_pos(svda_header->vda_next);
       next_aux_offset += svda_header->vda_next;
     }
 
@@ -1557,17 +1561,16 @@ ok_error_t Parser::parse_symbol_version_definition(uint64_t offset, uint32_t nb_
     if (svd_header->vd_next == 0) {
       break;
     }
-
-    next_symbol_offset += svd_header->vd_next;
+    sscoped->increment_pos(svd_header->vd_next);
   }
+
+  binary_->sizing_info_->verdef = def_size;
 
   // Associate Symbol Version with auxiliary symbol
   // We mask the 15th bit because it sets if this symbol is a hidden on or not
   // but we don't care
   for (std::unique_ptr<SymbolVersionDefinition>& svd : binary_->symbol_version_definition_) {
-    binary_->sizing_info_->verdef += sizeof(Elf_Verdef);
     for (std::unique_ptr<SymbolVersionAux>& sva : svd->symbol_version_aux_) {
-      binary_->sizing_info_->verdef += sizeof(Elf_Verdaux);
       for (std::unique_ptr<SymbolVersion>& sv : binary_->symbol_version_table_) {
         if (svd->ndx() > 1 && (sv->value() & 0x7FFF) == svd->ndx() && !sv->symbol_aux_) {
           sv->symbol_aux_ = sva.get();

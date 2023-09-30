@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <algorithm>
 #include <cassert>
+#include <iterator>
 #include <numeric>
 #include <unordered_map>
 
@@ -1606,65 +1608,84 @@ ok_error_t Builder::build_symbol_definition() {
     return make_error_code(lief_errors::not_found);
   }
 
-  const Elf_Addr svd_va    = dt_verdef->value();
-  const uint32_t svd_nb    = dt_verdefnum->value();
+  const Elf_Addr svd_va = dt_verdef->value();
+  const uint32_t svd_nb = dt_verdefnum->value();
 
   if (svd_nb != binary_->symbol_version_definition_.size()) {
     LIEF_WARN("The number of symbol version definition entries "
               "in the binary differ from the value in DT_VERDEFNUM");
   }
 
-  vector_iostream svd_raw(should_swap());
+  auto sym_verdef = binary_->symbols_version_definition();
 
-  uint32_t svd_idx = 0;
   const auto& sym_name_offset = static_cast<ExeLayout*>(layout_.get())->dynstr_map();
-  for (const SymbolVersionDefinition& svd: binary_->symbols_version_definition()) {
+  auto& verdef_info = static_cast<ExeLayout*>(layout_.get())->verdef_info();
 
-    SymbolVersionDefinition::it_const_version_aux svas = svd.symbols_aux();
+  vector_iostream svd_aux_raw(should_swap());
+  {
+    for (const auto& names : verdef_info.names_list) {
+      for (size_t i = 0; i < names.size(); ++i) {
+        const std::string& sva_name = names[i];
+        uint64_t dynstr_offset = 0;
 
-    Elf_Off next_symbol_offset = 0;
+        const auto it_name_offset = sym_name_offset.find(sva_name);
+        if (it_name_offset == std::end(sym_name_offset)) {
+          LIEF_ERR("Can't find dynstr offset for '{}'", sva_name);
+          return make_error_code(lief_errors::not_found);
+        }
 
-    if (svd_idx < (svd_nb - 1)) {
-      next_symbol_offset = sizeof(Elf_Verdef) + svas.size() * sizeof(Elf_Verdaux);
-    }
+        dynstr_offset = it_name_offset->second;
+        const uint64_t next_offset = i < (names.size() - 1) ?
+                                     sizeof(Elf_Verdaux) : 0;
 
-    Elf_Verdef header;
-    header.vd_version = static_cast<Elf_Half>(svd.version());
-    header.vd_flags   = static_cast<Elf_Half>(svd.flags());
-    header.vd_ndx     = static_cast<Elf_Half>(svd.ndx());
-    header.vd_cnt     = static_cast<Elf_Half>(svas.size());
-    header.vd_hash    = static_cast<Elf_Word>(svd.hash());
-    header.vd_aux     = static_cast<Elf_Word>(!svas.empty() ? sizeof(Elf_Verdef) : 0);
-    header.vd_next    = static_cast<Elf_Word>(next_symbol_offset);
-
-    svd_raw.write_conv<Elf_Verdef>(header);
-
-
-    uint32_t sva_idx = 0;
-    for (const SymbolVersionAux& sva : svas) {
-      const std::string& sva_name = sva.name();
-
-      Elf_Off sva_name_offset = 0;
-      const auto& it_name_offset = sym_name_offset.find(sva_name);
-      if (it_name_offset != std::end(sym_name_offset)) {
-        sva_name_offset = it_name_offset->second;
-      } else {
-        LIEF_ERR("Can't find dynstr offset for '{}'", sva_name);
-        continue;
+        Elf_Verdaux aux_header;
+        aux_header.vda_name  = static_cast<Elf_Word>(dynstr_offset);
+        aux_header.vda_next  = static_cast<Elf_Word>(next_offset);
+        verdef_info.names_offset[&names] = svd_aux_raw.tellp();
+        svd_aux_raw.write_conv<Elf_Verdaux>(aux_header);
       }
-
-      Elf_Verdaux aux_header;
-      aux_header.vda_name  = static_cast<Elf_Word>(sva_name_offset);
-      aux_header.vda_next  = static_cast<Elf_Word>(sva_idx < (svas.size() - 1) ? sizeof(Elf_Verdaux) : 0);
-
-      svd_raw.write_conv<Elf_Verdaux>(aux_header);
-
-      ++sva_idx;
     }
-    ++svd_idx;
   }
 
-  binary_->patch_address(svd_va, svd_raw.raw());
+  const uint64_t svd_aux_offset = sizeof(Elf_Verdef) * sym_verdef.size();
+
+  vector_iostream svd_raw(should_swap());
+  {
+    for (size_t i = 0; i < sym_verdef.size(); ++i) {
+      const SymbolVersionDefinition& svd = sym_verdef[i];
+      const uint64_t next_offset = i < (sym_verdef.size() - 1) ?
+                                   sizeof(Elf_Verdef) : 0;
+
+      auto it_names = verdef_info.def_to_names.find(&svd);
+      if (it_names == verdef_info.def_to_names.end()) {
+        LIEF_ERR("Can't find list of names");
+        return make_error_code(lief_errors::not_found);
+      }
+
+      auto it_offset = verdef_info.names_offset.find(it_names->second);
+      if (it_offset == verdef_info.names_offset.end()) {
+        LIEF_ERR("Can't find names offset");
+        return make_error_code(lief_errors::not_found);
+      }
+
+      uint64_t aux_offset = svd_aux_offset + it_offset->second;
+      // This is a **relative** offset
+      aux_offset -=  svd_raw.tellp();
+
+      Elf_Verdef header;
+      header.vd_version = static_cast<Elf_Half>(svd.version());
+      header.vd_flags   = static_cast<Elf_Half>(svd.flags());
+      header.vd_ndx     = static_cast<Elf_Half>(svd.ndx());
+      header.vd_cnt     = static_cast<Elf_Half>(svd.symbols_aux().size());
+      header.vd_hash    = static_cast<Elf_Word>(svd.hash());
+      header.vd_aux     = static_cast<Elf_Word>(aux_offset);
+      header.vd_next    = static_cast<Elf_Word>(next_offset);
+      svd_raw.write_conv<Elf_Verdef>(header);
+    }
+  }
+
+  binary_->patch_address(svd_va,                  svd_raw.raw());
+  binary_->patch_address(svd_va + svd_aux_offset, svd_aux_raw.raw());
   return ok();
 }
 

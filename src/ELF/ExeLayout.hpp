@@ -38,6 +38,8 @@
 #include <LIEF/ELF/utils.hpp>
 #include <LIEF/iostream.hpp>
 #include <LIEF/errors.hpp>
+#include <algorithm>
+#include <iterator>
 
 #include "ELF/Structures.hpp"
 #include "internal_utils.hpp"
@@ -54,7 +56,14 @@ class Note;
 //! needed to rebuild the ELF file.
 class LIEF_LOCAL ExeLayout : public Layout {
   public:
+  struct sym_verdef_info_t {
+    using list_names_t = std::vector<std::string>;
+    std::set<list_names_t> names_list;
+    std::unordered_map<const SymbolVersionDefinition*, const list_names_t*> def_to_names;
+    std::unordered_map<const list_names_t*, size_t> names_offset;
+  };
   using Layout::Layout;
+
   ExeLayout(const ExeLayout&) = delete;
   ExeLayout& operator=(const ExeLayout&) = delete;
 
@@ -85,97 +94,83 @@ class LIEF_LOCAL ExeLayout : public Layout {
     // Start with dynamic entries: NEEDED / SONAME etc
     vector_iostream raw_dynstr;
     raw_dynstr.write<uint8_t>(0);
+
+    std::vector<std::string> opt_list;
+
+    std::transform(binary_->dynamic_symbols_.begin(),
+                   binary_->dynamic_symbols_.end(),
+                   std::back_inserter(opt_list),
+                   [] (const std::unique_ptr<Symbol>& sym) {
+                     return sym->name();
+                   });
+
     for (std::unique_ptr<DynamicEntry>& entry : binary_->dynamic_entries_) {
       switch (entry->tag()) {
       case DYNAMIC_TAGS::DT_NEEDED:
         {
           const std::string& name = entry->as<DynamicEntryLibrary>()->name();
-          offset_name_map_[name] = raw_dynstr.tellp();
-          raw_dynstr.write(name);
+          opt_list.push_back(name);
           break;
         }
 
       case DYNAMIC_TAGS::DT_SONAME:
         {
           const std::string& name = entry->as<DynamicSharedObject>()->name();
-          offset_name_map_[name] = raw_dynstr.tellp();
-          raw_dynstr.write(name);
+          opt_list.push_back(name);
           break;
         }
 
       case DYNAMIC_TAGS::DT_RPATH:
         {
           const std::string& name = entry->as<DynamicEntryRpath>()->name();
-          offset_name_map_[name] = raw_dynstr.tellp();
-          raw_dynstr.write(name);
+          opt_list.push_back(name);
           break;
         }
 
       case DYNAMIC_TAGS::DT_RUNPATH:
         {
           const std::string& name = entry->as<DynamicEntryRunPath>()->name();
-          offset_name_map_[name] = raw_dynstr.tellp();
-          raw_dynstr.write(name);
+          opt_list.push_back(name);
           break;
         }
 
       default: {}
       }
     }
+    // Symbol definition
+    for (const SymbolVersionDefinition& svd: binary_->symbols_version_definition()) {
+      sym_verdef_info_t::list_names_t aux_names;
+      auto saux = svd.symbols_aux();
+      aux_names.reserve(saux.size());
+      for (const SymbolVersionAux& sva : saux) {
+        const std::string& sva_name = sva.name();
+        aux_names.push_back(sva_name);
+        opt_list.push_back(sva_name);
+      }
+      auto res = verdef_info_.names_list.insert(std::move(aux_names));
+      verdef_info_.def_to_names[&svd] = &*res.first;
+    }
 
-    // Dynamic symbols names
+    // Symbol version requirement
+    for (const SymbolVersionRequirement& svr: binary_->symbols_version_requirement()) {
+      const std::string& libname = svr.name();
+      opt_list.push_back(libname);
+      for (const SymbolVersionAuxRequirement& svar : svr.auxiliary_symbols()) {
+        const std::string& name = svar.name();
+        opt_list.push_back(name);
+      }
+    }
+
     size_t offset_counter = raw_dynstr.tellp();
-    std::vector<std::string> string_table_optimized = optimize(binary_->dynamic_symbols_,
-                     [] (const std::unique_ptr<Symbol>& sym) {
-                       return sym->name();
-                     },
+
+    std::vector<std::string> string_table_optimized = optimize(opt_list,
+                     [] (const std::string& name) { return name; },
                      offset_counter, &offset_name_map_);
+
     for (const std::string& name : string_table_optimized) {
       raw_dynstr.write(name);
     }
 
-    // Symbol definition
-    for (const SymbolVersionDefinition& svd: binary_->symbols_version_definition()) {
-      for (const SymbolVersionAux& sva : svd.symbols_aux()) {
-        const std::string& sva_name = sva.name();
-        auto it = offset_name_map_.find(sva_name);
-        if (it != std::end(offset_name_map_)) {
-          continue;
-        }
-        offset_name_map_[sva_name] = raw_dynstr.tellp();
-        raw_dynstr.write(sva_name);
-      }
-    }
-    // Symbol version requirement
-    for (const SymbolVersionRequirement& svr: binary_->symbols_version_requirement()) {
-      const std::string& libname = svr.name();
-      auto it = offset_name_map_.find(libname);
-      if (it == std::end(offset_name_map_)) {
-        offset_name_map_[libname] = raw_dynstr.tellp();
-        raw_dynstr.write(libname);
-      }
-      for (const SymbolVersionAuxRequirement& svar : svr.auxiliary_symbols()) {
-        const std::string& name = svar.name();
-        auto it = offset_name_map_.find(name);
-        if (it != std::end(offset_name_map_)) {
-          continue;
-        }
-        offset_name_map_[name] = raw_dynstr.tellp();
-        raw_dynstr.write(name);
-      }
-    }
-    // Symbol version definition
-    for (const SymbolVersionDefinition& svd: binary_->symbols_version_definition()) {
-      for (const SymbolVersionAux& svar : svd.symbols_aux()) {
-        const std::string& name = svar.name();
-        auto it = offset_name_map_.find(name);
-        if (it != std::end(offset_name_map_)) {
-          continue;
-        }
-        offset_name_map_[name] = raw_dynstr.tellp();
-        raw_dynstr.write(name);
-      }
-    }
     raw_dynstr.move(raw_dynstr_);
     return raw_dynstr_.size();
   }
@@ -436,9 +431,12 @@ class LIEF_LOCAL ExeLayout : public Layout {
   size_t symbol_vdef_size() {
     using Elf_Verdef  = typename ELF_T::Elf_Verdef;
     using Elf_Verdaux = typename ELF_T::Elf_Verdaux;
-    size_t computed_size = 0;
-    for (const SymbolVersionDefinition& svd: binary_->symbols_version_definition()) {
-      computed_size += sizeof(Elf_Verdef) + svd.symbols_aux().size() * sizeof(Elf_Verdaux);
+    CHECK_FATAL(!binary_->symbols_version_definition().empty() &&
+                verdef_info_.def_to_names.empty(), "Inconsistent state");
+    size_t computed_size = binary_->symbols_version_definition().size() * sizeof(Elf_Verdef);
+
+    for (const sym_verdef_info_t::list_names_t& names : verdef_info_.names_list) {
+      computed_size += sizeof(Elf_Verdaux) * names.size();
     }
     return computed_size;
   }
@@ -461,92 +459,100 @@ class LIEF_LOCAL ExeLayout : public Layout {
     return binary_->interpreter_.size() + 1;
   }
 
-  inline void relocate_dynamic(uint64_t size) {
+  void relocate_dynamic(uint64_t size) {
     dynamic_size_ = size;
   }
 
-  inline void relocate_dynstr(bool val) {
+  void relocate_dynstr(bool val) {
     relocate_dynstr_ = val;
   }
 
-  inline void relocate_shstr(bool val) {
+  void relocate_shstr(bool val) {
     relocate_shstrtab_ = val;
   }
 
-  inline void relocate_strtab(bool val) {
+  void relocate_strtab(bool val) {
     relocate_strtab_ = val;
   }
 
-  inline void relocate_gnu_hash(bool val) {
+  void relocate_gnu_hash(bool val) {
     relocate_gnu_hash_ = val;
   }
 
-  inline void relocate_sysv_hash(uint64_t size) {
+  void relocate_sysv_hash(uint64_t size) {
     sysv_size_ = size;
   }
 
-  inline void relocate_dynsym(uint64_t size) {
+  void relocate_dynsym(uint64_t size) {
     dynsym_size_ = size;
   }
 
-  inline void relocate_symver(uint64_t size) {
+  void relocate_symver(uint64_t size) {
     sver_size_ = size;
   }
 
-  inline void relocate_symverd(uint64_t size) {
+  void relocate_symverd(uint64_t size) {
     sverd_size_ = size;
   }
 
-  inline void relocate_symverr(uint64_t size) {
+  void relocate_symverr(uint64_t size) {
     sverr_size_ = size;
   }
 
-  inline void relocate_preinit_array(uint64_t size) {
+  void relocate_preinit_array(uint64_t size) {
     preinit_size_ = size;
   }
 
-  inline void relocate_init_array(uint64_t size) {
+  void relocate_init_array(uint64_t size) {
     init_size_ = size;
   }
 
-  inline void relocate_fini_array(uint64_t size) {
+  void relocate_fini_array(uint64_t size) {
     fini_size_ = size;
   }
 
-  inline void relocate_dyn_reloc(uint64_t size) {
+  void relocate_dyn_reloc(uint64_t size) {
     dynamic_reloc_size_ = size;
   }
 
-  inline void relocate_plt_reloc(uint64_t size) {
+  void relocate_plt_reloc(uint64_t size) {
     pltgot_reloc_size_ = size;
   }
 
-  inline void relocate_interpreter(uint64_t size) {
+  void relocate_interpreter(uint64_t size) {
     interp_size_ = size;
   }
 
-  inline void relocate_notes(bool value) {
+  void relocate_notes(bool value) {
     relocate_notes_ = value;
   }
 
-  inline void relocate_symtab(size_t size) {
+  void relocate_symtab(size_t size) {
     symtab_size_ = size;
   }
 
-  inline const std::vector<uint8_t>& raw_dynstr() const {
+  const std::vector<uint8_t>& raw_dynstr() const {
     return raw_dynstr_;
   }
 
-  inline const std::vector<uint8_t>& raw_shstr() const override {
+  const std::vector<uint8_t>& raw_shstr() const override {
     return raw_shstrtab_;
   }
 
-  inline const std::vector<uint8_t>& raw_gnuhash() const {
+  const std::vector<uint8_t>& raw_gnuhash() const {
     return raw_gnu_hash_;
   }
 
-  inline const std::vector<uint8_t>& raw_notes() const {
+  const std::vector<uint8_t>& raw_notes() const {
     return raw_notes_;
+  }
+
+  sym_verdef_info_t& verdef_info() {
+    return verdef_info_;
+  }
+
+  const sym_verdef_info_t& verdef_info() const {
+    return verdef_info_;
   }
 
   result<bool> relocate() {
@@ -1337,15 +1343,15 @@ class LIEF_LOCAL ExeLayout : public Layout {
     return true;
   }
 
-  inline const std::unordered_map<std::string, size_t>& dynstr_map() const {
+  const std::unordered_map<std::string, size_t>& dynstr_map() const {
     return offset_name_map_;
   }
 
-  inline const std::unordered_map<const Note*, size_t>& note_off_map() const {
+  const std::unordered_map<const Note*, size_t>& note_off_map() const {
     return notes_off_map_;
   }
 
-  inline uint32_t sysv_nchain() const {
+  uint32_t sysv_nchain() const {
     return nchain_;
   }
 
@@ -1355,6 +1361,8 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
   std::unordered_map<std::string, size_t> offset_name_map_;
   std::unordered_map<const Note*, size_t> notes_off_map_;
+
+  sym_verdef_info_t verdef_info_;
 
   std::vector<uint8_t> raw_notes_;
   bool relocate_notes_{false};
