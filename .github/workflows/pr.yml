@@ -24,16 +24,13 @@ jobs:
         shell: bash
         env:
           LIEF_SAMPLES_DIR: "/tmp/samples"
-          BUILD_DIR: "/tmp/lief-build"
+          LIEF_BUILD_DIR: "/tmp/lief-build"
         run: |
           python -m pip install -r tests/requirements.txt
           python tests/dl_samples.py ${LIEF_SAMPLES_DIR}
           cd api/python
           PYLIEF_CONF=${GITHUB_WORKSPACE}/scripts/osx/osx-testing-x64.toml \
-          python ./setup.py build                                          \
-                            --build-base=${BUILD_DIR}/base                 \
-                            --build-temp=${BUILD_DIR}/temp                 \
-                            install --user
+          python -m pip install -e .
           cd ${GITHUB_WORKSPACE}
           python tests/run_pytest.py
           python tests/run_tools_check.py ${BUILD_DIR}/temp
@@ -74,17 +71,14 @@ jobs:
       run: |
         chcp 65001 #set code page to utf-8
         echo ("LIEF_SAMPLES_DIR=" + $env:RUNNER_TEMP + "/samples") >> $env:GITHUB_ENV
-        echo ("BUILD_DIR=" + $env:RUNNER_TEMP + "/lief-build") >> $env:GITHUB_ENV
+        echo ("LIEF_BUILD_DIR=" + $env:RUNNER_TEMP + "/lief-build") >> $env:GITHUB_ENV
         echo ("PYLIEF_CONF=" + $env:GITHUB_WORKSPACE + "/scripts/windows/py-x64-test.toml") >> $env:GITHUB_ENV
     - name: Build Python ${{ env.python-win-version }}
       run: |
         python -m pip install -r tests/requirements.txt
         python tests/dl_samples.py %LIEF_SAMPLES_DIR%
         cd api/python
-        python ./setup.py build                          ^
-                          --build-base=%BUILD_DIR%/base  ^
-                          --build-temp=%BUILD_DIR%/temp  ^
-                          install --user
+        python -m pip install -e .
       shell: cmd
     - name: Run tests
       run: |

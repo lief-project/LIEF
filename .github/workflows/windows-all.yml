@@ -133,7 +133,7 @@ jobs:
           python -m pip install -r tests/requirements.txt
           python tests/dl_samples.py %LIEF_SAMPLES_DIR%
           cd api/python
-          python -m pip -vvv install --user api/python
+          python -m pip -vvv install --user ./api/python
         shell: cmd
       - name: Run tests
         run: |
@@ -213,7 +213,7 @@ jobs:
           chcp 65001 #set code page to utf-8
       - name: Build Python ${{ matrix.python-version }}
         run: |
-          python -m pip -vvv wheel --wheel-dir=dist/ api/python
+          python -m pip -vvv wheel --wheel-dir=dist/ ./api/python
         shell: cmd
       - name: 'Upload Python artifacts [${{ matrix.python-version }}]'
         uses: actions/upload-artifact@v3
