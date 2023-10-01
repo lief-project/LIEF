@@ -429,11 +429,11 @@ class build_ext(_build_ext):
         }
 
         # 1. Configure
-        configure_cmd = (
+        configure_cmd = [
             cmake_bin,
             "-S", LIEF_DIR.as_posix(),
             "-B", cmake_output.as_posix(),
-        ) + cmake_conf.gen_cmake_option(cmake_output)
+        ] + cmake_conf.gen_cmake_option(cmake_output)
         report("CMake Config:", " ".join(configure_cmd))
         subprocess.check_call(configure_cmd, **cmake_subprocess_args)
 
