@@ -445,13 +445,13 @@ class build_ext(_build_ext):
         libsuffix = pylief_dst.suffix
 
         pylief_path = cmake_output / f"{PACKAGE_NAME}{libsuffix}"
-        if Config.is_windows():
-            pylief_base = cmake_output / "Release" / "api" / "python"
-            pylief_path = pylief_base / cmake_conf.build_type() / f"{PACKAGE_NAME}{libsuffix}"
-            if not pylief_path.is_file():
-                pylief_path = pylief_base / f"{PACKAGE_NAME}{libsuffix}"
+        #if Config.is_windows():
+        #    pylief_base = cmake_output / "Release" / "api" / "python"
+        #    pylief_path = pylief_base / cmake_conf.build_type() / f"{PACKAGE_NAME}{libsuffix}"
+        #    if not pylief_path.is_file():
+        #        pylief_path = pylief_base / f"{PACKAGE_NAME}{libsuffix}"
 
-            pylief_path = pylief_path.as_posix()
+        #    pylief_path = pylief_path.as_posix()
 
         dst = Path(pylief_dst)
         dst.parent.mkdir(exist_ok=True)
