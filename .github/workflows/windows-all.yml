@@ -139,7 +139,7 @@ jobs:
         run: |
           cd %GITHUB_WORKSPACE%
           python tests/run_pytest.py
-          ctest --output-on-failure --test-dir %LIEF_BUILD_DIR%/temp/Release
+          ctest --output-on-failure --test-dir %LIEF_BUILD_DIR%/temp
         shell: cmd
       - name: sccache stats
         run: sccache --show-stats

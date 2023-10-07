@@ -84,7 +84,7 @@ jobs:
       run: |
         cd %GITHUB_WORKSPACE%
         python tests/run_pytest.py
-        ctest --output-on-failure --test-dir %BUILD_DIR%/temp/Release
+        ctest --output-on-failure --test-dir %BUILD_DIR%/temp
       shell: cmd
 
 
