@@ -36,8 +36,8 @@ endmacro()
 if (LIEF_EXTERNAL_NANOBINDS)
   find_package(nanobind REQUIRED)
 else()
-  set(NANOBIND_VERSION 1c462d6)
-  set(NANOBIND_SHA256 SHA256=84e8334c97aa870fa5531108f945b77c24ad30addf09f9cb40c04ffc1f6f757b)
+  set(NANOBIND_VERSION 1.6.2.r7.gb4c5af0)
+  set(NANOBIND_SHA256 SHA256=b0c84f3729ba231b7539ca9484b7cc1bf32cce877cc29fa875e9f7919ef5b874)
   set(NANOBIND_URL "${THIRD_PARTY_DIRECTORY}/nanobind-${NANOBIND_VERSION}.zip" CACHE STRING "URL to the Nanobind")
   FetchContent_Declare(nanobind
     URL        ${NANOBIND_URL}
