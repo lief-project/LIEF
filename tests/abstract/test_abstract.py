@@ -93,3 +93,15 @@ def test_function():
     assert binary.get_function_address("foo") == lief.lief_errors.not_found
     assert binary.get_function_address("add") == 0x6a0
 
+
+def test_entropy():
+    """
+    from issue #976 by @PaulDance
+    """
+    weird_section_0 = lief.MachO.Section("weird_section_0", []).entropy
+    weird_section_1 = lief.MachO.Section("weird_section_1", [1]).entropy
+    assert str(weird_section_0) == "0.0"
+    assert str(weird_section_1) == "0.0"
+
+    assert weird_section_0 >= 0
+    assert weird_section_1 >= 0
