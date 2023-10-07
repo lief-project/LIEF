@@ -19,3 +19,7 @@ def test_issue_863(tmp_path: Path):
     new = lief.parse(out.as_posix())
     assert new.sysv_hash.nchain == 6
 
+def test_pr_968():
+    elf = lief.ELF.parse(get_sample('ELF/echo.mips_r3000.bin'))
+    sym: lief.ELF.Symbol = elf.get_symbol("strstr")
+    assert sym.imported

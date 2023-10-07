@@ -45,7 +45,8 @@ Symbol::Symbol(const Symbol& other) : LIEF::Symbol{other},
   type_{other.type_},
   binding_{other.binding_},
   other_{other.other_},
-  shndx_{other.shndx_}
+  shndx_{other.shndx_},
+  arch_{other.arch_}
 {}
 
 
@@ -57,23 +58,26 @@ void Symbol::swap(Symbol& other) {
   std::swap(shndx_,          other.shndx_);
   std::swap(section_,        other.section_);
   std::swap(symbol_version_, other.symbol_version_);
+  std::swap(arch_,           other.arch_);
 }
 
-Symbol::Symbol(const details::Elf32_Sym& header) :
+Symbol::Symbol(const details::Elf32_Sym& header, ARCH arch) :
   type_{static_cast<ELF_SYMBOL_TYPES>(header.st_info & 0x0f)},
   binding_{static_cast<SYMBOL_BINDINGS>(header.st_info >> 4)},
   other_{header.st_other},
-  shndx_{header.st_shndx}
+  shndx_{header.st_shndx},
+  arch_{arch}
 {
   value_ = header.st_value;
   size_  = header.st_size;
 }
 
-Symbol::Symbol(const details::Elf64_Sym& header) :
+Symbol::Symbol(const details::Elf64_Sym& header, ARCH arch) :
   type_{static_cast<ELF_SYMBOL_TYPES>(header.st_info & 0x0f)},
   binding_{static_cast<SYMBOL_BINDINGS>(header.st_info >> 4)},
   other_{header.st_other},
-  shndx_{header.st_shndx}
+  shndx_{header.st_shndx},
+  arch_{arch}
 {
   value_ = header.st_value;
   size_  = header.st_size;
@@ -214,8 +218,14 @@ bool Symbol::is_imported() const {
   // An import must not be defined in a section
   bool is_imported = shndx() == static_cast<uint16_t>(SYMBOL_SECTION_INDEX::SHN_UNDEF);
 
-  // An import must not have an address
-  is_imported = is_imported && value() == 0;
+  const bool is_mips = arch_ == ARCH::EM_MIPS || arch_ == ARCH::EM_MIPS_X ||
+                       arch_ == ARCH::EM_MIPS_RS3_LE;
+  const bool is_ppc = arch_ == ARCH::EM_PPC || arch_ == ARCH::EM_PPC64;
+
+  // An import must not have an address (except for some architectures like Mips/PPC)
+  if (!is_mips && !is_ppc) {
+    is_imported = is_imported && value() == 0;
+  }
 
   // its name must not be empty
   is_imported = is_imported && !name().empty();
@@ -239,15 +249,9 @@ void Symbol::set_imported(bool flag) {
   }
 }
 
-
-
 void Symbol::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
-
-
-
-
 
 std::ostream& operator<<(std::ostream& os, const Symbol& entry) {
 

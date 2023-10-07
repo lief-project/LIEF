@@ -992,8 +992,11 @@ ok_error_t Parser::parse_static_symbols(uint64_t offset, uint32_t nb_symbols,
     if (!raw_sym) {
       break;
     }
-    auto symbol = std::make_unique<Symbol>(std::move(*raw_sym));
-    auto symbol_name = stream_->peek_string_at(string_section.file_offset() + raw_sym->st_name);
+    auto symbol = std::make_unique<Symbol>(std::move(*raw_sym),
+                                           binary_->header().machine_type());
+
+    const auto name_offset = string_section.file_offset() + raw_sym->st_name;
+    auto symbol_name = stream_->peek_string_at(name_offset);
     if (symbol_name) {
       symbol->name(std::move(*symbol_name));
     } else {
@@ -1044,7 +1047,8 @@ ok_error_t Parser::parse_dynamic_symbols(uint64_t offset) {
       LIEF_DEBUG("Break on symbol #{:d}", i);
       break;
     }
-    auto symbol = std::make_unique<Symbol>(std::move(*symbol_header));
+    auto symbol = std::make_unique<Symbol>(std::move(*symbol_header),
+                                           binary_->header().machine_type());
 
     if (symbol_header->st_name > 0) {
       auto name = stream_->peek_string_at(string_offset + symbol_header->st_name);

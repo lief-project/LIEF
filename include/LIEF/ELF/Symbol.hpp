@@ -43,8 +43,8 @@ class LIEF_API Symbol : public LIEF::Symbol {
   friend class Binary;
 
   public:
-  Symbol(const details::Elf32_Sym& header);
-  Symbol(const details::Elf64_Sym& header);
+  Symbol(const details::Elf32_Sym& header, ARCH arch);
+  Symbol(const details::Elf64_Sym& header, ARCH arch);
   Symbol(std::string name,
       ELF_SYMBOL_TYPES type = ELF_SYMBOL_TYPES::STT_NOTYPE,
       SYMBOL_BINDINGS binding = SYMBOL_BINDINGS::STB_WEAK,
@@ -173,6 +173,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
   uint16_t         shndx_   = 0;
   Section*         section_ = nullptr;
   SymbolVersion*   symbol_version_ = nullptr;
+  ARCH             arch_ = ARCH::EM_NONE;
 };
 }
 }
