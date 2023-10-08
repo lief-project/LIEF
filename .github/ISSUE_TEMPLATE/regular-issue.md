@@ -4,7 +4,6 @@ about: You identified a bug or a problem in LIEF
 title: ''
 labels: ''
 assignees: romainthomas
-
 ---
 
 **Describe the bug**
@@ -23,3 +22,12 @@ A clear and concise description of what you expected to happen (if applicable)
 
 **Additional context**
 Add any other context about the problem here.
+
+
+**NOTICE**
+
+If the issue does not contain enough information to be reproduced,
+it will be flagged as [incomplete](https://github.com/lief-project/LIEF/issues?q=is%3Aissue+is%3Aclosed+label%3AIncomplete)
+and closed.
+
+**/NOTICE**
