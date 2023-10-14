@@ -15,6 +15,8 @@
  */
 #include "pyLIEF.hpp"
 #include "pyErr.hpp"
+#include <spdlog/logger.h>
+#include "spdlog/sinks/python_sink.h"
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
@@ -125,6 +127,12 @@ void init_json(nb::module_& m) {
   m.def("to_json", &LIEF::to_json);
 }
 
+void init_python_sink() {
+  auto sink = std::make_shared<spdlog::sinks::python_stderr_sink_mt>();
+  spdlog::logger logger("LIEF", std::move(sink));
+  LIEF::logging::set_logger(std::move(logger));
+}
+
 }
 
 NB_MODULE(_lief, m) {
@@ -134,6 +142,8 @@ NB_MODULE(_lief, m) {
   m.attr("__commit__")    = nb::str(LIEF_COMMIT);
   m.attr("__is_tagged__") = bool(LIEF_TAGGED);
   m.doc() = "LIEF Python API";
+
+  LIEF::py::init_python_sink();
 
   LIEF::py::init_platforms(m);
   LIEF::py::init_object(m);

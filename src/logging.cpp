@@ -61,6 +61,7 @@ Logger::Logger(const std::string& filepath) {
   sink_->set_level(spdlog::level::warn);
   sink_->set_pattern("%v");
   sink_->flush_on(spdlog::level::warn);
+
 }
 
 Logger& Logger::instance() {
@@ -90,6 +91,20 @@ Logger& Logger::set_log_path(const std::string& path) {
   logger.sink_->set_level(spdlog::level::warn);
   logger.sink_->flush_on(spdlog::level::warn);
   return logger;
+}
+
+void Logger::set_logger(const spdlog::logger& logger) {
+  if (logger.name() != "LIEF") {
+    return;
+  }
+
+  auto& instance = Logger::instance();
+  spdlog::details::registry::instance().drop("LIEF");
+
+  instance.sink_ = std::make_shared<spdlog::logger>(logger);
+  instance.sink_->set_pattern("%v");
+  instance.sink_->set_level(spdlog::level::warn);
+  instance.sink_->flush_on(spdlog::level::warn);
 }
 
 const char* to_string(LOGGING_LEVEL e) {
@@ -184,6 +199,10 @@ void set_level(LOGGING_LEVEL level) {
 
 void set_path(const std::string& path) {
   Logger::set_log_path(path);
+}
+
+void set_logger(const spdlog::logger& logger) {
+  Logger::set_logger(logger);
 }
 
 void log(LOGGING_LEVEL level, const std::string& msg) {

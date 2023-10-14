@@ -102,6 +102,8 @@ class Logger {
     }
   }
 
+  static void set_logger(const spdlog::logger& logger);
+
   ~Logger();
   private:
   Logger();

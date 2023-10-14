@@ -122,7 +122,7 @@ set_target_properties(pyLIEF PROPERTIES
 )
 
 set_target_properties(pyLIEF PROPERTIES PYTHON_VERSION ${Python_VERSION})
-target_link_libraries(pyLIEF PUBLIC ${LIEF_TARGET})
+target_link_libraries(pyLIEF PUBLIC ${LIEF_TARGET} lief_spdlog)
 
 if(APPLE)
   set_target_properties(pyLIEF PROPERTIES
