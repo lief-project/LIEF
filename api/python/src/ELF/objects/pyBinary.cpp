@@ -640,6 +640,7 @@ void create<Binary>(nb::module_& m) {
         },
         "Return list of strings used in the current ELF file.\n"
         "Basically this function looks for strings in the ``.roadata`` section"_doc,
+        "(self) -> list[Union[str,bytes]]"_p,
         nb::rv_policy::move)
 
     .def("remove_static_symbol",

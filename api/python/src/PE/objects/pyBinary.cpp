@@ -359,7 +359,8 @@ void create<Binary>(nb::module_& m) {
         [] (Binary& self) {
           return error_or(&Binary::resources_manager, self);
         },
-        "Return the " RST_CLASS_REF(lief.PE.ResourcesManager) " to manage resources"_doc)
+        "Return the " RST_CLASS_REF(lief.PE.ResourcesManager) " to manage resources"_doc,
+        "(self) -> lief.PE.ResourcesManager | lief.lief_errors"_p)
 
     .def_prop_ro("resources",
         nb::overload_cast<>(&Binary::resources),

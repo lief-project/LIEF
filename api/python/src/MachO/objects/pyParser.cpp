@@ -72,7 +72,9 @@ void create<Parser>(nb::module_& m) {
     Parse the given binary from a Python IO interface and return a :class:`~lief.MachO.FatBinary` object
 
     One can configure the parsing with the ``config`` parameter. See :class:`~lief.MachO.ParserConfig`
-    )delim"_doc, "io"_a, "config"_a = ParserConfig::quick(),
+    )delim"_doc,
+    "io"_a, "config"_a = ParserConfig::quick(),
+    "parse(io: io.IOBase, config: lief.MachO.ParserConfig = ...) -> lief.MachO.FatBinary | None"_p,
     nb::rv_policy::take_ownership);
 }
 

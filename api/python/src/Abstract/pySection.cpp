@@ -39,6 +39,7 @@ void create<Section>(nb::module_& m) {
           return safe_string(obj.name());
         },
         nb::overload_cast<const std::string&>(&Section::name),
+        "(self) -> bytes | str"_p,
         "Section's name"_doc)
 
     .def_prop_ro("fullname",
@@ -86,6 +87,7 @@ void create<Section>(nb::module_& m) {
           return nb::cast(res);
         },
         "Look for **integer** within the current section"_doc,
+        "search(self, number: int, pos: int = ..., size: int = ...) -> int | None"_p,
         "number"_a, "pos"_a = 0, "size"_a = 0)
 
     .def("search",
@@ -99,6 +101,7 @@ void create<Section>(nb::module_& m) {
           return nb::cast(res);
         },
         "Look for **string** within the current section"_doc,
+        "search(self, str: str, pos: int = ...) -> int | None"_p,
         "str"_a, "pos"_a = 0)
 
     .def("search",
@@ -117,6 +120,7 @@ void create<Section>(nb::module_& m) {
           return nb::cast(res);
         },
         "Look for the given bytes within the current section"_doc,
+        "search(self, bytes: bytes, pos: int = ...) -> int | None"_p,
         "bytes"_a, "pos"_a = 0)
 
     .def("search_all",

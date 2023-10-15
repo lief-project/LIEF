@@ -193,7 +193,7 @@ void create<x509>(nb::module_& m) {
           .. code-block:: python
 
             signer = binary.signatures[0].signers[0]
-            microsoft_ca_bundle  lief.PE.x509.parse("bundle.pem")
+            microsoft_ca_bundle = lief.PE.x509.parse("bundle.pem")
             print(signer.cert.is_trusted_by(microsoft_ca_bundle))
         )delim"_doc,
         "ca_list"_a)

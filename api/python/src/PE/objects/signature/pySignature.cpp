@@ -116,6 +116,7 @@ void create<Signature>(nb::module_& m) {
           return nb::cast(sig.value());
         },
         "Parse the DER PKCS #7 signature from the file path given in the first parameter"_doc,
+        "parse(path: str) -> lief.PE.Binary | None"_p,
         "path"_a)
 
     .def_static("parse",
@@ -127,6 +128,7 @@ void create<Signature>(nb::module_& m) {
           return nb::cast(sig.value());
         },
         "Parse the raw (DER) PKCS #7 signature given in the first parameter"_doc,
+        "parse(raw: list[int], skip_header: bool = ...) -> lief.PE.Binary | None"_p,
         "raw"_a, "skip_header"_a = false)
 
     .def_prop_ro("version",

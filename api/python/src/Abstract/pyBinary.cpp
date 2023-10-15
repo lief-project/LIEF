@@ -115,7 +115,8 @@ void create<Binary>(nb::module_& m) {
               &safe_string);
           return imported_libraries_encoded;
         },
-        "Return binary's imported libraries (name)"_doc)
+        "Return binary's imported libraries (name)"_doc,
+        "(self) -> list[Union[str,bytes]]"_p)
 
     .def_prop_ro("symbols",
         nb::overload_cast<>(&Binary::symbols),
@@ -192,6 +193,7 @@ void create<Binary>(nb::module_& m) {
         R"delim(
         Return the abstract representation of the current binary (:class:`lief.Binary`)
         )delim"_doc,
+        "abstract(self) -> lief.Binary"_p,
         nb::rv_policy::reference_internal)
 
     .def_prop_ro("concrete",
@@ -204,6 +206,7 @@ void create<Binary>(nb::module_& m) {
 
         See also: :attr:`lief.Binary.abstract`
         )delim"_doc,
+        "concrete(self) -> lief.ELF.Binary | lief.PE.Binary | lief.MachO.Binary"_p,
         nb::rv_policy::reference)
 
     .def_prop_ro("ctor_functions",

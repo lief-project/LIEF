@@ -58,6 +58,7 @@ void create<Parser>(nb::module_& m) {
     },
     "Parse the PE binary from the given Python IO interface and return a :class:`lief.PE.Binary` object"_doc,
     "io"_a, "config"_a = ParserConfig::all(),
+    "parse(io: io.IOBase, config: lief.PE.ParserConfig = ...) -> lief.PE.Binary | None"_p,
     nb::rv_policy::take_ownership);
 }
 

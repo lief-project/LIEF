@@ -1,8 +1,13 @@
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Optional
 
 from typing import overload
-import lief # type: ignore
 import lief.DEX # type: ignore
+import lief.DEX.Class # type: ignore
+import lief.DEX.File # type: ignore
+import lief.DEX.MapItem # type: ignore
+import lief.DEX.MapList # type: ignore
+import lief.DEX.Prototype # type: ignore
+import lief.DEX.Type # type: ignore
 
 class ACCESS_FLAGS:
     ABSTRACT: ClassVar[ACCESS_FLAGS] = ...
@@ -336,9 +341,9 @@ class Type(lief.Object):
     def value(self) -> object: ...
 
 @overload
-def parse(filename: str) -> lief.DEX.File: ...
+def parse(filename: str) -> Optional[lief.DEX.File]: ...
 @overload
-def parse(raw: list[int], name: str = ...) -> lief.DEX.File: ...
+def parse(raw: list[int], name: str = ...) -> Optional[lief.DEX.File]: ...
 @overload
 def parse(io: object, name: str = ...) -> object: ...
 @overload

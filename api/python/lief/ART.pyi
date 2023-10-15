@@ -1,7 +1,6 @@
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Optional
 
 from typing import overload
-import lief # type: ignore
 import lief.ART # type: ignore
 import lief.Android # type: ignore
 
@@ -62,9 +61,9 @@ class STORAGE_MODES:
 
 def android_version(art_version: int) -> lief.Android.ANDROID_VERSIONS: ...
 @overload
-def parse(filename: str) -> lief.ART.File: ...
+def parse(filename: str) -> Optional[lief.ART.File]: ...
 @overload
-def parse(raw: list[int], name: str = ...) -> lief.ART.File: ...
+def parse(raw: list[int], name: str = ...) -> Optional[lief.ART.File]: ...
 @overload
 def parse(io: object, name: str = ...) -> object: ...
 @overload

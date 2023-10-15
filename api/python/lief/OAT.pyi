@@ -1,11 +1,13 @@
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Optional
 
 from typing import overload
-import lief # type: ignore
 import lief.Android # type: ignore
 import lief.DEX # type: ignore
 import lief.ELF # type: ignore
 import lief.OAT # type: ignore
+import lief.OAT.Binary # type: ignore
+import lief.OAT.Class # type: ignore
+import lief.OAT.Header # type: ignore
 
 class Binary(lief.ELF.Binary):
     class it_classes:
@@ -224,11 +226,11 @@ class OAT_CLASS_TYPES:
 
 def android_version(arg: int, /) -> lief.Android.ANDROID_VERSIONS: ...
 @overload
-def parse(oat_file: str) -> lief.OAT.Binary: ...
+def parse(oat_file: str) -> Optional[lief.OAT.Binary]: ...
 @overload
-def parse(oat_file: str, vdex_file: str) -> lief.OAT.Binary: ...
+def parse(oat_file: str, vdex_file: str) -> Optional[lief.OAT.Binary]: ...
 @overload
-def parse(raw: list[int]) -> lief.OAT.Binary: ...
+def parse(raw: list[int]) -> Optional[lief.OAT.Binary]: ...
 @overload
 def parse(io: object) -> object: ...
 @overload

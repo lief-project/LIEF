@@ -39,8 +39,7 @@ void create<Parser>(nb::module_& m) {
     The second argument is an optional configuration (:class:`~lief.ELF.ParserConfig`)
     that can be used to define which part(s) of the ELF should be parsed or skipped.
 
-    )delim"_doc,
-    "filename"_a, "config"_a = ParserConfig::all(),
+    )delim"_doc, "filename"_a, "config"_a = ParserConfig::all(),
     nb::rv_policy::take_ownership);
 
   m.def("parse",
@@ -50,9 +49,7 @@ void create<Parser>(nb::module_& m) {
 
     The second argument is an optional configuration (:class:`~lief.ELF.ParserConfig`)
     that can be used to define which part(s) of the ELF should be parsed or skipped.
-    )delim"_doc,
-
-    "raw"_a, "config"_a = ParserConfig::all(),
+    )delim"_doc, "raw"_a, "config"_a = ParserConfig::all(),
     nb::rv_policy::take_ownership);
 
 
@@ -71,6 +68,7 @@ void create<Parser>(nb::module_& m) {
       The second argument is an optional configuration (:class:`~lief.ELF.ParserConfig`)
       that can be used to define which part(s) of the ELF should be parsed or skipped.
       )delim"_doc,
+      "parse(io: io.IOBase, config: lief.ELF.ParserConfig = ...) -> lief.ELF.Binary | None"_p,
       "io"_a, "config"_a = ParserConfig::all(),
       nb::rv_policy::take_ownership);
 }
