@@ -22,6 +22,7 @@
 #include <sstream>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/set.h>
+#include <nanobind/stl/vector.h>
 
 #define PY_ENUM(x) to_string(x), x
 
