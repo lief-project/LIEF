@@ -22,11 +22,12 @@ class python_base_sink final : public base_sink<Mutex> {
   void sink_it_(const details::log_msg &msg) override {
     memory_buf_t formatted;
     base_sink<Mutex>::formatter_->format(msg, formatted);
+    std::string msg_str(formatted.data(), formatted.size());
 
     if constexpr (std::is_same_v<ErrOrOut, py_stderr_tag>) {
-      PySys_WriteStderr("%s", formatted.data());
+      PySys_WriteStderr("%s", msg_str.c_str());
     } else {
-      PySys_WriteStdout("%s", formatted.data());
+      PySys_WriteStdout("%s", msg_str.c_str());
     }
   }
 };

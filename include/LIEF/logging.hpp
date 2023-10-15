@@ -61,6 +61,8 @@ LIEF_API void log(LOGGING_LEVEL level, const std::string& msg);
 
 LIEF_API void set_logger(const spdlog::logger& logger);
 
+LIEF_API void reset();
+
 }
 }
 

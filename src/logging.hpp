@@ -67,6 +67,8 @@ class Logger {
 
   static Logger& set_log_path(const std::string& path);
 
+  static void reset();
+
   template <typename... Args>
   static void trace(const char *fmt, const Args &... args) {
     if constexpr (lief_logging_support && lief_logging_debug) {

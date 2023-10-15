@@ -72,9 +72,15 @@ Logger& Logger::instance() {
   return *instance_;
 }
 
+void Logger::reset() {
+  Logger::destroy();
+  Logger::instance();
+}
 
 void Logger::destroy() {
+  spdlog::details::registry::instance().drop("LIEF");
   delete instance_;
+  instance_ = nullptr;
 }
 
 Logger& Logger::set_log_path(const std::string& path) {
@@ -203,6 +209,10 @@ void set_path(const std::string& path) {
 
 void set_logger(const spdlog::logger& logger) {
   Logger::set_logger(logger);
+}
+
+void reset() {
+  Logger::reset();
 }
 
 void log(LOGGING_LEVEL level, const std::string& msg) {

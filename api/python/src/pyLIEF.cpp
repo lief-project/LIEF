@@ -74,6 +74,12 @@ void init_object(nb::module_& m) {
         });
 }
 
+void init_python_sink() {
+  auto sink = std::make_shared<spdlog::sinks::python_stderr_sink_mt>();
+  spdlog::logger logger("LIEF", std::move(sink));
+  LIEF::logging::set_logger(std::move(logger));
+}
+
 void init_logger(nb::module_& m) {
   nb::module_ logging = m.def_submodule("logging");
 
@@ -103,6 +109,11 @@ void init_logger(nb::module_& m) {
   logging.def("log", &logging::log,
               "Log a message with the LIEF's logger",
               "level"_a, "msg"_a);
+
+  logging.def("reset", [] {
+    logging::reset();
+    init_python_sink();
+  });
 }
 
 void init_hash(nb::module_& m) {
@@ -127,11 +138,6 @@ void init_json(nb::module_& m) {
   m.def("to_json", &LIEF::to_json);
 }
 
-void init_python_sink() {
-  auto sink = std::make_shared<spdlog::sinks::python_stderr_sink_mt>();
-  spdlog::logger logger("LIEF", std::move(sink));
-  LIEF::logging::set_logger(std::move(logger));
-}
 
 }
 
