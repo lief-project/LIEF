@@ -41,6 +41,7 @@ void create<CodeViewPDB>(nb::module_& m) {
         R"delim(
         Return a reference to the parent :class:`lief.PE.CodeView`
         )delim"_doc,
+        "parent(self) -> lief.PE.CodeView"_p,
         nb::rv_policy::reference_internal)
 
     .def_prop_rw("signature",

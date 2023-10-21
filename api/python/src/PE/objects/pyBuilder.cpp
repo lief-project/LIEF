@@ -40,7 +40,7 @@ void create<Builder>(nb::module_& m) {
         "pe_binary"_a)
 
     .def("build",
-        [] (Builder& self) -> nb::object {
+        [] (Builder& self) {
           return error_or(static_cast<ok_error_t(Builder::*)()>(&Builder::build), self);
         },
         "Perform the build process"_doc)

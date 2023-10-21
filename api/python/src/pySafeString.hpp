@@ -16,9 +16,18 @@
 #ifndef PY_LIEF_SAFE_STRING_H
 #define PY_LIEF_SAFE_STRING_H
 #include <string>
-#include <nanobind/nanobind.h>
+#include "typing.hpp"
+
+struct safe_string_t {
+  LIEF_PY_DEFAULT_CTOR(safe_string_t, nanobind::str);
+  LIEF_PY_DEFAULT_CTOR(safe_string_t, nanobind::bytes);
+
+  LIEF_PY_DEFAULT_WRAPPER(safe_string_t);
+};
+
+LIEF_PY_DEFAULT_NB_CASTER(safe_string_t, "Union[str, bytes]");
 
 namespace LIEF::py {
-nanobind::object safe_string(const std::string& str);
+safe_string_t safe_string(const std::string& str);
 }
 #endif

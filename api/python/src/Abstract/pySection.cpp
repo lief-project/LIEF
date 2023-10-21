@@ -18,12 +18,23 @@
 #include <nanobind/stl/vector.h>
 
 #include "Abstract/init.hpp"
+
 #include "pyLIEF.hpp"
 #include "pySafeString.hpp"
+#include "typing.hpp"
 #include "nanobind/extra/memoryview.hpp"
 
 #include "LIEF/Abstract/Section.hpp"
 
+
+namespace LIEF::py {
+struct search_result {
+  LIEF_PY_DEFAULT_CTOR(search_result, nanobind::object);
+  LIEF_PY_DEFAULT_WRAPPER(search_result);
+};
+}
+
+LIEF_PY_DEFAULT_NB_CASTER(LIEF::py::search_result, "Optional[int]")
 
 namespace LIEF::py {
 
@@ -39,7 +50,6 @@ void create<Section>(nb::module_& m) {
           return safe_string(obj.name());
         },
         nb::overload_cast<const std::string&>(&Section::name),
-        "(self) -> bytes | str"_p,
         "Section's name"_doc)
 
     .def_prop_ro("fullname",
@@ -78,7 +88,7 @@ void create<Section>(nb::module_& m) {
 
     .def("search",
         [] (const Section& self,
-            uint64_t number, size_t pos, size_t size) -> nb::object
+            uint64_t number, size_t pos, size_t size) -> search_result
         {
           size_t res = self.search(number, pos, size);
           if (res == Section::npos) {
@@ -87,12 +97,11 @@ void create<Section>(nb::module_& m) {
           return nb::cast(res);
         },
         "Look for **integer** within the current section"_doc,
-        "search(self, number: int, pos: int = ..., size: int = ...) -> int | None"_p,
         "number"_a, "pos"_a = 0, "size"_a = 0)
 
     .def("search",
         [] (const Section& self,
-            const std::string& str, size_t pos) ->nb::object
+            const std::string& str, size_t pos) -> search_result
         {
           size_t res = self.search(str, pos);
           if (res == Section::npos) {
@@ -101,12 +110,11 @@ void create<Section>(nb::module_& m) {
           return nb::cast(res);
         },
         "Look for **string** within the current section"_doc,
-        "search(self, str: str, pos: int = ...) -> int | None"_p,
         "str"_a, "pos"_a = 0)
 
     .def("search",
         [] (const Section& self,
-            nb::bytes bytes, size_t pos) -> nb::object
+            nb::bytes bytes, size_t pos) -> search_result
         {
           std::string raw_str(bytes.c_str(), bytes.size());
           const std::vector<uint8_t> raw = {
@@ -120,7 +128,6 @@ void create<Section>(nb::module_& m) {
           return nb::cast(res);
         },
         "Look for the given bytes within the current section"_doc,
-        "search(self, bytes: bytes, pos: int = ...) -> int | None"_p,
         "bytes"_a, "pos"_a = 0)
 
     .def("search_all",

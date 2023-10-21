@@ -54,8 +54,10 @@ void init_utils(nb::module_& m) {
       [] (const std::string& file) {
         return error_or(static_cast<result<PE_TYPE> (*)(const std::string&)>(&get_type), file);
       },
-      "If the input file is a ``PE`` one, return the " RST_CLASS_REF(lief.PE.PE_TYPE) " \n"
-      "If the function fails to determine the type, it returns a " RST_CLASS_REF(lief.lief_errors) ""_doc,
+      R"delim(
+      If the input file is a a valid ``PE``, return the :class:`~.lief.PE.PE_TYPE`.
+      Otherwise, return a :class:`lief.lief_errors`.
+      )delim"_doc,
       "file"_a);
 
 
@@ -63,8 +65,6 @@ void init_utils(nb::module_& m) {
       [] (const std::vector<uint8_t>& raw) {
         return error_or(static_cast<result<PE_TYPE> (*)(const std::vector<uint8_t>&)>(&get_type), raw);
       },
-      "If the input *raw* data represent a ``PE`` file, return the " RST_CLASS_REF(lief.PE.PE_TYPE) " \n"
-      "If the function fails to determine the type, it returns a " RST_CLASS_REF(lief.lief_errors) ""_doc,
       "raw"_a);
 
   m.def("get_imphash",
@@ -95,10 +95,12 @@ void init_utils(nb::module_& m) {
       [] (const Import& import, bool strict = false, bool use_std = false) {
         return error_or(resolve_ordinals, import, strict, use_std);
       },
-      "Take an " RST_CLASS_REF(lief.PE.Import) " as entry and try to resolve its ordinal imports\n\n"
+      R"delim(
+      Take a :class:`~lief.PE.Import` as input and try to resolve its ordinal imports.
 
-      "The ``strict`` boolean parameter enables to throw a " RST_CLASS_REF(lief.not_found) " exception "
-      "if the ordinal can't be resolved. Otherwise it skips the entry."_doc,
+      If the ``strict`` boolean parameter is set, a :attr:`lief.lief_errors.not_found` error is
+      returned upon the first non-resolvable ordinal.
+      )delim",
       "imp"_a, "strict"_a = false, "use_std"_a = false,
       nb::rv_policy::copy);
 }

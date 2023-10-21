@@ -17,6 +17,7 @@
 #include "pyLIEF.hpp"
 #include "pyIOStream.hpp"
 #include "pyutils.hpp"
+#include "typing/InputParser.hpp"
 
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
@@ -65,20 +66,21 @@ void create<Parser>(nb::module_& m) {
 
 
   m.def("parse",
-      [] (nb::object generic) -> nb::object {
+      [] (typing::InputParser generic) -> std::unique_ptr<LIEF::Binary> {
         if (auto path_str = path_to_str(generic)) {
-          return nb::cast(Parser::parse(std::move(*path_str)));
+          return Parser::parse(std::move(*path_str));
         }
 
         if (auto stream = PyIOStream::from_python(generic)) {
           auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
-          return nb::cast(Parser::parse(std::move(ptr)));
+          return Parser::parse(std::move(ptr));
         }
 
         logging::log(logging::LOG_ERR,
                      "LIEF parser interface does not support Python object: " +
                      type2str(generic));
-        return nb::none();
+
+        return nullptr;
       },
       R"delim(
       Parse a binary supported by LIEF from the given Python object and return either:
@@ -89,7 +91,6 @@ void create<Parser>(nb::module_& m) {
 
       depending on the given binary format.
       )delim"_doc,
-      "parse(obj: io.IOBase | os.PathLike) -> lief.Binary | None"_p,
       "obj"_a, nb::rv_policy::take_ownership);
 }
 }

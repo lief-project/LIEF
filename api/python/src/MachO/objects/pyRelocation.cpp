@@ -23,6 +23,24 @@
 #include "LIEF/MachO/SegmentCommand.hpp"
 
 #include "MachO/pyMachO.hpp"
+#include "typing.hpp"
+
+namespace LIEF::MachO::py {
+struct relocations_typing {
+  LIEF_PY_DEFAULT_CTOR(relocations_typing, nb::object);
+
+  LIEF_PY_DEFAULT_WRAPPER(relocations_typing);
+};
+}
+
+LIEF_PY_DEFAULT_NB_CASTER(LIEF::MachO::py::relocations_typing,
+    "Union[" "lief.MachO.X86_RELOCATION, "
+             "lief.MachO.X86_64_RELOCATION, "
+             "lief.MachO.PPC_RELOCATION, "
+             "lief.MachO.ARM_RELOCATION, "
+             "lief.MachO.ARM64_RELOCATION, "
+             "lief.MachO.REBASE_TYPES, "
+         "]");
 
 namespace LIEF::MachO::py {
 
@@ -62,7 +80,7 @@ void create<Relocation>(nb::module_& m) {
         )delim"_doc)
 
     .def_prop_rw("type",
-        [] (const Relocation& reloc) -> nb::object {
+        [] (const Relocation& reloc) -> relocations_typing {
           if (reloc.origin() == RELOCATION_ORIGINS::ORIGIN_DYLDINFO) {
             return nb::cast(REBASE_TYPES(reloc.type()));
           }

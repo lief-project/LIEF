@@ -626,21 +626,18 @@ void create<Binary>(nb::module_& m) {
 
     .def_prop_ro("strings",
         [] (const Binary& bin) {
-        const std::vector<std::string>& elf_strings = bin.strings();
-        std::vector<nb::object>  elf_strings_encoded;
-        elf_strings_encoded.reserve(elf_strings.size());
+          const std::vector<std::string>& elf_strings = bin.strings();
+          std::vector<safe_string_t> elf_strings_encoded;
+          elf_strings_encoded.reserve(elf_strings.size());
 
-        std::transform(
-                std::begin(elf_strings),
-                std::end(elf_strings),
-                std::back_inserter(elf_strings_encoded),
-                &safe_string);
+          std::transform(std::begin(elf_strings), std::end(elf_strings),
+                         std::back_inserter(elf_strings_encoded),
+                         &safe_string);
 
-        return elf_strings_encoded;
+          return elf_strings_encoded;
         },
         "Return list of strings used in the current ELF file.\n"
         "Basically this function looks for strings in the ``.roadata`` section"_doc,
-        "(self) -> list[Union[str,bytes]]"_p,
         nb::rv_policy::move)
 
     .def("remove_static_symbol",

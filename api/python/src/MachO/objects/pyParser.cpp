@@ -19,6 +19,7 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
 
+#include "typing/InputParser.hpp"
 #include "pyutils.hpp"
 #include "pyIOStream.hpp"
 
@@ -61,20 +62,20 @@ void create<Parser>(nb::module_& m) {
     nb::rv_policy::take_ownership);
 
   m.def("parse",
-    [] (nb::object obj, const ParserConfig& config) -> nb::object {
+    [] (typing::InputParser obj, const ParserConfig& config) -> std::unique_ptr<FatBinary> {
       if (auto path_str = path_to_str(obj)) {
-        return nb::cast(MachO::Parser::parse(std::move(*path_str)));
+        return MachO::Parser::parse(std::move(*path_str));
       }
 
       if (auto stream = PyIOStream::from_python(obj)) {
         auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
-        return nb::cast(MachO::Parser::parse(std::move(ptr), config));
+        return MachO::Parser::parse(std::move(ptr), config);
       }
 
       logging::log(logging::LOG_ERR,
                    "LIEF parser interface does not support Python object: " +
                    type2str(obj));
-      return nb::none();
+      return nullptr;
     },
     R"delim(
     Parse the given binary from the given input and return a :class:`~lief.MachO.FatBinary` object
@@ -82,7 +83,6 @@ void create<Parser>(nb::module_& m) {
     One can configure the parser with the ``config`` parameter. See :class:`~lief.MachO.ParserConfig`
     )delim"_doc,
     "obj"_a, "config"_a = ParserConfig::quick(),
-    "parse(obj: io.IOBase | os.PathLike, config: lief.MachO.ParserConfig = ...) -> lief.MachO.FatBinary | None"_p,
     nb::rv_policy::take_ownership);
 }
 

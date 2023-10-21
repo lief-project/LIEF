@@ -45,7 +45,7 @@ void create<Segment>(nb::module_& m) {
   seg
     .def(nb::init<>())
     .def_static("from_raw",
-        [] (nb::bytes raw) -> nb::object {
+        [] (nb::bytes raw) {
           const std::vector<uint8_t>& cpp_raw = {raw.c_str(), raw.c_str() + raw.size()};
           auto* f_ptr = nb::overload_cast<const std::vector<uint8_t>&>(&Segment::from_raw);
           return error_or(f_ptr, cpp_raw);

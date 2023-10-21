@@ -19,6 +19,7 @@
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/unique_ptr.h>
 
+#include "typing/InputParser.hpp"
 #include "pyutils.hpp"
 #include "pyIOStream.hpp"
 #include "LIEF/logging.hpp"
@@ -55,19 +56,19 @@ void create<Parser>(nb::module_& m) {
 
 
   m.def("parse",
-      [] (nb::object obj, const ParserConfig& config) -> nb::object {
+      [] (typing::InputParser obj, const ParserConfig& config) -> std::unique_ptr<Binary> {
         if (auto path_str = path_to_str(obj)) {
-          return nb::cast(ELF::Parser::parse(std::move(*path_str)));
+          return ELF::Parser::parse(std::move(*path_str));
         }
 
         if (auto stream = PyIOStream::from_python(obj)) {
           auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
-          return nb::cast(ELF::Parser::parse(std::move(ptr), config));
+          return ELF::Parser::parse(std::move(ptr), config);
         }
         logging::log(logging::LOG_ERR,
                      "LIEF parser interface does not support Python object: " +
                      type2str(obj));
-        return nb::none();
+        return nullptr;
       },
       R"delim(
       Parse the ELF binary from the given Python object and return a :class:`lief.ELF.Binary` object
@@ -75,7 +76,6 @@ void create<Parser>(nb::module_& m) {
       The second argument is an optional configuration (:class:`~lief.ELF.ParserConfig`)
       that can be used to define which part(s) of the ELF should be parsed or skipped.
       )delim"_doc,
-      "parse(obj: io.IOBase | os.PathLike, config: lief.ELF.ParserConfig = ...) -> lief.ELF.Binary | None"_p,
       "obj"_a, "config"_a = ParserConfig::all(),
       nb::rv_policy::take_ownership);
 }

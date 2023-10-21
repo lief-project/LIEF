@@ -17,10 +17,10 @@
 #include "pyLIEF.hpp"
 
 namespace LIEF::py {
-nb::object safe_string(const std::string& str) {
+safe_string_t safe_string(const std::string& str) {
   nb::bytes str_bytes(str.c_str(), str.size());
   try {
-    return str_bytes.attr("decode")("utf8");
+    return nb::str(str_bytes.attr("decode")("utf8"));
   } catch (const std::exception& e) {
     return str_bytes;
   }

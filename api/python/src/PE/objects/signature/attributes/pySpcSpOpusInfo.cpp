@@ -42,12 +42,14 @@ void create<SpcSpOpusInfo>(nb::module_& m) {
     .def_prop_ro("program_name",
         [] (const SpcSpOpusInfo& info) {
           return LIEF::py::safe_string(info.program_name());
-        }, "Program description provided by the publisher"_doc)
+        },
+        "Program description provided by the publisher"_doc)
 
     .def_prop_ro("more_info",
         [] (const SpcSpOpusInfo& info) {
           return LIEF::py::safe_string(info.more_info());
-        }, "Other information such as an URL"_doc);
+        },
+        "Other information such as an URL"_doc);
 }
 
 }

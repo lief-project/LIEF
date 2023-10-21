@@ -108,27 +108,25 @@ void create<Signature>(nb::module_& m) {
 
   signature
     .def_static("parse",
-        [] (const std::string& path) -> nb::object {
+        [] (const std::string& path) -> std::unique_ptr<Signature> {
           auto sig = SignatureParser::parse(path);
           if (!sig) {
-            return nb::none();
+            return nullptr;
           }
-          return nb::cast(sig.value());
+          return std::make_unique<Signature>(std::move(sig.value()));
         },
         "Parse the DER PKCS #7 signature from the file path given in the first parameter"_doc,
-        "parse(path: str) -> lief.PE.Binary | None"_p,
-        "path"_a)
+        "path"_a, nb::rv_policy::take_ownership)
 
     .def_static("parse",
-        [] (const std::vector<uint8_t>& raw, bool skip_header) -> nb::object {
+        [] (const std::vector<uint8_t>& raw, bool skip_header) -> std::unique_ptr<Signature> {
           auto sig = SignatureParser::parse(raw, skip_header);
           if (!sig) {
-            return nb::none();
+            return nullptr;
           }
-          return nb::cast(sig.value());
+          return std::make_unique<Signature>(std::move(sig.value()));
         },
         "Parse the raw (DER) PKCS #7 signature given in the first parameter"_doc,
-        "parse(raw: list[int], skip_header: bool = ...) -> lief.PE.Binary | None"_p,
         "raw"_a, "skip_header"_a = false)
 
     .def_prop_ro("version",

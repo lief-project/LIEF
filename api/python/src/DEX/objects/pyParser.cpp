@@ -21,6 +21,7 @@
 
 #include "pyutils.hpp"
 #include "pyIOStream.hpp"
+#include "typing/InputParser.hpp"
 
 #include <string>
 #include <memory>
@@ -48,22 +49,21 @@ void create<Parser>(nb::module_& m) {
     nb::rv_policy::take_ownership);
 
   m.def("parse",
-    [] (nb::object obj, const std::string& name) -> nb::object {
+    [] (typing::InputParser obj, const std::string& name) -> std::unique_ptr<File> {
       if (auto path_str = path_to_str(obj)) {
-        return nb::cast(DEX::Parser::parse(std::move(*path_str)));
+        return DEX::Parser::parse(std::move(*path_str));
       }
 
       if (auto stream = PyIOStream::from_python(obj)) {
         auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
-        return nb::cast(DEX::Parser::parse(stream->content(), name));
+        return DEX::Parser::parse(stream->content(), name);
       }
 
       logging::log(logging::LOG_ERR,
                    "LIEF parser interface does not support Python object: " +
                    type2str(obj));
-      return nb::none();
+      return nullptr;
     }, "obj"_a, "name"_a = "",
-    "parse(obj: io.IOBase | os.PathLike, name: str = ...) -> Optional[lief.DEX.File]"_p,
     nb::rv_policy::take_ownership);
 }
 }
