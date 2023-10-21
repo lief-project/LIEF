@@ -1,10 +1,12 @@
 from typing import Optional
 
 from typing import overload
+import io
 import lief.Android # type: ignore
 import lief.DEX # type: ignore
 import lief.OAT.Binary # type: ignore
 import lief.VDEX # type: ignore
+import os
 
 class File(lief.Object):
     class it_dex_files:
@@ -40,7 +42,7 @@ def android_version(vdex_version: int) -> lief.Android.ANDROID_VERSIONS: ...
 @overload
 def parse(filename: str) -> Optional[lief.VDEX.File]: ...
 @overload
-def parse(io: object, name: str = ...) -> object: ...
+def parse(obj: io.IOBase | os.PathLike, name: str = ...) -> Optional[lief.VDEX.File]: ...
 @overload
 def version(file: str) -> int: ...
 @overload

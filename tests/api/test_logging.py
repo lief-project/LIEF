@@ -16,3 +16,10 @@ def test_stderr(capsys):
     captured = capsys.readouterr()
     assert captured.err == "This is an error\nThis is another error\n"
 
+def test_stderr(capsys):
+    lief.logging.log(lief.logging.LOGGING_LEVEL.ERROR, "This is an error")
+    lief.logging.log(lief.logging.LOGGING_LEVEL.ERROR, "This is another error")
+
+    captured = capsys.readouterr()
+    assert captured.err == "This is an error\nThis is another error\n"
+

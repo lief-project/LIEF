@@ -19,6 +19,7 @@
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/unique_ptr.h>
 
+#include "pyutils.hpp"
 #include "pyIOStream.hpp"
 #include "LIEF/logging.hpp"
 
@@ -54,22 +55,28 @@ void create<Parser>(nb::module_& m) {
 
 
   m.def("parse",
-      [] (nb::object byteio, const ParserConfig& config) -> nb::object {
-        if (auto stream = PyIOStream::from_python(std::move(byteio))) {
+      [] (nb::object obj, const ParserConfig& config) -> nb::object {
+        if (auto path_str = path_to_str(obj)) {
+          return nb::cast(ELF::Parser::parse(std::move(*path_str)));
+        }
+
+        if (auto stream = PyIOStream::from_python(obj)) {
           auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
           return nb::cast(ELF::Parser::parse(std::move(ptr), config));
         }
-        logging::log(logging::LOG_ERR, "Can't create a LIEF stream interface over the provided io");
+        logging::log(logging::LOG_ERR,
+                     "LIEF parser interface does not support Python object: " +
+                     type2str(obj));
         return nb::none();
       },
       R"delim(
-      Parse the ELF binary from a Python IO stream and return a :class:`lief.ELF.Binary` object
+      Parse the ELF binary from the given Python object and return a :class:`lief.ELF.Binary` object
 
       The second argument is an optional configuration (:class:`~lief.ELF.ParserConfig`)
       that can be used to define which part(s) of the ELF should be parsed or skipped.
       )delim"_doc,
-      "parse(io: io.IOBase, config: lief.ELF.ParserConfig = ...) -> lief.ELF.Binary | None"_p,
-      "io"_a, "config"_a = ParserConfig::all(),
+      "parse(obj: io.IOBase | os.PathLike, config: lief.ELF.ParserConfig = ...) -> lief.ELF.Binary | None"_p,
+      "obj"_a, "config"_a = ParserConfig::all(),
       nb::rv_policy::take_ownership);
 }
 }

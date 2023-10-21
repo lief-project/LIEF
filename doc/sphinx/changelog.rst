@@ -97,6 +97,8 @@ Changelog
 
 :General Design:
 
+  * Python parser functions (like: :func:`lief.PE.parse`) now accept `os.PathLike`
+    arguments like `pathlib.Path` (:issue:`974`).
   * Remove the `lief.Binary.name` attribute
   * LIEF is now compiled with C++17 (the API remains C++11 compliant)
   * Switch to `nanobind <https://nanobind.readthedocs.io/en/latest/>`_ for the

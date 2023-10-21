@@ -3,11 +3,25 @@ import sys
 import pytest
 import io
 from io import open as io_open
+from pathlib import Path
 
 import lief
 from utils import get_sample, is_x86_64
 
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
+
+
+def test_wrong_obj(capsys):
+    class Empty:
+        pass
+    _ = lief.parse(Empty())
+    captured = capsys.readouterr()
+    assert "LIEF parser interface does not support Python object: test_python.Empty" in captured.err
+
+def test_pathlib():
+    lspath = Path(get_sample('ELF/ELF64_x86-64_binary_ls.bin'))
+    ls = lief.parse(lspath)
+    assert isinstance(ls, lief.ELF.Binary)
 
 def test_io():
     lspath = get_sample('ELF/ELF64_x86-64_binary_ls.bin')

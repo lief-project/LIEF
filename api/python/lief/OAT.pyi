@@ -1,6 +1,7 @@
 from typing import Any, ClassVar, Optional
 
 from typing import overload
+import io
 import lief.Android # type: ignore
 import lief.DEX # type: ignore
 import lief.ELF # type: ignore
@@ -8,6 +9,7 @@ import lief.OAT # type: ignore
 import lief.OAT.Binary # type: ignore
 import lief.OAT.Class # type: ignore
 import lief.OAT.Header # type: ignore
+import os
 
 class Binary(lief.ELF.Binary):
     class it_classes:
@@ -232,7 +234,7 @@ def parse(oat_file: str, vdex_file: str) -> Optional[lief.OAT.Binary]: ...
 @overload
 def parse(raw: list[int]) -> Optional[lief.OAT.Binary]: ...
 @overload
-def parse(io: object) -> object: ...
+def parse(obj: io.IOBase | os.PathLike) -> Optional[lief.OAT.Binary]: ...
 @overload
 def version(binary: lief.ELF.Binary) -> int: ...
 @overload

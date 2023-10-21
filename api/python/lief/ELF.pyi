@@ -13,6 +13,7 @@ import lief.ELF.Section # type: ignore
 import lief.ELF.Segment # type: ignore
 import lief.ELF.SymbolVersionDefinition # type: ignore
 import lief.ELF.SymbolVersionRequirement # type: ignore
+import os
 
 class ARCH:
     AARCH64: ClassVar[ARCH] = ...
@@ -2615,4 +2616,4 @@ def parse(filename: str, config: lief.ELF.ParserConfig = ...) -> Optional[lief.E
 @overload
 def parse(raw: list[int], config: lief.ELF.ParserConfig = ...) -> Optional[lief.ELF.Binary]: ...
 @overload
-def parse(io: io.IOBase, config: lief.ELF.ParserConfig = ...) -> lief.ELF.Binary | None: ...
+def parse(obj: io.IOBase | os.PathLike, config: lief.ELF.ParserConfig = ...) -> lief.ELF.Binary | None: ...

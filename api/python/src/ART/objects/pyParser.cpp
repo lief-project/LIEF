@@ -19,6 +19,7 @@
 
 #include "ART/pyART.hpp"
 
+#include "pyutils.hpp"
 #include "pyIOStream.hpp"
 
 #include <string>
@@ -46,15 +47,22 @@ void create<Parser>(nb::module_& m) {
     "raw"_a, "name"_a = "",
     nb::rv_policy::take_ownership);
 
-
   m.def("parse",
-    [] (nb::object byteio, const std::string& name) -> nb::object {
-      if (auto stream = PyIOStream::from_python(std::move(byteio))) {
+    [] (nb::object obj, const std::string& name) -> nb::object {
+      if (auto path_str = path_to_str(obj)) {
+        return nb::cast(Parser::parse(std::move(*path_str)));
+      }
+
+      if (auto stream = PyIOStream::from_python(obj)) {
         auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
         return nb::cast(Parser::parse(stream->content(), name));
       }
-      logging::log(logging::LOG_ERR, "Can't create a LIEF stream interface over the provided io");
+      logging::log(logging::LOG_ERR,
+                   "LIEF parser interface does not support Python object: " +
+                   type2str(obj));
       return nb::none();
-    }, "io"_a, "name"_a = "", nb::rv_policy::take_ownership);
+    },
+    "parse(obj: io.IOBase | os.PathLike, name: str = ...) -> Optional[lief.ART.File]"_p,
+    "obj"_a, "name"_a = "", nb::rv_policy::take_ownership);
 }
 }

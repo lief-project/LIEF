@@ -1,5 +1,6 @@
 import lief
 import hashlib
+from pathlib import Path
 from utils import get_sample, is_64bits_platform
 
 winhello64 = lief.PE.parse(get_sample('PE/PE64_x86-64_binary_winhello64-mingw.exe'))
@@ -538,3 +539,7 @@ def test_overlay():
     pe = lief.PE.parse(get_sample("PE/PE32_x86_binary_KMSpico_setup_MALWARE.exe"))
     assert len(pe.overlay) == 3073728
     assert hashlib.sha256(pe.overlay).hexdigest() == "01c0472ead112b44dca6996c9fae47e0d6870e61792ef606ea47067932115d01"
+
+
+def test_path_like():
+    assert lief.PE.parse(Path(get_sample('PE/PE32_x86-64_binary_avast-free-antivirus-setup-online.exe'))) is not None

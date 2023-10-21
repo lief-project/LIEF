@@ -1,5 +1,6 @@
 import lief
 from utils import get_sample, is_64bits_platform
+from pathlib import Path
 
 def test_symbol_count():
     config = lief.ELF.ParserConfig()
@@ -127,3 +128,6 @@ def test_io():
     assert lief.ELF.parse(wrong_io) is None
     with open(get_sample('ELF/test_897.elf'), "rb") as f:
         assert lief.ELF.parse(f) is not None
+
+def test_path_like():
+    assert lief.ELF.parse(Path(get_sample('ELF/test_897.elf'))) is not None

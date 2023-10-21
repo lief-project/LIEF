@@ -16,6 +16,7 @@
 #include "Abstract/init.hpp"
 #include "pyLIEF.hpp"
 #include "pyIOStream.hpp"
+#include "pyutils.hpp"
 
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
@@ -36,8 +37,7 @@ void create<Parser>(nb::module_& m) {
           std::make_move_iterator(std::begin(raw_str)),
           std::make_move_iterator(std::end(raw_str))
         };
-        std::unique_ptr<Binary> binary = Parser::parse(raw);
-        return binary;
+        return Parser::parse(raw);
       },
       R"delim(
       Parse a binary supported by LIEF from the given bytes and return either:
@@ -65,17 +65,23 @@ void create<Parser>(nb::module_& m) {
 
 
   m.def("parse",
-      [] (nb::object byteio) -> nb::object {
-        if (auto stream = PyIOStream::from_python(std::move(byteio))) {
+      [] (nb::object generic) -> nb::object {
+        if (auto path_str = path_to_str(generic)) {
+          return nb::cast(Parser::parse(std::move(*path_str)));
+        }
+
+        if (auto stream = PyIOStream::from_python(generic)) {
           auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
           return nb::cast(Parser::parse(std::move(ptr)));
         }
+
         logging::log(logging::LOG_ERR,
-            "Can't create a LIEF stream interface over the provided io");
+                     "LIEF parser interface does not support Python object: " +
+                     type2str(generic));
         return nb::none();
       },
       R"delim(
-      Parse a binary supported by LIEF from the given Python IO interface and return either:
+      Parse a binary supported by LIEF from the given Python object and return either:
 
       - :class:`lief.ELF.Binary`
       - :class:`lief.PE.Binary`
@@ -83,7 +89,7 @@ void create<Parser>(nb::module_& m) {
 
       depending on the given binary format.
       )delim"_doc,
-      "io"_a,
-      nb::rv_policy::take_ownership);
+      "parse(obj: io.IOBase | os.PathLike) -> lief.Binary | None"_p,
+      "obj"_a, nb::rv_policy::take_ownership);
 }
 }

@@ -1,12 +1,14 @@
 from typing import Any, ClassVar, Optional, Union
 
 from typing import overload
+import io
 import lief # type: ignore
 import lief.Binary # type: ignore
 import lief.ELF # type: ignore
 import lief.Function # type: ignore
 import lief.MachO # type: ignore
 import lief.PE # type: ignore
+import os
 
 class ARCHITECTURES:
     ARM: ClassVar[ARCHITECTURES] = ...
@@ -307,5 +309,5 @@ def parse(raw: bytes) -> Optional[lief.Binary]: ...
 @overload
 def parse(filepath: str) -> Optional[lief.Binary]: ...
 @overload
-def parse(io: object) -> object: ...
+def parse(obj: io.IOBase | os.PathLike) -> lief.Binary | None: ...
 def to_json(arg: lief.Object, /) -> str: ...

@@ -57,6 +57,7 @@ set(LIEF_PYTHON_SRC
   "${CMAKE_CURRENT_SOURCE_DIR}/src/pySafeString.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/pyErr.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/pyIOStream.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyutils.cpp"
 )
 
 set(LIEF_PYTHON_HDR

@@ -1,8 +1,10 @@
 from typing import Any, ClassVar, Optional
 
 from typing import overload
+import io
 import lief.ART # type: ignore
 import lief.Android # type: ignore
+import os
 
 class File(lief.Object):
     def __init__(self, *args, **kwargs) -> None: ...
@@ -65,7 +67,7 @@ def parse(filename: str) -> Optional[lief.ART.File]: ...
 @overload
 def parse(raw: list[int], name: str = ...) -> Optional[lief.ART.File]: ...
 @overload
-def parse(io: object, name: str = ...) -> object: ...
+def parse(obj: io.IOBase | os.PathLike, name: str = ...) -> Optional[lief.ART.File]: ...
 @overload
 def version(file: str) -> int: ...
 @overload

@@ -20,6 +20,7 @@
 #include "LIEF/logging.hpp"
 
 #include "pyIOStream.hpp"
+#include "pyutils.hpp"
 
 #include <string>
 #include <nanobind/stl/unique_ptr.h>
@@ -36,21 +37,23 @@ void create<Parser>(nb::module_& m) {
     "Parse the given filename and return a " RST_CLASS_REF(lief.VDEX.File) " object"_doc,
     "filename"_a, nb::rv_policy::take_ownership);
 
-  //m.def("parse",
-  //  nb::overload_cast<const std::vector<uint8_t>&, const std::string&>(&Parser::parse),
-  //  "Parse the given raw data and return a " RST_CLASS_REF(lief.VDEX.File) " object"_a,
-  //  "raw"_a, "name"_a = "", nb::rv_policy::take_ownership);
-
   m.def("parse",
-      [] (nb::object byteio, const std::string& name) {
-        if (auto stream = PyIOStream::from_python(std::move(byteio))) {
+      [] (nb::object obj, const std::string& name) {
+        if (auto path_str = path_to_str(obj)) {
+          return nb::cast(Parser::parse(std::move(*path_str)));
+        }
+
+        if (auto stream = PyIOStream::from_python(obj)) {
           auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
           return nb::cast(Parser::parse(stream->content(), name));
         }
-        logging::log(logging::LOG_ERR, "Can't create a LIEF stream interface over the provided io");
+        logging::log(logging::LOG_ERR,
+                     "LIEF parser interface does not support Python object: " +
+                     type2str(obj));
         return nb::none();
       },
-      "io"_a, "name"_a = "",
+      "obj"_a, "name"_a = "",
+      "parse(obj: io.IOBase | os.PathLike, name: str = ...) -> Optional[lief.VDEX.File]"_p,
       nb::rv_policy::take_ownership);
 }
 }
