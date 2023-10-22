@@ -18,42 +18,16 @@
 #include <nanobind/nanobind.h>
 
 #define LIEF_PY_DEFAULT_CTOR(Class_, Ty) \
-  Class_(Ty obj_) : obj(std::move(obj_)) {}
+  Class_(Ty obj_) : nanobind::object(obj_, nanobind::detail::borrow_t{}) {}
 
-#define LIEF_PY_DEFAULT_WRAPPER(Class_)       \
-  Class_(const Class_&) = default;            \
-  Class_(Class_&&) = default;                 \
-                                              \
-  Class_& operator=(const Class_&) = default; \
-  Class_& operator=(Class_&&) = default;      \
-                                              \
-  operator nanobind::object () const {        \
-    return obj;                               \
-  }                                           \
-                                              \
-  operator nanobind::object && () {           \
-    return std::move(obj);                    \
-  }                                           \
-                                              \
-  Class_() : obj(nanobind::none()) {}         \
-  nanobind::object obj;
-
-
-#define LIEF_PY_DEFAULT_NB_CASTER(Class_, Typing)                   \
-NAMESPACE_BEGIN(NB_NAMESPACE)                                       \
-NAMESPACE_BEGIN(detail)                                             \
-template <> struct type_caster<Class_> {                            \
-  NB_TYPE_CASTER(Class_, const_name(Typing));                       \
-                                                                    \
-  bool from_python(handle src, uint8_t, cleanup_list *) noexcept {  \
-    return false;                                                   \
-  }                                                                 \
-  static handle from_cpp(const Class_ &value, rv_policy,            \
-                         cleanup_list *) noexcept {                 \
-    return value.obj;                                               \
-  }                                                                 \
-};                                                                  \
-NAMESPACE_END(detail)                                               \
-NAMESPACE_END(NB_NAMESPACE)
-
+#define NB_OBJECT_DEFAULT_NONAME(Type, Parent, Check)      \
+public:                                                    \
+    NB_INLINE Type(handle h, ::nanobind::detail::borrow_t) \
+        : Parent(h, ::nanobind::detail::borrow_t{}) { }    \
+    NB_INLINE Type(handle h, ::nanobind::detail::steal_t)  \
+        : Parent(h, ::nanobind::detail::steal_t{}) { }     \
+    NB_INLINE static bool check_(handle h) {               \
+        return Check(h.ptr());                             \
+    }                                                      \
+    NB_INLINE Type() : Parent() {}
 #endif

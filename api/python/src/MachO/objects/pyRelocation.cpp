@@ -26,21 +26,25 @@
 #include "typing.hpp"
 
 namespace LIEF::MachO::py {
-struct relocations_typing {
-  LIEF_PY_DEFAULT_CTOR(relocations_typing, nb::object);
 
-  LIEF_PY_DEFAULT_WRAPPER(relocations_typing);
+
+struct relocations_typing : public nanobind::object {
+  LIEF_PY_DEFAULT_CTOR(relocations_typing, nb::object);
+  NB_OBJECT_DEFAULT(relocations_typing, object,
+  "Union["
+    "lief.MachO.X86_RELOCATION, "
+    "lief.MachO.X86_64_RELOCATION, "
+    "lief.MachO.PPC_RELOCATION, "
+    "lief.MachO.ARM_RELOCATION, "
+    "lief.MachO.ARM64_RELOCATION, "
+    "lief.MachO.REBASE_TYPES, "
+  "]", check)
+
+  static bool check(handle h) {
+    return true;
+  }
 };
 }
-
-LIEF_PY_DEFAULT_NB_CASTER(LIEF::MachO::py::relocations_typing,
-    "Union[" "lief.MachO.X86_RELOCATION, "
-             "lief.MachO.X86_64_RELOCATION, "
-             "lief.MachO.PPC_RELOCATION, "
-             "lief.MachO.ARM_RELOCATION, "
-             "lief.MachO.ARM64_RELOCATION, "
-             "lief.MachO.REBASE_TYPES, "
-         "]");
 
 namespace LIEF::MachO::py {
 

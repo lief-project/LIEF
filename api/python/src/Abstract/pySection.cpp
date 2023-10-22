@@ -28,15 +28,16 @@
 
 
 namespace LIEF::py {
-struct search_result {
+
+struct search_result : public nanobind::object {
   LIEF_PY_DEFAULT_CTOR(search_result, nanobind::object);
-  LIEF_PY_DEFAULT_WRAPPER(search_result);
+
+  NB_OBJECT_DEFAULT(search_result, object, "Optional[int]", check)
+
+  static bool check(handle h) {
+    return true;
+  }
 };
-}
-
-LIEF_PY_DEFAULT_NB_CASTER(LIEF::py::search_result, "Optional[int]")
-
-namespace LIEF::py {
 
 template<>
 void create<Section>(nb::module_& m) {

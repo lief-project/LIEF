@@ -24,36 +24,24 @@
 namespace LIEF::py {
 
 template<class RetTy>
-struct typing_error {
+struct typing_error : public nanobind::object {
   using value_type = typename RetTy::value_type;
   using err_type = typename RetTy::error_type;
+
+  static constexpr auto Name = nanobind::detail::const_name("Union[") +
+                 nanobind::detail::make_caster<value_type>::Name +
+      nanobind::detail::const_name(", ") +
+                 nanobind::detail::make_caster<err_type>::Name +
+      nanobind::detail::const_name("]");
+
   LIEF_PY_DEFAULT_CTOR(typing_error, nanobind::object);
-  LIEF_PY_DEFAULT_WRAPPER(typing_error);
+  NB_OBJECT_DEFAULT_NONAME(typing_error, object, check)
+
+  static bool check(handle h) {
+    return true;
+  }
 };
 }
-
-NAMESPACE_BEGIN(NB_NAMESPACE)
-NAMESPACE_BEGIN(detail)
-template<class T>
-struct type_caster<LIEF::py::typing_error<T>> {
-  using typing_type = typename LIEF::py::typing_error<T>;
-  NB_TYPE_CASTER(LIEF::py::typing_error<T>,
-      const_name("Union[") +
-                 make_caster<typename typing_type::value_type>::Name +
-      const_name(", ") +
-                 make_caster<typename typing_type::err_type>::Name +
-      const_name("]"));
-
-  bool from_python(handle src, uint8_t, cleanup_list *) noexcept {
-    return false;
-  }
-  static handle from_cpp(const LIEF::py::typing_error<T> &value, rv_policy,
-                         cleanup_list *) noexcept {
-    return value.obj;
-  }
-};
-NAMESPACE_END(detail)
-NAMESPACE_END(NB_NAMESPACE)
 
 namespace LIEF::py {
 template <class Func, typename... Ts,

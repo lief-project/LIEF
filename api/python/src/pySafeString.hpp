@@ -18,14 +18,16 @@
 #include <string>
 #include "typing.hpp"
 
-struct safe_string_t {
+struct safe_string_t : public nanobind::object {
   LIEF_PY_DEFAULT_CTOR(safe_string_t, nanobind::str);
   LIEF_PY_DEFAULT_CTOR(safe_string_t, nanobind::bytes);
 
-  LIEF_PY_DEFAULT_WRAPPER(safe_string_t);
-};
+  NB_OBJECT_DEFAULT(safe_string_t, object, "Union[str, bytes]", check)
 
-LIEF_PY_DEFAULT_NB_CASTER(safe_string_t, "Union[str, bytes]");
+  static bool check(handle h) {
+    return true;
+  }
+};
 
 namespace LIEF::py {
 safe_string_t safe_string(const std::string& str);

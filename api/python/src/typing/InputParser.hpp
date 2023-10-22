@@ -18,28 +18,14 @@
 #include "typing.hpp"
 
 namespace LIEF::py::typing {
-struct InputParser {
+struct InputParser : public nanobind::object {
   LIEF_PY_DEFAULT_CTOR(InputParser, nanobind::object);
-  LIEF_PY_DEFAULT_WRAPPER(InputParser);
-};
-}
 
-NAMESPACE_BEGIN(NB_NAMESPACE)
-NAMESPACE_BEGIN(detail)
-template <> struct type_caster<LIEF::py::typing::InputParser> {
-  using Type = LIEF::py::typing::InputParser;
-  NB_TYPE_CASTER(LIEF::py::typing::InputParser, const_name("Union[io.IOBase | os.PathLike]"));
+  NB_OBJECT_DEFAULT(InputParser, object, "Union[io.IOBase | os.PathLike]", check)
 
-  bool from_python(handle src, uint8_t, cleanup_list *) noexcept {
-    value = nanobind::object(src, nanobind::detail::borrow_t());
+  static bool check(handle h) {
     return true;
   }
-  static handle from_cpp(const Type &value, rv_policy,
-                         cleanup_list *) noexcept {
-    return nanobind::none();
-  }
 };
-NAMESPACE_END(detail)
-NAMESPACE_END(NB_NAMESPACE)
-
+}
 #endif
