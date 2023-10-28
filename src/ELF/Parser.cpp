@@ -205,8 +205,9 @@ bool Parser::should_swap() const {
 
 
 ELF_CLASS determine_elf_class(BinaryStream& stream) {
-  ELF_CLASS from_ei_class  = ELF_CLASS::ELFCLASSNONE;
-  ELF_CLASS from_e_machine = ELF_CLASS::ELFCLASSNONE;
+  auto from_ei_class  = ELF_CLASS::ELFCLASSNONE;
+  auto from_e_machine = ELF_CLASS::ELFCLASSNONE;
+  auto file_type = E_TYPE::ET_NONE;
 
   // First, check EI_CLASS
   if (auto res = stream.peek<Header::identity_t>()) {
@@ -216,6 +217,11 @@ ELF_CLASS determine_elf_class(BinaryStream& stream) {
     if (typed == ELF_CLASS::ELFCLASS32 || typed == ELF_CLASS::ELFCLASS64) {
       from_ei_class = typed;
     }
+  }
+
+  constexpr size_t e_type_off = offsetof(details::Elf32_Ehdr, e_type);
+  if (auto res = stream.peek<uint16_t>(e_type_off)) {
+    file_type = static_cast<E_TYPE>(*res);
   }
 
   // Try to determine the size based on Elf_Ehdr.e_machine
@@ -258,6 +264,10 @@ ELF_CLASS determine_elf_class(BinaryStream& stream) {
       from_ei_class != ELF_CLASS::ELFCLASSNONE)
   {
     if (from_e_machine == from_ei_class) {
+      return from_ei_class;
+    }
+
+    if (file_type == E_TYPE::ET_REL) {
       return from_ei_class;
     }
 

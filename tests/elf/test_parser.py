@@ -131,3 +131,7 @@ def test_io():
 
 def test_path_like():
     assert lief.ELF.parse(Path(get_sample('ELF/test_897.elf'))) is not None
+
+def test_984():
+    elf = lief.ELF.parse(get_sample('ELF/issue_984_ilp32.o'))
+    assert len(elf.sections) > 0
