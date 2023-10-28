@@ -72,7 +72,7 @@ jobs:
       - name: stop sccache server
         run: sccache --stop-server || true
   tests:
-    runs-on: windows-2019
+    runs-on: windows-2022
     if: "!contains(github.event.commits[0].message, '[skip-test]')"
     strategy:
       matrix:
@@ -146,7 +146,7 @@ jobs:
       - name: stop sccache server
         run: sccache --stop-server || true
   wheels:
-    runs-on: windows-2019
+    runs-on: windows-2022
     needs: build-sdk
     strategy:
       matrix:
