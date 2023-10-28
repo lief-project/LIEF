@@ -85,7 +85,7 @@ class Config:
     def get_python_opt(self):
         config = ["-DLIEF_PYTHON_API=on"]
         interpreter = Path(sys.executable)
-        base = sysconfig.get_config_var("base")
+        base = sysconfig.get_config_var("installed_base")
         if base is not None:
             config += [f"-DPython_ROOT_DIR={base}"]
 
@@ -377,7 +377,9 @@ class build_ext(_build_ext):
     def run(self):
         for ext in self.extensions:
             self.build_extension(ext)
-        self.copy_extensions_to_source()
+
+        if self.inplace:
+            self.copy_extensions_to_source()
 
     def _fix_platform(self):
         if sys.platform == "darwin":
@@ -491,9 +493,8 @@ setup(
     long_description=long_description.read_text(),
     long_description_content_type="text/x-rst; charset=UTF-8",
     distclass=LiefDistribution,
-    scripts=['examples/elf_reader.py', 'examples/pe_reader.py', 'examples/macho_reader.py'],
     packages=["lief"],
-    package_data={"lief": ["py.typed", "*.pyi", "*.so", "*.pyd"]},
+    package_data={"lief": ["py.typed", "*.pyi", "*.pyd"]},
     ext_modules=[Module("lief._lief")],
     cmdclass=cmdclass,
     version=version

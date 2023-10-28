@@ -13,7 +13,7 @@ env:
 
 jobs:
   build-sdk:
-    runs-on: windows-2019
+    runs-on: windows-2022
     strategy:
       matrix:
         arch: ['x64', 'x86']
@@ -36,7 +36,7 @@ jobs:
           choco install sccache
       - uses: ilammy/msvc-dev-cmd@v1
         with:
-          toolset: "14.16"
+          vsversion: "2022"
       - name: Get Date
         id: get-date
         run: |
@@ -96,7 +96,7 @@ jobs:
           choco install sccache
       - uses: ilammy/msvc-dev-cmd@v1
         with:
-          toolset: "14.16"
+          vsversion: "2022"
       - name: Get Date
         id: get-date
         run: |
@@ -150,7 +150,7 @@ jobs:
     needs: build-sdk
     strategy:
       matrix:
-        python-version: [3.8, 3.9, '3.10', '3.11', '3.12-dev']
+        python-version: [3.8, 3.9, '3.10', '3.11', '3.12']
         arch: ['x86', 'x64']
       fail-fast: false
     env:
@@ -172,7 +172,7 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
       - uses: ilammy/msvc-dev-cmd@v1
         with:
-          toolset: "14.16"
+          vsversion: "2022"
       - name: Get Date
         id: get-date
         run: |

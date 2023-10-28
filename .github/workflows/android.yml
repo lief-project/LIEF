@@ -36,7 +36,7 @@ jobs:
            -e CCACHE_DIR=/ccache      \
            -v $GITHUB_WORKSPACE:/work \
            -v $HOME/.ccache:/ccache   \
-          --rm liefproject/android-${ARCH} bash /work/scripts/docker/android-${ARCH}.sh
+          --rm liefproject/android-${ARCH} bash /work/scripts/docker/android-sdk-${ARCH}
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v3
         with:

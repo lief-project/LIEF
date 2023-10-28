@@ -50,7 +50,7 @@ jobs:
            -e PYTHON_VERSION=$PYTHON_VERSION \
            -e PYTHON_BINARY=/opt/python/cp39-cp39/bin/python3.9 \
            -v $GITHUB_WORKSPACE:/src \
-           liefproject/manylinux_2_28_x86_64 bash /src/scripts/docker/run_linux_test.sh
+           liefproject/manylinux_2_28_x86_64 bash /src/scripts/docker/test-linux-x64
   windows:
     runs-on: windows-latest
     steps:

@@ -9,11 +9,11 @@ on:
       - "**"
 
 env:
-  python-version: '3.9'
+  python-version: '3.12'
 
 jobs:
   quick-test:
-    runs-on: windows-2019
+    runs-on: windows-2022
     strategy:
       matrix:
         arch: [x64, x86]
@@ -37,7 +37,7 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
     - uses: ilammy/msvc-dev-cmd@v1
       with:
-        toolset: "14.16"
+        vsversion: "2022"
     - name: Get Date
       id: get-date
       run: |

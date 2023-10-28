@@ -15,7 +15,7 @@ jobs:
            -e BUILD_DIR=/tmp/build_gcc \
            -e SRC_DIR=/src \
            -v $GITHUB_WORKSPACE:/src \
-           liefproject/sanity:latest bash /src/scripts/docker/gcc.sh
+           liefproject/sanity:latest bash /src/scripts/docker/test-gcc
   clang:
     runs-on: ubuntu-latest
     steps:
@@ -29,7 +29,7 @@ jobs:
            -e BUILD_DIR=/tmp/build_clang \
            -e SRC_DIR=/src \
            -v $GITHUB_WORKSPACE:/src \
-           liefproject/sanity:latest bash /src/scripts/docker/clang.sh
+           liefproject/sanity:latest bash /src/scripts/docker/test-clang
   asan:
     runs-on: ubuntu-latest
     steps:
@@ -41,4 +41,4 @@ jobs:
         run: |
           docker run --rm \
            -v $GITHUB_WORKSPACE:/src \
-           liefproject/sanity:latest bash /src/scripts/docker/asan_check.sh
+           liefproject/sanity:latest bash /src/scripts/docker/test-asan

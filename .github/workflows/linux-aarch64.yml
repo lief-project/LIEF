@@ -24,14 +24,19 @@ jobs:
         shell: bash
         run: |
           mkdir -p $RUNNER_TEMP/lief-install
-          docker run --name lief_sdk --rm         \
-            -e CCACHE_COMPRESS=1                  \
-            -e CCACHE_MAXSIZE=10.0G               \
-            -e CCACHE_DIR=/ccache                 \
-            -v $GITHUB_WORKSPACE:/work            \
-            -v $RUNNER_TEMP/lief-install:/install \
-            -v $HOME/.ccache:/ccache              \
-            liefproject/manylinux2014-aarch64 bash /work/scripts/docker/linux-aarch64.sh
+          mkdir -p $HOME/.ccache
+
+          chmod -R 777 $HOME/.ccache
+
+          docker run --name lief-sdk -u 1001:1001 --rm \
+            -e CCACHE_COMPRESS=1                       \
+            -e CCACHE_MAXSIZE=10.0G                    \
+            -e CCACHE_DIR=/ccache                      \
+            -v $GITHUB_WORKSPACE:/src                  \
+            -v $RUNNER_TEMP/lief-install:/install      \
+            -v $HOME/.ccache:/ccache                   \
+            liefproject/manylinux2014-aarch64          \
+            bash /src/scripts/docker/linux-sdk-aarch64
       - name: 'Upload SDK Artifact'
         uses: actions/upload-artifact@v3
         with:
@@ -49,7 +54,7 @@ jobs:
     needs: linux-sdk
     strategy:
       matrix:
-        python-version: [3.8, 3.9, '3.10', '3.11']
+        python-version: [3.8, 3.9, '3.10', '3.11', '3.12']
     steps:
       - uses: actions/checkout@v3
         with:
@@ -76,18 +81,23 @@ jobs:
         env:
           PYTHON_VERSION: ${{ matrix.python-version }}
         run: |
+          mkdir -p $HOME/.ccache
+          chmod -R 777 $HOME/.ccache
+
           PYTHON_VERSION_ALT=$(echo "${PYTHON_VERSION}" | sed 's/\.//') # Transform 3.8 -> 38
-          docker run --rm                                       \
-           -e CCACHE_COMPRESS=1                                 \
-           -e CCACHE_MAXSIZE=10.0G                              \
-           -e CCACHE_CPP2=1                                     \
-           -e CCACHE_DIR=/ccache                                \
-           -e PYTHON_VERSION=$PYTHON_VERSION_ALT                \
-           -e PYTHON_BINARY=/opt/python/cp${PYTHON_VERSION_ALT}-cp${PYTHON_VERSION_ALT}/bin/python${PYTHON_VERSION} \
-           -v $GITHUB_WORKSPACE:/work                           \
-           -v $HOME/.ccache:/ccache                             \
-           -v $RUNNER_TEMP/lief-install:/install                \
-           liefproject/manylinux2014-aarch64 bash /work/scripts/docker/manylinux2014-aarch64.sh
+          PYTHON_BINARY="/opt/python/cp${PYTHON_VERSION_ALT}-cp${PYTHON_VERSION_ALT}/bin/python${PYTHON_VERSION}"
+          docker run -u 1001:1001 --rm           \
+           -e CCACHE_COMPRESS=1                  \
+           -e CCACHE_MAXSIZE=10.0G               \
+           -e CCACHE_CPP2=1                      \
+           -e CCACHE_DIR=/ccache                 \
+           -e PYTHON_VERSION=$PYTHON_VERSION_ALT \
+           -e PYTHON_BINARY=$PYTHON_BINARY       \
+           -v $GITHUB_WORKSPACE:/src             \
+           -v $HOME/.ccache:/ccache              \
+           -v $RUNNER_TEMP/lief-install:/install \
+           liefproject/manylinux2014-aarch64     \
+           bash /src/scripts/docker/linux-py-aarch64
       - name: 'Artifact'
         uses: actions/upload-artifact@v3
         with:
@@ -124,6 +134,7 @@ jobs:
             -e GITHUB_REPOSITORY=$GITHUB_REPOSITORY           \
             -e LIEF_S3_KEY=$LIEF_S3_KEY                       \
             -e LIEF_S3_SECRET=$LIEF_S3_SECRET                 \
-            liefproject/deploy python3 /src/.github/deploy.py /runner_tmp/artifacts
+            liefproject/deploy                                \
+            python3 /src/.github/deploy.py /runner_tmp/artifacts
 
 
