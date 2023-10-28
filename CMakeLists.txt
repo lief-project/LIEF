@@ -20,9 +20,11 @@ include(CheckCCompilerFlag)
 include(ExternalProject)
 include(CMakePackageConfigHelpers)
 
+find_package(Git)
+
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git"
-   AND IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/.git")
-  find_package(Git REQUIRED)
+   AND IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/.git"
+   AND Git_FOUND)
 
   # Information from git
   # ====================
