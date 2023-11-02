@@ -71,7 +71,11 @@ Builder::Builder(Binary& binary) :
 
 
 bool Builder::should_swap() const {
-  switch (binary_->header().abstract_endianness()) {
+  return Builder::should_swap(binary_);
+}
+
+bool Builder::should_swap(const Binary *binary) {
+  switch (binary->header().abstract_endianness()) {
 #ifdef __BYTE_ORDER__
 #if  defined(__ORDER_LITTLE_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
     case ENDIANNESS::ENDIAN_BIG:

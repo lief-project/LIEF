@@ -190,7 +190,7 @@ vector_iostream& vector_iostream::seekp(vector_iostream::off_type p, std::ios_ba
 
     case std::ios_base::end:
       {
-        //current_pos_ = p;
+        current_pos_ = raw_.size() + p;
         break;
       }
 
@@ -228,7 +228,14 @@ void vector_iostream::set_endian_swap(bool swap) {
 }
 
 vector_iostream& vector_iostream::write(size_t count, uint8_t value) {
-  raw_.insert(std::end(raw_), count, value);
+  const auto u_pos = static_cast<size_t>(current_pos_);
+  const auto u_rem = static_cast<size_t>(raw_.size() - u_pos);
+  if (u_pos < raw_.size()) {
+    std::memset(raw_.data() + u_pos, value, std::min(count, u_rem));
+  }
+  if (u_rem < count) {
+    raw_.insert(std::end(raw_), count - u_rem, value);
+  }
   current_pos_ += count;
   return *this;
 }

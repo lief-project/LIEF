@@ -184,6 +184,15 @@ class LIEF_API Parser : public LIEF::Parser {
   ok_error_t parse_pltgot_relocations(uint64_t offset, uint64_t size);
 
 
+  //! Parse Android packed relocations
+  template<typename ELF_T, typename REL_T>
+  ok_error_t parse_android_relocations(uint64_t offset, uint64_t size);
+
+  //! Parse `.relr.dyn` relocations
+  template<typename ELF_T, typename REL_T>
+  ok_error_t parse_relrdyn_relocations(uint64_t offset, uint64_t size, uint64_t entry_size);
+
+
   //! Parse relocations using LIEF::ELF::Section.
   //! Section relocations are usually found in object files
   template<typename ELF_T, typename REL_T>

@@ -112,6 +112,40 @@ uint32_t Relocation::type() const {
   return type_;
 }
 
+bool Relocation::type_is_relative() const {
+  switch (architecture()) {
+    case ARCH::EM_AARCH64:
+      return type() == static_cast<uint32_t>(RELOC_AARCH64::R_AARCH64_RELATIVE);
+    case ARCH::EM_ARM:
+      return type() == static_cast<uint32_t>(RELOC_ARM::R_ARM_RELATIVE);
+    case ARCH::EM_HEXAGON:
+      return type() == static_cast<uint32_t>(RELOC_HEXAGON::R_HEX_RELATIVE);
+    case ARCH::EM_LOONGARCH:
+      return type() == static_cast<uint32_t>(RELOC_LOONGARCH::R_LARCH_RELATIVE);
+    case ARCH::EM_PPC:
+      return type() == static_cast<uint32_t>(RELOC_POWERPC32::R_PPC_RELATIVE);
+    case ARCH::EM_PPC64:
+      return type() == static_cast<uint32_t>(RELOC_POWERPC64::R_PPC64_RELATIVE);
+    case ARCH::EM_SPARC:
+      return type() == static_cast<uint32_t>(RELOC_SPARC::R_SPARC_RELATIVE);
+    case ARCH::EM_X86_64:
+      return type() == static_cast<uint32_t>(RELOC_x86_64::R_X86_64_RELATIVE);
+    case ARCH::EM_386:
+      return type() == static_cast<uint32_t>(RELOC_i386::R_386_RELATIVE);
+    case ARCH::EM_S390:
+      return type() == static_cast<uint32_t>(RELOC_SYSTEMZ::R_390_RELATIVE);
+    case ARCH::EM_MIPS:
+    case ARCH::EM_MIPS_RS3_LE:
+    case ARCH::EM_MIPS_X:
+      return type() == ((static_cast<uint32_t>(RELOC_MIPS::R_MIPS_64) << 8)
+                       | static_cast<uint32_t>(RELOC_MIPS::R_MIPS_REL32)) ||
+             type() == static_cast<uint32_t>(RELOC_MIPS::R_MIPS_REL32);
+    default:
+      LIEF_ERR("Architecture {} relative relocation check not implemented", to_string(architecture()));
+      return false;
+  }
+}
+
 
 const Symbol* Relocation::symbol() const {
   return symbol_;

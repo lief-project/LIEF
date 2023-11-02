@@ -181,9 +181,31 @@ ok_error_t Builder::build_exe_lib() {
     } else { LIEF_DEBUG("PT_DYNAMIC: -0x{:x} bytes", osize - dynamic_needed_size); }
   }
 
+  if (binary_->has(DYNAMIC_TAGS::DT_ANDROID_RELA) || binary_->has(DYNAMIC_TAGS::DT_ANDROID_REL)) {
+    if (config_.android_rela) {
+      const size_t android_reloc_needed_size = layout->android_relocations_size<ELF_T>();
+      const uint64_t osize = binary_->sizing_info_->android_rela;
+      const bool should_relocate = android_reloc_needed_size > osize || config_.force_relocate;
+      if (should_relocate) {
+        LIEF_DEBUG("[-] Need to relocate DT_ANDROID_REL(A) (0x{:x} new bytes)", android_reloc_needed_size - osize);
+        layout->relocate_android_reloc(android_reloc_needed_size);
+      } else { LIEF_DEBUG("DT_ANDROID_REL(A): -0x{:x} bytes", osize - android_reloc_needed_size); }
+    }
+  }
+
+  if (binary_->has(DYNAMIC_TAGS::DT_RELR) && config_.relr) {
+    const size_t relr_needed_size = layout->relrdyn_relocations_size<ELF_T>();
+    const uint64_t osize = binary_->sizing_info_->relr;
+    const bool should_relocate = relr_needed_size > osize || config_.force_relocate;
+    if (should_relocate) {
+      LIEF_DEBUG("[-] Need to relocate .relr.dyn section (0x{:x} new bytes)", relr_needed_size - osize);
+      layout->relocate_dynamic(relr_needed_size);
+    } else { LIEF_DEBUG("DT_RELR: -0x{:x} bytes", osize - relr_needed_size); }
+  }
+
   if (binary_->has(DYNAMIC_TAGS::DT_RELA) || binary_->has(DYNAMIC_TAGS::DT_REL)) {
-    const size_t dyn_reloc_needed_size = layout->dynamic_relocations_size<ELF_T>();
     if (config_.rela) {
+      const size_t dyn_reloc_needed_size = layout->dynamic_relocations_size<ELF_T>();
       const uint64_t osize = binary_->sizing_info_->rela;
       const bool should_relocate = dyn_reloc_needed_size > osize || config_.force_relocate;
       if (should_relocate) {
@@ -402,6 +424,14 @@ ok_error_t Builder::build_exe_lib() {
 
   if (config_.sym_verneed && binary_->has(DYNAMIC_TAGS::DT_VERNEED)) {
     build_symbol_requirement<ELF_T>();
+  }
+
+  if (config_.android_rela) {
+    Builder::build_android_relocations<ELF_T>(binary_);
+  }
+
+  if (config_.relr) {
+    Builder::build_relrdyn_relocations<ELF_T>(binary_);
   }
 
   if (config_.rela) {
@@ -1207,6 +1237,37 @@ ok_error_t Builder::build_dynamic_symbols() {
 }
 
 template<typename ELF_T>
+result<typename ELF_T::Elf_Xword> get_relocation_info(const Relocation& relocation, const Binary::symbols_t& symbols) {
+  using Elf_Xword  = typename ELF_T::Elf_Xword;
+
+  // look for symbol index
+  uint32_t symidx = 0;
+  const Symbol* symbol = relocation.symbol();
+  if (symbol != nullptr) {
+    const auto it_name = std::find_if(std::begin(symbols), std::end(symbols),
+        [symbol] (const std::unique_ptr<Symbol>& s) {
+          return s.get() == symbol;
+        });
+
+    if (it_name == std::end(symbols)) {
+      LIEF_WARN("Can't find the relocation's symbol '{}'", symbol->name());
+      return make_error_code(lief_errors::not_found);
+    }
+
+    symidx = static_cast<uint32_t>(std::distance(std::begin(symbols), it_name));
+  }
+
+  Elf_Xword r_info = 0;
+  if (std::is_same<ELF_T, details::ELF32>::value) {
+    r_info = (static_cast<Elf_Xword>(symidx) << 8) | relocation.type();
+  } else {
+    // NOTE: To suppress a warning we require a cast here, this path is not constexpr but only uses Elf64_Xword
+    r_info = (static_cast<details::ELF64::Elf_Xword>(symidx) << 32) | (relocation.type() & 0xffffffffL);
+  }
+  return r_info;
+}
+
+template<typename ELF_T>
 ok_error_t Builder::build_section_relocations() {
   using Elf_Addr   = typename ELF_T::Elf_Addr;
   using Elf_Xword  = typename ELF_T::Elf_Xword;
@@ -1239,27 +1300,11 @@ ok_error_t Builder::build_section_relocations() {
               });
     for (const Relocation* reloc : relocs) {
       Section* reloc_section = sec_relo_map.at(section);
-      uint32_t symidx = 0;
-      const Symbol* sym = reloc->symbol();
-      if (sym != nullptr) {
-        const auto it_sym = std::find_if(std::begin(binary_->static_symbols_), std::end(binary_->static_symbols_),
-                                         [sym] (const std::unique_ptr<Symbol>& s) {
-                                           return s.get() == sym;
-                                         });
-        if (it_sym == std::end(binary_->static_symbols_)) {
-          LIEF_WARN("Can find the relocation's symbol '{}'", sym->name());
-          continue;
-        }
-
-        symidx = static_cast<uint32_t>(std::distance(std::begin(binary_->static_symbols_), it_sym));
-      }
-
-      Elf_Xword info = 0;
-      if (std::is_same<ELF_T, details::ELF32>::value) {
-        info = (static_cast<Elf_Xword>(symidx) << 8) | reloc->type();
+      Elf_Xword info;
+      if (const auto val = get_relocation_info<ELF_T>(*reloc, binary_->dynamic_symbols_)) {
+        info = *val;
       } else {
-        // NOTE: To suppress a warning we require a cast here, this path is not constexpr but only uses Elf64_Xword
-        info = (static_cast<details::ELF64::Elf_Xword>(symidx) << 32) | (reloc->type() & 0xffffffffL);
+        return make_error_code(val.error());
       }
 
       if (is_rela) {
@@ -1340,39 +1385,12 @@ ok_error_t Builder::build_dynamic_relocations() {
 
   vector_iostream content(should_swap());
   for (const Relocation& relocation : binary_->dynamic_relocations()) {
-
-    // look for symbol index
-    uint32_t idx = 0;
-    const Symbol* symbol = relocation.symbol();
-    if (symbol != nullptr) {
-      const std::string& name = symbol->name();
-      const auto it_name = std::find_if(
-          std::begin(binary_->dynamic_symbols_), std::end(binary_->dynamic_symbols_),
-          [&name] (const std::unique_ptr<Symbol>& s) {
-            return s->name() == name;
-          });
-
-      if (it_name == std::end(binary_->dynamic_symbols_)) {
-        LIEF_ERR("Unable to find the symbol associated with the relocation");
-        return make_error_code(lief_errors::not_found);
-      }
-
-      idx = static_cast<uint32_t>(std::distance(std::begin(binary_->dynamic_symbols_), it_name));
-    }
-
-    uint32_t info = relocation.info();
-    if (idx > 0) {
-      info = idx;
-    }
-
-    Elf_Xword r_info = 0;
-    if (std::is_same<ELF_T, details::ELF32>::value) {
-      r_info = (static_cast<Elf_Xword>(info) << 8) | relocation.type();
+    Elf_Xword r_info;
+    if (const auto val = get_relocation_info<ELF_T>(relocation, binary_->dynamic_symbols_)) {
+      r_info = *val;
     } else {
-      // NOTE: To suppress a warning we require a cast here, this path is not constexpr but only uses Elf64_Xword
-      r_info = (static_cast<details::ELF64::Elf_Xword>(info) << 32) | (relocation.type() & 0xffffffffL);
+      return make_error_code(val.error());
     }
-
 
     if (is_rela) {
       Elf_Rela relahdr;
@@ -1392,6 +1410,337 @@ ok_error_t Builder::build_dynamic_relocations() {
   binary_->patch_address(dt_reloc->value(), content.raw());
   return ok();
 }
+
+
+template<typename ELF_T, typename Binary_T>
+result<uint64_t> Builder::build_android_relocations(Binary_T *const binary) {
+  using Elf_Xword = typename ELF_T::Elf_Xword;
+  using Elf_Rela  = typename ELF_T::Elf_Rela;
+
+  static const std::vector<char> MAGIC_VALUE = {'A', 'P', 'S', '2'};
+
+  auto android_relocations = binary->android_relocations();
+  if (android_relocations.empty()) {
+    if constexpr (not std::is_const<Binary_T>::value) {
+      if (auto *DT = binary->get(DYNAMIC_TAGS::DT_ANDROID_REL)) {
+        if (auto *sec = binary->section_from_virtual_address(DT->value())) {
+          sec->size(0);
+        }
+      }
+      if (auto *DT = binary->get(DYNAMIC_TAGS::DT_ANDROID_RELA)) {
+        if (auto *sec = binary->section_from_virtual_address(DT->value())) {
+          sec->size(0);
+        }
+      }
+    }
+    return 0;
+  }
+
+  if constexpr (std::is_const<Binary_T>::value) {
+    LIEF_DEBUG("[+] Estimate size of android packed relocations");
+  } else {
+    LIEF_DEBUG("[+] Building android packed relocations");
+  }
+
+  const DynamicEntry *dt_android_reloc   = nullptr;
+  const DynamicEntry *dt_android_relocsz = nullptr;
+
+  const auto dt_android_rela = binary->get(DYNAMIC_TAGS::DT_ANDROID_RELA);
+
+  const bool is_android_rela = dt_android_rela != nullptr;
+  if (is_android_rela) {
+    dt_android_reloc   = dt_android_rela;
+    dt_android_relocsz = binary->get(DYNAMIC_TAGS::DT_ANDROID_RELASZ);
+  } else {
+    // Fallback on relation type REL
+    dt_android_reloc   = binary->get(DYNAMIC_TAGS::DT_ANDROID_REL);
+    dt_android_relocsz = binary->get(DYNAMIC_TAGS::DT_ANDROID_RELSZ);
+  }
+
+  if (dt_android_reloc == nullptr) {
+    LIEF_ERR("Unable to find the DT_ANDROID_REL/DT_ANDROID_RELA");
+    return make_error_code(lief_errors::not_found);
+  }
+
+  if (dt_android_relocsz == nullptr) {
+    LIEF_ERR("Unable to find the DT_ANDROID_RELSZ/DT_ANDROID_RELASZ");
+    return make_error_code(lief_errors::not_found);
+  }
+
+  vector_iostream content(Builder::should_swap(binary));
+  content.reserve(dt_android_relocsz->value());
+
+  // APS2 header
+  content.write(MAGIC_VALUE);
+  content.write_sleb128(android_relocations.size());
+  content.write_sleb128(0);
+
+
+  // ==== implementation referenced from LLD linker (https://llvm.org)
+
+  LIEF_DEBUG("Split relative and non-relative relocations");
+  std::vector<Elf_Rela> relatives, non_relatives;
+  for (const auto &reloc : android_relocations) {
+    Elf_Rela r;
+    r.r_offset = reloc.address();
+    if (const auto val = get_relocation_info<ELF_T>(reloc, binary->dynamic_symbols_)) {
+      r.r_info = *val;
+    } else {
+      return make_error_code(val.error());
+    }
+    r.r_addend = reloc.addend();
+
+    if (reloc.type_is_relative()) {
+      relatives.push_back(r);
+    } else {
+      non_relatives.push_back(r);
+    }
+  }
+
+  LIEF_DEBUG("Sort relative relocations by offset");
+  std::sort(relatives.begin(), relatives.end(), [] (const Elf_Rela &a, const Elf_Rela &b) {
+    return a.r_offset < b.r_offset;
+  });
+
+  LIEF_DEBUG("Find larger groups of relative relocations with one-word spacing");
+  std::vector<Elf_Rela> relatives_ungrouped;
+  std::vector<std::vector<Elf_Rela>> relatives_groups;
+  for (auto i = relatives.begin(), e = relatives.end(); i != e;) {
+    std::vector<Elf_Rela> group;
+    do {
+      group.push_back(*i++);
+    } while (i != e && (i - 1)->r_offset + sizeof(Elf_Xword) == i->r_offset);
+
+    if (group.size() < 8) {
+      relatives_ungrouped.insert(relatives_ungrouped.end(), group.begin(), group.end());
+    } else {
+      relatives_groups.emplace_back(std::move(group));
+    }
+  }
+
+  LIEF_DEBUG("Sort non-relative relocations");
+  std::sort(non_relatives.begin(), non_relatives.end(), [] (const Elf_Rela &a, const Elf_Rela &b) {
+    if (a.r_info != b.r_info) {
+      return a.r_info < b.r_info;
+    } else if (a.r_addend != b.r_addend) {
+      return a.r_addend < b.r_addend;
+    } else {
+      return a.r_offset < b.r_offset;
+    }
+  });
+
+  LIEF_DEBUG("Group relocations with the same r_info");
+  std::vector<Elf_Rela> non_relatives_ungrouped;
+  std::vector<std::vector<Elf_Rela>> non_relatives_groups;
+  for (auto i = non_relatives.begin(), e = non_relatives.end(); i != e;) {
+    auto j = i + 1;
+    while (j != e && i->r_info == j->r_info && (!is_android_rela || i->r_addend == j->r_addend)) {
+      ++j;
+    }
+    if (j - i < 3 || (is_android_rela && i->r_addend != 0)) {
+      non_relatives_ungrouped.insert(non_relatives_ungrouped.end(), i, j);
+    } else {
+      non_relatives_groups.emplace_back(i, j);
+    }
+    i = j;
+  }
+
+  LIEF_DEBUG("Sort ungrouped relocations by offset");
+  std::sort(non_relatives_ungrouped.begin(), non_relatives_ungrouped.end(), [] (const Elf_Rela &a, const Elf_Rela &b) {
+    return a.r_offset < b.r_offset;
+  });
+
+
+  uint64_t offset = 0;
+  uint64_t addend = 0;
+
+  const auto write_group = [&] (std::vector<Elf_Rela> group, ANDROID_RELOCATION_FLAGS flags) {
+
+    if (is_android_rela) {
+      if (std::any_of(group.begin(), group.end(), [] (const Elf_Rela &r) { return r.r_addend != 0; })) {
+        flags |= ANDROID_RELOCATION_FLAGS::RELOCATION_GROUP_HAS_ADDEND_FLAG;
+      }
+    }
+
+    // group header
+    content.write_sleb128(group.size());
+    content.write_sleb128(static_cast<int64_t>(flags));
+    if (static_cast<bool>(flags & ANDROID_RELOCATION_FLAGS::RELOCATION_GROUPED_BY_OFFSET_DELTA_FLAG)) {
+      content.write_sleb128(group[0].r_offset - offset);
+      offset = group[0].r_offset;
+    }
+    if (static_cast<bool>(flags & ANDROID_RELOCATION_FLAGS::RELOCATION_GROUPED_BY_INFO_FLAG)) {
+      content.write_sleb128(group[0].r_info);
+    }
+    if (static_cast<bool>(flags & ANDROID_RELOCATION_FLAGS::RELOCATION_GROUP_HAS_ADDEND_FLAG) &&
+        static_cast<bool>(flags & ANDROID_RELOCATION_FLAGS::RELOCATION_GROUPED_BY_ADDEND_FLAG)) {
+      content.write(group[0].r_addend - addend);
+      addend = group[0].r_addend;
+    }
+
+    // write each relocation
+    for (const auto &reloc : group) {
+      if (not static_cast<bool>(flags & ANDROID_RELOCATION_FLAGS::RELOCATION_GROUPED_BY_OFFSET_DELTA_FLAG)) {
+        content.write_sleb128(reloc.r_offset - offset);
+        offset = reloc.r_offset;
+      }
+      if (not static_cast<bool>(flags & ANDROID_RELOCATION_FLAGS::RELOCATION_GROUPED_BY_INFO_FLAG)) {
+        content.write_sleb128(reloc.r_info);
+      }
+      if (static_cast<bool>(flags & ANDROID_RELOCATION_FLAGS::RELOCATION_GROUP_HAS_ADDEND_FLAG) &&
+          not static_cast<bool>(flags & ANDROID_RELOCATION_FLAGS::RELOCATION_GROUPED_BY_ADDEND_FLAG)) {
+        content.write_sleb128(reloc.r_addend - addend);
+        addend = reloc.r_addend;
+      }
+    }
+
+    offset = group.back().r_offset;
+    addend = group.back().r_addend;
+  };
+
+
+  for (const auto &group : relatives_groups) {
+    const auto flags = ANDROID_RELOCATION_FLAGS::RELOCATION_GROUPED_BY_OFFSET_DELTA_FLAG |
+                       ANDROID_RELOCATION_FLAGS::RELOCATION_GROUPED_BY_INFO_FLAG;
+    // the first relocation has a different delta, put it in a separate group
+    write_group({group.begin(), group.begin() + 1}, flags);
+    write_group({group.begin() + 1, group.end()}, flags);
+  }
+
+  if (not relatives_ungrouped.empty()) {
+    write_group(relatives_ungrouped, ANDROID_RELOCATION_FLAGS::RELOCATION_GROUPED_BY_INFO_FLAG);
+  }
+
+  for (const auto &group : non_relatives_groups) {
+    // TODO why is `has_addend_if_rela` missing here in lld?
+    write_group(group, ANDROID_RELOCATION_FLAGS::RELOCATION_GROUPED_BY_INFO_FLAG);
+  }
+
+  if (not non_relatives_ungrouped.empty()) {
+    write_group(non_relatives_ungrouped, ANDROID_RELOCATION_FLAGS::RELOCATION_GROUPED_BY_NONE);
+  }
+
+
+  // done
+  if constexpr (not std::is_const<Binary_T>::value) {
+    if (static_cast<size_t>(content.tellp()) > dt_android_relocsz->value()) {
+      LIEF_ERR("Not enough space was reserved to write DT_ANDROID_REL(A)  (0x{:x} available, 0x{:x} needed)",
+               dt_android_relocsz->value(), content.tellp());
+      return make_error_code(lief_errors::data_too_large);
+    }
+
+    // ensure unused space is `0` (= ignore)
+    content.write(dt_android_relocsz->value() - content.tellp(), 0);
+
+    binary->patch_address(dt_android_reloc->value(), content.raw());
+  }
+
+  return content.size();
+} // build_android_relocations
+
+
+template<typename ELF_T, typename Binary_T>
+result<uint64_t> Builder::build_relrdyn_relocations(Binary_T *const binary) {
+  using Elf_Addr = typename ELF_T::Elf_Addr;
+  using uint__   = typename ELF_T::uint;
+
+  auto relrdyn_relocations = binary->relrdyn_relocations();
+  if (relrdyn_relocations.empty()) {
+    if constexpr (not std::is_const<Binary_T>::value) {
+      if (auto *DT = binary->get(DYNAMIC_TAGS::DT_RELR)) {
+        if (auto *sec = binary->section_from_virtual_address(DT->value())) {
+          sec->size(0);
+        }
+      }
+      if (auto *DT = binary->get(DYNAMIC_TAGS::DT_ANDROID_RELR)) {
+        if (auto *sec = binary->section_from_virtual_address(DT->value())) {
+          sec->size(0);
+        }
+      }
+    }
+    return 0;
+  }
+
+  if constexpr (std::is_const<Binary_T>::value) {
+    LIEF_DEBUG("[+] Estimate size of relative dynamic relocations");
+  } else {
+    LIEF_DEBUG("[+] Building relative dynamic relocations");
+  }
+
+  const DynamicEntry *dt_relr   = nullptr;
+  const DynamicEntry *dt_relrsz = nullptr;
+
+  dt_relr = binary->get(DYNAMIC_TAGS::DT_RELR);
+  if (dt_relr != nullptr) {
+    dt_relrsz = binary->get(DYNAMIC_TAGS::DT_RELRSZ);
+  } else {
+    // Fallback on legacy type ANDROID_RELR
+    dt_relr   = binary->get(DYNAMIC_TAGS::DT_ANDROID_RELR);
+    dt_relrsz = binary->get(DYNAMIC_TAGS::DT_ANDROID_RELRSZ);
+  }
+
+  if (dt_relr == nullptr) {
+    LIEF_ERR("Unable to find DT_RELR section");
+    return make_error_code(lief_errors::not_found);
+  }
+
+  if (dt_relrsz == nullptr) {
+    LIEF_ERR("Unable to find DT_RELSZ section");
+    return make_error_code(lief_errors::not_found);
+  }
+
+  vector_iostream content(Builder::should_swap(binary));
+
+  LIEF_DEBUG("Sort relative relocations by offset");
+  std::vector<uint__> offsets(relrdyn_relocations.size());
+  for (size_t i = 0; i < relrdyn_relocations.size(); i++) {
+    offsets[i] = relrdyn_relocations[i].address();
+  }
+  std::sort(offsets.begin(), offsets.end());
+
+  // ==== implementation referenced from LLD linker (https://llvm.org)
+
+  const auto wordsize = sizeof(uint__);
+  const size_t n_bits = 8 * wordsize - 1;
+  for (size_t i = 0, e = offsets.size(); i != e;) {
+    content.write(offsets[i]);
+    Elf_Addr base = offsets[i] + wordsize;
+    ++i;
+
+    for (;;) {
+      uint__ bitmap = 0;
+      for (; i != e; ++i) {
+        Elf_Addr d = offsets[i] - base;
+        if (d >= n_bits * wordsize || d % wordsize) {
+          break;
+        }
+        bitmap |= 1ull << (d / wordsize);
+      }
+      if (!bitmap) {
+        break;
+      }
+      content.write((bitmap << 1) | 1);
+      base += n_bits * wordsize;
+    }
+  }
+
+  // done
+  if constexpr (not std::is_const<Binary_T>::value) {
+    if (static_cast<size_t>(content.tellp()) > dt_relrsz->value()) {
+      LIEF_ERR("Not enough space was reserved to write DT_RELR  (0x{:x} available, 0x{:x} needed)",
+               dt_relrsz->value(), content.tellp());
+      return make_error_code(lief_errors::data_too_large);
+    }
+
+    // ensure unused space is `1` (= ignore)
+    content.write(dt_relrsz->value() - content.tellp(), 1);
+
+    binary->patch_address(dt_relr->value(), content.raw());
+  }
+
+  return content.size();
+}
+
 
 template<typename ELF_T>
 ok_error_t Builder::build_pltgot_relocations() {
@@ -1433,44 +1782,24 @@ ok_error_t Builder::build_pltgot_relocations() {
 
   vector_iostream content(should_swap()); // Section's content
   for (const Relocation& relocation : binary_->pltgot_relocations()) {
-    uint32_t idx = 0;
-    const Symbol* symbol = relocation.symbol();
-    if (symbol != nullptr) {
-      // look for symbol index
-      const std::string& name = symbol->name();
-      const auto& it_name = std::find_if(
-          std::begin(binary_->dynamic_symbols_), std::end(binary_->dynamic_symbols_),
-          [&name] (const std::unique_ptr<Symbol>& s) {
-            return s->name() == name;
-          });
-
-      if (it_name == std::end(binary_->dynamic_symbols_)) {
-        LIEF_ERR("Unable to find the symbol associated with the relocation");
-        return make_error_code(lief_errors::not_found);
-      }
-
-      idx = static_cast<uint32_t>(std::distance(std::begin(binary_->dynamic_symbols_), it_name));
-    }
-
-    Elf_Xword info = 0;
-    if (std::is_same<ELF_T, details::ELF32>::value) {
-      info = (static_cast<Elf_Xword>(idx) << 8) | relocation.type();
+    Elf_Xword r_info;
+    if (const auto val = get_relocation_info<ELF_T>(relocation, binary_->dynamic_symbols_)) {
+      r_info = *val;
     } else {
-      // NOTE: To suppress a warning we require a cast here, this path is not constexpr but only uses Elf64_Xword
-      info = (static_cast<details::ELF64::Elf_Xword>(idx) << 32) | (relocation.type() & 0xffffffffL);
+      return make_error_code(val.error());
     }
 
     if (is_rela) {
       Elf_Rela relahdr;
       relahdr.r_offset = static_cast<Elf_Addr>(relocation.address());
-      relahdr.r_info   = static_cast<Elf_Xword>(info);
+      relahdr.r_info   = static_cast<Elf_Xword>(r_info);
       relahdr.r_addend = static_cast<Elf_Sxword>(relocation.addend());
 
       content.write_conv<Elf_Rela>(relahdr);
     } else {
       Elf_Rel relhdr;
       relhdr.r_offset = static_cast<Elf_Addr>(relocation.address());
-      relhdr.r_info   = static_cast<Elf_Xword>(info);
+      relhdr.r_info   = static_cast<Elf_Xword>(r_info);
 
       content.write_conv<Elf_Rel>(relhdr);
     }

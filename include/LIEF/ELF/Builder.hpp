@@ -56,6 +56,7 @@ class LIEF_API Builder {
   public:
   //! Configuration options to tweak the building process
   struct config_t {
+    bool android_rela    = true;  /// Rebuild DT_ANDROID_REL[A]
     bool dt_hash         = true;  /// Rebuild DT_HASH
     bool dyn_str         = true;  /// Rebuild DT_STRTAB
     bool dynamic_section = true;  /// Rebuild PT_DYNAMIC segment
@@ -67,6 +68,7 @@ class LIEF_API Builder {
     bool notes           = false; /// Disable note building since it can break the default layout
     bool preinit_array   = true;  /// Rebuild DT_PREINIT_ARRAY
     bool rela            = true;  /// Rebuild DT_REL[A]
+    bool relr            = true;  /// Rebuild DT_RELR
     bool static_symtab   = true;  /// Rebuild `.symtab`
     bool sym_verdef      = true;  /// Rebuild DT_VERDEF
     bool sym_verneed     = true;  /// Rebuild DT_VERNEED
@@ -126,9 +128,6 @@ class LIEF_API Builder {
   ok_error_t build_static_symbols();
 
   template<typename ELF_T>
-  ok_error_t build_dynamic();
-
-  template<typename ELF_T>
   ok_error_t build_dynamic_section();
 
   template<typename ELF_T>
@@ -136,6 +135,14 @@ class LIEF_API Builder {
 
   template<typename ELF_T>
   ok_error_t build_obj_symbols();
+
+  //! @see https://github.com/llvm/llvm-project/blob/llvmorg-17.0.3/lld/ELF/SyntheticSections.cpp#L1747
+  template<typename ELF_T, typename Binary_T>
+  static result<uint64_t> build_android_relocations(Binary_T *binary);
+
+  //! @see https://groups.google.com/forum/#!topic/generic-abi/bX460iggiKg
+  template<typename ELF_T, typename Binary_T>
+  static result<uint64_t> build_relrdyn_relocations(Binary_T *binary);
 
   template<typename ELF_T>
   ok_error_t build_dynamic_relocations();
@@ -177,6 +184,7 @@ class LIEF_API Builder {
   ok_error_t build_overlay();
 
   bool should_swap() const;
+  static bool should_swap(const Binary *binary);
 
   template<class ELF_T>
   ok_error_t process_object_relocations();

@@ -92,6 +92,9 @@ class LIEF_API Relocation : public LIEF::Relocation {
   //! * RELOC_LOONGARCH
   uint32_t type() const;
 
+  //! Check if the relocation type is relative
+  bool type_is_relative() const;
+
   //! Check if the relocation uses the explicit addend() field (this is usually the case for 64 bits binaries)
   bool is_rela() const;
 

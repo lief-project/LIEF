@@ -883,6 +883,39 @@ Relocation* Binary::add_object_relocation(const Relocation& relocation, const Se
   return relocations_.back().get();
 }
 
+// Android format
+// --------------
+Binary::it_android_relocations Binary::android_relocations() {
+  return {relocations_, [] (const std::unique_ptr<Relocation>& reloc) {
+      return reloc->purpose() == RELOCATION_PURPOSES::RELOC_PURPOSE_ANDROID_DYNAMIC;
+    }
+  };
+}
+
+Binary::it_const_android_relocations Binary::android_relocations() const {
+  return {relocations_, [] (const std::unique_ptr<Relocation>& reloc) {
+      return reloc->purpose() == RELOCATION_PURPOSES::RELOC_PURPOSE_ANDROID_DYNAMIC;
+    }
+  };
+}
+
+// .relr.dyn
+// ---------
+Binary::it_relrdyn_relocations Binary::relrdyn_relocations() {
+  return {relocations_, [] (const std::unique_ptr<Relocation>& reloc) {
+      return reloc->purpose() == RELOCATION_PURPOSES::RELOC_PURPOSE_RELR_DYNAMIC;
+    }
+  };
+}
+
+Binary::it_const_relrdyn_relocations Binary::relrdyn_relocations() const {
+  return {relocations_, [] (const std::unique_ptr<Relocation>& reloc) {
+      return reloc->purpose() == RELOCATION_PURPOSES::RELOC_PURPOSE_RELR_DYNAMIC;
+    }
+  };
+}
+
+
 // plt/got
 // -------
 Binary::it_pltgot_relocations Binary::pltgot_relocations() {
@@ -2042,6 +2075,10 @@ void Binary::shift_dynamic_entries(uint64_t from, uint64_t shift) {
       case DYNAMIC_TAGS::DT_GNU_HASH:
       case DYNAMIC_TAGS::DT_STRTAB:
       case DYNAMIC_TAGS::DT_SYMTAB:
+      case DYNAMIC_TAGS::DT_ANDROID_RELA:
+      case DYNAMIC_TAGS::DT_ANDROID_REL:
+      case DYNAMIC_TAGS::DT_ANDROID_RELR:
+      case DYNAMIC_TAGS::DT_RELR:
       case DYNAMIC_TAGS::DT_RELA:
       case DYNAMIC_TAGS::DT_REL:
       case DYNAMIC_TAGS::DT_JMPREL:
@@ -2081,7 +2118,7 @@ void Binary::shift_dynamic_entries(uint64_t from, uint64_t shift) {
 
       default:
         {
-          //LIEF_DEBUG("{} not supported", to_string(entry->tag()));
+          LIEF_DEBUG("{} not supported", to_string(entry->tag()));
         }
     }
     LIEF_DEBUG("[AFTER ] {}", *entry);

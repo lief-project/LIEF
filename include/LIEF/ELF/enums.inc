@@ -688,6 +688,10 @@ enum _LIEF_EN(DYNAMIC_TAGS) {
 
   _LIEF_EI(DT_PREINIT_ARRAY)              = 32,         /**< Pointer to array of preinit functions. */
   _LIEF_EI(DT_PREINIT_ARRAYSZ)            = 33,         /**< Size of the DT_PREINIT_ARRAY array. */
+  _LIEF_EI(DT_SYMTAB_SHNDX)               = 34,         /**< Address of SYMTAB_SHNDX section */
+  _LIEF_EI(DT_RELRSZ)                     = 35,         /**< Total size of RELR relative relocations */
+  _LIEF_EI(DT_RELR)                       = 36,         /**< Address of RELR relative relocations */
+  _LIEF_EI(DT_RELRENT)                    = 37,         /**< Size of one RELR relative relocaction */
 
   _LIEF_EI(DT_LOOS)                       = 0x60000000, /**< Start of environment specific tags. */
   _LIEF_EI(DT_HIOS)                       = 0x6FFFFFFF, /**< End of environment specific tags. */
@@ -759,10 +763,10 @@ enum _LIEF_EN(DYNAMIC_TAGS) {
   _LIEF_EI(DT_ANDROID_RELSZ)              = 0x60000010, /**< The size of packed relocation data in bytes (Android specific). */
   _LIEF_EI(DT_ANDROID_RELA)               = 0x60000011, /**< The offset of packed relocation data (Android specific). */
   _LIEF_EI(DT_ANDROID_RELASZ)             = 0x60000012, /**< The size of packed relocation data in bytes (Android specific). */
-  _LIEF_EI(DT_RELR)                       = 0x6FFFE000, /**< The offset of new relr relocation data (Android specific). */
-  _LIEF_EI(DT_RELRSZ)                     = 0x6FFFE001, /**< The size of nre relr relocation data in bytes (Android specific). */
-  _LIEF_EI(DT_RELRENT)                    = 0x6FFFE003, /**< The size of a new relr relocation entry (Android specific). */
-  _LIEF_EI(DT_RELRCOUNT)                  = 0x6FFFE005 /**< Specifies the relative count of new relr relocation entries (Android specific). */
+  _LIEF_EI(DT_ANDROID_RELR)               = 0x6FFFE000, /**< The offset of new relr relocation data (Android specific). */
+  _LIEF_EI(DT_ANDROID_RELRSZ)             = 0x6FFFE001, /**< The size of nre relr relocation data in bytes (Android specific). */
+  _LIEF_EI(DT_ANDROID_RELRENT)            = 0x6FFFE003, /**< The size of a new relr relocation entry (Android specific). */
+  _LIEF_EI(DT_ANDROID_RELRCOUNT)          = 0x6FFFE005  /**< Specifies the relative count of new relr relocation entries (Android specific). */
 };
 
 /** DT_FLAGS and DT_FLAGS_1 values. */
@@ -971,9 +975,18 @@ enum _LIEF_EN(NOTE_ABIS) {
 };
 
 enum _LIEF_EN(RELOCATION_PURPOSES) {
-  _LIEF_EI(RELOC_PURPOSE_NONE)    = 0,
-  _LIEF_EI(RELOC_PURPOSE_PLTGOT)  = 1,
-  _LIEF_EI(RELOC_PURPOSE_DYNAMIC) = 2,
-  _LIEF_EI(RELOC_PURPOSE_OBJECT)  = 3,
+  _LIEF_EI(RELOC_PURPOSE_NONE)            = 0,
+  _LIEF_EI(RELOC_PURPOSE_PLTGOT)          = 1,
+  _LIEF_EI(RELOC_PURPOSE_DYNAMIC)         = 2,
+  _LIEF_EI(RELOC_PURPOSE_OBJECT)          = 3,
+  _LIEF_EI(RELOC_PURPOSE_ANDROID_DYNAMIC) = 4,
+  _LIEF_EI(RELOC_PURPOSE_RELR_DYNAMIC)    = 5,
+};
+
+enum _LIEF_EN(ANDROID_RELOCATION_FLAGS) {
+  _LIEF_EI(RELOCATION_GROUPED_BY_INFO_FLAG)         = 1,
+  _LIEF_EI(RELOCATION_GROUPED_BY_OFFSET_DELTA_FLAG) = 2,
+  _LIEF_EI(RELOCATION_GROUPED_BY_ADDEND_FLAG)       = 4,
+  _LIEF_EI(RELOCATION_GROUP_HAS_ADDEND_FLAG)        = 8,
 };
 

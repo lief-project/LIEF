@@ -394,6 +394,24 @@ class LIEF_LOCAL ExeLayout : public Layout {
   }
 
   template<class ELF_T>
+  size_t android_relocations_size() {
+    if (const auto size = Builder::build_android_relocations<ELF_T>(const_cast<const Binary*>(binary_))) {
+      return *size;
+    } else {
+      return binary_->sizing_info_->android_rela;
+    }
+  }
+
+  template<class ELF_T>
+  size_t relrdyn_relocations_size() {
+    if (const auto size = Builder::build_relrdyn_relocations<ELF_T>(const_cast<const Binary*>(binary_))) {
+      return *size;
+    } else {
+      return std::max(binary_->sizing_info_->relr, binary_->sizing_info_->android_relr);
+    }
+  }
+
+  template<class ELF_T>
   size_t dynamic_relocations_size() {
     using Elf_Rela = typename ELF_T::Elf_Rela;
     using Elf_Rel  = typename ELF_T::Elf_Rel;
@@ -511,6 +529,10 @@ class LIEF_LOCAL ExeLayout : public Layout {
     fini_size_ = size;
   }
 
+  void relocate_android_reloc(uint64_t size) {
+    android_reloc_size_ = size;
+  }
+
   void relocate_dyn_reloc(uint64_t size) {
     dynamic_reloc_size_ = size;
   }
@@ -584,6 +606,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
      *    .gnu.version_r
      *    .rela.dyn
      *    .rela.plt
+     *    .relr.dyn
      * Perm: READ ONLY
      * Align: 0x1000
      */
@@ -591,7 +614,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       interp_size_ +  sysv_size_ +
       dynsym_size_ +
       sver_size_ + sverd_size_ + sverr_size_ +
-      dynamic_reloc_size_ + pltgot_reloc_size_;
+      dynamic_reloc_size_ + pltgot_reloc_size_ + android_reloc_size_ + relrdyn_reloc_size_;
 
     if (relocate_notes_) {
       read_segment += raw_notes_.size();
@@ -908,6 +931,87 @@ class LIEF_LOCAL ExeLayout : public Layout {
       dt_verreq->value(va_r_base);
 
       va_r_base += sverr_size_;
+    }
+
+    if (android_reloc_size_ > 0) {
+      // Update:
+      // - DT_ANDROID_REL / DT_ANDROID_RELA
+      // - DT_ANDROID_RELSZ / DT_ANDROID_RELASZ
+      // - .rel.dyn
+
+      const auto dt_android_rela = binary_->get(DYNAMIC_TAGS::DT_ANDROID_RELA);
+
+      const bool is_rela = dt_android_rela != nullptr;
+      DynamicEntry *dt_android_reloc   = is_rela ? dt_android_rela : binary_->get(DYNAMIC_TAGS::DT_ANDROID_REL);
+      DynamicEntry *dt_android_relocsz = is_rela ? binary_->get(DYNAMIC_TAGS::DT_ANDROID_RELASZ) :
+                                                   binary_->get(DYNAMIC_TAGS::DT_ANDROID_RELSZ);
+
+      if (dt_android_reloc == nullptr || dt_android_relocsz == nullptr) {
+        LIEF_ERR("Can't find DT_ANDROID_REL(A) / DT_ANDROID_REL(A)SZ");
+        return make_error_code(lief_errors::file_format_error);
+      }
+
+      uint64_t offset_r_base = 0;
+      if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
+        offset_r_base = *res;
+      } else {
+        return make_error_code(lief_errors::build_error);
+      }
+
+      if (Section *section = binary_->section_from_virtual_address(dt_android_reloc->value())) {
+        section->virtual_address(va_r_base);
+        section->size(android_reloc_size_);
+        section->offset(offset_r_base);
+        section->original_size_ = android_reloc_size_;
+      }
+
+      dt_android_reloc->value(va_r_base);
+      dt_android_relocsz->value(android_reloc_size_);
+
+      va_r_base += android_reloc_size_;
+    }
+
+    if (relrdyn_reloc_size_ > 0) {
+      // Update:
+      // - DT_RELR / DT_ANDROID_RELR
+      // - DT_RELRSZ / DT_ANDROID_RELRSZ
+      // - .relr.dyn
+
+      DynamicEntry* dt_relr   = nullptr;
+      DynamicEntry* dt_relrsz = nullptr;
+
+      dt_relr = binary_->get(DYNAMIC_TAGS::DT_RELR);
+      if (dt_relr != nullptr) {
+        dt_relrsz = binary_->get(DYNAMIC_TAGS::DT_RELRSZ);
+      } else {
+        // Fallback on legacy type ANDROID_RELR
+        dt_relr   = binary_->get(DYNAMIC_TAGS::DT_ANDROID_RELR);
+        dt_relrsz = binary_->get(DYNAMIC_TAGS::DT_ANDROID_RELRSZ);
+      }
+
+      if (dt_relr == nullptr || dt_relrsz == nullptr) {
+        LIEF_ERR("Can't find DT_RELR / DT_RELRSZ");
+        return make_error_code(lief_errors::file_format_error);
+      }
+
+      uint64_t offset_r_base = 0;
+      if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
+        offset_r_base = *res;
+      } else {
+        return make_error_code(lief_errors::build_error);
+      }
+
+      if (Section *section = binary_->section_from_virtual_address(dt_relr->value())) {
+        section->virtual_address(va_r_base);
+        section->size(relrdyn_reloc_size_);
+        section->offset(offset_r_base);
+        section->original_size_ = relrdyn_reloc_size_;
+      }
+
+      dt_relr->value(va_r_base);
+      dt_relrsz->value(relrdyn_reloc_size_);
+
+      va_r_base += relrdyn_reloc_size_;
     }
 
     if (dynamic_reloc_size_ > 0) {
@@ -1383,6 +1487,8 @@ class LIEF_LOCAL ExeLayout : public Layout {
   uint64_t dynsym_size_{0};
 
   uint64_t pltgot_reloc_size_{0};
+  uint64_t android_reloc_size_{0};
+  uint64_t relrdyn_reloc_size_{0};
   uint64_t dynamic_reloc_size_{0};
 
   uint64_t sver_size_{0};

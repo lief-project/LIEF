@@ -127,6 +127,18 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Iterator which outputs plt/got const Relocation& object
   using it_const_pltgot_relocations = const_filter_iterator<const relocations_t&, const Relocation*>;
 
+  //! Iterator which outputs Android Relocation& object
+  using it_android_relocations = filter_iterator<relocations_t&, Relocation*>;
+
+  //! Iterator which outputs Android const Relocation& object
+  using it_const_android_relocations = const_filter_iterator<const relocations_t&, const Relocation*>;
+
+  //! Iterator which outputs `relr.dyn` Relocation& object
+  using it_relrdyn_relocations = filter_iterator<relocations_t&, Relocation*>;
+
+  //! Iterator which outputs `relr.dyn` const Relocation& object
+  using it_const_relrdyn_relocations = const_filter_iterator<const relocations_t&, const Relocation*>;
+
   //! Iterator which outputs dynamic Relocation& object (not related to the PLT/GOT mechanism)
   using it_dynamic_relocations = filter_iterator<relocations_t&, Relocation*>;
 
@@ -340,6 +352,14 @@ class LIEF_API Binary : public LIEF::Binary {
   //! If there is an error, this function returns a ``nullptr``. Otherwise, it returns
   //! the relocation added.
   Relocation* add_object_relocation(const Relocation& relocation, const Section& section);
+
+  //! Return android dynamic relocations
+  it_android_relocations       android_relocations();
+  it_const_android_relocations android_relocations() const;
+
+  //! Return relative relocations
+  it_relrdyn_relocations       relrdyn_relocations();
+  it_const_relrdyn_relocations relrdyn_relocations() const;
 
   //! Return `plt.got` relocations
   it_pltgot_relocations       pltgot_relocations();

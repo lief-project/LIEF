@@ -53,7 +53,8 @@ class BinaryStream {
   }
 
   result<uint64_t> read_uleb128() const;
-  result<uint64_t> read_sleb128() const;
+  result<int64_t> read_sleb128() const;
+  int64_t try_read_sleb128(bool &fail_fuse) const;
 
   result<int64_t> read_dwarf_encoded(uint8_t encoding) const;
 

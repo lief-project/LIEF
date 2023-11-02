@@ -139,7 +139,7 @@ result<uint64_t> BinaryStream::read_uleb128() const {
   return value;
 }
 
-result<uint64_t> BinaryStream::read_sleb128() const {
+result<int64_t> BinaryStream::read_sleb128() const {
   int64_t  value = 0;
   unsigned shift = 0;
   result<uint8_t> byte_read = 0;
@@ -159,6 +159,15 @@ result<uint64_t> BinaryStream::read_sleb128() const {
   }
 
   return value;
+}
+
+int64_t BinaryStream::try_read_sleb128(bool &fail_fuse) const {
+  if (const auto val = read_sleb128()) {
+    return val.value();
+  } else {
+    fail_fuse = true;
+    return 0;
+  }
 }
 
 result<std::string> BinaryStream::read_string(size_t maxsize) const {

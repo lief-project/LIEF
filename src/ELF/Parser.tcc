@@ -182,6 +182,81 @@ ok_error_t Parser::parse_binary() {
     }
   }
 
+  // Parse Android packed relocations
+  // ================================
+
+  // RELA
+  // ----
+  if (config_.parse_relocations) {
+    DynamicEntry* dt_android_rela   = binary_->get(DYNAMIC_TAGS::DT_ANDROID_RELA);
+    DynamicEntry* dt_android_relasz = binary_->get(DYNAMIC_TAGS::DT_ANDROID_RELASZ);
+
+    if (dt_android_rela != nullptr && dt_android_relasz != nullptr) {
+      const uint64_t virtual_address = dt_android_rela->value();
+      const uint64_t size            = dt_android_relasz->value();
+      if (const auto res = binary_->virtual_address_to_offset(virtual_address)) {
+        if (parse_android_relocations<ELF_T, typename ELF_T::Elf_Rela>(*res, size)) {
+          binary_->sizing_info_->android_rela = size;
+        } else {
+          LIEF_WARN("Can't parse packed RELA");
+        }
+      } else {
+        LIEF_WARN("Can't convert RELA.virtual_address into an offset (0x{:x})", virtual_address);
+      }
+    }
+  }
+
+  // REL
+  // ---
+  if (config_.parse_relocations) {
+    DynamicEntry* dt_android_rel   = binary_->get(DYNAMIC_TAGS::DT_ANDROID_REL);
+    DynamicEntry* dt_android_relsz = binary_->get(DYNAMIC_TAGS::DT_ANDROID_RELSZ);
+
+    if (dt_android_rel != nullptr && dt_android_relsz != nullptr) {
+      const uint64_t virtual_address = dt_android_rel->value();
+      const uint64_t size            = dt_android_relsz->value();
+      if (const auto res = binary_->virtual_address_to_offset(virtual_address)) {
+        if (parse_android_relocations<ELF_T, typename ELF_T::Elf_Rela>(*res, size)) {
+          binary_->sizing_info_->android_rela = size;
+        } else {
+          LIEF_WARN("Can't parse packed REL");
+        }
+      } else {
+        LIEF_WARN("Can't convert REL.virtual_address into an offset (0x{:x})", virtual_address);
+      }
+    }
+  }
+
+  // Parse `.relr.dyn` relocations
+  // =============================
+  if (config_.parse_relocations) {
+    constexpr DYNAMIC_TAGS relr[] = { DYNAMIC_TAGS::DT_RELR, DYNAMIC_TAGS::DT_RELRSZ, DYNAMIC_TAGS::DT_RELRENT };
+    // Legacy SHT_RELR and DT_RELR constants for Android API < 30:
+    constexpr DYNAMIC_TAGS android_relr[] = { DYNAMIC_TAGS::DT_ANDROID_RELR, DYNAMIC_TAGS::DT_ANDROID_RELRSZ,
+                                              DYNAMIC_TAGS::DT_ANDROID_RELRENT };
+    for (const auto dt : { relr, android_relr }) {
+      // TODO support multiple sections of this type?
+      DynamicEntry* dt_relr    = binary_->get(dt[0]);
+      DynamicEntry* dt_relrsz  = binary_->get(dt[1]);
+      DynamicEntry* dt_relrent = binary_->get(dt[2]);
+
+      if (dt_relr != nullptr && dt_relrsz != nullptr) {
+        const auto virtual_address = dt_relr->value();
+        const auto size = dt_relrsz->value();
+        const auto entry_size = dt_relrent->value();
+        if (const auto res = binary_->virtual_address_to_offset(virtual_address)) {
+          if (parse_relrdyn_relocations<ELF_T, typename ELF_T::Elf_Rel>(*res, size, entry_size)) {
+            binary_->sizing_info_->relr = size;
+          } else {
+            LIEF_WARN("Can't parse relative relocations");
+          }
+        } else {
+          LIEF_WARN("Can't convert RELR.virtual_address into an offset (0x{:x})", virtual_address);
+        }
+      }
+    }
+  }
+
   // Parse Symbol Version
   // ====================
   if (config_.parse_symbol_versions && config_.parse_dyn_symbols) {
@@ -972,8 +1047,180 @@ ok_error_t Parser::parse_dynamic_relocations(uint64_t relocations_offset, uint64
     binary_->relocations_.push_back(std::move(reloc));
   }
   return ok();
-} // build_dynamic_reclocations
+} // parse_dynamic_relocations
 
+
+
+template<typename ELF_T, typename REL_T>
+ok_error_t Parser::parse_android_relocations(const uint64_t offset, const uint64_t size) {
+  static_assert(std::is_same<REL_T, typename ELF_T::Elf_Rel>::value or
+                std::is_same<REL_T, typename ELF_T::Elf_Rela>::value, "REL_T must be Elf_Rel or Elf_Rela");
+  static constexpr char MAGIC_VALUE[] = {'A', 'P', 'S', '2'};
+  LIEF_DEBUG("== Parsing Android packed relocations ==");
+
+  // Already parsed
+  if (not binary_->android_relocations().empty()) {
+    return ok();
+  }
+
+  const uint8_t shift = std::is_same<ELF_T, details::ELF32>::value ? 8 : 32;
+
+  stream_->setpos(offset);
+
+  const auto magic = stream_->read_array<char>(sizeof MAGIC_VALUE);
+  if (memcmp(magic, MAGIC_VALUE, sizeof MAGIC_VALUE) != 0) {
+    LIEF_ERR("Bad magic value ({} vs {})", magic, MAGIC_VALUE);
+    return make_error_code(lief_errors::parsing_error);
+  }
+
+  bool fail_fuse = false;
+  uint64_t nb_relocs = stream_->try_read_sleb128(fail_fuse);
+  uint64_t reloc_offset = stream_->try_read_sleb128(fail_fuse);
+  if (fail_fuse) {
+    LIEF_ERR("Can't read packed relocation header");
+    return make_error_code(lief_errors::parsing_error);
+  }
+
+  uint64_t addend = 0;
+  LIEF_DEBUG("Number of relocations: {:d}", nb_relocs);
+  while (nb_relocs > 0) {
+    uint64_t nb_relocs_group = stream_->try_read_sleb128(fail_fuse);
+    if (nb_relocs_group > nb_relocs) {
+      LIEF_ERR("Too many relocation in the group ({:d} > {:d})", nb_relocs_group, nb_relocs);
+      break;
+    }
+    nb_relocs -= nb_relocs_group;
+
+    ANDROID_RELOCATION_FLAGS group_flags = static_cast<ANDROID_RELOCATION_FLAGS>(stream_->try_read_sleb128(fail_fuse));
+    bool grouped_info = static_cast<bool>(group_flags & ANDROID_RELOCATION_FLAGS::RELOCATION_GROUPED_BY_INFO_FLAG);
+    bool grouped_off_delta = static_cast<bool>(group_flags &
+                                               ANDROID_RELOCATION_FLAGS::RELOCATION_GROUPED_BY_OFFSET_DELTA_FLAG);
+    bool grouped_addend = static_cast<bool>(group_flags & ANDROID_RELOCATION_FLAGS::RELOCATION_GROUPED_BY_ADDEND_FLAG);
+    bool has_addend = static_cast<bool>(group_flags & ANDROID_RELOCATION_FLAGS::RELOCATION_GROUP_HAS_ADDEND_FLAG);
+
+    uint64_t group_offset_delta = 0;
+    uint64_t group_rinfo = 0;
+    if (grouped_off_delta) {
+      group_offset_delta = stream_->try_read_sleb128(fail_fuse);
+    }
+
+    if (grouped_info) {
+      group_rinfo = stream_->try_read_sleb128(fail_fuse);
+    }
+
+    if (grouped_addend and has_addend) {
+      addend += stream_->try_read_sleb128(fail_fuse);
+    }
+
+    if (fail_fuse) {
+      LIEF_ERR("Can't read packed relocation group");
+      return make_error_code(lief_errors::parsing_error);
+    }
+
+    for (uint64_t i = 0; i < nb_relocs_group; ++i) {
+      REL_T reloc;
+      reloc_offset += grouped_off_delta ? group_offset_delta : stream_->try_read_sleb128(fail_fuse);
+
+      reloc.r_offset = reloc_offset;
+      reloc.r_info = grouped_info ? group_rinfo : stream_->try_read_sleb128(fail_fuse);
+
+      if (has_addend) {
+        if (not grouped_addend) {
+          addend += stream_->try_read_sleb128(fail_fuse);
+        }
+
+        if constexpr (std::is_same<REL_T, typename ELF_T::Elf_Rela>::value) {
+          reinterpret_cast<typename ELF_T::Elf_Rela *>(&reloc)->r_addend = addend;
+        }
+      } else {
+        if constexpr (std::is_same<REL_T, typename ELF_T::Elf_Rela>::value) {
+          reinterpret_cast<typename ELF_T::Elf_Rela *>(&reloc)->r_addend = 0;
+        }
+      }
+
+      if (fail_fuse) {
+        LIEF_ERR("Can't read packed relocation entry");
+        return make_error_code(lief_errors::parsing_error);
+      }
+
+      std::unique_ptr<Relocation> relocation{new Relocation{reloc}};
+      relocation->architecture_ = binary_->header_.machine_type();
+      relocation->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_ANDROID_DYNAMIC);
+      const auto idx = static_cast<uint32_t>(reloc.r_info >> shift);
+      if (idx > 0 and idx < binary_->dynamic_symbols_.size()) {
+        relocation->symbol_ = binary_->dynamic_symbols_[idx].get();
+      }
+
+      LIEF_DEBUG("packed reloc:  {}", *relocation);
+      binary_->relocations_.push_back(std::move(relocation));
+    }
+
+  }
+  if (stream_->pos() > offset + size) {
+    LIEF_ERR("Android packed relocation size is invalid");
+    return make_error_code(lief_errors::corrupted);
+  }
+  return ok();
+} // parse_android_relocations
+
+
+template<typename ELF_T, typename REL_T>
+ok_error_t Parser::parse_relrdyn_relocations(uint64_t offset, const uint64_t size, const uint64_t entry_size) {
+  static_assert(std::is_same<REL_T, typename ELF_T::Elf_Rel>::value, "REL_T must be Elf_Rel");
+  using uint__   = typename ELF_T::uint;
+  using Elf_Rel  = typename ELF_T::Elf_Rel;
+  using Elf_Addr = typename ELF_T::Elf_Addr;
+
+  // Already parsed
+  if (not binary_->relrdyn_relocations().empty()) {
+    return ok();
+  }
+
+  if (entry_size != sizeof(uint__)) {
+    LIEF_ERR("DT_RELRENT={} is not supported yet", entry_size);
+    return make_error_code(lief_errors::not_supported);
+  }
+
+  LIEF_DEBUG("== Parsing relative relocations ==");
+
+  const auto push_back_relr = [&] (const uint__ r_offset) {
+    Elf_Rel reloc;
+    reloc.r_offset = r_offset;
+    reloc.r_info = 0;  // implicit, no symbol
+    std::unique_ptr<Relocation> relocation{new Relocation{reloc}};
+    relocation->architecture_ = binary_->header_.machine_type();
+    relocation->purpose(RELOCATION_PURPOSES::RELOC_PURPOSE_RELR_DYNAMIC);
+    binary_->relocations_.push_back(std::move(relocation));
+  };
+
+  Elf_Addr base = 0;
+
+  // decode section contents:
+  const auto end = offset + size;
+  const auto wordsize = sizeof(uint__);
+  for (stream_->setpos(offset); offset < end; offset += wordsize) {
+    uint__ entry;
+    if (const auto val = stream_->read<decltype(entry)>()) {
+      entry = *val;
+    } else {
+      LIEF_ERR("Can't read relative relocation entry");
+      return make_error_code(lief_errors::parsing_error);
+    }
+
+    if ((entry & 1) == 0) {
+      push_back_relr(entry);
+      base = entry + wordsize;
+    } else {
+      for (Elf_Addr off = base; (entry >>= 1) != 0; off += wordsize) {
+        if ((entry & 1) != 0) {
+          push_back_relr(off);
+        }
+      }
+      base += (8 * wordsize - 1) * wordsize;
+    }
+  }
+  return ok();
+}
 
 
 template<typename ELF_T>
@@ -1006,7 +1253,7 @@ ok_error_t Parser::parse_static_symbols(uint64_t offset, uint32_t nb_symbols,
     binary_->static_symbols_.push_back(std::move(symbol));
   }
   return ok();
-} // build_static_symbols
+} // parse_static_symbols
 
 
 template<typename ELF_T>
@@ -1070,7 +1317,7 @@ ok_error_t Parser::parse_dynamic_symbols(uint64_t offset) {
     binary_->sizing_info_->dynstr = dt_strsz->value();
   }
   return ok();
-} // build_dynamic_sybols
+} // parse_dynamic_sybols
 
 
 template<typename ELF_T>

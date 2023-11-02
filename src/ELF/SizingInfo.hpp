@@ -29,7 +29,10 @@ struct sizing_info_t {
   uint64_t interpreter = 0;
   uint64_t gnu_hash = 0;
   uint64_t hash = 0;
+  uint64_t android_rela = 0;
+  uint64_t android_relr = 0;
   uint64_t rela = 0;
+  uint64_t relr = 0;
   uint64_t jmprel = 0;
   uint64_t versym = 0;
   uint64_t verdef = 0;
