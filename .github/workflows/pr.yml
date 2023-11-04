@@ -73,16 +73,17 @@ jobs:
         echo ("LIEF_BUILD_DIR=" + $env:RUNNER_TEMP + "/lief-build") >> $env:GITHUB_ENV
         echo ("PYLIEF_CONF=" + $env:GITHUB_WORKSPACE + "/scripts/windows/py-x64-test.toml") >> $env:GITHUB_ENV
     - name: Build Python ${{ env.python-win-version }}
+      shell: cmd
       run: |
         python -m pip install -r tests/requirements.txt
         python -m pip install api/python
         python tests/dl_samples.py %LIEF_SAMPLES_DIR%
-      shell: cmd
     - name: Run tests
+      timeout-minutes: 20
+      shell: cmd
       run: |
         cd %GITHUB_WORKSPACE%
         python tests/run_pytest.py
         ctest --output-on-failure --test-dir %BUILD_DIR%
-      shell: cmd
 
 

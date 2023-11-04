@@ -4,13 +4,15 @@ import sys
 import platform
 import re
 import subprocess
-import pathlib
 import stat
-from typing import Tuple
+import time
+from typing import Optional, Tuple
+from pathlib import Path
+from subprocess import Popen
 
 import importlib.util
 
-def import_from_file(module_name: str, file_path: pathlib.Path):
+def import_from_file(module_name: str, file_path: Path):
     spec = importlib.util.spec_from_file_location(module_name, file_path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -78,7 +80,7 @@ def is_64bits_platform() -> bool:
     return sys.maxsize > 2**32
 
 def chmod_exe(path):
-    if isinstance(path, pathlib.Path):
+    if isinstance(path, Path):
         path.chmod(path.stat().st_mode | stat.S_IEXEC)
     elif isinstance(path, str):
         os.chmod(path, os.stat(path).st_mode | stat.S_IEXEC)
@@ -97,3 +99,47 @@ def sign(path):
 
 def is_github_ci() -> bool:
     return os.getenv("GITHUB_ACTIONS", None) is not None
+
+def _win_gui_exec(executable: Path, timeout: int = 60) -> Optional[Tuple[int, str]]:
+    popen_args = {
+        "universal_newlines": True,
+        "shell": True,
+        "stdout": subprocess.PIPE,
+        "stderr": subprocess.STDOUT,
+        "creationflags": 0x8000000  # win32con.CREATE_NO_WINDOW
+    }
+
+    with Popen(["START", executable.as_posix()], **popen_args) as proc:
+        time.sleep(3)
+        with Popen(["taskkill", "/im", executable.name], **popen_args) as kproc:
+            try:
+                pstdout, _ = proc.communicate(timeout)
+                print("pstdout:", pstdout)
+                kstdout, _ = kproc.communicate(timeout)
+                print("kstdout", kstdout)
+                return (kproc.returncode, pstdout + kstdout)
+            except subprocess.TimeoutExpired:
+                return None
+
+def win_exec(executable: Path, timeout: int = 60, gui: bool = True) -> Optional[Tuple[int, str]]:
+    if not is_windows():
+        return None
+
+    if gui:
+        return _win_gui_exec(executable, timeout)
+
+    popen_args = {
+        "universal_newlines": True,
+        "shell": True,
+        "stdout": subprocess.PIPE,
+        "stderr": subprocess.STDOUT,
+        "creationflags": 0x8000000  # win32con.CREATE_NO_WINDOW
+    }
+
+    with Popen([executable.as_posix()], **popen_args) as proc:
+        try:
+            stdout, _ = proc.communicate(timeout)
+            print("stdout:", stdout)
+            return (proc.returncode, stdout)
+        except subprocess.TimeoutExpired:
+            return None

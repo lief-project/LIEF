@@ -6,11 +6,8 @@ import lief
 import os
 import pytest
 import stat
-import subprocess
 
-from subprocess import Popen
-
-from utils import get_sample, is_windows
+from utils import get_sample, is_windows, win_exec
 
 if is_windows():
     SEM_NOGPFAULTERRORBOX = 0x0002  # From MSDN
@@ -28,18 +25,9 @@ def test_remove_section(tmp_path):
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-    if is_windows():
-        popen_args = {
-            "shell": True,
-            "universal_newlines": True,
-            "stdout": subprocess.PIPE,
-            "stderr": subprocess.STDOUT,
-            "creationflags": 0x8000000  # win32con.CREATE_NO_WINDOW
-        }
-        with Popen([output.as_posix()], **popen_args) as proc:
-            stdout, _ = proc.communicate()
-            print(stdout)
-            assert "Hello World" in stdout
+    if ret := win_exec(output, gui = False):
+        ret_code, stdout = ret
+        assert "Hello World" in stdout
 
 def test_unwind():
 
@@ -85,7 +73,6 @@ def test_utils():
 ])
 def test_json(pe_file):
     pe = lief.PE.parse(get_sample(pe_file))
-    print(pe)
     out = lief.to_json(pe)
     assert out is not None
     assert len(out) > 0

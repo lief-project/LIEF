@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+import ctypes
 import lief
 import os
 import random
 import sys
 import stat
-import subprocess
-import time
 import zipfile
 
-from subprocess import Popen
+from utils import get_sample, is_64bits_platform, is_windows, win_exec
 
-from utils import get_sample, is_64bits_platform, is_windows
+if is_windows():
+    SEM_NOGPFAULTERRORBOX = 0x0002  # From MSDN
+    ctypes.windll.kernel32.SetErrorMode(SEM_NOGPFAULTERRORBOX)
 
 def test_change_icons(tmp_path):
     mfc_path = get_sample('PE/PE64_x86-64_binary_mfc-application.exe')
@@ -43,21 +43,10 @@ def test_change_icons(tmp_path):
     builder.build()
     builder.write(output.as_posix())
 
-    if is_windows():
-        popen_args = {
-            "universal_newlines": True,
-            "shell": True,
-            "stdout": subprocess.PIPE,
-            "stderr": subprocess.STDOUT,
-            "creationflags": 0x8000000  # win32con.CREATE_NO_WINDOW
-        }
-        with Popen(["START", output.as_posix()], **popen_args):
-            time.sleep(3)
-            with Popen(["taskkill", "/im", output.name], **popen_args) as kproc:
-                stdout, _ = kproc.communicate()
-                print(stdout)
-                assert kproc.returncode == 0
-
+    if ret := win_exec(output):
+        ret_code, stdout = ret
+        print(stdout)
+        assert ret_code == 0
 
 def test_resource_string_table():
     sample_path = get_sample('PE/PE64_x86-64_binary_WinApp.exe')
@@ -255,21 +244,10 @@ def test_mfc_resource_builder(tmp_path):
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-    if sys.platform.startswith("win"):
-        popen_args = {
-            "universal_newlines": True,
-            "shell": True,
-            "stdout": subprocess.PIPE,
-            "stderr": subprocess.STDOUT,
-            "creationflags": 0x8000000 # win32con.CREATE_NO_WINDOW
-        }
-        with Popen(["START", output.as_posix()], **popen_args):
-            time.sleep(3)
-            with Popen(["taskkill", "/im", output.name], **popen_args) as kproc:
-                stdout, _ = kproc.communicate()
-                print(stdout)
-                assert kproc.returncode == 0
-
+    if ret := win_exec(output):
+        ret_code, stdout = ret
+        print(stdout)
+        assert ret_code == 0
 
 #def test_evince_resource_builder(self):
 #    sample_file = get_sample('PE/PE32_x86_binary_EvincePortable.zip')
@@ -326,20 +304,10 @@ def test_notepadpp_resource_builder(tmp_path):
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-    if sys.platform.startswith("win"):
-        popen_args = {
-            "universal_newlines": True,
-            "shell": True,
-            "stdout": subprocess.PIPE,
-            "stderr": subprocess.STDOUT,
-            "creationflags": 0x8000000 # win32con.CREATE_NO_WINDOW
-        }
-        with Popen(["START", output.as_posix()], **popen_args):
-            time.sleep(3)
-            with Popen(["taskkill", "/im", output.name], **popen_args) as kproc:
-                stdout, _ = kproc.communicate()
-                print(stdout)
-                assert kproc.returncode == 0
+    if ret := win_exec(output):
+        ret_code, stdout = ret
+        print(stdout)
+        assert ret_code == 0
 
 def test_filezilla_resource_builder(tmp_path):
     sample_file = get_sample('PE/PE64_x86-64_binary_FileZilla.zip')
@@ -361,20 +329,10 @@ def test_filezilla_resource_builder(tmp_path):
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-    if sys.platform.startswith("win"):
-        popen_args = {
-            "universal_newlines": True,
-            "shell": True,
-            "stdout": subprocess.PIPE,
-            "stderr": subprocess.STDOUT,
-            "creationflags": 0x8000000 # win32con.CREATE_NO_WINDOW
-        }
-        with Popen(["START", output.as_posix()], **popen_args):
-            time.sleep(3)
-            with Popen(["taskkill", "/im", output.name], **popen_args) as kproc:
-                stdout, _ = kproc.communicate()
-                print(stdout)
-                assert kproc.returncode == 0
+    if ret := win_exec(output):
+        ret_code, stdout = ret
+        print(stdout)
+        assert ret_code == 0
 
 def test_resource_directory_add_directory_node(tmp_path):
     sample_file = get_sample('PE/PE32_x86_binary_Notepad++.zip')

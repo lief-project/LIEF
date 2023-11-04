@@ -1,16 +1,12 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+
 import lief
 import os
 import stat
-import subprocess
-import time
 import ctypes
 import zipfile
 
-from subprocess import Popen
-
-from utils import get_sample, is_windows
+from utils import get_sample, is_windows, win_exec
 
 if is_windows():
     SEM_NOGPFAULTERRORBOX = 0x0002  # From MSDN
@@ -42,22 +38,9 @@ def test_add_multiples_sections(tmp_path):
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-    if is_windows():
-        popen_args = {
-            "universal_newlines": True,
-            "shell": True,
-            "stdout": subprocess.PIPE,
-            "stderr": subprocess.STDOUT,
-            "creationflags": 0x8000000  # win32con.CREATE_NO_WINDOW
-        }
-        with Popen(["START", output.as_posix()], **popen_args) as proc:
-            time.sleep(3)
-            with Popen(["taskkill", "/im", output.name], **popen_args) as kproc:
-                stdout, _ = proc.communicate()
-                print(stdout)
-                stdout, _ = kproc.communicate()
-                print(stdout)
-                assert kproc.returncode == 0
+    if ret := win_exec(output):
+        ret_code, stdout = ret
+        assert ret_code == 0
 
 def test_imports_notepadpp(tmp_path):
     sample_file = get_sample('PE/PE32_x86_binary_Notepad++.zip')
@@ -86,23 +69,9 @@ def test_imports_notepadpp(tmp_path):
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-    if is_windows():
-        popen_args = {
-            "universal_newlines": True,
-            "shell": True,
-            "stdout": subprocess.PIPE,
-            "stderr": subprocess.STDOUT,
-            "creationflags": 0x8000000  # win32con.CREATE_NO_WINDOW
-        }
-        with Popen(["START", output.as_posix()], **popen_args) as proc:
-            time.sleep(3)
-            with Popen(["taskkill", "/im", output.name], **popen_args) as kproc:
-                stdout, _ = proc.communicate()
-                print(stdout)
-                stdout, _ = kproc.communicate()
-                print(stdout)
-                assert kproc.returncode == 0
-
+    if ret := win_exec(output):
+        ret_code, stdout = ret
+        assert ret_code == 0
 
 def test_issue_952(tmp_path):
     pe = lief.PE.parse(get_sample("PE/PE32_x86_binary_HelloWorld.exe"))
@@ -113,5 +82,4 @@ def test_issue_952(tmp_path):
     pe.write(out.as_posix())
 
     new = lief.PE.parse(out.as_posix())
-    print(bytes(new.dos_stub))
     assert bytes(new.dos_stub) == stub
