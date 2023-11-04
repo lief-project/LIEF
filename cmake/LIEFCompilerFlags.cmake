@@ -1,7 +1,5 @@
-include(CheckCCompilerFlag)
-include(CheckCXXCompilerFlag)
 if(__add_lief_compiler_flags)
-	return()
+ return()
 endif()
 set(__add_lief_compiler_flags ON)
 
@@ -19,56 +17,33 @@ function(append_if condition value)
   endif()
 endfunction()
 
-macro(ADD_FLAG_IF_SUPPORTED flag name)
-  CHECK_C_COMPILER_FLAG("${flag}"   "C_SUPPORTS_${name}")
-  CHECK_CXX_COMPILER_FLAG("${flag}" "CXX_SUPPORTS_${name}")
-
-  if (C_SUPPORTS_${name})
-    target_compile_options(LIB_LIEF PRIVATE ${flag})
-  endif()
-
-  if (CXX_SUPPORTS_${name})
-    target_compile_options(LIB_LIEF PRIVATE ${flag})
-  endif()
-endmacro()
-
-
-
 if (MSVC)
   add_definitions(-DNOMINMAX)
 endif()
 
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  if (UNIX)
-    if (LIEF_FORCE32)
-      target_compile_options(LIB_LIEF PRIVATE -m32)
-
-      set_property(TARGET LIB_LIEF PROPERTY LINK_FLAGS -m32)
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+  target_compile_options(LIB_LIEF PRIVATE
+    -Wall
+    -Wextra
+    -Wpedantic
+    -Wno-expansion-to-defined
+    # Promote this warning into an error as error management
+    # where the result is 'result<void>' might miss the "return {}"
+    -Werror=return-type
+    -fdiagnostics-color=always
+  )
+  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    if(CMAKE_GENERATOR MATCHES "Ninja")
+      target_compile_options(LIB_LIEF PRIVATE
+        -fcolor-diagnostics
+      )
     endif()
+  else(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    # GCC specific flags
   endif()
 
 endif()
 
-if (NOT MSVC)
-  ADD_FLAG_IF_SUPPORTED("-Wall"                     WALL)
-  ADD_FLAG_IF_SUPPORTED("-Wextra"                   WEXTRA)
-  ADD_FLAG_IF_SUPPORTED("-Wpedantic"                WPEDANTIC)
-  ADD_FLAG_IF_SUPPORTED("-fomit-frame-pointer"      OMIT_FRAME_POINTER)
-  ADD_FLAG_IF_SUPPORTED("-Wno-expansion-to-defined" NO_EXPANSION_TO_DEFINED)
-
-  # Promote this warning into an error as error management
-  # where the result is 'result<void>' might miss the "return {}"
-  ADD_FLAG_IF_SUPPORTED("-Werror=return-type" ERR_RET_TYPE)
-
-
-  ADD_FLAG_IF_SUPPORTED("-fdiagnostics-color=always" DIAGNOSTICS_COLOR)
-  ADD_FLAG_IF_SUPPORTED("-fcolor-diagnostics"        COLOR_DIAGNOSTICS)
-endif()
-
-#ADD_FLAG_IF_SUPPORTED("-Wduplicated-cond"         HAS_DUPLICATED_COND)
-#ADD_FLAG_IF_SUPPORTED("-Wduplicated-branches"     HAS_DUPLICATED_BRANCHES)
-#ADD_FLAG_IF_SUPPORTED("-Wlogical-op"              HAS_LOGICAL_OP)
-#ADD_FLAG_IF_SUPPORTED("-Wshadow"                  HAS_SHADOW)
 if(MSVC AND NOT CLANG_CL)
   set(msvc_warning_flags
     # Disabled warnings.
