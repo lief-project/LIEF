@@ -36,58 +36,17 @@ message(STATUS "Python lib:         ${Python_LIBRARIES}")
 message(STATUS "Python include:     ${Python_INCLUDE_DIRS}")
 message(STATUS "Python interpreter: ${Python_EXECUTABLE}")
 
-set(LIEF_PYTHON_SRC
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyLIEF.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/pySafeString.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyErr.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyIOStream.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyutils.cpp"
-)
-
 nanobind_add_module(
   pyLIEF
   NB_STATIC
 
-  ${LIEF_PYTHON_SRC}
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/pyLIEF.cpp
 
   # Do not default to -Os
   NOMINSIZE
 )
 
-target_include_directories(pyLIEF PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}/src"
-)
-
-add_subdirectory(src/Abstract)
-add_subdirectory(src/platforms)
-
-if(LIEF_ELF)
-  add_subdirectory(src/ELF)
-endif()
-
-if(LIEF_PE)
-  add_subdirectory(src/PE)
-endif()
-
-if(LIEF_MACHO)
-  add_subdirectory(src/MachO)
-endif()
-
-if(LIEF_OAT)
-  add_subdirectory(src/OAT)
-endif()
-
-if(LIEF_DEX)
-  add_subdirectory(src/DEX)
-endif()
-
-if(LIEF_VDEX)
-  add_subdirectory(src/VDEX)
-endif()
-
-if(LIEF_ART)
-  add_subdirectory(src/ART)
-endif()
+add_subdirectory(src)
 
 set_target_properties(pyLIEF PROPERTIES
   POSITION_INDEPENDENT_CODE    ON

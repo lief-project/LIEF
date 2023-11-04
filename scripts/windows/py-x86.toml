@@ -3,6 +3,9 @@ type          = "Release"
 cache         = true
 ninja         = true
 parallel-jobs = 0
+extra-cmake-opt = [
+  "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded",
+]
 
 [lief.formats]
 elf     = true

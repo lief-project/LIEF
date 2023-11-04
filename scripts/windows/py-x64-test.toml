@@ -3,7 +3,10 @@ type            = "Release"
 cache           = true
 ninja           = true
 parallel-jobs   = 0
-extra-cmake-opt = ["-DLIEF_TESTS=on"]
+extra-cmake-opt = [
+  "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded",
+  "-DLIEF_TESTS=on",
+]
 extra-targets   = ["all"]
 
 [lief.formats]

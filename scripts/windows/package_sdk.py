@@ -49,7 +49,7 @@ cmake_config_static = [
     "-G", "Ninja",
     "-DCMAKE_BUILD_TYPE=Release",
     "-DBUILD_SHARED_LIBS=off",
-    "-DCMAKE_MSVC_RUNTIME_LIBRARY=MT",
+    "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded",
     "-DLIEF_PYTHON_API=off",
     "-DLIEF_INSTALL_COMPILED_EXAMPLES=on",
     f"-DCMAKE_INSTALL_PREFIX={INSTALL_DIR.as_posix()}"
@@ -58,7 +58,7 @@ cmake_config_static = [
 cmake_config_shared = [
     "-G", "Ninja",
     "-DCMAKE_BUILD_TYPE=Release",
-    "-DCMAKE_MSVC_RUNTIME_LIBRARY=MT",
+    "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded",
     "-DBUILD_SHARED_LIBS=on",
     "-DLIEF_PYTHON_API=off",
     "-DLIEF_INSTALL_COMPILED_EXAMPLES=off",

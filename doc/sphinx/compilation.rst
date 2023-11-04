@@ -38,13 +38,13 @@ Libraries only (SDK)
 
    .. code-block:: console
 
-      $ cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_MSVC_RUNTIME_LIBRARY=MT ..
+      $ cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded ..
 
    For Debug, you should set the CRT to **MTd**:
 
    .. code-block::
 
-      $ cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MSVC_RUNTIME_LIBRARY=MTd ..
+      $ cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug ..
       $ cmake --build . --target LIB_LIEF --config Debug
 
 Python bindings
