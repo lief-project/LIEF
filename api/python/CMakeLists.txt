@@ -15,36 +15,20 @@ if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
   cmake_policy(SET CMP0135 NEW)
 endif()
 
-
-include(ExternalProject)
-include(CheckCXXCompilerFlag)
-include(CheckCCompilerFlag)
-
-macro(ADD_FLAG_IF_SUPPORTED flag name)
-  CHECK_C_COMPILER_FLAG("${flag}"   "C_SUPPORTS_${name}")
-  CHECK_CXX_COMPILER_FLAG("${flag}" "CXX_SUPPORTS_${name}")
-
-  if (C_SUPPORTS_${name})
-    target_compile_options(pyLIEF PRIVATE ${flag})
-  endif()
-
-  if (CXX_SUPPORTS_${name})
-    target_compile_options(pyLIEF PRIVATE ${flag})
-  endif()
-endmacro()
-
 if (LIEF_EXTERNAL_NANOBINDS)
   find_package(nanobind REQUIRED)
 else()
   set(NANOBIND_VERSION 1.7.0.r7.gfd1f04b)
   set(NANOBIND_SHA256 SHA256=c6b1e0459559fc753ec6ef0911744f5fbc5f995e868dcb1ecef8f0c6c3d376d2)
-  set(NANOBIND_URL "${THIRD_PARTY_DIRECTORY}/nanobind-${NANOBIND_VERSION}.zip" CACHE STRING "URL to the Nanobind")
+  set(NANOBIND_URL "${THIRD_PARTY_DIRECTORY}/nanobind-${NANOBIND_VERSION}.zip"
+      CACHE STRING "URL to the Nanobind")
   FetchContent_Declare(nanobind
     URL        ${NANOBIND_URL}
     URL_HASH   ${NANOBIND_SHA256}
   )
   FetchContent_Populate(nanobind)
-  find_package(nanobind REQUIRED PATHS ${nanobind_SOURCE_DIR}/cmake NO_DEFAULT_PATH)
+  find_package(nanobind REQUIRED PATHS ${nanobind_SOURCE_DIR}/cmake
+               NO_DEFAULT_PATH)
 endif()
 
 message(STATUS "Python version:     ${Python_VERSION}")
@@ -60,18 +44,11 @@ set(LIEF_PYTHON_SRC
   "${CMAKE_CURRENT_SOURCE_DIR}/src/pyutils.cpp"
 )
 
-set(LIEF_PYTHON_HDR
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyLIEF.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/pyErr.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/pySafeString.hpp"
-)
-
 nanobind_add_module(
   pyLIEF
   NB_STATIC
 
   ${LIEF_PYTHON_SRC}
-  ${LIEF_PYTHON_HDR}
 
   # Do not default to -Os
   NOMINSIZE
@@ -119,20 +96,18 @@ set_target_properties(pyLIEF PROPERTIES
   CXX_VISIBILITY_PRESET        hidden
   C_VISIBILITY_PRESET          hidden
   PREFIX                       ""
-  OUTPUT_NAME                  "lief"
+  OUTPUT_NAME                  "_lief"
 )
 
-set_target_properties(pyLIEF PROPERTIES PYTHON_VERSION ${Python_VERSION})
 target_link_libraries(pyLIEF PUBLIC ${LIEF_TARGET} lief_spdlog)
 
 if(APPLE)
   set_target_properties(pyLIEF PROPERTIES
-    MACOSX_RPATH     ON
-    LINK_FLAGS       "-undefined dynamic_lookup "
+    MACOSX_RPATH ON
+    LINK_FLAGS   "-undefined dynamic_lookup "
   )
 endif()
 
-set_target_properties(pyLIEF PROPERTIES PREFIX "")
 if (UNIX)
   # Even on osx (c.f. EXT_SUFFIX from sysconfig)
   set_target_properties(pyLIEF PROPERTIES SUFFIX ".so")
@@ -140,36 +115,14 @@ elseif(WIN32)
   set_target_properties(pyLIEF PROPERTIES SUFFIX ".pyd")
 endif()
 
-get_target_property(suffix pyLIEF SUFFIX)
-set(LIEF_LIBRARY_NAME "lief${suffix}")
-
 if (WIN32)
   target_link_libraries(pyLIEF PUBLIC ${PYTHON_LIBRARIES})
 endif()
 
-if (CMAKE_BUILD_TYPE MATCHES Release AND UNIX AND NOT APPLE)
-  add_custom_command(TARGET pyLIEF
-    COMMENT "Strip LIEF Python bindings"
-    POST_BUILD
-    COMMAND ${CMAKE_STRIP} --strip-all $<TARGET_FILE:pyLIEF>
-  )
+if(SKBUILD)
+  if(LIEF_PYTHON_EDITABLE)
+    install(TARGETS pyLIEF LIBRARY DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/lief)
+  else()
+    install(TARGETS pyLIEF LIBRARY DESTINATION ${SKBUILD_PLATLIB_DIR}/lief/)
+  endif()
 endif()
-
-if (CMAKE_BUILD_TYPE MATCHES Release AND APPLE)
-  add_custom_command(TARGET pyLIEF
-    COMMENT "Strip LIEF Python bindings"
-    POST_BUILD
-    COMMAND ${CMAKE_STRIP} -x -S $<TARGET_FILE:pyLIEF>
-  )
-endif()
-
-add_custom_command(TARGET pyLIEF POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:pyLIEF> ${PROJECT_BINARY_DIR}/api/python/lief
-)
-
-if (MSVC)
-  add_custom_command(TARGET pyLIEF POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:pyLIEF> ${CMAKE_CURRENT_BINARY_DIR}
-  )
-endif()
-

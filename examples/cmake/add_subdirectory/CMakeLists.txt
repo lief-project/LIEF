@@ -14,7 +14,7 @@ option(LIEF_EXAMPLES "Build LIEF examples" OFF)
 option(LIEF_TESTS "Build LIEF tests" OFF)
 
 if(MSVC)
-  set(LIEF_USE_CRT_RELEASE "MT" CACHE STRING "LIEF CRT option")
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MT" CACHE STRING "CRT option")
 endif()
 
 

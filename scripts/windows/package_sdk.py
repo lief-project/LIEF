@@ -49,21 +49,20 @@ cmake_config_static = [
     "-G", "Ninja",
     "-DCMAKE_BUILD_TYPE=Release",
     "-DBUILD_SHARED_LIBS=off",
+    "-DCMAKE_MSVC_RUNTIME_LIBRARY=MT",
     "-DLIEF_PYTHON_API=off",
     "-DLIEF_INSTALL_COMPILED_EXAMPLES=on",
-    "-DLIEF_USE_CRT_RELEASE=MT",
     f"-DCMAKE_INSTALL_PREFIX={INSTALL_DIR.as_posix()}"
 ]
 
 cmake_config_shared = [
     "-G", "Ninja",
     "-DCMAKE_BUILD_TYPE=Release",
+    "-DCMAKE_MSVC_RUNTIME_LIBRARY=MT",
     "-DBUILD_SHARED_LIBS=on",
     "-DLIEF_PYTHON_API=off",
     "-DLIEF_INSTALL_COMPILED_EXAMPLES=off",
-    "-DLIEF_USE_CRT_RELEASE=MT",
 ]
-
 
 build_args = ['--config', 'Release']
 configure_cmd = ['cmake', LIEF_SRC.resolve().as_posix()]

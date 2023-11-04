@@ -140,11 +140,13 @@ foreach(example ${LIEF_CPP_EXAMPLES})
 endforeach()
 
 
-install(
-  DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
-  DESTINATION share/LIEF/examples/cpp
-  COMPONENT examples
-  FILES_MATCHING REGEX "(.*).(hpp|h|cpp)$"
-)
+if (LIEF_INSTALL)
+  install(
+    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
+    DESTINATION share/LIEF/examples/cpp
+    COMPONENT examples
+    FILES_MATCHING REGEX "(.*).(hpp|h|cpp)$"
+  )
+endif()
 
 

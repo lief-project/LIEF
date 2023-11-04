@@ -72,7 +72,6 @@ jobs:
       - name: Install system dependencies
         run: |
           brew install cmake ninja ccache
-          python -m pip install --upgrade pip setuptools wheel
       - name: Get Date
         id: get-date
         run: |
@@ -92,12 +91,13 @@ jobs:
       - name: Upgrade pip
         shell: bash
         run: |
-          python -m pip install --upgrade pip setuptools
+          python -m pip install --upgrade pip
       - name: Build Python 3.10 with tests
         shell: bash
         env:
           LIEF_SAMPLES_DIR: "/tmp/samples"
           LIEF_BUILD_DIR: "/tmp/lief-build"
+          PYLIEF_CONF: "${{ github.workspace }}/scripts/osx/osx-testing-x64.toml"
           MACOSX_TARGET: "11.7"
           MACOSX_DEPLOYMENT_TARGET: "11.0"
           CCACHE_DIR: ${{ runner.temp }}/.ccache
@@ -106,14 +106,11 @@ jobs:
           CCACHE_COMPRESS: 1
         run: |
           python -m pip install -r tests/requirements.txt
+          python -m pip -vvv install api/python
           python tests/dl_samples.py ${LIEF_SAMPLES_DIR}
-          cd api/python
-          PYLIEF_CONF=${GITHUB_WORKSPACE}/scripts/osx/osx-testing-x64.toml \
-          python -m pip -vvv install --user .
-          cd ${GITHUB_WORKSPACE}
           python tests/run_pytest.py
-          python tests/run_tools_check.py ${LIEF_BUILD_DIR}/temp
-          ctest --output-on-failure --test-dir ${LIEF_BUILD_DIR}/temp
+          python tests/run_tools_check.py ${LIEF_BUILD_DIR}/
+          ctest --output-on-failure --test-dir ${LIEF_BUILD_DIR}/
   wheels:
     runs-on: macos-11.0
     needs: osx-sdk
@@ -133,7 +130,7 @@ jobs:
       - name: Install system dependencies
         run: |
           brew install cmake ninja ccache
-          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install --upgrade pip
       - name: Get Date
         id: get-date
         run: |
@@ -150,10 +147,6 @@ jobs:
           key: osx-${{ runner.os }}-${{ matrix.arch }}-${{ matrix.python-version }}-${{ steps.get-date.outputs.date }}
           restore-keys: |
               osx-${{ runner.os }}-${{ matrix.arch }}-${{ matrix.python-version }}
-      - name: Upgrade pip
-        shell: bash
-        run: |
-          python -m pip install --upgrade pip setuptools
       - name: Download LIEF install dir
         uses: actions/download-artifact@v3
         with:
@@ -206,6 +199,7 @@ jobs:
             -e GITHUB_REPOSITORY=$GITHUB_REPOSITORY           \
             -e LIEF_S3_KEY=$LIEF_S3_KEY                       \
             -e LIEF_S3_SECRET=$LIEF_S3_SECRET                 \
-            liefproject/deploy python3 /src/.github/deploy.py /runner_tmp/artifacts
+            liefproject/deploy                                \
+            python3 /src/.github/deploy.py /runner_tmp/artifacts
 
 

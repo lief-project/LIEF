@@ -10,11 +10,7 @@ export LIEF_BUILD_DIR=/tmp/lief-build
 $PYTHON_BINARY -m venv /tmp/lief_venv
 source /tmp/lief_venv/bin/activate
 
-python -m pip install            \
-              tomli==2.0.1       \
-              wheel==0.41.2      \
-              setuptools==68.2.2
-
+python -m pip install -r /src/api/python/build-requirements.txt
 
 pushd /src/api/python
 python -m pip -vvv wheel                  \

@@ -1,15 +1,13 @@
-
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/cpp")
+add_subdirectory(cpp)
 
 if (LIEF_C_API)
-  add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/c")
+  add_subdirectory(c)
 endif()
 
-install(
-  DIRECTORY cmake
-  DESTINATION share/LIEF/examples
-  COMPONENT examples
-)
-
-
-
+if (LIEF_INSTALL)
+  install(
+    DIRECTORY cmake
+    DESTINATION share/LIEF/examples
+    COMPONENT examples
+  )
+endif()

@@ -132,14 +132,13 @@ jobs:
         run: |
           python -m pip install -r tests/requirements.txt
           python tests/dl_samples.py %LIEF_SAMPLES_DIR%
-          cd api/python
-          python -m pip -vvv install --user .
+          python -m pip -vvv install --user api/python
         shell: cmd
       - name: Run tests
         run: |
           cd %GITHUB_WORKSPACE%
           python tests/run_pytest.py
-          ctest --output-on-failure --test-dir %LIEF_BUILD_DIR%/temp
+          ctest --output-on-failure --test-dir %LIEF_BUILD_DIR%/
         shell: cmd
       - name: sccache stats
         run: sccache --show-stats
@@ -169,7 +168,7 @@ jobs:
         run: |
           choco install ninja
           choco install sccache
-          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install --upgrade pip
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           vsversion: "2022"
@@ -193,10 +192,6 @@ jobs:
           path: ~/lief-${{ matrix.arch }}-install
       - name: Start sccache server
         run: sccache --start-server
-      - name: Upgrade pip
-        run: |
-          python -m pip install --upgrade pip
-        shell: cmd
       - name: Set arch specific env
         if: matrix.arch == 'x64'
         run: |

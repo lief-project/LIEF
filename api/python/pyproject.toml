@@ -1,6 +1,7 @@
 [build-system]
-requires = ["setuptools", "wheel", "tomli"]
-build-backend = "setuptools.build_meta"
+requires = []
+build-backend = "setup"
+backend-path = ["backend"]
 
 [project]
 name = "lief"
@@ -18,6 +19,11 @@ classifiers = [
     "Topic :: Software Development :: Libraries",
 ]
 dynamic = ["version", "readme"]
+
+[tool.scikit-build]
+experimental = true
+metadata.version.provider = "dynamic_provider"
+metadata.readme.provider = "dynamic_provider"
 
 [project.urls]
 homepage = "https://lief-project.github.io/"
