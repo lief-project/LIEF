@@ -16,14 +16,6 @@
 #ifndef C_LIEF_ELF_UTILS_H_
 #define C_LIEF_ELF_UTILS_H_
 
-/** @defgroup elf_utils_c_api Utils
- *  @ingroup elf_c_api
- *  @addtogroup elf_utils_c_api
- *  @brief Utils C API
- *
- *  @{
- */
-
 #include <stddef.h>
 
 #include "LIEF/visibility.h"
@@ -42,5 +34,4 @@ LIEF_API bool is_elf(const char* file);
 #endif
 
 
-/** @} */
 #endif

@@ -16,14 +16,6 @@
 #ifndef C_LIEF_ELF_BINARY_H_
 #define C_LIEF_ELF_BINARY_H_
 
-/** @defgroup elf_binary_c_api Binary
- *  @ingroup elf_c_api
- *  @addtogroup elf_binary_c_api
- *  @brief Binary C API
- *
- *  @{
- */
-
 #include <stddef.h>
 
 #include "LIEF/visibility.h"
@@ -40,7 +32,7 @@
 extern "C" {
 #endif
 
-/** @brief LIEF::ELF::Binary C Handler */
+/** LIEF::ELF::Binary C Handler */
 struct Elf_Binary_t {
   void*              handler;
   const char*        name;
@@ -56,24 +48,16 @@ struct Elf_Binary_t {
 
 typedef struct Elf_Binary_t Elf_Binary_t;
 
-/** @brief Wrapper for LIEF::ELF::Parser::parse */
+/** Wrapper for LIEF::ELF::Parser::parse */
 LIEF_API Elf_Binary_t* elf_parse(const char *file);
 
 LIEF_API void elf_binary_destroy(Elf_Binary_t* binary);
 
-/* ELF::Binary methods
- * ==================
- */
-
-/** @brief Update LIEF::ELF::Header object */
+/** Update LIEF::ELF::Header object */
 LIEF_API int elf_binary_save_header(Elf_Binary_t* binary);
-
-
 
 #ifdef __cplusplus
 }
 #endif
 
-
-/** @} */
 #endif

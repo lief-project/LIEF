@@ -1,110 +1,29 @@
 ELF
 ---
 
-.. doxygenfunction:: elf_parse
+.. autodoxygenfile:: LIEF/ELF/Header.h
    :project: lief
 
-
-.. doxygenfunction:: elf_binary_destroy
+.. autodoxygenfile:: LIEF/ELF/Binary.h
    :project: lief
 
-
-.. doxygenfunction:: elf_binary_save_header
+.. autodoxygenfile:: LIEF/ELF/Section.h
    :project: lief
 
-Elf_Binary_t
-************
-
-.. doxygenstruct:: Elf_Binary_t
+.. autodoxygenfile:: LIEF/ELF/Segment.h
    :project: lief
 
-
-----------
-
-Elf_Header_t
-************
-
-.. doxygenstruct:: Elf_Header_t
+.. autodoxygenfile:: LIEF/ELF/Symbol.h
    :project: lief
 
-----------
-
-Elf_Section_t
-*************
-
-.. doxygenstruct:: Elf_Section_t
+.. autodoxygenfile:: LIEF/ELF/DynamicEntry.h
    :project: lief
 
-----------
-
-Elf_Segment_t
-*************
-
-.. doxygenstruct:: Elf_Segment_t
+.. autodoxygenfile:: LIEF/ELF/enums.h
    :project: lief
 
-----------
-
-Dynamic Entries
-***************
-
-Elf_DynamicEntry_t
-~~~~~~~~~~~~~~~~~~
-
-.. doxygenstruct:: Elf_DynamicEntry_t
+.. autodoxygenfile:: LIEF/ELF/EnumToString.h
    :project: lief
 
-----------
-
-Elf_DynamicEntry_Library_t
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. doxygenstruct:: Elf_DynamicEntry_Library_t
-   :project: lief
-
-----------
-
-Elf_DynamicEntry_SharedObject_t
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. doxygenstruct:: Elf_DynamicEntry_SharedObject_t
-   :project: lief
-
-----------
-
-Elf_DynamicEntry_Array_t
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. doxygenstruct:: Elf_DynamicEntry_Array_t
-   :project: lief
-
-----------
-
-Elf_DynamicEntry_Rpath_t
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. doxygenstruct:: Elf_DynamicEntry_Rpath_t
-   :project: lief
-
-----------
-
-Elf_DynamicEntry_RunPath_t
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. doxygenstruct:: Elf_DynamicEntry_RunPath_t
-   :project: lief
-
-----------
-
-Elf_DynamicEntry_Flags_t
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. doxygenstruct:: Elf_DynamicEntry_Flags_t
-   :project: lief
-
-
-Utilities
-*********
-
-.. doxygengroup:: elf_utils_c_api
+.. autodoxygenfile:: LIEF/ELF/utils.h
    :project: lief

@@ -1,60 +1,26 @@
 MachO
 -----
 
-.. doxygenfunction:: macho_parse
+.. autodoxygenfile:: LIEF/MachO/Binary.h
    :project: lief
 
-
-.. doxygenfunction:: macho_binaries_destroy
+.. autodoxygenfile:: LIEF/MachO/enums.h
    :project: lief
 
-
-Macho_Binary_t
-**************
-
-.. doxygenstruct:: Macho_Binary_t
+.. autodoxygenfile:: LIEF/MachO/EnumToString.h
    :project: lief
 
-
-----------
-
-Macho_Header_t
-**************
-
-.. doxygenstruct:: Macho_Header_t
+.. autodoxygenfile:: LIEF/MachO/Header.h
    :project: lief
 
-----------
-
-Macho_Section_t
-***************
-
-.. doxygenstruct:: Macho_Section_t
+.. autodoxygenfile:: LIEF/MachO/LoadCommand.h
    :project: lief
 
-----------
-
-Macho_Segment_t
-***************
-
-.. doxygenstruct:: Macho_Segment_t
+.. autodoxygenfile:: LIEF/MachO/Section.h
    :project: lief
 
-
-----------
-
-Macho_Command_t
-***************
-
-.. doxygenstruct:: Macho_Command_t
+.. autodoxygenfile:: LIEF/MachO/Segment.h
    :project: lief
 
-
-----------
-
-Macho_Symbol_t
-**************
-
-.. doxygenstruct:: Macho_Symbol_t
+.. autodoxygenfile:: LIEF/MachO/Symbol.h
    :project: lief
-

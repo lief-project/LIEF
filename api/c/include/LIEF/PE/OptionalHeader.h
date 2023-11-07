@@ -19,13 +19,6 @@
 
 #include "LIEF/PE/enums.h"
 #include "LIEF/visibility.h"
-/**  @defgroup pe_optional_header_c_api OptionalHeader
- *  @ingroup pe_c_api
- *  @addtogroup pe_optional_header_c_api
- *  @brief OptionalHeader C API
- *
- *  @{
- */
 
 #ifdef __cplusplus
 extern "C" {
@@ -103,5 +96,4 @@ LIEF_API const char* lief_pe_subsytem_str(enum LIEF_PE_SUBSYSTEM e);
 }
 #endif
 
-/** @} */
 #endif

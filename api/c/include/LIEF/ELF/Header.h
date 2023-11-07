@@ -18,13 +18,6 @@
 #include <inttypes.h>
 
 #include "LIEF/ELF/enums.h"
-/**  @defgroup elf_header_c_api Header
- *  @ingroup elf_c_api
- *  @addtogroup elf_header_c_api
- *  @brief Header C API
- *
- *  @{
- */
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,5 +47,4 @@ typedef struct Elf_Header_t Elf_Header_t;
 }
 #endif
 
-/** @} */
 #endif

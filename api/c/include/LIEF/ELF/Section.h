@@ -20,14 +20,6 @@
 
 #include "LIEF/ELF/enums.h"
 
-/** @defgroup elf_section_c_api Section
- *  @ingroup elf_c_api
- *  @addtogroup elf_section_c_api
- *  @brief Section C API
- *
- *  @{
- */
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -54,5 +46,4 @@ typedef struct Elf_Section_t Elf_Section_t;
 }
 #endif
 
-/** @} */
 #endif

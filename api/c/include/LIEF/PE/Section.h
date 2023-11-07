@@ -19,13 +19,6 @@
 #include <inttypes.h>
 
 #include "LIEF/PE/enums.h"
-/**  @defgroup pe_section_c_api Section
- *  @ingroup pe_c_api
- *  @addtogroup pe_section_c_api
- *  @brief Section C API
- *
- *  @{
- */
 
 #ifdef __cplusplus
 extern "C" {
@@ -93,5 +86,4 @@ typedef struct Pe_Section_t Pe_Section_t;
 }
 #endif
 
-/** @} */
 #endif

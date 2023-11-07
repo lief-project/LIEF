@@ -18,13 +18,6 @@
 #include <inttypes.h>
 
 #include "LIEF/ELF/enums.h"
-/** @defgroup pe_dos_header_c_api DosHeader
- *  @ingroup pe_c_api
- *  @addtogroup pe_dos_header_c_api
- *  @brief Dos Header C API
- *
- *  @{
- */
 
 #ifdef __cplusplus
 extern "C" {
@@ -59,5 +52,4 @@ typedef struct Pe_DosHeader_t Pe_DosHeader_t;
 }
 #endif
 
-/** @} */
 #endif

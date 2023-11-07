@@ -18,14 +18,6 @@
 #include <inttypes.h>
 
 #include "LIEF/MachO/enums.h"
-/**  @defgroup macho_section_c_api Header
- *  @ingroup macho_c_api
- *  @addtogroup macho_section_c_api
- *  @brief Section C API
- *
- *  @{
- */
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -55,5 +47,4 @@ typedef struct Macho_Section_t Macho_Section_t;
 }
 #endif
 
-/** @} */
 #endif

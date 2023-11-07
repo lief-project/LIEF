@@ -18,14 +18,6 @@
 #include <inttypes.h>
 
 #include "LIEF/MachO/enums.h"
-/**  @defgroup macho_load_command_c_api Header
- *  @ingroup macho_c_api
- *  @addtogroup macho_load_command_c_api
- *  @brief Load Command C API
- *
- *  @{
- */
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -44,5 +36,4 @@ typedef struct Macho_Command_t Macho_Command_t;
 }
 #endif
 
-/** @} */
 #endif

@@ -19,13 +19,6 @@
 #include <inttypes.h>
 
 #include "LIEF/PE/enums.h"
-/**  @defgroup pe_data_directory_c_api Section
- *  @ingroup pe_c_api
- *  @addtogroup pe_data_directory_c_api
- *  @brief Data directory C API
- *
- *  @{
- */
 
 #ifdef __cplusplus
 extern "C" {
@@ -65,5 +58,4 @@ typedef struct Pe_DataDirectory_t Pe_DataDirectory_t;
 }
 #endif
 
-/** @} */
 #endif

@@ -16,14 +16,6 @@
 #ifndef C_LIEF_PE_BINARY_H_
 #define C_LIEF_PE_BINARY_H_
 
-/** @defgroup pe_binary_c_api Binary
- *  @ingroup pe_c_api
- *  @addtogroup pe_binary_c_api
- *  @brief Binary C API
- *
- *  @{
- */
-
 #include <stddef.h>
 
 #include "LIEF/visibility.h"
@@ -64,6 +56,4 @@ LIEF_API void pe_binary_destroy(Pe_Binary_t* binary);
 }
 #endif
 
-
-/** @} */
 #endif

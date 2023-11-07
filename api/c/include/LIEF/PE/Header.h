@@ -20,14 +20,6 @@
 
 #include "LIEF/visibility.h"
 
-/**  @defgroup pe_header_c_api Header
- *  @ingroup pe_c_api
- *  @addtogroup pe_header_c_api
- *  @brief Header C API
- *
- *  @{
- */
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -99,5 +91,4 @@ LIEF_API const char* lief_pe_header_characteristics_str(enum LIEF_PE_HEADER_CHAR
 }
 #endif
 
-/** @} */
 #endif

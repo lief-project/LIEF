@@ -16,8 +16,6 @@
 #ifndef C_LIEF_MACHO_H_
 #define C_LIEF_MACHO_H_
 
-/** @defgroup macho_c_api MachO C API */
-
 #include "LIEF/MachO/Binary.h"
 #include "LIEF/MachO/Symbol.h"
 #include "LIEF/MachO/Segment.h"

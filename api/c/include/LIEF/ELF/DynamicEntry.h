@@ -20,15 +20,6 @@
 
 #include "LIEF/ELF/enums.h"
 
-/** @defgroup elf_dynamic_entry_c_api Dynamic Entry
- *  @ingroup elf_c_api
- *  @addtogroup elf_dynamic_entry_c_api
- *  @brief Dynamic Entry C API
- *
- *  @{
- */
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -88,5 +79,4 @@ typedef struct Elf_DynamicEntry_Flags_t        Elf_DynamicEntry_Flags_t;
 }
 #endif
 
-/** @} */
 #endif

@@ -21,14 +21,6 @@
 #include "LIEF/PE/enums.h"
 #include "LIEF/PE/ImportEntry.h"
 
-/**  @defgroup pe_import_c_api Import
- *  @ingroup pe_c_api
- *  @addtogroup pe_import_c_api
- *  @brief Import C API
- *
- *  @{
- */
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -49,5 +41,4 @@ typedef struct Pe_Import_t Pe_Import_t;
 }
 #endif
 
-/** @} */
 #endif

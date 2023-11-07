@@ -20,13 +20,6 @@
 
 #include "LIEF/ELF/enums.h"
 #include "LIEF/types.h"
-/**  @defgroup elf_symbol_c_api Symbol
- *  @ingroup elf_c_api
- *  @addtogroup elf_symbol_c_api
- *  @brief Symbol C API
- *
- *  @{
- */
 
 #ifdef __cplusplus
 extern "C" {
@@ -51,5 +44,4 @@ typedef struct Elf_Symbol_t Elf_Symbol_t;
 }
 #endif
 
-/** @} */
 #endif

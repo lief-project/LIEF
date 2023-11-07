@@ -1,78 +1,32 @@
 PE
 --
 
-
-.. doxygenfunction:: pe_parse
+.. autodoxygenfile:: LIEF/PE/DataDirectory.h
    :project: lief
 
-
-.. doxygenfunction:: pe_binary_destroy
+.. autodoxygenfile:: LIEF/PE/Section.h
    :project: lief
 
-Pe_Binary_t
-************
-
-.. doxygenstruct:: Pe_Binary_t
+.. autodoxygenfile:: LIEF/PE/OptionalHeader.h
    :project: lief
 
-
-----------
-
-Pe_DosHeader_t
-**************
-
-.. doxygenstruct:: Pe_DosHeader_t
+.. autodoxygenfile:: LIEF/PE/ImportEntry.h
    :project: lief
 
-----------
-
-Pe_Header_t
-***********
-
-.. doxygenstruct:: Pe_Header_t
+.. autodoxygenfile:: LIEF/PE/Import.h
    :project: lief
 
-----------
-
-Pe_OptionalHeader_t
-*******************
-
-.. doxygenstruct:: Pe_OptionalHeader_t
+.. autodoxygenfile:: LIEF/PE/Header.h
    :project: lief
 
-
-----------
-
-Pe_Section_t
-************
-
-.. doxygenstruct:: Pe_Section_t
+.. autodoxygenfile:: LIEF/PE/DosHeader.h
    :project: lief
 
-
-----------
-
-Pe_DataDirectory_t
-******************
-
-.. doxygenstruct:: Pe_DataDirectory_t
+.. autodoxygenfile:: LIEF/PE/Binary.h
    :project: lief
 
-
-----------
-
-Pe_Import_t
-***********
-
-.. doxygenstruct:: Pe_Import_t
+.. autodoxygenfile:: LIEF/PE/EnumToString.h
    :project: lief
 
-
-----------
-
-Pe_ImportEntry_t
-****************
-
-.. doxygenstruct:: Pe_ImportEntry_t
+.. autodoxygenfile:: LIEF/PE/enums.h
    :project: lief
-

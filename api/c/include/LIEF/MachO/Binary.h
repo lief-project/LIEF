@@ -16,14 +16,6 @@
 #ifndef C_LIEF_MACHO_BINARY_H_
 #define C_LIEF_MACHO_BINARY_H_
 
-/** @defgroup macho_binary_c_api Binary
- *  @ingroup macho_c_api
- *  @addtogroup macho_binary_c_api
- *  @brief Binary C API
- *
- *  @{
- */
-
 #include <stdint.h>
 
 #include "LIEF/visibility.h"
@@ -63,5 +55,4 @@ LIEF_API void macho_binaries_destroy(Macho_Binary_t** binaries);
 #endif
 
 
-/** @} */
 #endif

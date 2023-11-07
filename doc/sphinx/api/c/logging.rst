@@ -1,12 +1,6 @@
 Logging
 =======
 
-.. doxygenfunction:: lief_logging_disable
-   :project: lief
-
-.. doxygenfunction:: lief_logging_enable
-   :project: lief
-
-.. doxygenfunction:: lief_logging_set_level
+.. autodoxygenfile:: LIEF/logging.h
    :project: lief
 
