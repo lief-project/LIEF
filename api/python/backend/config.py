@@ -25,6 +25,8 @@ class BuildConfig(BaseModel):
     extra_cmake: Union[List[str], str] = Field(None, alias="extra-cmake-opt")
     lief_install_dir: Optional[str] = Field(None, alias="lief-install-dir")
     py_api: str = Field("", alias="py-api")
+    c_compiler: str | None = Field(None, alias="c-compiler")
+    cxx_compiler: str | None = Field(None, alias="cxx-compiler")
 
     @property
     def targets(self) -> List[str]:
@@ -56,6 +58,16 @@ class BuildConfig(BaseModel):
                 "-DLIEF_INSTALL=off",
                 f"-DLIEF_DIR={lief_dir.as_posix()}"
             ))
+
+        if self.c_compiler is not None:
+            out.append(
+                f"-DCMAKE_C_COMPILER={self.c_compiler}"
+            )
+
+        if self.cxx_compiler is not None:
+            out.append(
+                f"-DCMAKE_CXX_COMPILER={self.cxx_compiler}"
+            )
 
         return out
 
