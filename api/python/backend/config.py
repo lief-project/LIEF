@@ -25,8 +25,8 @@ class BuildConfig(BaseModel):
     extra_cmake: Union[List[str], str] = Field(None, alias="extra-cmake-opt")
     lief_install_dir: Optional[str] = Field(None, alias="lief-install-dir")
     py_api: str = Field("", alias="py-api")
-    c_compiler: str | None = Field(None, alias="c-compiler")
-    cxx_compiler: str | None = Field(None, alias="cxx-compiler")
+    c_compiler: Optional[str] = Field(None, alias="c-compiler")
+    cxx_compiler: Optional[str] = Field(None, alias="cxx-compiler")
 
     @property
     def targets(self) -> List[str]:
