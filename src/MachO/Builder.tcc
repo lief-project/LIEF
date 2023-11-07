@@ -648,7 +648,7 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
         ++isym;
       }
     }
-    nlist_table.align(8);
+    nlist_table.align(binary_->is64_ ? 8 : 4);
 
     raw_nlist_table = nlist_table.raw();
     symtab.symoff = linkedit_offset_ + linkedit_.size();

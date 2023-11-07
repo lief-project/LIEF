@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import lief
 from utils import get_sample
+from pathlib import Path
 
 def test_945():
     target = lief.MachO.parse(get_sample("MachO/python3_issue_476.bin")).at(0)
@@ -12,3 +13,12 @@ def test_945():
     for load_command in target.commands:
         if load_command.command in (lief.MachO.LOAD_COMMAND_TYPES.SEGMENT, lief.MachO.LOAD_COMMAND_TYPES.SEGMENT_64):
             assert isinstance(load_command, lief.MachO.SegmentCommand)
+
+def test_993(tmp_path):
+    target = lief.MachO.parse(get_sample("MachO/alivcffmpeg_armv7.dylib"))
+    out = Path(tmp_path) / "issue_993.dylib"
+    target.write(out.as_posix())
+
+    new = lief.MachO.parse(out)
+    not_err, msg = lief.MachO.check_layout(new)
+    assert not_err, msg
