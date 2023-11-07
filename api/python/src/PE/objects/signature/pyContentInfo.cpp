@@ -20,6 +20,7 @@
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/unique_ptr.h>
 
 namespace LIEF::PE::py {
 
