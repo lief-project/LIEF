@@ -13,6 +13,9 @@ jobs:
         LDFLAGS: "-Wl,--gc-sections -Wl,--exclude-libs,ALL"
         BUILD_DIR_STATIC: "/tmp/build/linux-x86-64/static-release"
         BUILD_DIR_SHARED: "/tmp/build/linux-x86-64/shared-release"
+        ACTIONS_RUNTIME_URL: "${{ env.ACTIONS_RUNTIME_URL }}"
+        ACTIONS_RUNTIME_TOKEN: "${{ env.ACTIONS_RUNTIME_TOKEN }}"
+        ACTIONS_CACHE_URL: "${{ env.ACTIONS_CACHE_URL }}"
       options: --user 1001:1001
     steps:
       - uses: actions/checkout@v3
@@ -23,10 +26,14 @@ jobs:
         run: |
           echo "date=$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")" >> $GITHUB_OUTPUT
         shell: bash
+      - name: Prepare ccache
+        shell: bash
+        run: |
+          mkdir -p /home/pylief/.ccache/tmp
       - name: ccache cache files
         uses: actions/cache@v3
         with:
-          path: ~/.ccache
+          path: /home/pylief/.ccache
           key: linux-x86-64-${{ runner.os }}-sdk-${{ steps.get-date.outputs.date }}
           restore-keys: |
               linux-x86-64-${{ runner.os }}-sdk
