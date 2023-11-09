@@ -108,6 +108,13 @@ jobs:
           python -m pip install -r tests/requirements.txt
           python -m pip -vvv install api/python
           python tests/dl_samples.py ${LIEF_SAMPLES_DIR}
+      - name: Run tests
+        shell: bash
+        timeout-minutes: 20
+        env:
+          LIEF_SAMPLES_DIR: "/tmp/samples"
+          LIEF_BUILD_DIR: "/tmp/lief-build"
+        run: |
           python tests/run_pytest.py
           python tests/run_tools_check.py ${LIEF_BUILD_DIR}/
           ctest --output-on-failure --test-dir ${LIEF_BUILD_DIR}/

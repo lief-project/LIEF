@@ -1,5 +1,5 @@
 #!/usr/bin/sh
-set -ex
+set -e
 export LIEF_SAMPLES_DIR=/tmp/samples
 export CXXFLAGS='-ffunction-sections -fdata-sections -fvisibility-inlines-hidden -static-libgcc'
 export CFLAGS='-ffunction-sections -fdata-sections -static-libgcc'
@@ -18,11 +18,7 @@ python -m pip install                            \
 mkdir -p ${LIEF_SAMPLES_DIR}
 
 python tests/dl_samples.py ${LIEF_SAMPLES_DIR}
-
-pushd /src/api/python
-python -m pip -vvv wheel --no-build-isolation --wheel-dir=/src/wheel_stage .
-python -m pip -vvv install .
-popd
+python -m pip -vvv install /src/api/python
 
 # Run the Python test suite
 python tests/run_pytest.py
