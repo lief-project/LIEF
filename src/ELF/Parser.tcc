@@ -172,9 +172,9 @@ ok_error_t Parser::parse_binary() {
       }
 
       if (auto res = binary_->virtual_address_to_offset(virtual_address)) {
-        auto parsing_result = type == DYNAMIC_TAGS::DT_RELA ?
-                              parse_pltgot_relocations<ELF_T, typename ELF_T::Elf_Rela>(*res, size) :
-                              parse_pltgot_relocations<ELF_T, typename ELF_T::Elf_Rel>(*res, size);
+        type == DYNAMIC_TAGS::DT_RELA ?
+                parse_pltgot_relocations<ELF_T, typename ELF_T::Elf_Rela>(*res, size) :
+                parse_pltgot_relocations<ELF_T, typename ELF_T::Elf_Rel>(*res, size);
         binary_->sizing_info_->jmprel = size;
       } else {
         LIEF_WARN("Can't convert DT_JMPREL.virtual_address into an offset (0x{:x})", virtual_address);

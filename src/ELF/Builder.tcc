@@ -1590,7 +1590,6 @@ ok_error_t Builder::build_symbol_definition() {
   using Elf_Half    = typename ELF_T::Elf_Half;
   using Elf_Word    = typename ELF_T::Elf_Word;
   using Elf_Addr    = typename ELF_T::Elf_Addr;
-  using Elf_Off     = typename ELF_T::Elf_Off;
 
   using Elf_Verdef  = typename ELF_T::Elf_Verdef;
   using Elf_Verdaux = typename ELF_T::Elf_Verdaux;

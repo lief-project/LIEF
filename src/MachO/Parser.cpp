@@ -212,7 +212,9 @@ ok_error_t Parser::undo_reloc_bindings(uintptr_t base_address) {
   for (std::unique_ptr<Binary>& bin : binaries_) {
     for (Relocation& reloc : bin->relocations()) {
       if (RelocationFixup::classof(reloc)) {
-        auto& fixup = static_cast<RelocationFixup&>(reloc);
+        /* TODO(romain): We should support fixup
+         * auto& fixup = static_cast<RelocationFixup&>(reloc);
+         */
       }
       else if (RelocationDyld::classof(reloc)) {
         span<const uint8_t> content = bin->get_content_from_virtual_address(reloc.address(), sizeof(uintptr_t));
