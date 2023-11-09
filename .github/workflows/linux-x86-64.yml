@@ -86,7 +86,7 @@ jobs:
       - name: Prepare test samples
         shell: bash
         run: |
-          source ${LIEF_VENV}/tmp/lief_venv/bin/activate
+          source ${LIEF_VENV}/bin/activate
           mkdir -p ${LIEF_SAMPLES_DIR}
           python tests/dl_samples.py ${LIEF_SAMPLES_DIR}
       - name: Build & install LIEF
