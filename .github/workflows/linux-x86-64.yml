@@ -34,7 +34,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p ${BUILD_DIR_STATIC}
-          cmake -S $GITHUB_WORKSPACE} -B ${BUILD_DIR_STATIC} -GNinja \
+          cmake -S $GITHUB_WORKSPACE -B ${BUILD_DIR_STATIC} -GNinja \
                 -DCMAKE_LINK_WHAT_YOU_USE=on                  \
                 -DBUILD_SHARED_LIBS=off                       \
                 -DLIEF_INSTALL_COMPILED_EXAMPLES=on           \
