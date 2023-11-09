@@ -21,14 +21,14 @@
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
 
-
 #include "LIEF/MachO/BinaryParser.hpp"
-
 #include "LIEF/MachO/utils.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/MachO/DyldExportsTrie.hpp"
+
+#include "LIEF/utils.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -136,7 +136,8 @@ ok_error_t BinaryParser::init_and_parse() {
 
 
 ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports, uint64_t start,
-                                           uint64_t end, const std::string& prefix)
+                                           uint64_t end, const std::string& prefix,
+                                           bool* invalid_names)
 {
   if (stream_->pos() >= end) {
     return make_error_code(lief_errors::read_error);
@@ -281,6 +282,13 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports, uint64_t sta
     }
     std::string name = prefix + std::move(*suffix);
 
+    if (!is_printable(name)) {
+      if (!*invalid_names) {
+        LIEF_WARN("The export trie contains non-printable symbols");
+        *invalid_names = true;
+      }
+    }
+
     auto res_child_node_offet = stream_->read_uleb128();
     if (!res_child_node_offet) {
       LIEF_ERR("Can't read child_node_offet");
@@ -298,7 +306,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports, uint64_t sta
     visited_.insert(start + child_node_offet);
     size_t current_pos = stream_->pos();
     stream_->setpos(start + child_node_offet);
-    parse_export_trie(exports, start, end, name);
+    parse_export_trie(exports, start, end, name, invalid_names);
     stream_->setpos(current_pos);
   }
   return ok();
@@ -336,7 +344,9 @@ ok_error_t BinaryParser::parse_dyld_exports() {
   exports->content_ = content.subspan(rel_offset, size);
 
   stream_->setpos(offset);
-  parse_export_trie(exports->export_info_, offset, end_offset, "");
+  bool invalid_names = false;
+  parse_export_trie(exports->export_info_, offset, end_offset, "",
+                    &invalid_names);
   return ok();
 
 }
@@ -374,7 +384,8 @@ ok_error_t BinaryParser::parse_dyldinfo_export() {
   dyldinfo->export_trie_ = content.subspan(rel_offset, size);
 
   stream_->setpos(offset);
-  parse_export_trie(dyldinfo->export_info_, offset, end_offset, "");
+  bool invalid_names = false;
+  parse_export_trie(dyldinfo->export_info_, offset, end_offset, "", &invalid_names);
   return ok();
 }
 

@@ -228,7 +228,8 @@ class LIEF_API BinaryParser : public LIEF::Parser {
   ok_error_t parse_dyld_exports();
 
   ok_error_t parse_export_trie(exports_list_t& exports, uint64_t start,
-                               uint64_t end, const std::string& prefix);
+                               uint64_t end, const std::string& prefix,
+                               bool* invalid_names);
 
   void copy_from(ChainedBindingInfo& to, ChainedBindingInfo& from);
 
