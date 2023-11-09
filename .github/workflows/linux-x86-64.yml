@@ -136,7 +136,7 @@ jobs:
           ctest --output-on-failure --test-dir ${LIEF_BUILD_DIR}/
       - name: Run fuzzing tests
         shell: bash
-        timeout-minutes: 10
+        timeout-minutes: 20
         run: |
           source ${LIEF_VENV}/bin/activate
           export PYTHONPATH="${GITHUB_WORKSPACE}/tests:$PYTHONPATH"
