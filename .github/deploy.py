@@ -12,17 +12,18 @@ import os
 import sys
 import tempfile
 import tomli
+import re
 
 LOG_LEVEL = logging.INFO
 
-CURRENTDIR     = Path(__file__).resolve().parent
-REPODIR        = CURRENTDIR.parent
-ASSET_DIR      = CURRENTDIR / "assets"
-CONFIG_DIR     = CURRENTDIR / "config"
-LIEF_S3_KEY    = os.getenv("LIEF_S3_KEY", None)
-LIEF_S3_SECRET = os.getenv("LIEF_S3_SECRET", None)
-OWNED_ORGS     = ["lief-project/", "romainthomas/"]
-RELEASE_KEYWRD = "release-"
+CURRENTDIR      = Path(__file__).resolve().parent
+REPODIR         = CURRENTDIR.parent
+ASSET_DIR       = CURRENTDIR / "assets"
+CONFIG_DIR      = CURRENTDIR / "config"
+LIEF_S3_KEY     = os.getenv("LIEF_S3_KEY", None)
+LIEF_S3_SECRET  = os.getenv("LIEF_S3_SECRET", None)
+OWNED_ORGS      = ["lief-project/", "romainthomas/"]
+RELEASE_KEYWORD = "release-"
 
 DEFAULT_CONFIG   = CONFIG_DIR / "gh-ci.toml"
 DEFAULT_TEMPLATE = (ASSET_DIR / "index.j2").read_text()
@@ -248,6 +249,16 @@ class GithubDeploy:
     def is_main_branch(self, name: str) -> bool:
         return name in self._main_branches
 
+    def should_be_deployed(self, branch: str) -> bool:
+        if GithubDeploy.is_tagged():
+            return True
+
+        if any(re.match(s, branch) for s in self._branches):
+            return True
+
+        if branch.startswith(RELEASE_KEYWORD):
+            return True
+
     def deploy(self, directories: list[str]):
         s3dir = None
         if GithubDeploy.is_tagged():
@@ -258,8 +269,8 @@ class GithubDeploy:
                 logger.warning("Can't resolve the branch name")
                 sys.exit(1)
 
-            if branch.startswith(RELEASE_KEYWRD):
-                _, s3dir = branch.split(RELEASE_KEYWRD)
+            if branch.startswith(RELEASE_KEYWORD):
+                _, s3dir = branch.split(RELEASE_KEYWORD)
             elif self.is_main_branch(branch):
                 s3dir = self._default_dir
             else:
@@ -267,6 +278,11 @@ class GithubDeploy:
         if s3dir is None:
             logger.error("Target directory is not set")
             sys.exit(1)
+
+        if not self.should_be_deployed(branch):
+            logger.info("Skipping deployment for branch: %s", branch)
+            return
+
         logger.info("s3dir: %s", s3dir)
         self.s3_manager.change_dir(s3dir)
         for dirname in directories:
