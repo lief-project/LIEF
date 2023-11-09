@@ -16,14 +16,12 @@ on its implementation using LIEF.
 These figures illustrate the ``plt/got`` mechanism:
 
 .. figure:: ../_static/tutorial/05/pltgot.png
-  :scale: 40 %
   :align: center
 
   With lazy binding, the first time that the function is called the ``got`` entry redirects to the plt instruction.
 
 
 .. figure:: ../_static/tutorial/05/pltgot3.png
-  :scale: 40 %
   :align: center
 
   The Second time, ``got`` entry holds the address in the shared library.
@@ -38,7 +36,6 @@ Basically the infection is done in two steps:
 It can be summed up by the following figure:
 
 .. figure:: ../_static/tutorial/05/pltgot2.png
-  :scale: 50 %
   :align: center
 
 

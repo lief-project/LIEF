@@ -35,7 +35,6 @@ Resource structure
 The underlying structure used to represent resources is a tree:
 
 .. figure:: ../_static/tutorial/07/07_resource_tree.png
-  :scale: 90 %
   :align: center
 
 In the resource tree we basically have two kinds of node:
@@ -129,7 +128,6 @@ As mentioned previously, the :class:`~lief.PE.ResourcesManager` is a kind of wra
 This can be summarize with the following diagram:
 
 .. figure:: ../_static/tutorial/07/07_pe_resource_manager.png
-  :scale: 110 %
   :align: center
 
 

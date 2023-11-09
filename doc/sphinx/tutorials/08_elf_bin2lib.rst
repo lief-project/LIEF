@@ -102,7 +102,6 @@ inlined, there won't be an address associated to this function.
 This figure sump-up the execution flow:
 
 .. figure:: ../_static/tutorial/08/bin2lib_a.png
-  :scale: 25%
   :align: center
 
 The *crackme* can be compiled with:
@@ -129,7 +128,6 @@ automatically export functions, like the ``check_found`` one. By opening
 Using a disassembler we can quickly identify the check function address:
 
 .. figure:: ../_static/tutorial/08/crackme101_ida.png
-  :scale: 100%
   :align: center
 
 In this case, the **check** function is located at the address: ``0x72A`` [2]_
@@ -206,7 +204,6 @@ If ``dlopen`` returns an error, please read `the following section about glibc >
 The transformation of the execution flow can be represented as follow:
 
 .. figure:: ../_static/tutorial/08/bin2lib_b.png
-  :scale: 25%
   :align: center
 
 .. _glic229:
