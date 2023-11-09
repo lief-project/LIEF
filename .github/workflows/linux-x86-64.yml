@@ -4,6 +4,16 @@ on: push
 jobs:
   linux-sdk:
     runs-on: ubuntu-latest
+    container:
+      image: liefproject/manylinux_2_28_x86_64
+      env:
+        CCACHE_DIR: "/home/pylief/.ccache"
+        CXXFLAGS: "-ffunction-sections -fdata-sections -fvisibility-inlines-hidden -static-libstdc++ -static-libgcc"
+        CFLAGS: "-ffunction-sections -fdata-sections -static-libstdc++ -static-libgcc"
+        LDFLAGS: "-Wl,--gc-sections -Wl,--exclude-libs,ALL"
+        BUILD_DIR_STATIC: "/tmp/build/linux-x86-64/static-release"
+        BUILD_DIR_SHARED: "/tmp/build/linux-x86-64/shared-release"
+      options: --user 1001:1001
     steps:
       - uses: actions/checkout@v3
         with:
@@ -20,33 +30,47 @@ jobs:
           key: linux-x86-64-${{ runner.os }}-sdk-${{ steps.get-date.outputs.date }}
           restore-keys: |
               linux-x86-64-${{ runner.os }}-sdk
-      - name: Build SDK
+      - name: CMake - Static
         shell: bash
         run: |
-          mkdir -p $RUNNER_TEMP/lief-install
-          mkdir -p $HOME/.ccache
-          chmod -R 777 $HOME/.ccache
-
-          docker run --name lief-sdk -u 1001:1001 --rm \
-            -e CCACHE_COMPRESS=1                       \
-            -e CCACHE_MAXSIZE=10.0G                    \
-            -e CCACHE_DIR=/ccache                      \
-            -v $GITHUB_WORKSPACE:/src                  \
-            -v $RUNNER_TEMP/lief-install:/install      \
-            -v $HOME/.ccache:/ccache                   \
-            liefproject/manylinux_2_28_x86_64          \
-            bash /src/scripts/docker/linux-sdk-x64
+          mkdir -p ${BUILD_DIR_STATIC}
+          cmake -S $GITHUB_WORKSPACE} -B ${BUILD_DIR_STATIC} -GNinja \
+                -DCMAKE_LINK_WHAT_YOU_USE=on                  \
+                -DBUILD_SHARED_LIBS=off                       \
+                -DLIEF_INSTALL_COMPILED_EXAMPLES=on           \
+                -DCMAKE_INSTALL_PREFIX=/install               \
+                -DCMAKE_BUILD_TYPE=Release
+      - name: Compile - Static
+        shell: bash
+        run: |
+          cmake --build ${BUILD_DIR_STATIC} --target install
+      - name: CMake - Shared
+        shell: bash
+        run: |
+          mkdir -p ${BUILD_DIR_SHARED}
+          cmake -S $GITHUB_WORKSPACE -B ${BUILD_DIR_SHARED} -GNinja \
+                -DCMAKE_LINK_WHAT_YOU_USE=on                 \
+                -DBUILD_SHARED_LIBS=on                       \
+                -DLIEF_INSTALL_COMPILED_EXAMPLES=off         \
+                -DCMAKE_BUILD_TYPE=Release
+      - name: Compile - Shared
+        run: |
+          cmake --build ${BUILD_DIR_SHARED} --target all
+      - name: Package
+        run: |
+          cd /tmp/build/linux-x86-64
+          cpack --config $GITHUB_WORKSPACE/cmake/cpack.config.cmake
       - name: 'Upload SDK Artifact'
         uses: actions/upload-artifact@v3
         with:
           name: linux-x86-64-sdk
-          path: build/*.tar.gz
+          path: /tmp/build/linux-x86-64/*.tar.gz
           retention-days: 3
       - name: 'Upload Install Artifact'
         uses: actions/upload-artifact@v3
         with:
           name: linux-x86-64-install
-          path: ${{ runner.temp }}/lief-install
+          path: /install
           retention-days: 1
   testing:
     if: "!contains(github.event.commits[0].message, '[skip-test]')"
