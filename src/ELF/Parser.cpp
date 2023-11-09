@@ -562,11 +562,14 @@ std::unique_ptr<Note> Parser::get_note(uint32_t type, std::string name,
 
 ok_error_t Parser::parse_notes(uint64_t offset, uint64_t size) {
   LIEF_DEBUG("== Parsing note segment ==");
-
   stream_->setpos(offset);
   uint64_t last_offset = offset + size;
 
-  while(stream_->pos() < last_offset) {
+  if (!*stream_) {
+    return make_error_code(lief_errors::read_error);
+  }
+
+  while (*stream_ && stream_->pos() < last_offset) {
     const auto current_pos = static_cast<int64_t>(stream_->pos());
     std::unique_ptr<Note> note = Note::create(
         *stream_,
