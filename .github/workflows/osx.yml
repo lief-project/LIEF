@@ -98,6 +98,7 @@ jobs:
           LIEF_SAMPLES_DIR: "/tmp/samples"
           LIEF_BUILD_DIR: "/tmp/lief-build"
           PYLIEF_CONF: "${{ github.workspace }}/scripts/osx/osx-testing-x64.toml"
+          CLICOLOR_FORCE: "1"
           MACOSX_TARGET: "11.7"
           MACOSX_DEPLOYMENT_TARGET: "11.0"
           CCACHE_DIR: ${{ runner.temp }}/.ccache
@@ -114,6 +115,7 @@ jobs:
         env:
           LIEF_SAMPLES_DIR: "/tmp/samples"
           LIEF_BUILD_DIR: "/tmp/lief-build"
+          PYTEST_ADDOPTS: "--color=yes"
         run: |
           python tests/run_pytest.py
           python tests/run_tools_check.py ${LIEF_BUILD_DIR}/

@@ -90,6 +90,8 @@ jobs:
         LIEF_SAMPLES_DIR: "/tmp/samples"
         LIEF_BUILD_DIR: "/tmp/lief-build"
         LIEF_VENV: "/tmp/venv"
+        CLICOLOR_FORCE: "1"
+        PYTEST_ADDOPTS: "--color=yes"
       options: --user 1001:1001
     steps:
       - uses: actions/checkout@v3
@@ -112,8 +114,8 @@ jobs:
         run: |
           $PYTHON_BINARY -m venv ${LIEF_VENV}
           source ${LIEF_VENV}/bin/activate
-          python -m pip install                            \
-                 -r tests/requirements.txt            \
+          python -m pip install             \
+                 -r tests/requirements.txt  \
                  -r api/python/build-requirements.txt
       - name: Build & install LIEF
         shell: bash
