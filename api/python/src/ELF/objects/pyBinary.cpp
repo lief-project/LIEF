@@ -344,10 +344,10 @@ void create<Binary>(nb::module_& m) {
         nb::rv_policy::reference_internal)
 
     .def("get",
-        nb::overload_cast<NOTE_TYPES>(&Binary::get),
+        nb::overload_cast<Note::TYPE>(&Binary::get),
         R"delim(
         Return the first binary's :class:`~lief.ELF.Note` from the given
-        :class:`~lief.ELF.NOTE_TYPES`.
+        :class:`~lief.ELF.Note.TYPE`.
 
         It returns None if the note can't be found.
         )delim"_doc,
@@ -379,8 +379,8 @@ void create<Binary>(nb::module_& m) {
         "type"_a)
 
     .def("has",
-        nb::overload_cast<NOTE_TYPES>(&Binary::has, nb::const_),
-        "Check if a " RST_CLASS_REF(lief.ELF.Note) " of *type* (" RST_CLASS_REF(lief.ELF.NOTE_TYPES) ") exists"_doc,
+        nb::overload_cast<Note::TYPE>(&Binary::has, nb::const_),
+        "Check if a " RST_CLASS_REF(lief.ELF.Note) " of *type* (" RST_CLASS_REF(lief.ELF.Note.TYPE) ") exists"_doc,
         "type"_a)
 
     .def("has",
@@ -516,8 +516,8 @@ void create<Binary>(nb::module_& m) {
         "note"_a)
 
     .def("remove",
-        nb::overload_cast<NOTE_TYPES>(&Binary::remove),
-        "Remove **all** the " RST_CLASS_REF(lief.ELF.Note) " with the given " RST_CLASS_REF(lief.ELF.NOTE_TYPES) ""_doc,
+        nb::overload_cast<Note::TYPE>(&Binary::remove),
+        "Remove **all** the " RST_CLASS_REF(lief.ELF.Note) " with the given " RST_CLASS_REF(lief.ELF.Note.TYPE) ""_doc,
         "type"_a)
 
     .def_prop_ro("has_notes",
@@ -728,20 +728,24 @@ void create<Binary>(nb::module_& m) {
     .def(nb::self += Segment(), nb::rv_policy::reference_internal)
     .def(nb::self += Section(), nb::rv_policy::reference_internal)
     .def(nb::self += DynamicEntry(), nb::rv_policy::reference_internal)
-    .def(nb::self += Note(), nb::rv_policy::reference_internal)
-
+    .def("__iadd__", [] (Binary& self, const Note& note) {
+        self += note;
+        return &self;
+    }, nb::rv_policy::reference_internal)
     .def(nb::self -= DynamicEntry(), nb::rv_policy::reference_internal)
     .def(nb::self -= DYNAMIC_TAGS(), nb::rv_policy::reference_internal)
-
-    .def(nb::self -= Note(), nb::rv_policy::reference_internal)
-    .def(nb::self -= NOTE_TYPES(), nb::rv_policy::reference_internal)
+    .def("__isub__", [] (Binary& self, const Note& note) {
+        self -= note;
+        return &self;
+    }, nb::rv_policy::reference_internal)
+    .def(nb::self -= Note::TYPE(), nb::rv_policy::reference_internal)
 
     .def("__getitem__",
         nb::overload_cast<SEGMENT_TYPES>(&Binary::operator[]),
         nb::rv_policy::reference_internal)
 
     .def("__getitem__",
-        nb::overload_cast<NOTE_TYPES>(&Binary::operator[]),
+        nb::overload_cast<Note::TYPE>(&Binary::operator[]),
         nb::rv_policy::reference_internal)
 
     .def("__getitem__",
@@ -761,8 +765,8 @@ void create<Binary>(nb::module_& m) {
         "Check if the " RST_CLASS_REF(lief.ELF.DynamicEntry) " associated with the given " RST_CLASS_REF(lief.ELF.DYNAMIC_TAGS) " exists"_doc)
 
     .def("__contains__",
-        nb::overload_cast<NOTE_TYPES>(&Binary::has, nb::const_),
-        "Check if the " RST_CLASS_REF(lief.ELF.Note) " associated with the given " RST_CLASS_REF(lief.ELF.NOTE_TYPES) " exists"_doc)
+        nb::overload_cast<Note::TYPE>(&Binary::has, nb::const_),
+        "Check if the " RST_CLASS_REF(lief.ELF.Note) " associated with the given " RST_CLASS_REF(lief.ELF.Note.TYPE) " exists"_doc)
 
     .def("__contains__",
         nb::overload_cast<ELF_SECTION_TYPES>(&Binary::has, nb::const_),

@@ -15,64 +15,7 @@
  */
 #ifndef LIEF_ELF_NOTE_DETAILS_H
 #define LIEF_ELF_NOTE_DETAILS_H
-
-#include <vector>
-#include <cstdint>
-#include <ostream>
-
-#include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
-
-namespace LIEF {
-namespace ELF {
-
-class Parser;
-class Builder;
-class Binary;
-class Note;
-
-class LIEF_API NoteDetails : public Object {
-
-  friend class Parser;
-  friend class Builder;
-  friend class Binary;
-
-  public:
-  using description_t = std::vector<uint8_t>;
-  NoteDetails();
-
-  protected:
-  NoteDetails(Note& note);
-
-  public:
-  ~NoteDetails() override;
-
-  virtual NoteDetails* clone() const;
-
-  const description_t& description() const;
-
-  virtual void dump(std::ostream& os) const;
-
-
-  void accept(Visitor& visitor) const override;
-
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const NoteDetails& note);
-
-  protected:
-  virtual void parse();
-  virtual void build();
-
-  description_t& description();
-  Binary* binary();
-  const Binary* binary() const;
-
-  private:
-  Note* note_{nullptr};
-  description_t empty_;
-};
-
-
-} // namepsace ELF
-} // namespace LIEF
-
+#include "LIEF/ELF/NoteDetails/AndroidIdent.hpp"
+#include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
+#include "LIEF/ELF/NoteDetails/Core.hpp"
 #endif

@@ -21,90 +21,87 @@
 #include "ELF/pyELF.hpp"
 
 #include "LIEF/ELF/NoteDetails/core/CoreAuxv.hpp"
-#include "LIEF/ELF/EnumToString.hpp"
 
+#include "pyErr.hpp"
 #include "enums_wrapper.hpp"
 
-#define PY_ENUM(x) LIEF::ELF::to_string(x), x
 
 namespace LIEF::ELF::py {
 
 template<>
 void create<CoreAuxv>(nb::module_& m) {
 
-  nb::class_<CoreAuxv, NoteDetails> cls(m, "CoreAuxv");
-  LIEF::enum_<AUX_TYPE>(cls, "TYPES")
-    .value(PY_ENUM(AUX_TYPE::AT_NULL))
-    .value(PY_ENUM(AUX_TYPE::AT_IGNORE))
-    .value(PY_ENUM(AUX_TYPE::AT_EXECFD))
-    .value(PY_ENUM(AUX_TYPE::AT_PHDR))
-    .value(PY_ENUM(AUX_TYPE::AT_PHENT))
-    .value(PY_ENUM(AUX_TYPE::AT_PHNUM))
-    .value(PY_ENUM(AUX_TYPE::AT_PAGESZ))
-    .value(PY_ENUM(AUX_TYPE::AT_BASE))
-    .value(PY_ENUM(AUX_TYPE::AT_FLAGS))
-    .value(PY_ENUM(AUX_TYPE::AT_ENTRY))
-    .value(PY_ENUM(AUX_TYPE::AT_NOTELF))
-    .value(PY_ENUM(AUX_TYPE::AT_UID))
-    .value(PY_ENUM(AUX_TYPE::AT_EUID))
-    .value(PY_ENUM(AUX_TYPE::AT_GID))
-    .value(PY_ENUM(AUX_TYPE::AT_EGID))
-    .value(PY_ENUM(AUX_TYPE::AT_CLKTCK))
-    .value(PY_ENUM(AUX_TYPE::AT_PLATFORM))
-    .value(PY_ENUM(AUX_TYPE::AT_HWCAP))
-    .value(PY_ENUM(AUX_TYPE::AT_HWCAP2))
-    .value(PY_ENUM(AUX_TYPE::AT_FPUCW))
-    .value(PY_ENUM(AUX_TYPE::AT_DCACHEBSIZE))
-    .value(PY_ENUM(AUX_TYPE::AT_ICACHEBSIZE))
-    .value(PY_ENUM(AUX_TYPE::AT_UCACHEBSIZE))
-    .value(PY_ENUM(AUX_TYPE::AT_IGNOREPPC))
-    .value(PY_ENUM(AUX_TYPE::AT_SECURE))
-    .value(PY_ENUM(AUX_TYPE::AT_BASE_PLATFORM))
-    .value(PY_ENUM(AUX_TYPE::AT_RANDOM))
-    .value(PY_ENUM(AUX_TYPE::AT_EXECFN))
-    .value(PY_ENUM(AUX_TYPE::AT_SYSINFO))
-    .value(PY_ENUM(AUX_TYPE::AT_SYSINFO_EHDR))
-    .value(PY_ENUM(AUX_TYPE::AT_L1I_CACHESHAPE))
-    .value(PY_ENUM(AUX_TYPE::AT_L1D_CACHESHAPE));
+  nb::class_<CoreAuxv, Note> cls(m, "CoreAuxv");
+  #define PY_ENUM(X) .value(LIEF::ELF::to_string(CoreAuxv::TYPE::X), CoreAuxv::TYPE::X)
+  LIEF::enum_<CoreAuxv::TYPE>(cls, "TYPE")
+    PY_ENUM(END)
+    PY_ENUM(IGNORE)
+    PY_ENUM(EXECFD)
+    PY_ENUM(PHDR)
+    PY_ENUM(PHENT)
+    PY_ENUM(PHNUM)
+    PY_ENUM(PAGESZ)
+    PY_ENUM(BASE)
+    PY_ENUM(FLAGS)
+    PY_ENUM(ENTRY)
+    PY_ENUM(NOTELF)
+    PY_ENUM(UID)
+    PY_ENUM(EUID)
+    PY_ENUM(GID)
+    PY_ENUM(EGID)
+    PY_ENUM(TGT_PLATFORM)
+    PY_ENUM(HWCAP)
+    PY_ENUM(CLKTCK)
+    PY_ENUM(FPUCW)
+    PY_ENUM(DCACHEBSIZE)
+    PY_ENUM(ICACHEBSIZE)
+    PY_ENUM(UCACHEBSIZE)
+    PY_ENUM(IGNOREPPC)
+    PY_ENUM(SECURE)
+    PY_ENUM(BASE_PLATFORM)
+    PY_ENUM(RANDOM)
+    PY_ENUM(HWCAP2)
+    PY_ENUM(EXECFN)
+    PY_ENUM(SYSINFO)
+    PY_ENUM(SYSINFO_EHDR)
+  ;
+  #undef PY_ENUM
 
   cls
-    .def_prop_rw("values",
-        nb::overload_cast<>(&CoreAuxv::values, nb::const_),
-        nb::overload_cast<const CoreAuxv::val_context_t&>(&CoreAuxv::values),
-        "Current values as a dictionary for which keys are AUXV types"_doc)
+    .def_prop_ro("values", &CoreAuxv::values,
+      R"doc(
+      Return the auxiliary vector as a dictionary of :class:`.TYPE` / `int`
+      )doc"
+    )
 
     .def("get",
-        [] (const CoreAuxv& status, AUX_TYPE atype) -> nb::object {
-          bool error;
-          const uint64_t val = status.get(atype, &error);
-          if (error) {
-            return nb::none();
-          }
-          return nb::int_(val);
-        },
-        "Return the type value"_doc,
-        "type"_a)
-
-    .def("set",
-        &CoreAuxv::set,
-        "Set type value"_doc,
-        "type"_a, "value"_a)
-
-    .def("has",
-        &CoreAuxv::has,
-        "Check if a value is associated with the given type"_doc,
-        "type"_a)
+        [] (const CoreAuxv& self, CoreAuxv::TYPE type) {
+          return LIEF::py::value_or_none(&CoreAuxv::get, self, type);
+        }, "type"_a,
+        R"doc(
+        Get the auxv value from the provided type. Return `None` if
+        it is not present.
+        )doc"_doc
+    )
 
     .def("__getitem__",
-        &CoreAuxv::operator[],
-        nb::rv_policy::copy)
+        [] (const CoreAuxv& self, CoreAuxv::TYPE type) {
+          return LIEF::py::value_or_none(&CoreAuxv::get, self, type);
+        }
+    )
 
-    .def("__setitem__",
-        [] (CoreAuxv& status, AUX_TYPE atype, uint64_t val) {
-          status.set(atype, val);
-        })
+    .def("set", nb::overload_cast<CoreAuxv::TYPE, uint64_t>(&CoreAuxv::set),
+         "type"_a, "value"_a,
+         R"doc(
+         Change the value for the given type.
+         )doc")
+    .def("set", nb::overload_cast<std::map<CoreAuxv::TYPE, uint64_t>>(&CoreAuxv::set),
+         R"doc(
+         Replace **all** the values by the given dictionary.
+         )doc")
 
-    .def("__contains__", &CoreAuxv::has)
+    .def("__setitem__", nb::overload_cast<CoreAuxv::TYPE, uint64_t>(&CoreAuxv::set))
+    .def("__setitem__", nb::overload_cast<std::map<CoreAuxv::TYPE, uint64_t>>(&CoreAuxv::set))
 
     LIEF_DEFAULT_STR(CoreAuxv);
 }

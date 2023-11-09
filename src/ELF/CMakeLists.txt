@@ -18,7 +18,6 @@ target_sources(LIB_LIEF PRIVATE
   Header.cpp
   Layout.cpp
   Note.cpp
-  NoteDetails.cpp
   Parser.cpp
   Parser.tcc
   Relocation.cpp
@@ -33,7 +32,6 @@ target_sources(LIB_LIEF PRIVATE
   SymbolVersionRequirement.cpp
   SysvHash.cpp
   hash.cpp
-  note_utils.cpp
   utils.cpp
   json_api.cpp)
 

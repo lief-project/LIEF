@@ -28,27 +28,27 @@ class Layout {
   public:
   Layout(Binary& bin);
 
-  inline virtual const std::unordered_map<std::string, size_t>& shstr_map() const {
+  virtual const std::unordered_map<std::string, size_t>& shstr_map() const {
     return shstr_name_map_;
   }
 
-  inline virtual const std::unordered_map<std::string, size_t>& strtab_map() const {
+  virtual const std::unordered_map<std::string, size_t>& strtab_map() const {
     return strtab_name_map_;
   }
 
-  inline virtual const std::vector<uint8_t>& raw_shstr() const {
+  virtual const std::vector<uint8_t>& raw_shstr() const {
     return raw_shstrtab_;
   }
 
-  inline virtual const std::vector<uint8_t>& raw_strtab() const {
+  virtual const std::vector<uint8_t>& raw_strtab() const {
     return raw_strtab_;
   }
 
-  inline void set_strtab_section(Section& section) {
+  void set_strtab_section(Section& section) {
     strtab_section_ = &section;
   }
 
-  inline void set_dyn_sym_idx(int32_t val) {
+  void set_dyn_sym_idx(int32_t val) {
     new_symndx_ = val;
   }
 

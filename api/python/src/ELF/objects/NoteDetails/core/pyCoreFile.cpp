@@ -28,9 +28,23 @@ namespace LIEF::ELF::py {
 
 template<>
 void create<CoreFile>(nb::module_& m) {
-
-  nb::class_<CoreFile, NoteDetails> cls(m, "CoreFile");
+  nb::class_<CoreFile, Note> cls(m, "CoreFile");
   nb::bind_vector<CoreFile::files_t>(cls, "files_t");
+
+  nb::class_<CoreFile::entry_t>(cls, "entry_t")
+    .def_rw("start", &CoreFile::entry_t::start,
+            "Start address of mapped file"_doc)
+
+    .def_rw("end", &CoreFile::entry_t::end,
+            "End address of mapped file"_doc)
+
+    .def_rw("file_ofs", &CoreFile::entry_t::file_ofs,
+             "Offset (in core) of mapped file"_doc)
+
+    .def_rw("path", &CoreFile::entry_t::path,
+            "Path of mapped file"_doc)
+
+    LIEF_DEFAULT_STR(CoreFile::entry_t);
 
   cls
     .def_prop_rw("files",

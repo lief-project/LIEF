@@ -21,19 +21,42 @@
 #include "ELF/pyELF.hpp"
 
 #include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
+#include "enums_wrapper.hpp"
+#include "pyErr.hpp"
 
 namespace LIEF::ELF::py {
 
 template<>
 void create<NoteAbi>(nb::module_& m) {
-  nb::class_<NoteAbi, NoteDetails>(m, "NoteAbi")
+  nb::class_<NoteAbi, Note> nabi(m, "NoteAbi",
+    R"doc(
+    Class that wraps the `NT_GNU_ABI_TAG` note
+    )doc"_doc
+  );
 
+  #define ENTRY(X) .value(to_string(NoteAbi::ABI::X), NoteAbi::ABI::X)
+  enum_<NoteAbi::ABI>(nabi, "ABI", "ABI recognized by this note"_doc)
+    ENTRY(LINUX)
+    ENTRY(GNU)
+    ENTRY(SOLARIS2)
+    ENTRY(FREEBSD)
+    ENTRY(NETBSD)
+    ENTRY(SYLLABLE)
+    ENTRY(NACL)
+  ;
+  #undef ENTRY
+
+  nabi
     .def_prop_ro("abi",
-        nb::overload_cast<>(&NoteAbi::abi, nb::const_),
-        "Return the target " RST_CLASS_REF(lief.ELF.NOTE_ABIS) ""_doc)
+        [] (const NoteAbi& self) {
+          return LIEF::py::value_or_none(nb::overload_cast<>(&NoteAbi::abi, nb::const_), self);
+        },
+        R"doc(Return the target :class:`~.ABI`)doc"_doc)
 
     .def_prop_ro("version",
-        nb::overload_cast<>(&NoteAbi::version, nb::const_),
+        [] (const NoteAbi& self) {
+          return LIEF::py::value_or_none(nb::overload_cast<>(&NoteAbi::version, nb::const_), self);
+        },
         "Return the target version as ``(Major, Minor, Patch)``"_doc)
 
     LIEF_DEFAULT_STR(NoteAbi);

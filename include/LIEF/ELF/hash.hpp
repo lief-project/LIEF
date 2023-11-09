@@ -82,8 +82,7 @@ class LIEF_API Hash : public LIEF::Hash {
   void visit(const SymbolVersionRequirement& svr)   override;
   void visit(const SymbolVersionDefinition& svd)    override;
   void visit(const Note& note)                      override;
-  void visit(const NoteDetails& details)            override;
-  void visit(const AndroidNote& note)               override;
+  void visit(const AndroidIdent& note)              override;
   void visit(const NoteAbi& note)                   override;
   void visit(const CorePrPsInfo& pinfo)             override;
   void visit(const CorePrStatus& pstatus)           override;

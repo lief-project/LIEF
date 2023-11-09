@@ -15,8 +15,10 @@
  */
 #include <string>
 #include <sstream>
+
 #include <nanobind/stl/string.h>
 
+#include "pyErr.hpp"
 #include "ELF/pyELF.hpp"
 
 #include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
@@ -25,49 +27,31 @@ namespace LIEF::ELF::py {
 
 template<>
 void create<CorePrPsInfo>(nb::module_& m) {
+  nb::class_<CorePrPsInfo, Note> cls(m, "CorePrPsInfo");
+  nb::class_<CorePrPsInfo::info_t>(cls, "info_t")
+    .def_rw("state", &CorePrPsInfo::info_t::state)
+    .def_rw("sname", &CorePrPsInfo::info_t::sname)
+    .def_rw("zombie", &CorePrPsInfo::info_t::zombie)
+    .def_rw("nice", &CorePrPsInfo::info_t::nice)
+    .def_rw("flag", &CorePrPsInfo::info_t::flag)
+    .def_rw("uid", &CorePrPsInfo::info_t::uid)
+    .def_rw("gid", &CorePrPsInfo::info_t::gid)
+    .def_rw("pid", &CorePrPsInfo::info_t::pid)
+    .def_rw("ppid", &CorePrPsInfo::info_t::ppid)
+    .def_rw("pgrp", &CorePrPsInfo::info_t::pgrp)
+    .def_rw("sid", &CorePrPsInfo::info_t::sid)
+    .def_rw("filename", &CorePrPsInfo::info_t::filename)
+    .def_rw("args", &CorePrPsInfo::info_t::args)
+    .def_prop_ro("filename_stripped", &CorePrPsInfo::info_t::filename_stripped)
+    .def_prop_ro("args_stripped", &CorePrPsInfo::info_t::args_stripped);
 
-  nb::class_<CorePrPsInfo, NoteDetails>(m, "CorePrPsInfo")
-
-    .def_prop_rw("file_name",
-        nb::overload_cast<>(&CorePrPsInfo::file_name, nb::const_),
-        nb::overload_cast<const std::string&>(&CorePrPsInfo::file_name),
-        "Process file name"_doc)
-
-    .def_prop_rw("flags",
-        nb::overload_cast<>(&CorePrPsInfo::flags, nb::const_),
-        nb::overload_cast<uint64_t>(&CorePrPsInfo::flags),
-        "Process flags"_doc)
-
-    .def_prop_rw("uid",
-        nb::overload_cast<>(&CorePrPsInfo::uid, nb::const_),
-        nb::overload_cast<uint32_t>(&CorePrPsInfo::uid),
-        "Process User ID"_doc)
-
-    .def_prop_rw("gid",
-        nb::overload_cast<>(&CorePrPsInfo::gid, nb::const_),
-        nb::overload_cast<uint32_t>(&CorePrPsInfo::gid),
-        "Process Group ID"_doc)
-
-    .def_prop_rw("pid",
-        nb::overload_cast<>(&CorePrPsInfo::pid, nb::const_),
-        nb::overload_cast<int32_t>(&CorePrPsInfo::pid),
-        "Process ID"_doc)
-
-    .def_prop_rw("ppid",
-        nb::overload_cast<>(&CorePrPsInfo::ppid, nb::const_),
-        nb::overload_cast<int32_t>(&CorePrPsInfo::ppid),
-        "Process parent ID"_doc)
-
-    .def_prop_rw("pgrp",
-        nb::overload_cast<>(&CorePrPsInfo::pgrp, nb::const_),
-        nb::overload_cast<int32_t>(&CorePrPsInfo::pgrp),
-        "Process session group ID"_doc)
-
-    .def_prop_rw("sid",
-        nb::overload_cast<>(&CorePrPsInfo::sid, nb::const_),
-        nb::overload_cast<int32_t>(&CorePrPsInfo::sid),
-        "Process session ID"_doc)
-
+  cls
+    .def_prop_rw("info",
+        [] (const CorePrPsInfo& self) {
+          return LIEF::py::value_or_none(nb::overload_cast<>(&CorePrPsInfo::info, nb::const_), self);
+        },
+        nb::overload_cast<const CorePrPsInfo::info_t&>(&CorePrPsInfo::info)
+    )
     LIEF_DEFAULT_STR(CorePrPsInfo);
 }
 

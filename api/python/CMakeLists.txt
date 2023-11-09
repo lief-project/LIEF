@@ -39,11 +39,10 @@ message(STATUS "Python interpreter: ${Python_EXECUTABLE}")
 nanobind_add_module(
   pyLIEF
   NB_STATIC
-
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/pyLIEF.cpp
-
   # Do not default to -Os
   NOMINSIZE
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/pyLIEF.cpp
 )
 
 add_subdirectory(src)

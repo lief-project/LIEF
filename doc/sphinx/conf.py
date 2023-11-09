@@ -1,13 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import re
+import inspect
 import lief
 import os
 import pathlib
-import inspect
-from pathlib import Path
+import re
+import sphinx
+import sys
 
+from datetime import date
 from docutils import nodes
+from docutils.nodes import Node
+from pathlib import Path
+from sphinx.ext.inheritance_diagram import InheritanceDiagram
+from sphinx.util import logging
+from sphinx.util.typing import OptionSpec
+from typing import Any
+
 from sphinx.util import logging
 from sphinx.util.inspect import (
     getdoc,
@@ -51,6 +60,7 @@ USE_RTD_THEME = USE_RTD_THEME or FORCE_RTD_THEME
 extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.autodoc',
+    'sphinx.ext.inheritance_diagram',
 ]
 
 
@@ -293,6 +303,38 @@ def _autodoc_process_docstring(app, what, name, obj, options, lines: list[str]):
         lines[:] = []
     return
 
+
+class LIEFInheritanceDiagram(InheritanceDiagram):
+    option_spec: OptionSpec = {
+        **InheritanceDiagram.option_spec,
+        'depth': int
+    }
+    def _check_module(self, module, obj, depth: int):
+        if not module.__name__.startswith("lief"):
+            return []
+
+        classes = []
+        for name, member in inspect.getmembers(module):
+            if inspect.isclass(member) and issubclass(member, obj):
+                mro = inspect.getmro(member)
+                if (0 < depth and mro.index(obj) <= depth) or depth == 0:
+                    classes.append(f"{module.__name__}.{name}")
+            if inspect.ismodule(member) and member != module:
+                classes.extend(self._check_module(member, obj, depth))
+        return list(set(classes))
+
+    def run(self) -> list[Node]:
+        cls = None
+        classes = []
+        depth = self.options.get('depth', 0)
+        if self.arguments[0].startswith("lief._lief"):
+            elements = self.arguments[0].split(".")[2:]
+            cls = lief._lief
+            for element in elements:
+                cls = getattr(cls, element)
+            self.arguments[0] = " ".join(self._check_module(lief, cls, depth))
+        return super().run()
+
 def setup(app):
     app.add_css_file('css/custom.css')  # may also be an URL
 
@@ -300,6 +342,7 @@ def setup(app):
     app.add_role('pr', pr_role)
     app.add_role('issue', issue_role)
     app.add_role('github_user', github_user)
+    app.add_directive('lief-inheritance', LIEFInheritanceDiagram)
 
     app.connect('autodoc-process-signature', _on_process_signature)
     app.connect('autodoc-process-docstring', _autodoc_process_docstring)

@@ -21,74 +21,99 @@
 #include <map>
 #include <utility>
 
-#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/ELF/enums.hpp"
-#include "LIEF/ELF/NoteDetails.hpp"
+#include "LIEF/ELF/Note.hpp"
 
 namespace LIEF {
 namespace ELF {
 
-class Parser;
-class Builder;
-class Binary;
-class Note;
-
-//! Class representing core Auxv object
-class LIEF_API CoreAuxv : public NoteDetails {
-
+//! Class representing core auxv object
+class LIEF_API CoreAuxv : public Note {
   public:
-  using NoteDetails::NoteDetails;
+  enum class TYPE {
+    END = 0,       /**< End of vector */
+    IGNORE,        /**< Entry should be ignored */
+    EXECFD,        /**< File descriptor of program */
+    PHDR,          /**< Program headers for program */
+    PHENT,         /**< Size of program header entry */
+    PHNUM,         /**< Number of program headers */
+    PAGESZ,        /**< System page size */
+    BASE,          /**< Base address of interpreter */
+    FLAGS,         /**< Flags */
+    ENTRY,         /**< Entry point of program */
+    NOTELF,        /**< Program is not ELF */
+    UID,           /**< Real uid */
+    EUID,          /**< Effective uid */
+    GID,           /**< Real gid */
+    EGID,          /**< Effective gid */
+    TGT_PLATFORM,  /**< String identifying platform.  */
+    HWCAP,         /**< Machine dependent hints about processor capabilities.  */
+    CLKTCK,        /**< Frequency of times() */
+    FPUCW,         /**< Used FPU control word.  */
+    DCACHEBSIZE,   /**< Data cache block size.  */
+    ICACHEBSIZE,   /**< Instruction cache block size.  */
+    UCACHEBSIZE,   /**< Instruction cache block size.  */
+    IGNOREPPC,     /**< Entry should be ignored.  */
+    SECURE,        /**< Boolean, was exec setuid-like?.  */
+    BASE_PLATFORM, /**< String identifying real platform  */
+    RANDOM,        /**< Address of 16 random bytes  */
+    HWCAP2,        /**< Extension of AT_HWCAP  */
+    //ENTRY27,
+    //ENTRY28,
+    //ENTRY29,
+    //ENTRY30,
+    EXECFN = 31,   /**< Filename of executable  */
+    SYSINFO,       /**< Filename of executable  */
+    SYSINFO_EHDR,  /**<  Pointer to ELF header of system-supplied DSO. */
+  };
 
-  using val_context_t = std::map<AUX_TYPE, uint64_t>;
+  CoreAuxv(ARCH arch, ELF_CLASS cls, std::string name,
+           uint32_t type, description_t description) :
+    Note(std::move(name), Note::TYPE::CORE_AUXV, type, std::move(description)),
+    arch_(arch), class_(cls)
+  {}
 
-  public:
-  static CoreAuxv make(Note& note);
+  std::unique_ptr<Note> clone() const override {
+    return std::unique_ptr<Note>(new CoreAuxv(*this));
+  }
 
-  CoreAuxv* clone() const override;
+  /// A map of CoreAuxv::TYPE and the value
+  std::map<TYPE, uint64_t> values() const;
 
-  //! Auxiliary values
-  const val_context_t& values() const;
+  /// Return the value associated with the provided TYPE or
+  /// a lief_errors::not_found if the type is not present.
+  result<uint64_t> get(TYPE type) const;
 
-  //! Get an auxiliary value. If ``error`` is set,
-  //! this function and the value exists, the function set the boolean value to ``false``
-  //! Otherwise it set the value to ``true``
-  uint64_t get(AUX_TYPE atype, bool* error = nullptr) const;
+  result<uint64_t> operator[](TYPE type) const {
+    return get(type);
+  }
 
-  //! Check if the given register is present in the info
-  bool has(AUX_TYPE reg) const;
-
-  void values(const val_context_t& ctx);
-
-  bool set(AUX_TYPE atype, uint64_t value);
-
-
-  uint64_t& operator[](AUX_TYPE atype);
+  bool set(TYPE type, uint64_t value);
+  bool set(std::map<TYPE, uint64_t> values);
 
   void dump(std::ostream& os) const override;
 
   void accept(Visitor& visitor) const override;
 
-  ~CoreAuxv() override;
+  static bool classof(const Note* note) {
+    return note->type() == Note::TYPE::CORE_AUXV;
+  }
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const CoreAuxv& note);
+  ~CoreAuxv() override = default;
+
+  LIEF_API friend
+  std::ostream& operator<<(std::ostream& os, const CoreAuxv& note) {
+    note.dump(os);
+    return os;
+  }
 
   protected:
-  template <typename ELF_T>
-  LIEF_LOCAL void parse_();
-
-  template <typename ELF_T>
-  LIEF_LOCAL void build_();
-
-  void parse() override;
-  void build() override;
-
-  private:
-  CoreAuxv(Note& note);
-
-  val_context_t ctx_;
+  ARCH arch_ = ARCH::EM_NONE;
+  ELF_CLASS class_ = ELF_CLASS::ELFCLASSNONE;
 };
 
+LIEF_API const char* to_string(CoreAuxv::TYPE type);
 
 } // namepsace ELF
 } // namespace LIEF

@@ -19,111 +19,177 @@
 
 #include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
-#include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/NoteDetails/core/CoreAuxv.hpp"
+#include "LIEF/Visitor.hpp"
+#include "LIEF/iostream.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 
+#include "frozen.hpp"
+#include "spdlog/fmt/fmt.h"
 #include "ELF/Structures.hpp"
-
-#include "CoreAuxv.tcc"
 
 namespace LIEF {
 namespace ELF {
 
-CoreAuxv::CoreAuxv(Note& note):
-  NoteDetails::NoteDetails{note}
-{}
-
-CoreAuxv CoreAuxv::make(Note& note) {
-  CoreAuxv pinfo(note);
-  pinfo.parse();
-  return pinfo;
-}
-
-CoreAuxv* CoreAuxv::clone() const {
-  return new CoreAuxv(*this);
-}
-
-
-const CoreAuxv::val_context_t& CoreAuxv::values() const {
-  return ctx_;
-}
-
-
-uint64_t CoreAuxv::get(LIEF::ELF::AUX_TYPE atype, bool* error) const {
-  if (!has(atype)) {
-    if (error != nullptr) {
-      *error = true;
+template<class ELF_T> inline result<uint64_t>
+get_impl(CoreAuxv::TYPE type, const Note::description_t& desc) {
+  using Elf_Auxv  = typename ELF_T::Elf_Auxv;
+  auto stream = SpanStream::from_vector(desc);
+  if (!stream) {
+    return make_error_code(get_error(stream));
+  }
+  while (*stream) {
+    auto auxv = stream->read<Elf_Auxv>();
+    if (!auxv) {
+      return make_error_code(lief_errors::not_found);
     }
-    return 0;
+    const auto atype = static_cast<CoreAuxv::TYPE>(auxv->a_type);
+    auto value = auxv->a_un.a_val;
+    if (atype == CoreAuxv::TYPE::END) {
+      return make_error_code(lief_errors::not_found);
+    }
+    if (atype == type) {
+      return static_cast<uint64_t>(value);
+    }
+  }
+  return make_error_code(lief_errors::not_found);
+}
+
+template<class ELF_T> inline std::map<CoreAuxv::TYPE, uint64_t>
+get_values_impl(const Note::description_t& desc) {
+  using Elf_Auxv  = typename ELF_T::Elf_Auxv;
+  auto stream = SpanStream::from_vector(desc);
+  if (!stream) {
+    return {};
   }
 
-  if (error != nullptr) {
-    *error = false;
+  std::map<CoreAuxv::TYPE, uint64_t> values;
+  while (*stream) {
+    auto auxv = stream->read<Elf_Auxv>();
+    if (!auxv) {
+      return values;
+    }
+    const auto atype = static_cast<CoreAuxv::TYPE>(auxv->a_type);
+    auto value = auxv->a_un.a_val;
+    if (atype == CoreAuxv::TYPE::END) {
+      return values;
+    }
+
+    values[atype] = static_cast<uint64_t>(value);
   }
-  return ctx_.at(atype);
+  return values;
 }
 
-bool CoreAuxv::has(LIEF::ELF::AUX_TYPE reg) const {
-  return ctx_.find(reg) != std::end(ctx_);
-}
+template<class ELF_T>
+inline bool write_impl(Note::description_t& description,
+                       std::map<CoreAuxv::TYPE, uint64_t> values)
+{
+  using Elf_Auxv  = typename ELF_T::Elf_Auxv;
+  using ptr_t     = typename ELF_T::uint;
+  vector_iostream io;
+  io.reserve(values.size() * sizeof(Elf_Auxv));
 
+  for (const auto& [type, value] : values) {
+    // This will be added at the end
+    if (type == CoreAuxv::TYPE::END) {
+      continue;
+    }
+    io.write(static_cast<ptr_t>(type))
+      .write(static_cast<ptr_t>(value));
+  }
+  io.write(static_cast<ptr_t>(CoreAuxv::TYPE::END))
+    .write(static_cast<ptr_t>(0));
 
-void CoreAuxv::values(const val_context_t& ctx) {
-  ctx_ = ctx;
-  build();
-}
-
-bool CoreAuxv::set(LIEF::ELF::AUX_TYPE atype, uint64_t value) {
-  ctx_[atype] = value;
-  build();
+  io.move(description);
   return true;
+}
+
+
+result<uint64_t> CoreAuxv::get(TYPE type) const {
+  return class_ == ELF_CLASS::ELFCLASS32 ?
+                   get_impl<details::ELF32>(type, description_) :
+                   get_impl<details::ELF64>(type, description_);
+}
+
+std::map<CoreAuxv::TYPE, uint64_t> CoreAuxv::values() const {
+  return class_ == ELF_CLASS::ELFCLASS32 ?
+                   get_values_impl<details::ELF32>(description_) :
+                   get_values_impl<details::ELF64>(description_);
+}
+
+
+bool CoreAuxv::set(TYPE type, uint64_t value) {
+  std::map<TYPE, uint64_t> vals = values();
+  vals[type] = value;
+  return set(vals);
+}
+
+bool CoreAuxv::set(std::map<TYPE, uint64_t> values) {
+  return class_ == ELF_CLASS::ELFCLASS32 ?
+                   write_impl<details::ELF32>(description_, values) :
+                   write_impl<details::ELF64>(description_, values);
+}
+
+void CoreAuxv::dump(std::ostream& os) const {
+  Note::dump(os);
+
+  const auto& aux_vals = values();
+  if (aux_vals.empty()) {
+    return;
+  }
+
+  os << '\n';
+  for (const auto& [type, val] : aux_vals) {
+    os << fmt::format("  {}: 0x{:08x}\n", to_string(type), val);
+  }
 }
 
 void CoreAuxv::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
+const char* to_string(CoreAuxv::TYPE type) {
+  #define ENTRY(X) std::pair(CoreAuxv::TYPE::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(END),
+    ENTRY(IGNORE),
+    ENTRY(EXECFD),
+    ENTRY(PHDR),
+    ENTRY(PHENT),
+    ENTRY(PHNUM),
+    ENTRY(PAGESZ),
+    ENTRY(BASE),
+    ENTRY(FLAGS),
+    ENTRY(ENTRY),
+    ENTRY(NOTELF),
+    ENTRY(UID),
+    ENTRY(EUID),
+    ENTRY(GID),
+    ENTRY(EGID),
+    ENTRY(TGT_PLATFORM),
+    ENTRY(HWCAP),
+    ENTRY(CLKTCK),
+    ENTRY(FPUCW),
+    ENTRY(DCACHEBSIZE),
+    ENTRY(ICACHEBSIZE),
+    ENTRY(UCACHEBSIZE),
+    ENTRY(IGNOREPPC),
+    ENTRY(SECURE),
+    ENTRY(BASE_PLATFORM),
+    ENTRY(RANDOM),
+    ENTRY(HWCAP2),
+    ENTRY(EXECFN),
+    ENTRY(SYSINFO),
+    ENTRY(SYSINFO_EHDR),
+  };
+  #undef ENTRY
 
-
-uint64_t& CoreAuxv::operator[](LIEF::ELF::AUX_TYPE atype) {
-  return ctx_[atype];
-}
-
-void CoreAuxv::dump(std::ostream& os) const {
-  static constexpr size_t WIDTH = 16;
-  os << std::left;
-
-  os << std::setw(WIDTH) << std::setfill(' ') << "Auxiliary values: "<< std::dec << std::endl;
-  for (const auto& val : ctx_) {
-    os << std::setw(14) << std::setfill(' ') << to_string(val.first) << ": " << std::hex << std::showbase << val.second << std::endl;
+  if (auto it = enums2str.find(type); it != enums2str.end()) {
+    return it->second;
   }
-  os << std::endl;
+
+  return "UNKNOWN";
 }
-
-
-void CoreAuxv::parse() {
-  if (binary()->type() == ELF_CLASS::ELFCLASS64) {
-    parse_<details::ELF64>();
-  } else if (binary()->type() == ELF_CLASS::ELFCLASS32) {
-    parse_<details::ELF32>();
-  }
-}
-
-void CoreAuxv::build() {
-  if (binary()->type() == ELF_CLASS::ELFCLASS64) {
-    build_<details::ELF64>();
-  } else if (binary()->type() == ELF_CLASS::ELFCLASS32) {
-    build_<details::ELF32>();
-  }
-}
-
-
-std::ostream& operator<<(std::ostream& os, const CoreAuxv& note) {
-  note.dump(os);
-  return os;
-}
-
-
-CoreAuxv::~CoreAuxv() = default;
 
 } // namespace ELF
 } // namespace LIEF

@@ -17,235 +17,231 @@
 #include <sstream>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/map.h>
+#include <nanobind/stl/vector.h>
 
+#include "pyErr.hpp"
 #include "ELF/pyELF.hpp"
-
 #include "LIEF/ELF/NoteDetails/core/CorePrStatus.hpp"
 
-#include "LIEF/ELF/EnumToString.hpp"
 #include "enums_wrapper.hpp"
 
-#define PY_ENUM(x) LIEF::ELF::to_string(x), x
+#define GET_SET_REGISTER(ARCH)                                                                                                         \
+    .def("get", [] (const CorePrStatus& self, CorePrStatus::Registers::ARCH reg) {                                                     \
+          return LIEF::py::value_or_none(nb::overload_cast<CorePrStatus::Registers::ARCH>(&CorePrStatus::get, nb::const_), self, reg); \
+        }, "Get the register value or non if it is not present", "reg"_a)                                                              \
+    .def("__getitem__", [] (const CorePrStatus& self, CorePrStatus::Registers::ARCH reg) {                                             \
+          return LIEF::py::value_or_none(nb::overload_cast<CorePrStatus::Registers::ARCH>(&CorePrStatus::get, nb::const_), self, reg); \
+        })                                                                                                                             \
+    .def("set", nb::overload_cast<CorePrStatus::Registers::ARCH, uint64_t>(&CorePrStatus::set),                                        \
+         "Change the register value", "reg"_a, "value"_a)                                                                              \
+    .def("__setitem__", nb::overload_cast<CorePrStatus::Registers::ARCH, uint64_t>(&CorePrStatus::set))
 
 namespace LIEF::ELF::py {
 
 template<>
 void create<CorePrStatus>(nb::module_& m) {
+  nb::class_<CorePrStatus, Note> cls(m, "CorePrStatus");
 
-  nb::class_<CorePrStatus, NoteDetails> cls(m, "CorePrStatus");
-
-  nb::class_<CorePrStatus::timeval_t>(cls, "timeval")
+  nb::class_<CorePrStatus::timeval_t>(cls, "timeval_t")
     .def_rw("sec",  &CorePrStatus::timeval_t::sec)
     .def_rw("usec", &CorePrStatus::timeval_t::usec);
 
   nb::class_<CorePrStatus::siginfo_t>(cls, "siginfo_t")
-    .def_rw("sicode", &CorePrStatus::siginfo_t::si_code)
-    .def_rw("errno",  &CorePrStatus::siginfo_t::si_errno)
-    .def_rw("signo",  &CorePrStatus::siginfo_t::si_signo);
+    .def_rw("sicode", &CorePrStatus::siginfo_t::code)
+    .def_rw("errno",  &CorePrStatus::siginfo_t::err)
+    .def_rw("signo",  &CorePrStatus::siginfo_t::signo);
 
+  nb::class_<CorePrStatus::pr_status_t>(cls, "pr_status_t")
+    .def_rw("info",  &CorePrStatus::pr_status_t::info)
+    .def_rw("cursig",  &CorePrStatus::pr_status_t::cursig)
+    .def_rw("reserved",  &CorePrStatus::pr_status_t::reserved)
+    .def_rw("sigpend",  &CorePrStatus::pr_status_t::sigpend)
+    .def_rw("sighold",  &CorePrStatus::pr_status_t::sighold)
+    .def_rw("pid",  &CorePrStatus::pr_status_t::pid)
+    .def_rw("ppid",  &CorePrStatus::pr_status_t::ppid)
+    .def_rw("pgrp",  &CorePrStatus::pr_status_t::pgrp)
+    .def_rw("sid",  &CorePrStatus::pr_status_t::sid)
+    .def_rw("utime",  &CorePrStatus::pr_status_t::utime)
+    .def_rw("stime",  &CorePrStatus::pr_status_t::stime)
+    .def_rw("cutime",  &CorePrStatus::pr_status_t::cutime)
+    .def_rw("cstime",  &CorePrStatus::pr_status_t::cstime);
+
+  nb::class_<CorePrStatus::Registers> Registers(cls, "Registers");
   cls
-    .def_prop_rw("siginfo",
-        nb::overload_cast<>(&CorePrStatus::siginfo, nb::const_),
-        nb::overload_cast<const CorePrStatus::siginfo_t&>(&CorePrStatus::siginfo),
+    .def_prop_rw("status",
+        nb::overload_cast<>(&CorePrStatus::status, nb::const_),
+        nb::overload_cast<const CorePrStatus::pr_status_t&>(&CorePrStatus::status),
         "Info associated with the signal"_doc)
 
-    .def_prop_rw("current_sig",
-        nb::overload_cast<>(&CorePrStatus::current_sig, nb::const_),
-        nb::overload_cast<uint16_t>(&CorePrStatus::current_sig),
-        "Current Signal"_doc)
+    .def_prop_ro("architecture", &CorePrStatus::architecture,
+        R"doc(Original target architecture.)doc"_doc)
 
-    .def_prop_rw("sigpend",
-        nb::overload_cast<>(&CorePrStatus::sigpend, nb::const_),
-        nb::overload_cast<uint64_t>(&CorePrStatus::sigpend),
-        "Set of pending signals"_doc)
-
-    .def_prop_rw("sighold",
-        nb::overload_cast<>(&CorePrStatus::sighold, nb::const_),
-        nb::overload_cast<uint64_t>(&CorePrStatus::sighold),
-        "Set of held signals"_doc)
-
-    .def_prop_rw("pid",
-        nb::overload_cast<>(&CorePrStatus::pid, nb::const_),
-        nb::overload_cast<int32_t>(&CorePrStatus::pid),
-        "Process ID"_doc)
-
-    .def_prop_rw("ppid",
-        nb::overload_cast<>(&CorePrStatus::ppid, nb::const_),
-        nb::overload_cast<int32_t>(&CorePrStatus::ppid),
-        "Process parent ID"_doc)
-
-    .def_prop_rw("pgrp",
-        nb::overload_cast<>(&CorePrStatus::pgrp, nb::const_),
-        nb::overload_cast<int32_t>(&CorePrStatus::pgrp),
-        "Process group ID"_doc)
-
-    .def_prop_rw("sid",
-        nb::overload_cast<>(&CorePrStatus::sid, nb::const_),
-        nb::overload_cast<int32_t>(&CorePrStatus::sid),
-        "Process session ID"_doc)
-
-    .def_prop_rw("utime",
-        nb::overload_cast<>(&CorePrStatus::utime, nb::const_),
-        nb::overload_cast<CorePrStatus::timeval_t>(&CorePrStatus::utime),
-        "User time (" RST_CLASS_REF(lief.ELF.CorePrStatus.timeval) ")"_doc)
-
-    .def_prop_rw("utime",
-        nb::overload_cast<>(&CorePrStatus::utime, nb::const_),
-        nb::overload_cast<CorePrStatus::timeval_t>(&CorePrStatus::utime),
-        "User time (" RST_CLASS_REF(lief.ELF.CorePrStatus.timeval) ")"_doc)
-
-    .def_prop_rw("stime",
-        nb::overload_cast<>(&CorePrStatus::stime, nb::const_),
-        nb::overload_cast<CorePrStatus::timeval_t>(&CorePrStatus::stime),
-        "System time (" RST_CLASS_REF(lief.ELF.CorePrStatus.timeval) ")"_doc)
-
-    .def_prop_rw("cutime",
-        nb::overload_cast<>(&CorePrStatus::cutime, nb::const_),
-        nb::overload_cast<CorePrStatus::timeval_t>(&CorePrStatus::cutime),
-        "Cumulative user time (" RST_CLASS_REF(lief.ELF.CorePrStatus.timeval) ")"_doc)
-
-    .def_prop_rw("cstime",
-        nb::overload_cast<>(&CorePrStatus::cstime, nb::const_),
-        nb::overload_cast<CorePrStatus::timeval_t>(&CorePrStatus::cstime),
-        "Cumulative system time (" RST_CLASS_REF(lief.ELF.CorePrStatus.timeval) ")"_doc)
-
-    .def_prop_rw("register_context",
-        nb::overload_cast<>(&CorePrStatus::reg_context, nb::const_),
-        nb::overload_cast<const CorePrStatus::reg_context_t&>(&CorePrStatus::reg_context),
-        "Current registers state as a dictionary where the keys are "
-        RST_CLASS_REF(lief.ELF.CorePrStatus.REGISTERS) " and the values the register's value"_doc)
-
-    .def("get",
-        [] (const CorePrStatus& status, CorePrStatus::REGISTERS reg) -> nb::object {
-          bool error;
-          const uint64_t val = status.get(reg, &error);
-          if (error) {
-            return nb::none();
-          }
-          return nb::int_(val);
+    .def_prop_ro("pc", [] (const CorePrStatus& self) {
+          return LIEF::py::value_or_none(&CorePrStatus::pc, self);
         },
-        "Return the register value"_doc,
-        "register"_a)
+        R"doc(
+        Return the program counter value (`rip`, `pc`, `eip` etc)
+        )doc"_doc)
 
-    .def("set",
-        &CorePrStatus::set,
-        "Set register value"_doc,
-        "register"_a, "value"_a)
+    .def_prop_ro("sp", [] (const CorePrStatus& self) {
+          return LIEF::py::value_or_none(&CorePrStatus::sp, self);
+        },
+        R"doc(
+        Return the stack pointer value
+        )doc"_doc)
 
-    .def("has",
-        &CorePrStatus::has,
-        "Check if a value is associated with the given register"_doc,
-        "register"_a)
+    .def_prop_ro("return_value", [] (const CorePrStatus& self) {
+          return LIEF::py::value_or_none(&CorePrStatus::return_value, self);
+        },
+        R"doc(
+        The value of the register that holds the return value according to
+        the calling convention.
+        )doc"_doc)
 
-    .def("__getitem__",
-        &CorePrStatus::operator[],
-        nb::rv_policy::copy)
+    .def_prop_ro("register_values", &CorePrStatus::register_values,
+      R"doc(
+      List of the register values.
+      This list is **guarantee** to be as long as the number of registers defined
+      in the :class:`~.Registers` or empty if it can't be resolved.
 
-    .def("__setitem__",
-        [] (CorePrStatus& status, CorePrStatus::REGISTERS reg, uint64_t val) {
-          status.set(reg, val);
-        })
+      Thus, one can access a specific register through:
 
-    .def("__contains__",
-        &CorePrStatus::has)
+      .. code-block:: python
 
+        reg_vals: list[int] = note.register_values()
+        x20 = reg_vals[CorePrStatus.Registesr.AARCH64.X20.value]
+      )doc"_doc
+    )
+
+    GET_SET_REGISTER(X86)
+    GET_SET_REGISTER(X86_64)
+    GET_SET_REGISTER(ARM)
+    GET_SET_REGISTER(AARCH64)
     LIEF_DEFAULT_STR(CorePrStatus);
 
 
-  LIEF::enum_<CorePrStatus::REGISTERS>(cls, "REGISTERS")
-    .value(PY_ENUM(CorePrStatus::REGISTERS::UNKNOWN))
+  #define ENTRY(X) .value(to_string(CorePrStatus::Registers::X86::X), CorePrStatus::Registers::X86::X)
+  enum_<CorePrStatus::Registers::X86>(Registers, "X86",
+    R"doc(
+    Registers for the x86 architecture (:attr:`~.ARCH.i386`)
+    )doc"_doc)
+    ENTRY(EBX)
+    ENTRY(ECX)
+    ENTRY(EDX)
+    ENTRY(ESI)
+    ENTRY(EDI)
+    ENTRY(EBP)
+    ENTRY(EAX)
+    ENTRY(DS)
+    ENTRY(ES)
+    ENTRY(FS)
+    ENTRY(GS)
+    ENTRY(ORIG_EAX)
+    ENTRY(EIP)
+    ENTRY(CS)
+    ENTRY(EFLAGS)
+    ENTRY(ESP)
+    ENTRY(SS)
+  ;
+  #undef ENTRY
 
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_EBX))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_ECX))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_EDX))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_ESI))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_EDI))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_EBP))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_EAX))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_DS))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_ES))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_FS))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_GS))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86__))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_EIP))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_CS))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_EFLAGS))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_ESP))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_SS))
+  #define ENTRY(X) .value(to_string(CorePrStatus::Registers::X86_64::X), CorePrStatus::Registers::X86_64::X)
+  enum_<CorePrStatus::Registers::X86_64>(Registers, "X86_64",
+    R"doc(
+    Registers for the x86-64 architecture (:attr:`~.ARCH.x86_64`)
+    )doc"_doc)
+    ENTRY(R15)
+    ENTRY(R14)
+    ENTRY(R13)
+    ENTRY(R12)
+    ENTRY(RBP)
+    ENTRY(RBX)
+    ENTRY(R11)
+    ENTRY(R10)
+    ENTRY(R9)
+    ENTRY(R8)
+    ENTRY(RAX)
+    ENTRY(RCX)
+    ENTRY(RDX)
+    ENTRY(RSI)
+    ENTRY(RDI)
+    ENTRY(ORIG_RAX)
+    ENTRY(RIP)
+    ENTRY(CS)
+    ENTRY(EFLAGS)
+    ENTRY(RSP)
+    ENTRY(SS)
+  ;
+  #undef ENTRY
 
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_64_R15))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_64_R14))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_64_R13))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_64_R12))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_64_RBP))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_64_RBX))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_64_R11))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_64_R10))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_64_R9))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_64_R8))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_64_RAX))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_64_RCX))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_64_RDX))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_64_RSI))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_64_RDI))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_64__))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_64_RIP))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_64_CS))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_64_EFLAGS))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_64_RSP))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::X86_64_SS))
+  #define ENTRY(X) .value(to_string(CorePrStatus::Registers::ARM::X), CorePrStatus::Registers::ARM::X)
+  enum_<CorePrStatus::Registers::ARM>(Registers, "ARM",
+    R"doc(
+    Registers for the ARM architecture (:attr:`~.ARCH.ARM`)
+    )doc"_doc)
+    ENTRY(R0)
+    ENTRY(R1)
+    ENTRY(R2)
+    ENTRY(R3)
+    ENTRY(R4)
+    ENTRY(R5)
+    ENTRY(R6)
+    ENTRY(R7)
+    ENTRY(R8)
+    ENTRY(R9)
+    ENTRY(R10)
+    ENTRY(R11)
+    ENTRY(R12)
+    ENTRY(R13)
+    ENTRY(R14)
+    ENTRY(R15)
+    ENTRY(CPSR)
+  ;
+  #undef ENTRY
 
-    .value(PY_ENUM(CorePrStatus::REGISTERS::ARM_R0))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::ARM_R1))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::ARM_R2))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::ARM_R3))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::ARM_R4))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::ARM_R5))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::ARM_R6))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::ARM_R7))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::ARM_R8))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::ARM_R9))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::ARM_R10))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::ARM_R11))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::ARM_R12))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::ARM_R13))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::ARM_R14))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::ARM_R15))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::ARM_CPSR))
+  #define ENTRY(X) .value(to_string(CorePrStatus::Registers::AARCH64::X), CorePrStatus::Registers::AARCH64::X)
+  enum_<CorePrStatus::Registers::AARCH64>(Registers, "AARCH64",
+    R"doc(
+    Registers for the AARCH64 architecture (:attr:`~.ARCH.AARCH64`)
+    )doc"_doc)
+    ENTRY(X0)
+    ENTRY(X1)
+    ENTRY(X2)
+    ENTRY(X3)
+    ENTRY(X4)
+    ENTRY(X5)
+    ENTRY(X6)
+    ENTRY(X7)
+    ENTRY(X8)
+    ENTRY(X9)
+    ENTRY(X10)
+    ENTRY(X11)
+    ENTRY(X12)
+    ENTRY(X13)
+    ENTRY(X14)
+    ENTRY(X15)
+    ENTRY(X15)
+    ENTRY(X16)
+    ENTRY(X17)
+    ENTRY(X18)
+    ENTRY(X19)
+    ENTRY(X20)
+    ENTRY(X21)
+    ENTRY(X22)
+    ENTRY(X23)
+    ENTRY(X24)
+    ENTRY(X25)
+    ENTRY(X26)
+    ENTRY(X27)
+    ENTRY(X28)
+    ENTRY(X29)
+    ENTRY(X30)
+    ENTRY(X31)
+    ENTRY(PC)
+    ENTRY(PSTATE)
+  ;
+  #undef ENTRY
 
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X0))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X1))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X2))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X3))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X4))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X5))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X6))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X7))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X8))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X9))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X10))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X11))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X12))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X13))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X14))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X15))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X16))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X17))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X18))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X19))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X20))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X21))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X22))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X23))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X24))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X25))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X26))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X27))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X28))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X29))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X30))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_X31))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64_PC))
-    .value(PY_ENUM(CorePrStatus::REGISTERS::AARCH64__));
+
 }
 }

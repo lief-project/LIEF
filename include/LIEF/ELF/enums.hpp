@@ -885,64 +885,6 @@ enum {
   VER_NEED_CURRENT = 1
 };
 
-
-enum class AUX_TYPE: size_t  {
-
-   AT_NULL          = 0,     /**< End of vector */
-   AT_IGNORE        = 1,     /**< Entry should be ignored */
-   AT_EXECFD        = 2,     /**< File descriptor of program */
-   AT_PHDR          = 3,     /**< Program headers for program */
-   AT_PHENT         = 4,     /**< Size of program header entry */
-   AT_PHNUM         = 5,     /**< Number of program headers */
-   AT_PAGESZ        = 6,     /**< System page size */
-   AT_BASE          = 7,     /**< Base address of interpreter */
-   AT_FLAGS         = 8,     /**< Flags */
-   AT_ENTRY         = 9,     /**< Entry point of program */
-   AT_NOTELF        = 10,    /**< Program is not ELF */
-   AT_UID           = 11,    /**< Real uid */
-   AT_EUID          = 12,    /**< Effective uid */
-   AT_GID           = 13,    /**< Real gid */
-   AT_EGID          = 14,    /**< Effective gid */
-   AT_CLKTCK        = 17,    /**< Frequency of times() */
-
-   /* Some more special a_type values describing the hardware.  */
-
-   AT_PLATFORM      = 15,    /**< String identifying platform.  */
-   AT_HWCAP         = 16,    /**< Machine dependent hints about processor capabilities.  */
-
-   /* This entry gives some information about the FPU initialization
-      performed by the kernel. */
-
-   AT_FPUCW        = 18,    /**< Used FPU control word.  */
-
-   /* Cache block sizes. */
-   AT_DCACHEBSIZE   = 19,    /**< Data cache block size.  */
-   AT_ICACHEBSIZE   = 20,    /**< Instruction cache block size.  */
-   AT_UCACHEBSIZE   = 21,    /**< Unified cache block size.  */
-
-   /* A special ignored value for PPC, used by the kernel to control the
-      interpretation of the AUXV. Must be > 16.  */
-
-   AT_IGNOREPPC     = 22,    /**< Entry should be ignored.  */
-   AT_SECURE        = 23,    /**< Boolean, was exec setuid-like?  */
-   AT_BASE_PLATFORM = 24,    /**< String identifying real platforms.*/
-   AT_RANDOM        = 25,    /**< Address of 16 random bytes.  */
-   AT_HWCAP2        = 26,    /**< Extension of AT_HWCAP.  */
-   AT_EXECFN        = 31,    /**< Filename of executable.  */
-
-   /* Pointer to the global system page used for system calls and other
-      nice things. */
-   AT_SYSINFO       = 32,
-   AT_SYSINFO_EHDR  = 33,
-
-   /* Shapes of the caches.  Bits 0-3 contains associativity; bits 4-7 contains
-      log2 of line size; mask those to get cache size.  */
-   AT_L1I_CACHESHAPE  = 34,
-   AT_L1D_CACHESHAPE  = 35,
-   AT_L2_CACHESHAPE   = 36,
-   AT_L3_CACHESHAPE   = 37
-};
-
 /** Methods that can be used by the LIEF::ELF::Parser
     to count the number of dynamic symbols */
 enum class DYNSYM_COUNT_METHODS: size_t  {
@@ -950,53 +892,6 @@ enum class DYNSYM_COUNT_METHODS: size_t  {
   COUNT_SECTION     = 1, /**< Count based on sections (not very reliable) */
   COUNT_HASH        = 2, /**< Count based on hash table (reliable) */
   COUNT_RELOCATIONS = 3, /**< Count based on PLT/GOT relocations (very reliable but not accurate) */
-};
-
-enum class NOTE_TYPES: size_t  {
-  NT_UNKNOWN                  = 0,
-  NT_GNU_ABI_TAG              = 1,
-  NT_GNU_HWCAP                = 2,
-  NT_GNU_BUILD_ID             = 3,
-  NT_GNU_GOLD_VERSION         = 4,
-  NT_GNU_PROPERTY_TYPE_0      = 5,
-  NT_GNU_BUILD_ATTRIBUTE_OPEN = 0x100,
-  NT_GNU_BUILD_ATTRIBUTE_FUNC = 0x101,
-  NT_CRASHPAD                 = 0x4f464e49,
-};
-
-enum class NOTE_TYPES_CORE: size_t  {
-  NT_CORE_UNKNOWN     = 0,
-  NT_PRSTATUS         = 1,
-  NT_PRFPREG          = 2,
-  NT_PRPSINFO         = 3,
-  NT_TASKSTRUCT       = 4,
-  NT_AUXV             = 6,
-  NT_SIGINFO          = 0x53494749,
-  NT_FILE             = 0x46494c45,
-  NT_PRXFPREG         = 0x46e62b7f,
-
-  NT_ARM_VFP          = 0x400,
-  NT_ARM_TLS          = 0x401,
-  NT_ARM_HW_BREAK     = 0x402,
-  NT_ARM_HW_WATCH     = 0x403,
-  NT_ARM_SYSTEM_CALL  = 0x404,
-  NT_ARM_SVE          = 0x405,
-
-  NT_386_TLS          = 0x200,
-  NT_386_IOPERM       = 0x201,
-  NT_386_XSTATE       = 0x202,
-
-};
-
-
-enum class NOTE_ABIS: size_t  {
-  ELF_NOTE_UNKNOWN     = ~(unsigned int)(0),
-  ELF_NOTE_OS_LINUX    = 0,
-  ELF_NOTE_OS_GNU      = 1,
-  ELF_NOTE_OS_SOLARIS2 = 2,
-  ELF_NOTE_OS_FREEBSD  = 3,
-  ELF_NOTE_OS_NETBSD   = 4,
-  ELF_NOTE_OS_SYLLABLE = 5,
 };
 
 enum class RELOCATION_PURPOSES: size_t  {

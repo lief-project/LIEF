@@ -6,6 +6,7 @@ Changelog
 
 :ELF:
 
+  * Refactoring of the ELF note processing
   * Fix relocation issue when using `-Wl,--emit-relocs` (c.f. :issue:`897` / :pr:`898` by :github_user:`adamjseitz`)
   * Improve the computation of the dynamic symbols thanks to :github_user:`adamjseitz` (c.f. :issue:`922`)
   * Add support for the LoongArch architecture thanks to :github_user:`loongson-zn` (c.f. :pr:`921`)

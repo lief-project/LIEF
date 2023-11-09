@@ -1720,22 +1720,16 @@ ok_error_t Builder::build_notes() {
   }
   // Clear the original content of the segment
   note_segment->content(std::vector<uint8_t>(note_segment->physical_size(), 0));
-
+  // Write the cached note
   note_segment->content(static_cast<ExeLayout*>(layout_.get())->raw_notes());
 
-  //TODO: .note.netbds etc
   if (binary_->header().file_type() == E_TYPE::ET_CORE) {
-    LIEF_WARN("Building note for coredump is not supported yet");
-    return make_error_code(lief_errors::not_supported);
+    return ok_t();
   }
 
-  // Track the list of the sections we wrote
-  // NOTE(romain): it is only used by the function build() itself but
-  //               to avoid creating an instance field, we create this
-  //               variable in the scode of this function
-  std::set<Section*> sections;
-  for (Note& note: binary_->notes()) {
-    build(note, sections);
+  std::set<const Note*> notes;
+  for (const Note& note: binary_->notes()) {
+    update_note_section(note, notes);
   }
   return ok();
 }

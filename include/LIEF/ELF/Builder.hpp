@@ -171,7 +171,7 @@ class LIEF_API Builder {
   template<typename ELF_T>
   ok_error_t build_notes();
 
-  ok_error_t build(const Note& note, std::set<Section*>& sections);
+  ok_error_t update_note_section(const Note& note, std::set<const Note*>& notes);
 
   template<typename ELF_T>
   ok_error_t build_overlay();

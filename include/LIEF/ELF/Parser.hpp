@@ -38,6 +38,7 @@ class Section;
 class Binary;
 class Segment;
 class Symbol;
+class Note;
 
 //! Class which parses and transforms an ELF file into a ELF::Binary object
 class LIEF_API Parser : public LIEF::Parser {
@@ -51,7 +52,6 @@ class LIEF_API Parser : public LIEF::Parser {
   static constexpr uint32_t NB_MAX_RELOCATIONS     = 3000000;
   static constexpr uint32_t NB_MAX_DYNAMIC_ENTRIES = 1000;
   static constexpr uint32_t NB_MAX_MASKWORD        = 512;
-  static constexpr uint32_t MAX_NOTE_DESCRIPTION   = 1_MB;
   static constexpr uint32_t MAX_SECTION_SIZE       = 2_GB;
   static constexpr uint32_t MAX_SEGMENT_SIZE       = 3_GB;
 
@@ -223,6 +223,8 @@ class LIEF_API Parser : public LIEF::Parser {
 
   //! Parse Note (.gnu.note)
   ok_error_t parse_notes(uint64_t offset, uint64_t size);
+
+  std::unique_ptr<Note> get_note(uint32_t type, std::string name, std::vector<uint8_t> desc_bytes);
 
   //! Parse Symbols's SYSV hash
   ok_error_t parse_symbol_sysv_hash(uint64_t offset);

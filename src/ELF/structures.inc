@@ -268,41 +268,6 @@ struct Elf32_Verdaux
   Elf32_Word	vda_next;		/**< Offset in bytes to next verdaux entry */
 };
 
-/** Structure for note type NT_PRPSINFO */
-struct Elf64_Prpsinfo
-{
-  char     pr_state;       /**< Numeric process state */
-  char     pr_sname;       /**< Char for pr_state */
-  char     pr_zomb;        /**< Process is a zombie */
-  char     pr_nice;        /**< Nice value */
-  uint32_t pr_pad;
-  uint64_t pr_flag;        /**< Process flags */
-  uint32_t pr_uid;         /**< Process user ID */
-  uint32_t pr_gid;         /**< Process group ID */
-  int32_t  pr_pid;         /**< Process ID */
-  int32_t  pr_ppid;        /**< Process parent ID */
-  int32_t  pr_pgrp;        /**< Process group */
-  int32_t  pr_sid;         /**< Process session ID */
-  char     pr_fname[16];   /**< Filename of executable */
-  char     pr_psargs[80];  /**< Initial part of arg list */
-};
-
-struct Elf32_Prpsinfo
-{
-  char     pr_state;      /**< Numeric process state */
-  char     pr_sname;      /**< Char for pr_state */
-  char     pr_zomb;       /**< Process is a zombie */
-  char     pr_nice;       /**< Nice value */
-  uint32_t pr_flag;       /**< Process flags */
-  uint16_t pr_uid;        /**< Process user ID */
-  uint16_t pr_gid;        /**< Process group ID */
-  int32_t  pr_pid;        /**< Process ID */
-  int32_t  pr_ppid;       /**< Process parent ID */
-  int32_t  pr_pgrp;       /**< Process group */
-  int32_t  pr_sid;        /**< Process session ID */
-  char     pr_fname[16];  /**< Filename of executable */
-  char     pr_psargs[80]; /**< Initial part of arg list */
-};
 
 struct Elf_siginfo {
   int32_t si_signo;

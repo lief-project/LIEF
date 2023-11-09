@@ -122,12 +122,14 @@ def test_notes():
     assert n2.name == "GNU"
     assert n3.name == "GNU"
 
-    assert n1.type == lief.ELF.NOTE_TYPES.ABI_TAG
-    assert n2.type == lief.ELF.NOTE_TYPES.BUILD_ID
-    assert n3.type == lief.ELF.NOTE_TYPES.GOLD_VERSION
+    assert n1.type == lief.ELF.Note.TYPE.GNU_ABI_TAG
+    assert n2.type == lief.ELF.Note.TYPE.GNU_BUILD_ID
+    assert n3.type == lief.ELF.Note.TYPE.GNU_GOLD_VERSION
 
-    assert n1.details.abi == lief.ELF.NOTE_ABIS.LINUX
-    assert n1.details.version == [2, 6, 32]
+    assert isinstance(n1, lief.ELF.NoteAbi)
+
+    assert n1.abi == lief.ELF.NoteAbi.ABI.LINUX
+    assert n1.version == [2, 6, 32]
 
     assert list(n2.description) == [0x7e, 0x68, 0x6c, 0x7d,
                                     0x79, 0x9b, 0xa4, 0xcd,

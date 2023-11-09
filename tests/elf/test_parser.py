@@ -135,3 +135,9 @@ def test_path_like():
 def test_984():
     elf = lief.ELF.parse(get_sample('ELF/issue_984_ilp32.o'))
     assert len(elf.sections) > 0
+
+def test_975():
+    elf = lief.ELF.parse(get_sample('ELF/issue_975_aarch64.o'))
+    for note in elf.notes:
+        print(note)
+    #assert len(elf.sections) > 0

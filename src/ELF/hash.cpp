@@ -26,8 +26,7 @@
 #include "LIEF/ELF/GnuHash.hpp"
 #include "LIEF/ELF/Header.hpp"
 #include "LIEF/ELF/Note.hpp"
-#include "LIEF/ELF/NoteDetails.hpp"
-#include "LIEF/ELF/NoteDetails/AndroidNote.hpp"
+#include "LIEF/ELF/NoteDetails/AndroidIdent.hpp"
 #include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreAuxv.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
@@ -233,84 +232,36 @@ void Hash::visit(const SymbolVersionAuxRequirement& svar) {
 void Hash::visit(const Note& note) {
   process(note.name());
   process(note.type());
+  process(note.original_type());
   process(note.description());
 }
 
-void Hash::visit(const NoteDetails& details) {
-  process(details.description());
+void Hash::visit(const AndroidIdent& note) {
+  visit(static_cast<const Note&>(note));
 }
-
-void Hash::visit(const AndroidNote& note) {
-  visit(static_cast<const NoteDetails&>(note));
-}
-
+//
 void Hash::visit(const NoteAbi& note) {
-  visit(static_cast<const NoteDetails&>(note));
+  visit(static_cast<const Note&>(note));
 }
 
 void Hash::visit(const CorePrPsInfo& pinfo) {
-  process(pinfo.file_name());
-  process(pinfo.flags());
-  process(pinfo.uid());
-  process(pinfo.gid());
-  process(pinfo.pid());
-  process(pinfo.ppid());
-  process(pinfo.pgrp());
-  process(pinfo.sid());
+  visit(static_cast<const Note&>(pinfo));
 }
 
 void Hash::visit(const CorePrStatus& pstatus) {
-  process(pstatus.siginfo().si_code);
-  process(pstatus.siginfo().si_errno);
-  process(pstatus.siginfo().si_signo);
-
-  process(pstatus.current_sig());
-  process(pstatus.sigpend());
-  process(pstatus.sighold());
-  process(pstatus.pid());
-  process(pstatus.ppid());
-  process(pstatus.pgrp());
-  process(pstatus.sid());
-
-  process(pstatus.utime().sec);
-  process(pstatus.utime().usec);
-
-  process(pstatus.stime().sec);
-  process(pstatus.stime().usec);
-
-  process(pstatus.cutime().sec);
-  process(pstatus.cutime().usec);
-
-  process(pstatus.cstime().sec);
-  process(pstatus.cstime().usec);
-
-  for (const CorePrStatus::reg_context_t::value_type& val : pstatus.reg_context()) {
-    process(val.first);  // Register
-    process(val.second); // Value
-  }
+  visit(static_cast<const Note&>(pstatus));
 }
 
 void Hash::visit(const CoreAuxv& auxv) {
-  for (const CoreAuxv::val_context_t::value_type& val : auxv.values()) {
-    process(val.first);  // Type
-    process(val.second); // Value
-  }
+  visit(static_cast<const Note&>(auxv));
 }
 
 void Hash::visit(const CoreSigInfo& siginfo) {
-  process(siginfo.signo());
-  process(siginfo.sigcode());
-  process(siginfo.sigerrno());
+  visit(static_cast<const Note&>(siginfo));
 }
 
 void Hash::visit(const CoreFile& file) {
-  process(file.count());
-  for (const CoreFileEntry& entry : file.files()) {
-    process(entry.start);
-    process(entry.end);
-    process(entry.file_ofs);
-    process(entry.path);
-  }
+  visit(static_cast<const Note&>(file));
 }
 
 void Hash::visit(const GnuHash& gnuhash) {

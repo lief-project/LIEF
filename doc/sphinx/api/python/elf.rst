@@ -158,13 +158,6 @@ Note
 
 ----------
 
-Note Details
-************
-
-.. autoclass:: lief.ELF.NoteDetails
-
-----------
-
 Core PrPsInfo
 *************
 
@@ -184,12 +177,6 @@ Core File
 
 .. autoclass:: lief.ELF.CoreFile
 
-----------
-
-Core File Entry
-***************
-
-.. autoclass:: lief.ELF.CoreFileEntry
 
 ----------
 
@@ -208,10 +195,10 @@ Core Auxiliary Vector
 
 ----------
 
-Android Note
+Android Ident
 *************
 
-.. autoclass:: lief.ELF.AndroidNote
+.. autoclass:: lief.ELF.AndroidIdent
 
 ----------
 
@@ -429,27 +416,6 @@ Relocation purpose
 
 ----------
 
-Note types
-~~~~~~~~~~
-
-.. autoclass:: lief.ELF.NOTE_TYPES
-
-----------
-
-Note ABIs
-~~~~~~~~~
-
-.. autoclass:: lief.ELF.NOTE_ABIS
-
-----------
-
-
-Note Core types
-~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.ELF.NOTE_TYPES_CORE
-
-----------
 
 ARM Processor flags
 ~~~~~~~~~~~~~~~~~~~

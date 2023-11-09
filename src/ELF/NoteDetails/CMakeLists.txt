@@ -1,6 +1,6 @@
 target_sources(LIB_LIEF PRIVATE
-  AndroidNote.cpp
   NoteAbi.cpp
+  AndroidIdent.cpp
 )
 
 add_subdirectory(core)

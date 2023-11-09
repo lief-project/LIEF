@@ -13,85 +13,67 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_ANDROID_NOTE_H
-#define LIEF_ELF_ANDROID_NOTE_H
+#ifndef LIEF_ELF_ANDROID_IDENT_H
+#define LIEF_ELF_ANDROID_IDENT_H
 
 #include <vector>
 #include <ostream>
+#include <memory>
 
-#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/ELF/NoteDetails.hpp"
+#include "LIEF/ELF/Note.hpp"
 
 namespace LIEF {
 namespace ELF {
 
-class Parser;
-class Builder;
-class Binary;
-class Note;
-
 //! Class representing the ".note.android.ident" section
 //!
 //! @see: https://android.googlesource.com/platform/ndk/+/ndk-release-r16/sources/crt/crtbrand.S#39
-class LIEF_API AndroidNote : public NoteDetails {
-
-  friend class Parser;
-  friend class Builder;
-  friend class Binary;
-
+class LIEF_API AndroidIdent : public Note {
   public:
-  static constexpr const char NAME[] = "Android";
-
-  static constexpr size_t sdk_version_offset      = 0;
   static constexpr size_t sdk_version_size        = sizeof(uint32_t);
-
-  static constexpr size_t ndk_version_offset      = sdk_version_offset + sdk_version_size;
   static constexpr size_t ndk_version_size        = 64 * sizeof(char);
-
-  static constexpr size_t ndk_build_number_offset = ndk_version_offset + ndk_version_size;
   static constexpr size_t ndk_build_number_size   = 64 * sizeof(char);
 
-  static AndroidNote make(Note& note);
-
   public:
-  using NoteDetails::NoteDetails;
-  using description_t = std::vector<uint8_t>;
+  std::unique_ptr<Note> clone() const override {
+    return std::unique_ptr<AndroidIdent>(new AndroidIdent(*this));
+  }
 
-  AndroidNote* clone() const override;
-
-  //! Target SDK version
+  //! Target SDK version (or 0 if it can't be resolved)
   uint32_t sdk_version() const;
 
-  //! NDK version used
+  //! NDK version used (or an empty string if it can't be parsed)
   std::string ndk_version() const;
 
-  //! NDK build number
+  //! NDK build number (or an empty string if it can't be parsed)
   std::string ndk_build_number() const;
 
   void sdk_version(uint32_t version);
   void ndk_version(const std::string& ndk_version);
   void ndk_build_number(const std::string& ndk_build_number);
 
-
   void dump(std::ostream& os) const override;
 
   void accept(Visitor& visitor) const override;
 
-  ~AndroidNote() override;
+  static bool classof(const Note* note) {
+    return note->type() == Note::TYPE::ANDROID_IDENT;
+  }
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const AndroidNote& note);
+  ~AndroidIdent() override = default;
 
+  static constexpr size_t description_size() {
+    return sdk_version_size + ndk_version_size + ndk_build_number_size;
+  }
+
+  LIEF_API friend
+  std::ostream& operator<<(std::ostream& os, const AndroidIdent& note) {
+    note.dump(os);
+    return os;
+  }
   protected:
-  void parse() override;
-  void build() override;
-
-  private:
-  AndroidNote(Note& note);
-
-  uint32_t sdk_version_ = 0;
-  std::string ndk_version_;
-  std::string ndk_build_number_;
+  using Note::Note;
 };
 
 

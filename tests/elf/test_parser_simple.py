@@ -105,11 +105,11 @@ def test_notes():
     notes = TARGET.notes
     assert len(notes) == 2
 
-    assert notes[0].details.abi == lief.ELF.NOTE_ABIS.LINUX
-    assert notes[0].description == [0, 0, 0, 0, 3, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0]
+    assert notes[0].abi == lief.ELF.NoteAbi.ABI.LINUX
+    assert list(notes[0].description) == [0, 0, 0, 0, 3, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0]
     assert notes[0].name == "GNU"
-    assert notes[0].type == lief.ELF.NOTE_TYPES.ABI_TAG
-    assert notes[0].details.version == [3, 2, 0]
+    assert notes[0].type == lief.ELF.Note.TYPE.GNU_ABI_TAG
+    assert notes[0].version == [3, 2, 0]
 
 def test_symbols_sections():
     """

@@ -25,6 +25,7 @@
 
 #include "LIEF/Abstract/Binary.hpp"
 
+#include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/Header.hpp"
 #include "LIEF/ELF/Builder.hpp"
 
@@ -39,7 +40,6 @@ class DynamicEntry;
 class ExeLayout;
 class GnuHash;
 class Layout;
-class Note;
 class ObjectFileLayout;
 class Parser;
 class Relocation;
@@ -281,7 +281,7 @@ class LIEF_API Binary : public LIEF::Binary {
   void remove(const Note& note);
 
   //! Remove **all** notes with the given type
-  void remove(NOTE_TYPES type);
+  void remove(Note::TYPE type);
 
   //! Remove the given segment
   void remove(const Segment& seg);
@@ -692,8 +692,8 @@ class LIEF_API Binary : public LIEF::Binary {
 
   //! Return the **first** ELF::Note associated with the given type
   //! If a note can't be found, it returns a nullptr.
-  const Note* get(NOTE_TYPES type) const;
-  Note*       get(NOTE_TYPES type);
+  const Note* get(Note::TYPE type) const;
+  Note*       get(Note::TYPE type);
 
   //! Return the **first** ELF::Section associated with the given type
   //! If a section can't be found, it returns a nullptr.
@@ -707,7 +707,7 @@ class LIEF_API Binary : public LIEF::Binary {
   bool has(SEGMENT_TYPES type) const;
 
   //! Check if a ELF::Note associated with the given type exists.
-  bool has(NOTE_TYPES type) const;
+  bool has(Note::TYPE type) const;
 
   //! Check if a ELF::Section associated with the given type exists.
   bool has(ELF_SECTION_TYPES type) const;
@@ -783,7 +783,7 @@ class LIEF_API Binary : public LIEF::Binary {
   Binary& operator-=(DYNAMIC_TAGS tag);
 
   Binary& operator-=(const Note& note);
-  Binary& operator-=(NOTE_TYPES type);
+  Binary& operator-=(Note::TYPE type);
 
   Segment*       operator[](SEGMENT_TYPES type);
   const Segment* operator[](SEGMENT_TYPES type) const;
@@ -791,8 +791,8 @@ class LIEF_API Binary : public LIEF::Binary {
   DynamicEntry*       operator[](DYNAMIC_TAGS tag);
   const DynamicEntry* operator[](DYNAMIC_TAGS tag) const;
 
-  Note*       operator[](NOTE_TYPES type);
-  const Note* operator[](NOTE_TYPES type) const;
+  Note*       operator[](Note::TYPE type);
+  const Note* operator[](Note::TYPE type) const;
 
   Section*       operator[](ELF_SECTION_TYPES type);
   const Section* operator[](ELF_SECTION_TYPES type) const;

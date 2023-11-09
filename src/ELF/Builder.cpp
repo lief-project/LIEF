@@ -26,7 +26,6 @@
 #include "LIEF/ELF/Symbol.hpp"
 #include "LIEF/ELF/Note.hpp"
 
-#include "notes_utils.hpp"
 
 #include "Builder.tcc"
 
@@ -186,76 +185,54 @@ ok_error_t Builder::build_empty_symbol_gnuhash() {
   return ok();
 }
 
-
-
-ok_error_t Builder::build(const Note& note, std::set<Section*>& sections) {
-  using value_t = typename note_to_section_map_t::value_type;
-
+ok_error_t Builder::update_note_section(const Note& note,
+                                        std::set<const Note*>& notes)
+{
   Segment* segment_note = binary_->get(SEGMENT_TYPES::PT_NOTE);
   if (segment_note == nullptr) {
     LIEF_ERR("Can't find the PT_NOTE segment");
     return make_error_code(lief_errors::not_found);
   }
-  const auto& note_to_section_map = get_note_to_section();
-  auto range_secname = note_to_section_map.equal_range(note.type());
 
-  const bool known_section = (range_secname.first != range_secname.second);
-
-  const auto it_section_name = std::find_if(
-      range_secname.first, range_secname.second,
-      [this] (value_t p) {
-        return binary_->has_section(p.second);
-      });
-
-  bool has_section = (it_section_name != range_secname.second);
-
-  std::string section_name;
-  if (has_section) {
-    section_name = it_section_name->second;
-  } else if (known_section) {
-    section_name = range_secname.first->second;
-  } else {
-    section_name = fmt::format(".note.{:x}", static_cast<uint32_t>(note.type()));
+  auto res_secname = Note::type_to_section(note.type());
+  if (!res_secname) {
+    LIEF_ERR("LIEF doesn't know the section name for note: '{}'",
+             to_string(note.type()));
+    return make_error_code(lief_errors::not_supported);
   }
 
-  const std::unordered_map<const Note*, size_t>& offset_map = reinterpret_cast<ExeLayout*>(layout_.get())->note_off_map();
-  const auto& it_offset = offset_map.find(&note);
+  Section* note_sec = binary_->get_section(*res_secname);
+  if (!note_sec) {
+    LIEF_ERR("Section {} not present", *res_secname);
+    return make_error_code(lief_errors::not_found);
+  }
 
-  // Link section and notes
-  if (binary_->has(note.type()) && has_section) {
-    if (it_offset == std::end(offset_map)) {
-      LIEF_ERR("Can't find {}", to_string(note.type()));
-      return make_error_code(lief_errors::not_found);
-    }
-    const size_t note_offset = it_offset->second;
-    Section* section = binary_->get_section(section_name);
-    if (section == nullptr) {
-      LIEF_ERR("Can't find section {}", section_name);
-      return make_error_code(lief_errors::not_found);
-    }
-    if (sections.insert(section).second) {
-      section->offset(segment_note->file_offset() + note_offset);
-      section->size(note.size());
-      section->virtual_address(segment_note->virtual_address() + note_offset);
-      // Special process for GNU_PROPERTY:
-      // This kind of note has a dedicated segment while others don't
-      // Therefore, when relocating this note, we need
-      // to update the segment as well.
-      if (note.type() == NOTE_TYPES::NT_GNU_PROPERTY_TYPE_0 &&
-          binary_->has(SEGMENT_TYPES::PT_GNU_PROPERTY))
-      {
-        Segment* seg = binary_->get(SEGMENT_TYPES::PT_GNU_PROPERTY);
-        if (seg == nullptr) return ok(); // Should not append as it is checked by has(...)
+  const auto& offset_map = static_cast<ExeLayout*>(layout_.get())->note_off_map();
+  auto it_offset = offset_map.find(&note);
+  if (it_offset == offset_map.end()) {
+    LIEF_ERR("Can't find offset for note '{}'", to_string(note.type()));
+    return make_error_code(lief_errors::not_found);
+  }
 
-        seg->file_offset(section->offset());
-        seg->physical_size(section->size());
-        seg->virtual_address(section->virtual_address());
-        seg->physical_address(section->virtual_address());
-        seg->virtual_size(section->size());
-      }
-    } else /* We already handled this kind of note */ {
-      section->virtual_address(0);
-      section->size(section->size() + note.size());
+  if (!notes.insert(&note).second) {
+    LIEF_DEBUG("Note '{}' has already been processed", to_string(note.type()));
+    note_sec->virtual_address(0);
+    note_sec->size(note_sec->size() + note.size());
+    return ok_t();
+  }
+
+  const uint64_t note_offset = it_offset->second;
+  note_sec->offset(segment_note->file_offset() + note_offset);
+  note_sec->size(note.size());
+  note_sec->virtual_address(segment_note->virtual_address() + note_offset);
+
+  if (note.type() == Note::TYPE::GNU_PROPERTY_TYPE_0) {
+    if (Segment* seg = binary_->get(SEGMENT_TYPES::PT_GNU_PROPERTY)) {
+      seg->file_offset(note_sec->offset());
+      seg->physical_size(note_sec->size());
+      seg->virtual_address(note_sec->virtual_address());
+      seg->physical_address(note_sec->virtual_address());
+      seg->virtual_size(note_sec->size());
     }
   }
   return ok();

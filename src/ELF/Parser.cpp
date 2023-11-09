@@ -30,7 +30,6 @@
 #include "LIEF/ELF/Symbol.hpp"
 #include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/SysvHash.hpp"
-#include "LIEF/ELF/NoteDetails/AndroidNote.hpp"
 
 #include "ELF/DataHandler/Handler.hpp"
 
@@ -502,6 +501,65 @@ ok_error_t Parser::parse_symbol_sysv_hash(uint64_t offset) {
   return ok();
 }
 
+#if 0
+std::unique_ptr<Note> Parser::get_note(uint32_t type, std::string name,
+                                       std::vector<uint8_t> desc_bytes)
+{
+  const E_TYPE ftype = binary_->header().file_type();
+
+  auto conv = Note::convert_type(ftype, type, name);
+  if (!conv) {
+    LIEF_WARN("Note type: 0x{:x} is not supported for owner: '{}'", type, name);
+    return std::make_unique<Note>(std::move(name), Note::TYPE::UNKNOWN, type,
+                                  std::move(desc_bytes));
+  }
+
+  Note::TYPE ntype = *conv;
+
+  if (ntype != Note::TYPE::GNU_BUILD_ATTRIBUTE_FUNC &&
+      ntype != Note::TYPE::GNU_BUILD_ATTRIBUTE_OPEN)
+  {
+    name = name.c_str();
+  }
+
+  const ARCH arch = binary_->header().machine_type();
+  const ELF_CLASS cls = binary_->header().identity_class();
+
+  if (cls != ELF_CLASS::ELFCLASS32 && cls != ELF_CLASS::ELFCLASS64) {
+    LIEF_WARN("Invalid ELFCLASS");
+    return nullptr;
+  }
+
+  switch (ntype) {
+    case Note::TYPE::CORE_PRSTATUS:
+        return std::make_unique<CorePrStatus>(arch, cls, std::move(name), type,
+                                              std::move(desc_bytes));
+    case Note::TYPE::CORE_PRPSINFO:
+        return std::make_unique<CorePrPsInfo>(arch, cls, std::move(name), type,
+                                              std::move(desc_bytes));
+    case Note::TYPE::CORE_FILE:
+        return std::make_unique<CoreFile>(arch, cls, std::move(name), type,
+                                          std::move(desc_bytes));
+    case Note::TYPE::CORE_AUXV:
+        return std::make_unique<CoreAuxv>(arch, cls, std::move(name), type,
+                                          std::move(desc_bytes));
+    case Note::TYPE::CORE_SIGINFO:
+        return std::make_unique<CoreSigInfo>(std::move(name), ntype, type,
+                                             std::move(desc_bytes));
+    case Note::TYPE::ANDROID_IDENT:
+        return std::make_unique<AndroidIdent>(std::move(name), ntype, type,
+                                              std::move(desc_bytes));
+    case Note::TYPE::GNU_ABI_TAG:
+        return std::make_unique<NoteAbi>(std::move(name), ntype, type,
+                                         std::move(desc_bytes));
+
+    default:
+        return std::make_unique<Note>(std::move(name), ntype, type,
+                                      std::move(desc_bytes));
+  }
+}
+#endif
+
 ok_error_t Parser::parse_notes(uint64_t offset, uint64_t size) {
   LIEF_DEBUG("== Parsing note segment ==");
 
@@ -509,85 +567,22 @@ ok_error_t Parser::parse_notes(uint64_t offset, uint64_t size) {
   uint64_t last_offset = offset + size;
 
   while(stream_->pos() < last_offset) {
-    const size_t pos = stream_->pos();
-    auto res_namesz = stream_->read_conv<uint32_t>();
-    if (!res_namesz) {
-      break;
-    }
+    std::unique_ptr<Note> note = Note::create(
+        *stream_,
+        binary_->header().file_type(), binary_->header().machine_type(),
+        binary_->header().identity_class()
+    );
 
-    const auto namesz = *res_namesz;
-    LIEF_DEBUG("[0x{:06x}] Name size: 0x{:x}", pos, namesz);
+    if (note != nullptr) {
+      const auto it_note = std::find_if(
+          std::begin(binary_->notes_), std::end(binary_->notes_),
+          [&note] (const std::unique_ptr<Note>& n) { return *n == *note; });
 
-    auto res_descz = stream_->read_conv<uint32_t>();
-    if (!res_descz) {
-      break;
-    }
-
-    uint32_t descsz = std::min(*res_descz, Parser::MAX_NOTE_DESCRIPTION);
-    LIEF_DEBUG("Description size: 0x{:x}", descsz);
-
-    auto res_type = stream_->read_conv<uint32_t>();
-    if (!res_type) {
-      break;
-    }
-
-    auto type = static_cast<NOTE_TYPES>(*res_type);
-    LIEF_DEBUG("Type: 0x{:x}", static_cast<size_t>(type));
-
-    if (namesz == 0) { // System reserves
-      break;
-    }
-    std::vector<uint8_t> name_buffer(namesz, 0);
-    if (!stream_->read_data(name_buffer, namesz)) {
-      LIEF_ERR("Can't read note name");
-      break;
-    }
-
-    std::string name(reinterpret_cast<const char*>(name_buffer.data()), name_buffer.size());
-    if (type != NOTE_TYPES::NT_GNU_BUILD_ATTRIBUTE_FUNC &&
-        type != NOTE_TYPES::NT_GNU_BUILD_ATTRIBUTE_OPEN)
-    {
-      name = name.c_str();
-    }
-    LIEF_DEBUG("Name: {}", name);
-
-    stream_->align(sizeof(uint32_t));
-
-    std::vector<uint32_t> description;
-    if (descsz > 0) {
-      const size_t nb_chunks = (descsz - 1) / sizeof(uint32_t) + 1;
-      description.reserve(nb_chunks);
-      for (size_t i = 0; i < nb_chunks; ++i) {
-        if (const auto chunk = stream_->read_conv<uint32_t>()) {
-          description.push_back(*chunk);
-        } else {
-          break;
-        }
+      if (it_note == std::end(binary_->notes_)) { // Not already present
+        binary_->notes_.push_back(std::move(note));
       }
-      stream_->align(sizeof(uint32_t));
-    }
-    std::unique_ptr<Note> note;
-    std::vector<uint8_t> desc_bytes;
-    if (!description.empty()) {
-      desc_bytes = {
-          reinterpret_cast<const uint8_t*>(description.data()),
-          reinterpret_cast<const uint8_t*>(description.data()) + description.size() * sizeof(uint32_t)
-      };
-    }
-
-    if (binary_->header().file_type() == E_TYPE::ET_CORE) {
-      note = std::make_unique<Note>(name, static_cast<NOTE_TYPES_CORE>(type),
-                                    std::move(desc_bytes), binary_.get());
     } else {
-      note = std::make_unique<Note>(name, type, std::move(desc_bytes), binary_.get());
-    }
-
-    const auto it_note = std::find_if(
-        std::begin(binary_->notes_), std::end(binary_->notes_),
-        [&note] (const std::unique_ptr<Note>& n) { return *n == *note; });
-
-    if (it_note == std::end(binary_->notes_)) { // Not already present
-      binary_->notes_.push_back(std::move(note));
+      LIEF_WARN("Note not parsed!");
     }
   }
   return ok();

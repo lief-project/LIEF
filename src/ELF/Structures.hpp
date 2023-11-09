@@ -12,9 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* From llvm/Support/ELF.h */
-#ifndef LIEF_ELF_STRUCTURES_H_
-#define LIEF_ELF_STRUCTURES_H_
+#ifndef LIEF_ELF_STRUCTURES_H
+#define LIEF_ELF_STRUCTURES_H
 
 #include <cstring>
 
@@ -22,7 +21,6 @@
 #include "LIEF/ELF/enums.hpp"
 
 namespace LIEF {
-//! @brief Namespace related to the LIEF's ELF module
 namespace ELF {
 
 namespace details {
@@ -159,7 +157,40 @@ static const DYNAMIC_FLAGS_1 dynamic_flags_1_array[] = {
   DYNAMIC_FLAGS_1::DF_1_PIE,
 };
 
+struct Elf64_Prpsinfo
+{
+  char     pr_state;
+  char     pr_sname;
+  char     pr_zomb;
+  char     pr_nice;
+  uint32_t pr_pad;
+  uint64_t pr_flag;
+  uint32_t pr_uid;
+  uint32_t pr_gid;
+  int32_t  pr_pid;
+  int32_t  pr_ppid;
+  int32_t  pr_pgrp;
+  int32_t  pr_sid;
+  char     pr_fname[16];
+  char     pr_psargs[80];
+};
 
+struct Elf32_Prpsinfo
+{
+  char     pr_state;
+  char     pr_sname;
+  char     pr_zomb;
+  char     pr_nice;
+  uint32_t pr_flag;
+  uint16_t pr_uid;
+  uint16_t pr_gid;
+  int32_t  pr_pid;
+  int32_t  pr_ppid;
+  int32_t  pr_pgrp;
+  int32_t  pr_sid;
+  char     pr_fname[16];
+  char     pr_psargs[80];
+};
 
 class ELF32 {
   public:

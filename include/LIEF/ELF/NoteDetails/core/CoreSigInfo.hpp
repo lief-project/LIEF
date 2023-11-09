@@ -18,71 +18,51 @@
 
 #include <vector>
 #include <ostream>
-#include <map>
-#include <utility>
+#include <memory>
 
-#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
-
-#include "LIEF/ELF/NoteDetails.hpp"
+#include "LIEF/ELF/Note.hpp"
+#include "LIEF/errors.hpp"
 
 namespace LIEF {
 namespace ELF {
 
-class Note;
-class Parser;
-class Builder;
-class Binary;
-
-//! Class representing core siginfo object
-class LIEF_API CoreSigInfo : public NoteDetails {
-
+//! Class representing a core siginfo object
+class LIEF_API CoreSigInfo : public Note {
   public:
-  using NoteDetails::NoteDetails;
+  std::unique_ptr<Note> clone() const override {
+    return std::unique_ptr<CoreSigInfo>(new CoreSigInfo(*this));
+  }
 
-  public:
-  static CoreSigInfo make(Note& note);
+  /// Signal number of an error if it can't be resolved
+  result<int32_t> signo() const;
+  /// Signal code of an error if it can't be resolved
+  result<int32_t> sigcode() const;
 
-  CoreSigInfo* clone() const override;
+  /// Signal error number of an error if it can't be resolved
+  result<int32_t> sigerrno() const;
 
-  //! Signal number.
-  int32_t signo() const;
-
-  //! Signal code.
-  int32_t sigcode() const;
-
-  //! If non-zero, an errno value associated with this signal.
-  int32_t sigerrno() const;
-
-  void signo(int32_t signo);
-  void sigcode(int32_t sigcode);
-  void sigerrno(int32_t sigerrno);
-
+  void signo(uint32_t value);
+  void sigcode(uint32_t value);
+  void sigerrno(uint32_t value);
 
   void dump(std::ostream& os) const override;
-
   void accept(Visitor& visitor) const override;
 
-  ~CoreSigInfo() override;
+  ~CoreSigInfo() override = default;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const CoreSigInfo& note);
+  static bool classof(const Note* note) {
+    return note->type() == Note::TYPE::CORE_SIGINFO;
+  }
 
+  LIEF_API friend
+  std::ostream& operator<<(std::ostream& os, const CoreSigInfo& note) {
+    note.dump(os);
+    return os;
+  }
   protected:
-  void parse() override;
-  void build() override;
-
-  private:
-  CoreSigInfo(Note& note);
-  struct siginfo_t {
-    int32_t si_signo;
-    int32_t si_code;
-    int32_t si_errno;
-  };
-
-  siginfo_t siginfo_;
+  using Note::Note;
 };
-
-
 } // namepsace ELF
 } // namespace LIEF
 

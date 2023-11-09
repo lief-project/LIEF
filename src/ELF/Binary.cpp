@@ -309,16 +309,16 @@ void Binary::remove(const Note& note) {
 
   if (it_note == std::end(notes_)) {
     LIEF_WARN("Can't find the note with the type {}. It can't be removed!",
-              to_string(static_cast<NOTE_TYPES>(note.type())));
+              to_string(static_cast<Note::TYPE>(note.type())));
     return;
   }
   notes_.erase(it_note);
 }
 
-void Binary::remove(NOTE_TYPES type) {
+void Binary::remove(Note::TYPE type) {
   for (auto it = std::begin(notes_); it != std::end(notes_);) {
     std::unique_ptr<Note>& n = *it;
-    if (static_cast<NOTE_TYPES>(n->type()) == type) {
+    if (n->type() == type) {
       n.reset(nullptr);
       it = notes_.erase(it);
     } else {
@@ -1864,10 +1864,10 @@ Segment* Binary::get(SEGMENT_TYPES type) {
   return const_cast<Segment*>(static_cast<const Binary*>(this)->get(type));
 }
 
-const Note* Binary::get(NOTE_TYPES type) const {
+const Note* Binary::get(Note::TYPE type) const {
   const auto it_note = std::find_if(std::begin(notes_), std::end(notes_),
                               [type] (const std::unique_ptr<Note>& note) {
-                                return static_cast<NOTE_TYPES>(note->type()) == type;
+                                return note->type() == type;
                               });
   if (it_note == std::end(notes_)) {
     return nullptr;
@@ -1877,7 +1877,7 @@ const Note* Binary::get(NOTE_TYPES type) const {
 }
 
 
-Note* Binary::get(NOTE_TYPES type) {
+Note* Binary::get(Note::TYPE type) {
   return const_cast<Note*>(static_cast<const Binary*>(this)->get(type));
 }
 
@@ -1902,7 +1902,7 @@ bool Binary::has(SEGMENT_TYPES type) const {
   return get(type) != nullptr;
 }
 
-bool Binary::has(NOTE_TYPES type) const {
+bool Binary::has(Note::TYPE type) const {
   return get(type) != nullptr;
 }
 
@@ -1968,7 +1968,6 @@ Binary::it_const_notes Binary::notes() const {
 Binary::it_notes Binary::notes() {
   return notes_;
 }
-
 
 void Binary::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
@@ -3347,7 +3346,7 @@ Binary& Binary::operator-=(const Note& note) {
   return *this;
 }
 
-Binary& Binary::operator-=(NOTE_TYPES type) {
+Binary& Binary::operator-=(Note::TYPE type) {
   remove(type);
   return *this;
 }
@@ -3370,11 +3369,11 @@ const DynamicEntry* Binary::operator[](DYNAMIC_TAGS tag) const {
   return get(tag);
 }
 
-Note* Binary::operator[](NOTE_TYPES type) {
+Note* Binary::operator[](Note::TYPE type) {
   return get(type);
 }
 
-const Note* Binary::operator[](NOTE_TYPES type) const {
+const Note* Binary::operator[](Note::TYPE type) const {
   return get(type);
 }
 

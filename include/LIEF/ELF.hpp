@@ -47,11 +47,8 @@
 #include "LIEF/ELF/SymbolVersionDefinition.hpp"
 #include "LIEF/ELF/SymbolVersionRequirement.hpp"
 #include "LIEF/ELF/SysvHash.hpp"
-
-#include "LIEF/ELF/NoteDetails/AndroidNote.hpp"
-#include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
-#include "LIEF/ELF/NoteDetails/Core.hpp"
 #include "LIEF/ELF/NoteDetails.hpp"
+
 #endif
 
 #endif

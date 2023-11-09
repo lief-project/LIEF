@@ -15,7 +15,7 @@ has been generated. The memory state embeds
 a *snapshot* of all segments mapped in the memory space of the program. The CPU state contains register values
 when the core dump has been generated.
 
-Coredump files use a subset of the ELF structures to register these information. **Segments** are used for
+Coredump files use a subset of the ELF structures to store this information. **Segments** are used for
 the memory state of the process while ELF notes (:class:`lief.ELF.Note`) are used for process metadata (pid, signal, ...)
 Especially, the CPU state is stored in a note with a special type.
 
@@ -31,7 +31,7 @@ For more details about coredump internal structure, one can look at the followin
 Coredump Analysis
 ~~~~~~~~~~~~~~~~~
 
-As corefiles are effectively ELF, we can open these files using the :func:`lief.parse` function:
+As core files are effectively ELF, we can open these files using the :func:`lief.parse` function:
 
 .. code-block:: python
 
@@ -53,34 +53,38 @@ To resolve the relationship between libraries and segments, we can look at the s
 
 .. code-block:: python
 
-   note_file = [n for n in core.notes if n.type_core == lief.ELF.NOTE_TYPES_CORE.FILE]
-   assert len(note_file) == 1
+   nt_core_file = core.get(lief.ELF.Note.TYPE.CORE.FILE)
 
-   note_file = note_file.pop()
+ELF notes are represented through the main :class:`lief.ELF.Note` interface. Some notes
+like (:class:`lief.ELF.CoreFile`) can expose additional API by extending the
+original :class:`lief.ELF.Note`.
 
-.. warning::
-
-   Due to enum conflict between :class:`lief.ELF.NOTE_TYPES` and :class:`lief.ELF.NOTE_TYPES_CORE`,
-   scripts must use :attr:`lief.ELF.Note.type_core` on ELF corefile instead of :attr:`lief.ELF.Note.type`
-
-The ``note_file`` variable is basically an object :class:`lief.ELF.Note` on which the attribute
-:attr:`lief.ELF.Note.details` can be access to have the underlying specialization of the note.
-In the case of a note type :attr:`lief.ELF.NOTE_TYPES_CORE.FILE`, the attribute :attr:`~lief.ELF.Note.details` returns an
-instance of :class:`lief.ELF.CoreFile`.
+.. lief-inheritance:: lief._lief.ELF.Note
+    :top-classes: lief._lief.ELF.Note
+    :depth: 1
+    :parts: 1
 
 .. note::
 
-   All note details inherit from the base class :class:`lief.ELF.NoteDetails` (or :cpp:class:`LIEF::ELF::NoteDetails`)
+    All note details inherit from the base class :class:`lief.ELF.Note` (or :cpp:class:`LIEF::ELF::Note`)
 
-   Especially, in C++ we must downcast the reference returned by :cpp:func:`LIEF::ELF::Note::details`:
+    Especially, in C++ we must downcast according to the `classof` function:
 
-   .. code-block:: cpp
+    .. code-block:: cpp
 
-      note = ...
-      // Check Type
-      // ...
-      const auto& note_file = reinterpret_cast<const CoreFile&>(note.details());
+      for (const Note& note : binary->notes()) {
+        if (CoreFile::classof(&note)) {
+          const auto& nt_core_file = static_cast<const CoreFile&(note);
+        }
+      }
 
+    Which is roughly equivalent in Python to:
+
+    .. code-block:: python
+
+      for note in binary.notes:
+          if isinstance(note, lief.ELF.CoreFile):
+              print("This is a CoreFile note")
 
 
 We can eventually use the attribute :attr:`lief.ELF.CoreFile.files` or directly iterate on
@@ -119,20 +123,18 @@ the :class:`lief.ELF.CoreFile` object. Both give access to the :class:`lief.ELF.
 From this output, we can see that the :class:`~lief.ELF.Segment` of the main executable
 (``/data/local/tmp/hello-exe``), are mapped from address ``0x5580b86000`` to address ``0x5580b99000``.
 
-One can also access to the registers state by using the note for which the :attr:`~lief.ELF.Note.type_core`
-is :class:`lief.ELF.CorePrStatus`.
+One can also access to the registers state by looking for the note: :class:`lief.ELF.CorePrStatus`.
 
 .. code-block:: python
 
    for note in core.notes:
-      if note.type_core == lief.ELF.NOTE_TYPES_CORE.PRSTATUS:
-         details = note.details
-         print(details)
+      if not isinstance(note, lief.ELF.CorePrStatus):
+          continue
 
-         # Print instruction pointer
-         print(hex(details[lief.ELF.CorePrStatus.REGISTERS.AARCH64_PC]))
-         # or
-         print(hex(details.get(lief.ELF.CorePrStatus.REGISTERS.AARCH64_PC)))
+      # Both are equivalent
+      print(note.pc)
+      reg_values = note.register_values
+      print(reg_values[lief.ELF.CorePrStatus.Registers.AARCH64.PC.value])
 
 .. code-block:: text
 
@@ -148,8 +150,8 @@ we can update the register values as follows:
 
 .. code-block:: python
 
-   note_prstatus = [n for n in core.notes if n.type_core == lief.ELF.NOTE_TYPES_CORE.PRSTATUS][0]
-   note_prstatus.details[lief.ELF.CorePrStatus.REGISTERS.AARCH64_PC] = 0xDEADC0DE
+   prstatus = elf_core.get(lief.ELF.Note.TYPE.CORE_PRSTATUS)
+   prstatus.set(lief.ELF.CorePrStatus.Registers.AARCH64.PC, 0xDEADC0DE)
 
    core.write("/tmp/new.core")
 
@@ -166,8 +168,8 @@ is that **relocations** and **dependencies** are resolved inside the coredump.
 
 This API could be used in association with other tools. For instance, we could use `Triton <https://triton.quarkslab.com/>`_ API:
 
-- `AArch64Cpu::setConcreteRegisterValue() <https://triton.quarkslab.com/documentation/doxygen/classtriton_1_1arch_1_1arm_1_1aarch64_1_1AArch64Cpu.html>`_
-- `AArch64Cpu::setConcreteMemoryAreaValue() <https://triton.quarkslab.com/documentation/doxygen/classtriton_1_1arch_1_1arm_1_1aarch64_1_1AArch64Cpu.html>`_
+- `AArch64Cpu::setConcreteRegisterValue() <https://github.com/JonathanSalwan/Triton/blob/a61651ce331ac53ec09e1d8fef5eab744e98c9de/src/libtriton/arch/architecture.cpp#L343>`_
+- `AArch64Cpu::setConcreteMemoryAreaValue() <https://github.com/JonathanSalwan/Triton/blob/a61651ce331ac53ec09e1d8fef5eab744e98c9de/src/libtriton/arch/architecture.cpp#L329-L340>`_
 
 to map the coredump in Triton and then use its engines: Taint analysis, symbolic execution.
 
@@ -176,12 +178,10 @@ to map the coredump in Triton and then use its engines: Taint analysis, symbolic
 
 .. [1] https://www.gabriel.urdhr.fr/2015/05/29/core-file/
 
-
-
 .. rubric:: API
 
 * :func:`lief.parse`
-* :attr:`lief.ELF.Note.details`
+* :class:`lief.ELF.Note`
 
 * :class:`lief.ELF.CorePrPsInfo`
 * :class:`lief.ELF.CorePrStatus`

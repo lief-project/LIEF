@@ -17,111 +17,122 @@
 #include <iomanip>
 #include <sstream>
 
+#include "logging.hpp"
 #include "LIEF/ELF/hash.hpp"
-
-#include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "ELF/Structures.hpp"
-
-#include "CoreFile.tcc"
+#include "LIEF/iostream.hpp"
 
 namespace LIEF {
 namespace ELF {
-class Note;
 
-CoreFile::CoreFile(Note& note):
-  NoteDetails::NoteDetails{note}
-{}
+template<class ELF_T>
+void CoreFile::read_files() {
+  static constexpr auto MAX_ENTRIES = 6000;
+  using Elf_Addr      = typename ELF_T::Elf_Addr;
+  using Elf_FileEntry = typename ELF_T::Elf_FileEntry;
 
-CoreFile CoreFile::make(Note& note) {
-  CoreFile file(note);
-  file.parse();
-  return file;
+  auto stream = SpanStream::from_vector(description_);
+  if (!stream) {
+    return;
+  }
+
+  auto count = stream->read<Elf_Addr>();
+  if (!count) {
+    return;
+  }
+
+  if (*count > MAX_ENTRIES) {
+    LIEF_ERR("Too many entries ({} while limited at {})", *count, MAX_ENTRIES);
+    return;
+  }
+
+  auto page_size = stream->read<Elf_Addr>();
+  if (!page_size) {
+    return;
+  }
+
+  page_size_ = *page_size;
+  files_.resize(*count);
+  for (size_t i = 0; i < files_.size(); ++i) {
+    auto entry = stream->read<Elf_FileEntry>();
+    if (!entry) {
+      break;
+    }
+    files_[i] = {entry->start, entry->end, entry->file_ofs, ""};
+  }
+
+  for (size_t i = 0; i < files_.size(); ++i) {
+    auto path = stream->read_string();
+    if (!path) {
+      break;
+    }
+    files_[i].path = std::move(*path);
+  }
 }
 
-CoreFile* CoreFile::clone() const {
-  return new CoreFile(*this);
+template<class ELF_T>
+void CoreFile::write_files() {
+  using Elf_Addr      = typename ELF_T::Elf_Addr;
+  using Elf_FileEntry = typename ELF_T::Elf_FileEntry;
+
+  vector_iostream ios;
+  ios.write(static_cast<Elf_Addr>(files_.size()));
+  ios.write(static_cast<Elf_Addr>(page_size_));
+  for (const entry_t& entry : files_) {
+    Elf_FileEntry raw_entry;
+    std::memset(&raw_entry, 0, sizeof(Elf_FileEntry));
+
+    raw_entry.start    = static_cast<Elf_Addr>(entry.start);
+    raw_entry.end      = static_cast<Elf_Addr>(entry.end);
+    raw_entry.file_ofs = static_cast<Elf_Addr>(entry.file_ofs);
+    ios.write(raw_entry);
+  }
+
+  for (const entry_t& entry : files_) {
+    ios.write(entry.path);
+  }
+  ios.move(description_);
 }
 
+CoreFile::CoreFile(ARCH arch, ELF_CLASS cls, std::string name,
+                   uint32_t type, Note::description_t description) :
+  Note(std::move(name), Note::TYPE::CORE_FILE, type, std::move(description)),
+  arch_(arch), class_(cls)
+{
 
-uint64_t CoreFile::count() const {
-  return files_.size();
+  class_ == ELF_CLASS::ELFCLASS32 ? read_files<details::ELF32>() :
+                                    read_files<details::ELF64>();
 }
 
-const CoreFile::files_t& CoreFile::files() const {
-  return files_;
-}
-
-
-CoreFile::iterator CoreFile::begin() {
-  return std::begin(files_);
-}
-
-CoreFile::iterator CoreFile::end() {
-  return std::end(files_);
-}
-
-CoreFile::const_iterator CoreFile::begin() const {
-  return std::begin(files_);
-}
-
-CoreFile::const_iterator CoreFile::end() const {
-  return std::end(files_);
-}
 
 void CoreFile::files(const CoreFile::files_t& files) {
   files_ = files;
-  build();
-}
+  class_ == ELF_CLASS::ELFCLASS32 ? write_files<details::ELF32>() :
+                                    write_files<details::ELF64>();
 
+}
 
 void CoreFile::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
 void CoreFile::dump(std::ostream& os) const {
-  static constexpr size_t WIDTH = 16;
-  os << std::left;
-
-  os << std::setw(WIDTH) << std::setfill(' ') << "Files: "<< std::dec << std::endl;
-  for (const CoreFileEntry& file : files()) {
-    os << " - ";
-    os << file.path << " ";
-    os << "[" << std::hex << std::showbase << file.start << ", " << file.end << "] ";
-    os << file.file_ofs;
-    os << std::endl;
+  Note::dump(os);
+  const files_t& files = this->files();
+  if (files.empty()) {
+    return;
   }
-  os << std::endl;
-}
-
-void CoreFile::parse() {
-  if (binary()->type() == ELF_CLASS::ELFCLASS64) {
-    parse_<details::ELF64>();
-  } else if (binary()->type() == ELF_CLASS::ELFCLASS32) {
-    parse_<details::ELF32>();
+  os << '\n';
+  for (const entry_t& entry : files) {
+    os << "  " << entry << '\n';
   }
 }
 
-void CoreFile::build() {
-  if (binary()->type() == ELF_CLASS::ELFCLASS64) {
-    build_<details::ELF64>();
-  } else if (binary()->type() == ELF_CLASS::ELFCLASS32) {
-    build_<details::ELF32>();
-  }
-}
-
-std::ostream& operator<<(std::ostream& os, const CoreFile& note) {
-  note.dump(os);
-  return os;
-}
-
-CoreFile::~CoreFile() = default;
-
-
-std::ostream& operator<<(std::ostream& os, const CoreFileEntry& entry) {
-  os << std::hex << std::showbase;
-  os << entry.path << ": [" << entry.start << ", " << entry.end << "]@" << entry.file_ofs;
+std::ostream& operator<<(std::ostream& os, const CoreFile::entry_t& entry) {
+  os << fmt::format("{}: [0x{:04x}, 0x{:04x}]@0x{:x}",
+                    entry.path, entry.start, entry.end, entry.file_ofs);
   return os;
 }
 

@@ -49,9 +49,7 @@ def test_hash():
 
     assert hash(resolve.header) > 0
     assert hash(etterlog.notes[0]) > 0
-    assert hash(etterlog.notes[0].details) > 0
-    #assert super(lief.ELF.NoteDetails, etterlog.notes[0].details) is None
-    #assert etterlog.notes[0].details is None
+    assert hash(etterlog.notes[0]) > 0
     assert hash(etterlog.relocations[0]) > 0
     assert hash(etterlog.sections[0]) > 0
     assert hash(etterlog.segments[0]) > 0
@@ -109,7 +107,6 @@ def test_str(capsys):
 
     print(resolve.header)
     print(etterlog.notes[0])
-    print(etterlog.notes[0].details)
     print(etterlog.relocations[0])
     print(etterlog.sections[0])
     print(etterlog.segments[0])

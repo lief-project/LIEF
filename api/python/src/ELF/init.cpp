@@ -30,15 +30,6 @@
 #include "LIEF/ELF/DynamicSharedObject.hpp"
 #include "LIEF/ELF/GnuHash.hpp"
 #include "LIEF/ELF/Header.hpp"
-#include "LIEF/ELF/Note.hpp"
-#include "LIEF/ELF/NoteDetails.hpp"
-#include "LIEF/ELF/NoteDetails/AndroidNote.hpp"
-#include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
-#include "LIEF/ELF/NoteDetails/core/CoreAuxv.hpp"
-#include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
-#include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
-#include "LIEF/ELF/NoteDetails/core/CorePrStatus.hpp"
-#include "LIEF/ELF/NoteDetails/core/CoreSigInfo.hpp"
 #include "LIEF/ELF/Parser.hpp"
 #include "LIEF/ELF/Relocation.hpp"
 #include "LIEF/ELF/Section.hpp"
@@ -51,9 +42,29 @@
 #include "LIEF/ELF/SysvHash.hpp"
 #include "LIEF/ELF/utils.hpp"
 
+#include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/NoteDetails/AndroidIdent.hpp"
+#include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
+#include "LIEF/ELF/NoteDetails/core/CoreAuxv.hpp"
+#include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
+#include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
+#include "LIEF/ELF/NoteDetails/core/CoreSigInfo.hpp"
+#include "LIEF/ELF/NoteDetails/core/CorePrStatus.hpp"
+
 #define CREATE(X,Y) create<X>(Y)
 
 namespace LIEF::ELF::py {
+
+void init_notes(nb::module_& m) {
+  CREATE(Note, m);
+  CREATE(AndroidIdent, m);
+  CREATE(NoteAbi, m);
+  CREATE(CoreAuxv, m);
+  CREATE(CoreFile, m);
+  CREATE(CorePrPsInfo, m);
+  CREATE(CoreSigInfo, m);
+  CREATE(CorePrStatus, m);
+}
 
 void init_objects(nb::module_& m) {
   CREATE(ParserConfig, m);
@@ -79,16 +90,8 @@ void init_objects(nb::module_& m) {
   CREATE(GnuHash, m);
   CREATE(SysvHash, m);
   CREATE(Builder, m);
-  CREATE(Note, m);
-  CREATE(NoteDetails, m);
-  CREATE(AndroidNote, m);
-  CREATE(NoteAbi, m);
-  CREATE(CorePrPsInfo, m);
-  CREATE(CoreFile, m);
-  CREATE(CoreFileEntry, m);
-  CREATE(CorePrStatus, m);
-  CREATE(CoreAuxv, m);
-  CREATE(CoreSigInfo, m);
+
+  init_notes(m);
 }
 
 inline void init_utils(nb::module_&) {

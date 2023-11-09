@@ -43,14 +43,11 @@
 
 #include "ELF/Structures.hpp"
 #include "internal_utils.hpp"
-#include "notes_utils.hpp"
 #include "logging.hpp"
 #include "Layout.hpp"
 
 namespace LIEF {
 namespace ELF {
-
-class Note;
 
 //! Compute the size and the offset of the elements
 //! needed to rebuild the ELF file.
@@ -215,8 +212,8 @@ class LIEF_LOCAL ExeLayout : public Layout {
       raw_notes.write_conv<uint32_t>(descsz);
 
       // Then the note's type
-      const NOTE_TYPES type = note.type();
-      raw_notes.write_conv<uint32_t>(static_cast<uint32_t>(type));
+      const uint32_t type = note.original_type();
+      raw_notes.write_conv<uint32_t>(type);
 
       // Then we write the note's name
       const std::string& name = note.name();
@@ -1278,65 +1275,45 @@ class LIEF_LOCAL ExeLayout : public Layout {
     }
 
     // Process note sections
-    const Segment* segment_note = binary_->get(SEGMENT_TYPES::PT_NOTE);
-    if (segment_note != nullptr) {
-      using value_t = typename note_to_section_map_t::value_type;
-      const note_to_section_map_t& note_to_section_map = get_note_to_section();
+    if (const Segment* segment_note = binary_->get(SEGMENT_TYPES::PT_NOTE)) {
+      //using value_t = typename note_to_section_map_t::value_type;
+      //const note_to_section_map_t& note_to_section_map = get_note_to_section();
       for (const Note& note : binary_->notes()) {
-        auto range_secname = note_to_section_map.equal_range(note.type());
-        const bool known_section = (range_secname.first != range_secname.second);
-
-        const NOTE_TYPES type = note.type();
-
-        const auto it_section_name = std::find_if(
-            range_secname.first, range_secname.second,
-            [this] (value_t p) {
-              return binary_->has_section(p.second);
-            });
-
-        bool has_section = (it_section_name != range_secname.second);
-
+        auto section_res = Note::note_to_section(note);
         const auto& it_offset = notes_off_map_.find(&note);
 
-        std::string section_name;
-        if (has_section) {
-          section_name = it_section_name->second;
-        } else if (known_section) {
-          section_name = range_secname.first->second;
-        } else {
-          section_name = fmt::format(".note.{:x}", static_cast<uint32_t>(type));
+        if (!section_res) {
+          LIEF_ERR("Note type: {} ('{}') is not supported",
+                   to_string(note.type()), note.name());
+          continue;
         }
 
-        // If the binary does not have the note "type"
-        // but still have the section, then remove the section
-        if (!binary_->has(note.type()) && has_section) {
-          binary_->remove_section(section_name, true);
-        }
+        const char* sec_name = *section_res;
 
         // If the binary has the note type but does not have
         // the section (likly because the user added the note manually)
         // then, create the section
-        if (binary_->has(type) && !has_section) {
+        if (const Section* nsec = binary_->get_section(*section_res);
+            nsec == nullptr)
+        {
           if (it_offset == std::end(notes_off_map_)) {
-            LIEF_ERR("Can't find {}", to_string(type));
-          } else {
-            const size_t note_offset = it_offset->second;
-
-            const Note& note = *binary_->get(type);
-
-            Section section{section_name, ELF_SECTION_TYPES::SHT_NOTE};
-            section += ELF_SECTION_FLAGS::SHF_ALLOC;
-
-            Section* section_added = binary_->add(section, /*loaded */ false);
-            if (section_added == nullptr) {
-              LIEF_ERR("Can't add SHT_NOTE section");
-              return make_error_code(lief_errors::build_error);
-            }
-            section_added->offset(segment_note->file_offset() + note_offset);
-            section_added->size(note.size());
-            section.virtual_address(segment_note->virtual_address() + note_offset);
-            section_added->alignment(4);
+            LIEF_ERR("Can't find raw data for note: '{}'", to_string(note.type()));
+            continue;
           }
+          const size_t note_offset = it_offset->second;
+
+          Section section{sec_name, ELF_SECTION_TYPES::SHT_NOTE};
+          section += ELF_SECTION_FLAGS::SHF_ALLOC;
+
+          Section* section_added = binary_->add(section, /*loaded */ false);
+          if (section_added == nullptr) {
+            LIEF_ERR("Can't add SHT_NOTE section");
+            return make_error_code(lief_errors::build_error);
+          }
+          section_added->offset(segment_note->file_offset() + note_offset);
+          section_added->size(note.size());
+          section.virtual_address(segment_note->virtual_address() + note_offset);
+          section_added->alignment(4);
         }
       }
     }

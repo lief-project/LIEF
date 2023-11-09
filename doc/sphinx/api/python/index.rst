@@ -55,6 +55,8 @@ Error Handling
 
 .. autoclass:: lief.ok_t
 
+.. autoclass:: lief.ok_error_t
+
 See also the section :ref:`err_handling`
 
 Exceptions

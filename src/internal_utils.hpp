@@ -20,8 +20,10 @@
 #include <set>
 #include <algorithm>
 #include <unordered_map>
+#include "spdlog/fmt/fmt.h"
 
 #include "LIEF/span.hpp"
+#include "LIEF/errors.hpp"
 
 
 namespace LIEF {
@@ -35,6 +37,30 @@ inline std::vector<T> as_vector(span<T> s) {
 template<class T>
 inline std::vector<T> as_vector(span<const T> s) {
   return std::vector<T>(s.begin(), s.end());
+}
+
+template<class T>
+inline const char* to_string_or(result<T> res, const char* defval = "???") {
+  return res ? to_string(*res) : defval;
+}
+
+template<class T>
+inline std::string to_hex(const T& container, size_t maxsize = 0) {
+  size_t count = maxsize;
+  if (count == 0 || count > container.size()) {
+    count = container.size();
+  }
+  std::string out;
+  out.reserve(count * 2);
+  for (size_t i = 0; i < count; ++i) {
+    out += fmt::format("{:02x} ", container[i]);
+  }
+  if (count < container.size()) {
+    out += "...";
+  } else{
+    out.pop_back(); // remove trailing ' '
+  }
+  return out;
 }
 
 template<typename HANDLER>

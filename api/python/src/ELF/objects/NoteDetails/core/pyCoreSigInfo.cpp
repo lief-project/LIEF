@@ -17,6 +17,7 @@
 #include <sstream>
 #include <nanobind/stl/string.h>
 
+#include "pyErr.hpp"
 #include "ELF/pyELF.hpp"
 
 #include "LIEF/ELF/NoteDetails/core/CoreSigInfo.hpp"
@@ -26,21 +27,26 @@ namespace LIEF::ELF::py {
 template<>
 void create<CoreSigInfo>(nb::module_& m) {
 
-  nb::class_<CoreSigInfo, NoteDetails>(m, "CoreSigInfo")
-
+  nb::class_<CoreSigInfo, Note>(m, "CoreSigInfo")
     .def_prop_rw("signo",
-        nb::overload_cast<>(&CoreSigInfo::signo, nb::const_),
-        nb::overload_cast<int32_t>(&CoreSigInfo::signo),
+        [] (const CoreSigInfo& self) {
+          return LIEF::py::value_or_none(nb::overload_cast<>(&CoreSigInfo::signo, nb::const_), self);
+        },
+        nb::overload_cast<uint32_t>(&CoreSigInfo::signo),
         "Signal number"_doc)
 
     .def_prop_rw("sigcode",
-        nb::overload_cast<>(&CoreSigInfo::sigcode, nb::const_),
-        nb::overload_cast<int32_t>(&CoreSigInfo::sigcode),
+        [] (const CoreSigInfo& self) {
+          return LIEF::py::value_or_none(nb::overload_cast<>(&CoreSigInfo::sigcode, nb::const_), self);
+        },
+        nb::overload_cast<uint32_t>(&CoreSigInfo::sigcode),
         "Signal code"_doc)
 
     .def_prop_rw("sigerrno",
-        nb::overload_cast<>(&CoreSigInfo::sigerrno, nb::const_),
-        nb::overload_cast<int32_t>(&CoreSigInfo::sigerrno),
+        [] (const CoreSigInfo& self) {
+          return LIEF::py::value_or_none(nb::overload_cast<>(&CoreSigInfo::sigerrno, nb::const_), self);
+        },
+        nb::overload_cast<uint32_t>(&CoreSigInfo::sigerrno),
         "If non-zero, an errno value associated with this signal"_doc)
 
     LIEF_DEFAULT_STR(CoreSigInfo);
