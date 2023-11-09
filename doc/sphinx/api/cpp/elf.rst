@@ -224,10 +224,10 @@ Core Auxiliary Vector
 
 ----------
 
-Android Note
-************
+Android Identity
+****************
 
-.. doxygenclass:: LIEF::ELF::AndroidNote
+.. doxygenclass:: LIEF::ELF::AndroidIdent
    :project: lief
 
 ----------
