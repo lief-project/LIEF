@@ -242,7 +242,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports, uint64_t sta
         DylibCommand& lib = binary_->libraries()[ordinal];
         export_info->alias_location_ = &lib;
       } else {
-        // TODO: Corrupted library name
+        LIEF_WARN("Library ordinal out of range");
       }
     } else {
       auto address = stream_->read_uleb128();
