@@ -522,18 +522,6 @@ const char* to_string(BuildVersion::PLATFORMS e) {
   return it == enumStrings.end() ? "UNKNOWN" : it->second;
 }
 
-
-const char* to_string(BuildToolVersion::TOOLS e) {
-  CONST_MAP(BuildToolVersion::TOOLS, const char*, 4) enumStrings {
-    { BuildToolVersion::TOOLS::UNKNOWN, "UNKNOWN"   },
-    { BuildToolVersion::TOOLS::SWIFT,   "SWIFT"     },
-    { BuildToolVersion::TOOLS::CLANG,   "CLANG"     },
-    { BuildToolVersion::TOOLS::LD,      "LD"        },
-  };
-  const auto it = enumStrings.find(e);
-  return it == enumStrings.end() ? "UNKNOWN" : it->second;
-}
-
 const char* to_string(DYLD_CHAINED_PTR_FORMAT e) {
   CONST_MAP(DYLD_CHAINED_PTR_FORMAT, const char*, 12) enumStrings {
     { DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E,              "PTR_ARM64E"              },

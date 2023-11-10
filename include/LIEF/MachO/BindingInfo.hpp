@@ -98,7 +98,6 @@ class LIEF_API BindingInfo : public Object {
 
   ~BindingInfo() override;
 
-
   void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const BindingInfo& binding_info);

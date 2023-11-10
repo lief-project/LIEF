@@ -23,52 +23,14 @@
 #include "LIEF/types.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/MachO/BuildToolVersion.hpp"
 
 namespace LIEF {
 namespace MachO {
 
 namespace details {
-struct build_tool_version;
 struct build_version_command;
 }
-
-//! Class that represents a tool's version that was
-//! involved in the build of the binary
-class LIEF_API BuildToolVersion : public LIEF::Object {
-  public:
-
-  //! A version is an array of **3** integers
-  using version_t = std::array<uint32_t, 3>;
-
-  public:
-  enum class TOOLS {
-    UNKNOWN = 0,
-    CLANG   = 1,
-    SWIFT   = 2,
-    LD      = 3,
-  };
-
-  public:
-  BuildToolVersion();
-  BuildToolVersion(const details::build_tool_version& tool);
-
-  //! The tools used
-  TOOLS tool() const;
-
-  //! Version associated with the tool
-  version_t version() const;
-
-  ~BuildToolVersion() override;
-
-
-  void accept(Visitor& visitor) const override;
-
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const BuildToolVersion& tool);
-
-  private:
-  TOOLS tool_{TOOLS::UNKNOWN};
-  version_t version_;
-};
 
 class LIEF_API BuildVersion : public LoadCommand {
   friend class BinaryParser;
@@ -109,7 +71,6 @@ class LIEF_API BuildVersion : public LoadCommand {
   tools_list_t tools() const;
 
   ~BuildVersion() override;
-
 
   void accept(Visitor& visitor) const override;
 

@@ -24,6 +24,7 @@
 #include "LIEF/MachO/BinaryParser.hpp"
 #include "LIEF/MachO/BindingInfo.hpp"
 #include "LIEF/MachO/BuildVersion.hpp"
+#include "LIEF/MachO/BuildToolVersion.hpp"
 #include "LIEF/MachO/Builder.hpp"
 #include "LIEF/MachO/ChainedBindingInfo.hpp"
 #include "LIEF/MachO/CodeSignature.hpp"

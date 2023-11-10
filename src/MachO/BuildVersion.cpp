@@ -24,49 +24,6 @@
 namespace LIEF {
 namespace MachO {
 
-BuildToolVersion::BuildToolVersion() = default;
-BuildToolVersion::BuildToolVersion(const details::build_tool_version& tool) :
-  tool_{static_cast<BuildToolVersion::TOOLS>(tool.tool)},
-  version_{{
-    static_cast<uint32_t>((tool.version >> 16) & 0xFFFF),
-    static_cast<uint32_t>((tool.version >>  8) & 0xFF),
-    static_cast<uint32_t>((tool.version >>  0) & 0xFF)
-  }}
-{}
-
-BuildToolVersion::TOOLS BuildToolVersion::tool() const {
-  return tool_;
-}
-
-BuildToolVersion::version_t BuildToolVersion::version() const {
-  return version_;
-}
-
-BuildToolVersion::~BuildToolVersion() = default;
-
-
-
-void BuildToolVersion::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
-
-
-
-std::ostream& operator<<(std::ostream& os, const BuildToolVersion& tool) {
-  BuildToolVersion::version_t version = tool.version();
-
-  os << to_string(tool.tool()) << " - ";
-  os << std::dec
-     << version[0] << "."
-     << version[1] << "."
-     << version[2] << std::endl;
-  return os;
-}
-
-
-// Build Version
-// =============
-
 BuildVersion::BuildVersion() = default;
 BuildVersion& BuildVersion::operator=(const BuildVersion&) = default;
 BuildVersion::BuildVersion(const BuildVersion&) = default;

@@ -4,6 +4,7 @@ target_sources(LIB_LIEF PRIVATE
   BinaryParser.cpp
   BinaryParser.tcc
   BindingInfo.cpp
+  BuildToolVersion.cpp
   BuildVersion.cpp
   Builder.cpp
   Builder.tcc
@@ -55,8 +56,8 @@ target_sources(LIB_LIEF PRIVATE
   VersionMin.cpp
   exports_trie.cpp
   hash.cpp
-  utils.cpp
   json_api.cpp
+  utils.cpp
 )
 
 if(LIEF_ENABLE_JSON)
