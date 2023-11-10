@@ -1279,7 +1279,7 @@ class ThreadCommand(LoadCommand):
     architecture: lief.MachO.CPU_TYPES
     count: int
     flavor: int
-    state: list[int]
+    state: memoryview
     def __init__(self, arg0: int, arg1: int, arg2: lief.MachO.CPU_TYPES, /) -> None: ...
     @property
     def pc(self) -> int: ...
