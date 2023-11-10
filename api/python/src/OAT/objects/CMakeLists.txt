@@ -1,11 +1,9 @@
-set(LIEF_PYTHON_OAT_OBJECTS_SRC
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyHeader.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyParser.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyDexFile.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyClass.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyMethod.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyParser.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyBinary.cpp"
+target_sources(pyLIEF PRIVATE
+  pyHeader.cpp
+  pyParser.cpp
+  pyDexFile.cpp
+  pyClass.cpp
+  pyMethod.cpp
+  pyParser.cpp
+  pyBinary.cpp
 )
-
-target_sources(pyLIEF PRIVATE ${LIEF_PYTHON_OAT_OBJECTS_SRC})

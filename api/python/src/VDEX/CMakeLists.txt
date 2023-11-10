@@ -1,11 +1,5 @@
-set(LIEF_PYTHON_VDEX_SRC
-  "${CMAKE_CURRENT_SOURCE_DIR}/init.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyUtils.cpp"
+target_sources(pyLIEF PRIVATE
+  init.cpp
+  pyUtils.cpp
 )
-
-set(LIEF_PYTHON_VDEX_HDR
-  "${CMAKE_CURRENT_SOURCE_DIR}/init.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyVDEX.hpp")
-
-target_sources(pyLIEF PRIVATE ${LIEF_PYTHON_VDEX_SRC} ${LIEF_PYTHON_VDEX_HDR})
 add_subdirectory(objects)

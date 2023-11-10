@@ -1,9 +1,4 @@
-set(LIEF_PYTHON_ANDROID_SRC
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyAndroid.cpp"
-)
-set(LIEF_PYTHON_ANDROID_HDR
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyAndroid.hpp")
-
 target_sources(pyLIEF PRIVATE
-  ${LIEF_PYTHON_ANDROID_SRC} ${LIEF_PYTHON_ANDROID_HDR})
+  pyAndroid.cpp
+)
 

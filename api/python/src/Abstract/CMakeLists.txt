@@ -1,19 +1,11 @@
-set(LIEF_PYTHON_ABSTRACT_SRC
-  "${CMAKE_CURRENT_SOURCE_DIR}/init.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/enums.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyParser.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyHeader.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pySymbol.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyRelocation.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pySection.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyFunction.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyBinary.cpp"
+target_sources(pyLIEF PRIVATE
+  init.cpp
+  enums.cpp
+  pyParser.cpp
+  pyHeader.cpp
+  pySymbol.cpp
+  pyRelocation.cpp
+  pySection.cpp
+  pyFunction.cpp
+  pyBinary.cpp
 )
-
-set(LIEF_PYTHON_ABSTRACT_HDR
-  "${CMAKE_CURRENT_SOURCE_DIR}/init.hpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/enums.hpp"
-)
-
-target_sources(pyLIEF
-  PRIVATE ${LIEF_PYTHON_ABSTRACT_SRC} ${LIEF_PYTHON_ELF_HDR})

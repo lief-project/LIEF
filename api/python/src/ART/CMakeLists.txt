@@ -1,10 +1,5 @@
-set(LIEF_PYTHON_ART_SRC
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyUtils.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/init.cpp"
+target_sources(pyLIEF PRIVATE
+  pyUtils.cpp
+  init.cpp
 )
-
-set(LIEF_PYTHON_ART_HDR
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyART.hpp")
-
-target_sources(pyLIEF PRIVATE ${LIEF_PYTHON_ART_SRC} ${LIEF_PYTHON_ART_HDR})
 add_subdirectory(objects)

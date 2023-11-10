@@ -1,11 +1,4 @@
-set(LIEF_PYTHON_PLATFORM_SRC
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyPlatform.cpp"
-)
-
-set(LIEF_PYTHON_PLATFORM_HDR
-  "${CMAKE_CURRENT_SOURCE_DIR}/pyPlatform.hpp")
-
 target_sources(pyLIEF PRIVATE
-  ${LIEF_PYTHON_PLATFORM_HDR} ${LIEF_PYTHON_PLATFORM_SRC})
-
+  pyPlatform.cpp
+)
 add_subdirectory(android)

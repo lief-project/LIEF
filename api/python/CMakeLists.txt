@@ -42,7 +42,7 @@ nanobind_add_module(
   # Do not default to -Os
   NOMINSIZE
 
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/pyLIEF.cpp
+  src/pyLIEF.cpp
 )
 
 add_subdirectory(src)
