@@ -93,7 +93,6 @@ class LIEF_API ExportInfo : public Object {
 
   ~ExportInfo() override;
 
-
   void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ExportInfo& export_info);

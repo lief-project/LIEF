@@ -22,6 +22,7 @@
 #include "LIEF/types.hpp"
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
+#include "LIEF/span.hpp"
 
 #include "LIEF/MachO/enums.hpp"
 
@@ -61,7 +62,9 @@ class LIEF_API LoadCommand : public Object {
   uint32_t size() const;
 
   //! Raw command
-  const raw_t& data() const;
+  span<const uint8_t> data() const {
+    return original_data_;
+  }
 
   //! Offset of the command within the *Load Command Table*
   uint64_t command_offset() const;

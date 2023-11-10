@@ -75,11 +75,6 @@ uint32_t LoadCommand::size() const {
   return size_;
 }
 
-const LoadCommand::raw_t& LoadCommand::data() const {
-  return original_data_;
-}
-
-
 uint64_t LoadCommand::command_offset() const {
   return command_offset_;
 }

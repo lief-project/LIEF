@@ -68,7 +68,6 @@ class LIEF_API CodeSignature : public LoadCommand {
 
   ~CodeSignature() override;
 
-
   void accept(Visitor& visitor) const override;
 
   std::ostream& print(std::ostream& os) const override;

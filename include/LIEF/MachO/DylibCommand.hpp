@@ -109,7 +109,6 @@ class LIEF_API DylibCommand : public LoadCommand {
 
   std::ostream& print(std::ostream& os) const override;
 
-
   void accept(Visitor& visitor) const override;
 
   static bool classof(const LoadCommand* cmd);

@@ -17,10 +17,12 @@
 #include <sstream>
 #include <nanobind/stl/string.h>
 #include "nanobind/extra/memoryview.hpp"
+#include "nanobind/utils.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
 #include "MachO/pyMachO.hpp"
+
 
 namespace LIEF::MachO::py {
 
@@ -43,8 +45,7 @@ void create<LoadCommand>(nb::module_& m) {
 
     .def_prop_rw("data",
         [] (const LoadCommand& cmd) {
-          const LoadCommand::raw_t& content = cmd.data();
-          return nb::memoryview::from_memory(content.data(), content.size());
+          return nb::to_memoryview(cmd.data());
         },
         nb::overload_cast<const LoadCommand::raw_t&>(&LoadCommand::data),
         "Command's data"_doc)
