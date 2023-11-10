@@ -73,8 +73,12 @@ class LIEF_API DyldBindingInfo : public BindingInfo {
     return BindingInfo::TYPES::DYLD_INFO;
   }
 
-  ~DyldBindingInfo() override;
 
+  static bool classof(BindingInfo* info) {
+    return info->type() == BindingInfo::TYPES::DYLD_INFO;
+  }
+
+  ~DyldBindingInfo() override;
 
   void accept(Visitor& visitor) const override;
 

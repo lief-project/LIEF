@@ -88,6 +88,10 @@ class LIEF_API ChainedBindingInfo : public BindingInfo {
     return BindingInfo::TYPES::CHAINED;
   }
 
+  static bool classof(BindingInfo* info) {
+    return info->type() == BindingInfo::TYPES::CHAINED;
+  }
+
   ~ChainedBindingInfo() override;
 
 
