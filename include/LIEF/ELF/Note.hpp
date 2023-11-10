@@ -23,6 +23,7 @@
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
+#include "LIEF/span.hpp"
 
 #include "LIEF/ELF/enums.hpp"
 
@@ -185,11 +186,11 @@ class LIEF_API Note : public Object {
   }
 
   //! Return the description associated with the note
-  const description_t& description() const {
+  span<const uint8_t> description() const {
     return description_;
   }
 
-  description_t& description() {
+  span<uint8_t> description() {
     return description_;
   }
 

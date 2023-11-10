@@ -223,7 +223,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       raw_notes.align(sizeof(uint32_t), 0);
 
       // description content (manipulated in 4 byte/uint32_t chunks)
-      const std::vector<uint8_t>& description = note.description();
+      span<const uint8_t> description = note.description();
       const auto* desc_ptr = reinterpret_cast<const uint32_t*>(description.data());
       size_t i = 0;
       for (; i < description.size() / sizeof(uint32_t); i++) {

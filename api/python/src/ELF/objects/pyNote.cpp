@@ -150,8 +150,7 @@ void create<Note>(nb::module_& m) {
 
     .def_prop_rw("description",
         [] (const Note& self) {
-          const std::vector<uint8_t>& content = self.description();
-          return nb::memoryview::from_memory(content.data(), content.size());
+          return nb::to_memoryview(self.description());
         },
         nb::overload_cast<Note::description_t>(&Note::description),
         "Return the description associated with the note"_doc)

@@ -67,7 +67,6 @@ class LIEF_API SysvHash : public Object {
     chains_.resize(nb);
   }
 
-
   void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const SysvHash& sysvhash);
