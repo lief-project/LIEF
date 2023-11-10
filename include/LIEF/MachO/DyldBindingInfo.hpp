@@ -73,7 +73,6 @@ class LIEF_API DyldBindingInfo : public BindingInfo {
     return BindingInfo::TYPES::DYLD_INFO;
   }
 
-
   static bool classof(BindingInfo* info) {
     return info->type() == BindingInfo::TYPES::DYLD_INFO;
   }
@@ -83,9 +82,6 @@ class LIEF_API DyldBindingInfo : public BindingInfo {
   void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const DyldBindingInfo& binding_info);
-
-  static bool classof(const BindingInfo& info);
-
   private:
   BINDING_CLASS   class_ = BINDING_CLASS::BIND_CLASS_STANDARD;
   BIND_TYPES      binding_type_ = BIND_TYPES::BIND_TYPE_POINTER;

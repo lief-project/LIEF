@@ -79,12 +79,6 @@ void DyldBindingInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
-bool DyldBindingInfo::classof(const BindingInfo& info) {
-  return info.type() == BindingInfo::TYPES::DYLD_INFO;
-}
-
 std::ostream& operator<<(std::ostream& os, const DyldBindingInfo& info) {
   os << static_cast<const BindingInfo&>(info);
   return os;

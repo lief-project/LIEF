@@ -67,13 +67,6 @@ void ChainedBindingInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
-bool ChainedBindingInfo::classof(const BindingInfo& info) {
-  return info.type() == BindingInfo::TYPES::CHAINED;
-}
-
-
 uint64_t ChainedBindingInfo::address() const {
   return /* imagebase */ address_ + offset_;
 }

@@ -99,8 +99,6 @@ class LIEF_API ChainedBindingInfo : public BindingInfo {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ChainedBindingInfo& info);
 
-  static bool classof(const BindingInfo& info);
-
   private:
   void clear();
   enum class BIND_TYPES {
