@@ -8,6 +8,8 @@ import argparse
 from pathlib import Path
 from utils import is_linux, is_x86_64
 
+DEFAULT_TIMEOUT = 60 # sec
+
 def generate_samples(melkor, seed='/usr/bin/ls', nb=100):
     cmd = [melkor, '-A', seed, '-n', str(nb), '-q']
 
@@ -41,13 +43,17 @@ def fuzz(melkor, seed, nb):
             continue
 
         print(f"Trying to parse {file!s}")
-        subprocess.check_call(
-            (
-                sys.executable, "-c",
-                f"import lief;lief.logging.disable();lief.parse('{file.as_posix()}')"
-            ),
-            env=os.environ.copy()
-        )
+        try:
+            subprocess.check_call(
+                (
+                    sys.executable, "-c",
+                    f"import lief;lief.logging.disable();lief.parse('{file.as_posix()}')"
+                ),
+                timeout=DEFAULT_TIMEOUT,
+                env=os.environ.copy()
+            )
+        except subprocess.TimeoutExpired:
+            print("Timeout!")
 
 if __name__ == '__main__':
     if not is_linux() and not is_x86_64():
