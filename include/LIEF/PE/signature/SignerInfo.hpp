@@ -19,7 +19,7 @@
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
-
+#include "LIEF/span.hpp"
 
 #include "LIEF/PE/signature/types.hpp"
 #include "LIEF/iterators.hpp"
@@ -84,7 +84,7 @@ class LIEF_API SignerInfo : public Object {
   //! @see
   //! LIEF::PE::x509::serial_number
   //! SignerInfo::issuer
-  const std::vector<uint8_t>& serial_number() const {
+  span<const uint8_t> serial_number() const {
     return serialno_;
   }
 
@@ -143,7 +143,7 @@ class LIEF_API SignerInfo : public Object {
   }
 
   //! Raw blob that is signed by the signer certificate
-  const std::vector<uint8_t>& raw_auth_data() const {
+  span<const uint8_t> raw_auth_data() const {
     return raw_auth_data_;
   }
 

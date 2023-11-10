@@ -27,6 +27,7 @@
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/array.h>
+#include "nanobind/utils.hpp"
 
 namespace LIEF::PE::py {
 
@@ -96,9 +97,8 @@ void create<x509>(nb::module_& m) {
         "X.509 version. (1=v1, 2=v2, 3=v3)"_doc)
 
     .def_prop_ro("serial_number",
-        [] (const x509& crt) -> nb::bytes {
-          const std::vector<uint8_t>& sn = crt.serial_number();
-          return nb::bytes(reinterpret_cast<const char*>(sn.data()), sn.size());
+        [] (const x509& crt) {
+          return nb::to_bytes(crt.serial_number());
         },
         "Unique id for certificate issued by a specific CA."_doc)
 
@@ -127,9 +127,8 @@ void create<x509>(nb::module_& m) {
         "Subject of the certificate"_doc)
 
     .def_prop_ro("raw",
-        [] (const x509& crt) -> nb::bytes {
-          const std::vector<uint8_t>& raw = crt.raw();
-          return nb::bytes(reinterpret_cast<const char*>(raw.data()), raw.size());
+        [] (const x509& crt) {
+          return nb::to_bytes(crt.raw());
         },
         "The raw bytes associated with this x509 cert (DER encoded)"_doc)
 
@@ -160,8 +159,7 @@ void create<x509>(nb::module_& m) {
 
     .def_prop_ro("signature",
         [] (const x509& cert) {
-          const std::vector<uint8_t>& sig = cert.signature();
-          return nb::bytes(reinterpret_cast<const char*>(sig.data()), sig.size());
+          return nb::to_bytes(cert.signature());
         }, "The signature of the certificate")
 
     .def("verify",

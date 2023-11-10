@@ -18,6 +18,7 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/unique_ptr.h>
+#include "nanobind/utils.hpp"
 
 #include "enums_wrapper.hpp"
 
@@ -219,8 +220,7 @@ void create<Signature>(nb::module_& m) {
 
     .def_prop_ro("raw_der",
         [] (const Signature& sig) {
-          const std::vector<uint8_t>& raw = sig.raw_der();
-          return nb::bytes(reinterpret_cast<const char*>(raw.data()), raw.size());
+          return nb::to_memoryview(sig.raw_der());
         },
         "Return the raw original signature as a byte object"_doc,
         nb::rv_policy::reference_internal)

@@ -63,14 +63,6 @@ CPU_TYPES ThreadCommand::architecture() const {
   return architecture_;
 }
 
-const std::vector<uint8_t>& ThreadCommand::state() const {
-  return state_;
-}
-
-std::vector<uint8_t>& ThreadCommand::state() {
-  return const_cast<std::vector<uint8_t>&>(static_cast<const ThreadCommand*>(this)->state());
-}
-
 uint64_t ThreadCommand::pc() const {
   uint64_t entry = 0;
   switch(architecture_) {

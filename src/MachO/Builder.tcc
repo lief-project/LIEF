@@ -934,7 +934,7 @@ ok_error_t Builder::build(ThreadCommand& tc) {
   details::thread_command raw_cmd;
   std::memset(&raw_cmd, 0, sizeof(details::thread_command));
 
-  const std::vector<uint8_t>& state = tc.state();
+  const span<const uint8_t> state = tc.state();
 
   const uint32_t raw_size = sizeof(details::thread_command) + state.size();
   const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));

@@ -20,6 +20,7 @@
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
+#include "nanobind/utils.hpp"
 
 namespace LIEF::PE::py {
 
@@ -47,8 +48,7 @@ void create<PKCS9MessageDigest>(nb::module_& m) {
 
     .def_prop_ro("digest",
         [] (const PKCS9MessageDigest& digest) {
-          const std::vector<uint8_t>& data = digest.digest();
-          return nb::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+          return nb::to_bytes(digest.digest());
         }, "Message digeset as a blob of bytes as described in the RFC"_doc);
 }
 

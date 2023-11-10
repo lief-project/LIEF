@@ -849,7 +849,7 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
     if (sec->sizeof_raw_data() == 0) {
       continue;
     }
-    const std::vector<uint8_t>& pad     = sec->padding();
+    span<const uint8_t> pad = sec->padding();
     span<const uint8_t> content = sec->content();
     LIEF_DEBUG("Authentihash:  Append section {:<8}: [0x{:04x}, 0x{:04x}] + [0x{:04x}] = [0x{:04x}, 0x{:04x}]",
                sec->name(),

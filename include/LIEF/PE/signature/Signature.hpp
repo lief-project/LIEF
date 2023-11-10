@@ -18,6 +18,7 @@
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
+#include "LIEF/span.hpp"
 
 #include "LIEF/PE/signature/x509.hpp"
 #include "LIEF/PE/signature/SignerInfo.hpp"
@@ -44,7 +45,10 @@ class LIEF_API Signature : public Object {
 
   public:
   //! Hash the input given the algorithm
-  static std::vector<uint8_t> hash(const std::vector<uint8_t>& input, ALGORITHMS algo);
+  static std::vector<uint8_t> hash(const std::vector<uint8_t>& input, ALGORITHMS algo) {
+    return hash(input.data(), input.size(), algo);
+  }
+  static std::vector<uint8_t> hash(const uint8_t* buffer, size_t size, ALGORITHMS algo);
 
   public:
 
@@ -112,7 +116,9 @@ class LIEF_API Signature : public Object {
   it_const_signers_t signers() const;
 
   //! Return the raw original PKCS7 signature
-  const std::vector<uint8_t>& raw_der() const;
+  span<const uint8_t> raw_der() const {
+    return original_raw_signature_;
+  }
 
   //! Find x509 certificate according to its serial number
   const x509* find_crt(const std::vector<uint8_t>& serialno) const;

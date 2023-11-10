@@ -21,6 +21,7 @@
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
+#include "nanobind/utils.hpp"
 
 namespace LIEF::PE::py {
 
@@ -35,9 +36,8 @@ void create<GenericType>(nb::module_& m) {
         "OID of the original attribute"_doc)
 
     .def_prop_ro("raw_content",
-        [] (const GenericType& type) -> nb::bytes {
-          const std::vector<uint8_t>& raw = type.raw_content();
-          return nb::bytes(reinterpret_cast<const char*>(raw.data()), raw.size());
+        [] (const GenericType& type) {
+          return nb::to_memoryview(type.raw_content());
         }, "Original DER blob of the attribute"_doc);
 }
 

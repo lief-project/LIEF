@@ -20,6 +20,7 @@
 #include <sstream>
 #include <nanobind/stl/string.h>
 #include <nanobind/extra/memoryview.hpp>
+#include "nanobind/utils.hpp"
 
 namespace LIEF::PE::py {
 
@@ -35,14 +36,10 @@ void create<Repro>(nb::module_& m) {
     )delim"_doc)
     .def_prop_rw("hash",
         [] (const Repro& repro) {
-          const span<const uint8_t> hash = repro.hash();
-          return nb::memoryview::from_memory(hash.data(), hash.size());
+          return nb::to_memoryview(repro.hash());
         },
         [] (Repro& repro, nb::bytes bytes) {
-          const auto* start = reinterpret_cast<const uint8_t*>(bytes.c_str());
-          const auto* end = start + bytes.size();
-          std::vector<uint8_t> hash(start, end);
-          repro.hash(std::move(hash));
+          repro.hash(nb::to_vector(bytes));
         }, "The hash associated with the reproducible build"_doc)
     LIEF_DEFAULT_STR(Repro);
 }

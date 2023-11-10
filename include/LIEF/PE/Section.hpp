@@ -112,7 +112,7 @@ class LIEF_API Section : public LIEF::Section {
   }
 
   //! Content of the section's padding area
-  const std::vector<uint8_t>& padding() const {
+  span<const uint8_t> padding() const {
     return padding_;
   }
 

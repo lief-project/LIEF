@@ -35,6 +35,7 @@
 #include <mbedtls/md5.h>
 
 #include "frozen.hpp"
+#include "internal_utils.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -85,7 +86,7 @@ Signature::VERIFICATION_FLAGS verify_ts_counter_signature(const SignerInfo& sign
   const x509& cs_cert = *cs_signer.cert();
   const SignerInfo::encrypted_digest_t& cs_enc_digest = cs_signer.encrypted_digest();
 
-  std::vector<uint8_t> cs_auth_data = cs_signer.raw_auth_data();
+  std::vector<uint8_t> cs_auth_data = as_vector(cs_signer.raw_auth_data());
   // According to the RFC:
   //
   // "[...] The Attributes value's tag is SET OF, and the DER encoding of
@@ -162,15 +163,15 @@ Signature::VERIFICATION_FLAGS verify_ts_counter_signature(const SignerInfo& sign
 }
 
 
-std::vector<uint8_t> Signature::hash(const std::vector<uint8_t>& input, ALGORITHMS algo) {
+std::vector<uint8_t> Signature::hash(const uint8_t* buffer, size_t size, ALGORITHMS algo) {
   switch (algo) {
 
     case ALGORITHMS::SHA_512:
       {
         std::vector<uint8_t> out(64);
-        int ret = mbedtls_sha512(input.data(), input.size(), out.data(), /* is384 */ 0);
+        int ret = mbedtls_sha512(buffer, size, out.data(), /* is384 */ 0);
         if (ret != 0) {
-          LIEF_ERR("Hashing {} bytes with SHA-512 failed! (ret: 0x{:x})", input.size(), ret);
+          LIEF_ERR("Hashing {} bytes with SHA-512 failed! (ret: 0x{:x})", size, ret);
           return {};
         }
         return out;
@@ -179,9 +180,9 @@ std::vector<uint8_t> Signature::hash(const std::vector<uint8_t>& input, ALGORITH
     case ALGORITHMS::SHA_384:
       {
         std::vector<uint8_t> out(64);
-        int ret = mbedtls_sha512(input.data(), input.size(), out.data(), /* is384 */ 1);
+        int ret = mbedtls_sha512(buffer, size, out.data(), /* is384 */ 1);
         if (ret != 0) {
-          LIEF_ERR("Hashing {} bytes with SHA-384 failed! (ret: 0x{:x})", input.size(), ret);
+          LIEF_ERR("Hashing {} bytes with SHA-384 failed! (ret: 0x{:x})", size, ret);
           return {};
         }
         return out;
@@ -190,9 +191,9 @@ std::vector<uint8_t> Signature::hash(const std::vector<uint8_t>& input, ALGORITH
     case ALGORITHMS::SHA_256:
       {
         std::vector<uint8_t> out(32);
-        int ret = mbedtls_sha256(input.data(), input.size(), out.data(), /* is224 */ 0);
+        int ret = mbedtls_sha256(buffer, size, out.data(), /* is224 */ 0);
         if (ret != 0) {
-          LIEF_ERR("Hashing {} bytes with SHA-256 failed! (ret: 0x{:x})", input.size(), ret);
+          LIEF_ERR("Hashing {} bytes with SHA-256 failed! (ret: 0x{:x})", size, ret);
           return {};
         }
         return out;
@@ -201,9 +202,9 @@ std::vector<uint8_t> Signature::hash(const std::vector<uint8_t>& input, ALGORITH
     case ALGORITHMS::SHA_1:
       {
         std::vector<uint8_t> out(20);
-        int ret = mbedtls_sha1(input.data(), input.size(), out.data());
+        int ret = mbedtls_sha1(buffer, size, out.data());
         if (ret != 0) {
-          LIEF_ERR("Hashing {} bytes with SHA-1 failed! (ret: 0x{:x})", input.size(), ret);
+          LIEF_ERR("Hashing {} bytes with SHA-1 failed! (ret: 0x{:x})", size, ret);
           return {};
         }
         return out;
@@ -212,9 +213,9 @@ std::vector<uint8_t> Signature::hash(const std::vector<uint8_t>& input, ALGORITH
     case ALGORITHMS::MD5:
       {
         std::vector<uint8_t> out(16);
-        int ret = mbedtls_md5(input.data(), input.size(), out.data());
+        int ret = mbedtls_md5(buffer, size, out.data());
         if (ret != 0) {
-          LIEF_ERR("Hashing {} bytes with MD5 failed! (ret: 0x{:x})", input.size(), ret);
+          LIEF_ERR("Hashing {} bytes with MD5 failed! (ret: 0x{:x})", size, ret);
           return {};
         }
         return out;
@@ -409,11 +410,6 @@ Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const
 
   }
   return flags;
-}
-
-
-const std::vector<uint8_t>& Signature::raw_der() const {
-  return original_raw_signature_;
 }
 
 

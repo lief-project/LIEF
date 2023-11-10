@@ -23,6 +23,8 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/set.h>
 #include <nanobind/stl/vector.h>
+#include "nanobind/utils.hpp"
+
 
 #define PY_ENUM(x) to_string(x), x
 
@@ -167,8 +169,7 @@ void create<Section>(nb::module_& m) {
 
     .def_prop_ro("padding",
         [] (const Section& sec) {
-          const std::vector<uint8_t>& data = sec.padding();
-          return nb::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+          return nb::to_bytes(sec.padding());
         },
         "Section padding content as bytes"_doc)
 

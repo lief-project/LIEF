@@ -31,6 +31,7 @@
 #include "pyErr.hpp"
 #include "pyIterator.hpp"
 #include "nanobind/extra/memoryview.hpp"
+#include "nanobind/utils.hpp"
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
@@ -197,8 +198,7 @@ void create<Binary>(nb::module_& m) {
 
     .def("authentihash",
         [] (const Binary& bin, ALGORITHMS algo) {
-          const std::vector<uint8_t>& data = bin.authentihash(algo);
-          return nb::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+          return nb::to_bytes(bin.authentihash(algo));
         },
         "Compute the authentihash according to the " RST_CLASS_REF(lief.PE.ALGORITHMS) " "
         "given in the first parameter"_doc,
@@ -235,29 +235,25 @@ void create<Binary>(nb::module_& m) {
 
     .def_prop_ro("authentihash_md5",
         [] (const Binary& bin) {
-          const std::vector<uint8_t>& data = bin.authentihash(ALGORITHMS::MD5);
-          return nb::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+          return nb::to_bytes(bin.authentihash(ALGORITHMS::MD5));
         },
         "Authentihash **MD5** value"_doc)
 
     .def_prop_ro("authentihash_sha1",
         [] (const Binary& bin) {
-          const std::vector<uint8_t>& data = bin.authentihash(ALGORITHMS::SHA_1);
-          return nb::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+          return nb::to_bytes(bin.authentihash(ALGORITHMS::SHA_1));
         },
         "Authentihash **SHA1** value"_doc)
 
     .def_prop_ro("authentihash_sha256",
         [] (const Binary& bin) {
-          const std::vector<uint8_t>& data = bin.authentihash(ALGORITHMS::SHA_256);
-          return nb::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+          return nb::to_bytes(bin.authentihash(ALGORITHMS::SHA_256));
         },
         "Authentihash **SHA-256** value"_doc)
 
     .def_prop_ro("authentihash_sha512",
         [] (const Binary& bin) {
-          const std::vector<uint8_t>& data = bin.authentihash(ALGORITHMS::SHA_512);
-          return nb::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+          return nb::to_bytes(bin.authentihash(ALGORITHMS::SHA_512));
         },
         "Authentihash **SHA-512** value"_doc)
 

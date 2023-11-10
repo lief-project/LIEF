@@ -20,6 +20,7 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"
+#include "LIEF/span.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
@@ -70,8 +71,13 @@ class LIEF_API ThreadCommand : public LoadCommand {
 
   //! The actual thread state as a vector of bytes. Depending on the architecture(),
   //! these data can be casted into x86_thread_state_t, x86_thread_state64_t, ...
-  const std::vector<uint8_t>& state() const;
-  std::vector<uint8_t>& state();
+  span<const uint8_t> state() const {
+    return  state_;
+  }
+
+  span<uint8_t> state() {
+    return state_;
+  }
 
   //! Return the initial Program Counter regardless of the underlying architecture.
   //! This value, when non null, can be used to determine the binary's entrypoint.

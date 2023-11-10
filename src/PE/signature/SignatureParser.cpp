@@ -49,6 +49,7 @@
 
 #include "logging.hpp"
 #include "messages.hpp"
+#include "internal_utils.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -320,7 +321,7 @@ result<Signature> SignatureParser::parse_signature(BinaryStream& stream) {
 
   // Tied signer info with x509 certificates
   for (SignerInfo& signer : signature.signers_) {
-    const x509* crt = signature.find_crt_issuer(signer.issuer(), signer.serial_number());
+    const x509* crt = signature.find_crt_issuer(signer.issuer(), as_vector(signer.serial_number()));
     if (crt != nullptr) {
       signer.cert_ = std::make_unique<x509>(*crt);
     } else {
@@ -329,7 +330,7 @@ result<Signature> SignatureParser::parse_signature(BinaryStream& stream) {
     const auto* cs = static_cast<const PKCS9CounterSignature*>(signer.get_attribute(SIG_ATTRIBUTE_TYPES::PKCS9_COUNTER_SIGNATURE));
     if (cs != nullptr) {
       SignerInfo& cs_signer = const_cast<PKCS9CounterSignature*>(cs)->signer_;
-      const x509* crt = signature.find_crt_issuer(cs_signer.issuer(), cs_signer.serial_number());
+      const x509* crt = signature.find_crt_issuer(cs_signer.issuer(), as_vector(cs_signer.serial_number()));
       if (crt != nullptr) {
         cs_signer.cert_ = std::make_unique<x509>(*crt);
       } else {

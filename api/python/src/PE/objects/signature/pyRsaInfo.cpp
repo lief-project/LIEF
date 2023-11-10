@@ -20,6 +20,7 @@
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
+#include "nanobind/utils.hpp"
 
 namespace LIEF::PE::py {
 
@@ -37,40 +38,34 @@ void create<RsaInfo>(nb::module_& m) {
 
     .def_prop_ro("N",
         [] (const RsaInfo& info) {
-          const std::vector<uint8_t>& data = info.N();
-          return nb::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+          return nb::to_bytes(info.N());
         },
         "RSA public modulus (in bytes)"_doc)
 
     .def_prop_ro("E",
         [] (const RsaInfo& info) {
-          const std::vector<uint8_t>& data = info.E();
-          return nb::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+          return nb::to_bytes(info.E());
         }, "RSA public exponent (in bytes)"_doc)
 
     .def_prop_ro("D",
         [] (const RsaInfo& info) {
-          const std::vector<uint8_t>& data = info.D();
-          return nb::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+          return nb::to_bytes(info.D());
         }, "RSA private exponent (in bytes)"_doc)
 
     .def_prop_ro("P",
         [] (const RsaInfo& info) {
-          const std::vector<uint8_t>& data = info.P();
-          return nb::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+          return nb::to_bytes(info.P());
         }, "First prime factor (in bytes)"_doc)
 
     .def_prop_ro("Q",
         [] (const RsaInfo& info) {
-          const std::vector<uint8_t>& data = info.Q();
-          return nb::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+          return nb::to_bytes(info.Q());
         }, "Second prime factor (in bytes)")
 
     .def_prop_ro("key_size",
         &RsaInfo::key_size, "Size of the public modulus in bits"_doc)
 
-    .def_prop_ro("__len__",
-        &RsaInfo::key_size)
+    .def_prop_ro("__len__", &RsaInfo::key_size)
 
     LIEF_DEFAULT_STR(RsaInfo);
 }

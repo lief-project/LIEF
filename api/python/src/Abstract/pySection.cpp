@@ -23,6 +23,7 @@
 #include "pySafeString.hpp"
 #include "typing.hpp"
 #include "nanobind/extra/memoryview.hpp"
+#include "nanobind/utils.hpp"
 
 #include "LIEF/Abstract/Section.hpp"
 
@@ -55,8 +56,7 @@ void create<Section>(nb::module_& m) {
 
     .def_prop_ro("fullname",
         [] (const Section& obj) {
-          const std::string& fullname = obj.fullname();
-          return nb::bytes(fullname.data(), fullname.size());
+          return nb::to_bytes(obj.fullname());
         },
         "Return the **fullname** of the section including the trailing bytes"_doc)
 
@@ -77,8 +77,7 @@ void create<Section>(nb::module_& m) {
 
     .def_prop_rw("content",
         [] (const Section& self) {
-          const span<const uint8_t> content = self.content();
-          return nb::memoryview::from_memory(content.data(), content.size());
+          return nanobind::to_memoryview(self.content());
         },
         nb::overload_cast<const std::vector<uint8_t>&>(&Section::content),
         "Section's content"_doc)
@@ -114,8 +113,7 @@ void create<Section>(nb::module_& m) {
         "str"_a, "pos"_a = 0)
 
     .def("search",
-        [] (const Section& self,
-            nb::bytes bytes, size_t pos) -> search_result
+        [] (const Section& self, nb::bytes bytes, size_t pos) -> search_result
         {
           std::string raw_str(bytes.c_str(), bytes.size());
           const std::vector<uint8_t> raw = {

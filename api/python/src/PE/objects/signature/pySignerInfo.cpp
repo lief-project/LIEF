@@ -24,6 +24,7 @@
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
+#include "nanobind/utils.hpp"
 
 namespace LIEF::PE::py {
 
@@ -58,9 +59,8 @@ void create<SignerInfo>(nb::module_& m) {
         "Should be 1"_doc)
 
     .def_prop_ro("serial_number",
-        [] (const SignerInfo& info) -> nb::bytes {
-          const std::vector<uint8_t>& data = info.serial_number();
-          return nb::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+        [] (const SignerInfo& info) {
+          return nb::to_bytes(info.serial_number());
         },
         "The X509 serial number used to sign the signed-data (see: :attr:`lief.PE.x509.serial_number`)"_doc)
 
@@ -83,8 +83,7 @@ void create<SignerInfo>(nb::module_& m) {
 
     .def_prop_ro("encrypted_digest",
         [] (const SignerInfo& info) {
-          const std::vector<uint8_t>& data = info.encrypted_digest();
-          return nb::bytes(reinterpret_cast<const char*>(data.data()), data.size());
+          return nb::to_bytes(info.encrypted_digest());
         },
         "Return the signature created by the signing certificate's private key"_doc)
 
