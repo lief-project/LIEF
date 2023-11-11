@@ -19,6 +19,7 @@
 #include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
+#include "LIEF/span.hpp"
 
 #include <vector>
 
@@ -58,7 +59,7 @@ class LIEF_API PKCS9MessageDigest : public Attribute {
   std::unique_ptr<Attribute> clone() const override;
 
   //! Message digeset as a blob of bytes as described in the RFC
-  const std::vector<uint8_t>& digest() const {
+  span<const uint8_t> digest() const {
     return digest_;
   }
 

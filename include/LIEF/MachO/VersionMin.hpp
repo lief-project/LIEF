@@ -55,7 +55,6 @@ class LIEF_API VersionMin : public LoadCommand {
   const version_t& sdk() const;
   void sdk(const version_t& sdk);
 
-
   void accept(Visitor& visitor) const override;
 
   std::ostream& print(std::ostream& os) const override;

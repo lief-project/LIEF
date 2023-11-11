@@ -132,7 +132,7 @@ Signature::VERIFICATION_FLAGS verify_ts_counter_signature(const SignerInfo& sign
     LIEF_WARN("Missing MessageDigest in authenticated attributes in the counter signature's signer");
     return flags | Signature::VERIFICATION_FLAGS::INVALID_SIGNER;
   }
-  const std::vector<uint8_t>& dg_value = message_dg->digest();
+  const std::vector<uint8_t>& dg_value = as_vector(message_dg->digest());
   const std::vector<uint8_t> dg_cs_hash = Signature::hash(signer.encrypted_digest(), cs_digest_algo);
   if (dg_value != dg_cs_hash) {
     LIEF_WARN("MessageDigest mismatch with Hash(signer ED)");
@@ -358,7 +358,7 @@ Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const
 
     const auto& digest_attr = reinterpret_cast<const PKCS9MessageDigest&>(*it_pkcs9_digest);
     LIEF_DEBUG("pkcs9-message-digest:\n  {}\n  {}", hex_dump(digest_attr.digest()), hex_dump(content_info_hash));
-    if (digest_attr.digest() != content_info_hash) {
+    if (as_vector(digest_attr.digest()) != content_info_hash) {
       return flags | VERIFICATION_FLAGS::BAD_DIGEST;
     }
   } else {

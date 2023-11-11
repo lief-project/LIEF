@@ -20,6 +20,7 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
+#include "LIEF/span.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/types.hpp"
 
@@ -51,7 +52,7 @@ class LIEF_API GenericType : public Attribute {
   }
 
   //! Original DER blob of the attribute
-  const std::vector<uint8_t>& raw_content() const {
+  span<const uint8_t> raw_content() const {
     return raw_;
   }
 
