@@ -296,6 +296,10 @@ class LIEF_API Binary : public LIEF::Binary {
     return signatures_;
   }
 
+  it_signatures signatures() {
+    return signatures_;
+  }
+
   //! Verify the binary against the embedded signature(s) (if any)
   //! First, it checks that the embedded signatures are correct (c.f. Signature::check)
   //! and then, it checks that the authentihash matches ContentInfo::digest

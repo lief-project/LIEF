@@ -146,12 +146,12 @@ void create<Signature>(nb::module_& m) {
         nb::rv_policy::reference_internal)
 
     .def_prop_ro("certificates",
-        &Signature::certificates,
+        nb::overload_cast<>(&Signature::certificates, nb::const_),
         "Return an iterator over " RST_CLASS_REF(lief.PE.x509) " certificates"_doc,
         nb::keep_alive<0, 1>())
 
     .def_prop_ro("signers",
-        &Signature::signers,
+        nb::overload_cast<>(&Signature::signers, nb::const_),
         "Return an iterator over the signers (" RST_CLASS_REF(lief.PE.SignerInfo) ")"_doc,
         nb::keep_alive<0, 1>())
 

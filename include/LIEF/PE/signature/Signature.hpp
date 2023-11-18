@@ -55,8 +55,14 @@ class LIEF_API Signature : public Object {
   //! Iterator which outputs const x509& certificates
   using it_const_crt = const_ref_iterator<const std::vector<x509>&>;
 
+  //! Iterator which outputs x509& certificates
+  using it_crt = ref_iterator<std::vector<x509>&>;
+
   //! Iterator which outputs const SignerInfo&
   using it_const_signers_t = const_ref_iterator<const std::vector<SignerInfo>&>;
+
+  //! Iterator which outputs SignerInfo&
+  using it_signers_t = ref_iterator<std::vector<SignerInfo>&>;
 
   //! Flags returned by the verification functions
   enum class VERIFICATION_FLAGS {
@@ -110,10 +116,22 @@ class LIEF_API Signature : public Object {
   const ContentInfo& content_info() const;
 
   //! Return an iterator over x509 certificates
-  it_const_crt certificates() const;
+  it_const_crt certificates() const {
+    return certificates_;
+  }
+
+  it_crt certificates()  {
+    return certificates_;
+  }
 
   //! Return an iterator over the signers (SignerInfo) defined in the PKCS #7 signature
-  it_const_signers_t signers() const;
+  it_const_signers_t signers() const {
+    return signers_;
+  }
+
+  it_signers_t signers() {
+    return signers_;
+  }
 
   //! Return the raw original PKCS7 signature
   span<const uint8_t> raw_der() const {

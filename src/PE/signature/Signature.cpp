@@ -238,14 +238,6 @@ const ContentInfo& Signature::content_info() const {
   return content_info_;
 }
 
-Signature::it_const_crt Signature::certificates() const {
-  return certificates_;
-}
-
-Signature::it_const_signers_t Signature::signers() const {
-  return signers_;
-}
-
 Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const {
   // According to the Authenticode documentation,
   // *SignerInfos contains one SignerInfo structure*
