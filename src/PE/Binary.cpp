@@ -60,14 +60,14 @@ namespace PE {
 Binary::~Binary() = default;
 
 Binary::Binary() :
-  LIEF::Binary{EXE_FORMATS::FORMAT_PE},
+  LIEF::Binary(LIEF::Binary::FORMATS::PE),
   dos_header_{DosHeader::create(PE_TYPE::PE32)},
   header_{Header::create(PE_TYPE::PE32)},
   optional_header_{OptionalHeader::create(PE_TYPE::PE32)}
 {}
 
 Binary::Binary(PE_TYPE type) :
-  LIEF::Binary{EXE_FORMATS::FORMAT_PE},
+  LIEF::Binary(LIEF::Binary::FORMATS::PE),
   type_{type},
   dos_header_{DosHeader::create(type)},
   header_{Header::create(type)},

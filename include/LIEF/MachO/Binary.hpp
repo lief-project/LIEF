@@ -682,6 +682,10 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   uint32_t page_size() const;
 
+  static bool classof(const LIEF::Binary* bin) {
+    return bin->format() == Binary::FORMATS::MACHO;
+  }
+
   private:
   //! Default constructor
   Binary();

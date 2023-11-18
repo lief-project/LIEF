@@ -34,7 +34,10 @@
 namespace LIEF {
 namespace OAT {
 
-Binary::Binary() = default;
+Binary::Binary() {
+  format_ = LIEF::Binary::FORMATS::OAT;
+}
+
 Binary::~Binary() = default;
 
 const Header& Binary::header() const {

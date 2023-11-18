@@ -22,12 +22,6 @@
 
 namespace LIEF::py {
 void init_enums(nb::module_& m) {
-  enum_<EXE_FORMATS>(m, "EXE_FORMATS")
-    .value(PY_ENUM(EXE_FORMATS::FORMAT_UNKNOWN))
-    .value(PY_ENUM(EXE_FORMATS::FORMAT_ELF))
-    .value(PY_ENUM(EXE_FORMATS::FORMAT_PE))
-    .value(PY_ENUM(EXE_FORMATS::FORMAT_MACHO));
-
   enum_<OBJECT_TYPES>(m, "OBJECT_TYPES")
     .value(PY_ENUM(OBJECT_TYPES::TYPE_NONE))
     .value(PY_ENUM(OBJECT_TYPES::TYPE_EXECUTABLE))

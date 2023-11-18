@@ -19,6 +19,9 @@ add_executable(unittests
   test_hash.cpp
   test_binarystream.cpp
   test_pe.cpp
+  test_elf.cpp
+  test_oat.cpp
+  test_macho.cpp
 )
 
 set_target_properties(unittests

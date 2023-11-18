@@ -70,9 +70,9 @@ bool Binary::KeyCmp::operator() (const Relocation* lhs, const Relocation* rhs) c
   return *lhs < *rhs;
 }
 
-Binary::Binary() {
-  format_ = LIEF::EXE_FORMATS::FORMAT_MACHO;
-}
+Binary::Binary() :
+  LIEF::Binary(LIEF::Binary::FORMATS::MACHO)
+{}
 
 LIEF::Binary::sections_t Binary::get_abstract_sections() {
   LIEF::Binary::sections_t result;

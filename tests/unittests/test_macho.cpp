@@ -13,20 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ENUM_TO_STRING_H
-#define LIEF_ENUM_TO_STRING_H
-#include "LIEF/visibility.h"
+#include <catch2/catch_session.hpp>
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_string.hpp>
 
-#include "LIEF/Abstract/enums.hpp"
-#include "LIEF/Abstract/Binary.hpp"
+#include "LIEF/MachO/Binary.hpp"
+#include "LIEF/Abstract/Parser.hpp"
 
-namespace LIEF {
-LIEF_API const char* to_string(ARCHITECTURES e);
-LIEF_API const char* to_string(OBJECT_TYPES e);
-LIEF_API const char* to_string(MODES e);
-LIEF_API const char* to_string(ENDIANNESS e);
-LIEF_API const char* to_string(Function::FLAGS e);
-} // namespace LIEF
+#include "utils.hpp"
 
-#endif
+using namespace LIEF;
+using namespace std::string_literals;
+
+TEST_CASE("lief.test.macho", "[lief][test][macho]") {
+  SECTION("classof") {
+    {
+      std::string path = test::get_macho_sample("alivcffmpeg_armv7.dylib");
+      std::unique_ptr<LIEF::Binary> bin = LIEF::Parser::parse(path);
+      REQUIRE(LIEF::MachO::Binary::classof(bin.get()));
+    }
+  }
+}
+
 

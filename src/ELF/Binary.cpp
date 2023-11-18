@@ -76,9 +76,10 @@ inline size_t get_relocation_sizeof(const Binary& bin, const Relocation& R) {
 }
 
 Binary::Binary() :
+  LIEF::Binary(LIEF::Binary::FORMATS::ELF),
   sizing_info_{std::make_unique<sizing_info_t>()}
 {
-  format_ = LIEF::EXE_FORMATS::FORMAT_ELF;
+
 }
 
 Header& Binary::header() {

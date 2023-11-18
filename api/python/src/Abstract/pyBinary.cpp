@@ -35,10 +35,7 @@
 #include "LIEF/Abstract/Header.hpp"
 #include "LIEF/Abstract/EnumToString.hpp"
 
-#define PY_ENUM(x) LIEF::to_string(x), x
-
 namespace LIEF::py {
-
 template<>
 void create<Binary>(nb::module_& m) {
   nb::class_<Binary, Object> pybinary(m, "Binary",
@@ -50,10 +47,23 @@ void create<Binary>(nb::module_& m) {
       of the concrete format (e.g. :attr:`lief.ELF.Binary.entrypoint`)
       )delim"_doc);
 
+# define ENTRY(X) .value(to_string(Binary::VA_TYPES::X), Binary::VA_TYPES::X)
   nb::enum_<Binary::VA_TYPES>(pybinary, "VA_TYPES")
-    .value(PY_ENUM(Binary::VA_TYPES::AUTO))
-    .value(PY_ENUM(Binary::VA_TYPES::VA))
-    .value(PY_ENUM(Binary::VA_TYPES::RVA));
+    ENTRY(AUTO)
+    ENTRY(VA)
+    ENTRY(RVA)
+  ;
+# undef ENTRY
+
+# define ENTRY(X) .value(to_string(Binary::FORMATS::X), Binary::FORMATS::X)
+  nb::enum_<Binary::FORMATS>(pybinary, "VA_TYPES")
+    ENTRY(UNKNOWN)
+    ENTRY(ELF)
+    ENTRY(PE)
+    ENTRY(MACHO)
+    ENTRY(OAT)
+  ;
+# undef ENTRY
 
   init_ref_iterator<Binary::it_sections>(pybinary, "it_sections");
   init_ref_iterator<Binary::it_symbols>(pybinary, "it_symbols");

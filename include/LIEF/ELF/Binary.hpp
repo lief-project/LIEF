@@ -766,13 +766,16 @@ class LIEF_API Binary : public LIEF::Binary {
   //!         the given method.
   uint64_t relocate_phdr_table(PHDR_RELOC type);
 
+  static bool classof(const LIEF::Binary* bin) {
+    return bin->format() == Binary::FORMATS::ELF ||
+           bin->format() == Binary::FORMATS::OAT;
+  }
+
   size_t hash(const std::string& name);
 
   ~Binary() override;
 
   std::ostream& print(std::ostream& os) const override;
-
-
 
   Binary& operator+=(const DynamicEntry& entry);
   Binary& operator+=(const Section& section);

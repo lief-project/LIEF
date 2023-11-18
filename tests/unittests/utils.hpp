@@ -20,5 +20,22 @@ namespace LIEF::test {
 std::string get_sample_dir();
 std::string get_sample(const std::string& name);
 std::string get_sample(const std::string& format, const std::string& name);
+
+inline std::string get_elf_sample(const std::string& name) {
+  return get_sample("ELF", name);
+}
+
+inline std::string get_pe_sample(const std::string& name) {
+  return get_sample("PE", name);
+}
+
+inline std::string get_macho_sample(const std::string& name) {
+  return get_sample("MachO", name);
+}
+
+inline std::string get_oat_sample(const std::string& name) {
+  return get_sample("OAT", name);
+}
+
 }
 #endif

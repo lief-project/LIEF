@@ -630,6 +630,9 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Functions found in the Exception table directory
   LIEF::Binary::functions_t exception_functions() const;
 
+  static bool classof(const LIEF::Binary* bin) {
+    return bin->format() == Binary::FORMATS::PE;
+  }
 
   std::ostream& print(std::ostream& os) const override;
 

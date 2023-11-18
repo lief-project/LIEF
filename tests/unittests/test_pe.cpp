@@ -95,6 +95,12 @@ TEST_CASE("lief.test.pe", "[lief][test][pe]") {
     PE::Repro repro;
     REQUIRE(PE::Repro::classof(&repro));
   }
+
+  SECTION("classof") {
+    std::string path = test::get_sample("PE", "PE64_x86-64_binary_mfc-application.exe");
+    std::unique_ptr<LIEF::Binary> pe = LIEF::Parser::parse(path);
+    REQUIRE(LIEF::PE::Binary::classof(pe.get()));
+  }
 }
 
 

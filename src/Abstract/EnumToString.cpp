@@ -18,16 +18,6 @@
 
 namespace LIEF {
 
-const char* to_string(EXE_FORMATS e) {
-  CONST_MAP(EXE_FORMATS, const char*, 4) enumStrings {
-    { EXE_FORMATS::FORMAT_UNKNOWN, "UNKNOWN" },
-    { EXE_FORMATS::FORMAT_ELF,     "ELF"     },
-    { EXE_FORMATS::FORMAT_PE,      "PE"      },
-    { EXE_FORMATS::FORMAT_MACHO,   "MACHO"   },
-  };
-  const auto it = enumStrings.find(e);
-  return it == enumStrings.end() ? "UNDEFINED" : it->second;
-}
 
 const char* to_string(OBJECT_TYPES e) {
   CONST_MAP(OBJECT_TYPES, const char*, 4) enumStrings {
@@ -91,17 +81,6 @@ const char* to_string(ENDIANNESS e) {
   const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
-
-const char* to_string(Binary::VA_TYPES e) {
-  CONST_MAP(Binary::VA_TYPES, const char*, 3) enumStrings {
-    { LIEF::Binary::VA_TYPES::AUTO, "AUTO" },
-    { LIEF::Binary::VA_TYPES::RVA,  "RVA"  },
-    { LIEF::Binary::VA_TYPES::VA,   "VA"   },
-  };
-  const auto it = enumStrings.find(e);
-  return it == enumStrings.end() ? "UNDEFINED" : it->second;
-}
-
 
 const char* to_string(Function::FLAGS e) {
   CONST_MAP(Function::FLAGS, const char*, 5) enumStrings {

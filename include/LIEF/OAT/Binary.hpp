@@ -109,6 +109,9 @@ class LIEF_API Binary : public ELF::Binary {
     return vdex_ != nullptr;
   }
 
+  static bool classof(const LIEF::Binary* bin) {
+    return bin->format() == Binary::FORMATS::OAT;
+  }
 
   void accept(Visitor& visitor) const override;
 
