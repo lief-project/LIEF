@@ -56,7 +56,7 @@ void create<Binary>(nb::module_& m) {
 # undef ENTRY
 
 # define ENTRY(X) .value(to_string(Binary::FORMATS::X), Binary::FORMATS::X)
-  nb::enum_<Binary::FORMATS>(pybinary, "VA_TYPES")
+  nb::enum_<Binary::FORMATS>(pybinary, "FORMATS")
     ENTRY(UNKNOWN)
     ENTRY(ELF)
     ENTRY(PE)
@@ -72,7 +72,7 @@ void create<Binary>(nb::module_& m) {
   pybinary
     .def_prop_ro("format",
         &Binary::format,
-        "File format " RST_CLASS_REF(lief.EXE_FORMATS) " of the underlying binary."_doc)
+        "File format (:class:`~.FORMATS`) of the underlying binary."_doc)
 
     .def_prop_ro("is_pie",
         &Binary::is_pie,

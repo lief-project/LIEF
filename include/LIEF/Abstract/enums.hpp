@@ -20,14 +20,6 @@
 
 namespace LIEF {
 
-//! LIEF executable format
-enum EXE_FORMATS {
-  FORMAT_UNKNOWN = 0,
-  FORMAT_ELF     = 1, /// ELF. See: LIEF::ELF
-  FORMAT_PE      = 2, /// PE. See: LIEF::PE
-  FORMAT_MACHO   = 3, /// Mach-O. See: LIEF::MachO
-};
-
 enum OBJECT_TYPES {
   TYPE_NONE       = 0,
   TYPE_EXECUTABLE = 1,

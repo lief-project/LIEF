@@ -57,15 +57,6 @@ Function
 Enums
 *****
 
-
-Executable formats
-~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.EXE_FORMATS
-
-----------
-
-
 Object types
 ~~~~~~~~~~~~
 

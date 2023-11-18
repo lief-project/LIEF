@@ -61,9 +61,6 @@ Function
 Enums
 *****
 
-.. doxygenenum:: LIEF::EXE_FORMATS
-   :project: lief
-
 .. doxygenenum:: LIEF::OBJECT_TYPES
    :project: lief
 

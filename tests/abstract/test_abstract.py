@@ -25,13 +25,13 @@ def test_endianness():
 
 def test_format():
     binary = lief.parse(get_sample('ELF/ELF32_x86_binary_ls.bin'))
-    binary.abstract.format == lief.EXE_FORMATS.ELF
+    binary.abstract.format == lief.Binary.FORMATS.ELF
 
     binary = lief.parse(get_sample('MachO/MachO64_x86-64_binary_id.bin'))
-    binary.abstract.format == lief.EXE_FORMATS.MACHO
+    binary.abstract.format == lief.Binary.FORMATS.MACHO
 
     binary = lief.parse(get_sample('PE/PE64_x86-64_binary_ConsoleApplication1.exe'))
-    binary.abstract.format == lief.EXE_FORMATS.PE
+    binary.abstract.format == lief.Binary.FORMATS.PE
 
 def test_pie():
     binary = lief.parse(get_sample('ELF/ELF32_ARM_binary-pie_ls.bin'))

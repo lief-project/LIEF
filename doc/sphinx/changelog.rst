@@ -96,6 +96,18 @@ Changelog
 
         pe = lief.PE.parse("pe.exe", config)
 
+:Abstraction:
+
+    * `LIEF::EXE_FORMATS` is now scoped in `LIEF::Binary::FORMATS`
+    * All the `Binary` classes now implement `classof`:
+
+      .. code-block:: cpp
+
+        std::unique_ptr<LIEF::Binary> bin = LIEF::Parser::parse("...");
+        if (LIEF::PE::Binary::classof(bin.get())) {
+          auto& pe_file = static_cast<LIEF::PE::Binary&>(*bin);
+        }
+
 :General Design:
 
   * Python parser functions (like: :func:`lief.PE.parse`) now accept `os.PathLike`
