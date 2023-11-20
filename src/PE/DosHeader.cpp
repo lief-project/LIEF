@@ -52,14 +52,11 @@ DosHeader::DosHeader(const details::pe_dos_header& header) :
   oem_info_{header.OEMinfo},
   addr_new_exe_header_{header.AddressOfNewExeHeader}
 {
-  std::copy(
-      reinterpret_cast<const uint16_t*>(header.Reserved),
-      reinterpret_cast<const uint16_t*>(header.Reserved) + sizeof(reserved_t),
-      std::begin(reserved_));
-  std::copy(
-      reinterpret_cast<const uint16_t*>(header.Reserved2),
-      reinterpret_cast<const uint16_t*>(header.Reserved2) + sizeof(reserved2_t),
-      std::begin(reserved2_));
+  std::copy(std::begin(header.Reserved), std::end(header.Reserved),
+            std::begin(reserved_));
+
+  std::copy(std::begin(header.Reserved2), std::end(header.Reserved2),
+            std::begin(reserved2_));
 }
 
 void DosHeader::accept(LIEF::Visitor& visitor) const {
