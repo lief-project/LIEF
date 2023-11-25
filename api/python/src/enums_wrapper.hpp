@@ -16,11 +16,65 @@
 #ifndef PY_LIEF_ENUMS_WRAPPER_H
 #define PY_LIEF_ENUMS_WRAPPER_H
 #include <nanobind/nanobind.h>
+#include <nanobind/stl/string.h>
+#include "pyutils.hpp"
 #include <LIEF/logging.hpp>
+#include <map>
+#include <spdlog/fmt/fmt.h>
 
 #include "LIEF/visibility.h"
 
 namespace LIEF {
+
+
+template<class Type, class Scalar = typename std::underlying_type_t<Type>>
+static inline
+std::map<Scalar, std::string> get_enums_map(const nanobind::object& value) {
+  static constexpr auto NANOBIND_ENTRIES = "@entries";
+  auto flags = nanobind::cast<Type>(value);
+  auto int_value = static_cast<Scalar>(flags);
+  const nanobind::dict entries = value.attr(NANOBIND_ENTRIES);
+  std::map<Scalar, std::string> entries_map;
+  for (const auto& [value, info] : entries) {
+    auto enum_int    = nanobind::cast<Scalar>(value);
+    auto name        = nanobind::cast<std::string>(info[0]);
+    auto enume_typed = nanobind::cast<Type>(info[2]);
+    entries_map[enum_int] = std::move(name);
+  }
+  return entries_map;
+}
+
+template<class Type, class Scalar = typename std::underlying_type_t<Type>>
+static inline
+std::string flag2str(const nanobind::object& value, bool full_type) {
+  auto flags = nanobind::cast<Type>(value);
+  auto int_value = static_cast<Scalar>(flags);
+  const std::map<Scalar, std::string>& entries_map = get_enums_map<Type>(value);
+
+  if (auto it = entries_map.find(int_value); it != entries_map.end()) {
+    return LIEF::py::type2str(value) + '.' + it->second;
+  }
+
+  std::string flags_str;
+  for (const auto& [entry_value, name] : entries_map) {
+    if (entry_value == 0) {
+      continue;
+    }
+
+    if ((int_value & entry_value) == entry_value) {
+      if (!flags_str.empty()) {
+        flags_str += " | ";
+      }
+      if (full_type) {
+        flags_str += LIEF::py::type2str(value) + '.' + name;
+      } else {
+        flags_str += name;
+      }
+    }
+  }
+  return flags_str;
+}
+
 
 template <class Type>
 class LIEF_LOCAL enum_ : public nanobind::enum_<Type> {
@@ -58,7 +112,19 @@ class LIEF_LOCAL enum_ : public nanobind::enum_<Type> {
       def("__and__", [](const Type &value, const Type &value2) { return (Scalar) value & (Scalar) value2; });
       def("__or__", [](const Type &value, const Type &value2) { return Type((Scalar) value | (Scalar) value2); });
       def("__xor__", [](const Type &value, const Type &value2) { return (Scalar) value ^ (Scalar) value2; });
+      def("__repr__", [] (const nanobind::object &value) {
+          auto typed_value = nanobind::cast<Type>(value);
+          auto int_value = static_cast<Scalar>(typed_value);
+         return fmt::format("<{}.{}: {}>", LIEF::py::type2str(value), flag2str<Type>(value, /*full_type*/false), int_value);
+      });
+      def("__str__", [] (const nanobind::object &value) {
+        return flag2str<Type>(value, /*full_type*/true);
+      });
+
     }
+
+
+
   }
 };
 
