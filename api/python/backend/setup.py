@@ -13,6 +13,8 @@ SRC_DIR = ROOT_DIR.resolve().absolute()
 
 DEFAULT_CONF = CWD / ".." / "config-default.toml"
 
+_WHEEL_TAG_COMPUTE_BEST = None
+
 @lru_cache(maxsize=1)
 def get_config():
     from config import Config
@@ -20,6 +22,24 @@ def get_config():
         config_path = Path(path).resolve().absolute()
         return Config.from_file(config_path)
     return Config.from_file(DEFAULT_CONF.as_posix())
+
+
+def _compute_best(cls, *arg, **kwargs):
+    from scikit_build_core.builder.wheel_tag import WheelTag
+    best_tag = _WHEEL_TAG_COMPUTE_BEST(cls, *arg, **kwargs)
+    config = get_config()
+
+    pyvers = best_tag.pyvers
+    abis = best_tag.abis
+    archs = best_tag.archs
+
+    if version := config.cross_compilation.pyversion:
+        pyvers = [version]
+
+    if abi := config.cross_compilation.abi:
+        abis = [abi]
+
+    return WheelTag(pyvers, abis, archs)
 
 def _fix_env():
     config = get_config()
@@ -42,6 +62,11 @@ def _fix_env():
         os.environ["ARCHFLAGS"]= f"-arch {config.osx_arch}"
 
     if platform := config.cross_compilation.platform:
+        global _WHEEL_TAG_COMPUTE_BEST
+        from scikit_build_core.builder.wheel_tag import WheelTag
+        _WHEEL_TAG_COMPUTE_BEST = WheelTag.compute_best
+        WheelTag.compute_best = _compute_best
+
         os.environ["_PYTHON_HOST_PLATFORM"] = platform
 
         if os.name == 'nt' and platform == 'win32':

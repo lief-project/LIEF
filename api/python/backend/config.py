@@ -87,6 +87,8 @@ class ThridParty(BaseModel):
 class CrossCompilation(BaseModel):
     osx_arch: Optional[str]  = Field(None, alias="osx-arch")
     platform: Optional[str] = None
+    pyversion: Optional[str] = None
+    abi: Optional[str] = None
 
     def cmake_dump(self) -> List[str]:
         out: List[str] = []
