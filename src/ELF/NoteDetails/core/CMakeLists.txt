@@ -5,5 +5,3 @@ target_sources(LIB_LIEF PRIVATE
   CorePrStatus.cpp
   CoreSigInfo.cpp
 )
-
-

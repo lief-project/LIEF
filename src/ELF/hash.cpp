@@ -28,6 +28,7 @@
 #include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/NoteDetails/AndroidIdent.hpp"
 #include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
+#include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreAuxv.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
 #include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
@@ -239,8 +240,12 @@ void Hash::visit(const Note& note) {
 void Hash::visit(const AndroidIdent& note) {
   visit(static_cast<const Note&>(note));
 }
-//
+
 void Hash::visit(const NoteAbi& note) {
+  visit(static_cast<const Note&>(note));
+}
+
+void Hash::visit(const NoteGnuProperty& note) {
   visit(static_cast<const Note&>(note));
 }
 

@@ -39,6 +39,7 @@
 #include "LIEF/ELF/DynamicSharedObject.hpp"
 #include "LIEF/ELF/GnuHash.hpp"
 #include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/NoteDetails.hpp"
 #include "LIEF/ELF/RelocationSizes.hpp"
 #include "LIEF/ELF/Symbol.hpp"
 #include "LIEF/ELF/SymbolVersion.hpp"
@@ -47,7 +48,6 @@
 #include "LIEF/ELF/SymbolVersionDefinition.hpp"
 #include "LIEF/ELF/SymbolVersionRequirement.hpp"
 #include "LIEF/ELF/SysvHash.hpp"
-#include "LIEF/ELF/NoteDetails.hpp"
 
 #endif
 

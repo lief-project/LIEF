@@ -31,6 +31,7 @@
 #include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
 #include "LIEF/ELF/NoteDetails/core/CorePrStatus.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreSigInfo.hpp"
+#include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
 #include "LIEF/iostream.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
@@ -524,17 +525,23 @@ Note::create(const std::string& name, Note::TYPE ntype, Note::description_t desc
       }
     case Note::TYPE::CORE_SIGINFO:
       {
+        return std::unique_ptr<CoreSigInfo>(new CoreSigInfo(
+            std::move(norm_name), ntype, *int_type, std::move(description)
+        ));
+      }
+    case Note::TYPE::GNU_PROPERTY_TYPE_0:
+      {
         if (cls != ELF_CLASS::ELFCLASS32 && cls != ELF_CLASS::ELFCLASS64) {
-          LIEF_WARN("CORE_SIGINFO requires a valid ELF class");
+          LIEF_WARN("GNU_PROPERTY_TYPE_0 requires a valid ELF class");
           return nullptr;
         }
 
         if (arch == ARCH::EM_NONE) {
-          LIEF_WARN("CORE_SIGINFO requires a valid architecture");
+          LIEF_WARN("GNU_PROPERTY_TYPE_0 requires a valid architecture");
           return nullptr;
         }
-        return std::unique_ptr<CoreSigInfo>(new CoreSigInfo(
-            std::move(norm_name), ntype, *int_type, std::move(description)
+        return std::unique_ptr<NoteGnuProperty>(new NoteGnuProperty(
+            arch, cls, std::move(norm_name), *int_type, std::move(description)
         ));
       }
     case Note::TYPE::ANDROID_IDENT:

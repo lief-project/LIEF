@@ -13,12 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_NOTE_DETAILS_H
-#define LIEF_ELF_NOTE_DETAILS_H
-#include "LIEF/ELF/NoteDetails/AndroidIdent.hpp"
-#include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
+#ifndef LIEF_ELF_NOTE_DETAILS_PROPERTIES_NEEDED_H
+#define LIEF_ELF_NOTE_DETAILS_PROPERTIES_NEEDED_H
+
 #include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
-#include "LIEF/ELF/NoteDetails/Core.hpp"
-#include "LIEF/ELF/NoteDetails/Properties.hpp"
+
+namespace LIEF {
+namespace ELF {
+
+class Needed : public NoteGnuProperty::Property {
+  public:
+  enum class NEED {
+    UNKNOWN = 0,
+    INDIRECT_EXTERN_ACCESS,
+  };
+  static bool classof(const NoteGnuProperty::Property* prop) {
+    return prop->type() == NoteGnuProperty::Property::TYPE::NEEDED;
+  }
+
+  ~Needed() override = default;
+};
+}
+}
 
 #endif

@@ -103,6 +103,8 @@ if GENERATE_DOXYGEN:
         "lief" : get_breathe_projects_source()
     }
 
+    breathe_default_project = "lief"
+
 logger = logging.getLogger("lief-doc")
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

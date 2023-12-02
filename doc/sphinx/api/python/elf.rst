@@ -177,9 +177,7 @@ Core File
 
 .. autoclass:: lief.ELF.CoreFile
 
-
 ----------
-
 
 Core Siginfo
 ************
@@ -206,6 +204,55 @@ Note ABI
 ********
 
 .. autoclass:: lief.ELF.NoteAbi
+
+----------
+
+Note Gnu Property
+*****************
+
+.. autoclass:: lief.ELF.NoteGnuProperty
+
+----------
+
+Generic
+*******
+
+.. autoclass:: lief.ELF.Generic
+
+----------
+
+AArch64 Feature
+***************
+
+.. autoclass:: lief.ELF.AArch64Feature
+
+----------
+
+No Copy on Protected
+********************
+
+.. autoclass:: lief.ELF.NoteNoCopyOnProtected
+
+----------
+
+Stack Size
+**********
+
+.. autoclass:: lief.ELF.StackSize
+
+----------
+
+X86 Feature
+***********
+
+.. autoclass:: lief.ELF.X86Features
+
+----------
+
+X86 ISA
+*******
+
+.. autoclass:: lief.ELF.X86ISA
 
 ----------
 

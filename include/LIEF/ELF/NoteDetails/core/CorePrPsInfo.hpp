@@ -45,12 +45,12 @@ class LIEF_API CorePrPsInfo : public Note {
     std::string filename; /// Filename of the executable
     std::string args;     /// Initial part of the arguments
 
-    /// Return the filename without the ending '\x00'
+    /// Return the filename without the ending `\x00`
     std::string filename_stripped() const {
       return filename.c_str();
     }
 
-    /// Return the args without the ending '\x00'
+    /// Return the args without the ending `\x00`
     std::string args_stripped() const {
       return args.c_str();
     }

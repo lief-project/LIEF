@@ -103,3 +103,88 @@ def test_crashpad():
     note = lief.ELF.Note.create(bytes.fromhex(RAW_CRASHPAD))
     assert note.type == lief.ELF.Note.TYPE.CRASHPAD
     assert note.name == "Crashpad"
+
+def test_note_aarch64_features():
+    GNU_PROPERTY_AARCH64_FEATURE_1_AND = "040000001000000005000000474e5500000000c0040000000100000000000000"
+
+    note: lief.ELF.NoteGnuProperty = lief.ELF.Note.create(raw=bytes.fromhex(GNU_PROPERTY_AARCH64_FEATURE_1_AND),
+            file_type=lief.ELF.E_TYPE.NONE, arch=lief.ELF.ARCH.AARCH64,
+            cls=lief.ELF.ELF_CLASS.CLASS64)
+    assert len(note.properties) == 1
+    assert note.find(lief.ELF.NoteGnuProperty.Property.TYPE.AARCH64_FEATURES) is not None
+    assert note.find(lief.ELF.NoteGnuProperty.Property.TYPE.GENERIC) is None
+    assert isinstance(note.properties[0], lief.ELF.AArch64Feature)
+    assert note.properties[0].features == [lief._lief.ELF.AArch64Feature.FEATURE.BTI]
+    assert note.properties[0].type == lief.ELF.NoteGnuProperty.Property.TYPE.AARCH64_FEATURES
+    assert str(note.properties[0])
+    print(note.properties[0])
+    print(note)
+
+def test_note_x86_isa():
+    GNU_PROPERTY_X86_ISA_1_NEEDED = "040000001800000005000000474e5500028000c00400000001000000020001c00400000000000000"
+    note: lief.ELF.NoteGnuProperty = lief.ELF.Note.create(raw=bytes.fromhex(GNU_PROPERTY_X86_ISA_1_NEEDED),
+            file_type=lief.ELF.E_TYPE.NONE, arch=lief.ELF.ARCH.x86_64,
+            cls=lief.ELF.ELF_CLASS.CLASS64)
+
+    assert len(note.properties) == 2
+    assert isinstance(note.properties[0], lief.ELF.X86ISA)
+    assert note.properties[0].values == [(lief.ELF.X86ISA.FLAG.NEEDED, lief.ELF.X86ISA.ISA.BASELINE)]
+    assert note.properties[0].type == lief._lief.ELF.NoteGnuProperty.Property.TYPE.X86_ISA
+    assert str(note.properties[0])
+    print(note)
+
+    GNU_PROPERTY_X86_ISA_1_NEEDED = "040000001800000005000000474e5500020001c0040000000a000000028000c00400000003000000040000001800000005000000474e5500020001c004000000a0000000028000c00400000030000000"
+    note: lief.ELF.NoteGnuProperty = lief.ELF.Note.create(raw=bytes.fromhex(GNU_PROPERTY_X86_ISA_1_NEEDED),
+            file_type=lief.ELF.E_TYPE.NONE, arch=lief.ELF.ARCH.x86_64,
+            cls=lief.ELF.ELF_CLASS.CLASS64)
+
+    assert len(note.properties) == 1
+    assert isinstance(note.properties[0], lief.ELF.X86ISA)
+    assert note.properties[0].values == [
+        (lief.ELF.X86ISA.FLAG.USED, lief.ELF.X86ISA.ISA.V2),
+        (lief.ELF.X86ISA.FLAG.USED, lief.ELF.X86ISA.ISA.V4),
+    ]
+    assert note.properties[0].type == lief._lief.ELF.NoteGnuProperty.Property.TYPE.X86_ISA
+    assert str(note.properties[0])
+    print(note)
+
+    GNU_PROPERTY_X86_ISA_1_NEEDED = "040000001800000005000000474e5500000001c0040000000a000000008000c00400000003000000040000001800000005000000474e5500000001c004000000a0000000008000c00400000030000000"
+    note: lief.ELF.NoteGnuProperty = lief.ELF.Note.create(raw=bytes.fromhex(GNU_PROPERTY_X86_ISA_1_NEEDED),
+            file_type=lief.ELF.E_TYPE.NONE, arch=lief.ELF.ARCH.x86_64,
+            cls=lief.ELF.ELF_CLASS.CLASS64)
+
+    assert len(note.properties) == 1
+    assert isinstance(note.properties[0], lief.ELF.X86ISA)
+    assert note.properties[0].values == [
+        (lief.ELF.X86ISA.FLAG.USED, lief.ELF.X86ISA.ISA.SSE),
+        (lief.ELF.X86ISA.FLAG.USED, lief.ELF.X86ISA.ISA.SSE3),
+    ]
+    assert str(note.properties[0])
+    print(note)
+
+def test_note_properties():
+    GNU_PROPERTY_C = "040000004800000005000000474e5500010000000800000000111100000000000200000000000000020001c0040000001110000000000000028000c0040000001110000000000000020000c0040000000100000000000000"
+    note: lief.ELF.NoteGnuProperty = lief.ELF.Note.create(raw=bytes.fromhex(GNU_PROPERTY_C),
+            file_type=lief.ELF.E_TYPE.NONE, arch=lief.ELF.ARCH.x86_64,
+            cls=lief.ELF.ELF_CLASS.CLASS64)
+
+    assert len(note.properties) == 5
+    assert str(note)
+
+    assert isinstance(note.properties[0], lief.ELF.StackSize)
+    assert note.properties[0].stack_size == 0x111100
+
+    assert isinstance(note.properties[1], lief.ELF.NoteNoCopyOnProtected)
+    assert isinstance(note.properties[2], lief.ELF.X86ISA)
+    assert note.properties[2].values == [
+        (lief.ELF.X86ISA.FLAG.USED, lief.ELF.X86ISA.ISA.BASELINE),
+        (lief.ELF.X86ISA.FLAG.USED, lief.ELF.X86ISA.ISA.UNKNOWN),
+        (lief.ELF.X86ISA.FLAG.USED, lief.ELF.X86ISA.ISA.UNKNOWN),
+    ]
+
+    assert isinstance(note.properties[4], lief.ELF.X86Features)
+    assert note.properties[4].features == [
+        (lief.ELF.X86Features.FLAG.NONE, lief.ELF.X86Features.FEATURE.IBT),
+    ]
+
+

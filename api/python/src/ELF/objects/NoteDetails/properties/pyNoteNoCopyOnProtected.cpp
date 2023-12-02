@@ -13,12 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_NOTE_DETAILS_H
-#define LIEF_ELF_NOTE_DETAILS_H
-#include "LIEF/ELF/NoteDetails/AndroidIdent.hpp"
-#include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
-#include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
-#include "LIEF/ELF/NoteDetails/Core.hpp"
-#include "LIEF/ELF/NoteDetails/Properties.hpp"
+#include "ELF/pyELF.hpp"
 
-#endif
+#include "LIEF/ELF/NoteDetails/properties/NoteNoCopyOnProtected.hpp"
+
+namespace LIEF::ELF::py {
+
+template<>
+void create<NoteNoCopyOnProtected>(nb::module_& m) {
+  nb::class_<NoteNoCopyOnProtected, NoteGnuProperty::Property> Class(
+      m, "NoteNoCopyOnProtected",
+      R"doc(
+      This class provides an interface over the `GNU_PROPERTY_NO_COPY_ON_PROTECTED`
+      property. This property indicates that the linker shouldn't copy relocations
+      against protected symbols.
+      )doc"_doc
+  );
+
+}
+
+}

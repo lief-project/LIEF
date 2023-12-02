@@ -42,6 +42,7 @@ class Header;
 class Note;
 class NoteAbi;
 class NoteDetails;
+class NoteGnuProperty;
 class Relocation;
 class Section;
 class Segment;
@@ -80,6 +81,7 @@ class JsonVisitor : public LIEF::JsonVisitor {
   void visit(const SymbolVersionDefinition& svd)    override;
   void visit(const Note& note)                      override;
   void visit(const NoteAbi& note)                   override;
+  void visit(const NoteGnuProperty& note)           override;
   void visit(const AndroidIdent& note)              override;
   void visit(const CorePrPsInfo& pinfo)             override;
   void visit(const CorePrStatus& pstatus)           override;

@@ -393,6 +393,19 @@ void JsonVisitor::visit(const NoteAbi& note_abi) {
   }
 }
 
+void JsonVisitor::visit(const NoteGnuProperty& note_prop) {
+  visit(static_cast<const Note&>(note_prop));
+  NoteGnuProperty::properties_t props = note_prop.properties();
+  std::vector<json> json_props;
+  json_props.reserve(props.size());
+
+  for (const std::unique_ptr<NoteGnuProperty::Property>& prop : props) {
+    json_props.push_back(to_string(prop->type()));
+  }
+
+  node_["properties"] = std::move(json_props);
+}
+
 void JsonVisitor::visit(const CorePrPsInfo& pinfo) {
   visit(static_cast<const Note&>(pinfo));
   auto info = pinfo.info();

@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_NOTE_DETAILS_H
-#define LIEF_ELF_NOTE_DETAILS_H
-#include "LIEF/ELF/NoteDetails/AndroidIdent.hpp"
-#include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
-#include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
-#include "LIEF/ELF/NoteDetails/Core.hpp"
-#include "LIEF/ELF/NoteDetails/Properties.hpp"
+#include "LIEF/ELF/NoteDetails/properties/StackSize.hpp"
+#include "spdlog/fmt/fmt.h"
 
-#endif
+namespace LIEF {
+namespace ELF {
+
+void StackSize::dump(std::ostream &os) const {
+  os << fmt::format("Size: 0x{:04x}", stack_size());
+}
+}
+}

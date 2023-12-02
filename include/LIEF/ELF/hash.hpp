@@ -44,6 +44,7 @@ class Note;
 class NoteDetails;
 class AndroidNote;
 class NoteAbi;
+class NoteGnuProperty;
 class CorePrPsInfo;
 class CorePrStatus;
 class CoreAuxv;
@@ -84,6 +85,7 @@ class LIEF_API Hash : public LIEF::Hash {
   void visit(const Note& note)                      override;
   void visit(const AndroidIdent& note)              override;
   void visit(const NoteAbi& note)                   override;
+  void visit(const NoteGnuProperty& note)           override;
   void visit(const CorePrPsInfo& pinfo)             override;
   void visit(const CorePrStatus& pstatus)           override;
   void visit(const CoreAuxv& auxv)                  override;

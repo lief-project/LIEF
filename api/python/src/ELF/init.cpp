@@ -45,6 +45,7 @@
 #include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/NoteDetails/AndroidIdent.hpp"
 #include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
+#include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreAuxv.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
 #include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
@@ -57,6 +58,7 @@ namespace LIEF::ELF::py {
 
 void init_notes(nb::module_& m) {
   CREATE(Note, m);
+  CREATE(NoteGnuProperty, m);
   CREATE(AndroidIdent, m);
   CREATE(NoteAbi, m);
   CREATE(CoreAuxv, m);

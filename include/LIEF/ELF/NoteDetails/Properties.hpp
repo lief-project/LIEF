@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_NOTE_DETAILS_H
-#define LIEF_ELF_NOTE_DETAILS_H
-#include "LIEF/ELF/NoteDetails/AndroidIdent.hpp"
-#include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
-#include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
-#include "LIEF/ELF/NoteDetails/Core.hpp"
-#include "LIEF/ELF/NoteDetails/Properties.hpp"
+#ifndef LIEF_ELF_NOTE_DETAILS_PROPERTIES_H
+#define LIEF_ELF_NOTE_DETAILS_PROPERTIES_H
+
+#include "LIEF/ELF/NoteDetails/properties/AArch64Feature.hpp"
+#include "LIEF/ELF/NoteDetails/properties/Needed.hpp"
+#include "LIEF/ELF/NoteDetails/properties/NoteNoCopyOnProtected.hpp"
+#include "LIEF/ELF/NoteDetails/properties/X86ISA.hpp"
+#include "LIEF/ELF/NoteDetails/properties/StackSize.hpp"
+#include "LIEF/ELF/NoteDetails/properties/X86Feature.hpp"
+#include "LIEF/ELF/NoteDetails/properties/Generic.hpp"
 
 #endif

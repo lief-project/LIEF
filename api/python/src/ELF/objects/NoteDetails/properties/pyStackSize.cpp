@@ -13,12 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_NOTE_DETAILS_H
-#define LIEF_ELF_NOTE_DETAILS_H
-#include "LIEF/ELF/NoteDetails/AndroidIdent.hpp"
-#include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
-#include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
-#include "LIEF/ELF/NoteDetails/Core.hpp"
-#include "LIEF/ELF/NoteDetails/Properties.hpp"
+#include "ELF/pyELF.hpp"
 
-#endif
+#include "LIEF/ELF/NoteDetails/properties/StackSize.hpp"
+
+namespace LIEF::ELF::py {
+
+template<>
+void create<StackSize>(nb::module_& m) {
+  nb::class_<StackSize, NoteGnuProperty::Property>(m, "StackSize",
+    R"doc(
+    This class provides an interface over the `GNU_PROPERTY_STACK_SIZE` property
+    This property can be used by the loader to raise the stack limit.
+    )doc")
+    .def_prop_ro("stack_size", &StackSize::stack_size);
+
+}
+
+}

@@ -5,6 +5,27 @@ Changelog
 -------------------------
 
 :ELF:
+  * Add support for the GNU note properies (:issue:`975`).
+
+    :Example:
+
+      .. code-block:: python
+
+        elf = lief.ELF.parse("...")
+        note = elf.get(lief.ELF.Note.TYPE.GNU_PROPERTY_TYPE_0)
+        aarch64_feat: lief.ELF.AArch64Feature = note.find(lief.ELF.NoteGnuProperty.Property.TYPE.AARCH64_FEATURES)
+        if lief.ELF.AArch64Feature.FEATURE.BTI in aarch64_feat.features:
+            print("BTI supported")
+
+    See:
+
+    - :class:`lief.ELF.NoteGnuProperty`
+    - :class:`lief.ELF.AArch64Feature`
+    - :class:`lief.ELF.NoteNoCopyOnProtected`
+    - :class:`lief.ELF.StackSize`
+    - :class:`lief.ELF.X86Features`
+    - :class:`lief.ELF.X86ISA`
+
 
   * Refactoring of the ELF note processing
   * Fix relocation issue when using `-Wl,--emit-relocs` (c.f. :issue:`897` / :pr:`898` by :github_user:`adamjseitz`)

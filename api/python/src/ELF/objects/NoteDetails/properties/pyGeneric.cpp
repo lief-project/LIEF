@@ -13,12 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ELF_NOTE_DETAILS_H
-#define LIEF_ELF_NOTE_DETAILS_H
-#include "LIEF/ELF/NoteDetails/AndroidIdent.hpp"
-#include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
-#include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
-#include "LIEF/ELF/NoteDetails/Core.hpp"
-#include "LIEF/ELF/NoteDetails/Properties.hpp"
+#include "ELF/pyELF.hpp"
 
-#endif
+#include "LIEF/ELF/NoteDetails/properties/Generic.hpp"
+
+namespace LIEF::ELF::py {
+
+template<>
+void create<Generic>(nb::module_& m) {
+  nb::class_<Generic, NoteGnuProperty::Property>(m, "Generic",
+      R"doc(
+      This class represents a property which doesn't have a concrete LIEF implementation.
+      )doc")
+    .def_prop_ro("raw_type", &Generic::type,
+        R"doc(
+        The original raw type as an integer. This value might depends
+        on the architecture and/or the file type.
+        )doc");
+
+}
+
+}
