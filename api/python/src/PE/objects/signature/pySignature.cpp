@@ -54,32 +54,6 @@ void create<Signature>(nb::module_& m) {
     .value("CERT_EXPIRED",                  Signature::VERIFICATION_FLAGS::CERT_EXPIRED)
     .value("CERT_FUTURE",                   Signature::VERIFICATION_FLAGS::CERT_FUTURE);
 
-  verif_flags_enums
-    .def("__str__", [] (nb::object& self) {
-        auto flags = nb::cast<Signature::VERIFICATION_FLAGS>(self);
-        const nb::dict verif_flags_entries = self.attr("@entries");
-        if (flags == Signature::VERIFICATION_FLAGS::OK) {
-          return Signature::flag_to_string(flags);
-        }
-
-        std::string flags_str;
-        for (const auto& item : verif_flags_entries) {
-          const auto& [value, info] = item;
-          auto enum_value = nb::cast<uint64_t>(value);
-          auto name = nb::cast<std::string>(info[0]);
-          auto flag = nb::cast<Signature::VERIFICATION_FLAGS>(info[2]);
-
-          //auto flag = nb::cast<Signature::VERIFICATION_FLAGS>(item.second[nb::int_(0)]);
-          if ((flags & flag) == flag && flag != Signature::VERIFICATION_FLAGS::OK) {
-            if (!flags_str.empty()) {
-              flags_str += " | ";
-            }
-            flags_str += "VERIFICATION_FLAGS." + name;
-          }
-        }
-        return flags_str;
-    });
-
   enum_<Signature::VERIFICATION_CHECKS>(signature, "VERIFICATION_CHECKS", nb::is_arithmetic(),
     R"delim(
     Flags to tweak the verification process of the signature
