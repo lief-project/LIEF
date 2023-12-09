@@ -48,12 +48,18 @@ class LIEF_API PKCS9AtSequenceNumber : public Attribute {
   friend class SignatureParser;
 
   public:
-  PKCS9AtSequenceNumber();
-  PKCS9AtSequenceNumber(uint32_t num);
-  PKCS9AtSequenceNumber(const PKCS9AtSequenceNumber&);
-  PKCS9AtSequenceNumber& operator=(const PKCS9AtSequenceNumber&);
+  PKCS9AtSequenceNumber() = delete;
+  PKCS9AtSequenceNumber(uint32_t num) :
+    Attribute(Attribute::TYPE::PKCS9_AT_SEQUENCE_NUMBER),
+    number_{num}
+  {}
 
-  std::unique_ptr<Attribute> clone() const override;
+  PKCS9AtSequenceNumber(const PKCS9AtSequenceNumber&) = default;
+  PKCS9AtSequenceNumber& operator=(const PKCS9AtSequenceNumber&) = default;
+
+  std::unique_ptr<Attribute> clone() const override {
+    return std::unique_ptr<Attribute>(new PKCS9AtSequenceNumber{*this});
+  }
 
   //! Number as described in the RFC
   uint32_t number() const {
@@ -64,14 +70,15 @@ class LIEF_API PKCS9AtSequenceNumber : public Attribute {
   std::string print() const override;
 
   static bool classof(const Attribute* attr) {
-    return attr->type() == SIG_ATTRIBUTE_TYPES::PKCS9_AT_SEQUENCE_NUMBER;
+    return attr->type() == Attribute::TYPE::PKCS9_AT_SEQUENCE_NUMBER;
   }
 
   void accept(Visitor& visitor) const override;
-  ~PKCS9AtSequenceNumber() override;
+
+  ~PKCS9AtSequenceNumber() override = default;
 
   private:
-  uint32_t number_;
+  uint32_t number_ = 0;
 };
 
 }

@@ -692,6 +692,3 @@ Enums
 
 .. doxygenenum:: LIEF::PE::ALGORITHMS
    :project: lief
-
-.. doxygenenum:: LIEF::PE::SIG_ATTRIBUTE_TYPES
-   :project: lief

@@ -24,10 +24,6 @@ namespace LIEF {
 class VectorStream;
 namespace PE {
 
-class Parser;
-class SignatureParser;
-
-
 //! Interface over the structure described by the OID ``1.2.840.113549.1.9.6`` (PKCS #9)
 //!
 //! The internal structure is described in the
@@ -45,12 +41,18 @@ class LIEF_API PKCS9CounterSignature : public Attribute {
   friend class SignatureParser;
 
   public:
-  PKCS9CounterSignature();
-  PKCS9CounterSignature(SignerInfo signer);
-  PKCS9CounterSignature(const PKCS9CounterSignature&);
-  PKCS9CounterSignature& operator=(const PKCS9CounterSignature&);
+  PKCS9CounterSignature() = delete;
+  PKCS9CounterSignature(SignerInfo signer) :
+    Attribute(Attribute::TYPE::PKCS9_COUNTER_SIGNATURE),
+    signer_{std::move(signer)}
+  {}
 
-  std::unique_ptr<Attribute> clone() const override;
+  PKCS9CounterSignature(const PKCS9CounterSignature&) = default;
+  PKCS9CounterSignature& operator=(const PKCS9CounterSignature&) = default;
+
+  std::unique_ptr<Attribute> clone() const override {
+    return std::unique_ptr<Attribute>(new PKCS9CounterSignature{*this});
+  }
 
   //! SignerInfo as described in the RFC #2985
   const SignerInfo& signer() const {
@@ -61,12 +63,12 @@ class LIEF_API PKCS9CounterSignature : public Attribute {
   std::string print() const override;
 
   static bool classof(const Attribute* attr) {
-    return attr->type() == SIG_ATTRIBUTE_TYPES::PKCS9_COUNTER_SIGNATURE;
+    return attr->type() == Attribute::TYPE::PKCS9_COUNTER_SIGNATURE;
   }
 
   void accept(Visitor& visitor) const override;
 
-  ~PKCS9CounterSignature() override;
+  ~PKCS9CounterSignature() override = default;
 
   private:
   SignerInfo signer_;

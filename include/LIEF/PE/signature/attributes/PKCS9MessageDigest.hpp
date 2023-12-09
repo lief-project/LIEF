@@ -51,12 +51,18 @@ class LIEF_API PKCS9MessageDigest : public Attribute {
   friend class SignatureParser;
 
   public:
-  PKCS9MessageDigest();
-  PKCS9MessageDigest(std::vector<uint8_t> digest);
-  PKCS9MessageDigest(const PKCS9MessageDigest&);
-  PKCS9MessageDigest& operator=(const PKCS9MessageDigest&);
+  PKCS9MessageDigest() = delete;
+  PKCS9MessageDigest(std::vector<uint8_t> digest) :
+    Attribute(Attribute::TYPE::PKCS9_MESSAGE_DIGEST),
+    digest_{std::move(digest)}
+  {}
 
-  std::unique_ptr<Attribute> clone() const override;
+  PKCS9MessageDigest(const PKCS9MessageDigest&) = default;
+  PKCS9MessageDigest& operator=(const PKCS9MessageDigest&) = default;
+
+  std::unique_ptr<Attribute> clone() const override {
+    return std::unique_ptr<Attribute>(new PKCS9MessageDigest{*this});
+  }
 
   //! Message digeset as a blob of bytes as described in the RFC
   span<const uint8_t> digest() const {
@@ -67,12 +73,12 @@ class LIEF_API PKCS9MessageDigest : public Attribute {
   std::string print() const override;
 
   static bool classof(const Attribute* attr) {
-    return attr->type() == SIG_ATTRIBUTE_TYPES::PKCS9_MESSAGE_DIGEST;
+    return attr->type() == Attribute::TYPE::PKCS9_MESSAGE_DIGEST;
   }
 
   void accept(Visitor& visitor) const override;
 
-  ~PKCS9MessageDigest() override;
+  ~PKCS9MessageDigest() override = default;
 
   private:
   std::vector<uint8_t> digest_;

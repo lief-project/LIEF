@@ -327,7 +327,7 @@ result<Signature> SignatureParser::parse_signature(BinaryStream& stream) {
     } else {
       LIEF_INFO("Can't find x509 certificate associated with signer '{}'", signer.issuer());
     }
-    const auto* cs = static_cast<const PKCS9CounterSignature*>(signer.get_attribute(SIG_ATTRIBUTE_TYPES::PKCS9_COUNTER_SIGNATURE));
+    const auto* cs = static_cast<const PKCS9CounterSignature*>(signer.get_attribute(Attribute::TYPE::PKCS9_COUNTER_SIGNATURE));
     if (cs != nullptr) {
       SignerInfo& cs_signer = const_cast<PKCS9CounterSignature*>(cs)->signer_;
       const x509* crt = signature.find_crt_issuer(cs_signer.issuer(), as_vector(cs_signer.serial_number()));

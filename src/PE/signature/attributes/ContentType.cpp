@@ -15,28 +15,11 @@
  */
 #include "LIEF/PE/signature/attributes/ContentType.hpp"
 #include "LIEF/PE/signature/OIDToString.hpp"
-#include "LIEF/PE/signature/Attribute.hpp"
 
 #include "LIEF/Visitor.hpp"
 
 namespace LIEF {
 namespace PE {
-
-ContentType::ContentType() :
-  Attribute(SIG_ATTRIBUTE_TYPES::CONTENT_TYPE)
-{}
-
-ContentType::ContentType(const ContentType&) = default;
-ContentType& ContentType::operator=(const ContentType&) = default;
-
-std::unique_ptr<Attribute> ContentType::clone() const {
-  return std::unique_ptr<Attribute>(new ContentType{*this});
-}
-
-ContentType::ContentType(oid_t oid) :
-  Attribute(SIG_ATTRIBUTE_TYPES::CONTENT_TYPE),
-  oid_{std::move(oid)}
-{}
 
 void ContentType::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -45,10 +28,6 @@ void ContentType::accept(Visitor& visitor) const {
 std::string ContentType::print() const {
   return oid() + " (" + oid_to_string(oid()) + ")";
 }
-
-
-ContentType::~ContentType() = default;
-
 
 }
 }

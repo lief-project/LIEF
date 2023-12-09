@@ -13,31 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iosfwd>
 #include <string>
 #include <ostream>
+
+#include "frozen.hpp"
 
 #include "LIEF/Visitor.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
 
 namespace LIEF {
 namespace PE {
-
-Attribute::Attribute() = default;
-Attribute::Attribute(const Attribute& other) = default;
-
-Attribute::Attribute(SIG_ATTRIBUTE_TYPES type) :
-  type_{type}
-{}
-
-Attribute& Attribute::operator=(const Attribute& other) {
-  if (this != &other) {
-    type_ = other.type_;
-  }
-  return *this;
-}
-
-Attribute::~Attribute() = default;
 
 void Attribute::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -46,6 +31,30 @@ void Attribute::accept(Visitor& visitor) const {
 std::ostream& operator<<(std::ostream& os, const Attribute& attribute) {
   os << attribute.print();
   return os;
+}
+
+const char* to_string(Attribute::TYPE e) {
+  #define ENTRY(X) std::pair(Attribute::TYPE::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(UNKNOWN),
+    ENTRY(CONTENT_TYPE),
+    ENTRY(GENERIC_TYPE),
+    ENTRY(SPC_SP_OPUS_INFO),
+    ENTRY(MS_COUNTER_SIGN),
+    ENTRY(MS_SPC_NESTED_SIGN),
+    ENTRY(MS_SPC_STATEMENT_TYPE),
+    ENTRY(PKCS9_AT_SEQUENCE_NUMBER),
+    ENTRY(PKCS9_COUNTER_SIGNATURE),
+    ENTRY(PKCS9_MESSAGE_DIGEST),
+    ENTRY(PKCS9_SIGNING_TIME),
+  };
+  #undef ENTRY
+
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
+  }
+
+  return "UNKNOWN";
 }
 
 }

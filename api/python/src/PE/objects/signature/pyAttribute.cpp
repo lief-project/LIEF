@@ -19,16 +19,36 @@
 
 #include <string>
 #include <sstream>
+#include "enums_wrapper.hpp"
 #include <nanobind/stl/string.h>
 
 namespace LIEF::PE::py {
 
 template<>
 void create<Attribute>(nb::module_& m) {
-  nb::class_<Attribute, Object>(m, "Attribute", "Interface over PKCS #7 attribute"_doc)
-    .def_prop_ro("type",
-        &Attribute::type,
-        "Concrete type (" RST_CLASS_REF(lief.PE.SIG_ATTRIBUTE_TYPES) ") of the attribute"_doc)
+  nb::class_<Attribute, Object> Class(m,
+      "Attribute", "Interface over PKCS #7 attribute"_doc
+  );
+
+  #define ENTRY(X) .value(to_string(Attribute::TYPE::X), Attribute::TYPE::X)
+  enum_<Attribute::TYPE>(Class, "TYPE")
+    ENTRY(UNKNOWN)
+    ENTRY(CONTENT_TYPE)
+    ENTRY(GENERIC_TYPE)
+    ENTRY(SPC_SP_OPUS_INFO)
+    ENTRY(MS_COUNTER_SIGN)
+    ENTRY(MS_SPC_NESTED_SIGN)
+    ENTRY(MS_SPC_STATEMENT_TYPE)
+    ENTRY(PKCS9_AT_SEQUENCE_NUMBER)
+    ENTRY(PKCS9_COUNTER_SIGNATURE)
+    ENTRY(PKCS9_MESSAGE_DIGEST)
+    ENTRY(PKCS9_SIGNING_TIME)
+  ;
+  #undef ENTRY
+
+  Class
+    .def_prop_ro("type", &Attribute::type,
+        "Concrete type of the attribute"_doc)
 
     LIEF_DEFAULT_STR(Attribute);
 }

@@ -26,9 +26,6 @@ namespace LIEF {
 class VectorStream;
 namespace PE {
 
-class Parser;
-class SignatureParser;
-
 //! Interface over the structure described by the OID ``1.3.6.1.4.1.311.2.4.1``
 //!
 //! The internal structure is not documented but we can infer the following structure:
@@ -44,12 +41,17 @@ class LIEF_API MsSpcNestedSignature : public Attribute {
   friend class SignatureParser;
 
   public:
-  MsSpcNestedSignature();
-  MsSpcNestedSignature(Signature sig);
-  MsSpcNestedSignature(const MsSpcNestedSignature&);
-  MsSpcNestedSignature& operator=(const MsSpcNestedSignature&);
+  MsSpcNestedSignature() = delete;
+  MsSpcNestedSignature(Signature sig) :
+    Attribute(Attribute::TYPE::MS_SPC_NESTED_SIGN),
+    sig_{std::move(sig)}
+  {}
+  MsSpcNestedSignature(const MsSpcNestedSignature&) = default;
+  MsSpcNestedSignature& operator=(const MsSpcNestedSignature&) = default;
 
-  std::unique_ptr<Attribute> clone() const override;
+  std::unique_ptr<Attribute> clone() const override {
+    return std::unique_ptr<Attribute>(new MsSpcNestedSignature{*this});
+  }
 
   //! Underlying Signature object
   const Signature& sig() const {
@@ -62,10 +64,10 @@ class LIEF_API MsSpcNestedSignature : public Attribute {
   void accept(Visitor& visitor) const override;
 
   static bool classof(const Attribute* attr) {
-    return attr->type() == SIG_ATTRIBUTE_TYPES::MS_SPC_NESTED_SIGN;
+    return attr->type() == Attribute::TYPE::MS_SPC_NESTED_SIGN;
   }
 
-  ~MsSpcNestedSignature() override;
+  ~MsSpcNestedSignature() override = default;
 
   private:
   Signature sig_;

@@ -114,7 +114,7 @@ Signature::VERIFICATION_FLAGS verify_ts_counter_signature(const SignerInfo& sign
    */
 
   // Verify 1.
-  const auto* content_type_data = reinterpret_cast<const ContentType*>(cs_signer.get_auth_attribute(SIG_ATTRIBUTE_TYPES::CONTENT_TYPE));
+  const auto* content_type_data = static_cast<const ContentType*>(cs_signer.get_auth_attribute(Attribute::TYPE::CONTENT_TYPE));
   if (content_type_data == nullptr) {
     LIEF_WARN("Missing ContentType in authenticated attributes in the counter signature's signer");
     return flags | Signature::VERIFICATION_FLAGS::INVALID_SIGNER;
@@ -127,7 +127,7 @@ Signature::VERIFICATION_FLAGS verify_ts_counter_signature(const SignerInfo& sign
   }
 
   // Verify 3.
-  const auto* message_dg = reinterpret_cast<const PKCS9MessageDigest*>(cs_signer.get_auth_attribute(SIG_ATTRIBUTE_TYPES::PKCS9_MESSAGE_DIGEST));
+  const auto* message_dg = static_cast<const PKCS9MessageDigest*>(cs_signer.get_auth_attribute(Attribute::TYPE::PKCS9_MESSAGE_DIGEST));
   if (message_dg == nullptr) {
     LIEF_WARN("Missing MessageDigest in authenticated attributes in the counter signature's signer");
     return flags | Signature::VERIFICATION_FLAGS::INVALID_SIGNER;
@@ -143,7 +143,7 @@ Signature::VERIFICATION_FLAGS verify_ts_counter_signature(const SignerInfo& sign
    * Verify that signing's time is valid within the signer's certificate
    * validity window.
    */
-  const auto* signing_time = reinterpret_cast<const PKCS9SigningTime*>(cs_signer.get_auth_attribute(SIG_ATTRIBUTE_TYPES::PKCS9_SIGNING_TIME));
+  const auto* signing_time = static_cast<const PKCS9SigningTime*>(cs_signer.get_auth_attribute(Attribute::TYPE::PKCS9_SIGNING_TIME));
   if (signing_time != nullptr && !is_true(checks & Signature::VERIFICATION_CHECKS::SKIP_CERT_TIME)) {
     LIEF_DEBUG("PKCS #9 signing time found");
     PKCS9SigningTime::time_t time = signing_time->time();
@@ -340,7 +340,7 @@ Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const
     // Check that content_info_hash matches pkcs9-message-digest
     auto it_pkcs9_digest = std::find_if(std::begin(auth_attrs), std::end(auth_attrs),
         [] (const Attribute& attr) {
-          return attr.type() == SIG_ATTRIBUTE_TYPES::PKCS9_MESSAGE_DIGEST;
+          return attr.type() == Attribute::TYPE::PKCS9_MESSAGE_DIGEST;
         });
 
     if (it_pkcs9_digest == std::end(auth_attrs)) {
@@ -348,7 +348,7 @@ Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const
       return flags | VERIFICATION_FLAGS::MISSING_PKCS9_MESSAGE_DIGEST;
     }
 
-    const auto& digest_attr = reinterpret_cast<const PKCS9MessageDigest&>(*it_pkcs9_digest);
+    const auto& digest_attr = static_cast<const PKCS9MessageDigest&>(*it_pkcs9_digest);
     LIEF_DEBUG("pkcs9-message-digest:\n  {}\n  {}", hex_dump(digest_attr.digest()), hex_dump(content_info_hash));
     if (as_vector(digest_attr.digest()) != content_info_hash) {
       return flags | VERIFICATION_FLAGS::BAD_DIGEST;
@@ -365,11 +365,11 @@ Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const
   /*
    * CounterSignature Checks
    */
-  const auto* counter = reinterpret_cast<const PKCS9CounterSignature*>(signer.get_unauth_attribute(SIG_ATTRIBUTE_TYPES::PKCS9_COUNTER_SIGNATURE));
+  const auto* counter = static_cast<const PKCS9CounterSignature*>(signer.get_unauth_attribute(Attribute::TYPE::PKCS9_COUNTER_SIGNATURE));
   bool has_ms_counter_sig = false;
   for (const Attribute& attr : signer.unauthenticated_attributes()) {
-    if (attr.type() == SIG_ATTRIBUTE_TYPES::GENERIC_TYPE) {
-      if (reinterpret_cast<const GenericType&>(attr).oid() == /* Ms-CounterSign */ "1.3.6.1.4.1.311.3.3.1") {
+    if (attr.type() == Attribute::TYPE::GENERIC_TYPE) {
+      if (static_cast<const GenericType&>(attr).oid() == /* Ms-CounterSign */ "1.3.6.1.4.1.311.3.3.1") {
         has_ms_counter_sig = true;
         break;
       }
@@ -469,23 +469,23 @@ inline void print_attr(SignerInfo::it_const_attributes_t& attrs, std::ostream& o
   for (const Attribute& attr : attrs) {
     std::string suffix;
     switch (attr.type()) {
-      case SIG_ATTRIBUTE_TYPES::CONTENT_TYPE:
+      case Attribute::TYPE::CONTENT_TYPE:
         {
-          const auto& ct = reinterpret_cast<const ContentType&>(attr);
+          const auto& ct = static_cast<const ContentType&>(attr);
           suffix = ct.oid() + " (" + oid_to_string(ct.oid()) + ")";
           break;
         }
 
-      case SIG_ATTRIBUTE_TYPES::MS_SPC_STATEMENT_TYPE:
+      case Attribute::TYPE::MS_SPC_STATEMENT_TYPE:
         {
-          const auto& ct = reinterpret_cast<const MsSpcStatementType&>(attr);
+          const auto& ct = static_cast<const MsSpcStatementType&>(attr);
           suffix = ct.oid() + " (" + oid_to_string(ct.oid()) + ")";
           break;
         }
 
-      case SIG_ATTRIBUTE_TYPES::SPC_SP_OPUS_INFO:
+      case Attribute::TYPE::SPC_SP_OPUS_INFO:
         {
-          const auto& ct = reinterpret_cast<const SpcSpOpusInfo&>(attr);
+          const auto& ct = static_cast<const SpcSpOpusInfo&>(attr);
           if (!ct.program_name().empty()) {
             suffix = ct.program_name();
           }
@@ -498,16 +498,16 @@ inline void print_attr(SignerInfo::it_const_attributes_t& attrs, std::ostream& o
           break;
         }
 
-      case SIG_ATTRIBUTE_TYPES::PKCS9_MESSAGE_DIGEST:
+      case Attribute::TYPE::PKCS9_MESSAGE_DIGEST:
         {
-          const auto& ct = reinterpret_cast<const PKCS9MessageDigest&>(attr);
+          const auto& ct = static_cast<const PKCS9MessageDigest&>(attr);
           suffix = hex_dump(ct.digest()).substr(0, 41) + "...";
           break;
         }
 
-      case SIG_ATTRIBUTE_TYPES::MS_SPC_NESTED_SIGN:
+      case Attribute::TYPE::MS_SPC_NESTED_SIGN:
         {
-          const auto& nested_attr = reinterpret_cast<const MsSpcNestedSignature&>(attr);
+          const auto& nested_attr = static_cast<const MsSpcNestedSignature&>(attr);
           const Signature& ct = nested_attr.sig();
           auto signers = ct.signers();
           auto crts = ct.certificates();
@@ -519,31 +519,31 @@ inline void print_attr(SignerInfo::it_const_attributes_t& attrs, std::ostream& o
           break;
         }
 
-      case SIG_ATTRIBUTE_TYPES::GENERIC_TYPE:
+      case Attribute::TYPE::GENERIC_TYPE:
         {
-          const auto& ct = reinterpret_cast<const GenericType&>(attr);
+          const auto& ct = static_cast<const GenericType&>(attr);
           suffix = ct.oid();
           break;
         }
 
-      case SIG_ATTRIBUTE_TYPES::PKCS9_AT_SEQUENCE_NUMBER:
+      case Attribute::TYPE::PKCS9_AT_SEQUENCE_NUMBER:
         {
-          const auto& ct = reinterpret_cast<const PKCS9AtSequenceNumber&>(attr);
+          const auto& ct = static_cast<const PKCS9AtSequenceNumber&>(attr);
           suffix = std::to_string(ct.number());
           break;
         }
 
-      case SIG_ATTRIBUTE_TYPES::PKCS9_COUNTER_SIGNATURE:
+      case Attribute::TYPE::PKCS9_COUNTER_SIGNATURE:
         {
-          const auto& ct = reinterpret_cast<const PKCS9CounterSignature&>(attr);
+          const auto& ct = static_cast<const PKCS9CounterSignature&>(attr);
           const SignerInfo& signer = ct.signer();
           suffix = signer.issuer();
           break;
         }
 
-      case SIG_ATTRIBUTE_TYPES::PKCS9_SIGNING_TIME:
+      case Attribute::TYPE::PKCS9_SIGNING_TIME:
         {
-          const auto& ct = reinterpret_cast<const PKCS9SigningTime&>(attr);
+          const auto& ct = static_cast<const PKCS9SigningTime&>(attr);
           const PKCS9SigningTime::time_t time = ct.time();
           suffix = fmt::format("{}/{}/{} - {}:{}:{}",
                               time[0], time[1], time[2], time[3], time[4], time[5]);

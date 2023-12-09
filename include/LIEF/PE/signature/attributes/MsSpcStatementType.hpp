@@ -25,9 +25,6 @@ namespace LIEF {
 class VectorStream;
 namespace PE {
 
-class Parser;
-class SignatureParser;
-
 //! Interface over the structure described by the OID ``1.3.6.1.4.1.311.2.1.11``
 //!
 //! The internal structure is described in the official document:
@@ -42,12 +39,18 @@ class LIEF_API MsSpcStatementType : public Attribute {
   friend class SignatureParser;
 
   public:
-  MsSpcStatementType();
-  MsSpcStatementType(oid_t oid);
-  MsSpcStatementType(const MsSpcStatementType&);
-  MsSpcStatementType& operator=(const MsSpcStatementType&);
+  MsSpcStatementType() = delete;
+  MsSpcStatementType(oid_t oid) :
+    Attribute(Attribute::TYPE::MS_SPC_STATEMENT_TYPE),
+    oid_{std::move(oid)}
+  {}
 
-  std::unique_ptr<Attribute> clone() const override;
+  MsSpcStatementType(const MsSpcStatementType&) = default;
+  MsSpcStatementType& operator=(const MsSpcStatementType&) = default;
+
+  std::unique_ptr<Attribute> clone() const override {
+    return std::unique_ptr<Attribute>(new MsSpcStatementType{*this});
+  }
 
   //! According to the documentation:
   //! > The SpcStatementType MUST contain one Object Identifier with either
@@ -61,11 +64,11 @@ class LIEF_API MsSpcStatementType : public Attribute {
   std::string print() const override;
 
   static bool classof(const Attribute* attr) {
-    return attr->type() == SIG_ATTRIBUTE_TYPES::MS_SPC_STATEMENT_TYPE;
+    return attr->type() == Attribute::TYPE::MS_SPC_STATEMENT_TYPE;
   }
 
   void accept(Visitor& visitor) const override;
-  ~MsSpcStatementType() override;
+  ~MsSpcStatementType() override = default;
 
   private:
   oid_t oid_;

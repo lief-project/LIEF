@@ -29,22 +29,26 @@ namespace LIEF {
 class VectorStream;
 namespace PE {
 
-class Parser;
-class SignatureParser;
-
 //! Interface over an attribute for which the internal structure is not supported by LIEF
 class LIEF_API GenericType : public Attribute {
-
   friend class Parser;
   friend class SignatureParser;
 
   public:
-  GenericType();
-  GenericType(oid_t oid, std::vector<uint8_t> raw);
-  GenericType(const GenericType&);
-  GenericType& operator=(const GenericType&);
+  GenericType() :
+    Attribute(Attribute::TYPE::GENERIC_TYPE)
+  {}
+  GenericType(oid_t oid, std::vector<uint8_t> raw) :
+    Attribute(Attribute::TYPE::GENERIC_TYPE),
+    oid_{std::move(oid)},
+    raw_{std::move(raw)}
+  {}
+  GenericType(const GenericType&) = default;
+  GenericType& operator=(const GenericType&) = default;
 
-  std::unique_ptr<Attribute> clone() const override;
+  std::unique_ptr<Attribute> clone() const override {
+    return std::unique_ptr<Attribute>(new GenericType{*this});
+  }
 
   //! OID of the original attribute
   const oid_t& oid() const {
@@ -61,10 +65,10 @@ class LIEF_API GenericType : public Attribute {
 
   void accept(Visitor& visitor) const override;
 
-  ~GenericType() override;
+  ~GenericType() override = default;
 
   static bool classof(const Attribute* attr) {
-    return attr->type() == SIG_ATTRIBUTE_TYPES::GENERIC_TYPE;
+    return attr->type() == Attribute::TYPE::GENERIC_TYPE;
   }
 
   private:

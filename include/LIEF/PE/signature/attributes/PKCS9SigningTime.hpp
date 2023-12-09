@@ -26,9 +26,6 @@ namespace LIEF {
 class VectorStream;
 namespace PE {
 
-class Parser;
-class SignatureParser;
-
 //! Interface over the structure described by the OID ``1.2.840.113549.1.9.5`` (PKCS #9)
 //!
 //! The internal structure is described in the
@@ -53,10 +50,14 @@ class LIEF_API PKCS9SigningTime : public Attribute {
   //! Time as an array [year, month, day, hour, min, sec]
   using time_t = std::array<int32_t, 6>;
 
-  PKCS9SigningTime();
-  PKCS9SigningTime(time_t time);
-  PKCS9SigningTime(const PKCS9SigningTime&);
-  PKCS9SigningTime& operator=(const PKCS9SigningTime&);
+  PKCS9SigningTime() = delete;
+  PKCS9SigningTime(time_t time) :
+    Attribute(Attribute::TYPE::PKCS9_SIGNING_TIME),
+    time_{time}
+  {}
+
+  PKCS9SigningTime(const PKCS9SigningTime&) = default;
+  PKCS9SigningTime& operator=(const PKCS9SigningTime&) = default;
 
   //! Time as an array [year, month, day, hour, min, sec]
   const time_t& time() const {
@@ -66,14 +67,17 @@ class LIEF_API PKCS9SigningTime : public Attribute {
   //! Print information about the attribute
   std::string print() const override;
 
-  std::unique_ptr<Attribute> clone() const override;
+  std::unique_ptr<Attribute> clone() const override {
+    return std::unique_ptr<Attribute>(new PKCS9SigningTime{*this});
+  }
 
   static bool classof(const Attribute* attr) {
-    return attr->type() == SIG_ATTRIBUTE_TYPES::PKCS9_SIGNING_TIME;
+    return attr->type() == Attribute::TYPE::PKCS9_SIGNING_TIME;
   }
 
   void accept(Visitor& visitor) const override;
-  ~PKCS9SigningTime() override;
+
+  ~PKCS9SigningTime() override = default;
 
   private:
   time_t time_;

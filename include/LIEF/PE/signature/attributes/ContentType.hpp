@@ -26,9 +26,6 @@ namespace LIEF {
 class VectorStream;
 namespace PE {
 
-class Parser;
-class SignatureParser;
-
 //! Interface over the structure described by the OID ``1.2.840.113549.1.9.3`` (PKCS #9)
 //!
 //! The internal structure is described in the
@@ -43,10 +40,15 @@ class LIEF_API ContentType : public Attribute {
   friend class SignatureParser;
 
   public:
-  ContentType();
-  ContentType(oid_t oid);
-  ContentType(const ContentType&);
-  ContentType& operator=(const ContentType&);
+  ContentType() :
+    Attribute(Attribute::TYPE::CONTENT_TYPE)
+  {}
+  ContentType(oid_t oid) :
+    Attribute(Attribute::TYPE::CONTENT_TYPE),
+    oid_{std::move(oid)}
+  {}
+  ContentType(const ContentType&) = default;
+  ContentType& operator=(const ContentType&) = default;
 
   //! OID as described in RFC #2985
   const oid_t& oid() const {
@@ -56,14 +58,16 @@ class LIEF_API ContentType : public Attribute {
   //! Print information about the attribute
   std::string print() const override;
 
-  std::unique_ptr<Attribute> clone() const override;
+  std::unique_ptr<Attribute> clone() const override {
+    return std::unique_ptr<Attribute>(new ContentType{*this});
+  }
 
   static bool classof(const Attribute* attr) {
-    return attr->type() == SIG_ATTRIBUTE_TYPES::CONTENT_TYPE;
+    return attr->type() == Attribute::TYPE::CONTENT_TYPE;
   }
 
   void accept(Visitor& visitor) const override;
-  ~ContentType() override;
+  ~ContentType() override = default;
 
   private:
   oid_t oid_;

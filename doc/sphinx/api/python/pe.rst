@@ -646,9 +646,3 @@ ALGORITHMS
 ~~~~~~~~~~
 
 .. autoclass:: lief.PE.ALGORITHMS
-
-
-SIG_ATTRIBUTE_TYPES
-~~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.SIG_ATTRIBUTE_TYPES

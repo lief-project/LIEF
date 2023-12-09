@@ -46,7 +46,6 @@ enum class RELOCATIONS_I386 : size_t;
 enum class RESOURCE_LANGS : size_t;
 enum class RESOURCE_SUBLANGS : size_t;
 enum class RESOURCE_TYPES : size_t;
-enum class SIG_ATTRIBUTE_TYPES : uint32_t;
 enum class SUBSYSTEM : size_t;
 enum class SYMBOL_BASE_TYPES : size_t;
 enum class SYMBOL_COMPLEX_TYPES : size_t;
@@ -89,7 +88,6 @@ LIEF_API const char* to_string(ACCELERATOR_FLAGS e);
 LIEF_API const char* to_string(ACCELERATOR_VK_CODES e);
 
 LIEF_API const char* to_string(ALGORITHMS e);
-LIEF_API const char* to_string(SIG_ATTRIBUTE_TYPES e);
 
 } // namespace PE
 } // namespace LIEF

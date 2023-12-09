@@ -24,6 +24,7 @@
 #include "LIEF/PE/signature/types.hpp"
 #include "LIEF/iterators.hpp"
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/PE/signature/Attribute.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -76,7 +77,9 @@ class LIEF_API SignerInfo : public Object {
   void swap(SignerInfo& other);
 
   //! Should be 1
-  uint32_t version() const;
+  uint32_t version() const {
+    return version_;
+  }
 
   //! Return the serial number associated with the x509 certificate
   //! used by this signer.
@@ -97,40 +100,50 @@ class LIEF_API SignerInfo : public Object {
   //!
   //! This value should match LIEF::PE::ContentInfo::digest_algorithm and
   //! LIEF::PE::Signature::digest_algorithm
-  ALGORITHMS digest_algorithm() const;
+  ALGORITHMS digest_algorithm() const {
+    return digest_algorithm_;
+  }
 
   //! Return the (public-key) algorithm used to encrypt
   //! the signature
-  ALGORITHMS encryption_algorithm() const;
+  ALGORITHMS encryption_algorithm() const {
+    return digest_enc_algorithm_;
+  }
 
   //! Return the signature created by the signing
   //! certificate's private key
-  const encrypted_digest_t& encrypted_digest() const;
+  const encrypted_digest_t& encrypted_digest() const {
+    return encrypted_digest_;
+  }
 
   //! Iterator over LIEF::PE::Attribute for **authenticated** attributes
-  it_const_attributes_t authenticated_attributes() const;
+  it_const_attributes_t authenticated_attributes() const {
+    return authenticated_attributes_;
+  }
 
   //! Iterator over LIEF::PE::Attribute for **unauthenticated** attributes
-  it_const_attributes_t unauthenticated_attributes() const;
+  it_const_attributes_t unauthenticated_attributes() const {
+    return unauthenticated_attributes_;
+  }
 
   //! Return the authenticated or un-authenticated attribute matching the
   //! given PE::SIG_ATTRIBUTE_TYPES.
   //!
   //! It returns **the first** entry that matches the given type. If it can't be
   //! found, it returns a nullptr.
-  const Attribute* get_attribute(PE::SIG_ATTRIBUTE_TYPES type) const;
+  const Attribute* get_attribute(Attribute::TYPE type) const;
 
   //! Return the authenticated attribute matching the given PE::SIG_ATTRIBUTE_TYPES.
   //!
   //! It returns **the first** entry that matches the given type. If it can't be
   //! found, it returns a nullptr.
-  const Attribute* get_auth_attribute(PE::SIG_ATTRIBUTE_TYPES type) const;
+  const Attribute* get_auth_attribute(Attribute::TYPE type) const;
 
   //! Return the un-authenticated attribute matching the given PE::SIG_ATTRIBUTE_TYPES.
   //!
   //! It returns **the first** entry that matches the given type. If it can't be
   //! found, it returns a nullptr.
-  const Attribute* get_unauth_attribute(PE::SIG_ATTRIBUTE_TYPES type) const;
+  const Attribute* get_unauth_attribute(Attribute::TYPE type) const;
 
   //! x509 certificate used by this signer. If it can't be found, it returns a nullptr
   const x509* cert() const {

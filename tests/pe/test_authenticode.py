@@ -148,30 +148,30 @@ def test_fail():
 
 def test_pkcs9_signing_time():
     sig = lief.PE.Signature.parse(get_sample("pkcs7/cert0.p7b"))
-    attr = sig.signers[0].get_attribute(lief.PE.SIG_ATTRIBUTE_TYPES.PKCS9_SIGNING_TIME)
+    attr = sig.signers[0].get_attribute(lief.PE.Attribute.TYPE.PKCS9_SIGNING_TIME)
     assert attr.time == [2018, 8, 2, 15, 0, 12]
 
 def test_pkcs9_at_sequence_number():
     sig = lief.PE.Signature.parse(get_sample("pkcs7/cert3.p7b"))
-    nested_sig = sig.signers[0].get_attribute(lief.PE.SIG_ATTRIBUTE_TYPES.MS_SPC_NESTED_SIGN).signature
-    at_seq_nb = nested_sig.signers[0].get_attribute(lief.PE.SIG_ATTRIBUTE_TYPES.PKCS9_AT_SEQUENCE_NUMBER)
+    nested_sig = sig.signers[0].get_attribute(lief.PE.Attribute.TYPE.MS_SPC_NESTED_SIGN).signature
+    at_seq_nb = nested_sig.signers[0].get_attribute(lief.PE.Attribute.TYPE.PKCS9_AT_SEQUENCE_NUMBER)
     assert at_seq_nb.number == 1
 
 def test_spc_sp_opus_info():
     sig = lief.PE.Signature.parse(get_sample("pkcs7/cert11.p7b"))
-    spc = sig.signers[0].get_attribute(lief.PE.SIG_ATTRIBUTE_TYPES.SPC_SP_OPUS_INFO)
+    spc = sig.signers[0].get_attribute(lief.PE.Attribute.TYPE.SPC_SP_OPUS_INFO)
 
     assert spc.program_name == "Slideshow Generator Powertoy for WinXP"
     assert spc.more_info == "http://www.microsoft.com/windowsxp"
 
     sig = lief.PE.Signature.parse(get_sample("pkcs7/cert9.p7b"))
-    spc = sig.signers[0].get_attribute(lief.PE.SIG_ATTRIBUTE_TYPES.SPC_SP_OPUS_INFO)
+    spc = sig.signers[0].get_attribute(lief.PE.Attribute.TYPE.SPC_SP_OPUS_INFO)
     assert spc.program_name == "Microsoft Windows"
     assert spc.more_info == "http://www.microsoft.com/windows"
 
 def test_pkcs9_counter_signature():
     sig = lief.PE.Signature.parse(get_sample("pkcs7/cert10.p7b"))
-    counter_sign = sig.signers[0].get_attribute(lief.PE.SIG_ATTRIBUTE_TYPES.PKCS9_COUNTER_SIGNATURE)
+    counter_sign = sig.signers[0].get_attribute(lief.PE.Attribute.TYPE.PKCS9_COUNTER_SIGNATURE)
 
     signer = counter_sign.signer
 
@@ -191,7 +191,7 @@ def test_pkcs9_counter_signature():
 
 def test_ms_spc_nested_signature():
     sig = lief.PE.Signature.parse(get_sample("pkcs7/cert0.p7b"))
-    attr = sig.signers[0].get_attribute(lief.PE.SIG_ATTRIBUTE_TYPES.MS_SPC_NESTED_SIGN)
+    attr = sig.signers[0].get_attribute(lief.PE.Attribute.TYPE.MS_SPC_NESTED_SIGN)
     nested_sig = attr.signature
 
     assert nested_sig.version == 1
