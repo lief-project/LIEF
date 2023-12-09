@@ -1146,7 +1146,7 @@ bool Binary::is_pie() const {
 
 bool Binary::has_nx() const {
   if (const Segment* gnu_stack = get(SEGMENT_TYPES::PT_GNU_STACK)) {
-    return gnu_stack->has(ELF_SEGMENT_FLAGS::PF_X);
+    return !gnu_stack->has(ELF_SEGMENT_FLAGS::PF_X);
   }
 
   if (header().machine_type() == ARCH::EM_PPC64) {
