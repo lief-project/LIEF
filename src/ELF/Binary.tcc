@@ -159,10 +159,17 @@ void Binary::patch_relocations<ARCH::EM_386>(uint64_t from, uint64_t shift) {
       case RELOC_i386::R_386_JUMP_SLOT:
       case RELOC_i386::R_386_IRELATIVE:
       case RELOC_i386::R_386_GLOB_DAT:
+      case RELOC_i386::R_386_32:
         {
           LIEF_DEBUG("Patch addend of {}", relocation);
           patch_addend<uint32_t>(relocation, from, shift);
           break;
+        }
+      case RELOC_i386::R_386_TLS_DTPMOD32:
+      case RELOC_i386::R_386_TLS_DTPOFF32:
+        {
+          // Nothing to do for these relocations
+          continue;
         }
 
       default:
@@ -275,7 +282,7 @@ void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift)
     return;
   }
 
-  T value = segment->get_content_value<T>(relative_offset);
+  auto value = segment->get_content_value<T>(relative_offset);
 
   if (value >= from) {
     value += shift;
