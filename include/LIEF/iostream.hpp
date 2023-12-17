@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_OSTREAM_H
 #define LIEF_OSTREAM_H
+#include <limits>
 #include <istream>
 #include <streambuf>
 #include <cstdint>
@@ -52,8 +53,8 @@ class vector_iostream {
   vector_iostream& write_sized_int(uint64_t value, size_t size);
   vector_iostream& write(const vector_iostream& other);
 
-  template<class T, typename U = typename std::enable_if<!std::is_integral<T>::value>, T>
-  vector_iostream& write(const U& t) {
+  template<class T, typename std::enable_if<!std::numeric_limits<T>::is_integer, int>::type = 0>
+  vector_iostream& write(const T& t) {
     const auto pos = static_cast<size_t>(tellp());
     if (raw_.size() < (pos + sizeof(T))) {
       raw_.resize(pos + sizeof(T));
@@ -71,7 +72,7 @@ class vector_iostream {
 
   vector_iostream& align(size_t alignment, uint8_t fill = 0);
 
-  template<class Integer, typename = typename std::enable_if<std::is_integral<Integer>::value>>
+  template<class Integer, typename std::enable_if<std::numeric_limits<Integer>::is_integer, int>::type = 0>
   vector_iostream& write(Integer integer) {
     const auto pos = static_cast<size_t>(tellp());
     if (raw_.size() < (pos + sizeof(Integer))) {
@@ -82,8 +83,9 @@ class vector_iostream {
     return *this;
   }
 
-  template<typename T, size_t size, typename = typename std::enable_if<std::is_integral<T>::value>>
+  template<typename T, size_t size>
   vector_iostream& write(const std::array<T, size>& t) {
+    static_assert(std::numeric_limits<T>::is_integer, "Requires integer type");
     for (T val : t) {
       write<T>(val);
     }
