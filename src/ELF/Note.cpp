@@ -720,7 +720,6 @@ IMPL_WRITE_AT(uint32_t);
 IMPL_WRITE_AT(int32_t);
 IMPL_WRITE_AT(uint64_t);
 IMPL_WRITE_AT(int64_t);
-IMPL_WRITE_AT(std::string);
 
 } // namespace ELF
 } // namespace LIEF

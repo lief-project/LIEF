@@ -43,17 +43,13 @@ class vector_iostream {
     return write(sp.data(), sp.size());
   }
 
-  vector_iostream& write(span<uint8_t> sp) {
-    return write(sp.data(), sp.size());
-  }
-
   vector_iostream& write(std::vector<uint8_t> s);
   vector_iostream& write(const std::string& s);
   vector_iostream& write(size_t count, uint8_t value);
   vector_iostream& write_sized_int(uint64_t value, size_t size);
   vector_iostream& write(const vector_iostream& other);
 
-  template<class T, typename std::enable_if<!std::numeric_limits<T>::is_integer, int>::type = 0>
+  template<class T, typename = typename std::enable_if<std::is_standard_layout<T>::value && std::is_trivial<T>::value>::type>
   vector_iostream& write(const T& t) {
     const auto pos = static_cast<size_t>(tellp());
     if (raw_.size() < (pos + sizeof(T))) {
@@ -71,17 +67,6 @@ class vector_iostream {
   vector_iostream& write_conv_array(const std::vector<T>& v);
 
   vector_iostream& align(size_t alignment, uint8_t fill = 0);
-
-  template<class Integer, typename std::enable_if<std::numeric_limits<Integer>::is_integer, int>::type = 0>
-  vector_iostream& write(Integer integer) {
-    const auto pos = static_cast<size_t>(tellp());
-    if (raw_.size() < (pos + sizeof(Integer))) {
-      raw_.resize(pos + sizeof(Integer));
-    }
-    memcpy(raw_.data() + pos, &integer, sizeof(Integer));
-    current_pos_ += sizeof(Integer);
-    return *this;
-  }
 
   template<typename T, size_t size>
   vector_iostream& write(const std::array<T, size>& t) {
