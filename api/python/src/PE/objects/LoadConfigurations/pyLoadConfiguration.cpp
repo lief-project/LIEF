@@ -16,6 +16,7 @@
 #include "PE/pyPE.hpp"
 
 #include "LIEF/PE/LoadConfigurations.hpp"
+#include "enums_wrapper.hpp"
 
 #include <string>
 #include <sstream>
@@ -25,11 +26,31 @@ namespace LIEF::PE::py {
 
 template<>
 void create<LoadConfiguration>(nb::module_& m) {
-  nb::class_<LoadConfiguration, LIEF::Object>(m, "LoadConfiguration",
+  nb::class_<LoadConfiguration, LIEF::Object> Config(m, "LoadConfiguration",
     R"delim(
     Class that represents the default PE's ``LoadConfiguration``
     It's the base class for any future versions of the structure
-    )delim"_doc)
+    )delim"_doc);
+
+  #define ENTRY(X) .value(to_string(LoadConfiguration::VERSION::X), LoadConfiguration::VERSION::X)
+  enum_<LoadConfiguration::VERSION>(Config, "VERSION")
+    ENTRY(UNKNOWN)
+    ENTRY(SEH)
+    ENTRY(WIN_8_1)
+    ENTRY(WIN_10_0_9879)
+    ENTRY(WIN_10_0_14286)
+    ENTRY(WIN_10_0_14383)
+    ENTRY(WIN_10_0_14901)
+    ENTRY(WIN_10_0_15002)
+    ENTRY(WIN_10_0_16237)
+    ENTRY(WIN_10_0_18362)
+    ENTRY(WIN_10_0_19534)
+    ENTRY(WIN_10_0_MSVC_2019)
+    ENTRY(WIN_10_0_MSVC_2019_16)
+  ;
+  #undef ENTRY
+
+  Config
     .def(nb::init<>())
 
     .def_prop_ro("version",

@@ -13,61 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
+#include <spdlog/fmt/fmt.h>
+#include "LIEF/PE/LoadConfigurations/LoadConfigurationV6.hpp"
+#include "LIEF/Visitor.hpp"
 
-#include "LIEF/PE/hash.hpp"
-
-
-#include "LIEF/PE/LoadConfigurations.hpp"
+#include "PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
 
-LoadConfigurationV6& LoadConfigurationV6::operator=(const LoadConfigurationV6&) = default;
-LoadConfigurationV6::LoadConfigurationV6(const LoadConfigurationV6&) = default;
-LoadConfigurationV6::~LoadConfigurationV6() = default;
-
-LoadConfigurationV6::LoadConfigurationV6() :
-  guardrf_verify_stackpointer_function_pointer_{0},
-  hotpatch_table_offset_{0}
+template<class T>
+LoadConfigurationV6::LoadConfigurationV6(const details::load_configuration_v6<T>& header) :
+  LoadConfigurationV5{reinterpret_cast<const details::load_configuration_v5<T>&>(header)},
+  guardrf_verify_stackpointer_function_pointer_{header.GuardRFVerifyStackPointerFunctionPointer},
+  hotpatch_table_offset_{header.HotPatchTableOffset}
 {}
-
-
-WIN_VERSION LoadConfigurationV6::version() const {
-  return LoadConfigurationV6::VERSION;
-}
-
-uint64_t LoadConfigurationV6::guard_rf_verify_stackpointer_function_pointer() const {
-  return guardrf_verify_stackpointer_function_pointer_;
-}
-
-uint32_t LoadConfigurationV6::hotpatch_table_offset() const {
-  return hotpatch_table_offset_;
-}
-
-void LoadConfigurationV6::guard_rf_verify_stackpointer_function_pointer(uint64_t value) {
-  guardrf_verify_stackpointer_function_pointer_ = value;
-}
-
-void LoadConfigurationV6::hotpatch_table_offset(uint32_t value) {
-  hotpatch_table_offset_ = value;
-}
 
 void LoadConfigurationV6::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
 std::ostream& LoadConfigurationV6::print(std::ostream& os) const {
   LoadConfigurationV5::print(os);
 
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "GRF verify stackpointer function pointer:" << std::hex << guard_rf_verify_stackpointer_function_pointer() << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Hotpatch table offset:"                    << std::hex << hotpatch_table_offset()                         << std::endl;
+  os << "LoadConfigurationV6:\n"
+     << fmt::format("  GRF verify stackpointer function pointer   0x{:08x}\n", guard_rf_verify_stackpointer_function_pointer())
+     << fmt::format("  Hotpatch table offset                      0x{:08x}\n", hotpatch_table_offset());
+  //os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "GRF verify stackpointer function pointer:" << std::hex << guard_rf_verify_stackpointer_function_pointer() << std::endl;
+  //os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Hotpatch table offset:"                    << std::hex << hotpatch_table_offset()                         << std::endl;
   return os;
 }
 
-
+template
+LoadConfigurationV6::LoadConfigurationV6(const details::load_configuration_v6<uint32_t>& header);
+template
+LoadConfigurationV6::LoadConfigurationV6(const details::load_configuration_v6<uint64_t>& header);
 
 } // namespace PE
 } // namespace LIEF

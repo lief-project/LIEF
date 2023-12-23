@@ -898,44 +898,6 @@ const char* to_string(CODE_PAGES e) {
 
 
 
-const char* to_string(WIN_VERSION e) {
-  CONST_MAP(WIN_VERSION, const char*, 13) enumStrings {
-    { WIN_VERSION::WIN_UNKNOWN,   "UNKNOWN"       },
-    { WIN_VERSION::WIN_SEH,       "SEH"           },
-    { WIN_VERSION::WIN8_1,        "WIN_8_1"       },
-    { WIN_VERSION::WIN10_0_9879,  "WIN10_0_9879"  },
-    { WIN_VERSION::WIN10_0_14286, "WIN10_0_14286" },
-    { WIN_VERSION::WIN10_0_14383, "WIN10_0_14383" },
-    { WIN_VERSION::WIN10_0_14901, "WIN10_0_14901" },
-    { WIN_VERSION::WIN10_0_15002, "WIN10_0_15002" },
-    { WIN_VERSION::WIN10_0_16237, "WIN10_0_16237" },
-    { WIN_VERSION::WIN10_0_18362, "WIN10_0_18362" },
-    { WIN_VERSION::WIN10_0_19534, "WIN10_0_19534" },
-    { WIN_VERSION::WIN10_0_MSVC_2019, "WIN10_0_MSVC_2019" },
-    { WIN_VERSION::WIN10_0_MSVC_2019_16, "WIN10_0_MSVC_2019_16" },
-  };
-  const auto it = enumStrings.find(e);
-  return it == enumStrings.end() ? "Out of range" : it->second;
-}
-
-
-const char* to_string(GUARD_CF_FLAGS e) {
-  CONST_MAP(GUARD_CF_FLAGS, const char*, 10) enumStrings {
-    { GUARD_CF_FLAGS::GCF_NONE,                             "GCF_NONE"                            },
-    { GUARD_CF_FLAGS::GCF_INSTRUMENTED,                     "GCF_INSTRUMENTED"                    },
-    { GUARD_CF_FLAGS::GCF_W_INSTRUMENTED,                   "GCF_W_INSTRUMENTED"                  },
-    { GUARD_CF_FLAGS::GCF_FUNCTION_TABLE_PRESENT,           "GCF_FUNCTION_TABLE_PRESENT"          },
-    { GUARD_CF_FLAGS::GCF_EXPORT_SUPPRESSION_INFO_PRESENT,  "GCF_EXPORT_SUPPRESSION_INFO_PRESENT" },
-    { GUARD_CF_FLAGS::GCF_ENABLE_EXPORT_SUPPRESSION,        "GCF_ENABLE_EXPORT_SUPPRESSION"       },
-    { GUARD_CF_FLAGS::GCF_LONGJUMP_TABLE_PRESENT,           "GCF_LONGJUMP_TABLE_PRESENT"          },
-    { GUARD_CF_FLAGS::GRF_INSTRUMENTED,                     "GRF_INSTRUMENTED"                    },
-    { GUARD_CF_FLAGS::GRF_ENABLE,                           "GRF_ENABLE"                          },
-    { GUARD_CF_FLAGS::GRF_STRICT,                           "GRF_STRICT"                          },
-  };
-  const auto it = enumStrings.find(e);
-  return it == enumStrings.end() ? "Out of range" : it->second;
-}
-
 const char* to_string(ACCELERATOR_FLAGS e) {
   CONST_MAP(ACCELERATOR_FLAGS, const char*, 6) enumStrings {
     { ACCELERATOR_FLAGS::FVIRTKEY,  "FVIRTKEY"  },

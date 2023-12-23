@@ -13,60 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
+#include <spdlog/fmt/fmt.h>
+#include "LIEF/PE/LoadConfigurations/LoadConfigurationV0.hpp"
+#include "LIEF/Visitor.hpp"
 
-#include "LIEF/PE/hash.hpp"
-
-
-#include "LIEF/PE/LoadConfigurations.hpp"
+#include "PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
 
-LoadConfigurationV0& LoadConfigurationV0::operator=(const LoadConfigurationV0&) = default;
-LoadConfigurationV0::LoadConfigurationV0(const LoadConfigurationV0&) = default;
-LoadConfigurationV0::~LoadConfigurationV0() = default;
-
-LoadConfigurationV0::LoadConfigurationV0() :
-  se_handler_table_{0},
-  se_handler_count_{0}
+template<class T>
+LoadConfigurationV0::LoadConfigurationV0(const details::load_configuration_v0<T>& header) :
+  LoadConfiguration{reinterpret_cast<const details::load_configuration<T>&>(header)},
+  se_handler_table_{header.SEHandlerTable},
+  se_handler_count_{header.SEHandlerCount}
 {}
-
-
-WIN_VERSION LoadConfigurationV0::version() const {
-  return LoadConfigurationV0::VERSION;
-}
-
-uint64_t LoadConfigurationV0::se_handler_table() const {
-  return se_handler_table_;
-}
-
-uint64_t LoadConfigurationV0::se_handler_count() const {
-  return se_handler_count_;
-}
-
-void LoadConfigurationV0::se_handler_table(uint64_t se_handler_table) {
-  se_handler_table_ = se_handler_table;
-}
-
-void LoadConfigurationV0::se_handler_count(uint64_t se_handler_count) {
-  se_handler_count_ = se_handler_count;
-}
 
 void LoadConfigurationV0::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
 std::ostream& LoadConfigurationV0::print(std::ostream& os) const {
   LoadConfiguration::print(os);
-
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "SE handler table:" << std::hex << se_handler_table() << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "SE handler count:" << std::dec << se_handler_count() << std::endl;
+  os << "LoadConfigurationV0:\n"
+     << fmt::format("  SE handler table 0x{:06x}\n", se_handler_table())
+     << fmt::format("  SE handler count {}\n", se_handler_count());
   return os;
 }
 
+template
+LoadConfigurationV0::LoadConfigurationV0(const details::load_configuration_v0<uint32_t>& header);
+template
+LoadConfigurationV0::LoadConfigurationV0(const details::load_configuration_v0<uint64_t>& header);
 
 } // namespace PE
 } // namespace LIEF

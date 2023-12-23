@@ -36,7 +36,6 @@ enum class FIXED_VERSION_FILE_FLAGS : size_t;
 enum class FIXED_VERSION_FILE_SUB_TYPES : size_t;
 enum class FIXED_VERSION_FILE_TYPES : size_t;
 enum class FIXED_VERSION_OS : size_t;
-enum class GUARD_CF_FLAGS : size_t;
 enum class PE_SECTION_TYPES : uint8_t;
 enum class PE_TYPE : uint16_t;
 enum class RELOCATIONS_AMD64 : size_t;
@@ -50,7 +49,6 @@ enum class SUBSYSTEM : size_t;
 enum class SYMBOL_BASE_TYPES : size_t;
 enum class SYMBOL_COMPLEX_TYPES : size_t;
 enum class WINDOW_STYLES : size_t;
-enum class WIN_VERSION : size_t;
 
 LIEF_API const char* to_string(PE_TYPE e);
 
@@ -79,10 +77,6 @@ LIEF_API const char* to_string(FIXED_VERSION_OS e);
 LIEF_API const char* to_string(FIXED_VERSION_FILE_FLAGS e);
 LIEF_API const char* to_string(FIXED_VERSION_FILE_TYPES e);
 LIEF_API const char* to_string(FIXED_VERSION_FILE_SUB_TYPES e);
-
-LIEF_API const char* to_string(WIN_VERSION e);
-
-LIEF_API const char* to_string(GUARD_CF_FLAGS e);
 
 LIEF_API const char* to_string(ACCELERATOR_FLAGS e);
 LIEF_API const char* to_string(ACCELERATOR_VK_CODES e);

@@ -31,43 +31,51 @@ struct load_configuration_v0;
 //! LoadConfiguration enhanced with SEH
 class LIEF_API LoadConfigurationV0 : public LoadConfiguration {
   public:
-  static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN_SEH;
+  static constexpr VERSION WIN_VERSION = VERSION::SEH;
 
-  LoadConfigurationV0();
+  LoadConfigurationV0() = default;
 
-  LoadConfigurationV0& operator=(const LoadConfigurationV0&);
-  LoadConfigurationV0(const LoadConfigurationV0&);
+  LoadConfigurationV0& operator=(const LoadConfigurationV0&) = default;
+  LoadConfigurationV0(const LoadConfigurationV0&) = default;
 
   template<class T>
   LIEF_LOCAL LoadConfigurationV0(const details::load_configuration_v0<T>& header);
 
-  WIN_VERSION version() const override;
+  VERSION version() const override {
+    return WIN_VERSION;
+  }
 
   //! The VA of the sorted table of RVAs of each valid, unique
   //! SE handler in the image.
-  uint64_t se_handler_table() const;
+  uint64_t se_handler_table() const {
+    return se_handler_table_;
+  }
 
   //! The count of unique handlers in the table.
-  uint64_t se_handler_count() const;
+  uint64_t se_handler_count() const {
+    return se_handler_count_;
+  }
 
-  void se_handler_table(uint64_t se_handler_table);
-  void se_handler_count(uint64_t se_handler_count);
+  void se_handler_table(uint64_t se_handler_table) {
+    se_handler_table_ = se_handler_table;
+  }
+  void se_handler_count(uint64_t se_handler_count) {
+    se_handler_count_ = se_handler_count;
+  }
 
-  ~LoadConfigurationV0() override;
-
+  ~LoadConfigurationV0() override = default;
 
   static bool classof(const LoadConfiguration* config) {
-    return config->version() == VERSION;
+    return config->version() == WIN_VERSION;
   }
 
   void accept(Visitor& visitor) const override;
 
-
   std::ostream& print(std::ostream& os) const override;
 
   protected:
-  uint64_t se_handler_table_;
-  uint64_t se_handler_count_;
+  uint64_t se_handler_table_ = 0;
+  uint64_t se_handler_count_ = 0;
 };
 }
 }

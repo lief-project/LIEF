@@ -37,7 +37,7 @@ class LIEF_API Header : public Object {
   public:
   using signature_t = std::array<uint8_t, /* PE Magic */ 4>;
 
-  enum class MACHINE_TYPES : size_t  {
+  enum class MACHINE_TYPES {
     UNKNOWN   = 0x0,
     AM33      = 0x1D3,  /**< Matsushita AM33                */
     AMD64     = 0x8664, /**< AMD x64                        */
@@ -65,7 +65,7 @@ class LIEF_API Header : public Object {
     WCEMIPSV2 = 0x169   /**< MIPS little-endian WCE v2      */
   };
 
-  enum class CHARACTERISTICS : size_t  {
+  enum class CHARACTERISTICS {
     NONE                    = 0x0000,
     RELOCS_STRIPPED         = 0x0001, /**< The file does not contain base relocations and must be loaded at its preferred base. If this cannot be done, the loader will error.*/
     EXECUTABLE_IMAGE        = 0x0002, /**< The file is valid and can be run.*/

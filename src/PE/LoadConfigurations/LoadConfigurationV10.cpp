@@ -13,41 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-
-#include "LIEF/PE/hash.hpp"
-
+#include <spdlog/fmt/fmt.h>
+#include "LIEF/Visitor.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfigurationV10.hpp"
+
+#include "PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
 
-LoadConfigurationV10& LoadConfigurationV10::operator=(const LoadConfigurationV10&) = default;
-LoadConfigurationV10::LoadConfigurationV10(const LoadConfigurationV10&) = default;
-LoadConfigurationV10::~LoadConfigurationV10() = default;
-
-LoadConfigurationV10::LoadConfigurationV10() = default;
+template<class T>
+LoadConfigurationV10::LoadConfigurationV10(const details::load_configuration_v10<T>& header) :
+  LoadConfigurationV9{static_cast<const details::load_configuration_v9<T>&>(header)},
+  guard_xfg_check_function_pointer_{header.GuardXFGCheckFunctionPointer},
+  guard_xfg_dispatch_function_pointer_{header.GuardXFGDispatchFunctionPointer},
+  guard_xfg_table_dispatch_function_pointer_{header.GuardXFGTableDispatchFunctionPointer}
+{
+}
 
 void LoadConfigurationV10::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
 std::ostream& LoadConfigurationV10::print(std::ostream& os) const {
   LoadConfigurationV9::print(os);
 
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') <<
-        "Guard XFG Check Function Pointer:" <<
-        std::hex << guard_xfg_check_function_pointer() << '\n'
-     << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') <<
-        "Guard XFG Dispatch Function Pointer:" <<
-        std::hex << guard_xfg_dispatch_function_pointer() << '\n'
-     << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') <<
-        "Guard XFG Table Dispatch Function Pointer:" <<
-        std::hex << guard_xfg_table_dispatch_function_pointer() << '\n';
+  os << "LoadConfigurationV10:\n"
+     << fmt::format("  Guard XFG Check Function Pointer:          0x{:08x}\n", guard_xfg_check_function_pointer())
+     << fmt::format("  Guard XFG Dispatch Function Pointer:       {}\n", guard_xfg_dispatch_function_pointer())
+     << fmt::format("  Guard XFG Table Dispatch Function Pointer: {}\n", guard_xfg_table_dispatch_function_pointer());
   return os;
 }
+
+template
+LoadConfigurationV10::LoadConfigurationV10(const details::load_configuration_v10<uint32_t>& header);
+template
+LoadConfigurationV10::LoadConfigurationV10(const details::load_configuration_v10<uint64_t>& header);
 
 
 } // namespace PE

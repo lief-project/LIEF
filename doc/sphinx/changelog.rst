@@ -53,6 +53,8 @@ Changelog
     (instead of `lief.MachO.Binary.name`)
 
 :PE:
+  * ``GUARD_CF_FLAGS`` is now scoped as :class:`~lief.PE.LoadConfigurationV1.IMAGE_GUARD` in
+    :class:`lief.PE.LoadConfigurationV1`
   * ``SECTION_CHARACTERISTICS`` is now scoped within the
     :class:`~lief.PE.Section` class instead of being globally defined:
 

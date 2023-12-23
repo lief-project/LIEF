@@ -13,60 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
+#include <spdlog/fmt/fmt.h>
+#include "LIEF/PE/LoadConfigurations/LoadConfigurationV4.hpp"
+#include "LIEF/Visitor.hpp"
 
-#include "LIEF/PE/hash.hpp"
-
-
-#include "LIEF/PE/LoadConfigurations.hpp"
+#include "PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
 
-LoadConfigurationV4& LoadConfigurationV4::operator=(const LoadConfigurationV4&) = default;
-LoadConfigurationV4::LoadConfigurationV4(const LoadConfigurationV4&) = default;
-LoadConfigurationV4::~LoadConfigurationV4() = default;
-
-LoadConfigurationV4::LoadConfigurationV4() :
-  dynamic_value_reloc_table_{0},
-  hybrid_metadata_pointer_{0}
-{}
-
-WIN_VERSION LoadConfigurationV4::version() const {
-  return LoadConfigurationV4::VERSION;
-}
-
-uint64_t LoadConfigurationV4::dynamic_value_reloc_table() const {
-  return dynamic_value_reloc_table_;
-}
-
-uint64_t LoadConfigurationV4::hybrid_metadata_pointer() const {
-  return hybrid_metadata_pointer_;
-}
-
-void LoadConfigurationV4::dynamic_value_reloc_table(uint64_t value) {
-  dynamic_value_reloc_table_ = value;
-}
-
-void LoadConfigurationV4::hybrid_metadata_pointer(uint64_t value) {
-  hybrid_metadata_pointer_ = value;
+template<class T>
+LoadConfigurationV4::LoadConfigurationV4(const details::load_configuration_v4<T>& header) :
+  LoadConfigurationV3{reinterpret_cast<const details::load_configuration_v3<T>&>(header)},
+  dynamic_value_reloc_table_{header.DynamicValueRelocTable},
+  hybrid_metadata_pointer_{header.HybridMetadataPointer}
+{
 }
 
 void LoadConfigurationV4::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
 std::ostream& LoadConfigurationV4::print(std::ostream& os) const {
   LoadConfigurationV3::print(os);
 
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Dynamic value relocation table:" << std::hex << dynamic_value_reloc_table() << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Hybrid metadata pointer:"        << std::hex << hybrid_metadata_pointer()   << std::endl;
+  os << "LoadConfigurationV4:\n"
+     << fmt::format("  Dynamic value relocation table 0x{:08x}\n", dynamic_value_reloc_table())
+     << fmt::format("  Hybrid metadata pointer        0x{:08x}\n", hybrid_metadata_pointer());
   return os;
 }
 
-
+template
+LoadConfigurationV4::LoadConfigurationV4(const details::load_configuration_v4<uint32_t>& header);
+template
+LoadConfigurationV4::LoadConfigurationV4(const details::load_configuration_v4<uint64_t>& header);
 
 } // namespace PE
 } // namespace LIEF

@@ -13,37 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-
-#include "LIEF/PE/hash.hpp"
-
+#include <spdlog/fmt/fmt.h>
 #include "LIEF/PE/LoadConfigurations/LoadConfigurationV9.hpp"
+#include "LIEF/Visitor.hpp"
+
+#include "PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
 
-LoadConfigurationV9& LoadConfigurationV9::operator=(const LoadConfigurationV9&) = default;
-LoadConfigurationV9::LoadConfigurationV9(const LoadConfigurationV9&) = default;
-LoadConfigurationV9::~LoadConfigurationV9() = default;
+template<class T>
+LoadConfigurationV9::LoadConfigurationV9(const details::load_configuration_v9<T>& header) :
+  LoadConfigurationV8{static_cast<const details::load_configuration_v8<T>&>(header)},
+  guard_eh_continuation_table_{header.GuardEHContinuationTable},
+  guard_eh_continuation_count_{header.GuardEHContinuationCount}
+{}
 
-LoadConfigurationV9::LoadConfigurationV9() = default;
 
 void LoadConfigurationV9::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
 std::ostream& LoadConfigurationV9::print(std::ostream& os) const {
   LoadConfigurationV8::print(os);
 
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') <<
-        "GuardEH Continuation Table:" << std::hex << guard_eh_continuation_table() << '\n'
-     << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') <<
-        "GuardEH Continuation Count:" << std::dec << guard_eh_continuation_count() << '\n';
+  os << "LoadConfigurationV9:\n"
+     << fmt::format("  GuardEH Continuation Table: 0x{:08x}\n", guard_eh_continuation_table())
+     << fmt::format("  GuardEH Continuation Count: {}\n", guard_eh_continuation_count());
   return os;
 }
 
+template
+LoadConfigurationV9::LoadConfigurationV9(const details::load_configuration_v9<uint32_t>& header);
+template
+LoadConfigurationV9::LoadConfigurationV9(const details::load_configuration_v9<uint64_t>& header);
 
 } // namespace PE
 } // namespace LIEF

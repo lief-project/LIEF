@@ -628,20 +628,6 @@ FIXED_VERSION_FILE_SUB_TYPES
 
 ----------
 
-WIN_VERSION
-~~~~~~~~~~~
-
-.. autoclass:: lief.PE.WIN_VERSION
-
-----------
-
-GUARD_CF_FLAGS
-~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.GUARD_CF_FLAGS
-
-----------
-
 ALGORITHMS
 ~~~~~~~~~~
 

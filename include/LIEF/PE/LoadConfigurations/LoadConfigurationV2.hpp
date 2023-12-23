@@ -19,7 +19,6 @@
 
 #include "LIEF/visibility.h"
 
-#include "LIEF/PE/enums.hpp"
 #include "LIEF/PE/CodeIntegrity.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfigurationV1.hpp"
 
@@ -34,29 +33,36 @@ struct load_configuration_v2;
 //! @brief LoadConfiguration enhanced with code integrity
 class LIEF_API LoadConfigurationV2 : public LoadConfigurationV1 {
   public:
-  static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN10_0_9879;
-  LoadConfigurationV2();
+  static constexpr VERSION WIN_VERSION = VERSION::WIN_10_0_9879;
 
-  LoadConfigurationV2& operator=(const LoadConfigurationV2&);
-  LoadConfigurationV2(const LoadConfigurationV2&);
+  LoadConfigurationV2() = default;
+
+  LoadConfigurationV2& operator=(const LoadConfigurationV2&) = default;
+  LoadConfigurationV2(const LoadConfigurationV2&) = default;
 
   template<class T>
   LIEF_LOCAL LoadConfigurationV2(const details::load_configuration_v2<T>& header);
 
-  WIN_VERSION version() const override;
-
-  //! @brief CodeIntegrity associated with
-  const CodeIntegrity& code_integrity() const;
-  CodeIntegrity& code_integrity();
-
-  static bool classof(const LoadConfiguration* config) {
-    return config->version() == VERSION;
+  VERSION version() const override {
+    return WIN_VERSION;
   }
 
-  ~LoadConfigurationV2() override;
+  //! @brief CodeIntegrity associated with
+  const CodeIntegrity& code_integrity() const {
+    return code_integrity_;
+  }
+
+  CodeIntegrity& code_integrity() {
+    return code_integrity_;
+  }
+
+  static bool classof(const LoadConfiguration* config) {
+    return config->version() == WIN_VERSION;
+  }
+
+  ~LoadConfigurationV2() override = default;
 
   void accept(Visitor& visitor) const override;
-
 
   std::ostream& print(std::ostream& os) const override;
 

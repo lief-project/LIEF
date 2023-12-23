@@ -13,243 +13,104 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-
+#include <spdlog/fmt/fmt.h>
 #include "LIEF/PE/hash.hpp"
 
-
-#include "LIEF/PE/LoadConfigurations.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "PE/Structures.hpp"
+#include "fmt_formatter.hpp"
+
+#include "frozen.hpp"
+
+FMT_FORMATTER(LIEF::PE::LoadConfiguration::VERSION, LIEF::PE::to_string);
 
 namespace LIEF {
 namespace PE {
 
-LoadConfiguration& LoadConfiguration::operator=(const LoadConfiguration&) = default;
-LoadConfiguration::LoadConfiguration(const LoadConfiguration&)            = default;
-LoadConfiguration::~LoadConfiguration()                               = default;
-
-LoadConfiguration::LoadConfiguration() :
-  characteristics_{0},
-  timedatestamp_{0},
-  major_version_{0},
-  minor_version_{0},
-  global_flags_clear_{0},
-  global_flags_set_{0},
-  critical_section_default_timeout_{0},
-  decommit_free_block_threshold_{0},
-  decommit_total_free_threshold_{0},
-  lock_prefix_table_{0},
-  maximum_allocation_size_{0},
-  virtual_memory_threshold_{0},
-  process_affinity_mask_{0},
-  process_heap_flags_{0},
-  csd_version_{0},
-  reserved1_{0},
-  editlist_{0},
-  security_cookie_{0}
+template<class T>
+LoadConfiguration::LoadConfiguration(const details::load_configuration<T>& header) :
+  characteristics_{header.Characteristics},
+  timedatestamp_{header.TimeDateStamp},
+  major_version_{header.MajorVersion},
+  minor_version_{header.MinorVersion},
+  global_flags_clear_{header.GlobalFlagsClear},
+  global_flags_set_{header.GlobalFlagsSet},
+  critical_section_default_timeout_{header.CriticalSectionDefaultTimeout},
+  decommit_free_block_threshold_{header.DeCommitFreeBlockThreshold},
+  decommit_total_free_threshold_{header.DeCommitTotalFreeThreshold},
+  lock_prefix_table_{header.LockPrefixTable},
+  maximum_allocation_size_{header.MaximumAllocationSize},
+  virtual_memory_threshold_{header.VirtualMemoryThreshold},
+  process_affinity_mask_{header.ProcessAffinityMask},
+  process_heap_flags_{header.ProcessHeapFlags},
+  csd_version_{header.CSDVersion},
+  reserved1_{header.Reserved1},
+  editlist_{header.EditList},
+  security_cookie_{header.SecurityCookie}
 {}
-
-WIN_VERSION LoadConfiguration::version() const {
-  return LoadConfiguration::VERSION;
-}
-
-uint32_t LoadConfiguration::characteristics() const {
-  return characteristics_;
-}
-
-uint32_t LoadConfiguration::size() const {
-  return characteristics_;
-}
-
-uint32_t LoadConfiguration::timedatestamp() const {
-  return timedatestamp_;
-}
-
-uint16_t LoadConfiguration::major_version() const {
-  return major_version_;
-}
-
-uint16_t LoadConfiguration::minor_version() const {
-  return minor_version_;
-}
-
-uint32_t LoadConfiguration::global_flags_clear() const {
-  return global_flags_clear_;
-}
-
-uint32_t LoadConfiguration::global_flags_set() const {
-  return global_flags_set_;
-}
-
-uint32_t LoadConfiguration::critical_section_default_timeout() const {
-  return critical_section_default_timeout_;
-}
-
-uint64_t LoadConfiguration::decommit_free_block_threshold() const {
-  return decommit_free_block_threshold_;
-}
-
-uint64_t LoadConfiguration::decommit_total_free_threshold() const {
-  return decommit_total_free_threshold_;
-}
-
-uint64_t LoadConfiguration::lock_prefix_table() const {
-  return lock_prefix_table_;
-}
-
-uint64_t LoadConfiguration::maximum_allocation_size() const {
-  return maximum_allocation_size_;
-}
-
-uint64_t LoadConfiguration::virtual_memory_threshold() const {
-  return virtual_memory_threshold_;
-}
-
-uint64_t LoadConfiguration::process_affinity_mask() const {
-  return process_affinity_mask_;
-}
-
-uint32_t LoadConfiguration::process_heap_flags() const {
-  return process_heap_flags_;
-}
-
-uint16_t LoadConfiguration::csd_version() const {
-  return csd_version_;
-}
-
-uint16_t LoadConfiguration::reserved1() const {
-  return reserved1_;
-}
-
-uint16_t LoadConfiguration::dependent_load_flags() const {
-  return reserved1_;
-}
-
-uint32_t LoadConfiguration::editlist() const {
-  return editlist_;
-}
-
-uint32_t LoadConfiguration::security_cookie() const {
-  return security_cookie_;
-}
-
-
-
-void LoadConfiguration::characteristics(uint32_t characteristics) {
-  characteristics_ = characteristics;
-}
-
-void LoadConfiguration::timedatestamp(uint32_t timedatestamp) {
-  timedatestamp_ = timedatestamp;
-}
-
-void LoadConfiguration::major_version(uint16_t major_version) {
-  major_version_ = major_version;
-}
-
-void LoadConfiguration::minor_version(uint16_t minor_version) {
-  minor_version_ = minor_version;
-}
-
-void LoadConfiguration::global_flags_clear(uint32_t global_flags_clear) {
-  global_flags_clear_ = global_flags_clear;
-}
-
-void LoadConfiguration::global_flags_set(uint32_t global_flags_set) {
-  global_flags_set_ = global_flags_set;
-}
-
-void LoadConfiguration::critical_section_default_timeout(uint32_t critical_section_default_timeout) {
-  critical_section_default_timeout_ = critical_section_default_timeout;
-}
-
-void LoadConfiguration::decommit_free_block_threshold(uint64_t decommit_free_block_threshold) {
-  decommit_free_block_threshold_ = decommit_free_block_threshold;
-}
-
-void LoadConfiguration::decommit_total_free_threshold(uint64_t decommit_total_free_threshold) {
-  decommit_total_free_threshold_ = decommit_total_free_threshold;
-}
-
-void LoadConfiguration::lock_prefix_table(uint64_t lock_prefix_table) {
-  lock_prefix_table_ = lock_prefix_table;
-}
-
-void LoadConfiguration::maximum_allocation_size(uint64_t maximum_allocation_size) {
-  maximum_allocation_size_ = maximum_allocation_size;
-}
-
-void LoadConfiguration::virtual_memory_threshold(uint64_t virtual_memory_threshold) {
-  virtual_memory_threshold_ = virtual_memory_threshold;
-}
-
-void LoadConfiguration::process_affinity_mask(uint64_t process_affinity_mask) {
-  process_affinity_mask_ = process_affinity_mask;
-}
-
-void LoadConfiguration::process_heap_flags(uint32_t process_heap_flagsid) {
-  process_heap_flags_ = process_heap_flagsid;
-}
-
-void LoadConfiguration::csd_version(uint16_t csd_version) {
-  csd_version_ = csd_version;
-}
-
-void LoadConfiguration::reserved1(uint16_t reserved1) {
-  reserved1_ = reserved1;
-}
-
-void LoadConfiguration::dependent_load_flags(uint16_t flags) {
-  reserved1_ = flags;
-}
-
-void LoadConfiguration::editlist(uint32_t editlist) {
-  editlist_ = editlist;
-}
-
-void LoadConfiguration::security_cookie(uint32_t security_cookie) {
-  security_cookie_ = security_cookie;
-}
 
 void LoadConfiguration::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
 std::ostream& LoadConfiguration::print(std::ostream& os) const {
-  os << std::hex << std::left << std::showbase;
-
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Version:"                          << std::hex << to_string(version()) << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Characteristics:"                  << std::hex << characteristics()    << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Timedatestamp:"                    << std::dec << timedatestamp()      << std::endl;
-
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Major version:"                    << std::dec << major_version() << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Minor version:"                    << std::dec << minor_version() << std::endl;
-
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Global flags clear:"               << std::hex << global_flags_clear() << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Global flags set:"                 << std::hex << global_flags_set()   << std::endl;
-
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Critical section default timeout:" << std::dec << critical_section_default_timeout() << std::endl;
-
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Decommit free block threshold:"    << std::hex << decommit_free_block_threshold() << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Decommit total free threshold:"    << std::hex << decommit_total_free_threshold() << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Lock prefix table:"                << std::hex << lock_prefix_table()             << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Maximum allocation size:"          << std::hex << maximum_allocation_size()       << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Virtual memory threshold:"         << std::hex << virtual_memory_threshold()      << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Process affinity mask:"            << std::hex << process_affinity_mask()         << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Process heap flags:"               << std::hex << process_heap_flags()            << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "CSD Version:"                      << std::hex << csd_version()                   << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Reserved 1:"                       << std::hex << reserved1()                     << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Edit list:"                        << std::hex << editlist()                      << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Security cookie:"                  << std::hex << security_cookie()               << std::endl;
+  os << "LoadConfiguration:\n"
+     << fmt::format("  Version                          {}\n", version())
+     << fmt::format("  Characteristics                  0x{:04x}\n", characteristics())
+     << fmt::format("  Timedatestamp                    {}\n", timedatestamp())
+     << fmt::format("  Major version                    {}\n", major_version())
+     << fmt::format("  Minor version                    {}\n", minor_version())
+     << fmt::format("  Global flags clear               0x{:04x}\n", global_flags_clear())
+     << fmt::format("  Global flags set                 0x{:04x}\n", global_flags_set())
+     << fmt::format("  Critical section default timeout {}\n", critical_section_default_timeout())
+     << fmt::format("  Decommit free block threshold    0x{:04x}\n", decommit_free_block_threshold())
+     << fmt::format("  Decommit total free threshold    0x{:04x}\n", decommit_total_free_threshold())
+     << fmt::format("  Lock prefix table                0x{:04x}\n", lock_prefix_table())
+     << fmt::format("  Maximum allocation size          0x{:04x}\n", maximum_allocation_size())
+     << fmt::format("  Virtual memory threshold         0x{:04x}\n", virtual_memory_threshold())
+     << fmt::format("  Process affinity mask            0x{:04x}\n", process_affinity_mask())
+     << fmt::format("  Process heap flags               0x{:04x}\n", process_heap_flags())
+     << fmt::format("  CSD Version                      0x{:04x}\n", csd_version())
+     << fmt::format("  Reserved 1                       0x{:04x}\n", reserved1())
+     << fmt::format("  Edit list                        0x{:04x}\n", editlist())
+     << fmt::format("  Security cookie                  0x{:04x}\n", security_cookie())
+  ;
   return os;
 }
 
 std::ostream& operator<<(std::ostream& os, const LoadConfiguration& config) {
   return config.print(os);
 }
+
+const char* to_string(LoadConfiguration::VERSION e) {
+  #define ENTRY(X) std::pair(LoadConfiguration::VERSION::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(UNKNOWN),
+    ENTRY(SEH),
+    ENTRY(WIN_8_1),
+    ENTRY(WIN_10_0_9879),
+    ENTRY(WIN_10_0_14286),
+    ENTRY(WIN_10_0_14383),
+    ENTRY(WIN_10_0_14901),
+    ENTRY(WIN_10_0_15002),
+    ENTRY(WIN_10_0_16237),
+    ENTRY(WIN_10_0_18362),
+    ENTRY(WIN_10_0_19534),
+    ENTRY(WIN_10_0_MSVC_2019),
+    ENTRY(WIN_10_0_MSVC_2019_16),
+  };
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
+  }
+
+  return "UNKNOWN";
+}
+
+template
+LoadConfiguration::LoadConfiguration(const details::load_configuration<uint32_t>& header);
+template
+LoadConfiguration::LoadConfiguration(const details::load_configuration<uint64_t>& header);
 
 
 } // namespace PE

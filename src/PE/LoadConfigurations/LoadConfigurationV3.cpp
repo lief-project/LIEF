@@ -13,80 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
+#include <spdlog/fmt/fmt.h>
+#include <ostream>
 
-#include "LIEF/PE/hash.hpp"
-
-
-#include "LIEF/PE/LoadConfigurations.hpp"
+#include "LIEF/Visitor.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfigurationV3.hpp"
+#include "PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
 
-LoadConfigurationV3& LoadConfigurationV3::operator=(const LoadConfigurationV3&) = default;
-LoadConfigurationV3::LoadConfigurationV3(const LoadConfigurationV3&) = default;
-LoadConfigurationV3::~LoadConfigurationV3() = default;
-
-LoadConfigurationV3::LoadConfigurationV3() :
-  guard_address_taken_iat_entry_table_{0},
-  guard_address_taken_iat_entry_count_{0},
-  guard_long_jump_target_table_{0},
-  guard_long_jump_target_count_{0}
-{}
-
-WIN_VERSION LoadConfigurationV3::version() const {
-  return LoadConfigurationV3::VERSION;
+template<class T>
+LoadConfigurationV3::LoadConfigurationV3(const details::load_configuration_v3<T>& header) :
+  LoadConfigurationV2{reinterpret_cast<const details::load_configuration_v2<T>&>(header)},
+  guard_address_taken_iat_entry_table_{header.GuardAddressTakenIatEntryTable},
+  guard_address_taken_iat_entry_count_{header.GuardAddressTakenIatEntryCount},
+  guard_long_jump_target_table_{header.GuardLongJumpTargetTable},
+  guard_long_jump_target_count_{header.GuardLongJumpTargetCount}
+{
 }
-
-uint64_t LoadConfigurationV3::guard_address_taken_iat_entry_table() const {
-  return guard_address_taken_iat_entry_table_;
-}
-
-uint64_t LoadConfigurationV3::guard_address_taken_iat_entry_count() const {
-  return guard_address_taken_iat_entry_count_;
-}
-
-uint64_t LoadConfigurationV3::guard_long_jump_target_table() const {
-  return guard_long_jump_target_table_;
-}
-
-uint64_t LoadConfigurationV3::guard_long_jump_target_count() const {
-  return guard_long_jump_target_count_;
-}
-
-void LoadConfigurationV3::guard_address_taken_iat_entry_table(uint64_t value) {
-  guard_address_taken_iat_entry_table_ = value;
-}
-
-void LoadConfigurationV3::guard_address_taken_iat_entry_count(uint64_t value) {
-  guard_address_taken_iat_entry_count_ = value;
-}
-
-void LoadConfigurationV3::guard_long_jump_target_table(uint64_t value) {
-  guard_long_jump_target_table_ = value;
-}
-
-void LoadConfigurationV3::guard_long_jump_target_count(uint64_t value) {
-  guard_long_jump_target_count_ = value;
-}
-
 
 void LoadConfigurationV3::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
 std::ostream& LoadConfigurationV3::print(std::ostream& os) const {
   LoadConfigurationV2::print(os);
-
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Guard address taken iat entry table:" << std::hex << guard_address_taken_iat_entry_table() << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Guard address taken iat entry count:" << std::dec << guard_address_taken_iat_entry_count() << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Guard long jump target table:"        << std::hex << guard_long_jump_target_table()        << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Guard long jump target count:"        << std::dec << guard_long_jump_target_count()        << std::endl;
+  os << "LoadConfigurationV3:\n"
+     << fmt::format("  Guard address taken iat entry table  0x{:08x}\n", guard_address_taken_iat_entry_table())
+     << fmt::format("  Guard address taken iat entry count  {}\n", guard_address_taken_iat_entry_count())
+     << fmt::format("  Guard long jump target table         0x{:08x}\n", guard_long_jump_target_table())
+     << fmt::format("  Guard long jump target count         {}\n", guard_long_jump_target_count());
   return os;
 }
 
+template
+LoadConfigurationV3::LoadConfigurationV3(const details::load_configuration_v3<uint32_t>& header);
+template
+LoadConfigurationV3::LoadConfigurationV3(const details::load_configuration_v3<uint64_t>& header);
 
 } // namespace PE
 } // namespace LIEF

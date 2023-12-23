@@ -13,58 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
+#include <spdlog/fmt/fmt.h>
+#include "LIEF/PE/LoadConfigurations/LoadConfigurationV7.hpp"
+#include "LIEF/Visitor.hpp"
 
-#include "LIEF/PE/hash.hpp"
-
-
-#include "LIEF/PE/LoadConfigurations.hpp"
+#include "PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
 
-LoadConfigurationV7& LoadConfigurationV7::operator=(const LoadConfigurationV7&) = default;
-LoadConfigurationV7::LoadConfigurationV7(const LoadConfigurationV7&) = default;
-LoadConfigurationV7::~LoadConfigurationV7() = default;
-
-LoadConfigurationV7::LoadConfigurationV7() :
-  reserved3_{0},
-  addressof_unicode_string_{0}
-{}
-
-WIN_VERSION LoadConfigurationV7::version() const {
-  return LoadConfigurationV7::VERSION;
-}
-
-uint32_t LoadConfigurationV7::reserved3() const {
-  return reserved3_;
-}
-
-uint64_t LoadConfigurationV7::addressof_unicode_string() const {
-  return addressof_unicode_string_;
-}
-
-void LoadConfigurationV7::reserved3(uint32_t value) {
-  reserved3_ = value;
-}
-
-void LoadConfigurationV7::addressof_unicode_string(uint64_t value) {
-  addressof_unicode_string_ = value;
+template<class T>
+LoadConfigurationV7::LoadConfigurationV7(const details::load_configuration_v7<T>& header) :
+  LoadConfigurationV6{reinterpret_cast<const details::load_configuration_v6<T>&>(header)},
+  reserved3_{header.Reserved3},
+  addressof_unicode_string_{header.AddressOfSomeUnicodeString}
+{
 }
 
 void LoadConfigurationV7::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
 std::ostream& LoadConfigurationV7::print(std::ostream& os) const {
   LoadConfigurationV6::print(os);
-
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Reserved 3:" << std::hex << reserved3() << std::endl;
+  os << "LoadConfigurationV7:\n"
+     << fmt::format("  Reserved 3                0x{:08x}\n", reserved3())
+     << fmt::format("  Addressof Unicode String  0x{:08x}\n", addressof_unicode_string());
   return os;
 }
 
+template
+LoadConfigurationV7::LoadConfigurationV7(const details::load_configuration_v7<uint32_t>& header);
+template
+LoadConfigurationV7::LoadConfigurationV7(const details::load_configuration_v7<uint64_t>& header);
 
 } // namespace PE
 } // namespace LIEF

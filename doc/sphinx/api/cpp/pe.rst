@@ -684,11 +684,5 @@ Enums
 .. doxygenenum:: LIEF::PE::FIXED_VERSION_FILE_SUB_TYPES
    :project: lief
 
-.. doxygenenum:: LIEF::PE::WIN_VERSION
-   :project: lief
-
-.. doxygenenum:: LIEF::PE::GUARD_CF_FLAGS
-   :project: lief
-
 .. doxygenenum:: LIEF::PE::ALGORITHMS
    :project: lief

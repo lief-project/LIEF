@@ -15,23 +15,47 @@
  * limitations under the License.
  */
 #include "PE/pyPE.hpp"
+#include "enums_wrapper.hpp"
 
 #include "LIEF/PE/LoadConfigurations.hpp"
 
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
-#include <nanobind/stl/set.h>
+#include <nanobind/stl/vector.h>
 
 namespace LIEF::PE::py {
 
 template<>
 void create<LoadConfigurationV1>(nb::module_& m) {
-  nb::class_<LoadConfigurationV1, LoadConfigurationV0>(m, "LoadConfigurationV1",
+  nb::class_<LoadConfigurationV1, LoadConfigurationV0> Config(m, "LoadConfigurationV1",
       R"delim(
       :class:`~lief.PE.LoadConfigurationV0` enhanced with *Control Flow Guard*.
       It is associated with the :class:`~lief.PE.WIN_VERSION` set to :attr:`~lief.PE.WIN_VERSION.WIN_8_1`
-      )delim"_doc)
+      )delim"_doc);
+
+
+  #define ENTRY(X) .value(to_string(LoadConfigurationV1::IMAGE_GUARD::X), LoadConfigurationV1::IMAGE_GUARD::X)
+  enum_<LoadConfigurationV1::IMAGE_GUARD>(Config, "IMAGE_GUARD", nb::is_arithmetic())
+    ENTRY(NONE)
+    ENTRY(CF_INSTRUMENTED)
+    ENTRY(CFW_INSTRUMENTED)
+    ENTRY(CF_FUNCTION_TABLE_PRESENT)
+    ENTRY(SECURITY_COOKIE_UNUSED)
+    ENTRY(PROTECT_DELAYLOAD_IAT)
+    ENTRY(DELAYLOAD_IAT_IN_ITS_OWN_SECTION)
+    ENTRY(CF_EXPORT_SUPPRESSION_INFO_PRESENT)
+    ENTRY(CF_ENABLE_EXPORT_SUPPRESSION)
+    ENTRY(CF_LONGJUMP_TABLE_PRESENT)
+    ENTRY(RF_INSTRUMENTED)
+    ENTRY(RF_ENABLE)
+    ENTRY(RF_STRICT)
+    ENTRY(RETPOLINE_PRESENT)
+    ENTRY(EH_CONTINUATION_TABLE_PRESENT)
+  ;
+  #undef ENTRY
+
+  Config
     .def(nb::init<>())
 
     .def_prop_rw("guard_cf_check_function_pointer",
@@ -56,11 +80,11 @@ void create<LoadConfigurationV1>(nb::module_& m) {
 
     .def_prop_rw("guard_flags",
         nb::overload_cast<>(&LoadConfigurationV1::guard_flags, nb::const_),
-        nb::overload_cast<GUARD_CF_FLAGS>(&LoadConfigurationV1::guard_flags),
+        nb::overload_cast<LoadConfigurationV1::IMAGE_GUARD>(&LoadConfigurationV1::guard_flags),
         "Control Flow Guard related flags."_doc)
 
     .def("has",
-        nb::overload_cast<GUARD_CF_FLAGS>(&LoadConfigurationV1::has, nb::const_),
+        nb::overload_cast<LoadConfigurationV1::IMAGE_GUARD>(&LoadConfigurationV1::has, nb::const_),
         "Check if the given " RST_CLASS_REF(lief.PE.GUARD_CF_FLAGS) " is present in "
         ":attr:`~lief.PE.LoadConfigurationV1.guard_flags`"_doc,
         "flag"_a)
@@ -72,7 +96,7 @@ void create<LoadConfigurationV1>(nb::module_& m) {
         nb::rv_policy::reference_internal)
 
     .def("__contains__",
-        nb::overload_cast<GUARD_CF_FLAGS>(&LoadConfigurationV1::has, nb::const_))
+        nb::overload_cast<LoadConfigurationV1::IMAGE_GUARD>(&LoadConfigurationV1::has, nb::const_))
 
     LIEF_COPYABLE(LoadConfigurationV1)
     LIEF_DEFAULT_STR(LoadConfigurationV1);

@@ -33,17 +33,17 @@ struct load_configuration_v8;
 class LIEF_API LoadConfigurationV8 : public LoadConfigurationV7 {
   public:
 
-  static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN10_0_18362;
-  LoadConfigurationV8();
+  static constexpr VERSION WIN_VERSION = VERSION::WIN_10_0_18362;
+  LoadConfigurationV8() = default;
 
   template<class T>
   LIEF_LOCAL LoadConfigurationV8(const details::load_configuration_v8<T>& header);
 
-  LoadConfigurationV8& operator=(const LoadConfigurationV8&);
-  LoadConfigurationV8(const LoadConfigurationV8&);
+  LoadConfigurationV8& operator=(const LoadConfigurationV8&) = default;
+  LoadConfigurationV8(const LoadConfigurationV8&) = default;
 
-  WIN_VERSION version() const override {
-    return LoadConfigurationV8::VERSION;
+  VERSION version() const override {
+    return WIN_VERSION;
   }
 
   uint64_t volatile_metadata_pointer() const {
@@ -55,13 +55,12 @@ class LIEF_API LoadConfigurationV8 : public LoadConfigurationV7 {
   }
 
   static bool classof(const LoadConfiguration* config) {
-    return config->version() == VERSION;
+    return config->version() == WIN_VERSION;
   }
 
-  ~LoadConfigurationV8() override;
+  ~LoadConfigurationV8() override = default;
 
   void accept(Visitor& visitor) const override;
-
 
   std::ostream& print(std::ostream& os) const override;
 

@@ -19,7 +19,6 @@
 
 #include "LIEF/visibility.h"
 
-#include "LIEF/PE/enums.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfigurationV9.hpp"
 
 namespace LIEF {
@@ -33,17 +32,17 @@ struct load_configuration_v10;
 class LIEF_API LoadConfigurationV10 : public LoadConfigurationV9 {
   public:
 
-  static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN10_0_MSVC_2019;
-  LoadConfigurationV10();
+  static constexpr VERSION WIN_VERSION = VERSION::WIN_10_0_MSVC_2019;
+  LoadConfigurationV10() = default;
 
   template<class T>
   LIEF_LOCAL LoadConfigurationV10(const details::load_configuration_v10<T>& header);
 
-  LoadConfigurationV10& operator=(const LoadConfigurationV10&);
-  LoadConfigurationV10(const LoadConfigurationV10&);
+  LoadConfigurationV10& operator=(const LoadConfigurationV10&) = default;
+  LoadConfigurationV10(const LoadConfigurationV10&) = default;
 
-  WIN_VERSION version() const override {
-    return LoadConfigurationV10::VERSION;
+  VERSION version() const override {
+    return WIN_VERSION;
   }
 
   uint64_t guard_xfg_check_function_pointer() const {
@@ -71,13 +70,12 @@ class LIEF_API LoadConfigurationV10 : public LoadConfigurationV9 {
   }
 
   static bool classof(const LoadConfiguration* config) {
-    return config->version() == VERSION;
+    return config->version() == WIN_VERSION;
   }
 
-  ~LoadConfigurationV10() override;
+  ~LoadConfigurationV10() override = default;
 
   void accept(Visitor& visitor) const override;
-
 
   std::ostream& print(std::ostream& os) const override;
 

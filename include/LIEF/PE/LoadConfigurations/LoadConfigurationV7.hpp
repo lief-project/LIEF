@@ -19,7 +19,6 @@
 
 #include "LIEF/visibility.h"
 
-#include "LIEF/PE/enums.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfigurationV6.hpp"
 
 namespace LIEF {
@@ -33,37 +32,46 @@ struct load_configuration_v7;
 class LIEF_API LoadConfigurationV7 : public LoadConfigurationV6 {
   public:
 
-  static constexpr WIN_VERSION VERSION = WIN_VERSION::WIN10_0_16237;
-  LoadConfigurationV7();
+  static constexpr VERSION WIN_VERSION = VERSION::WIN_10_0_16237;
+  LoadConfigurationV7() = default;
 
   template<class T>
   LIEF_LOCAL LoadConfigurationV7(const details::load_configuration_v7<T>& header);
 
-  LoadConfigurationV7& operator=(const LoadConfigurationV7&);
-  LoadConfigurationV7(const LoadConfigurationV7&);
+  LoadConfigurationV7& operator=(const LoadConfigurationV7&) = default;
+  LoadConfigurationV7(const LoadConfigurationV7&) = default;
 
-  WIN_VERSION version() const override;
-
-  uint32_t reserved3() const;
-  uint64_t addressof_unicode_string() const;
-
-  void reserved3(uint32_t value);
-  void addressof_unicode_string(uint64_t value);
-
-  static bool classof(const LoadConfiguration* config) {
-    return config->version() == VERSION;
+  VERSION version() const override {
+    return WIN_VERSION;
   }
 
-  ~LoadConfigurationV7() override;
+  uint32_t reserved3() const {
+    return reserved3_;
+  }
+  uint64_t addressof_unicode_string() const {
+    return addressof_unicode_string_;
+  }
+
+  void reserved3(uint32_t value) {
+    reserved3_ = value;
+  }
+  void addressof_unicode_string(uint64_t value) {
+    addressof_unicode_string_ = value;
+  }
+
+  static bool classof(const LoadConfiguration* config) {
+    return config->version() == WIN_VERSION;
+  }
+
+  ~LoadConfigurationV7() override = default;
 
   void accept(Visitor& visitor) const override;
-
 
   std::ostream& print(std::ostream& os) const override;
 
   protected:
-  uint32_t reserved3_;
-  uint64_t addressof_unicode_string_;
+  uint32_t reserved3_ = 0;
+  uint64_t addressof_unicode_string_ = 0;
 };
 }
 }

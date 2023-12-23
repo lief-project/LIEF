@@ -13,117 +13,107 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-#include <numeric>
-#include <algorithm>
-#include <string>
+#include <spdlog/fmt/fmt.h>
 #include <ostream>
+#include <array>
+#include <algorithm>
 
-#include "LIEF/PE/hash.hpp"
+#include "LIEF/Visitor.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfigurationV1.hpp"
 
-#include "LIEF/PE/EnumToString.hpp"
-#include "LIEF/PE/LoadConfigurations.hpp"
+#include "fmt_formatter.hpp"
+#include "PE/Structures.hpp"
+#include "frozen.hpp"
+
+FMT_FORMATTER(LIEF::PE::LoadConfigurationV1::IMAGE_GUARD, LIEF::PE::to_string);
 
 namespace LIEF {
 namespace PE {
 
-LoadConfigurationV1& LoadConfigurationV1::operator=(const LoadConfigurationV1&) = default;
-LoadConfigurationV1::LoadConfigurationV1(const LoadConfigurationV1&) = default;
-LoadConfigurationV1::~LoadConfigurationV1() = default;
+static constexpr std::array IMAGE_GUARD_LIST = {
+  LoadConfigurationV1::IMAGE_GUARD::CF_INSTRUMENTED,
+  LoadConfigurationV1::IMAGE_GUARD::CFW_INSTRUMENTED,
+  LoadConfigurationV1::IMAGE_GUARD::CF_FUNCTION_TABLE_PRESENT,
+  LoadConfigurationV1::IMAGE_GUARD::SECURITY_COOKIE_UNUSED,
+  LoadConfigurationV1::IMAGE_GUARD::PROTECT_DELAYLOAD_IAT,
+  LoadConfigurationV1::IMAGE_GUARD::DELAYLOAD_IAT_IN_ITS_OWN_SECTION,
+  LoadConfigurationV1::IMAGE_GUARD::CF_EXPORT_SUPPRESSION_INFO_PRESENT,
+  LoadConfigurationV1::IMAGE_GUARD::CF_ENABLE_EXPORT_SUPPRESSION,
+  LoadConfigurationV1::IMAGE_GUARD::CF_LONGJUMP_TABLE_PRESENT,
+  LoadConfigurationV1::IMAGE_GUARD::RF_INSTRUMENTED,
+  LoadConfigurationV1::IMAGE_GUARD::RF_ENABLE,
+  LoadConfigurationV1::IMAGE_GUARD::RF_STRICT,
+  LoadConfigurationV1::IMAGE_GUARD::RETPOLINE_PRESENT,
+  LoadConfigurationV1::IMAGE_GUARD::EH_CONTINUATION_TABLE_PRESENT,
+};
 
-LoadConfigurationV1::LoadConfigurationV1() :
-  guard_cf_check_function_pointer_{0},
-  guard_cf_dispatch_function_pointer_{0},
-  guard_cf_function_table_{0},
-  guard_cf_function_count_{0},
-  guard_flags_{GUARD_CF_FLAGS::GCF_NONE}
+template<class T>
+LoadConfigurationV1::LoadConfigurationV1(const details::load_configuration_v1<T>& header) :
+  LoadConfigurationV0{reinterpret_cast<const details::load_configuration_v0<T>&>(header)},
+  guard_cf_check_function_pointer_{header.GuardCFCheckFunctionPointer},
+  guard_cf_dispatch_function_pointer_{header.GuardCFDispatchFunctionPointer},
+  guard_cf_function_table_{header.GuardCFFunctionTable},
+  guard_cf_function_count_{header.GuardCFFunctionCount},
+  flags_{static_cast<IMAGE_GUARD>(header.GuardFlags)}
 {}
 
-
-WIN_VERSION LoadConfigurationV1::version() const {
-  return LoadConfigurationV1::VERSION;
-}
-
-uint64_t LoadConfigurationV1::guard_cf_check_function_pointer() const {
-  return guard_cf_check_function_pointer_;
-}
-
-uint64_t LoadConfigurationV1::guard_cf_dispatch_function_pointer() const {
-  return guard_cf_dispatch_function_pointer_;
-}
-
-uint64_t LoadConfigurationV1::guard_cf_function_table() const {
-  return guard_cf_function_table_;
-}
-
-uint64_t LoadConfigurationV1::guard_cf_function_count() const {
-  return guard_cf_function_count_;
-}
-
-GUARD_CF_FLAGS LoadConfigurationV1::guard_flags() const {
-  return guard_flags_;
-}
-
-
-bool LoadConfigurationV1::has(GUARD_CF_FLAGS flag) const {
-  return (guard_flags() & flag) != GUARD_CF_FLAGS::GCF_NONE;
-}
-
-LoadConfigurationV1::guard_cf_flags_list_t LoadConfigurationV1::guard_cf_flags_list() const {
-
-  guard_cf_flags_list_t flags;
-
-  std::copy_if(std::begin(guard_cf_flags_array), std::end(guard_cf_flags_array),
-               std::inserter(flags, std::begin(flags)),
-               [this] (GUARD_CF_FLAGS f) { return has(f); });
-
+std::vector<LoadConfigurationV1::IMAGE_GUARD> LoadConfigurationV1::guard_cf_flags_list() const {
+  std::vector<IMAGE_GUARD> flags;
+  std::copy_if(std::begin(IMAGE_GUARD_LIST), std::end(IMAGE_GUARD_LIST),
+               std::back_inserter(flags),
+               [this] (IMAGE_GUARD f) { return has(f); });
   return flags;
-}
-
-void LoadConfigurationV1::guard_cf_check_function_pointer(uint64_t guard_cf_check_function_pointer) {
-  guard_cf_check_function_pointer_ = guard_cf_check_function_pointer;
-}
-
-void LoadConfigurationV1::guard_cf_dispatch_function_pointer(uint64_t guard_cf_dispatch_function_pointer) {
-  guard_cf_dispatch_function_pointer_ = guard_cf_dispatch_function_pointer;
-}
-
-void LoadConfigurationV1::guard_cf_function_table(uint64_t guard_cf_function_table) {
-  guard_cf_function_table_ = guard_cf_function_table;
-}
-
-void LoadConfigurationV1::guard_cf_function_count(uint64_t guard_cf_function_count) {
-  guard_cf_function_count_ = guard_cf_function_count;
-}
-
-void LoadConfigurationV1::guard_flags(GUARD_CF_FLAGS guard_flags) {
-  guard_flags_ = guard_flags;
 }
 
 void LoadConfigurationV1::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
+bool LoadConfigurationV1::has(IMAGE_GUARD flag) const {
+  return (guard_flags() & flag) != IMAGE_GUARD::NONE;
+}
 
 std::ostream& LoadConfigurationV1::print(std::ostream& os) const {
   LoadConfigurationV0::print(os);
-
-
-  const guard_cf_flags_list_t& flags = guard_cf_flags_list();
-  std::string flags_str = std::accumulate(
-     std::begin(flags), std::end(flags), std::string{},
-     [] (const std::string& a, GUARD_CF_FLAGS b) {
-         return a.empty() ? to_string(b) : a + " " + to_string(b);
-     });
-
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "GCF check function pointer:"    << std::hex << guard_cf_check_function_pointer()    << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "GCF dispatch function pointer:" << std::hex << guard_cf_dispatch_function_pointer() << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "GCF function table :"           << std::hex << guard_cf_function_table()            << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "GCF Function count:"            << std::dec << guard_cf_function_count()            << std::endl;
-  os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Guard flags:"                   << std::hex << flags_str << " (" << static_cast<size_t>(guard_flags()) << ")" << std::endl;
+  os << "LoadConfigurationV1:\n"
+     << fmt::format("  GCF check function pointer     0x{:08x}\n", guard_cf_check_function_pointer())
+     << fmt::format("  GCF dispatch function pointer  0x{:08x}\n", guard_cf_dispatch_function_pointer())
+     << fmt::format("  GCF function table             0x{:08x}\n", guard_cf_function_table())
+     << fmt::format("  GCF Function count             0x{:08x}\n", guard_cf_function_count())
+     << fmt::format("  Guard Flags                    {}\n", guard_cf_flags_list());
   return os;
 }
+
+const char* to_string(LoadConfigurationV1::IMAGE_GUARD e) {
+  #define ENTRY(X) std::pair(LoadConfigurationV1::IMAGE_GUARD::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(NONE),
+    ENTRY(CF_INSTRUMENTED),
+    ENTRY(CFW_INSTRUMENTED),
+    ENTRY(CF_FUNCTION_TABLE_PRESENT),
+    ENTRY(SECURITY_COOKIE_UNUSED),
+    ENTRY(PROTECT_DELAYLOAD_IAT),
+    ENTRY(DELAYLOAD_IAT_IN_ITS_OWN_SECTION),
+    ENTRY(CF_EXPORT_SUPPRESSION_INFO_PRESENT),
+    ENTRY(CF_ENABLE_EXPORT_SUPPRESSION),
+    ENTRY(CF_LONGJUMP_TABLE_PRESENT),
+    ENTRY(RF_INSTRUMENTED),
+    ENTRY(RF_ENABLE),
+    ENTRY(RF_STRICT),
+    ENTRY(RETPOLINE_PRESENT),
+    ENTRY(EH_CONTINUATION_TABLE_PRESENT),
+  };
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
+  }
+
+  return "NONE";
+}
+
+template
+LoadConfigurationV1::LoadConfigurationV1(const details::load_configuration_v1<uint32_t>& header);
+template
+LoadConfigurationV1::LoadConfigurationV1(const details::load_configuration_v1<uint64_t>& header);
 
 
 } // namespace PE

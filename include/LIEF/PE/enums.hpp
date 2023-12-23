@@ -864,36 +864,6 @@ enum class CODE_PAGES: size_t  {
   CP_UTF_8                   = 65001, /**< Unicode (UTF-8) */
 };
 
-enum class WIN_VERSION: size_t  {
-  WIN_UNKNOWN   = 0,
-  WIN_SEH,
-  WIN8_1,
-  WIN10_0_9879,
-  WIN10_0_14286,
-  WIN10_0_14383,
-  WIN10_0_14901,
-  WIN10_0_15002,
-  WIN10_0_16237,
-  WIN10_0_18362,
-  WIN10_0_19534,
-  WIN10_0_MSVC_2019,
-  WIN10_0_MSVC_2019_16,
-};
-
-enum class GUARD_CF_FLAGS: size_t  {
-  GCF_NONE                            = 0x00000000,
-  GCF_INSTRUMENTED                    = 0x00000100, /**< Module performs control flow integrity checks using system-supplied support */
-  GCF_W_INSTRUMENTED                  = 0x00000200, /**< Module performs control flow and write integrity checks */
-  GCF_FUNCTION_TABLE_PRESENT          = 0x00000400, /**< Module contains valid control flow target metadata */
-  GCF_EXPORT_SUPPRESSION_INFO_PRESENT = 0x00004000, /**< Module contains suppressed export information. This also infers that the address taken taken IAT table is also present in the load config. */
-  GCF_ENABLE_EXPORT_SUPPRESSION       = 0x00008000, /**< Module enables suppression of exports */
-  GCF_LONGJUMP_TABLE_PRESENT          = 0x00010000, /**< Module contains longjmp target information */
-
-  GRF_INSTRUMENTED                    = 0x00020000, /**< Module contains return flow instrumentation and metadata */
-  GRF_ENABLE                          = 0x00040000, /**< Module requests that the OS enable return flow protection */
-  GRF_STRICT                          = 0x00080000, /**< Module requests that the OS enable return flow protection in strict mode */
-};
-
 //! From https://docs.microsoft.com/en-us/windows/win32/menurc/acceltableentry
 enum class ACCELERATOR_FLAGS: size_t  {
   FVIRTKEY  = 0x01,
@@ -1487,22 +1457,8 @@ static const RESOURCE_SUBLANGS resource_sublangs_array[] = {
   RESOURCE_SUBLANGS::SUBLANG_ZULU_SOUTH_AFRICA,
 };
 
-
-static const GUARD_CF_FLAGS guard_cf_flags_array[] = {
-  GUARD_CF_FLAGS::GCF_INSTRUMENTED,
-  GUARD_CF_FLAGS::GCF_W_INSTRUMENTED,
-  GUARD_CF_FLAGS::GCF_FUNCTION_TABLE_PRESENT,
-  GUARD_CF_FLAGS::GCF_EXPORT_SUPPRESSION_INFO_PRESENT,
-  GUARD_CF_FLAGS::GCF_ENABLE_EXPORT_SUPPRESSION,
-  GUARD_CF_FLAGS::GCF_LONGJUMP_TABLE_PRESENT,
-  GUARD_CF_FLAGS::GRF_INSTRUMENTED,
-  GUARD_CF_FLAGS::GRF_ENABLE,
-  GUARD_CF_FLAGS::GRF_STRICT,
-};
-
 }
 }
 
-ENABLE_BITMASK_OPERATORS(LIEF::PE::GUARD_CF_FLAGS)
 ENABLE_BITMASK_OPERATORS(LIEF::PE::ACCELERATOR_FLAGS)
 #endif
