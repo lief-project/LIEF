@@ -14,238 +14,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-#include <iomanip>
-#include <numeric>
-#include <utility>
-
-#include "logging.hpp"
-#include "internal_utils.hpp"
-
-
-#include "LIEF/PE/hash.hpp"
+#include "LIEF/Visitor.hpp"
 #include "LIEF/utils.hpp"
 
-#include "LIEF/BinaryStream/SpanStream.hpp"
-
-#include "LIEF/PE/EnumToString.hpp"
-
 #include "LIEF/PE/ResourcesManager.hpp"
+#include "LIEF/PE/ResourceNode.hpp"
 #include "LIEF/PE/ResourceData.hpp"
 #include "LIEF/PE/ResourceDirectory.hpp"
 
-#include "LIEF/PE/resources/ResourceStringTable.hpp"
-#include "LIEF/PE/resources/ResourceAccelerator.hpp"
-#include "PE/Structures.hpp"
 #include "PE/ResourcesParser.hpp"
+#include "PE/Structures.hpp"
+
+#include "LIEF/BinaryStream/SpanStream.hpp"
+
+#include "frozen.hpp"
+#include "logging.hpp"
+#include "internal_utils.hpp"
+#include "fmt_formatter.hpp"
+
+FMT_FORMATTER(LIEF::PE::ResourcesManager::TYPE, LIEF::PE::to_string);
 
 namespace LIEF {
 namespace PE {
 
+static constexpr auto RESOURCE_TYPES = {
+  ResourcesManager::TYPE::CURSOR,         ResourcesManager::TYPE::BITMAP,
+  ResourcesManager::TYPE::ICON,           ResourcesManager::TYPE::MENU,
+  ResourcesManager::TYPE::DIALOG,         ResourcesManager::TYPE::STRING,
+  ResourcesManager::TYPE::FONTDIR,        ResourcesManager::TYPE::FONT,
+  ResourcesManager::TYPE::ACCELERATOR,    ResourcesManager::TYPE::RCDATA,
+  ResourcesManager::TYPE::MESSAGETABLE,   ResourcesManager::TYPE::GROUP_CURSOR,
+  ResourcesManager::TYPE::GROUP_ICON,     ResourcesManager::TYPE::VERSION,
+  ResourcesManager::TYPE::DLGINCLUDE,     ResourcesManager::TYPE::PLUGPLAY,
+  ResourcesManager::TYPE::VXD,            ResourcesManager::TYPE::ANICURSOR,
+  ResourcesManager::TYPE::ANIICON,        ResourcesManager::TYPE::HTML,
+  ResourcesManager::TYPE::MANIFEST,
+};
 
-ResourcesManager::ResourcesManager(ResourcesManager&&) = default;
-ResourcesManager& ResourcesManager::operator=(ResourcesManager&&) = default;
-
-ResourcesManager::ResourcesManager(const ResourcesManager&) = default;
-ResourcesManager& ResourcesManager::operator=(const ResourcesManager&) = default;
-ResourcesManager::~ResourcesManager() = default;
-
-ResourcesManager::ResourcesManager(ResourceNode& rsrc) :
-  resources_{&rsrc}
-{}
-
-RESOURCE_LANGS ResourcesManager::lang_from_id(size_t id) {
-  return static_cast<RESOURCE_LANGS>(id & 0x3ff);
-}
-
-RESOURCE_SUBLANGS ResourcesManager::sublang_from_id(size_t id) {
-  const size_t index = id >> 10;
-  const RESOURCE_LANGS lang = ResourcesManager::lang_from_id(id);
-  return ResourcesManager::sub_lang(lang, index);
-}
-
-RESOURCE_SUBLANGS ResourcesManager::sub_lang(RESOURCE_LANGS lang, size_t index) {
-  // From https://docs.microsoft.com/en-us/windows/win32/intl/language-identifier-constants-and-strings
-  static const std::map<std::pair<RESOURCE_LANGS, size_t>, RESOURCE_SUBLANGS> sublangs_map = {
-
-    { {RESOURCE_LANGS::LANG_ARABIC, 0x5}, RESOURCE_SUBLANGS::SUBLANG_ARABIC_ALGERIA },
-    { {RESOURCE_LANGS::LANG_ARABIC, 0xF}, RESOURCE_SUBLANGS::SUBLANG_ARABIC_BAHRAIN },
-    { {RESOURCE_LANGS::LANG_ARABIC, 0x3}, RESOURCE_SUBLANGS::SUBLANG_ARABIC_EGYPT },
-    { {RESOURCE_LANGS::LANG_ARABIC, 0x2}, RESOURCE_SUBLANGS::SUBLANG_ARABIC_IRAQ },
-    { {RESOURCE_LANGS::LANG_ARABIC, 0xB}, RESOURCE_SUBLANGS::SUBLANG_ARABIC_JORDAN },
-    { {RESOURCE_LANGS::LANG_ARABIC, 0xD}, RESOURCE_SUBLANGS::SUBLANG_ARABIC_KUWAIT },
-    { {RESOURCE_LANGS::LANG_ARABIC, 0xC}, RESOURCE_SUBLANGS::SUBLANG_ARABIC_LEBANON },
-    { {RESOURCE_LANGS::LANG_ARABIC, 0x4}, RESOURCE_SUBLANGS::SUBLANG_ARABIC_LIBYA },
-    { {RESOURCE_LANGS::LANG_ARABIC, 0x6}, RESOURCE_SUBLANGS::SUBLANG_ARABIC_MOROCCO },
-    { {RESOURCE_LANGS::LANG_ARABIC, 0x8}, RESOURCE_SUBLANGS::SUBLANG_ARABIC_OMAN },
-    { {RESOURCE_LANGS::LANG_ARABIC, 0x10}, RESOURCE_SUBLANGS::SUBLANG_ARABIC_QATAR },
-    { {RESOURCE_LANGS::LANG_ARABIC, 0x01}, RESOURCE_SUBLANGS::SUBLANG_ARABIC_SAUDI_ARABIA },
-    { {RESOURCE_LANGS::LANG_ARABIC, 0xA}, RESOURCE_SUBLANGS::SUBLANG_ARABIC_SYRIA },
-    { {RESOURCE_LANGS::LANG_ARABIC, 0x7}, RESOURCE_SUBLANGS::SUBLANG_ARABIC_TUNISIA },
-    { {RESOURCE_LANGS::LANG_ARABIC, 0xE}, RESOURCE_SUBLANGS::SUBLANG_ARABIC_UAE },
-    { {RESOURCE_LANGS::LANG_ARABIC, 0x9}, RESOURCE_SUBLANGS::SUBLANG_ARABIC_YEMEN },
-
-    { {RESOURCE_LANGS::LANG_AZERI, 2}, RESOURCE_SUBLANGS::SUBLANG_AZERI_CYRILLIC },
-    { {RESOURCE_LANGS::LANG_AZERI, 1}, RESOURCE_SUBLANGS::SUBLANG_AZERI_LATIN },
-
-    { {RESOURCE_LANGS::LANG_BANGLA, 2}, RESOURCE_SUBLANGS::SUBLANG_BANGLA_BANGLADESH },
-    { {RESOURCE_LANGS::LANG_BANGLA, 1}, RESOURCE_SUBLANGS::SUBLANG_BANGLA_INDIA },
-
-    { {RESOURCE_LANGS::LANG_BOSNIAN, 8}, RESOURCE_SUBLANGS::SUBLANG_BOSNIAN_BOSNIA_HERZEGOVINA_CYRILLIC },
-    { {RESOURCE_LANGS::LANG_BOSNIAN, 5}, RESOURCE_SUBLANGS::SUBLANG_BOSNIAN_BOSNIA_HERZEGOVINA_LATIN },
-
-    { {RESOURCE_LANGS::LANG_CHINESE, 3}, RESOURCE_SUBLANGS::SUBLANG_CHINESE_HONGKONG },
-    { {RESOURCE_LANGS::LANG_CHINESE, 5}, RESOURCE_SUBLANGS::SUBLANG_CHINESE_MACAU },
-    { {RESOURCE_LANGS::LANG_CHINESE, 4}, RESOURCE_SUBLANGS::SUBLANG_CHINESE_SINGAPORE },
-    { {RESOURCE_LANGS::LANG_CHINESE, 2}, RESOURCE_SUBLANGS::SUBLANG_CHINESE_SIMPLIFIED },
-
-    { {RESOURCE_LANGS::LANG_CROATIAN, 4}, RESOURCE_SUBLANGS::SUBLANG_CROATIAN_BOSNIA_HERZEGOVINA_LATIN },
-    { {RESOURCE_LANGS::LANG_CROATIAN, 1}, RESOURCE_SUBLANGS::SUBLANG_CROATIAN_CROATIA },
-
-    { {RESOURCE_LANGS::LANG_DUTCH, 2}, RESOURCE_SUBLANGS::SUBLANG_DUTCH_BELGIAN },
-    { {RESOURCE_LANGS::LANG_DUTCH, 2}, RESOURCE_SUBLANGS::SUBLANG_DUTCH },
-
-    { {RESOURCE_LANGS::LANG_ENGLISH, 0x3}, RESOURCE_SUBLANGS::SUBLANG_ENGLISH_AUS },
-    { {RESOURCE_LANGS::LANG_ENGLISH, 0xA}, RESOURCE_SUBLANGS::SUBLANG_ENGLISH_BELIZE },
-    { {RESOURCE_LANGS::LANG_ENGLISH, 0x4}, RESOURCE_SUBLANGS::SUBLANG_ENGLISH_CAN },
-    { {RESOURCE_LANGS::LANG_ENGLISH, 0x9}, RESOURCE_SUBLANGS::SUBLANG_ENGLISH_CARIBBEAN },
-    { {RESOURCE_LANGS::LANG_ENGLISH, 0x10}, RESOURCE_SUBLANGS::SUBLANG_ENGLISH_IRELAND },
-    { {RESOURCE_LANGS::LANG_ENGLISH, 0x6}, RESOURCE_SUBLANGS::SUBLANG_ENGLISH_JAMAICA },
-    { {RESOURCE_LANGS::LANG_ENGLISH, 0x8}, RESOURCE_SUBLANGS::SUBLANG_ENGLISH_MALAYSIA },
-    { {RESOURCE_LANGS::LANG_ENGLISH, 0x11}, RESOURCE_SUBLANGS::SUBLANG_ENGLISH_NZ },
-    { {RESOURCE_LANGS::LANG_ENGLISH, 0x5}, RESOURCE_SUBLANGS::SUBLANG_ENGLISH_PHILIPPINES },
-    { {RESOURCE_LANGS::LANG_ENGLISH, 0x12}, RESOURCE_SUBLANGS::SUBLANG_ENGLISH_SINGAPORE },
-    { {RESOURCE_LANGS::LANG_ENGLISH, 0x7}, RESOURCE_SUBLANGS::SUBLANG_ENGLISH_SOUTH_AFRICA },
-    { {RESOURCE_LANGS::LANG_ENGLISH, 0xB}, RESOURCE_SUBLANGS::SUBLANG_ENGLISH_TRINIDAD },
-    { {RESOURCE_LANGS::LANG_ENGLISH, 0x2}, RESOURCE_SUBLANGS::SUBLANG_ENGLISH_UK },
-    { {RESOURCE_LANGS::LANG_ENGLISH, 0x1}, RESOURCE_SUBLANGS::SUBLANG_ENGLISH_US },
-    { {RESOURCE_LANGS::LANG_ENGLISH, 0xC}, RESOURCE_SUBLANGS::SUBLANG_ENGLISH_ZIMBABWE },
-
-    { {RESOURCE_LANGS::LANG_FRENCH, 1}, RESOURCE_SUBLANGS::SUBLANG_FRENCH },
-    { {RESOURCE_LANGS::LANG_FRENCH, 2}, RESOURCE_SUBLANGS::SUBLANG_FRENCH_BELGIAN },
-    { {RESOURCE_LANGS::LANG_FRENCH, 3}, RESOURCE_SUBLANGS::SUBLANG_FRENCH_CANADIAN },
-    { {RESOURCE_LANGS::LANG_FRENCH, 5}, RESOURCE_SUBLANGS::SUBLANG_FRENCH_LUXEMBOURG },
-    { {RESOURCE_LANGS::LANG_FRENCH, 6}, RESOURCE_SUBLANGS::SUBLANG_FRENCH_MONACO },
-    { {RESOURCE_LANGS::LANG_FRENCH, 4}, RESOURCE_SUBLANGS::SUBLANG_FRENCH_SWISS },
-
-    { {RESOURCE_LANGS::LANG_GERMAN, 1}, RESOURCE_SUBLANGS::SUBLANG_GERMAN },
-    { {RESOURCE_LANGS::LANG_GERMAN, 3}, RESOURCE_SUBLANGS::SUBLANG_GERMAN_AUSTRIAN },
-    { {RESOURCE_LANGS::LANG_GERMAN, 5}, RESOURCE_SUBLANGS::SUBLANG_GERMAN_LIECHTENSTEIN },
-    { {RESOURCE_LANGS::LANG_GERMAN, 4}, RESOURCE_SUBLANGS::SUBLANG_GERMAN_LUXEMBOURG },
-    { {RESOURCE_LANGS::LANG_GERMAN, 2}, RESOURCE_SUBLANGS::SUBLANG_GERMAN_SWISS },
-
-    { {RESOURCE_LANGS::LANG_INUKTITUT, 1}, RESOURCE_SUBLANGS::SUBLANG_INUKTITUT_CANADA },
-    { {RESOURCE_LANGS::LANG_INUKTITUT, 2}, RESOURCE_SUBLANGS::SUBLANG_INUKTITUT_CANADA_LATIN },
-
-    { {RESOURCE_LANGS::LANG_IRISH, 2}, RESOURCE_SUBLANGS::SUBLANG_IRISH_IRELAND },
-
-    { {RESOURCE_LANGS::LANG_ITALIAN, 1}, RESOURCE_SUBLANGS::SUBLANG_ITALIAN },
-    { {RESOURCE_LANGS::LANG_ITALIAN, 2}, RESOURCE_SUBLANGS::SUBLANG_ITALIAN_SWISS },
-
-    { {RESOURCE_LANGS::LANG_LOWER_SORBIAN, 2}, RESOURCE_SUBLANGS::SUBLANG_LOWER_SORBIAN_GERMANY },
-
-    { {RESOURCE_LANGS::LANG_MALAY, 2}, RESOURCE_SUBLANGS::SUBLANG_MALAY_BRUNEI_DARUSSALAM },
-    { {RESOURCE_LANGS::LANG_MALAY, 1}, RESOURCE_SUBLANGS::SUBLANG_MALAY_MALAYSIA },
-
-    { {RESOURCE_LANGS::LANG_MONGOLIAN, 2}, RESOURCE_SUBLANGS::SUBLANG_MONGOLIAN_PRC },
-    { {RESOURCE_LANGS::LANG_MONGOLIAN, 1}, RESOURCE_SUBLANGS::SUBLANG_MONGOLIAN_CYRILLIC_MONGOLIA },
-
-    { {RESOURCE_LANGS::LANG_NEPALI, 2}, RESOURCE_SUBLANGS::SUBLANG_NEPALI_INDIA },
-    { {RESOURCE_LANGS::LANG_NEPALI, 1}, RESOURCE_SUBLANGS::SUBLANG_NEPALI_NEPAL },
-
-    { {RESOURCE_LANGS::LANG_NORWEGIAN, 1}, RESOURCE_SUBLANGS::SUBLANG_NORWEGIAN_BOKMAL },
-    { {RESOURCE_LANGS::LANG_NORWEGIAN, 2}, RESOURCE_SUBLANGS::SUBLANG_NORWEGIAN_NYNORSK },
-
-    { {RESOURCE_LANGS::LANG_PORTUGUESE, 2}, RESOURCE_SUBLANGS::SUBLANG_PORTUGUESE },
-    { {RESOURCE_LANGS::LANG_PORTUGUESE, 1}, RESOURCE_SUBLANGS::SUBLANG_PORTUGUESE_BRAZILIAN },
-
-    { {RESOURCE_LANGS::LANG_PULAR, 2}, RESOURCE_SUBLANGS::SUBLANG_PULAR_SENEGAL },
-
-    { {RESOURCE_LANGS::LANG_PUNJABI, 1}, RESOURCE_SUBLANGS::SUBLANG_PUNJABI_INDIA },
-    { {RESOURCE_LANGS::LANG_PUNJABI, 2}, RESOURCE_SUBLANGS::SUBLANG_PUNJABI_PAKISTAN },
-
-    { {RESOURCE_LANGS::LANG_QUECHUA, 1}, RESOURCE_SUBLANGS::SUBLANG_QUECHUA_BOLIVIA },
-    { {RESOURCE_LANGS::LANG_QUECHUA, 2}, RESOURCE_SUBLANGS::SUBLANG_QUECHUA_ECUADOR },
-    { {RESOURCE_LANGS::LANG_QUECHUA, 3}, RESOURCE_SUBLANGS::SUBLANG_QUECHUA_PERU },
-
-    { {RESOURCE_LANGS::LANG_SAMI, 9}, RESOURCE_SUBLANGS::SUBLANG_SAMI_INARI_FINLAND },
-    { {RESOURCE_LANGS::LANG_SAMI, 4}, RESOURCE_SUBLANGS::SUBLANG_SAMI_LULE_NORWAY },
-    { {RESOURCE_LANGS::LANG_SAMI, 5}, RESOURCE_SUBLANGS::SUBLANG_SAMI_LULE_SWEDEN },
-    { {RESOURCE_LANGS::LANG_SAMI, 3}, RESOURCE_SUBLANGS::SUBLANG_SAMI_NORTHERN_FINLAND },
-    { {RESOURCE_LANGS::LANG_SAMI, 2}, RESOURCE_SUBLANGS::SUBLANG_SAMI_NORTHERN_SWEDEN },
-    { {RESOURCE_LANGS::LANG_SAMI, 8}, RESOURCE_SUBLANGS::SUBLANG_SAMI_SKOLT_FINLAND },
-    { {RESOURCE_LANGS::LANG_SAMI, 6}, RESOURCE_SUBLANGS::SUBLANG_SAMI_SOUTHERN_NORWAY },
-    { {RESOURCE_LANGS::LANG_SAMI, 7}, RESOURCE_SUBLANGS::SUBLANG_SAMI_SOUTHERN_SWEDEN },
-    { {RESOURCE_LANGS::LANG_SAMI, 1}, RESOURCE_SUBLANGS::SUBLANG_SAMI_NORTHERN_NORWAY },
-
-    { {RESOURCE_LANGS::LANG_SERBIAN, 7}, RESOURCE_SUBLANGS::SUBLANG_SERBIAN_BOSNIA_HERZEGOVINA_CYRILLIC },
-    { {RESOURCE_LANGS::LANG_SERBIAN, 6}, RESOURCE_SUBLANGS::SUBLANG_SERBIAN_BOSNIA_HERZEGOVINA_LATIN },
-    { {RESOURCE_LANGS::LANG_SERBIAN, 1}, RESOURCE_SUBLANGS::SUBLANG_SERBIAN_CROATIA },
-    { {RESOURCE_LANGS::LANG_SERBIAN, 3}, RESOURCE_SUBLANGS::SUBLANG_SERBIAN_CYRILLIC },
-    { {RESOURCE_LANGS::LANG_SERBIAN, 2}, RESOURCE_SUBLANGS::SUBLANG_SERBIAN_LATIN },
-
-    { {RESOURCE_LANGS::LANG_TSWANA, 2}, RESOURCE_SUBLANGS::SUBLANG_TSWANA_BOTSWANA },
-    { {RESOURCE_LANGS::LANG_TSWANA, 1}, RESOURCE_SUBLANGS::SUBLANG_TSWANA_SOUTH_AFRICA },
-
-    { {RESOURCE_LANGS::LANG_SPANISH, 0xb}, RESOURCE_SUBLANGS::SUBLANG_SPANISH_ARGENTINA },
-    { {RESOURCE_LANGS::LANG_SPANISH, 0x10}, RESOURCE_SUBLANGS::SUBLANG_SPANISH_BOLIVIA },
-    { {RESOURCE_LANGS::LANG_SPANISH, 0xd}, RESOURCE_SUBLANGS::SUBLANG_SPANISH_CHILE },
-    { {RESOURCE_LANGS::LANG_SPANISH, 0x9}, RESOURCE_SUBLANGS::SUBLANG_SPANISH_COLOMBIA },
-    { {RESOURCE_LANGS::LANG_SPANISH, 0x5}, RESOURCE_SUBLANGS::SUBLANG_SPANISH_COSTA_RICA },
-    { {RESOURCE_LANGS::LANG_SPANISH, 0x7}, RESOURCE_SUBLANGS::SUBLANG_SPANISH_DOMINICAN_REPUBLIC },
-    { {RESOURCE_LANGS::LANG_SPANISH, 0xC}, RESOURCE_SUBLANGS::SUBLANG_SPANISH_ECUADOR },
-    { {RESOURCE_LANGS::LANG_SPANISH, 0x11}, RESOURCE_SUBLANGS::SUBLANG_SPANISH_EL_SALVADOR },
-    { {RESOURCE_LANGS::LANG_SPANISH, 0x4}, RESOURCE_SUBLANGS::SUBLANG_SPANISH_GUATEMALA },
-    { {RESOURCE_LANGS::LANG_SPANISH, 0x12}, RESOURCE_SUBLANGS::SUBLANG_SPANISH_HONDURAS },
-    { {RESOURCE_LANGS::LANG_SPANISH, 0x2}, RESOURCE_SUBLANGS::SUBLANG_SPANISH_MEXICAN },
-    { {RESOURCE_LANGS::LANG_SPANISH, 0x13}, RESOURCE_SUBLANGS::SUBLANG_SPANISH_NICARAGUA },
-    { {RESOURCE_LANGS::LANG_SPANISH, 0x6}, RESOURCE_SUBLANGS::SUBLANG_SPANISH_PANAMA },
-    { {RESOURCE_LANGS::LANG_SPANISH, 0xF}, RESOURCE_SUBLANGS::SUBLANG_SPANISH_PARAGUAY },
-    { {RESOURCE_LANGS::LANG_SPANISH, 0xA}, RESOURCE_SUBLANGS::SUBLANG_SPANISH_PERU },
-    { {RESOURCE_LANGS::LANG_SPANISH, 0x14}, RESOURCE_SUBLANGS::SUBLANG_SPANISH_PUERTO_RICO },
-    { {RESOURCE_LANGS::LANG_SPANISH, 0x3}, RESOURCE_SUBLANGS::SUBLANG_SPANISH_MODERN },
-    { {RESOURCE_LANGS::LANG_SPANISH, 0x1}, RESOURCE_SUBLANGS::SUBLANG_SPANISH },
-    { {RESOURCE_LANGS::LANG_SPANISH, 0x15}, RESOURCE_SUBLANGS::SUBLANG_SPANISH_US },
-    { {RESOURCE_LANGS::LANG_SPANISH, 0xE}, RESOURCE_SUBLANGS::SUBLANG_SPANISH_URUGUAY },
-    { {RESOURCE_LANGS::LANG_SPANISH, 0x8}, RESOURCE_SUBLANGS::SUBLANG_SPANISH_VENEZUELA },
-
-    { {RESOURCE_LANGS::LANG_SWEDISH, 2}, RESOURCE_SUBLANGS::SUBLANG_SWEDISH_FINLAND },
-    { {RESOURCE_LANGS::LANG_SWEDISH, 1}, RESOURCE_SUBLANGS::SUBLANG_SWEDISH },
-
-    { {RESOURCE_LANGS::LANG_TAMAZIGHT, 2}, RESOURCE_SUBLANGS::SUBLANG_TAMAZIGHT_ALGERIA_LATIN },
-
-    { {RESOURCE_LANGS::LANG_TAMIL, 1}, RESOURCE_SUBLANGS::SUBLANG_TAMIL_INDIA },
-    { {RESOURCE_LANGS::LANG_TAMIL, 2}, RESOURCE_SUBLANGS::SUBLANG_TAMIL_SRI_LANKA },
-
-    { {RESOURCE_LANGS::LANG_TIGRINYA, 1}, RESOURCE_SUBLANGS::SUBLANG_TIGRINYA_ETHIOPIA },
-    { {RESOURCE_LANGS::LANG_TIGRINYA, 2}, RESOURCE_SUBLANGS::SUBLANG_TIGRINYA_ERITREA },
-
-    { {RESOURCE_LANGS::LANG_TIGRINYA, 1}, RESOURCE_SUBLANGS::SUBLANG_UIGHUR_PRC },
-    { {RESOURCE_LANGS::LANG_TIGRINYA, 2}, RESOURCE_SUBLANGS::SUBLANG_UZBEK_CYRILLIC },
-
-    { {RESOURCE_LANGS::LANG_VALENCIAN, 2}, RESOURCE_SUBLANGS::SUBLANG_VALENCIAN_VALENCIA },
-  };
-
-  const auto it = sublangs_map.find({lang, index});
-  if (it == std::end(sublangs_map)) {
-    return RESOURCE_SUBLANGS::SUBLANG_DEFAULT;
-  }
-  return it->second;
-}
-
-
-// Enhancemed API to explore resource tree
-// =======================================
-
-ResourceNode* ResourcesManager::get_node_type(RESOURCE_TYPES type) {
+ResourceNode* ResourcesManager::get_node_type(ResourcesManager::TYPE type) {
   return const_cast<ResourceNode*>(static_cast<const ResourcesManager*>(this)->get_node_type(type));
 }
 
-const ResourceNode* ResourcesManager::get_node_type(RESOURCE_TYPES type) const {
+const ResourceNode* ResourcesManager::get_node_type(ResourcesManager::TYPE type) const {
   ResourceNode::it_childs nodes = resources_->childs();
   const auto it_node = std::find_if(std::begin(nodes), std::end(nodes),
       [type] (const ResourceNode& node) {
-        return static_cast<RESOURCE_TYPES>(node.id()) == type;
+        return ResourcesManager::TYPE(node.id()) == type;
       });
 
   if (it_node == std::end(nodes)) {
@@ -255,71 +69,24 @@ const ResourceNode* ResourcesManager::get_node_type(RESOURCE_TYPES type) const {
   return &*it_node;
 }
 
-std::set<RESOURCE_TYPES> ResourcesManager::get_types_available() const {
-  std::set<RESOURCE_TYPES> types;
+std::vector<ResourcesManager::TYPE> ResourcesManager::get_types() const {
+  std::vector<ResourcesManager::TYPE> types;
   for (const ResourceNode& node : resources_->childs()) {
-    const auto *const it = std::find_if(std::begin(resource_types_array), std::end(resource_types_array),
-        [&node] (RESOURCE_TYPES t) {
-          return t == static_cast<RESOURCE_TYPES>(node.id());
+    const auto it = std::find_if(std::begin(RESOURCE_TYPES), std::end(RESOURCE_TYPES),
+        [&node] (ResourcesManager::TYPE t) {
+          return t == ResourcesManager::TYPE(node.id());
         });
-    if (it != std::end(resource_types_array)) {
-      types.insert(*it);
+
+    if (it != std::end(RESOURCE_TYPES)) {
+      types.push_back(*it);
     }
   }
   return types;
-
-}
-
-std::set<RESOURCE_LANGS> ResourcesManager::get_langs_available() const {
-  std::set<RESOURCE_LANGS> langs;
-  for (const ResourceNode& node_lvl_1 : resources_->childs()) {
-    for (const ResourceNode& node_lvl_2 : node_lvl_1.childs()) {
-      for (const ResourceNode& node_lvl_3 : node_lvl_2.childs()) {
-
-        auto lang = static_cast<RESOURCE_LANGS>(node_lvl_3.id() & 0x3ff);
-        const auto *const it = std::find_if(std::begin(resource_langs_array), std::end(resource_langs_array),
-            [lang] (RESOURCE_LANGS t) {
-              return t == lang;
-            });
-
-        if (it != std::end(resource_langs_array)) {
-          langs.insert(*it);
-        }
-      }
-    }
-  }
-  return langs;
-}
-
-std::set<RESOURCE_SUBLANGS> ResourcesManager::get_sublangs_available() const {
-  std::set<RESOURCE_SUBLANGS> sublangs;
-  for (const ResourceNode& node_lvl_1 : resources_->childs()) {
-    for (const ResourceNode& node_lvl_2 : node_lvl_1.childs()) {
-      for (const ResourceNode& node_lvl_3 : node_lvl_2.childs()) {
-        RESOURCE_SUBLANGS sub_lang = ResourcesManager::sublang_from_id(node_lvl_3.id());
-        sublangs.insert(sub_lang);
-      }
-    }
-  }
-  return sublangs;
-}
-
-bool ResourcesManager::has_type(RESOURCE_TYPES type) const {
-  return get_node_type(type) != nullptr;
-}
-
-
-// Manifest
-// ========
-
-bool ResourcesManager::has_manifest() const {
-  return get_node_type(RESOURCE_TYPES::MANIFEST) != nullptr;
 }
 
 std::string ResourcesManager::manifest() const {
-  const ResourceNode* root_node = get_node_type(RESOURCE_TYPES::MANIFEST);
+  const ResourceNode* root_node = get_node_type(TYPE::MANIFEST);
   if (root_node == nullptr) {
-    LIEF_WARN("No manifest found in the resources");
     return "";
   }
 
@@ -346,7 +113,7 @@ std::string ResourcesManager::manifest() const {
 }
 
 void ResourcesManager::manifest(const std::string& manifest) {
-  if (ResourceNode* manifest_node = get_node_type(RESOURCE_TYPES::MANIFEST)) {
+  if (ResourceNode* manifest_node = get_node_type(TYPE::MANIFEST)) {
     auto l1 = manifest_node->childs();
     if (l1.empty()) {
       LIEF_INFO("Can't update manifest: l1 empty");
@@ -372,12 +139,8 @@ void ResourcesManager::manifest(const std::string& manifest) {
 
 // Resource Version
 // ================
-bool ResourcesManager::has_version() const {
-  return get_node_type(RESOURCE_TYPES::VERSION) != nullptr;
-}
-
 result<ResourceVersion> ResourcesManager::version() const {
-  const ResourceNode* root_node = get_node_type(RESOURCE_TYPES::VERSION);
+  const ResourceNode* root_node = get_node_type(TYPE::VERSION);
   if (root_node == nullptr) {
     return make_error_code(lief_errors::not_found);
   }
@@ -411,23 +174,17 @@ result<ResourceVersion> ResourcesManager::version() const {
 // Icons
 // =====
 
-bool ResourcesManager::has_icons() const {
-  const ResourceNode* root_icon     = get_node_type(RESOURCE_TYPES::ICON);
-  const ResourceNode* root_grp_icon = get_node_type(RESOURCE_TYPES::GROUP_ICON);
-  return root_icon != nullptr && root_grp_icon != nullptr;
-}
-
 ResourcesManager::it_const_icons ResourcesManager::icons() const {
   std::vector<ResourceIcon> icons;
-  const ResourceNode* root_icon     = get_node_type(RESOURCE_TYPES::ICON);
-  const ResourceNode* root_grp_icon = get_node_type(RESOURCE_TYPES::GROUP_ICON);
+  const ResourceNode* root_icon     = get_node_type(TYPE::ICON);
+  const ResourceNode* root_grp_icon = get_node_type(TYPE::GROUP_ICON);
   if (root_icon == nullptr) {
-    LIEF_ERR("Missing '{}' entry", to_string(RESOURCE_TYPES::ICON));
+    LIEF_ERR("Missing '{}' entry", to_string(TYPE::ICON));
     return icons;
   }
 
   if (root_grp_icon == nullptr) {
-    LIEF_ERR("Missing '{}' entry", to_string(RESOURCE_TYPES::GROUP_ICON));
+    LIEF_ERR("Missing '{}' entry", to_string(TYPE::GROUP_ICON));
     return icons;
   }
 
@@ -513,22 +270,22 @@ void ResourcesManager::add_icon(const ResourceIcon& icon) {
   ResourceNode::it_childs nodes = resources_->childs();
   const auto it_icon = std::find_if(std::begin(nodes), std::end(nodes),
       [] (const ResourceNode& node) {
-        return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::ICON;
+        return TYPE(node.id()) == TYPE::ICON;
       });
 
 
   const auto it_grp_icon = std::find_if(std::begin(nodes), std::end(nodes),
       [] (const ResourceNode& node) {
-        return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::GROUP_ICON;
+        return TYPE(node.id()) == TYPE::GROUP_ICON;
       });
 
   if (it_icon == std::end(nodes)) {
-    LIEF_ERR("Missing '{}' entry", to_string(RESOURCE_TYPES::ICON));
+    LIEF_ERR("Missing '{}' entry", to_string(TYPE::ICON));
     return;
   }
 
   if (it_grp_icon == std::end(nodes)) {
-    LIEF_ERR("Missing '{}' entry", to_string(RESOURCE_TYPES::GROUP_ICON));
+    LIEF_ERR("Missing '{}' entry", to_string(TYPE::GROUP_ICON));
     return;
   }
   auto new_id = static_cast<uint16_t>(icon.id());
@@ -600,18 +357,18 @@ void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceI
   ResourceNode::it_childs nodes = resources_->childs();
   const auto it_icon = std::find_if(std::begin(nodes), std::end(nodes),
       [] (const ResourceNode& node) {
-        return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::ICON;
+        return TYPE(node.id()) == TYPE::ICON;
       });
 
 
   const auto it_grp_icon = std::find_if(std::begin(nodes),
       std::end(nodes),
       [] (const ResourceNode& node) {
-        return static_cast<RESOURCE_TYPES>(node.id()) == RESOURCE_TYPES::GROUP_ICON;
+        return TYPE(node.id()) == TYPE::GROUP_ICON;
       });
 
   if (it_icon == std::end(nodes)) {
-    LIEF_ERR("Missing '{}' entry", to_string(RESOURCE_TYPES::ICON));
+    LIEF_ERR("Missing '{}' entry", to_string(TYPE::ICON));
     return;
   }
 
@@ -684,7 +441,7 @@ void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceI
 ResourcesManager::it_const_dialogs ResourcesManager::dialogs() const {
   std::vector<ResourceDialog> dialogs;
 
-  const ResourceNode* dialog_node = get_node_type(RESOURCE_TYPES::DIALOG);
+  const ResourceNode* dialog_node = get_node_type(TYPE::DIALOG);
   if (dialog_node == nullptr) {
     return dialogs;
   }
@@ -723,16 +480,12 @@ ResourcesManager::it_const_dialogs ResourcesManager::dialogs() const {
 }
 
 
-bool ResourcesManager::has_dialogs() const {
-  return get_node_type(RESOURCE_TYPES::DIALOG) != nullptr;
-}
-
 // String table entry
 ResourcesManager::it_const_strings_table ResourcesManager::string_table() const {
   std::vector<ResourceStringTable> string_table;
-  const ResourceNode* root_node = get_node_type(RESOURCE_TYPES::STRING);
+  const ResourceNode* root_node = get_node_type(TYPE::STRING);
   if (root_node == nullptr) {
-    LIEF_ERR("Missing '{}' entry", to_string(RESOURCE_TYPES::STRING));
+    LIEF_ERR("Missing '{}' entry", to_string(TYPE::STRING));
     return string_table;
   }
 
@@ -777,14 +530,10 @@ ResourcesManager::it_const_strings_table ResourcesManager::string_table() const 
   return string_table;
 }
 
-bool ResourcesManager::has_string_table() const {
-  return get_node_type(RESOURCE_TYPES::STRING) != nullptr;
-}
-
 std::vector<std::string> ResourcesManager::html() const {
-  const ResourceNode* root_node = get_node_type(RESOURCE_TYPES::HTML);
+  const ResourceNode* root_node = get_node_type(TYPE::HTML);
   if (root_node == nullptr) {
-    LIEF_ERR("Missing '{}' entry", to_string(RESOURCE_TYPES::HTML));
+    LIEF_ERR("Missing '{}' entry", to_string(TYPE::HTML));
     return {};
   }
   std::vector<std::string> html;
@@ -808,19 +557,11 @@ std::vector<std::string> ResourcesManager::html() const {
   return html;
 }
 
-bool ResourcesManager::has_html() const {
-  return get_node_type(RESOURCE_TYPES::HTML) != nullptr;
-}
-
-bool ResourcesManager::has_accelerator() const {
-  return get_node_type(RESOURCE_TYPES::ACCELERATOR) != nullptr;
-}
-
 ResourcesManager::it_const_accelerators ResourcesManager::accelerator() const {
   std::vector<ResourceAccelerator> accelerator;
-  const ResourceNode* root_node = get_node_type(RESOURCE_TYPES::ACCELERATOR);
+  const ResourceNode* root_node = get_node_type(TYPE::ACCELERATOR);
   if (root_node == nullptr) {
-    LIEF_ERR("Missing '{}' entry", to_string(RESOURCE_TYPES::ACCELERATOR));
+    LIEF_ERR("Missing '{}' entry", to_string(TYPE::ACCELERATOR));
     return accelerator;
   }
 
@@ -859,9 +600,6 @@ ResourcesManager::it_const_accelerators ResourcesManager::accelerator() const {
   return accelerator;
 }
 
-// Prints
-// ======
-
 std::string ResourcesManager::print(uint32_t depth) const {
   std::ostringstream oss;
   uint32_t current_depth = 0;
@@ -872,120 +610,62 @@ std::string ResourcesManager::print(uint32_t depth) const {
 void ResourcesManager::print_tree(const ResourceNode& node, std::ostringstream& output,
                                   uint32_t current_depth, uint32_t max_depth) const
 {
-
   if (max_depth < current_depth) {
     return;
   }
 
   for (const ResourceNode& child_node : node.childs()) {
-    output << std::string(2 * (current_depth + 1), ' ');
-    output << "[";
-    if (child_node.is_directory()) {
-      output << "Directory";
-    } else {
-      output << "Data";
-    }
-
-    output << "] ";
-
+    std::string space(2 * (current_depth + 1), ' ');
+    std::string type = child_node.is_directory() ? "Directory" : "Data";
+    output << fmt::format("{}[{}]", space, type);
     if (child_node.has_name()) {
-
       output << u16tou8(child_node.name());
     } else {
-      output << "ID: " << std::setw(2) << std::setfill('0') << std::dec << child_node.id();
+      output << fmt::format("ID: {:02d}", child_node.id());
       if (current_depth == 0) {
-        output << " - " << to_string(static_cast<RESOURCE_TYPES>(child_node.id()));
+        output << fmt::format(" - {}",  to_string(TYPE(child_node.id())));
       }
 
       if (current_depth == 2) {
-        RESOURCE_LANGS lang        = ResourcesManager::lang_from_id(child_node.id());
-        RESOURCE_SUBLANGS sub_lang = ResourcesManager::sublang_from_id(child_node.id());
-        output << " - " << to_string(lang) << "/" << to_string(sub_lang);
+        uint32_t lang        = ResourcesManager::lang_from_id(child_node.id());
+        uint32_t sub_lang = ResourcesManager::sublang_from_id(child_node.id());
+        output << fmt::format(" - Lang: 0x{:02x} / Sublang: 0x{:02x}", lang, sub_lang);
       }
-      output << std::setfill(' ');
     }
-    output << std::endl;
+    output << '\n';
     print_tree(child_node, output, current_depth + 1, max_depth);
   }
-
 }
 
 void ResourcesManager::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
-
 std::ostream& operator<<(std::ostream& os, const ResourcesManager& rsrc) {
-  os << rsrc.print(3);
-  os << std::endl;
+  os << rsrc.print(3) << '\n';
 
-  std::set<RESOURCE_TYPES> types = rsrc.get_types_available();
-  std::set<RESOURCE_LANGS> langs = rsrc.get_langs_available();
-  std::set<RESOURCE_SUBLANGS> sublangs = rsrc.get_sublangs_available();
+  std::vector<ResourcesManager::TYPE> types = rsrc.get_types();
 
   if (!types.empty()) {
-    std::string types_str = std::accumulate(
-        std::begin(types),
-        std::end(types), std::string{},
-        [] (const std::string& a, RESOURCE_TYPES t) {
-         return a.empty() ? to_string(t) : a + " - " + to_string(t);
-        });
-    os << "Types: " << types_str << std::endl << std::endl;
+    os << fmt::format("Types: {}\n", types);
   }
 
-
-  if (!langs.empty()) {
-    std::string langs_str = std::accumulate(
-        std::begin(langs),
-        std::end(langs), std::string{},
-        [] (const std::string& a, RESOURCE_LANGS l) {
-         return a.empty() ? to_string(l) : a + " - " + to_string(l);
-        });
-    os << "Langs: " << langs_str << std::endl << std::endl;
+  if (const std::string& manifest = rsrc.manifest(); !manifest.empty()) {
+    os << fmt::format("Manifest:\n{}\n", manifest);
   }
 
-
-  if (!sublangs.empty()) {
-    std::string sublangs_str = std::accumulate(
-        std::begin(sublangs),
-        std::end(sublangs), std::string{},
-        [] (const std::string& a, RESOURCE_SUBLANGS sl) {
-         return a.empty() ? to_string(sl) : a + " - " + to_string(sl);
-        });
-    os << "Sub-langs: " << sublangs_str << std::endl << std::endl;
-  }
-
-
-  if (rsrc.has_manifest()) {
-    os << "Manifest" << std::endl;
-    os << "========" << std::endl << std::endl;
-    os << rsrc.manifest();
-    os << std::endl << std::endl;
-  }
-
-
-  if (rsrc.has_version()) {
-    if (auto version = rsrc.version()) {
-      os << "Version" << std::endl;
-      os << "=======" << std::endl << std::endl;
-      os << *version;
-      os << std::endl;
-    }
+  if (auto version = rsrc.version()) {
+    os << fmt::format("Version:\n{}\n", *version);
   }
 
   const auto& icons = rsrc.icons();
   for (size_t i = 0; i < icons.size(); ++i) {
-    os << "Icon #" << std::dec << i << " : " << std::endl;
-    os << icons[i] << std::endl;
+    os << fmt::format("Icon #{:02d}:\n{}\n", i, icons[i]);
   }
-
 
   const auto& dialogs = rsrc.dialogs();
   for (size_t i = 0; i < dialogs.size(); ++i) {
-    os << "Dialog #" << std::dec << i << " : " << std::endl;
-    os << dialogs[i] << std::endl;
+    os << fmt::format("Dialog #{:02d}:\n{}\n", i, dialogs[i]);
   }
 
   const auto& str_table = rsrc.string_table();
@@ -994,6 +674,41 @@ std::ostream& operator<<(std::ostream& os, const ResourcesManager& rsrc) {
   }
   return os;
 }
+
+const char* to_string(ResourcesManager::TYPE type) {
+  #define ENTRY(X) std::pair(ResourcesManager::TYPE::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(CURSOR),
+    ENTRY(BITMAP),
+    ENTRY(ICON),
+    ENTRY(MENU),
+    ENTRY(DIALOG),
+    ENTRY(STRING),
+    ENTRY(FONTDIR),
+    ENTRY(FONT),
+    ENTRY(ACCELERATOR),
+    ENTRY(RCDATA),
+    ENTRY(MESSAGETABLE),
+    ENTRY(GROUP_CURSOR),
+    ENTRY(GROUP_ICON),
+    ENTRY(VERSION),
+    ENTRY(DLGINCLUDE),
+    ENTRY(PLUGPLAY),
+    ENTRY(VXD),
+    ENTRY(ANICURSOR),
+    ENTRY(ANIICON),
+    ENTRY(HTML),
+    ENTRY(MANIFEST),
+  };
+  #undef ENTRY
+
+  if (auto it = enums2str.find(type); it != enums2str.end()) {
+    return it->second;
+  }
+
+  return "UNKNOWN";
+}
+
 
 } // namespace PE
 } // namespace LIEF

@@ -60,27 +60,25 @@ CODE_PAGES LangCodeItem::code_page() const {
   return static_cast<CODE_PAGES>(std::stoul(u16tou8(key().substr(4, 8)), nullptr, 16));
 }
 
-RESOURCE_LANGS LangCodeItem::lang() const {
+uint32_t LangCodeItem::lang() const {
   if (key().length() != 8) {
     LIEF_WARN("{} is expected to be 8 lengthy", u16tou8(key()));
-    return static_cast<RESOURCE_LANGS>(0);
+    return 0;
   }
 
   uint64_t lang_id = std::stoul(u16tou8(key().substr(0, 4)), nullptr, 16);
-  auto lang = static_cast<RESOURCE_LANGS>(lang_id & 0x3ff);
-  return lang;
+  return ResourcesManager::lang_from_id(lang_id);
 
 }
 
-RESOURCE_SUBLANGS LangCodeItem::sublang() const {
+uint32_t LangCodeItem::sublang() const {
   if (key().length() != 8) {
     LIEF_WARN("{} is expected to be 8 lengthy", u16tou8(key()));
-    return static_cast<RESOURCE_SUBLANGS>(0);
+    return 0;
   }
 
   uint64_t lang_id = std::stoul(u16tou8(key().substr(0, 4)), nullptr, 16);
-  RESOURCE_SUBLANGS sublang = ResourcesManager::sub_lang(lang(), (lang_id >> 10));
-  return sublang;
+  return ResourcesManager::sublang_from_id(lang_id);
 }
 
 
@@ -122,7 +120,7 @@ void LangCodeItem::code_page(CODE_PAGES code_page) {
   }
 }
 
-void LangCodeItem::lang(RESOURCE_LANGS lang) {
+void LangCodeItem::lang(uint32_t lang) {
   uint64_t lang_id = std::stoul(u16tou8(key().substr(0, 4)), nullptr, 16);
   lang_id &= ~static_cast<uint64_t>(0x3ff);
   lang_id |= static_cast<uint16_t>(lang);
@@ -139,7 +137,7 @@ void LangCodeItem::lang(RESOURCE_LANGS lang) {
   }
 }
 
-void LangCodeItem::sublang(RESOURCE_SUBLANGS lang) {
+void LangCodeItem::sublang(uint32_t lang) {
   //TODO: Check
   uint64_t lang_id = std::stoul(u16tou8(key().substr(0, 4)), nullptr, 16);
   uint64_t mask = (static_cast<uint64_t>(-1) >> 16) << 16;
@@ -178,9 +176,9 @@ std::ostream& operator<<(std::ostream& os, const LangCodeItem& item) {
   os << std::setw(8) << std::setfill(' ') << "type:" << item.type()         << std::endl;
   os << std::setw(8) << std::setfill(' ') << "key:"  << u16tou8(item.key())
      << ": ("
-     << to_string(item.lang())
+     << item.lang()
      << " - "
-     <<  to_string(item.sublang())
+     << item.sublang()
      << " - "
      << std::hex << to_string(item.code_page()) << ")" << std::endl;
   os << std::setw(8) << std::setfill(' ') << "Items: " << std::endl;

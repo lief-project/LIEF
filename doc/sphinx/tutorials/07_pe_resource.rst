@@ -15,7 +15,8 @@ executable or a DLL.
 
 These resources are usually located in the ``.rsrc`` section but this is not an absolute rule.
 
-To retrieve the section in which resources are located, one can use the :attr:`~lief.PE.DataDirectory.section` attribute of the associated :class:`~lief.PE.DataDirectory`
+To retrieve the section in which resources are located, one can use the :attr:`~lief.PE.DataDirectory.section`
+attribute of the associated :class:`~lief.PE.DataDirectory`
 
 .. code-block:: python
 
@@ -44,9 +45,9 @@ In the resource tree we basically have two kinds of node:
 
 The first 3 levels of the tree have a special meaning:
 
-* Level 1: The :attr:`~lief.PE.ResourceDirectory.id` represents the :class:`~lief.PE.RESOURCE_TYPES`
+* Level 1: The :attr:`~lief.PE.ResourceDirectory.id` represents the :class:`~lief.PE.ResourcesManager.TYPE`
 * Level 2: The :attr:`~lief.PE.ResourceDirectory.id` represents an ID to access to the resource
-* Level 3: The :attr:`~lief.PE.ResourceDirectory.id` represents the :class:`~lief.PE.RESOURCE_LANGS` / :class:`~lief.PE.RESOURCE_SUBLANGS` of the resource.
+* Level 3: The :attr:`~lief.PE.ResourceDirectory.id` represents the :class:`~lief.PE.RESOURCE_LANGS` / SUBLANG of the resource.
 
 
 We can check that a given binary embed resources with the :attr:`~lief.PE.Binary.has_resources` property, then we can access to this structure
@@ -54,7 +55,7 @@ through the :attr:`~lief.PE.Binary.resources` property which returns a :class:`~
 
 Given a :class:`~lief.PE.ResourceDirectory`, the :attr:`~lief.PE.ResourceDirectory.childs` property returns an **iterator** (quiet similar to a ``list``) over the sub tree associated with the node.
 
-The following snippet retrieves the :attr:`~lief.PE.RESOURCE_TYPES.MANIFEST` element and print it.
+The following snippet retrieves the :attr:`~lief.PE.ResourcesManager.TYPE.MANIFEST` element and print it.
 
 .. code-block:: python
 
@@ -67,7 +68,7 @@ The following snippet retrieves the :attr:`~lief.PE.RESOURCE_TYPES.MANIFEST` ele
   root = filezilla.resources
 
   # First level => Type ((ResourceDirectory node)
-  manifest_node = next(i for i in root.childs if i.id == lief.PE.RESOURCE_TYPES.MANIFEST)
+  manifest_node = next(i for i in root.childs if i.id == lief.PE.ResourcesManager.TYPE.MANIFEST)
   print(manifest_node)
 
   # Second level => ID (ResourceDirectory node)
@@ -122,7 +123,7 @@ Resource Manager
 As mentioned previously, the :class:`~lief.PE.ResourcesManager` is a kind of wrapper over the resource tree to:
 
 * Parse resources that have a predefined structures like
-  :attr:`~lief.PE.RESOURCE_TYPES.MANIFEST`, :attr:`~lief.PE.RESOURCE_TYPES.ICON`, :attr:`~lief.PE.RESOURCE_TYPES.VERSION` ...
+  :attr:`~lief.PE.ResourcesManager.TYPE.MANIFEST`, :attr:`~lief.PE.ResourcesManager.TYPE.ICON`, :attr:`~lief.PE.ResourcesManager.TYPE.VERSION` ...
 * Access and modify these structures
 
 This can be summarize with the following diagram:
@@ -143,7 +144,7 @@ The :class:`~lief.PE.ResourcesManager` can be accessed with the :attr:`~lief.PE.
 
 .. literalinclude:: ../_static/tutorial/07/resource_manager_output.txt
 
-Similarly to the previous example, accessing to the :attr:`~lief.PE.RESOURCE_TYPES.MANIFEST` element is as simple as:
+Similarly to the previous example, accessing to the :attr:`~lief.PE.ResourcesManager.TYPE.MANIFEST` element is as simple as:
 
 
 .. code-block:: python

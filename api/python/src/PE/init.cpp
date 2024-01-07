@@ -32,6 +32,7 @@
 #include "LIEF/PE/debug/Pogo.hpp"
 #include "LIEF/PE/debug/PogoEntry.hpp"
 #include "LIEF/PE/resources/LangCodeItem.hpp"
+#include "LIEF/PE/resources/langs.hpp"
 #include "LIEF/PE/signature/attributes.hpp"
 #include "LIEF/PE/signature/SpcIndirectData.hpp"
 #include "LIEF/PE/signature/GenericContent.hpp"
@@ -55,6 +56,7 @@ void init_resources(nb::module_& m) {
   CREATE(ResourceDialogItem, m);
   CREATE(ResourceStringTable, m);
   CREATE(ResourceAccelerator, m);
+  CREATE(RESOURCE_LANGS, m);
 }
 
 void init_load_configs(nb::module_& m) {

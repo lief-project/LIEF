@@ -81,12 +81,7 @@ class LIEF_API ResourceVarFileInfo : public Object {
   std::vector<uint32_t> translations_;
 
 };
-
-
-
-
 }
 }
-
 
 #endif

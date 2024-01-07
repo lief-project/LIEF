@@ -127,7 +127,7 @@ def test_resource_version():
     langcode_item = string_file_info.langcode_items[0]
     assert langcode_item.type == 1
     assert langcode_item.lang == lief.PE.RESOURCE_LANGS.FRENCH
-    assert langcode_item.sublang == lief.PE.RESOURCE_SUBLANGS.FRENCH
+    assert langcode_item.sublang == 1
     assert langcode_item.code_page == lief.PE.CODE_PAGES.UTF_16
     items = langcode_item.items
     assert 'CompanyName' in items
@@ -186,7 +186,7 @@ def test_resource_dialogs():
     assert dialog.charset == 0x1
     assert dialog.style == 0x0
     assert dialog.lang == lief.PE.RESOURCE_LANGS.ENGLISH
-    assert dialog.sub_lang == lief.PE.RESOURCE_SUBLANGS.ENGLISH_US
+    assert dialog.sub_lang == 1
     assert len(dialog.items) == 6
 
     assert dialog.items[0].help_id == 0x0
@@ -349,15 +349,15 @@ def test_resource_directory_add_directory_node(tmp_path):
         nodes = []
 
         node = lief.PE.ResourceDirectory()
-        node.id = lief.PE.RESOURCE_TYPES.HTML
+        node.id = lief.PE.ResourcesManager.TYPE.HTML
         nodes.append(node)
 
         node = lief.PE.ResourceDirectory()
-        node.id = lief.PE.RESOURCE_TYPES.RCDATA
+        node.id = lief.PE.ResourcesManager.TYPE.RCDATA
         nodes.append(node)
 
         node = lief.PE.ResourceDirectory()
-        node.id = lief.PE.RESOURCE_TYPES.FONT
+        node.id = lief.PE.ResourcesManager.TYPE.FONT
         nodes.append(node)
 
         # Deterministically shuffle the add order with the seed
@@ -372,10 +372,10 @@ def test_resource_directory_add_directory_node(tmp_path):
 
     for seed in (7, 23, 91):
         app = lief.parse(sample.as_posix())
-        assert lief.PE.RESOURCE_TYPES.RCDATA.value not in [child.id for child in app.resources.childs]
+        assert lief.PE.ResourcesManager.TYPE.RCDATA.value not in [child.id for child in app.resources.childs]
 
         node = lief.PE.ResourceDirectory()
-        node.id = lief.PE.RESOURCE_TYPES.RCDATA
+        node.id = lief.PE.ResourcesManager.TYPE.RCDATA
         rcdata_node = app.resources.add_directory_node(node)
         assert isinstance(rcdata_node, lief.PE.ResourceNode)
 
@@ -430,10 +430,10 @@ def test_resource_directory_add_data_node(tmp_path):
 
     for seed in (7, 23, 91):
         app = lief.parse(sample.as_posix())
-        assert lief.PE.RESOURCE_TYPES.RCDATA.value not in [child.id for child in app.resources.childs]
+        assert lief.PE.ResourcesManager.TYPE.RCDATA.value not in [child.id for child in app.resources.childs]
 
         node = lief.PE.ResourceDirectory()
-        node.id = lief.PE.RESOURCE_TYPES.RCDATA
+        node.id = lief.PE.ResourcesManager.TYPE.RCDATA
         rcdata_node = app.resources.add_directory_node(node)
         assert isinstance(rcdata_node, lief.PE.ResourceNode)
 

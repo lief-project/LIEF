@@ -651,15 +651,6 @@ Enums
 .. doxygenenum:: LIEF::PE::RELOCATIONS_ARM
    :project: lief
 
-.. doxygenenum:: LIEF::PE::RESOURCE_TYPES
-   :project: lief
-
-.. doxygenenum:: LIEF::PE::RESOURCE_LANGS
-   :project: lief
-
-.. doxygenenum:: LIEF::PE::RESOURCE_SUBLANGS
-   :project: lief
-
 .. doxygenenum:: LIEF::PE::CODE_PAGES
    :project: lief
 

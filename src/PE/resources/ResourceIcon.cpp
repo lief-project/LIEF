@@ -59,11 +59,11 @@ uint32_t ResourceIcon::id() const {
   return id_;
 }
 
-RESOURCE_LANGS ResourceIcon::lang() const {
+uint32_t ResourceIcon::lang() const {
   return lang_;
 }
 
-RESOURCE_SUBLANGS ResourceIcon::sublang() const {
+uint32_t ResourceIcon::sublang() const {
   return sublang_;
 }
 
@@ -103,11 +103,11 @@ void ResourceIcon::id(uint32_t id) {
   id_ = id;
 }
 
-void ResourceIcon::lang(RESOURCE_LANGS lang) {
+void ResourceIcon::lang(uint32_t lang) {
   lang_ = lang;
 }
 
-void ResourceIcon::sublang(RESOURCE_SUBLANGS sublang) {
+void ResourceIcon::sublang(uint32_t sublang) {
   sublang_ = sublang;
 }
 

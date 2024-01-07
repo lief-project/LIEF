@@ -35,13 +35,13 @@ void create<ResourceIcon>(nb::module_& m) {
 
     .def_prop_rw("lang",
         nb::overload_cast<>(&ResourceIcon::lang, nb::const_),
-        nb::overload_cast<RESOURCE_LANGS>(&ResourceIcon::lang),
-        "Language (" RST_CLASS_REF(lief.PE.RESOURCE_LANGS) ") associated with the icon"_doc)
+        nb::overload_cast<uint32_t>(&ResourceIcon::lang),
+        "Language associated with the icon"_doc)
 
     .def_prop_rw("sublang",
         nb::overload_cast<>(&ResourceIcon::sublang, nb::const_),
-        nb::overload_cast<RESOURCE_SUBLANGS>(&ResourceIcon::sublang),
-        "Sub language (" RST_CLASS_REF(lief.PE.RESOURCE_SUBLANGS) ") associated with the icon"_doc)
+        nb::overload_cast<uint32_t>(&ResourceIcon::sublang),
+        "Sublanguage associated with the icon"_doc)
 
     .def_prop_rw("width",
         nb::overload_cast<>(&ResourceIcon::width, nb::const_),

@@ -21,6 +21,7 @@
 
 #include "LIEF/PE/ResourcesManager.hpp"
 #include "LIEF/PE/ResourceNode.hpp"
+#include "enums_wrapper.hpp"
 
 #include <string>
 #include <sstream>
@@ -41,6 +42,31 @@ void create<ResourcesManager>(nb::module_& m) {
   init_ref_iterator<ResourcesManager::it_const_icons>(manager, "it_const_icons");
   init_ref_iterator<ResourcesManager::it_const_strings_table>(manager, "it_const_strings_table");
   init_ref_iterator<ResourcesManager::it_const_accelerators>(manager, "it_const_accelerators");
+  #define ENTRY(X) .value(to_string(ResourcesManager::TYPE::X), ResourcesManager::TYPE::X)
+  enum_<ResourcesManager::TYPE>(manager, "TYPE")
+    ENTRY(CURSOR)
+    ENTRY(BITMAP)
+    ENTRY(ICON)
+    ENTRY(MENU)
+    ENTRY(DIALOG)
+    ENTRY(STRING)
+    ENTRY(FONTDIR)
+    ENTRY(FONT)
+    ENTRY(ACCELERATOR)
+    ENTRY(RCDATA)
+    ENTRY(MESSAGETABLE)
+    ENTRY(GROUP_CURSOR)
+    ENTRY(GROUP_ICON)
+    ENTRY(VERSION)
+    ENTRY(DLGINCLUDE)
+    ENTRY(PLUGPLAY)
+    ENTRY(VXD)
+    ENTRY(ANICURSOR)
+    ENTRY(ANIICON)
+    ENTRY(HTML)
+    ENTRY(MANIFEST)
+  ;
+  #undef ENTRY
 
   manager
     .def(nb::init<ResourceNode&>(), nb::keep_alive<0, 1>())
@@ -88,17 +114,9 @@ void create<ResourcesManager>(nb::module_& m) {
       "Return the list of the " RST_CLASS_REF(lief.PE.ResourceDialog) " present in the resource"_doc,
       nb::keep_alive<0, 1>())
 
-    .def_prop_ro("types_available",
-      &ResourcesManager::get_types_available,
-      "Return list of " RST_CLASS_REF(lief.PE.RESOURCE_TYPES) " present in the resources"_doc)
-
-    .def_prop_ro("langs_available",
-      &ResourcesManager::get_langs_available,
-      "Return list of " RST_CLASS_REF(lief.PE.RESOURCE_LANGS) " present in the resources"_doc)
-
-    .def_prop_ro("sublangs_available",
-      &ResourcesManager::get_sublangs_available,
-      "Return list of " RST_CLASS_REF(lief.PE.RESOURCE_SUBLANGS) " present in the resources"_doc)
+    .def_prop_ro("types",
+      &ResourcesManager::get_types,
+      "Return list of :class:`~.TYPE` present in the resources"_doc)
 
     .def("add_icon",
       &ResourcesManager::add_icon,
@@ -107,7 +125,7 @@ void create<ResourcesManager>(nb::module_& m) {
 
     .def("has_type",
       &ResourcesManager::has_type,
-      "``True`` if the resource has the given " RST_CLASS_REF(lief.PE.RESOURCE_TYPES) ""_doc,
+      "``True`` if the resource has the given :class:`~.TYPE`"_doc,
       "type"_a)
 
     .def_prop_ro("has_string_table",
@@ -135,9 +153,9 @@ void create<ResourcesManager>(nb::module_& m) {
       nb::keep_alive<1, 0>())
 
     .def("get_node_type",
-      nb::overload_cast<RESOURCE_TYPES>(&ResourcesManager::get_node_type),
+      nb::overload_cast<ResourcesManager::TYPE>(&ResourcesManager::get_node_type),
       R"delim(
-      Return :class:`~lief.PE.ResourceNode` with the given :class:`~lief.PE.RESOURCE_TYPES`
+      Return :class:`~lief.PE.ResourceNode` with the given :class:`~.TYPE`
       or None if not found.
       )delim"_doc,
       "type"_a,

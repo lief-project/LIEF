@@ -53,6 +53,9 @@ Changelog
     (instead of `lief.MachO.Binary.name`)
 
 :PE:
+  * ``RESOURCE_SUBLANGS`` has been removed
+  * ``RESOURCE_LANGS`` is now defined in a dedicated header: ``LIEF/PE/resources/langs.hpp``
+  * ``RESOURCE_TYPES`` is now scoped in ``ResourcesManager::TYPE``
   * ``GUARD_CF_FLAGS`` is now scoped as :class:`~lief.PE.LoadConfigurationV1.IMAGE_GUARD` in
     :class:`lief.PE.LoadConfigurationV1`
   * ``SECTION_CHARACTERISTICS`` is now scoped within the

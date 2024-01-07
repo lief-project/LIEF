@@ -67,10 +67,10 @@ class LIEF_API LangCodeItem : public Object {
   CODE_PAGES code_page() const;
 
   //! Lang for which LangCodeItem::items are defined
-  RESOURCE_LANGS lang() const;
+  uint32_t lang() const;
 
   //! Sublang for which LangCodeItem::items are defined
-  RESOURCE_SUBLANGS sublang() const;
+  uint32_t sublang() const;
 
   const items_t& items() const;
   items_t&       items();
@@ -80,8 +80,8 @@ class LIEF_API LangCodeItem : public Object {
   void key(const std::string& key);
 
   void code_page(CODE_PAGES code_page);
-  void lang(RESOURCE_LANGS lang);
-  void sublang(RESOURCE_SUBLANGS lang);
+  void lang(uint32_t lang);
+  void sublang(uint32_t lang);
 
   void items(const items_t& items);
 

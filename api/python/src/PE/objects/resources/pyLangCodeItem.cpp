@@ -63,14 +63,14 @@ void create<LangCodeItem>(nb::module_& m) {
 
     .def_prop_rw("lang",
         nb::overload_cast<>(&LangCodeItem::lang, nb::const_),
-        nb::overload_cast<RESOURCE_LANGS>(&LangCodeItem::lang),
-        "Lang (" RST_CLASS_REF(lief.PE.RESOURCE_LANGS) ") for which "
+        nb::overload_cast<uint32_t>(&LangCodeItem::lang),
+        "Language for which "
         ":attr:`~lief.PE.LangCodeItem.items` are defined"_doc)
 
     .def_prop_rw("sublang",
         nb::overload_cast<>(&LangCodeItem::sublang, nb::const_),
-        nb::overload_cast<RESOURCE_SUBLANGS>(&LangCodeItem::sublang),
-        "Sub-lang (" RST_CLASS_REF(lief.PE.RESOURCE_SUBLANGS) ") for which "
+        nb::overload_cast<uint32_t>(&LangCodeItem::sublang),
+        "Sublanguage for which "
         ":attr:`~lief.PE.LangCodeItem.items` are defined"_doc)
 
     .def_prop_rw("code_page",

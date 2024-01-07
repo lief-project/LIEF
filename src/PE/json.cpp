@@ -701,8 +701,8 @@ void JsonVisitor::visit(const ResourceVersion& resource_version) {
 void JsonVisitor::visit(const ResourceIcon& resource_icon) {
 
   node_["id"]          = resource_icon.id();
-  node_["lang"]        = to_string(resource_icon.lang());
-  node_["sublang"]     = to_string(resource_icon.sublang());
+  node_["lang"]        = resource_icon.lang();
+  node_["sublang"]     = resource_icon.sublang();
   node_["width"]       = resource_icon.width();
   node_["height"]      = resource_icon.height();
   node_["color_count"] = resource_icon.color_count();

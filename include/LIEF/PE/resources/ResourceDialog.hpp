@@ -105,13 +105,13 @@ class LIEF_API ResourceDialog : public Object {
   it_const_items items() const;
 
   //! RESOURCE_LANGS associated with the Dialog
-  RESOURCE_LANGS lang() const;
+  uint32_t lang() const;
 
   //! RESOURCE_SUBLANGS associated with the Dialog
-  RESOURCE_SUBLANGS sub_lang() const;
+  uint32_t sub_lang() const;
 
-  void lang(RESOURCE_LANGS lang);
-  void sub_lang(RESOURCE_SUBLANGS sub_lang);
+  void lang(uint32_t lang);
+  void sub_lang(uint32_t sub_lang);
 
 
   // Extended API
@@ -178,10 +178,8 @@ class LIEF_API ResourceDialog : public Object {
 
   items_t items_;
 
-  RESOURCE_LANGS lang_;
-  RESOURCE_SUBLANGS sublang_;
-
-
+  uint32_t lang_;
+  uint32_t sublang_;
 };
 
 

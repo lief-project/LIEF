@@ -551,27 +551,6 @@ RELOCATIONS_BASE_TYPES
 
 ----------
 
-RESOURCE_TYPES
-~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.RESOURCE_TYPES
-
-----------
-
-RESOURCE_LANGS
-~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.RESOURCE_LANGS
-
-----------
-
-RESOURCE_SUBLANGS
-~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.RESOURCE_SUBLANGS
-
-----------
-
 FIXED_VERSION_FILE_SUB_TYPES
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -620,6 +599,13 @@ FIXED_VERSION_FILE_TYPES
 .. autoclass:: lief.PE.FIXED_VERSION_FILE_TYPES
 
 ----------
+
+RESOURCE_LANGS
+~~~~~~~~~~~~~~
+
+.. autoclass:: lief.PE.RESOURCE_LANGS
+
+-----------
 
 FIXED_VERSION_FILE_SUB_TYPES
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

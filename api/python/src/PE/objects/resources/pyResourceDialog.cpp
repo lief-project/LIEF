@@ -150,13 +150,13 @@ void create<ResourceDialog>(nb::module_& m) {
 
     .def_prop_rw("lang",
         nb::overload_cast<>(&ResourceDialog::lang, nb::const_),
-        nb::overload_cast<RESOURCE_LANGS>(&ResourceDialog::lang),
-        "Primary " RST_CLASS_REF(lief.PE.RESOURCE_LANGS) " associated with the dialog"_doc)
+        nb::overload_cast<uint32_t>(&ResourceDialog::lang),
+        "Primary language associated with the dialog"_doc)
 
     .def_prop_rw("sub_lang",
         nb::overload_cast<>(&ResourceDialog::sub_lang, nb::const_),
-        nb::overload_cast<RESOURCE_SUBLANGS>(&ResourceDialog::sub_lang),
-        "Secondary " RST_CLASS_REF(lief.PE.RESOURCE_SUBLANGS) " associated with the dialog"_doc)
+        nb::overload_cast<uint32_t>(&ResourceDialog::sub_lang),
+        "Secondary language associated with the dialog"_doc)
 
     LIEF_DEFAULT_STR(ResourceDialog);
 }

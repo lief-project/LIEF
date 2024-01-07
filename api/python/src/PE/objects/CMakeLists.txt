@@ -22,6 +22,7 @@ target_sources(pyLIEF PRIVATE
   pyDelayImportEntry.cpp
   pySymbol.cpp
   pyTLS.cpp
+  pyLang.cpp
 )
 
 add_subdirectory(resources)

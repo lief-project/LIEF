@@ -84,10 +84,7 @@ void ResourceVarFileInfo::accept(Visitor& visitor) const {
 }
 
 
-
-
 std::ostream& operator<<(std::ostream& os, const ResourceVarFileInfo& entry) {
-
   std::string translation_str = std::accumulate(
      std::begin(entry.translations()), std::end(entry.translations()), std::string{},
      [] (const std::string& a, uint32_t t) {
@@ -96,10 +93,10 @@ std::ostream& operator<<(std::ostream& os, const ResourceVarFileInfo& entry) {
        uint16_t msb = t >> 16;
        auto cp = static_cast<CODE_PAGES>(msb);
 
-       auto lang = static_cast<RESOURCE_LANGS>(lsb & 0x3ff);
-       RESOURCE_SUBLANGS sublang = ResourcesManager::sub_lang(lang, (lsb >> 10));
+       uint32_t lang = ResourcesManager::lang_from_id(lsb);
+       uint32_t sublang = ResourcesManager::sublang_from_id(lsb);
 
-       ss << to_string(cp) << "/" << to_string(lang) << "/" << to_string(sublang);
+       ss << to_string(cp) << "/" << lang << "/" << sublang;
        return a.empty() ? ss.str() : a + " - " + ss.str();
      });
 

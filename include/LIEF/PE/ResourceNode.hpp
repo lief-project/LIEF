@@ -45,8 +45,7 @@ class LIEF_API ResourceNode : public Object {
   using it_childs       = ref_iterator<childs_t&, ResourceNode*>;
   using it_const_childs = const_ref_iterator<const childs_t&, ResourceNode*>;
 
-  //! Enum that identifies the type of a node in
-  //! the resource tree
+  /// Enum that identifies the type of a node in the resource tree
   enum class TYPE {
     UNKNOWN = 0,
     DATA,

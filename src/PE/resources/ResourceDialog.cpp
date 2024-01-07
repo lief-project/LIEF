@@ -48,8 +48,8 @@ ResourceDialog::ResourceDialog() :
   weight_{0},
   italic_{false},
   charset_{0},
-  lang_{RESOURCE_LANGS::LANG_NEUTRAL},
-  sublang_{RESOURCE_SUBLANGS::SUBLANG_DEFAULT}
+  lang_{0},
+  sublang_{0}
 {}
 
 
@@ -67,8 +67,8 @@ ResourceDialog::ResourceDialog(const details::pe_dialog_template_ext& header) :
   weight_{0},
   italic_{false},
   charset_{0},
-  lang_{RESOURCE_LANGS::LANG_NEUTRAL},
-  sublang_{RESOURCE_SUBLANGS::SUBLANG_DEFAULT}
+  lang_{0},
+  sublang_{0}
 {}
 
 
@@ -86,8 +86,8 @@ ResourceDialog::ResourceDialog(const details::pe_dialog_template& header) :
   weight_{0},
   italic_{false},
   charset_{0},
-  lang_{RESOURCE_LANGS::LANG_NEUTRAL},
-  sublang_{RESOURCE_SUBLANGS::SUBLANG_DEFAULT}
+  lang_{0},
+  sublang_{0}
 {}
 
 
@@ -172,19 +172,19 @@ ResourceDialog::it_const_items ResourceDialog::items() const {
 }
 
 
-RESOURCE_LANGS ResourceDialog::lang() const {
+uint32_t ResourceDialog::lang() const {
   return lang_;
 }
 
-RESOURCE_SUBLANGS ResourceDialog::sub_lang() const {
+uint32_t ResourceDialog::sub_lang() const {
   return sublang_;
 }
 
-void ResourceDialog::lang(RESOURCE_LANGS lang) {
+void ResourceDialog::lang(uint32_t lang) {
   lang_ = lang;
 }
 
-void ResourceDialog::sub_lang(RESOURCE_SUBLANGS sub_lang) {
+void ResourceDialog::sub_lang(uint32_t sub_lang) {
   sublang_ = sub_lang;
 }
 
@@ -307,7 +307,7 @@ std::ostream& operator<<(std::ostream& os, const ResourceDialog& dialog) {
   os << "Styles: "            << styles_str            << std::endl;
   os << "Dialog box styles: " << dialogbox_styles_str  << std::endl;
   os << "Extended styles: "   << ext_styles_str        << std::endl;
-  os << "Lang: "              << to_string(dialog.lang()) << " / " << to_string(dialog.sub_lang()) << std::endl;
+  os << "Lang: "              << dialog.lang() << " / " << dialog.sub_lang() << std::endl;
 
   if (dialog.is_extended()) {
     os << "Title: \"" << u16tou8(dialog.title()) << "\"" << std::endl;
