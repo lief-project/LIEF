@@ -644,6 +644,18 @@ void create<Binary>(nb::module_& m) {
         &Binary::page_size,
         "Return the binary's page size"_doc)
 
+    .def_prop_ro("has_nx_heap", &Binary::has_nx_heap,
+                 R"doc(
+                 Return True if the **heap** is flagged as non-executable. False
+                 otherwise.
+                 )doc"_doc)
+
+    .def_prop_ro("has_nx_stack", &Binary::has_nx_stack,
+                 R"doc(
+                 Return True if the **stack** is flagged as non-executable. False
+                 otherwise.
+                 )doc"_doc)
+
     .def("__getitem__",
         nb::overload_cast<LOAD_COMMAND_TYPES>(&Binary::operator[]),
         nb::rv_policy::reference_internal)

@@ -207,7 +207,6 @@ bool Binary::is_pie() const {
   return header().has(HEADER_FLAGS::MH_PIE);
 }
 
-
 bool Binary::has_nx() const {
   if (!header().has(HEADER_FLAGS::MH_NO_HEAP_EXECUTION)) {
     LIEF_INFO("Heap could be executable");
@@ -215,6 +214,13 @@ bool Binary::has_nx() const {
   return !header().has(HEADER_FLAGS::MH_ALLOW_STACK_EXECUTION);
 }
 
+bool Binary::has_nx_stack() const {
+  return !header().has(HEADER_FLAGS::MH_ALLOW_STACK_EXECUTION);
+}
+
+bool Binary::has_nx_heap() const {
+  return header().has(HEADER_FLAGS::MH_NO_HEAP_EXECUTION);
+}
 
 bool Binary::has_entrypoint() const {
   return has_main_command() || has_thread_command();
