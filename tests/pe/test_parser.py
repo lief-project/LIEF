@@ -437,16 +437,16 @@ def test_relocations():
     assert relocation.entries[46].address == 0xdeb8
     assert relocation.entries[46].data == 0xaeb8
     assert relocation.entries[46].position == 0xeb8
-    assert relocation.entries[46].type == lief.PE.RELOCATIONS_BASE_TYPES.DIR64
+    assert relocation.entries[46].type == lief.PE.RelocationEntry.BASE_TYPES.DIR64
     assert relocation.entries[25].data == 0xae10
     assert relocation.entries[25].position == 0xe10
-    assert relocation.entries[25].type == lief.PE.RELOCATIONS_BASE_TYPES.DIR64
+    assert relocation.entries[25].type == lief.PE.RelocationEntry.BASE_TYPES.DIR64
     assert relocation.entries[56].data == 0xaf08
     assert relocation.entries[56].position == 0xf08
-    assert relocation.entries[56].type == lief.PE.RELOCATIONS_BASE_TYPES.DIR64
+    assert relocation.entries[56].type == lief.PE.RelocationEntry.BASE_TYPES.DIR64
     assert relocation.entries[75].data == 0xafa0
     assert relocation.entries[75].position == 0xfa0
-    assert relocation.entries[75].type == lief.PE.RELOCATIONS_BASE_TYPES.DIR64
+    assert relocation.entries[75].type == lief.PE.RelocationEntry.BASE_TYPES.DIR64
 
     assert relocations[8].virtual_address == 0x15000
     assert relocations[8].block_size == 0xc0
@@ -454,16 +454,16 @@ def test_relocations():
     relocation = relocations[8]
     assert relocation.entries[87].data == 0xa9f8
     assert relocation.entries[87].position == 0x9f8
-    assert relocation.entries[87].type == lief.PE.RELOCATIONS_BASE_TYPES.DIR64
+    assert relocation.entries[87].type == lief.PE.RelocationEntry.BASE_TYPES.DIR64
     assert relocation.entries[24].data == 0xa0c0
     assert relocation.entries[24].position == 0xc0
-    assert relocation.entries[24].type == lief.PE.RELOCATIONS_BASE_TYPES.DIR64
+    assert relocation.entries[24].type == lief.PE.RelocationEntry.BASE_TYPES.DIR64
     assert relocation.entries[67].data == 0xa218
     assert relocation.entries[67].position == 0x218
-    assert relocation.entries[67].type == lief.PE.RELOCATIONS_BASE_TYPES.DIR64
+    assert relocation.entries[67].type == lief.PE.RelocationEntry.BASE_TYPES.DIR64
     assert relocation.entries[54].data == 0xa1b0
     assert relocation.entries[54].position == 0x1b0
-    assert relocation.entries[54].type == lief.PE.RELOCATIONS_BASE_TYPES.DIR64
+    assert relocation.entries[54].type == lief.PE.RelocationEntry.BASE_TYPES.DIR64
 
     assert relocations[9].virtual_address == 0x1c000
     assert relocations[9].block_size == 0x80
@@ -471,30 +471,30 @@ def test_relocations():
     relocation = relocations[9]
     assert relocation.entries[40].data == 0xa628
     assert relocation.entries[40].position == 0x628
-    assert relocation.entries[40].type == lief.PE.RELOCATIONS_BASE_TYPES.DIR64
+    assert relocation.entries[40].type == lief.PE.RelocationEntry.BASE_TYPES.DIR64
     assert relocation.entries[17].data == 0xa2d8
     assert relocation.entries[17].position == 0x2d8
-    assert relocation.entries[17].type == lief.PE.RELOCATIONS_BASE_TYPES.DIR64
+    assert relocation.entries[17].type == lief.PE.RelocationEntry.BASE_TYPES.DIR64
     assert relocation.entries[36].data == 0xa5a0
     assert relocation.entries[36].position == 0x5a0
-    assert relocation.entries[36].type == lief.PE.RELOCATIONS_BASE_TYPES.DIR64
+    assert relocation.entries[36].type == lief.PE.RelocationEntry.BASE_TYPES.DIR64
     assert relocation.entries[52].data == 0xa7f8
     assert relocation.entries[52].position == 0x7f8
-    assert relocation.entries[52].type == lief.PE.RELOCATIONS_BASE_TYPES.DIR64
+    assert relocation.entries[52].type == lief.PE.RelocationEntry.BASE_TYPES.DIR64
 
     r1 = lief.PE.RelocationEntry()
     r1.position = 0x123
-    r1.type = lief.PE.RELOCATIONS_BASE_TYPES.LOW
+    r1.type = lief.PE.RelocationEntry.BASE_TYPES.LOW
 
     assert r1.address == r1.position
     assert r1.size == 16
 
     r2 = lief.PE.RelocationEntry()
-    r2.type = lief.PE.RELOCATIONS_BASE_TYPES.HIGHLOW
+    r2.type = lief.PE.RelocationEntry.BASE_TYPES.HIGHLOW
     assert r2.size == 32
 
     r3 = lief.PE.RelocationEntry()
-    r3.type = lief.PE.RELOCATIONS_BASE_TYPES.ABSOLUTE
+    r3.type = lief.PE.RelocationEntry.BASE_TYPES.ABSOLUTE
     assert r3.size == 0
     r3.data = 0xBAAA
     assert r3.position == 0xAAA

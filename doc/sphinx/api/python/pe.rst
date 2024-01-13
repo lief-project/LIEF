@@ -544,13 +544,6 @@ SYMBOL_STORAGE_CLASS
 
 ----------
 
-RELOCATIONS_BASE_TYPES
-~~~~~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.RELOCATIONS_BASE_TYPES
-
-----------
-
 FIXED_VERSION_FILE_SUB_TYPES
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

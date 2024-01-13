@@ -639,9 +639,6 @@ Enums
 .. doxygenenum:: LIEF::PE::SYMBOL_COMPLEX_TYPES
    :project: lief
 
-.. doxygenenum:: LIEF::PE::RELOCATIONS_BASE_TYPES
-   :project: lief
-
 .. doxygenenum:: LIEF::PE::RELOCATIONS_I386
    :project: lief
 

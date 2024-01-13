@@ -340,7 +340,7 @@ ok_error_t Parser::parse_relocations() {
         LIEF_ERR("Can't parse relocation entry #{}", i);
         break;
       }
-      auto entry = std::make_unique<RelocationEntry>(*res_entry);
+      auto entry = std::make_unique<RelocationEntry>(RelocationEntry::from_raw(this->binary_->header().machine(), *res_entry));
       entry->relocation_ = relocation.get();
       relocation->entries_.push_back(std::move(entry));
     }
@@ -753,9 +753,10 @@ std::unique_ptr<Debug> Parser::parse_pogo(const details::pe_debug& debug_info) {
 
 std::unique_ptr<Debug> Parser::parse_repro(const details::pe_debug& debug_info) {
   LIEF_DEBUG("Parsing Debug Repro");
-  const uint32_t debug_size = debug_info.SizeOfData;
   const uint32_t debug_off  = debug_info.PointerToRawData;
-  const uint32_t debug_end  = debug_off + debug_size;
+
+  /* const uint32_t debug_size = debug_info.SizeOfData; */
+  /* const uint32_t debug_end  = debug_off + debug_size; */
   ScopedStream sscoped(*stream_, debug_off);
 
   auto res_size = sscoped->read<uint32_t>();

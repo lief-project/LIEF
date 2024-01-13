@@ -200,33 +200,6 @@ const char* to_string(RELOCATIONS_ARM e) {
 }
 
 
-const char* to_string(RELOCATIONS_BASE_TYPES e) {
-  CONST_MAP(RELOCATIONS_BASE_TYPES, const char*, 19) enumStrings {
-    { RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_ABSOLUTE,       "ABSOLUTE"                                           },
-    { RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_HIGH,           "HIGH"                                               },
-    { RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_LOW,            "LOW"                                                },
-    { RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_HIGHLOW,        "HIGHLOW"                                            },
-    { RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_HIGHADJ,        "HIGHADJ"                                            },
-    { RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_MIPS_JMPADDR,   "MIPS_JMPADDR | ARM_MOV32A | ARM_MOV32 | RISCV_HI20" },
-    { RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_ARM_MOV32A,     "MIPS_JMPADDR | ARM_MOV32A | ARM_MOV32 | RISCV_HI20" },
-    { RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_ARM_MOV32,      "MIPS_JMPADDR | ARM_MOV32A | ARM_MOV32 | RISCV_HI20" },
-    { RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_RISCV_HI20,     "MIPS_JMPADDR | ARM_MOV32A | ARM_MOV32 | RISCV_HI20" },
-    { RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_SECTION,        "SECTION"                                            },
-    { RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_REL,            "REL | ARM_MOV32T | THUMB_MOV32 | RISCV_LOW12I"      },
-    { RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_ARM_MOV32T,     "REL | ARM_MOV32T | THUMB_MOV32 | RISCV_LOW12I"      },
-    { RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_THUMB_MOV32,    "REL | ARM_MOV32T | THUMB_MOV32 | RISCV_LOW12I"      },
-    { RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_RISCV_LOW12I,   "REL | ARM_MOV32T | THUMB_MOV32 | RISCV_LOW12I"      },
-    { RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_RISCV_LOW12S,   "RISCV_LOW12S"                                       },
-    { RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_MIPS_JMPADDR16, "MIPS_JMPADDR16 | IA64_IMM64"                        },
-    { RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_IA64_IMM64,     "MIPS_JMPADDR16 | IA64_IMM64"                        },
-    { RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_DIR64,          "DIR64"                                              },
-    { RELOCATIONS_BASE_TYPES::IMAGE_REL_BASED_HIGH3ADJ,       "HIGH3ADJ"                                           },
-  };
-
-  const auto it = enumStrings.find(e);
-  return it == enumStrings.end() ? "Out of range" : it->second;
-}
-
 const char* to_string(EXTENDED_WINDOW_STYLES e) {
   CONST_MAP(EXTENDED_WINDOW_STYLES, const char*, 17) enumStrings {
     { EXTENDED_WINDOW_STYLES::WS_EX_DLGMODALFRAME,  "DLGMODALFRAME"  },

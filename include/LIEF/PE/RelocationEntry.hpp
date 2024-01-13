@@ -24,13 +24,11 @@
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/PE/enums.hpp"
+#include "LIEF/PE/Header.hpp"
 
 namespace LIEF {
 namespace PE {
 
-class Parser;
-class Builder;
 class Relocation;
 
 //! Class which represents an entry of the PE relocation table
@@ -43,12 +41,45 @@ class LIEF_API RelocationEntry : public LIEF::Relocation {
   friend class PE::Relocation;
 
   public:
-  RelocationEntry();
+  enum class BASE_TYPES {
+    UNKNOWN        = -1,
+
+    ABSOLUTE       = 0,
+    HIGH           = 1,
+    LOW            = 2,
+    HIGHLOW        = 3,
+    HIGHADJ        = 4,
+
+    MIPS_JMPADDR   = 5,
+    ARM_MOV32A     = 5 + 0x101,
+    ARM_MOV32      = 5 + 0x102,
+    RISCV_HI20     = 5 + 0x103,
+
+    SECTION        = 6,
+
+    REL            = 7,
+    ARM_MOV32T     = 7 + 0x201,
+    THUMB_MOV32    = 7 + 0x202,
+    RISCV_LOW12I   = 7 + 0x203,
+
+    RISCV_LOW12S   = 8,
+
+    IA64_IMM64     = 9,
+    MIPS_JMPADDR16 = 9 + 0x300,
+
+    DIR64          = 10,
+    HIGH3ADJ       = 11,
+  };
+  static RelocationEntry from_raw(Header::MACHINE_TYPES arch, uint16_t raw) {
+    return RelocationEntry(raw, arch);
+  }
+
+  RelocationEntry() = default;
   RelocationEntry(const RelocationEntry& other);
   RelocationEntry& operator=(RelocationEntry other);
-  RelocationEntry(uint16_t data);
-  RelocationEntry(uint16_t position, RELOCATIONS_BASE_TYPES type);
-  ~RelocationEntry() override;
+
+  RelocationEntry(uint16_t position, BASE_TYPES type);
+  ~RelocationEntry() override = default;
 
   void swap(RelocationEntry& other);
 
@@ -68,25 +99,39 @@ class LIEF_API RelocationEntry : public LIEF::Relocation {
   uint16_t data() const;
 
   //! Offset relative to Relocation::virtual_address where the relocation occurs.
-  uint16_t position() const;
+  uint16_t position() const {
+    return position_;
+  }
 
   //! Type of the relocation
-  RELOCATIONS_BASE_TYPES type() const;
+  BASE_TYPES type() const {
+    return type_;
+  }
 
   void data(uint16_t data);
-  void position(uint16_t position);
-  void type(RELOCATIONS_BASE_TYPES type);
+
+  void position(uint16_t position) {
+    position_ = position;
+  }
+
+  void type(BASE_TYPES type) {
+    type_ = type;
+  }
 
   void accept(Visitor& visitor) const override;
-
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const RelocationEntry& entry);
 
   private:
-  uint16_t               position_;
-  RELOCATIONS_BASE_TYPES type_;
-  PE::Relocation*        relocation_{nullptr}; // Used to compute some information
+  RelocationEntry(uint16_t data, Header::MACHINE_TYPES arch);
+
+  uint16_t               position_ = 0;
+  BASE_TYPES             type_ = BASE_TYPES::ABSOLUTE;
+  Header::MACHINE_TYPES  arch_ = Header::MACHINE_TYPES::UNKNOWN;
+  PE::Relocation*        relocation_ = nullptr; // Used to compute some information
 };
+
+LIEF_API const char* to_string(RelocationEntry::BASE_TYPES e);
 
 }
 }

@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-
-#include "LIEF/PE/hash.hpp"
+#include "LIEF/Visitor.hpp"
 
 #include "PE/Structures.hpp"
 #include "LIEF/PE/Relocation.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"
 
+#include <spdlog/fmt/fmt.h>
+
 namespace LIEF {
 namespace PE {
-
-Relocation::~Relocation() = default;
 
 Relocation::Relocation(const Relocation& other) :
   Object{other},
@@ -37,20 +35,12 @@ Relocation::Relocation(const Relocation& other) :
     copy->relocation_ = this;
     entries_.push_back(std::move(copy));
   }
-
 }
 
 Relocation& Relocation::operator=(Relocation other) {
   swap(other);
   return *this;
 }
-
-
-
-
-Relocation::Relocation() = default;
-
-
 
 Relocation::Relocation(const details::pe_base_relocation_block& header) :
   block_size_{header.BlockSize},
@@ -64,27 +54,6 @@ void Relocation::swap(Relocation& other) {
   std::swap(entries_,         other.entries_);
 }
 
-
-uint32_t Relocation::virtual_address() const {
-  return virtual_address_;
-}
-
-
-uint32_t Relocation::block_size() const {
-  return block_size_;
-}
-
-Relocation::it_const_entries Relocation::entries() const {
-  return entries_;
-}
-
-
-Relocation::it_entries Relocation::entries() {
-  return entries_;
-}
-
-
-
 RelocationEntry& Relocation::add_entry(const RelocationEntry& entry) {
   auto newone = std::make_unique<RelocationEntry>(entry);
   newone->relocation_ = this;
@@ -92,29 +61,16 @@ RelocationEntry& Relocation::add_entry(const RelocationEntry& entry) {
   return *entries_.back();
 }
 
-
-void Relocation::virtual_address(uint32_t virtual_address) {
-  virtual_address_ = virtual_address;
-}
-
-
-void Relocation::block_size(uint32_t block_size) {
-  block_size_ = block_size;
-}
-
-
 void Relocation::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }
 
 std::ostream& operator<<(std::ostream& os, const Relocation& relocation) {
+  os << fmt::format("0x{:06x} 0x{:06x}\n", relocation.virtual_address(),
+                    relocation.block_size());
 
-  os << std::hex << std::left;
-  os << std::setw(10) << relocation.virtual_address();
-  os << std::setw(10) << relocation.block_size();
-  os << std::endl;
   for (const RelocationEntry& entry : relocation.entries()) {
-    os << "    - " << entry << std::endl;
+    os << "    - " << entry << '\n';
   }
 
   return os;
