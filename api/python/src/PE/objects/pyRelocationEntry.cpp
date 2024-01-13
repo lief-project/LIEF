@@ -37,7 +37,7 @@ void create<RelocationEntry>(nb::module_& m) {
   #define ENTRY(X) .value(to_string(RelocationEntry::BASE_TYPES::X), RelocationEntry::BASE_TYPES::X)
   enum_<RelocationEntry::BASE_TYPES>(entry, "BASE_TYPES")
     ENTRY(UNKNOWN)
-    ENTRY(ABSOLUTE)
+    ENTRY(ABS)
     ENTRY(HIGH)
     ENTRY(LOW)
     ENTRY(HIGHLOW)

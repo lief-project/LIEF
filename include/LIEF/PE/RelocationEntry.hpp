@@ -44,7 +44,7 @@ class LIEF_API RelocationEntry : public LIEF::Relocation {
   enum class BASE_TYPES {
     UNKNOWN        = -1,
 
-    ABSOLUTE       = 0,
+    ABS            = 0,
     HIGH           = 1,
     LOW            = 2,
     HIGHLOW        = 3,
@@ -126,7 +126,7 @@ class LIEF_API RelocationEntry : public LIEF::Relocation {
   RelocationEntry(uint16_t data, Header::MACHINE_TYPES arch);
 
   uint16_t               position_ = 0;
-  BASE_TYPES             type_ = BASE_TYPES::ABSOLUTE;
+  BASE_TYPES             type_ = BASE_TYPES::ABS;
   Header::MACHINE_TYPES  arch_ = Header::MACHINE_TYPES::UNKNOWN;
   PE::Relocation*        relocation_ = nullptr; // Used to compute some information
 };

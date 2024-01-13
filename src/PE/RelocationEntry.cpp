@@ -93,7 +93,7 @@ size_t RelocationEntry::size() const {
       {
         return 64;
       }
-    case BASE_TYPES::ABSOLUTE:
+    case BASE_TYPES::ABS:
     default:
       {
         return 0;
@@ -119,7 +119,7 @@ const char* to_string(RelocationEntry::BASE_TYPES type) {
   #define ENTRY(X) std::pair(RelocationEntry::BASE_TYPES::X, #X)
   STRING_MAP enums2str {
     ENTRY(UNKNOWN),
-    ENTRY(ABSOLUTE),
+    ENTRY(ABS),
     ENTRY(HIGH),
     ENTRY(LOW),
     ENTRY(HIGHLOW),

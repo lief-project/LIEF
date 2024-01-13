@@ -17,6 +17,7 @@
 #include "LIEF/PE/Builder.hpp"
 #include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/Relocation.hpp"
+#include "LIEF/PE/RelocationEntry.hpp"
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/ResourceNode.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
