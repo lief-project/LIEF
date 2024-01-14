@@ -494,7 +494,7 @@ def test_relocations():
     assert r2.size == 32
 
     r3 = lief.PE.RelocationEntry()
-    r3.type = lief.PE.RelocationEntry.BASE_TYPES.ABSOLUTE
+    r3.type = lief.PE.RelocationEntry.BASE_TYPES.ABS
     assert r3.size == 0
     r3.data = 0xBAAA
     assert r3.position == 0xAAA
