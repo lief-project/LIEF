@@ -261,8 +261,11 @@ class GithubDeploy:
 
     def deploy(self, directories: list[str]):
         s3dir = None
+        tag = None
         if GithubDeploy.is_tagged():
             s3dir = GithubDeploy.tag_name()
+            tag = s3dir if len(s3dir) > 0 else None
+            logger.info("Deployment for tag: %s", tag)
         else:
             branch = GithubDeploy.branch()
             if branch is None:
@@ -275,13 +278,14 @@ class GithubDeploy:
                 s3dir = self._default_dir
             else:
                 s3dir = branch.replace("/", "-").replace("_", "-")
+
+            if not self.should_be_deployed(branch):
+                logger.info("Skipping deployment for branch: %s", branch)
+                return
+
         if s3dir is None:
             logger.error("Target directory is not set")
             sys.exit(1)
-
-        if not self.should_be_deployed(branch):
-            logger.info("Skipping deployment for branch: %s", branch)
-            return
 
         logger.info("s3dir: %s", s3dir)
         self.s3_manager.change_dir(s3dir)
