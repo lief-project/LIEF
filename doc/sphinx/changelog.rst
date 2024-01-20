@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.14.0 - Not Released Yet
+0.14.0 - January 20, 2024
 -------------------------
 
 :ELF:
