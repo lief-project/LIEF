@@ -56,6 +56,10 @@ class Versioning:
             _, version = branch.split("release-")
             return version
 
+        if branch is not None and branch.startswith("release/"):
+            _, version = branch.split("release/")
+            return version
+
         parts = version.split('-')
         assert len(parts) in (3, 4)
         dirty = len(parts) == 4
