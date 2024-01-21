@@ -5,6 +5,7 @@ on:
       - '**'
       - '!master'
       - '!release-**'
+      - '!release/**'
     tags-ignore:
       - "**"
 

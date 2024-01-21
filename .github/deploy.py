@@ -23,7 +23,7 @@ CONFIG_DIR      = CURRENTDIR / "config"
 LIEF_S3_KEY     = os.getenv("LIEF_S3_KEY", None)
 LIEF_S3_SECRET  = os.getenv("LIEF_S3_SECRET", None)
 OWNED_ORGS      = ["lief-project/", "romainthomas/"]
-RELEASE_KEYWORD = "release-"
+RELEASE_KEYWORD = ["release-", "release/"]
 
 DEFAULT_CONFIG   = CONFIG_DIR / "gh-ci.toml"
 DEFAULT_TEMPLATE = (ASSET_DIR / "index.j2").read_text()
@@ -256,8 +256,10 @@ class GithubDeploy:
         if any(re.match(s, branch) for s in self._branches):
             return True
 
-        if branch.startswith(RELEASE_KEYWORD):
+        if any(branch.startswith(e) for e in RELEASE_KEYWORD):
             return True
+
+        return False
 
     def deploy(self, directories: list[str]):
         s3dir = None
@@ -272,12 +274,15 @@ class GithubDeploy:
                 logger.warning("Can't resolve the branch name")
                 sys.exit(1)
 
-            if branch.startswith(RELEASE_KEYWORD):
-                _, s3dir = branch.split(RELEASE_KEYWORD)
-            elif self.is_main_branch(branch):
-                s3dir = self._default_dir
-            else:
-                s3dir = branch.replace("/", "-").replace("_", "-")
+            for rel_kwrd in RELEASE_KEYWORD:
+                if branch.startswith(rel_kwrd):
+                    _, s3dir = branch.split(rel_kwrd)
+            if s3dir is None:
+
+                if self.is_main_branch(branch):
+                    s3dir = self._default_dir
+                else:
+                    s3dir = branch.replace("/", "-").replace("_", "-")
 
             if not self.should_be_deployed(branch):
                 logger.info("Skipping deployment for branch: %s", branch)
