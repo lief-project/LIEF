@@ -106,6 +106,7 @@ add_subdirectory(src)
 
 if(NOT LIEF_PY_LIEF_EXT)
   add_library(LIEF::LIEF ALIAS LIB_LIEF)
+  set_target_properties(LIB_LIEF PROPERTIES EXCLUDE_FROM_ALL ON)
 endif()
 
 if(NOT LIEF_OPT_MBEDTLS_EXTERNAL)
@@ -290,6 +291,7 @@ set_target_properties(LIB_LIEF
   PROPERTIES POSITION_INDEPENDENT_CODE ON
              CXX_STANDARD              17
              CXX_STANDARD_REQUIRED     ON
+             VISIBILITY_INLINES_HIDDEN ON
              CXX_VISIBILITY_PRESET     hidden
              C_VISIBILITY_PRESET       hidden)
 
