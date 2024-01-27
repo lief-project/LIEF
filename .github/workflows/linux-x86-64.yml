@@ -19,7 +19,7 @@ jobs:
         ACTIONS_CACHE_URL: "${{ env.ACTIONS_CACHE_URL }}"
       options: --user 1001:1001
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Get Date
@@ -32,7 +32,7 @@ jobs:
         run: |
           mkdir -p /home/pylief/.ccache/tmp
       - name: ccache cache files
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: /home/pylief/.ccache
           key: linux-x86-64-${{ runner.os }}-sdk-${{ steps.get-date.outputs.date }}
@@ -94,7 +94,7 @@ jobs:
         PYTEST_ADDOPTS: "--color=yes"
       options: --user 1001:1001
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Get Date
@@ -103,7 +103,7 @@ jobs:
           echo "date=$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")" >> $GITHUB_OUTPUT
         shell: bash
       - name: ccache cache files
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.ccache
           key: linux-x86-64-${{ runner.os }}-test-${{ steps.get-date.outputs.date }}
@@ -186,7 +186,7 @@ jobs:
       matrix:
         python-version: [3.8, 3.9, '3.10', '3.11', '3.12']
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Get Date
@@ -199,7 +199,7 @@ jobs:
         run: |
           mkdir -p /home/pylief/.ccache/tmp
       - name: ccache cache files
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: /home/pylief/.ccache
           key: linux-x86-64-${{ runner.os }}-${{ matrix.python-version }}-${{ steps.get-date.outputs.date }}
@@ -239,7 +239,7 @@ jobs:
     if: ${{ always() }}
     needs: [linux-sdk, pywheels]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Download artifacts

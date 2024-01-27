@@ -23,11 +23,11 @@ jobs:
       SCCACHE_CACHE_SIZE: 2G
       SCCACHE_DIR: ${{ vars.SCCACHE_DIR }}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
     - name: Set up Python ${{ env.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ env.python-version }}
         architecture: ${{ matrix.python-version }}
@@ -45,7 +45,7 @@ jobs:
         echo "date=$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")" >> $GITHUB_OUTPUT
       shell: bash
     - name: Save sccache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       continue-on-error: false
       with:
         path: ${{ vars.SCCACHE_DIR }}

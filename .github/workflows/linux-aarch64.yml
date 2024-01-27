@@ -5,7 +5,7 @@ jobs:
   linux-sdk:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Get Date
@@ -14,7 +14,7 @@ jobs:
           echo "date=$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")" >> $GITHUB_OUTPUT
         shell: bash
       - name: ccache cache files
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.ccache
           key: linux-aarch64-${{ runner.os }}-sdk-${{ steps.get-date.outputs.date }}
@@ -56,7 +56,7 @@ jobs:
       matrix:
         python-version: [3.8, 3.9, '3.10', '3.11', '3.12']
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Get Date
@@ -65,7 +65,7 @@ jobs:
           echo "date=$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")" >> $GITHUB_OUTPUT
         shell: bash
       - name: ccache cache files
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.ccache
           key: linux-aarch64-${{ runner.os }}-${{ matrix.python-version }}-${{ steps.get-date.outputs.date }}
@@ -109,7 +109,7 @@ jobs:
     if: ${{ always() }}
     needs: [linux-sdk, wheels]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Download artifacts

@@ -5,7 +5,7 @@ jobs:
   ios-sdk:
     runs-on: macos-11.0
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Install system dependencies
@@ -21,7 +21,7 @@ jobs:
         run: |
           mkdir -p ~/.ccache
       - name: ccache cache files
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ runner.temp }}/.ccache
           key: ios-${{ runner.os }}-${{ steps.get-date.outputs.date }}
@@ -47,7 +47,7 @@ jobs:
     if: ${{ always() }}
     needs: ios-sdk
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Download artifacts
