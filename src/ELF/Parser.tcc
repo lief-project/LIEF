@@ -1514,48 +1514,46 @@ ok_error_t Parser::parse_symbol_version_requirement(uint64_t offset, uint32_t nb
   return ok();
 }
 
-
 template<typename ELF_T>
 ok_error_t Parser::parse_symbol_version_definition(uint64_t offset, uint32_t nb_entries) {
   using Elf_Verdef  = typename ELF_T::Elf_Verdef;
   using Elf_Verdaux = typename ELF_T::Elf_Verdaux;
 
   const uint64_t string_offset = get_dynamic_string_table();
-  ScopedStream sscoped(*stream_, offset);
+  ScopedStream verdef_stream(*stream_, offset);
   uint64_t def_size = 0;
 
   for (size_t i = 0; i < nb_entries; ++i) {
-    const auto svd_header = sscoped->peek_conv<Elf_Verdef>();
-    def_size = std::max(def_size, sscoped->pos() - offset + sizeof(Elf_Verdef));
+    const auto svd_header = verdef_stream->peek_conv<Elf_Verdef>();
+    def_size = std::max(def_size, verdef_stream->pos() - offset + sizeof(Elf_Verdef));
     if (!svd_header) {
       break;
     }
 
     auto symbol_version_definition = std::make_unique<SymbolVersionDefinition>(*svd_header);
     uint32_t nb_aux_symbols = svd_header->vd_cnt;
-    uint32_t next_aux_offset = 0;
-
-    for (size_t j = 0; j < nb_aux_symbols; ++j) {
-      ScopedStream aux_stream(*stream_, sscoped->pos() + svd_header->vd_aux);
-      const auto svda_header = aux_stream->peek_conv<Elf_Verdaux>();
-      def_size = std::max(def_size, aux_stream->pos() - offset + sizeof(Elf_Verdaux));
-      if (!svda_header) {
-        break;
-      }
-
-      if (string_offset != 0) {
-        auto name  = stream_->peek_string_at(string_offset + svda_header->vda_name);
-        if (name) {
-          symbol_version_definition->symbol_version_aux_.emplace_back(new SymbolVersionAux{std::move(*name)});
+    {
+      ScopedStream aux_stream(*stream_, verdef_stream->pos() + svd_header->vd_aux);
+      for (size_t j = 0; j < nb_aux_symbols; ++j) {
+        const auto svda_header = aux_stream->peek_conv<Elf_Verdaux>();
+        def_size = std::max(def_size, aux_stream->pos() - offset + sizeof(Elf_Verdaux));
+        if (!svda_header) {
+          break;
         }
-      }
 
-      // Additional check
-      if (svda_header->vda_next == 0) {
-        break;
+        if (string_offset != 0) {
+          auto name  = stream_->peek_string_at(string_offset + svda_header->vda_name);
+          if (name) {
+            symbol_version_definition->symbol_version_aux_.emplace_back(new SymbolVersionAux{std::move(*name)});
+          }
+        }
+
+        // Additional check
+        if (svda_header->vda_next == 0) {
+          break;
+        }
+        aux_stream->increment_pos(svda_header->vda_next);
       }
-      aux_stream->increment_pos(svda_header->vda_next);
-      next_aux_offset += svda_header->vda_next;
     }
 
     binary_->symbol_version_definition_.push_back(std::move(symbol_version_definition));
@@ -1564,7 +1562,7 @@ ok_error_t Parser::parse_symbol_version_definition(uint64_t offset, uint32_t nb_
     if (svd_header->vd_next == 0) {
       break;
     }
-    sscoped->increment_pos(svd_header->vd_next);
+    verdef_stream->increment_pos(svd_header->vd_next);
   }
 
   binary_->sizing_info_->verdef = def_size;

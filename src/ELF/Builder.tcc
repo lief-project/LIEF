@@ -1623,6 +1623,8 @@ ok_error_t Builder::build_symbol_definition() {
   vector_iostream svd_aux_raw(should_swap());
   {
     for (const auto& names : verdef_info.names_list) {
+      verdef_info.names_offset[&names] = svd_aux_raw.tellp();
+
       for (size_t i = 0; i < names.size(); ++i) {
         const std::string& sva_name = names[i];
         uint64_t dynstr_offset = 0;
@@ -1634,13 +1636,13 @@ ok_error_t Builder::build_symbol_definition() {
         }
 
         dynstr_offset = it_name_offset->second;
-        const uint64_t next_offset = i < (names.size() - 1) ?
-                                     sizeof(Elf_Verdaux) : 0;
+        const bool is_last = i == (names.size() - 1);
+        const uint64_t next_offset = !is_last ? sizeof(Elf_Verdaux) : 0;
 
         Elf_Verdaux aux_header;
         aux_header.vda_name  = static_cast<Elf_Word>(dynstr_offset);
         aux_header.vda_next  = static_cast<Elf_Word>(next_offset);
-        verdef_info.names_offset[&names] = svd_aux_raw.tellp();
+
         svd_aux_raw.write_conv<Elf_Verdaux>(aux_header);
       }
     }
@@ -1652,8 +1654,8 @@ ok_error_t Builder::build_symbol_definition() {
   {
     for (size_t i = 0; i < sym_verdef.size(); ++i) {
       const SymbolVersionDefinition& svd = sym_verdef[i];
-      const uint64_t next_offset = i < (sym_verdef.size() - 1) ?
-                                   sizeof(Elf_Verdef) : 0;
+      const bool is_last = i == (sym_verdef.size() - 1);
+      const uint64_t next_offset = !is_last ? sizeof(Elf_Verdef) : 0;
 
       auto it_names = verdef_info.def_to_names.find(&svd);
       if (it_names == verdef_info.def_to_names.end()) {
