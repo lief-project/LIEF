@@ -57,13 +57,13 @@ jobs:
         run: |
           python ./scripts/windows/package_sdk.py
       - name: 'Upload SDK artifact'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-${{ matrix.arch }}-sdk
           path: build/*.zip
           retention-days: 3
       - name: 'Upload install artifact'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-${{ matrix.arch }}-install
           path: ${{ runner.temp }}/lief-install
@@ -188,7 +188,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ matrix.arch }}-sccache-${{ matrix.python-version }}
       - name: Download LIEF install dir
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: windows-${{ matrix.arch }}-install
           path: ~/lief-${{ matrix.arch }}-install
@@ -213,7 +213,7 @@ jobs:
           python -m pip -vvv wheel --wheel-dir=dist/ ./api/python
         shell: cmd
       - name: 'Upload Python artifacts [${{ matrix.python-version }}]'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-${{ matrix.arch }}-wheel-${{ matrix.python-version }}
           path: dist/*.whl
@@ -227,7 +227,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: ${{ runner.temp }}/artifacts
       - name: Deploy

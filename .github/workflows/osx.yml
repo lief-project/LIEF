@@ -42,13 +42,13 @@ jobs:
         run: |
           bash scripts/osx/package_sdk.sh
       - name: 'Upload SDK Artifact'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: osx-sdk
           path: build/*.tar.gz
           retention-days: 3
       - name: 'Upload install artifact [arm64]'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: osx-arm64-install
           path: install/arm64

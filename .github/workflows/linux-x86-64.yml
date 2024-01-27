@@ -69,13 +69,13 @@ jobs:
           cd /tmp/build/linux-x86-64
           cpack --config $GITHUB_WORKSPACE/cmake/cpack.config.cmake
       - name: 'Upload SDK Artifact'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-x86-64-sdk
           path: /tmp/build/linux-x86-64/*.tar.gz
           retention-days: 3
       - name: 'Upload Install Artifact'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-x86-64-install
           path: /install
@@ -229,7 +229,7 @@ jobs:
                auditwheel repair -w $GITHUB_WORKSPACE/dist {} \;
           ls -alh $GITHUB_WORKSPACE/dist
       - name: 'Artifact'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-x86-64-python${{ matrix.python-version }}-wheel
           path: dist/*.whl

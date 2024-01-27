@@ -38,13 +38,13 @@ jobs:
             liefproject/manylinux2014-aarch64          \
             bash /src/scripts/docker/linux-sdk-aarch64
       - name: 'Upload SDK Artifact'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-aarch64-sdk
           path: build/*.tar.gz
           retention-days: 3
       - name: 'Upload Install Artifact'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-aarch64-install
           path: ${{ runner.temp }}/lief-install
