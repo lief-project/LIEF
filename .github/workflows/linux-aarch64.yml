@@ -72,7 +72,7 @@ jobs:
           restore-keys: |
               linux-aarch64-${{ runner.os }}-${{ matrix.python-version }}
       - name: Download LIEF install dir
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: linux-aarch64-install
           path: ${{ runner.temp }}/lief-install

@@ -54,7 +54,7 @@ jobs:
           path: install/arm64
           retention-days: 1
       - name: 'Upload install artifact [x64]'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: osx-x64-install
           path: install/x64
@@ -178,7 +178,7 @@ jobs:
         run: |
           python -m pip -vv wheel --wheel-dir=dist/ api/python
       - name: 'Upload Python wheel artifact - ${{ matrix.python-version }}'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: osx-wheel-${{ matrix.arch }}-${{ matrix.python-version }}
           path: dist/*.whl

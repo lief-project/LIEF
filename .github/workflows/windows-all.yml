@@ -229,7 +229,7 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: osx-*
+          pattern: windows-*
           merge-multiple: true
           path: ${{ runner.temp }}/artifacts
       - name: Deploy
