@@ -7,6 +7,12 @@ Changelog
 :ELF:
   * Fix regression in Symbol Version Definition processing (:issue:`1014`)
 
+:PE:
+  * Address :issue:`1016` by creating aliases:
+
+    - :attr:`lief.PE.ContentInfo.digest` to :attr:`lief.PE.SpcIndirectData.digest`
+    - :attr:`lief.PE.ContentInfo.digest_algorithm` to :attr:`lief.PE.SpcIndirectData.digest_algorithm`
+
 0.14.0 - January 20, 2024
 -------------------------
 
