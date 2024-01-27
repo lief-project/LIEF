@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.15.0 - Not Released Yet
+-------------------------
+
+:CMake:
+
+  * ``LIEFConfig.cmake`` is now installed in ``<prefix>/lib/cmake/LIEF/``
+    instead of ``<prefix>/share/LIEF/cmake/``
+
 0.14.0 - January 20, 2024
 -------------------------
 

@@ -503,7 +503,7 @@ if(LIEF_INSTALL)
   install(
     FILES ${CMAKE_CURRENT_BINARY_DIR}/LIEFConfig.cmake
           ${CMAKE_CURRENT_BINARY_DIR}/LIEFConfigVersion.cmake
-    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/LIEF/cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/LIEF
     COMPONENT config)
 
   install(
@@ -520,7 +520,7 @@ if(LIEF_INSTALL)
   install(
     EXPORT LIEFExport
     NAMESPACE LIEF::
-    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/LIEF/cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/LIEF
     FILE LIEFExport-${lib_type}.cmake
     COMPONENT config)
 
