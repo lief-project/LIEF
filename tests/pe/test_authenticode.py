@@ -44,6 +44,8 @@ def test_api():
     spc_indirect_data = content_info.value
 
     assert content_info.content_type == "1.3.6.1.4.1.311.2.1.4"
+    assert content_info.digest == bytes(spc_indirect_data.digest)
+    assert content_info.digest_algorithm == spc_indirect_data.digest_algorithm
     assert spc_indirect_data.digest_algorithm == lief.PE.ALGORITHMS.SHA_256
     assert spc_indirect_data.digest == from_hex("a7:38:da:44:46:a4:e7:8a:b6:47:db:7e:53:42:7e:b0:79:61:c9:94:31:7f:4c:59:d7:ed:be:a5:cc:78:6d:80")
 

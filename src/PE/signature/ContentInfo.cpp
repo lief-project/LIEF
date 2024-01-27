@@ -16,7 +16,11 @@
 #include "LIEF/Visitor.hpp"
 #include "LIEF/PE/signature/ContentInfo.hpp"
 #include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/PE/signature/SpcIndirectData.hpp"
 #include "LIEF/utils.hpp"
+
+#include "Object.tcc"
+#include "internal_utils.hpp"
 
 #include <ostream>
 
@@ -46,6 +50,22 @@ void ContentInfo::swap(ContentInfo& other) {
 
 void ContentInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
+}
+
+std::vector<uint8_t> ContentInfo::digest() const {
+  if (SpcIndirectData::classof(value_.get())) {
+    const auto* spc_ind_data = value_->as<SpcIndirectData>();
+    return as_vector(spc_ind_data->digest());
+  }
+  return {};
+}
+
+ALGORITHMS ContentInfo::digest_algorithm() const {
+  if (SpcIndirectData::classof(value_.get())) {
+    const auto* spc_ind_data = value_->as<SpcIndirectData>();
+    return spc_ind_data->digest_algorithm();
+  }
+  return ALGORITHMS::UNKNOWN;
 }
 
 std::ostream& operator<<(std::ostream& os, const ContentInfo& content_info) {
