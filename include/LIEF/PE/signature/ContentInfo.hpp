@@ -124,6 +124,14 @@ class LIEF_API ContentInfo : public Object {
     return *value_;
   }
 
+  /// Return the digest (authentihash) if the underlying content type is `SPC_INDIRECT_DATA_OBJID`
+  /// Otherwise, return an empty vector
+  std::vector<uint8_t> digest() const;
+
+  /// Return the OID algorithm if the underlying content type is `SPC_INDIRECT_DATA_OBJID`
+  /// Otherwise, return an empty oid
+  ALGORITHMS digest_algorithm() const;
+
   void accept(Visitor& visitor) const override;
 
   ~ContentInfo() override;

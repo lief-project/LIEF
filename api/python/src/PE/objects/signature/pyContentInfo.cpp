@@ -22,6 +22,8 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>
 
+#include "nanobind/utils.hpp"
+
 namespace LIEF::PE::py {
 
 template<>
@@ -82,6 +84,17 @@ void create<ContentInfo>(nb::module_& m) {
     .def_prop_ro("content_type",
         &ContentInfo::content_type,
         "An alias for :attr:`~.ContentInfo.content_type`"_doc)
+    .def_prop_ro("digest",
+        [] (const ContentInfo& self) -> nb::bytes {
+          return nb::to_bytes(self.digest());
+        },
+        R"delim(
+        Return the digest (authentihash) if the underlying content type is
+        `SPC_INDIRECT_DATA_OBJID`. Return an empty vector otherwise.
+        )delim"_doc
+    )
+    .def_prop_ro("digest_algorithm", &ContentInfo::digest_algorithm,
+                 "Return the hash algorithm used to generate the :attr:`.digest`"_doc)
     .def_prop_ro("value", nb::overload_cast<>(&ContentInfo::value),
                  nb::rv_policy::reference_internal)
 
