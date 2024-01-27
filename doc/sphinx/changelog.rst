@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.14.1 - Not Released Yet
+-------------------------
+
+:ELF:
+  * Fix regression in Symbol Version Definition processing (:issue:`1014`)
+
 0.14.0 - January 20, 2024
 -------------------------
 
