@@ -51,7 +51,7 @@ class BuildConfig(BaseModel):
                 out.extend(self.extra_cmake)
 
         if self.lief_install_dir is not None:
-            lief_cmake_dir = Path(self.lief_install_dir) / "share" / "LIEF" / "cmake"
+            lief_cmake_dir = Path(self.lief_install_dir) / "lib" / "cmake" / "LIEF"
             lief_dir = lief_cmake_dir.expanduser().resolve().absolute()
             out.extend((
                 "-DLIEF_PY_LIEF_EXT=on",
