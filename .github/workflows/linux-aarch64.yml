@@ -99,7 +99,7 @@ jobs:
            liefproject/manylinux2014-aarch64     \
            bash /src/scripts/docker/linux-py-aarch64
       - name: 'Artifact'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-aarch64-python${{ matrix.python-version }}-wheel
           path: dist/*.whl
@@ -113,8 +113,10 @@ jobs:
         with:
           fetch-depth: 0
       - name: Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
+          pattern: linux-aarch64-*
+          merge-multiple: true
           path: ${{ runner.temp }}/artifacts
       - name: Display artifacts
         run: ls -R

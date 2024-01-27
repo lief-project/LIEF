@@ -160,7 +160,7 @@ jobs:
           restore-keys: |
               osx-${{ runner.os }}-${{ matrix.arch }}-${{ matrix.python-version }}
       - name: Download LIEF install dir
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: osx-${{ matrix.arch }}-install
           path: ~/lief-${{ matrix.arch }}-install
@@ -192,8 +192,10 @@ jobs:
         with:
           fetch-depth: 0
       - name: Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
+          pattern: osx-*
+          merge-multiple: true
           path: ${{ runner.temp }}/artifacts
       - name: Display artifacts
         run: ls -R
