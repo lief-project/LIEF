@@ -44,13 +44,6 @@ void create<DynamicEntryRpath>(nb::module_& m) {
         "Constructor from a list of paths"_doc,
         "paths"_a)
 
-    .def_prop_rw("name",
-        [] (const DynamicEntryRpath& obj) {
-          return LIEF::py::safe_string(obj.name());
-        },
-        nb::overload_cast<const std::string&>(&DynamicEntryRpath::name),
-        "The actual rpath as a string"_doc)
-
     .def_prop_rw("rpath",
         [] (const DynamicEntryRpath& obj) {
           return LIEF::py::safe_string(obj.rpath());
@@ -63,20 +56,17 @@ void create<DynamicEntryRpath>(nb::module_& m) {
         nb::overload_cast<const std::vector<std::string>&>(&DynamicEntryRpath::paths),
         "Paths as a list"_doc)
 
-    .def("insert",
-        &DynamicEntryRpath::insert,
+    .def("insert", &DynamicEntryRpath::insert,
         "Insert a ``path`` at the given ``position``"_doc,
         "position"_a, "path"_a,
         nb::rv_policy::reference_internal)
 
-    .def("append",
-        &DynamicEntryRpath::append,
+    .def("append", &DynamicEntryRpath::append,
         "Append the given ``path`` "_doc,
         "path"_a,
         nb::rv_policy::reference_internal)
 
-    .def("remove",
-        &DynamicEntryRpath::remove,
+    .def("remove", &DynamicEntryRpath::remove,
         "Remove the given ``path`` "_doc,
         "path"_a,
         nb::rv_policy::reference_internal)

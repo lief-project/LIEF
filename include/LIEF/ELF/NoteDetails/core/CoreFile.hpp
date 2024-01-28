@@ -46,7 +46,7 @@ class LIEF_API CoreFile : public Note {
   using const_iterator = files_t::const_iterator;
 
   public:
-  CoreFile(ARCH arch, ELF_CLASS cls, std::string name,
+  CoreFile(ARCH arch, Header::CLASS cls, std::string name,
            uint32_t type, Note::description_t description);
 
   std::unique_ptr<Note> clone() const override {
@@ -105,8 +105,8 @@ class LIEF_API CoreFile : public Note {
 
   files_t  files_;
   uint64_t page_size_ = 0;
-  ARCH arch_ = ARCH::EM_NONE;
-  ELF_CLASS class_ = ELF_CLASS::ELFCLASSNONE;
+  ARCH arch_ = ARCH::NONE;
+  Header::CLASS class_ = Header::CLASS::NONE;
 };
 
 } // namepsace ELF

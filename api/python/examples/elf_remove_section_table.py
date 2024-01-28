@@ -23,7 +23,7 @@ import lief
 from lief import ELF
 
 def remove_section_table(filename, output):
-    binary  = lief.parse(filename) # Build an ELF binary
+    binary  = lief.ELF.parse(filename) # Build an ELF binary
 
     header = binary.header
     header.section_header_offset = 0;

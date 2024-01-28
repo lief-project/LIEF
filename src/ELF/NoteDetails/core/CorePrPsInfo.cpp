@@ -98,14 +98,14 @@ write_info_impl(Note::description_t& description,
 
 
 result<CorePrPsInfo::info_t> CorePrPsInfo::info() const {
-  return class_ == ELF_CLASS::ELFCLASS32 ?
+  return class_ == Header::CLASS::ELF32 ?
                    get_info_impl<details::ELF32>(description_) :
                    get_info_impl<details::ELF64>(description_);
 }
 
 
 void CorePrPsInfo::info(const info_t& info) {
-  class_ == ELF_CLASS::ELFCLASS32 ?
+  class_ == Header::CLASS::ELF32 ?
             write_info_impl<details::ELF32>(description_, info) :
             write_info_impl<details::ELF64>(description_, info);
 }

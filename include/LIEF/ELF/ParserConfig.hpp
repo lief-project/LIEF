@@ -23,12 +23,22 @@ namespace ELF {
 
 //! This structure is used to tweak the ELF Parser (ELF::Parser)
 struct LIEF_API ParserConfig {
+  /** Methods that can be used by the LIEF::ELF::Parser
+      to count the number of dynamic symbols */
+  enum class DYNSYM_COUNT  {
+    AUTO        = 0, /**< Automatic detection */
+    SECTION     = 1, /**< Count based on sections (not very reliable) */
+    HASH        = 2, /**< Count based on hash table (reliable) */
+    RELOCATIONS = 3, /**< Count based on PLT/GOT relocations (very reliable but not accurate) */
+  };
+
   //! This returns a ParserConfig object configured to process all the ELF
   //! elements.
   static ParserConfig all() {
     static const ParserConfig DEFAULT;
     return DEFAULT;
   }
+
   bool parse_relocations     = true; ///< Whether relocations (including plt-like relocations) should be parsed.
   bool parse_dyn_symbols     = true; ///< Whether dynamic symbols (those from `.dynsym`) should be parsed
   bool parse_static_symbols  = true; ///< Whether debug symbols (those from `.symtab`) should be parsed
@@ -37,7 +47,7 @@ struct LIEF_API ParserConfig {
   bool parse_overlay         = true; ///< Whether the overlay data should be parsed
 
   /** The method used to count the number of dynamic symbols */
-  DYNSYM_COUNT_METHODS count_mtd = DYNSYM_COUNT_METHODS::COUNT_AUTO;
+  DYNSYM_COUNT count_mtd = DYNSYM_COUNT::AUTO;
 };
 
 }

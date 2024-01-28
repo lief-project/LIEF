@@ -183,12 +183,7 @@ def main():
     lief.logging.set_level(args.main_verbosity)
 
 
-    binary = None
-    try:
-        binary = OAT.parse(args.binary)
-    except lief.exception as e:
-        print(e)
-        sys.exit(1)
+    binary = OAT.parse(args.binary)
 
     print_information(binary)
 

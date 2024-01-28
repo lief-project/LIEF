@@ -13,149 +13,201 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <numeric>
-#include <sstream>
 #include "LIEF/Visitor.hpp"
-
 #include "LIEF/ELF/DynamicEntryFlags.hpp"
-#include "LIEF/ELF/EnumToString.hpp"
-#include "ELF/Structures.hpp"
+
+#include "frozen.hpp"
+#include "logging.hpp"
+#include "fmt_formatter.hpp"
+
+FMT_FORMATTER(LIEF::ELF::DynamicEntryFlags::FLAG, LIEF::ELF::to_string);
 
 namespace LIEF {
 namespace ELF {
 
-DynamicEntryFlags::DynamicEntryFlags() = default;
-DynamicEntryFlags& DynamicEntryFlags::operator=(const DynamicEntryFlags&) = default;
-DynamicEntryFlags::DynamicEntryFlags(const DynamicEntryFlags&) = default;
+static constexpr auto DF_FLAGS = {
+  DynamicEntryFlags::FLAG::ORIGIN, DynamicEntryFlags::FLAG::SYMBOLIC,
+  DynamicEntryFlags::FLAG::TEXTREL, DynamicEntryFlags::FLAG::BIND_NOW,
+  DynamicEntryFlags::FLAG::STATIC_TLS,
+};
 
-bool DynamicEntryFlags::has(DYNAMIC_FLAGS f) const {
-  if (tag() != DYNAMIC_TAGS::DT_FLAGS) {
-    return false;
+static constexpr auto DF_FLAGS_1 = {
+  DynamicEntryFlags::FLAG::NOW,
+  DynamicEntryFlags::FLAG::GLOBAL,
+  DynamicEntryFlags::FLAG::GROUP,
+  DynamicEntryFlags::FLAG::NODELETE,
+  DynamicEntryFlags::FLAG::LOADFLTR,
+  DynamicEntryFlags::FLAG::INITFIRST,
+  DynamicEntryFlags::FLAG::NOOPEN,
+  DynamicEntryFlags::FLAG::HANDLE_ORIGIN,
+  DynamicEntryFlags::FLAG::DIRECT,
+  DynamicEntryFlags::FLAG::TRANS,
+  DynamicEntryFlags::FLAG::INTERPOSE,
+  DynamicEntryFlags::FLAG::NODEFLIB,
+  DynamicEntryFlags::FLAG::NODUMP,
+  DynamicEntryFlags::FLAG::CONFALT,
+  DynamicEntryFlags::FLAG::ENDFILTEE,
+  DynamicEntryFlags::FLAG::DISPRELDNE,
+  DynamicEntryFlags::FLAG::DISPRELPND,
+  DynamicEntryFlags::FLAG::NODIRECT,
+  DynamicEntryFlags::FLAG::IGNMULDEF,
+  DynamicEntryFlags::FLAG::NOKSYMS,
+  DynamicEntryFlags::FLAG::NOHDR,
+  DynamicEntryFlags::FLAG::EDITED,
+  DynamicEntryFlags::FLAG::NORELOC,
+  DynamicEntryFlags::FLAG::SYMINTPOSE,
+  DynamicEntryFlags::FLAG::GLOBAUDIT,
+  DynamicEntryFlags::FLAG::SINGLETON,
+  DynamicEntryFlags::FLAG::PIE,
+  DynamicEntryFlags::FLAG::KMOD,
+  DynamicEntryFlags::FLAG::WEAKFILTER,
+  DynamicEntryFlags::FLAG::NOCOMMON,
+};
+
+bool DynamicEntryFlags::has(DynamicEntryFlags::FLAG f) const {
+  if (tag() == DynamicEntry::TAG::FLAGS) {
+    auto raw = static_cast<uint64_t>(f);
+    if (BASE <= raw) {
+      return false;
+    }
+    return (value() & raw) > 0;
   }
 
-  return (static_cast<uint64_t>(f) & value()) > 0;
-}
-
-
-bool DynamicEntryFlags::has(DYNAMIC_FLAGS_1 f) const {
-  if (tag() != DYNAMIC_TAGS::DT_FLAGS_1) {
-    return false;
+  if (tag() == DynamicEntry::TAG::FLAGS_1) {
+    auto raw = static_cast<uint64_t>(f);
+    if (raw < BASE) {
+      return false;
+    }
+    raw -= BASE;
+    return (value() & raw) > 0;
   }
-  return (static_cast<uint64_t>(f) & value()) > 0;
+
+  return false;
 }
+
 
 DynamicEntryFlags::flags_list_t DynamicEntryFlags::flags() const {
-  DynamicEntryFlags::flags_list_t flags;
+  flags_list_t flags;
 
-
-  if (tag() == DYNAMIC_TAGS::DT_FLAGS) {
-    for (DYNAMIC_FLAGS f : details::dynamic_flags_array) {
+  if (tag() == DynamicEntry::TAG::FLAGS) {
+    for (DynamicEntryFlags::FLAG f : DF_FLAGS) {
       if (has(f)) {
-        flags.insert(static_cast<uint32_t>(f));
+        flags.push_back(f);
       }
     }
+    return flags;
   }
 
-  if (tag() == DYNAMIC_TAGS::DT_FLAGS_1) {
-    for (DYNAMIC_FLAGS_1 f : details::dynamic_flags_1_array) {
+  if (tag() == DynamicEntry::TAG::FLAGS_1) {
+    for (DynamicEntryFlags::FLAG f : DF_FLAGS_1) {
       if (has(f)) {
-        flags.insert(static_cast<uint32_t>(f));
+        flags.push_back(f);
       }
     }
+    return flags;
   }
 
   return flags;
 }
 
-void DynamicEntryFlags::add(DYNAMIC_FLAGS f) {
-  if (tag() != DYNAMIC_TAGS::DT_FLAGS) {
+void DynamicEntryFlags::add(DynamicEntryFlags::FLAG f) {
+  if (tag() == DynamicEntry::TAG::FLAGS) {
+    auto raw = static_cast<uint64_t>(f);
+    if (BASE <= raw) {
+      return;
+    }
+    value(value() | raw);
     return;
   }
 
-  value(value() | static_cast<uint64_t>(f));
-}
-
-void DynamicEntryFlags::add(DYNAMIC_FLAGS_1 f) {
-  if (tag() != DYNAMIC_TAGS::DT_FLAGS_1) {
+  if (tag() == DynamicEntry::TAG::FLAGS_1) {
+    auto raw = static_cast<uint64_t>(f);
+    if (raw < BASE) {
+      return;
+    }
+    raw -= BASE;
+    value(value() | raw);
     return;
   }
-
-  value(value() | static_cast<uint64_t>(f));
+  return;
 }
 
-void DynamicEntryFlags::remove(DYNAMIC_FLAGS f) {
-  if (tag() != DYNAMIC_TAGS::DT_FLAGS) {
-    return;
+void DynamicEntryFlags::remove(DynamicEntryFlags::FLAG f) {
+  if (tag() == DynamicEntry::TAG::FLAGS) {
+    auto raw = static_cast<uint64_t>(f);
+    if (BASE <= raw) {
+      return;
+    }
+    value(value() & ~raw);
   }
 
-  value(value() & (~ static_cast<uint64_t>(f)));
-}
-
-void DynamicEntryFlags::remove(DYNAMIC_FLAGS_1 f) {
-  if (tag() != DYNAMIC_TAGS::DT_FLAGS_1) {
-    return;
+  if (tag() == DynamicEntry::TAG::FLAGS_1) {
+    auto raw = static_cast<uint64_t>(f);
+    if (raw < BASE) {
+      return;
+    }
+    raw -= BASE;
+    value(value() & ~raw);
   }
-
-  value(value() & (~ static_cast<uint64_t>(f)));
-}
-
-
-DynamicEntryFlags& DynamicEntryFlags::operator+=(DYNAMIC_FLAGS f) {
-  add(f);
-  return *this;
-}
-
-DynamicEntryFlags& DynamicEntryFlags::operator+=(DYNAMIC_FLAGS_1 f) {
-  add(f);
-  return *this;
-}
-
-DynamicEntryFlags& DynamicEntryFlags::operator-=(DYNAMIC_FLAGS f) {
-  remove(f);
-  return *this;
-}
-
-DynamicEntryFlags& DynamicEntryFlags::operator-=(DYNAMIC_FLAGS_1 f) {
-  remove(f);
-  return *this;
 }
 
 void DynamicEntryFlags::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-bool DynamicEntryFlags::classof(const DynamicEntry* entry) {
-  const DYNAMIC_TAGS tag = entry->tag();
-  return tag == DYNAMIC_TAGS::DT_FLAGS_1 ||
-         tag == DYNAMIC_TAGS::DT_FLAGS;
-}
-
 std::ostream& DynamicEntryFlags::print(std::ostream& os) const {
   DynamicEntry::print(os);
-
-  const flags_list_t& flags = this->flags();
-  std::string flags_str;
-
-  if (tag() == DYNAMIC_TAGS::DT_FLAGS) {
-    flags_str = std::accumulate(std::begin(flags), std::end(flags), std::string{},
-       [] (const std::string& a, const uint32_t flag) {
-          auto f = static_cast<DYNAMIC_FLAGS>(flag);
-          return a.empty() ? to_string(f) : a + " - " + to_string(f);
-       });
-  }
-
-  if (tag() == DYNAMIC_TAGS::DT_FLAGS_1) {
-    flags_str = std::accumulate(std::begin(flags), std::end(flags), std::string{},
-       [] (const std::string& a, const uint32_t flag) {
-          auto f = static_cast<DYNAMIC_FLAGS_1>(flag);
-          return a.empty() ? to_string(f) : a + " - " + to_string(f);
-       });
-  }
-
-  os << " " << flags_str;
-
+  os << " " << fmt::to_string(flags());
   return os;
 }
+
+const char* to_string(DynamicEntryFlags::FLAG flag) {
+  #define ENTRY(X) std::pair(DynamicEntryFlags::FLAG::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(ORIGIN),
+    ENTRY(SYMBOLIC),
+    ENTRY(TEXTREL),
+    ENTRY(BIND_NOW),
+    ENTRY(STATIC_TLS),
+    ENTRY(NOW),
+    ENTRY(GLOBAL),
+    ENTRY(GROUP),
+    ENTRY(NODELETE),
+    ENTRY(LOADFLTR),
+    ENTRY(INITFIRST),
+    ENTRY(NOOPEN),
+    ENTRY(HANDLE_ORIGIN),
+    ENTRY(DIRECT),
+    ENTRY(TRANS),
+    ENTRY(INTERPOSE),
+    ENTRY(NODEFLIB),
+    ENTRY(NODUMP),
+    ENTRY(CONFALT),
+    ENTRY(ENDFILTEE),
+    ENTRY(DISPRELDNE),
+    ENTRY(DISPRELPND),
+    ENTRY(NODIRECT),
+    ENTRY(IGNMULDEF),
+    ENTRY(NOKSYMS),
+    ENTRY(NOHDR),
+    ENTRY(EDITED),
+    ENTRY(NORELOC),
+    ENTRY(SYMINTPOSE),
+    ENTRY(GLOBAUDIT),
+    ENTRY(SINGLETON),
+    ENTRY(PIE),
+    ENTRY(KMOD),
+    ENTRY(WEAKFILTER),
+    ENTRY(NOCOMMON),
+  };
+  #undef ENTRY
+  if (auto it = enums2str.find(flag); it != enums2str.end()) {
+    return it->second;
+  }
+
+  return "UNKNOWN";
+}
+
 
 }
 }

@@ -42,7 +42,7 @@ void create<DynamicEntryLibrary>(nb::module_& m) {
         [] (const DynamicEntryLibrary& obj) {
           return LIEF::py::safe_string(obj.name());
         },
-        nb::overload_cast<const std::string&>(&DynamicEntryLibrary::name),
+        nb::overload_cast<std::string>(&DynamicEntryLibrary::name),
         "Library associated with this entry (e.g. ``libc.so.6``)"_doc)
 
     LIEF_DEFAULT_STR(DynamicEntryLibrary);

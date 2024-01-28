@@ -23,10 +23,10 @@ CWD = Path(__file__).parent
 @is_updated_linux
 def test_simple(tmp_path: Path):
     sample_path = get_sample('ELF/ELF64_x86-64_binary_ls.bin')
-    stub        = lief.parse((CWD / "hello_lief.bin").as_posix())
+    stub        = lief.ELF.parse((CWD / "hello_lief.bin").as_posix())
     output      = tmp_path / "ls.segment"
 
-    target = lief.parse(sample_path)
+    target = lief.ELF.parse(sample_path)
     for _ in range(4):
         segment                 = stub.segments[0]
         original_va             = segment.virtual_address
@@ -48,10 +48,10 @@ def test_simple(tmp_path: Path):
 @is_updated_linux
 def test_gcc(tmp_path: Path):
     sample_path = get_sample('ELF/ELF64_x86-64_binary_gcc.bin')
-    stub        = lief.parse((CWD / "hello_lief.bin").as_posix())
+    stub        = lief.ELF.parse((CWD / "hello_lief.bin").as_posix())
     output      = tmp_path / "gcc.segment"
 
-    target                  = lief.parse(sample_path)
+    target                  = lief.ELF.parse(sample_path)
     segment                 = stub.segments[0]
     original_va             = segment.virtual_address
     segment.virtual_address = 0
@@ -72,10 +72,10 @@ def test_gcc(tmp_path: Path):
 @is_linux_x64
 def test_static(tmp_path: Path):
     sample_path = get_sample('ELF/ELF64_x86-64_binary_static-binary.bin')
-    stub        = lief.parse((CWD / "hello_lief.bin").as_posix())
+    stub        = lief.ELF.parse((CWD / "hello_lief.bin").as_posix())
     output      = tmp_path / "static.segment"
 
-    target                  = lief.parse(sample_path)
+    target                  = lief.ELF.parse(sample_path)
     segment                 = stub.segments[0]
     original_va             = segment.virtual_address
     segment.virtual_address = 0
@@ -111,12 +111,12 @@ def test_add_segment(tmp_path: Path, binpath):
 
     stub = None
     if is_x86_64():
-        stub = lief.parse((CWD / "hello_lief.bin").as_posix())
+        stub = lief.ELF.parse((CWD / "hello_lief.bin").as_posix())
     elif is_aarch64():
-        stub = lief.parse((CWD / "hello_lief_aarch64.bin").as_posix())
+        stub = lief.ELF.parse((CWD / "hello_lief_aarch64.bin").as_posix())
 
-    name   = target.name
-    target = lief.parse(target.as_posix())
+    name = target.name
+    elf = lief.ELF.parse(target.as_posix())
     output = tmp_path / f"{name}.segment"
     for _ in range(6):
         stub_segment      = stub.segments[0]
@@ -126,11 +126,11 @@ def test_add_segment(tmp_path: Path, binpath):
         segment.alignment = stub_segment.alignment
         segment.flags     = stub_segment.flags
 
-        new_segment       = target.add(segment)
+        new_segment       = elf.add(segment)
         new_ep            = (stub.header.entrypoint - stub.imagebase - stub_segment.file_offset) + new_segment.virtual_address
 
-        target.header.entrypoint = new_ep
-    target.write(output.as_posix())
+        elf.header.entrypoint = new_ep
+    elf.write(output.as_posix())
 
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)

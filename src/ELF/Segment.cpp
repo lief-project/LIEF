@@ -18,8 +18,7 @@
 #include <iterator>
 
 #include "logging.hpp"
-
-
+#include "frozen.hpp"
 
 #include "LIEF/ELF/hash.hpp"
 
@@ -30,19 +29,46 @@
 #include "ELF/DataHandler/Handler.hpp"
 #include "ELF/Structures.hpp"
 
-
 namespace LIEF {
 namespace ELF {
 
-Segment::Segment() = default;
-Segment::~Segment() = default;
+static constexpr auto PT_LOPROC = 0x70000000;
+static constexpr auto PT_HIPROC = 0x7fffffff;
 
-Segment& Segment::operator=(Segment&&) = default;
-Segment::Segment(Segment&&) = default;
+Segment::TYPE Segment::type_from(uint64_t value, ARCH arch) {
+  if (PT_LOPROC <= value && value <= PT_HIPROC) {
+    if (arch == ARCH::NONE) {
+      LIEF_WARN("Segment type 0x{:08x} requires to know the architecture", value);
+      return TYPE::UNKNOWN;
+    }
+    switch (arch) {
+      case ARCH::ARM:
+        return TYPE(value | PT_ARM);
+
+      case ARCH::AARCH64:
+        return TYPE(value | PT_AARCH64);
+
+      case ARCH::MIPS:
+        return TYPE(value | PT_MIPS);
+
+      case ARCH::RISCV:
+        return TYPE(value | PT_RISCV);
+
+      default:
+        {
+          LIEF_WARN("Segment type 0x{:08x} is unknown for the architecture {}",
+                     value, to_string(arch));
+          return TYPE::UNKNOWN;
+        }
+    }
+  }
+  return TYPE(value);
+}
 
 Segment::Segment(const Segment& other) :
   Object{other},
   type_{other.type_},
+  arch_{other.arch_},
   flags_{other.flags_},
   file_offset_{other.file_offset_},
   virtual_address_{other.virtual_address_},
@@ -54,9 +80,11 @@ Segment::Segment(const Segment& other) :
   content_c_{other.content_c_}
 {}
 
-Segment::Segment(const details::Elf64_Phdr& header) :
-  type_{static_cast<SEGMENT_TYPES>(header.p_type)},
-  flags_{static_cast<ELF_SEGMENT_FLAGS>(header.p_flags)},
+template<class T>
+Segment::Segment(const T& header, ARCH arch) :
+  type_{type_from(header.p_type, arch)},
+  arch_(arch),
+  flags_{header.p_flags},
   file_offset_{header.p_offset},
   virtual_address_{header.p_vaddr},
   physical_address_{header.p_paddr},
@@ -66,20 +94,12 @@ Segment::Segment(const details::Elf64_Phdr& header) :
   handler_size_{header.p_filesz}
 {}
 
-Segment::Segment(const details::Elf32_Phdr& header) :
-  type_{static_cast<SEGMENT_TYPES>(header.p_type)},
-  flags_{static_cast<ELF_SEGMENT_FLAGS>(header.p_flags)},
-  file_offset_{header.p_offset},
-  virtual_address_{header.p_vaddr},
-  physical_address_{header.p_paddr},
-  size_{header.p_filesz},
-  virtual_size_{header.p_memsz},
-  alignment_{header.p_align},
-  handler_size_{header.p_filesz}
-{}
+template Segment::Segment(const details::Elf32_Phdr& header, ARCH);
+template Segment::Segment(const details::Elf64_Phdr& header, ARCH);
 
 void Segment::swap(Segment& other) {
   std::swap(type_,             other.type_);
+  std::swap(arch_,             other.arch_);
   std::swap(flags_,            other.flags_);
   std::swap(file_offset_,      other.file_offset_);
   std::swap(virtual_address_,  other.virtual_address_);
@@ -93,25 +113,13 @@ void Segment::swap(Segment& other) {
   std::swap(content_c_,        other.content_c_);
 }
 
-
 Segment& Segment::operator=(Segment other) {
   swap(other);
   return *this;
 }
 
-
 result<Segment> Segment::from_raw(const uint8_t* ptr, size_t size) {
-  if (size != sizeof(details::Elf32_Phdr) &&
-      size != sizeof(details::Elf64_Phdr))
-  {
-    LIEF_ERR("The size of the provided data does not match a valid header size");
-    return make_error_code(lief_errors::corrupted);
-  }
-  return Segment::from_raw(std::vector<uint8_t>{ptr, ptr + size});
-}
 
-result<Segment> Segment::from_raw(const std::vector<uint8_t>& raw) {
-  const size_t size = raw.size();
   if (size != sizeof(details::Elf32_Phdr) &&
       size != sizeof(details::Elf64_Phdr))
   {
@@ -120,53 +128,14 @@ result<Segment> Segment::from_raw(const std::vector<uint8_t>& raw) {
   }
 
   if (size == sizeof(details::Elf32_Phdr)) {
-    return Segment(*reinterpret_cast<const details::Elf32_Phdr*>(raw.data()));
+    return Segment(*reinterpret_cast<const details::Elf32_Phdr*>(ptr));
   }
 
   if (size == sizeof(details::Elf64_Phdr)) {
-    return Segment(*reinterpret_cast<const details::Elf64_Phdr*>(raw.data()));
+    return Segment(*reinterpret_cast<const details::Elf64_Phdr*>(ptr));
   }
 
   return make_error_code(lief_errors::not_implemented);
-}
-
-SEGMENT_TYPES Segment::type() const {
-  return type_;
-}
-
-
-ELF_SEGMENT_FLAGS Segment::flags() const {
-  return flags_;
-}
-
-
-uint64_t Segment::file_offset() const {
-  return file_offset_;
-}
-
-
-uint64_t Segment::virtual_address() const {
-  return virtual_address_;
-}
-
-
-uint64_t Segment::physical_address() const {
-  return physical_address_;
-}
-
-
-uint64_t Segment::physical_size() const {
-  return size_;
-}
-
-
-uint64_t Segment::virtual_size() const {
-  return virtual_size_;
-}
-
-
-uint64_t Segment::alignment() const {
-  return alignment_;
 }
 
 span<const uint8_t> Segment::content() const {
@@ -224,7 +193,8 @@ size_t Segment::get_content_size() const {
   return node.size();
 }
 
-template<typename T> T Segment::get_content_value(size_t offset) const {
+template<typename T>
+T Segment::get_content_value(size_t offset) const {
   T ret;
   if (datahandler_ == nullptr) {
     LIEF_DEBUG("Get content of segment {}@0x{:x} from cache",
@@ -249,7 +219,8 @@ template unsigned int Segment::get_content_value<unsigned int>(size_t offset) co
 template unsigned long Segment::get_content_value<unsigned long>(size_t offset) const;
 template unsigned long long Segment::get_content_value<unsigned long long>(size_t offset) const;
 
-template<typename T> void Segment::set_content_value(size_t offset, T value) {
+template<typename T>
+void Segment::set_content_value(size_t offset, T value) {
   if (datahandler_ == nullptr) {
     LIEF_DEBUG("Set content of segment {}@0x{:x}:0x{:x} in cache (0x{:x} bytes)",
         to_string(type()), virtual_address(), offset, sizeof(T));
@@ -282,20 +253,6 @@ template void Segment::set_content_value<unsigned int>(size_t offset, unsigned i
 template void Segment::set_content_value<unsigned long>(size_t offset, unsigned long value);
 template void Segment::set_content_value<unsigned long long>(size_t offset, unsigned long long value);
 
-Segment::it_const_sections Segment::sections() const {
-  return sections_;
-}
-
-
-Segment::it_sections Segment::sections() {
-  return sections_;
-}
-
-bool Segment::has(ELF_SEGMENT_FLAGS flag) const {
-  return ((flags() & flag) != ELF_SEGMENT_FLAGS::PF_NONE);
-}
-
-
 bool Segment::has(const Section& section) const {
   auto it_section = std::find_if(std::begin(sections_), std::end(sections_),
       [&section] (const Section* s) {
@@ -303,7 +260,6 @@ bool Segment::has(const Section& section) const {
       });
   return it_section != std::end(sections_);
 }
-
 
 bool Segment::has(const std::string& name) const {
   auto it_section = std::find_if(std::begin(sections_), std::end(sections_),
@@ -313,26 +269,13 @@ bool Segment::has(const std::string& name) const {
   return it_section != std::end(sections_);
 }
 
-
-void Segment::flags(ELF_SEGMENT_FLAGS flags) {
-  flags_ = flags;
-}
-
-
-void Segment::add(ELF_SEGMENT_FLAGS flag) {
+void Segment::add(Segment::FLAGS flag) {
   flags(flags() | flag);
 }
 
-
-void Segment::remove(ELF_SEGMENT_FLAGS flag) {
+void Segment::remove(Segment::FLAGS flag) {
   flags(flags() & ~flag);
 }
-
-
-void Segment::clear_flags() {
-  flags_ = ELF_SEGMENT_FLAGS::PF_NONE;
-}
-
 
 void Segment::file_offset(uint64_t file_offset) {
   if (datahandler_ != nullptr) {
@@ -347,17 +290,6 @@ void Segment::file_offset(uint64_t file_offset) {
   file_offset_ = file_offset;
 }
 
-
-void Segment::virtual_address(uint64_t virtual_address) {
-  virtual_address_ = virtual_address;
-}
-
-
-void Segment::physical_address(uint64_t physical_address) {
-  physical_address_ = physical_address;
-}
-
-
 void Segment::physical_size(uint64_t physical_size) {
   if (datahandler_ != nullptr) {
     auto node = datahandler_->get(file_offset(), handler_size(), DataHandler::Node::SEGMENT);
@@ -369,20 +301,6 @@ void Segment::physical_size(uint64_t physical_size) {
     }
   }
   size_ = physical_size;
-}
-
-
-void Segment::virtual_size(uint64_t virtual_size) {
-  virtual_size_ = virtual_size;
-}
-
-
-void Segment::alignment(uint64_t alignment) {
-  alignment_ = alignment;
-}
-
-void Segment::type(SEGMENT_TYPES type) {
-  type_ = type;
 }
 
 void Segment::content(std::vector<uint8_t> content) {
@@ -422,20 +340,6 @@ void Segment::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-Segment& Segment::operator+=(ELF_SEGMENT_FLAGS flag) {
-  add(flag);
-  return *this;
-}
-
-Segment& Segment::operator-=(ELF_SEGMENT_FLAGS flag) {
-  remove(flag);
-  return *this;
-}
-
-
-
-
 span<uint8_t> Segment::writable_content() {
   span<const uint8_t> ref = static_cast<const Segment*>(this)->content();
   return {const_cast<uint8_t*>(ref.data()), ref.size()};
@@ -448,42 +352,70 @@ uint64_t Segment::handler_size() const {
   return physical_size();
 }
 
-std::ostream& operator<<(std::ostream& os, const ELF::Segment& segment) {
-
-
+std::ostream& operator<<(std::ostream& os, const Segment& segment) {
   std::string flags = "---";
 
-  if (segment.has(ELF_SEGMENT_FLAGS::PF_R)) {
+  if (segment.has(Segment::FLAGS::R)) {
     flags[0] = 'r';
   }
 
-  if (segment.has(ELF_SEGMENT_FLAGS::PF_W)) {
+  if (segment.has(Segment::FLAGS::W)) {
     flags[1] = 'w';
   }
 
-  if (segment.has(ELF_SEGMENT_FLAGS::PF_X)) {
+  if (segment.has(Segment::FLAGS::X)) {
     flags[2] = 'x';
   }
 
-  os << std::hex;
-  os << std::left
-     << std::setw(18) << to_string(segment.type())
-     << std::setw(10) << flags
-     << std::setw(10) << segment.file_offset()
-     << std::setw(10) << segment.virtual_address()
-     << std::setw(10) << segment.physical_address()
-     << std::setw(10) << segment.physical_size()
-     << std::setw(10) << segment.virtual_size()
-     << std::setw(10) << segment.alignment()
-     << std::endl;
-
-  if (!segment.sections().empty()) {
-    os << "Sections in this segment :" << std::endl;
-    for (const Section& section : segment.sections()) {
-      os << "  " << section.name() << std::endl;
-    }
-  }
+  os << fmt::format("{} 0x{:08x}/0x{:06x} 0x{:06x} 0x{:04x}/0x{:04x} {} {}",
+                    to_string(segment.type()), segment.virtual_address(),
+                    segment.file_offset(), segment.physical_address(),
+                    segment.physical_size(), segment.virtual_size(),
+                    segment.alignment(), flags);
   return os;
+}
+
+const char* to_string(Segment::TYPE e) {
+  #define ENTRY(X) std::pair(Segment::TYPE::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(PT_NULL),
+    ENTRY(LOAD),
+    ENTRY(DYNAMIC),
+    ENTRY(INTERP),
+    ENTRY(NOTE),
+    ENTRY(SHLIB),
+    ENTRY(PHDR),
+    ENTRY(TLS),
+    ENTRY(GNU_EH_FRAME),
+    ENTRY(GNU_STACK),
+    ENTRY(GNU_PROPERTY),
+    ENTRY(GNU_RELRO),
+    ENTRY(ARM_ARCHEXT),
+    ENTRY(ARM_EXIDX),
+    ENTRY(ARM_UNWIND),
+    ENTRY(AARCH64_MEMTAG_MTE),
+    ENTRY(MIPS_REGINFO),
+    ENTRY(MIPS_RTPROC),
+    ENTRY(MIPS_OPTIONS),
+    ENTRY(MIPS_ABIFLAGS),
+    ENTRY(RISCV_ATTRIBUTES),
+  };
+  #undef ENTRY
+
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
+  }
+  return "UNKNOWN";
+}
+
+const char* to_string(Segment::FLAGS e) {
+  switch (e) {
+    case Segment::FLAGS::NONE: return "NONE";
+    case Segment::FLAGS::R: return "R";
+    case Segment::FLAGS::W: return "W";
+    case Segment::FLAGS::X: return "X";
+  }
+  return "UNKNOWN";
 }
 }
 }

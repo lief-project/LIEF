@@ -55,7 +55,7 @@ class LIEF_API CorePrPsInfo : public Note {
       return args.c_str();
     }
   };
-  CorePrPsInfo(ARCH arch, ELF_CLASS cls, std::string name,
+  CorePrPsInfo(ARCH arch, Header::CLASS cls, std::string name,
                uint32_t type, description_t description) :
     Note(std::move(name), TYPE::CORE_PRPSINFO, type, std::move(description)),
     arch_(arch), class_(cls)
@@ -85,8 +85,8 @@ class LIEF_API CorePrPsInfo : public Note {
     return os;
   }
   private:
-  ARCH arch_ = ARCH::EM_NONE;
-  ELF_CLASS class_ = ELF_CLASS::ELFCLASSNONE;
+  ARCH arch_ = ARCH::NONE;
+  Header::CLASS class_ = Header::CLASS::NONE;
 };
 
 } // namepsace ELF

@@ -13,13 +13,13 @@ from utils import get_sample, is_linux, is_x86_64
 def test_issue_872(tmp_path):
     tmp = pathlib.Path(tmp_path)
 
-    elf: lief.ELF.Binary = lief.parse(get_sample('ELF/i872_risv.elf'))
+    elf: lief.ELF.Binary = lief.ELF.parse(get_sample('ELF/i872_risv.elf'))
     payload_sec = elf.get_section(".payload")
     offset = payload_sec.offset
 
     new_section = lief.ELF.Section(".new_section")
     new_section.virtual_address = 0xa0000000
-    new_section.add(lief.ELF.SECTION_FLAGS.ALLOC)
+    new_section.add(lief.ELF.Section.FLAGS.ALLOC)
     new_section.size = 0x1000
     new_section.content = [0xa5] * 0x1000
     elf.add(new_section)
@@ -51,7 +51,7 @@ def test_static_musl(tmp_path, mode):
     elf.relocate_phdr_table(mode)
 
     segment = lief.ELF.Segment()
-    segment.type = lief.ELF.SEGMENT_TYPES.LOAD
+    segment.type = lief.ELF.Segment.TYPE.LOAD
     segment.content = [0xcc for _ in range(0x2000)]
 
     elf.add(segment)
@@ -65,7 +65,7 @@ def test_static_musl(tmp_path, mode):
         "universal_newlines": True
     }
 
-    with Popen([outpath.as_posix()], **popen_args) as proc:
+    with Popen([outpath.as_posix()], **popen_args) as proc: # type: ignore
         stdout = proc.stdout.read()
         assert "Hello World" in stdout, f"Error: {stdout}"
 
@@ -82,7 +82,7 @@ def test_static_musl_bss(tmp_path, mode):
     elf.relocate_phdr_table(mode)
 
     segment = lief.ELF.Segment()
-    segment.type = lief.ELF.SEGMENT_TYPES.LOAD
+    segment.type = lief.ELF.Segment.TYPE.LOAD
     segment.content = [0xcc for _ in range(0x2000)]
 
     elf.add(segment)
@@ -96,7 +96,7 @@ def test_static_musl_bss(tmp_path, mode):
         "universal_newlines": True
     }
 
-    with Popen([outpath.as_posix()], **popen_args) as proc:
+    with Popen([outpath.as_posix()], **popen_args) as proc: # type: ignore
         stdout = proc.stdout.read()
         assert "Hello World" in stdout, f"Error: {stdout}"
 
@@ -112,7 +112,7 @@ def test_static(tmp_path, mode):
     elf.relocate_phdr_table(mode)
 
     segment = lief.ELF.Segment()
-    segment.type = lief.ELF.SEGMENT_TYPES.LOAD
+    segment.type = lief.ELF.Segment.TYPE.LOAD
     segment.content = [0xcc for _ in range(0x2000)]
 
     elf.add(segment)
@@ -126,7 +126,7 @@ def test_static(tmp_path, mode):
         "universal_newlines": True
     }
 
-    with Popen([outpath.as_posix()], **popen_args) as proc:
+    with Popen([outpath.as_posix()], **popen_args) as proc: # type: ignore
         stdout = proc.stdout.read()
         assert "Hello World" in stdout, f"Error: {stdout}"
 
@@ -143,7 +143,7 @@ def test_static_bss(tmp_path, mode):
     elf.relocate_phdr_table(mode)
 
     segment = lief.ELF.Segment()
-    segment.type = lief.ELF.SEGMENT_TYPES.LOAD
+    segment.type = lief.ELF.Segment.TYPE.LOAD
     segment.content = [0xcc for _ in range(0x2000)]
 
     elf.add(segment)
@@ -157,7 +157,7 @@ def test_static_bss(tmp_path, mode):
         "universal_newlines": True
     }
 
-    with Popen([outpath.as_posix()], **popen_args) as proc:
+    with Popen([outpath.as_posix()], **popen_args) as proc: # type: ignore
         stdout = proc.stdout.read()
         assert "Hello World" in stdout, f"Error: {stdout}"
 
@@ -173,7 +173,7 @@ def test_docker_init(tmp_path, mode):
     elf.relocate_phdr_table(mode)
 
     segment = lief.ELF.Segment()
-    segment.type = lief.ELF.SEGMENT_TYPES.LOAD
+    segment.type = lief.ELF.Segment.TYPE.LOAD
     segment.content = [0xcc for _ in range(0x2000)]
 
     elf.add(segment)
@@ -187,6 +187,6 @@ def test_docker_init(tmp_path, mode):
         "universal_newlines": True
     }
 
-    with Popen([outpath.as_posix(), "--version"], **popen_args) as proc:
+    with Popen([outpath.as_posix(), "--version"], **popen_args) as proc: # type: ignore
         stdout = proc.stdout.read()
         assert "tini version 0.19.0" in stdout, f"Error: {stdout}"

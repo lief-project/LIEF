@@ -22,18 +22,13 @@
 
 namespace LIEF {
 namespace ELF {
-Layout::Layout(Binary& bin) :
-  binary_{&bin}
-{}
-
-Layout::~Layout() = default;
 
 bool Layout::is_strtab_shared_shstrtab() const {
   // Check if the .strtab is shared with the .shstrtab
   const size_t shstrtab_idx = binary_->header().section_name_table_idx();
   size_t strtab_idx = 0;
 
-  const Section* symtab = binary_->get(ELF_SECTION_TYPES::SHT_SYMTAB);
+  const Section* symtab = binary_->get(Section::TYPE::SYMTAB);
   if (symtab == nullptr) {
     return false;
   }
@@ -98,10 +93,10 @@ size_t Layout::section_shstr_size() {
                  });
 
   if (!binary_->static_symbols_.empty()) {
-    if (binary_->get(ELF_SECTION_TYPES::SHT_SYMTAB) == nullptr) {
+    if (binary_->get(Section::TYPE::SYMTAB) == nullptr) {
       sec_names.emplace_back(".symtab");
     }
-    if (binary_->get(ELF_SECTION_TYPES::SHT_SYMTAB) == nullptr) {
+    if (binary_->get(Section::TYPE::SYMTAB) == nullptr) {
       sec_names.emplace_back(".strtab");
     }
   }
@@ -130,9 +125,6 @@ size_t Layout::section_shstr_size() {
   raw_shstrtab.move(raw_shstrtab_);
   return raw_shstrtab_.size();
 }
-
-
-
 
 }
 }

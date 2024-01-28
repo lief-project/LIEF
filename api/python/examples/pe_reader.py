@@ -565,12 +565,7 @@ def main():
     args = parser.parse_args()
     lief.logging.set_level(args.main_verbosity)
 
-    binary = None
-    try:
-        binary = PE.parse(args.pe_file)
-    except lief.exception as e:
-        print(e)
-        sys.exit(1)
+    binary = PE.parse(args.pe_file)
 
     if binary is None:
         sys.exit(1)

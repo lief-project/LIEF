@@ -120,12 +120,7 @@ def main():
 
     lief.logging.set_level(args.main_verbosity)
 
-    vdexfile = None
-    try:
-        vdexfile = DEX.parse(args.file)
-    except lief.exception as e:
-        print(e)
-        sys.exit(1)
+    vdexfile = DEX.parse(args.file)
 
     print_information(vdexfile)
 

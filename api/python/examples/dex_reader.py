@@ -208,12 +208,7 @@ def main():
 
     lief.logging.set_level(args.main_verbosity)
 
-    binary = None
-    try:
-        dexfile = DEX.parse(args.file)
-    except lief.exception as e:
-        print(e)
-        sys.exit(1)
+    dexfile = DEX.parse(args.file)
 
     print_information(dexfile)
 

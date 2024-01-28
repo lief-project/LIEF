@@ -63,7 +63,7 @@ def test_force_relocate(tmp_path):
         if not file.exists():
             print(f"{file} does not exist. Skipping ...", file=sys.stderr)
             continue
-        elf: lief.ELF.Binary = lief.parse(file.as_posix())
+        elf: lief.ELF.Binary = lief.ELF.parse(file.as_posix())
         fsize = file.stat().st_size
 
         builder = lief.ELF.Builder(elf)
@@ -103,16 +103,16 @@ def test_symtab(tmp_path):
         tmp = pathlib.Path(tmp_path)
         out_path = tmp / TARGET.name
 
-        elf: lief.ELF.Binary = lief.parse(TARGET.as_posix())
+        elf: lief.ELF.Binary = lief.ELF.parse(TARGET.as_posix())
 
         fsize = TARGET.stat().st_size
         for i in range(NB_SYMBOLS):
             sym = lief.ELF.Symbol()
             sym.name = "test_sym_{:03}".format(i)
             sym.value = 0x1000 + i
-            sym.type = lief.ELF.SYMBOL_TYPES.FUNC
-            sym.binding = lief.ELF.SYMBOL_BINDINGS.LOCAL
-            sym.visibility = lief.ELF.SYMBOL_VISIBILITY.DEFAULT
+            sym.type = lief.ELF.Symbol.TYPE.FUNC
+            sym.binding = lief.ELF.Symbol.BINDING.LOCAL
+            sym.visibility = lief.ELF.Symbol.VISIBILITY.DEFAULT
             elf.add_static_symbol(sym)
         elf.write(out_path.as_posix())
 
@@ -129,7 +129,7 @@ def test_symtab(tmp_path):
             assert normalize(OUTPUT) == normalize(stdout)
 
 
-        out = lief.parse(out_path.as_posix())
+        out = lief.ELF.parse(out_path.as_posix())
         sym_names = [s.name for s in out.static_symbols]
         assert "test_sym_029" in sym_names
 
@@ -139,7 +139,7 @@ def test_add_interpreter(tmp_path):
     tmp = pathlib.Path(tmp_path)
     out_path = tmp / TARGET.name
 
-    elf: lief.ELF.Binary = lief.parse(TARGET.as_posix())
+    elf: lief.ELF.Binary = lief.ELF.parse(TARGET.as_posix())
     fsize = TARGET.stat().st_size
 
     elf.interpreter = "/lib64/ld-linux-x86-64.so.2"
@@ -164,7 +164,7 @@ def test_change_interpreter(tmp_path):
     tmp = pathlib.Path(tmp_path)
     out_path = tmp / TARGET.name
 
-    elf: lief.ELF.Binary = lief.parse(TARGET.as_posix())
+    elf: lief.ELF.Binary = lief.ELF.parse(TARGET.as_posix())
     fsize = TARGET.stat().st_size
 
     elf.interpreter = "/lib64/ld-linux-x86-64.so.2"
@@ -190,7 +190,7 @@ def test_rust_files(tmp_path):
     tmp = pathlib.Path(tmp_path)
     out_path = tmp / TARGET.name
 
-    elf: lief.ELF.Binary = lief.parse(TARGET.as_posix())
+    elf: lief.ELF.Binary = lief.ELF.parse(TARGET.as_posix())
     fsize = TARGET.stat().st_size
 
     builder = lief.ELF.Builder(elf)
@@ -221,7 +221,7 @@ def test_go_files(tmp_path):
         tmp = pathlib.Path(tmp_path)
         out_path = tmp / TARGET.name
 
-        elf: lief.ELF.Binary = lief.parse(TARGET.as_posix())
+        elf: lief.ELF.Binary = lief.ELF.parse(TARGET.as_posix())
         fsize = TARGET.stat().st_size
 
         builder = lief.ELF.Builder(elf)

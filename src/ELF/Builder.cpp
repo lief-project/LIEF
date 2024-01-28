@@ -35,24 +35,23 @@
 namespace LIEF {
 namespace ELF {
 
-
 Builder::~Builder() = default;
 
 Builder::Builder(Binary& binary) :
   binary_{&binary},
   layout_{nullptr}
 {
-  const E_TYPE type = binary.header().file_type();
+  const Header::FILE_TYPE type = binary.header().file_type();
   switch (type) {
-    case E_TYPE::ET_CORE:
-    case E_TYPE::ET_DYN:
-    case E_TYPE::ET_EXEC:
+    case Header::FILE_TYPE::CORE:
+    case Header::FILE_TYPE::DYN:
+    case Header::FILE_TYPE::EXEC:
       {
         layout_ = std::make_unique<ExeLayout>(binary);
         break;
       }
 
-    case E_TYPE::ET_REL:
+    case Header::FILE_TYPE::REL:
       {
         layout_ = std::make_unique<ObjectFileLayout>(binary);
         break;
@@ -87,16 +86,10 @@ bool Builder::should_swap() const {
 
 
 void Builder::build() {
-  if (binary_->type() == ELF_CLASS::ELFCLASS32) {
-    auto res = build<details::ELF32>();
-    if (!res) {
-      LIEF_ERR("Builder failed");
-    }
-  } else {
-    auto res = build<details::ELF64>();
-    if (!res) {
-      LIEF_ERR("Builder failed");
-    }
+  auto res = binary_->type() == Header::CLASS::ELF32 ?
+             build<details::ELF32>() : build<details::ELF64>();
+  if (!res) {
+    LIEF_ERR("Builder failed");
   }
 }
 
@@ -124,8 +117,9 @@ uint32_t Builder::sort_dynamic_symbols() {
   const auto it_end = std::end(binary_->dynamic_symbols_);
 
   const auto it_first_non_local_symbol =
-      std::stable_partition(it_begin, it_end, [] (const std::unique_ptr<Symbol>& sym) {
-        return sym->binding() == SYMBOL_BINDINGS::STB_LOCAL;
+      std::stable_partition(it_begin, it_end,
+      [] (const std::unique_ptr<Symbol>& sym) {
+        return sym->is_local();
       });
 
   const uint32_t first_non_local_symbol_index = std::distance(it_begin, it_first_non_local_symbol);
@@ -144,7 +138,7 @@ uint32_t Builder::sort_dynamic_symbols() {
 
   const auto it_first_exported_symbol = std::stable_partition(
       it_first_non_local_symbol, it_end, [] (const std::unique_ptr<Symbol>& sym) {
-        return sym->shndx() == static_cast<uint16_t>(SYMBOL_SECTION_INDEX::SHN_UNDEF);
+        return sym->shndx() == Symbol::SECTION_INDEX::UNDEF;
       });
 
   const uint32_t first_exported_symbol_index = std::distance(it_begin, it_first_exported_symbol);
@@ -154,7 +148,7 @@ uint32_t Builder::sort_dynamic_symbols() {
 
 ok_error_t Builder::build_empty_symbol_gnuhash() {
   LIEF_DEBUG("Build empty GNU Hash");
-  Section* gnu_hash_section = binary_->get(ELF_SECTION_TYPES::SHT_GNU_HASH);
+  Section* gnu_hash_section = binary_->get(Section::TYPE::GNU_HASH);
 
   if (gnu_hash_section == nullptr) {
     LIEF_ERR("Can't find section with type SHT_GNU_HASH");
@@ -188,7 +182,7 @@ ok_error_t Builder::build_empty_symbol_gnuhash() {
 ok_error_t Builder::update_note_section(const Note& note,
                                         std::set<const Note*>& notes)
 {
-  Segment* segment_note = binary_->get(SEGMENT_TYPES::PT_NOTE);
+  Segment* segment_note = binary_->get(Segment::TYPE::NOTE);
   if (segment_note == nullptr) {
     LIEF_ERR("Can't find the PT_NOTE segment");
     return make_error_code(lief_errors::not_found);
@@ -227,7 +221,7 @@ ok_error_t Builder::update_note_section(const Note& note,
   note_sec->virtual_address(segment_note->virtual_address() + note_offset);
 
   if (note.type() == Note::TYPE::GNU_PROPERTY_TYPE_0) {
-    if (Segment* seg = binary_->get(SEGMENT_TYPES::PT_GNU_PROPERTY)) {
+    if (Segment* seg = binary_->get(Segment::TYPE::GNU_PROPERTY)) {
       seg->file_offset(note_sec->offset());
       seg->physical_size(note_sec->size());
       seg->virtual_address(note_sec->virtual_address());

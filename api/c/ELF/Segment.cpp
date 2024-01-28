@@ -29,7 +29,7 @@ void init_c_segments(Elf_Binary_t* c_binary, Binary* binary) {
     span<const uint8_t> segment_content = segment.content();
 
     c_binary->segments[i] = static_cast<Elf_Segment_t*>(malloc(sizeof(Elf_Segment_t)));
-    c_binary->segments[i]->type            = static_cast<enum LIEF_ELF_SEGMENT_TYPES>(segment.type());
+    c_binary->segments[i]->type            = static_cast<uint32_t>(segment.type());
     c_binary->segments[i]->flags           = static_cast<uint32_t>(segment.flags());
     c_binary->segments[i]->virtual_address = segment.virtual_address();
     c_binary->segments[i]->virtual_size    = segment.virtual_size();
@@ -44,10 +44,7 @@ void init_c_segments(Elf_Binary_t* c_binary, Binary* binary) {
 
 }
 
-
-
 void destroy_segments(Elf_Binary_t* c_binary) {
-
   Elf_Segment_t **segments = c_binary->segments;
   for (size_t idx = 0; segments[idx] != nullptr; ++idx) {
     free(segments[idx]);

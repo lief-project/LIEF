@@ -4,6 +4,27 @@ Changelog
 0.15.0 - Not Released Yet
 -------------------------
 
+:ELF:
+  * Re-scope ``DYNAMIC_TAGS`` into :class:`lief.ELF.DynamicEntry.TAG`
+  * Re-scope ``E_TYPE`` into :class:`lief.ELF.Header.FILE_TYPE`
+  * Re-scope ``VERSION`` into :class:`lief.ELF.Header.VERSION`
+  * Re-scope ``ELF_CLASS`` into :class:`lief.ELF.Header.CLASS`
+  * Re-scope ``ELF_DATA`` into :class:`lief.ELF.Header.ELF_DATA`
+  * Re-scope ``OS_ABI`` into :class:`lief.ELF.Header.OS_ABI`
+  * Re-scope ``ELF_SECTION_TYPES`` into :class:`lief.ELF.Section.TYPE`
+  * Re-scope ``ELF_SECTION_FLAGS`` into :class:`lief.ELF.Section.FLAGS`
+  * Re-scope ``SYMBOL_BINDINGS`` into :class:`lief.ELF.Symbol.BINDING`
+  * Re-scope ``ELF_SYMBOL_TYPES`` into :class:`lief.ELF.Symbol.TYPE`
+  * Re-scope ``ELF_SYMBOL_VISIBILITY`` into :class:`lief.ELF.Symbol.VISIBILITY`
+  * Re-scope ``SEGMENT_TYPES`` into :class:`lief.ELF.Segment.TYPE`
+  * Re-scope ``ELF_SEGMENT_FLAGS`` into :class:`lief.ELF.Segment.FLAG`
+  * Re-scope ``DYNAMIC_FLAGS_1`` into :class:`lief.ELF.DynamicEntryFlags.FLAG`
+  * Re-scope ``DYNAMIC_FLAGS`` into :class:`lief.ELF.DynamicEntryFlags.FLAG`
+  * Re-scope ``DYNSYM_COUNT_METHODS`` into :class:`lief.ELF.ParserConfig.DYNSYM_COUNT`
+  * Re-scope ``RELOCATION_PURPOSES`` into :class:`lief.ELF.Relocation.PURPOSE`
+  * ``RELOC_x86_64``, ``RELOC_i386``, ... have been re-scoped **and merged**
+    into :class:`lief.ELF.Relocation.TYPE`
+
 :CMake:
 
   * ``LIEFConfig.cmake`` is now installed in ``<prefix>/lib/cmake/LIEF/``
@@ -36,7 +57,7 @@ Changelog
 
 
   * Refactoring of the ELF note processing
-  * Fix relocation issue when using `-Wl,--emit-relocs` (c.f. :issue:`897` / :pr:`898` by :github_user:`adamjseitz`)
+  * Fix relocation issue when using ``-Wl,--emit-relocs`` (c.f. :issue:`897` / :pr:`898` by :github_user:`adamjseitz`)
   * Improve the computation of the dynamic symbols thanks to :github_user:`adamjseitz` (c.f. :issue:`922`)
   * Add support for the LoongArch architecture thanks to :github_user:`loongson-zn` (c.f. :pr:`921`)
 

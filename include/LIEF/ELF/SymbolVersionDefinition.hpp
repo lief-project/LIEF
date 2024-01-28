@@ -43,7 +43,7 @@ class LIEF_API SymbolVersionDefinition : public Object {
   using it_version_aux       = ref_iterator<version_aux_t&, SymbolVersionAux*>;
   using it_const_version_aux = const_ref_iterator<const version_aux_t&, const SymbolVersionAux*>;
 
-  SymbolVersionDefinition();
+  SymbolVersionDefinition() = default;
   SymbolVersionDefinition(const details::Elf64_Verdef& header);
   SymbolVersionDefinition(const details::Elf32_Verdef& header);
   ~SymbolVersionDefinition() override;
@@ -56,29 +56,49 @@ class LIEF_API SymbolVersionDefinition : public Object {
   //!
   //! This field should always have the value ``1``. It will be changed
   //! if the versioning implementation has to be changed in an incompatible way.
-  uint16_t version() const;
+  uint16_t version() const {
+    return version_;
+  }
 
   //! Version information
-  uint16_t flags() const;
+  uint16_t flags() const {
+    return flags_;
+  }
 
   //! Version index
   //!
   //! Numeric value used as an index in the LIEF::ELF::SymbolVersion table
-  uint16_t ndx() const;
+  uint16_t ndx() const {
+    return ndx_;
+  }
 
   //! Hash value of the symbol's name (using ELF hash function)
-  uint32_t hash() const;
+  uint32_t hash() const {
+    return hash_;
+  }
 
   //! SymbolVersionAux entries
-  it_version_aux       symbols_aux();
-  it_const_version_aux symbols_aux() const;
+  it_version_aux symbols_aux() {
+    return symbol_version_aux_;
+  }
 
-  void version(uint16_t version);
-  void flags(uint16_t flags);
-  void hash(uint32_t hash);
+  it_const_version_aux symbols_aux() const {
+    return symbol_version_aux_;
+  }
+
+  void version(uint16_t version) {
+    version_ = version;
+  }
+
+  void flags(uint16_t flags) {
+    flags_ = flags;
+  }
+
+  void hash(uint32_t hash) {
+    hash_ = hash;
+  }
 
   void accept(Visitor& visitor) const override;
-
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const SymbolVersionDefinition& sym);
 

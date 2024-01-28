@@ -20,8 +20,9 @@ def test_gnu_hash(tmpdir):
     target_path = get_sample('ELF/ELF64_x86-64_binary_empty-gnu-hash.bin')
     output      = os.path.join(tmpdir, "libnoempty.so")
 
-    binary = lief.parse(target_path)
-    binary[lief.ELF.DYNAMIC_TAGS.FLAGS_1].remove(lief.ELF.DYNAMIC_FLAGS_1.PIE)
+    binary = lief.ELF.parse(target_path)
+    entry_flag: lief.ELF.DynamicEntryFlags = binary[lief.ELF.DynamicEntry.TAG.FLAGS_1]
+    entry_flag.remove(lief.ELF.DynamicEntryFlags.FLAG.PIE)
 
     for name, addr in SYMBOLS.items():
         binary.add_exported_function(addr, name)

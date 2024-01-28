@@ -17,7 +17,7 @@ def test_issue_671(tmp_path: Path):
     cf. https://github.com/lief-project/LIEF/issues/671
     """
     binary_name = "nopie_bss_671.elf"
-    target: lief.ELF.Binary = lief.parse(get_sample(f"ELF/{binary_name}"))
+    target = lief.ELF.parse(get_sample(f"ELF/{binary_name}"))
 
     for s in filter(lambda e: e.exported, target.static_symbols):
         target.add_dynamic_symbol(s)
@@ -26,10 +26,10 @@ def test_issue_671(tmp_path: Path):
     target.write(output.as_posix())
 
     # Make sure that the PHDR has been relocated at the end:
-    built = lief.parse(output.as_posix())
-    assert built[lief.ELF.SEGMENT_TYPES.PHDR].file_offset == 0x3000
-    assert built[lief.ELF.SEGMENT_TYPES.PHDR].physical_size == 0x1f8
-    assert built[lief.ELF.SEGMENT_TYPES.PHDR].virtual_address == 0x403000
+    built = lief.ELF.parse(output.as_posix())
+    assert built[lief.ELF.Segment.TYPE.PHDR].file_offset == 0x3000
+    assert built[lief.ELF.Segment.TYPE.PHDR].physical_size == 0x1f8
+    assert built[lief.ELF.Segment.TYPE.PHDR].virtual_address == 0x403000
 
     if is_linux() and is_x86_64():
         st = os.stat(output)
@@ -46,7 +46,7 @@ def test_all(tmp_path: Path):
         pytest.skip("requires a 64-bits platform")
 
     binary_name = "544ca2035a9c15e7756ed8d8067d860bd3157e4eeaa39b4ee932458eebe2434b.elf"
-    target: lief.ELF.Binary = lief.parse(get_sample(f"ELF/{binary_name}"))
+    target: lief.ELF.Binary = lief.ELF.parse(get_sample(f"ELF/{binary_name}"))
     bss = target.get_section(".bss")
 
     assert bss.virtual_address == 0x65a3e0
@@ -57,7 +57,7 @@ def test_all(tmp_path: Path):
     target.add_library("libcap.so.2")
     # Add segment
     new_segment = lief.ELF.Segment()
-    new_segment.type = lief.ELF.SEGMENT_TYPES.LOAD
+    new_segment.type = lief.ELF.Segment.TYPE.LOAD
     new_segment.content = [0xCC] * 0x50
     target.add(new_segment)
 
@@ -74,5 +74,5 @@ def test_all(tmp_path: Path):
             assert len(stdout) > 0
 
     # Check that the written binary contains our modifications
-    new: lief.ELF.Binary = lief.parse(output.as_posix())
+    new: lief.ELF.Binary = lief.ELF.parse(output.as_posix())
     assert new.get_library("libcap.so.2").name == "libcap.so.2"

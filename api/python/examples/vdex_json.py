@@ -15,7 +15,7 @@ def main():
     parser.add_argument('file', help='VDEX file')
     args = parser.parse_args()
 
-    if not lief.VDEX.is_vdex(args.file):
+    if not lief.is_vdex(args.file):
         print("{} is not a VDEX file".format(args.file))
         return 1
     dexfile   = lief.VDEX.parse(args.file)

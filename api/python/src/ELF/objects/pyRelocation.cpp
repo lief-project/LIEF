@@ -18,6 +18,7 @@
 #include <nanobind/stl/string.h>
 
 #include "ELF/pyELF.hpp"
+#include "enums_wrapper.hpp"
 
 #include "LIEF/ELF/Relocation.hpp"
 #include "LIEF/ELF/Symbol.hpp"
@@ -25,19 +26,28 @@
 
 namespace LIEF::ELF::py {
 
+void init_relocation_types(nb::class_<Relocation, LIEF::Relocation>& m);
+
 template<>
 void create<Relocation>(nb::module_& m) {
-
-  // Relocation object
-  nb::class_<Relocation, LIEF::Relocation>(m, "Relocation",
+  nb::class_<Relocation, LIEF::Relocation> reloc(m, "Relocation",
       R"delim(
       Class that represents an ELF relocation.
-      )delim"_doc)
+      )delim"_doc);
 
+  init_relocation_types(reloc);
+
+  enum_<Relocation::PURPOSE>(reloc, "PURPOSE")
+    .value("NONE", Relocation::PURPOSE::NONE)
+    .value("PLTGOT", Relocation::PURPOSE::PLTGOT)
+    .value("DYNAMIC", Relocation::PURPOSE::DYNAMIC)
+    .value("OBJECT", Relocation::PURPOSE::OBJECT);
+
+  reloc
     .def(nb::init<>())
     .def(nb::init<ARCH>(), "arch"_a)
-    .def(nb::init<uint64_t, uint32_t, int64_t, bool>(),
-        "address"_a, "type"_a = 0, "addend"_a = 0, "is_rela"_a = false)
+    .def(nb::init<uint64_t, Relocation::TYPE, bool>(),
+        "address"_a, "type"_a = Relocation::TYPE::UNKNOWN, "is_rela"_a = false)
 
     .def_prop_rw("addend",
         nb::overload_cast<>(&Relocation::addend, nb::const_),
@@ -51,25 +61,16 @@ void create<Relocation>(nb::module_& m) {
 
     .def_prop_rw("purpose",
         nb::overload_cast<>(&Relocation::purpose, nb::const_),
-        nb::overload_cast<RELOCATION_PURPOSES>(&Relocation::purpose),
+        nb::overload_cast<Relocation::PURPOSE>(&Relocation::purpose),
         R"delim(
-        Purpose of the relocation (:class:`~lief.ELF.RELOCATION_PURPOSES`).
-
+        Purpose of the relocation.
         This value provides the information about how the relocation is used (PLT/GOT resolution, ``.o`` file, ...)
         )delim"_doc)
 
     .def_prop_rw("type",
         nb::overload_cast<>(&Relocation::type, nb::const_),
-        nb::overload_cast<uint32_t>(&Relocation::type),
-        R"delim(
-        Relocation type. This value depends on the underlying architecture.
-
-        See:
-          * :class:`~lief.ELF.RELOCATION_X86_64`
-          * :class:`~lief.ELF.RELOCATION_i386`
-          * :class:`~lief.ELF.RELOCATION_AARCH64`
-          * :class:`~lief.ELF.RELOCATION_ARM`
-        )delim"_doc)
+        nb::overload_cast<Relocation::TYPE>(&Relocation::type),
+        R"delim(Relocation type.)delim"_doc)
 
     .def_prop_ro("has_symbol",
         &Relocation::has_symbol,

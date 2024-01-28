@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
 
   std::unique_ptr<LIEF::ELF::Binary> binary = LIEF::ELF::Parser::parse(argv[1]);
   LIEF::ELF::Segment seg;
-  seg.type(LIEF::ELF::SEGMENT_TYPES::PT_LOAD);
+  seg.type(LIEF::ELF::Segment::TYPE::LOAD);
   //seg.content(std::vector<uint8_t>(0x100));
   //binary->add(seg);
   LIEF::logging::set_level(LIEF::logging::LOGGING_LEVEL::LOG_DEBUG);

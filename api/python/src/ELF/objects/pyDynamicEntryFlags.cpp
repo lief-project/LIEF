@@ -18,9 +18,10 @@
 
 #include <nanobind/operators.h>
 #include <nanobind/stl/string.h>
-#include <nanobind/stl/set.h>
+#include <nanobind/stl/vector.h>
 
 #include "ELF/pyELF.hpp"
+#include "enums_wrapper.hpp"
 
 #include "LIEF/ELF/DynamicEntryFlags.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
@@ -29,61 +30,76 @@ namespace LIEF::ELF::py {
 
 template<>
 void create<DynamicEntryFlags>(nb::module_& m) {
-  nb::class_<DynamicEntryFlags, DynamicEntry>(m, "DynamicEntryFlags")
-    .def(nb::init<>())
+  nb::class_<DynamicEntryFlags, DynamicEntry> entry(m, "DynamicEntryFlags");
 
-    .def(nb::init<DYNAMIC_TAGS, uint64_t>(),
-        "Constructor with " RST_CLASS_REF(lief.ELF.DYNAMIC_TAGS) " and value"_doc,
-        "tag"_a, "value"_a)
+  #define ENTRY(X) .value(to_string(DynamicEntryFlags::FLAG::X), DynamicEntryFlags::FLAG::X)
+  enum_<DynamicEntryFlags::FLAG>(entry, "FLAG")
+    ENTRY(ORIGIN)
+    ENTRY(SYMBOLIC)
+    ENTRY(TEXTREL)
+    ENTRY(BIND_NOW)
+    ENTRY(STATIC_TLS)
+    ENTRY(NOW)
+    ENTRY(GLOBAL)
+    ENTRY(GROUP)
+    ENTRY(NODELETE)
+    ENTRY(LOADFLTR)
+    ENTRY(INITFIRST)
+    ENTRY(NOOPEN)
+    ENTRY(HANDLE_ORIGIN)
+    ENTRY(DIRECT)
+    ENTRY(TRANS)
+    ENTRY(INTERPOSE)
+    ENTRY(NODEFLIB)
+    ENTRY(NODUMP)
+    ENTRY(CONFALT)
+    ENTRY(ENDFILTEE)
+    ENTRY(DISPRELDNE)
+    ENTRY(DISPRELPND)
+    ENTRY(NODIRECT)
+    ENTRY(IGNMULDEF)
+    ENTRY(NOKSYMS)
+    ENTRY(NOHDR)
+    ENTRY(EDITED)
+    ENTRY(NORELOC)
+    ENTRY(SYMINTPOSE)
+    ENTRY(GLOBAUDIT)
+    ENTRY(SINGLETON)
+    ENTRY(PIE)
+    ENTRY(KMOD)
+    ENTRY(WEAKFILTER)
+    ENTRY(NOCOMMON)
+  ;
+  #undef ENTRY
 
+  entry
     .def_prop_ro("flags",
         &DynamicEntryFlags::flags,
-        "Return list of " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS) " or " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS_1) " (integer)"_doc,
+        "Return list of :class:`~.FLAG`"_doc,
         nb::rv_policy::move)
 
     .def("has",
-        nb::overload_cast<DYNAMIC_FLAGS>(&DynamicEntryFlags::has, nb::const_),
-        "Check if this entry contains the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS) ""_doc,
+        nb::overload_cast<DynamicEntryFlags::FLAG>(&DynamicEntryFlags::has, nb::const_),
+        "Check if this entry contains the given :class:`~.FLAG`"_doc,
         "flag"_a)
 
-    .def("has",
-        nb::overload_cast<DYNAMIC_FLAGS_1>(&DynamicEntryFlags::has, nb::const_),
-        "Check if this entry contains the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS_1) ""_doc,
-        "flag"_a)
 
     .def("add",
-        nb::overload_cast<DYNAMIC_FLAGS>(&DynamicEntryFlags::add),
-        "Add the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS) ""_doc,
-        "flag"_a)
-
-    .def("add",
-        nb::overload_cast<DYNAMIC_FLAGS_1>(&DynamicEntryFlags::add),
-        "Add the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS_1) ""_doc,
+        nb::overload_cast<DynamicEntryFlags::FLAG>(&DynamicEntryFlags::add),
+        "Add the given :class:`~.FLAG`"_doc,
         "flag"_a)
 
     .def("remove",
-        nb::overload_cast<DYNAMIC_FLAGS>(&DynamicEntryFlags::remove),
-        "Remove the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS) ""_doc,
+        nb::overload_cast<DynamicEntryFlags::FLAG>(&DynamicEntryFlags::remove),
+        "Remove the given :class:`~.FLAG`"_doc,
         "flag"_a)
 
-    .def("remove",
-        nb::overload_cast<DYNAMIC_FLAGS_1>(&DynamicEntryFlags::remove),
-        "Remove the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS_1) ""_doc,
-        "flag"_a)
-
-    .def(nb::self += DYNAMIC_FLAGS())
-    .def(nb::self += DYNAMIC_FLAGS_1())
-
-    .def(nb::self -= DYNAMIC_FLAGS())
-    .def(nb::self -= DYNAMIC_FLAGS_1())
+    .def(nb::self += DynamicEntryFlags::FLAG())
+    .def(nb::self -= DynamicEntryFlags::FLAG())
 
     .def("__contains__",
-        nb::overload_cast<DYNAMIC_FLAGS>(&DynamicEntryFlags::has, nb::const_),
-        "Check if the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS) " is present"_doc)
-
-    .def("__contains__",
-        nb::overload_cast<DYNAMIC_FLAGS_1>(&DynamicEntryFlags::has, nb::const_),
-        "Check if the given " RST_CLASS_REF(lief.ELF.DYNAMIC_FLAGS_1) " is present"_doc)
+        nb::overload_cast<DynamicEntryFlags::FLAG>(&DynamicEntryFlags::has, nb::const_),
+        "Check if the given :class:`~.FLAG` is present"_doc)
 
     LIEF_DEFAULT_STR(DynamicEntryFlags);
 }

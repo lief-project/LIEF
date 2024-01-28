@@ -14,6 +14,7 @@ target_sources(pyLIEF PRIVATE
   pyParserConfig.cpp
   pyNote.cpp
   pyRelocation.cpp
+  pyRelocationTypes.cpp
   pySection.cpp
   pySegment.cpp
   pySymbol.cpp

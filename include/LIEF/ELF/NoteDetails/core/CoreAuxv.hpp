@@ -68,7 +68,7 @@ class LIEF_API CoreAuxv : public Note {
     SYSINFO_EHDR,  /**<  Pointer to ELF header of system-supplied DSO. */
   };
 
-  CoreAuxv(ARCH arch, ELF_CLASS cls, std::string name,
+  CoreAuxv(ARCH arch, Header::CLASS cls, std::string name,
            uint32_t type, description_t description) :
     Note(std::move(name), Note::TYPE::CORE_AUXV, type, std::move(description)),
     arch_(arch), class_(cls)
@@ -109,8 +109,8 @@ class LIEF_API CoreAuxv : public Note {
   }
 
   protected:
-  ARCH arch_ = ARCH::EM_NONE;
-  ELF_CLASS class_ = ELF_CLASS::ELFCLASSNONE;
+  ARCH arch_ = ARCH::NONE;
+  Header::CLASS class_ = Header::CLASS::NONE;
 };
 
 LIEF_API const char* to_string(CoreAuxv::TYPE type);

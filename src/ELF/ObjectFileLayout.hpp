@@ -63,7 +63,7 @@ class LIEF_LOCAL ObjectFileLayout : public Layout {
     uint64_t last_offset_sections = 0;
 
     for (std::unique_ptr<Section>& section : binary_->sections_) {
-      if (section->type() == LIEF::ELF::ELF_SECTION_TYPES::SHT_NOBITS) {
+      if (section->type() == Section::TYPE::NOBITS) {
         continue;
       }
       last_offset_sections = std::max<uint64_t>(section->file_offset() + section->size(),

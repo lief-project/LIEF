@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef C_LIEF_ELF_UTILS_H_
-#define C_LIEF_ELF_UTILS_H_
+#ifndef LIEF_C_ELF_UTILS_H
+#define LIEF_C_ELF_UTILS_H
 
 #include <stddef.h>
 

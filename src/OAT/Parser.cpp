@@ -82,7 +82,7 @@ std::unique_ptr<Binary> Parser::parse(std::vector<uint8_t> data) {
 Parser::Parser(std::vector<uint8_t> data) {
   stream_    = std::make_unique<VectorStream>(std::move(data));
   binary_    = std::unique_ptr<Binary>(new Binary{});
-  config_.count_mtd = ELF::DYNSYM_COUNT_METHODS::COUNT_AUTO;
+  config_.count_mtd = ELF::ParserConfig::DYNSYM_COUNT::AUTO;
 }
 
 Parser::Parser(const std::string& file) {
@@ -90,7 +90,7 @@ Parser::Parser(const std::string& file) {
     stream_ = std::make_unique<VectorStream>(std::move(*s));
   }
   binary_    = std::unique_ptr<Binary>(new Binary{});
-  config_.count_mtd = ELF::DYNSYM_COUNT_METHODS::COUNT_AUTO;
+  config_.count_mtd = ELF::ParserConfig::DYNSYM_COUNT::AUTO;
 }
 
 

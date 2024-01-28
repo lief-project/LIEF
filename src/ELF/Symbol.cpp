@@ -13,28 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
 #include <utility>
 
 #ifdef __unix__
   #include <cxxabi.h>
 #endif
 
-
-
-#include "LIEF/ELF/hash.hpp"
-
 #include "LIEF/ELF/Symbol.hpp"
-#include "LIEF/ELF/EnumToString.hpp"
 #include "LIEF/ELF/SymbolVersion.hpp"
-
+#include "LIEF/Visitor.hpp"
 #include "ELF/Structures.hpp"
+
+#include "frozen.hpp"
+#include <spdlog/fmt/fmt.h>
+
 
 namespace LIEF {
 namespace ELF {
-
-Symbol::Symbol() = default;
-Symbol::~Symbol() = default;
 
 Symbol& Symbol::operator=(Symbol other) {
   swap(other);
@@ -61,9 +56,10 @@ void Symbol::swap(Symbol& other) {
   std::swap(arch_,           other.arch_);
 }
 
-Symbol::Symbol(const details::Elf32_Sym& header, ARCH arch) :
-  type_{static_cast<ELF_SYMBOL_TYPES>(header.st_info & 0x0f)},
-  binding_{static_cast<SYMBOL_BINDINGS>(header.st_info >> 4)},
+template<class T>
+Symbol::Symbol(const T& header, ARCH arch) :
+  type_{type_from(header.st_info & 0x0f, arch)},
+  binding_{binding_from(header.st_info >> 4, arch)},
   other_{header.st_other},
   shndx_{header.st_shndx},
   arch_{arch}
@@ -72,102 +68,20 @@ Symbol::Symbol(const details::Elf32_Sym& header, ARCH arch) :
   size_  = header.st_size;
 }
 
-Symbol::Symbol(const details::Elf64_Sym& header, ARCH arch) :
-  type_{static_cast<ELF_SYMBOL_TYPES>(header.st_info & 0x0f)},
-  binding_{static_cast<SYMBOL_BINDINGS>(header.st_info >> 4)},
-  other_{header.st_other},
-  shndx_{header.st_shndx},
-  arch_{arch}
-{
-  value_ = header.st_value;
-  size_  = header.st_size;
-}
+template Symbol::Symbol(const details::Elf32_Sym& header, ARCH);
+template Symbol::Symbol(const details::Elf64_Sym& header, ARCH);
 
-
-Symbol::Symbol(std::string name, ELF_SYMBOL_TYPES type, SYMBOL_BINDINGS binding,
-    uint8_t other, uint16_t shndx,
-    uint64_t value, uint64_t size) :
-  LIEF::Symbol{std::move(name), value, size},
-  type_{type},
-  binding_{binding},
-  other_{other},
-  shndx_{shndx}
-{}
-
-
-ELF_SYMBOL_TYPES Symbol::type() const {
-  return type_;
-}
-
-SYMBOL_BINDINGS Symbol::binding() const {
-  return binding_;
-}
 
 uint8_t Symbol::information() const {
-  return static_cast<uint8_t>((static_cast<uint8_t>(binding_) << 4) | (static_cast<uint8_t>(type_) & 0x0f));
+  return static_cast<uint8_t>(
+      (static_cast<uint8_t>(binding_) << 4) | (static_cast<uint8_t>(type_) & 0x0f)
+  );
 }
-
-uint8_t Symbol::other() const {
-  return other_;
-}
-
-uint16_t Symbol::section_idx() const {
-  return shndx();
-}
-
-Section* Symbol::section() {
-  return section_;
-}
-
-uint16_t Symbol::shndx() const {
-  return shndx_;
-}
-
-
-ELF_SYMBOL_VISIBILITY Symbol::visibility() const {
-  return static_cast<ELF_SYMBOL_VISIBILITY>(other_);
-}
-
-
-bool Symbol::has_version() const {
-  return symbol_version_ != nullptr;
-}
-
-
-const SymbolVersion* Symbol::symbol_version() const {
-  return symbol_version_;
-}
-
-SymbolVersion* Symbol::symbol_version() {
-  return const_cast<SymbolVersion*>(static_cast<const Symbol*>(this)->symbol_version());
-}
-
-void Symbol::type(ELF_SYMBOL_TYPES type) {
-  type_ = type;
-}
-
-void Symbol::binding(SYMBOL_BINDINGS binding) {
-  binding_ = binding;
-}
-
-void Symbol::other(uint8_t other) {
-  other_ = other;
-}
-
-void Symbol::shndx(uint16_t idx) {
-  shndx_ = idx;
-}
-
-void Symbol::visibility(ELF_SYMBOL_VISIBILITY visibility) {
-  other_ = static_cast<uint8_t>(visibility);
-}
-
 
 void Symbol::information(uint8_t info) {
-  binding_ = static_cast<SYMBOL_BINDINGS>(info >> 4);
-  type_    = static_cast<ELF_SYMBOL_TYPES>(info & 0x0f);
+  binding_ = binding_from(info >> 4, arch_);
+  type_    = type_from(info & 0x0f, arch_);
 }
-
 
 std::string Symbol::demangled_name() const {
 #if defined(__unix__)
@@ -188,39 +102,39 @@ std::string Symbol::demangled_name() const {
 }
 
 bool Symbol::is_exported() const {
-  bool is_exported = shndx() != static_cast<uint16_t>(SYMBOL_SECTION_INDEX::SHN_UNDEF);
+  bool is_exported = shndx() != SECTION_INDEX::UNDEF;
 
   // An export must have an address
   is_exported = is_exported && (value() != 0 || (value() == 0 && size() > 0));
 
   // An export must be bind to GLOBAL or WEAK
-  is_exported = is_exported && (binding() == SYMBOL_BINDINGS::STB_GLOBAL ||
-                                binding() == SYMBOL_BINDINGS::STB_WEAK);
+  is_exported = is_exported && (binding() == BINDING::GLOBAL ||
+                                binding() == BINDING::WEAK);
 
   // An export must have one of theses types:
-  is_exported = is_exported && (type() == ELF_SYMBOL_TYPES::STT_FUNC ||
-                                type() == ELF_SYMBOL_TYPES::STT_GNU_IFUNC ||
-                                type() == ELF_SYMBOL_TYPES::STT_OBJECT);
+  is_exported = is_exported && (type() == TYPE::FUNC ||
+                                type() == TYPE::GNU_IFUNC ||
+                                type() == TYPE::OBJECT);
   return is_exported;
 }
 
 void Symbol::set_exported(bool flag) {
   if (flag) {
     shndx(1);
-    binding(SYMBOL_BINDINGS::STB_GLOBAL);
+    binding(BINDING::GLOBAL);
   } else {
-    shndx(SYMBOL_SECTION_INDEX::SHN_UNDEF);
-    binding(SYMBOL_BINDINGS::STB_LOCAL);
+    shndx(SECTION_INDEX::UNDEF);
+    binding(BINDING::LOCAL);
   }
 }
 
 bool Symbol::is_imported() const {
   // An import must not be defined in a section
-  bool is_imported = shndx() == static_cast<uint16_t>(SYMBOL_SECTION_INDEX::SHN_UNDEF);
+  bool is_imported = shndx() == SECTION_INDEX::UNDEF;
 
-  const bool is_mips = arch_ == ARCH::EM_MIPS || arch_ == ARCH::EM_MIPS_X ||
-                       arch_ == ARCH::EM_MIPS_RS3_LE;
-  const bool is_ppc = arch_ == ARCH::EM_PPC || arch_ == ARCH::EM_PPC64;
+  const bool is_mips = arch_ == ARCH::MIPS || arch_ == ARCH::MIPS_X ||
+                       arch_ == ARCH::MIPS_RS3_LE;
+  const bool is_ppc = arch_ == ARCH::PPC || arch_ == ARCH::PPC64;
 
   // An import must not have an address (except for some architectures like Mips/PPC)
   if (!is_mips && !is_ppc) {
@@ -231,19 +145,19 @@ bool Symbol::is_imported() const {
   is_imported = is_imported && !name().empty();
 
   // It must have a GLOBAL or WEAK bind
-  is_imported = is_imported && (binding() == SYMBOL_BINDINGS::STB_GLOBAL ||
-                                 binding() == SYMBOL_BINDINGS::STB_WEAK);
+  is_imported = is_imported && (binding()  == BINDING::GLOBAL ||
+                                 binding() == BINDING::WEAK);
 
   // It must be a FUNC or an OBJECT
-  is_imported = is_imported && (type() == ELF_SYMBOL_TYPES::STT_FUNC ||
-                                 type() == ELF_SYMBOL_TYPES::STT_GNU_IFUNC ||
-                                 type() == ELF_SYMBOL_TYPES::STT_OBJECT);
+  is_imported = is_imported && (type()  == TYPE::FUNC ||
+                                 type() == TYPE::GNU_IFUNC ||
+                                 type() == TYPE::OBJECT);
   return is_imported;
 }
 
 void Symbol::set_imported(bool flag) {
   if (flag) {
-    shndx(SYMBOL_SECTION_INDEX::SHN_UNDEF);
+    shndx(SECTION_INDEX::UNDEF);
   } else {
     shndx(1);
   }
@@ -254,25 +168,70 @@ void Symbol::accept(Visitor& visitor) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Symbol& entry) {
-
   std::string name = entry.demangled_name();
   if (name.empty()) {
     name = entry.name();
   }
 
-  os << std::hex;
-  os << std::left
-     << std::setw(30) << name
-     << std::setw(10) << to_string(entry.type())
-     << std::setw(10) << to_string(entry.binding())
-     << std::setw(10) << entry.value()
-     << std::setw(10) << entry.size();
+  os << fmt::format("{} ({}/{}): 0x{:06x} (0x{:02x})",
+                    name, to_string(entry.type()), to_string(entry.binding()),
+                    entry.value(), entry.size());
 
-  if (entry.has_version()) {
-    os << std::setw(10) << *entry.symbol_version();
+  if (const SymbolVersion* version = entry.symbol_version()) {
+    os << *version;
   }
-
   return os;
 }
+
+const char* to_string(Symbol::BINDING e) {
+  #define ENTRY(X) std::pair(Symbol::BINDING::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(LOCAL),
+    ENTRY(GLOBAL),
+    ENTRY(WEAK),
+    ENTRY(GNU_UNIQUE),
+  };
+  #undef ENTRY
+
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
+  }
+  return "UNKNOWN";
+}
+const char* to_string(Symbol::TYPE e) {
+  #define ENTRY(X) std::pair(Symbol::TYPE::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(NOTYPE),
+    ENTRY(OBJECT),
+    ENTRY(FUNC),
+    ENTRY(SECTION),
+    ENTRY(FILE),
+    ENTRY(COMMON),
+    ENTRY(TLS),
+    ENTRY(GNU_IFUNC),
+  };
+  #undef ENTRY
+
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
+  }
+  return "UNKNOWN";
+}
+const char* to_string(Symbol::VISIBILITY e) {
+  #define ENTRY(X) std::pair(Symbol::VISIBILITY::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(DEFAULT),
+    ENTRY(INTERNAL),
+    ENTRY(HIDDEN),
+    ENTRY(PROTECTED),
+  };
+  #undef ENTRY
+
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
+  }
+  return "UNKNOWN";
+}
+
 }
 }

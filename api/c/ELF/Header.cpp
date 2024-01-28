@@ -21,9 +21,9 @@ namespace ELF {
 void init_c_header(Elf_Binary_t* c_binary, Binary* binary) {
 
   const Header& hdr                       = binary->header();
-  c_binary->header.file_type              = static_cast<enum LIEF_ELF_E_TYPE>(hdr.file_type());
-  c_binary->header.machine_type           = static_cast<enum LIEF_ELF_ARCH>(hdr.machine_type());
-  c_binary->header.object_file_version    = static_cast<enum LIEF_ELF_VERSION>(hdr.object_file_version());
+  c_binary->header.file_type              = static_cast<uint32_t>(hdr.file_type());
+  c_binary->header.machine_type           = static_cast<uint32_t>(hdr.machine_type());
+  c_binary->header.object_file_version    = static_cast<uint32_t>(hdr.object_file_version());
   c_binary->header.program_headers_offset = hdr.program_headers_offset();
   c_binary->header.section_headers_offset = hdr.section_headers_offset();
   c_binary->header.processor_flags        = hdr.processor_flag();
@@ -35,10 +35,7 @@ void init_c_header(Elf_Binary_t* c_binary, Binary* binary) {
   c_binary->header.name_string_table_idx  = hdr.section_name_table_idx();
   c_binary->header.entrypoint             = hdr.entrypoint();
   const Header::identity_t& ident         = hdr.identity();
-  std::copy(
-      std::begin(ident),
-      std::end(ident),
-      c_binary->header.identity);
+  std::copy(std::begin(ident), std::end(ident), c_binary->header.identity);
 
 }
 

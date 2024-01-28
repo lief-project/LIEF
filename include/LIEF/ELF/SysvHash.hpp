@@ -43,25 +43,33 @@ class LIEF_API SysvHash : public Object {
   friend class Binary;
 
   public:
-  SysvHash();
-  SysvHash& operator=(const SysvHash& copy);
-  SysvHash(const SysvHash& copy);
+  SysvHash() = default;
+  SysvHash& operator=(const SysvHash& copy) = default;
+  SysvHash(const SysvHash& copy) = default;
 
-  SysvHash& operator=(SysvHash&&);
-  SysvHash(SysvHash&&);
-  ~SysvHash() override;
+  SysvHash& operator=(SysvHash&&) = default;
+  SysvHash(SysvHash&&) = default;
+  ~SysvHash() override = default;
 
   //! @brief Return the number of buckets used
-  uint32_t nbucket() const;
+  uint32_t nbucket() const {
+    return buckets_.size();
+  }
 
   //! @brief Return the number of chain used
-  uint32_t nchain() const;
+  uint32_t nchain() const {
+    return chains_.size();
+  }
 
   //! @brief Buckets values
-  const std::vector<uint32_t>& buckets() const;
+  const std::vector<uint32_t>& buckets() const {
+    return buckets_;
+  }
 
   //! @brief Chains values
-  const std::vector<uint32_t>& chains() const;
+  const std::vector<uint32_t>& chains() const {
+    return chains_;
+  }
 
   void nchain(uint32_t nb) {
     chains_.resize(nb);
@@ -74,9 +82,7 @@ class LIEF_API SysvHash : public Object {
   private:
   std::vector<uint32_t> buckets_;
   std::vector<uint32_t> chains_;
-
 };
-
 
 } // namepsace ELF
 } // namespace LIEF

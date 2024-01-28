@@ -25,7 +25,7 @@
 #include "LIEF/errors.hpp"
 #include "LIEF/span.hpp"
 
-#include "LIEF/ELF/enums.hpp"
+#include "LIEF/ELF/Header.hpp"
 
 namespace LIEF {
 class BinaryStream;
@@ -122,7 +122,7 @@ class LIEF_API Note : public Object {
 
   public:
   /// Convert the raw integer note type into a TYPE according to the owner
-  static result<TYPE> convert_type(E_TYPE ftype, uint32_t type,
+  static result<TYPE> convert_type(Header::FILE_TYPE ftype, uint32_t type,
                                    const std::string& name);
 
   /// Try to determine the ELF section name associated with the TYPE
@@ -141,22 +141,22 @@ class LIEF_API Note : public Object {
   /// creating notes like Coredump notes.
   static std::unique_ptr<Note> create(
       const std::string& name, uint32_t type, description_t description,
-      E_TYPE ftype = E_TYPE::ET_NONE, ARCH arch = ARCH::EM_NONE,
-      ELF_CLASS cls = ELF_CLASS::ELFCLASSNONE);
+      Header::FILE_TYPE ftype = Header::FILE_TYPE::NONE, ARCH arch = ARCH::NONE,
+      Header::CLASS cls = Header::CLASS::NONE);
 
   /// Create a new note from the given parameters. Additional information
   /// such as the architecture or the ELF class could be required for
   /// creating notes like Coredump notes.
   static std::unique_ptr<Note> create(
       const std::string& name, TYPE type, description_t description,
-      ARCH arch = ARCH::EM_NONE, ELF_CLASS cls = ELF_CLASS::ELFCLASSNONE);
+      ARCH arch = ARCH::NONE, Header::CLASS cls = Header::CLASS::NONE);
 
   /// Create a new note from the given stream. Additional information
   /// such as the architecture or the ELF class could be required for
   /// creating notes like Coredump notes.
   static std::unique_ptr<Note> create(BinaryStream& stream,
-      E_TYPE ftype = E_TYPE::ET_NONE, ARCH arch = ARCH::EM_NONE,
-      ELF_CLASS cls = ELF_CLASS::ELFCLASSNONE);
+      Header::FILE_TYPE ftype = Header::FILE_TYPE::NONE, ARCH arch = ARCH::NONE,
+      Header::CLASS cls = Header::CLASS::NONE);
 
   Note& operator=(const Note& copy) = default;
   Note(const Note& copy) = default;

@@ -36,7 +36,7 @@ namespace LIEF {
 namespace ELF {
 void init_c_binary(Elf_Binary_t* c_binary, Binary* binary) {
   c_binary->handler     = reinterpret_cast<void*>(binary);
-  c_binary->type        = static_cast<enum LIEF_ELF_ELF_CLASS>(binary->type());
+  c_binary->type        = static_cast<uint32_t>(binary->type());
   c_binary->interpreter = nullptr;
   if (binary->has_interpreter()) {
     const std::string& interp = binary->interpreter();
@@ -47,7 +47,6 @@ void init_c_binary(Elf_Binary_t* c_binary, Binary* binary) {
         interp.size());
     reinterpret_cast<char*>(const_cast<char*>(c_binary->interpreter))[interp.size()] = '\0';
   }
-
 
   init_c_header(c_binary, binary);
   init_c_sections(c_binary, binary);
@@ -81,9 +80,9 @@ Elf_Binary_t* elf_parse(const char *file) {
 int elf_binary_save_header(Elf_Binary_t* binary) {
   Header& hdr = reinterpret_cast<Binary*>(binary->handler)->header();
 
-  hdr.file_type(static_cast<LIEF::ELF::E_TYPE>(binary->header.file_type));
-  hdr.machine_type(static_cast<LIEF::ELF::ARCH>(binary->header.machine_type));
-  hdr.object_file_version(static_cast<LIEF::ELF::VERSION>(binary->header.object_file_version));
+  hdr.file_type(LIEF::ELF::Header::FILE_TYPE(binary->header.file_type));
+  hdr.machine_type(LIEF::ELF::ARCH(binary->header.machine_type));
+  hdr.object_file_version(LIEF::ELF::Header::VERSION(binary->header.object_file_version));
   hdr.program_headers_offset(binary->header.program_headers_offset);
   hdr.section_headers_offset(binary->header.section_headers_offset);
   hdr.processor_flag(binary->header.processor_flags);

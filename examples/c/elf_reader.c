@@ -27,13 +27,13 @@ int main(int argc, char **argv) {
   fprintf(stdout, "Header\n");
   fprintf(stdout, "======\n");
   fprintf(stdout, "Magic: %x %x %x %x\n",             identity[0], identity[1], identity[2], identity[3]);
-  fprintf(stdout, "Class: %s\n",                      ELF_CLASS_to_string(identity[LIEF_ELF_EI_CLASS]));
-  fprintf(stdout, "Endianness: %s\n",                 ELF_DATA_to_string(identity[LIEF_ELF_EI_DATA]));
-  fprintf(stdout, "Version: %s\n",                    VERSION_to_string(identity[LIEF_ELF_EI_VERSION]));
-  fprintf(stdout, "OS/ABI: %s\n",                     OS_ABI_to_string(identity[LIEF_ELF_EI_OSABI]));
-  fprintf(stdout, "File type: %s\n",                  E_TYPE_to_string(header.file_type));
-  fprintf(stdout, "Architecture: %s\n",               ARCH_to_string(header.machine_type));
-  fprintf(stdout, "Version: %s\n",                    VERSION_to_string(header.object_file_version));
+  fprintf(stdout, "Class: %d\n",                      identity[LIEF_EI_CLASS]);
+  fprintf(stdout, "Endianness: %d\n",                 identity[LIEF_EI_DATA]);
+  fprintf(stdout, "Version: %d\n",                    identity[LIEF_EI_VERSION]);
+  fprintf(stdout, "OS/ABI: %d\n",                     identity[LIEF_EI_OSABI]);
+  fprintf(stdout, "File type: %d\n",                  header.file_type);
+  fprintf(stdout, "Architecture: %d\n",               header.machine_type);
+  fprintf(stdout, "Version: %d\n",                    header.object_file_version);
   fprintf(stdout, "Segments offset: 0x%" PRIx64 "\n", header.program_headers_offset);
   fprintf(stdout, "Sections offset: 0x%" PRIx64 "\n", header.section_headers_offset);
   fprintf(stdout, "Processor flags: %x\n",            header.processor_flags);
@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
     Elf_Section_t* section = sections[i];
     fprintf(stdout, ""
         "%-20s "
-        "%-10s "
+        "%d "
         "0x%010" PRIx64 " "
         "0x%010" PRIx64 " "
         "0x%010" PRIx64 " "
@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
         "%.6f "
         "\n",
         section->name,
-        ELF_SECTION_TYPES_to_string(section->type),
+        section->type,
         section->virtual_address,
         section->size,
         section->offset,
@@ -91,8 +91,8 @@ int main(int argc, char **argv) {
 
     fprintf(stdout, ""
         "%-20s "
-        "%-10s "
-        "%-10s "
+        "%d "
+        "%d "
         "0x%02x "
         "0x%02x"
         "0x%010" PRIx64 " "
@@ -100,8 +100,8 @@ int main(int argc, char **argv) {
         "%-3s "
         "\n",
         symbol->name,
-        ELF_SYMBOL_TYPES_to_string(symbol->type),
-        SYMBOL_BINDINGS_to_string(symbol->binding),
+        symbol->type,
+        symbol->binding,
         symbol->other,
         symbol->shndx,
         symbol->value,
@@ -128,8 +128,8 @@ int main(int argc, char **argv) {
 
     fprintf(stdout, ""
         "%-20s "
-        "%-10s "
-        "%-10s "
+        "%d "
+        "%d "
         "0x%02x "
         "0x%02x"
         "0x%010" PRIx64 " "
@@ -137,8 +137,8 @@ int main(int argc, char **argv) {
         "%-3s "
         "\n",
         symbol->name,
-        ELF_SYMBOL_TYPES_to_string(symbol->type),
-        SYMBOL_BINDINGS_to_string(symbol->binding),
+        symbol->type,
+        symbol->binding,
         symbol->other,
         symbol->shndx,
         symbol->value,
@@ -153,7 +153,7 @@ int main(int argc, char **argv) {
   for (i = 0; segments[i] != NULL; ++i) {
     Elf_Segment_t* segment = segments[i];
     fprintf(stdout, ""
-        "%-20s "
+        "%d "
         "0x%06"  PRIx32 " "
         "0x%010" PRIx64 " "
         "0x%06"  PRIx64 " "
@@ -161,7 +161,7 @@ int main(int argc, char **argv) {
         "0x%06"  PRIx64 " "
         "0x%06"  PRIx64 " "
         "\n",
-        SEGMENT_TYPES_to_string(segment->type),
+        segment->type,
         segment->flags,
         segment->virtual_address,
         segment->virtual_size,
@@ -179,111 +179,100 @@ int main(int argc, char **argv) {
   for (i = 0; dynamic_entries[i] != NULL; ++i) {
     Elf_DynamicEntry_t* entry = dynamic_entries[i];
     switch(entry->tag) {
-      case LIEF_ELF_DT_NEEDED:
+      case LIEF_DT_NEEDED:
         {
           Elf_DynamicEntry_Library_t* e = (Elf_DynamicEntry_Library_t*)entry;
           fprintf(stdout, ""
-            "%-20s "
+            "0x%010" PRIx64 " "
             "0x%010" PRIx64 " "
             "%-20s "
             "\n",
-            DYNAMIC_TAGS_to_string(e->tag),
+            e->tag,
             e->value,
             e->name
             );
           break;
         }
-      case LIEF_ELF_DT_SONAME:
+      case LIEF_DT_SONAME:
         {
           Elf_DynamicEntry_SharedObject_t* e = (Elf_DynamicEntry_SharedObject_t*)entry;
           fprintf(stdout, ""
-            "%-20s "
+            "0x%010" PRIx64 " "
             "0x%010" PRIx64 " "
             "%-20s "
             "\n",
-            DYNAMIC_TAGS_to_string(e->tag),
+            e->tag,
             e->value,
             e->name
             );
           break;
         }
 
-      case LIEF_ELF_DT_RPATH:
+      case LIEF_DT_RPATH:
         {
           Elf_DynamicEntry_Rpath_t* e = (Elf_DynamicEntry_Rpath_t*)entry;
           fprintf(stdout, ""
-            "%-20s "
+            "0x%010" PRIx64 " "
             "0x%010" PRIx64 " "
             "%-20s "
             "\n",
-            DYNAMIC_TAGS_to_string(e->tag),
+            e->tag,
             e->value,
             e->rpath
             );
           break;
         }
 
-      case LIEF_ELF_DT_RUNPATH:
+      case LIEF_DT_RUNPATH:
         {
           Elf_DynamicEntry_RunPath_t* e = (Elf_DynamicEntry_RunPath_t*)entry;
           fprintf(stdout, ""
-            "%-20s "
+            "0x%010" PRIx64 " "
             "0x%010" PRIx64 " "
             "%-20s "
             "\n",
-            DYNAMIC_TAGS_to_string(e->tag),
+            e->tag,
             e->value,
             e->runpath
             );
           break;
         }
 
-      case LIEF_ELF_DT_FLAGS:
+      case LIEF_DT_FLAGS:
         {
           Elf_DynamicEntry_Flags_t* e = (Elf_DynamicEntry_Flags_t*)entry;
           fprintf(stdout, ""
-            "%-20s "
+            "0x%010" PRIx64 " "
             "0x%010" PRIx64 " ",
-            DYNAMIC_TAGS_to_string(e->tag),
+            e->tag,
             e->value);
-
-          enum LIEF_ELF_DYNAMIC_FLAGS* flags = e->flags;
-          for (j = 0; flags[j] != 0; ++j) {
-            fprintf(stdout, "%s ", DYNAMIC_FLAGS_to_string(flags[j]));
-          }
 
           fprintf(stdout, "\n");
           break;
         }
 
-      case LIEF_ELF_DT_FLAGS_1:
+      case LIEF_DT_FLAGS_1:
         {
           Elf_DynamicEntry_Flags_t* e = (Elf_DynamicEntry_Flags_t*)entry;
           fprintf(stdout, ""
-            "%-20s "
+            "0x%010" PRIx64 " "
             "0x%010" PRIx64 " ",
-            DYNAMIC_TAGS_to_string(e->tag),
+            e->tag,
             e->value);
-
-          enum LIEF_ELF_DYNAMIC_FLAGS_1* flags = e->flags_1;
-          for (j = 0; flags[j] != 0; ++j) {
-            fprintf(stdout, "%s ", DYNAMIC_FLAGS_1_to_string(flags[j]));
-          }
-
           fprintf(stdout, "\n");
           break;
         }
 
 
-      case LIEF_ELF_DT_INIT_ARRAY:
-      case LIEF_ELF_DT_FINI_ARRAY:
-      case LIEF_ELF_DT_PREINIT_ARRAY:
+      case LIEF_DT_INIT_ARRAY:
+      case LIEF_DT_FINI_ARRAY:
+      case LIEF_DT_PREINIT_ARRAY:
         {
           Elf_DynamicEntry_Array_t* e = (Elf_DynamicEntry_Array_t*)entry;
           fprintf(stdout, ""
-            "%-20s "
+            "0x%010" PRIx64 " "
             "0x%010" PRIx64 " ",
-            DYNAMIC_TAGS_to_string(e->tag),
+            e->tag,
             e->value
             );
           uint64_t* array = e->array;
@@ -298,18 +287,16 @@ int main(int argc, char **argv) {
       default:
         {
           fprintf(stdout, ""
-            "%-20s "
+            "0x%010" PRIx64 " "
             "0x%010" PRIx64 " "
             "\n",
-            DYNAMIC_TAGS_to_string(entry->tag),
+            entry->tag,
             entry->value
             );
           break;
         }
     }
   }
-
-
 
   elf_binary_destroy(elf_binary);
 

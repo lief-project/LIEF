@@ -123,7 +123,7 @@ The first step is to inject the hook into the binary. To do so we will add a :cl
 
   segment_added  = crackme.add(hook.segments[0])
 
-All assembly code of the hook stands in the first :attr:`~lief.ELF.SEGMENT_TYPES.LOAD` segment of ``hook``.
+All assembly code of the hook stands in the first :attr:`~lief.ELF.Segment.TYPE.LOAD` segment of ``hook``.
 
 Once the hook added, its virtual address is :attr:`~lief.ELF.Segment.virtual_address` of ``segment_added``  and we can processed to the ``got`` patching.
 

@@ -22,57 +22,14 @@
 namespace LIEF {
 namespace ELF {
 
-SymbolVersion::SymbolVersion() = default;
-SymbolVersion::~SymbolVersion() = default;
-
-SymbolVersion& SymbolVersion::operator=(const SymbolVersion&) = default;
-
-SymbolVersion::SymbolVersion(const SymbolVersion&) = default;
-
-SymbolVersion::SymbolVersion(uint16_t value) :
-  value_{value}
-{}
-
-
-SymbolVersion SymbolVersion::local() {
-  return SymbolVersion{0};
-}
-
-SymbolVersion SymbolVersion::global() {
-  return SymbolVersion{1};
-}
-
-uint16_t SymbolVersion::value() const {
-  return value_;
-}
-
-
-bool SymbolVersion::has_auxiliary_version() const {
-  return symbol_aux_ != nullptr;
-}
-
-const SymbolVersionAux* SymbolVersion::symbol_version_auxiliary() const {
-  return symbol_aux_;
-}
-
-SymbolVersionAux* SymbolVersion::symbol_version_auxiliary() {
-  return const_cast<SymbolVersionAux*>(static_cast<const SymbolVersion*>(this)->symbol_version_auxiliary());
-}
-
 void SymbolVersion::symbol_version_auxiliary(SymbolVersionAuxRequirement& svauxr) {
   symbol_aux_ = &svauxr;
   value_      = svauxr.other();
 }
 
-void SymbolVersion::value(uint16_t value) {
-  value_ = value;
-}
-
 void SymbolVersion::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
-
-
 
 std::ostream& operator<<(std::ostream& os, const ELF::SymbolVersion& symv) {
   if (symv.has_auxiliary_version()) {

@@ -17,7 +17,6 @@
 #define LIEF_ELF_RELOCATION_H
 
 #include <string>
-#include <map>
 #include <ostream>
 
 #include "LIEF/Object.hpp"
@@ -36,15 +35,7 @@ class Builder;
 class Symbol;
 class Section;
 
-namespace details {
-struct Elf32_Rel;
-struct Elf32_Rela;
-
-struct Elf64_Rel;
-struct Elf64_Rela;
-}
-
-//! Class that represents an ELF relocation.
+/// Class that represents an ELF relocation.
 class LIEF_API Relocation : public LIEF::Relocation {
 
   friend class Parser;
@@ -52,111 +43,223 @@ class LIEF_API Relocation : public LIEF::Relocation {
   friend class Builder;
 
   public:
-  Relocation(const details::Elf32_Rel&  header);
-  Relocation(const details::Elf32_Rela& header);
-  Relocation(const details::Elf64_Rel&  header);
-  Relocation(const details::Elf64_Rela& header);
-  Relocation(uint64_t address, uint32_t type = 0, int64_t addend = 0, bool isRela = false);
 
-  template<class T, typename = typename std::enable_if<std::is_enum<T>::value>::type>
-  Relocation(uint64_t address, T type, int64_t addend = 0, bool isRela = false) :
-    Relocation{address, static_cast<uint32_t>(type), addend, isRela}
-  {}
+  /// The *purpose* of a relocation defines
+  enum class PURPOSE {
+    NONE = 0,
+    PLTGOT = 1,  ///< The relocation is associated with the PLT/GOT resolution
+    DYNAMIC = 2, ///< The relocation is used for regulard data/code relocation
+    OBJECT = 3,  ///< The relocation is used in an object file
+  };
 
-  Relocation();
-  Relocation(ARCH arch);
-  ~Relocation() override;
+  static constexpr uint64_t R_BIT = 27;
+  static constexpr uint64_t R_MASK = (uint64_t(1) << R_BIT) - 1;
+
+  static constexpr uint64_t R_X64     = uint64_t(1)  << R_BIT;
+  static constexpr uint64_t R_AARCH64 = uint64_t(2)  << R_BIT;
+  static constexpr uint64_t R_ARM     = uint64_t(3)  << R_BIT;
+  static constexpr uint64_t R_HEXAGON = uint64_t(4)  << R_BIT;
+  static constexpr uint64_t R_X86     = uint64_t(5)  << R_BIT;
+  static constexpr uint64_t R_LARCH   = uint64_t(6)  << R_BIT;
+  static constexpr uint64_t R_MIPS    = uint64_t(7)  << R_BIT;
+  static constexpr uint64_t R_PPC     = uint64_t(8)  << R_BIT;
+  static constexpr uint64_t R_PPC64   = uint64_t(9)  << R_BIT;
+  static constexpr uint64_t R_SPARC   = uint64_t(10) << R_BIT;
+  static constexpr uint64_t R_SYSZ    = uint64_t(11) << R_BIT;
+
+  /// The different types of the relocation
+  enum class TYPE : uint32_t {
+    UNKNOWN = uint32_t(-1),
+
+    #define ELF_RELOC(name, value) name = (value | R_X64),
+      #include "LIEF/ELF/Relocations/x86_64.def"
+    #undef ELF_RELOC
+
+    #define ELF_RELOC(name, value) name = (value | R_AARCH64),
+      #include "LIEF/ELF/Relocations/AArch64.def"
+    #undef ELF_RELOC
+
+    #define ELF_RELOC(name, value) name = (value | R_ARM),
+      #include "LIEF/ELF/Relocations/ARM.def"
+    #undef ELF_RELOC
+
+    #define ELF_RELOC(name, value) name = (value | R_HEXAGON),
+      #include "LIEF/ELF/Relocations/Hexagon.def"
+    #undef ELF_RELOC
+
+    #define ELF_RELOC(name, value) name = (value | R_X86),
+      #include "LIEF/ELF/Relocations/i386.def"
+    #undef ELF_RELOC
+
+    #define ELF_RELOC(name, value) name = (value | R_LARCH),
+      #include "LIEF/ELF/Relocations/LoongArch.def"
+    #undef ELF_RELOC
+
+    #define ELF_RELOC(name, value) name = (value | R_MIPS),
+      #include "LIEF/ELF/Relocations/Mips.def"
+    #undef ELF_RELOC
+
+    #define ELF_RELOC(name, value) name = (value | R_PPC),
+      #include "LIEF/ELF/Relocations/PowerPC.def"
+    #undef ELF_RELOC
+
+    #define ELF_RELOC(name, value) name = (value | R_PPC64),
+      #include "LIEF/ELF/Relocations/PowerPC64.def"
+    #undef ELF_RELOC
+
+    #define ELF_RELOC(name, value) name = (value | R_SPARC),
+      #include "LIEF/ELF/Relocations/Sparc.def"
+    #undef ELF_RELOC
+
+    #define ELF_RELOC(name, value) name = (value | R_SYSZ),
+      #include "LIEF/ELF/Relocations/SystemZ.def"
+    #undef ELF_RELOC
+  };
+
+  static TYPE type_from(uint32_t value, ARCH arch);
+
+  static uint32_t to_value(TYPE type) {
+    return static_cast<uint32_t>(type) & R_MASK;
+  }
+
+  template<class T>
+  LIEF_LOCAL Relocation(const T& header, PURPOSE purpose, ARCH arch);
+
+  Relocation(uint64_t address, TYPE type = TYPE::UNKNOWN, bool is_rela = false);
+
+  Relocation() = default;
+  Relocation(ARCH arch) {
+    architecture_ = arch;
+  }
+  ~Relocation() override = default;
 
   Relocation& operator=(Relocation other);
   Relocation(const Relocation& other);
   void swap(Relocation& other);
 
-  //! Additional value that can be involved in the relocation processing
-  int64_t  addend() const;
+  /// Additional value that can be involved in the relocation processing
+  int64_t addend() const {
+    return addend_;
+  }
 
-  //! Type of the relocation
-  //! This type depends on the underlying architecture which can be accessed with architecture().
-  //!
-  //! Depending on the architecture, it can return:
-  //!
-  //! * RELOC_x86_64
-  //! * RELOC_i386
-  //! * RELOC_POWERPC32
-  //! * RELOC_POWERPC64
-  //! * RELOC_AARCH64
-  //! * RELOC_ARM
-  //! * RELOC_MIPS
-  //! * RELOC_HEXAGON
-  //! * RELOC_SYSTEMZ
-  //! * RELOC_SPARC
-  //! * RELOC_LOONGARCH
-  uint32_t type() const;
+  /// Type of the relocation
+  TYPE type() const {
+    return type_;
+  }
 
-  //! Check if the relocation uses the explicit addend() field (this is usually the case for 64 bits binaries)
-  bool is_rela() const;
+  /// Check if the relocation uses the explicit addend() field
+  /// (this is usually the case for 64 bits binaries)
+  bool is_rela() const {
+    return isRela_;
+  }
 
-  //! Check if the relocation uses the implicit added (i.e. not present in the ELF structure)
-  bool is_rel() const;
+  /// Check if the relocation uses the implicit addend
+  /// (i.e. not present in the ELF structure)
+  bool is_rel() const {
+    return !isRela_;
+  }
 
-  //! Relocation info which contains for instance the symbol index
-  uint32_t info() const;
+  /// Relocation info which contains, for instance, the symbol index
+  uint32_t info() const {
+    return info_;
+  }
 
-  ARCH architecture() const;
-  RELOCATION_PURPOSES purpose() const;
+  /// Target architecture for this relocation
+  ARCH architecture() const {
+    return architecture_;
+  }
 
-  //! Return the size (in **bits**) of the value associated with this relocation
-  //!
-  //! Return -1 if it fails
+  PURPOSE purpose() const {
+    return purpose_;
+  }
+
+  /// Return the size (in **bits**) of the value associated with this relocation
+  /// Return -1 if the size can't be determined
   size_t size() const override;
 
-  //! True if the current relocation is associated with a symbol
-  bool has_symbol() const;
+  /// True if the current relocation is associated with a symbol
+  bool has_symbol() const {
+    return symbol_ != nullptr;
+  }
 
-  //! Symbol associated with the relocation
-  //! If no symbol is tied to this relocation, it returns a nullptr
-  Symbol*       symbol();
-  const Symbol* symbol() const;
+  /// Symbol associated with the relocation (or a nullptr)
+  Symbol* symbol() {
+    return symbol_;
+  }
 
-  //! True if the relocation has an associated section
-  bool has_section() const;
+  const Symbol* symbol() const {
+    return symbol_;
+  }
 
-  //! The section to which the relocation applies.
-  //! If no section to which the relocation applies is associtated to this relocation, it returns a nullptr
-  Section*       section();
-  const Section* section() const;
+  /// True if the relocation has an associated section
+  bool has_section() const {
+    return section() != nullptr;
+  }
 
-  //! The associated symbol table.
-  //! If no symbol table section is associated with this relocation, it returns a nullptr
-  Section*       symbol_table();
-  const Section* symbol_table() const;
+  /// The section in which the relocation is applied (or a nullptr)
+  Section* section() {
+    return section_;
+  }
 
-  void addend(int64_t addend);
-  void type(uint32_t type);
-  void purpose(RELOCATION_PURPOSES purpose);
-  void info(uint32_t v);
-  void symbol(Symbol* symbol);
-  void section(Section* section);
-  void symbol_table(Section* section);
+  const Section* section() const {
+    return section_;
+  }
+
+  /// The associated symbol table (or a nullptr)
+  Section* symbol_table() {
+    return symbol_table_;
+  }
+
+  const Section* symbol_table() const {
+    return symbol_table_;
+  }
+
+  void addend(int64_t addend) {
+    addend_ = addend;
+  }
+
+  void type(TYPE type) {
+    type_ = type;
+  }
+
+  void purpose(PURPOSE purpose) {
+    purpose_ = purpose;
+  }
+
+  void info(uint32_t v) {
+    info_ = v;
+  }
+
+  void symbol(Symbol* symbol) {
+    symbol_ = symbol;
+  }
+
+  void section(Section* section) {
+    section_ = section;
+  }
+
+  void symbol_table(Section* section) {
+    symbol_table_ = section;
+  }
 
   void accept(Visitor& visitor) const override;
-
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Relocation& entry);
 
   private:
-  uint32_t            type_ = 0;
-  int64_t             addend_ = 0;
-  bool                isRela_ = false;
-  Symbol*             symbol_ = nullptr;
-  ARCH                architecture_ = ARCH::EM_NONE;
-  RELOCATION_PURPOSES purpose_ = RELOCATION_PURPOSES::RELOC_PURPOSE_NONE;
-  Section*            section_{nullptr};
-  Section*            symbol_table_{nullptr};
-  uint32_t            info_ = 0;
+  TYPE type_ = TYPE::UNKNOWN;
+  int64_t addend_ = 0;
+  bool isRela_ = false;
+  Symbol* symbol_ = nullptr;
+  ARCH architecture_ = ARCH::NONE;
+  PURPOSE purpose_ = PURPOSE::NONE;
+  Section* section_ = nullptr;
+  Section* symbol_table_ = nullptr;
+  uint32_t info_ = 0;
 };
 
-
+LIEF_API const char* to_string(Relocation::TYPE type);
 
 }
 }
-#endif /* _ELF_RELOCATION_H */
+#endif

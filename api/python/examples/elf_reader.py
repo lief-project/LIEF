@@ -134,13 +134,13 @@ def print_segments(binary):
             sections = segment.sections
             s = ", ".join([section.name for section in sections])
             flags_str = ["-"] * 3
-            if ELF.SEGMENT_FLAGS.R in segment:
+            if ELF.Segment.FLAGS.R in segment:
                 flags_str[0] = "r"
 
-            if ELF.SEGMENT_FLAGS.W in segment:
+            if ELF.Segment.FLAGS.W in segment:
                 flags_str[1] = "w"
 
-            if ELF.SEGMENT_FLAGS.X in segment:
+            if ELF.Segment.FLAGS.X in segment:
                 flags_str[2] = "x"
             flags_str = "".join(flags_str)
 
@@ -167,18 +167,18 @@ def print_dynamic_entries(binary):
     f_value = "|{:<16} | 0x{:<8x}| {:<20}|"
     print(f_title.format("Tag", "Value", "Info"))
     for entry in dynamic_entries:
-        if entry.tag == ELF.DYNAMIC_TAGS.NULL:
+        if entry.tag == ELF.DynamicEntry.TAG.NULL:
             continue
 
-        if entry.tag in [ELF.DYNAMIC_TAGS.SONAME, ELF.DYNAMIC_TAGS.NEEDED, ELF.DYNAMIC_TAGS.RUNPATH, ELF.DYNAMIC_TAGS.RPATH]:
+        if entry.tag in [ELF.DynamicEntry.TAG.SONAME, ELF.DynamicEntry.TAG.NEEDED, ELF.DynamicEntry.TAG.RUNPATH, ELF.DynamicEntry.TAG.RPATH]:
             print(f_value.format(str(entry.tag).split(".")[-1], entry.value, entry.name))
-        elif type(entry) is ELF.DynamicEntryArray: # [ELF.DYNAMIC_TAGS.INIT_ARRAY,ELF.DYNAMIC_TAGS.FINI_ARRAY]:
+        elif type(entry) is ELF.DynamicEntryArray: # [ELF.DynamicEntry.TAG.INIT_ARRAY,ELF.DynamicEntry.TAG.FINI_ARRAY]:
             print(f_value.format(str(entry.tag).split(".")[-1], entry.value, ", ".join(map(hex, entry.array))))
-        elif entry.tag == ELF.DYNAMIC_TAGS.FLAGS:
-            flags_str = " - ".join([str(ELF.DYNAMIC_FLAGS(s)).split(".")[-1] for s in entry.flags])
+        elif entry.tag == ELF.DynamicEntry.TAG.FLAGS:
+            flags_str = " - ".join([str(ELF.DynamicEntryFlags.FLAG(s)).split(".")[-1] for s in entry.flags])
             print(f_value.format(str(entry.tag).split(".")[-1], entry.value, flags_str))
-        elif entry.tag == ELF.DYNAMIC_TAGS.FLAGS_1:
-            flags_str = " - ".join([str(ELF.DYNAMIC_FLAGS_1(s)).split(".")[-1] for s in entry.flags])
+        elif entry.tag == ELF.DynamicEntry.TAG.FLAGS_1:
+            flags_str = " - ".join([str(ELF.DynamicEntryFlags.FLAG(s)).split(".")[-1] for s in entry.flags])
             print(f_value.format(str(entry.tag).split(".")[-1], entry.value, flags_str))
         else:
             print(f_value.format(str(entry.tag).split(".")[-1], entry.value, ""))
@@ -267,7 +267,7 @@ def print_relocations(binary, relocations):
             symbol: lief.ELF.Symbol = relocation.symbol
             if len(symbol.name) > 0:
                 symbol_name = symbol.name
-            elif symbol.type == lief.ELF.SYMBOL_TYPES.SECTION:
+            elif symbol.type == lief.ELF.Symbol.TYPE.SECTION:
                 shndx = symbol.shndx
                 sections = binary.sections
                 if 0 < shndx and shndx < len(sections):
@@ -402,19 +402,19 @@ def print_notes(binary):
 
         note_details = note.details
 
-        if type(note_details) == lief.ELF.AndroidNote:
+        if isinstance(note_details, lief.ELF.AndroidIdent):
             print(format_dec.format("SDK Version:",      note_details.sdk_version))
             print(format_str.format("NDK Version:",      note_details.ndk_version))
             print(format_str.format("NDK build number:", note_details.ndk_build_number))
 
-        if type(note_details) == lief.ELF.NoteAbi:
+        if isinstance(note_details, lief.ELF.NoteAbi):
             version     = note_details.version
             version_str = "{:d}.{:d}.{:d}".format(version[0], version[1], version[2])
 
             print(format_str.format("ABI:",     note_details.abi))
             print(format_str.format("Version:", version_str))
 
-        if ELF.NOTE_TYPES(note.type) == ELF.NOTE_TYPES.GOLD_VERSION:
+        if note.type == ELF.Note.TYPE.GNU_GOLD_VERSION:
             print(format_str.format("Version:", "".join(map(chr, note.description))))
 
         if note.is_core:

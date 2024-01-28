@@ -7,7 +7,7 @@ from pathlib import Path
 from utils import get_sample
 
 def test_issue_863(tmp_path: Path):
-    elf = lief.parse(get_sample('ELF/issue_863.elf'))
+    elf = lief.ELF.parse(get_sample('ELF/issue_863.elf'))
 
     assert elf.sysv_hash.nchain == 7
 
@@ -16,7 +16,7 @@ def test_issue_863(tmp_path: Path):
     out = tmp_path / "issue_863.modified"
     elf.write(out.as_posix())
 
-    new = lief.parse(out.as_posix())
+    new = lief.ELF.parse(out.as_posix())
     assert new.sysv_hash.nchain == 6
 
 def test_pr_968():

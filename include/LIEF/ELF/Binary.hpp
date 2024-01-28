@@ -26,7 +26,10 @@
 #include "LIEF/Abstract/Binary.hpp"
 
 #include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/DynamicEntry.hpp"
 #include "LIEF/ELF/Header.hpp"
+#include "LIEF/ELF/Section.hpp"
+#include "LIEF/ELF/Segment.hpp"
 #include "LIEF/ELF/Builder.hpp"
 
 namespace LIEF {
@@ -36,7 +39,6 @@ namespace DataHandler {
 class Handler;
 }
 
-class DynamicEntry;
 class ExeLayout;
 class GnuHash;
 class Layout;
@@ -226,11 +228,18 @@ class LIEF_API Binary : public LIEF::Binary {
   Binary(const Binary& copy) = delete;
 
   //! Return binary's class (ELF32 or ELF64)
-  ELF_CLASS type() const;
+  Header::CLASS type() const {
+    return type_;
+  }
 
   //! Return @link ELF::Header Elf header @endlink
-  Header&       header();
-  const Header& header() const;
+  Header& header() {
+    return header_;
+  }
+
+  const Header& header() const {
+    return header_;
+  }
 
   //! Return the last offset used in binary
   //! according to sections table
@@ -244,19 +253,36 @@ class LIEF_API Binary : public LIEF::Binary {
   uint64_t next_virtual_address() const;
 
   //! Return an iterator over the binary's sections
-  it_sections       sections();
-  it_const_sections sections() const;
+  it_sections sections() {
+    return sections_;
+  }
+
+  it_const_sections sections() const {
+    return sections_;
+  }
 
   //! Return the binary's entrypoint
-  uint64_t entrypoint() const override;
+  uint64_t entrypoint() const override {
+    return header_.entrypoint();
+  }
 
   //! Return binary's segments
-  it_segments       segments();
-  it_const_segments segments() const;
+  it_segments segments() {
+    return segments_;
+  }
+
+  it_const_segments segments() const {
+    return segments_;
+  }
 
   //! Return binary's dynamic entries
-  it_dynamic_entries       dynamic_entries();
-  it_const_dynamic_entries dynamic_entries() const;
+  it_dynamic_entries dynamic_entries() {
+    return dynamic_entries_;
+  }
+
+  it_const_dynamic_entries dynamic_entries() const {
+    return dynamic_entries_;
+  }
 
   //! Add the given dynamic entry and return the new entry
   DynamicEntry& add(const DynamicEntry& entry);
@@ -268,7 +294,7 @@ class LIEF_API Binary : public LIEF::Binary {
   void remove(const DynamicEntry& entry);
 
   //! Remove **all** dynamic entries with the given tag
-  void remove(DYNAMIC_TAGS tag);
+  void remove(DynamicEntry::TAG tag);
 
   //! Remove the given section. The ``clear`` parameter
   //! can be used to zeroize the original content beforehand
@@ -288,8 +314,12 @@ class LIEF_API Binary : public LIEF::Binary {
 
   //! Return an iterator over the binary's dynamic symbols
   //! The dynamic symbols are those located in the ``.dynsym`` section
-  it_dynamic_symbols       dynamic_symbols();
-  it_const_dynamic_symbols dynamic_symbols() const;
+  it_dynamic_symbols dynamic_symbols() {
+    return dynamic_symbols_;
+  }
+  it_const_dynamic_symbols dynamic_symbols() const {
+    return dynamic_symbols_;
+  }
 
   //! Return symbols which are exported by the binary
   it_exported_symbols       exported_symbols();
@@ -300,20 +330,39 @@ class LIEF_API Binary : public LIEF::Binary {
   it_const_imported_symbols imported_symbols() const;
 
   //! Return statics symbols.
-  it_static_symbols       static_symbols();
-  it_const_static_symbols static_symbols() const;
+  it_static_symbols static_symbols() {
+    return static_symbols_;
+  }
+
+  it_const_static_symbols static_symbols() const {
+    return static_symbols_;
+  }
 
   //! Return the symbol versions
-  it_symbols_version       symbols_version();
-  it_const_symbols_version symbols_version() const;
+  it_symbols_version symbols_version() {
+    return symbol_version_table_;
+  }
+  it_const_symbols_version symbols_version() const {
+    return symbol_version_table_;
+  }
 
   //! Return symbols version definition
-  it_symbols_version_definition       symbols_version_definition();
-  it_const_symbols_version_definition symbols_version_definition() const;
+  it_symbols_version_definition symbols_version_definition() {
+    return symbol_version_definition_;
+  }
+
+  it_const_symbols_version_definition symbols_version_definition() const {
+    return symbol_version_definition_;
+  }
 
   //! Return Symbol version requirement
-  it_symbols_version_requirement       symbols_version_requirement();
-  it_const_symbols_version_requirement symbols_version_requirement() const;
+  it_symbols_version_requirement symbols_version_requirement() {
+    return symbol_version_requirements_;
+  }
+
+  it_const_symbols_version_requirement symbols_version_requirement() const {
+    return symbol_version_requirements_;
+  }
 
   //! Return dynamic relocations
   it_dynamic_relocations       dynamic_relocations();
@@ -350,8 +399,13 @@ class LIEF_API Binary : public LIEF::Binary {
   it_const_object_relocations object_relocations() const;
 
   //! Return **all** relocations present in the binary
-  it_relocations       relocations();
-  it_const_relocations relocations() const;
+  it_relocations relocations() {
+    return relocations_;
+  }
+
+  it_const_relocations relocations() const {
+    return relocations_;
+  }
 
   //! Return relocation associated with the given address.
   //! It returns a ``nullptr`` if it is not found
@@ -371,20 +425,28 @@ class LIEF_API Binary : public LIEF::Binary {
   //! ``true`` if GNU hash is used
   //!
   //! @see gnu_hash and use_sysv_hash
-  bool use_gnu_hash() const;
+  bool use_gnu_hash() const {
+    return gnu_hash_ != nullptr && has(DynamicEntry::TAG::GNU_HASH);
+  }
 
   //! Return the GnuHash object in **readonly**
   //! If the ELF binary does not use the GNU hash table, return a nullptr
-  const GnuHash* gnu_hash() const;
+  const GnuHash* gnu_hash() const {
+    return use_gnu_hash() ? gnu_hash_.get() : nullptr;
+  }
 
   //! ``true`` if SYSV hash is used
   //!
   //! @see sysv_hash and use_gnu_hash
-  bool use_sysv_hash() const;
+  bool use_sysv_hash() const {
+    return sysv_hash_ != nullptr && has(DynamicEntry::TAG::HASH);
+  }
 
   //! Return the SysvHash object as a **read-only** object
   //! If the ELF binary does not use the legacy sysv hash table, return a nullptr
-  const SysvHash* sysv_hash() const;
+  const SysvHash* sysv_hash() const {
+    return use_sysv_hash() ? sysv_hash_.get() : nullptr;
+  }
 
   //! Check if a section with the given name exists in the binary
   bool has_section(const std::string& name) const;
@@ -402,7 +464,9 @@ class LIEF_API Binary : public LIEF::Binary {
 
   //! Return the `.text` section. If the section
   //! can't be found, it returns a nullptr
-  Section* text_section();
+  Section* text_section() {
+    return get_section(".text");
+  }
 
   //! Return the `.dynamic` section. If the section
   //! can't be found, it returns a nullptr
@@ -439,8 +503,13 @@ class LIEF_API Binary : public LIEF::Binary {
   void interpreter(const std::string& interpreter);
 
   //! Return an iterator on both static and dynamic symbols
-  it_symbols       symbols();
-  it_const_symbols symbols() const;
+  it_symbols symbols() {
+    return static_dyn_symbols();
+  }
+
+  it_const_symbols symbols() const {
+    return static_dyn_symbols();
+  }
 
   //! Export the given symbol and create it if it doesn't exist
   Symbol& export_symbol(const Symbol& symbol);
@@ -672,8 +741,8 @@ class LIEF_API Binary : public LIEF::Binary {
   Segment*       segment_from_virtual_address(uint64_t address);
 
 
-  const Segment* segment_from_virtual_address(SEGMENT_TYPES type, uint64_t address) const;
-  Segment*       segment_from_virtual_address(SEGMENT_TYPES type, uint64_t address);
+  const Segment* segment_from_virtual_address(Segment::TYPE type, uint64_t address) const;
+  Segment*       segment_from_virtual_address(Segment::TYPE type, uint64_t address);
 
   //! Return the ELF::Segment from the @p offset. Return a nullptr
   //! if a segment can't be found.
@@ -682,13 +751,15 @@ class LIEF_API Binary : public LIEF::Binary {
 
   //! Return the **first** ELF::DynamicEntry associated with the given tag
   //! If the tag can't be found, it returns a nullptr
-  const DynamicEntry* get(DYNAMIC_TAGS tag) const;
-  DynamicEntry*       get(DYNAMIC_TAGS tag);
+  const DynamicEntry* get(DynamicEntry::TAG tag) const;
+  DynamicEntry*       get(DynamicEntry::TAG tag) {
+    return const_cast<DynamicEntry*>(static_cast<const Binary*>(this)->get(tag));
+  }
 
   //! Return the **first** ELF::Segment associated with the given type.
   //! If a segment can't be found, it returns a nullptr.
-  const Segment* get(SEGMENT_TYPES type) const;
-  Segment*       get(SEGMENT_TYPES type);
+  const Segment* get(Segment::TYPE type) const;
+  Segment*       get(Segment::TYPE type);
 
   //! Return the **first** ELF::Note associated with the given type
   //! If a note can't be found, it returns a nullptr.
@@ -697,20 +768,28 @@ class LIEF_API Binary : public LIEF::Binary {
 
   //! Return the **first** ELF::Section associated with the given type
   //! If a section can't be found, it returns a nullptr.
-  const Section* get(ELF_SECTION_TYPES type) const;
-  Section*       get(ELF_SECTION_TYPES type);
+  const Section* get(Section::TYPE type) const;
+  Section*       get(Section::TYPE type);
 
   //! Check if an ELF::DynamicEntry associated with the given tag exists.
-  bool has(DYNAMIC_TAGS tag) const;
+  bool has(DynamicEntry::TAG tag) const {
+    return get(tag) != nullptr;
+  }
 
   //! Check if ELF::Segment associated with the given type exists.
-  bool has(SEGMENT_TYPES type) const;
+  bool has(Segment::TYPE type) const {
+    return get(type) != nullptr;
+  }
 
   //! Check if a ELF::Note associated with the given type exists.
-  bool has(Note::TYPE type) const;
+  bool has(Note::TYPE type) const {
+    return get(type) != nullptr;
+  }
 
   //! Check if a ELF::Section associated with the given type exists.
-  bool has(ELF_SECTION_TYPES type) const;
+  bool has(Section::TYPE type) const {
+    return get(type) != nullptr;
+  }
 
   //! Return the content located at virtual address
   span<const uint8_t> get_content_from_virtual_address(uint64_t virtual_address, uint64_t size,
@@ -737,9 +816,13 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Return an iterator over the ELF's LIEF::ELF::Note
   //!
   //! @see has_note
-  it_const_notes notes() const;
+  it_const_notes notes() const {
+    return notes_;
+  }
 
-  it_notes notes();
+  it_notes notes() {
+    return notes_;
+  }
 
   //! Return the last offset used by the ELF binary according to both: the sections table
   //! and the segments table
@@ -777,28 +860,76 @@ class LIEF_API Binary : public LIEF::Binary {
 
   std::ostream& print(std::ostream& os) const override;
 
-  Binary& operator+=(const DynamicEntry& entry);
-  Binary& operator+=(const Section& section);
-  Binary& operator+=(const Segment& segment);
-  Binary& operator+=(const Note& note);
+  Binary& operator+=(const DynamicEntry& entry) {
+    add(entry);
+    return *this;
+  }
+  Binary& operator+=(const Section& section) {
+    add(section);
+    return *this;
+  }
 
-  Binary& operator-=(const DynamicEntry& entry);
-  Binary& operator-=(DYNAMIC_TAGS tag);
+  Binary& operator+=(const Segment& segment) {
+    add(segment);
+    return *this;
+  }
 
-  Binary& operator-=(const Note& note);
-  Binary& operator-=(Note::TYPE type);
+  Binary& operator+=(const Note& note) {
+    add(note);
+    return *this;
+  }
 
-  Segment*       operator[](SEGMENT_TYPES type);
-  const Segment* operator[](SEGMENT_TYPES type) const;
+  Binary& operator-=(const DynamicEntry& entry) {
+    remove(entry);
+    return *this;
+  }
 
-  DynamicEntry*       operator[](DYNAMIC_TAGS tag);
-  const DynamicEntry* operator[](DYNAMIC_TAGS tag) const;
+  Binary& operator-=(DynamicEntry::TAG tag) {
+    remove(tag);
+    return *this;
+  }
 
-  Note*       operator[](Note::TYPE type);
-  const Note* operator[](Note::TYPE type) const;
+  Binary& operator-=(const Note& note) {
+    remove(note);
+    return *this;
+  }
 
-  Section*       operator[](ELF_SECTION_TYPES type);
-  const Section* operator[](ELF_SECTION_TYPES type) const;
+  Binary& operator-=(Note::TYPE type) {
+    remove(type);
+    return *this;
+  }
+
+  Segment* operator[](Segment::TYPE type) {
+    return get(type);
+  }
+
+  const Segment* operator[](Segment::TYPE type) const {
+    return get(type);
+  }
+
+  DynamicEntry* operator[](DynamicEntry::TAG tag) {
+    return get(tag);
+  }
+
+  const DynamicEntry* operator[](DynamicEntry::TAG tag) const {
+    return get(tag);
+  }
+
+  Note* operator[](Note::TYPE type) {
+    return get(type);
+  }
+
+  const Note* operator[](Note::TYPE type) const {
+    return get(type);
+  }
+
+  Section* operator[](Section::TYPE type) {
+    return get(type);
+  }
+
+  const Section* operator[](Section::TYPE type) const {
+    return get(type);
+  }
 
   protected:
   struct phdr_relocation_info_t {
@@ -840,7 +971,7 @@ class LIEF_API Binary : public LIEF::Binary {
   LIEF::Binary::functions_t eh_frame_functions() const;
   LIEF::Binary::functions_t armexid_functions() const;
 
-  template<E_TYPE OBJECT_TYPE, bool note = false>
+  template<Header::FILE_TYPE OBJECT_TYPE, bool note = false>
   Segment* add_segment(const Segment& segment, uint64_t base);
 
   uint64_t relocate_phdr_table_auto();
@@ -849,7 +980,7 @@ class LIEF_API Binary : public LIEF::Binary {
   uint64_t relocate_phdr_table_v2();
   uint64_t relocate_phdr_table_v3();
 
-  template<SEGMENT_TYPES PT>
+  template<Segment::TYPE PT>
   Segment* extend_segment(const Segment& segment, uint64_t size);
 
   template<bool LOADED>
@@ -859,9 +990,9 @@ class LIEF_API Binary : public LIEF::Binary {
   std::string shstrtab_name() const;
   Section* add_frame_section(const Section& sec);
 
-  LIEF::Binary::functions_t tor_functions(DYNAMIC_TAGS tag) const;
+  LIEF::Binary::functions_t tor_functions(DynamicEntry::TAG tag) const;
 
-  ELF_CLASS type_ = ELF_CLASS::ELFCLASSNONE;
+  Header::CLASS type_ = Header::CLASS::NONE;
   Header header_;
   sections_t sections_;
   segments_t segments_;

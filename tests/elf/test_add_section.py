@@ -19,7 +19,7 @@ if is_x86_64():
 elif is_aarch64():
     STUB_FILE = "hello_lief_aarch64.bin"
 
-STUB = lief.parse((CWD / STUB_FILE).as_posix())
+STUB = lief.ELF.parse((CWD / STUB_FILE).as_posix())
 
 is_updated_linux = pytest.mark.skipif(not (is_linux() and is_x86_64() and has_recent_glibc()),
                                       reason="needs a recent system")
@@ -28,11 +28,11 @@ def test_simple(tmp_path: Path):
     sample_path = get_sample('ELF/ELF64_x86-64_binary_ls.bin')
     output      = tmp_path / "ls.section"
 
-    ls = lief.parse(sample_path)
+    ls = lief.ELF.parse(sample_path)
     for i in range(10):
-        section = lief.ELF.Section(f".test.{i}", lief.ELF.SECTION_TYPES.PROGBITS)
-        section += lief.ELF.SECTION_FLAGS.EXECINSTR
-        section += lief.ELF.SECTION_FLAGS.WRITE
+        section = lief.ELF.Section(f".test.{i}", lief.ELF.Section.TYPE.PROGBITS)
+        section += lief.ELF.Section.FLAGS.EXECINSTR
+        section += lief.ELF.Section.FLAGS.WRITE
         section.content = STUB.segments[0].content # First LOAD segment which holds payload
         if i % 2 == 0:
             section = ls.add(section, loaded=True)
@@ -56,12 +56,12 @@ def test_gcc(tmp_path):
     sample_path = get_sample('ELF/ELF64_x86-64_binary_gcc.bin')
     output      = tmp_path / "gcc.section"
 
-    gcc = lief.parse(sample_path)
+    gcc = lief.ELF.parse(sample_path)
     for i in range(10):
-        section = lief.ELF.Section(f".test.{i}", lief.ELF.SECTION_TYPES.PROGBITS)
-        section.type     = lief.ELF.SECTION_TYPES.PROGBITS
-        section         += lief.ELF.SECTION_FLAGS.EXECINSTR
-        section         += lief.ELF.SECTION_FLAGS.WRITE
+        section = lief.ELF.Section(f".test.{i}", lief.ELF.Section.TYPE.PROGBITS)
+        section.type     = lief.ELF.Section.TYPE.PROGBITS
+        section         += lief.ELF.Section.FLAGS.EXECINSTR
+        section         += lief.ELF.Section.FLAGS.WRITE
         section.content  = STUB.segments[0].content # First LOAD segment which holds payload
 
         if i % 2 == 0:

@@ -41,6 +41,7 @@
 #include "LIEF/ELF/SymbolVersion.hpp"
 #include "LIEF/ELF/SymbolVersionDefinition.hpp"
 #include "LIEF/ELF/SymbolVersionRequirement.hpp"
+#include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 #include "LIEF/ELF/SysvHash.hpp"
 
 #include "pyIterator.hpp"
@@ -322,10 +323,10 @@ void create<Binary>(nb::module_& m) {
         nb::rv_policy::reference_internal)
 
     .def("get",
-        nb::overload_cast<DYNAMIC_TAGS>(&Binary::get),
+        nb::overload_cast<DynamicEntry::TAG>(&Binary::get),
         R"delim(
         Return the first binary's :class:`~lief.ELF.DynamicEntry` from the given
-        :class:`~lief.ELF.DYNAMIC_TAGS`.
+        :class:`~lief.ELF.DynamicEntry.TAG`.
 
         It returns None if the dynamic entry can't be found.
         )delim"_doc,
@@ -333,7 +334,7 @@ void create<Binary>(nb::module_& m) {
         nb::rv_policy::reference_internal)
 
     .def("get",
-        nb::overload_cast<SEGMENT_TYPES>(&Binary::get),
+        nb::overload_cast<Segment::TYPE>(&Binary::get),
         R"delim(
         Return the first binary's :class:`~lief.ELF.Segment` from the given
         :class:`~lief.ELF.SEGMENT_TYPES`
@@ -355,7 +356,7 @@ void create<Binary>(nb::module_& m) {
         nb::rv_policy::reference_internal)
 
     .def("get",
-        nb::overload_cast<ELF_SECTION_TYPES>(&Binary::get),
+        nb::overload_cast<Section::TYPE>(&Binary::get),
         R"delim(
         Return the first binary's :class:`~lief.ELF.Section` from the given
         :class:`~lief.ELF.ELF_SECTION_TYPES`
@@ -366,15 +367,15 @@ void create<Binary>(nb::module_& m) {
         nb::rv_policy::reference_internal)
 
     .def("has",
-        nb::overload_cast<DYNAMIC_TAGS>(&Binary::has, nb::const_),
+        nb::overload_cast<DynamicEntry::TAG>(&Binary::has, nb::const_),
         R"delim(
         Check if it exists a :class:`~lief.ELF.DynamicEntry` with the given
-        :class:`~lief.ELF.DYNAMIC_TAGS`
+        :class:`~lief.ELF.DynamicEntry.TAG`
         )delim"_doc,
         "tag"_a)
 
     .def("has",
-        nb::overload_cast<SEGMENT_TYPES>(&Binary::has, nb::const_),
+        nb::overload_cast<Segment::TYPE>(&Binary::has, nb::const_),
         "Check if a " RST_CLASS_REF(lief.ELF.Segment) " of *type* (" RST_CLASS_REF(lief.ELF.SEGMENT_TYPES) ") exists"_doc,
         "type"_a)
 
@@ -384,7 +385,7 @@ void create<Binary>(nb::module_& m) {
         "type"_a)
 
     .def("has",
-        nb::overload_cast<ELF_SECTION_TYPES>(&Binary::has, nb::const_),
+        nb::overload_cast<Section::TYPE>(&Binary::has, nb::const_),
         "Check if a " RST_CLASS_REF(lief.ELF.Section) " of *type* (" RST_CLASS_REF(lief.ELF.SECTION_TYPES) ") exists"_doc,
         "type"_a)
 
@@ -500,8 +501,8 @@ void create<Binary>(nb::module_& m) {
         "dynamic_entry"_a)
 
     .def("remove",
-        nb::overload_cast<DYNAMIC_TAGS>(&Binary::remove),
-        "Remove **all** the " RST_CLASS_REF(lief.ELF.DynamicEntry) " with the given " RST_CLASS_REF(lief.ELF.DYNAMIC_TAGS) ""_doc,
+        nb::overload_cast<DynamicEntry::TAG>(&Binary::remove),
+        "Remove **all** the " RST_CLASS_REF(lief.ELF.DynamicEntry) " with the given " RST_CLASS_REF(lief.ELF.DynamicEntry.TAG) ""_doc,
         "tag"_a)
 
     .def("remove",
@@ -733,7 +734,7 @@ void create<Binary>(nb::module_& m) {
         return &self;
     }, nb::rv_policy::reference_internal)
     .def(nb::self -= DynamicEntry(), nb::rv_policy::reference_internal)
-    .def(nb::self -= DYNAMIC_TAGS(), nb::rv_policy::reference_internal)
+    .def(nb::self -= DynamicEntry::TAG(), nb::rv_policy::reference_internal)
     .def("__isub__", [] (Binary& self, const Note& note) {
         self -= note;
         return &self;
@@ -741,7 +742,7 @@ void create<Binary>(nb::module_& m) {
     .def(nb::self -= Note::TYPE(), nb::rv_policy::reference_internal)
 
     .def("__getitem__",
-        nb::overload_cast<SEGMENT_TYPES>(&Binary::operator[]),
+        nb::overload_cast<Segment::TYPE>(&Binary::operator[]),
         nb::rv_policy::reference_internal)
 
     .def("__getitem__",
@@ -749,27 +750,27 @@ void create<Binary>(nb::module_& m) {
         nb::rv_policy::reference_internal)
 
     .def("__getitem__",
-        nb::overload_cast<DYNAMIC_TAGS>(&Binary::operator[]),
+        nb::overload_cast<DynamicEntry::TAG>(&Binary::operator[]),
         nb::rv_policy::reference_internal)
 
     .def("__getitem__",
-        nb::overload_cast<ELF_SECTION_TYPES>(&Binary::operator[]),
+        nb::overload_cast<Section::TYPE>(&Binary::operator[]),
         nb::rv_policy::reference_internal)
 
     .def("__contains__",
-        nb::overload_cast<SEGMENT_TYPES>(&Binary::has, nb::const_),
+        nb::overload_cast<Segment::TYPE>(&Binary::has, nb::const_),
         "Check if a " RST_CLASS_REF(lief.ELF.Segment) " of *type* (" RST_CLASS_REF(lief.ELF.SEGMENT_TYPES) ") exists"_doc)
 
     .def("__contains__",
-        nb::overload_cast<DYNAMIC_TAGS>(&Binary::has, nb::const_),
-        "Check if the " RST_CLASS_REF(lief.ELF.DynamicEntry) " associated with the given " RST_CLASS_REF(lief.ELF.DYNAMIC_TAGS) " exists"_doc)
+        nb::overload_cast<DynamicEntry::TAG>(&Binary::has, nb::const_),
+        "Check if the " RST_CLASS_REF(lief.ELF.DynamicEntry) " associated with the given " RST_CLASS_REF(lief.ELF.DynamicEntry.TAG) " exists"_doc)
 
     .def("__contains__",
         nb::overload_cast<Note::TYPE>(&Binary::has, nb::const_),
         "Check if the " RST_CLASS_REF(lief.ELF.Note) " associated with the given " RST_CLASS_REF(lief.ELF.Note.TYPE) " exists"_doc)
 
     .def("__contains__",
-        nb::overload_cast<ELF_SECTION_TYPES>(&Binary::has, nb::const_),
+        nb::overload_cast<Section::TYPE>(&Binary::has, nb::const_),
         "Check if the " RST_CLASS_REF(lief.ELF.Section) " associated with the given " RST_CLASS_REF(lief.ELF.SECTION_TYPES) " exists"_doc)
 
     LIEF_DEFAULT_STR(Binary);

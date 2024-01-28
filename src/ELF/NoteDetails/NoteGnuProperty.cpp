@@ -64,9 +64,9 @@ parse_property(ARCH arch, SpanStream& stream) {
   SpanStream content = std::move(*res_content);
   const uint32_t type = *res_type;
   if (GNU_PROPERTY_LOPROC <= type && type <= GNU_PROPERTY_HIPROC) {
-    if (arch == ARCH::EM_X86_64 ||
-        arch == ARCH::EM_IAMCU ||
-        arch == ARCH::EM_386)
+    if (arch == ARCH::X86_64 ||
+        arch == ARCH::IAMCU ||
+        arch == ARCH::I386)
     {
       switch (type) {
         case GNU_PROPERTY_X86_ISA_1_USED:
@@ -84,7 +84,7 @@ parse_property(ARCH arch, SpanStream& stream) {
       }
     }
 
-    if (arch == ARCH::EM_AARCH64) {
+    if (arch == ARCH::AARCH64) {
       if (type == GNU_PROPERTY_AARCH64_FEATURE_1_AND) {
         return AArch64Feature::create(content);
       }
@@ -136,8 +136,8 @@ NoteGnuProperty::properties_t NoteGnuProperty::properties() const {
     LIEF_WARN("Can't create stream");
     return {};
   }
-  const bool is64 = arch_ == ARCH::EM_IA_64 || arch_ == ARCH::EM_AARCH64 ||
-                    arch_ == ARCH::EM_LOONGARCH || arch_ == ARCH::EM_X86_64;
+  const bool is64 = arch_ == ARCH::IA_64 || arch_ == ARCH::AARCH64 ||
+                    arch_ == ARCH::LOONGARCH || arch_ == ARCH::X86_64;
 
   properties_t props;
 

@@ -89,7 +89,7 @@ def test_add_dynamic_symbols(tmp_path: Path, style):
     compile_libadd(libadd_so, libadd_c, [link_opt])
     compile_binadd(binadd_bin, binadd_c, [link_opt])
 
-    libadd = lief.parse(libadd_so.as_posix())
+    libadd = lief.ELF.parse(libadd_so.as_posix())
 
     dynamic_symbols = list(libadd.dynamic_symbols)
     for sym in dynamic_symbols:
@@ -107,13 +107,13 @@ def test_add_dynamic_symbols(tmp_path: Path, style):
       'env'   : {"LD_LIBRARY_PATH": tmp_path.as_posix()}
     }
 
-    with Popen([binadd_bin, '1', '2'], **opt) as P:
+    with Popen([binadd_bin, '1', '2'], **opt) as P: # type: ignore
         stdout = P.stdout.read().decode("utf8")
         P.communicate()
         assert P.returncode == 0
         assert "From myLIb, a + b = 3" in stdout
 
-    libadd = lief.parse(libadd_so.as_posix())
+    libadd = lief.ELF.parse(libadd_so.as_posix())
     dynamic_section = libadd.get_section(".dynsym")
     # TODO: Size of libadd.dynamic_symbols is larger than  dynamic_symbols_size.
     dynamic_symbols_size = int(dynamic_section.size / dynamic_section.entry_size)
@@ -122,10 +122,10 @@ def test_add_dynamic_symbols(tmp_path: Path, style):
         first_not_null_symbol_index = dynamic_section.information
         first_exported_symbol_index = next(i for i, sym in enumerate(dynamic_symbols) if sym.shndx != 0)
 
-        assert all(map(lambda sym: sym.shndx == 0 and sym.binding == lief.ELF.SYMBOL_BINDINGS.LOCAL,
+        assert all(map(lambda sym: sym.shndx == 0 and sym.binding == lief.ELF.Symbol.BINDING.LOCAL,
                        dynamic_symbols[:first_not_null_symbol_index]))
 
-        assert (all(map(lambda sym: sym.shndx == 0 and sym.binding != lief.ELF.SYMBOL_BINDINGS.LOCAL,
+        assert (all(map(lambda sym: sym.shndx == 0 and sym.binding != lief.ELF.Symbol.BINDING.LOCAL,
                         dynamic_symbols[first_not_null_symbol_index:first_exported_symbol_index])))
 
         assert (all(map(lambda sym: sym.shndx != 0, dynamic_symbols[first_exported_symbol_index:])))
@@ -144,7 +144,7 @@ def test_remove_library(tmp_path: Path):
     compile_libadd(libadd_so, libadd_c, [])
     compile_binadd(binadd_bin, binadd_c, [])
 
-    binadd = lief.parse(binadd_bin.as_posix())
+    binadd = lief.ELF.parse(binadd_bin.as_posix())
 
     libadd_needed = binadd.get_library("libadd.so")
     binadd -= libadd_needed
@@ -165,10 +165,10 @@ def test_remove_tag(tmp_path: Path):
     compile_libadd(libadd_so, libadd_c, [])
     compile_binadd(binadd_bin, binadd_c, [])
 
-    binadd = lief.parse(binadd_bin.as_posix())
+    binadd = lief.ELF.parse(binadd_bin.as_posix())
 
-    binadd -= lief.ELF.DYNAMIC_TAGS.NEEDED
-    assert all(e.tag != lief.ELF.DYNAMIC_TAGS.NEEDED for e in binadd.dynamic_entries)
+    binadd -= lief.ELF.DynamicEntry.TAG.NEEDED
+    assert all(e.tag != lief.ELF.DynamicEntry.TAG.NEEDED for e in binadd.dynamic_entries)
 
 @pytest.mark.skipif(not is_linux(), reason="requires Linux")
 def test_runpath_api(tmp_path: Path):
@@ -184,7 +184,7 @@ def test_runpath_api(tmp_path: Path):
     compile_libadd(libadd_so, libadd_c, [])
     compile_binadd(binadd_bin, binadd_c, [])
 
-    binadd = lief.parse(binadd_bin.as_posix())
+    binadd = lief.ELF.parse(binadd_bin.as_posix())
 
     rpath = lief.ELF.DynamicEntryRunPath()
     rpath = binadd.add(rpath)
@@ -223,21 +223,22 @@ def test_change_libname(tmp_path: Path):
     compile_libadd(libadd_so, libadd_c, [])
     compile_binadd(binadd_bin, binadd_c, [])
 
-    libadd = lief.parse(libadd_so.as_posix())
-    binadd = lief.parse(binadd_bin.as_posix())
+    libadd = lief.ELF.parse(libadd_so.as_posix())
+    binadd = lief.ELF.parse(binadd_bin.as_posix())
 
     new_name = "libwhichhasalongverylongname.so"
 
-    assert lief.ELF.DYNAMIC_TAGS.SONAME in libadd
-
-    libadd[lief.ELF.DYNAMIC_TAGS.SONAME].name = new_name
+    assert lief.ELF.DynamicEntry.TAG.SONAME in libadd
+    soname_entry: lief.ELF.DynamicEntryLibrary = libadd[lief.ELF.DynamicEntry.TAG.SONAME]
+    soname_entry.name = new_name
 
     libfoo_path = tmp_path / new_name
     libadd.write(libfoo_path.as_posix())
 
-    libfoo = lief.parse(libfoo_path.as_posix())
+    libfoo = lief.ELF.parse(libfoo_path.as_posix())
 
-    new_so_name = libfoo[lief.ELF.DYNAMIC_TAGS.SONAME]
+    new_so_name = libfoo[lief.ELF.DynamicEntry.TAG.SONAME]
+    assert isinstance(new_so_name, lief.ELF.DynamicSharedObject)
     # Check builder did the job right
     assert new_so_name.name == new_name
 

@@ -1,7 +1,7 @@
 import lief
 from utils import get_sample
 
-TARGET = lief.parse(get_sample('ELF/ELF32_x86_library_libshellx.so'))
+TARGET = lief.ELF.parse(get_sample('ELF/ELF32_x86_library_libshellx.so'))
 
 def test_symbols():
     symbols = [sym for idx, sym in enumerate(TARGET.dynamic_symbols) if idx == 0 or len(sym.name) > 0]

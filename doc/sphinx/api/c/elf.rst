@@ -22,8 +22,5 @@ ELF
 .. autodoxygenfile:: LIEF/ELF/enums.h
    :project: lief
 
-.. autodoxygenfile:: LIEF/ELF/EnumToString.h
-   :project: lief
-
 .. autodoxygenfile:: LIEF/ELF/utils.h
    :project: lief

@@ -17,10 +17,7 @@
 #define LIEF_ELF_DYNAMIC_ENTRY_LIBRARY_H
 
 #include <string>
-#include <ostream>
-
 #include "LIEF/visibility.h"
-
 #include "LIEF/ELF/DynamicEntry.hpp"
 
 namespace LIEF {
@@ -34,17 +31,34 @@ class LIEF_API DynamicEntryLibrary : public DynamicEntry {
   public:
   using DynamicEntry::DynamicEntry;
 
-  DynamicEntryLibrary();
-  DynamicEntryLibrary(std::string name);
+  DynamicEntryLibrary() :
+    DynamicEntry::DynamicEntry{DynamicEntry::TAG::NEEDED, 0}
+  {}
 
-  DynamicEntryLibrary& operator=(const DynamicEntryLibrary&);
-  DynamicEntryLibrary(const DynamicEntryLibrary&);
+  DynamicEntryLibrary(std::string name) :
+    DynamicEntry::DynamicEntry{DynamicEntry::TAG::NEEDED, 0},
+    libname_(std::move(name))
+  {}
+
+  DynamicEntryLibrary& operator=(const DynamicEntryLibrary&) = default;
+  DynamicEntryLibrary(const DynamicEntryLibrary&) = default;
+
+  std::unique_ptr<DynamicEntry> clone() const override {
+    return std::unique_ptr<DynamicEntryLibrary>(new DynamicEntryLibrary{*this});
+  }
 
   //! Return the library associated with this entry (e.g. ``libc.so.6``)
-  const std::string& name() const;
-  void name(const std::string& name);
+  const std::string& name() const {
+    return libname_;
+  }
 
-  static bool classof(const DynamicEntry* entry);
+  void name(std::string name) {
+    libname_ = std::move(name);
+  }
+
+  static bool classof(const DynamicEntry* entry) {
+    return entry->tag() == DynamicEntry::TAG::NEEDED;
+  }
 
   void accept(Visitor& visitor) const override;
 

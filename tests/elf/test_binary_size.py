@@ -10,7 +10,7 @@ def test_builder_size():
     ]
     for file in FILES:
         infile = pathlib.Path(get_sample(file))
-        target = lief.parse(infile.as_posix())
+        target = lief.ELF.parse(infile.as_posix())
         print(infile)
 
         builder = lief.ELF.Builder(target)

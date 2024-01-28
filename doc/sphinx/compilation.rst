@@ -128,7 +128,7 @@ by changing the `type` in the section `[lief.build]` of `config-default.toml`:
 
   .. code-block:: console
 
-    $ PYLIEF_CONF=~/lief-debug.toml python ./setup build develop --user
+    $ PYLIEF_CONF=~/lief-debug.toml pip install [-e] api/python
 
   With `lief-debug.toml` set to:
 
@@ -141,13 +141,6 @@ by changing the `type` in the section `[lief.build]` of `config-default.toml`:
     [lief.logging]
     enabled = true
     debug   = true
-
-  Compared to the ``install`` command, ``develop`` creates a ``.egg-link``
-  that links to the native LIEF library currently presents in your build directory.
-
-  The ``--user`` flag is used to avoid creating the ``.egg-link`` system-wide (i.e. ``/usr/lib/python3.9/site-packages``).
-  Instead, it links the ``.egg-link`` in the user's local dir (e.g. ``~/.local/lib/python3.9/site-packages``)
-
 
 .. _lief_third_party:
 

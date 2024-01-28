@@ -37,21 +37,21 @@ void create<Builder>(nb::module_& m) {
     .def_rw("force_relocate", &Builder::config_t::force_relocate,
             "Force to relocate all the ELF structures that can be relocated (mostly for testing)"_doc)
 
-    .def_rw("dt_hash",         &Builder::config_t::dt_hash, "Rebuild :attr:`~lief.ELF.DYNAMIC_TAGS.HASH`"_doc)
-    .def_rw("dyn_str",         &Builder::config_t::dyn_str, "Rebuild :attr:`~lief.ELF.DYNAMIC_TAGS.STRTAB`"_doc)
+    .def_rw("dt_hash",         &Builder::config_t::dt_hash, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.HASH`"_doc)
+    .def_rw("dyn_str",         &Builder::config_t::dyn_str, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.STRTAB`"_doc)
     .def_rw("dynamic_section", &Builder::config_t::dynamic_section, "Rebuild the `PT_DYNAMIC` segment"_doc)
-    .def_rw("fini_array",      &Builder::config_t::fini_array, "Rebuild :attr:`~lief.ELF.DYNAMIC_TAGS.FINI_ARRAY`"_doc)
-    .def_rw("init_array",      &Builder::config_t::init_array, "Rebuild :attr:`~lief.ELF.DYNAMIC_TAGS.INIT_ARRAY`"_doc)
+    .def_rw("fini_array",      &Builder::config_t::fini_array, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.FINI_ARRAY`"_doc)
+    .def_rw("init_array",      &Builder::config_t::init_array, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.INIT_ARRAY`"_doc)
     .def_rw("interpreter",     &Builder::config_t::interpreter, "Rebuild  the `PT_INTERP` segment"_doc)
-    .def_rw("jmprel",          &Builder::config_t::jmprel, "Rebuild :attr:`~lief.ELF.DYNAMIC_TAGS.JMPREL`"_doc)
+    .def_rw("jmprel",          &Builder::config_t::jmprel, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.JMPREL`"_doc)
     .def_rw("notes",           &Builder::config_t::notes, "Rebuild `PT_NOTES` segment(s)"_doc)
-    .def_rw("preinit_array",   &Builder::config_t::preinit_array, "Rebuild :attr:`~lief.ELF.DYNAMIC_TAGS.PREINIT_ARRAY`"_doc)
-    .def_rw("rela",            &Builder::config_t::rela, "Rebuild :attr:`~lief.ELF.DYNAMIC_TAGS.RELA`"_doc)
+    .def_rw("preinit_array",   &Builder::config_t::preinit_array, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.PREINIT_ARRAY`"_doc)
+    .def_rw("rela",            &Builder::config_t::rela, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.RELA`"_doc)
     .def_rw("static_symtab",   &Builder::config_t::static_symtab, "Rebuild `.symtab` section"_doc)
-    .def_rw("sym_verdef",      &Builder::config_t::sym_verdef, "Rebuild :attr:`~lief.ELF.DYNAMIC_TAGS.VERDEF`"_doc)
-    .def_rw("sym_verneed",     &Builder::config_t::sym_verneed, "Rebuild :attr:`~lief.ELF.DYNAMIC_TAGS.VERNEED`"_doc)
-    .def_rw("sym_versym",      &Builder::config_t::sym_versym, "Rebuild :attr:`~lief.ELF.DYNAMIC_TAGS.VERSYM`"_doc)
-    .def_rw("symtab",          &Builder::config_t::symtab, "Rebuild :attr:`~lief.ELF.DYNAMIC_TAGS.SYMTAB`"_doc);
+    .def_rw("sym_verdef",      &Builder::config_t::sym_verdef, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.VERDEF`"_doc)
+    .def_rw("sym_verneed",     &Builder::config_t::sym_verneed, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.VERNEED`"_doc)
+    .def_rw("sym_versym",      &Builder::config_t::sym_versym, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.VERSYM`"_doc)
+    .def_rw("symtab",          &Builder::config_t::symtab, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.SYMTAB`"_doc);
 
   builder
     .def(nb::init<Binary&>(),

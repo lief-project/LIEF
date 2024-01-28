@@ -7,7 +7,7 @@ from utils import get_sample
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
 def test_core_arm():
-    core: lief.ELF.Binary = lief.parse(get_sample('ELF/ELF32_ARM_core_hello.core'))
+    core: lief.ELF.Binary = lief.ELF.parse(get_sample('ELF/ELF32_ARM_core_hello.core'))
 
     notes = core.notes
 
@@ -145,7 +145,7 @@ def test_core_arm():
 
 
 def test_core_arm64():
-    core = lief.parse(get_sample('ELF/ELF64_AArch64_core_hello.core'))
+    core = lief.ELF.parse(get_sample('ELF/ELF64_AArch64_core_hello.core'))
 
     notes = core.notes
 
@@ -245,6 +245,8 @@ def test_core_arm64():
     siginfo  = notes[3]
     assert siginfo.type == lief.ELF.Note.TYPE.CORE_SIGINFO
 
+    assert isinstance(siginfo, lief.ELF.CoreSigInfo)
+
     assert siginfo.signo == 5
     assert siginfo.sigcode == 0
     assert siginfo.sigerrno == 1
@@ -254,6 +256,7 @@ def test_core_arm64():
     auxv: lief.ELF.CoreAuxv = notes[4]
 
     assert auxv.type == lief.ELF.Note.TYPE.CORE_AUXV
+    assert isinstance(auxv, lief.ELF.CoreAuxv)
 
     # Check details
     values = auxv.values
@@ -283,6 +286,8 @@ def test_core_arm64():
 
     assert note.type == lief.ELF.Note.TYPE.CORE_FILE
 
+    assert isinstance(note, lief.ELF.CoreFile)
+
     files = note.files
     assert len(files) == len(note)
     assert 22 == len(files)
@@ -299,18 +304,22 @@ def test_core_arm64():
     assert last.path == "/system/bin/linker64"
 
 def test_core_write(tmp_path: Path):
-    core = lief.parse(get_sample('ELF/ELF64_x86-64_core_hello.core'))
+    core = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_core_hello.core'))
     note = core.notes[1]
+
+    assert isinstance(note, lief.ELF.CorePrStatus)
     assert note.type == lief.ELF.Note.TYPE.CORE_PRSTATUS
 
     note[lief.ELF.CorePrStatus.Registers.X86_64.RIP] = 0xBADC0DE
 
     note = core.notes[5]
+    assert isinstance(note, lief.ELF.CoreAuxv)
     assert note.type == lief.ELF.Note.TYPE.CORE_AUXV
 
     note[lief.ELF.CoreAuxv.TYPE.ENTRY] = 0xBADC0DE
 
     note = core.notes[4]
+    assert isinstance(note, lief.ELF.CoreSigInfo)
     assert note.type == lief.ELF.Note.TYPE.CORE_SIGINFO
     orig_siginfo_len = len(note.description)
     note.sigerrno = 0xCC
@@ -322,20 +331,23 @@ def test_core_write(tmp_path: Path):
 
     #  Cannot re-open a file on Windows, so handle it by hand
     core.write(output.as_posix(), config)
-    core_new = lief.parse(output.as_posix())
+    core_new = lief.ELF.parse(output.as_posix())
     assert core_new is not None
 
     note = core_new.notes[1]
     assert note.type == lief.ELF.Note.TYPE.CORE_PRSTATUS
-
+    assert isinstance(note, lief.ELF.CorePrStatus)
     assert note[lief.ELF.CorePrStatus.Registers.X86_64.RIP] == 0xBADC0DE
 
     note = core_new.notes[5]
+    assert isinstance(note, lief.ELF.CoreAuxv)
     assert note.type == lief.ELF.Note.TYPE.CORE_AUXV
 
     assert note[lief.ELF.CoreAuxv.TYPE.ENTRY] == 0xBADC0DE
 
     note = core_new.notes[4]
+
+    assert isinstance(note, lief.ELF.CoreSigInfo)
     assert note.type == lief.ELF.Note.TYPE.CORE_SIGINFO
     assert len(note.description) == orig_siginfo_len
 

@@ -276,11 +276,11 @@ Here is a quick summary of advantages/disadvantages of this technique
 
 .. rubric:: Notes
 
-.. [1] Note that LIEF **does not** modify the :attr:`~lief.ELF.DYNAMIC_TAGS.DEBUG` entry ...
+.. [1] Note that LIEF **does not** modify the :attr:`~lief.ELF.DynamicEntry.TAG.DEBUG` entry ...
 
 .. [2] Modification of the ELF Dynamic section is not as easy as the API looks like.
 
-.. [3] In the ELF format they are located in the :attr:`~lief.ELF.DYNAMIC_TAGS.INIT_ARRAY` or :attr:`~lief.ELF.DYNAMIC_TAGS.INIT` entries
+.. [3] In the ELF format they are located in the :attr:`~lief.ELF.DynamicEntry.TAG.INIT_ARRAY` or :attr:`~lief.ELF.DynamicEntry.TAG.INIT` entries
 
 .. [4] For those who are interested, checks are done in the ``framework_base/core/jni/com_android_internal_content_NativeLibraryHelper.cpp`` file.
        Actually these checks on the prefix and suffix are only done if the application is not *debuggable*.

@@ -66,14 +66,14 @@ class LIEF_API CorePrStatus : public Note {
   };
 
   struct Registers {
-    /// Register for the x86 architecture (ARCH::EM_386).
+    /// Register for the x86 architecture (ARCH::I386).
     enum class X86 {
       EBX = 0, ECX, EDX, ESI, EDI, EBP, EAX,
       DS, ES, FS, GS, ORIG_EAX, EIP, CS, EFLAGS, ESP, SS,
       _COUNT
     };
 
-    /// Register for the x86-64 architecture (ARCH::EM_X86_64).
+    /// Register for the x86-64 architecture (ARCH::X86_64).
     enum class X86_64 {
       R15 = 0, R14, R13, R12, RBP, RBX, R11, R10,
       R9, R8, RAX, RCX, RDX, RSI, RDI, ORIG_RAX,
@@ -81,7 +81,7 @@ class LIEF_API CorePrStatus : public Note {
       _COUNT
     };
 
-    /// Register for the ARM architecture (ARCH::EM_ARM).
+    /// Register for the ARM architecture (ARCH::ARM).
     enum class ARM {
       R0 = 0, R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, R11, R12, R13, R14, R15,
       CPSR,
@@ -98,7 +98,7 @@ class LIEF_API CorePrStatus : public Note {
   };
 
   public:
-  CorePrStatus(ARCH arch, ELF_CLASS cls, std::string name,
+  CorePrStatus(ARCH arch, Header::CLASS cls, std::string name,
                uint32_t type, description_t description) :
     Note(std::move(name), TYPE::CORE_PRSTATUS, type, std::move(description)),
     arch_(arch), class_(cls)
@@ -145,7 +145,7 @@ class LIEF_API CorePrStatus : public Note {
   /// empty if it can't be resolved. Thus, one can access a specific register
   /// with:
   /// ```cpp
-  /// if (architecture() == ARCH::EM_AARCH64) {
+  /// if (architecture() == ARCH::AARCH64) {
   ///   auto reg_vals = register_values()
   ///   if (!reg_vals.empty()) {
   ///     auto x20 = reg_vals[static_cast<size_t>(Register::AARCH64::X20)]
@@ -186,8 +186,8 @@ class LIEF_API CorePrStatus : public Note {
   }
 
   private:
-  ARCH arch_ = ARCH::EM_NONE;
-  ELF_CLASS class_ = ELF_CLASS::ELFCLASSNONE;
+  ARCH arch_ = ARCH::NONE;
+  Header::CLASS class_ = Header::CLASS::NONE;
 };
 
 LIEF_API const char* to_string(CorePrStatus::Registers::X86 e);

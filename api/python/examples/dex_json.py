@@ -15,7 +15,7 @@ def main():
     parser.add_argument('file', help='DEX binary')
     args = parser.parse_args()
 
-    if not lief.DEX.is_dex(args.file):
+    if not lief.is_dex(args.file):
         print("{} is not a DEX file".format(args.file))
         return 1
     dexfile   = lief.DEX.parse(args.file)

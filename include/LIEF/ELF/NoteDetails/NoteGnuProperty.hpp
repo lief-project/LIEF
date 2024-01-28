@@ -71,8 +71,8 @@ class LIEF_API NoteGnuProperty : public Note {
 
   using properties_t = std::vector<std::unique_ptr<NoteGnuProperty::Property>>;
 
-  NoteGnuProperty(ARCH arch, ELF_CLASS cls, std::string name,
-               uint32_t type, description_t description) :
+  NoteGnuProperty(ARCH arch, Header::CLASS cls, std::string name,
+                  uint32_t type, description_t description) :
     Note(std::move(name), TYPE::GNU_PROPERTY_TYPE_0, type, std::move(description)),
     arch_(arch), class_(cls)
   {}
@@ -104,8 +104,8 @@ class LIEF_API NoteGnuProperty : public Note {
   }
 
   protected:
-  ARCH arch_ = ARCH::EM_NONE;
-  ELF_CLASS class_ = ELF_CLASS::ELFCLASSNONE;
+  ARCH arch_ = ARCH::NONE;
+  Header::CLASS class_ = Header::CLASS::NONE;
 };
 
 LIEF_API const char* to_string(NoteGnuProperty::Property::TYPE type);

@@ -106,13 +106,13 @@ inline bool write_impl(Note::description_t& description,
 
 
 result<uint64_t> CoreAuxv::get(TYPE type) const {
-  return class_ == ELF_CLASS::ELFCLASS32 ?
+  return class_ == Header::CLASS::ELF32 ?
                    get_impl<details::ELF32>(type, description_) :
                    get_impl<details::ELF64>(type, description_);
 }
 
 std::map<CoreAuxv::TYPE, uint64_t> CoreAuxv::values() const {
-  return class_ == ELF_CLASS::ELFCLASS32 ?
+  return class_ == Header::CLASS::ELF32 ?
                    get_values_impl<details::ELF32>(description_) :
                    get_values_impl<details::ELF64>(description_);
 }
@@ -125,7 +125,7 @@ bool CoreAuxv::set(TYPE type, uint64_t value) {
 }
 
 bool CoreAuxv::set(std::map<TYPE, uint64_t> values) {
-  return class_ == ELF_CLASS::ELFCLASS32 ?
+  return class_ == Header::CLASS::ELF32 ?
                    write_impl<details::ELF32>(description_, values) :
                    write_impl<details::ELF64>(description_, values);
 }

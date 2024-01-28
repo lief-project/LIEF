@@ -20,8 +20,10 @@ target_sources(LIB_LIEF PRIVATE
   Note.cpp
   Parser.cpp
   Parser.tcc
+  ProcessorFlags.cpp
   Relocation.cpp
   RelocationSizes.cpp
+  RelocationStrings.cpp
   Section.cpp
   Segment.cpp
   Symbol.cpp

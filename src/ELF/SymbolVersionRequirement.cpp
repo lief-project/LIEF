@@ -23,10 +23,6 @@
 namespace LIEF {
 namespace ELF {
 
-SymbolVersionRequirement::SymbolVersionRequirement() = default;
-SymbolVersionRequirement::~SymbolVersionRequirement() = default;
-
-
 SymbolVersionRequirement::SymbolVersionRequirement(const details::Elf64_Verneed& header) :
   version_{header.vn_version}
 {}
@@ -34,7 +30,6 @@ SymbolVersionRequirement::SymbolVersionRequirement(const details::Elf64_Verneed&
 SymbolVersionRequirement::SymbolVersionRequirement(const details::Elf32_Verneed& header)  :
   version_{header.vn_version}
 {}
-
 
 SymbolVersionRequirement::SymbolVersionRequirement(const SymbolVersionRequirement& other) :
   Object{other},
@@ -46,7 +41,6 @@ SymbolVersionRequirement::SymbolVersionRequirement(const SymbolVersionRequiremen
     aux_requirements_.push_back(std::make_unique<SymbolVersionAuxRequirement>(*aux));
   }
 }
-
 
 SymbolVersionRequirement& SymbolVersionRequirement::operator=(SymbolVersionRequirement other) {
   swap(other);
@@ -60,40 +54,6 @@ void SymbolVersionRequirement::swap(SymbolVersionRequirement& other) {
 }
 
 
-uint16_t SymbolVersionRequirement::version() const {
-  return version_;
-}
-
-
-uint32_t SymbolVersionRequirement::cnt() const {
-  return static_cast<uint32_t>(aux_requirements_.size());
-}
-
-
-SymbolVersionRequirement::it_aux_requirement SymbolVersionRequirement::auxiliary_symbols() {
-  return aux_requirements_;
-}
-
-
-SymbolVersionRequirement::it_const_aux_requirement SymbolVersionRequirement::auxiliary_symbols() const {
-  return aux_requirements_;
-}
-
-
-const std::string& SymbolVersionRequirement::name() const {
-  return name_;
-}
-
-
-void SymbolVersionRequirement::version(uint16_t version) {
-  version_ = version;
-}
-
-
-void SymbolVersionRequirement::name(const std::string& name) {
-  name_ = name;
-}
-
 SymbolVersionAuxRequirement& SymbolVersionRequirement::add_aux_requirement(const SymbolVersionAuxRequirement& aux_requirement) {
   aux_requirements_.push_back(std::make_unique<SymbolVersionAuxRequirement>(aux_requirement));
   return *aux_requirements_.back();
@@ -103,14 +63,5 @@ void SymbolVersionRequirement::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
-
-
-std::ostream& operator<<(std::ostream& os, const SymbolVersionRequirement& symr) {
-  os << symr.version() << " " << symr.name();
-
-  return os;
-}
 }
 }

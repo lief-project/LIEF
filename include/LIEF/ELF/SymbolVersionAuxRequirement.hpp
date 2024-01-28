@@ -38,33 +38,50 @@ class LIEF_API SymbolVersionAuxRequirement : public SymbolVersionAux {
 
   SymbolVersionAuxRequirement(const details::Elf64_Vernaux& header);
   SymbolVersionAuxRequirement(const details::Elf32_Vernaux& header);
-  SymbolVersionAuxRequirement();
+  SymbolVersionAuxRequirement() = default;
 
-  SymbolVersionAuxRequirement& operator=(const SymbolVersionAuxRequirement&);
-  SymbolVersionAuxRequirement(const SymbolVersionAuxRequirement&);
+  SymbolVersionAuxRequirement& operator=(const SymbolVersionAuxRequirement&) = default;
+  SymbolVersionAuxRequirement(const SymbolVersionAuxRequirement&) = default;
 
-  ~SymbolVersionAuxRequirement() override;
+  ~SymbolVersionAuxRequirement() override = default;
 
   //! Hash value of the dependency name (use ELF hashing function)
-  uint32_t hash() const;
+  uint32_t hash() const {
+    return hash_;
+  }
 
   //! Bitmask of flags
-  uint16_t flags() const;
+  uint16_t flags() const {
+    return flags_;
+  }
 
   //! It returns the unique version index for the file which is used in the
   //! version symbol table. If the highest bit (bit 15) is set this
   //! is a hidden symbol which cannot be referenced from outside the
   //! object.
-  uint16_t other() const;
+  uint16_t other() const {
+    return other_;
+  }
 
-  void hash(uint32_t hash);
-  void flags(uint16_t flags);
-  void other(uint16_t other);
+  void hash(uint32_t hash) {
+    hash_ = hash;
+  }
+
+  void flags(uint16_t flags) {
+    flags_ = flags;
+  }
+
+  void other(uint16_t other) {
+    other_ = other;
+  }
 
   void accept(Visitor& visitor) const override;
 
-
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const SymbolVersionAuxRequirement& symAux);
+  LIEF_API friend
+  std::ostream& operator<<(std::ostream& os, const SymbolVersionAuxRequirement& aux) {
+    os << aux.name();
+    return os;
+  }
 
   private:
   uint32_t hash_ = 0;

@@ -89,12 +89,15 @@ def run_cmd(cmd):
     return CommandResult(stdout, stderr, p.returncode)
 
 def modif_1(libadd: lief.ELF.Binary, output: Path):
-    libadd_hidden            = libadd.get_symbol("add_hidden")
-    libadd_hidden.binding    = lief.ELF.SYMBOL_BINDINGS.GLOBAL
-    libadd_hidden.visibility = lief.ELF.SYMBOL_VISIBILITY.DEFAULT
-    libadd_hidden            = libadd.add_dynamic_symbol(libadd_hidden, lief.ELF.SymbolVersion.global_)
-    if lief.ELF.DYNAMIC_TAGS.FLAGS_1 in libadd and libadd[lief.ELF.DYNAMIC_TAGS.FLAGS_1].has(lief.ELF.DYNAMIC_FLAGS_1.PIE):
-        libadd[lief.ELF.DYNAMIC_TAGS.FLAGS_1].remove(lief.ELF.DYNAMIC_FLAGS_1.PIE)
+    libadd_hidden: lief.ELF.Symbol = libadd.get_symbol("add_hidden")
+    libadd_hidden.binding    = lief.ELF.Symbol.BINDING.GLOBAL
+    libadd_hidden.visibility = lief.ELF.Symbol.VISIBILITY.DEFAULT
+    libadd_hidden            = libadd.add_dynamic_symbol(libadd_hidden, lief.ELF.SymbolVersion.global_) # type: ignore
+
+    if lief.ELF.DynamicEntry.TAG.FLAGS_1 in libadd:
+        flags_1: lief.ELF.DynamicEntryFlags = libadd[lief.ELF.DynamicEntry.TAG.FLAGS_1]
+        if flags_1.has(lief.ELF.DynamicEntryFlags.FLAG.PIE):
+            flags_1.remove(lief.ELF.DynamicEntryFlags.FLAG.PIE)
 
     print(libadd_hidden)
 
@@ -104,17 +107,23 @@ def modif_1(libadd: lief.ELF.Binary, output: Path):
 def modif_2(libadd: lief.ELF.Binary, output: Path):
     libadd.export_symbol("add_hidden")
 
-    if lief.ELF.DYNAMIC_TAGS.FLAGS_1 in libadd and libadd[lief.ELF.DYNAMIC_TAGS.FLAGS_1].has(lief.ELF.DYNAMIC_FLAGS_1.PIE):
-        libadd[lief.ELF.DYNAMIC_TAGS.FLAGS_1].remove(lief.ELF.DYNAMIC_FLAGS_1.PIE)
+    if lief.ELF.DynamicEntry.TAG.FLAGS_1 in libadd:
+        flags_1: lief.ELF.DynamicEntryFlags = libadd[lief.ELF.DynamicEntry.TAG.FLAGS_1]
+        if flags_1.has(lief.ELF.DynamicEntryFlags.FLAG.PIE):
+            flags_1.remove(lief.ELF.DynamicEntryFlags.FLAG.PIE)
 
     libadd.write(output.as_posix())
 
 def modif_3(libadd: lief.ELF.Binary, output: Path):
     add_hidden_static = libadd.get_static_symbol("add_hidden")
+    assert isinstance(add_hidden_static.name, str)
     libadd.add_exported_function(add_hidden_static.value, add_hidden_static.name)
 
-    if lief.ELF.DYNAMIC_TAGS.FLAGS_1 in libadd and libadd[lief.ELF.DYNAMIC_TAGS.FLAGS_1].has(lief.ELF.DYNAMIC_FLAGS_1.PIE):
-        libadd[lief.ELF.DYNAMIC_TAGS.FLAGS_1].remove(lief.ELF.DYNAMIC_FLAGS_1.PIE)
+    if lief.ELF.DynamicEntry.TAG.FLAGS_1 in libadd:
+        flags_1: lief.ELF.DynamicEntryFlags = libadd[lief.ELF.DynamicEntry.TAG.FLAGS_1]
+        if flags_1.has(lief.ELF.DynamicEntryFlags.FLAG.PIE):
+            flags_1.remove(lief.ELF.DynamicEntryFlags.FLAG.PIE)
+
     libadd.write(output.as_posix())
 
 
@@ -150,7 +159,7 @@ def test_libadd(tmp_path: Path, modifier):
                            output=libadd_so, input=libadd_src))
     assert r
 
-    libadd = lief.parse(libadd_so.as_posix())
+    libadd = lief.ELF.parse(libadd_so.as_posix())
     modifier(libadd, libadd2_so)
 
     lib_directory = libadd2_so.parent

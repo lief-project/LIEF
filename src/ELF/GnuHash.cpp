@@ -26,15 +26,6 @@
 namespace LIEF {
 namespace ELF {
 
-GnuHash::GnuHash(GnuHash&&)                 = default;
-GnuHash& GnuHash::operator=(GnuHash&&)      = default;
-
-GnuHash& GnuHash::operator=(const GnuHash&) = default;
-GnuHash::GnuHash(const GnuHash&)            = default;
-GnuHash::~GnuHash()                         = default;
-GnuHash::GnuHash()                          = default;
-
-
 
 GnuHash::GnuHash(uint32_t symbol_idx, uint32_t shift2,
                  std::vector<uint64_t> bloom_filters, std::vector<uint32_t> buckets,
@@ -47,34 +38,6 @@ GnuHash::GnuHash(uint32_t symbol_idx, uint32_t shift2,
 {}
 
 
-uint32_t GnuHash::nb_buckets() const {
-  return static_cast<uint32_t>(buckets_.size());
-}
-
-uint32_t GnuHash::symbol_index() const {
-  return symbol_index_;
-}
-
-uint32_t GnuHash::maskwords() const {
-  return bloom_filters_.size();
-}
-
-uint32_t GnuHash::shift2() const {
-  return shift2_;
-}
-
-const std::vector<uint64_t>& GnuHash::bloom_filters() const {
-  return bloom_filters_;
-}
-
-const std::vector<uint32_t>& GnuHash::buckets() const {
-  return buckets_;
-}
-
-const std::vector<uint32_t>& GnuHash::hash_values() const {
-  return hash_values_;
-}
-
 bool GnuHash::check_bloom_filter(uint32_t hash) const {
   const size_t C = c_;
   const uint32_t h1 = hash;
@@ -86,11 +49,6 @@ bool GnuHash::check_bloom_filter(uint32_t hash) const {
   const uint32_t b2 = h2 % C;
   const uint64_t filter = bloom_filters()[n1];
   return ((filter >> b1) & (filter >> b2) & 1) != 0u;
-}
-
-
-bool GnuHash::check_bucket(uint32_t hash) const {
-  return buckets()[hash % nb_buckets()] > 0;
 }
 
 bool GnuHash::check(const std::string& symbol_name) const {
@@ -111,11 +69,9 @@ bool GnuHash::check(uint32_t hash) const {
 }
 
 
-
 void GnuHash::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
-
 
 std::ostream& operator<<(std::ostream& os, const GnuHash& gnuhash) {
   os << std::hex << std::left;

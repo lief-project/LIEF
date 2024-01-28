@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef C_LIEF_ELF_DYNAMIC_ENTRY_H_
-#define C_LIEF_ELF_DYNAMIC_ENTRY_H_
+#ifndef LIEF_C_ELF_DYNAMIC_ENTRY_H
+#define LIEF_C_ELF_DYNAMIC_ENTRY_H
 
 #include <stdint.h>
-
-#include "LIEF/ELF/enums.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -59,12 +57,9 @@ struct Elf_DynamicEntry_RunPath_t {
   const char* runpath;
 };
 
-
 struct Elf_DynamicEntry_Flags_t {
   uint64_t tag;
   uint64_t value;
-  enum LIEF_ELF_DYNAMIC_FLAGS   *flags;
-  enum LIEF_ELF_DYNAMIC_FLAGS_1 *flags_1;
 };
 
 typedef struct Elf_DynamicEntry_t              Elf_DynamicEntry_t;

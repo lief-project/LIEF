@@ -16,52 +16,21 @@
 #include "LIEF/ELF/DynamicSharedObject.hpp"
 #include "LIEF/Visitor.hpp"
 
-#include <iomanip>
-#include <utility>
+#include <spdlog/fmt/fmt.h>
 
 namespace LIEF {
 namespace ELF {
-DynamicSharedObject::DynamicSharedObject() :
-  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_SONAME, 0}
-{}
-
-DynamicSharedObject& DynamicSharedObject::operator=(const DynamicSharedObject&) = default;
-
-DynamicSharedObject::DynamicSharedObject(const DynamicSharedObject&) = default;
-
-DynamicSharedObject::DynamicSharedObject(std::string name) :
-  DynamicEntry::DynamicEntry{DYNAMIC_TAGS::DT_SONAME, 0},
-  name_{std::move(name)}
-{}
-
-
-const std::string& DynamicSharedObject::name() const {
-  return name_;
-}
-
-
-void DynamicSharedObject::name(const std::string& name) {
-  name_ = name;
-}
 
 void DynamicSharedObject::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-bool DynamicSharedObject::classof(const DynamicEntry* entry) {
-  const DYNAMIC_TAGS tag = entry->tag();
-  return tag == DYNAMIC_TAGS::DT_SONAME;
-}
-
-
 std::ostream& DynamicSharedObject::print(std::ostream& os) const {
   DynamicEntry::print(os);
-  os << std::hex
-     << std::left
-     << std::setw(10) << name();
+  os << fmt::format("{:<10}", name());
   return os;
-
 }
+
 }
 }
 

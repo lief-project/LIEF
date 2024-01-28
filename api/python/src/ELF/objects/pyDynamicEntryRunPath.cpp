@@ -44,18 +44,11 @@ void create<DynamicEntryRunPath>(nb::module_& m) {
         "Constructor from a list of paths"_doc,
         "paths"_a)
 
-    .def_prop_rw("name",
-        [] (const DynamicEntryRunPath& obj) {
-          return LIEF::py::safe_string(obj.name());
-        },
-        nb::overload_cast<const std::string&>(&DynamicEntryRunPath::name),
-        "Runpath raw value"_doc)
-
     .def_prop_rw("runpath",
         [] (const DynamicEntryRunPath& obj) {
           return LIEF::py::safe_string(obj.runpath());
         },
-        nb::overload_cast<const std::string&>(&DynamicEntryRunPath::runpath),
+        nb::overload_cast<std::string>(&DynamicEntryRunPath::runpath),
         "Runpath raw value"_doc)
 
     .def_prop_rw("paths",
@@ -63,20 +56,16 @@ void create<DynamicEntryRunPath>(nb::module_& m) {
         nb::overload_cast<const std::vector<std::string>&>(&DynamicEntryRunPath::paths),
         "Paths as a list"_doc)
 
-    .def("insert",
-        &DynamicEntryRunPath::insert,
+    .def("insert", &DynamicEntryRunPath::insert,
         "Insert a ``path`` at the given ``position``"_doc,
         "position"_a, "path"_a,
         nb::rv_policy::reference_internal)
 
-    .def("append",
-        &DynamicEntryRunPath::append,
+    .def("append", &DynamicEntryRunPath::append,
         "Append the given ``path`` "_doc,
         "path"_a, nb::rv_policy::reference_internal)
 
-
-    .def("remove",
-        &DynamicEntryRunPath::remove,
+    .def("remove", &DynamicEntryRunPath::remove,
         "Remove the given ``path`` ",
         "path"_a,
         nb::rv_policy::reference_internal)

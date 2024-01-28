@@ -73,6 +73,7 @@ void init_objects(nb::module_& m) {
   CREATE(Parser, m);
   CREATE(SymbolVersion, m);
   CREATE(Binary, m);
+  CREATE(PROCESSOR_FLAGS, m);
   CREATE(Header, m);
   CREATE(Section, m);
   CREATE(Segment, m);

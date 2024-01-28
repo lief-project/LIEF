@@ -294,12 +294,12 @@ result<const char*> Note::type_owner(Note::TYPE type) {
 }
 
 
-result<Note::TYPE> Note::convert_type(E_TYPE ftype, uint32_t type,
+result<Note::TYPE> Note::convert_type(Header::FILE_TYPE ftype, uint32_t type,
                                       const std::string& name)
 {
   std::string norm_name = strip_zero(name);
 
-  if (ftype == E_TYPE::ET_CORE) {
+  if (ftype == Header::FILE_TYPE::CORE) {
     if (norm_name == NT_CORE_NAME) {
       if (auto it = CORE_TYPES.find(type); it != CORE_TYPES.end()) {
         return it->second;
@@ -363,7 +363,7 @@ result<Note::TYPE> Note::convert_type(E_TYPE ftype, uint32_t type,
 }
 
 std::unique_ptr<Note>
-Note::create(BinaryStream& stream, E_TYPE ftype, ARCH arch, ELF_CLASS cls) {
+Note::create(BinaryStream& stream, Header::FILE_TYPE ftype, ARCH arch, Header::CLASS cls) {
   static constexpr uint32_t MAX_NOTE_DESCRIPTION = 1_MB;
   const size_t pos = stream.pos();
   auto res_namesz = stream.read_conv<uint32_t>();
@@ -429,7 +429,7 @@ Note::create(BinaryStream& stream, E_TYPE ftype, ARCH arch, ELF_CLASS cls) {
 
 std::unique_ptr<Note>
 Note::create(const std::string& name, Note::TYPE ntype, Note::description_t description,
-             ARCH arch, ELF_CLASS cls)
+             ARCH arch, Header::CLASS cls)
 {
   std::string owner;
   auto res_owner = type_owner(ntype);
@@ -465,12 +465,12 @@ Note::create(const std::string& name, Note::TYPE ntype, Note::description_t desc
   switch (ntype) {
     case Note::TYPE::CORE_PRSTATUS:
       {
-        if (cls != ELF_CLASS::ELFCLASS32 && cls != ELF_CLASS::ELFCLASS64) {
+        if (cls != Header::CLASS::ELF32 && cls != Header::CLASS::ELF64) {
           LIEF_WARN("CORE_PRSTATUS requires a valid ELF class");
           return nullptr;
         }
 
-        if (arch == ARCH::EM_NONE) {
+        if (arch == ARCH::NONE) {
           LIEF_WARN("CORE_PRSTATUS requires a valid architecture");
           return nullptr;
         }
@@ -480,12 +480,12 @@ Note::create(const std::string& name, Note::TYPE ntype, Note::description_t desc
       }
     case Note::TYPE::CORE_PRPSINFO:
       {
-        if (cls != ELF_CLASS::ELFCLASS32 && cls != ELF_CLASS::ELFCLASS64) {
+        if (cls != Header::CLASS::ELF32 && cls != Header::CLASS::ELF64) {
           LIEF_WARN("CORE_PRPSINFO requires a valid ELF class");
           return nullptr;
         }
 
-        if (arch == ARCH::EM_NONE) {
+        if (arch == ARCH::NONE) {
           LIEF_WARN("CORE_PRPSINFO requires a valid architecture");
           return nullptr;
         }
@@ -495,12 +495,12 @@ Note::create(const std::string& name, Note::TYPE ntype, Note::description_t desc
       }
     case Note::TYPE::CORE_FILE:
       {
-        if (cls != ELF_CLASS::ELFCLASS32 && cls != ELF_CLASS::ELFCLASS64) {
+        if (cls != Header::CLASS::ELF32 && cls != Header::CLASS::ELF64) {
           LIEF_WARN("CORE_FILE requires a valid ELF class");
           return nullptr;
         }
 
-        if (arch == ARCH::EM_NONE) {
+        if (arch == ARCH::NONE) {
           LIEF_WARN("CORE_FILE requires a valid architecture");
           return nullptr;
         }
@@ -510,12 +510,12 @@ Note::create(const std::string& name, Note::TYPE ntype, Note::description_t desc
       }
     case Note::TYPE::CORE_AUXV:
       {
-        if (cls != ELF_CLASS::ELFCLASS32 && cls != ELF_CLASS::ELFCLASS64) {
+        if (cls != Header::CLASS::ELF32 && cls != Header::CLASS::ELF64) {
           LIEF_WARN("CORE_AUXV requires a valid ELF class");
           return nullptr;
         }
 
-        if (arch == ARCH::EM_NONE) {
+        if (arch == ARCH::NONE) {
           LIEF_WARN("CORE_AUXV requires a valid architecture");
           return nullptr;
         }
@@ -531,12 +531,12 @@ Note::create(const std::string& name, Note::TYPE ntype, Note::description_t desc
       }
     case Note::TYPE::GNU_PROPERTY_TYPE_0:
       {
-        if (cls != ELF_CLASS::ELFCLASS32 && cls != ELF_CLASS::ELFCLASS64) {
+        if (cls != Header::CLASS::ELF32 && cls != Header::CLASS::ELF64) {
           LIEF_WARN("GNU_PROPERTY_TYPE_0 requires a valid ELF class");
           return nullptr;
         }
 
-        if (arch == ARCH::EM_NONE) {
+        if (arch == ARCH::NONE) {
           LIEF_WARN("GNU_PROPERTY_TYPE_0 requires a valid architecture");
           return nullptr;
         }
@@ -564,7 +564,7 @@ Note::create(const std::string& name, Note::TYPE ntype, Note::description_t desc
 
 std::unique_ptr<Note>
 Note::create(const std::string& name, uint32_t type, Note::description_t description,
-             E_TYPE ftype, ARCH arch, ELF_CLASS cls)
+             Header::FILE_TYPE ftype, ARCH arch, Header::CLASS cls)
 {
   auto conv = Note::convert_type(ftype, type, name);
   if (!conv) {

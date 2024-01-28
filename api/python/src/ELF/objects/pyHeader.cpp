@@ -18,9 +18,11 @@
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/set.h>
+#include <nanobind/stl/vector.h>
 #include <nanobind/stl/array.h>
 
 #include "ELF/pyELF.hpp"
+#include "enums_wrapper.hpp"
 
 #include "LIEF/ELF/Header.hpp"
 
@@ -29,36 +31,115 @@ namespace LIEF::ELF::py {
 template<>
 void create<Header>(nb::module_& m) {
 
-  nb::class_<Header, LIEF::Object>(m, "Header",
+  nb::class_<Header, LIEF::Object> header(m, "Header",
       R"delim(
-      Class which represents the ELF's header. This is the ELF structure
-      that starts an ELF file.
-      )delim"_doc)
+      Class which represents the ELF's header. This class mirrors the raw ELF
+      ``Elfxx_Ehdr`` structure.
+      )delim"_doc);
+
+  #define ENTRY(X, D) .value(to_string(Header::FILE_TYPE::X), Header::FILE_TYPE::X, D)
+  enum_<Header::FILE_TYPE>(header, "FILE_TYPE",
+    R"delim(
+    The type of the underlying ELF file. This enum matches the semantic of
+    ``ET_NONE``, ``ET_REL``, ...
+    )delim"_doc
+  )
+    ENTRY(NONE, "Can't be determined/Invalid"_doc)
+    ENTRY(REL, "Relocatable file (or object file)"_doc)
+    ENTRY(EXEC, "non-pie executable"_doc)
+    ENTRY(DYN, "Shared library **or** a pie-executable"_doc)
+    ENTRY(CORE, "Core dump file"_doc)
+  ;
+  #undef ENTRY
+
+  #define ENTRY(X, D) .value(to_string(Header::VERSION::X), Header::VERSION::X, D)
+  enum_<Header::VERSION>(header, "VERSION",
+    R"delim(
+    Match the result of ``Elfxx_Ehdr.e_version``
+    )delim"_doc
+  )
+    ENTRY(NONE, "Invalid ELF version"_doc)
+    ENTRY(CURRENT, "Current version (default)"_doc)
+  ;
+  #undef ENTRY
+
+  #define ENTRY(X, D) .value(to_string(Header::CLASS::X), Header::CLASS::X, D)
+  enum_<Header::CLASS>(header, "CLASS",
+    R"delim(
+    Match the result of ``Elfxx_Ehdr.e_ident[EI_CLASS]``
+    )delim"_doc
+  )
+    ENTRY(NONE, "Invalid class"_doc)
+    ENTRY(ELF32, "32-bit objects"_doc)
+    ENTRY(ELF64, "64-bit objects"_doc)
+  ;
+  #undef ENTRY
+
+  #define ENTRY(X) .value(to_string(Header::OS_ABI::X), Header::OS_ABI::X)
+  enum_<Header::OS_ABI>(header, "OS_ABI")
+    ENTRY(SYSTEMV)
+    ENTRY(HPUX)
+    ENTRY(NETBSD)
+    ENTRY(GNU)
+    ENTRY(LINUX)
+    ENTRY(HURD)
+    ENTRY(SOLARIS)
+    ENTRY(AIX)
+    ENTRY(IRIX)
+    ENTRY(FREEBSD)
+    ENTRY(TRU64)
+    ENTRY(MODESTO)
+    ENTRY(OPENBSD)
+    ENTRY(OPENVMS)
+    ENTRY(NSK)
+    ENTRY(AROS)
+    ENTRY(FENIXOS)
+    ENTRY(CLOUDABI)
+    ENTRY(C6000_ELFABI)
+    ENTRY(AMDGPU_HSA)
+    ENTRY(C6000_LINUX)
+    ENTRY(ARM)
+    ENTRY(STANDALONE)
+  ;
+  #undef ENTRY
+
+  #define ENTRY(X, D) .value(to_string(Header::ELF_DATA::X), Header::ELF_DATA::X, D)
+  enum_<Header::ELF_DATA>(header, "ELF_DATA",
+    R"delim(
+    Match the result ``Elfxx_Ehdr.e_ident[EI_DATA]``
+    )delim"_doc
+  )
+    ENTRY(NONE, "Invalid data encoding"_doc)
+    ENTRY(LSB, "2's complement, little endian"_doc)
+    ENTRY(MSB, "2's complement, big endian"_doc)
+  ;
+  #undef ENTRY
+
+  header
     .def(nb::init<>())
 
     .def_prop_rw("identity_class",
         nb::overload_cast<>(&Header::identity_class, nb::const_),
-        nb::overload_cast<ELF_CLASS>(&Header::identity_class),
-        "Header's " RST_CLASS_REF(lief.ELF.ELF_CLASS) "."_doc)
+        nb::overload_cast<Header::CLASS>(&Header::identity_class),
+        "Header's class."_doc)
 
     .def_prop_rw("identity_data",
         nb::overload_cast<>(&Header::identity_data, nb::const_),
-        nb::overload_cast<ELF_DATA>(&Header::identity_data),
-        "Specify the data encoding (" RST_CLASS_REF(lief.ELF.ELF_DATA) ")"_doc)
+        nb::overload_cast<Header::ELF_DATA>(&Header::identity_data),
+        "Specify the data encoding"_doc)
 
     .def_prop_rw("identity_version",
         nb::overload_cast<>(&Header::identity_version, nb::const_),
-        nb::overload_cast<VERSION>(&Header::identity_version),
-        "Return header's " RST_CLASS_REF(lief.ELF.VERSION) "."_doc)
+        nb::overload_cast<Header::VERSION>(&Header::identity_version))
 
     .def_prop_rw("identity_os_abi",
         nb::overload_cast<>(&Header::identity_os_abi, nb::const_),
-        nb::overload_cast<OS_ABI>(&Header::identity_os_abi),
-        "Identifies the version of the ABI for which the object is prepared (" RST_CLASS_REF(lief.ELF.OS_ABI) ")."_doc)
+        nb::overload_cast<Header::OS_ABI>(&Header::identity_os_abi),
+        "Identifies the version of the ABI for which the object is prepared."_doc)
 
     .def_prop_rw("identity_abi_version",
         nb::overload_cast<>(&Header::identity_abi_version, nb::const_),
-        nb::overload_cast<uint32_t>(&Header::identity_abi_version),
+        nb::overload_cast<uint8_t>(&Header::identity_abi_version),
         "Return the ABI version (integer)."_doc)
 
     .def_prop_rw("identity",
@@ -89,19 +170,19 @@ void create<Header>(nb::module_& m) {
 
     .def_prop_rw("file_type",
         nb::overload_cast<>(&Header::file_type, nb::const_),
-        nb::overload_cast<E_TYPE>(&Header::file_type),
-        "Return binary's " RST_CLASS_REF(lief.ELF.E_TYPE) ". This field determines if the binary \
-        is a executable, a library..."_doc)
+        nb::overload_cast<Header::FILE_TYPE>(&Header::file_type),
+        "Return binary's type. This field determines if the binary is a "
+        "executable, a library..."_doc)
 
     .def_prop_rw("machine_type",
         nb::overload_cast<>(&Header::machine_type, nb::const_),
         nb::overload_cast<ARCH>(&Header::machine_type),
-        "Return the target architecture (" RST_CLASS_REF(lief.ELF.ARCH) ")"_doc)
+        "Return the target architecture"_doc)
 
     .def_prop_rw("object_file_version",
         nb::overload_cast<>(&Header::object_file_version, nb::const_),
-        nb::overload_cast<VERSION>(&Header::object_file_version),
-        "Return the " RST_CLASS_REF(lief.ELF.VERSION) ""_doc)
+        nb::overload_cast<Header::VERSION>(&Header::object_file_version),
+        "Return the version"_doc)
 
     .def_prop_rw("entrypoint",
         nb::overload_cast<>(&Header::entrypoint, nb::const_),
@@ -123,42 +204,17 @@ void create<Header>(nb::module_& m) {
         nb::overload_cast<uint32_t>(&Header::processor_flag),
         "Processor-specific flags"_doc)
 
-    .def_prop_ro("arm_flags_list",
-        &Header::arm_flags_list,
-        "Return a list of " RST_CLASS_REF(lief.ELF.ARM_EFLAGS) " present in "
-        ":attr:`~lief.ELF.Header.processor_flag`"_doc,
-        nb::rv_policy::reference_internal)
+    .def("has", &Header::has,
+        "Check if the given processor flag is present"_doc)
 
-    .def_prop_ro("mips_flags_list",
-        &Header::mips_flags_list,
-        "Return a list of " RST_CLASS_REF(lief.ELF.MIPS_EFLAGS) " present in "
-        ":attr:`~lief.ELF.Header.processor_flag`"_doc,
-        nb::rv_policy::reference_internal)
-
-    .def_prop_ro("ppc64_flags_list",
-        &Header::ppc64_flags_list,
-        "Return a list of " RST_CLASS_REF(lief.ELF.PPC64_EFLAGS) " present in "
-        ":attr:`~lief.ELF.Header.processor_flag`"_doc,
-        nb::rv_policy::reference_internal)
-
-    .def_prop_ro("hexagon_flags_list",
-        &Header::hexagon_flags_list,
-        "Return a list of " RST_CLASS_REF(lief.ELF.HEXAGON_EFLAGS) " present in "
-        ":attr:`~lief.ELF.Header.processor_flag`"_doc,
-        nb::rv_policy::reference_internal)
-
-    .def_prop_ro("loongarch_flags_list",
-        &Header::loongarch_flags_list,
-        "Return a list of " RST_CLASS_REF(lief.ELF.LOONGARCH_EFLAGS) " present in "
-        ":attr:`~lief.ELF.Header.processor_flag`"_doc,
-        nb::rv_policy::reference_internal)
+    .def_prop_ro("flags_list", &Header::flags_list,
+                 "Processor flags as a list"_doc)
 
     .def_prop_rw("header_size",
         nb::overload_cast<>(&Header::header_size, nb::const_),
         nb::overload_cast<uint32_t>(&Header::header_size),
         R"delim(
         Return the size of the ELF header
-
         This size should be 64 for an ``ELF64`` binary and 52 for an ``ELF32``.
         )delim"_doc)
 
@@ -166,9 +222,8 @@ void create<Header>(nb::module_& m) {
         nb::overload_cast<>(&Header::program_header_size, nb::const_),
         nb::overload_cast<uint32_t>(&Header::program_header_size),
         R"delim(
-        Return the size of a Segment header (:class:`lief.ELF.Segment`)
-
-        This size should be 56 for a ``ELF64`` binary and 32 for an ``ELF32``.
+        Return the size of the raw ``Elfxx_Phdr`` structure (see :class:`lief.ELF.Segment`)
+        This size should be 56 for an ``ELF64`` binary and 32 for an ``ELF32``.
         )delim"_doc)
 
     .def_prop_rw("numberof_segments",
@@ -180,9 +235,9 @@ void create<Header>(nb::module_& m) {
         nb::overload_cast<>(&Header::section_header_size, nb::const_),
         nb::overload_cast<uint32_t>(&Header::section_header_size),
         R"delim(
-        Return the size of a Section header (:class:`lief.ELF.Section`)
+        Return the size of the raw ``Elfxx_Shdr`` (:class:`lief.ELF.Section`)
 
-        This size should be 64 for a ``ELF64`` binary and 40 for an ``ELF32``.
+        This size should be 64 for an ``ELF64`` binary and 40 for an ``ELF32``.
         )delim"_doc)
 
     .def_prop_rw("numberof_sections",
@@ -194,34 +249,6 @@ void create<Header>(nb::module_& m) {
         nb::overload_cast<>(&Header::section_name_table_idx, nb::const_),
         nb::overload_cast<uint32_t>(&Header::section_name_table_idx),
         "Return the section index which contains sections' names"_doc)
-
-    .def("__contains__",
-        nb::overload_cast<ARM_EFLAGS>(&Header::has, nb::const_),
-        "Check if the given " RST_CLASS_REF(lief.ELF.ARM_EFLAGS) " is present in "
-        ":attr:`~lief.ELF.Header.processor_flag`"_doc)
-
-
-    .def("__contains__",
-        nb::overload_cast<MIPS_EFLAGS>(&Header::has, nb::const_),
-        "Check if the given " RST_CLASS_REF(lief.ELF.MIPS_EFLAGS) " is present in "
-        ":attr:`~lief.ELF.Header.processor_flag`"_doc)
-
-
-    .def("__contains__",
-        nb::overload_cast<PPC64_EFLAGS>(&Header::has, nb::const_),
-        "Check if the given " RST_CLASS_REF(lief.ELF.PPC64_EFLAGS) " is present in "
-        ":attr:`~lief.ELF.Header.processor_flag`"_doc)
-
-
-    .def("__contains__",
-        nb::overload_cast<HEXAGON_EFLAGS>(&Header::has, nb::const_),
-        "Check if the given " RST_CLASS_REF(lief.ELF.HEXAGON_EFLAGS) " is present in "
-        ":attr:`~lief.ELF.Header.processor_flag`"_doc)
-
-    .def("__contains__",
-        nb::overload_cast<LOONGARCH_EFLAGS>(&Header::has, nb::const_),
-        "Check if the given " RST_CLASS_REF(lief.ELF.LOONGARCH_EFLAGS) " is present in "
-        ":attr:`~lief.ELF.Header.processor_flag`"_doc)
 
     LIEF_DEFAULT_STR(Header);
 }

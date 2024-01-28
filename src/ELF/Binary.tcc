@@ -41,7 +41,7 @@ namespace ELF {
 // ARM Relocations
 // ===============
 template<>
-void Binary::patch_relocations<ARCH::EM_ARM>(uint64_t from, uint64_t shift) {
+void Binary::patch_relocations<ARCH::ARM>(uint64_t from, uint64_t shift) {
   for (Relocation& relocation : relocations()) {
 
     if (relocation.address() >= from) {
@@ -49,13 +49,13 @@ void Binary::patch_relocations<ARCH::EM_ARM>(uint64_t from, uint64_t shift) {
       relocation.address(relocation.address() + shift);
     }
 
-    const auto type = static_cast<RELOC_ARM>(relocation.type());
+    const Relocation::TYPE type = relocation.type();
 
     switch (type) {
-      case RELOC_ARM::R_ARM_JUMP_SLOT:
-      case RELOC_ARM::R_ARM_RELATIVE:
-      case RELOC_ARM::R_ARM_GLOB_DAT:
-      case RELOC_ARM::R_ARM_IRELATIVE:
+      case Relocation::TYPE::ARM_JUMP_SLOT:
+      case Relocation::TYPE::ARM_RELATIVE:
+      case Relocation::TYPE::ARM_GLOB_DAT:
+      case Relocation::TYPE::ARM_IRELATIVE:
         {
           LIEF_DEBUG("Patch addend of {}", relocation);
           patch_addend<uint32_t>(relocation, from, shift);
@@ -75,7 +75,7 @@ void Binary::patch_relocations<ARCH::EM_ARM>(uint64_t from, uint64_t shift) {
 // AARCH64 Relocations
 // ===================
 template<>
-void Binary::patch_relocations<ARCH::EM_AARCH64>(uint64_t from, uint64_t shift) {
+void Binary::patch_relocations<ARCH::AARCH64>(uint64_t from, uint64_t shift) {
   for (Relocation& relocation : relocations()) {
 
     if (relocation.address() >= from) {
@@ -83,50 +83,49 @@ void Binary::patch_relocations<ARCH::EM_AARCH64>(uint64_t from, uint64_t shift) 
       relocation.address(relocation.address() + shift);
     }
 
-    const auto type = static_cast<RELOC_AARCH64>(relocation.type());
+    const Relocation::TYPE type = relocation.type();
 
     switch (type) {
-      case RELOC_AARCH64::R_AARCH64_JUMP_SLOT:
-      case RELOC_AARCH64::R_AARCH64_RELATIVE:
-      case RELOC_AARCH64::R_AARCH64_GLOB_DAT:
-      case RELOC_AARCH64::R_AARCH64_IRELATIVE:
-      case RELOC_AARCH64::R_AARCH64_ABS64:
+      case Relocation::TYPE::AARCH64_JUMP_SLOT:
+      case Relocation::TYPE::AARCH64_RELATIVE:
+      case Relocation::TYPE::AARCH64_GLOB_DAT:
+      case Relocation::TYPE::AARCH64_IRELATIVE:
+      case Relocation::TYPE::AARCH64_ABS64:
         {
           LIEF_DEBUG("Patch addend of {}", relocation);
           patch_addend<uint64_t>(relocation, from, shift);
           break;
         }
 
-      case RELOC_AARCH64::R_AARCH64_ABS32:
+      case Relocation::TYPE::AARCH64_ABS32:
         {
           LIEF_DEBUG("Patch addend of {}", relocation);
           patch_addend<uint32_t>(relocation, from, shift);
           break;
         }
 
-      case RELOC_AARCH64::R_AARCH64_ABS16:
+      case Relocation::TYPE::AARCH64_ABS16:
         {
           LIEF_DEBUG("Patch addend of {}", relocation);
           patch_addend<uint16_t>(relocation, from, shift);
           break;
         }
 
-
-      case RELOC_AARCH64::R_AARCH64_PREL64:
+      case Relocation::TYPE::AARCH64_PREL64:
         {
           LIEF_DEBUG("Patch addend of {}", relocation);
           patch_addend<uint64_t>(relocation, from, shift);
           break;
         }
 
-      case RELOC_AARCH64::R_AARCH64_PREL32:
+      case Relocation::TYPE::AARCH64_PREL32:
         {
           LIEF_DEBUG("Patch addend of {}", relocation);
           patch_addend<uint32_t>(relocation, from, shift);
           break;
         }
 
-      case RELOC_AARCH64::R_AARCH64_PREL16:
+      case Relocation::TYPE::AARCH64_PREL16:
         {
           LIEF_DEBUG("Patch addend of {}", relocation);
           patch_addend<uint16_t>(relocation, from, shift);
@@ -145,28 +144,28 @@ void Binary::patch_relocations<ARCH::EM_AARCH64>(uint64_t from, uint64_t shift) 
 // x86_32 Relocations
 // ==================
 template<>
-void Binary::patch_relocations<ARCH::EM_386>(uint64_t from, uint64_t shift) {
+void Binary::patch_relocations<ARCH::I386>(uint64_t from, uint64_t shift) {
   for (Relocation& relocation : relocations()) {
     if (relocation.address() >= from) {
       //shift_code(relocation.address(), shift, relocation.size() / 8);
       relocation.address(relocation.address() + shift);
     }
 
-    const auto type = static_cast<RELOC_i386>(relocation.type());
+    const Relocation::TYPE type = relocation.type();
 
     switch (type) {
-      case RELOC_i386::R_386_RELATIVE:
-      case RELOC_i386::R_386_JUMP_SLOT:
-      case RELOC_i386::R_386_IRELATIVE:
-      case RELOC_i386::R_386_GLOB_DAT:
-      case RELOC_i386::R_386_32:
+      case Relocation::TYPE::X86_RELATIVE:
+      case Relocation::TYPE::X86_JUMP_SLOT:
+      case Relocation::TYPE::X86_IRELATIVE:
+      case Relocation::TYPE::X86_GLOB_DAT:
+      case Relocation::TYPE::X86_32:
         {
           LIEF_DEBUG("Patch addend of {}", relocation);
           patch_addend<uint32_t>(relocation, from, shift);
           break;
         }
-      case RELOC_i386::R_386_TLS_DTPMOD32:
-      case RELOC_i386::R_386_TLS_DTPOFF32:
+      case Relocation::TYPE::X86_TLS_DTPMOD32:
+      case Relocation::TYPE::X86_TLS_DTPOFF32:
         {
           // Nothing to do for these relocations
           continue;
@@ -184,27 +183,28 @@ void Binary::patch_relocations<ARCH::EM_386>(uint64_t from, uint64_t shift) {
 // x86_64 Relocations
 // ==================
 template<>
-void Binary::patch_relocations<ARCH::EM_X86_64>(uint64_t from, uint64_t shift) {
+void Binary::patch_relocations<ARCH::X86_64>(uint64_t from, uint64_t shift) {
   for (Relocation& relocation : relocations()) {
     if (relocation.address() >= from) {
       //shift_code(relocation.address(), shift, relocation.size() / 8);
       relocation.address(relocation.address() + shift);
     }
 
-    const auto type = static_cast<RELOC_x86_64>(relocation.type());
+    const Relocation::TYPE type = relocation.type();
+
     switch (type) {
-      case RELOC_x86_64::R_X86_64_RELATIVE:
-      case RELOC_x86_64::R_X86_64_IRELATIVE:
-      case RELOC_x86_64::R_X86_64_JUMP_SLOT:
-      case RELOC_x86_64::R_X86_64_GLOB_DAT:
-      case RELOC_x86_64::R_X86_64_64:
+      case Relocation::TYPE::X86_64_RELATIVE:
+      case Relocation::TYPE::X86_64_IRELATIVE:
+      case Relocation::TYPE::X86_64_JUMP_SLOT:
+      case Relocation::TYPE::X86_64_GLOB_DAT:
+      case Relocation::TYPE::X86_64_64:
         {
           LIEF_DEBUG("Patch addend of {}", relocation);
           patch_addend<uint64_t>(relocation, from, shift);
           break;
         }
 
-      case RELOC_x86_64::R_X86_64_32:
+      case Relocation::TYPE::X86_64_32:
         {
           LIEF_DEBUG("Patch addend of {}", relocation);
           patch_addend<uint32_t>(relocation, from, shift);
@@ -224,16 +224,16 @@ void Binary::patch_relocations<ARCH::EM_X86_64>(uint64_t from, uint64_t shift) {
 // PPC_32 Relocations
 // ==================
 template<>
-void Binary::patch_relocations<ARCH::EM_PPC>(uint64_t from, uint64_t shift) {
+void Binary::patch_relocations<ARCH::PPC>(uint64_t from, uint64_t shift) {
   for (Relocation& relocation : relocations()) {
     if (relocation.address() >= from) {
       relocation.address(relocation.address() + shift);
     }
 
-    const auto type = static_cast<RELOC_POWERPC32>(relocation.type());
+    const Relocation::TYPE type = relocation.type();
 
     switch (type) {
-      case RELOC_POWERPC32::R_PPC_RELATIVE:
+      case Relocation::TYPE::PPC_RELATIVE:
         {
           LIEF_DEBUG("Patch addend of {}", relocation);
           patch_addend<uint32_t>(relocation, from, shift);
@@ -309,7 +309,7 @@ void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift)
 // To do so, we would just need to extend the PT_LOAD segment associated
 // with the caving.
 template<>
-Segment* Binary::add_segment<E_TYPE::ET_EXEC>(const Segment& segment, uint64_t base) {
+Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment, uint64_t base) {
   Header& header = this->header();
   const uint64_t new_phdr_offset = relocate_phdr_table_auto();
 
@@ -393,7 +393,7 @@ Segment* Binary::add_segment<E_TYPE::ET_EXEC>(const Segment& segment, uint64_t b
 // ET_DYN (PIE/Libraries)
 // =======================
 template<>
-Segment* Binary::add_segment<E_TYPE::ET_DYN>(const Segment& segment, uint64_t base) {
+Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment, uint64_t base) {
   const auto psize = static_cast<uint64_t>(getpagesize());
 
   /*const uint64_t new_phdr_offset = */ relocate_phdr_table_auto();
@@ -464,7 +464,7 @@ Segment* Binary::add_segment<E_TYPE::ET_DYN>(const Segment& segment, uint64_t ba
 // Extend PT_LOAD
 // =======================
 template<>
-Segment* Binary::extend_segment<SEGMENT_TYPES::PT_LOAD>(const Segment& segment, uint64_t size) {
+Segment* Binary::extend_segment<Segment::TYPE::LOAD>(const Segment& segment, uint64_t size) {
 
   const auto it_segment = std::find_if(std::begin(segments_), std::end(segments_),
                                        [&segment] (const std::unique_ptr<Segment>& s) {
@@ -512,7 +512,7 @@ Segment* Binary::extend_segment<SEGMENT_TYPES::PT_LOAD>(const Segment& segment, 
   shift_symbols(from_address, shift);
   shift_relocations(from_address, shift);
 
-  if (type() == ELF_CLASS::ELFCLASS32) {
+  if (type() == Header::CLASS::ELF32) {
     fix_got_entries<details::ELF32>(from_address, shift);
   } else {
     fix_got_entries<details::ELF64>(from_address, shift);
@@ -533,7 +533,7 @@ Section* Binary::add_section<true>(const Section& section) {
   Segment new_segment;
   span<const uint8_t> content_ref = section.content();
   new_segment.content({std::begin(content_ref), std::end(content_ref)});
-  new_segment.type(SEGMENT_TYPES::PT_LOAD);
+  new_segment.type(Segment::TYPE::LOAD);
 
   new_segment.virtual_address(section.virtual_address());
   new_segment.physical_address(section.virtual_address());
@@ -542,14 +542,14 @@ Section* Binary::add_section<true>(const Section& section) {
   new_segment.file_offset(section.offset());
   new_segment.alignment(section.alignment());
 
-  new_segment.add(ELF_SEGMENT_FLAGS::PF_R);
+  new_segment.add(Segment::FLAGS::R);
 
-  if (section.has(ELF_SECTION_FLAGS::SHF_WRITE)) {
-    new_segment.add(ELF_SEGMENT_FLAGS::PF_W);
+  if (section.has(Section::FLAGS::WRITE)) {
+    new_segment.add(Segment::FLAGS::W);
   }
 
-  if (section.has(ELF_SECTION_FLAGS::SHF_EXECINSTR)) {
-    new_segment.add(ELF_SEGMENT_FLAGS::PF_X);
+  if (section.has(Section::FLAGS::EXECINSTR)) {
+    new_segment.add(Segment::FLAGS::X);
   }
 
   Segment* segment_added = add(new_segment);
@@ -625,7 +625,7 @@ template<class ELF_T>
 void Binary::fix_got_entries(uint64_t from, uint64_t shift) {
   using ptr_t = typename ELF_T::Elf_Addr;
 
-  DynamicEntry* dt_pltgot = get(DYNAMIC_TAGS::DT_PLTGOT);
+  DynamicEntry* dt_pltgot = get(DynamicEntry::TAG::PLTGOT);
   if (dt_pltgot == nullptr) {
     return;
   }

@@ -48,7 +48,7 @@ class LIEF_API Header : public Object {
   bool is_64() const;
 
   //! @brief Method so that the ``visitor`` can visit us
-  void           accept(Visitor& visitor) const override;
+  void accept(Visitor& visitor) const override;
 
   void architecture(ARCHITECTURES arch);
   void modes(const std::set<MODES>& m);

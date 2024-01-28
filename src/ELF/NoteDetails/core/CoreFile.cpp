@@ -96,21 +96,21 @@ void CoreFile::write_files() {
   ios.move(description_);
 }
 
-CoreFile::CoreFile(ARCH arch, ELF_CLASS cls, std::string name,
+CoreFile::CoreFile(ARCH arch, Header::CLASS cls, std::string name,
                    uint32_t type, Note::description_t description) :
   Note(std::move(name), Note::TYPE::CORE_FILE, type, std::move(description)),
   arch_(arch), class_(cls)
 {
 
-  class_ == ELF_CLASS::ELFCLASS32 ? read_files<details::ELF32>() :
-                                    read_files<details::ELF64>();
+  class_ == Header::CLASS::ELF32 ? read_files<details::ELF32>() :
+                                   read_files<details::ELF64>();
 }
 
 
 void CoreFile::files(const CoreFile::files_t& files) {
   files_ = files;
-  class_ == ELF_CLASS::ELFCLASS32 ? write_files<details::ELF32>() :
-                                    write_files<details::ELF64>();
+  class_ == Header::CLASS::ELF32 ? write_files<details::ELF32>() :
+                                   write_files<details::ELF64>();
 
 }
 

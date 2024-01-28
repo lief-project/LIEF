@@ -183,7 +183,7 @@ void JsonVisitor::visit(const Header& header) {
 
 void JsonVisitor::visit(const Section& section) {
   std::vector<json> flags;
-  for (ELF_SECTION_FLAGS f : section.flags_list()) {
+  for (Section::FLAGS f : section.flags_list()) {
     flags.emplace_back(to_string(f));
   }
 
@@ -261,23 +261,13 @@ void JsonVisitor::visit(const DynamicEntryFlags& entry) {
   std::vector<std::string> flags_str;
   flags_str.reserve(flags.size());
 
-  if (entry.tag() == DYNAMIC_TAGS::DT_FLAGS) {
-    std::transform(
-        std::begin(flags), std::end(flags),
-        std::back_inserter(flags_str),
-        [] (uint32_t f) {
-          return to_string(static_cast<DYNAMIC_FLAGS>(f));
-        });
-  }
+  std::transform(
+      std::begin(flags), std::end(flags),
+      std::back_inserter(flags_str),
+      [] (DynamicEntryFlags::FLAG f) {
+        return to_string(f);
+      });
 
-  if (entry.tag() == DYNAMIC_TAGS::DT_FLAGS_1) {
-    std::transform(
-        std::begin(flags), std::end(flags),
-        std::back_inserter(flags_str),
-        [] (uint32_t f) {
-          return to_string(static_cast<DYNAMIC_FLAGS_1>(f));
-        });
-  }
 
   node_["flags"] = flags_str;
 }
@@ -315,10 +305,7 @@ void JsonVisitor::visit(const Relocation& relocation) {
     section_name = reloc_sec->name();
   }
 
-
-  if (relocation.architecture() == ARCH::EM_X86_64) {
-    relocation_type = to_string(static_cast<RELOC_x86_64>(relocation.type()));
-  }
+  relocation_type = to_string(relocation.type());
 
   node_["symbol_name"] = symbol_name;
   node_["address"]     = relocation.address();
@@ -332,7 +319,6 @@ void JsonVisitor::visit(const SymbolVersion& sv) {
   if (sv.has_auxiliary_version()) {
    node_["symbol_version_auxiliary"] = sv.symbol_version_auxiliary()->name();
   }
-
 }
 
 void JsonVisitor::visit(const SymbolVersionRequirement& svr) {
@@ -457,28 +443,28 @@ void JsonVisitor::visit(const CorePrStatus& pstatus) {
   if (!reg_vals.empty()) {
     json regs;
     switch (pstatus.architecture()) {
-      case ARCH::EM_386:
+      case ARCH::I386:
         {
           for (size_t i = 0; i < reg_vals.size(); ++i) {
             regs[to_string(CorePrStatus::Registers::X86(i))] = reg_vals[i];
           }
           break;
         }
-      case ARCH::EM_X86_64:
+      case ARCH::X86_64:
         {
           for (size_t i = 0; i < reg_vals.size(); ++i) {
             regs[to_string(CorePrStatus::Registers::X86_64(i))] = reg_vals[i];
           }
           break;
         }
-      case ARCH::EM_ARM:
+      case ARCH::ARM:
         {
           for (size_t i = 0; i < reg_vals.size(); ++i) {
             regs[to_string(CorePrStatus::Registers::ARM(i))] = reg_vals[i];
           }
           break;
         }
-      case ARCH::EM_AARCH64:
+      case ARCH::AARCH64:
         {
           for (size_t i = 0; i < reg_vals.size(); ++i) {
             regs[to_string(CorePrStatus::Registers::AARCH64(i))] = reg_vals[i];

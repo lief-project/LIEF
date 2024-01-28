@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef C_LIEF_ELF_BINARY_H_
-#define C_LIEF_ELF_BINARY_H_
+#ifndef LIEF_C_ELF_BINARY_H
+#define LIEF_C_ELF_BINARY_H
 
 #include <stddef.h>
 
@@ -37,7 +37,7 @@ struct Elf_Binary_t {
   void*              handler;
   const char*        name;
   const char*        interpreter;
-  enum LIEF_ELF_ELF_CLASS     type;
+  uint32_t           type;
   Elf_Header_t       header;
   Elf_Section_t      **sections;
   Elf_Segment_t      **segments;

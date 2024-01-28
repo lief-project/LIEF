@@ -43,7 +43,7 @@ void create<DynamicSharedObject>(nb::module_& m) {
         [] (const DynamicSharedObject& obj) {
           return LIEF::py::safe_string(obj.name());
         },
-        nb::overload_cast<const std::string&>(&DynamicSharedObject::name),
+        nb::overload_cast<std::string>(&DynamicSharedObject::name),
         "Return the library name"_doc)
 
     LIEF_DEFAULT_STR(DynamicSharedObject);

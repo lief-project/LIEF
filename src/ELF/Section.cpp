@@ -18,68 +18,91 @@
 #include <numeric>
 #include <iterator>
 
-#include "LIEF/ELF/Parser.hpp"
-
 #include "logging.hpp"
+#include "frozen.hpp"
+#include "fmt_formatter.hpp"
 
-#include "LIEF/ELF/hash.hpp"
-
-#include "LIEF/ELF/EnumToString.hpp"
+#include "LIEF/Visitor.hpp"
 
 #include "LIEF/ELF/Section.hpp"
 #include "LIEF/ELF/Segment.hpp"
 
+#include "LIEF/ELF/EnumToString.hpp"
+
 #include "ELF/DataHandler/Handler.hpp"
 #include "ELF/Structures.hpp"
+
+FMT_FORMATTER(LIEF::ELF::Section::FLAGS, LIEF::ELF::to_string);
+FMT_FORMATTER(LIEF::ELF::Section::TYPE, LIEF::ELF::to_string);
 
 namespace LIEF {
 namespace ELF {
 
-Section::~Section() = default;
-Section::Section() = default;
+static constexpr uint64_t SHF_MASKPROC = 0xf0000000;
+static constexpr uint64_t SHT_LOPROC = 0x70000000;
+static constexpr uint64_t SHT_HIPROC = 0x7fffffff;
 
-Section::Section(const details::Elf64_Shdr& header) :
-  type_{static_cast<ELF_SECTION_TYPES>(header.sh_type)},
-  flags_{header.sh_flags},
-  original_size_{header.sh_size},
-  link_{header.sh_link},
-  info_{header.sh_info},
-  address_align_{header.sh_addralign},
-  entry_size_{header.sh_entsize}
-{
-  virtual_address_ = header.sh_addr;
-  offset_          = header.sh_offset;
-  size_            = header.sh_size;
-}
+static constexpr auto ARRAY_FLAGS = {
+  Section::FLAGS::NONE, Section::FLAGS::WRITE,
+  Section::FLAGS::ALLOC, Section::FLAGS::EXECINSTR,
+  Section::FLAGS::MERGE, Section::FLAGS::STRINGS,
+  Section::FLAGS::INFO_LINK, Section::FLAGS::LINK_ORDER,
+  Section::FLAGS::OS_NONCONFORMING, Section::FLAGS::GROUP,
+  Section::FLAGS::TLS, Section::FLAGS::COMPRESSED,
+  Section::FLAGS::GNU_RETAIN, Section::FLAGS::EXCLUDE,
+  Section::FLAGS::XCORE_SHF_DP_SECTION, Section::FLAGS::XCORE_SHF_CP_SECTION,
+  Section::FLAGS::X86_64_LARGE, Section::FLAGS::HEX_GPREL,
+  Section::FLAGS::MIPS_NODUPES, Section::FLAGS::MIPS_NAMES,
+  Section::FLAGS::MIPS_LOCAL, Section::FLAGS::MIPS_NOSTRIP,
+  Section::FLAGS::MIPS_GPREL, Section::FLAGS::MIPS_MERGE,
+  Section::FLAGS::MIPS_ADDR, Section::FLAGS::MIPS_STRING,
+  Section::FLAGS::ARM_PURECODE,
+};
 
-Section::Section(const details::Elf32_Shdr& header) :
-  type_{static_cast<ELF_SECTION_TYPES>(header.sh_type)},
-  flags_{header.sh_flags},
-  original_size_{header.sh_size},
-  link_{header.sh_link},
-  info_{header.sh_info},
-  address_align_{header.sh_addralign},
-  entry_size_{header.sh_entsize}
-{
-  virtual_address_ = header.sh_addr;
-  offset_          = header.sh_offset;
-  size_            = header.sh_size;
-}
+Section::TYPE Section::type_from(uint32_t value, ARCH arch) {
+  if (SHT_LOPROC <= value && value <= SHT_HIPROC) {
+    switch (arch) {
+      case ARCH::ARM:
+        return TYPE(value + (uint64_t(TYPE::_ARM_ID_) << uint8_t(TYPE::_ID_SHIFT_)));
 
-Section::Section(const std::string& name, ELF_SECTION_TYPES type) :
-  LIEF::Section{name},
-  type_{type}
-{}
+      case ARCH::HEXAGON:
+        return TYPE(value + (uint64_t(TYPE::_HEX_ID_) << uint8_t(TYPE::_ID_SHIFT_)));
 
+      case ARCH::X86_64:
+        return TYPE(value + (uint64_t(TYPE::_X86_64_ID_) << uint8_t(TYPE::_ID_SHIFT_)));
 
-Section::Section(const uint8_t *data, ELF_CLASS type)
-{
-  if (type == ELF_CLASS::ELFCLASS32) {
-    *this = {*reinterpret_cast<const details::Elf32_Shdr*>(data)};
-  } else if (type == ELF_CLASS::ELFCLASS64) {
-    *this = {*reinterpret_cast<const details::Elf64_Shdr*>(data)};
+      case ARCH::MIPS:
+        return TYPE(value + (uint64_t(TYPE::_MIPS_ID_) << uint8_t(TYPE::_ID_SHIFT_)));
+
+      default:
+        {
+          LIEF_ERR("Arch-specific section: 0x{:08x} is not recognized for {}",
+                   value, to_string(arch));
+          return TYPE::SHT_NULL;
+        }
+    }
   }
+  return TYPE(value);
 }
+
+template<class T>
+Section::Section(const T& header, ARCH arch) :
+  arch_{arch},
+  type_{type_from(header.sh_type, arch)},
+  flags_{header.sh_flags},
+  original_size_{header.sh_size},
+  link_{header.sh_link},
+  info_{header.sh_info},
+  address_align_{header.sh_addralign},
+  entry_size_{header.sh_entsize}
+{
+  virtual_address_ = header.sh_addr;
+  offset_          = header.sh_offset;
+  size_            = header.sh_size;
+}
+
+template Section::Section(const details::Elf32_Shdr& header, ARCH);
+template Section::Section(const details::Elf64_Shdr& header, ARCH);
 
 Section& Section::operator=(Section other) {
   swap(other);
@@ -88,6 +111,7 @@ Section& Section::operator=(Section other) {
 
 Section::Section(const Section& other) :
   LIEF::Section{other},
+  arch_{other.arch_},
   type_{other.type_},
   flags_{other.flags_},
   original_size_{other.original_size_},
@@ -97,16 +121,15 @@ Section::Section(const Section& other) :
   entry_size_{other.entry_size_},
   is_frame_{other.is_frame_},
   content_c_{other.content_c_}
-{
-}
+{}
 
 void Section::swap(Section& other) {
-
   std::swap(name_,            other.name_);
   std::swap(virtual_address_, other.virtual_address_);
   std::swap(offset_,          other.offset_);
   std::swap(size_,            other.size_);
 
+  std::swap(arch_,           other.arch_);
   std::swap(type_,           other.type_);
   std::swap(flags_,          other.flags_);
   std::swap(original_size_,  other.original_size_);
@@ -120,20 +143,6 @@ void Section::swap(Section& other) {
   std::swap(content_c_,      other.content_c_);
 }
 
-
-ELF_SECTION_TYPES Section::type() const {
-  return type_;
-}
-
-uint64_t Section::flags() const {
-  return flags_;
-}
-
-bool Section::has(ELF_SECTION_FLAGS flag) const {
-  return (flags() & static_cast<uint64_t>(flag)) != 0;
-}
-
-
 bool Section::has(const Segment& segment) const {
   auto it_segment = std::find_if(std::begin(segments_), std::end(segments_),
       [&segment] (Segment* s) {
@@ -142,42 +151,15 @@ bool Section::has(const Segment& segment) const {
   return it_segment != std::end(segments_);
 }
 
-uint64_t Section::file_offset() const {
-  return offset();
-}
-
-uint64_t Section::original_size() const {
-  return original_size_;
-}
-
-uint64_t Section::information() const {
-  return info_;
-}
-
-uint64_t Section::entry_size() const {
-  return entry_size_;
-}
-
-uint64_t Section::alignment() const {
-  return address_align_;
-}
-
-uint64_t Section::size() const {
-  return size_;
-}
-
-uint64_t Section::offset() const {
-  return offset_;
-}
-
 
 void Section::size(uint64_t size) {
   if (datahandler_ != nullptr && !is_frame()) {
     if (auto node = datahandler_->get(file_offset(), this->size(), DataHandler::Node::SECTION)) {
       node->get().size(size);
     } else {
-      if (type() != ELF_SECTION_TYPES::SHT_NOBITS) {
+      if (type() != TYPE::NOBITS) {
         LIEF_ERR("Node not found. Can't resize the section {}", name());
+        std::abort();
       }
     }
   }
@@ -190,7 +172,7 @@ void Section::offset(uint64_t offset) {
     if (auto node = datahandler_->get(file_offset(), size(), DataHandler::Node::SECTION)) {
       node->get().offset(offset);
     } else {
-      if (type() != ELF_SECTION_TYPES::SHT_NOBITS) {
+      if (type() != TYPE::NOBITS) {
         LIEF_WARN("Node not found. Can't change the offset of the section {}", name());
       }
     }
@@ -207,13 +189,13 @@ span<const uint8_t> Section::content() const {
     return content_c_;
   }
 
-  if (size() > Parser::MAX_SECTION_SIZE) {
+  if (size() > MAX_SECTION_SIZE) {
     return {};
   }
 
   auto res = datahandler_->get(offset(), size(), DataHandler::Node::SECTION);
   if (!res) {
-    if (type() != ELF_SECTION_TYPES::SHT_NOBITS) {
+    if (type() != TYPE::NOBITS) {
       LIEF_WARN("Section '{}' does not have content", name());
     }
     return {};
@@ -224,16 +206,11 @@ span<const uint8_t> Section::content() const {
   return {ptr, ptr + node.size()};
 }
 
-uint32_t Section::link() const {
-  return link_;
-}
-
-std::set<ELF_SECTION_FLAGS> Section::flags_list() const {
-  std::set<ELF_SECTION_FLAGS> flags;
-  std::copy_if(std::begin(details::section_flags_array), std::end(details::section_flags_array),
-               std::inserter(flags, std::begin(flags)),
-               [this] (ELF_SECTION_FLAGS f) { return has(f); });
-
+std::vector<Section::FLAGS> Section::flags_list() const {
+  std::vector<FLAGS> flags;
+  std::copy_if(std::begin(ARRAY_FLAGS), std::end(ARRAY_FLAGS),
+               std::back_inserter(flags),
+               [this] (FLAGS f) { return has(f); });
   return flags;
 }
 
@@ -242,7 +219,7 @@ void Section::content(const std::vector<uint8_t>& data) {
     return;
   }
 
-  if (!data.empty() && type() == ELF_SECTION_TYPES::SHT_NOBITS) {
+  if (!data.empty() && type() == TYPE::NOBITS) {
     LIEF_INFO("You inserted 0x{:x} bytes in section '{}' which has SHT_NOBITS type",
               data.size(), name());
   }
@@ -286,7 +263,7 @@ void Section::content(std::vector<uint8_t>&& data) {
   if (is_frame()) {
     return;
   }
-  if (!data.empty() && type() == ELF_SECTION_TYPES::SHT_NOBITS) {
+  if (!data.empty() && type() == TYPE::NOBITS) {
     LIEF_INFO("You inserted 0x{:x} bytes in section '{}' which has SHT_NOBITS type",
               data.size(), name());
   }
@@ -322,55 +299,50 @@ void Section::content(std::vector<uint8_t>&& data) {
             std::begin(binary_content) + node.offset());
 }
 
-void Section::type(ELF_SECTION_TYPES type) {
-  type_ = type;
+bool Section::has(Section::FLAGS flag) const {
+  if ((flags_ & SHF_MASKPROC) == 0) {
+    return (flags_ & (static_cast<uint64_t>(flag) & FLAG_MASK)) != 0;
+  }
+
+  uint64_t raw_flag = static_cast<uint64_t>(flag);
+  size_t id = raw_flag >> uint8_t(FLAGS::_ID_SHIFT_);
+
+  if (id > 0 && arch_ == ARCH::NONE) {
+    LIEF_WARN("Missing architecture. Can't determine whether the flag is present");
+    return false;
+  }
+
+  if (id == uint8_t(FLAGS::_XCORE_ID_) && arch_ != ARCH::XCORE) {
+    return false;
+  }
+
+  if (id == uint8_t(FLAGS::_X86_64_ID_) && arch_ != ARCH::X86_64) {
+    return false;
+  }
+
+  if (id == uint8_t(FLAGS::_HEX_ID_) && arch_ != ARCH::HEXAGON) {
+    return false;
+  }
+
+  if (id == uint8_t(FLAGS::_MIPS_ID_) && arch_ != ARCH::MIPS) {
+    return false;
+  }
+
+  if (id == uint8_t(FLAGS::_ARM_ID_) && arch_ != ARCH::ARM) {
+    return false;
+  }
+
+  return (flags_ & (static_cast<uint64_t>(flag) & FLAG_MASK)) != 0;
 }
 
-void Section::flags(uint64_t flags) {
-  flags_ = flags;
+void Section::add(Section::FLAGS flag) {
+  flags(flags() | (static_cast<uint64_t>(flag) & FLAG_MASK));
 }
 
-void Section::add(ELF_SECTION_FLAGS flag) {
-  flags(flags() | static_cast<uint64_t>(flag));
+void Section::remove(Section::FLAGS flag) {
+  const auto raw_flag = static_cast<uint64_t>(flag) & FLAG_MASK;
+  flags(flags() & (~ raw_flag));
 }
-
-void Section::remove(ELF_SECTION_FLAGS flag) {
-  flags(flags() & (~ static_cast<uint64_t>(flag)));
-}
-
-void Section::clear_flags() {
-  flags(0);
-}
-
-void Section::file_offset(uint64_t offset) {
-  this->offset(offset);
-}
-
-void Section::link(uint32_t link) {
-  link_ = link;
-}
-
-void Section::information(uint32_t info) {
-  info_ = info;
-}
-
-void Section::alignment(uint64_t alignment) {
-  address_align_ = alignment;
-}
-
-void Section::entry_size(uint64_t entry_size) {
-  entry_size_ = entry_size;
-}
-
-
-Section::it_segments Section::segments() {
-  return segments_;
-}
-
-Section::it_const_segments Section::segments() const {
-  return segments_;
-}
-
 
 Section& Section::clear(uint8_t value) {
   if (is_frame()) {
@@ -391,27 +363,11 @@ Section& Section::clear(uint8_t value) {
 
   std::fill_n(std::begin(binary_content) + node.offset(), size(), value);
   return *this;
-
 }
 
 void Section::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
-
-
-Section& Section::operator+=(ELF_SECTION_FLAGS c) {
-  add(c);
-  return *this;
-}
-
-Section& Section::operator-=(ELF_SECTION_FLAGS c) {
-  remove(c);
-  return *this;
-}
-
-
-
-
 
 span<uint8_t> Section::writable_content() {
   if (is_frame()) {
@@ -421,34 +377,108 @@ span<uint8_t> Section::writable_content() {
   return {const_cast<uint8_t*>(ref.data()), ref.size()};
 }
 
-
 std::ostream& operator<<(std::ostream& os, const Section& section) {
   const auto& flags = section.flags_list();
-  std::string flags_str = std::accumulate(
-     std::begin(flags), std::end(flags), std::string{},
-     [] (const std::string& a, ELF_SECTION_FLAGS b) {
-         return a.empty() ? to_string(b) : a + " " + to_string(b);
-     });
 
-  Section::it_const_segments segments = section.segments();
-  std::string segments_str = std::accumulate(
-     std::begin(segments), std::end(segments), std::string{},
-     [] (const std::string& a, const Segment& segment) {
-         return a.empty() ? to_string(segment.type()) : a + " " + to_string(segment.type());
-     });
-
-  os << std::hex;
-  os << std::left
-     << std::setw(20) << section.name()
-     << std::setw(15) << to_string(section.type())
-     << std::setw(10) << section.virtual_address()
-     << std::setw(10) << section.size()
-     << std::setw(10) << section.file_offset()
-     << std::setw(10) << section.entropy()
-     << std::setw(30) << flags_str
-     << std::setw(15) << segments_str;
+  os << fmt::format("{} ({}) 0x{:08x}/0x{:08x} 0x{:04x} {} {}",
+                    section.name(), section.type(), section.virtual_address(),
+                    section.file_offset(), section.size(),
+                    section.entropy(), fmt::to_string(flags));
 
   return os;
 }
+
+
+const char* to_string(Section::TYPE e) {
+  #define ENTRY(X) std::pair(Section::TYPE::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(SHT_NULL),
+    ENTRY(PROGBITS),
+    ENTRY(SYMTAB),
+    ENTRY(STRTAB),
+    ENTRY(RELA),
+    ENTRY(HASH),
+    ENTRY(DYNAMIC),
+    ENTRY(NOTE),
+    ENTRY(NOBITS),
+    ENTRY(REL),
+    ENTRY(SHLIB),
+    ENTRY(DYNSYM),
+    ENTRY(INIT_ARRAY),
+    ENTRY(FINI_ARRAY),
+    ENTRY(PREINIT_ARRAY),
+    ENTRY(GROUP),
+    ENTRY(SYMTAB_SHNDX),
+    ENTRY(RELR),
+
+    ENTRY(ANDROID_REL),
+    ENTRY(ANDROID_RELA),
+    ENTRY(LLVM_ADDRSIG),
+    ENTRY(ANDROID_RELR),
+    ENTRY(GNU_ATTRIBUTES),
+    ENTRY(GNU_HASH),
+    ENTRY(GNU_VERDEF),
+    ENTRY(GNU_VERNEED),
+    ENTRY(GNU_VERSYM),
+
+    ENTRY(ARM_EXIDX),
+    ENTRY(ARM_PREEMPTMAP),
+    ENTRY(ARM_ATTRIBUTES),
+    ENTRY(ARM_DEBUGOVERLAY),
+    ENTRY(ARM_OVERLAYSECTION),
+    ENTRY(HEX_ORDERED),
+    ENTRY(X86_64_UNWIND),
+    ENTRY(MIPS_REGINFO),
+    ENTRY(MIPS_OPTIONS),
+    ENTRY(MIPS_ABIFLAGS),
+  };
+  #undef ENTRY
+
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
+  }
+  return "UNKNOWN";
+}
+
+const char* to_string(Section::FLAGS e) {
+  #define ENTRY(X) std::pair(Section::FLAGS::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(NONE),
+    ENTRY(WRITE),
+    ENTRY(ALLOC),
+    ENTRY(EXECINSTR),
+    ENTRY(MERGE),
+    ENTRY(STRINGS),
+    ENTRY(INFO_LINK),
+    ENTRY(LINK_ORDER),
+    ENTRY(OS_NONCONFORMING),
+    ENTRY(GROUP),
+    ENTRY(TLS),
+    ENTRY(COMPRESSED),
+    ENTRY(GNU_RETAIN),
+    ENTRY(EXCLUDE),
+    ENTRY(XCORE_SHF_DP_SECTION),
+    ENTRY(XCORE_SHF_CP_SECTION),
+    ENTRY(X86_64_LARGE),
+    ENTRY(HEX_GPREL),
+
+    ENTRY(MIPS_NODUPES),
+    ENTRY(MIPS_NAMES),
+    ENTRY(MIPS_LOCAL),
+    ENTRY(MIPS_NOSTRIP),
+    ENTRY(MIPS_GPREL),
+    ENTRY(MIPS_MERGE),
+    ENTRY(MIPS_ADDR),
+    ENTRY(MIPS_STRING),
+    ENTRY(ARM_PURECODE),
+  };
+  #undef ENTRY
+
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
+  }
+  return "UNKNOWN";
+}
+
 }
 }

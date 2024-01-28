@@ -40,49 +40,65 @@ class LIEF_API GnuHash : public Object {
   friend class Binary;
 
   public:
-  GnuHash();
+  GnuHash() = default;
   GnuHash(uint32_t symbol_idx, uint32_t shift2,
           std::vector<uint64_t> bloom_filters, std::vector<uint32_t> buckets,
           std::vector<uint32_t> hash_values = {});
 
 
-  GnuHash& operator=(const GnuHash& copy);
-  GnuHash(const GnuHash& copy);
+  GnuHash& operator=(const GnuHash& copy) = default;
+  GnuHash(const GnuHash& copy) = default;
 
-  GnuHash(GnuHash&&);
-  GnuHash& operator=(GnuHash&&);
+  GnuHash(GnuHash&&) = default;
+  GnuHash& operator=(GnuHash&&) = default;
 
-  ~GnuHash() override;
+  ~GnuHash() override = default;
 
   //! Return the number of buckets
   //! @see GnuHash::buckets
-  uint32_t nb_buckets() const;
+  uint32_t nb_buckets() const {
+    return buckets_.size();
+  }
 
   //! Index of the first symbol in the dynamic
   //! symbols table which accessible with the hash table
-  uint32_t symbol_index() const;
+  uint32_t symbol_index() const {
+    return symbol_index_;
+  }
 
   //! Shift count used in the bloom filter
-  uint32_t shift2() const;
+  uint32_t shift2() const {
+    return shift2_;
+  }
 
   //! Number of bloom filters used.
   //! It must be a power of 2
-  uint32_t maskwords() const;
+  uint32_t maskwords() const {
+    return bloom_filters_.size();
+  }
 
   //! Bloom filters
-  const std::vector<uint64_t>& bloom_filters() const;
+  const std::vector<uint64_t>& bloom_filters() const {
+    return bloom_filters_;
+  }
 
   //! Hash buckets
-  const std::vector<uint32_t>& buckets() const;
+  const std::vector<uint32_t>& buckets() const {
+    return buckets_;
+  }
 
   //! Hash values
-  const std::vector<uint32_t>& hash_values() const;
+  const std::vector<uint32_t>& hash_values() const {
+    return hash_values_;
+  }
 
   //! Check if the given hash passes the bloom filter
   bool check_bloom_filter(uint32_t hash) const;
 
   //! Check if the given hash passes the bucket filter
-  bool check_bucket(uint32_t hash) const;
+  bool check_bucket(uint32_t hash) const {
+    return buckets_[hash % nb_buckets()] > 0;
+  }
 
   //! Check if the symbol *probably* exists. If
   //! the returned value is ``false`` you can assume at ``100%`` that

@@ -40,11 +40,9 @@ void create<DynamicEntryArray>(nb::module_& m) {
       The underlying values are 64-bits integers to cover both:
       ELF32 and ELF64 binaries.
       )delim"_doc)
-    .def(nb::init<>())
 
-    .def(nb::init<DYNAMIC_TAGS, uint64_t>(),
-        "Constructor with " RST_CLASS_REF(lief.ELF.DYNAMIC_TAGS) " and value"_doc,
-        "tag"_a, "value"_a)
+    .def(nb::init<DynamicEntry::TAG, DynamicEntryArray::array_t>(),
+        "tag"_a, "array"_a)
 
     .def_prop_rw("array",
         nb::overload_cast<>(&DynamicEntryArray::array, nb::const_),
@@ -69,7 +67,6 @@ void create<DynamicEntryArray>(nb::module_& m) {
         "Remove the given ``function`` "_doc,
         "function"_a,
         nb::rv_policy::reference_internal)
-
 
     .def(nb::self += uint64_t())
     .def(nb::self -= uint64_t())

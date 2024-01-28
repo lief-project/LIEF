@@ -22,7 +22,6 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/Abstract/Symbol.hpp"
-
 #include "LIEF/ELF/enums.hpp"
 
 namespace LIEF {
@@ -32,95 +31,187 @@ class Binary;
 class SymbolVersion;
 class Section;
 
-namespace details {
-struct Elf32_Sym;
-struct Elf64_Sym;
-}
-
-//! Class which represents an ELF symbol
+/// Class which represents an ELF symbol
 class LIEF_API Symbol : public LIEF::Symbol {
   friend class Parser;
   friend class Binary;
+  public:
+
+  enum class BINDING {
+    LOCAL      = 0,  ///< Local symbol
+    GLOBAL     = 1,  ///< Global symbols
+    WEAK       = 2,  ///< Weak symbol
+    GNU_UNIQUE = 10, ///< Unique symbol
+  };
+
+  /// Type of the symbol. This enum matches the `STT_xxx` values of the ELF
+  /// specs
+  enum class TYPE {
+    NOTYPE    = 0,   ///< Symbol's type is not specified
+    OBJECT    = 1,   ///< Symbol is a data object (variable, array, etc.)
+    FUNC      = 2,   ///< Symbol is executable code (function, etc.)
+    SECTION   = 3,   ///< Symbol refers to a section
+    FILE      = 4,   ///< Local, absolute symbol that refers to a file
+    COMMON    = 5,   ///< An uninitialized common block
+    TLS       = 6,   ///< Thread local data object
+    GNU_IFUNC = 10,  ///< GNU indirect function
+  };
+
+  /// Visibility of the symbol. This enum matches the `STV_xxx` values of the
+  /// official ELF specs
+  enum class VISIBILITY {
+    DEFAULT   = 0,  ///< Visibility is specified by binding type
+    INTERNAL  = 1,  ///< Defined by processor supplements
+    HIDDEN    = 2,  ///< Not visible to other components
+    PROTECTED = 3   ///< Visible in other components but not preemptable
+  };
+
+  /// Special section indices
+  enum SECTION_INDEX {
+    UNDEF  = 0,      ///< Undefined section
+    ABS    = 0xfff1, ///< Associated symbol is absolute
+    COMMON = 0xfff2, ///< Associated symbol is common
+  };
 
   public:
-  Symbol(const details::Elf32_Sym& header, ARCH arch);
-  Symbol(const details::Elf64_Sym& header, ARCH arch);
-  Symbol(std::string name,
-      ELF_SYMBOL_TYPES type = ELF_SYMBOL_TYPES::STT_NOTYPE,
-      SYMBOL_BINDINGS binding = SYMBOL_BINDINGS::STB_WEAK,
-      uint8_t other = 0, uint16_t shndx = 0,
-      uint64_t value = 0, uint64_t size = 0);
-  Symbol();
+  Symbol(std::string name):
+    LIEF::Symbol(std::move(name), 0, 0)
+  {}
 
-  ~Symbol() override;
+  static BINDING binding_from(uint32_t value, ARCH) {
+    return BINDING(value);
+  }
+
+  static TYPE type_from(uint32_t value, ARCH) {
+    return TYPE(value);
+  }
+
+  static uint8_t to_value(BINDING binding) {
+    return static_cast<uint8_t>(binding);
+  }
+
+  static uint8_t to_value(TYPE type) {
+    return static_cast<uint8_t>(type);
+  }
+
+  Symbol() = default;
+  ~Symbol() override = default;
 
   Symbol& operator=(Symbol other);
   Symbol(const Symbol& other);
   void swap(Symbol& other);
 
-  //! The symbol's type provides a general classification for the associated entity
-  ELF_SYMBOL_TYPES type() const;
+  /// The symbol's type provides a general classification for the associated entity
+  TYPE type() const {
+    return type_;
+  }
 
-  //! The symbol's binding determines the linkage visibility and behavior
-  SYMBOL_BINDINGS binding() const;
+  /// The symbol's binding determines the linkage visibility and behavior
+  BINDING binding() const {
+    return binding_;
+  }
 
-  //! This member specifies the symbol's type and binding attributes.
+  /// This member specifies the symbol's type and binding attributes.
   uint8_t information() const;
 
-  //! Alias for visibility()
-  uint8_t other() const;
+  /// Alias for visibility()
+  uint8_t other() const {
+    return other_;
+  }
 
-  //! ELF::Section index associated with the symbol
-  uint16_t section_idx() const;
+  /// ELF::Section index associated with the symbol
+  uint16_t section_idx() const {
+    return shndx();
+  }
 
-  //! Symbol visibility
-  ELF_SYMBOL_VISIBILITY visibility() const;
+  /// Symbol visibility
+  VISIBILITY visibility() const {
+    return VISIBILITY(other_);
+  }
 
-  //! Section associated with the symbol or a nullptr if
-  //! it does not exist.
-  Section* section();
+  /// Section associated with the symbol or a nullptr if
+  /// it does not exist.
+  Section* section() {
+    return section_;
+  }
 
-  //! This member has slightly different interpretations:
-  //!   * In relocatable files, `value` holds alignment constraints for a symbol for which section index
-  //!     is SHN_COMMON
-  //!   * In relocatable files, `value` holds a section offset for a defined symbol. That is, `value` is an
-  //!     offset from the beginning of the section associated with this symbol.
-  //!   * In executable and shared object files, `value` holds a virtual address. To make these files's
-  //!     symbols more useful for the dynamic linker, the section offset (file interpretation) gives way to
-  //!     a virtual address (memory interpretation) for which the section number is irrelevant.
+  /// This member has slightly different interpretations:
+  ///   * In relocatable files, `value` holds alignment constraints for a symbol for which section index
+  ///     is SHN_COMMON
+  ///   * In relocatable files, `value` holds a section offset for a defined symbol. That is, `value` is an
+  ///     offset from the beginning of the section associated with this symbol.
+  ///   * In executable and shared object files, `value` holds a virtual address. To make these files's
+  ///     symbols more useful for the dynamic linker, the section offset (file interpretation) gives way to
+  ///     a virtual address (memory interpretation) for which the section number is irrelevant.
   uint64_t value() const override {
     return value_;
   }
 
-  //! Symbol size
-  //!
-  //! Many symbols have associated sizes. For example, a data object's size is the number of
-  //! bytes contained in the object. This member holds `0` if the symbol has no size or
-  //! an unknown size.
+  /// Symbol size
+  ///
+  /// Many symbols have associated sizes. For example, a data object's size is the number of
+  /// bytes contained in the object. This member holds `0` if the symbol has no size or
+  /// an unknown size.
   uint64_t size() const override {
     return size_;
   }
 
-  //! @see Symbol::section_idx
-  uint16_t shndx() const;
+  /// @see Symbol::section_idx
+  uint16_t shndx() const {
+    return shndx_;
+  }
 
-  //! Check if this symbols has a @link ELF::SymbolVersion symbol version @endlink
-  bool has_version() const;
+  /// Check if this symbols has a @link ELF::SymbolVersion symbol version @endlink
+  bool has_version() const {
+    return symbol_version_ != nullptr;
+  }
 
-  //! Return the SymbolVersion associated with this symbol.
-  //! If there is no symbol version, return a nullptr
-  SymbolVersion*       symbol_version();
-  const SymbolVersion* symbol_version() const;
+  /// Return the SymbolVersion associated with this symbol.
+  /// If there is no symbol version, return a nullptr
+  SymbolVersion* symbol_version() {
+    return symbol_version_;
+  }
 
-  //! Symbol's unmangled name. If not available, it returns an empty string
+  const SymbolVersion* symbol_version() const {
+    return symbol_version_;
+  }
+
+  bool is_local() const {
+    return binding() == BINDING::LOCAL;
+  }
+
+  bool is_global() const {
+    return binding() == BINDING::GLOBAL;
+  }
+
+  bool is_weak() const {
+    return binding() == BINDING::WEAK;
+  }
+
+  /// Symbol's unmangled name. If not available, it returns an empty string
   std::string demangled_name() const;
 
-  void type(ELF_SYMBOL_TYPES type);
-  void binding(SYMBOL_BINDINGS binding);
-  void other(uint8_t other);
-  void visibility(ELF_SYMBOL_VISIBILITY visibility);
+  void type(TYPE type) {
+    type_ = type;
+  }
+
+  void binding(BINDING binding) {
+    binding_ = binding;
+  }
+
+  void other(uint8_t other) {
+    other_ = other;
+  }
+
+  void visibility(VISIBILITY visibility) {
+    other_ = static_cast<uint8_t>(visibility);
+  }
+
   void information(uint8_t info);
-  void shndx(uint16_t idx);
+
+  void shndx(uint16_t idx) {
+    shndx_ = idx;
+  }
 
   void value(uint64_t value) override {
     value_ = value;
@@ -130,51 +221,53 @@ class LIEF_API Symbol : public LIEF::Symbol {
     size_ = size;
   }
 
-  void shndx(SYMBOL_SECTION_INDEX idx) {
-    this->shndx_ = static_cast<uint16_t>(idx);
-  }
-
-  //! Check if the current symbol is exported
+  /// Check if the current symbol is exported
   bool is_exported() const;
 
-  //! Set whether or not the symbol is exported
+  /// Set whether or not the symbol is exported
   void set_exported(bool flag = true);
 
-  //! Check if the current symbol is imported
+  /// Check if the current symbol is imported
   bool is_imported() const;
 
-  //! Set whether or not the symbol is imported
+  /// Set whether or not the symbol is imported
   void set_imported(bool flag = true);
 
-  //! True if the symbol is a static one
+  /// True if the symbol is a static one
   bool is_static() const {
-    return this->binding() == SYMBOL_BINDINGS::STB_GLOBAL;
+    return this->binding() == BINDING::GLOBAL;
   }
 
-  //! True if the symbol represent a function
+  /// True if the symbol represent a function
   bool is_function() const {
-    return this->type() == ELF_SYMBOL_TYPES::STT_FUNC;
+    return this->type() == TYPE::FUNC;
   }
 
-  //! True if the symbol represent a variable
+  /// True if the symbol represent a variable
   bool is_variable() const {
-    return this->type() == ELF_SYMBOL_TYPES::STT_OBJECT;
+    return this->type() == TYPE::OBJECT;
   }
 
   void accept(Visitor& visitor) const override;
 
-
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Symbol& entry);
 
   private:
-  ELF_SYMBOL_TYPES type_    = ELF_SYMBOL_TYPES::STT_NOTYPE;
-  SYMBOL_BINDINGS  binding_ = SYMBOL_BINDINGS::STB_LOCAL;
-  uint8_t          other_   = 0;
-  uint16_t         shndx_   = 0;
-  Section*         section_ = nullptr;
-  SymbolVersion*   symbol_version_ = nullptr;
-  ARCH             arch_ = ARCH::EM_NONE;
+  template<class T>
+  LIEF_API Symbol(const T& header, ARCH arch);
+
+  TYPE    type_ = TYPE::NOTYPE;
+  BINDING binding_ = BINDING::LOCAL;
+  uint8_t other_   = 0;
+  uint16_t shndx_   = 0;
+  Section* section_ = nullptr;
+  SymbolVersion* symbol_version_ = nullptr;
+  ARCH arch_ = ARCH::NONE;
 };
+
+LIEF_API const char* to_string(Symbol::BINDING binding);
+LIEF_API const char* to_string(Symbol::TYPE type);
+LIEF_API const char* to_string(Symbol::VISIBILITY viz);
 }
 }
 #endif /* _ELF_SYMBOL_H */

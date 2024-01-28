@@ -67,7 +67,7 @@ Once the stub is injected we have to calculate the new address for the ``exp`` s
 
   new_address = segment_added.virtual_address + hook_symbol.value - code_segment.virtual_address
   exp_symbol.value = new_address
-  exp_symbol.type  = lief.ELF.SYMBOL_TYPES.FUNC  # it might have been GNU_IFUNC
+  exp_symbol.type  = lief.ELF.Symbol.TYPE.FUNC  # it might have been GNU_IFUNC
 
 Note that we have to update symbol's type to be regular `FUNC` because on many
 distributions `libm.so` is built with automatic hardware detection and exposes

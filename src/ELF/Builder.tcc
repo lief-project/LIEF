@@ -60,14 +60,14 @@ namespace ELF {
 
 template<class ELF_T>
 ok_error_t Builder::build() {
-  const char* type = ((binary_->type_ == ELF_CLASS::ELFCLASS32) ? "ELF32" : "ELF64");
+  const char* type = ((binary_->type_ == Header::CLASS::ELF32) ? "ELF32" : "ELF64");
   LIEF_DEBUG("== Re-building {} ==", type);
 
-  const E_TYPE file_type = binary_->header().file_type();
+  const Header::FILE_TYPE file_type = binary_->header().file_type();
   switch (file_type) {
-    case E_TYPE::ET_DYN:
-    case E_TYPE::ET_EXEC:
-    case E_TYPE::ET_CORE:
+    case Header::FILE_TYPE::DYN:
+    case Header::FILE_TYPE::EXEC:
+    case Header::FILE_TYPE::CORE:
       {
         auto res = build_exe_lib<ELF_T>();
         if (!res) {
@@ -78,7 +78,7 @@ ok_error_t Builder::build() {
         return ok();
       }
 
-    case E_TYPE::ET_REL:
+    case Header::FILE_TYPE::REL:
       {
         auto res = build_relocatable<ELF_T>();
         if (!res) {
@@ -105,7 +105,7 @@ ok_error_t Builder::build_exe_lib() {
   uint32_t new_symndx = sort_dynamic_symbols();
   layout->set_dyn_sym_idx(new_symndx);
 
-  Segment* pt_interp = binary_->get(SEGMENT_TYPES::PT_INTERP);
+  Segment* pt_interp = binary_->get(Segment::TYPE::INTERP);
   if (config_.interpreter) {
     if (pt_interp != nullptr) {
       const size_t interpt_size = layout->interpreter_size<ELF_T>();
@@ -125,11 +125,11 @@ ok_error_t Builder::build_exe_lib() {
     }
   }
 
-  if (binary_->has(SEGMENT_TYPES::PT_NOTE) && config_.notes) {
+  if (binary_->has(Segment::TYPE::NOTE) && config_.notes) {
     const size_t notes_size = layout->note_size<ELF_T>();
     std::vector<Segment*> note_segments;
     for (std::unique_ptr<Segment>& seg : binary_->segments_) {
-      if (seg->type() == SEGMENT_TYPES::PT_NOTE) {
+      if (seg->type() == Segment::TYPE::NOTE) {
         note_segments.push_back(seg.get());
       }
     }
@@ -151,7 +151,7 @@ ok_error_t Builder::build_exe_lib() {
     } else { /*LIEF_DEBUG(".notes: -0x{:x} bytes", note_segment.physical_size() - notes_size);*/ }
   }
 
-  if (binary_->has(DYNAMIC_TAGS::DT_GNU_HASH) && config_.gnu_hash) {
+  if (binary_->has(DynamicEntry::TAG::GNU_HASH) && config_.gnu_hash) {
     const size_t needed_size = layout->symbol_gnu_hash_size<ELF_T>();
     const uint64_t osize = binary_->sizing_info_->gnu_hash;
     const bool should_relocate = needed_size > osize || config_.force_relocate;
@@ -161,7 +161,7 @@ ok_error_t Builder::build_exe_lib() {
     } else { LIEF_DEBUG("DT_GNU_HASH: -0x{:x} bytes", osize - needed_size); }
   }
 
-  if (binary_->has(DYNAMIC_TAGS::DT_HASH) && config_.dt_hash) {
+  if (binary_->has(DynamicEntry::TAG::HASH) && config_.dt_hash) {
     const size_t needed_size = layout->symbol_sysv_hash_size<ELF_T>();
     const uint64_t osize = binary_->sizing_info_->hash;
     const bool should_relocate = needed_size > osize || config_.force_relocate;
@@ -171,7 +171,7 @@ ok_error_t Builder::build_exe_lib() {
     } else { LIEF_DEBUG("DT_HASH: -0x{:x} bytes", osize - needed_size); }
   }
 
-  if (binary_->has(SEGMENT_TYPES::PT_DYNAMIC) && config_.dynamic_section) {
+  if (binary_->has(Segment::TYPE::DYNAMIC) && config_.dynamic_section) {
     const size_t dynamic_needed_size = layout->dynamic_size<ELF_T>();
     const uint64_t osize = binary_->sizing_info_->dynamic;
     const bool should_relocate = dynamic_needed_size > osize || config_.force_relocate;
@@ -181,7 +181,7 @@ ok_error_t Builder::build_exe_lib() {
     } else { LIEF_DEBUG("PT_DYNAMIC: -0x{:x} bytes", osize - dynamic_needed_size); }
   }
 
-  if (binary_->has(DYNAMIC_TAGS::DT_RELA) || binary_->has(DYNAMIC_TAGS::DT_REL)) {
+  if (binary_->has(DynamicEntry::TAG::RELA) || binary_->has(DynamicEntry::TAG::REL)) {
     const size_t dyn_reloc_needed_size = layout->dynamic_relocations_size<ELF_T>();
     if (config_.rela) {
       const uint64_t osize = binary_->sizing_info_->rela;
@@ -193,7 +193,7 @@ ok_error_t Builder::build_exe_lib() {
     }
   }
 
-  if (config_.jmprel && binary_->has(DYNAMIC_TAGS::DT_JMPREL)) {
+  if (config_.jmprel && binary_->has(DynamicEntry::TAG::JMPREL)) {
     const size_t plt_reloc_needed_size = layout->pltgot_relocations_size<ELF_T>();
     const uint64_t osize = binary_->sizing_info_->jmprel;
     const bool should_relocate = plt_reloc_needed_size > osize || config_.force_relocate;
@@ -203,7 +203,7 @@ ok_error_t Builder::build_exe_lib() {
     } else { LIEF_DEBUG("DT_JMPREL: -0x{:x} bytes", osize - plt_reloc_needed_size); }
   }
 
-  if (config_.dyn_str && binary_->has(DYNAMIC_TAGS::DT_STRTAB)) {
+  if (config_.dyn_str && binary_->has(DynamicEntry::TAG::STRTAB)) {
     const size_t needed_size = layout->dynstr_size<ELF_T>();
     const uint64_t osize  = binary_->sizing_info_->dynstr;
     const bool should_relocate = needed_size > osize || config_.force_relocate;
@@ -213,7 +213,7 @@ ok_error_t Builder::build_exe_lib() {
     } else { LIEF_DEBUG("DT_STRTAB: -0x{:x} bytes", osize - needed_size); }
   }
 
-  if (config_.symtab && binary_->has(DYNAMIC_TAGS::DT_SYMTAB)) {
+  if (config_.symtab && binary_->has(DynamicEntry::TAG::SYMTAB)) {
     const size_t dynsym_needed_size = layout->dynsym_size<ELF_T>();
     const uint64_t osize = binary_->sizing_info_->dynsym;
     const bool should_relocate = dynsym_needed_size > osize || config_.force_relocate;
@@ -223,10 +223,10 @@ ok_error_t Builder::build_exe_lib() {
     } else { LIEF_DEBUG("DT_SYMTAB: -0x{:x} bytes", osize - dynsym_needed_size); }
   }
 
-  if (binary_->has(DYNAMIC_TAGS::DT_INIT_ARRAY) && binary_->has(DYNAMIC_TAGS::DT_INIT_ARRAYSZ) &&
+  if (binary_->has(DynamicEntry::TAG::INIT_ARRAY) && binary_->has(DynamicEntry::TAG::INIT_ARRAYSZ) &&
       config_.init_array)
   {
-    const size_t needed_size = layout->dynamic_arraysize<ELF_T>(DYNAMIC_TAGS::DT_INIT_ARRAY);
+    const size_t needed_size = layout->dynamic_arraysize<ELF_T>(DynamicEntry::TAG::INIT_ARRAY);
     const uint64_t osize = binary_->sizing_info_->init_array;
     const bool should_relocate = needed_size > osize;
     if (should_relocate) {
@@ -238,10 +238,10 @@ ok_error_t Builder::build_exe_lib() {
     } else { LIEF_DEBUG("DT_INIT_ARRAY: -0x{:x} bytes", osize - needed_size); }
   }
 
-  if (binary_->has(DYNAMIC_TAGS::DT_PREINIT_ARRAY) && binary_->has(DYNAMIC_TAGS::DT_PREINIT_ARRAYSZ) &&
+  if (binary_->has(DynamicEntry::TAG::PREINIT_ARRAY) && binary_->has(DynamicEntry::TAG::PREINIT_ARRAYSZ) &&
       config_.preinit_array)
   {
-    const size_t needed_size = layout->dynamic_arraysize<ELF_T>(DYNAMIC_TAGS::DT_PREINIT_ARRAY);
+    const size_t needed_size = layout->dynamic_arraysize<ELF_T>(DynamicEntry::TAG::PREINIT_ARRAY);
     const uint64_t osize = binary_->sizing_info_->preinit_array;
     const bool should_relocate = needed_size > osize;
     if (should_relocate) {
@@ -250,10 +250,10 @@ ok_error_t Builder::build_exe_lib() {
     } else { LIEF_DEBUG("DT_PREINIT_ARRAY: -0x{:x} bytes", osize - needed_size); }
   }
 
-  if (binary_->has(DYNAMIC_TAGS::DT_FINI_ARRAY) && binary_->has(DYNAMIC_TAGS::DT_FINI_ARRAYSZ) &&
+  if (binary_->has(DynamicEntry::TAG::FINI_ARRAY) && binary_->has(DynamicEntry::TAG::FINI_ARRAYSZ) &&
       config_.fini_array)
   {
-    const size_t needed_size   = layout->dynamic_arraysize<ELF_T>(DYNAMIC_TAGS::DT_FINI_ARRAY);
+    const size_t needed_size   = layout->dynamic_arraysize<ELF_T>(DynamicEntry::TAG::FINI_ARRAY);
     const uint64_t osize       = binary_->sizing_info_->fini_array;
     const bool should_relocate = needed_size > osize;
     if (should_relocate) {
@@ -265,7 +265,7 @@ ok_error_t Builder::build_exe_lib() {
     } else { LIEF_DEBUG("DT_FINI_ARRAY: -0x{:x} bytes", osize - needed_size); }
   }
 
-  if (binary_->has(DYNAMIC_TAGS::DT_VERSYM) && config_.sym_versym) {
+  if (binary_->has(DynamicEntry::TAG::VERSYM) && config_.sym_versym) {
     const size_t symver_needed_size = layout->symbol_version<ELF_T>();
     const uint64_t osize       = binary_->sizing_info_->versym;
     const bool should_relocate = symver_needed_size > osize || config_.force_relocate;
@@ -275,7 +275,7 @@ ok_error_t Builder::build_exe_lib() {
     } else { LIEF_DEBUG("DT_VERSYM: -0x{:x} bytes", osize - symver_needed_size); }
   }
 
-  if (binary_->has(DYNAMIC_TAGS::DT_VERDEF) && config_.sym_verdef) {
+  if (binary_->has(DynamicEntry::TAG::VERDEF) && config_.sym_verdef) {
     const size_t symvdef_needed_size = layout->symbol_vdef_size<ELF_T>();
     const uint64_t osize       = binary_->sizing_info_->verdef;
     const bool should_relocate = symvdef_needed_size > osize || config_.force_relocate;
@@ -285,7 +285,7 @@ ok_error_t Builder::build_exe_lib() {
     } else { LIEF_DEBUG("DT_VERDEF: -0x{:x} bytes", osize - symvdef_needed_size); }
   }
 
-  if (binary_->has(DYNAMIC_TAGS::DT_VERNEED) && config_.sym_verneed) {
+  if (binary_->has(DynamicEntry::TAG::VERNEED) && config_.sym_verneed) {
     const size_t symvreq_needed_size = layout->symbol_vreq_size<ELF_T>();
     const uint64_t osize       = binary_->sizing_info_->verneed;
     const bool should_relocate = symvreq_needed_size > osize || config_.force_relocate;
@@ -311,7 +311,7 @@ ok_error_t Builder::build_exe_lib() {
   }
 
   // Check if we should relocate or create the .strtab section
-  Section* sec_symtab = binary_->get(ELF_SECTION_TYPES::SHT_SYMTAB);
+  Section* sec_symtab = binary_->get(Section::TYPE::SYMTAB);
   if (!layout->is_strtab_shared_shstrtab() && !binary_->static_symbols_.empty()) {
     // There is no .symtab section => create .strtab
     if (sec_symtab == nullptr) {
@@ -371,36 +371,36 @@ ok_error_t Builder::build_exe_lib() {
   }
 
   if (config_.dyn_str) {
-    if (DynamicEntry* dt_strtab = binary_->get(DYNAMIC_TAGS::DT_STRTAB)) {
+    if (DynamicEntry* dt_strtab = binary_->get(DynamicEntry::TAG::STRTAB)) {
       binary_->patch_address(dt_strtab->value(), layout->raw_dynstr());
     }
   }
 
-  if (config_.interpreter && binary_->has(SEGMENT_TYPES::PT_INTERP)) {
+  if (config_.interpreter && binary_->has(Segment::TYPE::INTERP)) {
     build_interpreter<ELF_T>();
   }
 
-  if (config_.notes && binary_->has(SEGMENT_TYPES::PT_NOTE)) {
+  if (config_.notes && binary_->has(Segment::TYPE::NOTE)) {
     build_notes<ELF_T>();
   }
 
-  if (config_.dynamic_section && binary_->has(SEGMENT_TYPES::PT_DYNAMIC)) {
+  if (config_.dynamic_section && binary_->has(Segment::TYPE::DYNAMIC)) {
     build_dynamic_section<ELF_T>();
   }
 
-  if (config_.symtab && binary_->has(DYNAMIC_TAGS::DT_SYMTAB)) {
+  if (config_.symtab && binary_->has(DynamicEntry::TAG::SYMTAB)) {
     build_dynamic_symbols<ELF_T>();
   }
 
-  if (config_.sym_versym && binary_->has(DYNAMIC_TAGS::DT_VERSYM)) {
+  if (config_.sym_versym && binary_->has(DynamicEntry::TAG::VERSYM)) {
     build_symbol_version<ELF_T>();
   }
 
-  if (config_.sym_verdef && binary_->has(DYNAMIC_TAGS::DT_VERDEF)) {
+  if (config_.sym_verdef && binary_->has(DynamicEntry::TAG::VERDEF)) {
     build_symbol_definition<ELF_T>();
   }
 
-  if (config_.sym_verneed && binary_->has(DYNAMIC_TAGS::DT_VERNEED)) {
+  if (config_.sym_verneed && binary_->has(DynamicEntry::TAG::VERNEED)) {
     build_symbol_requirement<ELF_T>();
   }
 
@@ -412,7 +412,7 @@ ok_error_t Builder::build_exe_lib() {
     build_pltgot_relocations<ELF_T>();
   }
 
-  if (config_.static_symtab && binary_->has(ELF_SECTION_TYPES::SHT_SYMTAB)) {
+  if (config_.static_symtab && binary_->has(Section::TYPE::SYMTAB)) {
     build_static_symbols<ELF_T>();
   }
 
@@ -458,8 +458,8 @@ ok_error_t Builder::process_object_relocations() {
   ObjectFileLayout::rel_sections_size_t& rel_sections_size = layout->rel_sections_size();
 
   for (Section& sec : sections) {
-    const ELF_SECTION_TYPES type = sec.type();
-    if (type != ELF_SECTION_TYPES::SHT_RELA && type != ELF_SECTION_TYPES::SHT_REL) {
+    const Section::TYPE type = sec.type();
+    if (type != Section::TYPE::RELA && type != Section::TYPE::REL) {
       continue;
     }
     const size_t sh_info = sec.information();
@@ -523,7 +523,7 @@ ok_error_t Builder::build_relocatable() {
   }
 
   // Check the .symtab section
-  Section* symtab = binary_->get(ELF_SECTION_TYPES::SHT_SYMTAB);
+  Section* symtab = binary_->get(Section::TYPE::SYMTAB);
   if (symtab != nullptr) {
     const size_t needed_size = layout->symtab_size<ELF_T>();
     if (needed_size > symtab->size() || config_.force_relocate) {
@@ -536,7 +536,7 @@ ok_error_t Builder::build_relocatable() {
   // Check if we should relocate or create a .strtab section.
   // We assume that a .shstrtab is always prensent
   if (!layout->is_strtab_shared_shstrtab() && !binary_->static_symbols_.empty()) {
-    Section* sec_symtab = binary_->get(ELF_SECTION_TYPES::SHT_SYMTAB);
+    Section* sec_symtab = binary_->get(Section::TYPE::SYMTAB);
     if (sec_symtab == nullptr) {
       LIEF_ERR("Object file without a symtab section is not supported. Please consider submitting an issue.");
       return make_error_code(lief_errors::not_supported);
@@ -565,7 +565,7 @@ ok_error_t Builder::build_relocatable() {
     return make_error_code(lief_errors::build_error);
   }
 
-  if (binary_->has(ELF_SECTION_TYPES::SHT_SYMTAB)) {
+  if (binary_->has(Section::TYPE::SYMTAB)) {
     build_obj_symbols<ELF_T>();
   }
 
@@ -654,7 +654,7 @@ ok_error_t Builder::build_sections() {
         // SHT_NOTBITS sections should not be considered.
         // Nevertheless, some (malformed or tricky) ELF binaries
         // might use this type to put content.
-        section->type() != ELF_SECTION_TYPES::SHT_NOBITS) {
+        section->type() != Section::TYPE::NOBITS) {
       span<const uint8_t> content = section->content();
       LIEF_DEBUG("[Content] {:20}: 0x{:010x} - 0x{:010x} (0x{:x})",
                  section->name(), section->file_offset(),
@@ -725,7 +725,7 @@ ok_error_t Builder::build_segments() {
     pheaders.write_conv<Elf_Phdr>(phdr);
   }
 
-  Segment* phdr_segment = binary_->get(SEGMENT_TYPES::PT_PHDR);
+  Segment* phdr_segment = binary_->get(Segment::TYPE::PHDR);
   if (phdr_segment != nullptr) {
     phdr_segment->content(pheaders.raw());
   }
@@ -774,11 +774,7 @@ ok_error_t Builder::build_static_symbols() {
 
   std::stable_sort(std::begin(binary_->static_symbols_), std::end(binary_->static_symbols_),
       [](const std::unique_ptr<Symbol>& lhs, const std::unique_ptr<Symbol>& rhs) {
-        return lhs->binding() == SYMBOL_BINDINGS::STB_LOCAL &&
-               (
-                rhs->binding() == SYMBOL_BINDINGS::STB_GLOBAL ||
-                rhs->binding() == SYMBOL_BINDINGS::STB_WEAK
-               );
+        return lhs->is_local() && (rhs->is_global() || rhs->is_weak());
   });
 
   const auto it_first_exported_symbol =
@@ -853,7 +849,7 @@ ok_error_t Builder::build_dynamic_section() {
   for (std::unique_ptr<DynamicEntry>& entry : binary_->dynamic_entries_) {
 
     switch (entry->tag()) {
-      case DYNAMIC_TAGS::DT_NEEDED:
+      case DynamicEntry::TAG::NEEDED:
         {
           const std::string& name = entry->as<DynamicEntryLibrary>()->name();
           const auto& it = dynstr_map.find(name);
@@ -865,7 +861,7 @@ ok_error_t Builder::build_dynamic_section() {
           break;
         }
 
-      case DYNAMIC_TAGS::DT_SONAME:
+      case DynamicEntry::TAG::SONAME:
         {
           const std::string& name = entry->as<DynamicSharedObject>()->name();
           const auto& it = dynstr_map.find(name);
@@ -877,9 +873,9 @@ ok_error_t Builder::build_dynamic_section() {
           break;
         }
 
-      case DYNAMIC_TAGS::DT_RPATH:
+      case DynamicEntry::TAG::RPATH:
         {
-          const std::string& name = entry->as<DynamicEntryRpath>()->name();
+          const std::string& name = entry->as<DynamicEntryRpath>()->rpath();
           const auto& it = dynstr_map.find(name);
           if (it == std::end(dynstr_map)) {
             LIEF_ERR("Can't find string offset in .dynstr for {}", name);
@@ -889,9 +885,9 @@ ok_error_t Builder::build_dynamic_section() {
           break;
         }
 
-      case DYNAMIC_TAGS::DT_RUNPATH:
+      case DynamicEntry::TAG::RUNPATH:
         {
-          const std::string& name = entry->as<DynamicEntryRunPath>()->name();
+          const std::string& name = entry->as<DynamicEntryRunPath>()->runpath();
           const auto& it = dynstr_map.find(name);
           if (it == std::end(dynstr_map)) {
             LIEF_ERR("Can't find string offset in .dynstr for {}", name);
@@ -901,10 +897,10 @@ ok_error_t Builder::build_dynamic_section() {
           break;
         }
 
-      case DYNAMIC_TAGS::DT_INIT_ARRAY:
+      case DynamicEntry::TAG::INIT_ARRAY:
         {
           if (config_.init_array) {
-            DynamicEntry* dt_array_size = binary_->get(DYNAMIC_TAGS::DT_INIT_ARRAYSZ);
+            DynamicEntry* dt_array_size = binary_->get(DynamicEntry::TAG::INIT_ARRAYSZ);
             if (dt_array_size == nullptr) {
               LIEF_ERR("Can't find the DT_INIT_ARRAYSZ / .init_array");
               break;
@@ -923,10 +919,10 @@ ok_error_t Builder::build_dynamic_section() {
           break;
         }
 
-      case DYNAMIC_TAGS::DT_FINI_ARRAY:
+      case DynamicEntry::TAG::FINI_ARRAY:
         {
           if (config_.fini_array) {
-            DynamicEntry* dt_array_size = binary_->get(DYNAMIC_TAGS::DT_FINI_ARRAYSZ);
+            DynamicEntry* dt_array_size = binary_->get(DynamicEntry::TAG::FINI_ARRAYSZ);
             if (dt_array_size == nullptr) {
               LIEF_ERR("Can't find the DT_FINI_ARRAYSZ / .fini_array");
               break;
@@ -946,10 +942,10 @@ ok_error_t Builder::build_dynamic_section() {
           break;
         }
 
-      case DYNAMIC_TAGS::DT_PREINIT_ARRAY:
+      case DynamicEntry::TAG::PREINIT_ARRAY:
         {
           if (config_.fini_array) {
-            DynamicEntry* dt_array_size = binary_->get(DYNAMIC_TAGS::DT_PREINIT_ARRAYSZ);
+            DynamicEntry* dt_array_size = binary_->get(DynamicEntry::TAG::PREINIT_ARRAYSZ);
             if (dt_array_size == nullptr) {
               LIEF_ERR("Can't find the DT_PREINIT_ARRAYSZ / .preinit_array");
               break;
@@ -977,7 +973,7 @@ ok_error_t Builder::build_dynamic_section() {
     }
 
     Elf_Dyn dynhdr;
-    dynhdr.d_tag      = static_cast<Elf_Sxword>(entry->tag());
+    dynhdr.d_tag      = static_cast<Elf_Sxword>(DynamicEntry::to_value(entry->tag()));
     dynhdr.d_un.d_val = static_cast<Elf_Xword>(entry->value());
 
     dynamic_table_raw.write_conv<Elf_Dyn>(dynhdr);
@@ -993,7 +989,7 @@ ok_error_t Builder::build_dynamic_section() {
   }
 
   // Update the PT_DYNAMIC segment
-  if (Segment* dynamic_seg = binary_->get(SEGMENT_TYPES::PT_DYNAMIC)) {
+  if (Segment* dynamic_seg = binary_->get(Segment::TYPE::DYNAMIC)) {
     dynamic_seg->physical_size(raw.size());
     dynamic_seg->virtual_size(raw.size());
     dynamic_seg->content(std::move(raw));
@@ -1008,7 +1004,7 @@ ok_error_t Builder::build_dynamic_section() {
 template<typename ELF_T>
 ok_error_t Builder::build_symbol_hash() {
   LIEF_DEBUG("== Build SYSV Hash ==");
-  DynamicEntry* dt_hash = binary_->get(DYNAMIC_TAGS::DT_HASH);
+  DynamicEntry* dt_hash = binary_->get(DynamicEntry::TAG::HASH);
 
   if (dt_hash == nullptr) {
     LIEF_ERR("Can't find the SYSV hash section");
@@ -1041,7 +1037,7 @@ ok_error_t Builder::build_symbol_hash() {
   uint32_t* chain  = &new_hash_table_ptr[2 + nbucket];
   uint32_t idx = 0;
   for (const std::unique_ptr<Symbol>& symbol : binary_->dynamic_symbols_) {
-    uint32_t hash = binary_->type_ == ELF_CLASS::ELFCLASS32 ?
+    uint32_t hash = binary_->type_ == Header::CLASS::ELF32 ?
                     hash32(symbol->name().c_str()) :
                     hash64(symbol->name().c_str());
 
@@ -1082,7 +1078,7 @@ ok_error_t Builder::build_hash_table() {
   LIEF_DEBUG("== Build hash table ==");
 
   bool has_error = false;
-  if (config_.dt_hash && binary_->has(DYNAMIC_TAGS::DT_HASH)) {
+  if (config_.dt_hash && binary_->has(DynamicEntry::TAG::HASH)) {
     if (!build_symbol_hash<ELF_T>()) {
       LIEF_ERR("Building the new SYSV Hash section failed");
       has_error = true;
@@ -1090,7 +1086,7 @@ ok_error_t Builder::build_hash_table() {
   }
 
   if (config_.gnu_hash) {
-    if (const DynamicEntry* entry = binary_->get(DYNAMIC_TAGS::DT_GNU_HASH)) {
+    if (const DynamicEntry* entry = binary_->get(DynamicEntry::TAG::GNU_HASH)) {
       binary_->patch_address(entry->value(), static_cast<ExeLayout*>(layout_.get())->raw_gnuhash());
     }
   }
@@ -1119,7 +1115,7 @@ ok_error_t Builder::build_obj_symbols() {
   }
 
   // Find the section associated with the address
-  Section* symbol_table_section = binary_->get(ELF_SECTION_TYPES::SHT_SYMTAB);
+  Section* symbol_table_section = binary_->get(Section::TYPE::SYMTAB);
   if (symbol_table_section == nullptr) {
     LIEF_ERR("Can't find the .symtab section");
     return make_error_code(lief_errors::file_format_error);
@@ -1168,7 +1164,7 @@ ok_error_t Builder::build_dynamic_symbols() {
 
   // Find useful sections
   // ====================
-  DynamicEntry* dt_symtab = binary_->get(DYNAMIC_TAGS::DT_SYMTAB);
+  DynamicEntry* dt_symtab = binary_->get(DynamicEntry::TAG::SYMTAB);
   if (dt_symtab == nullptr) {
     LIEF_ERR("Can't find the DT_SYMTAB entry");
     return make_error_code(lief_errors::not_found);
@@ -1256,10 +1252,10 @@ ok_error_t Builder::build_section_relocations() {
 
       Elf_Xword info = 0;
       if (std::is_same<ELF_T, details::ELF32>::value) {
-        info = (static_cast<Elf_Xword>(symidx) << 8) | reloc->type();
+        info = (static_cast<Elf_Xword>(symidx) << 8) | Relocation::to_value(reloc->type());
       } else {
         // NOTE: To suppress a warning we require a cast here, this path is not constexpr but only uses Elf64_Xword
-        info = (static_cast<details::ELF64::Elf_Xword>(symidx) << 32) | (reloc->type() & 0xffffffffL);
+        info = (static_cast<details::ELF64::Elf_Xword>(symidx) << 32) | (Relocation::to_value(reloc->type()) & 0xffffffffL);
       }
 
       if (is_rela) {
@@ -1297,12 +1293,12 @@ ok_error_t Builder::build_dynamic_relocations() {
 
   Binary::it_dynamic_relocations dynamic_relocations = binary_->dynamic_relocations();
   if (dynamic_relocations.empty()) {
-    if (auto* DT = binary_->get(DYNAMIC_TAGS::DT_REL)) {
+    if (auto* DT = binary_->get(DynamicEntry::TAG::REL)) {
       if (auto* sec = binary_->section_from_virtual_address(DT->value())) {
         sec->size(0);
       }
     }
-    if (auto* DT = binary_->get(DYNAMIC_TAGS::DT_RELA)) {
+    if (auto* DT = binary_->get(DynamicEntry::TAG::RELA)) {
       if (auto* sec = binary_->section_from_virtual_address(DT->value())) {
         sec->size(0);
       }
@@ -1314,16 +1310,16 @@ ok_error_t Builder::build_dynamic_relocations() {
   DynamicEntry* dt_reloc   = nullptr;
   DynamicEntry* dt_relocsz = nullptr;
 
-  DynamicEntry* dt_rela = binary_->get(DYNAMIC_TAGS::DT_RELA);
+  DynamicEntry* dt_rela = binary_->get(DynamicEntry::TAG::RELA);
 
   const bool is_rela = dt_rela != nullptr;
   if (dt_rela != nullptr) {
     dt_reloc   = dt_rela;
-    dt_relocsz = binary_->get(DYNAMIC_TAGS::DT_RELASZ);
+    dt_relocsz = binary_->get(DynamicEntry::TAG::RELASZ);
   } else {
     // Fallback on relation type REL
-    dt_reloc   = binary_->get(DYNAMIC_TAGS::DT_REL);
-    dt_relocsz = binary_->get(DYNAMIC_TAGS::DT_RELSZ);
+    dt_reloc   = binary_->get(DynamicEntry::TAG::REL);
+    dt_relocsz = binary_->get(DynamicEntry::TAG::RELSZ);
   }
 
 
@@ -1367,10 +1363,10 @@ ok_error_t Builder::build_dynamic_relocations() {
 
     Elf_Xword r_info = 0;
     if (std::is_same<ELF_T, details::ELF32>::value) {
-      r_info = (static_cast<Elf_Xword>(info) << 8) | relocation.type();
+      r_info = (static_cast<Elf_Xword>(info) << 8) | Relocation::to_value(relocation.type());
     } else {
       // NOTE: To suppress a warning we require a cast here, this path is not constexpr but only uses Elf64_Xword
-      r_info = (static_cast<details::ELF64::Elf_Xword>(info) << 32) | (relocation.type() & 0xffffffffL);
+      r_info = (static_cast<details::ELF64::Elf_Xword>(info) << 32) | (Relocation::to_value(relocation.type()) & 0xffffffffL);
     }
 
 
@@ -1404,7 +1400,7 @@ ok_error_t Builder::build_pltgot_relocations() {
 
   Binary::it_pltgot_relocations pltgot_relocations = binary_->pltgot_relocations();
   if (pltgot_relocations.empty()) {
-    if (auto* DT = binary_->get(DYNAMIC_TAGS::DT_JMPREL)) {
+    if (auto* DT = binary_->get(DynamicEntry::TAG::JMPREL)) {
       if (auto* sec = binary_->section_from_virtual_address(DT->value())) {
         sec->size(0);
       }
@@ -1415,12 +1411,12 @@ ok_error_t Builder::build_pltgot_relocations() {
   LIEF_DEBUG("[+] Building .plt.got relocations");
 
   bool is_rela = false;
-  DynamicEntry* dt_pltrel = binary_->get(DYNAMIC_TAGS::DT_PLTREL);
+  DynamicEntry* dt_pltrel = binary_->get(DynamicEntry::TAG::PLTREL);
   if (dt_pltrel != nullptr) {
-    is_rela = dt_pltrel->value() == static_cast<uint64_t>(DYNAMIC_TAGS::DT_RELA);
+    is_rela = dt_pltrel->value() == static_cast<uint64_t>(DynamicEntry::TAG::RELA);
   }
-  DynamicEntry* dt_jmprel   = binary_->get(DYNAMIC_TAGS::DT_JMPREL);
-  DynamicEntry* dt_pltrelsz = binary_->get(DYNAMIC_TAGS::DT_PLTRELSZ);
+  DynamicEntry* dt_jmprel   = binary_->get(DynamicEntry::TAG::JMPREL);
+  DynamicEntry* dt_pltrelsz = binary_->get(DynamicEntry::TAG::PLTRELSZ);
   if (dt_jmprel == nullptr) {
     LIEF_ERR("Unable to find the DT_JMPREL entry");
     return make_error_code(lief_errors::not_found);
@@ -1453,11 +1449,11 @@ ok_error_t Builder::build_pltgot_relocations() {
     }
 
     Elf_Xword info = 0;
-    if (std::is_same<ELF_T, details::ELF32>::value) {
-      info = (static_cast<Elf_Xword>(idx) << 8) | relocation.type();
+    if constexpr (std::is_same_v<ELF_T, details::ELF32>) {
+      info = (static_cast<Elf_Xword>(idx) << 8) | Relocation::to_value(relocation.type());
     } else {
       // NOTE: To suppress a warning we require a cast here, this path is not constexpr but only uses Elf64_Xword
-      info = (static_cast<details::ELF64::Elf_Xword>(idx) << 32) | (relocation.type() & 0xffffffffL);
+      info = (static_cast<details::ELF64::Elf_Xword>(idx) << 32) | (Relocation::to_value(relocation.type()) & 0xffffffffL);
     }
 
     if (is_rela) {
@@ -1491,13 +1487,13 @@ ok_error_t Builder::build_symbol_requirement() {
   using Elf_Vernaux = typename ELF_T::Elf_Vernaux;
   LIEF_DEBUG("[+] Building symbol requirement");
 
-  DynamicEntry* dt_verneed = binary_->get(DYNAMIC_TAGS::DT_VERNEED);
+  DynamicEntry* dt_verneed = binary_->get(DynamicEntry::TAG::VERNEED);
   if (dt_verneed == nullptr) {
     LIEF_ERR("Can't find DT_VERNEED");
     return make_error_code(lief_errors::not_found);
   }
 
-  DynamicEntry* dt_verneednum = binary_->get(DYNAMIC_TAGS::DT_VERNEEDNUM);
+  DynamicEntry* dt_verneednum = binary_->get(DynamicEntry::TAG::VERNEEDNUM);
   if (dt_verneednum == nullptr) {
     LIEF_ERR("Can't find DT_VERNEEDNUM");
     return make_error_code(lief_errors::not_found);
@@ -1595,13 +1591,13 @@ ok_error_t Builder::build_symbol_definition() {
   using Elf_Verdaux = typename ELF_T::Elf_Verdaux;
 
   LIEF_DEBUG("[+] Building symbol definition");
-  DynamicEntry* dt_verdef = binary_->get(DYNAMIC_TAGS::DT_VERDEF);
+  DynamicEntry* dt_verdef = binary_->get(DynamicEntry::TAG::VERDEF);
   if (dt_verdef == nullptr) {
     LIEF_ERR("Can't find DT_VERDEF");
     return make_error_code(lief_errors::not_found);
   }
 
-  DynamicEntry* dt_verdefnum = binary_->get(DYNAMIC_TAGS::DT_VERDEFNUM);
+  DynamicEntry* dt_verdefnum = binary_->get(DynamicEntry::TAG::VERDEFNUM);
   if (dt_verdef == nullptr) {
     LIEF_ERR("Can't find DT_VERDEFNUM");
     return make_error_code(lief_errors::not_found);
@@ -1697,7 +1693,7 @@ ok_error_t Builder::build_interpreter() {
   }
   LIEF_DEBUG("[+] Building Interpreter");
   const std::string& inter_str = binary_->interpreter();
-  Segment* interp_segment = binary_->get(SEGMENT_TYPES::PT_INTERP);
+  Segment* interp_segment = binary_->get(Segment::TYPE::INTERP);
   if (interp_segment == nullptr) {
     LIEF_ERR("Can't find a PT_INTERP segment");
     return make_error_code(lief_errors::not_found);
@@ -1714,7 +1710,7 @@ ok_error_t Builder::build_notes() {
   }
 
   LIEF_DEBUG("== Building notes ==");
-  Segment* note_segment = binary_->get(SEGMENT_TYPES::PT_NOTE);
+  Segment* note_segment = binary_->get(Segment::TYPE::NOTE);
   if (note_segment == nullptr) {
     LIEF_ERR("Can't find the PT_NOTE segment");
     return make_error_code(lief_errors::not_found);
@@ -1724,7 +1720,7 @@ ok_error_t Builder::build_notes() {
   // Write the cached note
   note_segment->content(static_cast<ExeLayout*>(layout_.get())->raw_notes());
 
-  if (binary_->header().file_type() == E_TYPE::ET_CORE) {
+  if (binary_->header().file_type() == Header::FILE_TYPE::CORE) {
     return ok_t();
   }
 
@@ -1745,7 +1741,7 @@ ok_error_t Builder::build_symbol_version() {
               binary_->symbol_version_table_.size(), binary_->dynamic_symbols_.size());
   }
 
-  DynamicEntry* dt_versym = binary_->get(DYNAMIC_TAGS::DT_VERSYM);
+  DynamicEntry* dt_versym = binary_->get(DynamicEntry::TAG::VERSYM);
   if (dt_versym == nullptr) {
     LIEF_ERR("Can't find DT_VERSYM entry");
     return make_error_code(lief_errors::not_found);

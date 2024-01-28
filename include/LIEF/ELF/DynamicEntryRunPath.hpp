@@ -17,9 +17,9 @@
 #define LIEF_ELF_DYNAMIC_ENTRY_RUNPATH_H
 
 #include <string>
+#include <vector>
 
 #include "LIEF/visibility.h"
-
 #include "LIEF/ELF/DynamicEntry.hpp"
 
 namespace LIEF {
@@ -33,24 +33,38 @@ class LIEF_API DynamicEntryRunPath : public DynamicEntry {
   static constexpr char delimiter = ':';
   using DynamicEntry::DynamicEntry;
 
-  DynamicEntryRunPath();
+  DynamicEntryRunPath() :
+    DynamicEntry::DynamicEntry(DynamicEntry::TAG::RUNPATH, 0)
+  {}
 
   //! Constructor from (run)path
-  DynamicEntryRunPath(std::string runpath);
+  DynamicEntryRunPath(std::string runpath) :
+    DynamicEntry::DynamicEntry(DynamicEntry::TAG::RUNPATH, 0),
+    runpath_(std::move(runpath))
+  {}
 
   //! Constructor from a list of paths
-  DynamicEntryRunPath(const std::vector<std::string>& paths);
+  DynamicEntryRunPath(const std::vector<std::string>& paths) :
+    DynamicEntry::DynamicEntry(DynamicEntry::TAG::RUNPATH, 0)
+  {
+    this->paths(paths);
+  }
 
-  DynamicEntryRunPath& operator=(const DynamicEntryRunPath&);
-  DynamicEntryRunPath(const DynamicEntryRunPath&);
+  DynamicEntryRunPath& operator=(const DynamicEntryRunPath&) = default;
+  DynamicEntryRunPath(const DynamicEntryRunPath&) = default;
+
+  std::unique_ptr<DynamicEntry> clone() const override {
+    return std::unique_ptr<DynamicEntry>(new DynamicEntryRunPath(*this));
+  }
 
   //! Runpath raw value
-  const std::string& name() const;
-  void name(const std::string& name);
+  const std::string& runpath() const {
+    return runpath_;
+  }
 
-  //! Runpath raw value
-  const std::string& runpath() const;
-  void runpath(const std::string& runpath);
+  void runpath(std::string runpath) {
+    runpath_ = std::move(runpath);
+  }
 
   //! Paths as a list
   std::vector<std::string> paths() const;
@@ -65,14 +79,23 @@ class LIEF_API DynamicEntryRunPath : public DynamicEntry {
   //! Remove the given ``path``
   DynamicEntryRunPath& remove(const std::string& path);
 
-  DynamicEntryRunPath& operator+=(const std::string& path);
-  DynamicEntryRunPath& operator-=(const std::string& path);
+  DynamicEntryRunPath& operator+=(std::string path) {
+    return append(std::move(path));
+  }
+
+  DynamicEntryRunPath& operator-=(const std::string& path) {
+    return remove(path);
+  }
 
   void accept(Visitor& visitor) const override;
 
-  static bool classof(const DynamicEntry* entry);
+  static bool classof(const DynamicEntry* entry) {
+    return entry->tag() == DynamicEntry::TAG::RUNPATH;
+  }
 
   std::ostream& print(std::ostream& os) const override;
+
+  ~DynamicEntryRunPath() = default;
 
   private:
   std::string runpath_;

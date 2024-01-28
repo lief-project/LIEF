@@ -66,7 +66,7 @@ def test_force_relocate(tmp_path):
         if not file.exists():
             print(f"{file} does not exist. Skipping ...", file=sys.stderr)
             continue
-        elf: lief.ELF.Binary = lief.parse(file.as_posix())
+        elf: lief.ELF.Binary = lief.ELF.parse(file.as_posix())
 
         builder = lief.ELF.Builder(elf)
         builder.config.force_relocate = True
@@ -88,7 +88,7 @@ def test_object_files_section(tmp_path):
         if not file.exists():
             print(f"{file} does not exist. Skipping ...", file=sys.stderr)
             continue
-        elf: lief.ELF.Binary = lief.parse(file.as_posix())
+        elf: lief.ELF.Binary = lief.ELF.parse(file.as_posix())
 
         elf.get_section(".symtab").name = ".foooooootab"
 
@@ -110,13 +110,13 @@ def test_object_files_symbols(tmp_path):
         if not file.exists():
             print(f"{file} does not exist. Skipping ...", file=sys.stderr)
             continue
-        elf: lief.ELF.Binary = lief.parse(file.as_posix())
+        elf: lief.ELF.Binary = lief.ELF.parse(file.as_posix())
 
         sym = lief.ELF.Symbol()
         sym.name       = "LIEF_CUSTOM_SYMBOL"
-        sym.type       = lief.ELF.SYMBOL_TYPES.NOTYPE
-        sym.visibility = lief.ELF.SYMBOL_VISIBILITY.DEFAULT
-        sym.binding    = lief.ELF.SYMBOL_BINDINGS.GLOBAL # TODO(romain): it fails if the symbol is "local"
+        sym.type       = lief.ELF.Symbol.TYPE.NOTYPE
+        sym.visibility = lief.ELF.Symbol.VISIBILITY.DEFAULT
+        sym.binding    = lief.ELF.Symbol.BINDING.GLOBAL # TODO(romain): it fails if the symbol is "local"
                                                          # cf. binutils-2.35.1/bfd/elflink.c:4602
         sym.value = 0xdeadc0de
         elf.add_static_symbol(sym)
@@ -144,14 +144,14 @@ def test_relocations(tmp_path):
         if not file.exists():
             print(f"{file} does not exist. Skipping ...", file=sys.stderr)
             continue
-        elf: lief.ELF.Binary = lief.parse(file.as_posix())
+        elf: lief.ELF.Binary = lief.ELF.parse(file.as_posix())
 
         # Add a relocation that do "nothing"
-        rel = lief.ELF.Relocation(lief.ELF.ARCH.x86_64)
+        rel = lief.ELF.Relocation(lief.ELF.ARCH.X86_64)
         rel.addend  = 123
         rel.address = 0x123
-        rel.type    = lief.ELF.RELOCATION_X86_64.NONE
-        rel.purpose = lief.ELF.RELOCATION_PURPOSES.OBJECT
+        rel.type    = lief.ELF.Relocation.TYPE.X86_64_NONE
+        rel.purpose = lief.ELF.Relocation.PURPOSE.OBJECT
         elf.add_object_relocation(rel, elf.get_section(".text"))
 
         builder = lief.ELF.Builder(elf)

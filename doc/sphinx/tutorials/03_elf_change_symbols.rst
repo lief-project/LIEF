@@ -16,13 +16,13 @@ dynamic table (``PT_DYNAMIC``).
 In addition, the functions imported from this library are referenced in the dynamic symbols table with the following attributes:
 
 * :attr:`~lief.ELF.Symbol.value` set to ``0``
-* :attr:`~lief.ELF.Symbol.type` set to :attr:`~lief.ELF.SYMBOL_TYPES.FUNC`
+* :attr:`~lief.ELF.Symbol.type` set to :attr:`~lief.ELF.Symbol.TYPE.FUNC`
 
 Similarly, when a library exports functions the exported functions
 are registered in the dynamic symbols table with the following attributes:
 
 * :attr:`~lief.ELF.Symbol.value` set to the address of the function in the library
-* :attr:`~lief.ELF.Symbol.type` set to :attr:`~lief.ELF.SYMBOL_TYPES.FUNC`
+* :attr:`~lief.ELF.Symbol.type` set to :attr:`~lief.ELF.Symbol.TYPE.FUNC`
 
 Imported and exported functions are abstracted in LIEF and one can iterate over these elements through
 the properties: :attr:`~lief.Binary.exported_functions` and :attr:`~lief.Binary.imported_functions`

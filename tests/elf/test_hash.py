@@ -87,8 +87,8 @@ def test_simple(tmp_path: Path, flag: str):
     libadd_so  = compile_libadd(tmp_path, flag)
     binadd_bin = compile_binadd(tmp_path, flag)
 
-    libadd = lief.parse(libadd_so.as_posix())
-    binadd = lief.parse(binadd_bin.as_posix())
+    libadd = lief.ELF.parse(libadd_so.as_posix())
+    binadd = lief.ELF.parse(binadd_bin.as_posix())
 
     libadd_dynsym = libadd.dynamic_symbols
     binadd_dynsym = binadd.dynamic_symbols
@@ -106,7 +106,10 @@ def test_simple(tmp_path: Path, flag: str):
 
     # change library name in the binary
     for entry in binadd.dynamic_entries:
-        if entry.tag == lief.ELF.DYNAMIC_TAGS.NEEDED and entry.name == "libadd.so":
+        if (entry.tag == lief.ELF.DynamicEntry.TAG.NEEDED and
+            isinstance(entry, lief.ELF.DynamicEntryLibrary) and
+            entry.name == "libadd.so"
+        ):
             entry.name = "libabc.so"
 
     libadd_modified = tmp_path / "libabc.so"
@@ -126,7 +129,7 @@ def test_simple(tmp_path: Path, flag: str):
         "stderr": subprocess.STDOUT,
         "env":    {"LD_LIBRARY_PATH": tmp_path.as_posix()},
     }
-    with Popen([binadd_bin, '1', '2'], **popen_args) as P:
+    with Popen([binadd_bin, '1', '2'], **popen_args) as P: # type: ignore
         stdout = P.stdout.read().decode("utf8")
         print(stdout)
         assert "From myLIb, a + b = 3" in stdout

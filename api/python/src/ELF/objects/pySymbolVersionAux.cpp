@@ -33,7 +33,7 @@ void create<SymbolVersionAux>(nb::module_& m) {
         [] (const SymbolVersionAux& obj) {
           return LIEF::py::safe_string(obj.name());
         },
-        nb::overload_cast<const std::string&>(&SymbolVersionAux::name),
+        nb::overload_cast<std::string>(&SymbolVersionAux::name),
         "Symbol's name (e.g. ``GLIBC_2.2.5``)"_doc)
 
     LIEF_DEFAULT_STR(SymbolVersionAux);

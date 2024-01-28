@@ -3,7 +3,7 @@
 
 # Description:
 # Create a PE which pop a MessageBox
-# with the message "Hello World"
+# with the message "Hello World"
 
 from lief import PE
 

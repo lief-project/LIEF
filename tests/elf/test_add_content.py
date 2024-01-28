@@ -23,7 +23,7 @@ elif is_aarch64():
 
 assert STUB_FILE is not None
 
-STUB = lief.parse((CURRENT_DIRECTORY / STUB_FILE).as_posix())
+STUB = lief.ELF.parse((CURRENT_DIRECTORY / STUB_FILE).as_posix())
 
 COMPILER = get_compiler()
 
@@ -93,21 +93,22 @@ def test_simple(tmp_path: Path):
     libadd_so  = compile_libadd(tmp_path)
     binadd_bin = compile_binadd(tmp_path)
 
-    libadd = lief.parse(libadd_so.as_posix())
+    libadd = lief.ELF.parse(libadd_so.as_posix())
     for _ in range(10):
         segment = libadd.add(STUB.segments[0])
         segment.alignment = 0x1000
 
         new_ep = (STUB.header.entrypoint - STUB.segments[0].virtual_address) + segment.virtual_address
 
-        if libadd.has(lief.ELF.DYNAMIC_TAGS.INIT_ARRAY):
-            init_array = libadd.get(lief.ELF.DYNAMIC_TAGS.INIT_ARRAY)
+        if libadd.has(lief.ELF.DynamicEntry.TAG.INIT_ARRAY):
+            init_array = libadd.get(lief.ELF.DynamicEntry.TAG.INIT_ARRAY)
+            assert isinstance(init_array, lief.ELF.DynamicEntryArray)
             callbacks = init_array.array
             callbacks[0] = new_ep
             init_array.array = callbacks
 
-        if libadd.has(lief.ELF.DYNAMIC_TAGS.INIT):
-            init = libadd.get(lief.ELF.DYNAMIC_TAGS.INIT)
+        if libadd.has(lief.ELF.DynamicEntry.TAG.INIT):
+            init = libadd.get(lief.ELF.DynamicEntry.TAG.INIT)
             init.value = new_ep
 
     libadd.write(libadd_so.as_posix())
@@ -120,7 +121,7 @@ def test_simple(tmp_path: Path):
         "env":    {"LD_LIBRARY_PATH": tmp_path.as_posix()},
     }
 
-    with Popen([binadd_bin, '1', '2'], **popen_args) as P:
+    with Popen([binadd_bin, '1', '2'], **popen_args) as P: # type: ignore
         stdout = P.stdout.read().decode("utf8")
         print(stdout)
         assert re.search(r'LIEF is Working', stdout) is not None

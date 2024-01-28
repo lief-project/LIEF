@@ -15,6 +15,7 @@
  */
 #include "ELF/pyELF.hpp"
 #include "pyIterator.hpp"
+#include "enums_wrapper.hpp"
 
 #include "LIEF/ELF/Symbol.hpp"
 #include "LIEF/ELF/SymbolVersion.hpp"
@@ -29,10 +30,43 @@ namespace LIEF::ELF::py {
 template<>
 void create<Symbol>(nb::module_& m) {
 
-  nb::class_<Symbol, LIEF::Symbol>(m, "Symbol",
+  nb::class_<Symbol, LIEF::Symbol> sym(m, "Symbol",
     R"delim(
-    "Class which represents an ELF symbol"
-    )delim")
+    Class which represents an ELF symbol
+    )delim"_doc);
+
+  #define ENTRY(X) .value(to_string(Symbol::BINDING::X), Symbol::BINDING::X)
+  enum_<Symbol::BINDING>(sym, "BINDING")
+    ENTRY(LOCAL)
+    ENTRY(GLOBAL)
+    ENTRY(WEAK)
+    ENTRY(GNU_UNIQUE)
+  ;
+  #undef ENTRY
+
+  #define ENTRY(X) .value(to_string(Symbol::TYPE::X), Symbol::TYPE::X)
+  enum_<Symbol::TYPE>(sym, "TYPE")
+    ENTRY(NOTYPE)
+    ENTRY(OBJECT)
+    ENTRY(FUNC)
+    ENTRY(SECTION)
+    ENTRY(FILE)
+    ENTRY(COMMON)
+    ENTRY(TLS)
+    ENTRY(GNU_IFUNC)
+  ;
+  #undef ENTRY
+
+  #define ENTRY(X) .value(to_string(Symbol::VISIBILITY::X), Symbol::VISIBILITY::X)
+  enum_<Symbol::VISIBILITY>(sym, "VISIBILITY")
+    ENTRY(DEFAULT)
+    ENTRY(INTERNAL)
+    ENTRY(HIDDEN)
+    ENTRY(PROTECTED)
+  ;
+  #undef ENTRY
+
+  sym
     .def(nb::init<>())
     .def_prop_ro("demangled_name",
         &Symbol::demangled_name,
@@ -40,15 +74,13 @@ void create<Symbol>(nb::module_& m) {
 
     .def_prop_rw("type",
         nb::overload_cast<>(&Symbol::type, nb::const_),
-        nb::overload_cast<ELF_SYMBOL_TYPES>(&Symbol::type),
-        "The symbol's type provides a general classification for the associated entity. "
-        "See: " RST_CLASS_REF(lief.ELF.SYMBOL_TYPES) ""_doc)
+        nb::overload_cast<Symbol::TYPE>(&Symbol::type),
+        "The symbol's type provides a general classification for the associated entity."_doc)
 
     .def_prop_rw("binding",
         nb::overload_cast<>(&Symbol::binding, nb::const_),
-        nb::overload_cast<SYMBOL_BINDINGS>(&Symbol::binding),
-        "A symbol's binding determines the linkage visibility and behavior. "
-        "See " RST_CLASS_REF(lief.ELF.SYMBOL_BINDINGS) ""_doc)
+        nb::overload_cast<Symbol::BINDING>(&Symbol::binding),
+        "A symbol's binding determines the linkage visibility and behavior."_doc)
 
     .def_prop_rw("information",
         nb::overload_cast<>(&Symbol::information, nb::const_),
@@ -62,10 +94,9 @@ void create<Symbol>(nb::module_& m) {
 
     .def_prop_rw("visibility",
         nb::overload_cast<>(&Symbol::visibility, nb::const_),
-        nb::overload_cast<ELF_SYMBOL_VISIBILITY>(&Symbol::visibility),
+        nb::overload_cast<Symbol::VISIBILITY>(&Symbol::visibility),
         R"delim(
-        Symbol :class:`~lief.ELF.SYMBOL_VISIBILITY`.
-        It's basically an alias on :attr:`~lief.ELF.Symbol.other`
+        Symbol visibility. It's basically an alias on :attr:`~.Symbol.other`
         )delim"_doc)
 
     .def_prop_rw("value", // Even though it is already defined in the base class (Abstract/Symbol)

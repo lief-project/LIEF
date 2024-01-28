@@ -20,19 +20,19 @@ CWD = Path(__file__).parent
 
 def test_simple(tmp_path: Path):
     sample_path = get_sample('ELF/ELF64_x86-64_binary_ls.bin')
-    stub        = lief.parse((CWD / "hello_lief.bin").as_posix())
+    stub        = lief.ELF.parse((CWD / "hello_lief.bin").as_posix())
     output      = tmp_path / "ls.replace_segment"
-    target      = lief.parse(sample_path)
+    target      = lief.ELF.parse(sample_path)
 
 
-    if not lief.ELF.SEGMENT_TYPES.NOTE in target:
+    if not lief.ELF.Segment.TYPE.NOTE in target:
         print("Note not found!", file=sys.stderr)
         return
 
     segment                 = stub.segments[0]
     original_va             = segment.virtual_address
     segment.virtual_address = 0
-    segment                 = target.replace(segment, target[lief.ELF.SEGMENT_TYPES.NOTE])
+    segment                 = target.replace(segment, target[lief.ELF.Segment.TYPE.NOTE])
     new_ep                  = (stub.header.entrypoint - original_va) + segment.virtual_address
 
     target.header.entrypoint = new_ep
@@ -49,18 +49,18 @@ def test_simple(tmp_path: Path):
 
 def test_gcc(tmp_path: Path):
     sample_path = get_sample('ELF/ELF64_x86-64_binary_gcc.bin')
-    stub        = lief.parse((CWD / "hello_lief.bin").as_posix())
+    stub        = lief.ELF.parse((CWD / "hello_lief.bin").as_posix())
     output      = tmp_path / "gcc.replace_segment"
-    target      = lief.parse(sample_path)
+    target      = lief.ELF.parse(sample_path)
 
-    if not lief.ELF.SEGMENT_TYPES.NOTE in target:
+    if not lief.ELF.Segment.TYPE.NOTE in target:
         print("Note not found!", file=sys.stderr)
         return
 
     segment                 = stub.segments[0]
     original_va             = segment.virtual_address
     segment.virtual_address = 0
-    segment                 = target.replace(segment, target[lief.ELF.SEGMENT_TYPES.NOTE])
+    segment                 = target.replace(segment, target[lief.ELF.Segment.TYPE.NOTE])
     new_ep                  = (stub.header.entrypoint - original_va) + segment.virtual_address
 
     target.header.entrypoint = new_ep
@@ -80,21 +80,21 @@ def test_gcc(tmp_path: Path):
 def test_ssh(tmp_path: Path):
     stub = None
     if is_x86_64():
-        stub = lief.parse((CWD / "hello_lief.bin").as_posix())
+        stub = lief.ELF.parse((CWD / "hello_lief.bin").as_posix())
     elif is_aarch64():
-        stub = lief.parse((CWD / "hello_lief_aarch64.bin").as_posix())
+        stub = lief.ELF.parse((CWD / "hello_lief_aarch64.bin").as_posix())
 
     output = tmp_path / "ssh.replace_segment"
-    target = lief.parse("/usr/bin/ssh")
+    target = lief.ELF.parse("/usr/bin/ssh")
 
-    if not lief.ELF.SEGMENT_TYPES.NOTE in target:
+    if not lief.ELF.Segment.TYPE.NOTE in target:
         print("Note not found!", file=sys.stderr)
         return
 
     segment                 = stub.segments[0]
     original_va             = segment.virtual_address
     segment.virtual_address = 0
-    segment                 = target.replace(segment, target[lief.ELF.SEGMENT_TYPES.NOTE])
+    segment                 = target.replace(segment, target[lief.ELF.Segment.TYPE.NOTE])
     new_ep                  = (stub.header.entrypoint - original_va) + segment.virtual_address
 
     target.header.entrypoint = new_ep

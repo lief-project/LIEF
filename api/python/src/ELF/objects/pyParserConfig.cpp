@@ -16,16 +16,25 @@
 #include "ELF/pyELF.hpp"
 #include "LIEF/ELF/ParserConfig.hpp"
 
+#include "enums_wrapper.hpp"
+
 namespace LIEF::ELF::py {
 
 template<>
 void create<ParserConfig>(nb::module_& m) {
 
-  nb::class_<ParserConfig>(m, "ParserConfig",
+  nb::class_<ParserConfig> pconfig(m, "ParserConfig",
       R"delim(
       This class is used to tweak the ELF Parser
-      )delim"_doc)
+      )delim"_doc);
 
+  enum_<ParserConfig::DYNSYM_COUNT>(pconfig, "DYNSYM_COUNT")
+    .value("AUTO", ParserConfig::DYNSYM_COUNT::AUTO)
+    .value("SECTION", ParserConfig::DYNSYM_COUNT::SECTION)
+    .value("HASH", ParserConfig::DYNSYM_COUNT::HASH)
+    .value("RELOCATIONS", ParserConfig::DYNSYM_COUNT::RELOCATIONS);
+
+  pconfig
     .def(nb::init<>())
     .def_rw("parse_relocations", &ParserConfig::parse_relocations,
             "Whether relocations (including plt-like relocations) should be parsed."_doc)

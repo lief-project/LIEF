@@ -20,8 +20,6 @@
 #pragma message("LIEF will disable #define enums. Please use LIEF_ELF_XXXX or LIEF::ELF::XXXX instead!")
 #endif
 
-
-
 #undef EI_MAG0
 #undef EI_MAG1
 #undef EI_MAG2

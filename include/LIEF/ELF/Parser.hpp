@@ -52,8 +52,12 @@ class LIEF_API Parser : public LIEF::Parser {
   static constexpr uint32_t NB_MAX_RELOCATIONS     = 3000000;
   static constexpr uint32_t NB_MAX_DYNAMIC_ENTRIES = 1000;
   static constexpr uint32_t NB_MAX_MASKWORD        = 512;
-  static constexpr uint32_t MAX_SECTION_SIZE       = 2_GB;
   static constexpr uint32_t MAX_SEGMENT_SIZE       = 3_GB;
+
+  enum ELF_TYPE {
+    ELF_UNKNOWN,
+    ELF32, ELF64
+  };
 
   //! Parse an ELF file and return a LIEF::ELF::Binary object
   //!
@@ -92,12 +96,12 @@ class LIEF_API Parser : public LIEF::Parser {
   Parser(const Parser&)            = delete;
 
   protected:
-  Parser();
+  Parser() = default;
   Parser(std::unique_ptr<BinaryStream> stream, ParserConfig config);
   Parser(const std::string& file, ParserConfig config);
   Parser(const std::vector<uint8_t>& data, ParserConfig config);
 
-  ~Parser() override;
+  ~Parser() override = default;
 
   ok_error_t init();
 
@@ -129,7 +133,7 @@ class LIEF_API Parser : public LIEF::Parser {
 
   //! Return the number of dynamic symbols using the given method
   template<typename ELF_T>
-  result<uint32_t> get_numberof_dynamic_symbols(DYNSYM_COUNT_METHODS mtd) const;
+  result<uint32_t> get_numberof_dynamic_symbols(ParserConfig::DYNSYM_COUNT mtd) const;
 
   //! Count based on hash table (reliable)
   template<typename ELF_T>
@@ -192,8 +196,8 @@ class LIEF_API Parser : public LIEF::Parser {
   //! Parse SymbolVersionRequirement
   //!
   //! We use the virtual address stored in the
-  //! DYNAMIC_TAGS::DT_VERNEED entry to get the offset.
-  //! and DYNAMIC_TAGS::DT_VERNEEDNUM to get the number of entries
+  //! DynamicEntry::TAG::VERNEED entry to get the offset.
+  //! and DynamicEntry::TAG::VERNEEDNUM to get the number of entries
   template<typename ELF_T>
   ok_error_t parse_symbol_version_requirement(uint64_t offset, uint32_t nb_entries);
 
@@ -201,8 +205,8 @@ class LIEF_API Parser : public LIEF::Parser {
   //! Parse SymbolVersionDefinition.
   //!
   //! We use the virtual address stored in
-  //! the DYNAMIC_TAGS::DT_VERDEF DT_VERDEF entry to get the offset.
-  //! DYNAMIC_TAGS::DT_VERDEFNUM gives the number of entries
+  //! the DynamicEntry::TAG::VERDEF DT_VERDEF entry to get the offset.
+  //! DynamicEntry::TAG::VERDEFNUM gives the number of entries
   template<typename ELF_T>
   ok_error_t parse_symbol_version_definition(uint64_t offset, uint32_t nb_entries);
 
@@ -210,7 +214,7 @@ class LIEF_API Parser : public LIEF::Parser {
   //! Parse @link SymbolVersion Symbol version @endlink.
   //!
   //! We use the virtual address stored in the
-  //! DYNAMIC_TAGS::DT_VERSYM entry to parse it.
+  //! DynamicEntry::TAG::VERSYM entry to parse it.
   //!
   //! @see http://dev.gentoo.org/~solar/elf/symbol-versioning
   ok_error_t parse_symbol_version(uint64_t symbol_version_offset);
@@ -238,9 +242,8 @@ class LIEF_API Parser : public LIEF::Parser {
   static bool check_section_in_segment(const Section& section, const Segment& segment);
 
   std::unique_ptr<BinaryStream> stream_;
-  std::unique_ptr<Binary>       binary_;
-  ELF_CLASS                     type_ = ELF_CLASS::ELFCLASSNONE;
-  ParserConfig                  config_;
+  std::unique_ptr<Binary> binary_;
+  ParserConfig config_;
   /*
    * parse_sections() may skip some sections so that
    * binary_->sections_ is not contiguous based on the index of the sections.

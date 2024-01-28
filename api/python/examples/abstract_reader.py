@@ -177,12 +177,7 @@ def main():
 
     args = parser.parse_args()
 
-    binary = None
-    try:
-        binary = lief.parse(args.binary)
-    except lief.exception as e:
-        print(e)
-        sys.exit(1)
+    binary = lief.parse(args.binary)
 
     binary = binary.abstract
     if args.show_header or args.show_all:

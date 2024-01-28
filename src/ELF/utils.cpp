@@ -88,13 +88,5 @@ uint32_t dl_new_hash(const char* name) {
   return h & 0xffffffff;
 }
 
-
-
 } // namespace ELF
 } // namespace LIEF
-
-
-
-
-
-

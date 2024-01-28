@@ -135,6 +135,11 @@ jobs:
           python -m pip install -r tests/requirements.txt
           python tests/dl_samples.py %LIEF_SAMPLES_DIR%
           python -m pip -vvv install --user api/python
+      - name: Download samples
+        shell: cmd
+        run: |
+          python -m pip install -r tests/requirements.txt
+          python tests/dl_samples.py %LIEF_SAMPLES_DIR%
       - name: Run tests
         timeout-minutes: 20
         shell: cmd

@@ -114,29 +114,29 @@ inline Note::description_t write_status_impl(const CorePrStatus::pr_status_t& st
 template<class REG_T>
 inline result<uint64_t>
 get_reg_impl(REG_T reg, const Note::description_t& description,
-             ELF_CLASS cls, ARCH arch)
+             Header::CLASS cls, ARCH arch)
 {
   if constexpr (std::is_same_v<REG_T, CorePrStatus::Registers::X86>)
   {
-    if (arch != ARCH::EM_386) {
+    if (arch != ARCH::I386) {
       return make_error_code(lief_errors::not_found);
     }
   }
   else if constexpr (std::is_same_v<REG_T, CorePrStatus::Registers::X86_64>)
   {
-    if (arch != ARCH::EM_X86_64) {
+    if (arch != ARCH::X86_64) {
       return make_error_code(lief_errors::not_found);
     }
   }
   else if constexpr (std::is_same_v<REG_T, CorePrStatus::Registers::ARM>)
   {
-    if (arch != ARCH::EM_ARM) {
+    if (arch != ARCH::ARM) {
       return make_error_code(lief_errors::not_found);
     }
   }
   else if constexpr (std::is_same_v<REG_T, CorePrStatus::Registers::AARCH64>)
   {
-    if (arch != ARCH::EM_AARCH64) {
+    if (arch != ARCH::AARCH64) {
       return make_error_code(lief_errors::not_found);
     }
   }
@@ -155,7 +155,7 @@ get_reg_impl(REG_T reg, const Note::description_t& description,
     return make_error_code(lief_errors::not_found);
   }
 
-  if (cls == ELF_CLASS::ELFCLASS32) {
+  if (cls == Header::CLASS::ELF32) {
     stream->increment_pos(sizeof(details::ELF32::Elf_Prstatus));
     stream->increment_pos(pos * sizeof(uint32_t));
     auto value = stream->read<uint32_t>();
@@ -165,7 +165,7 @@ get_reg_impl(REG_T reg, const Note::description_t& description,
     return *value;
   }
 
-  if (cls == ELF_CLASS::ELFCLASS64) {
+  if (cls == Header::CLASS::ELF64) {
     stream->increment_pos(sizeof(details::ELF64::Elf_Prstatus));
     stream->increment_pos(pos * sizeof(uint64_t));
     auto value = stream->read<uint64_t>();
@@ -181,29 +181,29 @@ get_reg_impl(REG_T reg, const Note::description_t& description,
 template<class REG_T>
 inline ok_error_t
 set_reg_impl(REG_T reg, uint64_t value, Note::description_t& description,
-             ELF_CLASS cls, ARCH arch)
+             Header::CLASS cls, ARCH arch)
 {
   if constexpr (std::is_same_v<REG_T, CorePrStatus::Registers::X86>)
   {
-    if (arch != ARCH::EM_386) {
+    if (arch != ARCH::I386) {
       return make_error_code(lief_errors::not_found);
     }
   }
   else if constexpr (std::is_same_v<REG_T, CorePrStatus::Registers::X86_64>)
   {
-    if (arch != ARCH::EM_X86_64) {
+    if (arch != ARCH::X86_64) {
       return make_error_code(lief_errors::not_found);
     }
   }
   else if constexpr (std::is_same_v<REG_T, CorePrStatus::Registers::ARM>)
   {
-    if (arch != ARCH::EM_ARM) {
+    if (arch != ARCH::ARM) {
       return make_error_code(lief_errors::not_found);
     }
   }
   else if constexpr (std::is_same_v<REG_T, CorePrStatus::Registers::AARCH64>)
   {
-    if (arch != ARCH::EM_AARCH64) {
+    if (arch != ARCH::AARCH64) {
       return make_error_code(lief_errors::not_found);
     }
   }
@@ -221,14 +221,14 @@ set_reg_impl(REG_T reg, uint64_t value, Note::description_t& description,
   vector_iostream os;
   os.write(description);
 
-  if (cls == ELF_CLASS::ELFCLASS32) {
+  if (cls == Header::CLASS::ELF32) {
     offset += sizeof(details::ELF32::Elf_Prstatus) + pos * sizeof(uint32_t);
     os.seekp(offset);
     os.write<uint32_t>(value);
     return ok();
   }
 
-  if (cls == ELF_CLASS::ELFCLASS64) {
+  if (cls == Header::CLASS::ELF64) {
     offset += sizeof(details::ELF64::Elf_Prstatus) + pos * sizeof(uint64_t);
     os.seekp(offset);
     os.write<uint64_t>(value);
@@ -242,7 +242,7 @@ set_reg_impl(REG_T reg, uint64_t value, Note::description_t& description,
 std::vector<uint64_t> CorePrStatus::register_values() const {
   std::vector<uint64_t> values;
   switch (arch_) {
-    case ARCH::EM_X86_64:
+    case ARCH::X86_64:
       {
         using Reg = Registers::X86_64;
         const auto count = static_cast<size_t>(Reg::_COUNT);
@@ -256,7 +256,7 @@ std::vector<uint64_t> CorePrStatus::register_values() const {
         }
         return values;
       }
-    case ARCH::EM_386:
+    case ARCH::I386:
       {
         using Reg = Registers::X86;
         const auto count = static_cast<size_t>(Reg::_COUNT);
@@ -270,7 +270,7 @@ std::vector<uint64_t> CorePrStatus::register_values() const {
         }
         return values;
       }
-    case ARCH::EM_ARM:
+    case ARCH::ARM:
       {
         using Reg = Registers::ARM;
         const auto count = static_cast<size_t>(Reg::_COUNT);
@@ -284,7 +284,7 @@ std::vector<uint64_t> CorePrStatus::register_values() const {
         }
         return values;
       }
-    case ARCH::EM_AARCH64:
+    case ARCH::AARCH64:
       {
         using Reg = Registers::AARCH64;
         const auto count = static_cast<size_t>(Reg::_COUNT);
@@ -303,14 +303,14 @@ std::vector<uint64_t> CorePrStatus::register_values() const {
 }
 
 CorePrStatus::pr_status_t CorePrStatus::status() const {
-  if (class_ == ELF_CLASS::ELFCLASS32) {
+  if (class_ == Header::CLASS::ELF32) {
     return get_status_impl<details::ELF32>(description_);
   }
   return get_status_impl<details::ELF64>(description_);
 }
 
 void CorePrStatus::status(const pr_status_t& status) {
-  Note::description_t description = class_ == ELF_CLASS::ELFCLASS32 ?
+  Note::description_t description = class_ == Header::CLASS::ELF32 ?
       write_status_impl<details::ELF32>(status) :
       write_status_impl<details::ELF64>(status);
 
@@ -360,30 +360,30 @@ ok_error_t CorePrStatus::set(Registers::AARCH64 reg, uint64_t value) {
 
 result<uint64_t> CorePrStatus::pc() const {
   switch (arch_) {
-    case ARCH::EM_AARCH64: return get(Registers::AARCH64::PC);
-    case ARCH::EM_ARM: return get(Registers::ARM::R15);
-    case ARCH::EM_386: return get(Registers::X86::EIP);
-    case ARCH::EM_X86_64: return get(Registers::X86_64::RIP);
+    case ARCH::AARCH64: return get(Registers::AARCH64::PC);
+    case ARCH::ARM: return get(Registers::ARM::R15);
+    case ARCH::I386: return get(Registers::X86::EIP);
+    case ARCH::X86_64: return get(Registers::X86_64::RIP);
     default: return make_error_code(lief_errors::not_supported);
   }
 }
 
 result<uint64_t> CorePrStatus::sp() const {
   switch (arch_) {
-    case ARCH::EM_AARCH64: return get(Registers::AARCH64::X31);
-    case ARCH::EM_ARM: return get(Registers::ARM::R13);
-    case ARCH::EM_386: return get(Registers::X86::ESP);
-    case ARCH::EM_X86_64: return get(Registers::X86_64::RSP);
+    case ARCH::AARCH64: return get(Registers::AARCH64::X31);
+    case ARCH::ARM: return get(Registers::ARM::R13);
+    case ARCH::I386: return get(Registers::X86::ESP);
+    case ARCH::X86_64: return get(Registers::X86_64::RSP);
     default: return make_error_code(lief_errors::not_supported);
   }
 }
 
 result<uint64_t> CorePrStatus::return_value() const {
   switch (arch_) {
-    case ARCH::EM_AARCH64: return get(Registers::AARCH64::X0);
-    case ARCH::EM_ARM: return get(Registers::ARM::R0);
-    case ARCH::EM_386: return get(Registers::X86::EAX);
-    case ARCH::EM_X86_64: return get(Registers::X86_64::RAX);
+    case ARCH::AARCH64: return get(Registers::AARCH64::X0);
+    case ARCH::ARM: return get(Registers::ARM::R0);
+    case ARCH::I386: return get(Registers::X86::EAX);
+    case ARCH::X86_64: return get(Registers::X86_64::RAX);
     default: return make_error_code(lief_errors::not_supported);
   }
 }
@@ -413,13 +413,13 @@ void CorePrStatus::dump(std::ostream& os) const {
                     status.cursig, status.reserved);
   const std::vector<uint64_t>& reg_vals = register_values();
   switch (architecture()) {
-    case ARCH::EM_ARM:
+    case ARCH::ARM:
       dump_impl<CorePrStatus::Registers::ARM>(os, reg_vals); break;
-    case ARCH::EM_AARCH64:
+    case ARCH::AARCH64:
       dump_impl<CorePrStatus::Registers::AARCH64>(os, reg_vals); break;
-    case ARCH::EM_386:
+    case ARCH::I386:
       dump_impl<CorePrStatus::Registers::X86>(os, reg_vals); break;
-    case ARCH::EM_X86_64:
+    case ARCH::X86_64:
       dump_impl<CorePrStatus::Registers::X86_64>(os, reg_vals); break;
     default:
       dump_impl<void>(os, reg_vals); break;

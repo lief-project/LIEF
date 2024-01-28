@@ -15,6 +15,7 @@
  */
 #include "ELF/pyELF.hpp"
 #include "pyIterator.hpp"
+#include "enums_wrapper.hpp"
 
 #include <nanobind/operators.h>
 #include <nanobind/stl/string.h>
@@ -35,11 +36,89 @@ void create<Section>(nb::module_& m) {
   using namespace LIEF::py;
 
   nb::class_<Section, LIEF::Section> sec(m, "Section",
-      R"delim(
-      Class which represents an ELF section.
-      )delim"_doc);
+    R"delim(
+    Class which represents an ELF section.
+    )delim"_doc
+  );
 
   init_ref_iterator<Section::it_segments>(sec, "it_segments");
+
+  #define ENTRY(X) .value(to_string(Section::FLAGS::X), Section::FLAGS::X)
+  enum_<Section::FLAGS>(sec, "FLAGS", nb::is_arithmetic())
+    ENTRY(NONE)
+    ENTRY(WRITE)
+    ENTRY(ALLOC)
+    ENTRY(EXECINSTR)
+    ENTRY(MERGE)
+    ENTRY(STRINGS)
+    ENTRY(INFO_LINK)
+    ENTRY(LINK_ORDER)
+    ENTRY(OS_NONCONFORMING)
+    ENTRY(GROUP)
+    ENTRY(TLS)
+    ENTRY(COMPRESSED)
+    ENTRY(GNU_RETAIN)
+    ENTRY(EXCLUDE)
+    ENTRY(XCORE_SHF_DP_SECTION)
+    ENTRY(XCORE_SHF_CP_SECTION)
+    ENTRY(X86_64_LARGE)
+    ENTRY(HEX_GPREL)
+
+    ENTRY(MIPS_NODUPES)
+    ENTRY(MIPS_NAMES)
+    ENTRY(MIPS_LOCAL)
+    ENTRY(MIPS_NOSTRIP)
+    ENTRY(MIPS_GPREL)
+    ENTRY(MIPS_MERGE)
+    ENTRY(MIPS_ADDR)
+    ENTRY(MIPS_STRING)
+    ENTRY(ARM_PURECODE)
+  ;
+  #undef ENTRY
+
+  #define ENTRY(X) .value(to_string(Section::TYPE::X), Section::TYPE::X)
+  enum_<Section::TYPE>(sec, "TYPE")
+    ENTRY(SHT_NULL)
+    ENTRY(PROGBITS)
+    ENTRY(SYMTAB)
+    ENTRY(STRTAB)
+    ENTRY(RELA)
+    ENTRY(HASH)
+    ENTRY(DYNAMIC)
+    ENTRY(NOTE)
+    ENTRY(NOBITS)
+    ENTRY(REL)
+    ENTRY(SHLIB)
+    ENTRY(DYNSYM)
+    ENTRY(INIT_ARRAY)
+    ENTRY(FINI_ARRAY)
+    ENTRY(PREINIT_ARRAY)
+    ENTRY(GROUP)
+    ENTRY(SYMTAB_SHNDX)
+    ENTRY(RELR)
+
+    ENTRY(ANDROID_REL)
+    ENTRY(ANDROID_RELA)
+    ENTRY(LLVM_ADDRSIG)
+    ENTRY(ANDROID_RELR)
+    ENTRY(GNU_ATTRIBUTES)
+    ENTRY(GNU_HASH)
+    ENTRY(GNU_VERDEF)
+    ENTRY(GNU_VERNEED)
+    ENTRY(GNU_VERSYM)
+
+    ENTRY(ARM_EXIDX)
+    ENTRY(ARM_PREEMPTMAP)
+    ENTRY(ARM_ATTRIBUTES)
+    ENTRY(ARM_DEBUGOVERLAY)
+    ENTRY(ARM_OVERLAYSECTION)
+    ENTRY(HEX_ORDERED)
+    ENTRY(X86_64_UNWIND)
+    ENTRY(MIPS_REGINFO)
+    ENTRY(MIPS_OPTIONS)
+    ENTRY(MIPS_ABIFLAGS)
+  ;
+  #undef ENTRY
 
   sec
     .def(nb::init<>(),
@@ -52,27 +131,22 @@ void create<Section>(nb::module_& m) {
     .def_prop_ro("is_frame",
         &Section::is_frame)
 
-    .def(nb::init<const std::string&, ELF_SECTION_TYPES>(),
+    .def(nb::init<const std::string&, Section::TYPE>(),
         "Constructor from a name and a section type"_doc,
-        "name"_a, "type"_a = ELF_SECTION_TYPES::SHT_PROGBITS)
-
-    //.def(nb::init([] (Section& section, std::vector<uint8_t>& content, ELF_CLASS type) {
-    //      return new Section(content.data(), type);
-    //    }))
+        "name"_a, "type"_a = Section::TYPE::PROGBITS)
 
     .def_prop_rw("type",
         nb::overload_cast<>(&Section::type, nb::const_),
-        nb::overload_cast<ELF_SECTION_TYPES>(&Section::type),
-        "Return the " RST_CLASS_REF(lief.ELF.SECTION_TYPES) ""_doc)
+        nb::overload_cast<Section::TYPE>(&Section::type),
+        "Return the type of the section"_doc)
 
     .def_prop_rw("flags",
         nb::overload_cast<>(&Section::flags, nb::const_),
         nb::overload_cast<uint64_t>(&Section::flags),
         "Return the section's flags as an integer"_doc)
 
-    .def_prop_ro("flags_list",
-        &Section::flags_list,
-        "Return section's flags as a list of " RST_CLASS_REF(lief.ELF.SECTION_FLAGS) ""_doc)
+    .def_prop_ro("flags_list", &Section::flags_list,
+        "Return section's flags as a list"_doc)
 
     .def_prop_rw("file_offset",
         nb::overload_cast<>(&Section::file_offset, nb::const_),
@@ -128,21 +202,17 @@ void create<Section>(nb::module_& m) {
       "value"_a = 0,
       nb::rv_policy::reference_internal)
 
-    .def("add",
-        &Section::add,
-        "Add the given " RST_CLASS_REF(lief.ELF.SECTION_FLAGS) " to the list of "
-        ":attr:`~lief.ELF.Section.flags`"_doc,
+    .def("add", &Section::add,
+        "Add the given flag to the list of :attr:`~lief.ELF.Section.flags`"_doc,
         "flag"_a)
 
-    .def("remove",
-        &Section::remove,
-        "Remove the given " RST_CLASS_REF(lief.ELF.SECTION_FLAGS) " from the list of "
-        ":attr:`~lief.ELF.Section.flags`"_doc,
+    .def("remove", &Section::remove,
+        "Remove the given flag from the list of " ":attr:`~lief.ELF.Section.flags`"_doc,
         "flag"_a)
 
     .def("has",
-        nb::overload_cast<ELF_SECTION_FLAGS>(&Section::has, nb::const_),
-        "Check if the given " RST_CLASS_REF(lief.ELF.SECTION_FLAGS) " is present"_doc,
+        nb::overload_cast<Section::FLAGS>(&Section::has, nb::const_),
+        "Check if the given flag is present"_doc,
         "flag"_a)
 
     .def("has",
@@ -151,12 +221,12 @@ void create<Section>(nb::module_& m) {
         "in :attr:`~lief.ELF.Section.segments`"_doc,
         "segment"_a)
 
-    .def(nb::self += ELF_SECTION_FLAGS())
-    .def(nb::self -= ELF_SECTION_FLAGS())
+    .def(nb::self += Section::FLAGS())
+    .def(nb::self -= Section::FLAGS())
 
     .def("__contains__",
-        nb::overload_cast<ELF_SECTION_FLAGS>(&Section::has, nb::const_),
-        "Check if the given " RST_CLASS_REF(lief.ELF.SECTION_FLAGS) " is present"_doc)
+        nb::overload_cast<Section::FLAGS>(&Section::has, nb::const_),
+        "Check if the given flag is present"_doc)
 
 
     .def("__contains__",

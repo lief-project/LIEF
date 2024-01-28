@@ -23,29 +23,29 @@ def test_hash():
     assert hello_c_debug.gnu_hash is not None
     assert hash(hello_c_debug.gnu_hash) > 0
 
-    assert empty_gnu_hash[lief.ELF.DYNAMIC_TAGS.FLAGS_1] is not None
-    assert hash(empty_gnu_hash[lief.ELF.DYNAMIC_TAGS.FLAGS_1]) > 0
+    assert empty_gnu_hash[lief.ELF.DynamicEntry.TAG.FLAGS_1] is not None
+    assert hash(empty_gnu_hash[lief.ELF.DynamicEntry.TAG.FLAGS_1]) > 0
 
-    assert arm_ls[lief.ELF.DYNAMIC_TAGS.FLAGS] is not None
-    assert hash(arm_ls[lief.ELF.DYNAMIC_TAGS.FLAGS]) > 0
+    assert arm_ls[lief.ELF.DynamicEntry.TAG.FLAGS] is not None
+    assert hash(arm_ls[lief.ELF.DynamicEntry.TAG.FLAGS]) > 0
 
-    assert libfreebl3[lief.ELF.DYNAMIC_TAGS.SONAME] is not None
-    assert hash(libfreebl3[lief.ELF.DYNAMIC_TAGS.SONAME]) > 0
+    assert libfreebl3[lief.ELF.DynamicEntry.TAG.SONAME] is not None
+    assert hash(libfreebl3[lief.ELF.DynamicEntry.TAG.SONAME]) > 0
 
-    assert hello_c_debug[lief.ELF.DYNAMIC_TAGS.GNU_HASH] is not None
-    assert hash(hello_c_debug[lief.ELF.DYNAMIC_TAGS.GNU_HASH]) > 0
+    assert hello_c_debug[lief.ELF.DynamicEntry.TAG.GNU_HASH] is not None
+    assert hash(hello_c_debug[lief.ELF.DynamicEntry.TAG.GNU_HASH]) > 0
 
-    assert hello_c_debug[lief.ELF.DYNAMIC_TAGS.INIT_ARRAY] is not None
-    assert hash(hello_c_debug[lief.ELF.DYNAMIC_TAGS.INIT_ARRAY]) > 0
+    assert hello_c_debug[lief.ELF.DynamicEntry.TAG.INIT_ARRAY] is not None
+    assert hash(hello_c_debug[lief.ELF.DynamicEntry.TAG.INIT_ARRAY]) > 0
 
-    assert hello_c_debug[lief.ELF.DYNAMIC_TAGS.NEEDED] is not None
-    assert hash(hello_c_debug[lief.ELF.DYNAMIC_TAGS.NEEDED]) > 0
+    assert hello_c_debug[lief.ELF.DynamicEntry.TAG.NEEDED] is not None
+    assert hash(hello_c_debug[lief.ELF.DynamicEntry.TAG.NEEDED]) > 0
 
-    assert etterlog[lief.ELF.DYNAMIC_TAGS.RPATH] is not None
-    assert hash(etterlog[lief.ELF.DYNAMIC_TAGS.RPATH]) > 0
+    assert etterlog[lief.ELF.DynamicEntry.TAG.RPATH] is not None
+    assert hash(etterlog[lief.ELF.DynamicEntry.TAG.RPATH]) > 0
 
-    assert resolve[lief.ELF.DYNAMIC_TAGS.RUNPATH] is not None
-    assert hash(resolve[lief.ELF.DYNAMIC_TAGS.RUNPATH]) > 0
+    assert resolve[lief.ELF.DynamicEntry.TAG.RUNPATH] is not None
+    assert hash(resolve[lief.ELF.DynamicEntry.TAG.RUNPATH]) > 0
 
     assert hash(resolve.header) > 0
     assert hash(etterlog.notes[0]) > 0
@@ -80,30 +80,30 @@ def test_str(capsys):
     assert hello_c_debug.gnu_hash is not None
     print(hello_c_debug.gnu_hash)
 
-    assert empty_gnu_hash[lief.ELF.DYNAMIC_TAGS.FLAGS_1] is not None
-    print(empty_gnu_hash[lief.ELF.DYNAMIC_TAGS.FLAGS_1])
+    assert empty_gnu_hash[lief.ELF.DynamicEntry.TAG.FLAGS_1] is not None
+    print(empty_gnu_hash[lief.ELF.DynamicEntry.TAG.FLAGS_1])
 
-    assert arm_ls[lief.ELF.DYNAMIC_TAGS.FLAGS] is not None
-    print(arm_ls[lief.ELF.DYNAMIC_TAGS.FLAGS])
+    assert arm_ls[lief.ELF.DynamicEntry.TAG.FLAGS] is not None
+    print(arm_ls[lief.ELF.DynamicEntry.TAG.FLAGS])
 
-    assert libfreebl3[lief.ELF.DYNAMIC_TAGS.SONAME] is not None
-    print(libfreebl3[lief.ELF.DYNAMIC_TAGS.SONAME])
+    assert libfreebl3[lief.ELF.DynamicEntry.TAG.SONAME] is not None
+    print(libfreebl3[lief.ELF.DynamicEntry.TAG.SONAME])
 
-    assert hello_c_debug[lief.ELF.DYNAMIC_TAGS.GNU_HASH] is not None
-    print(hello_c_debug[lief.ELF.DYNAMIC_TAGS.GNU_HASH])
+    assert hello_c_debug[lief.ELF.DynamicEntry.TAG.GNU_HASH] is not None
+    print(hello_c_debug[lief.ELF.DynamicEntry.TAG.GNU_HASH])
 
 
-    assert hello_c_debug[lief.ELF.DYNAMIC_TAGS.INIT_ARRAY] is not None
-    print(hello_c_debug[lief.ELF.DYNAMIC_TAGS.INIT_ARRAY])
+    assert hello_c_debug[lief.ELF.DynamicEntry.TAG.INIT_ARRAY] is not None
+    print(hello_c_debug[lief.ELF.DynamicEntry.TAG.INIT_ARRAY])
 
-    assert hello_c_debug[lief.ELF.DYNAMIC_TAGS.NEEDED] is not None
-    print(hello_c_debug[lief.ELF.DYNAMIC_TAGS.NEEDED])
+    assert hello_c_debug[lief.ELF.DynamicEntry.TAG.NEEDED] is not None
+    print(hello_c_debug[lief.ELF.DynamicEntry.TAG.NEEDED])
 
-    assert etterlog[lief.ELF.DYNAMIC_TAGS.RPATH] is not None
-    print(etterlog[lief.ELF.DYNAMIC_TAGS.RPATH])
+    assert etterlog[lief.ELF.DynamicEntry.TAG.RPATH] is not None
+    print(etterlog[lief.ELF.DynamicEntry.TAG.RPATH])
 
-    assert resolve[lief.ELF.DYNAMIC_TAGS.RUNPATH] is not None
-    print(resolve[lief.ELF.DYNAMIC_TAGS.RUNPATH])
+    assert resolve[lief.ELF.DynamicEntry.TAG.RUNPATH] is not None
+    print(resolve[lief.ELF.DynamicEntry.TAG.RUNPATH])
 
     print(resolve.header)
     print(etterlog.notes[0])

@@ -26,7 +26,9 @@ class Section;
 class Binary;
 class Layout {
   public:
-  Layout(Binary& bin);
+  Layout(Binary& bin) :
+    binary_(&bin)
+  {}
 
   virtual const std::unordered_map<std::string, size_t>& shstr_map() const {
     return shstr_name_map_;
@@ -56,7 +58,7 @@ class Layout {
   size_t section_strtab_size();
   size_t section_shstr_size();
 
-  virtual ~Layout();
+  virtual ~Layout() = default;
   Layout() = delete;
 
   protected:

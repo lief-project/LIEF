@@ -18,42 +18,8 @@
 
 #include "logging.hpp"
 
-#include <algorithm>
-#include <numeric>
-#include <sstream>
-#include <utility>
-
 namespace LIEF {
 namespace ELF {
-
-DynamicEntryArray::DynamicEntryArray() = default;
-DynamicEntryArray& DynamicEntryArray::operator=(const DynamicEntryArray&) = default;
-DynamicEntryArray::DynamicEntryArray(const DynamicEntryArray&) = default;
-
-
-DynamicEntryArray::DynamicEntryArray(DYNAMIC_TAGS tag, array_t array) :
-  DynamicEntry::DynamicEntry{tag, 0},
-  array_{std::move(array)}
-{}
-
-
-DynamicEntryArray::array_t& DynamicEntryArray::array() {
-  return const_cast<DynamicEntryArray::array_t&>(static_cast<const DynamicEntryArray*>(this)->array());
-}
-
-
-const DynamicEntryArray::array_t& DynamicEntryArray::array() const {
-  return array_;
-}
-
-void DynamicEntryArray::array(const DynamicEntryArray::array_t& array) {
-  array_ = array;
-}
-
-DynamicEntryArray& DynamicEntryArray::append(uint64_t function) {
-  array_.push_back(function);
-  return *this;
-}
 
 DynamicEntryArray& DynamicEntryArray::remove(uint64_t function) {
   array_.erase(std::remove_if(std::begin(array_), std::end(array_),
@@ -76,21 +42,8 @@ DynamicEntryArray& DynamicEntryArray::insert(size_t pos, uint64_t function) {
   return *this;
 }
 
-
-size_t DynamicEntryArray::size() const {
-  return array_.size();
-}
-
-DynamicEntryArray& DynamicEntryArray::operator+=(uint64_t value) {
-  return append(value);
-}
-
-DynamicEntryArray& DynamicEntryArray::operator-=(uint64_t value) {
-  return remove(value);
-}
-
 const uint64_t& DynamicEntryArray::operator[](size_t idx) const {
-  static uint64_t GARBAGE;
+  static uint64_t GARBAGE = 0;
   if (idx >= array_.size()) {
     LIEF_WARN("DynamicEntryArray[{}] is out-of-range", idx);
     return GARBAGE;
@@ -106,33 +59,12 @@ void DynamicEntryArray::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-bool DynamicEntryArray::classof(const DynamicEntry* entry) {
-  const DYNAMIC_TAGS tag = entry->tag();
-  return tag == DYNAMIC_TAGS::DT_INIT_ARRAY ||
-         tag == DYNAMIC_TAGS::DT_FINI_ARRAY ||
-         tag == DYNAMIC_TAGS::DT_PREINIT_ARRAY;
-}
-
 std::ostream& DynamicEntryArray::print(std::ostream& os) const {
-  const DynamicEntryArray::array_t& array = this->array();
+  const array_t& array = this->array();
   DynamicEntry::print(os);
-  os << std::hex
-     << std::left
-     << "["
-     << std::accumulate(std::begin(array), std::end(array), std::string(),
-         [] (std::string& s, uint64_t x) {
-          std::stringstream ss;
-          ss << "0x" << std::hex << x;
-            return s.empty() ? ss.str() : s + ", " + ss.str();
-         })
-     << "]";
-
-
+  os << '[' << fmt::format("0x{:04x}", fmt::join(array, ", ")) << ']';
   return os;
 }
-
-
-DynamicEntryArray::~DynamicEntryArray() = default;
 
 }
 }

@@ -33,19 +33,25 @@ class LIEF_API SymbolVersion : public Object {
   friend class Parser;
 
   public:
-  SymbolVersion(uint16_t value);
-  SymbolVersion();
+  SymbolVersion(uint16_t value) :
+    value_(value)
+  {}
+  SymbolVersion() = default;
 
   //! Generate a *local* SymbolVersion
-  static SymbolVersion local();
+  static SymbolVersion local() {
+    return SymbolVersion(0);
+  }
 
   //! Generate a *global* SymbolVersion
-  static SymbolVersion global();
+  static SymbolVersion global() {
+    return SymbolVersion(1);
+  }
 
-  ~SymbolVersion() override;
+  ~SymbolVersion() override = default;
 
-  SymbolVersion& operator=(const SymbolVersion&);
-  SymbolVersion(const SymbolVersion&);
+  SymbolVersion& operator=(const SymbolVersion&) = default;
+  SymbolVersion(const SymbolVersion&) = default;
 
   //! Value associated with the symbol
   //!
@@ -53,15 +59,24 @@ class LIEF_API SymbolVersion : public Object {
   //!
   //! * ``0`` means **Local**
   //! * ``1`` means **Global**
-  uint16_t value() const;
+  uint16_t value() const {
+    return value_;
+  }
 
   //! Whether the current SymbolVersion has an auxiliary one
-  bool has_auxiliary_version() const;
+  bool has_auxiliary_version() const {
+    return symbol_version_auxiliary() != nullptr;
+  }
 
   //! SymbolVersionAux associated with the current Version if any,
   //! or a nullptr
-  SymbolVersionAux*       symbol_version_auxiliary();
-  const SymbolVersionAux* symbol_version_auxiliary() const;
+  SymbolVersionAux* symbol_version_auxiliary() {
+    return symbol_aux_;
+  }
+
+  const SymbolVersionAux* symbol_version_auxiliary() const {
+    return symbol_aux_;
+  }
 
   //! Set the version's auxiliary requirement
   //! The given SymbolVersionAuxRequirement must be an existing
@@ -71,10 +86,11 @@ class LIEF_API SymbolVersion : public Object {
   //! SymbolVersionRequirement::add_aux_requirement
   void symbol_version_auxiliary(SymbolVersionAuxRequirement& svauxr);
 
-  void value(uint16_t v);
+  void value(uint16_t v) {
+    value_ = v;
+  }
 
   void accept(Visitor& visitor) const override;
-
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const SymbolVersion& symv);
 

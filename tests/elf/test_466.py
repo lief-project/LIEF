@@ -19,13 +19,15 @@ def test_freebl(tmp_path):
     output_ls         = tmp / "ls.new"
     output_libfreebl3 = tmp / "libfreebl3.so"
 
-    libfreebl3 = lief.parse(libfreebl3_path)
-    ls         = lief.parse("/usr/bin/ls")
+    libfreebl3 = lief.ELF.parse(libfreebl3_path)
+    ls: lief.ELF.Binary = lief.ELF.parse("/usr/bin/ls")
     if ls is None:
-        ls = lief.parse("/bin/ls")
+        ls = lief.ELF.parse("/bin/ls")
 
-    if lief.ELF.DYNAMIC_TAGS.FLAGS_1 in ls and ls[lief.ELF.DYNAMIC_TAGS.FLAGS_1].has(lief.ELF.DYNAMIC_FLAGS_1.PIE):
-        ls[lief.ELF.DYNAMIC_TAGS.FLAGS_1].remove(lief.ELF.DYNAMIC_FLAGS_1.PIE)
+    if lief.ELF.DynamicEntry.TAG.FLAGS_1 in ls:
+        flags_1: lief.ELF.DynamicEntryFlags = ls[lief.ELF.DynamicEntry.TAG.FLAGS_1]
+        if flags_1.has(lief.ELF.DynamicEntryFlags.FLAG.PIE):
+            flags_1.remove(lief.ELF.DynamicEntryFlags.FLAG.PIE)
 
     ls.add_library("libfreebl3.so")
 

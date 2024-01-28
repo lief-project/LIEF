@@ -16,37 +16,37 @@ BUILD_DIR = os.getenv("LIEF_BUILD_DIR", None)
 
 assert BUILD_DIR is not None
 
-BUILD_DIR = Path(BUILD_DIR)
+BUILD_DIR_PATH = Path(BUILD_DIR)
 
 def test_elf_reader_c():
-    target = BUILD_DIR / "examples" / "c" / "elf_reader"
+    target = BUILD_DIR_PATH / "examples" / "c" / "elf_reader"
     for sample in elf_samples:
         check_call([target, sample])
 
 def test_elf_reader_cpp():
-    target = BUILD_DIR / "examples" / "cpp" / "elf_reader"
+    target = BUILD_DIR_PATH / "examples" / "cpp" / "elf_reader"
     for sample in elf_samples:
         check_call([target, sample])
 
 def test_abstract_reader():
-    target = BUILD_DIR / "examples" / "cpp" / "abstract_reader"
+    target = BUILD_DIR_PATH / "examples" / "cpp" / "abstract_reader"
     for sample in elf_samples:
         check_call([target, sample])
 
 def test_elf_strip(tmp_path: Path):
     out = tmp_path / "out.bin"
-    target = BUILD_DIR / "examples" / "cpp" / "elf_strip"
+    target = BUILD_DIR_PATH / "examples" / "cpp" / "elf_strip"
     for sample in elf_samples:
         check_call([target, sample, out])
 
 def test_elf_add_section(tmp_path: Path):
     out = tmp_path / "out.bin"
-    target = BUILD_DIR / "examples" / "cpp" / "elf_add_section"
+    target = BUILD_DIR_PATH / "examples" / "cpp" / "elf_add_section"
     for sample in elf_samples:
         check_call([target, sample, out])
 
 def test_elf_symbols(tmp_path: Path):
     out = tmp_path / "out.bin"
-    target = BUILD_DIR / "examples" / "cpp" / "elf_add_section"
+    target = BUILD_DIR_PATH / "examples" / "cpp" / "elf_add_section"
     for sample in elf_samples:
         check_call([target, sample, out])

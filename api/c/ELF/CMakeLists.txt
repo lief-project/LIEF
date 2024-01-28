@@ -5,6 +5,5 @@ target_sources(LIB_LIEF PRIVATE
   DynamicEntry.cpp
   Header.cpp
   Binary.cpp
-  EnumToString.cpp
   utils.cpp
 )

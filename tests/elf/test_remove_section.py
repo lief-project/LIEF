@@ -16,7 +16,7 @@ def test_simple(tmp_path: Path):
     sample_path = get_sample('ELF/ELF64_x86-64_binary_ls.bin')
     output      = tmp_path / "ls.section"
 
-    ls = lief.parse(sample_path)
+    ls = lief.ELF.parse(sample_path)
     ls.remove_section(".text", clear=False)
     ls.write(output.as_posix())
 

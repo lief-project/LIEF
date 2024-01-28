@@ -44,10 +44,10 @@ class LIEF_API SymbolVersionRequirement : public Object {
   using it_aux_requirement       = ref_iterator<aux_requirement_t&, SymbolVersionAuxRequirement*>;
   using it_const_aux_requirement = const_ref_iterator<const aux_requirement_t&, const SymbolVersionAuxRequirement*>;
 
-  SymbolVersionRequirement();
+  SymbolVersionRequirement() = default;
   SymbolVersionRequirement(const details::Elf64_Verneed& header);
   SymbolVersionRequirement(const details::Elf32_Verneed& header);
-  ~SymbolVersionRequirement() override;
+  ~SymbolVersionRequirement() override = default;
 
   SymbolVersionRequirement& operator=(SymbolVersionRequirement other);
   SymbolVersionRequirement(const SymbolVersionRequirement& other);
@@ -57,28 +57,47 @@ class LIEF_API SymbolVersionRequirement : public Object {
   //!
   //! This field should always have the value ``1``. It will be changed
   //! if the versioning implementation has to be changed in an incompatible way.
-  uint16_t version() const;
+  uint16_t version() const {
+    return version_;
+  }
 
-  //! Number of associated auxiliary entries
-  uint32_t cnt() const;
+  //! Number of auxiliary entries
+  size_t cnt() const {
+    return aux_requirements_.size();
+  }
 
   //! Auxiliary entries as an iterator over SymbolVersionAuxRequirement
-  it_aux_requirement       auxiliary_symbols();
-  it_const_aux_requirement auxiliary_symbols() const;
+  it_aux_requirement auxiliary_symbols() {
+    return aux_requirements_;
+  }
+
+  it_const_aux_requirement auxiliary_symbols() const {
+    return aux_requirements_;
+  }
 
   //! Return the library name associated with this requirement (e.g. ``libc.so.6``)
-  const std::string& name() const;
+  const std::string& name() const {
+    return name_;
+  }
 
-  void version(uint16_t version);
-  void name(const std::string& name);
+  void version(uint16_t version) {
+    version_ = version;
+  }
+
+  void name(const std::string& name) {
+    name_ = name;
+  }
 
   //! Add a version auxiliary requirement to the existing list
   SymbolVersionAuxRequirement& add_aux_requirement(const SymbolVersionAuxRequirement& aux_requirement);
 
   void accept(Visitor& visitor) const override;
 
-
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const SymbolVersionRequirement& symr);
+  LIEF_API friend
+  std::ostream& operator<<(std::ostream& os, const SymbolVersionRequirement& symr) {
+    os << symr.version() << " " << symr.name();
+    return os;
+  }
 
   private:
   aux_requirement_t aux_requirements_;

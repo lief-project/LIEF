@@ -8,4 +8,4 @@ def test_loongarch():
 
     relocation = elf.relocations[0]
     assert relocation.size == 26
-    assert relocation.type == int(lief.ELF.RELOCATION_LOONGARCH.LARCH_B26)
+    assert relocation.type == int(lief.ELF.Relocation.TYPE.LARCH_B26)

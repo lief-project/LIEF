@@ -240,7 +240,7 @@ In order to circumvent this test, LIEF can be used to remove this ``DF_1_PIE`` f
   import sys
   path = sys.argv[1]
   bin_ = lief.parse(path)
-  bin_[lief.ELF.DYNAMIC_TAGS.FLAGS_1].remove(lief.ELF.DYNAMIC_FLAGS_1.PIE)
+  bin_[lief.ELF.DynamicEntry.TAG.FLAGS_1].remove(lief.ELF.DynamicEntryFlags.FLAG.PIE)
   bin_.write(path + ".patched")
 
 

@@ -20,7 +20,7 @@ def main():
 
     symtab_section             = ELF.Section()
     symtab_section.name        = ""
-    symtab_section.type        = ELF.SECTION_TYPES.SYMTAB
+    symtab_section.type        = ELF.Section.TYPE.SYMTAB
     symtab_section.entry_size  = 0x18
     symtab_section.alignment   = 8
     symtab_section.link        = len(binary.sections) + 1
@@ -28,7 +28,7 @@ def main():
 
     symstr_section            = ELF.Section()
     symstr_section.name       = ""
-    symstr_section.type       = ELF.SECTION_TYPES.STRTAB
+    symstr_section.type       = ELF.Section.TYPE.STRTAB
     symstr_section.entry_size = 1
     symstr_section.alignment  = 1
     symstr_section.content    = [0] * 100
@@ -38,18 +38,18 @@ def main():
 
     symbol         = ELF.Symbol()
     symbol.name    = ""
-    symbol.type    = ELF.SYMBOL_TYPES.NOTYPE
+    symbol.type    = ELF.Symbol.TYPE.NOTYPE
     symbol.value   = 0
-    symbol.binding = ELF.SYMBOL_BINDINGS.LOCAL
+    symbol.binding = ELF.Symbol.BINDING.LOCAL
     symbol.size    = 0
     symbol.shndx   = 0
     symbol         = binary.add_static_symbol(symbol)
 
     symbol         = ELF.Symbol()
     symbol.name    = "main"
-    symbol.type    = ELF.SYMBOL_TYPES.FUNC
+    symbol.type    = ELF.Symbol.TYPE.FUNC
     symbol.value   = 0x402A00
-    symbol.binding = ELF.SYMBOL_BINDINGS.LOCAL
+    symbol.binding = ELF.Symbol.BINDING.LOCAL
     symbol.shndx   = 14
     symbol         = binary.add_static_symbol(symbol)
 

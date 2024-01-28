@@ -19,6 +19,8 @@
 #include "LIEF/visibility.h"
 #include "LIEF/ELF/DynamicEntry.hpp"
 
+#include <vector>
+
 namespace LIEF {
 namespace ELF {
 
@@ -33,36 +35,57 @@ namespace ELF {
 class LIEF_API DynamicEntryArray : public DynamicEntry {
   public:
   using array_t = std::vector<uint64_t>;
-
-  public:
   using DynamicEntry::DynamicEntry;
 
-  DynamicEntryArray();
-  DynamicEntryArray(DYNAMIC_TAGS tag, array_t array);
+  DynamicEntryArray() = delete;
+  DynamicEntryArray(DynamicEntry::TAG tag, array_t array) :
+    DynamicEntry(tag, 0),
+    array_(std::move(array))
+  {}
 
-  DynamicEntryArray& operator=(const DynamicEntryArray&);
-  DynamicEntryArray(const DynamicEntryArray&);
+  DynamicEntryArray& operator=(const DynamicEntryArray&) = default;
+  DynamicEntryArray(const DynamicEntryArray&) = default;
 
-  //! Return the array values (list of pointer)
-  array_t& array();
+  std::unique_ptr<DynamicEntry> clone() const override {
+    return std::unique_ptr<DynamicEntryArray>(new DynamicEntryArray(*this));
+  }
 
-  const array_t& array() const;
-  void array(const array_t& array);
+  //! Return the array values (list of pointers)
+  array_t& array() {
+    return array_;
+  }
+
+  const array_t& array() const {
+    return array_;
+  }
+  void array(const array_t& array) {
+    array_ = array;
+  }
 
   //! Insert the given function at ``pos``
   DynamicEntryArray& insert(size_t pos, uint64_t function);
 
   //! Append the given function
-  DynamicEntryArray& append(uint64_t function);
+  DynamicEntryArray& append(uint64_t function) {
+    array_.push_back(function);
+    return *this;
+  }
 
   //! Remove the given function
   DynamicEntryArray& remove(uint64_t function);
 
   //! Number of function registred in this array
-  size_t size() const;
+  size_t size() const {
+    return array_.size();
+  }
 
-  DynamicEntryArray& operator+=(uint64_t value);
-  DynamicEntryArray& operator-=(uint64_t value);
+  DynamicEntryArray& operator+=(uint64_t value) {
+    return append(value);
+  }
+
+  DynamicEntryArray& operator-=(uint64_t value) {
+    return remove(value);
+  }
 
   const uint64_t& operator[](size_t idx) const;
   uint64_t&       operator[](size_t idx);
@@ -71,13 +94,17 @@ class LIEF_API DynamicEntryArray : public DynamicEntry {
 
   std::ostream& print(std::ostream& os) const override;
 
-  ~DynamicEntryArray() override;
+  ~DynamicEntryArray() override = default;
 
-  static bool classof(const DynamicEntry* entry);
+  static bool classof(const DynamicEntry* entry) {
+    const DynamicEntry::TAG tag = entry->tag();
+    return tag == DynamicEntry::TAG::INIT_ARRAY ||
+           tag == DynamicEntry::TAG::FINI_ARRAY ||
+           tag == DynamicEntry::TAG::PREINIT_ARRAY;
+  }
 
   private:
   array_t array_;
-
 };
 }
 }

@@ -15,7 +15,7 @@ def change_interpreter(target, interpreter, output=None):
         print("Wrong interpreter! ({})".format(interpreter))
         return 1
 
-    binary = lief.parse(target)
+    binary = lief.ELF.parse(target)
     if not binary.has_interpreter:
         print("The given target doesn't have interpreter!")
         return 1
