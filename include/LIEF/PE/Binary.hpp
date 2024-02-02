@@ -273,7 +273,7 @@ class LIEF_API Binary : public LIEF::Binary {
   //!
   //! @see Relocation
   bool has_relocations() const {
-    return relocations_.empty();
+    return !relocations_.empty();
   }
 
   //! Check if the current binary contains debug information
