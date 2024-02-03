@@ -43,11 +43,22 @@ void create<Relocation>(nb::module_& m) {
     .value("DYNAMIC", Relocation::PURPOSE::DYNAMIC)
     .value("OBJECT", Relocation::PURPOSE::OBJECT);
 
+  enum_<Relocation::ENCODING>(reloc, "ENCODING")
+    .value("UNKNOWN", Relocation::ENCODING::UNKNOWN)
+    .value("ANDROID_SLEB", Relocation::ENCODING::ANDROID_SLEB,
+           "The relocation is using the packed Android-SLEB128 format"_doc)
+    .value("REL", Relocation::ENCODING::REL,
+           "The relocation is using the regular Elf_Rel structure"_doc)
+    .value("RELR", Relocation::ENCODING::RELR,
+           "The relocation is using the relative relocation format"_doc)
+    .value("RELA", Relocation::ENCODING::RELA,
+           "The relocation is using the regular Elf_Rela structure"_doc);
+
   reloc
     .def(nb::init<>())
     .def(nb::init<ARCH>(), "arch"_a)
-    .def(nb::init<uint64_t, Relocation::TYPE, bool>(),
-        "address"_a, "type"_a = Relocation::TYPE::UNKNOWN, "is_rela"_a = false)
+    .def(nb::init<uint64_t, Relocation::TYPE, Relocation::ENCODING>(),
+        "address"_a, "type"_a, "encoding"_a)
 
     .def_prop_rw("addend",
         nb::overload_cast<>(&Relocation::addend, nb::const_),
@@ -114,6 +125,26 @@ void create<Relocation>(nb::module_& m) {
     .def_prop_ro("is_rel",
       &Relocation::is_rel,
       "``True`` if the relocation **doesn't use** the :attr:`~lief.ELF.Relocation.addend` proprety"_doc)
+
+    .def("r_info", &Relocation::r_info,
+      R"delim(
+      (re)Compute the raw ``r_info`` attribute based on the given ELF class
+      )delim"_doc, "clazz"_a)
+
+    .def_prop_ro("is_relatively_encoded", &Relocation::is_relatively_encoded,
+                 "True if the relocation is using the relative encoding"_doc)
+
+    .def_prop_ro("is_android_packed", &Relocation::is_android_packed,
+                 "True if the relocation is using the Android packed relocation format"_doc)
+
+    .def_prop_ro("is_rel", &Relocation::is_rel,
+        R"delim(
+        Check if the relocation uses the implicit addend
+        (i.e. not present in the ELF structure)
+        )delim"_doc)
+
+    .def_prop_ro("encoding", &Relocation::encoding,
+                 "The encoding of the relocation")
 
     LIEF_DEFAULT_STR(Relocation);
 }

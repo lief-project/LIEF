@@ -49,6 +49,29 @@
 namespace LIEF {
 namespace ELF {
 
+inline Relocation::TYPE relative_from_arch(ARCH arch) {
+  using TYPE = Relocation::TYPE;
+  switch (arch) {
+    case ARCH::AARCH64:
+      return TYPE::AARCH64_RELATIVE;
+    case ARCH::ARM:
+      return TYPE::ARM_RELATIVE;
+    case ARCH::X86_64:
+      return TYPE::X86_64_RELATIVE;
+    case ARCH::I386:
+      return TYPE::X86_RELATIVE;
+    case ARCH::PPC:
+      return TYPE::PPC_RELATIVE;
+    case ARCH::PPC64:
+      return TYPE::PPC64_RELATIVE;
+    case ARCH::HEXAGON:
+      return TYPE::HEX_RELATIVE;
+    default:
+      return TYPE::UNKNOWN;
+  }
+  return TYPE::UNKNOWN;
+}
+
 //! Compute the size and the offset of the elements
 //! needed to rebuild the ELF file.
 class LIEF_LOCAL ExeLayout : public Layout {
@@ -395,10 +418,15 @@ class LIEF_LOCAL ExeLayout : public Layout {
     using Elf_Rela = typename ELF_T::Elf_Rela;
     using Elf_Rel  = typename ELF_T::Elf_Rel;
     const Binary::it_dynamic_relocations& dyn_relocs = binary_->dynamic_relocations();
+    const size_t nb_rel_a = std::count_if(dyn_relocs.begin(), dyn_relocs.end(),
+      [] (const Relocation& R) {
+        return R.is_rel() || R.is_rela();
+      }
+    );
 
     const size_t computed_size = binary_->has(DynamicEntry::TAG::RELA) ?
-                                 dyn_relocs.size() * sizeof(Elf_Rela) :
-                                 dyn_relocs.size() * sizeof(Elf_Rel);
+                                 nb_rel_a * sizeof(Elf_Rela) :
+                                 nb_rel_a * sizeof(Elf_Rel);
     return computed_size;
   }
 
@@ -458,12 +486,267 @@ class LIEF_LOCAL ExeLayout : public Layout {
     return binary_->interpreter_.size() + 1;
   }
 
+  template<class ELF_T>
+  size_t android_relocations_size(bool force = false) {
+    static constexpr uint64_t GROUPED_BY_INFO_FLAG         = 1 << 0;
+    static constexpr uint64_t GROUPED_BY_OFFSET_DELTA_FLAG = 1 << 1;
+    static constexpr uint64_t GROUPED_BY_ADDEND_FLAG       = 1 << 2;
+    static constexpr uint64_t GROUP_HAS_ADDEND_FLAG        = 1 << 3;
+
+    using Elf_Xword = typename ELF_T::Elf_Xword;
+
+    // This code reproduces what the lld linker is doing for generating the
+    // packed relocations. See lld/ELF/SyntheticSections.cpp -
+    // AndroidPackedRelocationSection:updateAllocSize
+    constexpr size_t wordsize = sizeof(typename ELF_T::Elf_Addr);
+    const bool is_rela = binary_->has(DynamicEntry::TAG::ANDROID_RELA);
+    const Relocation::TYPE relative_reloc = relative_from_arch(binary_->header().machine_type());
+    const uint64_t raw_relative_reloc = Relocation::to_value(relative_reloc);
+
+    const Header::CLASS elf_class = std::is_same_v<ELF_T, details::ELF32> ?
+                                    Header::CLASS::ELF32 : Header::CLASS::ELF64;
+
+    if (force) {
+      raw_android_rela_.clear();
+    }
+
+    if (!raw_android_rela_.empty()) {
+      return raw_android_rela_.size();
+    }
+
+    std::vector<const Relocation*> android_relocs;
+    std::vector<const Relocation*> relative_rels;
+    std::vector<const Relocation*> non_relative_rels;
+    android_relocs.reserve(20);
+
+    for (const Relocation& R : binary_->relocations()) {
+      if (!R.is_android_packed()) {
+        continue;
+      }
+      android_relocs.push_back(&R);
+      R.is_relative() ? relative_rels.push_back(&R) :
+                        non_relative_rels.push_back(&R);
+    }
+
+    std::sort(relative_rels.begin(), relative_rels.end(),
+      [] (const Relocation* lhs, const Relocation* rhs) {
+        return lhs->address() < rhs->address();
+      }
+    );
+
+    std::vector<const Relocation*> ungrouped_relative;
+    std::vector<std::vector<const Relocation*>> relative_groups;
+    for (auto i = relative_rels.begin(), e = relative_rels.end(); i != e;) {
+      std::vector<const Relocation*> group;
+      do {
+        group.push_back(*i++);
+      } while (i != e && (*(i - 1))->address() + wordsize == (*i)->address());
+
+      if (group.size() < 8) {
+        ungrouped_relative.insert(ungrouped_relative.end(),
+                                  group.begin(), group.end());
+      } else {
+        relative_groups.emplace_back(std::move(group));
+      }
+    }
+
+
+    std::sort(non_relative_rels.begin(), non_relative_rels.end(),
+      [&elf_class] (const Relocation* lhs, const Relocation* rhs) {
+        if (lhs->r_info(elf_class) != rhs->r_info(elf_class)) {
+          return lhs->r_info(elf_class) < rhs->r_info(elf_class);
+        }
+        if (lhs->addend() != rhs->addend()) {
+          return lhs->addend() < rhs->addend();
+        }
+        return lhs->address() < rhs->address();
+      }
+    );
+
+    std::vector<const Relocation*> ungrouped_non_relative;
+    std::vector<std::vector<const Relocation*>> non_relative_group;
+
+    for (auto i = non_relative_rels.begin(),
+              e = non_relative_rels.end(); i != e;)
+    {
+      auto j = i + 1;
+      while (j != e && (*i)->r_info(elf_class) == (*j)->r_info(elf_class) &&
+             (!is_rela || (*i)->addend() == (*j)->addend()))
+      {
+        ++j;
+      }
+
+      if ((j - i) < 3 || (is_rela && (*i)->addend() != 0)) {
+        ungrouped_non_relative.insert(ungrouped_non_relative.end(), i, j);
+      } else {
+        non_relative_group.emplace_back(i, j);
+      }
+      i = j;
+    }
+
+    std::sort(ungrouped_non_relative.begin(), ungrouped_non_relative.end(),
+      [] (const Relocation* lhs, const Relocation* rhs) {
+        return lhs->address() < rhs->address();
+      }
+    );
+
+    const unsigned has_addend_with_rela = is_rela ? GROUP_HAS_ADDEND_FLAG : 0;
+    uint64_t offset = 0;
+    uint64_t addend = 0;
+
+    vector_iostream ios;
+    ios.write('A')
+       .write('P')
+       .write('S')
+       .write('2');
+
+    ios.write_sleb128(android_relocs.size());
+    ios.write_sleb128(0);
+
+    for (const std::vector<const Relocation*>& g : relative_groups) {
+      ios.write_sleb128(1);
+      ios.write_sleb128(GROUPED_BY_OFFSET_DELTA_FLAG | GROUPED_BY_INFO_FLAG |
+                        has_addend_with_rela);
+      ios.write_sleb128(g[0]->address() - offset);
+      ios.write_sleb128(raw_relative_reloc);
+      if (is_rela) {
+        ios.write_sleb128(g[0]->addend() - addend);
+        addend = g[0]->addend();
+      }
+
+      ios.write_sleb128(g.size() - 1);
+      ios.write_sleb128(GROUPED_BY_OFFSET_DELTA_FLAG | GROUPED_BY_INFO_FLAG |
+                        has_addend_with_rela);
+      ios.write_sleb128(wordsize);
+      ios.write_sleb128(raw_relative_reloc);
+      if (is_rela) {
+        auto it = g.begin(); ++it;
+        for (; it != g.end(); ++it) {
+          ios.write_sleb128((*it)->addend() - addend);
+          addend = (*it)->addend();
+        }
+      }
+      offset = g.back()->address();
+    }
+
+    if (!ungrouped_relative.empty()) {
+      ios.write_sleb128(ungrouped_relative.size());
+      ios.write_sleb128(GROUPED_BY_INFO_FLAG | has_addend_with_rela);
+      ios.write_sleb128(raw_relative_reloc);
+      for (const Relocation* R : ungrouped_relative) {
+        ios.write_sleb128(R->address() - offset);
+        offset = R->address();
+        if (is_rela) {
+          ios.write_sleb128(R->addend() - addend);
+          addend = R->addend();
+        }
+      }
+    }
+
+    for (const std::vector<const Relocation*>& g: non_relative_group) {
+      ios.write_sleb128(g.size());
+      ios.write_sleb128(GROUPED_BY_INFO_FLAG);
+      ios.write_sleb128(static_cast<Elf_Xword>(g[0]->r_info(elf_class)));
+
+      for (const Relocation* R : g) {
+        ios.write_sleb128(R->address() - offset);
+        offset = R->address();
+      }
+      addend = 0;
+    }
+
+    if (!ungrouped_non_relative.empty()) {
+      ios.write_sleb128(ungrouped_non_relative.size());
+      ios.write_sleb128(has_addend_with_rela);
+      for (const Relocation* R : ungrouped_non_relative) {
+        ios.write_sleb128(R->address() - offset);
+        offset = R->address();
+        ios.write_sleb128(static_cast<Elf_Xword>(R->r_info(elf_class)));
+        if (is_rela) {
+          ios.write_sleb128(R->addend() - addend);
+          addend = R->addend();
+        }
+      }
+    }
+
+    ios.move(raw_android_rela_);
+    return raw_android_rela_.size();
+  }
+
+  template<class ELF_T>
+  size_t relative_relocations_size(bool force = false) {
+    // This code is inspired from LLVM-lld:
+    // lld/ELF/SyntheticSections.cpp - RelrSection<ELFT>::updateAllocSize
+    // https://github.com/llvm/llvm-project/blob/754a8add57098ef71e4a51a9caa0cc175e94377d/lld/ELF/SyntheticSections.cpp#L1997-L2078
+    using Elf_Addr = typename ELF_T::Elf_Addr;
+
+    if (force) {
+      raw_relr_.clear();
+    }
+
+    if (!raw_relr_.empty()) {
+      return raw_relr_.size();
+    }
+
+    std::vector<const Relocation*> relr_relocs;
+    relr_relocs.reserve(20);
+
+    for (const Relocation& R : binary_->relocations()) {
+      if (R.is_relatively_encoded()) {
+        relr_relocs.push_back(&R);
+      }
+    }
+
+    std::unique_ptr<uint64_t[]> offsets(new uint64_t[relr_relocs.size()]);
+    for (size_t i = 0; i < relr_relocs.size(); ++i) {
+      offsets[i] = relr_relocs[i]->address();
+    }
+    std::sort(offsets.get(), offsets.get() + relr_relocs.size());
+
+    const size_t wordsize = sizeof(Elf_Addr);
+    const size_t nbits = wordsize * 8 - 1;
+
+    vector_iostream raw_relr;
+
+    for (size_t i = 0, e = relr_relocs.size(); i != e;) {
+      raw_relr.write<Elf_Addr>(offsets[i]);
+      uint64_t base = offsets[i] + wordsize;
+      ++i;
+
+      for (;;) {
+        uint64_t bitmap = 0;
+        for (; i != e; ++i) {
+          uint64_t d = offsets[i] - base;
+          if (nbits <= (d * wordsize) || (d % wordsize) != 0) {
+            break;
+          }
+          bitmap |= uint64_t(1) << (d / wordsize);
+        }
+        if (!bitmap) {
+          break;
+        }
+        raw_relr.write<Elf_Addr>((bitmap << 1) | 1);
+        base += nbits * wordsize;
+      }
+    }
+    raw_relr.move(raw_relr_);
+    return raw_relr_.size();
+  }
+
   void relocate_dynamic(uint64_t size) {
     dynamic_size_ = size;
   }
 
   void relocate_dynstr(bool val) {
     relocate_dynstr_ = val;
+  }
+
+  void relocate_relr(bool val) {
+    relocate_relr_ = val;
+  }
+
+  void relocate_android_rela(bool val) {
+    relocate_android_rela_ = val;
   }
 
   void relocate_shstr(bool val) {
@@ -554,6 +837,14 @@ class LIEF_LOCAL ExeLayout : public Layout {
     return verdef_info_;
   }
 
+  const std::vector<uint8_t>& raw_relr() const {
+    return raw_relr_;
+  }
+
+  const std::vector<uint8_t>& raw_android_rela() const {
+    return raw_android_rela_;
+  }
+
   result<bool> relocate() {
     /* PT_INTERP segment (optional)
      *
@@ -583,14 +874,20 @@ class LIEF_LOCAL ExeLayout : public Layout {
      *    .gnu.version_r
      *    .rela.dyn
      *    .rela.plt
+     *    .relr.dyn
      * Perm: READ ONLY
      * Align: 0x1000
      */
-    uint64_t read_segment =
-      interp_size_ +  sysv_size_ +
-      dynsym_size_ +
-      sver_size_ + sverd_size_ + sverr_size_ +
-      dynamic_reloc_size_ + pltgot_reloc_size_;
+    uint64_t read_segment = interp_size_ +  sysv_size_ + dynsym_size_ +
+                            sver_size_ + sverd_size_ + sverr_size_ +
+                            dynamic_reloc_size_ + pltgot_reloc_size_;
+    if (relocate_relr_) {
+      read_segment += raw_relr_.size();
+    }
+
+    if (relocate_android_rela_) {
+      read_segment += raw_android_rela_.size();
+    }
 
     if (relocate_notes_) {
       read_segment += raw_notes_.size();
@@ -650,8 +947,6 @@ class LIEF_LOCAL ExeLayout : public Layout {
         return make_error_code(lief_errors::build_error);
       }
     }
-
-
 
     if (relocate_shstrtab_) {
       LIEF_DEBUG("[-] Relocate .shstrtab");
@@ -980,6 +1275,59 @@ class LIEF_LOCAL ExeLayout : public Layout {
       va_r_base += pltgot_reloc_size_;
     }
 
+    if (relocate_relr_) {
+      DynamicEntry* dt_relr = binary_->get(DynamicEntry::TAG::RELR);
+      if (dt_relr == nullptr) {
+        LIEF_ERR("Can't find DT_RELR");
+        return make_error_code(lief_errors::file_format_error);
+      }
+
+      uint64_t offset_r_base = 0;
+      if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
+        offset_r_base = *res;
+      } else {
+        return make_error_code(lief_errors::build_error);
+      }
+
+      if (Section* section = binary_->section_from_virtual_address(dt_relr->value())) {
+        section->virtual_address(va_r_base);
+        section->size(raw_relr_.size());
+        section->offset(offset_r_base);
+        section->original_size_ = raw_relr_.size();
+      }
+
+      dt_relr->value(va_r_base);
+      va_r_base += raw_relr_.size();
+    }
+
+    if (relocate_android_rela_) {
+      DynamicEntry* dt_rel = binary_->get(DynamicEntry::TAG::ANDROID_RELA);
+      if (dt_rel == nullptr) {
+        dt_rel = binary_->get(DynamicEntry::TAG::ANDROID_REL);
+      }
+
+      if (dt_rel == nullptr) {
+        LIEF_ERR("Can't find DT_ANDROID_REL[A]");
+        return make_error_code(lief_errors::file_format_error);
+      }
+
+      uint64_t offset_r_base = 0;
+      if (auto res = binary_->virtual_address_to_offset(va_r_base)) {
+        offset_r_base = *res;
+      } else {
+        return make_error_code(lief_errors::build_error);
+      }
+
+      if (Section* section = binary_->section_from_virtual_address(dt_rel->value())) {
+        section->virtual_address(va_r_base);
+        section->size(raw_android_rela_.size());
+        section->offset(offset_r_base);
+        section->original_size_ = raw_android_rela_.size();
+      }
+
+      dt_rel->value(va_r_base);
+      va_r_base += raw_android_rela_.size();
+    }
 
     if (relocate_gnu_hash_) {
       // Update .gnu.hash section / DT_GNU_HASH
@@ -1354,6 +1702,12 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
   std::vector<uint8_t> raw_gnu_hash_;
   bool relocate_gnu_hash_{false};
+
+  std::vector<uint8_t> raw_relr_;
+  bool relocate_relr_{false};
+
+  std::vector<uint8_t> raw_android_rela_;
+  bool relocate_android_rela_{false};
 
   uint64_t sysv_size_{0};
 

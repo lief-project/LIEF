@@ -317,6 +317,7 @@ class LIEF_API Binary : public LIEF::Binary {
   it_dynamic_symbols dynamic_symbols() {
     return dynamic_symbols_;
   }
+
   it_const_dynamic_symbols dynamic_symbols() const {
     return dynamic_symbols_;
   }
@@ -720,6 +721,17 @@ class LIEF_API Binary : public LIEF::Binary {
 
   //! Check if the binary uses the ``NX`` protection (Non executable stack)
   bool has_nx() const override;
+
+  //! Symbol index in the dynamic symbol table or -1 if the symbol
+  //! does not exist.
+  int64_t dynsym_idx(const std::string& name) const;
+
+  int64_t dynsym_idx(const Symbol& sym) const;
+
+  //! Symbol index from the `.symtab` section or -1 if the symbol is not present
+  int64_t symtab_idx(const std::string& name) const;
+
+  int64_t symtab_idx(const Symbol& sym) const;
 
   //! Return the ELF::Section from the given @p offset. Return a nullptr
   //! if a section can't be found

@@ -51,6 +51,10 @@ void Binary::patch_relocations<ARCH::ARM>(uint64_t from, uint64_t shift) {
       relocation.address(relocation.address() + shift);
     }
 
+    if (relocation.encoding() == Relocation::ENCODING::RELR) {
+      continue;
+    }
+
     const Relocation::TYPE type = relocation.type();
 
     switch (type) {
@@ -83,6 +87,10 @@ void Binary::patch_relocations<ARCH::AARCH64>(uint64_t from, uint64_t shift) {
     if (relocation.address() >= from) {
       //shift_code(relocation.address(), shift, relocation.size() / 8);
       relocation.address(relocation.address() + shift);
+    }
+
+    if (relocation.encoding() == Relocation::ENCODING::RELR) {
+      continue;
     }
 
     const Relocation::TYPE type = relocation.type();
@@ -153,6 +161,10 @@ void Binary::patch_relocations<ARCH::I386>(uint64_t from, uint64_t shift) {
       relocation.address(relocation.address() + shift);
     }
 
+    if (relocation.encoding() == Relocation::ENCODING::RELR) {
+      continue;
+    }
+
     const Relocation::TYPE type = relocation.type();
 
     switch (type) {
@@ -188,8 +200,11 @@ template<>
 void Binary::patch_relocations<ARCH::X86_64>(uint64_t from, uint64_t shift) {
   for (Relocation& relocation : relocations()) {
     if (relocation.address() >= from) {
-      //shift_code(relocation.address(), shift, relocation.size() / 8);
       relocation.address(relocation.address() + shift);
+    }
+
+    if (relocation.encoding() == Relocation::ENCODING::RELR) {
+      continue;
     }
 
     const Relocation::TYPE type = relocation.type();
@@ -253,7 +268,6 @@ void Binary::patch_relocations<ARCH::PPC>(uint64_t from, uint64_t shift) {
 
 template<class T>
 void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift) {
-
   if (static_cast<uint64_t>(relocation.addend()) >= from) {
     relocation.addend(relocation.addend() + shift);
   }

@@ -399,6 +399,34 @@ void create<Binary>(nb::module_& m) {
         "Patch the imported " RST_CLASS_REF(lief.ELF.Symbol) " with the ``address``"_doc,
         "symbol"_a, "address"_a)
 
+    .def("dynsym_idx",
+        nb::overload_cast<const std::string&>(&Binary::dynsym_idx, nb::const_),
+        R"doc(
+        Get the symbol index in the **dynamic** symbol from the given name or
+        return -1 if the symbol does not exist.
+        )doc"_doc, "name"_a)
+
+    .def("dynsym_idx",
+        nb::overload_cast<const Symbol&>(&Binary::dynsym_idx, nb::const_),
+        R"doc(
+        Get the symbol index in the **dynamic** symbol table for the given symbol
+        or return -1 if the symbol does not exist
+        )doc"_doc, "symbol"_a)
+
+    .def("symtab_idx",
+        nb::overload_cast<const std::string&>(&Binary::symtab_idx, nb::const_),
+        R"doc(
+        Get the symbol index in the ``.symtab`` section from the given name or
+        return -1 if the symbol does not exist.
+        )doc"_doc, "name"_a)
+
+    .def("symtab_idx",
+        nb::overload_cast<const Symbol&>(&Binary::symtab_idx, nb::const_),
+        R"doc(
+        Get the symbol index in the ``.symtab`` section or return -1 if the
+        symbol does not exist
+        )doc"_doc, "symbol"_a)
+
     .def("has_section",
         &Binary::has_section,
         "Check if a " RST_CLASS_REF(lief.ELF.Section) " with the given name exists in the binary"_doc,

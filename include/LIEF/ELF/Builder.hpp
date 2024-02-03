@@ -66,6 +66,8 @@ class LIEF_API Builder {
     bool jmprel          = true;  /// Rebuild DT_JMPREL
     bool notes           = false; /// Disable note building since it can break the default layout
     bool preinit_array   = true;  /// Rebuild DT_PREINIT_ARRAY
+    bool relr            = true;  /// Rebuild DT_RELR
+    bool android_rela    = true;  /// Rebuild DT_ANDROID_REL[A]
     bool rela            = true;  /// Rebuild DT_REL[A]
     bool static_symtab   = true;  /// Rebuild `.symtab`
     bool sym_verdef      = true;  /// Rebuild DT_VERDEF
@@ -139,6 +141,12 @@ class LIEF_API Builder {
 
   template<typename ELF_T>
   ok_error_t build_dynamic_relocations();
+
+  template<typename ELF_T>
+  ok_error_t build_relative_relocations();
+
+  template<typename ELF_T>
+  ok_error_t build_android_relocations();
 
   template<typename ELF_T>
   ok_error_t build_pltgot_relocations();

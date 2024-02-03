@@ -39,6 +39,7 @@ class Binary;
 class Segment;
 class Symbol;
 class Note;
+class Relocation;
 
 //! Class which parses and transforms an ELF file into a ELF::Binary object
 class LIEF_API Parser : public LIEF::Parser {
@@ -188,6 +189,17 @@ class LIEF_API Parser : public LIEF::Parser {
   ok_error_t parse_pltgot_relocations(uint64_t offset, uint64_t size);
 
 
+  //! Parse *relative* relocations
+  template<typename ELF_T>
+  ok_error_t parse_relative_relocations(uint64_t offset, uint64_t size);
+
+  //! Parse Android packed relocations
+  template<typename ELF_T>
+  ok_error_t parse_packed_relocations(uint64_t offset, uint64_t size);
+
+  template<typename ELF_T>
+  ok_error_t process_dynamic_table();
+
   //! Parse relocations using LIEF::ELF::Section.
   //! Section relocations are usually found in object files
   template<typename ELF_T, typename REL_T>
@@ -240,6 +252,8 @@ class LIEF_API Parser : public LIEF::Parser {
 
   //! Check if the given Section is wrapped by the given segment
   static bool check_section_in_segment(const Section& section, const Segment& segment);
+
+  bool bind_symbol(Relocation& R);
 
   std::unique_ptr<BinaryStream> stream_;
   std::unique_ptr<Binary> binary_;

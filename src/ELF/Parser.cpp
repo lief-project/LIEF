@@ -646,5 +646,21 @@ ok_error_t Parser::link_symbol_section(Symbol& sym) {
   return ok();
 }
 
+
+bool Parser::bind_symbol(Relocation& R) {
+  if (!config_.parse_dyn_symbols) {
+    return false;
+  }
+  const uint32_t idx = R.info();
+  if (idx >= binary_->dynamic_symbols_.size()) {
+    LIEF_DEBUG("Index #{} is out of range for reloc: {}", idx, to_string(R));
+    return false;
+  }
+
+  R.symbol_ = binary_->dynamic_symbols_[idx].get();
+
+  return true;
+}
+
 }
 }

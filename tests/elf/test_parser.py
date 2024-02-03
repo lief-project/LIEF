@@ -1,5 +1,5 @@
 import lief
-from utils import get_sample, is_64bits_platform
+from utils import get_sample, is_64bits_platform, glibc_version
 from pathlib import Path
 
 def test_symbol_count():
@@ -140,4 +140,6 @@ def test_975():
     elf = lief.ELF.parse(get_sample('ELF/issue_975_aarch64.o'))
     for note in elf.notes:
         print(note)
-    #assert len(elf.sections) > 0
+
+
+

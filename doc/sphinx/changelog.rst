@@ -35,6 +35,9 @@ Changelog
   * ``RELOC_x86_64``, ``RELOC_i386``, ... have been re-scoped **and merged**
     into :class:`lief.ELF.Relocation.TYPE`
 
+  * Add support for Android packed relocation format (``DT_ANDROID_REL{A}``)
+  * Add support for relative relocation format (``DT_RELR``)
+
 :CMake:
 
   * ``LIEFConfig.cmake`` is now installed in ``<prefix>/lib/cmake/LIEF/``

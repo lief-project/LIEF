@@ -157,7 +157,7 @@ void DynamicEntryFlags::accept(Visitor& visitor) const {
 
 std::ostream& DynamicEntryFlags::print(std::ostream& os) const {
   DynamicEntry::print(os);
-  os << " " << fmt::to_string(flags());
+  os << fmt::to_string(flags());
   return os;
 }
 

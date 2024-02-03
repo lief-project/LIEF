@@ -63,7 +63,7 @@ Relocation::Relocation(const Relocation& other) :
   LIEF::Relocation{other},
   type_{other.type_},
   addend_{other.addend_},
-  isRela_{other.isRela_},
+  encoding_{other.encoding_},
   architecture_{other.architecture_}
 {}
 
@@ -73,8 +73,9 @@ Relocation& Relocation::operator=(Relocation other) {
 }
 
 template<class T>
-Relocation::Relocation(const T& header, PURPOSE purpose, ARCH arch) :
+Relocation::Relocation(const T& header, PURPOSE purpose, ENCODING enc, ARCH arch) :
   LIEF::Relocation{header.r_offset, 0},
+  encoding_{enc},
   architecture_{arch},
   purpose_{purpose}
 {
@@ -95,15 +96,14 @@ Relocation::Relocation(const T& header, PURPOSE purpose, ARCH arch) :
   if constexpr (std::is_same_v<T, details::Elf32_Rela> ||
                 std::is_same_v<T, details::Elf64_Rela>)
   {
-    isRela_ = true;
     addend_ = header.r_addend;
   }
 }
 
-Relocation::Relocation(uint64_t address, TYPE type, bool is_rela) :
+Relocation::Relocation(uint64_t address, TYPE type, ENCODING encoding) :
   LIEF::Relocation(address, 0),
   type_(type),
-  isRela_(is_rela)
+  encoding_(encoding)
 {
   if (type != TYPE::UNKNOWN) {
     auto raw_type = static_cast<uint64_t>(type);
@@ -141,16 +141,16 @@ Relocation::Relocation(uint64_t address, TYPE type, bool is_rela) :
   }
 }
 
-template Relocation::Relocation(const details::Elf32_Rel&, PURPOSE, ARCH);
-template Relocation::Relocation(const details::Elf32_Rela&, PURPOSE, ARCH);
-template Relocation::Relocation(const details::Elf64_Rel&, PURPOSE, ARCH);
-template Relocation::Relocation(const details::Elf64_Rela&, PURPOSE, ARCH);
+template Relocation::Relocation(const details::Elf32_Rel&, PURPOSE, ENCODING, ARCH);
+template Relocation::Relocation(const details::Elf32_Rela&, PURPOSE, ENCODING, ARCH);
+template Relocation::Relocation(const details::Elf64_Rel&, PURPOSE, ENCODING, ARCH);
+template Relocation::Relocation(const details::Elf64_Rela&, PURPOSE, ENCODING, ARCH);
 
 void Relocation::swap(Relocation& other) {
   std::swap(address_,      other.address_);
   std::swap(type_,         other.type_);
   std::swap(addend_,       other.addend_);
-  std::swap(isRela_,       other.isRela_);
+  std::swap(encoding_,     other.encoding_);
   std::swap(symbol_,       other.symbol_);
   std::swap(architecture_, other.architecture_);
   std::swap(purpose_,      other.purpose_);

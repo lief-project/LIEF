@@ -105,6 +105,14 @@ inline ok_t ok() {
 //! \endcode
 using ok_error_t = result<ok_t>;
 
+inline bool is_ok(const ok_error_t& val) {
+  return val.has_value();
+}
+
+inline bool is_err(const ok_error_t& val) {
+  return !is_ok(val);
+}
+
 }
 
 

@@ -25,6 +25,7 @@
 #include "LIEF/Abstract/Relocation.hpp"
 
 #include "LIEF/ELF/enums.hpp"
+#include "LIEF/ELF/Header.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -50,6 +51,14 @@ class LIEF_API Relocation : public LIEF::Relocation {
     PLTGOT = 1,  ///< The relocation is associated with the PLT/GOT resolution
     DYNAMIC = 2, ///< The relocation is used for regulard data/code relocation
     OBJECT = 3,  ///< The relocation is used in an object file
+  };
+
+  enum class ENCODING {
+    UNKNOWN = 0,
+    REL,   ///< The relocation is using the regular Elf_Rel structure
+    RELA,  ///< The relocation is using the regular Elf_Rela structure
+    RELR,  ///< The relocation is using the relative relocation format
+    ANDROID_SLEB, ///< The relocation is using the packed Android-SLEB128 format
   };
 
   static constexpr uint64_t R_BIT = 27;
@@ -122,10 +131,7 @@ class LIEF_API Relocation : public LIEF::Relocation {
     return static_cast<uint32_t>(type) & R_MASK;
   }
 
-  template<class T>
-  LIEF_LOCAL Relocation(const T& header, PURPOSE purpose, ARCH arch);
-
-  Relocation(uint64_t address, TYPE type = TYPE::UNKNOWN, bool is_rela = false);
+  Relocation(uint64_t address, TYPE type, ENCODING enc);
 
   Relocation() = default;
   Relocation(ARCH arch) {
@@ -150,18 +156,38 @@ class LIEF_API Relocation : public LIEF::Relocation {
   /// Check if the relocation uses the explicit addend() field
   /// (this is usually the case for 64 bits binaries)
   bool is_rela() const {
-    return isRela_;
+    return encoding_ == ENCODING::RELA;
   }
 
   /// Check if the relocation uses the implicit addend
   /// (i.e. not present in the ELF structure)
   bool is_rel() const {
-    return !isRela_;
+    return encoding_ == ENCODING::REL;
+  }
+
+  /// True if the relocation is using the relative encoding
+  bool is_relatively_encoded() const {
+    return encoding_ == ENCODING::RELR;
+  }
+
+  /// True if the relocation is using the Android packed relocation format
+  bool is_android_packed() const {
+    return encoding_ == ENCODING::ANDROID_SLEB;
   }
 
   /// Relocation info which contains, for instance, the symbol index
   uint32_t info() const {
     return info_;
+  }
+
+  /// (re)Compute the *raw* `r_info` attribute based on the given ELF class
+  uint64_t r_info(Header::CLASS clazz) const {
+    if (clazz == Header::CLASS::NONE) {
+      return 0;
+    }
+    return clazz == Header::CLASS::ELF32 ?
+           uint32_t(info()) << 8  | to_value(type()) :
+           uint64_t(info()) << 32 | (to_value(type()) & 0xffffffffL);
   }
 
   /// Target architecture for this relocation
@@ -171,6 +197,19 @@ class LIEF_API Relocation : public LIEF::Relocation {
 
   PURPOSE purpose() const {
     return purpose_;
+  }
+
+  /// The encoding of the relocation
+  ENCODING encoding() const {
+    return encoding_;
+  }
+
+  /// True if the semantic of the relocation is `<ARCH>_RELATIVE`
+  bool is_relative() const {
+    return type_ == TYPE::AARCH64_RELATIVE || type_ == TYPE::X86_64_RELATIVE ||
+           type_ == TYPE::X86_RELATIVE || type_ == TYPE::ARM_RELATIVE ||
+           type_ == TYPE::HEX_RELATIVE || type_ == TYPE::PPC64_RELATIVE ||
+           type_ == TYPE::PPC_RELATIVE;
   }
 
   /// Return the size (in **bits**) of the value associated with this relocation
@@ -247,9 +286,12 @@ class LIEF_API Relocation : public LIEF::Relocation {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Relocation& entry);
 
   private:
+  template<class T>
+  LIEF_LOCAL Relocation(const T& header, PURPOSE purpose, ENCODING enc, ARCH arch);
+
   TYPE type_ = TYPE::UNKNOWN;
   int64_t addend_ = 0;
-  bool isRela_ = false;
+  ENCODING encoding_ = ENCODING::UNKNOWN;
   Symbol* symbol_ = nullptr;
   ARCH architecture_ = ARCH::NONE;
   PURPOSE purpose_ = PURPOSE::NONE;

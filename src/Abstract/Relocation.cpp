@@ -61,10 +61,6 @@ void Relocation::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
-
-
 bool Relocation::operator<(const Relocation& rhs) const {
   return address() < rhs.address();
 }

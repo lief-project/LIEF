@@ -69,20 +69,20 @@ namespace ELF {
 
 
 inline size_t get_relocation_sizeof(const Binary& bin, const Relocation& R) {
-  const bool is64    = (bin.type() == Header::CLASS::ELF64);
-  const bool is_rela = R.is_rela();
-
-  return is64 ?
-         (is_rela ? sizeof(details::Elf64_Rela) : sizeof(details::Elf64_Rel)) :
-         (is_rela ? sizeof(details::Elf32_Rela) : sizeof(details::Elf32_Rel));
+  const bool is64 = bin.type() == Header::CLASS::ELF64;
+  if (R.is_rel() || R.is_rela()) {
+    return is64 ?
+           (R.is_rela() ? sizeof(details::Elf64_Rela) : sizeof(details::Elf64_Rel)) :
+           (R.is_rela() ? sizeof(details::Elf32_Rela) : sizeof(details::Elf32_Rel));
+  }
+  LIEF_WARN("get_relocation_sizeof() only supports REL/RELA encoding");
+  return size_t(-1);
 }
 
 Binary::Binary() :
   LIEF::Binary(LIEF::Binary::FORMATS::ELF),
   sizing_info_{std::make_unique<sizing_info_t>()}
-{
-
-}
+{}
 
 size_t Binary::hash(const std::string& name) {
   if (type_ == Header::CLASS::ELF32) {
@@ -259,6 +259,48 @@ void Binary::remove(Note::TYPE type) {
   }
 }
 
+
+int64_t Binary::symtab_idx(const std::string& name) const {
+  if (symtab_symbols_.empty()) {
+    return -1;
+  }
+
+  auto it = std::find_if(symtab_symbols_.begin(), symtab_symbols_.end(),
+    [&name] (const std::unique_ptr<Symbol>& S) {
+      return S->name() == name;
+    }
+  );
+
+  if (it == symtab_symbols_.end()) {
+    return -1;
+  }
+
+  return std::distance(symtab_symbols_.begin(), it);
+}
+
+int64_t Binary::symtab_idx(const Symbol& sym) const {
+  return symtab_idx(sym.name());
+}
+
+int64_t Binary::dynsym_idx(const Symbol& sym) const {
+  return dynsym_idx(sym.name());
+}
+
+int64_t Binary::dynsym_idx(const std::string& name) const {
+  if (dynamic_symbols_.empty()) {
+    return -1;
+  }
+
+  auto it = std::find_if(dynamic_symbols_.begin(), dynamic_symbols_.end(),
+    [&name] (const std::unique_ptr<Symbol>& S) {
+      return S->name() == name;
+    }
+  );
+  if (it == dynamic_symbols_.end()) {
+    return -1;
+  }
+  return std::distance(dynamic_symbols_.begin(), it);
+}
 
 
 Symbol& Binary::export_symbol(const Symbol& symbol) {
@@ -657,6 +699,11 @@ Binary::it_const_dynamic_relocations Binary::dynamic_relocations() const {
 }
 
 Relocation& Binary::add_dynamic_relocation(const Relocation& relocation) {
+  if (!relocation.is_rel() && !relocation.is_rela()) {
+    LIEF_WARN("LIEF only supports regulard rel/rela relocations");
+    static Relocation None;
+    return None;
+  }
   auto relocation_ptr = std::make_unique<Relocation>(relocation);
   relocation_ptr->purpose(Relocation::PURPOSE::DYNAMIC);
   relocation_ptr->architecture_ = header().machine_type();
@@ -1858,6 +1905,7 @@ void Binary::shift_dynamic_entries(uint64_t from, uint64_t shift) {
       case DynamicEntry::TAG::STRTAB:
       case DynamicEntry::TAG::SYMTAB:
       case DynamicEntry::TAG::RELA:
+      case DynamicEntry::TAG::RELR:
       case DynamicEntry::TAG::REL:
       case DynamicEntry::TAG::JMPREL:
       case DynamicEntry::TAG::INIT:
@@ -1866,7 +1914,6 @@ void Binary::shift_dynamic_entries(uint64_t from, uint64_t shift) {
       case DynamicEntry::TAG::VERDEF:
       case DynamicEntry::TAG::VERNEED:
         {
-
           if (entry->value() >= from) {
             entry->value(entry->value() + shift);
           }
@@ -1921,48 +1968,19 @@ void Binary::shift_relocations(uint64_t from, uint64_t shift) {
 
   switch(arch) {
     case ARCH::ARM:
-      {
-        patch_relocations<ARCH::ARM>(from, shift);
-        break;
-      }
+      patch_relocations<ARCH::ARM>(from, shift); return;
 
     case ARCH::AARCH64:
-      {
-        patch_relocations<ARCH::AARCH64>(from, shift);
-        break;
-      }
+      patch_relocations<ARCH::AARCH64>(from, shift); return;
 
     case ARCH::X86_64:
-      {
-        patch_relocations<ARCH::X86_64>(from, shift);
-        break;
-      }
+      patch_relocations<ARCH::X86_64>(from, shift); return;
 
     case ARCH::I386:
-      {
-        patch_relocations<ARCH::I386>(from, shift);
-        break;
-      }
+      patch_relocations<ARCH::I386>(from, shift); return;
 
     case ARCH::PPC:
-      {
-        patch_relocations<ARCH::PPC>(from, shift);
-        break;
-      }
-
-      /*
-    case ARCH::PPC64:
-      {
-        patch_relocations<ARCH::PPC64>(from, shift);
-        break;
-      }
-
-      case ARCH::RISCV:
-        {
-          patch_relocations<ARCH::RISCV>(from, shift);
-          break;
-        }
-      */
+      patch_relocations<ARCH::PPC>(from, shift); return;
 
     default:
       {

@@ -52,8 +52,7 @@
 #include "Object.tcc"
 #include "ExeLayout.hpp"
 #include "ObjectFileLayout.hpp"
-
-
+#include "internal_utils.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -181,7 +180,9 @@ ok_error_t Builder::build_exe_lib() {
     } else { LIEF_DEBUG("PT_DYNAMIC: -0x{:x} bytes", osize - dynamic_needed_size); }
   }
 
-  if (binary_->has(DynamicEntry::TAG::RELA) || binary_->has(DynamicEntry::TAG::REL)) {
+  if (binary_->has(DynamicEntry::TAG::RELA) ||
+      binary_->has(DynamicEntry::TAG::REL))
+  {
     const size_t dyn_reloc_needed_size = layout->dynamic_relocations_size<ELF_T>();
     if (config_.rela) {
       const uint64_t osize = binary_->sizing_info_->rela;
@@ -191,6 +192,31 @@ ok_error_t Builder::build_exe_lib() {
         layout->relocate_dyn_reloc(dyn_reloc_needed_size);
       } else { LIEF_DEBUG("DT_REL(A): -0x{:x} bytes", osize - dyn_reloc_needed_size); }
     }
+  }
+
+  if ((binary_->has(DynamicEntry::TAG::RELR) ||
+      binary_->has(DynamicEntry::TAG::ANDROID_RELR)) && config_.relr)
+  {
+    const size_t relr_reloc_size = layout->relative_relocations_size<ELF_T>();
+    const uint64_t osize = binary_->sizing_info_->relr;
+    const bool should_relocate = relr_reloc_size > osize || config_.force_relocate;
+    if (should_relocate) {
+      LIEF_DEBUG("[-] Need to relocate DT_RELR (0x{:x} new bytes)", relr_reloc_size - osize);
+      layout->relocate_relr(true);
+    } else { LIEF_DEBUG("DT_RELR: -0x{:x} bytes", osize - relr_reloc_size); }
+  }
+
+  if ((binary_->has(DynamicEntry::TAG::ANDROID_RELA) ||
+      binary_->has(DynamicEntry::TAG::ANDROID_REL)) && config_.android_rela)
+  {
+    const size_t android_rela_sz = layout->android_relocations_size<ELF_T>();
+    const uint64_t osize = binary_->sizing_info_->android_rela;
+    const bool should_relocate = android_rela_sz > osize || config_.force_relocate;
+    if (should_relocate) {
+      LIEF_DEBUG("[-] Need to relocate DT_ANDROID_REL[A] (0x{:x} new bytes)",
+                 android_rela_sz - osize);
+      layout->relocate_android_rela(true);
+    } else { LIEF_DEBUG("DT_ANDROID_REL[A]: -0x{:x} bytes", osize - android_rela_sz); }
   }
 
   if (config_.jmprel && binary_->has(DynamicEntry::TAG::JMPREL)) {
@@ -223,7 +249,8 @@ ok_error_t Builder::build_exe_lib() {
     } else { LIEF_DEBUG("DT_SYMTAB: -0x{:x} bytes", osize - dynsym_needed_size); }
   }
 
-  if (binary_->has(DynamicEntry::TAG::INIT_ARRAY) && binary_->has(DynamicEntry::TAG::INIT_ARRAYSZ) &&
+  if (binary_->has(DynamicEntry::TAG::INIT_ARRAY) &&
+      binary_->has(DynamicEntry::TAG::INIT_ARRAYSZ) &&
       config_.init_array)
   {
     const size_t needed_size = layout->dynamic_arraysize<ELF_T>(DynamicEntry::TAG::INIT_ARRAY);
@@ -238,7 +265,8 @@ ok_error_t Builder::build_exe_lib() {
     } else { LIEF_DEBUG("DT_INIT_ARRAY: -0x{:x} bytes", osize - needed_size); }
   }
 
-  if (binary_->has(DynamicEntry::TAG::PREINIT_ARRAY) && binary_->has(DynamicEntry::TAG::PREINIT_ARRAYSZ) &&
+  if (binary_->has(DynamicEntry::TAG::PREINIT_ARRAY) &&
+      binary_->has(DynamicEntry::TAG::PREINIT_ARRAYSZ) &&
       config_.preinit_array)
   {
     const size_t needed_size = layout->dynamic_arraysize<ELF_T>(DynamicEntry::TAG::PREINIT_ARRAY);
@@ -250,7 +278,8 @@ ok_error_t Builder::build_exe_lib() {
     } else { LIEF_DEBUG("DT_PREINIT_ARRAY: -0x{:x} bytes", osize - needed_size); }
   }
 
-  if (binary_->has(DynamicEntry::TAG::FINI_ARRAY) && binary_->has(DynamicEntry::TAG::FINI_ARRAYSZ) &&
+  if (binary_->has(DynamicEntry::TAG::FINI_ARRAY) &&
+      binary_->has(DynamicEntry::TAG::FINI_ARRAYSZ) &&
       config_.fini_array)
   {
     const size_t needed_size   = layout->dynamic_arraysize<ELF_T>(DynamicEntry::TAG::FINI_ARRAY);
@@ -402,6 +431,18 @@ ok_error_t Builder::build_exe_lib() {
 
   if (config_.sym_verneed && binary_->has(DynamicEntry::TAG::VERNEED)) {
     build_symbol_requirement<ELF_T>();
+  }
+
+  if (config_.relr) {
+    if (ok_error_t ret = build_relative_relocations<ELF_T>(); !is_ok(ret)) {
+      return ret;
+    }
+  }
+
+  if (config_.android_rela) {
+    if (ok_error_t ret = build_android_relocations<ELF_T>(); !is_ok(ret)) {
+      return ret;
+    }
   }
 
   if (config_.rela) {
@@ -1233,41 +1274,42 @@ ok_error_t Builder::build_section_relocations() {
               [] (const Relocation* lhs, const Relocation* rhs) {
                 return lhs->address() < rhs->address();
               });
-    for (const Relocation* reloc : relocs) {
+    for (Relocation* reloc : relocs) {
       Section* reloc_section = sec_relo_map.at(section);
       uint32_t symidx = 0;
-      const Symbol* sym = reloc->symbol();
-      if (sym != nullptr) {
-        const auto it_sym = std::find_if(std::begin(binary_->symtab_symbols_), std::end(binary_->symtab_symbols_),
-                                         [sym] (const std::unique_ptr<Symbol>& s) {
-                                           return s.get() == sym;
-                                         });
-        if (it_sym == std::end(binary_->symtab_symbols_)) {
-          LIEF_WARN("Can find the relocation's symbol '{}'", sym->name());
-          continue;
+
+      if (const Symbol* symbol = reloc->symbol()) {
+        int64_t symtab_idx = binary_->symtab_idx(*symbol);
+        if (0 <= symtab_idx) {
+          symidx = static_cast<uint32_t>(symtab_idx);
+        } else {
+          LIEF_ERR("Can't find the symbol idx associated with the relocation ({})",
+                   symbol->name());
         }
+      }
+      Elf_Xword info = reloc->info();
 
-        symidx = static_cast<uint32_t>(std::distance(std::begin(binary_->symtab_symbols_), it_sym));
+      if (symidx > 0) {
+        if (symidx != info) {
+          LIEF_DEBUG("Fixing symbol idx for {}", to_string(*reloc));
+        }
+        reloc->info(symidx);
       }
 
-      Elf_Xword info = 0;
-      if (std::is_same<ELF_T, details::ELF32>::value) {
-        info = (static_cast<Elf_Xword>(symidx) << 8) | Relocation::to_value(reloc->type());
-      } else {
-        // NOTE: To suppress a warning we require a cast here, this path is not constexpr but only uses Elf64_Xword
-        info = (static_cast<details::ELF64::Elf_Xword>(symidx) << 32) | (Relocation::to_value(reloc->type()) & 0xffffffffL);
-      }
+      uint64_t r_info = reloc->r_info(std::is_same_v<ELF_T, details::ELF32> ?
+                                      Header::CLASS::ELF32 :
+                                      Header::CLASS::ELF64);
 
       if (is_rela) {
         Elf_Rela relahdr;
         relahdr.r_offset = static_cast<Elf_Addr>(reloc->address());
-        relahdr.r_info   = static_cast<Elf_Xword>(info);
+        relahdr.r_info   = static_cast<Elf_Xword>(r_info);
         relahdr.r_addend = static_cast<Elf_Sxword>(reloc->addend());
         section_content[reloc_section].write<Elf_Rela>(relahdr);
       } else {
         Elf_Rel relhdr;
         relhdr.r_offset = static_cast<Elf_Addr>(reloc->address());
-        relhdr.r_info   = static_cast<Elf_Xword>(info);
+        relhdr.r_info   = static_cast<Elf_Xword>(r_info);
         section_content[reloc_section].write<Elf_Rel>(relhdr);
       }
     }
@@ -1278,6 +1320,80 @@ ok_error_t Builder::build_section_relocations() {
     vector_iostream& ios = p.second;
     LIEF_DEBUG("Fill section {} with 0x{:x} bytes", sec->name(), ios.raw().size());
     sec->content(ios.raw());
+  }
+  return ok();
+}
+
+template<typename ELF_T>
+ok_error_t Builder::build_android_relocations() {
+  LIEF_DEBUG("Build DT_ANDROID_REL[A] relocations");
+  if (!config_.android_rela) {
+    return ok();
+  }
+
+  /* The relocations might have been update when adding the new segment
+   * (->relocate()). Thus the cache might be invalidated
+   */
+  auto& layout = static_cast<ExeLayout&>(*layout_);
+  const size_t computed_size = layout.android_relocations_size<ELF_T>();
+  const size_t new_size = layout.android_relocations_size<ELF_T>(/*force=*/true);
+  if (computed_size != new_size) {
+    if (computed_size < new_size) {
+      LIEF_ERR("New ANDROID_REL[A] is larger than the in-cache size");
+      return make_error_code(lief_errors::build_error);
+    }
+    LIEF_WARN("New ANDROID_REL[A] is smaller than the in-cache size. It might require padding");
+  }
+
+  if (const DynamicEntry* entry = binary_->get(DynamicEntry::TAG::ANDROID_RELA)) {
+    binary_->patch_address(entry->value(), layout.raw_android_rela());
+    if (DynamicEntry* dt_size = binary_->get(DynamicEntry::TAG::ANDROID_RELASZ)) {
+      dt_size->value(layout.raw_android_rela().size());
+    }
+  }
+  else if (const DynamicEntry* entry = binary_->get(DynamicEntry::TAG::ANDROID_REL)) {
+    binary_->patch_address(entry->value(), layout.raw_android_rela());
+    if (DynamicEntry* dt_size = binary_->get(DynamicEntry::TAG::ANDROID_RELSZ)) {
+      dt_size->value(layout.raw_android_rela().size());
+    }
+  }
+
+  return ok();
+}
+
+template<typename ELF_T>
+ok_error_t Builder::build_relative_relocations() {
+  LIEF_DEBUG("Build DT_RELR relocations");
+
+  if (!config_.relr) {
+    return ok();
+  }
+  /* The relocations might have been update when adding the new segment
+   * (->relocate()). Thus the cache might be invalidated
+   */
+  auto& layout = static_cast<ExeLayout&>(*layout_);
+  const size_t computed_size = layout.relative_relocations_size<ELF_T>();
+  const size_t new_size = layout.relative_relocations_size<ELF_T>(/*force=*/true);
+  if (computed_size != new_size) {
+    if (computed_size < new_size) {
+      LIEF_ERR("New RELR is larger than the in-cache size");
+      return make_error_code(lief_errors::build_error);
+    }
+    LIEF_WARN("New RELR is smaller than the in-cache size. It might require padding");
+  }
+  if (const DynamicEntry* entry = binary_->get(DynamicEntry::TAG::RELR)) {
+    binary_->patch_address(entry->value(), layout.raw_relr());
+    if (DynamicEntry* dt_size = binary_->get(DynamicEntry::TAG::RELRSZ)) {
+      dt_size->value(layout.raw_relr().size());
+    }
+  }
+
+  if (const DynamicEntry* entry = binary_->get(DynamicEntry::TAG::ANDROID_RELR)) {
+    binary_->patch_address(entry->value(), layout.raw_relr());
+
+    if (DynamicEntry* dt_size = binary_->get(DynamicEntry::TAG::ANDROID_RELRSZ)) {
+      dt_size->value(layout.raw_relr().size());
+    }
   }
   return ok();
 }
@@ -1306,11 +1422,16 @@ ok_error_t Builder::build_dynamic_relocations() {
     return ok();
   }
 
-  LIEF_DEBUG("[+] Building dynamic relocations");
+  DynamicEntry* dt_rela = binary_->get(DynamicEntry::TAG::RELA);
+  DynamicEntry* dt_rel = binary_->get(DynamicEntry::TAG::REL);
+  if (dt_rela == nullptr && dt_rel == nullptr) {
+    return ok();
+  }
+  LIEF_DEBUG("Building DT_REL/DT_RELA");
+
   DynamicEntry* dt_reloc   = nullptr;
   DynamicEntry* dt_relocsz = nullptr;
 
-  DynamicEntry* dt_rela = binary_->get(DynamicEntry::TAG::RELA);
 
   const bool is_rela = dt_rela != nullptr;
   if (dt_rela != nullptr) {
@@ -1318,10 +1439,9 @@ ok_error_t Builder::build_dynamic_relocations() {
     dt_relocsz = binary_->get(DynamicEntry::TAG::RELASZ);
   } else {
     // Fallback on relation type REL
-    dt_reloc   = binary_->get(DynamicEntry::TAG::REL);
+    dt_reloc   = dt_rel;
     dt_relocsz = binary_->get(DynamicEntry::TAG::RELSZ);
   }
-
 
   if (dt_reloc == nullptr) {
     LIEF_ERR("Unable to find the DT_REL/DT_RELA");
@@ -1335,41 +1455,34 @@ ok_error_t Builder::build_dynamic_relocations() {
 
 
   vector_iostream content(should_swap());
-  for (const Relocation& relocation : binary_->dynamic_relocations()) {
+  for (Relocation& relocation : binary_->dynamic_relocations()) {
+    if (!relocation.is_rel() && !relocation.is_rela()) {
+      continue;
+    }
 
     // look for symbol index
     uint32_t idx = 0;
-    const Symbol* symbol = relocation.symbol();
-    if (symbol != nullptr) {
-      const std::string& name = symbol->name();
-      const auto it_name = std::find_if(
-          std::begin(binary_->dynamic_symbols_), std::end(binary_->dynamic_symbols_),
-          [&name] (const std::unique_ptr<Symbol>& s) {
-            return s->name() == name;
-          });
-
-      if (it_name == std::end(binary_->dynamic_symbols_)) {
-        LIEF_ERR("Unable to find the symbol associated with the relocation");
-        return make_error_code(lief_errors::not_found);
+    if (const Symbol* symbol = relocation.symbol()) {
+      int64_t dynsym_idx = binary_->dynsym_idx(*symbol);
+      if (0 <= dynsym_idx) {
+        idx = static_cast<uint32_t>(dynsym_idx);
+      } else {
+        LIEF_ERR("Can't find the symbol idx associated with the relocation ({})",
+                 symbol->name());
       }
-
-      idx = static_cast<uint32_t>(std::distance(std::begin(binary_->dynamic_symbols_), it_name));
     }
 
     uint32_t info = relocation.info();
     if (idx > 0) {
-      info = idx;
+      if (idx != info) {
+        LIEF_DEBUG("Fixing symbol idx for {}", to_string(relocation));
+      }
+      relocation.info(idx);
     }
 
-    Elf_Xword r_info = 0;
-    if (std::is_same<ELF_T, details::ELF32>::value) {
-      r_info = (static_cast<Elf_Xword>(info) << 8) | Relocation::to_value(relocation.type());
-    } else {
-      // NOTE: To suppress a warning we require a cast here, this path is not constexpr but only uses Elf64_Xword
-      r_info = (static_cast<details::ELF64::Elf_Xword>(info) << 32) | (Relocation::to_value(relocation.type()) & 0xffffffffL);
-    }
-
-
+    uint64_t r_info = relocation.r_info(std::is_same_v<ELF_T, details::ELF32> ?
+                                        Header::CLASS::ELF32 :
+                                        Header::CLASS::ELF64);
     if (is_rela) {
       Elf_Rela relahdr;
       relahdr.r_offset = static_cast<Elf_Addr>(relocation.address());
@@ -1413,7 +1526,7 @@ ok_error_t Builder::build_pltgot_relocations() {
   bool is_rela = false;
   DynamicEntry* dt_pltrel = binary_->get(DynamicEntry::TAG::PLTREL);
   if (dt_pltrel != nullptr) {
-    is_rela = dt_pltrel->value() == static_cast<uint64_t>(DynamicEntry::TAG::RELA);
+    is_rela = DynamicEntry::TAG(dt_pltrel->value()) == DynamicEntry::TAG::RELA;
   }
   DynamicEntry* dt_jmprel   = binary_->get(DynamicEntry::TAG::JMPREL);
   DynamicEntry* dt_pltrelsz = binary_->get(DynamicEntry::TAG::PLTRELSZ);
@@ -1428,45 +1541,41 @@ ok_error_t Builder::build_pltgot_relocations() {
   }
 
   vector_iostream content(should_swap()); // Section's content
-  for (const Relocation& relocation : binary_->pltgot_relocations()) {
+  for (Relocation& relocation : binary_->pltgot_relocations()) {
     uint32_t idx = 0;
-    const Symbol* symbol = relocation.symbol();
-    if (symbol != nullptr) {
-      // look for symbol index
-      const std::string& name = symbol->name();
-      const auto& it_name = std::find_if(
-          std::begin(binary_->dynamic_symbols_), std::end(binary_->dynamic_symbols_),
-          [&name] (const std::unique_ptr<Symbol>& s) {
-            return s->name() == name;
-          });
-
-      if (it_name == std::end(binary_->dynamic_symbols_)) {
-        LIEF_ERR("Unable to find the symbol associated with the relocation");
-        return make_error_code(lief_errors::not_found);
+    if (const Symbol* symbol = relocation.symbol()) {
+      int64_t dynsym_idx = binary_->dynsym_idx(*symbol);
+      if (0 <= dynsym_idx) {
+        idx = static_cast<uint32_t>(dynsym_idx);
+      } else {
+        LIEF_ERR("Can't find the symbol idx associated with the relocation ({})",
+                 symbol->name());
       }
-
-      idx = static_cast<uint32_t>(std::distance(std::begin(binary_->dynamic_symbols_), it_name));
     }
 
-    Elf_Xword info = 0;
-    if constexpr (std::is_same_v<ELF_T, details::ELF32>) {
-      info = (static_cast<Elf_Xword>(idx) << 8) | Relocation::to_value(relocation.type());
-    } else {
-      // NOTE: To suppress a warning we require a cast here, this path is not constexpr but only uses Elf64_Xword
-      info = (static_cast<details::ELF64::Elf_Xword>(idx) << 32) | (Relocation::to_value(relocation.type()) & 0xffffffffL);
+    uint32_t info = relocation.info();
+    if (idx > 0) {
+      if (idx != info) {
+        LIEF_DEBUG("Fixing symbol idx for {}", to_string(relocation));
+      }
+      relocation.info(idx);
     }
+
+    uint64_t r_info = relocation.r_info(std::is_same_v<ELF_T, details::ELF32> ?
+                                        Header::CLASS::ELF32 :
+                                        Header::CLASS::ELF64);
 
     if (is_rela) {
       Elf_Rela relahdr;
       relahdr.r_offset = static_cast<Elf_Addr>(relocation.address());
-      relahdr.r_info   = static_cast<Elf_Xword>(info);
+      relahdr.r_info   = static_cast<Elf_Xword>(r_info);
       relahdr.r_addend = static_cast<Elf_Sxword>(relocation.addend());
 
       content.write_conv<Elf_Rela>(relahdr);
     } else {
       Elf_Rel relhdr;
       relhdr.r_offset = static_cast<Elf_Addr>(relocation.address());
-      relhdr.r_info   = static_cast<Elf_Xword>(info);
+      relhdr.r_info   = static_cast<Elf_Xword>(r_info);
 
       content.write_conv<Elf_Rel>(relhdr);
     }
@@ -1553,7 +1662,7 @@ ok_error_t Builder::build_symbol_requirement() {
         continue;
       }
       uint32_t new_hash = 0;
-      if (std::is_same<ELF_T, details::ELF32>::value) {
+      if constexpr (std::is_same_v<ELF_T, details::ELF32>) {
         new_hash = hash32(svar_name.c_str());
       } else {
         new_hash = hash64(svar_name.c_str());

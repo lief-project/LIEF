@@ -19,7 +19,8 @@ def test_simple(tmp_path: Path):
 
     ls = lief.ELF.parse(sample_path)
 
-    relocation = lief.ELF.Relocation(0x61D370, type=lief.ELF.Relocation.TYPE.X86_64_JUMP_SLOT, is_rela=True)
+    relocation = lief.ELF.Relocation(0x61D370, type=lief.ELF.Relocation.TYPE.X86_64_JUMP_SLOT,
+                                     encoding=lief.ELF.Relocation.ENCODING.RELA)
 
     symbol = lief.ELF.Symbol()
     symbol.name = "printf123"
@@ -45,7 +46,8 @@ def test_all(tmp_path: Path):
 
     target = lief.ELF.parse(sample_path)
 
-    relocation = lief.ELF.Relocation(0x201028, type=lief.ELF.Relocation.TYPE.X86_64_JUMP_SLOT, is_rela=True)
+    relocation = lief.ELF.Relocation(0x201028, type=lief.ELF.Relocation.TYPE.X86_64_JUMP_SLOT,
+                                     encoding=lief.ELF.Relocation.ENCODING.RELA)
 
     symbol = lief.ELF.Symbol()
     symbol.name = "printf123"
@@ -71,7 +73,8 @@ def test_all32(tmp_path: Path):
 
     target = lief.ELF.parse(sample_path)
 
-    relocation = lief.ELF.Relocation(0x2018, type=lief.ELF.Relocation.TYPE.X86_JUMP_SLOT, is_rela=False)
+    relocation = lief.ELF.Relocation(0x2018, type=lief.ELF.Relocation.TYPE.X86_JUMP_SLOT,
+                                     encoding=lief.ELF.Relocation.ENCODING.REL)
 
     symbol = lief.ELF.Symbol()
     symbol.name = "printf123"

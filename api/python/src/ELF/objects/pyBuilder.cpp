@@ -46,6 +46,8 @@ void create<Builder>(nb::module_& m) {
     .def_rw("jmprel",          &Builder::config_t::jmprel, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.JMPREL`"_doc)
     .def_rw("notes",           &Builder::config_t::notes, "Rebuild `PT_NOTES` segment(s)"_doc)
     .def_rw("preinit_array",   &Builder::config_t::preinit_array, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.PREINIT_ARRAY`"_doc)
+    .def_rw("relr",            &Builder::config_t::relr, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.RELR`"_doc)
+    .def_rw("android_rela",    &Builder::config_t::android_rela, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.ANDROID_RELA`"_doc)
     .def_rw("rela",            &Builder::config_t::rela, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.RELA`"_doc)
     .def_rw("static_symtab",   &Builder::config_t::static_symtab, "Rebuild `.symtab` section"_doc)
     .def_rw("sym_verdef",      &Builder::config_t::sym_verdef, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.VERDEF`"_doc)
