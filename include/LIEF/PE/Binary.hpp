@@ -329,7 +329,7 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Try to predict the RVA of the function `function` in the import library `library`
   //!
   //! @warning
-  //! The value could be chang if imports change
+  //! The value could be changed if imports change
   //!
   //! @note
   //! It should be used with:
@@ -339,7 +339,21 @@ class LIEF_API Binary : public LIEF::Binary {
   //! @param[in] function Function name
   //! @return The address of the function (``IAT``)  in the new import table
   uint32_t predict_function_rva(const std::string& library, const std::string& function);
-
+  
+  //! Try to predict the RVA of the ordinal `ordinal` in the import library `library`
+  //!
+  //! @warning
+  //! The value could be changed if imports change
+  //!
+  //! @note
+  //! It should be used with:
+  //! LIEF::PE::Builder::build_imports set to ``true``
+  //!
+  //! @param[in] library  Library name in which the function is located
+  //! @param[in] ordinal  Function ordinal
+  //! @return The address of the function (``IAT``)  in the new import table
+  uint32_t predict_function_rva(const std::string& library, const uint16_t& ordinal);
+  
   //! Return the Export object
   Export* get_export() {
     return export_.get();
