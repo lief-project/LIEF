@@ -96,12 +96,12 @@ class LIEF_API Parser : public LIEF::Parser {
   Parser(const Parser&)            = delete;
 
   protected:
-  Parser() = default;
+  Parser();
   Parser(std::unique_ptr<BinaryStream> stream, ParserConfig config);
   Parser(const std::string& file, ParserConfig config);
   Parser(const std::vector<uint8_t>& data, ParserConfig config);
 
-  ~Parser() override = default;
+  ~Parser() override;
 
   ok_error_t init();
 

@@ -38,6 +38,9 @@
 namespace LIEF {
 namespace ELF {
 
+Parser::Parser() = default;
+Parser::~Parser() = default;
+
 Parser::Parser(const std::vector<uint8_t>& data, ParserConfig conf) :
   stream_{std::make_unique<VectorStream>(data)},
   binary_{new Binary{}},
