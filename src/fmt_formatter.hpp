@@ -17,7 +17,6 @@
 #define LIEF_FMT_FORMATTER
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/fmt/ranges.h>
-#include <spdlog/fmt/ostr.h>
 
 #define FMT_FORMATTER(T, F)                                          \
 template <typename Char> struct fmt::formatter<T, Char> {            \

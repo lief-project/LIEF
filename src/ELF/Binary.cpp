@@ -62,6 +62,7 @@
 
 #include "Binary.tcc"
 #include "Object.tcc"
+#include "internal_utils.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -163,7 +164,7 @@ void Binary::remove(const DynamicEntry& entry) {
       });
 
   if (it_entry == std::end(dynamic_entries_)) {
-    LIEF_WARN("Can't find {} in the dynamic table. This entry can't be removed", entry);
+    LIEF_WARN("Can't find {} in the dynamic table. This entry can't be removed", to_string(entry));
     return;
   }
   dynamic_entries_.erase(it_entry);
@@ -1820,12 +1821,12 @@ void Binary::shift_sections(uint64_t from, uint64_t shift) {
       continue;
     }
     if (section->file_offset() >= from) {
-      LIEF_DEBUG("[BEFORE] {}", *section);
+      LIEF_DEBUG("[BEFORE] {}", to_string(*section));
       section->file_offset(section->file_offset() + shift);
       if (section->virtual_address() > 0) {
         section->virtual_address(section->virtual_address() + shift);
       }
-      LIEF_DEBUG("[AFTER ] {}", *section);
+      LIEF_DEBUG("[AFTER ] {}", to_string(*section));
     }
   }
 }
@@ -1836,11 +1837,11 @@ void Binary::shift_segments(uint64_t from, uint64_t shift) {
 
   for (std::unique_ptr<Segment>& segment : segments_) {
     if (segment->file_offset() >= from) {
-      LIEF_DEBUG("[BEFORE] {}", *segment);
+      LIEF_DEBUG("[BEFORE] {}", to_string(*segment));
       segment->file_offset(segment->file_offset() + shift);
       segment->virtual_address(segment->virtual_address() + shift);
       segment->physical_address(segment->physical_address() + shift);
-      LIEF_DEBUG("[AFTER ] {}", *segment);
+      LIEF_DEBUG("[AFTER ] {}", to_string(*segment));
     }
   }
 }
@@ -1849,7 +1850,7 @@ void Binary::shift_dynamic_entries(uint64_t from, uint64_t shift) {
   LIEF_DEBUG("Shift dynamic entries by 0x{:x} from 0x{:x}", shift, from);
 
   for (std::unique_ptr<DynamicEntry>& entry : dynamic_entries_) {
-    LIEF_DEBUG("[BEFORE] {}", *entry);
+    LIEF_DEBUG("[BEFORE] {}", to_string(*entry));
     switch (entry->tag()) {
       case DynamicEntry::TAG::PLTGOT:
       case DynamicEntry::TAG::HASH:
@@ -1898,7 +1899,7 @@ void Binary::shift_dynamic_entries(uint64_t from, uint64_t shift) {
           //LIEF_DEBUG("{} not supported", to_string(entry->tag()));
         }
     }
-    LIEF_DEBUG("[AFTER ] {}", *entry);
+    LIEF_DEBUG("[AFTER ] {}", to_string(*entry));
   }
 }
 
@@ -1907,9 +1908,9 @@ void Binary::shift_symbols(uint64_t from, uint64_t shift) {
   LIEF_DEBUG("Shift symbols by 0x{:x} from 0x{:x}", shift, from);
   for (Symbol& symbol : symbols()) {
     if (symbol.value() >= from) {
-      LIEF_DEBUG("[BEFORE] {}", symbol);
+      LIEF_DEBUG("[BEFORE] {}", to_string(symbol));
       symbol.value(symbol.value() + shift);
-      LIEF_DEBUG("[AFTER ] {}", symbol);
+      LIEF_DEBUG("[AFTER ] {}", to_string(symbol));
     }
   }
 }
@@ -2981,12 +2982,12 @@ uint64_t Binary::relocate_phdr_table_v2() {
       continue;
     }
     if (section->file_offset() >= from && section->type() != Section::TYPE::NOBITS) {
-      LIEF_DEBUG("[BEFORE] {}", *section);
+      LIEF_DEBUG("[BEFORE] {}", to_string(*section));
       section->file_offset(section->file_offset() + shift);
       if (section->virtual_address() > 0) {
         section->virtual_address(section->virtual_address() + shift);
       }
-      LIEF_DEBUG("[AFTER ] {}", *section);
+      LIEF_DEBUG("[AFTER ] {}", to_string(*section));
     }
   }
   return phdr_reloc_info_.new_offset;

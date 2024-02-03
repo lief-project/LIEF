@@ -63,6 +63,8 @@
 #include "LIEF/MachO/VersionMin.hpp"
 #include "MachO/Structures.hpp"
 
+#include "internal_utils.hpp"
+
 namespace LIEF {
 namespace MachO {
 
@@ -1148,7 +1150,7 @@ bool Binary::remove(const LoadCommand& command) {
       });
 
   if (it == std::end(commands_)) {
-    LIEF_ERR("Unable to find command: {}", command);
+    LIEF_ERR("Unable to find command: {}", to_string(command));
     return false;
   }
 
@@ -1249,7 +1251,7 @@ bool Binary::extend(const LoadCommand& command, uint64_t size) {
       });
 
   if (it == std::end(commands_)) {
-    LIEF_ERR("Unable to find command: {}", command);
+    LIEF_ERR("Unable to find command: {}", to_string(command));
     return false;
   }
 

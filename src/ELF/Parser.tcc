@@ -47,6 +47,7 @@
 #include "ELF/SizingInfo.hpp"
 
 #include "Object.tcc"
+#include "internal_utils.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -964,7 +965,8 @@ ok_error_t Parser::parse_dynamic_relocations(uint64_t relocations_offset, uint64
       if (idx < binary_->dynamic_symbols_.size()) {
         reloc->symbol_ = binary_->dynamic_symbols_[idx].get();
       } else {
-        LIEF_WARN("Unable to find the symbol associated with the relocation (idx: {}) {}", idx, *reloc);
+        LIEF_WARN("Unable to find the symbol associated with the relocation "
+                  "(idx: {}) {}", idx, to_string(*reloc));
       }
     }
 

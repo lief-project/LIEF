@@ -173,7 +173,7 @@ ok_error_t Builder::build_segments() {
       const Section& section = sections[i];
       const std::string& sec_name = section.name();
       const std::string& segment_name = segment.name();
-      LIEF_DEBUG("{}", section);
+      LIEF_DEBUG("{}", to_string(section));
       section_t header;
       std::memset(&header, 0, sizeof(header));
 

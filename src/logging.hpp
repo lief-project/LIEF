@@ -21,7 +21,6 @@
 #include "LIEF/config.h"
 
 #include <spdlog/spdlog.h>
-#include <spdlog/fmt/ostr.h>
 #include <spdlog/fmt/fmt.h>
 
 #define LIEF_TRACE(...) LIEF::logging::Logger::trace(__VA_ARGS__)

@@ -20,6 +20,7 @@
 #include <set>
 #include <algorithm>
 #include <unordered_map>
+#include <sstream>
 #include "spdlog/fmt/fmt.h"
 
 #include "LIEF/span.hpp"
@@ -43,6 +44,14 @@ template<class T>
 inline const char* to_string_or(result<T> res, const char* defval = "???") {
   return res ? to_string(*res) : defval;
 }
+
+template<class T>
+inline std::string to_string(const T& obj) {
+  std::stringstream oss;
+  oss << obj;
+  return oss.str();
+}
+
 
 template<class T>
 inline std::string to_hex(const T& container, size_t maxsize = 0) {

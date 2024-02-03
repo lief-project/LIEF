@@ -26,6 +26,8 @@
 #include "LIEF/PE/ResourceDirectory.hpp"
 #include "LIEF/PE/ResourceData.hpp"
 
+#include "internal_utils.hpp"
+
 namespace LIEF {
 namespace PE {
 
@@ -173,7 +175,7 @@ void ResourceNode::delete_child(const ResourceNode& node) {
       });
 
   if (it_node == std::end(childs_)) {
-    LIEF_ERR("Unable to find the node {}", node);
+    LIEF_ERR("Unable to find the node {}", to_string(node));
     return;
   }
 

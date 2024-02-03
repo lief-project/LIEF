@@ -655,22 +655,22 @@ std::ostream& operator<<(std::ostream& os, const ResourcesManager& rsrc) {
   }
 
   if (auto version = rsrc.version()) {
-    os << fmt::format("Version:\n{}\n", *version);
+    os << fmt::format("Version:\n{}\n", to_string(*version));
   }
 
   const auto& icons = rsrc.icons();
   for (size_t i = 0; i < icons.size(); ++i) {
-    os << fmt::format("Icon #{:02d}:\n{}\n", i, icons[i]);
+    os << fmt::format("Icon #{:02d}:\n{}\n", i, to_string(icons[i]));
   }
 
   const auto& dialogs = rsrc.dialogs();
   for (size_t i = 0; i < dialogs.size(); ++i) {
-    os << fmt::format("Dialog #{:02d}:\n{}\n", i, dialogs[i]);
+    os << fmt::format("Dialog #{:02d}:\n{}\n", i, to_string(dialogs[i]));
   }
 
   const auto& str_table = rsrc.string_table();
   for (size_t i = 0; i < str_table.size(); ++i) {
-    os << fmt::format("StringTable[{}]: {}", i, str_table[i]);
+    os << fmt::format("StringTable[{}]: {}", i, to_string(str_table[i]));
   }
   return os;
 }

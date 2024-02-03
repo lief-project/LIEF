@@ -357,7 +357,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     std::vector<uint32_t> hash_values(dynamic_symbols.size() - symndx, 0);
 
     for (size_t i = symndx; i < dynamic_symbols.size(); ++i) {
-      LIEF_DEBUG("Dealing with symbol {}", dynamic_symbols[i]);
+      LIEF_DEBUG("Dealing with symbol {}", to_string(dynamic_symbols[i]));
       const uint32_t hash = dl_new_hash(dynamic_symbols[i].name().c_str());
       int bucket = hash % nb_buckets;
 

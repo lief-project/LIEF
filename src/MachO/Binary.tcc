@@ -19,6 +19,7 @@
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/Relocation.hpp"
 #include "LIEF/errors.hpp"
+#include "internal_utils.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -104,7 +105,7 @@ ok_error_t Binary::patch_relocation(Relocation& relocation, uint64_t from, uint6
   }
 
   if (relative_offset >= segment_size || (relative_offset + sizeof(T)) >= segment_size) {
-    LIEF_DEBUG("Offset out of bound for relocation: {}", relocation);
+    LIEF_DEBUG("Offset out of bound for relocation: {}", to_string(relocation));
     return make_error_code(lief_errors::read_out_of_bound);
   }
 

@@ -35,6 +35,7 @@
 #include "utils/ordinals_lookup_tables_std/libraries_table.hpp"
 
 #include "hash_stream.hpp"
+#include "internal_utils.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -339,7 +340,7 @@ result<Import> resolve_ordinals(const Import& import, bool strict, bool use_std)
   Import resolved_import = import;
   for (ImportEntry& entry : resolved_import.entries()) {
     if (entry.is_ordinal()) {
-      LIEF_DEBUG("Dealing with: {}", entry);
+      LIEF_DEBUG("Dealing with: {}", to_string(entry));
       const char* entry_name = ordinal_resolver(static_cast<uint32_t>(entry.ordinal()));
       if (entry_name == nullptr) {
         if (strict) {

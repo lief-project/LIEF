@@ -26,6 +26,8 @@
 #include "ELF/DataHandler/Node.hpp"
 #include "ELF/DataHandler/Handler.hpp"
 
+#include "internal_utils.hpp"
+
 #include <numeric>
 
 #if defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
@@ -57,7 +59,7 @@ void Binary::patch_relocations<ARCH::ARM>(uint64_t from, uint64_t shift) {
       case Relocation::TYPE::ARM_GLOB_DAT:
       case Relocation::TYPE::ARM_IRELATIVE:
         {
-          LIEF_DEBUG("Patch addend of {}", relocation);
+          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
           patch_addend<uint32_t>(relocation, from, shift);
           break;
         }
@@ -92,42 +94,42 @@ void Binary::patch_relocations<ARCH::AARCH64>(uint64_t from, uint64_t shift) {
       case Relocation::TYPE::AARCH64_IRELATIVE:
       case Relocation::TYPE::AARCH64_ABS64:
         {
-          LIEF_DEBUG("Patch addend of {}", relocation);
+          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
           patch_addend<uint64_t>(relocation, from, shift);
           break;
         }
 
       case Relocation::TYPE::AARCH64_ABS32:
         {
-          LIEF_DEBUG("Patch addend of {}", relocation);
+          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
           patch_addend<uint32_t>(relocation, from, shift);
           break;
         }
 
       case Relocation::TYPE::AARCH64_ABS16:
         {
-          LIEF_DEBUG("Patch addend of {}", relocation);
+          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
           patch_addend<uint16_t>(relocation, from, shift);
           break;
         }
 
       case Relocation::TYPE::AARCH64_PREL64:
         {
-          LIEF_DEBUG("Patch addend of {}", relocation);
+          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
           patch_addend<uint64_t>(relocation, from, shift);
           break;
         }
 
       case Relocation::TYPE::AARCH64_PREL32:
         {
-          LIEF_DEBUG("Patch addend of {}", relocation);
+          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
           patch_addend<uint32_t>(relocation, from, shift);
           break;
         }
 
       case Relocation::TYPE::AARCH64_PREL16:
         {
-          LIEF_DEBUG("Patch addend of {}", relocation);
+          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
           patch_addend<uint16_t>(relocation, from, shift);
           break;
         }
@@ -160,7 +162,7 @@ void Binary::patch_relocations<ARCH::I386>(uint64_t from, uint64_t shift) {
       case Relocation::TYPE::X86_GLOB_DAT:
       case Relocation::TYPE::X86_32:
         {
-          LIEF_DEBUG("Patch addend of {}", relocation);
+          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
           patch_addend<uint32_t>(relocation, from, shift);
           break;
         }
@@ -199,14 +201,14 @@ void Binary::patch_relocations<ARCH::X86_64>(uint64_t from, uint64_t shift) {
       case Relocation::TYPE::X86_64_GLOB_DAT:
       case Relocation::TYPE::X86_64_64:
         {
-          LIEF_DEBUG("Patch addend of {}", relocation);
+          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
           patch_addend<uint64_t>(relocation, from, shift);
           break;
         }
 
       case Relocation::TYPE::X86_64_32:
         {
-          LIEF_DEBUG("Patch addend of {}", relocation);
+          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
           patch_addend<uint32_t>(relocation, from, shift);
           break;
         }
@@ -235,7 +237,7 @@ void Binary::patch_relocations<ARCH::PPC>(uint64_t from, uint64_t shift) {
     switch (type) {
       case Relocation::TYPE::PPC_RELATIVE:
         {
-          LIEF_DEBUG("Patch addend of {}", relocation);
+          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
           patch_addend<uint32_t>(relocation, from, shift);
           break;
         }
@@ -278,7 +280,7 @@ void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift)
   }
 
   if (relative_offset >= segment_size || (relative_offset + sizeof(T)) > segment_size) {
-    LIEF_DEBUG("Offset out of bound for relocation: {}", relocation);
+    LIEF_DEBUG("Offset out of bound for relocation: {}", to_string(relocation));
     return;
   }
 
