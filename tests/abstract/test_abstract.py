@@ -82,6 +82,7 @@ def test_search():
     rodata = binary.get_section(".rodata")
     assert rodata.search("kernel-address") == 4
     assert rodata.search("foobar") is None
+    assert rodata.search_all(b"foobar") == []
 
 def test_content():
     binary: lief.ELF.Binary = lief.parse(get_sample('ELF/ELF64_x86-64_binary_gcc.bin'))
