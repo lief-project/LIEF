@@ -46,6 +46,9 @@ inline const char* to_string_or(result<T> res, const char* defval = "???") {
 
 template<class T>
 inline std::string to_hex(const T& container, size_t maxsize = 0) {
+  if (container.empty()) {
+    return "";
+  }
   size_t count = maxsize;
   if (count == 0 || count > container.size()) {
     count = container.size();
