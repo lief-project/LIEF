@@ -32,6 +32,8 @@ Relocation::TYPE Relocation::type_from(uint32_t value, ARCH arch) {
   switch (arch) {
     case ARCH::X86_64:
       return TYPE(value | R_X64);
+    case ARCH::AARCH64:
+      return TYPE(value | R_AARCH64);
     case ARCH::I386:
       return TYPE(value | R_X86);
     case ARCH::ARM:
