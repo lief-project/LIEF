@@ -71,8 +71,8 @@ void create<Binary>(nb::module_& m) {
   init_ref_iterator<Binary::it_pltgot_relocations>(bin, "it_filter_relocation");
   init_ref_iterator<Binary::it_relocations>(bin, "it_relocations");
 
-  init_ref_iterator<Binary::it_symbols>(bin, "it_dyn_static_symbols");
-  init_ref_iterator<Binary::it_dynamic_symbols>(bin, "it_symbols");        // For it_dynamic_symbols / it_static_symbols
+  init_ref_iterator<Binary::it_symbols>(bin, "it_dyn_symtab_symbols");
+  init_ref_iterator<Binary::it_dynamic_symbols>(bin, "it_symbols");        // For it_dynamic_symbols / it_symtab_symbols
   init_ref_iterator<Binary::it_exported_symbols>(bin, "it_filter_symbols"); // For it_imported_symbols
 
   nb::enum_<Binary::PHDR_RELOC>(bin, "PHDR_RELOC", R"delim(
@@ -135,8 +135,8 @@ void create<Binary>(nb::module_& m) {
         "dynamic_entry",
         nb::rv_policy::reference_internal)
 
-    .def_prop_ro("static_symbols",
-        nb::overload_cast<>(&Binary::static_symbols),
+    .def_prop_ro("symtab_symbols",
+        nb::overload_cast<>(&Binary::symtab_symbols),
         "Return an iterator to static  " RST_CLASS_REF(lief.ELF.Symbol) ""_doc,
         nb::keep_alive<0, 1>())
 
@@ -424,8 +424,8 @@ void create<Binary>(nb::module_& m) {
         "section_name"_a,
         nb::rv_policy::reference_internal)
 
-    .def("add_static_symbol",
-        &Binary::add_static_symbol,
+    .def("add_symtab_symbol",
+        &Binary::add_symtab_symbol,
         "Add a **static** " RST_CLASS_REF(lief.ELF.Symbol) " to the binary"_doc,
         "symbol"_a,
         nb::rv_policy::reference_internal)
@@ -603,13 +603,13 @@ void create<Binary>(nb::module_& m) {
         "symbol_name"_a,
         nb::rv_policy::reference_internal)
 
-    .def("has_static_symbol",
-        &Binary::has_static_symbol,
+    .def("has_symtab_symbol",
+        &Binary::has_symtab_symbol,
         "Check if the symbol with the given ``name`` exists in the **static** symbol table"_doc,
         "symbol_name"_a)
 
-    .def("get_static_symbol",
-        nb::overload_cast<const std::string&>(&Binary::get_static_symbol),
+    .def("get_symtab_symbol",
+        nb::overload_cast<const std::string&>(&Binary::get_symtab_symbol),
         R"delim(
         Get the **static** symbol from the given ``name``.
 
@@ -641,8 +641,8 @@ void create<Binary>(nb::module_& m) {
         "Basically this function looks for strings in the ``.roadata`` section"_doc,
         nb::rv_policy::move)
 
-    .def("remove_static_symbol",
-        nb::overload_cast<Symbol*>(&Binary::remove_static_symbol),
+    .def("remove_symtab_symbol",
+        nb::overload_cast<Symbol*>(&Binary::remove_symtab_symbol),
         "Remove the given " RST_CLASS_REF(lief.ELF.Symbol) " from the ``.symtab`` section"_doc)
 
     .def("remove_dynamic_symbol",

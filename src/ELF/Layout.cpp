@@ -58,11 +58,11 @@ size_t Layout::section_strtab_size() {
 
   size_t offset_counter = raw_strtab.tellp();
 
-  if (binary_->static_symbols_.empty()) {
+  if (binary_->symtab_symbols_.empty()) {
     return 0;
   }
 
-  std::vector<std::string> symstr_opt = optimize(binary_->static_symbols_,
+  std::vector<std::string> symstr_opt = optimize(binary_->symtab_symbols_,
                       [] (const std::unique_ptr<Symbol>& sym) { return sym->name(); },
                       offset_counter, &strtab_name_map_);
 
@@ -92,7 +92,7 @@ size_t Layout::section_shstr_size() {
                    return s->name();
                  });
 
-  if (!binary_->static_symbols_.empty()) {
+  if (!binary_->symtab_symbols_.empty()) {
     if (binary_->get(Section::TYPE::SYMTAB) == nullptr) {
       sec_names.emplace_back(".symtab");
     }
@@ -111,10 +111,10 @@ size_t Layout::section_shstr_size() {
   }
 
   // Check if the .shstrtab and the .strtab are shared (optimization used by clang)
-  // in this case, include the static symbol names
-  if (!binary_->static_symbols_.empty() && is_strtab_shared_shstrtab()) {
+  // in this case, include the symtab symbol names
+  if (!binary_->symtab_symbols_.empty() && is_strtab_shared_shstrtab()) {
     offset_counter = raw_shstrtab.tellp();
-    std::vector<std::string> symstr_opt = optimize(binary_->static_symbols_,
+    std::vector<std::string> symstr_opt = optimize(binary_->symtab_symbols_,
                        [] (const std::unique_ptr<Symbol>& sym) { return sym->name(); },
                        offset_counter, &shstr_name_map_);
     for (const std::string& name : symstr_opt) {

@@ -113,7 +113,7 @@ def test_symtab(tmp_path):
             sym.type = lief.ELF.Symbol.TYPE.FUNC
             sym.binding = lief.ELF.Symbol.BINDING.LOCAL
             sym.visibility = lief.ELF.Symbol.VISIBILITY.DEFAULT
-            elf.add_static_symbol(sym)
+            elf.add_symtab_symbol(sym)
         elf.write(out_path.as_posix())
 
         print(f"File written in {out_path}")
@@ -130,7 +130,7 @@ def test_symtab(tmp_path):
 
 
         out = lief.ELF.parse(out_path.as_posix())
-        sym_names = [s.name for s in out.static_symbols]
+        sym_names = [s.name for s in out.symtab_symbols]
         assert "test_sym_029" in sym_names
 
 @pytest.mark.skipif(not is_linux() or glibc_too_old, reason="not linux or glibc too old")

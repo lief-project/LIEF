@@ -40,7 +40,7 @@ void create<ParserConfig>(nb::module_& m) {
             "Whether relocations (including plt-like relocations) should be parsed."_doc)
     .def_rw("parse_dyn_symbols", &ParserConfig::parse_dyn_symbols,
             "Whether dynamic symbols (those from `.dynsym`) should be parsed"_doc)
-    .def_rw("parse_static_symbols", &ParserConfig::parse_static_symbols,
+    .def_rw("parse_symtab_symbols", &ParserConfig::parse_symtab_symbols,
             "Whether debug symbols (those from `.symtab`) should be parsed"_doc)
     .def_rw("parse_symbol_versions", &ParserConfig::parse_symbol_versions,
             "Whether versioning symbols should be parsed"_doc)

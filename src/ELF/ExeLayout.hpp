@@ -181,7 +181,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
   template<class ELF_T>
   size_t static_sym_size() {
     using Elf_Sym = typename ELF_T::Elf_Sym;
-    return binary_->static_symbols_.size() * sizeof(Elf_Sym);
+    return binary_->symtab_symbols_.size() * sizeof(Elf_Sym);
   }
 
   template<class ELF_T>
@@ -1244,7 +1244,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     }
     LIEF_DEBUG("strtab_idx: {:d}", strtab_idx);
     // Sections that are not associated with segments (mostly debug information)
-    // currently we only handle the static symbol table: .symtab
+    // currently we only handle the symtab symbol table: .symtab
     if (symtab_size_ > 0) {
       LIEF_DEBUG("Relocate .symtab");
 

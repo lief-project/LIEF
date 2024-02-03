@@ -52,7 +52,7 @@ void init_c_binary(Elf_Binary_t* c_binary, Binary* binary) {
   init_c_sections(c_binary, binary);
   init_c_segments(c_binary, binary);
   init_c_dynamic_symbols(c_binary, binary);
-  init_c_static_symbols(c_binary, binary);
+  init_c_symtab_symbols(c_binary, binary);
   init_c_dynamic_entries(c_binary, binary);
 
 
@@ -103,7 +103,7 @@ void elf_binary_destroy(Elf_Binary_t* binary) {
   destroy_sections(binary);
   destroy_segments(binary);
   destroy_dynamic_symbols(binary);
-  destroy_static_symbols(binary);
+  destroy_symtab_symbols(binary);
   destroy_dynamic_entries(binary);
 
   if (binary->interpreter != nullptr) {

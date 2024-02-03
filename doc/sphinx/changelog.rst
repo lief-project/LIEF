@@ -5,6 +5,16 @@ Changelog
 -------------------------
 
 :ELF:
+  * The ``static_symbols`` API functions has been renamed in ``symtab_symbols``.
+
+    LIEF was naming symbols located in the ``.symtab`` sections as **static
+    symbols** in opposition to the ``.dynsym`` symbols. This naming can be
+    confusing since the concept of **static symbol** in a program is well
+    defined (i.e. ``static bool my_var``) and not applicable in this case.
+
+    **Therefore, the ``xxx_static_symbols`` API is has been renamed
+    ``xxx_symtab_symbol``.**
+
   * Re-scope ``DYNAMIC_TAGS`` into :class:`lief.ELF.DynamicEntry.TAG`
   * Re-scope ``E_TYPE`` into :class:`lief.ELF.Header.FILE_TYPE`
   * Re-scope ``VERSION`` into :class:`lief.ELF.Header.VERSION`

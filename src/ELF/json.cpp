@@ -58,12 +58,12 @@ void JsonVisitor::visit(const Binary& binary) {
   }
 
 
-  // Static symbols
-  std::vector<json> static_symbols;
-  for (const Symbol& symbol : binary.static_symbols()) {
+  // Symtab symbols
+  std::vector<json> symtab_symbols;
+  for (const Symbol& symbol : binary.symtab_symbols()) {
     JsonVisitor visitor;
     visitor(symbol);
-    static_symbols.emplace_back(visitor.get());
+    symtab_symbols.emplace_back(visitor.get());
   }
 
 
@@ -134,7 +134,7 @@ void JsonVisitor::visit(const Binary& binary) {
   node_["segments"]                    = segments;
   node_["dynamic_entries"]             = dynamic_entries;
   node_["dynamic_symbols"]             = dynamic_symbols;
-  node_["static_symbols"]              = static_symbols;
+  node_["symtab_symbols"]              = symtab_symbols;
   node_["dynamic_relocations"]         = dynamic_relocations;
   node_["pltgot_relocations"]          = pltgot_relocations;
   node_["symbols_version"]             = symbols_version;

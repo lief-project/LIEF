@@ -312,7 +312,7 @@ ok_error_t Builder::build_exe_lib() {
 
   // Check if we should relocate or create the .strtab section
   Section* sec_symtab = binary_->get(Section::TYPE::SYMTAB);
-  if (!layout->is_strtab_shared_shstrtab() && !binary_->static_symbols_.empty()) {
+  if (!layout->is_strtab_shared_shstrtab() && !binary_->symtab_symbols_.empty()) {
     // There is no .symtab section => create .strtab
     if (sec_symtab == nullptr) {
       // Required since it writes the .strtab content in cache
@@ -347,7 +347,7 @@ ok_error_t Builder::build_exe_lib() {
       layout->relocate_symtab(needed_size);
     }
   }
-  else if (!binary_->static_symbols_.empty()) {
+  else if (!binary_->symtab_symbols_.empty()) {
     // In this case the binary was stripped but the user
     // added symbols => We have to craft a new section that will contain the symtab
     LIEF_DEBUG("Need to create a new .symtab section");
@@ -413,7 +413,7 @@ ok_error_t Builder::build_exe_lib() {
   }
 
   if (config_.static_symtab && binary_->has(Section::TYPE::SYMTAB)) {
-    build_static_symbols<ELF_T>();
+    build_symtab_symbols<ELF_T>();
   }
 
   // Build sections
@@ -535,7 +535,7 @@ ok_error_t Builder::build_relocatable() {
 
   // Check if we should relocate or create a .strtab section.
   // We assume that a .shstrtab is always prensent
-  if (!layout->is_strtab_shared_shstrtab() && !binary_->static_symbols_.empty()) {
+  if (!layout->is_strtab_shared_shstrtab() && !binary_->symtab_symbols_.empty()) {
     Section* sec_symtab = binary_->get(Section::TYPE::SYMTAB);
     if (sec_symtab == nullptr) {
       LIEF_ERR("Object file without a symtab section is not supported. Please consider submitting an issue.");
@@ -754,7 +754,7 @@ ok_error_t Builder::build_segments() {
 }
 
 template<typename ELF_T>
-ok_error_t Builder::build_static_symbols() {
+ok_error_t Builder::build_symtab_symbols() {
   using Elf_Half = typename ELF_T::Elf_Half;
   using Elf_Word = typename ELF_T::Elf_Word;
   using Elf_Addr = typename ELF_T::Elf_Addr;
@@ -764,27 +764,27 @@ ok_error_t Builder::build_static_symbols() {
 
   auto* layout = static_cast<ExeLayout*>(layout_.get());
 
-  LIEF_DEBUG("== Build static symbols ==");
-  Section* symbol_section = binary_->static_symbols_section();
+  LIEF_DEBUG("== Build symtabl symbols ==");
+  Section* symbol_section = binary_->symtab_symbols_section();
   if (symbol_section == nullptr) {
     LIEF_ERR("Can't find the .symtab section");
     return make_error_code(lief_errors::file_format_error);
   }
   LIEF_DEBUG(".symtab section: '{}'", symbol_section->name());
 
-  std::stable_sort(std::begin(binary_->static_symbols_), std::end(binary_->static_symbols_),
+  std::stable_sort(std::begin(binary_->symtab_symbols_), std::end(binary_->symtab_symbols_),
       [](const std::unique_ptr<Symbol>& lhs, const std::unique_ptr<Symbol>& rhs) {
         return lhs->is_local() && (rhs->is_global() || rhs->is_weak());
   });
 
   const auto it_first_exported_symbol =
-      std::find_if(std::begin(binary_->static_symbols_), std::end(binary_->static_symbols_),
+      std::find_if(std::begin(binary_->symtab_symbols_), std::end(binary_->symtab_symbols_),
                    [](const std::unique_ptr<Symbol>& sym) {
                     return sym->is_exported();
                    });
 
   const auto first_exported_symbol_index =
-      static_cast<uint32_t>(std::distance(std::begin(binary_->static_symbols_), it_first_exported_symbol));
+      static_cast<uint32_t>(std::distance(std::begin(binary_->symtab_symbols_), it_first_exported_symbol));
 
   if (first_exported_symbol_index != symbol_section->information()) {
     LIEF_INFO("information of .symtab section changes from {:d} to {:d}",
@@ -809,13 +809,13 @@ ok_error_t Builder::build_static_symbols() {
     str_map = &layout->strtab_map();
   }
 
-  for (const std::unique_ptr<Symbol>& symbol : binary_->static_symbols_) {
+  for (const std::unique_ptr<Symbol>& symbol : binary_->symtab_symbols_) {
     const std::string& name = symbol->name();
 
     Elf_Off offset_name = 0;
     const auto it = str_map->find(name);
     if (it == std::end(*str_map)) {
-      LIEF_ERR("Can't find string offset for static symbol name '{}'", name);
+      LIEF_ERR("Can't find string offset for symtab symbol name '{}'", name);
     } else {
       offset_name = it->second;
     }
@@ -1123,7 +1123,7 @@ ok_error_t Builder::build_obj_symbols() {
 
   // Build symbols
   vector_iostream symbol_table_raw(should_swap());
-  for (const std::unique_ptr<Symbol>& symbol : binary_->static_symbols_) {
+  for (const std::unique_ptr<Symbol>& symbol : binary_->symtab_symbols_) {
     const std::string& name = symbol->name();
     const auto offset_it = str_map->find(name);
     if (offset_it == std::end(*str_map)) {
@@ -1238,16 +1238,16 @@ ok_error_t Builder::build_section_relocations() {
       uint32_t symidx = 0;
       const Symbol* sym = reloc->symbol();
       if (sym != nullptr) {
-        const auto it_sym = std::find_if(std::begin(binary_->static_symbols_), std::end(binary_->static_symbols_),
+        const auto it_sym = std::find_if(std::begin(binary_->symtab_symbols_), std::end(binary_->symtab_symbols_),
                                          [sym] (const std::unique_ptr<Symbol>& s) {
                                            return s.get() == sym;
                                          });
-        if (it_sym == std::end(binary_->static_symbols_)) {
+        if (it_sym == std::end(binary_->symtab_symbols_)) {
           LIEF_WARN("Can find the relocation's symbol '{}'", sym->name());
           continue;
         }
 
-        symidx = static_cast<uint32_t>(std::distance(std::begin(binary_->static_symbols_), it_sym));
+        symidx = static_cast<uint32_t>(std::distance(std::begin(binary_->symtab_symbols_), it_sym));
       }
 
       Elf_Xword info = 0;

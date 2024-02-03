@@ -161,7 +161,7 @@ class LIEF_API Parser : public LIEF::Parser {
   template<typename ELF_T>
   ok_error_t parse_dynamic_symbols(uint64_t offset);
 
-  //! Parse static Symbol
+  //! Parse symtab Symbol
   //!
   //! Parser find Symbols offset by using the file offset attribute of the
   //! ELF_SECTION_TYPES::SHT_SYMTAB Section.
@@ -170,7 +170,7 @@ class LIEF_API Parser : public LIEF::Parser {
   //!
   //! The section containing symbols name is found with the `link` attribute.
   template<typename ELF_T>
-  ok_error_t parse_static_symbols(uint64_t offset, uint32_t nb_symbols,
+  ok_error_t parse_symtab_symbols(uint64_t offset, uint32_t nb_symbols,
                                   const Section& string_section);
 
   //! Parse Dynamic relocations

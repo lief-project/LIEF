@@ -60,10 +60,10 @@ int main(int argc, char **argv) {
     std::cout << entry << '\n';
   }
 
-  auto static_symbols = binary->static_symbols();
-  if (static_symbols.size() > 0) {
-    std::cout << "== Static symbols ==" << '\n';
-    for (const Symbol& symbol : static_symbols) {
+  auto symtab_symbols = binary->symtab_symbols();
+  if (symtab_symbols.size() > 0) {
+    std::cout << "== .symtab (debug) symbols ==" << '\n';
+    for (const Symbol& symbol : symtab_symbols) {
       std::cout << symbol << '\n';
     }
   }

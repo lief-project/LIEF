@@ -119,10 +119,10 @@ def test_object_files_symbols(tmp_path):
         sym.binding    = lief.ELF.Symbol.BINDING.GLOBAL # TODO(romain): it fails if the symbol is "local"
                                                          # cf. binutils-2.35.1/bfd/elflink.c:4602
         sym.value = 0xdeadc0de
-        elf.add_static_symbol(sym)
+        elf.add_symtab_symbol(sym)
 
         # Modify an existing one
-        file_sym = elf.get_static_symbol("test.cpp")
+        file_sym = elf.get_symtab_symbol("test.cpp")
         file_sym.name = "/tmp/foobar.cpp"
 
         builder = lief.ELF.Builder(elf)

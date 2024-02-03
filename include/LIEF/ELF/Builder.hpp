@@ -123,7 +123,7 @@ class LIEF_API Builder {
   ok_error_t build_segments();
 
   template<typename ELF_T>
-  ok_error_t build_static_symbols();
+  ok_error_t build_symtab_symbols();
 
   template<typename ELF_T>
   ok_error_t build_dynamic();

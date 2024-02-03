@@ -157,10 +157,10 @@ class LIEF_API Binary : public LIEF::Binary {
   using it_const_dynamic_symbols = const_ref_iterator<const symbols_t&, const Symbol*>;
 
   //! Iterator which outputs the static/debug Symbol& object
-  using it_static_symbols = ref_iterator<symbols_t&, Symbol*>;
+  using it_symtab_symbols = ref_iterator<symbols_t&, Symbol*>;
 
   //! Iterator which outputs the static/debug const Symbol& object
-  using it_const_static_symbols = const_ref_iterator<const symbols_t&, const Symbol*>;
+  using it_const_symtab_symbols = const_ref_iterator<const symbols_t&, const Symbol*>;
 
   //! Iterator which outputs static and dynamic Symbol& object
   using it_symbols = ref_iterator<std::vector<Symbol*>>;
@@ -329,13 +329,13 @@ class LIEF_API Binary : public LIEF::Binary {
   it_imported_symbols       imported_symbols();
   it_const_imported_symbols imported_symbols() const;
 
-  //! Return statics symbols.
-  it_static_symbols static_symbols() {
-    return static_symbols_;
+  //! Return the debug symbols from the `.symtab` section.
+  it_symtab_symbols symtab_symbols() {
+    return symtab_symbols_;
   }
 
-  it_const_static_symbols static_symbols() const {
-    return static_symbols_;
+  it_const_symtab_symbols symtab_symbols() const {
+    return symtab_symbols_;
   }
 
   //! Return the symbol versions
@@ -476,9 +476,9 @@ class LIEF_API Binary : public LIEF::Binary {
   //! can't be found, it returns a nullptr
   Section* hash_section();
 
-  //! Return section which holds static symbols. If the section
+  //! Return section which holds the symtab symbols. If the section
   //! can't be found, it returns a nullptr
-  Section* static_symbols_section();
+  Section* symtab_symbols_section();
 
   //! Return program image base. For instance ``0x40000``
   //!
@@ -504,11 +504,11 @@ class LIEF_API Binary : public LIEF::Binary {
 
   //! Return an iterator on both static and dynamic symbols
   it_symbols symbols() {
-    return static_dyn_symbols();
+    return symtab_dyn_symbols();
   }
 
   it_const_symbols symbols() const {
-    return static_dyn_symbols();
+    return symtab_dyn_symbols();
   }
 
   //! Export the given symbol and create it if it doesn't exist
@@ -526,14 +526,16 @@ class LIEF_API Binary : public LIEF::Binary {
 
   Symbol* get_dynamic_symbol(const std::string& name);
 
-  //! Check if the symbol with the given ``name`` exists in the static symbol table
-  bool has_static_symbol(const std::string& name) const;
+  //! Check if the symbol with the given ``name`` exists in the symtab symbol table
+  bool has_symtab_symbol(const std::string& name) const {
+    return get_symtab_symbol(name) != nullptr;
+  }
 
-  //! Get the static symbol from the given name
+  //! Get the symtab symbol from the given name
   //! Return a nullptr if it can't be found
-  const Symbol* get_static_symbol(const std::string& name) const;
+  const Symbol* get_symtab_symbol(const std::string& name) const;
 
-  Symbol* get_static_symbol(const std::string& name);
+  Symbol* get_symtab_symbol(const std::string& name);
 
   //! Return list of the strings used by the ELF binary.
   //!
@@ -542,14 +544,14 @@ class LIEF_API Binary : public LIEF::Binary {
 
   //! Remove symbols with the given name in both:
   //!   * dynamic symbols
-  //!   * static symbols
+  //!   * symtab symbols
   //!
-  //! @see remove_static_symbol, remove_dynamic_symbol
+  //! @see remove_symtab_symbol, remove_dynamic_symbol
   void remove_symbol(const std::string& name);
 
-  //! Remove static symbols with the given name
-  void remove_static_symbol(const std::string& name);
-  void remove_static_symbol(Symbol* symbol);
+  //! Remove symtabl symbols with the given name
+  void remove_symtab_symbol(const std::string& name);
+  void remove_symtab_symbol(Symbol* symbol);
 
   //! Remove dynamic symbols with the given name
   void remove_dynamic_symbol(const std::string& name);
@@ -583,8 +585,8 @@ class LIEF_API Binary : public LIEF::Binary {
 
   Section* extend(const Section& section, uint64_t size);
 
-  //! Add a static symbol
-  Symbol& add_static_symbol(const Symbol& symbol);
+  //! Add a symtab symbol
+  Symbol& add_symtab_symbol(const Symbol& symbol);
 
   //! Add a dynamic symbol with the associated SymbolVersion
   Symbol& add_dynamic_symbol(const Symbol& symbol, const SymbolVersion* version = nullptr);
@@ -658,7 +660,7 @@ class LIEF_API Binary : public LIEF::Binary {
   //! @param[in] address New address
   void patch_pltgot(const std::string& symbol_name, uint64_t address);
 
-  //! Strip the binary by removing static symbols
+  //! Strip the binary by removing symtab symbols
   void strip();
 
   //! Remove a binary's section.
@@ -985,7 +987,7 @@ class LIEF_API Binary : public LIEF::Binary {
 
   template<bool LOADED>
   Section* add_section(const Section& section);
-  std::vector<Symbol*> static_dyn_symbols() const;
+  std::vector<Symbol*> symtab_dyn_symbols() const;
 
   std::string shstrtab_name() const;
   Section* add_frame_section(const Section& sec);
@@ -998,7 +1000,7 @@ class LIEF_API Binary : public LIEF::Binary {
   segments_t segments_;
   dynamic_entries_t dynamic_entries_;
   symbols_t dynamic_symbols_;
-  symbols_t static_symbols_;
+  symbols_t symtab_symbols_;
   relocations_t relocations_;
   symbols_version_t symbol_version_table_;
   symbols_version_requirement_t symbol_version_requirements_;

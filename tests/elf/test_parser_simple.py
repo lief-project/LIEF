@@ -71,17 +71,17 @@ def test_relocations():
 
 def test_symbols():
     dynamic_symbols = TARGET.dynamic_symbols
-    static_symbols  = TARGET.static_symbols
+    symtab_symbols  = TARGET.symtab_symbols
 
     assert len(dynamic_symbols) == 27
-    assert len(static_symbols) == 78
+    assert len(symtab_symbols) == 78
 
     first = TARGET.get_dynamic_symbol("first")
     assert first.value == 0x000008a9
     assert first.symbol_version.value == 0x8002
     assert first.symbol_version.symbol_version_auxiliary.name == "LIBSIMPLE_1.0"
 
-    dtor = TARGET.get_static_symbol("__cxa_finalize@@GLIBC_2.1.3")
+    dtor = TARGET.get_symtab_symbol("__cxa_finalize@@GLIBC_2.1.3")
     assert dtor.value == 00000000
 
     symbol_version_definition   = TARGET.symbols_version_definition
@@ -120,9 +120,9 @@ def test_symbols_sections():
     Related to this issue: https://github.com/lief-project/LIEF/issues/841
     """
     elf = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_all.bin'))
-    main = elf.get_static_symbol("main")
+    main = elf.get_symtab_symbol("main")
     assert main.section is not None
     assert main.section.name == ".text"
 
-    assert elf.get_static_symbol("__gmon_start__").section is None
-    assert elf.get_static_symbol("_fini").section.name == ".fini"
+    assert elf.get_symtab_symbol("__gmon_start__").section is None
+    assert elf.get_symtab_symbol("_fini").section.name == ".fini"

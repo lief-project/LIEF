@@ -41,7 +41,7 @@ struct LIEF_API ParserConfig {
 
   bool parse_relocations     = true; ///< Whether relocations (including plt-like relocations) should be parsed.
   bool parse_dyn_symbols     = true; ///< Whether dynamic symbols (those from `.dynsym`) should be parsed
-  bool parse_static_symbols  = true; ///< Whether debug symbols (those from `.symtab`) should be parsed
+  bool parse_symtab_symbols  = true; ///< Whether debug symbols (those from `.symtab`) should be parsed
   bool parse_symbol_versions = true; ///< Whether versioning symbols should be parsed
   bool parse_notes           = true; ///< Whether ELF notes  information should be parsed
   bool parse_overlay         = true; ///< Whether the overlay data should be parsed

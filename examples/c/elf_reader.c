@@ -110,11 +110,11 @@ int main(int argc, char **argv) {
         );
   }
 
-  /* Static symbols */
-  fprintf(stdout, "Static symbols:\n");
-  Elf_Symbol_t** static_symbols = elf_binary->static_symbols;
-  for (i = 0; static_symbols[i] != NULL; ++i) {
-    Elf_Symbol_t* symbol = static_symbols[i];
+  /* symtab symbols */
+  fprintf(stdout, "symtab symbols:\n");
+  Elf_Symbol_t** symtab_symbols = elf_binary->symtab_symbols;
+  for (i = 0; symtab_symbols[i] != NULL; ++i) {
+    Elf_Symbol_t* symbol = symtab_symbols[i];
 
     const char* import_export = "";
 

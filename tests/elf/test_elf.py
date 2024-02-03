@@ -143,10 +143,10 @@ def test_symbols_access():
 
     symbols         = hello.symbols
     dynamic_symbols = hello.dynamic_symbols
-    static_symbols  = hello.static_symbols
+    symtab_symbols  = hello.symtab_symbols
 
     assert all(s in symbols for s in dynamic_symbols)
-    assert all(s in symbols for s in static_symbols)
+    assert all(s in symbols for s in symtab_symbols)
 
 def test_strings():
     hello = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_all.bin'))

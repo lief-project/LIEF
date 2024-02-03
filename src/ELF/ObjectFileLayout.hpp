@@ -102,7 +102,7 @@ class LIEF_LOCAL ObjectFileLayout : public Layout {
   template<class ELF_T>
   size_t symtab_size() {
     using Elf_Sym = typename ELF_T::Elf_Sym;
-    return binary_->static_symbols_.size() * sizeof(Elf_Sym);
+    return binary_->symtab_symbols_.size() * sizeof(Elf_Sym);
   }
 
   inline relocations_map_t& relocation_map() {

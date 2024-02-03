@@ -240,9 +240,9 @@ def print_dynamic_symbols(binary, args):
 
 
 @exceptions_handler(Exception)
-def print_static_symbols(binary, args):
-    print("== Static symbols ==\n")
-    print_symbols(binary.static_symbols, args.no_trunc)
+def print_symtab_symbols(binary, args):
+    print("== Symtab symbols ==\n")
+    print_symbols(binary.symtab_symbols, args.no_trunc)
 
 @exceptions_handler(Exception)
 def print_relocations(binary, relocations):
@@ -497,9 +497,9 @@ def main():
             action='store_true', dest='show_dynamic_symbols',
             help='Display the dynamic symbols')
 
-    parser.add_argument('--static-symbols', '--ssyms',
-            action='store_true', dest='show_static_symbols',
-            help='Display the static symbols')
+    parser.add_argument('--symtab-symbols', '--ssyms',
+            action='store_true', dest='show_symtab_symbols',
+            help='Display the symtab symbols')
 
     parser.add_argument('-r', '--relocs',
             action='store_true', dest='show_relocs',
@@ -608,8 +608,8 @@ def main():
     if (args.show_symbols or args.show_all or args.show_dynamic_symbols) and len(binary.dynamic_symbols) > 0:
         print_dynamic_symbols(binary, args)
 
-    if (args.show_symbols or args.show_all or args.show_static_symbols) and len(binary.static_symbols) > 0:
-        print_static_symbols(binary, args)
+    if (args.show_symbols or args.show_all or args.show_symtab_symbols) and len(binary.symtab_symbols) > 0:
+        print_symtab_symbols(binary, args)
 
     if args.show_relocs or args.show_all:
         print_all_relocations(binary)

@@ -233,9 +233,6 @@ ok_error_t Parser::parse_binary() {
     }
   }
 
-
-  // Parse static symbols
-  // ====================
   if (const Section* sec_symbtab = binary_->get(Section::TYPE::SYMTAB)) {
     auto nb_entries = static_cast<uint32_t>((sec_symbtab->size() / sizeof(typename ELF_T::Elf_Sym)));
     nb_entries = std::min(nb_entries, Parser::NB_MAX_SYMBOLS);
@@ -243,11 +240,11 @@ ok_error_t Parser::parse_binary() {
     if (sec_symbtab->link() == 0 || sec_symbtab->link() >= binary_->sections_.size()) {
       LIEF_WARN("section->link() is not valid !");
     } else {
-      if (config_.parse_static_symbols) {
+      if (config_.parse_symtab_symbols) {
         // We should have:
         // nb_entries == section->information())
         // but lots of compiler not respect this rule
-        parse_static_symbols<ELF_T>(sec_symbtab->file_offset(), nb_entries,
+        parse_symtab_symbols<ELF_T>(sec_symbtab->file_offset(), nb_entries,
                                     *binary_->sections_[sec_symbtab->link()]);
       }
     }
@@ -977,14 +974,14 @@ ok_error_t Parser::parse_dynamic_relocations(uint64_t relocations_offset, uint64
 } // build_dynamic_reclocations
 
 template<typename ELF_T>
-ok_error_t Parser::parse_static_symbols(uint64_t offset, uint32_t nb_symbols,
+ok_error_t Parser::parse_symtab_symbols(uint64_t offset, uint32_t nb_symbols,
                                         const Section& string_section) {
   using Elf_Sym = typename ELF_T::Elf_Sym;
   static constexpr size_t MAX_RESERVED_SYMBOLS = 10000;
-  LIEF_DEBUG("== Parsing static symbols ==");
+  LIEF_DEBUG("== Parsing symtab symbols ==");
 
   size_t nb_reserved = std::min<size_t>(nb_symbols, MAX_RESERVED_SYMBOLS);
-  binary_->static_symbols_.reserve(nb_reserved);
+  binary_->symtab_symbols_.reserve(nb_reserved);
 
   stream_->setpos(offset);
   const ARCH arch = binary_->header().machine_type();
@@ -994,20 +991,18 @@ ok_error_t Parser::parse_static_symbols(uint64_t offset, uint32_t nb_symbols,
       break;
     }
     auto symbol = std::unique_ptr<Symbol>(new Symbol(std::move(*raw_sym), arch));
-
     const auto name_offset = string_section.file_offset() + raw_sym->st_name;
-    auto symbol_name = stream_->peek_string_at(name_offset);
-    if (symbol_name) {
+
+    if (auto symbol_name = stream_->peek_string_at(name_offset)) {
       symbol->name(std::move(*symbol_name));
     } else {
       LIEF_ERR("Can't read the symbol's name for symbol #{}", i);
     }
     link_symbol_section(*symbol);
-    binary_->static_symbols_.push_back(std::move(symbol));
+    binary_->symtab_symbols_.push_back(std::move(symbol));
   }
   return ok();
-} // build_static_symbols
-
+}
 
 template<typename ELF_T>
 ok_error_t Parser::parse_dynamic_symbols(uint64_t offset) {
@@ -1412,13 +1407,13 @@ ok_error_t Parser::parse_section_relocations(const Section& section) {
                (symbol_table == nullptr ||
                 symbol_table->type() == Section::TYPE::DYNSYM);
 
-    const bool is_from_symtab = idx < binary_->static_symbols_.size() &&
+    const bool is_from_symtab = idx < binary_->symtab_symbols_.size() &&
                                 (symbol_table == nullptr ||
                                  symbol_table->type() == Section::TYPE::SYMTAB);
     if (is_from_dynsym) {
       reloc->symbol_ = binary_->dynamic_symbols_[idx].get();
     } else if (is_from_symtab) {
-      reloc->symbol_ = binary_->static_symbols_[idx].get();
+      reloc->symbol_ = binary_->symtab_symbols_[idx].get();
     }
 
     if (reloc_hash.insert(reloc.get()).second) {

@@ -19,7 +19,7 @@ def test_issue_671(tmp_path: Path):
     binary_name = "nopie_bss_671.elf"
     target = lief.ELF.parse(get_sample(f"ELF/{binary_name}"))
 
-    for s in filter(lambda e: e.exported, target.static_symbols):
+    for s in filter(lambda e: e.exported, target.symtab_symbols):
         target.add_dynamic_symbol(s)
 
     output = tmp_path / binary_name

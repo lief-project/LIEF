@@ -115,7 +115,7 @@ def modif_2(libadd: lief.ELF.Binary, output: Path):
     libadd.write(output.as_posix())
 
 def modif_3(libadd: lief.ELF.Binary, output: Path):
-    add_hidden_static = libadd.get_static_symbol("add_hidden")
+    add_hidden_static = libadd.get_symtab_symbol("add_hidden")
     assert isinstance(add_hidden_static.name, str)
     libadd.add_exported_function(add_hidden_static.value, add_hidden_static.name)
 

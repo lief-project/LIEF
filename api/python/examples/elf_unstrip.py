@@ -5,7 +5,7 @@
 # -----------
 # In this example, we assume that we found
 # the ``main`` function at address 0x402A00
-# and we add a static symbol to the binary
+# and we add a symtab symbol to the binary
 # so that we can do:
 #
 # (gdb) break main
@@ -43,7 +43,7 @@ def main():
     symbol.binding = ELF.Symbol.BINDING.LOCAL
     symbol.size    = 0
     symbol.shndx   = 0
-    symbol         = binary.add_static_symbol(symbol)
+    symbol         = binary.add_symtab_symbol(symbol)
 
     symbol         = ELF.Symbol()
     symbol.name    = "main"
@@ -51,7 +51,7 @@ def main():
     symbol.value   = 0x402A00
     symbol.binding = ELF.Symbol.BINDING.LOCAL
     symbol.shndx   = 14
-    symbol         = binary.add_static_symbol(symbol)
+    symbol         = binary.add_symtab_symbol(symbol)
 
     print(symbol)
 

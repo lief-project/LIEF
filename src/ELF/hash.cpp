@@ -62,7 +62,7 @@ void Hash::visit(const Binary& binary) {
   process(std::begin(binary.segments()), std::end(binary.segments()));
   process(std::begin(binary.dynamic_entries()), std::end(binary.dynamic_entries()));
   process(std::begin(binary.dynamic_symbols()), std::end(binary.dynamic_symbols()));
-  process(std::begin(binary.static_symbols()), std::end(binary.static_symbols()));
+  process(std::begin(binary.symtab_symbols()), std::end(binary.symtab_symbols()));
   process(std::begin(binary.relocations()), std::end(binary.relocations()));
   process(std::begin(binary.notes()), std::end(binary.notes()));
 

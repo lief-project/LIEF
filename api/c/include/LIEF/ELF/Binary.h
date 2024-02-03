@@ -43,7 +43,7 @@ struct Elf_Binary_t {
   Elf_Segment_t      **segments;
   Elf_DynamicEntry_t **dynamic_entries;
   Elf_Symbol_t       **dynamic_symbols;
-  Elf_Symbol_t       **static_symbols;
+  Elf_Symbol_t       **symtab_symbols;
 };
 
 typedef struct Elf_Binary_t Elf_Binary_t;

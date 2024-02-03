@@ -26,10 +26,10 @@ namespace LIEF {
 namespace ELF {
 
 void init_c_dynamic_symbols(Elf_Binary_t* c_binary, Binary* binary);
-void init_c_static_symbols(Elf_Binary_t* c_binary, Binary* binary);
+void init_c_symtab_symbols(Elf_Binary_t* c_binary, Binary* binary);
 
 void destroy_dynamic_symbols(Elf_Binary_t* c_binary);
-void destroy_static_symbols(Elf_Binary_t* c_binary);
+void destroy_symtab_symbols(Elf_Binary_t* c_binary);
 
 }
 }

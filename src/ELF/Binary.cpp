@@ -309,7 +309,7 @@ Symbol& Binary::export_symbol(const std::string& symbol_name, uint64_t value) {
     return export_symbol(*s);
   }
 
-  s = get_static_symbol(symbol_name);
+  s = get_symtab_symbol(symbol_name);
   if (s != nullptr) {
     if (value > 0) {
       s->value(value);
@@ -348,7 +348,7 @@ Symbol& Binary::add_exported_function(uint64_t address, const std::string& name)
   }
 
   // Second: Check if a symbol with the given 'name' exists in the **static**
-  s = get_static_symbol(funcname);
+  s = get_symtab_symbol(funcname);
   if (s != nullptr) {
     s->type(Symbol::TYPE::FUNC);
     s->binding(Symbol::BINDING::GLOBAL);
@@ -399,22 +399,13 @@ Symbol* Binary::get_dynamic_symbol(const std::string& name) {
   return const_cast<Symbol*>(static_cast<const Binary*>(this)->get_dynamic_symbol(name));
 }
 
-bool Binary::has_static_symbol(const std::string& name) const {
+const Symbol* Binary::get_symtab_symbol(const std::string& name) const {
   const auto it_symbol = std::find_if(
-      std::begin(static_symbols_), std::end(static_symbols_),
+      std::begin(symtab_symbols_), std::end(symtab_symbols_),
       [&name] (const std::unique_ptr<Symbol>& s) {
         return s->name() == name;
       });
-  return it_symbol != std::end(static_symbols_);
-}
-
-const Symbol* Binary::get_static_symbol(const std::string& name) const {
-  const auto it_symbol = std::find_if(
-      std::begin(static_symbols_), std::end(static_symbols_),
-      [&name] (const std::unique_ptr<Symbol>& s) {
-        return s->name() == name;
-      });
-  if (it_symbol == std::end(static_symbols_)) {
+  if (it_symbol == std::end(symtab_symbols_)) {
     return nullptr;
   }
   return it_symbol->get();
@@ -459,19 +450,19 @@ Binary::string_list_t Binary::strings(size_t min_size) const {
   return list;
 }
 
-Symbol* Binary::get_static_symbol(const std::string& name) {
-  return const_cast<Symbol*>(static_cast<const Binary*>(this)->get_static_symbol(name));
+Symbol* Binary::get_symtab_symbol(const std::string& name) {
+  return const_cast<Symbol*>(static_cast<const Binary*>(this)->get_symtab_symbol(name));
 }
 
 
-std::vector<Symbol*> Binary::static_dyn_symbols() const {
+std::vector<Symbol*> Binary::symtab_dyn_symbols() const {
   std::vector<Symbol*> symbols;
-  symbols.reserve(static_symbols_.size() + dynamic_symbols_.size());
+  symbols.reserve(symtab_symbols_.size() + dynamic_symbols_.size());
   for (const std::unique_ptr<Symbol>& s : dynamic_symbols_) {
     symbols.push_back(s.get());
   }
 
-  for (const std::unique_ptr<Symbol>& s : static_symbols_) {
+  for (const std::unique_ptr<Symbol>& s : symtab_symbols_) {
     symbols.push_back(s.get());
   }
   return symbols;
@@ -481,13 +472,13 @@ std::vector<Symbol*> Binary::static_dyn_symbols() const {
 // --------
 
 Binary::it_exported_symbols Binary::exported_symbols() {
-  return {static_dyn_symbols(), [] (const Symbol* symbol) {
+  return {symtab_dyn_symbols(), [] (const Symbol* symbol) {
     return symbol->is_exported();
   }};
 }
 
 Binary::it_const_exported_symbols Binary::exported_symbols() const {
-  return {static_dyn_symbols(), [] (const Symbol* symbol) {
+  return {symtab_dyn_symbols(), [] (const Symbol* symbol) {
     return symbol->is_exported();
   }};
 }
@@ -498,52 +489,50 @@ Binary::it_const_exported_symbols Binary::exported_symbols() const {
 // --------
 
 Binary::it_imported_symbols Binary::imported_symbols() {
-  return {static_dyn_symbols(), [] (const Symbol* symbol) {
+  return {symtab_dyn_symbols(), [] (const Symbol* symbol) {
     return symbol->is_imported();
   }};
 }
 
 Binary::it_const_imported_symbols Binary::imported_symbols() const {
-  return {static_dyn_symbols(), [] (const Symbol* symbol) {
+  return {symtab_dyn_symbols(), [] (const Symbol* symbol) {
     return symbol->is_imported();
   }};
 }
 
 void Binary::remove_symbol(const std::string& name) {
-  remove_static_symbol(name);
+  remove_symtab_symbol(name);
   remove_dynamic_symbol(name);
 }
 
-void Binary::remove_static_symbol(const std::string& name) {
-  Symbol* sym = get_static_symbol(name);
+void Binary::remove_symtab_symbol(const std::string& name) {
+  Symbol* sym = get_symtab_symbol(name);
   if (sym == nullptr) {
-    LIEF_WARN("Can't find the static symbol '{}'. It won't be removed", name);
+    LIEF_WARN("Can't find the symtab symbol '{}'. It won't be removed", name);
     return;
   }
-  remove_static_symbol(sym);
+  remove_symtab_symbol(sym);
 }
 
-void Binary::remove_static_symbol(Symbol* symbol) {
+void Binary::remove_symtab_symbol(Symbol* symbol) {
   if (symbol == nullptr) {
     return;
   }
 
   const auto it_symbol = std::find_if(
-      std::begin(static_symbols_), std::end(static_symbols_),
+      std::begin(symtab_symbols_), std::end(symtab_symbols_),
       [symbol] (const std::unique_ptr<Symbol>& sym) {
         return *symbol == *sym;
       }
   );
 
-  if (it_symbol == std::end(static_symbols_)) {
-    LIEF_WARN("Can't find the static symbol '{}'. It won't be removed", symbol->name());
+  if (it_symbol == std::end(symtab_symbols_)) {
+    LIEF_WARN("Can't find the symtab symbol '{}'. It won't be removed", symbol->name());
     return;
   }
 
-  static_symbols_.erase(it_symbol);
+  symtab_symbols_.erase(it_symbol);
 }
-
-
 
 void Binary::remove_dynamic_symbol(const std::string& name) {
   Symbol* sym = get_dynamic_symbol(name);
@@ -809,14 +798,14 @@ LIEF::Binary::relocations_t Binary::get_abstract_relocations() {
 
 LIEF::Binary::symbols_t Binary::get_abstract_symbols() {
   LIEF::Binary::symbols_t symbols;
-  symbols.reserve(dynamic_symbols_.size() + static_symbols_.size());
+  symbols.reserve(dynamic_symbols_.size() + symtab_symbols_.size());
   std::transform(std::begin(dynamic_symbols_), std::end(dynamic_symbols_),
                  std::back_inserter(symbols),
                  [] (std::unique_ptr<Symbol>& s) {
                   return s.get();
                  });
 
-  std::transform(std::begin(static_symbols_), std::end(static_symbols_),
+  std::transform(std::begin(symtab_symbols_), std::end(symtab_symbols_),
                  std::back_inserter(symbols),
                  [] (std::unique_ptr<Symbol>& s) {
                   return s.get();
@@ -875,7 +864,7 @@ Section* Binary::hash_section() {
 
 }
 
-Section* Binary::static_symbols_section() {
+Section* Binary::symtab_symbols_section() {
   const auto it_symtab_section = std::find_if(
       std::begin(sections_), std::end(sections_),
       [] (const std::unique_ptr<Section>& section) {
@@ -931,7 +920,7 @@ result<uint64_t> Binary::get_function_address(const std::string& func_name) cons
 }
 
 result<uint64_t> Binary::get_function_address(const std::string& func_name, bool demangled) const {
-  const auto it_symbol = std::find_if(std::begin(static_symbols_), std::end(static_symbols_),
+  const auto it_symbol = std::find_if(std::begin(symtab_symbols_), std::end(symtab_symbols_),
       [&func_name, demangled] (const std::unique_ptr<Symbol>& symbol) {
         std::string sname;
         if (demangled) {
@@ -945,7 +934,7 @@ result<uint64_t> Binary::get_function_address(const std::string& func_name, bool
                symbol->type() == Symbol::TYPE::FUNC;
       });
 
-  if (it_symbol == std::end(static_symbols_)) {
+  if (it_symbol == std::end(symtab_symbols_)) {
     return make_error_code(lief_errors::not_found);
   }
 
@@ -1519,7 +1508,7 @@ bool Binary::has_section_with_va(uint64_t va) const {
 }
 
 void Binary::strip() {
-  static_symbols_.clear();
+  symtab_symbols_.clear();
   Section* symtab = get(Section::TYPE::SYMTAB);
   if (symtab != nullptr) {
     remove(*symtab, /* clear */ true);
@@ -1527,9 +1516,9 @@ void Binary::strip() {
 }
 
 
-Symbol& Binary::add_static_symbol(const Symbol& symbol) {
-  static_symbols_.push_back(std::make_unique<Symbol>(symbol));
-  return *static_symbols_.back();
+Symbol& Binary::add_symtab_symbol(const Symbol& symbol) {
+  symtab_symbols_.push_back(std::make_unique<Symbol>(symbol));
+  return *symtab_symbols_.back();
 }
 
 
@@ -3178,10 +3167,10 @@ std::ostream& Binary::print(std::ostream& os) const {
   os << std::endl;
 
 
-  os << "Static symbols" << std::endl;
+  os << "Symtab symbols" << std::endl;
   os << "==============" << std::endl;
 
-  for (const Symbol& symbol : static_symbols()) {
+  for (const Symbol& symbol : symtab_symbols()) {
     os << symbol << std::endl;
   }
 
