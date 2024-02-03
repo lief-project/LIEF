@@ -6,7 +6,7 @@ import progressbar
 import argparse
 from pathlib import Path
 
-URL = "https://lief-tests.s3.fr-par.scw.cloud/lief_test.zip"
+URL = "https://lief-tests.s3.fr-par.scw.cloud/lief_tests.zip"
 DIR_ENV = os.getenv("LIEF_SAMPLES_DIR", None)
 TIMEOUT = 3 # sec
 
