@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.14.1 - Not Released Yet
--------------------------
+0.14.1 - February 11th, 2024
+----------------------------
 
 :ELF:
   * Fix regression in Symbol Version Definition processing (:issue:`1014`)
@@ -12,6 +12,10 @@ Changelog
 
     - :attr:`lief.PE.ContentInfo.digest` to :attr:`lief.PE.SpcIndirectData.digest`
     - :attr:`lief.PE.ContentInfo.digest_algorithm` to :attr:`lief.PE.SpcIndirectData.digest_algorithm`
+
+:Python:
+
+  * Fix regression in iterator's performances
 
 0.14.0 - January 20, 2024
 -------------------------
