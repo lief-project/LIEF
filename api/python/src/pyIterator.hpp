@@ -73,7 +73,9 @@ void init_ref_iterator(nanobind::handle& m, const char* it_name) {
           if (v == std::end(v)) {
             throw nb::stop_iteration();
           }
-          return *(v++);
+          auto& value = *v;
+          ++v;
+          return value;
         }, nb::rv_policy::reference_internal);
 }
 }
