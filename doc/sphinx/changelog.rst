@@ -43,6 +43,23 @@ Changelog
   * ``LIEFConfig.cmake`` is now installed in ``<prefix>/lib/cmake/LIEF/``
     instead of ``<prefix>/share/LIEF/cmake/``
 
+
+0.14.1 - February 11th, 2024
+----------------------------
+
+:ELF:
+  * Fix regression in Symbol Version Definition processing (:issue:`1014`)
+
+:PE:
+  * Address :issue:`1016` by creating aliases:
+
+    - :attr:`lief.PE.ContentInfo.digest` to :attr:`lief.PE.SpcIndirectData.digest`
+    - :attr:`lief.PE.ContentInfo.digest_algorithm` to :attr:`lief.PE.SpcIndirectData.digest_algorithm`
+
+:Python:
+
+  * Fix regression in iterator's performances
+
 0.14.0 - January 20, 2024
 -------------------------
 
