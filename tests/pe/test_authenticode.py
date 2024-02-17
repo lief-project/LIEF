@@ -281,6 +281,6 @@ def test_issue_912():
 def test_verification_flags_str():
     flag = lief.PE.Signature.VERIFICATION_FLAGS.BAD_DIGEST | \
            lief.PE.Signature.VERIFICATION_FLAGS.CERT_FUTURE
-    assert str(flag) == "lief._lief.PE.VERIFICATION_FLAGS.BAD_DIGEST | lief._lief.PE.VERIFICATION_FLAGS.CERT_FUTURE"
-    assert repr(flag) == "<lief._lief.PE.VERIFICATION_FLAGS.BAD_DIGEST | CERT_FUTURE: 2176>"
-    assert str(lief.PE.Signature.VERIFICATION_FLAGS.from_value(0)) == "lief._lief.PE.VERIFICATION_FLAGS.OK"
+    assert str(flag) == "lief.PE.VERIFICATION_FLAGS.BAD_DIGEST | lief.PE.VERIFICATION_FLAGS.CERT_FUTURE"
+    assert repr(flag) == "<lief.PE.VERIFICATION_FLAGS.BAD_DIGEST | CERT_FUTURE: 2176>"
+    assert str(lief.PE.Signature.VERIFICATION_FLAGS.from_value(0)) == "lief.PE.VERIFICATION_FLAGS.OK"
