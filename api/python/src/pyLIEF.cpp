@@ -138,10 +138,7 @@ void init_json(nb::module_& m) {
   m.def("to_json", &LIEF::to_json);
 }
 
-
-}
-
-NB_MODULE(_lief, m) {
+void init(nb::module_& m) {
   lief_mod = &m;
   m.attr("__version__")   = nb::str(LIEF_VERSION);
   m.attr("__tag__")       = nb::str(LIEF_TAG);
@@ -187,4 +184,9 @@ NB_MODULE(_lief, m) {
 #if defined(LIEF_ART_SUPPORT)
   LIEF::ART::py::init(m);
 #endif
+}
+}
+
+NB_MODULE(_lief, m) {
+  LIEF::py::init(m);
 }
