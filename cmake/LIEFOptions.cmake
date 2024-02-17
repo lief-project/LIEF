@@ -31,6 +31,9 @@ option(LIEF_ART            "Build LIEF with ART module"                 ON)
 cmake_dependent_option(LIEF_PYTHON_EDITABLE "Make an editable build " OFF
                        "LIEF_PYTHON_API" OFF)
 
+cmake_dependent_option(LIEF_PYTHON_STATIC "Internal usage" OFF
+                       "LIEF_PYTHON_API" OFF)
+
 # OAT support relies on the ELF and DEX format.
 # Therefore, these options must be enabled to support use this format
 cmake_dependent_option(LIEF_OAT "Build LIEF with OAT module" ON

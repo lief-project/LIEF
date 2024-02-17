@@ -37,11 +37,18 @@ message(STATUS "Python lib:         ${Python_LIBRARIES}")
 message(STATUS "Python include:     ${Python_INCLUDE_DIRS}")
 message(STATUS "Python interpreter: ${Python_EXECUTABLE}")
 
+set(NANOBIND_OPT
+  NB_STATIC
+  NOMINSIZE
+)
+
+if (LIEF_PYTHON_STATIC)
+  list(APPEND NANOBIND_OPT NB_EXT_STATIC)
+endif()
+
 nanobind_add_module(
   pyLIEF
-  NB_STATIC
-  # Do not default to -Os
-  NOMINSIZE
+  ${NANOBIND_OPT}
 
   src/pyLIEF.cpp
 )
@@ -68,10 +75,18 @@ if(APPLE)
 endif()
 
 if (UNIX)
-  # Even on osx (c.f. EXT_SUFFIX from sysconfig)
-  set_target_properties(pyLIEF PROPERTIES SUFFIX ".so")
+  if (LIEF_PYTHON_STATIC)
+    set_target_properties(pyLIEF PROPERTIES SUFFIX ".a")
+  else()
+    # Even on osx (c.f. EXT_SUFFIX from sysconfig)
+    set_target_properties(pyLIEF PROPERTIES SUFFIX ".so")
+  endif()
 elseif(WIN32)
-  set_target_properties(pyLIEF PROPERTIES SUFFIX ".pyd")
+  if (LIEF_PYTHON_STATIC)
+    set_target_properties(pyLIEF PROPERTIES SUFFIX ".lib")
+  else()
+    set_target_properties(pyLIEF PROPERTIES SUFFIX ".pyd")
+  endif()
 endif()
 
 if (WIN32)
@@ -84,4 +99,18 @@ if(SKBUILD)
   else()
     install(TARGETS pyLIEF LIBRARY DESTINATION ${SKBUILD_PLATLIB_DIR}/lief/)
   endif()
+endif()
+
+if (LIEF_PYTHON_STATIC)
+  install(TARGETS nanobind-static pyLIEF
+          DESTINATION lib/python-${Python_VERSION})
+
+  install(
+    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lief
+    DESTINATION lib/python/typing
+    FILES_MATCHING
+    REGEX "(.*).(pyi)$")
+
+  install(DIRECTORY ${NB_DIR}/include/
+          DESTINATION include/)
 endif()
