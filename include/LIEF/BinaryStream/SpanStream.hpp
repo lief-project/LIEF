@@ -29,7 +29,15 @@ class SpanStream : public BinaryStream {
   using BinaryStream::end;
   using BinaryStream::start;
 
-  static result<SpanStream> from_vector(const std::vector<uint8_t>& data);
+  static result<SpanStream> from_vector(const std::vector<uint8_t>& data) {
+    return SpanStream(data);
+  }
+
+  template<size_t N>
+  static result<SpanStream> from_array(const std::array<uint8_t, N>& data) {
+    return SpanStream(data.data(), N);
+  }
+
   SpanStream(span<const uint8_t> data);
   SpanStream(span<uint8_t> data);
 

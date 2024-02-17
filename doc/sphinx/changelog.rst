@@ -38,6 +38,10 @@ Changelog
   * Add support for Android packed relocation format (``DT_ANDROID_REL{A}``)
   * Add support for relative relocation format (``DT_RELR``)
 
+:PE:
+
+  * Add :attr:`lief.PE.CodeViewPDB.guid` attribute (:issue:`480`)
+
 :CMake:
 
   * ``LIEFConfig.cmake`` is now installed in ``<prefix>/lib/cmake/LIEF/``

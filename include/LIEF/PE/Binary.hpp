@@ -36,17 +36,18 @@ namespace LIEF {
 
 //! Namespace related to the LIEF's PE module
 namespace PE {
-class Debug;
-class Parser;
 class Builder;
-class ResourceNode;
+class CodeViewPDB;
+class Debug;
+class Export;
+class LoadConfiguration;
+class Parser;
+class Relocation;
 class ResourceData;
 class ResourceDirectory;
-class LoadConfiguration;
-class Relocation;
-class TLS;
-class Export;
+class ResourceNode;
 class RichHeader;
+class TLS;
 
 //! Class which represents a PE binary
 //! This is the main interface to manage and modify a PE executable
@@ -440,6 +441,9 @@ class LIEF_API Binary : public LIEF::Binary {
   it_const_debug_entries debug() const {
     return debug_;
   }
+
+  //! Return the CodeViewPDB object if present
+  const CodeViewPDB* codeview_pdb() const;
 
   //! Retrun the LoadConfiguration object or a nullptr
   //! if the binary does not use the LoadConfiguration

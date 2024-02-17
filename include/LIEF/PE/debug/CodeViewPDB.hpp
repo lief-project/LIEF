@@ -43,6 +43,8 @@ class LIEF_API CodeViewPDB : public CodeView {
   CodeViewPDB(const CodeViewPDB& other);
   CodeViewPDB& operator=(const CodeViewPDB& other);
 
+  std::string guid() const;
+
   uint32_t age() const {
     return age_;
   }

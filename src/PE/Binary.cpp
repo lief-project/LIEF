@@ -1359,6 +1359,23 @@ const DelayImport* Binary::get_delay_import(const std::string& import_name) cons
   return &*it_import;
 }
 
+const CodeViewPDB* Binary::codeview_pdb() const {
+  if (debug_.empty()) {
+    return nullptr;
+  }
+
+  const auto it = std::find_if(debug_.begin(), debug_.end(),
+    [] (const std::unique_ptr<Debug>& debug) {
+      return CodeViewPDB::classof(debug.get());
+    }
+  );
+  if (it == debug_.end()) {
+    return nullptr;
+  }
+
+  return static_cast<const CodeViewPDB*>(it->get());
+}
+
 void Binary::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }

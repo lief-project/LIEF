@@ -263,6 +263,11 @@ void create<Binary>(nb::module_& m) {
         "Return the " RST_CLASS_REF(lief.PE.Debug) ""_doc,
         nb::rv_policy::reference_internal)
 
+    .def_prop_ro("codeview_pdb",
+        nb::overload_cast<>(&Binary::codeview_pdb, nb::const_),
+        "Return the :class:`~.CodeViewPDB` if present"_doc,
+        nb::rv_policy::reference_internal)
+
     .def_prop_ro("load_configuration",
         nb::overload_cast<>(&Binary::load_configuration),
         "Return the " RST_CLASS_REF(lief.PE.LoadConfiguration) " object or None if not present"_doc,

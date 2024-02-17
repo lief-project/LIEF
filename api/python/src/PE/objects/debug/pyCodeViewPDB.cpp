@@ -44,6 +44,8 @@ void create<CodeViewPDB>(nb::module_& m) {
         "parent(self) -> lief.PE.CodeView"_p,
         nb::rv_policy::reference_internal)
 
+    .def_prop_ro("guid", &CodeViewPDB::guid)
+
     .def_prop_rw("signature",
         nb::overload_cast<>(&CodeViewPDB::signature, nb::const_),
         nb::overload_cast<const CodeViewPDB::signature_t&>(&CodeViewPDB::signature))

@@ -45,6 +45,18 @@ def test_pgo():
     assert entries[0].copy() == entries[0]
     assert entries[1].copy() != entries[-2]
 
+def test_guid():
+    path = get_sample('PE/ntoskrnl.exe')
+    sample = lief.PE.parse(path)
+    cv: lief.PE.CodeViewPDB = sample.codeview_pdb
+    assert cv is not None
+    assert cv.guid == "fcb9afc6-a352-f97b-17cf-5f981382c782"
+
+    path = get_sample('PE/PE64_x86-64_binary_ConsoleApplication1.exe')
+    sample = lief.PE.parse(path)
+    cv: lief.PE.CodeViewPDB = sample.codeview_pdb
+    assert cv is not None
+    assert cv.guid == "b6e3d9f5-7147-4f01-a203-aa477c4aba54"
 
 def test_code_view_pdb():
     path = get_sample('PE/PE64_x86-64_binary_ConsoleApplication1.exe')

@@ -15,6 +15,7 @@
  */
 #include "LIEF/PE/debug/CodeViewPDB.hpp"
 #include "LIEF/Visitor.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "spdlog/fmt/fmt.h"
 #include "spdlog/fmt/ranges.h"
@@ -43,10 +44,27 @@ void CodeViewPDB::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
+std::string CodeViewPDB::guid() const {
+  auto stream = SpanStream::from_array(signature_);
+  if (!stream) {
+    return "";
+  }
+  stream->set_endian_swap(true);
+   return fmt::format("{:08x}-{:04x}-{:04x}-{:04x}-{:04x}{:08x}",
+       stream->read<uint32_t>().value_or(0),
+       stream->read<uint16_t>().value_or(0),
+       stream->read<uint16_t>().value_or(0),
+       stream->read_conv<uint16_t>().value_or(0),
+        stream->read_conv<uint16_t>().value_or(0),
+        stream->read_conv<uint32_t>().value_or(0)
+  );
+}
+
 std::ostream& operator<<(std::ostream& os, const CodeViewPDB& entry) {
   os << static_cast<const CodeView&>(entry) << '\n'
      << fmt::format("[CV][PDB] age:       {}\n", entry.age())
      << fmt::format("[CV][PDB] signature: {}\n", entry.signature())
+     << fmt::format("[CV][PDB] GUID:      {}\n", entry.guid())
      << fmt::format("[CV][PDB] filename:  {}\n", entry.filename())
   ;
   return os;
