@@ -1729,6 +1729,11 @@ Binary::get_content_from_virtual_address(uint64_t virtual_address,
   span<const uint8_t> content = segment->content();
   const uint64_t offset = virtual_address - segment->virtual_address();
   uint64_t checked_size = size;
+
+  if (offset >= content.size()) {
+    return {};
+  }
+
   if ((offset + checked_size) > content.size()) {
     checked_size = checked_size - (offset + checked_size - content.size());
   }

@@ -23,3 +23,16 @@ def test_pr_968():
     elf = lief.ELF.parse(get_sample('ELF/echo.mips_r3000.bin'))
     sym: lief.ELF.Symbol = elf.get_symbol("strstr")
     assert sym.imported
+
+def test_issue_1023():
+    """
+    Make sure that get_content_from_virtual_address return an empty
+    buffer when trying to read bss segment
+    """
+    elf = lief.ELF.parse(get_sample('ELF/nopie_bss_671.elf'))
+
+    bss_segment = elf.segments[3]
+    bss_start = bss_segment.virtual_address + bss_segment.physical_size
+    bss_content = elf.get_content_from_virtual_address(bss_start + 1, 1)
+
+    assert len(bss_content) == 0
