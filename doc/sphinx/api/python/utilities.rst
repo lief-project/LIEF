@@ -15,3 +15,5 @@ Utilities
 
 .. autofunction:: lief.is_art
 
+.. autofunction:: lief.disable_leak_warning
+

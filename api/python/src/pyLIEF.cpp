@@ -146,6 +146,25 @@ void init(nb::module_& m) {
   m.attr("__is_tagged__") = bool(LIEF_TAGGED);
   m.doc() = "LIEF Python API";
 
+  m.def("disable_leak_warning", [] {
+    nb::set_leak_warnings(false);
+  }, R"doc(
+  Disable nanobind warnings about leaked objects.
+  For instance:
+
+  .. code-block:: text
+
+      nanobind: leaked 45 instances!
+      nanobind: leaked 25 types!
+       - leaked type "lief._lief.FORMATS"
+       - ... skipped remainder
+      nanobind: leaked 201 functions!
+       - leaked function ""
+       - leaked function "export_symbol"
+       - ... skipped remainder
+      nanobind: this is likely caused by a reference counting issue in the binding code.
+  )doc");
+
   LIEF::py::init_python_sink();
 
   LIEF::py::init_platforms(m);

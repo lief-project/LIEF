@@ -48,6 +48,17 @@ Changelog
     instead of ``<prefix>/share/LIEF/cmake/``
 
 
+:Python Bindings:
+
+  * Add :func:`lief.disable_leak_warning` to disable Nanobind warning about "leaks".
+
+  .. warning::
+
+    These warnings does not necessarily mean that LIEF leak objects. These
+    warnings might happen in `Cyclic garbage collection <https://nanobind.readthedocs.io/en/latest/typeslots.html#cyclic-garbage-collection>`_.
+
+
+
 0.14.1 - February 11th, 2024
 ----------------------------
 
