@@ -212,14 +212,6 @@ class Config:
             cmake_args.append(
                 "-DLIEF_PYTHON_EDITABLE=ON",
             )
-        if self._config.build.ninja:
-            # For some reasons, this condition is not met:
-            # https://github.com/scikit-build/scikit-build-core/blob/9ac2e35aa888b70e9f1999a75dfafb7a5d709f88/src/scikit_build_core/cmake.py#L173-L174
-            # https://github.com/scikit-build/scikit-build-core/blob/9ac2e35aa888b70e9f1999a75dfafb7a5d709f88/src/scikit_build_core/cmake.py#L205-L207
-            cmake_args.append(
-                f"-DCMAKE_BUILD_TYPE={self._config.build.build_type}",
-            )
-
         return cmake_args
 
     @property

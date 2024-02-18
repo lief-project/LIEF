@@ -108,10 +108,7 @@ def _get_hooked_config(is_editable: bool) -> Optional[dict[str, Union[str, List[
             *config.cmake_generator,
             *config.get_cmake_args(is_editable),
         ],
-        # 'wheel.exclude' does not exist but the 'wheel' is aware of it
-        # Note(romain): It could be worth to have a wheel.exclude for wheel.
-        #               the directories in wheel.packages
-        "sdist.exclude": Config.DEFAULT_EXCLUDE,
+        "wheel.exclude": Config.DEFAULT_EXCLUDE,
     }
     return config_settings
 
