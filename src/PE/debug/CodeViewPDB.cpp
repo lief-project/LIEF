@@ -49,14 +49,18 @@ std::string CodeViewPDB::guid() const {
   if (!stream) {
     return "";
   }
+
   stream->set_endian_swap(true);
-   return fmt::format("{:08x}-{:04x}-{:04x}-{:04x}-{:04x}{:08x}",
-       stream->read<uint32_t>().value_or(0),
-       stream->read<uint16_t>().value_or(0),
-       stream->read<uint16_t>().value_or(0),
-       stream->read_conv<uint16_t>().value_or(0),
-        stream->read_conv<uint16_t>().value_or(0),
-        stream->read_conv<uint32_t>().value_or(0)
+
+  const auto chunk1 = stream->read<uint32_t>().value_or(0);
+  const auto chunk2 = stream->read<uint16_t>().value_or(0);
+  const auto chunk3 = stream->read<uint16_t>().value_or(0);
+  const auto chunk4 = stream->read_conv<uint16_t>().value_or(0);
+  const auto chunk5 = stream->read_conv<uint16_t>().value_or(0);
+  const auto chunk6 = stream->read_conv<uint32_t>().value_or(0);
+
+  return fmt::format("{:08x}-{:04x}-{:04x}-{:04x}-{:04x}{:08x}",
+      chunk1, chunk2, chunk3, chunk4, chunk5, chunk6
   );
 }
 
