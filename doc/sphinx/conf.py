@@ -28,82 +28,59 @@ RE_INST = re.compile(r"\s=\s<.*\sobject\sat[^>]*>")
 CURRENT_DIR = Path(__file__).parent
 LIEF_ROOT_DIR = (CURRENT_DIR / "../..").resolve().absolute()
 
-GENERATE_DOXYGEN = False
-DOXYGEN_XML_PATH = None
-USE_RTD_THEME = False
+import sphinx_lief
+import breathe
 
-try:
-    import sphinx_lief
-except Exception:
-    import sphinx_rtd_theme
-    USE_RTD_THEME = True
-
-
-try:
-    import breathe
-    DOXYGEN_XML_PATH = os.getenv("LIEF_DOXYGEN_XML", None)
-    if DOXYGEN_XML_PATH is not None and pathlib.Path(DOXYGEN_XML_PATH).exists():
-        DOXYGEN_XML_PATH = pathlib.Path(DOXYGEN_XML_PATH).resolve().absolute()
-        GENERATE_DOXYGEN = True
-except Exception:
-    GENERATE_DOXYGEN = False
-
-
-FORCE_RTD_THEME = os.environ.get("FORCE_RTD_THEME", False)
-FORCE_RTD_THEME = FORCE_RTD_THEME in ("1", "true", "yes")
-
-if FORCE_RTD_THEME:
-    import sphinx_rtd_theme
-
-USE_RTD_THEME = USE_RTD_THEME or FORCE_RTD_THEME
+DOXYGEN_XML_PATH = os.getenv("LIEF_DOXYGEN_XML", None)
+DOXYGEN_XML_PATH = pathlib.Path(DOXYGEN_XML_PATH).resolve().absolute()
 
 extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.autodoc',
     'sphinx.ext.inheritance_diagram',
+    'breathe', 'sphinx_lief'
 ]
 
+def get_breathe_projects_source():
+    LIEF_C_INCLUDE = LIEF_ROOT_DIR / "api/c/include"
+    files = []
+    for file in LIEF_C_INCLUDE.rglob("*.h"):
+        files.append(file.relative_to(LIEF_C_INCLUDE))
+    return (LIEF_C_INCLUDE.as_posix(), files)
 
-if GENERATE_DOXYGEN:
-    def get_breathe_projects_source():
-        LIEF_C_INCLUDE = LIEF_ROOT_DIR / "api/c/include"
-        files = []
-        for file in LIEF_C_INCLUDE.rglob("*.h"):
-            files.append(file.relative_to(LIEF_C_INCLUDE))
-        return (LIEF_C_INCLUDE.as_posix(), files)
-    PREDEFINED = (
-        "LIEF_API=",
-        "LIEF_LOCAL=",
-        "__cplusplus",
-    )
-    EXPAND_AS_DEFINED = (
-        "_LIEF_EI",
-        "_LIEF_EN",
-        "_LIEF_EN_2",
-    )
-    extensions += ["breathe"]
-    breathe_projects = {
-        "lief": DOXYGEN_XML_PATH,
-    }
+PREDEFINED = (
+    "LIEF_API=",
+    "LIEF_LOCAL=",
+    "__cplusplus",
+)
 
-    breathe_domain_by_extension = {
-        "h" : "c",
-        "hpp" : "cpp",
-    }
+EXPAND_AS_DEFINED = (
+    "_LIEF_EI",
+    "_LIEF_EN",
+    "_LIEF_EN_2",
+)
+breathe_projects = {
+    "lief": DOXYGEN_XML_PATH,
+}
 
-    breathe_doxygen_config_options = {
-        "WARN_IF_UNDOCUMENTED": "NO",
-        "MACRO_EXPANSION": "YES",
-        'PREDEFINED': " ".join(PREDEFINED),
-        'EXPAND_AS_DEFINED': " ".join(EXPAND_AS_DEFINED)
-    }
+breathe_domain_by_extension = {
+    "h" : "c",
+    "hpp" : "cpp",
+}
 
-    # This is used for generating the C API
-    breathe_projects_source = {
-        "lief" : get_breathe_projects_source()
-    }
+breathe_doxygen_config_options = {
+    "WARN_IF_UNDOCUMENTED": "NO",
+    "MACRO_EXPANSION": "YES",
+    'PREDEFINED': " ".join(PREDEFINED),
+    'EXPAND_AS_DEFINED': " ".join(EXPAND_AS_DEFINED)
+}
 
-    breathe_default_project = "lief"
+# This is used for generating the C API
+breathe_projects_source = {
+    "lief" : get_breathe_projects_source()
+}
+
+breathe_default_project = "lief"
 
 logger = logging.getLogger("lief-doc")
 # Add any paths that contain templates here, relative to this directory.
@@ -134,9 +111,8 @@ autodoc_default_options = {
     'members': True,
 }
 
-if GENERATE_DOXYGEN:
-    breathe_default_members = ('members', 'protected-members', 'undoc-members')
-    breathe_show_enumvalue_initializer = True
+breathe_default_members = ('members', 'protected-members', 'undoc-members')
+breathe_show_enumvalue_initializer = True
 
 #exclude_patterns = [
 #    "tutorials/*.rst",
@@ -305,7 +281,6 @@ def _autodoc_process_docstring(app, what, name, obj, options, lines: list[str]):
         lines[:] = []
     return
 
-
 class LIEFInheritanceDiagram(InheritanceDiagram):
     option_spec: OptionSpec = {
         **InheritanceDiagram.option_spec,
@@ -362,72 +337,68 @@ linkcheck_ignore = [
 ]
 
 
-if not USE_RTD_THEME:
-    pygments_style = "xcode"
-    endpoint = "stable" if lief.__is_tagged__ else "latest"
-    extensions.append("sphinx_lief")
-    html_theme_path = sphinx_lief.html_theme_path()
-    html_context    = sphinx_lief.get_html_context()
-    html_theme      = "sphinx_lief"
-    html_base_url   = "https://lief-project.github.io/"
-    base_url        = f"{html_base_url}/doc/{endpoint}"
-    html_theme_options = {
-        "commit": commit,
-        "base_url": f"{base_url}/",
-        "sponsor_link": "https://github.com/sponsors/lief-project/",
-        "repo_url": "https://github.com/lief-project/LIEF/",
-        "repo_name": "LIEF",
-        "html_minify": True,
-        "html_prettify": False,
-        "css_minify": True,
-        "logo_icon": "logo_blue.png",
-        "globaltoc_depth": 2,
-        "color_primary": "blue",
-        "color_accent": "cyan",
-        "touch_icon": "favicon.ico",
-        "nav_links": [
-            {
-                "href": html_base_url,
-                "internal": False,
-                "title": "Home",
-                "icon": "fa-solid fa-house"
-            },
-            {
-                "href": f"{html_base_url}/blog",
-                "internal": False,
-                "title": "Blog",
-                "icon": "fa-solid fa-rss"
-            },
-            {
-                "href": f"{html_base_url}/download",
-                "internal": False,
-                "title": "Download",
-                "icon": "fa-solid fa-download",
-            },
-            {
-                "href": "index",
-                "internal": True,
-                "title": "Documentation",
-                "icon": "fa-solid fa-book",
-                "subnav": [
-                    {
-                        "title": "Doxygen",
-                        "href": f"{base_url}/doxygen",
-                    },
-                ]
-            },
-            {
-                "href": f"{html_base_url}/about",
-                "internal": False,
-                "title": "About",
-                "icon": "fa-solid fa-bars-staggered"
-            },
-        ],
-        "table_classes": ["plain"],
-    }
-else:
-    html_theme = "sphinx_rtd_theme"
-    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+pygments_style = "xcode"
+endpoint = "stable" if lief.__is_tagged__ else "latest"
+
+html_theme_path = sphinx_lief.html_theme_path()
+html_context    = sphinx_lief.get_html_context()
+html_theme      = "sphinx_lief"
+html_base_url   = "https://lief-project.github.io/"
+base_url        = f"{html_base_url}/doc/{endpoint}"
+html_theme_options = {
+    "commit": commit,
+    "base_url": f"{base_url}/",
+    "sponsor_link": "https://github.com/sponsors/lief-project/",
+    "repo_url": "https://github.com/lief-project/LIEF/",
+    "repo_name": "LIEF",
+    "html_minify": True,
+    "html_prettify": False,
+    "css_minify": True,
+    "logo_icon": "logo_blue.png",
+    "globaltoc_depth": 2,
+    "color_primary": "blue",
+    "color_accent": "cyan",
+    "touch_icon": "favicon.ico",
+    "nav_links": [
+        {
+            "href": html_base_url,
+            "internal": False,
+            "title": "Home",
+            "icon": "fa-solid fa-house"
+        },
+        {
+            "href": f"{html_base_url}/blog",
+            "internal": False,
+            "title": "Blog",
+            "icon": "fa-solid fa-rss"
+        },
+        {
+            "href": f"{html_base_url}/download",
+            "internal": False,
+            "title": "Download",
+            "icon": "fa-solid fa-download",
+        },
+        {
+            "href": "index",
+            "internal": True,
+            "title": "Documentation",
+            "icon": "fa-solid fa-book",
+            "subnav": [
+                {
+                    "title": "Doxygen",
+                    "href": f"{base_url}/doxygen",
+                },
+            ]
+        },
+        {
+            "href": f"{html_base_url}/about",
+            "internal": False,
+            "title": "About",
+            "icon": "fa-solid fa-bars-staggered"
+        },
+    ],
+    "table_classes": ["plain"],
+}
 
 html_last_updated_fmt = '%d/%m/%Y, %H:%M:%S'
 html_logo        = '_static/logo_blue.png'
