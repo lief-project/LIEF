@@ -45,6 +45,18 @@ BuildVersion::BuildVersion(const details::build_version_command& ver) :
 {
 }
 
+BuildVersion::BuildVersion(const PLATFORMS platform,
+                           const version_t &minos,
+                           const version_t &sdk,
+                           const tools_list_t &tools) :
+  LoadCommand::LoadCommand{LOAD_COMMAND_TYPES::LC_BUILD_VERSION,
+                           static_cast<uint32_t>(sizeof(details::build_version_command) +
+                           sizeof(details::build_tool_version) * tools.size())},
+  platform_{platform}, minos_{minos}, sdk_{sdk}, tools_{tools}
+{
+  original_data_.resize(size());
+}
+
 BuildVersion* BuildVersion::clone() const {
   return new BuildVersion(*this);
 }

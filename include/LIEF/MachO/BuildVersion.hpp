@@ -53,6 +53,10 @@ class LIEF_API BuildVersion : public LoadCommand {
   public:
   BuildVersion();
   BuildVersion(const details::build_version_command& version_cmd);
+  BuildVersion(const PLATFORMS platform,
+               const version_t &minos,
+               const version_t &sdk,
+               const tools_list_t &tools);
 
   BuildVersion& operator=(const BuildVersion& copy);
   BuildVersion(const BuildVersion& copy);
