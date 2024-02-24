@@ -139,7 +139,7 @@ void create<Symbol>(nb::module_& m) {
         nb::rv_policy::reference_internal)
 
     .def_prop_ro("section",
-        &Symbol::section,
+        nb::overload_cast<>(&Symbol::section),
         R"delim(
         Return the section (:class:`~lief.ELF.Section`) associated with this symbol
         if any. Otherwise, return None.
