@@ -129,9 +129,12 @@ class LIEF_API Symbol : public LIEF::Symbol {
     return VISIBILITY(other_);
   }
 
-  /// Section associated with the symbol or a nullptr if
-  /// it does not exist.
+  /// Section associated with the symbol or a nullptr if it does not exist.
   Section* section() {
+    return section_;
+  }
+
+  const Section* section() const {
     return section_;
   }
 
