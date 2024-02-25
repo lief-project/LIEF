@@ -399,7 +399,7 @@ if(APPLE)
   set_target_properties(LIB_LIEF PROPERTIES MACOSX_RPATH ON)
 endif()
 
-include(LIEFApi)
+add_subdirectory(api)
 
 if(LIEF_EXAMPLES)
   add_subdirectory(examples)
