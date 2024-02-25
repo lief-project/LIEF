@@ -57,6 +57,10 @@ Changelog
     These warnings does not necessarily mean that LIEF leak objects. These
     warnings might happen in `Cyclic garbage collection <https://nanobind.readthedocs.io/en/latest/typeslots.html#cyclic-garbage-collection>`_.
 
+:Documentation:
+
+  * Add icons
+  * Include inheritance diagram for Python API (e.g. :class:`lief.ELF.Note`)
 
 
 0.14.1 - February 11th, 2024

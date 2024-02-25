@@ -46,10 +46,13 @@ Data Directory
 Section
 *******
 
+.. lief-inheritance:: lief._lief.PE.Section
+  :top-classes: lief._lief.Section
+  :parts: 2
+
 .. autoclass:: lief.PE.Section
 
 ----------
-
 
 Import
 *******
@@ -61,6 +64,10 @@ Import
 
 Import Entry
 ************
+
+.. lief-inheritance:: lief._lief.PE.ImportEntry
+  :top-classes: lief._lief.Symbol
+  :parts: 2
 
 .. autoclass:: lief.PE.ImportEntry
 
@@ -76,6 +83,10 @@ Delay Import
 Delay Import Entry
 ******************
 
+.. lief-inheritance:: lief._lief.PE.DelayImportEntry
+  :top-classes: lief._lief.Symbol
+  :parts: 2
+
 .. autoclass:: lief.PE.DelayImportEntry
 
 ----------
@@ -89,6 +100,10 @@ TLS
 
 Symbol
 *******
+
+.. lief-inheritance:: lief._lief.PE.Symbol
+  :top-classes: lief._lief.Symbol
+  :parts: 2
 
 .. autoclass:: lief.PE.Symbol
 
@@ -105,6 +120,10 @@ Relocation
 Relocation Entry
 ****************
 
+.. lief-inheritance:: lief._lief.PE.RelocationEntry
+  :top-classes: lief._lief.Relocation
+  :parts: 2
+
 .. autoclass:: lief.PE.RelocationEntry
 
 ----------
@@ -118,6 +137,10 @@ Export
 
 Export Entry
 ************
+
+.. lief-inheritance:: lief._lief.PE.ExportEntry
+  :top-classes: lief._lief.Symbol
+  :parts: 2
 
 .. autoclass:: lief.PE.ExportEntry
 
@@ -133,12 +156,20 @@ Signature
 Signature Attribute
 *******************
 
+.. lief-inheritance:: lief._lief.PE.Attribute
+  :top-classes: lief._lief.PE.Attribute
+  :parts: 2
+
 .. autoclass:: lief.PE.Attribute
 
 ----------
 
 Signature ContentType
 *********************
+
+.. lief-inheritance:: lief._lief.PE.ContentType
+  :top-classes: lief._lief.PE.Attribute
+  :parts: 2
 
 .. autoclass:: lief.PE.ContentType
 
@@ -147,12 +178,20 @@ Signature ContentType
 Signature GenericType
 *********************
 
+.. lief-inheritance:: lief._lief.PE.GenericType
+  :top-classes: lief._lief.PE.Attribute
+  :parts: 2
+
 .. autoclass:: lief.PE.GenericType
 
 ----------
 
 Signature MsSpcNestedSignature
 ******************************
+
+.. lief-inheritance:: lief._lief.PE.MsSpcNestedSignature
+  :top-classes: lief._lief.PE.Attribute
+  :parts: 2
 
 .. autoclass:: lief.PE.MsSpcNestedSignature
 
@@ -161,12 +200,20 @@ Signature MsSpcNestedSignature
 Signature MsSpcStatementType
 ****************************
 
+.. lief-inheritance:: lief._lief.PE.MsSpcStatementType
+  :top-classes: lief._lief.PE.Attribute
+  :parts: 2
+
 .. autoclass:: lief.PE.MsSpcStatementType
 
 ----------
 
 Signature PKCS9AtSequenceNumber
 *******************************
+
+.. lief-inheritance:: lief._lief.PE.PKCS9AtSequenceNumber
+  :top-classes: lief._lief.PE.Attribute
+  :parts: 2
 
 .. autoclass:: lief.PE.PKCS9AtSequenceNumber
 
@@ -175,12 +222,20 @@ Signature PKCS9AtSequenceNumber
 Signature PKCS9CounterSignature
 *******************************
 
+.. lief-inheritance:: lief._lief.PE.PKCS9CounterSignature
+  :top-classes: lief._lief.PE.Attribute
+  :parts: 2
+
 .. autoclass:: lief.PE.PKCS9CounterSignature
 
 ----------
 
 Signature PKCS9MessageDigest
 ****************************
+
+.. lief-inheritance:: lief._lief.PE.PKCS9MessageDigest
+  :top-classes: lief._lief.PE.Attribute
+  :parts: 2
 
 .. autoclass:: lief.PE.PKCS9MessageDigest
 
@@ -189,12 +244,20 @@ Signature PKCS9MessageDigest
 Signature PKCS9SigningTime
 **************************
 
+.. lief-inheritance:: lief._lief.PE.PKCS9SigningTime
+  :top-classes: lief._lief.PE.Attribute
+  :parts: 2
+
 .. autoclass:: lief.PE.PKCS9SigningTime
 
 ----------
 
 Signature SpcSpOpusInfo
 ***********************
+
+.. lief-inheritance:: lief._lief.PE.SpcSpOpusInfo
+  :top-classes: lief._lief.PE.Attribute
+  :parts: 2
 
 .. autoclass:: lief.PE.SpcSpOpusInfo
 
@@ -203,14 +266,24 @@ Signature SpcSpOpusInfo
 Signature SpcIndirectData
 *************************
 
+.. lief-inheritance:: lief._lief.PE.SpcIndirectData
+  :top-classes: lief._lief.PE.ContentInfo.Content
+  :parts: 2
+
+
 .. autoclass:: lief.PE.SpcIndirectData
 
 ----------
 
-Signature GenericType
-*********************
+GenericContent
+**************
 
-.. autoclass:: lief.PE.GenericType
+.. lief-inheritance:: lief._lief.PE.GenericContent
+  :top-classes: lief._lief.PE.ContentInfo.Content
+  :parts: 2
+
+
+.. autoclass:: lief.PE.GenericContent
 
 ----------
 
@@ -230,6 +303,10 @@ x509
 
 ContentInfo
 ***********
+
+.. lief-inheritance:: lief._lief.PE.ContentInfo.Content
+  :top-classes: lief._lief.PE.ContentInfo.Content
+  :parts: 2
 
 .. autoclass:: lief.PE.ContentInfo
 
@@ -253,12 +330,20 @@ Builder
 Resource Node
 *************
 
+.. lief-inheritance:: lief._lief.PE.ResourceNode
+  :top-classes: lief._lief.PE.ResourceNode
+  :parts: 2
+
 .. autoclass:: lief.PE.ResourceNode
 
 ----------
 
 Resource Directory
 ******************
+
+.. lief-inheritance:: lief._lief.PE.ResourceDirectory
+  :top-classes: lief._lief.PE.ResourceNode
+  :parts: 2
 
 .. autoclass:: lief.PE.ResourceDirectory
 
@@ -267,6 +352,10 @@ Resource Directory
 
 Resource Data
 *************
+
+.. lief-inheritance:: lief._lief.PE.ResourceData
+  :top-classes: lief._lief.PE.ResourceNode
+  :parts: 2
 
 .. autoclass:: lief.PE.ResourceData
 
@@ -359,6 +448,10 @@ Rich Entry
 Debug
 *****
 
+.. lief-inheritance:: lief._lief.PE.Debug
+  :top-classes: lief._lief.PE.Debug
+  :parts: 2
+
 .. autoclass:: lief.PE.Debug
 
 ----------
@@ -367,12 +460,20 @@ Debug
 Code View
 *********
 
+.. lief-inheritance:: lief._lief.PE.CodeView
+  :top-classes: lief._lief.PE.Debug
+  :parts: 2
+
 .. autoclass:: lief.PE.CodeView
 
 ----------
 
 Code View PDB
 **************
+
+.. lief-inheritance:: lief._lief.PE.CodeViewPDB
+  :top-classes: lief._lief.PE.Debug
+  :parts: 2
 
 .. autoclass:: lief.PE.CodeViewPDB
 
@@ -388,6 +489,10 @@ Code Integrity
 Pogo
 ****
 
+.. lief-inheritance:: lief._lief.PE.Pogo
+  :top-classes: lief._lief.PE.Debug
+  :parts: 2
+
 .. autoclass:: lief.PE.Pogo
 
 ----------
@@ -402,6 +507,10 @@ Pogo Entry
 Repro
 *****
 
+.. lief-inheritance:: lief._lief.PE.Repro
+  :top-classes: lief._lief.PE.Debug
+  :parts: 2
+
 .. autoclass:: lief.PE.Repro
 
 ----------
@@ -410,7 +519,6 @@ Load Configuration
 ******************
 
 .. autoclass:: lief.PE.LoadConfiguration
-
 
 Load Configuration V0
 ~~~~~~~~~~~~~~~~~~~~~

@@ -106,7 +106,8 @@ autoclass_content = 'both'
 autodoc_default_options = {
     'exclude-members': '@entries',
     'undoc-members': True,
-    'inherited-members': True,
+    'inherited-members': False,
+    'show-inheritance': False,
     'undoc-members': True,
     'members': True,
 }

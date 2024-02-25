@@ -47,6 +47,10 @@ Header
 Section
 *******
 
+.. lief-inheritance:: lief._lief.MachO.Section
+  :top-classes: lief._lief.Section
+  :parts: 2
+
 .. autoclass:: lief.MachO.Section
 
 ----------
@@ -54,6 +58,10 @@ Section
 
 SegmentCommand
 **************
+
+.. lief-inheritance:: lief._lief.MachO.SegmentCommand
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
 
 .. autoclass:: lief.MachO.SegmentCommand
 
@@ -63,6 +71,10 @@ SegmentCommand
 LoadCommand
 ***********
 
+.. lief-inheritance:: lief._lief.MachO.LoadCommand
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
 .. autoclass:: lief.MachO.LoadCommand
 
 ----------
@@ -70,6 +82,10 @@ LoadCommand
 
 DylibCommand
 ************
+
+.. lief-inheritance:: lief._lief.MachO.DylibCommand
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
 
 .. autoclass:: lief.MachO.DylibCommand
 
@@ -79,6 +95,10 @@ DylibCommand
 DylinkerCommand
 ***************
 
+.. lief-inheritance:: lief._lief.MachO.DylinkerCommand
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
 .. autoclass:: lief.MachO.DylinkerCommand
 
 
@@ -86,6 +106,10 @@ DylinkerCommand
 
 UUIDCommand
 ***********
+
+.. lief-inheritance:: lief._lief.MachO.UUIDCommand
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
 
 .. autoclass:: lief.MachO.UUIDCommand
 
@@ -96,6 +120,10 @@ UUIDCommand
 MainCommand
 ***********
 
+.. lief-inheritance:: lief._lief.MachO.MainCommand
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
 .. autoclass:: lief.MachO.MainCommand
 
 ----------
@@ -103,6 +131,10 @@ MainCommand
 
 Symbol
 ******
+
+.. lief-inheritance:: lief._lief.MachO.Symbol
+  :top-classes: lief._lief.Symbol
+  :parts: 2
 
 .. autoclass:: lief.MachO.Symbol
 
@@ -112,12 +144,21 @@ Symbol
 Symbol Command
 **************
 
+.. lief-inheritance:: lief._lief.MachO.DylinkerCommand
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
 .. autoclass:: lief.MachO.SymbolCommand
 
 ----------
 
 Dynamic Symbol Command
 **********************
+
+.. lief-inheritance:: lief._lief.MachO.DynamicSymbolCommand
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
 
 .. autoclass:: lief.MachO.DynamicSymbolCommand
 
@@ -126,6 +167,11 @@ Dynamic Symbol Command
 Dyld Info
 *********
 
+.. lief-inheritance:: lief._lief.MachO.DyldInfo
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
+
 .. autoclass:: lief.MachO.DyldInfo
 
 ----------
@@ -133,12 +179,22 @@ Dyld Info
 Function starts
 ***************
 
+.. lief-inheritance:: lief._lief.MachO.FunctionStarts
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
+
 .. autoclass:: lief.MachO.FunctionStarts
 
 ----------
 
 Source Version
 **************
+
+.. lief-inheritance:: lief._lief.MachO.SourceVersion
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
 
 .. autoclass:: lief.MachO.SourceVersion
 
@@ -148,6 +204,10 @@ Source Version
 Version Min
 ***********
 
+.. lief-inheritance:: lief._lief.MachO.VersionMin
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
 .. autoclass:: lief.MachO.VersionMin
 
 ----------
@@ -155,6 +215,10 @@ Version Min
 
 Relocation
 **********
+
+.. lief-inheritance:: lief._lief.MachO.Relocation
+  :top-classes: lief._lief.Relocation
+  :parts: 2
 
 .. autoclass:: lief.MachO.Relocation
 
@@ -164,6 +228,10 @@ Relocation
 Relocation Object
 *****************
 
+.. lief-inheritance:: lief._lief.MachO.RelocationObject
+  :top-classes: lief._lief.Relocation
+  :parts: 2
+
 .. autoclass:: lief.MachO.RelocationObject
 
 ----------
@@ -172,12 +240,20 @@ Relocation Object
 Relocation Dyld
 ***************
 
+.. lief-inheritance:: lief._lief.MachO.RelocationDyld
+  :top-classes: lief._lief.Relocation
+  :parts: 2
+
 .. autoclass:: lief.MachO.RelocationDyld
 
 ----------
 
 Relocation Fixup
 ****************
+
+.. lief-inheritance:: lief._lief.MachO.RelocationFixup
+  :top-classes: lief._lief.Relocation
+  :parts: 2
 
 .. autoclass:: lief.MachO.RelocationFixup
 
@@ -187,12 +263,20 @@ Relocation Fixup
 Binding Info
 ************
 
+.. lief-inheritance:: lief._lief.MachO.BindingInfo
+  :top-classes: lief._lief.MachO.BindingInfo
+  :parts: 2
+
 .. autoclass:: lief.MachO.BindingInfo
 
 ----------
 
 Dyld Binding Info
 *****************
+
+.. lief-inheritance:: lief._lief.MachO.DyldBindingInfo
+  :top-classes: lief._lief.MachO.BindingInfo
+  :parts: 2
 
 .. autoclass:: lief.MachO.DyldBindingInfo
 
@@ -201,6 +285,10 @@ Dyld Binding Info
 
 Chained Binding Info
 ********************
+
+.. lief-inheritance:: lief._lief.MachO.ChainedBindingInfo
+  :top-classes: lief._lief.MachO.BindingInfo
+  :parts: 2
 
 .. autoclass:: lief.MachO.ChainedBindingInfo
 
@@ -218,12 +306,20 @@ Export Info
 Thread Command
 **************
 
+.. lief-inheritance:: lief._lief.MachO.ThreadCommand
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
 .. autoclass:: lief.MachO.ThreadCommand
 
 ----------
 
 RPath Command
 *************
+
+.. lief-inheritance:: lief._lief.MachO.RPathCommand
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
 
 .. autoclass:: lief.MachO.RPathCommand
 
@@ -233,12 +329,20 @@ RPath Command
 Code Signature
 **************
 
+.. lief-inheritance:: lief._lief.MachO.CodeSignature
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
 .. autoclass:: lief.MachO.CodeSignature
 
 ----------
 
 Data In Code
 ************
+
+.. lief-inheritance:: lief._lief.MachO.DataInCode
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
 
 .. autoclass:: lief.MachO.DataInCode
 
@@ -254,12 +358,20 @@ Data Code Entry
 Segment Split Info
 ******************
 
+.. lief-inheritance:: lief._lief.MachO.SegmentSplitInfo
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
 .. autoclass:: lief.MachO.SegmentSplitInfo
 
 ----------
 
 Sub Framework
 *************
+
+.. lief-inheritance:: lief._lief.MachO.SubFramework
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
 
 .. autoclass:: lief.MachO.SubFramework
 
@@ -268,12 +380,20 @@ Sub Framework
 Dyld Environment
 ****************
 
+.. lief-inheritance:: lief._lief.MachO.DyldEnvironment
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
 .. autoclass:: lief.MachO.DyldEnvironment
 
 ----------
 
 Encryption Info
 ***************
+
+.. lief-inheritance:: lief._lief.MachO.EncryptionInfo
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
 
 .. autoclass:: lief.MachO.EncryptionInfo
 
@@ -282,12 +402,20 @@ Encryption Info
 Build Version
 *************
 
+.. lief-inheritance:: lief._lief.MachO.BuildVersion
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
 .. autoclass:: lief.MachO.BuildVersion
 
 ----------
 
 Build Tool Version
 ******************
+
+.. lief-inheritance:: lief._lief.MachO.BuildToolVersion
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
 
 .. autoclass:: lief.MachO.BuildToolVersion
 
@@ -296,12 +424,20 @@ Build Tool Version
 Fileset Command
 ***************
 
+.. lief-inheritance:: lief._lief.MachO.FilesetCommand
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
 .. autoclass:: lief.MachO.FilesetCommand
 
 ----------
 
 DyldChainedFixups Command
 *************************
+
+.. lief-inheritance:: lief._lief.MachO.DyldChainedFixups
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
 
 .. autoclass:: lief.MachO.DyldChainedFixups
 
@@ -310,12 +446,20 @@ DyldChainedFixups Command
 DyldExportsTrie Command
 ***********************
 
+.. lief-inheritance:: lief._lief.MachO.DyldExportsTrie
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
 .. autoclass:: lief.MachO.DyldExportsTrie
 
 ----------
 
 Code Signature Dir Command
 **************************
+
+.. lief-inheritance:: lief._lief.MachO.CodeSignatureDir
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
 
 .. autoclass:: lief.MachO.CodeSignatureDir
 
@@ -324,12 +468,20 @@ Code Signature Dir Command
 Two Level Hints
 ***************
 
+.. lief-inheritance:: lief._lief.MachO.TwoLevelHints
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
 .. autoclass:: lief.MachO.TwoLevelHints
 
 ----------
 
 Linker Optimization Hint
 ************************
+
+.. lief-inheritance:: lief._lief.MachO.LinkerOptHint
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
 
 .. autoclass:: lief.MachO.LinkerOptHint
 
