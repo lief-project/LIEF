@@ -548,8 +548,8 @@ ok_error_t Parser::parse_symbols() {
     }
 
     if (symbol.section_number() > 0 &&
-        static_cast<uint32_t>(symbol.section_number()) < binary_->sections_.size()) {
-      symbol.section_ = binary_->sections_[symbol.section_number()].get();
+        static_cast<uint32_t>(symbol.section_number()) <= binary_->sections_.size()) {
+      symbol.section_ = binary_->sections_[symbol.section_number()-1].get();
     }
 
     for (uint32_t i = 0; i < raw_symbol.NumberOfAuxSymbols; ++i) {
