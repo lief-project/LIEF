@@ -552,7 +552,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
 
     std::sort(non_relative_rels.begin(), non_relative_rels.end(),
-      [&elf_class] (const Relocation* lhs, const Relocation* rhs) {
+      [elf_class] (const Relocation* lhs, const Relocation* rhs) {
         if (lhs->r_info(elf_class) != rhs->r_info(elf_class)) {
           return lhs->r_info(elf_class) < rhs->r_info(elf_class);
         }
