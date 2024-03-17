@@ -22,6 +22,8 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/array.h>
 
+#include "pySafeString.hpp"
+
 namespace LIEF::PE::py {
 
 template<>
@@ -55,7 +57,9 @@ void create<CodeViewPDB>(nb::module_& m) {
         nb::overload_cast<uint32_t>(&CodeViewPDB::age))
 
     .def_prop_rw("filename",
-        nb::overload_cast<>(&CodeViewPDB::filename, nb::const_),
+        [] (const CodeViewPDB& self) {
+          return LIEF::py::safe_string(self.filename());
+        },
         nb::overload_cast<std::string>(&CodeViewPDB::filename),
         "Original pdb path")
 

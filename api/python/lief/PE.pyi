@@ -701,7 +701,7 @@ class CodeView(Debug):
 
 class CodeViewPDB(CodeView):
     age: int
-    filename: str
+    filename: Union[str,bytes]
     signature: list[int]
     def __init__(self) -> None: ...
     @property
