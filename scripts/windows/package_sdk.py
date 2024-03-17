@@ -1,8 +1,6 @@
 from setuptools import msvc
-import pathlib
 import os
 import sys
-import subprocess
 from subprocess import check_call
 import shutil
 from pathlib import Path
@@ -58,7 +56,7 @@ cmake_config_static = [
 cmake_config_shared = [
     "-G", "Ninja",
     "-DCMAKE_BUILD_TYPE=Release",
-    "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded",
+    "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL",
     "-DBUILD_SHARED_LIBS=on",
     "-DLIEF_PYTHON_API=off",
     "-DLIEF_INSTALL_COMPILED_EXAMPLES=off",
