@@ -811,7 +811,7 @@ This release contains several security fixes:
 
    * :github_user:`lkollar` added support for Python 3.8 in CI (Linux & OSX only)
    * Update Pybind11 dependency to ``v2.4.3``
-   * Enhance Python install (see: :ref:`v10-label`)
+   * Enhance Python install
    * Thanks to :github_user:`lkollar`, Linux CI now produces **manylinux1-compliant wheels**
 
 Many thanks to the contributors: :github_user:`recvfrom`, :github_user:`pbrunet`,
