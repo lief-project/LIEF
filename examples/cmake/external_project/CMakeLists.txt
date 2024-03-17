@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.21)
 
 project(CMakeLIEF LANGUAGES NONE)
 
@@ -26,7 +26,7 @@ set(LIEF_CMAKE_ARGS
 )
 
 if(MSVC)
-  list(APPEND ${LIEF_CMAKE_ARGS} -DCMAKE_MSVC_RUNTIME_LIBRARY=MT)
+  list(APPEND ${LIEF_CMAKE_ARGS} -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded)
 endif()
 
 ExternalProject_Add(LIEF
@@ -49,6 +49,6 @@ ExternalProject_Add(HelloLIEF
   BINARY_DIR      "${CMAKE_CURRENT_BUILD_DIR}"
   INSTALL_COMMAND ""
   CMAKE_ARGS
-    "-DLIEF_DIR=${LIEF_INSTALL_DIR}/share/LIEF/cmake"
+    "-DLIEF_DIR=${LIEF_INSTALL_DIR}/lib/cmake/LIEF"
     -DCMAKE_BUILD_TYPE=RelWithDebInfo
 )

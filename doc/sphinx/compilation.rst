@@ -1,6 +1,8 @@
 .. role:: strike
    :class: strike
 
+.. _compilation-ref:
+
 Compilation
 ===========
 
@@ -9,12 +11,6 @@ To compile **LIEF**, you need at least the following requirements:
 - C++17 compiler (GCC, Clang, MSVC..)
 - CMake
 - Python >= 3.8 (for the bindings)
-
-To build the documentation:
-
-- Doxygen (= ``1.8.10``, the CI uses ``1.8.20``)
-- Sphinx (with ``sphinx_rtd_theme`` module)
-- breathe (>= ``4.25.1``)
 
 .. note::
 
@@ -59,27 +55,19 @@ Python bindings
 
   $ git clone https://github.com/lief-project/LIEF.git
   $ cd LIEF/api/python
-  $ python ./setup.py build install [--user]
+  $ pip install [-e] [--user] .
   # Or
-  $ pip install [-e] .
+  $ pip install [-e] api/python
 
 .. note::
 
-  You can speed-up the compilation by installing `ccache <https://ccache.dev/>`_ or `sccache <https://github.com/mozilla/sccache>`_
+  You can speed-up the compilation by installing `ccache <https://ccache.dev/>`_
+  or `sccache <https://github.com/mozilla/sccache>`_
 
-**Before LIEF 0.13.0**, we could tweak the compilation of the Python bindings
-through command line options:
+One can tweak the compilation by setting the environment variable ``PYLIEF_CONF``
+to a Toml configuration file. By default, the Python bindings are using ``config-default.toml``
+in the Python binding directory:
 
-.. code-block:: console
-
-  $ python ./setup.py --lief-no-dex --lief-no-vdex --lief-no-oat [...]
-
-This interface had the drawback to produce long commands and using `setup.py`
-options is even more complicated with `pip install` approach.
-
-Since LIEF 0.13.0, the options of the Python bindings are now defined in a `config-default.toml`
-next to the `setup.py` file. This `.toml` file can be used to configure the different options
-of LIEF and its Python binding:
 
 .. code-block:: toml
 
@@ -94,8 +82,6 @@ of LIEF and its Python binding:
   pe      = false
   macho   = true
   ...
-
-One can also provide a custom configuration file through the `PYLIEF_CONF` environment variable:
 
 .. code-block:: console
 
@@ -120,7 +106,6 @@ by changing the `type` in the section `[lief.build]` of `config-default.toml`:
 
   [lief.build]
   type = "RelWithDebInfo"
-
 
 .. note::
 
@@ -249,7 +234,3 @@ Docker
 ------
 
 See `liefproject <https://hub.docker.com/u/liefproject>`_ on Dockerhub
-
-.. container:: strike
-
-  See the `Dockerlief <https://github.com/lief-project/Dockerlief>`_ repo.

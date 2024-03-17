@@ -1,6 +1,4 @@
-# Minimum of 3.5 for adding submodule of LIEF because LIEF min is 3.5,
-# otherwise 3.11+ for FetchContent command
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.21)
 
 project(SubdirLIEF LANGUAGES CXX)
 
