@@ -690,6 +690,87 @@ uint32_t Binary::predict_function_rva(const std::string& library, const std::str
   return next_virtual_address + address;
 }
 
+uint32_t Binary::predict_function_rva(const std::string& library, const uint16_t& ordinal) {
+    const auto it_import = std::find_if(imports_.cbegin(), imports_.cend(),
+        [&library](const Import& imp) {
+            return imp.name() == library;
+        });
+
+    if (it_import == std::end(imports_)) {
+        LIEF_ERR("Unable to find library {}", library);
+        return 0;
+    }
+
+    Import::it_const_entries entries = it_import->entries();
+
+    // Some weird library define a function twice
+    size_t nb_functions = std::count_if(entries.cbegin(), entries.cend(),
+        [&ordinal](const ImportEntry& entry) {
+            return entry.is_ordinal() && entry.ordinal() == ordinal;
+        });
+
+    if (nb_functions == 0) {
+        LIEF_ERR("Unable to find the ordinal '{}' in '{}'", ordinal, library);
+        return 0;
+    }
+
+    if (nb_functions > 1) {
+        LIEF_ERR("{} is defined #{:d} times in {}", ordinal, nb_functions, library);
+        return 0;
+    }
+
+    uint32_t import_table_size = static_cast<uint32_t>((imports().size() + 1) * sizeof(details::pe_import)); // +1 for the null entry
+
+    uint32_t address = import_table_size;
+
+    uint32_t lookup_table_size = 0;
+    for (const Import& f : imports_) {
+        if (type_ == PE_TYPE::PE32) {
+            lookup_table_size += (f.entries().size() + 1) * sizeof(uint32_t);
+        }
+        else {
+            lookup_table_size += (f.entries().size() + 1) * sizeof(uint64_t);
+        }
+    }
+
+    address += lookup_table_size;
+
+    for (auto it_imp = imports_.cbegin();
+        (it_imp->name() != library && it_imp != imports_.cend());
+        ++it_imp) {
+        if (type_ == PE_TYPE::PE32) {
+            address += sizeof(uint32_t) * (it_imp->entries().size() + 1);
+        }
+        else {
+            address += sizeof(uint64_t) * (it_imp->entries().size() + 1);
+        }
+    }
+
+
+    for (auto it_func = entries.cbegin();
+        (it_func->ordinal() != ordinal && it_func != entries.cend());
+        ++it_func) {
+        if (type_ == PE_TYPE::PE32) {
+            address += sizeof(uint32_t);
+        }
+        else {
+            address += sizeof(uint64_t);
+        }
+    }
+
+
+    // We assume the the idata section will be the last section
+    const auto section_align = static_cast<uint64_t>(optional_header().section_alignment());
+    const uint64_t next_virtual_address = align(std::accumulate(
+        std::begin(sections_),
+        std::end(sections_), section_align,
+        [](uint64_t va, const std::unique_ptr<Section>& s) {
+            return std::max<uint64_t>(s->virtual_address() + s->virtual_size(), va);
+        }), section_align);
+
+    return next_virtual_address + address;
+}
+
 Import* Binary::get_import(const std::string& import_name) {
   return const_cast<Import*>(static_cast<const Binary*>(this)->get_import(import_name));
 }

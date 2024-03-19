@@ -191,6 +191,11 @@ void create<Binary>(nb::module_& m) {
         nb::overload_cast<const std::string&, const std::string&>(&Binary::predict_function_rva),
         "Try to predict the RVA of the given function name in the given import library name"_doc,
         "library"_a, "function"_a)
+		
+	.def("predict_function_rva",
+        nb::overload_cast<const std::string&, const uint16_t&>(&Binary::predict_function_rva),
+        "Try to predict the RVA of the given function ordinal in the given import library name"_doc,
+        "library"_a, "ordinal"_a)
 
     .def_prop_ro("signatures",
         nb::overload_cast<>(&Binary::signatures, nb::const_),
