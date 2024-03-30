@@ -35,7 +35,6 @@ extern "C" {
 /** LIEF::ELF::Binary C Handler */
 struct Elf_Binary_t {
   void*              handler;
-  const char*        name;
   const char*        interpreter;
   uint32_t           type;
   Elf_Header_t       header;

@@ -6,8 +6,6 @@
 
 
 void print_binary(Macho_Binary_t* binary) {
-  fprintf(stdout, "Binary Name: %s\n", binary->name);
-
   Macho_Header_t header = binary->header;
   fprintf(stdout, "Header\n");
   fprintf(stdout, "========\n");

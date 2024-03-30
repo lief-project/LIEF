@@ -36,7 +36,6 @@ extern "C" {
 /** @brief LIEF::PE::Binary C Handler */
 struct Pe_Binary_t {
   void*                handler;
-  const char*          name;
   Pe_DosHeader_t       dos_header;
   Pe_Header_t          header;
   Pe_OptionalHeader_t  optional_header;

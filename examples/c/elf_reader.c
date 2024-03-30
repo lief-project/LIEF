@@ -19,7 +19,6 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
 
-  fprintf(stdout, "Binary Name: %s\n", elf_binary->name);
   fprintf(stdout, "Interpreter: %s\n", elf_binary->interpreter);
 
   Elf_Header_t header = elf_binary->header;

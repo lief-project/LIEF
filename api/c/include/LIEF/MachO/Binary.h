@@ -33,7 +33,6 @@ extern "C" {
 /** @brief LIEF::MachO::Binary C Handler */
 struct Macho_Binary_t {
   void*               handler;
-  const char*         name;
   uint64_t            imagebase;
   Macho_Header_t      header;
   Macho_Command_t**   commands;

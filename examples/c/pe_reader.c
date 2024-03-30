@@ -18,8 +18,6 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
 
-  fprintf(stdout, "Binary Name: %s\n", pe_binary->name);
-
   Pe_DosHeader_t dos_header = pe_binary->dos_header;
 
   uint16_t *reserved = dos_header.reserved;

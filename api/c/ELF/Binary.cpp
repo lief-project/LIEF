@@ -54,8 +54,6 @@ void init_c_binary(Elf_Binary_t* c_binary, Binary* binary) {
   init_c_dynamic_symbols(c_binary, binary);
   init_c_symtab_symbols(c_binary, binary);
   init_c_dynamic_entries(c_binary, binary);
-
-
 }
 
 }
