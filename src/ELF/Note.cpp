@@ -591,8 +591,12 @@ void Note::accept(Visitor& visitor) const {
 }
 
 void Note::dump(std::ostream& os) const {
+  std::string note_name = name();
+  if (type() == TYPE::GNU_BUILD_ATTRIBUTE_OPEN) {
+    note_name = printable_string(note_name);
+  }
   os << fmt::format("{}(0x{:04x}) '{}' [{}]",
-                    to_string(type()), original_type(), name(),
+                    to_string(type()), original_type(), note_name,
                     to_hex(description(), 10));
 }
 
