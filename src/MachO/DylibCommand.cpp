@@ -127,6 +127,7 @@ bool DylibCommand::classof(const LoadCommand* cmd) {
   return type == LOAD_COMMAND_TYPES::LC_LOAD_WEAK_DYLIB ||
          type == LOAD_COMMAND_TYPES::LC_ID_DYLIB ||
          type == LOAD_COMMAND_TYPES::LC_LOAD_DYLIB ||
+         type == LOAD_COMMAND_TYPES::LC_LOAD_UPWARD_DYLIB ||
          type == LOAD_COMMAND_TYPES::LC_REEXPORT_DYLIB ||
          type == LOAD_COMMAND_TYPES::LC_LOAD_UPWARD_DYLIB ||
          type == LOAD_COMMAND_TYPES::LC_LAZY_LOAD_DYLIB;

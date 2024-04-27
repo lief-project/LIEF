@@ -3,3 +3,6 @@ build/
 *.whl
 lief.egg-info/
 dist/
+api/rust/cargo/target/*
+api/rust/examples/target/*
+Cargo.lock

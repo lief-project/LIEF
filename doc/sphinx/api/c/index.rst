@@ -1,7 +1,7 @@
 .. _c-api-ref:
 
-C
-==
+:fa:`regular fa-file-code` C
+============================
 
 .. warning::
 

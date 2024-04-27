@@ -1,0 +1,15 @@
+[package]
+name        = "lief-ffi"
+description = "LIEF ffi"
+edition     = "2021"
+version.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+cxx     = { version = "1.0.117", features = [ "c++20" ] }
+autocxx = "0.26"
+
+[build-dependencies]
+lief-build = { path = "../lief-build" }
+miette     = { version="5.10", features = [ "fancy" ] }

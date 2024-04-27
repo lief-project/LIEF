@@ -1,0 +1,17 @@
+[workspace.package]
+authors     = ["Romain Thomas <me@romainthomas.fr>"]
+license     = "Apache-2.0"
+description = "Official Rust bindings for LIEF."
+readme      = "README.md"
+version     = "0.15.0"
+
+[workspace]
+members = [
+    "lief-ffi",
+    "lief",
+    "lief-ffigen",
+]
+default-members = [
+    "lief",
+]
+resolver = "2"

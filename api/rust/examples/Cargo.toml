@@ -1,0 +1,11 @@
+[package]
+name    = "lief-examples"
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+lief = { path = "../cargo/lief" }
+
+[[bin]]
+name = "reader"
+path = "reader.rs"

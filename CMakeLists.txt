@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.24)
 enable_language(C)
 enable_language(CXX)
 
@@ -98,6 +98,25 @@ message(STATUS "CMAKE_LINK_LIBRARY_FILE_FLAG:      ${CMAKE_LINK_LIBRARY_FILE_FLA
 message(STATUS "CMAKE_LINK_INTERFACE_LIBRARIES:    ${CMAKE_LINK_INTERFACE_LIBRARIES}")
 message(STATUS "CMAKE_CXX_IMPLICIT_LINK_LIBRARIES: ${CMAKE_CXX_IMPLICIT_LINK_LIBRARIES}")
 message(STATUS "CMAKE_SYSTEM_PROCESSOR:            ${CMAKE_SYSTEM_PROCESSOR}")
+message(STATUS "CMAKE_MSVC_RUNTIME_LIBRARY:        ${CMAKE_MSVC_RUNTIME_LIBRARY}")
+
+if(LIEF_INSTALL)
+  if(UNIX)
+    include(GNUInstallDirs)
+    set(CMAKE_INSTALL_LIBDIR "lib")
+  else()
+    if(WIN32)
+        set(CMAKE_INSTALL_LIBDIR      "lib")
+        set(CMAKE_INSTALL_DATADIR     "share")
+        set(CMAKE_INSTALL_INCLUDEDIR  "include")
+        set(CMAKE_INSTALL_BINDIR      "bin")
+        set(CMAKE_INSTALL_DATAROOTDIR "share")
+        message(STATUS "Setting installation destination on Windows to: ${CMAKE_INSTALL_PREFIX}")
+      else()
+        message(FATAL_ERROR "System not UNIX nor WIN32 - not implemented yet")
+      endif()
+  endif()
+endif()
 
 # LIEF Source definition
 # ======================
@@ -414,6 +433,7 @@ if(LIEF_DOC)
   add_subdirectory(doc)
 endif()
 
+
 # Post-build operations
 # ======================
 if(BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Release")
@@ -463,25 +483,6 @@ if(LIEF_INSTALL)
           "/usr/local"
           CACHE PATH "" FORCE)
     endif()
-  endif()
-
-  # Installation
-  # ======================
-
-  if(UNIX)
-    include(GNUInstallDirs)
-    set(CMAKE_INSTALL_LIBDIR "lib")
-  else()
-    if(WIN32)
-        set(CMAKE_INSTALL_LIBDIR      "lib")
-        set(CMAKE_INSTALL_DATADIR     "share")
-        set(CMAKE_INSTALL_INCLUDEDIR  "include")
-        set(CMAKE_INSTALL_BINDIR      "bin")
-        set(CMAKE_INSTALL_DATAROOTDIR "share")
-        message(STATUS "Setting installation destination on Windows to: ${CMAKE_INSTALL_PREFIX}")
-      else()
-        message(FATAL_ERROR "System not UNIX nor WIN32 - not implemented yet")
-      endif()
   endif()
 
   install(

@@ -32,7 +32,7 @@ enum class MACHO_TYPES: uint32_t {
   FAT_CIGAM   = 0xBEBAFECAu  ///< little-endian fat magic
 };
 
-enum class FILE_TYPES: size_t  {
+enum class FILE_TYPES {
   MH_OBJECT      = 0x1u,
   MH_EXECUTE     = 0x2u,
   MH_FVMLIB      = 0x3u,
@@ -47,7 +47,7 @@ enum class FILE_TYPES: size_t  {
 };
 
 
-enum class HEADER_FLAGS: size_t  {
+enum class HEADER_FLAGS {
   MH_NOUNDEFS                = 0x00000001u,
   MH_INCRLINK                = 0x00000002u,
   MH_DYLDLINK                = 0x00000004u,
@@ -77,7 +77,7 @@ enum class HEADER_FLAGS: size_t  {
 };
 
 
-enum class LOAD_COMMAND_TYPES: size_t  {
+enum class LOAD_COMMAND_TYPES: uint64_t  {
   // Constants for the "cmd" field in llvm::MachO::load_command
   LC_SEGMENT                  = 0x00000001u,
   LC_SYMTAB                   = 0x00000002u,
@@ -142,7 +142,7 @@ enum {
   };
 
 
-enum class MACHO_SEGMENTS_FLAGS: size_t  {
+enum class MACHO_SEGMENTS_FLAGS: uint64_t  {
   // Constant bits for the "flags" field in llvm::MachO::segment_command
   SG_HIGHVM              = 0x1u, ///< The file contents for this segment are for the high part of the virtual memory space; the low part is zero filled (for stacks in core files).
   SG_FVMLIB              = 0x2u, ///< this segment is the VM that is allocated by a fixed VM library, for overlap checking in the link editor.
@@ -150,7 +150,7 @@ enum class MACHO_SEGMENTS_FLAGS: size_t  {
   SG_PROTECTED_VERSION_1 = 0x8u,
 };
 
-enum class SECTION_FLAGS_HELPER: size_t   {
+enum class SECTION_FLAGS_HELPER: uint64_t   {
   // Constant masks for the "flags" field in llvm::MachO::section and
   // llvm::MachO::section_64
   SECTION_TYPE_MASK      = 0x000000ffu, // SECTION_TYPE
@@ -161,7 +161,7 @@ enum class SECTION_FLAGS_HELPER: size_t   {
 
 //! @brief These are the section type and attributes fields.  A MachO section can
 //! have only one Type, but can have any of the attributes specified.
-enum class MACHO_SECTION_TYPES: size_t  {
+enum class MACHO_SECTION_TYPES: uint64_t  {
   // Constant masks for the "flags[7:0]" field in llvm::MachO::section and
   // llvm::MachO::section_64 (mask "flags" with SECTION_TYPE)
   S_REGULAR                             = 0x00u, ///< Regular section.
@@ -190,7 +190,7 @@ enum class MACHO_SECTION_TYPES: size_t  {
   LAST_KNOWN_SECTION_TYPE = 0x15u, //S_THREAD_LOCAL_INIT_FUNCTION_POINTERS
 };
 
-enum class MACHO_SECTION_FLAGS: size_t  {
+enum class MACHO_SECTION_FLAGS: uint64_t  {
 
   // Constant masks for the "flags[31:24]" field in llvm::MachO::section and
   // llvm::MachO::section_64 (mask "flags" with SECTION_ATTRIBUTES_USR)
@@ -215,7 +215,7 @@ enum class MACHO_SECTION_FLAGS: size_t  {
 };
 
 
-enum class DataRegionType: size_t  {
+enum class DataRegionType: uint64_t  {
   // Constants for the "kind" field in a data_in_code_entry structure
   DICE_KIND_DATA             = 1u,
   DICE_KIND_JUMP_TABLE8      = 2u,
@@ -224,7 +224,7 @@ enum class DataRegionType: size_t  {
   DICE_KIND_ABS_JUMP_TABLE32 = 5u
 };
 
-enum class REBASE_TYPES: size_t  {
+enum class REBASE_TYPES: uint64_t  {
   REBASE_TYPE_POINTER         = 1u,
   REBASE_TYPE_TEXT_ABSOLUTE32 = 2u,
   REBASE_TYPE_TEXT_PCREL32    = 3u,
@@ -254,7 +254,7 @@ enum class REBASE_OPCODES: uint8_t {
 //! @brief Within the dyld_info_command there are
 //! differents area of binding. These enums
 //! tag these area
-enum class BINDING_CLASS: size_t  {
+enum class BINDING_CLASS: uint64_t  {
   BIND_CLASS_WEAK     = 1u,
   BIND_CLASS_LAZY     = 2u,
   BIND_CLASS_STANDARD = 3u,
@@ -262,7 +262,7 @@ enum class BINDING_CLASS: size_t  {
 };
 
 
-enum class BIND_TYPES: size_t  {
+enum class BIND_TYPES: uint64_t  {
   BIND_TYPE_POINTER         = 1u,
   BIND_TYPE_TEXT_ABSOLUTE32 = 2u,
   BIND_TYPE_TEXT_PCREL32    = 3u
@@ -308,20 +308,20 @@ enum class BIND_SUBOPCODE_THREADED: uint8_t {
   BIND_SUBOPCODE_THREADED_APPLY                            = 0x01u,
 };
 
-enum class EXPORT_SYMBOL_FLAGS: size_t  {
+enum class EXPORT_SYMBOL_FLAGS: uint64_t  {
   EXPORT_SYMBOL_FLAGS_KIND_MASK           = 0x03u, ///< Mask to access to EXPORT_SYMBOL_KINDS
   EXPORT_SYMBOL_FLAGS_WEAK_DEFINITION     = 0x04u,
   EXPORT_SYMBOL_FLAGS_REEXPORT            = 0x08u,
   EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER   = 0x10u
 };
 
-enum class EXPORT_SYMBOL_KINDS: size_t  {
+enum class EXPORT_SYMBOL_KINDS: uint64_t  {
   EXPORT_SYMBOL_FLAGS_KIND_REGULAR        = 0x00u,
   EXPORT_SYMBOL_FLAGS_KIND_THREAD_LOCAL   = 0x01u,
   EXPORT_SYMBOL_FLAGS_KIND_ABSOLUTE       = 0x02u
 };
 
-enum class MACHO_SYMBOL_TYPES: size_t  {
+enum class MACHO_SYMBOL_TYPES: uint64_t  {
   N_STAB = 0xe0, ///< The symbol is symbolic debugging table
   N_PEXT = 0x10, ///< Limited global scope symbol.
   N_TYPE = 0x0e, ///< Define the type of the symbol. @see N_LIST_TYPES
@@ -330,7 +330,7 @@ enum class MACHO_SYMBOL_TYPES: size_t  {
 
 //! @brief Constants for the "n_type & SYMBOL_TYPES::N_TYPE" in nlist
 //! @see nlist
-enum class N_LIST_TYPES: size_t  {
+enum class N_LIST_TYPES: uint64_t  {
   N_UNDF = 0x0u, ///< The symbol is undefined. It is referenced in a different module.
   N_ABS  = 0x2u, ///< The symbol is absolute. The linker doesn't update his value.
   N_SECT = 0xeu, ///< The symbol is defined in the section number given in nlist_base.n_sect .
@@ -338,14 +338,14 @@ enum class N_LIST_TYPES: size_t  {
   N_INDR = 0xau  ///< The symbol is defined to be the same as another symbol. The n_value field is an index into the string table specifying the name of the other symbol. When that symbol is linked, both this and the other symbol point to the same defined type and value.
 };
 
-enum class SectionOrdinal: size_t  {
+enum class SectionOrdinal: uint64_t  {
   // Constants for the "n_sect" field in llvm::MachO::nlist and
   // llvm::MachO::nlist_64
   NO_SECT  = 0u,
   MAX_SECT = 0xffu
 };
 
-enum class SYMBOL_DESCRIPTIONS: size_t  {
+enum class SYMBOL_DESCRIPTIONS: uint64_t  {
 
   // The low 3 bits are the for the REFERENCE_TYPE.
   REFERENCE_TYPE                            = 0x7,
@@ -373,7 +373,7 @@ enum class SYMBOL_DESCRIPTIONS: size_t  {
   EXECUTABLE_ORDINAL     = 0xff
 };
 
-enum class StabType: size_t  {
+enum class StabType: uint64_t  {
   // Constant values for the "n_type" field in llvm::MachO::nlist and
   // llvm::MachO::nlist_64 when "(n_type & N_STAB) != 0"
   N_GSYM    = 0x20u,
@@ -420,7 +420,7 @@ enum {
   R_SCATTERED = 0x80000000
 };
 
-enum class RELOCATION_ORIGINS: size_t  {
+enum class RELOCATION_ORIGINS  {
   ORIGIN_UNKNOWN        = 0,
   ORIGIN_DYLDINFO       = 1,
   ORIGIN_RELOC_TABLE    = 2,
@@ -428,14 +428,14 @@ enum class RELOCATION_ORIGINS: size_t  {
 };
 
 
-enum class SYMBOL_ORIGINS: size_t  {
+enum class SYMBOL_ORIGINS  {
   SYM_ORIGIN_UNKNOWN     = 0,
   SYM_ORIGIN_DYLD_EXPORT = 1,
   SYM_ORIGIN_DYLD_BIND   = 2, /// The symbol comes from the binding opcodes
   SYM_ORIGIN_LC_SYMTAB   = 3,
 };
 
-enum class X86_RELOCATION: size_t  {
+enum class X86_RELOCATION  {
   GENERIC_RELOC_VANILLA        = 0, /**< A generic relocation entry for both addresses contained in data and addresses contained in CPU instructions. */
   GENERIC_RELOC_PAIR           = 1, /**< The second relocation entry of a pair. */
   GENERIC_RELOC_SECTDIFF       = 2, /**< A relocation entry for an item that contains the difference of two section addresses. This is generally used for position-independent code generation. */
@@ -445,7 +445,7 @@ enum class X86_RELOCATION: size_t  {
 };
 
 
-enum class X86_64_RELOCATION: size_t  {
+enum class X86_64_RELOCATION  {
   X86_64_RELOC_UNSIGNED        = 0, /**< A CALL/JMP instruction with 32-bit displacement. */
   X86_64_RELOC_SIGNED          = 1, /**< A MOVQ load of a GOT entry. */
   X86_64_RELOC_BRANCH          = 2, /**< Other GOT references. */
@@ -459,7 +459,7 @@ enum class X86_64_RELOCATION: size_t  {
 };
 
 
-enum class PPC_RELOCATION: size_t  {
+enum class PPC_RELOCATION  {
   PPC_RELOC_VANILLA            = 0,
   PPC_RELOC_PAIR               = 1,
   PPC_RELOC_BR14               = 2,
@@ -479,7 +479,7 @@ enum class PPC_RELOCATION: size_t  {
 };
 
 
-enum class ARM_RELOCATION: size_t  {
+enum class ARM_RELOCATION  {
   ARM_RELOC_VANILLA            = 0,
   ARM_RELOC_PAIR               = 1,
   ARM_RELOC_SECTDIFF           = 2,
@@ -493,7 +493,7 @@ enum class ARM_RELOCATION: size_t  {
 };
 
 
-enum class ARM64_RELOCATION: size_t  {
+enum class ARM64_RELOCATION  {
   ARM64_RELOC_UNSIGNED            = 0,  /**< For pointers. */
   ARM64_RELOC_SUBTRACTOR          = 1,  /**< Must be followed by an ARM64_RELOCATION::ARM64_RELOC_UNSIGNED */
   ARM64_RELOC_BRANCH26            = 2,  /**< A B/BL instruction with 26-bit displacement. */
@@ -509,7 +509,7 @@ enum class ARM64_RELOCATION: size_t  {
 
 //! Values for segment_command.initprot.
 //! From <mach/vm_prot.h>
-enum class VM_PROTECTIONS: size_t  {
+enum class VM_PROTECTIONS  {
   VM_PROT_READ    = 0x1, ///< Reading data within the segment is allowed
   VM_PROT_WRITE   = 0x2, ///< Writing data within the segment is allowed
   VM_PROT_EXECUTE = 0x4, ///< Executing data within the segment is allowed
@@ -548,7 +548,7 @@ enum {
 };
 
 // Constants for the cpusubtype field.
-enum class CPU_SUBTYPES_X86: size_t  {
+enum class CPU_SUBTYPES_X86  {
   CPU_SUBTYPE_I386_ALL       = 3,
   CPU_SUBTYPE_386            = 3,
   CPU_SUBTYPE_486            = 4,
@@ -583,7 +583,7 @@ enum {
   CPU_SUBTYPE_INTEL_MODEL_ALL  = 0
 };
 
-enum class CPU_SUBTYPES_ARM: size_t  {
+enum class CPU_SUBTYPES_ARM  {
   CPU_SUBTYPE_ARM_ALL     = 0,
   CPU_SUBTYPE_ARM_V4T     = 5,
   CPU_SUBTYPE_ARM_V6      = 6,
@@ -599,15 +599,15 @@ enum class CPU_SUBTYPES_ARM: size_t  {
   CPU_SUBTYPE_ARM_V7EM    = 16
 };
 
-enum class CPU_SUBTYPES_ARM64: size_t  {
+enum class CPU_SUBTYPES_ARM64  {
   CPU_SUBTYPE_ARM64_ALL   = 0
 };
 
-enum class CPU_SUBTYPES_SPARC: size_t  {
+enum class CPU_SUBTYPES_SPARC  {
   CPU_SUBTYPE_SPARC_ALL   = 0
 };
 
-enum class CPU_SUBTYPES_POWERPC: size_t  {
+enum class CPU_SUBTYPES_POWERPC  {
   CPU_SUBTYPE_POWERPC_ALL   = 0,
   CPU_SUBTYPE_POWERPC_601   = 1,
   CPU_SUBTYPE_POWERPC_602   = 2,

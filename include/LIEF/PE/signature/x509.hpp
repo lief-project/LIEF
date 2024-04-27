@@ -68,7 +68,7 @@ class LIEF_API x509 : public Object {
   static bool time_is_future(const date_t& from);
 
   //! Public key scheme
-  enum class KEY_TYPES  {
+  enum class KEY_TYPES : uint32_t {
     NONE = 0,    ///< Unknown scheme
     RSA,         ///< RSA Scheme
     ECKEY,       ///< Elliptic-curve scheme
@@ -81,7 +81,7 @@ class LIEF_API x509 : public Object {
   //! Mirror of mbedtls's X509 Verify codes: MBEDTLS_X509_XX
   //!
   //! It must be sync with include/mbedtls/x509.h
-  enum class VERIFICATION_FLAGS {
+  enum class VERIFICATION_FLAGS : uint32_t {
     OK                     = 0,       /**< The verification succeed  */
     BADCERT_EXPIRED        = 1 << 0,  /**< The certificate validity has expired. */
     BADCERT_REVOKED        = 1 << 1,  /**< The certificate has been revoked (is on a CRL). */
@@ -106,7 +106,7 @@ class LIEF_API x509 : public Object {
   };
 
   //! Key usage as defined in [RFC #5280 - section-4.2.1.3](https://tools.ietf.org/html/rfc5280#section-4.2.1.3)
-  enum class KEY_USAGE {
+  enum class KEY_USAGE : uint32_t {
     DIGITAL_SIGNATURE = 0, /**< The key is used for digital signature */
     NON_REPUDIATION,       /**< The key is used for digital signature AND to protects against falsely denying some action */
     KEY_ENCIPHERMENT,      /**< The key is used for enciphering private or secret keys */

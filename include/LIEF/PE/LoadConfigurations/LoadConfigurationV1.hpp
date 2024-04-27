@@ -37,7 +37,7 @@ class LIEF_API LoadConfigurationV1 : public LoadConfigurationV0 {
   public:
   static constexpr VERSION WIN_VERSION = VERSION::WIN_8_1;
 
-  enum class IMAGE_GUARD  {
+  enum class IMAGE_GUARD : uint32_t {
     NONE                               = 0x00000000,
     CF_INSTRUMENTED                    = 0x00000100, /**< Module performs control flow integrity checks using system-supplied support */
     CFW_INSTRUMENTED                   = 0x00000200, /**< Module performs control flow and write integrity checks */

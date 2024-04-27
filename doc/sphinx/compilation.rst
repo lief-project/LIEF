@@ -1,3 +1,5 @@
+.. _compilation-ref:
+
 .. role:: strike
    :class: strike
 

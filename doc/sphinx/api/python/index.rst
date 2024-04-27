@@ -1,7 +1,7 @@
 .. _python-api-ref:
 
-Python
-======
+:fa:`brands fa-python` Python
+==============================
 
 .. toctree::
   :caption: Common

@@ -1,0 +1,18 @@
+[package]
+name        = "lief-ffigen"
+edition     = "2021"
+description = "Generate FFI bindings for LIEF"
+version.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+cc            = "1.0"
+autocxx-build = "0.26.0"
+cmake         = "0.1.50"
+toml          = "0.8.6"
+serde         = "1.0"
+thiserror     = "1.0"
+zip           = "0.6.6"
+miette        = { version="5.10", features = [ "fancy" ] }
+clap          = { version="4.5.1", features = [ "derive" ] }

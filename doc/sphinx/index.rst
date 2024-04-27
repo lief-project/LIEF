@@ -35,6 +35,7 @@ Welcome to LIEF's documentation!
   api/python/index
   api/cpp/index
   api/c/index
+  api/rust/index
 
 .. toctree::
   :caption: <i class="fa-brands fa-space-awesome">&nbsp;</i>Extra Information

@@ -1,7 +1,7 @@
 .. _cpp-api-ref:
 
-C++
-===
+:fa:`regular fa-file-code` C++
+==============================
 
 The original Doxygen documentation is also available `here <../../doxygen/>`_
 
