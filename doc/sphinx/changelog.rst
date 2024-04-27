@@ -7,6 +7,9 @@ Changelog
 :Repo:
   * ``master`` branch has been renamed ``main``
 
+:Rust:
+  * First (beta) release of the bindings (c.f. :ref:`lief_rust_bindings`)
+
 :ELF:
   * The ``static_symbols`` API functions has been renamed in ``symtab_symbols``.
 

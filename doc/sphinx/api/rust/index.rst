@@ -1,3 +1,5 @@
+.. _lief_rust_bindings:
+
 :fa:`brands fa-rust` Rust
 ======================================
 
