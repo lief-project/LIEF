@@ -473,6 +473,10 @@ std::string ASN1Reader::tag2str(int tag) {
   HANDLE(ASN1_CONSTRUCTED);
   HANDLE(ASN1_CONTEXT_SPECIFIC);
 
+  if (tag_str.size() < 3) {
+    return "MBEDTLS_ASN1_UNKNOWN";
+  }
+
   return tag_str.substr(3);
 #undef HANDLE
 }
