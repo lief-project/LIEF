@@ -61,7 +61,6 @@ void create<Segment>(nb::module_& m) {
     ENTRY(GNU_RELRO)
     ENTRY(ARM_ARCHEXT)
     ENTRY(ARM_EXIDX)
-    ENTRY(ARM_UNWIND)
     ENTRY(AARCH64_MEMTAG_MTE)
     ENTRY(MIPS_REGINFO)
     ENTRY(MIPS_RTPROC)

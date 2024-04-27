@@ -80,7 +80,6 @@ class LIEF_API Segment : public Object {
 
     ARM_ARCHEXT   = 0x70000000 | PT_ARM, /**< Platform architecture compatibility info */
     ARM_EXIDX     = 0x70000001 | PT_ARM,
-    ARM_UNWIND    = 0x70000001 | PT_ARM,
 
     AARCH64_MEMTAG_MTE = 0x70000002 | PT_AARCH64,
 
