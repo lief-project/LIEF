@@ -278,9 +278,9 @@ jobs:
         CIRCLE_CI_TOKEN: ${{ secrets.CIRCLE_CI_TOKEN }}
     steps:
       - name: Trigger documentation
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/main'
         run: |
           curl --request POST --url ${CIRCLE_CI_URL}       \
                --header "Circle-Token: ${CIRCLE_CI_TOKEN}" \
                --header 'content-type: application/json'   \
-               --data '{"parameters":{"lief-branch":"master"}}'
+               --data '{"parameters":{"lief-branch":"main"}}'

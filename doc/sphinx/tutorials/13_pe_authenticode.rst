@@ -186,8 +186,8 @@ Then, we can use ``openssl`` to process its content:
 
             object: undefined (1.3.6.1.4.1.311.2.1.11)
 
-The `authenticode_reader.py <https://github.com/lief-project/LIEF/blob/master/examples/python/authenticode/authenticode_reader.py>`_
-script located in the `examples/ <https://github.com/lief-project/LIEF/tree/master/examples/python/authenticode>`_ directory
+The `authenticode_reader.py <https://github.com/lief-project/LIEF/blob/main/examples/python/authenticode/authenticode_reader.py>`_
+script located in the `examples/ <https://github.com/lief-project/LIEF/tree/main/examples/python/authenticode>`_ directory
 can also be used to inspect the signature:
 
 .. code-block:: console

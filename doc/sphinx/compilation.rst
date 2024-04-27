@@ -215,14 +215,14 @@ Continuous Integration
 
 LIEF uses CI Github Action to test and release nightly builds. The configuration
 of this CI can also be a good source of information for the compilation process.
-In particular, `scripts/docker/run_linux_sdk <https://github.com/lief-project/LIEF/blob/master/scripts/docker/run_linux_sdk.sh>`_
+In particular, `scripts/docker/run_linux_sdk <https://github.com/lief-project/LIEF/blob/main/scripts/docker/run_linux_sdk.sh>`_
 contains the build process to generate the **Linux x86-64 SDK**.
 
 On Windows, the SDK is built with the following Python script:
-`scripts/windows/package_sdk.py <https://github.com/lief-project/LIEF/blob/master/scripts/windows/package_sdk.py>`_
+`scripts/windows/package_sdk.py <https://github.com/lief-project/LIEF/blob/main/scripts/windows/package_sdk.py>`_
 
-For **OSX & iOS**, the CI configs `.github/workflows/ios.yml <https://github.com/lief-project/LIEF/blob/master/.github/workflows/ios.yml>`_
-and `.github/workflows/osx.yml <https://github.com/lief-project/LIEF/blob/master/.github/workflows/osx.yml>`_
+For **OSX & iOS**, the CI configs `.github/workflows/ios.yml <https://github.com/lief-project/LIEF/blob/main/.github/workflows/ios.yml>`_
+and `.github/workflows/osx.yml <https://github.com/lief-project/LIEF/blob/main/.github/workflows/osx.yml>`_
 to compile (and cross-compile) LIEF for these platforms.
 
 CMake Options

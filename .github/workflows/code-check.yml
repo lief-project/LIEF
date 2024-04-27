@@ -4,7 +4,7 @@ on:
     inputs:
       branch:
         description: 'LIEF branch'
-        default: master
+        default: main
         required: false
         type: string
       what:
@@ -19,7 +19,7 @@ on:
         type: string
   push:
     branches:
-      - master
+      - main
 jobs:
   coverage:
     runs-on: ubuntu-latest

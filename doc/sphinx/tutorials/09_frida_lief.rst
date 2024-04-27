@@ -44,7 +44,7 @@ Frida & LIEF
 One less known injection technique but quite old is based on modifying the ELF format. It has been well explained by Mayhem in `Phrack <http://phrack.org/issues/61/8.html>`_ [1]_ and LIEF provides a user-friendly API [2]_ to do it.
 
 To summarize, executable formats include libraries that are linked with executable. We can have list of linked libraries with
-``ldd`` or ``readelf`` (Unix) or with `elf_reader.py <https://github.com/lief-project/LIEF/blob/master/examples/python/elf_reader.py>`_ (Linux, Windows, OSX):
+``ldd`` or ``readelf`` (Unix) or with `elf_reader.py <https://github.com/lief-project/LIEF/blob/main/examples/python/elf_reader.py>`_ (Linux, Windows, OSX):
 
 .. code-block:: console
 

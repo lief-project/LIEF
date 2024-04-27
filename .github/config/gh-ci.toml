@@ -5,5 +5,5 @@ endpoint = "https://s3.fr-par.scw.cloud"
 
 [lief.deploy]
 branches = ["master", "deploy", "devel"]
-main-branches = ["master", "main"]
+main-branches = ["main", "master"]
 default-dir = "latest"

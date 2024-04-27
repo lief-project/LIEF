@@ -4,6 +4,9 @@ Changelog
 0.15.0 - Not Released Yet
 -------------------------
 
+:Repo:
+  * ``master`` branch has been renamed ``main``
+
 :ELF:
   * The ``static_symbols`` API functions has been renamed in ``symtab_symbols``.
 

@@ -33,7 +33,7 @@ else()
   # URL of the LIEF repo (Can be your fork)
   set(LIEF_GIT_URL "https://github.com/lief-project/LIEF.git")
 
-  # LIEF's version to be used (can be 'master')
+  # LIEF's version to be used (can be 'main')
   set(LIEF_VERSION 0.13.0)
 
   include(FetchContent)

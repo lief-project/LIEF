@@ -1,5 +1,5 @@
 <p align="center" >
-<img width="90%" src="https://github.com/lief-project/LIEF/blob/master/.github/images/architecture.png"/><br />
+<img width="90%" src="https://github.com/lief-project/LIEF/blob/main/.github/images/architecture.png"/><br />
 </p>
 
 <p align="center">
@@ -8,27 +8,27 @@
   </a>
   &nbsp;
   <a href="https://github.com/lief-project/LIEF/actions/workflows/linux-x86-64.yml">
-    <img alt="Linux x86-64 CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/linux-x86-64.yml?branch=master&label=Linux%20x86-64&logo=github">
+    <img alt="Linux x86-64 CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/linux-x86-64.yml?branch=main&label=Linux%20x86-64&logo=github">
   </a>
   &nbsp;
   <a href="https://github.com/lief-project/LIEF/actions/workflows/linux-aarch64.yml">
-    <img alt="Linux AArch64 CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/linux-aarch64.yml?branch=master&label=Linux%20AArch64&logo=github">
+    <img alt="Linux AArch64 CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/linux-aarch64.yml?branch=main&label=Linux%20AArch64&logo=github">
   </a>
   &nbsp;
   <a href="https://github.com/lief-project/LIEF/actions/workflows/android.yml">
-    <img alt="Android CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/android.yml?branch=master&label=Android&logo=github">
+    <img alt="Android CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/android.yml?branch=main&label=Android&logo=github">
   </a>
   &nbsp;
   <a href="https://github.com/lief-project/LIEF/actions/workflows/osx.yml">
-    <img alt="macOS CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/osx.yml?branch=master&label=macOS&logo=github">
+    <img alt="macOS CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/osx.yml?branch=main&label=macOS&logo=github">
   </a>
   &nbsp;
   <a href="https://github.com/lief-project/LIEF/actions/workflows/ios.yml">
-    <img alt="iOS CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/ios.yml?branch=master&label=iOS&logo=github">
+    <img alt="iOS CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/ios.yml?branch=main&label=iOS&logo=github">
   </a>
   &nbsp;
   <a href="https://github.com/lief-project/LIEF/actions/workflows/windows-all.yml">
-    <img alt="Windows CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/windows-all.yml?branch=master&label=Windows&logo=github">
+    <img alt="Windows CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/windows-all.yml?branch=main&label=Windows&logo=github">
   </a>
   &nbsp;
   <a href="https://github.com/lief-project/LIEF/releases">

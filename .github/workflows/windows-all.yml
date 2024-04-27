@@ -2,6 +2,7 @@ name: LIEF Windows
 on:
   push:
     branches:
+      - 'main'
       - 'master'
       - 'release-**'
       - 'release/**'
