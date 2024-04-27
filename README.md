@@ -58,7 +58,7 @@ Main features:
   * **Parsing**: LIEF can parse ELF, PE, MachO, OAT, DEX, VDEX, ART and provides an user-friendly API to access to format internals.
   * **Modify**: LIEF enables to modify some parts of these formats
   * **Abstract**: Three formats have common features like sections, symbols, entry point... LIEF factors them.
-  * **API**: LIEF can be used in C, C++ and Python
+  * **API**: LIEF can be used in C++, Python, Rust and C
 
 # Content
 
@@ -144,6 +144,22 @@ if rheader := pe.rich_header:
 binary = lief.parse("/usr/bin/ls")
 for fixup in binary.dyld_chained_fixups:
     print(fixup)
+```
+
+### Rust
+
+```rust
+use lief::Binary;
+use lief::pe::debug::Entries::CodeViewPDB;
+
+
+if let Some(Binary::PE(pe)) = Binary::parse(path.as_str()) {
+    for entry in pe.debug() {
+        if let CodeViewPDB(pdb_view) = entry {
+            println!("{}", pdb_view.filename());
+        }
+    }
+}
 ```
 
 
