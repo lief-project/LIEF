@@ -15,9 +15,9 @@
  */
 #include "LIEF/Visitor.hpp"
 #include "LIEF/PE/signature/ContentInfo.hpp"
+#include "LIEF/PE/signature/GenericContent.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/signature/SpcIndirectData.hpp"
-#include "LIEF/utils.hpp"
 
 #include "Object.tcc"
 #include "internal_utils.hpp"
@@ -27,12 +27,16 @@
 namespace LIEF {
 namespace PE {
 
-ContentInfo::ContentInfo() = default;
+
 ContentInfo::~ContentInfo() = default;
 
 ContentInfo::Content::~Content() = default;
 
 ContentInfo::ContentInfo(ContentInfo&& other) = default;
+
+ContentInfo::ContentInfo() :
+  value_(std::make_unique<GenericContent>())
+{}
 
 ContentInfo::ContentInfo(const ContentInfo& other) :
   Object::Object(other),
