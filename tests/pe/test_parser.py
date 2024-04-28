@@ -542,3 +542,7 @@ def test_overlay():
 
 def test_path_like():
     assert lief.PE.parse(Path(get_sample('PE/PE32_x86-64_binary_avast-free-antivirus-setup-online.exe'))) is not None
+
+def test_issue_1049():
+    pe = lief.PE.parse(get_sample("PE/issue_1049.exe"))
+    assert pe is not None
