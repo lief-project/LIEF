@@ -109,9 +109,9 @@ def _win_gui_exec(executable: Path, timeout: int = 60) -> Optional[Tuple[int, st
         "creationflags": 0x8000000  # win32con.CREATE_NO_WINDOW
     }
 
-    with Popen(["START", executable.as_posix()], **popen_args) as proc:
+    with Popen(["START", executable.as_posix()], **popen_args) as proc: # type: ignore[call-overload]
         time.sleep(3)
-        with Popen(["taskkill", "/im", executable.name], **popen_args) as kproc:
+        with Popen(["taskkill", "/im", executable.name], **popen_args) as kproc: # type: ignore[call-overload]
             try:
                 pstdout, _ = proc.communicate(timeout)
                 print("pstdout:", pstdout)
@@ -136,7 +136,7 @@ def win_exec(executable: Path, timeout: int = 60, gui: bool = True) -> Optional[
         "creationflags": 0x8000000  # win32con.CREATE_NO_WINDOW
     }
 
-    with Popen([executable.as_posix()], **popen_args) as proc:
+    with Popen([executable.as_posix()], **popen_args) as proc: # type: ignore[call-overload]
         try:
             stdout, _ = proc.communicate(timeout)
             print("stdout:", stdout)

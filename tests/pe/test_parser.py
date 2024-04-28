@@ -284,7 +284,7 @@ def test_tls():
     tls = winhello64.tls
 
     assert tls.addressof_callbacks == 0x409040
-    assert tls.callbacks, [0x4019c0 == 0x401990]
+    assert tls.callbacks == [0x4019c0, 0x401990]
     assert tls.addressof_index == 0x4075fc
     assert tls.sizeof_zero_fill == 0
     assert tls.characteristics == 0
@@ -393,6 +393,7 @@ def test_issue_685():
     assert exports.entries[0].name == "oplk"
 
     entry = exports.entries[0]
+    assert entry is not None
 
 def test_rich_header():
     rheader = atapi.rich_header
@@ -520,7 +521,6 @@ def test_checksum():
     assert winhello64.optional_header.computed_checksum == winhello64.optional_header.checksum
 
 def test_config():
-
     config = lief.PE.ParserConfig()
     config.parse_signature = False
     config.parse_imports = False
@@ -539,7 +539,6 @@ def test_overlay():
     pe = lief.PE.parse(get_sample("PE/PE32_x86_binary_KMSpico_setup_MALWARE.exe"))
     assert len(pe.overlay) == 3073728
     assert hashlib.sha256(pe.overlay).hexdigest() == "01c0472ead112b44dca6996c9fae47e0d6870e61792ef606ea47067932115d01"
-
 
 def test_path_like():
     assert lief.PE.parse(Path(get_sample('PE/PE32_x86-64_binary_avast-free-antivirus-setup-online.exe'))) is not None
