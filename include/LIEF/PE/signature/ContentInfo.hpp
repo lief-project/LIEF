@@ -99,16 +99,16 @@ class LIEF_API ContentInfo : public Object {
       return os;
     }
 
-    ~Content() override;
+    ~Content() override = default;
     private:
     oid_t type_;
   };
   ContentInfo();
   ContentInfo(const ContentInfo& other);
-  ContentInfo(ContentInfo&& other);
+  ContentInfo(ContentInfo&& other) noexcept = default;
   ContentInfo& operator=(ContentInfo other);
 
-  void swap(ContentInfo& other);
+  void swap(ContentInfo& other) noexcept;
 
   //! Return the OID that describes the content wrapped by this object.
   //! It should match SPC_INDIRECT_DATA_OBJID (1.3.6.1.4.1.311.2.1.4)
@@ -134,7 +134,7 @@ class LIEF_API ContentInfo : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  ~ContentInfo() override;
+  ~ContentInfo() override = default;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ContentInfo& content_info);
 

@@ -28,12 +28,6 @@ namespace LIEF {
 namespace PE {
 
 
-ContentInfo::~ContentInfo() = default;
-
-ContentInfo::Content::~Content() = default;
-
-ContentInfo::ContentInfo(ContentInfo&& other) = default;
-
 ContentInfo::ContentInfo() :
   value_(std::make_unique<GenericContent>())
 {}
@@ -48,7 +42,7 @@ ContentInfo& ContentInfo::operator=(ContentInfo other) {
   return *this;
 }
 
-void ContentInfo::swap(ContentInfo& other) {
+void ContentInfo::swap(ContentInfo& other) noexcept {
   std::swap(value_, other.value_);
 }
 
