@@ -41,7 +41,7 @@ void create<DataDirectory>(nb::module_& m) {
     .value(PY_ENUM(DataDirectory::TYPES::EXCEPTION_TABLE))
     .value(PY_ENUM(DataDirectory::TYPES::CERTIFICATE_TABLE))
     .value(PY_ENUM(DataDirectory::TYPES::BASE_RELOCATION_TABLE))
-    .value(PY_ENUM(DataDirectory::TYPES::DEBUG))
+    .value(PY_ENUM(DataDirectory::TYPES::DEBUG_DIR))
     .value(PY_ENUM(DataDirectory::TYPES::ARCHITECTURE))
     .value(PY_ENUM(DataDirectory::TYPES::GLOBAL_PTR))
     .value(PY_ENUM(DataDirectory::TYPES::TLS_TABLE))

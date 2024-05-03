@@ -51,7 +51,7 @@ class LIEF_API DataDirectory : public Object {
     EXCEPTION_TABLE,
     CERTIFICATE_TABLE,
     BASE_RELOCATION_TABLE,
-    DEBUG,
+    DEBUG_DIR,
     ARCHITECTURE,
     GLOBAL_PTR,
     TLS_TABLE,

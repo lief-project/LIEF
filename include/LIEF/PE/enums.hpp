@@ -672,7 +672,7 @@ enum class PE_SECTION_TYPES : uint8_t {
   RESOURCE   = 5,
   RELOCATION = 6,
   EXPORT     = 7,
-  DEBUG      = 8,
+  DEBUG_TYPE = 8,
   LOAD_CONFIG = 9,
   UNKNOWN     = 10
 };

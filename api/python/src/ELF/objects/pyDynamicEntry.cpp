@@ -56,7 +56,7 @@ void create<DynamicEntry>(nb::module_& m) {
     ENTRY(RELSZ)
     ENTRY(RELENT)
     ENTRY(PLTREL)
-    ENTRY(DEBUG)
+    ENTRY(DEBUG_TAG)
     ENTRY(TEXTREL)
     ENTRY(JMPREL)
     ENTRY(BIND_NOW)

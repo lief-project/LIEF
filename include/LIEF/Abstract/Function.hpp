@@ -45,7 +45,7 @@ class LIEF_API Function : public Symbol {
     DESTRUCTOR,
 
     //! The function is associated with Debug information
-    DEBUG,
+    DEBUG_INFO,
 
     //! The function is exported by the binary and the address() method
     //! returns its virtual address in the binary

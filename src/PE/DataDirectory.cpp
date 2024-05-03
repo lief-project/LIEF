@@ -65,7 +65,7 @@ const char* to_string(DataDirectory::TYPES e) {
     { DataDirectory::TYPES::EXCEPTION_TABLE,         "EXCEPTION_TABLE" },
     { DataDirectory::TYPES::CERTIFICATE_TABLE,       "CERTIFICATE_TABLE" },
     { DataDirectory::TYPES::BASE_RELOCATION_TABLE,   "BASE_RELOCATION_TABLE" },
-    { DataDirectory::TYPES::DEBUG,                   "DEBUG" },
+    { DataDirectory::TYPES::DEBUG_DIR,               "DEBUG_DIR" },
     { DataDirectory::TYPES::ARCHITECTURE,            "ARCHITECTURE" },
     { DataDirectory::TYPES::GLOBAL_PTR,              "GLOBAL_PTR" },
     { DataDirectory::TYPES::TLS_TABLE,               "TLS_TABLE" },

@@ -41,7 +41,7 @@ void create<Function>(nb::module_& m) {
     .value(PY_ENUM(Function::FLAGS::EXPORTED))
     .value(PY_ENUM(Function::FLAGS::CONSTRUCTOR))
     .value(PY_ENUM(Function::FLAGS::DESTRUCTOR))
-    .value(PY_ENUM(Function::FLAGS::DEBUG));
+    .value(PY_ENUM(Function::FLAGS::DEBUG_INFO));
 
     pyfunction
     .def(nb::init())

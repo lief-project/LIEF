@@ -66,7 +66,7 @@ class LIEF_API DynamicEntry : public Object {
     RELSZ                      = 18,/**< Size of Rel relocation table. */
     RELENT                     = 19,/**< Size of a Rel relocation entry. */
     PLTREL                     = 20,/**< Type of relocation entry used for linking. */
-    DEBUG                      = 21,/**< Reserved for debugger. */
+    DEBUG_TAG                  = 21,/**< Reserved for debugger. */
     TEXTREL                    = 22,/**< Relocations exist for non-writable segments. */
     JMPREL                     = 23,/**< Address of relocations associated with PLT. */
     BIND_NOW                   = 24,/**< Process all relocations before execution. */
