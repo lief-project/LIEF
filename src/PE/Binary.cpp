@@ -96,7 +96,7 @@ Binary::Binary(PE_TYPE type) :
   data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::EXCEPTION_TABLE));
   data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::CERTIFICATE_TABLE));
   data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::BASE_RELOCATION_TABLE));
-  data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::DEBUG));
+  data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::DEBUG_DIR));
   data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::ARCHITECTURE));
   data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::GLOBAL_PTR));
   data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES::TLS_TABLE));

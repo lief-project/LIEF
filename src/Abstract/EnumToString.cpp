@@ -84,7 +84,7 @@ const char* to_string(ENDIANNESS e) {
 
 const char* to_string(Function::FLAGS e) {
   CONST_MAP(Function::FLAGS, const char*, 5) enumStrings {
-    { LIEF::Function::FLAGS::DEBUG,        "DEBUG"        },
+    { LIEF::Function::FLAGS::DEBUG_INFO,   "DEBUG_INFO"   },
     { LIEF::Function::FLAGS::CONSTRUCTOR,  "CONSTRUCTOR"  },
     { LIEF::Function::FLAGS::DESTRUCTOR,   "DESTRUCTOR"   },
     { LIEF::Function::FLAGS::IMPORTED,     "IMPORTED"     },

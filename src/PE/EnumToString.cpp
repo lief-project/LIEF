@@ -42,7 +42,7 @@ const char* to_string(PE_SECTION_TYPES e) {
     { PE_SECTION_TYPES::RESOURCE,   "RESOURCE"   },
     { PE_SECTION_TYPES::RELOCATION, "RELOCATION" },
     { PE_SECTION_TYPES::EXPORT,     "EXPORT"     },
-    { PE_SECTION_TYPES::DEBUG,      "DEBUG"      },
+    { PE_SECTION_TYPES::DEBUG_TYPE, "DEBUG"      },
     { PE_SECTION_TYPES::UNKNOWN,    "UNKNOWN"    },
   };
   const auto it = enumStrings.find(e);

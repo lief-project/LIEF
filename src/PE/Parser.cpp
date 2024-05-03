@@ -607,7 +607,7 @@ ok_error_t Parser::parse_symbols() {
 ok_error_t Parser::parse_debug() {
   LIEF_DEBUG("Parsing debug directory");
 
-  DataDirectory* dir = binary_->data_directory(DataDirectory::TYPES::DEBUG);
+  DataDirectory* dir = binary_->data_directory(DataDirectory::TYPES::DEBUG_DIR);
   if (dir == nullptr) {
     return make_error_code(lief_errors::not_found);
   }

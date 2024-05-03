@@ -201,10 +201,10 @@ ok_error_t Parser::parse_data_directories() {
     }
   }
 
-  if (DataDirectory* dir = binary_->data_directory(DataDirectory::TYPES::DEBUG)) {
+  if (DataDirectory* dir = binary_->data_directory(DataDirectory::TYPES::DEBUG_DIR)) {
     if (dir->RVA() > 0) {
       if (Section* sec = dir->section()) {
-        sec->add_type(PE_SECTION_TYPES::DEBUG);
+        sec->add_type(PE_SECTION_TYPES::DEBUG_TYPE);
       }
       parse_debug();
     }
