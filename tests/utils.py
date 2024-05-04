@@ -19,14 +19,14 @@ def import_from_file(module_name: str, file_path: Path):
     return module
 
 def lief_samples_dir() -> str:
-    dir = os.getenv("LIEF_SAMPLES_DIR", None)
-    if dir is None:
+    samples_dir = os.getenv("LIEF_SAMPLES_DIR", None)
+    if samples_dir is None:
         print("LIEF_SAMPLES_DIR is not set", file=sys.stderr)
         sys.exit(1)
-    if not os.path.isdir(dir):
-        print("{} is not a valid directory".format(dir), file=sys.stderr)
+    if not os.path.isdir(samples_dir):
+        print(f"{samples_dir} is not a valid directory", file=sys.stderr)
         sys.exit(1)
-    return dir
+    return samples_dir
 
 def get_sample(filename):
     fullpath = os.path.join(lief_samples_dir(), filename)
@@ -84,7 +84,6 @@ def chmod_exe(path):
         path.chmod(path.stat().st_mode | stat.S_IEXEC)
     elif isinstance(path, str):
         os.chmod(path, os.stat(path).st_mode | stat.S_IEXEC)
-    return
 
 def sign(path):
     """
@@ -92,7 +91,7 @@ def sign(path):
     """
     CMD = ["/usr/bin/codesign", "-vv", "--verbose", "--force", "-s", "-"]
     CMD.append(path)
-    print("Signing {}".format(path))
+    print(f"Signing {path}")
     with subprocess.Popen(CMD, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
         stdout = proc.stdout.read().decode("utf8")
         print(stdout)
@@ -104,15 +103,15 @@ def is_server_ci() -> bool:
     return os.getenv('CI_SERVER_HOST', '') == 'gitlab.server'
 
 def _win_gui_exec_server(executable: Path, timeout: int = 60) -> Optional[Tuple[int, str]]:
-    si = subprocess.STARTUPINFO()
-    si.dwFlags = subprocess.STARTF_USESTDHANDLES | subprocess.STARTF_USESHOWWINDOW
+    si = subprocess.STARTUPINFO() # type: ignore[attr-defined]
+    si.dwFlags = subprocess.STARTF_USESTDHANDLES | subprocess.STARTF_USESHOWWINDOW # type: ignore[attr-defined]
     si.wShowWindow = 0 # SW_HIDE
     popen_args = {
         "universal_newlines": True,
         "shell": True,
         "stdout": subprocess.PIPE,
         "stderr": subprocess.STDOUT,
-        "creationflags": subprocess.CREATE_NO_WINDOW,
+        "creationflags": subprocess.CREATE_NO_WINDOW, # type: ignore[attr-defined]
         "startupinfo": si,
     }
     with Popen([executable.as_posix()], **popen_args) as proc:
@@ -134,6 +133,13 @@ def _win_gui_exec(executable: Path, timeout: int = 60) -> Optional[Tuple[int, st
     if is_server_ci():
         return _win_gui_exec_server(executable, timeout)
 
+    popen_args = {
+        "universal_newlines": True,
+        "shell": True,
+        "stdout": subprocess.PIPE,
+        "stderr": subprocess.STDOUT,
+        "creationflags": subprocess.CREATE_NO_WINDOW, # type: ignore[attr-defined]
+    }
     with Popen(["START", executable.as_posix()], **popen_args) as proc: # type: ignore[call-overload]
         time.sleep(3)
         with Popen(["taskkill", "/im", executable.name], **popen_args) as kproc: # type: ignore[call-overload]

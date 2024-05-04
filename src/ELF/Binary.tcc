@@ -27,14 +27,7 @@
 #include "ELF/DataHandler/Handler.hpp"
 
 #include "internal_utils.hpp"
-
-#include <numeric>
-
-#if defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
-#include <unistd.h>
-#else
-#define getpagesize() 0x1000
-#endif
+#include "paging.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -355,7 +348,7 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment, ui
 
   uint64_t last_offset = std::max<uint64_t>(last_offset_sections, last_offset_segments);
 
-  const auto psize = static_cast<uint64_t>(getpagesize());
+  const auto psize = static_cast<uint64_t>(get_pagesize(*this));
   const uint64_t last_offset_aligned = align(last_offset, psize);
   new_segment->file_offset(last_offset_aligned);
 
@@ -410,7 +403,7 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment, ui
 // =======================
 template<>
 Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment, uint64_t base) {
-  const auto psize = static_cast<uint64_t>(getpagesize());
+  const auto psize = static_cast<uint64_t>(get_pagesize(*this));
 
   /*const uint64_t new_phdr_offset = */ relocate_phdr_table_auto();
 

@@ -21,6 +21,7 @@
 
 #include "Object.tcc"
 #include "Binary.tcc"
+#include "paging.hpp"
 
 #include "LIEF/Visitor.hpp"
 #include "LIEF/utils.hpp"
@@ -707,9 +708,7 @@ ok_error_t Binary::shift_linkedit(size_t width) {
 }
 
 uint32_t Binary::page_size() const {
-  const bool is_arm = header().cpu_type() == CPU_TYPES::CPU_TYPE_ARM ||
-                      header().cpu_type() == CPU_TYPES::CPU_TYPE_ARM64;
-  return is_arm ? 0x4000 : 0x1000;
+  return get_pagesize(*this);
 }
 
 void Binary::shift_command(size_t width, uint64_t from_offset) {

@@ -9,7 +9,7 @@ import random
 from subprocess import Popen
 
 import lief
-from utils import get_sample, is_apple_m1, is_osx, sign, chmod_exe, is_github_ci
+from utils import get_sample, is_apple_m1, is_osx, is_x86_64, sign, chmod_exe, is_github_ci
 
 lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
 
@@ -97,7 +97,7 @@ def test_add_command(tmp_path):
 
     assert len([l for l in new.libraries if l.name == LIB_NAME]) > 0
 
-    if is_osx():
+    if is_osx() and is_x86_64():
         assert run_program(bin_path.as_posix())
 
         stdout = run_program(output)
@@ -126,7 +126,7 @@ def test_remove_cmd(tmp_path):
     assert lief.MachO.LOAD_COMMAND_TYPES.UUID not in new
     assert lief.MachO.LOAD_COMMAND_TYPES.CODE_SIGNATURE not in new
 
-    if is_osx():
+    if is_osx() and is_x86_64():
         assert run_program(bin_path.as_posix())
 
         stdout = run_program(output)
@@ -172,7 +172,7 @@ def test_add_section_id(tmp_path):
     checked, err = lief.MachO.check_layout(new)
     assert checked, err
 
-    if is_osx():
+    if is_osx() and is_x86_64():
         assert run_program(bin_path.as_posix())
         stdout = run_program(output)
 
@@ -204,7 +204,7 @@ def test_add_section_ssh(tmp_path):
     checked, err = lief.MachO.check_layout(new)
     assert checked, err
 
-    if is_osx():
+    if is_osx() and is_x86_64():
         assert run_program(bin_path.as_posix(), args=["--help"])
         stdout = run_program(output, args=["--help"])
 
@@ -228,7 +228,7 @@ def test_add_segment_nm(tmp_path):
     checked, err = lief.MachO.check_layout(new)
     assert checked, err
 
-    if is_osx():
+    if is_osx() and is_x86_64():
         assert run_program(bin_path.as_posix())
         stdout = run_program(output, ["-version"])
         print(stdout)
@@ -252,7 +252,7 @@ def test_add_segment_all(tmp_path):
     checked, err = lief.MachO.check_layout(new)
     assert checked, err
 
-    if is_osx():
+    if is_osx() and is_x86_64():
         assert run_program(bin_path.as_posix())
         stdout = run_program(output)
         print(stdout)
@@ -277,7 +277,7 @@ def test_ssh_segments(tmp_path):
 
     assert len(new.segments) == len(original.segments)
 
-    if is_osx():
+    if is_osx() and is_x86_64():
         assert run_program(bin_path.as_posix(), args=["--help"])
         stdout = run_program(output, args=["--help"])
 
@@ -299,7 +299,7 @@ def test_remove_section(tmp_path):
 
     assert new.get_section("__to_remove") is None
 
-    if is_osx():
+    if is_osx() and is_x86_64():
         assert run_program(bin_path.as_posix())
         stdout = run_program(output)
 
@@ -321,7 +321,7 @@ def test_remove_section_with_segment_name(tmp_path):
 
     assert new.get_section("__DATA", "__to_remove") is None
 
-    if is_osx():
+    if is_osx() and is_x86_64():
         assert run_program(bin_path.as_posix())
         stdout = run_program(output)
 
@@ -392,7 +392,7 @@ def test_objc_x86_64(tmp_path):
     checked, err = lief.MachO.check_layout(new)
     assert checked, err
 
-    if is_osx():
+    if is_osx() and is_x86_64():
         assert run_program(bin_path.as_posix())
         stdout = run_program(output)
 
@@ -485,19 +485,20 @@ def test_break(tmp_path):
 
         __objc_classlist = lief.MachO.Section("__objc_classlist",
                                               [random.randint(0, 255) for _ in range(0x100)])
-        __objc_imageinfo = lief.MachO.Section("__objc_imageinfo",
-                                              [random.randint(0, 255) for _ in range(0x100)])
         __objc_const     = lief.MachO.Section("__objc_const",
                                               [random.randint(0, 255) for _ in range(0x100)])
         __objc_classrefs = lief.MachO.Section("__objc_classrefs",
                                               [random.randint(0, 255) for _ in range(0x100)])
 
         __objc_classlist = segment.add_section(__objc_classlist)
-        __objc_imageinfo = segment.add_section(__objc_imageinfo)
         __objc_const     = segment.add_section(__objc_const)
         __objc_classrefs = segment.add_section(__objc_classrefs)
 
-        objc_section = [__objc_classlist, __objc_imageinfo, __objc_const, __objc_classrefs]
+        objc_section = [
+            __objc_classlist,
+            __objc_const,
+            __objc_classrefs
+        ]
         section: lief.MachO.Section
         for section in objc_section:
             section.type = lief.MachO.SECTION_TYPES.REGULAR

@@ -1,13 +1,14 @@
 target_sources(LIB_LIEF PRIVATE
-  errors.cpp
-  hash_stream.cpp
-  logging.cpp
-  iostream.cpp
-  utils.cpp
-  internal_utils.cpp
   Object.tcc
   Visitor.cpp
+  errors.cpp
+  hash_stream.cpp
+  internal_utils.cpp
+  iostream.cpp
   json_api.cpp
+  logging.cpp
+  paging.cpp
+  utils.cpp
   visitors/hash.cpp
 )
 

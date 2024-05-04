@@ -21,13 +21,8 @@
 
 #include "LIEF/DWARF/enums.hpp"
 
-#if defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
-#include <unistd.h>
-#else
-#define getpagesize() 0x1000
-#endif
-
 #include "logging.hpp"
+#include "paging.hpp"
 
 #include "LIEF/utils.hpp"
 
@@ -943,7 +938,7 @@ uint64_t Binary::virtual_size() const {
       virtual_size = std::max(virtual_size, segment->virtual_address() + segment->virtual_size());
     }
   }
-  virtual_size = align(virtual_size, static_cast<uint64_t>(getpagesize()));
+  virtual_size = align(virtual_size, static_cast<uint64_t>(get_pagesize(*this)));
   return virtual_size - imagebase();
 }
 
@@ -1114,7 +1109,7 @@ Segment* Binary::replace(const Segment& new_segment, const Segment& original_seg
   const uint64_t last_offset_segments = last_offset_segment();
   const uint64_t last_offset          = std::max<uint64_t>(last_offset_sections, last_offset_segments);
 
-  const auto psize = static_cast<uint64_t>(getpagesize());
+  const auto psize = static_cast<uint64_t>(get_pagesize(*this));
   const uint64_t last_offset_aligned = align(last_offset, psize);
   new_segment_ptr->file_offset(last_offset_aligned);
 
