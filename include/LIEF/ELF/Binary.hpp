@@ -848,10 +848,14 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   //! Overlay data (if any)
-  span<const uint8_t> overlay() const;
+  span<const uint8_t> overlay() const {
+    return overlay_;
+  }
 
   //! Function to set the overlay
-  void overlay(std::vector<uint8_t> overlay);
+  void overlay(std::vector<uint8_t> overlay) {
+    overlay_ = std::move(overlay);
+  }
 
   //! Force relocating the segments table in a specific way.
   //!

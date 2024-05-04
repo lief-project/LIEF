@@ -2583,16 +2583,6 @@ uint64_t Binary::eof_offset() const {
   return last_offset;
 }
 
-
-span<const uint8_t> Binary::overlay() const {
-  return overlay_;
-}
-
-void Binary::overlay(std::vector<uint8_t> overlay) {
-  overlay_ = std::move(overlay);
-}
-
-
 std::string Binary::shstrtab_name() const {
   const Header& hdr = header();
   const size_t shstrtab_idx = hdr.section_name_table_idx();
