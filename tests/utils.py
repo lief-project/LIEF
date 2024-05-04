@@ -100,14 +100,39 @@ def sign(path):
 def is_github_ci() -> bool:
     return os.getenv("GITHUB_ACTIONS", None) is not None
 
-def _win_gui_exec(executable: Path, timeout: int = 60) -> Optional[Tuple[int, str]]:
+def is_server_ci() -> bool:
+    return os.getenv('CI_SERVER_HOST', '') == 'gitlab.server'
+
+def _win_gui_exec_server(executable: Path, timeout: int = 60) -> Optional[Tuple[int, str]]:
+    si = subprocess.STARTUPINFO()
+    si.dwFlags = subprocess.STARTF_USESTDHANDLES | subprocess.STARTF_USESHOWWINDOW
+    si.wShowWindow = 0 # SW_HIDE
     popen_args = {
         "universal_newlines": True,
         "shell": True,
         "stdout": subprocess.PIPE,
         "stderr": subprocess.STDOUT,
-        "creationflags": 0x8000000  # win32con.CREATE_NO_WINDOW
+        "creationflags": subprocess.CREATE_NO_WINDOW,
+        "startupinfo": si,
     }
+    with Popen([executable.as_posix()], **popen_args) as proc:
+        time.sleep(3)
+        with Popen(["tasklist", "/FI", f"IMAGENAME eq {executable.name}"], **popen_args) as tasklist: # type: ignore[call-overload]
+            pstdout, _ = tasklist.communicate(timeout)
+            print("tasklist:", pstdout)
+        with Popen(["taskkill", '/F', '/IM', executable.name], **popen_args) as kproc: # type: ignore[call-overload]
+            try:
+                pstdout, _ = proc.communicate(timeout)
+                print("pstdout:", pstdout)
+                kstdout, _ = kproc.communicate(timeout)
+                print("kstdout", kstdout)
+                return (kproc.returncode, pstdout + kstdout)
+            except subprocess.TimeoutExpired:
+                return None
+
+def _win_gui_exec(executable: Path, timeout: int = 60) -> Optional[Tuple[int, str]]:
+    if is_server_ci():
+        return _win_gui_exec_server(executable, timeout)
 
     with Popen(["START", executable.as_posix()], **popen_args) as proc: # type: ignore[call-overload]
         time.sleep(3)
