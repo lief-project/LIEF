@@ -150,11 +150,11 @@ class LIEF_API Binary : public LIEF::Binary {
   //!
   //! The conversion is performed by looking for the section that
   //! encompasses the provided RVA.
-  uint64_t rva_to_offset(uint64_t RVA);
+  uint64_t rva_to_offset(uint64_t RVA) const;
 
   //! Convert the **absolute** virtual address into an offset.
   //! @see rva_to_offset
-  uint64_t va_to_offset(uint64_t VA);
+  uint64_t va_to_offset(uint64_t VA) const;
 
   //! Convert the given offset into a virtual address.
   //!

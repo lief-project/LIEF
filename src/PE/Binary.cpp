@@ -139,7 +139,7 @@ void Binary::tls(const TLS& tls) {
   tls_ = std::make_unique<TLS>(tls);
 }
 
-uint64_t Binary::va_to_offset(uint64_t VA) {
+uint64_t Binary::va_to_offset(uint64_t VA) const {
 
   //TODO: add checks relocation/va < imagebase
   uint64_t rva = VA - optional_header().imagebase();
@@ -168,7 +168,7 @@ result<uint64_t> Binary::offset_to_virtual_address(uint64_t offset, uint64_t sli
   return base_rva + offset;
 }
 
-uint64_t Binary::rva_to_offset(uint64_t RVA) {
+uint64_t Binary::rva_to_offset(uint64_t RVA) const {
   const auto it_section = std::find_if(std::begin(sections_), std::end(sections_),
       [RVA] (const std::unique_ptr<Section>& section) {
         const auto vsize_adj = std::max<uint64_t>(section->virtual_size(), section->sizeof_raw_data());
