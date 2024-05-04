@@ -222,6 +222,8 @@ class LIEF_API BinaryParser : public LIEF::Parser {
   template<class MACHO_T>
   ok_error_t post_process(CodeSignatureDir& cmd);
 
+  ok_error_t parse_overlay();
+
   // Exports
   // -------
   ok_error_t parse_dyldinfo_export();

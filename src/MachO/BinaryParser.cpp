@@ -348,7 +348,6 @@ ok_error_t BinaryParser::parse_dyld_exports() {
   parse_export_trie(exports->export_info_, offset, end_offset, "",
                     &invalid_names);
   return ok();
-
 }
 
 ok_error_t BinaryParser::parse_dyldinfo_export() {
@@ -386,6 +385,22 @@ ok_error_t BinaryParser::parse_dyldinfo_export() {
   stream_->setpos(offset);
   bool invalid_names = false;
   parse_export_trie(dyldinfo->export_info_, offset, end_offset, "", &invalid_names);
+  return ok();
+}
+
+
+ok_error_t BinaryParser::parse_overlay() {
+  const uint64_t last_offset = binary_->off_ranges().end;
+  if (last_offset >= stream_->size()) {
+    return ok();
+  }
+
+  const uint64_t overlay_size = stream_->size() - last_offset;
+  LIEF_INFO("Overlay detected at 0x{:x} ({} bytes)", last_offset, overlay_size);
+  if (!stream_->peek_data(binary_->overlay_, last_offset, overlay_size)) {
+    LIEF_WARN("Can't read overlay data");
+    return make_error_code(lief_errors::read_error);
+  }
   return ok();
 }
 

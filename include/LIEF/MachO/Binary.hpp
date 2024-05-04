@@ -692,6 +692,10 @@ class LIEF_API Binary : public LIEF::Binary  {
     return bin->format() == Binary::FORMATS::MACHO;
   }
 
+  span<const uint8_t> overlay() const {
+    return overlay_;
+  }
+
   private:
   //! Default constructor
   Binary();
@@ -756,6 +760,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   uint64_t fileset_offset_ = 0;
   uint64_t in_memory_base_addr_ = 0;
   std::string fileset_name_;
+  std::vector<uint8_t> overlay_;
 };
 
 } // namespace MachO

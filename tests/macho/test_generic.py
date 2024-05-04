@@ -276,3 +276,7 @@ def test_twolevel_hints():
     assert hashlib.sha256(tw_hints.data).hexdigest() == "e44cef3a83eb89954557a9ad2a36ebf4794ce0385da5a39381fdadc3e6037beb"
     assert tw_hints.command_offset == 1552
     print(lief.to_json(tw_hints))
+
+def test_overlay():
+    sample = lief.MachO.parse(get_sample("MachO/overlay_data.bin")).at(0)
+    assert bytes(sample.overlay) == b'\x00overlay data'

@@ -17,6 +17,7 @@
 #include <sstream>
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/string.h>
+#include "nanobind/extra/memoryview.hpp"
 
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/BuildVersion.hpp"
@@ -662,6 +663,12 @@ void create<Binary>(nb::module_& m) {
 
     .def("__contains__",
         nb::overload_cast<LOAD_COMMAND_TYPES>(&Binary::has, nb::const_))
+
+    .def_prop_ro("overlay",
+        [] (const Binary& self) {
+          const span<const uint8_t> overlay = self.overlay();
+          return nb::memoryview::from_memory(overlay.data(), overlay.size());
+        })
 
     LIEF_DEFAULT_STR(Binary);
 }

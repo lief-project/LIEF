@@ -175,6 +175,10 @@ ok_error_t BinaryParser::parse() {
   if (LinkerOptHint* opt = binary_->linker_opt_hint()) {
     post_process<MACHO_T>(*opt);
   }
+
+  if (config_.parse_overlay) {
+    parse_overlay();
+  }
   return ok();
 }
 
