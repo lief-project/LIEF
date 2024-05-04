@@ -167,8 +167,8 @@ if(LIEF_EXTERNAL_SPDLOG)
   get_target_property(SPDLOG_INC_DIR spdlog::spdlog INTERFACE_INCLUDE_DIRECTORIES)
   target_include_directories(lief_spdlog SYSTEM INTERFACE ${SPDLOG_INC_DIR})
 else()
-  set(SPDLOG_VERSION 1.12.0)
-  set(SPDLOG_SHA256 SHA256=6174bf8885287422a6c6a0312eb8a30e8d22bcfcee7c48a6d02d1835d7769232)
+  set(SPDLOG_VERSION 1.14.0)
+  set(SPDLOG_SHA256 SHA256=2cd8a65885e7937fdd046b181eed7e95d61bab7006bd0fb7b9c766185ed3e0ae)
   set(SPDLOG_URL "${THIRD_PARTY_DIRECTORY}/spdlog-${SPDLOG_VERSION}.zip" CACHE STRING "URL to the spdlog source")
   ExternalProject_Add(lief_spdlog_project
     URL               ${SPDLOG_URL}
