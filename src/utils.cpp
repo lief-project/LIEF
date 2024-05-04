@@ -49,7 +49,7 @@ std::vector<uint8_t> uencode(uint64_t value) {
 template <typename octet_iterator>
 result<uint32_t> next(octet_iterator& it, octet_iterator end) {
   using namespace utf8;
-  uint32_t cp = 0;
+  utfchar32_t cp = 0;
   internal::utf_error err_code = internal::validate_next(it, end, cp);
   switch (err_code) {
     case internal::UTF8_OK :
@@ -72,7 +72,7 @@ std::string u16tou8(const std::u16string& string, bool remove_null_char) {
   std::u16string clean_string;
   std::copy_if(std::begin(string), std::end(string),
                std::back_inserter(clean_string),
-               utf8::internal::is_code_point_valid<char16_t>);
+               utf8::internal::is_code_point_valid);
 
   utf8::unchecked::utf16to8(std::begin(clean_string), std::end(clean_string),
                             std::back_inserter(name));
