@@ -219,6 +219,7 @@ if(LIEF_ENABLE_JSON)
     target_include_directories(LIB_LIEF PRIVATE
                                ${CMAKE_CURRENT_BINARY_DIR}/)
   endif()
+  target_compile_definitions(LIB_LIEF PRIVATE JSON_NOEXCEPTION)
 endif()
 
 if(LIEF_FROZEN_ENABLED)
