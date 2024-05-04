@@ -1,11 +1,13 @@
 from __future__ import annotations
-from pydantic_core import ErrorDetails
-from pydantic import BaseModel, ValidationError, Field
+from pydantic_core import ErrorDetails, core_schema, CoreSchema
+from pydantic import BaseModel, ValidationError, Field, GetCoreSchemaHandler
 from typing import Any, Optional, Union, List
 from pathlib import Path
 import tomli
 import os
 import platform
+
+from typing_extensions import Annotated
 
 from scikit_build_core.settings.skbuild_read_settings import rich_print
 
@@ -14,19 +16,37 @@ def cmake_serialize(field: Any):
         return "ON" if field else "OFF"
     return field
 
+class EnvStringValidator:
+    def _get_env_string(self, string: str) -> str:
+        formatted = string.format(
+                python_version=os.getenv("LIEF_TARGET_PYTHON_VERSION", ""),
+                python_version_alt=os.getenv("LIEF_TARGET_PYTHON_VERSION", "").replace('.', ''),
+                architecture=os.getenv("LIEF_TARGET_ARCHITECTURE", ""),
+        )
+        return formatted
+
+    def __get_pydantic_core_schema__(
+        self, source_type: Any, handler: GetCoreSchemaHandler
+    ) -> CoreSchema:
+        return core_schema.no_info_after_validator_function(
+            self._get_env_string, handler(source_type)
+        )
+
+EnvString = Annotated[str, EnvStringValidator()]
+
 class BuildConfig(BaseModel):
-    build_type: str = Field("Release", alias="type")
+    build_type: EnvString = Field("Release", alias="type")
     cache: bool = True
     ninja: bool = False
     default_target: str = Field("pyLIEF", alias="default-target")
     parallel_jobs: int = Field(0, alias="parallel-jobs")
-    build_dir: Optional[str] = Field(None, alias="build-dir")
-    extra_targets: Union[List[str], str] = Field(None, alias="extra-targets")
-    extra_cmake: Union[List[str], str] = Field(None, alias="extra-cmake-opt")
-    lief_install_dir: Optional[str] = Field(None, alias="lief-install-dir")
-    py_api: str = Field("", alias="py-api")
-    c_compiler: Optional[str] = Field(None, alias="c-compiler")
-    cxx_compiler: Optional[str] = Field(None, alias="cxx-compiler")
+    build_dir: Optional[EnvString] = Field(None, alias="build-dir")
+    extra_targets: Union[List[EnvString], EnvString] = Field(None, alias="extra-targets")
+    extra_cmake: Union[List[EnvString], EnvString] = Field(None, alias="extra-cmake-opt")
+    lief_install_dir: Optional[EnvString] = Field(None, alias="lief-install-dir")
+    py_api: EnvString = Field("", alias="py-api")
+    c_compiler: Optional[EnvString] = Field(None, alias="c-compiler")
+    cxx_compiler: Optional[EnvString] = Field(None, alias="cxx-compiler")
 
     @property
     def targets(self) -> List[str]:
@@ -72,7 +92,7 @@ class BuildConfig(BaseModel):
         return out
 
 class ThridParty(BaseModel):
-    spdlog: Optional[str] = None
+    spdlog: Optional[EnvString] = None
 
     def cmake_dump(self) -> List[str]:
         out: List[str] = []
@@ -85,10 +105,10 @@ class ThridParty(BaseModel):
         return out
 
 class CrossCompilation(BaseModel):
-    osx_arch: Optional[str]  = Field(None, alias="osx-arch")
-    platform: Optional[str] = None
-    pyversion: Optional[str] = None
-    abi: Optional[str] = None
+    osx_arch: Optional[EnvString]  = Field(None, alias="osx-arch")
+    platform: Optional[EnvString] = None
+    pyversion: Optional[EnvString] = None
+    abi: Optional[EnvString] = None
 
     def cmake_dump(self) -> List[str]:
         out: List[str] = []
