@@ -108,7 +108,7 @@ def _get_hooked_config(is_editable: bool) -> Optional[dict[str, Union[str, List[
             *config.cmake_generator,
             *config.get_cmake_args(is_editable),
         ],
-        "wheel.exclude": Config.DEFAULT_EXCLUDE,
+        "sdist.exclude": Config.DEFAULT_EXCLUDE,
     }
     return config_settings
 
