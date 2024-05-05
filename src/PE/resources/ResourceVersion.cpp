@@ -161,29 +161,29 @@ void ResourceVersion::accept(Visitor& visitor) const {
 
 std::ostream& operator<<(std::ostream& os, const ResourceVersion& version) {
   os << std::hex << std::left;
-  os << std::setw(6) << std::setfill(' ') << "type:" << version.type()         << std::endl;
-  os << std::setw(6) << std::setfill(' ') << "key:"  << u16tou8(version.key()) << std::endl << std::endl;
+  os << std::setw(6) << std::setfill(' ') << "type:" << version.type()         << '\n';
+  os << std::setw(6) << std::setfill(' ') << "key:"  << u16tou8(version.key()) << '\n' << '\n';
 
   if (const auto* fixed_file_info = version.fixed_file_info()) {
-    os << "Fixed file info" << std::endl;
-    os << "===============" << std::endl;
+    os << "Fixed file info" << '\n';
+    os << "===============" << '\n';
     os << *fixed_file_info;
-    os << std::endl;
+    os << '\n';
   }
 
 
   if (const auto* string_file_info = version.string_file_info()) {
-    os << "String file info" << std::endl;
-    os << "================" << std::endl;
+    os << "String file info" << '\n';
+    os << "================" << '\n';
     os << *string_file_info;
-    os << std::endl;
+    os << '\n';
   }
 
   if (const auto* var_file_info = version.var_file_info()) {
-    os << "Var file info" << std::endl;
-    os << "=============" << std::endl;
+    os << "Var file info" << '\n';
+    os << "=============" << '\n';
     os << *var_file_info;
-    os << std::endl;
+    os << '\n';
   }
   return os;
 }

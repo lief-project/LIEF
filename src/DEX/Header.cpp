@@ -23,11 +23,11 @@
 #include <sstream>
 
 #define PRINT_FIELD(name,attr) \
-  os << std::setw(WIDTH) << std::setfill(' ') << name << std::hex << attr << std::endl
+  os << std::setw(WIDTH) << std::setfill(' ') << name << std::hex << attr << '\n'
 
 #define PRINT_LOCATION(name,attr)                                               \
   os << std::setw(WIDTH) << std::setfill(' ') << name << std::hex << attr.first \
-     << std::dec << " (#" << attr.second << ")" << std::endl
+     << std::dec << " (#" << attr.second << ")" << '\n'
 
 namespace LIEF {
 namespace DEX {

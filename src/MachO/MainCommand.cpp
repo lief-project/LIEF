@@ -84,7 +84,7 @@ std::ostream& MainCommand::print(std::ostream& os) const {
   os << std::hex;
   os << std::left
      << "Entrypoint: " << "0x" << entrypoint()
-     << std::endl
+     << '\n'
      << "Stack size: " << "0x" << stack_size();
   return os;
 }

@@ -101,9 +101,9 @@ std::ostream& operator<<(std::ostream& os, const ResourceVarFileInfo& entry) {
      });
 
   os << std::hex << std::left;
-  os << std::setw(14) << std::setfill(' ') << "type:"          << entry.type()         << std::endl;
-  os << std::setw(14) << std::setfill(' ') << "key:"           << u16tou8(entry.key()) << std::endl;
-  os << std::setw(14) << std::setfill(' ') << "Translations:"  << translation_str      << std::endl;
+  os << std::setw(14) << std::setfill(' ') << "type:"          << entry.type()         << '\n';
+  os << std::setw(14) << std::setfill(' ') << "key:"           << u16tou8(entry.key()) << '\n';
+  os << std::setw(14) << std::setfill(' ') << "Translations:"  << translation_str      << '\n';
 
   return os;
 }

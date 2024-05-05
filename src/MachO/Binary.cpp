@@ -2573,36 +2573,36 @@ void Binary::refresh_seg_offset() {
 Binary::~Binary() = default;
 
 std::ostream& Binary::print(std::ostream& os) const {
-  os << "Header" << std::endl;
-  os << "======" << std::endl;
+  os << "Header" << '\n';
+  os << "======" << '\n';
 
   os << header();
-  os << std::endl;
+  os << '\n';
 
 
-  os << "Commands" << std::endl;
-  os << "========" << std::endl;
+  os << "Commands" << '\n';
+  os << "========" << '\n';
   for (const LoadCommand& cmd : commands()) {
-    os << cmd << std::endl;
+    os << cmd << '\n';
   }
 
-  os << std::endl;
+  os << '\n';
 
-  os << "Sections" << std::endl;
-  os << "========" << std::endl;
+  os << "Sections" << '\n';
+  os << "========" << '\n';
   for (const Section& section : sections()) {
-    os << section << std::endl;
+    os << section << '\n';
   }
 
-  os << std::endl;
+  os << '\n';
 
-  os << "Symbols" << std::endl;
-  os << "=======" << std::endl;
+  os << "Symbols" << '\n';
+  os << "=======" << '\n';
   for (const Symbol& symbol : symbols()) {
-    os << symbol << std::endl;
+    os << symbol << '\n';
   }
 
-  os << std::endl;
+  os << '\n';
   return os;
 }
 

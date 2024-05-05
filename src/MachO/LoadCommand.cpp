@@ -119,9 +119,9 @@ bool LoadCommand::is_linkedit_data(const LoadCommand& cmd) {
 
 std::ostream& LoadCommand::print(std::ostream& os) const {
   os << std::hex;
-  os << "Command : " << to_string(command()) << std::endl;
-  os << "Offset  : " << command_offset() << std::endl;
-  os << "Size    : " << size() << std::endl;
+  os << "Command : " << to_string(command()) << '\n';
+  os << "Offset  : " << command_offset() << '\n';
+  os << "Size    : " << size() << '\n';
   return os;
 }
 

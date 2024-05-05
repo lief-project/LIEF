@@ -101,11 +101,11 @@ void ResourceData::accept(Visitor& visitor) const {
 
 
 std::ostream& operator<<(std::ostream& os, const ResourceData& data) {
-  os << static_cast<const ResourceNode&>(data) << std::endl;
-  os << "    " << std::setw(13) << std::left << std::setfill(' ') << "Code page :" << data.code_page()                       << std::endl;
-  os << "    " << std::setw(13) << std::left << std::setfill(' ') << "Reserved :"  << data.reserved()                        << std::endl;
-  os << "    " << std::setw(13) << std::left << std::setfill(' ') << "Size :"      << data.content().size()                  << std::endl;
-  os << "    " << std::setw(13) << std::left << std::setfill(' ') << "Hash :"      << std::hex << Hash::hash(data.content()) << std::endl;
+  os << static_cast<const ResourceNode&>(data) << '\n';
+  os << "    " << std::setw(13) << std::left << std::setfill(' ') << "Code page :" << data.code_page()                       << '\n';
+  os << "    " << std::setw(13) << std::left << std::setfill(' ') << "Reserved :"  << data.reserved()                        << '\n';
+  os << "    " << std::setw(13) << std::left << std::setfill(' ') << "Size :"      << data.content().size()                  << '\n';
+  os << "    " << std::setw(13) << std::left << std::setfill(' ') << "Hash :"      << std::hex << Hash::hash(data.content()) << '\n';
   return os;
 }
 

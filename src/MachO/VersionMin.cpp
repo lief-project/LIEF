@@ -86,12 +86,12 @@ std::ostream& VersionMin::print(std::ostream& os) const {
   os << std::setw(10) << "Version: " << std::dec
      << version[0] << "."
      << version[1] << "."
-     << version[2] << std::endl;
+     << version[2] << '\n';
 
   os << std::setw(10) << "SDK: " << std::dec
      << sdk[0] << "."
      << sdk[1] << "."
-     << sdk[2] << std::endl;
+     << sdk[2] << '\n';
 
   return os;
 }

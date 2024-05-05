@@ -155,13 +155,13 @@ std::ostream& operator<<(std::ostream& os, const ExportInfo& export_info) {
   os << std::hex;
   os << std::left;
 
-  os << std::setw(13) << "Node Offset: " << std::hex << export_info.node_offset()     << std::endl;
-  os << std::setw(13) << "Flags: "       << std::hex << export_info.flags()           << std::endl;
-  os << std::setw(13) << "Address: "     << std::hex << export_info.address()         << std::endl;
-  os << std::setw(13) << "Kind: "        << to_string(export_info.kind()) << std::endl;
-  os << std::setw(13) << "Flags: "       << flags_str << std::endl;
+  os << std::setw(13) << "Node Offset: " << std::hex << export_info.node_offset()     << '\n';
+  os << std::setw(13) << "Flags: "       << std::hex << export_info.flags()           << '\n';
+  os << std::setw(13) << "Address: "     << std::hex << export_info.address()         << '\n';
+  os << std::setw(13) << "Kind: "        << to_string(export_info.kind()) << '\n';
+  os << std::setw(13) << "Flags: "       << flags_str << '\n';
   if (export_info.has_symbol()) {
-    os << std::setw(13) << "Symbol: "    << export_info.symbol()->name() << std::endl;
+    os << std::setw(13) << "Symbol: "    << export_info.symbol()->name() << '\n';
   }
 
   if (export_info.alias() != nullptr) {
@@ -169,7 +169,7 @@ std::ostream& operator<<(std::ostream& os, const ExportInfo& export_info) {
     if (export_info.alias_library() != nullptr) {
       os << " from " << export_info.alias_library()->name();
     }
-    os << std::endl;
+    os << '\n';
   }
 
   return os;

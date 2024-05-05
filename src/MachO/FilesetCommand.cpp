@@ -94,7 +94,7 @@ std::ostream& FilesetCommand::print(std::ostream& os) const {
      << std::setw(15) << name()
      << std::setw(15) << virtual_address()
      << std::setw(15) << file_offset()
-     << std::endl;
+     << '\n';
   return os;
 }
 

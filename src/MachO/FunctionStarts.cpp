@@ -87,15 +87,15 @@ bool FunctionStarts::classof(const LoadCommand* cmd) {
 std::ostream& FunctionStarts::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << std::left;
-  os << std::endl;
-  os << "Function starts location:" << std::endl;
-  os << std::setw(8) << "Offset" << ": 0x" << data_offset() << std::endl;
-  os << std::setw(8) << "Size"   << ": 0x" << data_size()   << std::endl;
-  os << "Functions (" << std::dec << functions().size() << "):" << std::endl;
+  os << '\n';
+  os << "Function starts location:" << '\n';
+  os << std::setw(8) << "Offset" << ": 0x" << data_offset() << '\n';
+  os << std::setw(8) << "Size"   << ": 0x" << data_size()   << '\n';
+  os << "Functions (" << std::dec << functions().size() << "):" << '\n';
   for (size_t i = 0; i < functions().size(); ++i) {
     os << "    [" << std::dec << i << "] ";
     os << "__TEXT + ";
-    os << std::hex << std::setw(6) << std::setfill(' ') << functions()[i] << std::endl;
+    os << std::hex << std::setw(6) << std::setfill(' ') << functions()[i] << '\n';
   }
   return os;
 }

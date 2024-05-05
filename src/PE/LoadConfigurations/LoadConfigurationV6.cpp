@@ -39,8 +39,8 @@ std::ostream& LoadConfigurationV6::print(std::ostream& os) const {
   os << "LoadConfigurationV6:\n"
      << fmt::format("  GRF verify stackpointer function pointer   0x{:08x}\n", guard_rf_verify_stackpointer_function_pointer())
      << fmt::format("  Hotpatch table offset                      0x{:08x}\n", hotpatch_table_offset());
-  //os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "GRF verify stackpointer function pointer:" << std::hex << guard_rf_verify_stackpointer_function_pointer() << std::endl;
-  //os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Hotpatch table offset:"                    << std::hex << hotpatch_table_offset()                         << std::endl;
+  //os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "GRF verify stackpointer function pointer:" << std::hex << guard_rf_verify_stackpointer_function_pointer() << '\n';
+  //os << std::setw(LoadConfiguration::PRINT_WIDTH) << std::setfill(' ') << "Hotpatch table offset:"                    << std::hex << hotpatch_table_offset()                         << '\n';
   return os;
 }
 

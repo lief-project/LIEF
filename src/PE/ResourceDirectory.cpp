@@ -131,13 +131,13 @@ void ResourceDirectory::accept(Visitor& visitor) const {
 
 
 std::ostream& operator<<(std::ostream& os, const ResourceDirectory& directory) {
-  os << static_cast<const ResourceNode&>(directory) << std::endl;
-  os << "    " << std::setw(26) << std::left << std::setfill(' ') << "Characteristics :"        << directory.characteristics()       << std::endl;
-  os << "    " << std::setw(26) << std::left << std::setfill(' ') << "Time/Date stamp :"        << directory.time_date_stamp()       << std::endl;
-  os << "    " << std::setw(26) << std::left << std::setfill(' ') << "Major version :"          << directory.major_version()         << std::endl;
-  os << "    " << std::setw(26) << std::left << std::setfill(' ') << "Minor version :"          << directory.minor_version()         << std::endl;
-  os << "    " << std::setw(26) << std::left << std::setfill(' ') << "Number of name entries :" << directory.numberof_name_entries() << std::endl;
-  os << "    " << std::setw(26) << std::left << std::setfill(' ') << "Number of id entries :"   << directory.numberof_id_entries()   << std::endl;
+  os << static_cast<const ResourceNode&>(directory) << '\n';
+  os << "    " << std::setw(26) << std::left << std::setfill(' ') << "Characteristics :"        << directory.characteristics()       << '\n';
+  os << "    " << std::setw(26) << std::left << std::setfill(' ') << "Time/Date stamp :"        << directory.time_date_stamp()       << '\n';
+  os << "    " << std::setw(26) << std::left << std::setfill(' ') << "Major version :"          << directory.major_version()         << '\n';
+  os << "    " << std::setw(26) << std::left << std::setfill(' ') << "Minor version :"          << directory.minor_version()         << '\n';
+  os << "    " << std::setw(26) << std::left << std::setfill(' ') << "Number of name entries :" << directory.numberof_name_entries() << '\n';
+  os << "    " << std::setw(26) << std::left << std::setfill(' ') << "Number of id entries :"   << directory.numberof_id_entries()   << '\n';
   return os;
 }
 

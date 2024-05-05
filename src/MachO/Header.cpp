@@ -248,7 +248,7 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
      << std::setw(10) << "NCMDS"
      << std::setw(15) << "Sizeof cmds"
      << std::setw(10) << "Reserved"
-     << std::setw(10) << "Flags" << std::endl
+     << std::setw(10) << "Flags" << '\n'
 
      << std::setw(10) << to_string(hdr.magic())
      << std::setw(10) << to_string(hdr.cpu_type())
@@ -258,7 +258,7 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
      << std::setw(15) << hdr.sizeof_cmds()
      << std::setw(10) << hdr.reserved()
      << std::setw(10) << flags_str
-     << std::endl;
+     << '\n';
 
   return os;
 }

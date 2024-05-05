@@ -115,7 +115,7 @@ void show_trie(std::ostream& output, std::string output_prefix,
     //}
 
     output << "}";
-    output << std::endl;
+    output << '\n';
 
   }
   stream.setpos(children_offset);
@@ -148,7 +148,7 @@ void show_trie(std::ostream& output, std::string output_prefix,
       break;
     }
 
-    output << output_prefix << name << "@off." << std::hex << std::showbase << stream.pos() << std::endl;
+    output << output_prefix << name << "@off." << std::hex << std::showbase << stream.pos() << '\n';
 
     size_t current_pos = stream.pos();
     stream.setpos(start + child_node_offet);

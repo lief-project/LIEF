@@ -117,12 +117,12 @@ std::ostream& operator<<(std::ostream& os, const GnuHash& gnuhash) {
       });
   hash_values_str += "]";
 
-  os << std::setw(33) << std::setfill(' ') << "Number of buckets:"  << gnuhash.nb_buckets()   << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "First symbol index:" << gnuhash.symbol_index() << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Shift Count:"        << gnuhash.shift2()       << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Bloom filters:"      << bloom_filters_str      << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Buckets:"            << buckets_str            << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Hash values:"        << hash_values_str        << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "Number of buckets:"  << gnuhash.nb_buckets()   << '\n';
+  os << std::setw(33) << std::setfill(' ') << "First symbol index:" << gnuhash.symbol_index() << '\n';
+  os << std::setw(33) << std::setfill(' ') << "Shift Count:"        << gnuhash.shift2()       << '\n';
+  os << std::setw(33) << std::setfill(' ') << "Bloom filters:"      << bloom_filters_str      << '\n';
+  os << std::setw(33) << std::setfill(' ') << "Buckets:"            << buckets_str            << '\n';
+  os << std::setw(33) << std::setfill(' ') << "Hash values:"        << hash_values_str        << '\n';
 
 
 

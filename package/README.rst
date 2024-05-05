@@ -67,25 +67,25 @@ C++
     // ELF
     try {
       std::unique_ptr<LIEF::ELF::Binary> elf = LIEF::ELF::Parser::parse("/bin/ls");
-      std::cout << *elf << std::endl;
+      std::cout << *elf << '\n';
     } catch (const LIEF::exception& err) {
-      std::cerr << err.what() << std::endl;
+      std::cerr << err.what() << '\n';
     }
 
     // PE
     try {
       std::unique_ptr<LIEF::PE::Binary> pe = LIEF::PE::Parser::parse("C:\\Windows\\explorer.exe");
-      std::cout << *pe << std::endl;
+      std::cout << *pe << '\n';
     } catch (const LIEF::exception& err) {
-      std::cerr << err.what() << std::endl;
+      std::cerr << err.what() << '\n';
     }
 
     // Mach-O
     try {
       std::unique_ptr<LIEF::MachO::FatBinary> macho = LIEF::MachO::Parser::parse("/bin/ls");
-      std::cout << *macho << std::endl;
+      std::cout << *macho << '\n';
     } catch (const LIEF::exception& err) {
-      std::cerr << err.what() << std::endl;
+      std::cerr << err.what() << '\n';
     }
 
     return 0;

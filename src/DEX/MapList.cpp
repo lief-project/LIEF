@@ -80,7 +80,7 @@ void MapList::accept(Visitor& visitor) const {
 
 std::ostream& operator<<(std::ostream& os, const MapList& mlist) {
   for (const MapItem& item : mlist.items()) {
-    os << item << std::endl;
+    os << item << '\n';
   }
   return os;
 }

@@ -3132,141 +3132,141 @@ uint64_t Binary::relocate_phdr_table_v1() {
 
 std::ostream& Binary::print(std::ostream& os) const {
 
-  os << "Header" << std::endl;
-  os << "======" << std::endl;
+  os << "Header" << '\n';
+  os << "======" << '\n';
 
   os << header();
-  os << std::endl;
+  os << '\n';
 
 
-  os << "Sections" << std::endl;
-  os << "========" << std::endl;
+  os << "Sections" << '\n';
+  os << "========" << '\n';
   for (const Section& section : sections()) {
-    os << section << std::endl;
+    os << section << '\n';
   }
-  os << std::endl;
+  os << '\n';
 
 
-  os << "Segments" << std::endl;
-  os << "========" << std::endl;
+  os << "Segments" << '\n';
+  os << "========" << '\n';
   for (const Segment& segment : segments()) {
-    os << segment << std::endl;
+    os << segment << '\n';
   }
 
-  os << std::endl;
+  os << '\n';
 
 
-  os << "Dynamic entries" << std::endl;
-  os << "===============" << std::endl;
+  os << "Dynamic entries" << '\n';
+  os << "===============" << '\n';
 
   for (const DynamicEntry& entry : dynamic_entries()) {
-    os << entry << std::endl;
+    os << entry << '\n';
   }
 
-  os << std::endl;
+  os << '\n';
 
 
-  os << "Dynamic symbols" << std::endl;
-  os << "===============" << std::endl;
+  os << "Dynamic symbols" << '\n';
+  os << "===============" << '\n';
 
   for (const Symbol& symbol : dynamic_symbols()) {
-    os << symbol << std::endl;
+    os << symbol << '\n';
   }
 
-  os << std::endl;
+  os << '\n';
 
 
-  os << "Symtab symbols" << std::endl;
-  os << "==============" << std::endl;
+  os << "Symtab symbols" << '\n';
+  os << "==============" << '\n';
 
   for (const Symbol& symbol : symtab_symbols()) {
-    os << symbol << std::endl;
+    os << symbol << '\n';
   }
 
-  os << std::endl;
+  os << '\n';
 
 
-  os << "Symbol versions" << std::endl;
-  os << "===============" << std::endl;
+  os << "Symbol versions" << '\n';
+  os << "===============" << '\n';
 
   for (const SymbolVersion& sv : symbols_version()) {
-    os << sv << std::endl;
+    os << sv << '\n';
   }
 
-  os << std::endl;
+  os << '\n';
 
 
-  os << "Symbol versions definition" << std::endl;
-  os << "==========================" << std::endl;
+  os << "Symbol versions definition" << '\n';
+  os << "==========================" << '\n';
 
   for (const SymbolVersionDefinition& svd : symbols_version_definition()) {
-    os << svd << std::endl;
+    os << svd << '\n';
   }
 
-  os << std::endl;
+  os << '\n';
 
 
-  os << "Symbol version requirement" << std::endl;
-  os << "==========================" << std::endl;
+  os << "Symbol version requirement" << '\n';
+  os << "==========================" << '\n';
 
   for (const SymbolVersionRequirement& svr : symbols_version_requirement()) {
-    os << svr << std::endl;
+    os << svr << '\n';
   }
 
-  os << std::endl;
+  os << '\n';
 
 
-  os << "Dynamic relocations" << std::endl;
-  os << "===================" << std::endl;
+  os << "Dynamic relocations" << '\n';
+  os << "===================" << '\n';
 
   for (const Relocation& relocation : dynamic_relocations()) {
-    os << relocation << std::endl;
+    os << relocation << '\n';
   }
 
-  os << std::endl;
+  os << '\n';
 
 
-  os << ".plt.got relocations" << std::endl;
-  os << "====================" << std::endl;
+  os << ".plt.got relocations" << '\n';
+  os << "====================" << '\n';
 
   for (const Relocation& relocation : pltgot_relocations()) {
-    os << relocation << std::endl;
+    os << relocation << '\n';
   }
 
-  os << std::endl;
+  os << '\n';
 
   if (notes().size() > 0) {
-    os << "Notes" << std::endl;
-    os << "=====" << std::endl;
+    os << "Notes" << '\n';
+    os << "=====" << '\n';
 
     it_const_notes notes = this->notes();
     for (size_t i = 0; i < notes.size(); ++i) {
       std::string title = "Note #" + std::to_string(i);
-      os << title << std::endl;
-      os << std::string(title.size(), '-') << std::endl;
-      os << notes[i] << std::endl;
+      os << title << '\n';
+      os << std::string(title.size(), '-') << '\n';
+      os << notes[i] << '\n';
     }
-    os << std::endl;
+    os << '\n';
   }
 
-  os << std::endl;
+  os << '\n';
   if (use_gnu_hash()) {
-    os << "GNU Hash Table" << std::endl;
-    os << "==============" << std::endl;
+    os << "GNU Hash Table" << '\n';
+    os << "==============" << '\n';
 
-    os << gnu_hash() << std::endl;
+    os << gnu_hash() << '\n';
 
-    os << std::endl;
+    os << '\n';
   }
 
 
   if (use_sysv_hash()) {
-    os << "SYSV Hash Table" << std::endl;
-    os << "===============" << std::endl;
+    os << "SYSV Hash Table" << '\n';
+    os << "===============" << '\n';
 
-    os << sysv_hash() << std::endl;
+    os << sysv_hash() << '\n';
 
-    os << std::endl;
+    os << '\n';
   }
 
 

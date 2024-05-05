@@ -154,7 +154,7 @@ void FatBinary::release_all_binaries() {
 std::ostream& operator<<(std::ostream& os, const FatBinary& fatbinary) {
   for (const Binary& binary : fatbinary) {
     os << binary;
-    os << std::endl << std::endl;
+    os << '\n' << '\n';
   }
 
   return os;

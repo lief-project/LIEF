@@ -163,21 +163,21 @@ void Binary::accept(Visitor& visitor) const {
 
 std::ostream& operator<<(std::ostream& os, const Binary& binary) {
 
-  os << "Header" << std::endl;
-  os << "======" << std::endl;
-  os << binary.header() << std::endl;
+  os << "Header" << '\n';
+  os << "======" << '\n';
+  os << binary.header() << '\n';
 
   if (binary.oat_dex_files().size() > 0) {
-    os << "Dex Files" << std::endl;
-    os << "=========" << std::endl;
+    os << "Dex Files" << '\n';
+    os << "=========" << '\n';
 
     for (const DexFile& dex : binary.oat_dex_files()) {
-      os << dex << std::endl;
+      os << dex << '\n';
     }
   }
 
-  os << "Number of classes: " << std::dec << binary.classes().size() << std::endl;
-  os << "Number of methods: " << std::dec << binary.methods().size() << std::endl;
+  os << "Number of classes: " << std::dec << binary.classes().size() << '\n';
+  os << "Number of methods: " << std::dec << binary.methods().size() << '\n';
 
 
   return os;

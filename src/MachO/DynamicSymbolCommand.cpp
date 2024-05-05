@@ -243,41 +243,41 @@ std::ostream& DynamicSymbolCommand::print(std::ostream& os) const {
   os << std::hex;
   os << std::left
      << std::setw(WIDTH) << "First local symbol index:"          << idx_local_symbol()
-     << std::endl
+     << '\n'
      << std::setw(WIDTH) << "Number of local symbols:"           << nb_local_symbols()
-     << std::endl
+     << '\n'
      << std::setw(WIDTH) << "External symbol index:"             << idx_external_define_symbol()
-     << std::endl
+     << '\n'
      << std::setw(WIDTH) << "Number of external symbols:"        << nb_external_define_symbols()
-     << std::endl
+     << '\n'
      << std::setw(WIDTH) << "Undefined symbol index:"            << idx_undefined_symbol()
-     << std::endl
+     << '\n'
      << std::setw(WIDTH) << "Number of undefined symbols:"       << nb_undefined_symbols()
-     << std::endl
+     << '\n'
      << std::setw(WIDTH) << "Table of content offset:"           << toc_offset()
-     << std::endl
+     << '\n'
      << std::setw(WIDTH) << "Number of entries in TOC:"          << nb_toc()
-     << std::endl
+     << '\n'
      << std::setw(WIDTH) << "Module table offset:"               << module_table_offset()
-     << std::endl
+     << '\n'
      << std::setw(WIDTH) << "Number of entries in module table:" << nb_module_table()
-     << std::endl
+     << '\n'
      << std::setw(WIDTH) << "External reference table offset:"   << external_reference_symbol_offset()
-     << std::endl
+     << '\n'
      << std::setw(WIDTH) << "Number of external reference:"      << nb_external_reference_symbols()
-     << std::endl
+     << '\n'
      << std::setw(WIDTH) << "Indirect symbols offset:"           << indirect_symbol_offset()
-     << std::endl
+     << '\n'
      << std::setw(WIDTH) << "Number of indirect symbols:"        << nb_indirect_symbols()
-     << std::endl
+     << '\n'
      << std::setw(WIDTH) << "External relocation offset:"        << external_relocation_offset()
-     << std::endl
+     << '\n'
      << std::setw(WIDTH) << "Number of external relocations:"    << nb_external_relocations()
-     << std::endl
+     << '\n'
      << std::setw(WIDTH) << "Local relocation offset:"           << local_relocation_offset()
-     << std::endl
+     << '\n'
      << std::setw(WIDTH) << "Number of local relocations:"       << nb_local_relocations()
-     << std::endl;
+     << '\n';
 
   return os;
 }

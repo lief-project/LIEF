@@ -1382,143 +1382,143 @@ void Binary::accept(Visitor& visitor) const {
 
 std::ostream& Binary::print(std::ostream& os) const {
 
-  os << "Dos Header" << std::endl;
-  os << "==========" << std::endl;
+  os << "Dos Header" << '\n';
+  os << "==========" << '\n';
 
   os << dos_header();
-  os << std::endl;
+  os << '\n';
 
 
   if (const RichHeader* rheader = rich_header()) {
-    os << "Rich Header" << std::endl;
-    os << "===========" << std::endl;
-    os << *rheader << std::endl;
-    os << std::endl;
+    os << "Rich Header" << '\n';
+    os << "===========" << '\n';
+    os << *rheader << '\n';
+    os << '\n';
   }
 
 
-  os << "Header" << std::endl;
-  os << "======" << std::endl;
+  os << "Header" << '\n';
+  os << "======" << '\n';
 
   os << header();
-  os << std::endl;
+  os << '\n';
 
 
-  os << "Optional Header" << std::endl;
-  os << "===============" << std::endl;
+  os << "Optional Header" << '\n';
+  os << "===============" << '\n';
 
   os << optional_header();
-  os << std::endl;
+  os << '\n';
 
 
-  os << "Data directories" << std::endl;
-  os << "================" << std::endl;
+  os << "Data directories" << '\n';
+  os << "================" << '\n';
 
   for (const DataDirectory& data_directory : data_directories()) {
-    os << data_directory << std::endl;
+    os << data_directory << '\n';
   }
-  os << std::endl;
+  os << '\n';
 
 
-  os << "Sections" << std::endl;
-  os << "========" << std::endl;
+  os << "Sections" << '\n';
+  os << "========" << '\n';
 
   for (const Section& section : sections()) {
-    os << section << std::endl;;
+    os << section << '\n';;
   }
-  os << std::endl;
+  os << '\n';
 
 
   if (const TLS* tls_obj = tls()) {
-    os << "TLS" << std::endl;
-    os << "===" << std::endl;
-    os << *tls_obj << std::endl;
-    os << std::endl;
+    os << "TLS" << '\n';
+    os << "===" << '\n';
+    os << *tls_obj << '\n';
+    os << '\n';
   }
 
 
   if (has_signatures()) {
-    os << "Signatures" << std::endl;
-    os << "==========" << std::endl;
+    os << "Signatures" << '\n';
+    os << "==========" << '\n';
     for (const Signature& sig : signatures_) {
-      os << sig << std::endl;
+      os << sig << '\n';
     }
-    os << std::endl;
+    os << '\n';
   }
 
 
   if (has_imports()) {
-    os << "Imports" << std::endl;
-    os << "=======" << std::endl;
+    os << "Imports" << '\n';
+    os << "=======" << '\n';
     for (const Import& import : imports()) {
-      os << import << std::endl;
+      os << import << '\n';
     }
-    os << std::endl;
+    os << '\n';
   }
 
   if (has_delay_imports()) {
-    os << "Delay Imports" << std::endl;
-    os << "=============" << std::endl;
+    os << "Delay Imports" << '\n';
+    os << "=============" << '\n';
     for (const DelayImport& import : delay_imports()) {
-      os << import << std::endl;
+      os << import << '\n';
     }
-    os << std::endl;
+    os << '\n';
   }
 
 
   if (has_debug()) {
-    os << "Debug" << std::endl;
-    os << "=====" << std::endl;
+    os << "Debug" << '\n';
+    os << "=====" << '\n';
     for (const Debug& debug : this->debug()) {
-      os << debug << std::endl;
+      os << debug << '\n';
     }
-    os << std::endl;
+    os << '\n';
   }
 
 
   if (has_relocations()) {
-    os << "Relocations" << std::endl;
-    os << "===========" << std::endl;
+    os << "Relocations" << '\n';
+    os << "===========" << '\n';
     for (const Relocation& relocation : relocations()) {
-      os << relocation << std::endl;
+      os << relocation << '\n';
     }
-    os << std::endl;
+    os << '\n';
   }
 
 
   if (const Export* exp = get_export()) {
-    os << "Export" << std::endl;
-    os << "======" << std::endl;
-    os << *exp << std::endl;
-    os << std::endl;
+    os << "Export" << '\n';
+    os << "======" << '\n';
+    os << *exp << '\n';
+    os << '\n';
   }
 
 
   if (has_resources()) {
     if (auto manager = resources_manager()) {
-      os << "Resources" << std::endl;
-      os << "=========" << std::endl;
-      os << *manager << std::endl;
-      os << std::endl;
+      os << "Resources" << '\n';
+      os << "=========" << '\n';
+      os << *manager << '\n';
+      os << '\n';
     }
   }
 
-  os << "Symbols" << std::endl;
-  os << "=======" << std::endl;
+  os << "Symbols" << '\n';
+  os << "=======" << '\n';
 
   for (const Symbol& symbol : symbols()) {
-    os << symbol << std::endl;;
+    os << symbol << '\n';;
   }
-  os << std::endl;
+  os << '\n';
 
 
   if (has_configuration()) {
-    os << "Load Configuration" << std::endl;
-    os << "==================" << std::endl;
+    os << "Load Configuration" << '\n';
+    os << "==================" << '\n';
 
     os << load_configuration();
 
-    os << std::endl;
+    os << '\n';
   }
 
 

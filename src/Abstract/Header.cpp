@@ -112,12 +112,12 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
     bitness = "64";
   }
 
-  os << std::setw(33) << std::setfill(' ') << "Architecture:" << to_string(hdr.architecture()) << "_" << modes << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Entrypoint:"   << "0x" << hdr.entrypoint()                      << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Object type:"  << to_string(hdr.object_type())                  << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "32/64 bits:"   << bitness                                       << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "Architecture:" << to_string(hdr.architecture()) << "_" << modes << '\n';
+  os << std::setw(33) << std::setfill(' ') << "Entrypoint:"   << "0x" << hdr.entrypoint()                      << '\n';
+  os << std::setw(33) << std::setfill(' ') << "Object type:"  << to_string(hdr.object_type())                  << '\n';
+  os << std::setw(33) << std::setfill(' ') << "32/64 bits:"   << bitness                                       << '\n';
 
-  os << std::setw(33) << std::setfill(' ') << "Endianness:"   << to_string(hdr.endianness())                                       << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "Endianness:"   << to_string(hdr.endianness())                                       << '\n';
   return os;
 }
 

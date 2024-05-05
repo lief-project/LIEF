@@ -216,43 +216,43 @@ void Header::accept(Visitor& visitor) const {
 std::ostream& operator<<(std::ostream& os, const Header& hdr) {
   static constexpr size_t WIDTH = 45;
   os << std::hex << std::left << std::showbase;
-  //os << std::setw(33) << std::setfill(' ') << "Version:"   << ident_magic << std::endl;
-  //os << std::setw(33) << std::setfill(' ') << "Location:"  << ident_magic << std::endl;
-  os << std::setw(WIDTH) << std::setfill(' ') << "Checksum:"  << std::hex << hdr.checksum() << std::endl;
-  os << std::setw(WIDTH) << std::setfill(' ') << "Instruction set:"  << to_string(hdr.instruction_set()) << std::endl;
-  //os << std::setw(33) << std::setfill(' ') << "Instruction set features:"  << ident_magic << std::endl;
-  os << std::setw(WIDTH) << std::setfill(' ') << "Dex file count:"                              << std::dec << hdr.nb_dex_files()      << std::endl;
-  os << std::setw(WIDTH) << std::setfill(' ') << "Executable offset:"                           << std::hex << hdr.executable_offset() << std::endl;
+  //os << std::setw(33) << std::setfill(' ') << "Version:"   << ident_magic << '\n';
+  //os << std::setw(33) << std::setfill(' ') << "Location:"  << ident_magic << '\n';
+  os << std::setw(WIDTH) << std::setfill(' ') << "Checksum:"  << std::hex << hdr.checksum() << '\n';
+  os << std::setw(WIDTH) << std::setfill(' ') << "Instruction set:"  << to_string(hdr.instruction_set()) << '\n';
+  //os << std::setw(33) << std::setfill(' ') << "Instruction set features:"  << ident_magic << '\n';
+  os << std::setw(WIDTH) << std::setfill(' ') << "Dex file count:"                              << std::dec << hdr.nb_dex_files()      << '\n';
+  os << std::setw(WIDTH) << std::setfill(' ') << "Executable offset:"                           << std::hex << hdr.executable_offset() << '\n';
 
-  os << std::endl;
+  os << '\n';
 
-  os << std::setw(WIDTH) << std::setfill(' ') << "Interpreter to Interpreter Bridge Offset:"   << std::hex << hdr.i2i_bridge_offset()      << std::endl;
-  os << std::setw(WIDTH) << std::setfill(' ') << "Interpreter to Compiled Code Bridge Offset:" << std::hex << hdr.i2c_code_bridge_offset() << std::endl;
+  os << std::setw(WIDTH) << std::setfill(' ') << "Interpreter to Interpreter Bridge Offset:"   << std::hex << hdr.i2i_bridge_offset()      << '\n';
+  os << std::setw(WIDTH) << std::setfill(' ') << "Interpreter to Compiled Code Bridge Offset:" << std::hex << hdr.i2c_code_bridge_offset() << '\n';
 
-  os << std::endl;
+  os << '\n';
 
-  os << std::setw(WIDTH) << std::setfill(' ') << "JNI dlsym lookup offset:" << std::hex << hdr.jni_dlsym_lookup_offset() << std::endl;
+  os << std::setw(WIDTH) << std::setfill(' ') << "JNI dlsym lookup offset:" << std::hex << hdr.jni_dlsym_lookup_offset() << '\n';
 
-  os << std::endl;
+  os << '\n';
 
-  os << std::setw(WIDTH) << std::setfill(' ') << "Quick Generic JNI Trampoline Offset:"  << std::hex << hdr.quick_generic_jni_trampoline_offset()  << std::endl;
-  os << std::setw(WIDTH) << std::setfill(' ') << "Quick IMT Conflict Trampoline Offset:" << std::hex << hdr.quick_imt_conflict_trampoline_offset() << std::endl;
-  os << std::setw(WIDTH) << std::setfill(' ') << "Quick Resolution Trampoline Offset:"   << std::hex << hdr.quick_resolution_trampoline_offset()   << std::endl;
-  os << std::setw(WIDTH) << std::setfill(' ') << "Quick to Interpreter Bridge Offset:"   << std::hex << hdr.quick_to_interpreter_bridge_offset()   << std::endl;
+  os << std::setw(WIDTH) << std::setfill(' ') << "Quick Generic JNI Trampoline Offset:"  << std::hex << hdr.quick_generic_jni_trampoline_offset()  << '\n';
+  os << std::setw(WIDTH) << std::setfill(' ') << "Quick IMT Conflict Trampoline Offset:" << std::hex << hdr.quick_imt_conflict_trampoline_offset() << '\n';
+  os << std::setw(WIDTH) << std::setfill(' ') << "Quick Resolution Trampoline Offset:"   << std::hex << hdr.quick_resolution_trampoline_offset()   << '\n';
+  os << std::setw(WIDTH) << std::setfill(' ') << "Quick to Interpreter Bridge Offset:"   << std::hex << hdr.quick_to_interpreter_bridge_offset()   << '\n';
 
-  os << std::endl;
+  os << '\n';
 
-  os << std::setw(WIDTH) << std::setfill(' ') << "Image Patch Delta:" << std::dec << hdr.image_patch_delta() << std::endl;
+  os << std::setw(WIDTH) << std::setfill(' ') << "Image Patch Delta:" << std::dec << hdr.image_patch_delta() << '\n';
 
-  os << std::endl;
+  os << '\n';
 
-  os << std::setw(WIDTH) << std::setfill(' ') << "Image File Location OAT Checksum:" << std::hex << hdr.image_file_location_oat_checksum()   << std::endl;
-  os << std::setw(WIDTH) << std::setfill(' ') << "Image File Location OAT Begin:"    << std::hex << hdr.image_file_location_oat_data_begin() << std::endl;
+  os << std::setw(WIDTH) << std::setfill(' ') << "Image File Location OAT Checksum:" << std::hex << hdr.image_file_location_oat_checksum()   << '\n';
+  os << std::setw(WIDTH) << std::setfill(' ') << "Image File Location OAT Begin:"    << std::hex << hdr.image_file_location_oat_data_begin() << '\n';
 
-  os << std::endl;
+  os << '\n';
 
   for (const auto& p : hdr.key_values()) {
-    os << std::setw(WIDTH) << std::setfill(' ') << Header::key_to_string(p.key) + ":" << *p.value << std::endl;
+    os << std::setw(WIDTH) << std::setfill(' ') << Header::key_to_string(p.key) + ":" << *p.value << '\n';
   }
 
   return os;

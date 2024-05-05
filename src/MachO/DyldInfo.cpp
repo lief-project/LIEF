@@ -171,7 +171,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
     switch(opcode) {
       case REBASE_OPCODES::REBASE_OPCODE_DONE:
         {
-          output << "[" << to_string(opcode) << "]" << std::endl;
+          output << "[" << to_string(opcode) << "]" << '\n';
           done = true;
           break;
         }
@@ -181,7 +181,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
           type = imm;
           output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "] ";
           output << "Type: " << to_string(static_cast<REBASE_TYPES>(type));
-          output << std::endl;
+          output << '\n';
           break;
         }
 
@@ -199,7 +199,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
           output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "] ";
           output << "Segment Index := " << std::dec << segment_index << " (" << segments[segment_index].name() << ") ";
           output << "Segment Offset := " << std::hex << std::showbase << segment_offset;
-          output << std::endl;
+          output << '\n';
 
           break;
         }
@@ -218,7 +218,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
 
           output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "] ";
           output << "Segment Offset += " << std::hex << std::showbase << val << " (" << segment_offset << ")";
-          output << std::endl;
+          output << '\n';
           break;
         }
 
@@ -228,14 +228,14 @@ std::string DyldInfo::show_rebases_opcodes() const {
 
           output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "]" ;
           output << "Segment Offset += " << std::hex << std::showbase << (imm * pint_v) << " (" << segment_offset << ")";
-          output << std::endl;
+          output << '\n';
           break;
         }
 
       case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_IMM_TIMES:
         {
-          output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "]" << std::endl;
-          output << tab << "for i in range(" << std::dec << static_cast<uint32_t>(imm) << "):" << std::endl;
+          output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "]" << '\n';
+          output << tab << "for i in range(" << std::dec << static_cast<uint32_t>(imm) << "):" << '\n';
           for (size_t i = 0; i < imm; ++i) {
             output << tab << tab;
             output << "rebase(";
@@ -244,15 +244,15 @@ std::string DyldInfo::show_rebases_opcodes() const {
             output << segments[segment_index].name();
             output << ", ";
             output << std::hex << std::showbase << segment_offset;
-            output << ")" << std::endl;
+            output << ")" << '\n';
 
             segment_offset += pint_v;
 
             output << tab << tab;
             output << "Segment Offset += " << std::hex << std::showbase << pint_v << " (" << segment_offset << ")";
-            output << std::endl << std::endl;
+            output << '\n' << '\n';
           }
-          output << std::endl;
+          output << '\n';
           break;
         }
       case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES:
@@ -265,9 +265,9 @@ std::string DyldInfo::show_rebases_opcodes() const {
             break;
           }
 
-          output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "]" << std::endl;
+          output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "]" << '\n';
 
-          output << tab << "for i in range(" << std::dec << static_cast<uint32_t>(count) << "):" << std::endl;
+          output << tab << "for i in range(" << std::dec << static_cast<uint32_t>(count) << "):" << '\n';
           for (size_t i = 0; i < count; ++i) {
             output << tab << tab;
             output << "rebase(";
@@ -276,23 +276,23 @@ std::string DyldInfo::show_rebases_opcodes() const {
             output << segments[segment_index].name();
             output << ", ";
             output << std::hex << std::showbase << segment_offset;
-            output << ")" << std::endl;
+            output << ")" << '\n';
 
             segment_offset += pint_v;
 
             output << tab << tab;
             output << "Segment Offset += " << std::hex << std::showbase << pint_v << " (" << segment_offset << ")";
-            output << std::endl << std::endl;
+            output << '\n' << '\n';
           }
 
-          output << std::endl;
+          output << '\n';
           break;
         }
 
       case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB:
         {
 
-          output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "]" << std::endl;
+          output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "]" << '\n';
 
           output << tab;
           output << "rebase(";
@@ -301,7 +301,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
           output << segments[segment_index].name();
           output << ", ";
           output << std::hex << std::showbase << segment_offset;
-          output << ")" << std::endl;
+          output << ")" << '\n';
 
           uint64_t val = 0;
           if (auto res = rebase_stream.read_uleb128()) {
@@ -315,7 +315,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
 
           output << tab;
           output << "Segment Offset += " << std::hex << std::showbase << (val + pint_v) << " (" << segment_offset << ")";
-          output << std::endl;
+          output << '\n';
 
           break;
         }
@@ -323,7 +323,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
       case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB:
         {
 
-          output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "]" << std::endl;
+          output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "]" << '\n';
 
           // Count
           if (auto res = rebase_stream.read_uleb128()) {
@@ -341,7 +341,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
             break;
           }
 
-          output << tab << "for i in range(" << std::dec << static_cast<uint32_t>(count) << "):" << std::endl;
+          output << tab << "for i in range(" << std::dec << static_cast<uint32_t>(count) << "):" << '\n';
           for (size_t i = 0; i < count; ++i) {
             output << tab << tab;
             output << "rebase(";
@@ -350,13 +350,13 @@ std::string DyldInfo::show_rebases_opcodes() const {
             output << segments[segment_index].name();
             output << ", ";
             output << std::hex << std::showbase << segment_offset;
-            output << ")" << std::endl;
+            output << ")" << '\n';
 
             segment_offset += skip + pint_v;
 
             output << tab << tab;
             output << "Segment Offset += " << std::hex << std::showbase << skip << " + " << pint_v << " (" << segment_offset << ")";
-            output << std::endl << std::endl;
+            output << '\n' << '\n';
           }
 
           break;
@@ -364,7 +364,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
 
       default:
         {
-          output << "[UNSUPPORTED OPCODE - " << std::showbase << std::hex << static_cast<uint32_t>(opcode) << "]" << std::endl;
+          output << "[UNSUPPORTED OPCODE - " << std::showbase << std::hex << static_cast<uint32_t>(opcode) << "]" << '\n';
           break;
         }
     }
@@ -458,7 +458,7 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
     switch (opcode) {
       case BIND_OPCODES::BIND_OPCODE_DONE:
         {
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
+          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
           if (!is_lazy) {
             done = true;
           }
@@ -467,17 +467,17 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
 
       case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM:
         {
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
+          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
 
           library_ordinal = imm;
 
-          output << tab << "Library Ordinal := " << std::dec << static_cast<uint32_t>(imm) << std::endl;
+          output << tab << "Library Ordinal := " << std::dec << static_cast<uint32_t>(imm) << '\n';
           break;
         }
 
       case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
         {
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
+          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
 
           if (auto res = bind_stream.read_uleb128()) {
             library_ordinal = *res;
@@ -486,7 +486,7 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
             break;
           }
 
-          output << tab << "Library Ordinal := " << std::dec << library_ordinal << std::endl;
+          output << tab << "Library Ordinal := " << std::dec << library_ordinal << '\n';
 
           break;
         }
@@ -494,7 +494,7 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
       case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
         {
 
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
+          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
           // the special ordinals are negative numbers
           if (imm == 0) {
             library_ordinal = 0;
@@ -503,14 +503,14 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
             library_ordinal = sign_extended;
           }
 
-          output << tab << "Library Ordinal := " << std::dec << library_ordinal << std::endl;
+          output << tab << "Library Ordinal := " << std::dec << library_ordinal << '\n';
           break;
         }
 
       case BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
         {
 
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
+          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
 
           if (auto res = bind_stream.read_string()) {
             symbol_name = std::move(*res);
@@ -522,25 +522,25 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
 
           is_weak_import = (imm & BIND_SYMBOL_FLAGS_WEAK_IMPORT) != 0;
 
-          output << tab << "Symbol name := " << symbol_name << std::endl;
-          output << tab << "Is Weak ? " << std::boolalpha << is_weak_import << std::endl;
+          output << tab << "Symbol name := " << symbol_name << '\n';
+          output << tab << "Is Weak ? " << std::boolalpha << is_weak_import << '\n';
           break;
         }
 
       case BIND_OPCODES::BIND_OPCODE_SET_TYPE_IMM:
         {
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
+          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
 
           type = imm;
 
-          output << tab << "Type := " << to_string(static_cast<BIND_TYPES>(type)) << std::endl;
+          output << tab << "Type := " << to_string(static_cast<BIND_TYPES>(type)) << '\n';
 
           break;
         }
 
       case BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB:
         {
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
+          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
 
           if (auto res = bind_stream.read_sleb128()) {
             addend = *res;
@@ -549,14 +549,14 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
             break;
           }
 
-          output << tab << "Addend := " << std::dec << addend << std::endl;
+          output << tab << "Addend := " << std::dec << addend << '\n';
           break;
         }
 
       case BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
         {
 
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
+          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
           segment_idx  = imm;
 
           if (auto res = bind_stream.read_uleb128()) {
@@ -566,8 +566,8 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
             break;
           }
 
-          output << tab << "Segment := " << segments[segment_idx].name() << std::endl;
-          output << tab << "Segment Offset := " << std::hex << std::showbase << segment_offset << std::endl;
+          output << tab << "Segment := " << segments[segment_idx].name() << '\n';
+          output << tab << "Segment Offset := " << std::hex << std::showbase << segment_offset << '\n';
 
           break;
         }
@@ -575,7 +575,7 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
       case BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB:
         {
 
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
+          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
 
           uint64_t val = 0;
           if (auto res = bind_stream.read_uleb128()) {
@@ -586,14 +586,14 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           }
           segment_offset += val;
 
-          output << tab << "Segment Offset += " << std::hex << std::showbase << val << " (" << segment_offset << ")" << std::endl;
+          output << tab << "Segment Offset += " << std::hex << std::showbase << val << " (" << segment_offset << ")" << '\n';
           break;
         }
 
       case BIND_OPCODES::BIND_OPCODE_DO_BIND:
         {
           if (!use_threaded_rebase_bind) {
-            output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
+            output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
 
             output << tab;
             output << "bind(";
@@ -610,11 +610,11 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
             output << std::dec << addend;
             output << ", is_weak_import=";
             output << std::boolalpha << is_weak_import;
-            output << ")" << std::endl;
+            output << ")" << '\n';
 
             segment_offset += pint_v;
 
-            output << tab << "Segment Offset += " << std::hex << std::showbase << pint_v << " (" << segment_offset << ")" << std::endl;
+            output << tab << "Segment Offset += " << std::hex << std::showbase << pint_v << " (" << segment_offset << ")" << '\n';
           } else {
             ordinal_table.push_back(ThreadedBindData{symbol_name, addend, library_ordinal, symbol_flags, type});
           }
@@ -624,7 +624,7 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
       case BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB:
         {
 
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
+          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
 
           output << tab;
           output << "bind(";
@@ -641,7 +641,7 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           output << std::dec << addend;
           output << ", is_weak_import=";
           output << std::boolalpha << is_weak_import;
-          output << ")" << std::endl;
+          output << ")" << '\n';
 
           uint64_t v = 0;
           if (auto res = bind_stream.read_uleb128()) {
@@ -652,14 +652,14 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           }
           segment_offset += v + pint_v;
 
-          output << tab << "Segment Offset += " << std::hex << std::showbase << v + pint_v << " (" << segment_offset << ")" << std::endl;
+          output << tab << "Segment Offset += " << std::hex << std::showbase << v + pint_v << " (" << segment_offset << ")" << '\n';
           break;
         }
 
       case BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
         {
 
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
+          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
 
           output << tab;
           output << "bind(";
@@ -676,11 +676,11 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           output << std::dec << addend;
           output << ", is_weak_import=";
           output << std::boolalpha << is_weak_import;
-          output << ")" << std::endl;
+          output << ")" << '\n';
 
           segment_offset += imm * pint_v + pint_v;
 
-          output << tab << "Segment Offset += " << std::hex << std::showbase << (imm * pint_v + pint_v) << " (" << segment_offset << ")" << std::endl;
+          output << tab << "Segment Offset += " << std::hex << std::showbase << (imm * pint_v + pint_v) << " (" << segment_offset << ")" << '\n';
 
           break;
         }
@@ -688,7 +688,7 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
       case BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
         {
 
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << std::endl;
+          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
           // Count
           if (auto res = bind_stream.read_uleb128()) {
             count = *res;
@@ -705,7 +705,7 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
             break;
           }
 
-          output << tab << "for i in range(" << std::dec << static_cast<uint32_t>(count) << "):" << std::endl;
+          output << tab << "for i in range(" << std::dec << static_cast<uint32_t>(count) << "):" << '\n';
           for (size_t i = 0; i < count; ++i) {
             output << tab << tab;
             output << "bind(";
@@ -722,14 +722,14 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
             output << std::dec << addend;
             output << ", is_weak_import=";
             output << std::boolalpha << is_weak_import;
-            output << ")" << std::endl;
+            output << ")" << '\n';
 
 
             segment_offset += skip + pint_v;
 
             output << "Segment Offset += " << std::hex << std::showbase << skip << " + " << pint_v << " (" << segment_offset << ")";
 
-            output << std::endl << std::endl;
+            output << '\n' << '\n';
           }
           break;
         }
@@ -2287,26 +2287,26 @@ bool DyldInfo::classof(const LoadCommand* cmd) {
 std::ostream& DyldInfo::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << std::hex << std::left;
-  os << std::setw(11) << "Type "       << std::setw(10) << "Offset" << "Size" << std::endl;
-  os << std::setw(11) << "Rebase: "    << std::setw(10) << std::get<0>(rebase())      << std::get<1>(rebase())      << std::endl;
-  os << std::setw(11) << "Bind: "      << std::setw(10) << std::get<0>(bind())        << std::get<1>(bind())        << std::endl;
-  os << std::setw(11) << "Weak bind: " << std::setw(10) << std::get<0>(weak_bind())   << std::get<1>(weak_bind())   << std::endl;
-  os << std::setw(11) << "Lazy bind: " << std::setw(10) << std::get<0>(lazy_bind())   << std::get<1>(lazy_bind())   << std::endl;
-  os << std::setw(11) << "Export: "    << std::setw(10) << std::get<0>(export_info()) << std::get<1>(export_info()) << std::endl;
+  os << std::setw(11) << "Type "       << std::setw(10) << "Offset" << "Size" << '\n';
+  os << std::setw(11) << "Rebase: "    << std::setw(10) << std::get<0>(rebase())      << std::get<1>(rebase())      << '\n';
+  os << std::setw(11) << "Bind: "      << std::setw(10) << std::get<0>(bind())        << std::get<1>(bind())        << '\n';
+  os << std::setw(11) << "Weak bind: " << std::setw(10) << std::get<0>(weak_bind())   << std::get<1>(weak_bind())   << '\n';
+  os << std::setw(11) << "Lazy bind: " << std::setw(10) << std::get<0>(lazy_bind())   << std::get<1>(lazy_bind())   << '\n';
+  os << std::setw(11) << "Export: "    << std::setw(10) << std::get<0>(export_info()) << std::get<1>(export_info()) << '\n';
 
   it_const_binding_info bindings = this->bindings();
   for (size_t i = 0; i < bindings.size(); ++i) {
-    os << "Binding Info #" << std::dec << i << std::endl;
-    os << "================" << std::endl;
-    os << bindings[i] << std::endl;
+    os << "Binding Info #" << std::dec << i << '\n';
+    os << "================" << '\n';
+    os << bindings[i] << '\n';
   }
 
 
   it_const_export_info exports = this->exports();
   for (size_t i = 0; i < exports.size(); ++i) {
-    os << "Export Info #" << std::dec << i << std::endl;
-    os << "==============" << std::endl;
-    os << exports[i] << std::endl;
+    os << "Export Info #" << std::dec << i << '\n';
+    os << "==============" << '\n';
+    os << exports[i] << '\n';
   }
   return os;
 }

@@ -127,18 +127,18 @@ std::ostream& operator<<(std::ostream& os, const BindingInfo& binding_info) {
   os << std::hex;
   os << std::left;
 
-  os << std::setw(13) << "Address: 0x" <<  std::hex << binding_info.address() << std::endl;
+  os << std::setw(13) << "Address: 0x" <<  std::hex << binding_info.address() << '\n';
 
   if (binding_info.has_symbol()) {
-    os << std::setw(13) << "Symbol: "    << binding_info.symbol()->name() << std::endl;
+    os << std::setw(13) << "Symbol: "    << binding_info.symbol()->name() << '\n';
   }
 
   if (binding_info.has_segment()) {
-    os << std::setw(13) << "Segment: "    << binding_info.segment()->name() << std::endl;
+    os << std::setw(13) << "Segment: "    << binding_info.segment()->name() << '\n';
   }
 
   if (binding_info.has_library()) {
-    os << std::setw(13) << "Library: "    << binding_info.library()->name() << std::endl;
+    os << std::setw(13) << "Library: "    << binding_info.library()->name() << '\n';
   }
 
   return os;

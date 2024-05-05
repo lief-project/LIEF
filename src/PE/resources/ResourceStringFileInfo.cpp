@@ -86,11 +86,11 @@ void ResourceStringFileInfo::accept(Visitor& visitor) const {
 
 std::ostream& operator<<(std::ostream& os, const ResourceStringFileInfo& string_file_info) {
   os << std::hex << std::left;
-  os << std::setw(7) << std::setfill(' ') << "type: " << string_file_info.type()         << std::endl;
-  os << std::setw(7) << std::setfill(' ') << "key: "  << u16tou8(string_file_info.key()) << std::endl << std::endl;
+  os << std::setw(7) << std::setfill(' ') << "type: " << string_file_info.type()         << '\n';
+  os << std::setw(7) << std::setfill(' ') << "key: "  << u16tou8(string_file_info.key()) << '\n' << '\n';
 
   for (const LangCodeItem& item : string_file_info.langcode_items()) {
-    os << item << std::endl;
+    os << item << '\n';
   }
   return os;
 }

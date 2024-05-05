@@ -188,13 +188,13 @@ void ResourceIcon::accept(Visitor& visitor) const {
 
 
 std::ostream& operator<<(std::ostream& os, const ResourceIcon& icon) {
-  os << std::setw(33) << std::left << std::setfill(' ') << "ID: "          << std::hex << icon.id()                                                                                       << std::endl;
-  os << std::setw(33) << std::left << std::setfill(' ') << "Size: "        << std::dec << static_cast<uint32_t>(icon.width()) << "x" << static_cast<uint32_t>(icon.height()) << " pixels" << std::endl;
-  os << std::setw(33) << std::left << std::setfill(' ') << "Color count: " << std::hex << static_cast<uint32_t>(icon.color_count())                                                       << std::endl;
-  os << std::setw(33) << std::left << std::setfill(' ') << "Reserved: "    << std::hex << static_cast<uint32_t>(icon.reserved())                                                          << std::endl;
-  os << std::setw(33) << std::left << std::setfill(' ') << "Planes: "      << std::hex << static_cast<uint32_t>(icon.planes())                                                            << std::endl;
-  os << std::setw(33) << std::left << std::setfill(' ') << "Bit count: "   << std::hex << static_cast<uint32_t>(icon.bit_count())                                                         << std::endl;
-  os << std::setw(33) << std::left << std::setfill(' ') << "Hash: "        << std::hex << Hash::hash(icon.pixels())                                                                       << std::endl;
+  os << std::setw(33) << std::left << std::setfill(' ') << "ID: "          << std::hex << icon.id()                                                                                       << '\n';
+  os << std::setw(33) << std::left << std::setfill(' ') << "Size: "        << std::dec << static_cast<uint32_t>(icon.width()) << "x" << static_cast<uint32_t>(icon.height()) << " pixels" << '\n';
+  os << std::setw(33) << std::left << std::setfill(' ') << "Color count: " << std::hex << static_cast<uint32_t>(icon.color_count())                                                       << '\n';
+  os << std::setw(33) << std::left << std::setfill(' ') << "Reserved: "    << std::hex << static_cast<uint32_t>(icon.reserved())                                                          << '\n';
+  os << std::setw(33) << std::left << std::setfill(' ') << "Planes: "      << std::hex << static_cast<uint32_t>(icon.planes())                                                            << '\n';
+  os << std::setw(33) << std::left << std::setfill(' ') << "Bit count: "   << std::hex << static_cast<uint32_t>(icon.bit_count())                                                         << '\n';
+  os << std::setw(33) << std::left << std::setfill(' ') << "Hash: "        << std::hex << Hash::hash(icon.pixels())                                                                       << '\n';
   return os;
 }
 

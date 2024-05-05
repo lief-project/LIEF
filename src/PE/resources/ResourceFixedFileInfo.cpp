@@ -198,15 +198,15 @@ std::ostream& operator<<(std::ostream& os, const ResourceFixedFileInfo& fixed_in
   product_version_str += std::to_string(fixed_info.product_version_LS() & 0xFFFF);
 
   os << std::hex << std::left;
-  os << std::setw(17) << std::setfill(' ') << "Signature:"       << fixed_info.signature()            << std::endl;
-  os << std::setw(17) << std::setfill(' ') << "Struct version:"  << fixed_info.struct_version()       << std::endl;
-  os << std::setw(17) << std::setfill(' ') << "File version:"    << file_version_str                  << std::endl;
-  os << std::setw(17) << std::setfill(' ') << "Product version:" << product_version_str               << std::endl;
-  os << std::setw(17) << std::setfill(' ') << "File OS:"         << to_string(fixed_info.file_os())   << std::endl;
-  os << std::setw(17) << std::setfill(' ') << "File type:"       << to_string(fixed_info.file_type()) << std::endl;
+  os << std::setw(17) << std::setfill(' ') << "Signature:"       << fixed_info.signature()            << '\n';
+  os << std::setw(17) << std::setfill(' ') << "Struct version:"  << fixed_info.struct_version()       << '\n';
+  os << std::setw(17) << std::setfill(' ') << "File version:"    << file_version_str                  << '\n';
+  os << std::setw(17) << std::setfill(' ') << "Product version:" << product_version_str               << '\n';
+  os << std::setw(17) << std::setfill(' ') << "File OS:"         << to_string(fixed_info.file_os())   << '\n';
+  os << std::setw(17) << std::setfill(' ') << "File type:"       << to_string(fixed_info.file_type()) << '\n';
   if (fixed_info.file_type() == FIXED_VERSION_FILE_TYPES::VFT_DRV ||
       fixed_info.file_type() == FIXED_VERSION_FILE_TYPES::VFT_FONT) {
-    os << std::setw(17) << std::setfill(' ') << "File sub-type:" << to_string(fixed_info.file_subtype()) << std::endl;
+    os << std::setw(17) << std::setfill(' ') << "File sub-type:" << to_string(fixed_info.file_subtype()) << '\n';
   }
   return os;
 }

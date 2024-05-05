@@ -101,9 +101,9 @@ std::vector<uint8_t> RichHeader::hash(ALGORITHMS algo, uint32_t xor_key) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const RichHeader& rich_header) {
-  os << "Key: " << std::hex << rich_header.key() << std::endl;
+  os << "Key: " << std::hex << rich_header.key() << '\n';
   for (const RichEntry& entry : rich_header.entries()) {
-    os << "  - " << entry << std::endl;
+    os << "  - " << entry << '\n';
   }
   return os;
 }

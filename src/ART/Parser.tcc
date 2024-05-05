@@ -57,7 +57,7 @@ void Parser::parse_sections() {
   using jclass_t       = typename ART_T::template jclass_t<>;
   using jobject_t      = typename ART_T::template jobject_t<>;
 
-  VLOG(VDEBUG) << "Parsing Image Sections" << std::endl;
+  VLOG(VDEBUG) << "Parsing Image Sections" << '\n';
   size_t nb_sections = file_->header().nb_sections_;
 
   const art_header_t& hdr = stream_->peek<art_header_t>(0);
@@ -81,7 +81,7 @@ void Parser::parse_sections() {
       jarray_offset = align(jarray_offset, sizeof(uint64_t));
       //jarray_offset = 0x700e1db0 - imagebase_;
     }
-    std::cout << "addr:" << std::hex << imagebase_ + jarray_offset << std::endl;
+    std::cout << "addr:" << std::hex << imagebase_ + jarray_offset << '\n';
 
     const jarray_t* array = reinterpret_cast<const jarray_t*>(stream_->read(jarray_offset, sizeof(jarray_t)));
     uint64_t elements_offset = jarray_offset + offsetof(jarray_t, elements);
@@ -92,11 +92,11 @@ void Parser::parse_sections() {
                  << " --> " << (section_header.offset + section_header.size)
                  << " #" << std::dec << array->length;
 
-    std::cout << std::hex << stream_->read_integer<uint32_t>(jarray_offset) << std::endl;
-    std::cout << std::hex << stream_->read_integer<uint32_t>(jarray_offset + sizeof(uint32_t)) << std::endl;
-    std::cout << std::hex << stream_->read_integer<uint32_t>(jarray_offset + 2 * sizeof(uint32_t)) << std::endl;
-    std::cout << std::hex << stream_->read_integer<uint32_t>(jarray_offset + 3 * sizeof(uint32_t)) << std::endl;
-    std::cout << std::hex << stream_->read_integer<uint32_t>(jarray_offset + 4 * sizeof(uint32_t)) << std::endl;
+    std::cout << std::hex << stream_->read_integer<uint32_t>(jarray_offset) << '\n';
+    std::cout << std::hex << stream_->read_integer<uint32_t>(jarray_offset + sizeof(uint32_t)) << '\n';
+    std::cout << std::hex << stream_->read_integer<uint32_t>(jarray_offset + 2 * sizeof(uint32_t)) << '\n';
+    std::cout << std::hex << stream_->read_integer<uint32_t>(jarray_offset + 3 * sizeof(uint32_t)) << '\n';
+    std::cout << std::hex << stream_->read_integer<uint32_t>(jarray_offset + 4 * sizeof(uint32_t)) << '\n';
 
 
     uint32_t parent  = array->object.klass - imagebase_;
@@ -145,7 +145,7 @@ void Parser::parse_sections() {
 template<typename ART_T, typename PTR_T>
 void Parser::parse_roots() {
   using jarray_t = typename ART_T::template jarray_t<>;
-  VLOG(VDEBUG) << "Parsing Image Roots" << std::endl;
+  VLOG(VDEBUG) << "Parsing Image Roots" << '\n';
   using IMAGE_ROOTS = typename ART_T::IMAGE_ROOTS;
 
   uint32_t image_root_offset = file_->header().image_roots_ - file_->header().image_begin_;
@@ -154,7 +154,7 @@ void Parser::parse_roots() {
   VLOG(VDEBUG) << "Image root offset: " << std::hex << std::showbase << image_root_offset;
 
   const jarray_t* array = reinterpret_cast<const jarray_t*>(stream_->read(image_root_offset, sizeof(jarray_t)));
-  std::cout << "Nb elements: " << array->length << std::endl;
+  std::cout << "Nb elements: " << array->length << '\n';
 
   const uint32_t* array_values = reinterpret_cast<const uint32_t*>(
       stream_->read(
@@ -166,9 +166,9 @@ void Parser::parse_roots() {
   for (size_t i = 0; i < ART_T::nb_image_roots; ++i) {
     IMAGE_ROOTS type = static_cast<IMAGE_ROOTS>(i);
     uint64_t struct_offset = array_values[i] - imagebase_;
-    std::cout << std::hex << struct_offset << std::endl;
+    std::cout << std::hex << struct_offset << '\n';
     const jarray_t* array = reinterpret_cast<const jarray_t*>(stream_->read(struct_offset, sizeof(jarray_t)));
-    std::cout << "Nb elements: " << std::dec << array->length << std::endl;
+    std::cout << "Nb elements: " << std::dec << array->length << '\n';
     switch (type) {
       case IMAGE_ROOTS::DEX_CACHES:
         {
@@ -202,7 +202,7 @@ template<typename ART_T, typename PTR_T>
 void Parser::parse_class_roots(size_t offset, size_t size) {
   using jclass_t = typename ART_T::template jclass_t<>;
   using jstring_t    = typename ART_T::template jstring_t<>;
-  VLOG(VDEBUG) << "Parsing Class Roots" << std::endl;
+  VLOG(VDEBUG) << "Parsing Class Roots" << '\n';
 
   for (size_t i = 0; i < size; ++i) {
     uint32_t object_offset = stream_->read_integer<uint32_t>(offset + i * sizeof(uint32_t)) - imagebase_;
@@ -223,7 +223,7 @@ template<typename ART_T, typename PTR_T>
 void Parser::parse_jstring(size_t offset) {
   using jstring_t    = typename ART_T::template jstring_t<>;
   const jstring_t* jstring = reinterpret_cast<const jstring_t*>(stream_->read(offset, sizeof(jstring_t)));
-  //std::cout << "Class leng: " << std::dec << jstring->count << std::endl;
+  //std::cout << "Class leng: " << std::dec << jstring->count << '\n';
 
   uint64_t value_offset = offset + offsetof(jstring_t, value);
 
@@ -231,7 +231,7 @@ void Parser::parse_jstring(size_t offset) {
     reinterpret_cast<const char16_t*>(stream_->read(value_offset, static_cast<uint16_t>(jstring->count) * sizeof(char16_t))),
     static_cast<uint16_t>(jstring->count)
   };
-  std::cout << u16tou8(str)  << std::endl;
+  std::cout << u16tou8(str)  << '\n';
 }
 
 template<typename ART_T, typename PTR_T>
@@ -242,7 +242,7 @@ void Parser::parse_dex_caches(size_t offset, size_t size) {
   using jstring_t    = typename ART_T::template jstring_t<>;
   using jdex_cache_t = typename ART_T::template jdex_cache_t<>;
 
-  VLOG(VDEBUG) << "Parsing Dex Cache" << std::endl;
+  VLOG(VDEBUG) << "Parsing Dex Cache" << '\n';
 
   for (size_t i = 0; i < size; ++i) {
     uint32_t object_offset = stream_->read_integer<uint32_t>(offset + i * sizeof(uint32_t)) - imagebase_;
@@ -266,14 +266,14 @@ void Parser::parse_dex_cache(size_t object_offset) {
       reinterpret_cast<const char*>(stream_->read(name_offset, static_cast<uint16_t>(len) * sizeof(char))),
       len
     };
-    std::cout << location_string  << std::endl;
+    std::cout << location_string  << '\n';
   } else {
 
     std::u16string location_string = {
       reinterpret_cast<const char16_t*>(stream_->read(name_offset, static_cast<uint16_t>(location->count) * sizeof(char16_t))),
       static_cast<uint16_t>(location->count)
     };
-    std::cout << u16tou8(location_string)  << std::endl;
+    std::cout << u16tou8(location_string)  << '\n';
   }
 }
 
@@ -282,7 +282,7 @@ void Parser::parse_methods() {
   using art_header_t = typename ART_T::art_header_t;
   using IMAGE_METHODS = typename ART_T::IMAGE_METHODS;
 
-  VLOG(VDEBUG) << "Parsing Image Methods" << std::endl;
+  VLOG(VDEBUG) << "Parsing Image Methods" << '\n';
 
 
   const art_header_t* hdr = reinterpret_cast<const art_header_t*>(stream_->read(0, sizeof(art_header_t)));
@@ -304,26 +304,26 @@ void Parser::parse_objects(size_t offset, size_t size) {
   using jclass_t  = typename ART_T::template jclass_t<>;
   using jstring_t = typename ART_T::template jstring_t<>;
 
-  VLOG(VDEBUG) << "Paring objects at " << std::hex << offset << std::endl;
+  VLOG(VDEBUG) << "Paring objects at " << std::hex << offset << '\n';
   //const jarray_t* array = reinterpret_cast<const jarray_t*>(stream_->read(offset, sizeof(jarray_t)));
-  //std::cout << std::dec << "nb elements " << array->length << std::endl;;
+  //std::cout << std::dec << "nb elements " << array->length << '\n';;
 }
 
 
 template<typename ART_T, typename PTR_T>
 void Parser::parse_art_fields(size_t offset, size_t size) {
-  VLOG(VDEBUG) << "Paring ART Fields at " << std::hex << offset << std::endl;
+  VLOG(VDEBUG) << "Paring ART Fields at " << std::hex << offset << '\n';
 }
 
 template<typename ART_T, typename PTR_T>
 void Parser::parse_art_methods(size_t offset, size_t size) {
-  VLOG(VDEBUG) << "Paring ART Methods at " << std::hex << offset << std::endl;
+  VLOG(VDEBUG) << "Paring ART Methods at " << std::hex << offset << '\n';
   // 0x6ff99db0: long[] length:65533
   const PTR_T* methods = reinterpret_cast<const PTR_T*>(stream_->read(offset, size));
   // 26740: 0x70a7ea60
   PTR_T get_device_id = methods[26740];
 
-  std::cout << std::hex << "Get device ID " << get_device_id << std::endl;
+  std::cout << std::hex << "Get device ID " << get_device_id << '\n';
 }
 
 template<typename ART_T, typename PTR_T>

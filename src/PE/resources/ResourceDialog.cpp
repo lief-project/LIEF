@@ -301,29 +301,29 @@ std::ostream& operator<<(std::ostream& os, const ResourceDialog& dialog) {
   } else {
     os << "DIALOG ";
   }
-  os << std::dec << dialog.x() << ", " << dialog.y() << ", " << dialog.cx() << ", " << dialog.cy() << std::endl;
-  os << "Version: "           << std::dec << dialog.version()      << std::endl;
-  os << "Signature: "         << std::hex << dialog.signature()      << std::endl;
-  os << "Styles: "            << styles_str            << std::endl;
-  os << "Dialog box styles: " << dialogbox_styles_str  << std::endl;
-  os << "Extended styles: "   << ext_styles_str        << std::endl;
-  os << "Lang: "              << dialog.lang() << " / " << dialog.sub_lang() << std::endl;
+  os << std::dec << dialog.x() << ", " << dialog.y() << ", " << dialog.cx() << ", " << dialog.cy() << '\n';
+  os << "Version: "           << std::dec << dialog.version()      << '\n';
+  os << "Signature: "         << std::hex << dialog.signature()      << '\n';
+  os << "Styles: "            << styles_str            << '\n';
+  os << "Dialog box styles: " << dialogbox_styles_str  << '\n';
+  os << "Extended styles: "   << ext_styles_str        << '\n';
+  os << "Lang: "              << dialog.lang() << " / " << dialog.sub_lang() << '\n';
 
   if (dialog.is_extended()) {
-    os << "Title: \"" << u16tou8(dialog.title()) << "\"" << std::endl;
+    os << "Title: \"" << u16tou8(dialog.title()) << "\"" << '\n';
     os << "Font: \""
        << std::dec << dialog.point_size()
        << " " << u16tou8(dialog.typeface()) << "\""
        << ", " << std::boolalpha << dialog.is_italic()
-       << ", " << std::dec << static_cast<uint32_t>(dialog.charset()) << std::endl;
+       << ", " << std::dec << static_cast<uint32_t>(dialog.charset()) << '\n';
   }
 
-  os << "{" << std::endl;
+  os << "{" << '\n';
   for (const ResourceDialogItem& item : dialog.items()) {
-    os << "    " << item << std::endl;
+    os << "    " << item << '\n';
   }
 
-  os << "}" << std::endl;
+  os << "}" << '\n';
   return os;
 }
 

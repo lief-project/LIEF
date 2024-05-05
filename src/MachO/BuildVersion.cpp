@@ -111,20 +111,20 @@ std::ostream& BuildVersion::print(std::ostream& os) const {
   BuildVersion::version_t minos = this->minos();
   BuildVersion::version_t sdk   = this->sdk();
 
-  os << std::setw(10) << "Platform: " << to_string(platform()) << std::endl;
+  os << std::setw(10) << "Platform: " << to_string(platform()) << '\n';
 
   os << std::setw(10) << "Min OS: " << std::dec
      << minos[0] << "."
      << minos[1] << "."
-     << minos[2] << std::endl;
+     << minos[2] << '\n';
 
   os << std::setw(10) << "SDK: " << std::dec
      << sdk[0] << "."
      << sdk[1] << "."
-     << sdk[2] << std::endl;
+     << sdk[2] << '\n';
 
   for (const BuildToolVersion& tool_version : tools()) {
-    os << "  " << tool_version << std::endl;
+    os << "  " << tool_version << '\n';
   }
   return os;
 }

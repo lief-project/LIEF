@@ -79,17 +79,17 @@ void File::accept(Visitor& visitor) const {
 
 
 std::ostream& operator<<(std::ostream& os, const File& vdex_file) {
-  os << "Header" << std::endl;
-  os << "======" << std::endl;
+  os << "Header" << '\n';
+  os << "======" << '\n';
 
-  os << vdex_file.header() << std::endl << std::endl;
+  os << vdex_file.header() << '\n' << '\n';
 
 
-  os << "DEX Files" << std::endl;
-  os << "=========" << std::endl;
+  os << "DEX Files" << '\n';
+  os << "=========" << '\n';
 
   for (const DEX::File& f : vdex_file.dex_files()) {
-    os << f << std::endl << std::endl;
+    os << f << '\n' << '\n';
   }
 
 

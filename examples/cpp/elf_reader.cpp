@@ -127,7 +127,7 @@ int main(int argc, char **argv) {
   //std::cout << "== Symbols Version Requirement ==" << '\n';
   //std::vector<SymbolVersionRequirement> *symR = binary->get_symbol_version_requirement();
   //for (SymbolVersionRequirement &symbolR : *symR) {
-  //  std::cout << symbolR << '\n' << std::endl;
+  //  std::cout << symbolR << '\n' << '\n';
   //  auto symAux = symbolR.get_auxiliary_symbols();
   //  for (auto &symbolAux : symAux) {
   //    std::cout << *symbolAux << '\n';

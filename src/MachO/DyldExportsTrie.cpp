@@ -118,10 +118,10 @@ bool DyldExportsTrie::classof(const LoadCommand* cmd) {
 std::ostream& DyldExportsTrie::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << std::left;
-  os << std::endl;
-  os << "Data location:" << std::endl;
-  os << std::setw(8) << "Offset" << ": 0x" << data_offset() << std::endl;
-  os << std::setw(8) << "Size"   << ": 0x" << data_size()   << std::endl;
+  os << '\n';
+  os << "Data location:" << '\n';
+  os << std::setw(8) << "Offset" << ": 0x" << data_offset() << '\n';
+  os << std::setw(8) << "Size"   << ": 0x" << data_size()   << '\n';
   return os;
 }
 

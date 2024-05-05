@@ -56,10 +56,10 @@ bool CodeSignatureDir::classof(const LoadCommand* cmd) {
 std::ostream& CodeSignatureDir::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << std::left;
-  os << std::endl;
-  os << "Code Signature Dir:" << std::endl;
-  os << std::setw(8) << "Offset" << ": 0x" << data_offset() << std::endl;
-  os << std::setw(8) << "Size"   << ": 0x" << data_size()   << std::endl;
+  os << '\n';
+  os << "Code Signature Dir:" << '\n';
+  os << std::setw(8) << "Offset" << ": 0x" << data_offset() << '\n';
+  os << std::setw(8) << "Size"   << ": 0x" << data_size()   << '\n';
   return os;
 }
 

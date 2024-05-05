@@ -536,21 +536,21 @@ std::ostream& operator<<(std::ostream& os, const File& file) {
   if (!file.location().empty()) {
     os << " - " << file.location();
   }
-  os << std::endl;
+  os << '\n';
 
-  os << "Header" << std::endl;
-  os << "======" << std::endl;
+  os << "Header" << '\n';
+  os << "======" << '\n';
 
   os << file.header();
 
-  os << std::endl;
+  os << '\n';
 
-  os << "Map" << std::endl;
-  os << "===" << std::endl;
+  os << "Map" << '\n';
+  os << "===" << '\n';
 
   os << file.map();
 
-  os << std::endl;
+  os << '\n';
   return os;
 }
 

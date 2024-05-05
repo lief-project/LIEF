@@ -61,7 +61,7 @@ bool SubFramework::classof(const LoadCommand* cmd) {
 std::ostream& SubFramework::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << std::left;
-  os << std::endl;
+  os << '\n';
   os << "Umbrella:" << umbrella();
   return os;
 }

@@ -61,11 +61,11 @@ std::ostream& operator<<(std::ostream& os, const SysvHash& sysvhash) {
 
 
 
-  os << std::setw(33) << std::setfill(' ') << "Number of buckets:"  << sysvhash.nbucket() << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Buckets:"            << buckets_str        << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "Number of buckets:"  << sysvhash.nbucket() << '\n';
+  os << std::setw(33) << std::setfill(' ') << "Buckets:"            << buckets_str        << '\n';
 
-  os << std::setw(33) << std::setfill(' ') << "Number of chains:"   << sysvhash.nchain() << std::endl;
-  os << std::setw(33) << std::setfill(' ') << "Chains:"             << chains_str        << std::endl;
+  os << std::setw(33) << std::setfill(' ') << "Number of chains:"   << sysvhash.nchain() << '\n';
+  os << std::setw(33) << std::setfill(' ') << "Chains:"             << chains_str        << '\n';
 
   return os;
 

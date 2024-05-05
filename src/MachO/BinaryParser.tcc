@@ -794,9 +794,9 @@ ok_error_t BinaryParser::parse_load_commands() {
           //// 1. Type
           //uint8_t kind = stream_->peek<uint8_t>();
           //if (kind == DYLD_CACHE_ADJ_V2_FORMAT) {
-          //  std::cout  << "V2 Format" << std::endl;
+          //  std::cout  << "V2 Format" << '\n';
           //} else {
-          //  std::cout  << "V1 Format" << std::endl;
+          //  std::cout  << "V1 Format" << '\n';
           //  while (stream_->pos() < (start + size)) {
           //    uint8_t kind = stream_->read<uint8_t>();
           //    uint64_t cache_offset = 0;

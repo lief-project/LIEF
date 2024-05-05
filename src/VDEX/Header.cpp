@@ -22,10 +22,10 @@
 #include <iomanip>
 
 #define PRINT_FIELD_X(name,attr) \
-  os << std::setw(WIDTH) << std::setfill(' ') << name << std::hex << attr << std::endl
+  os << std::setw(WIDTH) << std::setfill(' ') << name << std::hex << attr << '\n'
 
 #define PRINT_FIELD_D(name,attr) \
-  os << std::setw(WIDTH) << std::setfill(' ') << name << std::dec << attr << std::endl
+  os << std::setw(WIDTH) << std::setfill(' ') << name << std::dec << attr << '\n'
 
 namespace LIEF {
 namespace VDEX {

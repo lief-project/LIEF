@@ -52,10 +52,10 @@ std::ostream& operator<<(std::ostream& os, const ResourceAccelerator& acc) {
   for (const ACCELERATOR_FLAGS c : acc.flags_list()) {
     os << to_string(c) << " ";
   }
-  os << std::endl;
-  os << "ansi: " << acc.ansi_str() << std::endl;
-  os << std::hex << "id: " << acc.id() << std::endl;
-  os << std::hex << "padding: " << acc.padding() << std::endl;
+  os << '\n';
+  os << "ansi: " << acc.ansi_str() << '\n';
+  os << std::hex << "id: " << acc.id() << '\n';
+  os << std::hex << "padding: " << acc.padding() << '\n';
   return os;
 }
 

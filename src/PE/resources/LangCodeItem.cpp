@@ -173,17 +173,17 @@ void LangCodeItem::accept(Visitor& visitor) const {
 
 std::ostream& operator<<(std::ostream& os, const LangCodeItem& item) {
   os << std::hex << std::left;
-  os << std::setw(8) << std::setfill(' ') << "type:" << item.type()         << std::endl;
+  os << std::setw(8) << std::setfill(' ') << "type:" << item.type()         << '\n';
   os << std::setw(8) << std::setfill(' ') << "key:"  << u16tou8(item.key())
      << ": ("
      << item.lang()
      << " - "
      << item.sublang()
      << " - "
-     << std::hex << to_string(item.code_page()) << ")" << std::endl;
-  os << std::setw(8) << std::setfill(' ') << "Items: " << std::endl;
+     << std::hex << to_string(item.code_page()) << ")" << '\n';
+  os << std::setw(8) << std::setfill(' ') << "Items: " << '\n';
   for (const LangCodeItem::items_t::value_type& p : item.items()) {
-    os << "    " << "'" << u16tou8(p.first) << "': '" << u16tou8(p.second) << "'" << std::endl;
+    os << "    " << "'" << u16tou8(p.first) << "': '" << u16tou8(p.second) << "'" << '\n';
   }
   return os;
 }

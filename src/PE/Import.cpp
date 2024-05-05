@@ -177,10 +177,10 @@ std::ostream& operator<<(std::ostream& os, const Import& entry) {
      << std::setw(10) << entry.import_address_table_rva()
      << std::setw(10) << entry.forwarder_chain()
      << std::setw(10) << entry.timedatestamp()
-     << std::endl;
+     << '\n';
 
   for (const ImportEntry& functions: entry.entries()) {
-    os << "\t - " << functions << std::endl;
+    os << "\t - " << functions << '\n';
   }
 
   return os;

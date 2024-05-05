@@ -364,10 +364,10 @@ std::ostream& operator<<(std::ostream& os, const Section& section) {
   }
 
   if (section.relocations().size() > 0)  {
-    os << std::endl;
-    os << "Relocations associated with the section :" << std::endl;
+    os << '\n';
+    os << "Relocations associated with the section :" << '\n';
     for (const Relocation& relocation : section.relocations()) {
-      os << "    " << relocation << std::endl;
+      os << "    " << relocation << '\n';
     }
   }
 

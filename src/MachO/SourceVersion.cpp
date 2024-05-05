@@ -74,7 +74,7 @@ std::ostream& SourceVersion::print(std::ostream& os) const {
      << version[2] << "."
      << version[3] << "."
      << version[4]
-     << std::endl;
+     << '\n';
 
   return os;
 }

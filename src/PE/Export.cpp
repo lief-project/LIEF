@@ -45,9 +45,9 @@ void Export::accept(Visitor& visitor) const {
 std::ostream& operator<<(std::ostream& os, const Export& exp) {
   os << std::hex;
   os << std::left;
-  os << exp.name() << std::endl;
+  os << exp.name() << '\n';
   for (const ExportEntry& entry : exp.entries()) {
-    os << "  " << entry << std::endl;
+    os << "  " << entry << '\n';
   }
   return os;
 }

@@ -347,11 +347,11 @@ std::ostream& SegmentCommand::print(std::ostream& os) const {
      << std::setw(15) << init_protection()
      << std::setw(15) << numberof_sections()
      << std::setw(15) << flags()
-     << std::endl;
+     << '\n';
 
-  os << "Sections in this segment :" << std::endl;
+  os << "Sections in this segment :" << '\n';
   for (const Section& section : sections()) {
-    os << "\t" << section << std::endl;
+    os << "\t" << section << '\n';
   }
 
   return os;

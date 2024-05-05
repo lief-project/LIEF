@@ -145,9 +145,9 @@ std::ostream& ThreadCommand::print(std::ostream& os) const {
   os << std::hex;
   os << std::left
      << std::setw(10) << "Flavor: " << "0x" << flavor()
-     << std::endl
+     << '\n'
      << std::setw(10) << "Count: " << "0x" << count()
-     << std::endl
+     << '\n'
      << std::setw(10) << "PC: " << "0x" << pc();
   return os;
 }

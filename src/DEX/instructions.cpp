@@ -274,7 +274,7 @@ INST_FORMATS inst_format_from_opcode(OPCODES op) {
 
   auto   it  = size_map.find(op);
   //if (it == std::end(size_map)) {
-  //  std::cout << std::hex << "OP: " << op << std::endl;
+  //  std::cout << std::hex << "OP: " << op << '\n';
   //}
   return it == size_map.end() ? INST_FORMATS::F_00x : it->second;
 }

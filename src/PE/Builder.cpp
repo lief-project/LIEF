@@ -548,13 +548,13 @@ ok_error_t Builder::build(const Section& section) {
 std::ostream& operator<<(std::ostream& os, const Builder& b) {
   os << std::left;
   os << std::boolalpha;
-  os << std::setw(20) << "Build imports:"     << b.build_imports_     << std::endl;
-  os << std::setw(20) << "Patch imports:"     << b.patch_imports_     << std::endl;
-  os << std::setw(20) << "Build relocations:" << b.build_relocations_ << std::endl;
-  os << std::setw(20) << "Build TLS:"         << b.build_tls_         << std::endl;
-  os << std::setw(20) << "Build resources:"   << b.build_resources_   << std::endl;
-  os << std::setw(20) << "Build overlay:"     << b.build_overlay_     << std::endl;
-  os << std::setw(20) << "Build dos stub:"    << b.build_dos_stub_    << std::endl;
+  os << std::setw(20) << "Build imports:"     << b.build_imports_     << '\n';
+  os << std::setw(20) << "Patch imports:"     << b.patch_imports_     << '\n';
+  os << std::setw(20) << "Build relocations:" << b.build_relocations_ << '\n';
+  os << std::setw(20) << "Build TLS:"         << b.build_tls_         << '\n';
+  os << std::setw(20) << "Build resources:"   << b.build_resources_   << '\n';
+  os << std::setw(20) << "Build overlay:"     << b.build_overlay_     << '\n';
+  os << std::setw(20) << "Build dos stub:"    << b.build_dos_stub_    << '\n';
   return os;
 }
 

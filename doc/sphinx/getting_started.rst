@@ -76,14 +76,14 @@ C++
     std::unique_ptr<LIEF::OAT::File>     vdex  = LIEF::VDEX::Parser::parse("classes.vdex");
     std::unique_ptr<LIEF::OAT::File>     art   = LIEF::ART::Parser::parse("boot.art");
 
-    std::cout << *elf   << std::endl;
-    std::cout << *pe    << std::endl;
-    std::cout << *macho << std::endl;
+    std::cout << *elf   << '\n';
+    std::cout << *pe    << '\n';
+    std::cout << *macho << '\n';
 
-    std::cout << *oat << std::endl;
-    std::cout << *dex << std::endl;
-    std::cout << *vdex << std::endl;
-    std::cout << *art << std::endl;
+    std::cout << *oat << '\n';
+    std::cout << *dex << '\n';
+    std::cout << *vdex << '\n';
+    std::cout << *art << '\n';
   }
 
 
