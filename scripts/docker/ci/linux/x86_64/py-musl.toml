@@ -1,0 +1,41 @@
+[lief.build]
+type             = "Release"
+cache            = true
+ninja            = true
+parallel-jobs    = 0
+cxx-compiler     = "clang++"
+c-compiler       = "clang"
+lief-install-dir = "/install"
+extra-cmake-opt  = [
+  "-DCMAKE_TOOLCHAIN_FILE=/cmake/linux/musl-toolchain.cmake",
+  "-DPython_VERSION={python_version}",
+  "-DCMAKE_COLOR_DIAGNOSTICS=ON",
+  "-DCMAKE_C_COMPILER=clang",
+  "-DCMAKE_CXX_COMPILER=clang++",
+  "-DCMAKE_CXX_FLAGS='-static-libgcc -static-libstdc++'",
+  "-DCMAKE_C_FLAGS='-static-libgcc -static-libstdc++'",
+  "-DCMAKE_MODULE_PATH=/cmake/linux/",
+]
+
+[lief.formats]
+elf     = true
+pe      = true
+macho   = true
+android = true
+art     = true
+vdex    = true
+oat     = true
+dex     = true
+
+[lief.features]
+json    = false
+frozen  = true
+
+[lief.logging]
+enabled = true
+debug   = false
+
+[lief.cross-compilation]
+platform  = "musllinux_1_2_x86_64"
+pyversion = "cp{python_version_alt}"
+abi       = "cp{python_version_alt}"
