@@ -280,3 +280,9 @@ def test_twolevel_hints():
 def test_overlay():
     sample = lief.MachO.parse(get_sample("MachO/overlay_data.bin")).at(0)
     assert bytes(sample.overlay) == b'\x00overlay data'
+
+def test_issue_1055():
+    sample = lief.MachO.parse(get_sample("MachO/issue_1055.bin")).at(0)
+    for section in sample.sections:
+        size = len(section.content)
+        assert size is not None

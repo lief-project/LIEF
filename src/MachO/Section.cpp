@@ -117,7 +117,6 @@ void Section::swap(Section& other) {
 
 }
 
-
 Section::Section(std::string name) {
   this->name(std::move(name));
 }
@@ -133,6 +132,10 @@ span<const uint8_t> Section::content() const {
   }
 
   if (size_ == 0 || offset_ == 0) { // bss section for instance
+    return {};
+  }
+
+  if (int64_t(size_) < 0 || int64_t(offset_) < 0) {
     return {};
   }
 
