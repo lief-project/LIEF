@@ -29,8 +29,8 @@ namespace PE {
 
 Import::~Import() = default;
 
-Import::Import(Import&& other) = default;
-Import& Import::operator=(Import&& other) = default;
+Import::Import(Import&& other) noexcept = default;
+Import& Import::operator=(Import&& other) noexcept = default;
 Import::Import() = default;
 Import::Import(const Import& other) = default;
 Import& Import::operator=(const Import& other)  = default;
@@ -43,11 +43,9 @@ Import::Import(const details::pe_import& import) :
   import_address_table_RVA_(import.ImportAddressTableRVA)
 {}
 
-
 Import::Import(std::string name) :
   name_{std::move(name)}
 {}
-
 
 const ImportEntry* Import::get_entry(const std::string& name) const {
   const auto it_entry = std::find_if(std::begin(entries_), std::end(entries_),

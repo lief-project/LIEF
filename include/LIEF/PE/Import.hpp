@@ -53,8 +53,8 @@ class LIEF_API Import : public Object {
   ~Import() override;
 
   Import(const Import& other);
-  Import(Import&& other);
-  Import& operator=(Import&& other);
+  Import(Import&& other) noexcept;
+  Import& operator=(Import&& other) noexcept;
   Import& operator=(const Import& other);
 
   //! The index of the first forwarder reference
