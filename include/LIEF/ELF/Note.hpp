@@ -30,6 +30,9 @@
 namespace LIEF {
 class BinaryStream;
 namespace ELF {
+class Binary;
+class Parser;
+class Builder;
 
 /// Class which represents an ELF note. This class can be instantiated using
 /// the static Note::create functions.
