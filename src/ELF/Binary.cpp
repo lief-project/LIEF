@@ -1650,7 +1650,7 @@ void Binary::write(const std::string& filename) {
 
 void Binary::write(const std::string& filename, Builder::config_t config) {
   Builder builder{*this};
-  builder.set_config(std::move(config));
+  builder.set_config(config);
   builder.build();
   builder.write(filename);
 }
@@ -1663,7 +1663,7 @@ void Binary::write(std::ostream& os) {
 
 void Binary::write(std::ostream& os, Builder::config_t config) {
   Builder builder{*this};
-  builder.set_config(std::move(config));
+  builder.set_config(config);
   builder.build();
   builder.write(os);
 }
@@ -2638,9 +2638,9 @@ uint64_t Binary::relocate_phdr_table_auto() {
   }
 
   LIEF_DEBUG("Try v1 relocator");
-  if ((offset = relocate_phdr_table_v1()) == 0) {
+  if (offset = relocate_phdr_table_v1(); offset == 0) {
     LIEF_DEBUG("Try v2 relocator");
-    if ((offset = relocate_phdr_table_v2()) == 0) {
+    if (offset = relocate_phdr_table_v2(); offset == 0) {
       LIEF_ERR("Can't relocate the phdr table for this binary. "
                 "Please consider opening an issue");
       return 0;
@@ -2662,7 +2662,7 @@ uint64_t Binary::relocate_phdr_table_pie() {
   // Part 1: Make spaces for a new PHDR
   // --------------------------------------
   const uint64_t phdr_offset = header().program_headers_offset();
-  uint64_t phdr_size         = 0;
+  uint64_t phdr_size = 0;
 
   if (type() == Header::CLASS::ELF32) {
     phdr_size = sizeof(details::ELF32::Elf_Phdr);
