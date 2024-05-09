@@ -42,6 +42,10 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     # GCC specific flags
   endif()
 
+  if (LIEF_DISABLE_EXCEPTIONS)
+      target_compile_options(LIB_LIEF PRIVATE -fno-exceptions)
+  endif()
+
 endif()
 
 if(MSVC AND NOT CLANG_CL)
@@ -112,6 +116,10 @@ if(MSVC AND NOT CLANG_CL)
   foreach(flag ${msvc_warning_flags})
     append("${flag}" CMAKE_C_FLAGS CMAKE_CXX_FLAGS)
   endforeach(flag)
+
+  if (LIEF_DISABLE_EXCEPTIONS)
+      target_compile_options(LIB_LIEF PRIVATE /EHsc-)
+  endif()
 endif()
 
 # Speed up MSVC build

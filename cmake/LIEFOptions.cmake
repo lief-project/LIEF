@@ -19,6 +19,7 @@ option(LIEF_OPT_NLOHMANN_JSON_EXTERNAL "Use nlohmann/json externaly"            
 option(LIEF_FORCE_API_EXPORTS          "Force exports of API symbols"               OFF)
 option(LIEF_PY_LIEF_EXT                "Use a pre-installed version of LIEF for the bindings" OFF)
 option(LIEF_RUST_API                   "Generate the C++ bridge for Rust's cxx" OFF)
+option(LIEF_DISABLE_EXCEPTIONS         "Disable C++ exceptions on the core library" ON)
 
 option(LIEF_DISABLE_FROZEN "Disable Frozen even if it is supported"     OFF)
 
