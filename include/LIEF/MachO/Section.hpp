@@ -103,7 +103,7 @@ class LIEF_API Section : public LIEF::Section {
   };
 
   public:
-  Section() = default;
+  Section();
   Section(const details::section_32& section_cmd);
   Section(const details::section_64& section_cmd);
 
@@ -233,7 +233,9 @@ class LIEF_API Section : public LIEF::Section {
   void numberof_relocations(uint32_t nb_reloc) {
     nbof_relocations_ = nb_reloc;
   }
-  void flags(uint32_t flags);
+  void flags(uint32_t flags) {
+    flags_ = flags_ | flags;
+  }
   void flags(std::vector<FLAGS> flags);
   void type(TYPE type) {
     flags_ = (flags_ & FLAGS_MASK) | uint8_t(type);

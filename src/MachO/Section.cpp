@@ -47,6 +47,7 @@ static constexpr auto ARRAY_FLAGS = {
   Section::FLAGS::LOC_RELOC,
 };
 
+Section::Section() = default;
 Section::~Section() = default;
 
 Section& Section::operator=(Section other) {
@@ -209,11 +210,6 @@ void Section::segment_name(const std::string& name) {
   }
 }
 
-void Section::flags(uint32_t flags) {
-  flags_ = flags_ | flags;
-}
-
-
 bool Section::has(FLAGS flag) const {
   return (static_cast<uint32_t>(flag) & uint32_t(flags())) > 0;
 }
@@ -227,7 +223,7 @@ void Section::remove(FLAGS flag) {
 }
 
 void Section::clear(uint8_t v) {
-  Section::content_t clear(size(), v);
+  content_t clear(size(), v);
   content(std::move(clear));
 }
 
