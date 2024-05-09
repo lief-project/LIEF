@@ -15,28 +15,12 @@
  */
 #include "spdlog/fmt/fmt.h"
 
-#include "LIEF/PE/hash.hpp"
+#include "LIEF/Visitor.hpp"
 
 #include "LIEF/PE/DelayImportEntry.hpp"
 
-
 namespace LIEF {
 namespace PE {
-DelayImportEntry::DelayImportEntry(const DelayImportEntry&) = default;
-DelayImportEntry& DelayImportEntry::operator=(const DelayImportEntry&) = default;
-
-DelayImportEntry::DelayImportEntry(DelayImportEntry&&) = default;
-DelayImportEntry& DelayImportEntry::operator=(DelayImportEntry&&) = default;
-
-DelayImportEntry::~DelayImportEntry() = default;
-
-DelayImportEntry::DelayImportEntry() = default;
-
-
-DelayImportEntry::DelayImportEntry(uint64_t data, PE_TYPE type) :
-  data_{data},
-  type_{type}
-{}
 
 bool DelayImportEntry::is_ordinal() const {
   // See: https://docs.microsoft.com/en-us/windows/desktop/debug/pe-format#the-idata-section
@@ -52,37 +36,9 @@ bool DelayImportEntry::is_ordinal() const {
   return val == 0;
 }
 
-uint16_t DelayImportEntry::ordinal() const {
-  return data_ & 0xFFFF;
-}
-
-uint16_t DelayImportEntry::hint() const {
-  return hint_;
-}
-
-uint64_t DelayImportEntry::iat_value() const {
-  return iat_value_;
-}
-
-uint64_t DelayImportEntry::hint_name_rva() const {
-  return data();
-}
-
-uint64_t DelayImportEntry::data() const {
-  return data_;
-}
-
-void DelayImportEntry::data(uint64_t data) {
-  data_ = data;
-}
-
-
 void DelayImportEntry::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }
-
-
-
 
 std::ostream& operator<<(std::ostream& os, const DelayImportEntry& entry) {
   if (entry.is_ordinal()) {

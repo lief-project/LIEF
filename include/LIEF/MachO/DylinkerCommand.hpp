@@ -18,11 +18,9 @@
 #include <string>
 #include <ostream>
 
-#include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
-
 
 namespace LIEF {
 namespace MachO {
@@ -35,28 +33,37 @@ struct dylinker_command;
 //! Most of the time, DylinkerCommand::name() returns ``/usr/lib/dyld``
 class LIEF_API DylinkerCommand : public LoadCommand {
   public:
-  DylinkerCommand();
+  DylinkerCommand() = default;
   DylinkerCommand(const details::dylinker_command& cmd);
   DylinkerCommand(std::string name);
 
-  DylinkerCommand& operator=(const DylinkerCommand& copy);
-  DylinkerCommand(const DylinkerCommand& copy);
+  DylinkerCommand& operator=(const DylinkerCommand& copy) = default;
+  DylinkerCommand(const DylinkerCommand& copy) = default;
 
-  DylinkerCommand* clone() const override;
+  std::unique_ptr<LoadCommand> clone() const override {
+    return std::unique_ptr<DylinkerCommand>(new DylinkerCommand(*this));
+  }
 
-  ~DylinkerCommand() override;
+  ~DylinkerCommand() override = default;
 
   std::ostream& print(std::ostream& os) const override;
 
   //! Path to the linker (or loader)
-  const std::string& name() const;
+  const std::string& name() const {
+    return name_;
+  }
 
-  void name(const std::string& name);
-
+  void name(std::string name) {
+    name_ = std::move(name);
+  }
 
   void accept(Visitor& visitor) const override;
 
-  static bool classof(const LoadCommand* cmd);
+  static bool classof(const LoadCommand* cmd) {
+    const LoadCommand::TYPE type = cmd->command();
+    return type == LoadCommand::TYPE::ID_DYLINKER ||
+           type == LoadCommand::TYPE::LOAD_DYLINKER;
+  }
 
   private:
   std::string name_;

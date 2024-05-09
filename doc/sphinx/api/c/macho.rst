@@ -7,9 +7,6 @@ MachO
 .. autodoxygenfile:: LIEF/MachO/enums.h
    :project: lief
 
-.. autodoxygenfile:: LIEF/MachO/EnumToString.h
-   :project: lief
-
 .. autodoxygenfile:: LIEF/MachO/Header.h
    :project: lief
 

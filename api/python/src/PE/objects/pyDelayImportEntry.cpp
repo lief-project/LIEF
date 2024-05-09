@@ -43,7 +43,7 @@ void create<DelayImportEntry>(nb::module_& m) {
         [] (const DelayImportEntry& obj) {
           return LIEF::py::safe_string(obj.name());
         },
-        nb::overload_cast<const std::string&>(&DelayImportEntry::name),
+        nb::overload_cast<std::string>(&DelayImportEntry::name),
         "Delay import name if not ordinal"_doc)
 
     .def_prop_rw("data",

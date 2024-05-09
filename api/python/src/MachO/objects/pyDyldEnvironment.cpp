@@ -36,7 +36,7 @@ void create<DyldEnvironment>(nb::module_& m) {
 
     .def_prop_rw("value",
         nb::overload_cast<>(&DyldEnvironment::value, nb::const_),
-        nb::overload_cast<const std::string&>(&DyldEnvironment::value),
+        nb::overload_cast<std::string>(&DyldEnvironment::value),
         "Environment variable as a string"_doc,
         nb::rv_policy::reference_internal)
 

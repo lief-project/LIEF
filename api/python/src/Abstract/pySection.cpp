@@ -51,7 +51,7 @@ void create<Section>(nb::module_& m) {
         [] (const Section& obj) {
           return safe_string(obj.name());
         },
-        nb::overload_cast<const std::string&>(&Section::name),
+        nb::overload_cast<std::string>(&Section::name),
         "Section's name"_doc)
 
     .def_prop_ro("fullname",

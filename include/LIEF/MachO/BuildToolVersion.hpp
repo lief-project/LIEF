@@ -15,14 +15,12 @@
  */
 #ifndef LIEF_MACHO_BUILD_TOOL_VERSION_COMMAND_H
 #define LIEF_MACHO_BUILD_TOOL_VERSION_COMMAND_H
-#include <vector>
 #include <ostream>
 #include <array>
+#include <cstdint>
 
+#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
-
-#include "LIEF/MachO/LoadCommand.hpp"
 
 namespace LIEF {
 namespace MachO {

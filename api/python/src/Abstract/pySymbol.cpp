@@ -35,7 +35,7 @@ void create<Symbol>(nb::module_& m) {
         [] (const Symbol& obj) {
           return safe_string(obj.name());
         },
-        nb::overload_cast<const std::string&>(&Symbol::name),
+        nb::overload_cast<std::string>(&Symbol::name),
         "Symbol's name"_doc)
 
     .def_prop_rw("value",

@@ -33,33 +33,44 @@ struct entry_point_command;
 //! of command can be used to determine the entrypoint of an executable
 class LIEF_API MainCommand : public LoadCommand {
   public:
-  MainCommand();
+  MainCommand() = default;
   MainCommand(const details::entry_point_command& cmd);
   MainCommand(uint64_t entrypoint, uint64_t stacksize);
 
-  MainCommand& operator=(const MainCommand& copy);
-  MainCommand(const MainCommand& copy);
+  MainCommand& operator=(const MainCommand& copy) = default;
+  MainCommand(const MainCommand& copy) = default;
 
-  MainCommand* clone() const override;
+  std::unique_ptr<LoadCommand> clone() const override {
+    return std::unique_ptr<MainCommand>(new MainCommand(*this));
+  }
 
-  ~MainCommand() override;
+  ~MainCommand() override = default;
 
   //! Offset of the *main* function relative to the ``__TEXT``
   //! segment
-  uint64_t entrypoint() const;
+  uint64_t entrypoint() const {
+    return entrypoint_;
+  }
 
   //! The initial stack size (if not 0)
-  uint64_t stack_size() const;
+  uint64_t stack_size() const {
+    return stack_size_;
+  }
 
-  void entrypoint(uint64_t entrypoint);
-  void stack_size(uint64_t stacksize);
-
+  void entrypoint(uint64_t entrypoint) {
+    entrypoint_ = entrypoint;
+  }
+  void stack_size(uint64_t stacksize) {
+    stack_size_ = stacksize;
+  }
 
   std::ostream& print(std::ostream& os) const override;
 
   void accept(Visitor& visitor) const override;
 
-  static bool classof(const LoadCommand* cmd);
+  static bool classof(const LoadCommand* cmd) {
+    return cmd->command() == LoadCommand::TYPE::MAIN;
+  }
 
   private:
   uint64_t entrypoint_ = 0;

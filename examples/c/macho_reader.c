@@ -10,9 +10,9 @@ void print_binary(Macho_Binary_t* binary) {
   fprintf(stdout, "Header\n");
   fprintf(stdout, "========\n");
   fprintf(stdout, "Magic: 0x%" PRIx32 "\n",              header.magic);
-  fprintf(stdout, "CPU Type: %s\n",                      CPU_TYPES_to_string(header.cpu_type));
+  fprintf(stdout, "CPU Type: %d\n",                      header.cpu_type);
   fprintf(stdout, "CPU SubType: 0x%" PRIx32 "\n",        header.cpu_subtype);
-  fprintf(stdout, "File type: %s\n",                     FILE_TYPES_to_string(header.file_type));
+  fprintf(stdout, "File type: %d\n",                     header.file_type);
   fprintf(stdout, "Number of commands: 0x%" PRIx32 "\n", header.nb_cmds);
   fprintf(stdout, "Commands size: 0x%" PRIx32 "\n",      header.sizeof_cmds);
   fprintf(stdout, "flags: 0x%" PRIx32 "\n",              header.flags);
@@ -25,11 +25,11 @@ void print_binary(Macho_Binary_t* binary) {
   for (i = 0; commands[i] != NULL; ++i) {
     Macho_Command_t* command = commands[i];
     fprintf(stdout, ""
-        "%-20s "
+        "%d "
         "0x%06" PRIx32 " "
         "0x%06" PRIx32 " "
         "\n",
-        LOAD_COMMAND_TYPES_to_string(command->command),
+        command->command,
         command->size,
         command->offset
         );
@@ -84,7 +84,7 @@ void print_binary(Macho_Binary_t* binary) {
         "0x%06" PRIx32 " "
         "0x%06" PRIx32 " "
         "0x%06" PRIx32 " "
-        "%-30s "
+        "%d "
         "0x%02" PRIx32 " "
         "0x%02" PRIx32 " "
         "0x%02" PRIx32 " "
@@ -98,7 +98,7 @@ void print_binary(Macho_Binary_t* binary) {
         section->relocation_offset,
         section->numberof_relocations,
         section->flags,
-        MACHO_SECTION_TYPES_to_string(section->type),
+        section->type,
         section->reserved1,
         section->reserved2,
         section->reserved3,

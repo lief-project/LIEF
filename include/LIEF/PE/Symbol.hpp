@@ -17,7 +17,6 @@
 #define LIEF_PE_SYMBOLS_H
 
 #include <string>
-#include <vector>
 #include <ostream>
 
 #include "LIEF/Object.hpp"
@@ -77,7 +76,6 @@ class LIEF_API Symbol : public LIEF::Symbol {
   uint8_t  numberof_aux_symbols_ = 0;
   Section* section_ = nullptr;
   SYMBOL_STORAGE_CLASS storage_class_ = SYMBOL_STORAGE_CLASS::IMAGE_SYM_CLASS_INVALID;
-
 };
 
 

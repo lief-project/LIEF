@@ -25,6 +25,7 @@
 #include "nanobind/extra/memoryview.hpp"
 
 #include "MachO/pyMachO.hpp"
+#include "enums_wrapper.hpp"
 
 namespace LIEF::MachO::py {
 
@@ -36,6 +37,50 @@ void create<DyldInfo>(nb::module_& m) {
       R"delim(
       Class that represents the LC_DYLD_INFO and LC_DYLD_INFO_ONLY commands
       )delim"_doc);
+
+  enum_<DyldInfo::REBASE_TYPE>(dyld, "REBASE_TYPE")
+  #define PY_ENUM(x) to_string(x), x
+    .value(PY_ENUM(DyldInfo::REBASE_TYPE::POINTER))
+    .value(PY_ENUM(DyldInfo::REBASE_TYPE::TEXT_ABSOLUTE32))
+    .value(PY_ENUM(DyldInfo::REBASE_TYPE::TEXT_PCREL32))
+    .value(PY_ENUM(DyldInfo::REBASE_TYPE::THREADED))
+  #undef PY_ENUM
+  ;
+
+  enum_<DyldInfo::REBASE_OPCODES>(dyld, "REBASE_OPCODES")
+  #define PY_ENUM(x) to_string(x), x
+    .value(PY_ENUM(DyldInfo::REBASE_OPCODES::DONE))
+    .value(PY_ENUM(DyldInfo::REBASE_OPCODES::SET_TYPE_IMM))
+    .value(PY_ENUM(DyldInfo::REBASE_OPCODES::SET_SEGMENT_AND_OFFSET_ULEB))
+    .value(PY_ENUM(DyldInfo::REBASE_OPCODES::ADD_ADDR_ULEB))
+    .value(PY_ENUM(DyldInfo::REBASE_OPCODES::ADD_ADDR_IMM_SCALED))
+    .value(PY_ENUM(DyldInfo::REBASE_OPCODES::DO_REBASE_IMM_TIMES))
+    .value(PY_ENUM(DyldInfo::REBASE_OPCODES::DO_REBASE_ULEB_TIMES))
+    .value(PY_ENUM(DyldInfo::REBASE_OPCODES::DO_REBASE_ADD_ADDR_ULEB))
+    .value(PY_ENUM(DyldInfo::REBASE_OPCODES::DO_REBASE_ULEB_TIMES_SKIPPING_ULEB))
+  #undef PY_ENUM
+  ;
+
+  enum_<DyldInfo::BIND_OPCODES>(dyld, "BIND_OPCODES")
+  #define PY_ENUM(x) to_string(x), x
+    .value(PY_ENUM(DyldInfo::BIND_OPCODES::DONE))
+    .value(PY_ENUM(DyldInfo::BIND_OPCODES::SET_DYLIB_ORDINAL_IMM))
+    .value(PY_ENUM(DyldInfo::BIND_OPCODES::SET_DYLIB_ORDINAL_ULEB))
+    .value(PY_ENUM(DyldInfo::BIND_OPCODES::SET_DYLIB_SPECIAL_IMM))
+    .value(PY_ENUM(DyldInfo::BIND_OPCODES::SET_SYMBOL_TRAILING_FLAGS_IMM))
+    .value(PY_ENUM(DyldInfo::BIND_OPCODES::SET_TYPE_IMM))
+    .value(PY_ENUM(DyldInfo::BIND_OPCODES::SET_ADDEND_SLEB))
+    .value(PY_ENUM(DyldInfo::BIND_OPCODES::SET_SEGMENT_AND_OFFSET_ULEB))
+    .value(PY_ENUM(DyldInfo::BIND_OPCODES::ADD_ADDR_ULEB))
+    .value(PY_ENUM(DyldInfo::BIND_OPCODES::DO_BIND))
+    .value(PY_ENUM(DyldInfo::BIND_OPCODES::DO_BIND_ADD_ADDR_ULEB))
+    .value(PY_ENUM(DyldInfo::BIND_OPCODES::DO_BIND_ADD_ADDR_IMM_SCALED))
+    .value(PY_ENUM(DyldInfo::BIND_OPCODES::DO_BIND_ULEB_TIMES_SKIPPING_ULEB))
+    .value(PY_ENUM(DyldInfo::BIND_OPCODES::THREADED))
+    .value(PY_ENUM(DyldInfo::BIND_OPCODES::THREADED_APPLY))
+    .value(PY_ENUM(DyldInfo::BIND_OPCODES::THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB))
+  #undef PY_ENUM
+  ;
 
   init_ref_iterator<DyldInfo::it_binding_info>(dyld, "it_binding_info");
 

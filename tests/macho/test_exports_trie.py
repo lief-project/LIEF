@@ -4,9 +4,9 @@ import subprocess
 from utils import get_sample, is_apple_m1, sign, chmod_exe
 
 def process(target: lief.MachO.Binary):
-    assert target.has(lief.MachO.LOAD_COMMAND_TYPES.DYLD_EXPORTS_TRIE)
+    assert target.has(lief.MachO.LoadCommand.TYPE.DYLD_EXPORTS_TRIE)
 
-    exports = target.get(lief.MachO.LOAD_COMMAND_TYPES.DYLD_EXPORTS_TRIE)
+    exports: lief.MachO.DyldExportsTrie = target.get(lief.MachO.LoadCommand.TYPE.DYLD_EXPORTS_TRIE) # type: ignore[assignment]
     assert exports.data_offset == 0x70278
 
     entries = list(exports.exports)
@@ -22,20 +22,20 @@ def process(target: lief.MachO.Binary):
 
 def test_basic():
     fat = lief.MachO.parse(get_sample('MachO/9edfb04c55289c6c682a25211a4b30b927a86fe50b014610d04d6055bd4ac23d_crypt_and_hash.macho'))
-    target = fat.take(lief.MachO.CPU_TYPES.ARM64)
+    target = fat.take(lief.MachO.Header.CPU_TYPE.ARM64)
 
     process(target)
-    assert target.get(lief.MachO.LOAD_COMMAND_TYPES.DYLD_EXPORTS_TRIE).data_size == 0x4158
+    assert target.get(lief.MachO.LoadCommand.TYPE.DYLD_EXPORTS_TRIE).data_size == 0x4158 # type: ignore[attr-defined]
 
 def test_write(tmp_path):
     binary_name = "crypt_and_hash"
     fat = lief.MachO.parse(get_sample('MachO/9edfb04c55289c6c682a25211a4b30b927a86fe50b014610d04d6055bd4ac23d_crypt_and_hash.macho'))
-    target = fat.take(lief.MachO.CPU_TYPES.ARM64)
+    target = fat.take(lief.MachO.Header.CPU_TYPE.ARM64)
 
     output = f"{tmp_path}/{binary_name}.built"
 
     target.write(output)
-    target = lief.parse(output)
+    target = lief.MachO.parse(output).at(0)
 
     process(target)
 
@@ -50,5 +50,3 @@ def test_write(tmp_path):
             stdout = proc.stdout.read()
             assert "CAMELLIA-256-CCM*-NO-TAG" in stdout
             assert "AES-128-CCM*-NO-TAG" in stdout
-
-

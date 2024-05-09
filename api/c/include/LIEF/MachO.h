@@ -22,5 +22,4 @@
 #include "LIEF/MachO/Section.h"
 #include "LIEF/MachO/LoadCommand.h"
 #include "LIEF/MachO/Header.h"
-#include "LIEF/MachO/EnumToString.h"
 #endif

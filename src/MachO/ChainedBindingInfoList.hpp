@@ -31,18 +31,22 @@ class ChainedBindingInfoList : public ChainedBindingInfo {
 
   public:
   ChainedBindingInfoList() = delete;
-  explicit ChainedBindingInfoList(DYLD_CHAINED_FORMAT fmt, bool is_weak);
+  explicit ChainedBindingInfoList(DYLD_CHAINED_FORMAT fmt, bool is_weak) :
+    ChainedBindingInfo(fmt, is_weak)
+  {}
 
   ChainedBindingInfoList& operator=(ChainedBindingInfoList other) = delete;
   ChainedBindingInfoList(const ChainedBindingInfoList& other) = delete;
 
-  ChainedBindingInfoList(ChainedBindingInfoList&&);
+  ChainedBindingInfoList(ChainedBindingInfoList&&) noexcept = default;
 
-  void swap(ChainedBindingInfoList& other);
+  void swap(ChainedBindingInfoList& other) noexcept;
 
-  ~ChainedBindingInfoList() override;
+  ~ChainedBindingInfoList() override = default;
 
-  static bool classof(const BindingInfo& info);
+  static bool classof(const BindingInfo& info) {
+    return info.type() == BindingInfo::TYPES::CHAINED_LIST;
+  }
 
   private:
   std::vector<ChainedBindingInfo*> elements_;

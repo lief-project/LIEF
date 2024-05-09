@@ -50,9 +50,9 @@ void create<FatBinary>(nb::module_& m) {
       nb::rv_policy::reference_internal)
 
     .def("take",
-        nb::overload_cast<CPU_TYPES>(&FatBinary::take),
+        nb::overload_cast<Header::CPU_TYPE>(&FatBinary::take),
         "Return the " RST_CLASS_REF(lief.MachO.Binary) " that matches the "
-        "given " RST_CLASS_REF(lief.MachO.CPU_TYPES) ""_doc,
+        "given " RST_CLASS_REF(lief.MachO.Header.CPU_TYPE) ""_doc,
         "cpu"_a, nb::rv_policy::take_ownership)
 
     .def("write", &FatBinary::write,

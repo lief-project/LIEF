@@ -18,12 +18,14 @@
 #include <nanobind/stl/string.h>
 
 #include "LIEF/MachO/Relocation.hpp"
+#include "LIEF/MachO/DyldInfo.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 
 #include "MachO/pyMachO.hpp"
 #include "typing.hpp"
+#include "enums_wrapper.hpp"
 
 namespace LIEF::MachO::py {
 
@@ -37,7 +39,7 @@ struct relocations_typing : public nanobind::object {
     "lief.MachO.PPC_RELOCATION, "
     "lief.MachO.ARM_RELOCATION, "
     "lief.MachO.ARM64_RELOCATION, "
-    "lief.MachO.REBASE_TYPES, "
+    "lief.MachO.DyldInfo.REBASE_TYPE, "
   "]", check)
 
   static bool check(handle h) {
@@ -51,24 +53,34 @@ namespace LIEF::MachO::py {
 template<>
 void create<Relocation>(nb::module_& m) {
 
-  nb::class_<Relocation, LIEF::Relocation>(m, "Relocation",
+  nb::class_<Relocation, LIEF::Relocation> cls(m, "Relocation",
       R"delim(
       It extends the LIEF :class:`lief.Relocation` abstract class and it is sub-classed by
 
       1. :class:`~lief.MachO.RelocationObject`
       2. :class:`~lief.MachO.RelocationDyld`
-      )delim"_doc)
+      )delim"_doc);
 
+  enum_<Relocation::ORIGIN>(cls, "ORIGIN")
+  #define PY_ENUM(x) to_string(x), x
+    .value(PY_ENUM(Relocation::ORIGIN::UNKNOWN))
+    .value(PY_ENUM(Relocation::ORIGIN::DYLDINFO))
+    .value(PY_ENUM(Relocation::ORIGIN::RELOC_TABLE))
+    .value(PY_ENUM(Relocation::ORIGIN::CHAINED_FIXUPS))
+  #undef PY_ENUM
+  ;
+
+  cls
     .def_prop_rw("address",
         static_cast<uint64_t(MachO::Relocation::*)() const>(&MachO::Relocation::address),
         static_cast<void(MachO::Relocation::*)(uint64_t)>(&MachO::Relocation::address),
         R"delim(
-        For :attr:`~lief.MachO.FILE_TYPES.OBJECT` or (:attr:`~lief.MachO.Relocation.origin` is :attr:`~lief.MachO.RELOCATION_ORIGINS.RELOC_TABLE`) this is an "
+        For :attr:`~lief.MachO.FILE_TYPES.OBJECT` or (:attr:`~lief.MachO.Relocation.origin` is :attr:`~lief.MachO.Relocation.ORIGIN.RELOC_TABLE`) this is an
         offset from the start of the :class:`~lief.MachO.Section`
         to the item containing the address requiring relocation.
 
-        For :attr:`~lief.MachO.FILE_TYPES.EXECUTE` / :attr:`~lief.MachO.FILE_TYPES.DYLIB` or
-        (:attr:`~lief.MachO.Relocation.origin` is :attr:`~lief.MachO.RELOCATION_ORIGINS.DYLDINFO`)
+        For :attr:`~lief.MachO.Header.FILE_TYPE.EXECUTE` / :attr:`~lief.MachO.Header.FILE_TYPE.DYLIB` or
+        (:attr:`~lief.MachO.Relocation.origin` is :attr:`~lief.MachO.Relocation.ORIGIN.DYLDINFO`)
         this is a :attr:`~lief.MachO.SegmentCommand.virtual_address`.
         )delim"_doc)
 
@@ -85,25 +97,25 @@ void create<Relocation>(nb::module_& m) {
 
     .def_prop_rw("type",
         [] (const Relocation& reloc) -> relocations_typing {
-          if (reloc.origin() == RELOCATION_ORIGINS::ORIGIN_DYLDINFO) {
-            return nb::cast(REBASE_TYPES(reloc.type()));
+          if (reloc.origin() == Relocation::ORIGIN::DYLDINFO) {
+            return nb::cast(DyldInfo::REBASE_TYPE(reloc.type()));
           }
 
-          if (reloc.origin() == RELOCATION_ORIGINS::ORIGIN_RELOC_TABLE) {
+          if (reloc.origin() == Relocation::ORIGIN::RELOC_TABLE) {
             switch (reloc.architecture()) {
-              case CPU_TYPES::CPU_TYPE_X86:
+              case Header::CPU_TYPE::X86:
                 return nb::cast(X86_RELOCATION(reloc.type()));
 
-              case CPU_TYPES::CPU_TYPE_X86_64:
+              case Header::CPU_TYPE::X86_64:
                 return nb::cast(X86_64_RELOCATION(reloc.type()));
 
-              case CPU_TYPES::CPU_TYPE_ARM:
+              case Header::CPU_TYPE::ARM:
                 return nb::cast(ARM_RELOCATION(reloc.type()));
 
-              case CPU_TYPES::CPU_TYPE_ARM64:
+              case Header::CPU_TYPE::ARM64:
                 return nb::cast(ARM64_RELOCATION(reloc.type()));
 
-              case CPU_TYPES::CPU_TYPE_POWERPC:
+              case Header::CPU_TYPE::POWERPC:
                 return nb::cast(PPC_RELOCATION(reloc.type()));
 
               default:
@@ -115,9 +127,10 @@ void create<Relocation>(nb::module_& m) {
         },
         nb::overload_cast<uint8_t>(&Relocation::type),
         R"delim(
-        Type of the relocation according to the :attr:`~lief.MachO.Relocation.architecture` and/or :attr:`~lief.MachO.Relocation.origin`
+        Type of the relocation according to the :attr:`~lief.MachO.Relocation.architecture`
+        and/or :attr:`~lief.MachO.Relocation.origin`
 
-        If :attr:`~lief.MachO.Relocation.origin` is :attr:`~lief.MachO.RELOCATION_ORIGINS.RELOC_TABLE`:
+        If :attr:`~lief.MachO.Relocation.origin` is :attr:`~lief.MachO.Relocation.ORIGIN.RELOC_TABLE`:
 
         See:
 
@@ -127,13 +140,13 @@ void create<Relocation>(nb::module_& m) {
           * :class:`lief.MachO.ARM_RELOCATION`
           * :class:`lief.MachO.ARM64_RELOCATION`
 
-        If :attr:`~lief.MachO.Relocation.origin` is :attr:`~lief.MachO.RELOCATION_ORIGINS.DYLDINFO`,
-        the value is associated with :class:`~lief.MachO.REBASE_TYPES`.
+        If :attr:`~lief.MachO.Relocation.origin` is :attr:`~lief.MachO.Relocation.ORIGIN.DYLDINFO`,
+        the value is associated with :class:`~lief.MachO.DyldInfo.REBASE_TYPE`.
         )delim"_doc)
 
     .def_prop_ro("architecture",
         &Relocation::architecture,
-        "" RST_CLASS_REF(lief.MachO.CPU_TYPES) " of the relocation"_doc)
+        "" RST_CLASS_REF(lief.MachO.Header.CPU_TYPE) " of the relocation"_doc)
 
     .def_prop_ro("has_symbol",
         &Relocation::has_symbol,
@@ -156,10 +169,10 @@ void create<Relocation>(nb::module_& m) {
 
     .def_prop_ro("origin", &Relocation::origin,
         R"delim(
-        :class:`~lief.MachO.RELOCATION_ORIGINS` of the relocation
+        :class:`~lief.MachO.Relocation.ORIGIN` of the relocation
 
-        * For :attr:`~lief.MachO.FILE_TYPES.OBJECT` file it should be :attr:`~lief.MachO.RELOCATION_ORIGINS.RELOC_TABLE`
-        * For :attr:`~lief.MachO.FILE_TYPES.EXECUTE` or :attr:`~lief.MachO.FILE_TYPES.DYLIB` it should be :attr:`~lief.MachO.RELOCATION_ORIGINS.DYLDINFO`")
+        * For :attr:`~lief.MachO.Header.FILE_TYPE.OBJECT` file it should be :attr:`~lief.MachO.Relocation.ORIGIN.RELOC_TABLE`
+        * For :attr:`~lief.MachO.Header.FILE_TYPE.EXECUTE` or :attr:`~lief.MachO.FILE_TYPES.DYLIB` it should be :attr:`~lief.MachO.Relocation.ORIGIN.DYLDINFO`")
         )delim"_doc)
 
     .def_prop_ro("has_segment", &Relocation::has_segment,

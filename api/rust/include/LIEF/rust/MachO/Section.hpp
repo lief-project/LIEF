@@ -40,7 +40,7 @@ class MachO_Section : public AbstractSection {
   uint32_t alignment() const { return impl().alignment(); }
   uint32_t relocation_offset() const { return impl().relocation_offset(); }
   uint32_t numberof_relocations() const { return impl().numberof_relocations(); }
-  uint32_t flags() const { return impl().flags(); }
+  uint32_t flags() const { return to_int(impl().flags()); }
   auto section_type() const { return to_int(impl().type()); }
   uint32_t reserved1() const { return impl().reserved1(); }
   uint32_t reserved2() const { return impl().reserved2(); }

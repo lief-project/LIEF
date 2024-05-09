@@ -28,7 +28,7 @@ template<>
 void create<SegmentSplitInfo>(nb::module_& m) {
 
   nb::class_<SegmentSplitInfo, LoadCommand>(m, "SegmentSplitInfo",
-      "Class that represents the LOAD_COMMAND_TYPES::LC_SEGMENT_SPLIT_INFO command"_doc)
+      "Class that represents the :attr:`~.LoadCommand.TYPE.SEGMENT_SPLIT_INFO` command"_doc)
 
     .def_prop_rw("data_offset",
         nb::overload_cast<>(&SegmentSplitInfo::data_offset, nb::const_),

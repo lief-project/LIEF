@@ -36,7 +36,7 @@ void create<ThreadCommand>(nb::module_& m) {
       Generally speaking, this command aims at defining the original state
       of the main thread which includes the registers' values
       )delim"_doc)
-    .def(nb::init<uint32_t, uint32_t, CPU_TYPES>())
+    .def(nb::init<uint32_t, uint32_t, Header::CPU_TYPE>())
 
     .def_prop_rw("flavor",
         nb::overload_cast<>(&ThreadCommand::flavor, nb::const_),
@@ -56,7 +56,7 @@ void create<ThreadCommand>(nb::module_& m) {
         [] (const ThreadCommand& self) {
           return nb::to_memoryview(self.state());
         },
-        nb::overload_cast<const std::vector<uint8_t>&>(&ThreadCommand::state),
+        nb::overload_cast<std::vector<uint8_t>>(&ThreadCommand::state),
         R"delim(
         The actual thread state as a vector of bytes. Depending on the architecture(),
         these data can be casted into x86_thread_state_t, x86_thread_state64_t, ...
@@ -83,7 +83,7 @@ void create<ThreadCommand>(nb::module_& m) {
 
     .def_prop_rw("architecture",
         nb::overload_cast<>(&ThreadCommand::architecture, nb::const_),
-        nb::overload_cast<CPU_TYPES>(&ThreadCommand::architecture),
+        nb::overload_cast<Header::CPU_TYPE>(&ThreadCommand::architecture),
         "The CPU architecture that is targeted by this ThreadCommand"_doc)
 
     LIEF_DEFAULT_STR(ThreadCommand);

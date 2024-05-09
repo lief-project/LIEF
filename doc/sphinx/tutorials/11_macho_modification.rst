@@ -274,8 +274,8 @@ As explained in the talk about format modification [1]_, one way to inject code 
 
 For a Mach-O binary, it can be achieved by adding one of these load commands:
 
-* :attr:`~lief.MachO.LOAD_COMMAND_TYPES.ID_DYLIB`
-* :attr:`~lief.MachO.LOAD_COMMAND_TYPES.LOAD_DYLIB`
+* :attr:`~lief.MachO.LoadCommand.TYPE.ID_DYLIB`
+* :attr:`~lief.MachO.LoadCommand.TYPE.LOAD_DYLIB`
 * ...
 
 Let's take an example with ``clang``. First, we need to create a tiny library which defines a constructor:
@@ -296,7 +296,7 @@ Which is complied with
 
   $ clang -fPIC -shared libexample.c -o libexample.dylib
 
-Then we add a new :attr:`~lief.MachO.LOAD_COMMAND_TYPES.LOAD_DYLIB` using the :meth:`lief.MachO.Binary.add_library` function:
+Then we add a new :attr:`~lief.MachO.LoadCommand.TYPE.LOAD_DYLIB` using the :meth:`lief.MachO.Binary.add_library` function:
 
 .. code-block:: python
 
@@ -317,7 +317,7 @@ Finally, we run ``clang.new`` and see that ``Hello World`` is printed before the
   Hello World
   clang: error: no input files
 
-We can also observe the new :attr:`~lief.MachO.LOAD_COMMAND_TYPES.LOAD_DYLIB` command with otool:
+We can also observe the new :attr:`~lief.MachO.LoadCommand.TYPE.LOAD_DYLIB` command with otool:
 
 .. code-block:: console
 
@@ -403,12 +403,3 @@ You can also check other tools such as optool [2]_ or insert_dylib [3]_
 
 * :meth:`lief.MachO.Binary.add_section`
 * :meth:`lief.MachO.Binary.add_library`
-
-
-
-
-
-
-
-
-

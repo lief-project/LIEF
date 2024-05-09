@@ -1,4 +1,4 @@
-sphinx
-alabaster
-breathe
-sphinx_rtd_theme
+requests==2.31.0
+sphinx==7.2.6
+Pygments==2.17.2
+breathe==4.35.0

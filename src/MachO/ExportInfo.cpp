@@ -13,28 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <numeric>
-#include <iomanip>
+#include "fmt_formatter.hpp"
+
 #include <algorithm>
+
+#include "frozen.hpp"
 
 #include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
-#include "LIEF/MachO/EnumToString.hpp"
 #include "LIEF/MachO/DylibCommand.hpp"
+
+
+FMT_FORMATTER(LIEF::MachO::ExportInfo::FLAGS, LIEF::MachO::to_string);
+FMT_FORMATTER(LIEF::MachO::ExportInfo::KIND, LIEF::MachO::to_string);
 
 namespace LIEF {
 namespace MachO {
 
-ExportInfo::~ExportInfo() = default;
-
-ExportInfo::ExportInfo() = default;
-
-ExportInfo::ExportInfo(uint64_t address, uint64_t flags, uint64_t offset) :
-  node_offset_{offset},
-  flags_{flags},
-  address_{address}
-{}
+static constexpr auto ARRAY_FLAGS = {
+  ExportInfo::FLAGS::WEAK_DEFINITION,
+  ExportInfo::FLAGS::REEXPORT,
+  ExportInfo::FLAGS::STUB_AND_RESOLVER,
+};
 
 ExportInfo& ExportInfo::operator=(ExportInfo other) {
   swap(other);
@@ -49,7 +50,7 @@ ExportInfo::ExportInfo(const ExportInfo& other) :
   other_{other.other_}
 {}
 
-void ExportInfo::swap(ExportInfo& other) {
+void ExportInfo::swap(ExportInfo& other) noexcept {
   std::swap(node_offset_,    other.node_offset_);
   std::swap(flags_,          other.flags_);
   std::swap(address_,        other.address_);
@@ -59,76 +60,16 @@ void ExportInfo::swap(ExportInfo& other) {
   std::swap(alias_location_, other.alias_location_);
 }
 
-
-bool ExportInfo::has(EXPORT_SYMBOL_FLAGS flag) const {
+bool ExportInfo::has(FLAGS flag) const {
   return (flags_ & static_cast<uint64_t>(flag)) != 0u;
 }
-
-EXPORT_SYMBOL_KINDS ExportInfo::kind() const {
-  static constexpr size_t EXPORT_SYMBOL_FLAGS_KIND_MASK = 0x03u;
-  return static_cast<EXPORT_SYMBOL_KINDS>(flags_ & EXPORT_SYMBOL_FLAGS_KIND_MASK);
-}
-
-
-uint64_t ExportInfo::node_offset() const {
-  return node_offset_;
-}
-
-uint64_t ExportInfo::flags() const {
-  return flags_;
-}
-
-void ExportInfo::flags(uint64_t flags) {
-  flags_ = flags;
-}
-
-uint64_t ExportInfo::address() const {
-  return address_;
-}
-
-uint64_t ExportInfo::other() const {
-  return other_;
-}
-
-Symbol* ExportInfo::alias() {
-  return alias_;
-}
-
-const Symbol* ExportInfo::alias() const {
-  return alias_;
-}
-
-DylibCommand* ExportInfo::alias_library() {
-  return alias_location_;
-}
-
-const DylibCommand* ExportInfo::alias_library() const {
-  return alias_location_;
-}
-
-void ExportInfo::address(uint64_t addr) {
-  address_ = addr;
-}
-
-bool ExportInfo::has_symbol() const {
-  return symbol_ != nullptr;
-}
-
-const Symbol* ExportInfo::symbol() const {
-  return symbol_;
-}
-
-Symbol* ExportInfo::symbol() {
-  return const_cast<Symbol*>(static_cast<const ExportInfo*>(this)->symbol());
-}
-
 
 ExportInfo::flag_list_t ExportInfo::flags_list() const {
   flag_list_t flags;
 
-  std::copy_if(std::begin(export_symbol_flags), std::end(export_symbol_flags),
+  std::copy_if(std::begin(ARRAY_FLAGS), std::end(ARRAY_FLAGS),
                std::back_inserter(flags),
-               [this] (EXPORT_SYMBOL_FLAGS f) { return has(f); });
+               [this] (FLAGS f) { return has(f); });
 
   return flags;
 }
@@ -137,42 +78,56 @@ void ExportInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
+std::ostream& operator<<(std::ostream& os, const ExportInfo& info) {
 
-
-
-
-std::ostream& operator<<(std::ostream& os, const ExportInfo& export_info) {
-
-  const ExportInfo::flag_list_t& flags = export_info.flags_list();
-
-  std::string flags_str = std::accumulate(
-      std::begin(flags),
-      std::end(flags), std::string{},
-     [] (const std::string& a, EXPORT_SYMBOL_FLAGS b) {
-         return a.empty() ? to_string(b) : a + " " + to_string(b);
-     });
-
-  os << std::hex;
-  os << std::left;
-
-  os << std::setw(13) << "Node Offset: " << std::hex << export_info.node_offset()     << '\n';
-  os << std::setw(13) << "Flags: "       << std::hex << export_info.flags()           << '\n';
-  os << std::setw(13) << "Address: "     << std::hex << export_info.address()         << '\n';
-  os << std::setw(13) << "Kind: "        << to_string(export_info.kind()) << '\n';
-  os << std::setw(13) << "Flags: "       << flags_str << '\n';
-  if (export_info.has_symbol()) {
-    os << std::setw(13) << "Symbol: "    << export_info.symbol()->name() << '\n';
+  const ExportInfo::flag_list_t& flags = info.flags_list();
+  os << fmt::format(
+    "offset=0x{:x}, flags={}, address=0x{:x}, kind={}",
+    info.node_offset(), flags, info.address(), info.kind()
+  );
+  if (const Symbol* sym = info.symbol()) {
+    os << fmt::format(" symbol={}", sym->name());
   }
 
-  if (export_info.alias() != nullptr) {
-    os << std::setw(13) << "Alias Symbol: " << export_info.alias()->name();
-    if (export_info.alias_library() != nullptr) {
-      os << " from " << export_info.alias_library()->name();
+  if (const Symbol* alias = info.alias()) {
+    os << fmt::format(" alias={}", alias->name());
+    if (const DylibCommand* lib = info.alias_library()) {
+      os << fmt::format(" library={}", lib->name());
     }
-    os << '\n';
   }
 
+  os << '\n';
   return os;
+}
+
+const char* to_string(ExportInfo::KIND e) {
+  #define ENTRY(X) std::pair(ExportInfo::KIND::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(REGULAR),
+    ENTRY(THREAD_LOCAL_KIND),
+    ENTRY(ABSOLUTE_KIND),
+  };
+  #undef ENTRY
+
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
+  }
+  return "UNKNOWN";
+}
+
+const char* to_string(ExportInfo::FLAGS e) {
+  #define ENTRY(X) std::pair(ExportInfo::FLAGS::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(WEAK_DEFINITION),
+    ENTRY(REEXPORT),
+    ENTRY(STUB_AND_RESOLVER),
+  };
+  #undef ENTRY
+
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
+  }
+  return "UNKNOWN";
 }
 
 

@@ -13,55 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-
-#include "LIEF/MachO/hash.hpp"
+#include "LIEF/Visitor.hpp"
 #include "LIEF/MachO/DyldEnvironment.hpp"
 #include "MachO/Structures.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-DyldEnvironment::DyldEnvironment() = default;
-DyldEnvironment& DyldEnvironment::operator=(const DyldEnvironment&) = default;
-DyldEnvironment::DyldEnvironment(const DyldEnvironment&) = default;
-DyldEnvironment::~DyldEnvironment() = default;
-
 DyldEnvironment::DyldEnvironment(const details::dylinker_command& cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize}
+  LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize}
 {}
-
-DyldEnvironment* DyldEnvironment::clone() const {
-  return new DyldEnvironment(*this);
-}
-
-const std::string& DyldEnvironment::value() const {
-  return value_;
-}
-
-void DyldEnvironment::value(const std::string& value) {
-  value_ = value;
-}
-
 
 void DyldEnvironment::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
-
-bool DyldEnvironment::classof(const LoadCommand* cmd) {
-  // This must be sync with BinaryParser.tcc
-  const LOAD_COMMAND_TYPES type = cmd->command();
-  return type == LOAD_COMMAND_TYPES::LC_DYLD_ENVIRONMENT;
-}
-
 std::ostream& DyldEnvironment::print(std::ostream& os) const {
   LoadCommand::print(os);
-  os << std::hex;
-  os << std::left
-     << std::setw(35) << value();
+  os << value() << '\n';
   return os;
 }
 

@@ -154,7 +154,6 @@ class LIEF_API Section : public LIEF::Section {
     return static_cast<uint64_t>(type) & TYPE_MASK;
   }
 
-
   Section(const std::string& name, TYPE type = TYPE::PROGBITS) :
     LIEF::Section(name),
     type_{type}
@@ -163,9 +162,12 @@ class LIEF_API Section : public LIEF::Section {
   Section() = default;
   ~Section() override = default;
 
-  Section& operator=(Section other);
+  Section& operator=(Section other) {
+    swap(other);
+    return *this;
+  }
   Section(const Section& other);
-  void swap(Section& other);
+  void swap(Section& other) noexcept;
 
   TYPE type() const {
     return type_;

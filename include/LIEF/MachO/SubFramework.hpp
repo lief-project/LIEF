@@ -19,7 +19,6 @@
 #include <ostream>
 
 #include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
@@ -47,26 +46,33 @@ struct sub_framework_command;
 class LIEF_API SubFramework : public LoadCommand {
   friend class BinaryParser;
   public:
-  SubFramework();
+  SubFramework() = default;
   SubFramework(const details::sub_framework_command& cmd);
 
-  SubFramework& operator=(const SubFramework& copy);
-  SubFramework(const SubFramework& copy);
+  SubFramework& operator=(const SubFramework& copy) = default;
+  SubFramework(const SubFramework& copy) = default;
 
-  SubFramework* clone() const override;
+  std::unique_ptr<LoadCommand> clone() const override {
+    return std::unique_ptr<SubFramework>(new SubFramework(*this));
+  }
 
   //! Name of the umbrella framework
-  const std::string& umbrella() const;
-  void umbrella(const std::string& u);
+  const std::string& umbrella() const {
+    return umbrella_;
+  }
+  void umbrella(std::string u) {
+    umbrella_ = std::move(u);
+  }
 
-  ~SubFramework() override;
-
+  ~SubFramework() override = default;
 
   void accept(Visitor& visitor) const override;
 
   std::ostream& print(std::ostream& os) const override;
 
-  static bool classof(const LoadCommand* cmd);
+  static bool classof(const LoadCommand* cmd) {
+    return cmd->command() == LoadCommand::TYPE::SUB_FRAMEWORK;
+  }
 
   private:
   std::string umbrella_;

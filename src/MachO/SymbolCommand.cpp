@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/MachO/hash.hpp"
+#include "LIEF/Visitor.hpp"
 
 #include "LIEF/MachO/SymbolCommand.hpp"
 #include "MachO/Structures.hpp"
@@ -21,66 +21,16 @@
 namespace LIEF {
 namespace MachO {
 
-SymbolCommand::SymbolCommand() = default;
-SymbolCommand& SymbolCommand::operator=(const SymbolCommand&) = default;
-SymbolCommand::SymbolCommand(const SymbolCommand&) = default;
-SymbolCommand::~SymbolCommand() = default;
-
 SymbolCommand::SymbolCommand(const details::symtab_command& cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize},
+  LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
   symbols_offset_{cmd.symoff},
   nb_symbols_{cmd.nsyms},
   strings_offset_{cmd.stroff},
   strings_size_{cmd.strsize}
 {}
 
-SymbolCommand* SymbolCommand::clone() const {
-  return new SymbolCommand(*this);
-}
-
-uint32_t SymbolCommand::symbol_offset() const {
-  return symbols_offset_;
-}
-
-uint32_t SymbolCommand::numberof_symbols() const {
-  return nb_symbols_;
-}
-
-uint32_t SymbolCommand::strings_offset() const {
-  return strings_offset_;
-}
-
-uint32_t SymbolCommand::strings_size() const {
-  return strings_size_;
-}
-
-void SymbolCommand::symbol_offset(uint32_t offset) {
-  symbols_offset_ = offset;
-}
-
-void SymbolCommand::numberof_symbols(uint32_t nb) {
-  nb_symbols_ = nb;
-}
-
-void SymbolCommand::strings_offset(uint32_t offset) {
-  strings_offset_ = offset;
-}
-
-void SymbolCommand::strings_size(uint32_t size) {
-  strings_size_ = size;
-}
-
 void SymbolCommand::accept(Visitor& visitor) const {
   visitor.visit(*this);
-}
-
-
-
-
-bool SymbolCommand::classof(const LoadCommand* cmd) {
-  // This must be sync with BinaryParser.tcc
-  const LOAD_COMMAND_TYPES type = cmd->command();
-  return type == LOAD_COMMAND_TYPES::LC_SYMTAB;
 }
 
 std::ostream& SymbolCommand::print(std::ostream& os) const {

@@ -20,34 +20,10 @@
 
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
-#include "LIEF/MachO/enums.hpp"
 #include "LIEF/iostream.hpp"
 
 namespace LIEF {
 namespace MachO {
-
-TrieEdge::TrieEdge(std::string str, TrieNode& node) :
-  substr{std::move(str)},
-  child{&node}
-{}
-
-
-std::unique_ptr<TrieEdge> TrieEdge::create(const std::string& str, TrieNode& node) {
-  return std::make_unique<TrieEdge>(str, node);
-}
-
-TrieEdge::~TrieEdge() = default;
-
-TrieNode::~TrieNode() = default;
-TrieNode::TrieNode(std::string str) :
-  cummulative_string_{std::move(str)}
-{}
-
-
-std::unique_ptr<TrieNode> TrieNode::create(const std::string& str) {
-  return std::make_unique<TrieNode>(str);
-}
-
 
 
 // Mainly inspired from LLVM: lld/lib/ReaderWriter/MachO/MachONormalizedFileBinaryWriter.cpp
@@ -96,13 +72,13 @@ TrieNode& TrieNode::add_symbol(const ExportInfo& info, TrieNode::node_list_t& no
     }
   }
 
-  if (info.has(EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_REEXPORT)) {
+  if (info.has(ExportInfo::FLAGS::REEXPORT)) {
     if (info.other() != 0) {
       LIEF_INFO("other is not null");
     }
   }
 
-  if (info.has(EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER)) {
+  if (info.has(ExportInfo::FLAGS::STUB_AND_RESOLVER)) {
     if (info.other() == 0) {
       LIEF_INFO("other is null");
     }
@@ -116,7 +92,7 @@ TrieNode& TrieNode::add_symbol(const ExportInfo& info, TrieNode::node_list_t& no
   new_node->flags_   = info.flags();
   new_node->other_   = info.other();
 
-  if (info.has(EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_REEXPORT)) {
+  if (info.has(ExportInfo::FLAGS::REEXPORT)) {
     new_node->imported_name_ = "";
     if ((info.alias() != nullptr) && info.alias()->name() != sym.name()) {
       new_node->imported_name_ = info.alias()->name();
@@ -161,14 +137,14 @@ TrieNode& TrieNode::add_ordered_nodes(const ExportInfo& info, std::vector<TrieNo
 bool TrieNode::update_offset(uint32_t& offset) {
   uint32_t node_size = 1;
   if (has_export_info_) {
-   if ((flags_ & static_cast<uint64_t>(EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_REEXPORT)) != 0u) {
+   if ((flags_ & static_cast<uint64_t>(ExportInfo::FLAGS::REEXPORT)) != 0u) {
       node_size = vector_iostream::uleb128_size(flags_);
       node_size += vector_iostream::uleb128_size(other_);
       node_size += imported_name_.size() + 1;
     } else {
       node_size = vector_iostream::uleb128_size(flags_);
       node_size += vector_iostream::uleb128_size(address_);
-      if ((flags_ & static_cast<uint64_t>(EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER)) != 0u) {
+      if ((flags_ & static_cast<uint64_t>(ExportInfo::FLAGS::STUB_AND_RESOLVER)) != 0u) {
         node_size += vector_iostream::uleb128_size(other_);
       }
     }
@@ -191,7 +167,7 @@ bool TrieNode::update_offset(uint32_t& offset) {
 
 TrieNode& TrieNode::write(vector_iostream& buffer) {
   if (has_export_info_) {
-    if ((flags_ & static_cast<uint64_t>(EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_REEXPORT)) != 0u) {
+    if ((flags_ & static_cast<uint64_t>(ExportInfo::FLAGS::REEXPORT)) != 0u) {
       if (!imported_name_.empty()) {
         uint32_t node_size = 0;
         node_size += vector_iostream::uleb128_size(flags_);
@@ -216,7 +192,7 @@ TrieNode& TrieNode::write(vector_iostream& buffer) {
           .write<uint8_t>('\0');
       }
     }
-    else if ((flags_ & static_cast<uint64_t>(EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER)) != 0u) {
+    else if ((flags_ & static_cast<uint64_t>(ExportInfo::FLAGS::STUB_AND_RESOLVER)) != 0u) {
       uint32_t node_size = 0;
       node_size += vector_iostream::uleb128_size(flags_);
       node_size += vector_iostream::uleb128_size(address_);
@@ -256,8 +232,5 @@ TrieNode& TrieNode::write(vector_iostream& buffer) {
   }
   return *this;
 }
-
-
-
 }
 }

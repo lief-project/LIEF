@@ -104,11 +104,6 @@ Section::Section(const T& header, ARCH arch) :
 template Section::Section(const details::Elf32_Shdr& header, ARCH);
 template Section::Section(const details::Elf64_Shdr& header, ARCH);
 
-Section& Section::operator=(Section other) {
-  swap(other);
-  return *this;
-}
-
 Section::Section(const Section& other) :
   LIEF::Section{other},
   arch_{other.arch_},
@@ -123,7 +118,7 @@ Section::Section(const Section& other) :
   content_c_{other.content_c_}
 {}
 
-void Section::swap(Section& other) {
+void Section::swap(Section& other) noexcept {
   std::swap(name_,            other.name_);
   std::swap(virtual_address_, other.virtual_address_);
   std::swap(offset_,          other.offset_);

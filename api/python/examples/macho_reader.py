@@ -173,19 +173,19 @@ def print_sections(binary):
                 name = reloc.symbol.name if reloc.has_symbol else ""
                 secname = " - " + reloc.section.name if reloc.has_section else ""
                 type = str(reloc.type)
-                if reloc.architecture == MachO.CPU_TYPES.x86:
+                if reloc.architecture == MachO.Header.CPU_TYPE.X86:
                     type = str(MachO.X86_RELOCATION(reloc.type))
 
-                if reloc.architecture == MachO.CPU_TYPES.x86_64:
+                if reloc.architecture == MachO.Header.CPU_TYPE.x86_64:
                     type = str(MachO.X86_64_RELOCATION(reloc.type))
 
-                if reloc.architecture == MachO.CPU_TYPES.ARM:
+                if reloc.architecture == MachO.Header.CPU_TYPE.ARM:
                     type = str(MachO.ARM_RELOCATION(reloc.type))
 
-                if reloc.architecture == MachO.CPU_TYPES.ARM64:
+                if reloc.architecture == MachO.Header.CPU_TYPE.ARM64:
                     type = str(MachO.ARM64_RELOCATION(reloc.type))
 
-                if reloc.architecture == MachO.CPU_TYPES.POWERPC:
+                if reloc.architecture == MachO.Header.CPU_TYPE.POWERPC:
                     type = str(MachO.PPC_RELOCATION(reloc.type))
 
 

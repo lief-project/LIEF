@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/MachO/hash.hpp"
+#include "LIEF/Visitor.hpp"
 
 #include "LIEF/MachO/RPathCommand.hpp"
 #include "MachO/Structures.hpp"
@@ -23,45 +23,17 @@
 namespace LIEF {
 namespace MachO {
 
-RPathCommand::RPathCommand() = default;
-RPathCommand& RPathCommand::operator=(const RPathCommand&) = default;
-RPathCommand::RPathCommand(const RPathCommand&) = default;
-RPathCommand::~RPathCommand() = default;
-
 RPathCommand::RPathCommand(const details::rpath_command& rpath) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(rpath.cmd), rpath.cmdsize}
+  LoadCommand::LoadCommand{LoadCommand::TYPE(rpath.cmd), rpath.cmdsize}
 {}
-
-RPathCommand* RPathCommand::clone() const {
-  return new RPathCommand(*this);
-}
-
-const std::string& RPathCommand::path() const {
-  return path_;
-}
-
-void RPathCommand::path(const std::string& path) {
-  path_ = path;
-}
-
 
 void RPathCommand::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
-
-bool RPathCommand::classof(const LoadCommand* cmd) {
-  // This must be sync with BinaryParser.tcc
-  const LOAD_COMMAND_TYPES type = cmd->command();
-  return type == LOAD_COMMAND_TYPES::LC_RPATH;
-}
-
 std::ostream& RPathCommand::print(std::ostream& os) const {
   LoadCommand::print(os);
-  os << std::left
-     << std::setw(10) << "Path: " << path();
+  os << path() << '\n';
   return os;
 }
 

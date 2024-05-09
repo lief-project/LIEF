@@ -20,6 +20,7 @@
 #include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/MachO/DyldChainedFormat.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -100,19 +101,29 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
 
   DyldChainedFixups();
   DyldChainedFixups(const details::linkedit_data_command& cmd);
-  DyldChainedFixups* clone() const override;
+  std::unique_ptr<LoadCommand> clone() const override {
+    return std::unique_ptr<DyldChainedFixups>(new DyldChainedFixups(*this));
+  }
 
   ~DyldChainedFixups() override;
 
   //! Offset of the LC_DYLD_CHAINED_FIXUPS chained payload.
   //! This offset should point in the __LINKEDIT segment
-  uint32_t data_offset() const;
+  uint32_t data_offset() const {
+    return data_offset_;
+  }
 
   //! Size of the LC_DYLD_CHAINED_FIXUPS payload.
-  uint32_t data_size() const;
+  uint32_t data_size() const {
+    return data_size_;
+  }
 
-  void data_offset(uint32_t offset);
-  void data_size(uint32_t size);
+  void data_offset(uint32_t offset) {
+    data_offset_ = offset;
+  }
+  void data_size(uint32_t size) {
+    data_size_ = size;
+  }
 
   //! Iterator over the bindings (ChainedBindingInfo) associated with this command
   it_binding_info bindings() {
@@ -171,7 +182,9 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
 
   std::ostream& print(std::ostream& os) const override;
 
-  static bool classof(const LoadCommand* cmd);
+  static bool classof(const LoadCommand* cmd) {
+    return cmd->command() == LoadCommand::TYPE::DYLD_CHAINED_FIXUPS;
+  }
 
   private:
   void update_with(const details::dyld_chained_fixups_header& header);

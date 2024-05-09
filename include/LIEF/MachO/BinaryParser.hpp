@@ -22,15 +22,15 @@
 #include <set>
 #include <map>
 
-#include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
 
 #include "LIEF/Abstract/Parser.hpp"
 
 #include "LIEF/MachO/enums.hpp"
+#include "LIEF/MachO/DyldChainedFormat.hpp"
 #include "LIEF/MachO/ParserConfig.hpp"
-#include "LIEF/MachO/type_traits.hpp"
+#include "LIEF/MachO/DyldBindingInfo.hpp"
 
 namespace LIEF {
 class BinaryStream;
@@ -140,7 +140,7 @@ class LIEF_API BinaryParser : public LIEF::Parser {
   using it_opaque_segments = void*; // To avoid including Binary.hpp. It must contains it_opaque_segments
 
   template<class MACHO_T>
-  ok_error_t do_bind(BINDING_CLASS cls, uint8_t type, uint8_t segment_idx,
+  ok_error_t do_bind(DyldBindingInfo::CLASS cls, uint8_t type, uint8_t segment_idx,
                      uint64_t segment_offset, const std::string& symbol_name,
                      int32_t ord, int64_t addend, bool is_weak,
                      bool is_non_weak_definition, it_opaque_segments segments_ptr, uint64_t offset = 0);

@@ -19,11 +19,9 @@
 #include <vector>
 #include <memory>
 
-#include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
-
-#include "LIEF/MachO/enums.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/MachO/Header.hpp"
 
 namespace LIEF {
 class Parser;
@@ -58,16 +56,29 @@ class LIEF_API FatBinary {
   virtual ~FatBinary();
 
   //! Number of MachO::Binary wrapped by this object
-  size_t size() const;
+  size_t size() const {
+    return binaries_.size();
+  }
 
   //! Checks whether this object contains MachO::Binary
-  bool empty() const;
+  bool empty() const {
+    return binaries_.empty();
+  }
 
-  it_binaries begin();
-  it_const_binaries begin() const;
+  it_binaries begin() {
+    return binaries_;
+  }
+  it_const_binaries begin() const {
+    return binaries_;
+  }
 
-  it_binaries end();
-  it_const_binaries end() const;
+  it_binaries end() {
+    return it_binaries(binaries_).end();
+  }
+
+  it_const_binaries end() const {
+    return it_const_binaries(binaries_).end();
+  }
 
   void release_all_binaries();
 
@@ -86,8 +97,12 @@ class LIEF_API FatBinary {
   Binary*       front();
   const Binary* front() const;
 
-  Binary*       operator[](size_t index);
-  const Binary* operator[](size_t index) const;
+  Binary* operator[](size_t index) {
+    return at(index);
+  }
+  const Binary* operator[](size_t index) const {
+    return at(index);
+  }
 
   //! Extract a MachO::Binary object. Gives ownership to the caller, and
   //! remove it from this FatBinary object.
@@ -97,7 +112,7 @@ class LIEF_API FatBinary {
 
   //! Take the underlying MachO::Binary that matches the given architecture
   //! If no binary with the architecture can be found, return a nullptr
-  std::unique_ptr<Binary> take(CPU_TYPES cpu);
+  std::unique_ptr<Binary> take(Header::CPU_TYPE cpu);
 
   //! Reconstruct the Fat binary object and write it in `filename`
   //! @param filename Path to write the reconstructed binary

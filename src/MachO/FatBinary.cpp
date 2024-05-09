@@ -29,30 +29,6 @@ FatBinary::FatBinary(binaries_t binaries) :
   binaries_{std::move(binaries)}
 {}
 
-
-size_t FatBinary::size() const {
-  return binaries_.size();
-}
-
-
-FatBinary::it_binaries FatBinary::begin() {
-  return binaries_;
-}
-
-FatBinary::it_const_binaries FatBinary::begin() const {
-  return binaries_;
-}
-
-
-FatBinary::it_binaries FatBinary::end() {
-  return it_binaries{binaries_}.end();
-}
-
-FatBinary::it_const_binaries FatBinary::end() const {
-  return it_const_binaries{binaries_}.end();
-}
-
-
 std::unique_ptr<Binary> FatBinary::pop_back() {
   if (binaries_.empty()) {
     return nullptr;
@@ -96,20 +72,7 @@ const Binary* FatBinary::front() const {
   return binaries_.front().get();
 }
 
-
-Binary* FatBinary::operator[](size_t index) {
-  return const_cast<Binary*>(static_cast<const FatBinary*>(this)->operator[](index));
-}
-
-const Binary* FatBinary::operator[](size_t index) const {
-  return at(index);
-}
-
-bool FatBinary::empty() const {
-  return binaries_.empty();
-}
-
-std::unique_ptr<Binary> FatBinary::take(CPU_TYPES cpu) {
+std::unique_ptr<Binary> FatBinary::take(Header::CPU_TYPE cpu) {
   auto it = std::find_if(std::begin(binaries_), std::end(binaries_),
       [cpu] (const std::unique_ptr<Binary>& bin) {
         return bin->header().cpu_type() == cpu;
@@ -147,20 +110,17 @@ std::vector<uint8_t> FatBinary::raw() {
 
 void FatBinary::release_all_binaries() {
   for (auto& bin : binaries_) {
-    bin.release();
+    bin.release(); // NOLINT(bugprone-unused-return-value)
   }
 }
 
 std::ostream& operator<<(std::ostream& os, const FatBinary& fatbinary) {
   for (const Binary& binary : fatbinary) {
-    os << binary;
-    os << '\n' << '\n';
+    os << binary << "\n\n";
   }
 
   return os;
 }
-
-
 
 }
 }

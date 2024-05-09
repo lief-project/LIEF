@@ -18,13 +18,11 @@
 
 #include <ostream>
 
-#include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/Abstract/Symbol.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
-#include "LIEF/MachO/enums.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -64,43 +62,70 @@ class LIEF_API Symbol : public LIEF::Symbol {
     INDIRECT_ABS,
     INDIRECT_LOCAL,
   };
-  Symbol();
+
+  enum class ORIGIN {
+    UNKNOWN     = 0,
+    DYLD_EXPORT = 1,
+    DYLD_BIND   = 2, /// The symbol comes from the binding opcodes
+    LC_SYMTAB   = 3,
+  };
+
+  Symbol() = default;
 
   Symbol(const details::nlist_32& cmd);
   Symbol(const details::nlist_64& cmd);
 
   Symbol& operator=(Symbol other);
   Symbol(const Symbol& other);
-  void swap(Symbol& other);
+  void swap(Symbol& other) noexcept;
 
-  ~Symbol() override;
+  ~Symbol() override = default;
 
-  uint8_t type() const;
+  uint8_t type() const {
+    return type_;
+  }
 
   //! It returns the number of sections in which this symbol can be found.
   //! If the symbol can't be found in any section, it returns 0 (NO_SECT)
-  uint8_t numberof_sections() const;
+  uint8_t numberof_sections() const {
+    return numberof_sections_;
+  }
 
   //! Return information about the symbol (SYMBOL_DESCRIPTIONS)
-  uint16_t description() const;
+  uint16_t description() const {
+    return description_;
+  }
 
   //! True if the symbol is associated with an ExportInfo
   //! This value is set when the symbol comes from the Dyld Export trie
-  bool has_export_info() const;
+  bool has_export_info() const {
+    return export_info() != nullptr;
+  }
 
   //! Return the ExportInfo associated with this symbol (or nullptr if not present)
   //! @see has_export_info
-  const ExportInfo* export_info() const;
-  ExportInfo* export_info();
+  const ExportInfo* export_info() const {
+    return export_info_;
+  }
+  ExportInfo* export_info() {
+    return export_info_;
+  }
 
   //! True if the symbol is associated with a BindingInfo
   //! This value is set when the symbol comes from the Dyld symbol bindings
-  bool has_binding_info() const;
+  bool has_binding_info() const {
+    return binding_info() != nullptr;
+  }
 
   //! Return the BindingInfo associated with this symbol (or nullptr if not present)
   //! @see has_binding_info
-  const BindingInfo* binding_info() const;
-  BindingInfo* binding_info();
+  const BindingInfo* binding_info() const {
+    return binding_info_;
+  }
+
+  BindingInfo* binding_info() {
+    return binding_info_;
+  }
 
   //! Try to demangle the symbol or return an empty string if it is not possible
   std::string demangled_name() const;
@@ -121,19 +146,26 @@ class LIEF_API Symbol : public LIEF::Symbol {
   }
 
   //! Return the origin of the symbol: from LC_SYMTAB command or from the Dyld information
-  SYMBOL_ORIGINS origin() const;
+  ORIGIN origin() const {
+    return origin_;
+  }
 
   //! Category of the symbol according to the `LC_DYSYMTAB` command
   CATEGORY category() const {
     return category_;
   }
 
-  void type(uint8_t type);
-  void numberof_sections(uint8_t nbsections);
-  void description(uint16_t desc);
+  void type(uint8_t type) {
+    type_ = type;
+  }
+  void numberof_sections(uint8_t nbsections) {
+    numberof_sections_ = nbsections;
+  }
+  void description(uint16_t desc) {
+    description_ = desc;
+  }
 
   void accept(Visitor& visitor) const override;
-
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Symbol& symbol);
 
@@ -141,7 +173,9 @@ class LIEF_API Symbol : public LIEF::Symbol {
   static const Symbol& indirect_local();
 
   private:
-  Symbol(CATEGORY cat);
+  Symbol(CATEGORY cat) :
+    category_(cat)
+  {}
   void library(DylibCommand& library) {
     this->library_ = &library;
   }
@@ -155,9 +189,12 @@ class LIEF_API Symbol : public LIEF::Symbol {
 
   DylibCommand* library_ = nullptr;
 
-  SYMBOL_ORIGINS origin_ = SYMBOL_ORIGINS::SYM_ORIGIN_UNKNOWN;
+  ORIGIN origin_ = ORIGIN::UNKNOWN;
   CATEGORY category_ = CATEGORY::NONE;
 };
+
+LIEF_API const char* to_string(Symbol::ORIGIN e);
+LIEF_API const char* to_string(Symbol::CATEGORY e);
 
 }
 }

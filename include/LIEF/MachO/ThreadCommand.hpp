@@ -19,10 +19,10 @@
 #include <ostream>
 
 #include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
 #include "LIEF/span.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/MachO/Header.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -41,17 +41,20 @@ struct thread_command;
 class LIEF_API ThreadCommand : public LoadCommand {
   friend class BinaryParser;
   public:
-  ThreadCommand();
+  ThreadCommand() = default;
   ThreadCommand(const details::thread_command& cmd,
-                CPU_TYPES arch = CPU_TYPES::CPU_TYPE_ANY);
-  ThreadCommand(uint32_t flavor, uint32_t count, CPU_TYPES arch=CPU_TYPES::CPU_TYPE_ANY);
+                Header::CPU_TYPE arch = Header::CPU_TYPE::ANY);
+  ThreadCommand(uint32_t flavor, uint32_t count,
+                Header::CPU_TYPE arch= Header::CPU_TYPE::ANY);
 
-  ThreadCommand& operator=(const ThreadCommand& copy);
-  ThreadCommand(const ThreadCommand& copy);
+  ThreadCommand& operator=(const ThreadCommand& copy) = default;
+  ThreadCommand(const ThreadCommand& copy) = default;
 
-  ThreadCommand* clone() const override;
+  std::unique_ptr<LoadCommand> clone() const override {
+    return std::unique_ptr<ThreadCommand>(new ThreadCommand(*this));
+  }
 
-  ~ThreadCommand() override;
+  ~ThreadCommand() override = default;
 
   //! Integer that defines a special *flavor* for the thread.
   //!
@@ -59,15 +62,21 @@ class LIEF_API ThreadCommand : public LoadCommand {
   //! the values can be found in the XNU kernel files:
   //! - xnu/osfmk/mach/arm/thread_status.h  for the ARM/AArch64 architectures
   //! - xnu/osfmk/mach/i386/thread_status.h for the x86/x86-64 architectures
-  uint32_t flavor() const;
+  uint32_t flavor() const {
+    return flavor_;
+  }
 
   //! Size of the thread state data with 32-bits alignment.
   //!
   //! This value should match state().size()
-  uint32_t count() const;
+  uint32_t count() const {
+    return count_;
+  }
 
   //! The CPU architecture that is targeted by this ThreadCommand
-  CPU_TYPES architecture() const;
+  Header::CPU_TYPE architecture() const {
+    return architecture_;
+  }
 
   //! The actual thread state as a vector of bytes. Depending on the architecture(),
   //! these data can be casted into x86_thread_state_t, x86_thread_state64_t, ...
@@ -85,22 +94,34 @@ class LIEF_API ThreadCommand : public LoadCommand {
   //! Underneath, it works by looking for the PC register value in the state() data
   uint64_t pc() const;
 
-  void state(const std::vector<uint8_t>& state);
-  void flavor(uint32_t flavor);
-  void count(uint32_t count);
-  void architecture(CPU_TYPES arch);
+  void state(std::vector<uint8_t> state) {
+    state_ = std::move(state);
+  }
 
+  void flavor(uint32_t flavor) {
+    flavor_ = flavor;
+  }
+  void count(uint32_t count) {
+    count_ = count;
+  }
+  void architecture(Header::CPU_TYPE arch) {
+    architecture_ = arch;
+  }
 
   void accept(Visitor& visitor) const override;
 
   std::ostream& print(std::ostream& os) const override;
 
-  static bool classof(const LoadCommand* cmd);
+  static bool classof(const LoadCommand* cmd) {
+    const LoadCommand::TYPE type = cmd->command();
+    return type == LoadCommand::TYPE::THREAD ||
+           type == LoadCommand::TYPE::UNIXTHREAD;
+  }
 
   private:
-  uint32_t flavor_;
-  uint32_t count_;
-  CPU_TYPES architecture_;
+  uint32_t flavor_ = 0;
+  uint32_t count_ = 0;
+  Header::CPU_TYPE architecture_  = Header::CPU_TYPE::ANY;
   std::vector<uint8_t> state_;
 
 };

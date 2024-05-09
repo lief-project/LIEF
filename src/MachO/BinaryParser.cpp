@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
 #include <memory>
 
 #include "logging.hpp"
@@ -179,7 +178,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports, uint64_t sta
     } else { // Register it into the symbol table
       auto symbol = std::make_unique<Symbol>();
 
-      symbol->origin_            = SYMBOL_ORIGINS::SYM_ORIGIN_DYLD_EXPORT;
+      symbol->origin_            = Symbol::ORIGIN::DYLD_EXPORT;
       symbol->value_             = 0;
       symbol->type_              = 0;
       symbol->numberof_sections_ = 0;
@@ -194,7 +193,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports, uint64_t sta
 
     // REEXPORT
     // ========
-    if (export_info->has(EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_REEXPORT)) {
+    if (export_info->has(ExportInfo::FLAGS::REEXPORT)) {
       auto res_ordinal = stream_->read_uleb128();
       if (!res_ordinal) {
         LIEF_ERR("Can't read uleb128 to determine the ordinal value");
@@ -225,7 +224,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports, uint64_t sta
         symbol->value_       = export_info->address();
       } else {
         auto symbol = std::make_unique<Symbol>();
-        symbol->origin_            = SYMBOL_ORIGINS::SYM_ORIGIN_DYLD_EXPORT;
+        symbol->origin_            = Symbol::ORIGIN::DYLD_EXPORT;
         symbol->value_             = export_info->address();
         symbol->type_              = 0;
         symbol->numberof_sections_ = 0;
@@ -256,7 +255,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports, uint64_t sta
 
     // STUB_AND_RESOLVER
     // =================
-    if (export_info->has(EXPORT_SYMBOL_FLAGS::EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER)) {
+    if (export_info->has(ExportInfo::FLAGS::STUB_AND_RESOLVER)) {
       auto other = stream_->read_uleb128();
       if (!other) {
         LIEF_ERR("Can't read 'other' value for the export info");

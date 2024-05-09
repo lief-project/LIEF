@@ -52,7 +52,7 @@ void check(std::unique_ptr<LIEF::MachO::FatBinary> bin) {
         fit.add(seg);
       }
       auto target = &fit;
-      if (auto* uuid = target->get(LIEF::MachO::LOAD_COMMAND_TYPES::LC_UUID)) {
+      if (auto* uuid = target->get(LIEF::MachO::LoadCommand::TYPE::UUID)) {
         target->extend(*uuid, uuid->size() + 0x100);
       }
       if (auto* seg = target->get_segment("__LINKEDIT")) {

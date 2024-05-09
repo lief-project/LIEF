@@ -497,9 +497,9 @@ void create<Binary>(nb::module_& m) {
         "load_command"_a)
 
     .def("remove",
-        nb::overload_cast<LOAD_COMMAND_TYPES>(&Binary::remove),
-        "Remove **all** the " RST_CLASS_REF(lief.MachO.LoadCommand) " having the given "
-        "" RST_CLASS_REF(lief.MachO.LOAD_COMMAND_TYPES) ""_doc,
+        nb::overload_cast<LoadCommand::TYPE>(&Binary::remove),
+        "Remove **all** the " RST_CLASS_REF(lief.MachO.LoadCommand) " with the given "
+        "" RST_CLASS_REF(lief.MachO.LoadCommand.TYPE) ""_doc,
         "type"_a)
 
     .def("remove",
@@ -583,15 +583,15 @@ void create<Binary>(nb::module_& m) {
         nb::rv_policy::reference_internal)
 
     .def("get",
-        nb::overload_cast<LOAD_COMMAND_TYPES>(&Binary::get),
-        "Return the **first** " RST_CLASS_REF(lief.MachO.LoadCommand) " having the given "
-        "" RST_CLASS_REF(lief.MachO.LOAD_COMMAND_TYPES) " or None if it is not present."_doc,
+        nb::overload_cast<LoadCommand::TYPE>(&Binary::get),
+        "Return the **first** " RST_CLASS_REF(lief.MachO.LoadCommand) " with the given "
+        "" RST_CLASS_REF(lief.MachO.LoadCommand.TYPE) " or None if it is not present."_doc,
         "type"_a, nb::rv_policy::reference_internal)
 
     .def("has",
-        nb::overload_cast<LOAD_COMMAND_TYPES>(&Binary::has, nb::const_),
+        nb::overload_cast<LoadCommand::TYPE>(&Binary::has, nb::const_),
         "Check if the current binary has a " RST_CLASS_REF(lief.MachO.LoadCommand) " with the given "
-        "" RST_CLASS_REF(lief.MachO.LOAD_COMMAND_TYPES) ""_doc,
+        "" RST_CLASS_REF(lief.MachO.LoadCommand.TYPE) ""_doc,
         "type"_a)
 
     .def_prop_ro("unwind_functions",
@@ -658,11 +658,11 @@ void create<Binary>(nb::module_& m) {
                  )doc"_doc)
 
     .def("__getitem__",
-        nb::overload_cast<LOAD_COMMAND_TYPES>(&Binary::operator[]),
+        nb::overload_cast<LoadCommand::TYPE>(&Binary::operator[]),
         nb::rv_policy::reference_internal)
 
     .def("__contains__",
-        nb::overload_cast<LOAD_COMMAND_TYPES>(&Binary::has, nb::const_))
+        nb::overload_cast<LoadCommand::TYPE>(&Binary::has, nb::const_))
 
     .def_prop_ro("overlay",
         [] (const Binary& self) {

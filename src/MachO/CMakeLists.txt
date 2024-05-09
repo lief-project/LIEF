@@ -18,6 +18,7 @@ target_sources(LIB_LIEF PRIVATE
   DataInCode.cpp
   DyldBindingInfo.cpp
   DyldChainedFixups.cpp
+  DyldChainedFormat.cpp
   DyldEnvironment.cpp
   DyldExportsTrie.cpp
   DyldInfo.cpp

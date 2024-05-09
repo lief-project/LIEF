@@ -16,7 +16,7 @@
 #include "logging.hpp"
 #include "spdlog/fmt/fmt.h"
 
-#include "LIEF/MachO/hash.hpp"
+#include "LIEF/Visitor.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/RelocationFixup.hpp"
 #include "MachO/ChainedFixup.hpp"
@@ -86,35 +86,9 @@ RelocationFixup::RelocationFixup(const RelocationFixup& other) :
   }
 }
 
-RelocationFixup& RelocationFixup::operator=(RelocationFixup&&) = default;
-RelocationFixup::RelocationFixup(RelocationFixup&&) = default;
-
-bool RelocationFixup::is_pc_relative() const {
-  return false;
-}
-
-
-Relocation* RelocationFixup::clone() const {
-  return new RelocationFixup(*this);
-}
-
-
-RELOCATION_ORIGINS RelocationFixup::origin() const {
-  return RELOCATION_ORIGINS::ORIGIN_CHAINED_FIXUPS;
-}
-
-void RelocationFixup::pc_relative(bool) {}
 
 void RelocationFixup::accept(Visitor& visitor) const {
   visitor.visit(*this);
-}
-
-
-
-
-
-bool RelocationFixup::classof(const Relocation& r) {
-  return r.origin() == RELOCATION_ORIGINS::ORIGIN_CHAINED_FIXUPS;
 }
 
 
@@ -123,7 +97,7 @@ std::ostream& RelocationFixup::print(std::ostream& os) const {
   if (const Symbol* sym = symbol()) {
     os << fmt::format("({})", sym->name());
   }
-  os << "\n";
+  os << '\n';
   return Relocation::print(os);
 }
 
@@ -210,13 +184,7 @@ void RelocationFixup::target(uint64_t target) {
   }
 }
 
-uint64_t RelocationFixup::address() const {
-  return imagebase_ + offset_;
-}
 
-void RelocationFixup::address(uint64_t address)  {
-  offset_ = address - imagebase_;
-}
 
 void RelocationFixup::set(const details::dyld_chained_ptr_arm64e_rebase& fixup) {
   rtypes_ = REBASE_TYPES::ARM64E_REBASE;

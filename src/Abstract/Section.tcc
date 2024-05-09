@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-#include <limits>
+#include <cstdint>
+#include <vector>
+
 namespace LIEF {
 
 template<typename T>

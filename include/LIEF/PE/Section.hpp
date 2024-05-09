@@ -170,7 +170,7 @@ class LIEF_API Section : public LIEF::Section {
   void clear(uint8_t c);
   void content(const std::vector<uint8_t>& data) override;
 
-  void name(const std::string& name) override;
+  void name(std::string name) override;
 
   void virtual_size(uint32_t virtual_sz) {
     virtual_size_ = virtual_sz;

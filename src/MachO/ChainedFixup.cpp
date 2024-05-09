@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 #include "logging.hpp"
-#include "LIEF/MachO/enums.hpp"
+#include "LIEF/MachO/DyldChainedFormat.hpp"
 #include "MachO/ChainedFixup.hpp"
 
 namespace LIEF {

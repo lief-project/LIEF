@@ -15,26 +15,15 @@
  */
 #include "ChainedBindingInfoList.hpp"
 #include "MachO/ChainedFixup.hpp"
-#include "LIEF/MachO/BindingInfo.hpp"
+
 #include "LIEF/MachO/ChainedBindingInfo.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-ChainedBindingInfoList::ChainedBindingInfoList(ChainedBindingInfoList&&) = default;
-ChainedBindingInfoList::~ChainedBindingInfoList() = default;
-
-ChainedBindingInfoList::ChainedBindingInfoList(DYLD_CHAINED_FORMAT fmt, bool is_weak) :
-  ChainedBindingInfo(fmt, is_weak)
-{}
-
-void ChainedBindingInfoList::swap(ChainedBindingInfoList& other) {
+void ChainedBindingInfoList::swap(ChainedBindingInfoList& other) noexcept {
   ChainedBindingInfo::swap(other);
   std::swap(elements_, other.elements_);
-}
-
-bool ChainedBindingInfoList::classof(const BindingInfo& info) {
-  return info.type() == BindingInfo::TYPES::CHAINED_LIST;
 }
 
 }

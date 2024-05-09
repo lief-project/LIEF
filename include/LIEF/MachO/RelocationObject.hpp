@@ -18,7 +18,6 @@
 #include <ostream>
 
 #include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
 
 #include "LIEF/MachO/Relocation.hpp"
 
@@ -42,21 +41,25 @@ class LIEF_API RelocationObject : public Relocation {
 
   public:
   using Relocation::Relocation;
-  RelocationObject();
+  RelocationObject() = default;
   RelocationObject(const details::relocation_info& relocinfo);
   RelocationObject(const details::scattered_relocation_info& scattered_relocinfo);
 
-  RelocationObject& operator=(RelocationObject other);
-  RelocationObject(const RelocationObject& other);
+  RelocationObject& operator=(const RelocationObject& other) = default;
+  RelocationObject(const RelocationObject& other) = default;
 
-  void swap(RelocationObject& other);
+  void swap(RelocationObject& other) noexcept;
 
-  ~RelocationObject() override;
+  ~RelocationObject() override = default;
 
-  RelocationObject* clone() const override;
+  std::unique_ptr<Relocation> clone() const override {
+    return std::unique_ptr<RelocationObject>(new RelocationObject(*this));
+  }
 
   //! Whether the relocation is PC relative
-  bool is_pc_relative() const override;
+  bool is_pc_relative() const override {
+    return is_pcrel_;
+  }
 
   //! Size of the relocation
   size_t size() const override;
@@ -66,7 +69,9 @@ class LIEF_API RelocationObject : public Relocation {
   uint64_t address() const override;
 
   //! ``true`` if the relocation is a scattered one
-  bool is_scattered() const;
+  bool is_scattered() const {
+    return is_scattered_;
+  }
 
   //! For **scattered** relocations:
   //! The address of the relocatable expression for the item in the file that needs
@@ -78,20 +83,27 @@ class LIEF_API RelocationObject : public Relocation {
   //! is contained in the second relocation entry.
   int32_t value() const;
 
-  //! Origin of the relocation. For this object it should be RELOCATION_ORIGINS::ORIGIN_RELOC_TABLE)
-  RELOCATION_ORIGINS origin() const override;
+  //! Origin of the relocation. For this object it should be Relocation::ORIGIN::RELOC_TABLE)
+  Relocation::ORIGIN origin() const override {
+    return Relocation::ORIGIN::RELOC_TABLE;
+  }
 
-  void pc_relative(bool val) override;
+  void pc_relative(bool val) override {
+    is_pcrel_ = val;
+  }
   void size(size_t size) override;
 
   void value(int32_t value);
 
-
   void accept(Visitor& visitor) const override;
 
-  std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override {
+    return Relocation::print(os);
+  }
 
-  static bool classof(const Relocation& r);
+  static bool classof(const Relocation& r) {
+    return r.origin() == Relocation::ORIGIN::RELOC_TABLE;
+  }
 
   private:
   bool is_pcrel_ = false;

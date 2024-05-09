@@ -13,19 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
 #include <sstream>
 #include "logging.hpp"
+#include "frozen.hpp"
 #include "LIEF/iostream.hpp"
 
 #include "LIEF/Abstract/Binary.hpp"
 
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
-#include "LIEF/MachO/hash.hpp"
-
-#include "LIEF/MachO/EnumToString.hpp"
-#include "LIEF/MachO/enums.hpp"
+#include "LIEF/Visitor.hpp"
 
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/DyldInfo.hpp"
@@ -74,15 +71,8 @@ DyldInfo::DyldInfo(const DyldInfo& copy) :
   export_trie_{copy.export_trie_}
 {}
 
-
-
-DyldInfo* DyldInfo::clone() const {
-  return new DyldInfo(*this);
-}
-
-
 DyldInfo::DyldInfo(const details::dyld_info_command& dyld_info_cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(dyld_info_cmd.cmd), dyld_info_cmd.cmdsize},
+  LoadCommand::LoadCommand{LoadCommand::TYPE(dyld_info_cmd.cmd), dyld_info_cmd.cmdsize},
   rebase_{dyld_info_cmd.rebase_off, dyld_info_cmd.rebase_size},
   bind_{dyld_info_cmd.bind_off, dyld_info_cmd.bind_size},
   weak_bind_{dyld_info_cmd.weak_bind_off, dyld_info_cmd.weak_bind_size},
@@ -91,7 +81,7 @@ DyldInfo::DyldInfo(const details::dyld_info_command& dyld_info_cmd) :
 {}
 
 
-void DyldInfo::swap(DyldInfo& other) {
+void DyldInfo::swap(DyldInfo& other) noexcept {
   LoadCommand::swap(other);
 
   std::swap(rebase_,             other.rebase_);
@@ -113,21 +103,6 @@ void DyldInfo::swap(DyldInfo& other) {
   std::swap(binding_info_,       other.binding_info_);
 
   std::swap(binary_,             other.binary_);
-}
-
-
-// Rebase
-// ======
-const DyldInfo::info_t& DyldInfo::rebase() const {
-  return rebase_;
-}
-
-span<const uint8_t> DyldInfo::rebase_opcodes() const {
-  return rebase_opcodes_;
-}
-
-span<uint8_t> DyldInfo::rebase_opcodes() {
-  return rebase_opcodes_;
 }
 
 void DyldInfo::rebase_opcodes(buffer_t raw) {
@@ -165,27 +140,27 @@ std::string DyldInfo::show_rebases_opcodes() const {
     if (!val) {
       break;
     }
-    uint8_t imm = *val & REBASE_IMMEDIATE_MASK;
-    auto opcode = static_cast<REBASE_OPCODES>(*val & REBASE_OPCODE_MASK);
+    uint8_t imm = *val & IMMEDIATE_MASK;
+    auto opcode = REBASE_OPCODES(*val & OPCODE_MASK);
 
     switch(opcode) {
-      case REBASE_OPCODES::REBASE_OPCODE_DONE:
+      case REBASE_OPCODES::DONE:
         {
           output << "[" << to_string(opcode) << "]" << '\n';
           done = true;
           break;
         }
 
-      case REBASE_OPCODES::REBASE_OPCODE_SET_TYPE_IMM:
+      case REBASE_OPCODES::SET_TYPE_IMM:
         {
           type = imm;
-          output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "] ";
-          output << "Type: " << to_string(static_cast<REBASE_TYPES>(type));
+          output << "[" << to_string(opcode) << "] ";
+          output << "Type: " << to_string(REBASE_TYPE(type));
           output << '\n';
           break;
         }
 
-      case REBASE_OPCODES::REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+      case REBASE_OPCODES::SET_SEGMENT_AND_OFFSET_ULEB:
         {
           if (auto val = rebase_stream.read_uleb128()) {
             segment_offset = *val;
@@ -196,7 +171,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
 
           segment_index = imm;
 
-          output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "] ";
+          output << "[" << to_string(opcode) << "] ";
           output << "Segment Index := " << std::dec << segment_index << " (" << segments[segment_index].name() << ") ";
           output << "Segment Offset := " << std::hex << std::showbase << segment_offset;
           output << '\n';
@@ -204,7 +179,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
           break;
         }
 
-      case REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_ULEB:
+      case REBASE_OPCODES::ADD_ADDR_ULEB:
         {
           uint64_t val = 0;
           if (auto res = rebase_stream.read_uleb128()) {
@@ -216,30 +191,30 @@ std::string DyldInfo::show_rebases_opcodes() const {
 
           segment_offset += val;
 
-          output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "] ";
+          output << "[" << to_string(opcode) << "] ";
           output << "Segment Offset += " << std::hex << std::showbase << val << " (" << segment_offset << ")";
           output << '\n';
           break;
         }
 
-      case REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_IMM_SCALED:
+      case REBASE_OPCODES::ADD_ADDR_IMM_SCALED:
         {
           segment_offset += (imm * pint_v);
 
-          output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "]" ;
+          output << "[" << to_string(opcode) << "]" ;
           output << "Segment Offset += " << std::hex << std::showbase << (imm * pint_v) << " (" << segment_offset << ")";
           output << '\n';
           break;
         }
 
-      case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_IMM_TIMES:
+      case REBASE_OPCODES::DO_REBASE_IMM_TIMES:
         {
-          output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "]" << '\n';
+          output << "[" << to_string(opcode) << "]" << '\n';
           output << tab << "for i in range(" << std::dec << static_cast<uint32_t>(imm) << "):" << '\n';
           for (size_t i = 0; i < imm; ++i) {
             output << tab << tab;
             output << "rebase(";
-            output << to_string(static_cast<REBASE_TYPES>(type));
+            output << to_string(REBASE_TYPE(type));
             output << ", ";
             output << segments[segment_index].name();
             output << ", ";
@@ -255,7 +230,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
           output << '\n';
           break;
         }
-      case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES:
+      case REBASE_OPCODES::DO_REBASE_ULEB_TIMES:
         {
 
           if (auto res = rebase_stream.read_uleb128()) {
@@ -265,13 +240,13 @@ std::string DyldInfo::show_rebases_opcodes() const {
             break;
           }
 
-          output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "]" << '\n';
+          output << "[" << to_string(opcode) << "]" << '\n';
 
           output << tab << "for i in range(" << std::dec << static_cast<uint32_t>(count) << "):" << '\n';
           for (size_t i = 0; i < count; ++i) {
             output << tab << tab;
             output << "rebase(";
-            output << to_string(static_cast<REBASE_TYPES>(type));
+            output << to_string(REBASE_TYPE(type));
             output << ", ";
             output << segments[segment_index].name();
             output << ", ";
@@ -289,14 +264,14 @@ std::string DyldInfo::show_rebases_opcodes() const {
           break;
         }
 
-      case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB:
+      case REBASE_OPCODES::DO_REBASE_ADD_ADDR_ULEB:
         {
 
-          output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "]" << '\n';
+          output << "[" << to_string(opcode) << "]" << '\n';
 
           output << tab;
           output << "rebase(";
-          output << to_string(static_cast<REBASE_TYPES>(type));
+          output << to_string(REBASE_TYPE(type));
           output << ", ";
           output << segments[segment_index].name();
           output << ", ";
@@ -320,7 +295,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
           break;
         }
 
-      case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB:
+      case REBASE_OPCODES::DO_REBASE_ULEB_TIMES_SKIPPING_ULEB:
         {
 
           output << "[" << to_string(static_cast<REBASE_OPCODES>(opcode)) << "]" << '\n';
@@ -345,7 +320,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
           for (size_t i = 0; i < count; ++i) {
             output << tab << tab;
             output << "rebase(";
-            output << to_string(static_cast<REBASE_TYPES>(type));
+            output << to_string(REBASE_TYPE(type));
             output << ", ";
             output << segments[segment_index].name();
             output << ", ";
@@ -371,29 +346,6 @@ std::string DyldInfo::show_rebases_opcodes() const {
   }
 
   return output.str();
-}
-
-// Binding
-// =======
-
-DyldInfo::it_binding_info DyldInfo::bindings() {
-  return binding_info_;
-}
-
-DyldInfo::it_const_binding_info DyldInfo::bindings() const {
-  return binding_info_;
-}
-
-const DyldInfo::info_t& DyldInfo::bind() const {
-  return bind_;
-}
-
-span<const uint8_t> DyldInfo::bind_opcodes() const {
-  return bind_opcodes_;
-}
-
-span<uint8_t> DyldInfo::bind_opcodes() {
-  return bind_opcodes_;
 }
 
 void DyldInfo::bind_opcodes(buffer_t raw) {
@@ -422,7 +374,7 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
                   sizeof(uint64_t) :
                   sizeof(uint32_t);
 
-  uint8_t     type = is_lazy ? static_cast<uint8_t>(BIND_TYPES::BIND_TYPE_POINTER) : 0;
+  uint8_t     type = is_lazy ? static_cast<uint8_t>(DyldBindingInfo::TYPE::POINTER) : 0;
   uint8_t     segment_idx = 0;
   uint64_t    segment_offset = 0;
   std::string symbol_name;
@@ -452,22 +404,22 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
     if (!val) {
       break;
     }
-    uint8_t imm = *val & BIND_IMMEDIATE_MASK;
-    auto opcode = static_cast<BIND_OPCODES>(*val & BIND_OPCODE_MASK);
+    uint8_t imm = *val & IMMEDIATE_MASK;
+    auto opcode = BIND_OPCODES(*val & OPCODE_MASK);
 
     switch (opcode) {
-      case BIND_OPCODES::BIND_OPCODE_DONE:
+      case BIND_OPCODES::DONE:
         {
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
+          output << "[" << to_string(opcode) << "]" << '\n';
           if (!is_lazy) {
             done = true;
           }
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM:
+      case BIND_OPCODES::SET_DYLIB_ORDINAL_IMM:
         {
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
+          output << "[" << to_string(opcode) << "]" << '\n';
 
           library_ordinal = imm;
 
@@ -475,9 +427,9 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
+      case BIND_OPCODES::SET_DYLIB_ORDINAL_ULEB:
         {
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
+          output << "[" << to_string(opcode) << "]" << '\n';
 
           if (auto res = bind_stream.read_uleb128()) {
             library_ordinal = *res;
@@ -491,15 +443,15 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
+      case BIND_OPCODES::SET_DYLIB_SPECIAL_IMM:
         {
 
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
+          output << "[" << to_string(opcode) << "]" << '\n';
           // the special ordinals are negative numbers
           if (imm == 0) {
             library_ordinal = 0;
           } else {
-            int8_t sign_extended = static_cast<int8_t>(BIND_OPCODE_MASK) | imm;
+            int8_t sign_extended = static_cast<int8_t>(OPCODE_MASK) | imm;
             library_ordinal = sign_extended;
           }
 
@@ -507,10 +459,10 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
+      case BIND_OPCODES::SET_SYMBOL_TRAILING_FLAGS_IMM:
         {
 
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
+          output << "[" << to_string(opcode) << "]" << '\n';
 
           if (auto res = bind_stream.read_string()) {
             symbol_name = std::move(*res);
@@ -520,27 +472,27 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           }
           symbol_flags = imm;
 
-          is_weak_import = (imm & BIND_SYMBOL_FLAGS_WEAK_IMPORT) != 0;
+          is_weak_import = (imm & BIND_SYMBOL_FLAGS::WEAK_IMPORT) != 0;
 
           output << tab << "Symbol name := " << symbol_name << '\n';
           output << tab << "Is Weak ? " << std::boolalpha << is_weak_import << '\n';
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_TYPE_IMM:
+      case BIND_OPCODES::SET_TYPE_IMM:
         {
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
+          output << "[" << to_string(opcode) << "]" << '\n';
 
           type = imm;
 
-          output << tab << "Type := " << to_string(static_cast<BIND_TYPES>(type)) << '\n';
+          output << tab << "Type := " << to_string(DyldBindingInfo::TYPE(type)) << '\n';
 
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB:
+      case BIND_OPCODES::SET_ADDEND_SLEB:
         {
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
+          output << "[" << to_string(opcode) << "]" << '\n';
 
           if (auto res = bind_stream.read_sleb128()) {
             addend = *res;
@@ -553,10 +505,10 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+      case BIND_OPCODES::SET_SEGMENT_AND_OFFSET_ULEB:
         {
 
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
+          output << "[" << to_string(opcode) << "]" << '\n';
           segment_idx  = imm;
 
           if (auto res = bind_stream.read_uleb128()) {
@@ -572,10 +524,10 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB:
+      case BIND_OPCODES::ADD_ADDR_ULEB:
         {
 
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
+          output << "[" << to_string(opcode) << "]" << '\n';
 
           uint64_t val = 0;
           if (auto res = bind_stream.read_uleb128()) {
@@ -590,14 +542,14 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_DO_BIND:
+      case BIND_OPCODES::DO_BIND:
         {
           if (!use_threaded_rebase_bind) {
-            output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
+            output << "[" << to_string(opcode) << "]" << '\n';
 
             output << tab;
             output << "bind(";
-            output << to_string(static_cast<BIND_TYPES>(type));
+            output << to_string(DyldBindingInfo::TYPE(type));
             output << ", ";
             output << segments[segment_idx].name();
             output << ", ";
@@ -621,14 +573,14 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB:
+      case BIND_OPCODES::DO_BIND_ADD_ADDR_ULEB:
         {
 
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
+          output << "[" << to_string(opcode) << "]" << '\n';
 
           output << tab;
           output << "bind(";
-          output << to_string(static_cast<BIND_TYPES>(type));
+          output << to_string(DyldBindingInfo::TYPE(type));
           output << ", ";
           output << segments[segment_idx].name();
           output << ", ";
@@ -656,14 +608,14 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
+      case BIND_OPCODES::DO_BIND_ADD_ADDR_IMM_SCALED:
         {
 
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
+          output << "[" << to_string(opcode) << "]" << '\n';
 
           output << tab;
           output << "bind(";
-          output << to_string(static_cast<BIND_TYPES>(type));
+          output << to_string(DyldBindingInfo::TYPE(type));
           output << ", ";
           output << segments[segment_idx].name();
           output << ", ";
@@ -685,10 +637,10 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
+      case BIND_OPCODES::DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
         {
 
-          output << "[" << to_string(static_cast<BIND_OPCODES>(opcode)) << "]" << '\n';
+          output << "[" << to_string(opcode) << "]" << '\n';
           // Count
           if (auto res = bind_stream.read_uleb128()) {
             count = *res;
@@ -709,7 +661,7 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           for (size_t i = 0; i < count; ++i) {
             output << tab << tab;
             output << "bind(";
-            output << to_string(static_cast<BIND_TYPES>(type));
+            output << to_string(DyldBindingInfo::TYPE(type));
             output << ", ";
             output << segments[segment_idx].name();
             output << ", ";
@@ -733,12 +685,12 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           }
           break;
         }
-      case BIND_OPCODES::BIND_OPCODE_THREADED:
+      case BIND_OPCODES::THREADED:
         {
           const auto subopcode = static_cast<BIND_SUBOPCODE_THREADED>(imm);
-          output << std::string("[") + to_string(BIND_OPCODES::BIND_OPCODE_THREADED) + "]\n";
+          output << std::string("[") + to_string(BIND_OPCODES::THREADED) + "]\n";
           switch (subopcode) {
-            case BIND_SUBOPCODE_THREADED::BIND_SUBOPCODE_THREADED_APPLY:
+            case BIND_SUBOPCODE_THREADED::APPLY:
               {
                 output << tab << std::string("[") + to_string(subopcode) + "]\n";
                 uint64_t delta = 0;
@@ -750,7 +702,6 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
                       (segment_offset + sizeof(uint64_t)) >= content.size())
                   {
                     LIEF_WARN("Bad segment offset (0x{:x})", segment_offset);
-                    delta = 0; // exit from de do ... while
                     break;
                   }
                   auto value = *reinterpret_cast<const uint64_t*>(content.data() + segment_offset);
@@ -776,7 +727,7 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
                     const int64_t library_ordinal = th_bind_data.library_ordinal;
                     output << tab << tab << fmt::format("threaded_bind({}/{}, 0x{:x}, {}, {}, library_ordinal={}, "
                                                         "addend={}, is_weak_import={})\n",
-                        "THREADED_BIND", to_string(static_cast<BIND_TYPES>(th_bind_data.type)), segment_offset,
+                        "THREADED_BIND", to_string(DyldBindingInfo::TYPE(th_bind_data.type)), segment_offset,
                         current_segment.name(), th_bind_data.symbol_name,
                         library_ordinal > 0 ? libraries[library_ordinal - 1].name() : std::to_string(library_ordinal),
                         th_bind_data.addend, th_bind_data.symbol_flags);
@@ -790,7 +741,7 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
                 } while (delta != 0);
                 break;
               }
-            case BIND_SUBOPCODE_THREADED::BIND_SUBOPCODE_THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB:
+            case BIND_SUBOPCODE_THREADED::SET_BIND_ORDINAL_TABLE_SIZE_ULEB:
               {
                 output << tab << std::string("[") + to_string(subopcode) + "]\n";
                 if (auto res = bind_stream.read_uleb128()) {
@@ -821,17 +772,6 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
 
 // Weak Binding
 // ============
-const DyldInfo::info_t& DyldInfo::weak_bind() const {
-  return weak_bind_;
-}
-
-span<const uint8_t> DyldInfo::weak_bind_opcodes() const {
-  return weak_bind_opcodes_;
-}
-
-span<uint8_t> DyldInfo::weak_bind_opcodes() {
-  return weak_bind_opcodes_;
-}
 
 void DyldInfo::weak_bind_opcodes(buffer_t raw) {
   if (raw.size() > weak_bind_opcodes_.size()) {
@@ -850,18 +790,6 @@ std::string DyldInfo::show_weak_bind_opcodes() const {
 
 // Lazy Binding
 // ============
-const DyldInfo::info_t& DyldInfo::lazy_bind() const {
-  return lazy_bind_;
-}
-
-span<const uint8_t> DyldInfo::lazy_bind_opcodes() const {
-  return lazy_bind_opcodes_;
-}
-
-span<uint8_t> DyldInfo::lazy_bind_opcodes() {
-  return lazy_bind_opcodes_;
-}
-
 void DyldInfo::lazy_bind_opcodes(buffer_t raw) {
   if (raw.size() > lazy_bind_opcodes_.size()) {
     LIEF_WARN("Can't update lazy bind opcodes. The provided data is larger than the original ones");
@@ -878,27 +806,6 @@ std::string DyldInfo::show_lazy_bind_opcodes() const {
 
 // Export Info
 // ===========
-DyldInfo::it_export_info DyldInfo::exports() {
-  return export_info_;
-}
-
-DyldInfo::it_const_export_info DyldInfo::exports() const {
-  return export_info_;
-}
-
-const DyldInfo::info_t& DyldInfo::export_info() const {
-  return export_;
-}
-
-span<const uint8_t> DyldInfo::export_trie() const {
-  return export_trie_;
-}
-
-span<uint8_t> DyldInfo::export_trie() {
-  return export_trie_;
-}
-
-
 std::string DyldInfo::show_export_trie() const {
   if (binary_ == nullptr) {
     LIEF_WARN("Can't print bind opcodes");
@@ -917,7 +824,7 @@ std::string DyldInfo::show_export_trie() const {
 void DyldInfo::show_trie(std::ostream& output, std::string output_prefix, BinaryStream& stream,
                          uint64_t start, uint64_t end, const std::string& prefix) const
 {
-  MachO::show_trie(output, output_prefix, stream, start, end, prefix);
+  MachO::show_trie(output, std::move(output_prefix), stream, start, end, prefix);
 }
 
 void DyldInfo::export_trie(buffer_t raw) {
@@ -928,77 +835,15 @@ void DyldInfo::export_trie(buffer_t raw) {
   std::move(std::begin(raw), std::end(raw), export_trie_.data());
 }
 
-
-void DyldInfo::rebase(const DyldInfo::info_t& info) {
-  rebase_ = info;
-}
-
-void DyldInfo::bind(const DyldInfo::info_t& info) {
-  bind_ = info;
-}
-
-void DyldInfo::weak_bind(const DyldInfo::info_t& info) {
-  weak_bind_ = info;
-}
-
-void DyldInfo::lazy_bind(const DyldInfo::info_t& info) {
-  lazy_bind_ = info;
-}
-
-void DyldInfo::export_info(const DyldInfo::info_t& info) {
-  export_ = info;
-}
-
-
-
-void DyldInfo::set_rebase_offset(uint32_t offset) {
-  rebase_ = {offset, std::get<1>(rebase())};
-}
-void DyldInfo::set_rebase_size(uint32_t size) {
-  rebase_ = {std::get<0>(rebase()), size};
-}
-
-
-void DyldInfo::set_bind_offset(uint32_t offset) {
-  bind_ = {offset, std::get<1>(bind())};
-}
-void DyldInfo::set_bind_size(uint32_t size) {
-  bind_ = {std::get<0>(bind()), size};
-}
-
-
-void DyldInfo::set_weak_bind_offset(uint32_t offset) {
-  weak_bind_ = {offset, std::get<1>(weak_bind())};
-}
-void DyldInfo::set_weak_bind_size(uint32_t size) {
-  weak_bind_ = {std::get<0>(weak_bind()), size};
-}
-
-
-void DyldInfo::set_lazy_bind_offset(uint32_t offset) {
-  lazy_bind_ = {offset, std::get<1>(lazy_bind())};
-}
-void DyldInfo::set_lazy_bind_size(uint32_t size) {
-  lazy_bind_ = {std::get<0>(lazy_bind()), size};
-}
-
-
-void DyldInfo::set_export_offset(uint32_t offset) {
-  export_ = {offset, std::get<1>(export_info())};
-}
-void DyldInfo::set_export_size(uint32_t size) {
-  export_ = {std::get<0>(export_info()), size};
-}
-
 void DyldInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-bool operator==(uint8_t lhs, REBASE_OPCODES rhs) {
+bool operator==(uint8_t lhs, DyldInfo::REBASE_OPCODES rhs) {
   return lhs == static_cast<uint8_t>(rhs);
 }
 
-bool operator!=(uint8_t lhs, REBASE_OPCODES rhs) {
+bool operator!=(uint8_t lhs, DyldInfo::REBASE_OPCODES rhs) {
   return lhs != static_cast<uint8_t>(rhs);
 }
 
@@ -1015,7 +860,7 @@ DyldInfo& DyldInfo::update_rebase_info(vector_iostream& stream) {
   std::set<RelocationDyld*, decltype(cmp)> rebases(cmp);
   Binary::relocations_t relocations = binary_->relocations_list();
   for (Relocation* r : relocations) {
-    if (r->origin() == RELOCATION_ORIGINS::ORIGIN_DYLDINFO) {
+    if (r->origin() == Relocation::ORIGIN::DYLDINFO) {
       rebases.insert(r->as<RelocationDyld>());
     }
   }
@@ -1030,7 +875,7 @@ DyldInfo& DyldInfo::update_rebase_info(vector_iostream& stream) {
 
   for (RelocationDyld* rebase : rebases) {
     if (type != rebase->type()) {
-      output.emplace_back(static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_SET_TYPE_IMM), rebase->type());
+      output.emplace_back(static_cast<uint8_t>(REBASE_OPCODES::SET_TYPE_IMM), rebase->type());
       type = rebase->type();
     }
 
@@ -1047,21 +892,21 @@ DyldInfo& DyldInfo::update_rebase_info(vector_iostream& stream) {
         current_segment_end   = segment->virtual_address() + segment->virtual_size();
         current_segment_index = index;
 
-        output.emplace_back(static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB), current_segment_index, rebase->address() - current_segment_start);
+        output.emplace_back(static_cast<uint8_t>(REBASE_OPCODES::SET_SEGMENT_AND_OFFSET_ULEB), current_segment_index, rebase->address() - current_segment_start);
       } else {
-        output.emplace_back(static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_ULEB), rebase->address() - address);
+        output.emplace_back(static_cast<uint8_t>(REBASE_OPCODES::ADD_ADDR_ULEB), rebase->address() - address);
       }
       address = rebase->address();
     }
 
-    output.emplace_back(static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES), 1);
+    output.emplace_back(static_cast<uint8_t>(REBASE_OPCODES::DO_REBASE_ULEB_TIMES), 1);
     address += binary_->pointer_size();
 
     if (address >= current_segment_end) {
       address = 0;
     }
   }
-  output.emplace_back(static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_DONE), 0);
+  output.emplace_back(static_cast<uint8_t>(REBASE_OPCODES::DONE), 0);
 
 
   // ===========================================
@@ -1070,11 +915,11 @@ DyldInfo& DyldInfo::update_rebase_info(vector_iostream& stream) {
   // Based on ld64-274.2/src/ld/LinkEdit.hpp:239
   // ===========================================
   auto dst = std::begin(output);
-  for (auto it = std::begin(output); it->opcode != REBASE_OPCODES::REBASE_OPCODE_DONE; ++it) {
-    if (it->opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES && it->op1 == 1) {
+  for (auto it = std::begin(output); it->opcode != REBASE_OPCODES::DONE; ++it) {
+    if (it->opcode == REBASE_OPCODES::DO_REBASE_ULEB_TIMES && it->op1 == 1) {
       *dst = *it++;
 
-      while (it->opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES) {
+      while (it->opcode == REBASE_OPCODES::DO_REBASE_ULEB_TIMES) {
         dst->op1 += it->op1;
         ++it;
       }
@@ -1085,7 +930,7 @@ DyldInfo& DyldInfo::update_rebase_info(vector_iostream& stream) {
       *dst++ = *it;
     }
   }
-  dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_DONE);
+  dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::DONE);
 
   // ===========================================
   // 2. Second optimization
@@ -1093,12 +938,12 @@ DyldInfo& DyldInfo::update_rebase_info(vector_iostream& stream) {
   // Base on ld64-274.2/src/ld/LinkEdit.hpp:257
   // ===========================================
   dst = std::begin(output);
-  for (auto it = std::begin(output); it->opcode != REBASE_OPCODES::REBASE_OPCODE_DONE; ++it) {
+  for (auto it = std::begin(output); it->opcode != REBASE_OPCODES::DONE; ++it) {
 
-    if ((it->opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES)
+    if ((it->opcode == REBASE_OPCODES::DO_REBASE_ULEB_TIMES)
         && it->op1 == 1
-        && it[1].opcode == REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_ULEB) {
-      dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB);
+        && it[1].opcode == REBASE_OPCODES::ADD_ADDR_ULEB) {
+      dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::DO_REBASE_ADD_ADDR_ULEB);
       dst->op1 = it[1].op1;
       ++it;
       ++dst;
@@ -1106,26 +951,26 @@ DyldInfo& DyldInfo::update_rebase_info(vector_iostream& stream) {
       *dst++ = *it;
     }
   }
-  dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_DONE);
+  dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::DONE);
 
   // ===========================================
   // 3. Third optimization
   // Base on ld64-274.2/src/ld/LinkEdit.hpp:274
   // ===========================================
   dst = std::begin(output);
-  for (auto it = std::begin(output); it->opcode != REBASE_OPCODES::REBASE_OPCODE_DONE; ++it) {
+  for (auto it = std::begin(output); it->opcode != REBASE_OPCODES::DONE; ++it) {
     uint64_t delta = it->op1;
-    if ((it->opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB)
-        && (it[1].opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB)
-        && (it[2].opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB)
+    if ((it->opcode == REBASE_OPCODES::DO_REBASE_ADD_ADDR_ULEB)
+        && (it[1].opcode == REBASE_OPCODES::DO_REBASE_ADD_ADDR_ULEB)
+        && (it[2].opcode == REBASE_OPCODES::DO_REBASE_ADD_ADDR_ULEB)
         && (it[1].op1 == delta)
         && (it[2].op1 == delta) ) {
 
-      dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB);
+      dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::DO_REBASE_ULEB_TIMES_SKIPPING_ULEB);
       dst->op1 = 1;
       dst->op2 = delta;
       ++it;
-      while (it->opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB && it->op1 == delta) {
+      while (it->opcode == REBASE_OPCODES::DO_REBASE_ADD_ADDR_ULEB && it->op1 == delta) {
         dst->op1++;
         ++it;
       }
@@ -1135,7 +980,7 @@ DyldInfo& DyldInfo::update_rebase_info(vector_iostream& stream) {
       *dst++ = *it;
     }
   }
-  dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_DONE);
+  dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::DONE);
 
   // ===========================================
   // 4. Fourth optimization
@@ -1143,13 +988,13 @@ DyldInfo& DyldInfo::update_rebase_info(vector_iostream& stream) {
   // Base on ld64-274.2/src/ld/LinkEdit.hpp:303
   // ===========================================
   const size_t pint_size = binary_->pointer_size();
-  for (auto it = std::begin(output); it->opcode != REBASE_OPCODES::REBASE_OPCODE_DONE; ++it) {
+  for (auto it = std::begin(output); it->opcode != REBASE_OPCODES::DONE; ++it) {
 
-    if (it->opcode == REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_ULEB && it->op1 < (15 * pint_size) && (it->op1 % pint_size) == 0) {
-      it->opcode = static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_IMM_SCALED);
+    if (it->opcode == REBASE_OPCODES::ADD_ADDR_ULEB && it->op1 < (15 * pint_size) && (it->op1 % pint_size) == 0) {
+      it->opcode = static_cast<uint8_t>(REBASE_OPCODES::ADD_ADDR_IMM_SCALED);
       it->op1 = it->op1 / pint_size;
-    } else if ( (it->opcode == REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES) && (it->op1 < 15) ) {
-      it->opcode = static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_IMM_TIMES);
+    } else if ( (it->opcode == REBASE_OPCODES::DO_REBASE_ULEB_TIMES) && (it->op1 < 15) ) {
+      it->opcode = static_cast<uint8_t>(REBASE_OPCODES::DO_REBASE_IMM_TIMES);
     }
   }
 
@@ -1159,74 +1004,74 @@ DyldInfo& DyldInfo::update_rebase_info(vector_iostream& stream) {
     const details::rebase_instruction& inst = *it;
 
     switch (static_cast<REBASE_OPCODES>(inst.opcode)) {
-      case REBASE_OPCODES::REBASE_OPCODE_DONE:
+      case REBASE_OPCODES::DONE:
         {
           done = true;
           break;
         }
 
-      case REBASE_OPCODES::REBASE_OPCODE_SET_TYPE_IMM:
+      case REBASE_OPCODES::SET_TYPE_IMM:
         {
-          raw_output.write<uint8_t>(static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_SET_TYPE_IMM | static_cast<REBASE_OPCODES>(inst.op1)));
+          raw_output.write<uint8_t>(uint8_t(REBASE_OPCODES::SET_TYPE_IMM) | inst.op1);
           break;
         }
 
-      case REBASE_OPCODES::REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+      case REBASE_OPCODES::SET_SEGMENT_AND_OFFSET_ULEB:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB | static_cast<REBASE_OPCODES>(inst.op1)))
+            .write<uint8_t>(uint8_t(REBASE_OPCODES::SET_SEGMENT_AND_OFFSET_ULEB) | inst.op1)
             .write_uleb128(inst.op2);
 
           break;
         }
 
-      case REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_ULEB:
+      case REBASE_OPCODES::ADD_ADDR_ULEB:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_ULEB))
+            .write<uint8_t>(uint8_t(REBASE_OPCODES::ADD_ADDR_ULEB))
             .write_uleb128(inst.op1);
 
           break;
         }
 
-      case REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_IMM_SCALED:
+      case REBASE_OPCODES::ADD_ADDR_IMM_SCALED:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_ADD_ADDR_IMM_SCALED | static_cast<REBASE_OPCODES>(inst.op1)));
+            .write<uint8_t>(uint8_t(REBASE_OPCODES::ADD_ADDR_IMM_SCALED) | inst.op1);
 
           break;
         }
 
-      case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_IMM_TIMES:
+      case REBASE_OPCODES::DO_REBASE_IMM_TIMES:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_IMM_TIMES | static_cast<REBASE_OPCODES>(inst.op1)));
+            .write<uint8_t>(uint8_t(REBASE_OPCODES::DO_REBASE_IMM_TIMES) | inst.op1);
 
           break;
         }
 
-      case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES:
+      case REBASE_OPCODES::DO_REBASE_ULEB_TIMES:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES))
+            .write<uint8_t>(uint8_t(REBASE_OPCODES::DO_REBASE_ULEB_TIMES))
             .write_uleb128(inst.op1);
 
           break;
         }
 
-      case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB:
+      case REBASE_OPCODES::DO_REBASE_ADD_ADDR_ULEB:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB))
+            .write<uint8_t>(uint8_t(REBASE_OPCODES::DO_REBASE_ADD_ADDR_ULEB))
             .write_uleb128(inst.op1);
 
           break;
         }
 
-      case REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB:
+      case REBASE_OPCODES::DO_REBASE_ULEB_TIMES_SKIPPING_ULEB:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB))
+            .write<uint8_t>(uint8_t(REBASE_OPCODES::DO_REBASE_ULEB_TIMES_SKIPPING_ULEB))
             .write_uleb128(inst.op1)
             .write_uleb128(inst.op2);
 
@@ -1299,20 +1144,20 @@ DyldInfo& DyldInfo::update_binding_info(vector_iostream& stream, details::dyld_i
 
   for (const std::unique_ptr<DyldBindingInfo>& binfo : binding_info_) {
     switch (binfo->binding_class()) {
-      case BINDING_CLASS::BIND_CLASS_THREADED:
-      case BINDING_CLASS::BIND_CLASS_STANDARD:
+      case DyldBindingInfo::CLASS::THREADED:
+      case DyldBindingInfo::CLASS::STANDARD:
         {
           standard_binds.insert(binfo.get());
           break;
         }
 
-      case BINDING_CLASS::BIND_CLASS_WEAK:
+      case DyldBindingInfo::CLASS::WEAK:
         {
           weak_binds.insert(binfo.get());
           break;
         }
 
-      case BINDING_CLASS::BIND_CLASS_LAZY:
+      case DyldBindingInfo::CLASS::LAZY:
         {
           lazy_binds.insert(binfo.get());
           break;
@@ -1349,11 +1194,11 @@ DyldInfo& DyldInfo::update_binding_info(vector_iostream& stream, details::dyld_i
   return *this;
 }
 
-bool operator==(uint8_t lhs, BIND_OPCODES rhs) {
+bool operator==(uint8_t lhs, DyldInfo::BIND_OPCODES rhs) {
   return lhs == static_cast<uint8_t>(rhs);
 }
 
-bool operator!=(uint8_t lhs, BIND_OPCODES rhs) {
+bool operator!=(uint8_t lhs, DyldInfo::BIND_OPCODES rhs) {
   return lhs != static_cast<uint8_t>(rhs);
 }
 
@@ -1375,17 +1220,17 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
     Symbol* sym = info->symbol();
     if (sym != nullptr) {
       if (sym->name() != symbol_name) {
-        uint64_t flag = info->is_non_weak_definition() ? BIND_SYMBOL_FLAGS_NON_WEAK_DEFINITION : 0;
-        instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM), flag, 0, sym->name());
+        uint64_t flag = info->is_non_weak_definition() ? BIND_SYMBOL_FLAGS::NON_WEAK_DEFINITION : 0;
+        instructions.emplace_back(uint8_t(BIND_OPCODES::SET_SYMBOL_TRAILING_FLAGS_IMM), flag, 0, sym->name());
         symbol_name = sym->name();
       }
     } else {
       LIEF_ERR("No symbol associated with the binding info");
     }
 
-    if (info->binding_type() != static_cast<BIND_TYPES>(type)) {
+    if (info->binding_type() != DyldBindingInfo::TYPE(type)) {
       type = static_cast<uint8_t>(info->binding_type());
-      instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_TYPE_IMM), type);
+      instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::SET_TYPE_IMM), type);
     }
 
     if (info->address() != address) {
@@ -1402,25 +1247,25 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
         current_segment_end   = segment->virtual_address() + segment->virtual_size();
         current_segment_index = index;
 
-        instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB),
+        instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::SET_SEGMENT_AND_OFFSET_ULEB),
             current_segment_index, info->address() - current_segment_start);
 
       } else {
-        instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB), info->address() - address);
+        instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::ADD_ADDR_ULEB), info->address() - address);
       }
       address = info->address();
     }
 
     if (addend != info->addend()) {
-      instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB), info->addend());
+      instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::SET_ADDEND_SLEB), info->addend());
       addend = info->addend();
     }
 
-    instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND), 0);
+    instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::DO_BIND), 0);
     address += binary_->pointer_size();
   }
 
-  instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DONE), 0);
+  instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::DONE), 0);
 
 
   // ===========================================
@@ -1429,9 +1274,9 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
   // Based on ld64-274.2/src/ld/LinkEdit.hpp:469
   // ===========================================
   auto dst = std::begin(instructions);
-  for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
-    if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND && it[1].opcode == BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB) {
-      dst->opcode = static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB);
+  for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::DONE; ++it) {
+    if (it->opcode == BIND_OPCODES::DO_BIND && it[1].opcode == BIND_OPCODES::ADD_ADDR_ULEB) {
+      dst->opcode = static_cast<uint8_t>(BIND_OPCODES::DO_BIND_ADD_ADDR_ULEB);
       dst->op1 = it[1].op1;
       ++it;
       ++dst;
@@ -1439,23 +1284,23 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
       *dst++ = *it;
     }
   }
-  dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_DONE);
+  dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::DONE);
 
   // ===========================================
   // 2. Second optimization
   // Based on ld64-274.2/src/ld/LinkEdit.hpp:485
   // ===========================================
   dst = std::begin(instructions);
-  for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
+  for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::DONE; ++it) {
     uint64_t delta = it->op1;
-    if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB &&
-        it[1].opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB &&
+    if (it->opcode == BIND_OPCODES::DO_BIND_ADD_ADDR_ULEB &&
+        it[1].opcode == BIND_OPCODES::DO_BIND_ADD_ADDR_ULEB &&
         it[1].op1 == delta) {
-      dst->opcode = static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB);
+      dst->opcode = static_cast<uint8_t>(BIND_OPCODES::DO_BIND_ULEB_TIMES_SKIPPING_ULEB);
       dst->op1 = 1;
       dst->op2 = delta;
       ++it;
-      while (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB && it->op1 == delta) {
+      while (it->opcode == BIND_OPCODES::DO_BIND_ADD_ADDR_ULEB && it->op1 == delta) {
         dst->op1++;
         ++it;
       }
@@ -1465,7 +1310,7 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
       *dst++ = *it;
     }
   }
-  dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_DONE);
+  dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::DONE);
 
 
   // ===========================================
@@ -1473,116 +1318,116 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
   // Use immediate encodings
   // Based on ld64-274.2/src/ld/LinkEdit.hpp:512
   // ===========================================
-  for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
-    if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB &&
+  for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::DONE; ++it) {
+    if (it->opcode == BIND_OPCODES::DO_BIND_ADD_ADDR_ULEB &&
         it->op1 < (15 * pint_size) &&
         (it->op1 % pint_size) == 0) {
-      it->opcode = static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED);
+      it->opcode = static_cast<uint8_t>(BIND_OPCODES::DO_BIND_ADD_ADDR_IMM_SCALED);
       it->op1 = it->op1 / pint_size;
-    } else if (it->opcode == BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB && it->op1 <= 15) {
-      it->opcode = static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM);
+    } else if (it->opcode == BIND_OPCODES::SET_DYLIB_ORDINAL_ULEB && it->op1 <= 15) {
+      it->opcode = static_cast<uint8_t>(BIND_OPCODES::SET_DYLIB_ORDINAL_IMM);
     }
   }
-  dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_DONE);
+  dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::DONE);
 
   bool done = false;
   vector_iostream raw_output;
   for (auto it = std::begin(instructions); !done && it != std::end(instructions); ++it) {
     const details::binding_instruction& inst = *it;
     switch (static_cast<BIND_OPCODES>(inst.opcode)) {
-      case BIND_OPCODES::BIND_OPCODE_DONE:
+      case BIND_OPCODES::DONE:
         {
           done = true;
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM:
+      case BIND_OPCODES::SET_DYLIB_ORDINAL_IMM:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM | static_cast<BIND_OPCODES>(inst.op1)));
+            .write<uint8_t>(uint8_t(BIND_OPCODES::SET_DYLIB_ORDINAL_IMM) | inst.op1);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
+      case BIND_OPCODES::SET_DYLIB_ORDINAL_ULEB:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB))
+            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::SET_DYLIB_ORDINAL_ULEB))
             .write_uleb128(inst.op1);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
+      case BIND_OPCODES::SET_DYLIB_SPECIAL_IMM:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_SPECIAL_IMM | static_cast<BIND_OPCODES>(inst.op1 & BIND_IMMEDIATE_MASK)));
+            .write<uint8_t>(uint8_t(BIND_OPCODES::SET_DYLIB_SPECIAL_IMM) | (inst.op1 & IMMEDIATE_MASK));
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
+      case BIND_OPCODES::SET_SYMBOL_TRAILING_FLAGS_IMM:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM | static_cast<BIND_OPCODES>(inst.op1)))
+            .write<uint8_t>(uint8_t(BIND_OPCODES::SET_SYMBOL_TRAILING_FLAGS_IMM) | inst.op1)
             .write(inst.name);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_TYPE_IMM:
+      case BIND_OPCODES::SET_TYPE_IMM:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_TYPE_IMM | static_cast<BIND_OPCODES>(inst.op1)));
+            .write<uint8_t>(uint8_t(BIND_OPCODES::SET_TYPE_IMM) | inst.op1);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB:
+      case BIND_OPCODES::SET_ADDEND_SLEB:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB))
+            .write<uint8_t>(uint8_t(BIND_OPCODES::SET_ADDEND_SLEB))
             .write_sleb128(inst.op1);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+      case BIND_OPCODES::SET_SEGMENT_AND_OFFSET_ULEB:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB | static_cast<BIND_OPCODES>(inst.op1)))
+            .write<uint8_t>(uint8_t(BIND_OPCODES::SET_SEGMENT_AND_OFFSET_ULEB) | inst.op1)
             .write_uleb128(inst.op2);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB:
+      case BIND_OPCODES::ADD_ADDR_ULEB:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB))
+            .write<uint8_t>(uint8_t(BIND_OPCODES::ADD_ADDR_ULEB))
             .write_uleb128(inst.op1);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_DO_BIND:
+      case BIND_OPCODES::DO_BIND:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND));
+            .write<uint8_t>(uint8_t(BIND_OPCODES::DO_BIND));
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB:
+      case BIND_OPCODES::DO_BIND_ADD_ADDR_ULEB:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB))
+              .write<uint8_t>(uint8_t(BIND_OPCODES::DO_BIND_ADD_ADDR_ULEB))
             .write_uleb128(inst.op1);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
+      case BIND_OPCODES::DO_BIND_ADD_ADDR_IMM_SCALED:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED | static_cast<BIND_OPCODES>(inst.op1)));
+            .write<uint8_t>(uint8_t(BIND_OPCODES::DO_BIND_ADD_ADDR_IMM_SCALED) | inst.op1);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
+      case BIND_OPCODES::DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB))
+            .write<uint8_t>(uint8_t(BIND_OPCODES::DO_BIND_ULEB_TIMES_SKIPPING_ULEB))
             .write_uleb128(inst.op1)
             .write_uleb128(inst.op2);
           break;
@@ -1620,34 +1465,36 @@ DyldInfo& DyldInfo::update_lazy_bindings(const DyldInfo::bind_container_t& bindi
     uint32_t current_segment_index = index;
 
     raw_output
-      .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB | static_cast<BIND_OPCODES>(current_segment_index)))
+      .write<uint8_t>(uint8_t(BIND_OPCODES::SET_SEGMENT_AND_OFFSET_ULEB) | current_segment_index)
       .write_uleb128(info->address() - current_segment_start);
 
     if (info->library_ordinal() <= 0) {
-      raw_output.write<uint8_t>(static_cast<uint8_t>(
-          BIND_OPCODES::BIND_OPCODE_SET_DYLIB_SPECIAL_IMM | static_cast<BIND_OPCODES>(info->library_ordinal() & BIND_IMMEDIATE_MASK)));
+      raw_output.write<uint8_t>(
+        uint8_t(BIND_OPCODES::SET_DYLIB_SPECIAL_IMM) | (info->library_ordinal() & IMMEDIATE_MASK)
+      );
     } else if (info->library_ordinal() <= 15) {
-      raw_output.write<uint8_t>(static_cast<uint8_t>(
-          BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM | static_cast<BIND_OPCODES>(info->library_ordinal())));
+      raw_output.write<uint8_t>(
+        uint8_t(BIND_OPCODES::SET_DYLIB_ORDINAL_IMM) | info->library_ordinal()
+      );
     } else {
       raw_output
-        .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB))
+        .write<uint8_t>(uint8_t(BIND_OPCODES::SET_DYLIB_ORDINAL_ULEB))
         .write_uleb128(info->library_ordinal());
     }
 
-    uint64_t flags = info->is_weak_import() ? BIND_SYMBOL_FLAGS_WEAK_IMPORT : 0;
-    flags |= info->is_non_weak_definition() ? BIND_SYMBOL_FLAGS_NON_WEAK_DEFINITION : 0;
+    uint64_t flags = info->is_weak_import() ? BIND_SYMBOL_FLAGS::WEAK_IMPORT : 0;
+    flags |= info->is_non_weak_definition() ? BIND_SYMBOL_FLAGS::NON_WEAK_DEFINITION : 0;
     if (!info->has_symbol()) {
       LIEF_ERR("Missing symbol. Can't update");
       return *this;
     }
     raw_output
-      .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM | static_cast<BIND_OPCODES>(flags)))
+      .write<uint8_t>(uint8_t(BIND_OPCODES::SET_SYMBOL_TRAILING_FLAGS_IMM) | flags)
       .write(info->symbol()->name());
 
     raw_output
-      .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND))
-      .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DONE));
+      .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::DO_BIND))
+      .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::DONE));
   }
 
   raw_output.align(binary_->pointer_size());
@@ -1676,7 +1523,7 @@ DyldInfo& DyldInfo::update_standard_bindings(const DyldInfo::bind_container_t& b
         Binary::relocations_t relocations = binary_->relocations_list();
         rebases.reserve(relocations.size());
         for (Relocation* r : relocations) {
-          if (r->origin() == RELOCATION_ORIGINS::ORIGIN_DYLDINFO) {
+          if (r->origin() == Relocation::ORIGIN::DYLDINFO) {
             rebases.push_back(r->as<RelocationDyld>());
           }
         }
@@ -1716,9 +1563,9 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
   for (DyldBindingInfo* info : bindings) {
     if (info->library_ordinal() != ordinal) {
       if (info->library_ordinal() <= 0) {
-        instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_SPECIAL_IMM), info->library_ordinal());
+        instructions.emplace_back(uint8_t(BIND_OPCODES::SET_DYLIB_SPECIAL_IMM), info->library_ordinal());
       } else {
-        instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB), info->library_ordinal());
+        instructions.emplace_back(uint8_t(BIND_OPCODES::SET_DYLIB_ORDINAL_ULEB), info->library_ordinal());
       }
       ordinal = info->library_ordinal();
     }
@@ -1728,14 +1575,14 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
       return *this;
     }
     if (info->symbol()->name() != symbol_name) {
-      uint64_t flag = info->is_weak_import() ? BIND_SYMBOL_FLAGS_WEAK_IMPORT : 0;
+      uint64_t flag = info->is_weak_import() ? BIND_SYMBOL_FLAGS::WEAK_IMPORT : 0;
       symbol_name = info->symbol()->name();
-      instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM), flag, 0, symbol_name);
+      instructions.emplace_back(uint8_t(BIND_OPCODES::SET_SYMBOL_TRAILING_FLAGS_IMM), flag, 0, symbol_name);
     }
 
-    if (info->binding_type() != static_cast<BIND_TYPES>(type)) {
+    if (info->binding_type() != DyldBindingInfo::TYPE(type)) {
       type = static_cast<uint8_t>(info->binding_type());
-      instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_TYPE_IMM), type);
+      instructions.emplace_back(uint8_t(BIND_OPCODES::SET_TYPE_IMM), type);
     }
 
     if (info->address() != address) {
@@ -1751,25 +1598,25 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
         current_segment_end   = segment->virtual_address() + segment->virtual_size();
         current_segment_index = index;
 
-        instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB),
+        instructions.emplace_back(uint8_t(BIND_OPCODES::SET_SEGMENT_AND_OFFSET_ULEB),
             current_segment_index, info->address() - current_segment_start);
 
       } else {
-        instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB), info->address() - address);
+        instructions.emplace_back(uint8_t(BIND_OPCODES::ADD_ADDR_ULEB), info->address() - address);
       }
       address = info->address();
     }
 
     if (addend != info->addend()) {
-      instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB), info->addend());
+      instructions.emplace_back(uint8_t(BIND_OPCODES::SET_ADDEND_SLEB), info->addend());
       addend = info->addend();
     }
 
-    instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND), 0);
+    instructions.emplace_back(uint8_t(BIND_OPCODES::DO_BIND), 0);
     address += binary_->pointer_size();
   }
 
-  instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DONE), 0);
+  instructions.emplace_back(uint8_t(BIND_OPCODES::DONE), 0);
 
 
   // ===========================================
@@ -1778,9 +1625,9 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
   // Based on ld64-274.2/src/ld/LinkEdit.hpp:469
   // ===========================================
   auto dst = std::begin(instructions);
-  for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
-    if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND && it[1].opcode == BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB) {
-      dst->opcode = static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB);
+  for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::DONE; ++it) {
+    if (it->opcode == BIND_OPCODES::DO_BIND && it[1].opcode == BIND_OPCODES::ADD_ADDR_ULEB) {
+      dst->opcode = static_cast<uint8_t>(BIND_OPCODES::DO_BIND_ADD_ADDR_ULEB);
       dst->op1 = it[1].op1;
       ++it;
       ++dst;
@@ -1788,23 +1635,23 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
       *dst++ = *it;
     }
   }
-  dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_DONE);
+  dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::DONE);
 
   // ===========================================
   // 2. Second optimization
   // Based on ld64-274.2/src/ld/LinkEdit.hpp:485
   // ===========================================
   dst = std::begin(instructions);
-  for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
+  for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::DONE; ++it) {
     uint64_t delta = it->op1;
-    if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB &&
-        it[1].opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB &&
+    if (it->opcode == BIND_OPCODES::DO_BIND_ADD_ADDR_ULEB &&
+        it[1].opcode == BIND_OPCODES::DO_BIND_ADD_ADDR_ULEB &&
         it[1].op1 == delta) {
-      dst->opcode = static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB);
+      dst->opcode = static_cast<uint8_t>(BIND_OPCODES::DO_BIND_ULEB_TIMES_SKIPPING_ULEB);
       dst->op1 = 1;
       dst->op2 = delta;
       ++it;
-      while (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB && it->op1 == delta) {
+      while (it->opcode == BIND_OPCODES::DO_BIND_ADD_ADDR_ULEB && it->op1 == delta) {
         dst->op1++;
         ++it;
       }
@@ -1814,7 +1661,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
       *dst++ = *it;
     }
   }
-  dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_DONE);
+  dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::DONE);
 
 
   // ===========================================
@@ -1822,116 +1669,116 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
   // Use immediate encodings
   // Based on ld64-274.2/src/ld/LinkEdit.hpp:512
   // ===========================================
-  for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::BIND_OPCODE_DONE; ++it) {
-    if (it->opcode == BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB &&
+  for (auto it = std::begin(instructions); it->opcode != BIND_OPCODES::DONE; ++it) {
+    if (it->opcode == BIND_OPCODES::DO_BIND_ADD_ADDR_ULEB &&
         it->op1 < (15 * pint_size) &&
         (it->op1 % pint_size) == 0) {
-      it->opcode = static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED);
+      it->opcode = static_cast<uint8_t>(BIND_OPCODES::DO_BIND_ADD_ADDR_IMM_SCALED);
       it->op1 = it->op1 / pint_size;
-    } else if (it->opcode == BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB && it->op1 <= 15) {
-      it->opcode = static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM);
+    } else if (it->opcode == BIND_OPCODES::SET_DYLIB_ORDINAL_ULEB && it->op1 <= 15) {
+      it->opcode = static_cast<uint8_t>(BIND_OPCODES::SET_DYLIB_ORDINAL_IMM);
     }
   }
-  dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::REBASE_OPCODE_DONE);
+  dst->opcode = static_cast<uint8_t>(REBASE_OPCODES::DONE);
 
   bool done = false;
   vector_iostream raw_output;
   for (auto it = std::begin(instructions); !done && it != std::end(instructions); ++it) {
     const details::binding_instruction& inst = *it;
     switch (static_cast<BIND_OPCODES>(inst.opcode)) {
-      case BIND_OPCODES::BIND_OPCODE_DONE:
+      case BIND_OPCODES::DONE:
         {
           done = true;
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM:
+      case BIND_OPCODES::SET_DYLIB_ORDINAL_IMM:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM | static_cast<BIND_OPCODES>(inst.op1)));
+            .write<uint8_t>(uint8_t(BIND_OPCODES::SET_DYLIB_ORDINAL_IMM) | inst.op1);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
+      case BIND_OPCODES::SET_DYLIB_ORDINAL_ULEB:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB))
+            .write<uint8_t>(uint8_t(BIND_OPCODES::SET_DYLIB_ORDINAL_ULEB))
             .write_uleb128(inst.op1);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
+      case BIND_OPCODES::SET_DYLIB_SPECIAL_IMM:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_SPECIAL_IMM | static_cast<BIND_OPCODES>(inst.op1 & BIND_IMMEDIATE_MASK)));
+            .write<uint8_t>(uint8_t(BIND_OPCODES::SET_DYLIB_SPECIAL_IMM) | (inst.op1 & IMMEDIATE_MASK));
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
+      case BIND_OPCODES::SET_SYMBOL_TRAILING_FLAGS_IMM:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM | static_cast<BIND_OPCODES>(inst.op1)))
+            .write<uint8_t>(uint8_t(BIND_OPCODES::SET_SYMBOL_TRAILING_FLAGS_IMM) | inst.op1)
             .write(inst.name);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_TYPE_IMM:
+      case BIND_OPCODES::SET_TYPE_IMM:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_TYPE_IMM | static_cast<BIND_OPCODES>(inst.op1)));
+            .write<uint8_t>(uint8_t(BIND_OPCODES::SET_TYPE_IMM) | inst.op1);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB:
+      case BIND_OPCODES::SET_ADDEND_SLEB:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB))
+            .write<uint8_t>(uint8_t(BIND_OPCODES::SET_ADDEND_SLEB))
             .write_sleb128(inst.op1);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+      case BIND_OPCODES::SET_SEGMENT_AND_OFFSET_ULEB:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB | static_cast<BIND_OPCODES>(inst.op1)))
+            .write<uint8_t>(uint8_t(BIND_OPCODES::SET_SEGMENT_AND_OFFSET_ULEB) | inst.op1)
             .write_uleb128(inst.op2);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB:
+      case BIND_OPCODES::ADD_ADDR_ULEB:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB))
+            .write<uint8_t>(uint8_t(BIND_OPCODES::ADD_ADDR_ULEB))
             .write_uleb128(inst.op1);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_DO_BIND:
+      case BIND_OPCODES::DO_BIND:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND));
+            .write<uint8_t>(uint8_t(BIND_OPCODES::DO_BIND));
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB:
+      case BIND_OPCODES::DO_BIND_ADD_ADDR_ULEB:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB))
+            .write<uint8_t>(uint8_t(BIND_OPCODES::DO_BIND_ADD_ADDR_ULEB))
             .write_uleb128(inst.op1);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
+      case BIND_OPCODES::DO_BIND_ADD_ADDR_IMM_SCALED:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED | static_cast<BIND_OPCODES>(inst.op1)));
+            .write<uint8_t>(uint8_t(BIND_OPCODES::DO_BIND_ADD_ADDR_IMM_SCALED) | inst.op1);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
+      case BIND_OPCODES::DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB))
+            .write<uint8_t>(uint8_t(BIND_OPCODES::DO_BIND_ULEB_TIMES_SKIPPING_ULEB))
             .write_uleb128(inst.op1)
             .write_uleb128(inst.op2);
           break;
@@ -1978,13 +1825,13 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(const DyldInfo::bind_container_t
     const int32_t lib_ordinal = info->library_ordinal();
     if (ordinal != lib_ordinal) {
       if (lib_ordinal <= 0) {
-        instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_SPECIAL_IMM), lib_ordinal);
+        instructions.emplace_back(uint8_t(BIND_OPCODES::SET_DYLIB_SPECIAL_IMM), lib_ordinal);
       }
       else if (lib_ordinal <= 15) {
-        instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM), lib_ordinal);
+        instructions.emplace_back(uint8_t(BIND_OPCODES::SET_DYLIB_ORDINAL_IMM), lib_ordinal);
       }
       else {
-        instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB), lib_ordinal);
+        instructions.emplace_back(uint8_t(BIND_OPCODES::SET_DYLIB_ORDINAL_ULEB), lib_ordinal);
       }
       ordinal = lib_ordinal;
       made_changes = true;
@@ -1994,19 +1841,19 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(const DyldInfo::bind_container_t
       return *this;
     }
     if (symbol_name != info->symbol()->name()) {
-      uint64_t flag = info->is_weak_import() ? BIND_SYMBOL_FLAGS_WEAK_IMPORT : 0;
+      uint64_t flag = info->is_weak_import() ? BIND_SYMBOL_FLAGS::WEAK_IMPORT : 0;
       symbol_name = info->symbol()->name();
-      instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM), flag, 0, symbol_name);
+      instructions.emplace_back(uint8_t(BIND_OPCODES::SET_SYMBOL_TRAILING_FLAGS_IMM), flag, 0, symbol_name);
       made_changes = true;
     }
 
-    if (info->binding_type() != static_cast<BIND_TYPES>(type)) {
-      if (info->binding_type() != BIND_TYPES::BIND_TYPE_POINTER) {
+    if (info->binding_type() != DyldBindingInfo::TYPE(type)) {
+      if (info->binding_type() != DyldBindingInfo::TYPE::POINTER) {
         LIEF_ERR("Unsupported bind type with linked list opcodes");
         return *this;
       }
       type = static_cast<uint8_t>(info->binding_type());
-      instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_TYPE_IMM), type);
+      instructions.emplace_back(uint8_t(BIND_OPCODES::SET_TYPE_IMM), type);
       made_changes = true;
     }
 
@@ -2026,13 +1873,13 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(const DyldInfo::bind_container_t
 
     if (addend != info->addend()) {
       addend = info->addend();
-      instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB), addend);
+      instructions.emplace_back(uint8_t(BIND_OPCODES::SET_ADDEND_SLEB), addend);
       made_changes = true;
     }
 
     if (made_changes) {
       ++num_bindings;
-      instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND), 0);
+      instructions.emplace_back(uint8_t(BIND_OPCODES::DO_BIND), 0);
     }
   }
 
@@ -2102,141 +1949,134 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(const DyldInfo::bind_container_t
     }
     uint64_t page_index = (address - current_segment_start) / 4096;
     if (new_segment || page_index != prev_page_index) {
-      instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB),
+      instructions.emplace_back(uint8_t(BIND_OPCODES::SET_SEGMENT_AND_OFFSET_ULEB),
                                 current_segment_index, address - current_segment_start);
-      instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_THREADED) |
-                                static_cast<uint8_t>(BIND_SUBOPCODE_THREADED::BIND_SUBOPCODE_THREADED_APPLY),
+      instructions.emplace_back(uint8_t(BIND_OPCODES::THREADED) |
+                                uint8_t(BIND_SUBOPCODE_THREADED::APPLY),
                                 0);
     }
     prev_page_index = page_index;
   }
-  instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DONE), 0);
+  instructions.emplace_back(static_cast<uint8_t>(BIND_OPCODES::DONE), 0);
   vector_iostream raw_output;
-  raw_output.write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_THREADED) |
-                            static_cast<uint8_t>(BIND_SUBOPCODE_THREADED::BIND_SUBOPCODE_THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB))
+  raw_output.write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::THREADED) |
+                            static_cast<uint8_t>(BIND_SUBOPCODE_THREADED::SET_BIND_ORDINAL_TABLE_SIZE_ULEB))
             .write_uleb128(num_bindings + 1);
 
   bool done = false;
   for (auto it = std::begin(instructions); !done && it != std::end(instructions); ++it) {
     const details::binding_instruction& inst = *it;
     switch(static_cast<BIND_OPCODES>(it->opcode)) {
-      case BIND_OPCODES::BIND_OPCODE_DONE:
+      case BIND_OPCODES::DONE:
         {
           done = true;
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM:
+      case BIND_OPCODES::SET_DYLIB_ORDINAL_IMM:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_IMM |
-                                                 static_cast<BIND_OPCODES>(inst.op1)));
+            .write<uint8_t>(uint8_t(BIND_OPCODES::SET_DYLIB_ORDINAL_IMM) | inst.op1);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB:
+      case BIND_OPCODES::SET_DYLIB_ORDINAL_ULEB:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB))
+            .write<uint8_t>(uint8_t(BIND_OPCODES::SET_DYLIB_ORDINAL_ULEB))
             .write_uleb128(inst.op1);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_DYLIB_SPECIAL_IMM:
+      case BIND_OPCODES::SET_DYLIB_SPECIAL_IMM:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_DYLIB_SPECIAL_IMM |
-                            static_cast<BIND_OPCODES>(inst.op1 & BIND_IMMEDIATE_MASK)));
-
+            .write<uint8_t>(uint8_t(BIND_OPCODES::SET_DYLIB_SPECIAL_IMM) | (inst.op1 & IMMEDIATE_MASK));
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM:
+      case BIND_OPCODES::SET_SYMBOL_TRAILING_FLAGS_IMM:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM |
-                            static_cast<BIND_OPCODES>(inst.op1)))
+            .write<uint8_t>(uint8_t(BIND_OPCODES::SET_SYMBOL_TRAILING_FLAGS_IMM) | inst.op1)
             .write(inst.name);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_TYPE_IMM:
+      case BIND_OPCODES::SET_TYPE_IMM:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_TYPE_IMM |
-                            static_cast<BIND_OPCODES>(inst.op1)));
+            .write<uint8_t>(uint8_t(BIND_OPCODES::SET_TYPE_IMM) | inst.op1);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB:
+      case BIND_OPCODES::SET_ADDEND_SLEB:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_ADDEND_SLEB))
+            .write<uint8_t>(uint8_t(BIND_OPCODES::SET_ADDEND_SLEB))
             .write_sleb128(inst.op1);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB:
+      case BIND_OPCODES::SET_SEGMENT_AND_OFFSET_ULEB:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB |
-                            static_cast<BIND_OPCODES>(inst.op1)))
+            .write<uint8_t>(uint8_t(BIND_OPCODES::SET_SEGMENT_AND_OFFSET_ULEB) | inst.op1)
             .write_uleb128(inst.op2);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB:
+      case BIND_OPCODES::ADD_ADDR_ULEB:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_ADD_ADDR_ULEB))
+            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::ADD_ADDR_ULEB))
             .write_uleb128(inst.op1);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_DO_BIND:
+      case BIND_OPCODES::DO_BIND:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND));
+            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::DO_BIND));
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB:
+      case BIND_OPCODES::DO_BIND_ADD_ADDR_ULEB:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB))
+            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::DO_BIND_ADD_ADDR_ULEB))
             .write_uleb128(inst.op1);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED:
+      case BIND_OPCODES::DO_BIND_ADD_ADDR_IMM_SCALED:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED |
-                            static_cast<BIND_OPCODES>(inst.op1)));
+            .write<uint8_t>(uint8_t(BIND_OPCODES::DO_BIND_ADD_ADDR_IMM_SCALED) | inst.op1);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
+      case BIND_OPCODES::DO_BIND_ULEB_TIMES_SKIPPING_ULEB:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB))
+            .write<uint8_t>(uint8_t(BIND_OPCODES::DO_BIND_ULEB_TIMES_SKIPPING_ULEB))
             .write_uleb128(inst.op1)
             .write_uleb128(inst.op2);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB:
+      case BIND_OPCODES::THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB:
         {
           raw_output
-            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB))
+            .write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB))
             .write_uleb128(inst.op1);
           break;
         }
 
-      case BIND_OPCODES::BIND_OPCODE_THREADED_APPLY:
+      case BIND_OPCODES::THREADED_APPLY:
         {
           raw_output
-            .write(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_THREADED_APPLY));
+            .write(static_cast<uint8_t>(BIND_OPCODES::THREADED_APPLY));
           break;
         }
 
@@ -2249,7 +2089,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(const DyldInfo::bind_container_t
     }
   }
 
-  raw_output.write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::BIND_OPCODE_DONE));
+  raw_output.write<uint8_t>(static_cast<uint8_t>(BIND_OPCODES::DONE));
   raw_output.align(pint_size);
 
   if (raw_output.size() > bind_opcodes_.size()) {
@@ -2276,39 +2116,109 @@ void DyldInfo::add(std::unique_ptr<ExportInfo> info) {
   export_info_.push_back(std::move(info));
 }
 
-bool DyldInfo::classof(const LoadCommand* cmd) {
-  // This must be sync with BinaryParser.tcc
-  const LOAD_COMMAND_TYPES type = cmd->command();
-  return type == LOAD_COMMAND_TYPES::LC_DYLD_INFO ||
-         type == LOAD_COMMAND_TYPES::LC_DYLD_INFO_ONLY;
+std::ostream& DyldInfo::print(std::ostream& os) const {
+  LoadCommand::print(os);
+
+  os << fmt::format("{:11}: {:10} {:10}", "Type", "Offset", "Size") << '\n'
+     << fmt::format("{:11}: {:10} {:10}", "Rebase", std::get<0>(rebase()), std::get<1>(rebase())) << '\n'
+     << fmt::format("{:11}: {:10} {:10}", "Bind", std::get<0>(bind()), std::get<1>(bind())) << '\n'
+     << fmt::format("{:11}: {:10} {:10}", "Weak bind", std::get<0>(weak_bind()), std::get<1>(weak_bind())) << '\n'
+     << fmt::format("{:11}: {:10} {:10}", "Lazy bind", std::get<0>(lazy_bind()), std::get<1>(lazy_bind())) << '\n'
+     << fmt::format("{:11}: {:10} {:10}", "Export", std::get<0>(export_info()), std::get<1>(export_info())) << '\n';
+
+  it_const_binding_info bindings = this->bindings();
+  if (!bindings.empty()) {
+    os << fmt::format("Binding Info (#{})", bindings.size()) << '\n';
+    for (const BindingInfo& info : bindings) {
+      os << info << '\n';
+    }
+  }
+
+  it_const_export_info exports = this->exports();
+  if (!exports.empty()) {
+    os << fmt::format("Export Info (#{})", exports.size()) << '\n';
+    for (const ExportInfo& info : exports) {
+      os << info << '\n';
+    }
+  }
+
+  return os;
 }
 
 
-std::ostream& DyldInfo::print(std::ostream& os) const {
-  LoadCommand::print(os);
-  os << std::hex << std::left;
-  os << std::setw(11) << "Type "       << std::setw(10) << "Offset" << "Size" << '\n';
-  os << std::setw(11) << "Rebase: "    << std::setw(10) << std::get<0>(rebase())      << std::get<1>(rebase())      << '\n';
-  os << std::setw(11) << "Bind: "      << std::setw(10) << std::get<0>(bind())        << std::get<1>(bind())        << '\n';
-  os << std::setw(11) << "Weak bind: " << std::setw(10) << std::get<0>(weak_bind())   << std::get<1>(weak_bind())   << '\n';
-  os << std::setw(11) << "Lazy bind: " << std::setw(10) << std::get<0>(lazy_bind())   << std::get<1>(lazy_bind())   << '\n';
-  os << std::setw(11) << "Export: "    << std::setw(10) << std::get<0>(export_info()) << std::get<1>(export_info()) << '\n';
-
-  it_const_binding_info bindings = this->bindings();
-  for (size_t i = 0; i < bindings.size(); ++i) {
-    os << "Binding Info #" << std::dec << i << '\n';
-    os << "================" << '\n';
-    os << bindings[i] << '\n';
+const char* to_string(DyldInfo::REBASE_TYPE e) {
+  #define ENTRY(X) std::pair(DyldInfo::REBASE_TYPE::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(POINTER),
+    ENTRY(TEXT_ABSOLUTE32),
+    ENTRY(TEXT_PCREL32),
+    ENTRY(THREADED),
+  };
+  #undef ENTRY
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
   }
+  return "UNKNOWN";
+}
 
-
-  it_const_export_info exports = this->exports();
-  for (size_t i = 0; i < exports.size(); ++i) {
-    os << "Export Info #" << std::dec << i << '\n';
-    os << "==============" << '\n';
-    os << exports[i] << '\n';
+const char* to_string(DyldInfo::REBASE_OPCODES e) {
+  #define ENTRY(X) std::pair(DyldInfo::REBASE_OPCODES::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(DONE),
+    ENTRY(SET_TYPE_IMM),
+    ENTRY(SET_SEGMENT_AND_OFFSET_ULEB),
+    ENTRY(ADD_ADDR_ULEB),
+    ENTRY(ADD_ADDR_IMM_SCALED),
+    ENTRY(DO_REBASE_IMM_TIMES),
+    ENTRY(DO_REBASE_ULEB_TIMES),
+    ENTRY(DO_REBASE_ADD_ADDR_ULEB),
+    ENTRY(DO_REBASE_ULEB_TIMES_SKIPPING_ULEB),
+  };
+  #undef ENTRY
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
   }
-  return os;
+  return "UNKNOWN";
+}
+
+const char* to_string(DyldInfo::BIND_OPCODES e) {
+  #define ENTRY(X) std::pair(DyldInfo::BIND_OPCODES::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(DONE),
+    ENTRY(SET_DYLIB_ORDINAL_IMM),
+    ENTRY(SET_DYLIB_ORDINAL_ULEB),
+    ENTRY(SET_DYLIB_SPECIAL_IMM),
+    ENTRY(SET_SYMBOL_TRAILING_FLAGS_IMM),
+    ENTRY(SET_TYPE_IMM),
+    ENTRY(SET_ADDEND_SLEB),
+    ENTRY(SET_SEGMENT_AND_OFFSET_ULEB),
+    ENTRY(ADD_ADDR_ULEB),
+    ENTRY(DO_BIND),
+    ENTRY(DO_BIND_ADD_ADDR_ULEB),
+    ENTRY(DO_BIND_ADD_ADDR_IMM_SCALED),
+    ENTRY(DO_BIND_ULEB_TIMES_SKIPPING_ULEB),
+    ENTRY(THREADED),
+    ENTRY(THREADED_APPLY),
+    ENTRY(THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB),
+  };
+  #undef ENTRY
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
+  }
+  return "UNKNOWN";
+}
+
+const char* to_string(DyldInfo::BIND_SUBOPCODE_THREADED e) {
+  #define ENTRY(X) std::pair(DyldInfo::BIND_SUBOPCODE_THREADED::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(SET_BIND_ORDINAL_TABLE_SIZE_ULEB),
+    ENTRY(APPLY),
+  };
+  #undef ENTRY
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
+  }
+  return "UNKNOWN";
 }
 
 

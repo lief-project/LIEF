@@ -15,11 +15,9 @@
  */
 #ifndef LIEF_MACHO_SEGMENT_SPLIT_INFO_H
 #define LIEF_MACHO_SEGMENT_SPLIT_INFO_H
-#include <vector>
 #include <ostream>
 
 #include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
 #include "LIEF/span.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
@@ -33,24 +31,34 @@ namespace details {
 struct linkedit_data_command;
 }
 
-//! Class that represents the LOAD_COMMAND_TYPES::LC_SEGMENT_SPLIT_INFO command
+//! Class that represents the LoadCommand::TYPE::SEGMENT_SPLIT_INFO command
 class LIEF_API SegmentSplitInfo : public LoadCommand {
   friend class BinaryParser;
   friend class LinkEdit;
   public:
-  SegmentSplitInfo();
+  SegmentSplitInfo() = default;
   SegmentSplitInfo(const details::linkedit_data_command& cmd);
 
-  SegmentSplitInfo& operator=(const SegmentSplitInfo& copy);
-  SegmentSplitInfo(const SegmentSplitInfo& copy);
+  SegmentSplitInfo& operator=(const SegmentSplitInfo& copy) = default;
+  SegmentSplitInfo(const SegmentSplitInfo& copy) = default;
 
-  SegmentSplitInfo* clone() const override;
+  std::unique_ptr<LoadCommand> clone() const override {
+    return std::unique_ptr<SegmentSplitInfo>(new SegmentSplitInfo(*this));
+  }
 
-  uint32_t data_offset() const;
-  uint32_t data_size() const;
+  uint32_t data_offset() const {
+    return data_offset_;
+  }
+  uint32_t data_size() const {
+    return data_size_;
+  }
 
-  void data_offset(uint32_t offset);
-  void data_size(uint32_t size);
+  void data_offset(uint32_t offset) {
+    data_offset_ = offset;
+  }
+  void data_size(uint32_t size) {
+    data_size_ = size;
+  }
 
   span<uint8_t> content() {
     return content_;
@@ -60,14 +68,15 @@ class LIEF_API SegmentSplitInfo : public LoadCommand {
     return content_;
   }
 
-  ~SegmentSplitInfo() override;
-
+  ~SegmentSplitInfo() override = default;
 
   void accept(Visitor& visitor) const override;
 
   std::ostream& print(std::ostream& os) const override;
 
-  static bool classof(const LoadCommand* cmd);
+  static bool classof(const LoadCommand* cmd) {
+    return cmd->command() == LoadCommand::TYPE::SEGMENT_SPLIT_INFO;
+  }
 
   private:
   uint32_t data_offset_ = 0;

@@ -28,6 +28,8 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
 
+#include "enums_wrapper.hpp"
+
 namespace LIEF::MachO::py {
 
 template<>
@@ -37,8 +39,8 @@ void create<SegmentCommand>(nb::module_& m) {
 
   nb::class_<SegmentCommand, LoadCommand> seg_cmd(m, "SegmentCommand",
       R"delim(
-      Class which represents a LOAD_COMMAND_TYPES::LC_SEGMENT /
-      LOAD_COMMAND_TYPES::LC_SEGMENT_64 command
+      Class which represents a :attr:`~.LoadCommand.TYPE.SEGMENT` /
+      :attr:`~.LoadCommand.TYPE.SEGMENT_64` command
       )delim"_doc);
 
     init_ref_iterator<SegmentCommand::it_sections>(seg_cmd, "it_sections");
@@ -50,6 +52,24 @@ void create<SegmentCommand>(nb::module_& m) {
     init_ref_iterator<SegmentCommand::it_relocations>(seg_cmd, "it_relocations");
   } catch (const std::runtime_error&) { }
 
+  enum_<SegmentCommand::VM_PROTECTIONS>(seg_cmd, "VM_PROTECTIONS")
+  #define PY_ENUM(x) to_string(x), x
+    .value(PY_ENUM(SegmentCommand::VM_PROTECTIONS::READ))
+    .value(PY_ENUM(SegmentCommand::VM_PROTECTIONS::WRITE))
+    .value(PY_ENUM(SegmentCommand::VM_PROTECTIONS::EXECUTE))
+  #undef PY_ENUM
+  ;
+
+  enum_<SegmentCommand::FLAGS>(seg_cmd, "FLAGS")
+  #define PY_ENUM(x) to_string(x), x
+    .value(PY_ENUM(SegmentCommand::FLAGS::HIGHVM))
+    .value(PY_ENUM(SegmentCommand::FLAGS::FVMLIB))
+    .value(PY_ENUM(SegmentCommand::FLAGS::NORELOC))
+    .value(PY_ENUM(SegmentCommand::FLAGS::PROTECTED_VERSION_1))
+    .value(PY_ENUM(SegmentCommand::FLAGS::READ_ONLY))
+  #undef PY_ENUM
+  ;
+
   seg_cmd
     .def(nb::init<>())
     .def(nb::init<const std::string&>())
@@ -59,7 +79,7 @@ void create<SegmentCommand>(nb::module_& m) {
         [] (const SegmentCommand& obj) {
           return safe_string(obj.name());
         },
-        nb::overload_cast<const std::string&>(&SegmentCommand::name),
+        nb::overload_cast<std::string>(&SegmentCommand::name),
         "Segment's name"_doc)
 
     .def_prop_rw("virtual_address",

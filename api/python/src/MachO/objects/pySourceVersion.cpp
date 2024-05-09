@@ -29,7 +29,7 @@ void create<SourceVersion>(nb::module_& m) {
 
   nb::class_<SourceVersion, LoadCommand>(m, "SourceVersion",
       R"delim(
-      Class that represents the MachO LOAD_COMMAND_TYPES::LC_SOURCE_VERSION
+      Class that represents the MachO :attr:`~.LoadCommand.TYPE.SOURCE_VERSION`
       This command is used to provide the *version* of the sources used to build the binary
       )delim"_doc)
 

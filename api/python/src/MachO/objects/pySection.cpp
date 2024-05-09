@@ -26,6 +26,7 @@
 
 #include "MachO/pyMachO.hpp"
 #include "pyIterator.hpp"
+#include "enums_wrapper.hpp"
 
 namespace LIEF::MachO::py {
 
@@ -41,6 +42,49 @@ void create<Section>(nb::module_& m) {
      */
     init_ref_iterator<Section::it_relocations>(sec, "it_relocations");
   } catch (const std::runtime_error&) { }
+
+  enum_<Section::TYPE>(sec, "TYPE")
+  #define PY_ENUM(x) to_string(x), x
+    .value(PY_ENUM(Section::TYPE::REGULAR))
+    .value(PY_ENUM(Section::TYPE::ZEROFILL))
+    .value(PY_ENUM(Section::TYPE::CSTRING_LITERALS))
+    .value(PY_ENUM(Section::TYPE::S_4BYTE_LITERALS))
+    .value(PY_ENUM(Section::TYPE::S_8BYTE_LITERALS))
+    .value(PY_ENUM(Section::TYPE::LITERAL_POINTERS))
+    .value(PY_ENUM(Section::TYPE::NON_LAZY_SYMBOL_POINTERS))
+    .value(PY_ENUM(Section::TYPE::LAZY_SYMBOL_POINTERS))
+    .value(PY_ENUM(Section::TYPE::SYMBOL_STUBS))
+    .value(PY_ENUM(Section::TYPE::MOD_INIT_FUNC_POINTERS))
+    .value(PY_ENUM(Section::TYPE::MOD_TERM_FUNC_POINTERS))
+    .value(PY_ENUM(Section::TYPE::COALESCED))
+    .value(PY_ENUM(Section::TYPE::GB_ZEROFILL))
+    .value(PY_ENUM(Section::TYPE::INTERPOSING))
+    .value(PY_ENUM(Section::TYPE::S_16BYTE_LITERALS))
+    .value(PY_ENUM(Section::TYPE::DTRACE_DOF))
+    .value(PY_ENUM(Section::TYPE::LAZY_DYLIB_SYMBOL_POINTERS))
+    .value(PY_ENUM(Section::TYPE::THREAD_LOCAL_REGULAR))
+    .value(PY_ENUM(Section::TYPE::THREAD_LOCAL_ZEROFILL))
+    .value(PY_ENUM(Section::TYPE::THREAD_LOCAL_VARIABLES))
+    .value(PY_ENUM(Section::TYPE::THREAD_LOCAL_VARIABLE_POINTERS))
+    .value(PY_ENUM(Section::TYPE::THREAD_LOCAL_INIT_FUNCTION_POINTERS))
+    .value(PY_ENUM(Section::TYPE::INIT_FUNC_OFFSETS))
+  #undef PY_ENUM
+  ;
+
+  enum_<Section::FLAGS>(sec, "FLAGS", nb::is_arithmetic())
+  #define PY_ENUM(x) to_string(x), x
+    .value(PY_ENUM(Section::FLAGS::PURE_INSTRUCTIONS))
+    .value(PY_ENUM(Section::FLAGS::NO_TOC))
+    .value(PY_ENUM(Section::FLAGS::STRIP_STATIC_SYMS))
+    .value(PY_ENUM(Section::FLAGS::NO_DEAD_STRIP))
+    .value(PY_ENUM(Section::FLAGS::LIVE_SUPPORT))
+    .value(PY_ENUM(Section::FLAGS::SELF_MODIFYING_CODE))
+    .value(PY_ENUM(Section::FLAGS::DEBUG_INFO))
+    .value(PY_ENUM(Section::FLAGS::SOME_INSTRUCTIONS))
+    .value(PY_ENUM(Section::FLAGS::EXT_RELOC))
+    .value(PY_ENUM(Section::FLAGS::LOC_RELOC))
+  #undef PY_ENUM
+  ;
 
   sec
     .def(nb::init<>())
@@ -75,10 +119,10 @@ void create<Section>(nb::module_& m) {
 
     .def_prop_rw("type",
         nb::overload_cast<>(&Section::type, nb::const_),
-        nb::overload_cast<MACHO_SECTION_TYPES>(&Section::type),
+        nb::overload_cast<Section::TYPE>(&Section::type),
         R"delim(
         Type of the section. This value can help to determine
-        the purpose of the section (c.f. :class:`~lief.MachO.MACHO_SECTION_TYPES`)
+        the purpose of the section (c.f. :class:`~lief.MachO.Section.TYPE`)
         )delim"_doc)
 
     .def_prop_ro("relocations",
@@ -104,7 +148,7 @@ void create<Section>(nb::module_& m) {
     .def_prop_rw("flags",
         nb::overload_cast<>(&Section::flags, nb::const_),
         nb::overload_cast<uint32_t>(&Section::flags),
-        "Section's flags masked with SECTION_FLAGS_MASK (see: :class:`~lief.MachO.MACHO_SECTION_FLAGS`)"_doc)
+        "Section's flags masked with SECTION_FLAGS_MASK (see: :class:`~lief.MachO.Section.FLAGS`)"_doc)
 
     .def_prop_ro("flags_list",
         nb::overload_cast<>(&Section::flags_list, nb::const_),
@@ -124,25 +168,25 @@ void create<Section>(nb::module_& m) {
         "True if the current section has a segment associated with"_doc)
 
     .def("has",
-        nb::overload_cast<MACHO_SECTION_FLAGS>(&Section::has, nb::const_),
+        nb::overload_cast<Section::FLAGS>(&Section::has, nb::const_),
         "Check if the section has the given " RST_CLASS_REF(lief.MachO.SECTION_FLAGS) ""_doc,
         "flag"_a)
 
     .def("add",
-        nb::overload_cast<MACHO_SECTION_FLAGS>(&Section::add),
+        nb::overload_cast<Section::FLAGS>(&Section::add),
         "Add the given " RST_CLASS_REF(lief.MachO.SECTION_FLAGS) ""_doc,
         "flag"_a)
 
     .def("remove",
-        nb::overload_cast<MACHO_SECTION_FLAGS>(&Section::remove),
+        nb::overload_cast<Section::FLAGS>(&Section::remove),
         "Remove the given " RST_CLASS_REF(lief.MachO.SECTION_FLAGS) ""_doc,
         "flag"_a)
 
-    .def(nb::self += MACHO_SECTION_FLAGS(), nb::rv_policy::reference_internal)
-    .def(nb::self -= MACHO_SECTION_FLAGS(), nb::rv_policy::reference_internal)
+    .def(nb::self += Section::FLAGS(), nb::rv_policy::reference_internal)
+    .def(nb::self -= Section::FLAGS(), nb::rv_policy::reference_internal)
 
     .def("__contains__",
-        nb::overload_cast<MACHO_SECTION_FLAGS>(&Section::has, nb::const_),
+        nb::overload_cast<Section::FLAGS>(&Section::has, nb::const_),
         "Check if the given " RST_CLASS_REF(lief.MachO.MACHO_SECTION_FLAGS) " is present"_doc)
 
     LIEF_DEFAULT_STR(Section);

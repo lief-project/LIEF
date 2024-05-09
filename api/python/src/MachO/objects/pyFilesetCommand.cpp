@@ -30,7 +30,7 @@ void create<FilesetCommand>(nb::module_& m) {
      "Class associated with the LC_FILESET_ENTRY commands"_doc)
     .def_prop_rw("name",
         nb::overload_cast<>(&FilesetCommand::name, nb::const_),
-        nb::overload_cast<const std::string&>(&FilesetCommand::name),
+        nb::overload_cast<std::string>(&FilesetCommand::name),
         "Name of the underlying MachO binary"_doc)
 
     .def_prop_rw("virtual_address",

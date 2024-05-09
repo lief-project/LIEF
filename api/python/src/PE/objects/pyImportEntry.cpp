@@ -56,7 +56,7 @@ void create<ImportEntry>(nb::module_& m) {
         [] (const ImportEntry& obj) {
           return LIEF::py::safe_string(obj.name());
         },
-        nb::overload_cast<const std::string&>(&ImportEntry::name),
+        nb::overload_cast<std::string>(&ImportEntry::name),
         "Import name if not ordinal"_doc)
 
     .def_prop_rw("data",

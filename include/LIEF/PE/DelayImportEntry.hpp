@@ -41,40 +41,55 @@ class LIEF_API DelayImportEntry : public LIEF::Symbol {
   friend class Builder;
 
   public:
-  DelayImportEntry();
-  DelayImportEntry(uint64_t data, PE_TYPE type);
+  DelayImportEntry() = default;
+  DelayImportEntry(uint64_t data, PE_TYPE type) :
+    data_(data),
+    type_(type)
+  {}
 
-  DelayImportEntry(const DelayImportEntry&);
-  DelayImportEntry& operator=(const DelayImportEntry&);
+  DelayImportEntry(const DelayImportEntry&) = default;
+  DelayImportEntry& operator=(const DelayImportEntry&) = default;
 
-  DelayImportEntry(DelayImportEntry&&);
-  DelayImportEntry& operator=(DelayImportEntry&&);
+  DelayImportEntry(DelayImportEntry&&) noexcept = default;
+  DelayImportEntry& operator=(DelayImportEntry&&) noexcept = default;
 
-  ~DelayImportEntry() override;
+  ~DelayImportEntry() override = default;
 
   //!``True`` if it is an import by ordinal
   bool is_ordinal() const;
 
   //! The ordinal value
-  uint16_t ordinal() const;
+  uint16_t ordinal() const {
+    static constexpr auto MASK = 0xFFFF;
+    return data_ & MASK;
+  }
 
   //! @see DelayImportEntry::data
-  uint64_t hint_name_rva() const;
+  uint64_t hint_name_rva() const {
+    return data();
+  }
 
   //! Index into the Export::entries that is used to speed-up
   //! the symbol resolution.
-  uint16_t hint() const;
+  uint16_t hint() const {
+    return hint_;
+  }
 
   //! Value of the current entry in the Import Address Table.
-  uint64_t iat_value() const;
+  uint64_t iat_value() const {
+    return iat_value_;
+  }
 
   //! Raw value
-  uint64_t data() const;
+  uint64_t data() const {
+    return data_;
+  }
 
-  void data(uint64_t data);
+  void data(uint64_t data) {
+    data_ = data;
+  }
 
   void accept(Visitor& visitor) const override;
-
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const DelayImportEntry& entry);
 

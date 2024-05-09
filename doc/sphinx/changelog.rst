@@ -48,6 +48,26 @@ Changelog
 
   * Add :attr:`lief.PE.CodeViewPDB.guid` attribute (:issue:`480`)
 
+:MachO:
+
+  * Re-scope ``LOAD_COMMAND_TYPES`` into :class:`lief.MachO.LoadCommand.TYPE`
+  * Re-scope ``FILE_TYPES`` into :class:`lief.MachO.Header.FILE_TYPE`
+  * Re-scope ``HEADER_FLAGS`` into :class:`lief.MachO.Header.FLAGS`
+  * Re-scope ``MACHO_SEGMENTS_FLAGS`` into :class:`lief.MachO.SegmentCommand.FLAGS`
+  * Re-scope ``MACHO_SECTION_TYPES`` into :class:`lief.MachO.Section.TYPE`
+  * Re-scope ``MACHO_SECTION_FLAGS`` into :class:`lief.MachO.Section.FLAGS`
+  * Re-scope ``REBASE_TYPES`` into :class:`lief.MachO.DyldInfo.REBASE_TYPE`
+  * Re-scope ``REBASE_OPCODES`` into :class:`lief.MachO.DyldInfo.REBASE_OPCODES`
+  * Re-scope ``BIND_OPCODES`` into :class:`lief.MachO.DyldInfo.BIND_OPCODES`
+  * Re-scope ``BINDING_CLASS`` into :class:`lief.MachO.DyldBindingInfo.CLASS`
+  * Re-scope ``BIND_TYPES`` into :class:`lief.MachO.DyldBindingInfo.TYPE`
+  * Re-scope ``EXPORT_SYMBOL_FLAGS`` into :class:`lief.MachO.ExportInfo.FLAGS`
+  * Re-scope ``EXPORT_SYMBOL_KINDS`` into :class:`lief.MachO.ExportInfo.KIND`
+  * Re-scope ``RELOCATION_ORIGINS`` into :class:`lief.MachO.Relocation.ORIGIN`
+  * Re-scope ``SYMBOL_ORIGINS`` into :class:`lief.MachO.Symbol.ORIGIN`
+  * Re-scope ``VM_PROTECTIONS`` into :class:`lief.MachO.SegmentCommand.VM_PROTECTIONS`
+  * Re-scope ``CPU_TYPES`` into :class:`lief.MachO.Header.CPU_TYPE`
+
 :CMake:
 
   * ``LIEFConfig.cmake`` is now installed in ``<prefix>/lib/cmake/LIEF/``

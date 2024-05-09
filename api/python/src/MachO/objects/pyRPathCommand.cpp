@@ -30,7 +30,7 @@ void create<RPathCommand>(nb::module_& m) {
 
     .def_prop_rw("path",
         nb::overload_cast<>(&RPathCommand::path, nb::const_),
-        nb::overload_cast<const std::string&>(&RPathCommand::path),
+        nb::overload_cast<std::string>(&RPathCommand::path),
         "@rpath path"_doc, nb::rv_policy::reference_internal)
 
     LIEF_DEFAULT_STR(RPathCommand);

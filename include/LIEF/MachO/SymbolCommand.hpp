@@ -18,7 +18,6 @@
 #include <ostream>
 
 #include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
 #include "LIEF/span.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
@@ -38,33 +37,50 @@ class LIEF_API SymbolCommand : public LoadCommand {
   friend class LinkEdit;
 
   public:
-  SymbolCommand();
+  SymbolCommand() = default;
   SymbolCommand(const details::symtab_command& command);
 
-  SymbolCommand& operator=(const SymbolCommand& copy);
-  SymbolCommand(const SymbolCommand& copy);
+  SymbolCommand& operator=(const SymbolCommand& copy) = default;
+  SymbolCommand(const SymbolCommand& copy) = default;
 
-  SymbolCommand* clone() const override;
+  std::unique_ptr<LoadCommand> clone() const override {
+    return std::unique_ptr<SymbolCommand>(new SymbolCommand(*this));
+  }
 
-  ~SymbolCommand() override;
+  ~SymbolCommand() override = default;
 
   //! Offset from the start of the file to the n_list associated with the command
-  uint32_t symbol_offset() const;
+  uint32_t symbol_offset() const {
+    return symbols_offset_;
+  }
 
   //! Number of symbols registered
-  uint32_t numberof_symbols() const;
+  uint32_t numberof_symbols() const {
+    return nb_symbols_;
+  }
 
   //! Offset from the start of the file to the string table
-  uint32_t strings_offset() const;
+  uint32_t strings_offset() const {
+    return strings_offset_;
+  }
 
   //! Size of the size string table
-  uint32_t strings_size() const;
+  uint32_t strings_size() const {
+    return strings_size_;
+  }
 
-  void symbol_offset(uint32_t offset);
-  void numberof_symbols(uint32_t nb);
-  void strings_offset(uint32_t offset);
-  void strings_size(uint32_t size);
-
+  void symbol_offset(uint32_t offset) {
+    symbols_offset_ = offset;
+  }
+  void numberof_symbols(uint32_t nb) {
+    nb_symbols_ = nb;
+  }
+  void strings_offset(uint32_t offset) {
+    strings_offset_ = offset;
+  }
+  void strings_size(uint32_t size) {
+    strings_size_ = size;
+  }
 
   span<const uint8_t> symbol_table() const {
     return symbol_table_;
@@ -94,8 +110,9 @@ class LIEF_API SymbolCommand : public LoadCommand {
 
   void accept(Visitor& visitor) const override;
 
-
-  static bool classof(const LoadCommand* cmd);
+  static bool classof(const LoadCommand* cmd) {
+    return cmd->command() == LoadCommand::TYPE::SYMTAB;
+  }
 
   private:
   uint32_t symbols_offset_ = 0;

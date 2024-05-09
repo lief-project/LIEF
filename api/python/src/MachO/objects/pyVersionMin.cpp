@@ -36,7 +36,6 @@ void create<VersionMin>(nb::module_& m) {
         "Version as a tuple of **3** integers"_doc,
         nb::rv_policy::reference_internal)
 
-
     .def_prop_rw("sdk",
         nb::overload_cast<>(&VersionMin::sdk, nb::const_),
         nb::overload_cast<const VersionMin::version_t&>(&VersionMin::sdk),

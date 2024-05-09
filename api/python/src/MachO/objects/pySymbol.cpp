@@ -50,6 +50,12 @@ void create<Symbol>(nb::module_& m) {
     .value("INDIRECT_ABS",   Symbol::CATEGORY::INDIRECT_ABS)
     .value("INDIRECT_LOCAL", Symbol::CATEGORY::INDIRECT_LOCAL);
 
+  enum_<Symbol::ORIGIN>(symbol, "ORIGIN")
+    .value("UNKNOWN",        Symbol::ORIGIN::UNKNOWN)
+    .value("DYLD_EXPORT",    Symbol::ORIGIN::DYLD_EXPORT)
+    .value("DYLD_BIND",      Symbol::ORIGIN::DYLD_BIND)
+    .value("LC_SYMTAB",      Symbol::ORIGIN::LC_SYMTAB)
+  ;
   symbol
     .def(nb::init<>())
 
@@ -76,7 +82,7 @@ void create<Symbol>(nb::module_& m) {
     .def_prop_rw("description",
         nb::overload_cast<>(&Symbol::description, nb::const_),
         nb::overload_cast<uint16_t>(&Symbol::description),
-        "Return information about the symbol (:class:`~lief.MachO.SYMBOL_DESCRIPTIONS`)"_doc)
+        "Return information about the symbol"_doc)
 
     .def_prop_ro("has_export_info",
         &Symbol::has_export_info,
@@ -84,7 +90,7 @@ void create<Symbol>(nb::module_& m) {
 
     .def_prop_ro("origin",
         &Symbol::origin,
-        "Return the " RST_CLASS_REF(lief.MachO.SYMBOL_ORIGINS) " of this symbol"_doc)
+        "Return the " RST_CLASS_REF(lief.MachO.Symbol.ORIGIN) " of this symbol"_doc)
 
     .def_prop_ro("export_info",
         nb::overload_cast<>(&Symbol::export_info),

@@ -15,13 +15,10 @@
  */
 #ifndef LIEF_MACHO_FUNCTION_STARTS_COMMAND_H
 #define LIEF_MACHO_FUNCTION_STARTS_COMMAND_H
-#include <string>
 #include <vector>
 #include <ostream>
-#include <array>
 
 #include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
 
 #include "LIEF/span.hpp"
 #include "LIEF/MachO/LoadCommand.hpp"
@@ -44,35 +41,54 @@ class LIEF_API FunctionStarts : public LoadCommand {
   friend class LinkEdit;
 
   public:
-  FunctionStarts();
+  FunctionStarts() = default;
   FunctionStarts(const details::linkedit_data_command& cmd);
 
-  FunctionStarts& operator=(const FunctionStarts& copy);
-  FunctionStarts(const FunctionStarts& copy);
+  FunctionStarts& operator=(const FunctionStarts& copy) = default;
+  FunctionStarts(const FunctionStarts& copy) = default;
 
-  FunctionStarts* clone() const override;
+  std::unique_ptr<LoadCommand> clone() const override {
+    return std::unique_ptr<FunctionStarts>(new FunctionStarts(*this));
+  }
 
   //! Offset in the ``__LINKEDIT`` SegmentCommand where *start functions* are located
-  uint32_t data_offset() const;
+  uint32_t data_offset() const {
+    return data_offset_;
+  }
 
   //! Size of the functions list in the binary
-  uint32_t data_size() const;
+  uint32_t data_size() const {
+    return data_size_;
+  }
 
   //! Addresses of every function entry point in the executable.
   //!
   //! This allows functions to exist for which there are no entries in the symbol table.
   //!
   //! @warning The address is relative to the ``__TEXT`` segment
-  const std::vector<uint64_t>& functions() const;
+  const std::vector<uint64_t>& functions() const {
+    return functions_;
+  }
 
-  std::vector<uint64_t>& functions();
+  std::vector<uint64_t>& functions() {
+    return functions_;
+  }
 
   //! Add a new function
-  void add_function(uint64_t address);
+  void add_function(uint64_t address) {
+    functions_.emplace_back(address);
+  }
 
-  void data_offset(uint32_t offset);
-  void data_size(uint32_t size);
-  void functions(const std::vector<uint64_t>& funcs);
+  void data_offset(uint32_t offset) {
+    data_offset_ = offset;
+  }
+  void data_size(uint32_t size) {
+    data_size_ = size;
+  }
+
+  void functions(std::vector<uint64_t> funcs) {
+    functions_ = std::move(funcs);
+  }
 
   span<const uint8_t> content() const {
     return content_;
@@ -82,16 +98,15 @@ class LIEF_API FunctionStarts : public LoadCommand {
     return content_;
   }
 
-  ~FunctionStarts() override;
-
+  ~FunctionStarts() override = default;
 
   void accept(Visitor& visitor) const override;
 
   std::ostream& print(std::ostream& os) const override;
 
-  static bool classof(const LoadCommand* cmd);
-
-
+  static bool classof(const LoadCommand* cmd) {
+    return cmd->command() == LoadCommand::TYPE::FUNCTION_STARTS;
+  }
   private:
   uint32_t data_offset_ = 0;
   uint32_t data_size_ = 0;

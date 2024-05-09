@@ -18,7 +18,6 @@
 #include <string>
 #include <ostream>
 
-#include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
@@ -34,27 +33,34 @@ struct dylinker_command;
 //! used by the Mach-O linker/loader to initialize an environment variable
 class LIEF_API DyldEnvironment : public LoadCommand {
   public:
-  DyldEnvironment();
+  DyldEnvironment() = default;
   DyldEnvironment(const details::dylinker_command& cmd);
 
-  DyldEnvironment& operator=(const DyldEnvironment& copy);
-  DyldEnvironment(const DyldEnvironment& copy);
+  DyldEnvironment& operator=(const DyldEnvironment& copy) = default;
+  DyldEnvironment(const DyldEnvironment& copy) = default;
 
-  DyldEnvironment* clone() const override;
+  std::unique_ptr<LoadCommand> clone() const override {
+    return std::unique_ptr<DyldEnvironment>(new DyldEnvironment(*this));
+  }
 
-  ~DyldEnvironment() override;
+  ~DyldEnvironment() override = default;
 
   std::ostream& print(std::ostream& os) const override;
 
   //! The actual environment variable
-  const std::string& value() const;
+  const std::string& value() const {
+    return value_;
+  }
 
-  void value(const std::string& values);
-
+  void value(std::string value) {
+    value_ = std::move(value);
+  }
 
   void accept(Visitor& visitor) const override;
 
-  static bool classof(const LoadCommand* cmd);
+  static bool classof(const LoadCommand* cmd) {
+    return cmd->command() == LoadCommand::TYPE::DYLD_ENVIRONMENT;
+  }
 
   private:
   std::string value_;

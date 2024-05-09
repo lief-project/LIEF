@@ -15,17 +15,11 @@
  */
 #include <iomanip>
 
-#include "LIEF/PE/hash.hpp"
+#include "LIEF/Visitor.hpp"
 #include "LIEF/PE/ExportEntry.hpp"
 
 namespace LIEF {
 namespace PE {
-ExportEntry::~ExportEntry() = default;
-ExportEntry::ExportEntry(const ExportEntry&) = default;
-ExportEntry& ExportEntry::operator=(const ExportEntry&) = default;
-
-ExportEntry::ExportEntry() = default;
-
 ExportEntry::ExportEntry(uint32_t address, bool is_extern, uint16_t ordinal, uint32_t function_rva) :
   function_rva_{function_rva},
   ordinal_{ordinal},
@@ -33,56 +27,9 @@ ExportEntry::ExportEntry(uint32_t address, bool is_extern, uint16_t ordinal, uin
   is_extern_{is_extern}
 {}
 
-
-ExportEntry::forward_information_t::operator bool() const {
-  return !library.empty() || !function.empty();
-}
-
-uint16_t ExportEntry::ordinal() const {
-  return ordinal_;
-}
-
-uint32_t ExportEntry::address() const {
-  return address_;
-}
-
-bool ExportEntry::is_extern() const {
-  return is_extern_;
-}
-
-bool ExportEntry::is_forwarded() const {
-  return forward_info_;
-}
-
-ExportEntry::forward_information_t ExportEntry::forward_information() const {
-  if (!is_forwarded()) {
-    return {};
-  }
-  return forward_info_;
-}
-
-uint32_t ExportEntry::function_rva() const {
-  return function_rva_;
-}
-
-void ExportEntry::ordinal(uint16_t ordinal) {
-  ordinal_ = ordinal;
-}
-
-void ExportEntry::address(uint32_t address) {
-  address_ = address;
-}
-
-void ExportEntry::is_extern(bool is_extern) {
-  is_extern_ = is_extern;
-}
-
 void ExportEntry::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }
-
-
-
 
 std::ostream& operator<<(std::ostream& os, const ExportEntry::forward_information_t& info) {
   os << info.library << "." << info.function;

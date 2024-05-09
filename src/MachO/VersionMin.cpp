@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-
-#include "LIEF/MachO/hash.hpp"
+#include "spdlog/fmt/fmt.h"
+#include "LIEF/Visitor.hpp"
 
 #include "LIEF/MachO/VersionMin.hpp"
 #include "MachO/Structures.hpp"
@@ -23,13 +22,8 @@
 namespace LIEF {
 namespace MachO {
 
-VersionMin::VersionMin() = default;
-VersionMin& VersionMin::operator=(const VersionMin&) = default;
-VersionMin::VersionMin(const VersionMin&) = default;
-VersionMin::~VersionMin() = default;
-
 VersionMin::VersionMin(const details::version_min_command& version_cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(version_cmd.cmd), version_cmd.cmdsize},
+  LoadCommand::LoadCommand{LoadCommand::TYPE(version_cmd.cmd), version_cmd.cmdsize},
   version_{{
     static_cast<uint32_t>((version_cmd.version >> 16) & 0xFFFF),
     static_cast<uint32_t>((version_cmd.version >>  8) & 0xFF),
@@ -43,56 +37,14 @@ VersionMin::VersionMin(const details::version_min_command& version_cmd) :
 {
 }
 
-VersionMin* VersionMin::clone() const {
-  return new VersionMin(*this);
-}
-
-
- const VersionMin::version_t& VersionMin::version() const {
-   return version_;
- }
-
- void VersionMin::version(const VersionMin::version_t& version) {
-   version_ = version;
- }
-
- const VersionMin::version_t& VersionMin::sdk() const {
-   return sdk_;
- }
-
- void VersionMin::sdk(const VersionMin::version_t& version) {
-   sdk_ = version;
- }
-
 void VersionMin::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
-
-
-bool VersionMin::classof(const LoadCommand* cmd) {
-  // This must be sync with BinaryParser.tcc
-  const LOAD_COMMAND_TYPES type = cmd->command();
-  return type == LOAD_COMMAND_TYPES::LC_VERSION_MIN_MACOSX ||
-         type == LOAD_COMMAND_TYPES::LC_VERSION_MIN_IPHONEOS;
-}
-
 std::ostream& VersionMin::print(std::ostream& os) const {
   LoadCommand::print(os);
-  const VersionMin::version_t& version = this->version();
-  const VersionMin::version_t& sdk = this->sdk();
-  os << std::setw(10) << "Version: " << std::dec
-     << version[0] << "."
-     << version[1] << "."
-     << version[2] << '\n';
-
-  os << std::setw(10) << "SDK: " << std::dec
-     << sdk[0] << "."
-     << sdk[1] << "."
-     << sdk[2] << '\n';
-
+  os << fmt::format("Version: {}", fmt::join(version(), ".")) << '\n';
+  os << fmt::format("SDK:     {}", fmt::join(sdk(), ".")) << '\n';
   return os;
 }
 

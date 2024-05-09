@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-
-#include "LIEF/MachO/hash.hpp"
+#include "spdlog/fmt/fmt.h"
+#include "LIEF/Visitor.hpp"
 
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "MachO/Structures.hpp"
@@ -23,43 +22,21 @@
 namespace LIEF {
 namespace MachO {
 
-LinkerOptHint::LinkerOptHint() = default;
-LinkerOptHint& LinkerOptHint::operator=(const LinkerOptHint&) = default;
-LinkerOptHint::LinkerOptHint(const LinkerOptHint&) = default;
-LinkerOptHint::~LinkerOptHint() = default;
-
 LinkerOptHint::LinkerOptHint(const details::linkedit_data_command& cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize},
+  LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
   data_offset_{cmd.dataoff},
   data_size_{cmd.datasize}
 {}
-
-
-LinkerOptHint* LinkerOptHint::clone() const {
-  return new LinkerOptHint(*this);
-}
 
 void LinkerOptHint::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
-
-bool LinkerOptHint::classof(const LoadCommand* cmd) {
-  // This must be sync with BinaryParser.tcc
-  const LOAD_COMMAND_TYPES type = cmd->command();
-  return type == LOAD_COMMAND_TYPES::LC_LINKER_OPTIMIZATION_HINT;
-}
-
-
 std::ostream& LinkerOptHint::print(std::ostream& os) const {
   LoadCommand::print(os);
-  os << std::left;
-  os << '\n';
-  os << "Linker Optimization Hint:" << '\n';
-  os << std::setw(8) << "Offset" << ": 0x" << data_offset() << '\n';
-  os << std::setw(8) << "Size"   << ": 0x" << data_size()   << '\n';
+  LoadCommand::print(os);
+  os << fmt::format("offset=0x{:06x}, size=0x{:06x}",
+                     data_offset(), data_size()) << '\n';
   return os;
 }
 

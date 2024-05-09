@@ -18,10 +18,8 @@
 #include <ostream>
 
 #include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
 #include "LIEF/MachO/BindingInfo.hpp"
-
-#include "LIEF/MachO/enums.hpp"
+#include "LIEF/MachO/DyldChainedFormat.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -51,14 +49,15 @@ class LIEF_API ChainedBindingInfo : public BindingInfo {
   friend class Builder;
 
   public:
+
   ChainedBindingInfo() = delete;
   explicit ChainedBindingInfo(DYLD_CHAINED_FORMAT fmt, bool is_weak);
 
   ChainedBindingInfo& operator=(ChainedBindingInfo other);
   ChainedBindingInfo(const ChainedBindingInfo& other);
-  ChainedBindingInfo(ChainedBindingInfo&&);
+  ChainedBindingInfo(ChainedBindingInfo&&) noexcept;
 
-  void swap(ChainedBindingInfo& other);
+  void swap(ChainedBindingInfo& other) noexcept;
 
   //! Format of the imports
   DYLD_CHAINED_FORMAT format() const {
@@ -79,8 +78,13 @@ class LIEF_API ChainedBindingInfo : public BindingInfo {
     offset_ = offset;
   }
 
-  uint64_t address() const override;
-  void address(uint64_t address) override;
+  uint64_t address() const override {
+    return /* imagebase */ address_ + offset_;
+  }
+
+  void address(uint64_t address) override {
+    offset_ = address - /* imagebase */ address_;
+  }
 
   uint64_t sign_extended_addend() const;
 
@@ -92,12 +96,17 @@ class LIEF_API ChainedBindingInfo : public BindingInfo {
     return info->type() == BindingInfo::TYPES::CHAINED;
   }
 
-  ~ChainedBindingInfo() override;
-
+  ~ChainedBindingInfo() override {
+    clear();
+  }
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ChainedBindingInfo& info);
+  LIEF_API friend
+  std::ostream& operator<<(std::ostream& os, const ChainedBindingInfo& info) {
+    os << static_cast<const BindingInfo&>(info);
+    return os;
+  }
 
   private:
   void clear();

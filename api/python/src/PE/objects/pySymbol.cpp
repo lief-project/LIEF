@@ -33,7 +33,7 @@ void create<Symbol>(nb::module_& m) {
 
     .def_prop_rw("name",
         nb::overload_cast<>(&Symbol::wname, nb::const_),
-        nb::overload_cast<const std::string&>(&Symbol::name))
+        nb::overload_cast<std::string>(&Symbol::name))
 
     .def_prop_ro("section_number",
         &Symbol::section_number)

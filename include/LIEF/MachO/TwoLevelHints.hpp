@@ -19,7 +19,6 @@
 #include <ostream>
 
 #include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
 #include "LIEF/span.hpp"
 #include "LIEF/iterators.hpp"
 
@@ -47,13 +46,15 @@ class LIEF_API TwoLevelHints : public LoadCommand {
   using it_hints_t       = ref_iterator<hints_list_t&>;
   using it_const_hints_t = const_ref_iterator<const hints_list_t&>;
 
-  TwoLevelHints();
+  TwoLevelHints() = default;
   TwoLevelHints(const details::twolevel_hints_command& cmd);
 
-  TwoLevelHints& operator=(const TwoLevelHints& copy);
-  TwoLevelHints(const TwoLevelHints& copy);
+  TwoLevelHints& operator=(const TwoLevelHints& copy) = default;
+  TwoLevelHints(const TwoLevelHints& copy) = default;
 
-  TwoLevelHints* clone() const override;
+  std::unique_ptr<LoadCommand> clone() const override {
+    return std::unique_ptr<TwoLevelHints>(new TwoLevelHints(*this));
+  }
 
   //! Original payload of the command
   span<const uint8_t> content() const { return content_; }
@@ -72,14 +73,15 @@ class LIEF_API TwoLevelHints : public LoadCommand {
     return original_nb_hints_;
   }
 
-  ~TwoLevelHints() override;
-
+  ~TwoLevelHints() override = default;
 
   void accept(Visitor& visitor) const override;
 
   std::ostream& print(std::ostream& os) const override;
 
-  static bool classof(const LoadCommand* cmd);
+  static bool classof(const LoadCommand* cmd) {
+    return cmd->command() == LoadCommand::TYPE::TWOLEVEL_HINTS;
+  }
 
   private:
   uint32_t offset_ = 0;

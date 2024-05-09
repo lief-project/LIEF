@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
 #include <memory>
 
 #include "logging.hpp"
@@ -228,7 +227,7 @@ ok_error_t Parser::undo_reloc_bindings(uintptr_t base_address) {
     }
     if (const DyldInfo* info = bin->dyld_info()) {
       for (const DyldBindingInfo& bindinfo : info->bindings()) {
-        if (bindinfo.binding_class() == BINDING_CLASS::BIND_CLASS_STANDARD) {
+        if (bindinfo.binding_class() == DyldBindingInfo::CLASS::STANDARD) {
           bin->patch_address(bindinfo.address(), 0, sizeof(uintptr_t));
         }
       }

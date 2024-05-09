@@ -16,7 +16,7 @@
 #include <iomanip>
 
 #include "logging.hpp"
-#include "LIEF/MachO/hash.hpp"
+#include "LIEF/Visitor.hpp"
 
 #include "LIEF/MachO/ThreadCommand.hpp"
 #include "MachO/Structures.hpp"
@@ -24,20 +24,15 @@
 namespace LIEF {
 namespace MachO {
 
-ThreadCommand::ThreadCommand() = default;
-ThreadCommand& ThreadCommand::operator=(const ThreadCommand&) = default;
-ThreadCommand::ThreadCommand(const ThreadCommand&) = default;
-ThreadCommand::~ThreadCommand() = default;
-
-ThreadCommand::ThreadCommand(const details::thread_command& cmd, CPU_TYPES arch) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize},
+ThreadCommand::ThreadCommand(const details::thread_command& cmd, Header::CPU_TYPE arch) :
+  LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
   flavor_{cmd.flavor},
   count_{cmd.count},
   architecture_{arch}
 {}
 
-ThreadCommand::ThreadCommand(uint32_t flavor, uint32_t count, CPU_TYPES arch) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(LIEF::MachO::LOAD_COMMAND_TYPES::LC_UNIXTHREAD),
+ThreadCommand::ThreadCommand(uint32_t flavor, uint32_t count, Header::CPU_TYPE arch) :
+  LoadCommand::LoadCommand{LoadCommand::TYPE::UNIXTHREAD,
                            static_cast<uint32_t>(sizeof(details::thread_command) + count * sizeof(uint32_t))},
   flavor_{flavor},
   count_{count},
@@ -46,27 +41,10 @@ ThreadCommand::ThreadCommand(uint32_t flavor, uint32_t count, CPU_TYPES arch) :
 {
 }
 
-ThreadCommand* ThreadCommand::clone() const {
-  return new ThreadCommand(*this);
-}
-
-
-uint32_t ThreadCommand::flavor() const {
-  return flavor_;
-}
-
-uint32_t ThreadCommand::count() const {
-  return count_;
-}
-
-CPU_TYPES ThreadCommand::architecture() const {
-  return architecture_;
-}
-
 uint64_t ThreadCommand::pc() const {
   uint64_t entry = 0;
   switch(architecture_) {
-    case CPU_TYPES::CPU_TYPE_X86:
+    case Header::CPU_TYPE::X86:
       {
         if (state_.size() < sizeof(details::x86_thread_state_t)) {
           return entry;
@@ -75,7 +53,7 @@ uint64_t ThreadCommand::pc() const {
         break;
       }
 
-    case CPU_TYPES::CPU_TYPE_X86_64:
+    case Header::CPU_TYPE::X86_64:
       {
         if (state_.size() < sizeof(details::x86_thread_state64_t)) {
           return entry;
@@ -84,7 +62,7 @@ uint64_t ThreadCommand::pc() const {
         break;
       }
 
-    case CPU_TYPES::CPU_TYPE_ARM:
+    case Header::CPU_TYPE::ARM:
       {
         if (state_.size() < sizeof(details::arm_thread_state_t)) {
           return entry;
@@ -93,7 +71,7 @@ uint64_t ThreadCommand::pc() const {
         break;
       }
 
-    case CPU_TYPES::CPU_TYPE_ARM64:
+    case Header::CPU_TYPE::ARM64:
       {
         if (state_.size() < sizeof(details::arm_thread_state64_t)) {
           return entry;
@@ -109,46 +87,14 @@ uint64_t ThreadCommand::pc() const {
   return entry;
 }
 
-void ThreadCommand::state(const std::vector<uint8_t>& state) {
-  state_ = state;
-}
-
-void ThreadCommand::flavor(uint32_t flavor) {
-  flavor_ = flavor;
-}
-
-void ThreadCommand::count(uint32_t count) {
-  count_ = count;
-}
-
-void ThreadCommand::architecture(CPU_TYPES arch) {
-  architecture_ = arch;
-}
-
 void ThreadCommand::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
-
-bool ThreadCommand::classof(const LoadCommand* cmd) {
-  // This must be sync with BinaryParser.tcc
-  const LOAD_COMMAND_TYPES type = cmd->command();
-  return type == LOAD_COMMAND_TYPES::LC_THREAD ||
-         type == LOAD_COMMAND_TYPES::LC_UNIXTHREAD;
-}
-
-
 std::ostream& ThreadCommand::print(std::ostream& os) const {
   LoadCommand::print(os);
-  os << std::hex;
-  os << std::left
-     << std::setw(10) << "Flavor: " << "0x" << flavor()
-     << '\n'
-     << std::setw(10) << "Count: " << "0x" << count()
-     << '\n'
-     << std::setw(10) << "PC: " << "0x" << pc();
+  os << fmt::format("flavor=0x{:x}, count=0x{:x}, pc=0x{:06x}",
+                    flavor(), count(), pc()) << '\n';
   return os;
 }
 

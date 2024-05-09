@@ -46,7 +46,7 @@ void create<FunctionStarts>(nb::module_& m) {
 
     .def_prop_rw("functions",
         nb::overload_cast<>(&FunctionStarts::functions, nb::const_),
-        nb::overload_cast<const std::vector<uint64_t>&>(&FunctionStarts::functions),
+        nb::overload_cast<std::vector<uint64_t>>(&FunctionStarts::functions),
         R"delim(
         Addresses of every function entry point in the executable
 

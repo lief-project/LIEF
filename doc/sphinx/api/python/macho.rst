@@ -497,47 +497,6 @@ Builder
 Enums
 *****
 
-
-CPU_TYPES
-~~~~~~~~~
-
-.. autoclass:: lief.MachO.CPU_TYPES
-
-----------
-
-
-FILE_TYPES
-~~~~~~~~~~
-
-.. autoclass:: lief.MachO.FILE_TYPES
-
-----------
-
-
-HEADER_FLAGS
-~~~~~~~~~~~~~
-
-.. autoclass:: lief.MachO.HEADER_FLAGS
-
-----------
-
-
-LOAD_COMMAND_TYPES
-~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.MachO.LOAD_COMMAND_TYPES
-
-----------
-
-
-SECTION_TYPES
-~~~~~~~~~~~~~
-
-.. autoclass:: lief.MachO.SECTION_TYPES
-
-----------
-
-
 MACHO_TYPES
 ~~~~~~~~~~~
 
@@ -552,7 +511,6 @@ X86_RELOCATION
 .. autoclass:: lief.MachO.X86_RELOCATION
 
 ----------
-
 
 X86_64_RELOCATION
 ~~~~~~~~~~~~~~~~~~
@@ -583,101 +541,6 @@ ARM64_RELOCATION
 .. autoclass:: lief.MachO.ARM64_RELOCATION
 
 
-----------
-
-RELOCATION_ORIGINS
-~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.MachO.RELOCATION_ORIGINS
-
-
-----------
-
-REBASE_TYPES
-~~~~~~~~~~~~
-
-.. autoclass:: lief.MachO.REBASE_TYPES
-
-
-
-----------
-
-BINDING_CLASS
-~~~~~~~~~~~~~
-
-.. autoclass:: lief.MachO.BINDING_CLASS
-
-
-----------
-
-REBASE_OPCODES
-~~~~~~~~~~~~~~
-
-.. autoclass:: lief.MachO.REBASE_OPCODES
-
-
-----------
-
-BIND_TYPES
-~~~~~~~~~~
-
-.. autoclass:: lief.MachO.BIND_TYPES
-
-
-----------
-
-BIND_SPECIAL_DYLIB
-~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.MachO.BIND_SPECIAL_DYLIB
-
-
-----------
-
-BIND_OPCODES
-~~~~~~~~~~~~
-
-.. autoclass:: lief.MachO.BIND_OPCODES
-
-
-----------
-
-EXPORT_SYMBOL_KINDS
-~~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.MachO.EXPORT_SYMBOL_KINDS
-
-
-----------
-
-EXPORT_SYMBOL_FLAGS
-~~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.MachO.EXPORT_SYMBOL_FLAGS
-
-
-----------
-
-VM_PROTECTIONS
-~~~~~~~~~~~~~~
-
-.. autoclass:: lief.MachO.VM_PROTECTIONS
-
-
-----------
-
-SYMBOL_ORIGINS
-~~~~~~~~~~~~~~
-
-.. autoclass:: lief.MachO.SYMBOL_ORIGINS
-
-----------
-
-SECTION_FLAGS
-~~~~~~~~~~~~~
-
-.. autoclass:: lief.MachO.SECTION_FLAGS
-
 DYLD_CHAINED_FORMAT
 ~~~~~~~~~~~~~~~~~~~
 
@@ -687,4 +550,3 @@ DYLD_CHAINED_PTR_FORMAT
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: lief.MachO.DYLD_CHAINED_PTR_FORMAT
-

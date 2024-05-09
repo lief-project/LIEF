@@ -35,7 +35,7 @@ void create<DylinkerCommand>(nb::module_& m) {
 
     .def_prop_rw("name",
         nb::overload_cast<>(&DylinkerCommand::name, nb::const_),
-        nb::overload_cast<const std::string&>(&DylinkerCommand::name),
+        nb::overload_cast<std::string>(&DylinkerCommand::name),
         "Path to the loader/linker"_doc,
         nb::rv_policy::reference_internal)
 

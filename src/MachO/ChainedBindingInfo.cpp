@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/MachO/hash.hpp"
+#include "LIEF/Visitor.hpp"
 #include "LIEF/MachO/ChainedBindingInfo.hpp"
 #include "MachO/ChainedFixup.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-ChainedBindingInfo::ChainedBindingInfo(ChainedBindingInfo&&) = default;
+ChainedBindingInfo::ChainedBindingInfo(ChainedBindingInfo&&) noexcept = default;
 ChainedBindingInfo::ChainedBindingInfo(const ChainedBindingInfo& other) :
   BindingInfo(other),
   format_{other.format_},
@@ -40,10 +40,6 @@ ChainedBindingInfo::ChainedBindingInfo(const ChainedBindingInfo& other) :
   }
 }
 
-ChainedBindingInfo::~ChainedBindingInfo() {
-  clear();
-}
-
 ChainedBindingInfo::ChainedBindingInfo(DYLD_CHAINED_FORMAT fmt, bool is_weak) :
   format_{fmt}
 {
@@ -55,7 +51,7 @@ ChainedBindingInfo& ChainedBindingInfo::operator=(ChainedBindingInfo other) {
   return *this;
 }
 
-void ChainedBindingInfo::swap(ChainedBindingInfo& other) {
+void ChainedBindingInfo::swap(ChainedBindingInfo& other) noexcept {
   BindingInfo::swap(other);
   std::swap(format_,          other.format_);
   std::swap(ptr_format_,      other.ptr_format_);
@@ -66,15 +62,6 @@ void ChainedBindingInfo::swap(ChainedBindingInfo& other) {
 void ChainedBindingInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
-
-uint64_t ChainedBindingInfo::address() const {
-  return /* imagebase */ address_ + offset_;
-}
-
-void ChainedBindingInfo::address(uint64_t address) {
-  offset_ = address - /* imagebase */ address_;
-}
-
 
 uint64_t ChainedBindingInfo::sign_extended_addend() const {
   switch (btypes_) {
@@ -139,12 +126,6 @@ void ChainedBindingInfo::clear() {
   }
   btypes_ = BIND_TYPES::UNKNOWN;
 }
-
-std::ostream& operator<<(std::ostream& os, const ChainedBindingInfo& info) {
-  os << static_cast<const BindingInfo&>(info);
-  return os;
-}
-
 
 }
 }

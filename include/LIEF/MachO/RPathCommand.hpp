@@ -19,7 +19,6 @@
 #include <ostream>
 
 #include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
@@ -36,26 +35,34 @@ struct rpath_command;
 //! associated with the ``@rpath`` prefix.
 class LIEF_API RPathCommand : public LoadCommand {
   public:
-  RPathCommand();
+  RPathCommand() = default;
   RPathCommand(const details::rpath_command& rpathCmd);
 
-  RPathCommand& operator=(const RPathCommand& copy);
-  RPathCommand(const RPathCommand& copy);
+  RPathCommand& operator=(const RPathCommand& copy) = default;
+  RPathCommand(const RPathCommand& copy) = default;
 
-  RPathCommand* clone() const override;
+  std::unique_ptr<LoadCommand> clone() const override {
+    return std::unique_ptr<RPathCommand>(new RPathCommand(*this));
+  }
 
-  ~RPathCommand() override;
+  ~RPathCommand() override = default;
 
   //! The rpath value as a string
-  const std::string& path() const;
-  void path(const std::string& path);
+  const std::string& path() const {
+    return path_;
+  }
 
+  void path(std::string path) {
+    path_ = std::move(path);
+  }
 
   void accept(Visitor& visitor) const override;
 
   std::ostream& print(std::ostream& os) const override;
 
-  static bool classof(const LoadCommand* cmd);
+  static bool classof(const LoadCommand* cmd) {
+    return cmd->command() == LoadCommand::TYPE::RPATH;
+  }
 
   private:
   std::string path_;

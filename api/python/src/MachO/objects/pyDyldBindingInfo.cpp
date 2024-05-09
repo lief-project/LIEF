@@ -18,6 +18,7 @@
 #include <nanobind/stl/string.h>
 
 #include "LIEF/MachO/DyldBindingInfo.hpp"
+#include "enums_wrapper.hpp"
 
 #include "MachO/pyMachO.hpp"
 
@@ -25,7 +26,7 @@ namespace LIEF::MachO::py {
 
 template<>
 void create<DyldBindingInfo>(nb::module_& m) {
-  nb::class_<DyldBindingInfo, BindingInfo>(m, "DyldBindingInfo",
+  nb::class_<DyldBindingInfo, BindingInfo> cls(m, "DyldBindingInfo",
       R"delim(
       This class represents a symbol binding operation associated with
       the LC_DYLD_INFO bytecode.
@@ -34,16 +35,35 @@ void create<DyldBindingInfo>(nb::module_& m) {
       specifications but it provides a *view* on an entry of the Dyld binding opcodes.
 
       See also: :class:`~lief.MachO.BindingInfo`
-      )delim"_doc)
+      )delim"_doc);
 
+
+  enum_<DyldBindingInfo::CLASS>(cls, "CLASS")
+  #define PY_ENUM(x) to_string(x), x
+    .value(PY_ENUM(DyldBindingInfo::CLASS::WEAK))
+    .value(PY_ENUM(DyldBindingInfo::CLASS::LAZY))
+    .value(PY_ENUM(DyldBindingInfo::CLASS::STANDARD))
+    .value(PY_ENUM(DyldBindingInfo::CLASS::THREADED))
+  #undef PY_ENUM
+  ;
+
+  enum_<DyldBindingInfo::TYPE>(cls, "TYPE")
+  #define PY_ENUM(x) to_string(x), x
+    .value(PY_ENUM(DyldBindingInfo::TYPE::POINTER))
+    .value(PY_ENUM(DyldBindingInfo::TYPE::TEXT_ABSOLUTE32))
+    .value(PY_ENUM(DyldBindingInfo::TYPE::TEXT_PCREL32))
+  #undef PY_ENUM
+  ;
+
+  cls
     .def_prop_rw("binding_class",
         nb::overload_cast<>(&DyldBindingInfo::binding_class, nb::const_),
-        nb::overload_cast<BINDING_CLASS>(&DyldBindingInfo::binding_class),
+        nb::overload_cast<DyldBindingInfo::CLASS>(&DyldBindingInfo::binding_class),
         "" RST_CLASS_REF(lief.MachO.BINDING_CLASS) " of the binding"_doc)
 
     .def_prop_rw("binding_type",
         nb::overload_cast<>(&DyldBindingInfo::binding_type, nb::const_),
-        nb::overload_cast<BIND_TYPES>(&DyldBindingInfo::binding_type),
+        nb::overload_cast<DyldBindingInfo::TYPE>(&DyldBindingInfo::binding_type),
         R"delim(
         :class:`~lief.MachO.BIND_TYPES` of the binding.
 
@@ -55,6 +75,7 @@ void create<DyldBindingInfo>(nb::module_& m) {
         "Original relative offset of the binding opcodes"_doc)
 
     LIEF_DEFAULT_STR(DyldBindingInfo);
+
 }
 
 }

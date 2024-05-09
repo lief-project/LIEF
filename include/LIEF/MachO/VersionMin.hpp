@@ -19,7 +19,6 @@
 #include <array>
 
 #include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
@@ -37,29 +36,43 @@ class LIEF_API VersionMin : public LoadCommand {
   //! Version is an array of **3** integers
   using version_t = std::array<uint32_t, 3>;
 
-  VersionMin();
+  VersionMin() = default;
   VersionMin(const details::version_min_command& version_cmd);
 
-  VersionMin& operator=(const VersionMin& copy);
-  VersionMin(const VersionMin& copy);
+  VersionMin& operator=(const VersionMin& copy) = default;
+  VersionMin(const VersionMin& copy) = default;
 
-  VersionMin* clone() const override;
+  std::unique_ptr<LoadCommand> clone() const override {
+    return std::unique_ptr<VersionMin>(new VersionMin(*this));
+  }
 
-  ~VersionMin() override;
+  ~VersionMin() override = default;
 
   //! Return the version as an array
-  const version_t& version() const;
-  void version(const version_t& version);
+  const version_t& version() const {
+    return version_;
+  }
+  void version(const version_t& version) {
+    version_ = version;
+  }
 
   //! Return the sdk version as an array
-  const version_t& sdk() const;
-  void sdk(const version_t& sdk);
+  const version_t& sdk() const {
+    return sdk_;
+  }
+  void sdk(const version_t& sdk) {
+    sdk_ = sdk;
+  }
 
   void accept(Visitor& visitor) const override;
 
   std::ostream& print(std::ostream& os) const override;
 
-  static bool classof(const LoadCommand* cmd);
+  static bool classof(const LoadCommand* cmd) {
+    const LoadCommand::TYPE type = cmd->command();
+    return type == LoadCommand::TYPE::VERSION_MIN_MACOSX ||
+           type == LoadCommand::TYPE::VERSION_MIN_IPHONEOS;
+  }
 
   private:
   version_t version_;

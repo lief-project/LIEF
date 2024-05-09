@@ -11,7 +11,7 @@ def test_945():
     assert "__LINKEDIT" in {s.name for s in segments}
 
     for load_command in target.commands:
-        if load_command.command in (lief.MachO.LOAD_COMMAND_TYPES.SEGMENT, lief.MachO.LOAD_COMMAND_TYPES.SEGMENT_64):
+        if load_command.command in (lief.MachO.LoadCommand.TYPE.SEGMENT, lief.MachO.LoadCommand.TYPE.SEGMENT_64):
             assert isinstance(load_command, lief.MachO.SegmentCommand)
 
 def test_993(tmp_path):

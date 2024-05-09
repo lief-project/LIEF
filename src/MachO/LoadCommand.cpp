@@ -15,10 +15,11 @@
  */
 #include <ostream>
 
+#include "frozen.hpp"
+#include <spdlog/fmt/fmt.h>
 #include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
-#include "LIEF/MachO/EnumToString.hpp"
 
 #include "LIEF/MachO/DyldInfo.hpp"
 #include "LIEF/MachO/DyldExportsTrie.hpp"
@@ -30,77 +31,26 @@
 #include "LIEF/MachO/SymbolCommand.hpp"
 #include "LIEF/MachO/CodeSignature.hpp"
 
-
 #include "MachO/Structures.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-LoadCommand::LoadCommand() = default;
-LoadCommand::~LoadCommand() = default;
-LoadCommand::LoadCommand(const LoadCommand& other) = default;
-
-LoadCommand& LoadCommand::operator=(LoadCommand other) {
-  swap(other);
-  return *this;
-}
-
-LoadCommand::LoadCommand(LOAD_COMMAND_TYPES type, uint32_t size) :
-  command_{type},
-  size_{size}
-{}
-
 LoadCommand::LoadCommand(const details::load_command& command) :
-  command_{static_cast<LOAD_COMMAND_TYPES>(command.cmd)},
+  command_{static_cast<LoadCommand::TYPE>(command.cmd)},
   size_{command.cmdsize}
 {}
 
-
-void LoadCommand::swap(LoadCommand& other) {
+void LoadCommand::swap(LoadCommand& other) noexcept {
   std::swap(original_data_,  other.original_data_);
   std::swap(command_,        other.command_);
   std::swap(size_,           other.size_);
   std::swap(command_offset_, other.command_offset_);
 }
 
-LoadCommand* LoadCommand::clone() const {
-  return new LoadCommand{*this};
-}
-
-LOAD_COMMAND_TYPES LoadCommand::command() const {
-  return command_;
-}
-
-uint32_t LoadCommand::size() const {
-  return size_;
-}
-
-uint64_t LoadCommand::command_offset() const {
-  return command_offset_;
-}
-
-void LoadCommand::data(const LoadCommand::raw_t& data) {
-  original_data_ = data;
-}
-
-void LoadCommand::command(LOAD_COMMAND_TYPES command) {
-  command_ = command;
-}
-
-void LoadCommand::size(uint32_t size) {
-  size_ = size;
-}
-
-
-void LoadCommand::command_offset(uint64_t offset) {
-  command_offset_ = offset;
-}
-
-
 void LoadCommand::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
-
 
 bool LoadCommand::is_linkedit_data(const LoadCommand& cmd) {
   if (DyldInfo::classof(&cmd))             return true;
@@ -116,17 +66,79 @@ bool LoadCommand::is_linkedit_data(const LoadCommand& cmd) {
 }
 
 
-
 std::ostream& LoadCommand::print(std::ostream& os) const {
-  os << std::hex;
-  os << "Command : " << to_string(command()) << '\n';
-  os << "Offset  : " << command_offset() << '\n';
-  os << "Size    : " << size() << '\n';
+  os << fmt::format("Command: {}", to_string(command())) << '\n'
+     << fmt::format("Offset:  0x{:x}", command_offset()) << '\n'
+     << fmt::format("Size:    0x{:x}", size()) << '\n';
+
   return os;
 }
 
-std::ostream& operator<<(std::ostream& os, const LoadCommand& cmd) {
-  return cmd.print(os);
+const char* to_string(LoadCommand::TYPE e) {
+  #define ENTRY(X) std::pair(LoadCommand::TYPE::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(UNKNOWN),
+    ENTRY(SEGMENT),
+    ENTRY(SYMTAB),
+    ENTRY(SYMSEG),
+    ENTRY(THREAD),
+    ENTRY(UNIXTHREAD),
+    ENTRY(LOADFVMLIB),
+    ENTRY(IDFVMLIB),
+    ENTRY(IDENT),
+    ENTRY(FVMFILE),
+    ENTRY(PREPAGE),
+    ENTRY(DYSYMTAB),
+    ENTRY(LOAD_DYLIB),
+    ENTRY(ID_DYLIB),
+    ENTRY(LOAD_DYLINKER),
+    ENTRY(ID_DYLINKER),
+    ENTRY(PREBOUND_DYLIB),
+    ENTRY(ROUTINES),
+    ENTRY(SUB_FRAMEWORK),
+    ENTRY(SUB_UMBRELLA),
+    ENTRY(SUB_CLIENT),
+    ENTRY(SUB_LIBRARY),
+    ENTRY(TWOLEVEL_HINTS),
+    ENTRY(PREBIND_CKSUM),
+    ENTRY(LOAD_WEAK_DYLIB),
+    ENTRY(SEGMENT_64),
+    ENTRY(ROUTINES_64),
+    ENTRY(UUID),
+    ENTRY(RPATH),
+    ENTRY(CODE_SIGNATURE),
+    ENTRY(SEGMENT_SPLIT_INFO),
+    ENTRY(REEXPORT_DYLIB),
+    ENTRY(LAZY_LOAD_DYLIB),
+    ENTRY(ENCRYPTION_INFO),
+    ENTRY(DYLD_INFO),
+    ENTRY(DYLD_INFO_ONLY),
+    ENTRY(LOAD_UPWARD_DYLIB),
+    ENTRY(VERSION_MIN_MACOSX),
+    ENTRY(VERSION_MIN_IPHONEOS),
+    ENTRY(FUNCTION_STARTS),
+    ENTRY(DYLD_ENVIRONMENT),
+    ENTRY(MAIN),
+    ENTRY(DATA_IN_CODE),
+    ENTRY(SOURCE_VERSION),
+    ENTRY(DYLIB_CODE_SIGN_DRS),
+    ENTRY(ENCRYPTION_INFO_64),
+    ENTRY(LINKER_OPTION),
+    ENTRY(LINKER_OPTIMIZATION_HINT),
+    ENTRY(VERSION_MIN_TVOS),
+    ENTRY(VERSION_MIN_WATCHOS),
+    ENTRY(NOTE),
+    ENTRY(BUILD_VERSION),
+    ENTRY(DYLD_EXPORTS_TRIE),
+    ENTRY(DYLD_CHAINED_FIXUPS),
+    ENTRY(FILESET_ENTRY),
+  };
+  #undef ENTRY
+
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
+  }
+  return "UNKNOWN";
 }
 
 }

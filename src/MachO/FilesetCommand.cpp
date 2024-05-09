@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-
-#include "LIEF/MachO/hash.hpp"
+#include "spdlog/fmt/fmt.h"
+#include "LIEF/Visitor.hpp"
 
 #include "LIEF/MachO/FilesetCommand.hpp"
 #include "MachO/Structures.hpp"
@@ -23,19 +22,11 @@
 namespace LIEF {
 namespace MachO {
 
-FilesetCommand::FilesetCommand() = default;
-
 FilesetCommand::FilesetCommand(const details::fileset_entry_command& cmd) :
-  LoadCommand{LOAD_COMMAND_TYPES::LC_FILESET_ENTRY, cmd.cmdsize},
+  LoadCommand{LoadCommand::TYPE::FILESET_ENTRY, cmd.cmdsize},
   virtual_address_{cmd.vmaddr},
   file_offset_{cmd.fileoff}
 {}
-
-FilesetCommand::FilesetCommand(const std::string& name) :
-  FilesetCommand{}
-{
-  this->name(name);
-}
 
 FilesetCommand& FilesetCommand::operator=(FilesetCommand other) {
   swap(other);
@@ -49,62 +40,20 @@ FilesetCommand::FilesetCommand(const FilesetCommand& other) :
   file_offset_{other.file_offset_}
 {}
 
-FilesetCommand::~FilesetCommand() = default;
-
-void FilesetCommand::swap(FilesetCommand& other) {
+void FilesetCommand::swap(FilesetCommand& other) noexcept {
   LoadCommand::swap(other);
 
   std::swap(virtual_address_, other.virtual_address_);
   std::swap(file_offset_,     other.file_offset_);
 }
 
-FilesetCommand* FilesetCommand::clone() const {
-  return new FilesetCommand(*this);
-}
-
-const std::string& FilesetCommand::name() const {
-  return name_;
-}
-
-uint64_t FilesetCommand::virtual_address() const {
-  return virtual_address_;
-}
-
-uint64_t FilesetCommand::file_offset() const {
-  return file_offset_;
-}
-
-void FilesetCommand::name(const std::string& name) {
-  name_ = name;
-}
-
-void FilesetCommand::virtual_address(uint64_t virtual_address) {
-  virtual_address_ = virtual_address;
-}
-
-void FilesetCommand::file_offset(uint64_t file_offset) {
-  file_offset_ = file_offset;
-}
-
 std::ostream& FilesetCommand::print(std::ostream& os) const {
-
   LoadCommand::print(os);
-  os << std::hex;
-  os << std::left
-     << std::setw(15) << name()
-     << std::setw(15) << virtual_address()
-     << std::setw(15) << file_offset()
-     << '\n';
+  os << fmt::format("name={}, va=0x{:06x}, offset=0x{:x}",
+                    name(), virtual_address(), file_offset()) << '\n';
   return os;
 }
 
-
-
-bool FilesetCommand::classof(const LoadCommand* cmd) {
-  // This must be sync with BinaryParser.tcc
-  const LOAD_COMMAND_TYPES type = cmd->command();
-  return type == LOAD_COMMAND_TYPES::LC_FILESET_ENTRY;
-}
 
 }
 }

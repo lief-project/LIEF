@@ -16,10 +16,6 @@
 #ifndef LIEF_MACHO_BUIDLER_H
 #define LIEF_MACHO_BUIDLER_H
 
-#include <algorithm>
-#include <functional>
-#include <memory>
-#include <unordered_map>
 #include <vector>
 
 #include "LIEF/errors.hpp"
@@ -180,8 +176,6 @@ class LIEF_API Builder {
 
   template <typename T>
   ok_error_t update_fixups(DyldChainedFixups& fixups);
-
-
 
   std::vector<Binary*> binaries_;
   Binary* binary_ = nullptr;

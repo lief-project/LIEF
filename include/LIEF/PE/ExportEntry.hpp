@@ -40,30 +40,53 @@ class LIEF_API ExportEntry : public LIEF::Symbol {
     std::string library;
     std::string function;
 
-    operator bool() const;
+    operator bool() const {
+      return !library.empty() || !function.empty();
+    }
 
     LIEF_API friend std::ostream& operator<<(std::ostream& os, const forward_information_t& info);
   };
 
   public:
-  ExportEntry();
+  ExportEntry() = default;
   ExportEntry(uint32_t address, bool is_extern,
               uint16_t ordinal, uint32_t function_rva);
-  ExportEntry(const ExportEntry&);
-  ExportEntry& operator=(const ExportEntry&);
-  ~ExportEntry() override;
+  ExportEntry(const ExportEntry&) = default;
+  ExportEntry& operator=(const ExportEntry&) = default;
+  ~ExportEntry() override = default;
 
-  uint16_t           ordinal() const;
-  uint32_t           address() const;
-  bool               is_extern() const;
-  bool               is_forwarded() const;
-  forward_information_t forward_information() const;
+  uint16_t ordinal() const {
+    return ordinal_;
+  }
+  uint32_t address() const {
+    return address_;
+  }
+  bool is_extern() const {
+    return is_extern_;
+  }
+  bool is_forwarded() const {
+    return forward_info_;
+  }
 
-  uint32_t function_rva() const;
+  forward_information_t forward_information() const {
+    return is_forwarded() ? forward_info_ : forward_information_t{};
+  }
 
-  void ordinal(uint16_t ordinal);
-  void address(uint32_t address);
-  void is_extern(bool is_extern);
+  uint32_t function_rva() const {
+    return function_rva_;
+  }
+
+  void ordinal(uint16_t ordinal) {
+    ordinal_ = ordinal;
+  }
+
+  void address(uint32_t address) {
+    address_ = address;
+  }
+
+  void is_extern(bool is_extern) {
+    is_extern_ = is_extern;
+  }
 
   uint64_t value() const override {
     return address();

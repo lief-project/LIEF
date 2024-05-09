@@ -19,7 +19,6 @@
 #include <vector>
 #include <memory>
 
-#include "LIEF/types.hpp"
 #include "LIEF/errors.hpp"
 #include "LIEF/visibility.h"
 

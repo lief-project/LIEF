@@ -15,11 +15,9 @@
  */
 #ifndef LIEF_MACHO_LINKER_OPT_HINT_COMMAND_H
 #define LIEF_MACHO_LINKER_OPT_HINT_COMMAND_H
-#include <vector>
 #include <ostream>
 
 #include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
 #include "LIEF/span.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
@@ -42,13 +40,15 @@ class LIEF_API LinkerOptHint : public LoadCommand {
   friend class LinkEdit;
 
   public:
-  LinkerOptHint();
+  LinkerOptHint() = default;
   LinkerOptHint(const details::linkedit_data_command& cmd);
 
-  LinkerOptHint& operator=(const LinkerOptHint& copy);
-  LinkerOptHint(const LinkerOptHint& copy);
+  LinkerOptHint& operator=(const LinkerOptHint& copy) = default;
+  LinkerOptHint(const LinkerOptHint& copy) = default;
 
-  LinkerOptHint* clone() const override;
+  std::unique_ptr<LoadCommand> clone() const override {
+    return std::unique_ptr<LinkerOptHint>(new LinkerOptHint(*this));
+  }
 
   //! Offset in the binary where the signature starts
   uint32_t data_offset() const {
@@ -76,14 +76,15 @@ class LIEF_API LinkerOptHint : public LoadCommand {
     return content_;
   }
 
-  ~LinkerOptHint() override;
-
+  ~LinkerOptHint() override = default;
 
   void accept(Visitor& visitor) const override;
 
   std::ostream& print(std::ostream& os) const override;
 
-  static bool classof(const LoadCommand* cmd);
+  static bool classof(const LoadCommand* cmd) {
+    return cmd->command() == LoadCommand::TYPE::LINKER_OPTIMIZATION_HINT;
+  }
 
   private:
   uint32_t      data_offset_ = 0;

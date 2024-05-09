@@ -559,7 +559,7 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
 
   /* 1. Fille the n_list table */ {
     for (Symbol& s : binary_->symbols()) {
-      if (s.origin() != SYMBOL_ORIGINS::SYM_ORIGIN_LC_SYMTAB) {
+      if (s.origin() != Symbol::ORIGIN::LC_SYMTAB) {
         continue;
       }
       all_syms.push_back(&s);
@@ -1484,9 +1484,5 @@ ok_error_t Builder::build(TwoLevelHints& two) {
   memcpy(two.original_data_.data(), &raw_cmd, sizeof(details::linkedit_data_command));
   return ok();
 }
-
-
-
-
 }
 }

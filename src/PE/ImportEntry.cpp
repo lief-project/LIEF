@@ -15,12 +15,8 @@
  */
 #include <iomanip>
 
-#include "LIEF/PE/hash.hpp"
-
-
+#include "LIEF/Visitor.hpp"
 #include "LIEF/PE/ImportEntry.hpp"
-#include "logging.hpp"
-
 
 namespace LIEF {
 namespace PE {
@@ -66,47 +62,9 @@ bool ImportEntry::is_ordinal() const {
   return val == 0;
 }
 
-uint16_t ImportEntry::ordinal() const {
-  if (!is_ordinal()) {
-    LIEF_WARN("This import is not ordinal");
-    return 0;
-  }
-
-  return data_ & 0xFFFF;
-}
-
-uint16_t ImportEntry::hint() const {
-  return hint_;
-}
-
-uint64_t ImportEntry::iat_value() const {
-  return iat_value_;
-}
-
-
-uint64_t ImportEntry::hint_name_rva() const {
-  return data();
-}
-
-uint64_t ImportEntry::data() const {
-  return data_;
-}
-
-uint64_t ImportEntry::iat_address() const {
-  return rva_;
-}
-
-void ImportEntry::data(uint64_t data) {
-  data_ = data;
-}
-
-
 void ImportEntry::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }
-
-
-
 
 std::ostream& operator<<(std::ostream& os, const ImportEntry& entry) {
   os << std::hex;

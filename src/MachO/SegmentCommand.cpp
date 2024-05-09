@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
 #include <memory>
 
-#include "logging.hpp"
-#include "LIEF/MachO/hash.hpp"
+#include "spdlog/fmt/fmt.h"
+#include "LIEF/Visitor.hpp"
 
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
@@ -27,8 +26,16 @@
 namespace LIEF {
 namespace MachO {
 
-SegmentCommand::SegmentCommand() = default;
 SegmentCommand::~SegmentCommand() = default;
+
+SegmentCommand::SegmentCommand(std::string name, content_t content) :
+  name_(std::move(name)),
+  data_(std::move(content))
+{}
+
+SegmentCommand::SegmentCommand(std::string name) :
+  name_(std::move(name))
+{}
 
 SegmentCommand& SegmentCommand::operator=(SegmentCommand other) {
   swap(other);
@@ -66,7 +73,7 @@ SegmentCommand::SegmentCommand(const SegmentCommand& other) :
 
 
 SegmentCommand::SegmentCommand(const details::segment_command_32& seg) :
-  LoadCommand{LOAD_COMMAND_TYPES::LC_SEGMENT, seg.cmdsize},
+  LoadCommand{LoadCommand::TYPE::SEGMENT, seg.cmdsize},
   name_{seg.segname, sizeof(seg.segname)},
   virtual_address_{seg.vmaddr},
   virtual_size_{seg.vmsize},
@@ -81,7 +88,7 @@ SegmentCommand::SegmentCommand(const details::segment_command_32& seg) :
 }
 
 SegmentCommand::SegmentCommand(const details::segment_command_64& seg) :
-  LoadCommand{LOAD_COMMAND_TYPES::LC_SEGMENT_64, seg.cmdsize},
+  LoadCommand{LoadCommand::TYPE::SEGMENT_64, seg.cmdsize},
   name_{seg.segname, sizeof(seg.segname)},
   virtual_address_{seg.vmaddr},
   virtual_size_{seg.vmsize},
@@ -95,7 +102,7 @@ SegmentCommand::SegmentCommand(const details::segment_command_64& seg) :
   name_ = std::string{name_.c_str()};
 }
 
-void SegmentCommand::swap(SegmentCommand& other) {
+void SegmentCommand::swap(SegmentCommand& other) noexcept {
   LoadCommand::swap(other);
 
   std::swap(virtual_address_, other.virtual_address_);
@@ -112,117 +119,11 @@ void SegmentCommand::swap(SegmentCommand& other) {
   //std::swap(dyld_,            other.dyld_);
 }
 
-SegmentCommand* SegmentCommand::clone() const {
-  return new SegmentCommand(*this);
-}
-
-
-SegmentCommand::SegmentCommand(std::string name, content_t content) :
-  name_{std::move(name)},
-  data_{std::move(content)}
-{}
-
-
-SegmentCommand::SegmentCommand(std::string name) :
-  name_{std::move(name)}
-{}
-
-const std::string& SegmentCommand::name() const {
-  return name_;
-}
-
-uint64_t SegmentCommand::virtual_address() const {
-  return virtual_address_;
-}
-
-uint64_t SegmentCommand::virtual_size() const {
-  return virtual_size_;
-}
-
-uint64_t SegmentCommand::file_size() const {
-  return file_size_;
-}
-
-uint64_t SegmentCommand::file_offset() const {
-  return file_offset_;
-}
-
-uint32_t SegmentCommand::max_protection() const {
-  return max_protection_;
-}
-
-uint32_t SegmentCommand::init_protection() const {
-  return init_protection_;
-}
-
-uint32_t SegmentCommand::numberof_sections() const {
-  return nb_sections_;
-}
-
-uint32_t SegmentCommand::flags() const {
-  return flags_;
-}
-
-SegmentCommand::it_sections SegmentCommand::sections() {
-  return sections_;
-}
-
-SegmentCommand::it_const_sections SegmentCommand::sections() const {
-  return sections_;
-}
-
-
-SegmentCommand::it_relocations SegmentCommand::relocations() {
-  return relocations_;
-}
-
-SegmentCommand::it_const_relocations SegmentCommand::relocations() const {
-  return relocations_;
-}
-
-void SegmentCommand::name(const std::string& name) {
-  name_ = name;
-}
-
-void SegmentCommand::virtual_address(uint64_t virtual_address) {
-  virtual_address_ = virtual_address;
-}
-
-void SegmentCommand::virtual_size(uint64_t virtual_size) {
-  virtual_size_ = virtual_size;
-}
-
-void SegmentCommand::file_size(uint64_t file_size) {
-  file_size_ = file_size;
-}
-
-void SegmentCommand::file_offset(uint64_t file_offset) {
-  file_offset_ = file_offset;
-}
-
-void SegmentCommand::max_protection(uint32_t max_protection) {
-  max_protection_ = max_protection;
-}
-
-void SegmentCommand::init_protection(uint32_t init_protection) {
-  init_protection_ = init_protection;
-}
-
-void SegmentCommand::numberof_sections(uint32_t nb_sections) {
-  nb_sections_ = nb_sections;
-}
-
-void SegmentCommand::flags(uint32_t flags) {
-  flags_ = flags;
-}
-
-
 void SegmentCommand::content(SegmentCommand::content_t data) {
   update_data([data = std::move(data)] (std::vector<uint8_t>& inner_data) mutable {
                 inner_data = std::move(data);
               });
 }
-
 
 void SegmentCommand::remove_all_sections() {
   numberof_sections(0);
@@ -319,50 +220,51 @@ Section* SegmentCommand::get_section(const std::string& name) {
   return const_cast<Section*>(static_cast<const SegmentCommand*>(this)->get_section(name));
 }
 
-
 void SegmentCommand::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
-bool SegmentCommand::classof(const LoadCommand* cmd) {
-  // This must be sync with BinaryParser.tcc
-  const LOAD_COMMAND_TYPES type = cmd->command();
-  return type == LOAD_COMMAND_TYPES::LC_SEGMENT_64 ||
-         type == LOAD_COMMAND_TYPES::LC_SEGMENT;
-}
-
 std::ostream& SegmentCommand::print(std::ostream& os) const {
-
   LoadCommand::print(os);
-  os << std::hex;
-  os << std::left
-     << std::setw(15) << name()
-     << std::setw(15) << virtual_address()
-     << std::setw(15) << virtual_size()
-     << std::setw(15) << file_offset()
-     << std::setw(15) << file_size()
-     << std::setw(15) << max_protection()
-     << std::setw(15) << init_protection()
-     << std::setw(15) << numberof_sections()
-     << std::setw(15) << flags()
-     << '\n';
-
-  os << "Sections in this segment :" << '\n';
-  for (const Section& section : sections()) {
-    os << "\t" << section << '\n';
-  }
-
+  os << fmt::format(
+    "name={}, vaddr=0x{:06x}, vsize=0x{:04x} "
+    "offset=0x{:06x}, size={}, max protection={}, init protection={} "
+    "flags={}",
+    name(), virtual_address(), virtual_size(),
+    file_offset(), file_size(), max_protection(), init_protection(),
+    flags()
+  ) << '\n';
   return os;
 }
 
-void SegmentCommand::update_data(SegmentCommand::update_fnc_t f) {
+void SegmentCommand::update_data(const SegmentCommand::update_fnc_t& f) {
   f(data_);
 }
 
-void SegmentCommand::update_data(SegmentCommand::update_fnc_ws_t f, size_t where, size_t size) {
+void SegmentCommand::update_data(const SegmentCommand::update_fnc_ws_t& f,
+                                 size_t where, size_t size)
+{
   f(data_, where, size);
+}
+
+const char* to_string(SegmentCommand::FLAGS flag) {
+  switch (flag) {
+    case SegmentCommand::FLAGS::HIGHVM: return "HIGHVM";
+    case SegmentCommand::FLAGS::FVMLIB: return "FVMLIB";
+    case SegmentCommand::FLAGS::NORELOC: return "NORELOC";
+    case SegmentCommand::FLAGS::PROTECTED_VERSION_1: return "PROTECTED_VERSION_1";
+    case SegmentCommand::FLAGS::READ_ONLY: return "READ_ONLY";
+  }
+  return "UNKNOWN";
+}
+
+const char* to_string(SegmentCommand::VM_PROTECTIONS protection) {
+  switch (protection) {
+    case SegmentCommand::VM_PROTECTIONS::READ: return "R";
+    case SegmentCommand::VM_PROTECTIONS::WRITE: return "W";
+    case SegmentCommand::VM_PROTECTIONS::EXECUTE: return "X";
+  }
+  return "UNKNOWN";
 }
 
 }

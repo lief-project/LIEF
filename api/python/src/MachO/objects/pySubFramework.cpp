@@ -44,7 +44,7 @@ void create<SubFramework>(nb::module_& m) {
 
     .def_prop_rw("umbrella",
         nb::overload_cast<>(&SubFramework::umbrella, nb::const_),
-        nb::overload_cast<const std::string&>(&SubFramework::umbrella),
+        nb::overload_cast<std::string>(&SubFramework::umbrella),
         "Name of the umbrella framework"_doc)
 
     LIEF_DEFAULT_STR(SubFramework);

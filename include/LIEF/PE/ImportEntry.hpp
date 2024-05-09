@@ -51,26 +51,41 @@ class LIEF_API ImportEntry : public LIEF::Symbol {
   bool is_ordinal() const;
 
   //! The ordinal value
-  uint16_t ordinal() const;
+  uint16_t ordinal() const {
+    static constexpr auto MASK = 0xFFFF;
+    return is_ordinal() ? (data_ & MASK) : 0;
+  }
 
   //! @see ImportEntry::data
-  uint64_t hint_name_rva() const;
+  uint64_t hint_name_rva() const {
+    return data();
+  }
 
   //! Index into the Export::entries that is used to speed-up
   //! the symbol resolution.
-  uint16_t hint() const;
+  uint16_t hint() const {
+    return hint_;
+  }
 
   //! Value of the current entry in the Import Address Table.
   //! It should match the lookup table value
-  uint64_t iat_value() const;
+  uint64_t iat_value() const {
+    return iat_value_;
+  }
 
   //! Raw value
-  uint64_t data() const;
+  uint64_t data() const {
+    return data_;
+  }
 
   //! **Original** address of the entry in the Import Address Table
-  uint64_t iat_address() const;
+  uint64_t iat_address() const {
+    return rva_;
+  }
 
-  void data(uint64_t data);
+  void data(uint64_t data) {
+    data_ = data;
+  }
 
   void accept(Visitor& visitor) const override;
 

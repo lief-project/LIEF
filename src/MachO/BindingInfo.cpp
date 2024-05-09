@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
 
-#include "LIEF/MachO/hash.hpp"
+#include <spdlog/fmt/fmt.h>
+#include "LIEF/Visitor.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/BindingInfo.hpp"
@@ -23,9 +23,6 @@
 
 namespace LIEF {
 namespace MachO {
-
-BindingInfo::BindingInfo() = default;
-BindingInfo::~BindingInfo() = default;
 
 BindingInfo::BindingInfo(const BindingInfo& other) :
   Object{other},
@@ -35,7 +32,7 @@ BindingInfo::BindingInfo(const BindingInfo& other) :
   address_{other.address_}
 {}
 
-void BindingInfo::swap(BindingInfo& other) {
+void BindingInfo::swap(BindingInfo& other) noexcept {
   std::swap(segment_,         other.segment_);
   std::swap(symbol_,          other.symbol_);
   std::swap(library_ordinal_, other.library_ordinal_);
@@ -45,105 +42,24 @@ void BindingInfo::swap(BindingInfo& other) {
   std::swap(address_,         other.address_);
 }
 
-
-bool BindingInfo::has_segment() const {
-  return segment_ != nullptr;
-}
-
-const SegmentCommand* BindingInfo::segment() const {
-  return segment_;
-}
-
-SegmentCommand* BindingInfo::segment() {
-  return const_cast<SegmentCommand*>(static_cast<const BindingInfo*>(this)->segment());
-}
-
-bool BindingInfo::has_symbol() const {
-  return symbol_ != nullptr;
-}
-
-const Symbol* BindingInfo::symbol() const {
-  return symbol_;
-}
-
-Symbol* BindingInfo::symbol() {
-  return const_cast<Symbol*>(static_cast<const BindingInfo*>(this)->symbol());
-}
-
-bool BindingInfo::has_library() const {
-  return library_ != nullptr;
-}
-
-const DylibCommand* BindingInfo::library() const {
-  return library_;
-}
-
-DylibCommand* BindingInfo::library() {
-  return const_cast<DylibCommand*>(static_cast<const BindingInfo*>(this)->library());
-}
-
-int32_t BindingInfo::library_ordinal() const {
-  return library_ordinal_;
-}
-
-void BindingInfo::library_ordinal(int32_t ordinal) {
-  library_ordinal_ = ordinal;
-}
-
-int64_t BindingInfo::addend() const {
-  return addend_;
-}
-
-void BindingInfo::addend(int64_t addend) {
-  addend_ = addend;
-}
-
-bool BindingInfo::is_weak_import() const {
-  return is_weak_import_;
-}
-
-void BindingInfo::set_weak_import(bool val) {
-  is_weak_import_ = val;
-}
-
-
-uint64_t BindingInfo::address() const {
-  return address_;
-}
-
-void BindingInfo::address(uint64_t addr) {
-  address_ = addr;
-}
-
 void BindingInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
-
-std::ostream& operator<<(std::ostream& os, const BindingInfo& binding_info) {
-
-  os << std::hex;
-  os << std::left;
-
-  os << std::setw(13) << "Address: 0x" <<  std::hex << binding_info.address() << '\n';
-
-  if (binding_info.has_symbol()) {
-    os << std::setw(13) << "Symbol: "    << binding_info.symbol()->name() << '\n';
+std::ostream& operator<<(std::ostream& os, const BindingInfo& info) {
+  os << fmt::format("address=0x{:08x}, addend=0x{:x}",
+                    info.address(), info.addend()) << '\n';
+  if (const Symbol* sym = info.symbol()) {
+    os << fmt::format("  symbol={}", sym->name()) << '\n';
   }
-
-  if (binding_info.has_segment()) {
-    os << std::setw(13) << "Segment: "    << binding_info.segment()->name() << '\n';
+  if (const SegmentCommand* seg = info.segment()) {
+    os << fmt::format("  segment={}", seg->name()) << '\n';
   }
-
-  if (binding_info.has_library()) {
-    os << std::setw(13) << "Library: "    << binding_info.library()->name() << '\n';
+  if (const DylibCommand* lib = info.library()) {
+    os << fmt::format("  library={}", lib->name()) << '\n';
   }
-
   return os;
 }
-
 
 }
 }

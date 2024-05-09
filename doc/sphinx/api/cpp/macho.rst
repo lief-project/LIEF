@@ -400,30 +400,6 @@ Enums
 .. doxygenenum:: LIEF::MachO::MACHO_TYPES
    :project: lief
 
-.. doxygenenum:: LIEF::MachO::FILE_TYPES
-   :project: lief
-
-.. doxygenenum:: LIEF::MachO::HEADER_FLAGS
-   :project: lief
-
-.. doxygenenum:: LIEF::MachO::LOAD_COMMAND_TYPES
-   :project: lief
-
-.. doxygenenum:: LIEF::MachO::MACHO_SEGMENTS_FLAGS
-   :project: lief
-
-.. doxygenenum:: LIEF::MachO::MACHO_SECTION_TYPES
-   :project: lief
-
-.. doxygenenum:: LIEF::MachO::MACHO_SECTION_FLAGS
-   :project: lief
-
-.. doxygenenum:: LIEF::MachO::MACHO_SYMBOL_TYPES
-   :project: lief
-
-.. doxygenenum:: LIEF::MachO::SYMBOL_DESCRIPTIONS
-   :project: lief
-
 .. doxygenenum:: LIEF::MachO::X86_RELOCATION
    :project: lief
 
@@ -437,45 +413,6 @@ Enums
    :project: lief
 
 .. doxygenenum:: LIEF::MachO::ARM64_RELOCATION
-   :project: lief
-
-.. doxygenenum:: LIEF::MachO::CPU_TYPES
-   :project: lief
-
-.. doxygenenum:: LIEF::MachO::CPU_SUBTYPES_X86
-   :project: lief
-
-.. doxygenenum:: LIEF::MachO::RELOCATION_ORIGINS
-   :project: lief
-
-.. doxygenenum:: LIEF::MachO::REBASE_TYPES
-   :project: lief
-
-.. doxygenenum:: LIEF::MachO::BINDING_CLASS
-   :project: lief
-
-.. doxygenenum:: LIEF::MachO::REBASE_OPCODES
-   :project: lief
-
-.. doxygenenum:: LIEF::MachO::BIND_TYPES
-   :project: lief
-
-.. doxygenenum:: LIEF::MachO::BIND_SPECIAL_DYLIB
-   :project: lief
-
-.. doxygenenum:: LIEF::MachO::BIND_OPCODES
-   :project: lief
-
-.. doxygenenum:: LIEF::MachO::EXPORT_SYMBOL_KINDS
-   :project: lief
-
-.. doxygenenum:: LIEF::MachO::EXPORT_SYMBOL_FLAGS
-   :project: lief
-
-.. doxygenenum:: LIEF::MachO::VM_PROTECTIONS
-   :project: lief
-
-.. doxygenenum:: LIEF::MachO::SYMBOL_ORIGINS
    :project: lief
 
 .. doxygenenum:: LIEF::MachO::DYLD_CHAINED_FORMAT

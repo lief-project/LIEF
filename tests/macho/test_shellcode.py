@@ -16,9 +16,9 @@ def patch(tmp_path: str, bin_path: pathlib.Path) -> str:
     output = f"{tmp_path}/{bin_path.name}"
 
     cpu = original.header.cpu_type
-    if cpu == lief.MachO.CPU_TYPES.ARM64:
+    if cpu == lief.MachO.Header.CPU_TYPE.ARM64:
         shellcode_path = pathlib.Path(get_sample("MachO/shellcode-stub/lief_hello_darwin_arm64.bin"))
-    elif cpu == lief.MachO.CPU_TYPES.x86_64:
+    elif cpu == lief.MachO.Header.CPU_TYPE.X86_64:
         shellcode_path = pathlib.Path(get_sample("MachO/shellcode-stub/lief_hello_darwin_x86_64.bin"))
     else:
         print(f"Unsupported architecture {cpu!s} for {bin_path}")

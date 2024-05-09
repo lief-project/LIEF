@@ -21,7 +21,7 @@
 #include <map>
 #include <memory>
 
-#include "LIEF/types.hpp"
+#include "LIEF/MachO/LoadCommand.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/Abstract/Binary.hpp"
@@ -53,7 +53,6 @@ class ExportInfo;
 class FunctionStarts;
 class Header;
 class LinkerOptHint;
-class LoadCommand;
 class MainCommand;
 class Parser;
 class RPathCommand;
@@ -176,25 +175,46 @@ class LIEF_API Binary : public LIEF::Binary  {
   Binary& operator=(const Binary&) = delete;
 
   //! Return a reference to the MachO::Header
-  Header& header();
-  const Header& header() const;
+  Header& header() {
+    return header_;
+  }
+
+  const Header& header() const {
+    return header_;
+  }
 
   //! Return an iterator over the MachO LoadCommand present
   //! in the binary
-  it_commands commands();
-  it_const_commands commands() const;
+  it_commands commands() {
+    return commands_;
+  }
+
+  it_const_commands commands() const {
+    return commands_;
+  }
 
   //! Return an iterator over the MachO::Binary associated
-  //! with the LOAD_COMMAND_TYPES::LC_FILESET_ENTRY commands
-  it_fileset_binaries       filesets();
-  it_const_fileset_binaries filesets() const;
+  //! with the LoadCommand::TYPE::FILESET_ENTRY commands
+  it_fileset_binaries filesets() {
+    return filesets_;
+  }
+
+  it_const_fileset_binaries filesets() const {
+    return filesets_;
+  }
 
   //! Return binary's @link MachO::Symbol symbols @endlink
-  it_symbols       symbols();
-  it_const_symbols symbols() const;
+  it_symbols symbols() {
+    return symbols_;
+  }
+  it_const_symbols symbols() const {
+    return symbols_;
+  }
 
   //! Check if a symbol with the given name exists
-  bool has_symbol(const std::string& name) const;
+  bool has_symbol(const std::string& name) const {
+    return get_symbol(name) != nullptr;
+  }
 
   //! Return Symbol from the given name. If the symbol does not
   //! exists, it returns a null pointer
@@ -205,27 +225,57 @@ class LIEF_API Binary : public LIEF::Binary  {
   static bool is_exported(const Symbol& symbol);
 
   //! Return binary's exported symbols (iterator over LIEF::MachO::Symbol)
-  it_exported_symbols       exported_symbols();
-  it_const_exported_symbols exported_symbols() const;
+  it_exported_symbols exported_symbols() {
+    return {symbols_, [] (const std::unique_ptr<Symbol>& symbol) {
+      return is_exported(*symbol); }
+    };
+  }
+  it_const_exported_symbols exported_symbols() const {
+    return {symbols_, [] (const std::unique_ptr<Symbol>& symbol) {
+      return is_exported(*symbol);
+    }};
+  }
 
   //! Check if the given symbol is an imported one
   static bool is_imported(const Symbol& symbol);
 
   //! Return binary's imported symbols (iterator over LIEF::MachO::Symbol)
-  it_imported_symbols imported_symbols();
-  it_const_imported_symbols imported_symbols() const;
+  it_imported_symbols imported_symbols() {
+    return {symbols_, [] (const std::unique_ptr<Symbol>& symbol) {
+      return is_imported(*symbol);
+    }};
+  }
+
+  it_const_imported_symbols imported_symbols() const {
+    return {symbols_, [] (const std::unique_ptr<Symbol>& symbol) {
+      return is_imported(*symbol);
+    }};
+  }
 
   //! Return binary imported libraries (MachO::DylibCommand)
-  it_libraries libraries();
-  it_const_libraries libraries() const;
+  it_libraries libraries() {
+    return libraries_;
+  }
+
+  it_const_libraries libraries() const {
+    return libraries_;
+  }
 
   //! Return an iterator over the SegmentCommand
-  it_segments       segments();
-  it_const_segments segments() const;
+  it_segments segments() {
+    return segments_;
+  }
+  it_const_segments segments() const {
+    return segments_;
+  }
 
   //! Return an iterator over the MachO::Section
-  it_sections       sections();
-  it_const_sections sections() const;
+  it_sections sections() {
+    return sections_;
+  }
+  it_const_sections sections() const {
+    return sections_;
+  }
 
   //! Return an iterator over the MachO::Relocation
   it_relocations       relocations();
@@ -244,13 +294,13 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Reconstruct the binary object and return its content as bytes
   std::vector<uint8_t> raw();
 
-  //! Check if the current binary has the given MachO::LOAD_COMMAND_TYPES
-  bool has(LOAD_COMMAND_TYPES type) const;
+  //! Check if the current binary has the given MachO::LoadCommand::TYPE
+  bool has(LoadCommand::TYPE type) const;
 
-  //! Return the LoadCommand associated with the given LOAD_COMMAND_TYPES
+  //! Return the LoadCommand associated with the given LoadCommand::TYPE
   //! or a nullptr if the command can't be found.
-  const LoadCommand* get(LOAD_COMMAND_TYPES type) const;
-  LoadCommand* get(LOAD_COMMAND_TYPES type);
+  const LoadCommand* get(LoadCommand::TYPE type) const;
+  LoadCommand* get(LoadCommand::TYPE type);
 
   //! Insert a new LoadCommand
   LoadCommand* add(const LoadCommand& command);
@@ -294,8 +344,8 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Remove the given LoadCommand
   bool remove(const LoadCommand& command);
 
-  //! Remove **all** LoadCommand with the given type (MachO::LOAD_COMMAND_TYPES)
-  bool remove(LOAD_COMMAND_TYPES type);
+  //! Remove **all** LoadCommand with the given type (MachO::LoadCommand::TYPE)
+  bool remove(LoadCommand::TYPE type);
 
   //! Remove the Load Command at the provided ``index``
   bool remove_command(size_t index);
@@ -323,7 +373,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   std::string loader() const;
 
   //! Check if a section with the given name exists
-  bool has_section(const std::string& name) const;
+  bool has_section(const std::string& name) const {
+    return get_section(name) != nullptr;
+  }
 
   //! Return the section from the given name of a nullptr
   //! if the section can't be found.
@@ -341,7 +393,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   const Section* get_section(const std::string& segname, const std::string& secname) const;
 
   //! Check if a segment with the given name exists
-  bool has_segment(const std::string& name) const;
+  bool has_segment(const std::string& name) const {
+    return get_segment(name) != nullptr;
+  }
 
   //! Return the segment from the given name
   const SegmentCommand* get_segment(const std::string& name) const;
@@ -396,7 +450,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   size_t segment_index(const SegmentCommand& segment) const;
 
   //! Return binary's *fat offset*. ``0`` if not relevant.
-  uint64_t fat_offset() const;
+  uint64_t fat_offset() const {
+    return fat_offset_;
+  }
 
   //! Return the binary's SegmentCommand which encompasses the given virtual address
   //! or a nullptr if not found.
@@ -447,21 +503,31 @@ class LIEF_API Binary : public LIEF::Binary  {
   uint64_t entrypoint() const override;
 
   //! Check if the binary is position independent
-  bool is_pie() const override;
+  bool is_pie() const override {
+    return header().has(Header::FLAGS::PIE);
+  }
 
   //! Check if the binary uses ``NX`` protection
-  bool has_nx() const override;
+  bool has_nx() const override {
+    return !has_nx_stack();
+  }
 
   /// Return True if the **heap** is flagged as non-executable. False otherwise
-  bool has_nx_stack() const;
+  bool has_nx_stack() const {
+    return !header().has(Header::FLAGS::ALLOW_STACK_EXECUTION);
+  }
 
   /// Return True if the **stack** is flagged as non-executable. False otherwise
-  bool has_nx_heap() const;
+  bool has_nx_heap() const {
+    return !header().has(Header::FLAGS::NO_HEAP_EXECUTION);
+  }
 
   //! ``true`` if the binary has an entrypoint.
   //!
   //! Basically for libraries it will return ``false``
-  bool has_entrypoint() const;
+  bool has_entrypoint() const {
+    return has_main_command() || has_thread_command();
+  }
 
   //! ``true`` if the binary has a MachO::UUIDCommand command.
   bool has_uuid() const;
@@ -649,8 +715,12 @@ class LIEF_API Binary : public LIEF::Binary  {
   template<class CMD, class Func>
   LIEF_LOCAL Binary& for_commands(Func f);
 
-  LoadCommand*       operator[](LOAD_COMMAND_TYPES type);
-  const LoadCommand* operator[](LOAD_COMMAND_TYPES type) const;
+  LoadCommand* operator[](LoadCommand::TYPE type) {
+    return get(type);
+  }
+  const LoadCommand* operator[](LoadCommand::TYPE type) const {
+    return get(type);
+  }
 
   //! Return the list of the MachO's constructors
   LIEF::Binary::functions_t ctor_functions() const override;
@@ -661,7 +731,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Return the functions found in the ``__unwind_info`` section
   LIEF::Binary::functions_t unwind_functions() const;
 
-  //! ``true`` if the binary has a LOAD_COMMAND_TYPES::LC_FILESET_ENTRY command
+  //! ``true`` if the binary has a LoadCommand::TYPE::FILESET_ENTRY command
   bool has_filesets() const;
 
   //! Name associated with the LC_FILESET_ENTRY binary

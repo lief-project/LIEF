@@ -53,31 +53,46 @@ class LIEF_API DyldExportsTrie : public LoadCommand {
   //! Iterator which outputs const ExportInfo&
   using it_const_export_info = const_ref_iterator<const export_info_t&, ExportInfo*>;
 
-  DyldExportsTrie();
+  DyldExportsTrie() = default;
   DyldExportsTrie(const details::linkedit_data_command& cmd);
-  DyldExportsTrie* clone() const override;
+  std::unique_ptr<LoadCommand> clone() const override {
+    return std::unique_ptr<DyldExportsTrie>(new DyldExportsTrie(*this));
+  }
 
-  void swap(DyldExportsTrie& other);
+  void swap(DyldExportsTrie& other) noexcept;
 
   ~DyldExportsTrie() override;
 
   //! Offset of the LC_DYLD_EXPORTS_TRIE.
   //! This offset should point in the __LINKEDIT segment
-  uint32_t data_offset() const;
+  uint32_t data_offset() const {
+    return data_offset_;
+  }
 
   //! Size of the LC_DYLD_EXPORTS_TRIE payload.
-  uint32_t data_size() const;
+  uint32_t data_size() const {
+    return data_size_;
+  }
 
-  void data_offset(uint32_t offset);
-  void data_size(uint32_t size);
+  void data_offset(uint32_t offset) {
+    data_offset_ = offset;
+  }
+  void data_size(uint32_t size) {
+    data_size_ = size;
+  }
 
   span<const uint8_t> content() const {
     return content_;
   }
 
   //! Iterator over the ExportInfo entries
-  it_export_info       exports();
-  it_const_export_info exports() const;
+  it_export_info exports() {
+    return export_info_;
+  }
+
+  it_const_export_info exports() const {
+    return export_info_;
+  }
 
   //! Print the exports trie in a humman-readable way
   std::string show_export_trie() const;
@@ -86,12 +101,13 @@ class LIEF_API DyldExportsTrie : public LoadCommand {
   //! See also: LIEF::MachO::Binary::add_exported_function
   void add(std::unique_ptr<ExportInfo> info);
 
-
   void accept(Visitor& visitor) const override;
 
   std::ostream& print(std::ostream& os) const override;
 
-  static bool classof(const LoadCommand* cmd);
+  static bool classof(const LoadCommand* cmd) {
+    return cmd->command() == LoadCommand::TYPE::DYLD_EXPORTS_TRIE;
+  }
 
   private:
   DyldExportsTrie& operator=(DyldExportsTrie other);

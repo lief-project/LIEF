@@ -4,7 +4,7 @@ from utils import get_sample
 import hashlib
 
 def test_function_starts():
-    dd = lief.parse(get_sample('MachO/MachO64_x86-64_binary_dd.bin'))
+    dd = lief.MachO.parse(get_sample('MachO/MachO64_x86-64_binary_dd.bin')).at(0)
 
     functions = [
         0x100001581, 0x1000016cc, 0x1000017cc,
@@ -28,17 +28,17 @@ def test_function_starts():
 
 
 def test_version_min():
-    sshd = lief.parse(get_sample('MachO/MachO64_x86-64_binary_sshd.bin'))
+    sshd = lief.MachO.parse(get_sample('MachO/MachO64_x86-64_binary_sshd.bin')).at(0)
     assert sshd.version_min.version == [10, 11, 0]
     assert sshd.version_min.sdk == [10, 11, 0]
 
 def test_va2offset():
-    dd = lief.parse(get_sample('MachO/MachO64_x86-64_binary_dd.bin'))
+    dd = lief.MachO.parse(get_sample('MachO/MachO64_x86-64_binary_dd.bin')).at(0)
     assert dd.virtual_address_to_offset(0x100004054) == 0x4054
 
 
 def test_thread_cmd():
-    micromacho = lief.parse(get_sample('MachO/MachO32_x86_binary_micromacho.bin'))
+    micromacho = lief.MachO.parse(get_sample('MachO/MachO32_x86_binary_micromacho.bin')).at(0)
     assert micromacho.has_thread_command
     assert micromacho.thread_command.pc == 0x68
     assert micromacho.thread_command.flavor == 1
@@ -46,18 +46,18 @@ def test_thread_cmd():
     assert micromacho.entrypoint == 0x68
 
 def test_rpath_cmd():
-    rpathmacho = lief.parse(get_sample('MachO/MachO64_x86-64_binary_rpathtest.bin'))
+    rpathmacho = lief.MachO.parse(get_sample('MachO/MachO64_x86-64_binary_rpathtest.bin')).at(0)
     assert rpathmacho.rpath.path == "@executable_path/../lib"
 
 def test_rpaths():
-    macho = lief.parse(get_sample('MachO/rpath_291.bin'))
+    macho = lief.MachO.parse(get_sample('MachO/rpath_291.bin')).at(0)
     assert len(macho.rpaths) == 2
 
     assert macho.rpaths[0].path == "/tmp"
     assert macho.rpaths[1].path == "/var"
 
 def test_relocations():
-    helloworld = lief.parse(get_sample('MachO/MachO64_x86-64_object_HelloWorld64.o'))
+    helloworld = lief.MachO.parse(get_sample('MachO/MachO64_x86-64_object_HelloWorld64.o')).at(0)
 
     # __text Section
     text_section = helloworld.get_section("__text")
@@ -69,7 +69,7 @@ def test_relocations():
     assert relocations[0].type ==    2
     assert relocations[0].size ==    32
 
-    assert not relocations[0].is_scattered
+    assert not relocations[0].is_scattered # type: ignore[attr-defined]
 
     assert relocations[0].has_symbol
     assert relocations[0].symbol.name == "_printf"
@@ -82,7 +82,7 @@ def test_relocations():
     assert relocations[1].type ==    1
     assert relocations[1].size ==    32
 
-    assert not relocations[1].is_scattered
+    assert not relocations[1].is_scattered # type: ignore[attr-defined]
 
     assert not relocations[1].has_symbol
 
@@ -100,7 +100,7 @@ def test_relocations():
     assert relocations[0].type ==    0
     assert relocations[0].size ==    32
 
-    assert not relocations[0].is_scattered
+    assert not relocations[0].is_scattered # type: ignore[attr-defined]
 
     assert not relocations[0].has_symbol
 
@@ -108,7 +108,7 @@ def test_relocations():
     assert relocations[0].section.name == "__cstring"
 
 def test_data_in_code():
-    binary = lief.parse(get_sample('MachO/MachO32_ARM_binary_data-in-code-LLVM.bin'))
+    binary = lief.MachO.parse(get_sample('MachO/MachO32_ARM_binary_data-in-code-LLVM.bin')).at(0)
 
     assert binary.has_data_in_code
     dcode = binary.data_in_code
@@ -136,7 +136,7 @@ def test_data_in_code():
 
 
 def test_segment_split_info():
-    binary = lief.parse(get_sample('MachO/FAT_MachO_x86_x86-64_library_libdyld.dylib'))
+    binary = lief.MachO.parse(get_sample('MachO/FAT_MachO_x86_x86-64_library_libdyld.dylib')).at(1)
 
     assert binary.has_segment_split_info
     ssi = binary.segment_split_info
@@ -144,17 +144,17 @@ def test_segment_split_info():
     assert ssi.data_size == 292
 
 def test_dyld_environment():
-    binary = lief.parse(get_sample('MachO/MachO64_x86-64_binary_safaridriver.bin'))
+    binary = lief.MachO.parse(get_sample('MachO/MachO64_x86-64_binary_safaridriver.bin')).at(0)
     assert binary.has_dyld_environment
     assert binary.dyld_environment.value == "DYLD_VERSIONED_FRAMEWORK_PATH=/System/Library/StagedFrameworks/Safari"
 
 def test_sub_framework():
-    binary = lief.parse(get_sample('MachO/FAT_MachO_x86_x86-64_library_libdyld.dylib'))
+    binary = lief.MachO.parse(get_sample('MachO/FAT_MachO_x86_x86-64_library_libdyld.dylib')).at(0)
     assert binary.has_sub_framework
     assert binary.sub_framework.umbrella == "System"
 
 def test_unwind():
-    binary = lief.parse(get_sample('MachO/MachO64_x86-64_binary_sshd.bin'))
+    binary = lief.MachO.parse(get_sample('MachO/MachO64_x86-64_binary_sshd.bin')).at(0)
 
     functions = sorted(binary.functions, key=lambda f: f.address)
 
@@ -186,18 +186,18 @@ def test_build_version():
     assert tools[0].tool == lief.MachO.BuildToolVersion.TOOLS.LD
 
 def test_segment_index():
-    binary = lief.parse(get_sample('MachO/MachO64_x86-64_binary_safaridriver.bin'))
+    binary = lief.MachO.parse(get_sample('MachO/MachO64_x86-64_binary_safaridriver.bin')).at(0)
     assert binary.get_segment("__LINKEDIT").index == len(binary.segments) - 1
     original_data_index = binary.get_segment("__DATA").index
 
     # Add a new segment (it should be placed right beore __LINKEDIT)
     segment = lief.MachO.SegmentCommand("__LIEF", [0x60] * 0x100)
-    segment = binary.add(segment)
+    segment = binary.add(segment) # type: ignore[assignment]
     assert segment.index == binary.get_segment("__LINKEDIT").index - 1
     assert segment.index == original_data_index + 1
 
     # discard changes
-    binary = lief.parse(get_sample('MachO/MachO64_x86-64_binary_safaridriver.bin'))
+    binary = lief.MachO.parse(get_sample('MachO/MachO64_x86-64_binary_safaridriver.bin')).at(0)
     text_segment = binary.get_segment("__TEXT")
     original_data_index = binary.get_segment("__DATA").index
 
@@ -217,7 +217,7 @@ def test_offset_to_va():
     # |__LINKEDIT  |0x100010000    |0x4000      |0xc000|0x130
 
     sample = get_sample("MachO/MachO64_x86-64_binary_large-bss.bin")
-    large_bss = lief.parse(sample)
+    large_bss = lief.MachO.parse(sample).at(0)
     assert large_bss.segment_from_offset(0).name      == "__TEXT"
     assert large_bss.segment_from_offset(0x4001).name == "__DATA_CONST"
     assert large_bss.segment_from_offset(0xc000).name == "__LINKEDIT"
@@ -226,13 +226,13 @@ def test_offset_to_va():
 
 def test_get_section():
     sample = get_sample("MachO/MachO64_x86-64_binary_large-bss.bin")
-    macho = lief.parse(sample)
+    macho = lief.MachO.parse(sample).at(0)
     assert macho.get_section("__DATA_CONST", "__got") is not None
 
 
 
 def test_segment_add_section():
-    binary = lief.parse(get_sample('MachO/MachO64_x86-64_binary_safaridriver.bin'))
+    binary = lief.MachO.parse(get_sample('MachO/MachO64_x86-64_binary_safaridriver.bin')).at(0)
 
     section = lief.MachO.Section("__bar", [1, 2, 3])
 
@@ -240,7 +240,7 @@ def test_segment_add_section():
     new_segment = lief.MachO.SegmentCommand("__FOO")
 
     for segment in (existing_segment, new_segment):
-        assert not segment.has_section(section.name)
+        assert not segment.has_section(section.name) # type: ignore[arg-type]
         assert not segment.has(section)
         assert segment.numberof_sections == len(segment.sections)
 
@@ -248,13 +248,13 @@ def test_segment_add_section():
 
         section = segment.add_section(section)
         assert segment.numberof_sections == numberof_sections + 1
-        assert segment.has_section(section.name)
+        assert segment.has_section(section.name) # type: ignore[arg-type]
         assert segment.has(section)
         assert section in segment.sections
 
 def test_issue_728():
-    x86_64_binary = lief.parse(get_sample('MachO/MachO64_x86-64_binary_safaridriver.bin'))
-    arm64_binary = lief.MachO.parse(get_sample('MachO/FAT_MachO_arm-arm64-binary-helloworld.bin')).take(lief.MachO.CPU_TYPES.ARM64)
+    x86_64_binary = lief.MachO.parse(get_sample('MachO/MachO64_x86-64_binary_safaridriver.bin')).at(0)
+    arm64_binary = lief.MachO.parse(get_sample('MachO/FAT_MachO_arm-arm64-binary-helloworld.bin')).take(lief.MachO.Header.CPU_TYPE.ARM64)
 
     segment = lief.MachO.SegmentCommand("__FOO")
     segment.add_section(lief.MachO.Section("__bar", [1, 2, 3]))
@@ -265,7 +265,7 @@ def test_issue_728():
 
 def test_twolevel_hints():
     sample = lief.MachO.parse(get_sample("MachO/ios1-expr.bin"))[0]
-    tw_hints: lief.MachO.TwoLevelHints = sample[lief.MachO.LOAD_COMMAND_TYPES.TWOLEVEL_HINTS]
+    tw_hints: lief.MachO.TwoLevelHints = sample[lief.MachO.LoadCommand.TYPE.TWOLEVEL_HINTS]
     assert tw_hints is not None
     print(tw_hints)
     hints = tw_hints.hints

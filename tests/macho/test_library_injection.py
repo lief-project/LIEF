@@ -44,7 +44,7 @@ def compile(output, extra_flags=None):
 @pytest.mark.skipif(not is_osx(), reason="requires OSX")
 def test_ssh(tmp_path):
     bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_sshd.bin"))
-    original = lief.parse(bin_path.as_posix())
+    original = lief.MachO.parse(bin_path.as_posix()).at(0)
     output = f"{tmp_path}/sshd_injected.bin"
     library_path = f"{tmp_path}/libexample.dylib"
     compile(library_path, extra_flags=["-arch", "x86_64"])
@@ -53,7 +53,7 @@ def test_ssh(tmp_path):
 
     original.remove_signature()
     original.write(output)
-    new = lief.parse(output)
+    new = lief.MachO.parse(output).at(0)
 
     checked, err = lief.MachO.check_layout(new)
     assert checked, err
@@ -66,7 +66,7 @@ def test_ssh(tmp_path):
 @pytest.mark.skipif(not is_apple_m1(), reason="requires Apple M1")
 def test_crypt_and_hash(tmp_path):
     bin_path = pathlib.Path(get_sample("MachO/9edfb04c55289c6c682a25211a4b30b927a86fe50b014610d04d6055bd4ac23d_crypt_and_hash.macho"))
-    original = lief.parse(bin_path.as_posix())
+    original = lief.MachO.parse(bin_path.as_posix()).at(0)
     output = f"{tmp_path}/crypt_and_hash.bin"
     library_path = f"{tmp_path}/libexample.dylib"
     compile(library_path, extra_flags=["-arch", "arm64"])
@@ -75,7 +75,7 @@ def test_crypt_and_hash(tmp_path):
 
     original.remove_signature()
     original.write(output)
-    new = lief.parse(output)
+    new = lief.MachO.parse(output).at(0)
 
     checked, err = lief.MachO.check_layout(new)
     assert checked, err

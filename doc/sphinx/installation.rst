@@ -39,7 +39,7 @@ One can also compile and install from source as follows
   # Or pip+git:
   $ pip install git+https://github.com/lief-project/LIEF.git#subdirectory=api/python
 
-For more details about the compilation options, see the :ref:`compilation-ref` section.
+For more details about the compilation options, see the :ref:`compilation_ref` section.
 
 
 CMake Integration

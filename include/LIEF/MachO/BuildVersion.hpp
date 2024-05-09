@@ -20,7 +20,6 @@
 #include <array>
 
 #include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 #include "LIEF/MachO/BuildToolVersion.hpp"
@@ -51,43 +50,64 @@ class LIEF_API BuildVersion : public LoadCommand {
   };
 
   public:
-  BuildVersion();
+  BuildVersion() = default;
   BuildVersion(const details::build_version_command& version_cmd);
   BuildVersion(const PLATFORMS platform,
                const version_t &minos,
                const version_t &sdk,
                const tools_list_t &tools);
 
-  BuildVersion& operator=(const BuildVersion& copy);
-  BuildVersion(const BuildVersion& copy);
+  BuildVersion& operator=(const BuildVersion& copy) = default;
+  BuildVersion(const BuildVersion& copy) = default;
 
-  BuildVersion* clone() const override;
+  std::unique_ptr<LoadCommand> clone() const override {
+    return std::unique_ptr<BuildVersion>(new BuildVersion(*this));
+  }
 
-  version_t minos() const;
-  void minos(version_t version);
+  version_t minos() const {
+    return minos_;
+  }
 
-  version_t sdk() const;
-  void sdk(version_t version);
+  void minos(version_t version) {
+    minos_ = version;
+  }
 
-  PLATFORMS platform() const;
-  void platform(PLATFORMS plat);
+  version_t sdk() const {
+    return sdk_;
+  }
+  void sdk(version_t version) {
+    sdk_ = version;
+  }
 
-  tools_list_t tools() const;
+  PLATFORMS platform() const {
+    return platform_;
+  }
+  void platform(PLATFORMS plat) {
+    platform_ = plat;
+  }
 
-  ~BuildVersion() override;
+  const tools_list_t& tools() const {
+    return tools_;
+  }
+
+  ~BuildVersion() override = default;
 
   void accept(Visitor& visitor) const override;
 
   std::ostream& print(std::ostream& os) const override;
 
-  static bool classof(const LoadCommand* cmd);
+  static bool classof(const LoadCommand* cmd) {
+    return cmd->command() == LoadCommand::TYPE::BUILD_VERSION;
+  }
 
   private:
-  PLATFORMS platform_{PLATFORMS::UNKNOWN};
+  PLATFORMS platform_ = PLATFORMS::UNKNOWN;
   version_t minos_;
   version_t sdk_;
   tools_list_t tools_;
 };
+
+LIEF_API const char* to_string(BuildVersion::PLATFORMS e);
 
 }
 }

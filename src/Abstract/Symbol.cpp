@@ -19,60 +19,12 @@
 #include "LIEF/Abstract/Symbol.hpp"
 
 namespace LIEF {
-Symbol::Symbol() = default;
-Symbol::Symbol(const Symbol&) = default;
-Symbol& Symbol::operator=(const Symbol&) = default;
-Symbol::~Symbol() = default;
 
-Symbol::Symbol(std::string name) :
-  name_{std::move(name)}
-{}
-
-Symbol::Symbol(std::string name, uint64_t value) :
-  name_{std::move(name)},
-  value_{value}
-{}
-
-Symbol::Symbol(std::string name, uint64_t value, uint64_t size) :
-  name_{std::move(name)},
-  value_{value},
-  size_{size}
-{}
-
-void Symbol::swap(Symbol& other) {
+void Symbol::swap(Symbol& other) noexcept {
   std::swap(name_,   other.name_);
   std::swap(value_,  other.value_);
   std::swap(size_,   other.size_);
 }
-
-const std::string& Symbol::name() const {
-  return name_;
-}
-
-std::string& Symbol::name() {
-  return name_;
-}
-
-void Symbol::name(const std::string& name) {
-  name_ = name;
-}
-
-uint64_t Symbol::value() const {
-  return value_;
-}
-
-void Symbol::value(uint64_t value) {
-  value_ = value;
-}
-
-uint64_t Symbol::size() const {
-  return size_;
-}
-
-void Symbol::size(uint64_t value) {
-  size_ = value;
-}
-
 
 void Symbol::accept(Visitor& visitor) const {
   visitor.visit(*this);

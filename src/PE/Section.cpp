@@ -119,13 +119,13 @@ bool Section::is_type(PE_SECTION_TYPES type) const {
   return types_.count(type) != 0;
 }
 
-void Section::name(const std::string& name) {
+void Section::name(std::string name) {
   if (name.size() > MAX_SECTION_NAME) {
     LIEF_ERR("The max size of a section's name is {} vs {}", MAX_SECTION_NAME,
              name.size());
     return;
   }
-  name_ = name;
+  name_ = std::move(name);
 }
 
 std::vector<Section::CHARACTERISTICS> Section::characteristics_list() const {

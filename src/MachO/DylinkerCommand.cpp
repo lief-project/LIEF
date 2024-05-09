@@ -23,55 +23,25 @@
 namespace LIEF {
 namespace MachO {
 
-DylinkerCommand::DylinkerCommand() = default;
-DylinkerCommand& DylinkerCommand::operator=(const DylinkerCommand&) = default;
-DylinkerCommand::DylinkerCommand(const DylinkerCommand&) = default;
-DylinkerCommand::~DylinkerCommand() = default;
-
 DylinkerCommand::DylinkerCommand(const details::dylinker_command& cmd) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(cmd.cmd), cmd.cmdsize}
+  LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize}
 {}
 
 DylinkerCommand::DylinkerCommand(std::string name) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(LIEF::MachO::LOAD_COMMAND_TYPES::LC_LOAD_DYLINKER),
+  LoadCommand::LoadCommand{LoadCommand::TYPE::LOAD_DYLINKER,
                            static_cast<uint32_t>(align(sizeof(details::dylinker_command) + name.size() + 1, sizeof(uint64_t)))},
-  name_{name}
+  name_{std::move(name)}
 {
   this->data(LoadCommand::raw_t(size(), 0));
 }
-
-DylinkerCommand* DylinkerCommand::clone() const {
-  return new DylinkerCommand(*this);
-}
-
-const std::string& DylinkerCommand::name() const {
-  return name_;
-}
-
-void DylinkerCommand::name(const std::string& name) {
-  name_ = name;
-}
-
 
 void DylinkerCommand::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
-
-bool DylinkerCommand::classof(const LoadCommand* cmd) {
-  // This must be sync with BinaryParser.tcc
-  const LOAD_COMMAND_TYPES type = cmd->command();
-  return type == LOAD_COMMAND_TYPES::LC_LOAD_DYLINKER ||
-         type == LOAD_COMMAND_TYPES::LC_ID_DYLINKER;
-}
-
 std::ostream& DylinkerCommand::print(std::ostream& os) const {
   LoadCommand::print(os);
-  os << std::hex;
-  os << std::left
-     << std::setw(35) << name();
+  os << name();
   return os;
 }
 

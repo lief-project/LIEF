@@ -43,12 +43,12 @@ uint32_t get_pagesize(const PE::Binary& pe) {
 
 uint32_t get_pagesize(const MachO::Binary& macho) {
   switch (macho.header().cpu_type()) {
-    case MachO::CPU_TYPES::CPU_TYPE_I386:
-    case MachO::CPU_TYPES::CPU_TYPE_X86_64:
+    case MachO::Header::CPU_TYPE::X86:
+    case MachO::Header::CPU_TYPE::X86_64:
       return 4_KB;
 
-    case MachO::CPU_TYPES::CPU_TYPE_ARM:
-    case MachO::CPU_TYPES::CPU_TYPE_ARM64:
+    case MachO::Header::CPU_TYPE::ARM:
+    case MachO::Header::CPU_TYPE::ARM64:
       return 16_KB;
 
     default:

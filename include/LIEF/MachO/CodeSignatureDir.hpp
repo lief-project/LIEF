@@ -15,11 +15,9 @@
  */
 #ifndef LIEF_MACHO_CODE_SIGNATURE_DIR_COMMAND_H
 #define LIEF_MACHO_CODE_SIGNATURE_DIR_COMMAND_H
-#include <vector>
 #include <ostream>
 
 #include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
 #include "LIEF/span.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
@@ -41,13 +39,15 @@ class LIEF_API CodeSignatureDir : public LoadCommand {
   friend class LinkEdit;
 
   public:
-  CodeSignatureDir();
+  CodeSignatureDir() = default;
   CodeSignatureDir(const details::linkedit_data_command& cmd);
 
-  CodeSignatureDir& operator=(const CodeSignatureDir& copy);
-  CodeSignatureDir(const CodeSignatureDir& copy);
+  CodeSignatureDir& operator=(const CodeSignatureDir& copy) = default;
+  CodeSignatureDir(const CodeSignatureDir& copy) = default;
 
-  CodeSignatureDir* clone() const override;
+  std::unique_ptr<LoadCommand> clone() const override {
+    return std::unique_ptr<CodeSignatureDir>(new CodeSignatureDir(*this));
+  }
 
   //! Offset in the binary where the signature starts
   uint32_t data_offset() const {
@@ -75,14 +75,15 @@ class LIEF_API CodeSignatureDir : public LoadCommand {
     return content_;
   }
 
-  ~CodeSignatureDir() override;
-
+  ~CodeSignatureDir() override = default;
 
   void accept(Visitor& visitor) const override;
 
   std::ostream& print(std::ostream& os) const override;
 
-  static bool classof(const LoadCommand* cmd);
+  static bool classof(const LoadCommand* cmd) {
+    return cmd->command() == LoadCommand::TYPE::DYLIB_CODE_SIGN_DRS;
+  }
 
   private:
   uint32_t      data_offset_ = 0;

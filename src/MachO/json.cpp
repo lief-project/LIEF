@@ -107,7 +107,7 @@ void JsonVisitor::visit(const Binary& binary) {
 void JsonVisitor::visit(const Header& header) {
 
   std::vector<json> flags;
-  for (HEADER_FLAGS f : header.flags_list()) {
+  for (Header::FLAGS f : header.flags_list()) {
     flags.emplace_back(to_string(f));
   }
   node_["magic"]       = to_string(header.magic());
@@ -164,7 +164,7 @@ void JsonVisitor::visit(const SegmentCommand& segment) {
 void JsonVisitor::visit(const Section& section) {
 
   std::vector<json> flags;
-  for (MACHO_SECTION_FLAGS f : section.flags_list()) {
+  for (Section::FLAGS f : section.flags_list()) {
     flags.emplace_back(to_string(f));
   }
   node_["name"]                 = section.name();

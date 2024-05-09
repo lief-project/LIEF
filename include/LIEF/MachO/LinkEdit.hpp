@@ -15,17 +15,11 @@
  */
 #ifndef LIEF_MACHO_LINK_EDIT_H
 #define LIEF_MACHO_LINK_EDIT_H
-
-#include <string>
-#include <vector>
-#include <ostream>
 #include <memory>
 
-#include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/MachO/SegmentCommand.hpp"
-
 
 namespace LIEF {
 namespace MachO {
@@ -55,22 +49,28 @@ class LIEF_API LinkEdit : public SegmentCommand {
   using SegmentCommand::SegmentCommand;
 
   LinkEdit& operator=(LinkEdit other);
-  LinkEdit(const LinkEdit& copy);
+  LinkEdit(const LinkEdit& copy) = default;
 
-  void swap(LinkEdit& other);
+  void swap(LinkEdit& other) noexcept;
 
-  SegmentCommand* clone() const override;
+  std::unique_ptr<LoadCommand> clone() const override {
+    return std::unique_ptr<LinkEdit>(new LinkEdit(*this));
+  }
 
-  ~LinkEdit() override;
+  ~LinkEdit() override = default;
 
+  static bool classof(const LoadCommand* cmd) {
+    return SegmentCommand::classof(cmd);
+  }
 
-  static bool classof(const LoadCommand* cmd);
-  static bool segmentof(const SegmentCommand& segment);
+  static bool segmentof(const SegmentCommand& segment) {
+    return segment.name() == "__LINKEDIT";
+  }
 
   private:
-
-  LIEF_LOCAL void update_data(update_fnc_t f) override;
-  LIEF_LOCAL void update_data(update_fnc_ws_t f, size_t where, size_t size) override;
+  LIEF_LOCAL void update_data(const update_fnc_t& f) override;
+  LIEF_LOCAL void update_data(const update_fnc_ws_t& f,
+                              size_t where, size_t size) override;
 
   //x-ref to keep the spans in a consistent state
   DyldInfo* dyld_                    = nullptr;

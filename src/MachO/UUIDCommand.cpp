@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-
-#include "LIEF/MachO/hash.hpp"
+#include "spdlog/fmt/fmt.h"
+#include "LIEF/Visitor.hpp"
 
 #include "LIEF/MachO/UUIDCommand.hpp"
 #include "MachO/Structures.hpp"
@@ -23,50 +22,23 @@
 namespace LIEF {
 namespace MachO {
 
-UUIDCommand::UUIDCommand() = default;
-UUIDCommand& UUIDCommand::operator=(const UUIDCommand&) = default;
-UUIDCommand::UUIDCommand(const UUIDCommand&) = default;
-UUIDCommand::~UUIDCommand() = default;
 
 UUIDCommand::UUIDCommand(const details::uuid_command& uuid) :
-  LoadCommand::LoadCommand{static_cast<LOAD_COMMAND_TYPES>(uuid.cmd), uuid.cmdsize}
+  LoadCommand::LoadCommand{LoadCommand::TYPE(uuid.cmd), uuid.cmdsize}
 {
   std::copy(std::begin(uuid.uuid), std::end(uuid.uuid), std::begin(uuid_));
 }
-
-UUIDCommand* UUIDCommand::clone() const {
-  return new UUIDCommand(*this);
-}
-
-uuid_t UUIDCommand::uuid() const {
-  return uuid_;
-}
-
-void UUIDCommand::uuid(const uuid_t& uuid) {
-  uuid_ = uuid;
-}
-
 
 void UUIDCommand::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
-
-bool UUIDCommand::classof(const LoadCommand* cmd) {
-  // This must be sync with BinaryParser.tcc
-  const LOAD_COMMAND_TYPES type = cmd->command();
-  return type == LOAD_COMMAND_TYPES::LC_UUID;
-}
-
-
 std::ostream& UUIDCommand::print(std::ostream& os) const {
   LoadCommand::print(os);
   for (uint32_t x : uuid()) {
-    os << std::setw(2) << std::setfill('0') << std::hex << static_cast<uint32_t>(x) << " ";
+    os << fmt::format("{:02x}", x) << ' ';
   }
-  os << std::setfill(' ');
+  os << ' ';
   return os;
 }
 

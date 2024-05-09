@@ -13,30 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/MachO/hash.hpp"
+#include "LIEF/Visitor.hpp"
 #include "LIEF/MachO/RelocationDyld.hpp"
+#include "LIEF/MachO/DyldInfo.hpp"
 
 namespace LIEF {
 namespace MachO {
 
-RelocationDyld::~RelocationDyld() = default;
-
-RelocationDyld::RelocationDyld() = default;
-RelocationDyld& RelocationDyld::operator=(const RelocationDyld&) = default;
-RelocationDyld::RelocationDyld(const RelocationDyld&) = default;
-
 bool RelocationDyld::is_pc_relative() const {
-  return static_cast<REBASE_TYPES>(type()) == REBASE_TYPES::REBASE_TYPE_TEXT_PCREL32;
-}
-
-
-Relocation* RelocationDyld::clone() const {
-  return new RelocationDyld(*this);
-}
-
-
-RELOCATION_ORIGINS RelocationDyld::origin() const {
-  return RELOCATION_ORIGINS::ORIGIN_DYLDINFO;
+  return DyldInfo::REBASE_TYPE(type()) == DyldInfo::REBASE_TYPE::TEXT_PCREL32;
 }
 
 void RelocationDyld::pc_relative(bool val) {
@@ -45,12 +30,12 @@ void RelocationDyld::pc_relative(bool val) {
   }
 
   if (val) {
-    type_ = static_cast<uint32_t>(REBASE_TYPES::REBASE_TYPE_TEXT_PCREL32);
+    type_ = uint8_t(DyldInfo::REBASE_TYPE::TEXT_PCREL32);
   } else {
     if (size() == 32) {
-      type_ = static_cast<uint32_t>(REBASE_TYPES::REBASE_TYPE_TEXT_ABSOLUTE32);
+      type_ = uint8_t(DyldInfo::REBASE_TYPE::TEXT_ABSOLUTE32);
     } else {
-      type_ = static_cast<uint32_t>(REBASE_TYPES::REBASE_TYPE_POINTER);
+      type_ = uint8_t(DyldInfo::REBASE_TYPE::POINTER);
     }
   }
 }
@@ -58,9 +43,6 @@ void RelocationDyld::pc_relative(bool val) {
 void RelocationDyld::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
-
-
-
 
 bool RelocationDyld::operator<(const RelocationDyld& rhs) const {
   // From ld/OutputFile.h
@@ -70,31 +52,12 @@ bool RelocationDyld::operator<(const RelocationDyld& rhs) const {
   return address() < rhs.address();
 }
 
-bool RelocationDyld::operator>=(const RelocationDyld& rhs) const {
-  return !(*this < rhs);
-}
-
 bool RelocationDyld::operator>(const RelocationDyld& rhs) const {
   if (type() != rhs.type()) {
     return type() > rhs.type();
   }
   return address() > rhs.address();
 }
-
-bool RelocationDyld::operator<=(const RelocationDyld& rhs) const {
-  return !(*this > rhs);
-}
-
-
-bool RelocationDyld::classof(const Relocation& r) {
-  return r.origin() == RELOCATION_ORIGINS::ORIGIN_DYLDINFO;
-}
-
-
-std::ostream& RelocationDyld::print(std::ostream& os) const {
-  return Relocation::print(os);
-}
-
 
 }
 }

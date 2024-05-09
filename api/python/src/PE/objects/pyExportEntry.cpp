@@ -43,7 +43,7 @@ void create<ExportEntry>(nb::module_& m) {
         [] (const ExportEntry& obj) {
           return LIEF::py::safe_string(obj.name());
         },
-        nb::overload_cast<const std::string&>(&ExportEntry::name))
+        nb::overload_cast<std::string>(&ExportEntry::name))
 
     .def_prop_rw("ordinal",
         nb::overload_cast<>(&ExportEntry::ordinal, nb::const_),

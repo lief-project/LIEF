@@ -19,9 +19,9 @@
 #include <memory>
 
 #include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
 
 #include "LIEF/MachO/Relocation.hpp"
+#include "LIEF/MachO/DyldChainedFormat.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -58,19 +58,25 @@ class LIEF_API RelocationFixup : public Relocation {
   RelocationFixup& operator=(const RelocationFixup&);
   RelocationFixup(const RelocationFixup&);
 
-  RelocationFixup& operator=(RelocationFixup&&);
-  RelocationFixup(RelocationFixup&&);
+  RelocationFixup& operator=(RelocationFixup&&) noexcept = default;
+  RelocationFixup(RelocationFixup&&) noexcept = default;
 
   ~RelocationFixup() override;
 
-  Relocation* clone() const override;
+  std::unique_ptr<Relocation> clone() const override {
+    return std::unique_ptr<RelocationFixup>(new RelocationFixup(*this));
+  }
 
   //! Not relevant for this kind of relocation
-  bool is_pc_relative() const override;
+  bool is_pc_relative() const override {
+    return false;
+  }
 
   //! Origin of the relocation. For this concrete object, it
-  //! should be RELOCATION_ORIGINS::ORIGIN_CHAINED_FIXUPS
-  RELOCATION_ORIGINS origin() const override;
+  //! should be Relocation::ORIGIN::CHAINED_FIXUPS
+  Relocation::ORIGIN origin() const override {
+    return Relocation::ORIGIN::CHAINED_FIXUPS;
+  }
 
   DYLD_CHAINED_PTR_FORMAT ptr_format() const {
     return ptr_fmt_;
@@ -83,7 +89,7 @@ class LIEF_API RelocationFixup : public Relocation {
   void target(uint64_t target);
 
   //! Not relevant for this kind of relocation
-  void pc_relative(bool) override;
+  void pc_relative(bool) override {}
 
   uint32_t offset() const {
     return offset_;
@@ -94,15 +100,20 @@ class LIEF_API RelocationFixup : public Relocation {
   }
 
   //! The address of this relocation is bound to its offset.
-  uint64_t address() const override;
+  uint64_t address() const override {
+    return imagebase_ + offset_;
+  }
 
   //! Changing the address means changing the offset
-  void address(uint64_t address) override;
-
+  void address(uint64_t address) override {
+    offset_ = address - imagebase_;
+  }
 
   void accept(Visitor& visitor) const override;
 
-  static bool classof(const Relocation& r);
+  static bool classof(const Relocation& r) {
+    return r.origin() == Relocation::ORIGIN::CHAINED_FIXUPS;
+  }
 
   std::ostream& print(std::ostream& os) const override;
 
@@ -121,7 +132,7 @@ class LIEF_API RelocationFixup : public Relocation {
   void set(const details::dyld_chained_ptr_64_rebase& fixup);
   void set(const details::dyld_chained_ptr_32_rebase& fixup);
 
-  DYLD_CHAINED_PTR_FORMAT ptr_fmt_;
+  DYLD_CHAINED_PTR_FORMAT ptr_fmt_ = DYLD_CHAINED_PTR_FORMAT::PTR_32;
   uint64_t imagebase_ = 0;
   uint32_t offset_ = 0;
 

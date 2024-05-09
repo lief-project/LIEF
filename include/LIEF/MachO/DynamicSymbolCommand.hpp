@@ -16,10 +16,8 @@
 #ifndef LIEF_MACHO_DYNAMIC_SYMBOL_COMMAND_H
 #define LIEF_MACHO_DYNAMIC_SYMBOL_COMMAND_H
 #include <ostream>
-#include <set>
 
 #include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
@@ -48,66 +46,91 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
 
   DynamicSymbolCommand(const details::dysymtab_command& cmd);
 
-  DynamicSymbolCommand& operator=(const DynamicSymbolCommand& copy);
-  DynamicSymbolCommand(const DynamicSymbolCommand& copy);
+  DynamicSymbolCommand& operator=(const DynamicSymbolCommand& copy) = default;
+  DynamicSymbolCommand(const DynamicSymbolCommand& copy) = default;
 
-  DynamicSymbolCommand* clone() const override;
+  std::unique_ptr<LoadCommand> clone() const override {
+    return std::unique_ptr<DynamicSymbolCommand>(new DynamicSymbolCommand(*this));
+  }
 
-  ~DynamicSymbolCommand() override;
+  ~DynamicSymbolCommand() override = default;
 
   void accept(Visitor& visitor) const override;
-
 
   std::ostream& print(std::ostream& os) const override;
 
   //! Index of the first symbol in the group of local symbols.
-  uint32_t idx_local_symbol() const;
+  uint32_t idx_local_symbol() const {
+    return idx_local_symbol_;
+  }
 
   //! Number of symbols in the group of local symbols.
-  uint32_t nb_local_symbols() const;
+  uint32_t nb_local_symbols() const {
+    return nb_local_symbols_;
+  }
 
   //! Index of the first symbol in the group of defined external symbols.
-  uint32_t idx_external_define_symbol() const;
+  uint32_t idx_external_define_symbol() const {
+    return idx_external_define_symbol_;
+  }
 
   //! Number of symbols in the group of defined external symbols.
-  uint32_t nb_external_define_symbols() const;
+  uint32_t nb_external_define_symbols() const {
+    return nb_external_define_symbols_;
+  }
 
   //! Index of the first symbol in the group of undefined external symbols.
-  uint32_t idx_undefined_symbol() const;
+  uint32_t idx_undefined_symbol() const {
+    return idx_undefined_symbol_;
+  }
 
   //! Number of symbols in the group of undefined external symbols.
-  uint32_t nb_undefined_symbols() const;
+  uint32_t nb_undefined_symbols() const {
+    return nb_undefined_symbols_;
+  }
 
   //! Byte offset from the start of the file to the table of contents data
   //!
   //! Table of content is used by legacy Mach-O loader and this field should be
   //! set to 0
-  uint32_t toc_offset() const;
+  uint32_t toc_offset() const {
+    return toc_offset_;
+  }
 
   //! Number of entries in the table of contents.
   //!
   //! Should be set to 0 on recent Mach-O
-  uint32_t nb_toc() const;
+  uint32_t nb_toc() const {
+    return nb_toc_;
+  }
 
   //! Byte offset from the start of the file to the module table data.
   //!
   //! This field seems unused by recent Mach-O loader and should be set to 0
-  uint32_t module_table_offset() const;
+  uint32_t module_table_offset() const {
+    return module_table_offset_;
+  }
 
   //! Number of entries in the module table.
   //!
   //! This field seems unused by recent Mach-O loader and should be set to 0
-  uint32_t nb_module_table() const;
+  uint32_t nb_module_table() const {
+    return nb_module_table_;
+  }
 
   //! Byte offset from the start of the file to the external reference table data.
   //!
   //! This field seems unused by recent Mach-O loader and should be set to 0
-  uint32_t external_reference_symbol_offset() const;
+  uint32_t external_reference_symbol_offset() const {
+    return external_reference_symbol_offset_;
+  }
 
   //! Number of entries in the external reference table
   //!
   //! This field seems unused by recent Mach-O loader and should be set to 0
-  uint32_t nb_external_reference_symbols() const;
+  uint32_t nb_external_reference_symbols() const {
+    return nb_external_reference_symbols_;
+  }
 
   //! Byte offset from the start of the file to the indirect symbol table data.
   //!
@@ -117,63 +140,112 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
   //! References:
   //!   * dyld-519.2.1/src/ImageLoaderMachOCompressed.cpp
   //!   * dyld-519.2.1/src/ImageLoaderMachOClassic.cpp
-  uint32_t indirect_symbol_offset() const;
+  uint32_t indirect_symbol_offset() const {
+    return indirect_sym_offset_;
+  }
 
   //! Number of entries in the indirect symbol table.
   //!
   //! @see indirect_symbol_offset
-  uint32_t nb_indirect_symbols() const;
+  uint32_t nb_indirect_symbols() const {
+    return nb_indirect_symbols_;
+  }
 
 
   //! Byte offset from the start of the file to the external relocation table data.
   //!
   //! This field seems unused by recent Mach-O loader and should be set to 0
-  uint32_t external_relocation_offset() const;
+  uint32_t external_relocation_offset() const {
+    return external_relocation_offset_;
+  }
 
   //! Number of entries in the external relocation table.
   //!
   //! This field seems unused by recent Mach-O loader and should be set to 0
-  uint32_t nb_external_relocations() const;
+  uint32_t nb_external_relocations() const {
+    return nb_external_relocations_;
+  }
 
   //! Byte offset from the start of the file to the local relocation table data.
   //!
   //! This field seems unused by recent Mach-O loader and should be set to 0
-  uint32_t local_relocation_offset() const;
+  uint32_t local_relocation_offset() const {
+    return local_relocation_offset_;
+  }
 
   //! Number of entries in the local relocation table.
   //!
   //! This field seems unused by recent Mach-O loader and should be set to 0
-  uint32_t nb_local_relocations() const;
+  uint32_t nb_local_relocations() const {
+    return nb_local_relocations_;
+  }
 
+  void idx_local_symbol(uint32_t value) {
+    idx_local_symbol_ = value;
+  }
+  void nb_local_symbols(uint32_t value) {
+    nb_local_symbols_ = value;
+  }
 
-  void idx_local_symbol(uint32_t value);
-  void nb_local_symbols(uint32_t value);
+  void idx_external_define_symbol(uint32_t value) {
+    idx_external_define_symbol_ = value;
+  }
+  void nb_external_define_symbols(uint32_t value) {
+    nb_external_define_symbols_ = value;
+  }
 
-  void idx_external_define_symbol(uint32_t value);
-  void nb_external_define_symbols(uint32_t value);
+  void idx_undefined_symbol(uint32_t value) {
+    idx_undefined_symbol_ = value;
+  }
+  void nb_undefined_symbols(uint32_t value) {
+    nb_undefined_symbols_ = value;
+  }
 
-  void idx_undefined_symbol(uint32_t value);
-  void nb_undefined_symbols(uint32_t value);
+  void toc_offset(uint32_t value) {
+    toc_offset_ = value;
+  }
+  void nb_toc(uint32_t value) {
+    nb_toc_ = value;
+  }
 
-  void toc_offset(uint32_t value);
-  void nb_toc(uint32_t value);
+  void module_table_offset(uint32_t value) {
+    module_table_offset_ = value;
+  }
+  void nb_module_table(uint32_t value) {
+    nb_module_table_ = value;
+  }
 
-  void module_table_offset(uint32_t value);
-  void nb_module_table(uint32_t value);
+  void external_reference_symbol_offset(uint32_t value) {
+    external_reference_symbol_offset_ = value;
+  }
+  void nb_external_reference_symbols(uint32_t value) {
+    nb_external_reference_symbols_ = value;
+  }
 
-  void external_reference_symbol_offset(uint32_t value);
-  void nb_external_reference_symbols(uint32_t value);
+  void indirect_symbol_offset(uint32_t value) {
+    indirect_sym_offset_ = value;
+  }
+  void nb_indirect_symbols(uint32_t value) {
+    nb_indirect_symbols_ = value;
+  }
 
-  void indirect_symbol_offset(uint32_t value);
-  void nb_indirect_symbols(uint32_t value);
+  void external_relocation_offset(uint32_t value) {
+    external_relocation_offset_ = value;
+  }
+  void nb_external_relocations(uint32_t value) {
+    nb_external_relocations_ = value;
+  }
 
-  void external_relocation_offset(uint32_t value);
-  void nb_external_relocations(uint32_t value);
+  void local_relocation_offset(uint32_t value) {
+    local_relocation_offset_ = value;
+  }
+  void nb_local_relocations(uint32_t value) {
+    nb_local_relocations_ = value;
+  }
 
-  void local_relocation_offset(uint32_t value);
-  void nb_local_relocations(uint32_t value);
-
-  static bool classof(const LoadCommand* cmd);
+  static bool classof(const LoadCommand* cmd) {
+    return cmd->command() == LoadCommand::TYPE::DYSYMTAB;
+  }
 
   private:
   uint32_t idx_local_symbol_ = 0;

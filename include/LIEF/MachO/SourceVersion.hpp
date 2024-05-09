@@ -19,7 +19,6 @@
 #include <array>
 
 #include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
@@ -30,37 +29,45 @@ namespace details {
 struct source_version_command;
 }
 
-//! Class that represents the MachO LOAD_COMMAND_TYPES::LC_SOURCE_VERSION
-//! This command is used to provide the *version* of the sources used to build the binary
+//! Class that represents the MachO LoadCommand::TYPE::SOURCE_VERSION
+//! This command is used to provide the *version* of the sources used to
+//! build the binary
 class LIEF_API SourceVersion : public LoadCommand {
 
   public:
   //! Version is an array of **5** integers
   using version_t = std::array<uint32_t, 5>;
 
-  SourceVersion();
+  SourceVersion() = default;
   SourceVersion(const details::source_version_command& version_cmd);
 
-  SourceVersion& operator=(const SourceVersion& copy);
-  SourceVersion(const SourceVersion& copy);
+  SourceVersion& operator=(const SourceVersion& copy) = default;
+  SourceVersion(const SourceVersion& copy) = default;
 
-  SourceVersion* clone() const override;
+  std::unique_ptr<LoadCommand> clone() const override {
+    return std::unique_ptr<SourceVersion>(new SourceVersion(*this));
+  }
 
-  ~SourceVersion() override;
+  ~SourceVersion() override = default;
 
   //! Return the version as an array
-  const SourceVersion::version_t& version() const;
-  void version(const SourceVersion::version_t& version);
-
+  const version_t& version() const {
+    return version_;
+  }
+  void version(const version_t& version) {
+    version_ = version;
+  }
 
   void accept(Visitor& visitor) const override;
 
   std::ostream& print(std::ostream& os) const override;
 
-  static bool classof(const LoadCommand* cmd);
+  static bool classof(const LoadCommand* cmd) {
+    return cmd->command() == LoadCommand::TYPE::SOURCE_VERSION;
+  }
 
   private:
-  SourceVersion::version_t version_;
+  version_t version_ = {0};
 };
 
 }

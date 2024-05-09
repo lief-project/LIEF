@@ -18,7 +18,6 @@
 #include <ostream>
 
 #include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
 
 #include "LIEF/MachO/Relocation.hpp"
 
@@ -37,14 +36,16 @@ class LIEF_API RelocationDyld : public Relocation {
 
   public:
   using Relocation::Relocation;
-  RelocationDyld();
+  RelocationDyld() = default;
 
-  RelocationDyld& operator=(const RelocationDyld&);
-  RelocationDyld(const RelocationDyld&);
+  RelocationDyld& operator=(const RelocationDyld&) = default;
+  RelocationDyld(const RelocationDyld&) = default;
 
-  ~RelocationDyld() override;
+  ~RelocationDyld() override = default;
 
-  Relocation* clone() const override;
+  std::unique_ptr<Relocation> clone() const override {
+    return std::unique_ptr<RelocationDyld>(new RelocationDyld(*this));
+  }
 
   //! Indicates whether the item containing the address to be
   //! relocated is part of a CPU instruction that uses PC-relative addressing.
@@ -54,23 +55,32 @@ class LIEF_API RelocationDyld : public Relocation {
   bool is_pc_relative() const override;
 
   //! Origin of the relocation. For this concrete object, it
-  //! should be RELOCATION_ORIGINS::ORIGIN_DYLDINFO
-  RELOCATION_ORIGINS origin() const override;
+  //! should be Relocation::ORIGIN::DYLDINFO
+  Relocation::ORIGIN origin() const override {
+    return Relocation::ORIGIN::DYLDINFO;
+  }
 
   void pc_relative(bool val) override;
 
-
   bool operator<(const RelocationDyld& rhs) const;
-  bool operator>=(const RelocationDyld& rhs) const;
+  bool operator>=(const RelocationDyld& rhs) const {
+    return !(*this < rhs);
+  }
 
   bool operator>(const RelocationDyld& rhs) const;
-  bool operator<=(const RelocationDyld& rhs) const;
+  bool operator<=(const RelocationDyld& rhs) const {
+    return !(*this > rhs);
+  }
 
   void accept(Visitor& visitor) const override;
 
-  static bool classof(const Relocation& r);
+  static bool classof(const Relocation& r) {
+    return r.origin() == Relocation::ORIGIN::DYLDINFO;
+  }
 
-  std::ostream& print(std::ostream& os) const override;
+  std::ostream& print(std::ostream& os) const override {
+    return Relocation::print(os);
+  }
 };
 
 }
