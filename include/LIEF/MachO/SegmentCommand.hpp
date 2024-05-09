@@ -90,7 +90,7 @@ class LIEF_API SegmentCommand : public LoadCommand {
   };
 
   public:
-  SegmentCommand() = default;
+  SegmentCommand();
   SegmentCommand(const details::segment_command_32& cmd);
   SegmentCommand(const details::segment_command_64& cmd);
 

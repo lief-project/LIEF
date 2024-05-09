@@ -26,6 +26,7 @@
 namespace LIEF {
 namespace MachO {
 
+SegmentCommand::SegmentCommand() = default;
 SegmentCommand::~SegmentCommand() = default;
 
 SegmentCommand::SegmentCommand(std::string name, content_t content) :
