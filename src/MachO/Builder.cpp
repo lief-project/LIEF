@@ -26,6 +26,7 @@
 #include "LIEF/MachO/Builder.hpp"
 #include "LIEF/MachO/FatBinary.hpp"
 #include "LIEF/MachO/UUIDCommand.hpp"
+#include "LIEF/MachO/ExportInfo.hpp"
 
 #include "Object.tcc"
 
@@ -140,7 +141,7 @@ ok_error_t Builder::build_fat() {
     std::vector<uint8_t> raw = build_raw(*binaries_[i], config_);
 
     auto alignment = BinaryStream::swap_endian<uint32_t>(arch->align);
-    uint32_t offset = align(raw_.size(), 1 << alignment);
+    uint32_t offset = align(raw_.size(), 1llu << alignment);
 
     arch->offset = BinaryStream::swap_endian<uint32_t>(offset);
     arch->size   = BinaryStream::swap_endian<uint32_t>(raw.size());

@@ -53,7 +53,7 @@ class LIEF_API DyldExportsTrie : public LoadCommand {
   //! Iterator which outputs const ExportInfo&
   using it_const_export_info = const_ref_iterator<const export_info_t&, ExportInfo*>;
 
-  DyldExportsTrie() = default;
+  DyldExportsTrie();
   DyldExportsTrie(const details::linkedit_data_command& cmd);
   std::unique_ptr<LoadCommand> clone() const override {
     return std::unique_ptr<DyldExportsTrie>(new DyldExportsTrie(*this));

@@ -27,6 +27,8 @@
 
 namespace LIEF {
 namespace MachO {
+
+DyldExportsTrie::DyldExportsTrie() = default;
 DyldExportsTrie::~DyldExportsTrie() = default;
 DyldExportsTrie::DyldExportsTrie(const DyldExportsTrie& other) :
   LoadCommand::LoadCommand(other),
