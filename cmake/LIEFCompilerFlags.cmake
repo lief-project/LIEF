@@ -108,6 +108,7 @@ if(MSVC AND NOT CLANG_CL)
     -we4238 # Promote 'nonstandard extension used : class rvalue used as lvalue' to error.
 
     -wd4530 # Supress C++ exception handler used, but unwind semantics are not enabled
+    -wd4251 # remove: needs to have dll-interface to be used by clients of class
   )
 
   set(msvc_warning_flags "/W4 ${msvc_warning_flags}")
