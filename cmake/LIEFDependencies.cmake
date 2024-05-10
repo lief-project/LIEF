@@ -248,8 +248,8 @@ endif()
 # https://github.com/tcbrindle/span
 # ---------------------------------
 if(NOT LIEF_EXTERNAL_SPAN)
-  set(TCB_SPAN_VERSION d6c6e30)
-  set(TCB_SPAN_SHA256 SHA256=c31fed99ea01526af28f26bb9b77a86d21e8964748708d57cf55a8813e883fe3)
+  set(TCB_SPAN_VERSION b70b0ff)
+  set(TCB_SPAN_SHA256 SHA256=f3d47ed83507fce94245a9f3cf97bc433cd1116f94d11ac0dca1a6f53bbeb239)
   set(TCB_SPAN_URL "${THIRD_PARTY_DIRECTORY}/tcb-span-${TCB_SPAN_VERSION}.zip" CACHE STRING "URL to tcb/span")
   ExternalProject_Add(lief_span
     URL               ${TCB_SPAN_URL}
