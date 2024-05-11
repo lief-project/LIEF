@@ -15,7 +15,6 @@
  */
 #ifndef LIEF_PE_RICH_HEADER_H
 #define LIEF_PE_RICH_HEADER_H
-#include <array>
 #include <ostream>
 
 #include "LIEF/Object.hpp"
