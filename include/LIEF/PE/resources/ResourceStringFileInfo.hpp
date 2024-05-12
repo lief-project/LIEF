@@ -16,7 +16,7 @@
 #ifndef LIEF_PE_RESOURCE_STRING_FILE_INFO_H
 #define LIEF_PE_RESOURCE_STRING_FILE_INFO_H
 #include <ostream>
-#include <sstream>
+#include <vector>
 
 #include "LIEF/visibility.h"
 
@@ -43,33 +43,51 @@ class LIEF_API ResourceStringFileInfo : public Object {
 
   public:
   ResourceStringFileInfo();
-  ResourceStringFileInfo(uint16_t type, std::u16string key);
-  ResourceStringFileInfo(const ResourceStringFileInfo&);
-  ResourceStringFileInfo& operator=(const ResourceStringFileInfo&);
-  ~ResourceStringFileInfo() override;
+  ResourceStringFileInfo(uint16_t type, std::u16string key) :
+    type_(type),
+    key_(std::move(key))
+  {}
+  ResourceStringFileInfo(const ResourceStringFileInfo&) = default;
+  ResourceStringFileInfo& operator=(const ResourceStringFileInfo&) = default;
+  ~ResourceStringFileInfo() override = default;
 
   //! The type of data in the version resource
   //! * ``1`` if it contains text data
   //! * ``0`` if it contains binary data
-  uint16_t type() const;
+  uint16_t type() const {
+    return type_;
+  }
 
   //! Signature of the structure:
   //! Must be the unicode string "StringFileInfo"
-  const std::u16string& key() const;
+  const std::u16string& key() const {
+    return key_;
+  }
 
   //! List of the LangCodeItem items.
   //!
   //! Each LangCodeItem::key indicates the appropriate
   //! language and code page for displaying the ``key: value`` of
   //! LangCodeItem::items
-  const std::vector<LangCodeItem>& langcode_items() const;
-  std::vector<LangCodeItem>&       langcode_items();
+  const std::vector<LangCodeItem>& langcode_items() const {
+    return childs_;
+  }
+  std::vector<LangCodeItem>& langcode_items() {
+    return childs_;
+  }
 
-  void type(uint16_t type);
+  void type(uint16_t type) {
+    type_ = type;
+  }
 
-  void key(const std::u16string& key);
+  void key(std::u16string key) {
+    key_ = std::move(key);
+  }
   void key(const std::string& key);
-  void langcode_items(const std::vector<LangCodeItem>& items);
+
+  void langcode_items(std::vector<LangCodeItem> items) {
+    childs_ = std::move(items);
+  }
 
   void accept(Visitor& visitor) const override;
 

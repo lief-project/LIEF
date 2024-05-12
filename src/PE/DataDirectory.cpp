@@ -27,15 +27,6 @@
 namespace LIEF {
 namespace PE {
 
-DataDirectory::~DataDirectory() = default;
-DataDirectory::DataDirectory() = default;
-
-DataDirectory::DataDirectory(const DataDirectory& other) = default;
-DataDirectory& DataDirectory::operator=(const DataDirectory& other) = default;
-
-DataDirectory::DataDirectory(DataDirectory&& other) = default;
-DataDirectory& DataDirectory::operator=(DataDirectory&& other) = default;
-
 DataDirectory::DataDirectory(const details::pe_data_directory& header,
                              DataDirectory::TYPES type) :
   rva_{header.RelativeVirtualAddress},
@@ -58,30 +49,32 @@ std::ostream& operator<<(std::ostream& os, const DataDirectory& entry) {
 }
 
 const char* to_string(DataDirectory::TYPES e) {
-  CONST_MAP(DataDirectory::TYPES, const char*, 17) enumStrings {
-    { DataDirectory::TYPES::EXPORT_TABLE,            "EXPORT_TABLE" },
-    { DataDirectory::TYPES::IMPORT_TABLE,            "IMPORT_TABLE" },
-    { DataDirectory::TYPES::RESOURCE_TABLE,          "RESOURCE_TABLE" },
-    { DataDirectory::TYPES::EXCEPTION_TABLE,         "EXCEPTION_TABLE" },
-    { DataDirectory::TYPES::CERTIFICATE_TABLE,       "CERTIFICATE_TABLE" },
-    { DataDirectory::TYPES::BASE_RELOCATION_TABLE,   "BASE_RELOCATION_TABLE" },
-    { DataDirectory::TYPES::DEBUG_DIR,               "DEBUG_DIR" },
-    { DataDirectory::TYPES::ARCHITECTURE,            "ARCHITECTURE" },
-    { DataDirectory::TYPES::GLOBAL_PTR,              "GLOBAL_PTR" },
-    { DataDirectory::TYPES::TLS_TABLE,               "TLS_TABLE" },
-    { DataDirectory::TYPES::LOAD_CONFIG_TABLE,       "LOAD_CONFIG_TABLE" },
-    { DataDirectory::TYPES::BOUND_IMPORT,            "BOUND_IMPORT" },
-    { DataDirectory::TYPES::IAT,                     "IAT" },
-    { DataDirectory::TYPES::DELAY_IMPORT_DESCRIPTOR, "DELAY_IMPORT_DESCRIPTOR" },
-    { DataDirectory::TYPES::CLR_RUNTIME_HEADER,      "CLR_RUNTIME_HEADER" },
-    { DataDirectory::TYPES::RESERVED,                "RESERVED" },
-
-    { DataDirectory::TYPES::UNKNOWN,                 "UNKNOWN" }
+  #define ENTRY(X) std::pair(DataDirectory::TYPES::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(EXPORT_TABLE),
+    ENTRY(IMPORT_TABLE),
+    ENTRY(RESOURCE_TABLE),
+    ENTRY(EXCEPTION_TABLE),
+    ENTRY(CERTIFICATE_TABLE),
+    ENTRY(BASE_RELOCATION_TABLE),
+    ENTRY(DEBUG_DIR),
+    ENTRY(ARCHITECTURE),
+    ENTRY(GLOBAL_PTR),
+    ENTRY(TLS_TABLE),
+    ENTRY(LOAD_CONFIG_TABLE),
+    ENTRY(BOUND_IMPORT),
+    ENTRY(IAT),
+    ENTRY(DELAY_IMPORT_DESCRIPTOR),
+    ENTRY(CLR_RUNTIME_HEADER),
+    ENTRY(RESERVED),
+    ENTRY(UNKNOWN),
   };
-  const auto it = enumStrings.find(e);
-  return it == enumStrings.end() ? "UNKNOWN" : it->second;
+  #undef ENTRY
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
+  }
+  return "UNKNOWN";
 }
-
 
 }
 }

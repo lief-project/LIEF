@@ -15,7 +15,7 @@
  */
 #include <iomanip>
 
-#include "LIEF/PE/hash.hpp"
+#include "LIEF/Visitor.hpp"
 
 #include "LIEF/utils.hpp"
 #include "logging.hpp"
@@ -25,44 +25,10 @@
 namespace LIEF {
 namespace PE {
 
-ResourceStringFileInfo::ResourceStringFileInfo(const ResourceStringFileInfo&) = default;
-ResourceStringFileInfo& ResourceStringFileInfo::operator=(const ResourceStringFileInfo&) = default;
-ResourceStringFileInfo::~ResourceStringFileInfo() = default;
-
-ResourceStringFileInfo::ResourceStringFileInfo(uint16_t type, std::u16string key) :
-  type_{type},
-  key_{std::move(key)}
-{}
-
 ResourceStringFileInfo::ResourceStringFileInfo() :
   key_{*u8tou16("StringFileInfo")}
 {}
 
-
-uint16_t ResourceStringFileInfo::type() const {
-  return type_;
-}
-
-const std::u16string& ResourceStringFileInfo::key() const {
-  return key_;
-}
-
-const std::vector<LangCodeItem>& ResourceStringFileInfo::langcode_items() const {
-  return childs_;
-}
-
-std::vector<LangCodeItem>& ResourceStringFileInfo::langcode_items() {
-  return const_cast<std::vector<LangCodeItem>&>(static_cast<const ResourceStringFileInfo*>(this)->langcode_items());
-}
-
-
-void ResourceStringFileInfo::type(uint16_t type) {
-  type_ = type;
-}
-
-void ResourceStringFileInfo::key(const std::u16string& key) {
-  key_ = key;
-}
 
 void ResourceStringFileInfo::key(const std::string& key) {
   if (auto res = u8tou16(key)) {
@@ -72,17 +38,9 @@ void ResourceStringFileInfo::key(const std::string& key) {
   }
 }
 
-void ResourceStringFileInfo::langcode_items(const std::vector<LangCodeItem>& items) {
-  childs_ = items;
-}
-
-
 void ResourceStringFileInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
-
-
-
 
 std::ostream& operator<<(std::ostream& os, const ResourceStringFileInfo& string_file_info) {
   os << std::hex << std::left;

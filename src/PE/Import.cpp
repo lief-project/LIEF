@@ -15,10 +15,8 @@
  */
 #include <algorithm>
 #include <iomanip>
-#include <utility>
 
-#include "LIEF/PE/hash.hpp"
-
+#include "LIEF/Visitor.hpp"
 
 #include "LIEF/PE/ImportEntry.hpp"
 #include "LIEF/PE/Import.hpp"
@@ -26,14 +24,6 @@
 
 namespace LIEF {
 namespace PE {
-
-Import::~Import() = default;
-
-Import::Import(Import&& other) noexcept = default;
-Import& Import::operator=(Import&& other) noexcept = default;
-Import::Import() = default;
-Import::Import(const Import& other) = default;
-Import& Import::operator=(const Import& other)  = default;
 
 Import::Import(const details::pe_import& import) :
   import_lookup_table_RVA_(import.ImportLookupTableRVA),
@@ -43,9 +33,7 @@ Import::Import(const details::pe_import& import) :
   import_address_table_RVA_(import.ImportAddressTableRVA)
 {}
 
-Import::Import(std::string name) :
-  name_{std::move(name)}
-{}
+
 
 const ImportEntry* Import::get_entry(const std::string& name) const {
   const auto it_entry = std::find_if(std::begin(entries_), std::end(entries_),
@@ -57,30 +45,6 @@ const ImportEntry* Import::get_entry(const std::string& name) const {
   }
   return &*it_entry;
 }
-
-ImportEntry* Import::get_entry(const std::string& name) {
-  return const_cast<ImportEntry*>(static_cast<const Import*>(this)->get_entry(name));
-}
-
-Import::it_entries Import::entries() {
-  return entries_;
-}
-
-
-Import::it_const_entries Import::entries() const {
-  return entries_;
-}
-
-
-uint32_t Import::import_address_table_rva() const {
-  return import_address_table_RVA_;
-}
-
-
-uint32_t Import::import_lookup_table_rva() const {
-  return import_lookup_table_RVA_;
-}
-
 
 result<uint32_t> Import::get_function_rva_from_iat(const std::string& function) const {
   const auto it_function = std::find_if(std::begin(entries_), std::end(entries_),
@@ -99,37 +63,6 @@ result<uint32_t> Import::get_function_rva_from_iat(const std::string& function) 
     return idx * sizeof(uint32_t);
   }
   return idx * sizeof(uint64_t);
-}
-
-
-const std::string& Import::name() const {
-  return name_;
-}
-
-//std::string& Import::name() {
-//  return const_cast<std::string&>(static_cast<const Import*>(this)->name());
-//}
-
-void Import::name(const std::string& name) {
-  name_ = name;
-}
-
-
-const DataDirectory* Import::directory() const {
-  return directory_;
-}
-
-DataDirectory* Import::directory() {
-  return const_cast<DataDirectory*>(static_cast<const Import*>(this)->directory());
-}
-
-
-const DataDirectory* Import::iat_directory() const {
-  return iat_directory_;
-}
-
-DataDirectory* Import::iat_directory() {
-  return const_cast<DataDirectory*>(static_cast<const Import*>(this)->iat_directory());
 }
 
 
@@ -153,19 +86,10 @@ ImportEntry& Import::add_entry(const std::string& name) {
   return entries_.back();
 }
 
-uint32_t Import::forwarder_chain() const {
-  return forwarder_chain_;
-}
-
-uint32_t Import::timedatestamp() const {
-  return timedatestamp_;
-}
 
 void Import::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }
-
-
 
 std::ostream& operator<<(std::ostream& os, const Import& entry) {
   os << std::hex;

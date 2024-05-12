@@ -50,7 +50,7 @@ void create<ResourceData>(nb::module_& m) {
           const span<const uint8_t> content = self.content();
           return nb::memoryview::from_memory(content.data(), content.size());
         },
-        nb::overload_cast<const std::vector<uint8_t>&>(&ResourceData::content),
+        nb::overload_cast<std::vector<uint8_t>>(&ResourceData::content),
         "Resource content"_doc)
 
     .def_prop_rw("reserved",

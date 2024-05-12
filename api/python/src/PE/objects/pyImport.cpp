@@ -67,7 +67,7 @@ void create<Import>(nb::module_& m) {
         [] (const Import& obj) {
           return safe_string(obj.name());
         },
-        nb::overload_cast<const std::string&>(&Import::name),
+        nb::overload_cast<std::string>(&Import::name),
         "Library name (e.g. ``kernel32.dll``)"_doc,
         nb::rv_policy::reference_internal)
 

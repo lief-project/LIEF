@@ -64,20 +64,20 @@ class LIEF_API DataDirectory : public Object {
 
     UNKNOWN,
   };
-  DataDirectory();
+  DataDirectory() = default;
   DataDirectory(TYPES type) :
     type_{type}
   {}
 
   DataDirectory(const details::pe_data_directory& header, TYPES type);
 
-  DataDirectory(const DataDirectory& other);
-  DataDirectory& operator=(const DataDirectory& other);
+  DataDirectory(const DataDirectory& other) = default;
+  DataDirectory& operator=(const DataDirectory& other) = default;
 
-  DataDirectory(DataDirectory&& other);
-  DataDirectory& operator=(DataDirectory&& other);
+  DataDirectory(DataDirectory&& other) noexcept = default;
+  DataDirectory& operator=(DataDirectory&& other) noexcept = default;
 
-  ~DataDirectory() override;
+  ~DataDirectory() override = default;
 
   //! The relative virtual address of the content of this data
   //! directory

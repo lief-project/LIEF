@@ -35,14 +35,20 @@ class LIEF_API ResourceData : public ResourceNode {
   friend class Builder;
 
   public:
-  ResourceData();
-  ResourceData(std::vector<uint8_t> content, uint32_t code_page);
+  ResourceData() :
+    ResourceNode(ResourceNode::TYPE::DATA)
+  {}
+  ResourceData(std::vector<uint8_t> content, uint32_t code_page) :
+    ResourceNode(ResourceNode::TYPE::DATA),
+    content_(std::move(content)),
+    code_page_(code_page)
+  {}
 
-  ResourceData(const ResourceData& other);
-  ResourceData& operator=(ResourceData other);
-  void swap(ResourceData& other);
+  ResourceData(const ResourceData& other) = default;
+  ResourceData& operator=(const ResourceData& other) = default;
+  void swap(ResourceData& other) noexcept;
 
-  ~ResourceData() override;
+  ~ResourceData() override = default;
 
   std::unique_ptr<ResourceNode> clone() const override {
     return std::unique_ptr<ResourceNode>{new ResourceData{*this}};
@@ -50,30 +56,47 @@ class LIEF_API ResourceData : public ResourceNode {
 
   //! Return the code page that is used to decode code point
   //! values within the resource data. Typically, the code page is the Unicode code page.
-  uint32_t code_page() const;
+  uint32_t code_page() const {
+    return code_page_;
+  }
 
   //! Resource content
-  span<const uint8_t> content() const;
-  span<uint8_t> content();
+  span<const uint8_t> content() const {
+    return content_;
+  }
+  span<uint8_t> content() {
+    return content_;
+  }
 
   //! Reserved value. Should be ``0``
-  uint32_t reserved() const;
+  uint32_t reserved() const {
+    return reserved_;
+  }
 
   //! Offset of the content within the resource
   //!
   //! @warning This value may change when rebuilding resource table
-  uint32_t offset() const;
+  uint32_t offset() const {
+    return offset_;
+  }
 
-  void code_page(uint32_t code_page);
-  void content(const std::vector<uint8_t>& content);
-  void reserved(uint32_t value);
+  void code_page(uint32_t code_page) {
+    code_page_ = code_page;
+  }
+
+  void content(std::vector<uint8_t> content) {
+    content_ = std::move(content);
+  }
+
+  void reserved(uint32_t value) {
+    reserved_ = value;
+  }
 
   static bool classof(const ResourceNode* node) {
     return node->is_data();
   }
 
   void accept(Visitor& visitor) const override;
-
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceData& data);
 

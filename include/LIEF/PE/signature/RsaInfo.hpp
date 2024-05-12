@@ -17,8 +17,8 @@
 #define LIEF_PE_SIGNATURE_RSA_INFO_H
 #include <vector>
 #include <ostream>
+#include <cstdint>
 
-#include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {

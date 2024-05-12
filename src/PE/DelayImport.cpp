@@ -14,26 +14,15 @@
  * limitations under the License.
  */
 #include <utility>
-#include "logging.hpp"
+#include <spdlog/fmt/fmt.h>
 
-#include "LIEF/PE/hash.hpp"
+#include "LIEF/Visitor.hpp"
 
 #include "LIEF/PE/DelayImport.hpp"
 #include "PE/Structures.hpp"
 
 namespace LIEF {
 namespace PE {
-
-DelayImport::~DelayImport() = default;
-
-DelayImport::DelayImport() = default;
-
-DelayImport& DelayImport::operator=(const DelayImport&) = default;
-DelayImport::DelayImport(const DelayImport&) = default;
-
-
-DelayImport::DelayImport(DelayImport&&) = default;
-DelayImport& DelayImport::operator=(DelayImport&&) = default;
 
 void DelayImport::swap(DelayImport& other) {
   std::swap(attribute_,   other.attribute_);
@@ -48,7 +37,6 @@ void DelayImport::swap(DelayImport& other) {
   std::swap(type_,        other.type_);
 }
 
-
 DelayImport::DelayImport(const details::delay_imports& import, PE_TYPE type) :
   attribute_{import.attribute},
   handle_{import.handle},
@@ -60,91 +48,9 @@ DelayImport::DelayImport(const details::delay_imports& import, PE_TYPE type) :
   type_{type}
 {}
 
-
-DelayImport::DelayImport(std::string name) :
-  name_{std::move(name)}
-{}
-
-const std::string& DelayImport::name() const {
-  return name_;
-}
-
-
-void DelayImport::name(std::string name) {
-  name_ = std::move(name);
-}
-
-DelayImport::it_entries DelayImport::entries() {
-  return entries_;
-}
-
-DelayImport::it_const_entries DelayImport::entries() const {
-  return entries_;
-}
-
-
-uint32_t DelayImport::attribute() const {
-  return attribute_;
-}
-
-void DelayImport::attribute(uint32_t hdl) {
-  attribute_ = hdl;
-}
-
-uint32_t DelayImport::handle() const {
-  return handle_;
-}
-
-void DelayImport::handle(uint32_t hdl) {
-  handle_ = hdl;
-}
-
-
-uint32_t DelayImport::iat() const {
-  return iat_;
-}
-
-void DelayImport::iat(uint32_t iat) {
-  iat_ = iat;
-}
-
-uint32_t DelayImport::names_table() const {
-  return names_table_;
-}
-
-void DelayImport::names_table(uint32_t value) {
-  names_table_ = value;
-}
-
-uint32_t DelayImport::biat() const {
-  return bound_iat_;
-}
-
-void DelayImport::biat(uint32_t value) {
-  bound_iat_ = value;
-}
-
-uint32_t DelayImport::uiat() const {
-  return unload_iat_;
-}
-
-void DelayImport::uiat(uint32_t value) {
-  unload_iat_ = value;
-}
-
 void DelayImport::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }
-
-uint32_t DelayImport::timestamp() const {
-  return timestamp_;
-}
-
-void DelayImport::timestamp(uint32_t value) {
-  timestamp_ = value;
-}
-
-
 
 std::ostream& operator<<(std::ostream& os, const DelayImport& entry) {
   os << fmt::format("{:<20}: #{} imports", entry.name(), entry.entries().size());

@@ -51,7 +51,7 @@ void create<ResourceStringFileInfo>(nb::module_& m) {
 
     .def_prop_rw("langcode_items",
         nb::overload_cast<>(&ResourceStringFileInfo::langcode_items),
-        nb::overload_cast<const std::vector<LangCodeItem>&>(&ResourceStringFileInfo::langcode_items),
+        nb::overload_cast<std::vector<LangCodeItem>>(&ResourceStringFileInfo::langcode_items),
         R"delim(
         List of the LangCodeItem items
 

@@ -23,112 +23,29 @@
 namespace LIEF {
 namespace PE {
 
-
-ResourceDirectory::~ResourceDirectory() = default;
-
-ResourceDirectory& ResourceDirectory::operator=(ResourceDirectory other) {
-  swap(other);
-  return *this;
-
-}
-
-ResourceDirectory::ResourceDirectory(const ResourceDirectory& other) :
-  ResourceNode{static_cast<const ResourceNode&>(other)},
-  characteristics_{other.characteristics_},
-  timeDateStamp_{other.timeDateStamp_},
-  majorVersion_{other.majorVersion_},
-  minorVersion_{other.minorVersion_},
-  numberOfNameEntries_{other.numberOfNameEntries_},
-  numberOfIDEntries_{other.numberOfIDEntries_}
-{
-}
-
-
-void ResourceDirectory::swap(ResourceDirectory& other) {
+void ResourceDirectory::swap(ResourceDirectory& other) noexcept {
   ResourceNode::swap(other);
-  std::swap(characteristics_,     other.characteristics_);
-  std::swap(timeDateStamp_,       other.timeDateStamp_);
-  std::swap(majorVersion_,        other.majorVersion_);
-  std::swap(minorVersion_,        other.minorVersion_);
-  std::swap(numberOfNameEntries_, other.numberOfNameEntries_);
-  std::swap(numberOfIDEntries_,   other.numberOfIDEntries_);
-}
-
-ResourceDirectory::ResourceDirectory() {
-  type_ = ResourceNode::TYPE::DIRECTORY;
+  std::swap(characteristics_,       other.characteristics_);
+  std::swap(timedatestamp_,         other.timedatestamp_);
+  std::swap(majorversion_,          other.majorversion_);
+  std::swap(numberof_id_entries_,   other.numberof_id_entries_);
+  std::swap(numberof_name_entries_, other.numberof_name_entries_);
+  std::swap(numberof_id_entries_,   other.numberof_id_entries_);
 }
 
 ResourceDirectory::ResourceDirectory(const details::pe_resource_directory_table& header) :
+  ResourceNode(ResourceNode::TYPE::DIRECTORY),
   characteristics_(header.Characteristics),
-  timeDateStamp_(header.TimeDateStamp),
-  majorVersion_(header.MajorVersion),
-  minorVersion_(header.MajorVersion),
-  numberOfNameEntries_(header.NumberOfNameEntries),
-  numberOfIDEntries_(header.NumberOfIDEntries)
-{
-  type_ = ResourceNode::TYPE::DIRECTORY;
-}
-
-uint32_t ResourceDirectory::characteristics() const {
-  return characteristics_;
-}
-
-
-uint32_t ResourceDirectory::time_date_stamp() const {
-  return timeDateStamp_;
-}
-
-
-uint16_t ResourceDirectory::major_version() const {
-  return majorVersion_;
-}
-
-
-uint16_t ResourceDirectory::minor_version() const {
-  return minorVersion_;
-}
-
-
-uint16_t ResourceDirectory::numberof_name_entries() const {
-  return numberOfNameEntries_;
-}
-
-
-uint16_t ResourceDirectory::numberof_id_entries() const {
-  return numberOfIDEntries_;
-}
-
-
-void ResourceDirectory::characteristics(uint32_t characteristics) {
-  characteristics_ = characteristics;
-}
-
-void ResourceDirectory::time_date_stamp(uint32_t time_date_stamp) {
-  timeDateStamp_ = time_date_stamp;
-}
-
-void ResourceDirectory::major_version(uint16_t major_version) {
-  majorVersion_ = major_version;
-}
-
-void ResourceDirectory::minor_version(uint16_t minor_version) {
-  minorVersion_ = minor_version;
-}
-
-void ResourceDirectory::numberof_name_entries(uint16_t numberof_name_entries) {
-  numberOfNameEntries_ = numberof_name_entries;
-}
-
-void ResourceDirectory::numberof_id_entries(uint16_t numberof_id_entries) {
-  numberOfIDEntries_ = numberof_id_entries;
-}
+  timedatestamp_(header.TimeDateStamp),
+  majorversion_(header.MajorVersion),
+  minorversion_(header.MajorVersion),
+  numberof_name_entries_(header.NumberOfNameEntries),
+  numberof_id_entries_(header.NumberOfIDEntries)
+{}
 
 void ResourceDirectory::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
-
-
-
 
 std::ostream& operator<<(std::ostream& os, const ResourceDirectory& directory) {
   os << static_cast<const ResourceNode&>(directory) << '\n';

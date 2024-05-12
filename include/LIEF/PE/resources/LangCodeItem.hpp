@@ -16,8 +16,6 @@
 #ifndef LIEF_PE_RESOURCE_LANG_CODE_ITEM_H
 #define LIEF_PE_RESOURCE_LANG_CODE_ITEM_H
 #include <ostream>
-#include <sstream>
-#include <vector>
 #include <unordered_map>
 
 #include "LIEF/visibility.h"
@@ -44,23 +42,30 @@ class LIEF_API LangCodeItem : public Object {
   public:
   using items_t = std::unordered_map<std::u16string, std::u16string>;
   LangCodeItem();
-  LangCodeItem(uint16_t type, std::u16string key);
+  LangCodeItem(uint16_t type, std::u16string key) :
+    type_(type),
+    key_(std::move(key))
+  {}
 
-  LangCodeItem(const LangCodeItem&);
-  LangCodeItem& operator=(const LangCodeItem&);
-  ~LangCodeItem() override;
+  LangCodeItem(const LangCodeItem&) = default;
+  LangCodeItem& operator=(const LangCodeItem&) = default;
+  ~LangCodeItem() override = default;
 
   //! The type of data in the version resource
   //! * ``1`` if it contains text data
   //! * ``0`` if it contains binary data
-  uint16_t type() const;
+  uint16_t type() const {
+    return type_;
+  }
 
   //! A 8-digit hexadecimal number stored as an Unicode string.
   //! * The four most significant digits represent the language identifier.
   //! * The four least significant digits represent the code page for which the data is formatted.
   //!
   //! @see LangCodeItem::code_page, LangCodeItem::lang, LangCodeItem::sublang
-  const std::u16string& key() const;
+  const std::u16string& key() const {
+    return key_;
+  }
 
   //! [Code page](https://docs.microsoft.com/en-us/windows/win32/intl/code-page-identifiers)
   //! for which LangCodeItem::items are defined
@@ -72,11 +77,21 @@ class LIEF_API LangCodeItem : public Object {
   //! Sublang for which LangCodeItem::items are defined
   uint32_t sublang() const;
 
-  const items_t& items() const;
-  items_t&       items();
+  const items_t& items() const {
+    return items_;
+  }
 
-  void type(uint16_t type);
-  void key(const std::u16string& key);
+  items_t& items() {
+    return items_;
+  }
+
+  void type(uint16_t type) {
+    type_ = type;
+  }
+
+  void key(const std::u16string& key) {
+    key_ = key;
+  }
   void key(const std::string& key);
 
   void code_page(CODE_PAGES code_page);

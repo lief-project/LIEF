@@ -23,8 +23,6 @@
 #include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
 
-#include "LIEF/PE/enums.hpp"
-
 namespace LIEF {
 namespace PE {
 
@@ -66,20 +64,32 @@ class LIEF_API ResourceNode : public Object {
 
   //! Integer that identifies the Type, Name, or Language ID of the entry
   //! depending on its depth in the tree
-  uint32_t id() const;
+  uint32_t id() const {
+    return id_;
+  }
 
   //! Name of the entry
-  const std::u16string& name() const;
+  const std::u16string& name() const {
+    return name_;
+  }
 
   //! Iterator on node's children
-  it_childs       childs();
-  it_const_childs childs() const;
+  it_childs childs() {
+    return childs_;
+  }
+  it_const_childs childs() const {
+    return childs_;
+  }
 
   //! ``True`` if the entry uses a name as ID
-  bool has_name() const;
+  bool has_name() const {
+    return static_cast<bool>(id() & 0x80000000);
+  }
 
   //! Current depth of the Node in the resource tree
-  uint32_t depth() const;
+  uint32_t depth() const {
+    return depth_;
+  }
 
   //! ``True`` if the current entry is a ResourceDirectory.
   //!
@@ -88,7 +98,9 @@ class LIEF_API ResourceNode : public Object {
   //! ```cpp
   //! const auto& dir_node = static_cast<const ResourceDirectory&>(node);
   //! ```
-  bool is_directory() const;
+  bool is_directory() const {
+    return type_ == TYPE::DIRECTORY;
+  }
 
   //! ``True`` if the current entry is a ResourceData.
   //!
@@ -97,9 +109,13 @@ class LIEF_API ResourceNode : public Object {
   //! ```cpp
   //! const auto& data_node = static_cast<const ResourceData&>(node);
   //! ```
-  bool is_data() const;
+  bool is_data() const {
+    return type_ == TYPE::DATA;
+  }
 
-  void id(uint32_t id);
+  void id(uint32_t id) {
+    id_ = id;
+  }
   void name(const std::string& name);
 
   void name(std::u16string name) {
@@ -120,11 +136,11 @@ class LIEF_API ResourceNode : public Object {
 
   void accept(Visitor& visitor) const override;
 
-
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceNode& node);
 
   protected:
   ResourceNode();
+  ResourceNode(TYPE type);
   childs_t::iterator insert_child(std::unique_ptr<ResourceNode> child);
   TYPE           type_ = TYPE::UNKNOWN;
   uint32_t       id_ = 0;

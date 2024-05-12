@@ -16,7 +16,7 @@
  */
 #include <algorithm>
 
-#include "LIEF/PE/hash.hpp"
+#include "LIEF/Visitor.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "PE/Structures.hpp"
 
@@ -24,16 +24,6 @@
 
 namespace LIEF {
 namespace PE {
-
-ResourceAccelerator::ResourceAccelerator(const ResourceAccelerator&) = default;
-ResourceAccelerator& ResourceAccelerator::operator=(const ResourceAccelerator&) = default;
-ResourceAccelerator::~ResourceAccelerator() = default;
-
-ResourceAccelerator::ResourceAccelerator() :
-  flags_{0},
-  ansi_{0},
-  id_{0},
-  padding_{0} {}
 
 ResourceAccelerator::ResourceAccelerator(const details::pe_resource_acceltableentry& entry) :
   flags_{entry.fFlags},
@@ -44,8 +34,6 @@ ResourceAccelerator::ResourceAccelerator(const details::pe_resource_acceltableen
 void ResourceAccelerator::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
-
-
 
 std::ostream& operator<<(std::ostream& os, const ResourceAccelerator& acc) {
   os << "flags: ";
@@ -76,22 +64,6 @@ std::set<ACCELERATOR_FLAGS> ResourceAccelerator::flags_list() const {
     }
   );
   return flags_set;
-}
-
-int16_t ResourceAccelerator::flags() const {
-  return flags_;
-}
-
-int16_t ResourceAccelerator::ansi() const {
-  return ansi_;
-}
-
-uint16_t ResourceAccelerator::id() const {
-  return id_;
-}
-
-int16_t ResourceAccelerator::padding() const {
-  return padding_;
 }
 
 }

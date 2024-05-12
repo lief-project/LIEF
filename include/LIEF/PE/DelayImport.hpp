@@ -20,7 +20,6 @@
 #include <ostream>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
 
@@ -44,48 +43,74 @@ class LIEF_API DelayImport : public Object {
   using it_entries       = ref_iterator<entries_t&>;
   using it_const_entries = const_ref_iterator<const entries_t&>;
 
-  DelayImport();
+  DelayImport() = default;
   DelayImport(const details::delay_imports& import, PE_TYPE type);
-  DelayImport(std::string name);
+  DelayImport(std::string name) :
+    name_(std::move(name))
+  {}
 
-  ~DelayImport() override;
+  ~DelayImport() override = default;
 
-  DelayImport(const DelayImport&);
-  DelayImport& operator=(const DelayImport&);
+  DelayImport(const DelayImport&) = default;
+  DelayImport& operator=(const DelayImport&) = default;
 
-  DelayImport(DelayImport&&);
-  DelayImport& operator=(DelayImport&&);
+  DelayImport(DelayImport&&) noexcept = default;
+  DelayImport& operator=(DelayImport&&) noexcept = default;
 
   void swap(DelayImport& other);
 
   //! According to the official PE specifications,
   //! this value is reserved and should be set to 0.
-  uint32_t attribute() const;
-  void attribute(uint32_t hdl);
+  uint32_t attribute() const {
+    return attribute_;
+  }
+  void attribute(uint32_t hdl) {
+    attribute_ = hdl;
+  }
 
   //! Return the library's name (e.g. `kernel32.dll`)
-  const std::string& name() const;
-  void name(std::string name);
+  const std::string& name() const {
+    return name_;
+  }
+  void name(std::string name) {
+    name_ = std::move(name);
+  }
 
   //! The RVA of the module handle (in the ``.data`` section)
   //! It is used for storage by the routine that is supplied to
   //! manage delay-loading.
-  uint32_t handle() const;
-  void handle(uint32_t hdl);
+  uint32_t handle() const {
+    return handle_;
+  }
+  void handle(uint32_t hdl) {
+    handle_ = hdl;
+  }
 
   //! RVA of the delay-load import address table.
-  uint32_t iat() const;
-  void iat(uint32_t iat);
+  uint32_t iat() const {
+    return iat_;
+  }
+  void iat(uint32_t iat) {
+    iat_ = iat;
+  }
 
   //! RVA of the delay-load import names table.
   //! The content of this table has the layout as the Import lookup table
-  uint32_t names_table() const;
-  void names_table(uint32_t value);
+  uint32_t names_table() const {
+    return names_table_;
+  }
+  void names_table(uint32_t value) {
+    names_table_ = value;
+  }
 
   //! RVA of the **bound** delay-load import address table or 0
   //! if the table does not exist.
-  uint32_t biat() const;
-  void biat(uint32_t value);
+  uint32_t biat() const {
+    return bound_iat_;
+  }
+  void biat(uint32_t value) {
+    bound_iat_ = value;
+  }
 
   //! RVA of the **unload** delay-load import address table or 0
   //! if the table does not exist.
@@ -93,21 +118,32 @@ class LIEF_API DelayImport : public Object {
   //! According to the PE specifications, this table is an
   //! exact copy of the delay import address table that can be
   //! used to to restore the original IAT the case of unloading.
-  uint32_t uiat() const;
-  void uiat(uint32_t value);
+  uint32_t uiat() const {
+    return unload_iat_;
+  }
+  void uiat(uint32_t value) {
+    unload_iat_ = value;
+  }
 
   //! The timestamp of the DLL to which this image has been bound.
-  uint32_t timestamp() const;
-  void timestamp(uint32_t value);
+  uint32_t timestamp() const {
+    return timestamp_;
+  }
+  void timestamp(uint32_t value) {
+    timestamp_ = value;
+  }
 
   //! Iterator over the DelayImport's entries (DelayImportEntry)
-  it_entries entries();
+  it_entries entries() {
+    return entries_;
+  }
 
   //! Iterator over the DelayImport's entries (DelayImportEntry)
-  it_const_entries entries() const;
+  it_const_entries entries() const {
+    return entries_;
+  }
 
   void accept(Visitor& visitor) const override;
-
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const DelayImport& entry);
 

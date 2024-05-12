@@ -17,7 +17,6 @@
 
 #include "logging.hpp"
 
-
 #include "LIEF/PE/hash.hpp"
 
 #include "LIEF/utils.hpp"
@@ -29,27 +28,9 @@
 namespace LIEF {
 namespace PE {
 
-LangCodeItem::LangCodeItem(const LangCodeItem&) = default;
-LangCodeItem& LangCodeItem::operator=(const LangCodeItem&) = default;
-LangCodeItem::~LangCodeItem() = default;
-
-LangCodeItem::LangCodeItem(uint16_t type, std::u16string key) :
-  type_{type},
-  key_{std::move(key)}
-{}
-
 LangCodeItem::LangCodeItem() :
   key_{*u8tou16("040c04B0")}
 {}
-
-uint16_t LangCodeItem::type() const {
-  return type_;
-}
-
-const std::u16string& LangCodeItem::key() const {
-  return key_;
-}
-
 
 CODE_PAGES LangCodeItem::code_page() const {
   if (key().length() != 8) {
@@ -79,24 +60,6 @@ uint32_t LangCodeItem::sublang() const {
 
   uint64_t lang_id = std::stoul(u16tou8(key().substr(0, 4)), nullptr, 16);
   return ResourcesManager::sublang_from_id(lang_id);
-}
-
-
-const LangCodeItem::items_t& LangCodeItem::items() const {
-  return items_;
-}
-
-LangCodeItem::items_t& LangCodeItem::items() {
-  return const_cast<LangCodeItem::items_t&>(static_cast<const LangCodeItem*>(this)->items());
-}
-
-
-void LangCodeItem::type(uint16_t type) {
-  type_ = type;
-}
-
-void LangCodeItem::key(const std::u16string& key) {
-  key_ = key;
 }
 
 void LangCodeItem::key(const std::string& key) {
@@ -167,9 +130,6 @@ void LangCodeItem::items(const LangCodeItem::items_t& items) {
 void LangCodeItem::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
-
-
-
 
 std::ostream& operator<<(std::ostream& os, const LangCodeItem& item) {
   os << std::hex << std::left;

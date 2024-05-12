@@ -16,12 +16,8 @@
 #ifndef LIEF_PE_RESOURCE_DIRECTORY_H
 #define LIEF_PE_RESOURCE_DIRECTORY_H
 
-#include <string>
-#include <list>
-
 #include "LIEF/visibility.h"
 
-#include "LIEF/PE/enums.hpp"
 #include "LIEF/PE/ResourceNode.hpp"
 
 namespace LIEF {
@@ -40,15 +36,17 @@ class LIEF_API ResourceDirectory : public ResourceNode {
   friend class Builder;
 
   public:
-  ResourceDirectory();
+  ResourceDirectory() :
+    ResourceNode(ResourceNode::TYPE::DIRECTORY)
+  {}
   ResourceDirectory(const details::pe_resource_directory_table& header);
 
-  ResourceDirectory(const ResourceDirectory& other);
-  ResourceDirectory& operator=(ResourceDirectory other);
+  ResourceDirectory(const ResourceDirectory& other) = default;
+  ResourceDirectory& operator=(const ResourceDirectory& other) = default;
 
-  void swap(ResourceDirectory& other);
+  void swap(ResourceDirectory& other) noexcept;
 
-  ~ResourceDirectory() override;
+  ~ResourceDirectory() override = default;
 
   std::unique_ptr<ResourceNode> clone() const override {
     return std::unique_ptr<ResourceNode>(new ResourceDirectory{*this});
@@ -56,35 +54,59 @@ class LIEF_API ResourceDirectory : public ResourceNode {
 
   //! Resource characteristics. This field is reserved for future use.
   //! It is currently set to zero.
-  uint32_t characteristics() const;
+  uint32_t characteristics() const {
+    return characteristics_;
+  }
 
   //! The time that the resource data was created by the
   //! resource compiler.
-  uint32_t time_date_stamp() const;
+  uint32_t time_date_stamp() const {
+    return timedatestamp_;
+  }
 
   //! The major version number, set by the user.
-  uint16_t major_version() const;
+  uint16_t major_version() const {
+    return majorversion_;
+  }
 
   //! The minor version number, set by the user.
-  uint16_t minor_version() const;
+  uint16_t minor_version() const {
+    return minorversion_;
+  }
 
   //! The number of directory entries immediately
   //! following the table that use strings to identify Type,
   //! Name, or Language entries (depending on the level
   //! of the table).
-  uint16_t numberof_name_entries() const;
+  uint16_t numberof_name_entries() const {
+    return numberof_name_entries_;
+  }
 
   //! The number of directory entries immediately
   //! following the Name entries that use numeric IDs for
   //! Type, Name, or Language entries.
-  uint16_t numberof_id_entries() const;
+  uint16_t numberof_id_entries() const {
+    return numberof_id_entries_;
+  }
 
-  void characteristics(uint32_t characteristics);
-  void time_date_stamp(uint32_t time_date_stamp);
-  void major_version(uint16_t major_version);
-  void minor_version(uint16_t minor_version);
-  void numberof_name_entries(uint16_t numberof_name_entries);
-  void numberof_id_entries(uint16_t numberof_id_entries);
+  void characteristics(uint32_t characteristics) {
+    characteristics_ = characteristics;
+  }
+  void time_date_stamp(uint32_t time_date_stamp) {
+    timedatestamp_ = time_date_stamp;
+  }
+  void major_version(uint16_t major_version) {
+    majorversion_ = major_version;
+  }
+  void minor_version(uint16_t minor_version) {
+    minorversion_ = minor_version;
+  }
+  void numberof_name_entries(uint16_t numberof_name_entries) {
+    numberof_name_entries_ = numberof_name_entries;
+  }
+  void numberof_id_entries(uint16_t numberof_id_entries) {
+    numberof_id_entries_ = numberof_id_entries;
+  }
 
   static bool classof(const ResourceNode* node) {
     return node->is_directory();
@@ -92,16 +114,15 @@ class LIEF_API ResourceDirectory : public ResourceNode {
 
   void accept(Visitor& visitor) const override;
 
-
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceDirectory& directory);
 
   private:
   uint32_t characteristics_ = 0;
-  uint32_t timeDateStamp_ = 0;
-  uint16_t majorVersion_ = 0;
-  uint16_t minorVersion_ = 0;
-  uint16_t numberOfNameEntries_ = 0;
-  uint16_t numberOfIDEntries_ = 0;
+  uint32_t timedatestamp_ = 0;
+  uint16_t majorversion_ = 0;
+  uint16_t minorversion_ = 0;
+  uint16_t numberof_name_entries_ = 0;
+  uint16_t numberof_id_entries_ = 0;
 
 };
 }
