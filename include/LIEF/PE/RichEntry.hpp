@@ -28,33 +28,50 @@ namespace PE {
 class LIEF_API RichEntry : public Object {
   public:
 
-  RichEntry();
-  RichEntry(uint16_t id, uint16_t build_id, uint32_t count);
-  RichEntry(const RichEntry&);
-  RichEntry& operator=(const RichEntry&);
-  ~RichEntry() override;
+  RichEntry() = default;
+  RichEntry(uint16_t id, uint16_t build_id, uint32_t count) :
+    id_(id),
+    build_id_(build_id),
+    count_(count)
+  {}
+
+  RichEntry(const RichEntry&) = default;
+  RichEntry& operator=(const RichEntry&) = default;
+  ~RichEntry() override = default;
 
   //! Entry type
-  uint16_t id() const;
+  uint16_t id() const {
+    return id_;
+  }
 
   //! Build number of the tool (if any)
-  uint16_t build_id() const;
+  uint16_t build_id() const {
+    return build_id_;
+  }
 
   //! *Occurrence* count.
-  uint32_t count() const;
+  uint32_t count() const {
+    return count_;
+  }
 
-  void id(uint16_t id);
-  void build_id(uint16_t build_id);
-  void count(uint32_t count);
+  void id(uint16_t id) {
+    id_ = id;
+  }
+  void build_id(uint16_t build_id) {
+    build_id_ = build_id;
+  }
+  void count(uint32_t count) {
+    count_ = count;
+  }
 
   void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const RichEntry& rich_entry);
 
   private:
-  uint16_t id_;
-  uint16_t build_id_;
-  uint32_t count_;
+  uint16_t id_ = 0;
+  uint16_t build_id_ = 0;
+  uint32_t count_ = 0;
 
 };
 }

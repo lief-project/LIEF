@@ -13,67 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
+#include <spdlog/fmt/fmt.h>
 
-#include "LIEF/PE/hash.hpp"
+#include "LIEF/Visitor.hpp"
 
 #include "LIEF/PE/RichEntry.hpp"
 
 namespace LIEF {
 namespace PE {
 
-RichEntry::~RichEntry() = default;
-RichEntry::RichEntry(const RichEntry&) = default;
-RichEntry& RichEntry::operator=(const RichEntry&) = default;
-
-RichEntry::RichEntry() :
-  id_{0},
-  build_id_{0},
-  count_{0}
-{}
-
-RichEntry::RichEntry(uint16_t id, uint16_t build_id, uint32_t count) :
-  id_{id},
-  build_id_{build_id},
-  count_{count}
-{}
-
-
-uint16_t RichEntry::id() const {
-  return id_;
-}
-
-uint16_t RichEntry::build_id() const {
-  return build_id_;
-}
-
-uint32_t RichEntry::count() const {
-  return count_;
-}
-
-void RichEntry::id(uint16_t id) {
-  id_ = id;
-}
-
-void RichEntry::build_id(uint16_t build_id) {
-  build_id_ = build_id;
-}
-
-void RichEntry::count(uint32_t count) {
-  count_ = count;
-}
-
 void RichEntry::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
-
-
-std::ostream& operator<<(std::ostream& os, const RichEntry& rich_entry) {
-  os << "ID: 0x"       << std::hex << std::setw(4) << std::setfill('0') << rich_entry.id() << " ";
-  os << "Build ID: 0x" << std::hex << std::setw(4) << std::setfill('0') << rich_entry.build_id() << " ";
-  os << "Count: "      << std::dec << std::setw(0) << rich_entry.count();
+std::ostream& operator<<(std::ostream& os, const RichEntry& entry) {
+  os << fmt::format("ID: 0x{:04x}", entry.id()) << '\n'
+     << fmt::format("Build ID: 0x{:04x}", entry.build_id()) << '\n'
+     << fmt::format("Count: ", entry.count()) << '\n';
   return os;
 }
 
