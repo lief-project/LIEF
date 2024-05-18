@@ -1,6 +1,6 @@
 set(PROFILING_FLAGS
     -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc
-    -fno-builtin-free -fno-omit-frame-pointer -g)
+    -fno-builtin-free -fno-omit-frame-pointer -g -O3)
 target_compile_options(LIB_LIEF PUBLIC ${PROFILING_FLAGS})
 
 add_executable(elf_profiler elf_profiler.cpp)
