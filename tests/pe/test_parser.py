@@ -1,5 +1,6 @@
 import lief
 import hashlib
+import pytest
 from pathlib import Path
 from utils import get_sample, is_64bits_platform
 
@@ -515,10 +516,15 @@ def test_symbols():
     assert symbol.section_number == 1
     assert symbol.type == 32
 
-
-def test_checksum():
-    assert atapi.optional_header.computed_checksum == atapi.optional_header.checksum
-    assert winhello64.optional_header.computed_checksum == winhello64.optional_header.checksum
+@pytest.mark.parametrize("input_file", [
+    "PE/PE64_x86-64_binary_winhello64-mingw.exe",
+    "PE/PE32_x86_binary_KMSpico_setup_MALWARE.exe",
+    "PE/PE64_x86-64_atapi.sys",
+    "PE/PE32_x86-64_binary_avast-free-antivirus-setup-online.exe"
+])
+def test_checksum(input_file: str):
+    pe = lief.PE.parse(get_sample(input_file))
+    assert pe.compute_checksum() == pe.optional_header.checksum
 
 def test_config():
     config = lief.PE.ParserConfig()

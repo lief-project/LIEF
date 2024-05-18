@@ -29,6 +29,7 @@ target_sources(LIB_LIEF PRIVATE
   Section.cpp
   Symbol.cpp
   TLS.cpp
+  checksum.cpp
   hash.cpp
   json_api.cpp
   utils.cpp

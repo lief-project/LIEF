@@ -50,7 +50,9 @@
 #include "LIEF/PE/TLS.hpp"
 #include "LIEF/PE/utils.hpp"
 #include "LIEF/PE/signature/SpcIndirectData.hpp"
+
 #include "PE/Structures.hpp"
+#include "PE/checksum.hpp"
 
 #include "frozen.hpp"
 
@@ -715,6 +717,149 @@ void Binary::set_resources(const ResourceData& resource) {
   resources_ = std::make_unique<ResourceData>(resource);
 }
 
+uint32_t Binary::compute_checksum() const {
+  const size_t sizeof_ptr = type_ == PE_TYPE::PE32 ? sizeof(uint32_t) :
+                                                     sizeof(uint64_t);
+
+  ChecksumStream cs(optional_header_.checksum());
+  cs // Hash dos header
+    .write(dos_header_.magic())
+    .write(dos_header_.used_bytes_in_last_page())
+    .write(dos_header_.file_size_in_pages())
+    .write(dos_header_.numberof_relocation())
+    .write(dos_header_.header_size_in_paragraphs())
+    .write(dos_header_.minimum_extra_paragraphs())
+    .write(dos_header_.maximum_extra_paragraphs())
+    .write(dos_header_.initial_relative_ss())
+    .write(dos_header_.initial_sp())
+    .write(dos_header_.checksum())
+    .write(dos_header_.initial_ip())
+    .write(dos_header_.initial_relative_cs())
+    .write(dos_header_.addressof_relocation_table())
+    .write(dos_header_.overlay_number())
+    .write(dos_header_.reserved())
+    .write(dos_header_.oem_id())
+    .write(dos_header_.oem_info())
+    .write(dos_header_.reserved2())
+    .write(dos_header_.addressof_new_exeheader())
+    .write(dos_stub_);
+
+  cs // Hash PE Header
+    .write(header_.signature())
+    .write(static_cast<uint16_t>(header_.machine()))
+    .write(header_.numberof_sections())
+    .write(header_.time_date_stamp())
+    .write(header_.pointerto_symbol_table())
+    .write(header_.numberof_symbols())
+    .write(header_.sizeof_optional_header())
+    .write(static_cast<uint16_t>(header_.characteristics()));
+
+  cs // Hash OptionalHeader
+    .write(static_cast<uint16_t>(optional_header_.magic()))
+    .write(optional_header_.major_linker_version())
+    .write(optional_header_.minor_linker_version())
+    .write(optional_header_.sizeof_code())
+    .write(optional_header_.sizeof_initialized_data())
+    .write(optional_header_.sizeof_uninitialized_data())
+    .write(optional_header_.addressof_entrypoint())
+    .write(optional_header_.baseof_code());
+
+  if (type_ == PE_TYPE::PE32) {
+    cs.write(optional_header_.baseof_data());
+  }
+  cs // Continuation of optional header
+    .write_sized_int(optional_header_.imagebase(), sizeof_ptr)
+    .write(optional_header_.section_alignment())
+    .write(optional_header_.file_alignment())
+    .write(optional_header_.major_operating_system_version())
+    .write(optional_header_.minor_operating_system_version())
+    .write(optional_header_.major_image_version())
+    .write(optional_header_.minor_image_version())
+    .write(optional_header_.major_subsystem_version())
+    .write(optional_header_.minor_subsystem_version())
+    .write(optional_header_.win32_version_value())
+    .write(optional_header_.sizeof_image())
+    .write(optional_header_.sizeof_headers())
+    .write(optional_header_.checksum())
+    .write(static_cast<uint16_t>(optional_header_.subsystem()))
+    .write(static_cast<uint16_t>(optional_header_.dll_characteristics()))
+    .write_sized_int(optional_header_.sizeof_stack_reserve(), sizeof_ptr)
+    .write_sized_int(optional_header_.sizeof_stack_commit(), sizeof_ptr)
+    .write_sized_int(optional_header_.sizeof_heap_reserve(), sizeof_ptr)
+    .write_sized_int(optional_header_.sizeof_heap_commit(), sizeof_ptr)
+    .write(optional_header_.loader_flags())
+    .write(optional_header_.numberof_rva_and_size());
+
+  for (const std::unique_ptr<DataDirectory>& dir : data_directories_) {
+    cs
+      .write(dir->RVA())
+      .write(dir->size());
+  }
+  // Section headers
+  for (const std::unique_ptr<Section>& sec : sections_) {
+    std::array<char, 8> name = {0};
+    const std::string& sec_name = sec->fullname();
+    uint32_t name_length = std::min<uint32_t>(sec_name.size() + 1, sizeof(name));
+    std::copy(sec_name.c_str(), sec_name.c_str() + name_length, std::begin(name));
+    cs
+      .write(name)
+      .write(sec->virtual_size())
+      .write<uint32_t>(sec->virtual_address())
+      .write(sec->sizeof_raw_data())
+      .write(sec->pointerto_raw_data())
+      .write(sec->pointerto_relocation())
+      .write(sec->pointerto_line_numbers())
+      .write(sec->numberof_relocations())
+      .write(sec->numberof_line_numbers())
+      .write(static_cast<uint32_t>(sec->characteristics()));
+  }
+
+  cs.write(section_offset_padding_);
+
+  std::vector<Section*> sections;
+  sections.reserve(sections_.size());
+  std::transform(std::begin(sections_), std::end(sections_),
+                 std::back_inserter(sections),
+                 [] (const std::unique_ptr<Section>& s) {
+                   return s.get();
+                 });
+
+  // Sort by file offset
+  std::sort(std::begin(sections), std::end(sections),
+            [] (const Section* lhs, const Section* rhs) {
+              return  lhs->pointerto_raw_data() < rhs->pointerto_raw_data();
+            });
+
+  uint64_t position = 0;
+  for (const Section* sec : sections) {
+    if (sec->sizeof_raw_data() == 0) {
+      continue;
+    }
+    span<const uint8_t> pad = sec->padding();
+    span<const uint8_t> content = sec->content();
+    if (/* overlapping */ sec->offset() < position) {
+      // Trunc the beginning of the overlap
+      if (position <= sec->offset() + content.size()) {
+        const uint64_t start_p = position - sec->offset();
+        const uint64_t size = content.size() - start_p;
+        cs
+          .write(content.data() + start_p, size)
+          .write(pad);
+      } else {
+        LIEF_WARN("Overlapping in the padding area");
+      }
+    } else {
+      cs
+        .write(content.data(), content.size())
+        .write(pad);
+    }
+    position = sec->offset() + content.size() + pad.size();
+  }
+  if (!overlay_.empty()) {
+    cs.write(overlay());
+  }
+  return cs.finalize();
+}
 
 std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
   static const std::map<ALGORITHMS, hashstream::HASH> HMAP = {

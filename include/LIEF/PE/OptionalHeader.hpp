@@ -28,6 +28,7 @@
 namespace LIEF {
 namespace PE {
 class Parser;
+class Binary;
 
 namespace details {
 struct pe32_optional_header;
@@ -37,6 +38,7 @@ struct pe64_optional_header;
 //! Class which represents the PE OptionalHeader structure
 class LIEF_API OptionalHeader : public Object {
   friend class Parser;
+  friend class Binary;
   public:
 
   enum class DLL_CHARACTERISTICS: size_t  {
@@ -214,20 +216,10 @@ class LIEF_API OptionalHeader : public Object {
     return checksum_;
   }
 
-  //! The re-computed value of the OptionalHeader::checksum.
-  //! If both values do not match, it could mean that the binary has been modified
-  //! after the compilation.
-  //!
-  //! This value is computed by LIEF when parsing the PE binary.
-  uint32_t computed_checksum() const {
-    return computed_checksum_;
-  }
-
   //! Target subsystem like Driver, XBox, Windows GUI, ...
   SUBSYSTEM subsystem() const {
     return subsystem_;
   }
-
 
   //! Some characteristics of the underlying binary like the support of the PIE.
   //! The prefix ``dll`` comes from the official PE specifications but these characteristics
@@ -441,8 +433,6 @@ class LIEF_API OptionalHeader : public Object {
   uint64_t  sizeof_heap_commit_ = 0;
   uint32_t  loader_flags_ = 0;
   uint32_t  nb_rva_size_ = 0;
-
-  uint32_t  computed_checksum_ = 0;
 };
 
 LIEF_API const char* to_string(OptionalHeader::DLL_CHARACTERISTICS);

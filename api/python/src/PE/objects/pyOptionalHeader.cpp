@@ -228,15 +228,6 @@ void create<OptionalHeader>(nb::module_& m) {
         time, and any **DLL** that is loaded into a **critical** Windows process.
         )delim"_doc)
 
-    .def_prop_ro("computed_checksum",
-        &OptionalHeader::computed_checksum,
-        R"delim(
-        The re-computed value of the :attr:`~lief.PE.OptionalHeader.checksum`.
-        If both values do not match, it could mean that the binary has been modified
-        after the compilation.
-
-        This value is computed by LIEF when parsing the PE binary.
-        )delim"_doc)
 
     .def_prop_rw("subsystem",
         nb::overload_cast<>(&OptionalHeader::subsystem, nb::const_),

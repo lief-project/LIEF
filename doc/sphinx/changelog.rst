@@ -47,6 +47,20 @@ Changelog
 :PE:
 
   * Add :attr:`lief.PE.CodeViewPDB.guid` attribute (:issue:`480`)
+  * Move ``lief.PE.OptionalHeader.computed_checksum`` to :meth:`lief.PE.Binary.compute_checksum`
+
+    In previous versions of LIEF, :attr:`lief.PE.OptionalHeader.checksum` was
+    re-computed (on purpose) in the parsing phase. On large
+    binaries, this re-computation can have a **strong impact** on the performances.
+    Thus, this computation has been deferred to a dedicated method :meth:`lief.PE.Binary.compute_checksum`
+
+    .. code-block:: python
+
+      pe = lief.PE.parse("...")
+      # Before:
+      computed = pe.optional_header.computed_checksum
+      # Now:
+      computed = pe.compute_checksum()
 
 :MachO:
 

@@ -200,7 +200,7 @@ std::ostream& operator<<(std::ostream& os, const OptionalHeader& entry) {
      << fmt::format("Win32 Version Value:           0x{:x}\n", entry.win32_version_value())
      << fmt::format("Size of image:                 0x{:x}\n", entry.sizeof_image())
      << fmt::format("Size of headers:               0x{:x}\n", entry.sizeof_headers())
-     << fmt::format("Checksum:                      0x{:x} (computed: 0x{:x})\n", entry.checksum(), entry.computed_checksum())
+     << fmt::format("Checksum:                      0x{:x}\n", entry.checksum())
      << fmt::format("Subsystem:                     {}\n", to_string(entry.subsystem()))
      << fmt::format("Dll characteristics:           {}\n", fmt::join(list_str, ", "))
      << fmt::format("Size of stack reserve:         0x{:x}\n", entry.sizeof_stack_reserve())

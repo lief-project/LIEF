@@ -284,10 +284,6 @@ impl OptionalHeader<'_> {
         self.ptr.checksum()
     }
 
-    pub fn computed_checksum(&self) -> u32 {
-        self.ptr.computed_checksum()
-    }
-
     pub fn subsystem(&self) -> u32 {
         self.ptr.subsystem()
     }

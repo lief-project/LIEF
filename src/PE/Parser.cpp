@@ -1078,53 +1078,6 @@ ok_error_t Parser::parse_overlay() {
   return ok();
 }
 
-
-result<uint32_t> Parser::checksum() {
-  /*
-   * (re)compute the checksum specified in OptionalHeader::CheckSum
-   */
-  ScopedStream chk_stream(*stream_, 0);
-  const uint32_t padding = chk_stream->size() % sizeof(uint16_t);
-
-  LIEF_DEBUG("padding: {}", padding);
-
-  uint32_t partial_sum = 0;
-  const uint64_t file_length = chk_stream->size();
-  uint64_t nb_chunk = (file_length + 1) >> 1; // Number of uint16_t chunks
-
-  while (*chk_stream) {
-    uint16_t chunk = 0;
-    if (auto res = chk_stream->read<uint16_t>()) {
-      chunk = *res;
-    } else {
-      break;
-    }
-    --nb_chunk;
-    partial_sum += chunk;
-    partial_sum = (partial_sum >> 16) + (partial_sum & 0xffff);
-  }
-
-  if (nb_chunk > 0) {
-    if (auto res = chk_stream->read<uint8_t>()) {
-      partial_sum += *res;
-      partial_sum = (partial_sum >> 16) + (partial_sum & 0xffff);
-    }
-  }
-
-  auto partial_sum_res = static_cast<uint16_t>(((partial_sum >> 16) + partial_sum) & 0xffff);
-  const uint32_t binary_checksum = binary_->optional_header().checksum();
-  const uint32_t adjust_sum_lsb = binary_checksum & 0xFFFF;
-  const uint32_t adjust_sum_msb = binary_checksum >> 16;
-
-  partial_sum_res -= static_cast<int>(partial_sum_res < adjust_sum_lsb);
-  partial_sum_res -= adjust_sum_lsb;
-
-  partial_sum_res -= static_cast<int>(partial_sum_res < adjust_sum_msb);
-  partial_sum_res -= adjust_sum_msb;
-
-  return static_cast<uint32_t>(partial_sum_res) + file_length;
-}
-
 std::unique_ptr<Binary> Parser::parse(const std::string& filename,
                                       const ParserConfig& conf) {
   if (!is_pe(filename)) {

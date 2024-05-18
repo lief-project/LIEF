@@ -86,6 +86,16 @@ void create<Binary>(nb::module_& m) {
         "Return the " RST_CLASS_REF(lief.PE.OptionalHeader) ""_doc,
         nb::rv_policy::reference_internal)
 
+    .def("compute_checksum",
+        &Binary::compute_checksum,
+        R"delim(
+        Re-compute the value of :attr:`~lief.PE.OptionalHeader.checksum`.
+        If both values do not match, it could mean that the binary has been modified
+        after the compilation.
+
+        This value is computed by LIEF for the current binary object.
+        )delim"_doc)
+
     .def_prop_ro("virtual_size",
         &Binary::virtual_size,
         R"delim(

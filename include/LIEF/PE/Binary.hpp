@@ -217,6 +217,13 @@ class LIEF_API Binary : public LIEF::Binary {
     return optional_header_;
   }
 
+  //! Re-compute the value of OptionalHeader::checksum.
+  //! If both values do not match, it could mean that the binary has been modified
+  //! after the compilation.
+  //!
+  //! This value is computed by LIEF for the current binary object.
+  uint32_t compute_checksum() const;
+
   //! Compute the binary's virtual size.
   //! It should match OptionalHeader::sizeof_image
   uint64_t virtual_size() const;

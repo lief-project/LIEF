@@ -144,8 +144,6 @@ class LIEF_API Parser : public LIEF::Parser {
   ok_error_t parse_dos_stub();
   ok_error_t parse_rich_header();
 
-  result<uint32_t> checksum();
-
   std::unique_ptr<ResourceNode> parse_resource_node(
       const details::pe_resource_directory_table& directory_table,
       uint32_t base_offset, uint32_t current_offset, uint32_t depth = 0);

@@ -170,6 +170,8 @@ class PE_Binary : public AbstractBinary {
     return std::make_unique<PE_OptionalHeader>(impl().optional_header());
   }
 
+  uint32_t compute_checksum() const { return impl().compute_checksum(); }
+
   auto resources_manager() const {
     return details::from_result<PE_ResourcesManager>(impl().resources_manager());
   }

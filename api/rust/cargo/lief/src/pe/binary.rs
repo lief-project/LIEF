@@ -46,6 +46,10 @@ impl Binary {
         OptionalHeader::from_ffi(self.ptr.optional_header())
     }
 
+    pub fn compute_checksum(&self) -> u32 {
+        self.ptr.compute_checksum()
+    }
+
     pub fn header(&self) -> Header {
         Header::from_ffi(self.ptr.header())
     }
