@@ -16,9 +16,9 @@
 #ifndef LIEF_MEMORY_STREAM_H
 #define LIEF_MEMORY_STREAM_H
 
-#include <vector>
-#include <string>
+#include <cstdint>
 
+#include "LIEF/errors.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 
 namespace LIEF {
@@ -31,13 +31,17 @@ class MemoryStream : public BinaryStream {
 
   MemoryStream() = delete;
   MemoryStream(uintptr_t base_address);
-  MemoryStream(uintptr_t base_address, uint64_t size);
+  MemoryStream(uintptr_t base_address, uint64_t size) :
+    BinaryStream(BinaryStream::STREAM_TYPE::MEMORY),
+    baseaddr_(base_address),
+    size_(size)
+  {}
 
   MemoryStream(const MemoryStream&) = delete;
   MemoryStream& operator=(const MemoryStream&) = delete;
 
-  MemoryStream(MemoryStream&&);
-  MemoryStream& operator=(MemoryStream&&);
+  MemoryStream(MemoryStream&&) noexcept = default;
+  MemoryStream& operator=(MemoryStream&&) noexcept = default;
 
   uintptr_t base_address() const {
     return this->baseaddr_;
@@ -63,10 +67,15 @@ class MemoryStream : public BinaryStream {
     return this->binary_;
   }
 
-  uint64_t size() const override;
-  ~MemoryStream() override;
+  uint64_t size() const override {
+    return size_;
+  }
 
-  static bool classof(const BinaryStream& stream);
+  ~MemoryStream() override = default;
+
+  static bool classof(const BinaryStream& stream) {
+    return stream.type() == BinaryStream::STREAM_TYPE::MEMORY;
+  }
 
   protected:
   result<const void*> read_at(uint64_t offset, uint64_t size) const override;

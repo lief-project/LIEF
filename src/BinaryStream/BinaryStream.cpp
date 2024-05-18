@@ -27,9 +27,6 @@
 #define TMPL_DECL(T) template T BinaryStream::swap_endian<T>(T u)
 
 namespace LIEF {
-BinaryStream::~BinaryStream() = default;
-BinaryStream::BinaryStream() = default;
-
 
 template<typename T>
 T BinaryStream::swap_endian(T u) {
@@ -55,32 +52,6 @@ TMPL_DECL(int8_t);
 TMPL_DECL(int16_t);
 TMPL_DECL(int32_t);
 TMPL_DECL(int64_t);
-
-void BinaryStream::setpos(size_t pos) const {
-  pos_ = pos;
-}
-
-void BinaryStream::increment_pos(size_t value) const {
-  pos_ += value;
-}
-
-
-void BinaryStream::decrement_pos(size_t value) const {
-  if (pos_ >= value) {
-    pos_ -= value;
-  } else {
-    pos_ = 0;
-  }
-}
-
-
-BinaryStream::operator bool() const {
-  return pos_ < size();
-}
-
-size_t BinaryStream::pos() const {
-  return pos_;
-}
 
 
 result<int64_t> BinaryStream::read_dwarf_encoded(uint8_t encoding) const {
@@ -340,10 +311,6 @@ result<std::string> BinaryStream::read_mutf8(size_t maxsize) const {
   utf8::unchecked::utf32to8(std::begin(u32str), std::end(u32str),
                             std::back_inserter(u8str));
   return u8str;
-}
-
-void BinaryStream::set_endian_swap(bool swap) {
-  endian_swap_ = swap;
 }
 
 }

@@ -28,7 +28,11 @@ namespace LIEF {
 class FileStream : public BinaryStream {
   public:
   static result<FileStream> from_file(const std::string& file);
-  FileStream(std::ifstream fs, uint64_t size);
+  FileStream(std::ifstream fs, uint64_t size) :
+    BinaryStream(STREAM_TYPE::FILE),
+    ifs_(std::move(fs)),
+    size_(size)
+  {}
 
   FileStream() = delete;
 
@@ -36,17 +40,19 @@ class FileStream : public BinaryStream {
   FileStream(const FileStream&) = delete;
   FileStream& operator=(const FileStream&) = delete;
 
-  FileStream(FileStream&& other);
-  FileStream& operator=(FileStream&& other);
+  FileStream(FileStream&& other) noexcept = default;
+  FileStream& operator=(FileStream&& other) noexcept = default;
 
   uint64_t size() const override {
     return size_;
   }
 
   std::vector<uint8_t> content() const;
-  ~FileStream() override;
+  ~FileStream() override = default;
 
-  static bool classof(const BinaryStream& stream);
+  static bool classof(const BinaryStream& stream) {
+    return stream.type() == STREAM_TYPE::FILE;
+  }
 
   protected:
   ok_error_t peek_in(void* dst, uint64_t offset, uint64_t size) const override {

@@ -29,30 +29,21 @@ namespace LIEF {
 namespace ELF {
 namespace DataHandler {
 
-
-//class DataHandlerStream : public SpanStream {
-//  public:
-//  DataHandlerStream(std::vector<uint8_t>& ref, size_t non_aligned_size) :
-//    SpanStream({ref.data(), non_aligned_size})
-//  {
-//    stype_ = STREAM_TYPE::ELF_DATA_HANDLER;
-//  }
-//  ~DataHandlerStream() override = default;
-//};
 class DataHandlerStream : public BinaryStream {
   public:
   DataHandlerStream(std::vector<uint8_t>& ref) :
+    BinaryStream(STREAM_TYPE::ELF_DATA_HANDLER),
     data_{ref}
   {
-    stype_ = STREAM_TYPE::ELF_DATA_HANDLER;
   }
+
   ~DataHandlerStream() override = default;
 
-  inline uint64_t size() const override {
+  uint64_t size() const override {
     return data_.size();
   }
 
-  inline result<const void*> read_at(uint64_t offset, uint64_t size) const override {
+  result<const void*> read_at(uint64_t offset, uint64_t size) const override {
     if (offset > data_.size() || (offset + size) > data_.size()) {
       return make_error_code(lief_errors::read_error);
     }
@@ -62,22 +53,6 @@ class DataHandlerStream : public BinaryStream {
   private:
   std::vector<uint8_t>& data_;
 };
-
-Handler::~Handler() = default;
-Handler::Handler() = default;
-
-Handler& Handler::operator=(Handler&&) = default;
-Handler::Handler(Handler&&) = default;
-
-Handler::Handler(std::vector<uint8_t> content) :
-  data_{std::move(content)}
-{}
-
-
-Handler::Handler(std::vector<uint8_t>&& content) :
-  data_{std::move(content)}
-{}
-
 
 result<std::unique_ptr<Handler>> Handler::from_stream(std::unique_ptr<BinaryStream>& stream) {
   auto hdl = std::unique_ptr<Handler>(new Handler{});
@@ -112,14 +87,6 @@ result<std::unique_ptr<Handler>> Handler::from_stream(std::unique_ptr<BinaryStre
 
   LIEF_ERR("Unknown stream for Handler");
   return make_error_code(lief_errors::not_supported);
-}
-
-const std::vector<uint8_t>& Handler::content() const {
-  return data_;
-}
-
-std::vector<uint8_t>& Handler::content() {
-  return const_cast<std::vector<uint8_t>&>(static_cast<const Handler*>(this)->content());
 }
 
 bool Handler::has(uint64_t offset, uint64_t size, Node::Type type) {

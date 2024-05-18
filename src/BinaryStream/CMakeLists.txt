@@ -4,6 +4,5 @@ target_sources(LIB_LIEF PRIVATE
   VectorStream.cpp
   FileStream.cpp
   MemoryStream.cpp
-  SpanStream.cpp
   Convert.cpp
 )

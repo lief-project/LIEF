@@ -18,10 +18,6 @@
 #include "LIEF/BinaryStream/FileStream.hpp"
 namespace LIEF {
 
-FileStream::FileStream(FileStream&& other) = default;
-FileStream& FileStream::operator=(FileStream&& other) = default;
-FileStream::~FileStream() = default;
-
 result<FileStream> FileStream::from_file(const std::string& file) {
   std::ifstream ifs(file, std::ios::in | std::ios::binary);
   if (!ifs) {
@@ -37,13 +33,6 @@ result<FileStream> FileStream::from_file(const std::string& file) {
 }
 
 
-FileStream::FileStream(std::ifstream fs, uint64_t size) :
-  ifs_{std::move(fs)},
-  size_{size}
-{
-  stype_ = STREAM_TYPE::FILE;
-}
-
 std::vector<uint8_t> FileStream::content() const {
   std::vector<uint8_t> data(size_, 0);
   const auto pos = ifs_.tellg();
@@ -54,8 +43,5 @@ std::vector<uint8_t> FileStream::content() const {
   return data;
 }
 
-bool FileStream::classof(const BinaryStream& stream) {
-  return stream.type() == STREAM_TYPE::FILE;
-}
 }
 

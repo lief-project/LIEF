@@ -44,8 +44,10 @@ class BinaryStream {
     ELF_DATA_HANDLER,
   };
 
-  BinaryStream();
-  virtual ~BinaryStream();
+  BinaryStream(STREAM_TYPE type) :
+    stype_(type)
+  {}
+  virtual ~BinaryStream() = default;
   virtual uint64_t size() const = 0;
 
   STREAM_TYPE type() const {
@@ -103,12 +105,29 @@ class BinaryStream {
     return ok();
   }
 
-  void setpos(size_t pos) const;
-  void increment_pos(size_t value) const;
-  void decrement_pos(size_t value) const;
-  size_t pos() const;
+  void setpos(size_t pos) const {
+    pos_ = pos;
+  }
 
-  operator bool() const;
+  void increment_pos(size_t value) const {
+    pos_ += value;
+  }
+
+  void decrement_pos(size_t value) const {
+    if (pos_ > value) {
+      pos_ -= value;
+    } else {
+      pos_ = 0;
+    }
+  }
+
+  size_t pos() const {
+    return pos_;
+  }
+
+  operator bool() const {
+    return pos_ < size();
+  }
 
   template<class T>
   const T* read_array(size_t size) const;
@@ -161,7 +180,9 @@ class BinaryStream {
   template<typename T>
   static T swap_endian(T u);
 
-  void set_endian_swap(bool swap);
+  void set_endian_swap(bool swap) {
+    endian_swap_ = swap;
+  }
 
   template<class T>
   static bool is_all_zero(const T& buffer) {
@@ -199,6 +220,7 @@ class BinaryStream {
   }
 
   protected:
+  BinaryStream() = default;
   virtual result<const void*> read_at(uint64_t offset, uint64_t size) const = 0;
   virtual ok_error_t peek_in(void* dst, uint64_t offset, uint64_t size) const {
     if (auto raw = read_at(offset, size)) {

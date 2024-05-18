@@ -21,6 +21,7 @@
 
 #include "LIEF/errors.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
+
 namespace LIEF {
 class VectorStream : public BinaryStream {
   public:
@@ -29,7 +30,11 @@ class VectorStream : public BinaryStream {
   using BinaryStream::start;
 
   static result<VectorStream> from_file(const std::string& file);
-  VectorStream(std::vector<uint8_t> data);
+  VectorStream(std::vector<uint8_t> data) :
+    BinaryStream(BinaryStream::STREAM_TYPE::VECTOR),
+    binary_(std::move(data)),
+    size_(binary_.size())
+  {}
 
   VectorStream() = delete;
 
@@ -37,14 +42,16 @@ class VectorStream : public BinaryStream {
   VectorStream(const VectorStream&) = delete;
   VectorStream& operator=(const VectorStream&) = delete;
 
-  VectorStream(VectorStream&& other);
-  VectorStream& operator=(VectorStream&& other);
+  VectorStream(VectorStream&& other) noexcept = default;
+  VectorStream& operator=(VectorStream&& other) noexcept = default;
 
   uint64_t size() const override {
     return size_;
   }
 
-  const std::vector<uint8_t>& content() const;
+  const std::vector<uint8_t>& content() const {
+    return binary_;
+  }
 
   std::vector<uint8_t>&& move_content() {
     size_ = 0;
@@ -63,10 +70,18 @@ class VectorStream : public BinaryStream {
     return this->binary_.data() + this->binary_.size();
   }
 
-  static bool classof(const BinaryStream& stream);
+  static bool classof(const BinaryStream& stream) {
+    return stream.type() == STREAM_TYPE::VECTOR;
+  }
 
   protected:
-  result<const void*> read_at(uint64_t offset, uint64_t size) const override;
+  result<const void*> read_at(uint64_t offset, uint64_t size) const override {
+    const uint64_t stream_size = this->size();
+    if (offset > stream_size || (offset + size) > stream_size) {
+      return make_error_code(lief_errors::read_error);
+    }
+    return binary_.data() + offset;
+  }
   std::vector<uint8_t> binary_;
   uint64_t size_ = 0; // Original size without alignment
 };

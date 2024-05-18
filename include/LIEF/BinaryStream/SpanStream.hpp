@@ -16,7 +16,10 @@
 #ifndef LIEF_SPAN_STREAM_H
 #define LIEF_SPAN_STREAM_H
 
-#include <string>
+#include <cstdint>
+#include <vector>
+#include <array>
+#include <cstddef>
 
 #include "LIEF/errors.hpp"
 #include "LIEF/span.hpp"
@@ -38,23 +41,30 @@ class SpanStream : public BinaryStream {
     return SpanStream(data.data(), N);
   }
 
-  SpanStream(span<const uint8_t> data);
-  SpanStream(span<uint8_t> data);
+  SpanStream(span<const uint8_t> data) :
+    SpanStream(data.data(), data.size())
+  {}
+
+  SpanStream(span<uint8_t> data) :
+    SpanStream(data.data(), data.size())
+  {}
 
   SpanStream(const uint8_t* p, size_t size) :
+    BinaryStream(BinaryStream::STREAM_TYPE::SPAN),
     data_{p, p + size}
-  {
-    stype_ = STREAM_TYPE::SPAN;
-  }
+  {}
 
-  SpanStream(const std::vector<uint8_t>& data);
+  SpanStream(const std::vector<uint8_t>& data) :
+    SpanStream(data.data(), data.size())
+  {}
+
   SpanStream() = delete;
 
   SpanStream(const SpanStream&) = delete;
   SpanStream& operator=(const SpanStream&) = delete;
 
-  SpanStream(SpanStream&& other);
-  SpanStream& operator=(SpanStream&& other);
+  SpanStream(SpanStream&& other) noexcept = default;
+  SpanStream& operator=(SpanStream&& other) noexcept = default;
 
   uint64_t size() const override {
     return data_.size();
@@ -72,16 +82,37 @@ class SpanStream : public BinaryStream {
     return data_.data() + size();
   }
 
-  std::vector<uint8_t> content() const;
+  std::vector<uint8_t> content() const {
+    return {data_.begin(), data_.end()};
+  }
 
-  result<SpanStream> slice(size_t offset, size_t size) const;
-  result<SpanStream> slice(size_t offset) const;
+  result<SpanStream> slice(size_t offset, size_t size) const {
+    if (offset > data_.size() || (offset + size) > data_.size()) {
+      return make_error_code(lief_errors::read_out_of_bound);
+    }
+    return data_.subspan(offset, size);
+  }
+  result<SpanStream> slice(size_t offset) const {
+    if (offset > data_.size()) {
+      return make_error_code(lief_errors::read_out_of_bound);
+    }
+    return data_.subspan(offset, data_.size() - offset);
+  }
 
-  static bool classof(const BinaryStream& stream);
-  ~SpanStream() override;
+  static bool classof(const BinaryStream& stream) {
+    return stream.type() == BinaryStream::STREAM_TYPE::SPAN;
+  }
+
+  ~SpanStream() override = default;
 
   protected:
-  result<const void*> read_at(uint64_t offset, uint64_t size) const override;
+  result<const void*> read_at(uint64_t offset, uint64_t size) const override {
+    const uint64_t stream_size = this->size();
+    if (offset > stream_size || (offset + size) > stream_size) {
+      return make_error_code(lief_errors::read_error);
+    }
+    return data_.data() + offset;
+  }
   span<const uint8_t> data_;
 };
 }

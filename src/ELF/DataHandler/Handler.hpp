@@ -36,20 +36,27 @@ class LIEF_API Handler {
   using ref_t = std::reference_wrapper<T>;
 
   static constexpr size_t MAX_SIZE = 4_GB;
-  Handler(std::vector<uint8_t> content);
-  Handler(std::vector<uint8_t>&& content);
-  ~Handler();
+  Handler(std::vector<uint8_t> content) :
+    data_(std::move(content))
+  {}
+
+  ~Handler() = default;
 
   // This class should not be implicitly copied as it might
   // have a huge impact on the performances
   Handler& operator=(const Handler&) = delete;
   Handler(const Handler&) = delete;
 
-  Handler& operator=(Handler&&);
-  Handler(Handler&&);
+  Handler& operator=(Handler&&) noexcept = default;
+  Handler(Handler&&) noexcept = default;
 
-  const std::vector<uint8_t>& content() const;
-  std::vector<uint8_t>& content();
+  const std::vector<uint8_t>& content() const {
+    return data_;
+  }
+
+  std::vector<uint8_t>& content() {
+    return data_;
+  }
 
   Node& add(const Node& node);
 
@@ -68,7 +75,7 @@ class LIEF_API Handler {
   static result<std::unique_ptr<Handler>> from_stream(std::unique_ptr<BinaryStream>& stream);
 
   private:
-  Handler();
+  Handler() = default;
   Handler(BinaryStream& stream);
   std::vector<uint8_t> data_;
   std::vector<std::unique_ptr<Node>> nodes_;

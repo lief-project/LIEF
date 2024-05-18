@@ -28,10 +28,6 @@ bool Node::operator==(const Node& rhs) const {
          offset() == rhs.offset();
 }
 
-bool Node::operator!=(const Node& rhs) const {
-  return !(*this == rhs);
-}
-
 bool Node::operator<(const Node& rhs) const {
   return ((type() == rhs.type() &&
          offset() <= rhs.offset() &&
@@ -42,17 +38,10 @@ bool Node::operator<(const Node& rhs) const {
 
 }
 
-bool Node::operator<=(const Node& rhs) const {
-  return (type() == rhs.type() && !(*this > rhs));
-}
 
 bool Node::operator>(const Node& rhs) const {
   return type() == rhs.type() &&
         (offset() > rhs.offset() || (offset() + size()) > (rhs.offset() + rhs.size()));
-}
-
-bool Node::operator>=(const Node& rhs) const {
-  return (type() == rhs.type() && !(*this < rhs));
 }
 
 }

@@ -16,7 +16,7 @@
 #ifndef LIEF_ELF_DATA_HANDLER_NODE_H
 #define LIEF_ELF_DATA_HANDLER_NODE_H
 
-#include "LIEF/types.hpp"
+#include <cstdint>
 #include "LIEF/visibility.h"
 
 namespace LIEF::ELF::DataHandler {
@@ -60,13 +60,19 @@ class LIEF_LOCAL Node {
   }
 
   bool operator==(const Node& rhs) const;
-  bool operator!=(const Node& rhs) const;
+  bool operator!=(const Node& rhs) const {
+    return !(*this == rhs);
+  }
 
   bool operator<(const Node& rhs) const;
-  bool operator<=(const Node& rhs) const;
+  bool operator<=(const Node& rhs) const {
+    return (type() == rhs.type() && !(*this > rhs));
+  }
 
   bool operator>(const Node& rhs) const;
-  bool operator>=(const Node& rhs) const;
+  bool operator>=(const Node& rhs) const {
+    return (type() == rhs.type() && !(*this < rhs));
+  }
   ~Node() = default;
 
   private:
