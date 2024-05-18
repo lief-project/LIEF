@@ -17,7 +17,7 @@
 
 #include "logging.hpp"
 
-#include "LIEF/BinaryStream/VectorStream.hpp"
+#include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/PE/LoadConfigurations.hpp"
 #include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/Binary.hpp"
@@ -664,7 +664,7 @@ ok_error_t Parser::parse_load_config() {
     return make_error_code(lief_errors::read_error);
   }
 
-  const uint32_t size = std::move(*res);
+  const uint32_t size = *res;
   size_t current_size = 0;
   auto version_found = LoadConfiguration::VERSION::UNKNOWN;
 
