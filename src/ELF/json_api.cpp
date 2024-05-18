@@ -25,7 +25,7 @@ namespace LIEF {
 class Object;
 namespace ELF {
 
-std::string to_json(const Object& v) {
+std::string to_json([[maybe_unused]] const Object& v) {
 #ifdef LIEF_JSON_SUPPORT
   JsonVisitor visitor;
   visitor(v);

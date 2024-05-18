@@ -23,7 +23,7 @@
 
 namespace LIEF {
 
-std::string to_json_from_abstract(const Object& v) {
+std::string to_json_from_abstract([[maybe_unused]] const Object& v) {
 #if LIEF_JSON_SUPPORT
   AbstractJsonVisitor visitor;
   v.accept(visitor);

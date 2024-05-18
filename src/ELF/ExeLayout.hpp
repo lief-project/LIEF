@@ -490,7 +490,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
   size_t android_relocations_size(bool force = false) {
     static constexpr uint64_t GROUPED_BY_INFO_FLAG         = 1 << 0;
     static constexpr uint64_t GROUPED_BY_OFFSET_DELTA_FLAG = 1 << 1;
-    static constexpr uint64_t GROUPED_BY_ADDEND_FLAG       = 1 << 2;
+    /* static constexpr uint64_t GROUPED_BY_ADDEND_FLAG    = 1 << 2;  */
     static constexpr uint64_t GROUP_HAS_ADDEND_FLAG        = 1 << 3;
 
     using Elf_Xword = typename ELF_T::Elf_Xword;
@@ -552,7 +552,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
 
     std::sort(non_relative_rels.begin(), non_relative_rels.end(),
-      [elf_class] (const Relocation* lhs, const Relocation* rhs) {
+      [] (const Relocation* lhs, const Relocation* rhs) {
         if (lhs->r_info(elf_class) != rhs->r_info(elf_class)) {
           return lhs->r_info(elf_class) < rhs->r_info(elf_class);
         }

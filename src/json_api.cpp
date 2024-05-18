@@ -51,7 +51,7 @@
 
 namespace LIEF {
 
-std::string to_json(const Object& v) {
+std::string to_json([[maybe_unused]] const Object& v) {
 #if defined(LIEF_JSON_SUPPORT)
   json node;
 #if defined(LIEF_PE_SUPPORT)
