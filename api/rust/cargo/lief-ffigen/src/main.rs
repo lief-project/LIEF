@@ -15,6 +15,9 @@ struct Args {
 
     #[arg(short, long)]
     target: String,
+
+    #[arg(long, action=clap::ArgAction::SetTrue)]
+    skip_compilation: bool,
 }
 
 fn main() -> miette::Result<()> {
@@ -44,18 +47,19 @@ fn main() -> miette::Result<()> {
         .extra_clang_args(&["-std=c++17"])
         .build()?;
 
-    cxx_builder
-        .out_dir(precompiled_dir.join("cxx_builder"))
-        .host(&host)
-        .target(&target)
-        .std("c++17")
-        .flag("-O3")
-        .flag_if_supported("-fno-rtti")
-        .flag_if_supported("-fno-exceptions")
-        .flag_if_supported("/EHsc-")
-        .flag_if_supported("/GR-")
-        .compile("lief-sys");
-
+    if !args.skip_compilation {
+        cxx_builder
+            .out_dir(precompiled_dir.join("cxx_builder"))
+            .host(&host)
+            .target(&target)
+            .std("c++17")
+            .flag("-O3")
+            .flag_if_supported("-fno-rtti")
+            .flag_if_supported("-fno-exceptions")
+            .flag_if_supported("/EHsc-")
+            .flag_if_supported("/GR-")
+            .compile("lief-sys");
+    }
 
     Ok(())
 }
