@@ -29,6 +29,8 @@
 #include "LIEF/MachO/utils.hpp"
 #include "LIEF/MachO/Parser.hpp"
 
+#include "LIEF/visibility.h"
+
 struct IRustStream;
 
 class RustStream {
@@ -37,7 +39,7 @@ class RustStream {
   RustStream(std::unique_ptr<LIEF::VectorStream> stream) :
     stream_(std::move(stream))
   {}
-  static std::unique_ptr<RustStream> from_rust(uint8_t* buffer , size_t size);
+  LIEF_API static std::unique_ptr<RustStream> from_rust(uint8_t* buffer , size_t size);
   bool is_elf() const {
     return LIEF::ELF::is_elf(*stream_);
   }

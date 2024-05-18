@@ -18,6 +18,7 @@
 #include "LIEF/rust/Abstract/Symbol.hpp"
 #include "LIEF/rust/MachO/Dylib.hpp"
 #include "LIEF/rust/helpers.hpp"
+#include "LIEF/visibility.h"
 
 class MachO_ExportInfo;
 class MachO_BindingInfo;
@@ -34,8 +35,8 @@ class MachO_Symbol : public AbstractSymbol {
   auto category() const { return to_int(impl().category()); };
   bool is_external() const { return impl().is_external(); };
 
-  std::unique_ptr<MachO_ExportInfo> export_info() const;
-  std::unique_ptr<MachO_BindingInfo> binding_info() const;
+  LIEF_API std::unique_ptr<MachO_ExportInfo> export_info() const;
+  LIEF_API std::unique_ptr<MachO_BindingInfo> binding_info() const;
 
   auto library() const {
     return details::try_unique<MachO_Dylib>(impl().library());
