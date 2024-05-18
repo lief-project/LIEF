@@ -50,6 +50,10 @@ fn main() -> miette::Result<()> {
         .target(&target)
         .std("c++17")
         .flag("-O3")
+        .flag_if_supported("-fno-rtti")
+        .flag_if_supported("-fno-exceptions")
+        .flag_if_supported("/EHsc-")
+        .flag_if_supported("/GR-")
         .compile("lief-sys");
 
 
