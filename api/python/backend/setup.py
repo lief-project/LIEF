@@ -39,6 +39,9 @@ def _compute_best(cls, *arg, **kwargs):
     if abi := config.cross_compilation.abi:
         abis = [abi]
 
+    if platform := config.cross_compilation.platform:
+        archs = [platform]
+
     return WheelTag(pyvers, abis, archs)
 
 def _fix_env():
