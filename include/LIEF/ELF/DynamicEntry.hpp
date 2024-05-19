@@ -16,7 +16,6 @@
 #ifndef LIEF_ELF_DYNAMIC_ENTRY_H
 #define LIEF_ELF_DYNAMIC_ENTRY_H
 
-#include <string>
 #include <ostream>
 #include <memory>
 #include <cstdint>

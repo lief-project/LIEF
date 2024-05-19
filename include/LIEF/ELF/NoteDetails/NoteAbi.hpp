@@ -16,7 +16,6 @@
 #ifndef LIEF_ELF_NOTE_ABI_H
 #define LIEF_ELF_NOTE_ABI_H
 
-#include <vector>
 #include <ostream>
 #include <array>
 #include <memory>
