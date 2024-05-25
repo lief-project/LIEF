@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <fstream>
-
 #include "logging.hpp"
 
 #include "LIEF/utils.hpp"
@@ -227,15 +225,6 @@ std::vector<uint8_t> Signature::hash(const uint8_t* buffer, size_t size, ALGORIT
       }
   }
   return {};
-}
-
-uint32_t Signature::version() const {
-  return version_;
-}
-
-
-const ContentInfo& Signature::content_info() const {
-  return content_info_;
 }
 
 Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const {

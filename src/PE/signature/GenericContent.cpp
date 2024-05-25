@@ -34,9 +34,6 @@ GenericContent::GenericContent(oid_t oid) :
 
 GenericContent::~GenericContent() = default;
 
-GenericContent::GenericContent(const GenericContent&) = default;
-GenericContent& GenericContent::operator=(const GenericContent&) = default;
-
 void GenericContent::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }

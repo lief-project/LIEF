@@ -26,8 +26,8 @@ class GenericContent : public ContentInfo::Content {
   public:
   GenericContent();
   GenericContent(oid_t oid);
-  GenericContent(const GenericContent&);
-  GenericContent& operator=(const GenericContent&);
+  GenericContent(const GenericContent&) = default;
+  GenericContent& operator=(const GenericContent&) = default;
 
   std::unique_ptr<Content> clone() const override {
     return std::unique_ptr<Content>(new GenericContent{*this});

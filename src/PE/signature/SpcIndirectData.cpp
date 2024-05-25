@@ -29,11 +29,6 @@ SpcIndirectData::SpcIndirectData() :
   ContentInfo::Content(SPC_INDIRECT_DATA_OBJID)
 {}
 
-SpcIndirectData::~SpcIndirectData() = default;
-
-SpcIndirectData::SpcIndirectData(const SpcIndirectData&) = default;
-SpcIndirectData& SpcIndirectData::operator=(const SpcIndirectData&) = default;
-
 void SpcIndirectData::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }

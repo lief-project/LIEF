@@ -103,7 +103,9 @@ class LIEF_API Signature : public Object {
   Signature& operator=(Signature&&);
 
   //! Should be 1
-  uint32_t version() const;
+  uint32_t version() const {
+    return version_;
+  }
 
   //! Algorithm used to *digest* the file.
   //!
@@ -113,7 +115,9 @@ class LIEF_API Signature : public Object {
   }
 
   //! Return the ContentInfo
-  const ContentInfo& content_info() const;
+  const ContentInfo& content_info() const {
+    return content_info_;
+  }
 
   //! Return an iterator over x509 certificates
   it_const_crt certificates() const {

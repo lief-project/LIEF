@@ -30,8 +30,8 @@ class SpcIndirectData : public ContentInfo::Content {
 
   public:
   SpcIndirectData();
-  SpcIndirectData(const SpcIndirectData&);
-  SpcIndirectData& operator=(const SpcIndirectData&);
+  SpcIndirectData(const SpcIndirectData&) = default;
+  SpcIndirectData& operator=(const SpcIndirectData&) = default;
 
   std::unique_ptr<Content> clone() const override {
     return std::unique_ptr<Content>(new SpcIndirectData{*this});
@@ -64,7 +64,7 @@ class SpcIndirectData : public ContentInfo::Content {
     return os;
   }
 
-  ~SpcIndirectData() override;
+  ~SpcIndirectData() override = default;
 
   static bool classof(const ContentInfo::Content* content);
 
