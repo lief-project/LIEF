@@ -32,10 +32,10 @@ class LIEF_API PogoEntry : public Object {
   friend class Parser;
 
   public:
-  PogoEntry();
-  PogoEntry(PogoEntry&& other);
-  PogoEntry& operator=(PogoEntry&& other);
-  PogoEntry(const PogoEntry&);
+  PogoEntry() = default;
+  PogoEntry(PogoEntry&& other) = default;
+  PogoEntry& operator=(PogoEntry&& other) = default;
+  PogoEntry(const PogoEntry&) = default;
   PogoEntry(uint32_t start_rva, uint32_t size, std::string name) :
     start_rva_{start_rva},
     size_{size},
@@ -46,8 +46,8 @@ class LIEF_API PogoEntry : public Object {
     PogoEntry{start_rva, size, ""}
   {}
 
-  PogoEntry& operator=(const PogoEntry&);
-  ~PogoEntry() override;
+  PogoEntry& operator=(const PogoEntry&) = default;
+  ~PogoEntry() override = default;
 
   uint32_t start_rva() const {
     return start_rva_;

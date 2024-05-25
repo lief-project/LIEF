@@ -61,18 +61,20 @@ class LIEF_API Debug : public Object {
     REPRO                 = 16, ///< PE determinism or reproducibility.
     EX_DLLCHARACTERISTICS = 20,
   };
-  Debug();
+  Debug() = default;
   Debug(TYPES type) {
     type_ = type;
   }
 
   Debug(const details::pe_debug& debug_s);
-  Debug(const Debug& other);
-  Debug& operator=(const Debug& other);
+  Debug(const Debug& other) = default;
+  Debug& operator=(const Debug& other) = default;
 
-  ~Debug() override;
+  ~Debug() override = default;
 
-  virtual std::unique_ptr<Debug> clone() const;
+  virtual std::unique_ptr<Debug> clone() const {
+    return std::unique_ptr<Debug>(new Debug(*this));
+  }
 
   //! Reserved should be 0
   uint32_t characteristics() const {

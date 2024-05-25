@@ -20,10 +20,6 @@
 
 namespace LIEF {
 namespace PE {
-CodeView::CodeView() = default;
-CodeView::CodeView(const CodeView& other) = default;
-CodeView& CodeView::operator=(const CodeView& other) = default;
-CodeView::~CodeView() = default;
 
 CodeView::CodeView(const details::pe_debug& debug, SIGNATURES sig) :
   Debug{debug},

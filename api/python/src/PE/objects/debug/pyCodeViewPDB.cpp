@@ -46,22 +46,36 @@ void create<CodeViewPDB>(nb::module_& m) {
         "parent(self) -> lief.PE.CodeView"_p,
         nb::rv_policy::reference_internal)
 
-    .def_prop_ro("guid", &CodeViewPDB::guid)
+    .def_prop_ro("guid", &CodeViewPDB::guid,
+      R"doc(
+      The GUID signature to verify against the .pdb file signature.
+
+      This attribute might be used to lookup remote PDB file on a symbol server
+      )doc"_doc
+    )
 
     .def_prop_rw("signature",
         nb::overload_cast<>(&CodeViewPDB::signature, nb::const_),
-        nb::overload_cast<const CodeViewPDB::signature_t&>(&CodeViewPDB::signature))
+        nb::overload_cast<const CodeViewPDB::signature_t&>(&CodeViewPDB::signature),
+        R"doc(
+        The 32-bit signature to verify against the .pdb file signature.
+        )doc"_doc)
 
     .def_prop_rw("age",
         nb::overload_cast<>(&CodeViewPDB::age, nb::const_),
-        nb::overload_cast<uint32_t>(&CodeViewPDB::age))
+        nb::overload_cast<uint32_t>(&CodeViewPDB::age),
+        R"doc(
+        Age value to verify. The age does not necessarily correspond to any known
+        time value, it is used to determine if a .pdb file is out of sync with
+        a corresponding .exe file.
+        )doc"_doc)
 
     .def_prop_rw("filename",
         [] (const CodeViewPDB& self) {
           return LIEF::py::safe_string(self.filename());
         },
         nb::overload_cast<std::string>(&CodeViewPDB::filename),
-        "Original pdb path")
+        "The path to the ``.pdb`` file"_doc)
 
     LIEF_DEFAULT_STR(CodeViewPDB);
 }

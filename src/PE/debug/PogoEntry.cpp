@@ -21,15 +21,6 @@
 namespace LIEF {
 namespace PE {
 
-PogoEntry::PogoEntry(const PogoEntry&) = default;
-PogoEntry& PogoEntry::operator=(const PogoEntry&) = default;
-PogoEntry::PogoEntry(PogoEntry&& other) = default;
-PogoEntry& PogoEntry::operator=(PogoEntry&& other) = default;
-
-PogoEntry::~PogoEntry() = default;
-
-PogoEntry::PogoEntry() = default;
-
 void PogoEntry::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }

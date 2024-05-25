@@ -25,12 +25,6 @@
 namespace LIEF {
 namespace PE {
 
-CodeViewPDB::CodeViewPDB() = default;
-CodeViewPDB::CodeViewPDB(const CodeViewPDB& other) = default;
-CodeViewPDB& CodeViewPDB::operator=(const CodeViewPDB& other) = default;
-CodeViewPDB::~CodeViewPDB() = default;
-
-
 CodeViewPDB::CodeViewPDB(const details::pe_debug& debug_info,
                          const details::pe_pdb_70& pdb_70) :
   CodeView{debug_info, SIGNATURES::PDB_70},

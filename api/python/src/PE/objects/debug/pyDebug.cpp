@@ -68,7 +68,7 @@ void create<Debug>(nb::module_& m) {
     .def_prop_rw("timestamp",
         nb::overload_cast<>(&Debug::timestamp, nb::const_),
         nb::overload_cast<uint32_t>(&Debug::timestamp),
-        "The time and date that the debug data was created."_doc)
+        "The time and date when the debug data was created."_doc)
 
     .def_prop_rw("major_version",
         nb::overload_cast<>(&Debug::major_version, nb::const_),

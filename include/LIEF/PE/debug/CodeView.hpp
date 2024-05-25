@@ -22,7 +22,7 @@ namespace PE {
 class Parser;
 class Builder;
 
-//! Interface for the (Generic) Debug CodeView (``IMAGE_DEBUG_TYPE_CODEVIEW``)
+//! Interface for the (generic) Debug CodeView (``IMAGE_DEBUG_TYPE_CODEVIEW``)
 class LIEF_API CodeView : public Debug {
   friend class Parser;
   friend class Builder;
@@ -39,7 +39,9 @@ class LIEF_API CodeView : public Debug {
     CV_41  = 0x3930424e, // NB09
   };
 
-  CodeView();
+  CodeView() :
+    Debug(Debug::TYPES::CODEVIEW)
+  {}
   CodeView(SIGNATURES sig) :
     Debug{Debug::TYPES::CODEVIEW},
     sig_{sig}
@@ -47,10 +49,10 @@ class LIEF_API CodeView : public Debug {
 
   CodeView(const details::pe_debug& debug, SIGNATURES sig);
 
-  CodeView(const CodeView& other);
-  CodeView& operator=(const CodeView& other);
+  CodeView(const CodeView& other) = default;
+  CodeView& operator=(const CodeView& other) = default;
 
-  ~CodeView() override;
+  ~CodeView() override = default;
 
   //! The signature that defines the underlying type of the payload
   SIGNATURES signature() const {

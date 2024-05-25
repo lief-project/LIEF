@@ -22,10 +22,6 @@
 
 namespace LIEF {
 namespace PE {
-Debug::Debug() = default;
-Debug::~Debug() = default;
-Debug::Debug(const Debug& copy) = default;
-Debug& Debug::operator=(const Debug& other) = default;
 
 Debug::Debug(const details::pe_debug& debug_s) :
   type_{static_cast<TYPES>(debug_s.Type)},
@@ -37,10 +33,6 @@ Debug::Debug(const details::pe_debug& debug_s) :
   addressof_rawdata_{debug_s.AddressOfRawData},
   pointerto_rawdata_{debug_s.PointerToRawData}
 {}
-
-std::unique_ptr<Debug> Debug::clone() const {
-  return std::make_unique<Debug>(*this);
-}
 
 void Debug::accept(Visitor& visitor) const {
   visitor.visit(*this);

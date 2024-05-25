@@ -21,10 +21,6 @@
 namespace LIEF {
 namespace PE {
 
-Pogo::Pogo(const Pogo&) = default;
-Pogo& Pogo::operator=(const Pogo&) = default;
-Pogo::~Pogo() = default;
-
 Pogo::Pogo() {
   type_ = Debug::TYPES::POGO;
 }

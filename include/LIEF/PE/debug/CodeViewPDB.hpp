@@ -37,22 +37,28 @@ class LIEF_API CodeViewPDB : public CodeView {
 
   public:
   using signature_t = std::array<uint8_t, 16>;
-  CodeViewPDB();
+  CodeViewPDB() = default;
   CodeViewPDB(const details::pe_debug& debug_info,
               const details::pe_pdb_70& pdb_70);
-  CodeViewPDB(const CodeViewPDB& other);
-  CodeViewPDB& operator=(const CodeViewPDB& other);
+  CodeViewPDB(const CodeViewPDB& other) = default;
+  CodeViewPDB& operator=(const CodeViewPDB& other) = default;
 
+  /// The GUID signature to verify against the .pdb file signature.
+  /// This attribute might be used to lookup remote PDB file on a symbol server
   std::string guid() const;
 
+  /// Age value to verify. The age does not necessarily correspond to any known
+  /// time value, it is used to determine if a .pdb file is out of sync with a corresponding .exe file.
   uint32_t age() const {
     return age_;
   }
 
+  /// The 32-bit signature to verify against the .pdb file signature.
   const signature_t& signature() const {
     return signature_;
   }
 
+  /// The path to the `.pdb` file
   const std::string& filename() const {
     return filename_;
   }
@@ -86,7 +92,7 @@ class LIEF_API CodeViewPDB : public CodeView {
   void accept(Visitor& visitor) const override;
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const CodeViewPDB& entry);
 
-  ~CodeViewPDB() override;
+  ~CodeViewPDB() override = default;
 
   protected:
   uint32_t    age_ = 0;

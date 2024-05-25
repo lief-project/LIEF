@@ -54,8 +54,8 @@ class LIEF_API Pogo : public Debug {
   {}
 
   Pogo(const details::pe_debug& debug, SIGNATURES sig);
-  Pogo(const Pogo&);
-  Pogo& operator=(const Pogo&);
+  Pogo(const Pogo&) = default;
+  Pogo& operator=(const Pogo&) = default;
 
   std::unique_ptr<Debug> clone() const override {
     return std::unique_ptr<Debug>(new Pogo(*this));
@@ -86,7 +86,7 @@ class LIEF_API Pogo : public Debug {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Pogo& entry);
 
-  ~Pogo() override;
+  ~Pogo() override = default;
 
   protected:
   SIGNATURES sig_ = SIGNATURES::UNKNOWN;
