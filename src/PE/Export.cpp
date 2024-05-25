@@ -22,12 +22,6 @@
 namespace LIEF {
 namespace PE {
 
-Export::~Export() = default;
-Export::Export(const Export&) = default;
-Export& Export::operator=(const Export&) = default;
-
-Export::Export() = default;
-
 Export::Export(const details::pe_export_directory_table& header) :
   export_flags_{header.ExportFlags},
   timestamp_{header.Timestamp},

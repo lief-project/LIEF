@@ -15,7 +15,6 @@
  */
 #ifndef LIEF_PE_DELAY_IMPORT_ENTRY_H
 #define LIEF_PE_DELAY_IMPORT_ENTRY_H
-#include <string>
 #include <ostream>
 
 #include "LIEF/Object.hpp"
@@ -32,10 +31,10 @@ class Builder;
 //! Class that represents an entry (i.e. an import) in the delay import table (DelayImport).
 //!
 //! It extends the LIEF::Symbol generic class that exposes the LIEF::Symbol::name and
-//! LIEF::Symbol::value API
+//! LIEF::Symbol::value API.
 //!
 //! The meaning of LIEF::Symbol::value for this PE object is the address (as an RVA) in the IAT
-//! where the resolution should take place
+//! where the resolution should take place.
 class LIEF_API DelayImportEntry : public LIEF::Symbol {
   friend class Parser;
   friend class Builder;
@@ -55,7 +54,7 @@ class LIEF_API DelayImportEntry : public LIEF::Symbol {
 
   ~DelayImportEntry() override = default;
 
-  //!``True`` if it is an import by ordinal
+  //! `True` if it is an import by ordinal
   bool is_ordinal() const;
 
   //! The ordinal value

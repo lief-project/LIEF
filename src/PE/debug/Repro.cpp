@@ -22,10 +22,6 @@
 namespace LIEF {
 namespace PE {
 
-Repro::Repro(const Repro&) = default;
-Repro& Repro::operator=(const Repro&) = default;
-Repro::~Repro() = default;
-
 void Repro::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }

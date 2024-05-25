@@ -15,9 +15,6 @@
  */
 #include <algorithm>
 
-#include "LIEF/utils.hpp"
-
-#include "logging.hpp"
 #include "frozen.hpp"
 
 #include "LIEF/PE/hash.hpp"
@@ -43,11 +40,6 @@ static constexpr std::array DLL_CHARACTERISTICS_LIST = {
   OptionalHeader::DLL_CHARACTERISTICS::GUARD_CF,
   OptionalHeader::DLL_CHARACTERISTICS::TERMINAL_SERVER_AWARE,
 };
-
-OptionalHeader::~OptionalHeader() = default;
-OptionalHeader& OptionalHeader::operator=(const OptionalHeader&) = default;
-OptionalHeader::OptionalHeader(const OptionalHeader&) = default;
-OptionalHeader::OptionalHeader() = default;
 
 OptionalHeader::OptionalHeader(const details::pe32_optional_header& header):
   magic_(static_cast<PE_TYPE>(header.Magic)),
@@ -140,18 +132,6 @@ OptionalHeader OptionalHeader::create(PE_TYPE type) {
   return header;
 }
 
-bool OptionalHeader::has(DLL_CHARACTERISTICS c) const {
-  return (dll_characteristics() & static_cast<uint32_t>(c)) > 0;
-}
-
-void OptionalHeader::add(DLL_CHARACTERISTICS c) {
-  dll_characteristics(dll_characteristics() | static_cast<uint32_t>(c));
-}
-
-void OptionalHeader::remove(DLL_CHARACTERISTICS c) {
-  dll_characteristics(dll_characteristics() & (~ static_cast<uint32_t>(c)));
-}
-
 std::vector<OptionalHeader::DLL_CHARACTERISTICS> OptionalHeader::dll_characteristics_list() const {
   std::vector<DLL_CHARACTERISTICS> characteristics;
   characteristics.reserve(3);
@@ -164,16 +144,6 @@ std::vector<OptionalHeader::DLL_CHARACTERISTICS> OptionalHeader::dll_characteris
 
 void OptionalHeader::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
-}
-
-OptionalHeader& OptionalHeader::operator+=(DLL_CHARACTERISTICS c) {
-  add(c);
-  return *this;
-}
-
-OptionalHeader& OptionalHeader::operator-=(DLL_CHARACTERISTICS c) {
-  remove(c);
-  return *this;
 }
 
 std::ostream& operator<<(std::ostream& os, const OptionalHeader& entry) {

@@ -24,15 +24,6 @@
 namespace LIEF {
 namespace PE {
 
-DosHeader::~DosHeader() = default;
-DosHeader::DosHeader(const DosHeader&) = default;
-DosHeader& DosHeader::operator=(const DosHeader&) = default;
-
-DosHeader::DosHeader(DosHeader&&) = default;
-DosHeader& DosHeader::operator=(DosHeader&&) = default;
-
-DosHeader::DosHeader() = default;
-
 DosHeader::DosHeader(const details::pe_dos_header& header) :
   magic_{header.Magic},
   used_bytes_in_last_page_{header.UsedBytesInTheLastPage},

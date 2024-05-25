@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include <iomanip>
+#include <algorithm>
 #include "LIEF/Visitor.hpp"
 
 #include "LIEF/PE/TLS.hpp"

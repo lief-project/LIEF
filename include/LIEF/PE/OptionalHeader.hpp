@@ -36,6 +36,9 @@ struct pe64_optional_header;
 }
 
 //! Class which represents the PE OptionalHeader structure
+//!
+//! Note that the term *optional* comes from the COFF specifications but this
+//! header is **mandatory** for a PE binary.
 class LIEF_API OptionalHeader : public Object {
   friend class Parser;
   friend class Binary;
@@ -74,10 +77,10 @@ class LIEF_API OptionalHeader : public Object {
 
   OptionalHeader(const details::pe32_optional_header& header);
   OptionalHeader(const details::pe64_optional_header& header);
-  ~OptionalHeader() override;
+  ~OptionalHeader() override = default;
 
-  OptionalHeader& operator=(const OptionalHeader&);
-  OptionalHeader(const OptionalHeader&);
+  OptionalHeader& operator=(const OptionalHeader&) = default;
+  OptionalHeader(const OptionalHeader&) = default;
 
   static OptionalHeader create(PE_TYPE type);
 
@@ -97,7 +100,7 @@ class LIEF_API OptionalHeader : public Object {
   }
 
   //! The size of the code ``.text`` section or the sum of
-  //! all the sections that contain code (ie. PE::Section with the flag Section::CHARACTERISTICS::CNT_CODE)
+  //! all the sections that contain code (i.e. PE::Section with the flag Section::CHARACTERISTICS::CNT_CODE)
   uint32_t sizeof_code() const {
     return sizeof_code_;
   }
@@ -230,7 +233,7 @@ class LIEF_API OptionalHeader : public Object {
 
   //! Size of the stack to reserve when loading the PE binary
   //!
-  //! Only :attr:`~lief.PE.OptionalHeader.sizeof_stack_commit` is committed, the rest is made
+  //! Only OptionalHeader::sizeof_stack_commit is committed, the rest is made
   //! available one page at a time until the reserve size is reached.
   uint64_t sizeof_stack_reserve() const {
     return sizeof_stack_reserve_;
@@ -262,16 +265,22 @@ class LIEF_API OptionalHeader : public Object {
   }
 
   //! Check if the given DLL_CHARACTERISTICS is included in the dll_characteristics
-  bool has(DLL_CHARACTERISTICS c) const;
+  bool has(DLL_CHARACTERISTICS c) const {
+    return (dll_characteristics() & static_cast<uint32_t>(c)) != 0;
+  }
 
   //! Return the list of the dll_characteristics as an std::set of DLL_CHARACTERISTICS
   std::vector<DLL_CHARACTERISTICS> dll_characteristics_list() const;
 
   //! Add a DLL_CHARACTERISTICS to the current characteristics
-  void add(DLL_CHARACTERISTICS c);
+  void add(DLL_CHARACTERISTICS c) {
+    dll_characteristics(dll_characteristics() | static_cast<uint32_t>(c));
+  }
 
   //! Remove a DLL_CHARACTERISTICS from the current characteristics
-  void remove(DLL_CHARACTERISTICS c);
+  void remove(DLL_CHARACTERISTICS c) {
+    dll_characteristics(dll_characteristics() & (~ static_cast<uint32_t>(c)));
+  }
 
   void magic(PE_TYPE magic) {
     magic_ = magic;
@@ -395,13 +404,19 @@ class LIEF_API OptionalHeader : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  OptionalHeader& operator+=(DLL_CHARACTERISTICS c);
-  OptionalHeader& operator-=(DLL_CHARACTERISTICS c);
+  OptionalHeader& operator+=(DLL_CHARACTERISTICS c) {
+    add(c);
+    return *this;
+  }
+  OptionalHeader& operator-=(DLL_CHARACTERISTICS c) {
+    remove(c);
+    return *this;
+  }
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const OptionalHeader& entry);
 
   private:
-  OptionalHeader();
+  OptionalHeader() = default;
 
   PE_TYPE   magic_ = PE_TYPE::PE32;
   uint8_t   major_linker_version_ = 0;

@@ -34,7 +34,6 @@ Import::Import(const details::pe_import& import) :
 {}
 
 
-
 const ImportEntry* Import::get_entry(const std::string& name) const {
   const auto it_entry = std::find_if(std::begin(entries_), std::end(entries_),
       [&name] (const ImportEntry& entry) {
@@ -64,28 +63,6 @@ result<uint32_t> Import::get_function_rva_from_iat(const std::string& function) 
   }
   return idx * sizeof(uint64_t);
 }
-
-
-void Import::import_lookup_table_rva(uint32_t rva) {
-  import_lookup_table_RVA_ = rva;
-}
-
-
-void Import::import_address_table_rva(uint32_t rva) {
-  import_address_table_RVA_ = rva;
-}
-
-ImportEntry& Import::add_entry(const ImportEntry& entry) {
-  entries_.push_back(entry);
-  return entries_.back();
-}
-
-
-ImportEntry& Import::add_entry(const std::string& name) {
-  entries_.emplace_back(name);
-  return entries_.back();
-}
-
 
 void Import::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);

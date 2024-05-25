@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <sstream>
 #include <algorithm>
 
 #include "LIEF/Visitor.hpp"
@@ -45,13 +44,6 @@ static constexpr std::array CHARACTERISTICS_LIST = {
   Header::CHARACTERISTICS::UP_SYSTEM_ONLY,
   Header::CHARACTERISTICS::BYTES_REVERSED_HI
 };
-
-
-Header::~Header() = default;
-Header& Header::operator=(const Header&) = default;
-Header::Header(const Header&) = default;
-
-Header::Header() = default;
 
 
 Header Header::create(PE_TYPE type) {

@@ -79,7 +79,8 @@ class LIEF_API Import : public Object {
   }
 
   //! The RVA of the import address table (``IAT``). The content of this table is
-  //! **identical** to the content of the Import Lookup Table (``ILT``) until the image is bound.
+  //! **identical** to the content of the Import Lookup Table (``ILT``) until the
+  //! image is bound.
   //!
   //! @warning
   //! This address could change when re-building the binary
@@ -87,7 +88,7 @@ class LIEF_API Import : public Object {
     return import_address_table_RVA_;
   }
 
-  //! Return the relative virtual address of the import lookup table
+  //! Return the relative virtual address of the import lookup table.
   //!
   //! @warning
   //! This address could change when re-building the binary
@@ -140,13 +141,23 @@ class LIEF_API Import : public Object {
   }
 
   //! Add a new import entry (i.e. an imported function)
-  ImportEntry& add_entry(const ImportEntry& entry);
+  ImportEntry& add_entry(ImportEntry entry) {
+    entries_.push_back(std::move(entry));
+    return entries_.back();
+  }
 
   //! Add a new import entry with the given name (i.e. an imported function)
-  ImportEntry& add_entry(const std::string& name);
+  ImportEntry& add_entry(const std::string& name) {
+    entries_.emplace_back(name);
+    return entries_.back();
+  }
 
-  void import_lookup_table_rva(uint32_t rva);
-  void import_address_table_rva(uint32_t rva);
+  void import_lookup_table_rva(uint32_t rva) {
+    import_lookup_table_RVA_ = rva;
+  }
+  void import_address_table_rva(uint32_t rva) {
+    import_address_table_RVA_ = rva;
+  }
 
   void accept(Visitor& visitor) const override;
 

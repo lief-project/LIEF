@@ -68,10 +68,10 @@ class LIEF_API Header : public Object {
   enum class CHARACTERISTICS {
     NONE                    = 0x0000,
     RELOCS_STRIPPED         = 0x0001, /**< The file does not contain base relocations and must be loaded at its preferred base. If this cannot be done, the loader will error.*/
-    EXECUTABLE_IMAGE        = 0x0002, /**< The file is valid and can be run.*/
-    LINE_NUMS_STRIPPED      = 0x0004, /**< COFF line numbers have been stripped. This is deprecated and should be 0*/
+    EXECUTABLE_IMAGE        = 0x0002, /**< File is executable (i.e. no unresolved externel references). */
+    LINE_NUMS_STRIPPED      = 0x0004, /**< COFF line numbers have been stripped. This is deprecated and should be 0 */
     LOCAL_SYMS_STRIPPED     = 0x0008, /**< COFF symbol table entries for local symbols have been removed. This is deprecated and should be 0.*/
-    AGGRESSIVE_WS_TRIM      = 0x0010, /**< Aggressively trim working set. This is deprecated and must be 0.*/
+    AGGRESSIVE_WS_TRIM      = 0x0010, /**< Aggressively trim working set. This is deprecated and must be 0. */
     LARGE_ADDRESS_AWARE     = 0x0020, /**< Image can handle > 2GiB addresses. */
     BYTES_REVERSED_LO       = 0x0080, /**< Little endian: the LSB precedes the MSB in memory. This is deprecated and should be 0.*/
     NEED_32BIT_MACHINE      = 0x0100, /**< Machine is based on a 32bit word architecture. */
@@ -86,10 +86,10 @@ class LIEF_API Header : public Object {
   static Header create(PE_TYPE type);
 
   Header(const details::pe_header& header);
-  ~Header() override;
+  ~Header() override = default;
 
-  Header& operator=(const Header&);
-  Header(const Header&);
+  Header& operator=(const Header&) = default;
+  Header(const Header&) = default;
 
   //! Signature (or magic byte) of the header. It must be: ``PE\0\0``
   const signature_t& signature() const {
@@ -107,7 +107,7 @@ class LIEF_API Header : public Object {
   }
 
   //! The low 32 bits of the number of seconds since
-  //! January 1, 1970. Basically, it **indicates** when the file was created.
+  //! January 1, 1970. It **indicates** when the file was created.
   uint32_t time_date_stamp() const {
     return timedatestamp_;
   }
@@ -196,7 +196,7 @@ class LIEF_API Header : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Header& entry);
 
   private:
-  Header();
+  Header() = default;
   signature_t signature_;
   MACHINE_TYPES machine_ = MACHINE_TYPES::UNKNOWN;
   uint16_t nb_sections_ = 0;

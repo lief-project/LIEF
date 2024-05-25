@@ -44,11 +44,11 @@ class LIEF_API Export : public Object {
   using it_entries       = ref_iterator<entries_t&>;
   using it_const_entries = const_ref_iterator<const entries_t&>;
 
-  Export();
+  Export() = default;
   Export(const details::pe_export_directory_table& header);
-  Export(const Export&);
-  Export& operator=(const Export&);
-  ~Export() override;
+  Export(const Export&) = default;
+  Export& operator=(const Export&) = default;
+  ~Export() override = default;
 
   //! According to the PE specifications this value is reserved
   //! and should be set to 0
@@ -71,13 +71,12 @@ class LIEF_API Export : public Object {
     return minor_version_;
   }
 
-  //! The starting number for the exports. Usually this value is set
-  //! to 1
+  //! The starting number for the exports. Usually this value is set to 1
   uint32_t ordinal_base() const {
     return ordinal_base_;
   }
 
-  //! The name of the library exported (e.g. ``KERNEL32.dll``)
+  //! The name of the library exported (e.g. `KERNEL32.dll`)
   const std::string& name() const {
     return name_;
   }

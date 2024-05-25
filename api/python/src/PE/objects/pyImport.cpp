@@ -121,7 +121,7 @@ void create<Import>(nb::module_& m) {
         "function_name"_a)
 
     .def("add_entry",
-        nb::overload_cast<const ImportEntry&>(&Import::add_entry),
+        nb::overload_cast<ImportEntry>(&Import::add_entry),
         "Add an " RST_CLASS_REF(lief.PE.ImportEntry) " (function) to the current import"_doc,
         "entry"_a,
         nb::rv_policy::reference_internal)

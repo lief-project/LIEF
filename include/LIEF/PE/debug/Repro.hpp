@@ -53,8 +53,8 @@ class LIEF_API Repro : public Debug {
     hash_{std::move(hash)}
   {}
 
-  Repro(const Repro& other);
-  Repro& operator=(const Repro& other);
+  Repro(const Repro& other) = default;
+  Repro& operator=(const Repro& other) = default;
 
   //! The hash associated with the reproducible build
   span<const uint8_t> hash() const {
@@ -81,7 +81,7 @@ class LIEF_API Repro : public Debug {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Repro& entry);
 
-  ~Repro() override;
+  ~Repro() override = default;
 
   protected:
   std::vector<uint8_t> hash_;

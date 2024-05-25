@@ -34,7 +34,7 @@ struct pe_dos_header;
 //! Class which represents the DosHeader, the **first**
 //! structure presents at the beginning of a PE file.
 //!
-//! Most of the attributes of this structures are not relevant.
+//! Most of the attributes of this structures are no longer relevant.
 class LIEF_API DosHeader : public Object {
   public:
   using reserved_t  = std::array<uint16_t, 4>;
@@ -43,13 +43,13 @@ class LIEF_API DosHeader : public Object {
   static constexpr uint16_t MAGIC = 0x5a4d; // MZ
 
   DosHeader(const details::pe_dos_header& header);
-  DosHeader(const DosHeader&);
-  DosHeader& operator=(const DosHeader&);
+  DosHeader(const DosHeader&) = default;
+  DosHeader& operator=(const DosHeader&) = default;
 
-  DosHeader(DosHeader&&);
-  DosHeader& operator=(DosHeader&&);
+  DosHeader(DosHeader&&) = default;
+  DosHeader& operator=(DosHeader&&) = default;
 
-  ~DosHeader() override;
+  ~DosHeader() override = default;
 
   //! Magic bytes identifying a DOS/PE binary
   uint16_t magic() const {
@@ -212,7 +212,7 @@ class LIEF_API DosHeader : public Object {
   static DosHeader create(PE_TYPE type);
 
   private:
-  DosHeader();
+  DosHeader() = default;
 
   uint16_t    magic_ = 0;
   uint16_t    used_bytes_in_last_page_ = 0;
