@@ -394,6 +394,12 @@ void JsonVisitor::visit(const VersionMin& vmin) {
   node_["sdk"]     = vmin.sdk();
 }
 
+void JsonVisitor::visit(const UnknownCommand& ukn) {
+  visit(*ukn.as<LoadCommand>());
+
+  node_["original_command"] = ukn.original_command();
+}
+
 void JsonVisitor::visit(const SegmentSplitInfo& ssi) {
   visit(*ssi.as<LoadCommand>());
   node_["data_offset"] = ssi.data_offset();

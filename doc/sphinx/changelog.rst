@@ -64,6 +64,8 @@ Changelog
 
 :MachO:
 
+  * Add generic :class:`lief.MachO.UnknownCommand` to support Apple private Load
+    commands not officially supported by LIEF.
   * Re-scope ``LOAD_COMMAND_TYPES`` into :class:`lief.MachO.LoadCommand.TYPE`
   * Re-scope ``FILE_TYPES`` into :class:`lief.MachO.Header.FILE_TYPE`
   * Re-scope ``HEADER_FLAGS`` into :class:`lief.MachO.Header.FLAGS`

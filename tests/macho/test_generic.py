@@ -286,3 +286,11 @@ def test_issue_1055():
     for section in sample.sections:
         size = len(section.content)
         assert size is not None
+
+def test_unknown_command():
+    sample = lief.MachO.parse(get_sample("MachO/libadd_unknown_cmd.so")).at(0)
+    unknown_cmd = sample.commands[15]
+    assert isinstance(unknown_cmd, lief.MachO.UnknownCommand)
+    assert unknown_cmd.original_command == 0x3333
+    print(hash(unknown_cmd))
+    print(unknown_cmd)

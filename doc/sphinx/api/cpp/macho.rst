@@ -374,6 +374,14 @@ Two Level Hints Command
 
 ----------
 
+Unknown Command
+***************
+
+.. doxygenclass:: LIEF::MachO::UnknownCommand
+   :project: lief
+
+----------
+
 
 Utilities
 *********

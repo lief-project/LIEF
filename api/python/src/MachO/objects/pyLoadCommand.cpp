@@ -116,6 +116,7 @@ void create<LoadCommand>(nb::module_& m) {
     .value(PY_ENUM(LoadCommand::TYPE::DYLD_EXPORTS_TRIE))
     .value(PY_ENUM(LoadCommand::TYPE::DYLD_CHAINED_FIXUPS))
     .value(PY_ENUM(LoadCommand::TYPE::FILESET_ENTRY))
+    .value(PY_ENUM(LoadCommand::TYPE::LIEF_UNKNOWN))
   #undef PY_ENUM
   ;
 

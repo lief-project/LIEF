@@ -26,6 +26,7 @@ pub mod thread_command;
 pub mod two_level_hints;
 pub mod uuid;
 pub mod version_min;
+pub mod unknown;
 
 pub use build_version::BuildVersion;
 pub use code_signature::CodeSignature;
@@ -52,6 +53,7 @@ pub use thread_command::ThreadCommand;
 pub use two_level_hints::TwoLevelHints;
 pub use uuid::UUID;
 pub use version_min::VersionMin;
+pub use unknown::Unknown;
 
 use crate::common::FromFFI;
 use crate::{declare_iterator, to_slice};
@@ -261,6 +263,7 @@ pub enum Commands<'a> {
     TwoLevelHints(TwoLevelHints<'a>),
     UUID(UUID<'a>),
     VersionMin(VersionMin<'a>),
+    Unknown(Unknown<'a>),
 }
 
 impl<'a> Commands<'a> {
@@ -443,6 +446,13 @@ impl<'a> Commands<'a> {
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Commands::VersionMin(VersionMin::from_ffi(raw))
+            } else if ffi::MachO_UnknownCommand::classof(cmd_ref) {
+                let raw = {
+                    type From = cxx::UniquePtr<ffi::MachO_Command>;
+                    type To = cxx::UniquePtr<ffi::MachO_UnknownCommand>;
+                    std::mem::transmute::<From, To>(ffi_entry)
+                };
+                Commands::Unknown(Unknown::from_ffi(raw))
             } else {
                 Commands::Generic(Generic::from_ffi(ffi_entry))
             }

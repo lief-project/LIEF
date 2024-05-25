@@ -487,6 +487,17 @@ Linker Optimization Hint
 
 ----------
 
+UnknownCommand
+**************
+
+.. lief-inheritance:: lief._lief.MachO.UnknownCommand
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
+.. autoclass:: lief.MachO.UnknownCommand
+
+----------
+
 Builder
 *******
 

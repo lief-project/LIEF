@@ -132,6 +132,7 @@ const char* to_string(LoadCommand::TYPE e) {
     ENTRY(DYLD_EXPORTS_TRIE),
     ENTRY(DYLD_CHAINED_FIXUPS),
     ENTRY(FILESET_ENTRY),
+    ENTRY(LIEF_UNKNOWN),
   };
   #undef ENTRY
 

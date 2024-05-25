@@ -39,6 +39,7 @@
 #include "LIEF/MachO/BuildVersion.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
 #include "LIEF/MachO/FilesetCommand.hpp"
+#include "LIEF/MachO/UnknownCommand.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
@@ -1047,7 +1048,7 @@ ok_error_t BinaryParser::parse_load_commands() {
           if (not_parsed.insert(cmd_type).second) {
             LIEF_WARN("Command '{}' not parsed!", to_string(cmd_type));
           }
-          load_command = std::make_unique<LoadCommand>(*command);
+          load_command = std::make_unique<UnknownCommand>(*command);
         }
     }
 

@@ -95,6 +95,8 @@ class LIEF_API LoadCommand : public Object {
     DYLD_EXPORTS_TRIE        = 0x80000033u,
     DYLD_CHAINED_FIXUPS      = 0x80000034u,
     FILESET_ENTRY            = 0x80000035u,
+
+    LIEF_UNKNOWN             = 0xffee0001u
   };
 
   public:

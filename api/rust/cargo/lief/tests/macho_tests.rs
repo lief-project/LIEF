@@ -1,4 +1,5 @@
 mod utils;
+
 use lief::generic::Binary as GenericBinary;
 use lief::macho::binding_info::{self, AsGeneric};
 use lief::macho::commands::{Command, Commands};
@@ -108,6 +109,10 @@ fn explore_macho(_: &str, macho: &lief::macho::Binary) {
                 for export in cmd.exports() {
                     format!("{:?}", export);
                 }
+            }
+
+            Commands::Unknown(ukn) => {
+                println!("Original: {:?}", ukn.original_command());
             }
             _ => {}
         }
@@ -258,4 +263,5 @@ fn test_api() {
     test_with("json_api.cpp_1.o");
     test_with("python3_issue_476.bin");
     test_with("FAT_MachO_x86_x86-64_library_libc++abi.dylib");
+    test_with("libadd_unknown_cmd.so");
 }

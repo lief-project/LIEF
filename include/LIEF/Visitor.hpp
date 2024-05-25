@@ -183,6 +183,7 @@ LIEF_MACHO_FORWARD(FilesetCommand)
 LIEF_MACHO_FORWARD(TwoLevelHints)
 LIEF_MACHO_FORWARD(CodeSignatureDir)
 LIEF_MACHO_FORWARD(LinkerOptHint)
+LIEF_MACHO_FORWARD(UnknownCommand)
 
 // OAT
 // ===============================
@@ -606,6 +607,9 @@ class LIEF_API Visitor {
 
   //! Method to visit a LIEF::MachO::LinkerOptHint
   LIEF_MACHO_VISITABLE(LinkerOptHint)
+
+  //! @brief Method to visit a LIEF::MachO::UnknownCommand
+  LIEF_MACHO_VISITABLE(UnknownCommand)
 
   // OAT part
   // ========

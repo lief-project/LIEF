@@ -288,6 +288,11 @@ void Hash::visit(const VersionMin& vmin) {
   process(vmin.sdk());
 }
 
+void Hash::visit(const UnknownCommand& ukn) {
+  visit(*ukn.as<LoadCommand>());
+  process(ukn.original_command());
+}
+
 void Hash::visit(const SourceVersion& sv) {
   visit(*sv.as<LoadCommand>());
   process(sv.version());

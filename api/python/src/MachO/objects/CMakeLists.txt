@@ -1,46 +1,47 @@
 target_sources(pyLIEF PRIVATE
-  pyDylibCommand.cpp
   pyBinary.cpp
+  pyBindingInfo.cpp
+  pyBuildVersion.cpp
+  pyBuilder.cpp
+  pyChainedBindingInfo.cpp
+  pyCodeSignature.cpp
+  pyCodeSignatureDir.cpp
+  pyDataCodeEntry.cpp
+  pyDataInCode.cpp
+  pyDyldBindingInfo.cpp
+  pyDyldChainedFixups.cpp
+  pyDyldEnvironment.cpp
+  pyDyldExportsTrie.cpp
+  pyDyldInfo.cpp
+  pyDylibCommand.cpp
+  pyDylinker.cpp
+  pyDynamicSymbolCommand.cpp
+  pyEncryptionInfo.cpp
+  pyExportInfo.cpp
   pyFatBinary.cpp
-  pyLoadCommand.cpp
-  pySegmentCommand.cpp
+  pyFilesetCommand.cpp
+  pyFunctionStarts.cpp
   pyHeader.cpp
-  pySection.cpp
+  pyLinkerOptHint.cpp
+  pyLoadCommand.cpp
+  pyMainCommand.cpp
   pyParser.cpp
+  pyParserConfig.cpp
+  pyRPathCommand.cpp
+  pyRelocation.cpp
+  pyRelocationDyld.cpp
+  pyRelocationFixup.cpp
+  pyRelocationObject.cpp
+  pySection.cpp
+  pySegmentCommand.cpp
+  pySegmentSplitInfo.cpp
+  pySourceVersion.cpp
+  pySubFramework.cpp
   pySymbol.cpp
   pySymbolCommand.cpp
-  pyUUID.cpp
-  pySourceVersion.cpp
-  pyVersionMin.cpp
-  pyMainCommand.cpp
-  pyDylinker.cpp
-  pyDyldInfo.cpp
-  pyDyldChainedFixups.cpp
-  pyChainedBindingInfo.cpp
-  pyDyldBindingInfo.cpp
-  pyDyldExportsTrie.cpp
-  pyRelocationFixup.cpp
-  pyFunctionStarts.cpp
-  pyRelocation.cpp
-  pyRelocationObject.cpp
-  pyRelocationDyld.cpp
-  pyBindingInfo.cpp
-  pyExportInfo.cpp
   pyThreadCommand.cpp
-  pyRPathCommand.cpp
-  pyParserConfig.cpp
-  pyDynamicSymbolCommand.cpp
-  pyCodeSignature.cpp
-  pySegmentSplitInfo.cpp
-  pyDataInCode.cpp
-  pyDataCodeEntry.cpp
-  pySubFramework.cpp
-  pyDyldEnvironment.cpp
-  pyEncryptionInfo.cpp
-  pyBuildVersion.cpp
-  pyFilesetCommand.cpp
-  pyCodeSignatureDir.cpp
   pyTwoLevelHints.cpp
-  pyLinkerOptHint.cpp
-  pyBuilder.cpp
+  pyUUID.cpp
+  pyUnknownCommand.cpp
+  pyVersionMin.cpp
 )

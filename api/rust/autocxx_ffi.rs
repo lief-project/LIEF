@@ -384,6 +384,8 @@ include_cpp! {
     block_constructors!("MachO_Utils")
     generate!("MachO_VersionMin")
     block_constructors!("MachO_VersionMin")
+    generate!("MachO_UnknownCommand")
+    block_constructors!("MachO_UnknownCommand")
 
     safety!(unsafe)
 }

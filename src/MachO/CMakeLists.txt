@@ -54,6 +54,7 @@ target_sources(LIB_LIEF PRIVATE
   TrieNode.cpp
   TwoLevelHints.cpp
   UUIDCommand.cpp
+  UnknownCommand.cpp
   VersionMin.cpp
   exports_trie.cpp
   hash.cpp

@@ -61,6 +61,7 @@ class ThreadCommand;
 class TwoLevelHints;
 class UUIDCommand;
 class VersionMin;
+class UnknownCommand;
 
 //! Class which implements a visitor to compute
 //! a **deterministic** hash for LIEF MachO objects
@@ -112,6 +113,7 @@ class LIEF_API Hash : public LIEF::Hash {
   void visit(const TwoLevelHints& e)                      override;
   void visit(const UUIDCommand& uuid)                     override;
   void visit(const VersionMin& vmin)                      override;
+  void visit(const UnknownCommand& ukn)                   override;
 
   ~Hash() override;
 };

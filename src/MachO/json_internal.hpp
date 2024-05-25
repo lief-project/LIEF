@@ -62,6 +62,7 @@ class ThreadCommand;
 class TwoLevelHints;
 class UUIDCommand;
 class VersionMin;
+class UnknownCommand;
 
 //! Class that implements the Visitor pattern to output
 //! a JSON representation of a MachO object
@@ -109,6 +110,7 @@ class JsonVisitor : public LIEF::JsonVisitor {
   void visit(const TwoLevelHints& e)                      override;
   void visit(const UUIDCommand& uuid)                     override;
   void visit(const VersionMin& vmin)                      override;
+  void visit(const UnknownCommand& ukn)                   override;
 };
 
 }

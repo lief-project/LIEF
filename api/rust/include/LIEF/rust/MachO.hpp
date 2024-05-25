@@ -47,4 +47,5 @@
 #include "LIEF/rust/MachO/TwoLevelHints.hpp"
 #include "LIEF/rust/MachO/UUIDCommand.hpp"
 #include "LIEF/rust/MachO/VersionMin.hpp"
+#include "LIEF/rust/MachO/UnknownCommand.hpp"
 #include "LIEF/rust/MachO/utils.hpp"
