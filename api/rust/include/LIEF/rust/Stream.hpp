@@ -53,20 +53,18 @@ class RustStream {
   }
 
   auto as_elf() {
-    return std::make_unique<ELF_Binary>(LIEF::ELF::Parser::parse(std::move(stream_)));
+    return details::try_unique<ELF_Binary>(LIEF::ELF::Parser::parse(std::move(stream_)));
   }
 
   auto as_macho() {
-    return std::make_unique<MachO_FatBinary>(LIEF::MachO::Parser::parse(std::move(stream_)));
+    return details::try_unique<MachO_FatBinary>(LIEF::MachO::Parser::parse(std::move(stream_)));
   }
 
   auto as_pe() {
-    return std::make_unique<PE_Binary>(LIEF::PE::Parser::parse(std::move(stream_)));
+    return details::try_unique<PE_Binary>(LIEF::PE::Parser::parse(std::move(stream_)));
   }
 
   ~RustStream() = default;
   private:
   std::unique_ptr<LIEF::VectorStream> stream_;
 };
-
-//std::unique_ptr<LIEF::Binary> parse_from_stream(IRustStream& stream);

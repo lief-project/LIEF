@@ -38,7 +38,7 @@ class ELF_Binary : public AbstractBinary {
   ELF_Binary(std::unique_ptr<lief_t> bin) : AbstractBinary(std::move(bin)) {}
 
   static auto parse(std::string path) {
-    return std::make_unique<ELF_Binary>(LIEF::ELF::Parser::parse(path));
+    return details::try_unique<ELF_Binary>(LIEF::ELF::Parser::parse(path));
   }
 
   class it_sections :

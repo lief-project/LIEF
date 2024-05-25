@@ -107,7 +107,7 @@ class PE_Binary : public AbstractBinary {
   {}
 
   static auto parse(std::string path) {
-    return std::make_unique<PE_Binary>(LIEF::PE::Parser::parse(path));
+    return details::try_unique<PE_Binary>(LIEF::PE::Parser::parse(path));
   }
 
   auto debug() const {

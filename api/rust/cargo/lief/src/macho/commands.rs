@@ -114,6 +114,8 @@ pub enum LoadCommandTypes {
     VersionMinMacOSX,
     VersionMinTvOS,
     VersionMinWatchOS,
+
+    LiefUnknown,
     Unknown(u64),
 }
 impl LoadCommandTypes {
@@ -171,6 +173,8 @@ impl LoadCommandTypes {
     const LC_VERSION_MIN_MACOSX: u64 = 0x00000024;
     const LC_VERSION_MIN_TVOS: u64 = 0x0000002F;
     const LC_VERSION_MIN_WATCHOS: u64 = 0x00000030;
+
+    const LIEF_UNKNOWN: u64 = 0xffee0001;
 
     pub fn from_value(value: u64) -> Self {
         match value {
@@ -230,6 +234,7 @@ impl LoadCommandTypes {
             LoadCommandTypes::LC_VERSION_MIN_MACOSX => LoadCommandTypes::VersionMinMacOSX,
             LoadCommandTypes::LC_VERSION_MIN_TVOS => LoadCommandTypes::VersionMinTvOS,
             LoadCommandTypes::LC_VERSION_MIN_WATCHOS => LoadCommandTypes::VersionMinWatchOS,
+            LoadCommandTypes::LIEF_UNKNOWN => LoadCommandTypes::LiefUnknown,
             _ => LoadCommandTypes::Unknown(value),
         }
     }

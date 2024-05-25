@@ -24,7 +24,7 @@ class MachO_FatBinary : private Mirror<LIEF::MachO::FatBinary> {
   public:
   using Mirror::Mirror;
   static auto parse(std::string path) {
-    return std::make_unique<MachO_FatBinary>(LIEF::MachO::Parser::parse(path));
+    return details::try_unique<MachO_FatBinary>(LIEF::MachO::Parser::parse(path));
   }
 
   uint32_t size() const { return get().size(); }
