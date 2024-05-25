@@ -55,7 +55,7 @@ void create<RichHeader>(nb::module_& m) {
         nb::keep_alive<1, 0>())
 
     .def("add_entry",
-        nb::overload_cast<const RichEntry&>(&RichHeader::add_entry),
+        nb::overload_cast<RichEntry>(&RichHeader::add_entry),
         "Add a new " RST_CLASS_REF(lief.PE.RichEntry) ""_doc,
         "entry"_a)
 
