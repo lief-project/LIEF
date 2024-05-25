@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <numeric>
+#include <algorithm>
 #include <iterator>
 
 #include "logging.hpp"
 #include "LIEF/Visitor.hpp"
-#include "LIEF/Abstract/Section.hpp"
 
 #include "LIEF/PE/Section.hpp"
 #include "PE/Structures.hpp"
@@ -65,13 +64,6 @@ static constexpr std::array CHARACTERISTICS_LIST = {
   Section::CHARACTERISTICS::MEM_READ,
   Section::CHARACTERISTICS::MEM_WRITE,
 };
-
-Section::~Section() = default;
-
-Section::Section() = default;
-
-Section& Section::operator=(const Section&) = default;
-Section::Section(const Section&) = default;
 
 Section::Section(const details::pe_section& header) :
   virtual_size_{header.VirtualSize},

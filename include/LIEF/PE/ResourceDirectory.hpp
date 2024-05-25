@@ -76,8 +76,7 @@ class LIEF_API ResourceDirectory : public ResourceNode {
 
   //! The number of directory entries immediately
   //! following the table that use strings to identify Type,
-  //! Name, or Language entries (depending on the level
-  //! of the table).
+  //! Name, or Language entries (depending on the level of the table).
   uint16_t numberof_name_entries() const {
     return numberof_name_entries_;
   }

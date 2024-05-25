@@ -41,10 +41,10 @@ class LIEF_API RichHeader : public Object {
   using it_entries       = ref_iterator<entries_t&>;
   using it_const_entries = const_ref_iterator<const entries_t&>;
 
-  RichHeader();
-  RichHeader(const RichHeader&);
-  RichHeader& operator=(const RichHeader&);
-  ~RichHeader() override;
+  RichHeader() = default;
+  RichHeader(const RichHeader&) = default;
+  RichHeader& operator=(const RichHeader&) = default;
+  ~RichHeader() override = default;
 
   //! Key used to encode the header (xor operation)
   uint32_t key() const {
@@ -65,10 +65,14 @@ class LIEF_API RichHeader : public Object {
   }
 
   //! Add a new PE::RichEntry
-  void add_entry(const RichEntry& entry);
+  void add_entry(RichEntry entry) {
+    entries_.push_back(std::move(entry));
+  }
 
   //! Add a new entry given the id, build_id and count
-  void add_entry(uint16_t id, uint16_t build_id, uint32_t count);
+  void add_entry(uint16_t id, uint16_t build_id, uint32_t count) {
+    entries_.emplace_back(id, build_id, count);
+  }
 
   //! The raw structure of the Rich header without xor-encoding.
   //!

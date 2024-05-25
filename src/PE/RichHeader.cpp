@@ -32,20 +32,6 @@
 namespace LIEF {
 namespace PE {
 
-RichHeader::~RichHeader() = default;
-RichHeader::RichHeader(const RichHeader&) = default;
-RichHeader& RichHeader::operator=(const RichHeader&) = default;
-
-RichHeader::RichHeader() = default;
-
-void RichHeader::add_entry(const RichEntry& entry) {
-  entries_.push_back(entry);
-}
-
-void RichHeader::add_entry(uint16_t id, uint16_t build_id, uint32_t count) {
-  entries_.emplace_back(id, build_id, count);
-}
-
 void RichHeader::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }

@@ -20,11 +20,6 @@
 
 namespace LIEF {
 namespace PE {
-ImportEntry::ImportEntry(const ImportEntry&) = default;
-ImportEntry& ImportEntry::operator=(const ImportEntry&) = default;
-ImportEntry::~ImportEntry() = default;
-
-ImportEntry::ImportEntry() = default;
 
 ImportEntry::ImportEntry(uint64_t data, const std::string& name) :
   data_{data},

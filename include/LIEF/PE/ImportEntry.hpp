@@ -38,16 +38,16 @@ class LIEF_API ImportEntry : public LIEF::Symbol {
   friend class Builder;
 
   public:
-  ImportEntry();
+  ImportEntry() = default;
   ImportEntry(uint64_t data, const std::string& name = "");
   ImportEntry(uint64_t data, PE_TYPE type, const std::string& name);
   ImportEntry(const std::string& name);
   ImportEntry(const std::string& name, PE_TYPE type);
-  ImportEntry(const ImportEntry&);
-  ImportEntry& operator=(const ImportEntry&);
-  ~ImportEntry() override;
+  ImportEntry(const ImportEntry&) = default;
+  ImportEntry& operator=(const ImportEntry&) = default;
+  ~ImportEntry() override = default;
 
-  //!``True`` if it is an import by ordinal
+  //! `True` if it is an import by ordinal
   bool is_ordinal() const;
 
   //! The ordinal value

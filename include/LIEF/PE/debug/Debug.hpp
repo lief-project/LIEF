@@ -81,7 +81,7 @@ class LIEF_API Debug : public Object {
     return characteristics_;
   }
 
-  //! The time and date that the debug data was created.
+  //! The time and date when the debug data was created.
   uint32_t timestamp() const {
     return timestamp_;
   }

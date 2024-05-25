@@ -55,7 +55,7 @@ class LIEF_API ResourceData : public ResourceNode {
   }
 
   //! Return the code page that is used to decode code point
-  //! values within the resource data. Typically, the code page is the Unicode code page.
+  //! values within the resource data. Typically, the code page is the unicode code page.
   uint32_t code_page() const {
     return code_page_;
   }
