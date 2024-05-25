@@ -9,6 +9,7 @@ target_sources(LIB_LIEF PRIVATE
   logging.cpp
   paging.cpp
   utils.cpp
+  range.cpp
   visitors/hash.cpp
 )
 
