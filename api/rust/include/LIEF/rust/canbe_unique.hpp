@@ -32,8 +32,9 @@ class canbe_unique {
     std::swap(ptr_, other.ptr_);
     owned_ = other.owned_;
   }
+
   canbe_unique& operator=(canbe_unique&& other) {
-    if (&other == this) {
+    if (&other != this) {
       std::swap(ptr_, other.ptr_);
       owned_ = other.owned_;
     }
