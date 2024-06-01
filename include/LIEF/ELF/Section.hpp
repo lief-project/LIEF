@@ -134,10 +134,10 @@ class LIEF_API Section : public LIEF::Section {
 
     HEX_GPREL            = 0x010000000 + (_HEX_ID_ << _ID_SHIFT_),
 
-    MIPS_NODUPES         = 0x010000000 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_NAMES           = 0x020000000 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_LOCAL           = 0x040000000 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_NOSTRIP         = 0x080000000 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_NODUPES         = 0x001000000 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_NAMES           = 0x002000000 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_LOCAL           = 0x004000000 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_NOSTRIP         = 0x008000000 + (_MIPS_ID_ << _ID_SHIFT_),
     MIPS_GPREL           = 0x010000000 + (_MIPS_ID_ << _ID_SHIFT_),
     MIPS_MERGE           = 0x020000000 + (_MIPS_ID_ << _ID_SHIFT_),
     MIPS_ADDR            = 0x040000000 + (_MIPS_ID_ << _ID_SHIFT_),

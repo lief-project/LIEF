@@ -154,10 +154,10 @@ bitflags! {
         const XCORE_SHF_CP_SECTION = 0x120000000;
         const X86_64_LARGE = 0x210000000;
         const HEX_GPREL = 0x310000000;
-        const MIPS_NODUPES = 0x410000000;
-        const MIPS_NAMES = 0x420000000;
-        const MIPS_LOCAL = 0x440000000;
-        const MIPS_NOSTRIP = 0x480000000;
+        const MIPS_NODUPES = 0x401000000;
+        const MIPS_NAMES = 0x402000000;
+        const MIPS_LOCAL = 0x404000000;
+        const MIPS_NOSTRIP = 0x408000000;
         const MIPS_GPREL = 0x410000000;
         const MIPS_MERGE = 0x420000000;
         const MIPS_ADDR = 0x440000000;
