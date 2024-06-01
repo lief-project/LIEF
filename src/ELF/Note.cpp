@@ -438,7 +438,7 @@ Note::create(const std::string& name, Note::TYPE ntype, Note::description_t desc
       LIEF_WARN("The note owner of '{}' should be '{}' while '{}' is provided",
                  to_string(ntype), *res_owner, name);
     }
-    owner = std::move(*res_owner);
+    owner = *res_owner;
   } else {
     if (!name.empty()) {
       owner = name;
@@ -569,7 +569,7 @@ Note::create(const std::string& name, uint32_t type, Note::description_t descrip
   auto conv = Note::convert_type(ftype, type, name);
   if (!conv) {
     LIEF_WARN("Note type: 0x{:x} is not supported for owner: '{}'", type, name);
-    return std::unique_ptr<Note>(new Note(std::move(name), Note::TYPE::UNKNOWN, type,
+    return std::unique_ptr<Note>(new Note(name, Note::TYPE::UNKNOWN, type,
                                   std::move(description)));
   }
   return create(name, *conv, std::move(description), arch, cls);

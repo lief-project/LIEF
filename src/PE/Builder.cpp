@@ -473,7 +473,8 @@ ok_error_t Builder::build(const Header& bHeader) {
   header.Characteristics       = static_cast<uint16_t>(bHeader.characteristics());
 
   const Header::signature_t& signature = binary_->header_.signature();
-  std::copy(std::begin(signature), std::end(signature), std::begin(header.signature));
+  std::copy(std::begin(signature), std::end(signature),
+            reinterpret_cast<uint8_t*>(&header.signature));
 
   const uint32_t address_next_header = binary_->dos_header().addressof_new_exeheader();
 

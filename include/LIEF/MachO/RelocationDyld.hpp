@@ -36,6 +36,10 @@ class LIEF_API RelocationDyld : public Relocation {
 
   public:
   using Relocation::Relocation;
+  using LIEF::Relocation::operator<;
+  using LIEF::Relocation::operator<=;
+  using LIEF::Relocation::operator>;
+  using LIEF::Relocation::operator>=;
   RelocationDyld() = default;
 
   RelocationDyld& operator=(const RelocationDyld&) = default;

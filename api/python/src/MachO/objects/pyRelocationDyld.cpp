@@ -36,10 +36,10 @@ void create<RelocationDyld>(nb::module_& m) {
       See also: :class:`~lief.MachO.RelocationObject`
       )delim"_doc)
 
-    .def("__le__", &RelocationDyld::operator<=)
-    .def("__lt__", &RelocationDyld::operator<)
-    .def("__ge__", &RelocationDyld::operator>=)
-    .def("__gt__", &RelocationDyld::operator>)
+    .def("__le__", nb::overload_cast<const RelocationDyld&>(&RelocationDyld::operator<=, nb::const_))
+    .def("__lt__", nb::overload_cast<const RelocationDyld&>(&RelocationDyld::operator<, nb::const_))
+    .def("__ge__", nb::overload_cast<const RelocationDyld&>(&RelocationDyld::operator>=, nb::const_))
+    .def("__gt__", nb::overload_cast<const RelocationDyld&>(&RelocationDyld::operator>, nb::const_))
 
     LIEF_DEFAULT_STR(RelocationDyld);
 

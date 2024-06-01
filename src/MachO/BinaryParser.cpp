@@ -202,21 +202,24 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports, uint64_t sta
       const uint64_t ordinal = *res_ordinal;
       export_info->other_ = ordinal;
 
-      auto imported_name = stream_->peek_string();
-      if (!imported_name) {
+      auto res_imported_name = stream_->peek_string();
+      if (!res_imported_name) {
         LIEF_ERR("Can't read imported_name");
         return make_error_code(lief_errors::parsing_error);
       }
-      if (imported_name->empty() && export_info->has_symbol()) {
+
+      std::string imported_name = std::move(*res_imported_name);
+
+      if (imported_name.empty() && export_info->has_symbol()) {
         imported_name = export_info->symbol()->name();
       }
 
       Symbol* symbol = nullptr;
-      auto search = memoized_symbols_.find(*imported_name);
+      auto search = memoized_symbols_.find(imported_name);
       if (search != memoized_symbols_.end()) {
         symbol = search->second;
       } else {
-        symbol = binary_->get_symbol(*imported_name);
+        symbol = binary_->get_symbol(imported_name);
       }
       if (symbol != nullptr) {
         export_info->alias_  = symbol;
