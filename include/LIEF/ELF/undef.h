@@ -484,6 +484,7 @@
 
 #undef PT_GNU_STACK
 #undef PT_GNU_RELRO
+#undef PT_GNU_PROPERTY
 
 #undef PT_ARM_ARCHEXT
 
@@ -538,6 +539,7 @@
 
 #undef DT_PREINIT_ARRAY
 #undef DT_PREINIT_ARRAYSZ
+#undef DT_SYMTAB_SHNDX
 
 #undef DT_LOOS
 #undef DT_HIOS
