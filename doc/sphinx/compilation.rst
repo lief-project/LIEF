@@ -215,7 +215,7 @@ Continuous Integration
 
 LIEF uses CI Github Action to test and release nightly builds. The configuration
 of this CI can also be a good source of information for the compilation process.
-In particular, `scripts/docker/run_linux_sdk <https://github.com/lief-project/LIEF/blob/main/scripts/docker/run_linux_sdk.sh>`_
+In particular, `scripts/docker/linux-sdk-x64 <https://github.com/lief-project/LIEF/blob/main/scripts/docker/linux-sdk-x64>`_
 contains the build process to generate the **Linux x86-64 SDK**.
 
 On Windows, the SDK is built with the following Python script:
