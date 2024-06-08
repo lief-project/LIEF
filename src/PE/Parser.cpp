@@ -840,15 +840,15 @@ ok_error_t Parser::parse_exports() {
   uint32_t name_offset = binary_->rva_to_offset(export_dir_tbl.NameRVA);
   if (auto res_name = stream_->peek_string_at(name_offset, Parser::MAX_DLL_NAME_SIZE)) {
     std::string name = *res_name;
-    if (Parser::is_valid_dll_name(name)) {
+    if (is_valid_dll_name(name)) {
       export_object->name_ = std::move(name);
       LIEF_DEBUG("Export name {}@0x{:x}", export_object->name_, name_offset);
     } else {
-      // Empty export names are not allowed
       if (name.empty()) {
-        return make_error_code(lief_errors::corrupted);
+        LIEF_DEBUG("Export name is empty");
+      } else {
+        LIEF_DEBUG("'{}' is not a valid export name", printable_string(name));
       }
-      LIEF_DEBUG("'{}' is not a valid export name", printable_string(name));
     }
   } else {
     LIEF_INFO("DLL name seems corrupted");
