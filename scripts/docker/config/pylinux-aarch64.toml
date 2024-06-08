@@ -22,3 +22,8 @@ frozen  = true
 [lief.logging]
 enabled = true
 debug   = false
+
+[lief.cross-compilation]
+platform  = "manylinux2014-aarch64"
+pyversion = "cp{python_version_alt}"
+abi       = "cp{python_version_alt}"

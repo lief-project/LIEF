@@ -16,6 +16,7 @@ pushd /src/api/python
 # These exports need to set here to avoid pip install using the wrong platform
 export _PYTHON_HOST_PLATFORM="manylinux2014-aarch64"
 export SETUPTOOLS_EXT_SUFFIX=$($PYTHON_BINARY -c "import sysconfig;print(sysconfig.get_config_var('EXT_SUFFIX').replace('x86_64', 'aarch64'))")
+export LIEF_TARGET_PYTHON_VERSION=$($PYTHON_BINARY -c "import sysconfig;print(sysconfig.get_python_version())")
 
 python -m pip -vvv wheel                  \
               --no-build-isolation        \
