@@ -128,11 +128,6 @@ std::string hex_dump(span<const uint8_t> data, const std::string& sep) {
 }
 
 
-bool is_printable(const std::string& str) {
-  return std::all_of(std::begin(str), std::end(str),
-                     [] (char c) { return std::isprint<char>(c, std::locale("C")); });
-}
-
 bool is_hex_number(const std::string& str) {
   return std::all_of(std::begin(str), std::end(str), isxdigit);
 }

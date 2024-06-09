@@ -21,6 +21,7 @@
 #include <limits>
 #include <set>
 #include <map>
+#include <unordered_map>
 
 #include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
@@ -241,7 +242,7 @@ class LIEF_API BinaryParser : public LIEF::Parser {
   bool                           is64_ = true;
   ParserConfig                   config_;
   std::set<uint64_t>             visited_;
-  std::map<std::string, Symbol*> memoized_symbols_;
+  std::unordered_map<std::string, Symbol*> memoized_symbols_;
   std::map<uint64_t, Symbol*>    memoized_symbols_by_address_;
 
   std::vector<DylibCommand*> binding_libs_;

@@ -27,7 +27,7 @@
 #include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/MachO/DyldExportsTrie.hpp"
 
-#include "LIEF/utils.hpp"
+#include "internal_utils.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -302,10 +302,9 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports, uint64_t sta
       break;
     }
 
-    if (visited_.count(start + child_node_offet) > 0) {
+    if (!visited_.insert(start + child_node_offet).second) {
       break;
     }
-    visited_.insert(start + child_node_offet);
     size_t current_pos = stream_->pos();
     stream_->setpos(start + child_node_offet);
     parse_export_trie(exports, start, end, name, invalid_names);

@@ -16,10 +16,6 @@
 #include "internal_utils.hpp"
 namespace LIEF {
 
-inline bool is_printable(char c) {
-  return static_cast<bool>(::isprint(c)) && c != '\n' && c != '\r';
-}
-
 std::string printable_string(const std::string& str) {
   std::string out;
   out.reserve(str.size());

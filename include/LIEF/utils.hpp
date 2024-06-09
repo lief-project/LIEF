@@ -89,9 +89,6 @@ LIEF_API std::string hex_dump(const std::vector<uint8_t>& data,
 LIEF_API std::string hex_dump(span<const uint8_t> data,
                               const std::string& sep = ":");
 
-//! Check if the given string in printable
-LIEF_API bool is_printable(const std::string& str);
-
 //! Check if the given number is a hex-like string
 LIEF_API bool is_hex_number(const std::string& nb);
 }

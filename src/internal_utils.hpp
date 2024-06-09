@@ -30,6 +30,16 @@
 namespace LIEF {
 std::string printable_string(const std::string& str);
 
+inline bool is_printable(char c) {
+  return ' ' <= c && c <= '~';
+}
+
+inline bool is_printable(const std::string& str) {
+  return std::all_of(std::begin(str), std::end(str),
+    [] (char c) { return is_printable(c); }
+  );
+}
+
 template<class T>
 inline std::vector<T> as_vector(span<T> s) {
   return std::vector<T>(s.begin(), s.end());
@@ -163,6 +173,7 @@ std::vector<std::string> optimize(const HANDLER& container,
 
   return string_table_optimized;
 }
+
 }
 
 #endif
