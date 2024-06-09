@@ -64,6 +64,7 @@ Changelog
 
 :MachO:
 
+  * Fix **major performance issue when processing Mach-O binaries on Windows & macOS**
   * Add generic :class:`lief.MachO.UnknownCommand` to support Apple private Load
     commands not officially supported by LIEF.
   * Re-scope ``LOAD_COMMAND_TYPES`` into :class:`lief.MachO.LoadCommand.TYPE`
