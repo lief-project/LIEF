@@ -12,6 +12,12 @@ include_cpp! {
     block_constructors!("RustStream")
 
     // -------------------------------------------------------------------------
+    // Logging
+    // -------------------------------------------------------------------------
+    generate!("LIEF_Logging")
+    block_constructors!("LIEF_Logging")
+
+    // -------------------------------------------------------------------------
     // Abstract
     // -------------------------------------------------------------------------
     generate!("AbstractBinary")
@@ -95,8 +101,12 @@ include_cpp! {
     block_constructors!("ELF_SymbolVersionAuxRequirement")
     generate!("ELF_SymbolVersionDefinition")
     block_constructors!("ELF_SymbolVersionDefinition")
+    generate!("ELF_SymbolVersionDefinition_it_auxiliary_symbols")
+    block_constructors!("ELF_SymbolVersionDefinition_it_auxiliary_symbols")
     generate!("ELF_SymbolVersionRequirement")
     block_constructors!("ELF_SymbolVersionRequirement")
+    generate!("ELF_SymbolVersionRequirement_it_auxiliary_symbols")
+    block_constructors!("ELF_SymbolVersionRequirement_it_auxiliary_symbols")
     generate!("ELF_SysvHash")
     block_constructors!("ELF_SysvHash")
     generate!("ELF_Utils")
@@ -180,6 +190,10 @@ include_cpp! {
     block_constructors!("PE_RichHeader_it_entries")
     generate!("PE_Section")
     block_constructors!("PE_Section")
+    generate!("PE_SpcIndirectData")
+    block_constructors!("PE_SpcIndirectData")
+    generate!("PE_GenericContent")
+    block_constructors!("PE_GenericContent")
 
     generate!("PE_Debug")
     block_constructors!("PE_Debug")

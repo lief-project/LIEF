@@ -5,6 +5,7 @@ use crate::to_slice;
 
 use std::marker::PhantomData;
 
+/// Structure that represents the `LC_SEGMENT_SPLIT_INFO` command
 pub struct SegmentSplitInfo<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_SegmentSplitInfo>,
     _owner: PhantomData<&'a ffi::MachO_Binary>

@@ -23,9 +23,6 @@
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/PE/enums.hpp"
-
-
 namespace LIEF {
 namespace PE {
 
@@ -47,20 +44,20 @@ class LIEF_API TLS : public Object {
   friend class Builder;
 
   public:
-  TLS();
+  TLS() = default;
   TLS(const details::pe32_tls& header);
   TLS(const details::pe64_tls& header);
-  ~TLS() override;
+  ~TLS() override = default;
 
-  TLS(const TLS& copy);
-  TLS& operator=(const TLS& copy);
+  TLS(const TLS& copy) = default;
+  TLS& operator=(const TLS& copy) = default;
 
-  TLS(TLS&& other);
-  TLS& operator=(TLS&& other);
+  TLS(TLS&& other) noexcept = default;
+  TLS& operator=(TLS&& other) noexcept = default;
 
   //! List of the callback associated with the current TLS.
   //!
-  //! These functions are called before any other functions of the PE binary.
+  //! These functions are called before any other functions .
   const std::vector<uint64_t>& callbacks() const {
     return callbacks_;
   }
@@ -77,38 +74,35 @@ class LIEF_API TLS : public Object {
     return va_rawdata_;
   }
 
-  //! The location to receive the TLS index, which the loader assigns.
-  //! This location is in an ordinary data section, so it can be given a symbolic name that is accessible
-  //! to the program.
+  //! The location to receive the TLS index assigned by the loader.
+  //! This location should be located in a writable section like `.data`
   uint64_t addressof_index() const {
     return addressof_index_;
   }
 
-
-  //! The pointer to an array of TLS callback functions.
+  //! Pointer to an array of TLS callback functions.
   //!
-  //! The array is null-terminated, so if no callback function
-  //! is supported, this field points to 4 bytes set to zero.
+  //! The array is null-terminated, so if there is no callback function
+  //! this field points to 4 bytes set to zero.
   uint64_t addressof_callbacks() const {
     return addressof_callbacks_;
   }
 
-  //! The size in bytes of the template, beyond the initialized data delimited by
-  //! the addressof_raw_data field.
-  //! The total template size should be the same as the total size of TLS data in the image file.
-  //! The zero fill is the amount of data that comes after the initialized nonzero data.
+  //! Size in bytes of the zero to be *padded* after the data specified by
+  //! data_template.
   uint32_t sizeof_zero_fill() const {
     return sizeof_zero_fill_;
   }
 
   //! The four bits [23:20] describe alignment info.
-  //! Possible values are those defined as IMAGE_SCN_ALIGN_*, which are also used to
-  //! describe alignment of section in object files. The other 28 bits are reserved for future use.
+  //! Possible values are those defined as `IMAGE_SCN_ALIGN_*`, which are also
+  //! used to describe alignment of section in object files.
+  //! The other 28 bits are reserved for future use.
   uint32_t characteristics() const {
     return characteristics_;
   }
 
-  //! The data template content
+  //! The initial content used to initialize TLS data.
   span<const uint8_t> data_template() const {
     return data_template_;
   }

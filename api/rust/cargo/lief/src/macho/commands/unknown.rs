@@ -4,6 +4,7 @@ use crate::common::FromFFI;
 
 use std::marker::PhantomData;
 
+/// Generic structure when the command is not recognized by LIEF (e.g private `LC_xxx` command)
 pub struct Unknown<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_UnknownCommand>,
     _owner: PhantomData<&'a ffi::MachO_Binary>
@@ -11,6 +12,7 @@ pub struct Unknown<'a> {
 
 
 impl Unknown<'_> {
+    /// The original `LC_` int that is not supported by LIEF
     pub fn original_command(&self) -> u64 {
         self.ptr.original_command()
     }
@@ -20,7 +22,9 @@ impl std::fmt::Debug for Unknown<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let base = self as &dyn Command;
         f.debug_struct("UnknownCommand")
-                        .finish()
+            .field("base", &base)
+            .field("original_command", &self.original_command())
+            .finish()
     }
 }
 

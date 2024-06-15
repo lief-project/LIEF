@@ -4,18 +4,29 @@ use crate::common::FromFFI;
 
 use std::marker::PhantomData;
 
+/// Structure that wraps the `LC_VERSION_MIN_MACOSX, LC_VERSION_MIN_IPHONEOS, ...` commands.
 pub struct VersionMin<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_VersionMin>,
     _owner: PhantomData<&'a ffi::MachO_Binary>
 }
 
-
 impl VersionMin<'_> {
-    pub fn version(&self) -> Vec<u64> {
-        Vec::from(self.ptr.version().as_slice())
+    /// Version as a tuplce
+    pub fn version(&self) -> (u64, u64, u64) {
+        let vec = Vec::from(self.ptr.version().as_slice());
+        if vec.len() != 3 {
+            return (0, 0, 0);
+        }
+        (vec[0], vec[1], vec[2])
     }
-    pub fn sdk(&self) -> Vec<u64> {
-        Vec::from(self.ptr.sdk().as_slice())
+
+    /// SDK version as a tuple
+    pub fn sdk(&self) -> (u64, u64, u64) {
+        let vec = Vec::from(self.ptr.sdk().as_slice());
+        if vec.len() != 3 {
+            return (0, 0, 0);
+        }
+        (vec[0], vec[1], vec[2])
     }
 }
 

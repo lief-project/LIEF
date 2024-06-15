@@ -35,6 +35,7 @@ class ELF_SymbolVersionRequirement : private Mirror<LIEF::ELF::SymbolVersionRequ
     it_auxiliary_symbols(const ELF_SymbolVersionRequirement::lief_t& src)
       : Iterator(std::move(src.auxiliary_symbols())) { }
     auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
   };
 
   auto auxiliary_symbols() const {

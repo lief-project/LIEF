@@ -8,4 +8,21 @@ lief = { path = "../cargo/lief" }
 
 [[bin]]
 name = "reader"
-path = "reader.rs"
+
+[[bin]]
+name = "pe_check_authenticode"
+
+[[bin]]
+name = "pe_rich_header"
+
+[[bin]]
+name = "elf_deps"
+
+[[bin]]
+name = "pe_deps"
+
+[[bin]]
+name = "list_macho_encryption"
+
+[[bin]]
+name = "test_run_examples"

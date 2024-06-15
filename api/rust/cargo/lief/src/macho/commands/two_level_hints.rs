@@ -5,19 +5,22 @@ use crate::to_slice;
 
 use std::marker::PhantomData;
 
+/// Structure which represents the `LC_TWOLEVEL_HINTS` command
 pub struct TwoLevelHints<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_TwoLevelHints>,
     _owner: PhantomData<&'a ffi::MachO_Binary>
 }
 
-
 impl TwoLevelHints<'_> {
+    /// Offset of the command. It should point in the `__LINKEDIT` segment
     pub fn offset(&self) -> u32 {
         self.ptr.offset()
     }
     pub fn original_nb_hints(&self) -> u32 {
         self.ptr.original_nb_hints()
     }
+
+    /// Original payload of the command
     pub fn content(&self) -> &[u8] {
         to_slice!(self.ptr.content());
     }

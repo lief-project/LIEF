@@ -21,10 +21,10 @@ class MachO_ThreadCommand : public MachO_Command {
   public:
   using lief_t = LIEF::MachO::ThreadCommand;
   MachO_ThreadCommand(const lief_t& base) : MachO_Command(base) {}
-  uint32_t flavor() const { return impl().flavor(); }
-  uint32_t count() const { return impl().count(); }
-  auto architecture() const { return to_int(impl().architecture()); }
-  uint64_t pc() const { return impl().pc(); }
+  auto flavor() const { return impl().flavor(); }
+  auto count() const { return impl().count(); }
+  int32_t architecture() const { return to_int(impl().architecture()); }
+  auto pc() const { return impl().pc(); }
 
   auto state() const { return make_span(impl().state()); }
 

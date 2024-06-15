@@ -43,8 +43,9 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_debug(const PE_Binary::lief_t& src)
-      : Iterator(std::move(src.debug())) { }
+      : Iterator(std::move(src.debug())) { } // NOLINT(performance-move-const-arg)
     auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
   };
 
   class it_signatures :
@@ -52,8 +53,9 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_signatures(const PE_Binary::lief_t& src)
-      : Iterator(std::move(src.signatures())) { }
+      : Iterator(std::move(src.signatures())) { } // NOLINT(performance-move-const-arg)
     auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
   };
 
   class it_sections :
@@ -61,8 +63,9 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_sections(const PE_Binary::lief_t& src)
-      : Iterator(std::move(src.sections())) { }
+      : Iterator(std::move(src.sections())) { } // NOLINT(performance-move-const-arg)
     auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
   };
 
   class it_relocations :
@@ -70,8 +73,9 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_relocations(const PE_Binary::lief_t& src)
-      : Iterator(std::move(src.relocations())) { }
+      : Iterator(std::move(src.relocations())) { } // NOLINT(performance-move-const-arg)
     auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
   };
 
   class it_imports :
@@ -79,8 +83,9 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_imports(const PE_Binary::lief_t& src)
-      : Iterator(std::move(src.imports())) { }
+      : Iterator(std::move(src.imports())) { } // NOLINT(performance-move-const-arg)
     auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
   };
 
   class it_delay_imports :
@@ -88,8 +93,9 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_delay_imports(const PE_Binary::lief_t& src)
-      : Iterator(std::move(src.delay_imports())) { }
+      : Iterator(std::move(src.delay_imports())) { } // NOLINT(performance-move-const-arg)
     auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
   };
 
   class it_data_directories :
@@ -97,8 +103,9 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_data_directories(const PE_Binary::lief_t& src)
-      : Iterator(std::move(src.data_directories())) { }
+      : Iterator(std::move(src.data_directories())) { } // NOLINT(performance-move-const-arg)
     auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
   };
 
 
@@ -106,7 +113,7 @@ class PE_Binary : public AbstractBinary {
     AbstractBinary(std::move(bin))
   {}
 
-  static auto parse(std::string path) {
+  static auto parse(std::string path) { // NOLINT(performance-unnecessary-value-param)
     return details::try_unique<PE_Binary>(LIEF::PE::Parser::parse(path));
   }
 
@@ -139,23 +146,23 @@ class PE_Binary : public AbstractBinary {
   }
 
   auto tls() const {
-    return details::try_unique<PE_TLS>(impl().tls());
+    return details::try_unique<PE_TLS>(impl().tls()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto rich_header() const {
-    return details::try_unique<PE_RichHeader>(impl().rich_header());
+    return details::try_unique<PE_RichHeader>(impl().rich_header()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto get_export() const {
-    return details::try_unique<PE_Export>(impl().get_export());
+    return details::try_unique<PE_Export>(impl().get_export()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto resources() const {
-    return details::try_unique<PE_ResourceNode>(impl().resources());
+    return details::try_unique<PE_ResourceNode>(impl().resources()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto load_configuration() const {
-    return details::try_unique<PE_LoadConfiguration>(impl().load_configuration());
+    return details::try_unique<PE_LoadConfiguration>(impl().load_configuration()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto dos_header() const {
@@ -173,12 +180,17 @@ class PE_Binary : public AbstractBinary {
   uint32_t compute_checksum() const { return impl().compute_checksum(); }
 
   auto resources_manager() const {
-    return details::from_result<PE_ResourcesManager>(impl().resources_manager());
+    return details::from_result<PE_ResourcesManager>(impl().resources_manager()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto verify_signature(uint32_t flags) const {
     using check_t = LIEF::PE::Signature::VERIFICATION_CHECKS;
     return to_int(impl().verify_signature(check_t(flags)));
+  }
+
+  auto verify_with_signature(const PE_Signature& sig, uint32_t flags) const {
+    using check_t = LIEF::PE::Signature::VERIFICATION_CHECKS;
+    return to_int(impl().verify_signature(sig.get(), check_t(flags)));
   }
 
   std::vector<uint8_t> authentihash(uint32_t algo) const {
@@ -189,8 +201,56 @@ class PE_Binary : public AbstractBinary {
     return make_span(impl().overlay());
   }
 
+  auto overlay_offset() const {
+    return impl().overlay_offset();
+  }
+
   auto dos_stub() const {
     return make_span(impl().dos_stub());
+  }
+
+  auto rva_to_offset(uint64_t rva) const {
+    return impl().rva_to_offset(rva);
+  }
+
+  auto va_to_offset(uint64_t rva) const {
+    return impl().va_to_offset(rva);
+  }
+
+  uint64_t virtual_size() const {
+    return impl().virtual_size();
+  }
+
+  uint64_t sizeof_headers() const {
+    return impl().sizeof_headers();
+  }
+
+  auto section_from_offset(uint64_t offset) const {
+    return details::try_unique<PE_Section>(impl().section_from_offset(offset)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+
+  auto section_from_rva(uint64_t address) const {
+    return details::try_unique<PE_Section>(impl().section_from_offset(address)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+
+  auto section_by_name(std::string name) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<PE_Section>(impl().get_section(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+
+  auto data_directory_by_type(uint32_t type) const {
+    return details::try_unique<PE_DataDirectory>(impl().data_directory(LIEF::PE::DataDirectory::TYPES(type))); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+
+  auto import_by_name(std::string name) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<PE_Import>(impl().get_import(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+
+  auto delay_import_by_name(std::string name) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<PE_DelayImport>(impl().get_delay_import(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+
+  Span get_content_from_virtual_address(uint64_t virtual_address, uint64_t size) const {
+    return make_span(impl().get_content_from_virtual_address(virtual_address, size));
   }
 
   private:

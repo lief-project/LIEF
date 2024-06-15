@@ -45,7 +45,8 @@ class LIEF_API Relocation : public LIEF::Relocation {
 
   public:
 
-  /// The *purpose* of a relocation defines
+  /// The *purpose* of a relocation defines how this relocation is used by the
+  /// loader.
   enum class PURPOSE {
     NONE = 0,
     PLTGOT = 1,  ///< The relocation is associated with the PLT/GOT resolution

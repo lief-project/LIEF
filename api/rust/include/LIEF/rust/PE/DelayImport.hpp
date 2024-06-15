@@ -33,6 +33,7 @@ class PE_DelayImport : private Mirror<LIEF::PE::DelayImport> {
     it_entries(const PE_DelayImport::lief_t& src)
       : Iterator(std::move(src.entries())) { }
     auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
   };
 
   uint32_t attribute() const { return get().attribute(); }

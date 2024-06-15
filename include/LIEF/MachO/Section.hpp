@@ -138,7 +138,7 @@ class LIEF_API Section : public LIEF::Section {
   //! Offset of the relocation table. This value should be 0
   //! for executable and libraries as the relocations are managed by the DyldInfo::rebase
   //!
-  //! Other the other hand, for object files (``.o``) this value should not be 0
+  //! On the other hand, for object files (``.o``) this value should not be 0
   //!
   //! @see numberof_relocations
   //! @see relocations

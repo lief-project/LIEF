@@ -10,6 +10,7 @@ use crate::declare_iterator;
 
 use super::Symbol;
 
+/// Structure which reprents an ELF relocation
 pub struct Relocation<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_Relocation>,
     _owner: PhantomData<&'a ffi::ELF_Binary>
@@ -18,6 +19,7 @@ pub struct Relocation<'a> {
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+/// The different types of the relocation
 pub enum Type {
     X86_64_NONE,
     X86_64_64,
@@ -1885,10 +1887,15 @@ impl Type {
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+/// The *purpose* of a relocation defines how this relocation is used by the
+/// loader.
 pub enum Purpose {
     NONE,
+    /// The relocation is associated with the PLT/GOT resolution
     PLTGOT,
+    /// The relocation is used for regulard data/code relocation
     DYNAMIC,
+    /// The relocation is used in an object file
     OBJECT,
     UNKNOWN(u32),
 }
@@ -1910,9 +1917,13 @@ impl Purpose {
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Encoding {
+    /// The relocation is using the regular Elf_Rel structure
     REL,
+    /// The relocation is using the regular Elf_Rela structure
     RELA,
+    /// The relocation is using the relative relocation format
     RELR,
+    /// The relocation is using the packed Android-SLEB128 format
     ANDROID_SLEB,
     UNKNOWN(u32),
 }
@@ -1931,36 +1942,59 @@ impl Encoding {
 }
 
 impl Relocation<'_> {
+    /// Additional value that can be involved in the relocation processing
     pub fn addend(&self) -> i64 {
         self.ptr.addend()
     }
+
+    /// Type of the relocation
     pub fn get_type(&self) -> Type {
         Type::from_value(self.ptr.get_type())
     }
+
+    /// Check if the relocation uses the explicit [`Relocation::addend`] field
+    /// (this is usually the case for 64 bits binaries)
     pub fn is_rela(&self) -> bool {
         self.ptr.is_rela()
     }
+
+    /// Check if the relocation uses the implicit addend
+    /// (i.e. not present in the ELF structure)
     pub fn is_rel(&self) -> bool {
         self.ptr.is_rel()
     }
+
+    /// Relocation info which contains, for instance, the symbol index
     pub fn info(&self) -> u32 {
         self.ptr.info()
     }
+
+    /// Target architecture for this relocation
     pub fn architecture(&self) -> u32 {
         self.ptr.architecture()
     }
+
+    /// The purpose of the relocation
     pub fn purpose(&self) -> Purpose {
         Purpose::from_value(self.ptr.purpose())
     }
+
+    /// The encoding of the relocation
     pub fn encoding(&self) -> Encoding {
         Encoding::from_value(self.ptr.encoding())
     }
+
+    /// Symbol associated with the relocation (if any)
     pub fn symbol(&self) -> Option<Symbol> {
         into_optional(self.ptr.symbol())
     }
+
+    /// The section in which the relocation is applied (if any)
     pub fn section(&self) -> Option<Section> {
         into_optional(self.ptr.section())
     }
+
+    /// The associated symbol table (if any)
     pub fn symbol_table(&self) -> Option<Section> {
         into_optional(self.ptr.symbol_table())
     }

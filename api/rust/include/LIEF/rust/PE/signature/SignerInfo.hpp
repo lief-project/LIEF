@@ -33,8 +33,9 @@ class PE_SignerInfo : private Mirror<LIEF::PE::SignerInfo> {
   {
     public:
     it_authenticated_attributes(const PE_SignerInfo::lief_t& src)
-      : Iterator(std::move(src.authenticated_attributes())) { }
+      : Iterator(std::move(src.authenticated_attributes())) { } // NOLINT(performance-move-const-arg
     auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
   };
 
   class it_unauthenticated_attributes :
@@ -42,8 +43,9 @@ class PE_SignerInfo : private Mirror<LIEF::PE::SignerInfo> {
   {
     public:
     it_unauthenticated_attributes(const PE_SignerInfo::lief_t& src)
-      : Iterator(std::move(src.unauthenticated_attributes())) { }
+      : Iterator(std::move(src.unauthenticated_attributes())) { } // NOLINT(performance-move-const-arg)
     auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
   };
 
   uint32_t version() const { return get().version(); }
@@ -66,5 +68,9 @@ class PE_SignerInfo : private Mirror<LIEF::PE::SignerInfo> {
 
   auto unauthenticated_attributes() const {
     return std::make_unique<it_unauthenticated_attributes>(get());
+  }
+
+  auto raw_auth_data() const {
+    return make_span(get().raw_auth_data());
   }
 };

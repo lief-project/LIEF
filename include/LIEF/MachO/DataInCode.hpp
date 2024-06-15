@@ -63,7 +63,7 @@ class LIEF_API DataInCode : public LoadCommand {
     return data_offset_;
   }
 
-  //! Whole size of the array (``size = sizeof(DataCodeEntry) * nb_elements``)
+  //! Size of the raw array (``size = sizeof(DataCodeEntry) * nb_elements``)
   uint32_t data_size() const {
     return data_size_;
   }

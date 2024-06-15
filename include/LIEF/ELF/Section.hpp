@@ -75,7 +75,7 @@ class LIEF_API Section : public LIEF::Section {
     PREINIT_ARRAY       = 16, /**< Pointers to pre-init functions. */
     GROUP               = 17, /**< Section group. */
     SYMTAB_SHNDX        = 18, /**< Indices for SHN_XINDEX entries. */
-    RELR                = 19,
+    RELR                = 19, /**< Relocation entries; only offsets. */
 
     ANDROID_REL         = 0x60000001, /**< Packed relocations (Android specific). */
     ANDROID_RELA        = 0x60000002, /**< Packed relocations (Android specific). */
@@ -97,7 +97,7 @@ class LIEF_API Section : public LIEF::Section {
     ARM_DEBUGOVERLAY    = 0x70000004U + (_ARM_ID_ << _ID_SHIFT_),
     ARM_OVERLAYSECTION  = 0x70000005U + (_ARM_ID_ << _ID_SHIFT_),
 
-    HEX_ORDERED         = 0x70000000 + (_HEX_ID_ << _ID_SHIFT_), /**< Link editor is to sort the entries in */
+    HEX_ORDERED         = 0x70000000 + (_HEX_ID_ << _ID_SHIFT_), /**< Link editor is to sort the entries in this section based on their sizes */
 
     /* this section based on their sizes */
     X86_64_UNWIND       = 0x70000001 + (_X86_64_ID_ << _ID_SHIFT_), /**< Unwind information */
@@ -226,16 +226,16 @@ class LIEF_API Section : public LIEF::Section {
   }
 
   //! Section information.
-  //! This meaning of this value depends on the section's type
+  //! The meaning of this value depends on the section's type
   uint64_t information() const {
     return info_;
   }
 
   //! This function returns the size of an element in the case of a section that contains
   //! an array.
-  //
+  //!
   //! For instance, the `.dynamic` section contains an array of DynamicEntry. As the
-  //! size of the raw C structure of this entry is 0x10 (``sizeof(Elf64_Dyn)``)
+  //! size of the raw C structure of this entry is 0x10 (`sizeoe(Elf64_Dyn)`)
   //! in a ELF64, the `entry_size` is set to this value.
   uint64_t entry_size() const {
     return entry_size_;

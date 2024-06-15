@@ -1,3 +1,5 @@
+//! PE Data Directory module
+
 use std::marker::PhantomData;
 
 use crate::common::into_optional;
@@ -30,11 +32,13 @@ pub enum Type {
     DELAY_IMPORT_DESCRIPTOR,
     CLR_RUNTIME_HEADER,
     RESERVED,
-    UNKNOWN(u64),
+    UNKNOWN(u32),
 }
 
-impl Type {
-    pub fn from_value(value: u64) -> Self {
+
+/// Data directory's types
+impl From<u32> for Type {
+    fn from(value: u32) -> Self {
         match value {
             0x00000000 => Type::EXPORT_TABLE,
             0x00000001 => Type::IMPORT_TABLE,
@@ -53,6 +57,31 @@ impl Type {
             0x0000000e => Type::CLR_RUNTIME_HEADER,
             0x0000000f => Type::RESERVED,
             _ => Type::UNKNOWN(value),
+
+        }
+    }
+}
+impl Into<u32> for Type {
+    fn into(self) -> u32 {
+        match self {
+            Type::EXPORT_TABLE => 0x00000000,
+            Type::IMPORT_TABLE => 0x00000001,
+            Type::RESOURCE_TABLE => 0x00000002,
+            Type::EXCEPTION_TABLE => 0x00000003,
+            Type::CERTIFICATE_TABLE => 0x00000004,
+            Type::BASE_RELOCATION_TABLE => 0x00000005,
+            Type::DEBUG_DIR => 0x00000006,
+            Type::ARCHITECTURE => 0x00000007,
+            Type::GLOBAL_PTR => 0x00000008,
+            Type::TLS_TABLE => 0x00000009,
+            Type::LOAD_CONFIG_TABLE => 0x0000000a,
+            Type::BOUND_IMPORT => 0x0000000b,
+            Type::IAT => 0x0000000c,
+            Type::DELAY_IMPORT_DESCRIPTOR => 0x0000000d,
+            Type::CLR_RUNTIME_HEADER => 0x0000000e,
+            Type::RESERVED => 0x0000000f,
+            Type::UNKNOWN(_) => 0x0000000f, // RESERVED
+
         }
     }
 }
@@ -78,15 +107,21 @@ impl<'a> FromFFI<ffi::PE_DataDirectory> for DataDirectory<'a> {
 }
 
 impl DataDirectory<'_> {
+    /// The **relative** virtual address where the data referenced by this data directory are
+    /// located.
     pub fn rva(&self) -> u32 {
         self.ptr.RVA()
     }
+    /// The size of the data referenced by this data directory
     pub fn size(&self) -> u32 {
         self.ptr.size()
     }
+    /// The type of the data directory which is defined by its index.
     pub fn get_type(&self) -> Type {
-        Type::from_value(self.ptr.get_type().into())
+        Type::from(self.ptr.get_type())
     }
+    /// The (optional) section in which the data associated with the data directory
+    /// are located.
     pub fn section(&self) -> Option<Section> {
         into_optional(self.ptr.section())
     }

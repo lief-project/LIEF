@@ -45,6 +45,8 @@
 #include "LIEF/rust/PE/debug/Repro.hpp"
 
 #include "LIEF/rust/PE/signature/Signature.hpp"
+#include "LIEF/rust/PE/signature/SpcIndirectData.hpp"
+#include "LIEF/rust/PE/signature/GenericContent.hpp"
 #include "LIEF/rust/PE/signature/ContentInfo.hpp"
 #include "LIEF/rust/PE/signature/x509.hpp"
 #include "LIEF/rust/PE/signature/RsaInfo.hpp"

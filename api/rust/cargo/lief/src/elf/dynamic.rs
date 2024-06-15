@@ -259,22 +259,38 @@ impl Tag {
 
 
 #[derive(Debug)]
+/// Enum that represents the different variants of a dynamic entry
 pub enum Entries<'a> {
-    Generic(Generic<'a>),
+    /// Entry for `DT_NEEDED`
     Library(Library<'a>),
+
+    /// Entry for `DT_INIT_ARRAY, DT_FINI_ARRAY`, ...
     Array(Array<'a>),
+
+    /// Entry for `DT_RPATH`
     Rpath(Rpath<'a>),
+
+    /// Entry for `DT_RUNPATH`
     RunPath(RunPath<'a>),
+
+    /// Entry for `DT_SONAME`
     SharedObject(SharedObject<'a>),
+
+    /// Generic value
+    Generic(Generic<'a>),
 }
 
+/// Trait shared by all the [`Entries`]
 pub trait DynamicEntry {
     #[doc(hidden)]
     fn as_base(&self) -> &ffi::ELF_DynamicEntry;
 
+    /// Dynamic TAG associated with the entry
     fn tag(&self) -> Tag {
         Tag::from_value(self.as_base().tag())
     }
+
+    /// Raw value which should be interpreted according to the [`DynamicEntry::tag`]
     fn value(&self) -> u64 {
         self.as_base().value()
     }
@@ -333,6 +349,8 @@ impl FromFFI<ffi::ELF_DynamicEntry> for Entries<'_> {
 }
 
 
+/// Generic structure for the dynamic entries whose [`DynamicEntry::value`] can be interpreted
+/// as is.
 pub struct Generic<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_DynamicEntry>,
     _owner: PhantomData<&'a ffi::ELF_Binary>
@@ -360,6 +378,7 @@ impl std::fmt::Debug for Generic<'_> {
     }
 }
 
+/// Structure that represents a dynamic entry associated with a library name (e.g. `DT_NEEDED`)
 pub struct Library<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryLibrary>,
     _owner: PhantomData<&'a ffi::ELF_Binary>
@@ -393,6 +412,7 @@ impl std::fmt::Debug for Library<'_> {
     }
 }
 
+/// Structure that represents a dynamic entry associated with an array (e.g. `DT_INIT_ARRAY`)
 pub struct Array<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryArray>,
     _owner: PhantomData<&'a ffi::ELF_Binary>
@@ -425,6 +445,7 @@ impl std::fmt::Debug for Array<'_> {
     }
 }
 
+/// Structure that represents a dynamic entry associated with the rpath info
 pub struct Rpath<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryRpath>,
     _owner: PhantomData<&'a ffi::ELF_Binary>
@@ -458,6 +479,7 @@ impl std::fmt::Debug for Rpath<'_> {
     }
 }
 
+/// Structure that represents a dynamic entry associated with the runpath info
 pub struct RunPath<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryRunPath>,
     _owner: PhantomData<&'a ffi::ELF_Binary>
@@ -491,6 +513,7 @@ impl std::fmt::Debug for RunPath<'_> {
     }
 }
 
+/// Structure that represents a dynamic entry associated with the name of a library (`DT_SONAME`)
 pub struct SharedObject<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_DynamicSharedObject>,
     _owner: PhantomData<&'a ffi::ELF_Binary>

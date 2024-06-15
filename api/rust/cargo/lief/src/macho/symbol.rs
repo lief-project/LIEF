@@ -8,6 +8,12 @@ use lief_ffi as ffi;
 use super::commands::Dylib;
 use super::{BindingInfo, ExportInfo};
 
+/// Structure that represents a Symbol in a Mach-O file.
+///
+/// A Mach-O symbol can come from:
+/// 1. The symbols command (LC_SYMTAB / SymbolCommand)
+/// 2. The Dyld Export trie
+/// 3. The Dyld Symbol bindings
 pub struct Symbol<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_Symbol>,
     _owner: PhantomData<&'a ()>,
@@ -15,7 +21,7 @@ pub struct Symbol<'a> {
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum CATEGORY {
+pub enum Category {
     NONE,
     LOCAL,
     EXTERNAL,
@@ -25,36 +31,36 @@ pub enum CATEGORY {
     UNKNOWN(u32),
 }
 
-impl CATEGORY {
-    pub fn from_value(value: u32) -> Self {
+impl From<u32> for Category {
+    fn from(value: u32) -> Self {
         match value {
-            0x00000000 => CATEGORY::NONE,
-            0x00000001 => CATEGORY::LOCAL,
-            0x00000002 => CATEGORY::EXTERNAL,
-            0x00000003 => CATEGORY::UNDEFINED,
-            0x00000004 => CATEGORY::INDIRECT_ABS,
-            0x00000005 => CATEGORY::INDIRECT_LOCAL,
-            _ => CATEGORY::UNKNOWN(value),
+            0x00000000 => Category::NONE,
+            0x00000001 => Category::LOCAL,
+            0x00000002 => Category::EXTERNAL,
+            0x00000003 => Category::UNDEFINED,
+            0x00000004 => Category::INDIRECT_ABS,
+            0x00000005 => Category::INDIRECT_LOCAL,
+            _ => Category::UNKNOWN(value),
         }
     }
 }
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum ORIGIN {
+pub enum Origin {
     DYLD_EXPORT,
     DYLD_BIND,
     LC_SYMTAB,
     UNKNOWN(u32),
 }
 
-impl ORIGIN {
-    pub fn from_value(value: u32) -> Self {
+impl From<u32> for Origin {
+    fn from(value: u32) -> Self {
         match value {
-            0x00000001 => ORIGIN::DYLD_EXPORT,
-            0x00000002 => ORIGIN::DYLD_BIND,
-            0x00000003 => ORIGIN::LC_SYMTAB,
-            _ => ORIGIN::UNKNOWN(value),
+            0x00000001 => Origin::DYLD_EXPORT,
+            0x00000002 => Origin::DYLD_BIND,
+            0x00000003 => Origin::LC_SYMTAB,
+            _ => Origin::UNKNOWN(value),
         }
     }
 }
@@ -64,30 +70,38 @@ impl Symbol<'_> {
         self.ptr.get_type()
     }
 
+    /// It returns the number of sections in which this symbol can be found.
+    /// If the symbol can't be found in any section, it returns 0 (`NO_SECT`)
     pub fn numberof_sections(&self) -> u8 {
         self.ptr.numberof_sections()
     }
 
+    /// Return information about the symbol
     pub fn description(&self) -> u16 {
         self.ptr.description()
     }
 
-    pub fn origin(&self) -> ORIGIN {
-        ORIGIN::from_value(self.ptr.origin())
+    /// Return the origin of the symbol: from `LC_SYMTAB` from the Dyld information, ...
+    pub fn origin(&self) -> Origin {
+        Origin::from(self.ptr.origin())
     }
 
-    pub fn category(&self) -> CATEGORY {
-        CATEGORY::from_value(self.ptr.category())
+    /// Category of the symbol according to the `LC_DYSYMTAB` command
+    pub fn category(&self) -> Category {
+        Category::from(self.ptr.category())
     }
 
+    /// Export info associated with this symbol (if any)
     pub fn export_info(&self) -> Option<ExportInfo> {
         into_optional(self.ptr.export_info())
     }
 
+    /// Binding info associated with this symbol (if any)
     pub fn binding_info(&self) -> Option<BindingInfo> {
         into_optional(self.ptr.binding_info())
     }
 
+    /// Return the library in which this symbol is defined (if any)
     pub fn library(&self) -> Option<Dylib> {
         into_optional(self.ptr.library())
     }

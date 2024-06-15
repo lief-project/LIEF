@@ -50,8 +50,8 @@ namespace LIEF {
 namespace MachO {
 
 inline result<MACHO_TYPES> magic_from_stream(BinaryStream& stream) {
-  stream.setpos(0);
-  if (auto magic_res = stream.read<uint32_t>()) {
+  ScopedStream scoped(stream, 0);
+  if (auto magic_res = scoped->read<uint32_t>()) {
     return static_cast<MACHO_TYPES>(*magic_res);
   }
   return make_error_code(lief_errors::read_error);

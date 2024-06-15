@@ -16,6 +16,8 @@
 #include <cstdint>
 
 #include "LIEF/PE/TLS.hpp"
+#include "LIEF/rust/PE/Section.hpp"
+#include "LIEF/rust/PE/DataDirectories.hpp"
 #include "LIEF/rust/Mirror.hpp"
 
 class PE_TLS : private Mirror<LIEF::PE::TLS> {
@@ -33,4 +35,13 @@ class PE_TLS : private Mirror<LIEF::PE::TLS> {
   auto addressof_raw_data() const {
     return details::make_vector(get().addressof_raw_data());
   }
+
+  auto section() const {
+    return details::try_unique<PE_Section>(get().section()); // NOLINT(lang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+  auto data_directory() const {
+    return details::try_unique<PE_DataDirectory>(get().directory()); // NOLINT(lang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+
+
 };

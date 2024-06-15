@@ -3,18 +3,27 @@ use crate::common::FromFFI;
 use lief_ffi as ffi;
 use std::marker::PhantomData;
 
+/// Structure that represents the LC_ENCRYPTION_INFO / LC_ENCRYPTION_INFO_64 commands
+///
+/// The encryption info is usually present in Mach-O executables that
+/// target iOS to encrypt some sections of the binary
 pub struct EncryptionInfo<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_EncryptionInfo>,
     _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
 
 impl EncryptionInfo<'_> {
+    /// The beginning of the encrypted area
     pub fn crypt_offset(&self) -> u32 {
         self.ptr.crypt_offset()
     }
+
+    /// The size of the encrypted area
     pub fn crypt_size(&self) -> u32 {
         self.ptr.crypt_size()
     }
+
+    /// The encryption system. 0 means no encrypted
     pub fn crypt_id(&self) -> u32 {
         self.ptr.crypt_id()
     }

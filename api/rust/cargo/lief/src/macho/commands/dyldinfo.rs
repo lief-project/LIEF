@@ -8,6 +8,7 @@ use crate::{declare_iterator, declare_iterator_conv, to_slice};
 
 use lief_ffi as ffi;
 
+/// Structure that represents the `LC_DYLD_INFO` and `LC_DYLD_INFO_ONLY` commands
 pub struct DyldInfo<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_DyldInfo>,
     _owner: PhantomData<&'a ffi::MachO_Binary>,
@@ -37,24 +38,38 @@ impl FromFFI<ffi::MachO_DyldInfo> for DyldInfo<'_> {
 }
 
 impl<'a> DyldInfo<'a> {
+    /// Return Rebase's opcodes as a slice of bytes
     pub fn rebase_opcodes(&self) -> &[u8] {
         to_slice!(self.ptr.rebase_opcodes());
     }
+
+    /// Return **regular** binding's opcodes as a slice of bytes
     pub fn bind_opcodes(&self) -> &[u8] {
         to_slice!(self.ptr.bind_opcodes());
     }
+
+    /// Return **weak** binding's opcodes as a slice of bytes
     pub fn weak_bind_opcodes(&self) -> &[u8] {
         to_slice!(self.ptr.weak_bind_opcodes());
     }
+
+    /// Return **lazy** binding's opcodes as a slice of bytes
     pub fn lazy_bind_opcodes(&self) -> &[u8] {
         to_slice!(self.ptr.lazy_bind_opcodes());
     }
+
+    /// Return the raw export trie as a slice of bytes
     pub fn export_trie(&self) -> &[u8] {
         to_slice!(self.ptr.export_trie());
     }
+
+    /// Return an iterator over the [`crate::macho::BindingInfo::Dyld`] associated with this
+    /// command
     pub fn bindings(&self) -> BindingInfos {
         BindingInfos::new(self.ptr.bindings())
     }
+
+    /// Return an iterator over the [`crate::macho::ExportInfo`] associated with this command
     pub fn exports(&self) -> ExportInfos {
         ExportInfos::new(self.ptr.exports())
     }

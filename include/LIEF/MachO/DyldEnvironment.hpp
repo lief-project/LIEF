@@ -29,7 +29,7 @@ namespace details {
 struct dylinker_command;
 }
 
-//! Class that represents a LC_DYLD_ENVIRONMENT which is
+//! Class that represents a `LC_DYLD_ENVIRONMENT` command which is
 //! used by the Mach-O linker/loader to initialize an environment variable
 class LIEF_API DyldEnvironment : public LoadCommand {
   public:

@@ -1,3 +1,5 @@
+//! This module includes the different structures related to the relocation process in a PE binary
+
 use std::marker::PhantomData;
 
 use lief_ffi as ffi;
@@ -5,19 +7,25 @@ use lief_ffi as ffi;
 use crate::common::FromFFI;
 use crate::{declare_iterator, generic};
 
+/// Class which represents the *Base Relocation Block*
+/// We usually find this structure in the `.reloc` section
 pub struct Relocation<'a> {
     ptr: cxx::UniquePtr<ffi::PE_Relocation>,
     _owner: PhantomData<&'a ffi::PE_Binary>,
 }
 
 impl Relocation<'_> {
+    /// The RVA for which the offset of the relocation entries is added
     pub fn virtual_address(&self) -> u32 {
         self.ptr.virtual_address()
     }
+
+    /// The total number of bytes in the base relocation block.
+    /// `block_size = sizeof(BaseRelocationBlock) + nb_of_relocs * sizeof(uint16_t = RelocationEntry)`
     pub fn block_size(&self) -> u32 {
         self.ptr.block_size()
     }
-
+    /// Iterator over the Relocation [`Entry`]
     pub fn entries(&self) -> RelocationEntries {
         RelocationEntries::new(self.ptr.entries())
     }
@@ -93,6 +101,9 @@ impl BaseType {
     }
 }
 
+/// Class which represents an entry in the relocation table
+///
+/// It implements the [`generic::Relocation`] trait which provides additional functions
 pub struct Entry<'a> {
     ptr: cxx::UniquePtr<ffi::PE_RelocationEntry>,
     _owner: PhantomData<&'a ffi::PE_Relocation>,
@@ -105,12 +116,19 @@ impl generic::Relocation for Entry<'_> {
 }
 
 impl Entry<'_> {
+    /// Offset relative to [`Relocation::virtual_address`] where the relocation occurs.
     pub fn position(&self) -> u64 {
         self.ptr.position()
     }
+
+    /// Type of the relocation
     pub fn get_type(&self) -> BaseType {
         BaseType::from_value(self.ptr.get_type())
     }
+
+    /// Raw data of the relocation:
+    /// - The **high** 4 bits store the relocation type
+    /// - The **low** 12 bits store the relocation offset
     pub fn data(&self) -> u16 {
         self.ptr.data()
     }

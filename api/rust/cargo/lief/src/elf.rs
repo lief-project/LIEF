@@ -34,6 +34,12 @@ pub use hash::Gnu as GnuHash;
 pub use note::Notes;
 
 #[doc(inline)]
+pub use dynamic::Entries as DynamicEntries;
+
+#[doc(inline)]
+pub use relocation::Relocation;
+
+#[doc(inline)]
 pub use symbol_versioning::{
     SymbolVersion, SymbolVersionAux, SymbolVersionAuxRequirement, SymbolVersionDefinition,
     SymbolVersionRequirement,

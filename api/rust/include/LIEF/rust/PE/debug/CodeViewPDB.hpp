@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 #pragma once
-#include <cstdint>
 
 #include "LIEF/rust/PE/debug/CodeView.hpp"
 #include "LIEF/PE/debug/CodeViewPDB.hpp"
@@ -23,7 +22,10 @@ class PE_CodeViewPDB : public PE_CodeView {
   using lief_t = LIEF::PE::CodeViewPDB;
   PE_CodeViewPDB(const lief_t& obj) : PE_CodeView(obj) {}
 
-  uint32_t age() const { return impl().age(); }
+  auto age() const { return impl().age(); }
+
+  std::string guid() const { return impl().guid(); }
+
   std::string filename() const { return impl().filename(); }
 
   auto signature() const {

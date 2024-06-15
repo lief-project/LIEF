@@ -83,7 +83,10 @@ void create<Binary>(nb::module_& m) {
 
     .def_prop_ro("optional_header",
         nb::overload_cast<>(&Binary::optional_header, nb::const_),
-        "Return the " RST_CLASS_REF(lief.PE.OptionalHeader) ""_doc,
+        R"doc(
+        Header that follows the :att:`~.header`. It is named optional from the
+        COFF specifications but it is mandatory in a PE file.
+        )doc"_doc,
         nb::rv_policy::reference_internal)
 
     .def("compute_checksum",

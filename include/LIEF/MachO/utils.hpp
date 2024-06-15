@@ -16,7 +16,7 @@
 #ifndef LIEF_MACHO_UTILS_H
 #define LIEF_MACHO_UTILS_H
 
-#include "LIEF/types.hpp"
+#include <cstdint>
 #include "LIEF/visibility.h"
 
 #include <string>

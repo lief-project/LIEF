@@ -1,4 +1,6 @@
 mod utils;
+use std::env;
+use lief::logging;
 use lief::elf::dynamic;
 use lief::elf::dynamic::DynamicEntry;
 use lief::elf::note::NoteBase;
@@ -10,13 +12,20 @@ use lief::generic::Section;
 use lief::generic::Symbol;
 use lief::Binary;
 
-fn explore_elf(elf: &lief::elf::Binary) {
+fn explore_elf(name: &str, elf: &lief::elf::Binary) {
     format!("{elf:?}");
     format!("{} {} {}", elf.entrypoint(), elf.imagebase(), elf.is_pie());
+    format!("{} {} {}", elf.has_nx(), elf.original_size(), elf.virtual_size());
+    format!("{}", elf.interpreter());
 
     if let Some(sysv) = elf.sysv_hash() {
         format!("{sysv:?}");
     }
+
+    if let Some(text) = elf.section_by_name(".text") {
+        format!("{text:?}");
+    }
+
 
     if let Some(gnu) = elf.gnu_hash() {
         format!("{gnu:?}");
@@ -103,10 +112,16 @@ fn explore_elf(elf: &lief::elf::Binary) {
 
     for sym_def in elf.symbols_version_definition() {
         format!("{sym_def:?}");
+        for aux in sym_def.auxiliary_symbols() {
+            println!("{aux:?}");
+        }
     }
 
     for sym_req in elf.symbols_version_requirement() {
         format!("{sym_req:?}");
+        for aux in sym_req.auxiliary_symbols() {
+            println!("{aux:?}");
+        }
     }
 
     for entry in elf.dynamic_entries() {
@@ -133,13 +148,43 @@ fn explore_elf(elf: &lief::elf::Binary) {
             }
         }
     }
+
+    if name == "ELF64_x86-64_library_libfreebl3.so" {
+        assert!(elf.relocation_by_addr(0x1234).is_none());
+        assert!(elf.relocation_by_addr(0x003369c01df0).is_some());
+
+        assert!(elf.relocation_for_symbol("tooto").is_none());
+        assert!(elf.relocation_for_symbol("_Jv_RegisterClasses").is_some());
+
+        assert!(elf.dynamic_symbol_by_name("_Jv_RegisterClasses").is_some());
+    }
+    if name == "simple-gcc-c.bin" {
+        assert!(elf.symtab_symbol_by_name("test.c").is_some());
+        assert!(elf.get_library("libc.so.6").is_some());
+        assert!(elf.get_library("libtoto.so").is_none());
+        assert!(elf.virtual_address_to_offset(0x100000000).is_err());
+        assert!(elf.virtual_address_to_offset(0x401000).is_ok());
+
+        assert!(elf.segment_from_virtual_address(0x401000).is_some());
+        assert!(elf.segment_from_virtual_address(0x100000000).is_none());
+
+        assert!(elf.segment_from_offset(0).is_some());
+        assert!(elf.segment_from_offset(0x100000000).is_none());
+
+        assert!(elf.section_from_offset(0x318, /*skip_nobits*/ true).is_some());
+        assert!(elf.section_from_offset(0x100000000, /*skip_nobits*/ true).is_none());
+
+        assert!(elf.section_from_virtual_address(0x400318, /*skip_nobits*/ true).is_some());
+        assert!(elf.section_from_virtual_address(0x100000000, /*skip_nobits*/ true).is_none());
+        assert!(!elf.content_from_virtual_address(0x400318, 0x10).is_empty());
+    }
 }
 
 fn test_with(bin_name: &str) {
     let path = utils::get_elf_sample(bin_name).unwrap();
     let path_str = path.to_str();
     if let Some(Binary::ELF(bin)) = Binary::parse(path_str.unwrap()) {
-        explore_elf(&bin);
+        explore_elf(bin_name, &bin);
     }
 
     // Test Read + Seek interface
@@ -150,6 +195,10 @@ fn test_with(bin_name: &str) {
 
 #[test]
 fn test_api() {
+    let mut dir = env::temp_dir();
+    dir.push("lief_elf_test.log");
+    logging::set_path(dir.as_path());
+
     test_with("elf_reader.mips.elf");
     test_with("issue_975_aarch64.o");
     test_with("ELF_Core_issue_808.core");
@@ -157,4 +206,6 @@ fn test_api() {
     test_with("ELF64_x86-64_binary_etterlog.bin");
     test_with("ELF64_x86-64_binary_systemd-resolve.bin");
     test_with("art_reader.loongarch");
+    test_with("simple-gcc-c.bin");
 }
+

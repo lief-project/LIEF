@@ -3,6 +3,8 @@ use crate::common::FromFFI;
 use lief_ffi as ffi;
 use std::marker::PhantomData;
 
+/// Structure that represents the Mach-O linker, also named loader.
+/// Most of the time, [`Dylinker::name`] should return `/usr/lib/dyld`
 pub struct Dylinker<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_Dylinker>,
     _owner: PhantomData<&'a ffi::MachO_Binary>,
@@ -19,6 +21,7 @@ impl std::fmt::Debug for Dylinker<'_> {
 }
 
 impl Dylinker<'_> {
+    /// Path to the linker (or loader)
     pub fn name(&self) -> String {
         self.ptr.name().to_string()
     }

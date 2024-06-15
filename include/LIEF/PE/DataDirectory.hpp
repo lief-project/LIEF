@@ -44,7 +44,7 @@ class LIEF_API DataDirectory : public Object {
   public:
   static constexpr size_t DEFAULT_NB = 16;
 
-  enum class TYPES: size_t  {
+  enum class TYPES: uint32_t  {
     EXPORT_TABLE = 0,
     IMPORT_TABLE,
     RESOURCE_TABLE,

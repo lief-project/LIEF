@@ -4,12 +4,15 @@ use lief_ffi as ffi;
 use crate::common::FromFFI;
 use std::marker::PhantomData;
 
+/// Structure that represents a `LC_DYLD_ENVIRONMENT` command which is
+/// used by the Mach-O linker/loader to initialize an environment variable
 pub struct DyldEnvironment<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_DyldEnvironment>,
     _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
 
 impl DyldEnvironment<'_> {
+    /// The actual environment variable
     pub fn value(&self) -> String {
         self.ptr.value().to_string()
     }

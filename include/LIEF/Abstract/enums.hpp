@@ -16,8 +16,6 @@
 #ifndef LIEF_ABSTRACT_ENUMS_H
 #define LIEF_ABSTRACT_ENUMS_H
 
-#include "LIEF/types.hpp"
-
 namespace LIEF {
 
 enum OBJECT_TYPES {
@@ -67,10 +65,6 @@ enum ENDIANNESS {
   ENDIAN_BIG    = 1,
   ENDIAN_LITTLE = 2,
 };
-
-
-
-
 
 } // namespace LIEF
 #endif

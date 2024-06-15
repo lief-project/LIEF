@@ -39,7 +39,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
 
   enum class BINDING {
     LOCAL      = 0,  ///< Local symbol
-    GLOBAL     = 1,  ///< Global symbols
+    GLOBAL     = 1,  ///< Global symbol
     WEAK       = 2,  ///< Weak symbol
     GNU_UNIQUE = 10, ///< Unique symbol
   };

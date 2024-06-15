@@ -7,21 +7,32 @@ use std::marker::PhantomData;
 
 use crate::declare_iterator;
 
+/// Structure that represents the `LC_DYLD_EXPORTS_TRIE` command
+///
+/// In recent Mach-O binaries, this command replace the DyldInfo export trie buffer
 pub struct DyldExportsTrie<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_DyldExportsTrie>,
     _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
 
 impl DyldExportsTrie<'_> {
+    /// Offset of the `LC_DYLD_EXPORTS_TRIE`. This offset should point in the
+    /// `__LINKEDIT` segment
     pub fn data_offset(&self) -> u32 {
         self.ptr.data_offset()
     }
+
+    /// Size of the `LC_DYLD_EXPORTS_TRIE` payload.
     pub fn data_size(&self) -> u32 {
         self.ptr.data_size()
     }
+
+    /// Raw payload as a slice of bytes
     pub fn content(&self) -> &[u8] {
         to_slice!(self.ptr.content());
     }
+
+    /// Iterator over the [`crate::macho::ExportInfo`] associated with this command
     pub fn exports(&self) -> ExportInfos {
         ExportInfos::new(self.ptr.exports())
     }

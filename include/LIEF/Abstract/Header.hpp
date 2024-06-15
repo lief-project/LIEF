@@ -21,7 +21,6 @@
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
 
 #include "LIEF/Abstract/enums.hpp"
 
@@ -64,8 +63,6 @@ class LIEF_API Header : public Object {
   OBJECT_TYPES    object_type_ = OBJECT_TYPES::TYPE_NONE;
   uint64_t        entrypoint_ = 0;
   ENDIANNESS      endianness_ = ENDIANNESS::ENDIAN_NONE;
-
-
 };
 }
 

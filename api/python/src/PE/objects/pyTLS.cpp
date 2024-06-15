@@ -46,26 +46,25 @@ void create<TLS>(nb::module_& m) {
         R"delim(
         List of the callback associated with the current TLS.
 
-        These functions are called before any other functions of the PE binary.
+        These functions are called before any other functions.
         )delim"_doc)
 
     .def_prop_rw("addressof_index",
         nb::overload_cast<>(&TLS::addressof_index, nb::const_),
         nb::overload_cast<uint64_t>(&TLS::addressof_index),
         R"delim(
-        The location to receive the TLS index, which the loader assigns.
-        This location is in an ordinary data section, so it can be given a symbolic name that is accessible
-        to the program.
+        The location to receive the TLS index assigned by the loader.
+        This location should be located in a writable section like ``.data``.
         )delim"_doc)
 
     .def_prop_rw("addressof_callbacks",
         nb::overload_cast<>(&TLS::addressof_callbacks, nb::const_),
         nb::overload_cast<uint64_t>(&TLS::addressof_callbacks),
         R"delim(
-        The pointer to an array of TLS callback functions.
+        Pointer to an array of TLS callback functions.
 
-        The array is null-terminated, so if no callback function
-        is supported, this field points to 4 bytes set to zero.
+        The array is null-terminated, so if there is no callback,
+        this field points to 4 bytes set to zero.
 
         See: :attr:`~lief.PE.TLS.callbacks`
         )delim"_doc)
@@ -74,10 +73,8 @@ void create<TLS>(nb::module_& m) {
         nb::overload_cast<>(&TLS::sizeof_zero_fill, nb::const_),
         nb::overload_cast<uint32_t>(&TLS::sizeof_zero_fill),
         R"delim(
-        The size in bytes of the template, beyond the initialized data delimited by
-        the :attr:`~lief.PE.TLS.addressof_raw_data` fields.
-        The total template size should be the same as the total size of TLS data in the image file.
-        The zero fill is the amount of data that comes after the initialized nonzero data.
+        Size in bytes of the zeros to be *padded* after the data specified by
+        :attr:`~.data_template`.
         )delim"_doc)
 
 
@@ -86,8 +83,9 @@ void create<TLS>(nb::module_& m) {
         nb::overload_cast<uint32_t>(&TLS::characteristics),
         R"delim(
         The four bits [23:20] describe alignment info.
-        Possible values are those defined as IMAGE_SCN_ALIGN_*, which are also used to
-        describe alignment of section in object files. The other 28 bits are reserved for future use.
+        Possible values are those defined as ``IMAGE_SCN_ALIGN_*``, which are
+        also used to describe alignment of section in object files.
+        The other 28 bits are reserved for future use.
         )delim"_doc)
 
     .def_prop_rw("addressof_raw_data",
@@ -96,13 +94,13 @@ void create<TLS>(nb::module_& m) {
         R"delim(
         Tuple ``(start address, end address)`` of the TLS template.
         The template is a block of data that is used to initialize TLS data.
-        The system copies all of this data each time a thread is created, so it must not be
-        corrupted.
+        The system copies all of this data each time a thread is created, so it
+        must not be corrupted.
 
         .. note::
 
-          These addresses are not RVA. It is addresses for which there should be a base
-          relocation in the ``.reloc`` section.
+          These addresses are not RVA. It is addresses for which there should
+          be a base relocation in the ``.reloc`` section.
         )delim"_doc)
 
     .def_prop_rw("data_template",
@@ -111,7 +109,7 @@ void create<TLS>(nb::module_& m) {
           return nb::memoryview::from_memory(content.data(), content.size());
         },
         nb::overload_cast<std::vector<uint8_t>>(&TLS::data_template),
-        "The data template content"_doc)
+        "The initial content used to initialize TLS data."_doc)
 
     .def_prop_ro("has_section",
         &TLS::has_section,

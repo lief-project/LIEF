@@ -18,7 +18,6 @@
 
 #include <vector>
 
-#include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 #include "LIEF/iterators.hpp"

@@ -34,7 +34,7 @@ namespace logging {
 //!
 //! For example, if LOG_INFO is enabled then LOG_WARN, LOG_ERR are also enabled
 enum LOGGING_LEVEL {
-  LOG_TRACE,
+  LOG_TRACE = 0,
   LOG_DEBUG,
   LOG_INFO,
   LOG_WARN,

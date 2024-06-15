@@ -33,20 +33,21 @@ class MachO_Section : public AbstractSection {
     it_relocations(const MachO_Section::lief_t& src)
       : Iterator(std::move(src.relocations())) { }
     auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
   };
 
   std::string segment_name() const { return impl().segment_name(); }
-  uint64_t address() const { return impl().address(); }
-  uint32_t alignment() const { return impl().alignment(); }
-  uint32_t relocation_offset() const { return impl().relocation_offset(); }
-  uint32_t numberof_relocations() const { return impl().numberof_relocations(); }
-  uint32_t flags() const { return to_int(impl().flags()); }
+  auto address() const { return impl().address(); }
+  auto alignment() const { return impl().alignment(); }
+  auto relocation_offset() const { return impl().relocation_offset(); }
+  auto numberof_relocations() const { return impl().numberof_relocations(); }
+  auto flags() const { return to_int(impl().flags()); }
   auto section_type() const { return to_int(impl().type()); }
-  uint32_t reserved1() const { return impl().reserved1(); }
-  uint32_t reserved2() const { return impl().reserved2(); }
-  uint32_t reserved3() const { return impl().reserved3(); }
+  auto reserved1() const { return impl().reserved1(); }
+  auto reserved2() const { return impl().reserved2(); }
+  auto reserved3() const { return impl().reserved3(); }
 
-  uint32_t raw_flags() const { return impl().raw_flags(); }
+  auto raw_flags() const { return impl().raw_flags(); }
 
   auto segment() const { return details::try_unique<MachO_SegmentCommand>(impl().segment()); }
   auto relocations() const { return std::make_unique<it_relocations>(impl()); }

@@ -10,8 +10,9 @@
 //!
 //! The bindings require at least Rust version **1.74.0** with the 2021 edition and support:
 //! - Windows x86-64 (support `/MT` and `/MD` linking)
-//! - Linux x86-64  (Ubuntu 20.04, Almalinux 9, Debian 11.5, Fedora 29)
+//! - Linux x86-64/aarch64  (Ubuntu 20.04, Almalinux 9, Debian 11.5, Fedora 29)
 //! - macOS (`x86-64` and `aarch64` with at least OSX Big Sur: 11.0)
+//! - iOS (`aarch64`)
 //!
 //! ## Getting Started
 //!
@@ -49,15 +50,41 @@
 //!    return;
 //! }
 //! ```
+//!
+//! Note that the [`generic`] module implements the different traits shared by different structure
+//! of executable formats (symbols, relocations, ...)
+//!
 
 #![doc(html_no_source)]
+
+/// Module for the ELF format
 pub mod elf;
+
+/// Executable formats generic traits (LIEF's abstract layer)
 pub mod generic;
+
+/// Module for the Mach-O format
 pub mod macho;
+
+/// Module for the PE format
 pub mod pe;
+
+/// Module for LIEF's error
+pub mod error;
+
+pub mod logging;
 
 mod binary;
 mod common;
 
 #[doc(inline)]
 pub use binary::Binary;
+
+#[doc(inline)]
+pub use generic::Relocation;
+
+#[doc(inline)]
+pub use error::Error;
+
+
+

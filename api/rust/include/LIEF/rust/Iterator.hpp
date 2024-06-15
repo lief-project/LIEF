@@ -23,6 +23,10 @@ class Iterator {
     if (it_ == it_.end()) return nullptr;
     return std::make_unique<T>(*it_++);
   }
+
+  uint64_t size() const {
+    return it_.size();
+  }
   protected:
   Iterator(V it) : it_(std::move(it)) {}
   V it_;

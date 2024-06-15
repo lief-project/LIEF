@@ -32,8 +32,9 @@ class PE_Import : private Mirror<LIEF::PE::Import> {
   {
     public:
     it_entries(const PE_Import::lief_t& src)
-      : Iterator(std::move(src.entries())) { }
+      : Iterator(std::move(src.entries())) { } // NOLINT(performance-move-const-arg)
     auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
   };
 
   uint32_t forwarder_chain() const { return get().forwarder_chain(); }
@@ -47,11 +48,15 @@ class PE_Import : private Mirror<LIEF::PE::Import> {
   }
 
   auto iat_directory() const {
-    return details::try_unique<PE_DataDirectory>(get().iat_directory());
+    return details::try_unique<PE_DataDirectory>(get().iat_directory()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto entries() const {
     return std::make_unique<it_entries>(get());
+  }
+
+  auto entry_by_name(std::string name) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<PE_ImportEntry>(get().get_entry(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
 };

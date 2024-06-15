@@ -18,7 +18,6 @@
 #include <ostream>
 
 #include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 

@@ -5,6 +5,7 @@ use lief_ffi as ffi;
 use super::Command;
 use crate::common::FromFFI;
 
+/// Structure that represents the `LC_BUILD_VERSION` command
 pub struct BuildVersion<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_BuildVersion>,
     _owner: PhantomData<&'a ffi::MachO_Binary>,
@@ -12,7 +13,7 @@ pub struct BuildVersion<'a> {
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum PLATFORM {
+pub enum Platform {
     MACOS,
     IOS,
     TVOS,
@@ -20,29 +21,37 @@ pub enum PLATFORM {
     UNKNOWN(u32),
 }
 
-impl PLATFORM {
-    pub fn from_value(value: u32) -> Self {
+impl From<u32> for Platform {
+    fn from(value: u32) -> Self {
         match value {
-            0x00000001 => PLATFORM::MACOS,
-            0x00000002 => PLATFORM::IOS,
-            0x00000003 => PLATFORM::TVOS,
-            0x00000004 => PLATFORM::WATCHOS,
-            _ => PLATFORM::UNKNOWN(value),
+            0x00000001 => Platform::MACOS,
+            0x00000002 => Platform::IOS,
+            0x00000003 => Platform::TVOS,
+            0x00000004 => Platform::WATCHOS,
+            _ => Platform::UNKNOWN(value),
         }
     }
 }
 
 impl BuildVersion<'_> {
-    pub fn sdk(&self) -> Vec<u64> {
-        Vec::from(self.ptr.sdk().as_slice())
+    pub fn sdk(&self) -> (u64, u64, u64) {
+        let vec = Vec::from(self.ptr.sdk().as_slice());
+        if vec.len() != 3 {
+            return (0, 0, 0);
+        }
+        (vec[0], vec[1], vec[2])
     }
 
-    pub fn minos(&self) -> Vec<u64> {
-        Vec::from(self.ptr.minos().as_slice())
+    pub fn minos(&self) -> (u64, u64, u64) {
+        let vec = Vec::from(self.ptr.sdk().as_slice());
+        if vec.len() != 3 {
+            return (0, 0, 0);
+        }
+        (vec[0], vec[1], vec[2])
     }
 
-    pub fn platform(&self) -> PLATFORM {
-        PLATFORM::from_value(self.ptr.platform())
+    pub fn platform(&self) -> Platform {
+        Platform::from(self.ptr.platform())
     }
 }
 

@@ -47,6 +47,11 @@ macro_rules! declare_iterator_conv {
                 }
             }
         }
+        impl<'a> ExactSizeIterator for $name<'a> {
+            fn len(&self) -> usize {
+                self.it.as_ref().unwrap().size().try_into().unwrap()
+            }
+        }
     };
 }
 
@@ -71,5 +76,19 @@ macro_rules! to_slice {
             }
             return &[];
         }
+    };
+}
+
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! to_result {
+    ($func: expr, $self: expr, $($arg:tt)*) => {
+        let mut err: u32 = 0;
+        let value = $func(&$self.ptr, $($arg),*, Pin::new(&mut err));
+        if err > 0 {
+            return Err(crate::Error::from(err));
+        }
+        return Ok(value);
     };
 }

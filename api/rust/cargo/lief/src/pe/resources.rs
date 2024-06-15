@@ -1,3 +1,5 @@
+//! This module contains the different structures involved in the PE's resource tree
+
 use lief_ffi as ffi;
 
 use std::{fmt, marker::PhantomData};
@@ -7,22 +9,29 @@ use crate::{common::FromFFI, declare_iterator};
 
 #[derive(Debug)]
 pub enum Node<'a> {
+    /// A *data* node (i.e. a leaf)
     Data(Data<'a>),
+    /// A directory node
     Directory(Directory<'a>),
 }
 
+/// Trait that is shared by both [`Node::Data`] and [`Node::Directory`].
 pub trait NodeBase {
     #[doc(hidden)]
     fn get_base(&self) -> &ffi::PE_ResourceNode;
 
+    /// Integer that identifies the Type, Name, or Language ID of the entry
+    /// depending on its [`NodeBase::depth`] in the tree
     fn id(&self) -> u32 {
         self.get_base().id()
     }
 
+    /// Current depth of the Node in the resource tree
     fn depth(&self) -> u32 {
         self.get_base().depth()
     }
 
+    /// Iterator on node's children
     fn children(&self) -> Children {
         Children::new(self.get_base().childs())
     }
@@ -69,15 +78,25 @@ pub struct Data<'a> {
 }
 
 impl Data<'_> {
+    /// Return the code page that is used to decode code point
+    /// values within the resource data. Typically, the code page is the unicode code page.
     pub fn code_page(&self) -> u32 {
         self.ptr.code_page()
     }
+
+    /// Reserved value. Should be `0`
     pub fn reserved(&self) -> u32 {
         self.ptr.reserved()
     }
+
+    /// Offset of the content within the resource
+    ///
+    /// <div class="warning">this value may change when rebuilding resource table</div>
     pub fn offset(&self) -> u32 {
         self.ptr.offset()
     }
+
+    /// Resource content
     pub fn content(&self) -> &[u8] {
         to_slice!(self.ptr.content());
     }
@@ -116,21 +135,40 @@ pub struct Directory<'a> {
 }
 
 impl Directory<'_> {
+
+    /// Resource characteristics. This field is reserved for future use.
+    /// It is currently set to zero.
     pub fn characteristics(&self) -> u32 {
         self.ptr.characteristics()
     }
+
+    /// The time that the resource data was created by the
+    /// resource compiler.
     pub fn time_date_stamp(&self) -> u32 {
         self.ptr.time_date_stamp()
     }
+
+    /// The major version number, set by the user.
     pub fn major_version(&self) -> u32 {
         self.ptr.major_version()
     }
+
+    /// The minor version number, set by the user.
     pub fn minor_version(&self) -> u32 {
         self.ptr.minor_version()
     }
+
+    /// The number of directory entries immediately
+    /// following the table that use strings to identify Type,
+    /// Name, or Language entries (depending on the level of the table).
     pub fn numberof_name_entries(&self) -> u32 {
         self.ptr.numberof_name_entries()
     }
+
+
+    /// The number of directory entries immediately
+    /// following the Name entries that use numeric IDs for
+    /// Type, Name, or Language entries.
     pub fn numberof_id_entries(&self) -> u32 {
         self.ptr.numberof_id_entries()
     }

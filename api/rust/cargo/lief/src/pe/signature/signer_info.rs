@@ -2,11 +2,13 @@ use std::marker::PhantomData;
 
 use super::attributes::Attribute;
 use super::X509;
+use crate::pe::Algorithms;
 use crate::to_slice;
 use crate::common::{FromFFI, into_optional};
 use crate::declare_iterator;
 use lief_ffi as ffi;
 
+/// SignerInfo as described in the [RFC 2315](https://tools.ietf.org/html/rfc2315#section-9.2)
 pub struct SignerInfo<'a> {
     ptr: cxx::UniquePtr<ffi::PE_SignerInfo>,
     _owner: PhantomData<&'a ()>, // Can be own by Signature or PKCS9CounterSignature
@@ -33,33 +35,55 @@ impl<'a> FromFFI<ffi::PE_SignerInfo> for SignerInfo<'a> {
 }
 
 impl<'a> SignerInfo<'a> {
+    /// Should be 1
     pub fn version(&self) -> u32 {
         self.ptr.version()
     }
+
+    /// Return the [`X509::issuer`] used by this signer
     pub fn issuer(&self) -> String {
         self.ptr.issuer().to_string()
     }
-    pub fn digest_algorithm(&self) -> u32 {
-        self.ptr.digest_algorithm()
+
+    /// Algorithm used to hash the file.
+    pub fn digest_algorithm(&self) -> Algorithms {
+        Algorithms::from(self.ptr.digest_algorithm())
     }
-    pub fn encryption_algorithm(&self) -> u32 {
-        self.ptr.encryption_algorithm()
+
+    /// Return the (public-key) algorithm used to encrypt the signature
+    pub fn encryption_algorithm(&self) -> Algorithms {
+        Algorithms::from(self.ptr.encryption_algorithm())
     }
+
+    /// Return the serial number associated with the x509 certificate
+    /// used by this signer.
     pub fn serial_number(&self) -> &[u8] {
         to_slice!(self.ptr.serial_number());
     }
+
+    /// Return the signature created by the signing certificate's private key
     pub fn encrypted_digest(&self) -> Vec<u8> {
         Vec::from(self.ptr.encrypted_digest().as_slice())
     }
+
+    /// [`X509`] certificate used by this signer.
     pub fn cert(&self) -> Option<X509> {
         into_optional(self.ptr.cert())
     }
+
+    /// Iterator over the **authenticated** [`Attribute`]
     pub fn authenticated_attributes(&self) -> AuthenticatedAttributes {
         AuthenticatedAttributes::new(self.ptr.authenticated_attributes())
     }
 
+    /// Iterator over the **unauthenticated** [`Attribute`]
     pub fn unauthenticated_attributes(&self) -> UnAuthenticatedAttributes {
         UnAuthenticatedAttributes::new(self.ptr.unauthenticated_attributes())
+    }
+
+    /// Raw blob that is signed by the signer certificate
+    pub fn raw_auth_data(&self) -> &[u8] {
+        to_slice!(self.ptr.raw_auth_data());
     }
 }
 

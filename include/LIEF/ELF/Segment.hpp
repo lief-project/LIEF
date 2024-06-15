@@ -167,7 +167,7 @@ class LIEF_API Segment : public Object {
   }
 
   //! The in-memory size of this segment.
-  //! Usually, if the ``.bss`` segment is wrapped by this segment
+  //! Usually, if the `.bss` segment is wrapped by this segment
   //! then, virtual_size is larger than physical_size
   uint64_t virtual_size() const {
     return virtual_size_;

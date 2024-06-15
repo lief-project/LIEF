@@ -5,23 +5,38 @@ use crate::common::FromFFI;
 use crate::declare_iterator;
 use std::marker::PhantomData;
 
+/// Structure which represents a library dependency
 pub struct Dylib<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_Dylib>,
     _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
 
 impl Dylib<'_> {
+    /// Library name
     pub fn name(&self) -> String {
         self.ptr.name().to_string()
     }
+
+    /// Date and Time when the shared library was built
     pub fn timestamp(&self) -> u32 {
         self.ptr.timestamp()
     }
-    pub fn current_version(&self) -> Vec<u64> {
-        Vec::from(self.ptr.current_version().as_slice())
+
+    /// Current version of the shared library
+    pub fn current_version(&self) -> (u64, u64, u64) {
+        let vec = Vec::from(self.ptr.current_version().as_slice());
+        if vec.len() != 3 {
+            return (0, 0, 0);
+        }
+        (vec[0], vec[1], vec[2])
     }
-    pub fn compatibility_version(&self) -> Vec<u64> {
-        Vec::from(self.ptr.compatibility_version().as_slice())
+    /// Compatibility version of the shared library
+    pub fn compatibility_version(&self) -> (u64, u64, u64) {
+        let vec = Vec::from(self.ptr.compatibility_version().as_slice());
+        if vec.len() != 3 {
+            return (0, 0, 0);
+        }
+        (vec[0], vec[1], vec[2])
     }
 }
 

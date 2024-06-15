@@ -16,8 +16,9 @@
 
 #include "LIEF/PE/signature/ContentInfo.hpp"
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/helpers.hpp"
 
-class PE_ContentInfo_Content : private Mirror<LIEF::PE::ContentInfo::Content> {
+class PE_ContentInfo_Content : public Mirror<LIEF::PE::ContentInfo::Content> {
   public:
   using lief_t = LIEF::PE::ContentInfo::Content;
   using Mirror::Mirror;
@@ -38,5 +39,13 @@ class PE_ContentInfo : private Mirror<LIEF::PE::ContentInfo> {
 
   auto value() const {
     return std::make_unique<PE_ContentInfo_Content>(get().value());
+  }
+
+  auto digest_algorithm() const {
+    return to_int(get().digest_algorithm());
+  }
+
+  auto digest() const {
+    return get().digest();
   }
 };

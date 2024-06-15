@@ -4,14 +4,21 @@ use crate::common::FromFFI;
 
 use std::marker::PhantomData;
 
+/// Class that represents the MachO `LC_SOURCE_VERSION`
+/// This command is used to provide the *version* of the sources used to
+/// build the binary.
 pub struct SourceVersion<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_SourceVersion>,
     _owner: PhantomData<&'a ffi::MachO_Binary>
 }
 
 impl SourceVersion<'_> {
-    pub fn version(&self) -> Vec<u64> {
-        Vec::from(self.ptr.version().as_slice())
+    pub fn version(&self) -> (u64, u64, u64, u64, u64) {
+        let vec = Vec::from(self.ptr.version().as_slice());
+        if vec.len() != 5 {
+            return (0, 0, 0, 0, 0);
+        }
+        (vec[0], vec[1], vec[2], vec[3], vec[4])
     }
 }
 

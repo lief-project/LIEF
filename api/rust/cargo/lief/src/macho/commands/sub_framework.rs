@@ -4,6 +4,17 @@ use crate::common::FromFFI;
 
 use std::marker::PhantomData;
 
+/// Class that represents the SubFramework command.
+/// Accodring to the Mach-O ``loader.h`` documentation:
+///
+/// > A dynamically linked shared library may be a subframework of an umbrella
+/// > framework.  If so it will be linked with "-umbrella umbrella_name" where
+/// > Where "umbrella_name" is the name of the umbrella framework. A subframework
+/// > can only be linked against by its umbrella framework or other subframeworks
+/// > that are part of the same umbrella framework.  Otherwise the static link
+/// > editor produces an error and states to link against the umbrella framework.
+/// > The name of the umbrella framework for subframeworks is recorded in the
+/// > following structure.
 pub struct SubFramework<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_SubFramework>,
     _owner: PhantomData<&'a ffi::MachO_Binary>
@@ -11,6 +22,7 @@ pub struct SubFramework<'a> {
 
 
 impl SubFramework<'_> {
+    /// Name of the umbrella framework
     pub fn umbrella(&self) -> String {
         self.ptr.umbrella().to_string()
     }

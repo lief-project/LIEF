@@ -208,7 +208,8 @@ class LIEF_API Binary : public LIEF::Binary {
     return header_;
   }
 
-  //! Return a reference to the OptionalHeader object
+  //! Header that follows the header(). It is named optional from the COFF
+  //! specfication but it is mandatory in a PE file.
   OptionalHeader& optional_header() {
     return optional_header_;
   }
@@ -318,7 +319,7 @@ class LIEF_API Binary : public LIEF::Binary {
   Signature::VERIFICATION_FLAGS verify_signature(
       Signature::VERIFICATION_CHECKS checks = Signature::VERIFICATION_CHECKS::DEFAULT) const;
 
-  //! Verify the binary with the Signature object provided in the first parameter
+  //! Verify the binary with the Signature object provided in the first parameter.
   //! It can be used to verify a detached signature:
   //!
   //! \code{.cpp}

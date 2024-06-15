@@ -39,7 +39,9 @@ class RustStream {
   RustStream(std::unique_ptr<LIEF::VectorStream> stream) :
     stream_(std::move(stream))
   {}
-  LIEF_API static std::unique_ptr<RustStream> from_rust(uint8_t* buffer , size_t size);
+  LIEF_API
+  static std::unique_ptr<RustStream> from_rust(uint8_t* buffer , size_t size);
+
   bool is_elf() const {
     return LIEF::ELF::is_elf(*stream_);
   }
@@ -53,15 +55,15 @@ class RustStream {
   }
 
   auto as_elf() {
-    return details::try_unique<ELF_Binary>(LIEF::ELF::Parser::parse(std::move(stream_)));
+    return details::try_unique<ELF_Binary>(LIEF::ELF::Parser::parse(std::move(stream_))); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto as_macho() {
-    return details::try_unique<MachO_FatBinary>(LIEF::MachO::Parser::parse(std::move(stream_)));
+    return details::try_unique<MachO_FatBinary>(LIEF::MachO::Parser::parse(std::move(stream_))); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto as_pe() {
-    return details::try_unique<PE_Binary>(LIEF::PE::Parser::parse(std::move(stream_)));
+    return details::try_unique<PE_Binary>(LIEF::PE::Parser::parse(std::move(stream_))); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   ~RustStream() = default;

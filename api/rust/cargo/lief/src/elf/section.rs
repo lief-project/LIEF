@@ -8,36 +8,60 @@ use crate::generic;
 use crate::common::FromFFI;
 use crate::declare_iterator;
 
+/// Structure wich represents an ELF Section
 pub struct Section<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_Section>,
     _owner: PhantomData<&'a ()>
 }
 
 impl Section<'_> {
+    /// Type of the section
     pub fn get_type(&self) -> Type {
         Type::from_value(self.ptr.get_type())
     }
+
+    /// Sections flags
     pub fn flags(&self) -> Flags {
         Flags::from_value(self.ptr.flags())
     }
+
+    /// Section alignment
     pub fn alignment(&self) -> u64 {
         self.ptr.alignment()
     }
+
+    /// Section information.
+    /// This meaning of this value depends on the section's type
     pub fn information(&self) -> u64 {
         self.ptr.information()
     }
+
+    /// This function returns the size of an element in the case of a section that contains
+    /// an array.
+    ///
+    /// For instance, the `.dynamic` section contains an array of DynamicEntry. As the
+    /// size of the raw C structure of this entry is 0x10 (`sizeof(Elf64_Dyn)`)
+    /// in a ELF64, the `entry_size` is set to this value.
     pub fn entry_size(&self) -> u64 {
         self.ptr.entry_size()
     }
+
+    /// Index to another section
     pub fn link(&self) -> u64 {
         self.ptr.link()
     }
+
+    /// Offset in the file where the content of this section is located
     pub fn file_offset(&self) -> u64 {
         self.ptr.file_offset()
     }
+
+    /// Original size of the section (regardless modifications)
     pub fn original_size(&self) -> u64 {
         self.ptr.original_size()
     }
+
+    /// Content of the section as a slice of bytes
     pub fn content(&self) -> &[u8] {
         to_slice!(self.ptr.content());
     }
@@ -46,42 +70,77 @@ impl Section<'_> {
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Type {
+    /// No associated section (inactive entry)
     SHT_NULL,
+    /// Program-defined contents.
     PROGBITS,
+    /// Symbol table
     SYMTAB,
+    /// String table
     STRTAB,
+    /// Relocation entries; explicit addends.
     RELA,
+    /// Symbol hash table.
     HASH,
+    /// Information for dynamic linking.
     DYNAMIC,
+    /// Information about the file.
     NOTE,
+    /// Data occupies no space in the file.
     NOBITS,
+    /// Relocation entries; no explicit addends.
     REL,
+    /// Reserved
     SHLIB,
+    /// Symbol table.
     DYNSYM,
+    /// Pointers to initialization functions.
     INIT_ARRAY,
+    /// Pointers to termination functions.
     FINI_ARRAY,
+    /// Pointers to pre-init functions.
     PREINIT_ARRAY,
+    /// Section group.
     GROUP,
+    /// Indices for SHN_XINDEX entries.
     SYMTAB_SHNDX,
+    /// Relocation entries; only offsets.
     RELR,
+    /// Packed relocations (Android specific).
     ANDROID_REL,
+    /// Packed relocations (Android specific).
     ANDROID_RELA,
+    /// This section is used to mark symbols as address-significant.
     LLVM_ADDRSIG,
+    /// New relr relocations (Android specific).
     ANDROID_RELR,
+    /// Object attributes.
     GNU_ATTRIBUTES,
+    /// GNU-style hash table.
     GNU_HASH,
+    /// GNU version definitions.
     GNU_VERDEF,
+    /// GNU version references.
     GNU_VERNEED,
+    /// GNU symbol versions table.
     GNU_VERSYM,
+    /// Exception Index table
     ARM_EXIDX,
+    /// BPABI DLL dynamic linking pre-emption map
     ARM_PREEMPTMAP,
+    /// Object file compatibility attributes
     ARM_ATTRIBUTES,
     ARM_DEBUGOVERLAY,
     ARM_OVERLAYSECTION,
+    /// Link editor is to sort the entries in this section based on their sizes
     HEX_ORDERED,
+    /// Unwind information
     X86_64_UNWIND,
+    /// Register usage information
     MIPS_REGINFO,
+    /// General options
     MIPS_OPTIONS,
+    /// ABI information
     MIPS_ABIFLAGS,
     UNKNOWN(u64),
 }

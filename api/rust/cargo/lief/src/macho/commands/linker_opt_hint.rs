@@ -5,18 +5,24 @@ use lief_ffi as ffi;
 
 use std::marker::PhantomData;
 
+/// Structure which represents the `LC_LINKER_OPTIMIZATION_HINT` command
 pub struct LinkerOptHint<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_LinkerOptHint>,
     _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
 
 impl LinkerOptHint<'_> {
+    /// Offset in the binary where the *hint* starts
     pub fn data_offset(&self) -> u32 {
         self.ptr.data_offset()
     }
+
+    /// Size of the payload
     pub fn data_size(&self) -> u32 {
         self.ptr.data_size()
     }
+
+    /// Payload as a slice of bytes
     pub fn content(&self) -> &[u8] {
         to_slice!(self.ptr.content());
     }

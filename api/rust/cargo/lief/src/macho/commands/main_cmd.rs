@@ -3,15 +3,21 @@ use crate::common::FromFFI;
 use lief_ffi as ffi;
 use std::marker::PhantomData;
 
+/// Structure that represent the `LC_MAIN` command. This kind of command can be used to determine the
+/// entrypoint of an executable.
 pub struct Main<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_Main>,
     _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
 
 impl Main<'_> {
+    /// Offset of the *main* function **relative** to the `__TEXT`
+    /// segment
     pub fn entrypoint(&self) -> u64 {
         self.ptr.entrypoint()
     }
+
+    /// The initial stack size
     pub fn stack_size(&self) -> u64 {
         self.ptr.stack_size()
     }

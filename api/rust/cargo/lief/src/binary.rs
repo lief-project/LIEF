@@ -7,6 +7,7 @@ use crate::common::FromFFI;
 use std::io::{Read, Seek};
 
 #[derive(Debug)]
+/// Enum that wraps all the executable formats supported by LIEF
 pub enum Binary {
     ELF(elf::Binary),
     PE(pe::Binary),
@@ -14,6 +15,13 @@ pub enum Binary {
 }
 
 impl Binary {
+    /// Parse form a file path
+    ///
+    /// ```
+    /// if let Some(Binary::ELF(elf)) = Binary::parse("/bin/ls") {
+    ///     // ...
+    /// }
+    /// ```
     pub fn parse(path: &str) -> Option<Binary> {
         if ffi::ELF_Utils::is_elf(path) {
             return Some(Binary::ELF(elf::Binary::parse(path)));
@@ -26,7 +34,14 @@ impl Binary {
         }
         None
     }
-
+    /// Parse from an input that implements `Read + Seek` traits
+    ///
+    /// ```
+    /// let mut file = std::fs::File::open("C:/test.ext").expect("Can't open the file");
+    /// if let Some(Binary::PE(pe)) = Binary::from(&mut file) {
+    ///     // ...
+    /// }
+    /// ```
     pub fn from<R: Read + Seek>(reader: &mut R) -> Option<Binary> {
         let mut buffer = std::vec::Vec::new();
         if reader.read_to_end(&mut buffer).is_err() {

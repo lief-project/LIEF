@@ -8,6 +8,7 @@ use crate::generic;
 use crate::elf::Section;
 use super::SymbolVersion;
 
+/// Structure which reprents an ELF symbol
 pub struct Symbol<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_Symbol>,
     _owner: PhantomData<&'a ffi::ELF_Binary>
@@ -16,9 +17,13 @@ pub struct Symbol<'a> {
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Binding {
+    /// Local symbol
     LOCAL,
+    /// Global symbol
     GLOBAL,
+    /// Weak symbol
     WEAK,
+    /// Unique symbol
     GNU_UNIQUE,
     UNKNOWN(u32),
 }
@@ -39,14 +44,24 @@ impl Binding {
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+/// Type of the symbol. This enum matches the `STT_xxx` values of the ELF
+/// specs
 pub enum Type {
+    /// Symbol's type is not specified
     NOTYPE,
+    /// Symbol is a data object (variable, array, etc.)
     OBJECT,
+    /// Symbol is executable code (function, etc.)
     FUNC,
+    /// Symbol refers to a section
     SECTION,
+    /// Local, absolute symbol that refers to a file
     FILE,
+    /// An uninitialized common block
     COMMON,
+    /// Thread local data object
     TLS,
+    /// GNU indirect function
     GNU_IFUNC,
     UNKNOWN(u32),
 }
@@ -71,10 +86,16 @@ impl Type {
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+/// Visibility of the symbol. This enum matches the `STV_xxx` values of the
+/// official ELF specs
 pub enum Visibility {
+    /// Visibility is specified by binding type
     DEFAULT,
+    /// Defined by processor supplements
     INTERNAL,
+    /// Not visible to other components
     HIDDEN,
+    /// Visible in other components but not preemptable
     PROTECTED,
     UNKNOWN(u32),
 }
@@ -93,27 +114,42 @@ impl Visibility {
 }
 
 impl Symbol<'_> {
+    /// The symbol's type provides a general classification for the associated entity
     pub fn get_type(&self) -> Type {
         Type::from_value(self.ptr.get_type())
     }
+
+    /// The symbol's binding determines the linkage visibility and behavior
     pub fn binding(&self) -> Binding {
         Binding::from_value(self.ptr.binding())
     }
+
+    /// This member specifies the symbol's type and binding attributes.
     pub fn information(&self) -> u8 {
         self.ptr.information()
     }
+
+    /// Alias for [`Symbol::visibility`]
     pub fn other(&self) -> u8 {
         self.ptr.other()
     }
+
+    /// ELF Section index associated with the symbol
     pub fn section_idx(&self) -> u16 {
         self.ptr.section_idx()
     }
+
+    /// Symbol visibility
     pub fn visibility(&self) -> Visibility {
         Visibility::from_value(self.ptr.visibility())
     }
+
+    /// Section associated with the symbol (if any)
     pub fn section(&self) -> Option<Section> {
         into_optional(self.ptr.section())
     }
+
+    /// Return the SymbolVersion associated with this symbol (if any)
     pub fn symbol_version(&self) -> Option<SymbolVersion> {
         into_optional(self.ptr.symbol_version())
     }

@@ -5,21 +5,32 @@ use crate::to_slice;
 use crate::{common::FromFFI, declare_iterator};
 use std::marker::PhantomData;
 
+/// Structure that represents the `LC_DATA_IN_CODE` command
+///
+/// This command is used to list slices of code sections that contain data. The *slices*
+/// information are stored as an array of [`DataCodeEntry`]
 pub struct DataInCode<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_DataInCode>,
     _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
 
 impl DataInCode<'_> {
+    /// Start of the array of the [`DataCodeEntry`] entries
     pub fn data_offset(&self) -> u32 {
         self.ptr.data_offset()
     }
+
+    /// Size of the (raw) array (`size = sizeof(DataCodeEntry) * nb_elements`)
     pub fn data_size(&self) -> u32 {
         self.ptr.data_size()
     }
+
+    /// Raw content as a slice of bytes
     pub fn content(&self) -> &[u8] {
         to_slice!(self.ptr.content());
     }
+
+    /// Iterator over the [`DataCodeEntry`]
     pub fn entries(&self) -> Entries {
         Entries::new(self.ptr.entries())
     }
@@ -58,7 +69,7 @@ pub struct DataCodeEntry<'a> {
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum ENTRY_TYPE {
+pub enum EntryType {
     DATA,
     JUMP_TABLE_8,
     JUMP_TABLE_16,
@@ -67,28 +78,32 @@ pub enum ENTRY_TYPE {
     UNKNOWN(u32),
 }
 
-impl ENTRY_TYPE {
-    pub fn from_value(value: u32) -> Self {
+impl From<u32> for EntryType {
+    fn from(value: u32) -> Self {
         match value {
-            0x00000001 => ENTRY_TYPE::DATA,
-            0x00000002 => ENTRY_TYPE::JUMP_TABLE_8,
-            0x00000003 => ENTRY_TYPE::JUMP_TABLE_16,
-            0x00000004 => ENTRY_TYPE::JUMP_TABLE_32,
-            0x00000005 => ENTRY_TYPE::ABS_JUMP_TABLE_32,
-            _ => ENTRY_TYPE::UNKNOWN(value),
+            0x00000001 => EntryType::DATA,
+            0x00000002 => EntryType::JUMP_TABLE_8,
+            0x00000003 => EntryType::JUMP_TABLE_16,
+            0x00000004 => EntryType::JUMP_TABLE_32,
+            0x00000005 => EntryType::ABS_JUMP_TABLE_32,
+            _ => EntryType::UNKNOWN(value),
         }
     }
 }
 
 impl DataCodeEntry<'_> {
+    /// Offset of the data
     pub fn offset(&self) -> u32 {
         self.ptr.offset()
     }
+    /// Length of the data
     pub fn length(&self) -> u32 {
         self.ptr.length()
     }
-    pub fn get_type(&self) -> ENTRY_TYPE {
-        ENTRY_TYPE::from_value(self.ptr.get_type())
+
+    /// Type of the data
+    pub fn get_type(&self) -> EntryType {
+        EntryType::from(self.ptr.get_type())
     }
 }
 

@@ -3,6 +3,7 @@ use lief_ffi as ffi;
 
 use crate::common::FromFFI;
 
+/// This structure represents a FAT Mach-O
 pub struct FatBinary {
     pub nb_macho: u32,
     ptr: cxx::UniquePtr<ffi::MachO_FatBinary>,
@@ -25,12 +26,14 @@ impl std::fmt::Debug for FatBinary {
     }
 }
 
+/// Iterator over the different [`crate::macho::Binary`] wrapped by this FAT Mach-O
 pub struct FatBinaryIterator<'a> {
     index: u32,
     fat: &'a FatBinary,
 }
 
 impl FatBinary {
+    /// Create a FatBinary from the given Mach-O path.
     pub fn parse(path: &str) -> FatBinary {
         let bin = ffi::MachO_FatBinary::parse(path);
         FatBinary {
@@ -39,6 +42,7 @@ impl FatBinary {
         }
     }
 
+    /// Iterator over the [`crate::macho::Binary`]
     pub fn iter(&self) -> FatBinaryIterator {
         FatBinaryIterator {
             index: 0,

@@ -14,6 +14,7 @@
  */
 #pragma once
 
+#include "LIEF/rust/logging.hpp"
 #include "LIEF/rust/ELF.hpp"
 #include "LIEF/rust/PE.hpp"
 #include "LIEF/rust/MachO.hpp"

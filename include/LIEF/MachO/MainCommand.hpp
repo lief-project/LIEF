@@ -19,7 +19,6 @@
 
 #include "LIEF/visibility.h"
 
-#include "LIEF/MachO/enums.hpp"
 #include "LIEF/MachO/LoadCommand.hpp"
 
 namespace LIEF {
@@ -52,7 +51,7 @@ class LIEF_API MainCommand : public LoadCommand {
     return entrypoint_;
   }
 
-  //! The initial stack size (if not 0)
+  //! The initial stack size
   uint64_t stack_size() const {
     return stack_size_;
   }

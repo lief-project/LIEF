@@ -19,6 +19,8 @@
 class ELF_DynamicEntryLibrary : public ELF_DynamicEntry {
   public:
   using lief_t = LIEF::ELF::DynamicEntryLibrary;
+  ELF_DynamicEntryLibrary(const lief_t& impl) :
+    ELF_DynamicEntry(static_cast<const LIEF::ELF::DynamicEntry&>(impl)) {}
 
   std::string name() const { return impl().name(); }
 

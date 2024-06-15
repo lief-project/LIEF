@@ -200,7 +200,7 @@ class LIEF_API Header : public Object {
     return section_string_table_idx_;
   }
 
-  /// Return the ELF identity as an ``std::array``
+  /// Return the ELF identity as an `std::array`
   identity_t& identity() {
     return identity_;
   }
@@ -209,7 +209,7 @@ class LIEF_API Header : public Object {
     return identity_;
   }
 
-  /// Return the object's class. ``ELF64`` or ``ELF32``
+  /// Return the object's class. `ELF64` or `ELF32`
   CLASS identity_class() const {
     return CLASS(identity_[EI_CLASS]);
   }

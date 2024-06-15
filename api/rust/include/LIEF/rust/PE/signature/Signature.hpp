@@ -15,6 +15,7 @@
 #pragma once
 #include <cstdint>
 
+#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
 #include "LIEF/PE/signature/SignatureParser.hpp"
 #include "LIEF/rust/PE/signature/ContentInfo.hpp"
@@ -25,6 +26,7 @@
 #include "LIEF/rust/helpers.hpp"
 
 class PE_Signature : private Mirror<LIEF::PE::Signature> {
+  friend class PE_Binary;
   public:
   using lief_t = LIEF::PE::Signature;
   using Mirror::Mirror;
@@ -34,8 +36,9 @@ class PE_Signature : private Mirror<LIEF::PE::Signature> {
   {
     public:
     it_certificates(const PE_Signature::lief_t& src)
-      : Iterator(std::move(src.certificates())) { }
+      : Iterator(std::move(src.certificates())) { } // NOLINT(performance-move-const-arg)
     auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
   };
 
   class it_signers :
@@ -43,11 +46,12 @@ class PE_Signature : private Mirror<LIEF::PE::Signature> {
   {
     public:
     it_signers(const PE_Signature::lief_t& src)
-      : Iterator(std::move(src.signers())) { }
+      : Iterator(std::move(src.signers())) { } // NOLINT(performance-move-const-arg)
     auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
   };
 
-  static auto parse(std::string path) {
+  static auto parse(std::string path) { // NOLINT(performance-unnecessary-value-param)
     auto res = LIEF::PE::SignatureParser::parse(path);
     std::unique_ptr<LIEF::PE::Signature> sig;
     if (res) {
@@ -56,9 +60,19 @@ class PE_Signature : private Mirror<LIEF::PE::Signature> {
     return sig ? std::make_unique<PE_Signature>(std::move(sig)) : nullptr;
   }
 
+  static auto from_raw(uint8_t* buffer, size_t size) {
+    LIEF::SpanStream stream(buffer, size);
+    auto res = LIEF::PE::SignatureParser::parse(stream);
+    std::unique_ptr<LIEF::PE::Signature> sig;
+    if (res) {
+      sig = std::make_unique<LIEF::PE::Signature>(std::move(*res));
+    }
+    return sig ? std::make_unique<PE_Signature>(std::move(sig)) : nullptr;
+  }
 
-  uint32_t version() const { return get().version(); }
-  uint32_t digest_algorithm() const { return to_int(get().digest_algorithm()); }
+
+  auto version() const { return get().version(); }
+  auto digest_algorithm() const { return to_int(get().digest_algorithm()); }
   auto raw_der() const { return make_span(get().raw_der()); }
 
   auto content_info() const {
@@ -72,4 +86,33 @@ class PE_Signature : private Mirror<LIEF::PE::Signature> {
   auto signers() const {
     return std::make_unique<it_signers>(get());
   }
+
+  auto find_crt_by_serial(const uint8_t* serial, size_t size) const {
+    return details::try_unique<PE_x509>(get().find_crt(std::vector<uint8_t>{serial, serial + size})); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+
+  auto find_crt_by_subject(std::string subject) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<PE_x509>(get().find_crt_subject(subject)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+
+  auto find_crt_by_subject_and_serial(std::string subject, // NOLINT(performance-unnecessary-value-param)
+                                      const uint8_t* serial, size_t size) const {
+    std::vector<uint8_t> serial_vec{serial, serial + size};
+    return details::try_unique<PE_x509>(get().find_crt_subject(subject, serial_vec)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+
+  auto find_crt_by_issuer(std::string issuer) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<PE_x509>(get().find_crt_issuer(issuer)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+
+  auto find_crt_by_issuer_and_serial(std::string issuer, // NOLINT(performance-unnecessary-value-param)
+                                     const uint8_t* serial, size_t size) const {
+    std::vector<uint8_t> serial_vec{serial, serial + size};
+    return details::try_unique<PE_x509>(get().find_crt_issuer(issuer, serial_vec)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+
+  auto check(uint32_t flags) const {
+    return to_int(get().check(LIEF::PE::Signature::VERIFICATION_CHECKS(flags)));
+  }
+
 };

@@ -9,11 +9,20 @@ use crate::generic;
 use lief_ffi as ffi;
 
 #[derive(Debug)]
+/// Enum that represents the different to encode/represent a relocation
+/// in a Mach-O file
 pub enum Relocation<'a> {
-    Generic(Generic<'a>),
+    /// Relocation encoded in the rebase bytecode of `LC_DYLD_INFO`
     Dyld(Dyld<'a>),
+
+    /// Relocation encoded in chained fixup `LC_DYLD_CHAINED_FIXUPS`
     Fixup(Fixup<'a>),
+
+    /// Relocation of Mach-O object files (`.o`) wrapped by the sections
     Object(Object<'a>),
+
+    /// Fallback structure
+    Generic(Generic<'a>),
 }
 
 impl<'a> FromFFI<ffi::MachO_Relocation> for Relocation<'a> {
@@ -49,22 +58,32 @@ impl<'a> FromFFI<ffi::MachO_Relocation> for Relocation<'a> {
     }
 }
 
+/// Trait shared by **all** the relocations defined in [`Relocation`]
 pub trait RelocationBase {
     #[doc(hidden)]
     fn get_base(&self) -> &ffi::MachO_Relocation;
 
+
+    /// Indicates whether the item containing the address to be
+    /// relocated is part of a CPU instruction that uses PC-relative addressing.
+    ///
+    /// For addresses contained in PC-relative instructions, the CPU adds the address of
+    /// the instruction to the address contained in the instruction.
     fn is_pc_relative(&self) -> bool {
         self.get_base().is_pc_relative()
     }
 
+    /// Symbol associated with the relocation (if any)
     fn symbol(&self) -> Option<Symbol> {
         into_optional(self.get_base().symbol())
     }
 
+    /// Section associated with the section (if any)
     fn section(&self) -> Option<Section> {
         into_optional(self.get_base().section())
     }
 
+    /// Segment command associated with the relocation (if any)
     fn segment(&self) -> Option<Segment> {
         into_optional(self.get_base().segment())
     }
@@ -114,6 +133,7 @@ impl FromFFI<ffi::MachO_Relocation> for Generic<'_> {
     }
 }
 
+/// Structure that represents a bytecode rebase operation (from `LC_DYLD_INFO`)
 pub struct Dyld<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_RelocationDyld>,
     _owner: PhantomData<&'a ()>,
@@ -141,18 +161,25 @@ impl std::fmt::Debug for Dyld<'_> {
     }
 }
 
+/// Structure that represents a fixup (i.e. relocation) from  the recent from `LC_DYLD_CHAINED_FIXUPS`
+/// command
 pub struct Fixup<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_RelocationFixup>,
     _owner: PhantomData<&'a ()>,
 }
 
 impl Fixup<'_> {
+    /// The value that should be set at the address pointed by [`crate::Relocation::address`]
+    /// if the imagebase chosen by the loader is [`crate::generic::Binary::imagebase`].
+    /// Otherwise: [`Fixup::target`] - [`crate::generic::Binary::imagebase`] + new_imagebase.
     pub fn target(&self) -> u64 {
         self.ptr.target()
     }
     pub fn ptr_format(&self) -> u32 {
         self.ptr.ptr_format()
     }
+
+    /// The address of this relocation is bound to its offset
     pub fn offset(&self) -> u32 {
         self.ptr.offset()
     }
@@ -185,6 +212,7 @@ impl std::fmt::Debug for Fixup<'_> {
     }
 }
 
+/// This structure represents a relocation in a Mach-O object file (`.o`)
 pub struct Object<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_RelocationObject>,
     _owner: PhantomData<&'a ()>,

@@ -188,7 +188,7 @@ class LIEF_API Note : public Object {
     return original_type_;
   }
 
-  //! Return the description associated with the note
+  /// Return the description associated with the note
   span<const uint8_t> description() const {
     return description_;
   }

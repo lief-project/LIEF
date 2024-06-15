@@ -1,3 +1,5 @@
+//! PE export module
+
 use lief_ffi as ffi;
 
 use crate::common::FromFFI;
@@ -12,25 +14,37 @@ pub struct Export<'a> {
 }
 
 impl Export<'_> {
+    /// According to the PE specifications this value is reserved and should be set to 0
     pub fn export_flags(&self) -> u32 {
         self.ptr.export_flags()
     }
+
+    /// The time and date that the export data was created
     pub fn timestamp(&self) -> u32 {
         self.ptr.timestamp()
     }
+
+    /// The major version number (can be user-defined)
     pub fn major_version(&self) -> u32 {
         self.ptr.major_version()
     }
+
+    /// The minor version number (can be user-defined)
     pub fn minor_version(&self) -> u32 {
         self.ptr.minor_version()
     }
+
+    /// The starting number for the exports. Usually this value is set to 1
     pub fn ordinal_base(&self) -> u32 {
         self.ptr.ordinal_base()
     }
+
+    /// The name of the library exported (e.g. `KERNEL32.dll`)
     pub fn name(&self) -> String {
         self.ptr.name().to_string()
     }
 
+    /// Iterator over the different [`Entry`] exported by this table
     pub fn entries(&self) -> ExportEntries {
         ExportEntries::new(self.ptr.entries())
     }
@@ -58,6 +72,10 @@ impl<'a> FromFFI<ffi::PE_Export> for Export<'a> {
     }
 }
 
+/// Structure which represents an entry in the export table.
+///
+/// It implements the [`generic::Symbol`] trait that exposes [`generic::Symbol::name`] and
+/// [`generic::Symbol::value`].
 pub struct Entry<'a> {
     ptr: cxx::UniquePtr<ffi::PE_ExportEntry>,
     _owner: PhantomData<&'a ffi::PE_Export>,

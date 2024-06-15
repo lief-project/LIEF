@@ -15,10 +15,11 @@
  */
 #ifndef LIEF_ERROR_H
 #define LIEF_ERROR_H
+#include <cstdint>
 #include <LIEF/third-party/expected.hpp>
 
 //! LIEF error codes definition
-enum class lief_errors {
+enum class lief_errors : uint32_t {
   read_error = 1,
   not_found,
   not_implemented,
@@ -38,8 +39,8 @@ enum class lief_errors {
   data_too_large,
   /*
    * When adding a new error, do not forget
-   * to update the Python bindings as well (pyErr.cpp)
-   *
+   * to update the Python bindings as well (pyErr.cpp) and Rust bindings:
+   * lief/src/error.rs
    */
 };
 

@@ -36,7 +36,7 @@ struct dyld_chained_ptr_32_rebase;
 class BinaryParser;
 class Builder;
 
-//! Class that represents a rebase relocation found in the LC_DYLD_CHAINED_FIXUPS command.
+//! Class that represents a rebase relocation found in the `LC_DYLD_CHAINED_FIXUPS` command.
 //!
 //! This class extends LIEF::Relocation in which LIEF::Relocation::address is set to
 //! the absolute virtual address where the relocation must take place (e.g. `0x10000d270`).
@@ -82,9 +82,9 @@ class LIEF_API RelocationFixup : public Relocation {
     return ptr_fmt_;
   }
 
-  //! The value that should be set at LIEF::Relocation::address
-  //! if the imagebase is LIEF::Binary::imagebase. Otherwise, it should
-  //! be: target() - LIEF::Binary::imagebase() + new_imagebase
+  //! The value that should be set at the address pointed by LIEF::Relocation::address
+  //! if the imagebase chosen by the loader is LIEF::Binary::imagebase.
+  //! Otherwise: target() - LIEF::Binary::imagebase() + new_imagebase.
   uint64_t target() const;
   void target(uint64_t target);
 

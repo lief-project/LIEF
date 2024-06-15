@@ -5,6 +5,8 @@ use crate::to_slice;
 
 use std::marker::PhantomData;
 
+
+/// Structure that represents the `LC_SYMTAB` command
 pub struct SymbolCommand<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_SymbolCommand>,
     _owner: PhantomData<&'a ffi::MachO_Binary>
@@ -12,27 +14,38 @@ pub struct SymbolCommand<'a> {
 
 
 impl SymbolCommand<'_> {
+    /// Offset from the start of the file to the n_list associated with the command
     pub fn symbol_offset(&self) -> u32 {
         self.ptr.symbol_offset()
     }
+
+    /// Number of symbols registered
     pub fn numberof_symbols(&self) -> u32 {
         self.ptr.numberof_symbols()
     }
+
+    /// Offset from the start of the file to the string table
     pub fn strings_offset(&self) -> u32 {
         self.ptr.strings_offset()
     }
+
+    /// Size of the size string table
     pub fn strings_size(&self) -> u32 {
         self.ptr.strings_size()
     }
+
     pub fn original_str_size(&self) -> u32 {
         self.ptr.original_str_size()
     }
+
     pub fn original_nb_symbols(&self) -> u32 {
         self.ptr.original_nb_symbols()
     }
+
     pub fn symbol_table(&self) -> &[u8] {
         to_slice!(self.ptr.symbol_table());
     }
+
     pub fn string_table(&self) -> &[u8] {
         to_slice!(self.ptr.string_table());
     }

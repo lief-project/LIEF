@@ -50,12 +50,12 @@ class LIEF_API LinkerOptHint : public LoadCommand {
     return std::unique_ptr<LinkerOptHint>(new LinkerOptHint(*this));
   }
 
-  //! Offset in the binary where the signature starts
+  //! Offset in the binary where the *hint* starts
   uint32_t data_offset() const {
     return data_offset_;
   }
 
-  //! Size of the raw signature
+  //! Size of the payload
   uint32_t data_size() const {
     return data_size_;
   }

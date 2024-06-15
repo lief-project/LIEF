@@ -70,7 +70,7 @@ class LIEF_API DyldBindingInfo : public BindingInfo {
     class_ = bind_class;
   }
 
-  //! Type of the binding. Most of the times it's BIND_TYPES::BIND_TYPE_POINTER
+  //! Type of the binding. Most of the times it's TYPE::POINTER
   TYPE binding_type() const {
     return binding_type_;
   }

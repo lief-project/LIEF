@@ -4,6 +4,7 @@ use crate::common::FromFFI;
 
 use std::marker::PhantomData;
 
+/// Structure that represents the `LC_UUID` command
 pub struct UUID<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_UUIDCommand>,
     _owner: PhantomData<&'a ffi::MachO_Binary>
@@ -11,6 +12,7 @@ pub struct UUID<'a> {
 
 
 impl UUID<'_> {
+    /// The UUID as a 16-bytes array
     pub fn uuid(&self) -> Vec<u64> {
         Vec::from(self.ptr.uuid().as_slice())
     }

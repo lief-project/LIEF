@@ -39,7 +39,7 @@ class LIEF_API SymbolVersionAux : public Object {
   SymbolVersionAux& operator=(const SymbolVersionAux&) = default;
   SymbolVersionAux(const SymbolVersionAux&) = default;
 
-  //! Smybol's aux name (e.g. ``GLIBC_2.2.5``)
+  //! Symbol's aux name (e.g. ``GLIBC_2.2.5``)
   const std::string& name() const {
     return name_;
   }

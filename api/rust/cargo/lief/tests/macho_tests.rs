@@ -1,5 +1,6 @@
 mod utils;
-
+use std::env;
+use lief::logging;
 use lief::generic::Binary as GenericBinary;
 use lief::macho::binding_info::{self, AsGeneric};
 use lief::macho::commands::{Command, Commands};
@@ -31,6 +32,7 @@ fn print_binding(binding: &binding_info::BindingInfo) {
 fn explore_macho(_: &str, macho: &lief::macho::Binary) {
     format!("{macho:?}");
     format!("{}", macho.entrypoint());
+    format!("{:?}", macho.header());
     for section in macho.sections() {
         format!("{section:?}");
         format!("{:?}", section.segment());
@@ -253,6 +255,11 @@ fn test_with(bin_name: &str) {
 
 #[test]
 fn test_api() {
+
+    let mut dir = env::temp_dir();
+    dir.push("lief_macho_test.log");
+    logging::set_path(dir.as_path());
+
     test_with("alivcffmpeg_armv7.dylib");
     test_with(
         "9edfb04c55289c6c682a25211a4b30b927a86fe50b014610d04d6055bd4ac23d_crypt_and_hash.macho",

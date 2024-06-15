@@ -6,6 +6,7 @@ pub mod fat_binary;
 pub mod relocation;
 pub mod section;
 pub mod symbol;
+pub mod header;
 
 #[doc(inline)]
 pub use binary::Binary;
@@ -21,3 +22,8 @@ pub use relocation::Relocation;
 pub use section::Section;
 #[doc(inline)]
 pub use symbol::Symbol;
+#[doc(inline)]
+pub use commands::Commands;
+#[doc(inline)]
+pub use header::Header;
+

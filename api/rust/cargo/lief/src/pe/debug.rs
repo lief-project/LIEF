@@ -1,3 +1,5 @@
+//! Module that wraps the different debug information structure we can find in a PE binary.
+
 use std::marker::PhantomData;
 
 use crate::declare_iterator;
@@ -5,12 +7,18 @@ use crate::{common::FromFFI, to_slice};
 use lief_ffi as ffi;
 
 #[derive(Debug)]
+/// This enum exposes the different debug entries that can be
+/// found in the debug DataDirectory.
 pub enum Entries<'a> {
-    Generic(Generic<'a>),
     CodeView(CodeView<'a>),
+    /// Entry associated with the `IMAGE_DEBUG_TYPE_CODEVIEW`
     CodeViewPDB(CodeViewPDB<'a>),
+    /// Entry associated with `IMAGE_DEBUG_TYPE_REPRO`
     Repro(Repro<'a>),
+    /// Entry associated with `IMAGE_DEBUG_TYPE_POGO`
     Pogo(Pogo<'a>),
+    /// Generic entry for all the other ``IMAGE_DEBUG_xxx`
+    Generic(Generic<'a>),
 }
 
 #[allow(non_camel_case_types)]
@@ -36,8 +44,8 @@ pub enum Type {
     UNKNOWN(u32),
 }
 
-impl Type {
-    pub fn from_value(value: u32) -> Self {
+impl From<u32> for Type {
+    fn from(value: u32) -> Self {
         match value {
             0x00000001 => Type::COFF,
             0x00000002 => Type::CODEVIEW,
@@ -65,27 +73,42 @@ pub trait DebugEntry {
     #[doc(hidden)]
     fn get_base(&self) -> &ffi::PE_Debug;
 
+    /// Reserved should be 0
     fn characteristics(&self) -> u32 {
         self.get_base().characteristics()
     }
+
+    /// The time and date when the debug data was created.
     fn timestamp(&self) -> u32 {
         self.get_base().timestamp()
     }
+
+    /// The major version number of the debug data format.
     fn major_version(&self) -> u16 {
         self.get_base().major_version()
     }
+
+    /// The minor version number of the debug data format.
     fn minor_version(&self) -> u16 {
         self.get_base().minor_version()
     }
+
+    /// The format of the debugging information
     fn get_type(&self) -> Type {
-        Type::from_value(self.get_base().get_type())
+        Type::from(self.get_base().get_type())
     }
+
+    /// Size of the debug data
     fn sizeof_data(&self) -> u32 {
         self.get_base().sizeof_data()
     }
+
+    /// Address of the debug data relative to the image base
     fn addressof_rawdata(&self) -> u32 {
         self.get_base().addressof_rawdata()
     }
+
+    /// File offset of the debug data
     fn pointerto_rawdata(&self) -> u32 {
         self.get_base().pointerto_rawdata()
     }
@@ -172,12 +195,16 @@ impl std::fmt::Debug for Generic<'_> {
     }
 }
 
+/// This structure represents a *Profile Guided Optimization* entry from the
+/// debug directory (`IMAGE_DEBUG_TYPE_POGO`).
 pub struct Pogo<'a> {
     ptr: cxx::UniquePtr<ffi::PE_Pogo>,
     _owner: PhantomData<&'a ffi::PE_Binary>,
 }
 
 impl Pogo<'_> {
+
+    /// An iterator over the different POGO elements: [`PogoEntry`]
     pub fn entries(&self) -> PogoEntries {
         PogoEntries::new(self.ptr.entries())
     }
@@ -205,6 +232,7 @@ impl std::fmt::Debug for Pogo<'_> {
     }
 }
 
+/// Structure which reprents an entry in the [`Pogo`] debug structure
 pub struct PogoEntry<'a> {
     ptr: cxx::UniquePtr<ffi::PE_PogoEntry>,
     _owner: PhantomData<&'a ffi::PE_Pogo>,
@@ -241,6 +269,7 @@ impl std::fmt::Debug for PogoEntry<'_> {
     }
 }
 
+/// Structure that represents the (generic) Debug CodeView (`IMAGE_DEBUG_TYPE_CODEVIEW`).
 pub struct CodeView<'a> {
     ptr: cxx::UniquePtr<ffi::PE_CodeView>,
     _owner: PhantomData<&'a ffi::PE_Binary>,
@@ -267,6 +296,7 @@ impl std::fmt::Debug for CodeView<'_> {
     }
 }
 
+/// CodeView PDB specialization
 pub struct CodeViewPDB<'a> {
     ptr: cxx::UniquePtr<ffi::PE_CodeViewPDB>,
     _owner: PhantomData<&'a ffi::PE_Binary>,
@@ -281,13 +311,32 @@ impl<'a> FromFFI<ffi::PE_CodeViewPDB> for CodeViewPDB<'a> {
     }
 }
 
+/// CodeView PDB specialization
 impl CodeViewPDB<'_> {
+    /// Age value to verify. The age does not necessarily correspond to any known
+    /// time value, it is used to determine if a .pdb file is out of sync with a corresponding
+    /// `.exe` file.
     pub fn age(&self) -> u32 {
         self.ptr.age()
     }
+
+    /// The path to the `.pdb` file
     pub fn filename(&self) -> String {
         self.ptr.filename().to_string()
     }
+
+    /// The GUID signature to verify against the .pdb file signature.
+    /// This attribute might be used to lookup remote PDB file on a symbol server.
+    pub fn guid(&self) -> String {
+        self.ptr.guid().to_string()
+    }
+
+    /// The 32-bit signature to verify against the .pdb file signature.
+    pub fn signature(&self) -> [u8; 16] {
+        let vector: Vec<u8> = self.ptr.signature().iter().map(|&e| e as u8).collect();
+        vector.try_into().expect("Wrong size")
+    }
+
 }
 
 impl DebugEntry for CodeViewPDB<'_> {
@@ -307,6 +356,11 @@ impl std::fmt::Debug for CodeViewPDB<'_> {
     }
 }
 
+/// This structure represents a reproducible build entry from the debug directory
+/// (`IMAGE_DEBUG_TYPE_REPRO`)
+///
+/// This entry is usually generated with the undocumented `/Brepro` linker flag.
+/// See: <https://nikhilism.com/post/2020/windows-deterministic-builds/>
 pub struct Repro<'a> {
     ptr: cxx::UniquePtr<ffi::PE_Repro>,
     _owner: PhantomData<&'a ffi::PE_Binary>,
@@ -322,6 +376,7 @@ impl<'a> FromFFI<ffi::PE_Repro> for Repro<'a> {
 }
 
 impl Repro<'_> {
+    /// The hash associated with the reproducible build
     pub fn hash(&self) -> &[u8] {
         to_slice!(self.ptr.hash());
     }

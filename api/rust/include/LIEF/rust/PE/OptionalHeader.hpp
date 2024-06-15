@@ -45,8 +45,8 @@ class PE_OptionalHeader : private Mirror<LIEF::PE::OptionalHeader>  {
   uint32_t sizeof_image() const { return get().sizeof_image(); }
   uint32_t sizeof_headers() const { return get().sizeof_headers(); }
   uint32_t checksum() const { return get().checksum(); }
-  uint32_t subsystem() const { return to_int(get().subsystem()); }
-  uint32_t dll_characteristics() const { return get().dll_characteristics(); }
+  auto subsystem() const { return to_int(get().subsystem()); }
+  auto dll_characteristics() const { return get().dll_characteristics(); }
   uint64_t sizeof_stack_reserve() const { return get().sizeof_stack_reserve(); }
   uint64_t sizeof_stack_commit() const { return get().sizeof_stack_commit(); }
   uint64_t sizeof_heap_reserve() const { return get().sizeof_heap_reserve(); }

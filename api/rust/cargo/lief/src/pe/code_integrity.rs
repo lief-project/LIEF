@@ -20,15 +20,20 @@ impl std::fmt::Debug for CodeIntegrity<'_> {
 }
 
 impl CodeIntegrity<'_> {
+    /// Flags to indicate if CI information is available, etc.
     pub fn flags(&self) -> u16 {
         self.ptr.flags()
     }
+
+    /// 0xFFFF means not available
     pub fn catalog(&self) -> u16 {
         self.ptr.catalog()
     }
     pub fn catalog_offset(&self) -> u32 {
         self.ptr.catalog_offset()
     }
+
+    /// Additional bitmask to be defined later
     pub fn reserved(&self) -> u32 {
         self.ptr.reserved()
     }

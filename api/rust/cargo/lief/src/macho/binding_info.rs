@@ -8,32 +8,45 @@ use std::{fmt, marker::PhantomData};
 use crate::common::{into_optional, FromFFI};
 
 #[derive(Debug)]
+/// This enum exposes all the different types of binding operations that
+/// we can find in a Mach-O binary. [`BindingInfo::Dyld`] exposes the bindings info
+/// wrapped in the `LC_DYLD_INFO` command while [`BindingInfo::Chained`] exposes the new
+/// chained bindings implemented in the `DYLD_CHAINED_FIXUPS` command.
 pub enum BindingInfo<'a> {
-    Generic(Generic<'a>),
+    /// Bindings defined in `LC_DYLD_INFO` command
     Dyld(Dyld<'a>),
+    /// Bindings defined in `DYLD_CHAINED_FIXUPS` command
     Chained(Chained<'a>),
+    /// Fallback item
+    Generic(Generic<'a>),
 }
 
+/// Generic trait shared by all [`BindingInfo`] items
 pub trait AsGeneric {
     #[doc(hidden)]
     fn as_generic(&self) -> &ffi::MachO_BindingInfo;
 
+    /// Library associated with the binding (if any)
     fn library(&self) -> Option<Dylib> {
         into_optional(self.as_generic().library())
     }
 
+    /// Symbol associated with the binding (if any)
     fn symbol(&self) -> Option<Symbol> {
         into_optional(self.as_generic().symbol())
     }
 
+    /// Segment associated with the binding (if any)
     fn segment(&self) -> Option<Segment> {
         into_optional(self.as_generic().segment())
     }
 
+    /// Address of the binding
     fn address(&self) -> u64 {
         self.as_generic().address()
     }
 
+    /// Value added to the segment's virtual address when bound
     fn addend(&self) -> i64 {
         self.as_generic().addend()
     }
@@ -106,6 +119,8 @@ impl AsGeneric for Generic<'_> {
     }
 }
 
+/// This structure represents a binding operation coming from binding bytecode
+/// of `LC_DYLD_INFO`
 pub struct Dyld<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_DyldBindingInfo>,
     _owner: PhantomData<&'a ()>,
@@ -154,10 +169,12 @@ impl BIND_TYPES {
 }
 
 impl Dyld<'_> {
+    /// Class of the binding (weak, lazy, ...)
     pub fn binding_class(&self) -> BINDING_CLASS {
         BINDING_CLASS::from_value(self.ptr.binding_class())
     }
 
+    /// Type of the binding. Most of the times it should be [`BIND_TYPES::POINTER`]
     pub fn binding_type(&self) -> BIND_TYPES {
         BIND_TYPES::from_value(self.ptr.binding_type())
     }
@@ -198,7 +215,8 @@ impl AsGeneric for Dyld<'_> {
         self.ptr.as_ref().unwrap().as_ref()
     }
 }
-
+/// This structure represents a binding operation coming from chained binding command:
+/// `LC_DYLD_CHAINED_FIXUPS`
 pub struct Chained<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_ChainedBindingInfo>,
     _owner: PhantomData<&'a ()>,
@@ -225,14 +243,17 @@ impl CHAINED_FORMAT {
 }
 
 impl Chained<'_> {
+    /// Format of the imports
     pub fn format(&self) -> CHAINED_FORMAT {
         CHAINED_FORMAT::from_value(self.ptr.format())
     }
 
+    /// Format of the pointer
     pub fn ptr_format(&self) -> u32 {
         self.ptr.ptr_format()
     }
 
+    /// Original offset in the chain of this binding
     pub fn offset(&self) -> u32 {
         self.ptr.offset()
     }

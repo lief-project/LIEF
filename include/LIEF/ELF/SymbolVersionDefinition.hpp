@@ -22,8 +22,6 @@
 #include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
 
-#include "LIEF/ELF/enums.hpp"
-
 namespace LIEF {
 namespace ELF {
 
@@ -35,7 +33,7 @@ struct Elf64_Verdef;
 struct Elf32_Verdef;
 }
 
-//! Class which represents an entry defined in ``DT_VERDEF`` or ``.gnu.version_d``
+//! Class which represents an entry defined in `DT_VERDEF` or `.gnu.version_d`
 class LIEF_API SymbolVersionDefinition : public Object {
   friend class Parser;
   public:

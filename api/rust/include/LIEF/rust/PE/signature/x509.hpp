@@ -48,4 +48,16 @@ class PE_x509 : private Mirror<LIEF::PE::x509> {
   auto rsa_info() const {
     return std::make_unique<PE_RsaInfo>(get().rsa_info());
   }
+
+  auto check_signature(const uint8_t* hash, size_t hsize,
+                       const uint8_t* signature, size_t sigsiz,
+                       uint32_t algo) const
+  {
+    return get().check_signature({hash, hash + hsize}, {signature, signature + sigsiz},
+                           LIEF::PE::ALGORITHMS(algo));
+  }
+
+  auto verify(const PE_x509& ca) const {
+    return to_int(get().verify(ca.get()));
+  }
 };

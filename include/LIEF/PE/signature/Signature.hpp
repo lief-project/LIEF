@@ -65,7 +65,7 @@ class LIEF_API Signature : public Object {
   using it_signers_t = ref_iterator<std::vector<SignerInfo>&>;
 
   //! Flags returned by the verification functions
-  enum class VERIFICATION_FLAGS {
+  enum class VERIFICATION_FLAGS : uint32_t {
     OK = 0,
     INVALID_SIGNER                = 1 << 0,
     UNSUPPORTED_ALGORITHM         = 1 << 1,
@@ -88,7 +88,7 @@ class LIEF_API Signature : public Object {
   //! Flags to tweak the verification process of the signature
   //!
   //! See Signature::check and LIEF::PE::Binary::verify_signature
-  enum class VERIFICATION_CHECKS {
+  enum class VERIFICATION_CHECKS : uint32_t {
     DEFAULT          = 1 << 0, /**< Default behavior that tries to follow the Microsoft verification process as close as possible */
     HASH_ONLY        = 1 << 1, /**< Only check that Binary::authentihash matches ContentInfo::digest regardless of the signature's validity */
     LIFETIME_SIGNING = 1 << 2, /**< Same semantic as [WTD_LIFETIME_SIGNING_FLAG](https://docs.microsoft.com/en-us/windows/win32/api/wintrust/ns-wintrust-wintrust_data#WTD_LIFETIME_SIGNING_FLAG) */

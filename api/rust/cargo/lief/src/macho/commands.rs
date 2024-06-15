@@ -28,31 +28,57 @@ pub mod uuid;
 pub mod version_min;
 pub mod unknown;
 
+#[doc(inline)]
 pub use build_version::BuildVersion;
+#[doc(inline)]
 pub use code_signature::CodeSignature;
+#[doc(inline)]
 pub use code_signature_dir::CodeSignatureDir;
+#[doc(inline)]
 pub use data_in_code::DataInCode;
+#[doc(inline)]
 pub use dyld_chained_fixups::DyldChainedFixups;
+#[doc(inline)]
 pub use dyld_environment::DyldEnvironment;
+#[doc(inline)]
 pub use dyld_export_trie::DyldExportsTrie;
+#[doc(inline)]
 pub use dyldinfo::DyldInfo;
+#[doc(inline)]
 pub use dylib::{Dylib, Libraries};
+#[doc(inline)]
 pub use dylinker::Dylinker;
+#[doc(inline)]
 pub use dynamic_symbol_command::DynamicSymbolCommand;
+#[doc(inline)]
 pub use encryption_info::EncryptionInfo;
+#[doc(inline)]
 pub use functionstarts::FunctionStarts;
+#[doc(inline)]
 pub use linker_opt_hint::LinkerOptHint;
+#[doc(inline)]
 pub use main_cmd::Main;
+#[doc(inline)]
 pub use rpath::RPath;
+#[doc(inline)]
 pub use segment::Segment;
+#[doc(inline)]
 pub use segment_split_info::SegmentSplitInfo;
+#[doc(inline)]
 pub use source_version::SourceVersion;
+#[doc(inline)]
 pub use sub_framework::SubFramework;
+#[doc(inline)]
 pub use symbol_command::SymbolCommand;
+#[doc(inline)]
 pub use thread_command::ThreadCommand;
+#[doc(inline)]
 pub use two_level_hints::TwoLevelHints;
+#[doc(inline)]
 pub use uuid::UUID;
+#[doc(inline)]
 pub use version_min::VersionMin;
+#[doc(inline)]
 pub use unknown::Unknown;
 
 use crate::common::FromFFI;
@@ -241,6 +267,8 @@ impl LoadCommandTypes {
 }
 
 #[derive(Debug)]
+/// Enum that wraps all the different Mach-O load commands (`LC_xxx`).
+/// Note that all these commands implements the trait: [`Command`]
 pub enum Commands<'a> {
     Generic(Generic<'a>),
     BuildVersion(BuildVersion<'a>),
@@ -485,22 +513,27 @@ impl FromFFI<ffi::MachO_Command> for Generic<'_> {
     }
 }
 
+/// Trait shared by **all** the load command: [`Commands`]
 pub trait Command {
     #[doc(hidden)]
     fn get_base(&self) -> &ffi::MachO_Command;
 
+    /// Size of the command (should be greather than ``sizeof(load_command)``)
     fn size(&self) -> u32 {
         self.get_base().size()
     }
 
+    /// Offset of the command within the *Load Command Table*
     fn offset(&self) -> u64 {
         self.get_base().command_offset()
     }
 
+    /// The command's type
     fn command_type(&self) -> LoadCommandTypes {
         LoadCommandTypes::from_value(self.get_base().cmd_type())
     }
 
+    /// The raw command as a slice of bytes
     fn data(&self) -> &[u8] {
         to_slice!(self.get_base().data());
     }

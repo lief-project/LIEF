@@ -35,7 +35,7 @@ struct Elf64_Verneed;
 struct Elf32_Verneed;
 }
 
-//! Class which represents an entry in the ``DT_VERNEED`` or ``.gnu.version_r`` table
+//! Class which represents an entry in the `DT_VERNEED` or `.gnu.version_r` table
 class LIEF_API SymbolVersionRequirement : public Object {
   friend class Parser;
 

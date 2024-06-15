@@ -5,18 +5,25 @@ use crate::common::FromFFI;
 use crate::to_slice;
 use std::marker::PhantomData;
 
+
+/// Structure that represents the `LC_CODE_SIGNATURE` command
 pub struct CodeSignature<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_CodeSignature>,
     _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
 
 impl CodeSignature<'_> {
+    /// Offset in the binary where the signature starts
     pub fn data_offset(&self) -> u32 {
         self.ptr.data_offset()
     }
+
+    /// Size of the raw signature
     pub fn data_size(&self) -> u32 {
         self.ptr.data_size()
     }
+
+    /// Content of the signature as a slice of bytes
     pub fn content(&self) -> &[u8] {
         to_slice!(self.ptr.content());
     }

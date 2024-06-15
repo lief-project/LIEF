@@ -3,13 +3,17 @@ use lief_ffi as ffi;
 use crate::common::FromFFI;
 use std::marker::PhantomData;
 
+/// Structure that represents the `LC_RPATH` command.
+///
+/// This command is used to add path for searching libraries
+/// associated with the `@rpath` prefix.
 pub struct RPath<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_RPathCommand>,
     _owner: PhantomData<&'a ffi::MachO_Binary>
 }
 
-
 impl RPath<'_> {
+    /// The rpath value as a string
     pub fn path(&self) -> String {
         self.ptr.path().to_string()
     }

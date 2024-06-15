@@ -24,11 +24,11 @@ class MachO_Header : private Mirror<LIEF::MachO::Header> {
   using Mirror::Mirror;
 
   auto magic() const { return to_int(get().magic()); }
-  auto cpu_type() const { return to_int(get().cpu_type()); }
-  uint32_t cpu_subtype() const { return get().cpu_subtype(); }
+  int32_t cpu_type() const { return to_int(get().cpu_type()); }
+  auto cpu_subtype() const { return get().cpu_subtype(); }
   auto file_type() const { return to_int(get().file_type()); }
-  uint32_t nb_cmds() const { return get().nb_cmds(); }
-  uint32_t sizeof_cmds() const { return get().sizeof_cmds(); }
-  uint32_t flags() const { return get().flags(); }
-  uint32_t reserved() const { return get().reserved(); }
+  auto nb_cmds() const { return get().nb_cmds(); }
+  auto sizeof_cmds() const { return get().sizeof_cmds(); }
+  auto flags() const { return get().flags(); }
+  auto reserved() const { return get().reserved(); }
 };

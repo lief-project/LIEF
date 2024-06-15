@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
 #include <algorithm>
 #include "LIEF/Visitor.hpp"
 
@@ -25,15 +24,6 @@
 
 namespace LIEF {
 namespace PE {
-
-TLS::~TLS() = default;
-TLS::TLS() = default;
-
-TLS::TLS(const TLS& copy) = default;
-TLS& TLS::operator=(const TLS& copy) = default;
-TLS::TLS(TLS&& other) = default;
-TLS& TLS::operator=(TLS&& other) = default;;
-
 
 TLS::TLS(const details::pe32_tls& header) :
   va_rawdata_{header.RawDataStartVA, header.RawDataEndVA},

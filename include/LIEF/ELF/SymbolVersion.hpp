@@ -27,7 +27,7 @@ class Parser;
 class SymbolVersionAux;
 class SymbolVersionAuxRequirement;
 
-//! Class which represents an entry defined in the ``DT_VERSYM``
+//! Class which represents an entry defined in the `DT_VERSYM`
 //! dynamic entry
 class LIEF_API SymbolVersion : public Object {
   friend class Parser;

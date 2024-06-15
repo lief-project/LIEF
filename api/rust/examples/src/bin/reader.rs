@@ -1,14 +1,12 @@
 use lief::Binary;
+use lief::generic;
 
 use lief::elf;
 use lief::pe;
-//use lief::macho::FatBinary;
-//use lief::macho::commands::Commands;
-use lief::generic::Relocation;
-use lief::pe::DosHeader;
-// use lief::elf::dynamic::DynamicEntry;
 
 fn explore_elf(elf: &elf::Binary) {
+    let foo = elf as &dyn generic::Binary;
+    println!("{}", foo.entrypoint());
     for section in elf.sections() {
         println!("{:?}", section);
     }

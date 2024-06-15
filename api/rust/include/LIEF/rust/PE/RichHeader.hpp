@@ -31,6 +31,7 @@ class PE_RichHeader : Mirror<LIEF::PE::RichHeader> {
     it_entries(const PE_RichHeader::lief_t& src)
       : Iterator(std::move(src.entries())) { }
     auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
   };
 
   uint32_t key() const { return get().key(); }

@@ -48,7 +48,7 @@ class LIEF_API Header : public Object {
 
   ~Header() override = default;
 
-  enum class FILE_TYPE {
+  enum class FILE_TYPE : uint32_t {
     UNKNOWN     = 0,
     OBJECT      = 0x1u,
     EXECUTE     = 0x2u,
@@ -94,7 +94,7 @@ class LIEF_API Header : public Object {
 
   static constexpr int ABI64 = 0x01000000;
 
-  enum class CPU_TYPE: int {
+  enum class CPU_TYPE: int32_t {
     ANY       = -1,
     X86       = 7,
     X86_64    = 7 | ABI64,

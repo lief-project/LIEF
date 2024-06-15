@@ -17,8 +17,8 @@
 #define LIEF_ABSTRACT_RELOCATION_H
 
 #include <ostream>
+#include <cstdint>
 
-#include "LIEF/types.hpp"
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
