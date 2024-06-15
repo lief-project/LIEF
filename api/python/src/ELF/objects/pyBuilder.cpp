@@ -53,7 +53,8 @@ void create<Builder>(nb::module_& m) {
     .def_rw("sym_verdef",      &Builder::config_t::sym_verdef, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.VERDEF`"_doc)
     .def_rw("sym_verneed",     &Builder::config_t::sym_verneed, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.VERNEED`"_doc)
     .def_rw("sym_versym",      &Builder::config_t::sym_versym, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.VERSYM`"_doc)
-    .def_rw("symtab",          &Builder::config_t::symtab, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.SYMTAB`"_doc);
+    .def_rw("symtab",          &Builder::config_t::symtab, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.SYMTAB`"_doc)
+    .def_rw("coredump_notes",  &Builder::config_t::coredump_notes, "Rebuild the Coredump notes"_doc);
 
   builder
     .def(nb::init<Binary&>(),

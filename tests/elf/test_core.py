@@ -326,11 +326,8 @@ def test_core_write(tmp_path: Path):
 
     output = tmp_path / "elf.core"
 
-    config = lief.ELF.Builder.config_t()
-    config.notes = True
-
     #  Cannot re-open a file on Windows, so handle it by hand
-    core.write(output.as_posix(), config)
+    core.write(output.as_posix())
     core_new = lief.ELF.parse(output.as_posix())
     assert core_new is not None
 

@@ -124,7 +124,7 @@ ok_error_t Builder::build_exe_lib() {
     }
   }
 
-  if (binary_->has(Segment::TYPE::NOTE) && config_.notes) {
+  if (binary_->has(Segment::TYPE::NOTE) && should_build_notes()) {
     const size_t notes_size = layout->note_size<ELF_T>();
     std::vector<Segment*> note_segments;
     for (std::unique_ptr<Segment>& seg : binary_->segments_) {
@@ -409,7 +409,7 @@ ok_error_t Builder::build_exe_lib() {
     build_interpreter<ELF_T>();
   }
 
-  if (config_.notes && binary_->has(Segment::TYPE::NOTE)) {
+  if (should_build_notes() && binary_->has(Segment::TYPE::NOTE)) {
     build_notes<ELF_T>();
   }
 
@@ -1814,7 +1814,7 @@ ok_error_t Builder::build_interpreter() {
 
 template<typename ELF_T>
 ok_error_t Builder::build_notes() {
-  if (!config_.notes) {
+  if (!should_build_notes()) {
     return ok();
   }
 
@@ -1888,6 +1888,14 @@ ok_error_t Builder::build_overlay() {
     ios_.write(overlay);
   }
   return ok();
+}
+
+
+bool Builder::should_build_notes() const {
+  if (binary_->header().file_type() == Header::FILE_TYPE::CORE) {
+    return config_.coredump_notes;
+  }
+  return config_.notes;
 }
 
 } // namespace ELF

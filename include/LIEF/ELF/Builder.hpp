@@ -17,18 +17,15 @@
 #ifndef LIEF_ELF_BUIDLER_H
 #define LIEF_ELF_BUIDLER_H
 
-#include <functional>
 #include <memory>
 #include <set>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 #include "LIEF/errors.hpp"
 
 #include "LIEF/visibility.h"
 #include "LIEF/iostream.hpp"
-#include "LIEF/ELF/enums.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -74,7 +71,7 @@ class LIEF_API Builder {
     bool sym_verneed     = true;  /// Rebuild DT_VERNEED
     bool sym_versym      = true;  /// Rebuild DT_VERSYM
     bool symtab          = true;  /// Rebuild DT_SYMTAB
-
+    bool coredump_notes  = true;  /// Rebuild the Coredump notes
     bool force_relocate  = false; /// Force to relocating all the ELF structures that are supported by LIEF (mostly for testing)
   };
 
@@ -88,7 +85,7 @@ class LIEF_API Builder {
 
   //! Tweak the ELF builder with the provided config parameter
   Builder& set_config(config_t conf) {
-    config_ = std::move(conf);
+    config_ = conf;
     return *this;
   }
 
@@ -189,11 +186,12 @@ class LIEF_API Builder {
   template<class ELF_T>
   ok_error_t process_object_relocations();
 
+  bool should_build_notes() const;
+
   config_t config_;
   mutable vector_iostream ios_;
   Binary* binary_{nullptr};
   std::unique_ptr<Layout> layout_;
-
 };
 
 } // namespace ELF

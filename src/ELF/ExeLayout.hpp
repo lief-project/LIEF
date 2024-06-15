@@ -972,8 +972,8 @@ class LIEF_LOCAL ExeLayout : public Layout {
       relocations_addresses_[reloc->address()] = reloc.get();
     }
 
-    uint64_t va_r_base  = new_rsegment  != nullptr ? new_rsegment->virtual_address() : 0;
-    uint64_t va_rw_base = new_rwsegment != nullptr ? new_rwsegment->virtual_address() : 0;
+    [[maybe_unused]] uint64_t va_r_base  = new_rsegment  != nullptr ? new_rsegment->virtual_address() : 0;
+    [[maybe_unused]] uint64_t va_rw_base = new_rwsegment != nullptr ? new_rwsegment->virtual_address() : 0;
 
     if (interp_size_ > 0) {
       Segment* pt_interp = binary_->get(Segment::TYPE::INTERP);
@@ -1625,15 +1625,15 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
     // Process note sections
     if (const Segment* segment_note = binary_->get(Segment::TYPE::NOTE)) {
-      //using value_t = typename note_to_section_map_t::value_type;
-      //const note_to_section_map_t& note_to_section_map = get_note_to_section();
       for (const Note& note : binary_->notes()) {
         auto section_res = Note::note_to_section(note);
         const auto& it_offset = notes_off_map_.find(&note);
 
         if (!section_res) {
-          LIEF_ERR("Note type: {} ('{}') is not supported",
-                   to_string(note.type()), note.name());
+          if (binary_->header().file_type() != Header::FILE_TYPE::CORE) {
+            LIEF_ERR("Note type: {} ('{}') is not supported",
+                     to_string(note.type()), note.name());
+          }
           continue;
         }
 

@@ -556,6 +556,7 @@ class Binary(lief.Binary):
 class Builder:
     class config_t:
         android_rela: bool
+        coredump_notes: bool
         dt_hash: bool
         dyn_str: bool
         dynamic_section: bool

@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-#include <iomanip>
-#include <sstream>
-
 #include "logging.hpp"
 #include "frozen.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
@@ -249,7 +246,7 @@ std::vector<uint64_t> CorePrStatus::register_values() const {
         values.reserve(count);
         for (size_t i = 0; i < count; ++i) {
           if (auto val = get(Reg(i))) {
-            values.push_back(std::move(*val));
+            values.push_back(*val);
           } else {
             return {};
           }
@@ -263,7 +260,7 @@ std::vector<uint64_t> CorePrStatus::register_values() const {
         values.reserve(count);
         for (size_t i = 0; i < count; ++i) {
           if (auto val = get(Reg(i))) {
-            values.push_back(std::move(*val));
+            values.push_back(*val);
           } else {
             return {};
           }
@@ -277,7 +274,7 @@ std::vector<uint64_t> CorePrStatus::register_values() const {
         values.reserve(count);
         for (size_t i = 0; i < count; ++i) {
           if (auto val = get(Reg(i))) {
-            values.push_back(std::move(*val));
+            values.push_back(*val);
           } else {
             return {};
           }
@@ -291,7 +288,7 @@ std::vector<uint64_t> CorePrStatus::register_values() const {
         values.reserve(count);
         for (size_t i = 0; i < count; ++i) {
           if (auto val = get(Reg(i))) {
-            values.push_back(std::move(*val));
+            values.push_back(*val);
           } else {
             return {};
           }
