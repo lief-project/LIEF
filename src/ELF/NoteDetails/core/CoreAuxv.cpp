@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-#include <iomanip>
-#include <sstream>
 
 #include "LIEF/ELF/hash.hpp"
-#include "LIEF/ELF/EnumToString.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreAuxv.hpp"
 #include "LIEF/Visitor.hpp"
 #include "LIEF/iostream.hpp"
@@ -82,7 +79,7 @@ get_values_impl(const Note::description_t& desc) {
 
 template<class ELF_T>
 inline bool write_impl(Note::description_t& description,
-                       std::map<CoreAuxv::TYPE, uint64_t> values)
+                       const std::map<CoreAuxv::TYPE, uint64_t>& values)
 {
   using Elf_Auxv  = typename ELF_T::Elf_Auxv;
   using ptr_t     = typename ELF_T::uint;
@@ -124,7 +121,7 @@ bool CoreAuxv::set(TYPE type, uint64_t value) {
   return set(vals);
 }
 
-bool CoreAuxv::set(std::map<TYPE, uint64_t> values) {
+bool CoreAuxv::set(const std::map<TYPE, uint64_t>& values) {
   return class_ == Header::CLASS::ELF32 ?
                    write_impl<details::ELF32>(description_, values) :
                    write_impl<details::ELF64>(description_, values);

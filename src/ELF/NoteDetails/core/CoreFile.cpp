@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-#include <iomanip>
-#include <sstream>
-
 #include "logging.hpp"
 #include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"

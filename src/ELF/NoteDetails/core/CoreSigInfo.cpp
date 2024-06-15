@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-#include <iomanip>
-#include <sstream>
-
-#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreSigInfo.hpp"
 #include "ELF/Structures.hpp"

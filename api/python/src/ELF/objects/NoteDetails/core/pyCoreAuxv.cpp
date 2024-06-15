@@ -95,13 +95,13 @@ void create<CoreAuxv>(nb::module_& m) {
          R"doc(
          Change the value for the given type.
          )doc")
-    .def("set", nb::overload_cast<std::map<CoreAuxv::TYPE, uint64_t>>(&CoreAuxv::set),
+    .def("set", nb::overload_cast<const std::map<CoreAuxv::TYPE, uint64_t>&>(&CoreAuxv::set),
          R"doc(
          Replace **all** the values by the given dictionary.
          )doc")
 
     .def("__setitem__", nb::overload_cast<CoreAuxv::TYPE, uint64_t>(&CoreAuxv::set))
-    .def("__setitem__", nb::overload_cast<std::map<CoreAuxv::TYPE, uint64_t>>(&CoreAuxv::set))
+    .def("__setitem__", nb::overload_cast<const std::map<CoreAuxv::TYPE, uint64_t>&>(&CoreAuxv::set))
 
     LIEF_DEFAULT_STR(CoreAuxv);
 }

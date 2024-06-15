@@ -1109,7 +1109,7 @@ ok_error_t Builder::build_symbol_hash() {
       Convert::swap_endian(&new_hash_table_ptr[i]);
     }
   }
-  binary_->patch_address(dt_hash->value(), std::move(new_hash_table));
+  binary_->patch_address(dt_hash->value(), new_hash_table);
   return ok();
 }
 

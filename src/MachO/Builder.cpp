@@ -20,7 +20,6 @@
 
 #include "logging.hpp"
 
-
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 
 #include "LIEF/MachO/Builder.hpp"

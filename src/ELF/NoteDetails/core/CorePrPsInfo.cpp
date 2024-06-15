@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-#include <iomanip>
-#include <sstream>
-
 #include "LIEF/ELF/hash.hpp"
 #include "ELF/Structures.hpp"
 

@@ -13,17 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-#include <sstream>
-
 #include "frozen.hpp"
 #include "internal_utils.hpp"
 
 #include "LIEF/ELF/hash.hpp"
 
-#include "LIEF/ELF/EnumToString.hpp"
-#include "LIEF/BinaryStream/SpanStream.hpp"
-#include "LIEF/iostream.hpp"
 #include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
 
 #include "spdlog/fmt/fmt.h"

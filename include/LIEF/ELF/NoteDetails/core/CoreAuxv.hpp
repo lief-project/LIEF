@@ -90,7 +90,7 @@ class LIEF_API CoreAuxv : public Note {
   }
 
   bool set(TYPE type, uint64_t value);
-  bool set(std::map<TYPE, uint64_t> values);
+  bool set(const std::map<TYPE, uint64_t>& values);
 
   void dump(std::ostream& os) const override;
 

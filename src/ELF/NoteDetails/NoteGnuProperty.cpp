@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-#include <sstream>
 #include <algorithm>
 
 #include "spdlog/fmt/fmt.h"
@@ -33,9 +31,7 @@
 #include "LIEF/ELF/NoteDetails/properties/X86ISA.hpp"
 #include "LIEF/ELF/NoteDetails/properties/NoteNoCopyOnProtected.hpp"
 
-#include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
-#include "LIEF/iostream.hpp"
 
 namespace LIEF {
 namespace ELF {

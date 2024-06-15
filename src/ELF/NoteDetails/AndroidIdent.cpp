@@ -13,15 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-#include <sstream>
-#include <algorithm>
-#include "logging.hpp"
-
-#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/ELF/NoteDetails/AndroidIdent.hpp"
 #include "LIEF/ELF/hash.hpp"
-#include "LIEF/iostream.hpp"
+
+#include <spdlog/fmt/fmt.h>
 
 namespace LIEF {
 namespace ELF {

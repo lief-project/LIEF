@@ -17,7 +17,6 @@
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 
 #include "frozen.hpp"
-#include "logging.hpp"
 #include "fmt_formatter.hpp"
 
 #include "ELF/NoteDetails/properties/common.hpp"
