@@ -2,3 +2,4 @@ requests==2.32.0
 sphinx==7.2.6
 Pygments==2.17.2
 breathe==4.35.0
+sphinx-tabs==3.4.5

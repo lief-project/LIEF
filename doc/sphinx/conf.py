@@ -37,6 +37,7 @@ DOXYGEN_XML_PATH = pathlib.Path(DOXYGEN_XML_PATH).resolve().absolute()
 extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.autodoc',
+    'sphinx_tabs.tabs',
     'sphinx.ext.inheritance_diagram',
     'breathe', 'sphinx_lief'
 ]
