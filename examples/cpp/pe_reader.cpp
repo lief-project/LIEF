@@ -26,10 +26,10 @@ int main(int argc, char **argv) {
   std::cout << "PE Reader" << '\n';
   if (argc != 2) {
     std::cerr << "Usage: " << argv[0] << " <PE binary>" << '\n';
-    return -1;
+    return EXIT_FAILURE;
   }
 
-  std::unique_ptr<const Binary> binary{Parser::parse(argv[1])};
+  std::unique_ptr<const Binary> binary = Parser::parse(argv[1]);
 
   std::cout << "== Dos Header ==" << '\n';
   std::cout << binary->dos_header() << '\n';
@@ -40,9 +40,9 @@ int main(int argc, char **argv) {
   std::cout << "== Optional Header ==" << '\n';
   std::cout << binary->optional_header() << '\n';
 
-  if (binary->has_rich_header()) {
+  if (const LIEF::PE::RichHeader* rich_header = binary->rich_header()) {
     std::cout << "== Rich Header ==" << '\n';
-    std::cout << binary->rich_header() << '\n';
+    std::cout << *rich_header << '\n';
   }
 
   std::cout << "== Data Directories ==" << '\n';
@@ -69,14 +69,14 @@ int main(int argc, char **argv) {
     }
   }
 
-  if (binary->has_tls()) {
+  if (const LIEF::PE::TLS* tls = binary->tls()) {
     std::cout << "== TLS ==" << '\n';
-    std::cout << binary->tls() << '\n';
+    std::cout << *tls << '\n';
   }
 
-  if (binary->has_exports()) {
+  if (const LIEF::PE::Export* exp = binary->get_export()) {
     std::cout << "== Exports ==" << '\n';
-    std::cout << binary->get_export() << '\n';
+    std::cout << *exp << '\n';
   }
 
   if (!binary->symbols().empty()) {
@@ -86,14 +86,12 @@ int main(int argc, char **argv) {
     }
   }
 
-
   if (binary->has_debug()) {
     std::cout << "== Debug ==" << '\n';
     for (const Debug& debug : binary->debug()) {
       std::cout << debug << '\n';
     }
   }
-
 
   if (auto manager = binary->resources_manager()) {
     std::cout << "== Resources ==" << '\n';

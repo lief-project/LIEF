@@ -16,10 +16,6 @@
 #include <iostream>
 #include <memory>
 #include <iostream>
-#include <fstream>
-#include <algorithm>
-#include <iterator>
-
 #include <LIEF/ELF.hpp>
 
 //

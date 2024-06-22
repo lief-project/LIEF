@@ -15,10 +15,6 @@
  */
 #include <iostream>
 #include <memory>
-#include <fstream>
-#include <algorithm>
-#include <iterator>
-
 #include <LIEF/ELF.hpp>
 
 int main(int argc, char **argv) {

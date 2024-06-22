@@ -17,7 +17,6 @@
 #include <LIEF/logging.hpp>
 
 #include <iostream>
-#include <iomanip>
 
 using namespace LIEF::MachO;
 

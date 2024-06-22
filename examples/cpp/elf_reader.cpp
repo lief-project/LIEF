@@ -115,26 +115,6 @@ int main(int argc, char **argv) {
     }
   }
 
-
-
-  //std::cout << "== Symbol Version ==" << '\n';
-  //std::vector<SymbolVersion>* symbolsVersion = binary->get_symbol_version();
-  //for (const auto &symVersion : *symbolsVersion) {
-  //  std::cout << symVersion << '\n';
-  //}
-
-
-  //std::cout << "== Symbols Version Requirement ==" << '\n';
-  //std::vector<SymbolVersionRequirement> *symR = binary->get_symbol_version_requirement();
-  //for (SymbolVersionRequirement &symbolR : *symR) {
-  //  std::cout << symbolR << '\n' << '\n';
-  //  auto symAux = symbolR.get_auxiliary_symbols();
-  //  for (auto &symbolAux : symAux) {
-  //    std::cout << *symbolAux << '\n';
-  //  }
-  //  std::cout << '\n';
-  //}
-
   return 0;
 
 }

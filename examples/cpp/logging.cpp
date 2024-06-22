@@ -31,6 +31,9 @@ int main(int argc, char **argv) {
   LIEF::logging::set_level(LIEF::logging::LOGGING_LEVEL::LOG_DEBUG);
   std::unique_ptr<const LIEF::Binary> binary_global = LIEF::Parser::parse(argv[1]);
 
+  // Log a message with LIEF's logger
+  LIEF::logging::log(LIEF::logging::LOGGING_LEVEL::LOG_DEBUG, "Hi!");
+
   // Disable logger
   LIEF::logging::disable();
   std::unique_ptr<const LIEF::Binary> binary_debug = LIEF::Parser::parse(argv[1]);

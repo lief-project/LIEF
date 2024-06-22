@@ -13,19 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-//
-// Description
-// ===========
-// The tool is used to test the rebuilding of a binary.
-// It take a binary as first argument, decompose it, rebuild the binary and then
-// save it (second argument)
-//
-
 #include <iostream>
 #include <memory>
-#include <fstream>
-#include <algorithm>
-#include <iterator>
 
 #include <LIEF/MachO.hpp>
 
