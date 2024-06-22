@@ -66,9 +66,6 @@ void Relocation::accept(Visitor& visitor) const {
 }
 
 std::ostream& Relocation::print(std::ostream& os) const {
-  //os << std::hex;
-  //os << std::left;
-
   std::string symbol_name;
   if (const Symbol* sym = symbol()) {
     symbol_name = sym->name();

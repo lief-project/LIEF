@@ -74,8 +74,8 @@ class LIEF_API RelocationFixup : public Relocation {
 
   //! Origin of the relocation. For this concrete object, it
   //! should be Relocation::ORIGIN::CHAINED_FIXUPS
-  Relocation::ORIGIN origin() const override {
-    return Relocation::ORIGIN::CHAINED_FIXUPS;
+  ORIGIN origin() const override {
+    return ORIGIN::CHAINED_FIXUPS;
   }
 
   DYLD_CHAINED_PTR_FORMAT ptr_format() const {

@@ -60,8 +60,8 @@ class LIEF_API RelocationDyld : public Relocation {
 
   //! Origin of the relocation. For this concrete object, it
   //! should be Relocation::ORIGIN::DYLDINFO
-  Relocation::ORIGIN origin() const override {
-    return Relocation::ORIGIN::DYLDINFO;
+  ORIGIN origin() const override {
+    return ORIGIN::DYLDINFO;
   }
 
   void pc_relative(bool val) override;

@@ -84,8 +84,8 @@ class LIEF_API RelocationObject : public Relocation {
   int32_t value() const;
 
   //! Origin of the relocation. For this object it should be Relocation::ORIGIN::RELOC_TABLE)
-  Relocation::ORIGIN origin() const override {
-    return Relocation::ORIGIN::RELOC_TABLE;
+  ORIGIN origin() const override {
+    return ORIGIN::RELOC_TABLE;
   }
 
   void pc_relative(bool val) override {
