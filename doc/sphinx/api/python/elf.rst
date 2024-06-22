@@ -264,6 +264,17 @@ Android Ident
 
 ----------
 
+QNX Stack
+*********
+
+.. lief-inheritance:: lief._lief.ELF.QNXStack
+  :top-classes: lief._lief.ELF.Note
+  :parts: 2
+
+.. autoclass:: lief.ELF.QNXStack
+
+----------
+
 Note ABI
 ********
 

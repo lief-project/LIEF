@@ -526,6 +526,14 @@ void JsonVisitor::visit(const AndroidIdent& ident) {
 }
 
 
+void JsonVisitor::visit(const QNXStack& note) {
+  visit(static_cast<const Note&>(note));
+  node_["stack_size"] = note.stack_size();
+  node_["sdk_verison"] = note.stack_allocated();
+  node_["is_executable"] = note.is_executable();
+}
+
+
 void JsonVisitor::visit(const GnuHash& gnuhash) {
   node_["nb_buckets"]    = gnuhash.nb_buckets();
   node_["symbol_index"]  = gnuhash.symbol_index();

@@ -82,8 +82,9 @@ void create<Note>(nb::module_& m) {
     ENTRY(ANDROID_MEMTAG)
     ENTRY(ANDROID_KUSER)
     ENTRY(ANDROID_IDENT)
-    ENTRY(STAPSDT)
     ENTRY(GO_BUILDID)
+    ENTRY(STAPSDT)
+    ENTRY(QNX_STACK)
   ;
   #undef ENTRY
 

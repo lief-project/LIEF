@@ -16,7 +16,6 @@
 #ifndef LIEF_ELF_ANDROID_IDENT_H
 #define LIEF_ELF_ANDROID_IDENT_H
 
-#include <vector>
 #include <ostream>
 #include <memory>
 

@@ -203,6 +203,13 @@ Android Identity
 
 ----------
 
+QNX Stack
+*********
+
+.. doxygenclass:: LIEF::ELF::QNXStack
+
+----------
+
 Note ABI
 ********
 

@@ -73,6 +73,8 @@ pub enum Type {
     GO_BUILDID,
     /// Note for SystemTap probes
     STAPSDT,
+    /// Note for QNX Stack info
+    QNX_STACK,
     UNKNOWN(u32),
 }
 
@@ -121,6 +123,7 @@ impl Type {
             0x00000028 => Type::ANDROID_KUSER,
             0x00000029 => Type::GO_BUILDID,
             0x0000002a => Type::STAPSDT,
+            0x0000002b => Type::QNX_STACK,
             _ => Type::UNKNOWN(value),
         }
     }

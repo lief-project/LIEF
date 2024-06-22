@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include "LIEF/ELF/NoteDetails/AndroidIdent.hpp"
-#include "LIEF/ELF/hash.hpp"
+#include "LIEF/Visitor.hpp"
 
 #include <spdlog/fmt/fmt.h>
 

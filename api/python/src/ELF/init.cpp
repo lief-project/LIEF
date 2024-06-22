@@ -44,6 +44,7 @@
 
 #include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/NoteDetails/AndroidIdent.hpp"
+#include "LIEF/ELF/NoteDetails/QNXStack.hpp"
 #include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
 #include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreAuxv.hpp"
@@ -66,6 +67,7 @@ void init_notes(nb::module_& m) {
   CREATE(CorePrPsInfo, m);
   CREATE(CoreSigInfo, m);
   CREATE(CorePrStatus, m);
+  CREATE(QNXStack, m);
 }
 
 void init_objects(nb::module_& m) {

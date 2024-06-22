@@ -26,6 +26,7 @@
 #include "LIEF/ELF/GnuHash.hpp"
 #include "LIEF/ELF/Header.hpp"
 #include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/NoteDetails/QNXStack.hpp"
 #include "LIEF/ELF/NoteDetails/AndroidIdent.hpp"
 #include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
 #include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
@@ -235,6 +236,10 @@ void Hash::visit(const Note& note) {
   process(note.type());
   process(note.original_type());
   process(note.description());
+}
+
+void Hash::visit(const QNXStack& note) {
+  visit(static_cast<const Note&>(note));
 }
 
 void Hash::visit(const AndroidIdent& note) {

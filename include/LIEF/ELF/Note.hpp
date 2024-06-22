@@ -121,6 +121,8 @@ class LIEF_API Note : public Object {
     GO_BUILDID,
     /// Note for SystemTap probes
     STAPSDT,
+    /// QNX Note
+    QNX_STACK
   };
 
   public:

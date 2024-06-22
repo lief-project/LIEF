@@ -11,6 +11,7 @@ Changelog
   * First (beta) release of the bindings (c.f. :ref:`lief_rust_bindings`)
 
 :ELF:
+  * Add support for QNX Stack note (:issue:`1065`)
   * The ``static_symbols`` API functions has been renamed in ``symtab_symbols``.
 
     LIEF was naming symbols located in the ``.symtab`` sections as **static

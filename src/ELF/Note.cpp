@@ -13,18 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
 #include <memory>
-#include <numeric>
-#include <sstream>
 #include <algorithm>
 #include <utility>
 
 #include "LIEF/utils.hpp"
 #include "LIEF/ELF/hash.hpp"
-#include "LIEF/ELF/EnumToString.hpp"
 #include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
+#include "LIEF/ELF/NoteDetails/QNXStack.hpp"
 #include "LIEF/ELF/NoteDetails/AndroidIdent.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreAuxv.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
@@ -56,6 +53,7 @@ static constexpr auto NT_LINUX_NAME = "LINUX";
 static constexpr auto NT_GO_NAME = "Go";
 static constexpr auto NT_STAPSDT_NAME = "stapsdt";
 static constexpr auto NT_CRASHPAD_NAME = "Crashpad";
+static constexpr auto NT_QNX = "QNX";
 
 CONST_MAP_ALT GNU_TYPES {
   std::pair(1,     Note::TYPE::GNU_ABI_TAG),
@@ -132,6 +130,11 @@ CONST_MAP_ALT CRASHPAD_TYPES {
   std::pair(0x4f464e49, Note::TYPE::CRASHPAD),
 };
 
+/* Crashpad types. */
+CONST_MAP_ALT QNX_TYPES {
+  std::pair(3, Note::TYPE::QNX_STACK),
+};
+
 static inline std::string strip_zero(const std::string& name) {
   return name.c_str();
 }
@@ -150,6 +153,7 @@ result<const char*> Note::type_to_section(TYPE type) {
     std::pair(TYPE::CRASHPAD,                 ".note.crashpad.info"),
     std::pair(TYPE::ANDROID_IDENT,            ".note.android.ident"),
     std::pair(TYPE::GO_BUILDID,               ".note.go.buildid"),
+    std::pair(TYPE::QNX_STACK,                ".note"),
   };
 
   if (auto it = TYPE2SECTION.find(type); it != TYPE2SECTION.end()) {
@@ -232,6 +236,17 @@ inline result<uint32_t> raw_type(const std::string& name, Note::TYPE type) {
     return make_error_code(lief_errors::not_found);
   }
 
+
+  if (norm_name == NT_QNX) {
+    for (const auto& [nt, ntype] : QNX_TYPES) {
+      if (ntype == type) {
+        return nt;
+      }
+    }
+
+    return make_error_code(lief_errors::not_found);
+  }
+
   for (const auto& [nt, ntype] : GENERIC_TYPES) {
     if (ntype == type) {
       return nt;
@@ -285,6 +300,7 @@ result<const char*> Note::type_owner(Note::TYPE type) {
     std::pair(TYPE::GO_BUILDID            ,NT_GO_NAME),
     std::pair(TYPE::STAPSDT               ,NT_STAPSDT_NAME),
     std::pair(TYPE::CRASHPAD              ,NT_CRASHPAD_NAME),
+    std::pair(TYPE::QNX_STACK             ,NT_QNX),
   };
 
   if (auto it = TYPE2OWNER.find(type); it != TYPE2OWNER.end()) {
@@ -349,6 +365,13 @@ result<Note::TYPE> Note::convert_type(Header::FILE_TYPE ftype, uint32_t type,
 
   if (norm_name == NT_CRASHPAD_NAME) {
     if (auto it = CRASHPAD_TYPES.find(type); it != CRASHPAD_TYPES.end()) {
+      return it->second;
+    }
+    return make_error_code(lief_errors::not_found);
+  }
+
+  if (norm_name == NT_QNX) {
+    if (auto it = QNX_TYPES.find(type); it != CRASHPAD_TYPES.end()) {
       return it->second;
     }
     return make_error_code(lief_errors::not_found);
@@ -428,7 +451,7 @@ Note::create(BinaryStream& stream, Header::FILE_TYPE ftype, ARCH arch, Header::C
 }
 
 std::unique_ptr<Note>
-Note::create(const std::string& name, Note::TYPE ntype, Note::description_t description,
+Note::create(const std::string& name, Note::TYPE ntype, description_t description,
              ARCH arch, Header::CLASS cls)
 {
   std::string owner;
@@ -548,6 +571,10 @@ Note::create(const std::string& name, Note::TYPE ntype, Note::description_t desc
         return std::unique_ptr<AndroidIdent>(new AndroidIdent(
             std::move(norm_name), ntype, *int_type, std::move(description)
         ));
+    case Note::TYPE::QNX_STACK:
+        return std::unique_ptr<QNXStack>(new QNXStack(
+            std::move(norm_name), ntype, *int_type, std::move(description)
+        ));
     case Note::TYPE::GNU_ABI_TAG:
         return std::unique_ptr<NoteAbi>(new NoteAbi(
             std::move(norm_name), ntype, *int_type, std::move(description)
@@ -563,7 +590,7 @@ Note::create(const std::string& name, Note::TYPE ntype, Note::description_t desc
 
 
 std::unique_ptr<Note>
-Note::create(const std::string& name, uint32_t type, Note::description_t description,
+Note::create(const std::string& name, uint32_t type, description_t description,
              Header::FILE_TYPE ftype, ARCH arch, Header::CLASS cls)
 {
   auto conv = Note::convert_type(ftype, type, name);
@@ -651,6 +678,7 @@ const char* to_string(Note::TYPE type) {
     ENTRY(ANDROID_IDENT),
     ENTRY(STAPSDT),
     ENTRY(GO_BUILDID),
+    ENTRY(QNX_STACK),
   };
   #undef ENTRY
 
@@ -707,6 +735,7 @@ ok_error_t Note::write_string_at(size_t offset, const std::string& value) {
   return ok();
 }
 
+IMPL_READ_AT(bool);
 IMPL_READ_AT(uint8_t);
 IMPL_READ_AT(int8_t);
 IMPL_READ_AT(uint16_t);
@@ -716,6 +745,7 @@ IMPL_READ_AT(int32_t);
 IMPL_READ_AT(uint64_t);
 IMPL_READ_AT(int64_t);
 
+IMPL_WRITE_AT(bool);
 IMPL_WRITE_AT(uint8_t);
 IMPL_WRITE_AT(int8_t);
 IMPL_WRITE_AT(uint16_t);

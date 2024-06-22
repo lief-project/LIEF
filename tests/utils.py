@@ -102,6 +102,9 @@ def is_github_ci() -> bool:
 def is_server_ci() -> bool:
     return os.getenv('CI_SERVER_HOST', '') == 'gitlab.server'
 
+def has_private_samples() -> bool:
+    return (Path(lief_samples_dir()) / "private").is_dir()
+
 def _win_gui_exec_server(executable: Path, timeout: int = 60) -> Optional[Tuple[int, str]]:
     si = subprocess.STARTUPINFO() # type: ignore[attr-defined]
     si.dwFlags = subprocess.STARTF_USESTDHANDLES | subprocess.STARTF_USESHOWWINDOW # type: ignore[attr-defined]

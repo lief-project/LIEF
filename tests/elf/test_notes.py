@@ -1,10 +1,11 @@
 #!/usr/bin/env python
+import pytest
 from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
 
 import lief
-from utils import get_sample
+from utils import get_sample, has_private_samples
 
 lief.logging.set_level(lief.logging.LEVEL.INFO)
 
@@ -188,4 +189,11 @@ def test_note_properties():
         (lief.ELF.X86Features.FLAG.NONE, lief.ELF.X86Features.FEATURE.IBT),
     ]
 
-
+@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+def test_qnx_note():
+    qnx = lief.ELF.parse(get_sample("private/ELF/qnx_aarch64le_bsdtar"))
+    stack_info: lief.ELF.QNXStack = qnx.get(lief.ELF.Note.TYPE.QNX_STACK)
+    print(stack_info)
+    assert stack_info.stack_size == 0
+    assert stack_info.stack_allocated == 0x1000
+    assert not stack_info.is_executable

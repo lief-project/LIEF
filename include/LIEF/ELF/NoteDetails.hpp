@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_ELF_NOTE_DETAILS_H
 #define LIEF_ELF_NOTE_DETAILS_H
+#include "LIEF/ELF/NoteDetails/QNXStack.hpp"
 #include "LIEF/ELF/NoteDetails/AndroidIdent.hpp"
 #include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
 #include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
