@@ -63,7 +63,6 @@ pub trait RelocationBase {
     #[doc(hidden)]
     fn get_base(&self) -> &ffi::MachO_Relocation;
 
-
     /// Indicates whether the item containing the address to be
     /// relocated is part of a CPU instruction that uses PC-relative addressing.
     ///
@@ -86,6 +85,28 @@ pub trait RelocationBase {
     /// Segment command associated with the relocation (if any)
     fn segment(&self) -> Option<Segment> {
         into_optional(self.get_base().segment())
+    }
+}
+
+impl RelocationBase for Relocation<'_> {
+    fn get_base(&self) -> &ffi::MachO_Relocation {
+        match &self {
+            Relocation::Dyld(reloc) => {
+                reloc.get_base()
+            }
+
+            Relocation::Fixup(reloc) => {
+                reloc.get_base()
+            }
+
+            Relocation::Object(reloc) => {
+                reloc.get_base()
+            }
+
+            Relocation::Generic(reloc) => {
+                reloc.get_base()
+            }
+        }
     }
 }
 

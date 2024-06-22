@@ -539,6 +539,94 @@ pub trait Command {
     }
 }
 
+impl Command for Commands<'_> {
+    fn get_base(&self) -> &ffi::MachO_Command {
+        match &self {
+            Commands::Generic(cmd) => {
+                cmd.get_base()
+            }
+            Commands::BuildVersion(cmd) => {
+                cmd.get_base()
+            }
+            Commands::CodeSignature(cmd) => {
+                cmd.get_base()
+            }
+            Commands::CodeSignatureDir(cmd) => {
+                cmd.get_base()
+            }
+            Commands::DataInCode(cmd) => {
+                cmd.get_base()
+            }
+            Commands::DyldChainedFixups(cmd) => {
+                cmd.get_base()
+            }
+            Commands::DyldEnvironment(cmd) => {
+                cmd.get_base()
+            }
+            Commands::DyldExportsTrie(cmd) => {
+                cmd.get_base()
+            }
+            Commands::DyldInfo(cmd) => {
+                cmd.get_base()
+            }
+            Commands::Dylib(cmd) => {
+                cmd.get_base()
+            }
+            Commands::Dylinker(cmd) => {
+                cmd.get_base()
+            }
+            Commands::DynamicSymbolCommand(cmd) => {
+                cmd.get_base()
+            }
+            Commands::EncryptionInfo(cmd) => {
+                cmd.get_base()
+            }
+            Commands::FunctionStarts(cmd) => {
+                cmd.get_base()
+            }
+            Commands::LinkerOptHint(cmd) => {
+                cmd.get_base()
+            }
+            Commands::Main(cmd) => {
+                cmd.get_base()
+            }
+            Commands::RPath(cmd) => {
+                cmd.get_base()
+            }
+            Commands::Segment(cmd) => {
+                cmd.get_base()
+            }
+            Commands::SegmentSplitInfo(cmd) => {
+                cmd.get_base()
+            }
+            Commands::SourceVersion(cmd) => {
+                cmd.get_base()
+            }
+            Commands::SubFramework(cmd) => {
+                cmd.get_base()
+            }
+            Commands::SymbolCommand(cmd) => {
+                cmd.get_base()
+            }
+            Commands::ThreadCommand(cmd) => {
+                cmd.get_base()
+            }
+            Commands::TwoLevelHints(cmd) => {
+                cmd.get_base()
+            }
+            Commands::UUID(cmd) => {
+                cmd.get_base()
+            }
+            Commands::VersionMin(cmd) => {
+                cmd.get_base()
+            }
+            Commands::Unknown(cmd) => {
+                cmd.get_base()
+            }
+        }
+    }
+}
+
 impl Command for Generic<'_> {
     fn get_base(&self) -> &ffi::MachO_Command {
         self.ptr.as_ref().unwrap()

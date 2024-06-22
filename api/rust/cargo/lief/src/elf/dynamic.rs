@@ -296,6 +296,37 @@ pub trait DynamicEntry {
     }
 }
 
+impl DynamicEntry for Entries<'_> {
+    fn as_base(&self) -> &ffi::ELF_DynamicEntry {
+        match &self {
+            Entries::Library(entry) => {
+                entry.as_base()
+            }
+
+            Entries::Array(entry) => {
+                entry.as_base()
+            }
+
+            Entries::Rpath(entry) => {
+                entry.as_base()
+            }
+
+            Entries::RunPath(entry) => {
+                entry.as_base()
+            }
+
+            Entries::SharedObject(entry) => {
+                entry.as_base()
+            }
+
+            Entries::Generic(entry) => {
+                entry.as_base()
+            }
+        }
+    }
+
+}
+
 impl FromFFI<ffi::ELF_DynamicEntry> for Entries<'_> {
     fn from_ffi(ffi_entry: cxx::UniquePtr<ffi::ELF_DynamicEntry>) -> Self {
         unsafe {

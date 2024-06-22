@@ -180,6 +180,19 @@ impl NodeBase for Directory<'_> {
     }
 }
 
+impl NodeBase for Node<'_> {
+    fn get_base(&self) -> &ffi::PE_ResourceNode {
+        match &self {
+            Node::Data(n) => {
+                n.get_base()
+            }
+            Node::Directory(n) => {
+                n.get_base()
+            }
+        }
+    }
+}
+
 impl fmt::Debug for Directory<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let base = self as &dyn NodeBase;

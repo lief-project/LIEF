@@ -56,6 +56,23 @@ pub trait AsGeneric {
     }
 }
 
+impl AsGeneric for BindingInfo<'_> {
+    #[doc(hidden)]
+    fn as_generic(&self) -> &ffi::MachO_BindingInfo {
+        match &self {
+            BindingInfo::Dyld(info) => {
+                info.as_generic()
+            }
+            BindingInfo::Chained(info) => {
+                info.as_generic()
+            }
+            BindingInfo::Generic(info) => {
+                info.as_generic()
+            }
+        }
+    }
+}
+
 impl std::fmt::Debug for &dyn AsGeneric {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("AsGeneric")

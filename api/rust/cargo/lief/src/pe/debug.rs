@@ -114,6 +114,32 @@ pub trait DebugEntry {
     }
 }
 
+impl DebugEntry for Entries<'_> {
+    fn get_base(&self) -> &ffi::PE_Debug {
+        match &self {
+            Entries::CodeView(entry) => {
+                entry.get_base()
+            }
+
+            Entries::CodeViewPDB(entry) => {
+                entry.get_base()
+            }
+
+            Entries::Repro(entry) => {
+                entry.get_base()
+            }
+
+            Entries::Pogo(entry) => {
+                entry.get_base()
+            }
+
+            Entries::Generic(entry) => {
+                entry.get_base()
+            }
+        }
+    }
+}
+
 impl std::fmt::Debug for &dyn DebugEntry {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("DebugEntry")
