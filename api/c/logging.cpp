@@ -27,5 +27,5 @@ void lief_logging_enable(void) {
 }
 
 void lief_logging_set_level(uint32_t level) {
-  set_level(static_cast<LOGGING_LEVEL>(level));
+  set_level(static_cast<LEVEL>(level));
 }

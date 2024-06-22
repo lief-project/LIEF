@@ -6,7 +6,7 @@ from pathlib import Path
 import lief
 from utils import get_sample
 
-lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
+lief.logging.set_level(lief.logging.LEVEL.INFO)
 
 config = lief.ELF.Builder.config_t()
 config.notes = True;

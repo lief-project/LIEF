@@ -14,6 +14,7 @@
  */
 #pragma once
 #include "LIEF/logging.hpp"
+#include <cstdint>
 
 class LIEF_Logging {
   public:
@@ -21,13 +22,13 @@ class LIEF_Logging {
   static void reset() { LIEF::logging::reset(); }
   static void enable() { LIEF::logging::enable(); }
   static void set_level(uint32_t lvl) {
-    LIEF::logging::set_level(LIEF::logging::LOGGING_LEVEL(lvl));
+    LIEF::logging::set_level(LIEF::logging::LEVEL(lvl));
   }
   static void set_path(std::string path) { // NOLINT
     LIEF::logging::set_path(path);
   }
 
   static void log(uint32_t lvl, std::string msg) { // NOLINT
-    LIEF::logging::log(LIEF::logging::LOGGING_LEVEL(lvl), msg);
+    LIEF::logging::log(LIEF::logging::LEVEL(lvl), msg);
   }
 };

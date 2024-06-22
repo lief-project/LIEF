@@ -2,7 +2,7 @@
 import lief
 from utils import get_sample
 
-lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
+lief.logging.set_level(lief.logging.LEVEL.INFO)
 
 def test_header_key_values():
     CallDeviceId = lief.parse(get_sample('OAT/OAT_079_x86-64_CallDeviceId.oat'))

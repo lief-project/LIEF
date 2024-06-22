@@ -27,7 +27,7 @@ def patch(tmp_path: str, bin_path: pathlib.Path) -> str:
 
     shellcode = lief.parse(shellcode_path.as_posix())
 
-    #lief.logging.set_level(lief.logging.LOGGING_LEVEL.DEBUG)
+    #lief.logging.set_level(lief.logging.LEVEL.DEBUG)
 
     __TEXT  = shellcode.get_segment("__TEXT")
     __STEXT = lief.MachO.SegmentCommand("__STEXT", list(__TEXT.content))

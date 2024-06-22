@@ -12,7 +12,7 @@ if not is_linux():
 
 COMPILER = get_compiler()
 
-lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
+lief.logging.set_level(lief.logging.LEVEL.INFO)
 
 BINADD_C = """\
 #include <stdio.h>

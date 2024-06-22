@@ -10,7 +10,7 @@ try:
 except:
     pass
 
-lief.logging.set_level(lief.logging.LOGGING_LEVEL.WARNING)
+lief.logging.set_level(lief.logging.LEVEL.WARNING)
 
 def from_hex(x):
     return bytes.fromhex(x.replace(":", ""))

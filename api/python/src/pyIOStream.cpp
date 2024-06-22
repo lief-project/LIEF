@@ -30,13 +30,13 @@ result<PyIOStream> PyIOStream::from_python(nb::object object) {
   const nb::object IOBase = mod_io.attr("IOBase");
 
   if (!isinstance(object, IOBase)) {
-    logging::log(logging::LOGGING_LEVEL::LOG_ERR,
+    logging::log(logging::LEVEL::ERR,
         "The provided io object does not sub-class io.IOBase");
     return make_error_code(lief_errors::read_error);
   }
 
   if (!nb::hasattr(object, "read") && !nb::hasattr(object, "readinto")) {
-    logging::log(logging::LOGGING_LEVEL::LOG_ERR,
+    logging::log(logging::LEVEL::ERR,
         "The provided io object does not implement read() or readinto()");
     return make_error_code(lief_errors::read_error);
   }

@@ -9,7 +9,7 @@ from subprocess import Popen
 import lief
 from utils import get_sample, is_linux, is_x86_64, is_64bits_platform
 
-lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
+lief.logging.set_level(lief.logging.LEVEL.INFO)
 
 def test_issue_671(tmp_path: Path):
     """

@@ -59,7 +59,7 @@ void create<Parser>(nb::module_& m) {
         return DEX::Parser::parse(stream->content(), name);
       }
 
-      logging::log(logging::LOG_ERR,
+      logging::log(logging::LEVEL::ERR,
                    "LIEF parser interface does not support Python object: " +
                    type2str(obj));
       return nullptr;

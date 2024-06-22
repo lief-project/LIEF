@@ -1,3 +1,9 @@
+set(LIEF_CPP_EXAMPLES
+  logging.cpp
+  abstract_reader.cpp
+  benchmark.cpp
+)
+
 if (LIEF_ELF)
   list(APPEND LIEF_CPP_EXAMPLES
     elf_reader.cpp

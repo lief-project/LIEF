@@ -76,7 +76,7 @@ void create<Parser>(nb::module_& m) {
           return Parser::parse(std::move(ptr));
         }
 
-        logging::log(logging::LOG_ERR,
+        logging::log(logging::LEVEL::ERR,
                      "LIEF parser interface does not support Python object: " +
                      type2str(generic));
 

@@ -11,7 +11,7 @@ from pathlib import Path
 import lief
 from utils import get_sample, has_recent_glibc, is_linux, is_x86_64, is_aarch64
 
-lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
+lief.logging.set_level(lief.logging.LEVEL.INFO)
 
 is_updated_linux = is_linux() and is_x86_64() and has_recent_glibc()
 is_linux_x64 = is_linux() and is_x86_64()

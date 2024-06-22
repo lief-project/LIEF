@@ -1,7 +1,7 @@
 import lief
 import utils
 
-lief.logging.set_level(lief.logging.LOGGING_LEVEL.DEBUG)
+lief.logging.set_level(lief.logging.LEVEL.DEBUG)
 
 def test_issue_686():
     """

@@ -2,7 +2,7 @@
 import lief
 from utils import get_sample
 
-lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
+lief.logging.set_level(lief.logging.LEVEL.INFO)
 
 def test_linkedit(tmp_path):
     original = lief.MachO.parse(get_sample('MachO/MachO64_x86-64_binary_id.bin')).at(0)

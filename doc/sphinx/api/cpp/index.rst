@@ -82,7 +82,7 @@ Logging
 Logging levels
 ~~~~~~~~~~~~~~
 
-.. doxygenenum:: LIEF::logging::LOGGING_LEVEL
+.. doxygenenum:: LIEF::logging::LEVEL
    :project: lief
 
 

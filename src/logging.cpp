@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-#include <map>
 #include "LIEF/config.h"
 #include "LIEF/logging.hpp"
 #include "LIEF/platforms.hpp"
 #include "logging.hpp"
 
 #include "spdlog/spdlog.h"
+#include "spdlog/fmt/bundled/args.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/android_sink.h"
+
 
 namespace LIEF {
 namespace logging {
@@ -113,17 +114,17 @@ void Logger::set_logger(const spdlog::logger& logger) {
   instance.sink_->flush_on(spdlog::level::warn);
 }
 
-const char* to_string(LOGGING_LEVEL e) {
-  const std::map<LOGGING_LEVEL, const char*> enumStrings {
-    { LOGGING_LEVEL::LOG_TRACE,   "TRACE"    },
-    { LOGGING_LEVEL::LOG_DEBUG,   "DEBUG"    },
-    { LOGGING_LEVEL::LOG_INFO,    "INFO"     },
-    { LOGGING_LEVEL::LOG_ERR,     "ERROR"    },
-    { LOGGING_LEVEL::LOG_WARN,    "WARNING"  },
-    { LOGGING_LEVEL::LOG_CRITICAL,"CRITICAL" },
-  };
-  auto   it  = enumStrings.find(e);
-  return it == enumStrings.end() ? "UNDEFINED" : it->second;
+const char* to_string(LEVEL e) {
+  switch (e) {
+    case LEVEL::TRACE: return "TRACE";
+    case LEVEL::DEBUG: return "DEBUG";
+    case LEVEL::INFO: return "INFO";
+    case LEVEL::ERR: return "ERROR";
+    case LEVEL::WARN: return "WARN";
+    case LEVEL::CRITICAL: return "CRITICAL";
+    default: return "UNDEFINED";
+  }
+  return "UNDEFINED";
 }
 
 
@@ -139,26 +140,26 @@ void Logger::enable() {
   }
 }
 
-void Logger::set_level(LOGGING_LEVEL level) {
+void Logger::set_level(LEVEL level) {
   if constexpr (!lief_logging_support) {
     return;
   }
   switch (level) {
-    case LOG_TRACE:
+    case LEVEL::TRACE:
       {
         Logger::instance().sink_->set_level(spdlog::level::trace);
         Logger::instance().sink_->flush_on(spdlog::level::trace);
         break;
       }
 
-    case LOG_DEBUG:
+    case LEVEL::DEBUG:
       {
         Logger::instance().sink_->set_level(spdlog::level::debug);
         Logger::instance().sink_->flush_on(spdlog::level::debug);
         break;
       }
 
-    case LOG_INFO:
+    case LEVEL::INFO:
       {
         Logger::instance().sink_->set_level(spdlog::level::info);
         Logger::instance().sink_->flush_on(spdlog::level::info);
@@ -166,21 +167,21 @@ void Logger::set_level(LOGGING_LEVEL level) {
       }
 
     default:
-    case LOG_WARN:
+    case LEVEL::WARN:
       {
         Logger::instance().sink_->set_level(spdlog::level::warn);
         Logger::instance().sink_->flush_on(spdlog::level::warn);
         break;
       }
 
-    case LOG_ERR:
+    case LEVEL::ERR:
       {
         Logger::instance().sink_->set_level(spdlog::level::err);
         Logger::instance().sink_->flush_on(spdlog::level::err);
         break;
       }
 
-    case LOG_CRITICAL:
+    case LEVEL::CRITICAL:
       {
         Logger::instance().sink_->set_level(spdlog::level::critical);
         Logger::instance().sink_->flush_on(spdlog::level::critical);
@@ -199,7 +200,7 @@ void enable() {
   Logger::enable();
 }
 
-void set_level(LOGGING_LEVEL level) {
+void set_level(LEVEL level) {
   Logger::set_level(level);
 }
 
@@ -215,32 +216,44 @@ void reset() {
   Logger::reset();
 }
 
-void log(LOGGING_LEVEL level, const std::string& msg) {
+void log(LEVEL level, const std::string& msg) {
   switch (level) {
-    case LOGGING_LEVEL::LOG_TRACE:
-    case LOGGING_LEVEL::LOG_DEBUG:
+    case LEVEL::TRACE:
+    case LEVEL::DEBUG:
       {
         LIEF_DEBUG("{}", msg);
         break;
       }
-    case LOGGING_LEVEL::LOG_INFO:
+    case LEVEL::INFO:
       {
         LIEF_INFO("{}", msg);
         break;
       }
-    case LOGGING_LEVEL::LOG_WARN:
+    case LEVEL::WARN:
       {
         LIEF_WARN("{}", msg);
         break;
       }
-    case LOGGING_LEVEL::LOG_CRITICAL:
-    case LOGGING_LEVEL::LOG_ERR:
+    case LEVEL::CRITICAL:
+    case LEVEL::ERR:
       {
         LIEF_ERR("{}", msg);
         break;
       }
   }
 }
+
+void log(LEVEL level, const std::string& fmt,
+         const std::vector<std::string>& args)
+{
+  fmt::dynamic_format_arg_store<fmt::format_context> store;
+  for (const std::string& arg : args) {
+    store.push_back(arg);
+  }
+  std::string result = fmt::vformat(fmt, store);
+  log(level, result);
+}
+
 
 }
 }

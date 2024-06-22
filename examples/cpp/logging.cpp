@@ -28,11 +28,16 @@ int main(int argc, char **argv) {
   std::cout << "Parsing with DEBUG level" << '\n';
   std::cout << "========================" << '\n';
 
-  LIEF::logging::set_level(LIEF::logging::LOGGING_LEVEL::LOG_DEBUG);
+  LIEF::logging::set_level(LIEF::logging::LEVEL::DEBUG);
   std::unique_ptr<const LIEF::Binary> binary_global = LIEF::Parser::parse(argv[1]);
 
   // Log a message with LIEF's logger
-  LIEF::logging::log(LIEF::logging::LOGGING_LEVEL::LOG_DEBUG, "Hi!");
+  LIEF::logging::log(LIEF::logging::LEVEL::DEBUG, "Hi!");
+
+  // Log a formatted message with LIEF's logger
+  LIEF::logging::log(LIEF::logging::LEVEL::DEBUG, "Hi: {} here is your number: {}",
+    argv[0], std::to_string(argc)
+  );
 
   // Disable logger
   LIEF::logging::disable();

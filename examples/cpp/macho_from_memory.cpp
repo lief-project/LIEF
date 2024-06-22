@@ -42,7 +42,7 @@ uintptr_t get_module_base_address(const std::string& name) {
 }
 
 int main(int argc, char **argv) {
-  LIEF::logging::set_level(LIEF::logging::LOGGING_LEVEL::LOG_DEBUG);
+  LIEF::logging::set_level(LIEF::logging::LEVEL::DEBUG);
 
   //const uintptr_t base = get_module_base_address("macho_from_memory");
   const uintptr_t base = get_module_base_address("in_mem.test");

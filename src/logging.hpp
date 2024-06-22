@@ -62,7 +62,7 @@ class Logger {
   static void enable();
 
   //! @brief Change the logging level (**hierarchical**)
-  static void set_level(LOGGING_LEVEL level);
+  static void set_level(LEVEL level);
 
   static Logger& set_log_path(const std::string& path);
 

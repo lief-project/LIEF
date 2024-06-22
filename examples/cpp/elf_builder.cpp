@@ -34,8 +34,8 @@ int main(int argc, char **argv) {
   seg.type(LIEF::ELF::Segment::TYPE::LOAD);
   //seg.content(std::vector<uint8_t>(0x100));
   //binary->add(seg);
-  LIEF::logging::set_level(LIEF::logging::LOGGING_LEVEL::LOG_DEBUG);
-  //LIEF::logging::set_level(LIEF::logging::LOGGING_LEVEL::LOG_WARN);
+  LIEF::logging::set_level(LIEF::logging::LEVEL::DEBUG);
+  //LIEF::logging::set_level(LIEF::logging::LEVEL::LOG_WARN);
   //binary->get(LIEF::ELF::SEGMENT_TYPES::PT_GNU_RELRO).type(LIEF::ELF::SEGMENT_TYPES::PT_NULL);
   LIEF::ELF::Builder builder{*binary};
   LIEF::ELF::Builder::config_t config;

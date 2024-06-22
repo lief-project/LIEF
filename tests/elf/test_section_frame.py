@@ -6,7 +6,7 @@ from random import shuffle
 
 from utils import get_sample, is_linux
 
-lief.logging.set_level(lief.logging.LOGGING_LEVEL.DEBUG)
+lief.logging.set_level(lief.logging.LEVEL.DEBUG)
 
 def test_frame(tmp_path):
     elf = lief.ELF.parse(get_sample("ELF/mbedtls_selftest.elf64"))

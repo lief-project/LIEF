@@ -2,7 +2,7 @@ import lief
 import json
 from utils import get_sample
 
-lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
+lief.logging.set_level(lief.logging.LEVEL.INFO)
 
 
 def test_multidex():

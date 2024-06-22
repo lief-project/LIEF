@@ -16,7 +16,7 @@ is_updated_linux = pytest.mark.skipif(not (is_linux() and is_x86_64() and has_re
 
 is_linux_x64 = pytest.mark.skipif(not (is_linux() and is_x86_64()), reason="needs a Linux x86-64")
 
-lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
+lief.logging.set_level(lief.logging.LEVEL.INFO)
 
 CWD = Path(__file__).parent
 

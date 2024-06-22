@@ -44,7 +44,7 @@ Logging
 Logging levels
 ~~~~~~~~~~~~~~
 
-.. autoclass:: lief.logging.LOGGING_LEVEL
+.. autoclass:: lief.logging.LEVEL
 
 .. _python-api-error-handling:
 

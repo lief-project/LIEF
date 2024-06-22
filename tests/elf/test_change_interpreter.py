@@ -10,7 +10,7 @@ from subprocess import Popen
 import lief
 from utils import is_linux
 
-lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
+lief.logging.set_level(lief.logging.LEVEL.INFO)
 
 @pytest.mark.skipif(not is_linux(), reason="requires Linux")
 @pytest.mark.parametrize("target", [

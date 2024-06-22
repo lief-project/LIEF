@@ -11,7 +11,7 @@ from utils import get_compiler, is_linux, is_x86_64, is_aarch64
 if not is_linux():
     pytest.skip("requires Linux", allow_module_level=True)
 
-lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
+lief.logging.set_level(lief.logging.LEVEL.INFO)
 
 class CommandResult:
     def __init__(self, output, error, retcode, process=None):

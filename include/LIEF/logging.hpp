@@ -17,9 +17,9 @@
 #define LIEF_LOGGING_H
 
 #include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
 
 #include <string>
+#include <vector>
 
 namespace spdlog {
 class logger;
@@ -33,16 +33,16 @@ namespace logging {
 //! From a given level set, all levels below this ! level are enabled
 //!
 //! For example, if LOG_INFO is enabled then LOG_WARN, LOG_ERR are also enabled
-enum LOGGING_LEVEL {
-  LOG_TRACE = 0,
-  LOG_DEBUG,
-  LOG_INFO,
-  LOG_WARN,
-  LOG_ERR,
-  LOG_CRITICAL,
+enum class LEVEL {
+  TRACE = 0,
+  DEBUG,
+  INFO,
+  WARN,
+  ERR,
+  CRITICAL,
 };
 
-LIEF_API const char* to_string(LOGGING_LEVEL e);
+LIEF_API const char* to_string(LEVEL e);
 
 //! Globally disable the logging module
 LIEF_API void disable();
@@ -51,13 +51,23 @@ LIEF_API void disable();
 LIEF_API void enable();
 
 //! Change the logging level (**hierarchical**)
-LIEF_API void set_level(LOGGING_LEVEL level);
+LIEF_API void set_level(LEVEL level);
 
 //! Change the logger as a file-base logging and set its path
 LIEF_API void set_path(const std::string& path);
 
 //! Log a message with the LIEF's logger
-LIEF_API void log(LOGGING_LEVEL level, const std::string& msg);
+LIEF_API void log(LEVEL level, const std::string& msg);
+
+LIEF_API void log(LEVEL level, const std::string& fmt,
+                  const std::vector<std::string>& args);
+
+template <typename... Args>
+void log(LEVEL level, const std::string& fmt, const Args &... args) {
+  std::vector<std::string> vec_args;
+  vec_args.insert(vec_args.end(), { static_cast<decltype(vec_args)::value_type>(args)...});
+  return log(level, fmt, vec_args);
+}
 
 LIEF_API void set_logger(const spdlog::logger& logger);
 

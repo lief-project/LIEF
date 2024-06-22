@@ -119,11 +119,11 @@ int main(int argc, char** argv) {
   using namespace std::literals::string_literals;
 
   if (argc < 2) {
-    LIEF::logging::log(LIEF::logging::LOG_ERR,
+    LIEF::logging::log(LIEF::logging::LEVEL::ERR,
         "Usage: "s + argv[0] + " <binary>");
     return EXIT_FAILURE;
   }
-  LIEF::logging::set_level(LIEF::logging::LOG_ERR);
+  LIEF::logging::set_level(LIEF::logging::LEVEL::ERR);
   const std::string path = argv[1];
 
   if (LIEF::ELF::is_elf(path)) {

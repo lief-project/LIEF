@@ -84,30 +84,31 @@ void init_logger(nb::module_& m) {
   nb::module_ logging = m.def_submodule("logging");
 
   #define PY_ENUM(x) LIEF::logging::to_string(x), x
-  nb::enum_<logging::LOGGING_LEVEL>(logging, "LOGGING_LEVEL")
-    .value(PY_ENUM(logging::LOGGING_LEVEL::LOG_TRACE))
-    .value(PY_ENUM(logging::LOGGING_LEVEL::LOG_DEBUG))
-    .value(PY_ENUM(logging::LOGGING_LEVEL::LOG_CRITICAL))
-    .value(PY_ENUM(logging::LOGGING_LEVEL::LOG_ERR))
-    .value(PY_ENUM(logging::LOGGING_LEVEL::LOG_WARN))
-    .value(PY_ENUM(logging::LOGGING_LEVEL::LOG_INFO));
+  nb::enum_<logging::LEVEL>(logging, "LEVEL")
+    .value(PY_ENUM(logging::LEVEL::TRACE))
+    .value(PY_ENUM(logging::LEVEL::DEBUG))
+    .value(PY_ENUM(logging::LEVEL::CRITICAL))
+    .value(PY_ENUM(logging::LEVEL::ERR))
+    .value(PY_ENUM(logging::LEVEL::WARN))
+    .value(PY_ENUM(logging::LEVEL::INFO));
   #undef PY_ENUM
 
   logging.def("disable", &logging::disable,
-              "Disable the logger globally");
+              "Disable the logger globally"_doc);
 
   logging.def("enable", &logging::enable,
-              "Enable the logger globally");
+              "Enable the logger globally"_doc);
 
   logging.def("set_level", &logging::set_level,
               "Change logging level", "level"_a);
 
   logging.def("set_path", &logging::set_path,
-              "Change the logger as a file-base logging and set its path",
+              "Change the logger as a file-base logging and set its path"_doc,
               "path"_a);
 
-  logging.def("log", &logging::log,
-              "Log a message with the LIEF's logger",
+  logging.def("log",
+              static_cast<void(*)(LIEF::logging::LEVEL, const std::string&)>(&logging::log),
+              "Log a message with the LIEF's logger"_doc,
               "level"_a, "msg"_a);
 
   logging.def("reset", [] {

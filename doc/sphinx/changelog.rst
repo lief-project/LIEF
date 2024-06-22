@@ -773,7 +773,7 @@ This release contains several security fixes:
 
     lief.logging.disable()
     lief.logging.enable()
-    lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
+    lief.logging.set_level(lief.logging.LEVEL.INFO)
 
   See: :func:`lief.logging.set_level`
 
@@ -1235,7 +1235,7 @@ In the C++ API ``get_XXX()`` getters have been renamed into ``XXX()`` (e.g. ``ge
     from lief import Logger
     Logger.disable()
     Logger.enable()
-    Logger.set_level(lief.LOGGING_LEVEL.INFO)
+    Logger.set_level(lief.LEVEL.INFO)
 
   See: :class:`lief.Logger`
 

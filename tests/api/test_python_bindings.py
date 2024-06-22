@@ -4,7 +4,7 @@ import sys
 import lief
 from utils import get_sample
 
-lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
+lief.logging.set_level(lief.logging.LEVEL.INFO)
 
 def test_one_liner():
     assert len(lief.parse(get_sample("MachO/issue_853_classes_15.bin")).sections[0].name) > 0

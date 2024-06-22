@@ -20,7 +20,7 @@
 
 
 int main(int argc, char **argv) {
-  LIEF::logging::set_level(LIEF::logging::LOGGING_LEVEL::LOG_DEBUG);
+  LIEF::logging::set_level(LIEF::logging::LEVEL::DEBUG);
   if (argc != 2) {
     std::cerr << "Usage: " << argv[0] << " <Binary>" << '\n';
     return EXIT_FAILURE;

@@ -57,7 +57,7 @@ void create<Parser>(nb::module_& m) {
         auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
         return PE::Parser::parse(std::move(ptr));
       }
-      logging::log(logging::LOG_ERR,
+      logging::log(logging::LEVEL::ERR,
                    "LIEF parser interface does not support Python object: " +
                    type2str(obj));
       return nullptr;

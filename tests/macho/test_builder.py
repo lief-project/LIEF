@@ -11,7 +11,7 @@ from subprocess import Popen
 import lief
 from utils import get_sample, is_apple_m1, is_osx, is_x86_64, sign, chmod_exe, is_github_ci
 
-lief.logging.set_level(lief.logging.LOGGING_LEVEL.INFO)
+lief.logging.set_level(lief.logging.LEVEL.INFO)
 
 def dyld_check(path: str):
     dyld_info_path = "/usr/bin/dyld_info"
