@@ -84,7 +84,7 @@ void create<Binary>(nb::module_& m) {
     .def_prop_ro("optional_header",
         nb::overload_cast<>(&Binary::optional_header, nb::const_),
         R"doc(
-        Header that follows the :att:`~.header`. It is named optional from the
+        Header that follows the :attr:`~.header`. It is named optional from the
         COFF specifications but it is mandatory in a PE file.
         )doc"_doc,
         nb::rv_policy::reference_internal)
