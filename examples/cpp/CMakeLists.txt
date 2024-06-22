@@ -1,97 +1,67 @@
-set(LIEF_ELF_CPP_EXAMPLES
-  elf_reader.cpp
-  elf_add_section.cpp
-  elf_builder.cpp
-  elf_section_rename.cpp
-  elf_strip.cpp
-  elf_symbols.cpp
-)
-
-set(LIEF_PE_CPP_EXAMPLES
-  pe_builder.cpp
-  pe_reader.cpp
-  pe_authenticode_check.cpp
-)
-
-set(LIEF_MACHO_CPP_EXAMPLES
-  macho_reader.cpp
-  macho_builder.cpp
-)
-
-set(LIEF_OAT_CPP_EXAMPLES
-  oat_reader.cpp
-)
-
-set(LIEF_VDEX_CPP_EXAMPLES
-  vdex_reader.cpp
-)
-
-set(LIEF_ART_CPP_EXAMPLES
-  art_reader.cpp
-)
-
-set(LIEF_DEX_CPP_EXAMPLES
-  dex_reader.cpp
-)
-
-set(LIEF_CPP_EXAMPLES
-  abstract_reader.cpp
-  logging.cpp
-  benchmark.cpp
-)
-
 if (LIEF_ELF)
-  set(LIEF_CPP_EXAMPLES "${LIEF_CPP_EXAMPLES}" "${LIEF_ELF_CPP_EXAMPLES}")
-endif()
-
-if (LIEF_PE)
-  set(LIEF_CPP_EXAMPLES "${LIEF_CPP_EXAMPLES}" "${LIEF_PE_CPP_EXAMPLES}")
-endif()
-
-if (LIEF_MACHO)
-  set(LIEF_CPP_EXAMPLES "${LIEF_CPP_EXAMPLES}" "${LIEF_MACHO_CPP_EXAMPLES}")
-endif()
-
-if (LIEF_OAT)
-  set(LIEF_CPP_EXAMPLES ${LIEF_CPP_EXAMPLES} ${LIEF_OAT_CPP_EXAMPLES})
-endif()
-
-if (LIEF_VDEX)
-  set(LIEF_CPP_EXAMPLES ${LIEF_CPP_EXAMPLES} ${LIEF_VDEX_CPP_EXAMPLES})
-endif()
-
-if (LIEF_ART)
-  set(LIEF_CPP_EXAMPLES ${LIEF_CPP_EXAMPLES} ${LIEF_ART_CPP_EXAMPLES})
-endif()
-
-if (LIEF_DEX)
-  set(LIEF_CPP_EXAMPLES ${LIEF_CPP_EXAMPLES} ${LIEF_DEX_CPP_EXAMPLES})
-endif()
-
-if(APPLE)
-  add_executable(macho_from_memory "macho_from_memory.cpp")
-  set_target_properties(
-    macho_from_memory
-    PROPERTIES POSITION_INDEPENDENT_CODE ON
-               CXX_STANDARD              11
-               CXX_STANDARD_REQUIRED     ON)
-
-  target_link_libraries(macho_from_memory PUBLIC LIB_LIEF)
-  add_custom_command(
-    TARGET macho_from_memory
-    COMMENT "Strip $<TARGET_FILE:macho_from_memory>"
-    POST_BUILD
-    COMMAND ${CMAKE_STRIP} -x -S $<TARGET_FILE:macho_from_memory>
+  list(APPEND LIEF_CPP_EXAMPLES
+    elf_reader.cpp
+    elf_add_section.cpp
+    elf_builder.cpp
+    elf_section_rename.cpp
+    elf_strip.cpp
+    elf_symbols.cpp
   )
 endif()
 
+if (LIEF_PE)
+  list(APPEND LIEF_CPP_EXAMPLES
+    pe_builder.cpp
+    pe_reader.cpp
+    pe_authenticode_check.cpp
+  )
+endif()
+
+if (LIEF_MACHO)
+  list(APPEND LIEF_CPP_EXAMPLES
+    macho_reader.cpp
+    macho_builder.cpp
+  )
+endif()
+
+if (LIEF_OAT)
+  list(APPEND LIEF_CPP_EXAMPLES
+    oat_reader.cpp
+  )
+endif()
+
+if (LIEF_VDEX)
+  list(APPEND LIEF_CPP_EXAMPLES
+    vdex_reader.cpp
+  )
+endif()
+
+if (LIEF_ART)
+  list(APPEND LIEF_CPP_EXAMPLES
+    art_reader.cpp
+  )
+endif()
+
+if (LIEF_DEX)
+  list(APPEND LIEF_CPP_EXAMPLES
+    dex_reader.cpp
+  )
+endif()
+
+if(APPLE)
+  list(APPEND LIEF_CPP_EXAMPLES
+    macho_from_memory.cpp
+  )
+endif()
 
 foreach(example ${LIEF_CPP_EXAMPLES})
   string(REGEX REPLACE ".cpp\$" "" output_name "${example}")
-  add_executable("${output_name}" "${example}")
+  add_executable(${output_name} ${example})
 
   # Don't use default include dir
-  set_property(TARGET "${output_name}" PROPERTY INCLUDE_DIRECTORIES "")
+  set_property(TARGET "${output_name}"
+    PROPERTY INCLUDE_DIRECTORIES ""
+  )
 
   set_target_properties(
     ${output_name}
@@ -99,17 +69,7 @@ foreach(example ${LIEF_CPP_EXAMPLES})
                CXX_STANDARD              11
                CXX_STANDARD_REQUIRED     ON)
 
-  if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    if (UNIX)
-      if (LIEF_FORCE32)
-        target_compile_options("${output_name}" PRIVATE -m32)
-
-        set_property(TARGET "${output_name}" PROPERTY LINK_FLAGS -m32)
-      endif()
-    endif()
-  endif()
-
-  target_link_libraries("${output_name}" PUBLIC LIB_LIEF)
+  target_link_libraries(${output_name} PUBLIC LIB_LIEF)
 
   if (CMAKE_BUILD_TYPE MATCHES "Release")
     if (UNIX AND NOT APPLE)
@@ -130,6 +90,7 @@ foreach(example ${LIEF_CPP_EXAMPLES})
       )
     endif()
   endif()
+
   if(LIEF_INSTALL_COMPILED_EXAMPLES)
     install(
       TARGETS ${output_name}
@@ -139,7 +100,6 @@ foreach(example ${LIEF_CPP_EXAMPLES})
   endif()
 endforeach()
 
-
 if (LIEF_INSTALL)
   install(
     DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
@@ -148,5 +108,3 @@ if (LIEF_INSTALL)
     FILES_MATCHING REGEX "(.*).(hpp|h|cpp)$"
   )
 endif()
-
-
