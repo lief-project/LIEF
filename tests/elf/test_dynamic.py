@@ -13,7 +13,7 @@ from utils import get_compiler, is_linux
 if not is_linux():
     pytest.skip("requires Linux", allow_module_level=True)
 
-lief.logging.set_level(lief.logging.LEVEL.WARNING)
+lief.logging.set_level(lief.logging.LEVEL.WARN)
 
 COMPILER = get_compiler()
 

@@ -164,7 +164,7 @@ def main():
     verbosity.add_argument('--warn',
             dest='main_verbosity',
             action='store_const',
-            const=lief.logging.LEVEL.WARNING)
+            const=lief.logging.LEVEL.WARN)
 
     verbosity.add_argument('--err',
             dest='main_verbosity',
@@ -176,7 +176,7 @@ def main():
             action='store_const',
             const=lief.logging.LEVEL.CRITICAL)
 
-    parser.set_defaults(main_verbosity=lief.logging.LEVEL.WARNING)
+    parser.set_defaults(main_verbosity=lief.logging.LEVEL.WARN)
 
     args = parser.parse_args()
 
