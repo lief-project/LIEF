@@ -16,6 +16,7 @@
 #ifndef LIEF_ABSTRACT_HEADER_H
 #define LIEF_ABSTRACT_HEADER_H
 
+#include <cstdint> // for uint64_t
 #include <ostream>
 #include <set>
 
