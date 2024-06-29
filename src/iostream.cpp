@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 #include <iterator>
-#include <ostream>
 #include "LIEF/iostream.hpp"
 
 namespace LIEF {
-vector_iostream::vector_iostream() = default;
-vector_iostream::vector_iostream(bool endian_swap) :
-  endian_swap_{endian_swap}
-{}
 
 size_t vector_iostream::uleb128_size(uint64_t value) {
   size_t size = 0;
@@ -45,12 +40,7 @@ size_t vector_iostream::sleb128_size(int64_t value) {
   return size;
 }
 
-
-void vector_iostream::reserve(size_t size) {
-  raw_.reserve(size);
-}
 vector_iostream& vector_iostream::put(uint8_t c) {
-
   if (raw_.size() < (static_cast<size_t>(tellp()) + 1)) {
     raw_.resize(static_cast<size_t>(tellp()) + 1);
   }
@@ -58,6 +48,7 @@ vector_iostream& vector_iostream::put(uint8_t c) {
   current_pos_ += 1;
   return *this;
 }
+
 vector_iostream& vector_iostream::write(const uint8_t* s, std::streamsize n) {
   const auto pos = static_cast<size_t>(tellp());
   if (raw_.size() < (pos + n)) {
@@ -84,11 +75,6 @@ vector_iostream& vector_iostream::write(std::vector<uint8_t> s) {
 
   current_pos_ += s.size();
   return *this;
-}
-
-vector_iostream& vector_iostream::write_sized_int(uint64_t value, size_t size) {
-  const uint64_t stack_val = value;
-  return write(reinterpret_cast<const uint8_t*>(&stack_val), size);
 }
 
 vector_iostream& vector_iostream::write(const std::string& s) {
@@ -144,67 +130,12 @@ vector_iostream& vector_iostream::write_sleb128(int64_t value) {
   return *this;
 }
 
-
-vector_iostream& vector_iostream::get(std::vector<uint8_t>& c) {
-  c = raw_;
-  return *this;
-}
-
-vector_iostream& vector_iostream::move(std::vector<uint8_t>& c) {
-  c = std::move(raw_);
-  return *this;
-}
-
-vector_iostream& vector_iostream::flush() {
-  return *this;
-}
-
-const std::vector<uint8_t>& vector_iostream::raw() const {
-  return raw_;
-}
-
-std::vector<uint8_t>& vector_iostream::raw() {
-  return raw_;
-}
-
-size_t vector_iostream::size() const {
-  return raw_.size();
-}
-
-// seeks:
-vector_iostream::pos_type vector_iostream::tellp() {
-  return current_pos_;
-}
-vector_iostream& vector_iostream::seekp(vector_iostream::pos_type p) {
-  current_pos_ = p;
-  return *this;
-}
 vector_iostream& vector_iostream::seekp(vector_iostream::off_type p, std::ios_base::seekdir dir) {
   switch (dir) {
-    case std::ios_base::beg:
-      {
-        current_pos_ = p;
-        break;
-      }
-
-
-    case std::ios_base::end:
-      {
-        //current_pos_ = p;
-        break;
-      }
-
-
-    case std::ios_base::cur:
-      {
-        current_pos_ += p;
-        break;
-      }
-
-    default:
-      {
-        break;
-      }
+    case std::ios_base::beg: current_pos_ = p; return *this;
+    case std::ios_base::end: return *this;
+    case std::ios_base::cur: current_pos_ += p; return *this;
+    default: return *this;
   }
 
   return *this;
@@ -221,24 +152,5 @@ vector_iostream& vector_iostream::align(size_t alignment, uint8_t fill) {
 
   return *this;
 }
-
-
-void vector_iostream::set_endian_swap(bool swap) {
-  endian_swap_ = swap;
-}
-
-vector_iostream& vector_iostream::write(size_t count, uint8_t value) {
-  raw_.insert(std::end(raw_), count, value);
-  current_pos_ += count;
-  return *this;
-}
-
-
-vector_iostream& vector_iostream::write(const vector_iostream& other) {
-  return write(other.raw());
-}
-
-
-
 }
 

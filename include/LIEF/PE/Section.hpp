@@ -203,12 +203,14 @@ class LIEF_API Section : public LIEF::Section {
   void add_type(PE_SECTION_TYPES type);
   void remove_type(PE_SECTION_TYPES type);
 
-  void remove_characteristic(Section::CHARACTERISTICS characteristic) {
+  Section& remove_characteristic(CHARACTERISTICS characteristic) {
     characteristics_ &= ~static_cast<size_t>(characteristic);
+    return *this;
   }
 
-  void add_characteristic(Section::CHARACTERISTICS characteristic) {
+  Section& add_characteristic(CHARACTERISTICS characteristic) {
     characteristics_ |= static_cast<size_t>(characteristic);
+    return *this;
   }
 
   void accept(Visitor& visitor) const override;
