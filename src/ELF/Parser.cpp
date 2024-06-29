@@ -557,9 +557,11 @@ std::unique_ptr<Note> Parser::get_note(uint32_t type, std::string name,
 #endif
 
 ok_error_t Parser::parse_notes(uint64_t offset, uint64_t size) {
+  static constexpr auto ERROR_THRESHOLD = 6;
   LIEF_DEBUG("== Parsing note segment ==");
   stream_->setpos(offset);
   uint64_t last_offset = offset + size;
+  size_t error_count = 0;
 
   if (!*stream_) {
     return make_error_code(lief_errors::read_error);
@@ -583,6 +585,12 @@ ok_error_t Parser::parse_notes(uint64_t offset, uint64_t size) {
       }
     } else {
       LIEF_WARN("Note not parsed!");
+      ++error_count;
+    }
+
+    if (error_count > ERROR_THRESHOLD) {
+      LIEF_ERR("Too many errors while trying to parse notes");
+      return make_error_code(lief_errors::corrupted);
     }
 
     if (static_cast<int64_t>(stream_->pos()) <= current_pos) {
