@@ -27,7 +27,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.python-version }}
           architecture: ${{ matrix.arch }}
@@ -87,7 +87,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Set up Python ${{ env.python-test-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.python-test-version }}
           architecture: ${{ matrix.arch }}
@@ -151,7 +151,7 @@ jobs:
     needs: build-sdk
     strategy:
       matrix:
-        python-version: [3.8, 3.9, '3.10', '3.11', '3.12']
+        python-version: ['3.13.0-beta.2']
         arch: ['x86', 'x64']
       fail-fast: false
     env:
@@ -162,7 +162,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           architecture: ${{ matrix.arch }}

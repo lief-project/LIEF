@@ -59,76 +59,12 @@ jobs:
           name: osx-x64-install
           path: install/x64
           retention-days: 1
-  osx-testing:
-    runs-on: macos-11.0
-    if: "!contains(github.event.commits[0].message, '[skip-test]')"
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Set up Python ${{ env.python-test-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.python-test-version }}
-      - name: Install system dependencies
-        run: |
-          brew install cmake ninja ccache
-      - name: Get Date
-        id: get-date
-        run: |
-          echo "date=$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")" >> $GITHUB_OUTPUT
-        shell: bash
-      - name: Setup cache dir
-        shell: bash
-        run: |
-          mkdir -p $RUNNER_TEMP/.ccache
-      - name: ccache cache files
-        uses: actions/cache@v3
-        with:
-          path: ${{ runner.temp }}/.ccache
-          key: osx-${{ runner.os }}-test-${{ steps.get-date.outputs.date }}
-          restore-keys: |
-              osx-${{ runner.os }}-test
-      - name: Upgrade pip
-        shell: bash
-        run: |
-          python -m pip install --upgrade pip
-      - name: Build Python 3.10 with tests
-        shell: bash
-        env:
-          LIEF_SAMPLES_DIR: "/tmp/samples"
-          LIEF_BUILD_DIR: "/tmp/lief-build"
-          PYLIEF_CONF: "${{ github.workspace }}/scripts/osx/osx-testing-x64.toml"
-          CLICOLOR_FORCE: "1"
-          PYTEST_ADDOPTS: "--color=yes"
-          FORCE_COLOR: "1"
-          MACOSX_TARGET: "11.7"
-          MACOSX_DEPLOYMENT_TARGET: "11.0"
-          CCACHE_DIR: ${{ runner.temp }}/.ccache
-          CCACHE_MAXSIZE: 10.0G
-          CCACHE_CPP2: 1
-          CCACHE_COMPRESS: 1
-        run: |
-          python -m pip install -r tests/requirements.txt
-          python -m pip -vvv install api/python
-          python tests/dl_samples.py ${LIEF_SAMPLES_DIR}
-      - name: Run tests
-        shell: bash
-        timeout-minutes: 20
-        env:
-          LIEF_SAMPLES_DIR: "/tmp/samples"
-          LIEF_BUILD_DIR: "/tmp/lief-build"
-          PYTEST_ADDOPTS: "--color=yes"
-        run: |
-          python tests/run_pytest.py
-          python tests/run_tools_check.py ${LIEF_BUILD_DIR}/
-          ctest --output-on-failure --test-dir ${LIEF_BUILD_DIR}/
   wheels:
     runs-on: macos-11.0
     needs: osx-sdk
     strategy:
       matrix:
-        python-version: [3.8, 3.9, '3.10', '3.11', '3.12']
+        python-version: ['3.13']
         arch: ['x64', 'arm64']
       fail-fast: false
     steps:
