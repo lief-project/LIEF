@@ -616,8 +616,7 @@ void Binary::shift_command(size_t width, uint64_t from_offset) {
     }
 
     for (std::unique_ptr<Symbol>& s : symbols_) {
-      static constexpr size_t N_TYPE = 0x0e;
-      if (static_cast<N_LIST_TYPES>(s->type() & N_TYPE) == N_LIST_TYPES::N_SECT) {
+      if (s->type() == Symbol::TYPE::SECTION) {
         uint64_t value = s->value();
         if (value > from_offset) {
           s->value(value + width);

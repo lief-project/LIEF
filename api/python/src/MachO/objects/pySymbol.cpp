@@ -56,6 +56,14 @@ void create<Symbol>(nb::module_& m) {
     .value("DYLD_BIND",      Symbol::ORIGIN::DYLD_BIND)
     .value("LC_SYMTAB",      Symbol::ORIGIN::LC_SYMTAB)
   ;
+
+  enum_<Symbol::TYPE>(symbol, "TYPE")
+    .value("UNDEFINED",    Symbol::TYPE::UNDEFINED)
+    .value("ABSOLUTE_SYM", Symbol::TYPE::ABSOLUTE_SYM)
+    .value("SECTION",      Symbol::TYPE::SECTION)
+    .value("PREBOUND",     Symbol::TYPE::PREBOUND)
+    .value("INDIRECT",     Symbol::TYPE::INDIRECT)
+  ;
   symbol
     .def(nb::init<>())
 
@@ -67,9 +75,19 @@ void create<Symbol>(nb::module_& m) {
         &Symbol::category,
         "Category of the symbol according to the `LC_DYSYMTAB` command"_doc)
 
-    .def_prop_rw("type",
+    .def_prop_rw("raw_type",
+        nb::overload_cast<>(&Symbol::raw_type, nb::const_),
+        nb::overload_cast<uint8_t>(&Symbol::raw_type),
+        R"doc(
+        Raw value of ``nlist_xx.n_type``
+        )doc"_doc
+    )
+
+    .def_prop_ro("type",
         nb::overload_cast<>(&Symbol::type, nb::const_),
-        nb::overload_cast<uint8_t>(&Symbol::type))
+        R"doc(
+        Type as defined by ``nlist_xx.n_type & N_TYPE``
+        )doc"_doc)
 
     .def_prop_rw("numberof_sections",
         nb::overload_cast<>(&Symbol::numberof_sections, nb::const_),

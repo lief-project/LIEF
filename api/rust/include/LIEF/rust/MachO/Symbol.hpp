@@ -28,7 +28,7 @@ class MachO_Symbol : public AbstractSymbol {
   public:
   MachO_Symbol(const lief_t& sym) : AbstractSymbol(sym) {}
 
-  uint8_t get_type() const { return impl().type(); }
+  uint8_t get_type() const { return impl().raw_type(); }
   uint8_t numberof_sections() const { return impl().numberof_sections(); };
   uint16_t description() const { return impl().description(); };
   auto origin() const { return to_int(impl().origin()); };

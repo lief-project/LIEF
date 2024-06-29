@@ -33,18 +33,6 @@ const char* to_string(MACHO_TYPES e) {
   return it == enumStrings.end() ? "Out of range" : it->second;
 }
 
-const char* to_string(N_LIST_TYPES e) {
-  CONST_MAP(N_LIST_TYPES, const char*, 5) enumStrings {
-    { N_LIST_TYPES::N_UNDF, "UNDF"},
-    { N_LIST_TYPES::N_ABS,  "ABS"},
-    { N_LIST_TYPES::N_SECT, "SECT"},
-    { N_LIST_TYPES::N_PBUD, "PBUD"},
-    { N_LIST_TYPES::N_INDR, "INDR"}
-  };
-  const auto it = enumStrings.find(e);
-  return it == enumStrings.end() ? "Out of range" : it->second;
-}
-
 const char* to_string(X86_RELOCATION e) {
   CONST_MAP(X86_RELOCATION, const char*, 6) enumStrings {
     { X86_RELOCATION::GENERIC_RELOC_VANILLA,        "VANILLA"        },

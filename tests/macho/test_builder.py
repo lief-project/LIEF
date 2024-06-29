@@ -458,7 +458,7 @@ def test_break(tmp_path):
         name = list(sym.name)
         random.shuffle(name)
         sym.name = "_" + "".join(name)
-        sym.type = 0xf
+        sym.raw_type = 0xf
         sym.description = 0x300
         sym.numberof_sections = 1
         sym.value += 2

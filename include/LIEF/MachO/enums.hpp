@@ -31,16 +31,6 @@ enum class MACHO_TYPES: uint32_t {
   FAT_CIGAM   = 0xBEBAFECAu  ///< little-endian fat magic
 };
 
-//! @brief Constants for the "n_type & SYMBOL_TYPES::N_TYPE" in nlist
-//! @see nlist
-enum class N_LIST_TYPES: uint64_t  {
-  N_UNDF = 0x0u, ///< The symbol is undefined. It is referenced in a different module.
-  N_ABS  = 0x2u, ///< The symbol is absolute. The linker doesn't update his value.
-  N_SECT = 0xeu, ///< The symbol is defined in the section number given in nlist_base.n_sect .
-  N_PBUD = 0xcu, ///< The symbol is undefined and the image is using a prebound value for the symbol. Set the n_sect field to NO_SECT .
-  N_INDR = 0xau  ///< The symbol is defined to be the same as another symbol. The n_value field is an index into the string table specifying the name of the other symbol. When that symbol is linked, both this and the other symbol point to the same defined type and value.
-};
-
 enum class X86_RELOCATION  {
   GENERIC_RELOC_VANILLA        = 0, /**< A generic relocation entry for both addresses contained in data and addresses contained in CPU instructions. */
   GENERIC_RELOC_PAIR           = 1, /**< The second relocation entry of a pair. */

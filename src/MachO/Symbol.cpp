@@ -73,15 +73,6 @@ void Symbol::swap(Symbol& other) noexcept {
   std::swap(origin_,            other.origin_);
 }
 
-
-bool Symbol::is_external() const {
-  static constexpr size_t N_TYPE = 0x0e;
-  return static_cast<N_LIST_TYPES>(type_ & N_TYPE) == N_LIST_TYPES::N_UNDF;
-    //(type_ & MACHO_SYMBOL_TYPES::N_EXT) == MACHO_SYMBOL_TYPES::N_EXT;
-    //(type_ & MACHO_SYMBOL_TYPES::N_PEXT) == 0;
-}
-
-
 std::string Symbol::demangled_name() const {
 #if defined(__unix__)
   int status;
@@ -128,7 +119,7 @@ std::ostream& operator<<(std::ostream& os, const Symbol& symbol) {
 
   os << fmt::format(
     "name={}, type={}, desc={}, value={}",
-    symbol.name(), symbol.type(), symbol.description(), symbol.value()
+    symbol.name(), symbol.raw_type(), symbol.description(), symbol.value()
   ) << '\n';
   return os;
 }
@@ -166,5 +157,24 @@ const char* to_string(Symbol::CATEGORY e) {
   }
   return "UNKNOWN";
 }
+
+const char* to_string(Symbol::TYPE e) {
+  #define ENTRY(X) std::pair(Symbol::TYPE::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(UNDEFINED),
+    ENTRY(ABSOLUTE_SYM),
+    ENTRY(SECTION),
+    ENTRY(UNDEFINED),
+    ENTRY(PREBOUND),
+    ENTRY(INDIRECT),
+  };
+  #undef ENTRY
+
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
+  }
+  return "UNKNOWN";
+}
+
 } // namespace MachO
 } // namespace LIEF

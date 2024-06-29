@@ -29,7 +29,7 @@ void init_c_symbols(Macho_Binary_t* c_binary, Binary* binary) {
     c_binary->symbols[i] = static_cast<Macho_Symbol_t*>(malloc(sizeof(Macho_Symbol_t)));
 
     c_binary->symbols[i]->name              = symbol.name().c_str();
-    c_binary->symbols[i]->type              = symbol.type();
+    c_binary->symbols[i]->type              = symbol.raw_type();
     c_binary->symbols[i]->numberof_sections = symbol.numberof_sections();
     c_binary->symbols[i]->description       = symbol.description();
     c_binary->symbols[i]->value             = symbol.value();

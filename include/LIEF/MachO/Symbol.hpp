@@ -53,7 +53,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
 
   //! Category of the symbol when the symbol comes from the `LC_SYMTAB` command.
   //! The category is defined according to the `LC_DYSYMTAB` (DynamicSymbolCommand) command.
-  enum class CATEGORY {
+  enum class CATEGORY : uint32_t {
     NONE = 0,
     LOCAL,
     EXTERNAL,
@@ -63,12 +63,23 @@ class LIEF_API Symbol : public LIEF::Symbol {
     INDIRECT_LOCAL,
   };
 
-  enum class ORIGIN {
+  enum class ORIGIN : uint32_t {
     UNKNOWN     = 0,
     DYLD_EXPORT = 1,
     DYLD_BIND   = 2, /// The symbol comes from the binding opcodes
     LC_SYMTAB   = 3,
   };
+
+  enum class TYPE : uint32_t{
+    UNDEFINED     = 0x0u, ///< The symbol is undefined. It is referenced in a different module.
+    ABSOLUTE_SYM  = 0x2u, ///< The symbol is absolute. The linker doesn't update his value.
+    SECTION       = 0xeu, ///< The symbol is defined in the section number given in nlist_base.n_sect .
+    PREBOUND      = 0xcu, ///< The symbol is undefined and the image is using a prebound value for the symbol. Set the n_sect field to NO_SECT .
+    INDIRECT      = 0xau  ///< The symbol is defined to be the same as another symbol. The n_value field is an index into the string table specifying the name of the other symbol. When that symbol is linked, both this and the other symbol point to the same defined type and value.
+  };
+
+  //! Same as N_TYPE
+  static constexpr uint32_t TYPE_MASK = 0x0e;
 
   Symbol() = default;
 
@@ -81,8 +92,14 @@ class LIEF_API Symbol : public LIEF::Symbol {
 
   ~Symbol() override = default;
 
-  uint8_t type() const {
+  //! Raw value of `nlist_xx.n_type`
+  uint8_t raw_type() const {
     return type_;
+  }
+
+  //! Type as defined by `nlist_xx.n_type & N_TYPE`
+  TYPE type() const {
+    return TYPE(type_ & TYPE_MASK);
   }
 
   //! It returns the number of sections in which this symbol can be found.
@@ -131,9 +148,9 @@ class LIEF_API Symbol : public LIEF::Symbol {
   std::string demangled_name() const;
 
   //! True if the symbol is defined as an external symbol.
-  //!
-  //! This function check if the flag N_LIST_TYPES::N_UNDF is set
-  bool is_external() const;
+  bool is_external() const {
+    return type() == TYPE::UNDEFINED;
+  }
 
   //! Return the library in which the symbol is defined.
   //! It returns a null pointer if the library can't be resolved
@@ -155,7 +172,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
     return category_;
   }
 
-  void type(uint8_t type) {
+  void raw_type(uint8_t type) {
     type_ = type;
   }
   void numberof_sections(uint8_t nbsections) {
@@ -195,6 +212,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
 
 LIEF_API const char* to_string(Symbol::ORIGIN e);
 LIEF_API const char* to_string(Symbol::CATEGORY e);
+LIEF_API const char* to_string(Symbol::TYPE e);
 
 }
 }
