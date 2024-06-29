@@ -17,6 +17,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
+#include "LIEF/PE/LoadConfigurations.hpp"
 #include "LIEF/hash.hpp"
 #include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/debug/Debug.hpp"
@@ -100,6 +101,17 @@ TEST_CASE("lief.test.pe", "[lief][test][pe]") {
     std::string path = test::get_sample("PE", "PE64_x86-64_binary_mfc-application.exe");
     std::unique_ptr<LIEF::Binary> pe = LIEF::Parser::parse(path);
     REQUIRE(LIEF::PE::Binary::classof(pe.get()));
+  }
+
+  SECTION("load_configuration.cast") {
+    std::string path = test::get_sample("PE", "PE64_x86-64_binary_WinApp.exe");
+    std::unique_ptr<LIEF::PE::Binary> pe = LIEF::PE::Parser::parse(path);
+    const LIEF::PE::LoadConfiguration* lc = pe->load_configuration();
+    REQUIRE(LIEF::PE::LoadConfigurationV6::classof(lc));
+    REQUIRE(lc->version() == LIEF::PE::LoadConfigurationV6::WIN_VERSION);
+    REQUIRE(LIEF::PE::LoadConfigurationV10::WIN_VERSION > LIEF::PE::LoadConfigurationV6::WIN_VERSION);
+    REQUIRE(LIEF::PE::LoadConfiguration::cast<LIEF::PE::LoadConfigurationV11>(lc) == nullptr);
+    REQUIRE(LIEF::PE::LoadConfiguration::cast<LIEF::PE::LoadConfigurationV4>(lc) != nullptr);
   }
 }
 

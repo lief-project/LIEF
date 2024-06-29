@@ -269,6 +269,14 @@ class LIEF_API LoadConfiguration : public Object {
     return true;
   }
 
+  template<class T>
+  static const T* cast(const LoadConfiguration* config) {
+    if (config->version() >= T::WIN_VERSION) {
+      return static_cast<const T*>(config);
+    }
+    return nullptr;
+  }
+
   void accept(Visitor& visitor) const override;
 
   virtual std::ostream& print(std::ostream& os) const;
