@@ -128,6 +128,7 @@ ok_error_t BinaryParser::init_and_parse() {
   is64_          = type == MACHO_TYPES::MH_MAGIC_64 || type == MACHO_TYPES::MH_CIGAM_64;
   binary_->is64_ = is64_;
   type_          = type;
+  binary_->original_size_ = stream_->size();
 
   return is64_ ? parse<details::MachO64>() :
                  parse<details::MachO32>();

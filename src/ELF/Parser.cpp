@@ -286,7 +286,7 @@ ok_error_t Parser::init() {
     return make_error_code(lief_errors::parsing_error);
   }
 
-  binary_->original_size_ = binary_size_;
+  binary_->original_size_ = stream_->size();
 
   auto res = DataHandler::Handler::from_stream(stream_);
   if (!res) {

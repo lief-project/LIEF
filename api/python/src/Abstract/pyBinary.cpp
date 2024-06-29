@@ -239,6 +239,10 @@ void create<Binary>(nb::module_& m) {
         &Binary::imagebase,
         "Default image base (i.e. if the ASLR is not enabled)"_doc)
 
+    .def_prop_ro("original_size",
+        nb::overload_cast<>(&LIEF::Binary::original_size, nb::const_),
+        "Original size of the binary"_doc)
+
     LIEF_DEFAULT_STR(Binary);
 
 }

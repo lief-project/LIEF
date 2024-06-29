@@ -84,15 +84,12 @@ struct ThreadedBindData {
 };
 }
 
-
-
 template<class MACHO_T>
 ok_error_t BinaryParser::parse() {
   parse_header<MACHO_T>();
   if (binary_->header().nb_cmds() > 0) {
     parse_load_commands<MACHO_T>();
   }
-
 
   /*
    * We must before this post-processing BEFORE parsing

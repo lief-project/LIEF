@@ -74,11 +74,9 @@ Parser::Parser(std::vector<uint8_t> data) :
   Parser{std::make_unique<VectorStream>(std::move(data))}
 {}
 
-
-Parser::Parser(std::unique_ptr<BinaryStream> stream)
-  : stream_{std::move(stream)}
+Parser::Parser(std::unique_ptr<BinaryStream> stream) :
+  stream_{std::move(stream)}
 {}
-
 
 void Parser::init(const ParserConfig& config) {
   stream_->setpos(0);
@@ -87,9 +85,11 @@ void Parser::init(const ParserConfig& config) {
     LIEF_ERR("Can't determine PE type.");
     return;
   }
+
   type_   = type.value();
   binary_ = std::unique_ptr<Binary>(new Binary{});
   binary_->type_ = type_;
+  binary_->original_size_ = stream_->size();
   config_ = config;
 
   if (type_ == PE_TYPE::PE32) {
@@ -97,7 +97,6 @@ void Parser::init(const ParserConfig& config) {
   } else {
     parse<details::PE64>();
   }
-
 }
 
 ok_error_t Parser::parse_dos_stub() {

@@ -6,6 +6,7 @@ import lief
 import os
 import pytest
 import stat
+from pathlib import Path
 
 from utils import get_sample, is_windows, win_exec
 
@@ -33,6 +34,8 @@ def test_unwind():
 
     path = get_sample("PE/PE64_x86-64_binary_cmd.exe")
     sample = lief.parse(path)
+
+    assert sample.original_size == Path(path).stat().st_size
 
     functions = sorted(sample.functions, key=lambda f: f.address)
 

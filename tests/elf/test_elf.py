@@ -228,6 +228,8 @@ def test_unwind_arm():
     sample = "ELF/ELF32_ARM_binary_ls.bin"
     ls = lief.ELF.parse(get_sample(sample))
 
+    assert ls.original_size == Path(get_sample(sample)).stat().st_size
+
     functions = sorted(ls.functions, key=lambda f: f.address)
 
     assert len(functions) == 265

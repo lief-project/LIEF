@@ -171,7 +171,9 @@ ok_error_t Parser::build_fat() {
       continue;
     }
 
-    std::unique_ptr<Binary> bin = BinaryParser::parse(std::move(macho_data), offset, config_);
+    std::unique_ptr<Binary> bin = BinaryParser::parse(
+        std::move(macho_data), offset, config_
+    );
     if (bin == nullptr) {
       LIEF_ERR("Can't parse the binary at the index #{:d}", i);
       continue;
@@ -194,7 +196,9 @@ ok_error_t Parser::build() {
       LIEF_WARN("Errors while parsing the Fat MachO");
     }
   } else { // fit binary
+    const size_t original_size = stream_->size();
     std::unique_ptr<Binary> bin = BinaryParser::parse(std::move(stream_), 0, config_);
+    bin->original_size_ = original_size;
     if (bin == nullptr) {
       return make_error_code(lief_errors::parsing_error);
     }
