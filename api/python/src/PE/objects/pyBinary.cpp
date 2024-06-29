@@ -397,7 +397,7 @@ void create<Binary>(nb::module_& m) {
           const span<const uint8_t> content = self.dos_stub();
           return nb::memoryview::from_memory(content.data(), content.size());
         },
-        nb::overload_cast<const std::vector<uint8_t>&>(&Binary::dos_stub),
+        nb::overload_cast<std::vector<uint8_t>>(&Binary::dos_stub),
         "DOS stub content as a ``list`` of bytes"_doc)
 
     .def("add_import_function",

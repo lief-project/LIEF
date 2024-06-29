@@ -16,8 +16,6 @@
 #ifndef LIEF_PE_BINARY_H
 #define LIEF_PE_BINARY_H
 
-#include <map>
-
 #include "LIEF/PE/Header.hpp"
 #include "LIEF/PE/OptionalHeader.hpp"
 #include "LIEF/PE/DosHeader.hpp"
@@ -359,8 +357,13 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   //! Return binary Symbols
-  std::vector<Symbol>& symbols();
-  const std::vector<Symbol>& symbols() const;
+  std::vector<Symbol>& symbols() {
+    return symbols_;
+  }
+
+  const std::vector<Symbol>& symbols() const {
+    return symbols_;
+  }
 
   //! Return resources as a tree or a nullptr if there is no resources
   ResourceNode* resources() {
@@ -487,7 +490,9 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   //! Update the DOS stub content
-  void dos_stub(const std::vector<uint8_t>& content);
+  void dos_stub(std::vector<uint8_t> content) {
+    dos_stub_ = std::move(content);
+  }
 
   // Rich Header
   // -----------
@@ -573,13 +578,18 @@ class LIEF_API Binary : public LIEF::Binary {
   ImportEntry* add_import_function(const std::string& library, const std::string& function);
 
   //! Add an imported library (i.e. `DLL`) to the binary
-  Import& add_library(const std::string& name);
+  Import& add_library(const std::string& name) {
+    imports_.emplace_back(name);
+    return imports_.back();
+  }
 
   //! Remove the library with the given `name`
   void remove_library(const std::string& name);
 
   //! Remove all libraries in the binary
-  void remove_all_libraries();
+  void remove_all_libraries() {
+    imports_.clear();
+  }
 
   //! Reconstruct the binary object and write the raw PE in `filename`
   //!
@@ -623,13 +633,19 @@ class LIEF_API Binary : public LIEF::Binary {
       Binary::VA_TYPES addr_type = Binary::VA_TYPES::AUTO) const override;
 
   //! Return the binary's entrypoint (It is the same value as OptionalHeader::addressof_entrypoint
-  uint64_t entrypoint() const override;
+  uint64_t entrypoint() const override {
+    return optional_header_.imagebase() + optional_header_.addressof_entrypoint();
+  }
 
   //! Check if the binary is position independent
-  bool is_pie() const override;
+  bool is_pie() const override {
+    return optional_header_.has(OptionalHeader::DLL_CHARACTERISTICS::DYNAMIC_BASE);
+  }
 
   //! Check if the binary uses ``NX`` protection
-  bool has_nx() const override;
+  bool has_nx() const override {
+    return optional_header_.has(OptionalHeader::DLL_CHARACTERISTICS::NX_COMPAT);
+  }
 
   //! Return the list of the binary constructors.
   //!

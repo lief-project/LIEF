@@ -575,7 +575,6 @@ void Binary::remove_all_relocations() {
   relocations_.clear();
 }
 
-
 LIEF::Binary::relocations_t Binary::get_abstract_relocations() {
   LIEF::Binary::relocations_t abstract_relocs;
   for (Relocation& relocation : relocations()) {
@@ -601,17 +600,8 @@ ImportEntry* Binary::add_import_function(const std::string& library, const std::
   return it_import->get_entry(function);
 }
 
-Import& Binary::add_library(const std::string& name) {
-  imports_.emplace_back(name);
-  return imports_.back();
-}
-
 void Binary::remove_library(const std::string&) {
   LIEF_ERR("Removing a library from a PE file is not implemented yet");
-}
-
-void Binary::remove_all_libraries() {
-  imports_.clear();
 }
 
 uint32_t Binary::predict_function_rva(const std::string& library, const std::string& function) {
@@ -1111,17 +1101,6 @@ Signature::VERIFICATION_FLAGS Binary::verify_signature(const Signature& sig, Sig
   return flags;
 }
 
-
-std::vector<Symbol>& Binary::symbols() {
-  return const_cast<std::vector<Symbol>&>(static_cast<const Binary*>(this)->symbols());
-}
-
-
-const std::vector<Symbol>& Binary::symbols() const {
-  return symbols_;
-}
-
-
 LIEF::Binary::functions_t Binary::get_abstract_exported_functions() const {
   LIEF::Binary::functions_t result;
   if (const Export* exp = get_export()) {
@@ -1257,12 +1236,6 @@ LIEF::Header Binary::get_abstract_header() const {
 }
 
 
-// LIEF Interface
-// ==============
-uint64_t Binary::entrypoint() const {
-  return optional_header().imagebase() + optional_header().addressof_entrypoint();
-}
-
 void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_value, LIEF::Binary::VA_TYPES addr_type) {
   uint64_t rva = address;
 
@@ -1389,18 +1362,6 @@ span<const uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_ad
 
   return {content.data() + offset, static_cast<size_t>(checked_size)};
 
-}
-
-bool Binary::is_pie() const {
-  return optional_header().has(OptionalHeader::DLL_CHARACTERISTICS::DYNAMIC_BASE);
-}
-
-bool Binary::has_nx() const {
-  return optional_header().has(OptionalHeader::DLL_CHARACTERISTICS::NX_COMPAT);
-}
-
-void Binary::dos_stub(const std::vector<uint8_t>& content) {
-  dos_stub_ = content;
 }
 
 void Binary::rich_header(const RichHeader& rich_header) {
