@@ -15,12 +15,14 @@
  */
 #ifndef LIEF_PE_GENERIC_CONTENT_H
 #define LIEF_PE_GENERIC_CONTENT_H
+
+#include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
 #include "LIEF/PE/signature/ContentInfo.hpp"
 
 namespace LIEF {
 namespace PE {
-class GenericContent : public ContentInfo::Content {
+class LIEF_API GenericContent : public ContentInfo::Content {
   friend class SignatureParser;
 
   public:

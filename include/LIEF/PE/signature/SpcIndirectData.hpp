@@ -20,12 +20,13 @@
 #include <vector>
 #include <cstdint>
 
+#include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
 #include "LIEF/PE/signature/ContentInfo.hpp"
 
 namespace LIEF {
 namespace PE {
-class SpcIndirectData : public ContentInfo::Content {
+class LIEF_API SpcIndirectData : public ContentInfo::Content {
   friend class SignatureParser;
 
   public:

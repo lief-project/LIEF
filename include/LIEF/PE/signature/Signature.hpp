@@ -24,7 +24,6 @@
 #include "LIEF/PE/signature/SignerInfo.hpp"
 #include "LIEF/PE/signature/ContentInfo.hpp"
 
-#include "LIEF/PE/signature/types.hpp"
 #include "LIEF/PE/enums.hpp"
 
 #include "LIEF/iterators.hpp"

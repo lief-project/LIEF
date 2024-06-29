@@ -17,7 +17,6 @@
 #define LIEF_PE_ATTRIBUTES_MS_SPC_NESTED_SIG_H
 
 #include "LIEF/visibility.h"
-#include "LIEF/errors.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
 

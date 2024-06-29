@@ -17,7 +17,6 @@
 #define LIEF_PE_ATTRIBUTES_PKCS9_AT_SEQUENCE_NUMBER_H
 
 #include "LIEF/visibility.h"
-#include "LIEF/errors.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
 
 namespace LIEF {

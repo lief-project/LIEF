@@ -17,7 +17,6 @@
 #define LIEF_PE_ATTRIBUTES_PKCS9_MESSAGE_DIGEST_H
 
 #include "LIEF/visibility.h"
-#include "LIEF/errors.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/span.hpp"
 

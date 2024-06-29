@@ -19,7 +19,6 @@
 #include <vector>
 
 #include "LIEF/visibility.h"
-#include "LIEF/errors.hpp"
 #include "LIEF/span.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/types.hpp"
