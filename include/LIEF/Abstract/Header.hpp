@@ -18,6 +18,7 @@
 
 #include <ostream>
 #include <set>
+#include <cstdint>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
