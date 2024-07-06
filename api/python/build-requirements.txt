@@ -1,11 +1,10 @@
 tomli==2.0.1
-scikit-build-core==0.9.3
+scikit-build-core==0.9.8
 # For Ninja: msvc.msvc14_get_vc_env
-setuptools==69.1.0
+setuptools==70.2.0
 # For the "env" feature
-pydantic==2.7.1
-pydantic-core==2.18.2
+pydantic==2.8.2
 # Implicit from scikit-build-core
 pathspec==0.12.1
-build==1.0.3
-wheel==0.42.0
+build==1.2.1
+wheel==0.43.0
