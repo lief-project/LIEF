@@ -28,6 +28,10 @@
 #include "messages.hpp"
 #include "internal_utils.hpp"
 
+namespace LIEF::details {
+class DebugInfo {};
+}
+
 namespace LIEF::dwarf {
 
 namespace details {

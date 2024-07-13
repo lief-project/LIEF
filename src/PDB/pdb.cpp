@@ -33,6 +33,10 @@
 #include "messages.hpp"
 #include "internal_utils.hpp"
 
+namespace LIEF::details {
+class DebugInfo {};
+}
+
 namespace LIEF::pdb {
 namespace details {
 class CompilationUnit {};
