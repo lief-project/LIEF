@@ -18,8 +18,6 @@
 
 #include "nanobind/nanobind.h"
 #include "nanobind/make_iterator.h"
-#include <iostream>
-//#include "nanobind/nb_lib.h"
 
 namespace nb = nanobind;
 

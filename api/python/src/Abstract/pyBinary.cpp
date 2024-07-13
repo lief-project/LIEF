@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 #include <sstream>
-#include <iostream>
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
