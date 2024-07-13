@@ -19,6 +19,8 @@
 #include "nanobind/nanobind.h"
 #include "nanobind/make_iterator.h"
 
+#include <string>
+
 namespace nb = nanobind;
 
 namespace LIEF::py {
