@@ -22,13 +22,17 @@
 
 #include "LIEF/Abstract/Section.hpp"
 #include "LIEF/Abstract/Symbol.hpp"
+#include "LIEF/Abstract/DebugInfo.hpp"
 
 namespace LIEF {
+
+Binary::Binary(FORMATS fmt) :
+  format_{fmt}
+{}
+
 Binary::Binary() = default;
 
 Binary::~Binary() = default;
-Binary& Binary::operator=(const Binary&) = default;
-Binary::Binary(const Binary&) = default;
 
 Header Binary::header() const {
   return get_abstract_header();

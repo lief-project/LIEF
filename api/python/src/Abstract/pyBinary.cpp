@@ -17,6 +17,7 @@
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
+#include <nanobind/stl/unique_ptr.h>
 
 #include "Abstract/init.hpp"
 #include "pyLIEF.hpp"
@@ -33,6 +34,8 @@
 #include "LIEF/Abstract/Section.hpp"
 #include "LIEF/Abstract/Header.hpp"
 #include "LIEF/Abstract/EnumToString.hpp"
+
+#include "LIEF/Abstract/DebugInfo.hpp"
 
 namespace LIEF::py {
 template<>
@@ -69,6 +72,26 @@ void create<Binary>(nb::module_& m) {
   init_ref_iterator<Binary::it_relocations>(pybinary, "it_relocations");
 
   pybinary
+    .def_prop_ro("debug_info",
+        &Binary::debug_info,
+        R"doc(
+        Return debug info if present. It can be either a
+        :class:`lief.dwarf.DebugInfo` or a :class:`lief.pdb.DebugInfo`
+
+        For ELF and Mach-O binaries, it returns the given DebugInfo object **only**
+        if the binary embeds the DWARF debug info in the binary itself.
+
+        For PE file, this function tries to find the **external** PDB using
+        the :attr:`lief::PE.CodeViewPDB.filename` output (if present). One can also
+        use :func:`lief.pdb.load` to manually load a PDB.
+
+        .. warning::
+
+            This function requires LIEF's extended version otherwise it
+            **always** return a nullptr
+        )doc"_doc,
+        nb::keep_alive<0, 1>())
+
     .def_prop_ro("format",
         &Binary::format,
         "File format (:class:`~.FORMATS`) of the underlying binary."_doc)

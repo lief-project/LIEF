@@ -17,6 +17,10 @@ from sphinx.util import logging
 from sphinx.util.typing import OptionSpec
 from typing import Any
 
+from docutils.parsers.rst.roles import set_classes
+
+from docutils.nodes import emphasis, title, raw
+
 from sphinx.util import logging
 from sphinx.util.inspect import (
     getdoc,
@@ -37,7 +41,7 @@ DOXYGEN_XML_PATH = pathlib.Path(DOXYGEN_XML_PATH).resolve().absolute()
 extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.autodoc',
-    'sphinx_tabs.tabs',
+    "sphinx_tabs.tabs",
     'sphinx.ext.inheritance_diagram',
     'breathe', 'sphinx_lief'
 ]
@@ -157,6 +161,16 @@ def github_user(name, rawtext, text, lineno, inliner, options={}, content=[]):
                                  **options)
 
     return [issue_link], []
+
+def xmark(role, rawtext, text, lineno, inliner, options={}, content=[]):
+    options["format"] = "html"
+    node = raw(text='<b class="fa-solid fa-xmark text-danger  me-1"></b>', **options)
+    return [node], []
+
+def fa_check(role, rawtext, text, lineno, inliner, options={}, content=[]):
+    options["format"] = "html"
+    node = raw(text='<b class="fa-solid fa-check text-success me-1"></b>', **options)
+    return [node], []
 
 def clean_nanobind_typehint(typehint: str) -> str:
     typehint = RE_INST.sub("", typehint)
@@ -321,6 +335,8 @@ def setup(app):
     app.add_role('pr', pr_role)
     app.add_role('issue', issue_role)
     app.add_role('github_user', github_user)
+    app.add_role('xmark', xmark)
+    app.add_role('fa-check', fa_check)
     app.add_directive('lief-inheritance', LIEFInheritanceDiagram)
 
     app.connect('autodoc-process-signature', _on_process_signature)
@@ -338,6 +354,11 @@ linkcheck_ignore = [
     'http://github.com',
 ]
 
+rst_prolog = """
+.. |lief-extended-url| replace:: https://extended.lief.re/
+.. |lief-rust-doc-nightly| replace:: https://lief-rs.s3.fr-par.scw.cloud/doc/latest/lief/index.html
+"""
+
 
 pygments_style = "xcode"
 endpoint = "stable" if lief.__is_tagged__ else "latest"
@@ -345,7 +366,7 @@ endpoint = "stable" if lief.__is_tagged__ else "latest"
 html_theme_path = sphinx_lief.html_theme_path()
 html_context    = sphinx_lief.get_html_context()
 html_theme      = "sphinx_lief"
-html_base_url   = "https://lief-project.github.io/"
+html_base_url   = "https://lief.re/"
 base_url        = f"{html_base_url}/doc/{endpoint}"
 html_theme_options = {
     "commit": commit,

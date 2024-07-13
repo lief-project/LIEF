@@ -38,6 +38,15 @@ Welcome to LIEF's documentation!
   api/rust/index
 
 .. toctree::
+  :caption: <i class="fa-solid fa-hat-wizard">&nbsp;</i>LIEF Extended
+  :maxdepth: 1
+
+  extended/intro
+  extended/dwarf/index
+  extended/pdb/index
+  extended/objc/index
+
+.. toctree::
   :caption: <i class="fa-brands fa-space-awesome">&nbsp;</i>Extra Information
   :maxdepth: 1
 

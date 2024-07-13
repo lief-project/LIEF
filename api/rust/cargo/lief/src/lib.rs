@@ -68,6 +68,11 @@ pub mod macho;
 
 /// Module for the PE format
 pub mod pe;
+pub mod pdb;
+pub mod dwarf;
+pub mod objc;
+pub mod debug_info;
+pub mod range;
 
 /// Module for LIEF's error
 pub mod error;
@@ -76,6 +81,8 @@ pub mod logging;
 
 mod binary;
 mod common;
+
+pub mod debug_location;
 
 #[doc(inline)]
 pub use binary::Binary;
@@ -86,5 +93,16 @@ pub use generic::Relocation;
 #[doc(inline)]
 pub use error::Error;
 
+#[doc(inline)]
+pub use debug_info::DebugInfo;
 
+#[doc(inline)]
+pub use range::Range;
 
+#[doc(inline)]
+pub use debug_location::DebugLocation;
+
+/// Whether it is an extended version of LIEF
+pub fn is_extended() -> bool {
+    lief_ffi::is_extended()
+}

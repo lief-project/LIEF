@@ -14,3 +14,8 @@ target_sources(LIB_LIEF PRIVATE
 if(LIEF_ENABLE_JSON)
   target_sources(LIB_LIEF PRIVATE json.cpp)
 endif()
+
+
+if(NOT LIEF_DEBUG_INFO_SUPPORT)
+  target_sources(LIB_LIEF PRIVATE debug_info.cpp)
+endif()

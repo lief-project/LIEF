@@ -32,6 +32,7 @@ use lief_ffi as ffi;
 
 use crate::common::{into_optional, FromFFI};
 use crate::generic;
+use crate::objc::Metadata;
 
 /// This is the main interface to read and write Mach-O binary attributes.
 ///
@@ -211,6 +212,10 @@ impl Binary {
         self.ptr.support_arm64_ptr_auth()
     }
 
+    /// Return Objective-C metadata if present
+    pub fn objc_metadata(&self) -> Option<Metadata> {
+        into_optional(self.ptr.objc_metadata())
+    }
 }
 
 impl generic::Binary for Binary {

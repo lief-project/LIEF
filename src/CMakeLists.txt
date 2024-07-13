@@ -49,3 +49,12 @@ if(LIEF_ART)
   add_subdirectory(ART)
 endif()
 
+if(NOT LIEF_DEBUG_INFO_SUPPORT)
+  add_subdirectory(DWARF)
+  add_subdirectory(PDB)
+endif()
+
+if(NOT LIEF_OBJC_SUPPORT)
+  add_subdirectory(ObjC)
+endif()
+

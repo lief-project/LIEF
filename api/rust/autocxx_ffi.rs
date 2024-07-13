@@ -3,13 +3,22 @@ use autocxx::prelude::*;
 include_cpp! {
     #include "LIEF/rust/LIEF.hpp"
     #include "LIEF/rust/Stream.hpp"
+    #include "LIEF/rust/range.hpp"
     name!(autocxx_ffi)
+
+    generate!("is_extended")
 
     generate_pod!("Span")
     block_constructors!("Span")
 
+    generate_pod!("Range")
+    block_constructors!("Range")
+
     generate!("RustStream")
     block_constructors!("RustStream")
+
+    generate!("DebugLocation")
+    block_constructors!("DebugLocation")
 
     // -------------------------------------------------------------------------
     // Logging
@@ -31,6 +40,9 @@ include_cpp! {
 
     generate!("AbstractRelocation")
     block_constructors!("AbstractRelocation")
+
+    generate!("AbstracDebugInfo")
+    block_constructors!("AbstracDebugInfo")
 
     // -------------------------------------------------------------------------
     // ELF
@@ -400,6 +412,153 @@ include_cpp! {
     block_constructors!("MachO_VersionMin")
     generate!("MachO_UnknownCommand")
     block_constructors!("MachO_UnknownCommand")
+
+    // -------------------------------------------------------------------------
+    // PDB
+    // -------------------------------------------------------------------------
+    generate!("PDB_DebugInfo")
+    block_constructors!("PDB_DebugInfo")
+    generate!("PDB_DebugInfo_it_compilation_units")
+    block_constructors!("PDB_DebugInfo_it_compilation_units")
+    generate!("PDB_DebugInfo_it_types")
+    block_constructors!("PDB_DebugInfo_it_types")
+    generate!("PDB_DebugInfo_it_public_symbols")
+    block_constructors!("PDB_DebugInfo_it_public_symbols")
+    generate!("PDB_CompilationUnit")
+    block_constructors!("PDB_CompilationUnit")
+    generate!("PDB_PublicSymbol")
+    block_constructors!("PDB_PublicSymbol")
+    generate!("PDB_CompilationUnit_it_sources")
+    block_constructors!("PDB_CompilationUnit_it_sources")
+    generate!("PDB_CompilationUnit_it_functions")
+    block_constructors!("PDB_CompilationUnit_it_functions")
+    generate!("PDB_Function")
+    block_constructors!("PDB_Function")
+    generate!("PDB_Type")
+    block_constructors!("PDB_Type")
+    generate!("PDB_types_Simple")
+    block_constructors!("PDB_types_Simple")
+    generate!("PDB_types_Array")
+    block_constructors!("PDB_types_Array")
+    generate!("PDB_types_BitField")
+    block_constructors!("PDB_types_BitField")
+    generate!("PDB_types_ClassLike")
+    block_constructors!("PDB_types_ClassLike")
+    generate!("PDB_types_ClassLike_it_attributes")
+    block_constructors!("PDB_types_ClassLike_it_attributes")
+    generate!("PDB_types_ClassLike_it_methods")
+    block_constructors!("PDB_types_ClassLike_it_methods")
+    generate!("PDB_types_Class")
+    block_constructors!("PDB_types_Class")
+    generate!("PDB_types_Structure")
+    block_constructors!("PDB_types_Structure")
+    generate!("PDB_types_Interface")
+    block_constructors!("PDB_types_Interface")
+    generate!("PDB_types_Enum")
+    block_constructors!("PDB_types_Enum")
+    generate!("PDB_types_Function")
+    block_constructors!("PDB_types_Function")
+    generate!("PDB_types_Modifier")
+    block_constructors!("PDB_types_Modifier")
+    generate!("PDB_types_Pointer")
+    block_constructors!("PDB_types_Pointer")
+    generate!("PDB_types_Union")
+    block_constructors!("PDB_types_Union")
+    generate!("PDB_types_Attribute")
+    block_constructors!("PDB_types_Attribute")
+    generate!("PDB_types_Method")
+    block_constructors!("PDB_types_Method")
+
+    // -------------------------------------------------------------------------
+    // DWARF
+    // -------------------------------------------------------------------------
+    generate!("DWARF_DebugInfo")
+    block_constructors!("DWARF_DebugInfo")
+    generate!("DWARF_DebugInfo_it_compilation_units")
+    block_constructors!("DWARF_DebugInfo_it_compilation_units")
+    generate!("DWARF_CompilationUnit")
+    block_constructors!("DWARF_CompilationUnit")
+    generate_pod!("DWARF_CompilationUnit_Language")
+    block_constructors!("DWARF_CompilationUnit_Language")
+    generate!("DWARF_Function")
+    block_constructors!("DWARF_Function")
+    generate!("DWARF_Function_Parameter")
+    block_constructors!("DWARF_Function_Parameter")
+    generate!("DWARF_Function_it_variables")
+    block_constructors!("DWARF_Function_it_variables")
+    generate!("DWARF_Function_it_parameters")
+    block_constructors!("DWARF_Function_it_parameters")
+    generate!("DWARF_CompilationUnit_it_functions")
+    block_constructors!("DWARF_CompilationUnit_it_functions")
+    generate!("DWARF_CompilationUnit_it_types")
+    block_constructors!("DWARF_CompilationUnit_it_types")
+    generate!("DWARF_CompilationUnit_it_variables")
+    block_constructors!("DWARF_CompilationUnit_it_variables")
+    generate!("DWARF_Variable")
+    block_constructors!("DWARF_Variable")
+    generate!("DWARF_Type")
+    block_constructors!("DWARF_Type")
+    generate!("DWARF_types_ClassLike")
+    block_constructors!("DWARF_types_ClassLike")
+    generate!("DWARF_types_ClassLike_it_members")
+    block_constructors!("DWARF_types_ClassLike_it_members")
+    generate!("DWARF_types_ClassLike_Member")
+    block_constructors!("DWARF_types_ClassLike_Member")
+    generate!("DWARF_types_Class")
+    block_constructors!("DWARF_types_Class")
+    generate!("DWARF_types_Structure")
+    block_constructors!("DWARF_types_Structure")
+    generate!("DWARF_types_Union")
+    block_constructors!("DWARF_types_Union")
+    generate!("DWARF_types_Pointer")
+    block_constructors!("DWARF_types_Pointer")
+    generate!("DWARF_types_Const")
+    block_constructors!("DWARF_types_Const")
+    generate!("DWARF_types_Base")
+    block_constructors!("DWARF_types_Base")
+    generate!("DWARF_types_Array")
+    block_constructors!("DWARF_types_Array")
+    generate!("DWARF_Scope")
+    block_constructors!("DWARF_Scope")
+
+    // -------------------------------------------------------------------------
+    // ObjC
+    // -------------------------------------------------------------------------
+    generate!("ObjC_Metadata")
+    block_constructors!("ObjC_Metadata")
+    generate!("ObjC_Metadata_it_classes")
+    block_constructors!("ObjC_Metadata_it_classes")
+    generate!("ObjC_Metadata_it_protocols")
+    block_constructors!("ObjC_Metadata_it_protocols")
+
+    generate!("ObjC_Class")
+    block_constructors!("ObjC_Class")
+    generate!("ObjC_Class_it_methods")
+    block_constructors!("ObjC_Class_it_methods")
+    generate!("ObjC_Class_it_protocols")
+    block_constructors!("ObjC_Class_it_protocols")
+    generate!("ObjC_Class_it_properties")
+    block_constructors!("ObjC_Class_it_properties")
+    generate!("ObjC_Class_it_ivars")
+    block_constructors!("ObjC_Class_it_ivars")
+
+    generate!("ObjC_IVar")
+    block_constructors!("ObjC_IVar")
+
+    generate!("ObjC_Method")
+    block_constructors!("ObjC_Method")
+
+    generate!("ObjC_Property")
+    block_constructors!("ObjC_Property")
+
+    generate!("ObjC_Protocol")
+    block_constructors!("ObjC_Protocol")
+    generate!("ObjC_Protocol_it_opt_methods")
+    block_constructors!("ObjC_Protocol_it_opt_methods")
+    generate!("ObjC_Protocol_it_req_methods")
+    block_constructors!("ObjC_Protocol_it_req_methods")
+    generate!("ObjC_Protocol_it_properties")
+    block_constructors!("ObjC_Protocol_it_properties")
 
     safety!(unsafe)
 }

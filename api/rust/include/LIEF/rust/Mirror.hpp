@@ -17,7 +17,7 @@
 #include <vector>
 #include <memory>
 #include "LIEF/errors.hpp"
-#include "LIEF/rust/canbe_unique.hpp"
+#include "LIEF/canbe_unique.hpp"
 
 #pragma once
 template<class T>
@@ -31,7 +31,7 @@ class Mirror {
   const T& get() const { return *impl_; }
 
   private:
-  details::canbe_unique<T> impl_;
+  LIEF::details::canbe_unique<T> impl_;
 };
 
 template<class To, class From>

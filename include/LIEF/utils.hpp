@@ -91,6 +91,9 @@ LIEF_API std::string hex_dump(span<const uint8_t> data,
 
 //! Check if the given number is a hex-like string
 LIEF_API bool is_hex_number(const std::string& nb);
+
+//! Whether this version of LIEF includes extended features
+LIEF_API bool is_extended();
 }
 
 namespace LIEF {

@@ -75,5 +75,7 @@
 #include "LIEF/MachO/type_traits.hpp"
 #include "LIEF/MachO/utils.hpp"
 
+#include "LIEF/ObjC/Metadata.hpp"
+
 #endif
 #endif

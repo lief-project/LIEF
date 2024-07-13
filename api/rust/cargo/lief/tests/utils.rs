@@ -40,3 +40,9 @@ pub fn get_pkcs7_sample(name: &str) -> Option<PathBuf> {
     let suffix = Path::new("pkcs7").join(name);
     get_sample(suffix.as_path())
 }
+
+#[allow(dead_code)]
+pub fn get_pdb_sample(name: &str) -> Option<PathBuf> {
+    let suffix = Path::new("PDB").join(name);
+    get_sample(suffix.as_path())
+}

@@ -25,6 +25,7 @@
 
 #include "LIEF/span.hpp"
 #include "LIEF/errors.hpp"
+#include "LIEF/iterators.hpp"
 
 
 namespace LIEF {
@@ -172,6 +173,16 @@ std::vector<std::string> optimize(const HANDLER& container,
   }
 
   return string_table_optimized;
+}
+
+template<class T>
+auto make_empty_iterator() {
+  auto begin = std::make_unique<typename T::Iterator::implementation>();
+  auto end = std::make_unique<typename  T::Iterator::implementation>();
+  return make_range<typename T::Iterator>(
+      typename T::Iterator(std::move(begin)),
+      typename T::Iterator(std::move(end))
+  );
 }
 
 }

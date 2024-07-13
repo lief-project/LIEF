@@ -27,6 +27,8 @@
 #include <LIEF/PE.hpp>
 #include <LIEF/MachO.hpp>
 #include <LIEF/DWARF.hpp>
+#include <LIEF/PDB.hpp>
+#include <LIEF/ObjC.hpp>
 #include <LIEF/logging.hpp>
 #include <LIEF/platforms.hpp>
 

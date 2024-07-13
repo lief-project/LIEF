@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <sstream>
 #include "pyLIEF.hpp"
 #include "pyErr.hpp"
 #include <spdlog/logger.h>
@@ -23,6 +24,8 @@
 
 #include "LIEF/hash.hpp"
 #include "LIEF/Object.hpp"
+#include "LIEF/range.hpp"
+#include "LIEF/debug_loc.hpp"
 #include "LIEF/errors.hpp"
 #include "LIEF/logging.hpp"
 #include "LIEF/version.h"
@@ -31,6 +34,9 @@
 #include "platforms/pyPlatform.hpp"
 
 #include "Abstract/init.hpp"
+#include "DWARF/init.hpp"
+#include "PDB/init.hpp"
+#include "ObjC/init.hpp"
 
 #if defined(LIEF_ELF_SUPPORT)
   #include "ELF/init.hpp"
@@ -60,9 +66,15 @@
   #include "ART/init.hpp"
 #endif
 
+
 nb::module_* lief_mod = nullptr;
 
 namespace LIEF::py {
+
+void init_extension(nb::module_& m) {
+  m.attr("__extended__") = false;
+}
+
 void init_object(nb::module_& m) {
   nb::class_<Object>(m, "Object")
     .def("__hash__", [] (const Object& self) {
@@ -139,6 +151,34 @@ void init_json(nb::module_& m) {
   m.def("to_json", &LIEF::to_json);
 }
 
+void init_range(nb::module_& m) {
+  nb::class_<LIEF::range_t>(m, "range_t")
+    .def_rw("low", &LIEF::range_t::low)
+    .def_rw("high", &LIEF::range_t::high)
+    .def_prop_ro("size", &LIEF::range_t::size)
+    .def("__repr__",
+      [] (const LIEF::range_t& R) {
+        return fmt::format("<range: 0x{:04x}-0x{:04x}>", R.low, R.high);
+      }
+    )
+
+    LIEF_DEFAULT_STR(LIEF::range_t);
+  ;
+}
+
+void init_debug_location(nb::module_& m) {
+  nb::class_<LIEF::debug_location_t>(m, "debug_location_t")
+    .def_rw("line", &LIEF::debug_location_t::line)
+    .def_rw("file", &LIEF::debug_location_t::file)
+    .def("__repr__",
+      [] (const LIEF::debug_location_t& loc) {
+        return fmt::format("<debug_location_t: {}:{}>", loc.file, loc.line);
+      }
+    )
+  ;
+}
+
+
 void init(nb::module_& m) {
   lief_mod = &m;
   m.attr("__version__")   = nb::str(LIEF_VERSION);
@@ -166,8 +206,12 @@ void init(nb::module_& m) {
       nanobind: this is likely caused by a reference counting issue in the binding code.
   )doc");
 
+  LIEF::py::init_extension(m);
+
   LIEF::py::init_python_sink();
 
+  LIEF::py::init_range(m);
+  LIEF::py::init_debug_location(m);
   LIEF::py::init_platforms(m);
   LIEF::py::init_object(m);
   LIEF::py::init_errors(m);
@@ -176,6 +220,10 @@ void init(nb::module_& m) {
   LIEF::py::init_json(m);
 
   LIEF::py::init_abstract(m);
+
+  LIEF::dwarf::py::init(m);
+  LIEF::pdb::py::init(m);
+  LIEF::objc::py::init(m);
 
 #if defined(LIEF_ELF_SUPPORT)
   LIEF::ELF::py::init(m);
@@ -204,7 +252,9 @@ void init(nb::module_& m) {
 #if defined(LIEF_ART_SUPPORT)
   LIEF::ART::py::init(m);
 #endif
+
 }
+
 }
 
 NB_MODULE(_lief, m) {

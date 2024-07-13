@@ -480,6 +480,27 @@ template<class T, typename U = typename decay_t<T>::value_type,
          class CT = typename std::add_const<T>::type>
 using const_filter_iterator = filter_iterator<CT, U, typename decay_t<CT>::const_iterator>;
 
+
+template <typename IteratorT>
+class iterator_range {
+  public:
+  using IteratorTy = IteratorT;
+  iterator_range(IteratorT it_begin, IteratorT it_end)
+      : begin_(std::move(it_begin)),
+        end_(std::move(it_end)) {}
+
+  IteratorT begin() const { return begin_; }
+  IteratorT end() const { return end_; }
+  bool empty() const { return begin_ == end_; }
+  private:
+  IteratorT begin_;
+  IteratorT end_;
+};
+
+template <class T> iterator_range<T> make_range(T x, T y) {
+  return iterator_range<T>(std::move(x), std::move(y));
+}
+
 }
 
 #endif

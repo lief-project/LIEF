@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import lief
 import os
 import sys
 import platform
@@ -11,6 +12,10 @@ from pathlib import Path
 from subprocess import Popen
 
 import importlib.util
+
+def check_objc_dump(metadata: lief.objc.Metadata, file: Path) -> bool:
+    assert metadata.to_decl() == file.read_text()
+    return True
 
 def import_from_file(module_name: str, file_path: Path):
     spec = importlib.util.spec_from_file_location(module_name, file_path)
@@ -177,3 +182,6 @@ def win_exec(executable: Path, timeout: int = 60, gui: bool = True) -> Optional[
             return (proc.returncode, stdout)
         except subprocess.TimeoutExpired:
             return None
+
+def normalize_path(path: str) -> str:
+    return path.replace('\\', '/')

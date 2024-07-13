@@ -28,6 +28,11 @@
 #cmakedefine LIEF_VDEX_SUPPORT     @LIEF_VDEX_SUPPORT@
 #cmakedefine LIEF_ART_SUPPORT      @LIEF_ART_SUPPORT@
 
+// Extended features
+#cmakedefine LIEF_DEBUG_INFO       @LIEF_DEBUG_INFO_SUPPORT@
+#cmakedefine LIEF_OBJC             @LIEF_OBJC_SUPPORT@
+#cmakedefine LIEF_EXTENDED         @LIEF_EXTENDED@
+
 // LIEF options
 #cmakedefine LIEF_JSON_SUPPORT      @ENABLE_JSON_SUPPORT@
 #cmakedefine LIEF_LOGGING_SUPPORT   @LIEF_LOGGING_SUPPORT@
@@ -41,6 +46,7 @@
 
 #cmakedefine LIEF_NLOHMANN_JSON_EXTERNAL  @LIEF_NLOHMANN_JSON_EXTERNAL@
 
+
 #ifdef __cplusplus
 
 static constexpr bool lief_pe_support      = @LIEF_PE_SUPPORT@;
@@ -51,6 +57,10 @@ static constexpr bool lief_oat_support     = @LIEF_OAT_SUPPORT@;
 static constexpr bool lief_dex_support     = @LIEF_DEX_SUPPORT@;
 static constexpr bool lief_vdex_support    = @LIEF_VDEX_SUPPORT@;
 static constexpr bool lief_art_support     = @LIEF_ART_SUPPORT@;
+
+static constexpr bool lief_debug_info      = @LIEF_DEBUG_INFO_SUPPORT@;
+static constexpr bool lief_objc            = @LIEF_OBJC_SUPPORT@;
+static constexpr bool lief_extended        = @LIEF_EXTENDED@;
 
 static constexpr bool lief_json_support    = @LIEF_JSON_SUPPORT@;
 static constexpr bool lief_logging_support = @LIEF_LOGGING_SUPPORT@;

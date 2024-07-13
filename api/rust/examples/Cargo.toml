@@ -25,4 +25,13 @@ name = "pe_deps"
 name = "list_macho_encryption"
 
 [[bin]]
+name = "dwarf_inspect"
+
+[[bin]]
+name = "pdb_inspect"
+
+[[bin]]
+name = "objc_inspect"
+
+[[bin]]
 name = "test_run_examples"

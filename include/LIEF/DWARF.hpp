@@ -17,5 +17,12 @@
 #define LIEF_DWARF_H
 
 #include "LIEF/DWARF/enums.hpp"
+#include "LIEF/DWARF/DebugInfo.hpp"
+#include "LIEF/DWARF/CompilationUnit.hpp"
+#include "LIEF/DWARF/Function.hpp"
+#include "LIEF/DWARF/Variable.hpp"
+#include "LIEF/DWARF/Scope.hpp"
+#include "LIEF/DWARF/Type.hpp"
+#include "LIEF/DWARF/types.hpp"
 
 #endif

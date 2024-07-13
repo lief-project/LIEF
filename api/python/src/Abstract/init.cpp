@@ -24,6 +24,7 @@
 #include "LIEF/Abstract/Parser.hpp"
 #include "LIEF/Abstract/Relocation.hpp"
 #include "LIEF/Abstract/Function.hpp"
+#include "LIEF/Abstract/DebugInfo.hpp"
 
 #define CREATE(X,Y) create<X>(Y)
 
@@ -37,6 +38,7 @@ void init_objects(nb::module_& m) {
   CREATE(Parser, m);
   CREATE(Relocation, m);
   CREATE(Function, m);
+  CREATE(DebugInfo, m);
 }
 void init_abstract(nb::module_& m) {
   init_enums(m);

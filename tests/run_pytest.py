@@ -14,6 +14,9 @@ if __name__ == "__main__":
         (CWD / "dex"),
         (CWD / "art"),
         (CWD / "api"),
+        (CWD / "pdb"),
+        (CWD / "dwarf"),
+        (CWD / "objc"),
         (CWD / "abstract"),
         "--verbose"
     ])

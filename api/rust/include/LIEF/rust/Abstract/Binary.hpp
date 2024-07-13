@@ -14,6 +14,7 @@
  */
 #pragma once
 #include <LIEF/Abstract/Binary.hpp>
+#include <LIEF/rust/Abstract/DebugInfo.hpp>
 #include <LIEF/rust/Mirror.hpp>
 
 class AbstractBinary : public Mirror<LIEF::Binary> {
@@ -25,4 +26,8 @@ class AbstractBinary : public Mirror<LIEF::Binary> {
   uint64_t original_size() const { return get().original_size(); }
   bool is_pie() const { return get().is_pie(); }
   bool has_nx() const { return get().has_nx(); }
+
+  auto debug_info() const {
+    return details::try_unique<AbstracDebugInfo>(get().debug_info()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  }
 };

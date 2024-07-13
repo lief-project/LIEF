@@ -74,6 +74,7 @@ if(APPLE)
   )
 endif()
 
+
 if (UNIX)
   if (LIEF_PYTHON_STATIC)
     set_target_properties(pyLIEF PROPERTIES SUFFIX ".a")
@@ -88,6 +89,7 @@ elseif(WIN32)
     set_target_properties(pyLIEF PROPERTIES SUFFIX ".pyd")
   endif()
 endif()
+
 
 if (WIN32)
   target_link_libraries(pyLIEF PUBLIC ${PYTHON_LIBRARIES})

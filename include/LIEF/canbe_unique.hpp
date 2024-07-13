@@ -12,9 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#pragma once
+#ifndef LIEF_CAN_BE_UNIQUE_H
+#define LIEF_CAN_BE_UNIQUE_H
 #include <memory>
 
+namespace LIEF {
 namespace details {
 template<class T>
 class canbe_unique {
@@ -28,12 +30,12 @@ class canbe_unique {
     return *this;
   }
 
-  canbe_unique(canbe_unique&& other) {
+  canbe_unique(canbe_unique&& other) noexcept {
     std::swap(ptr_, other.ptr_);
     owned_ = other.owned_;
   }
 
-  canbe_unique& operator=(canbe_unique&& other) {
+  canbe_unique& operator=(canbe_unique&& other) noexcept {
     if (&other != this) {
       std::swap(ptr_, other.ptr_);
       owned_ = other.owned_;
@@ -84,7 +86,10 @@ class canbe_unique {
     if (!owned_) {
       return;
     }
-    delete ptr_;
+    if (ptr_ != nullptr) {
+      delete ptr_;
+    }
+    ptr_ = nullptr;
   }
 
   operator bool() const {
@@ -99,4 +104,17 @@ class canbe_unique {
   T* ptr_ = nullptr;
   bool owned_ = false;
 };
+
+template<class T>
+inline bool operator==(const canbe_unique<T>& lhs, std::nullptr_t) {
+  return !lhs;
 }
+
+template<class T>
+inline bool operator==(std::nullptr_t, const canbe_unique<T>& lhs) {
+  return !lhs;
+}
+
+}
+}
+#endif

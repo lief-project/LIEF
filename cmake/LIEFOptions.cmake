@@ -30,6 +30,10 @@ option(LIEF_MACHO          "Build LIEF with MachO module"               ON)
 option(LIEF_DEX            "Build LIEF with DEX module"                 ON)
 option(LIEF_ART            "Build LIEF with ART module"                 ON)
 
+# Extended features
+option(LIEF_DEBUG_INFO     "Build LIEF with DWARF/PDB support"          OFF)
+option(LIEF_OBJC           "Build LIEF with ObjC metadata support"      OFF)
+
 cmake_dependent_option(LIEF_PYTHON_EDITABLE "Make an editable build " OFF
                        "LIEF_PYTHON_API" OFF)
 
@@ -116,6 +120,10 @@ set(LIEF_EXTERNAL_UTF8CPP 0)
 set(LIEF_EXTERNAL_MBEDTLS 0)
 set(LIEF_EXTERNAL_SPAN 0)
 
+set(LIEF_DEBUG_INFO_SUPPORT 0)
+set(LIEF_OBJC_SUPPORT 0)
+set(LIEF_EXTENDED 0)
+
 if(LIEF_ELF)
   set(LIEF_ELF_SUPPORT 1)
 endif()
@@ -189,3 +197,15 @@ if(LIEF_PYTHON_API)
   endif()
 endif()
 
+# Extended features
+if (LIEF_DEBUG_INFO)
+  set(LIEF_DEBUG_INFO_SUPPORT 1)
+endif()
+
+if (LIEF_OBJC)
+  set(LIEF_OBJC_SUPPORT 1)
+endif()
+
+if (LIEF_DEBUG_INFO OR LIEF_OBJC) # or any other extended feature
+  set(LIEF_EXTENDED 1)
+endif()

@@ -2271,7 +2271,7 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
   auto eh_frame_ptr = *res_eh_frame_ptr;
   int64_t fde_count    = -1;
 
-  if (static_cast<DWARF::EH_ENCODING>(fde_count_enc) != DWARF::EH_ENCODING::OMIT) {
+  if (static_cast<dwarf::EH_ENCODING>(fde_count_enc) != dwarf::EH_ENCODING::OMIT) {
     auto res_count = vs.read_dwarf_encoded(fde_count_enc);
     if (!res_count) {
       return functions;
@@ -2295,7 +2295,7 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
   LIEF_DEBUG("  eh_frame_ptr:     0x{:x}", static_cast<uint32_t>(eh_frame_ptr));
   LIEF_DEBUG("  fde_count:        0x{:x}", static_cast<uint32_t>(fde_count));
 
-  auto table_bias = static_cast<DWARF::EH_ENCODING>(table_enc & 0xF0);
+  auto table_bias = static_cast<dwarf::EH_ENCODING>(table_enc & 0xF0);
 
   for (size_t i = 0; i < static_cast<size_t>(fde_count); ++i) {
 
@@ -2316,31 +2316,31 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
     uint64_t bias    = 0;
 
     switch (table_bias) {
-      case DWARF::EH_ENCODING::PCREL:
+      case dwarf::EH_ENCODING::PCREL:
         {
           bias = (eh_frame_rva + vs.pos());
           break;
         }
 
-      case DWARF::EH_ENCODING::TEXTREL:
+      case dwarf::EH_ENCODING::TEXTREL:
         {
           LIEF_WARN("EH_ENCODING::TEXTREL is not supported");
           break;
         }
 
-      case DWARF::EH_ENCODING::DATAREL:
+      case dwarf::EH_ENCODING::DATAREL:
         {
           bias = eh_frame_rva;
           break;
         }
 
-      case DWARF::EH_ENCODING::FUNCREL:
+      case dwarf::EH_ENCODING::FUNCREL:
         {
           LIEF_WARN("EH_ENCODING::FUNCREL is not supported");
           break;
         }
 
-      case DWARF::EH_ENCODING::ALIGNED:
+      case dwarf::EH_ENCODING::ALIGNED:
         {
           LIEF_WARN("EH_ENCODING::ALIGNED is not supported");
           break;
@@ -2403,7 +2403,7 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
 
 
       // Go to CIE structure
-      //uint8_t augmentation_data = static_cast<uint8_t>(DWARF::EH_ENCODING::OMIT);
+      //uint8_t augmentation_data = static_cast<uint8_t>(dwarf::EH_ENCODING::OMIT);
 
       const size_t saved_pos = vs.pos();
       uint8_t augmentation_data = 0;

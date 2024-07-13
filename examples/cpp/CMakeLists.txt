@@ -2,6 +2,9 @@ set(LIEF_CPP_EXAMPLES
   logging.cpp
   abstract_reader.cpp
   benchmark.cpp
+  dwarf_inspect.cpp
+  pdb_inspect.cpp
+  objc_inspect.cpp
 )
 
 if (LIEF_ELF)

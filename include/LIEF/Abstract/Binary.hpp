@@ -17,6 +17,7 @@
 #define LIEF_ABSTRACT_BINARY_H
 
 #include <vector>
+#include <memory>
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
@@ -32,6 +33,8 @@ namespace LIEF {
 class Section;
 class Relocation;
 class Symbol;
+
+class DebugInfo;
 
 //! Abstract binary that exposes an uniform API for the
 //! different executable file formats
@@ -84,14 +87,12 @@ class LIEF_API Binary : public Object {
 
   public:
   Binary();
-  Binary(FORMATS fmt) :
-    format_{fmt}
-  {}
+  Binary(FORMATS fmt);
 
   ~Binary() override;
 
-  Binary& operator=(const Binary&);
-  Binary(const Binary&);
+  Binary& operator=(const Binary&) = delete;
+  Binary(const Binary&) = delete;
 
   //! Executable format (ELF, PE, Mach-O) of the underlying binary
   FORMATS format() const {
@@ -210,9 +211,24 @@ class LIEF_API Binary : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Binary& binary);
 
+  /// Return the debug info if present. It can be either a
+  /// LIEF::dwarf::DebugInfo or a LIEF::pdb::DebugInfo
+  ///
+  /// For ELF and Mach-O binaries, it returns the given DebugInfo object **only**
+  /// if the binary embeds the DWARF debug info in the binary itself.
+  ///
+  /// For PE file, this function tries to find the **external** PDB using
+  /// the LIEF::PE::CodeViewPDB::filename() output (if present). One can also
+  /// use LIEF::pdb::load() or LIEF::pdb::DebugInfo::from_file() to get PDB debug
+  /// info.
+  ///
+  /// @warning This function requires LIEF's extended version otherwise it
+  /// **always** return a nullptr
+  DebugInfo* debug_info() const;
+
   protected:
   FORMATS format_ = FORMATS::UNKNOWN;
-
+  mutable std::unique_ptr<DebugInfo> debug_info_;
   uint64_t original_size_ = 0;
 
   // These functions need to be overloaded by the object that claims to extend this Abstract Binary

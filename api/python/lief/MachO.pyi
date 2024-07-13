@@ -21,6 +21,7 @@ import lief.MachO.Section # type: ignore
 import lief.MachO.SegmentCommand # type: ignore
 import lief.MachO.Symbol # type: ignore
 import lief.MachO.TwoLevelHints # type: ignore
+import lief.objc # type: ignore
 import os
 
 class ARM64_RELOCATION:
@@ -296,6 +297,8 @@ class Binary(lief.Binary):
     def linker_opt_hint(self) -> lief.MachO.LinkerOptHint: ...
     @property
     def main_command(self) -> lief.MachO.MainCommand: ...
+    @property
+    def objc_metadata(self) -> Optional[lief.objc.Metadata]: ...
     @property
     def off_ranges(self) -> lief.MachO.Binary.range_t: ...
     @property

@@ -3,7 +3,10 @@
 :fa:`regular fa-file-code` C++
 ==============================
 
-The original Doxygen documentation is also available `here <../../doxygen/>`_
+.. note::
+
+   You can also find the Doxygen documentation `here <../../doxygen/>`_
+
 
 .. toctree::
   :maxdepth: 2

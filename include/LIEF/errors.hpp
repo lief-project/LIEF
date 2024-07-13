@@ -17,6 +17,7 @@
 #define LIEF_ERROR_H
 #include <cstdint>
 #include <LIEF/third-party/expected.hpp>
+#include <cstdint>
 
 //! LIEF error codes definition
 enum class lief_errors : uint32_t {

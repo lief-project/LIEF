@@ -28,6 +28,8 @@
 
 #include "third-party/utfcpp.hpp"
 
+#include "LIEF/config.h"
+
 namespace LIEF {
 namespace LEB128 {
 std::vector<uint8_t> uencode(uint64_t value) {
@@ -132,6 +134,10 @@ bool is_hex_number(const std::string& str) {
   return std::all_of(std::begin(str), std::end(str), isxdigit);
 }
 
+
+bool is_extended() {
+  return lief_extended;
+}
 
 
 } // namespace LIEF

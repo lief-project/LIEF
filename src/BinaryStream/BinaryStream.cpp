@@ -55,33 +55,33 @@ TMPL_DECL(int64_t);
 
 
 result<int64_t> BinaryStream::read_dwarf_encoded(uint8_t encoding) const {
-  const auto encodevalue =  static_cast<LIEF::DWARF::EH_ENCODING>(encoding & 0x0F);
+  const auto encodevalue =  static_cast<LIEF::dwarf::EH_ENCODING>(encoding & 0x0F);
 
   switch (encodevalue) {
-    case LIEF::DWARF::EH_ENCODING::ULEB128:
+    case LIEF::dwarf::EH_ENCODING::ULEB128:
       {
         return read_uleb128();
       }
 
-    case LIEF::DWARF::EH_ENCODING::SDATA2:
-    case LIEF::DWARF::EH_ENCODING::UDATA2:
+    case LIEF::dwarf::EH_ENCODING::SDATA2:
+    case LIEF::dwarf::EH_ENCODING::UDATA2:
       {
         return read<int16_t>();
       }
 
-    case LIEF::DWARF::EH_ENCODING::SDATA4:
-    case LIEF::DWARF::EH_ENCODING::UDATA4:
+    case LIEF::dwarf::EH_ENCODING::SDATA4:
+    case LIEF::dwarf::EH_ENCODING::UDATA4:
       {
         return read<int32_t>();
       }
 
-    case LIEF::DWARF::EH_ENCODING::SDATA8:
-    case LIEF::DWARF::EH_ENCODING::UDATA8:
+    case LIEF::dwarf::EH_ENCODING::SDATA8:
+    case LIEF::dwarf::EH_ENCODING::UDATA8:
       {
         return read<int64_t>();
       }
 
-    case LIEF::DWARF::EH_ENCODING::SLEB128:
+    case LIEF::dwarf::EH_ENCODING::SLEB128:
       {
         return read_sleb128();
       }

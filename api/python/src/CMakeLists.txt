@@ -13,6 +13,10 @@ target_sources(pyLIEF PRIVATE
 add_subdirectory(Abstract)
 add_subdirectory(platforms)
 
+add_subdirectory(DWARF)
+add_subdirectory(PDB)
+add_subdirectory(ObjC)
+
 if(LIEF_ELF)
   add_subdirectory(ELF)
 endif()

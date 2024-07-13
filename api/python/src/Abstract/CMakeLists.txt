@@ -8,4 +8,5 @@ target_sources(pyLIEF PRIVATE
   pySection.cpp
   pyFunction.cpp
   pyBinary.cpp
+  pyDebugInfo.cpp
 )

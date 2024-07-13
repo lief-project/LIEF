@@ -19,5 +19,12 @@
 #include "LIEF/rust/PE.hpp"
 #include "LIEF/rust/MachO.hpp"
 #include "LIEF/rust/Abstract.hpp"
+#include "LIEF/rust/PDB.hpp"
+#include "LIEF/rust/DWARF.hpp"
+#include "LIEF/rust/ObjC.hpp"
 
 #include "LIEF/rust/Span.hpp"
+#include "LIEF/rust/range.hpp"
+#include "LIEF/rust/debug_location.hpp"
+#include "LIEF/rust/utils.hpp"
+

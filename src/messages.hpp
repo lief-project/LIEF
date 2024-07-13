@@ -15,9 +15,26 @@
 #ifndef LIEF_MSG_H
 #define LIEF_MSG_H
 
+#if !defined(LIEF_DOC_PREFIX)
+#define LIEF_DOC_PREFIX "https://lief.re/doc/latest"
+#endif
+
 #define SUBMISSION_MSG                                                  \
   "This file can be interesting for improving LIEF. "                   \
   "If you have the rights to do, please consider submitting this file " \
   "through a GitHub issue: https://github.com/lief-project/LIEF"
+
+#if !defined(DEBUG_FMT_NOT_SUPPORTED)
+#define DEBUG_FMT_NOT_SUPPORTED                                         \
+  "DebugInfo are not available for this build.\n"                       \
+  "Please checkout " LIEF_DOC_PREFIX "/latest/extended/intro.html for the details"
+#endif
+
+#if !defined(OBJC_NOT_SUPPORTED)
+#define OBJC_NOT_SUPPORTED                                         \
+  "ObjC metadata are not available for this build.\n"                       \
+  "Please checkout " LIEF_DOC_PREFIX "/latest/extended/intro.html for the details"
+#endif
+
 
 #endif

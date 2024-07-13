@@ -32,6 +32,10 @@
 
 namespace LIEF {
 
+namespace objc {
+class Metadata;
+}
+
 //! Namespace related to the LIEF's Mach-O module
 namespace MachO {
 
@@ -699,6 +703,9 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   //! Add a symbol in LC_SYMTAB command of the current binary
   Symbol* add_local_symbol(uint64_t address, const std::string& name);
+
+  //! Return Objective-C metadata if present
+  std::unique_ptr<objc::Metadata> objc_metadata() const;
 
   template<class T>
   LIEF_LOCAL bool has_command() const;
