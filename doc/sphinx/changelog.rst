@@ -11,6 +11,10 @@ Changelog
   * First (beta) release of the bindings (c.f. :ref:`lief_rust_bindings`)
 
 :ELF:
+  * Add :meth:`lief.ELF.Binary.get_relocated_dynamic_array` which allows
+    to get a **relocated** view of the of init/fini entries. This function can
+    handy ELF init array/fini array functions are defined through relocations.
+    See: :issue:`1058`, :issue:`626`
   * Add support for QNX Stack note (:issue:`1065`)
   * The ``static_symbols`` API functions has been renamed in ``symtab_symbols``.
 

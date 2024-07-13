@@ -324,6 +324,10 @@ class ELF_Binary : public AbstractBinary {
     return impl().interpreter();
   }
 
+  auto get_relocated_dynamic_array(uint64_t tag) const {
+    return impl().get_relocated_dynamic_array(LIEF::ELF::DynamicEntry::TAG(tag));
+  }
+
   private:
   const lief_t& impl() const { return as<lief_t>(this); }
 };

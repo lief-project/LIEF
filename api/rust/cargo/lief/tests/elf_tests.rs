@@ -149,6 +149,10 @@ fn explore_elf(name: &str, elf: &lief::elf::Binary) {
         }
     }
 
+    elf.get_relocated_dynamic_array(dynamic::Tag::INIT_ARRAY);
+    elf.get_relocated_dynamic_array(dynamic::Tag::FINI_ARRAY);
+    elf.get_relocated_dynamic_array(dynamic::Tag::PREINIT_ARRAY);
+
     if name == "ELF64_x86-64_library_libfreebl3.so" {
         assert!(elf.relocation_by_addr(0x1234).is_none());
         assert!(elf.relocation_by_addr(0x003369c01df0).is_some());

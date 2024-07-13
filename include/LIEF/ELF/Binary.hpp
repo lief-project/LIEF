@@ -867,6 +867,10 @@ class LIEF_API Binary : public LIEF::Binary {
   //!         the given method.
   uint64_t relocate_phdr_table(PHDR_RELOC type);
 
+  //! Return the array defined by the given tag (e.g.
+  //! DynamicEntry::TAG::INIT_ARRAY) with relocations applied (if any)
+  std::vector<uint64_t> get_relocated_dynamic_array(DynamicEntry::TAG tag) const;
+
   static bool classof(const LIEF::Binary* bin) {
     return bin->format() == Binary::FORMATS::ELF ||
            bin->format() == Binary::FORMATS::OAT;

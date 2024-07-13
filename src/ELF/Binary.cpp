@@ -3130,6 +3130,42 @@ uint64_t Binary::relocate_phdr_table_v1() {
   return phdr_reloc_info_.new_offset;
 }
 
+
+std::vector<uint64_t> Binary::get_relocated_dynamic_array(DynamicEntry::TAG tag) const {
+  const DynamicEntry* entry = get(tag);
+  if (entry == nullptr || !DynamicEntryArray::classof(entry)) {
+    return {};
+  }
+
+  const auto& entry_array = static_cast<const DynamicEntryArray&>(*entry);
+  std::vector<uint64_t> result = entry_array.array();
+
+  const uint64_t base_addr = entry_array.value();
+  const size_t ptr_size = (type_ == Header::CLASS::ELF64) ? sizeof(uint64_t) :
+                                                            sizeof(uint32_t);
+  const uint64_t end_addr = base_addr + result.size() * ptr_size;
+
+  for (const Relocation& reloc : dynamic_relocations()) {
+    const uint64_t addr = reloc.address();
+    bool in_range = base_addr <= addr  && addr < end_addr;
+    if (!in_range) {
+      continue;
+    }
+
+    const size_t idx = (addr - base_addr) / ptr_size;
+
+    if (idx >= result.size()) {
+      continue;
+    }
+
+    if (reloc.is_relative()) {
+      result[idx] = reloc.addend();
+    }
+  }
+
+  return result;
+}
+
 std::ostream& Binary::print(std::ostream& os) const {
 
   os << "Header" << '\n';

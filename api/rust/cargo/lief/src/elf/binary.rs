@@ -232,6 +232,11 @@ impl Binary {
         to_result!(ffi::ELF_Binary::virtual_address_to_offset, &self, address);
     }
 
+    /// Return the array defined by the given tag (e.g.
+    /// [`dynamic::Tag::INIT_ARRAY`]) with relocations applied (if any)
+    pub fn get_relocated_dynamic_array(&self, tag: dynamic::Tag) -> Vec<u64> {
+        Vec::from(self.ptr.get_relocated_dynamic_array(u64::from(tag)).as_slice())
+    }
 }
 
 impl generic::Binary for Binary {

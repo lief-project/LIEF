@@ -1,5 +1,6 @@
 import lief
-from utils import get_sample, is_64bits_platform, glibc_version
+import pytest
+from utils import get_sample, is_64bits_platform, glibc_version, has_private_samples
 from pathlib import Path
 
 def test_symbol_count():
@@ -141,5 +142,27 @@ def test_975():
     for note in elf.notes:
         print(note)
 
+@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+def test_1058():
+    elf = lief.ELF.parse(get_sample("private/ELF/cn-105.elf"))
 
+    original_init = elf.get(lief.ELF.DynamicEntry.TAG.INIT_ARRAY).array
+    relocated_init = elf.get_relocated_dynamic_array(lief.ELF.DynamicEntry.TAG.INIT_ARRAY)
 
+    assert original_init == [
+        0xffffffffffffffff,
+        0x7ab000, 0x7ab000, 0x7ab000, 0x7ab000, 0x7ab000, 0x7ab000, 0x7ab000,
+        0x7ab000, 0x7ab000, 0x7ab000, 0x7ab000, 0x7ab000, 0x0
+    ]
+
+    assert relocated_init == [
+        0xffffffffffffffff,
+        0x96db10, 0x9b9c14, 0xe7f660, 0xe7f70c, 0xe7f888, 0xe7f8e0, 0xebeb74,
+        0xebfc68, 0xec0898, 0xec0b98, 0xf52db0, 0xf8fb20, 0x0
+    ]
+
+    original_fini = elf.get(lief.ELF.DynamicEntry.TAG.FINI_ARRAY).array
+    relocated_fini = elf.get_relocated_dynamic_array(lief.ELF.DynamicEntry.TAG.FINI_ARRAY)
+
+    assert original_fini == [0xffffffffffffffff, 0x0]
+    assert relocated_fini == [0xffffffffffffffff, 0x0]

@@ -754,6 +754,14 @@ void create<Binary>(nb::module_& m) {
          fails, it returns 0
          )delim"_doc, "type"_a = Binary::PHDR_RELOC::AUTO)
 
+    .def("get_relocated_dynamic_array", &Binary::get_relocated_dynamic_array,
+      R"doc(
+      Return the array defined by the given tag (e.g.
+      :attr:`~.DynamicEntry.TAG.INIT_ARRAY` with relocations applied (if any)
+      )doc"_doc,
+      "array_tag"_a
+    )
+
     .def(nb::self += Segment(), nb::rv_policy::reference_internal)
     .def(nb::self += Section(), nb::rv_policy::reference_internal)
     .def(nb::self += DynamicEntry(), nb::rv_policy::reference_internal)

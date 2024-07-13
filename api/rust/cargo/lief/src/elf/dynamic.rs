@@ -5,7 +5,7 @@ use crate::common::FromFFI;
 use crate::declare_iterator;
 
 #[allow(non_camel_case_types)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum Tag {
     DT_NULL,
     NEEDED,
@@ -129,8 +129,8 @@ pub enum Tag {
     UNKNOWN(u64),
 }
 
-impl Tag {
-    pub fn from_value(value: u64) -> Self {
+impl From<u64> for Tag {
+    fn from(value: u64) -> Self {
         match value {
             0x00000000 => Tag::DT_NULL,
             0x00000001 => Tag::NEEDED,
@@ -256,6 +256,132 @@ impl Tag {
         }
     }
 }
+impl From<Tag> for u64 {
+    fn from(value: Tag) -> u64 {
+        match value {
+            Tag::DT_NULL => 0x00000000,
+            Tag::NEEDED => 0x00000001,
+            Tag::PLTRELSZ => 0x00000002,
+            Tag::PLTGOT => 0x00000003,
+            Tag::HASH => 0x00000004,
+            Tag::STRTAB => 0x00000005,
+            Tag::SYMTAB => 0x00000006,
+            Tag::RELA => 0x00000007,
+            Tag::RELASZ => 0x00000008,
+            Tag::RELAENT => 0x00000009,
+            Tag::STRSZ => 0x0000000a,
+            Tag::SYMENT => 0x0000000b,
+            Tag::INIT => 0x0000000c,
+            Tag::FINI => 0x0000000d,
+            Tag::SONAME => 0x0000000e,
+            Tag::RPATH => 0x0000000f,
+            Tag::SYMBOLIC => 0x00000010,
+            Tag::REL => 0x00000011,
+            Tag::RELSZ => 0x00000012,
+            Tag::RELENT => 0x00000013,
+            Tag::PLTREL => 0x00000014,
+            Tag::DEBUG_TAG => 0x00000015,
+            Tag::TEXTREL => 0x00000016,
+            Tag::JMPREL => 0x00000017,
+            Tag::BIND_NOW => 0x00000018,
+            Tag::INIT_ARRAY => 0x00000019,
+            Tag::FINI_ARRAY => 0x0000001a,
+            Tag::INIT_ARRAYSZ => 0x0000001b,
+            Tag::FINI_ARRAYSZ => 0x0000001c,
+            Tag::RUNPATH => 0x0000001d,
+            Tag::FLAGS => 0x0000001e,
+            Tag::PREINIT_ARRAY => 0x00000020,
+            Tag::PREINIT_ARRAYSZ => 0x00000021,
+            Tag::SYMTAB_SHNDX => 0x00000022,
+            Tag::RELRSZ => 0x00000023,
+            Tag::RELR => 0x00000024,
+            Tag::RELRENT => 0x00000025,
+            Tag::GNU_HASH => 0x6ffffef5,
+            Tag::RELACOUNT => 0x6ffffff9,
+            Tag::RELCOUNT => 0x6ffffffa,
+            Tag::FLAGS_1 => 0x6ffffffb,
+            Tag::VERSYM => 0x6ffffff0,
+            Tag::VERDEF => 0x6ffffffc,
+            Tag::VERDEFNUM => 0x6ffffffd,
+            Tag::VERNEED => 0x6ffffffe,
+            Tag::VERNEEDNUM => 0x6fffffff,
+            Tag::ANDROID_REL_OFFSET => 0x6000000d,
+            Tag::ANDROID_REL_SIZE => 0x6000000e,
+            Tag::ANDROID_REL => 0x6000000f,
+            Tag::ANDROID_RELSZ => 0x60000010,
+            Tag::ANDROID_RELA => 0x60000011,
+            Tag::ANDROID_RELASZ => 0x60000012,
+            Tag::ANDROID_RELR => 0x6fffe000,
+            Tag::ANDROID_RELRSZ => 0x6fffe001,
+            Tag::ANDROID_RELRENT => 0x6fffe003,
+            Tag::ANDROID_RELRCOUNT => 0x6fffe005,
+            Tag::MIPS_RLD_VERSION => 0x170000001,
+            Tag::MIPS_TIME_STAMP => 0x170000002,
+            Tag::MIPS_ICHECKSUM => 0x170000003,
+            Tag::MIPS_IVERSION => 0x170000004,
+            Tag::MIPS_FLAGS => 0x170000005,
+            Tag::MIPS_BASE_ADDRESS => 0x170000006,
+            Tag::MIPS_MSYM => 0x170000007,
+            Tag::MIPS_CONFLICT => 0x170000008,
+            Tag::MIPS_LIBLIST => 0x170000009,
+            Tag::MIPS_LOCAL_GOTNO => 0x17000000a,
+            Tag::MIPS_CONFLICTNO => 0x17000000b,
+            Tag::MIPS_LIBLISTNO => 0x170000010,
+            Tag::MIPS_SYMTABNO => 0x170000011,
+            Tag::MIPS_UNREFEXTNO => 0x170000012,
+            Tag::MIPS_GOTSYM => 0x170000013,
+            Tag::MIPS_HIPAGENO => 0x170000014,
+            Tag::MIPS_RLD_MAP => 0x170000016,
+            Tag::MIPS_DELTA_CLASS => 0x170000017,
+            Tag::MIPS_DELTA_CLASS_NO => 0x170000018,
+            Tag::MIPS_DELTA_INSTANCE => 0x170000019,
+            Tag::MIPS_DELTA_INSTANCE_NO => 0x17000001a,
+            Tag::MIPS_DELTA_RELOC => 0x17000001b,
+            Tag::MIPS_DELTA_RELOC_NO => 0x17000001c,
+            Tag::MIPS_DELTA_SYM => 0x17000001d,
+            Tag::MIPS_DELTA_SYM_NO => 0x17000001e,
+            Tag::MIPS_DELTA_CLASSSYM => 0x170000020,
+            Tag::MIPS_DELTA_CLASSSYM_NO => 0x170000021,
+            Tag::MIPS_CXX_FLAGS => 0x170000022,
+            Tag::MIPS_PIXIE_INIT => 0x170000023,
+            Tag::MIPS_SYMBOL_LIB => 0x170000024,
+            Tag::MIPS_LOCALPAGE_GOTIDX => 0x170000025,
+            Tag::MIPS_LOCAL_GOTIDX => 0x170000026,
+            Tag::MIPS_HIDDEN_GOTIDX => 0x170000027,
+            Tag::MIPS_PROTECTED_GOTIDX => 0x170000028,
+            Tag::MIPS_OPTIONS => 0x170000029,
+            Tag::MIPS_INTERFACE => 0x17000002a,
+            Tag::MIPS_DYNSTR_ALIGN => 0x17000002b,
+            Tag::MIPS_INTERFACE_SIZE => 0x17000002c,
+            Tag::MIPS_RLD_TEXT_RESOLVE_ADDR => 0x17000002d,
+            Tag::MIPS_PERF_SUFFIX => 0x17000002e,
+            Tag::MIPS_COMPACT_SIZE => 0x17000002f,
+            Tag::MIPS_GP_VALUE => 0x170000030,
+            Tag::MIPS_AUX_DYNAMIC => 0x170000031,
+            Tag::MIPS_PLTGOT => 0x170000032,
+            Tag::MIPS_RWPLT => 0x170000034,
+            Tag::MIPS_RLD_MAP_REL => 0x170000035,
+            Tag::MIPS_XHASH => 0x170000036,
+            Tag::AARCH64_BTI_PLT => 0x270000001,
+            Tag::AARCH64_PAC_PLT => 0x270000003,
+            Tag::AARCH64_VARIANT_PCS => 0x270000005,
+            Tag::AARCH64_MEMTAG_MODE => 0x270000009,
+            Tag::AARCH64_MEMTAG_HEAP => 0x27000000b,
+            Tag::AARCH64_MEMTAG_STACK => 0x27000000c,
+            Tag::AARCH64_MEMTAG_GLOBALS => 0x27000000d,
+            Tag::AARCH64_MEMTAG_GLOBALSSZ => 0x27000000f,
+            Tag::HEXAGON_SYMSZ => 0x370000000,
+            Tag::HEXAGON_VER => 0x370000001,
+            Tag::HEXAGON_PLT => 0x370000002,
+            Tag::PPC_GOT => 0x470000000,
+            Tag::PPC_OPT => 0x470000001,
+            Tag::PPC64_GLINK => 0x570000000,
+            Tag::PPC64_OPT => 0x570000003,
+            Tag::RISCV_VARIANT_CC => 0x670000003,
+            Tag::UNKNOWN(value) => value,
+        }
+    }
+}
 
 
 #[derive(Debug)]
@@ -287,7 +413,7 @@ pub trait DynamicEntry {
 
     /// Dynamic TAG associated with the entry
     fn tag(&self) -> Tag {
-        Tag::from_value(self.as_base().tag())
+        Tag::from(self.as_base().tag())
     }
 
     /// Raw value which should be interpreted according to the [`DynamicEntry::tag`]
