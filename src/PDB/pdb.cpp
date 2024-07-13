@@ -148,6 +148,10 @@ CompilationUnit::Iterator& CompilationUnit::Iterator::operator++() {
   return *this;
 }
 
+CompilationUnit::Iterator& CompilationUnit::Iterator::operator--() {
+  return *this;
+}
+
 std::unique_ptr<CompilationUnit> CompilationUnit::Iterator::operator*() const {
   return nullptr;
 }
