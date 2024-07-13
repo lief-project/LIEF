@@ -555,3 +555,25 @@ def test_issue_726(tmp_path):
 
         for parsed in (original, new):
             assert parsed.get_segment("__LINKEDIT").virtual_size % parsed.page_size == 0
+
+
+def test_rpath(tmp_path):
+    # c.f. https://github.com/lief-project/LIEF/issues/1074
+    macho = lief.MachO.parse(get_sample("MachO/rpath_291.bin")).at(0)
+    rpaths = list(macho.rpaths)
+
+    assert rpaths[0].path == "/tmp"
+    assert rpaths[1].path == "/var"
+
+    rpaths[0].path = "/foo"
+    rpaths[1].path = "/bar"
+
+    output = f"{tmp_path}/rpath.bin"
+
+    macho.write(output)
+
+    new = lief.MachO.parse(output).at(0)
+
+    new_rpaths = list(new.rpaths)
+    assert new_rpaths[0].path == "/foo"
+    assert new_rpaths[1].path == "/bar"

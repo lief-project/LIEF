@@ -114,6 +114,11 @@ ok_error_t Builder::build() {
       build<T>(*cmd->as<BuildVersion>());
       continue;
     }
+
+    if (RPathCommand::classof(cmd.get())) {
+      build<T>(*cmd->as<RPathCommand>());
+      continue;
+    }
   }
 
   build_segments<T>();

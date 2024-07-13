@@ -35,6 +35,7 @@
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
+#include "LIEF/MachO/RPathCommand.hpp"
 #include "LIEF/MachO/RelocationFixup.hpp"
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
@@ -347,6 +348,47 @@ ok_error_t Builder::build(SourceVersion& source_version) {
   return ok();
 }
 
+
+template<class T>
+ok_error_t Builder::build(RPathCommand& rpath_cmd) {
+  LIEF_DEBUG("Build '{}'", to_string(rpath_cmd.command()));
+
+  const uint32_t raw_size = sizeof(details::rpath_command) + rpath_cmd.path().size() + 1;
+  const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
+  const uint32_t padding = size_needed - raw_size;
+
+  if (rpath_cmd.original_data_.size() != size_needed ||
+      rpath_cmd.size() != size_needed)
+  {
+    LIEF_WARN("Not enough room left to rebuild {}."
+              "required=0x{:x} available=0x{:x}",
+              rpath_cmd.path(), size_needed, rpath_cmd.original_data_.size());
+  }
+
+
+  details::rpath_command raw_cmd;
+  std::memset(&raw_cmd, 0, sizeof(details::rpath_command));
+
+  raw_cmd.cmd     = static_cast<uint32_t>(rpath_cmd.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(size_needed);
+  raw_cmd.path    = static_cast<uint32_t>(sizeof(details::rpath_command));
+
+  rpath_cmd.size_ = size_needed;
+  rpath_cmd.original_data_.clear();
+
+  // Write Header
+  std::move(reinterpret_cast<uint8_t*>(&raw_cmd),
+            reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
+            std::back_inserter(rpath_cmd.original_data_));
+
+  // Write String
+  const std::string& rpath = rpath_cmd.path();
+  std::move(std::begin(rpath), std::end(rpath),
+            std::back_inserter(rpath_cmd.original_data_));
+  rpath_cmd.original_data_.push_back(0);
+  rpath_cmd.original_data_.insert(std::end(rpath_cmd.original_data_), padding, 0);
+  return ok();
+}
 
 template<class T>
 ok_error_t Builder::build(MainCommand& main_cmd) {

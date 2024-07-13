@@ -49,6 +49,7 @@ class SymbolCommand;
 class ThreadCommand;
 class TwoLevelHints;
 class VersionMin;
+class RPathCommand;
 
 //! Class used to rebuild a Mach-O file
 class LIEF_API Builder {
@@ -120,6 +121,9 @@ class LIEF_API Builder {
 
   template<class T>
   ok_error_t build(MainCommand& main_cmd);
+
+  template<class T>
+  ok_error_t build(RPathCommand& rpath_cmd);
 
   template<class T>
   ok_error_t build(DyldInfo& dyld_info);

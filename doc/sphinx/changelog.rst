@@ -65,6 +65,7 @@ Changelog
 
 :MachO:
 
+  * Add support to modify Mach-O rpath (see: :issue:`1074`)
   * Add helper :attr:`lief.MachO.Binary.support_arm64_ptr_auth` to check if a
     Mach-O binary is supporting ARM64 pointer authentication (arm64e)
   * Fix **major performance issue when processing Mach-O binaries on Windows & macOS**
