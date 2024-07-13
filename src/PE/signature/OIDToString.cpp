@@ -20,7 +20,7 @@
 namespace LIEF {
 namespace PE {
 const char* oid_to_string(const oid_t& oid) {
-  const std::unordered_map<oid_t, const char*> oid_to_str  {
+  static const std::unordered_map<oid_t, const char*> oid_to_str  {
     { "0.2.262.1.10",                     "TELESEC" },
     { "0.2.262.1.10.0",                   "EXTENSION" },
     { "0.2.262.1.10.1",                   "MECHANISM" },

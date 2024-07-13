@@ -77,7 +77,6 @@ void init_utils(nb::module_& m) {
         * Order agnostic
         * Casse agnostic
         * Ordinal (**in some extent**) agnostic
-        *
 
       If one needs the same output as Virus Total (i.e. pefile), you can use :attr:`~lief.PE.IMPHASH_MODE.PEFILE`
       as second parameter.
