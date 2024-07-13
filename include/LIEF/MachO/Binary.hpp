@@ -756,6 +756,13 @@ class LIEF_API Binary : public LIEF::Binary  {
     return in_memory_base_addr_;
   }
 
+  // Check if the binary is supporting ARM64 pointer authentication (arm64e)
+  bool support_arm64_ptr_auth() const {
+    static constexpr auto CPU_SUBTYPE_ARM64E = 2;
+    return header().cpu_type() == Header::CPU_TYPE::ARM64 &&
+           (header().cpu_subtype() & ~Header::CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM64E;
+  }
+
   uint32_t page_size() const;
 
   static bool classof(const LIEF::Binary* bin) {

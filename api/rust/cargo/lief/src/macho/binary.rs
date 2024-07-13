@@ -205,6 +205,12 @@ impl Binary {
     pub fn version_min(&self) -> Option<VersionMin> {
         into_optional(self.ptr.version_min())
     }
+
+    /// Check if the binary is supporting ARM64 pointer authentication (arm64e)
+    pub fn support_arm64_ptr_auth(&self) -> bool {
+        self.ptr.support_arm64_ptr_auth()
+    }
+
 }
 
 impl generic::Binary for Binary {

@@ -219,6 +219,10 @@ class MachO_Binary : public AbstractBinary {
     return details::try_unique<MachO_VersionMin>(impl().version_min());
   }
 
+  auto support_arm64_ptr_auth() const {
+    return impl().support_arm64_ptr_auth();
+  }
+
   static bool is_exported(const MachO_Symbol& symbol) {
     return lief_t::is_exported(static_cast<const LIEF::MachO::Symbol&>(symbol.get()));
   }

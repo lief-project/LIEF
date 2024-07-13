@@ -657,6 +657,12 @@ void create<Binary>(nb::module_& m) {
                  otherwise.
                  )doc"_doc)
 
+    .def_prop_ro("support_arm64_ptr_auth", &Binary::support_arm64_ptr_auth,
+      R"doc(
+      Check if the binary is supporting ARM64 pointer authentication (arm64e)
+      )doc"
+    )
+
     .def("__getitem__",
         nb::overload_cast<LoadCommand::TYPE>(&Binary::operator[]),
         nb::rv_policy::reference_internal)

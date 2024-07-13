@@ -65,6 +65,8 @@ Changelog
 
 :MachO:
 
+  * Add helper :attr:`lief.MachO.Binary.support_arm64_ptr_auth` to check if a
+    Mach-O binary is supporting ARM64 pointer authentication (arm64e)
   * Fix **major performance issue when processing Mach-O binaries on Windows & macOS**
   * Add generic :class:`lief.MachO.UnknownCommand` to support Apple private Load
     commands not officially supported by LIEF.

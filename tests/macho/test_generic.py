@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import lief
-from utils import get_sample
+import pytest
+from utils import get_sample, has_private_samples
 import hashlib
 
 def test_function_starts():
@@ -294,3 +295,8 @@ def test_unknown_command():
     assert unknown_cmd.original_command == 0x3333
     print(hash(unknown_cmd))
     print(unknown_cmd)
+
+@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+def test_arm64e():
+    sample = lief.MachO.parse(get_sample("private/MachO/libCoreKE_arm64e.dylib")).at(0)
+    assert sample.support_arm64_ptr_auth
