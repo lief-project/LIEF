@@ -5,7 +5,7 @@ set(PROFILING_FLAGS
 set(SRC_TARGETS
   elf_profiler.cpp
   macho_profiler.cpp
-  pe_profilier.cpp
+  pe_profiler.cpp
 )
 
 foreach(src_target ${SRC_TARGETS})
