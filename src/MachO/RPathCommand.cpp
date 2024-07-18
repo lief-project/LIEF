@@ -15,6 +15,7 @@
  */
 #include <iomanip>
 
+#include "LIEF/utils.hpp"
 #include "LIEF/Visitor.hpp"
 
 #include "LIEF/MachO/RPathCommand.hpp"
@@ -37,6 +38,17 @@ std::ostream& RPathCommand::print(std::ostream& os) const {
   return os;
 }
 
+RPathCommand RPathCommand::rpath(const std::string& path) {
+  LoadCommand::TYPE type = LoadCommand::TYPE::RPATH;
+  details::rpath_command raw_cmd;
+  raw_cmd.cmd                         = static_cast<uint32_t>(type);
+  raw_cmd.cmdsize                     = align(sizeof(details::rpath_command) + path.size() + 1, sizeof(uint64_t));
+  
+  RPathCommand rpath{raw_cmd};
+  rpath.path(path);
+  rpath.data(LoadCommand::raw_t(raw_cmd.cmdsize, 0));
+  return rpath;
+}
 
 }
 }

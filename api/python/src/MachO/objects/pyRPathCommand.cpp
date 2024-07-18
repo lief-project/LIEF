@@ -33,6 +33,11 @@ void create<RPathCommand>(nb::module_& m) {
         nb::overload_cast<std::string>(&RPathCommand::path),
         "@rpath path"_doc, nb::rv_policy::reference_internal)
 
+    .def_static("rpath",
+        &RPathCommand::rpath,
+        "Factory function to generate a " RST_CLASS_REF(lief.MachO.LoadCommand.TYPE.RPATH) " "_doc,
+        "path"_a)
+
     LIEF_DEFAULT_STR(RPathCommand);
 }
 }

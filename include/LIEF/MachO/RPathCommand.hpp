@@ -35,6 +35,10 @@ struct rpath_command;
 //! associated with the ``@rpath`` prefix.
 class LIEF_API RPathCommand : public LoadCommand {
   public:
+  //! Factory function to generate a LC_RPATH command
+  static RPathCommand rpath(const std::string& path);
+
+  public:
   RPathCommand() = default;
   RPathCommand(const details::rpath_command& rpathCmd);
 
