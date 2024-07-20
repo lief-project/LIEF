@@ -88,8 +88,8 @@ void create<Note>(nb::module_& m) {
   ;
   #undef ENTRY
 
-  const auto create_overload_0 = nb::overload_cast<const std::string&, uint32_t, Note::description_t, Header::FILE_TYPE, ARCH, Header::CLASS>(&Note::create);
-  const auto create_overload_1 = nb::overload_cast<const std::string&, Note::TYPE, Note::description_t, ARCH, Header::CLASS>(&Note::create);
+  const auto create_overload_0 = nb::overload_cast<const std::string&, uint32_t, Note::description_t, std::string, Header::FILE_TYPE, ARCH, Header::CLASS>(&Note::create);
+  const auto create_overload_1 = nb::overload_cast<const std::string&, Note::TYPE, Note::description_t, std::string, ARCH, Header::CLASS>(&Note::create);
   note
     .def_static("create", create_overload_0,
       R"doc(
@@ -98,16 +98,16 @@ void create<Note>(nb::module_& m) {
 
       Depending on the note, the filetype, the architecture and the ELF class might be needed.
       )doc"_doc,
-      "name"_a, "original_type"_a, "description"_a,
+      "name"_a, "original_type"_a, "description"_a, "section_name"_a,
       "file_type"_a = Header::FILE_TYPE::NONE, "arch"_a = ARCH::NONE, "cls"_a = Header::CLASS::NONE)
 
     .def_static("create",
-      [] (nb::bytes bytes, Header::FILE_TYPE ftype, ARCH arch, Header::CLASS cls) -> std::unique_ptr<Note> {
+      [] (nb::bytes bytes, std::string section, Header::FILE_TYPE ftype, ARCH arch, Header::CLASS cls) -> std::unique_ptr<Note> {
         std::unique_ptr<LIEF::SpanStream> stream = to_stream(bytes);
         if (!stream) {
           return nullptr;
         }
-        return Note::create(*stream, ftype, arch, cls);
+        return Note::create(*stream, std::move(section), ftype, arch, cls);
       },
       R"doc(
       Create a note from the given `bytes` buffer.
@@ -115,7 +115,7 @@ void create<Note>(nb::module_& m) {
       Depending on the note, the filetype, the architecture and the ELF class might
       be needed.
       )doc"_doc,
-      "raw"_a,
+      "raw"_a, "section_name"_a = "",
       "file_type"_a = Header::FILE_TYPE::NONE, "arch"_a = ARCH::NONE,
       "cls"_a = Header::CLASS::NONE)
 
@@ -126,7 +126,7 @@ void create<Note>(nb::module_& m) {
       Depending on the note, the filetype, the architecture and the ELF class might
       be needed.
       )doc"_doc,
-      "name"_a, "type"_a, "description"_a,
+      "name"_a, "type"_a, "description"_a, "section_name"_a,
       "arch"_a = ARCH::NONE, "cls"_a = Header::CLASS::NONE)
 
     .def_prop_rw("name",

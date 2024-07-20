@@ -41,7 +41,8 @@ def test_remove_note(tmp_path: Path):
 def test_add_note(tmp_path: Path):
     etterlog = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_etterlog.bin'))
     output = tmp_path / "etterlog"
-    note = lief.ELF.Note.create("Foo", lief.ELF.Note.TYPE.GNU_GOLD_VERSION, [1, 2])
+    note = lief.ELF.Note.create("Foo", lief.ELF.Note.TYPE.GNU_GOLD_VERSION, [1, 2],
+                                section_name="")
 
     etterlog += note
 
@@ -57,7 +58,6 @@ def test_add_note(tmp_path: Path):
     with StringIO() as temp_stdout:
         with redirect_stdout(temp_stdout):
             print(etterlog)
-
 
 def test_android_note(tmp_path: Path):
     ndkr16 = lief.ELF.parse(get_sample('ELF/ELF64_AArch64_piebinary_ndkr16.bin'))
@@ -197,3 +197,38 @@ def test_qnx_note():
     assert stack_info.stack_size == 0
     assert stack_info.stack_allocated == 0x1000
     assert not stack_info.is_executable
+
+
+def test_create_custom_note(tmp_path: Path):
+    elf = lief.ELF.parse(get_sample("ELF/ELF64_x86-64_binary_hello-gdb.bin"))
+
+    elf += lief.ELF.Note.create(
+        name="lief-testing",
+        original_type=lief.ELF.Note.TYPE.UNKNOWN,
+        description=list(b"some descriptions"),
+        section_name=".lief.note.1"
+    )
+
+    elf += lief.ELF.Note.create(
+        name="lief-testing-alt",
+        original_type=lief.ELF.Note.TYPE.UNKNOWN,
+        description=list(b"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed"),
+        section_name=".lief.note.alternative"
+    )
+
+    out = tmp_path / "note-1.elf"
+
+    config = lief.ELF.Builder.config_t()
+    config.notes = True
+    elf.write(out.as_posix(), config)
+
+    new = lief.ELF.parse(out.as_posix())
+    assert new.get_section(".lief.note.1") is not None
+    assert new.get_section(".lief.note.alternative") is not None
+
+    notes = new.notes
+    assert len(notes) == 4
+    assert notes[2].name == "lief-testing\x00"
+    assert bytes(notes[2].description) == b"some descriptions\x00\x00\x00"
+    assert notes[3].name == "lief-testing-alt\x00"
+    assert bytes(notes[3].description) == b"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed"

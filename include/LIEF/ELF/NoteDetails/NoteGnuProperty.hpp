@@ -72,8 +72,10 @@ class LIEF_API NoteGnuProperty : public Note {
   using properties_t = std::vector<std::unique_ptr<NoteGnuProperty::Property>>;
 
   NoteGnuProperty(ARCH arch, Header::CLASS cls, std::string name,
-                  uint32_t type, description_t description) :
-    Note(std::move(name), TYPE::GNU_PROPERTY_TYPE_0, type, std::move(description)),
+                  uint32_t type, description_t description,
+                  std::string secname) :
+    Note(std::move(name), TYPE::GNU_PROPERTY_TYPE_0, type, std::move(description),
+         std::move(secname)),
     arch_(arch), class_(cls)
   {}
 

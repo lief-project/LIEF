@@ -100,7 +100,7 @@ class LIEF_API CorePrStatus : public Note {
   public:
   CorePrStatus(ARCH arch, Header::CLASS cls, std::string name,
                uint32_t type, description_t description) :
-    Note(std::move(name), TYPE::CORE_PRSTATUS, type, std::move(description)),
+    Note(std::move(name), TYPE::CORE_PRSTATUS, type, std::move(description), ""),
     arch_(arch), class_(cls)
   {}
 

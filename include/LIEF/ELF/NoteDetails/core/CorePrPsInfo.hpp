@@ -57,7 +57,7 @@ class LIEF_API CorePrPsInfo : public Note {
   };
   CorePrPsInfo(ARCH arch, Header::CLASS cls, std::string name,
                uint32_t type, description_t description) :
-    Note(std::move(name), TYPE::CORE_PRPSINFO, type, std::move(description)),
+    Note(std::move(name), TYPE::CORE_PRPSINFO, type, std::move(description), ""),
     arch_(arch), class_(cls)
   {}
 

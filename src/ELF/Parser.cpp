@@ -569,8 +569,11 @@ ok_error_t Parser::parse_notes(uint64_t offset, uint64_t size) {
 
   while (*stream_ && stream_->pos() < last_offset) {
     const auto current_pos = static_cast<int64_t>(stream_->pos());
+    const Section* sec = binary_->section_from_offset(current_pos);
+    std::string sec_name = sec != nullptr ? sec->name() : "";
+
     std::unique_ptr<Note> note = Note::create(
-        *stream_,
+        *stream_, std::move(sec_name),
         binary_->header().file_type(), binary_->header().machine_type(),
         binary_->header().identity_class()
     );

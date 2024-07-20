@@ -1637,7 +1637,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
           continue;
         }
 
-        const char* sec_name = *section_res;
+        std::string sec_name = *section_res;
 
         // If the binary has the note type but does not have
         // the section (likly because the user added the note manually)

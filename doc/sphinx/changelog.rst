@@ -22,6 +22,23 @@ Changelog
   * First (beta) release of the bindings (c.f. :ref:`lief_rust_bindings`)
 
 :ELF:
+  * Add support to create custom notes (:issue:`1026`):
+
+    .. code-block:: python
+
+      elf: lief.ELF.Binary = ...
+
+      elf += lief.ELF.Note.create(
+          name="my-custom-note",
+          original_type=lief.ELF.Note.TYPE.UNKNOWN,
+          description=list(b"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed"),
+          section_name=".lief.note.custom"
+      )
+
+      config = lief.ELF.Builder.config_t()
+      config.notes = True
+      elf.write("/tmp/new-binary.elf", config)
+
   * Add :meth:`lief.ELF.Binary.get_relocated_dynamic_array` which allows
     to get a **relocated** view of the of init/fini entries. This function can
     handy ELF init array/fini array functions are defined through relocations.

@@ -134,8 +134,12 @@ class LIEF_API Note : public Object {
   /// provided in parameter
   static result<const char*> type_to_section(TYPE type);
 
-  static result<const char*> note_to_section(const Note& note) {
-    return type_to_section(note.type());
+  static result<std::string> note_to_section(const Note& note) {
+    const std::string& sec_name = note.section_name();
+    if (sec_name.empty()) {
+      return type_to_section(note.type());
+    }
+    return sec_name;
   }
 
   /// Try to determine the owner's name of the TYPE provided in parameter
@@ -146,6 +150,7 @@ class LIEF_API Note : public Object {
   /// creating notes like Coredump notes.
   static std::unique_ptr<Note> create(
       const std::string& name, uint32_t type, description_t description,
+      std::string section_name,
       Header::FILE_TYPE ftype = Header::FILE_TYPE::NONE, ARCH arch = ARCH::NONE,
       Header::CLASS cls = Header::CLASS::NONE);
 
@@ -154,12 +159,14 @@ class LIEF_API Note : public Object {
   /// creating notes like Coredump notes.
   static std::unique_ptr<Note> create(
       const std::string& name, TYPE type, description_t description,
+      std::string section_name,
       ARCH arch = ARCH::NONE, Header::CLASS cls = Header::CLASS::NONE);
 
   /// Create a new note from the given stream. Additional information
   /// such as the architecture or the ELF class could be required for
   /// creating notes like Coredump notes.
   static std::unique_ptr<Note> create(BinaryStream& stream,
+      std::string section_name,
       Header::FILE_TYPE ftype = Header::FILE_TYPE::NONE, ARCH arch = ARCH::NONE,
       Header::CLASS cls = Header::CLASS::NONE);
 
@@ -176,6 +183,11 @@ class LIEF_API Note : public Object {
   /// Return the *name* of the note (also known as 'owner' )
   const std::string& name() const {
     return name_;
+  }
+
+  /// Return the section name in which the note is or should be stored
+  const std::string& section_name() const {
+    return section_name_;
   }
 
   /// Return the type of the note. This type does not match the `NT_` type
@@ -224,11 +236,12 @@ class LIEF_API Note : public Object {
   protected:
   Note() = default;
   Note(std::string name, TYPE type, uint32_t original_type,
-       description_t description) :
+       description_t description, std::string section) :
     name_(std::move(name)),
     type_(type),
     original_type_(original_type),
-    description_(std::move(description))
+    description_(std::move(description)),
+    section_name_(std::move(section))
   {}
 
   template<class T>
@@ -246,6 +259,7 @@ class LIEF_API Note : public Object {
   TYPE type_ = TYPE::UNKNOWN;
   uint32_t original_type_ = 0;
   description_t description_;
+  std::string section_name_;
 };
 
 LIEF_API const char* to_string(Note::TYPE type);

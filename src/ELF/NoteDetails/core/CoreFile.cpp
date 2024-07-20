@@ -95,7 +95,7 @@ void CoreFile::write_files() {
 
 CoreFile::CoreFile(ARCH arch, Header::CLASS cls, std::string name,
                    uint32_t type, Note::description_t description) :
-  Note(std::move(name), Note::TYPE::CORE_FILE, type, std::move(description)),
+  Note(std::move(name), Note::TYPE::CORE_FILE, type, std::move(description), ""),
   arch_(arch), class_(cls)
 {
 

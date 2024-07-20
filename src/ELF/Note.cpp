@@ -386,7 +386,9 @@ result<Note::TYPE> Note::convert_type(Header::FILE_TYPE ftype, uint32_t type,
 }
 
 std::unique_ptr<Note>
-Note::create(BinaryStream& stream, Header::FILE_TYPE ftype, ARCH arch, Header::CLASS cls) {
+Note::create(BinaryStream& stream, std::string section_name,
+             Header::FILE_TYPE ftype, ARCH arch, Header::CLASS cls)
+{
   static constexpr uint32_t MAX_NOTE_DESCRIPTION = 1_MB;
   const size_t pos = stream.pos();
   auto res_namesz = stream.read_conv<uint32_t>();
@@ -447,11 +449,13 @@ Note::create(BinaryStream& stream, Header::FILE_TYPE ftype, ARCH arch, Header::C
                   start_ptr + description.size() * sizeof(uint32_t)};
   }
 
-  return create(name, type, std::move(desc_bytes), ftype, arch, cls);
+  return create(name, type, std::move(desc_bytes), std::move(section_name),
+                ftype, arch, cls);
 }
 
 std::unique_ptr<Note>
 Note::create(const std::string& name, Note::TYPE ntype, description_t description,
+             std::string section_name,
              ARCH arch, Header::CLASS cls)
 {
   std::string owner;
@@ -549,7 +553,8 @@ Note::create(const std::string& name, Note::TYPE ntype, description_t descriptio
     case Note::TYPE::CORE_SIGINFO:
       {
         return std::unique_ptr<CoreSigInfo>(new CoreSigInfo(
-            std::move(norm_name), ntype, *int_type, std::move(description)
+            std::move(norm_name), ntype, *int_type, std::move(description),
+            std::move(section_name)
         ));
       }
     case Note::TYPE::GNU_PROPERTY_TYPE_0:
@@ -564,25 +569,30 @@ Note::create(const std::string& name, Note::TYPE ntype, description_t descriptio
           return nullptr;
         }
         return std::unique_ptr<NoteGnuProperty>(new NoteGnuProperty(
-            arch, cls, std::move(norm_name), *int_type, std::move(description)
+            arch, cls, std::move(norm_name), *int_type, std::move(description),
+            std::move(section_name)
         ));
       }
     case Note::TYPE::ANDROID_IDENT:
         return std::unique_ptr<AndroidIdent>(new AndroidIdent(
-            std::move(norm_name), ntype, *int_type, std::move(description)
+            std::move(norm_name), ntype, *int_type, std::move(description),
+            std::move(section_name)
         ));
     case Note::TYPE::QNX_STACK:
         return std::unique_ptr<QNXStack>(new QNXStack(
-            std::move(norm_name), ntype, *int_type, std::move(description)
+            std::move(norm_name), ntype, *int_type, std::move(description),
+            std::move(section_name)
         ));
     case Note::TYPE::GNU_ABI_TAG:
         return std::unique_ptr<NoteAbi>(new NoteAbi(
-            std::move(norm_name), ntype, *int_type, std::move(description)
+            std::move(norm_name), ntype, *int_type, std::move(description),
+            std::move(section_name)
         ));
 
     default:
         return std::unique_ptr<Note>(new Note(
-            std::move(norm_name), ntype, *int_type, std::move(description)
+            std::move(norm_name), ntype, *int_type, std::move(description),
+            std::move(section_name)
         ));
   }
   return nullptr;
@@ -591,15 +601,17 @@ Note::create(const std::string& name, Note::TYPE ntype, description_t descriptio
 
 std::unique_ptr<Note>
 Note::create(const std::string& name, uint32_t type, description_t description,
+             std::string section_name,
              Header::FILE_TYPE ftype, ARCH arch, Header::CLASS cls)
 {
   auto conv = Note::convert_type(ftype, type, name);
   if (!conv) {
-    LIEF_WARN("Note type: 0x{:x} is not supported for owner: '{}'", type, name);
+    LIEF_DEBUG("Note type: 0x{:x} is not supported for owner: '{}'", type, name);
     return std::unique_ptr<Note>(new Note(name, Note::TYPE::UNKNOWN, type,
-                                  std::move(description)));
+                                  std::move(description), std::move(section_name)));
   }
-  return create(name, *conv, std::move(description), arch, cls);
+  return create(name, *conv, std::move(description),
+                std::move(section_name), arch, cls);
 }
 
 
@@ -618,10 +630,7 @@ void Note::accept(Visitor& visitor) const {
 }
 
 void Note::dump(std::ostream& os) const {
-  std::string note_name = name();
-  if (type() == TYPE::GNU_BUILD_ATTRIBUTE_OPEN) {
-    note_name = printable_string(note_name);
-  }
+  std::string note_name = printable_string(name());
   os << fmt::format("{}(0x{:04x}) '{}' [{}]",
                     to_string(type()), original_type(), note_name,
                     to_hex(description(), 10));

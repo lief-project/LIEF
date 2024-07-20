@@ -101,6 +101,17 @@ size_t Layout::section_shstr_size() {
     }
   }
 
+  for (const Note& note : binary_->notes()) {
+    const std::string& secname = note.section_name();
+    if (secname.empty()) {
+      continue;
+    }
+
+    if (const Section* sec = binary_->get_section(secname); sec == nullptr) {
+      sec_names.push_back(secname);
+    }
+  }
+
   // First write section names
   size_t offset_counter = raw_shstrtab.tellp();
   std::vector<std::string> shstrtab_opt = optimize(sec_names, [] (const std::string& s) { return s; },
