@@ -4,6 +4,17 @@ license     = "Apache-2.0"
 description = "Official Rust bindings for LIEF."
 readme      = "README.md"
 version     = "0.15.0"
+homepage    = "https://lief.re"
+keywords    = ["ELF", "PE", "Mach-O", "reverse-engineering"]
+repository  = "https://github.com/lief-project/LIEF"
+categories  = [
+  "api-bindings",
+  "development-tools::debugging",
+  "development-tools::profiling",
+  "development-tools::build-utils",
+  "parser-implementations",
+  "parsing"
+]
 
 [workspace]
 members = [

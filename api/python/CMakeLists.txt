@@ -75,7 +75,7 @@ if(APPLE)
 endif()
 
 
-if (UNIX)
+if (UNIX OR MUSL)
   if (LIEF_PYTHON_STATIC)
     set_target_properties(pyLIEF PROPERTIES SUFFIX ".a")
   else()

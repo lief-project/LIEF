@@ -290,7 +290,7 @@ Changelog
 
 :Abstraction:
 
-    * `LIEF::EXE_FORMATS` is now scoped in `LIEF::Binary::FORMATS`
+    * ``LIEF::EXE_FORMATS`` is now scoped in ``LIEF::Binary::FORMATS``
     * All the `Binary` classes now implement `classof`:
 
       .. code-block:: cpp
