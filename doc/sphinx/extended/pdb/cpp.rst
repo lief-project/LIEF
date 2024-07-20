@@ -52,14 +52,12 @@ Array
 
 ----------
 
-
 Attribute (type)
 ****************
 
 .. doxygenclass:: LIEF::pdb::types::Attribute
 
 ----------
-
 
 BitField
 ********
@@ -68,14 +66,12 @@ BitField
 
 ----------
 
-
 ClassLike
 *********
 
 .. doxygenclass:: LIEF::pdb::types::ClassLike
 
 ----------
-
 
 Structure
 *********
@@ -84,14 +80,12 @@ Structure
 
 ----------
 
-
 Class
 *****
 
 .. doxygenclass:: LIEF::pdb::types::Class
 
 ----------
-
 
 Interface
 *********
@@ -100,14 +94,12 @@ Interface
 
 ----------
 
-
 Enum
 ********
 
 .. doxygenclass:: LIEF::pdb::types::Enum
 
 ----------
-
 
 Function (type)
 ***************
@@ -116,14 +108,12 @@ Function (type)
 
 ----------
 
-
 Method (type)
 *************
 
 .. doxygenclass:: LIEF::pdb::types::Method
 
 ----------
-
 
 Modifier
 ********
@@ -132,14 +122,12 @@ Modifier
 
 ----------
 
-
 Pointer
 ********
 
 .. doxygenclass:: LIEF::pdb::types::Pointer
 
 ----------
-
 
 Simple
 ********
@@ -148,8 +136,15 @@ Simple
 
 ----------
 
-
 Union
 ********
 
 .. doxygenclass:: LIEF::pdb::types::Union
+
+----------
+
+debug_location_t
+****************
+
+.. doxygenclass:: LIEF::debug_location_t
+

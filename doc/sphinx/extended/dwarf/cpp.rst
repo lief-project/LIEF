@@ -110,3 +110,10 @@ Pointer
 *******
 
 .. doxygenclass:: LIEF::dwarf::types::Pointer
+
+----------
+
+debug_location_t
+****************
+
+.. doxygenclass:: LIEF::debug_location_t
