@@ -34,6 +34,7 @@
 #include "LIEF/PE/resources/LangCodeItem.hpp"
 #include "LIEF/PE/resources/langs.hpp"
 #include "LIEF/PE/signature/attributes.hpp"
+#include "LIEF/PE/signature/PKCS9TSTInfo.hpp"
 #include "LIEF/PE/signature/SpcIndirectData.hpp"
 #include "LIEF/PE/signature/GenericContent.hpp"
 
@@ -99,11 +100,16 @@ void init_signature(nb::module_& m) {
   CREATE(GenericType, m);
   CREATE(MsSpcNestedSignature, m);
   CREATE(MsSpcStatementType, m);
+  CREATE(MsManifestBinaryID, m);
   CREATE(PKCS9AtSequenceNumber, m);
   CREATE(PKCS9CounterSignature, m);
   CREATE(PKCS9MessageDigest, m);
   CREATE(PKCS9SigningTime, m);
   CREATE(SpcSpOpusInfo, m);
+  CREATE(MsCounterSign, m);
+  CREATE(SpcRelaxedPeMarkerCheck, m);
+  CREATE(SigningCertificateV2, m);
+  CREATE(PKCS9TSTInfo, m);
 }
 
 void init_objects(nb::module_& m) {

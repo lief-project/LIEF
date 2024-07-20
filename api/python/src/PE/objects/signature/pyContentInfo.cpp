@@ -16,6 +16,8 @@
 #include "PE/pyPE.hpp"
 
 #include "LIEF/PE/signature/ContentInfo.hpp"
+#include "LIEF/PE/signature/SpcIndirectData.hpp"
+#include "LIEF/PE/signature/GenericContent.hpp"
 
 #include <string>
 #include <sstream>
@@ -74,7 +76,8 @@ void create<ContentInfo>(nb::module_& m) {
         }
       )delim"_doc);
 
-  nb::class_<ContentInfo::Content, Object>(info, "Content")
+  nb::class_<ContentInfo::Content, Object> content(info, "Content");
+  content
     .def_prop_ro("content_type",
         &ContentInfo::Content::content_type,
         "OID of the content type. This value should match ``SPC_INDIRECT_DATA_OBJID``"_doc)
@@ -84,17 +87,19 @@ void create<ContentInfo>(nb::module_& m) {
     .def_prop_ro("content_type",
         &ContentInfo::content_type,
         "An alias for :attr:`~.ContentInfo.content_type`"_doc)
+
     .def_prop_ro("digest",
         [] (const ContentInfo& self) -> nb::bytes {
           return nb::to_bytes(self.digest());
         },
         R"delim(
         Return the digest (authentihash) if the underlying content type is
-        `SPC_INDIRECT_DATA_OBJID`. Return an empty vector otherwise.
+        ``SPC_INDIRECT_DATA_OBJID``. Return empty bytes otherwise.
         )delim"_doc
     )
     .def_prop_ro("digest_algorithm", &ContentInfo::digest_algorithm,
                  "Return the hash algorithm used to generate the :attr:`.digest`"_doc)
+
     .def_prop_ro("value", nb::overload_cast<>(&ContentInfo::value),
                  nb::rv_policy::reference_internal)
 

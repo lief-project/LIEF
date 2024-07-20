@@ -69,6 +69,9 @@
 #include "LIEF/PE/signature/attributes.hpp"
 #include "LIEF/PE/signature/types.hpp"
 #include "LIEF/PE/signature/x509.hpp"
+#include "LIEF/PE/signature/SpcIndirectData.hpp"
+#include "LIEF/PE/signature/GenericContent.hpp"
+#include "LIEF/PE/signature/PKCS9TSTInfo.hpp"
 
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/enums.hpp"

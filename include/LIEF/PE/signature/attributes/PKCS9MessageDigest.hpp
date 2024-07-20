@@ -23,7 +23,6 @@
 #include <vector>
 
 namespace LIEF {
-class VectorStream;
 namespace PE {
 
 class Parser;

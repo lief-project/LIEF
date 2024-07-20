@@ -67,6 +67,7 @@ class VectorStream : public BinaryStream {
   }
 
   const uint8_t* end() const override {
+
     return this->binary_.data() + this->binary_.size();
   }
 

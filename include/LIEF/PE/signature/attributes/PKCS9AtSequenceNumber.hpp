@@ -20,7 +20,6 @@
 #include "LIEF/PE/signature/Attribute.hpp"
 
 namespace LIEF {
-class VectorStream;
 namespace PE {
 
 class Parser;

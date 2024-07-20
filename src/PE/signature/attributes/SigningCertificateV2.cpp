@@ -1,5 +1,5 @@
-/* Copyright 2017 - 2024 R. Thomas
- * Copyright 2017 - 2024 Quarkslab
+/* Copyright 2021 - 2023 R. Thomas
+ * Copyright 2021 - 2023 Quarkslab
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,27 +14,19 @@
  * limitations under the License.
  */
 #include "LIEF/Visitor.hpp"
-#include "LIEF/utils.hpp"
-#include "LIEF/PE/signature/SpcIndirectData.hpp"
-#include "LIEF/PE/EnumToString.hpp"
-
-#include <spdlog/fmt/fmt.h>
+#include "LIEF/PE/signature/attributes/SigningCertificateV2.hpp"
 
 namespace LIEF {
 namespace PE {
 
-void SpcIndirectData::accept(Visitor& visitor) const {
+void SigningCertificateV2::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-void SpcIndirectData::print(std::ostream& os) const {
-  if (!file().empty()) {
-    os << fmt::format("{} - {} - {}\n", to_string(digest_algorithm()),
-                      file(), hex_dump(digest()));
-  } else {
-    os << fmt::format("{}: {}\n", to_string(digest_algorithm()), hex_dump(digest()));
-  }
+std::string SigningCertificateV2::print() const {
+  return "";
 }
 
 }
 }
+

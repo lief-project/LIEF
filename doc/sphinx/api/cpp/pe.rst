@@ -335,6 +335,47 @@ SignerInfo
 
 ----------
 
+MsCounterSign
+*************
+
+.. doxygenclass:: LIEF::PE::MsCounterSign
+  :project: lief
+
+----------
+
+PKCS9TSTInfo
+************
+
+.. doxygenclass:: LIEF::PE::PKCS9TSTInfo
+  :project: lief
+
+----------
+
+MsManifestBinaryID
+******************
+
+.. doxygenclass:: LIEF::PE::MsManifestBinaryID
+  :project: lief
+
+----------
+
+
+SpcRelaxedPeMarkerCheck
+***********************
+
+.. doxygenclass:: LIEF::PE::SpcRelaxedPeMarkerCheck
+  :project: lief
+
+----------
+
+
+SigningCertificateV2
+********************
+
+.. doxygenclass:: LIEF::PE::SigningCertificateV2
+  :project: lief
+
+----------
 
 Builder
 *******

@@ -363,17 +363,17 @@ Regarding the PKCS #7 structure itself, LIEF is able to parse and process most o
 the :class:`lief.PE.SignerInfo` structure can embed attributes (authenticated or not) for which the ASN.1 structure
 can be public or not. As of LIEF v0.11.0 we do not support yet the following OIDs:
 
-+----------------------------+-------------------------------------------------------+
-| OID                        | Description                                           |
-+============================+=======================================================+
-| 1.3.6.1.4.1.311.3.3.1      | Ms-CounterSign (undocumented)                         |
-+----------------------------+-------------------------------------------------------+
-| 1.2.840.113549.1.9.16.2.12 | S/MIME Signing certificate (id-aa-signingCertificate) |
-+----------------------------+-------------------------------------------------------+
-| 1.3.6.1.4.1.311.2.6.1      | SPC_COMMERCIAL_SP_KEY_PURPOSE_OBJID                   |
-+----------------------------+-------------------------------------------------------+
-| 1.3.6.1.4.1.311.10.3.28    | szOID_PLATFORM_MANIFEST_BINARY_ID                     |
-+----------------------------+-------------------------------------------------------+
++----------------------------+--------------------------------------------------------------+
+| OID                        | Description                                                  |
++============================+==============================================================+
+| 1.3.6.1.4.1.311.3.3.1      | Ms-CounterSign (undocumented, supported in LIEF 0.15.0)      |
++----------------------------+--------------------------------------------------------------+
+| 1.2.840.113549.1.9.16.2.12 | S/MIME Signing certificate (id-aa-signingCertificate)        |
++----------------------------+--------------------------------------------------------------+
+| 1.3.6.1.4.1.311.2.6.1      | SPC_COMMERCIAL_SP_KEY_PURPOSE_OBJID                          |
++----------------------------+--------------------------------------------------------------+
+| 1.3.6.1.4.1.311.10.3.28    | szOID_PLATFORM_MANIFEST_BINARY_ID (supported in LIEF 0.15.0) |
++----------------------------+--------------------------------------------------------------+
 
 These not-supported attributes are wrapped within the :class:`lief.PE.GenericType` that exposes the raw
 ASN.1 blob with the property :attr:`~lief.PE.GenericType.raw_content`.
@@ -381,7 +381,7 @@ ASN.1 blob with the property :attr:`~lief.PE.GenericType.raw_content`.
 Conclusion
 ~~~~~~~~~~
 
-Under the hood, most of the work is done by `mbedtls <https://github.com/ARMmbed/mbedtls>`_ which provides the following primitive used
+Under the hood, most of the work is done by `mbedtls <https://github.com/Mbed-TLS/mbedtls>`_ which provides the following primitive used
 by LIEF:
 
 - ASN.1 decoder
@@ -389,7 +389,7 @@ by LIEF:
 - Hash algorithms
 - Public key algorithms
 
-For the *fun*, we can also cross-compile a small C++ snippet for iOS:
+We can also cross-compile a small C++ snippet for iOS:
 
 .. code-block:: cpp
 
@@ -436,19 +436,21 @@ Whilst this example is quite useless, it emphasizes the purpose of this project:
 To complete these functionalities of LIEF, you might also be interested in the following projects
 that deal with Authenticode:
 
-+------------------+----------------------------------------------+
-| Project          | URL                                          |
-+==================+==============================================+
-| signify          | https://github.com/ralphje/signify           |
-+------------------+----------------------------------------------+
-| winsign          | https://github.com/mozilla-releng/winsign    |
-+------------------+----------------------------------------------+
-| uthenticode      | https://github.com/trailofbits/uthenticode   |
-+------------------+----------------------------------------------+
-| AuthenticodeLint | https://github.com/vcsjones/AuthenticodeLint |
-+------------------+----------------------------------------------+
-| osslsigncode     | https://github.com/mtrojnar/osslsigncode     |
-+------------------+----------------------------------------------+
++------------------+------------------------------------------------------------------------------+
+| Project          | URL                                                                          |
++==================+==============================================================================+
+| signify          | https://github.com/ralphje/signify                                           |
++------------------+------------------------------------------------------------------------------+
+| winsign          | https://github.com/mozilla-releng/winsign                                    |
++------------------+------------------------------------------------------------------------------+
+| uthenticode      | https://github.com/trailofbits/uthenticode                                   |
++------------------+------------------------------------------------------------------------------+
+| AuthenticodeLint | https://github.com/vcsjones/AuthenticodeLint                                 |
++------------------+------------------------------------------------------------------------------+
+| osslsigncode     | https://github.com/mtrojnar/osslsigncode                                     |
++------------------+------------------------------------------------------------------------------+
+| yara-x           | https://github.com/VirusTotal/yara-x (which has support for PE Authenticode) |
++------------------+------------------------------------------------------------------------------+
 
 Finally, you can find additional information about the Authenticode in Trail of Bits blog post [#]_.
 If you are interested in Authenticode tricks used by Dropbox, you can take a look at Microsoft website [#]_ and

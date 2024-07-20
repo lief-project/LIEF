@@ -22,7 +22,6 @@
 #include "LIEF/PE/signature/Attribute.hpp"
 
 namespace LIEF {
-class VectorStream;
 namespace PE {
 
 //! Interface over the structure described by the OID ``1.2.840.113549.1.9.5`` (PKCS #9)

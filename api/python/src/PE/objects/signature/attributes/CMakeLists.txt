@@ -1,12 +1,15 @@
 target_sources(pyLIEF PRIVATE
-  pyMsCounterSign.cpp
   pyContentType.cpp
   pyGenericType.cpp
-  pySpcSpOpusInfo.cpp
-  pyMsSpcStatementType.cpp
+  pyMsCounterSign.cpp
+  pyMsManifestBinaryID.cpp
   pyMsSpcNestedSignature.cpp
-  pyPKCS9SigningTime.cpp
-  pyPKCS9MessageDigest.cpp
+  pyMsSpcStatementType.cpp
   pyPKCS9AtSequenceNumber.cpp
   pyPKCS9CounterSignature.cpp
+  pyPKCS9MessageDigest.cpp
+  pyPKCS9SigningTime.cpp
+  pySpcRelaxedPeMarkerCheck.cpp
+  pySigningCertificateV2.cpp
+  pySpcSpOpusInfo.cpp
 )

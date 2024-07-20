@@ -78,6 +78,67 @@ fn explore_sig_attribute(attr: &Attribute) {
         Attribute::SpcSpOpusInfo(item) => {
             format!("{item:?}");
         }
+        Attribute::MsManifestBinaryID(item) => {
+            format!("{}", item.manifest_id());
+        }
+        Attribute::MsCounterSign(item) => {
+            let content_info = item.content_info();
+            format!("{content_info:?}");
+            for crt in item.certificates() {
+                format!("{crt:?}");
+                format!("{}", crt.serial_number().len());
+                format!("{}", crt.raw().len());
+                format!("{}", crt.signature().len());
+
+                if let Some(rsa_info) = crt.rsa_info() {
+                    format!("{rsa_info:?}");
+                    format!("{}", rsa_info.N().bits());
+                    format!("{}", rsa_info.E().bits());
+                    format!("{}", rsa_info.D().bits());
+                    format!("{}", rsa_info.P().bits());
+                    format!("{}", rsa_info.Q().bits());
+                }
+            }
+            for signer in item.signers() {
+                format!("{signer:?}");
+                if let Some(crt) = signer.cert() {
+                    format!("{crt:?}");
+                }
+                format!("{}", signer.encrypted_digest().len());
+                format!("{}", signer.serial_number().len());
+
+                for attr in signer.authenticated_attributes() {
+                    explore_sig_attribute(&attr);
+                }
+
+                for attr in signer.unauthenticated_attributes() {
+                    explore_sig_attribute(&attr);
+                }
+            }
+            let info = item.content_info();
+            if let Some(value) = info.value() {
+                format!("{:?}", value);
+                match value {
+                    Content::SpcIndirectData(data) => {
+                        format!("{:?}", data);
+                        format!("{}", data.digest().len());
+                    },
+                    Content::PKCS9TSTInfo(data) => {
+                        println!("PKCS9TSTInfo");
+                    },
+                    Content::Generic(generic) => {
+                        println!("{}", generic.oid());
+                        format!("{}", generic.raw().len());
+                    }
+                }
+            }
+        }
+        Attribute::SigningCertificateV2(item) => {
+            println!("SigningCertificateV2");
+        }
+        Attribute::SpcRelaxedPeMarkerCheck(item) => {
+            println!("SpcRelaxedPeMarkerCheck");
+        }
     }
 }
 
@@ -124,6 +185,9 @@ fn explore_signature(signature: &Signature) {
             Content::SpcIndirectData(data) => {
                 format!("{:?}", data);
                 format!("{}", data.digest().len());
+            },
+            Content::PKCS9TSTInfo(data) => {
+                println!("PKCS9TSTInfo");
             },
             Content::Generic(generic) => {
                 println!("{}", generic.oid());
@@ -471,7 +535,7 @@ fn explore_pe(bin_name: &str, pe: &lief::pe::Binary) {
     }
 
     if bin_name == "PE32_x86-64_binary_avast-free-antivirus-setup-online.exe" {
-        assert_eq!(pe.verify_signature(signature::VerificationChecks::DEFAULT), signature::VerificationFlags::OK);
+        assert_eq!(pe.verify_signature(signature::VerificationChecks::DEFAULT),  signature::VerificationFlags::OK);
         let signature = pe.signatures().last().expect("Error");
         let raw_sig = signature.raw_der();
         let mut cursor = Cursor::new(raw_sig);

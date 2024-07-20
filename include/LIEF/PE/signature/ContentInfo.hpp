@@ -76,7 +76,6 @@ class SignatureParser;
  * ```
  */
 class LIEF_API ContentInfo : public Object {
-
   friend class Parser;
   friend class SignatureParser;
 

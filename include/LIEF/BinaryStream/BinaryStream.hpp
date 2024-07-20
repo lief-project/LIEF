@@ -34,6 +34,7 @@ class ASN1Reader;
 class BinaryStream {
   public:
   friend class ASN1Reader;
+
   enum class STREAM_TYPE {
     UNKNOWN = 0,
     VECTOR,

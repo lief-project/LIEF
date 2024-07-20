@@ -4,6 +4,10 @@ use lief_ffi as ffi;
 
 use crate::common::FromFFI;
 use crate::to_slice;
+use crate::pe::Algorithms;
+use crate::pe::signature::ContentInfo;
+use crate::declare_iterator;
+use crate::pe::signature::X509;
 
 use super::{Signature, SignerInfo};
 
@@ -27,6 +31,14 @@ pub enum Attribute<'a> {
     PKCS9SigningTime(PKCS9SigningTime<'a>),
     /// Attribute for the OID: `1.3.6.1.4.1.311.2.1.12`
     SpcSpOpusInfo(SpcSpOpusInfo<'a>),
+    /// Attribute for the OID: `1.3.6.1.4.1.311.10.3.28`
+    MsManifestBinaryID(MsManifestBinaryID<'a>),
+    /// Attribute for the OID: `1.3.6.1.4.1.311.3.3.1`
+    MsCounterSign(MsCounterSign<'a>),
+    /// Attribute for the OID: `1.2.840.113549.1.9.16.2.47`
+    SigningCertificateV2(SigningCertificateV2<'a>),
+    /// Attribute for the OID: `1.3.6.1.4.1.311.2.6.1`
+    SpcRelaxedPeMarkerCheck(SpcRelaxedPeMarkerCheck<'a>),
     /// Attribute for an OID not supported by LIEF
     GenericType(GenericType<'a>),
 }
@@ -92,6 +104,34 @@ impl<'a> FromFFI<ffi::PE_Attribute> for Attribute<'a> {
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Attribute::SpcSpOpusInfo(SpcSpOpusInfo::from_ffi(raw))
+            } else if ffi::PE_MsManifestBinaryID::classof(cmd_ref) {
+                let raw = {
+                    type From = cxx::UniquePtr<ffi::PE_Attribute>;
+                    type To = cxx::UniquePtr<ffi::PE_MsManifestBinaryID>;
+                    std::mem::transmute::<From, To>(ffi_entry)
+                };
+                Attribute::MsManifestBinaryID(MsManifestBinaryID::from_ffi(raw))
+            } else if ffi::PE_MsCounterSign::classof(cmd_ref) {
+                let raw = {
+                    type From = cxx::UniquePtr<ffi::PE_Attribute>;
+                    type To = cxx::UniquePtr<ffi::PE_MsCounterSign>;
+                    std::mem::transmute::<From, To>(ffi_entry)
+                };
+                Attribute::MsCounterSign(MsCounterSign::from_ffi(raw))
+            } else if ffi::PE_SpcRelaxedPeMarkerCheck::classof(cmd_ref) {
+                let raw = {
+                    type From = cxx::UniquePtr<ffi::PE_Attribute>;
+                    type To = cxx::UniquePtr<ffi::PE_SpcRelaxedPeMarkerCheck>;
+                    std::mem::transmute::<From, To>(ffi_entry)
+                };
+                Attribute::SpcRelaxedPeMarkerCheck(SpcRelaxedPeMarkerCheck::from_ffi(raw))
+            } else if ffi::PE_SigningCertificateV2::classof(cmd_ref) {
+                let raw = {
+                    type From = cxx::UniquePtr<ffi::PE_Attribute>;
+                    type To = cxx::UniquePtr<ffi::PE_SigningCertificateV2>;
+                    std::mem::transmute::<From, To>(ffi_entry)
+                };
+                Attribute::SigningCertificateV2(SigningCertificateV2::from_ffi(raw))
             } else {
                 assert!(
                     ffi::PE_GenericType::classof(cmd_ref),
@@ -469,5 +509,178 @@ impl SpcSpOpusInfo<'_> {
     /// Other information such as an url
     pub fn more_info(&self) -> String {
         self.ptr.more_info().to_string()
+    }
+}
+
+pub struct SpcRelaxedPeMarkerCheck<'a> {
+    ptr: cxx::UniquePtr<ffi::PE_SpcRelaxedPeMarkerCheck>,
+    _owner: PhantomData<&'a ffi::PE_SignerInfo>,
+}
+
+impl std::fmt::Debug for SpcRelaxedPeMarkerCheck<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("SpcRelaxedPeMarkerCheck")
+            .finish()
+    }
+}
+
+impl<'a> FromFFI<ffi::PE_SpcRelaxedPeMarkerCheck> for SpcRelaxedPeMarkerCheck<'a> {
+    fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_SpcRelaxedPeMarkerCheck>) -> Self {
+        Self {
+            ptr,
+            _owner: PhantomData,
+        }
+    }
+}
+
+impl SpcRelaxedPeMarkerCheck<'_> {
+
+}
+
+
+/// ```text
+/// SigningCertificateV2 ::= SEQUENCE {
+///   certs    SEQUENCE OF ESSCertIDv2,
+///   policies SEQUENCE OF PolicyInformation OPTIONAL
+/// }
+///
+/// ESSCertIDv2 ::= SEQUENCE {
+///   hashAlgorithm AlgorithmIdentifier DEFAULT {algorithm id-sha256},
+///   certHash      OCTET STRING,
+///   issuerSerial  IssuerSerial OPTIONAL
+/// }
+///
+/// IssuerSerial ::= SEQUENCE {
+///   issuer       GeneralNames,
+///   serialNumber CertificateSerialNumber
+/// }
+///
+/// PolicyInformation ::= SEQUENCE {
+///   policyIdentifier   OBJECT IDENTIFIER,
+///   policyQualifiers   SEQUENCE SIZE (1..MAX) OF PolicyQualifierInfo OPTIONAL
+/// }
+/// ```
+pub struct SigningCertificateV2<'a> {
+    ptr: cxx::UniquePtr<ffi::PE_SigningCertificateV2>,
+    _owner: PhantomData<&'a ffi::PE_SignerInfo>,
+}
+
+impl std::fmt::Debug for SigningCertificateV2<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("SigningCertificateV2")
+            .finish()
+    }
+}
+
+impl<'a> FromFFI<ffi::PE_SigningCertificateV2> for SigningCertificateV2<'a> {
+    fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_SigningCertificateV2>) -> Self {
+        Self {
+            ptr,
+            _owner: PhantomData,
+        }
+    }
+}
+
+impl SigningCertificateV2<'_> {
+    // TODO(romain): Add API
+}
+
+/// This structure exposes the MS Counter Signature attribute
+pub struct MsCounterSign<'a> {
+    ptr: cxx::UniquePtr<ffi::PE_MsCounterSign>,
+    _owner: PhantomData<&'a ffi::PE_SignerInfo>,
+}
+
+impl std::fmt::Debug for MsCounterSign<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("MsCounterSign")
+            .finish()
+    }
+}
+
+impl<'a> FromFFI<ffi::PE_MsCounterSign> for MsCounterSign<'a> {
+    fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_MsCounterSign>) -> Self {
+        Self {
+            ptr,
+            _owner: PhantomData,
+        }
+    }
+}
+
+impl<'a> MsCounterSign<'a> {
+    pub fn version(&self) -> u32 {
+        self.ptr.version()
+    }
+
+    pub fn digest_algorithm(&self) -> Algorithms {
+        Algorithms::from(self.ptr.digest_algorithm())
+    }
+
+    /// ContentInfo as described in the RFC2315 <https://tools.ietf.org/html/rfc2315#section-7>
+    pub fn content_info(&'a self) -> ContentInfo<'a> {
+        ContentInfo::from_ffi(self.ptr.content_info())
+    }
+
+    /// Return list of [`crate::pe::X509`] certificates associated with this signature
+    pub fn certificates(&'a self) -> MsCounterCertificates<'a> {
+        MsCounterCertificates::new(self.ptr.certificates())
+    }
+
+    /// Iterator over the signer [`SignerInfo`] defined in the PKCS #7 signature
+    pub fn signers(&'a self) -> MsCounterSigners<'a> {
+        MsCounterSigners::new(self.ptr.signers())
+    }
+}
+
+declare_iterator!(
+    MsCounterCertificates,
+    X509<'a>,
+    ffi::PE_x509,
+    ffi::PE_MsCounterSign,
+    ffi::PE_MsCounterSign_it_certificates
+);
+
+declare_iterator!(
+    MsCounterSigners,
+    SignerInfo<'a>,
+    ffi::PE_SignerInfo,
+    ffi::PE_MsCounterSign,
+    ffi::PE_MsCounterSign_it_signers
+);
+
+/// Interface over the structure described by the OID `1.3.6.1.4.1.311.10.3.28` (szOID_PLATFORM_MANIFEST_BINARY_ID)
+///
+/// The internal structure is not documented but we can infer the following structure:
+///
+/// ```text
+/// szOID_PLATFORM_MANIFEST_BINARY_ID ::= SET OF BinaryID
+/// ```
+///
+/// `BinaryID` being an alias of UTF8STRING
+pub struct MsManifestBinaryID<'a> {
+    ptr: cxx::UniquePtr<ffi::PE_MsManifestBinaryID>,
+    _owner: PhantomData<&'a ffi::PE_SignerInfo>,
+}
+
+impl std::fmt::Debug for MsManifestBinaryID<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("MsManifestBinaryID")
+            .field("manifest_id", &self.manifest_id())
+            .finish()
+    }
+}
+
+impl<'a> FromFFI<ffi::PE_MsManifestBinaryID> for MsManifestBinaryID<'a> {
+    fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_MsManifestBinaryID>) -> Self {
+        Self {
+            ptr,
+            _owner: PhantomData,
+        }
+    }
+}
+
+impl MsManifestBinaryID<'_> {
+    pub fn manifest_id(&self) -> String {
+        self.ptr.manifest_id().to_string()
     }
 }

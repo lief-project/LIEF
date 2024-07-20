@@ -3,6 +3,7 @@ target_sources(LIB_LIEF PRIVATE
   ContentInfo.cpp
   GenericContent.cpp
   OIDToString.cpp
+  PKCS9TSTInfo.cpp
   RsaInfo.cpp
   Signature.cpp
   SignatureParser.cpp

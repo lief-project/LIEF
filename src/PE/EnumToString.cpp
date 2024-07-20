@@ -720,8 +720,5 @@ const char* to_string(ALGORITHMS e) {
   return it == enumStrings.end() ? "UNKNOWN" : it->second;
 }
 
-
-
-
 } // namespace PE
 } // namespace LIEF

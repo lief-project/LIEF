@@ -21,7 +21,6 @@
 #include "LIEF/PE/signature/types.hpp"
 
 namespace LIEF {
-class VectorStream;
 namespace PE {
 
 //! Interface over the structure described by the OID ``1.3.6.1.4.1.311.2.1.11``

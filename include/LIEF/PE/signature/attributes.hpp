@@ -18,12 +18,15 @@
 #include "LIEF/PE/signature/attributes/ContentType.hpp"
 #include "LIEF/PE/signature/attributes/GenericType.hpp"
 #include "LIEF/PE/signature/attributes/MsCounterSign.hpp"
+#include "LIEF/PE/signature/attributes/MsManifestBinaryID.hpp"
 #include "LIEF/PE/signature/attributes/MsSpcNestedSignature.hpp"
 #include "LIEF/PE/signature/attributes/MsSpcStatementType.hpp"
 #include "LIEF/PE/signature/attributes/PKCS9AtSequenceNumber.hpp"
 #include "LIEF/PE/signature/attributes/PKCS9CounterSignature.hpp"
 #include "LIEF/PE/signature/attributes/PKCS9MessageDigest.hpp"
 #include "LIEF/PE/signature/attributes/PKCS9SigningTime.hpp"
+#include "LIEF/PE/signature/attributes/SigningCertificateV2.hpp"
 #include "LIEF/PE/signature/attributes/SpcSpOpusInfo.hpp"
+#include "LIEF/PE/signature/attributes/SpcRelaxedPeMarkerCheck.hpp"
 #endif
 

@@ -1,13 +1,12 @@
 target_sources(pyLIEF PRIVATE
-  pySignerInfo.cpp
   pyAttribute.cpp
-  pyRsaInfo.cpp
-  pyx509.cpp
   pyContentInfo.cpp
   pyGenericContent.cpp
-  pySpcIndirectData.cpp
+  pyPKCS9TSTInfo.cpp
+  pyRsaInfo.cpp
   pySignature.cpp
+  pySignerInfo.cpp
   pySpcIndirectData.cpp
-  pyGenericContent.cpp
+  pyx509.cpp
 )
 add_subdirectory(attributes)

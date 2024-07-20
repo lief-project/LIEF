@@ -18,6 +18,7 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
+
 #include "LIEF/PE/signature/ContentInfo.hpp"
 
 namespace LIEF {

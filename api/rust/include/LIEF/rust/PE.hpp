@@ -46,6 +46,7 @@
 
 #include "LIEF/rust/PE/signature/Signature.hpp"
 #include "LIEF/rust/PE/signature/SpcIndirectData.hpp"
+#include "LIEF/rust/PE/signature/PKCS9TSTInfo.hpp"
 #include "LIEF/rust/PE/signature/GenericContent.hpp"
 #include "LIEF/rust/PE/signature/ContentInfo.hpp"
 #include "LIEF/rust/PE/signature/x509.hpp"
@@ -61,6 +62,10 @@
 #include "LIEF/rust/PE/signature/attributes/PKCS9MessageDigest.hpp"
 #include "LIEF/rust/PE/signature/attributes/PKCS9SigningTime.hpp"
 #include "LIEF/rust/PE/signature/attributes/SpcSpOpusInfo.hpp"
+#include "LIEF/rust/PE/signature/attributes/MsCounterSign.hpp"
+#include "LIEF/rust/PE/signature/attributes/MsManifestBinaryID.hpp"
+#include "LIEF/rust/PE/signature/attributes/SpcRelaxedPeMarkerCheck.hpp"
+#include "LIEF/rust/PE/signature/attributes/SigningCertificateV2.hpp"
 
 #include "LIEF/rust/PE/LoadConfiguration/LoadConfiguration.hpp"
 #include "LIEF/rust/PE/LoadConfiguration/LoadConfigurationV0.hpp"

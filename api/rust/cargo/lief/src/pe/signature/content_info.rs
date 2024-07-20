@@ -55,6 +55,7 @@ impl<'a> FromFFI<ffi::PE_ContentInfo> for ContentInfo<'a> {
 #[derive(Debug)]
 pub enum Content<'a> {
     SpcIndirectData(SpcIndirectData<'a>),
+    PKCS9TSTInfo(PKCS9TSTInfo<'a>),
     Generic(Generic<'a>),
 }
 
@@ -69,6 +70,14 @@ impl<'a> FromFFI<ffi::PE_ContentInfo_Content> for Content<'a> {
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Content::SpcIndirectData(SpcIndirectData::from_ffi(raw))
+            }
+            else if ffi::PE_PKCS9TSTInfo::classof(content_ref) {
+                let raw = {
+                    type From = cxx::UniquePtr<ffi::PE_ContentInfo_Content>;
+                    type To = cxx::UniquePtr<ffi::PE_PKCS9TSTInfo>;
+                    std::mem::transmute::<From, To>(ffi_entry)
+                };
+                Content::PKCS9TSTInfo(PKCS9TSTInfo::from_ffi(raw))
             } else {
                 let raw = {
                     type From = cxx::UniquePtr<ffi::PE_ContentInfo_Content>;
@@ -137,6 +146,38 @@ impl ContentTrait for SpcIndirectData<'_> {
         self.ptr.as_ref().unwrap().as_ref()
     }
 }
+
+pub struct PKCS9TSTInfo<'a> {
+    ptr: cxx::UniquePtr<ffi::PE_PKCS9TSTInfo>,
+    _owner: PhantomData<&'a ffi::PE_ContentInfo>,
+}
+
+impl PKCS9TSTInfo<'_> {
+    // TODO(romain): Add API
+}
+
+impl std::fmt::Debug for PKCS9TSTInfo<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("PKCS9TSTInfo")
+            .finish()
+    }
+}
+
+impl FromFFI<ffi::PE_PKCS9TSTInfo> for PKCS9TSTInfo<'_> {
+    fn from_ffi(cmd: cxx::UniquePtr<ffi::PE_PKCS9TSTInfo>) -> Self {
+        Self {
+            ptr: cmd,
+            _owner: PhantomData,
+        }
+    }
+}
+
+impl ContentTrait for PKCS9TSTInfo<'_> {
+    fn as_generic(&self) -> &ffi::PE_ContentInfo_Content {
+        self.ptr.as_ref().unwrap().as_ref()
+    }
+}
+
 
 pub struct Generic<'a> {
     ptr: cxx::UniquePtr<ffi::PE_GenericContent>,

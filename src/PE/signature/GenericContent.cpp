@@ -46,5 +46,6 @@ void GenericContent::print(std::ostream& os) const {
   os << fmt::format("oid: {}\n", oid());
 }
 
+
 }
 }

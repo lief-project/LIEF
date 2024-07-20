@@ -320,6 +320,44 @@ SignerInfo
 
 ----------
 
+MsCounterSign
+*************
+
+.. autoclass:: lief.PE.MsCounterSign
+
+----------
+
+
+PKCS9TSTInfo
+************
+
+.. autoclass:: lief.PE.PKCS9TSTInfo
+
+----------
+
+
+MsManifestBinaryID
+******************
+
+.. autoclass:: lief.PE.MsManifestBinaryID
+
+----------
+
+SpcRelaxedPeMarkerCheck
+***********************
+
+.. autoclass:: lief.PE.SpcRelaxedPeMarkerCheck
+
+----------
+
+SigningCertificateV2
+********************
+
+.. autoclass:: lief.PE.SigningCertificateV2
+
+----------
+
+
 Builder
 *******
 

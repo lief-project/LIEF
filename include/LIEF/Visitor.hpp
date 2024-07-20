@@ -82,14 +82,17 @@ LIEF_PE_FORWARD(SpcIndirectData)
 LIEF_PE_FORWARD(Attribute)
 LIEF_PE_FORWARD(ContentType)
 LIEF_PE_FORWARD(GenericType)
-//LIEF_PE_FORWARD(MsCounterSign)
+LIEF_PE_FORWARD(MsCounterSign)
 LIEF_PE_FORWARD(MsSpcNestedSignature)
 LIEF_PE_FORWARD(MsSpcStatementType)
+LIEF_PE_FORWARD(MsManifestBinaryID)
 LIEF_PE_FORWARD(PKCS9AtSequenceNumber)
 LIEF_PE_FORWARD(PKCS9CounterSignature)
 LIEF_PE_FORWARD(PKCS9MessageDigest)
 LIEF_PE_FORWARD(PKCS9SigningTime)
 LIEF_PE_FORWARD(SpcSpOpusInfo)
+LIEF_PE_FORWARD(SigningCertificateV2)
+LIEF_PE_FORWARD(SpcRelaxedPeMarkerCheck)
 
 LIEF_PE_FORWARD(CodeIntegrity)
 LIEF_PE_FORWARD(LoadConfiguration)
@@ -417,7 +420,10 @@ class LIEF_API Visitor {
   LIEF_PE_VISITABLE(GenericType)
 
   //! Method to visit a LIEF::PE::MsCounterSign
-  //LIEF_PE_VISITABLE(MsCounterSign)
+  LIEF_PE_VISITABLE(MsCounterSign)
+
+  //! Method to visit a LIEF::PE::MsManifestBinaryID
+  LIEF_PE_VISITABLE(MsManifestBinaryID)
 
   //! Method to visit a LIEF::PE::MsSpcNestedSignature
   LIEF_PE_VISITABLE(MsSpcNestedSignature)
@@ -439,6 +445,12 @@ class LIEF_API Visitor {
 
   //! Method to visit a LIEF::PE::SpcSpOpusInfo
   LIEF_PE_VISITABLE(SpcSpOpusInfo)
+
+  //! Method to visit a LIEF::PE::SpcRelaxedPeMarkerCheck
+  LIEF_PE_VISITABLE(SpcRelaxedPeMarkerCheck)
+
+  //! Method to visit a LIEF::PE::SigningCertificateV2
+  LIEF_PE_VISITABLE(SigningCertificateV2)
 
   //! Method to visit a LIEF::PE::LoadConfiguration
   LIEF_PE_VISITABLE(LoadConfiguration)

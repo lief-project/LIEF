@@ -564,5 +564,6 @@ void init_enums(nb::module_& m) {
     .value(PY_ENUM(ALGORITHMS::SHA_256_ECDSA))
     .value(PY_ENUM(ALGORITHMS::SHA_384_ECDSA))
     .value(PY_ENUM(ALGORITHMS::SHA_512_ECDSA));
+
 }
 }

@@ -49,6 +49,7 @@
 #include "LIEF/PE/Symbol.hpp"
 #include "LIEF/PE/TLS.hpp"
 #include "LIEF/PE/utils.hpp"
+
 #include "LIEF/PE/signature/SpcIndirectData.hpp"
 
 #include "PE/Structures.hpp"
@@ -1098,6 +1099,7 @@ Signature::VERIFICATION_FLAGS Binary::verify_signature(const Signature& sig, Sig
   if (flags != Signature::VERIFICATION_FLAGS::OK) {
     flags |= Signature::VERIFICATION_FLAGS::BAD_SIGNATURE;
   }
+
   return flags;
 }
 

@@ -13,28 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/Visitor.hpp"
-#include "LIEF/utils.hpp"
-#include "LIEF/PE/signature/SpcIndirectData.hpp"
-#include "LIEF/PE/EnumToString.hpp"
+#include "PE/pyPE.hpp"
 
-#include <spdlog/fmt/fmt.h>
+#include "LIEF/PE/signature/attributes/SpcRelaxedPeMarkerCheck.hpp"
 
-namespace LIEF {
-namespace PE {
+namespace LIEF::PE::py {
 
-void SpcIndirectData::accept(Visitor& visitor) const {
-  visitor.visit(*this);
+template<>
+void create<SpcRelaxedPeMarkerCheck>(nb::module_& m) {
+  nb::class_<SpcRelaxedPeMarkerCheck, Attribute>(m, "SpcRelaxedPeMarkerCheck",
+    R"delim(
+    )delim"_doc
+  )
+    .def_prop_ro("value", nb::overload_cast<>(&SpcRelaxedPeMarkerCheck::value, nb::const_))
+  ;
 }
 
-void SpcIndirectData::print(std::ostream& os) const {
-  if (!file().empty()) {
-    os << fmt::format("{} - {} - {}\n", to_string(digest_algorithm()),
-                      file(), hex_dump(digest()));
-  } else {
-    os << fmt::format("{}: {}\n", to_string(digest_algorithm()), hex_dump(digest()));
-  }
-}
-
-}
 }

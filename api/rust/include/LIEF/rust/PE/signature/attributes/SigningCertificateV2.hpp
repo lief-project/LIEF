@@ -1,5 +1,4 @@
-/* Copyright 2021 - 2023 R. Thomas
- * Copyright 2021 - 2023 Quarkslab
+/* Copyright 2024 R. Thomas
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/Visitor.hpp"
-#include "LIEF/PE/signature/attributes/MsCounterSign.hpp"
-#include <sstream>
+#pragma once
+#include "LIEF/PE/signature/attributes/SigningCertificateV2.hpp"
+#include "LIEF/rust/PE/signature/attributes/Attribute.hpp"
 
-namespace LIEF {
-namespace PE {
+class PE_SigningCertificateV2 : public PE_Attribute {
+  public:
+  using lief_t = LIEF::PE::SigningCertificateV2;
+  PE_SigningCertificateV2(const lief_t& base) : PE_Attribute(base) {}
 
-void MsCounterSign::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
-
-std::string MsCounterSign::print() const {
-  std::ostringstream oss;
-  for (const SignerInfo& signer : signers()) {
-    oss << signer << "\n";
+  static bool classof(const PE_Attribute& attr) {
+    return lief_t::classof(&attr.get());
   }
-  return oss.str();
-}
 
-}
-}
+  private:
+  const lief_t& impl() const { return as<lief_t>(this); }
+};

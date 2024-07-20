@@ -494,6 +494,7 @@ void Hash::visit(const SpcIndirectData& content) {
   process(content.file());
   process(content.digest());
   process(content.digest_algorithm());
+
 }
 
 
@@ -501,39 +502,67 @@ void Hash::visit(const ContentType& attr) {
   visit(*attr.as<Attribute>());
   process(attr.oid());
 }
+
 void Hash::visit(const GenericType& attr) {
   visit(*attr.as<Attribute>());
   process(attr.raw_content());
   process(attr.oid());
 }
+
 void Hash::visit(const MsSpcNestedSignature& attr) {
   visit(*attr.as<Attribute>());
   process(attr.sig());
 }
+
 void Hash::visit(const MsSpcStatementType& attr) {
   visit(*attr.as<Attribute>());
   process(attr.oid());
 }
+
+void Hash::visit(const MsCounterSign& attr) {
+  visit(*attr.as<Attribute>());
+  // TODO
+}
+
+void Hash::visit(const MsManifestBinaryID& attr) {
+  visit(*attr.as<Attribute>());
+  process(attr.manifest_id());
+}
+
 void Hash::visit(const PKCS9AtSequenceNumber& attr) {
   visit(*attr.as<Attribute>());
   process(attr.number());
 }
+
 void Hash::visit(const PKCS9CounterSignature& attr) {
   visit(*attr.as<Attribute>());
   process(attr.signer());
 }
+
 void Hash::visit(const PKCS9MessageDigest& attr) {
   visit(*attr.as<Attribute>());
   process(attr.digest());
 }
+
 void Hash::visit(const PKCS9SigningTime& attr) {
   visit(*attr.as<Attribute>());
   process(attr.time());
 }
+
 void Hash::visit(const SpcSpOpusInfo& attr) {
   visit(*attr.as<Attribute>());
   process(attr.program_name());
   process(attr.more_info());
+}
+
+void Hash::visit(const SpcRelaxedPeMarkerCheck& attr) {
+  visit(*attr.as<Attribute>());
+  process(attr.value());
+}
+
+void Hash::visit(const SigningCertificateV2& attr) {
+  visit(*attr.as<Attribute>());
+  //TODO
 }
 
 void Hash::visit(const CodeIntegrity& code_integrity) {

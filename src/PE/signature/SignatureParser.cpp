@@ -33,6 +33,7 @@
 #include "LIEF/PE/signature/Signature.hpp"
 #include "LIEF/PE/signature/SpcIndirectData.hpp"
 #include "LIEF/PE/signature/GenericContent.hpp"
+#include "LIEF/PE/signature/PKCS9TSTInfo.hpp"
 
 #include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/attributes/ContentType.hpp"
@@ -44,6 +45,10 @@
 #include "LIEF/PE/signature/attributes/PKCS9SigningTime.hpp"
 #include "LIEF/PE/signature/attributes/MsSpcNestedSignature.hpp"
 #include "LIEF/PE/signature/attributes/MsSpcStatementType.hpp"
+#include "LIEF/PE/signature/attributes/MsManifestBinaryID.hpp"
+#include "LIEF/PE/signature/attributes/SigningCertificateV2.hpp"
+#include "LIEF/PE/signature/attributes/SpcRelaxedPeMarkerCheck.hpp"
+#include "LIEF/PE/signature/attributes/MsCounterSign.hpp"
 
 #include "LIEF/PE/signature/OIDToString.hpp"
 
@@ -88,7 +93,6 @@ result<Signature> SignatureParser::parse(std::vector<uint8_t> data, bool skip_he
     stream->increment_pos(8);
   }
 
-  SignatureParser parser;
   auto sig = SignatureParser::parse_signature(*stream);
   if (!sig) {
     LIEF_ERR("Error while parsing the signature");
@@ -365,19 +369,33 @@ SignatureParser::parse_content_info(BinaryStream& stream, range_t& range) {
   LIEF_DEBUG("content-info.content-type: {}", oid_to_string(ctype_str));
 
   if (ctype_str == /* SPC_INDIRECT_DATA_CONTEXT */ "1.3.6.1.4.1.311.2.1.4") {
-    if (auto spc_indirect_data = parse_spc_indirect_data(stream, range)) {
+    auto spc_indirect_data = parse_spc_indirect_data(stream, range);
+    if (spc_indirect_data) {
       content_info.value_ = std::move(*spc_indirect_data);
       return content_info;
-    } else {
-      LIEF_WARN("Can't parse SPC_INDIRECT_DATA (pos={})", stream.pos());
-      auto generic = std::make_unique<GenericContent>(ctype_str);
-      stream.setpos(0);
-      generic->raw_ = {stream.p(), stream.end()};
-      content_info.value_ = std::move(generic);
-      return content_info;
     }
+
+    LIEF_WARN("Can't parse SPC_INDIRECT_DATA (pos={})", stream.pos());
+    auto generic = std::make_unique<GenericContent>(ctype_str);
+    stream.setpos(0);
+    generic->raw_ = {stream.p(), stream.end()};
+    content_info.value_ = std::move(generic);
+    return content_info;
   }
 
+  if (ctype_str == /* PKCS9 TSTInfo */ "1.2.840.113549.1.9.16.1.4") {
+    auto tstinfo = parse_pkcs9_tstinfo(stream);
+    if (tstinfo) {
+      content_info.value_ = std::move(*tstinfo);
+      return content_info;
+    }
+    LIEF_WARN("Can't parse PKCS9 TSTInfo (pos={})", stream.pos());
+    auto generic = std::make_unique<GenericContent>(ctype_str);
+    stream.setpos(0);
+    generic->raw_ = {stream.p(), stream.end()};
+    content_info.value_ = std::move(generic);
+    return content_info;
+  }
 
   LIEF_INFO("ContentInfo: Unknown OID ({})", ctype_str);
   auto generic = std::make_unique<GenericContent>(ctype_str);
@@ -524,7 +542,7 @@ result<SignatureParser::x509_certificates_t> SignatureParser::parse_certificates
     auto cert = asn1r.read_cert();
     if (!cert) {
       LIEF_INFO("Can't parse X509 cert pkcs7-signed-data.certificates (pos: {:d})", stream.pos());
-      return make_error_code(cert.error());
+      return certificates;
     }
 
     std::unique_ptr<mbedtls_x509_crt> cert_p = std::move(cert.value());
@@ -729,10 +747,9 @@ SignatureParser::parse_attributes(BinaryStream& stream) {
   //    values     AttributeSetValue
   // }
   attributes_t attributes;
-  const uint64_t end_pos = stream.size();
   ASN1Reader asn1r(stream);
 
-  while (stream.pos() < end_pos) {
+  while (stream) {
     auto tag = asn1r.read_tag(/* Attribute ::= SEQUENCE */
                               MBEDTLS_ASN1_SEQUENCE | MBEDTLS_ASN1_CONSTRUCTED);
     if (!tag) {
@@ -756,7 +773,7 @@ SignatureParser::parse_attributes(BinaryStream& stream) {
 
     SpanStream value_stream(stream.p(), value_set_size);
 
-    while (value_stream.pos() < value_stream.size()) {
+    while (value_stream) {
       const uint64_t current_p = value_stream.pos();
       const std::string& oid_str = oid.value();
 
@@ -780,13 +797,13 @@ SignatureParser::parse_attributes(BinaryStream& stream) {
         }
       }
 
-      // TODO(romain): Parse the internal DER of Ms-CounterSign
-      // else if (oid_str == /* Ms-CounterSign */ "1.3.6.1.4.1.311.3.3.1") {
-      //   auto res = parse_ms_counter_sign(value_stream);
-      //   if (not res) {
-      //     LIEF_INFO("Can't parse ms-counter-sign attribute");
-      //   }
-      // }
+      else if (oid_str == /* Ms-CounterSign */ "1.3.6.1.4.1.311.3.3.1") {
+        if (auto res = parse_ms_counter_sign(value_stream)) {
+          attributes.push_back(std::move(*res));
+        } else {
+          LIEF_INFO("Can't parse ms-counter-sign attribute");
+        }
+      }
 
       else if (oid_str == /* pkcs9-CounterSignature */ "1.2.840.113549.1.9.6") {
         auto res = parse_pkcs9_counter_sign(value_stream);
@@ -846,6 +863,30 @@ SignatureParser::parse_attributes(BinaryStream& stream) {
           LIEF_INFO("Can't parse pkcs9-signing-time attribute");
         } else {
           attributes.push_back(std::make_unique<PKCS9SigningTime>(*res));
+        }
+      }
+
+      else if (oid_str == /* szOID_PLATFORM_MANIFEST_BINARY_ID */ "1.3.6.1.4.1.311.10.3.28") {
+        if (auto res = parse_ms_platform_manifest_binary_id(value_stream)) {
+          attributes.push_back(std::move(*res));
+        } else {
+          LIEF_INFO("Can't parse ms-szoid-platform-manifest-binary-id");
+        }
+      }
+
+      else if (oid_str == /* SPC_RELAXED_PE_MARKER_CHECK_OBJID */ "1.3.6.1.4.1.311.2.6.1") {
+        if (auto res = parse_spc_relaxed_pe_marker_check(value_stream)) {
+          attributes.push_back(std::move(*res));
+        } else {
+          LIEF_INFO("Can't parse spc-relaxed-pe-marker-check");
+        }
+      }
+
+      else if (oid_str == /* SIGNING_CERTIFICATE_V2 */ "1.2.840.113549.1.9.16.2.47") {
+        if (auto res = parse_signing_certificate_v2(value_stream)) {
+          attributes.push_back(std::move(*res));
+        } else {
+          LIEF_INFO("Can't parse signing-certificate-v2");
         }
       }
 
@@ -933,10 +974,217 @@ result<SignatureParser::SpcSpOpusInfo> SignatureParser::parse_spc_sp_opus_info(B
 }
 
 result<std::unique_ptr<Attribute>> SignatureParser::parse_ms_counter_sign(BinaryStream& stream) {
-  LIEF_DEBUG("Parsing Ms-CounterSign ({} bytes)", stream.size());
-  LIEF_DEBUG("TODO: Ms-CounterSign");
-  stream.increment_pos(stream.size());
-  return {};
+  /*
+   *
+   * SignedData ::= SEQUENCE {
+   *   version          Version,
+   *   digestAlgorithms DigestAlgorithmIdentifiers,
+   *   contentInfo      ContentInfo,
+   *   certificates     [0] IMPLICIT ExtendedCertificatesAndCertificates OPTIONAL,
+   *   crls             [1] IMPLICIT CertificateRevocationLists OPTIONAL,
+   *   signerInfos      SignerInfos
+   * }
+   *
+   * Version ::= INTEGER
+   * DigestAlgorithmIdentifiers ::= SET OF DigestAlgorithmIdentifier
+   *
+   */
+  auto counter_sig = std::make_unique<MsCounterSign>();
+  ASN1Reader asn1r(stream);
+  auto tag = asn1r.read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
+  if (!tag) {
+    LIEF_INFO("Wrong tag: {} (pos: {:d})", asn1r.get_str_tag(), stream.pos());
+    return make_error_code(tag.error());
+  }
+
+  auto oid = asn1r.read_oid();
+  if (!oid) {
+    LIEF_INFO("Can't read OID value (pos: {})", stream.pos());
+    return make_error_code(oid.error());
+  }
+  std::string& oid_str = oid.value();
+
+  if (oid_str != /* pkcs7-signedData */ "1.2.840.113549.1.7.2") {
+    LIEF_INFO("Expecting OID pkcs7-signed-data at {:d} but got {}",
+              stream.pos(), oid_to_string(oid_str));
+    return make_error_code(lief_errors::read_error);
+  }
+
+  tag = asn1r.read_tag(MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_CONSTRUCTED | 0);
+  if (!tag) {
+    LIEF_INFO("Wrong tag: {} (pos: {:d})", asn1r.get_str_tag(), stream.pos());
+    return make_error_code(tag.error());
+  }
+  tag = asn1r.read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
+  if (!tag) {
+    LIEF_INFO("Wrong tag: {} (pos: {:d})", asn1r.get_str_tag(), stream.pos());
+    return make_error_code(tag.error());
+  }
+  /* ===========================================================================
+   * SEQUENCE {
+   *  version Version
+   *  ...
+   * }
+   *
+   * Version ::= INTEGER
+   * ===========================================================================
+   */
+  {
+    auto version = asn1r.read_int();
+    if (!version) {
+      LIEF_INFO("Can't parse version (pos: {:d})", stream.pos());
+      return make_error_code(tag.error());
+    }
+    const int32_t version_val = version.value();
+    LIEF_DEBUG("ms_counter_sig.pkcs7-signed-data.version: {:d}", version_val);
+    counter_sig->version_ = version.value();
+  }
+
+  /* ===========================================================================
+   * SEQUENCE {
+   *  ...
+   *  digestAlgorithms  DigestAlgorithmIdentifiers,
+   *  ...
+   * }
+   *
+   * DigestAlgorithmIdentifiers ::= SET OF DigestAlgorithmIdentifier
+   * ===========================================================================
+   */
+  {
+    auto tag = asn1r.read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SET);
+    if (!tag) {
+      LIEF_INFO("Wrong tag: {} (pos: {:d})", asn1r.get_str_tag(), stream.pos());
+      return make_error_code(tag.error());
+    }
+    const uintptr_t end_set = stream.pos() + tag.value();
+    std::vector<oid_t> algorithms;
+    while (stream.pos() < end_set) {
+      const size_t current_p = stream.pos();
+      auto alg = asn1r.read_alg();
+      if (!alg) {
+        LIEF_INFO("Can't parse signed data digest algorithm (pos: {:d})", stream.pos());
+        break;
+      }
+
+      if (stream.pos() == current_p) {
+        break;
+      }
+      LIEF_DEBUG("ms_counter_sig.pkcs7-signed-data.digest-algorithms: {}", oid_to_string(alg.value()));
+      algorithms.push_back(std::move(alg.value()));
+    }
+
+    if (algorithms.empty()) {
+      LIEF_INFO("ms_counter_sig.pkcs7-signed-data.digest-algorithms no algorithms found");
+      return make_error_code(lief_errors::read_error);
+    }
+
+    if (algorithms.size() > 1) {
+      LIEF_INFO("ms_counter_sig.pkcs7-signed-data.digest-algorithms multiple algorithms");
+      return make_error_code(lief_errors::read_error);
+    }
+    counter_sig->digest_algorithm_ = algo_from_oid(algorithms.back());
+  }
+
+  /* ===========================================================================
+   * SEQUENCE {
+   *  ...
+   *  contentInfo ContentInfo,
+   *  ...
+   * }
+   * ===========================================================================
+   */
+  {
+    auto tag = asn1r.read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
+    if (!tag) {
+      LIEF_INFO("Wrong tag: {} can't parse content info (pos: {:d})",
+                asn1r.get_str_tag(), stream.pos());
+      return make_error_code(tag.error());
+    }
+    const size_t raw_content_size = tag.value();
+    SpanStream content_info_stream{stream.p(), tag.value()};
+
+    range_t range = {0, 0};
+    if (auto content_info = parse_content_info(content_info_stream, range)) {
+      counter_sig->content_info_ = std::move(*content_info);
+      //signature.content_info_start_ = stream.pos() + range.start;
+      //signature.content_info_end_   = stream.pos() + range.end;
+      LIEF_DEBUG("ContentInfo range: {} -> {}", range.start, range.end);
+    } else {
+      LIEF_INFO("Fail to parse ms_counter_sig.pkcs7-signed-data.content-info");
+    }
+    stream.increment_pos(raw_content_size);
+  }
+
+  /* ===========================================================================
+   * SEQUENCE {
+   *  ...
+   *  certificates [0]  CertificateSet OPTIONAL,
+   *  ...
+   * }
+   * ===========================================================================
+   */
+  {
+    auto tag = asn1r.read_tag(MBEDTLS_ASN1_CONSTRUCTED |
+                              MBEDTLS_ASN1_CONTEXT_SPECIFIC | 0);
+    if (tag) {
+      LIEF_DEBUG("ms_counter_sig.pkcs7-signed-data.certificates (offset={}, size={})",
+                 stream.pos(), *tag);
+      SpanStream certificate_stream{stream.p(), *tag};
+      stream.increment_pos(*tag);
+
+      auto certificates = parse_certificates(certificate_stream);
+      if (certificates) {
+        counter_sig->certificates_ = std::move(*certificates);
+      } else {
+        LIEF_INFO("Fail to parse ms_counter_sig.pkcs7-signed-data.certificates");
+      }
+    }
+  }
+  /* ===========================================================================
+   * SEQUENCE {
+   *  ...
+   *  crls [1]  CertificateRevocationLists OPTIONAL,
+   *  ...
+   * }
+   * ===========================================================================
+   */
+  {
+    auto tag = asn1r.read_tag(MBEDTLS_ASN1_CONSTRUCTED |
+                              MBEDTLS_ASN1_CONTEXT_SPECIFIC | 1);
+    if (tag) {
+      LIEF_DEBUG("ms_counter_sig.pkcs7-signed-data.crls offset: {:d}", stream.pos());
+      // TODO(romain): process
+      SpanStream crls_stream{stream.p(), tag.value()};
+      stream.increment_pos(tag.value());
+    }
+  }
+
+  /* ===========================================================================
+   * SEQUENCE {
+   *  ...
+   *  signerInfos       SignerInfos
+   * }
+   *
+   * SignerInfos ::= SET OF SignerInfo
+   * ===========================================================================
+   */
+  {
+    auto tag = asn1r.read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SET);
+    if (tag) {
+      LIEF_DEBUG("ms_counter_sig.pkcs7-signed-data.signer-infos offset: {:d}", stream.pos());
+      const size_t raw_content_size = tag.value();
+      SpanStream signers_stream{stream.p(), raw_content_size};
+      stream.increment_pos(raw_content_size);
+      if (auto signer_info = parse_signer_infos(signers_stream)) {
+        counter_sig->signers_ = std::move(signer_info.value());
+      } else {
+        LIEF_INFO("Fail to parse ms_counter_sig.pkcs7-signed-data.signer-infos");
+      }
+    }
+  }
+
+  LIEF_DEBUG("Ms-CounterSignature remaining bytes: {}", stream.size() - stream.pos());
+  return counter_sig;
 }
 
 result<SignatureParser::signer_infos_t> SignatureParser::parse_pkcs9_counter_sign(BinaryStream& stream) {
@@ -1113,30 +1361,287 @@ result<SignatureParser::time_t> SignatureParser::parse_pkcs9_signing_time(Binary
                                  time->hour, time->min, time->sec};
 }
 
+result<std::unique_ptr<Attribute>> SignatureParser::parse_ms_platform_manifest_binary_id(BinaryStream& stream) {
+  // SET of UTF8STRING
+  LIEF_DEBUG("Parsing szOID_PLATFORM_MANIFEST_BINARY_ID ({} bytes)", stream.size());
+  ASN1Reader asn1r(stream);
+  auto res = asn1r.read_utf8_string();
+  if (res) {
+    LIEF_DEBUG("  ID: {} (pos={})", *res, stream.pos());
+    LIEF_DEBUG("ms-platform-manifest-binary-id remaining bytes: {}", stream.size() - stream.pos());
+    return std::make_unique<MsManifestBinaryID>(std::move(*res));
+  }
+  return make_error_code(res.error());
+}
+
+result<std::unique_ptr<PKCS9TSTInfo>> SignatureParser::parse_pkcs9_tstinfo(BinaryStream& stream) {
+  // TODO(romain): Expose an API for this structure
+  auto tstinfo = std::make_unique<PKCS9TSTInfo>();
+
+  ASN1Reader asn1r(stream);
+  {
+    auto tag = asn1r.read_tag(/* [0] EXPLICIT ANY DEFINED BY contentType OPTIONAL */
+                              MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_CONSTRUCTED);
+
+    if (!tag) {
+      LIEF_INFO("Wrong tag for pkcs9-tstinfo: {} (pos: {:d})",
+                asn1r.get_str_tag(), stream.pos());
+      return make_error_code(tag.error());
+    }
+  }
+
+  auto raw = asn1r.read_octet_string();
+  if (!raw) {
+    LIEF_INFO("Can't read pkcs9-tstinfo encapsulated content");
+    return make_error_code(raw.error());
+  }
+  SpanStream substream(*raw);
+  ASN1Reader reader(substream);
+
+  auto tag = reader.read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
+
+  if (!tag) {
+    LIEF_INFO("Wrong tag for pkcs9-tstinfo: {} (pos: {:d})",
+              reader.get_str_tag(), substream.pos());
+    return make_error_code(tag.error());
+  }
+  /* version INTEGER  { v1(1) } */ {
+    if (auto res = reader.read_int()) {
+      uint32_t version = *res;
+      LIEF_DEBUG("pkcs9-tstinfo.version: {}", version);
+    } else {
+      LIEF_INFO("Can't read pkcs9-tstinfo.version (pos: {})", substream.pos());
+      return make_error_code(res.error());
+    }
+  }
+
+  /* policy TSAPolicyId */ {
+    if (auto res = reader.read_oid()) {
+      LIEF_DEBUG("pkcs9-tstinfo.policy: {}", *res);
+    } else {
+      LIEF_INFO("Can't read pkcs9-tstinfo.policy (pos: {})", substream.pos());
+      return make_error_code(res.error());
+    }
+  }
+
+  /* messageImprint MessageImprint */ {
+    auto tag = reader.read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
+    if (!tag) {
+      LIEF_INFO("Wrong tag for pkcs9-tstinfo.message_imprint: {} (pos: {:d})",
+                reader.get_str_tag(), substream.pos());
+      return make_error_code(tag.error());
+    }
+
+    if (auto res = reader.read_alg()) {
+      LIEF_DEBUG("pkcs9-tstinfo.message_imprint.hash_algorithm: {}", *res);
+      // TODO
+    } else {
+      LIEF_INFO("Can't read pkcs9-tstinfo.message_imprint.hash_algorithm (pos: {})",
+                 substream.pos());
+      return make_error_code(res.error());
+    }
+
+    if (auto res = reader.read_octet_string()) {
+      LIEF_DEBUG("pkcs9-tstinfo.message_imprint.hash_message: {}", hex_dump(*res));
+      // TODO
+    } else {
+      LIEF_INFO("Can't read pkcs9-tstinfo.message_imprint.hash_message (pos: {})",
+                 substream.pos());
+      return make_error_code(res.error());
+    }
+  }
+
+  /* serial_number INTEGER */ {
+    if (auto res = reader.read_large_int()) {
+      LIEF_DEBUG("pkcs9-tstinfo.serial_number: {}", hex_dump(*res));
+      // TODO
+    } else {
+      LIEF_INFO("Can't read pkcs9-tstinfo.serial_number (pos: {} {} {})",
+                 substream.pos(), to_string(get_error(res)), substream.size());
+      return make_error_code(res.error());
+    }
+  }
+
+  /* genTime GeneralizedTime */ {
+    if (auto tag = reader.read_tag(MBEDTLS_ASN1_GENERALIZED_TIME)) {
+      substream.increment_pos(*tag);
+      //std::unique_ptr<mbedtls_x509_time> time = std::move(*res);
+      //LIEF_DEBUG("pkcs9-tstinfo.gen_time {}/{}/{}",
+      //           time->day, time->mon, time->year);
+      // TODO
+    } else {
+      LIEF_INFO("Can't read pkcs9-tstinfo.gen_time (pos: {})",
+                 substream.pos());
+      return make_error_code(tag.error());
+    }
+  }
+
+  if (substream.pos() >= substream.size()) {
+    return tstinfo;
+  }
+
+
+  /* accuracy Accuracy (OPTIONAL) */ {
+    auto res = reader.is_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
+    if (res && *res) {
+      if (auto tag = reader.read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE)) {
+        substream.increment_pos(*tag);
+        // TODO(romain): Read accuracy
+      } else {
+        LIEF_INFO("Can't read pkcs9-tstinfo.accuracy (pos: {})", substream.pos());
+        return make_error_code(tag.error());
+      }
+    }
+  }
+
+  /* ordering BOOLEAN (OPTIONAL) */ {
+    auto res = reader.is_tag(MBEDTLS_ASN1_BOOLEAN);
+    if (res && *res) {
+      if (auto ordering = reader.read_bool()) {
+        LIEF_DEBUG("pkcs9-tstinfo.ordering: {}", *ordering);
+        // TODO(romain): add field
+      } else {
+        LIEF_INFO("Can't read pkcs9-tstinfo.ordering (pos: {})", substream.pos());
+        return make_error_code(tag.error());
+      }
+    }
+  }
+
+  /* nonce INTEGER (OPTIONAL) */ {
+    auto res = reader.is_tag(MBEDTLS_ASN1_INTEGER);
+    if (res && *res) {
+      if (auto nonce = reader.read_int64()) {
+        LIEF_DEBUG("pkcs9-tstinfo.nonce: {}", *nonce);
+        // TODO(romain): add field
+      } else {
+        LIEF_INFO("Can't read pkcs9-tstinfo.nonce (pos: {})", substream.pos());
+        return make_error_code(tag.error());
+      }
+    }
+  }
+
+  /* tsa [0] GeneralName (OPTIONAL) */ {
+    static constexpr auto CTX_SPEC_0 = MBEDTLS_ASN1_CONSTRUCTED |
+                                       MBEDTLS_ASN1_CONTEXT_SPECIFIC | 0;
+    auto res = reader.is_tag(CTX_SPEC_0);
+    if (/* optional check */ res && *res) {
+      if (auto ctx = reader.read_tag(CTX_SPEC_0)) {
+        //LIEF_ERR("LEN: {} ({} / {})", *ctx, substream.pos(), substream.size());
+        //LIEF_ERR("pos: {} {:b}", substream.pos(), *substream.peek<uint8_t>());
+        //LIEF_ERR("foo: {:b}", MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_CONTEXT_SPECIFIC | 4);
+        if (auto choice = asn1r.read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_CONTEXT_SPECIFIC | 4)) {
+
+        } else {
+          LIEF_INFO("error: {}", to_string(get_error(choice)));
+        }
+        substream.increment_pos(*ctx);
+        // TODO
+      } else {
+        LIEF_INFO("Can't read pkcs9-tstinfo.tsa (pos: {})", substream.pos());
+        return make_error_code(tag.error());
+      }
+    }
+  }
+
+  LIEF_DEBUG("pkcs9-tstinfo remaining bytes: {}", substream.size() - substream.pos());
+  return tstinfo;
+}
+
+result<std::unique_ptr<Attribute>> SignatureParser::parse_spc_relaxed_pe_marker_check(BinaryStream& stream) {
+  auto attr = std::make_unique<SpcRelaxedPeMarkerCheck>();
+  ASN1Reader asn1r(stream);
+  if (auto res = asn1r.read_int()) {
+    int value = *res;
+    attr->value(value);
+    LIEF_DEBUG("spc-relaxed-pe-marker-check: {}", value);
+  } else {
+    LIEF_INFO("Fail to read spc-relaxed-pe-marker-check");
+    return make_error_code(res.error());
+  }
+
+  LIEF_DEBUG("spc-relaxed-pe-marker-check remaining bytes: {}", stream.size() - stream.pos());
+  return attr;
+}
+
+
+result<std::unique_ptr<Attribute>>
+SignatureParser::parse_signing_certificate_v2(BinaryStream& stream) {
+  auto scertv2 = std::make_unique<SigningCertificateV2>();
+  ASN1Reader asn1r(stream);
+  uint64_t nextpos = stream.pos();
+  /* certs SEQUENCE OF ESSCertIDv2 */ {
+    auto tag = asn1r.read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
+
+    if (!tag) {
+      LIEF_INFO("Wrong tag: {} (pos: {:d})", asn1r.get_str_tag(), stream.pos());
+      return make_error_code(tag.error());
+    }
+
+    nextpos = stream.pos() + tag.value();
+
+    /* ESSCertIDv2 ::= SEQUENCE */ {
+      auto tag = asn1r.read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
+      if (!tag) {
+        LIEF_INFO("Wrong tag: {} (pos: {:d})", asn1r.get_str_tag(), stream.pos());
+        return make_error_code(tag.error());
+      }
+
+      /* hashAlgorithm AlgorithmIdentifier DEFAULT {algorithm id-sha256} */
+      if (auto res = asn1r.read_alg()) {
+        LIEF_DEBUG("SigningCertificateV2.certs.hashAlgorithm: {}", *res);
+      } else {
+        // Empty -> default value
+        if (!asn1r.read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE)) {
+          LIEF_INFO("Wrong tag: {} (pos: {:d})", asn1r.get_str_tag(), stream.pos());
+          return make_error_code(tag.error());
+        }
+        // Default is algorithm id-sha256
+      }
+      /* certHash OCTET STRING */
+      if (auto res = asn1r.read_octet_string()) {
+        LIEF_DEBUG("SigningCertificateV2.certs.certHash: {}", hex_dump(*res));
+      } else {
+        LIEF_INFO("Can't read SigningCertificateV2.certs.certHash. {} (pos: {:d})",
+                  asn1r.get_str_tag(), stream.pos());
+        return make_error_code(tag.error());
+      }
+
+      /* issuerSerial IssuerSerial OPTIONAL */
+      tag = asn1r.read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
+      if (tag && *tag) {
+        /* issuer       GeneralNames */
+        if (auto tag = asn1r.read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE)) {
+          // TODO(romain): Parse "GeneralNames"
+          stream.increment_pos(*tag);
+        } else {
+          LIEF_INFO("Can't read SigningCertificateV2.certs.issuerSerial.issuer {} (pos: {:d})",
+                    asn1r.get_str_tag(), stream.pos());
+          return make_error_code(tag.error());
+        }
+        /* serialNumber CertificateSerialNumber := INTEGER */
+        if (auto serial = asn1r.read_large_int()) {
+          LIEF_DEBUG("SigningCertificateV2.certs.issuerSerial.serial: {}",
+                     hex_dump(*serial));
+        } else {
+          LIEF_INFO("Can't read SigningCertificateV2.certs.issuerSerial.serial {} (pos: {:d})",
+                    asn1r.get_str_tag(), stream.pos());
+          return make_error_code(tag.error());
+        }
+      }
+    }
+  }
+  {
+    stream.setpos(nextpos);
+    /* policies SEQUENCE OF PolicyInformation OPTIONAL */
+    // TODO(romain): to parse
+  }
+  //auto res = reader.is_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
+  LIEF_DEBUG("signing-certificate-v2 remaining bytes: {}", stream.size() - stream.pos());
+  return scertv2;
+}
+
 result<SignatureParser::SpcPeImageData>
 SignatureParser::parse_spc_pe_image_data(BinaryStream& stream) {
-  // SpcPeImageData ::= SEQUENCE {
-  //   flags SpcPeImageFlags DEFAULT { includeResources },
-  //   file  SpcLink
-  // }
-  //
-  // SpcPeImageFlags ::= BIT STRING {
-  //   includeResources          (0),
-  //   includeDebugInfo          (1),
-  //   includeImportAddressTable (2)
-  // }
-  //
-  // SpcLink ::= CHOICE {
-  //   url     [0] IMPLICIT IA5STRING,
-  //   moniker [1] IMPLICIT SpcSerializedObject,
-  //   file    [2] EXPLICIT SpcString
-  // }
-  //
-  // SpcString ::= CHOICE {
-  //   unicode [0] IMPLICIT BMPSTRING,
-  //   ascii   [1] IMPLICIT IA5STRING
-  // }
-
   LIEF_DEBUG("Parsing SpcPeImageData");
   ASN1Reader asn1r(stream);
 
@@ -1185,6 +1690,27 @@ SignatureParser::parse_spc_pe_image_data(BinaryStream& stream) {
     }
   }
 
+  // SpcPeImageData ::= SEQUENCE {
+  //   flags SpcPeImageFlags DEFAULT { includeResources },
+  //   file  SpcLink
+  // }
+  //
+  // SpcPeImageFlags ::= BIT STRING {
+  //   includeResources          (0),
+  //   includeDebugInfo          (1),
+  //   includeImportAddressTable (2)
+  // }
+  //
+  // SpcLink ::= CHOICE {
+  //   url     [0] IMPLICIT IA5STRING,
+  //   moniker [1] IMPLICIT SpcSerializedObject,
+  //   file    [2] EXPLICIT SpcString
+  // }
+  //
+  // SpcString ::= CHOICE {
+  //   unicode [0] IMPLICIT BMPSTRING,
+  //   ascii   [1] IMPLICIT IA5STRING
+  // }
   return {};
 }
 

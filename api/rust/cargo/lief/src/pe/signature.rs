@@ -20,6 +20,7 @@ pub use x509::{Certificates, X509};
 
 use std::io::{Read, Seek};
 
+use crate::pe::Algorithms;
 use crate::common::into_optional;
 use crate::common::FromFFI;
 use crate::declare_iterator;
@@ -162,8 +163,8 @@ impl<'a> Signature<'a> {
     /// Algorithm used to *digest* the file.
     ///
     /// It should match [`SignerInfo::digest_algorithm`]
-    pub fn digest_algorithm(&self) -> u32 {
-        self.ptr.version()
+    pub fn digest_algorithm(&self) -> Algorithms {
+        Algorithms::from(self.ptr.digest_algorithm())
     }
 
     /// ContentInfo as described in the RFC2315 <https://tools.ietf.org/html/rfc2315#section-7>

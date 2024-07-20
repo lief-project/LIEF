@@ -88,13 +88,15 @@ class LIEF_API SignatureParser {
   static result<std::unique_ptr<Attribute>> parse_ms_counter_sign(BinaryStream& stream);
   static result<Signature> parse_ms_spc_nested_signature(BinaryStream& stream);
   static result<oid_t> parse_ms_spc_statement_type(BinaryStream& stream);
-
   static result<SpcSpOpusInfo> parse_spc_sp_opus_info(BinaryStream& stream);
   static result<std::string> parse_spc_string(BinaryStream& stream);
   static result<std::string> parse_spc_link(BinaryStream& stream);
+  static result<std::unique_ptr<Attribute>> parse_spc_relaxed_pe_marker_check(BinaryStream& stream);
   static result<SpcPeImageData> parse_spc_pe_image_data(BinaryStream& stream);
   static result<std::unique_ptr<SpcIndirectData>> parse_spc_indirect_data(BinaryStream& stream, range_t& range);
+  static result<std::unique_ptr<Attribute>> parse_ms_platform_manifest_binary_id(BinaryStream& stream);
 
+  static result<std::unique_ptr<Attribute>> parse_signing_certificate_v2(BinaryStream& stream);
 };
 
 }

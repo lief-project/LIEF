@@ -23,7 +23,6 @@
 #include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/types.hpp"
 
-
 namespace LIEF {
 class VectorStream;
 namespace PE {

@@ -22,6 +22,7 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
+
 #include "LIEF/PE/signature/ContentInfo.hpp"
 
 namespace LIEF {
@@ -30,7 +31,11 @@ class LIEF_API SpcIndirectData : public ContentInfo::Content {
   friend class SignatureParser;
 
   public:
-  SpcIndirectData();
+  static constexpr auto SPC_INDIRECT_DATA_OBJID = "1.3.6.1.4.1.311.2.1.4";
+
+  SpcIndirectData() :
+    ContentInfo::Content(SPC_INDIRECT_DATA_OBJID)
+  {}
   SpcIndirectData(const SpcIndirectData&) = default;
   SpcIndirectData& operator=(const SpcIndirectData&) = default;
 
@@ -67,7 +72,9 @@ class LIEF_API SpcIndirectData : public ContentInfo::Content {
 
   ~SpcIndirectData() override = default;
 
-  static bool classof(const ContentInfo::Content* content);
+  static bool classof(const ContentInfo::Content* content) {
+    return content->content_type() == SPC_INDIRECT_DATA_OBJID;
+  }
 
   private:
   std::string file_;

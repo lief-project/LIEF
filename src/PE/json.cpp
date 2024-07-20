@@ -855,6 +855,7 @@ void JsonVisitor::visit(const SpcIndirectData& content) {
   node_["file"]             = content.file();
   node_["digest"]           = content.digest();
   node_["digest_algorithm"] = to_string(content.digest_algorithm());
+  node_["content_type"]     = content.content_type();
 }
 
 void JsonVisitor::visit(const Attribute& auth) {
@@ -888,6 +889,15 @@ void JsonVisitor::visit(const MsSpcStatementType& attr) {
   node_["oid"] = attr.oid();
 }
 
+void JsonVisitor::visit(const MsCounterSign& attr) {
+  visit(*attr.as<Attribute>());
+}
+
+void JsonVisitor::visit(const MsManifestBinaryID& attr) {
+  visit(*attr.as<Attribute>());
+  node_["manifest_id"] = attr.manifest_id();
+}
+
 void JsonVisitor::visit(const PKCS9AtSequenceNumber& attr) {
 
   visit(*attr.as<Attribute>());
@@ -919,6 +929,18 @@ void JsonVisitor::visit(const SpcSpOpusInfo& attr) {
   visit(*attr.as<Attribute>());
   node_["more_info"]    = attr.more_info();
   node_["program_name"] = attr.program_name();
+}
+
+void JsonVisitor::visit(const SpcRelaxedPeMarkerCheck& attr) {
+
+  visit(*attr.as<Attribute>());
+  node_["value"] = attr.value();
+}
+
+void JsonVisitor::visit(const SigningCertificateV2& attr) {
+
+  visit(*attr.as<Attribute>());
+  // TODO
 }
 
 void JsonVisitor::visit(const CodeIntegrity& code_integrity) {
