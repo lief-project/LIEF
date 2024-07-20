@@ -31,6 +31,7 @@
 #include <LIEF/ObjC.hpp>
 #include <LIEF/logging.hpp>
 #include <LIEF/platforms.hpp>
+#include <LIEF/debug_loc.hpp>
 
 
 #endif

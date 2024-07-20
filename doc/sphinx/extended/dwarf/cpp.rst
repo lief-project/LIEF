@@ -116,4 +116,4 @@ Pointer
 debug_location_t
 ****************
 
-.. doxygenclass:: LIEF::debug_location_t
+.. doxygenstruct:: LIEF::debug_location_t

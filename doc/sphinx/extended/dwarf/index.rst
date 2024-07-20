@@ -1,3 +1,5 @@
+.. _extended-dwarf:
+
 :fa:`solid fa-bars-staggered` DWARF
 -----------------------------------
 

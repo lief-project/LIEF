@@ -4,6 +4,17 @@ Changelog
 0.15.0 - Not Released Yet
 -------------------------
 
+:Extended:
+
+  .. note::
+
+    See: https://extended.lief.re and :ref:`extended-intro`
+
+  * Add support for DWARF: :ref:`extended-dwarf`
+  * Add support for PDB: :ref:`extended-pdb`
+  * Add support for Objective-C: :ref:`extended-objc`
+
+
 :Repo:
   * ``master`` branch has been renamed ``main``
 

@@ -1,3 +1,5 @@
+.. _extended-intro:
+
 :fa:`cubes` What is LIEF Extended?
 ----------------------------------
 

@@ -1,3 +1,5 @@
+.. _extended-pdb:
+
 :fa:`brands fa-windows` PDB
 ----------------------------
 

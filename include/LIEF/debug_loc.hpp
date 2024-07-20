@@ -19,6 +19,7 @@
 #include <cstdint>
 
 namespace LIEF {
+/// This structure holds a debug location (source filename & line)
 struct debug_location_t {
   std::string file;
   uint64_t line = 0;
