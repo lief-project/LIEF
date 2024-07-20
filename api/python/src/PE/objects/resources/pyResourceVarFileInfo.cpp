@@ -48,7 +48,7 @@ void create<ResourceVarFileInfo>(nb::module_& m) {
 
     .def_prop_rw("translations",
         nb::overload_cast<>(&ResourceVarFileInfo::translations),
-        nb::overload_cast<const std::vector<uint32_t>&>(&ResourceVarFileInfo::translations),
+        nb::overload_cast<std::vector<uint32_t>>(&ResourceVarFileInfo::translations),
         R"delim(
         List of languages that the application supports
 

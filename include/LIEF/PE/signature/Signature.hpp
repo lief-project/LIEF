@@ -47,6 +47,7 @@ class LIEF_API Signature : public Object {
   static std::vector<uint8_t> hash(const std::vector<uint8_t>& input, ALGORITHMS algo) {
     return hash(input.data(), input.size(), algo);
   }
+
   static std::vector<uint8_t> hash(const uint8_t* buffer, size_t size, ALGORITHMS algo);
 
   public:

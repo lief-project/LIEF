@@ -79,7 +79,7 @@ class ref_iterator {
     return *this;
   }
 
-  void swap(ref_iterator& other) {
+  void swap(ref_iterator& other) noexcept {
     std::swap(const_cast<add_lvalue_reference_t<remove_const_t<DT>>>(container_),
               const_cast<add_lvalue_reference_t<remove_const_t<DT>>>(other.container_));
     std::swap(it_, other.it_);
@@ -330,7 +330,7 @@ class filter_iterator {
     return *this;
   }
 
-  void swap(filter_iterator& other) {
+  void swap(filter_iterator& other) noexcept {
     std::swap(const_cast<remove_const_t<DT>&>(container_), const_cast<remove_const_t<DT>&>(other.container_));
     std::swap(it_,        other.it_);
     std::swap(filters_,   other.filters_);

@@ -51,7 +51,7 @@ void RelocationObject::swap(RelocationObject& other) noexcept {
 
 size_t RelocationObject::size() const {
   if (size_ < 2) {
-    return (size_ + 1) * 8;
+    return ((size_t)size_ + 1) * 8;
   }
   return sizeof(uint32_t) * 8;
 }

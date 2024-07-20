@@ -116,7 +116,7 @@ std::ostream& DyldChainedFixups::print(std::ostream& os) const {
 
     if (const auto* lib = bind.library()) {
       libname = lib->name();
-      auto pos = libname.rfind("/");
+      auto pos = libname.rfind('/');
       if (pos != std::string::npos) {
         libname = libname.substr(pos + 1);
       }

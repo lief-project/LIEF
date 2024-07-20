@@ -29,11 +29,6 @@
 namespace LIEF {
 namespace PE {
 
-ResourceVarFileInfo::ResourceVarFileInfo(const ResourceVarFileInfo&) = default;
-ResourceVarFileInfo& ResourceVarFileInfo::operator=(const ResourceVarFileInfo&) = default;
-ResourceVarFileInfo::~ResourceVarFileInfo() = default;
-
-
 ResourceVarFileInfo::ResourceVarFileInfo(uint16_t type, std::u16string key) :
   type_{type},
   key_{std::move(key)}
@@ -44,26 +39,6 @@ ResourceVarFileInfo::ResourceVarFileInfo() :
 {}
 
 
-uint16_t ResourceVarFileInfo::type() const {
-  return type_;
-}
-
-const std::u16string& ResourceVarFileInfo::key() const {
-  return key_;
-}
-
-const std::vector<uint32_t>& ResourceVarFileInfo::translations() const {
-  return translations_;
-}
-
-void ResourceVarFileInfo::type(uint16_t type) {
-  type_ = type;
-}
-
-void ResourceVarFileInfo::key(const std::u16string& key) {
-  key_ = key;
-}
-
 void ResourceVarFileInfo::key(const std::string& key) {
   if (auto res = u8tou16(key)) {
     return this->key(std::move(*res));
@@ -71,13 +46,6 @@ void ResourceVarFileInfo::key(const std::string& key) {
   LIEF_WARN("{} can't be converted to a UTF-16 string", key);
 }
 
-std::vector<uint32_t>& ResourceVarFileInfo::translations() {
-  return const_cast<std::vector<uint32_t>&>(static_cast<const ResourceVarFileInfo*>(this)->translations());
-}
-
-void ResourceVarFileInfo::translations(const std::vector<uint32_t>& translations) {
-  translations_ = translations;
-}
 
 void ResourceVarFileInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);

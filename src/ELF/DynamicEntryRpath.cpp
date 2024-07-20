@@ -44,9 +44,9 @@ void DynamicEntryRpath::paths(const std::vector<std::string>& paths) {
       });
 }
 
-DynamicEntryRpath& DynamicEntryRpath::append(const std::string& path) {
+DynamicEntryRpath& DynamicEntryRpath::append(std::string path) {
   std::vector<std::string> paths = this->paths();
-  paths.push_back(path);
+  paths.push_back(std::move(path));
   this->paths(paths);
   return *this;
 }

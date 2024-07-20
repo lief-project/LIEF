@@ -66,9 +66,6 @@ inline uint8_t stream_get_tag(BinaryStream& stream) {
   return 0;
 }
 
-SignatureParser::~SignatureParser() = default;
-SignatureParser::SignatureParser() = default;
-
 result<Signature> SignatureParser::parse(const std::string& path) {
   std::ifstream binary(path, std::ios::in | std::ios::binary);
   if (!binary) {

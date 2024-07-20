@@ -303,7 +303,7 @@ Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const
     std::begin(original_raw_signature_) + content_info_end_
   };
 
-  const std::vector<uint8_t> content_info_hash = Signature::hash(std::move(raw_content_info), digest_algo);
+  const std::vector<uint8_t> content_info_hash = Signature::hash(raw_content_info, digest_algo);
 
 
   // Copy authenticated attributes

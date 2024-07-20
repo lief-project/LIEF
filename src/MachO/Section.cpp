@@ -160,7 +160,7 @@ span<const uint8_t> Section::content() const {
   return content.subspan(relative_offset, size_);
 }
 
-void Section::content(const Section::content_t& data) {
+void Section::content(const content_t& data) {
   if (segment_ == nullptr) {
     content_ = data;
     return;

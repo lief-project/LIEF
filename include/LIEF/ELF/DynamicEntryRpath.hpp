@@ -59,7 +59,7 @@ class LIEF_API DynamicEntryRpath : public DynamicEntry {
     return rpath_;
   }
 
-  void rpath(const std::string& name) {
+  void rpath(std::string name) {
     rpath_ = std::move(name);
   }
 
@@ -71,7 +71,7 @@ class LIEF_API DynamicEntryRpath : public DynamicEntry {
   DynamicEntryRpath& insert(size_t pos, const std::string& path);
 
   //! Append the given ``path``
-  DynamicEntryRpath& append(const std::string& path);
+  DynamicEntryRpath& append(std::string path);
 
   //! Remove the given ``path``
   DynamicEntryRpath& remove(const std::string& path);

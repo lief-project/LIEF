@@ -68,8 +68,8 @@ class LIEF_API SignatureParser {
   SignatureParser& operator=(const SignatureParser&) = delete;
   private:
 
-  ~SignatureParser();
-  SignatureParser();
+  ~SignatureParser() = default;
+  SignatureParser() = default;
 
   static result<Signature> parse_signature(BinaryStream& stream);
 

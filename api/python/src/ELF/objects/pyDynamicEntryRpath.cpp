@@ -48,7 +48,7 @@ void create<DynamicEntryRpath>(nb::module_& m) {
         [] (const DynamicEntryRpath& obj) {
           return LIEF::py::safe_string(obj.rpath());
         },
-        nb::overload_cast<const std::string&>(&DynamicEntryRpath::rpath),
+        nb::overload_cast<std::string>(&DynamicEntryRpath::rpath),
         "The actual rpath as a string"_doc)
 
     .def_prop_rw("paths",
