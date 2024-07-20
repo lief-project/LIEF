@@ -15,4 +15,4 @@ bitflags   = "2.4"
 num-traits = "0.2"
 num-derive = "0.4"
 num-bigint = "0.4"
-lief-ffi   = { path = "../lief-ffi" }
+lief-ffi   = { version = "0.15.0", path = "../lief-ffi" }
