@@ -102,8 +102,10 @@ html_title = "LIEF Documentation"
 copyright  = '2020, Quarkslab'
 author     = 'Romain Thomas'
 
-version = lief.__tag__ if lief.__is_tagged__ else lief.__version__
-release = lief.__version__
+LIEF_VERSION_ENV = "LIEF_VERSION"
+
+version = os.getenv(LIEF_VERSION_ENV) or (lief.__tag__ if lief.__is_tagged__ else lief.__version__)
+release = os.getenv(LIEF_VERSION_ENV) or lief.__version__
 commit  = lief.__commit__
 
 language = "en"

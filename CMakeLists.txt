@@ -21,13 +21,16 @@ include(ExternalProject)
 include(CMakePackageConfigHelpers)
 
 find_package(Git)
-
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git"
-   AND IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/.git"
-   AND Git_FOUND)
-
-  # Information from git
-  # ====================
+if (DEFINED ENV{LIEF_VERSION_ENV})
+  string(REGEX MATCHALL "([0-9]+)" VERSION_STRING "$ENV{LIEF_VERSION_ENV}")
+  if (NOT VERSION_STRING)
+    message(FATAL_ERROR "Invalid version")
+  endif()
+  list(GET VERSION_STRING 0 LIEF_VERSION_MAJOR)
+  list(GET VERSION_STRING 1 LIEF_VERSION_MINOR)
+  list(GET VERSION_STRING 2 LIEF_VERSION_PATCH)
+elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git"
+       AND IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/.git" AND Git_FOUND)
   include(LIEFGit)
 else()
   set(LIEF_VERSION_MAJOR "0")
@@ -105,16 +108,12 @@ if(LIEF_INSTALL)
     include(GNUInstallDirs)
     set(CMAKE_INSTALL_LIBDIR "lib")
   else()
-    if(WIN32)
-        set(CMAKE_INSTALL_LIBDIR      "lib")
-        set(CMAKE_INSTALL_DATADIR     "share")
-        set(CMAKE_INSTALL_INCLUDEDIR  "include")
-        set(CMAKE_INSTALL_BINDIR      "bin")
-        set(CMAKE_INSTALL_DATAROOTDIR "share")
-        message(STATUS "Setting installation destination on Windows to: ${CMAKE_INSTALL_PREFIX}")
-      else()
-        message(FATAL_ERROR "System not UNIX nor WIN32 - not implemented yet")
-      endif()
+    set(CMAKE_INSTALL_LIBDIR      "lib")
+    set(CMAKE_INSTALL_DATADIR     "share")
+    set(CMAKE_INSTALL_INCLUDEDIR  "include")
+    set(CMAKE_INSTALL_BINDIR      "bin")
+    set(CMAKE_INSTALL_DATAROOTDIR "share")
+    message(STATUS "Setting installation destination to: ${CMAKE_INSTALL_PREFIX}")
   endif()
 endif()
 
@@ -300,7 +299,7 @@ endif()
 
 target_link_libraries(LIB_LIEF PRIVATE lief_spdlog)
 
-if(ANDROID AND BUILD_SHARED_LIBS AND LIEF_LOGGING)
+if(ANDROID AND LIEF_LOGGING)
   target_link_libraries(LIB_LIEF PUBLIC log)
 endif()
 

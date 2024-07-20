@@ -3,6 +3,7 @@ import shlex
 import subprocess
 import re
 import sys
+import os
 
 from setup import ROOT_DIR
 from scikit_build_core.settings.skbuild_read_settings import rich_print as _rich_print
@@ -113,6 +114,9 @@ class Versioning:
         return f"{major}.{minor}.{patch}"
 
     def get_version(self) -> str:
+        if version := os.getenv("LIEF_VERSION_ENV"):
+            return version
+
         if version := self.version_from_git():
             return version
 
