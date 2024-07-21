@@ -1,10 +1,15 @@
 [package]
-name        = "lief"
-description = "Official Rust bindings for LIEF"
-edition     = "2021"
-version.workspace = true
-authors.workspace = true
-license.workspace = true
+name                  = "lief"
+description           = "Official Rust bindings for LIEF"
+edition               = "2021"
+version.workspace     = true
+authors.workspace     = true
+license.workspace     = true
+readme.workspace      = true
+homepage.workspace    = true
+keywords.workspace    = true
+repository.workspace  = true
+categories.workspace  = true
 
 [lib]
 doctest = false

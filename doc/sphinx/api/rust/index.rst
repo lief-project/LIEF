@@ -3,12 +3,6 @@
 :fa:`brands fa-rust` Rust
 ======================================
 
-.. warning::
-
-   LIEF Rust bindings are still in a beta version and not published yet on crate.io.
-   Thus, you should specify LIEF as a dependency of your project using
-   ``git`` or ``path`` while the binding are not officially released.
-
 .. code-block:: toml
 
   [package]
