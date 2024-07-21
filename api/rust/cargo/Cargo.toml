@@ -12,7 +12,6 @@ categories  = [
   "development-tools::debugging",
   "development-tools::profiling",
   "development-tools::build-utils",
-  "parser-implementations",
   "parsing"
 ]
 
