@@ -2,6 +2,7 @@
 name                  = "lief"
 description           = "Official Rust bindings for LIEF"
 edition               = "2021"
+documentation         = "https://lief.re/doc/stable/rust/lief/"
 version.workspace     = true
 authors.workspace     = true
 license.workspace     = true
