@@ -13,8 +13,13 @@
   [dependencies]
   lief = { git = "https://github.com/lief-project/LIEF", branch = "main" }
 
-The API is documented here: https://docs.rs/crate/lief/latest and the nightly
-documentation is available here: https://lief-rs.s3.fr-par.scw.cloud/doc/latest/lief/index.html
+
+.. warning::
+
+   LIEF rust bindings are not on ``docs.rs`` because of network restrictions:
+   https://github.com/rust-lang/docs.rs/issues/2563
+
+The API is documented here https://lief-rs.s3.fr-par.scw.cloud/doc/latest/lief/index.html
 
 Precompiled FFI Bindings
 ~~~~~~~~~~~~~~~~~~~~~~~~
