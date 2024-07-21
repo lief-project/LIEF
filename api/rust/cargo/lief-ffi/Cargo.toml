@@ -11,5 +11,5 @@ cxx     = { version = "1.0.117", features = [ "c++20" ] }
 autocxx = "0.26"
 
 [build-dependencies]
-lief-build = { version="0.15.0", path = "../lief-build" }
+lief-build = { version="0.16.0", path = "../lief-build" }
 miette     = { version="5.10", features = [ "fancy" ] }
