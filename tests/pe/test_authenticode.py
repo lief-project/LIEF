@@ -221,9 +221,8 @@ def test_ms_spc_nested_signature():
 
     # Check self-signed
     assert self_signed_ca.verify(self_signed_ca) == lief.PE.x509.VERIFICATION_FLAGS.OK
-
-    assert signer_cert.is_trusted_by([self_signed_ca]) == lief.PE.x509.VERIFICATION_FLAGS.OK
-    assert self_signed_ca.verify(signer_cert) == lief.PE.x509.VERIFICATION_FLAGS.OK
+    assert signer_cert.is_trusted_by([self_signed_ca]) == lief.PE.x509.VERIFICATION_FLAGS.BADCERT_EXPIRED
+    assert self_signed_ca.verify(signer_cert) == lief.PE.x509.VERIFICATION_FLAGS.BADCERT_EXPIRED
     assert signer_cert.verify(nvidia_cert) == lief.PE.x509.VERIFICATION_FLAGS.BADCERT_EXPIRED
 
     ca_bundles = lief.PE.x509.parse(get_sample("pkcs7/windows-ca-bundle.pem"))
