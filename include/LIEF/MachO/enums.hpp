@@ -28,7 +28,9 @@ enum class MACHO_TYPES: uint32_t {
   MH_MAGIC_64 = 0xFEEDFACFu, ///< 64-bit big-endian magic
   MH_CIGAM_64 = 0xCFFAEDFEu, ///< 64-bit little-endian magic
   FAT_MAGIC   = 0xCAFEBABEu, ///< big-endian fat magic
-  FAT_CIGAM   = 0xBEBAFECAu  ///< little-endian fat magic
+  FAT_CIGAM   = 0xBEBAFECAu,  ///< little-endian fat magic
+
+  NEURAL_MODEL = 0xbeeffaceu,
 };
 
 enum class X86_RELOCATION  {

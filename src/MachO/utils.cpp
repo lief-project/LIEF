@@ -65,7 +65,8 @@ bool is_macho(BinaryStream& stream) {
             magic == MACHO_TYPES::MH_MAGIC_64 ||
             magic == MACHO_TYPES::MH_CIGAM_64 ||
             magic == MACHO_TYPES::FAT_MAGIC ||
-            magic == MACHO_TYPES::FAT_CIGAM);
+            magic == MACHO_TYPES::FAT_CIGAM ||
+            magic == MACHO_TYPES::NEURAL_MODEL);
   }
   return false;
 }

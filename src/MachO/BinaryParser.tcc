@@ -452,10 +452,13 @@ ok_error_t BinaryParser::parse_load_commands() {
           thread->architecture_ = binary_->header().cpu_type();
           LIEF_DEBUG("FLAVOR: {} | COUNT: {}", cmd->flavor, cmd->count);
           const uint64_t state_offset = loadcommands_offset + sizeof(details::thread_command);
-          switch (binary_->header().cpu_type()) {
+          const Header::CPU_TYPE arch = binary_->header().cpu_type();
+          switch (arch) {
             case Header::CPU_TYPE::X86:
               {
-                if (!stream_->peek_data(thread->state_, state_offset, sizeof(details::x86_thread_state_t))) {
+                if (!stream_->peek_data(thread->state_, state_offset,
+                      sizeof(details::x86_thread_state_t)))
+                {
                   LIEF_ERR("Can't read the state data");
                 }
                 break;
@@ -463,7 +466,9 @@ ok_error_t BinaryParser::parse_load_commands() {
 
             case Header::CPU_TYPE::X86_64:
               {
-                if (!stream_->peek_data(thread->state_, state_offset, sizeof(details::x86_thread_state64_t))) {
+                if (!stream_->peek_data(thread->state_, state_offset,
+                      sizeof(details::x86_thread_state64_t)))
+                {
                   LIEF_ERR("Can't read the state data");
                 }
                 break;
@@ -471,7 +476,9 @@ ok_error_t BinaryParser::parse_load_commands() {
 
             case Header::CPU_TYPE::ARM:
               {
-                if (!stream_->peek_data(thread->state_, state_offset, sizeof(details::arm_thread_state_t))) {
+                if (!stream_->peek_data(thread->state_, state_offset,
+                      sizeof(details::arm_thread_state_t)))
+                {
                   LIEF_ERR("Can't read the state data");
                 }
                 break;
@@ -479,14 +486,20 @@ ok_error_t BinaryParser::parse_load_commands() {
 
             case Header::CPU_TYPE::ARM64:
               {
-                if (!stream_->peek_data(thread->state_, state_offset, sizeof(details::arm_thread_state64_t))) {
+                if (!stream_->peek_data(thread->state_, state_offset,
+                      sizeof(details::arm_thread_state64_t)))
+                {
                   LIEF_ERR("Can't read the state data");
                 }
                 break;
               }
+
             default:
               {
-                LIEF_ERR("Unknown architecture");
+                static std::set<int32_t> ARCH_ERR;
+                if (ARCH_ERR.insert((int32_t)arch).second) {
+                  LIEF_ERR("Unknown architecture ({})", (int32_t)arch);
+                }
               }
           }
           break;
@@ -1043,7 +1056,8 @@ ok_error_t BinaryParser::parse_load_commands() {
       default:
         {
           if (not_parsed.insert(cmd_type).second) {
-            LIEF_WARN("Command '{}' not parsed!", to_string(cmd_type));
+            LIEF_WARN("Command '{}' ({}) not parsed!",
+                      to_string(cmd_type), static_cast<uint64_t>(cmd_type));
           }
           load_command = std::make_unique<UnknownCommand>(*command);
         }
