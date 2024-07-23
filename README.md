@@ -113,7 +113,7 @@ pip install [--user] --index-url https://lief.s3-website.fr-par.scw.cloud/latest
 - **Nightly**:
   * SDK: https://lief.s3-website.fr-par.scw.cloud/latest/sdk
   * Python Wheels: https://lief.s3-website.fr-par.scw.cloud/latest/lief
-- **v0.15.0**: https://github.com/lief-project/LIEF/releases/tag/0.15.0
+- **v0.15.1**: https://github.com/lief-project/LIEF/releases/tag/0.15.1
 
 Here are guides to install or integrate LIEF:
 
@@ -234,7 +234,7 @@ Romain Thomas ([@rh0main](https://twitter.com/rh0main)) - [Quarkslab](https://ww
 
 ### License
 
-LIEF is provided under the [Apache 2.0 license](https://github.com/lief-project/LIEF/blob/0.15.0/LICENSE).
+LIEF is provided under the [Apache 2.0 license](https://github.com/lief-project/LIEF/blob/0.15.1/LICENSE).
 
 ### Bibtex
 
