@@ -1,6 +1,13 @@
 Changelog
 =========
 
+.15.1 - July 23th, 2024
+------------------------
+
+:MachO:
+
+  * Fix missing commit for ``.hwx`` support
+
 0.15.0 - July 21th, 2024
 ------------------------
 

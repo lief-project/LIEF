@@ -21,13 +21,14 @@ namespace LIEF {
 namespace MachO {
 
 const char* to_string(MACHO_TYPES e) {
-  CONST_MAP(MACHO_TYPES, const char*, 6) enumStrings {
-      { MACHO_TYPES::MH_MAGIC,    "MAGIC"},
-      { MACHO_TYPES::MH_CIGAM,    "CIGAM"},
-      { MACHO_TYPES::MH_MAGIC_64, "MAGIC_64"},
-      { MACHO_TYPES::MH_CIGAM_64, "CIGAM_64"},
-      { MACHO_TYPES::FAT_MAGIC,   "FAT_MAGIC"},
-      { MACHO_TYPES::FAT_CIGAM,   "FAT_CIGAM"}
+  CONST_MAP(MACHO_TYPES, const char*, 7) enumStrings {
+      { MACHO_TYPES::MH_MAGIC,     "MAGIC"},
+      { MACHO_TYPES::MH_CIGAM,     "CIGAM"},
+      { MACHO_TYPES::MH_MAGIC_64,  "MAGIC_64"},
+      { MACHO_TYPES::MH_CIGAM_64,  "CIGAM_64"},
+      { MACHO_TYPES::FAT_MAGIC,    "FAT_MAGIC"},
+      { MACHO_TYPES::FAT_CIGAM,    "FAT_CIGAM"},
+      { MACHO_TYPES::NEURAL_MODEL, "NEURAL_MODEL"}
   };
   const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "Out of range" : it->second;

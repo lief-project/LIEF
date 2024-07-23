@@ -31,7 +31,9 @@ void init_enums(nb::module_& m) {
     .value(PY_ENUM(MACHO_TYPES::MH_MAGIC_64))
     .value(PY_ENUM(MACHO_TYPES::MH_CIGAM_64))
     .value(PY_ENUM(MACHO_TYPES::FAT_MAGIC))
-    .value(PY_ENUM(MACHO_TYPES::FAT_CIGAM));
+    .value(PY_ENUM(MACHO_TYPES::FAT_CIGAM))
+    .value(PY_ENUM(MACHO_TYPES::NEURAL_MODEL))
+  ;
 
   enum_<X86_RELOCATION>(m, "X86_RELOCATION")
     .value(PY_ENUM(X86_RELOCATION::GENERIC_RELOC_VANILLA))
