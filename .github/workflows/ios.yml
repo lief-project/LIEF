@@ -3,7 +3,7 @@ on: push
 
 jobs:
   ios-sdk:
-    runs-on: macos-11.0
+    runs-on: macos-13
     steps:
       - uses: actions/checkout@v4
         with:

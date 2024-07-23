@@ -6,7 +6,7 @@ env:
 
 jobs:
   osx-sdk:
-    runs-on: macos-11.0
+    runs-on: macos-13
     steps:
       - uses: actions/checkout@v4
         with:
@@ -60,7 +60,7 @@ jobs:
           path: install/x64
           retention-days: 1
   osx-testing:
-    runs-on: macos-11.0
+    runs-on: macos-13
     if: "!contains(github.event.commits[0].message, '[skip-test]')"
     steps:
       - uses: actions/checkout@v4
@@ -124,7 +124,7 @@ jobs:
           python tests/run_tools_check.py ${LIEF_BUILD_DIR}/
           ctest --output-on-failure --test-dir ${LIEF_BUILD_DIR}/
   wheels:
-    runs-on: macos-11.0
+    runs-on: macos-13
     needs: osx-sdk
     strategy:
       matrix:
