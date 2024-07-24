@@ -18,6 +18,8 @@
 
 #include "logging.hpp"
 
+#include <algorithm>
+
 namespace LIEF {
 namespace ELF {
 
