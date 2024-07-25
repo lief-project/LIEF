@@ -768,7 +768,11 @@ enum LIEF_DYNAMIC_TAGS {
   LIEF_DT_RELR                       = 0x6FFFE000, /**< The offset of new relr relocation data (Android specific. */
   LIEF_DT_RELRSZ                     = 0x6FFFE001, /**< The size of nre relr relocation data in bytes (Android specific. */
   LIEF_DT_RELRENT                    = 0x6FFFE003, /**< The size of a new relr relocation entry (Android specific. */
-  LIEF_DT_RELRCOUNT                  = 0x6FFFE005 /**< Specifies the relative count of new relr relocation entries (Android specific. */
+  LIEF_DT_RELRCOUNT                  = 0x6FFFE005, /**< Specifies the relative count of new relr relocation entries (Android specific. */
+
+  LIEF_DT_X86_64_PLT                 = 0x70000000,
+  LIEF_DT_X86_64_PLTSZ               = 0x70000001,
+  LIEF_DT_X86_64_PLTENT              = 0x70000003
 };
 
 /** DT_FLAGS and DT_FLAGS_1 values. */

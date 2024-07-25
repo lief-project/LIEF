@@ -51,6 +51,9 @@ DynamicEntry::TAG DynamicEntry::from_value(uint64_t value, ARCH arch) {
       case ARCH::RISCV:
         return TAG(RISCV_DISC + value);
 
+      case ARCH::X86_64:
+        return TAG(X86_64_DISC + value);
+
       default:
         LIEF_WARN("Dynamic tag: 0x{:04x} is not supported for the "
                   "current architecture", value);
@@ -83,8 +86,11 @@ uint64_t DynamicEntry::to_value(DynamicEntry::TAG tag) {
     return raw_value - PPC64_DISC;
   }
 
-  if (RISCV_DISC <= raw_value) {
+  if (RISCV_DISC <= raw_value && raw_value < X86_64_DISC) {
     return raw_value - RISCV_DISC;
+  }
+  if (X86_64_DISC <= raw_value) {
+    return raw_value - X86_64_DISC;
   }
 
   return raw_value;
@@ -237,6 +243,10 @@ const char* to_string(DynamicEntry::TAG tag) {
     ENTRY(PPC64_OPT),
 
     ENTRY(RISCV_VARIANT_CC),
+
+    ENTRY(X86_64_PLT),
+    ENTRY(X86_64_PLTSZ),
+    ENTRY(X86_64_PLTENT),
   };
   #undef ENTRY
 
