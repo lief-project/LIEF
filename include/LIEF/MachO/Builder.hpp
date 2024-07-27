@@ -100,8 +100,10 @@ class LIEF_API Builder {
 
   ok_error_t build_fat();
   ok_error_t build_fat_header();
-  ok_error_t build_header();
   ok_error_t build_load_commands();
+
+  template<typename T>
+  ok_error_t build_header();
 
   template<typename T>
   ok_error_t build_linkedit();

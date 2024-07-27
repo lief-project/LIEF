@@ -590,6 +590,48 @@ uint32_t Binary::page_size() const {
   return get_pagesize(*this);
 }
 
+
+void Binary::sort_segments() {
+  commands_t::iterator start = commands_.end();
+  commands_t::iterator end = commands_.end();
+
+  for (auto it = commands_.begin(); it != commands_.end(); ++it) {
+    if (start == commands_.end() && SegmentCommand::classof(it->get())) {
+      start = it;
+    }
+
+    if (SegmentCommand::classof(it->get())) {
+      end = it;
+    }
+  }
+  ++end;
+
+  bool all_segments = std::all_of(start, end, [] (const std::unique_ptr<LoadCommand>& cmd) {
+    return SegmentCommand::classof(cmd.get());
+  });
+
+  if (!all_segments) {
+    LIEF_ERR("Segment commands non contiguous. Sort aborted!");
+    return;
+  }
+
+  std::sort(start, end,
+    [] (const std::unique_ptr<LoadCommand>& lhs, const std::unique_ptr<LoadCommand>& rhs) {
+      return lhs->as<SegmentCommand>()->virtual_address() < rhs->as<SegmentCommand>()->virtual_address();
+    }
+  );
+
+  segments_.clear();
+  offset_seg_.clear();
+
+  for (auto it = start; it != end; ++it) {
+    SegmentCommand& seg = *(*it)->as<SegmentCommand>();
+    seg.index_ = segments_.size();
+    offset_seg_[seg.file_offset()] = &seg;
+    segments_.push_back(&seg);
+  }
+}
+
 void Binary::shift_command(size_t width, uint64_t from_offset) {
   const SegmentCommand* segment = segment_from_offset(from_offset);
 

@@ -851,6 +851,9 @@ class LIEF_API Binary : public LIEF::Binary  {
     return overlay_;
   }
 
+  void sort_segments();
+  void refresh_seg_offset();
+
   private:
   //! Default constructor
   Binary();
@@ -860,7 +863,6 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Insert a Segment command in the cache field (segments_)
   //! and keep a consistent state of the indexes.
   size_t add_cached_segment(SegmentCommand& segment);
-  void refresh_seg_offset();
 
   template<class T>
   LIEF_LOCAL ok_error_t patch_relocation(Relocation& relocation, uint64_t from, uint64_t shift);

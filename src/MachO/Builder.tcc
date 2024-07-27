@@ -216,8 +216,11 @@ template<typename T>
 ok_error_t Builder::build(DylibCommand& library) {
   LIEF_DEBUG("Build Dylib '{}'", library.name());
 
+  const uint32_t original_size = library.original_data_.size();
+
   const uint32_t raw_size = sizeof(details::dylib_command) + library.name().size() + 1;
-  const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
+  const uint32_t size_needed =
+    std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
   const uint32_t padding = size_needed - raw_size;
 
   if (library.original_data_.size() < size_needed ||
@@ -258,8 +261,11 @@ template <typename T>
 ok_error_t Builder::build(DylinkerCommand& linker) {
 
   LIEF_DEBUG("Build dylinker '{}'", linker.name());
+
+  const uint32_t original_size = linker.original_data_.size();
   const uint32_t raw_size = sizeof(details::dylinker_command) + linker.name().size() + 1;
-  const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
+  const uint32_t size_needed =
+    std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
   const uint32_t padding = size_needed - raw_size;
 
   if (linker.original_data_.size() < size_needed ||
@@ -355,8 +361,11 @@ template<class T>
 ok_error_t Builder::build(RPathCommand& rpath_cmd) {
   LIEF_DEBUG("Build '{}'", to_string(rpath_cmd.command()));
 
+  const uint32_t original_size = rpath_cmd.original_data_.size();
+
   const uint32_t raw_size = sizeof(details::rpath_command) + rpath_cmd.path().size() + 1;
-  const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
+  const uint32_t size_needed =
+    std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
   const uint32_t padding = size_needed - raw_size;
 
   if (rpath_cmd.original_data_.size() < size_needed ||
@@ -935,8 +944,12 @@ ok_error_t Builder::build(SubFramework& sf) {
   details::sub_framework_command raw_cmd;
   std::memset(&raw_cmd, 0, sizeof(details::sub_framework_command));
 
+  const uint32_t original_size = sf.original_data_.size();
+
   const uint32_t raw_size = sizeof(details::sub_framework_command) + sf.umbrella().size() + 1;
-  const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
+  const auto size_needed =
+    std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
+
   const uint32_t padding = size_needed - raw_size;
 
   if (sf.original_data_.size() < size_needed || sf.size() < size_needed) {
@@ -971,8 +984,11 @@ ok_error_t Builder::build(SubClient& sc) {
   details::sub_client_command raw_cmd;
   std::memset(&raw_cmd, 0, sizeof(details::sub_client_command));
 
+  const uint32_t original_size = sc.original_data_.size();
+
   const uint32_t raw_size = sizeof(details::sub_client_command) + sc.client().size() + 1;
-  const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
+  const uint32_t size_needed =
+    std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
   const uint32_t padding = size_needed - raw_size;
 
   if (sc.original_data_.size() < size_needed || sc.size() < size_needed) {
@@ -1006,8 +1022,11 @@ ok_error_t Builder::build(DyldEnvironment& de) {
   details::dylinker_command raw_cmd;
   std::memset(&raw_cmd, 0, sizeof(details::dylinker_command));
 
+  const uint32_t original_size = de.original_data_.size();
+
   const uint32_t raw_size = sizeof(details::dylinker_command) + de.value().size() + 1;
-  const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
+  const uint32_t size_needed =
+    std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
   const uint32_t padding = size_needed - raw_size;
 
   if (de.original_data_.size() < size_needed ||
@@ -1592,6 +1611,37 @@ ok_error_t Builder::build(TwoLevelHints& two) {
 
   memcpy(two.original_data_.data(), &raw_cmd, sizeof(details::linkedit_data_command));
   return ok();
+}
+
+template<class MACHO_T>
+ok_error_t Builder::build_header() {
+  using header_t = typename MACHO_T::header;
+
+  header_t header;
+  std::memset(&header, 0, sizeof(header_t));
+
+  const Header& binary_header = binary_->header();
+
+  header.magic      = static_cast<uint32_t>(binary_header.magic());
+  header.cputype    = static_cast<uint32_t>(binary_header.cpu_type());
+  header.cpusubtype = static_cast<uint32_t>(binary_header.cpu_subtype());
+  header.filetype   = static_cast<uint32_t>(binary_header.file_type());
+  header.ncmds      = static_cast<uint32_t>(binary_header.nb_cmds());
+  header.sizeofcmds = static_cast<uint32_t>(binary_header.sizeof_cmds());
+  header.flags      = static_cast<uint32_t>(binary_header.flags());
+
+  if constexpr (std::is_same_v<header_t, details::mach_header_64>) {
+    header.reserved = static_cast<uint32_t>(binary_header.reserved());
+  }
+
+  LIEF_DEBUG("Writing header at: 0 (size: 0x{:04x})", sizeof(header));
+
+  raw_
+    .seekp(0)
+    .write(header);
+
+  return ok();
+
 }
 }
 }

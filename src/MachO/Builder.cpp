@@ -92,7 +92,6 @@ ok_error_t Builder::build() {
       continue;
     }
 
-
     if (Routine::classof(cmd.get())) {
       build<T>(*cmd->as<Routine>());
       continue;
@@ -137,7 +136,7 @@ ok_error_t Builder::build() {
   build_segments<T>();
   build_load_commands();
 
-  build_header();
+  build_header<T>();
   return ok();
 }
 
@@ -196,46 +195,7 @@ ok_error_t Builder::build_fat_header() {
   return ok();
 }
 
-
-ok_error_t Builder::build_header() {
-  LIEF_DEBUG("[+] Building header");
-  const Header& binary_header = binary_->header();
-  if (binary_->is64_) {
-    details::mach_header_64 header;
-    std::memset(&header, 0, sizeof(details::mach_header_64));
-    header.magic      = static_cast<uint32_t>(binary_header.magic());
-    header.cputype    = static_cast<uint32_t>(binary_header.cpu_type());
-    header.cpusubtype = static_cast<uint32_t>(binary_header.cpu_subtype());
-    header.filetype   = static_cast<uint32_t>(binary_header.file_type());
-    header.ncmds      = static_cast<uint32_t>(binary_header.nb_cmds());
-    header.sizeofcmds = static_cast<uint32_t>(binary_header.sizeof_cmds());
-    header.flags      = static_cast<uint32_t>(binary_header.flags());
-    header.reserved   = static_cast<uint32_t>(binary_header.reserved());
-
-    raw_.seekp(0);
-    raw_.write(reinterpret_cast<const uint8_t*>(&header), sizeof(details::mach_header_64));
-  } else {
-    details::mach_header header;
-    std::memset(&header, 0, sizeof(details::mach_header));
-
-    header.magic      = static_cast<uint32_t>(binary_header.magic());
-    header.cputype    = static_cast<uint32_t>(binary_header.cpu_type());
-    header.cpusubtype = static_cast<uint32_t>(binary_header.cpu_subtype());
-    header.filetype   = static_cast<uint32_t>(binary_header.file_type());
-    header.ncmds      = static_cast<uint32_t>(binary_header.nb_cmds());
-    header.sizeofcmds = static_cast<uint32_t>(binary_header.sizeof_cmds());
-    header.flags      = static_cast<uint32_t>(binary_header.flags());
-
-    raw_.seekp(0);
-    raw_.write(reinterpret_cast<const uint8_t*>(&header), sizeof(details::mach_header));
-  }
-  return ok();
-}
-
-
 ok_error_t Builder::build_load_commands() {
-  LIEF_DEBUG("[+] Building load segments");
-
   const auto& binary = binaries_.back();
   // Check if the number of segments is correct
   if (binary->header().nb_cmds() != binary->commands_.size()) {
@@ -248,19 +208,25 @@ ok_error_t Builder::build_load_commands() {
     if (LinkEdit::segmentof(*segment) && config_.linkedit) {
       raw_.seekp(linkedit_offset_);
       raw_.write(linkedit_);
-    } else {
-      span<const uint8_t> segment_content = segment->content();
-      raw_.seekp(segment->file_offset());
-      raw_.write(segment_content.data(), segment_content.size());
+      continue;
     }
+    span<const uint8_t> segment_content = segment->content();
+    raw_.seekp(segment->file_offset());
+    raw_.write(segment_content.data(), segment_content.size());
   }
 
-  //uint64_t loadCommandsOffset = raw_.size();
-  for (const std::unique_ptr<LoadCommand>& command : binary->commands_) {
-    const auto& data = command->data();
-    uint64_t loadCommandsOffset = command->command_offset();
-    LIEF_DEBUG("[+] Command offset: 0x{:04x}", loadCommandsOffset);
-    raw_.seekp(loadCommandsOffset);
+  uint64_t start_offset = binary_->is64_ ? sizeof(details::mach_header_64) :
+                                           sizeof(details::mach_header);
+  raw_.seekp(start_offset);
+  for (size_t i = 0; i < binary_->commands_.size(); ++i) {
+    const std::unique_ptr<LoadCommand>& command = binary_->commands_[i];
+    span<const uint8_t> data = command->data();
+    //uint64_t offset = command->command_offset();
+    uint64_t offset = start_offset;
+
+    LIEF_DEBUG("Writing command #{:02d} {:30} offset=0x{:08x} size=0x{:08x}",
+               i, to_string(command->command()), offset, data.size());
+
     raw_.write(data);
   }
   return ok();
