@@ -42,6 +42,7 @@ class FatBinary;
 class FunctionStarts;
 class LinkerOptHint;
 class MainCommand;
+class Routine;
 class SegmentSplitInfo;
 class SourceVersion;
 class SubFramework;
@@ -122,6 +123,9 @@ class LIEF_API Builder {
 
   template<class T>
   ok_error_t build(MainCommand& main_cmd);
+
+  template<class T>
+  ok_error_t build(Routine& routine);
 
   template<class T>
   ok_error_t build(RPathCommand& rpath_cmd);

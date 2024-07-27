@@ -31,6 +31,7 @@
 #include "LIEF/rust/MachO/Header.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
 #include "LIEF/rust/MachO/Main.hpp"
+#include "LIEF/rust/MachO/Routine.hpp"
 #include "LIEF/rust/MachO/RPathCommand.hpp"
 #include "LIEF/rust/MachO/Relocation.hpp"
 #include "LIEF/rust/MachO/RelocationDyld.hpp"

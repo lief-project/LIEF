@@ -275,6 +275,8 @@ class Binary(lief.Binary):
     @property
     def has_nx_stack(self) -> bool: ...
     @property
+    def has_routine_command(self) -> bool: ...
+    @property
     def has_rpath(self) -> bool: ...
     @property
     def has_segment_split_info(self) -> bool: ...
@@ -314,6 +316,8 @@ class Binary(lief.Binary):
     def page_size(self) -> int: ...
     @property
     def relocations(self) -> lief.MachO.Binary.it_relocations: ...  # type: ignore
+    @property
+    def routine_command(self) -> lief.MachO.Routine: ...
     @property
     def rpath(self) -> lief.MachO.RPathCommand: ...
     @property
@@ -1309,6 +1313,17 @@ class RelocationObject(Relocation):
     def __init__(self, *args, **kwargs) -> None: ...
     @property
     def is_scattered(self) -> bool: ...
+
+class Routine(LoadCommand):
+    init_address: int
+    init_module: int
+    reserved1: int
+    reserved2: int
+    reserved3: int
+    reserved4: int
+    reserved5: int
+    reserved6: int
+    def __init__(self, *args, **kwargs) -> None: ...
 
 class Section(lief.Section):
     class FLAGS:

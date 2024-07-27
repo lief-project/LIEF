@@ -43,6 +43,7 @@ target_sources(LIB_LIEF PRIVATE
   RelocationDyld.cpp
   RelocationFixup.cpp
   RelocationObject.cpp
+  Routine.cpp
   Section.cpp
   SegmentCommand.cpp
   SegmentSplitInfo.cpp

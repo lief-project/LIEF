@@ -212,6 +212,17 @@ Version Min
 
 ----------
 
+Routine
+*******
+
+.. lief-inheritance:: lief._lief.MachO.Routine
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
+.. autoclass:: lief.MachO.Routine
+
+----------
+
 
 Relocation
 **********

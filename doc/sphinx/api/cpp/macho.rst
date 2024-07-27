@@ -174,6 +174,14 @@ Version Min
 
 ----------
 
+Routine
+*******
+
+.. doxygenclass:: LIEF::MachO::Routine
+   :project: lief
+
+----------
+
 Relocation
 **********
 

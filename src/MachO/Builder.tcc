@@ -35,6 +35,7 @@
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
+#include "LIEF/MachO/Routine.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
 #include "LIEF/MachO/RelocationFixup.hpp"
 #include "LIEF/MachO/Section.hpp"
@@ -388,6 +389,35 @@ ok_error_t Builder::build(RPathCommand& rpath_cmd) {
             std::back_inserter(rpath_cmd.original_data_));
   rpath_cmd.original_data_.push_back(0);
   rpath_cmd.original_data_.insert(std::end(rpath_cmd.original_data_), padding, 0);
+  return ok();
+}
+
+template<class T>
+ok_error_t Builder::build(Routine& routine) {
+  using routine_t = typename T::routines_command;
+  using uint__ = typename T::uint;
+  LIEF_DEBUG("Build '{}'", to_string(routine.command()));
+
+  routine_t raw_cmd;
+  std::memset(&raw_cmd, 0, sizeof(routine_t));
+
+  raw_cmd.cmd       = static_cast<uint32_t>(routine.command());
+  raw_cmd.cmdsize   = static_cast<uint32_t>(routine.size());
+
+  raw_cmd.init_address = static_cast<uint__>(routine.init_address());
+  raw_cmd.init_module  = static_cast<uint__>(routine.init_module());
+  raw_cmd.reserved1    = static_cast<uint__>(routine.reserved1());
+  raw_cmd.reserved2    = static_cast<uint__>(routine.reserved2());
+  raw_cmd.reserved3    = static_cast<uint__>(routine.reserved3());
+  raw_cmd.reserved4    = static_cast<uint__>(routine.reserved4());
+  raw_cmd.reserved5    = static_cast<uint__>(routine.reserved5());
+  raw_cmd.reserved6    = static_cast<uint__>(routine.reserved6());
+
+  routine.size_ = sizeof(routine_t);
+  routine.original_data_.clear();
+  std::move(reinterpret_cast<uint8_t*>(&raw_cmd),
+            reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(routine_t),
+            std::back_inserter(routine.original_data_));
   return ok();
 }
 

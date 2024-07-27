@@ -44,6 +44,7 @@
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
+#include "LIEF/MachO/Routine.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
 #include "LIEF/MachO/Relocation.hpp"
 #include "LIEF/MachO/RelocationDyld.hpp"
@@ -509,13 +510,29 @@ ok_error_t BinaryParser::parse_load_commands() {
       // ===============
       // Routine command
       // ===============
-      //case LoadCommand::TYPE::ROUTINES:
-      //case LoadCommand::TYPE::ROUTINES_64:
-      //  {
-      //    LIEF_DEBUG("[+] Parsing LC_ROUTINE");
-      //    load_command = std::unique_ptr<LoadCommand>{new LoadCommand{command}};
-      //    break;
-      //  }
+      case LoadCommand::TYPE::ROUTINES_64:
+        {
+          LIEF_DEBUG("[+] Parsing LC_ROUTINE_64");
+          const auto cmd = stream_->peek<details::routines_command_64>(loadcommands_offset);
+          if (!cmd) {
+            LIEF_ERR("Can't read routines_command_64");
+            break;
+          }
+          load_command = std::make_unique<Routine>(*cmd);
+          break;
+        }
+
+      case LoadCommand::TYPE::ROUTINES:
+        {
+          LIEF_DEBUG("[+] Parsing LC_ROUTINE");
+          const auto cmd = stream_->peek<details::routines_command_32>(loadcommands_offset);
+          if (!cmd) {
+            LIEF_ERR("Can't read routines_command_32");
+            break;
+          }
+          load_command = std::make_unique<Routine>(*cmd);
+          break;
+        }
 
       // =============
       // Symbols table

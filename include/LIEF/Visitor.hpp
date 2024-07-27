@@ -179,6 +179,7 @@ LIEF_MACHO_FORWARD(SourceVersion)
 LIEF_MACHO_FORWARD(VersionMin)
 LIEF_MACHO_FORWARD(SegmentSplitInfo)
 LIEF_MACHO_FORWARD(SubFramework)
+LIEF_MACHO_FORWARD(Routine)
 LIEF_MACHO_FORWARD(DyldEnvironment)
 LIEF_MACHO_FORWARD(EncryptionInfo)
 LIEF_MACHO_FORWARD(BuildVersion)
@@ -597,6 +598,9 @@ class LIEF_API Visitor {
 
   //! @brief Method to visit a LIEF::MachO::SubFramework
   LIEF_MACHO_VISITABLE(SubFramework)
+
+  //! @brief Method to visit a LIEF::MachO::Routine
+  LIEF_MACHO_VISITABLE(Routine)
 
   //! @brief Method to visit a LIEF::MachO::DyldEnvironment
   LIEF_MACHO_VISITABLE(DyldEnvironment)

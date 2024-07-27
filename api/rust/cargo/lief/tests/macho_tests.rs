@@ -1,4 +1,5 @@
 mod utils;
+use std::path::Path;
 use std::env;
 use lief::logging;
 use lief::generic::Binary as GenericBinary;
@@ -177,6 +178,10 @@ fn explore_macho(_: &str, macho: &lief::macho::Binary) {
         format!("{rpath:?}");
     }
 
+    if let Some(routine) = macho.routine() {
+        format!("{routine:?}");
+    }
+
     if let Some(symbol_command) = macho.symbol_command() {
         format!("{symbol_command:?}");
     }
@@ -257,6 +262,20 @@ fn test_with(bin_name: &str) {
     assert!(matches!(binary, Some(Binary::MachO(_))));
 }
 
+fn test_with_str(name: &str, path_str: &str) {
+    if let Some(lief::Binary::MachO(fat)) = lief::Binary::parse(path_str) {
+        for bin in fat.iter() {
+            explore_macho(name, &bin);
+        }
+    }
+}
+
+fn test_with_fullpath(name: &str, suffix: &str) {
+    let path = utils::get_sample(Path::new(suffix)).unwrap();
+    let path_str = path.to_str().unwrap();
+    test_with_str(name, path_str);
+}
+
 #[test]
 fn test_api() {
 
@@ -275,4 +294,6 @@ fn test_api() {
     test_with("python3_issue_476.bin");
     test_with("FAT_MachO_x86_x86-64_library_libc++abi.dylib");
     test_with("libadd_unknown_cmd.so");
+    test_with("StocksAnalytics");
+    test_with_fullpath("CoreFoundation", "private/MachO/CoreFoundation");
 }

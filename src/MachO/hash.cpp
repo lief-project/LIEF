@@ -162,6 +162,10 @@ void Hash::visit(const RPathCommand& rpath) {
   process(rpath.path());
 }
 
+void Hash::visit(const Routine& routine) {
+  visit(*routine.as<LoadCommand>());
+}
+
 void Hash::visit(const Symbol& symbol) {
   process(symbol.name());
   process(symbol.value());

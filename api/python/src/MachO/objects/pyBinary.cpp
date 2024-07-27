@@ -41,6 +41,7 @@
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
+#include "LIEF/MachO/Routine.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
 #include "LIEF/MachO/Relocation.hpp"
 #include "LIEF/MachO/RelocationFixup.hpp"
@@ -267,6 +268,15 @@ void create<Binary>(nb::module_& m) {
     .def_prop_ro("version_min",
         nb::overload_cast<>(&Binary::version_min),
         "Return the binary's " RST_CLASS_REF(lief.MachO.VersionMin) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
+
+    .def_prop_ro("has_routine_command",
+        &Binary::has_routine_command,
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.Routine) " command."_doc)
+
+    .def_prop_ro("routine_command",
+        nb::overload_cast<>(&Binary::routine_command),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.Routine) " if any, or None"_doc,
         nb::rv_policy::reference_internal)
 
     .def_prop_ro("has_thread_command",

@@ -37,6 +37,7 @@
 #include <LIEF/MachO/ThreadCommand.hpp>
 #include <LIEF/MachO/RPathCommand.hpp>
 #include <LIEF/MachO/Symbol.hpp>
+#include <LIEF/MachO/Routine.hpp>
 #include <LIEF/MachO/Relocation.hpp>
 #include <LIEF/MachO/RelocationObject.hpp>
 #include <LIEF/MachO/RelocationDyld.hpp>
@@ -103,6 +104,7 @@ void init_objects(nb::module_& m) {
   CREATE(DataInCode, m);
   CREATE(DataCodeEntry, m);
   CREATE(SourceVersion, m);
+  CREATE(Routine, m);
   CREATE(VersionMin, m);
   CREATE(SegmentSplitInfo, m);
   CREATE(SubFramework, m);

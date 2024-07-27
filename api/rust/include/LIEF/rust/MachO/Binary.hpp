@@ -31,6 +31,7 @@
 #include "LIEF/rust/MachO/ThreadCommand.hpp"
 #include "LIEF/rust/MachO/FunctionStarts.hpp"
 #include "LIEF/rust/MachO/RPathCommand.hpp"
+#include "LIEF/rust/MachO/Routine.hpp"
 #include "LIEF/rust/MachO/SymbolCommand.hpp"
 #include "LIEF/rust/MachO/DynamicSymbolCommand.hpp"
 #include "LIEF/rust/MachO/CodeSignature.hpp"
@@ -165,6 +166,10 @@ class MachO_Binary : public AbstractBinary {
 
   auto thread_command() const {
     return details::try_unique<MachO_ThreadCommand>(impl().thread_command());
+  }
+
+  auto routine_command() const {
+    return details::try_unique<MachO_Routine>(impl().routine_command());
   }
 
   auto rpath() const {

@@ -92,6 +92,12 @@ ok_error_t Builder::build() {
       continue;
     }
 
+
+    if (Routine::classof(cmd.get())) {
+      build<T>(*cmd->as<Routine>());
+      continue;
+    }
+
     if (MainCommand::classof(cmd.get())) {
       build<T>(*cmd->as<MainCommand>());
       continue;

@@ -17,6 +17,7 @@ pub mod functionstarts;
 pub mod linker_opt_hint;
 pub mod main_cmd;
 pub mod rpath;
+pub mod routine;
 pub mod segment;
 pub mod segment_split_info;
 pub mod source_version;
@@ -61,6 +62,8 @@ pub use linker_opt_hint::LinkerOptHint;
 pub use main_cmd::Main;
 #[doc(inline)]
 pub use rpath::RPath;
+#[doc(inline)]
+pub use routine::Routine;
 #[doc(inline)]
 pub use segment::Segment;
 #[doc(inline)]
@@ -290,6 +293,7 @@ pub enum Commands<'a> {
     LinkerOptHint(LinkerOptHint<'a>),
     Main(Main<'a>),
     RPath(RPath<'a>),
+    Routine(Routine<'a>),
     Segment(Segment<'a>),
     SegmentSplitInfo(SegmentSplitInfo<'a>),
     SourceVersion(SourceVersion<'a>),
@@ -378,6 +382,13 @@ impl<'a> Commands<'a> {
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Commands::RPath(RPath::from_ffi(raw))
+            } else if ffi::MachO_Routine::classof(cmd_ref) {
+                let raw = {
+                    type From = cxx::UniquePtr<ffi::MachO_Command>;
+                    type To = cxx::UniquePtr<ffi::MachO_Routine>;
+                    std::mem::transmute::<From, To>(ffi_entry)
+                };
+                Commands::Routine(Routine::from_ffi(raw))
             } else if ffi::MachO_SymbolCommand::classof(cmd_ref) {
                 let raw = {
                     type From = cxx::UniquePtr<ffi::MachO_Command>;
@@ -599,6 +610,9 @@ impl Command for Commands<'_> {
                 cmd.get_base()
             }
             Commands::Main(cmd) => {
+                cmd.get_base()
+            }
+            Commands::Routine(cmd) => {
                 cmd.get_base()
             }
             Commands::RPath(cmd) => {

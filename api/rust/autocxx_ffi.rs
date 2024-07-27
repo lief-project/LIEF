@@ -386,6 +386,8 @@ include_cpp! {
     block_constructors!("MachO_LinkerOptHint")
     generate!("MachO_Main")
     block_constructors!("MachO_Main")
+    generate!("MachO_Routine")
+    block_constructors!("MachO_Routine")
     generate!("MachO_RPathCommand")
     block_constructors!("MachO_RPathCommand")
     generate!("MachO_Relocation")

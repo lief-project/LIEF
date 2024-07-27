@@ -59,6 +59,7 @@ class Header;
 class LinkerOptHint;
 class MainCommand;
 class Parser;
+class Routine;
 class RPathCommand;
 class Relocation;
 class Section;
@@ -611,6 +612,15 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Return the MachO::ThreadCommand command if present, a nullptr otherwise.
   ThreadCommand* thread_command();
   const ThreadCommand* thread_command() const;
+
+  //! ``true`` if the binary has a MachO::Routine command.
+  bool has_routine_command() const {
+    return routine_command() != nullptr;
+  }
+
+  //! Return the MachO::Routine command if present, a nullptr otherwise.
+  Routine* routine_command();
+  const Routine* routine_command() const;
 
   //! ``true`` if the binary has a MachO::RPathCommand command.
   bool has_rpath() const {

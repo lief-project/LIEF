@@ -14,6 +14,7 @@ use super::commands::functionstarts::FunctionStarts;
 use super::commands::linker_opt_hint::LinkerOptHint;
 use super::commands::main_cmd::Main;
 use super::commands::rpath::RPath;
+use super::commands::routine::Routine;
 use super::commands::segment::Segments;
 use super::commands::segment_split_info::SegmentSplitInfo;
 use super::commands::source_version::SourceVersion;
@@ -131,6 +132,11 @@ impl Binary {
     /// Return the `LC_RPATH` command if present
     pub fn rpath(&self) -> Option<RPath> {
         into_optional(self.ptr.rpath())
+    }
+
+    /// Return the `LC_ROUTINE/LC_ROUTINE64` command if present
+    pub fn routine(&self) -> Option<Routine> {
+        into_optional(self.ptr.routine_command())
     }
 
     /// Return the `LC_SYMTAB` command if present

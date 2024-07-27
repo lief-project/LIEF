@@ -45,6 +45,7 @@
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
+#include "LIEF/MachO/Routine.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
 #include "LIEF/MachO/Relocation.hpp"
 #include "LIEF/MachO/RelocationFixup.hpp"
@@ -809,6 +810,12 @@ void Binary::shift_command(size_t width, uint64_t from_offset) {
   if (TwoLevelHints* two = two_level_hints()) {
     if (two->offset() > from_offset) {
       two->offset(two->offset() + width);
+    }
+  }
+
+  if (Routine* routine = routine_command()) {
+    if (routine->init_address() > virtual_address) {
+      routine->init_address(routine->init_address() + width);
     }
   }
 
@@ -2077,7 +2084,15 @@ const VersionMin* Binary::version_min() const {
   return command<VersionMin>();
 }
 
+// Routine Command
+// +++++++++++++++
+Routine* Binary::routine_command() {
+  return command<Routine>();
+}
 
+const Routine* Binary::routine_command() const {
+  return command<Routine>();
+}
 
 // Thread command
 // ++++++++++++++
