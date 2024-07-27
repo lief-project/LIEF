@@ -118,7 +118,7 @@ std::ostream& operator<<(std::ostream& os, const Symbol& symbol) {
   //}
 
   os << fmt::format(
-    "name={}, type={}, desc={}, value={}",
+    "name={}, type={}, desc={}, value=0x{:08x}",
     symbol.name(), symbol.raw_type(), symbol.description(), symbol.value()
   ) << '\n';
   return os;
