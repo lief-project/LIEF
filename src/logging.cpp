@@ -56,6 +56,28 @@ Logger::Logger() {
   }
 }
 
+LEVEL Logger::get_level() {
+  auto& instance = Logger::instance();
+  spdlog::level::level_enum lvl = instance.sink_->level();
+  switch (lvl) {
+    default:
+    case spdlog::level::level_enum::off:
+      return LEVEL::OFF;
+    case spdlog::level::level_enum::trace:
+      return LEVEL::TRACE;
+    case spdlog::level::level_enum::debug:
+      return LEVEL::DEBUG;
+    case spdlog::level::level_enum::info:
+      return LEVEL::INFO;
+    case spdlog::level::level_enum::warn:
+      return LEVEL::WARN;
+    case spdlog::level::level_enum::err:
+      return LEVEL::ERR;
+    case spdlog::level::level_enum::critical:
+      return LEVEL::CRITICAL;
+  }
+  return LEVEL::TRACE;
+}
 
 Logger::Logger(const std::string& filepath) {
   sink_ = spdlog::basic_logger_mt("LIEF", filepath, /* truncate */ true);
@@ -116,6 +138,7 @@ void Logger::set_logger(const spdlog::logger& logger) {
 
 const char* to_string(LEVEL e) {
   switch (e) {
+    case LEVEL::OFF: return "OFF";
     case LEVEL::TRACE: return "TRACE";
     case LEVEL::DEBUG: return "DEBUG";
     case LEVEL::INFO: return "INFO";
@@ -145,6 +168,13 @@ void Logger::set_level(LEVEL level) {
     return;
   }
   switch (level) {
+    case LEVEL::OFF:
+      {
+        Logger::instance().sink_->set_level(spdlog::level::off);
+        Logger::instance().sink_->flush_on(spdlog::level::off);
+        break;
+      }
+
     case LEVEL::TRACE:
       {
         Logger::instance().sink_->set_level(spdlog::level::trace);
@@ -216,8 +246,14 @@ void reset() {
   Logger::reset();
 }
 
+LEVEL get_level() {
+  return Logger::get_level();
+}
+
 void log(LEVEL level, const std::string& msg) {
   switch (level) {
+    case LEVEL::OFF:
+      break;
     case LEVEL::TRACE:
     case LEVEL::DEBUG:
       {

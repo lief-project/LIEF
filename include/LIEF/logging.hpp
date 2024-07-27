@@ -20,6 +20,7 @@
 
 #include <string>
 #include <vector>
+#include <cstdint>
 
 namespace spdlog {
 class logger;
@@ -33,14 +34,19 @@ namespace logging {
 //! From a given level set, all levels below this ! level are enabled
 //!
 //! For example, if LOG_INFO is enabled then LOG_WARN, LOG_ERR are also enabled
-enum class LEVEL {
-  TRACE = 0,
+enum class LEVEL : uint32_t {
+  OFF = 0,
+
+  TRACE,
   DEBUG,
   INFO,
   WARN,
   ERR,
   CRITICAL,
 };
+
+//! Current log level
+LIEF_API LEVEL get_level();
 
 LIEF_API const char* to_string(LEVEL e);
 
@@ -72,6 +78,33 @@ void log(LEVEL level, const std::string& fmt, const Args &... args) {
 LIEF_API void set_logger(const spdlog::logger& logger);
 
 LIEF_API void reset();
+
+class Scoped {
+  public:
+  Scoped(const Scoped&) = delete;
+  Scoped& operator=(const Scoped&) = delete;
+
+  Scoped(Scoped&&) = delete;
+  Scoped& operator=(Scoped&&) = delete;
+
+  explicit Scoped(LEVEL level) :
+    level_(get_level())
+  {
+    set_level(level);
+  }
+
+  const Scoped& set_level(LEVEL lvl) const {
+    logging::set_level(lvl);
+    return *this;
+  }
+
+  ~Scoped() {
+    set_level(level_);
+  }
+
+  private:
+  LEVEL level_ = LEVEL::INFO;
+};
 
 }
 }

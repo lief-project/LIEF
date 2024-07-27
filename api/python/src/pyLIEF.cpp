@@ -97,6 +97,7 @@ void init_logger(nb::module_& m) {
 
   #define PY_ENUM(x) LIEF::logging::to_string(x), x
   nb::enum_<logging::LEVEL>(logging, "LEVEL")
+    .value(PY_ENUM(logging::LEVEL::OFF))
     .value(PY_ENUM(logging::LEVEL::TRACE))
     .value(PY_ENUM(logging::LEVEL::DEBUG))
     .value(PY_ENUM(logging::LEVEL::CRITICAL))
@@ -113,6 +114,9 @@ void init_logger(nb::module_& m) {
 
   logging.def("set_level", &logging::set_level,
               "Change logging level", "level"_a);
+
+  logging.def("get_level", &logging::get_level,
+              "Get current logging level");
 
   logging.def("set_path", &logging::set_path,
               "Change the logger as a file-base logging and set its path"_doc,

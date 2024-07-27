@@ -19,6 +19,7 @@ use std::convert::{From, Into};
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 /// The different levels of log
 pub enum Level {
+    OFF,
     TRACE,
     DEBUG,
     INFO,
@@ -31,12 +32,13 @@ pub enum Level {
 impl From<u32> for Level {
     fn from(value: u32) -> Self {
         match value {
-            0x00000000 => Level::TRACE,
-            0x00000001 => Level::DEBUG,
-            0x00000002 => Level::INFO,
-            0x00000003 => Level::WARN,
-            0x00000004 => Level::ERR,
-            0x00000005 => Level::CRITICAL,
+            0x00000000 => Level::OFF,
+            0x00000001 => Level::TRACE,
+            0x00000002 => Level::DEBUG,
+            0x00000003 => Level::INFO,
+            0x00000004 => Level::WARN,
+            0x00000005 => Level::ERR,
+            0x00000006 => Level::CRITICAL,
             _ => Level::UNKNOWN(value),
         }
     }
@@ -45,13 +47,14 @@ impl From<u32> for Level {
 impl Into<u32> for Level {
     fn into(self) -> u32 {
         match self {
-            Level::TRACE => 0x00000000,
-            Level::DEBUG => 0x00000001,
-            Level::INFO => 0x00000002,
-            Level::WARN => 0x00000003,
-            Level::ERR => 0x00000004,
-            Level::CRITICAL => 0x00000005,
-            Level::UNKNOWN(_) => 0x00000002, // INFO
+            Level::OFF => 0x00000000,
+            Level::TRACE => 0x00000001,
+            Level::DEBUG => 0x00000002,
+            Level::INFO => 0x00000003,
+            Level::WARN => 0x00000004,
+            Level::ERR => 0x00000005,
+            Level::CRITICAL => 0x00000006,
+            Level::UNKNOWN(_) => 0x00000003, // INFO
         }
     }
 }
@@ -94,6 +97,3 @@ pub fn set_path(path: &Path) {
 pub fn log(level: Level, message: &str) {
     ffi::LIEF_Logging::log(level.into(), message)
 }
-
-
-
