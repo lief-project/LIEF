@@ -366,6 +366,10 @@ void create<Binary>(nb::module_& m) {
         &Binary::has_subclients,
         "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.SubClient) " command"_doc)
 
+    .def_prop_ro("has_sub_framework",
+        &Binary::has_sub_framework,
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.SubFramework) " command"_doc)
+
     .def_prop_ro("sub_framework",
         nb::overload_cast<>(&Binary::sub_framework),
         "Return the binary's " RST_CLASS_REF(lief.MachO.SubFramework) " if any, or None"_doc,
