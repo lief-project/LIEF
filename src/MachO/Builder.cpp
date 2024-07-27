@@ -41,7 +41,9 @@ Builder::Builder(Binary& binary, config_t config) :
   binary_{&binary},
   config_{std::move(config)}
 {
-  raw_.reserve(binary_->original_size());
+  if (binary_->original_size() != (uint64_t)-1) {
+    raw_.reserve(binary_->original_size());
+  }
   binaries_.push_back(binary_);
 }
 

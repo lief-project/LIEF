@@ -17,6 +17,7 @@
 #define LIEF_MACHO_UTILS_H
 
 #include <cstdint>
+#include <functional>
 #include "LIEF/visibility.h"
 
 #include <string>
@@ -43,6 +44,8 @@ LIEF_API bool is_fat(const std::string& file);
 //! Check if the given Mach-O is 64-bits
 LIEF_API bool is_64(const std::string& file);
 
+LIEF_API bool is_64(BinaryStream& stream);
+
 //! Check the layout of the given Mach-O binary. It checks if it can be signed
 //! according to cctools-921/libstuff/checkout.c
 LIEF_API bool check_layout(const Binary& binary, std::string* error = nullptr);
@@ -50,6 +53,14 @@ LIEF_API bool check_layout(const Binary& binary, std::string* error = nullptr);
 //! Check the layout of the given FAT Mach-O by checking individually the layout
 //! of the binaries embedded in the FAT
 LIEF_API bool check_layout(const FatBinary& binary, std::string* error = nullptr);
+
+
+using segment_callback_t = std::function<
+  void(const std::string& name, uint64_t offset, uint64_t size, uint64_t addr, uint64_t vsize)
+>;
+
+LIEF_API void foreach_segment(BinaryStream& stream, const segment_callback_t cbk);
+
 }
 }
 

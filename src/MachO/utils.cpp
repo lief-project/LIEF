@@ -49,8 +49,13 @@
 namespace LIEF {
 namespace MachO {
 
-inline result<MACHO_TYPES> magic_from_stream(BinaryStream& stream) {
-  ScopedStream scoped(stream, 0);
+inline result<MACHO_TYPES> magic_from_stream(BinaryStream& stream,
+                                             bool keep_offset = false) {
+  ScopedStream scoped(stream);
+  if (!keep_offset) {
+    scoped->setpos(0);
+  }
+
   if (auto magic_res = scoped->read<uint32_t>()) {
     return static_cast<MACHO_TYPES>(*magic_res);
   }
@@ -96,17 +101,22 @@ bool is_fat(const std::string& file) {
   return false;
 }
 
-bool is_64(const std::string& file) {
-  if (auto stream = FileStream::from_file(file)) {
-    if (auto magic_res = magic_from_stream(*stream)) {
-      const MACHO_TYPES magic = *magic_res;
-      return magic == MACHO_TYPES::MH_MAGIC_64 ||
-             magic == MACHO_TYPES::MH_CIGAM_64;
-    }
+bool is_64(BinaryStream& stream) {
+  ScopedStream scoped(stream, 0);
+  if (auto magic_res = magic_from_stream(*scoped)) {
+    const MACHO_TYPES magic = *magic_res;
+    return magic == MACHO_TYPES::MH_MAGIC_64 ||
+           magic == MACHO_TYPES::MH_CIGAM_64;
   }
   return false;
 }
 
+bool is_64(const std::string& file) {
+  if (auto stream = FileStream::from_file(file)) {
+    return is_64(*stream);
+  }
+  return false;
+}
 
 bool check_layout(const FatBinary& fat, std::string* error) {
   bool is_ok = true;
@@ -688,6 +698,66 @@ bool check_layout(const Binary& binary, std::string* error) {
     return false;
   }
   return true;
+}
+
+template<class MACHO_T>
+void foreach_segment_impl(BinaryStream& stream, const segment_callback_t cbk) {
+  using header_t = typename MACHO_T::header;
+  using segment_command_t = typename MACHO_T::segment_command;
+  auto res_hdr = stream.read<header_t>();
+  if (!res_hdr) {
+    return;
+  }
+  const auto& hdr = *res_hdr;
+
+  for (size_t i = 0; i < hdr.ncmds; ++i) {
+    const auto raw_cmd = stream.peek<details::load_command>();
+    if (!raw_cmd) {
+      break;
+    }
+    const auto cmd = LoadCommand::TYPE(raw_cmd->cmd);
+    const bool is_segment = cmd == LoadCommand::TYPE::SEGMENT ||
+                            cmd == LoadCommand::TYPE::SEGMENT_64;
+    if (is_segment) {
+      auto res_segment = stream.peek<segment_command_t>();
+      if (!res_segment) {
+        break;
+      }
+      std::string segname(res_segment->segname, 16);
+      cbk(segname, res_segment->fileoff, res_segment->filesize,
+          res_segment->vmaddr, res_segment->vmsize);
+    }
+
+    stream.increment_pos(raw_cmd->cmdsize);
+  }
+}
+
+void foreach_segment(BinaryStream& stream, const segment_callback_t cbk) {
+  ScopedStream scoped(stream);
+  auto magic_res = magic_from_stream(*scoped, /*keep_offset=*/true);
+  if (!magic_res) {
+    return;
+  }
+
+  const MACHO_TYPES magic = *magic_res;
+
+  if (magic == MACHO_TYPES::FAT_MAGIC || magic == MACHO_TYPES::FAT_CIGAM) {
+    LIEF_WARN("Can't get the file size of a FAT Macho-O");
+    return;
+  }
+
+  const bool is64 = magic == MACHO_TYPES::MH_MAGIC_64 ||
+                    magic == MACHO_TYPES::MH_CIGAM_64;
+
+  const bool is32 = magic == MACHO_TYPES::MH_MAGIC ||
+                    magic == MACHO_TYPES::MH_CIGAM;
+
+  if (!is64 && !is32) {
+    return;
+  }
+
+  return is64 ? foreach_segment_impl<details::MachO64>(*scoped, cbk) :
+                foreach_segment_impl<details::MachO32>(*scoped, cbk);
 }
 
 }

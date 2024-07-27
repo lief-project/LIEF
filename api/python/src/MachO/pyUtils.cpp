@@ -39,7 +39,7 @@ void init_utils(nb::module_& m) {
       "Check if the given Mach-O is fat"_doc,
       "file"_a);
 
-  m.def("is_64", &is_64,
+  m.def("is_64", nb::overload_cast<const std::string&>(&is_64),
       "Check if the given Mach-O is 64-bits"_doc,
       "file"_a);
 
