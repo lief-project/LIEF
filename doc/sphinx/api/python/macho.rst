@@ -212,6 +212,17 @@ Version Min
 
 ----------
 
+Routine
+*******
+
+.. lief-inheritance:: lief._lief.MachO.Routine
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
+.. autoclass:: lief.MachO.Routine
+
+----------
+
 
 Relocation
 **********
@@ -374,6 +385,18 @@ Sub Framework
   :parts: 2
 
 .. autoclass:: lief.MachO.SubFramework
+
+----------
+
+
+Sub Client
+**********
+
+.. lief-inheritance:: lief._lief.MachO.SubClient
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
+.. autoclass:: lief.MachO.SubClient
 
 ----------
 

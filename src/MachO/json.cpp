@@ -95,6 +95,7 @@ void JsonVisitor::visit(const Binary& binary) {
   process_command<VersionMin>(node_, binary, "version_min");
   process_command<ThreadCommand>(node_, binary, "thread_command");
   process_command<RPathCommand>(node_, binary, "rpath");
+  process_command<Routine>(node_, binary, "routine");
   process_command<SymbolCommand>(node_, binary, "symbol_command");
   process_command<DynamicSymbolCommand>(node_, binary, "dynamic_symbol_command");
   process_command<CodeSignature>(node_, binary, "code_signature");
@@ -239,6 +240,19 @@ void JsonVisitor::visit(const RPathCommand& rpath) {
   visit(*rpath.as<LoadCommand>());
 
   node_["path"] = rpath.path();
+}
+
+void JsonVisitor::visit(const Routine& routine) {
+  visit(*routine.as<LoadCommand>());
+
+  node_["init_address"] = routine.init_address();
+  node_["init_module"] = routine.init_module();
+  node_["reserved1"] = routine.reserved1();
+  node_["reserved2"] = routine.reserved2();
+  node_["reserved3"] = routine.reserved3();
+  node_["reserved4"] = routine.reserved4();
+  node_["reserved5"] = routine.reserved5();
+  node_["reserved6"] = routine.reserved6();
 }
 
 void JsonVisitor::visit(const Symbol& symbol) {

@@ -17,10 +17,12 @@ pub mod functionstarts;
 pub mod linker_opt_hint;
 pub mod main_cmd;
 pub mod rpath;
+pub mod routine;
 pub mod segment;
 pub mod segment_split_info;
 pub mod source_version;
 pub mod sub_framework;
+pub mod sub_client;
 pub mod symbol_command;
 pub mod thread_command;
 pub mod two_level_hints;
@@ -61,6 +63,8 @@ pub use main_cmd::Main;
 #[doc(inline)]
 pub use rpath::RPath;
 #[doc(inline)]
+pub use routine::Routine;
+#[doc(inline)]
 pub use segment::Segment;
 #[doc(inline)]
 pub use segment_split_info::SegmentSplitInfo;
@@ -68,6 +72,8 @@ pub use segment_split_info::SegmentSplitInfo;
 pub use source_version::SourceVersion;
 #[doc(inline)]
 pub use sub_framework::SubFramework;
+#[doc(inline)]
+pub use sub_client::SubClient;
 #[doc(inline)]
 pub use symbol_command::SymbolCommand;
 #[doc(inline)]
@@ -287,10 +293,12 @@ pub enum Commands<'a> {
     LinkerOptHint(LinkerOptHint<'a>),
     Main(Main<'a>),
     RPath(RPath<'a>),
+    Routine(Routine<'a>),
     Segment(Segment<'a>),
     SegmentSplitInfo(SegmentSplitInfo<'a>),
     SourceVersion(SourceVersion<'a>),
     SubFramework(SubFramework<'a>),
+    SubClient(SubClient<'a>),
     SymbolCommand(SymbolCommand<'a>),
     ThreadCommand(ThreadCommand<'a>),
     TwoLevelHints(TwoLevelHints<'a>),
@@ -374,6 +382,13 @@ impl<'a> Commands<'a> {
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Commands::RPath(RPath::from_ffi(raw))
+            } else if ffi::MachO_Routine::classof(cmd_ref) {
+                let raw = {
+                    type From = cxx::UniquePtr<ffi::MachO_Command>;
+                    type To = cxx::UniquePtr<ffi::MachO_Routine>;
+                    std::mem::transmute::<From, To>(ffi_entry)
+                };
+                Commands::Routine(Routine::from_ffi(raw))
             } else if ffi::MachO_SymbolCommand::classof(cmd_ref) {
                 let raw = {
                     type From = cxx::UniquePtr<ffi::MachO_Command>;
@@ -430,6 +445,13 @@ impl<'a> Commands<'a> {
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Commands::SubFramework(SubFramework::from_ffi(raw))
+            } else if ffi::MachO_SubClient::classof(cmd_ref) {
+                let raw = {
+                    type From = cxx::UniquePtr<ffi::MachO_Command>;
+                    type To = cxx::UniquePtr<ffi::MachO_SubClient>;
+                    std::mem::transmute::<From, To>(ffi_entry)
+                };
+                Commands::SubClient(SubClient::from_ffi(raw))
             } else if ffi::MachO_DyldEnvironment::classof(cmd_ref) {
                 let raw = {
                     type From = cxx::UniquePtr<ffi::MachO_Command>;
@@ -590,6 +612,9 @@ impl Command for Commands<'_> {
             Commands::Main(cmd) => {
                 cmd.get_base()
             }
+            Commands::Routine(cmd) => {
+                cmd.get_base()
+            }
             Commands::RPath(cmd) => {
                 cmd.get_base()
             }
@@ -603,6 +628,9 @@ impl Command for Commands<'_> {
                 cmd.get_base()
             }
             Commands::SubFramework(cmd) => {
+                cmd.get_base()
+            }
+            Commands::SubClient(cmd) => {
                 cmd.get_base()
             }
             Commands::SymbolCommand(cmd) => {

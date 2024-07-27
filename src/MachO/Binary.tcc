@@ -26,13 +26,7 @@ namespace MachO {
 
 template<class T>
 bool Binary::has_command() const {
-  static_assert(std::is_base_of<LoadCommand, T>::value, "Require inheritance of 'LoadCommand'");
-  const auto it_cmd = std::find_if(
-      std::begin(commands_), std::end(commands_),
-      [] (const std::unique_ptr<LoadCommand>& command) {
-        return T::classof(command.get());
-      });
-  return it_cmd != std::end(commands_);
+  return command<T>() != nullptr;
 }
 
 template<class T>

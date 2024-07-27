@@ -45,6 +45,7 @@
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
+#include "LIEF/MachO/Routine.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
 #include "LIEF/MachO/Relocation.hpp"
 #include "LIEF/MachO/RelocationFixup.hpp"
@@ -53,6 +54,7 @@
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
 #include "LIEF/MachO/SourceVersion.hpp"
 #include "LIEF/MachO/SubFramework.hpp"
+#include "LIEF/MachO/SubClient.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/SymbolCommand.hpp"
 #include "LIEF/MachO/ThreadCommand.hpp"
@@ -588,6 +590,48 @@ uint32_t Binary::page_size() const {
   return get_pagesize(*this);
 }
 
+
+void Binary::sort_segments() {
+  commands_t::iterator start = commands_.end();
+  commands_t::iterator end = commands_.end();
+
+  for (auto it = commands_.begin(); it != commands_.end(); ++it) {
+    if (start == commands_.end() && SegmentCommand::classof(it->get())) {
+      start = it;
+    }
+
+    if (SegmentCommand::classof(it->get())) {
+      end = it;
+    }
+  }
+  ++end;
+
+  bool all_segments = std::all_of(start, end, [] (const std::unique_ptr<LoadCommand>& cmd) {
+    return SegmentCommand::classof(cmd.get());
+  });
+
+  if (!all_segments) {
+    LIEF_ERR("Segment commands non contiguous. Sort aborted!");
+    return;
+  }
+
+  std::sort(start, end,
+    [] (const std::unique_ptr<LoadCommand>& lhs, const std::unique_ptr<LoadCommand>& rhs) {
+      return lhs->as<SegmentCommand>()->virtual_address() < rhs->as<SegmentCommand>()->virtual_address();
+    }
+  );
+
+  segments_.clear();
+  offset_seg_.clear();
+
+  for (auto it = start; it != end; ++it) {
+    SegmentCommand& seg = *(*it)->as<SegmentCommand>();
+    seg.index_ = segments_.size();
+    offset_seg_[seg.file_offset()] = &seg;
+    segments_.push_back(&seg);
+  }
+}
+
 void Binary::shift_command(size_t width, uint64_t from_offset) {
   const SegmentCommand* segment = segment_from_offset(from_offset);
 
@@ -808,6 +852,12 @@ void Binary::shift_command(size_t width, uint64_t from_offset) {
   if (TwoLevelHints* two = two_level_hints()) {
     if (two->offset() > from_offset) {
       two->offset(two->offset() + width);
+    }
+  }
+
+  if (Routine* routine = routine_command()) {
+    if (routine->init_address() > virtual_address) {
+      routine->init_address(routine->init_address() + width);
     }
   }
 
@@ -2008,10 +2058,6 @@ LIEF::Binary::functions_t Binary::unwind_functions() const {
 
 // UUID
 // ++++
-bool Binary::has_uuid() const {
-  return has_command<UUIDCommand>();
-}
-
 UUIDCommand* Binary::uuid() {
   return command<UUIDCommand>();
 }
@@ -2022,10 +2068,6 @@ const UUIDCommand* Binary::uuid() const {
 
 // MainCommand
 // +++++++++++
-bool Binary::has_main_command() const {
-  return has_command<MainCommand>();
-}
-
 MainCommand* Binary::main_command() {
   return command<MainCommand>();
 }
@@ -2036,10 +2078,6 @@ const MainCommand* Binary::main_command() const {
 
 // DylinkerCommand
 // +++++++++++++++
-bool Binary::has_dylinker() const {
-  return has_command<DylinkerCommand>();
-}
-
 DylinkerCommand* Binary::dylinker() {
   return command<DylinkerCommand>();
 }
@@ -2050,10 +2088,6 @@ const DylinkerCommand* Binary::dylinker() const {
 
 // DyldInfo
 // ++++++++
-bool Binary::has_dyld_info() const {
-  return has_command<DyldInfo>();
-}
-
 DyldInfo* Binary::dyld_info() {
   return command<DyldInfo>();
 }
@@ -2064,10 +2098,6 @@ const DyldInfo* Binary::dyld_info() const {
 
 // Function Starts
 // +++++++++++++++
-bool Binary::has_function_starts() const {
-  return has_command<FunctionStarts>();
-}
-
 FunctionStarts* Binary::function_starts() {
   return command<FunctionStarts>();
 }
@@ -2078,10 +2108,6 @@ const FunctionStarts* Binary::function_starts() const {
 
 // Source Version
 // ++++++++++++++
-bool Binary::has_source_version() const {
-  return has_command<SourceVersion>();
-}
-
 SourceVersion* Binary::source_version() {
   return command<SourceVersion>();
 }
@@ -2092,10 +2118,6 @@ const SourceVersion* Binary::source_version() const {
 
 // Version Min
 // +++++++++++
-bool Binary::has_version_min() const {
-  return has_command<VersionMin>();
-}
-
 VersionMin* Binary::version_min() {
   return command<VersionMin>();
 }
@@ -2104,14 +2126,18 @@ const VersionMin* Binary::version_min() const {
   return command<VersionMin>();
 }
 
+// Routine Command
+// +++++++++++++++
+Routine* Binary::routine_command() {
+  return command<Routine>();
+}
 
+const Routine* Binary::routine_command() const {
+  return command<Routine>();
+}
 
 // Thread command
 // ++++++++++++++
-bool Binary::has_thread_command() const {
-  return has_command<ThreadCommand>();
-}
-
 ThreadCommand* Binary::thread_command() {
   return command<ThreadCommand>();
 }
@@ -2122,10 +2148,6 @@ const ThreadCommand* Binary::thread_command() const {
 
 // RPath command
 // +++++++++++++
-bool Binary::has_rpath() const {
-  return has_command<RPathCommand>();
-}
-
 RPathCommand* Binary::rpath() {
   return command<RPathCommand>();
 }
@@ -2148,10 +2170,6 @@ Binary::it_const_rpaths Binary::rpaths() const {
 
 // SymbolCommand command
 // +++++++++++++++++++++
-bool Binary::has_symbol_command() const {
-  return has_command<SymbolCommand>();
-}
-
 SymbolCommand* Binary::symbol_command() {
   return command<SymbolCommand>();
 }
@@ -2162,9 +2180,6 @@ const SymbolCommand* Binary::symbol_command() const {
 
 // DynamicSymbolCommand command
 // ++++++++++++++++++++++++++++
-bool Binary::has_dynamic_symbol_command() const {
-  return has_command<DynamicSymbolCommand>();
-}
 
 DynamicSymbolCommand* Binary::dynamic_symbol_command() {
   return command<DynamicSymbolCommand>();
@@ -2176,10 +2191,6 @@ const DynamicSymbolCommand* Binary::dynamic_symbol_command() const {
 
 // CodeSignature command
 // +++++++++++++++++++++
-bool Binary::has_code_signature() const {
-  return has(LoadCommand::TYPE::CODE_SIGNATURE);
-}
-
 CodeSignature* Binary::code_signature() {
   return const_cast<CodeSignature*>(static_cast<const Binary*>(this)->code_signature());
 }
@@ -2194,10 +2205,6 @@ const CodeSignature* Binary::code_signature() const {
 
 // CodeSignatureDir command
 // ++++++++++++++++++++++++
-bool Binary::has_code_signature_dir() const {
-  return has(LoadCommand::TYPE::DYLIB_CODE_SIGN_DRS);
-}
-
 CodeSignatureDir* Binary::code_signature_dir() {
   return const_cast<CodeSignatureDir*>(static_cast<const Binary*>(this)->code_signature_dir());
 }
@@ -2212,10 +2219,6 @@ const CodeSignatureDir* Binary::code_signature_dir() const {
 
 // DataInCode command
 // ++++++++++++++++++
-bool Binary::has_data_in_code() const {
-  return has_command<DataInCode>();
-}
-
 DataInCode* Binary::data_in_code() {
   return command<DataInCode>();
 }
@@ -2227,10 +2230,6 @@ const DataInCode* Binary::data_in_code() const {
 
 // SegmentSplitInfo command
 // ++++++++++++++++++++++++
-bool Binary::has_segment_split_info() const {
-  return has_command<SegmentSplitInfo>();
-}
-
 SegmentSplitInfo* Binary::segment_split_info() {
   return command<SegmentSplitInfo>();
 }
@@ -2240,12 +2239,26 @@ const SegmentSplitInfo* Binary::segment_split_info() const {
 }
 
 
-// SubFramework command
+// SubClient command
 // ++++++++++++++++++++
-bool Binary::has_sub_framework() const {
-  return has_command<SubFramework>();
+Binary::it_sub_clients Binary::subclients() {
+  return {commands_, [] (const std::unique_ptr<LoadCommand>& cmd) {
+    return SubClient::classof(cmd.get());
+  }};
 }
 
+Binary::it_const_sub_clients Binary::subclients() const {
+  return {commands_, [] (const std::unique_ptr<LoadCommand>& cmd) {
+    return SubClient::classof(cmd.get());
+  }};
+}
+
+bool Binary::has_subclients() const {
+  return has_command<SubClient>();
+}
+
+// SubFramework command
+// ++++++++++++++++++++
 SubFramework* Binary::sub_framework() {
   return command<SubFramework>();
 }
@@ -2256,10 +2269,6 @@ const SubFramework* Binary::sub_framework() const {
 
 // DyldEnvironment command
 // +++++++++++++++++++++++
-bool Binary::has_dyld_environment() const {
-  return has_command<DyldEnvironment>();
-}
-
 DyldEnvironment* Binary::dyld_environment() {
   return command<DyldEnvironment>();
 }
@@ -2270,10 +2279,6 @@ const DyldEnvironment* Binary::dyld_environment() const {
 
 // EncryptionInfo command
 // +++++++++++++++++++++++
-bool Binary::has_encryption_info() const {
-  return has_command<EncryptionInfo>();
-}
-
 EncryptionInfo* Binary::encryption_info() {
   return command<EncryptionInfo>();
 }
@@ -2285,10 +2290,6 @@ const EncryptionInfo* Binary::encryption_info() const {
 
 // BuildVersion command
 // ++++++++++++++++++++
-bool Binary::has_build_version() const {
-  return has_command<BuildVersion>();
-}
-
 BuildVersion* Binary::build_version() {
   return command<BuildVersion>();
 }
@@ -2297,16 +2298,8 @@ const BuildVersion* Binary::build_version() const {
   return command<BuildVersion>();
 }
 
-bool Binary::has_filesets() const {
-  return !filesets_.empty();
-}
-
 // DyldChainedFixups command
 // ++++++++++++++++++++
-bool Binary::has_dyld_chained_fixups() const {
-  return has_command<DyldChainedFixups>();
-}
-
 DyldChainedFixups* Binary::dyld_chained_fixups() {
   return command<DyldChainedFixups>();
 }
@@ -2317,10 +2310,6 @@ const DyldChainedFixups* Binary::dyld_chained_fixups() const {
 
 // DyldExportsTrie command
 // +++++++++++++++++++++++
-bool Binary::has_dyld_exports_trie() const {
-  return has_command<DyldExportsTrie>();
-}
-
 DyldExportsTrie* Binary::dyld_exports_trie() {
   return command<DyldExportsTrie>();
 }
@@ -2331,10 +2320,6 @@ const DyldExportsTrie* Binary::dyld_exports_trie() const {
 
 // Linker Optimization Hint command
 // ++++++++++++++++++++++++++++++++
-bool Binary::has_linker_opt_hint() const {
-  return has(LoadCommand::TYPE::LINKER_OPTIMIZATION_HINT);
-}
-
 LinkerOptHint* Binary::linker_opt_hint() {
   return const_cast<LinkerOptHint*>(static_cast<const Binary*>(this)->linker_opt_hint());
 }
@@ -2348,10 +2333,6 @@ const LinkerOptHint* Binary::linker_opt_hint() const {
 
 // Two Level Hints Command
 // ++++++++++++++++++++++++++++++++
-bool Binary::has_two_level_hints() const {
-  return has(LoadCommand::TYPE::TWOLEVEL_HINTS);
-}
-
 TwoLevelHints* Binary::two_level_hints() {
   return const_cast<TwoLevelHints*>(static_cast<const Binary*>(this)->two_level_hints());
 }

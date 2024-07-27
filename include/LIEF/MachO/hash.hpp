@@ -54,6 +54,7 @@ class Section;
 class SegmentCommand;
 class SegmentSplitInfo;
 class SourceVersion;
+class Routine;
 class SubFramework;
 class Symbol;
 class SymbolCommand;
@@ -97,6 +98,7 @@ class LIEF_API Hash : public LIEF::Hash {
   void visit(const LinkerOptHint& e)                      override;
   void visit(const LoadCommand& cmd)                      override;
   void visit(const MainCommand& maincmd)                  override;
+  void visit(const Routine& rpath)                        override;
   void visit(const RPathCommand& rpath)                   override;
   void visit(const Relocation& relocation)                override;
   void visit(const RelocationDyld& rdyld)                 override;

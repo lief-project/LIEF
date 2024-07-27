@@ -35,6 +35,7 @@
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
+#include "LIEF/MachO/Routine.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
 #include "LIEF/MachO/RelocationFixup.hpp"
 #include "LIEF/MachO/Section.hpp"
@@ -42,6 +43,7 @@
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
 #include "LIEF/MachO/SourceVersion.hpp"
 #include "LIEF/MachO/SubFramework.hpp"
+#include "LIEF/MachO/SubClient.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/SymbolCommand.hpp"
 #include "LIEF/MachO/ThreadCommand.hpp"
@@ -214,12 +216,15 @@ template<typename T>
 ok_error_t Builder::build(DylibCommand& library) {
   LIEF_DEBUG("Build Dylib '{}'", library.name());
 
+  const uint32_t original_size = library.original_data_.size();
+
   const uint32_t raw_size = sizeof(details::dylib_command) + library.name().size() + 1;
-  const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
+  const uint32_t size_needed =
+    std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
   const uint32_t padding = size_needed - raw_size;
 
-  if (library.original_data_.size() != size_needed ||
-      library.size() != size_needed)
+  if (library.original_data_.size() < size_needed ||
+      library.size() < size_needed)
   {
     LIEF_WARN("Not enough spaces to rebuild {}. Size required: 0x{:x} vs 0x{:x}",
               library.name(),  library.original_data_.size(), size_needed);
@@ -256,12 +261,15 @@ template <typename T>
 ok_error_t Builder::build(DylinkerCommand& linker) {
 
   LIEF_DEBUG("Build dylinker '{}'", linker.name());
+
+  const uint32_t original_size = linker.original_data_.size();
   const uint32_t raw_size = sizeof(details::dylinker_command) + linker.name().size() + 1;
-  const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
+  const uint32_t size_needed =
+    std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
   const uint32_t padding = size_needed - raw_size;
 
-  if (linker.original_data_.size() != size_needed ||
-      linker.size() != size_needed)
+  if (linker.original_data_.size() < size_needed ||
+      linker.size() < size_needed)
   {
     LIEF_WARN("Not enough spaces to rebuild {}. Size required: 0x{:x} vs 0x{:x}",
               linker.name(),  linker.original_data_.size(), size_needed);
@@ -353,12 +361,15 @@ template<class T>
 ok_error_t Builder::build(RPathCommand& rpath_cmd) {
   LIEF_DEBUG("Build '{}'", to_string(rpath_cmd.command()));
 
+  const uint32_t original_size = rpath_cmd.original_data_.size();
+
   const uint32_t raw_size = sizeof(details::rpath_command) + rpath_cmd.path().size() + 1;
-  const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
+  const uint32_t size_needed =
+    std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
   const uint32_t padding = size_needed - raw_size;
 
-  if (rpath_cmd.original_data_.size() != size_needed ||
-      rpath_cmd.size() != size_needed)
+  if (rpath_cmd.original_data_.size() < size_needed ||
+      rpath_cmd.size() < size_needed)
   {
     LIEF_WARN("Not enough room left to rebuild {}."
               "required=0x{:x} available=0x{:x}",
@@ -387,6 +398,35 @@ ok_error_t Builder::build(RPathCommand& rpath_cmd) {
             std::back_inserter(rpath_cmd.original_data_));
   rpath_cmd.original_data_.push_back(0);
   rpath_cmd.original_data_.insert(std::end(rpath_cmd.original_data_), padding, 0);
+  return ok();
+}
+
+template<class T>
+ok_error_t Builder::build(Routine& routine) {
+  using routine_t = typename T::routines_command;
+  using uint__ = typename T::uint;
+  LIEF_DEBUG("Build '{}'", to_string(routine.command()));
+
+  routine_t raw_cmd;
+  std::memset(&raw_cmd, 0, sizeof(routine_t));
+
+  raw_cmd.cmd       = static_cast<uint32_t>(routine.command());
+  raw_cmd.cmdsize   = static_cast<uint32_t>(routine.size());
+
+  raw_cmd.init_address = static_cast<uint__>(routine.init_address());
+  raw_cmd.init_module  = static_cast<uint__>(routine.init_module());
+  raw_cmd.reserved1    = static_cast<uint__>(routine.reserved1());
+  raw_cmd.reserved2    = static_cast<uint__>(routine.reserved2());
+  raw_cmd.reserved3    = static_cast<uint__>(routine.reserved3());
+  raw_cmd.reserved4    = static_cast<uint__>(routine.reserved4());
+  raw_cmd.reserved5    = static_cast<uint__>(routine.reserved5());
+  raw_cmd.reserved6    = static_cast<uint__>(routine.reserved6());
+
+  routine.size_ = sizeof(routine_t);
+  routine.original_data_.clear();
+  std::move(reinterpret_cast<uint8_t*>(&raw_cmd),
+            reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(routine_t),
+            std::back_inserter(routine.original_data_));
   return ok();
 }
 
@@ -900,17 +940,21 @@ ok_error_t Builder::build(SegmentSplitInfo& ssi) {
 
 template<class T>
 ok_error_t Builder::build(SubFramework& sf) {
+  LIEF_DEBUG("Build '{}'", to_string(sf.command()));
   details::sub_framework_command raw_cmd;
   std::memset(&raw_cmd, 0, sizeof(details::sub_framework_command));
 
+  const uint32_t original_size = sf.original_data_.size();
+
   const uint32_t raw_size = sizeof(details::sub_framework_command) + sf.umbrella().size() + 1;
-  const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
+  const auto size_needed =
+    std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
+
   const uint32_t padding = size_needed - raw_size;
 
-  if (sf.original_data_.size() != size_needed || sf.size() != size_needed) {
-
-    LIEF_WARN("Not enough spaces to rebuild {}. Size required: 0x{:x} vs 0x{:x}",
-              sf.umbrella(),  sf.original_data_.size(), size_needed);
+  if (sf.original_data_.size() < size_needed || sf.size() < size_needed) {
+    LIEF_WARN("Not enough spaces to rebuild '{}'. Size required: 0x{:x} vs 0x{:x}",
+              sf.umbrella(),  size_needed, sf.original_data_.size());
   }
 
   raw_cmd.cmd      = static_cast<uint32_t>(sf.command());
@@ -935,16 +979,58 @@ ok_error_t Builder::build(SubFramework& sf) {
 }
 
 template<class T>
+ok_error_t Builder::build(SubClient& sc) {
+  LIEF_DEBUG("Build '{}'", to_string(sc.command()));
+  details::sub_client_command raw_cmd;
+  std::memset(&raw_cmd, 0, sizeof(details::sub_client_command));
+
+  const uint32_t original_size = sc.original_data_.size();
+
+  const uint32_t raw_size = sizeof(details::sub_client_command) + sc.client().size() + 1;
+  const uint32_t size_needed =
+    std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
+  const uint32_t padding = size_needed - raw_size;
+
+  if (sc.original_data_.size() < size_needed || sc.size() < size_needed) {
+    LIEF_WARN("Not enough spaces to rebuild '{}'. Size required: 0x{:x} vs 0x{:x}",
+              sc.client(),  size_needed, sc.original_data_.size());
+  }
+
+  raw_cmd.cmd      = static_cast<uint32_t>(sc.command());
+  raw_cmd.cmdsize  = static_cast<uint32_t>(size_needed);
+  raw_cmd.client   = static_cast<uint32_t>(sizeof(details::sub_client_command));
+
+  sc.size_ = size_needed;
+  sc.original_data_.clear();
+
+  // Write Header
+  std::move(reinterpret_cast<uint8_t*>(&raw_cmd),
+            reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
+            std::back_inserter(sc.original_data_));
+
+  // Write String
+  const std::string& um = sc.client();
+  std::move(std::begin(um), std::end(um),
+            std::back_inserter(sc.original_data_));
+  sc.original_data_.push_back(0);
+  sc.original_data_.insert(std::end(sc.original_data_), padding, 0);
+  return ok();
+}
+
+template<class T>
 ok_error_t Builder::build(DyldEnvironment& de) {
   details::dylinker_command raw_cmd;
   std::memset(&raw_cmd, 0, sizeof(details::dylinker_command));
 
+  const uint32_t original_size = de.original_data_.size();
+
   const uint32_t raw_size = sizeof(details::dylinker_command) + de.value().size() + 1;
-  const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
+  const uint32_t size_needed =
+    std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
   const uint32_t padding = size_needed - raw_size;
 
-  if (de.original_data_.size() != size_needed ||
-      de.size() != size_needed) {
+  if (de.original_data_.size() < size_needed ||
+      de.size() < size_needed) {
     LIEF_WARN("Not enough spaces to rebuild {}. Size required: 0x{:x} vs 0x{:x}",
               de.value(),  de.original_data_.size(), size_needed);
   }
@@ -982,7 +1068,7 @@ ok_error_t Builder::build(ThreadCommand& tc) {
   const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
   const uint32_t padding = size_needed - raw_size;
 
-  if (tc.original_data_.size() != size_needed || tc.size() != size_needed) {
+  if (tc.original_data_.size() < size_needed || tc.size() < size_needed) {
     LIEF_WARN("Not enough spaces to rebuild 'ThreadCommand'. Size required: 0x{:x} vs 0x{:x}",
               tc.original_data_.size(), size_needed);
   }
@@ -1406,7 +1492,7 @@ ok_error_t Builder::build(BuildVersion& bv) {
   const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
   const uint32_t padding     = size_needed - raw_size;
 
-  if (bv.original_data_.size() != size_needed || bv.size() != size_needed) {
+  if (bv.original_data_.size() < size_needed || bv.size() < size_needed) {
     LIEF_WARN("Not enough spaces to rebuild 'BuildVersion'. Size required: 0x{:x} vs 0x{:x}",
                bv.original_data_.size(), size_needed);
   }
@@ -1525,6 +1611,37 @@ ok_error_t Builder::build(TwoLevelHints& two) {
 
   memcpy(two.original_data_.data(), &raw_cmd, sizeof(details::linkedit_data_command));
   return ok();
+}
+
+template<class MACHO_T>
+ok_error_t Builder::build_header() {
+  using header_t = typename MACHO_T::header;
+
+  header_t header;
+  std::memset(&header, 0, sizeof(header_t));
+
+  const Header& binary_header = binary_->header();
+
+  header.magic      = static_cast<uint32_t>(binary_header.magic());
+  header.cputype    = static_cast<uint32_t>(binary_header.cpu_type());
+  header.cpusubtype = static_cast<uint32_t>(binary_header.cpu_subtype());
+  header.filetype   = static_cast<uint32_t>(binary_header.file_type());
+  header.ncmds      = static_cast<uint32_t>(binary_header.nb_cmds());
+  header.sizeofcmds = static_cast<uint32_t>(binary_header.sizeof_cmds());
+  header.flags      = static_cast<uint32_t>(binary_header.flags());
+
+  if constexpr (std::is_same_v<header_t, details::mach_header_64>) {
+    header.reserved = static_cast<uint32_t>(binary_header.reserved());
+  }
+
+  LIEF_DEBUG("Writing header at: 0 (size: 0x{:04x})", sizeof(header));
+
+  raw_
+    .seekp(0)
+    .write(header);
+
+  return ok();
+
 }
 }
 }

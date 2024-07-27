@@ -32,10 +32,12 @@ target_sources(pyLIEF PRIVATE
   pyRelocationDyld.cpp
   pyRelocationFixup.cpp
   pyRelocationObject.cpp
+  pyRoutine.cpp
   pySection.cpp
   pySegmentCommand.cpp
   pySegmentSplitInfo.cpp
   pySourceVersion.cpp
+  pySubClient.cpp
   pySubFramework.cpp
   pySymbol.cpp
   pySymbolCommand.cpp
