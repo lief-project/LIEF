@@ -41,6 +41,7 @@
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
+#include "LIEF/MachO/Routine.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
 #include "LIEF/MachO/Relocation.hpp"
 #include "LIEF/MachO/RelocationFixup.hpp"
@@ -49,6 +50,7 @@
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
 #include "LIEF/MachO/SourceVersion.hpp"
 #include "LIEF/MachO/SubFramework.hpp"
+#include "LIEF/MachO/SubClient.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/SymbolCommand.hpp"
 #include "LIEF/MachO/ThreadCommand.hpp"
@@ -82,6 +84,7 @@ void create<Binary>(nb::module_& m) {
   init_ref_iterator<Binary::it_libraries>(bin, "it_libraries");
   init_ref_iterator<Binary::it_relocations>(bin, "it_relocations");
   init_ref_iterator<Binary::it_rpaths>(bin, "it_rpaths");
+  init_ref_iterator<Binary::it_sub_clients>(bin, "it_sub_clients");
 
   nb::class_<Binary::range_t>(bin, "range_t")
     .def_rw("start", &Binary::range_t::start)
@@ -267,6 +270,15 @@ void create<Binary>(nb::module_& m) {
         "Return the binary's " RST_CLASS_REF(lief.MachO.VersionMin) " if any, or None"_doc,
         nb::rv_policy::reference_internal)
 
+    .def_prop_ro("has_routine_command",
+        &Binary::has_routine_command,
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.Routine) " command."_doc)
+
+    .def_prop_ro("routine_command",
+        nb::overload_cast<>(&Binary::routine_command),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.Routine) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
+
     .def_prop_ro("has_thread_command",
         &Binary::has_thread_command,
         "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.ThreadCommand) " command."_doc)
@@ -344,6 +356,15 @@ void create<Binary>(nb::module_& m) {
         nb::overload_cast<>(&Binary::segment_split_info),
         "Return the binary's " RST_CLASS_REF(lief.MachO.SegmentSplitInfo) " if any, or None"_doc,
         nb::rv_policy::reference_internal)
+
+    .def_prop_ro("subclients",
+        nb::overload_cast<>(&Binary::subclients),
+        "Return an iterator over the binary's " RST_CLASS_REF(lief.MachO.SubClient) ""_doc,
+        nb::keep_alive<0, 1>())
+
+    .def_prop_ro("has_subclients",
+        &Binary::has_subclients,
+        "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.SubClient) " command"_doc)
 
     .def_prop_ro("has_sub_framework",
         &Binary::has_sub_framework,

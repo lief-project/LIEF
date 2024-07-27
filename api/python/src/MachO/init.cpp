@@ -37,6 +37,7 @@
 #include <LIEF/MachO/ThreadCommand.hpp>
 #include <LIEF/MachO/RPathCommand.hpp>
 #include <LIEF/MachO/Symbol.hpp>
+#include <LIEF/MachO/Routine.hpp>
 #include <LIEF/MachO/Relocation.hpp>
 #include <LIEF/MachO/RelocationObject.hpp>
 #include <LIEF/MachO/RelocationDyld.hpp>
@@ -53,6 +54,7 @@
 #include <LIEF/MachO/VersionMin.hpp>
 #include <LIEF/MachO/SegmentSplitInfo.hpp>
 #include <LIEF/MachO/SubFramework.hpp>
+#include <LIEF/MachO/SubClient.hpp>
 #include <LIEF/MachO/DyldEnvironment.hpp>
 #include <LIEF/MachO/EncryptionInfo.hpp>
 #include <LIEF/MachO/BuildVersion.hpp>
@@ -102,9 +104,11 @@ void init_objects(nb::module_& m) {
   CREATE(DataInCode, m);
   CREATE(DataCodeEntry, m);
   CREATE(SourceVersion, m);
+  CREATE(Routine, m);
   CREATE(VersionMin, m);
   CREATE(SegmentSplitInfo, m);
   CREATE(SubFramework, m);
+  CREATE(SubClient, m);
   CREATE(DyldEnvironment, m);
   CREATE(EncryptionInfo, m);
   CREATE(BuildVersion, m);

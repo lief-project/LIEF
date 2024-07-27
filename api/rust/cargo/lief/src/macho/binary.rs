@@ -14,10 +14,12 @@ use super::commands::functionstarts::FunctionStarts;
 use super::commands::linker_opt_hint::LinkerOptHint;
 use super::commands::main_cmd::Main;
 use super::commands::rpath::RPath;
+use super::commands::routine::Routine;
 use super::commands::segment::Segments;
 use super::commands::segment_split_info::SegmentSplitInfo;
 use super::commands::source_version::SourceVersion;
 use super::commands::sub_framework::SubFramework;
+use super::commands::sub_client::{SubClient, SubClients};
 use super::commands::symbol_command::SymbolCommand;
 use super::commands::thread_command::ThreadCommand;
 use super::commands::two_level_hints::TwoLevelHints;
@@ -132,6 +134,11 @@ impl Binary {
         into_optional(self.ptr.rpath())
     }
 
+    /// Return the `LC_ROUTINE/LC_ROUTINE64` command if present
+    pub fn routine(&self) -> Option<Routine> {
+        into_optional(self.ptr.routine_command())
+    }
+
     /// Return the `LC_SYMTAB` command if present
     pub fn symbol_command(&self) -> Option<SymbolCommand> {
         into_optional(self.ptr.symbol_command())
@@ -170,6 +177,11 @@ impl Binary {
     /// Return the `LC_SUB_FRAMEWORK` command if present
     pub fn sub_framework(&self) -> Option<SubFramework> {
         into_optional(self.ptr.sub_framework())
+    }
+
+    /// Return the `LC_SUBCLIENT` command if present
+    pub fn subclients(&self) -> SubClients {
+        SubClients::new(self.ptr.subclients())
     }
 
     /// Return the `LC_DYLD_ENVIRONMENT` command if present

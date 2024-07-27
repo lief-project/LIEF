@@ -17,6 +17,7 @@
 #include "LIEF/Visitor.hpp"
 #include "logging.hpp"
 
+#include <algorithm>
 #include <numeric>
 #include <sstream>
 

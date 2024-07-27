@@ -42,9 +42,11 @@ class FatBinary;
 class FunctionStarts;
 class LinkerOptHint;
 class MainCommand;
+class Routine;
 class SegmentSplitInfo;
 class SourceVersion;
 class SubFramework;
+class SubClient;
 class SymbolCommand;
 class ThreadCommand;
 class TwoLevelHints;
@@ -98,8 +100,10 @@ class LIEF_API Builder {
 
   ok_error_t build_fat();
   ok_error_t build_fat_header();
-  ok_error_t build_header();
   ok_error_t build_load_commands();
+
+  template<typename T>
+  ok_error_t build_header();
 
   template<typename T>
   ok_error_t build_linkedit();
@@ -121,6 +125,9 @@ class LIEF_API Builder {
 
   template<class T>
   ok_error_t build(MainCommand& main_cmd);
+
+  template<class T>
+  ok_error_t build(Routine& routine);
 
   template<class T>
   ok_error_t build(RPathCommand& rpath_cmd);
@@ -145,6 +152,9 @@ class LIEF_API Builder {
 
   template<class T>
   ok_error_t build(SubFramework& sf);
+
+  template<class T>
+  ok_error_t build(SubClient& sf);
 
   template<class T>
   ok_error_t build(DyldEnvironment& de);

@@ -31,6 +31,7 @@
 #include "LIEF/rust/MachO/ThreadCommand.hpp"
 #include "LIEF/rust/MachO/FunctionStarts.hpp"
 #include "LIEF/rust/MachO/RPathCommand.hpp"
+#include "LIEF/rust/MachO/Routine.hpp"
 #include "LIEF/rust/MachO/SymbolCommand.hpp"
 #include "LIEF/rust/MachO/DynamicSymbolCommand.hpp"
 #include "LIEF/rust/MachO/CodeSignature.hpp"
@@ -39,6 +40,7 @@
 #include "LIEF/rust/MachO/SegmentSplitInfo.hpp"
 #include "LIEF/rust/MachO/EncryptionInfo.hpp"
 #include "LIEF/rust/MachO/SubFramework.hpp"
+#include "LIEF/rust/MachO/SubClient.hpp"
 #include "LIEF/rust/MachO/DyldEnvironment.hpp"
 #include "LIEF/rust/MachO/BuildVersion.hpp"
 #include "LIEF/rust/MachO/DyldChainedFixups.hpp"
@@ -115,6 +117,16 @@ class MachO_Binary : public AbstractBinary {
     auto size() const { return Iterator::size(); }
   };
 
+  class it_sub_clients :
+      public Iterator<MachO_SubClient, LIEF::MachO::Binary::it_const_sub_clients>
+  {
+    public:
+    it_sub_clients(const MachO_Binary::lief_t& src)
+      : Iterator(std::move(src.subclients())) { }
+    auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
+  };
+
   MachO_Binary(const lief_t& bin) : AbstractBinary(bin) {}
 
   auto header() const {
@@ -156,6 +168,10 @@ class MachO_Binary : public AbstractBinary {
     return details::try_unique<MachO_ThreadCommand>(impl().thread_command());
   }
 
+  auto routine_command() const {
+    return details::try_unique<MachO_Routine>(impl().routine_command());
+  }
+
   auto rpath() const {
     return details::try_unique<MachO_RPathCommand>(impl().rpath());
   }
@@ -190,6 +206,10 @@ class MachO_Binary : public AbstractBinary {
 
   auto sub_framework() const {
     return details::try_unique<MachO_SubFramework>(impl().sub_framework());
+  }
+
+  auto subclients() const {
+    return std::make_unique<it_sub_clients>(impl());
   }
 
   auto dyld_environment() const {

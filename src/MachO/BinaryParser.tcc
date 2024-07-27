@@ -44,6 +44,7 @@
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
+#include "LIEF/MachO/Routine.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
 #include "LIEF/MachO/Relocation.hpp"
 #include "LIEF/MachO/RelocationDyld.hpp"
@@ -53,6 +54,7 @@
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
 #include "LIEF/MachO/SourceVersion.hpp"
+#include "LIEF/MachO/SubClient.hpp"
 #include "LIEF/MachO/SubFramework.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/SymbolCommand.hpp"
@@ -189,7 +191,8 @@ ok_error_t BinaryParser::parse_header() {
     return make_error_code(lief_errors::parsing_error);
   }
   binary_->header_ = std::move(*hdr);
-  LIEF_DEBUG("Arch: {}", to_string(binary_->header_.cpu_type()));
+  LIEF_DEBUG("Arch:     {}", to_string(binary_->header_.cpu_type()));
+  LIEF_DEBUG("Commands: #{}", binary_->header().nb_cmds());
   return ok();
 }
 
@@ -229,6 +232,9 @@ ok_error_t BinaryParser::parse_load_commands() {
 
     std::unique_ptr<LoadCommand> load_command;
     const auto cmd_type = static_cast<LoadCommand::TYPE>(command->cmd);
+
+    LIEF_DEBUG("Parsing command #{:02d}: {} (0x{:04x})",
+               i, to_string(cmd_type), (uint64_t)cmd_type);
 
     switch (cmd_type) {
 
@@ -393,7 +399,6 @@ ok_error_t BinaryParser::parse_load_commands() {
           /*
            * DO NOT FORGET TO UPDATE UUIDCommand::classof
            */
-          LIEF_DEBUG("[+] Building UUID");
           const auto cmd = stream_->peek<details::uuid_command>(loadcommands_offset);
           if (!cmd) {
             LIEF_ERR("Can't read uuid_command");
@@ -439,8 +444,6 @@ ok_error_t BinaryParser::parse_load_commands() {
           /*
            * DO NOT FORGET TO UPDATE ThreadCommand::classof
            */
-          LIEF_DEBUG("[+] Parsing LC_THREAD");
-
           const auto cmd = stream_->peek<details::thread_command>(loadcommands_offset);
           if (!cmd) {
             LIEF_ERR("Can't read thread_command");
@@ -508,13 +511,27 @@ ok_error_t BinaryParser::parse_load_commands() {
       // ===============
       // Routine command
       // ===============
-      //case LoadCommand::TYPE::ROUTINES:
-      //case LoadCommand::TYPE::ROUTINES_64:
-      //  {
-      //    LIEF_DEBUG("[+] Parsing LC_ROUTINE");
-      //    load_command = std::unique_ptr<LoadCommand>{new LoadCommand{command}};
-      //    break;
-      //  }
+      case LoadCommand::TYPE::ROUTINES_64:
+        {
+          const auto cmd = stream_->peek<details::routines_command_64>(loadcommands_offset);
+          if (!cmd) {
+            LIEF_ERR("Can't read routines_command_64");
+            break;
+          }
+          load_command = std::make_unique<Routine>(*cmd);
+          break;
+        }
+
+      case LoadCommand::TYPE::ROUTINES:
+        {
+          const auto cmd = stream_->peek<details::routines_command_32>(loadcommands_offset);
+          if (!cmd) {
+            LIEF_ERR("Can't read routines_command_32");
+            break;
+          }
+          load_command = std::make_unique<Routine>(*cmd);
+          break;
+        }
 
       // =============
       // Symbols table
@@ -841,6 +858,27 @@ ok_error_t BinaryParser::parse_load_commands() {
           break;
         }
 
+      case LoadCommand::TYPE::SUB_CLIENT:
+        {
+          /*
+           * DO NOT FORGET TO UPDATE SubClient::classof
+           */
+          const auto cmd = stream_->peek<details::sub_client_command>(loadcommands_offset);
+          if (!cmd) {
+            LIEF_ERR("Can't parse sub_client_command");
+            break;
+          }
+          auto u = stream_->peek_string_at(loadcommands_offset + cmd->client);
+          if (!u) {
+            LIEF_ERR("Can't read client name string");
+            break;
+          }
+          auto sf = std::make_unique<SubClient>(*cmd);
+          sf->client(*u);
+          load_command = std::move(sf);
+          break;
+        }
+
 
       case LoadCommand::TYPE::DYLD_ENVIRONMENT:
         {
@@ -960,7 +998,6 @@ ok_error_t BinaryParser::parse_load_commands() {
         }
       case LoadCommand::TYPE::DYLD_CHAINED_FIXUPS:
         {
-          LIEF_DEBUG("[->] LC_DYLD_CHAINED_FIXUPS");
           const auto cmd = stream_->peek<details::linkedit_data_command>(loadcommands_offset);
           if (!cmd) {
             LIEF_ERR("Can't parse linkedit_data_command for LC_DYLD_CHAINED_FIXUPS");
@@ -1000,7 +1037,6 @@ ok_error_t BinaryParser::parse_load_commands() {
 
       case LoadCommand::TYPE::DYLD_EXPORTS_TRIE:
         {
-          LIEF_DEBUG("[->] LC_DYLD_EXPORTS_TRIE");
           if (const auto cmd = stream_->peek<details::linkedit_data_command>(loadcommands_offset)) {
             LIEF_DEBUG("[*] dataoff:  0x{:x}", cmd->dataoff);
             LIEF_DEBUG("[*] datasize: 0x{:x}", cmd->datasize);
@@ -1014,7 +1050,6 @@ ok_error_t BinaryParser::parse_load_commands() {
 
       case LoadCommand::TYPE::TWOLEVEL_HINTS:
         {
-          LIEF_DEBUG("[->] LC_TWOLEVEL_HINTS");
           if (const auto cmd = stream_->peek<details::twolevel_hints_command>(loadcommands_offset)) {
             load_command = std::make_unique<TwoLevelHints>(*cmd);
             auto* two = load_command->as<TwoLevelHints>();
@@ -1041,7 +1076,6 @@ ok_error_t BinaryParser::parse_load_commands() {
 
       case LoadCommand::TYPE::LINKER_OPTIMIZATION_HINT:
         {
-          LIEF_DEBUG("[->] LC_LINKER_OPTIMIZATION_HINT");
           if (const auto cmd = stream_->peek<details::linkedit_data_command>(loadcommands_offset)) {
             LIEF_DEBUG("  [*] dataoff:  0x{:x}", cmd->dataoff);
             LIEF_DEBUG("  [*] datasize: 0x{:x}", cmd->datasize);
@@ -1056,8 +1090,9 @@ ok_error_t BinaryParser::parse_load_commands() {
       default:
         {
           if (not_parsed.insert(cmd_type).second) {
-            LIEF_WARN("Command '{}' ({}) not parsed!",
-                      to_string(cmd_type), static_cast<uint64_t>(cmd_type));
+            LIEF_WARN("Command '{}' ({}) not parsed (size=0x{:04x})!",
+                      to_string(cmd_type), static_cast<uint64_t>(cmd_type),
+                      command->cmdsize);
           }
           load_command = std::make_unique<UnknownCommand>(*command);
         }

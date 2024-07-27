@@ -174,6 +174,14 @@ Version Min
 
 ----------
 
+Routine
+*******
+
+.. doxygenclass:: LIEF::MachO::Routine
+   :project: lief
+
+----------
+
 Relocation
 **********
 
@@ -286,6 +294,15 @@ Sub-Framework
 *************
 
 .. doxygenclass:: LIEF::MachO::SubFramework
+   :project: lief
+
+----------
+
+
+Sub-Client
+**********
+
+.. doxygenclass:: LIEF::MachO::SubClient
    :project: lief
 
 ----------

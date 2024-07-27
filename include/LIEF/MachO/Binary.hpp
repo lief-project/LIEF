@@ -59,6 +59,7 @@ class Header;
 class LinkerOptHint;
 class MainCommand;
 class Parser;
+class Routine;
 class RPathCommand;
 class Relocation;
 class Section;
@@ -66,6 +67,7 @@ class SegmentCommand;
 class SegmentSplitInfo;
 class SourceVersion;
 class SubFramework;
+class SubClient;
 class Symbol;
 class SymbolCommand;
 class ThreadCommand;
@@ -173,6 +175,12 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   //! Iterator which outputs const RPathCommand&
   using it_const_rpaths = const_filter_iterator<const commands_t&, const RPathCommand*>;
+
+  //! Iterator which outputs SubClient&
+  using it_sub_clients = filter_iterator<commands_t&, SubClient*>;
+
+  //! Iterator which outputs const SubClient&
+  using it_const_sub_clients = const_filter_iterator<const commands_t&, const SubClient*>;
 
   public:
   Binary(const Binary&) = delete;
@@ -534,63 +542,90 @@ class LIEF_API Binary : public LIEF::Binary  {
   }
 
   //! ``true`` if the binary has a MachO::UUIDCommand command.
-  bool has_uuid() const;
+  bool has_uuid() const {
+    return uuid() != nullptr;
+  }
 
   //! Return the MachO::UUIDCommand if present, a nullptr otherwise.
   UUIDCommand* uuid();
   const UUIDCommand* uuid() const;
 
   //! ``true`` if the binary has a MachO::MainCommand command.
-  bool has_main_command() const;
+  bool has_main_command() const {
+    return main_command() != nullptr;
+  }
 
   //! Return the MachO::MainCommand if present, a nullptr otherwise.
   MainCommand* main_command();
   const MainCommand* main_command() const;
 
   //! ``true`` if the binary has a MachO::DylinkerCommand.
-  bool has_dylinker() const;
+  bool has_dylinker() const {
+    return dylinker() != nullptr;
+  }
 
   //! Return the MachO::DylinkerCommand if present, a nullptr otherwise.
   DylinkerCommand* dylinker();
   const DylinkerCommand* dylinker() const;
 
   //! ``true`` if the binary has a MachO::DyldInfo command.
-  bool has_dyld_info() const;
+  bool has_dyld_info() const {
+    return dyld_info() != nullptr;
+  }
 
   //! Return the MachO::Dyld command if present, a nullptr otherwise.
   DyldInfo* dyld_info();
   const DyldInfo* dyld_info() const;
 
   //! ``true`` if the binary has a MachO::FunctionStarts command.
-  bool has_function_starts() const;
+  bool has_function_starts() const {
+    return function_starts() != nullptr;
+  }
 
   //! Return the MachO::FunctionStarts command if present, a nullptr otherwise.
   FunctionStarts* function_starts();
   const FunctionStarts* function_starts() const;
 
   //! ``true`` if the binary has a MachO::SourceVersion command.
-  bool has_source_version() const;
+  bool has_source_version() const {
+    return source_version() != nullptr;
+  }
 
   //! Return the MachO::SourceVersion command if present, a nullptr otherwise.
   SourceVersion* source_version();
   const SourceVersion* source_version() const;
 
   //! ``true`` if the binary has a MachO::VersionMin command.
-  bool has_version_min() const;
+  bool has_version_min() const {
+    return version_min() != nullptr;
+  }
 
   //! Return the MachO::VersionMin command if present, a nullptr otherwise.
   VersionMin* version_min();
   const VersionMin* version_min() const;
 
   //! ``true`` if the binary has a MachO::ThreadCommand command.
-  bool has_thread_command() const;
+  bool has_thread_command() const {
+    return thread_command() != nullptr;
+  }
 
   //! Return the MachO::ThreadCommand command if present, a nullptr otherwise.
   ThreadCommand* thread_command();
   const ThreadCommand* thread_command() const;
 
+  //! ``true`` if the binary has a MachO::Routine command.
+  bool has_routine_command() const {
+    return routine_command() != nullptr;
+  }
+
+  //! Return the MachO::Routine command if present, a nullptr otherwise.
+  Routine* routine_command();
+  const Routine* routine_command() const;
+
   //! ``true`` if the binary has a MachO::RPathCommand command.
-  bool has_rpath() const;
+  bool has_rpath() const {
+    return rpath() != nullptr;
+  }
 
   //! Return the MachO::RPathCommand command if present, a nullptr otherwise.
   RPathCommand* rpath();
@@ -601,52 +636,68 @@ class LIEF_API Binary : public LIEF::Binary  {
   it_const_rpaths rpaths() const;
 
   //! ``true`` if the binary has a MachO::SymbolCommand command.
-  bool has_symbol_command() const;
+  bool has_symbol_command() const {
+    return symbol_command() != nullptr;
+  }
 
   //! Return the MachO::SymbolCommand if present, a nullptr otherwise.
   SymbolCommand* symbol_command();
   const SymbolCommand* symbol_command() const;
 
   //! ``true`` if the binary has a MachO::DynamicSymbolCommand command.
-  bool has_dynamic_symbol_command() const;
+  bool has_dynamic_symbol_command() const {
+    return dynamic_symbol_command() != nullptr;
+  }
 
   //! Return the MachO::SymbolCommand if present, a nullptr otherwise.
   DynamicSymbolCommand* dynamic_symbol_command();
   const DynamicSymbolCommand* dynamic_symbol_command() const;
 
   //! ``true`` if the binary is signed with `LC_CODE_SIGNATURE` command
-  bool has_code_signature() const;
+  bool has_code_signature() const {
+    return code_signature() != nullptr;
+  }
 
   //! Return the MachO::CodeSignature if present, a nullptr otherwise.
   CodeSignature* code_signature();
   const CodeSignature* code_signature() const;
 
   //! ``true`` if the binary is signed with the command `DYLIB_CODE_SIGN_DRS`
-  bool has_code_signature_dir() const;
+  bool has_code_signature_dir() const {
+    return code_signature_dir() != nullptr;
+  }
 
   //! Return the MachO::CodeSignatureDir if present, a nullptr otherwise.
   CodeSignatureDir* code_signature_dir();
   const CodeSignatureDir* code_signature_dir() const;
 
   //! ``true`` if the binary has a MachO::DataInCode command.
-  bool has_data_in_code() const;
+  bool has_data_in_code() const {
+    return data_in_code() != nullptr;
+  }
 
   //! Return the MachO::DataInCode if present, a nullptr otherwise.
   DataInCode* data_in_code();
   const DataInCode* data_in_code() const;
 
   //! ``true`` if the binary has segment split info.
-  bool has_segment_split_info() const;
+  bool has_segment_split_info() const {
+    return segment_split_info() != nullptr;
+  }
 
   //! Return the MachO::SegmentSplitInfo if present, a nullptr otherwise.
   SegmentSplitInfo* segment_split_info();
   const SegmentSplitInfo* segment_split_info() const;
 
   //! ``true`` if the binary has a sub framework command.
-  bool has_sub_framework() const;
+  bool has_sub_framework() const {
+    return sub_framework() != nullptr;
+  }
 
   //! ``true`` if the binary has Encryption Info.
-  bool has_encryption_info() const;
+  bool has_encryption_info() const {
+    return encryption_info() != nullptr;
+  }
 
   //! Return the MachO::DyldEnvironment if present, a nullptr otherwise.
   EncryptionInfo* encryption_info();
@@ -656,43 +707,61 @@ class LIEF_API Binary : public LIEF::Binary  {
   SubFramework* sub_framework();
   const SubFramework* sub_framework() const;
 
+  //! Iterator over **all** the MachO::SubClient commands.
+  it_sub_clients subclients();
+  it_const_sub_clients subclients() const;
+
+  bool has_subclients() const;
+
   //! ``true`` if the binary has Dyld envrionment variables.
-  bool has_dyld_environment() const;
+  bool has_dyld_environment() const {
+    return dyld_environment() != nullptr;
+  }
 
   //! Return the MachO::DyldEnvironment if present, a nullptr otherwise
   DyldEnvironment* dyld_environment();
   const DyldEnvironment* dyld_environment() const;
 
   //! ``true`` if the binary has the BuildVersion command.
-  bool has_build_version() const;
+  bool has_build_version() const {
+    return build_version() != nullptr;
+  }
 
   //! Return the MachO::BuildVersion if present, a nullptr otherwise.
   BuildVersion* build_version();
   const BuildVersion* build_version() const;
 
   //! ``true`` if the binary has the command LC_DYLD_CHAINED_FIXUPS.
-  bool has_dyld_chained_fixups() const;
+  bool has_dyld_chained_fixups() const {
+    return dyld_chained_fixups() != nullptr;
+  }
 
   //! Return the MachO::DyldChainedFixups if present, a nullptr otherwise.
   DyldChainedFixups* dyld_chained_fixups();
   const DyldChainedFixups* dyld_chained_fixups() const;
 
   //! ``true`` if the binary has the command LC_DYLD_CHAINED_FIXUPS.
-  bool has_dyld_exports_trie() const;
+  bool has_dyld_exports_trie() const {
+    return dyld_exports_trie() != nullptr;
+  }
 
   //! Return the MachO::DyldChainedFixups if present, a nullptr otherwise.
   DyldExportsTrie* dyld_exports_trie();
   const DyldExportsTrie* dyld_exports_trie() const;
 
   //! ``true`` if the binary has the command LC_TWO_LEVEL_HINTS.
-  bool has_two_level_hints() const;
+  bool has_two_level_hints() const {
+    return two_level_hints() != nullptr;
+  }
 
   //! Return the MachO::DyldChainedFixups if present, a nullptr otherwise.
   TwoLevelHints* two_level_hints();
   const TwoLevelHints* two_level_hints() const;
 
   //! ``true`` if the binary has the command LC_LINKER_OPTIMIZATION_HINT.
-  bool has_linker_opt_hint() const;
+  bool has_linker_opt_hint() const {
+    return linker_opt_hint() != nullptr;
+  }
 
   //! Return the MachO::LinkerOptHint if present, a nullptr otherwise.
   LinkerOptHint* linker_opt_hint();
@@ -739,7 +808,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   LIEF::Binary::functions_t unwind_functions() const;
 
   //! ``true`` if the binary has a LoadCommand::TYPE::FILESET_ENTRY command
-  bool has_filesets() const;
+  bool has_filesets() const {
+    return filesets_.empty();
+  }
 
   //! Name associated with the LC_FILESET_ENTRY binary
   const std::string& fileset_name() const {
@@ -780,6 +851,9 @@ class LIEF_API Binary : public LIEF::Binary  {
     return overlay_;
   }
 
+  void sort_segments();
+  void refresh_seg_offset();
+
   private:
   //! Default constructor
   Binary();
@@ -789,7 +863,6 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Insert a Segment command in the cache field (segments_)
   //! and keep a consistent state of the indexes.
   size_t add_cached_segment(SegmentCommand& segment);
-  void refresh_seg_offset();
 
   template<class T>
   LIEF_LOCAL ok_error_t patch_relocation(Relocation& relocation, uint64_t from, uint64_t shift);
