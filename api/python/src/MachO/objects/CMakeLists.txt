@@ -37,6 +37,7 @@ target_sources(pyLIEF PRIVATE
   pySegmentSplitInfo.cpp
   pySourceVersion.cpp
   pySubFramework.cpp
+  pySubClient.cpp
   pySymbol.cpp
   pySymbolCommand.cpp
   pyThreadCommand.cpp

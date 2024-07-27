@@ -53,6 +53,7 @@
 #include <LIEF/MachO/VersionMin.hpp>
 #include <LIEF/MachO/SegmentSplitInfo.hpp>
 #include <LIEF/MachO/SubFramework.hpp>
+#include <LIEF/MachO/SubClient.hpp>
 #include <LIEF/MachO/DyldEnvironment.hpp>
 #include <LIEF/MachO/EncryptionInfo.hpp>
 #include <LIEF/MachO/BuildVersion.hpp>
@@ -105,6 +106,7 @@ void init_objects(nb::module_& m) {
   CREATE(VersionMin, m);
   CREATE(SegmentSplitInfo, m);
   CREATE(SubFramework, m);
+  CREATE(SubClient, m);
   CREATE(DyldEnvironment, m);
   CREATE(EncryptionInfo, m);
   CREATE(BuildVersion, m);

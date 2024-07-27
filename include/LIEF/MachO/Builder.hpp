@@ -45,6 +45,7 @@ class MainCommand;
 class SegmentSplitInfo;
 class SourceVersion;
 class SubFramework;
+class SubClient;
 class SymbolCommand;
 class ThreadCommand;
 class TwoLevelHints;
@@ -145,6 +146,9 @@ class LIEF_API Builder {
 
   template<class T>
   ok_error_t build(SubFramework& sf);
+
+  template<class T>
+  ok_error_t build(SubClient& sf);
 
   template<class T>
   ok_error_t build(DyldEnvironment& de);

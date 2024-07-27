@@ -53,6 +53,7 @@
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
 #include "LIEF/MachO/SourceVersion.hpp"
 #include "LIEF/MachO/SubFramework.hpp"
+#include "LIEF/MachO/SubClient.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/SymbolCommand.hpp"
 #include "LIEF/MachO/ThreadCommand.hpp"
@@ -2180,6 +2181,24 @@ const SegmentSplitInfo* Binary::segment_split_info() const {
   return command<SegmentSplitInfo>();
 }
 
+
+// SubClient command
+// ++++++++++++++++++++
+Binary::it_sub_clients Binary::subclients() {
+  return {commands_, [] (const std::unique_ptr<LoadCommand>& cmd) {
+    return SubClient::classof(cmd.get());
+  }};
+}
+
+Binary::it_const_sub_clients Binary::subclients() const {
+  return {commands_, [] (const std::unique_ptr<LoadCommand>& cmd) {
+    return SubClient::classof(cmd.get());
+  }};
+}
+
+bool Binary::has_subclients() const {
+  return has_command<SubClient>();
+}
 
 // SubFramework command
 // ++++++++++++++++++++

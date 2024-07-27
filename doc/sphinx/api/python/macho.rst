@@ -377,6 +377,18 @@ Sub Framework
 
 ----------
 
+
+Sub Client
+**********
+
+.. lief-inheritance:: lief._lief.MachO.SubClient
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
+.. autoclass:: lief.MachO.SubClient
+
+----------
+
 Dyld Environment
 ****************
 

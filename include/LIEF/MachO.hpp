@@ -62,6 +62,7 @@
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
 #include "LIEF/MachO/SourceVersion.hpp"
 #include "LIEF/MachO/SubFramework.hpp"
+#include "LIEF/MachO/SubClient.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/SymbolCommand.hpp"
 #include "LIEF/MachO/ThreadCommand.hpp"

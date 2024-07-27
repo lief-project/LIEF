@@ -39,6 +39,7 @@
 #include "LIEF/rust/MachO/SegmentSplitInfo.hpp"
 #include "LIEF/rust/MachO/EncryptionInfo.hpp"
 #include "LIEF/rust/MachO/SubFramework.hpp"
+#include "LIEF/rust/MachO/SubClient.hpp"
 #include "LIEF/rust/MachO/DyldEnvironment.hpp"
 #include "LIEF/rust/MachO/BuildVersion.hpp"
 #include "LIEF/rust/MachO/DyldChainedFixups.hpp"
@@ -111,6 +112,16 @@ class MachO_Binary : public AbstractBinary {
     public:
     it_relocations(const MachO_Binary::lief_t& src)
       : Iterator(std::move(src.relocations())) { }
+    auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
+  };
+
+  class it_sub_clients :
+      public Iterator<MachO_SubClient, LIEF::MachO::Binary::it_const_sub_clients>
+  {
+    public:
+    it_sub_clients(const MachO_Binary::lief_t& src)
+      : Iterator(std::move(src.subclients())) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -190,6 +201,10 @@ class MachO_Binary : public AbstractBinary {
 
   auto sub_framework() const {
     return details::try_unique<MachO_SubFramework>(impl().sub_framework());
+  }
+
+  auto subclients() const {
+    return std::make_unique<it_sub_clients>(impl());
   }
 
   auto dyld_environment() const {

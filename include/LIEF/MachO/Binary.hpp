@@ -66,6 +66,7 @@ class SegmentCommand;
 class SegmentSplitInfo;
 class SourceVersion;
 class SubFramework;
+class SubClient;
 class Symbol;
 class SymbolCommand;
 class ThreadCommand;
@@ -173,6 +174,12 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   //! Iterator which outputs const RPathCommand&
   using it_const_rpaths = const_filter_iterator<const commands_t&, const RPathCommand*>;
+
+  //! Iterator which outputs SubClient&
+  using it_sub_clients = filter_iterator<commands_t&, SubClient*>;
+
+  //! Iterator which outputs const SubClient&
+  using it_const_sub_clients = const_filter_iterator<const commands_t&, const SubClient*>;
 
   public:
   Binary(const Binary&) = delete;
@@ -689,6 +696,12 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Return the MachO::SubFramework if present, a nullptr otherwise.
   SubFramework* sub_framework();
   const SubFramework* sub_framework() const;
+
+  //! Iterator over **all** the MachO::SubClient commands.
+  it_sub_clients subclients();
+  it_const_sub_clients subclients() const;
+
+  bool has_subclients() const;
 
   //! ``true`` if the binary has Dyld envrionment variables.
   bool has_dyld_environment() const {

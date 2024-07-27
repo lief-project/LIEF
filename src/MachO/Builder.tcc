@@ -42,6 +42,7 @@
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
 #include "LIEF/MachO/SourceVersion.hpp"
 #include "LIEF/MachO/SubFramework.hpp"
+#include "LIEF/MachO/SubClient.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/SymbolCommand.hpp"
 #include "LIEF/MachO/ThreadCommand.hpp"
@@ -931,6 +932,41 @@ ok_error_t Builder::build(SubFramework& sf) {
             std::back_inserter(sf.original_data_));
   sf.original_data_.push_back(0);
   sf.original_data_.insert(std::end(sf.original_data_), padding, 0);
+  return ok();
+}
+
+template<class T>
+ok_error_t Builder::build(SubClient& sc) {
+  details::sub_client_command raw_cmd;
+  std::memset(&raw_cmd, 0, sizeof(details::sub_client_command));
+
+  const uint32_t raw_size = sizeof(details::sub_client_command) + sc.client().size() + 1;
+  const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
+  const uint32_t padding = size_needed - raw_size;
+
+  if (sc.original_data_.size() != size_needed || sc.size() != size_needed) {
+    LIEF_WARN("Not enough spaces to rebuild {}. Size required: 0x{:x} vs 0x{:x}",
+              sc.client(),  sc.original_data_.size(), size_needed);
+  }
+
+  raw_cmd.cmd      = static_cast<uint32_t>(sc.command());
+  raw_cmd.cmdsize  = static_cast<uint32_t>(size_needed);
+  raw_cmd.client   = static_cast<uint32_t>(sizeof(details::sub_client_command));
+
+  sc.size_ = size_needed;
+  sc.original_data_.clear();
+
+  // Write Header
+  std::move(reinterpret_cast<uint8_t*>(&raw_cmd),
+            reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
+            std::back_inserter(sc.original_data_));
+
+  // Write String
+  const std::string& um = sc.client();
+  std::move(std::begin(um), std::end(um),
+            std::back_inserter(sc.original_data_));
+  sc.original_data_.push_back(0);
+  sc.original_data_.insert(std::end(sc.original_data_), padding, 0);
   return ok();
 }
 

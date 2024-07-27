@@ -209,6 +209,10 @@ fn explore_macho(_: &str, macho: &lief::macho::Binary) {
         format!("{sub_framework:?}");
     }
 
+    for sc in macho.subclients() {
+        format!("{sc:?}");
+    }
+
     if let Some(dyld_environment) = macho.dyld_environment() {
         format!("{dyld_environment:?}");
     }

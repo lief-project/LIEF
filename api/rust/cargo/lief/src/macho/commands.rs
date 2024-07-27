@@ -21,6 +21,7 @@ pub mod segment;
 pub mod segment_split_info;
 pub mod source_version;
 pub mod sub_framework;
+pub mod sub_client;
 pub mod symbol_command;
 pub mod thread_command;
 pub mod two_level_hints;
@@ -68,6 +69,8 @@ pub use segment_split_info::SegmentSplitInfo;
 pub use source_version::SourceVersion;
 #[doc(inline)]
 pub use sub_framework::SubFramework;
+#[doc(inline)]
+pub use sub_client::SubClient;
 #[doc(inline)]
 pub use symbol_command::SymbolCommand;
 #[doc(inline)]
@@ -291,6 +294,7 @@ pub enum Commands<'a> {
     SegmentSplitInfo(SegmentSplitInfo<'a>),
     SourceVersion(SourceVersion<'a>),
     SubFramework(SubFramework<'a>),
+    SubClient(SubClient<'a>),
     SymbolCommand(SymbolCommand<'a>),
     ThreadCommand(ThreadCommand<'a>),
     TwoLevelHints(TwoLevelHints<'a>),
@@ -430,6 +434,13 @@ impl<'a> Commands<'a> {
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Commands::SubFramework(SubFramework::from_ffi(raw))
+            } else if ffi::MachO_SubClient::classof(cmd_ref) {
+                let raw = {
+                    type From = cxx::UniquePtr<ffi::MachO_Command>;
+                    type To = cxx::UniquePtr<ffi::MachO_SubClient>;
+                    std::mem::transmute::<From, To>(ffi_entry)
+                };
+                Commands::SubClient(SubClient::from_ffi(raw))
             } else if ffi::MachO_DyldEnvironment::classof(cmd_ref) {
                 let raw = {
                     type From = cxx::UniquePtr<ffi::MachO_Command>;
@@ -603,6 +614,9 @@ impl Command for Commands<'_> {
                 cmd.get_base()
             }
             Commands::SubFramework(cmd) => {
+                cmd.get_base()
+            }
+            Commands::SubClient(cmd) => {
                 cmd.get_base()
             }
             Commands::SymbolCommand(cmd) => {

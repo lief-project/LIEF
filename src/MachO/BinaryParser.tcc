@@ -53,6 +53,7 @@
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
 #include "LIEF/MachO/SourceVersion.hpp"
+#include "LIEF/MachO/SubClient.hpp"
 #include "LIEF/MachO/SubFramework.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/SymbolCommand.hpp"
@@ -837,6 +838,27 @@ ok_error_t BinaryParser::parse_load_commands() {
           }
           auto sf = std::make_unique<SubFramework>(*cmd);
           sf->umbrella(*u);
+          load_command = std::move(sf);
+          break;
+        }
+
+      case LoadCommand::TYPE::SUB_CLIENT:
+        {
+          /*
+           * DO NOT FORGET TO UPDATE SubClient::classof
+           */
+          const auto cmd = stream_->peek<details::sub_client_command>(loadcommands_offset);
+          if (!cmd) {
+            LIEF_ERR("Can't parse sub_client_command");
+            break;
+          }
+          auto u = stream_->peek_string_at(loadcommands_offset + cmd->client);
+          if (!u) {
+            LIEF_ERR("Can't read client name string");
+            break;
+          }
+          auto sf = std::make_unique<SubClient>(*cmd);
+          sf->client(*u);
           load_command = std::move(sf);
           break;
         }

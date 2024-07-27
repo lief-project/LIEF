@@ -18,6 +18,7 @@ use super::commands::segment::Segments;
 use super::commands::segment_split_info::SegmentSplitInfo;
 use super::commands::source_version::SourceVersion;
 use super::commands::sub_framework::SubFramework;
+use super::commands::sub_client::{SubClient, SubClients};
 use super::commands::symbol_command::SymbolCommand;
 use super::commands::thread_command::ThreadCommand;
 use super::commands::two_level_hints::TwoLevelHints;
@@ -170,6 +171,11 @@ impl Binary {
     /// Return the `LC_SUB_FRAMEWORK` command if present
     pub fn sub_framework(&self) -> Option<SubFramework> {
         into_optional(self.ptr.sub_framework())
+    }
+
+    /// Return the `LC_SUBCLIENT` command if present
+    pub fn subclients(&self) -> SubClients {
+        SubClients::new(self.ptr.subclients())
     }
 
     /// Return the `LC_DYLD_ENVIRONMENT` command if present

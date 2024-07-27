@@ -47,6 +47,7 @@ target_sources(LIB_LIEF PRIVATE
   SegmentCommand.cpp
   SegmentSplitInfo.cpp
   SourceVersion.cpp
+  SubClient.cpp
   SubFramework.cpp
   Symbol.cpp
   SymbolCommand.cpp

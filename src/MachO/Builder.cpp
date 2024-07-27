@@ -97,6 +97,11 @@ ok_error_t Builder::build() {
       continue;
     }
 
+    if (SubClient::classof(cmd.get())) {
+      build<T>(*cmd->as<SubClient>());
+      continue;
+    }
+
     if (SubFramework::classof(cmd.get())) {
       build<T>(*cmd->as<SubFramework>());
       continue;

@@ -296,6 +296,13 @@ def test_unknown_command():
     print(hash(unknown_cmd))
     print(unknown_cmd)
 
+def test_subclients():
+    macho = lief.MachO.parse(get_sample("MachO/StocksAnalytics")).at(0)
+    assert len(macho.subclients) == 19
+
+    assert macho.subclients[0].client == "NewsArticles"
+    assert macho.subclients[-1].client == "StocksAppKitBundle"
+
 @pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
 def test_arm64e():
     sample = lief.MachO.parse(get_sample("private/MachO/libCoreKE_arm64e.dylib")).at(0)

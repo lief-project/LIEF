@@ -3,7 +3,9 @@ Changelog
 
 0.16.0 - Not Released Yet
 -------------------------
+:MachO:
 
+  * Add support for the ``LC_SUBCLIENT`` command: :class:`lief.MachO.SubClient`
 
 0.15.1 - July 23th, 2024
 ------------------------

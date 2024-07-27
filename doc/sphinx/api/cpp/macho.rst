@@ -290,6 +290,15 @@ Sub-Framework
 
 ----------
 
+
+Sub-Client
+**********
+
+.. doxygenclass:: LIEF::MachO::SubClient
+   :project: lief
+
+----------
+
 Dyld Environment
 ****************
 
