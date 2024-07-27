@@ -41,6 +41,7 @@ class LIEF_API DynamicEntry : public Object {
   static constexpr uint64_t PPC_DISC     = 0x400000000;
   static constexpr uint64_t PPC64_DISC   = 0x500000000;
   static constexpr uint64_t RISCV_DISC   = 0x600000000;
+  static constexpr uint64_t X86_64_DISC  = 0x700000000;
 
   enum class TAG : uint64_t {
     UNKNOWN                    = uint64_t(-1),
@@ -174,6 +175,10 @@ class LIEF_API DynamicEntry : public Object {
     PPC64_OPT                  = PPC64_DISC   + 0x70000003,
 
     RISCV_VARIANT_CC           = RISCV_DISC   + 0x70000003,
+
+    X86_64_PLT                 = X86_64_DISC  + 0x70000000,
+    X86_64_PLTSZ               = X86_64_DISC  + 0x70000001,
+    X86_64_PLTENT              = X86_64_DISC  + 0x70000003,
   };
 
   static TAG from_value(uint64_t value, ARCH arch);

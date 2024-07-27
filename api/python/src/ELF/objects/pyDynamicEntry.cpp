@@ -159,6 +159,10 @@ void create<DynamicEntry>(nb::module_& m) {
     ENTRY(PPC64_OPT)
 
     ENTRY(RISCV_VARIANT_CC)
+
+    ENTRY(X86_64_PLT)
+    ENTRY(X86_64_PLTSZ)
+    ENTRY(X86_64_PLTENT)
   ;
   #undef ENTRY
 

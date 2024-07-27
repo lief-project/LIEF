@@ -695,6 +695,11 @@ enum LIEF_DYNAMIC_TAGS {
   LIEF_DT_PREINIT_ARRAY              = 32,         /**< Pointer to array of preinit functions. */
   LIEF_DT_PREINIT_ARRAYSZ            = 33,         /**< Size of the DT_PREINIT_ARRAY array. */
 
+  LIEF_DT_SYMTAB_SHNDX               = 34,         /**< Address of SYMTAB_SHNDX section */
+  LIEF_DT_RELRSZ                     = 35,         /**< Total size of RELR relative relocations */
+  LIEF_DT_RELR                       = 36,         /**< Address of RELR relative relocations */
+  LIEF_DT_RELRENT                    = 37,         /**< Size of one RELR relative relocaction */
+
   LIEF_DT_LOOS                       = 0x60000000, /**< Start of environment specific tags. */
   LIEF_DT_HIOS                       = 0x6FFFFFFF, /**< End of environment specific tags. */
   LIEF_DT_LOPROC                     = 0x70000000, /**< Start of processor specific tags. */
@@ -757,6 +762,8 @@ enum LIEF_DYNAMIC_TAGS {
   LIEF_DT_MIPS_AUX_DYNAMIC           = 0x70000031, /**< Address of auxiliary .dynamic. */
   LIEF_DT_MIPS_PLTGOT                = 0x70000032, /**< Address of the base of the PLTGOT. */
   LIEF_DT_MIPS_RWPLT                 = 0x70000034, /**< Points to the base of a writable PLT. */
+  LIEF_DT_MIPS_RLD_MAP_REL           = 0x70000035,
+  LIEF_DT_MIPS_XHASH                 = 0x70000036,
 
   /* Android specific dynamic table entry tags. */
   LIEF_DT_ANDROID_REL_OFFSET         = 0x6000000D, /**< The offset of packed relocation data (older version < M) (Android specific. */
@@ -765,10 +772,35 @@ enum LIEF_DYNAMIC_TAGS {
   LIEF_DT_ANDROID_RELSZ              = 0x60000010, /**< The size of packed relocation data in bytes (Android specific. */
   LIEF_DT_ANDROID_RELA               = 0x60000011, /**< The offset of packed relocation data (Android specific. */
   LIEF_DT_ANDROID_RELASZ             = 0x60000012, /**< The size of packed relocation data in bytes (Android specific. */
-  LIEF_DT_RELR                       = 0x6FFFE000, /**< The offset of new relr relocation data (Android specific. */
-  LIEF_DT_RELRSZ                     = 0x6FFFE001, /**< The size of nre relr relocation data in bytes (Android specific. */
-  LIEF_DT_RELRENT                    = 0x6FFFE003, /**< The size of a new relr relocation entry (Android specific. */
-  LIEF_DT_RELRCOUNT                  = 0x6FFFE005 /**< Specifies the relative count of new relr relocation entries (Android specific. */
+  LIEF_DT_ANDROID_RELR               = 0x6FFFE000, /**< The offset of new relr relocation data (Android specific. */
+  LIEF_DT_ANDROID_RELRSZ             = 0x6FFFE001, /**< The size of nre relr relocation data in bytes (Android specific. */
+  LIEF_DT_ANDROID_RELRENT            = 0x6FFFE003, /**< The size of a new relr relocation entry (Android specific. */
+  LIEF_DT_ANDROID_RELRCOUNT          = 0x6FFFE005, /**< Specifies the relative count of new relr relocation entries (Android specific. */
+
+  LIEF_DT_AARCH64_BTI_PLT            = 0x70000001,
+  LIEF_DT_AARCH64_PAC_PLT            = 0x70000003,
+  LIEF_DT_AARCH64_VARIANT_PCS        = 0x70000005,
+  LIEF_DT_AARCH64_MEMTAG_MODE        = 0x70000009,
+  LIEF_DT_AARCH64_MEMTAG_HEAP        = 0x7000000b,
+  LIEF_DT_AARCH64_MEMTAG_STACK       = 0x7000000c,
+  LIEF_DT_AARCH64_MEMTAG_GLOBALS     = 0x7000000d,
+  LIEF_DT_AARCH64_MEMTAG_GLOBALSSZ   = 0x7000000f,
+
+  LIEF_DT_HEXAGON_SYMSZ              = 0x70000000,
+  LIEF_DT_HEXAGON_VER                = 0x70000001,
+  LIEF_DT_HEXAGON_PLT                = 0x70000002,
+
+  LIEF_DT_PPC_GOT                    = 0x70000000,
+  LIEF_DT_PPC_OPT                    = 0x70000001,
+
+  LIEF_DT_PPC64_GLINK                = 0x70000000,
+  LIEF_DT_PPC64_OPT                  = 0x70000003,
+
+  LIEF_DT_RISCV_VARIANT_CC           = 0x70000003,
+
+  LIEF_DT_X86_64_PLT                 = 0x70000000,
+  LIEF_DT_X86_64_PLTSZ               = 0x70000001,
+  LIEF_DT_X86_64_PLTENT              = 0x70000003
 };
 
 /** DT_FLAGS and DT_FLAGS_1 values. */

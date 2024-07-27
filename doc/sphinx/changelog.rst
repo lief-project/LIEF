@@ -9,7 +9,6 @@ Changelog
   * Add support for the ``LC_SUBCLIENT`` command: :class:`lief.MachO.SubClient`
   * Add support for the ``LC_ROUTINE/LC_ROUTINE64`` command: :class:`lief.MachO.Routine`
 
-
 0.15.1 - July 23th, 2024
 ------------------------
 

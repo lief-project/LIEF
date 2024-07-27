@@ -126,6 +126,9 @@ pub enum Tag {
     PPC64_GLINK,
     PPC64_OPT,
     RISCV_VARIANT_CC,
+    X86_64_PLT,
+    X86_64_PLTSZ,
+    X86_64_PLTENT,
     UNKNOWN(u64),
 }
 
@@ -251,6 +254,9 @@ impl From<u64> for Tag {
             0x570000000 => Tag::PPC64_GLINK,
             0x570000003 => Tag::PPC64_OPT,
             0x670000003 => Tag::RISCV_VARIANT_CC,
+            0x770000000 => Tag::X86_64_PLT,
+            0x770000001 => Tag::X86_64_PLTSZ,
+            0x770000003 => Tag::X86_64_PLTENT,
             _ => Tag::UNKNOWN(value),
 
         }
@@ -378,6 +384,9 @@ impl From<Tag> for u64 {
             Tag::PPC64_GLINK => 0x570000000,
             Tag::PPC64_OPT => 0x570000003,
             Tag::RISCV_VARIANT_CC => 0x670000003,
+            Tag::X86_64_PLT => 0x770000000,
+            Tag::X86_64_PLTSZ => 0x770000001,
+            Tag::X86_64_PLTENT => 0x770000003,
             Tag::UNKNOWN(value) => value,
         }
     }
