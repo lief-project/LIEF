@@ -1196,6 +1196,7 @@ bool Binary::extend(const LoadCommand& command, uint64_t size) {
   }
 
   cmd->size(size_aligned);
+  cmd->original_data_.resize(size_aligned);
 
   // Update Header
   // =============
