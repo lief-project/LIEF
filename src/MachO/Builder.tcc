@@ -220,8 +220,8 @@ ok_error_t Builder::build(DylibCommand& library) {
   const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
   const uint32_t padding = size_needed - raw_size;
 
-  if (library.original_data_.size() != size_needed ||
-      library.size() != size_needed)
+  if (library.original_data_.size() < size_needed ||
+      library.size() < size_needed)
   {
     LIEF_WARN("Not enough spaces to rebuild {}. Size required: 0x{:x} vs 0x{:x}",
               library.name(),  library.original_data_.size(), size_needed);
@@ -262,8 +262,8 @@ ok_error_t Builder::build(DylinkerCommand& linker) {
   const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
   const uint32_t padding = size_needed - raw_size;
 
-  if (linker.original_data_.size() != size_needed ||
-      linker.size() != size_needed)
+  if (linker.original_data_.size() < size_needed ||
+      linker.size() < size_needed)
   {
     LIEF_WARN("Not enough spaces to rebuild {}. Size required: 0x{:x} vs 0x{:x}",
               linker.name(),  linker.original_data_.size(), size_needed);
@@ -359,8 +359,8 @@ ok_error_t Builder::build(RPathCommand& rpath_cmd) {
   const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
   const uint32_t padding = size_needed - raw_size;
 
-  if (rpath_cmd.original_data_.size() != size_needed ||
-      rpath_cmd.size() != size_needed)
+  if (rpath_cmd.original_data_.size() < size_needed ||
+      rpath_cmd.size() < size_needed)
   {
     LIEF_WARN("Not enough room left to rebuild {}."
               "required=0x{:x} available=0x{:x}",
@@ -931,6 +931,7 @@ ok_error_t Builder::build(SegmentSplitInfo& ssi) {
 
 template<class T>
 ok_error_t Builder::build(SubFramework& sf) {
+  LIEF_DEBUG("Build '{}'", to_string(sf.command()));
   details::sub_framework_command raw_cmd;
   std::memset(&raw_cmd, 0, sizeof(details::sub_framework_command));
 
@@ -938,10 +939,9 @@ ok_error_t Builder::build(SubFramework& sf) {
   const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
   const uint32_t padding = size_needed - raw_size;
 
-  if (sf.original_data_.size() != size_needed || sf.size() != size_needed) {
-
-    LIEF_WARN("Not enough spaces to rebuild {}. Size required: 0x{:x} vs 0x{:x}",
-              sf.umbrella(),  sf.original_data_.size(), size_needed);
+  if (sf.original_data_.size() < size_needed || sf.size() < size_needed) {
+    LIEF_WARN("Not enough spaces to rebuild '{}'. Size required: 0x{:x} vs 0x{:x}",
+              sf.umbrella(),  size_needed, sf.original_data_.size());
   }
 
   raw_cmd.cmd      = static_cast<uint32_t>(sf.command());
@@ -967,6 +967,7 @@ ok_error_t Builder::build(SubFramework& sf) {
 
 template<class T>
 ok_error_t Builder::build(SubClient& sc) {
+  LIEF_DEBUG("Build '{}'", to_string(sc.command()));
   details::sub_client_command raw_cmd;
   std::memset(&raw_cmd, 0, sizeof(details::sub_client_command));
 
@@ -974,9 +975,9 @@ ok_error_t Builder::build(SubClient& sc) {
   const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
   const uint32_t padding = size_needed - raw_size;
 
-  if (sc.original_data_.size() != size_needed || sc.size() != size_needed) {
-    LIEF_WARN("Not enough spaces to rebuild {}. Size required: 0x{:x} vs 0x{:x}",
-              sc.client(),  sc.original_data_.size(), size_needed);
+  if (sc.original_data_.size() < size_needed || sc.size() < size_needed) {
+    LIEF_WARN("Not enough spaces to rebuild '{}'. Size required: 0x{:x} vs 0x{:x}",
+              sc.client(),  size_needed, sc.original_data_.size());
   }
 
   raw_cmd.cmd      = static_cast<uint32_t>(sc.command());
@@ -1009,8 +1010,8 @@ ok_error_t Builder::build(DyldEnvironment& de) {
   const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
   const uint32_t padding = size_needed - raw_size;
 
-  if (de.original_data_.size() != size_needed ||
-      de.size() != size_needed) {
+  if (de.original_data_.size() < size_needed ||
+      de.size() < size_needed) {
     LIEF_WARN("Not enough spaces to rebuild {}. Size required: 0x{:x} vs 0x{:x}",
               de.value(),  de.original_data_.size(), size_needed);
   }
@@ -1048,7 +1049,7 @@ ok_error_t Builder::build(ThreadCommand& tc) {
   const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
   const uint32_t padding = size_needed - raw_size;
 
-  if (tc.original_data_.size() != size_needed || tc.size() != size_needed) {
+  if (tc.original_data_.size() < size_needed || tc.size() < size_needed) {
     LIEF_WARN("Not enough spaces to rebuild 'ThreadCommand'. Size required: 0x{:x} vs 0x{:x}",
               tc.original_data_.size(), size_needed);
   }
@@ -1472,7 +1473,7 @@ ok_error_t Builder::build(BuildVersion& bv) {
   const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
   const uint32_t padding     = size_needed - raw_size;
 
-  if (bv.original_data_.size() != size_needed || bv.size() != size_needed) {
+  if (bv.original_data_.size() < size_needed || bv.size() < size_needed) {
     LIEF_WARN("Not enough spaces to rebuild 'BuildVersion'. Size required: 0x{:x} vs 0x{:x}",
                bv.original_data_.size(), size_needed);
   }
