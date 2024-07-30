@@ -13,6 +13,7 @@ Introduction
 PE authenticode is the signature scheme used by Windows to sign and verify the integrity of PE executables.
 The signature is associated with the data directory :attr:`~lief.PE.DataDirectory.TYPES.CERTIFICATE_TABLE`
 that is not always tied to a section (it implies that the signature is not necessarily mapped in memory).
+In fact, the data directory entry points to a file offset, not a RVA.
 This signature is wrapped in a PKCS #7 container with custom object types as defined
 in the official documentation [#]_.
 
@@ -26,7 +27,7 @@ Exploring PKCS #7 Signature
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 LIEF API tries to expose most of the internal components of the PKCS #7 container associated with the
-Aunthenticode.
+Authenticode.
 First, we can access the PE's signature through the :attr:`lief.PE.Binary.signatures` attribute
 [#]_:
 
@@ -118,7 +119,7 @@ For instance, to compute the SHA-256 value of the authenticode, we just have to 
   To compare the :meth:`lief.PE.Binary.authentihash` value with the signed one (i.e. :attr:`lief.PE.ContentInfo.digest`)
   we must use the same hash algorithm as defined by :attr:`lief.PE.Signature.digest_algorithm`
 
-We also expose in the Python API, shortcut attributes to compute the authentihash values for:
+We also expose shortcut attributes in the Python API to compute the authentihash values for:
 
 +----------------+---------------------------------------------+
 | Hash Algorithm | Binary's Attribute                          |
@@ -263,7 +264,7 @@ object to :meth:`~lief.PE.Binary.verify_signature`:
    detached_sig = lief.PE.Signature.parse("/tmp/detached.p7b")
    print(pe.verify_signature(detached_sig))
 
-The verification process does not rely on an external component (i.e. neither openssl or WinTrust API) but we try
+The verification process does not rely on an external component (i.e. neither openssl nor WinTrust API) but we try
 to reproduce the same checks as described in the RFC(s) and the official documentation of the Authenticode
 [#]_.
 
@@ -276,7 +277,7 @@ A. Check the integrity of the signature (:meth:`lief.PE.Signature.check()`):
       (:attr:`Signature.digest_algorithm <lief.PE.Signature.digest_algorithm>` ``==`` :attr:`ContentInfo.digest_algorithm <lief.PE.ContentInfo.digest_algorithm>`  ``==`` :attr:`SignerInfo.digest_algorithm <lief.PE.SignerInfo.digest_algorithm>`)
    3. If the :class:`~lief.PE.SignerInfo` has authenticated attributes, check their integrity. Otherwise, check
       the integrity of the :class:`~lief.PE.ContentInfo` against the Signer's certificate.
-   4. If they are authenticated attributes, check that there is a
+   4. If there are authenticated attributes, check that there is a
       :class:`lief.PE.PKCS9MessageDigest` attribute for which the :attr:`~lief.PE.PKCS9MessageDigest.digest`
       matches the hash of the :class:`~lief.PE.ContentInfo`
    5. If there is a counter signature in the **un-authenticated attributes**, verify its integrity and check
@@ -310,7 +311,7 @@ pass :class:`lief.PE.Signature.VERIFICATION_CHECKS` flags to customize its behav
       signature.check(lief.PE.Signature.VERIFICATION_CHECKS.LIFETIME_SIGNING)
 
 
-:Skip Cerificate Check Time:
+:Skip Certificate Check Time:
 
     By using :attr:`VERIFICATION_CHECKS.SKIP_CERT_TIME <lief.PE.Signature.VERIFICATION_CHECKS.SKIP_CERT_TIME>`,
     LIEF doesn't raise an error if the certificate(s) expired.
