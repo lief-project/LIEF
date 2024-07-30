@@ -57,7 +57,7 @@ class LIEF_API Base : public Type {
     return type->kind() == Type::KIND::BASE;
   }
 
-  /// Describe how the the base type is encoded and should be interpreted
+  /// Describe how the base type is encoded and should be interpreted
   ENCODING encoding() const;
 
   ~Base() override;

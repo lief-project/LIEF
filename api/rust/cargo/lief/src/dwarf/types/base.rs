@@ -84,7 +84,7 @@ impl FromFFI<ffi::DWARF_types_Base> for Base<'_> {
 }
 
 impl Base<'_> {
-    /// Describe how the the base type is encoded and should be interpreted
+    /// Describe how the base type is encoded and should be interpreted
     pub fn encoding(&self) -> Encoding {
         Encoding::from(self.ptr.encoding())
     }

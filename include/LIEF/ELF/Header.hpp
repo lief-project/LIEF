@@ -176,7 +176,7 @@ class LIEF_API Header : public Object {
     return program_header_size_;
   }
 
-  /// Return the the number of segments
+  /// Return the number of segments
   uint32_t numberof_segments() const {
     return numberof_segments_;
   }

@@ -25,7 +25,7 @@ void create<dw::types::Base>(nb::module_& m) {
   type
     .def_prop_ro("encoding", &dw::types::Base::encoding,
       R"doc(
-      Describe how the the base type is encoded and should be interpreted.
+      Describe how the base type is encoded and should be interpreted.
       )doc"_doc
     )
   ;

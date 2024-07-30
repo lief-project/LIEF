@@ -51,7 +51,7 @@ class LIEF_API ClassLike : public Type {
   /// Iterator over the different methods implemented in this class-type type
   methods_iterator methods() const;
 
-  /// Size of the the type including all its attributes. This size should match
+  /// Size of the type including all its attributes. This size should match
   /// the `sizeof(...)` this type.
   uint64_t size() const;
 

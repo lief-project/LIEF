@@ -671,7 +671,7 @@ uint32_t Binary::predict_function_rva(const std::string& library, const std::str
   }
 
 
-  // We assume the the idata section will be the last section
+  // We assume the idata section will be the last section
   const auto section_align = static_cast<uint64_t>(optional_header().section_alignment());
   const uint64_t next_virtual_address = align(std::accumulate(
       std::begin(sections_),

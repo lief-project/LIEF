@@ -139,7 +139,7 @@ void create<Note>(nb::module_& m) {
         R"doc(
         Return the original `NT_` value of the note.
 
-        This value should be interpreted according the the :attr:`~.name` of the
+        This value should be interpreted according the :attr:`~.name` of the
         note.
         )doc"_doc)
 

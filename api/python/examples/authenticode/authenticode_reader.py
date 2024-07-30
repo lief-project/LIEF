@@ -203,7 +203,7 @@ def main():
 
     parser.add_argument('-H', '--hash',
             action='store_true', dest='show_hash',
-            help='Show the autentihash value')
+            help='Show the authentihash value')
 
     parser.add_argument('-C', '--check',
             action='store_true', dest='check_sig',
