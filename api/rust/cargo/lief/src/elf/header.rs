@@ -290,7 +290,7 @@ impl Header<'_> {
         self.ptr.program_header_size()
     }
 
-    /// Return the the number of segments
+    /// Return the number of segments
     pub fn numberof_segments(&self) -> u32 {
         self.ptr.numberof_segments()
     }

@@ -15,7 +15,7 @@ option(LIEF_EXTRA_WARNINGS             "Enable extra warning from the compiler" 
 option(LIEF_LOGGING                    "Enable logging"                             ON)
 option(LIEF_LOGGING_DEBUG              "Enable debug logging"                       ON)
 option(LIEF_ENABLE_JSON                "Enable JSON-related APIs"                   ON)
-option(LIEF_OPT_NLOHMANN_JSON_EXTERNAL "Use nlohmann/json externaly"                OFF)
+option(LIEF_OPT_NLOHMANN_JSON_EXTERNAL "Use nlohmann/json externally"               OFF)
 option(LIEF_FORCE_API_EXPORTS          "Force exports of API symbols"               OFF)
 option(LIEF_PY_LIEF_EXT                "Use a pre-installed version of LIEF for the bindings" OFF)
 option(LIEF_RUST_API                   "Generate the C++ bridge for Rust's cxx" OFF)
@@ -41,7 +41,7 @@ cmake_dependent_option(LIEF_PYTHON_STATIC "Internal usage" OFF
                        "LIEF_PYTHON_API" OFF)
 
 # OAT support relies on the ELF and DEX format.
-# Therefore, these options must be enabled to support use this format
+# Therefore, these options must be enabled to support this format
 cmake_dependent_option(LIEF_OAT "Build LIEF with OAT module" ON
                        "LIEF_ELF;LIEF_DEX" OFF)
 
@@ -70,7 +70,7 @@ cmake_dependent_option(LIEF_INSTALL_COMPILED_EXAMPLES "Install LIEF Compiled exa
 option(LIEF_EXTERNAL_SPDLOG OFF)
 
 # This option enables to provide an external
-# version of TartanLlama/expected  (e.g. present on the system)
+# version of TartanLlama/expected (e.g. present on the system)
 option(LIEF_OPT_EXTERNAL_EXPECTED OFF)
 
 # This option enables to provide an external version of utf8cpp

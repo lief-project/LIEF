@@ -22,7 +22,7 @@ pub trait ClassLike {
         self.get_classlike().name().to_string()
     }
 
-    /// Size of the the type including all its attributes. This size should match
+    /// Size of the type including all its attributes. This size should match
     /// the `sizeof(...)` this type.
     fn size(&self) -> u64 {
         self.get_classlike().size()

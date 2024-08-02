@@ -102,7 +102,7 @@ template<typename PE_T>
 void Builder::build_import_table() {
   using uint__ = typename PE_T::uint;
 
-  // Compute size of the the diffrent (sub)sections
+  // Compute size of the different (sub)sections
   // inside the future import section
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -112,10 +112,10 @@ void Builder::build_import_table() {
   // Size of import entries
   uint32_t entries_size = 0;
 
-  // Size of the section which will holds imported functions names
+  // Size of the section which will hold the imported functions names
   uint32_t functions_name_size = 0;
 
-  // Size of the section which will holds library name (e.g. kernel32.dll)
+  // Size of the section which will hold the library name (e.g. kernel32.dll)
   uint32_t libraries_name_size = 0;
 
   // Size of the trampoline section
@@ -137,10 +137,10 @@ void Builder::build_import_table() {
     trampolines_size    += import.entries().size() * trampoline_size;
   }
 
-  // Offset of the diffrents sections inside *import section*
+  // Offset of the different sections inside *import section*
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  // Offset to the import table (i.e list of pe_import)
+  // Offset to the import table (i.e. list of pe_import)
   uint32_t import_table_offset = 0;
 
   // Offset to the lookup table: After import table
@@ -149,10 +149,10 @@ void Builder::build_import_table() {
   // Address table (IAT). Identical to the lookup table until the library is bound
   uint32_t iat_offset = lookuptable_offset + entries_size / 2;
 
-  // Offset to the section which will contains hints/names of the imported functions name
+  // Offset to the section which will contain hints/names of the imported functions name
   uint32_t functions_name_offset = iat_offset + entries_size / 2;
 
-  // Offset of the section which will holds libraries name
+  // Offset of the section which will hold libraries name
   uint32_t libraries_name_offset = functions_name_offset + functions_name_size;
 
   // Offset of the section where trampolines will be written

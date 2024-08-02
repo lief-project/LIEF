@@ -33,7 +33,7 @@ if bundle_path is not None:
 # Get the certificate used by the signer
 cert_signer = pe.signatures[0].signers[0].cert
 print(cert_signer)
-bin_ca.verify(cert_signer) # Verify that cert_signer is signed the the CA
+bin_ca.verify(cert_signer) # Verify that cert_signer is signed the CA
 
 # running with:
 # LIEF_CA_BUNDLE=signify/signify/certs/authenticode-bundle.pem python ./authenticode.py avast_free_antivirus_setup_online.exe

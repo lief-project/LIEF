@@ -52,7 +52,7 @@ void create<pdb::types::ClassLike>(nb::module_& m) {
 
     .def_prop_ro("size", &pdb::types::ClassLike::size,
       R"doc(
-      Size of the the type including all its attributes. This size should match
+      Size of the type including all its attributes. This size should match
       the ``sizeof(...)`` this type.
       )doc"_doc
     )
