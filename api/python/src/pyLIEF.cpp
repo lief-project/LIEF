@@ -22,6 +22,7 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
 
+#include "LIEF/utils.hpp"
 #include "LIEF/hash.hpp"
 #include "LIEF/Object.hpp"
 #include "LIEF/range.hpp"
@@ -208,7 +209,21 @@ void init(nb::module_& m) {
        - leaked function "export_symbol"
        - ... skipped remainder
       nanobind: this is likely caused by a reference counting issue in the binding code.
-  )doc");
+  )doc"_doc);
+
+  m.def("demangle",
+    [] (const std::string& mangled) {
+      return LIEF::py::value_or_none(&LIEF::demangle, mangled);
+    },
+    R"doc(
+    Demangle the given input.
+
+    .. warnings::
+
+        This function only works with the extended version of LIEF
+    )doc"_doc,
+    "mangled"_a
+  );
 
   LIEF::py::init_extension(m);
 

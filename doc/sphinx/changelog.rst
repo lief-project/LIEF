@@ -13,6 +13,13 @@ Changelog
 
   * Add support for RISC-V architecture
 
+
+:Extended:
+
+  * Add :func:`lief.demangle` / :cpp:func:`LIEF::demangle` to demangle symbols
+    (c.f. :issue:`1054`)
+
+
 0.15.1 - July 23th, 2024
 ------------------------
 

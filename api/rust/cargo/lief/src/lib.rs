@@ -106,3 +106,14 @@ pub use debug_location::DebugLocation;
 pub fn is_extended() -> bool {
     lief_ffi::is_extended()
 }
+
+/// Try to demangle the given input.
+///
+/// This function requires the extended version of LIEF
+pub fn demangle(mangled: &str) -> Result<String, Error> {
+    to_conv_result!(
+        lief_ffi::demangle,
+        *mangled,
+        |e: cxx::UniquePtr<cxx::String>| { e.to_string() }
+    );
+}

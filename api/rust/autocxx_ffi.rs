@@ -7,6 +7,7 @@ include_cpp! {
     name!(autocxx_ffi)
 
     generate!("is_extended")
+    generate!("demangle")
 
     generate_pod!("Span")
     block_constructors!("Span")

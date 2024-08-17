@@ -14,7 +14,13 @@
  */
 #pragma once
 #include "LIEF/utils.hpp"
+#include "LIEF/rust/error.hpp"
 
 inline bool is_extended() {
   return LIEF::is_extended();
 }
+
+inline std::string demangle(std::string mangled, uint32_t& err) {
+  return details::make_error<std::string>(LIEF::demangle(mangled), err);
+}
+

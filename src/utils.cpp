@@ -25,6 +25,8 @@
 #include "third-party/utfcpp.hpp"
 
 #include "LIEF/config.h"
+#include "logging.hpp"
+#include "messages.hpp"
 
 namespace LIEF {
 
@@ -89,6 +91,13 @@ result<std::u16string> u8tou16(const std::string& string) {
 bool is_extended() {
   return lief_extended;
 }
+
+#if !defined(LIEF_EXTENDED)
+result<std::string> demangle(const std::string&/*mangled*/) {
+  LIEF_WARN(NEEDS_EXTENDED_MSG);
+  return make_error_code(lief_errors::not_implemented);
+}
+#endif
 
 
 } // namespace LIEF
