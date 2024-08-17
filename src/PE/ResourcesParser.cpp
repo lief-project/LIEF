@@ -19,6 +19,7 @@
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/utils.hpp"
+#include "internal_utils.hpp"
 
 #include "LIEF/PE/ResourcesManager.hpp"
 #include "LIEF/PE/ResourceData.hpp"

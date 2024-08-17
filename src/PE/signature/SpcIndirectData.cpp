@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 #include "LIEF/Visitor.hpp"
-#include "LIEF/utils.hpp"
 #include "LIEF/PE/signature/SpcIndirectData.hpp"
 #include "LIEF/PE/EnumToString.hpp"
+
+#include "internal_utils.hpp"
 
 #include <spdlog/fmt/fmt.h>
 

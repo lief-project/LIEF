@@ -25,6 +25,23 @@ std::string printable_string(const std::string& str) {
     }
   }
   return out;
-
 }
+
+template<class T>
+std::string hex_dump_impl(T data, const std::string& sep) {
+  std::vector<std::string> hexdigits;
+  hexdigits.reserve(data.size());
+  std::transform(data.begin(), data.end(), std::back_inserter(hexdigits),
+                 [] (uint8_t x) { return fmt::format("{:02x}", x); });
+  return fmt::to_string(fmt::join(hexdigits, sep));
+}
+
+std::string hex_dump(const std::vector<uint8_t>& data, const std::string& sep) {
+  return hex_dump_impl(data, sep);
+}
+
+std::string hex_dump(span<const uint8_t> data, const std::string& sep) {
+  return hex_dump_impl(data, sep);
+}
+
 }

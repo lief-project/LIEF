@@ -22,6 +22,7 @@
 
 #include "logging.hpp"
 #include "hash_stream.hpp"
+#include "internal_utils.hpp"
 
 #include "LIEF/utils.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"

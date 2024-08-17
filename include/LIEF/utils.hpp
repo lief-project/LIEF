@@ -15,15 +15,11 @@
  */
 #ifndef LIEF_UTILS_HEADER
 #define LIEF_UTILS_HEADER
-#include <vector>
 #include <string>
 
-#include "LIEF/span.hpp"
-#include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/errors.hpp"
-
 
 namespace LIEF {
 inline uint64_t align(uint64_t value, uint64_t align_on) {
@@ -74,32 +70,15 @@ constexpr size_t operator ""_GB(unsigned long long gbs)
     return 1024LLU * 1024LLU * 1024LLU * gbs;
 }
 
-
 //! Convert a UTF-16 string to a UTF-8 one
 LIEF_API std::string u16tou8(const std::u16string& string, bool remove_null_char = false);
 
 //! Convert a UTF-8 string to a UTF-16 one
 LIEF_API result<std::u16string> u8tou16(const std::string& string);
 
-LIEF_API std::string hex_str(uint8_t c);
-
-LIEF_API std::string hex_dump(const std::vector<uint8_t>& data,
-                              const std::string& sep = ":");
-
-LIEF_API std::string hex_dump(span<const uint8_t> data,
-                              const std::string& sep = ":");
-
-//! Check if the given number is a hex-like string
-LIEF_API bool is_hex_number(const std::string& nb);
-
 //! Whether this version of LIEF includes extended features
 LIEF_API bool is_extended();
 }
 
-namespace LIEF {
-namespace LEB128 {
-std::vector<uint8_t> uencode(uint64_t value);
-}
-}
 
 #endif

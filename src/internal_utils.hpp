@@ -185,6 +185,20 @@ auto make_empty_iterator() {
   );
 }
 
+inline bool is_hex_number(const std::string& str) {
+  return std::all_of(std::begin(str), std::end(str), ::isxdigit);
+}
+
+inline std::string hex_str(uint8_t c) {
+  return fmt::format("{:02x}", c);
+}
+
+std::string hex_dump(const std::vector<uint8_t>& data,
+                              const std::string& sep = ":");
+
+std::string hex_dump(span<const uint8_t> data,
+                     const std::string& sep = ":");
+
 }
 
 #endif

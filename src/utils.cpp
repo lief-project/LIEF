@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 #include <algorithm>
-#include <iomanip>
 #include <iterator>
-#include <locale>
-#include <numeric>
-#include <sstream>
 #include <string>
 
 #include <spdlog/fmt/fmt.h>
@@ -31,22 +27,6 @@
 #include "LIEF/config.h"
 
 namespace LIEF {
-namespace LEB128 {
-std::vector<uint8_t> uencode(uint64_t value) {
-  std::vector<uint8_t> result;
-  do {
-    uint8_t b = value & 0x7F;
-    value >>= 7;
-    if (value > 0) {
-      b |= 0x80;
-    }
-    result.push_back(b);
-  } while (value != 0);
-  return result;
-}
-
-}
-
 
 template <typename octet_iterator>
 result<uint32_t> next(octet_iterator& it, octet_iterator end) {
@@ -105,35 +85,6 @@ result<std::u16string> u8tou16(const std::string& string) {
   }
   return name;
 }
-
-std::string hex_str(uint8_t c) {
-  std::stringstream ss;
-  ss << std::setw(2) << std::setfill('0') << std::hex << static_cast<uint32_t>(c);
-  return ss.str();
-}
-
-template<class T>
-std::string hex_dump_impl(T data, const std::string& sep) {
-  std::vector<std::string> hexdigits;
-  hexdigits.reserve(data.size());
-  std::transform(data.begin(), data.end(), std::back_inserter(hexdigits),
-                 [] (uint8_t x) { return fmt::format("{:02x}", x); });
-  return fmt::to_string(fmt::join(hexdigits, sep));
-}
-
-std::string hex_dump(const std::vector<uint8_t>& data, const std::string& sep) {
-  return hex_dump_impl(data, sep);
-}
-
-std::string hex_dump(span<const uint8_t> data, const std::string& sep) {
-  return hex_dump_impl(data, sep);
-}
-
-
-bool is_hex_number(const std::string& str) {
-  return std::all_of(std::begin(str), std::end(str), isxdigit);
-}
-
 
 bool is_extended() {
   return lief_extended;

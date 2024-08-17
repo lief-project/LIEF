@@ -16,7 +16,7 @@
  */
 #include "LIEF/DEX/Header.hpp"
 #include "LIEF/DEX/hash.hpp"
-#include "LIEF/utils.hpp"
+#include "internal_utils.hpp"
 
 #include <numeric>
 #include <iomanip>

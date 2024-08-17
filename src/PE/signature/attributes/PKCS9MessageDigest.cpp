@@ -15,7 +15,7 @@
  */
 #include "LIEF/Visitor.hpp"
 #include "LIEF/PE/signature/attributes/PKCS9MessageDigest.hpp"
-#include "LIEF/utils.hpp"
+#include "internal_utils.hpp"
 
 namespace LIEF {
 namespace PE {
