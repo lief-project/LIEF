@@ -117,6 +117,8 @@ void create<Section>(nb::module_& m) {
     ENTRY(MIPS_REGINFO)
     ENTRY(MIPS_OPTIONS)
     ENTRY(MIPS_ABIFLAGS)
+
+    ENTRY(RISCV_ATTRIBUTES)
   ;
   #undef ENTRY
 

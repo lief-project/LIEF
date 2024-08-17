@@ -136,8 +136,10 @@ bool Symbol::is_imported() const {
                        arch_ == ARCH::MIPS_RS3_LE;
   const bool is_ppc = arch_ == ARCH::PPC || arch_ == ARCH::PPC64;
 
+  const bool is_riscv = arch_ == ARCH::RISCV;
+
   // An import must not have an address (except for some architectures like Mips/PPC)
-  if (!is_mips && !is_ppc) {
+  if (!is_mips && !is_ppc && !is_riscv) {
     is_imported = is_imported && value() == 0;
   }
 

@@ -36,3 +36,24 @@ def test_issue_1023():
     bss_content = elf.get_content_from_virtual_address(bss_start + 1, 1)
 
     assert len(bss_content) == 0
+
+def test_issue_1082():
+    """
+    Make sure RISC-V imported symbols are correctly exported
+    """
+    elf = lief.ELF.parse(get_sample("ELF/issue-1082-pie.elf"))
+    imp_symbols = [s.name for s in elf.imported_symbols]
+    assert len(imp_symbols) == 6
+    assert imp_symbols[0] == "__libc_start_main"
+    assert imp_symbols[1] == "printf"
+    assert imp_symbols[2] == "__cxa_finalize"
+    assert imp_symbols[3] == "__libc_start_main@GLIBC_2.34"
+    assert imp_symbols[4] == "printf@GLIBC_2.27"
+    assert imp_symbols[5] == "__cxa_finalize@GLIBC_2.27"
+
+    elf = lief.ELF.parse(get_sample("ELF/issue-1082-no_pie.elf"))
+    imp_symbols = [s.name for s in elf.imported_symbols]
+    assert len(imp_symbols) == 4
+    assert imp_symbols[0] == "printf"
+    assert imp_symbols[2] == "__libc_start_main@GLIBC_2.34"
+    assert imp_symbols[3] == "printf@GLIBC_2.27"

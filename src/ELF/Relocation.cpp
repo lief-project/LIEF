@@ -29,6 +29,7 @@ namespace ELF {
 int32_t get_reloc_size(Relocation::TYPE type);
 
 Relocation::TYPE Relocation::type_from(uint32_t value, ARCH arch) {
+  static std::set<ARCH> ERR;
   switch (arch) {
     case ARCH::X86_64:
       return TYPE(value | R_X64);
@@ -50,9 +51,13 @@ Relocation::TYPE Relocation::type_from(uint32_t value, ARCH arch) {
       return TYPE(value | R_PPC64);
     case ARCH::SPARC:
       return TYPE(value | R_SPARC);
+    case ARCH::RISCV:
+      return TYPE(value | R_RISCV);
     default:
       {
-        LIEF_ERR("LIEF does not support relocation for '{}'", to_string(arch));
+        if (ERR.insert(arch).second) {
+          LIEF_ERR("LIEF does not support relocation for '{}'", to_string(arch));
+        }
         return TYPE::UNKNOWN;
       }
   }
@@ -137,6 +142,9 @@ Relocation::Relocation(uint64_t address, TYPE type, ENCODING encoding) :
     }
     else if (ID == Relocation::R_SPARC) {
       architecture_ = ARCH::SPARC;
+    }
+    else if (ID == Relocation::R_RISCV) {
+      architecture_ = ARCH::RISCV;
     }
   }
 }

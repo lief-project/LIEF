@@ -39,6 +39,7 @@ void init_relocation_types(nb::class_<Relocation, LIEF::Relocation>& m) {
     #include "LIEF/ELF/Relocations/PowerPC64.def"
     #include "LIEF/ELF/Relocations/Sparc.def"
     #include "LIEF/ELF/Relocations/SystemZ.def"
+    #include "LIEF/ELF/Relocations/RISCV.def"
   ;
   #undef ELF_RELOC
 }

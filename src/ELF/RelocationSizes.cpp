@@ -768,6 +768,70 @@ int32_t get_R_LARCH(Relocation::TYPE R) {
   return it == SIZES.end() ? -1 : it->second;
 }
 
+int32_t get_R_RISCV(Relocation::TYPE R) {
+  CONST_MAP_ALT SIZES {
+    std::pair(Relocation::TYPE::RISCV_NONE,              0),
+    std::pair(Relocation::TYPE::RISCV_32,                32),
+    std::pair(Relocation::TYPE::RISCV_64,                64),
+    std::pair(Relocation::TYPE::RISCV_RELATIVE,          -1),
+    std::pair(Relocation::TYPE::RISCV_COPY,              -1),
+    std::pair(Relocation::TYPE::RISCV_JUMP_SLOT,         -1),
+    std::pair(Relocation::TYPE::RISCV_TLS_DTPMOD32,      32),
+    std::pair(Relocation::TYPE::RISCV_TLS_DTPMOD64,      64),
+    std::pair(Relocation::TYPE::RISCV_TLS_DTPREL32,      32),
+    std::pair(Relocation::TYPE::RISCV_TLS_DTPREL64,      64),
+    std::pair(Relocation::TYPE::RISCV_TLS_TPREL32,       32),
+    std::pair(Relocation::TYPE::RISCV_TLS_TPREL64,       64),
+    std::pair(Relocation::TYPE::RISCV_TLSDESC,           -1),
+    std::pair(Relocation::TYPE::RISCV_BRANCH,            -1),
+    std::pair(Relocation::TYPE::RISCV_JAL,               -1),
+    std::pair(Relocation::TYPE::RISCV_CALL,              -1),
+    std::pair(Relocation::TYPE::RISCV_CALL_PLT,          -1),
+    std::pair(Relocation::TYPE::RISCV_GOT_HI20,          20),
+    std::pair(Relocation::TYPE::RISCV_TLS_GOT_HI20,      20),
+    std::pair(Relocation::TYPE::RISCV_TLS_GD_HI20,       20),
+    std::pair(Relocation::TYPE::RISCV_PCREL_HI20,        20),
+    std::pair(Relocation::TYPE::RISCV_PCREL_LO12_I,      12),
+    std::pair(Relocation::TYPE::RISCV_PCREL_LO12_S,      12),
+    std::pair(Relocation::TYPE::RISCV_HI20,              20),
+    std::pair(Relocation::TYPE::RISCV_LO12_I,            12),
+    std::pair(Relocation::TYPE::RISCV_LO12_S,            12),
+    std::pair(Relocation::TYPE::RISCV_TPREL_HI20,        20),
+    std::pair(Relocation::TYPE::RISCV_TPREL_LO12_I,      12),
+    std::pair(Relocation::TYPE::RISCV_TPREL_LO12_S,      12),
+    std::pair(Relocation::TYPE::RISCV_TPREL_ADD,         -1),
+    std::pair(Relocation::TYPE::RISCV_ADD8,              8),
+    std::pair(Relocation::TYPE::RISCV_ADD16,             16),
+    std::pair(Relocation::TYPE::RISCV_ADD32,             32),
+    std::pair(Relocation::TYPE::RISCV_ADD64,             64),
+    std::pair(Relocation::TYPE::RISCV_SUB8,              8),
+    std::pair(Relocation::TYPE::RISCV_SUB16,             16),
+    std::pair(Relocation::TYPE::RISCV_SUB32,             32),
+    std::pair(Relocation::TYPE::RISCV_SUB64,             64),
+    std::pair(Relocation::TYPE::RISCV_GOT32_PCREL,       32),
+    std::pair(Relocation::TYPE::RISCV_ALIGN,             -1),
+    std::pair(Relocation::TYPE::RISCV_RVC_BRANCH,        -1),
+    std::pair(Relocation::TYPE::RISCV_RVC_JUMP,          -1),
+    std::pair(Relocation::TYPE::RISCV_RVC_LUI,           -1),
+    std::pair(Relocation::TYPE::RISCV_RELAX,             -1),
+    std::pair(Relocation::TYPE::RISCV_SUB6,              6),
+    std::pair(Relocation::TYPE::RISCV_SET6,              6),
+    std::pair(Relocation::TYPE::RISCV_SET8,              8),
+    std::pair(Relocation::TYPE::RISCV_SET16,             16),
+    std::pair(Relocation::TYPE::RISCV_SET32,             32),
+    std::pair(Relocation::TYPE::RISCV_32_PCREL,          32),
+    std::pair(Relocation::TYPE::RISCV_IRELATIVE,         0),
+    std::pair(Relocation::TYPE::RISCV_PLT32,             32),
+    std::pair(Relocation::TYPE::RISCV_SET_ULEB128,       -1),
+    std::pair(Relocation::TYPE::RISCV_SUB_ULEB128,       -1),
+    std::pair(Relocation::TYPE::RISCV_TLSDESC_HI20,      20),
+    std::pair(Relocation::TYPE::RISCV_TLSDESC_LOAD_LO12, 12),
+    std::pair(Relocation::TYPE::RISCV_TLSDESC_ADD_LO12,  12),
+    std::pair(Relocation::TYPE::RISCV_TLSDESC_CALL,      -1),
+  };
+  const auto it = SIZES.find(R);
+  return it == SIZES.end() ? -1 : it->second;
+}
 
 int32_t get_reloc_size(Relocation::TYPE type) {
   auto raw_type = static_cast<uint64_t>(type);
@@ -796,6 +860,9 @@ int32_t get_reloc_size(Relocation::TYPE type) {
   }
   if (ID == Relocation::R_PPC64) {
     return get_R_PPC64(type);
+  }
+  if (ID == Relocation::R_RISCV) {
+    return get_R_RISCV(type);
   }
   return -1;
 }

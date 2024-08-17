@@ -74,6 +74,9 @@ Section::TYPE Section::type_from(uint32_t value, ARCH arch) {
       case ARCH::MIPS:
         return TYPE(value + (uint64_t(TYPE::_MIPS_ID_) << uint8_t(TYPE::_ID_SHIFT_)));
 
+      case ARCH::RISCV:
+        return TYPE(value + (uint64_t(TYPE::_RISCV_ID_) << uint8_t(TYPE::_ID_SHIFT_)));
+
       default:
         {
           LIEF_ERR("Arch-specific section: 0x{:08x} is not recognized for {}",
@@ -426,6 +429,8 @@ const char* to_string(Section::TYPE e) {
     ENTRY(MIPS_REGINFO),
     ENTRY(MIPS_OPTIONS),
     ENTRY(MIPS_ABIFLAGS),
+
+    ENTRY(RISCV_ATTRIBUTES),
   };
   #undef ENTRY
 

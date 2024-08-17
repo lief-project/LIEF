@@ -1982,6 +1982,9 @@ void Binary::shift_relocations(uint64_t from, uint64_t shift) {
     case ARCH::PPC:
       patch_relocations<ARCH::PPC>(from, shift); return;
 
+    case ARCH::RISCV:
+      patch_relocations<ARCH::RISCV>(from, shift); return;
+
     default:
       {
         LIEF_DEBUG("Relocations for architecture {} is not handled", to_string(arch));

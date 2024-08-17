@@ -89,7 +89,7 @@ class LIEF_API Section : public LIEF::Section {
 
     _ID_SHIFT_ = 32,
     _ARM_ID_ = 1LLU, _HEX_ID_ = 2LLU, _X86_64_ID_ = 2LLU,
-    _MIPS_ID_ = 3LLU,
+    _MIPS_ID_ = 3LLU, _RISCV_ID_ = 4LLU,
 
     ARM_EXIDX           = 0x70000001U + (_ARM_ID_ << _ID_SHIFT_), /**< Exception Index table */
     ARM_PREEMPTMAP      = 0x70000002U + (_ARM_ID_ << _ID_SHIFT_), /**< BPABI DLL dynamic linking pre-emption map */
@@ -105,6 +105,8 @@ class LIEF_API Section : public LIEF::Section {
     MIPS_REGINFO        = 0x70000006 + (_MIPS_ID_ << _ID_SHIFT_), /**< Register usage information */
     MIPS_OPTIONS        = 0x7000000d + (_MIPS_ID_ << _ID_SHIFT_), /**< General options */
     MIPS_ABIFLAGS       = 0x7000002a + (_MIPS_ID_ << _ID_SHIFT_), /**< ABI information. */
+
+    RISCV_ATTRIBUTES    = 0x70000003 + (_RISCV_ID_ << _ID_SHIFT_),
   };
 
   enum class FLAGS : uint64_t {

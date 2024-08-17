@@ -258,6 +258,55 @@ void Binary::patch_relocations<ARCH::PPC>(uint64_t from, uint64_t shift) {
   }
 }
 
+// ==================
+// RISCV Relocations
+// ==================
+template<>
+void Binary::patch_relocations<ARCH::RISCV>(uint64_t from, uint64_t shift) {
+  for (Relocation& relocation : relocations()) {
+    if (relocation.address() >= from) {
+      relocation.address(relocation.address() + shift);
+    }
+
+    const Relocation::TYPE type = relocation.type();
+    const bool is64 = this->type_ == Header::CLASS::ELF64;
+
+    switch (type) {
+      case Relocation::TYPE::RISCV_32:
+      case Relocation::TYPE::RISCV_TLS_DTPREL32:
+      case Relocation::TYPE::RISCV_TLS_TPREL32:
+        {
+          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
+          patch_addend<uint32_t>(relocation, from, shift);
+          break;
+        }
+
+      case Relocation::TYPE::RISCV_64:
+      case Relocation::TYPE::RISCV_TLS_DTPMOD64:
+      case Relocation::TYPE::RISCV_TLS_DTPREL64:
+      case Relocation::TYPE::RISCV_TLS_TPREL64:
+        {
+          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
+          patch_addend<uint64_t>(relocation, from, shift);
+          break;
+        }
+
+      case Relocation::TYPE::RISCV_RELATIVE:
+      case Relocation::TYPE::RISCV_IRELATIVE:
+        {
+          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
+          is64 ? patch_addend<uint64_t>(relocation, from, shift) :
+                 patch_addend<uint32_t>(relocation, from, shift);
+          break;
+        }
+
+      default:
+        {
+          LIEF_DEBUG("Relocation {} is not patched", to_string(type));
+        }
+    }
+  }
+}
 
 template<class T>
 void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift) {

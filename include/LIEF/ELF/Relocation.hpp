@@ -16,7 +16,6 @@
 #ifndef LIEF_ELF_RELOCATION_H
 #define LIEF_ELF_RELOCATION_H
 
-#include <string>
 #include <ostream>
 
 #include "LIEF/Object.hpp"
@@ -76,6 +75,7 @@ class LIEF_API Relocation : public LIEF::Relocation {
   static constexpr uint64_t R_PPC64   = uint64_t(9)  << R_BIT;
   static constexpr uint64_t R_SPARC   = uint64_t(10) << R_BIT;
   static constexpr uint64_t R_SYSZ    = uint64_t(11) << R_BIT;
+  static constexpr uint64_t R_RISCV   = uint64_t(12) << R_BIT;
 
   /// The different types of the relocation
   enum class TYPE : uint32_t {
@@ -123,6 +123,10 @@ class LIEF_API Relocation : public LIEF::Relocation {
 
     #define ELF_RELOC(name, value) name = (value | R_SYSZ),
       #include "LIEF/ELF/Relocations/SystemZ.def"
+    #undef ELF_RELOC
+
+    #define ELF_RELOC(name, value) name = (value | R_RISCV),
+      #include "LIEF/ELF/Relocations/RISCV.def"
     #undef ELF_RELOC
   };
 

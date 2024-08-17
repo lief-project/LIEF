@@ -17,7 +17,7 @@ pub struct Section<'a> {
 impl Section<'_> {
     /// Type of the section
     pub fn get_type(&self) -> Type {
-        Type::from_value(self.ptr.get_type())
+        Type::from(self.ptr.get_type())
     }
 
     /// Sections flags
@@ -142,11 +142,14 @@ pub enum Type {
     MIPS_OPTIONS,
     /// ABI information
     MIPS_ABIFLAGS,
+    /// RISC-V Attribute
+    RISCV_ATTRIBUTES,
     UNKNOWN(u64),
 }
 
-impl Type {
-    pub fn from_value(value: u64) -> Self {
+
+impl From<u64> for Type {
+    fn from(value: u64) -> Self {
         match value {
             0x00000000 => Type::SHT_NULL,
             0x00000001 => Type::PROGBITS,
@@ -185,12 +188,57 @@ impl Type {
             0x370000006 => Type::MIPS_REGINFO,
             0x37000000d => Type::MIPS_OPTIONS,
             0x37000002a => Type::MIPS_ABIFLAGS,
+            0x470000003 => Type::RISCV_ATTRIBUTES,
             _ => Type::UNKNOWN(value),
 
         }
     }
 }
-
+impl From<Type> for u64 {
+    fn from(value: Type) -> u64 {
+        match value {
+            Type::SHT_NULL => 0x00000000,
+            Type::PROGBITS => 0x00000001,
+            Type::SYMTAB => 0x00000002,
+            Type::STRTAB => 0x00000003,
+            Type::RELA => 0x00000004,
+            Type::HASH => 0x00000005,
+            Type::DYNAMIC => 0x00000006,
+            Type::NOTE => 0x00000007,
+            Type::NOBITS => 0x00000008,
+            Type::REL => 0x00000009,
+            Type::SHLIB => 0x0000000a,
+            Type::DYNSYM => 0x0000000b,
+            Type::INIT_ARRAY => 0x0000000e,
+            Type::FINI_ARRAY => 0x0000000f,
+            Type::PREINIT_ARRAY => 0x00000010,
+            Type::GROUP => 0x00000011,
+            Type::SYMTAB_SHNDX => 0x00000012,
+            Type::RELR => 0x00000013,
+            Type::ANDROID_REL => 0x60000001,
+            Type::ANDROID_RELA => 0x60000002,
+            Type::LLVM_ADDRSIG => 0x6fff4c03,
+            Type::ANDROID_RELR => 0x6fffff00,
+            Type::GNU_ATTRIBUTES => 0x6ffffff5,
+            Type::GNU_HASH => 0x6ffffff6,
+            Type::GNU_VERDEF => 0x6ffffffd,
+            Type::GNU_VERNEED => 0x6ffffffe,
+            Type::GNU_VERSYM => 0x6fffffff,
+            Type::ARM_EXIDX => 0x170000001,
+            Type::ARM_PREEMPTMAP => 0x170000002,
+            Type::ARM_ATTRIBUTES => 0x170000003,
+            Type::ARM_DEBUGOVERLAY => 0x170000004,
+            Type::ARM_OVERLAYSECTION => 0x170000005,
+            Type::HEX_ORDERED => 0x270000000,
+            Type::X86_64_UNWIND => 0x270000001,
+            Type::MIPS_REGINFO => 0x370000006,
+            Type::MIPS_OPTIONS => 0x37000000d,
+            Type::MIPS_ABIFLAGS => 0x37000002a,
+            Type::RISCV_ATTRIBUTES => 0x470000003,
+            Type::UNKNOWN(value) => value,
+        }
+    }
+}
 
 bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
