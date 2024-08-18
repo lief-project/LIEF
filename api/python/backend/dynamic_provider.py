@@ -1,6 +1,5 @@
 from __future__ import annotations
-from pathlib import Path
-from setup import ROOT_DIR
+from setup import BINDING_DIR
 from versioning import Versioning
 from scikit_build_core.settings.skbuild_read_settings import rich_print
 
@@ -11,4 +10,4 @@ def dynamic_metadata(field, config) -> str:
         return version
 
     if field == "readme":
-        return (ROOT_DIR / "package" / "README.rst").as_posix()
+        return (BINDING_DIR / "README.rst").as_posix()
