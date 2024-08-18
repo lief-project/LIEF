@@ -900,7 +900,7 @@ SignatureParser::parse_attributes(BinaryStream& stream) {
 
       if (value_stream.pos() < value_stream.size()) {
         const uint32_t delta = value_stream.size() - value_stream.pos();
-        LIEF_WARN("{}: {} bytes left", oid_str, delta);
+        LIEF_INFO("{}: {} bytes left", oid_str, delta);
       }
     }
     stream.increment_pos(value_set_size);

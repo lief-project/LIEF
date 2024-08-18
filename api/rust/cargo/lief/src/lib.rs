@@ -68,11 +68,17 @@ pub mod macho;
 
 /// Module for the PE format
 pub mod pe;
+
+/// Module for PDB debug info
 pub mod pdb;
+
+/// Module for DWARF debug info
 pub mod dwarf;
+
+/// Module for Objective-C metadata
 pub mod objc;
 pub mod debug_info;
-pub mod range;
+mod range;
 
 /// Module for LIEF's error
 pub mod error;
@@ -82,7 +88,7 @@ pub mod logging;
 mod binary;
 mod common;
 
-pub mod debug_location;
+mod debug_location;
 
 #[doc(inline)]
 pub use binary::Binary;
