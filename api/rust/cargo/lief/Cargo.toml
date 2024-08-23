@@ -22,3 +22,7 @@ num-traits = "0.2"
 num-derive = "0.4"
 num-bigint = "0.4"
 lief-ffi   = { version = "0.16.0", path = "../lief-ffi" }
+
+[features]
+default = ["rustls-tls"]
+rustls-tls = ["lief-ffi/rustls-tls"]
