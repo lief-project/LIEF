@@ -58,7 +58,7 @@ class LIEF_API Section : public LIEF::Section {
   static constexpr uint32_t MAX_SECTION_SIZE = 2_GB;
 
   enum class TYPE : uint64_t {
-    SHT_NULL            = 0,  /**< No associated section (inactive entry). */
+    SHT_NULL_           = 0,  /**< No associated section (inactive entry). */
     PROGBITS            = 1,  /**< Program-defined contents. */
     SYMTAB              = 2,  /**< Symbol table. */
     STRTAB              = 3,  /**< String table. */
@@ -326,7 +326,7 @@ class LIEF_API Section : public LIEF::Section {
 
   span<uint8_t> writable_content();
   ARCH arch_ = ARCH::NONE;
-  TYPE type_ = TYPE::SHT_NULL;
+  TYPE type_ = TYPE::SHT_NULL_;
   uint64_t flags_ = 0;
   uint64_t original_size_ = 0;
   uint32_t link_ = 0;

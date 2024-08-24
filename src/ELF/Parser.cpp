@@ -127,7 +127,7 @@ Header::ELF_DATA determine_elf_endianess(BinaryStream& stream) {
   // First, check EI_CLASS
   if (auto res = stream.peek<Header::identity_t>()) {
     auto ident = *res;
-    uint32_t ei_data = ident[Header::EI_DATA];
+    uint32_t ei_data = ident[Header::ELI_DATA];
     const auto data = static_cast<Header::ELF_DATA>(ei_data);
     if (data == Header::ELF_DATA::LSB || data == Header::ELF_DATA::MSB) {
       from_ei_data = data;
@@ -207,7 +207,7 @@ Header::CLASS determine_elf_class(BinaryStream& stream) {
   // First, check EI_CLASS
   if (auto res = stream.peek<Header::identity_t>()) {
     auto ident = *res;
-    uint32_t ei_class = ident[Header::EI_CLASS];
+    uint32_t ei_class = ident[Header::ELI_CLASS];
     const auto typed = Header::CLASS(ei_class);
     if (typed == Header::CLASS::ELF32 || typed == Header::CLASS::ELF64) {
       from_ei_class = typed;

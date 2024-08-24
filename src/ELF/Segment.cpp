@@ -378,7 +378,7 @@ std::ostream& operator<<(std::ostream& os, const Segment& segment) {
 const char* to_string(Segment::TYPE e) {
   #define ENTRY(X) std::pair(Segment::TYPE::X, #X)
   STRING_MAP enums2str {
-    ENTRY(PT_NULL),
+    ENTRY(PT_NULL_),
     ENTRY(LOAD),
     ENTRY(DYNAMIC),
     ENTRY(INTERP),

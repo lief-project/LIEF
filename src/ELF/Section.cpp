@@ -81,7 +81,7 @@ Section::TYPE Section::type_from(uint32_t value, ARCH arch) {
         {
           LIEF_ERR("Arch-specific section: 0x{:08x} is not recognized for {}",
                    value, to_string(arch));
-          return TYPE::SHT_NULL;
+          return TYPE::SHT_NULL_;
         }
     }
   }
@@ -390,7 +390,7 @@ std::ostream& operator<<(std::ostream& os, const Section& section) {
 const char* to_string(Section::TYPE e) {
   #define ENTRY(X) std::pair(Section::TYPE::X, #X)
   STRING_MAP enums2str {
-    ENTRY(SHT_NULL),
+    ENTRY(SHT_NULL_),
     ENTRY(PROGBITS),
     ENTRY(SYMTAB),
     ENTRY(STRTAB),

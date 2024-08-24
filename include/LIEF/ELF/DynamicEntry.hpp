@@ -45,7 +45,7 @@ class LIEF_API DynamicEntry : public Object {
 
   enum class TAG : uint64_t {
     UNKNOWN                    = uint64_t(-1),
-    DT_NULL                    = 0, /**< Marks end of dynamic array. */
+    DT_NULL_                   = 0, /**< Marks end of dynamic array. */
     NEEDED                     = 1, /**< String table offset of needed library. */
     PLTRELSZ                   = 2, /**< Size of relocation entries in PLT. */
     PLTGOT                     = 3, /**< Address associated with linkage table. */
@@ -232,7 +232,7 @@ class LIEF_API DynamicEntry : public Object {
   }
 
   protected:
-  TAG      tag_ = TAG::DT_NULL;
+  TAG      tag_ = TAG::DT_NULL_;
   uint64_t value_ = 0;
 };
 

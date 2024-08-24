@@ -35,7 +35,7 @@ void create<DynamicEntry>(nb::module_& m) {
   #define ENTRY(X) .value(to_string(DynamicEntry::TAG::X), DynamicEntry::TAG::X)
   enum_<DynamicEntry::TAG>(entry, "TAG")
     ENTRY(UNKNOWN)
-    .value("NULL", DynamicEntry::TAG::DT_NULL)
+    .value("NULL", DynamicEntry::TAG::DT_NULL_)
     ENTRY(NEEDED)
     ENTRY(PLTRELSZ)
     ENTRY(PLTGOT)

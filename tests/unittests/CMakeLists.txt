@@ -23,6 +23,7 @@ add_executable(unittests
   test_elf.cpp
   test_oat.cpp
   test_macho.cpp
+  test_linux_header.cpp
 )
 
 set_target_properties(unittests

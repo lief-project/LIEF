@@ -1378,7 +1378,7 @@ ok_error_t Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
           break;
         }
 
-      case DynamicEntry::TAG::DT_NULL:
+      case DynamicEntry::TAG::DT_NULL_:
         {
           dynamic_entry = std::make_unique<DynamicEntry>(entry, arch);
           end_of_dynamic = true;

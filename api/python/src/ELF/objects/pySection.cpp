@@ -78,7 +78,7 @@ void create<Section>(nb::module_& m) {
 
   #define ENTRY(X) .value(to_string(Section::TYPE::X), Section::TYPE::X)
   enum_<Section::TYPE>(sec, "TYPE")
-    ENTRY(SHT_NULL)
+    ENTRY(SHT_NULL_)
     ENTRY(PROGBITS)
     ENTRY(SYMTAB)
     ENTRY(STRTAB)

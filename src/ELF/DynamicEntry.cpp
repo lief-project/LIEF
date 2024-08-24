@@ -119,7 +119,7 @@ const char* to_string(DynamicEntry::TAG tag) {
   #define ENTRY(X) std::pair(DynamicEntry::TAG::X, #X)
   STRING_MAP enums2str {
     ENTRY(UNKNOWN),
-    ENTRY(DT_NULL),
+    ENTRY(DT_NULL_),
     ENTRY(NEEDED),
     ENTRY(PLTRELSZ),
     ENTRY(PLTGOT),

@@ -136,7 +136,7 @@ DynamicEntry& Binary::add(const DynamicEntry& entry) {
 
   const auto it_new_place = std::find_if(std::begin(dynamic_entries_), std::end(dynamic_entries_),
       [&new_one] (const std::unique_ptr<DynamicEntry>& e) {
-        return e->tag() == new_one->tag() || e->tag() == DynamicEntry::TAG::DT_NULL;
+        return e->tag() == new_one->tag() || e->tag() == DynamicEntry::TAG::DT_NULL_;
       });
 
   auto* ptr = new_one.get();

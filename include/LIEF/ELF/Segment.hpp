@@ -63,7 +63,7 @@ class LIEF_API Segment : public Object {
 
   enum class TYPE : uint64_t {
     UNKNOWN       = uint64_t(-1),
-    PT_NULL       = 0, /**< Unused segment. */
+    PT_NULL_      = 0, /**< Unused segment. */
     LOAD          = 1, /**< Loadable segment. */
     DYNAMIC       = 2, /**< Dynamic linking information. */
     INTERP        = 3, /**< Interpreter pathname. */
@@ -270,7 +270,7 @@ class LIEF_API Segment : public Object {
   uint64_t handler_size() const;
   span<uint8_t> writable_content();
 
-  TYPE type_ = TYPE::PT_NULL;
+  TYPE type_ = TYPE::PT_NULL_;
   ARCH arch_ = ARCH::NONE;
   uint32_t flags_ = 0;
   uint64_t file_offset_ = 0;

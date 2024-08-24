@@ -47,7 +47,7 @@ void create<Segment>(nb::module_& m) {
 
   #define ENTRY(X) .value(to_string(Segment::TYPE::X), Segment::TYPE::X)
   enum_<Segment::TYPE>(seg, "TYPE")
-    ENTRY(PT_NULL)
+    ENTRY(PT_NULL_)
     ENTRY(LOAD)
     ENTRY(DYNAMIC)
     ENTRY(INTERP)
