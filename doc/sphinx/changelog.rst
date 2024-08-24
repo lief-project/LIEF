@@ -21,6 +21,8 @@ Changelog
 :ELF:
 
   * Add support for RISC-V architecture
+  * Fix bug when trying to remove a dynamic symbol that is associated with
+    multiple relocations (:issue:`1089`)
 
 :Extended:
 

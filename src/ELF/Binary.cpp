@@ -633,27 +633,41 @@ void Binary::remove_dynamic_symbol(Symbol* symbol) {
     R.symbol(nullptr);
   }
 
-  it_relocation = std::find_if(std::begin(relocations_), std::end(relocations_),
-      [symbol] (const std::unique_ptr<Relocation>& relocation) {
-        return relocation->purpose() == Relocation::PURPOSE::DYNAMIC &&
-               relocation->has_symbol() && relocation->symbol() == symbol;
-      });
+  const size_t nb_relocs = relocations_.size();
+  size_t rel_sizeof = 0;
 
-  if (it_relocation != std::end(relocations_)) {
-    const size_t rel_sizeof = get_relocation_sizeof(*this, **it_relocation);
+  relocations_.erase(
+    std::remove_if(relocations_.begin(), relocations_.end(),
+      [symbol, this, &rel_sizeof] (const std::unique_ptr<Relocation>& reloc) {
+        if (reloc->purpose() != Relocation::PURPOSE::DYNAMIC) {
+          return false;
+        }
+
+        if (const Symbol* sym = reloc->symbol(); sym == symbol) {
+          rel_sizeof = get_relocation_sizeof(*this, *reloc);
+          return true;
+        }
+
+        return false;
+      }
+    ), relocations_.end());
+
+  const size_t nb_deleted_relocs = nb_relocs - relocations_.size();
+
+  if (nb_deleted_relocs > 0) {
+    const size_t relocs_size = nb_deleted_relocs * rel_sizeof;
     if (auto* DT = get(DynamicEntry::TAG::RELASZ)) {
       const uint64_t sizes = DT->value();
-      if (sizes >= rel_sizeof) {
-        DT->value(sizes - rel_sizeof);
+      if (sizes >= relocs_size) {
+        DT->value(sizes - relocs_size);
       }
     }
     else if (auto* DT = get(DynamicEntry::TAG::RELSZ)) {
       const uint64_t sizes = DT->value();
-      if (sizes >= rel_sizeof) {
-        DT->value(sizes - rel_sizeof);
+      if (sizes >= relocs_size) {
+        DT->value(sizes - relocs_size);
       }
     }
-    relocations_.erase(it_relocation);
   }
 
   // Update symbol versions

@@ -57,3 +57,18 @@ def test_issue_1082():
     assert imp_symbols[0] == "printf"
     assert imp_symbols[2] == "__libc_start_main@GLIBC_2.34"
     assert imp_symbols[3] == "printf@GLIBC_2.27"
+
+def test_issue_1089(tmp_path: Path):
+    elf = lief.ELF.parse(get_sample("ELF/libip4tc.so.2.0.0"))
+
+    original_nb_relocations = len(elf.dynamic_relocations)
+
+    elf.remove_dynamic_symbol("iptc_read_counter")
+
+    out = tmp_path / "libip4tc.so.2.0.0"
+    elf.write(out.as_posix())
+
+    new = lief.ELF.parse(out)
+
+    assert new.get_symbol("iptc_read_counter") is None
+    assert len(new.dynamic_relocations) == original_nb_relocations - 2
