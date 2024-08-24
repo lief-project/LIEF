@@ -45,7 +45,7 @@ std::string hex_dump(span<const uint8_t> data, const std::string& sep) {
 }
 
 inline std::string pretty_hex(char c) {
-  if (::isascii(c) && ::isprint(c)) {
+  if (is_printable(c)) {
     return std::string("") + c;
   }
   return ".";
