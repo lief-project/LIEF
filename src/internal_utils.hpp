@@ -199,6 +199,20 @@ std::string hex_dump(const std::vector<uint8_t>& data,
 std::string hex_dump(span<const uint8_t> data,
                      const std::string& sep = ":");
 
+std::string dump(const uint8_t* buffer, size_t size,
+                 const std::string& title = "", const std::string& prefix = "", size_t limit = 0);
+
+inline std::string dump(span<const uint8_t> data,
+                 const std::string& title = "", const std::string& prefix = "", size_t limit = 0) {
+  return dump(data.data(), data.size(), title, prefix, limit);
+}
+
+inline std::string dump(const std::vector<uint8_t>& data,
+                 const std::string& title = "", const std::string& prefix = "", size_t limit = 0) {
+  return dump(data.data(), data.size(), title, prefix, limit);
+}
+
+
 }
 
 #endif

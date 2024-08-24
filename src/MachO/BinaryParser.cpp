@@ -138,29 +138,27 @@ ok_error_t BinaryParser::init_and_parse() {
 }
 
 
-ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports, uint64_t start,
-                                           uint64_t end, const std::string& prefix,
+ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
+                                           BinaryStream& stream,
+                                           uint64_t start,
+                                           const std::string& prefix,
                                            bool* invalid_names)
 {
-  if (stream_->pos() >= end) {
+  if (!stream) {
     return make_error_code(lief_errors::read_error);
   }
 
-  if (start > stream_->pos()) {
-    return make_error_code(lief_errors::read_error);
-  }
-
-  const auto terminal_size = stream_->read<uint8_t>();
+  const auto terminal_size = stream.read<uint8_t>();
   if (!terminal_size) {
     LIEF_ERR("Can't read terminal size");
     return make_error_code(lief_errors::read_error);
   }
-  uint64_t children_offset = stream_->pos() + *terminal_size;
+  uint64_t children_offset = stream.pos() + *terminal_size;
 
   if (*terminal_size != 0) {
-    uint64_t offset = stream_->pos() - start;
+    uint64_t offset = stream.pos();
 
-    auto res_flags = stream_->read_uleb128();
+    auto res_flags = stream.read_uleb128();
     if (!res_flags) {
       return make_error_code(lief_errors::read_error);
     }
@@ -198,7 +196,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports, uint64_t sta
     // REEXPORT
     // ========
     if (export_info->has(ExportInfo::FLAGS::REEXPORT)) {
-      auto res_ordinal = stream_->read_uleb128();
+      auto res_ordinal = stream.read_uleb128();
       if (!res_ordinal) {
         LIEF_ERR("Can't read uleb128 to determine the ordinal value");
         return make_error_code(lief_errors::parsing_error);
@@ -206,7 +204,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports, uint64_t sta
       const uint64_t ordinal = *res_ordinal;
       export_info->other_ = ordinal;
 
-      auto res_imported_name = stream_->peek_string();
+      auto res_imported_name = stream.peek_string();
       if (!res_imported_name) {
         LIEF_ERR("Can't read imported_name");
         return make_error_code(lief_errors::parsing_error);
@@ -252,7 +250,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports, uint64_t sta
         LIEF_WARN("Library ordinal out of range");
       }
     } else {
-      auto address = stream_->read_uleb128();
+      auto address = stream.read_uleb128();
       if (!address) {
         LIEF_ERR("Can't read export address");
         return make_error_code(lief_errors::parsing_error);
@@ -263,7 +261,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports, uint64_t sta
     // STUB_AND_RESOLVER
     // =================
     if (export_info->has(ExportInfo::FLAGS::STUB_AND_RESOLVER)) {
-      auto other = stream_->read_uleb128();
+      auto other = stream.read_uleb128();
       if (!other) {
         LIEF_ERR("Can't read 'other' value for the export info");
         return make_error_code(lief_errors::parsing_error);
@@ -274,14 +272,14 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports, uint64_t sta
     exports.push_back(std::move(export_info));
 
   }
-  stream_->setpos(children_offset);
-  const auto nb_children = stream_->read<uint8_t>();
+  stream.setpos(children_offset);
+  const auto nb_children = stream.read<uint8_t>();
   if (!nb_children) {
     LIEF_ERR("Can't read nb_children");
     return make_error_code(lief_errors::parsing_error);
   }
   for (size_t i = 0; i < *nb_children; ++i) {
-    auto suffix = stream_->read_string();
+    auto suffix = stream.read_string();
     if (!suffix) {
       LIEF_ERR("Can't read suffix");
       break;
@@ -295,7 +293,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports, uint64_t sta
       }
     }
 
-    auto res_child_node_offet = stream_->read_uleb128();
+    auto res_child_node_offet = stream.read_uleb128();
     if (!res_child_node_offet) {
       LIEF_ERR("Can't read child_node_offet");
       break;
@@ -306,13 +304,14 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports, uint64_t sta
       break;
     }
 
-    if (!visited_.insert(start + child_node_offet).second) {
+    if (!visited_.insert(child_node_offet).second) {
       break;
     }
-    size_t current_pos = stream_->pos();
-    stream_->setpos(start + child_node_offet);
-    parse_export_trie(exports, start, end, name, invalid_names);
-    stream_->setpos(current_pos);
+
+    {
+      ScopedStream scoped(stream, child_node_offet);
+      parse_export_trie(exports, *scoped, start, name, invalid_names);
+    }
   }
   return ok();
 }
@@ -352,10 +351,10 @@ ok_error_t BinaryParser::parse_dyld_exports() {
   }
 
   exports->content_ = content.subspan(rel_offset, size);
+  SpanStream trie_stream(exports->content_);
 
-  stream_->setpos(offset);
   bool invalid_names = false;
-  parse_export_trie(exports->export_info_, offset, end_offset, "",
+  parse_export_trie(exports->export_info_, trie_stream, offset, "",
                     &invalid_names);
   return ok();
 }
@@ -397,9 +396,10 @@ ok_error_t BinaryParser::parse_dyldinfo_export() {
 
   dyldinfo->export_trie_ = content.subspan(rel_offset, size);
 
-  stream_->setpos(offset);
+  SpanStream trie_stream(dyldinfo->export_trie_);
+
   bool invalid_names = false;
-  parse_export_trie(dyldinfo->export_info_, offset, end_offset, "", &invalid_names);
+  parse_export_trie(dyldinfo->export_info_, trie_stream, offset, "", &invalid_names);
   return ok();
 }
 
