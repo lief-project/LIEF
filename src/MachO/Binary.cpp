@@ -2345,10 +2345,13 @@ const TwoLevelHints* Binary::two_level_hints() const {
   return nullptr;
 }
 
-
-
 void Binary::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
+}
+
+Symbol& Binary::add(const Symbol& symbol) {
+  symbols_.push_back(std::make_unique<Symbol>(symbol));
+  return *symbols_.back();
 }
 
 Symbol* Binary::add_local_symbol(uint64_t address, const std::string& name) {

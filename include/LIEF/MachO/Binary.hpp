@@ -817,6 +817,9 @@ class LIEF_API Binary : public LIEF::Binary  {
     return fileset_name_;
   }
 
+  //! Add a symbol to this binary
+  Symbol& add(const Symbol& symbol);
+
   ~Binary() override;
 
   //! Shift the content located right after the Load commands table.
