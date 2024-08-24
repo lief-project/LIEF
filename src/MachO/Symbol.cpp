@@ -103,23 +103,12 @@ const Symbol& Symbol::indirect_local() {
   return local;
 }
 
-
 std::ostream& operator<<(std::ostream& os, const Symbol& symbol) {
-  //if ((symbol.type_ & MACHO_SYMBOL_TYPES::N_TYPE) == MACHO_SYMBOL_TYPES::N_TYPE) {
-  //  type = to_string(
-  //      static_cast<N_LIST_TYPES>(symbol.type_ & MACHO_SYMBOL_TYPES::N_TYPE));
-  //} else if((symbol.type_ & MACHO_SYMBOL_TYPES::N_STAB) > 0) {
-  //  type = to_string(MACHO_SYMBOL_TYPES::N_STAB);
-  //} else if((symbol.type_ & MACHO_SYMBOL_TYPES::N_PEXT) == MACHO_SYMBOL_TYPES::N_PEXT) {
-  //  type = to_string(MACHO_SYMBOL_TYPES::N_PEXT);
-  //}  else if((symbol.type_ & MACHO_SYMBOL_TYPES::N_EXT) == MACHO_SYMBOL_TYPES::N_EXT) {
-  //  type = to_string(MACHO_SYMBOL_TYPES::N_EXT);
-  //}
-
   os << fmt::format(
-    "name={}, type={}, desc={}, value=0x{:08x}",
-    symbol.name(), symbol.raw_type(), symbol.description(), symbol.value()
-  ) << '\n';
+    "name={}, type={}, desc={}, value=0x{:08x}, origin={}",
+    symbol.name(), symbol.raw_type(), symbol.description(), symbol.value(),
+    to_string(symbol.origin())
+  );
   return os;
 }
 
