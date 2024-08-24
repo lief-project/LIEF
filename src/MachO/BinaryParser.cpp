@@ -334,6 +334,11 @@ ok_error_t BinaryParser::parse_dyld_exports() {
   uint64_t end_offset = offset + size;
 
   SegmentCommand* linkedit = binary_->segment_from_offset(offset);
+
+  if (linkedit == nullptr) {
+    linkedit = binary_->get_segment("__LINKEDIT");
+  }
+
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the export trie");
     return make_error_code(lief_errors::not_found);
@@ -373,6 +378,11 @@ ok_error_t BinaryParser::parse_dyldinfo_export() {
   uint64_t end_offset = offset + size;
 
   SegmentCommand* linkedit = binary_->segment_from_offset(offset);
+
+  if (linkedit == nullptr) {
+    linkedit = binary_->get_segment("__LINKEDIT");
+  }
+
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the export trie");
     return make_error_code(lief_errors::not_found);

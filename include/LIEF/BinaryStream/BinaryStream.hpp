@@ -75,7 +75,8 @@ class BinaryStream {
 
 
   virtual ok_error_t peek_data(std::vector<uint8_t>& container,
-                                      uint64_t offset, uint64_t size)
+                               uint64_t offset, uint64_t size,
+                               uint64_t virtual_address = 0)
   {
 
     if (size == 0) {
@@ -91,7 +92,7 @@ class BinaryStream {
       return make_error_code(lief_errors::read_error);
     }
     container.resize(size);
-    if (peek_in(container.data(), offset, size)) {
+    if (peek_in(container.data(), offset, size, virtual_address)) {
       return ok();
     }
     return make_error_code(lief_errors::read_error);
@@ -222,9 +223,11 @@ class BinaryStream {
 
   protected:
   BinaryStream() = default;
-  virtual result<const void*> read_at(uint64_t offset, uint64_t size) const = 0;
-  virtual ok_error_t peek_in(void* dst, uint64_t offset, uint64_t size) const {
-    if (auto raw = read_at(offset, size)) {
+  virtual result<const void*> read_at(uint64_t offset, uint64_t size,
+                                      uint64_t virtual_address = 0) const = 0;
+  virtual ok_error_t peek_in(void* dst, uint64_t offset, uint64_t size,
+                             uint64_t virtual_address = 0) const {
+    if (auto raw = read_at(offset, size, virtual_address)) {
       if (dst == nullptr) {
         return make_error_code(lief_errors::read_error);
       }

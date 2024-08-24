@@ -25,7 +25,7 @@ MemoryStream::MemoryStream(uintptr_t base_address) :
   MemoryStream(base_address, MAX_MEM_SIZE)
 {}
 
-result<const void*> MemoryStream::read_at(uint64_t offset, uint64_t size) const {
+result<const void*> MemoryStream::read_at(uint64_t offset, uint64_t size, uint64_t /*va*/) const {
   if (offset > size_ || (offset + size) > size_) {
     return make_error_code(lief_errors::read_out_of_bound);
   }

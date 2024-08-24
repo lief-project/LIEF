@@ -289,7 +289,11 @@ ok_error_t BinaryParser::parse_load_commands() {
               const auto* p = reinterpret_cast<const uint8_t*>(address);
               segment->data_ = {p, p + segment->file_size()};
             } else {
-              if (!stream_->peek_data(segment->data_, segment->file_offset(), segment->file_size())) {
+              if (!stream_->peek_data(segment->data_,
+                                      segment->file_offset(),
+                                      segment->file_size(),
+                                      segment->virtual_address()))
+              {
                 LIEF_ERR("Segment {}: content corrupted!", segment->name());
               }
             }
@@ -1250,6 +1254,11 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
   }
 
   SegmentCommand* linkedit = binary_->segment_from_offset(offset);
+
+  if (linkedit == nullptr) {
+    linkedit = binary_->get_segment("__LINKEDIT");
+  }
+
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the rebase opcodes");
     return make_error_code(lief_errors::not_found);
@@ -1490,6 +1499,11 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
   }
 
   SegmentCommand* linkedit = binary_->segment_from_offset(offset);
+
+  if (linkedit == nullptr) {
+    linkedit = binary_->get_segment("__LINKEDIT");
+  }
+
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the regular bind opcodes");
     return make_error_code(lief_errors::not_found);
@@ -1852,6 +1866,11 @@ ok_error_t BinaryParser::parse_dyldinfo_weak_bind() {
   }
 
   SegmentCommand* linkedit = binary_->segment_from_offset(offset);
+
+  if (linkedit == nullptr) {
+    linkedit = binary_->get_segment("__LINKEDIT");
+  }
+
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the weak bind opcodes");
     return make_error_code(lief_errors::not_found);
@@ -2101,6 +2120,11 @@ ok_error_t BinaryParser::parse_dyldinfo_lazy_bind() {
   }
 
   SegmentCommand* linkedit = binary_->segment_from_offset(offset);
+
+  if (linkedit == nullptr) {
+    linkedit = binary_->get_segment("__LINKEDIT");
+  }
+
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the lazy bind opcodes");
     return make_error_code(lief_errors::not_found);
@@ -3334,6 +3358,11 @@ ok_error_t BinaryParser::post_process(SymbolCommand& cmd) {
   using nlist_t = typename MACHO_T::nlist;
   /* n_list table */ {
     SegmentCommand* linkedit = binary_->segment_from_offset(cmd.symbol_offset());
+
+    if (linkedit == nullptr) {
+      linkedit = binary_->get_segment("__LINKEDIT");
+    }
+
     if (linkedit == nullptr) {
       LIEF_WARN("Can't find the segment that contains the LC_SYMTAB.n_list");
       return make_error_code(lief_errors::not_found);
@@ -3359,6 +3388,11 @@ ok_error_t BinaryParser::post_process(SymbolCommand& cmd) {
 
   /* strtable */ {
     SegmentCommand* linkedit = binary_->segment_from_offset(cmd.strings_offset());
+
+    if (linkedit == nullptr) {
+      linkedit = binary_->get_segment("__LINKEDIT");
+    }
+
     if (linkedit == nullptr) {
       LIEF_WARN("Can't find the segment that contains the LC_SYMTAB.n_list");
       return make_error_code(lief_errors::not_found);
@@ -3393,9 +3427,13 @@ ok_error_t BinaryParser::post_process(FunctionStarts& cmd) {
   LIEF_DEBUG("[^] Post processing LC_FUNCTION_STARTS");
   SegmentCommand* linkedit = binary_->segment_from_offset(cmd.data_offset());
   if (linkedit == nullptr) {
-    LIEF_WARN("Can't find the segment that contains the LC_FUNCTION_STARTS");
+    linkedit = binary_->get_segment("__LINKEDIT");
+  }
+
+  if (linkedit == nullptr) {
+    LIEF_WARN("Can't find the segment that contains the LC_FUNCTION_STARTS (offset=0x{:016x})", cmd.data_offset());
     return make_error_code(lief_errors::not_found);
-  };
+  }
 
   span<uint8_t> content = linkedit->writable_content();
 
@@ -3420,6 +3458,11 @@ template<class MACHO_T>
 ok_error_t BinaryParser::post_process(DataInCode& cmd) {
   LIEF_DEBUG("[^] Post processing LC_DATA_IN_CODE");
   SegmentCommand* linkedit = binary_->segment_from_offset(cmd.data_offset());
+
+  if (linkedit == nullptr) {
+    linkedit = binary_->get_segment("__LINKEDIT");
+  }
+
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the LC_DATA_IN_CODE");
     return make_error_code(lief_errors::not_found);
@@ -3447,6 +3490,11 @@ template<class MACHO_T>
 ok_error_t BinaryParser::post_process(SegmentSplitInfo& cmd) {
   LIEF_DEBUG("[^] Post processing LC_SEGMENT_SPLIT_INFO");
   SegmentCommand* linkedit = binary_->segment_from_offset(cmd.data_offset());
+
+  if (linkedit == nullptr) {
+    linkedit = binary_->get_segment("__LINKEDIT");
+  }
+
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the LC_SEGMENT_SPLIT_INFO");
     return make_error_code(lief_errors::not_found);
@@ -3541,6 +3589,11 @@ template<class MACHO_T>
 ok_error_t BinaryParser::post_process(LinkerOptHint& cmd) {
   LIEF_DEBUG("[^] Post processing LC_LINKER_OPTIMIZATION_HINT");
   SegmentCommand* linkedit = binary_->segment_from_offset(cmd.data_offset());
+
+  if (linkedit == nullptr) {
+    linkedit = binary_->get_segment("__LINKEDIT");
+  }
+
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the LC_LINKER_OPTIMIZATION_HINT");
     return make_error_code(lief_errors::not_found);
@@ -3568,6 +3621,11 @@ template<class MACHO_T>
 ok_error_t BinaryParser::post_process(CodeSignature& cmd) {
   LIEF_DEBUG("[^] Post processing LC_CODE_SIGNATURE");
   SegmentCommand* linkedit = binary_->segment_from_offset(cmd.data_offset());
+
+  if (linkedit == nullptr) {
+    linkedit = binary_->get_segment("__LINKEDIT");
+  }
+
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the LC_CODE_SIGNATURE");
     return make_error_code(lief_errors::not_found);
@@ -3595,6 +3653,11 @@ template<class MACHO_T>
 ok_error_t BinaryParser::post_process(CodeSignatureDir& cmd) {
   LIEF_DEBUG("[^] Post processing LC_DYLIB_CODE_SIGN_DRS");
   SegmentCommand* linkedit = binary_->segment_from_offset(cmd.data_offset());
+
+  if (linkedit == nullptr) {
+    linkedit = binary_->get_segment("__LINKEDIT");
+  }
+
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the LC_DYLIB_CODE_SIGN_DRS");
     return make_error_code(lief_errors::not_found);

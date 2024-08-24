@@ -43,7 +43,7 @@ class DataHandlerStream : public BinaryStream {
     return data_.size();
   }
 
-  result<const void*> read_at(uint64_t offset, uint64_t size) const override {
+  result<const void*> read_at(uint64_t offset, uint64_t size, uint64_t /*va*/) const override {
     if (offset > data_.size() || (offset + size) > data_.size()) {
       return make_error_code(lief_errors::read_error);
     }

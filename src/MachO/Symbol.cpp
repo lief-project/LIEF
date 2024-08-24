@@ -61,7 +61,6 @@ Symbol::Symbol(const details::nlist_64& cmd) :
   value_ = cmd.n_value;
 }
 
-
 void Symbol::swap(Symbol& other) noexcept {
   LIEF::Symbol::swap(other);
 

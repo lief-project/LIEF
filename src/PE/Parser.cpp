@@ -242,7 +242,8 @@ ok_error_t Parser::parse_sections() {
       LIEF_WARN("Data of section section '{}' is too large (0x{:x})", section->name(), size_to_read);
     } else {
 
-      if (!stream_->peek_data(section->content_, offset, size_to_read)) {
+      if (!stream_->peek_data(section->content_, offset, size_to_read,
+                              section->virtual_address())) {
         LIEF_ERR("Section #{:d} ({}) is corrupted", i, section->name());
       }
 
@@ -440,7 +441,9 @@ Parser::parse_resource_node(const details::pe_resource_directory_table& director
       uint32_t code_page      = data_entry.Codepage;
 
       std::vector<uint8_t> leaf_data;
-      if (stream_->peek_data(leaf_data, content_offset, content_size)) {
+      if (stream_->peek_data(leaf_data, content_offset, content_size,
+                             data_entry.DataRVA))
+      {
         auto node = std::make_unique<ResourceData>(std::move(leaf_data), code_page);
 
         node->depth_ = depth + 1;

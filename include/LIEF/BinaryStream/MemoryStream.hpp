@@ -78,7 +78,7 @@ class MemoryStream : public BinaryStream {
   }
 
   protected:
-  result<const void*> read_at(uint64_t offset, uint64_t size) const override;
+  result<const void*> read_at(uint64_t offset, uint64_t size, uint64_t va) const override;
   uintptr_t baseaddr_ = 0;
   uint64_t size_ = 0;
   Binary* binary_ = nullptr;

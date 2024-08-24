@@ -85,6 +85,14 @@ class LIEF_API Symbol : public LIEF::Symbol {
 
   Symbol(const details::nlist_32& cmd);
   Symbol(const details::nlist_64& cmd);
+  Symbol(uint8_t n_type, uint8_t n_sect, uint8_t n_desc, uint64_t value) :
+    type_{n_type},
+    numberof_sections_{n_sect},
+    description_{n_desc},
+    origin_{ORIGIN::LC_SYMTAB}
+  {
+    value_ = value;
+  }
 
   Symbol& operator=(Symbol other);
   Symbol(const Symbol& other);
