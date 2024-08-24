@@ -264,8 +264,11 @@ ok_error_t BinaryParser::parse_load_commands() {
 
           auto* segment = load_command->as<SegmentCommand>();
           segment->index_ = binary_->segments_.size();
-          binary_->offset_seg_[segment->file_offset()] = segment;
           binary_->segments_.push_back(segment);
+
+          if (segment->file_size() > 0) {
+            binary_->offset_seg_[segment->file_offset()] = segment;
+          }
 
           if (segment->name() == "__TEXT" && imagebase < 0) {
             imagebase = segment->virtual_address();

@@ -22,3 +22,7 @@ def test_993(tmp_path):
     new = lief.MachO.parse(out)
     not_err, msg = lief.MachO.check_layout(new)
     assert not_err, msg
+
+def test_1087():
+    target = lief.MachO.parse(get_sample("MachO/fbcb7580db7bc04d695c3fd0308bb344_issue_1087")).at(0)
+    assert target.offset_to_virtual_address(0x42dae) == 0x100042dae
