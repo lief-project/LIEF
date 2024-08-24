@@ -17,6 +17,8 @@ pub enum BindingInfo<'a> {
     Dyld(Dyld<'a>),
     /// Bindings defined in `DYLD_CHAINED_FIXUPS` command
     Chained(Chained<'a>),
+    /// Bindings infered from the indirect symbol table
+    Indirect(Indirect<'a>),
     /// Fallback item
     Generic(Generic<'a>),
 }
@@ -66,6 +68,9 @@ impl AsGeneric for BindingInfo<'_> {
             BindingInfo::Chained(info) => {
                 info.as_generic()
             }
+            BindingInfo::Indirect(info) => {
+                info.as_generic()
+            }
             BindingInfo::Generic(info) => {
                 info.as_generic()
             }
@@ -102,6 +107,13 @@ impl<'a> FromFFI<ffi::MachO_BindingInfo> for BindingInfo<'a> {
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 BindingInfo::Dyld(Dyld::from_ffi(raw))
+            } else if ffi::MachO_IndirectBindingInfo::classof(cmd_ref) {
+                let raw = {
+                    type From = cxx::UniquePtr<ffi::MachO_BindingInfo>;
+                    type To = cxx::UniquePtr<ffi::MachO_IndirectBindingInfo>;
+                    std::mem::transmute::<From, To>(ffi_entry)
+                };
+                BindingInfo::Indirect(Indirect::from_ffi(raw))
             } else {
                 BindingInfo::Generic(Generic::from_ffi(ffi_entry))
             }
@@ -302,3 +314,35 @@ impl AsGeneric for Chained<'_> {
         self.ptr.as_ref().unwrap().as_ref()
     }
 }
+
+/// This structure represents a binding operation coming from the indirect symbol table
+pub struct Indirect<'a> {
+    ptr: cxx::UniquePtr<ffi::MachO_IndirectBindingInfo>,
+    _owner: PhantomData<&'a ()>,
+}
+
+impl fmt::Debug for Indirect<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let base = self as &dyn AsGeneric;
+        f.debug_struct("Indirect")
+            .field("base", &base)
+            .finish()
+    }
+}
+
+impl FromFFI<ffi::MachO_IndirectBindingInfo> for Indirect<'_> {
+    fn from_ffi(ptr: cxx::UniquePtr<ffi::MachO_IndirectBindingInfo>) -> Self {
+        Self {
+            ptr,
+            _owner: PhantomData,
+        }
+    }
+}
+
+impl AsGeneric for Indirect<'_> {
+    fn as_generic(&self) -> &ffi::MachO_BindingInfo {
+        self.ptr.as_ref().unwrap().as_ref()
+    }
+}
+
+

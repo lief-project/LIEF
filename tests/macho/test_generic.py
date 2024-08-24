@@ -306,15 +306,22 @@ def test_subclients():
 def test_bindings_iterator():
     dyld = lief.MachO.parse(get_sample("MachO/MachO64_x86-64_binary_sshd.bin")).at(0)
     chained = lief.MachO.parse(get_sample("MachO/PlugInKitDaemon")).at(0)
+    shared_cache = lief.MachO.parse(get_sample("MachO/liblog_srp.dylib")).at(0)
 
     dyld_bindings = list(dyld.bindings)
     chained_bindings = list(chained.bindings)
+    indirect_bindings = list(shared_cache.bindings)
 
     assert len(dyld_bindings) == 323
     assert len(chained_bindings) == 546
+    assert len(indirect_bindings) == 25
 
     assert dyld_bindings[320].symbol.name == "_vfprintf"
     assert chained_bindings[540].symbol.name == "__objc_empty_cache"
+
+    assert indirect_bindings[0].symbol.name == "___memcpy_chk"
+    assert indirect_bindings[-1].symbol.name == "_strcmp"
+
 
 @pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
 def test_routine():

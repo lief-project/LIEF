@@ -22,6 +22,7 @@ target_sources(pyLIEF PRIVATE
   pyFilesetCommand.cpp
   pyFunctionStarts.cpp
   pyHeader.cpp
+  pyIndirectBindingInfo.cpp
   pyLinkerOptHint.cpp
   pyLoadCommand.cpp
   pyMainCommand.cpp

@@ -38,6 +38,7 @@ class BindingInfoIterator :
     NONE = 0,
     DYLD,
     CHAINED_FIXUPS,
+    INDIRECT,
   };
 
   BindingInfoIterator(const BindingInfoIterator&) = default;
@@ -56,9 +57,11 @@ class BindingInfoIterator :
     chained_fixups_(&fixups)
   {}
 
-  static BindingInfoIterator none() {
-    return BindingInfoIterator();
-  }
+  BindingInfoIterator(const Binary& binary, size_t pos) :
+    pos_(pos),
+    origin_(ORIGIN::INDIRECT),
+    binary_(&binary)
+  {}
 
   bool operator<(const BindingInfoIterator& rhs) const {
     return pos_ < rhs.pos_;
@@ -91,6 +94,7 @@ class BindingInfoIterator :
   union {
     const DyldInfo* dyld_info_ = nullptr;
     const DyldChainedFixups* chained_fixups_;
+    const Binary* binary_;
   };
 
 };

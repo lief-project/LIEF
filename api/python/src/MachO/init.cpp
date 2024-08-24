@@ -60,6 +60,7 @@
 #include <LIEF/MachO/BuildVersion.hpp>
 #include <LIEF/MachO/FilesetCommand.hpp>
 #include <LIEF/MachO/ChainedBindingInfo.hpp>
+#include <LIEF/MachO/IndirectBindingInfo.hpp>
 #include <LIEF/MachO/UnknownCommand.hpp>
 #include <LIEF/MachO/TwoLevelHints.hpp>
 #include <LIEF/MachO/LinkerOptHint.hpp>
@@ -116,6 +117,7 @@ void init_objects(nb::module_& m) {
   CREATE(ChainedBindingInfo, m);
   CREATE(TwoLevelHints, m);
   CREATE(LinkerOptHint, m);
+  CREATE(IndirectBindingInfo, m);
   CREATE(UnknownCommand, m);
   CREATE(Builder, m);
 }

@@ -26,6 +26,7 @@
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "LIEF/MachO/Binary.hpp"
+#include "LIEF/MachO/BuildVersion.hpp"
 #include "LIEF/MachO/Builder.hpp"
 #include "LIEF/MachO/ChainedBindingInfo.hpp"
 #include "LIEF/MachO/CodeSignature.hpp"
@@ -42,23 +43,23 @@
 #include "LIEF/MachO/EncryptionInfo.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
+#include "LIEF/MachO/IndirectBindingInfo.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
-#include "LIEF/MachO/Routine.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
 #include "LIEF/MachO/Relocation.hpp"
 #include "LIEF/MachO/RelocationFixup.hpp"
+#include "LIEF/MachO/Routine.hpp"
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
 #include "LIEF/MachO/SourceVersion.hpp"
-#include "LIEF/MachO/SubFramework.hpp"
 #include "LIEF/MachO/SubClient.hpp"
+#include "LIEF/MachO/SubFramework.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/SymbolCommand.hpp"
 #include "LIEF/MachO/ThreadCommand.hpp"
-#include "LIEF/MachO/BuildVersion.hpp"
 #include "LIEF/MachO/TwoLevelHints.hpp"
 #include "LIEF/MachO/UUIDCommand.hpp"
 #include "LIEF/MachO/VersionMin.hpp"
@@ -2359,7 +2360,10 @@ Binary::it_bindings Binary::bindings() const {
     return make_range(std::move(begin), std::move(end));
   }
 
-  return make_range(BindingInfoIterator::none(), BindingInfoIterator::none());
+  auto begin = BindingInfoIterator(*this, 0);
+  auto end = BindingInfoIterator(*this, indirect_bindings_.size());
+
+  return make_range(std::move(begin), std::move(end));
 }
 
 void Binary::accept(LIEF::Visitor& visitor) const {

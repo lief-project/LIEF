@@ -138,6 +138,9 @@ class LIEF_API BinaryParser : public LIEF::Parser {
   template<class MACHO_T>
   ok_error_t parse_dyldinfo_lazy_bind();
 
+  template<class MACHO_T>
+  ok_error_t infer_indirect_bindings();
+
   using it_opaque_segments = void*; // To avoid including Binary.hpp. It must contains it_opaque_segments
 
   template<class MACHO_T>

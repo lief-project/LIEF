@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/BindingInfoIterator.hpp"
 #include "LIEF/MachO/DyldInfo.hpp"
 #include "LIEF/MachO/DyldBindingInfo.hpp"
 #include "LIEF/MachO/ChainedBindingInfo.hpp"
+#include "LIEF/MachO/IndirectBindingInfo.hpp"
 #include "LIEF/MachO/DyldChainedFixups.hpp"
 
 #include "logging.hpp"
@@ -29,6 +31,8 @@ const BindingInfo& BindingInfoIterator::operator*() const {
       return *dyld_info_->binding_info_.at(pos_);
     case ORIGIN::CHAINED_FIXUPS:
       return *chained_fixups_->all_bindings_.at(pos_);
+    case ORIGIN::INDIRECT:
+      return *binary_->indirect_bindings_.at(pos_);
     case ORIGIN::NONE:
       logging::fatal_error("Can't return a BindingInfo for a NONE iterator");
   }

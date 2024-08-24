@@ -351,6 +351,8 @@ include_cpp! {
 
     generate!("MachO_DyldBindingInfo")
     block_constructors!("MachO_DyldBindingInfo")
+    generate!("MachO_IndirectBindingInfo")
+    block_constructors!("MachO_IndirectBindingInfo")
     generate!("MachO_DyldChainedFixups")
     block_constructors!("MachO_DyldChainedFixups")
     generate!("MachO_DyldChainedFixups_it_bindings")

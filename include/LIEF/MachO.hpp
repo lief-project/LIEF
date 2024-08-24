@@ -47,6 +47,7 @@
 #include "LIEF/MachO/FilesetCommand.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "LIEF/MachO/Header.hpp"
+#include "LIEF/MachO/IndirectBindingInfo.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/LoadCommand.hpp"

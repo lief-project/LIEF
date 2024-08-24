@@ -28,6 +28,9 @@ fn print_binding(binding: &binding_info::BindingInfo) {
             format!("{:?}", chained.library());
             format!("{:?}", chained.segment());
         }
+        binding_info::BindingInfo::Indirect(indirect) => {
+            format!("{:?}", indirect.symbol());
+        }
     }
 }
 
@@ -303,5 +306,6 @@ fn test_api() {
     test_with("FAT_MachO_x86_x86-64_library_libc++abi.dylib");
     test_with("libadd_unknown_cmd.so");
     test_with("StocksAnalytics");
+    test_with("liblog_srp.dylib");
     test_with_fullpath("CoreFoundation", "private/MachO/CoreFoundation");
 }

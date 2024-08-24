@@ -50,6 +50,9 @@ class LIEF_API Symbol : public LIEF::Symbol {
   friend class Binary;
 
   public:
+  static constexpr int SELF_LIBRARY_ORD = 0x0; // Mirror SELF_LIBRARY_ORDINAL
+  static constexpr int MAIN_EXECUTABLE_ORD = 0xff; // Mirror DYNAMIC_LOOKUP_ORDINAL
+  static constexpr int DYNAMIC_LOOKUP_ORD = 0xfe; // EXECUTABLE_ORDINAL
 
   //! Category of the symbol when the symbol comes from the `LC_SYMTAB` command.
   //! The category is defined according to the `LC_DYSYMTAB` (DynamicSymbolCommand) command.
@@ -78,6 +81,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
     INDIRECT      = 0xau  ///< The symbol is defined to be the same as another symbol. The n_value field is an index into the string table specifying the name of the other symbol. When that symbol is linked, both this and the other symbol point to the same defined type and value.
   };
 
+
   //! Same as N_TYPE
   static constexpr uint32_t TYPE_MASK = 0x0e;
 
@@ -99,6 +103,16 @@ class LIEF_API Symbol : public LIEF::Symbol {
   void swap(Symbol& other) noexcept;
 
   ~Symbol() override = default;
+
+
+  static bool is_valid_index_ordinal(int idx) {
+    return idx != SELF_LIBRARY_ORD && idx != MAIN_EXECUTABLE_ORD &&
+           idx != DYNAMIC_LOOKUP_ORD;
+  }
+
+  int library_ordinal() const {
+    return (description() >> 8) & 0xff;
+  }
 
   //! Raw value of `nlist_xx.n_type`
   uint8_t raw_type() const {

@@ -12,6 +12,11 @@ Changelog
   * Add :attr:`lief.MachO.Binary.bindings` / :cpp:func:`LIEF::MachO::Binary::bindings`
     to iterate over the bindings info located in :class:`lief.MachO.DyldInfo` or
     :class:`lief.MachO.ChainedBindingInfo`
+  * Add :class:`lief.MachO.IndirectBindingInfo` / :cpp:class:`LIEF::MachO::IndirectBindingInfo`
+    to represent a binding operation inferred from the indirect symbol table.
+
+    This can be handy if a Mach-O does not have the commands :class:`~lief.MachO.DyldInfo`
+    or :class:`~lief.MachO.ChainedBindingInfo` (e.g. extracted shared cache library)
 
 :ELF:
 

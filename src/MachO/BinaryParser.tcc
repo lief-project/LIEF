@@ -23,6 +23,7 @@
 
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/BinaryParser.hpp"
+#include "LIEF/MachO/BuildVersion.hpp"
 #include "LIEF/MachO/ChainedBindingInfo.hpp"
 #include "LIEF/MachO/CodeSignature.hpp"
 #include "LIEF/MachO/CodeSignatureDir.hpp"
@@ -36,20 +37,18 @@
 #include "LIEF/MachO/DylinkerCommand.hpp"
 #include "LIEF/MachO/DynamicSymbolCommand.hpp"
 #include "LIEF/MachO/EncryptionInfo.hpp"
-#include "LIEF/MachO/BuildVersion.hpp"
-#include "LIEF/MachO/EnumToString.hpp"
 #include "LIEF/MachO/FilesetCommand.hpp"
-#include "LIEF/MachO/UnknownCommand.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
+#include "LIEF/MachO/IndirectBindingInfo.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
-#include "LIEF/MachO/Routine.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
 #include "LIEF/MachO/Relocation.hpp"
 #include "LIEF/MachO/RelocationDyld.hpp"
 #include "LIEF/MachO/RelocationFixup.hpp"
 #include "LIEF/MachO/RelocationObject.hpp"
+#include "LIEF/MachO/Routine.hpp"
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
@@ -61,6 +60,7 @@
 #include "LIEF/MachO/ThreadCommand.hpp"
 #include "LIEF/MachO/TwoLevelHints.hpp"
 #include "LIEF/MachO/UUIDCommand.hpp"
+#include "LIEF/MachO/UnknownCommand.hpp"
 #include "LIEF/MachO/VersionMin.hpp"
 
 #include "MachO/Structures.hpp"
@@ -174,6 +174,12 @@ ok_error_t BinaryParser::parse() {
   }
   if (LinkerOptHint* opt = binary_->linker_opt_hint()) {
     post_process<MACHO_T>(*opt);
+  }
+
+  if (binary_->dyld_info() == nullptr &&
+      binary_->dyld_chained_fixups() == nullptr)
+  {
+    infer_indirect_bindings<MACHO_T>();
   }
 
   if (config_.parse_overlay) {
@@ -3709,6 +3715,59 @@ ok_error_t BinaryParser::post_process(TwoLevelHints& cmd) {
     static_cast<LinkEdit*>(linkedit)->two_lvl_hint_ = &cmd;
   } else {
     LIEF_WARN("Weird: LC_TWOLEVEL_HINTS is not in the __LINKEDIT segment");
+  }
+  return ok();
+}
+
+
+template<class MACHO_T>
+ok_error_t BinaryParser::infer_indirect_bindings() {
+  const DynamicSymbolCommand* dynsym = binary_->dynamic_symbol_command();
+  if (dynsym == nullptr) {
+    return ok();
+  }
+
+  for (SegmentCommand& segment : binary_->segments()) {
+    for (Section& section : segment.sections()) {
+      const Section::TYPE type = section.type();
+      const bool might_have_indirect =
+        type == Section::TYPE::NON_LAZY_SYMBOL_POINTERS ||
+        type == Section::TYPE::LAZY_SYMBOL_POINTERS ||
+        type == Section::TYPE::LAZY_DYLIB_SYMBOL_POINTERS ||
+        type == Section::TYPE::THREAD_LOCAL_VARIABLE_POINTERS ||
+        type == Section::TYPE::SYMBOL_STUBS;
+      if (!might_have_indirect) {
+        continue;
+      }
+
+      uint32_t stride = type == Section::TYPE::SYMBOL_STUBS ?
+                        section.reserved2() :
+                        sizeof(typename MACHO_T::uint);
+      uint32_t count = section.size() / stride;
+      uint32_t n = section.reserved1();
+      auto indirect_syms = dynsym->indirect_symbols();
+
+      for (size_t i = 0; i < count; ++i) {
+        uint64_t addr = section.virtual_address() + i * stride;
+        if (n + i > indirect_syms.size()) {
+          return make_error_code(lief_errors::corrupted);
+        }
+        Symbol& sym = indirect_syms[n + i];
+        const int lib_ordinal = sym.library_ordinal();
+        DylibCommand* dylib = nullptr;
+
+        if (Symbol::is_valid_index_ordinal(lib_ordinal)) {
+          const size_t idx = lib_ordinal - 1;
+          if (idx < binding_libs_.size()) {
+            dylib = binding_libs_[idx];
+          }
+        }
+        auto binding = std::make_unique<IndirectBindingInfo>(
+          segment, sym, lib_ordinal, dylib, addr
+        );
+        binary_->indirect_bindings_.push_back(std::move(binding));
+      }
+    }
   }
   return ok();
 }

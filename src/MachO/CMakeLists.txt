@@ -33,6 +33,7 @@ target_sources(LIB_LIEF PRIVATE
   FilesetCommand.cpp
   FunctionStarts.cpp
   Header.cpp
+  IndirectBindingInfo.cpp
   LinkEdit.cpp
   LinkerOptHint.cpp
   LoadCommand.cpp

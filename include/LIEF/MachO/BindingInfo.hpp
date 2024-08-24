@@ -42,13 +42,13 @@ class LIEF_API BindingInfo : public Object {
   public:
   enum class TYPES {
     UNKNOWN = 0,
-    DYLD_INFO,    /// Binding associated with the Dyld info opcodes
-    CHAINED,      /// Binding associated with the chained fixups
-    CHAINED_LIST, /// Internal use
+    DYLD_INFO,       /// Binding associated with the Dyld info opcodes
+    CHAINED,         /// Binding associated with the chained fixups
+    CHAINED_LIST,    /// Internal use
+    INDIRECT_SYMBOL, /// Infered from the indirect symbols table
   };
 
   BindingInfo() = default;
-
   BindingInfo(const BindingInfo& other);
   void swap(BindingInfo& other) noexcept;
 

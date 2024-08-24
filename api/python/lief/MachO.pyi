@@ -1109,6 +1109,9 @@ class Header(lief.Object):
     @property
     def flags_list(self) -> list[lief.MachO.Header.FLAGS]: ...
 
+class IndirectBindingInfo(BindingInfo):
+    def __init__(self, *args, **kwargs) -> None: ...
+
 class LinkEdit(SegmentCommand):
     def __init__(self, *args, **kwargs) -> None: ...
 

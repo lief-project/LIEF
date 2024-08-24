@@ -58,18 +58,19 @@ class EncryptionInfo;
 class ExportInfo;
 class FunctionStarts;
 class Header;
+class IndirectBindingInfo;
 class LinkerOptHint;
 class MainCommand;
 class Parser;
-class Routine;
 class RPathCommand;
 class Relocation;
+class Routine;
 class Section;
 class SegmentCommand;
 class SegmentSplitInfo;
 class SourceVersion;
-class SubFramework;
 class SubClient;
+class SubFramework;
 class Symbol;
 class SymbolCommand;
 class ThreadCommand;
@@ -84,6 +85,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   friend class BinaryParser;
   friend class Builder;
   friend class DyldInfo;
+  friend class BindingInfoIterator;
 
   public:
   struct range_t {
@@ -929,6 +931,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   uint64_t in_memory_base_addr_ = 0;
   std::string fileset_name_;
   std::vector<uint8_t> overlay_;
+  std::vector<std::unique_ptr<IndirectBindingInfo>> indirect_bindings_;
 };
 
 } // namespace MachO
