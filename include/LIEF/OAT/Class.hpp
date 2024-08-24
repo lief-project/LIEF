@@ -23,6 +23,7 @@
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 
+#include <string>
 
 namespace LIEF {
 namespace DEX {

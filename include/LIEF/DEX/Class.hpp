@@ -17,6 +17,7 @@
 #define LIEF_DEX_CLASS_H
 
 #include <climits>
+#include <string>
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
