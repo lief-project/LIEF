@@ -74,7 +74,7 @@ std::string dump(const uint8_t* buffer, size_t size,
       out = prefix + "+" + std::string(22 * 3, '-') + "---+" + "\n" + prefix + "| ";
     }
 
-    if (i > 0 and i % 16 == 0) {
+    if (i > 0 && i % 16 == 0) {
       out += "\n" + prefix + "| ";
     }
 
