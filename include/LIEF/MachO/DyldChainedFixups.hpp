@@ -25,7 +25,9 @@
 namespace LIEF {
 namespace MachO {
 
+class Binary;
 class BinaryParser;
+class BindingInfoIterator;
 class Builder;
 class ChainedBindingInfo;
 class ChainedBindingInfoList;
@@ -47,6 +49,8 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
   friend class BinaryParser;
   friend class Builder;
   friend class LinkEdit;
+  friend class BindingInfoIterator;
+  friend class Binary;
 
   public:
   //! Structure that mirrors the raw dyld_chained_starts_in_segment

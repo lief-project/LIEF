@@ -119,6 +119,34 @@ class Logger {
   std::shared_ptr<spdlog::logger> sink_;
 };
 
+
+inline void critial(const char *msg) {
+  LIEF::logging::log(LIEF::logging::LEVEL::CRITICAL, msg);
+}
+
+template <typename... Args>
+void critial(const char *fmt, const Args &... args) {
+  LIEF::logging::log(LIEF::logging::LEVEL::CRITICAL,
+    fmt::format(fmt, args...)
+  );
+}
+
+[[noreturn]] inline void terminate() {
+  std::abort();
+}
+
+[[noreturn]] inline void fatal_error(const char* msg) {
+  critial(msg);
+  terminate();
+}
+
+template <typename... Args>
+[[noreturn]] void fatal_error(const char *fmt, const Args &... args) {
+  critial(fmt, args...);
+  terminate();
+}
+
+
 }
 }
 

@@ -35,6 +35,7 @@ namespace MachO {
 
 class Binary;
 class BinaryParser;
+class BindingInfoIterator;
 class Builder;
 class DyldBindingInfo;
 class ExportInfo;
@@ -52,6 +53,7 @@ class LIEF_API DyldInfo : public LoadCommand {
   friend class Binary;
   friend class Builder;
   friend class LinkEdit;
+  friend class BindingInfoIterator;
 
   public:
   //! Tuple of ``offset`` and ``size``

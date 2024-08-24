@@ -303,6 +303,19 @@ def test_subclients():
     assert macho.subclients[0].client == "NewsArticles"
     assert macho.subclients[-1].client == "StocksAppKitBundle"
 
+def test_bindings_iterator():
+    dyld = lief.MachO.parse(get_sample("MachO/MachO64_x86-64_binary_sshd.bin")).at(0)
+    chained = lief.MachO.parse(get_sample("MachO/PlugInKitDaemon")).at(0)
+
+    dyld_bindings = list(dyld.bindings)
+    chained_bindings = list(chained.bindings)
+
+    assert len(dyld_bindings) == 323
+    assert len(chained_bindings) == 546
+
+    assert dyld_bindings[320].symbol.name == "_vfprintf"
+    assert chained_bindings[540].symbol.name == "__objc_empty_cache"
+
 @pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
 def test_routine():
     macho = lief.MachO.parse(get_sample("private/MachO/CoreFoundation")).at(0)
@@ -321,3 +334,4 @@ def test_routine():
 def test_arm64e():
     sample = lief.MachO.parse(get_sample("private/MachO/libCoreKE_arm64e.dylib")).at(0)
     assert sample.support_arm64_ptr_auth
+

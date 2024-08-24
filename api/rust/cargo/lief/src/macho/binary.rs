@@ -30,10 +30,11 @@ use super::header::Header;
 use super::relocation::Relocations;
 use super::section::Sections;
 use super::symbol::Symbols;
+use super::binding_info::BindingInfo;
 use lief_ffi as ffi;
 
 use crate::common::{into_optional, FromFFI};
-use crate::generic;
+use crate::{generic, declare_fwd_iterator};
 use crate::objc::Metadata;
 
 /// This is the main interface to read and write Mach-O binary attributes.
@@ -224,6 +225,11 @@ impl Binary {
         self.ptr.support_arm64_ptr_auth()
     }
 
+    /// Return an iterator over the bindings located in [`DyldInfo`] or [`DyldChainedFixups`]
+    pub fn bindings(&self) -> BindingsInfo {
+        BindingsInfo::new(self.ptr.bindings())
+    }
+
     /// Return Objective-C metadata if present
     pub fn objc_metadata(&self) -> Option<Metadata> {
         into_optional(self.ptr.objc_metadata())
@@ -235,3 +241,12 @@ impl generic::Binary for Binary {
         self.ptr.as_ref().unwrap().as_ref()
     }
 }
+
+
+declare_fwd_iterator!(
+    BindingsInfo,
+    BindingInfo<'a>,
+    ffi::MachO_BindingInfo,
+    ffi::MachO_Binary,
+    ffi::MachO_Binary_it_bindings_info
+);

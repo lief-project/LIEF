@@ -9,6 +9,9 @@ Changelog
   * Add support for the ``LC_SUBCLIENT`` command: :class:`lief.MachO.SubClient`
   * Add support for the ``LC_ROUTINE/LC_ROUTINE64`` command: :class:`lief.MachO.Routine`
   * Expose an iterator for the indirect symbols in :class:`lief.MachO.DynamicSymbolCommand`: :attr:`~lief.MachO.DynamicSymbolCommand.indirect_symbols`
+  * Add :attr:`lief.MachO.Binary.bindings` / :cpp:func:`LIEF::MachO::Binary::bindings`
+    to iterate over the bindings info located in :class:`lief.MachO.DyldInfo` or
+    :class:`lief.MachO.ChainedBindingInfo`
 
 :ELF:
 

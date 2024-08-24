@@ -43,6 +43,10 @@ fn explore_macho(_: &str, macho: &lief::macho::Binary) {
         }
     }
 
+    for binding in macho.bindings() {
+        format!("{:?}", binding);
+    }
+
     for command in macho.commands() {
         format!("{command:?}");
         match command {

@@ -127,6 +127,15 @@ class MachO_Binary : public AbstractBinary {
     auto size() const { return Iterator::size(); }
   };
 
+  class it_bindings_info :
+      public ForwardIterator<MachO_BindingInfo, LIEF::MachO::BindingInfoIterator>
+  {
+    public:
+    it_bindings_info(const MachO_Binary::lief_t& src)
+      : ForwardIterator(src.bindings()) { }
+    auto next() { return ForwardIterator::next(); }
+  };
+
   MachO_Binary(const lief_t& bin) : AbstractBinary(bin) {}
 
   auto header() const {
@@ -139,6 +148,7 @@ class MachO_Binary : public AbstractBinary {
   auto segments() const { return std::make_unique<it_segments>(impl()); }
   auto libraries() const { return std::make_unique<it_libraries>(impl()); }
   auto relocations() const { return std::make_unique<it_relocations>(impl()); }
+  auto bindings() const { return std::make_unique<it_bindings_info>(impl()); }
 
   auto dyld_info() const {
     return details::try_unique<MachO_DyldInfo>(impl().dyld_info());

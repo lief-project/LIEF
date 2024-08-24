@@ -22,12 +22,14 @@
 #include <memory>
 
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/MachO/Header.hpp"
+#include "LIEF/MachO/BindingInfoIterator.hpp"
+
 #include "LIEF/visibility.h"
 
 #include "LIEF/Abstract/Binary.hpp"
 
 #include "LIEF/iterators.hpp"
-#include "LIEF/MachO/Header.hpp"
 #include "LIEF/errors.hpp"
 
 namespace LIEF {
@@ -181,6 +183,8 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   //! Iterator which outputs const SubClient&
   using it_const_sub_clients = const_filter_iterator<const commands_t&, const SubClient*>;
+
+  using it_bindings = iterator_range<BindingInfoIterator>;
 
   public:
   Binary(const Binary&) = delete;
@@ -837,12 +841,16 @@ class LIEF_API Binary : public LIEF::Binary  {
     return in_memory_base_addr_;
   }
 
-  // Check if the binary is supporting ARM64 pointer authentication (arm64e)
+  //! Check if the binary is supporting ARM64 pointer authentication (arm64e)
   bool support_arm64_ptr_auth() const {
     static constexpr auto CPU_SUBTYPE_ARM64E = 2;
     return header().cpu_type() == Header::CPU_TYPE::ARM64 &&
            (header().cpu_subtype() & ~Header::CPU_SUBTYPE_MASK) == CPU_SUBTYPE_ARM64E;
   }
+
+  //! Return an iterator over the binding info which can come from either
+  //! DyldInfo or DyldChainedFixups commands.
+  it_bindings bindings() const;
 
   uint32_t page_size() const;
 

@@ -4,6 +4,7 @@ target_sources(LIB_LIEF PRIVATE
   BinaryParser.cpp
   BinaryParser.tcc
   BindingInfo.cpp
+  BindingInfoIterator.cpp
   BuildToolVersion.cpp
   BuildVersion.cpp
   Builder.cpp

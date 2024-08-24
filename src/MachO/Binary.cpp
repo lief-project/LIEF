@@ -2345,6 +2345,23 @@ const TwoLevelHints* Binary::two_level_hints() const {
   return nullptr;
 }
 
+
+Binary::it_bindings Binary::bindings() const {
+  if (const DyldInfo* dyld = dyld_info()) {
+    auto begin = BindingInfoIterator(*dyld, 0);
+    auto end = BindingInfoIterator(*dyld, dyld->binding_info_.size());
+    return make_range(std::move(begin), std::move(end));
+  }
+
+  if (const DyldChainedFixups* fixup = dyld_chained_fixups()) {
+    auto begin = BindingInfoIterator(*fixup, 0);
+    auto end = BindingInfoIterator(*fixup, fixup->all_bindings_.size());
+    return make_range(std::move(begin), std::move(end));
+  }
+
+  return make_range(BindingInfoIterator::none(), BindingInfoIterator::none());
+}
+
 void Binary::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }

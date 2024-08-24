@@ -669,6 +669,17 @@ void create<Binary>(nb::module_& m) {
         &Binary::page_size,
         "Return the binary's page size"_doc)
 
+    .def_prop_ro("bindings",
+        [] (const Binary& self) {
+          auto bindings = self.bindings();
+          return nb::make_iterator(nb::type<Binary>(), "bindings_it", bindings);
+        }, nb::keep_alive<0, 1>(),
+        R"doc(
+        Return an iterator over the binding info which can come from either
+        :class:`~.DyldInfo` or :class:`~.DyldChainedFixups` commands.
+        )doc"_doc
+    )
+
     .def_prop_ro("has_nx_heap", &Binary::has_nx_heap,
                  R"doc(
                  Return True if the **heap** is flagged as non-executable. False

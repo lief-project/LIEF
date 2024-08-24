@@ -325,6 +325,8 @@ include_cpp! {
     block_constructors!("MachO_Binary_it_libraries")
     generate!("MachO_Binary_it_sub_clients")
     block_constructors!("MachO_Binary_it_sub_clients")
+    generate!("MachO_Binary_it_bindings_info")
+    block_constructors!("MachO_Binary_it_bindings_info")
     generate!("MachO_BindingInfo")
     block_constructors!("MachO_BindingInfo")
     generate!("MachO_BuildVersion")
