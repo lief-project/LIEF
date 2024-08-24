@@ -81,7 +81,7 @@ std::string dump(const uint8_t* buffer, size_t size,
     rhs += pretty_hex((char)(buffer[i]));
     out += fmt::format("{:02x} ", buffer[i]);
 
-    if (i % 16 == 15 or i == (size - 1)) {
+    if (i % 16 == 15 || i == (size - 1)) {
       if (i == (size - 1)) {
         out += std::string(((16 - ((size - 1) % 16) - 1)) * 3, ' ');
         rhs += std::string(((16 - ((size - 1) % 16) - 1)) * 1, ' ');

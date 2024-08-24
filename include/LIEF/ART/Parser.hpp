@@ -17,6 +17,7 @@
 #define LIEF_ART_PARSER_H
 #include <memory>
 #include <vector>
+#include <string>
 
 #include "LIEF/ART/types.hpp"
 #include "LIEF/visibility.h"
