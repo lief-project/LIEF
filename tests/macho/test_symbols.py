@@ -60,3 +60,44 @@ def test_rm_symbols(tmp_path):
         print(stdout)
         assert re.search(r'Hello World', stdout) is not None
 
+def test_dynsym_command():
+    macho = lief.MachO.parse(get_sample("MachO/MachO64_x86-64_binary_all.bin")).at(0)
+
+    dynsym = macho.dynamic_symbol_command
+
+    assert dynsym.idx_local_symbol == 0
+    assert dynsym.nb_local_symbols == 1
+
+    assert dynsym.idx_external_define_symbol == 1
+    assert dynsym.nb_external_define_symbols == 6
+
+    assert dynsym.idx_undefined_symbol == 7
+    assert dynsym.nb_undefined_symbols == 3
+
+    assert dynsym.toc_offset == 0
+    assert dynsym.nb_toc == 0
+    assert dynsym.module_table_offset == 0
+    assert dynsym.nb_module_table == 0
+    assert dynsym.external_reference_symbol_offset == 0
+    assert dynsym.nb_external_reference_symbols == 0
+    assert dynsym.indirect_symbol_offset == 0x2168
+    assert dynsym.nb_indirect_symbols == 4
+    assert dynsym.external_relocation_offset == 0
+    assert dynsym.nb_external_relocations == 0
+    assert dynsym.local_relocation_offset == 0
+    assert dynsym.nb_local_relocations == 0
+
+    for sym in dynsym.indirect_symbols:
+        print(sym)
+
+    indirect_symbols = dynsym.indirect_symbols
+    assert len(indirect_symbols) == 4
+
+    assert indirect_symbols[0].name == "_printf"
+    assert indirect_symbols[1].name == "dyld_stub_binder"
+
+    assert indirect_symbols[2].name == ""
+    assert indirect_symbols[2].category == lief.MachO.Symbol.CATEGORY.INDIRECT_ABS
+
+    assert indirect_symbols[3].name == "_printf"
+

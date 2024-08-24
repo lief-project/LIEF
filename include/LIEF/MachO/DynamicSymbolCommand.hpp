@@ -18,6 +18,7 @@
 #include <ostream>
 
 #include "LIEF/visibility.h"
+#include "LIEF/iterators.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
@@ -42,6 +43,13 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
   friend class Binary;
 
   public:
+  /// Container for the indirect symbols references (owned by MachO::Binary)
+  using indirect_symbols_t = std::vector<Symbol*>;
+
+  /// Iterator for the indirect symbols referenced by this command
+  using it_indirect_symbols = ref_iterator<indirect_symbols_t&>;
+  using it_const_indirect_symbols = const_ref_iterator<const indirect_symbols_t&>;
+
   DynamicSymbolCommand();
 
   DynamicSymbolCommand(const details::dysymtab_command& cmd);
@@ -243,6 +251,15 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
     nb_local_relocations_ = value;
   }
 
+  /// Iterator over the indirect symbols indexed by this command
+  it_indirect_symbols indirect_symbols() {
+    return indirect_symbols_;
+  }
+
+  it_const_indirect_symbols indirect_symbols() const {
+    return indirect_symbols_;
+  }
+
   static bool classof(const LoadCommand* cmd) {
     return cmd->command() == LoadCommand::TYPE::DYSYMTAB;
   }
@@ -275,7 +292,7 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
   uint32_t local_relocation_offset_ = 0;
   uint32_t nb_local_relocations_ = 0;
 
-  std::vector<Symbol*> indirect_symbols_;
+  indirect_symbols_t indirect_symbols_;
 };
 
 }

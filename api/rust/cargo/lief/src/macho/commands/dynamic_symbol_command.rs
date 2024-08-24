@@ -1,7 +1,10 @@
 use super::Command;
 use crate::common::FromFFI;
+use crate::macho::Symbol;
 use lief_ffi as ffi;
 use std::marker::PhantomData;
+
+use crate::declare_iterator;
 
 /// Structure that represents the `LC_DYSYMTAB` command.
 ///
@@ -110,7 +113,6 @@ impl DynamicSymbolCommand<'_> {
         self.ptr.external_relocation_offset()
     }
 
-
     /// Number of entries in the external relocation table.
     ///
     /// This field seems unused by recent Mach-O loader and should be set to 0
@@ -130,6 +132,11 @@ impl DynamicSymbolCommand<'_> {
     /// This field seems unused by recent Mach-O loader and should be set to 0
     pub fn nb_local_relocations(&self) -> u32 {
         self.ptr.nb_local_relocations()
+    }
+
+    /// Iterator over the indirect symbols indexed by this command
+    pub fn indirect_symbols(&self) -> IndirectSymbols {
+        IndirectSymbols::new(self.ptr.indirect_symbols())
     }
 }
 
@@ -189,3 +196,11 @@ impl Command for DynamicSymbolCommand<'_> {
         self.ptr.as_ref().unwrap().as_ref()
     }
 }
+
+declare_iterator!(
+    IndirectSymbols,
+    Symbol<'a>,
+    ffi::MachO_Symbol,
+    ffi::MachO_DynamicSymbolCommand,
+    ffi::MachO_DynamicSymbolCommand_it_indirect_symbols
+);

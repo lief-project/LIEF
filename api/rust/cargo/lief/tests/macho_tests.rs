@@ -5,6 +5,7 @@ use lief::logging;
 use lief::generic::Binary as GenericBinary;
 use lief::macho::binding_info::{self, AsGeneric};
 use lief::macho::commands::{Command, Commands};
+use lief::generic::Symbol;
 use lief::Binary;
 
 fn print_binding(binding: &binding_info::BindingInfo) {
@@ -188,6 +189,9 @@ fn explore_macho(_: &str, macho: &lief::macho::Binary) {
 
     if let Some(dynamic_symbol) = macho.dynamic_symbol() {
         format!("{dynamic_symbol:?}");
+        for sym in dynamic_symbol.indirect_symbols() {
+            format!("{}", sym.name());
+        }
     }
 
     if let Some(code_signature) = macho.code_signature() {

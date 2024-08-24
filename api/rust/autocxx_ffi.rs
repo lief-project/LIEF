@@ -371,6 +371,8 @@ include_cpp! {
     block_constructors!("MachO_Dylinker")
     generate!("MachO_DynamicSymbolCommand")
     block_constructors!("MachO_DynamicSymbolCommand")
+    generate!("MachO_DynamicSymbolCommand_it_indirect_symbols")
+    block_constructors!("MachO_DynamicSymbolCommand_it_indirect_symbols")
     generate!("MachO_EncryptionInfo")
     block_constructors!("MachO_EncryptionInfo")
     generate!("MachO_ExportInfo")

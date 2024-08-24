@@ -12,6 +12,7 @@ import lief.MachO.DataCodeEntry # type: ignore
 import lief.MachO.DyldBindingInfo # type: ignore
 import lief.MachO.DyldChainedFixups # type: ignore
 import lief.MachO.DyldInfo # type: ignore
+import lief.MachO.DynamicSymbolCommand # type: ignore
 import lief.MachO.ExportInfo # type: ignore
 import lief.MachO.FatBinary # type: ignore
 import lief.MachO.Header # type: ignore
@@ -811,6 +812,12 @@ class DylinkerCommand(LoadCommand):
     def __init__(self, arg: str, /) -> None: ...
 
 class DynamicSymbolCommand(LoadCommand):
+    class it_indirect_symbols:
+        def __init__(self, *args, **kwargs) -> None: ...
+        def __getitem__(self, arg: int, /) -> lief.MachO.Symbol: ...
+        def __iter__(self) -> lief.MachO.DynamicSymbolCommand.it_indirect_symbols: ...
+        def __len__(self) -> int: ...
+        def __next__(self) -> lief.MachO.Symbol: ...
     external_reference_symbol_offset: int
     external_relocation_offset: int
     idx_external_define_symbol: int
@@ -830,6 +837,8 @@ class DynamicSymbolCommand(LoadCommand):
     nb_undefined_symbols: int
     toc_offset: int
     def __init__(self, *args, **kwargs) -> None: ...
+    @property
+    def indirect_symbols(self) -> lief.MachO.DynamicSymbolCommand.it_indirect_symbols: ...
 
 class EncryptionInfo(LoadCommand):
     crypt_id: int

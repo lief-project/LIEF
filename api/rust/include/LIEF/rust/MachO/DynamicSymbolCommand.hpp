@@ -16,11 +16,23 @@
 #pragma once
 #include "LIEF/MachO/DynamicSymbolCommand.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
+#include "LIEF/rust/MachO/Symbol.hpp"
+#include "LIEF/rust/Iterator.hpp"
 
 class MachO_DynamicSymbolCommand : public MachO_Command {
   public:
   using lief_t = LIEF::MachO::DynamicSymbolCommand;
   MachO_DynamicSymbolCommand(const lief_t& base) : MachO_Command(base) {}
+
+  class it_indirect_symbols :
+      public Iterator<MachO_Symbol, LIEF::MachO::DynamicSymbolCommand::it_const_indirect_symbols>
+  {
+    public:
+    it_indirect_symbols(const MachO_DynamicSymbolCommand::lief_t& src)
+      : Iterator(std::move(src.indirect_symbols())) { }
+    auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
+  };
 
   uint32_t idx_local_symbol() const { return impl().idx_local_symbol(); };
   uint32_t nb_local_symbols() const { return impl().nb_local_symbols(); };
@@ -40,6 +52,8 @@ class MachO_DynamicSymbolCommand : public MachO_Command {
   uint32_t nb_external_relocations() const { return impl().nb_external_relocations(); };
   uint32_t local_relocation_offset() const { return impl().local_relocation_offset(); };
   uint32_t nb_local_relocations() const { return impl().nb_local_relocations(); };
+
+  auto indirect_symbols() const { return std::make_unique<it_indirect_symbols>(impl()); }
 
   static bool classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());

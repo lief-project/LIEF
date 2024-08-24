@@ -18,20 +18,27 @@
 #include <nanobind/stl/string.h>
 
 #include "LIEF/MachO/DynamicSymbolCommand.hpp"
+#include "LIEF/MachO/Symbol.hpp"
 
 #include "MachO/pyMachO.hpp"
+#include "pyIterator.hpp"
 
 namespace LIEF::MachO::py {
 
 template<>
 void create<DynamicSymbolCommand>(nb::module_& m) {
-  nb::class_<DynamicSymbolCommand, LoadCommand>(m, "DynamicSymbolCommand",
+  using namespace LIEF::py;
+
+  nb::class_<DynamicSymbolCommand, LoadCommand> dynsym(m, "DynamicSymbolCommand",
       R"delim(
       Class that represents the LC_DYSYMTAB command.
       This command completes the LC_SYMTAB (SymbolCommand) to provide
       a better granularity over the symbols layout.
-      )delim"_doc)
+      )delim"_doc);
 
+  init_ref_iterator<DynamicSymbolCommand::it_indirect_symbols>(dynsym, "it_indirect_symbols");
+
+  dynsym
     .def_prop_rw("idx_local_symbol",
       nb::overload_cast<>(&DynamicSymbolCommand::idx_local_symbol, nb::const_),
       nb::overload_cast<uint32_t>(&DynamicSymbolCommand::idx_local_symbol),
@@ -167,6 +174,11 @@ void create<DynamicSymbolCommand>(nb::module_& m) {
       Number of entries in the local relocation table.
       This field seems unused by recent Mach-O loader and should be set to 0
       )delim"_doc)
+
+    .def_prop_ro("indirect_symbols",
+        nb::overload_cast<>(&DynamicSymbolCommand::indirect_symbols),
+        "Iterator over the indirect symbols indexed by this command"_doc,
+        nb::keep_alive<0, 1>())
 
     LIEF_DEFAULT_STR(DynamicSymbolCommand);
 }

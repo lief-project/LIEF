@@ -8,6 +8,7 @@ Changelog
 
   * Add support for the ``LC_SUBCLIENT`` command: :class:`lief.MachO.SubClient`
   * Add support for the ``LC_ROUTINE/LC_ROUTINE64`` command: :class:`lief.MachO.Routine`
+  * Expose an iterator for the indirect symbols in :class:`lief.MachO.DynamicSymbolCommand`: :attr:`~lief.MachO.DynamicSymbolCommand.indirect_symbols`
 
 :ELF:
 
