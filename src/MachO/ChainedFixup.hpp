@@ -12,6 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifndef LIEF_MACHO_CHAINED_FIXUP_H
+#define LIEF_MACHO_CHAINED_FIXUP_H
 #include <cstdint>
 #include <type_traits>
 
@@ -276,3 +278,4 @@ union chained_fixup {
 } // Namespace details
 } // Namespace MachO
 } // Namespace LIEF
+#endif
