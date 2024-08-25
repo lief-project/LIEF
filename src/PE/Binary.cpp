@@ -429,7 +429,7 @@ void Binary::make_space_for_new_section() {
   for (std::unique_ptr<Section>& section : sections_) {
     section->pointerto_raw_data(section->pointerto_raw_data() + shift);
   }
-  available_sections_space_++;
+  available_sections_space_ = shift / sizeof(details::pe_section);
 }
 
 Section* Binary::add_section(const Section& section, PE_SECTION_TYPES type) {
