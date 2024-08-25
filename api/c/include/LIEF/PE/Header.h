@@ -40,6 +40,7 @@ enum LIEF_PE_MACHINE_TYPES {
   LIEF_PE_MACHINE_MIPSFPU16 = 0x466,  /**< MIPS16 with FPU                */
   LIEF_PE_MACHINE_POWERPC   = 0x1F0,  /**< Power PC little endian         */
   LIEF_PE_MACHINE_POWERPCFP = 0x1F1,  /**< Power PC with floating point   */
+  LIEF_PE_MACHINE_POWERPCBE = 0x1F2,  /**< Power PC big endian            */
   LIEF_PE_MACHINE_R4000     = 0x166,  /**< MIPS with little endian        */
   LIEF_PE_MACHINE_RISCV32   = 0x5032, /**< RISC-V 32-bit address space    */
   LIEF_PE_MACHINE_RISCV64   = 0x5064, /**< RISC-V 64-bit address space    */

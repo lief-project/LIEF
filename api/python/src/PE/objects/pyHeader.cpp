@@ -51,6 +51,7 @@ void create<Header>(nb::module_& m) {
     .value(PY_ENUM(Header::MACHINE_TYPES::MIPSFPU16))
     .value(PY_ENUM(Header::MACHINE_TYPES::POWERPC))
     .value(PY_ENUM(Header::MACHINE_TYPES::POWERPCFP))
+    .value(PY_ENUM(Header::MACHINE_TYPES::POWERPCBE))
     .value(PY_ENUM(Header::MACHINE_TYPES::R4000))
     .value(PY_ENUM(Header::MACHINE_TYPES::SH3))
     .value(PY_ENUM(Header::MACHINE_TYPES::SH3DSP))
