@@ -221,6 +221,23 @@ int main(int argc, char** argv) {
 * [API](https://lief-project.github.io/doc/latest/api/index.html)
 * [Doxygen](https://lief-project.github.io/doc/latest/doxygen/index.html)
 
+## Testing
+
+# On windows
+
+```powershell
+git clone https://github.com/lief-project/LIEF
+cd LIEF
+python -m venv venv3
+.\venv3\Scripts\activate
+python -m pip install setuptools=72.0.0
+python -m pip install -r tests/requirements.txt
+mkdir out
+python tests/dl_samples.py out
+$env:LIEF_SAMPLES_DIR = "$(pwd)\out"
+python -m pip -vvv install api/python
+python tests/run_pytest.py
+```
 ## Contact
 
 * **Mail**: contact at lief re
