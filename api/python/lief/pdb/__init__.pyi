@@ -2,7 +2,6 @@ from typing import Any, ClassVar, Iterator, Optional
 
 import lief # type: ignore
 import lief.pdb # type: ignore
-import lief.pdb.Type # type: ignore
 
 class CompilationUnit:
     def __init__(self, *args, **kwargs) -> None: ...

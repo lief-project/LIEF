@@ -4,32 +4,6 @@ from typing import overload
 import io
 import lief # type: ignore
 import lief.PE # type: ignore
-import lief.PE.Attribute # type: ignore
-import lief.PE.Binary # type: ignore
-import lief.PE.CodeView # type: ignore
-import lief.PE.ContentInfo # type: ignore
-import lief.PE.DataDirectory # type: ignore
-import lief.PE.Debug # type: ignore
-import lief.PE.DelayImport # type: ignore
-import lief.PE.Export # type: ignore
-import lief.PE.ExportEntry # type: ignore
-import lief.PE.Header # type: ignore
-import lief.PE.Import # type: ignore
-import lief.PE.LoadConfiguration # type: ignore
-import lief.PE.LoadConfigurationV1 # type: ignore
-import lief.PE.MsCounterSign # type: ignore
-import lief.PE.OptionalHeader # type: ignore
-import lief.PE.Pogo # type: ignore
-import lief.PE.Relocation # type: ignore
-import lief.PE.RelocationEntry # type: ignore
-import lief.PE.ResourceDialog # type: ignore
-import lief.PE.ResourceNode # type: ignore
-import lief.PE.ResourcesManager # type: ignore
-import lief.PE.RichHeader # type: ignore
-import lief.PE.Section # type: ignore
-import lief.PE.Signature # type: ignore
-import lief.PE.SignerInfo # type: ignore
-import lief.PE.x509 # type: ignore
 import os
 
 class ACCELERATOR_FLAGS:

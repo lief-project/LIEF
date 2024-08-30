@@ -4,24 +4,6 @@ from typing import overload
 import io
 import lief # type: ignore
 import lief.MachO # type: ignore
-import lief.MachO.Binary # type: ignore
-import lief.MachO.BuildToolVersion # type: ignore
-import lief.MachO.BuildVersion # type: ignore
-import lief.MachO.Builder # type: ignore
-import lief.MachO.DataCodeEntry # type: ignore
-import lief.MachO.DyldBindingInfo # type: ignore
-import lief.MachO.DyldChainedFixups # type: ignore
-import lief.MachO.DyldInfo # type: ignore
-import lief.MachO.DynamicSymbolCommand # type: ignore
-import lief.MachO.ExportInfo # type: ignore
-import lief.MachO.FatBinary # type: ignore
-import lief.MachO.Header # type: ignore
-import lief.MachO.LoadCommand # type: ignore
-import lief.MachO.Relocation # type: ignore
-import lief.MachO.Section # type: ignore
-import lief.MachO.SegmentCommand # type: ignore
-import lief.MachO.Symbol # type: ignore
-import lief.MachO.TwoLevelHints # type: ignore
 import lief.objc # type: ignore
 import os
 

@@ -4,10 +4,7 @@ from . import ART, Android, DEX, ELF, MachO, OAT, PE, VDEX, dwarf, logging, objc
 from typing import overload
 import io
 import lief # type: ignore
-import lief.Binary # type: ignore
-import lief.DebugInfo # type: ignore
 import lief.ELF # type: ignore
-import lief.Function # type: ignore
 import lief.MachO # type: ignore
 import lief.PE # type: ignore
 import lief.logging # type: ignore

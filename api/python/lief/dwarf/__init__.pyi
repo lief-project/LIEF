@@ -3,11 +3,6 @@ from typing import Any, ClassVar, Iterator, Optional
 from typing import overload
 import lief # type: ignore
 import lief.dwarf # type: ignore
-import lief.dwarf.CompilationUnit # type: ignore
-import lief.dwarf.CompilationUnit.Language # type: ignore
-import lief.dwarf.Function # type: ignore
-import lief.dwarf.Scope # type: ignore
-import lief.dwarf.Type # type: ignore
 
 class CompilationUnit:
     class Language:

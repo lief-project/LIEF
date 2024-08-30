@@ -4,30 +4,6 @@ from typing import overload
 import io
 import lief # type: ignore
 import lief.ELF # type: ignore
-import lief.ELF.AArch64Feature # type: ignore
-import lief.ELF.Binary # type: ignore
-import lief.ELF.Builder # type: ignore
-import lief.ELF.CoreAuxv # type: ignore
-import lief.ELF.CoreFile # type: ignore
-import lief.ELF.CorePrPsInfo # type: ignore
-import lief.ELF.CorePrStatus # type: ignore
-import lief.ELF.CorePrStatus.Registers # type: ignore
-import lief.ELF.DynamicEntry # type: ignore
-import lief.ELF.DynamicEntryFlags # type: ignore
-import lief.ELF.Header # type: ignore
-import lief.ELF.Note # type: ignore
-import lief.ELF.NoteAbi # type: ignore
-import lief.ELF.NoteGnuProperty # type: ignore
-import lief.ELF.NoteGnuProperty.Property # type: ignore
-import lief.ELF.ParserConfig # type: ignore
-import lief.ELF.Relocation # type: ignore
-import lief.ELF.Section # type: ignore
-import lief.ELF.Segment # type: ignore
-import lief.ELF.Symbol # type: ignore
-import lief.ELF.SymbolVersionDefinition # type: ignore
-import lief.ELF.SymbolVersionRequirement # type: ignore
-import lief.ELF.X86Features # type: ignore
-import lief.ELF.X86ISA # type: ignore
 import os
 
 class AArch64Feature(NoteGnuProperty.Property):

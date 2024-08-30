@@ -3,12 +3,6 @@ from typing import Any, ClassVar, Optional, Union
 from typing import overload
 import io
 import lief.DEX # type: ignore
-import lief.DEX.Class # type: ignore
-import lief.DEX.File # type: ignore
-import lief.DEX.MapItem # type: ignore
-import lief.DEX.MapList # type: ignore
-import lief.DEX.Prototype # type: ignore
-import lief.DEX.Type # type: ignore
 import os
 
 class ACCESS_FLAGS:

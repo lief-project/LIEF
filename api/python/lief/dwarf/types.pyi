@@ -1,8 +1,6 @@
 from typing import Any, ClassVar, Optional
 
 import lief.dwarf # type: ignore
-import lief.dwarf.types.Base # type: ignore
-import lief.dwarf.types.ClassLike # type: ignore
 
 class Array(lief.dwarf.Type):
     def __init__(self, *args, **kwargs) -> None: ...
