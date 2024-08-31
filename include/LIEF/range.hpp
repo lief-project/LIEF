@@ -26,6 +26,14 @@ struct range_t {
     return high - low;
   }
 
+  friend bool operator==(const range_t& lhs, const range_t& rhs) {
+    return lhs.high == rhs.high && lhs.low == rhs.low;
+  }
+
+  friend bool operator!=(const range_t& lhs, const range_t& rhs) {
+    return !(lhs == rhs);
+  }
+
   friend std::ostream& operator<<(std::ostream& os, const range_t& range);
 };
 
