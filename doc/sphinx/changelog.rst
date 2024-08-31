@@ -6,6 +6,11 @@ Changelog
 
 :MachO:
 
+  * Expose an iterator over the stub entries located in ``__stubs,__auth_stubs,__symbol_stub,__picsymbolstub4``
+
+    - :attr:`lief.MachO.Binary.symbol_stubs`, :class:`lief.MachO.Stub`
+    - :cpp:func:`LIEF::MachO::Binary::symbol_stubs`, :cpp:class:`LIEF::MachO::Stub`
+
   * Add support for the ``LC_SUBCLIENT`` command: :class:`lief.MachO.SubClient`
   * Add support for the ``LC_ROUTINE/LC_ROUTINE64`` command: :class:`lief.MachO.Routine`
   * Expose an iterator for the indirect symbols in :class:`lief.MachO.DynamicSymbolCommand`: :attr:`~lief.MachO.DynamicSymbolCommand.indirect_symbols`

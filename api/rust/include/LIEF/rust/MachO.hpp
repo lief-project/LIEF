@@ -42,6 +42,7 @@
 #include "LIEF/rust/MachO/SegmentCommand.hpp"
 #include "LIEF/rust/MachO/SegmentSplitInfo.hpp"
 #include "LIEF/rust/MachO/SourceVersion.hpp"
+#include "LIEF/rust/MachO/Stub.hpp"
 #include "LIEF/rust/MachO/SubClient.hpp"
 #include "LIEF/rust/MachO/SubFramework.hpp"
 #include "LIEF/rust/MachO/Symbol.hpp"

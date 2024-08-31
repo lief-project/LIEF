@@ -24,6 +24,7 @@
 #include "LIEF/MachO/LoadCommand.hpp"
 #include "LIEF/MachO/Header.hpp"
 #include "LIEF/MachO/BindingInfoIterator.hpp"
+#include "LIEF/MachO/Stub.hpp"
 
 #include "LIEF/visibility.h"
 
@@ -187,6 +188,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   using it_const_sub_clients = const_filter_iterator<const commands_t&, const SubClient*>;
 
   using it_bindings = iterator_range<BindingInfoIterator>;
+
+  //! Iterator type for Symbol's stub
+  using stub_iterator = iterator_range<Stub::Iterator>;
 
   public:
   Binary(const Binary&) = delete;
@@ -781,6 +785,14 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   //! Return Objective-C metadata if present
   std::unique_ptr<objc::Metadata> objc_metadata() const;
+
+  //! Return an iterator over the symbol stubs.
+  //!
+  //! These stubs are involved when calling an **imported** function and are
+  //! similar to the ELF's plt/got mechanism.
+  //!
+  //! There are located in sections like: `__stubs,__auth_stubs,__symbol_stub,__picsymbolstub4`
+  stub_iterator symbol_stubs() const;
 
   template<class T>
   LIEF_LOCAL bool has_command() const;

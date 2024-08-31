@@ -309,6 +309,8 @@ include_cpp! {
     // -------------------------------------------------------------------------
     generate!("MachO_Binary")
     block_constructors!("MachO_Binary")
+    generate!("MachO_Binary_it_stubs")
+    block_constructors!("MachO_Binary_it_stubs")
     generate!("MachO_Binary_it_symbols")
     block_constructors!("MachO_Binary_it_symbols")
     generate!("MachO_Binary_it_relocations")
@@ -345,6 +347,8 @@ include_cpp! {
     block_constructors!("MachO_DataCodeEntry")
     generate!("MachO_DataInCode")
     block_constructors!("MachO_DataInCode")
+    generate!("MachO_Stub")
+    block_constructors!("MachO_Stub")
 
     generate!("MachO_DataInCode_it_entries")
     block_constructors!("MachO_DataInCode_it_entries")

@@ -31,10 +31,11 @@ use super::relocation::Relocations;
 use super::section::Sections;
 use super::symbol::Symbols;
 use super::binding_info::BindingInfo;
+use super::stub::Stub;
 use lief_ffi as ffi;
 
 use crate::common::{into_optional, FromFFI};
-use crate::{generic, declare_fwd_iterator};
+use crate::{generic, declare_fwd_iterator, declare_iterator};
 use crate::objc::Metadata;
 
 /// This is the main interface to read and write Mach-O binary attributes.
@@ -230,6 +231,16 @@ impl Binary {
         BindingsInfo::new(self.ptr.bindings())
     }
 
+    /// Return an iterator over the symbol stubs.
+    ///
+    /// These stubs are involved when calling an **imported** function and are
+    /// similar to the ELF's plt/got mechanism.
+    ///
+    /// There are located in sections like: `__stubs,__auth_stubs,__symbol_stub,__picsymbolstub4`
+    pub fn symbol_stubs(&self) -> Stubs {
+        Stubs::new(self.ptr.symbol_stubs())
+    }
+
     /// Return Objective-C metadata if present
     pub fn objc_metadata(&self) -> Option<Metadata> {
         into_optional(self.ptr.objc_metadata())
@@ -249,4 +260,12 @@ declare_fwd_iterator!(
     ffi::MachO_BindingInfo,
     ffi::MachO_Binary,
     ffi::MachO_Binary_it_bindings_info
+);
+
+declare_iterator!(
+    Stubs,
+    Stub<'a>,
+    ffi::MachO_Stub,
+    ffi::MachO_Binary,
+    ffi::MachO_Binary_it_stubs
 );

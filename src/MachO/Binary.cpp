@@ -2426,6 +2426,48 @@ void Binary::refresh_seg_offset() {
   }
 }
 
+Binary::stub_iterator Binary::symbol_stubs() const {
+  static stub_iterator empty_iterator(
+    Stub::Iterator{},
+    Stub::Iterator{}
+  );
+
+  std::vector<const Section*> stub_sections;
+  stub_sections.reserve(3);
+
+  uint32_t total = 0;
+
+  for (const Section& section : sections()) {
+    if (section.type() != Section::TYPE::SYMBOL_STUBS) {
+      continue;
+    }
+
+    const uint32_t stride = section.reserved2();
+    if (stride == 0) {
+      continue;
+    }
+
+    const uint32_t count = section.content().size() / stride;
+    if (count == 0) {
+      continue;
+    }
+
+    total += count;
+    stub_sections.push_back(&section);
+  }
+
+  if (stub_sections.empty() || total == 0) {
+    return empty_iterator;
+  }
+  Stub::Iterator begin(
+      {header_.cpu_type(), header_.cpu_subtype()},
+      std::move(stub_sections), 0
+  );
+  Stub::Iterator end({}, {}, total);
+
+  return make_range(std::move(begin), std::move(end));
+}
+
 Binary::~Binary() = default;
 
 std::ostream& Binary::print(std::ostream& os) const {

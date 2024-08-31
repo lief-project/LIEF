@@ -17,37 +17,38 @@
 #include <memory>
 #include <LIEF/MachO.hpp>
 
-#include "LIEF/rust/MachO/LoadCommand.hpp"
-#include "LIEF/rust/MachO/Header.hpp"
-#include "LIEF/rust/MachO/Symbol.hpp"
-#include "LIEF/rust/MachO/Dylib.hpp"
-#include "LIEF/rust/MachO/SegmentCommand.hpp"
-#include "LIEF/rust/MachO/Relocation.hpp"
-#include "LIEF/rust/MachO/DyldInfo.hpp"
-#include "LIEF/rust/MachO/UUIDCommand.hpp"
-#include "LIEF/rust/MachO/Main.hpp"
-#include "LIEF/rust/MachO/Dylinker.hpp"
-#include "LIEF/rust/MachO/SourceVersion.hpp"
-#include "LIEF/rust/MachO/ThreadCommand.hpp"
-#include "LIEF/rust/MachO/FunctionStarts.hpp"
-#include "LIEF/rust/MachO/RPathCommand.hpp"
-#include "LIEF/rust/MachO/Routine.hpp"
-#include "LIEF/rust/MachO/SymbolCommand.hpp"
-#include "LIEF/rust/MachO/DynamicSymbolCommand.hpp"
+#include "LIEF/rust/MachO/BuildVersion.hpp"
 #include "LIEF/rust/MachO/CodeSignature.hpp"
 #include "LIEF/rust/MachO/CodeSignatureDir.hpp"
 #include "LIEF/rust/MachO/DataInCode.hpp"
-#include "LIEF/rust/MachO/SegmentSplitInfo.hpp"
-#include "LIEF/rust/MachO/EncryptionInfo.hpp"
-#include "LIEF/rust/MachO/SubFramework.hpp"
-#include "LIEF/rust/MachO/SubClient.hpp"
-#include "LIEF/rust/MachO/DyldEnvironment.hpp"
-#include "LIEF/rust/MachO/BuildVersion.hpp"
 #include "LIEF/rust/MachO/DyldChainedFixups.hpp"
+#include "LIEF/rust/MachO/DyldEnvironment.hpp"
 #include "LIEF/rust/MachO/DyldExportsTrie.hpp"
-#include "LIEF/rust/MachO/VersionMin.hpp"
-#include "LIEF/rust/MachO/TwoLevelHints.hpp"
+#include "LIEF/rust/MachO/DyldInfo.hpp"
+#include "LIEF/rust/MachO/Dylib.hpp"
+#include "LIEF/rust/MachO/Dylinker.hpp"
+#include "LIEF/rust/MachO/DynamicSymbolCommand.hpp"
+#include "LIEF/rust/MachO/EncryptionInfo.hpp"
+#include "LIEF/rust/MachO/FunctionStarts.hpp"
+#include "LIEF/rust/MachO/Header.hpp"
 #include "LIEF/rust/MachO/LinkerOptHint.hpp"
+#include "LIEF/rust/MachO/LoadCommand.hpp"
+#include "LIEF/rust/MachO/Main.hpp"
+#include "LIEF/rust/MachO/RPathCommand.hpp"
+#include "LIEF/rust/MachO/Relocation.hpp"
+#include "LIEF/rust/MachO/Routine.hpp"
+#include "LIEF/rust/MachO/SegmentCommand.hpp"
+#include "LIEF/rust/MachO/SegmentSplitInfo.hpp"
+#include "LIEF/rust/MachO/SourceVersion.hpp"
+#include "LIEF/rust/MachO/Stub.hpp"
+#include "LIEF/rust/MachO/SubClient.hpp"
+#include "LIEF/rust/MachO/SubFramework.hpp"
+#include "LIEF/rust/MachO/Symbol.hpp"
+#include "LIEF/rust/MachO/SymbolCommand.hpp"
+#include "LIEF/rust/MachO/ThreadCommand.hpp"
+#include "LIEF/rust/MachO/TwoLevelHints.hpp"
+#include "LIEF/rust/MachO/UUIDCommand.hpp"
+#include "LIEF/rust/MachO/VersionMin.hpp"
 
 #include "LIEF/rust/Abstract/Binary.hpp"
 
@@ -136,6 +137,16 @@ class MachO_Binary : public AbstractBinary {
     auto next() { return ForwardIterator::next(); }
   };
 
+  class it_stubs :
+      public RandomRangeIterator<MachO_Stub, LIEF::MachO::Stub::Iterator>
+  {
+    public:
+    it_stubs(const MachO_Binary::lief_t& src)
+      : RandomRangeIterator(src.symbol_stubs()) { }
+    auto next() { return RandomRangeIterator::next(); }
+    auto size() const { return RandomRangeIterator::size(); }
+  };
+
   MachO_Binary(const lief_t& bin) : AbstractBinary(bin) {}
 
   auto header() const {
@@ -149,6 +160,7 @@ class MachO_Binary : public AbstractBinary {
   auto libraries() const { return std::make_unique<it_libraries>(impl()); }
   auto relocations() const { return std::make_unique<it_relocations>(impl()); }
   auto bindings() const { return std::make_unique<it_bindings_info>(impl()); }
+  auto symbol_stubs() const { return std::make_unique<it_stubs>(impl()); }
 
   auto dyld_info() const {
     return details::try_unique<MachO_DyldInfo>(impl().dyld_info());

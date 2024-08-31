@@ -521,6 +521,14 @@ UnknownCommand
 
 ----------
 
+Stub
+****
+
+
+.. autoclass:: lief.MachO.Stub
+
+----------
+
 Builder
 *******
 

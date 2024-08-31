@@ -7,6 +7,7 @@ pub mod relocation;
 pub mod section;
 pub mod symbol;
 pub mod header;
+pub mod stub;
 
 #[doc(inline)]
 pub use binary::Binary;
@@ -26,4 +27,6 @@ pub use symbol::Symbol;
 pub use commands::Commands;
 #[doc(inline)]
 pub use header::Header;
+#[doc(inline)]
+pub use stub::Stub;
 

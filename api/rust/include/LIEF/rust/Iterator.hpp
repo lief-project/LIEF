@@ -57,6 +57,37 @@ class ForwardIterator {
   V end_;
 };
 
+template<class T, class V>
+class RandomRangeIterator {
+  public:
+  using lief_t = V;
+  std::unique_ptr<T> next() {
+    if (it_ == end_) return nullptr;
+    return std::make_unique<T>(*it_++);
+  }
+
+  uint64_t size() const {
+    return std::distance(begin_, end_);
+  }
+
+  protected:
+  RandomRangeIterator(LIEF::iterator_range<V> range) :
+    begin_(std::move(range.begin())),
+    end_(std::move(range.end())),
+    it_(begin_)
+  {}
+
+  RandomRangeIterator(V begin, V end) :
+    begin_(std::move(begin)),
+    end_(std::move(end)),
+    it_(begin_)
+  {}
+
+  V begin_;
+  V end_;
+  V it_;
+};
+
 template<class T, class ContainerT>
 class ContainerIterator {
   public:

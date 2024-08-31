@@ -399,6 +399,13 @@ Unknown Command
 
 ----------
 
+Stub
+****
+
+.. doxygenclass:: LIEF::MachO::Stub
+   :project: lief
+
+----------
 
 Utilities
 *********

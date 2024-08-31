@@ -20,7 +20,7 @@
 #include "LIEF/rust/MachO/Dylib.hpp"
 #include "LIEF/rust/MachO/Symbol.hpp"
 
-class MachO_BindingInfo : public Mirror<LIEF::MachO::BindingInfo>{
+class MachO_BindingInfo : public Mirror<LIEF::MachO::BindingInfo> {
   public:
   using lief_t = LIEF::MachO::BindingInfo;
   using Mirror::Mirror;
