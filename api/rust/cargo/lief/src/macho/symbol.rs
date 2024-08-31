@@ -28,6 +28,7 @@ pub enum Category {
     UNDEFINED,
     INDIRECT_ABS,
     INDIRECT_LOCAL,
+    INDIRECT_ABS_LOCAL,
     UNKNOWN(u32),
 }
 
@@ -40,6 +41,7 @@ impl From<u32> for Category {
             0x00000003 => Category::UNDEFINED,
             0x00000004 => Category::INDIRECT_ABS,
             0x00000005 => Category::INDIRECT_LOCAL,
+            0x00000006 => Category::INDIRECT_ABS_LOCAL,
             _ => Category::UNKNOWN(value),
         }
     }

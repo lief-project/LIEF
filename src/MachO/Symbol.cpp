@@ -103,6 +103,11 @@ const Symbol& Symbol::indirect_local() {
   return local;
 }
 
+const Symbol& Symbol::indirect_abs_local() {
+  static const Symbol local(CATEGORY::INDIRECT_ABS_LOCAL);
+  return local;
+}
+
 std::ostream& operator<<(std::ostream& os, const Symbol& symbol) {
   os << fmt::format(
     "name={}, type={}, desc={}, value=0x{:08x}, origin={}",

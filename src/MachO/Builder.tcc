@@ -653,6 +653,7 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
 
         case Symbol::CATEGORY::INDIRECT_ABS:
         case Symbol::CATEGORY::INDIRECT_LOCAL:
+        case Symbol::CATEGORY::INDIRECT_ABS_LOCAL:
           {
             break;
           }
@@ -764,6 +765,12 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
 
       if (sym->category() == Symbol::CATEGORY::INDIRECT_LOCAL) {
         linkedit_.write(details::INDIRECT_SYMBOL_LOCAL);
+        ++count;
+        continue;
+      }
+
+      if (sym->category() == Symbol::CATEGORY::INDIRECT_ABS_LOCAL) {
+        linkedit_.write(details::INDIRECT_SYMBOL_LOCAL | details::INDIRECT_SYMBOL_ABS);
         ++count;
         continue;
       }

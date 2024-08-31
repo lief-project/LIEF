@@ -43,12 +43,14 @@ void create<Symbol>(nb::module_& m) {
       )delim"_doc);
 
   enum_<Symbol::CATEGORY>(symbol, "CATEGORY")
-    .value("NONE",           Symbol::CATEGORY::NONE)
-    .value("LOCAL",          Symbol::CATEGORY::LOCAL)
-    .value("EXTERNAL",       Symbol::CATEGORY::EXTERNAL)
-    .value("UNDEFINED",      Symbol::CATEGORY::UNDEFINED)
-    .value("INDIRECT_ABS",   Symbol::CATEGORY::INDIRECT_ABS)
-    .value("INDIRECT_LOCAL", Symbol::CATEGORY::INDIRECT_LOCAL);
+    .value("NONE",               Symbol::CATEGORY::NONE)
+    .value("LOCAL",              Symbol::CATEGORY::LOCAL)
+    .value("EXTERNAL",           Symbol::CATEGORY::EXTERNAL)
+    .value("UNDEFINED",          Symbol::CATEGORY::UNDEFINED)
+    .value("INDIRECT_ABS",       Symbol::CATEGORY::INDIRECT_ABS)
+    .value("INDIRECT_LOCAL",     Symbol::CATEGORY::INDIRECT_LOCAL)
+    .value("INDIRECT_ABS_LOCAL", Symbol::CATEGORY::INDIRECT_ABS_LOCAL)
+  ;
 
   enum_<Symbol::ORIGIN>(symbol, "ORIGIN")
     .value("UNKNOWN",        Symbol::ORIGIN::UNKNOWN)

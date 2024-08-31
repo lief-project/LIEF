@@ -64,6 +64,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
 
     INDIRECT_ABS,
     INDIRECT_LOCAL,
+    INDIRECT_ABS_LOCAL,
   };
 
   enum class ORIGIN : uint32_t {
@@ -210,6 +211,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
 
   static const Symbol& indirect_abs();
   static const Symbol& indirect_local();
+  static const Symbol& indirect_abs_local();
 
   private:
   Symbol(CATEGORY cat) :
