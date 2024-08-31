@@ -330,8 +330,6 @@ ok_error_t BinaryParser::parse_dyld_exports() {
     return ok();
   }
 
-  uint64_t end_offset = offset + size;
-
   SegmentCommand* linkedit = binary_->segment_from_offset(offset);
 
   if (linkedit == nullptr) {
@@ -373,8 +371,6 @@ ok_error_t BinaryParser::parse_dyldinfo_export() {
   if (offset == 0 || size == 0) {
     return ok();
   }
-
-  uint64_t end_offset = offset + size;
 
   SegmentCommand* linkedit = binary_->segment_from_offset(offset);
 
