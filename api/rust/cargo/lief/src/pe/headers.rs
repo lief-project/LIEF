@@ -187,6 +187,8 @@ pub enum MachineType {
     POWERPC,
     /// Power PC with floating point
     POWERPCFP,
+    /// Power PC big endian
+    POWERPCBE,
     /// MIPS with little endian
     R4000,
     /// RISC-V 32-bit address space
@@ -227,6 +229,7 @@ impl From<u32> for MachineType {
             0x00000466 => MachineType::MIPSFPU16,
             0x000001f0 => MachineType::POWERPC,
             0x000001f1 => MachineType::POWERPCFP,
+            0x000001f2 => MachineType::POWERPCBE,
             0x00000166 => MachineType::R4000,
             0x00005032 => MachineType::RISCV32,
             0x00005064 => MachineType::RISCV64,
@@ -259,6 +262,7 @@ impl From<MachineType> for u32 {
             MachineType::MIPSFPU16 => 0x00000466,
             MachineType::POWERPC => 0x000001f0,
             MachineType::POWERPCFP => 0x000001f1,
+            MachineType::POWERPCBE => 0x000001f2,
             MachineType::R4000 => 0x00000166,
             MachineType::RISCV32 => 0x00005032,
             MachineType::RISCV64 => 0x00005064,

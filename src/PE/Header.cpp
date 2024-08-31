@@ -111,7 +111,7 @@ std::ostream& operator<<(std::ostream& os, const Header& entry) {
 }
 
 const char* to_string(Header::MACHINE_TYPES e) {
-  CONST_MAP(Header::MACHINE_TYPES, const char*, 25) enumStrings {
+  CONST_MAP(Header::MACHINE_TYPES, const char*, 26) enumStrings {
     { Header::MACHINE_TYPES::UNKNOWN,   "UNKNOWN" },
     { Header::MACHINE_TYPES::AM33,      "AM33" },
     { Header::MACHINE_TYPES::AMD64,     "AMD64" },
@@ -127,6 +127,7 @@ const char* to_string(Header::MACHINE_TYPES e) {
     { Header::MACHINE_TYPES::MIPSFPU16, "MIPSFPU16" },
     { Header::MACHINE_TYPES::POWERPC,   "POWERPC" },
     { Header::MACHINE_TYPES::POWERPCFP, "POWERPCFP" },
+    { Header::MACHINE_TYPES::POWERPCBE, "POWERPCBE" },
     { Header::MACHINE_TYPES::R4000,     "R4000" },
     { Header::MACHINE_TYPES::RISCV32,   "RISCV32" },
     { Header::MACHINE_TYPES::RISCV64,   "RISCV64" },
