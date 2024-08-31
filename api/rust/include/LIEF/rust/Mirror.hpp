@@ -25,6 +25,9 @@ class Mirror {
   public:
   Mirror(T& impl) : impl_(impl) {}
   Mirror(const T& impl) : impl_(impl) {}
+  Mirror(T&& impl) :
+    Mirror(std::make_unique<T>(std::move(impl)))
+  {}
   Mirror(std::unique_ptr<T> impl) : impl_(std::move(impl)) {}
 
   T& get() { return *impl_; }
