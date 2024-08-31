@@ -106,4 +106,4 @@ def test_demangling():
     macho = lief.MachO.parse(get_sample("MachO/FAT_MachO_x86_x86-64_library_libc++abi.dylib")).at(0)
 
     assert macho.symbols[1].demangled_name == "void __cxxabiv1::(anonymous namespace)::demangle<__cxxabiv1::(anonymous namespace)::Db>(char const*, char const*, __cxxabiv1::(anonymous namespace)::Db&, int&)"
-    assert macho.symbols[486].demangled_name == "__cxa_deleted_virtual"
+    assert macho.symbols[486].demangled_name == "___cxa_deleted_virtual"
