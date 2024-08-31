@@ -28,6 +28,10 @@
 
   platforms/android.rst
 
+Demangling
+----------
+
+.. autofunction:: lief.demangle
 
 Logging
 -------

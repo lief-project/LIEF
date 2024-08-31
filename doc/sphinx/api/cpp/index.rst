@@ -27,7 +27,14 @@
 
   platforms/android.rst
 
+Demangling
+----------
+
+.. doxygenfunction:: LIEF::demangle
+   :project: lief
+
 .. _cpp-api-error-handling:
+
 
 Error Handling
 --------------
