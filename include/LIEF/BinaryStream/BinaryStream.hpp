@@ -107,6 +107,46 @@ class BinaryStream {
     return ok();
   }
 
+
+  template<class T>
+  ok_error_t read_objects(std::vector<T>& container, uint64_t count) {
+    const size_t size = count * sizeof(T);
+    auto ret = peek_objects(container, count);
+    if (!ret) {
+      return make_error_code(lief_errors::read_error);
+    }
+    increment_pos(size);
+    return ok();
+  }
+
+  template<class T>
+  ok_error_t peek_objects(std::vector<T>& container, uint64_t count) {
+    return peek_objects_at(pos(), container, count);
+  }
+
+  template<class T>
+  ok_error_t peek_objects_at(uint64_t offset, std::vector<T>& container, uint64_t count) {
+    const auto current_p = pos();
+    setpos(offset);
+
+    const size_t size = count * sizeof(T);
+
+    if (!can_read(offset, size)) {
+      setpos(current_p);
+      return make_error_code(lief_errors::read_error);
+    }
+
+    container.resize(size);
+
+    if (!peek_in(container.data(), pos(), size)) {
+      setpos(current_p);
+      return make_error_code(lief_errors::read_error);
+    }
+
+    setpos(current_p);
+    return ok();
+  }
+
   void setpos(size_t pos) const {
     pos_ = pos;
   }
@@ -154,6 +194,10 @@ class BinaryStream {
 
   template<typename T>
   bool can_read(size_t offset) const;
+
+  bool can_read(int64_t offset, int64_t size) const {
+    return offset < (int64_t)this->size() && (offset + size) < (int64_t)this->size();
+  }
 
   size_t align(size_t align_on) const;
 

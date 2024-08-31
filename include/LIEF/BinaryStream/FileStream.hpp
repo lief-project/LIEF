@@ -36,7 +36,6 @@ class FileStream : public BinaryStream {
 
   FileStream() = delete;
 
-  // VectorStream should not be copyable for performances reasons
   FileStream(const FileStream&) = delete;
   FileStream& operator=(const FileStream&) = delete;
 
