@@ -38,6 +38,7 @@ enum class lief_errors : uint32_t {
   build_error,
 
   data_too_large,
+  require_extended_version
   /*
    * When adding a new error, do not forget
    * to update the Python bindings as well (pyErr.cpp) and Rust bindings:

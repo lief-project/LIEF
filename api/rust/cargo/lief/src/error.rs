@@ -15,6 +15,7 @@ pub enum Error {
     ParsingError,
     BuildError,
     DataTooLarge,
+    RequireExtendedVersion,
     Unknown(u32),
 }
 
@@ -34,6 +35,7 @@ impl From<u32> for Error {
             0x0000000b => Error::ParsingError,
             0x0000000c => Error::BuildError,
             0x0000000d => Error::DataTooLarge,
+            0x0000000e => Error::RequireExtendedVersion,
             _ => Error::Unknown(value),
 
         }

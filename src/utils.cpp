@@ -94,8 +94,8 @@ bool is_extended() {
 
 #if !defined(LIEF_EXTENDED)
 result<std::string> demangle(const std::string&/*mangled*/) {
-  LIEF_WARN(NEEDS_EXTENDED_MSG);
-  return make_error_code(lief_errors::not_implemented);
+  logging::needs_lief_extended();
+  return make_error_code(lief_errors::require_extended_version);
 }
 #endif
 
