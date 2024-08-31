@@ -17,6 +17,9 @@
 #include <memory>
 
 #include "logging.hpp"
+#include "internal_utils.hpp"
+
+#include "MachO/ChainedFixup.hpp"
 
 #include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/BinaryStream/MemoryStream.hpp"
@@ -94,9 +97,13 @@ ok_error_t BinaryParser::parse() {
   }
 
   /*
-   * We must before this post-processing BEFORE parsing
+   * We must perform this post-processing BEFORE parsing
    * the exports trie as it could create new symbols and break the DynamicSymbolCommand's indexes
    */
+  if (SymbolCommand* symtab = binary_->symbol_command()) {
+    post_process<MACHO_T>(*symtab);
+  }
+
   if (DynamicSymbolCommand* dynsym = binary_->dynamic_symbol_command()) {
     post_process<MACHO_T>(*dynsym);
   }
@@ -151,9 +158,6 @@ ok_error_t BinaryParser::parse() {
   /*
    * Create the slices for the LinkEdit commands
    */
-  if (SymbolCommand* symtab = binary_->symbol_command()) {
-    post_process<MACHO_T>(*symtab);
-  }
   if (FunctionStarts* fstart = binary_->function_starts()) {
     post_process<MACHO_T>(*fstart);
   }
@@ -185,6 +189,7 @@ ok_error_t BinaryParser::parse() {
   if (config_.parse_overlay) {
     parse_overlay();
   }
+
   return ok();
 }
 
@@ -554,7 +559,6 @@ ok_error_t BinaryParser::parse_load_commands() {
           /*
            * DO NOT FORGET TO UPDATE SymbolCommand::classof
            */
-          using nlist_t = typename MACHO_T::nlist;
           LIEF_DEBUG("[+] Parsing symbols");
 
           const auto cmd = stream_->peek<details::symtab_command>(loadcommands_offset);
@@ -563,32 +567,13 @@ ok_error_t BinaryParser::parse_load_commands() {
             break;
           }
 
+
+          LIEF_DEBUG("LC_SYMTAB.symoff:  0x{:016x}", cmd->symoff);
+          LIEF_DEBUG("LC_SYMTAB.nsyms:   0x{:016x}", cmd->nsyms);
+          LIEF_DEBUG("LC_SYMTAB.stroff:  0x{:016x}", cmd->stroff);
+          LIEF_DEBUG("LC_SYMTAB.strsize: 0x{:016x}", cmd->strsize);
+
           load_command = std::make_unique<SymbolCommand>(*cmd);
-          stream_->setpos(cmd->symoff);
-          for (size_t j = 0; j < cmd->nsyms; ++j) {
-            auto nlist = stream_->read<nlist_t>();
-            if (!nlist) {
-              LIEF_ERR("Can't read nlist #{}", i);
-              break;
-            }
-            auto symbol = std::make_unique<Symbol>(*nlist);
-            const uint32_t str_idx = nlist->n_strx;
-            const auto end_strings = cmd->stroff + cmd->strsize;
-            if (cmd->stroff + str_idx < end_strings) {
-              if (str_idx > 0) {
-                if (auto name = stream_->peek_string_at(cmd->stroff + str_idx)) {
-                  symbol->name(*name);
-                  memoized_symbols_[*name] = symbol.get();
-                } else {
-                  LIEF_WARN("Can't read symbol's name for nlist #{}", i);
-                }
-              }
-            } else {
-              LIEF_ERR("nlist[{}].str_idx seems corrupted (0x{:08x})", j, str_idx);
-            }
-            memoized_symbols_by_address_[symbol->value()] = symbol.get();
-            binary_->symbols_.push_back(std::move(symbol));
-          }
           break;
         }
 
@@ -741,19 +726,6 @@ ok_error_t BinaryParser::parse_load_commands() {
             break;
           }
           load_command = std::make_unique<DataInCode>(*cmd);
-          auto* datacode = load_command->as<DataInCode>();
-
-          const size_t nb_entries = datacode->data_size() / sizeof(details::data_in_code_entry);
-          stream_->setpos(datacode->data_offset());
-
-          for (size_t i = 0; i < nb_entries; ++i) {
-            if (auto entry = stream_->read<details::data_in_code_entry>()) {
-              datacode->add(*entry);
-            } else {
-              LIEF_ERR("Can't read data in code entry #{}", i);
-              break;
-            }
-          }
           break;
         }
 
@@ -791,22 +763,6 @@ ok_error_t BinaryParser::parse_load_commands() {
             break;
           }
           load_command = std::make_unique<FunctionStarts>(*cmd);
-
-          uint64_t value = 0;
-          auto* fstart = load_command->as<FunctionStarts>();
-          stream_->setpos(cmd->dataoff);
-
-          do {
-            auto val = stream_->read_uleb128();
-            if (!val || *val == 0) {
-              break;
-            }
-            value += *val;
-
-            //LIEF_DEBUG("Value: 0x{:x}", value);
-            fstart->add_function(value);
-          } while(stream_->pos() < (cmd->dataoff + cmd->datasize));
-
           break;
         }
 
@@ -1022,7 +978,10 @@ ok_error_t BinaryParser::parse_load_commands() {
 
           load_command = std::make_unique<DyldChainedFixups>(*cmd);
           auto* chained = load_command->as<DyldChainedFixups>();
-          SegmentCommand* lnk = binary_->segment_from_offset(chained->data_offset());
+          SegmentCommand* lnk = config_.from_dyld_shared_cache ?
+                                     binary_->get_segment("__LINKEDIT") :
+                                     binary_->segment_from_offset(chained->data_offset());
+
           if (lnk == nullptr) {
             LIEF_WARN("Can't find the segment associated with "
                       "the LC_DYLD_CHAINED_FIXUPS payload (offset: 0x{:x})", chained->data_offset());
@@ -1262,11 +1221,9 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
     return make_error_code(lief_errors::read_out_of_bound);
   }
 
-  SegmentCommand* linkedit = binary_->segment_from_offset(offset);
-
-  if (linkedit == nullptr) {
-    linkedit = binary_->get_segment("__LINKEDIT");
-  }
+  SegmentCommand* linkedit = config_.from_dyld_shared_cache ?
+                             binary_->get_segment("__LINKEDIT") :
+                             binary_->segment_from_offset(offset);
 
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the rebase opcodes");
@@ -1507,11 +1464,9 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
     return make_error_code(lief_errors::read_out_of_bound);
   }
 
-  SegmentCommand* linkedit = binary_->segment_from_offset(offset);
-
-  if (linkedit == nullptr) {
-    linkedit = binary_->get_segment("__LINKEDIT");
-  }
+  SegmentCommand* linkedit = config_.from_dyld_shared_cache ?
+                             binary_->get_segment("__LINKEDIT") :
+                             binary_->segment_from_offset(offset);
 
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the regular bind opcodes");
@@ -1874,11 +1829,9 @@ ok_error_t BinaryParser::parse_dyldinfo_weak_bind() {
     return make_error_code(lief_errors::read_out_of_bound);
   }
 
-  SegmentCommand* linkedit = binary_->segment_from_offset(offset);
-
-  if (linkedit == nullptr) {
-    linkedit = binary_->get_segment("__LINKEDIT");
-  }
+  SegmentCommand* linkedit = config_.from_dyld_shared_cache ?
+                             binary_->get_segment("__LINKEDIT") :
+                             binary_->segment_from_offset(offset);
 
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the weak bind opcodes");
@@ -2128,11 +2081,9 @@ ok_error_t BinaryParser::parse_dyldinfo_lazy_bind() {
     return make_error_code(lief_errors::read_out_of_bound);
   }
 
-  SegmentCommand* linkedit = binary_->segment_from_offset(offset);
-
-  if (linkedit == nullptr) {
-    linkedit = binary_->get_segment("__LINKEDIT");
-  }
+  SegmentCommand* linkedit = config_.from_dyld_shared_cache ?
+                             binary_->get_segment("__LINKEDIT") :
+                             binary_->segment_from_offset(offset);
 
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the lazy bind opcodes");
@@ -3365,79 +3316,93 @@ template<class MACHO_T>
 ok_error_t BinaryParser::post_process(SymbolCommand& cmd) {
   LIEF_DEBUG("[^] Post processing LC_SYMTAB");
   using nlist_t = typename MACHO_T::nlist;
-  /* n_list table */ {
-    SegmentCommand* linkedit = binary_->segment_from_offset(cmd.symbol_offset());
 
-    if (linkedit == nullptr) {
-      linkedit = binary_->get_segment("__LINKEDIT");
+  cmd.original_nb_symbols_ = cmd.numberof_symbols();
+  cmd.original_str_size_   = cmd.strings_size();
+
+  SegmentCommand* nlist_linkedit = config_.from_dyld_shared_cache ?
+    binary_->get_segment("__LINKEDIT") :
+    binary_->segment_from_offset(cmd.symbol_offset());
+
+  SegmentCommand* strings_linkedit = config_.from_dyld_shared_cache ?
+    binary_->get_segment("__LINKEDIT") :
+    binary_->segment_from_offset(cmd.strings_offset());
+
+
+  if (nlist_linkedit == nullptr || strings_linkedit == nullptr) {
+    std::vector<uint8_t> nlist_buffer;
+    std::vector<uint8_t> strings_buffer;
+
+    const uint64_t nlist_size = sizeof(nlist_t) * cmd.numberof_symbols();
+
+    nlist_buffer.resize(nlist_size);
+    strings_buffer.resize(cmd.strings_size());
+
+    if (!stream_->peek_data(nlist_buffer, cmd.symbol_offset(), nlist_size)) {
+      LIEF_ERR("Can't read nlist buffer at: 0x{:010x}", cmd.symbol_offset());
+      return make_error_code(lief_errors::read_error);
     }
 
-    if (linkedit == nullptr) {
-      LIEF_WARN("Can't find the segment that contains the LC_SYMTAB.n_list");
-      return make_error_code(lief_errors::not_found);
-    };
+    if (!stream_->peek_data(strings_buffer, cmd.strings_offset(), cmd.strings_size())) {
+      return make_error_code(lief_errors::read_error);
+    }
 
-    span<uint8_t> content = linkedit->writable_content();
+    SpanStream nlist_s(nlist_buffer);
+    SpanStream strings_s(strings_buffer);
+    return parse_symtab<MACHO_T>(cmd, nlist_s, strings_s);
+  }
 
-    const uint64_t rel_offset = cmd.symbol_offset() - linkedit->file_offset();
+  /* n_list table */ {
+    span<uint8_t> content = nlist_linkedit->writable_content();
+
+    const uint64_t rel_offset = cmd.symbol_offset() - nlist_linkedit->file_offset();
     const size_t symtab_size = cmd.numberof_symbols() * sizeof(nlist_t);
     if (rel_offset > content.size() || (rel_offset + symtab_size) > content.size()) {
-      LIEF_ERR("The LC_SYMTAB.n_list is out of bounds of the segment '{}'", linkedit->name());
+      LIEF_ERR("The LC_SYMTAB.n_list is out of bounds of the segment '{}'", nlist_linkedit->name());
       return make_error_code(lief_errors::read_out_of_bound);
     }
 
     cmd.symbol_table_ = content.subspan(rel_offset, symtab_size);
 
-    if (LinkEdit::segmentof(*linkedit)) {
-      static_cast<LinkEdit*>(linkedit)->symtab_ = &cmd;
+    if (LinkEdit::segmentof(*nlist_linkedit)) {
+      static_cast<LinkEdit*>(nlist_linkedit)->symtab_ = &cmd;
     } else {
       LIEF_WARN("Weird: LC_SYMTAB.n_list is not in the __LINKEDIT segment");
     }
   }
 
   /* strtable */ {
-    SegmentCommand* linkedit = binary_->segment_from_offset(cmd.strings_offset());
+    span<uint8_t> content = strings_linkedit->writable_content();
 
-    if (linkedit == nullptr) {
-      linkedit = binary_->get_segment("__LINKEDIT");
-    }
-
-    if (linkedit == nullptr) {
-      LIEF_WARN("Can't find the segment that contains the LC_SYMTAB.n_list");
-      return make_error_code(lief_errors::not_found);
-    };
-
-    span<uint8_t> content = linkedit->writable_content();
-
-    const uint64_t rel_offset = cmd.strings_offset() - linkedit->file_offset();
+    const uint64_t rel_offset = cmd.strings_offset() - strings_linkedit->file_offset();
     const size_t strtab_size = cmd.strings_size();
     if (rel_offset > content.size() || (rel_offset + strtab_size) > content.size()) {
-      LIEF_ERR("The LC_SYMTAB.strtab is out of bounds of the segment {}", linkedit->name());
+      LIEF_ERR("The LC_SYMTAB.strtab is out of bounds of the segment {}", strings_linkedit->name());
       return make_error_code(lief_errors::read_out_of_bound);
     }
 
     cmd.string_table_ = content.subspan(rel_offset, strtab_size);
 
-    if (LinkEdit::segmentof(*linkedit)) {
-      static_cast<LinkEdit*>(linkedit)->symtab_ = &cmd;
+    if (LinkEdit::segmentof(*strings_linkedit)) {
+      static_cast<LinkEdit*>(strings_linkedit)->symtab_ = &cmd;
     } else {
       LIEF_WARN("Weird: LC_SYMTAB.strtab is not in the __LINKEDIT segment");
     }
   }
 
-  cmd.original_nb_symbols_ = cmd.numberof_symbols();
-  cmd.original_str_size_   = cmd.strings_size();
-  return ok();
+  SpanStream nlist_stream(cmd.symbol_table_);
+  SpanStream string_stream(cmd.string_table_);
+
+  return parse_symtab<MACHO_T>(cmd, nlist_stream, string_stream);
 }
 
 
 template<class MACHO_T>
 ok_error_t BinaryParser::post_process(FunctionStarts& cmd) {
   LIEF_DEBUG("[^] Post processing LC_FUNCTION_STARTS");
-  SegmentCommand* linkedit = binary_->segment_from_offset(cmd.data_offset());
-  if (linkedit == nullptr) {
-    linkedit = binary_->get_segment("__LINKEDIT");
-  }
+  SegmentCommand* linkedit = config_.from_dyld_shared_cache ?
+                             binary_->get_segment("__LINKEDIT") :
+                             binary_->segment_from_offset(cmd.data_offset());
 
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the LC_FUNCTION_STARTS (offset=0x{:016x})", cmd.data_offset());
@@ -3457,8 +3422,29 @@ ok_error_t BinaryParser::post_process(FunctionStarts& cmd) {
   if (LinkEdit::segmentof(*linkedit)) {
     static_cast<LinkEdit*>(linkedit)->fstarts_ = &cmd;
   } else {
-    LIEF_WARN("Weird: LC_FUNCTION_STARTS is not in the __LINKEDIT segment");
+    LIEF_WARN("Weird: LC_FUNCTION_STARTS is not in the __LINKEDIT segment ({})", linkedit->name());
   }
+
+  SpanStream stream(cmd.content_);
+
+  uint64_t value = 0;
+  do {
+    auto val = stream.read_uleb128();
+    if (!val) {
+      LIEF_WARN("Can't read value at offset: 0x{:010x} (#{} read)",
+                stream.pos(), cmd.functions_.size()
+      );
+      return make_error_code(lief_errors::read_error);
+    }
+
+    if (*val == 0) {
+      break;
+    }
+
+    value += *val;
+    cmd.add_function(value);
+  } while(stream);
+
   return ok();
 }
 
@@ -3466,16 +3452,14 @@ ok_error_t BinaryParser::post_process(FunctionStarts& cmd) {
 template<class MACHO_T>
 ok_error_t BinaryParser::post_process(DataInCode& cmd) {
   LIEF_DEBUG("[^] Post processing LC_DATA_IN_CODE");
-  SegmentCommand* linkedit = binary_->segment_from_offset(cmd.data_offset());
-
-  if (linkedit == nullptr) {
-    linkedit = binary_->get_segment("__LINKEDIT");
-  }
-
+  SegmentCommand* linkedit = config_.from_dyld_shared_cache ?
+                             binary_->get_segment("__LINKEDIT") :
+                             binary_->segment_from_offset(cmd.data_offset());
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the LC_DATA_IN_CODE");
-    return make_error_code(lief_errors::not_found);
-  };
+    ScopedStream scoped(*stream_, cmd.data_offset());
+    return parse_data_in_code<MACHO_T>(cmd, *scoped);
+  }
 
   span<uint8_t> content = linkedit->writable_content();
 
@@ -3492,22 +3476,21 @@ ok_error_t BinaryParser::post_process(DataInCode& cmd) {
   } else {
     LIEF_WARN("Weird: LC_DATA_IN_CODE is not in the __LINKEDIT segment");
   }
-  return ok();
+
+  SpanStream stream(cmd.content_);
+  return parse_data_in_code<MACHO_T>(cmd, stream);
 }
 
 template<class MACHO_T>
 ok_error_t BinaryParser::post_process(SegmentSplitInfo& cmd) {
   LIEF_DEBUG("[^] Post processing LC_SEGMENT_SPLIT_INFO");
-  SegmentCommand* linkedit = binary_->segment_from_offset(cmd.data_offset());
-
-  if (linkedit == nullptr) {
-    linkedit = binary_->get_segment("__LINKEDIT");
-  }
-
+  SegmentCommand* linkedit = config_.from_dyld_shared_cache ?
+                             binary_->get_segment("__LINKEDIT") :
+                             binary_->segment_from_offset(cmd.data_offset());
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the LC_SEGMENT_SPLIT_INFO");
     return make_error_code(lief_errors::not_found);
-  };
+  }
 
   span<uint8_t> content = linkedit->writable_content();
 
@@ -3560,48 +3543,39 @@ ok_error_t BinaryParser::post_process(DynamicSymbolCommand& cmd) {
     ++isym;
   }
 
-  stream_->setpos(cmd.indirect_symbol_offset());
-  for (size_t i = 0; i < cmd.nb_indirect_symbols(); ++i) {
-    uint32_t index = 0;
-    if (auto res = stream_->read<uint32_t>()) {
-      index = *res;
-    } else {
-      LIEF_ERR("Can't read indirect symbol #{}", index);
-      break;
-    }
-
-    if (index == details::INDIRECT_SYMBOL_ABS) {
-      cmd.indirect_symbols_.push_back(const_cast<Symbol*>(&Symbol::indirect_abs()));
-      continue;
-    }
-    if (index == details::INDIRECT_SYMBOL_LOCAL) {
-      cmd.indirect_symbols_.push_back(const_cast<Symbol*>(&Symbol::indirect_local()));
-      continue;
-    }
-
-    if (index >= symtab.size()) {
-      LIEF_ERR("Indirect symbol index is out of range ({} vs max sym: {})",
-               index, symtab.size());
-      break;
-    }
-
-    Symbol* indirect = symtab[index];
-    LIEF_DEBUG("  indirectsyms[{}] = {}", index, indirect->name());
-    cmd.indirect_symbols_.push_back(indirect);
+  if (cmd.indirect_symbol_offset() == 0 || cmd.nb_indirect_symbols() == 0) {
+    return ok();
   }
-  LIEF_DEBUG("indirect_symbols_.size(): {} (nb_indirect_symbols: {})",
-             cmd.indirect_symbols_.size(), cmd.nb_indirect_symbols());
-  return ok();
+
+  SegmentCommand* linkedit = config_.from_dyld_shared_cache ?
+                             binary_->get_segment("__LINKEDIT") :
+                             binary_->segment_from_offset(cmd.indirect_symbol_offset());
+
+  if (linkedit == nullptr) {
+    ScopedStream scoped(*stream_, cmd.indirect_symbol_offset());
+    return parse_indirect_symbols(cmd, symtab, *scoped);
+  }
+
+  span<uint8_t> content = linkedit->writable_content();
+
+  const size_t size = cmd.nb_indirect_symbols() * sizeof(uint32_t);
+
+  const uint64_t rel_offset = cmd.indirect_symbol_offset() - linkedit->file_offset();
+  if (rel_offset > content.size() || (rel_offset + size) > content.size()) {
+    LIEF_ERR("LC_DYSYMTAB.indirect_symbols is out of bounds of the segment '{}'", linkedit->name());
+    return make_error_code(lief_errors::read_out_of_bound);
+  }
+  span<uint8_t> indirect_sym_buffer = content.subspan(rel_offset, size);
+  SpanStream indirect_sym_s(indirect_sym_buffer);
+  return parse_indirect_symbols(cmd, symtab, indirect_sym_s);
 }
 
 template<class MACHO_T>
 ok_error_t BinaryParser::post_process(LinkerOptHint& cmd) {
   LIEF_DEBUG("[^] Post processing LC_LINKER_OPTIMIZATION_HINT");
-  SegmentCommand* linkedit = binary_->segment_from_offset(cmd.data_offset());
-
-  if (linkedit == nullptr) {
-    linkedit = binary_->get_segment("__LINKEDIT");
-  }
+  SegmentCommand* linkedit = config_.from_dyld_shared_cache ?
+                             binary_->get_segment("__LINKEDIT") :
+                             binary_->segment_from_offset(cmd.data_offset());
 
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the LC_LINKER_OPTIMIZATION_HINT");
@@ -3629,11 +3603,9 @@ ok_error_t BinaryParser::post_process(LinkerOptHint& cmd) {
 template<class MACHO_T>
 ok_error_t BinaryParser::post_process(CodeSignature& cmd) {
   LIEF_DEBUG("[^] Post processing LC_CODE_SIGNATURE");
-  SegmentCommand* linkedit = binary_->segment_from_offset(cmd.data_offset());
-
-  if (linkedit == nullptr) {
-    linkedit = binary_->get_segment("__LINKEDIT");
-  }
+  SegmentCommand* linkedit = config_.from_dyld_shared_cache ?
+                             binary_->get_segment("__LINKEDIT") :
+                             binary_->segment_from_offset(cmd.data_offset());
 
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the LC_CODE_SIGNATURE");
@@ -3661,11 +3633,9 @@ ok_error_t BinaryParser::post_process(CodeSignature& cmd) {
 template<class MACHO_T>
 ok_error_t BinaryParser::post_process(CodeSignatureDir& cmd) {
   LIEF_DEBUG("[^] Post processing LC_DYLIB_CODE_SIGN_DRS");
-  SegmentCommand* linkedit = binary_->segment_from_offset(cmd.data_offset());
-
-  if (linkedit == nullptr) {
-    linkedit = binary_->get_segment("__LINKEDIT");
-  }
+  SegmentCommand* linkedit = config_.from_dyld_shared_cache ?
+                             binary_->get_segment("__LINKEDIT") :
+                             binary_->segment_from_offset(cmd.data_offset());
 
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the LC_DYLIB_CODE_SIGN_DRS");
@@ -3693,8 +3663,11 @@ ok_error_t BinaryParser::post_process(CodeSignatureDir& cmd) {
 
 template<class MACHO_T>
 ok_error_t BinaryParser::post_process(TwoLevelHints& cmd) {
-  LIEF_DEBUG("[^] Post processing LC_DYLIB_CODE_SIGN_DRS");
-  SegmentCommand* linkedit = binary_->segment_from_offset(cmd.offset());
+  LIEF_DEBUG("[^] Post processing TWOLEVEL_HINTS");
+  SegmentCommand* linkedit = config_.from_dyld_shared_cache ?
+                             binary_->get_segment("__LINKEDIT") :
+                             binary_->segment_from_offset(cmd.offset());
+
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the LC_TWOLEVEL_HINTS");
     return make_error_code(lief_errors::not_found);
@@ -3768,6 +3741,55 @@ ok_error_t BinaryParser::infer_indirect_bindings() {
         binary_->indirect_bindings_.push_back(std::move(binding));
       }
     }
+  }
+  return ok();
+}
+
+
+template<class MACHO_T>
+ok_error_t BinaryParser::parse_symtab(SymbolCommand&/*cmd*/,
+                                      SpanStream& nlist_s, SpanStream& string_s)
+{
+  using nlist_t = typename MACHO_T::nlist;
+
+  size_t idx = 0;
+  while (nlist_s) {
+    auto nlist = nlist_s.read<nlist_t>();
+    if (!nlist) {
+      LIEF_ERR("Can't read nlist #{}", idx);
+      return make_error_code(lief_errors::read_error);
+    }
+
+    auto symbol = std::make_unique<Symbol>(*nlist);
+    const uint32_t str_idx = nlist->n_strx;
+    if (str_idx > 0) {
+      auto name = string_s.peek_string_at(str_idx);
+      if (name) {
+        symbol->name(*name);
+        memoized_symbols_[*name] = symbol.get();
+      } else {
+        LIEF_WARN("Can't read symbol's name for nlist #{}", idx);
+      }
+    }
+    memoized_symbols_by_address_[symbol->value()] = symbol.get();
+    binary_->symbols_.push_back(std::move(symbol));
+    ++idx;
+  }
+  return ok();
+}
+
+
+template<class MACHO_T>
+ok_error_t BinaryParser::parse_data_in_code(DataInCode& cmd, BinaryStream& stream) {
+  const size_t nb_entries = cmd.data_size() / sizeof(details::data_in_code_entry);
+
+  for (size_t i = 0; i < nb_entries; ++i) {
+    auto entry = stream.read<details::data_in_code_entry>();
+    if (!entry) {
+      LIEF_ERR("Can't read data in code entry #{}", i);
+      return make_error_code(lief_errors::read_error);
+    }
+    cmd.add(*entry);
   }
   return ok();
 }

@@ -141,6 +141,19 @@ class LIEF_API BinaryParser : public LIEF::Parser {
   template<class MACHO_T>
   ok_error_t infer_indirect_bindings();
 
+  template<class MACHO_T>
+  ok_error_t parse_symtab(SymbolCommand& cmd,
+                          SpanStream& nlist_s,
+                          SpanStream& string_s);
+
+  ok_error_t parse_indirect_symbols(DynamicSymbolCommand& cmd,
+                                    std::vector<Symbol*>& symtab,
+                                    BinaryStream& indirect_stream);
+
+
+  template<class MACHO_T>
+  ok_error_t parse_data_in_code(DataInCode& cmd, BinaryStream& stream);
+
   using it_opaque_segments = void*; // To avoid including Binary.hpp. It must contains it_opaque_segments
 
   template<class MACHO_T>
