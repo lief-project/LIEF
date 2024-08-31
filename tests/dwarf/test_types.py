@@ -90,7 +90,7 @@ def test_vars_1():
 
     # Const type
     cst_type: lief.dwarf.types.Pointer = types[468]
-    assert cst_type.kind == lief.dwarf.Type.KIND.CONST
+    assert cst_type.kind == lief.dwarf.Type.KIND.CONST_KIND
     assert isinstance(cst_type, lief.dwarf.types.Const)
 
     underlying_cst_type = cst_type.underlying_type
