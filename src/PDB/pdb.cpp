@@ -116,8 +116,8 @@ std::string CompilationUnit::object_filename() const {
 }
 
 CompilationUnit::sources_iterator CompilationUnit::sources() const {
-  std::vector<std::string>::const_iterator empty;
-  return make_range<std::vector<std::string>::const_iterator>(empty, empty);
+  static const std::vector<std::string> empty;
+  return make_range(empty.begin(), empty.end());
 }
 
 CompilationUnit::function_iterator CompilationUnit::functions() const {

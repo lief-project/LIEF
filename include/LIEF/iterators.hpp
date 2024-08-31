@@ -486,20 +486,44 @@ template <typename IteratorT>
 class iterator_range {
   public:
   using IteratorTy = IteratorT;
-  iterator_range(IteratorT it_begin, IteratorT it_end)
-      : begin_(std::move(it_begin)),
-        end_(std::move(it_end)) {}
+  iterator_range(IteratorT&& it_begin, IteratorT&& it_end)
+      : begin_(std::forward<IteratorT>(it_begin)),
+        end_(std::forward<IteratorT>(it_end)) {}
 
   IteratorT begin() const { return begin_; }
   IteratorT end() const { return end_; }
   bool empty() const { return begin_ == end_; }
+
+  typename IteratorT::value_type at(typename IteratorT::difference_type pos) const {
+    static_assert(IsRandomAccess, "at() needs random access iterator");
+    auto it = begin_;
+    std::advance(it, pos);
+    return *it;
+  }
+
+  typename IteratorT::value_type operator[](typename IteratorT::difference_type pos) const {
+    return at(pos);
+  }
+
+  std::ptrdiff_t size() const {
+    static_assert(IsRandomAccess, "size() needs random access iterator");
+    return std::distance(begin_, end_);
+  }
+
+  protected:
+  enum {
+    IsRandomAccess = std::is_base_of<std::random_access_iterator_tag,
+                                      typename IteratorT::iterator_category>::value,
+    IsBidirectional = std::is_base_of<std::bidirectional_iterator_tag,
+                                      typename IteratorT::iterator_category>::value,
+  };
   private:
   IteratorT begin_;
   IteratorT end_;
 };
 
-template <class T> iterator_range<T> make_range(T x, T y) {
-  return iterator_range<T>(std::move(x), std::move(y));
+template <class T> iterator_range<T> make_range(T&& x, T&& y) {
+  return iterator_range<T>(std::forward<T>(x), std::forward<T>(y));
 }
 
 
