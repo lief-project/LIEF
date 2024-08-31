@@ -43,7 +43,7 @@ void create<dw::Type>(nb::module_& m) {
     .value("UNKNOWN", Type::KIND::UNKNOWN)
     .value("UNSPECIFIED", Type::KIND::UNSPECIFIED)
     .value("BASE", Type::KIND::BASE)
-    .value("CONST", Type::KIND::CONST)
+    .value("CONST_KIND", Type::KIND::CONST_KIND)
     .value("CLASS", Type::KIND::CLASS)
     .value("ARRAY", Type::KIND::ARRAY)
     .value("POINTER", Type::KIND::POINTER)

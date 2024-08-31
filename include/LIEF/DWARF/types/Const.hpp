@@ -28,7 +28,7 @@ class LIEF_API Const : public Type {
   using Type::Type;
 
   static bool classof(const Type* type) {
-    return type->kind() == Type::KIND::CONST;
+    return type->kind() == Type::KIND::CONST_KIND;
   }
 
   /// The underlying type being const-ed

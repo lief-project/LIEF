@@ -109,7 +109,7 @@ class LIEF_API Type {
     UNKNOWN = 0,
     UNSPECIFIED,
     BASE,
-    CONST,
+    CONST_KIND,
     CLASS,
     ARRAY,
     POINTER,
