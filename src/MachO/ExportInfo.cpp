@@ -79,7 +79,6 @@ void ExportInfo::accept(Visitor& visitor) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const ExportInfo& info) {
-
   const ExportInfo::flag_list_t& flags = info.flags_list();
   os << fmt::format(
     "offset=0x{:x}, flags={}, address=0x{:x}, kind={}",
@@ -95,8 +94,6 @@ std::ostream& operator<<(std::ostream& os, const ExportInfo& info) {
       os << fmt::format(" library={}", lib->name());
     }
   }
-
-  os << '\n';
   return os;
 }
 
