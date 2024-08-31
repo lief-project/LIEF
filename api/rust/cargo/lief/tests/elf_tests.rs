@@ -104,6 +104,7 @@ fn explore_elf(name: &str, elf: &lief::elf::Binary) {
     for sym in elf.dynamic_symbols() {
         format!("{sym:?}: {sym}");
         format!("{}: {} ({})", sym.name(), sym.value(), sym.size());
+        format!("{}", sym.demangled_name());
     }
 
     for sym_ver in elf.symbols_version() {

@@ -15,6 +15,10 @@
  */
 #include <iomanip>
 
+#include "logging.hpp"
+
+#include "LIEF/config.h"
+#include "LIEF/utils.hpp"
 #include "LIEF/Visitor.hpp"
 #include "LIEF/PE/ImportEntry.hpp"
 
@@ -42,6 +46,16 @@ ImportEntry::ImportEntry(const std::string& name) :
 ImportEntry::ImportEntry(const std::string& name, PE_TYPE type) :
   ImportEntry{0, type, name}
 {}
+
+std::string ImportEntry::demangled_name() const {
+  logging::needs_lief_extended();
+
+  if constexpr (lief_extended) {
+    return LIEF::demangle(name()).value_or("");
+  } else {
+    return "";
+  }
+}
 
 bool ImportEntry::is_ordinal() const {
   // See: https://docs.microsoft.com/en-us/windows/desktop/debug/pe-format#the-idata-section

@@ -28,6 +28,7 @@ class PE_ExportEntry : public AbstractSymbol {
   bool is_extern() const { return impl().is_extern(); }
   bool is_forwarded() const { return impl().is_forwarded(); }
 
+  auto demangled_name() const { return impl().demangled_name(); }
   private:
   const lief_t& impl() const { return as<lief_t>(this); }
 };

@@ -87,7 +87,6 @@ impl Import<'_> {
     pub fn entry_by_name(&self, name: &str) -> Option<ImportEntry> {
         into_optional(self.ptr.entry_by_name(name))
     }
-
 }
 
 /// Structure that represents an entry (i.e. an import) in the regular import table.
@@ -132,6 +131,12 @@ impl ImportEntry<'_> {
     /// **Original** address of the entry in the Import Address Table
     pub fn iat_address(&self) -> u64 {
         self.ptr.iat_address()
+    }
+
+    /// Demangled representation of the symbol or an empty string if it can't
+    /// be demangled
+    pub fn demangled_name(&self) -> String {
+        self.ptr.demangled_name().to_string()
     }
 }
 

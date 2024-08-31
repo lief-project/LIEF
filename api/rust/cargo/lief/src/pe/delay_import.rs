@@ -131,6 +131,12 @@ impl DelayImportEntry<'_> {
     pub fn data(&self) -> u64 {
         self.ptr.data()
     }
+
+    /// Demangled representation of the symbol or an empty string if it can't
+    /// be demangled
+    pub fn demangled_name(&self) -> String {
+        self.ptr.demangled_name().to_string()
+    }
 }
 
 impl generic::Symbol for DelayImportEntry<'_> {

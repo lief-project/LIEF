@@ -94,6 +94,12 @@ impl Entry<'_> {
     pub fn is_forwarded(&self) -> bool {
         self.ptr.is_forwarded()
     }
+
+    /// Demangled representation of the symbol or an empty string if it can't
+    /// be demangled
+    pub fn demangled_name(&self) -> String {
+        self.ptr.demangled_name().to_string()
+    }
 }
 
 impl generic::Symbol for Entry<'_> {

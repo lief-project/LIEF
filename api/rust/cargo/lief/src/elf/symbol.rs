@@ -153,6 +153,11 @@ impl Symbol<'_> {
     pub fn symbol_version(&self) -> Option<SymbolVersion> {
         into_optional(self.ptr.symbol_version())
     }
+
+    /// Try to demangle the symbol or return an empty string if it is not possible
+    pub fn demangled_name(&self) -> String {
+        self.ptr.demangled_name().to_string()
+    }
 }
 
 impl fmt::Debug for Symbol<'_> {

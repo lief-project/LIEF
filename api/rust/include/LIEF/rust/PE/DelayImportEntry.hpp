@@ -28,6 +28,7 @@ class PE_DelayImportEntry : public AbstractSymbol {
   uint16_t hint() const { return impl().hint(); };
   uint64_t iat_value() const { return impl().iat_value(); };
   uint64_t data() const { return impl().data(); };
+  auto demangled_name() const { return impl().demangled_name(); }
 
   private:
   const lief_t& impl() const { return as<lief_t>(this); }

@@ -223,6 +223,9 @@ fn explore_pe(bin_name: &str, pe: &lief::pe::Binary) {
         format!("{export:?}");
         for entry in export.entries() {
             format!("{entry:?}");
+            if lief::is_extended() {
+                format!("{}", entry.demangled_name());
+            }
         }
     }
 
@@ -460,6 +463,9 @@ fn explore_pe(bin_name: &str, pe: &lief::pe::Binary) {
         format!("{imp:?}");
         for entry in imp.entries() {
             format!("{entry:?}");
+            if lief::is_extended() {
+                format!("{}", entry.demangled_name());
+            }
         }
     }
 
@@ -483,6 +489,9 @@ fn explore_pe(bin_name: &str, pe: &lief::pe::Binary) {
         format!("{delay_import:?}");
         for entry in delay_import.entries() {
             format!("{entry:?}");
+            if lief::is_extended() {
+                format!("{}", entry.demangled_name());
+            }
         }
     }
 

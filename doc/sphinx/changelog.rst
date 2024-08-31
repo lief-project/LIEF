@@ -24,7 +24,34 @@ Changelog
   * Fix bug when trying to remove a dynamic symbol that is associated with
     multiple relocations (:issue:`1089`)
 
+
 :Extended:
+  * :attr:`lief.ELF.Symbol.demangled_name` /
+    :cpp:func:`LIEF::ELF::Symbol::demangled_name` is working on **all** platforms
+    (not only unix-based builds)
+  * :attr:`lief.MachO.Symbol.demangled_name` /
+    :cpp:func:`LIEF::MachO::Symbol::demangled_name` is working on **all** platforms
+    (not only unix-based builds)
+  * Add :attr:`lief.PE.DelayImportEntry.demangled_name` /
+    :cpp:func:`LIEF::PE::DelayImportEntry::demangled_name`
+  * Add :attr:`lief.PE.ImportEntry.demangled_name` /
+    :cpp:func:`LIEF::PE::ImportEntry::demangled_name`
+  * Add :attr:`lief.PE.ExportEntry.demangled_name` /
+    :cpp:func:`LIEF::PE::ExportEntry::demangled_name`
+
+    .. code-block:: python
+
+        pe = lief.PE.parse("some.exe")
+
+        if exp := pe.get_export():
+            for entry in exp.entries:
+                # e.g.void __cdecl Platform::Details::EventSourceUninitialize(void **)
+                print(entry.demangled_name)
+
+        for imp in pe.imports:
+            for entry in imp.entries:
+                # e.g. void __cdecl std::_Xlength_error(char const *)
+                print(entry.demangled_name)
 
   * Add :func:`lief.demangle` / :cpp:func:`LIEF::demangle` to demangle symbols
     (c.f. :issue:`1054`)

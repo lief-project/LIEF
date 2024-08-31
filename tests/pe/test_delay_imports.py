@@ -103,5 +103,3 @@ def test_cmd():
     assert ShellExecuteExW.iat_value == 0xffff00000004
     assert ShellExecuteExW.data == 0x2a700
     assert ShellExecuteExW.hint == 0
-
-

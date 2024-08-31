@@ -16,7 +16,7 @@
 #define LIEF_MSG_H
 
 #if !defined(LIEF_DOC_PREFIX)
-#define LIEF_DOC_PREFIX "https://lief.re/doc/"
+#define LIEF_DOC_PREFIX "https://lief.re/doc"
 #endif
 
 #define SUBMISSION_MSG                                                  \

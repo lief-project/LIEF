@@ -30,6 +30,8 @@ class PE_ImportEntry : public AbstractSymbol {
   uint64_t data() const { return impl().data(); }
   uint64_t iat_address() const { return impl().iat_address(); }
 
+  auto demangled_name() const { return impl().demangled_name(); }
+
   private:
   const lief_t& impl() const { return as<lief_t>(this); }
 };

@@ -20,6 +20,8 @@
 #include "LIEF/types.hpp"
 #include "LIEF/config.h"
 
+#include "messages.hpp"
+
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/fmt.h>
 
@@ -146,6 +148,11 @@ template <typename... Args>
   terminate();
 }
 
+inline void needs_lief_extended() {
+  if constexpr (!lief_extended) {
+    Logger::warn(NEEDS_EXTENDED_MSG);
+  }
+}
 
 }
 }

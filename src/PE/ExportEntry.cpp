@@ -15,25 +15,27 @@
  */
 #include <iomanip>
 
+#include "logging.hpp"
+
+#include "LIEF/config.h"
+#include "LIEF/utils.hpp"
 #include "LIEF/Visitor.hpp"
 #include "LIEF/PE/ExportEntry.hpp"
 
 namespace LIEF {
 namespace PE {
-ExportEntry::ExportEntry(uint32_t address, bool is_extern, uint16_t ordinal, uint32_t function_rva) :
-  function_rva_{function_rva},
-  ordinal_{ordinal},
-  address_{address},
-  is_extern_{is_extern}
-{}
+std::string ExportEntry::demangled_name() const {
+  logging::needs_lief_extended();
+
+  if constexpr (lief_extended) {
+    return LIEF::demangle(name()).value_or("");
+  } else {
+    return "";
+  }
+}
 
 void ExportEntry::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
-}
-
-std::ostream& operator<<(std::ostream& os, const ExportEntry::forward_information_t& info) {
-  os << info.library << "." << info.function;
-  return os;
 }
 
 std::ostream& operator<<(std::ostream& os, const ExportEntry& export_entry) {

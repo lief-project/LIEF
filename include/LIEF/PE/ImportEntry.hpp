@@ -47,6 +47,10 @@ class LIEF_API ImportEntry : public LIEF::Symbol {
   ImportEntry& operator=(const ImportEntry&) = default;
   ~ImportEntry() override = default;
 
+  //! Demangled representation of the symbol or an empty string if it can't
+  //! be demangled
+  std::string demangled_name() const;
+
   //! `True` if it is an import by ordinal
   bool is_ordinal() const;
 

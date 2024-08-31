@@ -107,6 +107,11 @@ impl Symbol<'_> {
     pub fn library(&self) -> Option<Dylib> {
         into_optional(self.ptr.library())
     }
+
+    /// Try to demangle the symbol or return an empty string if it is not possible
+    pub fn demangled_name(&self) -> String {
+        self.ptr.demangled_name().to_string()
+    }
 }
 
 impl std::fmt::Debug for Symbol<'_> {

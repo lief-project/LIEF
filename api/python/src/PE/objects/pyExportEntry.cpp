@@ -66,6 +66,14 @@ void create<ExportEntry>(nb::module_& m) {
     .def_prop_ro("function_rva",
         &ExportEntry::function_rva)
 
+    .def_prop_ro("demangled_name",
+      &ExportEntry::demangled_name,
+      R"doc(
+      Demangled representation of the symbol or an empty string if it can't
+      be demangled.
+      )doc"_doc
+    )
+
     LIEF_DEFAULT_STR(ExportEntry);
 
 }

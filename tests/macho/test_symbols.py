@@ -1,9 +1,9 @@
 #!/usr/bin/env python
+import pytest
 import lief
 import pathlib
 import re
-import sys
-from utils import is_osx, get_sample, is_apple_m1
+from utils import is_osx, get_sample
 
 from .test_builder import run_program
 
@@ -101,3 +101,9 @@ def test_dynsym_command():
 
     assert indirect_symbols[3].name == "_printf"
 
+@pytest.mark.skipif(not lief.__extended__, reason="needs LIEF extended")
+def test_demangling():
+    macho = lief.MachO.parse(get_sample("MachO/FAT_MachO_x86_x86-64_library_libc++abi.dylib")).at(0)
+
+    assert macho.symbols[1].demangled_name == "void __cxxabiv1::(anonymous namespace)::demangle<__cxxabiv1::(anonymous namespace)::Db>(char const*, char const*, __cxxabiv1::(anonymous namespace)::Db&, int&)"
+    assert macho.symbols[486].demangled_name == "__cxa_deleted_virtual"

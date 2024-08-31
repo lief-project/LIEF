@@ -64,6 +64,14 @@ void create<ImportEntry>(nb::module_& m) {
         nb::overload_cast<uint64_t>(&ImportEntry::data),
         "Raw value"_doc)
 
+    .def_prop_ro("demangled_name",
+      &ImportEntry::demangled_name,
+      R"doc(
+      Demangled representation of the symbol or an empty string if it can't
+      be demangled.
+      )doc"_doc
+    )
+
     .def_prop_ro("is_ordinal",
         &ImportEntry::is_ordinal,
         "``True`` if it is an import by ordinal"_doc)

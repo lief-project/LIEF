@@ -39,6 +39,14 @@ void create<DelayImportEntry>(nb::module_& m) {
       )delim"_doc)
     .def(nb::init<>())
 
+    .def_prop_ro("demangled_name",
+      &DelayImportEntry::demangled_name,
+      R"doc(
+      Demangled representation of the symbol or an empty string if it can't
+      be demangled.
+      )doc"_doc
+    )
+
     .def_prop_rw("name",
         [] (const DelayImportEntry& obj) {
           return LIEF::py::safe_string(obj.name());

@@ -35,6 +35,8 @@ class MachO_Symbol : public AbstractSymbol {
   auto category() const { return to_int(impl().category()); };
   bool is_external() const { return impl().is_external(); };
 
+  auto demangled_name() const { return impl().demangled_name(); }
+
   LIEF_API std::unique_ptr<MachO_ExportInfo> export_info() const;
   LIEF_API std::unique_ptr<MachO_BindingInfo> binding_info() const;
 

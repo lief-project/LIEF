@@ -34,6 +34,8 @@ class ELF_Symbol : public AbstractSymbol {
   auto section() const { return details::try_unique<ELF_Section>(impl().section());}
   auto symbol_version() const { return details::try_unique<ELF_SymbolVersion>(impl().symbol_version());}
 
+  auto demangled_name() const { return impl().demangled_name(); }
+
   std::string to_string() const { return details::to_string(impl()); }
 
   private:

@@ -20,6 +20,8 @@
 #include "spdlog/fmt/fmt.h"
 
 #include "LIEF/Visitor.hpp"
+#include "LIEF/config.h"
+#include "LIEF/utils.hpp"
 
 #include "LIEF/MachO/Symbol.hpp"
 #include "MachO/Structures.hpp"
@@ -73,20 +75,28 @@ void Symbol::swap(Symbol& other) noexcept {
 }
 
 std::string Symbol::demangled_name() const {
+  if constexpr (lief_extended) {
+    std::string sym_name = name();
+    if (sym_name.find("__Z") == 0) {
+      sym_name = sym_name.substr(1);
+    }
+    return LIEF::demangle(sym_name).value_or("");
+  } else {
 #if defined(__unix__)
-  int status;
-  const std::string& name = this->name().c_str();
-  char* demangled_name = abi::__cxa_demangle(name.c_str(), 0, 0, &status);
+    int status;
+    const std::string& name = this->name().c_str();
+    char* demangled_name = abi::__cxa_demangle(name.c_str(), 0, 0, &status);
 
-  if (status == 0) {
-    std::string realname = demangled_name;
-    free(demangled_name);
-    return realname;
-  }
-  return name;
+    if (status == 0) {
+      std::string realname = demangled_name;
+      free(demangled_name);
+      return realname;
+    }
+    return name;
 #else
-  return "";
+      return "";
 #endif
+  }
 }
 
 void Symbol::accept(Visitor& visitor) const {

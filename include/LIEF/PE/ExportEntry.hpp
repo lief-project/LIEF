@@ -44,16 +44,29 @@ class LIEF_API ExportEntry : public LIEF::Symbol {
       return !library.empty() || !function.empty();
     }
 
-    LIEF_API friend std::ostream& operator<<(std::ostream& os, const forward_information_t& info);
+    LIEF_API friend std::ostream& operator<<(std::ostream& os, const forward_information_t& info) {
+      os << info.library << '.' << info.function;
+      return os;
+    }
   };
 
   public:
   ExportEntry() = default;
   ExportEntry(uint32_t address, bool is_extern,
-              uint16_t ordinal, uint32_t function_rva);
+              uint16_t ordinal, uint32_t function_rva) :
+    function_rva_{function_rva},
+    ordinal_{ordinal},
+    address_{address},
+    is_extern_{is_extern}
+  {}
+
   ExportEntry(const ExportEntry&) = default;
   ExportEntry& operator=(const ExportEntry&) = default;
   ~ExportEntry() override = default;
+
+  //! Demangled representation of the symbol or an empty string if it can't
+  //! be demangled
+  std::string demangled_name() const;
 
   uint16_t ordinal() const {
     return ordinal_;
