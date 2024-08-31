@@ -152,7 +152,6 @@ for fixup in binary.dyld_chained_fixups:
 use lief::Binary;
 use lief::pe::debug::Entries::CodeViewPDB;
 
-
 if let Some(Binary::PE(pe)) = Binary::parse(path.as_str()) {
     for entry in pe.debug() {
         if let CodeViewPDB(pdb_view) = entry {
