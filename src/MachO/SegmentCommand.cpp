@@ -234,7 +234,7 @@ std::ostream& SegmentCommand::print(std::ostream& os) const {
     name(), virtual_address(), virtual_size(),
     file_offset(), file_size(), max_protection(), init_protection(),
     flags()
-  ) << '\n';
+  );
   return os;
 }
 

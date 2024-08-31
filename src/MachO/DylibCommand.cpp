@@ -41,7 +41,7 @@ std::ostream& DylibCommand::print(std::ostream& os) const {
                     "current_version={},  compatibility_version={}",
                     name(), timestamp(),
                     fmt::join(current_version(), "."),
-                    fmt::join(compatibility_version(), ".")) << '\n';
+                    fmt::join(compatibility_version(), "."));
    return os;
 }
 

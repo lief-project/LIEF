@@ -40,7 +40,7 @@ void SourceVersion::accept(Visitor& visitor) const {
 
 std::ostream& SourceVersion::print(std::ostream& os) const {
   LoadCommand::print(os);
-  os << fmt::format("Version: {}", fmt::join(version(), ".")) << '\n';
+  os << fmt::format("Version: {}", fmt::join(version(), "."));
   return os;
 }
 

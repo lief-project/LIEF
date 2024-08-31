@@ -43,7 +43,7 @@ void MainCommand::accept(Visitor& visitor) const {
 std::ostream& MainCommand::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << fmt::format("entrypoint=0x{:x}, stack size=0x{:x}",
-                    entrypoint(), stack_size()) << '\n';
+                    entrypoint(), stack_size());
   return os;
 }
 

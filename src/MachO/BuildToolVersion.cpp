@@ -39,7 +39,7 @@ void BuildToolVersion::accept(Visitor& visitor) const {
 std::ostream& operator<<(std::ostream& os, const BuildToolVersion& tool) {
   BuildToolVersion::version_t version = tool.version();
 
-  os << fmt::format("{} ({}.{}.{})\n",
+  os << fmt::format("{} ({}.{}.{})",
         to_string(tool.tool()), version[0], version[1], version[2]);
   return os;
 }

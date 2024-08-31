@@ -25,7 +25,7 @@ void UnknownCommand::accept(Visitor& visitor) const {
 
 std::ostream& UnknownCommand::print(std::ostream& os) const {
   LoadCommand::print(os);
-  os << fmt::format("Original Command: {}", original_command()) << '\n';
+  os << fmt::format("Original Command: {}", original_command());
   return os;
 }
 

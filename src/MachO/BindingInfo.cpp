@@ -48,15 +48,15 @@ void BindingInfo::accept(Visitor& visitor) const {
 
 std::ostream& operator<<(std::ostream& os, const BindingInfo& info) {
   os << fmt::format("address=0x{:08x}, addend=0x{:x}",
-                    info.address(), info.addend()) << '\n';
+                    info.address(), info.addend());
   if (const Symbol* sym = info.symbol()) {
-    os << fmt::format("  symbol={}", sym->name()) << '\n';
+    os << fmt::format("  symbol={}", sym->name());
   }
   if (const SegmentCommand* seg = info.segment()) {
-    os << fmt::format("  segment={}", seg->name()) << '\n';
+    os << fmt::format("  segment={}", seg->name());
   }
   if (const DylibCommand* lib = info.library()) {
-    os << fmt::format("  library={}", lib->name()) << '\n';
+    os << fmt::format("  library={}", lib->name());
   }
   return os;
 }

@@ -94,7 +94,7 @@ void ThreadCommand::accept(Visitor& visitor) const {
 std::ostream& ThreadCommand::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << fmt::format("flavor=0x{:x}, count=0x{:x}, pc=0x{:06x}",
-                    flavor(), count(), pc()) << '\n';
+                    flavor(), count(), pc());
   return os;
 }
 

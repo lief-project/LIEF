@@ -242,7 +242,7 @@ std::ostream& operator<<(std::ostream& os, const Section& section) {
     section.relocation_offset(), section.numberof_relocations(),
     section.reserved1(), section.reserved2(), section.reserved3(),
     flags
-  ) << '\n';
+  );
   return os;
 }
 

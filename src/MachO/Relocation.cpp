@@ -139,7 +139,7 @@ std::ostream& Relocation::print(std::ostream& os) const {
       os << section_name;
     }
   }
-  os << ' ' << symbol_name << '\n';
+  os << ' ' << symbol_name;
   return os;
 }
 

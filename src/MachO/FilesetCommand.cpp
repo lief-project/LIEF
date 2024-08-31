@@ -50,7 +50,7 @@ void FilesetCommand::swap(FilesetCommand& other) noexcept {
 std::ostream& FilesetCommand::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << fmt::format("name={}, va=0x{:06x}, offset=0x{:x}",
-                    name(), virtual_address(), file_offset()) << '\n';
+                    name(), virtual_address(), file_offset());
   return os;
 }
 

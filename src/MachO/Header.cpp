@@ -163,7 +163,7 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
   os << fmt::format("Flags: {}\n", hdr.flags());
   os << fmt::format("Reserved: 0x{:x}\n", hdr.reserved());
   os << fmt::format("Nb cmds: {}\n", hdr.nb_cmds());
-  os << fmt::format("Sizeof cmds: {}\n", hdr.sizeof_cmds());
+  os << fmt::format("Sizeof cmds: {}", hdr.sizeof_cmds());
   return os;
 }
 

@@ -44,7 +44,7 @@ void VersionMin::accept(Visitor& visitor) const {
 std::ostream& VersionMin::print(std::ostream& os) const {
   LoadCommand::print(os);
   os << fmt::format("Version: {}", fmt::join(version(), ".")) << '\n';
-  os << fmt::format("SDK:     {}", fmt::join(sdk(), ".")) << '\n';
+  os << fmt::format("SDK:     {}", fmt::join(sdk(), "."));
   return os;
 }
 

@@ -33,7 +33,7 @@ void RPathCommand::accept(Visitor& visitor) const {
 
 std::ostream& RPathCommand::print(std::ostream& os) const {
   LoadCommand::print(os);
-  os << path() << '\n';
+  os << path();
   return os;
 }
 
