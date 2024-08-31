@@ -47,6 +47,9 @@ struct LIEF_API ParserConfig {
   /// When activated, this option requires parse_dyld_bindings
   /// and parse_dyld_rebases to be enabled.
   bool fix_from_memory = false;
+
+  /// Whether the binary is coming/extracted from Dyld shared cache
+  bool from_dyld_shared_cache = false;
 };
 
 }

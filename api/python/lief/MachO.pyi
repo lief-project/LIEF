@@ -1259,6 +1259,7 @@ class PPC_RELOCATION:
 
 class ParserConfig:
     fix_from_memory: bool
+    from_dyld_shared_cache: bool
     parse_dyld_bindings: bool
     parse_dyld_exports: bool
     parse_dyld_rebases: bool

@@ -48,6 +48,11 @@ void create<ParserConfig>(nb::module_& m) {
             and parse_dyld_rebases to be enabled.
             )delim"_doc)
 
+    .def_rw("from_dyld_shared_cache", &ParserConfig::from_dyld_shared_cache,
+            R"delim(
+            Whether the binary is coming/extracted from Dyld shared cache
+            )delim"_doc)
+
     .def("full_dyldinfo", &ParserConfig::full_dyldinfo,
          R"delim(
          If ``flag`` is set to ``true``, Exports, Bindings and Rebases opcodes are parsed.
