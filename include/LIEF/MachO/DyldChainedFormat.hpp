@@ -26,7 +26,8 @@ enum class DYLD_CHAINED_FORMAT {
 };
 
 // values for dyld_chained_starts_in_segment.pointer_format
-enum DYLD_CHAINED_PTR_FORMAT {
+enum class DYLD_CHAINED_PTR_FORMAT {
+  NONE                       =  0,
   PTR_ARM64E                 =  1, // stride 8, unauth target is vmaddr
   PTR_64                     =  2, // target is vmaddr
   PTR_32                     =  3,

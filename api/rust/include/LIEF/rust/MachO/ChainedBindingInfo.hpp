@@ -24,7 +24,7 @@ class MachO_ChainedBindingInfo : public MachO_BindingInfo {
   MachO_ChainedBindingInfo(const lief_t& base) : MachO_BindingInfo(base) {}
 
   auto format() const { return to_int(impl().format()); };
-  uint32_t ptr_format() const { return impl().ptr_format(); };
+  auto ptr_format() const { return to_int(impl().ptr_format()); };
   uint32_t offset() const { return impl().offset(); };
 
   static bool classof(const MachO_BindingInfo& binding) {

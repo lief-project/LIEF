@@ -2759,6 +2759,8 @@ ok_error_t BinaryParser::walk_chain(SegmentCommand& segment, uint64_t chain_offs
 
 inline uintptr_t stride_size(DYLD_CHAINED_PTR_FORMAT fmt) {
   switch (fmt) {
+      case DYLD_CHAINED_PTR_FORMAT::NONE:
+        return 0;
       case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E:
       case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_USERLAND:
       case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_USERLAND24:

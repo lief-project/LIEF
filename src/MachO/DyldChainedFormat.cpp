@@ -37,6 +37,7 @@ const char* to_string(DYLD_CHAINED_FORMAT e) {
 const char* to_string(DYLD_CHAINED_PTR_FORMAT e) {
   #define ENTRY(X) std::pair(DYLD_CHAINED_PTR_FORMAT::X, #X)
   STRING_MAP enums2str {
+    ENTRY(NONE),
     ENTRY(PTR_ARM64E),
     ENTRY(PTR_64),
     ENTRY(PTR_32),
