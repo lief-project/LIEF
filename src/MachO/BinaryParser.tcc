@@ -2826,7 +2826,7 @@ result<uint64_t> BinaryParser::next_chain(uint64_t chain_offset,
         if (chain.rebase.next == 0) {
           return CHAIN_END;
         }
-        return chain_offset + chain.rebase.next * 4;
+        return chain_offset + chain.rebase.next * stride;
       }
     case DYLD_CHAINED_PTR_FORMAT::PTR_32:
       {
@@ -2841,7 +2841,7 @@ result<uint64_t> BinaryParser::next_chain(uint64_t chain_offset,
         if (chain.rebase.next == 0) {
           return CHAIN_END;
         }
-        chain_offset += chain.rebase.next * 4;
+        chain_offset += chain.rebase.next * stride;
 
         if (auto res = stream_->peek<decltype(chain)>(chain_offset)) {
           chain = *res;
@@ -2851,7 +2851,7 @@ result<uint64_t> BinaryParser::next_chain(uint64_t chain_offset,
         }
 
         while (chain.rebase.bind == 0 && chain.rebase.target > seg_info.max_valid_pointer) {
-          chain_offset += chain.rebase.next * 4;
+          chain_offset += chain.rebase.next * stride;
           if (auto res = stream_->peek<decltype(chain)>(chain_offset)) {
             chain = *res;
           } else {
@@ -2892,7 +2892,7 @@ result<uint64_t> BinaryParser::next_chain(uint64_t chain_offset,
         if (chain.next == 0) {
           return CHAIN_END;
         }
-        return chain.next * 4;
+        return chain.next * stride;
       }
     default:
       {
