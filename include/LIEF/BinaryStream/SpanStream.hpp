@@ -58,10 +58,27 @@ class SpanStream : public BinaryStream {
     SpanStream(data.data(), data.size())
   {}
 
+  std::unique_ptr<SpanStream> clone() const {
+    return std::make_unique<SpanStream>(*this);
+  }
+
   SpanStream() = delete;
 
-  SpanStream(const SpanStream&) = delete;
-  SpanStream& operator=(const SpanStream&) = delete;
+  SpanStream(const SpanStream& other) :
+    SpanStream(other.data_)
+  {
+    pos_ = other.pos_;
+  }
+
+  SpanStream& operator=(const SpanStream& other) {
+    if (this == &other) {
+      return *this;
+    }
+    stype_ = STREAM_TYPE::SPAN;
+    data_ = other.data_;
+    pos_ = other.pos_;
+    return *this;
+  }
 
   SpanStream(SpanStream&& other) noexcept = default;
   SpanStream& operator=(SpanStream&& other) noexcept = default;
