@@ -25,6 +25,7 @@ Changelog
 
 :ELF:
 
+  * Fix error while (re)generating ELF's RELR relocations (:issue:`1097`)
   * Add support for RISC-V architecture
   * Fix bug when trying to remove a dynamic symbol that is associated with
     multiple relocations (:issue:`1089`)

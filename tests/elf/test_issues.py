@@ -4,7 +4,7 @@ import pytest
 import lief
 from pathlib import Path
 
-from utils import get_sample
+from utils import get_sample, has_private_samples
 
 def test_issue_863(tmp_path: Path):
     elf = lief.ELF.parse(get_sample('ELF/issue_863.elf'))
@@ -72,3 +72,17 @@ def test_issue_1089(tmp_path: Path):
 
     assert new.get_symbol("iptc_read_counter") is None
     assert len(new.dynamic_relocations) == original_nb_relocations - 2
+
+@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+def test_issue_1097(tmp_path: Path):
+    elf = lief.ELF.parse(get_sample("private/ELF/libhwui.so"))
+    deps = [entry.name for entry in elf.dynamic_entries if isinstance(entry, lief.ELF.DynamicEntryLibrary)]
+
+    out = tmp_path / "libhwui.so"
+    elf.write(out.as_posix())
+
+    new = lief.ELF.parse(out)
+
+    new_deps = [entry.name for entry in new.dynamic_entries if isinstance(entry, lief.ELF.DynamicEntryLibrary)]
+
+    assert new_deps == deps

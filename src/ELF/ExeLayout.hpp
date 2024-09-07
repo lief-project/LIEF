@@ -717,7 +717,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
         uint64_t bitmap = 0;
         for (; i != e; ++i) {
           uint64_t d = offsets[i] - base;
-          if (nbits <= (d * wordsize) || (d % wordsize) != 0) {
+          if (d >= (nbits * wordsize) || (d % wordsize) != 0) {
             break;
           }
           bitmap |= uint64_t(1) << (d / wordsize);
