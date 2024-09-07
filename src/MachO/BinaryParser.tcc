@@ -3001,6 +3001,7 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment, uint32_t chai
 
   const uint64_t address = imagebase + chain_offset;
   if (fixup.auth_rebase.auth) {
+    // ---------- auth && bind ----------
     if (fixup.auth_bind.bind) {
       uint32_t bind_ordinal = ptr_fmt == DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_USERLAND24 ?
                               fixup.auth_bind24.ordinal :
@@ -3037,6 +3038,8 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment, uint32_t chai
       LIEF_ERR("Missing symbol for binding at ordinal {}", bind_ordinal);
       return make_error_code(lief_errors::not_found);
     }
+
+    // ---------- auth && !bind ----------
     const uint64_t target = imagebase + fixup.auth_rebase.target;
 
     auto reloc = std::make_unique<RelocationFixup>(ptr_fmt, imagebase);
@@ -3065,10 +3068,11 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment, uint32_t chai
     return ok();
   }
 
+  // ---------- !auth && bind ----------
   if (fixup.auth_bind.bind) {
       uint32_t bind_ordinal = ptr_fmt == DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_USERLAND24 ?
-                              fixup.auth_bind24.ordinal :
-                              fixup.auth_bind.ordinal;
+                              fixup.bind24.ordinal :
+                              fixup.bind.ordinal;
 
       if (bind_ordinal >= chained_fixups_->internal_bindings_.size()) {
         LIEF_WARN("Out of range bind ordinal {} (max {})",
@@ -3080,7 +3084,7 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment, uint32_t chai
       local_binding->segment_    = &segment;
       local_binding->ptr_format_ = ptr_fmt;
       ptr_fmt == DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_USERLAND24 ?
-                 local_binding->set(fixup.auth_bind24) : local_binding->set(fixup.auth_bind);
+                 local_binding->set(fixup.bind24) : local_binding->set(fixup.bind);
 
       chained_fixups_->all_bindings_.push_back(std::make_unique<ChainedBindingInfo>(*local_binding));
       auto& binding_extra_info = chained_fixups_->all_bindings_.back();
@@ -3106,6 +3110,7 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment, uint32_t chai
       return make_error_code(lief_errors::not_found);
   }
 
+  // ---------- !auth && !bind ----------
   // See comment for: dyld_chained_ptr_generic64
   const uint64_t target = ptr_fmt == DYLD_CHAINED_PTR_FORMAT::PTR_64 ?
                           fixup.unpack_target() :
