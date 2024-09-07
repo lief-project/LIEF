@@ -22,6 +22,13 @@ struct range_t {
   uint64_t low = 0;
   uint64_t high = 0;
 
+  bool contains(uint64_t value, bool strict = true) const {
+    if (strict) {
+      return low <= value && value < high;
+    }
+      return low <= value && value <= high;
+  }
+
   uint64_t size() const {
     return high - low;
   }
