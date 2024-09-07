@@ -28,6 +28,8 @@
 #include "LIEF/iterators.hpp"
 
 namespace LIEF {
+class SpanStream;
+
 namespace MachO {
 
 class BinaryParser;
@@ -204,6 +206,9 @@ class LIEF_API Section : public LIEF::Section {
   const SegmentCommand* segment() const {
     return segment_;
   }
+
+  //! Return a stream over the content of this section
+  std::unique_ptr<SpanStream> stream() const;
 
   //! Clear the content of this section by filling its values
   //! with the byte provided in parameter

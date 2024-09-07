@@ -15,14 +15,15 @@
  */
 #include <algorithm>
 #include <iterator>
-
-#include "logging.hpp"
-#include "LIEF/Visitor.hpp"
-
-#include "LIEF/PE/Section.hpp"
-#include "PE/Structures.hpp"
-#include "frozen.hpp"
 #include <spdlog/fmt/fmt.h>
+
+#include "frozen.hpp"
+#include "logging.hpp"
+#include "PE/Structures.hpp"
+
+#include "LIEF/Visitor.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/PE/Section.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -156,6 +157,11 @@ void Section::add_type(PE_SECTION_TYPES type) {
 
 void Section::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
+}
+
+
+std::unique_ptr<SpanStream> Section::stream() const {
+  return std::make_unique<SpanStream>(content());
 }
 
 void Section::clear(uint8_t c) {

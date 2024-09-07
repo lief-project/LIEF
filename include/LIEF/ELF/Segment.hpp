@@ -30,6 +30,8 @@
 #include "LIEF/ELF/enums.hpp"
 
 namespace LIEF {
+class SpanStream;
+
 namespace ELF {
 namespace DataHandler {
 class Handler;
@@ -248,6 +250,8 @@ class LIEF_API Segment : public Object {
   it_const_sections sections() const {
     return sections_;
   }
+
+  std::unique_ptr<SpanStream> stream() const;
 
   void accept(Visitor& visitor) const override;
 

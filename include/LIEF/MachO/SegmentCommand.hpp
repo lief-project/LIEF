@@ -30,6 +30,7 @@
 
 
 namespace LIEF {
+class SpanStream;
 namespace MachO {
 
 class BinaryParser;
@@ -183,6 +184,9 @@ class LIEF_API SegmentCommand : public LoadCommand {
   span<const uint8_t> content() const {
     return data_;
   }
+
+  //! Return a stream over the content of this segment
+  std::unique_ptr<SpanStream> stream() const;
 
   //! The original index of this segment or -1 if not defined
   int8_t index() const {

@@ -17,6 +17,7 @@
 
 #include "spdlog/fmt/fmt.h"
 #include "LIEF/Visitor.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
@@ -219,6 +220,11 @@ const Section* SegmentCommand::get_section(const std::string& name) const {
 
 Section* SegmentCommand::get_section(const std::string& name) {
   return const_cast<Section*>(static_cast<const SegmentCommand*>(this)->get_section(name));
+}
+
+
+std::unique_ptr<SpanStream> SegmentCommand::stream() const {
+  return std::make_unique<SpanStream>(content());
 }
 
 void SegmentCommand::accept(Visitor& visitor) const {

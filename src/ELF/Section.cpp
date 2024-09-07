@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
 #include <algorithm>
-#include <numeric>
 #include <iterator>
 
 #include "logging.hpp"
@@ -23,6 +21,7 @@
 #include "fmt_formatter.hpp"
 
 #include "LIEF/Visitor.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "LIEF/ELF/Section.hpp"
 #include "LIEF/ELF/Segment.hpp"
@@ -373,6 +372,10 @@ span<uint8_t> Section::writable_content() {
   }
   span<const uint8_t> ref = static_cast<const Section*>(this)->content();
   return {const_cast<uint8_t*>(ref.data()), ref.size()};
+}
+
+std::unique_ptr<SpanStream> Section::stream() const {
+  return std::make_unique<SpanStream>(content());
 }
 
 std::ostream& operator<<(std::ostream& os, const Section& section) {

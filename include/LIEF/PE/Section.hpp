@@ -19,6 +19,7 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <memory>
 
 #include "LIEF/visibility.h"
 #include "LIEF/Abstract/Section.hpp"
@@ -26,6 +27,8 @@
 #include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
+class SpanStream;
+
 namespace PE {
 
 class Parser;
@@ -212,6 +215,8 @@ class LIEF_API Section : public LIEF::Section {
     characteristics_ |= static_cast<size_t>(characteristic);
     return *this;
   }
+
+  std::unique_ptr<SpanStream> stream() const;
 
   void accept(Visitor& visitor) const override;
 

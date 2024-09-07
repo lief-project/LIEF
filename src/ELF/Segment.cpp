@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
 #include <algorithm>
 #include <iterator>
 
 #include "logging.hpp"
 #include "frozen.hpp"
+
+#include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "LIEF/ELF/hash.hpp"
 
@@ -338,6 +339,10 @@ void Segment::content(std::vector<uint8_t> content) {
 
 void Segment::accept(Visitor& visitor) const {
   visitor.visit(*this);
+}
+
+std::unique_ptr<SpanStream> Segment::stream() const {
+  return std::make_unique<SpanStream>(content());
 }
 
 span<uint8_t> Segment::writable_content() {

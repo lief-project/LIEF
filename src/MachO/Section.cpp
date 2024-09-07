@@ -22,6 +22,7 @@
 #include "fmt_formatter.hpp"
 
 #include "LIEF/Visitor.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/Relocation.hpp"
@@ -232,6 +233,10 @@ void Section::clear(uint8_t v) {
 
 void Section::accept(Visitor& visitor) const {
   visitor.visit(*this);
+}
+
+std::unique_ptr<SpanStream> Section::stream() const {
+  return std::make_unique<SpanStream>(content());
 }
 
 std::ostream& operator<<(std::ostream& os, const Section& section) {

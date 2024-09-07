@@ -19,6 +19,7 @@
 #include <string>
 #include <ostream>
 #include <vector>
+#include <memory>
 
 #include "LIEF/utils.hpp"
 #include "LIEF/visibility.h"
@@ -28,6 +29,7 @@
 #include "LIEF/iterators.hpp"
 
 namespace LIEF {
+class SpanStream;
 namespace ELF {
 
 namespace DataHandler {
@@ -317,6 +319,9 @@ class LIEF_API Section : public LIEF::Section {
     remove(c);
     return *this;
   }
+
+  /// Return a stream over the content of this section
+  std::unique_ptr<SpanStream> stream() const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Section& section);
 
