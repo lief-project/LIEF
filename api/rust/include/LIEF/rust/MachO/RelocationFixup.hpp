@@ -23,7 +23,7 @@ class MachO_RelocationFixup : public MachO_Relocation {
   MachO_RelocationFixup(const lief_t& base) : MachO_Relocation(base) {}
 
   uint64_t target() const { return impl().target(); }
-  uint32_t ptr_format() const { return impl().ptr_format(); }
+  auto ptr_format() const { return to_int(impl().ptr_format()); }
   uint32_t offset() const { return impl().offset(); }
 
   static bool classof(const MachO_Relocation& reloc) {
