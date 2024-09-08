@@ -136,7 +136,7 @@ class BinaryStream {
       return make_error_code(lief_errors::read_error);
     }
 
-    container.resize(size);
+    container.resize(count);
 
     if (!peek_in(container.data(), pos(), size)) {
       setpos(current_p);
