@@ -26,6 +26,7 @@
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 
 namespace LIEF {
+class VectorStream;
 class SpanStream : public BinaryStream {
   public:
   using BinaryStream::p;
@@ -64,21 +65,8 @@ class SpanStream : public BinaryStream {
 
   SpanStream() = delete;
 
-  SpanStream(const SpanStream& other) :
-    SpanStream(other.data_)
-  {
-    pos_ = other.pos_;
-  }
-
-  SpanStream& operator=(const SpanStream& other) {
-    if (this == &other) {
-      return *this;
-    }
-    stype_ = STREAM_TYPE::SPAN;
-    data_ = other.data_;
-    pos_ = other.pos_;
-    return *this;
-  }
+  SpanStream(const SpanStream& other) = default;
+  SpanStream& operator=(const SpanStream& other) = default;
 
   SpanStream(SpanStream&& other) noexcept = default;
   SpanStream& operator=(SpanStream&& other) noexcept = default;
@@ -115,6 +103,8 @@ class SpanStream : public BinaryStream {
     }
     return data_.subspan(offset, data_.size() - offset);
   }
+
+  std::unique_ptr<VectorStream> to_vector() const;
 
   static bool classof(const BinaryStream& stream) {
     return stream.type() == BinaryStream::STREAM_TYPE::SPAN;

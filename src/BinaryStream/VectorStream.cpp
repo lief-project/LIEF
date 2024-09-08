@@ -19,6 +19,7 @@
 
 #include "logging.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 
 namespace LIEF {
 
@@ -37,6 +38,19 @@ result<VectorStream> VectorStream::from_file(const std::string& file) {
   data.resize(size, 0);
   ifs.read(reinterpret_cast<char*>(data.data()), data.size());
   return VectorStream{std::move(data)};
+}
+
+std::unique_ptr<SpanStream> VectorStream::slice(uint32_t offset, size_t size) const {
+  if (offset > binary_.size() || (offset + size) > binary_.size()) {
+    return nullptr;
+  }
+  const uint8_t* start = binary_.data() + offset;
+  return std::unique_ptr<SpanStream>(new SpanStream(start, size));
+}
+
+
+std::unique_ptr<SpanStream> VectorStream::slice(uint32_t offset) const {
+  return slice(offset, binary_.size() - offset);
 }
 
 }
