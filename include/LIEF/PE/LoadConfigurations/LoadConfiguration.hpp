@@ -180,7 +180,7 @@ class LIEF_API LoadConfiguration : public Object {
 
   //! A pointer to a cookie that is used by Visual C++ or GS
   //! implementation.
-  uint32_t security_cookie() const {
+  uint64_t security_cookie() const {
     return security_cookie_;
   }
 
@@ -257,7 +257,7 @@ class LIEF_API LoadConfiguration : public Object {
     editlist_ = editlist;
   }
 
-  void security_cookie(uint32_t security_cookie) {
+  void security_cookie(uint64_t security_cookie) {
     security_cookie_ = security_cookie;
   }
 
