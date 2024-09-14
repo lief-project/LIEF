@@ -1428,7 +1428,8 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
   const std::vector<uint8_t>& raw = lnk_data.raw();
   LIEF_DEBUG("__chainfixups.old_size: 0x{:06x}", fixups.data_size());
   LIEF_DEBUG("__chainfixups.new_size: 0x{:06x}", raw.size());
-  if (fixups.data_size() < raw.size()) {
+
+  if (fixups.data_size() > 0 && fixups.data_size() < raw.size()) {
     LIEF_WARN("New chained fixups size is larger than the original one");
   }
 
@@ -1460,9 +1461,10 @@ ok_error_t Builder::build(DyldExportsTrie& exports) {
   using pin_t = typename T::uint;
   std::vector<uint8_t> raw = create_trie(exports.export_info_, sizeof(pin_t));
 
-  if (raw.size() > exports.content_.size()) {
+  if (exports.data_size() > 0 && raw.size() > exports.content_.size()) {
     const uint64_t delta = raw.size() - exports.content_.size();
-    LIEF_INFO("The export trie is larger than the original LC_DYLD_EXPORTS_TRIE (+0x{:x} bytes)", delta);
+    LIEF_INFO("The export trie is larger than the original "
+              "LC_DYLD_EXPORTS_TRIE (+0x{:x} bytes)", delta);
   }
 
   LIEF_DEBUG("LC_DYLD_EXPORTS_TRIE.offset: 0x{:06x} -> 0x{:x}",
