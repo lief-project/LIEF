@@ -18,6 +18,7 @@ fn explore_elf(name: &str, elf: &lief::elf::Binary) {
     format!("{} {} {}", elf.has_nx(), elf.original_size(), elf.virtual_size());
     format!("{}", elf.interpreter());
 
+
     if let Some(sysv) = elf.sysv_hash() {
         format!("{sysv:?}");
     }
@@ -182,6 +183,12 @@ fn explore_elf(name: &str, elf: &lief::elf::Binary) {
         assert!(elf.section_from_virtual_address(0x400318, /*skip_nobits*/ true).is_some());
         assert!(elf.section_from_virtual_address(0x100000000, /*skip_nobits*/ true).is_none());
         assert!(!elf.content_from_virtual_address(0x400318, 0x10).is_empty());
+
+
+        assert!(elf.get_int_from_virtual_address::<i8>(0x401126).expect("Read error") != 0);
+        assert!(elf.get_int_from_virtual_address::<i16>(0x401126).expect("Read error") != 0);
+        assert!(elf.get_int_from_virtual_address::<u32>(0x401126).expect("Read error") != 0);
+        assert!(elf.get_int_from_virtual_address::<i64>(0x401126).expect("Read error") != 0);
     }
 }
 
