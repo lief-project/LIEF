@@ -45,6 +45,12 @@ void create<RelocationFixup>(nb::module_& m) {
         nb::overload_cast<>(&RelocationFixup::target, nb::const_),
         nb::overload_cast<uint64_t>(&RelocationFixup::target))
 
+    .def_prop_rw("next",
+        nb::overload_cast<>(&RelocationFixup::next, nb::const_),
+        nb::overload_cast<uint32_t>(&RelocationFixup::next),
+        "(unscaled) next offset in the chain"_doc
+    )
+
     LIEF_DEFAULT_STR(RelocationFixup);
 
 }

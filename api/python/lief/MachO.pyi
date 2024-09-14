@@ -1329,6 +1329,7 @@ class RelocationDyld(Relocation):
     def __lt__(self, arg: lief.MachO.RelocationDyld, /) -> bool: ...
 
 class RelocationFixup(Relocation):
+    next: int
     target: int
     def __init__(self, *args, **kwargs) -> None: ...
 

@@ -283,6 +283,7 @@ def test_issue_853(tmp_path):
     ios14_built = lief.parse(output)
     assert len(ios14_built.relocations) == 31
     assert ios14_built.relocations[0].target == 0x100007ea8
+    assert ios14_built.relocations[0].next == 4
 
     ios15 = lief.MachO.parse(get_sample('MachO/issue_853_classes_15.bin')).at(0)
 
@@ -296,6 +297,7 @@ def test_issue_853(tmp_path):
     ios15_built = lief.parse(output)
     assert len(ios15_built.relocations) == 31
     assert ios15_built.relocations[0].target == 0x100007ea8
+    assert ios15_built.relocations[0].next == 4
 
 
 def test_with_imagebase():

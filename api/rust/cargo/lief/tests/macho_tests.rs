@@ -2,6 +2,7 @@ mod utils;
 use std::path::Path;
 use std::env;
 use lief::logging;
+use lief::macho::Relocation;
 use lief::generic::Binary as GenericBinary;
 use lief::macho::binding_info::{self, AsGeneric};
 use lief::macho::commands::{Command, Commands};
@@ -154,6 +155,18 @@ fn explore_macho(_: &str, macho: &lief::macho::Binary) {
 
     for reloc in macho.relocations() {
         format!("{reloc:?}");
+
+        match reloc {
+            Relocation::Dyld(_) => {
+            }
+            Relocation::Fixup(fixup) => {
+                format!("{}", fixup.next());
+            }
+            Relocation::Object(_) => {
+            }
+            Relocation::Generic(_) => {
+            }
+        }
     }
 
     for sym in macho.symbols() {

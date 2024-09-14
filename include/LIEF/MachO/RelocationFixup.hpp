@@ -109,6 +109,12 @@ class LIEF_API RelocationFixup : public Relocation {
     address_ = address;
   }
 
+  //! Return the (unscaled) next offset in the chain
+  uint32_t next() const;
+
+  //! Change next offset of the current element
+  void next(uint32_t value);
+
   void accept(Visitor& visitor) const override;
 
   static bool classof(const Relocation& r) {
