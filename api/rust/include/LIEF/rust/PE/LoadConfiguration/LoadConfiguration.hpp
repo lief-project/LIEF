@@ -40,5 +40,5 @@ class PE_LoadConfiguration : public Mirror<LIEF::PE::LoadConfiguration> {
   uint16_t reserved1() const { return get().reserved1(); }
   uint16_t dependent_load_flags() const { return get().dependent_load_flags(); }
   uint32_t editlist() const { return get().editlist(); }
-  uint32_t security_cookie() const { return get().security_cookie(); }
+  uint64_t security_cookie() const { return get().security_cookie(); }
 };

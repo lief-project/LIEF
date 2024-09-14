@@ -159,7 +159,7 @@ void create<LoadConfiguration>(nb::module_& m) {
 
     .def_prop_rw("security_cookie",
         nb::overload_cast<>(&LoadConfiguration::security_cookie, nb::const_),
-        nb::overload_cast<uint32_t>(&LoadConfiguration::security_cookie),
+        nb::overload_cast<uint64_t>(&LoadConfiguration::security_cookie),
         "A pointer to a cookie that is used by Visual C++ or GS implementation."_doc)
 
     LIEF_COPYABLE(LoadConfiguration)

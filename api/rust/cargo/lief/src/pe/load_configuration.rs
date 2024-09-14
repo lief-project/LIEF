@@ -244,7 +244,7 @@ pub trait AsBase {
         self.as_base().editlist()
     }
 
-    fn security_cookie(&self) -> u32 {
+    fn security_cookie(&self) -> u64 {
         self.as_base().security_cookie()
     }
 }
