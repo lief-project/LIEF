@@ -29,7 +29,7 @@ def test_winapp():
     assert lconf.csd_version == 0
     assert lconf.reserved1 == 0
     assert lconf.editlist == 0
-    assert lconf.security_cookie == 0x4000d008
+    assert lconf.security_cookie == 0x14000d008
 
     # V0
     assert lconf.se_handler_table == 0
