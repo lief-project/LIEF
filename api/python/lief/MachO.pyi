@@ -651,6 +651,8 @@ class DyldChainedFixups(LoadCommand):
     def bindings(self) -> lief.MachO.DyldChainedFixups.it_binding_info: ...
     @property
     def chained_starts_in_segments(self) -> lief.MachO.DyldChainedFixups.it_chained_starts_in_segments_t: ...
+    @property
+    def payload(self) -> memoryview: ...
 
 class DyldEnvironment(LoadCommand):
     value: str
@@ -1327,6 +1329,7 @@ class RelocationDyld(Relocation):
     def __lt__(self, arg: lief.MachO.RelocationDyld, /) -> bool: ...
 
 class RelocationFixup(Relocation):
+    next: int
     target: int
     def __init__(self, *args, **kwargs) -> None: ...
 

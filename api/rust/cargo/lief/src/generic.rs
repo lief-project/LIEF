@@ -144,6 +144,8 @@ pub trait Binary {
     fn debug_info(&self) -> Option<crate::DebugInfo> {
         into_optional(self.as_generic().debug_info())
     }
+
+
 }
 
 pub trait DebugInfo {

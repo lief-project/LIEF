@@ -1,3 +1,7 @@
+use std::mem::size_of;
+use num_traits::{Num, cast};
+
+use crate::Error;
 use super::commands::build_version::BuildVersion;
 use super::commands::code_signature::CodeSignature;
 use super::commands::code_signature_dir::CodeSignatureDir;
@@ -19,7 +23,7 @@ use super::commands::segment::Segments;
 use super::commands::segment_split_info::SegmentSplitInfo;
 use super::commands::source_version::SourceVersion;
 use super::commands::sub_framework::SubFramework;
-use super::commands::sub_client::{SubClient, SubClients};
+use super::commands::sub_client::SubClients;
 use super::commands::symbol_command::SymbolCommand;
 use super::commands::thread_command::ThreadCommand;
 use super::commands::two_level_hints::TwoLevelHints;
@@ -35,7 +39,7 @@ use super::stub::Stub;
 use lief_ffi as ffi;
 
 use crate::common::{into_optional, FromFFI};
-use crate::{generic, declare_fwd_iterator, declare_iterator};
+use crate::{generic, declare_fwd_iterator, declare_iterator, to_conv_result};
 use crate::objc::Metadata;
 
 /// This is the main interface to read and write Mach-O binary attributes.
@@ -244,6 +248,46 @@ impl Binary {
     /// Return Objective-C metadata if present
     pub fn objc_metadata(&self) -> Option<Metadata> {
         into_optional(self.ptr.objc_metadata())
+    }
+
+
+    /// Get the integer value at the given virtual address
+    pub fn get_int_from_virtual_address<T>(&self, addr: u64) -> Result<T, Error>
+        where T: Num + cast::FromPrimitive + cast::ToPrimitive
+    {
+        // Can't be in the generic trait because of:
+        //   > for a trait to be "object safe" it needs to allow building a vtable to allow the call
+        //   > to be resolvable dynamically; for more information visit
+        //   > https://doc.rust-lang.org/reference/items/traits.html#object-safety
+        if size_of::<T>() == size_of::<u8>() {
+            to_conv_result!(ffi::AbstractBinary::get_u8,
+                self.ptr.as_ref().unwrap().as_ref(),
+                |value| { T::from_u8(value).expect(format!("Can't cast value: {}", value).as_str()) },
+                addr);
+        }
+
+        if size_of::<T>() == size_of::<u16>() {
+            to_conv_result!(ffi::AbstractBinary::get_u16,
+                self.ptr.as_ref().unwrap().as_ref(),
+                |value| { T::from_u16(value).expect(format!("Can't cast value: {}", value).as_str()) },
+                addr);
+        }
+
+        if size_of::<T>() == size_of::<u32>() {
+            to_conv_result!(ffi::AbstractBinary::get_u32,
+                self.ptr.as_ref().unwrap().as_ref(),
+                |value| { T::from_u32(value).expect(format!("Can't cast value: {}", value).as_str()) },
+                addr);
+        }
+
+        if size_of::<T>() == size_of::<u64>() {
+            to_conv_result!(ffi::AbstractBinary::get_u64,
+                self.ptr.as_ref().unwrap().as_ref(),
+                |value| { T::from_u64(value).expect(format!("Can't cast value: {}", value).as_str()) },
+                addr);
+        }
+
+        Err(Error::NotSupported)
     }
 }
 

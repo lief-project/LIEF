@@ -72,21 +72,16 @@ TrieNode& TrieNode::add_symbol(const ExportInfo& info, TrieNode::node_list_t& no
     }
   }
 
-  if (info.has(ExportInfo::FLAGS::REEXPORT)) {
-    if (info.other() != 0) {
-      LIEF_INFO("other is not null");
-    }
+  if (info.has(ExportInfo::FLAGS::REEXPORT) && info.other() != 0) {
+    LIEF_DEBUG("REEXPORT: other={}", info.other());
   }
 
-  if (info.has(ExportInfo::FLAGS::STUB_AND_RESOLVER)) {
-    if (info.other() == 0) {
-      LIEF_INFO("other is null");
-    }
+  if (info.has(ExportInfo::FLAGS::STUB_AND_RESOLVER) && info.other() == 0) {
+    LIEF_DEBUG("STUB_AND_RESOLVER: other=0");
   }
 
   std::unique_ptr<TrieNode> new_node = TrieNode::create(sym.name());
   std::unique_ptr<TrieEdge> new_edge = TrieEdge::create(partial_str, *new_node);
-
 
   new_node->address_ = info.address();
   new_node->flags_   = info.flags();

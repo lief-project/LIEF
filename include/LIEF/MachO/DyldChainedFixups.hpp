@@ -129,6 +129,11 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
     data_size_ = size;
   }
 
+  //! Return the raw content of the command
+  span<const uint8_t> payload() const {
+    return content_;
+  }
+
   //! Iterator over the bindings (ChainedBindingInfo) associated with this command
   it_binding_info bindings() {
     return all_bindings_;

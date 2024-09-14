@@ -79,11 +79,11 @@ class LIEF_API ChainedBindingInfo : public BindingInfo {
   }
 
   uint64_t address() const override {
-    return /* imagebase */ address_ + offset_;
+    return address_;
   }
 
   void address(uint64_t address) override {
-    offset_ = address - /* imagebase */ address_;
+    address_ = address;
   }
 
   uint64_t sign_extended_addend() const;

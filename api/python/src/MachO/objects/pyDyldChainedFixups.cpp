@@ -18,6 +18,8 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
 
+#include "nanobind/extra/memoryview.hpp"
+
 #include "pyIterator.hpp"
 #include "LIEF/MachO/DyldChainedFixups.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
@@ -96,6 +98,11 @@ void create<DyldChainedFixups>(nb::module_& m) {
         nb::overload_cast<>(&DyldChainedFixups::data_size, nb::const_),
         nb::overload_cast<uint32_t>(&DyldChainedFixups::data_size),
         "Size of the LC_DYLD_CHAINED_FIXUPS payload"_doc)
+
+    .def_prop_ro("payload", [] (DyldChainedFixups& self) {
+      const span<const uint8_t> content = self.payload();
+      return nb::memoryview::from_memory(content.data(), content.size());
+    }, "Return the raw content of the command")
 
     .def_prop_ro("bindings",
         nb::overload_cast<>(&DyldChainedFixups::bindings),

@@ -218,7 +218,7 @@ void init(nb::module_& m) {
     R"doc(
     Demangle the given input.
 
-    .. warnings::
+    .. warning::
 
         This function only works with the extended version of LIEF
     )doc"_doc,

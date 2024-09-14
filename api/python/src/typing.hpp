@@ -30,4 +30,17 @@ public:                                                    \
         return Check(h.ptr());                             \
     }                                                      \
     NB_INLINE Type() : Parent() {}
+
+struct IntOrNone : public nanobind::object {
+  LIEF_PY_DEFAULT_CTOR(IntOrNone, nanobind::object);
+
+  static constexpr auto Name = nanobind::detail::const_name("Optional[int]");
+
+  NB_OBJECT_DEFAULT_NONAME(IntOrNone, object, check)
+  static bool check(handle h) {
+    return true;
+  }
+};
+
+
 #endif

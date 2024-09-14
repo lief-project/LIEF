@@ -236,6 +236,11 @@ class LIEF_API SegmentCommand : public LoadCommand {
   //! Check if the current segment embeds the given section name
   bool has_section(const std::string& section_name) const;
 
+  bool is(VM_PROTECTIONS prot) const {
+    return (init_protection() & (uint32_t)prot) > 0 ||
+           (max_protection() & (uint32_t)prot) > 0;
+  }
+
   std::ostream& print(std::ostream& os) const override;
 
   void accept(Visitor& visitor) const override;

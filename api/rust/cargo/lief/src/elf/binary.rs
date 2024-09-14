@@ -1,4 +1,6 @@
-use std::pin::Pin;
+use std::mem::size_of;
+
+use num_traits::{Num, cast};
 
 use lief_ffi as ffi;
 
@@ -15,7 +17,7 @@ use super::symbol_versioning::{SymbolVersion, SymbolVersionDefinition, SymbolVer
 use super::{Segment, Symbol};
 
 use crate::generic;
-use crate::{declare_iterator, to_slice, to_result};
+use crate::{declare_iterator, to_slice, to_result, to_conv_result};
 use crate::common::{into_optional, FromFFI};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -236,6 +238,45 @@ impl Binary {
     /// [`dynamic::Tag::INIT_ARRAY`]) with relocations applied (if any)
     pub fn get_relocated_dynamic_array(&self, tag: dynamic::Tag) -> Vec<u64> {
         Vec::from(self.ptr.get_relocated_dynamic_array(u64::from(tag)).as_slice())
+    }
+
+    /// Get the integer value at the given virtual address
+    pub fn get_int_from_virtual_address<T>(&self, addr: u64) -> Result<T, Error>
+        where T: Num + cast::FromPrimitive + cast::ToPrimitive
+    {
+        // Can't be in the generic trait because of:
+        //   > for a trait to be "object safe" it needs to allow building a vtable to allow the call
+        //   > to be resolvable dynamically; for more information visit
+        //   > https://doc.rust-lang.org/reference/items/traits.html#object-safety
+        if size_of::<T>() == size_of::<u8>() {
+            to_conv_result!(ffi::AbstractBinary::get_u8,
+                self.ptr.as_ref().unwrap().as_ref(),
+                |value| { T::from_u8(value).expect(format!("Can't cast value: {}", value).as_str()) },
+                addr);
+        }
+
+        if size_of::<T>() == size_of::<u16>() {
+            to_conv_result!(ffi::AbstractBinary::get_u16,
+                self.ptr.as_ref().unwrap().as_ref(),
+                |value| { T::from_u16(value).expect(format!("Can't cast value: {}", value).as_str()) },
+                addr);
+        }
+
+        if size_of::<T>() == size_of::<u32>() {
+            to_conv_result!(ffi::AbstractBinary::get_u32,
+                self.ptr.as_ref().unwrap().as_ref(),
+                |value| { T::from_u32(value).expect(format!("Can't cast value: {}", value).as_str()) },
+                addr);
+        }
+
+        if size_of::<T>() == size_of::<u64>() {
+            to_conv_result!(ffi::AbstractBinary::get_u64,
+                self.ptr.as_ref().unwrap().as_ref(),
+                |value| { T::from_u64(value).expect(format!("Can't cast value: {}", value).as_str()) },
+                addr);
+        }
+
+        Err(Error::NotSupported)
     }
 }
 

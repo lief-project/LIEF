@@ -4,6 +4,37 @@ Changelog
 0.16.0 - Not Released Yet
 -------------------------
 
+:Abstract:
+
+  * Add :meth:`lief.Binary.get_int_from_virtual_address` / :cpp:func:`LIEF::Binary::get_int_from_virtual_address`
+    to read an **integer** value at a specific virtual address
+
+
+    **C++**
+
+    .. code-block:: cpp
+
+      LIEF::Binary& bin;
+
+      uint16_t short_value = bin.get_int_from_virtual_address<uint16_>(0x140002CC8);
+
+    **Python**
+
+    .. code-block:: python
+
+      some_bin: lief.Binary = ...
+      long_value = some_bin.get_int_from_virtual_address(0x140002CC8, 4)
+      # or
+      long_value = some_bin.get_int_from_virtual_address(0x140002CC8, ctypes.sizeof(ctypes.c_uint32))
+
+    **Rust**
+
+    .. code-block:: rust
+
+      elf: &lief::elf::Binary
+      let value: i16 = elf.get_int_from_virtual_address::<i16>(0x401126).unwrap();
+
+
 :MachO:
 
   * Expose an iterator over the stub entries located in ``__stubs,__auth_stubs,__symbol_stub,__picsymbolstub4``
@@ -25,6 +56,8 @@ Changelog
 
 :ELF:
 
+  * Fix a critical error when rewriting ELF file with ``DT_RELR`` relocations.
+    This error leads to a crash of the modified binary.
   * Fix error while (re)generating ELF's RELR relocations (:issue:`1097`)
   * Add support for RISC-V architecture
   * Fix bug when trying to remove a dynamic symbol that is associated with

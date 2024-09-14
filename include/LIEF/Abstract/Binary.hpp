@@ -176,6 +176,23 @@ class LIEF_API Binary : public Object {
     get_content_from_virtual_address(uint64_t virtual_address, uint64_t size,
                                      VA_TYPES addr_type = VA_TYPES::AUTO) const = 0;
 
+  //! Get the integer value at the given virtual address
+  template<class T>
+  LIEF::result<T> get_int_from_virtual_address(
+    uint64_t va, VA_TYPES addr_type = VA_TYPES::AUTO) const
+  {
+    T value;
+    static_assert(std::is_integral<T>::value, "Require an integral type");
+    span<const uint8_t> raw = get_content_from_virtual_address(va, sizeof(T), addr_type);
+    if (raw.empty() || raw.size() < sizeof(T)) {
+      return make_error_code(lief_errors::read_error);
+    }
+
+    std::copy(raw.data(), raw.data() + sizeof(T),
+              reinterpret_cast<uint8_t*>(&value));
+    return value;
+  }
+
   //! @brief Change binary's original size.
   //!
   //! @warning

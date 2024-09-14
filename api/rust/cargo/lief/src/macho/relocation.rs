@@ -204,6 +204,11 @@ impl Fixup<'_> {
     pub fn offset(&self) -> u32 {
         self.ptr.offset()
     }
+
+    /// Return the (unscaled) next offset in the chain
+    pub fn next(&self) -> u32 {
+        self.ptr.next()
+    }
 }
 
 impl FromFFI<ffi::MachO_RelocationFixup> for Fixup<'_> {

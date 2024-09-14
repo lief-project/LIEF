@@ -214,6 +214,30 @@ void create<Binary>(nb::module_& m) {
        )delim"_doc,
        "virtual_address"_a, "size"_a, "va_type"_a = Binary::VA_TYPES::AUTO)
 
+    .def("get_int_from_virtual_address",
+          [] (const Binary& self, uint64_t va, size_t int_size, Binary::VA_TYPES type) -> IntOrNone {
+            if (int_size == sizeof(uint8_t)) {
+              return value_or_none(&Binary::get_int_from_virtual_address<uint8_t>, self, va, type);
+            }
+
+            if (int_size == sizeof(uint16_t)) {
+              return value_or_none(&Binary::get_int_from_virtual_address<uint16_t>, self, va, type);
+            }
+
+            if (int_size == sizeof(uint32_t)) {
+              return value_or_none(&Binary::get_int_from_virtual_address<uint32_t>, self, va, type);
+            }
+
+            if (int_size == sizeof(uint64_t)) {
+              return value_or_none(&Binary::get_int_from_virtual_address<uint64_t>, self, va, type);
+            }
+
+            return nb::none();
+          }, R"doc(
+          Get an integer representation of the data at the given address
+          )doc"_doc, "address"_a, "interger_size"_a, "type"_a = Binary::VA_TYPES::AUTO
+        )
+
     .def_prop_ro("abstract",
         [] (nb::object& self) -> nb::object {
           auto* ab = nb::cast<LIEF::Binary*>(self);

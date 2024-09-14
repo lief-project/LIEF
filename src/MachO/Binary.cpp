@@ -828,6 +828,10 @@ void Binary::shift_command(size_t width, uint64_t from_offset) {
       if (bind.offset() > from_offset) {
         bind.offset(bind.offset() + width);
       }
+
+      if (bind.address() > virtual_address) {
+        bind.address(bind.address() + width);
+      }
       // We don't need to update the virtual address,
       // as it is bound to the offset
     }

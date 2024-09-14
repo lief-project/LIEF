@@ -1,24 +1,29 @@
 use lief_ffi as ffi;
 
-use super::{data_directory, signature};
+use num_traits::{cast, Num};
+use std::mem::size_of;
+
 use super::data_directory::{DataDirectories, DataDirectory};
 use super::debug;
-use super::delay_import::{DelayImports, DelayImport};
+use super::delay_import::{DelayImport, DelayImports};
 use super::export::Export;
-use super::import::{Imports, Import};
+use super::import::{Import, Imports};
 use super::load_configuration::LoadConfiguration;
 use super::relocation::Relocations;
 use super::resources::Manager as ResourcesManager;
 use super::resources::Node as ResourceNode;
 use super::rich_header::RichHeader;
-use super::section::{Sections, Section};
+use super::section::{Section, Sections};
 use super::signature::Signatures;
 use super::tls::TLS;
+use super::{data_directory, signature};
 
 use crate::common::{into_optional, FromFFI};
 use crate::declare_iterator;
 use crate::generic;
+use crate::to_conv_result;
 use crate::to_slice;
+use crate::Error;
 
 use super::Algorithms;
 use super::{DosHeader, Header, OptionalHeader};
@@ -203,7 +208,10 @@ impl Binary {
     ///
     /// First, it checks that the embedded signatures are correct (c.f. [`signature::Signature::check`])
     /// and then, it checks that the authentihash matches [`crate::pe::signature::content_info::ContentInfo::digest`]
-    pub fn verify_signature(&self, checks: signature::VerificationChecks) -> signature::VerificationFlags {
+    pub fn verify_signature(
+        &self,
+        checks: signature::VerificationChecks,
+    ) -> signature::VerificationFlags {
         signature::VerificationFlags::from(self.ptr.verify_signature(checks.into()))
     }
 
@@ -215,8 +223,14 @@ impl Binary {
     ///     pe.verify_signature(&sig, signature::VerificationChecks::DEFAULT);
     /// }
     /// ```
-    pub fn verify_with_signature(&self, sig: &signature::Signature, checks: signature::VerificationChecks) -> signature::VerificationFlags {
-        signature::VerificationFlags::from(self.ptr.verify_with_signature(sig.into(), checks.into()))
+    pub fn verify_with_signature(
+        &self,
+        sig: &signature::Signature,
+        checks: signature::VerificationChecks,
+    ) -> signature::VerificationFlags {
+        signature::VerificationFlags::from(
+            self.ptr.verify_with_signature(sig.into(), checks.into()),
+        )
     }
 
     /// Find an import by its DLL name
@@ -232,6 +246,62 @@ impl Binary {
     /// Return the sized content from the virtual address
     pub fn content_from_virtual_address(&self, address: u64, size: u64) -> &[u8] {
         to_slice!(self.ptr.get_content_from_virtual_address(address, size));
+    }
+
+    /// Get the integer value at the given virtual address
+    pub fn get_int_from_virtual_address<T>(&self, addr: u64) -> Result<T, Error>
+    where
+        T: Num + cast::FromPrimitive + cast::ToPrimitive,
+    {
+        // Can't be in the generic trait because of:
+        //   > for a trait to be "object safe" it needs to allow building a vtable to allow the call
+        //   > to be resolvable dynamically; for more information visit
+        //   > https://doc.rust-lang.org/reference/items/traits.html#object-safety
+        if size_of::<T>() == size_of::<u8>() {
+            to_conv_result!(
+                ffi::AbstractBinary::get_u8,
+                self.ptr.as_ref().unwrap().as_ref(),
+                |value| {
+                    T::from_u8(value).expect(format!("Can't cast value: {}", value).as_str())
+                },
+                addr
+            );
+        }
+
+        if size_of::<T>() == size_of::<u16>() {
+            to_conv_result!(
+                ffi::AbstractBinary::get_u16,
+                self.ptr.as_ref().unwrap().as_ref(),
+                |value| {
+                    T::from_u16(value).expect(format!("Can't cast value: {}", value).as_str())
+                },
+                addr
+            );
+        }
+
+        if size_of::<T>() == size_of::<u32>() {
+            to_conv_result!(
+                ffi::AbstractBinary::get_u32,
+                self.ptr.as_ref().unwrap().as_ref(),
+                |value| {
+                    T::from_u32(value).expect(format!("Can't cast value: {}", value).as_str())
+                },
+                addr
+            );
+        }
+
+        if size_of::<T>() == size_of::<u64>() {
+            to_conv_result!(
+                ffi::AbstractBinary::get_u64,
+                self.ptr.as_ref().unwrap().as_ref(),
+                |value| {
+                    T::from_u64(value).expect(format!("Can't cast value: {}", value).as_str())
+                },
+                addr
+            );
+        }
+
+        Err(Error::NotSupported)
     }
 }
 

@@ -41,3 +41,11 @@ def test_relr_relocations(tmp_path: Path):
         lib = ctypes.cdll.LoadLibrary(out.as_posix())
         assert lib.cos is not None
 
+def test_relr_addend(tmp_path: Path):
+    elf = lief.ELF.parse(get_sample("ELF/ls-glibc2.40-relr.elf"))
+    elf.relocate_phdr_table()
+    out = tmp_path / "out.elf"
+    elf.write(out.as_posix())
+
+    new_elf = lief.ELF.parse(out)
+    assert new_elf.get_int_from_virtual_address(0x21f40, 8) == 0xa680

@@ -184,7 +184,41 @@ void RelocationFixup::target(uint64_t target) {
   }
 }
 
+uint32_t RelocationFixup::next() const {
+  switch (rtypes_) {
+    case REBASE_TYPES::ARM64E_REBASE:
+      return arm64_rebase_->next;
+    case REBASE_TYPES::ARM64E_AUTH_REBASE:
+      return arm64_auth_rebase_->next;
+    case REBASE_TYPES::PTR64_REBASE:
+      return p64_rebase_->next;
+    case REBASE_TYPES::PTR32_REBASE:
+      return p32_rebase_->next;
+    case REBASE_TYPES::UNKNOWN:
+      return 0;
+  }
+  return 0;
+}
 
+void RelocationFixup::next(uint32_t value) {
+  switch (rtypes_) {
+    case REBASE_TYPES::ARM64E_REBASE:
+      arm64_rebase_->next = value;
+      break;
+    case REBASE_TYPES::ARM64E_AUTH_REBASE:
+      arm64_auth_rebase_->next = value;
+      break;
+    case REBASE_TYPES::PTR64_REBASE:
+      p64_rebase_->next = value;
+      break;
+    case REBASE_TYPES::PTR32_REBASE:
+      p32_rebase_->next = value;
+      break;
+    case REBASE_TYPES::UNKNOWN:
+      return;
+  }
+  return;
+}
 
 void RelocationFixup::set(const details::dyld_chained_ptr_arm64e_rebase& fixup) {
   rtypes_ = REBASE_TYPES::ARM64E_REBASE;

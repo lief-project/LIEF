@@ -1,4 +1,5 @@
 import lief
+from ctypes import sizeof, c_uint8, c_uint16, c_int32, c_uint64
 from utils import get_sample
 
 lief.logging.set_level(lief.logging.LEVEL.INFO)
@@ -20,18 +21,24 @@ def test_endianness():
     binary = pe.abstract
     header = binary.header
 
-    header.endianness == lief.ENDIANNESS.LITTLE
+    assert pe.get_int_from_virtual_address(0x140001004, sizeof(c_uint8)) == 0x48
+    assert pe.get_int_from_virtual_address(0x140002CC8, sizeof(c_uint16)) == 0x552
+    assert pe.get_int_from_virtual_address(0x1400040FC, sizeof(c_int32)) == 0x1878
+    assert pe.get_int_from_virtual_address(0x140001AFC, sizeof(c_uint64)) == 0x8b485510245c8948
+    assert pe.get_int_from_virtual_address(0x140001AFC, 3443) is None
+    assert pe.get_int_from_virtual_address(0x1840001AFC, 1) is None
 
+    assert header.endianness == lief.ENDIANNESS.LITTLE
 
 def test_format():
     binary = lief.parse(get_sample('ELF/ELF32_x86_binary_ls.bin'))
-    binary.abstract.format == lief.Binary.FORMATS.ELF
+    assert binary.abstract.format == lief.Binary.FORMATS.ELF
 
     binary = lief.parse(get_sample('MachO/MachO64_x86-64_binary_id.bin'))
-    binary.abstract.format == lief.Binary.FORMATS.MACHO
+    assert binary.abstract.format == lief.Binary.FORMATS.MACHO
 
     binary = lief.parse(get_sample('PE/PE64_x86-64_binary_ConsoleApplication1.exe'))
-    binary.abstract.format == lief.Binary.FORMATS.PE
+    assert binary.abstract.format == lief.Binary.FORMATS.PE
 
 def test_pie():
     binary = lief.parse(get_sample('ELF/ELF32_ARM_binary-pie_ls.bin'))

@@ -101,13 +101,19 @@ class LIEF_API RelocationFixup : public Relocation {
 
   //! The address of this relocation is bound to its offset.
   uint64_t address() const override {
-    return imagebase_ + offset_;
+    return address_;
   }
 
   //! Changing the address means changing the offset
   void address(uint64_t address) override {
-    offset_ = address - imagebase_;
+    address_ = address;
   }
+
+  //! Return the (unscaled) next offset in the chain
+  uint32_t next() const;
+
+  //! Change next offset of the current element
+  void next(uint32_t value);
 
   void accept(Visitor& visitor) const override;
 

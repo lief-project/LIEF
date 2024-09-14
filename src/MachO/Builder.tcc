@@ -1225,7 +1225,6 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
 
   // -----
 
-  auto* seg_info_offsets = reinterpret_cast<uint32_t*>(lnk_data.raw().data() + segs_info_off);
 
   for (const auto& seg_info : starts_in_segment) {
     if (seg_info.page_count() == 0) {
@@ -1252,6 +1251,7 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
     // According to the linker documentation, dyld_chained_starts_in_segment
     // must be 64-bit aligned.
     lnk_data.align(8);
+    auto* seg_info_offsets = reinterpret_cast<uint32_t*>(lnk_data.raw().data() + segs_info_off);
     seg_info_offsets[seg_idx] = lnk_data.size() - segs_header_off;
     lnk_data.write(seg);
     for (uint16_t off : seg_info.page_start) {
