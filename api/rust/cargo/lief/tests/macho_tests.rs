@@ -62,6 +62,7 @@ fn explore_macho(_: &str, macho: &lief::macho::Binary) {
                 println!("TYPE: {:?}", gen.command_type());
             }
             Commands::DyldChainedFixups(cmd) => {
+                format!("{}", cmd.payload().len());
                 for binding in cmd.bindings() {
                     format!("{:?}", binding);
                 }

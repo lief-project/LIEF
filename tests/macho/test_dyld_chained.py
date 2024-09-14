@@ -13,6 +13,8 @@ def process_crypt_and_hash(path: str, delta: int = 0):
     assert target.has(lief.MachO.LoadCommand.TYPE.DYLD_CHAINED_FIXUPS)
 
     dyld_chained = target.get(lief.MachO.LoadCommand.TYPE.DYLD_CHAINED_FIXUPS)
+    assert len(dyld_chained.payload) == dyld_chained.data_size
+
     assert dyld_chained.fixups_version == 0
     assert dyld_chained.starts_offset ==  32
     assert dyld_chained.imports_offset == 112
