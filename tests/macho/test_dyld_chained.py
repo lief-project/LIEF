@@ -74,6 +74,7 @@ def test_1():
 
     start_in_segment: lief.MachO.DyldChainedFixups.chained_starts_in_segment = dyld_chained.chained_starts_in_segments[2]
     assert start_in_segment.offset == 24
+    assert start_in_segment.segment_offset == 0x4000
     assert start_in_segment.size == 24
     assert start_in_segment.page_size == 0x4000
     assert start_in_segment.pointer_format == lief.MachO.DYLD_CHAINED_PTR_FORMAT.PTR_ARM64E_USERLAND24
@@ -295,3 +296,18 @@ def test_issue_853(tmp_path):
     ios15_built = lief.parse(output)
     assert len(ios15_built.relocations) == 31
     assert ios15_built.relocations[0].target == 0x100007ea8
+
+
+def test_with_imagebase():
+    macho = lief.MachO.parse(get_sample('MachO/liblog_srp_fixups.dylib')).at(0)
+    chained = macho.dyld_chained_fixups
+    assert chained is not None
+
+    bindings = chained.bindings
+    assert(len(bindings) == 2)
+
+    assert bindings[0].symbol.name == "_calloc"
+    assert bindings[0].address == 0x24150f758
+
+    assert bindings[1].symbol.name == "_dlopen"
+    assert bindings[1].address == 0x24150f778
