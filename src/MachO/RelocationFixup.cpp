@@ -184,8 +184,6 @@ void RelocationFixup::target(uint64_t target) {
   }
 }
 
-
-
 void RelocationFixup::set(const details::dyld_chained_ptr_arm64e_rebase& fixup) {
   rtypes_ = REBASE_TYPES::ARM64E_REBASE;
   arm64_rebase_ = new details::dyld_chained_ptr_arm64e_rebase(fixup);

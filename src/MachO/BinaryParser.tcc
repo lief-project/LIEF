@@ -3057,6 +3057,7 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
 
     auto reloc = std::make_unique<RelocationFixup>(ptr_fmt, imagebase);
     reloc->set(fixup.auth_rebase);
+    reloc->address_      = chain_address;
     reloc->architecture_ = binary_->header().cpu_type();
     reloc->segment_      = &segment;
     reloc->size_         = stride_size(ptr_fmt) * BYTE_BITS;
@@ -3127,6 +3128,7 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
 
   auto reloc = std::make_unique<RelocationFixup>(ptr_fmt, imagebase);
   reloc->set(fixup.rebase);
+  reloc->address_      = chain_address;
   reloc->architecture_ = binary_->header().cpu_type();
   reloc->segment_      = &segment;
   reloc->size_         = stride_size(ptr_fmt) * BYTE_BITS;
@@ -3214,6 +3216,7 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
                           fixup.unpack_target() + imagebase;
   auto reloc = std::make_unique<RelocationFixup>(ptr_fmt, imagebase);
   reloc->set(fixup.rebase);
+  reloc->address_      = chain_address;
   reloc->architecture_ = binary_->header().cpu_type();
   reloc->segment_      = &segment;
   reloc->size_         = stride_size(ptr_fmt) * BYTE_BITS;
@@ -3297,7 +3300,7 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
     reloc = std::make_unique<RelocationFixup>(ptr_fmt, imagebase);
     reloc->set(fixup.rebase);
   }
-
+  reloc->address_      = chain_address;
   reloc->architecture_ = binary_->header().cpu_type();
   reloc->segment_      = &segment;
   reloc->size_         = stride_size(ptr_fmt) * BYTE_BITS;
