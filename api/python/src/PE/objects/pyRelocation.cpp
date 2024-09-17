@@ -60,7 +60,8 @@ void create<Relocation>(nb::module_& m) {
     .def("add_entry",
         &Relocation::add_entry,
         "Add a new " RST_CLASS_REF(lief.PE.RelocationEntry) ""_doc,
-        "new_entry"_a)
+        "new_entry"_a,
+        nb::rv_policy::reference_internal)
 
     LIEF_COPYABLE(Relocation)
     LIEF_DEFAULT_STR(Relocation);
