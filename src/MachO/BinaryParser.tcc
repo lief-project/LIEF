@@ -3735,7 +3735,7 @@ ok_error_t BinaryParser::infer_indirect_bindings() {
 
       for (size_t i = 0; i < count; ++i) {
         uint64_t addr = section.virtual_address() + i * stride;
-        if (n + i > indirect_syms.size()) {
+        if (n + i >= indirect_syms.size()) {
           return make_error_code(lief_errors::corrupted);
         }
         Symbol& sym = indirect_syms[n + i];
