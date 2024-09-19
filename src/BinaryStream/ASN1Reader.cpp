@@ -24,6 +24,16 @@
 #include <mbedtls/x509_crt.h>
 #include <mbedtls/bignum.h>
 
+extern "C" {
+int mbedtls_x509_get_name(unsigned char **p, const unsigned char *end,
+                          mbedtls_x509_name *cur);
+int mbedtls_x509_get_time(unsigned char **p, const unsigned char *end,
+                          mbedtls_x509_time *t);
+
+int mbedtls_x509_get_serial(unsigned char **p, const unsigned char *end,
+                            mbedtls_x509_buf *serial);
+}
+
 namespace LIEF {
 
 inline void free_names(mbedtls_x509_name& names) {

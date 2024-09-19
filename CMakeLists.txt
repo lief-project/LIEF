@@ -127,12 +127,8 @@ if(NOT LIEF_PY_LIEF_EXT)
 endif()
 
 if(NOT LIEF_OPT_MBEDTLS_EXTERNAL)
-  set_source_files_properties(${mbedtls_src_crypto} PROPERTIES GENERATED TRUE)
-  set_source_files_properties(${mbedtls_src_x509} PROPERTIES GENERATED TRUE)
-  set_source_files_properties(${mbedtls_src_tls} PROPERTIES GENERATED TRUE)
-  target_sources(LIB_LIEF PRIVATE ${mbedtls_src_crypto}
-                                  ${mbedtls_src_x509}
-                                  ${mbedtls_src_tls})
+  set_source_files_properties(${mbedtls_src_files} PROPERTIES GENERATED TRUE)
+  target_sources(LIB_LIEF PRIVATE ${mbedtls_src_files})
 
   target_include_directories(LIB_LIEF SYSTEM PRIVATE
                              ${MBEDTLS_INCLUDE_DIRS}

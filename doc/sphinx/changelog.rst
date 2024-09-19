@@ -96,6 +96,10 @@ Changelog
     (c.f. :issue:`1054`)
   * The extended version is now using a versioning matching LIEF regular version
 
+:Dependencies:
+
+  * Upgrade MbedTLS from ``3.2.1`` to ``3.6.1``
+
 
 0.15.1 - July 23th, 2024
 ------------------------
