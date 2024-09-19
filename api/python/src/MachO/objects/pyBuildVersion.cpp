@@ -58,7 +58,9 @@ void create<BuildVersion>(nb::module_& m) {
     .value(PY_ENUM(BuildToolVersion::TOOLS::UNKNOWN))
     .value(PY_ENUM(BuildToolVersion::TOOLS::CLANG))
     .value(PY_ENUM(BuildToolVersion::TOOLS::SWIFT))
-    .value(PY_ENUM(BuildToolVersion::TOOLS::LD));
+    .value(PY_ENUM(BuildToolVersion::TOOLS::LD))
+    .value(PY_ENUM(BuildToolVersion::TOOLS::LLD))
+  ;
 
   cls
     .def_prop_rw("platform",
@@ -88,7 +90,19 @@ void create<BuildVersion>(nb::module_& m) {
     .value(PY_ENUM(BuildVersion::PLATFORMS::MACOS))
     .value(PY_ENUM(BuildVersion::PLATFORMS::IOS))
     .value(PY_ENUM(BuildVersion::PLATFORMS::TVOS))
-    .value(PY_ENUM(BuildVersion::PLATFORMS::WATCHOS));
+    .value(PY_ENUM(BuildVersion::PLATFORMS::WATCHOS))
+    .value(PY_ENUM(BuildVersion::PLATFORMS::BRIDGEOS))
+    .value(PY_ENUM(BuildVersion::PLATFORMS::MAC_CATALYST))
+    .value(PY_ENUM(BuildVersion::PLATFORMS::IOS_SIMULATOR))
+    .value(PY_ENUM(BuildVersion::PLATFORMS::TVOS_SIMULATOR))
+    .value(PY_ENUM(BuildVersion::PLATFORMS::WATCHOS_SIMULATOR))
+    .value(PY_ENUM(BuildVersion::PLATFORMS::DRIVERKIT))
+    .value(PY_ENUM(BuildVersion::PLATFORMS::VISIONOS))
+    .value(PY_ENUM(BuildVersion::PLATFORMS::VISIONOS_SIMULATOR))
+    .value(PY_ENUM(BuildVersion::PLATFORMS::FIRMWARE))
+    .value(PY_ENUM(BuildVersion::PLATFORMS::SEPOS))
+    .value(PY_ENUM(BuildVersion::PLATFORMS::ANY))
+  ;
 
 }
 

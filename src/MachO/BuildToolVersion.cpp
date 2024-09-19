@@ -51,6 +51,7 @@ const char* to_string(BuildToolVersion::TOOLS tool) {
     ENTRY(CLANG),
     ENTRY(SWIFT),
     ENTRY(LD),
+    ENTRY(LLD),
   };
   #undef ENTRY
 

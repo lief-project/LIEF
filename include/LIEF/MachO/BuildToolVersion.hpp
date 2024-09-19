@@ -42,6 +42,7 @@ class LIEF_API BuildToolVersion : public Object {
     CLANG   = 1,
     SWIFT   = 2,
     LD      = 3,
+    LLD     = 4,
   };
 
   public:

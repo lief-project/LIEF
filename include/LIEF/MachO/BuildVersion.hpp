@@ -41,12 +41,24 @@ class LIEF_API BuildVersion : public LoadCommand {
   using tools_list_t = std::vector<BuildToolVersion>;
 
   public:
-  enum class PLATFORMS {
-    UNKNOWN = 0,
-    MACOS   = 1,
-    IOS     = 2,
-    TVOS    = 3,
-    WATCHOS = 4,
+  enum class PLATFORMS : uint32_t {
+    UNKNOWN            = 0,
+    MACOS              = 1,
+    IOS                = 2,
+    TVOS               = 3,
+    WATCHOS            = 4,
+    BRIDGEOS           = 5,
+    MAC_CATALYST       = 6,
+    IOS_SIMULATOR      = 7,
+    TVOS_SIMULATOR     = 8,
+    WATCHOS_SIMULATOR  = 9,
+    DRIVERKIT          = 10,
+    VISIONOS           = 11,
+    VISIONOS_SIMULATOR = 12,
+    FIRMWARE           = 13,
+    SEPOS              = 14,
+
+    ANY                = 0xFFFFFFFF
   };
 
   public:
