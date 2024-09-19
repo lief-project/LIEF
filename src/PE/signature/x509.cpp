@@ -25,8 +25,12 @@
 
 #include "logging.hpp"
 #include "frozen.hpp"
+#include "internal_utils.hpp"
 
 #include "LIEF/Visitor.hpp"
+
+#include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/BinaryStream/ASN1Reader.hpp"
 
 #include "LIEF/PE/signature/x509.hpp"
 #include "LIEF/PE/signature/RsaInfo.hpp"
@@ -434,6 +438,70 @@ std::unique_ptr<RsaInfo> x509::rsa_info() const {
   return nullptr;
 }
 
+std::vector<uint8_t> pkcs1_15_unpad(const std::vector<uint8_t>& input) {
+  // EB = 00 || BT || PS || 00 || D
+  if (input.size() < 10) {
+    return {};
+  }
+
+  // According ot the RFC, the leading byte must be 0:
+  if (input[0] != 0x00) {
+    return {};
+  }
+  const uint8_t BT = input[1];
+  if (BT != 0 && BT != 1 && BT != 2) {
+    return {};
+  }
+
+  // We only support "1" type (signature)
+  if (BT != 1) {
+    return {};
+  }
+
+  auto padding_start = input.begin() + 2;
+  auto padding_end = std::find_if(padding_start, input.end(),
+                                  [] (uint8_t x) { return x != 0xFF; });
+  if (padding_end == input.end()) {
+    return {};
+  }
+
+  auto content_start = padding_end + 1;
+  size_t content_size  = input.size() - (content_start - input.begin());
+  if (content_start == input.end()) {
+    return {};
+  }
+
+  SpanStream stream(&*content_start, content_size);
+  ASN1Reader asn1r(stream);
+
+  {
+    auto res = asn1r.read_tag(MBEDTLS_ASN1_SEQUENCE | MBEDTLS_ASN1_CONSTRUCTED);
+    if (!res) {
+      return stream.content();
+    }
+  }
+
+  /* digestAlgorithm DigestAlgorithmIdentifier */ {
+    auto res = asn1r.read_alg();
+    if (!res) {
+      return stream.content();
+    }
+
+    LIEF_DEBUG("PKCS1 1.5 padding - Algo: {}", *res);
+  }
+
+  /* digest Digest */ {
+    auto res = asn1r.read_octet_string();
+    if (!res) {
+      return stream.content();
+    }
+    LIEF_DEBUG("PKCS1 1.5 padding - Digest: {}", hex_dump(*res));
+    return *res;
+  }
+
+  return stream.content();
+}
+
 bool x509::check_signature(const std::vector<uint8_t>& hash, const std::vector<uint8_t>& signature, ALGORITHMS algo) const {
   CONST_MAP(ALGORITHMS, mbedtls_md_type_t, 5) LIEF2MBED_MD = {
     //{ALGORITHMS::MD2, MBEDTLS_MD_MD2},
@@ -483,21 +551,8 @@ bool x509::check_signature(const std::vector<uint8_t>& hash, const std::vector<u
         return false;
       }
 
-      // Check padding header
-      if (decrypted[0] != 0x00 && decrypted[1] != 0x01 && decrypted[2] != 0xff) {
-        return false;
-      }
+      std::vector<uint8_t> unpadded = pkcs1_15_unpad(decrypted);
 
-      std::vector<uint8_t> unpadded;
-      for (size_t i = 2; i < decrypted.size(); ++i) {
-        if (decrypted[i] == 0) {
-          unpadded = std::vector<uint8_t>(std::begin(decrypted) + i + 1, std::end(decrypted));
-          break;
-        }
-        if (decrypted[i] != 0xFF) {
-          return false;
-        }
-      }
       if (unpadded == hash) {
         return true;
       }

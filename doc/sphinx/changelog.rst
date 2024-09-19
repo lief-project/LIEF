@@ -54,6 +54,10 @@ Changelog
     This can be handy if a Mach-O does not have the commands :class:`~lief.MachO.DyldInfo`
     or :class:`~lief.MachO.ChainedBindingInfo` (e.g. extracted shared cache library)
 
+:PE:
+
+  * Fix authenticode error while reading RSA PKCS#1 1.5 padding
+
 :ELF:
 
   * Fix a critical error when rewriting ELF file with ``DT_RELR`` relocations.

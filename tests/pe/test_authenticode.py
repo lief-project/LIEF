@@ -335,3 +335,8 @@ def test_playready_signature():
     sig = pe.signatures[0]
     spc = sig.signers[0].get_auth_attribute(lief.PE.Attribute.TYPE.SPC_RELAXED_PE_MARKER_CHECK)
     assert spc is not None
+
+
+def test_pkcs1_15_padding():
+    pe = lief.PE.parse(get_sample("PE/jar.exe"))
+    assert pe.signatures[0].check() == lief.PE.Signature.VERIFICATION_FLAGS.OK
