@@ -13,3 +13,7 @@ autocxx = "0.26"
 [build-dependencies]
 lief-build = { version="0.16.0", path = "../lief-build" }
 miette     = { version="5.10", features = [ "fancy" ] }
+
+[features]
+default = ["rustls-tls"]
+rustls-tls = ["lief-build/rustls-tls"]
