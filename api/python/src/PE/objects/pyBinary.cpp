@@ -316,7 +316,8 @@ void create<Binary>(nb::module_& m) {
     .def("add_relocation",
         &Binary::add_relocation,
         "Add a " RST_CLASS_REF(lief.PE.Relocation) " to the binary"_doc,
-        "relocation"_a)
+        "relocation"_a,
+        nb::rv_policy::reference_internal)
 
     .def("remove_all_relocations", &Binary::remove_all_relocations)
 
