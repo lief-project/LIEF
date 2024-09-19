@@ -397,6 +397,18 @@ void create<Binary>(nb::module_& m) {
         &Binary::has_build_version,
         "``True`` if the binary has a " RST_CLASS_REF(lief.MachO.BuildVersion) " command"_doc)
 
+    .def_prop_ro("platform",
+        &Binary::platform,
+        "Return the platform for which this Mach-O has been compiled"_doc)
+
+    .def_prop_ro("is_ios",
+        &Binary::is_ios,
+        "True if this binary targets iOS"_doc)
+
+    .def_prop_ro("is_macos",
+        &Binary::is_macos,
+        "True if this binary targets macOS"_doc)
+
     .def_prop_ro("build_version",
         nb::overload_cast<>(&Binary::build_version),
         "Return the binary's " RST_CLASS_REF(lief.MachO.BuildVersion) " if any, or None"_doc,

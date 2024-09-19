@@ -24,6 +24,7 @@
 #include "LIEF/MachO/LoadCommand.hpp"
 #include "LIEF/MachO/Header.hpp"
 #include "LIEF/MachO/BindingInfoIterator.hpp"
+#include "LIEF/MachO/BuildVersion.hpp"
 #include "LIEF/MachO/Stub.hpp"
 
 #include "LIEF/visibility.h"
@@ -43,7 +44,6 @@ class Metadata;
 namespace MachO {
 
 class BinaryParser;
-class BuildVersion;
 class Builder;
 class CodeSignature;
 class CodeSignatureDir;
@@ -740,6 +740,27 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Return the MachO::BuildVersion if present, a nullptr otherwise.
   BuildVersion* build_version();
   const BuildVersion* build_version() const;
+
+  //! Return the platform for which this Mach-O has been compiled for
+  BuildVersion::PLATFORMS platform() const {
+    if (const BuildVersion* version = build_version()) {
+      return version->platform();
+    }
+    return BuildVersion::PLATFORMS::UNKNOWN;
+  }
+
+  //! True if this binary targets iOS
+  bool is_ios() const {
+    return platform() == BuildVersion::PLATFORMS::IOS ||
+           has(LoadCommand::TYPE::VERSION_MIN_IPHONEOS);
+  }
+
+  //! True if this binary targets macOS
+  bool is_macos() const {
+    return platform() == BuildVersion::PLATFORMS::MACOS ||
+           has(LoadCommand::TYPE::VERSION_MIN_MACOSX);
+  }
+
 
   //! ``true`` if the binary has the command LC_DYLD_CHAINED_FIXUPS.
   bool has_dyld_chained_fixups() const {

@@ -160,6 +160,7 @@ def test_unwind():
     functions = sorted(binary.functions, key=lambda f: f.address)
 
     assert len(functions) == 2619
+    assert binary.is_macos
 
     assert functions[0].address == 2624
     assert functions[0].size    == 0
@@ -175,6 +176,7 @@ def test_build_version():
     target = binary[1]
 
     assert target.has_build_version
+    assert target.is_ios
     build_version = target.build_version
 
     assert build_version.minos == [12, 1, 0]

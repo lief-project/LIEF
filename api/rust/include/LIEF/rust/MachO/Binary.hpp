@@ -270,9 +270,17 @@ class MachO_Binary : public AbstractBinary {
     return details::try_unique<ObjC_Metadata>(impl().objc_metadata());
   }
 
+  auto platform() const {
+    return to_int(impl().platform());
+  }
+
+  bool is_ios() const { return impl().is_ios(); }
+  bool is_macos() const { return impl().is_macos(); }
+
   static bool is_exported(const MachO_Symbol& symbol) {
     return lief_t::is_exported(static_cast<const LIEF::MachO::Symbol&>(symbol.get()));
   }
+
   private:
   const lief_t& impl() const { return as<lief_t>(this); }
 };

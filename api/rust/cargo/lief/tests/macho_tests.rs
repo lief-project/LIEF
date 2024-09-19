@@ -39,6 +39,7 @@ fn explore_macho(_: &str, macho: &lief::macho::Binary) {
     format!("{macho:?}");
     format!("{}", macho.entrypoint());
     format!("{:?}", macho.header());
+    println!("{:?}:{}:{}", macho.platform(), macho.is_ios(), macho.is_macos());
     for section in macho.sections() {
         format!("{section:?}");
         format!("{:?}", section.segment());

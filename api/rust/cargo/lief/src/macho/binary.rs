@@ -2,7 +2,7 @@ use std::mem::size_of;
 use num_traits::{Num, cast};
 
 use crate::Error;
-use super::commands::build_version::BuildVersion;
+use super::commands::build_version::{BuildVersion, Platform};
 use super::commands::code_signature::CodeSignature;
 use super::commands::code_signature_dir::CodeSignatureDir;
 use super::commands::data_in_code::DataInCode;
@@ -248,6 +248,21 @@ impl Binary {
     /// Return Objective-C metadata if present
     pub fn objc_metadata(&self) -> Option<Metadata> {
         into_optional(self.ptr.objc_metadata())
+    }
+
+    /// Return the platform for which this Mach-O has been compiled for
+    pub fn platform(&self) -> Platform {
+        Platform::from(self.ptr.platform())
+    }
+
+    /// True if this binary targets iOS
+    pub fn is_ios(&self) -> bool {
+        self.ptr.is_ios()
+    }
+
+    /// True if this binary targets macOS
+    pub fn is_macos(&self) -> bool {
+        self.ptr.is_macos()
     }
 
 

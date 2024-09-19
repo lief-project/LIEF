@@ -37,6 +37,12 @@ Changelog
 
 :MachO:
 
+  * Add helpers to determine the platform targeted by a Mach-O binary:
+
+    - :attr:`lief.MachO.Binary.is_ios`
+    - :attr:`lief.MachO.Binary.is_macos`
+    - :attr:`lief.MachO.Binary.platform`
+
   * Expose an iterator over the stub entries located in ``__stubs,__auth_stubs,__symbol_stub,__picsymbolstub4``
 
     - :attr:`lief.MachO.Binary.symbol_stubs`, :class:`lief.MachO.Stub`
