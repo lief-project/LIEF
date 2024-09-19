@@ -20,14 +20,24 @@ class python_base_sink final : public base_sink<Mutex> {
   protected:
   void flush_() override {}
   void sink_it_(const details::log_msg &msg) override {
+    // See: https://github.com/python/cpython/blob/453da532fee26dc4f83d4cab77eb9bdb17b941e6/Python/sysmodule.c#L4001
+    static constexpr auto BUFFER_SIZE = 1000;
     memory_buf_t formatted;
     base_sink<Mutex>::formatter_->format(msg, formatted);
     std::string msg_str(formatted.data(), formatted.size());
 
-    if constexpr (std::is_same_v<ErrOrOut, py_stderr_tag>) {
-      PySys_WriteStderr("%s", msg_str.c_str());
-    } else {
-      PySys_WriteStdout("%s", msg_str.c_str());
+    const size_t nb_chunks = (msg_str.size() / BUFFER_SIZE) + 1;
+
+    for (size_t i = 0; i < nb_chunks; ++i) {
+      const size_t rem = msg_str.size() - i * BUFFER_SIZE;
+      std::string msg = msg_str.substr(i * BUFFER_SIZE,
+                                       std::min<size_t>(rem, BUFFER_SIZE));
+
+      if constexpr (std::is_same_v<ErrOrOut, py_stderr_tag>) {
+        PySys_WriteStderr("%s", msg.c_str());
+      } else {
+        PySys_WriteStdout("%s", msg.c_str());
+      }
     }
   }
 };
