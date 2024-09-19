@@ -258,7 +258,7 @@ endif()
 
 if(LIEF_OPT_UTFCPP_EXTERNAL)
   find_package(utf8cpp REQUIRED)
-  target_link_libraries(LIB_LIEF PRIVATE utf8cpp)
+  target_link_libraries(LIB_LIEF PRIVATE utf8cpp::utf8cpp)
 else()
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/internal/utfcpp/utf8.h
     COMMAND
