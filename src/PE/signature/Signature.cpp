@@ -183,6 +183,7 @@ std::vector<uint8_t> Signature::hash(const uint8_t* buffer, size_t size, ALGORIT
           LIEF_ERR("Hashing {} bytes with SHA-384 failed! (ret: 0x{:x})", size, ret);
           return {};
         }
+        out.resize(48);
         return out;
       }
 
