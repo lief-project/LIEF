@@ -129,6 +129,7 @@ endif()
 if(NOT LIEF_OPT_MBEDTLS_EXTERNAL)
   set_source_files_properties(${mbedtls_src_files} PROPERTIES GENERATED TRUE)
   target_sources(LIB_LIEF PRIVATE ${mbedtls_src_files})
+  target_compile_definitions(LIB_LIEF PRIVATE -DMBEDTLS_NO_PLATFORM_ENTROPY)
 
   target_include_directories(LIB_LIEF SYSTEM PRIVATE
                              ${MBEDTLS_INCLUDE_DIRS}
@@ -136,6 +137,7 @@ if(NOT LIEF_OPT_MBEDTLS_EXTERNAL)
   )
 
   add_dependencies(LIB_LIEF lief_mbed_tls)
+  target_compile_definitions(LIB_LIEF PUBLIC -DLIEF_EXPORTS)
 else()
   find_package(MbedTLS REQUIRED)
   target_link_libraries(LIB_LIEF PRIVATE
