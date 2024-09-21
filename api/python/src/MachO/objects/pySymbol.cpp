@@ -21,6 +21,7 @@
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/BindingInfo.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
+#include "LIEF/MachO/DylibCommand.hpp"
 
 #include "pyIterator.hpp"
 #include "MachO/pyMachO.hpp"
@@ -125,6 +126,17 @@ void create<Symbol>(nb::module_& m) {
         nb::overload_cast<>(&Symbol::binding_info),
         "" RST_CLASS_REF(lief.MachO.BindingInfo) " associated with the symbol if any, or None"_doc,
         nb::rv_policy::reference_internal)
+
+    .def_prop_ro("library",
+        nb::overload_cast<>(&Symbol::library),
+        "" RST_CLASS_REF(lief.MachO.DylibCommand) " the library where the symbol is exposed"_doc,
+        nb::rv_policy::reference_internal)
+
+    .def_prop_ro("is_external", &Symbol::is_external,
+        "True if the symbol is defined as an external symbol."_doc)
+
+    .def_prop_ro("library_ordinal", &Symbol::library_ordinal,
+                 "Library ordinal + 1 (0 means self)"_doc)
 
     LIEF_DEFAULT_STR(Symbol);
 }
