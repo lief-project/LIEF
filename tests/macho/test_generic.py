@@ -324,6 +324,11 @@ def test_bindings_iterator():
     assert indirect_bindings[0].symbol.name == "___memcpy_chk"
     assert indirect_bindings[-1].symbol.name == "_strcmp"
 
+def test_va_range():
+    macho = lief.MachO.parse(get_sample("MachO/macho-arm64-osx-chained-fixups.bin")).at(0)
+    va_ranges = macho.va_ranges
+    assert va_ranges.start == 0x100000000
+    assert va_ranges.end == 0x100010000
 
 @pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
 def test_routine():

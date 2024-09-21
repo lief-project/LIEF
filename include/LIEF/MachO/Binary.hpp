@@ -489,7 +489,10 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   //! Check if the given address is encompassed in the
   //! binary's virtual addresses range
-  bool is_valid_addr(uint64_t address) const;
+  bool is_valid_addr(uint64_t address) const {
+    const range_t& r = va_ranges();
+    return r.start <= address && address < r.end;
+  }
 
   //! Method so that the ``visitor`` can visit us
   void accept(LIEF::Visitor& visitor) const override;

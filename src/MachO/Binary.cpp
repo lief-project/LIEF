@@ -1848,7 +1848,6 @@ uint64_t Binary::imagebase() const {
   return 0;
 }
 
-
 std::string Binary::loader() const {
   if (const DylinkerCommand* cmd = dylinker()) {
     return cmd->name();
@@ -1856,17 +1855,14 @@ std::string Binary::loader() const {
   return "";
 }
 
-bool Binary::is_valid_addr(uint64_t address) const {
-  range_t r = va_ranges();
-  return r.start <= address && address < r.end;
-}
-
-
 Binary::range_t Binary::va_ranges() const {
   uint64_t min = uint64_t(-1);
   uint64_t max = 0;
 
   for (const SegmentCommand* segment : segments_) {
+    if (segment->name_ == "__PAGEZERO") {
+      continue;
+    }
     min = std::min<uint64_t>(min, segment->virtual_address());
     max = std::max(max, segment->virtual_address() + segment->virtual_size());
   }
