@@ -101,6 +101,29 @@ def test_dynsym_command():
 
     assert indirect_symbols[3].name == "_printf"
 
+def test_symbol_library():
+    macho = lief.MachO.parse(get_sample("MachO/macho-arm64-osx-vtable-chained-fixups.bin")).at(0)
+    symbols = macho.symbols
+    assert len(symbols) == 16
+
+    bindings = list(macho.bindings)
+    assert len(bindings) == 3
+
+    assert bindings[0].symbol.name == "_printf"
+    assert bindings[0].symbol.is_external
+    assert bindings[0].symbol.library.name == "/usr/lib/libSystem.B.dylib"
+    assert bindings[0].symbol.library_ordinal == 2
+
+    assert bindings[1].symbol.is_external
+    assert bindings[1].symbol.name == "__ZTVN10__cxxabiv117__class_type_infoE"
+    assert bindings[1].symbol.library.name == "/usr/lib/libc++.1.dylib"
+    assert bindings[1].symbol.library_ordinal == 1
+
+    assert bindings[2].symbol.is_external
+    assert bindings[2].symbol.name == "__ZTVN10__cxxabiv120__si_class_type_infoE"
+    assert bindings[2].symbol.library.name == "/usr/lib/libc++.1.dylib"
+    assert bindings[2].symbol.library_ordinal == 1
+
 @pytest.mark.skipif(not lief.__extended__, reason="needs LIEF extended")
 def test_demangling():
     macho = lief.MachO.parse(get_sample("MachO/FAT_MachO_x86_x86-64_library_libc++abi.dylib")).at(0)

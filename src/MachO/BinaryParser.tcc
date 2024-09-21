@@ -2718,12 +2718,16 @@ ok_error_t BinaryParser::do_fixup(DYLD_CHAINED_FORMAT fmt, int32_t ord, const st
   if (symbol != nullptr) {
     binding_info->symbol_ = symbol;
     symbol->binding_info_ = binding_info.get();
+    if (symbol->library_ordinal() == ord) {
+      symbol->library_ = binding_info->library_;
+    }
   } else {
     LIEF_INFO("New symbol discovered: {}", symbol_name);
     auto symbol = std::make_unique<Symbol>();
     symbol->type_              = 0;
     symbol->numberof_sections_ = 0;
     symbol->description_       = 0;
+    symbol->library_           = binding_info->library_;
     symbol->name(symbol_name);
 
     binding_info->symbol_ = symbol.get();
