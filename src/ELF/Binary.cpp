@@ -122,8 +122,8 @@ LIEF::Binary::functions_t Binary::get_abstract_imported_functions() const {
 std::vector<std::string> Binary::get_abstract_imported_libraries() const {
   std::vector<std::string> result;
   for (const DynamicEntry& entry : dynamic_entries()) {
-    if (DynamicEntryLibrary::classof(&entry)) {
-      result.push_back(entry.as<DynamicEntryLibrary>()->name());
+    if (const auto* lib = entry.cast<DynamicEntryLibrary>()) {
+      result.push_back(lib->name());
     }
   }
   return result;
@@ -2067,8 +2067,10 @@ DynamicEntryLibrary* Binary::get_library(const std::string& library_name) {
 const DynamicEntryLibrary* Binary::get_library(const std::string& library_name) const {
   const auto it_needed = std::find_if(std::begin(dynamic_entries_), std::end(dynamic_entries_),
       [&library_name] (const std::unique_ptr<DynamicEntry>& entry) {
-        return DynamicEntryLibrary::classof(entry.get()) &&
-               entry->as<const DynamicEntryLibrary>()->name() == library_name;
+        if (const auto* lib = entry->cast<DynamicEntryLibrary>()) {
+          return lib->name() == library_name;
+        }
+        return false;
       });
   if (it_needed == std::end(dynamic_entries_)) {
     return nullptr;

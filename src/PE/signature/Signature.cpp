@@ -546,11 +546,10 @@ std::ostream& operator<<(std::ostream& os, const Signature& signature) {
   const ContentInfo& cinfo = signature.content_info();
   os << fmt::format("Version:             {:d}\n", signature.version());
   os << fmt::format("Digest Algorithm:    {}\n", to_string(signature.digest_algorithm()));
-  if (SpcIndirectData::classof(&cinfo.value())) {
-    const auto& spc_indirect_data = static_cast<const SpcIndirectData&>(cinfo.value());
-    os << fmt::format("Content Info Digest: {}\n", hex_dump(spc_indirect_data.digest()));
-    if (!spc_indirect_data.file().empty()) {
-      os << fmt::format("Content Info File:   {}\n", spc_indirect_data.file());
+  if (const auto* spc_indirect_data = cinfo.value().cast<SpcIndirectData>()) {
+    os << fmt::format("Content Info Digest: {}\n", hex_dump(spc_indirect_data->digest()));
+    if (!spc_indirect_data->file().empty()) {
+      os << fmt::format("Content Info File:   {}\n", spc_indirect_data->file());
     }
   }
 

@@ -95,11 +95,9 @@ std::ostream& DyldChainedFixups::print(std::ostream& os) const {
     os << info << "\n";
 
     for (const Relocation& reloc : info.segment.relocations()) {
-      if (!RelocationFixup::classof(reloc)) {
-        continue;
+      if (const auto* r = reloc.cast<RelocationFixup>()) {
+        os << fmt::format("[RELOC] 0x{:08x}: 0x{:08x}\n", r->address(), r->target());
       }
-      const auto& r = static_cast<const RelocationFixup&>(reloc);
-      os << fmt::format("[RELOC] 0x{:08x}: 0x{:08x}\n", r.address(), r.target());
     }
     os << "\n";
   }

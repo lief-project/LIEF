@@ -28,11 +28,6 @@ void Attribute::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-std::ostream& operator<<(std::ostream& os, const Attribute& attribute) {
-  os << attribute.print();
-  return os;
-}
-
 const char* to_string(Attribute::TYPE e) {
   #define ENTRY(X) std::pair(Attribute::TYPE::X, #X)
   STRING_MAP enums2str {

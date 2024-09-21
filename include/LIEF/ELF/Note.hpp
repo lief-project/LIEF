@@ -233,6 +233,21 @@ class LIEF_API Note : public Object {
     return os;
   }
 
+  template<class T>
+  const T* cast() const {
+    static_assert(std::is_base_of<Note, T>::value,
+                  "Require Note inheritance");
+    if (T::classof(this)) {
+      return static_cast<const T*>(this);
+    }
+    return nullptr;
+  }
+
+  template<class T>
+  T* cast() {
+    return const_cast<T*>(static_cast<const Note*>(this)->cast<T>());
+  }
+
   protected:
   Note() = default;
   Note(std::string name, TYPE type, uint32_t original_type,

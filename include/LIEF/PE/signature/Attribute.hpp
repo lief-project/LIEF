@@ -69,7 +69,26 @@ class LIEF_API Attribute : public Object {
 
   ~Attribute() override = default;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Attribute& Attribute);
+  LIEF_API friend
+  std::ostream& operator<<(std::ostream& os, const Attribute& attribute) {
+    os << attribute.print();
+    return os;
+  }
+
+  template<class T>
+  const T* cast() const {
+    static_assert(std::is_base_of<Attribute, T>::value,
+                  "Require Attribute inheritance");
+    if (T::classof(this)) {
+      return static_cast<const T*>(this);
+    }
+    return nullptr;
+  }
+
+  template<class T>
+  T* cast() {
+    return const_cast<T*>(static_cast<const Attribute*>(this)->cast<T>());
+  }
 
   protected:
   Attribute(TYPE type) :

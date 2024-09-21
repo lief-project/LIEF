@@ -231,6 +231,21 @@ class LIEF_API DynamicEntry : public Object {
     return entry.print(os);
   }
 
+  template<class T>
+  const T* cast() const {
+    static_assert(std::is_base_of<DynamicEntry, T>::value,
+                  "Require DynamicEntry inheritance");
+    if (T::classof(this)) {
+      return static_cast<const T*>(this);
+    }
+    return nullptr;
+  }
+
+  template<class T>
+  T* cast() {
+    return const_cast<T*>(static_cast<const DynamicEntry*>(this)->cast<T>());
+  }
+
   protected:
   TAG      tag_ = TAG::DT_NULL_;
   uint64_t value_ = 0;

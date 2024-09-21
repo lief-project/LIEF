@@ -98,6 +98,21 @@ class LIEF_API ContentInfo : public Object {
       return os;
     }
 
+    template<class T>
+    const T* cast() const {
+      static_assert(std::is_base_of<Content, T>::value,
+                    "Require ContentInfo inheritance");
+      if (T::classof(this)) {
+        return static_cast<const T*>(this);
+      }
+      return nullptr;
+    }
+
+    template<class T>
+    T* cast() {
+      return const_cast<T*>(static_cast<const Content*>(this)->cast<T>());
+    }
+
     ~Content() override = default;
     private:
     oid_t type_;

@@ -162,6 +162,22 @@ class LIEF_API LoadCommand : public Object {
 
   static bool is_linkedit_data(const LoadCommand& cmd);
 
+  template<class T>
+  const T* cast() const {
+    static_assert(std::is_base_of<LoadCommand, T>::value,
+                  "Require LoadCommand inheritance");
+    if (T::classof(this)) {
+      return static_cast<const T*>(this);
+    }
+    return nullptr;
+  }
+
+  template<class T>
+  T* cast() {
+    return const_cast<T*>(static_cast<const LoadCommand*>(this)->cast<T>());
+  }
+
+
   LIEF_API friend
   std::ostream& operator<<(std::ostream& os, const LoadCommand& cmd) {
     return cmd.print(os);

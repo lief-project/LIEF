@@ -811,13 +811,12 @@ void Binary::shift_command(size_t width, uint64_t from_offset) {
     // Update relocations
     for (auto& entry : fixups->chained_starts_in_segments()) {
       for (auto& reloc : entry.segment.relocations()) {
-        if (RelocationFixup::classof(reloc)) {
-          auto& fixup = static_cast<RelocationFixup&>(reloc);
-          if (fixup.offset() > from_offset) {
-            fixup.offset(fixup.offset() + width);
+        if (auto* fixup = reloc.cast<RelocationFixup>()) {
+          if (fixup->offset() > from_offset) {
+            fixup->offset(fixup->offset() + width);
           }
-          if (fixup.target() > virtual_address) {
-            fixup.target(fixup.target() + width);
+          if (fixup->target() > virtual_address) {
+            fixup->target(fixup->target() + width);
           }
           // No need to update the virtual address since
           // it is bound to the offset
@@ -1004,12 +1003,12 @@ LoadCommand* Binary::add(const LoadCommand& command) {
 
 
   // Update cache
-  if (DylibCommand::classof(copy.get())) {
-    libraries_.push_back(copy->as<DylibCommand>());
+  if (auto* lib = copy->cast<DylibCommand>()) {
+    libraries_.push_back(lib);
   }
 
-  if (SegmentCommand::classof(copy.get())) {
-    add_cached_segment(*copy->as<SegmentCommand>());
+  if (auto* segment = copy->cast<SegmentCommand>()) {
+    add_cached_segment(*segment);
   }
   LoadCommand* ptr = copy.get();
   commands_.push_back(std::move(copy));
@@ -1059,12 +1058,12 @@ LoadCommand* Binary::add(const LoadCommand& command, size_t index) {
     }
   }
 
-  if (DylibCommand::classof(copy.get())) {
-    libraries_.push_back(copy->as<DylibCommand>());
+  if (auto* lib = copy->cast<DylibCommand>()) {
+    libraries_.push_back(lib);
   }
 
-  if (SegmentCommand::classof(copy.get())) {
-    add_cached_segment(*copy->as<SegmentCommand>());
+  if (auto* segment = copy->cast<SegmentCommand>()) {
+    add_cached_segment(*segment);
   }
   LoadCommand* copy_ptr = copy.get();
   commands_.insert(std::begin(commands_) + index, std::move(copy));
@@ -1086,19 +1085,17 @@ bool Binary::remove(const LoadCommand& command) {
 
   LoadCommand* cmd_rm = it->get();
 
-  if (DylibCommand::classof(cmd_rm)) {
+  if (auto* lib = cmd_rm->cast<DylibCommand>()) {
     auto it_cache = std::find(std::begin(libraries_), std::end(libraries_), cmd_rm);
     if (it_cache == std::end(libraries_)) {
-      const auto* lib = cmd_rm->as<const DylibCommand>();
       LIEF_WARN("Library {} not found in cache. The binary object is likely in an inconsistent state", lib->name());
     } else {
       libraries_.erase(it_cache);
     }
   }
 
-  if (SegmentCommand::classof(cmd_rm)) {
+  if (const auto* seg = cmd_rm->cast<const SegmentCommand>()) {
     auto it_cache = std::find(std::begin(segments_), std::end(segments_), cmd_rm);
-    const auto* seg = cmd_rm->as<const SegmentCommand>();
     if (it_cache == std::end(segments_)) {
       LIEF_WARN("Segment {} not found in cache. The binary object is likely in an inconsistent state", seg->name());
     } else {
