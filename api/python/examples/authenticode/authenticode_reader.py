@@ -41,23 +41,23 @@ class exceptions_handler(object):
 
 @exceptions_handler(Exception)
 def print_attr(indent: int, auth: lief.PE.Attribute):
-    if auth.type == lief.PE.SIG_ATTRIBUTE_TYPES.CONTENT_TYPE:
+    if auth.type == lief.PE.Attribute.TYPE.CONTENT_TYPE:
         print_content_type(indent, auth)
-    elif auth.type == lief.PE.SIG_ATTRIBUTE_TYPES.PKCS9_SIGNING_TIME:
+    elif auth.type == lief.PE.Attribute.TYPE.PKCS9_SIGNING_TIME:
         print_signing_time(indent, auth)
-    elif auth.type == lief.PE.SIG_ATTRIBUTE_TYPES.MS_SPC_STATEMENT_TYPE:
+    elif auth.type == lief.PE.Attribute.TYPE.MS_SPC_STATEMENT_TYPE:
         print_ms_statement_type(indent, auth)
-    elif auth.type == lief.PE.SIG_ATTRIBUTE_TYPES.PKCS9_MESSAGE_DIGEST:
+    elif auth.type == lief.PE.Attribute.TYPE.PKCS9_MESSAGE_DIGEST:
         print_pkcs_msg_dg(indent, auth)
-    elif auth.type == lief.PE.SIG_ATTRIBUTE_TYPES.PKCS9_COUNTER_SIGNATURE:
+    elif auth.type == lief.PE.Attribute.TYPE.PKCS9_COUNTER_SIGNATURE:
         print_pkcs_counter_sig(indent, auth)
-    elif auth.type == lief.PE.SIG_ATTRIBUTE_TYPES.GENERIC_TYPE:
+    elif auth.type == lief.PE.Attribute.TYPE.GENERIC_TYPE:
         print_generic_type(indent, auth)
-    elif auth.type == lief.PE.SIG_ATTRIBUTE_TYPES.SPC_SP_OPUS_INFO:
+    elif auth.type == lief.PE.Attribute.TYPE.SPC_SP_OPUS_INFO:
         print_spc_sp_opus_info(indent, auth)
-    elif auth.type == lief.PE.SIG_ATTRIBUTE_TYPES.MS_SPC_NESTED_SIGN:
+    elif auth.type == lief.PE.Attribute.TYPE.MS_SPC_NESTED_SIGN:
         print_ms_nested_sig(indent, auth)
-    elif auth.type == lief.PE.SIG_ATTRIBUTE_TYPES.PKCS9_AT_SEQUENCE_NUMBER:
+    elif auth.type == lief.PE.Attribute.TYPE.PKCS9_AT_SEQUENCE_NUMBER:
         print_pkcs9_at_seq_number(indent, auth)
     else:
         print(" " * indent, type(auth), auth)
