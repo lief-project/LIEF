@@ -35,6 +35,11 @@ std::shared_ptr<spdlog::logger> default_logger(
   bool truncate = true
 )
 {
+  auto& registry = spdlog::details::registry::instance();
+  if (std::shared_ptr<spdlog::logger> _ = registry.get(name)) {
+    registry.drop(name);
+  }
+
   std::shared_ptr<spdlog::logger> sink;
   if constexpr (current_platform() == PLATFORMS::ANDROID_PLAT) {
 #if defined(__ANDROID__)
@@ -102,7 +107,11 @@ void Logger::destroy() {
 }
 
 Logger& Logger::set_log_path(const std::string& path) {
-  auto logger = spdlog::basic_logger_mt("LIEF", path, /*truncate=*/true);
+  auto& registry = spdlog::details::registry::instance();
+  if (std::shared_ptr<spdlog::logger> _ = registry.get(DEFAULT_NAME)) {
+    registry.drop(DEFAULT_NAME);
+  }
+  auto logger = spdlog::basic_logger_mt(DEFAULT_NAME, path, /*truncate=*/true);
   set_logger(*logger);
   return *this;
 }
@@ -117,6 +126,8 @@ void Logger::set_logger(const spdlog::logger& logger) {
   sink_->set_pattern("%v");
   sink_->set_level(spdlog::level::warn);
   sink_->flush_on(spdlog::level::warn);
+
+  registry.register_logger(sink_);
 }
 
 const char* to_string(LEVEL e) {
