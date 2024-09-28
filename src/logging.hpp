@@ -16,8 +16,8 @@
 #ifndef LIEF_PRIVATE_LOGGING_H
 #define LIEF_PRIVATE_LOGGING_H
 #include <memory>
+
 #include "LIEF/logging.hpp" // Public interface
-#include "LIEF/types.hpp"
 #include "LIEF/config.h"
 
 #include "messages.hpp"
@@ -25,11 +25,11 @@
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/fmt.h>
 
-#define LIEF_TRACE(...) LIEF::logging::Logger::trace(__VA_ARGS__)
-#define LIEF_DEBUG(...) LIEF::logging::Logger::debug(__VA_ARGS__)
-#define LIEF_INFO(...)  LIEF::logging::Logger::info(__VA_ARGS__)
-#define LIEF_WARN(...)  LIEF::logging::Logger::warn(__VA_ARGS__)
-#define LIEF_ERR(...)   LIEF::logging::Logger::err(__VA_ARGS__)
+#define LIEF_TRACE(...) LIEF::logging::Logger::instance().trace(__VA_ARGS__)
+#define LIEF_DEBUG(...) LIEF::logging::Logger::instance().debug(__VA_ARGS__)
+#define LIEF_INFO(...)  LIEF::logging::Logger::instance().info(__VA_ARGS__)
+#define LIEF_WARN(...)  LIEF::logging::Logger::instance().warn(__VA_ARGS__)
+#define LIEF_ERR(...)   LIEF::logging::Logger::instance().err(__VA_ARGS__)
 
 #define CHECK(X, ...)        \
   do {                       \
@@ -52,72 +52,83 @@ namespace logging {
 
 class Logger {
   public:
+  static constexpr auto DEFAULT_NAME = "LIEF";
   Logger(const Logger&) = delete;
   Logger& operator=(const Logger&) = delete;
 
-  static Logger& instance();
+  static Logger& instance(const char* name);
+  static Logger& instance() {
+    return Logger::instance(DEFAULT_NAME);
+  }
 
-  //! @brief Disable the logging module
-  static void disable();
+  void disable() {
+    if constexpr (lief_logging_support) {
+      sink_->set_level(spdlog::level::off);
+    }
+  }
 
-  //! @brief Enable the logging module
-  static void enable();
+  void enable() {
+    if constexpr (lief_logging_support) {
+      sink_->set_level(spdlog::level::warn);
+    }
+  }
 
-  //! @brief Change the logging level (**hierarchical**)
-  static void set_level(LEVEL level);
+  void set_level(LEVEL level);
 
-  static LEVEL get_level();
+  LEVEL get_level();
 
-  static Logger& set_log_path(const std::string& path);
+  Logger& set_log_path(const std::string& path);
 
-  static void reset();
+  void reset();
 
   template <typename... Args>
-  static void trace(const char *fmt, const Args &... args) {
+  void trace(const char *fmt, const Args &... args) {
     if constexpr (lief_logging_support && lief_logging_debug) {
-      Logger::instance().sink_->trace(fmt::runtime(fmt), args...);
+      sink_->trace(fmt::runtime(fmt), args...);
     }
   }
 
   template <typename... Args>
-  static void debug(const char *fmt, const Args &... args) {
+  void debug(const char *fmt, const Args &... args) {
     if constexpr (lief_logging_support && lief_logging_debug) {
-      Logger::instance().sink_->debug(fmt::runtime(fmt), args...);
+      sink_->debug(fmt::runtime(fmt), args...);
     }
   }
 
   template <typename... Args>
-  static void info(const char *fmt, const Args &... args) {
+  void info(const char *fmt, const Args &... args) {
     if constexpr (lief_logging_support) {
-      Logger::instance().sink_->info(fmt::runtime(fmt), args...);
+      sink_->info(fmt::runtime(fmt), args...);
     }
   }
 
   template <typename... Args>
-  static void err(const char *fmt, const Args &... args) {
+  void err(const char *fmt, const Args &... args) {
     if constexpr (lief_logging_support) {
-      Logger::instance().sink_->error(fmt::runtime(fmt), args...);
+      sink_->error(fmt::runtime(fmt), args...);
     }
   }
 
   template <typename... Args>
-  static void warn(const char *fmt, const Args &... args) {
+  void warn(const char *fmt, const Args &... args) {
     if constexpr (lief_logging_support) {
-      Logger::instance().sink_->warn(fmt::runtime(fmt), args...);
+      sink_->warn(fmt::runtime(fmt), args...);
     }
   }
 
-  static void set_logger(const spdlog::logger& logger);
+  void set_logger(const spdlog::logger& logger);
 
-  ~Logger();
+  ~Logger() = default;
+  Logger() = delete;
   private:
-  Logger();
-  Logger(const std::string& filepath);
-  Logger(Logger&&);
-  Logger& operator=(Logger&&);
+  Logger(std::shared_ptr<spdlog::logger> sink) :
+    sink_(std::move(sink))
+  {}
+  Logger(Logger&&) noexcept = default;
+  Logger& operator=(Logger&&) noexcept = default;
 
   static void destroy();
-  static inline Logger* instance_ = nullptr;
+  static inline std::unordered_map<std::string, Logger*> instances_;
   std::shared_ptr<spdlog::logger> sink_;
 };
 
@@ -150,7 +161,7 @@ template <typename... Args>
 
 inline void needs_lief_extended() {
   if constexpr (!lief_extended) {
-    Logger::warn(NEEDS_EXTENDED_MSG);
+    Logger::instance().warn(NEEDS_EXTENDED_MSG);
   }
 }
 
