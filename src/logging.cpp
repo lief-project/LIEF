@@ -28,13 +28,16 @@
 namespace LIEF {
 namespace logging {
 
-std::shared_ptr<spdlog::logger> default_logger(
+static std::shared_ptr<spdlog::logger> default_logger(
   [[maybe_unused]] const std::string& name = "LIEF",
   [[maybe_unused]] const std::string& logcat_tag = "lief",
   [[maybe_unused]] const std::string& filepath = "/tmp/lief.log",
-  bool truncate = true
+  [[maybe_unused]] bool truncate = true
 )
 {
+  auto& registry = spdlog::details::registry::instance();
+  registry.drop(name);
+
   std::shared_ptr<spdlog::logger> sink;
   if constexpr (current_platform() == PLATFORMS::ANDROID_PLAT) {
 #if defined(__ANDROID__)
@@ -77,43 +80,38 @@ LEVEL Logger::get_level() {
 }
 
 Logger& Logger::instance(const char* name) {
-  Logger* logger = nullptr;
-  if (auto it = instances_.find(name); it == instances_.end()) {
-    if (instances_.empty()) {
-      std::atexit(destroy);
-    }
-    logger = instances_.insert({name, new Logger(default_logger())}).first->second;
-  } else {
-    logger = it->second;
+  if (auto it = instances_.find(name); it != instances_.end()) {
+    return *it->second;
   }
-  return *logger;
+  if (instances_.empty()) {
+    std::atexit(destroy);
+  }
+  auto* impl = new Logger(default_logger(/*name=*/name));
+  instances_.insert({name, impl});
+  return *impl;
 }
 
 void Logger::reset() {
-  set_logger(*default_logger());
+  set_logger(default_logger());
 }
 
 void Logger::destroy() {
   for (const auto& [name, instance] : instances_) {
-    spdlog::details::registry::instance().drop(instance->sink_->name());
     delete instance;
   }
   instances_.clear();
 }
 
 Logger& Logger::set_log_path(const std::string& path) {
-  auto logger = spdlog::basic_logger_mt("LIEF", path, /*truncate=*/true);
-  set_logger(*logger);
+  auto& registry = spdlog::details::registry::instance();
+  registry.drop(DEFAULT_NAME);
+  auto logger = spdlog::basic_logger_mt(DEFAULT_NAME, path, /*truncate=*/true);
+  set_logger(std::move(logger));
   return *this;
 }
 
-void Logger::set_logger(const spdlog::logger& logger) {
-  auto& registry = spdlog::details::registry::instance();
-  if (std::shared_ptr<spdlog::logger> _ = registry.get(logger.name())) {
-    registry.drop(logger.name());
-  }
-
-  sink_ = std::make_shared<spdlog::logger>(logger);
+void Logger::set_logger(std::shared_ptr<spdlog::logger> logger) {
+  sink_ = logger;
   sink_->set_pattern("%v");
   sink_->set_level(spdlog::level::warn);
   sink_->flush_on(spdlog::level::warn);
@@ -208,8 +206,8 @@ void set_path(const std::string& path) {
   Logger::instance().set_log_path(path);
 }
 
-void set_logger(const spdlog::logger& logger) {
-  Logger::instance().set_logger(logger);
+void set_logger(std::shared_ptr<spdlog::logger> logger) {
+  Logger::instance().set_logger(std::move(logger));
 }
 
 void reset() {

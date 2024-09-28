@@ -5,6 +5,8 @@
 #include <spdlog/details/null_mutex.h>
 #include <mutex>
 
+#include <iostream>
+
 #include <Python.h>
 
 namespace spdlog {
@@ -47,14 +49,14 @@ using python_stderr_sink_st = python_base_sink<details::null_mutex, py_stderr_ta
 } // namespace sinks
 
 template<typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> stderr_python_mt()
+inline std::shared_ptr<logger> stderr_python_mt(const std::string& logger_name)
 {
-  return Factory::template create<sinks::python_stderr_sink_mt>();
+  return Factory::template create<sinks::python_stderr_sink_mt>(logger_name);
 }
 
 template<typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> stderr_python_st()
+inline std::shared_ptr<logger> stderr_python_st(const std::string& logger_name)
 {
-  return Factory::template create<sinks::python_stderr_sink_st>();
+  return Factory::template create<sinks::python_stderr_sink_st>(logger_name);
 }
 }

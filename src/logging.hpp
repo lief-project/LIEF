@@ -116,13 +116,13 @@ class Logger {
     }
   }
 
-  void set_logger(const spdlog::logger& logger);
+  void set_logger(std::shared_ptr<spdlog::logger> logger);
 
   ~Logger() = default;
   Logger() = delete;
   private:
   Logger(std::shared_ptr<spdlog::logger> sink) :
-    sink_(std::move(sink))
+    sink_(sink)
   {}
   Logger(Logger&&) noexcept = default;
   Logger& operator=(Logger&&) noexcept = default;

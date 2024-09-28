@@ -88,8 +88,8 @@ void init_object(nb::module_& m) {
 }
 
 void init_python_sink() {
-  auto sink = std::make_shared<spdlog::sinks::python_stderr_sink_mt>();
-  spdlog::logger logger("LIEF", std::move(sink));
+  spdlog::details::registry::instance().drop("LIEF");
+  std::shared_ptr<spdlog::logger> logger = spdlog::stderr_python_mt("LIEF");
   LIEF::logging::set_logger(std::move(logger));
 }
 

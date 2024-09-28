@@ -19,6 +19,7 @@
 #include "LIEF/visibility.h"
 
 #include <string>
+#include <memory>
 #include <vector>
 #include <cstdint>
 
@@ -75,7 +76,7 @@ void log(LEVEL level, const std::string& fmt, const Args &... args) {
   return log(level, fmt, vec_args);
 }
 
-LIEF_API void set_logger(const spdlog::logger& logger);
+LIEF_API void set_logger(std::shared_ptr<spdlog::logger> logger);
 
 LIEF_API void reset();
 
