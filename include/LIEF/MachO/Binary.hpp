@@ -28,6 +28,7 @@
 #include "LIEF/MachO/Stub.hpp"
 
 #include "LIEF/visibility.h"
+#include "LIEF/utils.hpp"
 
 #include "LIEF/Abstract/Binary.hpp"
 
@@ -92,6 +93,14 @@ class LIEF_API Binary : public LIEF::Binary  {
   struct range_t {
     uint64_t start = 0;
     uint64_t end   = 0;
+
+    uint64_t size() const {
+      return end - start;
+    }
+
+    bool empty() const {
+      return start == end;
+    }
   };
 
   //! Internal container for storing Mach-O LoadCommand
@@ -388,7 +397,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   uint64_t imagebase() const override;
 
   //! Size of the binary in memory when mapped by the loader (``dyld``)
-  uint64_t virtual_size() const;
+  uint64_t virtual_size() const {
+    return align(va_ranges().size(), (uint64_t)page_size());
+  }
 
   //! Return the binary's loader (e.g. ``/usr/lib/dyld``) or an
   //! empty string if the binary does not use a loader/linker

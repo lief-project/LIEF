@@ -591,7 +591,6 @@ uint32_t Binary::page_size() const {
   return get_pagesize(*this);
 }
 
-
 void Binary::sort_segments() {
   commands_t::iterator start = commands_.end();
   commands_t::iterator end = commands_.end();
@@ -1829,16 +1828,6 @@ const SegmentCommand* Binary::get_segment(const std::string& name) const {
 
 SegmentCommand* Binary::get_segment(const std::string& name) {
   return const_cast<SegmentCommand*>(static_cast<const Binary*>(this)->get_segment(name));
-}
-
-uint64_t Binary::virtual_size() const {
-  uint64_t virtual_size = 0;
-  for (const SegmentCommand* segment : segments_) {
-    virtual_size = std::max(virtual_size, segment->virtual_address() + segment->virtual_size());
-  }
-  virtual_size -= imagebase();
-  virtual_size = align(virtual_size, static_cast<uint64_t>(page_size()));
-  return virtual_size;
 }
 
 uint64_t Binary::imagebase() const {
