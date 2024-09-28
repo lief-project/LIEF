@@ -137,7 +137,6 @@ if(NOT LIEF_OPT_MBEDTLS_EXTERNAL)
   )
 
   add_dependencies(LIB_LIEF lief_mbed_tls)
-  target_compile_definitions(LIB_LIEF PUBLIC -DLIEF_EXPORTS)
 else()
   find_package(MbedTLS REQUIRED)
   target_link_libraries(LIB_LIEF PRIVATE
