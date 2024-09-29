@@ -148,6 +148,7 @@ ok_error_t BinaryParser::parse() {
   if (DyldChainedFixups* fixups = binary_->dyld_chained_fixups()) {
     LIEF_DEBUG("[+] Parsing LC_DYLD_CHAINED_FIXUPS payload");
     SpanStream stream = fixups->content_;
+    stream.set_endian_swap(stream_->should_swap());
     chained_fixups_ = fixups;
     auto is_ok = parse_chained_payload<MACHO_T>(stream);
     if (!is_ok) {
@@ -367,7 +368,7 @@ ok_error_t BinaryParser::parse_load_commands() {
           }
 
           load_command = std::make_unique<DylibCommand>(*cmd);
-          const uint32_t str_name_offset = cmd->dylib.name;
+          const uint32_t str_name_offset = cmd->name;
           auto name = stream_->peek_string_at(loadcommands_offset + str_name_offset);
           if (!name) {
             LIEF_ERR("Can't read Dylib string value");
@@ -2406,6 +2407,7 @@ ok_error_t BinaryParser::parse_chained_payload(SpanStream& stream) {
   }
 
   SpanStream symbols_pool = std::move(*res_symbols_pools);
+  symbols_pool.set_endian_swap(stream_->should_swap());
   if (!parse_chained_import<MACHO_T>(header, stream, symbols_pool)) {
     LIEF_WARN("Error while parsing the chained imports");
     return make_error_code(lief_errors::parsing_error);
@@ -2620,6 +2622,7 @@ ok_error_t BinaryParser::parse_fixup_seg(SpanStream& stream, uint32_t seg_info_o
     return make_error_code(res_seg_stream.error());
   }
   SpanStream seg_stream = std::move(*res_seg_stream);
+  seg_stream.set_endian_swap(stream_->should_swap());
   seg_stream.read<details::dyld_chained_starts_in_segment>();
 
   LIEF_DEBUG("{}size              = {}",      DPREFIX, seg_info.size);
@@ -3366,6 +3369,9 @@ ok_error_t BinaryParser::post_process(SymbolCommand& cmd) {
 
     SpanStream nlist_s(nlist_buffer);
     SpanStream strings_s(strings_buffer);
+
+    nlist_s.set_endian_swap(stream_->should_swap());
+    strings_s.set_endian_swap(stream_->should_swap());
     return parse_symtab<MACHO_T>(cmd, nlist_s, strings_s);
   }
 
@@ -3410,6 +3416,9 @@ ok_error_t BinaryParser::post_process(SymbolCommand& cmd) {
   SpanStream nlist_stream(cmd.symbol_table_);
   SpanStream string_stream(cmd.string_table_);
 
+  nlist_stream.set_endian_swap(stream_->should_swap());
+  string_stream.set_endian_swap(stream_->should_swap());
+
   return parse_symtab<MACHO_T>(cmd, nlist_stream, string_stream);
 }
 
@@ -3443,6 +3452,7 @@ ok_error_t BinaryParser::post_process(FunctionStarts& cmd) {
   }
 
   SpanStream stream(cmd.content_);
+  stream.set_endian_swap(stream_->should_swap());
 
   uint64_t value = 0;
   do {
@@ -3584,6 +3594,7 @@ ok_error_t BinaryParser::post_process(DynamicSymbolCommand& cmd) {
   }
   span<uint8_t> indirect_sym_buffer = content.subspan(rel_offset, size);
   SpanStream indirect_sym_s(indirect_sym_buffer);
+  indirect_sym_s.set_endian_swap(stream_->should_swap());
   return parse_indirect_symbols(cmd, symtab, indirect_sym_s);
 }
 

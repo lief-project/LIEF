@@ -23,7 +23,7 @@
 #include <array>
 
 #include "LIEF/span.hpp"
-#include "LIEF/BinaryStream/Convert.hpp"
+#include "LIEF/endianness_support.hpp"
 
 namespace LIEF {
 class vector_iostream {
@@ -67,16 +67,16 @@ class vector_iostream {
     if (raw_.size() < (pos + sizeof(T))) {
       raw_.resize(pos + sizeof(T));
     }
-    memcpy(raw_.data() + pos, &t, sizeof(T));
+    if (endian_swap_) {
+      T tmp = t;
+      swap_endian(&tmp);
+      memcpy(raw_.data() + pos, &tmp, sizeof(T));
+    } else {
+      memcpy(raw_.data() + pos, &t, sizeof(T));
+    }
     current_pos_ += sizeof(T);
     return *this;
   }
-
-  template<typename T>
-  vector_iostream& write_conv(const T& t);
-
-  template<typename T>
-  vector_iostream& write_conv_array(const std::vector<T>& v);
 
   vector_iostream& align(size_t alignment, uint8_t fill = 0);
 
@@ -147,37 +147,6 @@ class vector_iostream {
   std::vector<uint8_t> raw_;
   bool                 endian_swap_ = false;
 };
-
-
-template<typename T>
-vector_iostream& vector_iostream::write_conv(const T& t) {
-  const uint8_t *ptr = nullptr;
-  T tmp = t;
-  if (endian_swap_) {
-    LIEF::Convert::swap_endian<T>(&tmp);
-    ptr = reinterpret_cast<const uint8_t*>(&tmp);
-  } else {
-    ptr = reinterpret_cast<const uint8_t*>(&t);
-  }
-  write(ptr, sizeof(T));
-  return *this;
-}
-
-template<typename T>
-vector_iostream& vector_iostream::write_conv_array(const std::vector<T>& v) {
-  for (const T& i: v) {
-    const uint8_t* ptr = nullptr;
-    T tmp = i;
-    if (endian_swap_) {
-      LIEF::Convert::swap_endian<T>(&tmp);
-      ptr = reinterpret_cast<const uint8_t*>(&tmp);
-    } else {
-      ptr = reinterpret_cast<const uint8_t*>(&i);
-    }
-    write(ptr, sizeof(T));
-  }
-  return *this;
-}
 
 
 }

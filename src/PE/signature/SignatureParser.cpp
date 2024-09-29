@@ -1277,19 +1277,17 @@ result<std::string> SignatureParser::parse_spc_string(BinaryStream& stream) {
       LIEF_INFO("Can't read spc-string.program-name");
       return make_error_code(lief_errors::read_error);
     }
-    stream.set_endian_swap(true);
+    ToggleEndianness endian(stream);
 
-    auto progname = stream.read_u16string(length / sizeof(char16_t));
+    auto progname = endian->read_u16string(length / sizeof(char16_t));
     if (!progname) {
       LIEF_INFO("Can't read spc-string.program-name");
-      stream.set_endian_swap(false);
       return make_error_code(lief_errors::read_error);
     }
 
-    stream.set_endian_swap(false);
-
     return u16tou8(*progname);
   }
+
   if ((choice = asn1r.read_tag(MBEDTLS_ASN1_CONTEXT_SPECIFIC | 1))) {
     LIEF_DEBUG("SpcString: ASCII choice");
     const size_t length = choice.value();

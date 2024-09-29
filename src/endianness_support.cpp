@@ -13,15 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_CONVERT_H
-#define LIEF_CONVERT_H
+#include "LIEF/endianness_support.hpp"
+
+#include "intmem.h"
+
+#define TMPL_DECL(T)              \
+  template<> void                 \
+  swap_endian<T>(T* u) {          \
+    *u = swap_integer_endian(*u); \
+  }
+
 namespace LIEF {
-namespace Convert {
 
 template<typename T>
-void swap_endian(T*);
+T swap_integer_endian(T u) {
+  return intmem::bswap(u);
+}
+
+template<>
+char16_t swap_integer_endian<char16_t>(char16_t u) {
+  return intmem::bswap((uint16_t)u);
+}
+
+template<>
+char swap_integer_endian<char>(char u) {
+  return intmem::bswap((uint8_t)u);
+}
+
+TMPL_DECL(char);
+TMPL_DECL(char16_t);
+
+TMPL_DECL(uint8_t);
+TMPL_DECL(uint16_t);
+TMPL_DECL(uint32_t);
+TMPL_DECL(uint64_t);
+
+TMPL_DECL(int8_t);
+TMPL_DECL(int16_t);
+TMPL_DECL(int32_t);
+TMPL_DECL(int64_t);
 
 }
-}
-
-#endif // LIEF_CONVERT_H

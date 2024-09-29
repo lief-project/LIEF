@@ -156,11 +156,11 @@ ok_error_t Builder::build_fat() {
     auto* arch = reinterpret_cast<details::fat_arch*>(raw_.raw().data() + fat_header_sz + i * fat_arch_sz);
     std::vector<uint8_t> raw = build_raw(*binaries_[i], config_);
 
-    auto alignment = BinaryStream::swap_endian<uint32_t>(arch->align);
+    auto alignment = get_swapped_endian<uint32_t>(arch->align);
     uint32_t offset = align(raw_.size(), 1llu << alignment);
 
-    arch->offset = BinaryStream::swap_endian<uint32_t>(offset);
-    arch->size   = BinaryStream::swap_endian<uint32_t>(raw.size());
+    arch->offset = get_swapped_endian<uint32_t>(offset);
+    arch->size   = get_swapped_endian<uint32_t>(raw.size());
     raw_.seekp(offset);
     raw_.write(std::move(raw));
   }
@@ -175,7 +175,7 @@ ok_error_t Builder::build_fat_header() {
   std::memset(&header, 0, sizeof(details::fat_header));
 
   header.magic     = static_cast<uint32_t>(MACHO_TYPES::FAT_CIGAM);
-  header.nfat_arch = BinaryStream::swap_endian<uint32_t>(binaries_.size());
+  header.nfat_arch = get_swapped_endian<uint32_t>(binaries_.size());
 
   raw_.seekp(0);
   raw_.write(reinterpret_cast<const uint8_t*>(&header), sizeof(details::fat_header));
@@ -185,11 +185,11 @@ ok_error_t Builder::build_fat_header() {
     details::fat_arch arch_header;
     std::memset(&arch_header, 0, sizeof(details::fat_arch));
 
-    arch_header.cputype    = BinaryStream::swap_endian<uint32_t>(static_cast<uint32_t>(header.cpu_type()));
-    arch_header.cpusubtype = BinaryStream::swap_endian<uint32_t>(static_cast<uint32_t>(header.cpu_subtype()));
+    arch_header.cputype    = get_swapped_endian((uint32_t)header.cpu_type());
+    arch_header.cpusubtype = get_swapped_endian((uint32_t)header.cpu_subtype());
     arch_header.offset     = 0;
     arch_header.size       = 0;
-    arch_header.align      = BinaryStream::swap_endian<uint32_t>(ALIGNMENT);
+    arch_header.align      = get_swapped_endian<uint32_t>(ALIGNMENT);
     raw_.write(reinterpret_cast<const uint8_t*>(&arch_header), sizeof(details::fat_arch));
   }
   return ok();

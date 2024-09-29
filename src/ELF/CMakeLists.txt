@@ -3,7 +3,7 @@ target_sources(LIB_LIEF PRIVATE
   Binary.tcc
   Builder.cpp
   Builder.tcc
-  Convert.cpp
+  endianness_support.cpp
   DataHandler/Handler.cpp
   DataHandler/Node.cpp
   DynamicEntry.cpp

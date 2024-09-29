@@ -53,12 +53,6 @@ class hashstream {
     return write(reinterpret_cast<const uint8_t*>(&value), size);
   }
 
-  template<typename T>
-  hashstream& write_conv(const T& t);
-
-  template<typename T>
-  hashstream& write_conv_array(const std::vector<T>& v);
-
   hashstream& align(size_t size, uint8_t val = 0);
 
   template<typename T>

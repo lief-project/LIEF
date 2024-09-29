@@ -391,7 +391,7 @@ Note::create(BinaryStream& stream, std::string section_name,
 {
   static constexpr uint32_t MAX_NOTE_DESCRIPTION = 1_MB;
   const size_t pos = stream.pos();
-  auto res_namesz = stream.read_conv<uint32_t>();
+  auto res_namesz = stream.read<uint32_t>();
   if (!res_namesz) {
     return nullptr;
   }
@@ -399,7 +399,7 @@ Note::create(BinaryStream& stream, std::string section_name,
   const auto namesz = *res_namesz;
   LIEF_DEBUG("[0x{:06x}] Name size: 0x{:x}", pos, namesz);
 
-  auto res_descz = stream.read_conv<uint32_t>();
+  auto res_descz = stream.read<uint32_t>();
   if (!res_descz) {
     return nullptr;
   }
@@ -407,7 +407,7 @@ Note::create(BinaryStream& stream, std::string section_name,
   uint32_t descsz = std::min(*res_descz, MAX_NOTE_DESCRIPTION);
   LIEF_DEBUG("Description size: 0x{:x}", descsz);
 
-  auto res_type = stream.read_conv<uint32_t>();
+  auto res_type = stream.read<uint32_t>();
   if (!res_type) {
     return nullptr;
   }
@@ -434,7 +434,7 @@ Note::create(BinaryStream& stream, std::string section_name,
     const size_t nb_chunks = (descsz - 1) / sizeof(uint32_t) + 1;
     description.reserve(nb_chunks);
     for (size_t i = 0; i < nb_chunks; ++i) {
-      if (const auto chunk = stream.read_conv<uint32_t>()) {
+      if (const auto chunk = stream.read<uint32_t>()) {
         description.push_back(*chunk);
       } else {
         break;

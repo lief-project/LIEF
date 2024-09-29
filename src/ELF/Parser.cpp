@@ -148,19 +148,19 @@ Header::ELF_DATA determine_elf_endianess(BinaryStream& stream) {
     // Read Machine type with both endianess
     ARCH machine      = ARCH::NONE; // e_machine value without endian swap enabled
     ARCH machine_swap = ARCH::NONE; // e_machine value with endian swap enabled
-    const bool is_swap = stream.should_swap();
-    stream.set_endian_swap(false);
-    if (auto res = stream.peek_conv<uint16_t>(e_machine_off)) {
+    if (auto res = stream.peek<uint16_t>(e_machine_off)) {
       machine = static_cast<ARCH>(*res);
     }
-    stream.set_endian_swap(true);
-    if (auto res = stream.peek_conv<uint16_t>(e_machine_off)) {
-      machine_swap = static_cast<ARCH>(*res);
-    }
-    stream.set_endian_swap(is_swap);
 
-    LIEF_DEBUG("Machine     '{}'", to_string(machine));
-    LIEF_DEBUG("Machine Swap'{}'", to_string(machine_swap));
+    {
+      ToggleEndianness swapped(stream);
+      if (auto res = swapped->peek<uint16_t>(e_machine_off)) {
+        machine_swap = static_cast<ARCH>(*res);
+      }
+    }
+
+    LIEF_DEBUG("Machine      '{}' (0x{:x})", to_string(machine), (int)machine);
+    LIEF_DEBUG("Machine Swap '{}' (0x{:x})", to_string(machine_swap), (int)machine);
 
     const Header::ELF_DATA endian      = determine_elf_endianess(machine);
     const Header::ELF_DATA endian_swap = determine_elf_endianess(machine_swap);
@@ -197,8 +197,6 @@ bool Parser::should_swap() const {
   return false;
 }
 
-
-
 Header::CLASS determine_elf_class(BinaryStream& stream) {
   auto from_ei_class  = Header::CLASS::NONE;
   auto from_e_machine = Header::CLASS::NONE;
@@ -229,7 +227,7 @@ Header::CLASS determine_elf_class(BinaryStream& stream) {
   //     ....
   // } ElfN_Ehdr;
   constexpr size_t e_machine_off = offsetof(details::Elf32_Ehdr, e_machine);
-  if (auto res = stream.peek_conv<uint16_t>(e_machine_off)) {
+  if (auto res = stream.peek<uint16_t>(e_machine_off)) {
     const auto machine = static_cast<ARCH>(*res);
     switch (machine) {
       case ARCH::AARCH64:
@@ -361,7 +359,7 @@ ok_error_t Parser::parse_symbol_version(uint64_t symbol_version_offset) {
 
   stream_->setpos(symbol_version_offset);
   for (size_t i = 0; i < nb_entries; ++i) {
-    auto val = stream_->read_conv<uint16_t>();
+    auto val = stream_->read<uint16_t>();
     if (!val) {
       break;
     }
@@ -388,7 +386,7 @@ result<uint64_t> Parser::get_dynamic_string_table_from_segments() const {
     size_t nb_entries = size / sizeof(details::Elf32_Dyn);
 
     for (size_t i = 0; i < nb_entries; ++i) {
-      auto res = stream_->read_conv<details::Elf32_Dyn>();
+      auto res = stream_->read<details::Elf32_Dyn>();
       if (!res) {
         LIEF_ERR("Can't read dynamic entry #{}", i);
         return 0;
@@ -403,7 +401,7 @@ result<uint64_t> Parser::get_dynamic_string_table_from_segments() const {
   } else {
     size_t nb_entries = size / sizeof(details::Elf64_Dyn);
     for (size_t i = 0; i < nb_entries; ++i) {
-      auto res = stream_->read_conv<details::Elf64_Dyn>();
+      auto res = stream_->read<details::Elf64_Dyn>();
       if (!res) {
         LIEF_ERR("Can't read dynamic entry #{}", i);
         return 0;
@@ -456,13 +454,13 @@ ok_error_t Parser::parse_symbol_sysv_hash(uint64_t offset) {
 
   stream_->setpos(offset);
 
-  auto res_nbucket = stream_->read_conv<uint32_t>();
+  auto res_nbucket = stream_->read<uint32_t>();
   if (!res_nbucket) {
     LIEF_ERR("Can't read the number of buckets");
     return make_error_code(lief_errors::read_error);
   }
 
-  auto res_nchains = stream_->read_conv<uint32_t>();
+  auto res_nchains = stream_->read<uint32_t>();
   if (!res_nchains) {
     LIEF_ERR("Can't read the number of chains");
     return make_error_code(lief_errors::read_error);
@@ -474,7 +472,7 @@ ok_error_t Parser::parse_symbol_sysv_hash(uint64_t offset) {
   sysvhash->buckets_.reserve(nbuckets);
 
   for (size_t i = 0; i < nbuckets; ++i) {
-    if (auto bucket = stream_->read_conv<uint32_t>()) {
+    if (auto bucket = stream_->read<uint32_t>()) {
       sysvhash->buckets_.push_back(*bucket);
     } else {
       LIEF_ERR("Can't read bucket #{}", i);
@@ -484,7 +482,7 @@ ok_error_t Parser::parse_symbol_sysv_hash(uint64_t offset) {
 
   sysvhash->chains_.reserve(nchain);
   for (size_t i = 0; i < nchain; ++i) {
-    if (auto chain = stream_->read_conv<uint32_t>()) {
+    if (auto chain = stream_->read<uint32_t>()) {
       sysvhash->chains_.push_back(*chain);
     } else {
       LIEF_ERR("Can't read chain #{}", i);

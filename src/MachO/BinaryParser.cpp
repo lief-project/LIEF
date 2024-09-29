@@ -133,6 +133,11 @@ ok_error_t BinaryParser::init_and_parse() {
   type_          = type;
   binary_->original_size_ = stream_->size();
 
+  bool should_swap = type == MACHO_TYPES::MH_CIGAM_64 ||
+                     type == MACHO_TYPES::MH_CIGAM;
+
+  stream_->set_endian_swap(should_swap);
+
   return is64_ ? parse<details::MachO64>() :
                  parse<details::MachO32>();
 }
@@ -420,7 +425,6 @@ ok_error_t BinaryParser::parse_indirect_symbols(DynamicSymbolCommand& cmd,
                                                 std::vector<Symbol*>& symtab,
                                                 BinaryStream& indirect_stream)
 {
-
   for (size_t i = 0; i < cmd.nb_indirect_symbols(); ++i) {
     uint32_t index = 0;
     auto res = indirect_stream.read<uint32_t>();

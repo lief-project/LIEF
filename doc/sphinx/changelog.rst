@@ -37,6 +37,7 @@ Changelog
 
 :MachO:
 
+  * Fix endianness support (:issue:`1110`)
   * Add helpers to determine the platform targeted by a Mach-O binary:
 
     - :attr:`lief.MachO.Binary.is_ios`

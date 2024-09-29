@@ -136,29 +136,14 @@ struct section_64 {
   uint32_t reserved3;
 };
 
-struct fvmlib {
-  uint32_t name;
-  uint32_t minor_version;
-  uint32_t header_addr;
-};
-
-struct fvmlib_command {
-  uint32_t  cmd;
+struct dylib_command {
+  uint32_t cmd;
   uint32_t cmdsize;
-  struct fvmlib fvmlib;
-};
 
-struct dylib {
   uint32_t name;
   uint32_t timestamp;
   uint32_t current_version;
   uint32_t compatibility_version;
-};
-
-struct dylib_command {
-  uint32_t cmd;
-  uint32_t cmdsize;
-  struct dylib dylib;
 };
 
 struct sub_framework_command {

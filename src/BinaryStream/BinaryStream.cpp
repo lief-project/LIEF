@@ -20,38 +20,9 @@
 #include <mbedtls/x509.h>
 #include <mbedtls/x509_crt.h>
 
-#include "intmem.h"
-
 #include <algorithm>
 
-#define TMPL_DECL(T) template T BinaryStream::swap_endian<T>(T u)
-
 namespace LIEF {
-
-template<typename T>
-T BinaryStream::swap_endian(T u) {
-  return intmem::bswap(u);
-}
-
-template<>
-char16_t BinaryStream::swap_endian<char16_t>(char16_t u) {
-  return intmem::bswap(static_cast<uint16_t>(u));
-}
-
-template<>
-char BinaryStream::swap_endian<char>(char u) {
-  return intmem::bswap(static_cast<uint8_t>(u));
-}
-
-TMPL_DECL(uint8_t);
-TMPL_DECL(uint16_t);
-TMPL_DECL(uint32_t);
-TMPL_DECL(uint64_t);
-
-TMPL_DECL(int8_t);
-TMPL_DECL(int16_t);
-TMPL_DECL(int32_t);
-TMPL_DECL(int64_t);
 
 
 result<int64_t> BinaryStream::read_dwarf_encoded(uint8_t encoding) const {
@@ -222,7 +193,7 @@ result<std::u16string> BinaryStream::peek_u16string(size_t length) const {
   if (peek_in(raw_u16str.data(), pos(), length * sizeof(char16_t))) {
     if (endian_swap_) {
       for (char16_t& x : raw_u16str) {
-        LIEF::Convert::swap_endian(&x);
+        LIEF::swap_endian(&x);
       }
     }
     return std::u16string{std::begin(raw_u16str), std::end(raw_u16str)};

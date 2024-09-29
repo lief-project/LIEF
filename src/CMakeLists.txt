@@ -1,4 +1,5 @@
 target_sources(LIB_LIEF PRIVATE
+  endianness_support.cpp
   Object.tcc
   Visitor.cpp
   errors.cpp

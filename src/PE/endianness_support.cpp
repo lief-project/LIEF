@@ -1,5 +1,4 @@
 /* Copyright 2021 - 2024 R. Thomas
- * Copyright 2021 - 2024 Quarkslab
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +12,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/BinaryStream/Convert.hpp"
-#include "LIEF/BinaryStream/BinaryStream.hpp"
-
-#define TMPL_DECL(T) template<> void swap_endian<T>(T* u) { *u = BinaryStream::swap_endian(*u); }
-
-/* In place conversions for BinaryStream/VectorStream data */
-namespace LIEF {
-namespace Convert {
-
-TMPL_DECL(char)
-TMPL_DECL(char16_t)
-
-TMPL_DECL(uint8_t)
-TMPL_DECL(uint16_t)
-TMPL_DECL(uint32_t)
-TMPL_DECL(uint64_t)
-
-TMPL_DECL(int8_t)
-TMPL_DECL(int16_t)
-TMPL_DECL(int32_t)
-TMPL_DECL(int64_t)
-
-
-}
+namespace LIEF::PE {
 }

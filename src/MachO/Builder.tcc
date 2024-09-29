@@ -233,12 +233,12 @@ ok_error_t Builder::build(DylibCommand& library) {
   details::dylib_command raw_cmd;
   std::memset(&raw_cmd, 0, sizeof(details::dylib_command));
 
-  raw_cmd.cmd                         = static_cast<uint32_t>(library.command());
-  raw_cmd.cmdsize                     = static_cast<uint32_t>(size_needed);
-  raw_cmd.dylib.name                  = static_cast<uint32_t>(sizeof(details::dylib_command));
-  raw_cmd.dylib.timestamp             = static_cast<uint32_t>(library.timestamp());
-  raw_cmd.dylib.current_version       = static_cast<uint32_t>(DylibCommand::version2int(library.current_version()));
-  raw_cmd.dylib.compatibility_version = static_cast<uint32_t>(DylibCommand::version2int(library.compatibility_version()));
+  raw_cmd.cmd                   = static_cast<uint32_t>(library.command());
+  raw_cmd.cmdsize               = static_cast<uint32_t>(size_needed);
+  raw_cmd.name                  = static_cast<uint32_t>(sizeof(details::dylib_command));
+  raw_cmd.timestamp             = static_cast<uint32_t>(library.timestamp());
+  raw_cmd.current_version       = static_cast<uint32_t>(DylibCommand::version2int(library.current_version()));
+  raw_cmd.compatibility_version = static_cast<uint32_t>(DylibCommand::version2int(library.compatibility_version()));
 
   library.size_ = size_needed;
   library.original_data_.clear();

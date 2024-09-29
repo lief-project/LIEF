@@ -16,6 +16,7 @@
 #include "LIEF/PE/debug/CodeViewPDB.hpp"
 #include "LIEF/Visitor.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/endianness_support.hpp"
 
 #include "spdlog/fmt/fmt.h"
 #include "spdlog/fmt/ranges.h"
@@ -44,14 +45,14 @@ std::string CodeViewPDB::guid() const {
     return "";
   }
 
-  stream->set_endian_swap(true);
-
   const auto chunk1 = stream->read<uint32_t>().value_or(0);
   const auto chunk2 = stream->read<uint16_t>().value_or(0);
   const auto chunk3 = stream->read<uint16_t>().value_or(0);
-  const auto chunk4 = stream->read_conv<uint16_t>().value_or(0);
-  const auto chunk5 = stream->read_conv<uint16_t>().value_or(0);
-  const auto chunk6 = stream->read_conv<uint32_t>().value_or(0);
+
+  ToggleEndianness endian(*stream);
+  const auto chunk4 = endian->read<uint16_t>().value_or(0);
+  const auto chunk5 = endian->read<uint16_t>().value_or(0);
+  const auto chunk6 = endian->read<uint32_t>().value_or(0);
 
   return fmt::format("{:08x}-{:04x}-{:04x}-{:04x}-{:04x}{:08x}",
       chunk1, chunk2, chunk3, chunk4, chunk5, chunk6

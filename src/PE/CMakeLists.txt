@@ -3,7 +3,7 @@ target_sources(LIB_LIEF PRIVATE
   Builder.cpp
   Builder.tcc
   CodeIntegrity.cpp
-  Convert.cpp
+  endianness_support.cpp
   DataDirectory.cpp
   DelayImport.cpp
   DelayImportEntry.cpp

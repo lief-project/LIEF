@@ -228,15 +228,15 @@ class LIEF_LOCAL ExeLayout : public Layout {
       size_t pos = raw_notes.tellp();
       // First we have to write the length of the Note's name
       const auto namesz = static_cast<uint32_t>(note.name().size() + 1);
-      raw_notes.write_conv<uint32_t>(namesz);
+      raw_notes.write<uint32_t>(namesz);
 
       // Then the length of the Note's description
       const auto descsz = static_cast<uint32_t>(note.description().size());
-      raw_notes.write_conv<uint32_t>(descsz);
+      raw_notes.write<uint32_t>(descsz);
 
       // Then the note's type
       const uint32_t type = note.original_type();
-      raw_notes.write_conv<uint32_t>(type);
+      raw_notes.write<uint32_t>(type);
 
       // Then we write the note's name
       const std::string& name = note.name();
@@ -250,13 +250,13 @@ class LIEF_LOCAL ExeLayout : public Layout {
       const auto* desc_ptr = reinterpret_cast<const uint32_t*>(description.data());
       size_t i = 0;
       for (; i < description.size() / sizeof(uint32_t); i++) {
-        raw_notes.write_conv<uint32_t>(desc_ptr[i]);
+        raw_notes.write<uint32_t>(desc_ptr[i]);
       }
       if (description.size() % sizeof(uint32_t) != 0) {
         uint32_t padded = 0;
         auto *ptr = reinterpret_cast<uint8_t*>(&padded);
         memcpy(ptr, desc_ptr + i, description.size() % sizeof(uint32_t));
-        raw_notes.write_conv<uint32_t>(padded);
+        raw_notes.write<uint32_t>(padded);
       }
       notes_off_map_.emplace(&note, pos);
     }
@@ -349,10 +349,10 @@ class LIEF_LOCAL ExeLayout : public Layout {
     // Write header
     // =================================
     raw_gnuhash
-      .write_conv<uint32_t>(nb_buckets)
-      .write_conv<uint32_t>(symndx)
-      .write_conv<uint32_t>(maskwords)
-      .write_conv<uint32_t>(shift2);
+      .write<uint32_t>(nb_buckets)
+      .write<uint32_t>(symndx)
+      .write<uint32_t>(maskwords)
+      .write<uint32_t>(shift2);
 
     // Compute Bloom filters
     // =================================
@@ -370,7 +370,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
      LIEF_DEBUG("Bloom filter [{:d}]: 0x{:x}", idx, bloom_filters[idx]);
     }
 
-    raw_gnuhash.write_conv_array(bloom_filters);
+    raw_gnuhash.write(bloom_filters);
 
     // Write buckets and hash
     // =================================
@@ -407,8 +407,8 @@ class LIEF_LOCAL ExeLayout : public Layout {
     }
 
     raw_gnuhash
-      .write_conv_array<uint32_t>(buckets)
-      .write_conv_array<uint32_t>(hash_values);
+      .write(buckets)
+      .write(hash_values);
     raw_gnuhash.move(raw_gnu_hash_);
     return raw_gnu_hash_.size();
   }

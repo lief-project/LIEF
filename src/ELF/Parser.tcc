@@ -369,73 +369,73 @@ ok_error_t Parser::parse_header() {
     return make_error_code(lief_errors::read_error);
   }
 
-  if (auto res = stream_->read_conv<Elf_Half>()) {
+  if (auto res = stream_->read<Elf_Half>()) {
     binary_->header_.file_type_ = Header::FILE_TYPE(*res);
   } else {
     LIEF_ERR("Can't parse Elf_Ehdr.e_type");
     return make_error_code(lief_errors::read_error);
   }
 
-  if (auto res = stream_->read_conv<Elf_Half>()) {
+  if (auto res = stream_->read<Elf_Half>()) {
     binary_->header_.machine_type_ = static_cast<ARCH>(*res);
   } else {
     LIEF_ERR("Can't parse Elf_Ehdr.e_machine");
     return make_error_code(lief_errors::read_error);
   }
 
-  if (auto res = stream_->read_conv<Elf_Word>()) {
+  if (auto res = stream_->read<Elf_Word>()) {
     binary_->header_.object_file_version_ = Header::VERSION(*res);
   } else {
     LIEF_ERR("Can't parse Elf_Ehdr.e_version");
     return make_error_code(lief_errors::read_error);
   }
 
-  if (auto res = stream_->read_conv<Elf_Addr>()) {
+  if (auto res = stream_->read<Elf_Addr>()) {
     binary_->header_.entrypoint_ = *res;
   } else {
     LIEF_ERR("Can't parse Elf_Ehdr.e_entry");
     return make_error_code(lief_errors::read_error);
   }
 
-  if (auto res = stream_->read_conv<Elf_Off>()) {
+  if (auto res = stream_->read<Elf_Off>()) {
     binary_->header_.program_headers_offset_ = *res;
   } else {
     LIEF_ERR("Can't parse Elf_Ehdr.e_phoff");
     return make_error_code(lief_errors::read_error);
   }
 
-  if (auto res = stream_->read_conv<Elf_Off>()) {
+  if (auto res = stream_->read<Elf_Off>()) {
     binary_->header_.section_headers_offset_ = *res;
   } else {
     LIEF_ERR("Can't parse Elf_Ehdr.e_shoff");
     return make_error_code(lief_errors::read_error);
   }
 
-  if (auto res = stream_->read_conv<Elf_Word>()) {
+  if (auto res = stream_->read<Elf_Word>()) {
     binary_->header_.processor_flags_ = *res;
   } else {
     LIEF_ERR("Can't parse Elf_Ehdr.e_flags");
     return make_error_code(lief_errors::read_error);
   }
 
-  if (auto res = stream_->read_conv<Elf_Half>()) {
+  if (auto res = stream_->read<Elf_Half>()) {
     binary_->header_.header_size_ = *res;
   } else {
     LIEF_ERR("Can't parse Elf_Ehdr.e_ehsize");
     return make_error_code(lief_errors::read_error);
   }
 
-  if (auto res = stream_->read_conv<Elf_Half>()) {
+  if (auto res = stream_->read<Elf_Half>()) {
     binary_->header_.program_header_size_ = *res;
   } else {
     LIEF_ERR("Can't parse Elf_Ehdr.e_phentsize");
     return make_error_code(lief_errors::read_error);
   }
 
-  if (auto res = stream_->read_conv<Elf_Half>()) {
+  if (auto res = stream_->read<Elf_Half>()) {
     binary_->header_.numberof_segments_ = *res;
   } else {
-    if (auto res = stream_->read_conv<uint8_t>()) {
+    if (auto res = stream_->read<uint8_t>()) {
       binary_->header_.numberof_segments_ = *res;
     } else {
       LIEF_ERR("Can't parse Elf_Ehdr.e_phnum");
@@ -443,21 +443,21 @@ ok_error_t Parser::parse_header() {
     }
   }
 
-  if (auto res = stream_->read_conv<Elf_Half>()) {
+  if (auto res = stream_->read<Elf_Half>()) {
     binary_->header_.section_header_size_ = *res;
   } else {
     LIEF_ERR("Can't parse Elf_Ehdr.e_shentsize");
     return make_error_code(lief_errors::read_error);
   }
 
-  if (auto res = stream_->read_conv<Elf_Half>()) {
+  if (auto res = stream_->read<Elf_Half>()) {
     binary_->header_.numberof_sections_ = *res;
   } else {
     LIEF_ERR("Can't parse Elf_Ehdr.e_shnum");
     return make_error_code(lief_errors::read_error);
   }
 
-  if (auto res = stream_->read_conv<Elf_Half>()) {
+  if (auto res = stream_->read<Elf_Half>()) {
     binary_->header_.section_string_table_idx_ = *res;
   } else {
     LIEF_ERR("Can't parse Elf_Ehdr.e_shstrndx");
@@ -606,7 +606,7 @@ uint32_t Parser::max_relocation_index(uint64_t relocations_offset, uint64_t size
   uint32_t idx = 0;
   stream_->setpos(relocations_offset);
   for (uint32_t i = 0; i < nb_entries; ++i) {
-    auto reloc_entry = stream_->read_conv<REL_T>();
+    auto reloc_entry = stream_->read<REL_T>();
     if (!reloc_entry) {
       break;
     }
@@ -665,7 +665,7 @@ result<uint32_t> Parser::nb_dynsym_sysv_hash() const {
 
   // From the doc: 'so nchain should equal the number of symbol table entries.'
   stream_->setpos(sysv_hash_offset + sizeof(uint32_t));
-  auto nb_symbols = stream_->read_conv<uint32_t>();
+  auto nb_symbols = stream_->read<uint32_t>();
   if (nb_symbols) {
     return nb_symbols;
   }
@@ -692,17 +692,17 @@ result<uint32_t> Parser::nb_dynsym_gnu_hash() const {
   }
 
   stream_->setpos(gnu_hash_offset);
-  const auto res_nbuckets = stream_->read_conv<uint32_t>();
+  const auto res_nbuckets = stream_->read<uint32_t>();
   if (!res_nbuckets) {
     return 0;
   }
 
-  const auto res_symndx = stream_->read_conv<uint32_t>();
+  const auto res_symndx = stream_->read<uint32_t>();
   if (!res_symndx) {
     return 0;
   }
 
-  const auto res_maskwords = stream_->read_conv<uint32_t>();
+  const auto res_maskwords = stream_->read<uint32_t>();
   if (!res_maskwords) {
     return 0;
   }
@@ -728,7 +728,7 @@ result<uint32_t> Parser::nb_dynsym_gnu_hash() const {
 
   uint32_t max_bucket = 0;
   for (size_t i = 0; i < nbuckets; ++i) {
-    auto bucket = stream_->read_conv<uint32_t>();
+    auto bucket = stream_->read<uint32_t>();
     if (!bucket) {
       break;
     }
@@ -751,7 +751,7 @@ result<uint32_t> Parser::nb_dynsym_gnu_hash() const {
     if (!stream_->can_read<uint32_t>()) {
       return 0;
     }
-    hash_value = *stream_->read_conv<uint32_t>();
+    hash_value = *stream_->read<uint32_t>();
 
     nsyms++;
   } while ((hash_value & 1) == 0); // "It is set to 1 when a symbol is the last symbol in a given hash bucket"
@@ -775,7 +775,7 @@ ok_error_t Parser::parse_sections() {
   const ARCH arch = binary_->header().machine_type();
   for (size_t i = 0; i < numberof_sections; ++i) {
     LIEF_DEBUG("  Elf_Shdr#{:02d}.offset: 0x{:x} ", i, stream_->pos());
-    const auto shdr = stream_->read_conv<Elf_Shdr>();
+    const auto shdr = stream_->read<Elf_Shdr>();
     if (!shdr) {
       LIEF_ERR("  Can't parse section #{:02d}", i);
       break;
@@ -885,7 +885,7 @@ ok_error_t Parser::parse_segments() {
   const ARCH arch = binary_->header().machine_type();
 
   for (size_t i = 0; i < nbof_segments; ++i) {
-    const auto elf_phdr = stream_->read_conv<Elf_Phdr>();
+    const auto elf_phdr = stream_->read<Elf_Phdr>();
     if (!elf_phdr) {
       LIEF_ERR("Can't parse segement #{:d}", i);
       break;
@@ -1157,7 +1157,7 @@ ok_error_t Parser::parse_dynamic_relocations(uint64_t relocations_offset, uint64
                                                      Relocation::ENCODING::RELA;
 
   for (uint32_t i = 0; i < nb_entries; ++i) {
-    const auto raw_reloc = stream_->read_conv<REL_T>();
+    const auto raw_reloc = stream_->read<REL_T>();
     if (!raw_reloc) {
       break;
     }
@@ -1184,7 +1184,7 @@ ok_error_t Parser::parse_symtab_symbols(uint64_t offset, uint32_t nb_symbols,
   stream_->setpos(offset);
   const ARCH arch = binary_->header().machine_type();
   for (uint32_t i = 0; i < nb_symbols; ++i) {
-    const auto raw_sym = stream_->read_conv<Elf_Sym>();
+    const auto raw_sym = stream_->read<Elf_Sym>();
     if (!raw_sym) {
       break;
     }
@@ -1235,7 +1235,7 @@ ok_error_t Parser::parse_dynamic_symbols(uint64_t offset) {
   stream_->setpos(dynamic_symbols_offset);
 
   for (size_t i = 0; i < nb_symbols; ++i) {
-    const auto symbol_header = stream_->read_conv<Elf_Sym>();
+    const auto symbol_header = stream_->read<Elf_Sym>();
     if (!symbol_header) {
       LIEF_DEBUG("Break on symbol #{:d}", i);
       break;
@@ -1285,7 +1285,7 @@ ok_error_t Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
   bool end_of_dynamic = false;
   stream_->setpos(offset);
   for (size_t dynIdx = 0; dynIdx < nb_entries; ++dynIdx) {
-    const auto res_entry = stream_->read_conv<Elf_Dyn>();
+    const auto res_entry = stream_->read<Elf_Dyn>();
     if (!res_entry) {
       break;
     }
@@ -1412,7 +1412,7 @@ ok_error_t Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
       if (auto offset = binary_->virtual_address_to_offset(dt_init_array->value())) {
         stream_->setpos(*offset);
         for (size_t i = 0; i < nb_functions; ++i) {
-          if (auto val = stream_->read_conv<Elf_Addr>()) {
+          if (auto val = stream_->read<Elf_Addr>()) {
             array.push_back(*val);
           } else {
             break;
@@ -1437,7 +1437,7 @@ ok_error_t Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
       if (auto offset = binary_->virtual_address_to_offset(dt_fini_array->value())) {
         stream_->setpos(*offset);
         for (size_t i = 0; i < nb_functions; ++i) {
-          if (auto val = stream_->read_conv<Elf_Addr>()) {
+          if (auto val = stream_->read<Elf_Addr>()) {
             array.push_back(*val);
           } else {
             break;
@@ -1461,7 +1461,7 @@ ok_error_t Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
       if (auto offset = binary_->virtual_address_to_offset(dt_preini_array->value())) {
         stream_->setpos(static_cast<Elf_Off>(*offset));
         for (size_t i = 0; i < nb_functions; ++i) {
-          if (auto val = stream_->read_conv<Elf_Addr>()) {
+          if (auto val = stream_->read<Elf_Addr>()) {
             array.push_back(*val);
           } else {
             break;
@@ -1499,7 +1499,7 @@ ok_error_t Parser::parse_pltgot_relocations(uint64_t offset, uint64_t size) {
                                                      Relocation::ENCODING::RELA;
   stream_->setpos(offset_relocations);
   for (uint32_t i = 0; i < nb_entries; ++i) {
-    const auto rel_hdr = stream_->read_conv<REL_T>();
+    const auto rel_hdr = stream_->read<REL_T>();
     if (!rel_hdr) {
       break;
     }
@@ -1586,7 +1586,7 @@ ok_error_t Parser::parse_section_relocations(const Section& section) {
   std::unordered_set<Relocation*, RelocationSetHash, RelocationSetEq> reloc_hash;
   stream_->setpos(offset_relocations);
   for (uint32_t i = 0; i < nb_entries; ++i) {
-    const auto rel_hdr = stream_->read_conv<REL_T>();
+    const auto rel_hdr = stream_->read<REL_T>();
     if (!rel_hdr) {
       break;
     }
@@ -1639,7 +1639,7 @@ ok_error_t Parser::parse_symbol_version_requirement(uint64_t offset, uint32_t nb
   uint32_t next_symbol_offset = 0;
 
   for (size_t sym_idx = 0; sym_idx < nb_entries; ++sym_idx) {
-    const auto header = stream_->peek_conv<Elf_Verneed>(svr_offset + next_symbol_offset);
+    const auto header = stream_->peek<Elf_Verneed>(svr_offset + next_symbol_offset);
     if (!header) {
       break;
     }
@@ -1660,7 +1660,7 @@ ok_error_t Parser::parse_symbol_version_requirement(uint64_t offset, uint32_t nb
         const uint64_t aux_hdr_off = svr_offset + next_symbol_offset +
                                      header->vn_aux + next_aux_offset;
 
-        const auto aux_header = stream_->peek_conv<Elf_Vernaux>(aux_hdr_off);
+        const auto aux_header = stream_->peek<Elf_Vernaux>(aux_hdr_off);
         if (!aux_header) {
           break;
         }
@@ -1720,7 +1720,7 @@ ok_error_t Parser::parse_symbol_version_definition(uint64_t offset, uint32_t nb_
   uint64_t def_size = 0;
 
   for (size_t i = 0; i < nb_entries; ++i) {
-    const auto svd_header = verdef_stream->peek_conv<Elf_Verdef>();
+    const auto svd_header = verdef_stream->peek<Elf_Verdef>();
     def_size = std::max(def_size, verdef_stream->pos() - offset + sizeof(Elf_Verdef));
     if (!svd_header) {
       break;
@@ -1731,7 +1731,7 @@ ok_error_t Parser::parse_symbol_version_definition(uint64_t offset, uint32_t nb_
     {
       ScopedStream aux_stream(*stream_, verdef_stream->pos() + svd_header->vd_aux);
       for (size_t j = 0; j < nb_aux_symbols; ++j) {
-        const auto svda_header = aux_stream->peek_conv<Elf_Verdaux>();
+        const auto svda_header = aux_stream->peek<Elf_Verdaux>();
         def_size = std::max(def_size, aux_stream->pos() - offset + sizeof(Elf_Verdaux));
         if (!svda_header) {
           break;
@@ -1797,28 +1797,28 @@ ok_error_t Parser::parse_symbol_gnu_hash(uint64_t offset) {
   uint32_t nbuckets  = 0;
   uint32_t maskwords = 0;
 
-  if (auto res = stream_->read_conv<uint32_t>()) {
+  if (auto res = stream_->read<uint32_t>()) {
     nbuckets = std::min(*res, NB_MAX_BUCKETS);
   } else {
     LIEF_ERR("Can't read the number of buckets");
     return make_error_code(lief_errors::read_error);
   }
 
-  if (auto res = stream_->read_conv<uint32_t>()) {
+  if (auto res = stream_->read<uint32_t>()) {
     gnuhash->symbol_index_ = *res;
   } else {
     LIEF_ERR("Can't read the symndx");
     return make_error_code(lief_errors::read_error);
   }
 
-  if (auto res = stream_->read_conv<uint32_t>()) {
+  if (auto res = stream_->read<uint32_t>()) {
     maskwords = std::min(*res, NB_MAX_MASKWORD);
   } else {
     LIEF_ERR("Can't read the maskwords");
     return make_error_code(lief_errors::read_error);
   }
 
-  if (auto res = stream_->read_conv<uint32_t>()) {
+  if (auto res = stream_->read<uint32_t>()) {
     gnuhash->shift2_ = *res;
   } else {
     LIEF_ERR("Can't read the shift2");
@@ -1833,7 +1833,7 @@ ok_error_t Parser::parse_symbol_gnu_hash(uint64_t offset) {
     gnuhash->bloom_filters_.reserve(maskwords);
 
     for (size_t i = 0; i < maskwords; ++i) {
-      if (auto maskword = stream_->read_conv<uint__>()) {
+      if (auto maskword = stream_->read<uint__>()) {
         gnuhash->bloom_filters_.push_back(*maskword);
       } else {
         LIEF_ERR("Can't read maskwords #{:d}", i);
@@ -1852,7 +1852,7 @@ ok_error_t Parser::parse_symbol_gnu_hash(uint64_t offset) {
   gnuhash->buckets_.reserve(nbuckets);
 
   for (size_t i = 0; i < nbuckets; ++i) {
-    if (auto res = stream_->read_conv<uint32_t>()) {
+    if (auto res = stream_->read<uint32_t>()) {
       gnuhash->buckets_.push_back(*res);
     } else {
       LIEF_ERR("Can't read bucket #{}", i);
@@ -1868,7 +1868,7 @@ ok_error_t Parser::parse_symbol_gnu_hash(uint64_t offset) {
       if (nb_hash < MAX_NB_HASH) {
         gnuhash->hash_values_.reserve(nb_hash);
         for (size_t i = 0; i < nb_hash; ++i) {
-          if (auto res = stream_->read_conv<uint32_t>()) {
+          if (auto res = stream_->read<uint32_t>()) {
             gnuhash->hash_values_.push_back(*res);
           } else {
             LIEF_ERR("Can't read hash #{}", i);

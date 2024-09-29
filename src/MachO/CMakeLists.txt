@@ -14,7 +14,7 @@ target_sources(LIB_LIEF PRIVATE
   ChainedFixup.cpp
   CodeSignature.cpp
   CodeSignatureDir.cpp
-  Convert.cpp
+  endianness_support.cpp
   DataCodeEntry.cpp
   DataInCode.cpp
   DyldBindingInfo.cpp

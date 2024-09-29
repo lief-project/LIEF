@@ -162,16 +162,16 @@ ok_error_t Builder::build_empty_symbol_gnuhash() {
   const uint32_t symndx     = 1; // 0 is reserved
 
   // nb_buckets
-  content.write_conv<uint32_t>(nb_buckets);
+  content.write<uint32_t>(nb_buckets);
 
   // symndx
-  content.write_conv<uint32_t>(symndx);
+  content.write<uint32_t>(symndx);
 
   // maskwords
-  content.write_conv<uint32_t>(maskwords);
+  content.write<uint32_t>(maskwords);
 
   // shift2
-  content.write_conv<uint32_t>(shift2);
+  content.write<uint32_t>(shift2);
 
   // fill with 0
   content.align(gnu_hash_section->size(), 0);

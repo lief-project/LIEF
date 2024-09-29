@@ -158,8 +158,8 @@ ok_error_t Parser::build_fat() {
     }
     const auto arch = *res_arch;
 
-    const uint32_t offset = BinaryStream::swap_endian(arch.offset);
-    const uint32_t size   = BinaryStream::swap_endian(arch.size);
+    const uint32_t offset = get_swapped_endian(arch.offset);
+    const uint32_t size   = get_swapped_endian(arch.size);
 
     LIEF_DEBUG("Dealing with arch[{:d}]", i);
     LIEF_DEBUG("    [{:d}].offset: 0x{:06x}", i, offset);

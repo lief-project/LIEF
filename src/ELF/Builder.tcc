@@ -653,7 +653,7 @@ ok_error_t Builder::build(const Header& header) {;
             std::begin(ehdr.e_ident));
 
   ios_.seekp(0);
-  ios_.write_conv<Elf_Ehdr>(ehdr);
+  ios_.write<Elf_Ehdr>(ehdr);
   return ok();
 }
 
@@ -731,7 +731,7 @@ ok_error_t Builder::build_sections() {
                  section->name(),
                  offset, offset + sizeof(Elf_Shdr));
       ios_.seekp(offset);
-      ios_.write_conv<Elf_Shdr>(shdr);
+      ios_.write<Elf_Shdr>(shdr);
     }
   }
   return ok();
@@ -763,7 +763,7 @@ ok_error_t Builder::build_segments() {
     phdr.p_memsz  = static_cast<Elf_Word>(segment->virtual_size());
     phdr.p_align  = static_cast<Elf_Word>(segment->alignment());
 
-    pheaders.write_conv<Elf_Phdr>(phdr);
+    pheaders.write<Elf_Phdr>(phdr);
   }
 
   Segment* phdr_segment = binary_->get(Segment::TYPE::PHDR);
@@ -870,7 +870,7 @@ ok_error_t Builder::build_symtab_symbols() {
     sym_hdr.st_value = static_cast<Elf_Addr>(symbol->value());
     sym_hdr.st_size  = static_cast<Elf_Word>(symbol->size());
 
-    content.write_conv<Elf_Sym>(sym_hdr);
+    content.write<Elf_Sym>(sym_hdr);
   }
   symbol_section->content(std::move(content.raw()));
   return ok();
@@ -1017,7 +1017,7 @@ ok_error_t Builder::build_dynamic_section() {
     dynhdr.d_tag      = static_cast<Elf_Sxword>(DynamicEntry::to_value(entry->tag()));
     dynhdr.d_un.d_val = static_cast<Elf_Xword>(entry->value());
 
-    dynamic_table_raw.write_conv<Elf_Dyn>(dynhdr);
+    dynamic_table_raw.write<Elf_Dyn>(dynhdr);
   }
 
   std::vector<uint8_t> raw = dynamic_table_raw.raw();
@@ -1106,7 +1106,7 @@ ok_error_t Builder::build_symbol_hash() {
   // to be improved...?
   if (should_swap()) {
     for (size_t i = 0; i < buckets_limits; i++) {
-      Convert::swap_endian(&new_hash_table_ptr[i]);
+      swap_endian(&new_hash_table_ptr[i]);
     }
   }
   binary_->patch_address(dt_hash->value(), new_hash_table);
@@ -1184,7 +1184,7 @@ ok_error_t Builder::build_obj_symbols() {
     sym_header.st_value = static_cast<Elf_Addr>(symbol->value());
     sym_header.st_size  = static_cast<Elf_Addr>(symbol->size());
 
-    symbol_table_raw.write_conv(sym_header);
+    symbol_table_raw.write(sym_header);
   }
   symbol_table_section->content(std::move(symbol_table_raw.raw()));
   return ok();
@@ -1237,7 +1237,7 @@ ok_error_t Builder::build_dynamic_symbols() {
     sym_header.st_value = static_cast<Elf_Addr>(symbol->value());
     sym_header.st_size  = static_cast<Elf_Addr>(symbol->size());
 
-    symbol_table_raw.write_conv(sym_header);
+    symbol_table_raw.write(sym_header);
   }
   binary_->patch_address(symbol_table_va, symbol_table_raw.raw());
   return ok();
@@ -1489,13 +1489,13 @@ ok_error_t Builder::build_dynamic_relocations() {
       relahdr.r_info   = static_cast<Elf_Xword>(r_info);
       relahdr.r_addend = static_cast<Elf_Sxword>(relocation.addend());
 
-      content.write_conv<Elf_Rela>(relahdr);
+      content.write<Elf_Rela>(relahdr);
     } else {
       Elf_Rel relhdr;
       relhdr.r_offset = static_cast<Elf_Addr>(relocation.address());
       relhdr.r_info   = static_cast<Elf_Xword>(r_info);
 
-      content.write_conv<Elf_Rel>(relhdr);
+      content.write<Elf_Rel>(relhdr);
     }
   }
   binary_->patch_address(dt_reloc->value(), content.raw());
@@ -1571,13 +1571,13 @@ ok_error_t Builder::build_pltgot_relocations() {
       relahdr.r_info   = static_cast<Elf_Xword>(r_info);
       relahdr.r_addend = static_cast<Elf_Sxword>(relocation.addend());
 
-      content.write_conv<Elf_Rela>(relahdr);
+      content.write<Elf_Rela>(relahdr);
     } else {
       Elf_Rel relhdr;
       relhdr.r_offset = static_cast<Elf_Addr>(relocation.address());
       relhdr.r_info   = static_cast<Elf_Xword>(r_info);
 
-      content.write_conv<Elf_Rel>(relhdr);
+      content.write<Elf_Rel>(relhdr);
     }
   }
   binary_->patch_address(dt_jmprel->value(), content.raw());
@@ -1645,7 +1645,7 @@ ok_error_t Builder::build_symbol_requirement() {
     header.vn_aux     = static_cast<Elf_Word>(!svars.empty() ? sizeof(Elf_Verneed) : 0);
     header.vn_next    = static_cast<Elf_Word>(next_symbol_offset);
 
-    svr_raw.write_conv<Elf_Verneed>(header);
+    svr_raw.write<Elf_Verneed>(header);
 
 
     uint32_t svar_idx = 0;
@@ -1679,7 +1679,7 @@ ok_error_t Builder::build_symbol_requirement() {
       aux_header.vna_name  = static_cast<Elf_Word>(svar_name_offset);
       aux_header.vna_next  = static_cast<Elf_Word>(svar_idx < (svars.size() - 1) ? sizeof(Elf_Vernaux) : 0);
 
-      svr_raw.write_conv<Elf_Vernaux>(aux_header);
+      svr_raw.write<Elf_Vernaux>(aux_header);
 
       ++svar_idx;
     }
@@ -1748,7 +1748,7 @@ ok_error_t Builder::build_symbol_definition() {
         aux_header.vda_name  = static_cast<Elf_Word>(dynstr_offset);
         aux_header.vda_next  = static_cast<Elf_Word>(next_offset);
 
-        svd_aux_raw.write_conv<Elf_Verdaux>(aux_header);
+        svd_aux_raw.write<Elf_Verdaux>(aux_header);
       }
     }
   }
@@ -1786,7 +1786,7 @@ ok_error_t Builder::build_symbol_definition() {
       header.vd_hash    = static_cast<Elf_Word>(svd.hash());
       header.vd_aux     = static_cast<Elf_Word>(aux_offset);
       header.vd_next    = static_cast<Elf_Word>(next_offset);
-      svd_raw.write_conv<Elf_Verdef>(header);
+      svd_raw.write<Elf_Verdef>(header);
     }
   }
 
@@ -1868,7 +1868,7 @@ ok_error_t Builder::build_symbol_version() {
       return make_error_code(lief_errors::not_found);
     }
     const uint16_t value = sv->value();
-    sv_raw.write_conv<uint16_t>(value);
+    sv_raw.write<uint16_t>(value);
   }
   binary_->patch_address(sv_address, sv_raw.raw());
   return ok();
