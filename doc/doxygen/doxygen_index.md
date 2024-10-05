@@ -1,6 +1,6 @@
 Welcome to the LIEF's Doxygen Documentation
 
-<img src="https://data.romainthomas.fr/LIEF/lief_front_940x752.png" alt="LIEF Architecture" width="500" />
+<img src="https://raw.githubusercontent.com/lief-project/LIEF/refs/heads/main/.github/images/architecture.png" alt="LIEF Architecture" width="500" />
 
 To get started, you can look at the LIEF::ELF namespace or the LIEF::PE::Binary class.
 
