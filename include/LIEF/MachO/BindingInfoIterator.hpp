@@ -41,8 +41,11 @@ class BindingInfoIterator :
     INDIRECT,
   };
 
+  BindingInfoIterator& operator=(const BindingInfoIterator&) = default;
   BindingInfoIterator(const BindingInfoIterator&) = default;
+
   BindingInfoIterator(BindingInfoIterator&&) = default;
+  BindingInfoIterator& operator=(BindingInfoIterator&&) = default;
   ~BindingInfoIterator() = default;
 
   BindingInfoIterator(const DyldInfo& dyld_info, size_t pos) :
