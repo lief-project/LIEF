@@ -110,6 +110,8 @@ class LIEF_API Header : public Object {
   static constexpr uint32_t CPU_SUBTYPE_MASK = 0xff000000;
   static constexpr uint32_t CPU_SUBTYPE_LIB64 = 0x80000000;
 
+  static constexpr auto CPU_SUBTYPE_ARM64_ARM64E = 2;
+
   //! The Mach-O magic bytes. These bytes determine whether it is
   //! a 32 bits Mach-O, a 64 bits Mach-O files etc.
   MACHO_TYPES magic() const {
