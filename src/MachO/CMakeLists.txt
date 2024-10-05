@@ -12,6 +12,7 @@ target_sources(LIB_LIEF PRIVATE
   ChainedBindingInfo.cpp
   ChainedBindingInfoList.cpp
   ChainedFixup.cpp
+  ChainedPointerAnalysis.cpp
   CodeSignature.cpp
   CodeSignatureDir.cpp
   endianness_support.cpp
@@ -19,6 +20,7 @@ target_sources(LIB_LIEF PRIVATE
   DataInCode.cpp
   DyldBindingInfo.cpp
   DyldChainedFixups.cpp
+  DyldChainedFixupsCreator.cpp
   DyldChainedFormat.cpp
   DyldEnvironment.cpp
   DyldExportsTrie.cpp

@@ -66,6 +66,7 @@
 #include <LIEF/MachO/UUIDCommand.hpp>
 #include <LIEF/MachO/UnknownCommand.hpp>
 #include <LIEF/MachO/VersionMin.hpp>
+#include <LIEF/MachO/ChainedPointerAnalysis.hpp>
 
 #define CREATE(X,Y) create<X>(Y)
 
@@ -75,6 +76,7 @@ void init_objects(nb::module_& m) {
   CREATE(ParserConfig, m);
   CREATE(Parser, m);
 
+  CREATE(ChainedPointerAnalysis, m);
   CREATE(FatBinary, m);
   CREATE(Binary, m);
   CREATE(Header, m);

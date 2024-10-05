@@ -23,9 +23,11 @@
 
 namespace LIEF {
 namespace MachO {
-class Symbol;
 class BinaryParser;
 class Builder;
+class DyldChainedFixupsCreator;
+class ChainedBindingInfoList;
+class Symbol;
 
 namespace details {
 struct dyld_chained_ptr_arm64e_bind;
@@ -47,9 +49,10 @@ class LIEF_API ChainedBindingInfo : public BindingInfo {
 
   friend class BinaryParser;
   friend class Builder;
+  friend class DyldChainedFixupsCreator;
+  friend class ChainedBindingInfoList;
 
   public:
-
   ChainedBindingInfo() = delete;
   explicit ChainedBindingInfo(DYLD_CHAINED_FORMAT fmt, bool is_weak);
 
@@ -108,7 +111,7 @@ class LIEF_API ChainedBindingInfo : public BindingInfo {
     return os;
   }
 
-  private:
+  protected:
   void clear();
   enum class BIND_TYPES {
     UNKNOWN = 0,

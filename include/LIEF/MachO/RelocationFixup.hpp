@@ -35,6 +35,7 @@ struct dyld_chained_ptr_32_rebase;
 
 class BinaryParser;
 class Builder;
+class DyldChainedFixupsCreator;
 
 //! Class that represents a rebase relocation found in the `LC_DYLD_CHAINED_FIXUPS` command.
 //!
@@ -50,6 +51,7 @@ class LIEF_API RelocationFixup : public Relocation {
 
   friend class BinaryParser;
   friend class Builder;
+  friend class DyldChainedFixupsCreator;
 
   public:
   RelocationFixup() = delete;

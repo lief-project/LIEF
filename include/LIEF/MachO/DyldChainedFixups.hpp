@@ -31,6 +31,7 @@ class BindingInfoIterator;
 class Builder;
 class ChainedBindingInfo;
 class ChainedBindingInfoList;
+class DyldChainedFixupsCreator;
 class LinkEdit;
 class SegmentCommand;
 
@@ -51,6 +52,7 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
   friend class LinkEdit;
   friend class BindingInfoIterator;
   friend class Binary;
+  friend class DyldChainedFixupsCreator;
 
   public:
   //! Structure that mirrors the raw dyld_chained_starts_in_segment
@@ -63,7 +65,7 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
     uint16_t page_size         = 0; ///< Likely 0x1000 for x86/x86_64 architectures and 0x4000 for ARM64 architecture
     uint64_t segment_offset    = 0; ///< Offset of the segment's data from the beginning of the file (it should match SegmentCommand::file_offset)
     uint32_t max_valid_pointer = 0; ///< for 32-bit OS, any value beyond this is not a pointer
-    DYLD_CHAINED_PTR_FORMAT pointer_format; ///< How pointers are encoded
+    DYLD_CHAINED_PTR_FORMAT pointer_format = DYLD_CHAINED_PTR_FORMAT::NONE; ///< How pointers are encoded
 
     //! How many pages are in the page_start array
     size_t page_count() const {
@@ -79,7 +81,11 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
 
     private:
     friend class BinaryParser;
-    chained_starts_in_segment(uint32_t offset, SegmentCommand& segment);
+    friend class DyldChainedFixupsCreator;
+    chained_starts_in_segment(uint32_t offset, SegmentCommand& segment) :
+      offset(offset),
+      segment(segment)
+    {}
     chained_starts_in_segment(uint32_t offset, const details::dyld_chained_starts_in_segment& info,
                               SegmentCommand& segment);
   };

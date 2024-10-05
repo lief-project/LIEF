@@ -33,12 +33,13 @@ namespace LIEF {
 class SpanStream;
 namespace MachO {
 
-class BinaryParser;
 class Binary;
+class BinaryParser;
 class Builder;
-class Section;
-class Relocation;
+class DyldChainedFixupsCreator;
 class DyldInfo;
+class Relocation;
+class Section;
 
 namespace details {
 struct segment_command_32;
@@ -48,6 +49,7 @@ struct segment_command_64;
 //! Class which represents a LoadCommand::TYPE::SEGMENT / LoadCommand::TYPE::SEGMENT_64 command
 class LIEF_API SegmentCommand : public LoadCommand {
 
+  friend class DyldChainedFixupsCreator;
   friend class BinaryParser;
   friend class Binary;
   friend class Section;

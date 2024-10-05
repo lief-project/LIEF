@@ -34,6 +34,7 @@
 #include "LIEF/MachO/DataInCode.hpp"
 #include "LIEF/MachO/DyldBindingInfo.hpp"
 #include "LIEF/MachO/DyldChainedFixups.hpp"
+#include "LIEF/MachO/DyldChainedFixupsCreator.hpp"
 #include "LIEF/MachO/DyldEnvironment.hpp"
 #include "LIEF/MachO/DyldExportsTrie.hpp"
 #include "LIEF/MachO/DyldInfo.hpp"

@@ -25,6 +25,7 @@
 #include "LIEF/BinaryStream/MemoryStream.hpp"
 
 #include "LIEF/MachO/Binary.hpp"
+#include "LIEF/MachO/ChainedPointerAnalysis.hpp"
 #include "LIEF/MachO/BinaryParser.hpp"
 #include "LIEF/MachO/BuildVersion.hpp"
 #include "LIEF/MachO/ChainedBindingInfo.hpp"
@@ -2580,7 +2581,9 @@ ok_error_t BinaryParser::parse_chained_fixup(const details::dyld_chained_fixups_
       break;
     }
 
-    LIEF_DEBUG("    seg_offset[{}] = {} ({})", seg_idx, seg_info_offset, binary_->segments_[seg_idx]->name());
+    LIEF_DEBUG("    0x{:06x} seg_offset[{}] = {} ({})",
+               stream.pos() - sizeof(uint32_t),
+               seg_idx, seg_info_offset, binary_->segments_[seg_idx]->name());
     if (seg_info_offset == 0) {
       struct DyldChainedFixups::chained_starts_in_segment info(0, {}, *binary_->segments_[seg_idx]);
       chained_fixups_->chained_starts_in_segment_.push_back(std::move(info));
@@ -2769,38 +2772,13 @@ ok_error_t BinaryParser::walk_chain(SegmentCommand& segment,
 }
 
 
-inline uintptr_t stride_size(DYLD_CHAINED_PTR_FORMAT fmt) {
-  switch (fmt) {
-      case DYLD_CHAINED_PTR_FORMAT::NONE:
-        return 0;
-      case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E:
-      case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_USERLAND:
-      case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_USERLAND24:
-        return 8;
-
-      case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_KERNEL:
-      case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_FIRMWARE:
-      case DYLD_CHAINED_PTR_FORMAT::PTR_32_FIRMWARE:
-      case DYLD_CHAINED_PTR_FORMAT::PTR_64:
-      case DYLD_CHAINED_PTR_FORMAT::PTR_64_OFFSET:
-      case DYLD_CHAINED_PTR_FORMAT::PTR_32:
-      case DYLD_CHAINED_PTR_FORMAT::PTR_32_CACHE:
-      case DYLD_CHAINED_PTR_FORMAT::PTR_64_KERNEL_CACHE:
-          return 4;
-
-      case DYLD_CHAINED_PTR_FORMAT::PTR_X86_64_KERNEL_CACHE:
-          return 1;
-  }
-  return 0;
-}
-
 template<class MACHO_T>
 result<uint64_t> BinaryParser::next_chain(uint64_t& chain_address, uint64_t chain_offset,
                                           const details::dyld_chained_starts_in_segment& seg_info)
 {
   const auto ptr_fmt = static_cast<DYLD_CHAINED_PTR_FORMAT>(seg_info.pointer_format);
   static constexpr uint64_t CHAIN_END = 0;
-  const uintptr_t stride = stride_size(ptr_fmt);
+  const uintptr_t stride = ChainedPointerAnalysis::stride(ptr_fmt);
 
   switch (ptr_fmt) {
     case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E:
@@ -3067,7 +3045,7 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
     reloc->address_      = chain_address;
     reloc->architecture_ = binary_->header().cpu_type();
     reloc->segment_      = &segment;
-    reloc->size_         = stride_size(ptr_fmt) * BYTE_BITS;
+    reloc->size_         = ChainedPointerAnalysis::stride(ptr_fmt) * BYTE_BITS;
     reloc->offset_       = chain_offset;
 
     if (Section* section = binary_->section_from_virtual_address(address)) {
@@ -3138,7 +3116,7 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
   reloc->address_      = chain_address;
   reloc->architecture_ = binary_->header().cpu_type();
   reloc->segment_      = &segment;
-  reloc->size_         = stride_size(ptr_fmt) * BYTE_BITS;
+  reloc->size_         = ChainedPointerAnalysis::stride(ptr_fmt) * BYTE_BITS;
   reloc->offset_       = chain_offset;
 
   if (Section* section = binary_->section_from_virtual_address(address)) {
@@ -3226,7 +3204,7 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
   reloc->address_      = chain_address;
   reloc->architecture_ = binary_->header().cpu_type();
   reloc->segment_      = &segment;
-  reloc->size_         = stride_size(ptr_fmt) * BYTE_BITS;
+  reloc->size_         = ChainedPointerAnalysis::stride(ptr_fmt) * BYTE_BITS;
   reloc->offset_       = chain_offset;
 
   if (Section* section = binary_->section_from_virtual_address(address)) {
@@ -3310,7 +3288,7 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
   reloc->address_      = chain_address;
   reloc->architecture_ = binary_->header().cpu_type();
   reloc->segment_      = &segment;
-  reloc->size_         = stride_size(ptr_fmt) * BYTE_BITS;
+  reloc->size_         = ChainedPointerAnalysis::stride(ptr_fmt) * BYTE_BITS;
   reloc->offset_       = chain_offset;
 
   if (Section* section = binary_->section_from_virtual_address(address)) {

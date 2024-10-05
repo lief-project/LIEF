@@ -27,6 +27,7 @@ class DylibCommand;
 class SegmentCommand;
 class Symbol;
 class BinaryParser;
+class DyldChainedFixupsCreator;
 
 //! Class that provides an interface over a *binding* operation.
 //!
@@ -38,6 +39,7 @@ class BinaryParser;
 class LIEF_API BindingInfo : public Object {
 
   friend class BinaryParser;
+  friend class DyldChainedFixupsCreator;
 
   public:
   enum class TYPES {

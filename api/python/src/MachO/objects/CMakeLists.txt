@@ -4,6 +4,7 @@ target_sources(pyLIEF PRIVATE
   pyBuildVersion.cpp
   pyBuilder.cpp
   pyChainedBindingInfo.cpp
+  pyChainedPointerAnalysis.cpp
   pyCodeSignature.cpp
   pyCodeSignatureDir.cpp
   pyDataCodeEntry.cpp

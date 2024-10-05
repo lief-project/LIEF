@@ -143,12 +143,6 @@ DyldChainedFixups::chained_starts_in_segment::chained_starts_in_segment(uint32_t
   segment{segment}
 {}
 
-DyldChainedFixups::chained_starts_in_segment::chained_starts_in_segment(uint32_t offset, SegmentCommand& segment) :
-  offset{offset},
-  segment{segment}
-{}
-
-
 std::ostream& operator<<(std::ostream& os, const DyldChainedFixups::chained_starts_in_segment& info) {
   os << fmt::format("size              = {}\n",     info.size);
   os << fmt::format("page_size         = 0x{:x}\n", info.page_size);

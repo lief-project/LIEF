@@ -1196,7 +1196,7 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
   lnk_data.align(8);
 
   const size_t segs_header_off = lnk_data.size();
-  if (segs_header_off != fixups.starts_offset()) {
+  if (fixups.starts_offset() > 0 && segs_header_off != fixups.starts_offset()) {
     LIEF_INFO("segs_header_off could be wrong!");
   }
   auto starts_in_segment = fixups.chained_starts_in_segments();
@@ -1226,7 +1226,7 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
   // -----
 
 
-  for (const auto& seg_info : starts_in_segment) {
+  for (const DyldChainedFixups::chained_starts_in_segment& seg_info : starts_in_segment) {
     if (seg_info.page_count() == 0) {
       ++seg_idx;
       continue;
@@ -1253,6 +1253,9 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
     lnk_data.align(8);
     auto* seg_info_offsets = reinterpret_cast<uint32_t*>(lnk_data.raw().data() + segs_info_off);
     seg_info_offsets[seg_idx] = lnk_data.size() - segs_header_off;
+    LIEF_DEBUG("0x{:06x} seg_info_offsets[{}] = 0x{:016x}",
+               segs_info_off + sizeof(uint32_t) * seg_idx,
+               seg_idx, seg_info_offsets[seg_idx]);
     lnk_data.write(seg);
     for (uint16_t off : seg_info.page_start) {
       lnk_data.write(off);
@@ -1342,45 +1345,50 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
         }
     }
 
-    for (ChainedBindingInfo* elements : info->elements_) {
-      const uint64_t rel_offset = elements->offset_ - elements->segment()->file_offset();
-      uint8_t* data_ptr = elements->segment_->writable_content().data() + rel_offset;
+    for (ChainedBindingInfo* binding : info->elements_) {
+      const uint64_t rel_offset = binding->offset_ - binding->segment()->file_offset();
+      uint8_t* data_ptr = binding->segment_->writable_content().data() + rel_offset;
+      LIEF_DEBUG("Write binding (offset=0x{:010x}): 0x{:016x} {} in {} offset=0x{:010x}",
+                 binding->offset_, binding->address(), binding->symbol()->name(),
+                 binding->segment_->name(),
+                 binding->segment()->file_offset() + rel_offset);
+
       // Rewrite the raw chained binding
-      switch (elements->btypes_) {
+      switch (binding->btypes_) {
         case ChainedBindingInfo::BIND_TYPES::ARM64E_BIND:
           {
             auto& raw_bind = *reinterpret_cast<details::dyld_chained_ptr_arm64e*>(data_ptr);
-            raw_bind.bind = *elements->arm64_bind_;
+            raw_bind.bind = *binding->arm64_bind_;
             break;
           }
         case ChainedBindingInfo::BIND_TYPES::ARM64E_AUTH_BIND:
           {
             auto& raw_bind = *reinterpret_cast<details::dyld_chained_ptr_arm64e*>(data_ptr);
-            raw_bind.auth_bind = *elements->arm64_auth_bind_;
+            raw_bind.auth_bind = *binding->arm64_auth_bind_;
             break;
           }
         case ChainedBindingInfo::BIND_TYPES::ARM64E_BIND24:
           {
             auto& raw_bind = *reinterpret_cast<details::dyld_chained_ptr_arm64e*>(data_ptr);
-            raw_bind.bind24 = *elements->arm64_bind24_;
+            raw_bind.bind24 = *binding->arm64_bind24_;
             break;
           }
         case ChainedBindingInfo::BIND_TYPES::ARM64E_AUTH_BIND24:
           {
             auto& raw_bind = *reinterpret_cast<details::dyld_chained_ptr_arm64e*>(data_ptr);
-            raw_bind.auth_bind24 = *elements->arm64_auth_bind24_;
+            raw_bind.auth_bind24 = *binding->arm64_auth_bind24_;
             break;
           }
         case ChainedBindingInfo::BIND_TYPES::PTR64_BIND:
           {
             auto& raw_bind = *reinterpret_cast<details::dyld_chained_ptr_generic64*>(data_ptr);
-            raw_bind.bind = *elements->p64_bind_;
+            raw_bind.bind = *binding->p64_bind_;
             break;
           }
         case ChainedBindingInfo::BIND_TYPES::PTR32_BIND:
           {
             auto& raw_bind = *reinterpret_cast<details::dyld_chained_ptr_generic32*>(data_ptr);
-            raw_bind.bind = *elements->p32_bind_;
+            raw_bind.bind = *binding->p32_bind_;
             break;
           }
         case ChainedBindingInfo::BIND_TYPES::UNKNOWN: break;
