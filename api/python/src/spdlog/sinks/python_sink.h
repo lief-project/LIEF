@@ -5,8 +5,6 @@
 #include <spdlog/details/null_mutex.h>
 #include <mutex>
 
-#include <iostream>
-
 #include <Python.h>
 
 namespace spdlog {
