@@ -74,6 +74,9 @@ Changelog
   * Fix bug when trying to remove a dynamic symbol that is associated with
     multiple relocations (:issue:`1089`)
 
+:Rust:
+
+  * Thanks to :github_user:`Huntragon` Rust bindings can be used without openssl (see: :pr:`1105`)
 
 :Extended:
   * :attr:`lief.ELF.Symbol.demangled_name` /
