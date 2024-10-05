@@ -20,14 +20,16 @@
 #include <vector>
 #include <array>
 #include <cstddef>
+#include <memory>
 
 #include "LIEF/errors.hpp"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 
 namespace LIEF {
 class VectorStream;
-class SpanStream : public BinaryStream {
+class LIEF_API SpanStream : public BinaryStream {
   public:
   using BinaryStream::p;
   using BinaryStream::end;

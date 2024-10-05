@@ -19,6 +19,7 @@
 #include <utility>
 
 #include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
@@ -31,7 +32,7 @@ namespace ELF {
 /// - ``GNU_PROPERTY_X86_COMPAT_ISA_1_NEEDED``
 /// - ``GNU_PROPERTY_X86_COMPAT_2_ISA_1_USED``
 /// - ``GNU_PROPERTY_X86_COMPAT_2_ISA_1_NEEDED``
-class X86ISA : public NoteGnuProperty::Property {
+class LIEF_API X86ISA : public NoteGnuProperty::Property {
   public:
   enum class FLAG {
     NONE = 0,

@@ -37,6 +37,10 @@ option(LIEF_OBJC           "Build LIEF with ObjC metadata support"      OFF)
 cmake_dependent_option(LIEF_PYTHON_EDITABLE "Make an editable build " OFF
                        "LIEF_PYTHON_API" OFF)
 
+cmake_dependent_option(LIEF_PY_LIEF_EXT_SHARED
+                      "Use a 'SHARED' version of LIEF instead of a static one" OFF
+                       "LIEF_PY_LIEF_EXT" OFF)
+
 cmake_dependent_option(LIEF_PYTHON_STATIC "Internal usage" OFF
                        "LIEF_PYTHON_API" OFF)
 

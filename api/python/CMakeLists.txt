@@ -1,7 +1,11 @@
 find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
 
 if (LIEF_PY_LIEF_EXT)
-  find_package(LIEF REQUIRED COMPONENTS STATIC)
+  if (LIEF_PY_LIEF_EXT_SHARED)
+    find_package(LIEF REQUIRED COMPONENTS SHARED)
+  else()
+    find_package(LIEF REQUIRED COMPONENTS STATIC)
+  endif()
   message(STATUS "Using pre-installed version of LIEF")
   set(LIEF_TARGET LIEF::LIEF)
   set_target_properties(LIB_LIEF PROPERTIES EXCLUDE_FROM_ALL ON)

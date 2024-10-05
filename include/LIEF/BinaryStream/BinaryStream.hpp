@@ -18,20 +18,19 @@
 
 #include <cstdint>
 #include <vector>
-#include <memory>
 #include <cstring>
 #include <string>
-#include <type_traits>
 #include <algorithm>
 
 #include "LIEF/endianness_support.hpp"
 #include "LIEF/errors.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class ASN1Reader;
 
 //! Class that is used to a read stream of data from different sources
-class BinaryStream {
+class LIEF_API BinaryStream {
   public:
   friend class ASN1Reader;
 
@@ -350,7 +349,6 @@ class ToggleEndianness {
   bool endian_swap_ = false;
   BinaryStream& stream_;
 };
-
 
 
 template<class T>

@@ -20,13 +20,13 @@
 #include <functional>
 
 #include "LIEF/MachO/DyldChainedFormat.hpp"
-#include "LIEF/config.h"
 #include "LIEF/errors.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class BinaryStream;
 namespace MachO {
-class ChainedPointerAnalysis {
+class LIEF_API ChainedPointerAnalysis {
   public:
   // DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E
   struct dyld_chained_ptr_arm64e_rebase_t
@@ -37,7 +37,8 @@ class ChainedPointerAnalysis {
               bind   :  1,
               auth   :  1;
 
-    friend std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_arm64e_rebase_t& chain);
+    friend LIEF_API
+      std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_arm64e_rebase_t& chain);
 
     uint64_t unpack_target() const {
       return uint64_t(high8) | target;
@@ -54,7 +55,8 @@ class ChainedPointerAnalysis {
               bind    :  1,
               auth    :  1;
 
-    friend std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_arm64e_bind_t& chain);
+    friend LIEF_API
+      std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_arm64e_bind_t& chain);
   };
 
   // DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E
@@ -68,7 +70,8 @@ class ChainedPointerAnalysis {
               bind      :  1,
               auth      :  1;
 
-    friend std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_arm64e_auth_rebase_t& chain);
+    friend LIEF_API
+      std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_arm64e_auth_rebase_t& chain);
   };
 
   // DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E
@@ -83,7 +86,8 @@ class ChainedPointerAnalysis {
               bind      :  1,
               auth      :  1;
 
-    friend std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_arm64e_auth_bind_t& chain);
+    friend LIEF_API
+      std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_arm64e_auth_bind_t& chain);
   };
 
   // DYLD_CHAINED_PTR_FORMAT::PTR_64 & DYLD_CHAINED_PTR_FORMAT::PTR_64_OFFSET
@@ -95,7 +99,8 @@ class ChainedPointerAnalysis {
               next      : 12,
               bind      :  1;
 
-    friend std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_64_rebase_t& chain);
+    friend LIEF_API
+      std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_64_rebase_t& chain);
 
     uint64_t unpack_target() const {
       return uint64_t(high8) | target;
@@ -112,7 +117,8 @@ class ChainedPointerAnalysis {
                 bind    :  1,
                 auth    :  1;
 
-    friend std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_arm64e_bind24_t& chain);
+    friend LIEF_API
+      std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_arm64e_bind24_t& chain);
   };
 
   // DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_USERLAND24
@@ -127,7 +133,8 @@ class ChainedPointerAnalysis {
               bind      :  1,
               auth      :  1;
 
-    friend std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_arm64e_auth_bind24_t& chain);
+    friend LIEF_API
+      std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_arm64e_auth_bind24_t& chain);
   };
 
   // DYLD_CHAINED_PTR_FORMAT::PTR_64
@@ -139,7 +146,8 @@ class ChainedPointerAnalysis {
               next      : 12,
               bind      :  1;
 
-    friend std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_64_bind_t& chain);
+    friend LIEF_API
+      std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_64_bind_t& chain);
   };
 
   // DYLD_CHAINED_PTR_FORMAT::PTR_64_KERNEL_CACHE
@@ -153,7 +161,8 @@ class ChainedPointerAnalysis {
               next        : 12,
               is_auth     :  1;
 
-    friend std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_64_kernel_cache_rebase_t& chain);
+    friend LIEF_API
+      std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_64_kernel_cache_rebase_t& chain);
   };
 
   // DYLD_CHAINED_PTR_FORMAT::PTR_32
@@ -163,7 +172,8 @@ class ChainedPointerAnalysis {
               next   :  5,
               bind   :  1;
 
-    friend std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_32_rebase_t& chain);
+    friend LIEF_API
+      std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_32_rebase_t& chain);
   };
 
   // DYLD_CHAINED_PTR_FORMAT::PTR_32
@@ -174,7 +184,8 @@ class ChainedPointerAnalysis {
               next    :  5,
               bind    :  1;
 
-    friend std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_32_bind_t& chain);
+    friend LIEF_API
+      std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_32_bind_t& chain);
   };
 
   // DYLD_CHAINED_PTR_FORMAT::PTR_32_CACHE
@@ -183,7 +194,8 @@ class ChainedPointerAnalysis {
     uint32_t  target : 30,
               next   :  2;
 
-    friend std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_32_cache_rebase_t& chain);
+    friend LIEF_API
+      std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_32_cache_rebase_t& chain);
   };
 
   // DYLD_CHAINED_PTR_FORMAT::PTR_32_FIRMWARE
@@ -192,7 +204,8 @@ class ChainedPointerAnalysis {
     uint32_t  target : 26,
               next   :  6;
 
-    friend std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_32_firmware_rebase_t& chain);
+    friend LIEF_API
+      std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_32_firmware_rebase_t& chain);
   };
 
   enum class PTR_TYPE {
@@ -368,7 +381,8 @@ class ChainedPointerAnalysis {
     }
     bool is_auth() const;
 
-    friend std::ostream& operator<<(std::ostream& os, const union_pointer_t& ptr);
+    friend LIEF_API
+      std::ostream& operator<<(std::ostream& os, const union_pointer_t& ptr);
   };
 
   static_assert(sizeof(union_pointer_t) == 16);

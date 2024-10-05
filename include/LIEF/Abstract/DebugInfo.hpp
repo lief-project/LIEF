@@ -15,13 +15,14 @@
 #ifndef LIEF_DEBUGINFO_H
 #define LIEF_DEBUGINFO_H
 #include <memory>
+#include "LIEF/visibility.h"
 namespace LIEF {
 
 namespace details {
 class DebugInfo;
 }
 
-class DebugInfo {
+class LIEF_API DebugInfo {
   public:
   enum class FORMAT {
     UNKNOWN = 0,

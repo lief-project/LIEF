@@ -190,7 +190,7 @@ class LIEF_API LoadCommand : public Object {
   uint64_t command_offset_ = 0;
 };
 
-const char* to_string(LoadCommand::TYPE type);
+LIEF_API const char* to_string(LoadCommand::TYPE type);
 
 }
 }

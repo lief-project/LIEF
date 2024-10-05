@@ -22,10 +22,12 @@
 
 #include "LIEF/errors.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
+#include "LIEF/visibility.h"
+
 namespace LIEF {
 
 //! Stream interface over a std::ifstream
-class FileStream : public BinaryStream {
+class LIEF_API FileStream : public BinaryStream {
   public:
   static result<FileStream> from_file(const std::string& file);
   FileStream(std::ifstream fs, uint64_t size) :

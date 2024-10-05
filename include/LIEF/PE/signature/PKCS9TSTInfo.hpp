@@ -19,6 +19,7 @@
 #include <memory>
 
 #include "LIEF/Visitor.hpp"
+#include "LIEF/visibility.h"
 #include "LIEF/PE/signature/ContentInfo.hpp"
 
 namespace LIEF {
@@ -55,7 +56,7 @@ namespace PE {
 //!   micros     [1] INTEGER  (1..999) OPTIONAL
 //! }
 //! ```
-class PKCS9TSTInfo : public ContentInfo::Content {
+class LIEF_API PKCS9TSTInfo : public ContentInfo::Content {
   friend class SignatureParser;
 
   public:

@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_MACHO_BINDING_INFO_IT_H
 #define LIEF_MACHO_BINDING_INFO_IT_H
+#include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
 #include "LIEF/MachO/BindingInfo.hpp"
 
@@ -24,7 +25,7 @@ class Binary;
 class DyldInfo;
 class DyldChainedFixups;
 
-class BindingInfoIterator :
+class LIEF_API BindingInfoIterator :
     public iterator_facade_base<BindingInfoIterator,
                                 std::random_access_iterator_tag,
                                 const BindingInfo&,

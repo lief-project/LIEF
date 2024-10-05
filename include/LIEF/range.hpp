@@ -17,6 +17,8 @@
 #include <cstdint>
 #include <ostream>
 
+#include "LIEF/visibility.h"
+
 namespace LIEF {
 struct range_t {
   uint64_t low = 0;
@@ -41,7 +43,8 @@ struct range_t {
     return !(lhs == rhs);
   }
 
-  friend std::ostream& operator<<(std::ostream& os, const range_t& range);
+  friend LIEF_API
+    std::ostream& operator<<(std::ostream& os, const range_t& range);
 };
 
 }

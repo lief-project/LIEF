@@ -19,6 +19,7 @@
 #include <utility>
 
 #include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
@@ -28,7 +29,7 @@ namespace ELF {
 /// - ``GNU_PROPERTY_X86_FEATURE_1_AND``
 /// - ``GNU_PROPERTY_X86_FEATURE_2_USED``
 /// - ``GNU_PROPERTY_X86_FEATURE_2_NEEDED``
-class X86Features : public NoteGnuProperty::Property {
+class LIEF_API X86Features : public NoteGnuProperty::Property {
   public:
 
   /// Flag according to the ``_AND``, ``_USED`` or ``_NEEDED`` suffixes

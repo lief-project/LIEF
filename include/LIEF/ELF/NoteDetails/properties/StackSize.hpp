@@ -17,13 +17,14 @@
 #define LIEF_ELF_NOTE_DETAILS_PROPERTIES_STACK_SIZE_H
 
 #include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {
 /// This class provides an interface over the `GNU_PROPERTY_STACK_SIZE` property
 ///
 /// This property can be used by the loader to raise the stack limit.
-class StackSize : public NoteGnuProperty::Property {
+class LIEF_API StackSize : public NoteGnuProperty::Property {
   public:
   static bool classof(const NoteGnuProperty::Property* prop) {
     return prop->type() == NoteGnuProperty::Property::TYPE::STACK_SIZE;

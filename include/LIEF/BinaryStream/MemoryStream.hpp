@@ -19,11 +19,12 @@
 #include <cstdint>
 
 #include "LIEF/errors.hpp"
+#include "LIEF/visibility.h"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 
 namespace LIEF {
 class Binary;
-class MemoryStream : public BinaryStream {
+class LIEF_API MemoryStream : public BinaryStream {
   public:
   using BinaryStream::p;
   using BinaryStream::end;
