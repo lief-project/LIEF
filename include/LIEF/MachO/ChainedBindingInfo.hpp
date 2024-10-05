@@ -88,12 +88,12 @@ class LIEF_API ChainedBindingInfo : public BindingInfo {
 
   uint64_t sign_extended_addend() const;
 
-  BindingInfo::TYPES type() const override {
-    return BindingInfo::TYPES::CHAINED;
+  TYPES type() const override {
+    return TYPES::CHAINED;
   }
 
   static bool classof(const BindingInfo* info) {
-    return info->type() == BindingInfo::TYPES::CHAINED;
+    return info->type() == TYPES::CHAINED;
   }
 
   ~ChainedBindingInfo() override {
