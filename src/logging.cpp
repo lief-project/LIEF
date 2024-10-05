@@ -39,12 +39,12 @@ static std::shared_ptr<spdlog::logger> default_logger(
   registry.drop(name);
 
   std::shared_ptr<spdlog::logger> sink;
-  if constexpr (current_platform() == PLATFORMS::ANDROID_PLAT) {
+  if constexpr (current_platform() == PLATFORMS::PLAT_ANDROID) {
 #if defined(__ANDROID__)
     sink = spdlog::android_logger_mt(name, logcat_tag);
 #endif
   }
-  else if (current_platform() == PLATFORMS::IOS) {
+  else if (current_platform() == PLATFORMS::PLAT_IOS) {
     sink = spdlog::basic_logger_mt(name, filepath, truncate);
   }
   else {
