@@ -34,7 +34,7 @@ DyldChainedFixups::DyldChainedFixups() = default;
 DyldChainedFixups& DyldChainedFixups::operator=(const DyldChainedFixups& other) {
   if (&other != this) {
     data_offset_ = other.data_offset_;
-    data_offset_ = other.data_offset_;
+    data_size_ = other.data_size_;
   }
   return *this;
 }
