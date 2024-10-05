@@ -952,10 +952,9 @@ ok_error_t Binary::shift(size_t value) {
   return ok();
 }
 
-
-LoadCommand* Binary::add(const LoadCommand& command) {
+LoadCommand* Binary::add(std::unique_ptr<LoadCommand> command) {
   static constexpr uint32_t shift_value = 0x4000;
-  const int32_t size_aligned = align(command.size(), pointer_size());
+  const int32_t size_aligned = align(command->size(), pointer_size());
 
   // Check there is enough spaces between the load command table
   // and the raw content
@@ -964,7 +963,7 @@ LoadCommand* Binary::add(const LoadCommand& command) {
       return nullptr;
     }
     available_command_space_ += shift_value;
-    return add(command);
+    return add(std::move(command));
   }
 
   available_command_space_ -= size_aligned;
@@ -991,26 +990,25 @@ LoadCommand* Binary::add(const LoadCommand& command) {
   std::vector<uint8_t> content = {std::begin(content_ref), std::end(content_ref)};
 
   // Copy the command data
-  std::copy(std::begin(command.data()), std::end(command.data()),
+  std::copy(std::begin(command->data()), std::end(command->data()),
             std::begin(content) + loadcommands_end);
 
   load_cmd_segment->content(std::move(content));
 
   // Add the command in the Binary
-  std::unique_ptr<LoadCommand> copy(command.clone());
-  copy->command_offset(loadcommands_end);
+  command->command_offset(loadcommands_end);
 
 
   // Update cache
-  if (auto* lib = copy->cast<DylibCommand>()) {
-    libraries_.push_back(lib);
+  if (DylibCommand::classof(command.get())) {
+    libraries_.push_back(command->as<DylibCommand>());
   }
 
-  if (auto* segment = copy->cast<SegmentCommand>()) {
-    add_cached_segment(*segment);
+  if (SegmentCommand::classof(command.get())) {
+    add_cached_segment(*command->as<SegmentCommand>());
   }
-  LoadCommand* ptr = copy.get();
-  commands_.push_back(std::move(copy));
+  LoadCommand* ptr = command.get();
+  commands_.push_back(std::move(command));
   return ptr;
 }
 

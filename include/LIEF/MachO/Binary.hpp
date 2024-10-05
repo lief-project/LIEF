@@ -333,8 +333,12 @@ class LIEF_API Binary : public LIEF::Binary  {
   const LoadCommand* get(LoadCommand::TYPE type) const;
   LoadCommand* get(LoadCommand::TYPE type);
 
+  LoadCommand* add(std::unique_ptr<LoadCommand> command);
+
   //! Insert a new LoadCommand
-  LoadCommand* add(const LoadCommand& command);
+  LoadCommand* add(const LoadCommand& command) {
+    return add(command.clone());
+  }
 
   //! Insert a new LoadCommand at the specified ``index``
   LoadCommand* add(const LoadCommand& command, size_t index);
