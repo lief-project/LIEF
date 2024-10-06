@@ -66,7 +66,8 @@ Main features:
 - [Download / Install](#downloads--install)
 - [Getting started](#getting-started)
 - [Documentation](#documentation)
-  - [Sphinx](https://lief-project.github.io/doc/stable/index.html)
+  - [Rust](https://lief.re/doc/stable/rust/lief/)
+  - [Sphinx](https://lief-project.github.io/doc/latest/index.html)
   - [Doxygen](https://lief-project.github.io/doc/latest/doxygen/index.html)
   - Tutorials:
     - [Parse and manipulate formats](https://lief-project.github.io/doc/latest/tutorials/01_play_with_formats.html)
@@ -90,11 +91,26 @@ Main features:
 
 ## Downloads / Install
 
-First, make sure to have an updated version of setuptools:
+## C++
 
-```console
-pip install setuptools --upgrade
+```cmake
+find_package(LIEF REQUIRED)
+target_link_libraries(my-project LIEF::LIEF)
 ```
+
+## Rust
+
+```toml
+[package]
+name    = "my-awesome-project"
+version = "0.0.1"
+edition = "2021"
+
+[dependencies]
+lief = 0.15.1
+```
+
+## Python
 
 To install the latest **version** (release):
 
@@ -161,7 +177,6 @@ if let Some(Binary::PE(pe)) = Binary::parse(path.as_str()) {
 }
 ```
 
-
 ### C++
 
 ```cpp
@@ -219,6 +234,7 @@ int main(int argc, char** argv) {
 * [Tutorial](https://lief-project.github.io/doc/latest/tutorials/index.html)
 * [API](https://lief-project.github.io/doc/latest/api/index.html)
 * [Doxygen](https://lief-project.github.io/doc/latest/doxygen/index.html)
+* [Rust](https://lief.re/doc/stable/rust/lief/)
 
 ## Contact
 
