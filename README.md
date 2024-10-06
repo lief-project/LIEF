@@ -107,7 +107,7 @@ version = "0.0.1"
 edition = "2021"
 
 [dependencies]
-lief = 0.15.1
+lief = "0.15.1"
 ```
 
 ## Python
