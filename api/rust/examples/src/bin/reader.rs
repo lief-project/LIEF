@@ -2,7 +2,6 @@ use lief::Binary;
 use lief::generic;
 
 use lief::elf;
-use lief::pe;
 
 fn explore_elf(elf: &elf::Binary) {
     let foo = elf as &dyn generic::Binary;

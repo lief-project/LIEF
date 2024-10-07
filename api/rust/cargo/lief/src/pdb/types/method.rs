@@ -3,8 +3,6 @@ use lief_ffi as ffi;
 use crate::common::FromFFI;
 use std::marker::PhantomData;
 
-use crate::pdb::Type;
-use crate::common::into_optional;
 use crate::declare_fwd_iterator;
 
 /// This class represents a Method (`LF_ONEMETHOD`) that can be defined in

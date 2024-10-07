@@ -1,5 +1,3 @@
-use lief_ffi as ffi;
-
 pub mod metadata;
 pub mod class;
 pub mod protocol;

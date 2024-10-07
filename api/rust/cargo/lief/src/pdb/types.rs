@@ -1,11 +1,8 @@
 use lief_ffi as ffi;
 
-use crate::{common::FromFFI, Error};
+use crate::{common::FromFFI};
 
-use crate::to_conv_result;
 use std::marker::PhantomData;
-use crate::debug_location::DebugLocation;
-use crate::common::into_optional;
 use crate::declare_fwd_iterator;
 
 pub mod simple;

@@ -14,7 +14,6 @@ fn main() -> ExitCode {
     }
 
     let path = std::env::args().last().unwrap();
-    let mut file = std::fs::File::open(&path).expect("Can't open the file");
 
     let dbg = lief::dwarf::load(&path).unwrap_or_else(|| {
         process::exit(1);
