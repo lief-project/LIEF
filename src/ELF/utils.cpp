@@ -28,8 +28,8 @@ namespace ELF {
 
 bool is_elf(BinaryStream& stream) {
   using magic_t = std::array<char, sizeof(details::ElfMagic)>;
-  stream.setpos(0);
-  if (auto res = stream.peek<magic_t>()) {
+  ScopedStream scoped(stream, 0);
+  if (auto res = scoped->peek<magic_t>()) {
     const auto magic = *res;
     return std::equal(std::begin(magic), std::end(magic),
                       std::begin(details::ElfMagic));

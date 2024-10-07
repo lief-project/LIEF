@@ -52,13 +52,13 @@ inline std::string to_lower(std::string str) {
 
 bool is_pe(BinaryStream& stream) {
   using signature_t = std::array<char, sizeof(details::PE_Magic)>;
-  stream.setpos(0);
-  if (auto dos_header = stream.read<details::pe_dos_header>()) {
+  ScopedStream scoped(stream, 0);
+  if (auto dos_header = scoped->read<details::pe_dos_header>()) {
     if (dos_header->Magic != /* MZ */0x5a4d) {
       return false;
     }
-    stream.setpos(dos_header->AddressOfNewExeHeader);
-    if (auto res_sig = stream.read<signature_t>()) {
+    scoped->setpos(dos_header->AddressOfNewExeHeader);
+    if (auto res_sig = scoped->read<signature_t>()) {
       const auto signature = *res_sig;
       return std::equal(std::begin(signature), std::end(signature),
                         std::begin(details::PE_Magic));
