@@ -82,7 +82,7 @@ void create<Parser>(nb::module_& m) {
 
     One can configure the parser with the ``config`` parameter. See :class:`~lief.MachO.ParserConfig`
     )delim"_doc,
-    "obj"_a, "config"_a = ParserConfig::quick(),
+    "obj"_a, "config"_a = ParserConfig::deep(),
     nb::rv_policy::take_ownership);
 }
 
