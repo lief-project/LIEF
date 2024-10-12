@@ -51,7 +51,7 @@ void create<Parser>(nb::module_& m) {
     Parse the given binary (from raw bytes) and return a :class:`~lief.MachO.FatBinary` object
 
     One can configure the parsing with the ``config`` parameter. See :class:`~lief.MachO.ParserConfig`
-    )delim"_doc, "raw"_a, "config"_a = ParserConfig::quick(),
+    )delim"_doc, "raw"_a, "config"_a = ParserConfig::deep(),
     nb::rv_policy::take_ownership);
 
   m.def("parse_from_memory",
