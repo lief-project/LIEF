@@ -430,6 +430,14 @@ Parser::parse_resource_node(const details::pe_resource_directory_table& director
       uint32_t offset = base_offset + data_rva;
       details::pe_resource_data_entry data_entry;
 
+      if (!resource_visited_.insert(offset).second) {
+        if (resource_visited_.size() == 1) {
+          // Only print once
+          LIEF_WARN("Infinite loop detected on resources");
+        }
+        break;
+      }
+
       if (auto res_data_entry = stream_->peek<details::pe_resource_data_entry>(offset)) {
         data_entry = *res_data_entry;
       } else {
@@ -462,7 +470,10 @@ Parser::parse_resource_node(const details::pe_resource_directory_table& director
       const uint32_t directory_rva = data_rva & (~ 0x80000000);
       const uint32_t offset        = base_offset + directory_rva;
       if (!resource_visited_.insert(offset).second) {
-        LIEF_WARN("Infinite loop detected on resources");
+        if (resource_visited_.size() == 1) {
+          // Only print once
+          LIEF_WARN("Infinite loop detected on resources");
+        }
         break;
       }
 

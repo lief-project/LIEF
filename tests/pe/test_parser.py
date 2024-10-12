@@ -556,3 +556,11 @@ def test_issue_1049():
 def test_xbox_file():
     pe = lief.PE.parse(get_sample("PE/backcompat.exe"))
     assert pe.header.machine == lief.PE.Header.MACHINE_TYPES.POWERPCBE
+
+def test_issue_1115():
+    """
+    Infinite loop in PE resource tree
+    """
+    pe = lief.PE.parse(get_sample("PE/issue_1115.pe"))
+    assert pe is not None
+
