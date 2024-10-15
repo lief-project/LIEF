@@ -256,21 +256,10 @@ void Binary::remove(Note::TYPE type) {
 
 
 int64_t Binary::symtab_idx(const std::string& name) const {
-  if (symtab_symbols_.empty()) {
+  if (!symtab_symbol_indices_.count(name)) {
     return -1;
   }
-
-  auto it = std::find_if(symtab_symbols_.begin(), symtab_symbols_.end(),
-    [&name] (const std::unique_ptr<Symbol>& S) {
-      return S->name() == name;
-    }
-  );
-
-  if (it == symtab_symbols_.end()) {
-    return -1;
-  }
-
-  return std::distance(symtab_symbols_.begin(), it);
+  return symtab_symbol_indices_.at(name);
 }
 
 int64_t Binary::symtab_idx(const Symbol& sym) const {
@@ -282,19 +271,10 @@ int64_t Binary::dynsym_idx(const Symbol& sym) const {
 }
 
 int64_t Binary::dynsym_idx(const std::string& name) const {
-  if (dynamic_symbols_.empty()) {
+  if (!dynamic_symbol_indices_.count(name)) {
     return -1;
   }
-
-  auto it = std::find_if(dynamic_symbols_.begin(), dynamic_symbols_.end(),
-    [&name] (const std::unique_ptr<Symbol>& S) {
-      return S->name() == name;
-    }
-  );
-  if (it == dynamic_symbols_.end()) {
-    return -1;
-  }
-  return std::distance(dynamic_symbols_.begin(), it);
+  return dynamic_symbol_indices_.at(name);
 }
 
 
@@ -410,27 +390,14 @@ Symbol& Binary::add_exported_function(uint64_t address, const std::string& name)
 
 
 bool Binary::has_dynamic_symbol(const std::string& name) const {
-  const auto it_symbol = std::find_if(
-      std::begin(dynamic_symbols_), std::end(dynamic_symbols_),
-      [&name] (const std::unique_ptr<Symbol>& s) {
-        return s->name() == name;
-      }
-  );
-
-  return it_symbol != std::end(dynamic_symbols_);
+  return dynamic_symbol_indices_.count(name);
 }
 
 const Symbol* Binary::get_dynamic_symbol(const std::string& name) const {
-  const auto it_symbol = std::find_if(
-      std::begin(dynamic_symbols_), std::end(dynamic_symbols_),
-      [&name] (const std::unique_ptr<Symbol>& s) {
-        return s->name() == name;
-      });
-
-  if (it_symbol == std::end(dynamic_symbols_)) {
+  if (!dynamic_symbol_indices_.count(name)) {
     return nullptr;
   }
-  return it_symbol->get();
+  return dynamic_symbols_[dynamic_symbol_indices_.at(name)].get();
 }
 
 Symbol* Binary::get_dynamic_symbol(const std::string& name) {
@@ -438,15 +405,10 @@ Symbol* Binary::get_dynamic_symbol(const std::string& name) {
 }
 
 const Symbol* Binary::get_symtab_symbol(const std::string& name) const {
-  const auto it_symbol = std::find_if(
-      std::begin(symtab_symbols_), std::end(symtab_symbols_),
-      [&name] (const std::unique_ptr<Symbol>& s) {
-        return s->name() == name;
-      });
-  if (it_symbol == std::end(symtab_symbols_)) {
+  if (!symtab_symbol_indices_.count(name)) {
     return nullptr;
   }
-  return it_symbol->get();
+  return symtab_symbols_[symtab_symbol_indices_.at(name)].get();
 }
 
 
@@ -569,6 +531,7 @@ void Binary::remove_symtab_symbol(Symbol* symbol) {
     return;
   }
 
+  symtab_symbol_indices_.erase((*it_symbol)->name());
   symtab_symbols_.erase(it_symbol);
 }
 
@@ -683,6 +646,7 @@ void Binary::remove_dynamic_symbol(Symbol* symbol) {
     }
   }
 
+  dynamic_symbol_indices_.erase((*it_symbol)->name());
   dynamic_symbols_.erase(it_symbol);
 }
 
@@ -1575,6 +1539,7 @@ void Binary::strip() {
 
 Symbol& Binary::add_symtab_symbol(const Symbol& symbol) {
   symtab_symbols_.push_back(std::make_unique<Symbol>(symbol));
+  symtab_symbol_indices_.insert({symtab_symbols_.back()->name(), symtab_symbols_.size() - 1});
   return *symtab_symbols_.back();
 }
 
@@ -1591,6 +1556,7 @@ Symbol& Binary::add_dynamic_symbol(const Symbol& symbol, const SymbolVersion* ve
   sym->symbol_version_ = symver.get();
 
   dynamic_symbols_.push_back(std::move(sym));
+  dynamic_symbol_indices_.insert({dynamic_symbols_.back()->name(), dynamic_symbols_.size() - 1});
   symbol_version_table_.push_back(std::move(symver));
   return *dynamic_symbols_.back();
 }

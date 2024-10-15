@@ -1198,6 +1198,7 @@ ok_error_t Parser::parse_symtab_symbols(uint64_t offset, uint32_t nb_symbols,
     }
     link_symbol_section(*symbol);
     binary_->symtab_symbols_.push_back(std::move(symbol));
+    binary_->symtab_symbol_indices_.insert({binary_->symtab_symbols_.back()->name(), binary_->symtab_symbols_.size() - 1});
   }
   return ok();
 }
@@ -1257,6 +1258,7 @@ ok_error_t Parser::parse_dynamic_symbols(uint64_t offset) {
     }
     link_symbol_section(*symbol);
     binary_->dynamic_symbols_.push_back(std::move(symbol));
+    binary_->dynamic_symbol_indices_.insert({binary_->dynamic_symbols_.back()->name(), binary_->dynamic_symbols_.size() - 1});
   }
   binary_->sizing_info_->dynsym = binary_->dynamic_symbols_.size() * sizeof(Elf_Sym);
   if (const auto* dt_strsz = binary_->get(DynamicEntry::TAG::STRSZ)) {
