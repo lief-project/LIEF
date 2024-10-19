@@ -161,6 +161,16 @@ else()
   target_compile_definitions(LIB_LIEF PRIVATE -DLIEF_STATIC)
 endif()
 
+
+if(LIEF_ENABLE_JSON)
+  # Make nlohmann/json is only using C++11 API.
+  # Especially, MSVC[14.37.32822] is buggy with (no)rtti & std::any
+  # Ref:
+  # - https://github.com/nlohmann/json/issues/3900
+  # - https://github.com/microsoft/STL/issues/4349#issuecomment-1920093172
+  target_compile_definitions(LIB_LIEF PRIVATE JSON_HAS_CPP_11)
+endif()
+
 # Logging Configuration
 # =====================
 target_compile_definitions(LIB_LIEF PRIVATE SPDLOG_DISABLE_DEFAULT_LOGGER
