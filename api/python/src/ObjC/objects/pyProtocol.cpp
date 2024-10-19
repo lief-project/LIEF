@@ -48,6 +48,15 @@ void create<objc::Protocol>(nb::module_& m) {
       Iterator over the properties defined in this protocol
       )doc"_doc
     )
+
+    .def("to_decl", &Protocol::to_decl,
+      R"doc(
+      Generate a header-like string for this specific protocol.
+
+      The generated output can be configured with the provided :class:`~.DeclOpt`
+      parameter.
+      )doc"_doc, "opt"_a = DeclOpt()
+    )
   ;
 }
 

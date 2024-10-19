@@ -12,11 +12,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#pragma once
-#include "LIEF/rust/ObjC/Metadata.hpp"
-#include "LIEF/rust/ObjC/Class.hpp"
-#include "LIEF/rust/ObjC/Protocol.hpp"
-#include "LIEF/rust/ObjC/Method.hpp"
-#include "LIEF/rust/ObjC/IVar.hpp"
-#include "LIEF/rust/ObjC/Property.hpp"
-#include "LIEF/rust/ObjC/DeclOpt.hpp"
+#ifndef LIEF_OBJC_DECL_OPT_H
+#define LIEF_OBJC_DECL_OPT_H
+
+namespace LIEF {
+namespace objc {
+/// This structure wraps options to tweak the generated output of
+/// functions like LIEF::objc::Metadata::to_decl
+struct DeclOpt {
+  /// Whether annotations like method's address should be printed
+  bool show_annotations = true;
+};
+}
+}
+#endif
+

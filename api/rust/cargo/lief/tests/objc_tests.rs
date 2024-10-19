@@ -14,6 +14,8 @@ fn explore_method(meth: &lief::objc::Method) {
 }
 
 fn explore_proptocol(prot: &lief::objc::Protocol) {
+    println!("{}", prot.to_decl());
+    println!("{}", prot.to_decl_with_opt(&lief::objc::DeclOpt::default()));
     println!("{}", prot.mangled_name());
 
     for meth in prot.optional_methods() {
@@ -38,6 +40,8 @@ fn explore_ivar(ivar: &lief::objc::IVar) {
 }
 
 fn explore_class(class: &lief::objc::Class) {
+    println!("{}", class.to_decl());
+    println!("{}", class.to_decl_with_opt(&lief::objc::DeclOpt::default()));
     println!(
         "{}{}{:?}",
         class.name(),
@@ -75,6 +79,7 @@ fn explore_metadata(name: &str, metadata: &lief::objc::Metadata) {
     }
 
     println!("{}", metadata.to_decl());
+    println!("{}", metadata.to_decl_with_opt(&lief::objc::DeclOpt::default()));
 
     if name == "Module_Framework" {
         assert!(metadata.class_by_name("GADGestureRecognizer").is_some());

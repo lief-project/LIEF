@@ -4,9 +4,73 @@
 Demangling
 ~~~~~~~~~~~
 
+LIEF exposes a demangling API for the following formats:
+
+
+.. tabs::
+
+  .. tab:: :fa:`brands fa-windows` MSVC
+
+    **Input**
+
+    .. code-block:: python
+
+      lief.demangle("?h@@YAXH@Z")
+
+    **Result**
+
+    .. code-block:: text
+
+      void __cdecl h(int)
+
+  .. tab:: :fa:`brands fa-windows` Rust
+
+    **Input**
+
+    .. code-block:: python
+
+      lief.demangle("_RNvCskwGfYPst2Cb_3foo16example_function")
+
+    **Result**
+
+    .. code-block:: text
+
+      foo::example_function
+
+  .. tab:: :fa:`regular fa-file-code` Itanium C++
+
+    **Input**
+
+    .. code-block:: python
+
+      lief.demangle("_ZTSN3lld13SpecificAllocINS_4coff9TpiSourceEEE")
+
+    **Result**
+
+    .. code-block:: text
+
+      typeinfo name for lld::SpecificAlloc<lld::coff::TpiSource>
+
+  .. tab:: :fa:`brands fa-swift` Swift/Obj-C
+
+    **Input**
+
+    .. code-block:: python
+
+      lief.demangle("_$s10Foundation4DataV15_RepresentationON")
+
+    **Result**
+
+    .. code-block:: text
+
+      type metadata for Foundation.Data._Representation
+
+
 .. doxygenfunction:: LIEF::demangle
 
 .. autofunction:: lief.demangle
+
+:fa:`brands fa-rust` :rust:func:`lief::demangle`
 
 Is Extended?
 ~~~~~~~~~~~~

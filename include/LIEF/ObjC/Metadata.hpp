@@ -19,6 +19,7 @@
 #include <LIEF/ObjC/Protocol.hpp>
 
 #include <LIEF/iterators.hpp>
+#include <LIEF/ObjC/DeclOpt.hpp>
 
 #include <memory>
 
@@ -53,7 +54,8 @@ class LIEF_API Metadata {
 
   /// Generate a header-like of all the Objective-C metadata identified in the
   /// binary.
-  std::string to_decl() const;
+  /// The generated output can be configured with the DeclOpt
+  std::string to_decl(const DeclOpt& opt = DeclOpt()) const;
 
   ~Metadata();
   private:

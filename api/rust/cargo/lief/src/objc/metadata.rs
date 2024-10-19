@@ -4,7 +4,7 @@ use std::marker::PhantomData;
 use crate::common::{FromFFI, into_optional};
 use crate::declare_fwd_iterator;
 
-use super::{Class, Protocol};
+use super::{Class, Protocol, DeclOpt};
 
 
 /// This structure is the main interface to inspect Objective-C metadata
@@ -49,6 +49,12 @@ impl Metadata<'_> {
     /// binary.
     pub fn to_decl(&self) -> String {
         self.ptr.to_decl().to_string()
+    }
+
+    /// Same behavior as [`Metadata::to_decl`] but with an additional
+    /// [`DeclOpt`] parameter to customize the output
+    pub fn to_decl_with_opt(&self, opt: &DeclOpt) -> String {
+        self.ptr.to_decl_with_opt(opt.to_ffi()).to_string()
     }
 }
 

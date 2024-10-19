@@ -15,9 +15,11 @@
 #ifndef LIEF_OBJC_PROTOCOL_H
 #define LIEF_OBJC_PROTOCOL_H
 #include <LIEF/visibility.h>
+#include <LIEF/iterators.hpp>
+
 #include <LIEF/ObjC/Method.hpp>
 #include <LIEF/ObjC/Property.hpp>
-#include <LIEF/iterators.hpp>
+#include <LIEF/ObjC/DeclOpt.hpp>
 
 #include <memory>
 #include <string>
@@ -108,6 +110,11 @@ class LIEF_API Protocol {
 
   /// Iterator over the properties defined in this protocol
   properties_it properties() const;
+
+  /// Generate a header-like string for this specific protocol.
+  ///
+  /// The generated output can be configured with DeclOpt
+  std::string to_decl(const DeclOpt& opt = DeclOpt()) const;
 
   ~Protocol();
   private:

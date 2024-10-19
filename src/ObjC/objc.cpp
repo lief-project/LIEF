@@ -57,7 +57,7 @@ Metadata::Metadata(std::unique_ptr<details::Metadata>) :
   impl_(nullptr)
 {}
 
-std::string Metadata::to_decl() const {
+std::string Metadata::to_decl(const DeclOpt&) const {
   return "";
 }
 
@@ -125,6 +125,11 @@ std::string Class::name() const {
 std::string Class::demangled_name() const {
   return "";
 }
+
+std::string Class::to_decl(const DeclOpt&) const {
+  return "";
+}
+
 
 std::unique_ptr<Class> Class::super_class() const {
   return nullptr;
@@ -194,6 +199,10 @@ Protocol::Protocol(std::unique_ptr<details::Protocol> impl) :
 Protocol::~Protocol() = default;
 
 std::string Protocol::mangled_name() const {
+  return "";
+}
+
+std::string Protocol::to_decl(const DeclOpt&) const {
   return "";
 }
 

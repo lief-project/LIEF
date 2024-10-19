@@ -24,6 +24,36 @@
     :py:meth:`lief.objc.Metadata.to_decl`
     :cpp:func:`LIEF::objc::Metadata::to_decl`
 
+.. |lief-objc-method-address| lief-api:: lief.ObjC.Method.address()
+
+    :rust:method:`lief::objc::Method::address [struct]`
+    :py:attr:`lief.objc.Method.address`
+    :cpp:func:`LIEF::objc::Method::address`
+
+.. |lief-objc-metadata-to_decl_opt| lief-api:: lief.ObjC.Metadata.to_decl()
+
+    :rust:method:`lief::objc::Metadata::to_decl_with_opt [struct]`
+    :py:meth:`lief.objc.Metadata.to_decl`
+    :cpp:func:`LIEF::objc::Metadata::to_decl`
+
+.. |lief-objc-class-to_decl_opt| lief-api:: lief.ObjC.Class.to_decl()
+
+    :rust:method:`lief::objc::Class::to_decl_with_opt [struct]`
+    :py:meth:`lief.objc.Class.to_decl`
+    :cpp:func:`LIEF::objc::Class::to_decl`
+
+.. |lief-objc-proto-to_decl_opt| lief-api:: lief.ObjC.Protocol.to_decl()
+
+    :rust:method:`lief::objc::Protocol::to_decl_with_opt [struct]`
+    :py:meth:`lief.objc.Protocol.to_decl`
+    :cpp:func:`LIEF::objc::Protocol::to_decl`
+
+.. |lief-objc-declopt| lief-api:: lief.ObjC.DeclOpt
+
+    :rust:struct:`lief::objc::DeclOpt`
+    :py:class:`lief.objc.DeclOpt`
+    :cpp:struct:`LIEF::objc::DeclOpt`
+
 .. DWARF =======================================================================
 
 .. |lief-dwarf-binary-debug-info| lief-api:: lief.Binary.debug_info()

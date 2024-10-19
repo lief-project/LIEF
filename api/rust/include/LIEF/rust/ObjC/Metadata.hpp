@@ -18,6 +18,7 @@
 
 #include "LIEF/rust/ObjC/Class.hpp"
 #include "LIEF/rust/ObjC/Protocol.hpp"
+#include "LIEF/rust/ObjC/DeclOpt.hpp"
 
 #include "LIEF/rust/Iterator.hpp"
 
@@ -62,5 +63,9 @@ class ObjC_Metadata : private Mirror<LIEF::objc::Metadata> {
 
   auto to_decl() const {
     return get().to_decl();
+  }
+
+  auto to_decl_with_opt(ObjC_DeclOpt opt) const {
+    return get().to_decl(from_rust_declopt(opt));
   }
 };

@@ -14,7 +14,9 @@ from subprocess import Popen
 import importlib.util
 
 def check_objc_dump(metadata: lief.objc.Metadata, file: Path) -> bool:
-    assert metadata.to_decl() == file.read_text()
+    decl_opt = lief.objc.DeclOpt()
+    decl_opt.show_annotations = False
+    assert metadata.to_decl(decl_opt) == file.read_text()
     return True
 
 def import_from_file(module_name: str, file_path: Path):

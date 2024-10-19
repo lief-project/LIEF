@@ -17,6 +17,7 @@
 
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/ObjC/Method.hpp"
+#include "LIEF/rust/ObjC/DeclOpt.hpp"
 #include "LIEF/rust/ObjC/Protocol.hpp"
 #include "LIEF/rust/ObjC/Property.hpp"
 #include "LIEF/rust/ObjC/IVar.hpp"
@@ -76,5 +77,13 @@ class ObjC_Class : private Mirror<LIEF::objc::Class> {
   auto protocols() const { return std::make_unique<it_protocols>(get()); }
   auto properties() const { return std::make_unique<it_properties>(get()); }
   auto ivars() const { return std::make_unique<it_ivars>(get()); }
+
+  auto to_decl() const {
+    return get().to_decl();
+  }
+
+  auto to_decl_with_opt(ObjC_DeclOpt opt) const {
+    return get().to_decl(from_rust_declopt(opt));
+  }
 
 };

@@ -4,7 +4,7 @@ use std::marker::PhantomData;
 use crate::common::FromFFI;
 use crate::declare_fwd_iterator;
 
-use super::{Property, Method};
+use super::{Property, Method, DeclOpt};
 
 /// This class represents an Objective-C `@protocol`
 pub struct Protocol<'a> {
@@ -40,6 +40,17 @@ impl Protocol<'_> {
     /// Iterator over the properties defined in this protocol
     pub fn properties(&self) -> Properties {
         Properties::new(self.ptr.properties())
+    }
+
+    /// Generate a header-like string for this specific class
+    pub fn to_decl(&self) -> String {
+        self.ptr.to_decl().to_string()
+    }
+
+    /// Same behavior as [`Protocol::to_decl`] but with an additional
+    /// [`DeclOpt`] parameter to customize the output
+    pub fn to_decl_with_opt(&self, opt: &DeclOpt) -> String {
+        self.ptr.to_decl_with_opt(opt.to_ffi()).to_string()
     }
 }
 

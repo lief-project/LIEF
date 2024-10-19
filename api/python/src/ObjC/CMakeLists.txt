@@ -6,4 +6,5 @@ target_sources(pyLIEF PRIVATE
   objects/pyIVar.cpp
   objects/pyProtocol.cpp
   objects/pyProperty.cpp
+  objects/pyDeclOpt.cpp
 )

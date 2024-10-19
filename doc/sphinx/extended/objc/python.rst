@@ -41,3 +41,10 @@ Property
 ********
 
 .. autoclass:: lief.objc.Property
+
+----------
+
+DeclOpt
+*******
+
+.. autoclass:: lief.objc.DeclOpt

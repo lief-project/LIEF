@@ -70,6 +70,14 @@ void create<objc::Class>(nb::module_& m) {
       Iterator over the different instance variables defined in this class.
       )doc"_doc
     )
+    .def("to_decl", &Class::to_decl,
+      R"doc(
+      Generate a header-like string for this specific class.
+
+      The generated output can be configured with the provided :class:`~.DeclOpt`
+      parameter.
+      )doc"_doc, "opt"_a = DeclOpt()
+    )
   ;
 }
 

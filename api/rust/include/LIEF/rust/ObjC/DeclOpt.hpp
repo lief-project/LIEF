@@ -1,4 +1,4 @@
-/* Copyright 2022 - 2024 R. Thomas
+/* Copyright 2024 R. Thomas
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,22 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/rust/ObjC/Metadata.hpp"
-#include "LIEF/rust/ObjC/Class.hpp"
-#include "LIEF/rust/ObjC/Protocol.hpp"
-#include "LIEF/rust/ObjC/Method.hpp"
-#include "LIEF/rust/ObjC/IVar.hpp"
-#include "LIEF/rust/ObjC/Property.hpp"
-#include "LIEF/rust/ObjC/DeclOpt.hpp"
+#include "LIEF/ObjC/DeclOpt.hpp"
+
+class ObjC_DeclOpt {
+  public:
+  bool show_annotations = true;
+};
+
+inline ObjC_DeclOpt make_declopt(const LIEF::objc::DeclOpt& opt) {
+  return ObjC_DeclOpt {
+    /* .show_annotations = */ opt.show_annotations
+  };
+}
+
+inline LIEF::objc::DeclOpt from_rust_declopt(const ObjC_DeclOpt& opt) {
+  return LIEF::objc::DeclOpt {
+    /* .show_annotations = */ opt.show_annotations
+  };
+}
+

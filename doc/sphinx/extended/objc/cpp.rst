@@ -50,3 +50,10 @@ Property
 
 .. doxygenclass:: LIEF::objc::Property
 
+----------
+
+DeclOpt
+*******
+
+.. doxygenstruct:: LIEF::objc::DeclOpt
+

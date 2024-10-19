@@ -5,6 +5,7 @@ import lief
 import pytest
 from utils import get_sample, check_objc_dump
 from pathlib import Path
+from textwrap import dedent
 
 if not lief.__extended__:
     pytest.skip("skipping: extended version only", allow_module_level=True)
@@ -65,3 +66,25 @@ def test_droidguard():
     assert properties[0].attribute == 'T@"NSString",R'
 
     check_objc_dump(metadata, Path(get_sample("private/MachO/Module_Framework.objdump")))
+    assert YTILogAttestationRequest.to_decl() == \
+        dedent('''\
+        @interface YTILogAttestationRequest
+        // Address: 0x0001f125c8
+        + (NSObject *)descriptor:(YTILogAttestationRequest *)self :(SEL)id;
+        @property void context;
+        @property void hasContext;
+        @property void challenge;
+        @property void hasChallenge;
+        @property void xguardClientResponseOneOfCase;
+        @property void botguardResponse;
+        @property void droidguardResponse;
+        @property void iosguardResponse;
+        @property void webResponse;
+        @property void androidResponse;
+        @property void iosResponse;
+        @property void engagementType;
+        @property void hasEngagementType;
+        @property void idsArray;
+        @property void idsArray_Count;
+        @end
+        ''')

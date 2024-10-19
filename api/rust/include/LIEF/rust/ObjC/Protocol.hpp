@@ -19,6 +19,7 @@
 #include "LIEF/rust/Iterator.hpp"
 
 #include "LIEF/rust/ObjC/Method.hpp"
+#include "LIEF/rust/ObjC/DeclOpt.hpp"
 #include "LIEF/rust/ObjC/Property.hpp"
 
 class ObjC_Protocol : private Mirror<LIEF::objc::Protocol> {
@@ -65,5 +66,13 @@ class ObjC_Protocol : private Mirror<LIEF::objc::Protocol> {
 
   auto properties() const {
     return std::make_unique<it_properties>(get());
+  }
+
+  auto to_decl() const {
+    return get().to_decl();
+  }
+
+  auto to_decl_with_opt(ObjC_DeclOpt opt) const {
+    return get().to_decl(from_rust_declopt(opt));
   }
 };

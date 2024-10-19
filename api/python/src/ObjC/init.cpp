@@ -11,12 +11,14 @@ class IVar;
 class Property;
 class Method;
 class Protocol;
+struct DeclOpt;
 }
 
 namespace LIEF::objc::py {
 void init(nb::module_& m) {
   nb::module_ objc = m.def_submodule("objc");
 
+  create<LIEF::objc::DeclOpt>(objc);
   create<LIEF::objc::Metadata>(objc);
   create<LIEF::objc::Class>(objc);
   create<LIEF::objc::IVar>(objc);

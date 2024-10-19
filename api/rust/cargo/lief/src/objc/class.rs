@@ -3,7 +3,7 @@ use lief_ffi as ffi;
 use std::marker::PhantomData;
 use crate::common::{FromFFI, into_optional};
 use crate::declare_fwd_iterator;
-use super::{Method, Protocol, IVar, Property};
+use super::{Method, Protocol, IVar, Property, DeclOpt};
 
 /// This class represents an Objective-C class (`@interface`)
 pub struct Class<'a> {
@@ -58,6 +58,17 @@ impl Class<'_> {
     /// Iterator over the different instance variables ([`IVar`]) defined in this class
     pub fn ivars(&self) -> IVars {
         IVars::new(self.ptr.ivars())
+    }
+
+    /// Generate a header-like string for this specific class
+    pub fn to_decl(&self) -> String {
+        self.ptr.to_decl().to_string()
+    }
+
+    /// Same behavior as [`Class::to_decl`] but with an additional
+    /// [`DeclOpt`] parameter to customize the output
+    pub fn to_decl_with_opt(&self, opt: &DeclOpt) -> String {
+        self.ptr.to_decl_with_opt(opt.to_ffi()).to_string()
     }
 }
 

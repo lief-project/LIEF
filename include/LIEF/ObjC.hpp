@@ -21,4 +21,5 @@
 #include <LIEF/ObjC/Method.hpp>
 #include <LIEF/ObjC/Property.hpp>
 #include <LIEF/ObjC/Protocol.hpp>
+#include <LIEF/ObjC/DeclOpt.hpp>
 #endif

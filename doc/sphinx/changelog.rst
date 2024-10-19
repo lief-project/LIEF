@@ -78,6 +78,42 @@
 
   * Thanks to :github_user:`Huntragon` Rust bindings can be used without openssl (see: :pr:`1105`)
 
+:ObjC:
+
+
+  * The header-like generation (|lief-objc-metadata-to_decl|) is now including
+    method's address as a comment:
+
+    **Before**
+
+    .. code-block:: objc
+
+      @interface GCKUIImageHints<NSCopying,NSSecureCoding> {
+          long long _imageType;
+          NSObject<NSSecureCoding> * _customData;
+          struct CGSize _imageSize;
+      }
+      + (bool)supportsSecureCoding:(GCKUIImageHints *)self :(SEL)id;
+      - (bool)isEqual:(GCKUIImageHints *)self :(SEL)id :(NSObject *)arg2;
+
+    **After**
+
+    .. code-block:: objc
+
+      @interface GCKUIImageHints<NSCopying,NSSecureCoding> {
+          long long _imageType;
+          NSObject<NSSecureCoding> * _customData;
+          struct CGSize _imageSize;
+      }
+      // Address: 0x00001aa448
+      + (bool)supportsSecureCoding:(GCKUIImageHints *)self :(SEL)id;
+      // Address: 0x00001aa5ec
+      - (bool)isEqual:(GCKUIImageHints *)self :(SEL)id :(NSObject *)arg2;
+
+  * Fix |lief-objc-method-address| for *small* methods.
+  * The output of |lief-objc-metadata-to_decl_opt| can now be configured with
+    |lief-objc-declopt|.
+
 :Extended:
   * |lief-elf-symbol-demangled_name| is working on **all** platforms
     (not only unix-based builds)

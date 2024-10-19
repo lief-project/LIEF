@@ -591,5 +591,8 @@ include_cpp! {
     generate!("ObjC_Protocol_it_properties")
     block_constructors!("ObjC_Protocol_it_properties")
 
+    generate_pod!("ObjC_DeclOpt")
+    block_constructors!("ObjC_DeclOpt")
+
     safety!(unsafe)
 }

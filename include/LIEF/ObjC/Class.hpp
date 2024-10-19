@@ -14,11 +14,14 @@
  */
 #ifndef LIEF_OBJC_CLASS_H
 #define LIEF_OBJC_CLASS_H
+
 #include <LIEF/visibility.h>
+
 #include <LIEF/ObjC/IVar.hpp>
 #include <LIEF/ObjC/Protocol.hpp>
 #include <LIEF/ObjC/Method.hpp>
 #include <LIEF/ObjC/Property.hpp>
+#include <LIEF/ObjC/DeclOpt.hpp>
 
 #include <memory>
 #include <string>
@@ -129,6 +132,11 @@ class LIEF_API Class {
 
   /// Iterator over the different instance variables defined in this class
   ivars_t ivars() const;
+
+  /// Generate a header-like string for this specific class.
+  ///
+  /// The generated output can be configured with DeclOpt
+  std::string to_decl(const DeclOpt& opt = DeclOpt()) const;
 
   ~Class();
   private:

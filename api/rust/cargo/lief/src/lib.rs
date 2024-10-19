@@ -79,7 +79,6 @@ pub mod pdb;
 /// Module for DWARF debug info
 pub mod dwarf;
 
-/// Module for Objective-C metadata
 pub mod objc;
 pub mod debug_info;
 mod range;
