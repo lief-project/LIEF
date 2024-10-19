@@ -15,10 +15,7 @@ Welcome to LIEF's documentation!
   formats/elf/index
   formats/macho/index
   formats/pe/index
-  formats/oat/index
-  formats/dex/index
-  formats/vdex/index
-  formats/art/index
+  formats/android/index
 
 .. toctree::
   :caption: <i class="fa-solid fa-code">&nbsp;</i>API
