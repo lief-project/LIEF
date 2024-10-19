@@ -42,7 +42,7 @@ class LIEF_API Header : public Object {
 
   public:
   /// e_ident size and indices.
-  enum {
+  enum ELF_INDENT {
     ELI_MAG0       = 0,  ///< File identification index.
     ELI_MAG1       = 1,  ///< File identification index.
     ELI_MAG2       = 2,  ///< File identification index.

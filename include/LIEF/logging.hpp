@@ -34,7 +34,7 @@ namespace logging {
 //!
 //! From a given level set, all levels below this ! level are enabled
 //!
-//! For example, if LOG_INFO is enabled then LOG_WARN, LOG_ERR are also enabled
+//! For example, if LEVEL::INFO is enabled then LEVEL::WARN, LEVEL::ERR are also enabled
 enum class LEVEL : uint32_t {
   OFF = 0,
 

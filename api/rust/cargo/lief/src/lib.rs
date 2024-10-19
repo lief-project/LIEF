@@ -54,6 +54,10 @@
 //! Note that the [`generic`] module implements the different traits shared by different structure
 //! of executable formats (symbols, relocations, ...)
 //!
+//! ## Additional Information
+//!
+//! For more details about the install procedure and the configuration, please check:
+//! https://lief.re/doc/latest/api/rust/index.html
 
 #![doc(html_no_source)]
 

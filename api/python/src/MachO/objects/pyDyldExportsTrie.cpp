@@ -38,9 +38,7 @@ void create<DyldExportsTrie>(nb::module_& m) {
       In recent Mach-O binaries, this command replace the DyldInfo export trie buffer
       )delim"_doc);
 
-  try {
-    init_ref_iterator<DyldExportsTrie::it_export_info>(exports_trie, "it_export_info");
-  } catch (const std::runtime_error&) { }
+  init_ref_iterator<DyldExportsTrie::it_export_info>(exports_trie, "it_export_info");
 
   exports_trie
     .def_prop_rw("data_offset",

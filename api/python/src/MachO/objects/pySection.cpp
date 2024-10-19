@@ -30,18 +30,21 @@
 
 namespace LIEF::MachO::py {
 
+
+// (rtti)Trick to avoid duplication clash with SegmentCommand::it_relocations
+class section_it_relocations : public Section::it_relocations {
+  public:
+  using Section::it_relocations::it_relocations;
+};
+
 template<>
 void create<Section>(nb::module_& m) {
   using namespace LIEF::py;
 
   nb::class_<Section, LIEF::Section> sec(m, "Section",
       "Class that represents a Mach-O section"_doc);
-  try {
-    /*
-     * it_relocations could be already registered by the SegmentCommand
-     */
-    init_ref_iterator<Section::it_relocations>(sec, "it_relocations");
-  } catch (const std::runtime_error&) { }
+
+  init_ref_iterator<section_it_relocations>(sec, "it_relocations");
 
   enum_<Section::TYPE>(sec, "TYPE")
   #define PY_ENUM(x) to_string(x), x

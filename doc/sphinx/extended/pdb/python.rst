@@ -198,10 +198,3 @@ Union
   :parts: 2
 
 .. autoclass:: lief.pdb.types.Union
-
-----------
-
-debug_location_t
-****************
-
-.. autoclass:: lief.debug_location_t

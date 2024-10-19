@@ -3,10 +3,23 @@
 :fa:`brands fa-apple` Objective-C
 ---------------------------------
 
+.. toctree::
+  :caption: <i class="fa-solid fa-code">&nbsp;</i>API
+  :maxdepth: 2
+
+  cpp
+  python
+  rust
+
+----
+
+Introduction
+************
+
 This module allows to inspect Objective-C metadata from a Mach-O binary.
 
 If a Mach-O binary embeds Objective-C metadata, they can be accessed through
-:attr:`lief.MachO.Binary.objc_metadata` / :cpp:func:`LIEF::MachO::Binary::objc_metadata`:
+|lief-macho-binary-objc-metadata|:
 
 .. tabs::
 
@@ -40,12 +53,11 @@ If a Mach-O binary embeds Objective-C metadata, they can be accessed through
             println!("Objective-C metadata found");
         }
 
-Then at this point, one can use the API exposed by the class :class:`lief.objc.Metadata`
-/ :cpp:class:`LIEF::objc::Metadata` to inspect the Objective-C Metadata.
+Then at this point, one can use the API exposed by the class |lief-objc-metadata|
+to inspect the Objective-C Metadata.
 
-In particular, the function: :meth:`lief.objc.Metadata.to_decl`/
-:cpp:func:`LIEF::objc::Metadata::to_decl` can be used to generate a header-like
-output of all the Objective-C metadata found in the binary.
+In particular, the function: |lief-objc-metadata-to_decl| can be used to generate
+a header-like output of all the Objective-C metadata found in the binary.
 
 .. tabs::
 
@@ -103,10 +115,15 @@ This Objective-C support is based on iCDump which is detailed here:
 
 ----
 
+API
+****
+
 You can find the documentation of the API for the different languages here:
 
 :fa:`brands fa-python` :doc:`Python API <python>`
 
 :fa:`regular fa-file-code` :doc:`C++ API <cpp>`
 
-:fa:`brands fa-rust` Rust API: |lief-rust-doc-nightly|
+:fa:`brands fa-rust` Rust API: :rust:module:`lief::objc`
+
+.. include:: ../../_cross_api.rst

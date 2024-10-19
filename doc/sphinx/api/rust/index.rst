@@ -5,8 +5,8 @@
 
 .. note::
 
-  The API is documented here https://lief.re/doc/stable/rust/lief/ and the
-  nightly doc is here: https://lief-rs.s3.fr-par.scw.cloud/doc/latest/lief/index.html.
+  The API is documented here |lief-rust-doc| and the nightly doc is
+  here: |lief-rust-doc-nightly|.
 
 .. code-block:: toml
 

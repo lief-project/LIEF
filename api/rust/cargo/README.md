@@ -32,3 +32,9 @@ if let Some(lief::Binary::ELF(elf)) = lief::Binary::from(&mut file) {
     }
 }
 ```
+
+
+## Documentation
+
+- Rust API: https://lief.re/doc/stable/rust/lief/
+- Bootstrapping and tweaks: https://lief.re/doc/latest/api/rust/index.html

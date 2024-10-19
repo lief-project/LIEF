@@ -1,8 +1,8 @@
-Installation and Integration
-============================
+:fa:`solid fa-gears` Installation and Integration
+================================================================
 
-SDK
----
+:fa:`regular fa-file-code` SDK
+-------------------------------
 
 For each platform supported by LIEF, SDK packages contain:
 
@@ -14,8 +14,8 @@ Nightly build can be downloaded on: https://lief.s3-website.fr-par.scw.cloud/lat
 while releases are available on Github release page:
 https://github.com/lief-project/LIEF/releases.
 
-Python
-------
+:fa:`brands fa-python` Python
+------------------------------
 
 Nightly Python wheels are uploaded for **each commit** on the main branch in a
 S3 bucket. They can be installed through:
@@ -41,6 +41,22 @@ One can also compile and install from source as follows
 
 For more details about the compilation options, see the :ref:`compilation_ref` section.
 
+:fa:`brands fa-rust` Rust
+-------------------------
+
+One can add LIEF as a dependency of a Rust project as follows:
+
+.. code-block:: toml
+
+  # For nightly build
+  [dependencies]
+  lief = { git = "https://github.com/lief-project/LIEF", branch = "main" }
+
+  # For a tagged release
+  [dependencies]
+  lief = "0.15.1"
+
+You can find more details in the :ref:`Rust API section <lief_rust_bindings>`
 
 CMake Integration
 -----------------

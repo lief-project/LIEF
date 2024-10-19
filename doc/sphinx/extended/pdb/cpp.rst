@@ -140,11 +140,3 @@ Union
 ********
 
 .. doxygenclass:: LIEF::pdb::types::Union
-
-----------
-
-debug_location_t
-****************
-
-.. doxygenstruct:: LIEF::debug_location_t
-

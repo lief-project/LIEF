@@ -1,0 +1,315 @@
+.. |demangle| lief-api:: LIEF.demangle()
+
+    :rust:func:`lief::demangle`
+    :py:func:`lief.demangle`
+    :cpp:func:`LIEF::demangle`
+
+.. |get_int_from_virtual_address| lief-api:: LIEF.get_int_from_virtual_address()
+
+    :rust:method:`lief::elf::Binary::get_int_from_virtual_address [struct]`
+    :py:meth:`lief.Binary.get_int_from_virtual_address`
+    :cpp:func:`LIEF::Binary::get_int_from_virtual_address`
+
+.. ObjC ==========================================================================
+
+.. |lief-objc-metadata| lief-api:: lief.ObjC.Metadata
+
+    :rust:struct:`lief::objc::Metadata`
+    :py:class:`lief.objc.Metadata`
+    :cpp:class:`LIEF::objc::Metadata`
+
+.. |lief-objc-metadata-to_decl| lief-api:: lief.ObjC.Metadata.to_decl()
+
+    :rust:method:`lief::objc::Metadata::to_decl [struct]`
+    :py:meth:`lief.objc.Metadata.to_decl`
+    :cpp:func:`LIEF::objc::Metadata::to_decl`
+
+.. DWARF =======================================================================
+
+.. |lief-dwarf-binary-debug-info| lief-api:: lief.Binary.debug_info()
+
+    :rust:method:`lief::elf::Binary::debug_info [struct]`
+    :py:attr:`lief.Binary.debug_info`
+    :cpp:func:`LIEF::Binary::debug_info`
+
+.. |lief-dwarf-debug-info| lief-api:: lief.dwarf.DebugInfo
+
+    :rust:struct:`lief::dwarf::DebugInfo`
+    :py:class:`lief.dwarf.DebugInfo`
+    :cpp:class:`LIEF::dwarf::DebugInfo`
+
+.. |lief-dwarf-load| lief-api:: lief.dwarf.load()
+
+    :rust:func:`lief::dwarf::load`
+    :py:func:`lief.dwarf.load`
+    :cpp:func:`LIEF::dwarf::load`
+
+.. PDB =========================================================================
+
+.. |lief-pdb-binary-debug-info| lief-api:: lief.Binary.debug_info()
+
+    :rust:method:`lief::pe::Binary::debug_info [struct]`
+    :py:attr:`lief.Binary.debug_info`
+    :cpp:func:`LIEF::Binary::debug_info`
+
+.. |lief-pdb-debug-info| lief-api:: lief.pdb.DebugInfo
+
+    :rust:struct:`lief::pdb::DebugInfo`
+    :py:class:`lief.pdb.DebugInfo`
+    :cpp:class:`LIEF::pdb::DebugInfo`
+
+.. |lief-pdb-load| lief-api:: lief.pdb.load()
+
+    :rust:func:`lief::pdb::load`
+    :py:func:`lief.pdb.load`
+    :cpp:func:`LIEF::pdb::load`
+
+.. PE ==========================================================================
+
+
+.. |lief-pe-parse| lief-api:: lief.PE.parse()
+
+    :rust:method:`lief::pe::Binary::parse [struct]`
+    :py:func:`lief.PE.parse`
+    :cpp:func:`LIEF::PE::Parser::parse`
+
+.. |lief-pe-binary| lief-api:: lief.PE.Binary
+
+    :rust:struct:`lief::pe::Binary`
+    :py:class:`lief.PE.Binary`
+    :cpp:class:`LIEF::PE::Binary`
+
+.. |lief-pe-codeviewpdb-filename| lief-api:: lief.PE.CodeViewPDB.filename()
+
+    :rust:method:`lief::pe::debug::CodeViewPDB::filename [struct]`
+    :py:attr:`lief.PE.CodeViewPDB.filename`
+    :cpp:func:`LIEF::PE::CodeViewPDB::filename`
+
+.. |lief-pe-delayimportentry-demangled_name| lief-api:: lief.PE.DelayImportEntry.demangled_name()
+
+    :rust:method:`lief::pe::delay_import::DelayImportEntry::demangled_name [struct]`
+    :py:attr:`lief.PE.DelayImportEntry.demangled_name`
+    :cpp:func:`LIEF::PE::DelayImportEntry::demangled_name`
+
+.. |lief-pe-importentry-demangled_name| lief-api:: lief.PE.ImportEntry.demangled_name()
+
+    :rust:method:`lief::pe::import::ImportEntry::demangled_name [struct]`
+    :py:attr:`lief.PE.ImportEntry.demangled_name`
+    :cpp:func:`LIEF::PE::ImportEntry::demangled_name`
+
+.. |lief-pe-exportentry-demangled_name| lief-api:: lief.PE.exportentry.demangled_name()
+
+    :rust:method:`lief::pe::export::Entry::demangled_name [struct]`
+    :py:attr:`lief.PE.ExportEntry.demangled_name`
+    :cpp:func:`LIEF::PE::ExportEntry::demangled_name`
+
+.. |lief-pe-binary-write| lief-api:: lief.PE.Binary.write()
+
+    :py:meth:`lief.PE.Binary.write`
+    :cpp:func:`LIEF::PE::Binary::write`
+
+.. |lief-pe-binary-signatures| lief-api:: lief.PE.Binary.signatures()
+
+    :rust:method:`lief::pe::Binary::signatures [struct]`
+    :py:attr:`lief.PE.Binary.signatures`
+    :cpp:func:`LIEF::PE::Binary::signatures`
+
+.. |lief-pe-signature| lief-api:: lief.PE.Signature
+
+    :rust:struct:`lief::pe::Signature`
+    :py:class:`lief.PE.Signature`
+    :cpp:class:`LIEF::PE::Signature`
+
+.. |lief-pe-signature-check| lief-api:: lief.PE.Signature.check()
+
+    :rust:method:`lief::pe::Signature::check [struct]`
+    :py:meth:`lief.PE.Signature.check`
+    :cpp:func:`LIEF::PE::Signature::check`
+
+.. |lief-pe-binary-verify_signature| lief-api:: lief.PE.Binary.verify_signature()
+
+    :rust:method:`lief::pe::Binary::verify_signature [struct]`
+    :py:meth:`lief.PE.Binary.verify_signature`
+    :cpp:func:`LIEF::PE::Binary::verify_signature`
+
+.. Abstract ====================================================================
+
+.. |lief-abstract-binary| lief-api:: lief.abstract.Binary
+
+    :rust:trait:`lief::generic::Binary`
+    :py:class:`lief.Binary`
+    :cpp:class:`LIEF::Binary`
+
+.. |lief-abstract-parse| lief-api:: lief.abstract.parse
+
+    :py:func:`lief.parse`
+    :cpp:func:`LIEF::Parser::parse`
+
+.. |lief-pe-parser-config| lief-api:: lief.PE.ParserConfig
+
+    :py:class:`lief.PE.ParserConfig`
+    :cpp:class:`LIEF::PE::ParserConfig`
+
+.. |lief-pe-builder| lief-api:: lief.PE.Builder
+
+    :py:class:`lief.PE.Builder`
+    :cpp:class:`LIEF::PE::Builder`
+
+.. ELF =========================================================================
+
+.. |lief-elf-symbol-demangled_name| lief-api:: lief.ELF.Symbol.demangled_name()
+
+    :rust:method:`lief::elf::Symbol::demangled_name [struct]`
+    :py:attr:`lief.ELF.Symbol.demangled_name`
+    :cpp:func:`LIEF::ELF::Symbol::demangled_name`
+
+.. |lief-elf-parse| lief-api:: lief.ELF.parse()
+
+    :rust:method:`lief::elf::Binary::parse [struct]`
+    :py:func:`lief.ELF.parse`
+    :cpp:func:`LIEF::ELF::Parser::parse`
+
+.. |lief-elf-parser-config| lief-api:: lief.ELF.ParserConfig
+
+    :py:class:`lief.ELF.ParserConfig`
+    :cpp:class:`LIEF::ELF::ParserConfig`
+
+.. |lief-elf-builder-config| lief-api:: lief.ELF.Builder.config_t
+
+    :py:class:`lief.ELF.Builder.config_t`
+    :cpp:struct:`LIEF::ELF::Builder::config_t`
+
+.. |lief-elf-binary| lief-api:: lief.ELF.Binary
+
+    :rust:struct:`lief::elf::Binary`
+    :py:class:`lief.ELF.Binary`
+    :cpp:class:`LIEF::ELF::Binary`
+
+.. |lief-elf-binary-write| lief-api:: lief.ELF.Binary.write()
+
+    :py:meth:`lief.ELF.Binary.write`
+    :cpp:func:`LIEF::ELF::Binary::write`
+
+.. Mach-O ======================================================================
+
+.. |lief-macho-binary| lief-api:: lief.MachO.Binary
+
+    :rust:struct:`lief::macho::Binary`
+    :py:class:`lief.MachO.Binary`
+    :cpp:class:`LIEF::MachO::Binary`
+
+.. |lief-macho-binary-objc-metadata| lief-api:: lief.MachO.Binary.objc_metadata
+
+    :rust:method:`lief::macho::Binary::objc_metadata [struct]`
+    :py:attr:`lief.MachO.Binary.objc_metadata`
+    :cpp:func:`LIEF::MachO::Binary::objc_metadata`
+
+.. |lief-macho-binary-is-ios| lief-api:: lief.MachO.Binary.is_ios()
+
+    :rust:method:`lief::macho::Binary::is_ios [struct]`
+    :py:attr:`lief.MachO.Binary.is_ios`
+    :cpp:func:`LIEF::MachO::Binary::is_ios`
+
+.. |lief-macho-binary-is-macos| lief-api:: lief.MachO.Binary.is_macos()
+
+    :rust:method:`lief::macho::Binary::is_macos [struct]`
+    :py:attr:`lief.MachO.Binary.is_macos`
+    :cpp:func:`LIEF::MachO::Binary::is_macos`
+
+.. |lief-macho-binary-platform| lief-api:: lief.MachO.Binary.platform()
+
+    :rust:method:`lief::macho::Binary::platform [struct]`
+    :py:attr:`lief.MachO.Binary.platform`
+    :cpp:func:`LIEF::MachO::Binary::platform`
+
+.. |lief-macho-binary-symbol_stubs| lief-api:: lief.MachO.Binary.symbol_stubs()
+
+    :rust:method:`lief::macho::Binary::symbol_stubs [struct]`
+    :py:attr:`lief.MachO.Binary.symbol_stubs`
+    :cpp:func:`LIEF::MachO::Binary::symbol_stubs`
+
+.. |lief-macho-stub| lief-api:: lief.MachO.Stub
+
+    :rust:struct:`lief::macho::Stub`
+    :py:class:`lief.MachO.Stub`
+    :cpp:class:`LIEF::MachO::Stub`
+
+.. |lief-macho-subclient| lief-api:: lief.MachO.SubClient
+
+    :rust:struct:`lief::macho::commands::SubClient`
+    :py:class:`lief.MachO.SubClient`
+    :cpp:class:`LIEF::MachO::SubClient`
+
+.. |lief-macho-routine| lief-api:: lief.MachO.Routine
+
+    :rust:struct:`lief::macho::commands::Routine`
+    :py:class:`lief.MachO.Routine`
+    :cpp:class:`LIEF::MachO::Routine`
+
+.. |lief-macho-dyldinfo| lief-api:: lief.MachO.DyldInfo
+
+    :rust:struct:`lief::macho::commands::DyldInfo`
+    :py:class:`lief.MachO.DyldInfo`
+    :cpp:class:`LIEF::MachO::DyldInfo`
+
+.. |lief-macho-chainedbindinginfo| lief-api:: lief.MachO.ChainedBindingInfo
+
+    :rust:struct:`lief::macho::binding_info::Chained`
+    :py:class:`lief.MachO.ChainedBindingInfo`
+    :cpp:class:`LIEF::MachO::ChainedBindingInfo`
+
+.. |lief-macho-indirectbindinginfo| lief-api:: lief.MachO.IndirectBindingInfo
+
+    :rust:struct:`lief::macho::binding_info::Indirect`
+    :py:class:`lief.MachO.IndirectBindingInfo`
+    :cpp:class:`LIEF::MachO::IndirectBindingInfo`
+
+.. |lief-macho-dynamicsymbolcommand| lief-api:: lief.MachO.DynamicSymbolCommand
+
+    :rust:struct:`lief::macho::commands::DynamicSymbolCommand`
+    :py:class:`lief.MachO.DynamicSymbolCommand`
+    :cpp:class:`LIEF::MachO::DynamicSymbolCommand`
+
+.. |lief-macho-binary-bindings| lief-api:: lief.MachO.Binary.bindings()
+
+    :rust:method:`lief::macho::Binary::bindings [struct]`
+    :py:attr:`lief.MachO.Binary.bindings`
+    :cpp:func:`LIEF::MachO::Binary::bindings`
+
+.. |lief-macho-symbol-demangled_name| lief-api:: lief.MachO.Symbol.demangled_name()
+
+    :rust:method:`lief::macho::Symbol::demangled_name [struct]`
+    :py:attr:`lief.MachO.Symbol.demangled_name`
+    :cpp:func:`LIEF::MachO::Symbol::demangled_name`
+
+.. |lief-macho-parse| lief-api:: lief.MachO.parse()
+
+    :rust:method:`lief::macho::FatBinary::parse [struct]`
+    :py:func:`lief.MachO.parse`
+    :cpp:func:`LIEF::MachO::Parser::parse`
+
+.. |lief-macho-fatbinary| lief-api:: lief.MachO.FatBinary
+
+    :rust:struct:`lief::macho::FatBinary`
+    :py:class:`lief.MachO.FatBinary`
+    :cpp:class:`LIEF::MachO::FatBinary`
+
+.. |lief-macho-binary-write| lief-api:: lief.MachO.Binary.write()
+
+    :py:meth:`lief.MachO.Binary.write`
+    :cpp:func:`LIEF::MachO::Binary::write`
+
+.. |lief-macho-fatbinary-write| lief-api:: lief.MachO.FatBinary.write()
+
+    :py:meth:`lief.FatBinary.Binary.write`
+    :cpp:func:`LIEF::FatBinary::Binary::write`
+
+.. |lief-macho-parser-config| lief-api:: lief.MachO.ParserConfig
+
+    :py:class:`lief.MachO.ParserConfig`
+    :cpp:class:`LIEF::MachO::ParserConfig`
+
+.. |lief-macho-builder-config| lief-api:: lief.MachO.Builder.config_t
+
+    :py:class:`lief.MachO.Builder.config_t`
+    :cpp:class:`LIEF::MachO::Builder::config_t`

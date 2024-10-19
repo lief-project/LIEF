@@ -29,6 +29,12 @@
 
 namespace LIEF::MachO::py {
 
+// (rtti)Trick to avoid duplication clash with DyldExportsTrie::it_export_info
+class dyldinfo_it_export_info : public DyldInfo::it_export_info {
+  public:
+  using DyldInfo::it_export_info::it_export_info;
+};
+
 template<>
 void create<DyldInfo>(nb::module_& m) {
   using namespace LIEF::py;
@@ -83,10 +89,7 @@ void create<DyldInfo>(nb::module_& m) {
   ;
 
   init_ref_iterator<DyldInfo::it_binding_info>(dyld, "it_binding_info");
-
-  try {
-    init_ref_iterator<DyldInfo::it_export_info>(dyld, "it_export_info");
-  } catch (const std::runtime_error&) { }
+  init_ref_iterator<dyldinfo_it_export_info>(dyld, "it_export_info");
 
   dyld
     .def_prop_rw("rebase",

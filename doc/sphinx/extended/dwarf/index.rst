@@ -3,13 +3,24 @@
 :fa:`solid fa-bars-staggered` DWARF
 -----------------------------------
 
+.. toctree::
+  :caption: <i class="fa-solid fa-code">&nbsp;</i>API
+  :maxdepth: 1
+
+  cpp
+  python
+  rust
+
+----
+
+Introduction
+************
+
 DWARF debug info can be embedded in the binary itself (default behavior for ELF)
 or externalized in a dedicated file.
 
 If the DWARF debug info are embedded in the binary itself, one can use the
-attribute: :attr:`lief.Binary.debug_info` or :cpp:func:`LIEF::Binary::debug_info`
-to access an instance of :class:`lief.dwarf.DebugInfo` or
-:cpp:class:`LIEF::dwarf::DebugInfo`:
+attribute: |lief-dwarf-binary-debug-info| to access an instance of |lief-dwarf-debug-info|:
 
 .. tabs::
 
@@ -44,9 +55,8 @@ to access an instance of :class:`lief.dwarf.DebugInfo` or
             // DWARF debug info
         }
 
-On the other hand, we can also use the function: :cpp:func:`LIEF::dwarf::load`
-or :func:`lief.dwarf.load` to load a DWARF file regardless whether it is
-embedded or not:
+On the other hand, we can also use the function: |lief-dwarf-load| to load a
+DWARF file regardless whether it is embedded or not:
 
 .. tabs::
 
@@ -76,8 +86,8 @@ embedded or not:
         let dbg = lief::dwarf::load("external_dwarf");
         let dbg = lief::dwarf::load("debug.dwo");
 
-At this point, one can use all the API exposed in :class:`lief.dwarf.DebugInfo` or
-:cpp:class:`LIEF::dwarf::DebugInfo` on the instantiated debug info:
+At this point, one can use all the API exposed in |lief-dwarf-debug-info| on the
+instantiated debug info:
 
 .. tabs::
 
@@ -174,10 +184,15 @@ At this point, one can use all the API exposed in :class:`lief.dwarf.DebugInfo` 
 
 ----
 
+API
+****
+
 You can find the documentation of the API for the different languages here:
 
 :fa:`brands fa-python` :doc:`Python API <python>`
 
 :fa:`regular fa-file-code` :doc:`C++ API <cpp>`
 
-:fa:`brands fa-rust` Rust API: |lief-rust-doc-nightly|
+:fa:`brands fa-rust` Rust API: :rust:module:`lief::dwarf`
+
+.. include:: ../../_cross_api.rst

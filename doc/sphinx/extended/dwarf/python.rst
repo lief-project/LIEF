@@ -142,10 +142,3 @@ Pointer
   :parts: 2
 
 .. autoclass:: lief.dwarf.types.Pointer
-
-----------
-
-debug_location_t
-****************
-
-.. autoclass:: lief.debug_location_t

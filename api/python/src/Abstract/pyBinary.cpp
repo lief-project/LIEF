@@ -82,13 +82,13 @@ void create<Binary>(nb::module_& m) {
         if the binary embeds the DWARF debug info in the binary itself.
 
         For PE file, this function tries to find the **external** PDB using
-        the :attr:`lief::PE.CodeViewPDB.filename` output (if present). One can also
+        the :attr:`lief.PE.CodeViewPDB.filename` output (if present). One can also
         use :func:`lief.pdb.load` to manually load a PDB.
 
         .. warning::
 
             This function requires LIEF's extended version otherwise it
-            **always** return a nullptr
+            **always** return ``None``
         )doc"_doc,
         nb::keep_alive<0, 1>())
 

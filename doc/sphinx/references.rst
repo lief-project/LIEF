@@ -1,6 +1,6 @@
 
-References
-==========
+:fa:`fa-solid fa-book-bookmark` References
+==========================================
 
 Blog Posts & White Papers
 --------------------------

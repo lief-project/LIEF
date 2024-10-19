@@ -3,18 +3,28 @@
 :fa:`brands fa-windows` PDB
 ----------------------------
 
+.. toctree::
+  :caption: <i class="fa-solid fa-code">&nbsp;</i>API
+  :maxdepth: 1
+
+  cpp
+  python
+  rust
+
+----
+
+Introduction
+************
+
 Compared to DWARF debug info, the PDB debug info are always externalized from
 the original binary. Nevertheless, the original binary keeps the
-path of the PDB file in the attribute :attr:`lief.PE.CodeViewPDB.filename` /
-:cpp:func:`LIEF::PE::CodeViewPDB::filename`.
+path of the PDB file in the attribute |lief-pe-codeviewpdb-filename|.
 
-Based on this fact, :attr:`lief.Binary.debug_info` or :cpp:func:`LIEF::Binary::debug_info`
-tries to instantiate a :class:`lief.pdb.DebugInfo` or a
-:cpp:class:`LIEF::pdb::DebugInfo` based on this file path. If it fails, it
-returns a nullptr/None.
+Based on this fact, |lief-pdb-binary-debug-info|
+tries to instantiate a |lief-pdb-debug-info| based on this file path. If it fails, it
+returns a nullptr or None.
 
-One can also instantiate a :class:`lief.pdb.DebugInfo`/:cpp:class:`LIEF::pdb::DebugInfo`
-using :cpp:func:`LIEF::pdb::load` or :func:`lief.pdb.load`:
+One can also instantiate a |lief-pdb-debug-info| using |lief-pdb-load|:
 
 .. tabs::
 
@@ -57,9 +67,8 @@ using :cpp:func:`LIEF::pdb::load` or :func:`lief.pdb.load`:
         let pdb = lief::pdb::load("some.pdb");
 
 
-At this point, the PDB instance
-(:class:`lief.pdb.DebugInfo`/:cpp:class:`LIEF::pdb::DebugInfo`) can be used to
-explore the PDB debug info:
+At this point, the PDB instance (|lief-pdb-debug-info|) can be used to explore
+the PDB debug info:
 
 .. tabs::
 
@@ -152,6 +161,10 @@ explore the PDB debug info:
             }
         }
 
+----
+
+API
+****
 
 You can find the documentation of the API for the different languages here:
 
@@ -159,4 +172,6 @@ You can find the documentation of the API for the different languages here:
 
 :fa:`regular fa-file-code` :doc:`C++ API <cpp>`
 
-:fa:`brands fa-rust` Rust API: |lief-rust-doc-nightly|
+:fa:`brands fa-rust` Rust API: :rust:module:`lief::pdb`
+
+.. include:: ../../_cross_api.rst

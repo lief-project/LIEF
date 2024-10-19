@@ -3,8 +3,8 @@
 
 .. _compilation_ref:
 
-Compilation
-===========
+:fa:`solid fa-laptop-code` Compilation
+======================================
 
 To compile **LIEF**, you need at least the following requirements:
 
@@ -137,39 +137,29 @@ the dependencies in the public headers. This table summarizes these
 dependencies and their scope. ``internal`` means that it is required to compile
 LIEF but it is not required to use LIEF. ``external`` means that it is required for both.
 
-+-----------------------------------+--------------+--------------------------------------------+
-| Dependency                        | Scope        | Purpose                                    |
-+-----------------------------------+--------------+--------------------------------------------+
-| `tcb/span <span_ref>`_            | ``external`` | C++11 span interface                       |
-+-----------------------------------+--------------+--------------------------------------------+
-| `TL Expected <tl_ref>`_           | ``external`` | Error handling (see: :ref:`err_handling` ) |
-+-----------------------------------+--------------+--------------------------------------------+
-| `spdlog <spdlog_ref>`_            | ``internal`` | Logging                                    |
-+-----------------------------------+--------------+--------------------------------------------+
-| `MbedTLS <mbedtls_ref>`_          | ``internal`` | ASN.1 parser / Hash functions              |
-+-----------------------------------+--------------+--------------------------------------------+
-| `utfcpp <utfcpp_ref>`_            | ``internal`` | Unicode support (for PE and DEX files)     |
-+-----------------------------------+--------------+--------------------------------------------+
-| `json <json_ref>`_                | ``internal`` | Serialize LIEF's object into JSON          |
-+-----------------------------------+--------------+--------------------------------------------+
-| `nanobind <nanobind_ref>`_        | ``internal`` | Python bindings                            |
-+-----------------------------------+--------------+--------------------------------------------+
-| `Frozen <frozen_ref>`_            | ``internal`` | ``constexpr`` containers                   |
-+-----------------------------------+--------------+--------------------------------------------+
-| `Catch2 <catch_ref>`_             | ``internal`` | Testing                                    |
-+-----------------------------------+--------------+--------------------------------------------+
-| `Melkor ELF Fuzzer <melkor_ref>`_ | ``internal`` | ELF Fuzzing                                |
-+-----------------------------------+--------------+--------------------------------------------+
-
-.. _tl_ref: https://github.com/TartanLlama/expected
-.. _span_ref: https://github.com/tcbrindle/span
-.. _spdlog_ref: https://github.com/gabime/spdlog
-.. _mbedtls_ref: https://github.com/Mbed-TLS/mbedtls
-.. _utfcpp_ref: https://github.com/nemtrif/utfcpp
-.. _json_ref: https://github.com/nlohmann/json
-.. _nanobind_ref: https://github.com/wjakob/nanobind
-.. _frozen_ref: https://github.com/serge-sans-paille/frozen
-.. _melkor_ref: https://github.com/IOActive/Melkor_ELF_Fuzzer
++------------------------------------------+--------------+--------------------------------------------+
+| Dependency                               | Scope        | Purpose                                    |
++==========================================+==============+============================================+
+| :github-ref:`tcb/span`                   | ``external`` | C++11 span interface                       |
++------------------------------------------+--------------+--------------------------------------------+
+| :github-ref:`TartanLlama/expected`       | ``external`` | Error handling (see: :ref:`err_handling` ) |
++------------------------------------------+--------------+--------------------------------------------+
+| :github-ref:`gabime/spdlog`              | ``internal`` | Logging                                    |
++------------------------------------------+--------------+--------------------------------------------+
+| :github-ref:`Mbed-TLS/mbedtls`           | ``internal`` | ASN.1 parser / Hash functions              |
++------------------------------------------+--------------+--------------------------------------------+
+| :github-ref:`nemtrif/utfcpp`             | ``internal`` | Unicode support (for PE and DEX files)     |
++------------------------------------------+--------------+--------------------------------------------+
+| :github-ref:`nlohmann/json`              | ``internal`` | Serialize LIEF's object into JSON          |
++------------------------------------------+--------------+--------------------------------------------+
+| :github-ref:`wjakob/nanobind`            | ``internal`` | Python bindings                            |
++------------------------------------------+--------------+--------------------------------------------+
+| :github-ref:`serge-sans-paille/frozen`   | ``internal`` | ``constexpr`` containers                   |
++------------------------------------------+--------------+--------------------------------------------+
+| :github-ref:`IOActive/Melkor_ELF_Fuzzer` | ``internal`` | Testing                                    |
++------------------------------------------+--------------+--------------------------------------------+
+| :github-ref:`catchorg/Catch2`            | ``internal`` | ELF Fuzzing                                |
++------------------------------------------+--------------+--------------------------------------------+
 
 Except MbedTLS, all these dependencies are header-only and they are by default embedded/managed by LIEF such as it
 eases the compilation and the integration.
@@ -195,10 +185,10 @@ As a result, LIEF can be, for instance, compiled with the following configuratio
 
 .. code-block:: console
 
-   $ cmake .. -GNinja \
-              -DLIEF_OPT_NLOHMANN_JSON_EXTERNAL=ON \
+   $ cmake .. -GNinja                                                                    \
+              -DLIEF_OPT_NLOHMANN_JSON_EXTERNAL=ON                                       \
               -Dnlohmann_json_DIR=/lief-third-party/json/install/lib/cmake/nlohmann_json \
-              -DLIEF_OPT_MBEDTLS_EXTERNAL=on \
+              -DLIEF_OPT_MBEDTLS_EXTERNAL=on                                             \
               -DMbedTLS_DIR=/lief-third-party/mbedtls/install/cmake
 
 .. warning::

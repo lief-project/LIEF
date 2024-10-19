@@ -1,3 +1,5 @@
+.. _pe-authenticode:
+
 13 - PE Authenticode
 --------------------
 

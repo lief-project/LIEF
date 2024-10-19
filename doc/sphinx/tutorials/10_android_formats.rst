@@ -1,3 +1,5 @@
+.. _tuto-android-formats:
+
 10 - Android formats
 --------------------
 
