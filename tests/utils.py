@@ -112,6 +112,27 @@ def is_server_ci() -> bool:
 def has_private_samples() -> bool:
     return (Path(lief_samples_dir()) / "private").is_dir()
 
+def has_dyld_shared_cache_samples():
+    if (Path(lief_samples_dir()) / "dyld_shared_cache").is_dir():
+        return True
+
+    dsc_samples_dir = os.getenv("LIEF_DSC_SAMPLES_DIR", None)
+    if dsc_samples_dir is None:
+        return False
+
+    return Path(dsc_samples_dir).is_dir()
+
+def get_dsc_sample(suffix: str) -> Path:
+    dir1 = Path(lief_samples_dir()) / "dyld_shared_cache"
+    if dir1.is_dir():
+        return dir1 / suffix
+
+    dsc_samples_dir = os.environ["LIEF_DSC_SAMPLES_DIR"]
+    if dsc_samples_dir is None:
+        raise RuntimeError("Missing 'LIEF_DSC_SAMPLES_DIR'")
+
+    return Path(dsc_samples_dir).resolve().absolute() / suffix
+
 def _win_gui_exec_server(executable: Path, timeout: int = 60) -> Optional[Tuple[int, str]]:
     si = subprocess.STARTUPINFO() # type: ignore[attr-defined]
     si.dwFlags = subprocess.STARTF_USESTDHANDLES | subprocess.STARTF_USESHOWWINDOW # type: ignore[attr-defined]

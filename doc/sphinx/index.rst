@@ -40,6 +40,7 @@ Welcome to LIEF's documentation!
   extended/dwarf/index
   extended/pdb/index
   extended/objc/index
+  extended/dsc/index
 
 .. toctree::
   :caption: <i class="fa-solid fa-layer-group">&nbsp;</i>Tutorials

@@ -29,6 +29,7 @@
 #include <LIEF/DWARF.hpp>
 #include <LIEF/PDB.hpp>
 #include <LIEF/ObjC.hpp>
+#include <LIEF/DyldSharedCache.hpp>
 #include <LIEF/logging.hpp>
 #include <LIEF/platforms.hpp>
 #include <LIEF/debug_loc.hpp>

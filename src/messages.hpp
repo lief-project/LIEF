@@ -36,6 +36,12 @@
   "Please checkout " LIEF_DOC_PREFIX "/latest/extended/intro.html for the details"
 #endif
 
+#if !defined(DSC_NOT_SUPPORTED)
+#define DSC_NOT_SUPPORTED                                         \
+  "Dyld shared cache is not available for this build.\n"                       \
+  "Please checkout " LIEF_DOC_PREFIX "/latest/extended/intro.html for the details"
+#endif
+
 #if !defined(NEEDS_EXTENDED_MSG)
 #define NEEDS_EXTENDED_MSG                                         \
   "This function requires the extended version of LIEF.\n"                       \

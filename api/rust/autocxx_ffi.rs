@@ -594,5 +594,35 @@ include_cpp! {
     generate_pod!("ObjC_DeclOpt")
     block_constructors!("ObjC_DeclOpt")
 
+    // -------------------------------------------------------------------------
+    // Dyld Shared Cache
+    // -------------------------------------------------------------------------
+    generate!("dsc_enable_cache")
+    generate!("dsc_enable_cache_from_dir")
+
+    generate!("dsc_DyldSharedCache")
+    block_constructors!("dsc_DyldSharedCache")
+
+    generate!("dsc_DyldSharedCache_it_libraries")
+    block_constructors!("dsc_DyldSharedCache_it_libraries")
+
+    generate!("dsc_DyldSharedCache_it_mapping_info")
+    block_constructors!("dsc_DyldSharedCache_it_mapping_info")
+
+    generate!("dsc_DyldSharedCache_it_subcaches")
+    block_constructors!("dsc_DyldSharedCache_it_subcaches")
+
+    generate!("dsc_Dylib")
+    block_constructors!("dsc_Dylib")
+
+    generate_pod!("dsc_Dylib_extract_opt")
+    block_constructors!("dsc_Dylib_extract_opt")
+
+    generate!("dsc_MappingInfo")
+    block_constructors!("dsc_MappingInfo")
+
+    generate!("dsc_SubCache")
+    block_constructors!("dsc_SubCache")
+
     safety!(unsafe)
 }

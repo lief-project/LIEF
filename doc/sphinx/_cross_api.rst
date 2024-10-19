@@ -343,3 +343,61 @@
 
     :py:class:`lief.MachO.Builder.config_t`
     :cpp:class:`LIEF::MachO::Builder::config_t`
+
+.. dyld shared cache ===========================================================
+
+.. |lief-dsc-load| lief-api:: lief.dsc.load()
+
+    :rust:func:`lief::dsc::load_from_path`
+    :rust:func:`lief::dsc::load_from_files`
+    :py:func:`lief.dsc.load`
+    :cpp:func:`LIEF::dsc::load`
+
+.. |lief-dsc-dyldsharedcache| lief-api:: lief.dsc.DyldSharedCache
+
+    :rust:struct:`lief::dsc::DyldSharedCache`
+    :py:class:`lief.dsc.DyldSharedCache`
+    :cpp:class:`LIEF::dsc::DyldSharedCache`
+
+.. |lief-dsc-dyldsharedcache-libraries| lief-api:: lief.dsc.DyldSharedCache.libraries()
+
+    :rust:method:`lief::dsc::DyldSharedCache::libraries [struct]`
+    :py:attr:`lief.dsc.DyldSharedCache.libraries`
+    :cpp:func:`LIEF::dsc::DyldSharedCache::libraries`
+
+.. |lief-dsc-dylib| lief-api:: lief.dsc.Dylib
+
+    :rust:struct:`lief::dsc::Dylib`
+    :py:class:`lief.dsc.Dylib`
+    :cpp:class:`LIEF::dsc::Dylib`
+
+.. |lief-dsc-dylib-eopt| lief-api:: lief.dsc.Dylib.extract_opt_t
+
+    :rust:struct:`lief::dsc::dylib::ExtractOpt`
+    :py:class:`lief.dsc.Dylib.extract_opt_t`
+    :cpp:struct:`LIEF::dsc::Dylib::extract_opt_t`
+
+.. |lief-dsc-dylib-eopt-fix_branches| lief-api:: lief.dsc.Dylib.extract_opt_t.fix_branches
+
+    :rust:member:`lief::dsc::dylib::ExtractOpt::fix_branches [struct]`
+    :py:attr:`lief.dsc.Dylib.extract_opt_t.fix_branches`
+    :cpp:member:`LIEF::dsc::Dylib::extract_opt_t::fix_branches`
+
+.. |lief-dsc-enable_cache| lief-api:: lief.dsc.enable_cache()
+
+    :rust:func:`lief::dsc::enable_cache`
+    :py:func:`lief.dsc.enable_cache`
+    :cpp:func:`LIEF::dsc::enable_cache`
+
+.. |lief-dsc-dylib-get| lief-api:: lief.dsc.Dylib.get()
+
+    :rust:method:`lief::dsc::Dylib::get [struct]`
+    :py:meth:`lief.dsc.Dylib.get`
+    :cpp:func:`LIEF::dsc::Dylib::get`
+
+.. |lief-dsc-dyldsharedcache-enable_caching| lief-api:: lief.dsc.DyldSharedCache.enable_caching
+
+    :rust:method:`lief::dsc::DyldSharedCache::enable_caching [struct]`
+    :py:meth:`lief.dsc.DyldSharedCache.enable_caching`
+    :cpp:func:`LIEF::dsc::DyldSharedCache::enable_caching`
+

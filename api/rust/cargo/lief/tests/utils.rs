@@ -11,6 +11,11 @@ pub fn get_sample_dir() -> Option<String> {
     }
 }
 
+pub fn get_sample_path() -> PathBuf {
+    let sample_dir = get_sample_dir().unwrap();
+    PathBuf::from_str(sample_dir.as_str()).expect("Can't create a PathBuf")
+}
+
 pub fn get_sample(path: &Path) -> Option<PathBuf> {
     let sample_dir = get_sample_dir()?;
     let sample_dir_path = PathBuf::from_str(sample_dir.as_str()).ok()?;

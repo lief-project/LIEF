@@ -1,6 +1,6 @@
 from typing import Any, ClassVar, Optional, Union
 
-from . import ART, Android, DEX, ELF, MachO, OAT, PE, VDEX, dwarf, logging, objc, pdb # type: ignore
+from . import ART, Android, DEX, ELF, MachO, OAT, PE, VDEX, dsc, dwarf, logging, objc, pdb # type: ignore
 from typing import overload
 import io
 import lief # type: ignore

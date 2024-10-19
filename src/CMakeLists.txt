@@ -59,3 +59,6 @@ if(NOT LIEF_OBJC_SUPPORT)
   add_subdirectory(ObjC)
 endif()
 
+if(NOT LIEF_DYLD_SHARED_CACHE_SUPPORT)
+  add_subdirectory(dyld-shared-cache)
+endif()

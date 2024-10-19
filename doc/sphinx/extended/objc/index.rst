@@ -107,12 +107,6 @@ a header-like output of all the Objective-C metadata found in the binary.
         }
         println!("{}", metadata.to_decl());
 
-
-This Objective-C support is based on iCDump which is detailed here:
-
-- https://www.romainthomas.fr/post/23-01-icdump/
-- https://github.com/romainthomas/iCDump
-
 Class Dump
 **********
 
@@ -204,7 +198,13 @@ this option:
 
       for cls in metadata.classes:
           print(cls.to_decl(config))
-----
+
+:fa:`solid fa-book-open-reader` References
+*******************************************
+
+- :github-ref:`romainthomas/iCDump`
+- :github-ref:`nygard/class-dump`
+- https://www.romainthomas.fr/post/23-01-icdump/
 
 API
 ****

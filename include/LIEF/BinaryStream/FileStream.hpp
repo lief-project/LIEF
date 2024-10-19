@@ -26,7 +26,7 @@
 
 namespace LIEF {
 
-//! Stream interface over a std::ifstream
+//! Stream interface over a `std::ifstream`
 class LIEF_API FileStream : public BinaryStream {
   public:
   static result<FileStream> from_file(const std::string& file);

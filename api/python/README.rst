@@ -15,6 +15,7 @@ LIEF Extended:
 
   * DWARF/PDB Support
   * Objective-C Metadata
+  * dyld shared cache
 
 Checkout: https://lief.re/doc/latest/extended/intro.html for the details
 

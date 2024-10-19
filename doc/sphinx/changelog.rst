@@ -115,6 +115,7 @@
     |lief-objc-declopt|.
 
 :Extended:
+  * Support for :ref:`Dyld shared cache <extended-dsc>`
   * |lief-elf-symbol-demangled_name| is working on **all** platforms
     (not only unix-based builds)
   * |lief-macho-symbol-demangled_name| is working on **all** platforms

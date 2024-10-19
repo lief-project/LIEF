@@ -148,6 +148,7 @@ class MachO_Binary : public AbstractBinary {
   };
 
   MachO_Binary(const lief_t& bin) : AbstractBinary(bin) {}
+  MachO_Binary(std::unique_ptr<lief_t> ptr) : AbstractBinary(std::move(ptr)) {}
 
   auto header() const {
     return std::make_unique<MachO_Header>(impl().header());

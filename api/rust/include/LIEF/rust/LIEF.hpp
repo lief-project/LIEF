@@ -22,6 +22,7 @@
 #include "LIEF/rust/PDB.hpp"
 #include "LIEF/rust/DWARF.hpp"
 #include "LIEF/rust/ObjC.hpp"
+#include "LIEF/rust/DyldSharedCache.hpp"
 
 #include "LIEF/rust/Span.hpp"
 #include "LIEF/rust/range.hpp"

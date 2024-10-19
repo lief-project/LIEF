@@ -57,7 +57,7 @@
 //! ## Additional Information
 //!
 //! For more details about the install procedure and the configuration, please check:
-//! https://lief.re/doc/latest/api/rust/index.html
+//! <https://lief.re/doc/latest/api/rust/index.html>
 
 #![doc(html_no_source)]
 
@@ -80,6 +80,9 @@ pub mod pdb;
 pub mod dwarf;
 
 pub mod objc;
+
+pub mod dsc;
+
 pub mod debug_info;
 mod range;
 

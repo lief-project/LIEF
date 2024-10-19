@@ -29,9 +29,10 @@
 #cmakedefine LIEF_ART_SUPPORT      @LIEF_ART_SUPPORT@
 
 // Extended features
-#cmakedefine LIEF_DEBUG_INFO       @LIEF_DEBUG_INFO_SUPPORT@
-#cmakedefine LIEF_OBJC             @LIEF_OBJC_SUPPORT@
-#cmakedefine LIEF_EXTENDED         @LIEF_EXTENDED@
+#cmakedefine LIEF_DEBUG_INFO        @LIEF_DEBUG_INFO_SUPPORT@
+#cmakedefine LIEF_OBJC              @LIEF_OBJC_SUPPORT@
+#cmakedefine LIEF_DYLD_SHARED_CACHE @LIEF_DYLD_SHARED_CACHE_SUPPORT@
+#cmakedefine LIEF_EXTENDED          @LIEF_EXTENDED@
 
 // LIEF options
 #cmakedefine LIEF_JSON_SUPPORT      @ENABLE_JSON_SUPPORT@

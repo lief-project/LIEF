@@ -31,8 +31,9 @@ option(LIEF_DEX            "Build LIEF with DEX module"                 ON)
 option(LIEF_ART            "Build LIEF with ART module"                 ON)
 
 # Extended features
-option(LIEF_DEBUG_INFO     "Build LIEF with DWARF/PDB support"          OFF)
-option(LIEF_OBJC           "Build LIEF with ObjC metadata support"      OFF)
+option(LIEF_DEBUG_INFO        "Build LIEF with DWARF/PDB support"          OFF)
+option(LIEF_OBJC              "Build LIEF with ObjC metadata support"      OFF)
+option(LIEF_DYLD_SHARED_CACHE "Build LIEF with Dyld shared cache support"  OFF)
 
 cmake_dependent_option(LIEF_PYTHON_EDITABLE "Make an editable build " OFF
                        "LIEF_PYTHON_API" OFF)
@@ -210,6 +211,10 @@ if (LIEF_OBJC)
   set(LIEF_OBJC_SUPPORT 1)
 endif()
 
-if (LIEF_DEBUG_INFO OR LIEF_OBJC) # or any other extended feature
+if (LIEF_DYLD_SHARED_CACHE)
+  set(LIEF_DYLD_SHARED_CACHE_SUPPORT 1)
+endif()
+
+if (LIEF_DEBUG_INFO OR LIEF_OBJC OR LIEF_DYLD_SHARED_CACHE) # or any other extended feature
   set(LIEF_EXTENDED 1)
 endif()

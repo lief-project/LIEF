@@ -66,6 +66,11 @@ inline std::unique_ptr<T> try_unique(std::unique_ptr<V> value) {
 }
 
 template<class T, class V>
+inline std::unique_ptr<T> try_unique(std::unique_ptr<const V> value) {
+  return try_unique<T, V>(std::unique_ptr<V>(const_cast<V*>(value.release())));
+}
+
+template<class T, class V>
 inline std::unique_ptr<T> from_result(const LIEF::result<V> value) {
   return value ? std::make_unique<T>(std::move(*value)) : nullptr;
 }

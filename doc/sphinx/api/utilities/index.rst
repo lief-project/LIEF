@@ -23,7 +23,7 @@ LIEF exposes a demangling API for the following formats:
 
       void __cdecl h(int)
 
-  .. tab:: :fa:`brands fa-windows` Rust
+  .. tab:: :fa:`brands fa-rust` Rust
 
     **Input**
 

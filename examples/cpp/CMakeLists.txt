@@ -5,6 +5,7 @@ set(LIEF_CPP_EXAMPLES
   dwarf_inspect.cpp
   pdb_inspect.cpp
   objc_inspect.cpp
+  dyld_shared_cache_reader.cpp
 )
 
 if (LIEF_ELF)

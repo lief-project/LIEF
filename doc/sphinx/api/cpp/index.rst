@@ -12,17 +12,25 @@ Iterators
 ---------
 
 .. doxygenclass:: LIEF::ref_iterator
-   :project: lief
 
 .. doxygentypedef:: LIEF::const_ref_iterator
-   :project: lief
 
 .. doxygenclass:: LIEF::filter_iterator
-   :project: lief
 
 .. doxygentypedef:: LIEF::const_filter_iterator
-   :project: lief
+
+.. doxygenclass:: LIEF::iterator_range
 
 
+BinaryStream
+------------
 
+.. doxygenclass:: LIEF::BinaryStream
 
+.. doxygenclass:: LIEF::FileStream
+
+.. doxygenclass:: LIEF::SpanStream
+
+.. doxygenclass:: LIEF::VectorStream
+
+.. doxygenclass:: LIEF::MemoryStream
