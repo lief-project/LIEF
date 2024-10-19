@@ -115,6 +115,8 @@
     |lief-objc-declopt|.
 
 :Extended:
+  * Linux Python wheels are now ``manylinux_2_27`` compliants. In other words,
+    they are working with a glibc from at least 2018.
   * Support for :ref:`Dyld shared cache <extended-dsc>`
   * |lief-elf-symbol-demangled_name| is working on **all** platforms
     (not only unix-based builds)
