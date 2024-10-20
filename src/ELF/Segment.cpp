@@ -331,6 +331,12 @@ void Segment::content(std::vector<uint8_t> content) {
                 content.size(), to_string(type()), virtual_size(), node.size());
   }
 
+  auto max_offset = (int64_t)node.offset() + (int64_t)content.size();
+  if (max_offset < 0 || max_offset > (int64_t)binary_content.size()) {
+    LIEF_ERR("Write out of range");
+    return;
+  }
+
   physical_size(node.size());
 
   std::move(std::begin(content), std::end(content),

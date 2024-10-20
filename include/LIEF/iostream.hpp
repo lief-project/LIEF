@@ -46,8 +46,14 @@ class vector_iostream {
     return write(sp.data(), sp.size());
   }
 
-  vector_iostream& write(std::vector<uint8_t> s);
-  vector_iostream& write(const std::string& s);
+  vector_iostream& write(std::vector<uint8_t> s) {
+    return write(s.data(), s.size());
+  }
+
+  vector_iostream& write(const std::string& s) {
+    return write(reinterpret_cast<const uint8_t*>(s.c_str()), s.size() + 1);
+  }
+
   vector_iostream& write(size_t count, uint8_t value) {
     raw_.insert(std::end(raw_), count, value);
     current_pos_ += count;

@@ -54,43 +54,11 @@ vector_iostream& vector_iostream::write(const uint8_t* s, std::streamsize n) {
   if (raw_.size() < (pos + n)) {
     raw_.resize(pos + n);
   }
-
-  auto it = std::begin(raw_);
-  std::advance(it, pos);
-  std::copy(s, s + n, it);
-
+  std::copy(s, s + n, raw_.data() + pos);
   current_pos_ += n;
+
   return *this;
 }
-
-vector_iostream& vector_iostream::write(std::vector<uint8_t> s) {
-  const auto pos = static_cast<size_t>(tellp());
-  if (raw_.size() < (pos + s.size())) {
-    raw_.resize(pos + s.size());
-  }
-
-  auto it = std::begin(raw_);
-  std::advance(it, pos);
-  std::move(std::begin(s), std::end(s), it);
-
-  current_pos_ += s.size();
-  return *this;
-}
-
-vector_iostream& vector_iostream::write(const std::string& s) {
-  const auto pos = static_cast<size_t>(tellp());
-  if (raw_.size() < (pos + s.size() + 1)) {
-    raw_.resize(pos + s.size() + 1);
-  }
-
-  auto it = std::begin(raw_);
-  std::advance(it, pos);
-  std::copy(std::begin(s), std::end(s), it);
-
-  current_pos_ += s.size() + 1;
-  return *this;
-}
-
 
 vector_iostream& vector_iostream::write_uleb128(uint64_t value) {
   uint8_t byte;
