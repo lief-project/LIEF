@@ -199,6 +199,11 @@ span<const uint8_t> Section::content() const {
   }
   const std::vector<uint8_t>& binary_content = datahandler_->content();
   DataHandler::Node& node = res.value();
+  auto end_offset = (int64_t)node.offset() + (int64_t)node.size();
+  if (end_offset <= 0 || end_offset > (int64_t)binary_content.size()) {
+    return {};
+  }
+
   const uint8_t* ptr = binary_content.data() + node.offset();
   return {ptr, ptr + node.size()};
 }
@@ -248,6 +253,12 @@ void Section::content(const std::vector<uint8_t>& data) {
               data.size(), name(), node.size());
   }
 
+  auto max_offset = (int64_t)node.offset() + (int64_t)data.size();
+  if (max_offset < 0 || max_offset > (int64_t)binary_content.size()) {
+    LIEF_ERR("Write out of range");
+    return;
+  }
+
   size(data.size());
 
   std::copy(std::begin(data), std::end(data),
@@ -291,6 +302,12 @@ void Section::content(std::vector<uint8_t>&& data) {
   }
 
   size(data.size());
+
+  auto max_offset = (int64_t)node.offset() + (int64_t)data.size();
+  if (max_offset < 0 || max_offset > (int64_t)binary_content.size()) {
+    LIEF_ERR("Write out of range");
+    return;
+  }
 
   std::move(std::begin(data), std::end(data),
             std::begin(binary_content) + node.offset());

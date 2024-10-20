@@ -86,6 +86,12 @@ bool Builder::should_swap() const {
 
 
 void Builder::build() {
+  const Header::CLASS elf_class = binary_->type();
+  if (elf_class != Header::CLASS::ELF32 && elf_class != Header::CLASS::ELF64) {
+    LIEF_ERR("Invalid ELF class");
+    return;
+  }
+
   auto res = binary_->type() == Header::CLASS::ELF32 ?
              build<details::ELF32>() : build<details::ELF64>();
   if (!res) {
