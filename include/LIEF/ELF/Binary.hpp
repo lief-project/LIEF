@@ -16,7 +16,9 @@
 #ifndef LIEF_ELF_BINARY_H
 #define LIEF_ELF_BINARY_H
 
+#include <string_view>
 #include <vector>
+#include <map>
 #include <memory>
 
 #include "LIEF/visibility.h"
@@ -149,6 +151,9 @@ class LIEF_API Binary : public LIEF::Binary {
 
   //! Internal container for storing ELF's Symbol
   using symbols_t = std::vector<std::unique_ptr<Symbol>>;
+
+  //! Internal container for fast lookup of symbols
+  using symbol_indices_t = std::map<std::string_view, uint32_t>;
 
   //! Iterator which outputs the Dynamic Symbol& object
   using it_dynamic_symbols = ref_iterator<symbols_t&, Symbol*>;
@@ -1021,6 +1026,8 @@ class LIEF_API Binary : public LIEF::Binary {
   dynamic_entries_t dynamic_entries_;
   symbols_t dynamic_symbols_;
   symbols_t symtab_symbols_;
+  symbol_indices_t dynamic_symbol_indices_;
+  symbol_indices_t symtab_symbol_indices_;
   relocations_t relocations_;
   symbols_version_t symbol_version_table_;
   symbols_version_requirement_t symbol_version_requirements_;
