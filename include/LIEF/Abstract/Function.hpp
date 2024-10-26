@@ -18,76 +18,106 @@
 
 #include <vector>
 #include <string>
-#include <set>
 
 #include "LIEF/Abstract/Symbol.hpp"
 #include "LIEF/visibility.h"
+#include "LIEF/enums.hpp"
 
 namespace LIEF {
 
-//! Class that represents a function in the binary
+/// Class that represents a function in the binary
 class LIEF_API Function : public Symbol {
   public:
-  //! Flags used to characterize the semantic
-  //! of the function
-  enum class FLAGS {
+  /// Flags used to characterize the semantic of the function
+  enum class FLAGS : uint32_t {
     NONE = 0,
-    //! The function acts as constructor.
-    //!
-    //! Usually this flag is associated with functions
-    //! that are located in the ``.init_array``, ``__mod_init_func`` or ``.tls`` sections
-    CONSTRUCTOR,
+    /// The function acts as constructor.
+    ///
+    /// Usually this flag is associated with functions
+    /// that are located in the `.init_array`, `__mod_init_func` or `.tls` sections
+    CONSTRUCTOR = 1 << 0,
 
-    //! The function acts a destructor.
-    //!
-    //! Usually this flag is associated with functions
-    //! that are located in the ``.fini_array`` or ``__mod_term_func`` sections
-    DESTRUCTOR,
+    /// The function acts a destructor.
+    ///
+    /// Usually this flag is associated with functions
+    /// that are located in the `.fini_array` or `__mod_term_func` sections
+    DESTRUCTOR = 1 << 1,
 
-    //! The function is associated with Debug information
-    DEBUG_INFO,
+    /// The function is associated with Debug information
+    DEBUG_INFO = 1 << 2,
 
-    //! The function is exported by the binary and the address() method
-    //! returns its virtual address in the binary
-    EXPORTED,
+    /// The function is exported by the binary and the address() method
+    /// returns its virtual address in the binary
+    EXPORTED = 1 << 3,
 
-    //! The function is **imported** by the binary and the address() should return 0
-    IMPORTED,
+    /// The function is **imported** by the binary and the address() should return 0
+    IMPORTED = 1 << 4,
   };
 
-  using flags_list_t = std::vector<FLAGS>;
-  using flags_t      = std::set<FLAGS>;
-
   public:
-  Function();
-  Function(const std::string& name);
-  Function(uint64_t address);
-  Function(const std::string& name, uint64_t address);
-  Function(const std::string& name, uint64_t address, const flags_list_t& flags);
-  Function(const Function&);
-  Function& operator=(const Function&);
-  ~Function() override;
+  Function() = default;
+  Function(const std::string& name) :
+    Symbol(name)
+  {}
+  Function(uint64_t address) :
+    Function("", address)
+  {}
+  Function(const std::string& name, uint64_t address) :
+    Symbol(name, address)
+  {}
+  Function(const std::string& name, uint64_t address, FLAGS flags) :
+    Function(name, address)
+  {
+    flags_ = flags;
+  }
 
-  //! List of FLAGS
-  flags_list_t flags() const;
+  Function(const Function&) = default;
+  Function& operator=(const Function&) = default;
 
-  //! Add a flag to the current function
-  Function& add(FLAGS f);
+  ~Function() override = default;
 
-  //! Address of the current function. For functions that are set with the FLAGS::IMPORTED flag,
-  //! this value is likely 0.
-  uint64_t address() const;
-  void address(uint64_t address);
+  /// List of FLAGS
+  std::vector<FLAGS> flags_list() const;
 
-  //! Method so that the ``visitor`` can visit us
+  FLAGS flags() const {
+    return flags_;
+  }
+
+  /// Add a flag to the current function
+  Function& add(FLAGS f) {
+    flags_ = (FLAGS)((uint32_t)flags_ | (uint32_t)f);
+    return *this;
+  }
+
+  /// Check if the function has the given flag
+  bool has(FLAGS f) const {
+    return ((uint32_t)flags_ & (uint32_t)f) != 0;
+  }
+
+  /// Address of the current function. For functions that are set with the FLAGS::IMPORTED flag,
+  /// this value is likely 0.
+  uint64_t address() const {
+    return value_;
+  }
+
+  void address(uint64_t address) {
+    value_ = address;
+  }
+
   void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Function& entry);
 
   protected:
-  flags_t flags_;
+  FLAGS flags_ = FLAGS::NONE;
 };
+
+LIEF_API const char* to_string(Function::FLAGS e);
+
 }
+
+
+ENABLE_BITMASK_OPERATORS(LIEF::Function::FLAGS)
 
 #endif
 

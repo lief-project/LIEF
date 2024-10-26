@@ -82,21 +82,6 @@ const char* to_string(ENDIANNESS e) {
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
-const char* to_string(Function::FLAGS e) {
-  CONST_MAP(Function::FLAGS, const char*, 5) enumStrings {
-    { LIEF::Function::FLAGS::DEBUG_INFO,   "DEBUG_INFO"   },
-    { LIEF::Function::FLAGS::CONSTRUCTOR,  "CONSTRUCTOR"  },
-    { LIEF::Function::FLAGS::DESTRUCTOR,   "DESTRUCTOR"   },
-    { LIEF::Function::FLAGS::IMPORTED,     "IMPORTED"     },
-    { LIEF::Function::FLAGS::EXPORTED,     "EXPORTED"     },
-  };
-  const auto it = enumStrings.find(e);
-  return it == enumStrings.end() ? "UNDEFINED" : it->second;
-}
-
-
-
-
 } // namespace LIEF
 
 

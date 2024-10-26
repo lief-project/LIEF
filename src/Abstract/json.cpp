@@ -114,7 +114,7 @@ void AbstractJsonVisitor::visit(const Relocation& relocation) {
 void AbstractJsonVisitor::visit(const Function& function) {
 
   std::vector<std::string> flags_str;
-  Function::flags_list_t flags = function.flags();
+  std::vector<Function::FLAGS> flags = function.flags_list();
   flags_str.reserve(flags.size());
   for (Function::FLAGS f : flags) {
     flags_str.emplace_back(to_string(f));

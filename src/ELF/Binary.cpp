@@ -98,10 +98,10 @@ LIEF::Binary::sections_t Binary::get_abstract_sections() {
 }
 
 LIEF::Binary::functions_t Binary::get_abstract_exported_functions() const {
-  LIEF::Binary::functions_t result;
+  functions_t result;
   for (const Symbol& symbol : exported_symbols()) {
     if (symbol.type() == Symbol::TYPE::FUNC) {
-      result.emplace_back(symbol.name(), symbol.value(), Function::flags_list_t{Function::FLAGS::EXPORTED});
+      result.emplace_back(symbol.name(), symbol.value(), Function::FLAGS::EXPORTED);
     }
   }
   return result;
@@ -109,10 +109,10 @@ LIEF::Binary::functions_t Binary::get_abstract_exported_functions() const {
 
 
 LIEF::Binary::functions_t Binary::get_abstract_imported_functions() const {
-  LIEF::Binary::functions_t result;
+  functions_t result;
   for (const Symbol& symbol : imported_symbols()) {
     if (symbol.type() == Symbol::TYPE::FUNC) {
-      result.emplace_back(symbol.name(), symbol.value(), Function::flags_list_t{Function::FLAGS::IMPORTED});
+      result.emplace_back(symbol.name(), symbol.value(), Function::FLAGS::IMPORTED);
     }
   }
   return result;
@@ -2131,7 +2131,7 @@ LIEF::Binary::functions_t Binary::ctor_functions() const {
   const DynamicEntry* dt_init = get(DynamicEntry::TAG::INIT);
   if (dt_init != nullptr) {
     functions.emplace_back("__dt_init",
-          dt_init->value(), Function::flags_list_t{Function::FLAGS::CONSTRUCTOR});
+          dt_init->value(), Function::FLAGS::CONSTRUCTOR);
   }
   return functions;
 }
@@ -2154,7 +2154,7 @@ LIEF::Binary::functions_t Binary::dtor_functions() const {
   const DynamicEntry* dt_fini = get(DynamicEntry::TAG::FINI);
   if (dt_fini != nullptr) {
     functions.emplace_back("__dt_fini",
-        dt_fini->value(), Function::flags_list_t{Function::FLAGS::DESTRUCTOR});
+        dt_fini->value(), Function::FLAGS::DESTRUCTOR);
   }
   return functions;
 }

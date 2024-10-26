@@ -63,8 +63,7 @@ void AbstractHash::visit(const Relocation& relocation) {
 
 void AbstractHash::visit(const Function& function) {
   visit(*function.as<LIEF::Symbol>());
-  Function::flags_list_t flags = function.flags();
-  process(std::begin(flags), std::end(flags));
+  process(function.flags());
 }
 
 

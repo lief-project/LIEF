@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string>
 #include <sstream>
 
 #include <nanobind/stl/string.h>
@@ -23,7 +24,7 @@
 #include "pyLIEF.hpp"
 
 #include "LIEF/Abstract/Function.hpp"
-#include "LIEF/Abstract/EnumToString.hpp"
+#include "enums_wrapper.hpp"
 
 #define PY_ENUM(x) LIEF::to_string(x), x
 
@@ -36,7 +37,8 @@ void create<Function>(nb::module_& m) {
       Class which represents a Function in an executable file format.
       )delim"_doc);
 
-  nb::enum_<Function::FLAGS>(pyfunction, "FLAGS")
+  enum_<Function::FLAGS>(pyfunction, "FLAGS", nb::is_arithmetic())
+    .value(PY_ENUM(Function::FLAGS::NONE))
     .value(PY_ENUM(Function::FLAGS::IMPORTED))
     .value(PY_ENUM(Function::FLAGS::EXPORTED))
     .value(PY_ENUM(Function::FLAGS::CONSTRUCTOR))
@@ -49,13 +51,19 @@ void create<Function>(nb::module_& m) {
     .def(nb::init<uint64_t>())
     .def(nb::init<const std::string&, uint64_t>())
 
-    .def("add",
-        &Function::add,
+    .def("add", &Function::add,
         "Add the given " RST_CLASS_REF(lief.Function.FLAGS) ""_doc,
         "flag"_a)
 
-    .def_prop_ro("flags",
-        &Function::flags,
+    .def("has", &Function::has,
+        "Check if the function has the given flag"_doc,
+        "flag"_a)
+
+    .def_prop_ro("flags", &Function::flags,
+        "Function flags"_doc)
+
+    .def_prop_ro("flags_list",
+        &Function::flags_list,
         "Function flags as a list of " RST_CLASS_REF(lief.Function.FLAGS) ""_doc)
 
     .def_prop_rw("address",
@@ -64,6 +72,5 @@ void create<Function>(nb::module_& m) {
         "Function's address"_doc)
 
     LIEF_DEFAULT_STR(Function);
-
 }
 }

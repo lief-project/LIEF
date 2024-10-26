@@ -1110,7 +1110,7 @@ LIEF::Binary::functions_t Binary::get_abstract_exported_functions() const {
     for (const ExportEntry& entry : exp->entries()) {
       const std::string& name = entry.name();
       if(!name.empty()) {
-        result.emplace_back(name, entry.address(), Function::flags_list_t{Function::FLAGS::EXPORTED});
+        result.emplace_back(name, entry.address(), Function::FLAGS::EXPORTED);
       }
     }
   }
@@ -1127,8 +1127,7 @@ LIEF::Binary::functions_t Binary::get_abstract_imported_functions() const {
     for (const ImportEntry& entry : resolved.entries()) {
       const std::string& name = entry.name();
       if(!name.empty()) {
-        result.emplace_back(name, entry.iat_address(),
-                            Function::flags_list_t{Function::FLAGS::IMPORTED});
+        result.emplace_back(name, entry.iat_address(), Function::FLAGS::IMPORTED);
       }
     }
   }
@@ -1141,8 +1140,7 @@ LIEF::Binary::functions_t Binary::get_abstract_imported_functions() const {
       }
       const std::string& name = entry.name();
       if(!name.empty()) {
-        result.emplace_back(name, entry.value(),
-                            Function::flags_list_t{Function::FLAGS::IMPORTED});
+        result.emplace_back(name, entry.value(), Function::FLAGS::IMPORTED);
       }
     }
   }
@@ -1389,7 +1387,7 @@ LIEF::Binary::functions_t Binary::ctor_functions() const {
     const std::vector<uint64_t>& clbs = tls_obj->callbacks();
     for (size_t i = 0; i < clbs.size(); ++i) {
       functions.emplace_back("tls_" + std::to_string(i), clbs[i],
-                             Function::flags_list_t{Function::FLAGS::CONSTRUCTOR});
+                             Function::FLAGS::CONSTRUCTOR);
 
     }
   }

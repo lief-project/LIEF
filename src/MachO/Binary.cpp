@@ -223,24 +223,22 @@ LIEF::Binary::symbols_t Binary::get_abstract_symbols() {
 LIEF::Binary::functions_t Binary::get_abstract_exported_functions() const {
   LIEF::Binary::functions_t result;
   it_const_exported_symbols syms = exported_symbols();
-  std::transform(std::begin(syms), std::end(syms),
-                 std::back_inserter(result),
-                 [] (const Symbol& s) {
-                   return Function{s.name(), s.value(),
-                                   Function::flags_list_t{Function::FLAGS::EXPORTED}};
-                 });
+  std::transform(std::begin(syms), std::end(syms), std::back_inserter(result),
+    [] (const Symbol& s) {
+      return Function(s.name(), s.value(), Function::FLAGS::EXPORTED);
+    }
+  );
   return result;
 }
 
 LIEF::Binary::functions_t Binary::get_abstract_imported_functions() const {
   LIEF::Binary::functions_t result;
   it_const_imported_symbols syms = imported_symbols();
-  std::transform(std::begin(syms), std::end(syms),
-                 std::back_inserter(result),
-                 [] (const Symbol& s) {
-                   return Function{s.name(), s.value(),
-                                   Function::flags_list_t{Function::FLAGS::IMPORTED}};
-                 });
+  std::transform(std::begin(syms), std::end(syms), std::back_inserter(result),
+    [] (const Symbol& s) {
+      return Function(s.name(), s.value(), Function::FLAGS::IMPORTED);
+    }
+  );
   return result;
 }
 
@@ -1910,7 +1908,7 @@ LIEF::Binary::functions_t Binary::ctor_functions() const {
       const auto* aptr = reinterpret_cast<const uint64_t*>(content.data());
       for (size_t i = 0; i < nb_fnc; ++i) {
         functions.emplace_back("ctor_" + std::to_string(i), aptr[i],
-                               Function::flags_list_t{Function::FLAGS::CONSTRUCTOR});
+                               Function::FLAGS::CONSTRUCTOR);
       }
 
     } else {
@@ -1918,7 +1916,7 @@ LIEF::Binary::functions_t Binary::ctor_functions() const {
       const auto* aptr = reinterpret_cast<const uint32_t*>(content.data());
       for (size_t i = 0; i < nb_fnc; ++i) {
         functions.emplace_back("ctor_" + std::to_string(i), aptr[i],
-                               Function::flags_list_t{Function::FLAGS::CONSTRUCTOR});
+                               Function::FLAGS::CONSTRUCTOR);
       }
     }
   }
