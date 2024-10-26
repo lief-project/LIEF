@@ -7,7 +7,7 @@ authors.workspace = true
 license.workspace = true
 
 [dependencies]
-cxx     = { version = "1.0.117", features = [ "c++20" ] }
+cxx     = { version = "1.0.117", features = [ "c++17" ] }
 autocxx = "0.26"
 
 [build-dependencies]
