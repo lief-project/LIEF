@@ -16,6 +16,8 @@
 #ifndef LIEF_DSC_CACHING_H
 #define LIEF_DSC_CACHING_H
 #include <string>
+#include "LIEF/visibility.h"
+
 namespace LIEF {
 namespace dsc {
 
@@ -42,11 +44,11 @@ namespace dsc {
 ///
 ///
 /// \see LIEF::dsc::DyldSharedCache::enable_caching for a finer granularity
-bool enable_cache();
+LIEF_API bool enable_cache();
 
 /// Same behavior as enable_cache() but with a
 /// user-provided cache directory
-bool enable_cache(const std::string& dir);
+LIEF_API bool enable_cache(const std::string& dir);
 }
 }
 #endif
