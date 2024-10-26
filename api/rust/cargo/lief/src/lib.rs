@@ -10,7 +10,7 @@
 //!
 //! The bindings require at least Rust version **1.74.0** with the 2021 edition and support:
 //! - Windows x86-64 (support `/MT` and `/MD` linking)
-//! - Linux x86-64/aarch64  (Ubuntu 20.04, Almalinux 9, Debian 11.5, Fedora 29)
+//! - Linux x86-64/aarch64  (Ubuntu 19.10, Almalinux 8, Debian 10, Fedora 29)
 //! - macOS (`x86-64` and `aarch64` with at least OSX Big Sur: 11.0)
 //! - iOS (`aarch64`)
 //!
