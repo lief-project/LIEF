@@ -100,33 +100,53 @@ class LIEF_API Binary : public Object {
   }
 
   //! Return the abstract header of the binary
-  Header header() const;
+  Header header() const {
+    return get_abstract_header();
+  }
 
   //! Return an iterator over the abstracted symbols in which the elements **can** be modified
-  it_symbols symbols();
+  it_symbols symbols() {
+    return get_abstract_symbols();
+  }
 
   //! Return an iterator over the abstracted symbols in which the elements **can't** be modified
-  it_const_symbols  symbols() const;
+  it_const_symbols symbols() const {
+    return const_cast<Binary*>(this)->get_abstract_symbols();
+  }
 
   //! Check if a Symbol with the given name exists
-  bool has_symbol(const std::string& name) const;
+  bool has_symbol(const std::string& name) const {
+    return get_symbol(name) != nullptr;
+  }
 
   //! Return the Symbol with the given name
   //! If the symbol does not exist, return a nullptr
   const Symbol* get_symbol(const std::string& name) const;
 
-  Symbol* get_symbol(const std::string& name);
+  Symbol* get_symbol(const std::string& name) {
+    return const_cast<Symbol*>(static_cast<const Binary*>(this)->get_symbol(name));
+  }
 
   //! Return an iterator over the binary's sections (LIEF::Section)
-  it_sections sections();
-  it_const_sections sections() const;
+  it_sections sections() {
+    return get_abstract_sections();
+  }
+
+  it_const_sections sections() const {
+    return const_cast<Binary*>(this)->get_abstract_sections();
+  }
 
   //! Remove **all** the sections in the underlying binary
   virtual void remove_section(const std::string& name, bool clear = false) = 0;
 
   //! Return an iterator over the binary relocation (LIEF::Relocation)
-  it_relocations       relocations();
-  it_const_relocations relocations() const;
+  it_relocations relocations() {
+    return get_abstract_relocations();
+  }
+
+  it_const_relocations relocations() const {
+    return const_cast<Binary*>(this)->get_abstract_relocations();
+  }
 
   //! Binary's entrypoint (if any)
   virtual uint64_t entrypoint() const = 0;
@@ -137,13 +157,19 @@ class LIEF_API Binary : public Object {
   }
 
   //! Return the functions exported by the binary
-  functions_t exported_functions() const;
+  functions_t exported_functions() const {
+    return get_abstract_exported_functions();
+  }
 
   //! Return libraries which are imported by the binary
-  std::vector<std::string> imported_libraries() const;
+  std::vector<std::string> imported_libraries() const {
+    return get_abstract_imported_libraries();
+  }
 
   //! Return functions imported by the binary
-  functions_t imported_functions() const;
+  functions_t imported_functions() const {
+    return get_abstract_imported_functions();
+  }
 
   //! Return the address of the given function name
   virtual result<uint64_t> get_function_address(const std::string& func_name) const;
@@ -220,13 +246,18 @@ class LIEF_API Binary : public Object {
   //! @param[in] slide    If not 0, it will replace the default base address (if any)
   virtual result<uint64_t> offset_to_virtual_address(uint64_t offset, uint64_t slide = 0) const = 0;
 
-  virtual std::ostream& print(std::ostream& os) const;
+  virtual std::ostream& print(std::ostream& os) const {
+    return os;
+  }
 
   //! Build & transform the Binary object representation into a *real* executable
   virtual void write(const std::string& name) = 0;
   virtual void write(std::ostream& os) = 0;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Binary& binary);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Binary& binary) {
+    binary.print(os);
+    return os;
+  }
 
   /// Return the debug info if present. It can be either a
   /// LIEF::dwarf::DebugInfo or a LIEF::pdb::DebugInfo
@@ -256,7 +287,7 @@ class LIEF_API Binary : public Object {
 
   virtual functions_t  get_abstract_exported_functions() const = 0;
   virtual functions_t  get_abstract_imported_functions() const = 0;
-  virtual std::vector<std::string>  get_abstract_imported_libraries() const = 0;
+  virtual std::vector<std::string> get_abstract_imported_libraries() const = 0;
 };
 
 LIEF_API const char* to_string(Binary::VA_TYPES e);

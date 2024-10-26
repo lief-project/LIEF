@@ -1,7 +1,6 @@
 target_sources(LIB_LIEF PRIVATE
   Binary.cpp
   Symbol.cpp
-  EnumToString.cpp
   Header.cpp
   Section.cpp
   Section.tcc

@@ -9,13 +9,13 @@ def test_endianness():
     binary = elf.abstract
     header = binary.header
 
-    assert header.endianness == lief.ENDIANNESS.LITTLE
+    assert header.endianness == lief.Header.ENDIANNESS.LITTLE
 
     macho = lief.parse(get_sample('MachO/MachO64_x86-64_binary_id.bin'))
     binary = macho.abstract
     header = binary.header
 
-    header.endianness == lief.ENDIANNESS.LITTLE
+    assert header.endianness == lief.Header.ENDIANNESS.LITTLE
 
     pe = lief.parse(get_sample('PE/PE64_x86-64_binary_ConsoleApplication1.exe'))
     binary = pe.abstract
@@ -28,7 +28,7 @@ def test_endianness():
     assert pe.get_int_from_virtual_address(0x140001AFC, 3443) is None
     assert pe.get_int_from_virtual_address(0x1840001AFC, 1) is None
 
-    assert header.endianness == lief.ENDIANNESS.LITTLE
+    assert header.endianness == lief.Header.ENDIANNESS.LITTLE
 
 def test_format():
     binary = lief.parse(get_sample('ELF/ELF32_x86_binary_ls.bin'))

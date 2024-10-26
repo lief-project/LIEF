@@ -94,60 +94,6 @@ Header::Header(const T& header):
 template Header::Header(const details::Elf32_Ehdr& header);
 template Header::Header(const details::Elf64_Ehdr& header);
 
-OBJECT_TYPES Header::abstract_object_type() const {
-  switch (file_type()) {
-    case FILE_TYPE::EXEC:
-      return OBJECT_TYPES::TYPE_EXECUTABLE;
-    case FILE_TYPE::DYN:
-      return OBJECT_TYPES::TYPE_LIBRARY;
-    case FILE_TYPE::REL:
-      return OBJECT_TYPES::TYPE_OBJECT;
-    case FILE_TYPE::CORE:
-    case FILE_TYPE::NONE:
-      return OBJECT_TYPES::TYPE_NONE;
-  }
-  return OBJECT_TYPES::TYPE_NONE;
-}
-
-Header::abstract_architecture_t Header::abstract_architecture() const {
-  switch (machine_type()) {
-    case ARCH::X86_64:
-      return {ARCH_X86, {MODE_64}};
-    case ARCH::ARM:
-      return {ARCH_ARM, {MODE_32}};
-    case ARCH::AARCH64:
-      return {ARCH_ARM64, {MODE_64}};
-    case ARCH::I386:
-      return {ARCH_X86, {MODE_32}};
-    case ARCH::IA_64:
-      return {ARCH_INTEL, {MODE_64}};
-    case ARCH::MIPS:
-      return {ARCH_MIPS, {MODE_32}};
-    case ARCH::PPC:
-      return {ARCH_PPC, {MODE_32}};
-    case ARCH::PPC64:
-      return {ARCH_PPC, {MODE_64}};
-    case ARCH::RISCV:
-      return {ARCH_RISCV, {MODE_64}};
-    case ARCH::LOONGARCH:
-      return {ARCH_LOONGARCH, {MODE_64}};
-    case ARCH::NONE:
-    default:
-      return {ARCH_NONE,  {}};
-  }
-  return {ARCH_NONE,  {}};
-}
-
-
-ENDIANNESS Header::abstract_endianness() const {
-  switch (identity_data()) {
-    case ELF_DATA::LSB: return ENDIAN_LITTLE;
-    case ELF_DATA::MSB: return ENDIAN_BIG;
-    case ELF_DATA::NONE: return ENDIAN_NONE;
-  }
-  return ENDIAN_NONE;
-}
-
 void Header::identity(const std::string& identity) {
   std::copy(std::begin(identity), std::end(identity),
             std::begin(identity_));

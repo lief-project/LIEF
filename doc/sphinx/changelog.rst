@@ -115,6 +115,12 @@
     |lief-objc-declopt|.
 
 :Extended:
+
+  .. note::
+
+    * C++ SDK is now available
+    * Rust package is now available
+
   * Linux Python wheels are now ``manylinux_2_27`` compliants. In other words,
     they are working with a glibc from at least 2018.
   * Support for :ref:`Dyld shared cache <extended-dsc>`
@@ -147,9 +153,18 @@
 
   * Upgrade MbedTLS from ``3.2.1`` to ``3.6.1``
 
+:Abstraction:
+
+  * Global code cleaning (especially, |lief-header-architectures| and
+    |lief-header-modes| is now more meaningful)
+  * Re-scope ``lief.ARCHITECTURES`` into |lief-header-architectures|
+  * Re-scope ``lief.MODES`` into |lief-header-modes|
+  * Re-scope ``lief.OBJECT_TYPES`` into |lief-header-object-types|
+  * Re-scope ``lief.ENDIANNESS`` into |lief-header-endianness|
+
 :doc:
 
-  * Global restructing of the documentation
+  * Global restructuring of the documentation
 
   * Add Sphinx cross-reference support for Rust. For instance, this link:
     :rust:method:`lief::elf::Binary::debug_info [struct]` references the

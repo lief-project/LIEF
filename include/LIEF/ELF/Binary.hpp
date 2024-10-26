@@ -411,17 +411,23 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Return relocation associated with the given address.
   //! It returns a ``nullptr`` if it is not found
   const Relocation* get_relocation(uint64_t address) const;
-  Relocation*       get_relocation(uint64_t address);
+  Relocation* get_relocation(uint64_t address) {
+    return const_cast<Relocation*>(static_cast<const Binary*>(this)->get_relocation(address));
+  }
 
   //! Return relocation associated with the given Symbol
   //! It returns a ``nullptr`` if it is not found
   const Relocation* get_relocation(const Symbol& symbol) const;
-  Relocation*       get_relocation(const Symbol& symbol);
+  Relocation* get_relocation(const Symbol& symbol) {
+    return const_cast<Relocation*>(static_cast<const Binary*>(this)->get_relocation(symbol));
+  }
 
   //! Return relocation associated with the given Symbol name
   //! It returns a ``nullptr`` if it is not found
   const Relocation* get_relocation(const std::string& symbol_name) const;
-  Relocation*       get_relocation(const std::string& symbol_name);
+  Relocation* get_relocation(const std::string& symbol_name) {
+    return const_cast<Relocation*>(static_cast<const Binary*>(this)->get_relocation(symbol_name));
+  }
 
   //! ``true`` if GNU hash is used
   //!
@@ -450,7 +456,9 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   //! Check if a section with the given name exists in the binary
-  bool has_section(const std::string& name) const;
+  bool has_section(const std::string& name) const {
+    return get_section(name) != nullptr;
+  }
 
   //! Check if a section that handles the given offset exists
   bool has_section_with_offset(uint64_t offset) const;
@@ -460,7 +468,9 @@ class LIEF_API Binary : public LIEF::Binary {
 
   //! Return Section with the given `name`. If the section can't be
   //! found, it returns a nullptr
-  Section*       get_section(const std::string& name);
+  Section* get_section(const std::string& name) {
+    return const_cast<Section*>(static_cast<const Binary*>(this)->get_section(name));
+  }
   const Section* get_section(const std::string& name) const;
 
   //! Return the `.text` section. If the section
@@ -498,10 +508,14 @@ class LIEF_API Binary : public LIEF::Binary {
   //! If the binary does not have an interpreter, it returns an empty string
   //!
   //! @see has_interpreter
-  const std::string& interpreter() const;
+  const std::string& interpreter() const {
+    return interpreter_;
+  }
 
   //! Change the interpreter
-  void interpreter(const std::string& interpreter);
+  void interpreter(const std::string& interpreter) {
+    interpreter_ = interpreter;
+  }
 
   //! Return an iterator on both static and dynamic symbols
   it_symbols symbols() {
@@ -519,13 +533,17 @@ class LIEF_API Binary : public LIEF::Binary {
   Symbol& export_symbol(const std::string& symbol_name, uint64_t value = 0);
 
   //! Check if the symbol with the given ``name`` exists in the dynamic symbols table
-  bool has_dynamic_symbol(const std::string& name) const;
+  bool has_dynamic_symbol(const std::string& name) const {
+    return get_dynamic_symbol(name) != nullptr;
+  }
 
   //! Get the dynamic symbol from the given name.
   //! Return a nullptr if it can't be found
   const Symbol* get_dynamic_symbol(const std::string& name) const;
 
-  Symbol* get_dynamic_symbol(const std::string& name);
+  Symbol* get_dynamic_symbol(const std::string& name) {
+    return const_cast<Symbol*>(static_cast<const Binary*>(this)->get_dynamic_symbol(name));
+  }
 
   //! Check if the symbol with the given ``name`` exists in the symtab symbol table
   bool has_symtab_symbol(const std::string& name) const {
@@ -536,7 +554,9 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Return a nullptr if it can't be found
   const Symbol* get_symtab_symbol(const std::string& name) const;
 
-  Symbol* get_symtab_symbol(const std::string& name);
+  Symbol* get_symtab_symbol(const std::string& name) {
+    return const_cast<Symbol*>(static_cast<const Binary*>(this)->get_symtab_symbol(name));
+  }
 
   //! Return list of the strings used by the ELF binary.
   //!
@@ -603,14 +623,18 @@ class LIEF_API Binary : public LIEF::Binary {
 
   //! Get the library object (DynamicEntryLibrary) from the given name
   //! If the library can't be found, it returns a nullptr.
-  DynamicEntryLibrary* get_library(const std::string& library_name);
+  DynamicEntryLibrary* get_library(const std::string& library_name) {
+    return const_cast<DynamicEntryLibrary*>(static_cast<const Binary*>(this)->get_library(library_name));
+  }
 
   //! Get the library object (DynamicEntryLibrary) from the given name
   //! If the library can't be found, it returns a nullptr.
   const DynamicEntryLibrary* get_library(const std::string& library_name) const;
 
   //! Check if the given library name exists in the current binary
-  bool has_library(const std::string& name) const;
+  bool has_library(const std::string& name) const {
+    return get_library(name) != nullptr;
+  }
 
   //! Add a new segment in the binary
   //!
@@ -739,7 +763,9 @@ class LIEF_API Binary : public LIEF::Binary {
   //! If @p skip_nobits is set (which is the case by default), this function won't
   //! consider section for which the type is ``SHT_NOBITS`` (like ``.bss, .tbss, ...``)
   const Section* section_from_offset(uint64_t offset, bool skip_nobits = true) const;
-  Section*       section_from_offset(uint64_t offset, bool skip_nobits = true);
+  Section*       section_from_offset(uint64_t offset, bool skip_nobits = true) {
+    return const_cast<Section*>(static_cast<const Binary*>(this)->section_from_offset(offset, skip_nobits));
+  }
 
   //! Return the ELF::Section from the given @p address. Return a nullptr
   //! if a section can't be found.
@@ -747,21 +773,29 @@ class LIEF_API Binary : public LIEF::Binary {
   //! If @p skip_nobits is set (which is the case by default), this function won't
   //! consider section for which type is ``SHT_NOBITS`` (like ``.bss, .tbss, ...``)
   const Section* section_from_virtual_address(uint64_t address, bool skip_nobits = true) const;
-  Section*       section_from_virtual_address(uint64_t address, bool skip_nobits = true);
+  Section* section_from_virtual_address(uint64_t address, bool skip_nobits = true) {
+    return const_cast<Section*>(static_cast<const Binary*>(this)->section_from_virtual_address(address, skip_nobits));
+  }
 
   //! Return the ELF::Segment from the given @p address. Return a nullptr
   //! if a segment can't be found.
   const Segment* segment_from_virtual_address(uint64_t address) const;
-  Segment*       segment_from_virtual_address(uint64_t address);
+  Segment* segment_from_virtual_address(uint64_t address) {
+    return const_cast<Segment*>(static_cast<const Binary*>(this)->segment_from_virtual_address(address));
+  }
 
 
   const Segment* segment_from_virtual_address(Segment::TYPE type, uint64_t address) const;
-  Segment*       segment_from_virtual_address(Segment::TYPE type, uint64_t address);
+  Segment* segment_from_virtual_address(Segment::TYPE type, uint64_t address) {
+    return const_cast<Segment*>(static_cast<const Binary*>(this)->segment_from_virtual_address(type, address));
+  }
 
   //! Return the ELF::Segment from the @p offset. Return a nullptr
   //! if a segment can't be found.
   const Segment* segment_from_offset(uint64_t offset) const;
-  Segment*       segment_from_offset(uint64_t offset);
+  Segment* segment_from_offset(uint64_t offset) {
+    return const_cast<Segment*>(static_cast<const Binary*>(this)->segment_from_offset(offset));
+  }
 
   //! Return the **first** ELF::DynamicEntry associated with the given tag
   //! If the tag can't be found, it returns a nullptr
@@ -773,17 +807,23 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Return the **first** ELF::Segment associated with the given type.
   //! If a segment can't be found, it returns a nullptr.
   const Segment* get(Segment::TYPE type) const;
-  Segment*       get(Segment::TYPE type);
+  Segment* get(Segment::TYPE type) {
+    return const_cast<Segment*>(static_cast<const Binary*>(this)->get(type));
+  }
 
   //! Return the **first** ELF::Note associated with the given type
   //! If a note can't be found, it returns a nullptr.
   const Note* get(Note::TYPE type) const;
-  Note*       get(Note::TYPE type);
+  Note* get(Note::TYPE type) {
+    return const_cast<Note*>(static_cast<const Binary*>(this)->get(type));
+  }
 
   //! Return the **first** ELF::Section associated with the given type
   //! If a section can't be found, it returns a nullptr.
   const Section* get(Section::TYPE type) const;
-  Section*       get(Section::TYPE type);
+  Section* get(Section::TYPE type) {
+    return const_cast<Section*>(static_cast<const Binary*>(this)->get(type));
+  }
 
   //! Check if an ELF::DynamicEntry associated with the given tag exists.
   bool has(DynamicEntry::TAG tag) const {
@@ -967,7 +1007,9 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Return an abstraction of binary's section: LIEF::Section
   LIEF::Binary::sections_t get_abstract_sections() override;
 
-  LIEF::Header get_abstract_header() const override;
+  LIEF::Header get_abstract_header() const override {
+    return LIEF::Header::from(*this);
+  }
 
   LIEF::Binary::functions_t get_abstract_exported_functions() const override;
   LIEF::Binary::functions_t get_abstract_imported_functions() const override;

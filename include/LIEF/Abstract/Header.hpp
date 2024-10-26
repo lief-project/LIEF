@@ -17,54 +17,130 @@
 #define LIEF_ABSTRACT_HEADER_H
 
 #include <ostream>
-#include <set>
 #include <cstdint>
+#include <vector>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
-
-#include "LIEF/Abstract/enums.hpp"
+#include "LIEF/enums.hpp"
 
 namespace LIEF {
+namespace ELF {
+class Binary;
+}
+
+namespace PE {
+class Binary;
+}
+
+namespace MachO {
+class Binary;
+}
+
 class LIEF_API Header : public Object {
   public:
-  Header();
-  Header(const Header&);
-  Header& operator=(const Header&);
-  ~Header() override;
+  enum class ARCHITECTURES {
+    UNKNOWN = 0,
+    ARM,
+    ARM64,
+    MIPS,
+    X86,
+    X86_64,
+    PPC,
+    SPARC,
+    SYSZ,
+    XCORE,
+    RISCV,
+    LOONGARCH,
+  };
 
+  enum class ENDIANNESS {
+    UNKNOWN = 0,
+    BIG,
+    LITTLE,
+  };
 
-  ARCHITECTURES          architecture() const;
-  const std::set<MODES>& modes()        const;
-  OBJECT_TYPES           object_type()  const;
-  uint64_t               entrypoint()   const;
-  ENDIANNESS             endianness()   const;
+  enum MODES : uint64_t {
+    NONE = 0,
 
+    BITS_16 = 1LLU << 0, /// 16-bits architecture
+    BITS_32 = 1LLU << 1, /// 32-bits architecture
+    BITS_64 = 1LLU << 2, /// 64-bits architecture
+    THUMB   = 1LLU << 3, /// Support ARM Thumb mode
 
-  //! @brief ``true`` if the binary target a ``32-bits`` architecture
-  bool is_32() const;
+    ARM64E  = 1LLU << 4, /// ARM64 with extended (security) features
+  };
 
-  //! @brief ``true`` if the binary target a ``64-bits`` architecture
-  bool is_64() const;
+  enum class OBJECT_TYPES {
+    UNKNOWN = 0,
+    EXECUTABLE,
+    LIBRARY,
+    OBJECT,
+  };
 
-  //! @brief Method so that the ``visitor`` can visit us
+  static Header from(const LIEF::ELF::Binary& elf);
+  static Header from(const LIEF::PE::Binary& pe);
+  static Header from(const LIEF::MachO::Binary& macho);
+
+  Header() = default;
+  Header(const Header&) = default;
+  Header& operator=(const Header&) = default;
+  ~Header() override = default;
+
+  /// Target architecture
+  ARCHITECTURES architecture() const {
+    return architecture_;
+  }
+
+  /// Optional features for the given architecture
+  MODES modes() const {
+    return modes_;
+  }
+
+  /// MODES as a vector
+  std::vector<MODES> modes_list() const;
+
+  bool is(MODES m) const {
+    return ((uint64_t)m & (uint64_t)modes_) != 0;
+  }
+
+  OBJECT_TYPES object_type() const {
+    return object_type_;
+  }
+  uint64_t entrypoint() const {
+    return entrypoint_;
+  }
+
+  ENDIANNESS endianness() const {
+    return endianness_;
+  }
+
+  bool is_32() const {
+    return ((uint64_t)modes_ & (uint64_t)MODES::BITS_32) != 0;
+  }
+
+  bool is_64() const {
+    return ((uint64_t)modes_ & (uint64_t)MODES::BITS_64) != 0;
+  }
+
   void accept(Visitor& visitor) const override;
-
-  void architecture(ARCHITECTURES arch);
-  void modes(const std::set<MODES>& m);
-  void object_type(OBJECT_TYPES type);
-  void entrypoint(uint64_t entrypoint);
-  void endianness(ENDIANNESS endianness);
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Header& hdr);
 
   protected:
-  ARCHITECTURES   architecture_ = ARCHITECTURES::ARCH_NONE;
-  std::set<MODES> modes_;
-  OBJECT_TYPES    object_type_ = OBJECT_TYPES::TYPE_NONE;
-  uint64_t        entrypoint_ = 0;
-  ENDIANNESS      endianness_ = ENDIANNESS::ENDIAN_NONE;
+  ARCHITECTURES architecture_ = ARCHITECTURES::UNKNOWN;
+  OBJECT_TYPES  object_type_ = OBJECT_TYPES::UNKNOWN;
+  uint64_t entrypoint_ = 0;
+  ENDIANNESS endianness_ = ENDIANNESS::UNKNOWN;
+  MODES modes_ = MODES::NONE;
 };
+
+LIEF_API const char* to_string(Header::ARCHITECTURES e);
+LIEF_API const char* to_string(Header::OBJECT_TYPES e);
+LIEF_API const char* to_string(Header::MODES e);
+LIEF_API const char* to_string(Header::ENDIANNESS e);
 }
+
+ENABLE_BITMASK_OPERATORS(LIEF::Header::MODES)
 
 #endif

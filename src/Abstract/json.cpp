@@ -81,11 +81,6 @@ void AbstractJsonVisitor::visit(const Binary& binary) {
 
 
 void AbstractJsonVisitor::visit(const Header& header) {
-  std::vector<std::string> modes;
-  modes.reserve(header.modes().size());
-  for (MODES m : header.modes()) {
-    modes.emplace_back(to_string(m));
-  }
   node_["architecture"] = to_string(header.architecture());
   node_["object_type"]  = to_string(header.object_type());
   node_["entrypoint"]   = header.entrypoint();

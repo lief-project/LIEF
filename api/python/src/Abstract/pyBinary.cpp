@@ -33,7 +33,6 @@
 #include "LIEF/Abstract/Symbol.hpp"
 #include "LIEF/Abstract/Section.hpp"
 #include "LIEF/Abstract/Header.hpp"
-#include "LIEF/Abstract/EnumToString.hpp"
 
 #include "LIEF/Abstract/DebugInfo.hpp"
 

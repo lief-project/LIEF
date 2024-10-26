@@ -96,6 +96,15 @@
 
 .. PE ==========================================================================
 
+.. |lief-pe-parser-config| lief-api:: lief.PE.ParserConfig
+
+    :py:class:`lief.PE.ParserConfig`
+    :cpp:class:`LIEF::PE::ParserConfig`
+
+.. |lief-pe-builder| lief-api:: lief.PE.Builder
+
+    :py:class:`lief.PE.Builder`
+    :cpp:class:`LIEF::PE::Builder`
 
 .. |lief-pe-parse| lief-api:: lief.PE.parse()
 
@@ -127,7 +136,7 @@
     :py:attr:`lief.PE.ImportEntry.demangled_name`
     :cpp:func:`LIEF::PE::ImportEntry::demangled_name`
 
-.. |lief-pe-exportentry-demangled_name| lief-api:: lief.PE.exportentry.demangled_name()
+.. |lief-pe-exportentry-demangled_name| lief-api:: lief.PE.ExportEntry.demangled_name()
 
     :rust:method:`lief::pe::export::Entry::demangled_name [struct]`
     :py:attr:`lief.PE.ExportEntry.demangled_name`
@@ -175,15 +184,26 @@
     :py:func:`lief.parse`
     :cpp:func:`LIEF::Parser::parse`
 
-.. |lief-pe-parser-config| lief-api:: lief.PE.ParserConfig
+.. |lief-header-architectures| lief-api:: lief.Header.ARCHITECTURES
 
-    :py:class:`lief.PE.ParserConfig`
-    :cpp:class:`LIEF::PE::ParserConfig`
+    :py:class:`lief.Header.ARCHITECTURES`
+    :cpp:enum:`LIEF::Header::ARCHITECTURES`
 
-.. |lief-pe-builder| lief-api:: lief.PE.Builder
+.. |lief-header-modes| lief-api:: lief.Header.MODES
 
-    :py:class:`lief.PE.Builder`
-    :cpp:class:`LIEF::PE::Builder`
+    :py:class:`lief.Header.MODES`
+    :cpp:enum:`LIEF::Header::MODES`
+
+.. |lief-header-object-types| lief-api:: lief.Header.OBJECT_TYPES
+
+    :py:class:`lief.Header.OBJECT_TYPES`
+    :cpp:enum:`LIEF::Header::OBJECT_TYPES`
+
+.. |lief-header-endianness| lief-api:: lief.Header.ENDIANNESS
+
+    :py:class:`lief.Header.ENDIANNESS`
+    :cpp:enum:`LIEF::Header::ENDIANNESS`
+
 
 .. ELF =========================================================================
 

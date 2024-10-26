@@ -408,18 +408,6 @@ Symbol& Binary::add_exported_function(uint64_t address, const std::string& name)
 
 }
 
-
-bool Binary::has_dynamic_symbol(const std::string& name) const {
-  const auto it_symbol = std::find_if(
-      std::begin(dynamic_symbols_), std::end(dynamic_symbols_),
-      [&name] (const std::unique_ptr<Symbol>& s) {
-        return s->name() == name;
-      }
-  );
-
-  return it_symbol != std::end(dynamic_symbols_);
-}
-
 const Symbol* Binary::get_dynamic_symbol(const std::string& name) const {
   const auto it_symbol = std::find_if(
       std::begin(dynamic_symbols_), std::end(dynamic_symbols_),
@@ -431,10 +419,6 @@ const Symbol* Binary::get_dynamic_symbol(const std::string& name) const {
     return nullptr;
   }
   return it_symbol->get();
-}
-
-Symbol* Binary::get_dynamic_symbol(const std::string& name) {
-  return const_cast<Symbol*>(static_cast<const Binary*>(this)->get_dynamic_symbol(name));
 }
 
 const Symbol* Binary::get_symtab_symbol(const std::string& name) const {
@@ -487,11 +471,6 @@ Binary::string_list_t Binary::strings(size_t min_size) const {
 
   return list;
 }
-
-Symbol* Binary::get_symtab_symbol(const std::string& name) {
-  return const_cast<Symbol*>(static_cast<const Binary*>(this)->get_symtab_symbol(name));
-}
-
 
 std::vector<Symbol*> Binary::symtab_dyn_symbols() const {
   std::vector<Symbol*> symbols;
@@ -870,11 +849,6 @@ LIEF::Binary::symbols_t Binary::get_abstract_symbols() {
 
   return symbols;
 
-}
-
-
-Section* Binary::get_section(const std::string& name) {
-  return const_cast<Section*>(static_cast<const Binary*>(this)->get_section(name));
 }
 
 const Section* Binary::get_section(const std::string& name) const {
@@ -1490,10 +1464,6 @@ const Segment* Binary::segment_from_virtual_address(uint64_t address) const {
 
 }
 
-Segment* Binary::segment_from_virtual_address(Segment::TYPE type, uint64_t address) {
-  return const_cast<Segment*>(static_cast<const Binary*>(this)->segment_from_virtual_address(type, address));
-}
-
 const Segment* Binary::segment_from_virtual_address(Segment::TYPE type, uint64_t address) const {
   const auto it_segment = std::find_if(segments_.cbegin(), segments_.cend(),
       [address, type] (const std::unique_ptr<Segment>& segment) {
@@ -1510,10 +1480,6 @@ const Segment* Binary::segment_from_virtual_address(Segment::TYPE type, uint64_t
 
 }
 
-Segment* Binary::segment_from_virtual_address(uint64_t address) {
-  return const_cast<Segment*>(static_cast<const Binary*>(this)->segment_from_virtual_address(address));
-}
-
 const Segment* Binary::segment_from_offset(uint64_t offset) const {
   const auto it_segment = std::find_if(segments_.cbegin(), segments_.cend(),
       [&offset] (const std::unique_ptr<Segment>& segment) {
@@ -1528,20 +1494,12 @@ const Segment* Binary::segment_from_offset(uint64_t offset) const {
   return it_segment->get();
 }
 
-Segment* Binary::segment_from_offset(uint64_t offset) {
-  return const_cast<Segment*>(static_cast<const Binary*>(this)->segment_from_offset(offset));
-}
-
 void Binary::remove_section(const std::string& name, bool clear) {
   Section* sec = get_section(name);
   if (sec == nullptr) {
     return;
   }
   remove(*sec, clear);
-}
-
-bool Binary::has_section(const std::string& name) const {
-  return get_section(name) != nullptr;
 }
 
 bool Binary::has_section_with_offset(uint64_t offset) const {
@@ -1646,15 +1604,6 @@ bool Binary::has_interpreter() const {
   return it_segment_interp != std::end(segments_) && !interpreter_.empty();
 }
 
-const std::string& Binary::interpreter() const {
-  return interpreter_;
-}
-
-void Binary::interpreter(const std::string& interpreter) {
-  interpreter_ = interpreter;
-}
-
-
 void Binary::write(const std::string& filename) {
   Builder builder{*this};
   builder.build();
@@ -1699,11 +1648,6 @@ const Section* Binary::section_from_offset(uint64_t offset, bool skip_nobits) co
   return it_section->get();
 }
 
-Section* Binary::section_from_offset(uint64_t offset, bool skip_nobits) {
-  return const_cast<Section*>(static_cast<const Binary*>(this)->section_from_offset(offset, skip_nobits));
-}
-
-
 const Section* Binary::section_from_virtual_address(uint64_t address, bool skip_nobits) const {
   const auto it_section = std::find_if(sections_.cbegin(), sections_.cend(),
       [address, skip_nobits] (const std::unique_ptr<Section>& section) {
@@ -1720,10 +1664,6 @@ const Section* Binary::section_from_virtual_address(uint64_t address, bool skip_
   }
 
   return it_section->get();
-}
-
-Section* Binary::section_from_virtual_address(uint64_t address, bool skip_nobits) {
-  return const_cast<Section*>(static_cast<const Binary*>(this)->section_from_virtual_address(address, skip_nobits));
 }
 
 span<const uint8_t>
@@ -1778,11 +1718,6 @@ const Segment* Binary::get(Segment::TYPE type) const {
   return it_segment->get();
 }
 
-
-Segment* Binary::get(Segment::TYPE type) {
-  return const_cast<Segment*>(static_cast<const Binary*>(this)->get(type));
-}
-
 const Note* Binary::get(Note::TYPE type) const {
   const auto it_note = std::find_if(
       std::begin(notes_), std::end(notes_),
@@ -1794,11 +1729,6 @@ const Note* Binary::get(Note::TYPE type) const {
   }
 
   return it_note->get();
-}
-
-
-Note* Binary::get(Note::TYPE type) {
-  return const_cast<Note*>(static_cast<const Binary*>(this)->get(type));
 }
 
 const Section* Binary::get(Section::TYPE type) const {
@@ -1813,10 +1743,6 @@ const Section* Binary::get(Section::TYPE type) const {
   }
 
   return it_section->get();
-}
-
-Section* Binary::get(Section::TYPE type) {
-  return const_cast<Section*>(static_cast<const Binary*>(this)->get(type));
 }
 
 void Binary::permute_dynamic_symbols(const std::vector<size_t>& permutation) {
@@ -1841,25 +1767,6 @@ void Binary::permute_dynamic_symbols(const std::vector<size_t>& permutation) {
 
   }
 }
-
-LIEF::Header Binary::get_abstract_header() const {
-  LIEF::Header header;
-  const std::pair<ARCHITECTURES, std::set<MODES>>& am = this->header().abstract_architecture();
-  header.architecture(am.first);
-  header.modes(am.second);
-  header.entrypoint(this->header().entrypoint());
-
-  if (this->header().file_type() == Header::FILE_TYPE::DYN && has_interpreter()) { // PIE
-    header.object_type(OBJECT_TYPES::TYPE_EXECUTABLE);
-  } else {
-    header.object_type(this->header().abstract_object_type());
-  }
-
-  header.endianness(this->header().abstract_endianness());
-
-  return header;
-}
-
 
 bool Binary::has_notes() const {
   const auto it_segment_note = std::find_if(
@@ -2059,11 +1966,6 @@ void Binary::remove_library(const std::string& library_name) {
   remove(*lib);
 }
 
-
-DynamicEntryLibrary* Binary::get_library(const std::string& library_name) {
-  return const_cast<DynamicEntryLibrary*>(static_cast<const Binary*>(this)->get_library(library_name));
-}
-
 const DynamicEntryLibrary* Binary::get_library(const std::string& library_name) const {
   const auto it_needed = std::find_if(std::begin(dynamic_entries_), std::end(dynamic_entries_),
       [&library_name] (const std::unique_ptr<DynamicEntry>& entry) {
@@ -2077,11 +1979,6 @@ const DynamicEntryLibrary* Binary::get_library(const std::string& library_name) 
   }
   return static_cast<const DynamicEntryLibrary*>(it_needed->get());
 }
-
-bool Binary::has_library(const std::string& name) const {
-  return get_library(name) != nullptr;
-}
-
 
 LIEF::Binary::functions_t Binary::tor_functions(DynamicEntry::TAG tag) const {
   LIEF::Binary::functions_t functions;
@@ -2174,10 +2071,6 @@ const Relocation* Binary::get_relocation(uint64_t address) const {
 
 }
 
-Relocation* Binary::get_relocation(uint64_t address) {
-  return const_cast<Relocation*>(static_cast<const Binary*>(this)->get_relocation(address));
-}
-
 const Relocation* Binary::get_relocation(const Symbol& symbol) const {
   const auto it = std::find_if(std::begin(relocations_), std::end(relocations_),
                                [&symbol] (const std::unique_ptr<Relocation>& r) {
@@ -2191,10 +2084,6 @@ const Relocation* Binary::get_relocation(const Symbol& symbol) const {
   return nullptr;
 }
 
-Relocation* Binary::get_relocation(const Symbol& symbol) {
-  return const_cast<Relocation*>(static_cast<const Binary*>(this)->get_relocation(symbol));
-}
-
 const Relocation* Binary::get_relocation(const std::string& symbol_name) const {
   const LIEF::Symbol* sym = get_symbol(symbol_name);
   if (sym == nullptr) {
@@ -2202,11 +2091,6 @@ const Relocation* Binary::get_relocation(const std::string& symbol_name) const {
   }
   return get_relocation(*sym->as<Symbol>());
 }
-
-Relocation* Binary::get_relocation(const std::string& symbol_name) {
-  return const_cast<Relocation*>(static_cast<const Binary*>(this)->get_relocation(symbol_name));
-}
-
 
 LIEF::Binary::functions_t Binary::armexid_functions() const {
   LIEF::Binary::functions_t funcs;

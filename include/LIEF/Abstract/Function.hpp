@@ -113,9 +113,7 @@ class LIEF_API Function : public Symbol {
 };
 
 LIEF_API const char* to_string(Function::FLAGS e);
-
 }
-
 
 ENABLE_BITMASK_OPERATORS(LIEF::Function::FLAGS)
 

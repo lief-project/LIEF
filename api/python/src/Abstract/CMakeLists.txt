@@ -1,6 +1,5 @@
 target_sources(pyLIEF PRIVATE
   init.cpp
-  enums.cpp
   pyParser.cpp
   pyHeader.cpp
   pySymbol.cpp

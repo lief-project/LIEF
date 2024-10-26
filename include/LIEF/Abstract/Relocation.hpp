@@ -27,41 +27,64 @@ namespace LIEF {
 class LIEF_API Relocation : public Object {
 
   public:
-  Relocation();
+  Relocation() = default;
 
   //! Constructor from a relocation's address and size
-  Relocation(uint64_t address, uint8_t size);
+  Relocation(uint64_t address, uint8_t size) :
+    address_(address),
+    size_(size)
+  {}
 
-  ~Relocation() override;
+  ~Relocation() override = default;
 
-  Relocation& operator=(const Relocation&);
-  Relocation(const Relocation&);
-  void swap(Relocation& other);
+  Relocation& operator=(const Relocation&) = default;
+  Relocation(const Relocation&) = default;
+  void swap(Relocation& other) {
+    std::swap(address_, other.address_);
+    std::swap(size_,    other.size_);
+  }
 
   //! Relocation's address
-  virtual uint64_t address() const;
+  virtual uint64_t address() const {
+    return address_;
+  }
 
   //! Relocation size in **bits**
-  virtual size_t size() const;
+  virtual size_t size() const {
+    return size_;
+  }
 
-  virtual void address(uint64_t address);
-  virtual void size(size_t size);
+  virtual void address(uint64_t address) {
+    address_ = address;
+  }
+
+  virtual void size(size_t size) {
+    size_ = (uint8_t)size;
+  }
 
   //! Method so that the ``visitor`` can visit us
   void accept(Visitor& visitor) const override;
 
 
   //! Comparaison based on the Relocation's **address**
-  virtual bool operator<(const Relocation& rhs) const;
+  virtual bool operator<(const Relocation& rhs) const {
+    return address() < rhs.address();
+  }
 
   //! Comparaison based on the Relocation's **address**
-  virtual bool operator<=(const Relocation& rhs) const;
+  virtual bool operator<=(const Relocation& rhs) const {
+    return !(address() > rhs.address());
+  }
 
   //! Comparaison based on the Relocation's **address**
-  virtual bool operator>(const Relocation& rhs) const;
+  virtual bool operator>(const Relocation& rhs) const {
+    return address() > rhs.address();
+  }
 
   //! Comparaison based on the Relocation's **address**
-  virtual bool operator>=(const Relocation& rhs) const;
+  virtual bool operator>=(const Relocation& rhs) const {
+    return !(address() < rhs.address());
+  }
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Relocation& entry);
 

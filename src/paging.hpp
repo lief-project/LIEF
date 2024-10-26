@@ -15,7 +15,6 @@
 #ifndef LIEF_INTERNAL_PAGING_
 #define LIEF_INTERNAL_PAGING_
 #include "LIEF/Abstract/Binary.hpp"
-#include "LIEF/Abstract/enums.hpp"
 #include <cstdint>
 namespace LIEF {
 uint32_t get_pagesize(const Binary& bin);

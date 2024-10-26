@@ -16,7 +16,6 @@
 #include <utility>
 
 #include "LIEF/Abstract.hpp"
-#include "LIEF/Abstract/EnumToString.hpp"
 
 #include "visitors/json.hpp"
 

@@ -17,14 +17,11 @@
 #define LIEF_MACHO_HEADER_H
 
 #include <ostream>
-#include <set>
 #include <vector>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/enums.hpp"
-
-#include "LIEF/Abstract/enums.hpp"
 
 #include "LIEF/MachO/enums.hpp"
 
@@ -164,14 +161,6 @@ class LIEF_API Header : public Object {
   }
 
   void add(FLAGS flag);
-
-  //! LIEF abstract object type
-  OBJECT_TYPES abstract_object_type() const;
-
-  std::pair<ARCHITECTURES, std::set<MODES>> abstract_architecture() const;
-
-  //! LIEF abstract endiannes
-  ENDIANNESS abstract_endianness() const;
 
   void magic(MACHO_TYPES magic) {
     magic_ = magic;

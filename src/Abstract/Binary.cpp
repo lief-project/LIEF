@@ -31,32 +31,14 @@ Binary::Binary(FORMATS fmt) :
 {}
 
 Binary::Binary() = default;
-
 Binary::~Binary() = default;
-
-Header Binary::header() const {
-  return get_abstract_header();
-}
-
-Binary::it_symbols Binary::symbols() {
-  return get_abstract_symbols();
-}
-
-Binary::it_const_symbols Binary::symbols() const {
-  return const_cast<Binary*>(this)->get_abstract_symbols();
-}
-
-
-bool Binary::has_symbol(const std::string& name) const {
-  return get_symbol(name) != nullptr;
-}
 
 const Symbol* Binary::get_symbol(const std::string& name) const {
   symbols_t symbols = const_cast<Binary*>(this)->get_abstract_symbols();
-  const auto it_symbol = std::find_if(std::begin(symbols), std::end(symbols),
-                                      [&name] (const Symbol* s) {
-                                        return s->name() == name;
-                                      });
+  const auto it_symbol = std::find_if(
+    std::begin(symbols), std::end(symbols),
+    [&name] (const Symbol* s) { return s->name() == name; }
+  );
 
   if (it_symbol == std::end(symbols)) {
     return nullptr;
@@ -65,41 +47,6 @@ const Symbol* Binary::get_symbol(const std::string& name) const {
   return *it_symbol;
 }
 
-Symbol* Binary::get_symbol(const std::string& name) {
-  return const_cast<Symbol*>(static_cast<const Binary*>(this)->get_symbol(name));
-}
-
-Binary::it_sections Binary::sections() {
-  return get_abstract_sections();
-}
-
-
-Binary::it_const_sections Binary::sections() const {
-  return const_cast<Binary*>(this)->get_abstract_sections();
-}
-
-
-Binary::it_relocations Binary::relocations() {
-  return get_abstract_relocations();
-}
-
-Binary::it_const_relocations Binary::relocations() const {
-  return const_cast<Binary*>(this)->get_abstract_relocations();
-}
-
-
-Binary::functions_t Binary::exported_functions() const {
-  return get_abstract_exported_functions();
-}
-
-Binary::functions_t Binary::imported_functions() const {
-  return get_abstract_imported_functions();
-}
-
-
-std::vector<std::string> Binary::imported_libraries() const {
-  return get_abstract_imported_libraries();
-}
 
 result<uint64_t> Binary::get_function_address(const std::string&) const {
   LIEF_ERR("Not implemented for this format");
@@ -121,15 +68,6 @@ std::vector<uint64_t> Binary::xref(uint64_t address) const {
 
 void Binary::accept(Visitor& visitor) const {
   visitor.visit(*this);
-}
-
-std::ostream& Binary::print(std::ostream& os) const {
-  return os;
-}
-
-std::ostream& operator<<(std::ostream& os, const Binary& binary) {
-  binary.print(os);
-  return os;
 }
 
 const char* to_string(Binary::VA_TYPES e) {

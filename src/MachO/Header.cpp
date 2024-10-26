@@ -69,64 +69,6 @@ Header::Header(const T& header) :
 template Header::Header(const details::mach_header_64& header);
 template Header::Header(const details::mach_header& header);
 
-std::pair<ARCHITECTURES, std::set<MODES>> Header::abstract_architecture() const {
-  using modes_t = std::pair<ARCHITECTURES, std::set<MODES>>;
-  static const std::map<CPU_TYPE, modes_t> ARCH_MACHO_TO_LIEF {
-    {CPU_TYPE::ANY,       {ARCH_NONE,  {}}},
-    {CPU_TYPE::X86_64,    {ARCH_X86,   {MODE_64}}},
-    {CPU_TYPE::ARM,       {ARCH_ARM,   {MODE_32}}},
-    {CPU_TYPE::ARM64,     {ARCH_ARM64, {MODE_64}}},
-    {CPU_TYPE::X86,       {ARCH_X86,   {MODE_32}}},
-    {CPU_TYPE::SPARC,     {ARCH_SPARC, {}}},
-    {CPU_TYPE::POWERPC,   {ARCH_PPC,   {MODE_32}}},
-    {CPU_TYPE::POWERPC64, {ARCH_PPC,   {MODE_64}}},
-  };
-  auto it = ARCH_MACHO_TO_LIEF.find(cpu_type());
-  if (it == std::end(ARCH_MACHO_TO_LIEF)) {
-    return {ARCHITECTURES::ARCH_NONE, {}};
-  }
-  return it->second;
-}
-
-
-OBJECT_TYPES Header::abstract_object_type() const {
-  CONST_MAP(FILE_TYPE, OBJECT_TYPES, 3) OBJ_MACHO_TO_LIEF {
-    {FILE_TYPE::EXECUTE, OBJECT_TYPES::TYPE_EXECUTABLE},
-    {FILE_TYPE::DYLIB,   OBJECT_TYPES::TYPE_LIBRARY},
-    {FILE_TYPE::OBJECT,  OBJECT_TYPES::TYPE_OBJECT},
-  };
-  auto it = OBJ_MACHO_TO_LIEF.find(file_type());
-  if (it == std::end(OBJ_MACHO_TO_LIEF)) {
-    return OBJECT_TYPES::TYPE_NONE;
-  }
-  return it->second;
-}
-
-ENDIANNESS Header::abstract_endianness() const {
-  CONST_MAP(CPU_TYPE, ENDIANNESS, 7) ENDI_MACHO_TO_LIEF {
-    {CPU_TYPE::X86,       ENDIANNESS::ENDIAN_LITTLE},
-    {CPU_TYPE::X86_64,    ENDIANNESS::ENDIAN_LITTLE},
-    {CPU_TYPE::ARM,       ENDIANNESS::ENDIAN_LITTLE},
-    {CPU_TYPE::ARM64,     ENDIANNESS::ENDIAN_LITTLE},
-    {CPU_TYPE::SPARC,     ENDIANNESS::ENDIAN_BIG},
-    {CPU_TYPE::POWERPC,   ENDIANNESS::ENDIAN_BIG},
-    {CPU_TYPE::POWERPC64, ENDIANNESS::ENDIAN_BIG},
-  };
-  auto it = ENDI_MACHO_TO_LIEF.find(cpu_type());
-  if (it == std::end(ENDI_MACHO_TO_LIEF)) {
-    return ENDIANNESS::ENDIAN_NONE;
-  }
-  auto not_endianness = [] (ENDIANNESS endian) {
-    return endian == ENDIAN_LITTLE ? ENDIAN_BIG : ENDIAN_LITTLE;
-  };
-  if (magic() == MACHO_TYPES::MH_CIGAM ||
-      magic() == MACHO_TYPES::MH_CIGAM_64 ||
-      magic() == MACHO_TYPES::FAT_CIGAM)
-  {
-    return not_endianness(it->second);
-  }
-  return it->second;
-}
 
 std::vector<Header::FLAGS> Header::flags_list() const {
   std::vector<Header::FLAGS> flags;

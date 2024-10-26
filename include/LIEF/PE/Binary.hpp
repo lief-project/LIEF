@@ -170,13 +170,17 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Find the section associated that encompasses the given offset.
   //!
   //! If no section can be found, return a nullptr
-  Section* section_from_offset(uint64_t offset);
+  Section* section_from_offset(uint64_t offset) {
+    return const_cast<Section*>(static_cast<const Binary*>(this)->section_from_offset(offset));
+  }
   const Section* section_from_offset(uint64_t offset) const;
 
   //! Find the section associated that encompasses the given RVA.
   //!
   //! If no section can be found, return a nullptr
-  Section* section_from_rva(uint64_t virtual_address);
+  Section* section_from_rva(uint64_t virtual_address) {
+    return const_cast<Section*>(static_cast<const Binary*>(this)->section_from_rva(virtual_address));
+  }
   const Section* section_from_rva(uint64_t virtual_address) const;
 
   //! Return an iterator over the PE's Section
@@ -274,7 +278,9 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   //! Check if the current binary has exceptions
-  bool has_exceptions() const;
+  bool has_exceptions() const {
+    return has(DataDirectory::TYPES::EXCEPTION_TABLE);
+  }
 
   //! Check if the current binary has relocations
   //!
@@ -387,13 +393,17 @@ class LIEF_API Binary : public LIEF::Binary {
   //! If the secion can't be found, return a nullptr
   //!
   //! @param[in] name Name of the Section
-  Section* get_section(const std::string& name);
+  Section* get_section(const std::string& name) {
+    return const_cast<Section*>(static_cast<const Binary*>(this)->get_section(name));
+  }
   const Section* get_section(const std::string& name) const;
 
   //! Return the section associated with import table or a
   //! nullptr if the binary does not have an import table
   const Section* import_section() const;
-  Section*       import_section();
+  Section* import_section() {
+    return const_cast<Section*>(static_cast<const Binary*>(this)->import_section());
+  }
 
   //! Delete the section with the given name
   //!
@@ -436,7 +446,9 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   //! Return the DataDirectory with the given type (or index)
-  DataDirectory* data_directory(DataDirectory::TYPES type);
+  DataDirectory* data_directory(DataDirectory::TYPES type) {
+    return const_cast<DataDirectory*>(static_cast<const Binary*>(this)->data_directory(type));
+  }
   const DataDirectory* data_directory(DataDirectory::TYPES type) const;
 
   //! Check if the current binary has the given DataDirectory::TYPES
@@ -527,7 +539,9 @@ class LIEF_API Binary : public LIEF::Binary {
   //! found, return a nullptr
   //!
   //! @param[in] import_name Name of the import
-  Import* get_import(const std::string& import_name);
+  Import* get_import(const std::string& import_name) {
+    return const_cast<Import*>(static_cast<const Binary*>(this)->get_import(import_name));
+  }
   const Import* get_import(const std::string& import_name) const;
 
   //! ``True`` if the binary imports the given library name
@@ -558,7 +572,9 @@ class LIEF_API Binary : public LIEF::Binary {
   //! found, return a nullptr
   //!
   //! @param[in] import_name Name of the delay import
-  DelayImport* get_delay_import(const std::string& import_name);
+  DelayImport* get_delay_import(const std::string& import_name) {
+    return const_cast<DelayImport*>(static_cast<const Binary*>(this)->get_delay_import(import_name));
+  }
   const DelayImport* get_delay_import(const std::string& import_name) const;
 
 
@@ -674,7 +690,9 @@ class LIEF_API Binary : public LIEF::Binary {
   //! Return binary's symbols as LIEF::Symbol
   LIEF::Binary::symbols_t get_abstract_symbols() override;
 
-  LIEF::Header get_abstract_header() const override;
+  LIEF::Header get_abstract_header() const override {
+    return LIEF::Header::from(*this);
+  }
 
   //! Return binary's section as LIEF::Section
   LIEF::Binary::sections_t get_abstract_sections() override;

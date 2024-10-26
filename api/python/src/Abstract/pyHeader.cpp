@@ -16,48 +16,92 @@
 #include <sstream>
 
 #include <nanobind/stl/string.h>
-#include <nanobind/stl/set.h>
+#include <nanobind/stl/vector.h>
 
 #include "Abstract/init.hpp"
 #include "pyLIEF.hpp"
 
 #include "LIEF/Abstract/Header.hpp"
+#include "enums_wrapper.hpp"
 
 namespace LIEF::py {
 
 template<>
 void create<Header>(nb::module_& m) {
-  nb::class_<Header, Object>(m, "Header",
+  nb::class_<Header, Object> obj(m, "Header",
      R"delim(
      Class which represents an abstracted Header
-     )delim"_doc)
-    .def(nb::init())
-    .def_prop_rw("architecture",
+     )delim"_doc);
+
+  #define ENTRY(X) .value(to_string(Header::ARCHITECTURES::X), Header::ARCHITECTURES::X)
+  enum_<Header::ARCHITECTURES>(obj, "ARCHITECTURES")
+    ENTRY(UNKNOWN)
+    ENTRY(ARM)
+    ENTRY(ARM64)
+    ENTRY(MIPS)
+    ENTRY(X86)
+    ENTRY(X86_64)
+    ENTRY(PPC)
+    ENTRY(SPARC)
+    ENTRY(SYSZ)
+    ENTRY(XCORE)
+    ENTRY(RISCV)
+    ENTRY(LOONGARCH)
+  ;
+  #undef ENTRY
+
+  #define ENTRY(X) .value(to_string(Header::ENDIANNESS::X), Header::ENDIANNESS::X)
+  enum_<Header::ENDIANNESS>(obj, "ENDIANNESS")
+    ENTRY(UNKNOWN)
+    ENTRY(BIG)
+    ENTRY(LITTLE)
+  ;
+  #undef ENTRY
+
+  #define ENTRY(X) .value(to_string(Header::MODES::X), Header::MODES::X)
+  enum_<Header::MODES>(obj, "MODES")
+    ENTRY(NONE)
+    ENTRY(BITS_16)
+    ENTRY(BITS_32)
+    ENTRY(BITS_64)
+    ENTRY(THUMB)
+    ENTRY(ARM64E)
+  ;
+  #undef ENTRY
+
+  #define ENTRY(X) .value(to_string(Header::OBJECT_TYPES::X), Header::OBJECT_TYPES::X)
+  enum_<Header::OBJECT_TYPES>(obj, "OBJECT_TYPES")
+    ENTRY(UNKNOWN)
+    ENTRY(EXECUTABLE)
+    ENTRY(LIBRARY)
+    ENTRY(OBJECT)
+  ;
+  #undef ENTRY
+
+  obj
+    .def_prop_ro("architecture",
         nb::overload_cast<>(&Header::architecture, nb::const_),
-        nb::overload_cast<ARCHITECTURES>(&Header::architecture),
-        "Target architecture (" RST_CLASS_REF(lief.ARCHITECTURES) ")"_doc)
+        "Target architecture"_doc)
 
-    .def_prop_rw("modes",
+    .def_prop_ro("modes",
         nb::overload_cast<>(&Header::modes, nb::const_),
-        nb::overload_cast<const std::set<MODES>&>(&Header::modes),
-        "Target " RST_CLASS_REF(lief.MODES) " (32-bits, 64-bits...)"_doc)
+        "Architecture details"_doc)
 
-    .def_prop_rw("entrypoint",
+    .def_prop_ro("modes_list",
+        nb::overload_cast<>(&Header::modes_list, nb::const_),
+        "*Modes* as a list"_doc)
+
+    .def_prop_ro("entrypoint",
         nb::overload_cast<>(&Header::entrypoint, nb::const_),
-        nb::overload_cast<uint64_t>(&Header::entrypoint),
         "Binary entrypoint"_doc)
 
-    .def_prop_rw("object_type",
+    .def_prop_ro("object_type",
         nb::overload_cast<>(&Header::object_type, nb::const_),
-        nb::overload_cast<OBJECT_TYPES>(&Header::object_type),
-        "Type of the binary (executable, library...)\n"
-        "See: " RST_CLASS_REF(lief.OBJECT_TYPES) ""_doc)
+        "Type of the binary (executable, library...)"_doc)
 
-    .def_prop_rw("endianness",
+    .def_prop_ro("endianness",
         nb::overload_cast<>(&Header::endianness, nb::const_),
-        nb::overload_cast<ENDIANNESS>(&Header::endianness),
-        "Binary endianness\n"
-        "See: " RST_CLASS_REF(lief.ENDIANNESS) ""_doc)
+        "Binary endianness"_doc)
 
     .def_prop_ro("is_32",
         &Header::is_32,

@@ -19,11 +19,9 @@
 #include <ostream>
 #include <array>
 #include <vector>
-#include <set>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/Abstract/enums.hpp"
 
 #include "LIEF/ELF/enums.hpp"
 #include "LIEF/ELF/ProcessorFlags.hpp"
@@ -38,7 +36,6 @@ class LIEF_API Header : public Object {
   friend class Parser;
   public:
   using identity_t = std::array<uint8_t, 16>;
-  using abstract_architecture_t = std::pair<ARCHITECTURES, std::set<MODES>>;
 
   public:
   /// e_ident size and indices.
@@ -125,19 +122,10 @@ class LIEF_API Header : public Object {
     return file_type_;
   }
 
-  /// LIEF abstract object type
-  OBJECT_TYPES abstract_object_type() const;
-
   /// Target architecture
   ARCH machine_type() const {
     return machine_type_;
   }
-
-  /// LIEF abstract architecture
-  abstract_architecture_t abstract_architecture() const;
-
-  /// LIEF abstract endianness
-  ENDIANNESS abstract_endianness() const;
 
   /// Version of the object file format
   VERSION object_file_version() const {

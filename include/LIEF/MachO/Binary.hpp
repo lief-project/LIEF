@@ -19,6 +19,7 @@
 
 #include <vector>
 #include <map>
+#include <set>
 #include <memory>
 
 #include "LIEF/MachO/LoadCommand.hpp"
@@ -250,7 +251,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Return Symbol from the given name. If the symbol does not
   //! exists, it returns a null pointer
   const Symbol* get_symbol(const std::string& name) const;
-  Symbol* get_symbol(const std::string& name);
+  Symbol* get_symbol(const std::string& name) {
+    return const_cast<Symbol*>(static_cast<const Binary*>(this)->get_symbol(name));
+  }
 
   //! Check if the given symbol is exported
   static bool is_exported(const Symbol& symbol);
@@ -331,7 +334,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Return the LoadCommand associated with the given LoadCommand::TYPE
   //! or a nullptr if the command can't be found.
   const LoadCommand* get(LoadCommand::TYPE type) const;
-  LoadCommand* get(LoadCommand::TYPE type);
+  LoadCommand* get(LoadCommand::TYPE type) {
+    return const_cast<LoadCommand*>(static_cast<const Binary*>(this)->get(type));
+  }
 
   LoadCommand* add(std::unique_ptr<LoadCommand> command);
 
@@ -416,7 +421,9 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   //! Return the section from the given name of a nullptr
   //! if the section can't be found.
-  Section* get_section(const std::string& name);
+  Section* get_section(const std::string& name) {
+    return const_cast<Section*>(static_cast<const Binary*>(this)->get_section(name));
+  }
 
   //! Return the section from the given name or a nullptr
   //! if the section can't be found
@@ -425,7 +432,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Return the section from the segment with the name
   //! given in the first parameter and with the section's name provided in the
   //! second parameter. If the section cannot be found, it returns a nullptr
-  Section* get_section(const std::string& segname, const std::string& secname);
+  Section* get_section(const std::string& segname, const std::string& secname) {
+    return const_cast<Section*>(static_cast<const Binary*>(this)->get_section(segname, secname));
+  }
 
   const Section* get_section(const std::string& segname, const std::string& secname) const;
 
@@ -438,7 +447,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   const SegmentCommand* get_segment(const std::string& name) const;
 
   //! Return the segment from the given name
-  SegmentCommand* get_segment(const std::string& name);
+  SegmentCommand* get_segment(const std::string& name) {
+    return const_cast<SegmentCommand*>(static_cast<const Binary*>(this)->get_segment(name));
+  }
 
   //! Remove the symbol with the given name
   bool remove_symbol(const std::string& name);
@@ -460,12 +471,16 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   //! Return the MachO::Section that encompasses the provided offset.
   //! If a section can't be found, it returns a null pointer (``nullptr``)
-  Section* section_from_offset(uint64_t offset);
+  Section* section_from_offset(uint64_t offset) {
+    return const_cast<Section*>(static_cast<const Binary*>(this)->section_from_offset(offset));
+  }
   const Section* section_from_offset(uint64_t offset) const;
 
   //! Return the MachO::Section that encompasses the provided virtual address.
   //! If a section can't be found, it returns a null pointer (``nullptr``)
-  Section* section_from_virtual_address(uint64_t virtual_address);
+  Section* section_from_virtual_address(uint64_t virtual_address) {
+    return const_cast<Section*>(static_cast<const Binary*>(this)->section_from_virtual_address(virtual_address));
+  }
   const Section* section_from_virtual_address(uint64_t virtual_address) const;
 
   //! Convert a virtual address to an offset in the file
@@ -480,7 +495,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   //! Return the binary's SegmentCommand that encompasses the provided offset
   //!
   //! If a SegmentCommand can't be found it returns a null pointer (``nullptr``).
-  SegmentCommand* segment_from_offset(uint64_t offset);
+  SegmentCommand* segment_from_offset(uint64_t offset) {
+    return const_cast<SegmentCommand*>(static_cast<const Binary*>(this)->segment_from_offset(offset));
+  }
   const SegmentCommand* segment_from_offset(uint64_t offset) const;
 
   //! Return the index of the given SegmentCommand
@@ -493,7 +510,9 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   //! Return the binary's SegmentCommand which encompasses the given virtual address
   //! or a nullptr if not found.
-  SegmentCommand* segment_from_virtual_address(uint64_t virtual_address);
+  SegmentCommand* segment_from_virtual_address(uint64_t virtual_address) {
+    return const_cast<SegmentCommand*>(static_cast<const Binary*>(this)->segment_from_virtual_address(virtual_address));
+  }
   const SegmentCommand* segment_from_virtual_address(uint64_t virtual_address) const;
 
   //! Return the range of virtual addresses
@@ -687,7 +706,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   }
 
   //! Return the MachO::CodeSignature if present, a nullptr otherwise.
-  CodeSignature* code_signature();
+  CodeSignature* code_signature() {
+    return const_cast<CodeSignature*>(static_cast<const Binary*>(this)->code_signature());
+  }
   const CodeSignature* code_signature() const;
 
   //! ``true`` if the binary is signed with the command `DYLIB_CODE_SIGN_DRS`
@@ -696,7 +717,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   }
 
   //! Return the MachO::CodeSignatureDir if present, a nullptr otherwise.
-  CodeSignatureDir* code_signature_dir();
+  CodeSignatureDir* code_signature_dir() {
+    return const_cast<CodeSignatureDir*>(static_cast<const Binary*>(this)->code_signature_dir());
+  }
   const CodeSignatureDir* code_signature_dir() const;
 
   //! ``true`` if the binary has a MachO::DataInCode command.
@@ -804,7 +827,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   }
 
   //! Return the MachO::DyldChainedFixups if present, a nullptr otherwise.
-  TwoLevelHints* two_level_hints();
+  TwoLevelHints* two_level_hints() {
+    return const_cast<TwoLevelHints*>(static_cast<const Binary*>(this)->two_level_hints());
+  }
   const TwoLevelHints* two_level_hints() const;
 
   //! ``true`` if the binary has the command LC_LINKER_OPTIMIZATION_HINT.
@@ -813,7 +838,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   }
 
   //! Return the MachO::LinkerOptHint if present, a nullptr otherwise.
-  LinkerOptHint* linker_opt_hint();
+  LinkerOptHint* linker_opt_hint() {
+    return const_cast<LinkerOptHint*>(static_cast<const Binary*>(this)->linker_opt_hint());
+  }
   const LinkerOptHint* linker_opt_hint() const;
 
   //! Add a symbol in the export trie of the current binary
@@ -930,10 +957,12 @@ class LIEF_API Binary : public LIEF::Binary  {
   template<class T>
   LIEF_LOCAL ok_error_t patch_relocation(Relocation& relocation, uint64_t from, uint64_t shift);
 
-  LIEF::Header              get_abstract_header() const override;
-  LIEF::Binary::sections_t          get_abstract_sections() override;
-  LIEF::Binary::symbols_t           get_abstract_symbols() override;
-  LIEF::Binary::relocations_t       get_abstract_relocations() override;
+  LIEF::Header get_abstract_header() const override {
+    return LIEF::Header::from(*this);
+  }
+  LIEF::Binary::sections_t get_abstract_sections() override;
+  LIEF::Binary::symbols_t get_abstract_symbols() override;
+  LIEF::Binary::relocations_t get_abstract_relocations() override;
   LIEF::Binary::functions_t get_abstract_exported_functions() const override;
   LIEF::Binary::functions_t get_abstract_imported_functions() const override;
   std::vector<std::string>  get_abstract_imported_libraries() const override;

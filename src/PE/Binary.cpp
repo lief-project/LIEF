@@ -216,11 +216,6 @@ const Section* Binary::section_from_offset(uint64_t offset) const {
   return it_section->get();
 }
 
-Section* Binary::section_from_offset(uint64_t offset) {
-  return const_cast<Section*>(static_cast<const Binary*>(this)->section_from_offset(offset));
-}
-
-
 const Section* Binary::section_from_rva(uint64_t virtual_address) const {
   const auto it_section = std::find_if(std::begin(sections_), std::end(sections_),
       [virtual_address] (const std::unique_ptr<Section>& section) {
@@ -235,24 +230,12 @@ const Section* Binary::section_from_rva(uint64_t virtual_address) const {
   return it_section->get();
 }
 
-Section* Binary::section_from_rva(uint64_t virtual_address) {
-  return const_cast<Section*>(static_cast<const Binary*>(this)->section_from_rva(virtual_address));
-}
-
-DataDirectory* Binary::data_directory(DataDirectory::TYPES index) {
-  return const_cast<DataDirectory*>(static_cast<const Binary*>(this)->data_directory(index));
-}
-
 const DataDirectory* Binary::data_directory(DataDirectory::TYPES index) const {
   if (static_cast<size_t>(index) < data_directories_.size() &&
       data_directories_[static_cast<size_t>(index)] != nullptr) {
     return data_directories_[static_cast<size_t>(index)].get();
   }
   return nullptr;
-}
-
-bool Binary::has_exceptions() const {
-  return has(DataDirectory::TYPES::EXCEPTION_TABLE);
 }
 
 bool Binary::is_reproducible_build() const {
@@ -306,10 +289,6 @@ LIEF::Binary::sections_t Binary::get_abstract_sections() {
 }
 
 
-Section* Binary::get_section(const std::string& name) {
-  return const_cast<Section*>(static_cast<const Binary*>(this)->get_section(name));
-}
-
 const Section* Binary::get_section(const std::string& name) const {
   const auto section_it = std::find_if(std::begin(sections_), std::end(sections_),
       [&name] (const std::unique_ptr<Section>& section) {
@@ -332,12 +311,6 @@ const Section* Binary::import_section() const {
   }
   return nullptr;
 }
-
-
-Section* Binary::import_section() {
-  return const_cast<Section*>(static_cast<const Binary*>(this)->import_section());
-}
-
 
 uint64_t Binary::virtual_size() const {
   uint64_t size = 0;
@@ -682,10 +655,6 @@ uint32_t Binary::predict_function_rva(const std::string& library, const std::str
       }), section_align);
 
   return next_virtual_address + address;
-}
-
-Import* Binary::get_import(const std::string& import_name) {
-  return const_cast<Import*>(static_cast<const Binary*>(this)->get_import(import_name));
 }
 
 const Import* Binary::get_import(const std::string& import_name) const {
@@ -1159,85 +1128,6 @@ std::vector<std::string> Binary::get_abstract_imported_libraries() const {
   return result;
 }
 
-LIEF::Header Binary::get_abstract_header() const {
-  LIEF::Header header;
-  using modes_t = std::pair<ARCHITECTURES, std::set<MODES>>;
-  static const std::unordered_map<Header::MACHINE_TYPES, modes_t> ARCH_PE_TO_LIEF {
-    {Header::MACHINE_TYPES::UNKNOWN,   {ARCH_NONE,  {}}},
-    {Header::MACHINE_TYPES::AMD64,     {ARCH_X86,   {MODE_64}}},
-    {Header::MACHINE_TYPES::ARM,       {ARCH_ARM,   {MODE_32}}}, // MODE_LITTLE_ENDIAN
-    {Header::MACHINE_TYPES::ARMNT,     {ARCH_ARM,   {MODE_32, MODE_V7, MODE_THUMB}}},
-    {Header::MACHINE_TYPES::ARM64,     {ARCH_ARM64, {MODE_64, MODE_V8}}},
-    {Header::MACHINE_TYPES::I386,      {ARCH_X86,   {MODE_32}}},
-    {Header::MACHINE_TYPES::IA64,      {ARCH_INTEL, {MODE_64}}},
-    {Header::MACHINE_TYPES::THUMB,     {ARCH_ARM,   {MODE_32, MODE_THUMB}}},
-  };
-
-  CONST_MAP(Header::MACHINE_TYPES, ENDIANNESS, 26) arch_pe_to_endi_lief {
-    {Header::MACHINE_TYPES::UNKNOWN,   ENDIANNESS::ENDIAN_NONE},
-    {Header::MACHINE_TYPES::AM33,      ENDIANNESS::ENDIAN_NONE},
-    {Header::MACHINE_TYPES::AMD64,     ENDIANNESS::ENDIAN_LITTLE},
-    {Header::MACHINE_TYPES::ARM,       ENDIANNESS::ENDIAN_LITTLE},
-    {Header::MACHINE_TYPES::ARMNT,     ENDIANNESS::ENDIAN_LITTLE},
-    {Header::MACHINE_TYPES::ARM64,     ENDIANNESS::ENDIAN_LITTLE},
-    {Header::MACHINE_TYPES::EBC,       ENDIANNESS::ENDIAN_NONE},
-    {Header::MACHINE_TYPES::I386,      ENDIANNESS::ENDIAN_LITTLE},
-    {Header::MACHINE_TYPES::IA64,      ENDIANNESS::ENDIAN_LITTLE},
-    {Header::MACHINE_TYPES::M32R,      ENDIANNESS::ENDIAN_LITTLE},
-    {Header::MACHINE_TYPES::MIPS16,    ENDIANNESS::ENDIAN_BIG},
-    {Header::MACHINE_TYPES::MIPSFPU,   ENDIANNESS::ENDIAN_BIG},
-    {Header::MACHINE_TYPES::MIPSFPU16, ENDIANNESS::ENDIAN_BIG},
-    {Header::MACHINE_TYPES::POWERPC,   ENDIANNESS::ENDIAN_LITTLE},
-    {Header::MACHINE_TYPES::POWERPCFP, ENDIANNESS::ENDIAN_LITTLE},
-    {Header::MACHINE_TYPES::POWERPCBE, ENDIANNESS::ENDIAN_BIG},
-    {Header::MACHINE_TYPES::R4000,     ENDIANNESS::ENDIAN_LITTLE},
-    {Header::MACHINE_TYPES::RISCV32,   ENDIANNESS::ENDIAN_LITTLE},
-    {Header::MACHINE_TYPES::RISCV64,   ENDIANNESS::ENDIAN_LITTLE},
-    {Header::MACHINE_TYPES::RISCV128,  ENDIANNESS::ENDIAN_LITTLE},
-    {Header::MACHINE_TYPES::SH3,       ENDIANNESS::ENDIAN_NONE},
-    {Header::MACHINE_TYPES::SH3DSP,    ENDIANNESS::ENDIAN_NONE},
-    {Header::MACHINE_TYPES::SH4,       ENDIANNESS::ENDIAN_NONE},
-    {Header::MACHINE_TYPES::SH5,       ENDIANNESS::ENDIAN_NONE},
-    {Header::MACHINE_TYPES::THUMB,     ENDIANNESS::ENDIAN_LITTLE},
-    {Header::MACHINE_TYPES::WCEMIPSV2, ENDIANNESS::ENDIAN_LITTLE},
-  };
-
-  const Header::MACHINE_TYPES machine = this->header().machine();
-  auto it_arch = ARCH_PE_TO_LIEF.find(machine);
-  if (it_arch == std::end(ARCH_PE_TO_LIEF)) {
-    LIEF_ERR("Can't abstract the architecture {}", to_string(machine));
-    header.architecture(ARCHITECTURES::ARCH_NONE);
-    header.modes({});
-  } else {
-    const auto& p = it_arch->second;
-    header.architecture(p.first);
-    header.modes(p.second);
-  }
-
-
-  header.entrypoint(entrypoint());
-
-  if (this->header().has_characteristic(Header::CHARACTERISTICS::DLL)) {
-    header.object_type(OBJECT_TYPES::TYPE_LIBRARY);
-  } else if (this->header().has_characteristic(Header::CHARACTERISTICS::EXECUTABLE_IMAGE)) {
-    header.object_type(OBJECT_TYPES::TYPE_EXECUTABLE);
-  } else {
-    header.object_type(OBJECT_TYPES::TYPE_NONE);
-  }
-
-  auto it_endi = arch_pe_to_endi_lief.find(machine);
-
-  if (it_endi == std::end(arch_pe_to_endi_lief)) {
-    LIEF_ERR("Can't find the endianness for {}", to_string(machine));
-    header.endianness(ENDIANNESS::ENDIAN_NONE);
-  } else {
-    header.endianness(it_endi->second);
-  }
-
-  return header;
-}
-
-
 void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_value, LIEF::Binary::VA_TYPES addr_type) {
   uint64_t rva = address;
 
@@ -1447,11 +1337,6 @@ LIEF::Binary::functions_t Binary::exception_functions() const {
   }
 
   return functions;
-}
-
-
-DelayImport* Binary::get_delay_import(const std::string& import_name) {
-  return const_cast<DelayImport*>(static_cast<const Binary*>(this)->get_delay_import(import_name));
 }
 
 const DelayImport* Binary::get_delay_import(const std::string& import_name) const {
