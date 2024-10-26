@@ -17,6 +17,7 @@
 #define LIEF_ELF_NOTE_DETAILS_PROPERTIES_H
 
 #include "LIEF/ELF/NoteDetails/properties/AArch64Feature.hpp"
+#include "LIEF/ELF/NoteDetails/properties/AArch64PAuth.hpp"
 #include "LIEF/ELF/NoteDetails/properties/Needed.hpp"
 #include "LIEF/ELF/NoteDetails/properties/NoteNoCopyOnProtected.hpp"
 #include "LIEF/ELF/NoteDetails/properties/X86ISA.hpp"

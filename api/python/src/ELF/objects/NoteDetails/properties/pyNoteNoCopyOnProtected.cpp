@@ -24,7 +24,7 @@ void create<NoteNoCopyOnProtected>(nb::module_& m) {
   nb::class_<NoteNoCopyOnProtected, NoteGnuProperty::Property> Class(
       m, "NoteNoCopyOnProtected",
       R"doc(
-      This class provides an interface over the `GNU_PROPERTY_NO_COPY_ON_PROTECTED`
+      This class provides an interface over the ``GNU_PROPERTY_NO_COPY_ON_PROTECTED``
       property. This property indicates that the linker shouldn't copy relocations
       against protected symbols.
       )doc"_doc

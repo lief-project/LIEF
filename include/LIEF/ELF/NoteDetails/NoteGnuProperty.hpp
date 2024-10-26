@@ -40,6 +40,7 @@ class LIEF_API NoteGnuProperty : public Note {
       UNKNOWN = 0,
       GENERIC,              ///< Property that dont' have special implementation
       AARCH64_FEATURES,     ///< Mirror of `GNU_PROPERTY_AARCH64_FEATURE_1_AND`
+      AARCH64_PAUTH,        ///< Mirror of `GNU_PROPERTY_AARCH64_FEATURE_PAUTH`
       STACK_SIZE,           ///< Mirror of `GNU_PROPERTY_STACK_SIZE`
       NO_COPY_ON_PROTECTED, ///< Mirror of `GNU_PROPERTY_NO_COPY_ON_PROTECTED`
       X86_ISA,              ///< Mirror of `GNU_PROPERTY_X86_ISA_1_*` and `GNU_PROPERTY_X86_COMPAT_*`

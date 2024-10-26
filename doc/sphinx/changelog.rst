@@ -6,7 +6,7 @@
 0.16.0 - Not Released Yet
 -------------------------
 
-:Abstract:
+:Abstraction:
 
   * Add |get_int_from_virtual_address| to read an **integer** value
     at a specific virtual address
@@ -34,6 +34,13 @@
 
       elf: &lief::elf::Binary
       let value: i16 = elf.get_int_from_virtual_address::<i16>(0x401126).unwrap();
+
+  * Global code cleaning (especially, |lief-header-architectures| and
+    |lief-header-modes| is now more meaningful)
+  * Re-scope ``lief.ARCHITECTURES`` into |lief-header-architectures|
+  * Re-scope ``lief.MODES`` into |lief-header-modes|
+  * Re-scope ``lief.OBJECT_TYPES`` into |lief-header-object-types|
+  * Re-scope ``lief.ENDIANNESS`` into |lief-header-endianness|
 
 
 :MachO:
@@ -67,6 +74,8 @@
 
 :ELF:
 
+  * Add support for ``GNU_PROPERTY_AARCH64_FEATURE_PAUTH`` GNU property note:
+    |lief-elf-aarch64pauth|.
   * Add |lief-elf-binary-target-android| to check if an ELF targets Android
   * Fix a critical error when rewriting ELF file with ``DT_RELR`` relocations.
     This error leads to a crash of the modified binary.
@@ -155,15 +164,6 @@
 :Dependencies:
 
   * Upgrade MbedTLS from ``3.2.1`` to ``3.6.1``
-
-:Abstraction:
-
-  * Global code cleaning (especially, |lief-header-architectures| and
-    |lief-header-modes| is now more meaningful)
-  * Re-scope ``lief.ARCHITECTURES`` into |lief-header-architectures|
-  * Re-scope ``lief.MODES`` into |lief-header-modes|
-  * Re-scope ``lief.OBJECT_TYPES`` into |lief-header-object-types|
-  * Re-scope ``lief.ENDIANNESS`` into |lief-header-endianness|
 
 :doc:
 

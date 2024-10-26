@@ -24,6 +24,7 @@ static constexpr auto GNU_PROPERTY_HIPROC = 0xdfffffff;
 static constexpr auto GNU_PROPERTY_LOUSER = 0xe0000000;
 static constexpr auto GNU_PROPERTY_HIUSER = 0xffffffff;
 static constexpr auto GNU_PROPERTY_AARCH64_FEATURE_1_AND = 0xc0000000;
+static constexpr auto GNU_PROPERTY_AARCH64_FEATURE_PAUTH = 0xc0000001;
 
 static constexpr auto GNU_PROPERTY_STACK_SIZE = 1;
 static constexpr auto GNU_PROPERTY_NO_COPY_ON_PROTECTED = 2;

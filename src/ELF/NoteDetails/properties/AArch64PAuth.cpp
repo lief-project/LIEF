@@ -13,21 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "ELF/pyELF.hpp"
+#include "LIEF/ELF/NoteDetails/properties/AArch64PAuth.hpp"
+#include "LIEF/BinaryStream/BinaryStream.hpp"
 
-#include "LIEF/ELF/NoteDetails/properties/StackSize.hpp"
+#include "frozen.hpp"
+#include "fmt_formatter.hpp"
 
-namespace LIEF::ELF::py {
+namespace LIEF {
+namespace ELF {
 
-template<>
-void create<StackSize>(nb::module_& m) {
-  nb::class_<StackSize, NoteGnuProperty::Property>(m, "StackSize",
-    R"doc(
-    This class provides an interface over the ``GNU_PROPERTY_STACK_SIZE`` property
-    This property can be used by the loader to raise the stack limit.
-    )doc")
-    .def_prop_ro("stack_size", &StackSize::stack_size);
+std::unique_ptr<AArch64PAuth> AArch64PAuth::create(BinaryStream& stream) {
+  uint64_t platform = stream.read<uint64_t>().value_or(0);
+  uint64_t version = stream.read<uint64_t>().value_or(0);
 
+  return std::unique_ptr<AArch64PAuth>(new AArch64PAuth(platform, version));
 }
 
+void AArch64PAuth::dump(std::ostream &os) const {
+  os << fmt::format("Platform: 0x{:04x}, Version: 0x{:04x}",
+                    platform(), version());
+}
+
+
+}
 }

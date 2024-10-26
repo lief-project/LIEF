@@ -26,6 +26,7 @@
 #include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
 #include "LIEF/ELF/NoteDetails/properties/Generic.hpp"
 #include "LIEF/ELF/NoteDetails/properties/AArch64Feature.hpp"
+#include "LIEF/ELF/NoteDetails/properties/AArch64PAuth.hpp"
 #include "LIEF/ELF/NoteDetails/properties/StackSize.hpp"
 #include "LIEF/ELF/NoteDetails/properties/X86Feature.hpp"
 #include "LIEF/ELF/NoteDetails/properties/X86ISA.hpp"
@@ -83,6 +84,10 @@ parse_property(ARCH arch, SpanStream& stream) {
     if (arch == ARCH::AARCH64) {
       if (type == GNU_PROPERTY_AARCH64_FEATURE_1_AND) {
         return AArch64Feature::create(content);
+      }
+
+      if (type == GNU_PROPERTY_AARCH64_FEATURE_PAUTH) {
+        return AArch64PAuth::create(content);
       }
       return Generic::create(type);
     }
@@ -177,13 +182,13 @@ void NoteGnuProperty::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-
 const char* to_string(NoteGnuProperty::Property::TYPE type) {
   #define ENTRY(X) std::pair(NoteGnuProperty::Property::TYPE::X, #X)
   STRING_MAP enums2str {
     ENTRY(UNKNOWN),
     ENTRY(GENERIC),
     ENTRY(AARCH64_FEATURES),
+    ENTRY(AARCH64_PAUTH),
     ENTRY(STACK_SIZE),
     ENTRY(NO_COPY_ON_PROTECTED),
     ENTRY(X86_ISA),

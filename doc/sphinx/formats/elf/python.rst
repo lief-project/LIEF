@@ -323,6 +323,19 @@ AArch64 Feature
 
 ----------
 
+AArch64 PAuth
+***************
+
+.. lief-inheritance:: lief._lief.ELF.AArch64PAuth
+  :top-classes: lief._lief.ELF.NoteGnuProperty.Property
+  :parts: 2
+
+.. autoclass:: lief.ELF.AArch64PAuth
+
+----------
+
+
+
 No Copy on Protected
 ********************
 

@@ -238,6 +238,14 @@ AArch64 Feature
 
 ----------
 
+AArch64 PAuth
+***************
+
+.. doxygenclass:: LIEF::ELF::AArch64PAuth
+
+
+----------
+
 No Copy on Protected
 ********************
 

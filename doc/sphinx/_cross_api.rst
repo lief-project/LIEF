@@ -246,6 +246,11 @@
     :py:meth:`lief.ELF.Binary.write`
     :cpp:func:`LIEF::ELF::Binary::write`
 
+.. |lief-elf-aarch64pauth| lief-api:: lief.ELF.AArch64PAuth
+
+    :py:class:`lief.ELF.AArch64PAuth`
+    :cpp:class:`LIEF::ELF::AArch64PAuth`
+
 .. Mach-O ======================================================================
 
 .. |lief-macho-binary| lief-api:: lief.MachO.Binary

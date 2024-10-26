@@ -122,6 +122,25 @@ def test_note_aarch64_features():
     print(note.properties[0])
     print(note)
 
+def test_note_aarch_pauth():
+    GNU_PROPERTY_AARCH64_FEATURE_PAUTH = "040000001800000005000000474e5500010000c0100000002a000000000000000100000000000000"
+
+    note: lief.ELF.NoteGnuProperty = lief.ELF.Note.create(raw=bytes.fromhex(GNU_PROPERTY_AARCH64_FEATURE_PAUTH),
+            file_type=lief.ELF.Header.FILE_TYPE.NONE, arch=lief.ELF.ARCH.AARCH64,
+            cls=lief.ELF.Header.CLASS.ELF64)
+    assert len(note.properties) == 1
+    assert note.find(lief.ELF.NoteGnuProperty.Property.TYPE.AARCH64_PAUTH) is not None
+    assert note.find(lief.ELF.NoteGnuProperty.Property.TYPE.GENERIC) is None
+
+    assert isinstance(note.properties[0], lief.ELF.AArch64PAuth)
+    assert note.properties[0].platform == 42
+    assert note.properties[0].version == 1
+    assert str(note.properties[0])
+    print(note.properties[0])
+    print(note)
+
+
+
 def test_note_x86_isa():
     GNU_PROPERTY_X86_ISA_1_NEEDED = "040000001800000005000000474e5500028000c00400000001000000020001c00400000000000000"
     note: lief.ELF.NoteGnuProperty = lief.ELF.Note.create(raw=bytes.fromhex(GNU_PROPERTY_X86_ISA_1_NEEDED),

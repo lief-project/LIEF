@@ -30,7 +30,7 @@ void create<AArch64Feature>(nb::module_& m) {
   nb::class_<AArch64Feature, NoteGnuProperty::Property>
     Class(m, "AArch64Feature",
       R"doc(
-      This class represents the `GNU_PROPERTY_AARCH64_FEATURE_1_AND` note.
+      This class represents the ``GNU_PROPERTY_AARCH64_FEATURE_1_AND`` note.
       )doc"_doc);
 
   Class
