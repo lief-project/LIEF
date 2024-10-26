@@ -166,3 +166,13 @@ def test_1058():
 
     assert original_fini == [0xffffffffffffffff, 0x0]
     assert relocated_fini == [0xffffffffffffffff, 0x0]
+
+def test_is_android():
+    elf = lief.ELF.parse(get_sample('ELF/ELF64_AArch64_piebinary_ndkr16.bin'))
+    assert elf.is_targeting_android
+
+    elf = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_empty-gnu-hash.bin'))
+    assert not elf.is_targeting_android
+
+    elf = lief.ELF.parse(get_sample('ELF/libmonochrome-armv7.so'))
+    assert elf.is_targeting_android

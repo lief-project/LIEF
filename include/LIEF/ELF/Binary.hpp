@@ -911,6 +911,9 @@ class LIEF_API Binary : public LIEF::Binary {
   //! DynamicEntry::TAG::INIT_ARRAY) with relocations applied (if any)
   std::vector<uint64_t> get_relocated_dynamic_array(DynamicEntry::TAG tag) const;
 
+  //! True if the current ELF is targeting Android
+  bool is_targeting_android() const;
+
   static bool classof(const LIEF::Binary* bin) {
     return bin->format() == Binary::FORMATS::ELF ||
            bin->format() == Binary::FORMATS::OAT;

@@ -3069,6 +3069,59 @@ std::vector<uint64_t> Binary::get_relocated_dynamic_array(DynamicEntry::TAG tag)
   return result;
 }
 
+bool Binary::is_targeting_android() const {
+  static constexpr auto ANDROID_DT = {
+    DynamicEntry::TAG::ANDROID_REL_OFFSET,
+    DynamicEntry::TAG::ANDROID_REL_SIZE,
+    DynamicEntry::TAG::ANDROID_REL,
+    DynamicEntry::TAG::ANDROID_RELSZ,
+    DynamicEntry::TAG::ANDROID_RELA,
+    DynamicEntry::TAG::ANDROID_RELASZ,
+    DynamicEntry::TAG::ANDROID_RELR,
+    DynamicEntry::TAG::ANDROID_RELRSZ,
+    DynamicEntry::TAG::ANDROID_RELRENT,
+    DynamicEntry::TAG::ANDROID_RELRCOUNT,
+  };
+
+  static constexpr auto ANDROID_NOTES = {
+    Note::TYPE::ANDROID_IDENT,
+    Note::TYPE::ANDROID_KUSER,
+    Note::TYPE::ANDROID_MEMTAG,
+  };
+
+  if (format_ == Binary::FORMATS::OAT) {
+    return true;
+  }
+
+  if (std::any_of(ANDROID_DT.begin(), ANDROID_DT.end(),
+      [this] (DynamicEntry::TAG t) {
+        return has(t);
+      }))
+  {
+    return true;
+  }
+
+  if (std::any_of(ANDROID_NOTES.begin(), ANDROID_NOTES.end(),
+      [this] (Note::TYPE t) {
+        return has(t);
+      }))
+  {
+    return true;
+  }
+
+  if (has_section(".note.android.ident")) {
+    return true;
+  }
+
+  const std::string& interp = interpreter();
+
+  if (interp == "/system/bin/linker64" || interp == "/system/bin/linker") {
+    return true;
+  }
+
+  return false;
+}
+
 std::ostream& Binary::print(std::ostream& os) const {
 
   os << "Header" << '\n';

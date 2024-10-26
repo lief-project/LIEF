@@ -240,6 +240,11 @@ impl Binary {
         Vec::from(self.ptr.get_relocated_dynamic_array(u64::from(tag)).as_slice())
     }
 
+    /// True if the current binary is targeting Android
+    pub fn is_targeting_android(&self) -> bool {
+        self.ptr.is_targeting_android()
+    }
+
     /// Get the integer value at the given virtual address
     pub fn get_int_from_virtual_address<T>(&self, addr: u64) -> Result<T, Error>
         where T: Num + cast::FromPrimitive + cast::ToPrimitive

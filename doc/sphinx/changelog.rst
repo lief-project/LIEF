@@ -67,6 +67,7 @@
 
 :ELF:
 
+  * Add |lief-elf-binary-target-android| to check if an ELF targets Android
   * Fix a critical error when rewriting ELF file with ``DT_RELR`` relocations.
     This error leads to a crash of the modified binary.
   * Fix error while (re)generating ELF's RELR relocations (:issue:`1097`)

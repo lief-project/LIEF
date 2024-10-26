@@ -328,6 +328,10 @@ class ELF_Binary : public AbstractBinary {
     return impl().get_relocated_dynamic_array(LIEF::ELF::DynamicEntry::TAG(tag));
   }
 
+  auto is_targeting_android() const {
+    return impl().is_targeting_android();
+  }
+
   private:
   const lief_t& impl() const { return as<lief_t>(this); }
 };

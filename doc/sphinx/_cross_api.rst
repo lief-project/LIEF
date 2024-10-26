@@ -235,6 +235,12 @@
     :py:class:`lief.ELF.Binary`
     :cpp:class:`LIEF::ELF::Binary`
 
+.. |lief-elf-binary-target-android| lief-api:: lief.ELF.Binary.is_targeting_android
+
+    :rust:method:`lief::elf::Binary::is_targeting_android [struct]`
+    :py:attr:`lief.ELF.Binary.is_targeting_android`
+    :cpp:func:`LIEF::ELF::Binary::is_targeting_android`
+
 .. |lief-elf-binary-write| lief-api:: lief.ELF.Binary.write()
 
     :py:meth:`lief.ELF.Binary.write`

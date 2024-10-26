@@ -730,6 +730,10 @@ void create<Binary>(nb::module_& m) {
         &Binary::has_overlay,
         "True if data are appended to the end of the binary"_doc)
 
+    .def_prop_ro("is_targeting_android", &Binary::is_targeting_android,
+      R"doc(True if the current is targeting Android)doc"_doc
+    )
+
     .def_prop_rw("overlay",
         [] (const Binary& self) {
           const span<const uint8_t> overlay = self.overlay();
