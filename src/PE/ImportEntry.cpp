@@ -67,7 +67,7 @@ bool ImportEntry::is_ordinal() const {
     return false;
   }
   // Check that bits 30-15 / 62-15 are set to 0.
-  uint64_t val = (data_ & ~ORDINAL_MASK) >> 15;
+  uint64_t val = (data_ & ~ORDINAL_MASK) >> 16;
   return val == 0;
 }
 
