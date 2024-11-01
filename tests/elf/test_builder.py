@@ -258,3 +258,14 @@ def test_issue_970(tmp_path: Path):
 
     assert svd_0.auxiliary_symbols[0].name == "libcudart.so.12"
     assert svd_1.auxiliary_symbols[0].name == "libcudart.so.12"
+
+
+def test_issue_1121(tmp_path: Path):
+    elf = lief.ELF.parse(get_sample("ELF/issue_1121.elf"))
+    elf.get_symbol("main").name = "main_test"
+
+    out = tmp_path / "main_test.new"
+    elf.write(out.as_posix())
+
+    new = lief.ELF.parse(out)
+    assert new.has_symbol("main_test")

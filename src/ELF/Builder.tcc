@@ -805,7 +805,7 @@ ok_error_t Builder::build_symtab_symbols() {
 
   auto* layout = static_cast<ExeLayout*>(layout_.get());
 
-  LIEF_DEBUG("== Build symtabl symbols ==");
+  LIEF_DEBUG("== Build .symtab symbols ==");
   Section* symbol_section = binary_->symtab_symbols_section();
   if (symbol_section == nullptr) {
     LIEF_ERR("Can't find the .symtab section");
