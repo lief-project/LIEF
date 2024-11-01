@@ -54,8 +54,8 @@ class SymbolVersionDefinition;
 class SymbolVersionRequirement;
 class SysvHash;
 
-//! Class that implements the Visitor pattern to output
-//! a JSON representation of an ELF object
+/// Class that implements the Visitor pattern to output
+/// a JSON representation of an ELF object
 class JsonVisitor : public LIEF::JsonVisitor {
   public:
   using LIEF::JsonVisitor::JsonVisitor;

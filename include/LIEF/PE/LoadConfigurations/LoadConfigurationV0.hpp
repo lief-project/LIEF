@@ -28,7 +28,7 @@ template<class T>
 struct load_configuration_v0;
 }
 
-//! LoadConfiguration enhanced with SEH
+/// LoadConfiguration enhanced with SEH
 class LIEF_API LoadConfigurationV0 : public LoadConfiguration {
   public:
   static constexpr VERSION WIN_VERSION = VERSION::SEH;
@@ -45,13 +45,13 @@ class LIEF_API LoadConfigurationV0 : public LoadConfiguration {
     return WIN_VERSION;
   }
 
-  //! The VA of the sorted table of RVAs of each valid, unique
-  //! SE handler in the image.
+  /// The VA of the sorted table of RVAs of each valid, unique
+  /// SE handler in the image.
   uint64_t se_handler_table() const {
     return se_handler_table_;
   }
 
-  //! The count of unique handlers in the table.
+  /// The count of unique handlers in the table.
   uint64_t se_handler_count() const {
     return se_handler_count_;
   }

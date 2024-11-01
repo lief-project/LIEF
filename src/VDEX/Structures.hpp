@@ -20,7 +20,7 @@
 #include "LIEF/types.hpp"
 
 namespace LIEF {
-//! @brief Namespace related to the LIEF's VDEX module
+/// Namespace related to the LIEF's VDEX module
 namespace VDEX {
 namespace details {
 using vdex_version_t = uint32_t;

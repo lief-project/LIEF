@@ -21,7 +21,7 @@
 namespace LIEF {
 namespace PE {
 
-//! @brief Convert an OID to a human-readable string
+/// Convert an OID to a human-readable string
 LIEF_API const char* oid_to_string(const oid_t& oid);
 
 }

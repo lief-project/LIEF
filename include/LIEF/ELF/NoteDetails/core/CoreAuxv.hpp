@@ -28,7 +28,7 @@
 namespace LIEF {
 namespace ELF {
 
-//! Class representing core auxv object
+/// Class representing core auxv object
 class LIEF_API CoreAuxv : public Note {
   public:
   enum class TYPE {

@@ -24,8 +24,8 @@
 
 namespace LIEF {
 
-//! Class that implements the Visitor pattern to serialize LIEF abstracted
-//! object in JSON
+/// Class that implements the Visitor pattern to serialize LIEF abstracted
+/// object in JSON
 class AbstractJsonVisitor : public LIEF::JsonVisitor {
   public:
   using LIEF::JsonVisitor::JsonVisitor;

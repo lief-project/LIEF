@@ -27,21 +27,21 @@ class ResourceData;
 class ResourceDialog;
 
 struct ResourcesParser {
-  //! Parse the resource version structure described by:
-  //!
-  //! ```
-  //! typedef struct {
-  //!   WORD             wLength;
-  //!   WORD             wValueLength;
-  //!   WORD             wType;
-  //!   WCHAR            szKey;
-  //!   WORD             Padding1;
-  //!   VS_FIXEDFILEINFO Value;
-  //!   WORD             Padding2;
-  //!   WORD             Children;
-  //! } VS_VERSIONINFO;
-  //! ```
-  //! See: https://docs.microsoft.com/en-us/windows/win32/menurc/vs-versioninfo
+  /// Parse the resource version structure described by:
+  ///
+  /// ```
+  /// typedef struct {
+  ///   WORD             wLength;
+  ///   WORD             wValueLength;
+  ///   WORD             wType;
+  ///   WCHAR            szKey;
+  ///   WORD             Padding1;
+  ///   VS_FIXEDFILEINFO Value;
+  ///   WORD             Padding2;
+  ///   WORD             Children;
+  /// } VS_VERSIONINFO;
+  /// ```
+  /// See: https://docs.microsoft.com/en-us/windows/win32/menurc/vs-versioninfo
   static result<ResourceVersion> parse_vs_versioninfo(BinaryStream& stream);
 
   static ok_error_t parse_version_info_child(ResourceVersion& version, BinaryStream& stream);

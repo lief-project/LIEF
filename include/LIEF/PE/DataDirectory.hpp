@@ -34,7 +34,7 @@ namespace details {
 struct pe_data_directory;
 }
 
-//! Class that represents a PE data directory entry
+/// Class that represents a PE data directory entry
 class LIEF_API DataDirectory : public Object {
 
   friend class Builder;
@@ -79,24 +79,24 @@ class LIEF_API DataDirectory : public Object {
 
   ~DataDirectory() override = default;
 
-  //! The relative virtual address of the content of this data
-  //! directory
+  /// The relative virtual address of the content of this data
+  /// directory
   uint32_t RVA() const {
     return rva_;
   }
 
-  //! The size of the content
+  /// The size of the content
   uint32_t size() const {
     return size_;
   }
 
-  //! Check if the content of this data directory is associated
-  //! with a PE Cection
+  /// Check if the content of this data directory is associated
+  /// with a PE Cection
   bool has_section() const {
     return section_ != nullptr;
   }
 
-  //! Section associated with the DataDirectory
+  /// Section associated with the DataDirectory
   Section* section() {
     return section_;
   }
@@ -104,7 +104,7 @@ class LIEF_API DataDirectory : public Object {
     return section_;
   }
 
-  //! Type of the data directory
+  /// Type of the data directory
   TYPES type() const {
     return type_;
   }

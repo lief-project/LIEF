@@ -52,38 +52,38 @@ class LIEF_API ResourceDirectory : public ResourceNode {
     return std::unique_ptr<ResourceNode>(new ResourceDirectory{*this});
   }
 
-  //! Resource characteristics. This field is reserved for future use.
-  //! It is currently set to zero.
+  /// Resource characteristics. This field is reserved for future use.
+  /// It is currently set to zero.
   uint32_t characteristics() const {
     return characteristics_;
   }
 
-  //! The time that the resource data was created by the
-  //! resource compiler.
+  /// The time that the resource data was created by the
+  /// resource compiler.
   uint32_t time_date_stamp() const {
     return timedatestamp_;
   }
 
-  //! The major version number, set by the user.
+  /// The major version number, set by the user.
   uint16_t major_version() const {
     return majorversion_;
   }
 
-  //! The minor version number, set by the user.
+  /// The minor version number, set by the user.
   uint16_t minor_version() const {
     return minorversion_;
   }
 
-  //! The number of directory entries immediately
-  //! following the table that use strings to identify Type,
-  //! Name, or Language entries (depending on the level of the table).
+  /// The number of directory entries immediately
+  /// following the table that use strings to identify Type,
+  /// Name, or Language entries (depending on the level of the table).
   uint16_t numberof_name_entries() const {
     return numberof_name_entries_;
   }
 
-  //! The number of directory entries immediately
-  //! following the Name entries that use numeric IDs for
-  //! Type, Name, or Language entries.
+  /// The number of directory entries immediately
+  /// following the Name entries that use numeric IDs for
+  /// Type, Name, or Language entries.
   uint16_t numberof_id_entries() const {
     return numberof_id_entries_;
   }

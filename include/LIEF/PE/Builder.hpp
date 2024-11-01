@@ -41,7 +41,7 @@ class OptionalHeader;
 class DataDirectory;
 class Section;
 
-//! Class that is used to rebuild a raw PE binary from a PE::Binary object
+/// Class that is used to rebuild a raw PE binary from a PE::Binary object
 class LIEF_API Builder {
   public:
 
@@ -49,53 +49,53 @@ class LIEF_API Builder {
   Builder(Binary& binary);
   ~Builder();
 
-  //! Perform the build process
+  /// Perform the build process
   ok_error_t build();
 
-  //! @brief Construct a ``jmp [address] @ from``.
-  //!
-  //! It is used when patching import table
+  /// Construct a ``jmp [address] @ from``.
+  ///
+  /// It is used when patching import table
   template<typename PE_T>
   static std::vector<uint8_t> build_jmp(uint64_t from, uint64_t address);
 
 
-  //! @brief Construct a ``jmp far address @ from``.
-  //!
-  //! It is used for hooking
+  /// Construct a ``jmp far address @ from``.
+  ///
+  /// It is used for hooking
   template<typename PE_T>
   static std::vector<uint8_t> build_jmp_hook(uint64_t from, uint64_t address);
 
-  //! @brief Rebuild the import table in new section
+  /// Rebuild the import table in new section
   Builder& build_imports(bool flag = true);
 
-  //! @brief Patch the original import table in order to
-  //! redirect functions to the new import table.
-  //!
-  //! This setting should be used with LIEF::PE::Builder::build_imports set to ``true``
+  /// Patch the original import table in order to
+  /// redirect functions to the new import table.
+  ///
+  /// This setting should be used with LIEF::PE::Builder::build_imports set to ``true``
   Builder& patch_imports(bool flag = true);
 
-  //! @brief Rebuild the relocation table in another section
+  /// Rebuild the relocation table in another section
   Builder& build_relocations(bool flag = true);
 
-  //! @brief Rebuild TLS object in another section
+  /// Rebuild TLS object in another section
   Builder& build_tls(bool flag = true);
 
-  //! @brief Rebuid the resources in another section
+  /// Rebuid the resources in another section
   Builder& build_resources(bool flag);
 
-  //! @brief Rebuild the binary's overlay
+  /// Rebuild the binary's overlay
   Builder& build_overlay(bool flag);
 
-  //! @brief Rebuild the DOS stub content
+  /// Rebuild the DOS stub content
   Builder& build_dos_stub(bool flag);
 
-  //! @brief Return the build result
+  /// Return the build result
   const std::vector<uint8_t>& get_build();
 
-  //! @brief Write the build result into the ``output`` file
+  /// Write the build result into the ``output`` file
   void write(const std::string& filename) const;
 
-  //! @brief Write the build result into the ``os`` stream
+  /// Write the build result into the ``os`` stream
   void write(std::ostream& os) const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Builder& b);
@@ -110,7 +110,7 @@ class LIEF_API Builder {
   template<typename PE_T>
   ok_error_t build_optional_header(const OptionalHeader& optional_header);
 
-  //! @brief Rebuild Import Table
+  /// Rebuild Import Table
   // TODO: Bug with x86
   template<typename PE_T>
   void build_import_table();

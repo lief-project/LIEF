@@ -56,13 +56,13 @@ class LIEF_API SignatureParser {
   using x509_certificates_t = std::vector<x509>;
   using time_t = std::array<int32_t, 6>;
 
-  //! Parse a PKCS #7 signature given a raw blob
+  /// Parse a PKCS #7 signature given a raw blob
   static result<Signature> parse(std::vector<uint8_t> data, bool skip_header = false);
 
-  //! Parse a PKCS #7 signature given a BinaryStream
+  /// Parse a PKCS #7 signature given a BinaryStream
   static result<Signature> parse(BinaryStream& stream, bool skip_header = false);
 
-  //! Parse a PKCS #7 signature from a file path
+  /// Parse a PKCS #7 signature from a file path
   static result<Signature> parse(const std::string& path);
   SignatureParser(const SignatureParser&) = delete;
   SignatureParser& operator=(const SignatureParser&) = delete;

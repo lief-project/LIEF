@@ -29,10 +29,10 @@ namespace PE {
 class Parser;
 class Builder;
 
-//! Class that represents an entry (i.e. an import) in the import table (Import).
-//!
-//! It extends the LIEF::Symbol generic class that exposes the LIEF::Symbol::name and
-//! LIEF::Symbol::value API
+/// Class that represents an entry (i.e. an import) in the import table (Import).
+///
+/// It extends the LIEF::Symbol generic class that exposes the LIEF::Symbol::name and
+/// LIEF::Symbol::value API
 class LIEF_API ImportEntry : public LIEF::Symbol {
   friend class Parser;
   friend class Builder;
@@ -47,42 +47,42 @@ class LIEF_API ImportEntry : public LIEF::Symbol {
   ImportEntry& operator=(const ImportEntry&) = default;
   ~ImportEntry() override = default;
 
-  //! Demangled representation of the symbol or an empty string if it can't
-  //! be demangled
+  /// Demangled representation of the symbol or an empty string if it can't
+  /// be demangled
   std::string demangled_name() const;
 
-  //! `True` if it is an import by ordinal
+  /// `True` if it is an import by ordinal
   bool is_ordinal() const;
 
-  //! The ordinal value
+  /// The ordinal value
   uint16_t ordinal() const {
     static constexpr auto MASK = 0xFFFF;
     return is_ordinal() ? (data_ & MASK) : 0;
   }
 
-  //! @see ImportEntry::data
+  /// @see ImportEntry::data
   uint64_t hint_name_rva() const {
     return data();
   }
 
-  //! Index into the Export::entries that is used to speed-up
-  //! the symbol resolution.
+  /// Index into the Export::entries that is used to speed-up
+  /// the symbol resolution.
   uint16_t hint() const {
     return hint_;
   }
 
-  //! Value of the current entry in the Import Address Table.
-  //! It should match the lookup table value
+  /// Value of the current entry in the Import Address Table.
+  /// It should match the lookup table value
   uint64_t iat_value() const {
     return iat_value_;
   }
 
-  //! Raw value
+  /// Raw value
   uint64_t data() const {
     return data_;
   }
 
-  //! **Original** address of the entry in the Import Address Table
+  /// **Original** address of the entry in the Import Address Table
   uint64_t iat_address() const {
     return rva_;
   }

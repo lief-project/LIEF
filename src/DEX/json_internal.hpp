@@ -24,8 +24,8 @@ namespace DEX {
 
 json to_json_obj(const Object& v);
 
-//! Class that implements the Visitor pattern to output
-//! a JSON representation of an ELF object
+/// Class that implements the Visitor pattern to output
+/// a JSON representation of an ELF object
 class JsonVisitor : public LIEF::JsonVisitor {
   public:
   using LIEF::JsonVisitor::JsonVisitor;

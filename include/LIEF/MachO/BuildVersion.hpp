@@ -35,7 +35,7 @@ class LIEF_API BuildVersion : public LoadCommand {
   friend class BinaryParser;
 
   public:
-  //! Version is an array of **3** integers
+  /// Version is an array of **3** integers
   using version_t = std::array<uint32_t, 3>;
 
   using tools_list_t = std::vector<BuildToolVersion>;

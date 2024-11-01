@@ -23,14 +23,14 @@
 namespace LIEF {
 namespace PE {
 
-//! Interface over the structure described by the OID ``1.3.6.1.4.1.311.2.1.11``
-//!
-//! The internal structure is described in the official document:
-//! [Windows Authenticode Portable Executable Signature Format](http://download.microsoft.com/download/9/c/5/9c5b2167-8017-4bae-9fde-d599bac8184a/Authenticode_PE.docx)
-//!
-//! ```text
-//! SpcStatementType ::= SEQUENCE of OBJECT IDENTIFIER
-//! ```
+/// Interface over the structure described by the OID ``1.3.6.1.4.1.311.2.1.11``
+///
+/// The internal structure is described in the official document:
+/// [Windows Authenticode Portable Executable Signature Format](http://download.microsoft.com/download/9/c/5/9c5b2167-8017-4bae-9fde-d599bac8184a/Authenticode_PE.docx)
+///
+/// ```text
+/// SpcStatementType ::= SEQUENCE of OBJECT IDENTIFIER
+/// ```
 class LIEF_API MsSpcStatementType : public Attribute {
 
   friend class Parser;
@@ -50,15 +50,15 @@ class LIEF_API MsSpcStatementType : public Attribute {
     return std::unique_ptr<Attribute>(new MsSpcStatementType{*this});
   }
 
-  //! According to the documentation:
-  //! > The SpcStatementType MUST contain one Object Identifier with either
-  //! > the value ``1.3.6.1.4.1.311.2.1.21 (SPC_INDIVIDUAL_SP_KEY_PURPOSE_OBJID)`` or
-  //! > ``1.3.6.1.4.1.311.2.1.22 (SPC_COMMERCIAL_SP_KEY_PURPOSE_OBJID)``.
+  /// According to the documentation:
+  /// > The SpcStatementType MUST contain one Object Identifier with either
+  /// > the value ``1.3.6.1.4.1.311.2.1.21 (SPC_INDIVIDUAL_SP_KEY_PURPOSE_OBJID)`` or
+  /// > ``1.3.6.1.4.1.311.2.1.22 (SPC_COMMERCIAL_SP_KEY_PURPOSE_OBJID)``.
   const oid_t& oid() const {
     return oid_;
   }
 
-  //! Print information about the attribute
+  /// Print information about the attribute
   std::string print() const override;
 
   static bool classof(const Attribute* attr) {

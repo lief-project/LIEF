@@ -30,11 +30,11 @@ class logger;
 namespace LIEF {
 namespace logging {
 
-//! **Hierarchical** logging level
-//!
-//! From a given level set, all levels below this ! level are enabled
-//!
-//! For example, if LEVEL::INFO is enabled then LEVEL::WARN, LEVEL::ERR are also enabled
+/// **Hierarchical** logging level
+///
+/// From a given level set, all levels below this ! level are enabled
+///
+/// For example, if LEVEL::INFO is enabled then LEVEL::WARN, LEVEL::ERR are also enabled
 enum class LEVEL : uint32_t {
   OFF = 0,
 
@@ -46,24 +46,24 @@ enum class LEVEL : uint32_t {
   CRITICAL,
 };
 
-//! Current log level
+/// Current log level
 LIEF_API LEVEL get_level();
 
 LIEF_API const char* to_string(LEVEL e);
 
-//! Globally disable the logging module
+/// Globally disable the logging module
 LIEF_API void disable();
 
-//! Globally enable the logging module
+/// Globally enable the logging module
 LIEF_API void enable();
 
-//! Change the logging level (**hierarchical**)
+/// Change the logging level (**hierarchical**)
 LIEF_API void set_level(LEVEL level);
 
-//! Change the logger as a file-base logging and set its path
+/// Change the logger as a file-base logging and set its path
 LIEF_API void set_path(const std::string& path);
 
-//! Log a message with the LIEF's logger
+/// Log a message with the LIEF's logger
 LIEF_API void log(LEVEL level, const std::string& msg);
 
 LIEF_API void log(LEVEL level, const std::string& fmt,

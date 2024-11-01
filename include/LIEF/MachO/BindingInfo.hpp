@@ -29,13 +29,13 @@ class Symbol;
 class BinaryParser;
 class DyldChainedFixupsCreator;
 
-//! Class that provides an interface over a *binding* operation.
-//!
-//! This class does not represent a structure that exists in the Mach-O format
-//! specifications but it provides a *view* of a binding operation that is performed
-//! by the Dyld binding bytecode (`LC_DYLD_INFO`) or the Dyld chained fixups (`DYLD_CHAINED_FIXUPS`)
-//!
-//! See: LIEF::MachO::ChainedBindingInfo, LIEF::MachO::DyldBindingInfo
+/// Class that provides an interface over a *binding* operation.
+///
+/// This class does not represent a structure that exists in the Mach-O format
+/// specifications but it provides a *view* of a binding operation that is performed
+/// by the Dyld binding bytecode (`LC_DYLD_INFO`) or the Dyld chained fixups (`DYLD_CHAINED_FIXUPS`)
+///
+/// See: LIEF::MachO::ChainedBindingInfo, LIEF::MachO::DyldBindingInfo
 class LIEF_API BindingInfo : public Object {
 
   friend class BinaryParser;
@@ -54,13 +54,13 @@ class LIEF_API BindingInfo : public Object {
   BindingInfo(const BindingInfo& other);
   void swap(BindingInfo& other) noexcept;
 
-  //! Check if a MachO::SegmentCommand is associated with this binding
+  /// Check if a MachO::SegmentCommand is associated with this binding
   bool has_segment() const {
     return segment_ != nullptr;
   }
 
-  //! The MachO::SegmentCommand associated with the BindingInfo or
-  //! a nullptr of it is not bind to a SegmentCommand
+  /// The MachO::SegmentCommand associated with the BindingInfo or
+  /// a nullptr of it is not bind to a SegmentCommand
   const SegmentCommand* segment() const {
     return segment_;
   }
@@ -68,13 +68,13 @@ class LIEF_API BindingInfo : public Object {
     return segment_;
   }
 
-  //! Check if a MachO::DylibCommand is tied with the BindingInfo
+  /// Check if a MachO::DylibCommand is tied with the BindingInfo
   bool has_library() const {
     return library_ != nullptr;
   }
 
-  //! MachO::DylibCommand associated with the BindingInfo or a nullptr
-  //! if not present
+  /// MachO::DylibCommand associated with the BindingInfo or a nullptr
+  /// if not present
   const DylibCommand* library() const {
     return library_;
   }
@@ -82,13 +82,13 @@ class LIEF_API BindingInfo : public Object {
     return library_;
   }
 
-  //! Check if a MachO::Symbol is associated with the BindingInfo
+  /// Check if a MachO::Symbol is associated with the BindingInfo
   bool has_symbol() const {
     return symbol_ != nullptr;
   }
 
-  //! MachO::Symbol associated with the BindingInfo or
-  //! a nullptr if not present
+  /// MachO::Symbol associated with the BindingInfo or
+  /// a nullptr if not present
   const Symbol* symbol() const {
     return symbol_;
   }
@@ -96,7 +96,7 @@ class LIEF_API BindingInfo : public Object {
     return symbol_;
   }
 
-  //! Address of the binding
+  /// Address of the binding
   virtual uint64_t address() const {
     return address_;
   }
@@ -113,7 +113,7 @@ class LIEF_API BindingInfo : public Object {
     library_ordinal_ = ordinal;
   }
 
-  //! Value added to the segment's virtual address when bound
+  /// Value added to the segment's virtual address when bound
   int64_t addend() const {
     return addend_;
   }
@@ -130,8 +130,8 @@ class LIEF_API BindingInfo : public Object {
     is_weak_import_ = val;
   }
 
-  //! The type of the binding. This type provides the origin
-  //! of the binding (LC_DYLD_INFO or LC_DYLD_CHAINED_FIXUPS)
+  /// The type of the binding. This type provides the origin
+  /// of the binding (LC_DYLD_INFO or LC_DYLD_CHAINED_FIXUPS)
   virtual TYPES type() const = 0;
 
   ~BindingInfo() override = default;

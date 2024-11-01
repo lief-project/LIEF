@@ -24,7 +24,7 @@
 
 namespace LIEF {
 
-//! This class represents a symbol in an executable format.
+/// This class represents a symbol in an executable format.
 class LIEF_API Symbol : public Object {
   public:
   Symbol() = default;
@@ -47,7 +47,7 @@ class LIEF_API Symbol : public Object {
 
   void swap(Symbol& other) noexcept;
 
-  //! Return the symbol's name
+  /// Return the symbol's name
   virtual const std::string& name() const {
     return name_;
   }
@@ -55,7 +55,7 @@ class LIEF_API Symbol : public Object {
     return name_;
   }
 
-  //! Set symbol name
+  /// Set symbol name
   virtual void name(std::string name) {
     name_ = std::move(name);
   }
@@ -68,7 +68,7 @@ class LIEF_API Symbol : public Object {
     value_ = value;
   }
 
-  //! This size of the symbol (when applicable)
+  /// This size of the symbol (when applicable)
   virtual uint64_t size() const {
     return size_;
   }
@@ -77,7 +77,7 @@ class LIEF_API Symbol : public Object {
     size_ = value;
   }
 
-  //! Method so that the ``visitor`` can visit us
+  /// Method so that the ``visitor`` can visit us
   void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Symbol& entry);

@@ -35,7 +35,7 @@ class LIEF_API Method : public Object {
   friend class Parser;
   public:
 
-  //! Container for the Quick Code
+  /// Container for the Quick Code
   using quick_code_t = std::vector<uint8_t>;
 
   public:
@@ -45,22 +45,22 @@ class LIEF_API Method : public Object {
   Method& operator=(const Method&);
 
 
-  //! Method's name
+  /// Method's name
   std::string name() const;
 
-  //! OAT Class associated with this Method
+  /// OAT Class associated with this Method
   const Class* oat_class() const;
   Class* oat_class();
 
-  //! Check if a LIEF::DEX::Method is associated with
-  //! this Method
+  /// Check if a LIEF::DEX::Method is associated with
+  /// this Method
   bool has_dex_method() const;
 
-  //! LIEF::DEX::Method associated (if any)
+  /// LIEF::DEX::Method associated (if any)
   const DEX::Method* dex_method() const;
   DEX::Method* dex_method();
 
-  //! True if the optimization is DEX
+  /// True if the optimization is DEX
   bool is_dex2dex_optimized() const;
 
   // True if the optimization is native
@@ -68,7 +68,7 @@ class LIEF_API Method : public Object {
 
   const DEX::dex2dex_method_info_t& dex2dex_info() const;
 
-  //! Quick code associated with the method
+  /// Quick code associated with the method
   const quick_code_t& quick_code() const;
   void quick_code(const quick_code_t& code);
 

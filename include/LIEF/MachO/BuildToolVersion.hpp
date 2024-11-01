@@ -29,11 +29,11 @@ namespace details {
 struct build_tool_version;
 }
 
-//! Class that represents a tool's version that was
-//! involved in the build of the binary
+/// Class that represents a tool's version that was
+/// involved in the build of the binary
 class LIEF_API BuildToolVersion : public Object {
   public:
-  //! A version is an array of **3** integers
+  /// A version is an array of **3** integers
   using version_t = std::array<uint32_t, 3>;
 
   public:
@@ -49,12 +49,12 @@ class LIEF_API BuildToolVersion : public Object {
   BuildToolVersion() = default;
   BuildToolVersion(const details::build_tool_version& tool);
 
-  //! The tools used
+  /// The tools used
   TOOLS tool() const {
     return tool_;
   }
 
-  //! Version associated with the tool
+  /// Version associated with the tool
   version_t version() const {
     return version_;
   }

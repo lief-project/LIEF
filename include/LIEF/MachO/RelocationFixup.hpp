@@ -37,16 +37,16 @@ class BinaryParser;
 class Builder;
 class DyldChainedFixupsCreator;
 
-//! Class that represents a rebase relocation found in the `LC_DYLD_CHAINED_FIXUPS` command.
-//!
-//! This class extends LIEF::Relocation in which LIEF::Relocation::address is set to
-//! the absolute virtual address where the relocation must take place (e.g. `0x10000d270`).
-//!
-//! On the other hand, RelocationFixup::target contains the value that should be
-//! set at LIEF::Relocation::address if the imagebase is LIEF::Binary::imagebase (e.g. `0x1000073a8`).
-//!
-//! If the Mach-O loader chooses another base address (like 0x7ff100000), it must set
-//! `0x10000d270` to `0x7ff1073a8`.
+/// Class that represents a rebase relocation found in the `LC_DYLD_CHAINED_FIXUPS` command.
+///
+/// This class extends LIEF::Relocation in which LIEF::Relocation::address is set to
+/// the absolute virtual address where the relocation must take place (e.g. `0x10000d270`).
+///
+/// On the other hand, RelocationFixup::target contains the value that should be
+/// set at LIEF::Relocation::address if the imagebase is LIEF::Binary::imagebase (e.g. `0x1000073a8`).
+///
+/// If the Mach-O loader chooses another base address (like 0x7ff100000), it must set
+/// `0x10000d270` to `0x7ff1073a8`.
 class LIEF_API RelocationFixup : public Relocation {
 
   friend class BinaryParser;
@@ -69,13 +69,13 @@ class LIEF_API RelocationFixup : public Relocation {
     return std::unique_ptr<RelocationFixup>(new RelocationFixup(*this));
   }
 
-  //! Not relevant for this kind of relocation
+  /// Not relevant for this kind of relocation
   bool is_pc_relative() const override {
     return false;
   }
 
-  //! Origin of the relocation. For this concrete object, it
-  //! should be Relocation::ORIGIN::CHAINED_FIXUPS
+  /// Origin of the relocation. For this concrete object, it
+  /// should be Relocation::ORIGIN::CHAINED_FIXUPS
   ORIGIN origin() const override {
     return ORIGIN::CHAINED_FIXUPS;
   }
@@ -84,13 +84,13 @@ class LIEF_API RelocationFixup : public Relocation {
     return ptr_fmt_;
   }
 
-  //! The value that should be set at the address pointed by LIEF::Relocation::address
-  //! if the imagebase chosen by the loader is LIEF::Binary::imagebase.
-  //! Otherwise: target() - LIEF::Binary::imagebase() + new_imagebase.
+  /// The value that should be set at the address pointed by LIEF::Relocation::address
+  /// if the imagebase chosen by the loader is LIEF::Binary::imagebase.
+  /// Otherwise: target() - LIEF::Binary::imagebase() + new_imagebase.
   uint64_t target() const;
   void target(uint64_t target);
 
-  //! Not relevant for this kind of relocation
+  /// Not relevant for this kind of relocation
   void pc_relative(bool) override {}
 
   uint32_t offset() const {
@@ -101,20 +101,20 @@ class LIEF_API RelocationFixup : public Relocation {
     offset_ = offset;
   }
 
-  //! The address of this relocation is bound to its offset.
+  /// The address of this relocation is bound to its offset.
   uint64_t address() const override {
     return address_;
   }
 
-  //! Changing the address means changing the offset
+  /// Changing the address means changing the offset
   void address(uint64_t address) override {
     address_ = address;
   }
 
-  //! Return the (unscaled) next offset in the chain
+  /// Return the (unscaled) next offset in the chain
   uint32_t next() const;
 
-  //! Change next offset of the current element
+  /// Change next offset of the current element
   void next(uint32_t value);
 
   void accept(Visitor& visitor) const override;

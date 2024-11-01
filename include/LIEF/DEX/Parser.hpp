@@ -34,11 +34,11 @@ class Field;
 class File;
 class Type;
 
-//! Class which parses a DEX file to produce a DEX::File object
+/// Class which parses a DEX file to produce a DEX::File object
 class LIEF_API Parser {
   public:
 
-  //! Parse the DEX file from the file path given in parameter
+  /// Parse the DEX file from the file path given in parameter
   static std::unique_ptr<File> parse(const std::string& file);
   static std::unique_ptr<File> parse(std::vector<uint8_t> data, const std::string& name = "");
 

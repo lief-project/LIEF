@@ -23,9 +23,9 @@
 namespace LIEF {
 namespace ELF {
 
-//! Class which represents a ``DT_NEEDED`` entry in the dynamic table.
-//!
-//! This kind of entry is usually used to create library dependency.
+/// Class which represents a ``DT_NEEDED`` entry in the dynamic table.
+///
+/// This kind of entry is usually used to create library dependency.
 class LIEF_API DynamicEntryLibrary : public DynamicEntry {
 
   public:
@@ -47,7 +47,7 @@ class LIEF_API DynamicEntryLibrary : public DynamicEntry {
     return std::unique_ptr<DynamicEntryLibrary>(new DynamicEntryLibrary{*this});
   }
 
-  //! Return the library associated with this entry (e.g. ``libc.so.6``)
+  /// Return the library associated with this entry (e.g. ``libc.so.6``)
   const std::string& name() const {
     return libname_;
   }

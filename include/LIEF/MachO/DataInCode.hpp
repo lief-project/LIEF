@@ -34,11 +34,11 @@ namespace details {
 struct linkedit_data_command;
 }
 
-//! Interface of the LC_DATA_IN_CODE command
-//! This command is used to list slices of code sections that contain data. The *slices*
-//! information are stored as an array of DataCodeEntry
-//!
-//! @see DataCodeEntry
+/// Interface of the LC_DATA_IN_CODE command
+/// This command is used to list slices of code sections that contain data. The *slices*
+/// information are stored as an array of DataCodeEntry
+///
+/// @see DataCodeEntry
 class LIEF_API DataInCode : public LoadCommand {
   friend class BinaryParser;
   friend class LinkEdit;
@@ -58,12 +58,12 @@ class LIEF_API DataInCode : public LoadCommand {
     return std::unique_ptr<DataInCode>(new DataInCode(*this));
   }
 
-  //! Start of the array of the DataCodeEntry entries
+  /// Start of the array of the DataCodeEntry entries
   uint32_t data_offset() const {
     return data_offset_;
   }
 
-  //! Size of the raw array (``size = sizeof(DataCodeEntry) * nb_elements``)
+  /// Size of the raw array (``size = sizeof(DataCodeEntry) * nb_elements``)
   uint32_t data_size() const {
     return data_size_;
   }
@@ -75,13 +75,13 @@ class LIEF_API DataInCode : public LoadCommand {
     data_size_ = size;
   }
 
-  //! Add a new entry
+  /// Add a new entry
   DataInCode& add(DataCodeEntry entry) {
     entries_.push_back(std::move(entry));
     return *this;
   }
 
-  //! Iterator over the DataCodeEntry
+  /// Iterator over the DataCodeEntry
   it_const_entries entries() const {
     return entries_;
   }

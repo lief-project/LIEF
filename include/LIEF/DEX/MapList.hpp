@@ -29,11 +29,11 @@ namespace DEX {
 class Parser;
 class Class;
 
-//! Class which represents the ``map_list`` structure that
-//! follows the main DEX header.
-//!
-//! This MapList aims at referencing the location of other DEX structures as
-//! described in https://source.android.com/devices/tech/dalvik/dex-format#map-item
+/// Class which represents the ``map_list`` structure that
+/// follows the main DEX header.
+///
+/// This MapList aims at referencing the location of other DEX structures as
+/// described in https://source.android.com/devices/tech/dalvik/dex-format#map-item
 class LIEF_API MapList : public Object {
   friend class Parser;
 
@@ -48,23 +48,23 @@ class LIEF_API MapList : public Object {
   MapList(const MapList&);
   MapList& operator=(const MapList&);
 
-  //! Iterator over LIEF::DEX::MapItem
+  /// Iterator over LIEF::DEX::MapItem
   it_items_t items();
   it_const_items_t items() const;
 
-  //! Check if the given type exists
+  /// Check if the given type exists
   bool has(MapItem::TYPES type) const;
 
-  //! Return the LIEF::DEX::MapItem associated with the given type
+  /// Return the LIEF::DEX::MapItem associated with the given type
   const MapItem& get(MapItem::TYPES type) const;
 
-  //! Return the LIEF::DEX::MapItem associated with the given type
+  /// Return the LIEF::DEX::MapItem associated with the given type
   MapItem& get(MapItem::TYPES type);
 
-  //! Return the LIEF::DEX::MapItem associated with the given type
+  /// Return the LIEF::DEX::MapItem associated with the given type
   const MapItem& operator[](MapItem::TYPES type) const;
 
-  //! Return the LIEF::DEX::MapItem associated with the given type
+  /// Return the LIEF::DEX::MapItem associated with the given type
   MapItem& operator[](MapItem::TYPES type);
 
   void accept(Visitor& visitor) const override;

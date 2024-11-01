@@ -25,7 +25,7 @@ namespace LIEF {
 namespace PE {
 class x509;
 
-//! Object that wraps a RSA key
+/// Object that wraps a RSA key
 class LIEF_API RsaInfo {
   friend class x509;
 
@@ -38,28 +38,28 @@ class LIEF_API RsaInfo {
   RsaInfo(RsaInfo&& other);
   RsaInfo& operator=(RsaInfo other);
 
-  //! True if it embeds a public key
+  /// True if it embeds a public key
   bool has_public_key() const;
 
-  //! True if it embeds a private key
+  /// True if it embeds a private key
   bool has_private_key() const;
 
-  //! RSA public modulus
+  /// RSA public modulus
   bignum_wrapper_t N() const;
 
-  //! RSA public exponent
+  /// RSA public exponent
   bignum_wrapper_t E() const;
 
-  //! RSA private exponent
+  /// RSA private exponent
   bignum_wrapper_t D() const;
 
-  //! First prime factor
+  /// First prime factor
   bignum_wrapper_t P() const;
 
-  //! Second prime factor
+  /// Second prime factor
   bignum_wrapper_t Q() const;
 
-  //! Size of the public modulus (in bits)
+  /// Size of the public modulus (in bits)
   size_t key_size() const;
 
   void swap(RsaInfo& other);

@@ -25,7 +25,7 @@
 namespace LIEF {
 namespace PE {
 
-//! Interface over PKCS #7 attribute
+/// Interface over PKCS #7 attribute
 class LIEF_API Attribute : public Object {
 
   friend class Parser;
@@ -58,12 +58,12 @@ class LIEF_API Attribute : public Object {
 
   virtual std::unique_ptr<Attribute> clone() const = 0;
 
-  //! Concrete type of the attribute
+  /// Concrete type of the attribute
   virtual TYPE type() const {
     return type_;
   }
 
-  //! Print information about the underlying attribute
+  /// Print information about the underlying attribute
   virtual std::string print() const = 0;
 
   void accept(Visitor& visitor) const override;

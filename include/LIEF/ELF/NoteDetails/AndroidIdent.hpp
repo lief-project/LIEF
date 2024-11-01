@@ -25,9 +25,9 @@
 namespace LIEF {
 namespace ELF {
 
-//! Class representing the ".note.android.ident" section
-//!
-//! @see: https://android.googlesource.com/platform/ndk/+/ndk-release-r16/sources/crt/crtbrand.S#39
+/// Class representing the ".note.android.ident" section
+///
+/// @see: https://android.googlesource.com/platform/ndk/+/ndk-release-r16/sources/crt/crtbrand.S#39
 class LIEF_API AndroidIdent : public Note {
   public:
   static constexpr size_t sdk_version_size        = sizeof(uint32_t);
@@ -39,13 +39,13 @@ class LIEF_API AndroidIdent : public Note {
     return std::unique_ptr<AndroidIdent>(new AndroidIdent(*this));
   }
 
-  //! Target SDK version (or 0 if it can't be resolved)
+  /// Target SDK version (or 0 if it can't be resolved)
   uint32_t sdk_version() const;
 
-  //! NDK version used (or an empty string if it can't be parsed)
+  /// NDK version used (or an empty string if it can't be parsed)
   std::string ndk_version() const;
 
-  //! NDK build number (or an empty string if it can't be parsed)
+  /// NDK build number (or an empty string if it can't be parsed)
   std::string ndk_build_number() const;
 
   void sdk_version(uint32_t version);

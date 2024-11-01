@@ -31,7 +31,7 @@ struct uuid_command;
 
 using uuid_t = std::array<uint8_t, 16>;
 
-//! Class that represents the UUID command
+/// Class that represents the UUID command
 class LIEF_API UUIDCommand : public LoadCommand {
   public:
   UUIDCommand() = default;
@@ -46,7 +46,7 @@ class LIEF_API UUIDCommand : public LoadCommand {
 
   ~UUIDCommand() override = default;
 
-  //! The UUID as a 16-bytes array
+  /// The UUID as a 16-bytes array
   const uuid_t& uuid() const {
     return uuid_;
   }

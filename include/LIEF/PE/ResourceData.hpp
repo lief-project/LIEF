@@ -28,7 +28,7 @@ namespace PE {
 class Parser;
 class Builder;
 
-//! Class which represents a Data Node in the PE resources tree
+/// Class which represents a Data Node in the PE resources tree
 class LIEF_API ResourceData : public ResourceNode {
 
   friend class Parser;
@@ -54,13 +54,13 @@ class LIEF_API ResourceData : public ResourceNode {
     return std::unique_ptr<ResourceNode>{new ResourceData{*this}};
   }
 
-  //! Return the code page that is used to decode code point
-  //! values within the resource data. Typically, the code page is the unicode code page.
+  /// Return the code page that is used to decode code point
+  /// values within the resource data. Typically, the code page is the unicode code page.
   uint32_t code_page() const {
     return code_page_;
   }
 
-  //! Resource content
+  /// Resource content
   span<const uint8_t> content() const {
     return content_;
   }
@@ -68,14 +68,14 @@ class LIEF_API ResourceData : public ResourceNode {
     return content_;
   }
 
-  //! Reserved value. Should be ``0``
+  /// Reserved value. Should be ``0``
   uint32_t reserved() const {
     return reserved_;
   }
 
-  //! Offset of the content within the resource
-  //!
-  //! @warning This value may change when rebuilding resource table
+  /// Offset of the content within the resource
+  ///
+  /// @warning This value may change when rebuilding resource table
   uint32_t offset() const {
     return offset_;
   }

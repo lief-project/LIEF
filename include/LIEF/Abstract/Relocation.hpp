@@ -23,13 +23,13 @@
 #include "LIEF/visibility.h"
 
 namespace LIEF {
-//! Class which represents an abstracted Relocation
+/// Class which represents an abstracted Relocation
 class LIEF_API Relocation : public Object {
 
   public:
   Relocation() = default;
 
-  //! Constructor from a relocation's address and size
+  /// Constructor from a relocation's address and size
   Relocation(uint64_t address, uint8_t size) :
     address_(address),
     size_(size)
@@ -44,12 +44,12 @@ class LIEF_API Relocation : public Object {
     std::swap(size_,    other.size_);
   }
 
-  //! Relocation's address
+  /// Relocation's address
   virtual uint64_t address() const {
     return address_;
   }
 
-  //! Relocation size in **bits**
+  /// Relocation size in **bits**
   virtual size_t size() const {
     return size_;
   }
@@ -62,26 +62,26 @@ class LIEF_API Relocation : public Object {
     size_ = (uint8_t)size;
   }
 
-  //! Method so that the ``visitor`` can visit us
+  /// Method so that the ``visitor`` can visit us
   void accept(Visitor& visitor) const override;
 
 
-  //! Comparaison based on the Relocation's **address**
+  /// Comparaison based on the Relocation's **address**
   virtual bool operator<(const Relocation& rhs) const {
     return address() < rhs.address();
   }
 
-  //! Comparaison based on the Relocation's **address**
+  /// Comparaison based on the Relocation's **address**
   virtual bool operator<=(const Relocation& rhs) const {
     return !(address() > rhs.address());
   }
 
-  //! Comparaison based on the Relocation's **address**
+  /// Comparaison based on the Relocation's **address**
   virtual bool operator>(const Relocation& rhs) const {
     return address() > rhs.address();
   }
 
-  //! Comparaison based on the Relocation's **address**
+  /// Comparaison based on the Relocation's **address**
   virtual bool operator>=(const Relocation& rhs) const {
     return !(address() < rhs.address());
   }

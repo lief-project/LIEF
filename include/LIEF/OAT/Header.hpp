@@ -49,12 +49,12 @@ class LIEF_API Header : public Object {
   using it_key_values_t       = ref_iterator<std::vector<element_t>>;
   using it_const_key_values_t = const_ref_iterator<std::vector<element_t>>;
 
-  //! @brief Iterator type over
+  /// Iterator type over
   using keys_t   = std::vector<HEADER_KEYS>;
   using values_t = std::vector<std::string>;
 
   public:
-  //! Return the string value associated with the given key
+  /// Return the string value associated with the given key
   static std::string key_to_string(HEADER_KEYS key);
 
   public:
@@ -65,10 +65,10 @@ class LIEF_API Header : public Object {
   template<class T>
   LIEF_LOCAL Header(const T* header);
 
-  //! Magic value: ``oat``
+  /// Magic value: ``oat``
   Header::magic_t magic() const;
 
-  //! OAT version
+  /// OAT version
   oat_version_t version() const;
 
   uint32_t checksum() const;

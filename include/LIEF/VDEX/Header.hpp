@@ -40,22 +40,22 @@ class LIEF_API Header : public Object {
   Header(const Header&);
   Header& operator=(const Header&);
 
-  //! Magic value used to identify VDEX
+  /// Magic value used to identify VDEX
   magic_t magic() const;
 
-  //! VDEX version number
+  /// VDEX version number
   vdex_version_t version() const;
 
-  //! Number of LIEF::DEX::File files registered
+  /// Number of LIEF::DEX::File files registered
   uint32_t nb_dex_files() const;
 
-  //! Size of **all** LIEF::DEX::File
+  /// Size of **all** LIEF::DEX::File
   uint32_t dex_size() const;
 
-  //! Size of verifier deps section
+  /// Size of verifier deps section
   uint32_t verifier_deps_size() const;
 
-  //! Size of quickening info section
+  /// Size of quickening info section
   uint32_t quickening_info_size() const;
 
   void accept(Visitor& visitor) const override;

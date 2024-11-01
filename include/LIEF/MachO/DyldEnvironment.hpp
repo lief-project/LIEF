@@ -29,8 +29,8 @@ namespace details {
 struct dylinker_command;
 }
 
-//! Class that represents a `LC_DYLD_ENVIRONMENT` command which is
-//! used by the Mach-O linker/loader to initialize an environment variable
+/// Class that represents a `LC_DYLD_ENVIRONMENT` command which is
+/// used by the Mach-O linker/loader to initialize an environment variable
 class LIEF_API DyldEnvironment : public LoadCommand {
   public:
   DyldEnvironment() = default;
@@ -47,7 +47,7 @@ class LIEF_API DyldEnvironment : public LoadCommand {
 
   std::ostream& print(std::ostream& os) const override;
 
-  //! The actual environment variable
+  /// The actual environment variable
   const std::string& value() const {
     return value_;
   }

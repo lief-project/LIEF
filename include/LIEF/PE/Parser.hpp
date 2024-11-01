@@ -42,12 +42,12 @@ struct pe_resource_directory_table;
 struct pe_debug;
 }
 
-//! Main interface to parse PE binaries. In particular the **static** functions:
-//! Parser::parse should be used to get a LIEF::PE::Binary
+/// Main interface to parse PE binaries. In particular the **static** functions:
+/// Parser::parse should be used to get a LIEF::PE::Binary
 class LIEF_API Parser : public LIEF::Parser {
   public:
 
-  //! Maximum size of the data read
+  /// Maximum size of the data read
   static constexpr size_t MAX_DATA_SIZE = 3_GB;
 
   static constexpr size_t MAX_TLS_CALLBACKS = 3000;
@@ -55,34 +55,34 @@ class LIEF_API Parser : public LIEF::Parser {
   // According to https://stackoverflow.com/a/265782/87207
   static constexpr size_t MAX_DLL_NAME_SIZE = 255;
 
-  //! Max size of the padding section
+  /// Max size of the padding section
   static constexpr size_t MAX_PADDING_SIZE = 1_GB;
 
   public:
-  //! Check if the given name is a valid import.
-  //!
-  //! This check verified that:
-  //!   1. The name is not too large or empty (cf. https://stackoverflow.com/a/23340781)
-  //!   2. All the characters are printable
+  /// Check if the given name is a valid import.
+  ///
+  /// This check verified that:
+  ///   1. The name is not too large or empty (cf. https://stackoverflow.com/a/23340781)
+  ///   2. All the characters are printable
   static bool is_valid_import_name(const std::string& name);
 
-  //! Check if the given name is a valid DLL name.
-  //!
-  //! This check verifies that:
-  //!   1. The name of the DLL is at 4
-  //!   2. All the characters are printable
+  /// Check if the given name is a valid DLL name.
+  ///
+  /// This check verifies that:
+  ///   1. The name of the DLL is at 4
+  ///   2. All the characters are printable
   static bool is_valid_dll_name(const std::string& name);
 
   public:
-  //! Parse a PE binary from the given filename
+  /// Parse a PE binary from the given filename
   static std::unique_ptr<Binary> parse(const std::string& filename,
                                        const ParserConfig& conf = ParserConfig::all());
 
-  //! Parse a PE binary from a data buffer
+  /// Parse a PE binary from a data buffer
   static std::unique_ptr<Binary> parse(std::vector<uint8_t> data,
                                        const ParserConfig& conf = ParserConfig::all());
 
-  //! Parse a PE binary from the given BinaryStream
+  /// Parse a PE binary from the given BinaryStream
   static std::unique_ptr<Binary> parse(std::unique_ptr<BinaryStream> stream,
                                        const ParserConfig& conf = ParserConfig::all());
 

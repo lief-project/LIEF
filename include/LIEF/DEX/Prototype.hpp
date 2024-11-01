@@ -25,7 +25,7 @@ namespace DEX {
 class Parser;
 class Type;
 
-//! Class which represents a DEX method prototype
+/// Class which represents a DEX method prototype
 class LIEF_API Prototype : public Object {
   friend class Parser;
 
@@ -38,11 +38,11 @@ class LIEF_API Prototype : public Object {
   Prototype();
   Prototype(const Prototype& other);
 
-  //! Type returned or a nullptr if not resolved
+  /// Type returned or a nullptr if not resolved
   const Type* return_type() const;
   Type* return_type();
 
-  //! Types of the parameters
+  /// Types of the parameters
   it_const_params parameters_type() const;
   it_params parameters_type();
 

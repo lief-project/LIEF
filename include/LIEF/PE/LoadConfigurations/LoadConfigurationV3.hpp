@@ -28,7 +28,7 @@ template<class T>
 struct load_configuration_v3;
 }
 
-//! @brief LoadConfiguration with Control Flow Guard improved
+/// LoadConfiguration with Control Flow Guard improved
 class LIEF_API LoadConfigurationV3 : public LoadConfigurationV2 {
   public:
 
@@ -46,22 +46,22 @@ class LIEF_API LoadConfigurationV3 : public LoadConfigurationV2 {
     return WIN_VERSION;
   }
 
-  //! @brief VA of a table associated with CFG's *IAT* checks
+  /// VA of a table associated with CFG's *IAT* checks
   uint64_t guard_address_taken_iat_entry_table() const {
     return guard_address_taken_iat_entry_table_;
   }
 
-  //! @brief Number of entries in the LoadConfigurationV3::guard_address_taken_iat_entry_table
+  /// Number of entries in the LoadConfigurationV3::guard_address_taken_iat_entry_table
   uint64_t guard_address_taken_iat_entry_count() const {
     return guard_address_taken_iat_entry_count_;
   }
 
-  //! @brief VA of a table associated with CFG's *long jump*
+  /// VA of a table associated with CFG's *long jump*
   uint64_t guard_long_jump_target_table() const {
     return guard_long_jump_target_table_;
   }
 
-  //! @brief Number of entries in the LoadConfigurationV3::guard_long_jump_target_table
+  /// Number of entries in the LoadConfigurationV3::guard_long_jump_target_table
   uint64_t guard_long_jump_target_count() const {
     return guard_long_jump_target_count_;
   }

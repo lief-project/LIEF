@@ -34,9 +34,9 @@ namespace details {
 struct linkedit_data_command;
 }
 
-//! Class that represents the LC_DYLD_EXPORTS_TRIE command
-//!
-//! In recent Mach-O binaries, this command replace the DyldInfo export trie buffer
+/// Class that represents the LC_DYLD_EXPORTS_TRIE command
+///
+/// In recent Mach-O binaries, this command replace the DyldInfo export trie buffer
 class LIEF_API DyldExportsTrie : public LoadCommand {
   friend class BinaryParser;
   friend class Builder;
@@ -44,13 +44,13 @@ class LIEF_API DyldExportsTrie : public LoadCommand {
   friend class Binary;
 
   public:
-  //! Internal container for storing ExportInfo
+  /// Internal container for storing ExportInfo
   using export_info_t = std::vector<std::unique_ptr<ExportInfo>>;
 
-  //! Iterator which outputs const ExportInfo&
+  /// Iterator which outputs const ExportInfo&
   using it_export_info = ref_iterator<export_info_t&, ExportInfo*>;
 
-  //! Iterator which outputs const ExportInfo&
+  /// Iterator which outputs const ExportInfo&
   using it_const_export_info = const_ref_iterator<const export_info_t&, ExportInfo*>;
 
   DyldExportsTrie();
@@ -63,13 +63,13 @@ class LIEF_API DyldExportsTrie : public LoadCommand {
 
   ~DyldExportsTrie() override;
 
-  //! Offset of the LC_DYLD_EXPORTS_TRIE.
-  //! This offset should point in the __LINKEDIT segment
+  /// Offset of the LC_DYLD_EXPORTS_TRIE.
+  /// This offset should point in the __LINKEDIT segment
   uint32_t data_offset() const {
     return data_offset_;
   }
 
-  //! Size of the LC_DYLD_EXPORTS_TRIE payload.
+  /// Size of the LC_DYLD_EXPORTS_TRIE payload.
   uint32_t data_size() const {
     return data_size_;
   }
@@ -85,7 +85,7 @@ class LIEF_API DyldExportsTrie : public LoadCommand {
     return content_;
   }
 
-  //! Iterator over the ExportInfo entries
+  /// Iterator over the ExportInfo entries
   it_export_info exports() {
     return export_info_;
   }
@@ -94,11 +94,11 @@ class LIEF_API DyldExportsTrie : public LoadCommand {
     return export_info_;
   }
 
-  //! Print the exports trie in a humman-readable way
+  /// Print the exports trie in a humman-readable way
   std::string show_export_trie() const;
 
-  //! Add an entrie in the current trie.
-  //! See also: LIEF::MachO::Binary::add_exported_function
+  /// Add an entrie in the current trie.
+  /// See also: LIEF::MachO::Binary::add_exported_function
   void add(std::unique_ptr<ExportInfo> info);
 
   void accept(Visitor& visitor) const override;

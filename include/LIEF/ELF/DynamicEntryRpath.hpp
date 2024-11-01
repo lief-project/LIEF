@@ -25,8 +25,8 @@
 namespace LIEF {
 namespace ELF {
 
-//! Class which represents a ``DT_RPATH`` entry. This attribute is
-//! deprecated (cf. ``man ld``) in favour of ``DT_RUNPATH`` (See DynamicRunPath)
+/// Class which represents a ``DT_RPATH`` entry. This attribute is
+/// deprecated (cf. ``man ld``) in favour of ``DT_RUNPATH`` (See DynamicRunPath)
 class LIEF_API DynamicEntryRpath : public DynamicEntry {
   public:
   static constexpr char delimiter = ':';
@@ -40,7 +40,7 @@ class LIEF_API DynamicEntryRpath : public DynamicEntry {
     rpath_(std::move(rpath))
   {}
 
-  //! Constructor from a list of paths
+  /// Constructor from a list of paths
   DynamicEntryRpath(const std::vector<std::string>& paths) :
     DynamicEntry::DynamicEntry(DynamicEntry::TAG::RPATH, 0)
   {
@@ -54,7 +54,7 @@ class LIEF_API DynamicEntryRpath : public DynamicEntry {
     return std::unique_ptr<DynamicEntryRpath>(new DynamicEntryRpath(*this));
   }
 
-  //! The actual rpath as a string
+  /// The actual rpath as a string
   const std::string& rpath() const {
     return rpath_;
   }
@@ -63,17 +63,17 @@ class LIEF_API DynamicEntryRpath : public DynamicEntry {
     rpath_ = std::move(name);
   }
 
-  //! Paths as a list
+  /// Paths as a list
   std::vector<std::string> paths() const;
   void paths(const std::vector<std::string>& paths);
 
-  //! Insert a ``path`` at the given ``position``
+  /// Insert a ``path`` at the given ``position``
   DynamicEntryRpath& insert(size_t pos, const std::string& path);
 
-  //! Append the given ``path``
+  /// Append the given ``path``
   DynamicEntryRpath& append(std::string path);
 
-  //! Remove the given ``path``
+  /// Remove the given ``path``
   DynamicEntryRpath& remove(const std::string& path);
 
   DynamicEntryRpath& operator+=(std::string path) {

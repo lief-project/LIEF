@@ -31,25 +31,25 @@ class Binary;
 }
 namespace OAT {
 
-//! @brief Check if the given LIEF::ELF::Binary is an OAT one.
+/// Check if the given LIEF::ELF::Binary is an OAT one.
 LIEF_API bool is_oat(const LIEF::ELF::Binary& elf_binary);
 
-//! @brief Check if the given file is an OAT one.
+/// Check if the given file is an OAT one.
 LIEF_API bool is_oat(const std::string& file);
 
-//! @brief Check if the given raw data is an OAT one.
+/// Check if the given raw data is an OAT one.
 LIEF_API bool is_oat(const std::vector<uint8_t>& raw);
 
-//! @brief Return the OAT version of the given file
+/// Return the OAT version of the given file
 LIEF_API oat_version_t version(const std::string& file);
 
-//! @brief Return the OAT version of the raw data
+/// Return the OAT version of the raw data
 LIEF_API oat_version_t version(const std::vector<uint8_t>& raw);
 
-//! @brief Return the OAT version of the given LIEF::ELF::Binary
+/// Return the OAT version of the given LIEF::ELF::Binary
 LIEF_API oat_version_t version(const LIEF::ELF::Binary& elf_binary);
 
-//! @brief Return the ANDROID_VERSIONS associated with the given OAT version
+/// Return the ANDROID_VERSIONS associated with the given OAT version
 LIEF_API LIEF::Android::ANDROID_VERSIONS android_version(oat_version_t version);
 
 

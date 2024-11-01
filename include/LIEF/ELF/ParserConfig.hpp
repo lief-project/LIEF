@@ -21,7 +21,7 @@
 namespace LIEF {
 namespace ELF {
 
-//! This structure is used to tweak the ELF Parser (ELF::Parser)
+/// This structure is used to tweak the ELF Parser (ELF::Parser)
 struct LIEF_API ParserConfig {
   /** Methods that can be used by the LIEF::ELF::Parser
       to count the number of dynamic symbols */
@@ -32,8 +32,8 @@ struct LIEF_API ParserConfig {
     RELOCATIONS = 3, /**< Count based on PLT/GOT relocations (very reliable but not accurate) */
   };
 
-  //! This returns a ParserConfig object configured to process all the ELF
-  //! elements.
+  /// This returns a ParserConfig object configured to process all the ELF
+  /// elements.
   static ParserConfig all() {
     static const ParserConfig DEFAULT;
     return DEFAULT;

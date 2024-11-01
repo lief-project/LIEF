@@ -33,7 +33,7 @@ namespace details {
 struct load_command;
 }
 
-//! Based class for the Mach-O load commands
+/// Based class for the Mach-O load commands
 class LIEF_API LoadCommand : public Object {
   friend class Builder;
   friend class BinaryParser;
@@ -120,22 +120,22 @@ class LIEF_API LoadCommand : public Object {
 
   ~LoadCommand() override = default;
 
-  //! Command type
+  /// Command type
   LoadCommand::TYPE command() const {
     return command_;
   }
 
-  //! Size of the command (should be greather than ``sizeof(load_command)``)
+  /// Size of the command (should be greather than ``sizeof(load_command)``)
   uint32_t size() const {
     return size_;
   }
 
-  //! Raw command
+  /// Raw command
   span<const uint8_t> data() const {
     return original_data_;
   }
 
-  //! Offset of the command within the *Load Command Table*
+  /// Offset of the command within the *Load Command Table*
   uint64_t command_offset() const {
     return command_offset_;
   }

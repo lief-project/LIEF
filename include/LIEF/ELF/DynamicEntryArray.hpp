@@ -24,14 +24,14 @@
 namespace LIEF {
 namespace ELF {
 
-//! Class that represent an Array in the dynamic table.
-//! This entry is associated with constructors:
-//! - ``DT_PREINIT_ARRAY``
-//! - ``DT_INIT_ARRAY``
-//! - ``DT_FINI_ARRAY``
-//!
-//! The underlying values are 64-bits integers to cover both:
-//! ELF32 and ELF64 binaries.
+/// Class that represent an Array in the dynamic table.
+/// This entry is associated with constructors:
+/// - ``DT_PREINIT_ARRAY``
+/// - ``DT_INIT_ARRAY``
+/// - ``DT_FINI_ARRAY``
+///
+/// The underlying values are 64-bits integers to cover both:
+/// ELF32 and ELF64 binaries.
 class LIEF_API DynamicEntryArray : public DynamicEntry {
   public:
   using array_t = std::vector<uint64_t>;
@@ -50,7 +50,7 @@ class LIEF_API DynamicEntryArray : public DynamicEntry {
     return std::unique_ptr<DynamicEntryArray>(new DynamicEntryArray(*this));
   }
 
-  //! Return the array values (list of pointers)
+  /// Return the array values (list of pointers)
   array_t& array() {
     return array_;
   }
@@ -62,19 +62,19 @@ class LIEF_API DynamicEntryArray : public DynamicEntry {
     array_ = array;
   }
 
-  //! Insert the given function at ``pos``
+  /// Insert the given function at ``pos``
   DynamicEntryArray& insert(size_t pos, uint64_t function);
 
-  //! Append the given function
+  /// Append the given function
   DynamicEntryArray& append(uint64_t function) {
     array_.push_back(function);
     return *this;
   }
 
-  //! Remove the given function
+  /// Remove the given function
   DynamicEntryArray& remove(uint64_t function);
 
-  //! Number of function registred in this array
+  /// Number of function registred in this array
   size_t size() const {
     return array_.size();
   }

@@ -68,8 +68,8 @@ inline ok_error_t update_span(span<uint8_t>& sp, uintptr_t original_data_addr,
   return ok();
 }
 
-//! @param[in] offset    Offset where the insertion took place
-//! @param[in] size      Size of the inserted data
+/// @param[in] offset    Offset where the insertion took place
+/// @param[in] size      Size of the inserted data
 inline ok_error_t update_span(span<uint8_t>& sp, uintptr_t original_data_addr, uintptr_t original_data_end,
                               size_t offset, size_t size, std::vector<uint8_t>& new_data)
 {

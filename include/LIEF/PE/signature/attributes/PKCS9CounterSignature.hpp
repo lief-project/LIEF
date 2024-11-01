@@ -24,17 +24,17 @@ namespace LIEF {
 class VectorStream;
 namespace PE {
 
-//! Interface over the structure described by the OID ``1.2.840.113549.1.9.6`` (PKCS #9)
-//!
-//! The internal structure is described in the
-//! [RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types Version 2.0](https://tools.ietf.org/html/rfc2985)
-//!
-//! ```text
-//! counterSignature ATTRIBUTE ::= {
-//!   WITH SYNTAX SignerInfo
-//!   ID pkcs-9-at-counterSignature
-//! }
-//! ```
+/// Interface over the structure described by the OID ``1.2.840.113549.1.9.6`` (PKCS #9)
+///
+/// The internal structure is described in the
+/// [RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types Version 2.0](https://tools.ietf.org/html/rfc2985)
+///
+/// ```text
+/// counterSignature ATTRIBUTE ::= {
+///   WITH SYNTAX SignerInfo
+///   ID pkcs-9-at-counterSignature
+/// }
+/// ```
 class LIEF_API PKCS9CounterSignature : public Attribute {
 
   friend class Parser;
@@ -54,12 +54,12 @@ class LIEF_API PKCS9CounterSignature : public Attribute {
     return std::unique_ptr<Attribute>(new PKCS9CounterSignature{*this});
   }
 
-  //! SignerInfo as described in the RFC #2985
+  /// SignerInfo as described in the RFC #2985
   const SignerInfo& signer() const {
     return this->signer_;
   }
 
-  //! Print information about the attribute
+  /// Print information about the attribute
   std::string print() const override;
 
   static bool classof(const Attribute* attr) {

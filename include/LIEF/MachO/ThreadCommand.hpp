@@ -33,11 +33,11 @@ namespace details {
 struct thread_command;
 }
 
-//! Class that represents the LC_THREAD / LC_UNIXTHREAD commands and that
-//! can be used to get the binary entrypoint when the LC_MAIN (MainCommand) is not present
-//!
-//! Generally speaking, this command aims at defining the original state
-//! of the main thread which includes the registers' values
+/// Class that represents the LC_THREAD / LC_UNIXTHREAD commands and that
+/// can be used to get the binary entrypoint when the LC_MAIN (MainCommand) is not present
+///
+/// Generally speaking, this command aims at defining the original state
+/// of the main thread which includes the registers' values
 class LIEF_API ThreadCommand : public LoadCommand {
   friend class BinaryParser;
   public:
@@ -56,30 +56,30 @@ class LIEF_API ThreadCommand : public LoadCommand {
 
   ~ThreadCommand() override = default;
 
-  //! Integer that defines a special *flavor* for the thread.
-  //!
-  //! The meaning of this value depends on the architecture(). The list of
-  //! the values can be found in the XNU kernel files:
-  //! - xnu/osfmk/mach/arm/thread_status.h  for the ARM/AArch64 architectures
-  //! - xnu/osfmk/mach/i386/thread_status.h for the x86/x86-64 architectures
+  /// Integer that defines a special *flavor* for the thread.
+  ///
+  /// The meaning of this value depends on the architecture(). The list of
+  /// the values can be found in the XNU kernel files:
+  /// - xnu/osfmk/mach/arm/thread_status.h  for the ARM/AArch64 architectures
+  /// - xnu/osfmk/mach/i386/thread_status.h for the x86/x86-64 architectures
   uint32_t flavor() const {
     return flavor_;
   }
 
-  //! Size of the thread state data with 32-bits alignment.
-  //!
-  //! This value should match state().size()
+  /// Size of the thread state data with 32-bits alignment.
+  ///
+  /// This value should match state().size()
   uint32_t count() const {
     return count_;
   }
 
-  //! The CPU architecture that is targeted by this ThreadCommand
+  /// The CPU architecture that is targeted by this ThreadCommand
   Header::CPU_TYPE architecture() const {
     return architecture_;
   }
 
-  //! The actual thread state as a vector of bytes. Depending on the architecture(),
-  //! these data can be casted into x86_thread_state_t, x86_thread_state64_t, ...
+  /// The actual thread state as a vector of bytes. Depending on the architecture(),
+  /// these data can be casted into x86_thread_state_t, x86_thread_state64_t, ...
   span<const uint8_t> state() const {
     return  state_;
   }
@@ -88,10 +88,10 @@ class LIEF_API ThreadCommand : public LoadCommand {
     return state_;
   }
 
-  //! Return the initial Program Counter regardless of the underlying architecture.
-  //! This value, when non null, can be used to determine the binary's entrypoint.
-  //!
-  //! Underneath, it works by looking for the PC register value in the state() data
+  /// Return the initial Program Counter regardless of the underlying architecture.
+  /// This value, when non null, can be used to determine the binary's entrypoint.
+  ///
+  /// Underneath, it works by looking for the PC register value in the state() data
   uint64_t pc() const;
 
   void state(std::vector<uint8_t> state) {

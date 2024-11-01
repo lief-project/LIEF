@@ -39,7 +39,7 @@ namespace details {
 struct pe_section;
 }
 
-//! Class which represents a PE section
+/// Class which represents a PE section
 class LIEF_API Section : public LIEF::Section {
 
   friend class Parser;
@@ -98,77 +98,77 @@ class LIEF_API Section : public LIEF::Section {
   Section(const Section&) = default;
   ~Section() override = default;
 
-  //! Return the size of the data in the section.
+  /// Return the size of the data in the section.
   uint32_t sizeof_raw_data() const;
 
-  //! Return the size of the data when mapped in memory
-  //!
-  //! If this value is greater than sizeof_raw_data, the section is zero-padded.
+  /// Return the size of the data when mapped in memory
+  ///
+  /// If this value is greater than sizeof_raw_data, the section is zero-padded.
   uint32_t virtual_size() const {
     return virtual_size_;
   }
 
-  //! The actual content of the section
+  /// The actual content of the section
   span<const uint8_t> content() const override {
     return content_;
   }
 
-  //! Content of the section's padding area
+  /// Content of the section's padding area
   span<const uint8_t> padding() const {
     return padding_;
   }
 
-  //! The offset of the section data in the PE file
+  /// The offset of the section data in the PE file
   uint32_t pointerto_raw_data() const;
 
-  //! The file pointer to the beginning of the COFF relocation entries for the section. This is set to zero for
-  //! executable images or if there are no relocations.
-  //!
-  //! For modern PE binaries, this value is usually set to 0 as the relocations are managed by
-  //! PE::Relocation.
+  /// The file pointer to the beginning of the COFF relocation entries for the section. This is set to zero for
+  /// executable images or if there are no relocations.
+  ///
+  /// For modern PE binaries, this value is usually set to 0 as the relocations are managed by
+  /// PE::Relocation.
   uint32_t pointerto_relocation() const {
     return pointer_to_relocations_;
   }
 
-  //! The file pointer to the beginning of line-number entries for the section.
-  //! This is set to zero if there are no COFF line numbers. This value should be zero for an image because COFF
-  //! debugging information is deprecated and modern debug information relies on the PDB files.
+  /// The file pointer to the beginning of line-number entries for the section.
+  /// This is set to zero if there are no COFF line numbers. This value should be zero for an image because COFF
+  /// debugging information is deprecated and modern debug information relies on the PDB files.
   uint32_t pointerto_line_numbers() const {
     return pointer_to_linenumbers_;
   }
 
-  //! No longer used in recent PE binaries produced by Visual Studio
+  /// No longer used in recent PE binaries produced by Visual Studio
   uint16_t numberof_relocations() const {
     return number_of_relocations_;
   }
 
-  //! No longer used in recent PE binaries produced by Visual Studio
+  /// No longer used in recent PE binaries produced by Visual Studio
   uint16_t numberof_line_numbers() const {
     return number_of_linenumbers_;
   }
 
-  //! Characteristics of the section: it provides information about
-  //! the permissions of the section when mapped. It can also provide
-  //! information about the *purpose* of the section (contain code, BSS-like, ...)
+  /// Characteristics of the section: it provides information about
+  /// the permissions of the section when mapped. It can also provide
+  /// information about the *purpose* of the section (contain code, BSS-like, ...)
   uint32_t characteristics() const {
     return characteristics_;
   }
 
-  //! Deprecated do not use. It will likely change in a future release of LIEF
+  /// Deprecated do not use. It will likely change in a future release of LIEF
   bool is_type(PE_SECTION_TYPES type) const;
 
-  //! Deprecated do not use. It will likely change in a future release of LIEF
+  /// Deprecated do not use. It will likely change in a future release of LIEF
   const std::set<PE_SECTION_TYPES>& types() const;
 
-  //! Check if the section has the given CHARACTERISTICS
+  /// Check if the section has the given CHARACTERISTICS
   bool has_characteristic(CHARACTERISTICS c) const {
     return (characteristics() & static_cast<size_t>(c)) > 0;
   }
 
-  //! List of the section characteristics as a std::set
+  /// List of the section characteristics as a std::set
   std::vector<CHARACTERISTICS> characteristics_list() const;
 
-  //! Fill the content of the section with the given ``char``
+  /// Fill the content of the section with the given ``char``
   void clear(uint8_t c);
   void content(const std::vector<uint8_t>& data) override;
 

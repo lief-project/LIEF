@@ -90,10 +90,10 @@ class LIEF_API DynamicEntryFlags : public DynamicEntry {
     return std::unique_ptr<DynamicEntryFlags>(new DynamicEntryFlags(*this));
   }
 
-  //! If the current entry has the given FLAG
+  /// If the current entry has the given FLAG
   bool has(FLAG f) const;
 
-  //! Return flags as a list of integers
+  /// Return flags as a list of integers
   flags_list_t flags() const;
 
   uint64_t raw_flags() const {
@@ -105,10 +105,10 @@ class LIEF_API DynamicEntryFlags : public DynamicEntry {
     );
   }
 
-  //! Add the given FLAG
+  /// Add the given FLAG
   void add(FLAG f);
 
-  //! Remove the given FLAG
+  /// Remove the given FLAG
   void remove(FLAG f);
 
   DynamicEntryFlags& operator+=(FLAG f) {

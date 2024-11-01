@@ -98,8 +98,8 @@ class Pogo;
 class PogoEntry;
 class Repro;
 
-//! Class that implements the Visitor pattern to output
-//! a JSON representation of a PE object
+/// Class that implements the Visitor pattern to output
+/// a JSON representation of a PE object
 class JsonVisitor : public LIEF::JsonVisitor {
   public:
   using LIEF::JsonVisitor::JsonVisitor;

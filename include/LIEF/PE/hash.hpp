@@ -93,8 +93,8 @@ class Pogo;
 class PogoEntry;
 class Repro;
 
-//! Class which implements a visitor to compute
-//! a **deterministic** hash for LIEF PE objects
+/// Class which implements a visitor to compute
+/// a **deterministic** hash for LIEF PE objects
 class LIEF_API Hash : public LIEF::Hash {
   public:
   static LIEF::Hash::value_type hash(const Object& obj);

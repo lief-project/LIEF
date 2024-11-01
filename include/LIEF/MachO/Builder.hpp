@@ -53,10 +53,10 @@ class TwoLevelHints;
 class VersionMin;
 class RPathCommand;
 
-//! Class used to rebuild a Mach-O file
+/// Class used to rebuild a Mach-O file
 class LIEF_API Builder {
   public:
-  //! Options to tweak the building process
+  /// Options to tweak the building process
   struct config_t {
     bool linkedit = true;
   };

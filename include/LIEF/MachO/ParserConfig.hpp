@@ -20,20 +20,20 @@
 namespace LIEF {
 namespace MachO {
 
-//! This structure is used to tweak the MachO Parser (MachO::Parser)
+/// This structure is used to tweak the MachO Parser (MachO::Parser)
 struct LIEF_API ParserConfig {
-  //! Return a parser configuration such as all the objects supported by
-  //! LIEF are parsed
+  /// Return a parser configuration such as all the objects supported by
+  /// LIEF are parsed
   static ParserConfig deep();
 
-  //! Return a configuration to parse the most important MachO
-  //! structures
+  /// Return a configuration to parse the most important MachO
+  /// structures
   static ParserConfig quick();
 
-  //! If ``flag`` is set to ``true``, Exports, Bindings and Rebases opcodes are
-  //! parsed.
-  //!
-  //! @warning Enabling this flag can slow down the parsing
+  /// If ``flag`` is set to ``true``, Exports, Bindings and Rebases opcodes are
+  /// parsed.
+  ///
+  /// @warning Enabling this flag can slow down the parsing
   ParserConfig& full_dyldinfo(bool flag);
 
   bool parse_dyld_exports  = true; ///< Parse the Dyld export trie

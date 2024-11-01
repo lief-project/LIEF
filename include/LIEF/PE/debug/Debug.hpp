@@ -32,15 +32,15 @@ namespace details {
 struct pe_debug;
 }
 
-//! This class represents a generic entry in the debug data directory.
-//! For known types, this class is extended to provide a dedicated API
-//! (see: ! CodeCodeView)
+/// This class represents a generic entry in the debug data directory.
+/// For known types, this class is extended to provide a dedicated API
+/// (see: ! CodeCodeView)
 class LIEF_API Debug : public Object {
   friend class Parser;
   friend class Builder;
 
   public:
-  //! The entry types
+  /// The entry types
   enum class TYPES {
     UNKNOWN               = 0,
     COFF                  = 1, ///< COFF debug information
@@ -76,42 +76,42 @@ class LIEF_API Debug : public Object {
     return std::unique_ptr<Debug>(new Debug(*this));
   }
 
-  //! Reserved should be 0
+  /// Reserved should be 0
   uint32_t characteristics() const {
     return characteristics_;
   }
 
-  //! The time and date when the debug data was created.
+  /// The time and date when the debug data was created.
   uint32_t timestamp() const {
     return timestamp_;
   }
 
-  //! The major version number of the debug data format.
+  /// The major version number of the debug data format.
   uint16_t major_version() const {
     return major_version_;
   }
 
-  //! The minor version number of the debug data format.
+  /// The minor version number of the debug data format.
   uint16_t minor_version() const {
     return minor_version_;
   }
 
-  //! The format DEBUG_TYPES of the debugging information
+  /// The format DEBUG_TYPES of the debugging information
   TYPES type() const {
     return type_;
   }
 
-  //! Size of the debug data
+  /// Size of the debug data
   uint32_t sizeof_data() const {
     return sizeof_data_;
   }
 
-  //! Address of the debug data relative to the image base
+  /// Address of the debug data relative to the image base
   uint32_t addressof_rawdata() const {
     return addressof_rawdata_;
   }
 
-  //! File offset of the debug data
+  /// File offset of the debug data
   uint32_t pointerto_rawdata() const {
     return pointerto_rawdata_;
   }

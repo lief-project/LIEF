@@ -31,7 +31,7 @@ namespace details {
 struct linkedit_data_command;
 }
 
-//! Class that represents the LoadCommand::TYPE::SEGMENT_SPLIT_INFO command
+/// Class that represents the LoadCommand::TYPE::SEGMENT_SPLIT_INFO command
 class LIEF_API SegmentSplitInfo : public LoadCommand {
   friend class BinaryParser;
   friend class LinkEdit;

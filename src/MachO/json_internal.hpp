@@ -65,8 +65,8 @@ class UUIDCommand;
 class VersionMin;
 class UnknownCommand;
 
-//! Class that implements the Visitor pattern to output
-//! a JSON representation of a MachO object
+/// Class that implements the Visitor pattern to output
+/// a JSON representation of a MachO object
 class JsonVisitor : public LIEF::JsonVisitor {
   public:
   using LIEF::JsonVisitor::JsonVisitor;

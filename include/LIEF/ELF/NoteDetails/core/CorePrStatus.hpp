@@ -31,7 +31,7 @@ class Parser;
 class Builder;
 class Binary;
 
-//! Class representing core PrPsInfo object
+/// Class representing core PrPsInfo object
 class LIEF_API CorePrStatus : public Note {
   public:
   struct siginfo_t {

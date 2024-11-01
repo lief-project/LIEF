@@ -40,7 +40,7 @@ template< class T >
 using add_lvalue_reference_t = typename std::add_lvalue_reference<T>::type;
 
 
-//! Iterator which returns reference on container's values
+/// Iterator which returns reference on container's values
 template<class T, typename U = typename decay_t<T>::value_type,
          class ITERATOR_T = typename decay_t<T>::iterator>
 class ref_iterator {
@@ -252,12 +252,12 @@ class ref_iterator {
 };
 
 
-//! Iterator which return const ref on container's values
+/// Iterator which return const ref on container's values
 template<class T, typename U = typename decay_t<T>::value_type, class CT = typename std::add_const<T>::type>
 using const_ref_iterator = ref_iterator<CT, U, typename decay_t<CT>::const_iterator>;
 
 
-//! Iterator which return a ref on container's values given predicates
+/// Iterator which return a ref on container's values given predicates
 template<class T, typename U = typename decay_t<T>::value_type,
          class ITERATOR_T = typename decay_t<T>::iterator>
 class filter_iterator {
@@ -473,7 +473,7 @@ class filter_iterator {
   typename filter_iterator::difference_type distance_ = 0;
 };
 
-//! Iterator which return a const ref on container's values given predicates
+/// Iterator which return a const ref on container's values given predicates
 template<class T, typename U = typename decay_t<T>::value_type,
          class CT = typename std::add_const<T>::type>
 using const_filter_iterator = filter_iterator<CT, U, typename decay_t<CT>::const_iterator>;

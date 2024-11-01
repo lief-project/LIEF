@@ -31,11 +31,11 @@ class Visitor;
 namespace DEX {
 class Parser;
 
-//! Class which represents the DEX header.
-//! This is the first structure that begins the DEX format.
-//!
-//! The official documentation is provided here:
-//! https://source.android.com/devices/tech/dalvik/dex-format#header-item
+/// Class which represents the DEX header.
+/// This is the first structure that begins the DEX format.
+///
+/// The official documentation is provided here:
+/// https://source.android.com/devices/tech/dalvik/dex-format#header-item
 class LIEF_API Header : public Object {
   friend class Parser;
 
@@ -52,28 +52,28 @@ class LIEF_API Header : public Object {
   template<class T>
   LIEF_LOCAL Header(const T& header);
 
-  //! The DEX magic bytes (``DEX\n`` followed by the DEX version)
+  /// The DEX magic bytes (``DEX\n`` followed by the DEX version)
   magic_t magic() const;
 
-  //! The file checksum
+  /// The file checksum
   uint32_t checksum() const;
 
-  //! SHA-1 DEX signature (which is not really used as a signature)
+  /// SHA-1 DEX signature (which is not really used as a signature)
   signature_t signature() const;
 
-  //! Size of the entire file (including the current the header)
+  /// Size of the entire file (including the current the header)
   uint32_t file_size() const;
 
-  //! Size of this header. It should be 0x70
+  /// Size of this header. It should be 0x70
   uint32_t header_size() const;
 
-  //! File endianess of the file
+  /// File endianess of the file
   uint32_t endian_tag() const;
 
-  //! Offset from the start of the file to the map list (see: DEX::MapList)
+  /// Offset from the start of the file to the map list (see: DEX::MapList)
   uint32_t map() const;
 
-  //! Offset and size of the string pool
+  /// Offset and size of the string pool
   location_t strings() const;
   location_t link() const;
   location_t types() const;

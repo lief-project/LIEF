@@ -38,13 +38,13 @@ struct dyld_chained_ptr_64_bind;
 struct dyld_chained_ptr_32_bind;
 }
 
-//! This class represents a symbol binding operation associated with
-//! the LC_DYLD_CHAINED_FIXUPS command.
-//!
-//! This class does not represent a structure that exists in the Mach-O format
-//! specifications but it provides a *view* on an entry.
-//!
-//! @see: BindingInfo
+/// This class represents a symbol binding operation associated with
+/// the LC_DYLD_CHAINED_FIXUPS command.
+///
+/// This class does not represent a structure that exists in the Mach-O format
+/// specifications but it provides a *view* on an entry.
+///
+/// @see: BindingInfo
 class LIEF_API ChainedBindingInfo : public BindingInfo {
 
   friend class BinaryParser;
@@ -62,17 +62,17 @@ class LIEF_API ChainedBindingInfo : public BindingInfo {
 
   void swap(ChainedBindingInfo& other) noexcept;
 
-  //! Format of the imports
+  /// Format of the imports
   DYLD_CHAINED_FORMAT format() const {
     return format_;
   }
 
-  //! Format of the pointer
+  /// Format of the pointer
   DYLD_CHAINED_PTR_FORMAT ptr_format() const {
     return ptr_format_;
   }
 
-  //! Original offset in the chain of this binding
+  /// Original offset in the chain of this binding
   uint32_t offset() const {
     return offset_;
   }

@@ -46,7 +46,7 @@ struct segment_command_32;
 struct segment_command_64;
 }
 
-//! Class which represents a LoadCommand::TYPE::SEGMENT / LoadCommand::TYPE::SEGMENT_64 command
+/// Class which represents a LoadCommand::TYPE::SEGMENT / LoadCommand::TYPE::SEGMENT_64 command
 class LIEF_API SegmentCommand : public LoadCommand {
 
   friend class DyldChainedFixupsCreator;
@@ -58,22 +58,22 @@ class LIEF_API SegmentCommand : public LoadCommand {
   public:
   using content_t = std::vector<uint8_t>;
 
-  //! Internal container for storing Mach-O Section
+  /// Internal container for storing Mach-O Section
   using sections_t = std::vector<std::unique_ptr<Section>>;
 
-  //! Iterator which outputs Section&
+  /// Iterator which outputs Section&
   using it_sections = ref_iterator<sections_t&, Section*>;
 
-  //! Iterator which outputs const Section&
+  /// Iterator which outputs const Section&
   using it_const_sections = const_ref_iterator<const sections_t&, const Section*>;
 
-  //! Internal container for storing Mach-O Relocation
+  /// Internal container for storing Mach-O Relocation
   using relocations_t = std::vector<std::unique_ptr<Relocation>>;
 
-  //! Iterator which outputs Relocation&
+  /// Iterator which outputs Relocation&
   using it_relocations = ref_iterator<relocations_t&, Relocation*>;
 
-  //! Iterator which outputs const Relocation&
+  /// Iterator which outputs const Relocation&
   using it_const_relocations = const_ref_iterator<const relocations_t&, const Relocation*>;
 
   enum class FLAGS: uint64_t  {
@@ -84,8 +84,8 @@ class LIEF_API SegmentCommand : public LoadCommand {
     READ_ONLY           = 0x10u,
   };
 
-  //! Values for segment_command.initprot.
-  //! From <mach/vm_prot.h>
+  /// Values for segment_command.initprot.
+  /// From <mach/vm_prot.h>
   enum class VM_PROTECTIONS  {
     READ    = 0x1, ///< Reading data within the segment is allowed
     WRITE   = 0x2, ///< Writing data within the segment is allowed
@@ -112,52 +112,52 @@ class LIEF_API SegmentCommand : public LoadCommand {
 
   ~SegmentCommand() override;
 
-  //! Name of the segment (e.g. ``__TEXT``)
+  /// Name of the segment (e.g. ``__TEXT``)
   const std::string& name() const {
     return name_;
   }
 
-  //! Absolute virtual base address of the segment
+  /// Absolute virtual base address of the segment
   uint64_t virtual_address() const {
     return virtual_address_;
   }
 
-  //! Virtual size of the segment
+  /// Virtual size of the segment
   uint64_t virtual_size() const {
     return virtual_size_;
   }
 
-  //! Size of this segment in the binary file
+  /// Size of this segment in the binary file
   uint64_t file_size() const {
     return file_size_;
   }
 
-  //! Offset of the data of this segment in the file
+  /// Offset of the data of this segment in the file
   uint64_t file_offset() const {
     return file_offset_;
   }
 
-  //! The maximum of protections for this segment (cf. VM_PROTECTIONS)
+  /// The maximum of protections for this segment (cf. VM_PROTECTIONS)
   uint32_t max_protection() const {
     return max_protection_;
   }
 
-  //! The initial protections of this segment (cf. VM_PROTECTIONS)
+  /// The initial protections of this segment (cf. VM_PROTECTIONS)
   uint32_t init_protection() const {
     return init_protection_;
   }
 
-  //! The number of sections associated with this segment
+  /// The number of sections associated with this segment
   uint32_t numberof_sections() const {
     return nb_sections_;
   }
 
-  //! Flags associated with this segment (cf. SegmentCommand::FLAGS)
+  /// Flags associated with this segment (cf. SegmentCommand::FLAGS)
   uint32_t flags() const {
     return flags_;
   }
 
-  //! Return an iterator over the MachO::Section linked to this segment
+  /// Return an iterator over the MachO::Section linked to this segment
   it_sections sections() {
     return sections_;
   }
@@ -166,11 +166,11 @@ class LIEF_API SegmentCommand : public LoadCommand {
     return sections_;
   }
 
-  //! Return an iterator over the MachO::Relocation linked to this segment
-  //!
-  //! For Mach-O executable or library this iterator should be empty as
-  //! the relocations are managed by the Dyld::rebase_opcodes.
-  //! On the other hand, for object files (``.o``) this iterator should not be empty
+  /// Return an iterator over the MachO::Relocation linked to this segment
+  ///
+  /// For Mach-O executable or library this iterator should be empty as
+  /// the relocations are managed by the Dyld::rebase_opcodes.
+  /// On the other hand, for object files (``.o``) this iterator should not be empty
   it_relocations relocations() {
     return relocations_;
   }
@@ -178,19 +178,19 @@ class LIEF_API SegmentCommand : public LoadCommand {
     return relocations_;
   }
 
-  //! Get the section with the given name
+  /// Get the section with the given name
   const Section* get_section(const std::string& name) const;
   Section* get_section(const std::string& name);
 
-  //! The raw content of this segment
+  /// The raw content of this segment
   span<const uint8_t> content() const {
     return data_;
   }
 
-  //! Return a stream over the content of this segment
+  /// Return a stream over the content of this segment
   std::unique_ptr<SpanStream> stream() const;
 
-  //! The original index of this segment or -1 if not defined
+  /// The original index of this segment or -1 if not defined
   int8_t index() const {
     return this->index_;
   }
@@ -226,16 +226,16 @@ class LIEF_API SegmentCommand : public LoadCommand {
 
   void content(content_t data);
 
-  //! Add a new section in this segment
+  /// Add a new section in this segment
   Section& add_section(const Section& section);
 
-  //! Remove all the sections linked to this segment
+  /// Remove all the sections linked to this segment
   void remove_all_sections();
 
-  //! Check if the current segment embeds the given section
+  /// Check if the current segment embeds the given section
   bool has(const Section& section) const;
 
-  //! Check if the current segment embeds the given section name
+  /// Check if the current segment embeds the given section name
   bool has_section(const std::string& section_name) const;
 
   bool is(VM_PROTECTIONS prot) const {

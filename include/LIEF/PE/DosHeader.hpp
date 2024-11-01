@@ -31,10 +31,10 @@ namespace details {
 struct pe_dos_header;
 }
 
-//! Class which represents the DosHeader, the **first**
-//! structure presents at the beginning of a PE file.
-//!
-//! Most of the attributes of this structures are no longer relevant.
+/// Class which represents the DosHeader, the **first**
+/// structure presents at the beginning of a PE file.
+///
+/// Most of the attributes of this structures are no longer relevant.
 class LIEF_API DosHeader : public Object {
   public:
   using reserved_t  = std::array<uint16_t, 4>;
@@ -51,7 +51,7 @@ class LIEF_API DosHeader : public Object {
 
   ~DosHeader() override = default;
 
-  //! Magic bytes identifying a DOS/PE binary
+  /// Magic bytes identifying a DOS/PE binary
   uint16_t magic() const {
     return magic_;
   }
@@ -124,7 +124,7 @@ class LIEF_API DosHeader : public Object {
     return reserved2_;
   }
 
-  //! Return the offset to the PE::Header structure.
+  /// Return the offset to the PE::Header structure.
   uint32_t addressof_new_exeheader() const {
     return addr_new_exe_header_;
   }

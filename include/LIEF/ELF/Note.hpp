@@ -42,7 +42,7 @@ class LIEF_API Note : public Object {
   friend class Binary;
 
   public:
-  //! Container used to handle the description data
+  /// Container used to handle the description data
   using description_t = std::vector<uint8_t>;
 
   /// LIEF representation of the ELF `NT_` values.

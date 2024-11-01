@@ -27,7 +27,7 @@
 namespace LIEF {
 namespace ELF {
 
-//! Class representing a core siginfo object
+/// Class representing a core siginfo object
 class LIEF_API CoreSigInfo : public Note {
   public:
   std::unique_ptr<Note> clone() const override {

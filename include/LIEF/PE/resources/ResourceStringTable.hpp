@@ -43,12 +43,12 @@ class LIEF_API ResourceStringTable : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  //! The size of the string, not including length field itself.
+  /// The size of the string, not including length field itself.
   int16_t length() const {
     return length_;
   }
 
-  //! The variable-length Unicode string data, word-aligned.
+  /// The variable-length Unicode string data, word-aligned.
   const std::u16string& name() const {
     return name_;
   }

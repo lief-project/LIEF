@@ -42,7 +42,7 @@ class Binary;
 class Section;
 class Builder;
 
-//! Class which represents the ELF segments
+/// Class which represents the ELF segments
 class LIEF_API Segment : public Object {
 
   friend class Parser;
@@ -134,70 +134,70 @@ class LIEF_API Segment : public Object {
     return type() == TYPE::PHDR;
   }
 
-  //! The segment's type (LOAD, DYNAMIC, ...)
+  /// The segment's type (LOAD, DYNAMIC, ...)
   TYPE type() const {
     return type_;
   }
 
-  //! The flag permissions associated with this segment
+  /// The flag permissions associated with this segment
   FLAGS flags() const {
     return FLAGS(flags_);
   }
 
-  //! The file offset of the data associated with this segment
+  /// The file offset of the data associated with this segment
   uint64_t file_offset() const {
     return file_offset_;
   }
 
-  //! The virtual address of the segment.
+  /// The virtual address of the segment.
   uint64_t virtual_address() const {
     return virtual_address_;
   }
 
-  //! The physical address of the segment.
-  //! This value is not really relevant on systems like Linux or Android.
-  //! On the other hand, Qualcomm trustlets might use this value.
-  //!
-  //! Usually this value matches virtual_address
+  /// The physical address of the segment.
+  /// This value is not really relevant on systems like Linux or Android.
+  /// On the other hand, Qualcomm trustlets might use this value.
+  ///
+  /// Usually this value matches virtual_address
   uint64_t physical_address() const {
     return physical_address_;
   }
 
-  //! The **file** size of the data associated with this segment
+  /// The **file** size of the data associated with this segment
   uint64_t physical_size() const {
     return size_;
   }
 
-  //! The in-memory size of this segment.
-  //! Usually, if the `.bss` segment is wrapped by this segment
-  //! then, virtual_size is larger than physical_size
+  /// The in-memory size of this segment.
+  /// Usually, if the `.bss` segment is wrapped by this segment
+  /// then, virtual_size is larger than physical_size
   uint64_t virtual_size() const {
     return virtual_size_;
   }
 
-  //! The offset alignment of the segment
+  /// The offset alignment of the segment
   uint64_t alignment() const {
     return alignment_;
   }
 
-  //! The raw data associated with this segment.
+  /// The raw data associated with this segment.
   span<const uint8_t> content() const;
 
-  //! Check if the current segment has the given flag
+  /// Check if the current segment has the given flag
   bool has(FLAGS flag) const {
     return (flags_ & static_cast<uint64_t>(flag)) != 0;
   }
 
-  //! Check if the current segment wraps the given ELF::Section
+  /// Check if the current segment wraps the given ELF::Section
   bool has(const Section& section) const;
 
-  //! Check if the current segment wraps the given section's name
+  /// Check if the current segment wraps the given section's name
   bool has(const std::string& section_name) const;
 
-  //! Append the given ELF_SEGMENT_FLAGS
+  /// Append the given ELF_SEGMENT_FLAGS
   void add(FLAGS flag);
 
-  //! Remove the given ELF_SEGMENT_FLAGS
+  /// Remove the given ELF_SEGMENT_FLAGS
   void remove(FLAGS flag);
 
   void type(TYPE type) {
@@ -242,7 +242,7 @@ class LIEF_API Segment : public Object {
   template<typename T> void set_content_value(size_t offset, T value);
   size_t get_content_size() const;
 
-  //! Iterator over the sections wrapped by this segment
+  /// Iterator over the sections wrapped by this segment
   it_sections sections() {
     return sections_;
   }

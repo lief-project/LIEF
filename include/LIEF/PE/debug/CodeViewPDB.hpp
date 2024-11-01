@@ -30,7 +30,7 @@ namespace details {
 struct pe_pdb_70;
 }
 
-//! CodeView PDB specialization
+/// CodeView PDB specialization
 class LIEF_API CodeViewPDB : public CodeView {
   friend class Parser;
   friend class Builder;

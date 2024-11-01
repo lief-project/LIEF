@@ -200,7 +200,7 @@ enum class CodeViewIdentifiers: size_t  {
 };
 
 
-//! From https://docs.microsoft.com/en-us/windows/win32/winmsg/extended-window-styles
+/// From https://docs.microsoft.com/en-us/windows/win32/winmsg/extended-window-styles
 enum class EXTENDED_WINDOW_STYLES: size_t  {
   WS_EX_DLGMODALFRAME    = 0x00000001L,
   WS_EX_NOPARENTNOTIFY   = 0x00000004L,
@@ -225,7 +225,7 @@ enum class EXTENDED_WINDOW_STYLES: size_t  {
   WS_EX_APPWINDOW        = 0x00040000L,
 };
 
-//! From: https://docs.microsoft.com/en-us/windows/win32/winmsg/window-styles
+/// From: https://docs.microsoft.com/en-us/windows/win32/winmsg/window-styles
 enum class WINDOW_STYLES: size_t  {
   WS_OVERLAPPED      = 0x00000000L,
   WS_POPUP           = 0x80000000L,
@@ -251,7 +251,7 @@ enum class WINDOW_STYLES: size_t  {
 };
 
 
-//! From https://docs.microsoft.com/en-us/windows/win32/dlgbox/dialog-box-styles
+/// From https://docs.microsoft.com/en-us/windows/win32/dlgbox/dialog-box-styles
 enum class DIALOG_BOX_STYLES: size_t  {
   DS_ABSALIGN      = 0x0001L,
   DS_SYSMODAL      = 0x0002L,
@@ -329,7 +329,7 @@ enum class FIXED_VERSION_FILE_SUB_TYPES: size_t  {
   VFT2_UNKNOWN               = 0x00000000L,
 };
 
-//! Code page from https://docs.microsoft.com/en-us/windows/win32/intl/code-page-identifiers
+/// Code page from https://docs.microsoft.com/en-us/windows/win32/intl/code-page-identifiers
 enum class CODE_PAGES: size_t  {
   CP_IBM037                  = 37,    /**< IBM EBCDIC US-Canada */
   CP_IBM437                  = 437,   /**< OEM United States */
@@ -473,7 +473,7 @@ enum class CODE_PAGES: size_t  {
   CP_UTF_8                   = 65001, /**< Unicode (UTF-8) */
 };
 
-//! From https://docs.microsoft.com/en-us/windows/win32/menurc/acceltableentry
+/// From https://docs.microsoft.com/en-us/windows/win32/menurc/acceltableentry
 enum class ACCELERATOR_FLAGS: size_t  {
   FVIRTKEY  = 0x01,
   FNOINVERT = 0x02,
@@ -483,7 +483,7 @@ enum class ACCELERATOR_FLAGS: size_t  {
   END       = 0x80,
 };
 
-//! From https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+/// From https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
 enum class ACCELERATOR_VK_CODES: size_t  {
   VK_LBUTTON             = 0x01,
   VK_RBUTTON             = 0x02,
@@ -662,7 +662,7 @@ enum class ACCELERATOR_VK_CODES: size_t  {
 };
 
 
-//! Common section type
+/// Common section type
 enum class PE_SECTION_TYPES : uint8_t {
   TEXT       = 0,
   TLS        = 1,
@@ -682,7 +682,7 @@ enum class PE_TYPE : uint16_t {
     PE32_PLUS = 0x20b  ///< 64 bits
 };
 
-//! Cryptography algorithms
+/// Cryptography algorithms
 enum class ALGORITHMS : uint32_t {
   UNKNOWN = 0,
   SHA_512,

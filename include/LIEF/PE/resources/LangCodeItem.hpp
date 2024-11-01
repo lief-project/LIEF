@@ -30,10 +30,10 @@ namespace PE {
 class ResourcesManager;
 struct ResourcesParser;
 
-//! Class which represents the childs of the ResourceStringFileInfo
-//!
-//! @see: LIEF::PE::ResourceStringFileInfo
-//! @see: https://docs.microsoft.com/en-us/windows/win32/menurc/stringtable
+/// Class which represents the childs of the ResourceStringFileInfo
+///
+/// @see: LIEF::PE::ResourceStringFileInfo
+/// @see: https://docs.microsoft.com/en-us/windows/win32/menurc/stringtable
 class LIEF_API LangCodeItem : public Object {
 
   friend class ResourcesManager;
@@ -51,30 +51,30 @@ class LIEF_API LangCodeItem : public Object {
   LangCodeItem& operator=(const LangCodeItem&) = default;
   ~LangCodeItem() override = default;
 
-  //! The type of data in the version resource
-  //! * ``1`` if it contains text data
-  //! * ``0`` if it contains binary data
+  /// The type of data in the version resource
+  /// * ``1`` if it contains text data
+  /// * ``0`` if it contains binary data
   uint16_t type() const {
     return type_;
   }
 
-  //! A 8-digit hexadecimal number stored as an Unicode string.
-  //! * The four most significant digits represent the language identifier.
-  //! * The four least significant digits represent the code page for which the data is formatted.
-  //!
-  //! @see LangCodeItem::code_page, LangCodeItem::lang, LangCodeItem::sublang
+  /// A 8-digit hexadecimal number stored as an Unicode string.
+  /// * The four most significant digits represent the language identifier.
+  /// * The four least significant digits represent the code page for which the data is formatted.
+  ///
+  /// @see LangCodeItem::code_page, LangCodeItem::lang, LangCodeItem::sublang
   const std::u16string& key() const {
     return key_;
   }
 
-  //! [Code page](https://docs.microsoft.com/en-us/windows/win32/intl/code-page-identifiers)
-  //! for which LangCodeItem::items are defined
+  /// [Code page](https://docs.microsoft.com/en-us/windows/win32/intl/code-page-identifiers)
+  /// for which LangCodeItem::items are defined
   CODE_PAGES code_page() const;
 
-  //! Lang for which LangCodeItem::items are defined
+  /// Lang for which LangCodeItem::items are defined
   uint32_t lang() const;
 
-  //! Sublang for which LangCodeItem::items are defined
+  /// Sublang for which LangCodeItem::items are defined
   uint32_t sublang() const;
 
   const items_t& items() const {

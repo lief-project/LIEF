@@ -36,9 +36,9 @@ struct pe32_tls;
 struct pe64_tls;
 }
 
-//! Class which represents the PE Thread Local Storage
-//!
-//! This PE structure is also used to implement binary/library constructors.
+/// Class which represents the PE Thread Local Storage
+///
+/// This PE structure is also used to implement binary/library constructors.
 class LIEF_API TLS : public Object {
   friend class Parser;
   friend class Builder;
@@ -55,65 +55,65 @@ class LIEF_API TLS : public Object {
   TLS(TLS&& other) noexcept = default;
   TLS& operator=(TLS&& other) noexcept = default;
 
-  //! List of the callback associated with the current TLS.
-  //!
-  //! These functions are called before any other functions .
+  /// List of the callback associated with the current TLS.
+  ///
+  /// These functions are called before any other functions .
   const std::vector<uint64_t>& callbacks() const {
     return callbacks_;
   }
 
-  //! Pair ``(start address, end address)`` of the TLS template.
-  //! The template is a block of data that is used to initialize TLS data.
-  //! The system copies all of this data each time a thread is created, so it must not be
-  //! corrupted.
+  /// Pair ``(start address, end address)`` of the TLS template.
+  /// The template is a block of data that is used to initialize TLS data.
+  /// The system copies all of this data each time a thread is created, so it must not be
+  /// corrupted.
 
-  //! @note
-  //! These addresses are not RVA. It is addresses for which there should be a rebase
-  //! relocation in the ``.reloc`` section.
+  /// @note
+  /// These addresses are not RVA. It is addresses for which there should be a rebase
+  /// relocation in the ``.reloc`` section.
   const std::pair<uint64_t, uint64_t>& addressof_raw_data() const {
     return va_rawdata_;
   }
 
-  //! The location to receive the TLS index assigned by the loader.
-  //! This location should be located in a writable section like `.data`
+  /// The location to receive the TLS index assigned by the loader.
+  /// This location should be located in a writable section like `.data`
   uint64_t addressof_index() const {
     return addressof_index_;
   }
 
-  //! Pointer to an array of TLS callback functions.
-  //!
-  //! The array is null-terminated, so if there is no callback function
-  //! this field points to 4 bytes set to zero.
+  /// Pointer to an array of TLS callback functions.
+  ///
+  /// The array is null-terminated, so if there is no callback function
+  /// this field points to 4 bytes set to zero.
   uint64_t addressof_callbacks() const {
     return addressof_callbacks_;
   }
 
-  //! Size in bytes of the zero to be *padded* after the data specified by
-  //! data_template.
+  /// Size in bytes of the zero to be *padded* after the data specified by
+  /// data_template.
   uint32_t sizeof_zero_fill() const {
     return sizeof_zero_fill_;
   }
 
-  //! The four bits [23:20] describe alignment info.
-  //! Possible values are those defined as `IMAGE_SCN_ALIGN_*`, which are also
-  //! used to describe alignment of section in object files.
-  //! The other 28 bits are reserved for future use.
+  /// The four bits [23:20] describe alignment info.
+  /// Possible values are those defined as `IMAGE_SCN_ALIGN_*`, which are also
+  /// used to describe alignment of section in object files.
+  /// The other 28 bits are reserved for future use.
   uint32_t characteristics() const {
     return characteristics_;
   }
 
-  //! The initial content used to initialize TLS data.
+  /// The initial content used to initialize TLS data.
   span<const uint8_t> data_template() const {
     return data_template_;
   }
 
-  //! True if there is a data directory associated with this entry
+  /// True if there is a data directory associated with this entry
   bool has_data_directory() const {
     return directory_ != nullptr;
   }
 
-  //! Return the DataDirectory associated with this object or a nullptr
-  //! If it exists, its type should be DataDirectory::TYPES::TLS_TABLE
+  /// Return the DataDirectory associated with this object or a nullptr
+  /// If it exists, its type should be DataDirectory::TYPES::TLS_TABLE
   DataDirectory* directory() {
     return directory_;
   }
@@ -122,12 +122,12 @@ class LIEF_API TLS : public Object {
     return directory_;
   }
 
-  //! Check if there is a section associated with this entry
+  /// Check if there is a section associated with this entry
   bool has_section() const {
     return section_ != nullptr;
   }
 
-  //! The section associated with the entry (or a nullptr)
+  /// The section associated with the entry (or a nullptr)
   Section* section() {
     return section_;
   }

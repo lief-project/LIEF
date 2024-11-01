@@ -35,7 +35,7 @@ struct Elf64_Verneed;
 struct Elf32_Verneed;
 }
 
-//! Class which represents an entry in the `DT_VERNEED` or `.gnu.version_r` table
+/// Class which represents an entry in the `DT_VERNEED` or `.gnu.version_r` table
 class LIEF_API SymbolVersionRequirement : public Object {
   friend class Parser;
 
@@ -53,20 +53,20 @@ class LIEF_API SymbolVersionRequirement : public Object {
   SymbolVersionRequirement(const SymbolVersionRequirement& other);
   void swap(SymbolVersionRequirement& other);
 
-  //! Version revision
-  //!
-  //! This field should always have the value ``1``. It will be changed
-  //! if the versioning implementation has to be changed in an incompatible way.
+  /// Version revision
+  ///
+  /// This field should always have the value ``1``. It will be changed
+  /// if the versioning implementation has to be changed in an incompatible way.
   uint16_t version() const {
     return version_;
   }
 
-  //! Number of auxiliary entries
+  /// Number of auxiliary entries
   size_t cnt() const {
     return aux_requirements_.size();
   }
 
-  //! Auxiliary entries as an iterator over SymbolVersionAuxRequirement
+  /// Auxiliary entries as an iterator over SymbolVersionAuxRequirement
   it_aux_requirement auxiliary_symbols() {
     return aux_requirements_;
   }
@@ -75,7 +75,7 @@ class LIEF_API SymbolVersionRequirement : public Object {
     return aux_requirements_;
   }
 
-  //! Return the library name associated with this requirement (e.g. ``libc.so.6``)
+  /// Return the library name associated with this requirement (e.g. ``libc.so.6``)
   const std::string& name() const {
     return name_;
   }
@@ -88,7 +88,7 @@ class LIEF_API SymbolVersionRequirement : public Object {
     name_ = name;
   }
 
-  //! Add a version auxiliary requirement to the existing list
+  /// Add a version auxiliary requirement to the existing list
   SymbolVersionAuxRequirement& add_aux_requirement(const SymbolVersionAuxRequirement& aux_requirement);
 
   void accept(Visitor& visitor) const override;

@@ -36,7 +36,7 @@ struct pe_dialog_item_template_ext;
 struct pe_dialog_item_template;
 }
 
-//! This class represents an item in the ResourceDialog
+/// This class represents an item in the ResourceDialog
 class LIEF_API ResourceDialogItem : public Object {
 
   friend class ResourcesManager;
@@ -52,50 +52,50 @@ class LIEF_API ResourceDialogItem : public Object {
 
   ~ResourceDialogItem() override;
 
-  //! ``True`` if the control is an extended one
+  /// ``True`` if the control is an extended one
   bool is_extended() const;
 
-  //! The extended styles for a window
+  /// The extended styles for a window
   uint32_t extended_style() const;
 
-  //! List of PE::EXTENDED_WINDOW_STYLES associated with
-  //! the ResourceDialogItem::extended_style value
+  /// List of PE::EXTENDED_WINDOW_STYLES associated with
+  /// the ResourceDialogItem::extended_style value
   std::set<EXTENDED_WINDOW_STYLES> extended_style_list() const;
 
-  //! Check if the DialogItem has the given PE::EXTENDED_WINDOW_STYLES
+  /// Check if the DialogItem has the given PE::EXTENDED_WINDOW_STYLES
   bool has_extended_style(EXTENDED_WINDOW_STYLES style) const;
 
-  //! The style of the control
+  /// The style of the control
   uint32_t style() const;
 
   std::set<WINDOW_STYLES> style_list() const;
   bool has_style(WINDOW_STYLES style) const;
 
-  //! The x-coordinate, in dialog box units, of the upper-left corner of the control.
-  //! This coordinate is always relative to the upper-left corner of the dialog box's client area.
+  /// The x-coordinate, in dialog box units, of the upper-left corner of the control.
+  /// This coordinate is always relative to the upper-left corner of the dialog box's client area.
   int16_t x() const;
 
-  //! The y-coordinate, in dialog box units, of the upper-left corner of the control.
-  //! This coordinate is always relative to the upper-left corner of the dialog box's client area.
+  /// The y-coordinate, in dialog box units, of the upper-left corner of the control.
+  /// This coordinate is always relative to the upper-left corner of the dialog box's client area.
   int16_t y() const;
 
-  //! The width, in dialog box units, of the control.
+  /// The width, in dialog box units, of the control.
   int16_t cx() const;
 
-  //! The height, in dialog box units, of the control.
+  /// The height, in dialog box units, of the control.
   int16_t cy() const;
 
-  //! The control identifier.
+  /// The control identifier.
   uint32_t id() const;
 
 
   // Extended API
   // ============
 
-  //! The help context identifier for the control
+  /// The help context identifier for the control
   uint32_t help_id() const;
 
-  //! Initial text of the control
+  /// Initial text of the control
   const std::u16string& title() const;
 
   void accept(Visitor& visitor) const override;

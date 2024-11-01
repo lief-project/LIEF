@@ -30,7 +30,7 @@ namespace ELF {
 /// of the process
 class LIEF_API CoreFile : public Note {
   public:
-  //! Core file entry
+  /// Core file entry
   struct entry_t {
     uint64_t start = 0;    /// Start address of mapped file
     uint64_t end = 0;      ///< End address of mapped file
@@ -53,12 +53,12 @@ class LIEF_API CoreFile : public Note {
     return std::unique_ptr<Note>(new CoreFile(*this));
   }
 
-  //! Number of coredump file entries
+  /// Number of coredump file entries
   uint64_t count() const {
     return files_.size();
   }
 
-  //! Coredump file entries
+  /// Coredump file entries
   const files_t& files() const {
     return files_;
   }

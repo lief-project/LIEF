@@ -29,13 +29,13 @@ namespace details {
 struct source_version_command;
 }
 
-//! Class that represents the MachO LoadCommand::TYPE::SOURCE_VERSION
-//! This command is used to provide the *version* of the sources used to
-//! build the binary
+/// Class that represents the MachO LoadCommand::TYPE::SOURCE_VERSION
+/// This command is used to provide the *version* of the sources used to
+/// build the binary
 class LIEF_API SourceVersion : public LoadCommand {
 
   public:
-  //! Version is an array of **5** integers
+  /// Version is an array of **5** integers
   using version_t = std::array<uint32_t, 5>;
 
   SourceVersion() = default;
@@ -50,7 +50,7 @@ class LIEF_API SourceVersion : public LoadCommand {
 
   ~SourceVersion() override = default;
 
-  //! Return the version as an array
+  /// Return the version as an array
   const version_t& version() const {
     return version_;
   }

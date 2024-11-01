@@ -30,12 +30,12 @@ class Parser;
 class Builder;
 class Binary;
 
-//! Class which represents the SYSV hash for the symbols
-//! resolution.
-//!
-//! References:
-//! - http://www.linker-aliens.org/blogs/ali/entry/gnu_hash_elf_sections/
-//! - https://docs.oracle.com/cd/E23824_01/html/819-0690/chapter6-48031.html
+/// Class which represents the SYSV hash for the symbols
+/// resolution.
+///
+/// References:
+/// - http://www.linker-aliens.org/blogs/ali/entry/gnu_hash_elf_sections/
+/// - https://docs.oracle.com/cd/E23824_01/html/819-0690/chapter6-48031.html
 class LIEF_API SysvHash : public Object {
 
   friend class Parser;
@@ -51,22 +51,22 @@ class LIEF_API SysvHash : public Object {
   SysvHash(SysvHash&&) = default;
   ~SysvHash() override = default;
 
-  //! @brief Return the number of buckets used
+  /// Return the number of buckets used
   uint32_t nbucket() const {
     return buckets_.size();
   }
 
-  //! @brief Return the number of chain used
+  /// Return the number of chain used
   uint32_t nchain() const {
     return chains_.size();
   }
 
-  //! @brief Buckets values
+  /// Buckets values
   const std::vector<uint32_t>& buckets() const {
     return buckets_;
   }
 
-  //! @brief Chains values
+  /// Chains values
   const std::vector<uint32_t>& chains() const {
     return chains_;
   }

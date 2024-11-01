@@ -25,21 +25,21 @@ namespace PE {
 class Parser;
 class SignatureParser;
 
-//! Interface over the structure described by the OID ``1.2.840.113549.1.9.25.4`` (PKCS #9)
-//!
-//! The internal structure is described in the
-//! [RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types Version 2.0](https://tools.ietf.org/html/rfc2985)
-//!
-//! ```text
-//! sequenceNumber ATTRIBUTE ::= {
-//!   WITH SYNTAX SequenceNumber
-//!   EQUALITY MATCHING RULE integerMatch
-//!   SINGLE VALUE TRUE
-//!   ID pkcs-9-at-sequenceNumber
-//! }
-//!
-//! SequenceNumber ::= INTEGER (1..MAX)
-//! ```
+/// Interface over the structure described by the OID ``1.2.840.113549.1.9.25.4`` (PKCS #9)
+///
+/// The internal structure is described in the
+/// [RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types Version 2.0](https://tools.ietf.org/html/rfc2985)
+///
+/// ```text
+/// sequenceNumber ATTRIBUTE ::= {
+///   WITH SYNTAX SequenceNumber
+///   EQUALITY MATCHING RULE integerMatch
+///   SINGLE VALUE TRUE
+///   ID pkcs-9-at-sequenceNumber
+/// }
+///
+/// SequenceNumber ::= INTEGER (1..MAX)
+/// ```
 class LIEF_API PKCS9AtSequenceNumber : public Attribute {
 
   friend class Parser;
@@ -59,12 +59,12 @@ class LIEF_API PKCS9AtSequenceNumber : public Attribute {
     return std::unique_ptr<Attribute>(new PKCS9AtSequenceNumber{*this});
   }
 
-  //! Number as described in the RFC
+  /// Number as described in the RFC
   uint32_t number() const {
     return number_;
   }
 
-  //! Print information about the attribute
+  /// Print information about the attribute
   std::string print() const override;
 
   static bool classof(const Attribute* attr) {

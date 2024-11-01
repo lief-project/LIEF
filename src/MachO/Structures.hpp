@@ -44,7 +44,7 @@
    (((val) << 40) & 0x00FF000000000000) | (((val) << 56) & 0xFF00000000000000) )
 
 namespace LIEF {
-//! Namespace related to the LIEF's MachO module
+/// Namespace related to the LIEF's MachO module
 namespace MachO {
 
 namespace details {

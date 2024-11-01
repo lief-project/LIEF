@@ -29,29 +29,29 @@ namespace MachO {
 class Binary;
 class FatBinary;
 
-//! Check if the given stream wraps a Mach-O binary
+/// Check if the given stream wraps a Mach-O binary
 LIEF_API bool is_macho(BinaryStream& stream);
 
-//! Check if the given file is a Mach-O binary
+/// Check if the given file is a Mach-O binary
 LIEF_API bool is_macho(const std::string& file);
 
-//! Check if the given raw data is a Mach-O binary
+/// Check if the given raw data is a Mach-O binary
 LIEF_API bool is_macho(const std::vector<uint8_t>& raw);
 
-//! Check if the given file is a FAT Mach-O
+/// Check if the given file is a FAT Mach-O
 LIEF_API bool is_fat(const std::string& file);
 
-//! Check if the given Mach-O is 64-bits
+/// Check if the given Mach-O is 64-bits
 LIEF_API bool is_64(const std::string& file);
 
 LIEF_API bool is_64(BinaryStream& stream);
 
-//! Check the layout of the given Mach-O binary. It checks if it can be signed
-//! according to cctools-921/libstuff/checkout.c
+/// Check the layout of the given Mach-O binary. It checks if it can be signed
+/// according to cctools-921/libstuff/checkout.c
 LIEF_API bool check_layout(const Binary& binary, std::string* error = nullptr);
 
-//! Check the layout of the given FAT Mach-O by checking individually the layout
-//! of the binaries embedded in the FAT
+/// Check the layout of the given FAT Mach-O by checking individually the layout
+/// of the binaries embedded in the FAT
 LIEF_API bool check_layout(const FatBinary& binary, std::string* error = nullptr);
 
 

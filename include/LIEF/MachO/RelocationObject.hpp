@@ -31,10 +31,10 @@ struct relocation_info;
 struct scattered_relocation_info;
 }
 
-//! Class that represents a relocation presents in the MachO object
-//! file (``.o``). Usually, this kind of relocation is found in the MachO::Section
-//!
-//! @see RelocationDyld
+/// Class that represents a relocation presents in the MachO object
+/// file (``.o``). Usually, this kind of relocation is found in the MachO::Section
+///
+/// @see RelocationDyld
 class LIEF_API RelocationObject : public Relocation {
 
   friend class BinaryParser;
@@ -56,34 +56,34 @@ class LIEF_API RelocationObject : public Relocation {
     return std::unique_ptr<RelocationObject>(new RelocationObject(*this));
   }
 
-  //! Whether the relocation is PC relative
+  /// Whether the relocation is PC relative
   bool is_pc_relative() const override {
     return is_pcrel_;
   }
 
-  //! Size of the relocation
+  /// Size of the relocation
   size_t size() const override;
 
-  //! Address where the relocation is applied
-  //! This address is relative to the start of the section where the relocation takes place
+  /// Address where the relocation is applied
+  /// This address is relative to the start of the section where the relocation takes place
   uint64_t address() const override;
 
-  //! ``true`` if the relocation is a scattered one
+  /// ``true`` if the relocation is a scattered one
   bool is_scattered() const {
     return is_scattered_;
   }
 
-  //! For **scattered** relocations:
-  //! The address of the relocatable expression for the item in the file that needs
-  //! to be updated if the address is changed.
-  //!
-  //! For relocatable expressions with the difference of two section addresses,
-  //! the address from which to subtract (in mathematical terms, the minuend)
-  //! is contained in the first relocation entry and the address to subtract (the subtrahend)
-  //! is contained in the second relocation entry.
+  /// For **scattered** relocations:
+  /// The address of the relocatable expression for the item in the file that needs
+  /// to be updated if the address is changed.
+  ///
+  /// For relocatable expressions with the difference of two section addresses,
+  /// the address from which to subtract (in mathematical terms, the minuend)
+  /// is contained in the first relocation entry and the address to subtract (the subtrahend)
+  /// is contained in the second relocation entry.
   int32_t value() const;
 
-  //! Origin of the relocation. For this object it should be Relocation::ORIGIN::RELOC_TABLE)
+  /// Origin of the relocation. For this object it should be Relocation::ORIGIN::RELOC_TABLE)
   ORIGIN origin() const override {
     return ORIGIN::RELOC_TABLE;
   }

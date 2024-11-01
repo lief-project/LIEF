@@ -72,8 +72,8 @@ inline Relocation::TYPE relative_from_arch(ARCH arch) {
   return TYPE::UNKNOWN;
 }
 
-//! Compute the size and the offset of the elements
-//! needed to rebuild the ELF file.
+/// Compute the size and the offset of the elements
+/// needed to rebuild the ELF file.
 class LIEF_LOCAL ExeLayout : public Layout {
   public:
   struct sym_verdef_info_t {

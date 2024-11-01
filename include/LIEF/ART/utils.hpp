@@ -29,19 +29,19 @@
 namespace LIEF {
 namespace ART {
 
-//! @brief Check if the given file is an ART one.
+/// Check if the given file is an ART one.
 LIEF_API bool is_art(const std::string& file);
 
-//! @brief Check if the given raw data is an ART one.
+/// Check if the given raw data is an ART one.
 LIEF_API bool is_art(const std::vector<uint8_t>& raw);
 
-//! @brief Return the ART version of the given file
+/// Return the ART version of the given file
 LIEF_API art_version_t version(const std::string& file);
 
-//! @brief Return the ART version of the raw data
+/// Return the ART version of the raw data
 LIEF_API art_version_t version(const std::vector<uint8_t>& raw);
 
-//! @brief Return the ANDROID_VERSIONS associated with the given ART version
+/// Return the ANDROID_VERSIONS associated with the given ART version
 LIEF_API LIEF::Android::ANDROID_VERSIONS android_version(art_version_t version);
 
 }

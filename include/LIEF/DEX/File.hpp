@@ -35,7 +35,7 @@ class Type;
 class Prototype;
 class Field;
 
-//! Class that represents a DEX file
+/// Class that represents a DEX file
 class LIEF_API File : public Object {
   friend class Parser;
 
@@ -69,70 +69,70 @@ class LIEF_API File : public Object {
   File& operator=(const File& copy) = delete;
   File(const File& copy)            = delete;
 
-  //! Version of the current DEX file
+  /// Version of the current DEX file
   dex_version_t version() const;
 
-  //! Name of this file
+  /// Name of this file
   const std::string& name() const;
 
   void name(const std::string& name);
 
-  //! Location of this file
+  /// Location of this file
   const std::string& location() const;
   void location(const std::string& location);
 
-  //! DEX header
+  /// DEX header
   const Header& header() const;
   Header& header();
 
-  //! **All** classes used in the DEX file
+  /// **All** classes used in the DEX file
   it_const_classes classes() const;
   it_classes classes();
 
-  //! Check if the given class name exists
+  /// Check if the given class name exists
   bool has_class(const std::string& class_name) const;
 
-  //! Return the DEX::Class object associated with the given name
+  /// Return the DEX::Class object associated with the given name
   const Class* get_class(const std::string& class_name) const;
 
   Class* get_class(const std::string& class_name);
 
-  //! Return the DEX::Class object associated with the given index
+  /// Return the DEX::Class object associated with the given index
   const Class* get_class(size_t index) const;
 
   Class* get_class(size_t index);
 
-  //! De-optimize information
+  /// De-optimize information
   dex2dex_info_t dex2dex_info() const;
 
-  //! De-optimize information as JSON
+  /// De-optimize information as JSON
   std::string dex2dex_json_info() const;
 
-  //! Return an iterator over **all** the DEX::Method used in this DEX file
+  /// Return an iterator over **all** the DEX::Method used in this DEX file
   it_const_methods methods() const;
   it_methods methods();
 
-  //! Return an iterator over **all** the DEX::Field used in this DEX file
+  /// Return an iterator over **all** the DEX::Field used in this DEX file
   it_const_fields fields() const;
   it_fields fields();
 
-  //! String pool
+  /// String pool
   it_const_strings strings() const;
   it_strings strings();
 
-  //! Type pool
+  /// Type pool
   it_const_types types() const;
   it_types types();
 
-  //! Prototype pool
+  /// Prototype pool
   it_prototypes prototypes();
   it_const_prototypes prototypes() const;
 
-  //! DEX Map
+  /// DEX Map
   const MapList& map() const;
   MapList& map();
 
-  //! Extract the current dex file and deoptimize it
+  /// Extract the current dex file and deoptimize it
   std::string save(const std::string& path = "", bool deoptimize = true) const;
 
   std::vector<uint8_t> raw(bool deoptimize = true) const;

@@ -28,7 +28,7 @@ namespace ART {
 class File;
 
 
-//! @brief Class which parses an ART file and transform into a ART::File object
+/// Class which parses an ART file and transform into a ART::File object
 class LIEF_API Parser {
   public:
   static std::unique_ptr<File> parse(const std::string& file);

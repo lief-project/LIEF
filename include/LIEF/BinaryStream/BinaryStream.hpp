@@ -29,7 +29,7 @@
 namespace LIEF {
 class ASN1Reader;
 
-//! Class that is used to a read stream of data from different sources
+/// Class that is used to a read stream of data from different sources
 class LIEF_API BinaryStream {
   public:
   friend class ASN1Reader;

@@ -32,7 +32,7 @@ namespace details {
 struct delay_imports;
 }
 
-//! Class that represents a PE delayed import.
+/// Class that represents a PE delayed import.
 class LIEF_API DelayImport : public Object {
 
   friend class Parser;
@@ -59,8 +59,8 @@ class LIEF_API DelayImport : public Object {
 
   void swap(DelayImport& other);
 
-  //! According to the official PE specifications,
-  //! this value is reserved and should be set to 0.
+  /// According to the official PE specifications,
+  /// this value is reserved and should be set to 0.
   uint32_t attribute() const {
     return attribute_;
   }
@@ -68,7 +68,7 @@ class LIEF_API DelayImport : public Object {
     attribute_ = hdl;
   }
 
-  //! Return the library's name (e.g. `kernel32.dll`)
+  /// Return the library's name (e.g. `kernel32.dll`)
   const std::string& name() const {
     return name_;
   }
@@ -76,9 +76,9 @@ class LIEF_API DelayImport : public Object {
     name_ = std::move(name);
   }
 
-  //! The RVA of the module handle (in the ``.data`` section)
-  //! It is used for storage by the routine that is supplied to
-  //! manage delay-loading.
+  /// The RVA of the module handle (in the ``.data`` section)
+  /// It is used for storage by the routine that is supplied to
+  /// manage delay-loading.
   uint32_t handle() const {
     return handle_;
   }
@@ -86,7 +86,7 @@ class LIEF_API DelayImport : public Object {
     handle_ = hdl;
   }
 
-  //! RVA of the delay-load import address table.
+  /// RVA of the delay-load import address table.
   uint32_t iat() const {
     return iat_;
   }
@@ -94,8 +94,8 @@ class LIEF_API DelayImport : public Object {
     iat_ = iat;
   }
 
-  //! RVA of the delay-load import names table.
-  //! The content of this table has the layout as the Import lookup table
+  /// RVA of the delay-load import names table.
+  /// The content of this table has the layout as the Import lookup table
   uint32_t names_table() const {
     return names_table_;
   }
@@ -103,8 +103,8 @@ class LIEF_API DelayImport : public Object {
     names_table_ = value;
   }
 
-  //! RVA of the **bound** delay-load import address table or 0
-  //! if the table does not exist.
+  /// RVA of the **bound** delay-load import address table or 0
+  /// if the table does not exist.
   uint32_t biat() const {
     return bound_iat_;
   }
@@ -112,12 +112,12 @@ class LIEF_API DelayImport : public Object {
     bound_iat_ = value;
   }
 
-  //! RVA of the **unload** delay-load import address table or 0
-  //! if the table does not exist.
-  //!
-  //! According to the PE specifications, this table is an
-  //! exact copy of the delay import address table that can be
-  //! used to to restore the original IAT the case of unloading.
+  /// RVA of the **unload** delay-load import address table or 0
+  /// if the table does not exist.
+  ///
+  /// According to the PE specifications, this table is an
+  /// exact copy of the delay import address table that can be
+  /// used to to restore the original IAT the case of unloading.
   uint32_t uiat() const {
     return unload_iat_;
   }
@@ -125,7 +125,7 @@ class LIEF_API DelayImport : public Object {
     unload_iat_ = value;
   }
 
-  //! The timestamp of the DLL to which this image has been bound.
+  /// The timestamp of the DLL to which this image has been bound.
   uint32_t timestamp() const {
     return timestamp_;
   }
@@ -133,12 +133,12 @@ class LIEF_API DelayImport : public Object {
     timestamp_ = value;
   }
 
-  //! Iterator over the DelayImport's entries (DelayImportEntry)
+  /// Iterator over the DelayImport's entries (DelayImportEntry)
   it_entries entries() {
     return entries_;
   }
 
-  //! Iterator over the DelayImport's entries (DelayImportEntry)
+  /// Iterator over the DelayImport's entries (DelayImportEntry)
   it_const_entries entries() const {
     return entries_;
   }

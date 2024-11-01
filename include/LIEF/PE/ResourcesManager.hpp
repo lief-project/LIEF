@@ -34,7 +34,7 @@ class VectorStream;
 namespace PE {
 class ResourceNode;
 
-//! The Resource Manager provides an enhanced API to manipulate the resource tree.
+/// The Resource Manager provides an enhanced API to manipulate the resource tree.
 class LIEF_API ResourcesManager : public Object {
   public:
 
@@ -98,86 +98,86 @@ class LIEF_API ResourcesManager : public Object {
 
   ~ResourcesManager() override = default;
 
-  //! Return the ResourceNode associated with the given KIND
-  //! or a nullptr if not found;
+  /// Return the ResourceNode associated with the given KIND
+  /// or a nullptr if not found;
   ResourceNode*       get_node_type(TYPE type);
   const ResourceNode* get_node_type(TYPE type) const;
 
-  //! List of TYPE present in the resources
+  /// List of TYPE present in the resources
   std::vector<TYPE> get_types() const;
 
-  //! ``true`` if the resource has the given LIEF::PE::KIND
+  /// ``true`` if the resource has the given LIEF::PE::KIND
   bool has_type(TYPE type) const {
     return get_node_type(type) != nullptr;
   }
 
-    //! ``true`` if resources contain the Manifest element
+    /// ``true`` if resources contain the Manifest element
   bool has_manifest() const {
     return get_node_type(TYPE::MANIFEST) != nullptr;
   }
 
-  //! Return the manifest as a std::string or an empty string if not found
-  //! or corrupted
+  /// Return the manifest as a std::string or an empty string if not found
+  /// or corrupted
   std::string manifest() const;
 
-  //! Update the manifest with the given string
+  /// Update the manifest with the given string
   void manifest(const std::string& manifest);
 
-  //! ``true`` if resources contain a LIEF::PE::ResourceVersion
+  /// ``true`` if resources contain a LIEF::PE::ResourceVersion
   bool has_version() const {
     return get_node_type(TYPE::VERSION) != nullptr;
   }
 
-  //! Return the ResourceVersion if any
+  /// Return the ResourceVersion if any
   result<ResourceVersion> version() const;
 
-  //! ``true`` if resources contain a LIEF::PE::ResourceIcon
+  /// ``true`` if resources contain a LIEF::PE::ResourceIcon
   bool has_icons() const {
     return get_node_type(TYPE::ICON)       != nullptr &&
            get_node_type(TYPE::GROUP_ICON) != nullptr;
   }
 
-  //! Return the list of the icons present in the resources
+  /// Return the list of the icons present in the resources
   it_const_icons icons() const;
 
-  //! Add an icon to the resources
+  /// Add an icon to the resources
   void add_icon(const ResourceIcon& icon);
 
   void change_icon(const ResourceIcon& original, const ResourceIcon& newone);
 
-  //! ``true`` if resources contain @link LIEF::PE::ResourceDialog dialogs @endlink
+  /// ``true`` if resources contain @link LIEF::PE::ResourceDialog dialogs @endlink
   bool has_dialogs() const {
     return get_node_type(TYPE::DIALOG) != nullptr;
   }
 
-  //! Return the list of the dialogs present in the resource
+  /// Return the list of the dialogs present in the resource
   it_const_dialogs dialogs() const;
 
-  //! ``true`` if the resources contain a @link LIEF::PE::ResourceStringTable @endlink
+  /// ``true`` if the resources contain a @link LIEF::PE::ResourceStringTable @endlink
   bool has_string_table() const {
     return get_node_type(TYPE::STRING) != nullptr;
   }
 
-  //! Return the list of the string table in the resource
+  /// Return the list of the string table in the resource
   it_const_strings_table string_table() const;
 
-  //! ``true`` if the resources contain html
+  /// ``true`` if the resources contain html
   bool has_html() const {
     return get_node_type(TYPE::HTML) != nullptr;
   }
 
-  //! Return the list of the html resources
+  /// Return the list of the html resources
   std::vector<std::string> html() const;
 
-  //! ``true`` if the resources contain @link LIEF::PE::ResourceAccelerator @endlink
+  /// ``true`` if the resources contain @link LIEF::PE::ResourceAccelerator @endlink
   bool has_accelerator() const {
     return get_node_type(TYPE::ACCELERATOR) != nullptr;
   }
 
-  //! Return the list of the accelerator in the resource
+  /// Return the list of the accelerator in the resource
   it_const_accelerators accelerator() const;
 
-  //!Print the resource tree to the given depth
+  ///Print the resource tree to the given depth
   std::string print(uint32_t depth = 0) const;
 
   void accept(Visitor& visitor) const override;

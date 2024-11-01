@@ -29,19 +29,19 @@
 namespace LIEF {
 namespace VDEX {
 
-//! @brief Check if the given file is an VDEX one.
+/// Check if the given file is an VDEX one.
 LIEF_API bool is_vdex(const std::string& file);
 
-//! @brief Check if the given raw data is an VDEX one.
+/// Check if the given raw data is an VDEX one.
 LIEF_API bool is_vdex(const std::vector<uint8_t>& raw);
 
-//! @brief Return the VDEX version of the given file
+/// Return the VDEX version of the given file
 LIEF_API vdex_version_t version(const std::string& file);
 
-//! @brief Return the VDEX version of the raw data
+/// Return the VDEX version of the raw data
 LIEF_API vdex_version_t version(const std::vector<uint8_t>& raw);
 
-//! @brief Return the ANDROID_VERSIONS associated with the given VDEX version
+/// Return the ANDROID_VERSIONS associated with the given VDEX version
 LIEF_API Android::ANDROID_VERSIONS android_version(vdex_version_t version);
 
 }

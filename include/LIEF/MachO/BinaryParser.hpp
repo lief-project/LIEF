@@ -66,19 +66,19 @@ union dyld_chained_ptr_generic64;
 union dyld_chained_ptr_generic32;
 }
 
-//! Class used to parse a **single** binary (i.e. non-FAT)
-//!
-//! @warning This class should not be directly used.
-//!
-//! @see MachO::Parser
+/// Class used to parse a **single** binary (i.e. non-FAT)
+///
+/// @warning This class should not be directly used.
+///
+/// @see MachO::Parser
 class LIEF_API BinaryParser : public LIEF::Parser {
 
   friend class MachO::Parser;
 
-  //! Maximum number of relocations
+  /// Maximum number of relocations
   constexpr static size_t MAX_RELOCATIONS = (std::numeric_limits<uint16_t>::max)();
 
-  //! Maximum number of MachO LoadCommand
+  /// Maximum number of MachO LoadCommand
   constexpr static size_t MAX_COMMANDS = (std::numeric_limits<uint16_t>::max)();
 
   public:

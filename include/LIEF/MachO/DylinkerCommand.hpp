@@ -29,8 +29,8 @@ namespace details {
 struct dylinker_command;
 }
 
-//! Class that represents the Mach-O linker, also named loader.
-//! Most of the time, DylinkerCommand::name() should return ``/usr/lib/dyld``
+/// Class that represents the Mach-O linker, also named loader.
+/// Most of the time, DylinkerCommand::name() should return ``/usr/lib/dyld``
 class LIEF_API DylinkerCommand : public LoadCommand {
   public:
   DylinkerCommand() = default;
@@ -48,7 +48,7 @@ class LIEF_API DylinkerCommand : public LoadCommand {
 
   std::ostream& print(std::ostream& os) const override;
 
-  //! Path to the linker (or loader)
+  /// Path to the linker (or loader)
   const std::string& name() const {
     return name_;
   }

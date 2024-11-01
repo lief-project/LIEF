@@ -32,7 +32,7 @@ namespace details {
 struct pe_header;
 }
 
-//! Class that represents the PE header (which follows the DosHeader)
+/// Class that represents the PE header (which follows the DosHeader)
 class LIEF_API Header : public Object {
   public:
   using signature_t = std::array<uint8_t, /* PE Magic */ 4>;
@@ -92,64 +92,64 @@ class LIEF_API Header : public Object {
   Header& operator=(const Header&) = default;
   Header(const Header&) = default;
 
-  //! Signature (or magic byte) of the header. It must be: ``PE\0\0``
+  /// Signature (or magic byte) of the header. It must be: ``PE\0\0``
   const signature_t& signature() const {
     return signature_;
   }
 
-  //! The targeted machine architecture like ARM, x86, AMD64, ...
+  /// The targeted machine architecture like ARM, x86, AMD64, ...
   MACHINE_TYPES machine() const {
     return machine_;
   }
 
-  //! The number of sections in the binary.
+  /// The number of sections in the binary.
   uint16_t numberof_sections() const {
     return nb_sections_;
   }
 
-  //! The low 32 bits of the number of seconds since
-  //! January 1, 1970. It **indicates** when the file was created.
+  /// The low 32 bits of the number of seconds since
+  /// January 1, 1970. It **indicates** when the file was created.
   uint32_t time_date_stamp() const {
     return timedatestamp_;
   }
 
-  //! The offset of the **COFF** symbol table.
-  //!
-  //! This value should be zero for an image because COFF debugging information is deprecated.
+  /// The offset of the **COFF** symbol table.
+  ///
+  /// This value should be zero for an image because COFF debugging information is deprecated.
   uint32_t pointerto_symbol_table() const {
     return pointerto_symtab_;
   }
 
-  //! The number of entries in the symbol table. This data can be used to locate the string table
-  //! which immediately follows the symbol table.
-  //!
-  //! This value should be zero for an image because COFF debugging information is deprecated.
+  /// The number of entries in the symbol table. This data can be used to locate the string table
+  /// which immediately follows the symbol table.
+  ///
+  /// This value should be zero for an image because COFF debugging information is deprecated.
   uint32_t numberof_symbols() const {
     return nb_symbols_;
   }
 
-  //! Size of the OptionalHeader **AND** the data directories which follows this header.
-  //!
-  //! This value is equivalent to: ``sizeof(pe_optional_header) + NB_DATA_DIR * sizeof(data_directory)``
-  //!
-  //! This size **should** be either:
-  //! * 0xE0 (224) for a PE32  (32 bits)
-  //! * 0xF0 (240) for a PE32+ (64 bits)
+  /// Size of the OptionalHeader **AND** the data directories which follows this header.
+  ///
+  /// This value is equivalent to: ``sizeof(pe_optional_header) + NB_DATA_DIR * sizeof(data_directory)``
+  ///
+  /// This size **should** be either:
+  /// * 0xE0 (224) for a PE32  (32 bits)
+  /// * 0xF0 (240) for a PE32+ (64 bits)
   uint16_t sizeof_optional_header() const {
     return sizeof_opt_header_;
   }
 
-  //! Characteristics of the binary like whether it is a DLL or an executable
+  /// Characteristics of the binary like whether it is a DLL or an executable
   uint32_t characteristics() const {
     return characteristics_;
   }
 
-  //! Check if the given CHARACTERISTICS is present
+  /// Check if the given CHARACTERISTICS is present
   bool has_characteristic(CHARACTERISTICS c) const {
     return (characteristics() & static_cast<uint32_t>(c)) > 0;
   }
 
-  //! The list of the CHARACTERISTICS
+  /// The list of the CHARACTERISTICS
   std::vector<CHARACTERISTICS> characteristics_list() const;
 
   void machine(MACHINE_TYPES type) {

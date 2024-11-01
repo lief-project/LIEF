@@ -27,13 +27,13 @@ class BinaryStream;
 
 namespace ELF {
 
-//! @brief Check if given stream wraps an ELF file
+/// Check if given stream wraps an ELF file
 LIEF_API bool is_elf(BinaryStream& stream);
 
-//! @brief Check if the given file is an ELF one.
+/// Check if the given file is an ELF one.
 LIEF_API bool is_elf(const std::string& file);
 
-//! @brief check if the raw data is a ELF file
+/// check if the raw data is a ELF file
 LIEF_API bool is_elf(const std::vector<uint8_t>& raw);
 
 LIEF_API unsigned long hash32(const char* name);

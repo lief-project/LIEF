@@ -50,37 +50,37 @@ class LIEF_API ResourceIcon : public Object {
 
   ~ResourceIcon() override;
 
-  //! Id associated with the icon
+  /// Id associated with the icon
   uint32_t id() const;
 
-  //! Language associated with the icon
+  /// Language associated with the icon
   uint32_t lang() const;
 
-  //! Sub language associated with the icon
+  /// Sub language associated with the icon
   uint32_t sublang() const;
 
-  //! Width in pixels of the image
+  /// Width in pixels of the image
   uint8_t width() const;
 
-  //! Height in pixels of the image
+  /// Height in pixels of the image
   uint8_t height() const;
 
-  //! Number of colors in image (0 if >=8bpp)
+  /// Number of colors in image (0 if >=8bpp)
   uint8_t color_count() const;
 
-  //! Reserved (must be 0)
+  /// Reserved (must be 0)
   uint8_t reserved() const;
 
-  //! Color Planes
+  /// Color Planes
   uint16_t planes() const;
 
-  //! Bits per pixel
+  /// Bits per pixel
   uint16_t bit_count() const;
 
-  //! Size in bytes of the image
+  /// Size in bytes of the image
   uint32_t size() const;
 
-  //! Pixels of the image (as bytes)
+  /// Pixels of the image (as bytes)
   span<const uint8_t> pixels() const;
 
   void id(uint32_t id);
@@ -94,9 +94,9 @@ class LIEF_API ResourceIcon : public Object {
   void bit_count(uint16_t bit_count);
   void pixels(const std::vector<uint8_t>& pixels);
 
-  //! Save the icon to the given filename
-  //!
-  //! @param[in] filename Path to file in which the icon will be saved
+  /// Save the icon to the given filename
+  ///
+  /// @param[in] filename Path to file in which the icon will be saved
   void save(const std::string& filename) const;
 
   void accept(Visitor& visitor) const override;

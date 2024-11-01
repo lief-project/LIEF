@@ -32,9 +32,9 @@ class ResourceVarFileInfo;
 class ResourcesManager;
 struct ResourcesParser;
 
-//! Representation of the data associated with the ``RT_VERSION`` entry
-//!
-//! See: ``VS_VERSIONINFO`` - https://docs.microsoft.com/en-us/windows/win32/menurc/vs-versioninfo
+/// Representation of the data associated with the ``RT_VERSION`` entry
+///
+/// See: ``VS_VERSIONINFO`` - https://docs.microsoft.com/en-us/windows/win32/menurc/vs-versioninfo
 class LIEF_API ResourceVersion : public Object {
   friend class ResourcesManager;
   friend struct ResourcesParser;
@@ -44,38 +44,38 @@ class LIEF_API ResourceVersion : public Object {
   ResourceVersion& operator=(const ResourceVersion&);
   ~ResourceVersion() override;
 
-  //! The type of data in the version resource
-  //! * ``1`` if it contains text data
-  //! * ``0`` if it contains binary data
+  /// The type of data in the version resource
+  /// * ``1`` if it contains text data
+  /// * ``0`` if it contains binary data
   uint16_t type() const;
 
-  //! Signature of the structure:
-  //! Must be the unicode string "VS_VERSION_INFO"
+  /// Signature of the structure:
+  /// Must be the unicode string "VS_VERSION_INFO"
   const std::u16string& key() const;
 
-  //! ``true`` if the version contains a ResourceFixedFileInfo
+  /// ``true`` if the version contains a ResourceFixedFileInfo
   bool has_fixed_file_info() const;
 
-  //! ``true`` if the version contains a ResourceStringFileInfo
+  /// ``true`` if the version contains a ResourceStringFileInfo
   bool has_string_file_info() const;
 
-  //! ``true`` if the version contains a ResourceVarFileInfo
+  /// ``true`` if the version contains a ResourceVarFileInfo
   bool has_var_file_info() const;
 
-  //! Object that describes various information about the application's version.
-  //! This is an optional information and if it is not present, it returns a nullptr
+  /// Object that describes various information about the application's version.
+  /// This is an optional information and if it is not present, it returns a nullptr
   const ResourceFixedFileInfo* fixed_file_info() const;
   ResourceFixedFileInfo*       fixed_file_info();
 
-  //! Object that describes various information about the application's version.
-  //! The underlying structure is basically a dictionary (key/value)
-  //!
-  //! This structure is not always present and if not, it returns a nullptr
+  /// Object that describes various information about the application's version.
+  /// The underlying structure is basically a dictionary (key/value)
+  ///
+  /// This structure is not always present and if not, it returns a nullptr
   const ResourceStringFileInfo* string_file_info() const;
   ResourceStringFileInfo*       string_file_info();
 
-  //! Object that describes information about languages supported by the application
-  //! This structure is not always present and if not, it returns a nullptr
+  /// Object that describes information about languages supported by the application
+  /// This structure is not always present and if not, it returns a nullptr
   const ResourceVarFileInfo* var_file_info() const;
   ResourceVarFileInfo*       var_file_info();
 

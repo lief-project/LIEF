@@ -53,8 +53,8 @@ class CoreFile;
 class GnuHash;
 class SysvHash;
 
-//! Class which implements a visitor to compute
-//! a **deterministic** hash for LIEF ELF objects
+/// Class which implements a visitor to compute
+/// a **deterministic** hash for LIEF ELF objects
 class LIEF_API Hash : public LIEF::Hash {
   public:
   static LIEF::Hash::value_type hash(const Object& obj);

@@ -27,7 +27,7 @@ namespace LIEF {
 class VectorStream;
 namespace PE {
 
-//! Interface over an attribute for which the internal structure is not supported by LIEF
+/// Interface over an attribute for which the internal structure is not supported by LIEF
 class LIEF_API GenericType : public Attribute {
   friend class Parser;
   friend class SignatureParser;
@@ -48,17 +48,17 @@ class LIEF_API GenericType : public Attribute {
     return std::unique_ptr<Attribute>(new GenericType{*this});
   }
 
-  //! OID of the original attribute
+  /// OID of the original attribute
   const oid_t& oid() const {
     return oid_;
   }
 
-  //! Original DER blob of the attribute
+  /// Original DER blob of the attribute
   span<const uint8_t> raw_content() const {
     return raw_;
   }
 
-  //! Print information about the attribute
+  /// Print information about the attribute
   std::string print() const override;
 
   void accept(Visitor& visitor) const override;

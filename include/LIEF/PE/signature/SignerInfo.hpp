@@ -59,11 +59,11 @@ class LIEF_API SignerInfo : public Object {
   public:
   using encrypted_digest_t = std::vector<uint8_t>;
 
-  //! Internal container used to store both
-  //! authenticated and unauthenticated attributes
+  /// Internal container used to store both
+  /// authenticated and unauthenticated attributes
   using attributes_t = std::vector<std::unique_ptr<Attribute>>;
 
-  //! Iterator which outputs const Attribute&
+  /// Iterator which outputs const Attribute&
   using it_const_attributes_t = const_ref_iterator<const attributes_t&, const Attribute*>;
 
   SignerInfo();
@@ -76,86 +76,86 @@ class LIEF_API SignerInfo : public Object {
 
   void swap(SignerInfo& other);
 
-  //! Should be 1
+  /// Should be 1
   uint32_t version() const {
     return version_;
   }
 
-  //! Return the serial number associated with the x509 certificate
-  //! used by this signer.
-  //!
-  //! @see
-  //! LIEF::PE::x509::serial_number
-  //! SignerInfo::issuer
+  /// Return the serial number associated with the x509 certificate
+  /// used by this signer.
+  ///
+  /// @see
+  /// LIEF::PE::x509::serial_number
+  /// SignerInfo::issuer
   span<const uint8_t> serial_number() const {
     return serialno_;
   }
 
-  //! Return the x509::issuer used by this signer
+  /// Return the x509::issuer used by this signer
   const std::string& issuer() const {
     return issuer_;
   }
 
-  //! Algorithm (OID) used to hash the file.
-  //!
-  //! This value should match LIEF::PE::ContentInfo::digest_algorithm and
-  //! LIEF::PE::Signature::digest_algorithm
+  /// Algorithm (OID) used to hash the file.
+  ///
+  /// This value should match LIEF::PE::ContentInfo::digest_algorithm and
+  /// LIEF::PE::Signature::digest_algorithm
   ALGORITHMS digest_algorithm() const {
     return digest_algorithm_;
   }
 
-  //! Return the (public-key) algorithm used to encrypt
-  //! the signature
+  /// Return the (public-key) algorithm used to encrypt
+  /// the signature
   ALGORITHMS encryption_algorithm() const {
     return digest_enc_algorithm_;
   }
 
-  //! Return the signature created by the signing
-  //! certificate's private key
+  /// Return the signature created by the signing
+  /// certificate's private key
   const encrypted_digest_t& encrypted_digest() const {
     return encrypted_digest_;
   }
 
-  //! Iterator over LIEF::PE::Attribute for **authenticated** attributes
+  /// Iterator over LIEF::PE::Attribute for **authenticated** attributes
   it_const_attributes_t authenticated_attributes() const {
     return authenticated_attributes_;
   }
 
-  //! Iterator over LIEF::PE::Attribute for **unauthenticated** attributes
+  /// Iterator over LIEF::PE::Attribute for **unauthenticated** attributes
   it_const_attributes_t unauthenticated_attributes() const {
     return unauthenticated_attributes_;
   }
 
-  //! Return the authenticated or un-authenticated attribute matching the
-  //! given PE::SIG_ATTRIBUTE_TYPES.
-  //!
-  //! It returns **the first** entry that matches the given type. If it can't be
-  //! found, it returns a nullptr.
+  /// Return the authenticated or un-authenticated attribute matching the
+  /// given PE::SIG_ATTRIBUTE_TYPES.
+  ///
+  /// It returns **the first** entry that matches the given type. If it can't be
+  /// found, it returns a nullptr.
   const Attribute* get_attribute(Attribute::TYPE type) const;
 
-  //! Return the authenticated attribute matching the given PE::SIG_ATTRIBUTE_TYPES.
-  //!
-  //! It returns **the first** entry that matches the given type. If it can't be
-  //! found, it returns a nullptr.
+  /// Return the authenticated attribute matching the given PE::SIG_ATTRIBUTE_TYPES.
+  ///
+  /// It returns **the first** entry that matches the given type. If it can't be
+  /// found, it returns a nullptr.
   const Attribute* get_auth_attribute(Attribute::TYPE type) const;
 
-  //! Return the un-authenticated attribute matching the given PE::SIG_ATTRIBUTE_TYPES.
-  //!
-  //! It returns **the first** entry that matches the given type. If it can't be
-  //! found, it returns a nullptr.
+  /// Return the un-authenticated attribute matching the given PE::SIG_ATTRIBUTE_TYPES.
+  ///
+  /// It returns **the first** entry that matches the given type. If it can't be
+  /// found, it returns a nullptr.
   const Attribute* get_unauth_attribute(Attribute::TYPE type) const;
 
-  //! x509 certificate used by this signer. If it can't be found, it returns a nullptr
+  /// x509 certificate used by this signer. If it can't be found, it returns a nullptr
   const x509* cert() const {
     return cert_.get();
   }
 
-  //! x509 certificate used by this signer. If it can't be found, it returns a nullptr
+  /// x509 certificate used by this signer. If it can't be found, it returns a nullptr
   x509* cert() {
     return cert_.get();
   }
 
-  //! Raw blob that is signed by the signer certificate
+  /// Raw blob that is signed by the signer certificate
   span<const uint8_t> raw_auth_data() const {
     return raw_auth_data_;
   }

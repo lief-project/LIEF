@@ -44,7 +44,7 @@ class ExeLayout;
 class ObjectFileLayout;
 
 
-//! Class wich represents an ELF Section
+/// Class wich represents an ELF Section
 class LIEF_API Section : public LIEF::Section {
   friend class Parser;
   friend class Binary;
@@ -177,26 +177,26 @@ class LIEF_API Section : public LIEF::Section {
     return type_;
   }
 
-  //! Section's content
+  /// Section's content
   span<const uint8_t> content() const override;
 
-  //! Set section content
+  /// Set section content
   void content(const std::vector<uint8_t>& data) override;
 
   void content(std::vector<uint8_t>&& data);
 
-  //! Section flags
+  /// Section flags
   uint64_t flags() const {
     return flags_;
   }
 
-  //! ``True`` if the section has the given flag
+  /// ``True`` if the section has the given flag
   bool has(FLAGS flag) const;
 
-  //! ``True`` if the section is wrapped by the given Segment
+  /// ``True`` if the section is wrapped by the given Segment
   bool has(const Segment& segment) const;
 
-  //! Return section flags as a ``std::set``
+  /// Return section flags as a ``std::set``
   std::vector<FLAGS> flags_list() const;
 
   uint64_t size() const override {
@@ -211,52 +211,52 @@ class LIEF_API Section : public LIEF::Section {
     return offset_;
   }
 
-  //! @see offset
+  /// @see offset
   uint64_t file_offset() const {
     return this->offset();
   }
 
-  //! Original size of the section's data.
-  //!
-  //! This value is used by the ELF::Builder to determines if it needs
-  //! to be relocated to avoid an override of the data
+  /// Original size of the section's data.
+  ///
+  /// This value is used by the ELF::Builder to determines if it needs
+  /// to be relocated to avoid an override of the data
   uint64_t original_size() const {
     return original_size_;
   }
 
-  //! Section file alignment
+  /// Section file alignment
   uint64_t alignment() const {
     return address_align_;
   }
 
-  //! Section information.
-  //! The meaning of this value depends on the section's type
+  /// Section information.
+  /// The meaning of this value depends on the section's type
   uint64_t information() const {
     return info_;
   }
 
-  //! This function returns the size of an element in the case of a section that contains
-  //! an array.
-  //!
-  //! For instance, the `.dynamic` section contains an array of DynamicEntry. As the
-  //! size of the raw C structure of this entry is 0x10 (`sizeoe(Elf64_Dyn)`)
-  //! in a ELF64, the `entry_size` is set to this value.
+  /// This function returns the size of an element in the case of a section that contains
+  /// an array.
+  ///
+  /// For instance, the `.dynamic` section contains an array of DynamicEntry. As the
+  /// size of the raw C structure of this entry is 0x10 (`sizeoe(Elf64_Dyn)`)
+  /// in a ELF64, the `entry_size` is set to this value.
   uint64_t entry_size() const {
     return entry_size_;
   }
 
-  //! Index to another section
+  /// Index to another section
   uint32_t link() const {
     return link_;
   }
 
-  //! Clear the content of the section with the given ``value``
+  /// Clear the content of the section with the given ``value``
   Section& clear(uint8_t value = 0);
 
-  //! Add the given ELF_SECTION_FLAGS
+  /// Add the given ELF_SECTION_FLAGS
   void add(FLAGS flag);
 
-  //! Remove the given ELF_SECTION_FLAGS
+  /// Remove the given ELF_SECTION_FLAGS
   void remove(FLAGS flag);
 
   void type(TYPE type) {

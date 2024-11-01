@@ -29,10 +29,10 @@ namespace details {
 struct rpath_command;
 }
 
-//! Class that represents the LC_RPATH command.
-//!
-//! This command is used to add path for searching libraries
-//! associated with the ``@rpath`` prefix.
+/// Class that represents the LC_RPATH command.
+///
+/// This command is used to add path for searching libraries
+/// associated with the ``@rpath`` prefix.
 class LIEF_API RPathCommand : public LoadCommand {
   public:
   RPathCommand() = default;
@@ -47,7 +47,7 @@ class LIEF_API RPathCommand : public LoadCommand {
 
   ~RPathCommand() override = default;
 
-  //! The rpath value as a string
+  /// The rpath value as a string
   const std::string& path() const {
     return path_;
   }

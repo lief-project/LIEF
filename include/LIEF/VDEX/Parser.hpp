@@ -28,7 +28,7 @@ class VectorStream;
 namespace VDEX {
 class File;
 
-//! @brief Class which parse an VDEX file and transform into a VDEX::File object
+/// Class which parse an VDEX file and transform into a VDEX::File object
 class LIEF_API Parser {
   public:
   static std::unique_ptr<File> parse(const std::string& file);

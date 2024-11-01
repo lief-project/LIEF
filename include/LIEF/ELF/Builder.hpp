@@ -41,17 +41,17 @@ class ObjectFileLayout;
 class Layout;
 class Relocation;
 
-//! Class which takes an ELF::Binary object and reconstructs a valid binary
-//!
-//! This interface assumes that the layout of input ELF binary is correct (i.e.
-//! the binary can run).
+/// Class which takes an ELF::Binary object and reconstructs a valid binary
+///
+/// This interface assumes that the layout of input ELF binary is correct (i.e.
+/// the binary can run).
 class LIEF_API Builder {
   friend class ObjectFileLayout;
   friend class Layout;
   friend class ExeLayout;
 
   public:
-  //! Configuration options to tweak the building process
+  /// Configuration options to tweak the building process
   struct config_t {
     bool dt_hash         = true;  /// Rebuild DT_HASH
     bool dyn_str         = true;  /// Rebuild DT_STRTAB
@@ -80,10 +80,10 @@ class LIEF_API Builder {
   Builder() = delete;
   ~Builder();
 
-  //! Perform the build of the provided ELF binary
+  /// Perform the build of the provided ELF binary
   void build();
 
-  //! Tweak the ELF builder with the provided config parameter
+  /// Tweak the ELF builder with the provided config parameter
   Builder& set_config(config_t conf) {
     config_ = conf;
     return *this;
@@ -93,13 +93,13 @@ class LIEF_API Builder {
     return config_;
   }
 
-  //! Return the built ELF binary as a byte vector
+  /// Return the built ELF binary as a byte vector
   const std::vector<uint8_t>& get_build();
 
-  //! Write the built ELF binary in the ``filename`` given in parameter
+  /// Write the built ELF binary in the ``filename`` given in parameter
   void write(const std::string& filename) const;
 
-  //! Write the built ELF binary in the stream ``os`` given in parameter
+  /// Write the built ELF binary in the stream ``os`` given in parameter
   void write(std::ostream& os) const;
 
   protected:

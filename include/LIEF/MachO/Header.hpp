@@ -34,7 +34,7 @@ struct mach_header_64;
 struct mach_header;
 }
 
-//! Class that represents the Mach-O header
+/// Class that represents the Mach-O header
 class LIEF_API Header : public Object {
   friend class BinaryParser;
   public:
@@ -109,53 +109,53 @@ class LIEF_API Header : public Object {
 
   static constexpr auto CPU_SUBTYPE_ARM64_ARM64E = 2;
 
-  //! The Mach-O magic bytes. These bytes determine whether it is
-  //! a 32 bits Mach-O, a 64 bits Mach-O files etc.
+  /// The Mach-O magic bytes. These bytes determine whether it is
+  /// a 32 bits Mach-O, a 64 bits Mach-O files etc.
   MACHO_TYPES magic() const {
     return magic_;
   }
 
-  //! The CPU architecture targeted by this binary
+  /// The CPU architecture targeted by this binary
   CPU_TYPE cpu_type() const {
     return cputype_;
   }
 
-  //! Return the CPU subtype supported by the Mach-O binary.
-  //! For ARM architectures, this value could represent the minimum version
-  //! for which the Mach-O binary has been compiled for.
+  /// Return the CPU subtype supported by the Mach-O binary.
+  /// For ARM architectures, this value could represent the minimum version
+  /// for which the Mach-O binary has been compiled for.
   uint32_t cpu_subtype() const {
     return cpusubtype_;
   }
 
-  //! Return the type of the Mach-O file (executable, object, shared library, ...)
+  /// Return the type of the Mach-O file (executable, object, shared library, ...)
   FILE_TYPE file_type() const {
     return filetype_;
   }
 
-  //! Return the FLAGS as a list
+  /// Return the FLAGS as a list
   std::vector<FLAGS> flags_list() const;
 
-  //! Check if the given HEADER_FLAGS is present in the header's flags
+  /// Check if the given HEADER_FLAGS is present in the header's flags
   bool has(FLAGS flag) const;
 
-  //! Number of LoadCommand present in the Mach-O binary
+  /// Number of LoadCommand present in the Mach-O binary
   uint32_t nb_cmds() const {
     return ncmds_;
   }
 
-  //! The size of **all** the LoadCommand
+  /// The size of **all** the LoadCommand
   uint32_t sizeof_cmds() const {
     return sizeofcmds_;
   }
 
-  //! Header flags (cf. HEADER_FLAGS)
-  //!
-  //! @see flags_list
+  /// Header flags (cf. HEADER_FLAGS)
+  ///
+  /// @see flags_list
   uint32_t flags() const {
     return flags_;
   }
 
-  //! According to the official documentation, a reserved value
+  /// According to the official documentation, a reserved value
   uint32_t reserved() const {
     return reserved_;
   }

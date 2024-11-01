@@ -39,7 +39,7 @@
 // ======================
 
 namespace LIEF {
-//! @brief Namespace related to the LIEF's ART module
+/// Namespace related to the LIEF's ART module
 namespace ART {
 
 namespace details {

@@ -23,14 +23,14 @@
 
 namespace LIEF {
 
-//! Namespace related to the LIEF's PE module
-//!
-//! Some parts come from llvm/Support/COFF.h
+/// Namespace related to the LIEF's PE module
+///
+/// Some parts come from llvm/Support/COFF.h
 namespace PE {
 
 namespace details {
 
-//! Sizes in bytes of various things in the COFF format.
+/// Sizes in bytes of various things in the COFF format.
 namespace sizes {
   static constexpr size_t HEADER_16                    = 20;
   static constexpr size_t HEADER_32                    = 56;

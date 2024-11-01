@@ -23,7 +23,7 @@ namespace LIEF {
 namespace ELF {
 
 /**
- * @brief Machine architectures
+ * Machine architectures
  * See current registered ELF machine architectures at:
  * http://www.sco.com/developers/gabi/latest/ch4.eheader.html
  */

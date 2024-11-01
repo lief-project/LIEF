@@ -24,10 +24,10 @@
 namespace LIEF {
 namespace ELF {
 
-//! Class which represents a ``DT_SONAME`` entry in the dynamic table
-//! This kind of entry is usually used to name the original library.
-//!
-//! This entry is not present for executable.
+/// Class which represents a ``DT_SONAME`` entry in the dynamic table
+/// This kind of entry is usually used to name the original library.
+///
+/// This entry is not present for executable.
 class LIEF_API DynamicSharedObject : public DynamicEntry {
 
   public:
@@ -48,7 +48,7 @@ class LIEF_API DynamicSharedObject : public DynamicEntry {
     return std::unique_ptr<DynamicSharedObject>(new DynamicSharedObject(*this));
   }
 
-  //! The actual name (e.g. ``libMyLib.so``)
+  /// The actual name (e.g. ``libMyLib.so``)
   const std::string& name() const {
     return name_;
   }

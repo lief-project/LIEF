@@ -28,8 +28,8 @@ namespace PE {
 class Builder;
 class Parser;
 
-//! This class represents a *Profile Guided Optimization* entry from the
-//! debug directory (``IMAGE_DEBUG_TYPE_POGO``).
+/// This class represents a *Profile Guided Optimization* entry from the
+/// debug directory (``IMAGE_DEBUG_TYPE_POGO``).
 class LIEF_API Pogo : public Debug {
 
   friend class Builder;
@@ -65,7 +65,7 @@ class LIEF_API Pogo : public Debug {
     return sig_;
   }
 
-  //! An iterator over the different POGO elements
+  /// An iterator over the different POGO elements
   it_entries entries() {
     return entries_;
   }

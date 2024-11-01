@@ -24,7 +24,7 @@
 #include "LIEF/ART/types.hpp"
 
 namespace LIEF {
-//! @brief Namespace related to the LIEF's ART module
+/// Namespace related to the LIEF's ART module
 namespace ART {
 
 namespace details {
@@ -36,7 +36,7 @@ struct no_brooks_read_barrier_t {};
 // ======================
 namespace ART_17 {
 
-//! @brief Namespace related to the Java part of ART 17
+/// Namespace related to the Java part of ART 17
 namespace Java {
 
 using heap_reference_t = uint32_t;
@@ -130,7 +130,7 @@ struct ALIGNED_(4) jdex_cache_t {
 // ======================
 namespace ART_29 {
 
-//! @brief Namespace related to the Java part of ART 29
+/// Namespace related to the Java part of ART 29
 namespace Java {
 using heap_reference_t      = ART_17::Java::heap_reference_t;
 using brooks_read_barrier_t = ART_17::Java::brooks_read_barrier_t;
@@ -215,7 +215,7 @@ struct ALIGNED_(4) jdex_cache_t {
 // ======================
 namespace ART_30 {
 
-//! @brief Namespace related to the Java part of ART 30
+/// Namespace related to the Java part of ART 30
 namespace Java {
 
 using heap_reference_t      = ART_29::Java::heap_reference_t;
@@ -246,7 +246,7 @@ using jdex_cache_t = ART_29::Java::jdex_cache_t<T>;
 // ======================
 namespace ART_44 {
 
-//! @brief Namespace related to the Java part of ART 44
+/// Namespace related to the Java part of ART 44
 namespace Java {
 
 
@@ -335,7 +335,7 @@ struct ALIGNED_(4) jdex_cache_t {
 // ======================
 namespace ART_46 {
 
-//! @brief Namespace related to the Java part of ART 46
+/// Namespace related to the Java part of ART 46
 namespace Java {
 
 using heap_reference_t      = ART_44::Java::heap_reference_t;
@@ -364,7 +364,7 @@ using jdex_cache_t = ART_44::Java::jdex_cache_t<T>;
 // ======================
 namespace ART_56 {
 
-//! @brief Namespace related to the Java part of ART 46
+/// Namespace related to the Java part of ART 46
 namespace Java {
 
 using heap_reference_t      = ART_46::Java::heap_reference_t;

@@ -33,9 +33,9 @@ struct linkedit_data_command;
 }
 
 
-//! Class which represents the LC_FUNCTION_STARTS command
-//!
-//! This command is an array of ULEB128 encoded values
+/// Class which represents the LC_FUNCTION_STARTS command
+///
+/// This command is an array of ULEB128 encoded values
 class LIEF_API FunctionStarts : public LoadCommand {
   friend class BinaryParser;
   friend class LinkEdit;
@@ -51,21 +51,21 @@ class LIEF_API FunctionStarts : public LoadCommand {
     return std::unique_ptr<FunctionStarts>(new FunctionStarts(*this));
   }
 
-  //! Offset in the ``__LINKEDIT`` SegmentCommand where *start functions* are located
+  /// Offset in the ``__LINKEDIT`` SegmentCommand where *start functions* are located
   uint32_t data_offset() const {
     return data_offset_;
   }
 
-  //! Size of the functions list in the binary
+  /// Size of the functions list in the binary
   uint32_t data_size() const {
     return data_size_;
   }
 
-  //! Addresses of every function entry point in the executable.
-  //!
-  //! This allows functions to exist for which there are no entries in the symbol table.
-  //!
-  //! @warning The address is relative to the ``__TEXT`` segment
+  /// Addresses of every function entry point in the executable.
+  ///
+  /// This allows functions to exist for which there are no entries in the symbol table.
+  ///
+  /// @warning The address is relative to the ``__TEXT`` segment
   const std::vector<uint64_t>& functions() const {
     return functions_;
   }
@@ -74,7 +74,7 @@ class LIEF_API FunctionStarts : public LoadCommand {
     return functions_;
   }
 
-  //! Add a new function
+  /// Add a new function
   void add_function(uint64_t address) {
     functions_.emplace_back(address);
   }

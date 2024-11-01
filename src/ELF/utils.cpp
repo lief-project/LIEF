@@ -51,7 +51,7 @@ bool is_elf(const std::vector<uint8_t>& raw) {
   return false;
 }
 
-//! SYSV hash function
+/// SYSV hash function
 unsigned long hash32(const char* name) {
   unsigned long h = 0, g;
   while (*name != 0) {
@@ -64,8 +64,8 @@ unsigned long hash32(const char* name) {
   return h;
 }
 
-//! SYSV hash function
-//! https://blogs.oracle.com/ali/entry/gnu_hash_elf_sections
+/// SYSV hash function
+/// https://blogs.oracle.com/ali/entry/gnu_hash_elf_sections
 unsigned long hash64(const char* name) {
   unsigned long h = 0, g;
   while (*name != 0) {

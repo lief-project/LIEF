@@ -43,16 +43,16 @@ class LIEF_API SpcIndirectData : public ContentInfo::Content {
     return std::unique_ptr<Content>(new SpcIndirectData{*this});
   }
 
-  //! Digest used to hash the file
-  //!
-  //! It should match LIEF::PE::SignerInfo::digest_algorithm
+  /// Digest used to hash the file
+  ///
+  /// It should match LIEF::PE::SignerInfo::digest_algorithm
   ALGORITHMS digest_algorithm() const {
     return digest_algorithm_;
   }
 
-  //! PE's authentihash
-  //!
-  //! @see LIEF::PE::Binary::authentihash
+  /// PE's authentihash
+  ///
+  /// @see LIEF::PE::Binary::authentihash
   span<const uint8_t> digest() const {
     return digest_;
   }

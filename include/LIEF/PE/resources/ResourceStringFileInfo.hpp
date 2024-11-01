@@ -30,11 +30,11 @@ class ResourcesManager;
 class ResourceVersion;
 struct ResourcesParser;
 
-//! Representation of the ``StringFileInfo`` structure
-//!
-//! It contains version information that can be displayed for a particular language and code page.
-//!
-//! See: https://docs.microsoft.com/en-us/windows/win32/menurc/stringfileinfo
+/// Representation of the ``StringFileInfo`` structure
+///
+/// It contains version information that can be displayed for a particular language and code page.
+///
+/// See: https://docs.microsoft.com/en-us/windows/win32/menurc/stringfileinfo
 class LIEF_API ResourceStringFileInfo : public Object {
 
   friend class ResourcesManager;
@@ -51,24 +51,24 @@ class LIEF_API ResourceStringFileInfo : public Object {
   ResourceStringFileInfo& operator=(const ResourceStringFileInfo&) = default;
   ~ResourceStringFileInfo() override = default;
 
-  //! The type of data in the version resource
-  //! * ``1`` if it contains text data
-  //! * ``0`` if it contains binary data
+  /// The type of data in the version resource
+  /// * ``1`` if it contains text data
+  /// * ``0`` if it contains binary data
   uint16_t type() const {
     return type_;
   }
 
-  //! Signature of the structure:
-  //! Must be the unicode string "StringFileInfo"
+  /// Signature of the structure:
+  /// Must be the unicode string "StringFileInfo"
   const std::u16string& key() const {
     return key_;
   }
 
-  //! List of the LangCodeItem items.
-  //!
-  //! Each LangCodeItem::key indicates the appropriate
-  //! language and code page for displaying the ``key: value`` of
-  //! LangCodeItem::items
+  /// List of the LangCodeItem items.
+  ///
+  /// Each LangCodeItem::key indicates the appropriate
+  /// language and code page for displaying the ``key: value`` of
+  /// LangCodeItem::items
   const std::vector<LangCodeItem>& langcode_items() const {
     return childs_;
   }

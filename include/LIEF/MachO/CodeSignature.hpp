@@ -50,12 +50,12 @@ class LIEF_API CodeSignature : public LoadCommand {
     return std::unique_ptr<CodeSignature>(new CodeSignature(*this));
   }
 
-  //! Offset in the binary where the signature starts
+  /// Offset in the binary where the signature starts
   uint32_t data_offset() const {
     return data_offset_;
   }
 
-  //! Size of the raw signature
+  /// Size of the raw signature
   uint32_t data_size() const {
     return data_size_;
   }

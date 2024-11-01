@@ -29,7 +29,7 @@ namespace details {
 struct data_in_code_entry;
 }
 
-//! Interface over an entry in the DataInCode command
+/// Interface over an entry in the DataInCode command
 class LIEF_API DataCodeEntry : public LIEF::Object {
   public:
   enum class TYPES {
@@ -53,12 +53,12 @@ class LIEF_API DataCodeEntry : public LIEF::Object {
   DataCodeEntry& operator=(const DataCodeEntry&) = default;
   DataCodeEntry(const DataCodeEntry&) = default;
 
-  //! Offset of the data
+  /// Offset of the data
   uint32_t offset() const {
     return offset_;
   }
 
-  //! Length of the data
+  /// Length of the data
   uint16_t length() const {
     return length_;
   }

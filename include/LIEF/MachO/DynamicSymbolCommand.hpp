@@ -33,10 +33,10 @@ namespace details {
 struct dysymtab_command;
 }
 
-//! Class that represents the LC_DYSYMTAB command.
-//!
-//! This command completes the LC_SYMTAB (SymbolCommand) to provide
-//! a better granularity over the symbols layout.
+/// Class that represents the LC_DYSYMTAB command.
+///
+/// This command completes the LC_SYMTAB (SymbolCommand) to provide
+/// a better granularity over the symbols layout.
 class LIEF_API DynamicSymbolCommand : public LoadCommand {
   friend class BinaryParser;
   friend class Builder;
@@ -67,123 +67,123 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
 
   std::ostream& print(std::ostream& os) const override;
 
-  //! Index of the first symbol in the group of local symbols.
+  /// Index of the first symbol in the group of local symbols.
   uint32_t idx_local_symbol() const {
     return idx_local_symbol_;
   }
 
-  //! Number of symbols in the group of local symbols.
+  /// Number of symbols in the group of local symbols.
   uint32_t nb_local_symbols() const {
     return nb_local_symbols_;
   }
 
-  //! Index of the first symbol in the group of defined external symbols.
+  /// Index of the first symbol in the group of defined external symbols.
   uint32_t idx_external_define_symbol() const {
     return idx_external_define_symbol_;
   }
 
-  //! Number of symbols in the group of defined external symbols.
+  /// Number of symbols in the group of defined external symbols.
   uint32_t nb_external_define_symbols() const {
     return nb_external_define_symbols_;
   }
 
-  //! Index of the first symbol in the group of undefined external symbols.
+  /// Index of the first symbol in the group of undefined external symbols.
   uint32_t idx_undefined_symbol() const {
     return idx_undefined_symbol_;
   }
 
-  //! Number of symbols in the group of undefined external symbols.
+  /// Number of symbols in the group of undefined external symbols.
   uint32_t nb_undefined_symbols() const {
     return nb_undefined_symbols_;
   }
 
-  //! Byte offset from the start of the file to the table of contents data
-  //!
-  //! Table of content is used by legacy Mach-O loader and this field should be
-  //! set to 0
+  /// Byte offset from the start of the file to the table of contents data
+  ///
+  /// Table of content is used by legacy Mach-O loader and this field should be
+  /// set to 0
   uint32_t toc_offset() const {
     return toc_offset_;
   }
 
-  //! Number of entries in the table of contents.
-  //!
-  //! Should be set to 0 on recent Mach-O
+  /// Number of entries in the table of contents.
+  ///
+  /// Should be set to 0 on recent Mach-O
   uint32_t nb_toc() const {
     return nb_toc_;
   }
 
-  //! Byte offset from the start of the file to the module table data.
-  //!
-  //! This field seems unused by recent Mach-O loader and should be set to 0
+  /// Byte offset from the start of the file to the module table data.
+  ///
+  /// This field seems unused by recent Mach-O loader and should be set to 0
   uint32_t module_table_offset() const {
     return module_table_offset_;
   }
 
-  //! Number of entries in the module table.
-  //!
-  //! This field seems unused by recent Mach-O loader and should be set to 0
+  /// Number of entries in the module table.
+  ///
+  /// This field seems unused by recent Mach-O loader and should be set to 0
   uint32_t nb_module_table() const {
     return nb_module_table_;
   }
 
-  //! Byte offset from the start of the file to the external reference table data.
-  //!
-  //! This field seems unused by recent Mach-O loader and should be set to 0
+  /// Byte offset from the start of the file to the external reference table data.
+  ///
+  /// This field seems unused by recent Mach-O loader and should be set to 0
   uint32_t external_reference_symbol_offset() const {
     return external_reference_symbol_offset_;
   }
 
-  //! Number of entries in the external reference table
-  //!
-  //! This field seems unused by recent Mach-O loader and should be set to 0
+  /// Number of entries in the external reference table
+  ///
+  /// This field seems unused by recent Mach-O loader and should be set to 0
   uint32_t nb_external_reference_symbols() const {
     return nb_external_reference_symbols_;
   }
 
-  //! Byte offset from the start of the file to the indirect symbol table data.
-  //!
-  //! Indirect symbol table is used by the loader to speed-up symbol resolution during
-  //! the *lazy binding* process
-  //!
-  //! References:
-  //!   * dyld-519.2.1/src/ImageLoaderMachOCompressed.cpp
-  //!   * dyld-519.2.1/src/ImageLoaderMachOClassic.cpp
+  /// Byte offset from the start of the file to the indirect symbol table data.
+  ///
+  /// Indirect symbol table is used by the loader to speed-up symbol resolution during
+  /// the *lazy binding* process
+  ///
+  /// References:
+  ///   * dyld-519.2.1/src/ImageLoaderMachOCompressed.cpp
+  ///   * dyld-519.2.1/src/ImageLoaderMachOClassic.cpp
   uint32_t indirect_symbol_offset() const {
     return indirect_sym_offset_;
   }
 
-  //! Number of entries in the indirect symbol table.
-  //!
-  //! @see indirect_symbol_offset
+  /// Number of entries in the indirect symbol table.
+  ///
+  /// @see indirect_symbol_offset
   uint32_t nb_indirect_symbols() const {
     return nb_indirect_symbols_;
   }
 
 
-  //! Byte offset from the start of the file to the external relocation table data.
-  //!
-  //! This field seems unused by recent Mach-O loader and should be set to 0
+  /// Byte offset from the start of the file to the external relocation table data.
+  ///
+  /// This field seems unused by recent Mach-O loader and should be set to 0
   uint32_t external_relocation_offset() const {
     return external_relocation_offset_;
   }
 
-  //! Number of entries in the external relocation table.
-  //!
-  //! This field seems unused by recent Mach-O loader and should be set to 0
+  /// Number of entries in the external relocation table.
+  ///
+  /// This field seems unused by recent Mach-O loader and should be set to 0
   uint32_t nb_external_relocations() const {
     return nb_external_relocations_;
   }
 
-  //! Byte offset from the start of the file to the local relocation table data.
-  //!
-  //! This field seems unused by recent Mach-O loader and should be set to 0
+  /// Byte offset from the start of the file to the local relocation table data.
+  ///
+  /// This field seems unused by recent Mach-O loader and should be set to 0
   uint32_t local_relocation_offset() const {
     return local_relocation_offset_;
   }
 
-  //! Number of entries in the local relocation table.
-  //!
-  //! This field seems unused by recent Mach-O loader and should be set to 0
+  /// Number of entries in the local relocation table.
+  ///
+  /// This field seems unused by recent Mach-O loader and should be set to 0
   uint32_t nb_local_relocations() const {
     return nb_local_relocations_;
   }

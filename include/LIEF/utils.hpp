@@ -70,18 +70,18 @@ constexpr size_t operator ""_GB(unsigned long long gbs)
     return 1024LLU * 1024LLU * 1024LLU * gbs;
 }
 
-//! Convert a UTF-16 string to a UTF-8 one
+/// Convert a UTF-16 string to a UTF-8 one
 LIEF_API std::string u16tou8(const std::u16string& string, bool remove_null_char = false);
 
-//! Convert a UTF-8 string to a UTF-16 one
+/// Convert a UTF-8 string to a UTF-16 one
 LIEF_API result<std::u16string> u8tou16(const std::string& string);
 
-//! Whether this version of LIEF includes extended features
+/// Whether this version of LIEF includes extended features
 LIEF_API bool is_extended();
 
-//! Demangle the given input.
-//!
-//! This function only works with the extended version of LIEF
+/// Demangle the given input.
+///
+/// This function only works with the extended version of LIEF
 LIEF_API result<std::string> demangle(const std::string& mangled);
 }
 

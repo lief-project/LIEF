@@ -20,7 +20,7 @@
 namespace LIEF {
 namespace PE {
 
-//! This structure is used to tweak the PE Parser (PE::Parser)
+/// This structure is used to tweak the PE Parser (PE::Parser)
 struct LIEF_API ParserConfig {
   static ParserConfig all() {
     static const ParserConfig DEFAULT;

@@ -65,39 +65,39 @@ class LIEF_API Binary : public ELF::Binary {
   Binary& operator=(const Binary& copy) = delete;
   Binary(const Binary& copy)            = delete;
 
-  //! OAT Header
+  /// OAT Header
   const Header& header() const;
   Header& header();
 
-  //! Iterator over LIEF::DEX::File
+  /// Iterator over LIEF::DEX::File
   it_dex_files dex_files();
   it_const_dex_files dex_files() const;
 
-  //! Iterator over LIEF::OAT::DexFile
+  /// Iterator over LIEF::OAT::DexFile
   it_oat_dex_files       oat_dex_files();
   it_const_oat_dex_files oat_dex_files() const;
 
-  //! Iterator over LIEF::OAT::Class
+  /// Iterator over LIEF::OAT::Class
   it_const_classes classes() const;
   it_classes classes();
 
-  //! Check if the current OAT has the given class
+  /// Check if the current OAT has the given class
   bool has_class(const std::string& class_name) const;
 
 
-  //! Return the LIEF::OAT::Class with the given name or
-  //! a nullptr if the class can't be found
+  /// Return the LIEF::OAT::Class with the given name or
+  /// a nullptr if the class can't be found
   const Class* get_class(const std::string& class_name) const;
 
   Class* get_class(const std::string& class_name);
 
-  //! Return the LIEF::OAT::Class at the given index or a nullptr
-  //! if it does not exist
+  /// Return the LIEF::OAT::Class at the given index or a nullptr
+  /// if it does not exist
   const Class* get_class(size_t index) const;
 
   Class* get_class(size_t index);
 
-  //! Iterator over LIEF::OAT::Method
+  /// Iterator over LIEF::OAT::Method
   it_const_methods methods() const;
   it_methods methods();
 

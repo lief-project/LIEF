@@ -29,9 +29,9 @@ template<class T>
 struct load_configuration_v4;
 }
 
-//! @brief Load Configuration enhanced with
-//! * Kind of dynamic relocations
-//! * *Hybrid Metadata Pointer*
+/// Load Configuration enhanced with
+/// * Kind of dynamic relocations
+/// * *Hybrid Metadata Pointer*
 class LIEF_API LoadConfigurationV4 : public LoadConfigurationV3 {
   public:
   static constexpr VERSION WIN_VERSION = VERSION::WIN_10_0_14383;
@@ -48,7 +48,7 @@ class LIEF_API LoadConfigurationV4 : public LoadConfigurationV3 {
     return WIN_VERSION;
   }
 
-  //! @brief VA of pointing to a ``IMAGE_DYNAMIC_RELOCATION_TABLE``
+  /// VA of pointing to a ``IMAGE_DYNAMIC_RELOCATION_TABLE``
   uint64_t dynamic_value_reloc_table() const {
     return dynamic_value_reloc_table_;
   }

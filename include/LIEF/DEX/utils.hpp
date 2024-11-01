@@ -28,16 +28,16 @@ namespace LIEF {
 class BinaryStream;
 namespace DEX {
 
-//! Check if the given file is a DEX.
+/// Check if the given file is a DEX.
 LIEF_API bool is_dex(const std::string& file);
 
-//! Check if the given raw data is a DEX.
+/// Check if the given raw data is a DEX.
 LIEF_API bool is_dex(const std::vector<uint8_t>& raw);
 
-//! Return the DEX version of the given file
+/// Return the DEX version of the given file
 LIEF_API dex_version_t version(const std::string& file);
 
-//! Return the DEX version of the raw data
+/// Return the DEX version of the raw data
 LIEF_API dex_version_t version(const std::vector<uint8_t>& raw);
 
 dex_version_t version(BinaryStream& stream);

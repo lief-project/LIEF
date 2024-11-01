@@ -35,7 +35,7 @@ namespace details {
 struct pe_import;
 }
 
-//! Class that represents a PE import.
+/// Class that represents a PE import.
 class LIEF_API Import : public Object {
 
   friend class Parser;
@@ -58,18 +58,18 @@ class LIEF_API Import : public Object {
   Import& operator=(Import&& other) noexcept = default;
   Import& operator=(const Import& other) = default;
 
-  //! The index of the first forwarder reference
+  /// The index of the first forwarder reference
   uint32_t forwarder_chain() const {
     return forwarder_chain_;
   }
 
-  //! The stamp that is set to zero until the image is bound.
-  //! After the image is bound, this field is set to the time/data stamp of the DLL
+  /// The stamp that is set to zero until the image is bound.
+  /// After the image is bound, this field is set to the time/data stamp of the DLL
   uint32_t timedatestamp() const {
     return timedatestamp_;
   }
 
-  //! Iterator over the PE::ImportEntry
+  /// Iterator over the PE::ImportEntry
   it_const_entries entries() const {
     return entries_;
   }
@@ -78,50 +78,50 @@ class LIEF_API Import : public Object {
     return entries_;
   }
 
-  //! The RVA of the import address table (``IAT``). The content of this table is
-  //! **identical** to the content of the Import Lookup Table (``ILT``) until the
-  //! image is bound.
-  //!
-  //! @warning
-  //! This address could change when re-building the binary
+  /// The RVA of the import address table (``IAT``). The content of this table is
+  /// **identical** to the content of the Import Lookup Table (``ILT``) until the
+  /// image is bound.
+  ///
+  /// @warning
+  /// This address could change when re-building the binary
   uint32_t import_address_table_rva() const {
     return import_address_table_RVA_;
   }
 
-  //! Return the relative virtual address of the import lookup table.
-  //!
-  //! @warning
-  //! This address could change when re-building the binary
+  /// Return the relative virtual address of the import lookup table.
+  ///
+  /// @warning
+  /// This address could change when re-building the binary
   uint32_t import_lookup_table_rva() const {
     return import_lookup_table_RVA_;
   }
 
-  //! Return the Function's RVA from the import address table (`IAT`)
-  //!
-  //! @warning
-  //! This address could change when re-building the binary
+  /// Return the Function's RVA from the import address table (`IAT`)
+  ///
+  /// @warning
+  /// This address could change when re-building the binary
   result<uint32_t> get_function_rva_from_iat(const std::string& function) const;
 
-  //! Return the imported function with the given name
+  /// Return the imported function with the given name
   ImportEntry* get_entry(const std::string& name) {
     return const_cast<ImportEntry*>(static_cast<const Import*>(this)->get_entry(name));
   }
   const ImportEntry* get_entry(const std::string& name) const;
 
-  //! Return the library's name (e.g. `kernel32.dll`)
+  /// Return the library's name (e.g. `kernel32.dll`)
   const std::string& name() const {
     return name_;
   }
 
-  //! Change the current import name
+  /// Change the current import name
   void name(std::string name) {
     name_ = std::move(name);
   }
 
-  //! Return the PE::DataDirectory associated with this import.
-  //! It should be the one at index PE::DataDirectory::TYPES::IMPORT_TABLE
-  //!
-  //! If the data directory can't be found, return a nullptr
+  /// Return the PE::DataDirectory associated with this import.
+  /// It should be the one at index PE::DataDirectory::TYPES::IMPORT_TABLE
+  ///
+  /// If the data directory can't be found, return a nullptr
   DataDirectory* directory() {
     return directory_;
   }
@@ -129,10 +129,10 @@ class LIEF_API Import : public Object {
     return directory_;
   }
 
-  //! Return the PE::DataDirectory associated associated with the IAT.
-  //! It should be the one at index PE::DataDirectory::TYPES::IAT
-  //!
-  //! If the data directory can't be found, return a nullptr
+  /// Return the PE::DataDirectory associated associated with the IAT.
+  /// It should be the one at index PE::DataDirectory::TYPES::IAT
+  ///
+  /// If the data directory can't be found, return a nullptr
   DataDirectory* iat_directory() {
     return iat_directory_;
   }
@@ -140,13 +140,13 @@ class LIEF_API Import : public Object {
     return iat_directory_;
   }
 
-  //! Add a new import entry (i.e. an imported function)
+  /// Add a new import entry (i.e. an imported function)
   ImportEntry& add_entry(ImportEntry entry) {
     entries_.push_back(std::move(entry));
     return entries_.back();
   }
 
-  //! Add a new import entry with the given name (i.e. an imported function)
+  /// Add a new import entry with the given name (i.e. an imported function)
   ImportEntry& add_entry(const std::string& name) {
     entries_.emplace_back(name);
     return entries_.back();

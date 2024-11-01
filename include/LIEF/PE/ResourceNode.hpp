@@ -32,7 +32,7 @@ class ResourceData;
 class Parser;
 class Builder;
 
-//! Class which represents a Node in the resource tree.
+/// Class which represents a Node in the resource tree.
 class LIEF_API ResourceNode : public Object {
 
   friend class Parser;
@@ -62,18 +62,18 @@ class LIEF_API ResourceNode : public Object {
 
   virtual std::unique_ptr<ResourceNode> clone() const = 0;
 
-  //! Integer that identifies the Type, Name, or Language ID of the entry
-  //! depending on its depth in the tree
+  /// Integer that identifies the Type, Name, or Language ID of the entry
+  /// depending on its depth in the tree
   uint32_t id() const {
     return id_;
   }
 
-  //! Name of the entry
+  /// Name of the entry
   const std::u16string& name() const {
     return name_;
   }
 
-  //! Iterator on node's children
+  /// Iterator on node's children
   it_childs childs() {
     return childs_;
   }
@@ -81,34 +81,34 @@ class LIEF_API ResourceNode : public Object {
     return childs_;
   }
 
-  //! ``True`` if the entry uses a name as ID
+  /// ``True`` if the entry uses a name as ID
   bool has_name() const {
     return static_cast<bool>(id() & 0x80000000);
   }
 
-  //! Current depth of the Node in the resource tree
+  /// Current depth of the Node in the resource tree
   uint32_t depth() const {
     return depth_;
   }
 
-  //! ``True`` if the current entry is a ResourceDirectory.
-  //!
-  //! It can be safely casted with:
-  //!
-  //! ```cpp
-  //! const auto& dir_node = static_cast<const ResourceDirectory&>(node);
-  //! ```
+  /// ``True`` if the current entry is a ResourceDirectory.
+  ///
+  /// It can be safely casted with:
+  ///
+  /// ```cpp
+  /// const auto& dir_node = static_cast<const ResourceDirectory&>(node);
+  /// ```
   bool is_directory() const {
     return type_ == TYPE::DIRECTORY;
   }
 
-  //! ``True`` if the current entry is a ResourceData.
-  //!
-  //! It can be safely casted with:
-  //!
-  //! ```cpp
-  //! const auto& data_node = static_cast<const ResourceData&>(node);
-  //! ```
+  /// ``True`` if the current entry is a ResourceData.
+  ///
+  /// It can be safely casted with:
+  ///
+  /// ```cpp
+  /// const auto& data_node = static_cast<const ResourceData&>(node);
+  /// ```
   bool is_data() const {
     return type_ == TYPE::DATA;
   }
@@ -122,16 +122,16 @@ class LIEF_API ResourceNode : public Object {
     name_ = std::move(name);
   }
 
-  //! Add a ResourceDirectory to the current node
+  /// Add a ResourceDirectory to the current node
   ResourceNode& add_child(const ResourceDirectory& child);
 
-  //! Add a ResourceData to the current node
+  /// Add a ResourceData to the current node
   ResourceNode& add_child(const ResourceData& child);
 
-  //! Delete the node with the given ``id``
+  /// Delete the node with the given ``id``
   void delete_child(uint32_t id);
 
-  //! Delete the given node from the node's children
+  /// Delete the given node from the node's children
   void delete_child(const ResourceNode& node);
 
   void accept(Visitor& visitor) const override;

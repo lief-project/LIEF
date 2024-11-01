@@ -30,7 +30,7 @@ namespace DEX {
 class Parser;
 class Class;
 
-//! Class which represent a DEX Field
+/// Class which represent a DEX Field
 class LIEF_API Field : public Object {
   friend class Parser;
   public:
@@ -43,33 +43,33 @@ class LIEF_API Field : public Object {
   Field(const Field&);
   Field& operator=(const Field&);
 
-  //! Name of the Field
+  /// Name of the Field
   const std::string& name() const;
 
-  //! True if a class is associated with this field
-  //! (which should be the case)
+  /// True if a class is associated with this field
+  /// (which should be the case)
   bool has_class() const;
 
-  //! Class associated with this Field
+  /// Class associated with this Field
   const Class* cls() const;
   Class* cls();
 
-  //! Index in the DEX Fields pool
+  /// Index in the DEX Fields pool
   size_t index() const;
 
-  //! True if this field is a static one.
+  /// True if this field is a static one.
   bool is_static() const;
 
-  //! Field's prototype
+  /// Field's prototype
   const Type* type() const;
   Type* type();
 
   void accept(Visitor& visitor) const override;
 
-  //! Check if the field has the given ACCESS_FLAGS
+  /// Check if the field has the given ACCESS_FLAGS
   bool has(ACCESS_FLAGS f) const;
 
-  //! ACCESS_FLAGS as a list
+  /// ACCESS_FLAGS as a list
   access_flags_list_t access_flags() const;
 
 

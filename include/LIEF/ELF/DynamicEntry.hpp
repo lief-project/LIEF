@@ -31,8 +31,8 @@ struct Elf64_Dyn;
 struct Elf32_Dyn;
 }
 
-//! Class which represents an entry in the dynamic table
-//! These entries are located in the ``.dynamic`` section or the ``PT_DYNAMIC`` segment
+/// Class which represents an entry in the dynamic table
+/// These entries are located in the ``.dynamic`` section or the ``PT_DYNAMIC`` segment
 class LIEF_API DynamicEntry : public Object {
   public:
   static constexpr uint64_t MIPS_DISC    = 0x100000000;
@@ -200,16 +200,16 @@ class LIEF_API DynamicEntry : public Object {
     return std::unique_ptr<DynamicEntry>(new DynamicEntry(*this));
   }
 
-  //! Tag of the current entry. The most common tags are:
-  //! DT_NEEDED, DT_INIT, ...
+  /// Tag of the current entry. The most common tags are:
+  /// DT_NEEDED, DT_INIT, ...
   TAG tag() const {
     return tag_;
   }
 
-  //! Return the entry's value
-  //!
-  //! The meaning of the value strongly depends on the tag.
-  //! It can be an offset, an index, a flag, ...
+  /// Return the entry's value
+  ///
+  /// The meaning of the value strongly depends on the tag.
+  /// It can be an offset, an index, a flag, ...
   uint64_t value() const {
     return value_;
   }

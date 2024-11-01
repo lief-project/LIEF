@@ -38,7 +38,7 @@
 // ======================
 
 namespace LIEF {
-//! @brief Namespace related to the LIEF's OAT module
+/// Namespace related to the LIEF's OAT module
 namespace OAT {
 
 namespace details {

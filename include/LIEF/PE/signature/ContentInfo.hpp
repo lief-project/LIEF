@@ -124,8 +124,8 @@ class LIEF_API ContentInfo : public Object {
 
   void swap(ContentInfo& other) noexcept;
 
-  //! Return the OID that describes the content wrapped by this object.
-  //! It should match SPC_INDIRECT_DATA_OBJID (1.3.6.1.4.1.311.2.1.4)
+  /// Return the OID that describes the content wrapped by this object.
+  /// It should match SPC_INDIRECT_DATA_OBJID (1.3.6.1.4.1.311.2.1.4)
   oid_t content_type() const {
     return value_->content_type();
   }

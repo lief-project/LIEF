@@ -31,7 +31,7 @@ namespace details {
 struct fileset_entry_command;
 }
 
-//! Class associated with the LC_FILESET_ENTRY commands
+/// Class associated with the LC_FILESET_ENTRY commands
 class LIEF_API FilesetCommand : public LoadCommand {
   public:
   friend class BinaryParser;
@@ -54,23 +54,23 @@ class LIEF_API FilesetCommand : public LoadCommand {
 
   ~FilesetCommand() override = default;
 
-  //! Name of the underlying MachO binary (e.g. ``com.apple.security.quarantine``)
+  /// Name of the underlying MachO binary (e.g. ``com.apple.security.quarantine``)
   const std::string& name() const {
     return name_;
   }
 
-  //! Memory address where the MachO file should be mapped
+  /// Memory address where the MachO file should be mapped
   uint64_t virtual_address() const {
     return virtual_address_;
   }
 
-  //! Original offset in the kernel cache
+  /// Original offset in the kernel cache
   uint64_t file_offset() const {
     return file_offset_;
   }
 
-  //! Return a pointer on the LIEF::MachO::Binary associated
-  //! with this entry
+  /// Return a pointer on the LIEF::MachO::Binary associated
+  /// with this entry
   const Binary* binary() const {
     return binary_;
   }

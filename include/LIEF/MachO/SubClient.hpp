@@ -53,7 +53,7 @@ class LIEF_API SubClient : public LoadCommand {
     return std::unique_ptr<SubClient>(new SubClient(*this));
   }
 
-  //! Name of the client
+  /// Name of the client
   const std::string& client() const {
     return client_;
   }

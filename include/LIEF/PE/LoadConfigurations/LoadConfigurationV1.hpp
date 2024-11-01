@@ -30,9 +30,9 @@ namespace details {
 template<class T>
 struct load_configuration_v1;
 }
-//! LoadConfiguration enhanced with Control Flow Guard
-//!
-//! This structure is available from Windows 8.1
+/// LoadConfiguration enhanced with Control Flow Guard
+///
+/// This structure is available from Windows 8.1
 class LIEF_API LoadConfigurationV1 : public LoadConfigurationV0 {
   public:
   static constexpr VERSION WIN_VERSION = VERSION::WIN_8_1;
@@ -67,37 +67,37 @@ class LIEF_API LoadConfigurationV1 : public LoadConfigurationV0 {
     return WIN_VERSION;
   }
 
-  //! @brief The VA where Control Flow Guard check-function pointer is stored.
+  /// The VA where Control Flow Guard check-function pointer is stored.
   uint64_t guard_cf_check_function_pointer() const {
     return guard_cf_check_function_pointer_;
   }
 
-  //! @brief The VA where Control Flow Guard dispatch-function pointer is stored.
+  /// The VA where Control Flow Guard dispatch-function pointer is stored.
   uint64_t guard_cf_dispatch_function_pointer() const {
     return guard_cf_dispatch_function_pointer_;
   }
 
-  //! @brief The VA of the sorted table of RVAs of each Control Flow Guard
-  //! function in the image.
+  /// The VA of the sorted table of RVAs of each Control Flow Guard
+  /// function in the image.
   uint64_t guard_cf_function_table() const {
     return guard_cf_function_table_;
   }
 
-  //! @brief The count of unique RVAs in the
-  //! LoadConfigurationV1::guard_cf_function_table.
+  /// The count of unique RVAs in the
+  /// LoadConfigurationV1::guard_cf_function_table.
   uint64_t guard_cf_function_count() const {
     return guard_cf_function_count_;
   }
 
-  //! @brief Control Flow Guard related flags.
+  /// Control Flow Guard related flags.
   IMAGE_GUARD guard_flags() const {
     return flags_;
   }
 
-  //! @brief Check if the given flag is present in LoadConfigurationV1::guard_flags
+  /// Check if the given flag is present in LoadConfigurationV1::guard_flags
   bool has(IMAGE_GUARD flag) const;
 
-  //! @brief LoadConfigurationV1::guard_flags as a list of LIEF::PE::GUARD_CF_FLAGS
+  /// LoadConfigurationV1::guard_flags as a list of LIEF::PE::GUARD_CF_FLAGS
   std::vector<IMAGE_GUARD> guard_cf_flags_list() const;
 
   void guard_cf_check_function_pointer(uint64_t check_pointer) {

@@ -26,10 +26,10 @@ namespace MachO {
 
 class BinaryParser;
 
-//! Class that represents a relocation found in the DyldInfo structure.
-//!
-//! While this class does not have an associated structure in the Mach-O format specification,
-//! it provides a convenient interface for the Dyld::rebase
+/// Class that represents a relocation found in the DyldInfo structure.
+///
+/// While this class does not have an associated structure in the Mach-O format specification,
+/// it provides a convenient interface for the Dyld::rebase
 class LIEF_API RelocationDyld : public Relocation {
 
   friend class BinaryParser;
@@ -51,15 +51,15 @@ class LIEF_API RelocationDyld : public Relocation {
     return std::unique_ptr<RelocationDyld>(new RelocationDyld(*this));
   }
 
-  //! Indicates whether the item containing the address to be
-  //! relocated is part of a CPU instruction that uses PC-relative addressing.
-  //!
-  //! For addresses contained in PC-relative instructions, the CPU adds the address of
-  //! the instruction to the address contained in the instruction.
+  /// Indicates whether the item containing the address to be
+  /// relocated is part of a CPU instruction that uses PC-relative addressing.
+  ///
+  /// For addresses contained in PC-relative instructions, the CPU adds the address of
+  /// the instruction to the address contained in the instruction.
   bool is_pc_relative() const override;
 
-  //! Origin of the relocation. For this concrete object, it
-  //! should be Relocation::ORIGIN::DYLDINFO
+  /// Origin of the relocation. For this concrete object, it
+  /// should be Relocation::ORIGIN::DYLDINFO
   ORIGIN origin() const override {
     return ORIGIN::DYLDINFO;
   }

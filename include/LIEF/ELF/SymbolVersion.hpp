@@ -27,8 +27,8 @@ class Parser;
 class SymbolVersionAux;
 class SymbolVersionAuxRequirement;
 
-//! Class which represents an entry defined in the `DT_VERSYM`
-//! dynamic entry
+/// Class which represents an entry defined in the `DT_VERSYM`
+/// dynamic entry
 class LIEF_API SymbolVersion : public Object {
   friend class Parser;
 
@@ -38,12 +38,12 @@ class LIEF_API SymbolVersion : public Object {
   {}
   SymbolVersion() = default;
 
-  //! Generate a *local* SymbolVersion
+  /// Generate a *local* SymbolVersion
   static SymbolVersion local() {
     return SymbolVersion(0);
   }
 
-  //! Generate a *global* SymbolVersion
+  /// Generate a *global* SymbolVersion
   static SymbolVersion global() {
     return SymbolVersion(1);
   }
@@ -53,23 +53,23 @@ class LIEF_API SymbolVersion : public Object {
   SymbolVersion& operator=(const SymbolVersion&) = default;
   SymbolVersion(const SymbolVersion&) = default;
 
-  //! Value associated with the symbol
-  //!
-  //! If the given SymbolVersion hasn't Auxiliary version:
-  //!
-  //! * ``0`` means **Local**
-  //! * ``1`` means **Global**
+  /// Value associated with the symbol
+  ///
+  /// If the given SymbolVersion hasn't Auxiliary version:
+  ///
+  /// * ``0`` means **Local**
+  /// * ``1`` means **Global**
   uint16_t value() const {
     return value_;
   }
 
-  //! Whether the current SymbolVersion has an auxiliary one
+  /// Whether the current SymbolVersion has an auxiliary one
   bool has_auxiliary_version() const {
     return symbol_version_auxiliary() != nullptr;
   }
 
-  //! SymbolVersionAux associated with the current Version if any,
-  //! or a nullptr
+  /// SymbolVersionAux associated with the current Version if any,
+  /// or a nullptr
   SymbolVersionAux* symbol_version_auxiliary() {
     return symbol_aux_;
   }
@@ -78,12 +78,12 @@ class LIEF_API SymbolVersion : public Object {
     return symbol_aux_;
   }
 
-  //! Set the version's auxiliary requirement
-  //! The given SymbolVersionAuxRequirement must be an existing
-  //! reference in the ELF::Binary.
-  //!
-  //! On can add a new SymbolVersionAuxRequirement by using
-  //! SymbolVersionRequirement::add_aux_requirement
+  /// Set the version's auxiliary requirement
+  /// The given SymbolVersionAuxRequirement must be an existing
+  /// reference in the ELF::Binary.
+  ///
+  /// On can add a new SymbolVersionAuxRequirement by using
+  /// SymbolVersionRequirement::add_aux_requirement
   void symbol_version_auxiliary(SymbolVersionAuxRequirement& svauxr);
 
   void value(uint16_t v) {

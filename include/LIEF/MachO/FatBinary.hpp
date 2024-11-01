@@ -31,8 +31,8 @@ class Parser;
 class Builder;
 class Binary;
 
-//! Class which represent a Mach-O (fat) binary
-//! This object is also used for representing Mach-O binaries that are **NOT FAT**
+/// Class which represent a Mach-O (fat) binary
+/// This object is also used for representing Mach-O binaries that are **NOT FAT**
 class LIEF_API FatBinary {
 
   friend class LIEF::Parser;
@@ -41,13 +41,13 @@ class LIEF_API FatBinary {
 
   public:
 
-  //! Internal containter used to store Binary objects within a Fat Mach-O
+  /// Internal containter used to store Binary objects within a Fat Mach-O
   using binaries_t = std::vector<std::unique_ptr<Binary>>;
 
-  //! Iterator that outputs Binary&
+  /// Iterator that outputs Binary&
   using it_binaries = ref_iterator<binaries_t&, Binary*>;
 
-  //! Iterator that outputs const Binary&
+  /// Iterator that outputs const Binary&
   using it_const_binaries = const_ref_iterator<const binaries_t&, Binary*>;
 
   FatBinary(const FatBinary&) = delete;
@@ -55,12 +55,12 @@ class LIEF_API FatBinary {
 
   virtual ~FatBinary();
 
-  //! Number of MachO::Binary wrapped by this object
+  /// Number of MachO::Binary wrapped by this object
   size_t size() const {
     return binaries_.size();
   }
 
-  //! Checks whether this object contains MachO::Binary
+  /// Checks whether this object contains MachO::Binary
   bool empty() const {
     return binaries_.empty();
   }
@@ -82,12 +82,12 @@ class LIEF_API FatBinary {
 
   void release_all_binaries();
 
-  //! Get a pointer to the last MachO::Binary object presents in this Fat Binary.
-  //! It returns a nullptr if no binary are present.
+  /// Get a pointer to the last MachO::Binary object presents in this Fat Binary.
+  /// It returns a nullptr if no binary are present.
   std::unique_ptr<Binary> pop_back();
 
-  //! Get a pointer to the MachO::Binary specified by the ``index``.
-  //! It returns a nullptr if the binary does not exist at the given index.
+  /// Get a pointer to the MachO::Binary specified by the ``index``.
+  /// It returns a nullptr if the binary does not exist at the given index.
   Binary*       at(size_t index);
   const Binary* at(size_t index) const;
 
@@ -104,21 +104,21 @@ class LIEF_API FatBinary {
     return at(index);
   }
 
-  //! Extract a MachO::Binary object. Gives ownership to the caller, and
-  //! remove it from this FatBinary object.
-  //!
-  //! @warning: this invalidates any previously hold iterator!
+  /// Extract a MachO::Binary object. Gives ownership to the caller, and
+  /// remove it from this FatBinary object.
+  ///
+  /// @warning: this invalidates any previously hold iterator!
   std::unique_ptr<Binary> take(size_t index);
 
-  //! Take the underlying MachO::Binary that matches the given architecture
-  //! If no binary with the architecture can be found, return a nullptr
+  /// Take the underlying MachO::Binary that matches the given architecture
+  /// If no binary with the architecture can be found, return a nullptr
   std::unique_ptr<Binary> take(Header::CPU_TYPE cpu);
 
-  //! Reconstruct the Fat binary object and write it in `filename`
-  //! @param filename Path to write the reconstructed binary
+  /// Reconstruct the Fat binary object and write it in `filename`
+  /// @param filename Path to write the reconstructed binary
   void write(const std::string& filename);
 
-  //! Reconstruct the Fat binary object and return his content as bytes
+  /// Reconstruct the Fat binary object and return his content as bytes
   std::vector<uint8_t> raw();
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const FatBinary& fatbinary);

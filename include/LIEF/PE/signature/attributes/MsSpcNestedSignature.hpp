@@ -24,15 +24,15 @@
 namespace LIEF {
 namespace PE {
 
-//! Interface over the structure described by the OID ``1.3.6.1.4.1.311.2.4.1``
-//!
-//! The internal structure is not documented but we can infer the following structure:
-//!
-//! ```text
-//! MsSpcNestedSignature ::= SET OF SignedData
-//! ```
-//!
-//! ``SignedData`` is the structure described in PKCS #7 RFC (LIEF::PE::Signature)
+/// Interface over the structure described by the OID ``1.3.6.1.4.1.311.2.4.1``
+///
+/// The internal structure is not documented but we can infer the following structure:
+///
+/// ```text
+/// MsSpcNestedSignature ::= SET OF SignedData
+/// ```
+///
+/// ``SignedData`` is the structure described in PKCS #7 RFC (LIEF::PE::Signature)
 class LIEF_API MsSpcNestedSignature : public Attribute {
 
   friend class Parser;
@@ -51,12 +51,12 @@ class LIEF_API MsSpcNestedSignature : public Attribute {
     return std::unique_ptr<Attribute>(new MsSpcNestedSignature{*this});
   }
 
-  //! Underlying Signature object
+  /// Underlying Signature object
   const Signature& sig() const {
     return sig_;
   }
 
-  //! Print information about the attribute
+  /// Print information about the attribute
   std::string print() const override;
 
   void accept(Visitor& visitor) const override;

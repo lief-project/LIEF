@@ -1139,7 +1139,7 @@ bool Parser::is_valid_import_name(const std::string& name) {
 
 
 bool Parser::is_valid_dll_name(const std::string& name) {
-  //! @brief Minimum size for a DLL's name
+  /// @brief Minimum size for a DLL's name
   static constexpr unsigned MIN_DLL_NAME_SIZE = 4;
 
   if (name.size() < MIN_DLL_NAME_SIZE || name.size() > Parser::MAX_DLL_NAME_SIZE) {

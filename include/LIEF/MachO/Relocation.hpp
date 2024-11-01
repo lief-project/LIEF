@@ -31,12 +31,12 @@ class Section;
 class SegmentCommand;
 class Symbol;
 
-//! Class that represents a Mach-O relocation
-//!
-//! @see:
-//!   * MachO::RelocationObject
-//!   * MachO::RelocationDyld
-//!   * MachO::RelocationFixup
+/// Class that represents a Mach-O relocation
+///
+/// @see:
+///   * MachO::RelocationObject
+///   * MachO::RelocationDyld
+///   * MachO::RelocationFixup
 class LIEF_API Relocation : public LIEF::Relocation {
 
   friend class BinaryParser;
@@ -66,42 +66,42 @@ class LIEF_API Relocation : public LIEF::Relocation {
 
   virtual std::unique_ptr<Relocation> clone() const = 0;
 
-  //! Indicates whether the item containing the address to be
-  //! relocated is part of a CPU instruction that uses PC-relative addressing.
-  //!
-  //! For addresses contained in PC-relative instructions, the CPU adds the address of
-  //! the instruction to the address contained in the instruction.
+  /// Indicates whether the item containing the address to be
+  /// relocated is part of a CPU instruction that uses PC-relative addressing.
+  ///
+  /// For addresses contained in PC-relative instructions, the CPU adds the address of
+  /// the instruction to the address contained in the instruction.
   virtual bool is_pc_relative() const = 0;
 
-  //! Type of the relocation according to the
-  //! Relocation::architecture and/or the Relocation::origin
-  //!
-  //! See:
-  //!   * MachO::X86_RELOCATION
-  //!   * MachO::X86_64_RELOCATION
-  //!   * MachO::PPC_RELOCATION
-  //!   * MachO::ARM_RELOCATION
-  //!   * MachO::ARM64_RELOCATION
-  //!   * MachO::REBASE_TYPES
+  /// Type of the relocation according to the
+  /// Relocation::architecture and/or the Relocation::origin
+  ///
+  /// See:
+  ///   * MachO::X86_RELOCATION
+  ///   * MachO::X86_64_RELOCATION
+  ///   * MachO::PPC_RELOCATION
+  ///   * MachO::ARM_RELOCATION
+  ///   * MachO::ARM64_RELOCATION
+  ///   * MachO::REBASE_TYPES
   virtual uint8_t type() const {
     return type_;
   }
 
-  //! Achitecture targeted by this relocation
+  /// Achitecture targeted by this relocation
   Header::CPU_TYPE architecture() const {
     return architecture_;
   }
 
-  //! Origin of the relocation
+  /// Origin of the relocation
   virtual ORIGIN origin() const = 0;
 
-  //! ``true`` if the relocation has a symbol associated with
+  /// ``true`` if the relocation has a symbol associated with
   bool has_symbol() const {
     return symbol() != nullptr;
   }
 
-  //! Symbol associated with the relocation, if any,
-  //! otherwise a nullptr.
+  /// Symbol associated with the relocation, if any,
+  /// otherwise a nullptr.
   Symbol* symbol() {
     return symbol_;
   }
@@ -109,13 +109,13 @@ class LIEF_API Relocation : public LIEF::Relocation {
     return symbol_;
   }
 
-  //! ``true`` if the relocation has a section associated with
+  /// ``true`` if the relocation has a section associated with
   bool has_section() const {
     return section() != nullptr;
   }
 
-  //! Section associated with the relocation, if any,
-  //! otherwise a nullptr.
+  /// Section associated with the relocation, if any,
+  /// otherwise a nullptr.
   Section* section() {
     return section_;
   }
@@ -123,13 +123,13 @@ class LIEF_API Relocation : public LIEF::Relocation {
     return section_;
   }
 
-  //! ``true`` if the relocation has a SegmentCommand associated with
+  /// ``true`` if the relocation has a SegmentCommand associated with
   bool has_segment() const {
     return segment() != nullptr;
   }
 
-  //! SegmentCommand associated with the relocation, if any,
-  //! otherwise a nullptr.
+  /// SegmentCommand associated with the relocation, if any,
+  /// otherwise a nullptr.
   SegmentCommand* segment() {
     return segment_;
   }

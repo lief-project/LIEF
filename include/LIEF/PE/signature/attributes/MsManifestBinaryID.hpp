@@ -23,15 +23,15 @@
 namespace LIEF {
 namespace PE {
 
-//! Interface over the structure described by the OID `1.3.6.1.4.1.311.10.3.28` (szOID_PLATFORM_MANIFEST_BINARY_ID)
-//!
-//! The internal structure is not documented but we can infer the following structure:
-//!
-//! ```text
-//! szOID_PLATFORM_MANIFEST_BINARY_ID ::= SET OF BinaryID
-//! ```
-//!
-//! `BinaryID` being an alias of UTF8STRING
+/// Interface over the structure described by the OID `1.3.6.1.4.1.311.10.3.28` (szOID_PLATFORM_MANIFEST_BINARY_ID)
+///
+/// The internal structure is not documented but we can infer the following structure:
+///
+/// ```text
+/// szOID_PLATFORM_MANIFEST_BINARY_ID ::= SET OF BinaryID
+/// ```
+///
+/// `BinaryID` being an alias of UTF8STRING
 class LIEF_API MsManifestBinaryID : public Attribute {
 
   friend class Parser;
@@ -47,12 +47,12 @@ class LIEF_API MsManifestBinaryID : public Attribute {
   MsManifestBinaryID(const MsManifestBinaryID&) = default;
   MsManifestBinaryID& operator=(const MsManifestBinaryID&) = default;
 
-  //! Print information about the attribute
+  /// Print information about the attribute
   std::string print() const override {
     return id_;
   }
 
-  //! The manifest id as a string
+  /// The manifest id as a string
   const std::string& manifest_id() const {
     return id_;
   }

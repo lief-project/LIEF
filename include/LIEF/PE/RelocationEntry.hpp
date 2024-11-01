@@ -30,9 +30,9 @@ namespace PE {
 
 class Relocation;
 
-//! Class which represents an entry of the PE relocation table
-//!
-//! It extends the LIEF::Relocation object to provide an uniform API across the file formats
+/// Class which represents an entry of the PE relocation table
+///
+/// It extends the LIEF::Relocation object to provide an uniform API across the file formats
 class LIEF_API RelocationEntry : public LIEF::Relocation {
 
   friend class Parser;
@@ -82,27 +82,27 @@ class LIEF_API RelocationEntry : public LIEF::Relocation {
 
   void swap(RelocationEntry& other);
 
-  //! The address of the relocation
+  /// The address of the relocation
   uint64_t address() const override;
 
   void address(uint64_t address) override;
 
-  //! The size of the relocatable pointer
+  /// The size of the relocatable pointer
   size_t size() const override;
 
   void size(size_t size) override;
 
-  //! Raw data of the relocation:
-  //! - The **high** 4 bits store the relocation type
-  //! - The **low** 12 bits store the relocation offset
+  /// Raw data of the relocation:
+  /// - The **high** 4 bits store the relocation type
+  /// - The **low** 12 bits store the relocation offset
   uint16_t data() const;
 
-  //! Offset relative to Relocation::virtual_address where the relocation occurs.
+  /// Offset relative to Relocation::virtual_address where the relocation occurs.
   uint16_t position() const {
     return position_;
   }
 
-  //! Type of the relocation
+  /// Type of the relocation
   BASE_TYPES type() const {
     return type_;
   }

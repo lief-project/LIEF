@@ -29,9 +29,9 @@ template<class T>
 struct load_configuration;
 }
 
-//! Class that represents the default PE's ``LoadConfiguration``
-//!
-//! It's the base class for any future versions of the structure
+/// Class that represents the default PE's ``LoadConfiguration``
+///
+/// It's the base class for any future versions of the structure
 class LIEF_API LoadConfiguration : public Object {
   public:
   enum class VERSION {
@@ -60,126 +60,126 @@ class LIEF_API LoadConfiguration : public Object {
   LoadConfiguration& operator=(const LoadConfiguration&) = default;
   LoadConfiguration(const LoadConfiguration&) = default;
 
-  //! (SDK) Version of the structure
+  /// (SDK) Version of the structure
   virtual VERSION version() const {
     return WIN_VERSION;
   }
 
-  //! Characteristics of the structure
-  //! It usually holds its size
-  //!
-  //! @see @link version LoadConfiguration::version@endlink
+  /// Characteristics of the structure
+  /// It usually holds its size
+  ///
+  /// @see @link version LoadConfiguration::version@endlink
   uint32_t characteristics() const {
     return characteristics_;
   }
 
-  //! Size of the current structure which is an alias for characteristics
+  /// Size of the current structure which is an alias for characteristics
   uint32_t size() const {
     return characteristics_;
   }
 
-  //! Date and time stamp value
+  /// Date and time stamp value
   uint32_t timedatestamp() const {
     return timedatestamp_;
   }
 
-  //! Major Version
+  /// Major Version
   uint16_t major_version() const {
     return major_version_;
   }
 
-  //! Minor version
+  /// Minor version
   uint16_t minor_version() const {
     return minor_version_;
   }
 
-  //! The global loader flags to clear for
-  //! this process as the loader start the process.
+  /// The global loader flags to clear for
+  /// this process as the loader start the process.
   uint32_t global_flags_clear() const {
     return global_flags_clear_;
   }
 
-  //! The global loader flags to set for
-  //! this process as the loader starts the process.
+  /// The global loader flags to set for
+  /// this process as the loader starts the process.
   uint32_t global_flags_set() const {
     return global_flags_set_;
   }
 
-  //! The default timeout value to use for
-  //! this process’s critical sections that are abandoned.
+  /// The default timeout value to use for
+  /// this process’s critical sections that are abandoned.
   uint32_t critical_section_default_timeout() const {
     return critical_section_default_timeout_;
   }
 
-  //! Memory that must be freed before
-  //! it is returned to the system, in bytes.
+  /// Memory that must be freed before
+  /// it is returned to the system, in bytes.
   uint64_t decommit_free_block_threshold() const {
     return decommit_free_block_threshold_;
   }
 
-  //! Total amount of free memory, in
-  //! bytes.
+  /// Total amount of free memory, in
+  /// bytes.
   uint64_t decommit_total_free_threshold() const {
     return decommit_total_free_threshold_;
   }
 
-  //! The VA of a list of
-  //! addresses where the LOCK prefix
-  //! is used so that they can be replaced with NOP on single
-  //! processor machines.
-  //!
-  //! @warning For ``x86`` only
+  /// The VA of a list of
+  /// addresses where the LOCK prefix
+  /// is used so that they can be replaced with NOP on single
+  /// processor machines.
+  ///
+  /// @warning For ``x86`` only
   uint64_t lock_prefix_table() const {
     return lock_prefix_table_;
   }
 
-  //! Maximum allocation size, in bytes.
+  /// Maximum allocation size, in bytes.
   uint64_t maximum_allocation_size() const {
     return maximum_allocation_size_;
   }
 
-  //! Maximum virtual memory size, in bytes.
+  /// Maximum virtual memory size, in bytes.
   uint64_t virtual_memory_threshold() const {
     return virtual_memory_threshold_;
   }
 
-  //! Setting this field to a non-zero value is equivalent to calling
-  //! ``SetProcessAffinityMask`` with this value during process startup (.exe only)
+  /// Setting this field to a non-zero value is equivalent to calling
+  /// ``SetProcessAffinityMask`` with this value during process startup (.exe only)
   uint64_t process_affinity_mask() const {
     return process_affinity_mask_;
   }
 
-  //! Process heap flags that correspond to the first argument of the
-  //! ``HeapCreate`` function. These flags apply to the process heap that is
-  //! created during process startup.
+  /// Process heap flags that correspond to the first argument of the
+  /// ``HeapCreate`` function. These flags apply to the process heap that is
+  /// created during process startup.
   uint32_t process_heap_flags() const {
     return process_heap_flags_;
   }
 
-  //! The service pack version identifier.
+  /// The service pack version identifier.
   uint16_t csd_version() const {
     return csd_version_;
   }
 
-  //! Must be zero.
+  /// Must be zero.
   uint16_t reserved1() const {
     return reserved1_;
   }
 
-  //! Alias for reserved1.
-  //!
-  //! On recent the version of the structure, Microsoft renamed reserved1 to DependentLoadFlags
+  /// Alias for reserved1.
+  ///
+  /// On recent the version of the structure, Microsoft renamed reserved1 to DependentLoadFlags
   uint16_t dependent_load_flags() const {
     return reserved1_;
   }
 
-  //! Reserved for use by the system.
+  /// Reserved for use by the system.
   uint32_t editlist() const {
     return editlist_;
   }
 
-  //! A pointer to a cookie that is used by Visual C++ or GS
-  //! implementation.
+  /// A pointer to a cookie that is used by Visual C++ or GS
+  /// implementation.
   uint64_t security_cookie() const {
     return security_cookie_;
   }

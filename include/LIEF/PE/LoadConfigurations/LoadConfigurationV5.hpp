@@ -28,7 +28,7 @@ template<class T>
 struct load_configuration_v5;
 }
 
-//! @brief Load Configuration enhanced with Return Flow Guard
+/// Load Configuration enhanced with Return Flow Guard
 class LIEF_API LoadConfigurationV5 : public LoadConfigurationV4 {
   public:
   static constexpr VERSION WIN_VERSION = VERSION::WIN_10_0_14901;
@@ -44,27 +44,27 @@ class LIEF_API LoadConfigurationV5 : public LoadConfigurationV4 {
     return WIN_VERSION;
   }
 
-  //! @brief VA of the failure routine
+  /// VA of the failure routine
   uint64_t guard_rf_failure_routine() const {
     return guard_rf_failure_routine_;
   }
 
-  //! @brief VA of the failure routine ``fptr``.
+  /// VA of the failure routine ``fptr``.
   uint64_t guard_rf_failure_routine_function_pointer() const {
     return guard_rf_failure_routine_function_pointer_;
   }
 
-  //! @brief Offset of dynamic relocation table relative to the relocation table
+  /// Offset of dynamic relocation table relative to the relocation table
   uint32_t dynamic_value_reloctable_offset() const {
     return dynamic_value_reloctable_offset_;
   }
 
-  //! The section index of the dynamic value relocation table
+  /// The section index of the dynamic value relocation table
   uint16_t dynamic_value_reloctable_section() const {
     return dynamic_value_reloctable_section_;
   }
 
-  //! @brief Must be zero
+  /// Must be zero
   uint16_t reserved2() const {
     return reserved2_;
   }

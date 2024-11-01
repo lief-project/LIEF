@@ -32,7 +32,7 @@ class Parser;
 class Field;
 class Method;
 
-//! Class which represents a DEX Class (i.e. a Java/Kotlin class)
+/// Class which represents a DEX Class (i.e. a Java/Kotlin class)
 class LIEF_API Class : public Object {
   friend class Parser;
 
@@ -65,54 +65,54 @@ class LIEF_API Class : public Object {
   Class(std::string fullname, uint32_t access_flags = ACCESS_FLAGS::ACC_UNKNOWN,
         Class* parent = nullptr, std::string source_filename = "");
 
-  //! Mangled class name (e.g. ``Lcom/example/android/MyActivity;``)
+  /// Mangled class name (e.g. ``Lcom/example/android/MyActivity;``)
   const std::string& fullname() const;
 
-  //! Package Name
+  /// Package Name
   std::string package_name() const;
 
-  //! Class name
+  /// Class name
   std::string name() const;
 
-  //! Demangled class name
+  /// Demangled class name
   std::string pretty_name() const;
 
-  //! Check if the class has the given access flag
+  /// Check if the class has the given access flag
   bool has(ACCESS_FLAGS f) const;
 
-  //! Access flags used by this class
+  /// Access flags used by this class
   access_flags_list_t access_flags() const;
 
-  //! Filename associated with this class (if any)
+  /// Filename associated with this class (if any)
   const std::string& source_filename() const;
 
-  //! True if the current class extends another one
+  /// True if the current class extends another one
   bool has_parent() const;
 
-  //! Parent class
+  /// Parent class
   const Class* parent() const;
   Class* parent();
 
-  //! Methods implemented in this class
+  /// Methods implemented in this class
   it_const_methods methods() const;
   it_methods methods();
 
-  //! Return Methods having the given name
+  /// Return Methods having the given name
   it_named_methods methods(const std::string& name);
   it_const_named_methods methods(const std::string& name) const;
 
-  //! Fields implemented in this class
+  /// Fields implemented in this class
   it_const_fields fields() const;
   it_fields fields();
 
-  //! Return Fields having the given name
+  /// Return Fields having the given name
   it_named_fields fields(const std::string& name);
   it_const_named_fields fields(const std::string& name) const;
 
-  //! De-optimize information
+  /// De-optimize information
   dex2dex_class_info_t dex2dex_info() const;
 
-  //! Original index in the DEX class pool
+  /// Original index in the DEX class pool
   size_t index() const;
 
   void accept(Visitor& visitor) const override;

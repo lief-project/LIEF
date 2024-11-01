@@ -28,13 +28,13 @@ namespace PE {
 class Parser;
 class Builder;
 
-//! Class that represents an entry (i.e. an import) in the delay import table (DelayImport).
-//!
-//! It extends the LIEF::Symbol generic class that exposes the LIEF::Symbol::name and
-//! LIEF::Symbol::value API.
-//!
-//! The meaning of LIEF::Symbol::value for this PE object is the address (as an RVA) in the IAT
-//! where the resolution should take place.
+/// Class that represents an entry (i.e. an import) in the delay import table (DelayImport).
+///
+/// It extends the LIEF::Symbol generic class that exposes the LIEF::Symbol::name and
+/// LIEF::Symbol::value API.
+///
+/// The meaning of LIEF::Symbol::value for this PE object is the address (as an RVA) in the IAT
+/// where the resolution should take place.
 class LIEF_API DelayImportEntry : public LIEF::Symbol {
   friend class Parser;
   friend class Builder;
@@ -54,36 +54,36 @@ class LIEF_API DelayImportEntry : public LIEF::Symbol {
 
   ~DelayImportEntry() override = default;
 
-  //! Demangled representation of the symbol or an empty string if it can't
-  //! be demangled
+  /// Demangled representation of the symbol or an empty string if it can't
+  /// be demangled
   std::string demangled_name() const;
 
-  //! `True` if it is an import by ordinal
+  /// `True` if it is an import by ordinal
   bool is_ordinal() const;
 
-  //! The ordinal value
+  /// The ordinal value
   uint16_t ordinal() const {
     static constexpr auto MASK = 0xFFFF;
     return data_ & MASK;
   }
 
-  //! @see DelayImportEntry::data
+  /// @see DelayImportEntry::data
   uint64_t hint_name_rva() const {
     return data();
   }
 
-  //! Index into the Export::entries that is used to speed-up
-  //! the symbol resolution.
+  /// Index into the Export::entries that is used to speed-up
+  /// the symbol resolution.
   uint16_t hint() const {
     return hint_;
   }
 
-  //! Value of the current entry in the Import Address Table.
+  /// Value of the current entry in the Import Address Table.
   uint64_t iat_value() const {
     return iat_value_;
   }
 
-  //! Raw value
+  /// Raw value
   uint64_t data() const {
     return data_;
   }

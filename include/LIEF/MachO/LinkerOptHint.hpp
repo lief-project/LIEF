@@ -33,7 +33,7 @@ namespace details {
 struct linkedit_data_command;
 }
 
-//! Class which represents the `LC_LINKER_OPTIMIZATION_HINT` command
+/// Class which represents the `LC_LINKER_OPTIMIZATION_HINT` command
 class LIEF_API LinkerOptHint : public LoadCommand {
   friend class BinaryParser;
   friend class Builder;
@@ -50,12 +50,12 @@ class LIEF_API LinkerOptHint : public LoadCommand {
     return std::unique_ptr<LinkerOptHint>(new LinkerOptHint(*this));
   }
 
-  //! Offset in the binary where the *hint* starts
+  /// Offset in the binary where the *hint* starts
   uint32_t data_offset() const {
     return data_offset_;
   }
 
-  //! Size of the payload
+  /// Size of the payload
   uint32_t data_size() const {
     return data_size_;
   }

@@ -24,7 +24,7 @@
 #include "LIEF/DEX/types.hpp"
 
 namespace LIEF {
-//! @brief Namespace related to the LIEF's DEX module
+/// Namespace related to the LIEF's DEX module
 namespace DEX {
 
 namespace details {

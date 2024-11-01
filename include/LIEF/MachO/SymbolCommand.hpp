@@ -31,7 +31,7 @@ namespace details {
 struct symtab_command;
 }
 
-//! Class that represents the LC_SYMTAB command
+/// Class that represents the LC_SYMTAB command
 class LIEF_API SymbolCommand : public LoadCommand {
   friend class BinaryParser;
   friend class LinkEdit;
@@ -49,22 +49,22 @@ class LIEF_API SymbolCommand : public LoadCommand {
 
   ~SymbolCommand() override = default;
 
-  //! Offset from the start of the file to the n_list associated with the command
+  /// Offset from the start of the file to the n_list associated with the command
   uint32_t symbol_offset() const {
     return symbols_offset_;
   }
 
-  //! Number of symbols registered
+  /// Number of symbols registered
   uint32_t numberof_symbols() const {
     return nb_symbols_;
   }
 
-  //! Offset from the start of the file to the string table
+  /// Offset from the start of the file to the string table
   uint32_t strings_offset() const {
     return strings_offset_;
   }
 
-  //! Size of the size string table
+  /// Size of the size string table
   uint32_t strings_size() const {
     return strings_size_;
   }

@@ -30,13 +30,13 @@ namespace details {
 struct dylib_command;
 }
 
-//! Class which represents a library dependency
+/// Class which represents a library dependency
 class LIEF_API DylibCommand : public LoadCommand {
   public:
   using version_t = std::array<uint16_t, 3>;
 
   public:
-  //! Helper to convert an integer into a version array
+  /// Helper to convert an integer into a version array
   static version_t int2version(uint32_t version) {
     return {{
       static_cast<uint16_t>(version >> 16),
@@ -45,42 +45,42 @@ class LIEF_API DylibCommand : public LoadCommand {
     }};
   }
 
-  //! Helper to convert a version array into an integer
+  /// Helper to convert a version array into an integer
   static uint32_t version2int(version_t version) {
     return (version[2]) | (version[1] << 8) | (version[0] << 16);
   }
 
-  //! Factory function to generate a LC_LOAD_WEAK_DYLIB library
+  /// Factory function to generate a LC_LOAD_WEAK_DYLIB library
   static DylibCommand weak_dylib(const std::string& name,
       uint32_t timestamp = 0,
       uint32_t current_version = 0,
       uint32_t compat_version = 0);
 
-  //! Factory function to generate a LC_ID_DYLIB library
+  /// Factory function to generate a LC_ID_DYLIB library
   static DylibCommand id_dylib(const std::string& name,
       uint32_t timestamp = 0,
       uint32_t current_version = 0,
       uint32_t compat_version = 0);
 
-  //! Factory function to generate a LC_LOAD_DYLIB library
+  /// Factory function to generate a LC_LOAD_DYLIB library
   static DylibCommand load_dylib(const std::string& name,
       uint32_t timestamp = 2,
       uint32_t current_version = 0,
       uint32_t compat_version = 0);
 
-  //! Factory function to generate a LC_REEXPORT_DYLIB library
+  /// Factory function to generate a LC_REEXPORT_DYLIB library
   static DylibCommand reexport_dylib(const std::string& name,
       uint32_t timestamp = 0,
       uint32_t current_version = 0,
       uint32_t compat_version = 0);
 
-  //! Factory function to generate a LC_LOAD_UPWARD_DYLIB library
+  /// Factory function to generate a LC_LOAD_UPWARD_DYLIB library
   static DylibCommand load_upward_dylib(const std::string& name,
       uint32_t timestamp = 0,
       uint32_t current_version = 0,
       uint32_t compat_version = 0);
 
-  //! Factory function to generate a LC_LAZY_LOAD_DYLIB library
+  /// Factory function to generate a LC_LAZY_LOAD_DYLIB library
   static DylibCommand lazy_load_dylib(const std::string& name,
       uint32_t timestamp = 0,
       uint32_t current_version = 0,
@@ -99,22 +99,22 @@ class LIEF_API DylibCommand : public LoadCommand {
     return std::unique_ptr<DylibCommand>(new DylibCommand(*this));
   }
 
-  //! Library name
+  /// Library name
   const std::string& name() const {
     return name_;
   }
 
-  //! Date and Time when the shared library was built
+  /// Date and Time when the shared library was built
   uint32_t timestamp() const {
     return timestamp_;
   }
 
-  //! Current version of the shared library
+  /// Current version of the shared library
   version_t current_version() const {
     return int2version(current_version_);
   }
 
-  //! Compatibility version of the shared library
+  /// Compatibility version of the shared library
   version_t compatibility_version() const {
     return int2version(compatibility_version_);
   }

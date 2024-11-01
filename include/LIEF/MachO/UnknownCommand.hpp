@@ -28,7 +28,7 @@ struct load_command;
 }
 
 
-//! Generic class when the command is not recognized by LIEF
+/// Generic class when the command is not recognized by LIEF
 class LIEF_API UnknownCommand : public LoadCommand {
 
   public:
