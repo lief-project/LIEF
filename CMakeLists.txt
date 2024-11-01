@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
+project(LIEF LANGUAGES C CXX)
+
 enable_language(C)
 enable_language(CXX)
 
