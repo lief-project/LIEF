@@ -91,6 +91,8 @@
     Before, they require at least Debian 11 & Ubuntu 20.04
   * Add support for the ``x86_64-unknown-linux-musl`` target which allows to
     generate full static executable.
+  * Add :rust:enum:`lief::elf::header::Arch`
+  * Add :rust:struct:`lief::elf::dynamic::Flags`
 
 :ObjC:
 

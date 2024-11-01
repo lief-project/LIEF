@@ -148,6 +148,9 @@ fn explore_elf(name: &str, elf: &lief::elf::Binary) {
             dynamic::Entries::SharedObject(shared) => {
                 format!("{:?}: {}", shared.tag(), shared.name());
             }
+            dynamic::Entries::Flags(flags) => {
+                format!("{:?}: {:?}", flags.tag(), flags.flags());
+            }
         }
     }
 

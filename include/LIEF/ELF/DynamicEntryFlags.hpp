@@ -18,6 +18,7 @@
 
 #include <vector>
 #include <ostream>
+#include <numeric>
 
 #include "LIEF/visibility.h"
 #include "LIEF/ELF/DynamicEntry.hpp"
@@ -94,6 +95,15 @@ class LIEF_API DynamicEntryFlags : public DynamicEntry {
 
   //! Return flags as a list of integers
   flags_list_t flags() const;
+
+  uint64_t raw_flags() const {
+    flags_list_t flags = this->flags();
+    return std::accumulate(flags.begin(), flags.end(), uint64_t(0),
+      [] (uint64_t value, FLAG f) {
+        return value + (uint64_t)f;
+      }
+    );
+  }
 
   //! Add the given FLAG
   void add(FLAG f);

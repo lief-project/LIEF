@@ -1,6 +1,8 @@
 use std::marker::PhantomData;
 
 use lief_ffi as ffi;
+use bitflags::bitflags;
+
 use crate::common::FromFFI;
 use crate::declare_iterator;
 
@@ -411,6 +413,9 @@ pub enum Entries<'a> {
     /// Entry for `DT_SONAME`
     SharedObject(SharedObject<'a>),
 
+    /// Entry for `DT_FLAGS` and `DT_FLAGS_1`
+    Flags(Flags<'a>),
+
     /// Generic value
     Generic(Generic<'a>),
 }
@@ -451,6 +456,10 @@ impl DynamicEntry for Entries<'_> {
             }
 
             Entries::SharedObject(entry) => {
+                entry.as_base()
+            }
+
+            Entries::Flags(entry) => {
                 entry.as_base()
             }
 
@@ -506,6 +515,14 @@ impl FromFFI<ffi::ELF_DynamicEntry> for Entries<'_> {
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Entries::SharedObject(SharedObject::from_ffi(raw))
+            }
+            else if ffi::ELF_DynamicEntryFlags::classof(cmd_ref) {
+                let raw = {
+                    type From = cxx::UniquePtr<ffi::ELF_DynamicEntry>;
+                    type To   = cxx::UniquePtr<ffi::ELF_DynamicEntryFlags>;
+                    std::mem::transmute::<From, To>(ffi_entry)
+                };
+                Entries::Flags(Flags::from_ffi(raw))
             }
             else {
                 Entries::Generic(Generic::from_ffi(ffi_entry))
@@ -700,7 +717,6 @@ impl FromFFI<ffi::ELF_DynamicSharedObject> for SharedObject<'_> {
     }
 }
 
-
 impl DynamicEntry for SharedObject<'_> {
     fn as_base(&self) -> &ffi::ELF_DynamicEntry {
         self.ptr.as_ref().unwrap().as_ref()
@@ -710,6 +726,98 @@ impl DynamicEntry for SharedObject<'_> {
 impl std::fmt::Debug for SharedObject<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("SharedObject").finish()
+    }
+}
+
+/// Structure that represents a dynamic flag entry: `DT_FLAGS` or `DT_FLAGS_1`
+pub struct Flags<'a> {
+    ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryFlags>,
+    _owner: PhantomData<&'a ffi::ELF_Binary>
+}
+
+impl Flags<'_> {
+    pub fn flags(&self) -> DtFlags {
+        DtFlags::from(self.ptr.flags())
+    }
+}
+
+impl FromFFI<ffi::ELF_DynamicEntryFlags> for Flags<'_> {
+    fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryFlags>) -> Self {
+        Self {
+            ptr,
+            _owner: PhantomData
+        }
+    }
+}
+
+impl DynamicEntry for Flags<'_> {
+    fn as_base(&self) -> &ffi::ELF_DynamicEntry {
+        self.ptr.as_ref().unwrap().as_ref()
+    }
+}
+
+impl std::fmt::Debug for Flags<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Flags").finish()
+    }
+}
+
+
+bitflags! {
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+    pub struct DtFlags: u64 {
+        const ORIGIN = 0x1;
+        const SYMBOLIC = 0x2;
+        const TEXTREL = 0x4;
+        const BIND_NOW = 0x8;
+        const STATIC_TLS = 0x10;
+        const NOW = 0x100000001;
+        const GLOBAL = 0x100000002;
+        const GROUP = 0x100000004;
+        const NODELETE = 0x100000008;
+        const LOADFLTR = 0x100000010;
+        const INITFIRST = 0x100000020;
+        const NOOPEN = 0x100000040;
+        const HANDLE_ORIGIN = 0x100000080;
+        const DIRECT = 0x100000100;
+        const TRANS = 0x100000200;
+        const INTERPOSE = 0x100000400;
+        const NODEFLIB = 0x100000800;
+        const NODUMP = 0x100001000;
+        const CONFALT = 0x100002000;
+        const ENDFILTEE = 0x100004000;
+        const DISPRELDNE = 0x100008000;
+        const DISPRELPND = 0x100010000;
+        const NODIRECT = 0x100020000;
+        const IGNMULDEF = 0x100040000;
+        const NOKSYMS = 0x100080000;
+        const NOHDR = 0x100100000;
+        const EDITED = 0x100200000;
+        const NORELOC = 0x100400000;
+        const SYMINTPOSE = 0x100800000;
+        const GLOBAUDIT = 0x101000000;
+        const SINGLETON = 0x102000000;
+        const PIE = 0x108000000;
+        const KMOD = 0x110000000;
+        const WEAKFILTER = 0x120000000;
+        const NOCOMMON = 0x140000000;
+    }
+}
+
+
+impl From<u64> for DtFlags {
+    fn from(value: u64) -> Self {
+        DtFlags::from_bits_truncate(value)
+    }
+}
+impl From<DtFlags> for u64 {
+    fn from(value: DtFlags) -> Self {
+        value.bits()
+    }
+}
+impl std::fmt::Display for DtFlags {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        bitflags::parser::to_writer(self, f)
     }
 }
 
