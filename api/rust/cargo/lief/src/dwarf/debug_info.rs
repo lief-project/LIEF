@@ -10,7 +10,7 @@ use crate::dwarf::types::Type;
 use super::compilation_unit::CompilationUnits;
 
 /// This class represents a DWARF debug information. It can embed different
-/// compilation units which can be accessed through compilation_units() .
+/// compilation units which can be accessed through [`DebugInfo::compilation_units`].
 ///
 /// This class can be instantiated from [`crate::generic::Binary::debug_info`] or using the
 /// function [`crate::dwarf::load`]

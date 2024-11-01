@@ -1,3 +1,20 @@
+//! Module for processing PDB file
+//!
+//! This module exposes an API similar to the [`crate::dwarf`] module to process PDB
+//! files.
+//!
+//! One can instantiate a [`crate::pdb::DebugInfo`] using either [`crate::generic::Binary::debug_info`] or
+//! [`crate::pdb::load`].
+//!
+//! ```
+//! fn read_pdb(file: &str) {
+//!     let pdb = lief::pdb::load(file).unwrap();
+//!     for symbol in pdb.public_symbols() {
+//!         println!("name: {}", symbol.name());
+//!     }
+//! }
+//! ```
+
 use lief_ffi as ffi;
 
 use crate::common::into_optional;

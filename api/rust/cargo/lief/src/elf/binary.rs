@@ -66,9 +66,12 @@ impl FromFFI<ffi::ELF_Binary> for Binary {
 
 impl Binary {
     /// Create a [`Binary`] from the given file path
-    pub fn parse(path: &str) -> Self {
+    pub fn parse(path: &str) -> Option<Self> {
         let bin = ffi::ELF_Binary::parse(path);
-        Binary::from_ffi(bin)
+        if bin.is_null() {
+            return None;
+        }
+        Some(Binary::from_ffi(bin))
     }
 
     /// Return the main ELF header

@@ -139,7 +139,7 @@ pub trait Binary {
     /// info.
     ///
     /// <div class="warning">
-    /// This function requires LIEF's extended version otherwise it **always** return `None`
+    /// This function requires LIEF's extended version otherwise it always return `None`
     /// </div>
     fn debug_info(&self) -> Option<crate::DebugInfo> {
         into_optional(self.as_generic().debug_info())

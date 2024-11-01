@@ -1,3 +1,15 @@
+//! Module for the PE file format support in LIEF.
+//!
+//! The [`Binary`] structure exposes the main API to inspect a PE file. It can be instantiated,
+//! using either: [`crate::pe::parse`], [`crate::pe::Binary::parse`] or [`crate::Binary::parse`]
+//!
+//! ```
+//! let pe = lief::elf::parse("demo.exe").unwrap();
+//! for section in elf.sections() {
+//!     println!("section: {}", section.name());
+//! }
+//! ```
+
 pub mod binary;
 pub mod data_directory;
 pub mod debug;
@@ -121,4 +133,9 @@ impl From<Algorithms> for u32 {
 
         }
     }
+}
+
+/// Parse a PE file from the given file path
+pub fn parse(path: &str) -> Option<Binary> {
+    Binary::parse(path)
 }

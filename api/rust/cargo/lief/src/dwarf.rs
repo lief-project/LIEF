@@ -1,3 +1,28 @@
+//! Module for processing DWARF debug info
+//!
+//! This module exposes an API similar to the [`crate::pdb`] module to process DWARF
+//! debug info (embedded or not).
+//!
+//! One can instantiate a [`crate::dwarf::DebugInfo`] using either [`crate::generic::Binary::debug_info`] or
+//! [`crate::dwarf::load`] for external DWARF files.
+//!
+//! ```
+//! fn from_binary(elf: &lief::elf::Binary) {
+//!     if let Some(lief::DebugInfo::Dwarf(dwarf)) = elf.debug_info() {
+//!         for complilation_unit in dwarf.compilation_units() {
+//!             println!("{}", complilation_unit.name());
+//!         }
+//!     }
+//! }
+//!
+//! fn from_external(dwarf_file: &str) {
+//!     let debug_info = lief::dwarf::load(dwarf_file).unwrap();
+//!     for complilation_unit in debug_info.compilation_units() {
+//!         println!("{}", complilation_unit.name());
+//!     }
+//! }
+//! ```
+
 use lief_ffi as ffi;
 
 pub mod debug_info;

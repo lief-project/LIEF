@@ -52,9 +52,12 @@ impl FromFFI<ffi::PE_Binary> for Binary {
 
 impl Binary {
     /// Parse from a file path given as a string
-    pub fn parse(path: &str) -> Self {
-        let bin = ffi::PE_Binary::parse(path);
-        Self { ptr: bin }
+    pub fn parse(path: &str) -> Option<Self> {
+        let ffi = ffi::PE_Binary::parse(path);
+        if ffi.is_null() {
+            return None;
+        }
+        Some(Binary::from_ffi(ffi))
     }
 
     /// DosHeader which starts the PE files

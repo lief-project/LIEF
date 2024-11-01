@@ -245,7 +245,7 @@ fn test_api() {
         return;
     }
 
-    let elf = lief::elf::Binary::parse("/bin/ls");
+    let elf = lief::elf::Binary::parse("/bin/ls").unwrap();
     if let Some(lief::DebugInfo::Dwarf(dwarf)) = elf.debug_info() {
 
     }

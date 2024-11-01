@@ -1,3 +1,15 @@
+//! Module for the ELF file format support in LIEF.
+//!
+//! The [`Binary`] structure exposes the main API to inspect an ELF file. It can be instantiated,
+//! using either: [`crate::elf::parse`], [`crate::elf::Binary::parse`] or [`crate::Binary::parse`]
+//!
+//! ```
+//! let elf = lief::elf::parse("/bin/ls").unwrap();
+//! for section in elf.sections() {
+//!     println!("section: {}", section.name());
+//! }
+//! ```
+
 pub mod binary;
 pub mod dynamic;
 pub mod hash;
@@ -44,3 +56,8 @@ pub use symbol_versioning::{
     SymbolVersion, SymbolVersionAux, SymbolVersionAuxRequirement, SymbolVersionDefinition,
     SymbolVersionRequirement,
 };
+
+/// Parse an ELF file from the given file path
+pub fn parse(path: &str) -> Option<Binary> {
+    Binary::parse(path)
+}

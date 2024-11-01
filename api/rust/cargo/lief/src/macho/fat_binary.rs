@@ -34,12 +34,12 @@ pub struct FatBinaryIterator<'a> {
 
 impl FatBinary {
     /// Create a FatBinary from the given Mach-O path.
-    pub fn parse(path: &str) -> FatBinary {
-        let bin = ffi::MachO_FatBinary::parse(path);
-        FatBinary {
-            nb_macho: bin.size(),
-            ptr: bin,
+    pub fn parse(path: &str) -> Option<Self> {
+        let ffi = ffi::MachO_FatBinary::parse(path);
+        if ffi.is_null() {
+            return None;
         }
+        Some(FatBinary::from_ffi(ffi))
     }
 
     /// Iterator over the [`crate::macho::Binary`]

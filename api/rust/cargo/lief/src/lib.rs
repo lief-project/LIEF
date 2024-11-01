@@ -61,22 +61,17 @@
 
 #![doc(html_no_source)]
 
-/// Module for the ELF format
 pub mod elf;
 
 /// Executable formats generic traits (LIEF's abstract layer)
 pub mod generic;
 
-/// Module for the Mach-O format
 pub mod macho;
 
-/// Module for the PE format
 pub mod pe;
 
-/// Module for PDB debug info
 pub mod pdb;
 
-/// Module for DWARF debug info
 pub mod dwarf;
 
 pub mod objc;

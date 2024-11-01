@@ -24,13 +24,22 @@ impl Binary {
     /// ```
     pub fn parse(path: &str) -> Option<Binary> {
         if ffi::ELF_Utils::is_elf(path) {
-            return Some(Binary::ELF(elf::Binary::parse(path)));
+            if let Some(elf) = elf::Binary::parse(path) {
+                return Some(Binary::ELF(elf));
+            }
+            return None;
         }
         if ffi::PE_Utils::is_pe(path) {
-            return Some(Binary::PE(pe::Binary::parse(path)));
+            if let Some(pe) = pe::Binary::parse(path) {
+                return Some(Binary::PE(pe));
+            }
+            return None;
         }
         if ffi::MachO_Utils::is_macho(path) {
-            return Some(Binary::MachO(macho::FatBinary::parse(path)));
+            if let Some(fat) = macho::FatBinary::parse(path) {
+                return Some(Binary::MachO(fat));
+            }
+            return None;
         }
         None
     }

@@ -7,8 +7,7 @@
 //!
 //! ```
 //! fn inspect_objc(macho: &lief::macho::Binary) {
-//!     let metadata: lief::objc::Metadata = macho.objc_metadata()
-//!                                               .expect("Can't access metadata");
+//!     let metadata: lief::objc::Metadata = macho.objc_metadata().expect("Can't access metadata");
 //!     for class in metadata.classes() {
 //!         println!("{}", class.to_decl());
 //!     }
