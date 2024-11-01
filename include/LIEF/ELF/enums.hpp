@@ -204,7 +204,8 @@ enum class ARCH {
   CSR_KALIMBA   = 219, /**< CSR Kalimba architecture family */
   AMDGPU        = 224, /**< AMD GPU architecture */
   RISCV         = 243, /**< RISC-V */
-  BPF           = 247,  /**< eBPF Filter */
+  BPF           = 247, /**< eBPF Filter */
+  CSKY          = 252, /**< C-SKY */
   LOONGARCH     = 258  /**< LoongArch */
 };
 

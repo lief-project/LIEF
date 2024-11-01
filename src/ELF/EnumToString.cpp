@@ -199,6 +199,7 @@ const char* to_string(ARCH e) {
     ENTRY(AMDGPU),
     ENTRY(RISCV),
     ENTRY(BPF),
+    ENTRY(CSKY),
     ENTRY(LOONGARCH),
   };
   #undef ENTRY

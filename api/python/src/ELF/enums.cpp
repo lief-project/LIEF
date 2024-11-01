@@ -199,6 +199,7 @@ void init_enums(nb::module_& m) {
     ENTRY(AMDGPU)
     ENTRY(RISCV)
     ENTRY(BPF)
+    ENTRY(CSKY)
     ENTRY(LOONGARCH)
   ;
   #undef ENTRY
