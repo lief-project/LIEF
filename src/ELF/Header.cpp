@@ -35,6 +35,7 @@ static constexpr uint64_t MIPS_ABI_MASK      = 0x0000f000U;
 static constexpr uint64_t MIPS_MACH_MASK     = 0x00ff0000U;
 static constexpr uint64_t MIPS_ARCH_ASE_MASK = 0x0f000000U;
 static constexpr uint64_t MIPS_ARCH_MASK     = 0xf0000000U;
+static constexpr uint64_t RISCV_FLOAT_ABI_MASK = 0x0006; // EF_RISCV_FLOAT_ABI
 
 static constexpr auto PFLAGS_LIST = {
   PROCESSOR_FLAGS::ARM_EABI_UNKNOWN, PROCESSOR_FLAGS::ARM_SOFT_FLOAT,
@@ -69,6 +70,14 @@ static constexpr auto PFLAGS_LIST = {
   PROCESSOR_FLAGS::MIPS_ARCH_64, PROCESSOR_FLAGS::MIPS_ARCH_32R2,
   PROCESSOR_FLAGS::MIPS_ARCH_64R2, PROCESSOR_FLAGS::MIPS_ARCH_32R6,
   PROCESSOR_FLAGS::MIPS_ARCH_64R6,
+  PROCESSOR_FLAGS::RISCV_RVC,
+  PROCESSOR_FLAGS::RISCV_FLOAT_ABI_SOFT,
+  PROCESSOR_FLAGS::RISCV_FLOAT_ABI_SINGLE,
+  PROCESSOR_FLAGS::RISCV_FLOAT_ABI_DOUBLE,
+  PROCESSOR_FLAGS::RISCV_FLOAT_ABI_QUAD,
+  PROCESSOR_FLAGS::RISCV_FLOAT_ABI_RVE,
+  PROCESSOR_FLAGS::RISCV_FLOAT_ABI_TSO,
+
 };
 
 template<class T>
@@ -130,6 +139,25 @@ bool Header::has(PROCESSOR_FLAGS flag) const {
     }
 
     return false;
+  }
+
+
+  if (ID == PF_RISCV_ID) {
+    if (arch != ARCH::RISCV) {
+      return false;
+    }
+
+    switch (flag) {
+      case PROCESSOR_FLAGS::RISCV_FLOAT_ABI_SOFT:
+      case PROCESSOR_FLAGS::RISCV_FLOAT_ABI_SINGLE:
+      case PROCESSOR_FLAGS::RISCV_FLOAT_ABI_DOUBLE:
+      case PROCESSOR_FLAGS::RISCV_FLOAT_ABI_QUAD:
+      case PROCESSOR_FLAGS::ARM_EABI_VER5:
+        return (processor_flag() & RISCV_FLOAT_ABI_MASK) == raw_flag;
+      default:
+        return (processor_flag() & raw_flag) != 0;
+    }
+
   }
 
   if (ID == PF_HEX_ID) {

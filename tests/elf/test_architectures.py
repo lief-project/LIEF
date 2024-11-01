@@ -29,12 +29,20 @@ def test_riscv64():
     assert len(riscv64.dynamic_symbols) == 439
     assert len(riscv64.dynamic_entries) == 29
 
+    assert riscv64.header.flags_list == [
+        lief.ELF.PROCESSOR_FLAGS.RISCV_RVC, lief.ELF.PROCESSOR_FLAGS.RISCV_FLOAT_ABI_DOUBLE
+    ]
+
 def test_riscv32():
     riscv32 = lief.ELF.parse(get_sample("ELF/elf_reader.riscv32.elf"))
     assert len(riscv32.segments) == 10
     assert len(riscv32.sections) == 30
     assert len(riscv32.dynamic_symbols) == 445
     assert len(riscv32.dynamic_entries) == 29
+
+    assert riscv32.header.flags_list == [
+        lief.ELF.PROCESSOR_FLAGS.RISCV_RVC, lief.ELF.PROCESSOR_FLAGS.RISCV_FLOAT_ABI_DOUBLE
+    ]
 
 def test_ppc64le():
     ppc64le = lief.ELF.parse(get_sample("ELF/elf_reader.ppc64le.elf"))

@@ -27,6 +27,7 @@ static constexpr uint64_t PF_ARM_ID = 1;
 static constexpr uint64_t PF_HEX_ID = 2;
 static constexpr uint64_t PF_LOONGARCH_ID = 3;
 static constexpr uint64_t PF_MIPS_ID = 4;
+static constexpr uint64_t PF_RISCV_ID = 5;
 
 enum class PROCESSOR_FLAGS : uint64_t {
   ARM_EABI_UNKNOWN = 0x00000000 | (PF_ARM_ID << PFLAGS_BIT),
@@ -105,6 +106,16 @@ enum class PROCESSOR_FLAGS : uint64_t {
   MIPS_ARCH_64R2     = 0x80000000 | (PF_MIPS_ID << PFLAGS_BIT), /* mips64r2, mips64r3, mips64r5 */
   MIPS_ARCH_32R6     = 0x90000000 | (PF_MIPS_ID << PFLAGS_BIT), /* mips32r6 */
   MIPS_ARCH_64R6     = 0xa0000000 | (PF_MIPS_ID << PFLAGS_BIT), /* mips64r6 */
+
+  RISCV_RVC              = 0x00000001 | (PF_RISCV_ID << PFLAGS_BIT),
+
+  RISCV_FLOAT_ABI_SOFT   = 0x00000000 | (PF_RISCV_ID << PFLAGS_BIT),
+  RISCV_FLOAT_ABI_SINGLE = 0x00000002 | (PF_RISCV_ID << PFLAGS_BIT),
+  RISCV_FLOAT_ABI_DOUBLE = 0x00000004 | (PF_RISCV_ID << PFLAGS_BIT),
+  RISCV_FLOAT_ABI_QUAD   = 0x00000006 | (PF_RISCV_ID << PFLAGS_BIT),
+
+  RISCV_FLOAT_ABI_RVE    = 0x00000008 | (PF_RISCV_ID << PFLAGS_BIT),
+  RISCV_FLOAT_ABI_TSO    = 0x00000010 | (PF_RISCV_ID << PFLAGS_BIT),
 };
 
 LIEF_API const char* to_string(PROCESSOR_FLAGS flag);
