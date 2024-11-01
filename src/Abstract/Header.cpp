@@ -24,6 +24,7 @@
 
 #include "frozen.hpp"
 #include "fmt_formatter.hpp"
+#include "logging.hpp"
 
 FMT_FORMATTER(LIEF::Header::MODES, LIEF::to_string);
 
@@ -184,7 +185,11 @@ Header Header::from(const PE::Binary& pe) {
 
 Header Header::from(const MachO::Binary& macho) {
   Header hdr;
-  hdr.entrypoint_ = macho.entrypoint();
+  {
+    logging::Scoped scope(logging::LEVEL::OFF);
+    // Disable the warning message
+    hdr.entrypoint_ = macho.entrypoint();
+  }
   const MachO::Header& macho_hdr = macho.header();
   const MachO::MACHO_TYPES magic = macho_hdr.magic();
   if (magic == MachO::MACHO_TYPES::MH_MAGIC_64 ||
