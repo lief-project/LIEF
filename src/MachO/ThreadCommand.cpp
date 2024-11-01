@@ -79,6 +79,25 @@ uint64_t ThreadCommand::pc() const {
         entry = reinterpret_cast<const details::arm_thread_state64_t*>(state_.data())->pc;
         break;
       }
+
+    case Header::CPU_TYPE::POWERPC:
+      {
+        if (state_.size() < sizeof(details::ppc_thread_state_t)) {
+          return entry;
+        }
+        entry = reinterpret_cast<const details::ppc_thread_state_t*>(state_.data())->srr0;
+        break;
+      }
+
+    case Header::CPU_TYPE::POWERPC64:
+      {
+        if (state_.size() < sizeof(details::ppc_thread_state64_t)) {
+          return entry;
+        }
+        entry = reinterpret_cast<const details::ppc_thread_state64_t*>(state_.data())->srr0;
+        break;
+      }
+
     default:
       {
         LIEF_ERR("Unknown architecture");

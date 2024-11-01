@@ -585,6 +585,32 @@ struct arm_thread_state64_t {
   uint32_t cpsr;  // cpsr
 };
 
+struct ppc_thread_state_t {
+  uint32_t srr0; /* Instruction address register (PC) */
+  uint32_t srr1; /* Machine state register (supervisor) */
+  uint32_t r[32];
+
+  uint32_t cr;  /* Condition register */
+  uint32_t xer; /* User's integer exception register */
+  uint32_t lr;  /* Link register */
+  uint32_t ctr; /* Count register */
+  uint32_t mq;  /* MQ register (601 only) */
+
+  uint32_t vrsave; /* Vector Save Register */
+};
+
+struct ppc_thread_state64_t {
+  uint64_t srr0;
+  uint64_t srr1;
+  uint64_t r[32];
+  uint32_t cr;
+  uint64_t xer;
+  uint64_t lr;
+  uint64_t ctr;
+  uint32_t vrsave;
+};
+
+
 struct code_directory {
   uint32_t version;
   uint32_t flags;

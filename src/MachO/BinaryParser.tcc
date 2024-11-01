@@ -517,6 +517,26 @@ ok_error_t BinaryParser::parse_load_commands() {
                 break;
               }
 
+            case Header::CPU_TYPE::POWERPC:
+              {
+                if (!stream_->peek_data(thread->state_, state_offset,
+                     sizeof(details::ppc_thread_state_t)))
+                {
+                  LIEF_ERR("Can't read the state data");
+                }
+                break;
+              }
+
+            case Header::CPU_TYPE::POWERPC64:
+              {
+                if (!stream_->peek_data(thread->state_, state_offset,
+                     sizeof(details::ppc_thread_state64_t)))
+                {
+                  LIEF_ERR("Can't read the state data");
+                }
+                break;
+              }
+
             default:
               {
                 static std::set<int32_t> ARCH_ERR;

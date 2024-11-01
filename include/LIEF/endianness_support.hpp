@@ -107,6 +107,8 @@ struct uuid_command;
 struct version_min_command;
 struct x86_thread_state64_t;
 struct x86_thread_state_t;
+struct ppc_thread_state_t;
+struct ppc_thread_state64_t;
 }
 }
 
@@ -214,6 +216,8 @@ LIEF_ENDIAN_SUPPORT(MachO::details::uuid_command);
 LIEF_ENDIAN_SUPPORT(MachO::details::version_min_command);
 LIEF_ENDIAN_SUPPORT(MachO::details::x86_thread_state64_t);
 LIEF_ENDIAN_SUPPORT(MachO::details::x86_thread_state_t);
+LIEF_ENDIAN_SUPPORT(MachO::details::ppc_thread_state64_t);
+LIEF_ENDIAN_SUPPORT(MachO::details::ppc_thread_state_t);
 #endif
 
 }
