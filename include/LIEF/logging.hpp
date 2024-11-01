@@ -80,6 +80,96 @@ LIEF_API void set_logger(std::shared_ptr<spdlog::logger> logger);
 
 LIEF_API void reset();
 
+inline void enable_debug() {
+  set_level(LEVEL::DEBUG);
+}
+
+inline void debug(const std::string& msg) {
+  log(LEVEL::DEBUG, msg);
+}
+
+inline void debug(const std::string& fmt, const std::vector<std::string>& args) {
+  log(LEVEL::DEBUG, fmt, args);
+}
+
+template <typename... Args>
+void debug(const std::string& fmt, const Args &... args) {
+  std::vector<std::string> vec_args;
+  vec_args.insert(vec_args.end(), { static_cast<decltype(vec_args)::value_type>(args)...});
+  return debug(fmt, vec_args);
+}
+
+// -----------------------------------------------------------------------------
+
+inline void info(const std::string& msg) {
+  log(LEVEL::INFO, msg);
+}
+
+inline void info(const std::string& fmt, const std::vector<std::string>& args) {
+  log(LEVEL::INFO, fmt, args);
+}
+
+template <typename... Args>
+void info(const std::string& fmt, const Args &... args) {
+  std::vector<std::string> vec_args;
+  vec_args.insert(vec_args.end(), { static_cast<decltype(vec_args)::value_type>(args)...});
+  return info(fmt, vec_args);
+}
+
+// -----------------------------------------------------------------------------
+
+inline void warn(const std::string& msg) {
+  log(LEVEL::WARN, msg);
+}
+
+inline void warn(const std::string& fmt, const std::vector<std::string>& args) {
+  log(LEVEL::WARN, fmt, args);
+}
+
+template <typename... Args>
+void warn(const std::string& fmt, const Args &... args) {
+  std::vector<std::string> vec_args;
+  vec_args.insert(vec_args.end(), { static_cast<decltype(vec_args)::value_type>(args)...});
+  return warn(fmt, vec_args);
+}
+
+// -----------------------------------------------------------------------------
+
+inline void err(const std::string& msg) {
+  log(LEVEL::ERR, msg);
+}
+
+inline void err(const std::string& fmt, const std::vector<std::string>& args) {
+  log(LEVEL::ERR, fmt, args);
+}
+
+template <typename... Args>
+void err(const std::string& fmt, const Args &... args) {
+  std::vector<std::string> vec_args;
+  vec_args.insert(vec_args.end(), { static_cast<decltype(vec_args)::value_type>(args)...});
+  return err(fmt, vec_args);
+}
+
+// -----------------------------------------------------------------------------
+
+inline void critical(const std::string& msg) {
+  log(LEVEL::CRITICAL, msg);
+}
+
+inline void critical(const std::string& fmt, const std::vector<std::string>& args) {
+  log(LEVEL::CRITICAL, fmt, args);
+}
+
+template <typename... Args>
+void critical(const std::string& fmt, const Args &... args) {
+  std::vector<std::string> vec_args;
+  vec_args.insert(vec_args.end(), { static_cast<decltype(vec_args)::value_type>(args)...});
+  return critical(fmt, vec_args);
+}
+
+// -----------------------------------------------------------------------------
+
+
 class Scoped {
   public:
   Scoped(const Scoped&) = delete;
@@ -106,6 +196,7 @@ class Scoped {
   private:
   LEVEL level_ = LEVEL::INFO;
 };
+
 
 }
 }

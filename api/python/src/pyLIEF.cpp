@@ -129,6 +129,29 @@ void init_logger(nb::module_& m) {
               "Log a message with the LIEF's logger"_doc,
               "level"_a, "msg"_a);
 
+  logging.def("debug",
+              static_cast<void(*)(const std::string&)>(&logging::debug),
+              "Log a :attr:`~.LEVEL.DEBUG` message"_doc, "msg"_a);
+
+  logging.def("info",
+              static_cast<void(*)(const std::string&)>(&logging::info),
+              "Log an :attr:`~.LEVEL.INFO` message"_doc, "msg"_a);
+
+  logging.def("warn",
+              static_cast<void(*)(const std::string&)>(&logging::warn),
+              "Log a :attr:`~.LEVEL.WARN` message"_doc, "msg"_a);
+
+  logging.def("err",
+              static_cast<void(*)(const std::string&)>(&logging::err),
+              "Log an :attr:`~.LEVEL.ERROR` message"_doc, "msg"_a);
+
+  logging.def("critical",
+              static_cast<void(*)(const std::string&)>(&logging::critical),
+              "Log an :attr:`~.LEVEL.CRITICAL` message"_doc, "msg"_a);
+
+  logging.def("enable_debug", &logging::enable_debug,
+              "Enable :attr:`~.LEVEL.DEBUG` log level"_doc);
+
   logging.def("reset", [] {
     logging::reset();
     init_python_sink();
