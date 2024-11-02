@@ -1516,6 +1516,8 @@ class ParserConfig:
 class RPathCommand(LoadCommand):
     path: str
     def __init__(self, *args, **kwargs) -> None: ...
+    @staticmethod
+    def create(path: str) -> Optional[lief.MachO.RPathCommand]: ...
 
 class Relocation(lief.Relocation):
     class ORIGIN:

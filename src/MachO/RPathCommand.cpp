@@ -13,15 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-
 #include "LIEF/Visitor.hpp"
+#include "LIEF/utils.hpp"
 
 #include "LIEF/MachO/RPathCommand.hpp"
 #include "MachO/Structures.hpp"
 
 namespace LIEF {
 namespace MachO {
+
+RPathCommand::RPathCommand(std::string path) :
+  LoadCommand::LoadCommand(LoadCommand::TYPE::RPATH, 0),
+  path_(std::move(path))
+{
+  size_ = align(sizeof(details::rpath_command) + path.size() + 1, sizeof(uint64_t));
+  original_data_.resize(size_);
+}
 
 RPathCommand::RPathCommand(const details::rpath_command& rpath) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(rpath.cmd), rpath.cmdsize}

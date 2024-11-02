@@ -16,6 +16,7 @@
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/unique_ptr.h>
 
 #include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
@@ -27,6 +28,11 @@ namespace LIEF::MachO::py {
 template<>
 void create<RPathCommand>(nb::module_& m) {
   nb::class_<RPathCommand, LoadCommand>(m, "RPathCommand")
+
+    .def_static("create", &RPathCommand::create,
+      R"doc(Create a new RPathCommand for the provided ``path``)doc"_doc,
+      "path"_a
+    )
 
     .def_prop_rw("path",
         nb::overload_cast<>(&RPathCommand::path, nb::const_),

@@ -36,6 +36,7 @@ struct rpath_command;
 class LIEF_API RPathCommand : public LoadCommand {
   public:
   RPathCommand() = default;
+  RPathCommand(std::string path);
   RPathCommand(const details::rpath_command& rpathCmd);
 
   RPathCommand& operator=(const RPathCommand& copy) = default;
@@ -43,6 +44,11 @@ class LIEF_API RPathCommand : public LoadCommand {
 
   std::unique_ptr<LoadCommand> clone() const override {
     return std::unique_ptr<RPathCommand>(new RPathCommand(*this));
+  }
+
+  /// Create a new RPath command for the provided `path`
+  static std::unique_ptr<RPathCommand> create(std::string path) {
+    return std::unique_ptr<RPathCommand>(new RPathCommand(std::move(path)));
   }
 
   ~RPathCommand() override = default;
