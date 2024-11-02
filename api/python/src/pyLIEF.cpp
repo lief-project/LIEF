@@ -39,6 +39,7 @@
 #include "PDB/init.hpp"
 #include "ObjC/init.hpp"
 #include "DyldSharedCache/init.hpp"
+#include "asm/init.hpp"
 
 #if defined(LIEF_ELF_SUPPORT)
   #include "ELF/init.hpp"
@@ -268,6 +269,7 @@ void init(nb::module_& m) {
   LIEF::pdb::py::init(m);
   LIEF::objc::py::init(m);
   LIEF::dsc::py::init(m);
+  LIEF::assembly::py::init(m);
 
 #if defined(LIEF_ELF_SUPPORT)
   LIEF::ELF::py::init(m);

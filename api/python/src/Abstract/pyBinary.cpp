@@ -36,6 +36,9 @@
 
 #include "LIEF/Abstract/DebugInfo.hpp"
 
+#include "LIEF/asm/Engine.hpp"
+#include "LIEF/asm/Instruction.hpp"
+
 namespace LIEF::py {
 template<>
 void create<Binary>(nb::module_& m) {
@@ -287,6 +290,84 @@ void create<Binary>(nb::module_& m) {
     .def_prop_ro("original_size",
         nb::overload_cast<>(&LIEF::Binary::original_size, nb::const_),
         "Original size of the binary"_doc)
+
+    .def("disassemble", [] (const Binary& self, uint64_t address) {
+          auto insts = self.disassemble(address);
+          return nb::make_iterator(
+              nb::type<Binary>(), "instructions_it", insts);
+      }, "address"_a, nb::keep_alive<0, 1>(),
+      R"doc(
+      Disassemble code starting a the given virtual address.
+
+      .. code-block:: python
+
+        insts = binary.disassemble(0xacde, 100);
+        for inst in insts:
+            print(inst)
+
+      .. seealso:: :class:`lief.assembly.Instruction`
+      )doc"_doc
+    )
+
+    .def("disassemble", [] (const Binary& self, uint64_t address, size_t size) {
+          auto insts = self.disassemble(address, size);
+          return nb::make_iterator(
+              nb::type<Binary>(), "instructions_it", insts);
+      }, "address"_a, "size"_a, nb::keep_alive<0, 1>(),
+      R"doc(
+      Disassemble code starting a the given virtual address and with the given
+      size.
+
+      .. code-block:: python
+
+        insts = binary.disassemble(0xacde, 100);
+        for inst in insts:
+            print(inst)
+
+      .. seealso:: :class:`lief.assembly.Instruction`
+      )doc"_doc
+    )
+
+    .def("disassemble", [] (const Binary& self, const std::string& function) {
+          auto insts = self.disassemble(function);
+          return nb::make_iterator(
+              nb::type<Binary>(), "instructions_it", insts);
+      }, "function_name"_a, nb::keep_alive<0, 1>(),
+      R"doc(
+      Disassemble code for the given symbol name
+
+      .. code-block:: python
+
+        insts = binary.disassemble("__libc_start_main");
+        for inst in insts:
+            print(inst)
+
+      .. seealso:: :class:`lief.assembly.Instruction`
+      )doc"_doc
+    )
+
+    .def("disassemble_from_bytes",
+         [] (const Binary& self, const nb::bytes& buffer, uint64_t address) {
+          auto insts = self.disassemble(
+            reinterpret_cast<const uint8_t*>(buffer.c_str()),
+            buffer.size(), address
+          );
+          return nb::make_iterator(
+              nb::type<Binary>(), "instructions_it", insts);
+      }, "buffer"_a, "address"_a = 0, nb::keep_alive<0, 1>(), nb::keep_alive<0, 2>(),
+      R"doc(
+      Disassemble code from the provided bytes
+
+      .. code-block:: python
+
+        raw = bytes(binary.get_section(".text").content)
+        insts = binary.disassemble_from_bytes(raw);
+        for inst in insts:
+            print(inst)
+
+      .. seealso:: :class:`lief.assembly.Instruction`
+      )doc"_doc
+    )
 
     LIEF_DEFAULT_STR(Binary);
 

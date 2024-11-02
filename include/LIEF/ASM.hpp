@@ -1,4 +1,5 @@
-/* Copyright 2024 R. Thomas
+/* Copyright 2017 - 2024 R. Thomas
+ * Copyright 2017 - 2024 Quarkslab
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,21 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#pragma once
-
-#include "LIEF/rust/logging.hpp"
-#include "LIEF/rust/ELF.hpp"
-#include "LIEF/rust/PE.hpp"
-#include "LIEF/rust/MachO.hpp"
-#include "LIEF/rust/Abstract.hpp"
-#include "LIEF/rust/PDB.hpp"
-#include "LIEF/rust/DWARF.hpp"
-#include "LIEF/rust/ObjC.hpp"
-#include "LIEF/rust/DyldSharedCache.hpp"
-#include "LIEF/rust/ASM.hpp"
-
-#include "LIEF/rust/Span.hpp"
-#include "LIEF/rust/range.hpp"
-#include "LIEF/rust/debug_location.hpp"
-#include "LIEF/rust/utils.hpp"
-
+#ifndef LIEF_ASM_H
+#define LIEF_ASM_H
+#include <LIEF/asm/Engine.hpp>
+#include <LIEF/asm/Instruction.hpp>
+#endif

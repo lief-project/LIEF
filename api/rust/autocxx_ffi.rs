@@ -45,6 +45,9 @@ include_cpp! {
     generate!("AbstracDebugInfo")
     block_constructors!("AbstracDebugInfo")
 
+    generate!("AbstractBinary_it_instructions")
+    block_constructors!("AbstractBinary_it_instructions")
+
     // -------------------------------------------------------------------------
     // ELF
     // -------------------------------------------------------------------------
@@ -623,6 +626,15 @@ include_cpp! {
 
     generate!("dsc_SubCache")
     block_constructors!("dsc_SubCache")
+
+    // -------------------------------------------------------------------------
+    // ASM Support
+    // -------------------------------------------------------------------------
+    generate!("asm_Engine")
+    block_constructors!("asm_Engine")
+
+    generate!("asm_Instruction")
+    block_constructors!("asm_Instruction")
 
     safety!(unsafe)
 }

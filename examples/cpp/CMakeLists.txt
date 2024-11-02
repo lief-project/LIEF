@@ -1,5 +1,6 @@
 set(LIEF_CPP_EXAMPLES
   logging.cpp
+  disassembler.cpp
   abstract_reader.cpp
   benchmark.cpp
   dwarf_inspect.cpp

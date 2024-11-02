@@ -26,8 +26,5 @@ fn main() -> ExitCode {
     }
     println!("{}", metadata.to_decl());
 
-
-
     ExitCode::FAILURE
-
 }

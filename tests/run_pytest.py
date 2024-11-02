@@ -18,6 +18,7 @@ if __name__ == "__main__":
         (CWD / "dwarf"),
         (CWD / "objc"),
         (CWD / "dyld-shared-cache"),
+        (CWD / "assembly"),
         (CWD / "abstract"),
         "--verbose"
     ])

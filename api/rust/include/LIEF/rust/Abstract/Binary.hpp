@@ -15,13 +15,37 @@
 #pragma once
 #include <LIEF/Abstract/Binary.hpp>
 #include <LIEF/rust/Abstract/DebugInfo.hpp>
+#include <LIEF/rust/asm/Instruction.hpp>
 #include <LIEF/rust/Mirror.hpp>
+#include <LIEF/rust/Iterator.hpp>
 
 #include "LIEF/rust/error.hpp"
 
 class AbstractBinary : public Mirror<LIEF::Binary> {
   public:
+  using lief_t = LIEF::Binary;
   using Mirror::Mirror;
+
+  class it_instructions :
+      public ForwardIterator<asm_Instruction, LIEF::assembly::Instruction::Iterator>
+  {
+    public:
+    it_instructions(const AbstractBinary::lief_t& src, uint64_t addr, size_t size)
+      : ForwardIterator(src.disassemble(addr, size)) { }
+
+    it_instructions(const AbstractBinary::lief_t& src, uint64_t addr)
+      : ForwardIterator(src.disassemble(addr)) { }
+
+    it_instructions(const AbstractBinary::lief_t& src, const std::string& func)
+      : ForwardIterator(src.disassemble(func)) { }
+
+    it_instructions(const AbstractBinary::lief_t& src,
+                    const uint8_t* ptr, size_t size,
+                    uint64_t address)
+      : ForwardIterator(src.disassemble(ptr, size, address)) { }
+
+    auto next() { return ForwardIterator::next(); }
+  };
 
   uint64_t entrypoint() const { return get().entrypoint(); }
   uint64_t imagebase() const { return get().imagebase(); }
@@ -48,4 +72,21 @@ class AbstractBinary : public Mirror<LIEF::Binary> {
   auto debug_info() const {
     return details::try_unique<AbstracDebugInfo>(get().debug_info()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
+
+  auto disassemble(uint64_t addr, uint64_t size) const {
+    return std::make_unique<it_instructions>(get(), addr, size);
+  }
+
+  auto disassemble_address(uint64_t addr) const {
+    return std::make_unique<it_instructions>(get(), addr);
+  }
+
+  auto disassemble_buffer(const uint8_t* ptr, uint64_t size, uint64_t addr) const {
+    return std::make_unique<it_instructions>(get(), ptr, size, addr);
+  }
+
+  auto disassemble_function(std::string function) const {
+    return std::make_unique<it_instructions>(get(), function);
+  }
+
 };

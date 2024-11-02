@@ -17,6 +17,7 @@ add_subdirectory(DWARF)
 add_subdirectory(PDB)
 add_subdirectory(ObjC)
 add_subdirectory(DyldSharedCache)
+add_subdirectory(asm)
 
 if(LIEF_ELF)
   add_subdirectory(ELF)

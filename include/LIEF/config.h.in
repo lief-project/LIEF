@@ -32,6 +32,7 @@
 #cmakedefine LIEF_DEBUG_INFO        @LIEF_DEBUG_INFO_SUPPORT@
 #cmakedefine LIEF_OBJC              @LIEF_OBJC_SUPPORT@
 #cmakedefine LIEF_DYLD_SHARED_CACHE @LIEF_DYLD_SHARED_CACHE_SUPPORT@
+#cmakedefine LIEF_ASM_SUPPORT       @LIEF_ASM_SUPPORT@
 #cmakedefine LIEF_EXTENDED          @LIEF_EXTENDED@
 
 // LIEF options

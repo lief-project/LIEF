@@ -14,6 +14,7 @@
  */
 #pragma once
 #include "LIEF/span.hpp"
+#include <vector>
 
 class Span {
   public:
@@ -26,5 +27,9 @@ inline Span make_span(LIEF::span<uint8_t> content) {
 }
 
 inline Span make_span(LIEF::span<const uint8_t> content) {
+  return Span{const_cast<uint8_t*>(content.data()), content.size()};
+}
+
+inline Span make_span(const std::vector<uint8_t>& content) {
   return Span{const_cast<uint8_t*>(content.data()), content.size()};
 }

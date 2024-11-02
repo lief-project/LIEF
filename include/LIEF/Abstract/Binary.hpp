@@ -18,6 +18,7 @@
 
 #include <vector>
 #include <memory>
+#include <unordered_map>
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
@@ -28,6 +29,9 @@
 #include "LIEF/Abstract/Header.hpp"
 #include "LIEF/Abstract/Function.hpp"
 
+
+#include "LIEF/asm/Instruction.hpp"
+
 /// LIEF namespace
 namespace LIEF {
 class Section;
@@ -35,6 +39,10 @@ class Relocation;
 class Symbol;
 
 class DebugInfo;
+
+namespace assembly {
+class Engine;
+}
 
 /// Abstract binary that exposes an uniform API for the
 /// different executable file formats
@@ -84,6 +92,9 @@ class LIEF_API Binary : public Object {
 
   /// Iterator that outputs const LIEF::Relocation&
   using it_const_relocations = const_ref_iterator<relocations_t>;
+
+  //! Instruction iterator
+  using instructions_it = iterator_range<assembly::Instruction::Iterator>;
 
   public:
   Binary();
@@ -270,14 +281,83 @@ class LIEF_API Binary : public Object {
   /// use LIEF::pdb::load() or LIEF::pdb::DebugInfo::from_file() to get PDB debug
   /// info.
   ///
-  /// @warning This function requires LIEF's extended version otherwise it
+  /// \warning This function requires LIEF's extended version otherwise it
   /// **always** return a nullptr
   DebugInfo* debug_info() const;
+
+  /// Disassemble code starting a the given virtual address and with the given
+  /// size.
+  ///
+  /// ```cpp
+  /// auto insts = binary->disassemble(0xacde, 100);
+  /// for (std::unique_ptr<assembly::Instruction> inst : insts) {
+  ///   std::cout << inst->to_string() << '\n';
+  /// }
+  /// ```
+  ///
+  /// \see LIEF::assembly::Instruction
+  instructions_it disassemble(uint64_t address, size_t size) const;
+
+  /// Disassemble code starting a the given virtual address
+  ///
+  /// ```cpp
+  /// auto insts = binary->disassemble(0xacde);
+  /// for (std::unique_ptr<assembly::Instruction> inst : insts) {
+  ///   std::cout << inst->to_string() << '\n';
+  /// }
+  /// ```
+  ///
+  /// \see LIEF::assembly::Instruction
+  instructions_it disassemble(uint64_t address) const;
+
+  /// Disassemble code for the given symbol name
+  ///
+  /// ```cpp
+  /// auto insts = binary->disassemble("__libc_start_main");
+  /// for (std::unique_ptr<assembly::Instruction> inst : insts) {
+  ///   std::cout << inst->to_string() << '\n';
+  /// }
+  /// ```
+  ///
+  /// \see LIEF::assembly::Instruction
+  instructions_it disassemble(const std::string& function) const;
+
+  /// Disassemble code provided by the given buffer at the specified
+  /// `address` parameter.
+  ///
+  /// \see LIEF::assembly::Instruction
+  instructions_it disassemble(const uint8_t* buffer, size_t size,
+                              uint64_t address = 0) const;
+
+
+  /// Disassemble code provided by the given vector of bytes at the specified
+  /// `address` parameter.
+  ///
+  /// \see LIEF::assembly::Instruction
+  instructions_it disassemble(const std::vector<uint8_t>& buffer,
+                              uint64_t address = 0) const {
+    return disassemble(buffer.data(), buffer.size(), address);
+  }
+
+  instructions_it disassemble(LIEF::span<const uint8_t> buffer,
+                              uint64_t address = 0) const {
+    return disassemble(buffer.data(), buffer.size(), address);
+  }
+
+  instructions_it disassemble(LIEF::span<uint8_t> buffer, uint64_t address = 0) const {
+    return disassemble(buffer.data(), buffer.size(), address);
+  }
 
   protected:
   FORMATS format_ = FORMATS::UNKNOWN;
   mutable std::unique_ptr<DebugInfo> debug_info_;
+  mutable std::unordered_map<uint32_t, std::unique_ptr<assembly::Engine>> engines_;
   uint64_t original_size_ = 0;
+
+  assembly::Engine* get_engine(uint64_t address) const;
+
+  template<uint32_t Key, class F>
+  LIEF_LOCAL assembly::Engine* get_cache_engine(uint64_t address, F&& f) const;
 
   // These functions need to be overloaded by the object that claims to extend this Abstract Binary
   virtual Header get_abstract_header() const = 0;

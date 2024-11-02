@@ -24,6 +24,9 @@
 #include "LIEF/Abstract/Symbol.hpp"
 #include "LIEF/Abstract/DebugInfo.hpp"
 
+#include "LIEF/asm/Engine.hpp"
+#include "LIEF/asm/Instruction.hpp"
+
 namespace LIEF {
 
 Binary::Binary(FORMATS fmt) :

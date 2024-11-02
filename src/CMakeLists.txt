@@ -62,3 +62,8 @@ endif()
 if(NOT LIEF_DYLD_SHARED_CACHE_SUPPORT)
   add_subdirectory(dyld-shared-cache)
 endif()
+
+if(NOT LIEF_ASM)
+  add_subdirectory(asm)
+endif()
+

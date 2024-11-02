@@ -1,6 +1,7 @@
 use lief_ffi as ffi;
-use crate::to_slice;
-use crate::common::into_optional;
+use crate::{to_slice, declare_fwd_iterator};
+use crate::common::{into_optional, FromFFI};
+use crate::assembly::Instructions;
 
 /// Trait shared by all the symbols in executable formats
 pub trait Symbol {
@@ -145,10 +146,76 @@ pub trait Binary {
         into_optional(self.as_generic().debug_info())
     }
 
+    /// Disassemble code starting a the given virtual address and with the given
+    /// size.
+    ///
+    /// ```
+    /// let insts = binary.disassemble(0xacde, 100);
+    /// for inst in insts {
+    ///     println!("{}", inst.to_string());
+    /// }
+    /// ```
+    ///
+    /// See also [`crate::assembly::Instruction`] and [`crate::assembly::Instructions`]
+    fn disassemble(&self, address: u64, size: u64) -> InstructionsIt {
+        InstructionsIt::new(self.as_generic().disassemble(address, size))
+    }
 
+    /// Disassemble code for the given symbol name
+    ///
+    /// ```
+    /// let insts = binary.disassemble_symbol("__libc_start_main");
+    /// for inst in insts {
+    ///     println!("{}", inst.to_string());
+    /// }
+    /// ```
+    ///
+    /// See also [`crate::assembly::Instruction`] and [`crate::assembly::Instructions`]
+    fn disassemble_symbol(&self, name: &str) -> InstructionsIt {
+        InstructionsIt::new(self.as_generic().disassemble_function(name.to_string()))
+    }
+
+    /// Disassemble code at the given virtual address
+    ///
+    /// ```
+    /// let insts = binary.disassemble_address(0xacde);
+    /// for inst in insts {
+    ///     println!("{}", inst.to_string());
+    /// }
+    /// ```
+    ///
+    /// See also [`crate::assembly::Instruction`] and [`crate::assembly::Instructions`]
+    fn disassemble_address(&self, address: u64) -> InstructionsIt {
+        InstructionsIt::new(self.as_generic().disassemble_address(address))
+    }
+    /// Disassemble code provided by the given slice at the specified `address` parameter
+    ///
+    /// ```
+    /// let insts = binary.disassemble_address(0xacde);
+    /// for inst in insts {
+    ///     println!("{}", inst.to_string());
+    /// }
+    /// ```
+    ///
+    /// See also [`crate::assembly::Instruction`] and [`crate::assembly::Instructions`]
+    fn disassemble_slice(&self, slice: &[u8], address: u64) -> InstructionsIt {
+        unsafe {
+            InstructionsIt::new(self.as_generic().disassemble_buffer(
+                    slice.as_ptr(), slice.len().try_into().unwrap(),
+                    address))
+        }
+    }
 }
 
 pub trait DebugInfo {
     #[doc(hidden)]
     fn as_generic(&self) -> &ffi::AbstracDebugInfo;
 }
+
+declare_fwd_iterator!(
+    InstructionsIt,
+    Instructions,
+    ffi::asm_Instruction,
+    ffi::AbstractBinary,
+    ffi::AbstractBinary_it_instructions
+);

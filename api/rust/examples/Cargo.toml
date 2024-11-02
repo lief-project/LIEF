@@ -34,4 +34,7 @@ name = "pdb_inspect"
 name = "objc_inspect"
 
 [[bin]]
+name = "disassembler"
+
+[[bin]]
 name = "test_run_examples"

@@ -61,3 +61,9 @@ impl<'a> Iterator for FatBinaryIterator<'a> {
         Some(Binary::from_ffi(self.fat.ptr.binary_at(self.index - 1)))
     }
 }
+
+impl<'a> ExactSizeIterator for FatBinaryIterator<'a> {
+    fn len(&self) -> usize {
+        self.fat.nb_macho.try_into().unwrap()
+    }
+}

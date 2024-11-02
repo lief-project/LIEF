@@ -79,6 +79,8 @@ pub mod objc;
 pub mod dsc;
 
 pub mod debug_info;
+
+pub mod assembly;
 mod range;
 
 /// Module for LIEF's error

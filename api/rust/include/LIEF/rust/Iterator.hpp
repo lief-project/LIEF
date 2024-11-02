@@ -40,7 +40,9 @@ class ForwardIterator {
   using lief_t = V;
   std::unique_ptr<T> next() {
     if (begin_ == end_) return nullptr;
-    return std::make_unique<T>(*begin_++);
+    auto&& value = *begin_;
+    ++begin_;
+    return std::make_unique<T>(std::move(value));
   }
   protected:
   ForwardIterator(LIEF::iterator_range<V> range) :
