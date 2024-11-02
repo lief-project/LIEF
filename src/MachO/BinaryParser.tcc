@@ -326,6 +326,7 @@ ok_error_t BinaryParser::parse_load_commands() {
               break;
             }
             auto section = std::make_unique<Section>(*section_header);
+
             binary_->sections_.push_back(section.get());
             if (section->size_ > 0 &&
                 section->type() != Section::TYPE::ZEROFILL &&
@@ -3599,6 +3600,10 @@ ok_error_t BinaryParser::post_process(DynamicSymbolCommand& cmd) {
 template<class MACHO_T>
 ok_error_t BinaryParser::post_process(LinkerOptHint& cmd) {
   LIEF_DEBUG("[^] Post processing LC_LINKER_OPTIMIZATION_HINT");
+  if (binary_->header().file_type() == Header::FILE_TYPE::OBJECT) {
+    return ok();
+  }
+
   SegmentCommand* linkedit = config_.from_dyld_shared_cache ?
                              binary_->get_segment("__LINKEDIT") :
                              binary_->segment_from_offset(cmd.data_offset());
@@ -3606,7 +3611,7 @@ ok_error_t BinaryParser::post_process(LinkerOptHint& cmd) {
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the LC_LINKER_OPTIMIZATION_HINT");
     return make_error_code(lief_errors::not_found);
-  };
+  }
 
   span<uint8_t> content = linkedit->writable_content();
 
@@ -3636,7 +3641,7 @@ ok_error_t BinaryParser::post_process(CodeSignature& cmd) {
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the LC_CODE_SIGNATURE");
     return make_error_code(lief_errors::not_found);
-  };
+  }
 
   span<uint8_t> content = linkedit->writable_content();
 
@@ -3666,7 +3671,7 @@ ok_error_t BinaryParser::post_process(CodeSignatureDir& cmd) {
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the LC_DYLIB_CODE_SIGN_DRS");
     return make_error_code(lief_errors::not_found);
-  };
+  }
 
   span<uint8_t> content = linkedit->writable_content();
 
@@ -3697,7 +3702,7 @@ ok_error_t BinaryParser::post_process(TwoLevelHints& cmd) {
   if (linkedit == nullptr) {
     LIEF_WARN("Can't find the segment that contains the LC_TWOLEVEL_HINTS");
     return make_error_code(lief_errors::not_found);
-  };
+  }
 
   const size_t raw_size = cmd.original_nb_hints() * sizeof(uint32_t);
   span<uint8_t> content = linkedit->writable_content();

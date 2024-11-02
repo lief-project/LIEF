@@ -348,4 +348,3 @@ def test_routine():
 def test_arm64e():
     sample = lief.MachO.parse(get_sample("private/MachO/libCoreKE_arm64e.dylib")).at(0)
     assert sample.support_arm64_ptr_auth
-
