@@ -24,6 +24,7 @@
 #include <memory>
 
 namespace LIEF {
+/// Namespace related to ObjC metadata
 namespace objc {
 
 namespace details {
