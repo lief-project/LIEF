@@ -62,7 +62,7 @@ modify and abstract ELF, PE and MachO formats.
 
 Extended features:
 
-  * [**DWAF/PDB** Support](https://lief.re/doc/latest/extended/debug_info/index.html)
+  * [**DWARF/PDB** Support](https://lief.re/doc/latest/extended/debug_info/index.html)
   * [**Objective-C** Metadata](https://lief.re/doc/latest/extended/objc/index.html)
   * [**Dyld Shared Cache**](https://lief.re/doc/latest/extended/dsc/index.html) with support for extracting Dylib
 
