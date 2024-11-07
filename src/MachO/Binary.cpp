@@ -1236,6 +1236,7 @@ bool Binary::extend_segment(const SegmentCommand& segment, size_t size) {
   target_segment->virtual_size(target_segment->virtual_size() + size_aligned);
   target_segment->file_size(target_segment->file_size() + size_aligned);
   target_segment->content_resize(target_segment->file_size());
+  refresh_seg_offset();
   return true;
 }
 
