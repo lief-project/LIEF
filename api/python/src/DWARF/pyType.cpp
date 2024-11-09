@@ -65,6 +65,8 @@ void create<dw::Type>(nb::module_& m) {
         },
         R"doc(
         Return the type's name or ``None`` if it can't be resolved.
+
+        The name is resolved using either ``DW_AT_name`` or ``DW_AT_picture_string``.
         )doc"_doc
     )
 

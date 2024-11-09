@@ -174,7 +174,7 @@ pub trait DwarfType {
     #[doc(hidden)]
     fn get_base(&self) -> &ffi::DWARF_Type;
 
-    /// Return the type's name (if any)
+    /// Return the type's name using either `DW_AT_name` or `DW_AT_picture_string` (if any)
     fn name(&self) -> Result<String, Error> {
         to_conv_result!(
             ffi::DWARF_Type::name,

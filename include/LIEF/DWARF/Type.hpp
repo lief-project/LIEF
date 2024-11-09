@@ -126,7 +126,8 @@ class LIEF_API Type {
     return kind() == KIND::UNSPECIFIED;
   }
 
-  /// Return the type's name (if any)
+  /// Return the type's name using either `DW_AT_name` or `DW_AT_picture_string`
+  /// (if any).
   result<std::string> name() const;
 
   /// Return the size of the type or an error if it can't be computed.
