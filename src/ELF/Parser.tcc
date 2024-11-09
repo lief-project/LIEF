@@ -1069,7 +1069,7 @@ ok_error_t Parser::parse_packed_relocations(uint64_t offset, uint64_t size) {
       auto reloc = std::unique_ptr<Relocation>(new Relocation(R, Relocation::PURPOSE::DYNAMIC,
         Relocation::ENCODING::ANDROID_SLEB, arch));
       bind_symbol(*reloc);
-      binary_->relocations_.push_back(std::move(reloc));
+      insert_relocation(std::move(reloc));
     }
   }
   return ok();
@@ -1116,7 +1116,7 @@ ok_error_t Parser::parse_relative_relocations(uint64_t offset, uint64_t size) {
       auto reloc = std::make_unique<Relocation>(r_offset, type,
                                                 Relocation::ENCODING::RELR);
       reloc->purpose(Relocation::PURPOSE::DYNAMIC);
-      binary_->relocations_.push_back(std::move(reloc));
+      insert_relocation(std::move(reloc));
       base = rel + sizeof(Elf_Addr);
     } else {
       for (Elf_Addr offset = base; (rel >>= 1) != 0; offset += sizeof(Elf_Addr)) {
@@ -1125,7 +1125,7 @@ ok_error_t Parser::parse_relative_relocations(uint64_t offset, uint64_t size) {
           auto reloc = std::make_unique<Relocation>(r_offset, type,
                                                     Relocation::ENCODING::RELR);
           reloc->purpose(Relocation::PURPOSE::DYNAMIC);
-          binary_->relocations_.push_back(std::move(reloc));
+          insert_relocation(std::move(reloc));
         }
       }
       base += (8 * sizeof(Elf_Relr) - 1) * sizeof(Elf_Addr);
@@ -1166,8 +1166,7 @@ ok_error_t Parser::parse_dynamic_relocations(uint64_t relocations_offset, uint64
     auto reloc = std::unique_ptr<Relocation>(new Relocation(
         std::move(*raw_reloc), Relocation::PURPOSE::DYNAMIC, enc, arch));
     bind_symbol(*reloc);
-
-    binary_->relocations_.push_back(std::move(reloc));
+    insert_relocation(std::move(reloc));
   }
   return ok();
 } // build_dynamic_reclocations
@@ -1508,7 +1507,7 @@ ok_error_t Parser::parse_pltgot_relocations(uint64_t offset, uint64_t size) {
     auto reloc = std::unique_ptr<Relocation>(new Relocation(
         std::move(*rel_hdr), Relocation::PURPOSE::PLTGOT, enc, arch));
     bind_symbol(*reloc);
-    binary_->relocations_.push_back(std::move(reloc));
+    insert_relocation(std::move(reloc));
   }
   return ok();
 }
@@ -1625,7 +1624,7 @@ ok_error_t Parser::parse_section_relocations(const Section& section) {
 
     if (reloc_hash.insert(reloc.get()).second) {
       ++count;
-      binary_->relocations_.push_back(std::move(reloc));
+      insert_relocation(std::move(reloc));
     }
   }
   LIEF_DEBUG("#{} relocations found in {}", count, section.name());

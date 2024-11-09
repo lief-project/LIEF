@@ -74,6 +74,7 @@
 
 :ELF:
 
+  * Add |lief-elf-relocation-resolve| to resolve the value of relocations
   * Add support for eBPF relocations.
   * Add support for ``GNU_PROPERTY_AARCH64_FEATURE_PAUTH`` GNU property note:
     |lief-elf-aarch64pauth|.

@@ -254,6 +254,7 @@ class LIEF_API Parser : public LIEF::Parser {
   static bool check_section_in_segment(const Section& section, const Segment& segment);
 
   bool bind_symbol(Relocation& R);
+  Relocation& insert_relocation(std::unique_ptr<Relocation> R);
 
   std::unique_ptr<BinaryStream> stream_;
   std::unique_ptr<Binary> binary_;

@@ -263,6 +263,14 @@
     :py:class:`lief.ELF.AArch64PAuth`
     :cpp:class:`LIEF::ELF::AArch64PAuth`
 
+.. |lief-elf-relocation-resolve| lief-api:: lief.ELF.Relocation.resolve()
+
+    :rust:method:`lief::elf::Relocation::resolve [struct]`
+    :rust:method:`lief::elf::Relocation::resolve_with_base_address [struct]`
+    :py:func:`lief.ELF.Relocation.resolve`
+    :cpp:func:`LIEF::ELF::Relocation::resolve`
+
+
 .. Mach-O ======================================================================
 
 .. |lief-macho-binary| lief-api:: lief.MachO.Binary

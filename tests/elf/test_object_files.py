@@ -9,7 +9,7 @@ import pytest
 from pathlib import Path
 
 from subprocess import Popen
-from utils import is_linux, glibc_version
+from utils import is_linux, glibc_version, get_sample
 
 SAMPLE_DIR = Path(os.getenv("LIEF_SAMPLES_DIR", ""))
 
@@ -162,3 +162,7 @@ def test_relocations(tmp_path):
         print(f"File written in {out_path}")
         builder.write(out_path.as_posix())
         build_run_check(file, out_path)
+
+def test_relocation_resolve():
+    elf = lief.ELF.parse(get_sample("ELF/issue_975_aarch64.o"))
+    assert elf.relocations[0].resolve() == 0xffffffe4

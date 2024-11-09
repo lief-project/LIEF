@@ -1,12 +1,14 @@
 use std::marker::PhantomData;
 
 use lief_ffi as ffi;
+
+use crate::Error;
 use crate::generic;
 use crate::elf::Section;
 
 use crate::common::into_optional;
 use crate::common::FromFFI;
-use crate::declare_iterator;
+use crate::{declare_iterator, to_result};
 
 use super::Symbol;
 
@@ -548,6 +550,32 @@ pub enum Type {
     LARCH_TLS_GD_HI20,
     LARCH_32_PCREL,
     LARCH_RELAX,
+    LARCH_ALIGN,
+    LARCH_PCREL20_S2,
+    LARCH_ADD6,
+    LARCH_SUB6,
+    LARCH_ADD_ULEB128,
+    LARCH_SUB_ULEB128,
+    LARCH_64_PCREL,
+    LARCH_CALL36,
+    LARCH_TLS_DESC32,
+    LARCH_TLS_DESC64,
+    LARCH_TLS_DESC_PC_HI20,
+    LARCH_TLS_DESC_PC_LO12,
+    LARCH_TLS_DESC64_PC_LO20,
+    LARCH_TLS_DESC64_PC_HI12,
+    LARCH_TLS_DESC_HI20,
+    LARCH_TLS_DESC_LO12,
+    LARCH_TLS_DESC64_LO20,
+    LARCH_TLS_DESC64_HI12,
+    LARCH_TLS_DESC_LD,
+    LARCH_TLS_DESC_CALL,
+    LARCH_TLS_LE_HI20_R,
+    LARCH_TLS_LE_ADD_R,
+    LARCH_TLS_LE_LO12_R,
+    LARCH_TLS_LD_PCREL20_S2,
+    LARCH_TLS_GD_PCREL20_S2,
+    LARCH_TLS_DESC_PCREL20_S2,
     MIPS_NONE,
     MIPS_16,
     MIPS_32,
@@ -1544,6 +1572,32 @@ impl From<u32> for Type {
             0x30000062 => Type::LARCH_TLS_GD_HI20,
             0x30000063 => Type::LARCH_32_PCREL,
             0x30000064 => Type::LARCH_RELAX,
+            0x30000066 => Type::LARCH_ALIGN,
+            0x30000067 => Type::LARCH_PCREL20_S2,
+            0x30000069 => Type::LARCH_ADD6,
+            0x3000006a => Type::LARCH_SUB6,
+            0x3000006b => Type::LARCH_ADD_ULEB128,
+            0x3000006c => Type::LARCH_SUB_ULEB128,
+            0x3000006d => Type::LARCH_64_PCREL,
+            0x3000006e => Type::LARCH_CALL36,
+            0x3000000d => Type::LARCH_TLS_DESC32,
+            0x3000000e => Type::LARCH_TLS_DESC64,
+            0x3000006f => Type::LARCH_TLS_DESC_PC_HI20,
+            0x30000070 => Type::LARCH_TLS_DESC_PC_LO12,
+            0x30000071 => Type::LARCH_TLS_DESC64_PC_LO20,
+            0x30000072 => Type::LARCH_TLS_DESC64_PC_HI12,
+            0x30000073 => Type::LARCH_TLS_DESC_HI20,
+            0x30000074 => Type::LARCH_TLS_DESC_LO12,
+            0x30000075 => Type::LARCH_TLS_DESC64_LO20,
+            0x30000076 => Type::LARCH_TLS_DESC64_HI12,
+            0x30000077 => Type::LARCH_TLS_DESC_LD,
+            0x30000078 => Type::LARCH_TLS_DESC_CALL,
+            0x30000079 => Type::LARCH_TLS_LE_HI20_R,
+            0x3000007a => Type::LARCH_TLS_LE_ADD_R,
+            0x3000007b => Type::LARCH_TLS_LE_LO12_R,
+            0x3000007c => Type::LARCH_TLS_LD_PCREL20_S2,
+            0x3000007d => Type::LARCH_TLS_GD_PCREL20_S2,
+            0x3000007e => Type::LARCH_TLS_DESC_PCREL20_S2,
             0x38000000 => Type::MIPS_NONE,
             0x38000001 => Type::MIPS_16,
             0x38000002 => Type::MIPS_32,
@@ -2008,10 +2062,10 @@ impl From<u32> for Type {
             0x68000004 => Type::BPF_64_NODYLD32,
             0x6800000a => Type::BPF_64_32,
             _ => Type::UNKNOWN(value),
+
         }
     }
 }
-
 
 impl From<Type> for u32 {
     fn from(value: Type) -> u32 {
@@ -2543,6 +2597,32 @@ impl From<Type> for u32 {
             Type::LARCH_TLS_GD_HI20 => 0x30000062,
             Type::LARCH_32_PCREL => 0x30000063,
             Type::LARCH_RELAX => 0x30000064,
+            Type::LARCH_ALIGN => 0x30000066,
+            Type::LARCH_PCREL20_S2 => 0x30000067,
+            Type::LARCH_ADD6 => 0x30000069,
+            Type::LARCH_SUB6 => 0x3000006a,
+            Type::LARCH_ADD_ULEB128 => 0x3000006b,
+            Type::LARCH_SUB_ULEB128 => 0x3000006c,
+            Type::LARCH_64_PCREL => 0x3000006d,
+            Type::LARCH_CALL36 => 0x3000006e,
+            Type::LARCH_TLS_DESC32 => 0x3000000d,
+            Type::LARCH_TLS_DESC64 => 0x3000000e,
+            Type::LARCH_TLS_DESC_PC_HI20 => 0x3000006f,
+            Type::LARCH_TLS_DESC_PC_LO12 => 0x30000070,
+            Type::LARCH_TLS_DESC64_PC_LO20 => 0x30000071,
+            Type::LARCH_TLS_DESC64_PC_HI12 => 0x30000072,
+            Type::LARCH_TLS_DESC_HI20 => 0x30000073,
+            Type::LARCH_TLS_DESC_LO12 => 0x30000074,
+            Type::LARCH_TLS_DESC64_LO20 => 0x30000075,
+            Type::LARCH_TLS_DESC64_HI12 => 0x30000076,
+            Type::LARCH_TLS_DESC_LD => 0x30000077,
+            Type::LARCH_TLS_DESC_CALL => 0x30000078,
+            Type::LARCH_TLS_LE_HI20_R => 0x30000079,
+            Type::LARCH_TLS_LE_ADD_R => 0x3000007a,
+            Type::LARCH_TLS_LE_LO12_R => 0x3000007b,
+            Type::LARCH_TLS_LD_PCREL20_S2 => 0x3000007c,
+            Type::LARCH_TLS_GD_PCREL20_S2 => 0x3000007d,
+            Type::LARCH_TLS_DESC_PCREL20_S2 => 0x3000007e,
             Type::MIPS_NONE => 0x38000000,
             Type::MIPS_16 => 0x38000001,
             Type::MIPS_32 => 0x38000002,
@@ -3006,11 +3086,11 @@ impl From<Type> for u32 {
             Type::BPF_64_ABS32 => 0x68000003,
             Type::BPF_64_NODYLD32 => 0x68000004,
             Type::BPF_64_32 => 0x6800000a,
-            Type::UNKNOWN(val) => val,
+            Type::UNKNOWN(value) => value,
+
         }
     }
 }
-
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -3124,6 +3204,23 @@ impl Relocation<'_> {
     /// The associated symbol table (if any)
     pub fn symbol_table(&self) -> Option<Section> {
         into_optional(self.ptr.symbol_table())
+    }
+
+    /// Try to resolve the value of the relocation with the provided base address.
+    ///
+    /// The returned value could be used such as: `*address = resolve_with_base_address(...)`
+    ///
+    /// See: [`Relocation::resolve`]
+    pub fn resolve_with_base_address(&self, base_address: u64) -> Result<u64, Error> {
+        to_result!(ffi::ELF_Relocation::resolve, &self, base_address);
+    }
+
+    /// Try to resolve the value of the relocation.
+    /// The returned value could be used such as: `*address = resolve(...)`
+    ///
+    /// See: [`Relocation::resolve_with_base_address`]
+    pub fn resolve(&self) -> Result<u64, Error> {
+        self.resolve_with_base_address(0)
     }
 }
 

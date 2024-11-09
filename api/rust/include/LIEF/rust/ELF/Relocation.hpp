@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #pragma once
+#include "LIEF/rust/error.hpp"
 #include "LIEF/ELF/Relocation.hpp"
 #include "LIEF/rust/Abstract/Relocation.hpp"
 #include "LIEF/rust/ELF/Symbol.hpp"
@@ -43,6 +44,10 @@ class ELF_Relocation : public AbstractRelocation {
 
   auto symbol_table() const {
     return details::try_unique<ELF_Section>(impl().symbol_table());
+  }
+
+  uint64_t resolve(uint64_t base_address, uint32_t& err) const {
+    return details::make_error(impl().resolve(base_address), err);
   }
 
   private:

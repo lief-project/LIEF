@@ -206,9 +206,3 @@ def test_ebpf_relocations():
     assert relocations[8].info == 1
     assert relocations[8].purpose == lief.ELF.Relocation.PURPOSE.OBJECT
     assert relocations[8].type == lief.ELF.Relocation.TYPE.BPF_64_NODYLD32
-
-
-
-
-    for r in relocations:
-        print(r)

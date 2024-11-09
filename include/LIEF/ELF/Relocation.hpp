@@ -20,6 +20,7 @@
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
+#include "LIEF/errors.hpp"
 
 #include "LIEF/Abstract/Relocation.hpp"
 
@@ -147,11 +148,43 @@ class LIEF_API Relocation : public LIEF::Relocation {
   Relocation(ARCH arch) {
     architecture_ = arch;
   }
+
   ~Relocation() override = default;
 
-  Relocation& operator=(Relocation other);
-  Relocation(const Relocation& other);
-  void swap(Relocation& other);
+  /// Copy constructor.
+  ///
+  /// \warning When this constructor is invoked, referenced sections or symbols
+  /// are discarded. This means that on the copied Relocation, Relocation::section,
+  /// Relocation::symbol and Relocation::symbol_table are set to a nullptr.
+  Relocation(const Relocation& other) :
+    LIEF::Relocation{other},
+    type_{other.type_},
+    addend_{other.addend_},
+    encoding_{other.encoding_},
+    architecture_{other.architecture_}
+  {}
+
+  /// Copy assignment operator.
+  ///
+  /// Please read the notice of the copy constructor
+  Relocation& operator=(Relocation other) {
+    swap(other);
+    return *this;
+  }
+
+  void swap(Relocation& other) {
+    std::swap(address_,      other.address_);
+    std::swap(type_,         other.type_);
+    std::swap(addend_,       other.addend_);
+    std::swap(encoding_,     other.encoding_);
+    std::swap(symbol_,       other.symbol_);
+    std::swap(architecture_, other.architecture_);
+    std::swap(purpose_,      other.purpose_);
+    std::swap(section_,      other.section_);
+    std::swap(symbol_table_, other.symbol_table_);
+    std::swap(info_,         other.info_);
+    std::swap(binary_,       other.binary_);
+  }
 
   /// Additional value that can be involved in the relocation processing
   int64_t addend() const {
@@ -291,6 +324,10 @@ class LIEF_API Relocation : public LIEF::Relocation {
     symbol_table_ = section;
   }
 
+  /// Try to resolve the value of the relocation such as
+  /// `*address() = resolve()`
+  result<uint64_t> resolve(uint64_t base_address = 0) const;
+
   void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Relocation& entry);
@@ -308,6 +345,8 @@ class LIEF_API Relocation : public LIEF::Relocation {
   Section* section_ = nullptr;
   Section* symbol_table_ = nullptr;
   uint32_t info_ = 0;
+
+  Binary* binary_ = nullptr;
 };
 
 LIEF_API const char* to_string(Relocation::TYPE type);

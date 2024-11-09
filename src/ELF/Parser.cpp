@@ -671,5 +671,11 @@ bool Parser::bind_symbol(Relocation& R) {
   return true;
 }
 
+Relocation& Parser::insert_relocation(std::unique_ptr<Relocation> R) {
+  R->binary_ = binary_.get();
+  binary_->relocations_.push_back(std::move(R));
+  return *binary_->relocations_.back();
+}
+
 }
 }

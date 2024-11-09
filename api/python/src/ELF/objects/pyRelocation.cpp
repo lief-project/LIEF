@@ -19,6 +19,7 @@
 
 #include "ELF/pyELF.hpp"
 #include "enums_wrapper.hpp"
+#include "pyErr.hpp"
 
 #include "LIEF/ELF/Relocation.hpp"
 #include "LIEF/ELF/Symbol.hpp"
@@ -145,6 +146,15 @@ void create<Relocation>(nb::module_& m) {
 
     .def_prop_ro("encoding", &Relocation::encoding,
                  "The encoding of the relocation")
+
+    .def("resolve", [] (const Relocation& self, uint64_t base_address) {
+        return LIEF::py::error_or(&Relocation::resolve, self, base_address);
+      }, "base_address"_a = 0,
+      R"doc(
+      Try to resolve the value of the relocation such as
+      ``*address() = resolve()``
+      )doc"_doc
+    )
 
     LIEF_DEFAULT_STR(Relocation);
 }
