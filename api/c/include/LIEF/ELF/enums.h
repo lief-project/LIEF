@@ -276,64 +276,61 @@ enum LIEF_OS_ABI {
 
 /* ELF Relocations */
 
-#define ELF_RELOC(name, value) name = value,
-
 /** x86_64 relocations. */
 enum LIEF_RELOC_x86_64 {
-   #include "LIEF/ELF/Relocations/x86_64.def"
+  LIEF_RELOC_x86_64_NOT_SUPPORTED = 0,
 };
 
 /** i386 relocations. */
 enum  RELOC_i386 {
-   #include "LIEF/ELF/Relocations/i386.def"
+  LIEF_RELOC_i386_NOT_SUPPORTED = 0,
 };
 
 /* ELF Relocation types for PPC32 */
 enum LIEF_RELOC_POWERPC32 {
-   #include "LIEF/ELF/Relocations/PowerPC.def"
+  LIEF_RELOC_POWERPC32_NOT_SUPPORTED = 0,
 };
 
 /* ELF Relocation types for PPC64 */
 enum LIEF_RELOC_POWERPC64 {
-   #include "LIEF/ELF/Relocations/PowerPC64.def"
+  LIEF_RELOC_POWERPC64_NOT_SUPPORTED = 0,
 };
 
 /* ELF Relocation types for AArch64 */
 enum LIEF_RELOC_AARCH64 {
-   #include "LIEF/ELF/Relocations/AArch64.def"
+  LIEF_RELOC_AARCH64_NOT_SUPPORTED = 0,
 };
 
 /* ELF Relocation types for ARM */
 enum LIEF_RELOC_ARM {
-  #include "LIEF/ELF/Relocations/ARM.def"
+  LIEF_RELOC_ARM_NOT_SUPPORTED = 0,
 };
 
 /* ELF Relocation types for Mips */
 enum LIEF_RELOC_MIPS {
-  #include "LIEF/ELF/Relocations/Mips.def"
+  LIEF_RELOC_MIPS_NOT_SUPPORTED = 0,
 };
 
 /* ELF Relocation types for Hexagon */
 enum LIEF_RELOC_HEXAGON {
-  #include "LIEF/ELF/Relocations/Hexagon.def"
+  LIEF_RELOC_HEXAGON_NOT_SUPPORTED = 0,
 };
 
 /* ELF Relocation types for S390/zSeries */
 enum LIEF_RELOC_SYSTEMZ {
-  #include "LIEF/ELF/Relocations/SystemZ.def"
+  LIEF_RELOC_SYSTEMZ_NOT_SUPPORTED = 0,
 };
 
 /* ELF Relocation type for Sparc. */
 enum LIEF_RELOC_SPARC {
-  #include "LIEF/ELF/Relocations/Sparc.def"
+  LIEF_RELOC_SPARC_NOT_SUPPORTED = 0,
 };
 
 /* ELF Relocation types for LoongArch. */
 enum LIEF_RELOC_LOONGARCH {
-  #include "LIEF/ELF/Relocations/LoongArch.def"
+  LIEF_RELOC_LOONGARCH_NOT_SUPPORTED = 0,
 };
 
-#undef ELF_RELOC
 
 /* Specific e_flags for PPC64 */
 enum LIEF_PPC64_EFLAGS {
