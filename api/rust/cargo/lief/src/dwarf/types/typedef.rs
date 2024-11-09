@@ -5,14 +5,14 @@ use std::marker::PhantomData;
 use crate::dwarf::types::DwarfType;
 use crate::dwarf::Type;
 
-/// This structure represents a `DW_TAG_pointer_type` DWARF type.
-pub struct Pointer<'a> {
-    ptr: cxx::UniquePtr<ffi::DWARF_types_Pointer>,
+/// This structure represents a `DW_TAG_typedef` DWARF type.
+pub struct Typedef<'a> {
+    ptr: cxx::UniquePtr<ffi::DWARF_types_Typedef>,
     _owner: PhantomData<&'a ()>,
 }
 
-impl FromFFI<ffi::DWARF_types_Pointer> for Pointer<'_> {
-    fn from_ffi(cmd: cxx::UniquePtr<ffi::DWARF_types_Pointer>) -> Self {
+impl FromFFI<ffi::DWARF_types_Typedef> for Typedef<'_> {
+    fn from_ffi(cmd: cxx::UniquePtr<ffi::DWARF_types_Typedef>) -> Self {
         Self {
             ptr: cmd,
             _owner: PhantomData,
@@ -20,15 +20,20 @@ impl FromFFI<ffi::DWARF_types_Pointer> for Pointer<'_> {
     }
 }
 
-impl DwarfType for Pointer<'_> {
+impl DwarfType for Typedef<'_> {
     fn get_base(&self) -> &ffi::DWARF_Type {
         self.ptr.as_ref().unwrap().as_ref()
     }
 }
 
-impl Pointer<'_> {
-    /// The type pointed by this pointer
+impl Typedef<'_> {
+    /// The type aliased by this typedef
     pub fn underlying_type(&self) -> Option<Type> {
         into_optional(self.ptr.underlying_type())
+    }
+
+    /// Name of the typedef
+    pub fn name(&self) -> String {
+        self.ptr.name().to_string()
     }
 }

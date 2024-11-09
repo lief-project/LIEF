@@ -4,4 +4,5 @@ target_sources(pyLIEF PRIVATE
   pyConst.cpp
   pyBase.cpp
   pyArray.cpp
+  pyTypedef.cpp
 )

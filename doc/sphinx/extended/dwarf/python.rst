@@ -142,3 +142,15 @@ Pointer
   :parts: 2
 
 .. autoclass:: lief.dwarf.types.Pointer
+
+
+----------
+
+Typedef
+*******
+
+.. lief-inheritance:: lief._lief.dwarf.types.Typedef
+  :top-classes: lief._lief.dwarf.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.types.Typedef

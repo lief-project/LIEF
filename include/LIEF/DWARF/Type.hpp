@@ -43,6 +43,7 @@ class TypeIt;
 /// - `DW_TAG_string_type`
 /// - `DW_TAG_union_type`
 /// - `DW_TAG_volatile_type`
+/// - `DW_TAG_typedef`
 /// - `DW_TAG_unspecified_type`
 class LIEF_API Type {
   public:
@@ -115,6 +116,7 @@ class LIEF_API Type {
     POINTER,
     STRUCT,
     UNION,
+    TYPEDEF,
   };
 
   KIND kind() const;

@@ -50,6 +50,9 @@ fn explore_trait_classlike(classlike: &dyn ClassLike) {
                 lief::dwarf::Type::Union(_) => {
                     println!("Union");
                 }
+                lief::dwarf::Type::Typedef(_) => {
+                    println!("Typedef");
+                }
                 lief::dwarf::Type::Generic(_) => {
                     println!("Generic");
                 }
@@ -118,6 +121,14 @@ fn explore_type(type_: &lief::dwarf::Type) {
         lief::dwarf::Type::Union(t) => {
             explore_trait_type(t);
             explore_trait_classlike(t);
+        }
+
+        lief::dwarf::Type::Typedef(t) => {
+            explore_trait_type(t);
+            println!("{}", t.name());
+            if let Some(underlying) = t.underlying_type() {
+                explore_type(&underlying);
+            }
         }
 
         lief::dwarf::Type::Generic(t) => {

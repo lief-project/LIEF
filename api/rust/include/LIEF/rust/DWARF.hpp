@@ -19,8 +19,10 @@
 #include "LIEF/rust/DWARF/Variable.hpp"
 #include "LIEF/rust/DWARF/Scope.hpp"
 #include "LIEF/rust/DWARF/Type.hpp"
+
 #include "LIEF/rust/DWARF/types/ClassLike.hpp"
 #include "LIEF/rust/DWARF/types/Pointer.hpp"
 #include "LIEF/rust/DWARF/types/Const.hpp"
 #include "LIEF/rust/DWARF/types/Base.hpp"
 #include "LIEF/rust/DWARF/types/Array.hpp"
+#include "LIEF/rust/DWARF/types/Typedef.hpp"

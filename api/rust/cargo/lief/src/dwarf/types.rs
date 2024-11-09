@@ -14,6 +14,7 @@ pub mod pointer;
 pub mod const_ty;
 pub mod base;
 pub mod array;
+pub mod typedef;
 
 #[doc(inline)]
 pub use classlike::Structure;
@@ -39,6 +40,9 @@ pub use base::Base;
 #[doc(inline)]
 pub use array::Array;
 
+#[doc(inline)]
+pub use typedef::Typedef;
+
 /// This class represents a DWARF Type which includes:
 ///
 /// - `DW_TAG_array_type`
@@ -51,6 +55,7 @@ pub use array::Array;
 /// - `DW_TAG_string_type`
 /// - `DW_TAG_union_type`
 /// - `DW_TAG_volatile_type`
+/// - `DW_TAG_typedef`
 /// - `DW_TAG_unspecified_type`
 pub enum Type<'a> {
     /// Interface over `DW_TAG_structure_type`
@@ -73,6 +78,9 @@ pub enum Type<'a> {
 
     /// Interface over `DW_TAG_array_type`
     Array(Array<'a>),
+
+    /// Interface over `DW_TAG_typedef`
+    Typedef(Typedef<'a>),
 
     /// Generic type (fallback value)
     Generic(Generic<'a>),
@@ -132,6 +140,13 @@ impl FromFFI<ffi::DWARF_Type> for Type<'_> {
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Type::Array(Array::from_ffi(raw))
+            } else if ffi::DWARF_types_Typedef::classof(type_ref) {
+                let raw = {
+                    type From = cxx::UniquePtr<ffi::DWARF_Type>;
+                    type To = cxx::UniquePtr<ffi::DWARF_types_Typedef>;
+                    std::mem::transmute::<From, To>(ffi_entry)
+                };
+                Type::Typedef(Typedef::from_ffi(raw))
             } else {
                 Type::Generic(Generic::from_ffi(ffi_entry))
             }
@@ -223,6 +238,9 @@ impl DwarfType for Type<'_> {
                 s.get_base()
             }
             Type::Array(s) => {
+                s.get_base()
+            }
+            Type::Typedef(s) => {
                 s.get_base()
             }
             Type::Generic(s) => {

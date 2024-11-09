@@ -552,6 +552,8 @@ include_cpp! {
     block_constructors!("DWARF_types_Base")
     generate!("DWARF_types_Array")
     block_constructors!("DWARF_types_Array")
+    generate!("DWARF_types_Typedef")
+    block_constructors!("DWARF_types_Typedef")
     generate!("DWARF_Scope")
     block_constructors!("DWARF_Scope")
 

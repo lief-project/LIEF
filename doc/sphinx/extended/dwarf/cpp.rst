@@ -110,3 +110,10 @@ Pointer
 *******
 
 .. doxygenclass:: LIEF::dwarf::types::Pointer
+
+----------
+
+Typedef
+*******
+
+.. doxygenclass:: LIEF::dwarf::types::Typedef

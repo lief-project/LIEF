@@ -12,13 +12,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_DWARF_TYPES_H
-#define LIEF_DWARF_TYPES_H
-#include <LIEF/DWARF/Type.hpp>
-#include <LIEF/DWARF/types/ClassLike.hpp>
-#include <LIEF/DWARF/types/Pointer.hpp>
-#include <LIEF/DWARF/types/Const.hpp>
-#include <LIEF/DWARF/types/Base.hpp>
-#include <LIEF/DWARF/types/Array.hpp>
-#include <LIEF/DWARF/types/Typedef.hpp>
-#endif
+#pragma once
+#include "LIEF/DWARF/types/Typedef.hpp"
+#include "LIEF/rust/DWARF/Type.hpp"
+
+class DWARF_types_Typedef : public DWARF_Type {
+  public:
+  using lief_t = LIEF::dwarf::types::Typedef;
+
+  static bool classof(const DWARF_Type& type) {
+    return lief_t::classof(&type.get());
+  }
+
+  auto underlying_type() const {
+    return details::try_unique<DWARF_Type>(impl().underlying_type()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+
+  auto name() const { return impl().name(); }
+
+  private:
+  const lief_t& impl() const { return as<lief_t>(this); }
+};

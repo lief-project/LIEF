@@ -134,6 +134,7 @@
 
   * Add |lief-dwarf-function-is-external|
   * Add |lief-dwarf-cu-imported-functions|
+  * Add ``DW_TAG_typedef`` support
 
 :Extended:
 

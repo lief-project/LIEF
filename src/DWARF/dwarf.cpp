@@ -18,11 +18,13 @@
 #include "LIEF/DWARF/Variable.hpp"
 #include "LIEF/DWARF/Type.hpp"
 #include "LIEF/DWARF/Scope.hpp"
+
 #include "LIEF/DWARF/types/ClassLike.hpp"
 #include "LIEF/DWARF/types/Pointer.hpp"
 #include "LIEF/DWARF/types/Const.hpp"
 #include "LIEF/DWARF/types/Base.hpp"
 #include "LIEF/DWARF/types/Array.hpp"
+#include "LIEF/DWARF/types/Typedef.hpp"
 
 #include "logging.hpp"
 #include "messages.hpp"
@@ -546,6 +548,20 @@ Array::~Array() = default;
 const Type* Array::underlying_type() const {
   return nullptr;
 }
+
+// ----------------------------------------------------------------------------
+// DWARF/types/Typedef.hpp
+// ----------------------------------------------------------------------------
+Typedef::~Typedef() = default;
+
+const Type* Typedef::underlying_type() const {
+  return nullptr;
+}
+
+std::string Typedef::name() const {
+  return "";
+}
+
 
 } // namespace types
 
