@@ -133,6 +133,7 @@
 :DWARF:
 
   * Add |lief-dwarf-function-is-external|
+  * Add |lief-dwarf-cu-imported-functions|
 
 :Extended:
 

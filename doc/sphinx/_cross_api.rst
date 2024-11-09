@@ -68,6 +68,12 @@
     :py:attr:`lief.dwarf.Function.is_external`
     :cpp:func:`LIEF::dwarf::Function::is_external`
 
+.. |lief-dwarf-cu-imported-functions| lief-api:: lief.dwarf.CompilationUnit.imported_functions()
+
+    :rust:method:`lief::dwarf::CompilationUnit::imported_functions [struct]`
+    :py:attr:`lief.dwarf.CompilationUnit.imported_functions`
+    :cpp:func:`LIEF::dwarf::CompilationUnit::imported_functions`
+
 .. |lief-dwarf-debug-info| lief-api:: lief.dwarf.DebugInfo
 
     :rust:struct:`lief::dwarf::DebugInfo`

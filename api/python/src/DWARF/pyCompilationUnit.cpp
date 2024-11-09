@@ -193,6 +193,33 @@ void create<dw::CompilationUnit>(nb::module_& m) {
         )delim"_doc
     )
 
+    .def_prop_ro("imported_functions",
+        [] (dw::CompilationUnit& self) {
+          auto imported_functions = self.imported_functions();
+          return nb::make_iterator(
+              nb::type<dw::CompilationUnit>(), "functions_it", imported_functions);
+        }, nb::keep_alive<0, 1>(),
+        R"delim(
+        Return an iterator over the functions **imported** in this compilation
+        unit **but not** implemented.
+
+        For instance with this code:
+
+        .. code-block:: cpp
+
+          #include <cstdio>
+          int main() {
+            printf("Hello\n");
+            return 0;
+          }
+
+        ``printf`` is imported from the standard libc so the function is returned by
+        the iterator. On the other hand, ``main()`` is implemented in this
+        compilation unit so it is not returned by :attr:`.imported_function` but
+        :attr:`.functions`.
+        )delim"_doc
+    )
+
     .def_prop_ro("variables",
         [] (dw::CompilationUnit& self) {
           auto variables = self.variables();

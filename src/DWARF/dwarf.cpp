@@ -324,6 +324,10 @@ CompilationUnit::functions_it CompilationUnit::functions() const {
   return make_empty_iterator<Function>();
 }
 
+CompilationUnit::functions_it CompilationUnit::imported_functions() const {
+  return make_empty_iterator<Function>();
+}
+
 CompilationUnit::types_it CompilationUnit::types() const {
   return make_empty_iterator<Type>();
 }

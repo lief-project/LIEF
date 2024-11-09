@@ -181,6 +181,27 @@ impl CompilationUnit<'_> {
         Functions::new(self.ptr.functions())
     }
 
+    /// Return an iterator over the functions **imported** in this compilation
+    /// unit **but not** implemented.
+    ///
+    /// For instance with this code:
+    ///
+    /// ```cpp
+    /// #include <cstdio>
+    /// int main() {
+    ///   printf("Hello\n");
+    ///   return 0;
+    /// }
+    /// ```
+    ///
+    /// `printf` is imported from the standard libc so the function is returned by
+    /// the iterator. On the other hand, `main()` is implemented in this
+    /// compilation unit so it is not returned by [`CompilationUnit::imported_function`] but
+    /// [`CompilationUnit::functions`].
+    pub fn imported_functions(&self) -> Functions {
+        Functions::new(self.ptr.imported_functions())
+    }
+
     /// Return an iterator over the variables defined in the **global** scope
     /// of this compilation unit:
     ///

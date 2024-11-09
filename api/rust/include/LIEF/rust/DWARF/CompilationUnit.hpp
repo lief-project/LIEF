@@ -23,6 +23,9 @@
 #include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/range.hpp"
 
+struct imported_t {};
+struct implemented_t {};
+
 class DWARF_CompilationUnit : private Mirror<LIEF::dwarf::CompilationUnit> {
   public:
   using Mirror::Mirror;
@@ -32,8 +35,11 @@ class DWARF_CompilationUnit : private Mirror<LIEF::dwarf::CompilationUnit> {
       public ForwardIterator<DWARF_Function, LIEF::dwarf::Function::Iterator>
   {
     public:
-    it_functions(const DWARF_CompilationUnit::lief_t& src)
+    it_functions(const DWARF_CompilationUnit::lief_t& src, implemented_t)
       : ForwardIterator(src.functions()) { }
+
+    it_functions(const DWARF_CompilationUnit::lief_t& src, imported_t)
+      : ForwardIterator(src.imported_functions()) { }
     auto next() { return ForwardIterator::next(); }
   };
 
@@ -94,7 +100,11 @@ class DWARF_CompilationUnit : private Mirror<LIEF::dwarf::CompilationUnit> {
   }
 
   auto functions() const {
-    return std::make_unique<it_functions>(get());
+    return std::make_unique<it_functions>(get(), implemented_t{});
+  }
+
+  auto imported_functions() const {
+    return std::make_unique<it_functions>(get(), imported_t{});
   }
 
   auto types() const {
