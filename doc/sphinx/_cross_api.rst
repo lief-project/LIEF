@@ -62,6 +62,12 @@
     :py:attr:`lief.Binary.debug_info`
     :cpp:func:`LIEF::Binary::debug_info`
 
+.. |lief-dwarf-function-is-external| lief-api:: lief.dwarf.Function.is_external()
+
+    :rust:method:`lief::dwarf::Function::is_external [struct]`
+    :py:attr:`lief.dwarf.Function.is_external`
+    :cpp:func:`LIEF::dwarf::Function::is_external`
+
 .. |lief-dwarf-debug-info| lief-api:: lief.dwarf.DebugInfo
 
     :rust:struct:`lief::dwarf::DebugInfo`

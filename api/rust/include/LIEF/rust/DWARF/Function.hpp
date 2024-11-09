@@ -74,6 +74,8 @@ class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
   }
 
   auto is_artificial() const { return get().is_artificial(); }
+  auto is_external() const { return get().is_external(); }
+
   auto size() const { return get().size(); }
   auto ranges() const { return details::make_range(get().ranges()); }
   auto debug_location() const { return details::make_location(get().debug_location()); }

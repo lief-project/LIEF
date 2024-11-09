@@ -87,6 +87,13 @@ void create<dw::Function>(nb::module_& m) {
       )doc"_doc
     )
 
+    .def_prop_ro("is_external", &dw::Function::is_external,
+      R"doc(
+      Whether the function is defined **outside** the current compilation unit
+      (``DW_AT_external``).
+      )doc"_doc
+    )
+
     .def_prop_ro("size", &dw::Function::size,
       R"doc(
       Return the size taken by this function in the binary.

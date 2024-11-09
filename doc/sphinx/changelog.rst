@@ -130,6 +130,10 @@
   * The output of |lief-objc-metadata-to_decl_opt| can now be configured with
     |lief-objc-declopt|.
 
+:DWARF:
+
+  * Add |lief-dwarf-function-is-external|
+
 :Extended:
 
   .. note::

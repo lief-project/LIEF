@@ -141,6 +141,10 @@ class LIEF_API Function {
   /// present in the original source code
   bool is_artificial() const;
 
+  /// Whether the function is defined **outside** the current compilation unit
+  /// (`DW_AT_external`).
+  bool is_external() const;
+
   /// Return the size taken by this function in the binary
   uint64_t size() const;
 

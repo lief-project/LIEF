@@ -157,6 +157,10 @@ bool Function::is_artificial() const {
   return false;
 }
 
+bool Function::is_external() const {
+  return false;
+}
+
 uint64_t Function::size() const {
   return 0;
 }

@@ -58,6 +58,11 @@ impl Function<'_> {
         self.ptr.is_artificial()
     }
 
+    /// Whether the function is defined **outside** the compilation unit (`DW_AT_external`)
+    pub fn is_external(&self) -> bool {
+        self.ptr.is_external()
+    }
+
     /// Return the size taken by this function in the binary
     pub fn size(&self) -> u64 {
         self.ptr.size()
