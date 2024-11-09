@@ -75,7 +75,7 @@ def setup(app: Sphinx):
     app.config.lief_rust_doc = f"{app.config.lief_rust_doc_base_url}/lief"
 
     app.config.lief_rust_doc_nightly_base_url = "https://lief-rs.s3.fr-par.scw.cloud/doc/latest"
-    app.config.lief_rust_doc_nightly = f"{app.config.lief_rust_doc_nightly_base_url}/lief"
+    app.config.lief_rust_doc_nightly = f"{app.config.lief_rust_doc_nightly_base_url}/lief/index.html"
 
     app.config.lief_rust_doc_check = get_rust_doc_check()
 
