@@ -74,6 +74,7 @@
 
 :ELF:
 
+  * Add support for eBPF relocations.
   * Add support for ``GNU_PROPERTY_AARCH64_FEATURE_PAUTH`` GNU property note:
     |lief-elf-aarch64pauth|.
   * Add |lief-elf-binary-target-android| to check if an ELF targets Android

@@ -40,6 +40,7 @@ void init_relocation_types(nb::class_<Relocation, LIEF::Relocation>& m) {
     #include "LIEF/ELF/Relocations/Sparc.def"
     #include "LIEF/ELF/Relocations/SystemZ.def"
     #include "LIEF/ELF/Relocations/RISCV.def"
+    #include "LIEF/ELF/Relocations/BPF.def"
   ;
   #undef ELF_RELOC
 }

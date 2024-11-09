@@ -53,6 +53,8 @@ Relocation::TYPE Relocation::type_from(uint32_t value, ARCH arch) {
       return TYPE(value | R_SPARC);
     case ARCH::RISCV:
       return TYPE(value | R_RISCV);
+    case ARCH::BPF:
+      return TYPE(value | R_BPF);
     default:
       {
         if (ERR.insert(arch).second) {
@@ -145,6 +147,9 @@ Relocation::Relocation(uint64_t address, TYPE type, ENCODING encoding) :
     }
     else if (ID == Relocation::R_RISCV) {
       architecture_ = ARCH::RISCV;
+    }
+    else if (ID == Relocation::R_BPF) {
+      architecture_ = ARCH::BPF;
     }
   }
 }

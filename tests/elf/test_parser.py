@@ -176,3 +176,39 @@ def test_is_android():
 
     elf = lief.ELF.parse(get_sample('ELF/libmonochrome-armv7.so'))
     assert elf.is_targeting_android
+
+def test_ebpf_relocations():
+    elf = lief.ELF.parse(get_sample('ELF/hello.bpf.o'))
+    relocations = list(elf.relocations)
+
+    assert len(relocations) == 9
+
+    assert relocations[0].symbol.name == "pid_filter"
+    assert relocations[0].section.name == ".BTF"
+    assert relocations[0].address == 0x0000d4
+    assert relocations[0].addend == 0
+    assert relocations[0].info == 3
+    assert relocations[0].purpose == lief.ELF.Relocation.PURPOSE.OBJECT
+    assert relocations[0].type == lief.ELF.Relocation.TYPE.BPF_64_ABS32
+
+    assert relocations[1].symbol.name == "LICENSE"
+    assert relocations[1].section.name == ".BTF"
+    assert relocations[1].address == 0x0000ec
+    assert relocations[1].addend == 0
+    assert relocations[1].info == 4
+    assert relocations[1].purpose == lief.ELF.Relocation.PURPOSE.OBJECT
+    assert relocations[1].type == lief.ELF.Relocation.TYPE.BPF_64_NODYLD32
+
+    assert relocations[8].symbol.name == ""
+    assert relocations[8].section.name == ".BTF.ext"
+    assert relocations[8].address == 0x000090
+    assert relocations[8].addend == 0
+    assert relocations[8].info == 1
+    assert relocations[8].purpose == lief.ELF.Relocation.PURPOSE.OBJECT
+    assert relocations[8].type == lief.ELF.Relocation.TYPE.BPF_64_NODYLD32
+
+
+
+
+    for r in relocations:
+        print(r)
