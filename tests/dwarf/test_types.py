@@ -23,10 +23,13 @@ def test_vars_1():
     assert main_ret_type.encoding == lief.dwarf.types.Base.ENCODING.SIGNED
 
     types = list(cu.types)
-    assert len(types) == 477
+    assert len(types) == 766
+
+    pointers = [ty for ty in types if ty.kind == lief.dwarf.Type.KIND.POINTER]
+    assert len(pointers) == 142
 
     # Pointer type
-    ptr_type: lief.dwarf.types.Pointer = types[12]
+    ptr_type: lief.dwarf.types.Pointer = pointers[1]
     assert ptr_type.kind == lief.dwarf.Type.KIND.POINTER
     assert isinstance(ptr_type, lief.dwarf.types.Pointer)
 
@@ -40,7 +43,10 @@ def test_vars_1():
     assert underlying_ptr_type.encoding == lief.dwarf.types.Base.ENCODING.SIGNED_CHAR
 
     # Struct type
-    struct_type: lief.dwarf.types.Pointer = types[327]
+    structs = [ty for ty in types if ty.kind == lief.dwarf.Type.KIND.STRUCT]
+    assert len(structs) == 125
+
+    struct_type: lief.dwarf.types.Structure = structs[120]
     assert struct_type.kind == lief.dwarf.Type.KIND.STRUCT
     assert isinstance(struct_type, lief.dwarf.types.Structure)
     assert struct_type.name == "tm"
@@ -79,7 +85,10 @@ def test_vars_1():
     assert isinstance(members[10].type.underlying_type.underlying_type, lief.dwarf.types.Base)
 
     # Array type
-    array_type: lief.dwarf.types.Pointer = types[417]
+    arrays = [ty for ty in types if ty.kind == lief.dwarf.Type.KIND.ARRAY]
+    assert len(arrays) == 6
+
+    array_type: lief.dwarf.types.Array = arrays[5]
     assert array_type.kind == lief.dwarf.Type.KIND.ARRAY
     assert array_type.name is None
     assert array_type.size == 40
@@ -89,7 +98,11 @@ def test_vars_1():
     assert isinstance(underlying_array_type, lief.dwarf.types.Base)
 
     # Const type
-    cst_type: lief.dwarf.types.Pointer = types[468]
+
+    consts = [ty for ty in types if ty.kind == lief.dwarf.Type.KIND.CONST_KIND]
+    assert len(consts) == 141
+
+    cst_type: lief.dwarf.types.Pointer = consts[137]
     assert cst_type.kind == lief.dwarf.Type.KIND.CONST_KIND
     assert isinstance(cst_type, lief.dwarf.types.Const)
 

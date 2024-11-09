@@ -109,7 +109,17 @@ def test_lief():
     assert params[1].type.kind == lief.dwarf.Type.KIND.UNKNOWN
 
     assert params[2].name == "names_offset"
-    assert params[2].type.kind == lief.dwarf.Type.KIND.UNKNOWN
+    assert params[2].type.kind == lief.dwarf.Type.KIND.TYPEDEF
+    assert params[2].type.name == "uint32_t"
+    assert params[2].type.underlying_type.kind == lief.dwarf.Type.KIND.TYPEDEF
+    assert params[2].type.underlying_type.name == "__uint32_t"
+
+    CUS = list(dbg_info.compilation_units)
+    assert len(CUS) == 366
+    imported_functions = list(CUS[0].imported_functions)
+    assert len(imported_functions) == 177
+
+    assert imported_functions[0].name == "btowc"
 
 def test_scope():
     elf = lief.ELF.parse(get_sample("DWARF/scope_3"))
@@ -124,3 +134,15 @@ def test_scope():
     assert ty.find_member(0).name == "value_"
     assert ty.find_member(1).name == "value_"
     assert ty.find_member(8) is None
+
+def test_imported_functions():
+    elf = lief.ELF.parse(get_sample("ELF/simple-gcc-c.bin"))
+
+    dbg_info: lief.dwarf.DebugInfo = elf.debug_info
+    assert isinstance(dbg_info, lief.dwarf.DebugInfo)
+
+    units = list(dbg_info.compilation_units)
+    assert len(units) == 1
+    cu = units[0]
+    functions = list(cu.imported_functions)
+    assert len(functions) == 0

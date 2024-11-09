@@ -69,7 +69,7 @@ def test_vars_1():
 
     assert members[0].name == "_M_h"
     assert members[0].offset == 0
-    assert members[0].type.kind == lief.dwarf.Type.KIND.UNKNOWN
+    assert members[0].type.kind == lief.dwarf.Type.KIND.TYPEDEF
 
     main = dbg_info.find_function("main")
     assert main is not None
