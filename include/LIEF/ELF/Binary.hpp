@@ -914,6 +914,32 @@ class LIEF_API Binary : public LIEF::Binary {
   /// True if the current ELF is targeting Android
   bool is_targeting_android() const;
 
+  /// Find the index of the section given in the first parameter
+  result<size_t> get_section_idx(const Section& section) const {
+    auto it = std::find_if(sections_.begin(), sections_.end(),
+      [&section] (const std::unique_ptr<Section>& S) {
+        return S.get() == &section;
+      }
+    );
+    if (it == sections_.end()) {
+      return make_error_code(lief_errors::not_found);
+    }
+    return std::distance(sections_.begin(), it);
+  }
+
+  /// Find the index of the section with the name given in the first parameter
+  result<size_t> get_section_idx(const std::string& name) const {
+    auto it = std::find_if(sections_.begin(), sections_.end(),
+      [name] (const std::unique_ptr<Section>& S) {
+        return S->name() == name;
+      }
+    );
+    if (it == sections_.end()) {
+      return make_error_code(lief_errors::not_found);
+    }
+    return std::distance(sections_.begin(), it);
+  }
+
   static bool classof(const LIEF::Binary* bin) {
     return bin->format() == Binary::FORMATS::ELF ||
            bin->format() == Binary::FORMATS::OAT;
