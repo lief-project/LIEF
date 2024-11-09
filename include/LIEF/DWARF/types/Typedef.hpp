@@ -46,6 +46,10 @@ class LIEF_API Typedef : public Type {
   }
 
   ~Typedef() override;
+
+  protected:
+  mutable std::unique_ptr<Type> underlying_;
+
 };
 
 }
