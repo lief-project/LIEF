@@ -1031,59 +1031,59 @@ class LIEF_API Binary : public LIEF::Binary {
       nb_segments = 0;
     }
   };
-  Binary();
+  LIEF_LOCAL Binary();
 
   /// Return an abstraction of binary's section: LIEF::Section
-  LIEF::Binary::sections_t get_abstract_sections() override;
+  LIEF_LOCAL LIEF::Binary::sections_t get_abstract_sections() override;
 
-  LIEF::Header get_abstract_header() const override {
+  LIEF_LOCAL LIEF::Header get_abstract_header() const override {
     return LIEF::Header::from(*this);
   }
 
-  LIEF::Binary::functions_t get_abstract_exported_functions() const override;
-  LIEF::Binary::functions_t get_abstract_imported_functions() const override;
-  std::vector<std::string> get_abstract_imported_libraries() const override;
-  LIEF::Binary::symbols_t     get_abstract_symbols() override;
-  LIEF::Binary::relocations_t get_abstract_relocations() override;
+  LIEF_LOCAL LIEF::Binary::functions_t get_abstract_exported_functions() const override;
+  LIEF_LOCAL LIEF::Binary::functions_t get_abstract_imported_functions() const override;
+  LIEF_LOCAL std::vector<std::string> get_abstract_imported_libraries() const override;
+  LIEF_LOCAL LIEF::Binary::symbols_t     get_abstract_symbols() override;
+  LIEF_LOCAL LIEF::Binary::relocations_t get_abstract_relocations() override;
 
   template<ELF::ARCH ARCH>
-  void patch_relocations(uint64_t from, uint64_t shift);
+  LIEF_LOCAL void patch_relocations(uint64_t from, uint64_t shift);
 
   template<class T>
-  void patch_addend(Relocation& relocatio, uint64_t from, uint64_t shift);
+  LIEF_LOCAL void patch_addend(Relocation& relocatio, uint64_t from, uint64_t shift);
 
-  void shift_sections(uint64_t from, uint64_t shift);
-  void shift_segments(uint64_t from, uint64_t shift);
-  void shift_dynamic_entries(uint64_t from, uint64_t shift);
-  void shift_symbols(uint64_t from, uint64_t shift);
-  void shift_relocations(uint64_t from, uint64_t shift);
+  LIEF_LOCAL void shift_sections(uint64_t from, uint64_t shift);
+  LIEF_LOCAL void shift_segments(uint64_t from, uint64_t shift);
+  LIEF_LOCAL void shift_dynamic_entries(uint64_t from, uint64_t shift);
+  LIEF_LOCAL void shift_symbols(uint64_t from, uint64_t shift);
+  LIEF_LOCAL void shift_relocations(uint64_t from, uint64_t shift);
 
   template<class ELF_T>
-  void fix_got_entries(uint64_t from, uint64_t shift);
+  LIEF_LOCAL void fix_got_entries(uint64_t from, uint64_t shift);
 
-  LIEF::Binary::functions_t eh_frame_functions() const;
-  LIEF::Binary::functions_t armexid_functions() const;
+  LIEF_LOCAL LIEF::Binary::functions_t eh_frame_functions() const;
+  LIEF_LOCAL LIEF::Binary::functions_t armexid_functions() const;
 
   template<Header::FILE_TYPE OBJECT_TYPE, bool note = false>
-  Segment* add_segment(const Segment& segment, uint64_t base);
+  LIEF_LOCAL Segment* add_segment(const Segment& segment, uint64_t base);
 
-  uint64_t relocate_phdr_table_auto();
-  uint64_t relocate_phdr_table_pie();
-  uint64_t relocate_phdr_table_v1();
-  uint64_t relocate_phdr_table_v2();
-  uint64_t relocate_phdr_table_v3();
+  LIEF_LOCAL uint64_t relocate_phdr_table_auto();
+  LIEF_LOCAL uint64_t relocate_phdr_table_pie();
+  LIEF_LOCAL uint64_t relocate_phdr_table_v1();
+  LIEF_LOCAL uint64_t relocate_phdr_table_v2();
+  LIEF_LOCAL uint64_t relocate_phdr_table_v3();
 
   template<Segment::TYPE PT>
-  Segment* extend_segment(const Segment& segment, uint64_t size);
+  LIEF_LOCAL Segment* extend_segment(const Segment& segment, uint64_t size);
 
   template<bool LOADED>
-  Section* add_section(const Section& section);
-  std::vector<Symbol*> symtab_dyn_symbols() const;
+  LIEF_LOCAL Section* add_section(const Section& section);
+  LIEF_LOCAL std::vector<Symbol*> symtab_dyn_symbols() const;
 
-  std::string shstrtab_name() const;
-  Section* add_frame_section(const Section& sec);
+  LIEF_LOCAL std::string shstrtab_name() const;
+  LIEF_LOCAL Section* add_frame_section(const Section& sec);
 
-  LIEF::Binary::functions_t tor_functions(DynamicEntry::TAG tag) const;
+  LIEF_LOCAL LIEF::Binary::functions_t tor_functions(DynamicEntry::TAG tag) const;
 
   Header::CLASS type_ = Header::CLASS::NONE;
   Header header_;

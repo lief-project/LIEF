@@ -104,89 +104,89 @@ class LIEF_API Builder {
 
   protected:
   template<typename ELF_T>
-  ok_error_t build();
+  LIEF_LOCAL ok_error_t build();
 
   template<typename ELF_T>
-  ok_error_t build_relocatable();
+  LIEF_LOCAL ok_error_t build_relocatable();
 
   template<typename ELF_T>
-  ok_error_t build_exe_lib();
+  LIEF_LOCAL ok_error_t build_exe_lib();
 
   template<typename ELF_T>
-  ok_error_t build(const Header& header);
+  LIEF_LOCAL ok_error_t build(const Header& header);
 
   template<typename ELF_T>
-  ok_error_t build_sections();
+  LIEF_LOCAL ok_error_t build_sections();
 
   template<typename ELF_T>
-  ok_error_t build_segments();
+  LIEF_LOCAL ok_error_t build_segments();
 
   template<typename ELF_T>
-  ok_error_t build_symtab_symbols();
+  LIEF_LOCAL ok_error_t build_symtab_symbols();
 
   template<typename ELF_T>
-  ok_error_t build_dynamic();
+  LIEF_LOCAL ok_error_t build_dynamic();
 
   template<typename ELF_T>
-  ok_error_t build_dynamic_section();
+  LIEF_LOCAL ok_error_t build_dynamic_section();
 
   template<typename ELF_T>
-  ok_error_t build_dynamic_symbols();
+  LIEF_LOCAL ok_error_t build_dynamic_symbols();
 
   template<typename ELF_T>
-  ok_error_t build_obj_symbols();
+  LIEF_LOCAL ok_error_t build_obj_symbols();
 
   template<typename ELF_T>
-  ok_error_t build_dynamic_relocations();
+  LIEF_LOCAL ok_error_t build_dynamic_relocations();
 
   template<typename ELF_T>
-  ok_error_t build_relative_relocations();
+  LIEF_LOCAL ok_error_t build_relative_relocations();
 
   template<typename ELF_T>
-  ok_error_t build_android_relocations();
+  LIEF_LOCAL ok_error_t build_android_relocations();
 
   template<typename ELF_T>
-  ok_error_t build_pltgot_relocations();
+  LIEF_LOCAL ok_error_t build_pltgot_relocations();
 
   template<typename ELF_T>
-  ok_error_t build_section_relocations();
+  LIEF_LOCAL ok_error_t build_section_relocations();
 
-  uint32_t sort_dynamic_symbols();
-
-  template<typename ELF_T>
-  ok_error_t build_hash_table();
+  LIEF_LOCAL uint32_t sort_dynamic_symbols();
 
   template<typename ELF_T>
-  ok_error_t build_symbol_hash();
-
-  ok_error_t build_empty_symbol_gnuhash();
+  LIEF_LOCAL ok_error_t build_hash_table();
 
   template<typename ELF_T>
-  ok_error_t build_symbol_requirement();
+  LIEF_LOCAL ok_error_t build_symbol_hash();
+
+  LIEF_LOCAL ok_error_t build_empty_symbol_gnuhash();
 
   template<typename ELF_T>
-  ok_error_t build_symbol_definition();
+  LIEF_LOCAL ok_error_t build_symbol_requirement();
 
   template<typename ELF_T>
-  ok_error_t build_symbol_version();
+  LIEF_LOCAL ok_error_t build_symbol_definition();
 
   template<typename ELF_T>
-  ok_error_t build_interpreter();
+  LIEF_LOCAL ok_error_t build_symbol_version();
 
   template<typename ELF_T>
-  ok_error_t build_notes();
-
-  ok_error_t update_note_section(const Note& note, std::set<const Note*>& notes);
+  LIEF_LOCAL ok_error_t build_interpreter();
 
   template<typename ELF_T>
-  ok_error_t build_overlay();
+  LIEF_LOCAL ok_error_t build_notes();
 
-  bool should_swap() const;
+  LIEF_LOCAL ok_error_t update_note_section(const Note& note, std::set<const Note*>& notes);
+
+  template<typename ELF_T>
+  LIEF_LOCAL ok_error_t build_overlay();
+
+  LIEF_LOCAL bool should_swap() const;
 
   template<class ELF_T>
-  ok_error_t process_object_relocations();
+  LIEF_LOCAL ok_error_t process_object_relocations();
 
-  bool should_build_notes() const;
+  LIEF_LOCAL bool should_build_notes() const;
 
   config_t config_;
   mutable vector_iostream ios_;
