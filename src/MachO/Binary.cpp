@@ -883,7 +883,7 @@ ok_error_t Binary::shift(size_t value) {
   // Segment that wraps this load command table
   SegmentCommand* load_cmd_segment = segment_from_offset(loadcommands_end);
   if (load_cmd_segment == nullptr) {
-    LIEF_WARN("Can't find segment associated with last load command");
+    LIEF_ERR("Can't find segment associated with load command space");
     return make_error_code(lief_errors::file_format_error);
   }
   LIEF_DEBUG("LC Table wrapped by {} / End offset: 0x{:x} (size: {:x})",
@@ -1231,6 +1231,91 @@ bool Binary::extend_segment(const SegmentCommand& segment, size_t size) {
   target_segment->file_size(target_segment->file_size() + size_aligned);
   target_segment->content_resize(target_segment->file_size());
   refresh_seg_offset();
+  return true;
+}
+
+bool Binary::extend_section(Section& section, size_t size) {
+  // We want all sections to keep their requested alignment, at the same time
+  // we _would like_ to minimize gaps between sections.
+  //
+  // As per current implementation of `shift` method, space is allocated between
+  // the last load command and the first section, due to this
+  // we shift sections to the left.
+
+  const uint64_t loadcommands_start = is64_ ? sizeof(details::mach_header_64) :
+                                              sizeof(details::mach_header);
+  const uint64_t loadcommands_end = loadcommands_start + header().sizeof_cmds();
+  SegmentCommand* load_cmd_segment = segment_from_offset(loadcommands_end);
+  if (load_cmd_segment == nullptr) {
+    LIEF_ERR("Can't find segment associated with load command space");
+    return false;
+  }
+
+  if (section.segment() != load_cmd_segment) {
+    LIEF_ERR("Can't extend section that belongs to segment '{}' which is not the first one", section.segment_name());
+    return false;
+  }
+
+  // Select sections that we need.
+  // Note: there can be many sections with content size of zero and only one
+  //       section non-empty section at some specific offset; see `add_section`.
+  //       This can happen if user adds several sections without contents.
+  sections_cache_t sections_to_shift;
+  for (Section& s : sections()) {
+    if (&s != &section &&
+        (s.offset() > section.offset() || s.offset() == 0 ||
+        (s.offset() == section.offset() && s.size() != 0))) {
+      continue;
+    }
+    sections_to_shift.push_back(&s);
+  }
+
+  // Sort by (end_offset, alignment) pair:
+  // we want to shift from right to left, preferring sections with larger alignment.
+  std::sort(sections_to_shift.begin(), sections_to_shift.end(),
+            [](Section* a, Section* b) {
+              const uint64_t a_end = a->offset() + a->size();
+              const uint64_t b_end = b->offset() + b->size();
+              if (a_end != b_end) {
+                return a_end > b_end;
+              }
+              // In case of multiple sections at the same offset
+              // (e.g. they were added without contents yet),
+              // prefer to shift a section with larger alignment first.
+              assert(a->size() == 0);
+              assert(b->size() == 0);
+              return a->alignment() > b->alignment();
+            });
+
+  // Calculate the sum of shifts we need to keep each section aligned.
+  size_t shift_acc = size;
+  for (Section* s : sections_to_shift) {
+    const uint64_t shifted_offset = s->offset() - shift_acc;
+    const uint64_t aligned_offset = align_down(shifted_offset, 1 << s->alignment());
+    shift_acc += shifted_offset - aligned_offset;
+  }
+
+  // Resize command space, if needed.
+  if (auto result = ensure_command_space(shift_acc); is_err(result)) {
+    LIEF_ERR("Failed to ensure command space {}: {}", shift_acc, to_string(get_error(result)));
+    return false;
+  }
+  available_command_space_ -= shift_acc;
+
+  // Shift selected sections to allocate requested space for `section`.
+  shift_acc = size;
+  for (Section* s : sections_to_shift) {
+    const uint64_t original_offset = s->offset();
+    const uint64_t shifted_offset = s->offset() - shift_acc;
+    const uint64_t aligned_offset = align_down(shifted_offset, 1 << s->alignment());
+    s->offset(aligned_offset);
+    s->address(s->address() - (original_offset - aligned_offset));
+    shift_acc += shifted_offset - aligned_offset;
+  }
+
+  // Extend the given `section`.
+  section.size(section.size() + size);
+
   return true;
 }
 
