@@ -1233,6 +1233,32 @@ bool Binary::extend_segment(const SegmentCommand& segment, size_t size) {
   return true;
 }
 
+bool Binary::extend_section(Section& section, size_t size) {
+  const size_t size_aligned = align(size, pointer_size());
+
+  if (auto result = ensure_command_space(size_aligned); is_err(result)) {
+    LIEF_ERR("Failed to ensure command space {}: {}", size_aligned, to_string(get_error(result)));
+    return false;
+  }
+  available_command_space_ -= size_aligned;
+
+  // Note: there might exist empty sections and non-empty section at the same offset,
+  // due to this we do not shift sections at `shift_base`.
+  // Additionally skip on-demand sections.
+  const uint64_t shift_base = section.offset();
+  for (Section& s : sections()) {
+    if (s.offset() >= shift_base || s.offset() == 0) {
+      continue;
+    }
+    s.offset(s.offset() - size_aligned);
+    s.address(s.address() - size_aligned);
+  }
+  section.offset(section.offset() - size_aligned);
+  section.address(section.address() - size_aligned);
+  section.size(section.size() + size_aligned);
+  return true;
+}
+
 void Binary::remove_section(const std::string& name, bool clear) {
   Section* sec_to_delete = get_section(name);
   if (sec_to_delete == nullptr) {

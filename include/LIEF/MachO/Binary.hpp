@@ -409,6 +409,12 @@ class LIEF_API Binary : public LIEF::Binary  {
   /// Extend the **content** of the given SegmentCommand
   bool extend_segment(const SegmentCommand& segment, size_t size);
 
+  /// Extend the **content** of the given Section
+  ///
+  /// Note this may break position independent MachO if used with a section that is positioned
+  /// between a section that holds relative offset to other segment and that segment.
+  bool extend_section(Section& section, size_t size);
+
   /// Remove the `PIE` flag
   bool disable_pie();
 
