@@ -19,7 +19,7 @@
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
-#include "nanobind/extra/memoryview.hpp"
+#include "nanobind/extra/stl/lief_span.h"
 
 #include "ELF/pyELF.hpp"
 
@@ -735,10 +735,7 @@ void create<Binary>(nb::module_& m) {
     )
 
     .def_prop_rw("overlay",
-        [] (const Binary& self) {
-          const span<const uint8_t> overlay = self.overlay();
-          return nb::memoryview::from_memory(overlay.data(), overlay.size());
-        },
+        nb::overload_cast<>(&Binary::overlay, nb::const_),
         [] (Binary& self, nb::bytes& bytes) {
           const auto* ptr = reinterpret_cast<const uint8_t*>(bytes.c_str());
           std::vector<uint8_t> buffer(ptr, ptr + bytes.size());

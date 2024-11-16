@@ -31,7 +31,7 @@
 
 #include "pyErr.hpp"
 #include "pyIterator.hpp"
-#include "nanobind/extra/memoryview.hpp"
+#include "nanobind/extra/stl/lief_span.h"
 #include "nanobind/utils.hpp"
 
 #include <nanobind/stl/string.h>
@@ -383,10 +383,7 @@ void create<Binary>(nb::module_& m) {
         nb::rv_policy::reference_internal)
 
     .def_prop_ro("overlay",
-        [] (Binary& self) {
-          const span<const uint8_t> content = self.overlay();
-          return nb::memoryview::from_memory(content.data(), content.size());
-        },
+        nb::overload_cast<>(&Binary::overlay, nb::const_),
         "Return the overlay content as a ``list`` of bytes"_doc,
         nb::rv_policy::reference_internal)
 
@@ -394,10 +391,7 @@ void create<Binary>(nb::module_& m) {
                  "Return the original overlay offset")
 
     .def_prop_rw("dos_stub",
-        [] (Binary& self) {
-          const span<const uint8_t> content = self.dos_stub();
-          return nb::memoryview::from_memory(content.data(), content.size());
-        },
+        nb::overload_cast<>(&Binary::dos_stub, nb::const_),
         nb::overload_cast<std::vector<uint8_t>>(&Binary::dos_stub),
         "DOS stub content as a ``list`` of bytes"_doc)
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include "PE/pyPE.hpp"
-#include "nanobind/extra/memoryview.hpp"
+#include "nanobind/extra/stl/lief_span.h"
 
 #include "LIEF/PE/resources/ResourceIcon.hpp"
 
@@ -74,10 +74,7 @@ void create<ResourceIcon>(nb::module_& m) {
         "Bits per pixel"_doc)
 
     .def_prop_rw("pixels",
-        [] (ResourceIcon& self) {
-          const span<const uint8_t> content = self.pixels();
-          return nb::memoryview::from_memory(content.data(), content.size());
-        },
+        nb::overload_cast<>(&ResourceIcon::pixels, nb::const_),
         nb::overload_cast<const std::vector<uint8_t>&>(&ResourceIcon::pixels))
 
     .def("save",

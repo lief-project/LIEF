@@ -20,7 +20,7 @@
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
 
 #include "MachO/pyMachO.hpp"
-#include "nanobind/extra/memoryview.hpp"
+#include "nanobind/extra/stl/lief_span.h"
 
 namespace LIEF::MachO::py {
 
@@ -41,10 +41,8 @@ void create<SegmentSplitInfo>(nb::module_& m) {
         "Size of the raw data"_doc)
 
     .def_prop_ro("content",
-        [] (const SegmentSplitInfo& self) {
-          const span<const uint8_t> content = self.content();
-          return nb::memoryview::from_memory(content.data(), content.size());
-        }, "The original content as a bytes stream"_doc)
+        nb::overload_cast<>(&SegmentSplitInfo::content, nb::const_),
+        "The original content as a bytes stream"_doc)
 
     LIEF_DEFAULT_STR(SegmentSplitInfo);
 

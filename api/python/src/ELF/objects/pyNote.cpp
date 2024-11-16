@@ -18,7 +18,7 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/unique_ptr.h>
-#include "nanobind/extra/memoryview.hpp"
+#include "nanobind/extra/stl/lief_span.h"
 #include "nanobind/utils.hpp"
 
 #include "ELF/pyELF.hpp"
@@ -150,9 +150,7 @@ void create<Note>(nb::module_& m) {
         )doc"_doc)
 
     .def_prop_rw("description",
-        [] (const Note& self) {
-          return nb::to_memoryview(self.description());
-        },
+        nb::overload_cast<>(&Note::description, nb::const_),
         nb::overload_cast<Note::description_t>(&Note::description),
         "Return the description associated with the note"_doc)
 

@@ -27,7 +27,7 @@
 #include "ELF/pyELF.hpp"
 #include "pyErr.hpp"
 #include "pyIterator.hpp"
-#include "nanobind/extra/memoryview.hpp"
+#include "nanobind/extra/stl/lief_span.h"
 
 #include "enums_wrapper.hpp"
 
@@ -149,10 +149,7 @@ void create<Segment>(nb::module_& m) {
         "The offset alignment of the segment"_doc)
 
     .def_prop_rw("content",
-        [] (const Segment& self) {
-          const span<const uint8_t> content = self.content();
-          return nb::memoryview::from_memory(content.data(), content.size());
-        },
+        nb::overload_cast<>(&Segment::content, nb::const_),
         nb::overload_cast<std::vector<uint8_t>>(&Segment::content),
         "The raw data associated with this segment."_doc)
 

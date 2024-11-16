@@ -22,7 +22,7 @@
 #include "pyLIEF.hpp"
 #include "pySafeString.hpp"
 #include "typing.hpp"
-#include "nanobind/extra/memoryview.hpp"
+#include "nanobind/extra/stl/lief_span.h"
 #include "nanobind/utils.hpp"
 
 #include "LIEF/Abstract/Section.hpp"
@@ -76,9 +76,7 @@ void create<Section>(nb::module_& m) {
         "Section's virtual address"_doc)
 
     .def_prop_rw("content",
-        [] (const Section& self) {
-          return nanobind::to_memoryview(self.content());
-        },
+        nb::overload_cast<>(&Section::content, nb::const_),
         nb::overload_cast<const std::vector<uint8_t>&>(&Section::content),
         "Section's content"_doc)
 

@@ -19,6 +19,7 @@
 #include "nanobind/utils.hpp"
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
+#include <nanobind/extra/stl/lief_span.h>
 
 #include "MachO/pyMachO.hpp"
 
@@ -62,9 +63,7 @@ void create<Stub>(nb::module_& m) {
       "The virtual address where the stub is located"_doc
     )
     .def_prop_ro("raw",
-      [] (const Stub& stub) {
-        return nb::to_memoryview(stub.raw());
-      },
+      nb::overload_cast<>(&Stub::raw, nb::const_),
       "The (raw) instructions of this entry as a memory view of bytes"_doc)
 
     .def_prop_ro("target",

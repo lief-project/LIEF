@@ -18,7 +18,7 @@
 #include <nanobind/stl/string.h>
 
 #include "pyIterator.hpp"
-#include "nanobind/extra/memoryview.hpp"
+#include "nanobind/extra/stl/lief_span.h"
 
 #include "LIEF/MachO/DyldExportsTrie.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
@@ -52,10 +52,8 @@ void create<DyldExportsTrie>(nb::module_& m) {
                  "Raw size of the trie"_doc)
 
     .def_prop_ro("content",
-        [] (const DyldExportsTrie& self) {
-          const span<const uint8_t> content = self.content();
-          return nb::memoryview::from_memory(content.data(), content.size());
-        }, "The raw export trie"_doc)
+        nb::overload_cast<>(&DyldExportsTrie::content, nb::const_),
+        "The raw export trie"_doc)
 
     .def_prop_ro("exports",
                  nb::overload_cast<>(&DyldExportsTrie::exports),

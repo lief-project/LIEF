@@ -20,7 +20,7 @@
 #include "LIEF/MachO/LinkerOptHint.hpp"
 
 #include "MachO/pyMachO.hpp"
-#include "nanobind/extra/memoryview.hpp"
+#include "nanobind/extra/stl/lief_span.h"
 
 namespace LIEF::MachO::py {
 
@@ -43,10 +43,8 @@ void create<LinkerOptHint>(nb::module_& m) {
         "Size of the raw payload"_doc)
 
     .def_prop_ro("content",
-        [] (const LinkerOptHint& self) {
-          const span<const uint8_t> content = self.content();
-          return nb::memoryview::from_memory(content.data(), content.size());
-        }, "The raw payload"_doc)
+        nb::overload_cast<>(&LinkerOptHint::content, nb::const_),
+        "The raw payload"_doc)
 
     LIEF_DEFAULT_STR(LinkerOptHint);
 }

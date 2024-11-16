@@ -23,7 +23,7 @@
 #include "pyLIEF.hpp"
 #include "pyErr.hpp"
 #include "pySafeString.hpp"
-#include "nanobind/extra/memoryview.hpp"
+#include "nanobind/extra/stl/lief_span.h"
 #include "pyIterator.hpp"
 
 #include "LIEF/logging.hpp"
@@ -202,11 +202,7 @@ void create<Binary>(nb::module_& m) {
         "address"_a, "patch_value"_a, "size"_a = 8, "va_type"_a = Binary::VA_TYPES::AUTO)
 
 
-    .def("get_content_from_virtual_address",
-        [] (const Binary& self, uint64_t va, size_t size, Binary::VA_TYPES type) {
-        const span<const uint8_t> content = self.get_content_from_virtual_address(va, size, type);
-        return nb::memoryview::from_memory(content.data(), content.size());
-       },
+    .def("get_content_from_virtual_address", &Binary::get_content_from_virtual_address,
        R"delim(
        Return the content located at the provided virtual address.
        The virtual address is specified in the first argument and size to read (in bytes) in the second.

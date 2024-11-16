@@ -18,7 +18,7 @@
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>
-#include "nanobind/extra/memoryview.hpp"
+#include "nanobind/extra/stl/lief_span.h"
 #include "nanobind/extra/random_access_iterator.hpp"
 
 #include "LIEF/MachO/Binary.hpp"
@@ -743,10 +743,7 @@ void create<Binary>(nb::module_& m) {
         nb::overload_cast<LoadCommand::TYPE>(&Binary::has, nb::const_))
 
     .def_prop_ro("overlay",
-        [] (const Binary& self) {
-          const span<const uint8_t> overlay = self.overlay();
-          return nb::memoryview::from_memory(overlay.data(), overlay.size());
-        })
+        nb::overload_cast<>(&Binary::overlay, nb::const_))
 
     LIEF_DEFAULT_STR(Binary);
 }

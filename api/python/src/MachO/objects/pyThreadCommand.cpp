@@ -17,6 +17,7 @@
 #include <sstream>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
+#include <nanobind/extra/stl/lief_span.h>
 #include "nanobind/utils.hpp"
 
 #include "LIEF/MachO/ThreadCommand.hpp"
@@ -53,9 +54,7 @@ void create<ThreadCommand>(nb::module_& m) {
 
 
     .def_prop_rw("state",
-        [] (const ThreadCommand& self) {
-          return nb::to_memoryview(self.state());
-        },
+        nb::overload_cast<>(&ThreadCommand::state, nb::const_),
         nb::overload_cast<std::vector<uint8_t>>(&ThreadCommand::state),
         R"delim(
         The actual thread state as a vector of bytes. Depending on the architecture(),

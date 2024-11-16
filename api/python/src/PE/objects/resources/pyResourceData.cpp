@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include "PE/pyPE.hpp"
-#include "nanobind/extra/memoryview.hpp"
+#include "nanobind/extra/stl/lief_span.h"
 
 #include "LIEF/PE/ResourceData.hpp"
 
@@ -46,10 +46,7 @@ void create<ResourceData>(nb::module_& m) {
         )delim"_doc)
 
     .def_prop_rw("content",
-        [] (const ResourceData& self) {
-          const span<const uint8_t> content = self.content();
-          return nb::memoryview::from_memory(content.data(), content.size());
-        },
+        nb::overload_cast<>(&ResourceData::content, nb::const_),
         nb::overload_cast<std::vector<uint8_t>>(&ResourceData::content),
         "Resource content"_doc)
 

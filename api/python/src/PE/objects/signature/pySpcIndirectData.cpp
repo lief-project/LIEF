@@ -21,7 +21,7 @@
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
-#include <nanobind/extra/memoryview.hpp>
+#include <nanobind/extra/stl/lief_span.h>
 
 namespace LIEF::PE::py {
 
@@ -34,10 +34,8 @@ void create<SpcIndirectData>(nb::module_& m) {
                  :attr:`~lief.PE.SignerInfo.digest_algorithm`
                  )delim"_doc)
 
-    .def_prop_ro("digest", [] (const SpcIndirectData& sid) {
-                   const span<const uint8_t> digest = sid.digest();
-                   return nb::memoryview::from_memory(digest.data(), digest.size());
-                 })
+    .def_prop_ro("digest",
+                 nb::overload_cast<>(&SpcIndirectData::digest, nb::const_))
     .def_prop_ro("file", &SpcIndirectData::file)
     LIEF_DEFAULT_STR(SpcIndirectData);
 }

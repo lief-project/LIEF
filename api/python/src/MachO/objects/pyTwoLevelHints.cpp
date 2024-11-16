@@ -20,7 +20,7 @@
 #include "LIEF/MachO/TwoLevelHints.hpp"
 
 #include "MachO/pyMachO.hpp"
-#include "nanobind/extra/memoryview.hpp"
+#include "nanobind/extra/stl/lief_span.h"
 #include "pyIterator.hpp"
 
 namespace LIEF::MachO::py {
@@ -36,10 +36,8 @@ void create<TwoLevelHints>(nb::module_& m) {
   cmd
     .def_prop_ro("hints", nb::overload_cast<>(&TwoLevelHints::hints))
     .def_prop_ro("content",
-        [] (const TwoLevelHints& self) {
-          const span<const uint8_t> content = self.content();
-          return nb::memoryview::from_memory(content.data(), content.size());
-        }, "The original content as a bytes stream"_doc)
+        nb::overload_cast<>(&TwoLevelHints::content, nb::const_),
+        "The original content as a bytes stream"_doc)
 
   LIEF_DEFAULT_STR(TwoLevelHints);
 

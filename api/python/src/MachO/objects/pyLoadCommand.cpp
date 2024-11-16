@@ -16,7 +16,7 @@
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
-#include "nanobind/extra/memoryview.hpp"
+#include "nanobind/extra/stl/lief_span.h"
 #include "nanobind/utils.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
@@ -46,9 +46,7 @@ void create<LoadCommand>(nb::module_& m) {
         "Size of the command (should be greather than ``sizeof(load_command)``)"_doc)
 
     .def_prop_rw("data",
-        [] (const LoadCommand& cmd) {
-          return nb::to_memoryview(cmd.data());
-        },
+        nb::overload_cast<>(&LoadCommand::data, nb::const_),
         nb::overload_cast<LoadCommand::raw_t>(&LoadCommand::data),
         "Command's data"_doc)
 
