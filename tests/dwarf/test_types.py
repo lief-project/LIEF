@@ -289,7 +289,7 @@ def test_DW_TAG_enumeration_type():
 
     loc = enum.location
 
-    assert loc.file == "/home/cm3/settest/src/Main.m3"
+    assert normalize_path(loc.file) == "/home/cm3/settest/src/Main.m3"
     assert loc.line == 11
 
 def test_DW_TAG_string_type_cobol():
