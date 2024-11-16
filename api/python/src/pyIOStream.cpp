@@ -45,6 +45,11 @@ result<PyIOStream> PyIOStream::from_python(nb::object object) {
   seek(0, PY_SEEK_SET);
   seek(0, PY_SEEK_END);
   const auto size = nb::cast<size_t>(object.attr("tell")());
+
+  if (size == 0) {
+    return PyIOStream(std::move(object), {});
+  }
+
   std::vector<uint8_t> data;
   data.resize(size);
 
