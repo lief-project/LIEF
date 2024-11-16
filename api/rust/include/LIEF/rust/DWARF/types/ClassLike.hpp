@@ -15,6 +15,7 @@
 #pragma once
 #include "LIEF/DWARF/types/ClassLike.hpp"
 #include "LIEF/rust/DWARF/Type.hpp"
+#include "LIEF/rust/DWARF/Function.hpp"
 
 #include "LIEF/rust/Iterator.hpp"
 
@@ -66,6 +67,16 @@ class DWARF_types_ClassLike : public DWARF_Type {
     auto next() { return ContainerIterator::next(); }
   };
 
+  class it_functions :
+      public ForwardIterator<DWARF_Function, LIEF::dwarf::Function::Iterator>
+  {
+    public:
+    it_functions(const DWARF_types_ClassLike::lief_t& src)
+      : ForwardIterator(src.functions()) { }
+
+    auto next() { return ForwardIterator::next(); }
+  };
+
   static bool classof(const DWARF_Type& type) {
     return lief_t::classof(&type.get());
   }
@@ -77,6 +88,10 @@ class DWARF_types_ClassLike : public DWARF_Type {
   auto members() const {
     std::vector<LIEF::dwarf::types::ClassLike::Member> members = impl().members();
     return std::make_unique<it_members>(std::move(members));
+  }
+
+  auto functions() const {
+    return std::make_unique<it_functions>(impl());
   }
 
   private:
@@ -104,6 +119,15 @@ class DWARF_types_Class : public DWARF_types_ClassLike {
 class DWARF_types_Union : public DWARF_types_ClassLike {
   public:
   using lief_t = LIEF::dwarf::types::Union;
+
+  static bool classof(const DWARF_Type& type) {
+    return lief_t::classof(&type.get());
+  }
+};
+
+class DWARF_types_Packed : public DWARF_types_ClassLike {
+  public:
+  using lief_t = LIEF::dwarf::types::Packed;
 
   static bool classof(const DWARF_Type& type) {
     return lief_t::classof(&type.get());

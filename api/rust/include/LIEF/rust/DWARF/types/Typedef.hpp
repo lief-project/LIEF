@@ -28,8 +28,6 @@ class DWARF_types_Typedef : public DWARF_Type {
     return details::try_unique<DWARF_Type>(impl().underlying_type()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
-  auto name() const { return impl().name(); }
-
   private:
   const lief_t& impl() const { return as<lief_t>(this); }
 };

@@ -24,5 +24,6 @@
 #include "LIEF/DWARF/Scope.hpp"
 #include "LIEF/DWARF/Type.hpp"
 #include "LIEF/DWARF/types.hpp"
+#include "LIEF/DWARF/Parameter.hpp"
 
 #endif

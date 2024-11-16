@@ -36,7 +36,14 @@ void create<dw::CompilationUnit>(nb::module_& m) {
     .value("C", dw::CompilationUnit::Language::LANG::C)
     .value("CPP", dw::CompilationUnit::Language::LANG::CPP)
     .value("RUST", dw::CompilationUnit::Language::LANG::RUST)
-    .value("DART", dw::CompilationUnit::Language::LANG::DART);
+    .value("DART", dw::CompilationUnit::Language::LANG::DART)
+    .value("MODULA", dw::CompilationUnit::Language::LANG::MODULA)
+    .value("FORTRAN", dw::CompilationUnit::Language::LANG::FORTRAN)
+    .value("SWIFT", dw::CompilationUnit::Language::LANG::SWIFT)
+    .value("D", dw::CompilationUnit::Language::LANG::D)
+    .value("JAVA", dw::CompilationUnit::Language::LANG::JAVA)
+    .value("COBOL", dw::CompilationUnit::Language::LANG::COBOL)
+  ;
 
   Lang
     .def_rw("lang", &dw::CompilationUnit::Language::lang,

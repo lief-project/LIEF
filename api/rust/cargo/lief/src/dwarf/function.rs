@@ -1,7 +1,7 @@
 use lief_ffi as ffi;
 
 use super::variable::Variables;
-use super::{Scope, Type};
+use super::{Scope, Type, Parameters};
 use crate::common::{into_optional, into_ranges, FromFFI};
 use crate::declare_fwd_iterator;
 use crate::to_result;
@@ -83,41 +83,30 @@ impl Function<'_> {
         into_optional(self.ptr.get_type())
     }
 
-    /// Return an iterator over the [`Parameter`] of this function
-    pub fn parameters(&self) -> Parameters {
-        Parameters::new(self.ptr.parameters())
+    /// Return an iterator over the [`Parameters`] of this function
+    pub fn parameters(&self) -> ParametersIt {
+        ParametersIt::new(self.ptr.parameters())
+    }
+
+    /// List of exceptions (types) that can be thrown by the function.
+    ///
+    /// For instance, given this Swift code:
+    ///
+    /// ```swift
+    /// func summarize(_ ratings: [Int]) throws(StatisticsError) {
+    ///   // ...
+    /// }
+    /// ```
+    ///
+    /// [`Function::thrown_types`] returns one element associated with the [`Type`]:
+    /// `StatisticsError`.
+    pub fn thrown_types(&self) -> ThrownTypes {
+        ThrownTypes::new(self.ptr.thrown_types())
     }
 
     /// The scope in which this function is defined
     pub fn scope(&self) -> Option<Scope> {
         into_optional(self.ptr.scope())
-    }
-}
-
-/// This structure represents a DWARF function parameter.
-pub struct Parameter<'a> {
-    ptr: cxx::UniquePtr<ffi::DWARF_Function_Parameter>,
-    _owner: PhantomData<&'a ()>,
-}
-
-impl FromFFI<ffi::DWARF_Function_Parameter> for Parameter<'_> {
-    fn from_ffi(ptr: cxx::UniquePtr<ffi::DWARF_Function_Parameter>) -> Self {
-        Self {
-            ptr,
-            _owner: PhantomData,
-        }
-    }
-}
-
-impl Parameter<'_> {
-    /// The name of the parameter
-    pub fn name(&self) -> String {
-        self.ptr.name().to_string()
-    }
-
-    /// Return the type of the parameter
-    pub fn get_type(&self) -> Option<Type> {
-        into_optional(self.ptr.get_type())
     }
 }
 
@@ -130,9 +119,17 @@ declare_fwd_iterator!(
 );
 
 declare_fwd_iterator!(
-    Parameters,
-    Parameter<'a>,
-    ffi::DWARF_Function_Parameter,
+    ParametersIt,
+    Parameters<'a>,
+    ffi::DWARF_Parameter,
     ffi::DWARF_Function,
     ffi::DWARF_Function_it_parameters
+);
+
+declare_fwd_iterator!(
+    ThrownTypes,
+    Type<'a>,
+    ffi::DWARF_Type,
+    ffi::DWARF_Function,
+    ffi::DWARF_Function_it_thrown_types
 );

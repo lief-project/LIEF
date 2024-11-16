@@ -3,6 +3,7 @@
 #include "LIEF/DWARF/Scope.hpp"
 #include "LIEF/DWARF/Variable.hpp"
 #include "LIEF/DWARF/Type.hpp"
+#include "LIEF/DWARF/Parameter.hpp"
 #include "DWARF/pyDwarf.hpp"
 #include "pyErr.hpp"
 
@@ -20,26 +21,6 @@ void create<dw::Function>(nb::module_& m) {
     ``DW_TAG_subprogram`` or ``DW_TAG_inlined_subroutine``.
     )doc"_doc
   );
-
-  nb::class_<dw::Function::Parameter> param(func, "Parameter",
-    R"doc(
-    This class represents a DWARF function's parameter.
-    )doc"_doc
-  );
-
-  param
-    .def_prop_ro("name", &Function::Parameter::name,
-      R"doc(
-      The name of the parameter
-      )doc"_doc
-    )
-
-    .def_prop_ro("type", &Function::Parameter::type,
-      R"doc(
-      Type of the parameter
-      )doc"_doc
-    )
-  ;
 
   func
     .def_prop_ro("name", &dw::Function::name,
@@ -121,7 +102,24 @@ void create<dw::Function>(nb::module_& m) {
 
     .def_prop_ro("parameters", &dw::Function::parameters,
       R"doc(
-      Return the list of parameters used by this function.
+      Return the list of parameters used by this function
+      (including template parameters)
+      )doc"_doc
+    )
+
+    .def_prop_ro("thrown_types", &dw::Function::thrown_types,
+      R"doc(
+      List of exceptions (types) that can be thrown by the function.
+      For instance, given this Swift code:
+
+      .. code-block:: swift
+
+        func summarize(_ ratings: [Int]) throws(StatisticsError) {
+          // ...
+        }
+
+      :attr:`~.thrown_types` returns one element associated with the
+      :class:`~.Type`: ``StatisticsError``.
       )doc"_doc
     )
 

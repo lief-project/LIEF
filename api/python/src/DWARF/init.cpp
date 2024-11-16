@@ -21,6 +21,7 @@ void init(nb::module_& m) {
   create<LIEF::dwarf::Type>(dwarf);
   create<LIEF::dwarf::Variable>(dwarf);
   create<LIEF::dwarf::Function>(dwarf);
+  create<LIEF::dwarf::Parameter>(dwarf);
   create<LIEF::dwarf::CompilationUnit>(dwarf);
   create<LIEF::dwarf::DebugInfo>(dwarf);
 }

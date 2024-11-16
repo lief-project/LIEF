@@ -95,7 +95,7 @@ class ContainerIterator {
   public:
   std::unique_ptr<T> next() {
     if (begin_ == end_) return nullptr;
-    return std::make_unique<T>(*begin_++);
+    return std::make_unique<T>(std::move(*begin_++));
   }
   protected:
   ContainerIterator(ContainerT&& C) :

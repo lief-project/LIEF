@@ -31,6 +31,7 @@ pub mod function;
 pub mod variable;
 pub mod types;
 pub mod scope;
+pub mod parameters;
 
 use crate::common::into_optional;
 
@@ -51,6 +52,9 @@ pub use scope::Scope;
 
 #[doc(inline)]
 pub use types::Type;
+
+#[doc(inline)]
+pub use parameters::{Parameter, Parameters};
 
 /// Load a DWARF from its file path
 pub fn load(path: &str) -> Option<DebugInfo> {

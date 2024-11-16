@@ -17,6 +17,7 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/DWARF/Type.hpp"
+#include "LIEF/DWARF/Function.hpp"
 
 namespace LIEF {
 namespace dwarf {
@@ -67,6 +68,8 @@ class LIEF_API ClassLike : public Type {
     /// Type of the current member
     std::unique_ptr<Type> type() const;
 
+
+
     bool is_external() const;
 
     bool is_declaration() const;
@@ -75,6 +78,8 @@ class LIEF_API ClassLike : public Type {
     private:
     std::unique_ptr<details::Member> impl_;
   };
+
+  using functions_it = iterator_range<Function::Iterator>;
 
   static bool classof(const Type* type) {
     const auto kind = type->kind();
@@ -86,6 +91,9 @@ class LIEF_API ClassLike : public Type {
 
   /// Try to find the attribute at the given offset
   std::unique_ptr<Member> find_member(uint64_t offset) const;
+
+  /// Iterator over the functions defined by the class-like.
+  functions_it functions() const;
 
   ~ClassLike() override;
 };
@@ -124,6 +132,18 @@ class LIEF_API Union : public ClassLike {
   }
 
   ~Union() override;
+};
+
+/// This class represents a DWARF `packed` type (`DW_TAG_packed_type`)
+class LIEF_API Packed : public ClassLike {
+  public:
+  using ClassLike::ClassLike;
+
+  static bool classof(const Type* type) {
+    return type->kind() == Type::KIND::PACKED;
+  }
+
+  ~Packed() override;
 };
 
 }

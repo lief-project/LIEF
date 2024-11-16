@@ -15,6 +15,24 @@ class Const;
 class Base;
 class Array;
 class Typedef;
+class Atomic;
+class Coarray;
+class Dynamic;
+class Enum;
+class File;
+class Immutable;
+class Interface;
+class PointerToMember;
+class RValueReference;
+class Reference;
+class Restrict;
+class SetTy;
+class Shared;
+class StringTy;
+class Subroutine;
+class TemplateAlias;
+class Thrown;
+class Volatile;
 }
 
 namespace LIEF::dwarf::py {
@@ -36,8 +54,25 @@ void create<dw::Type>(nb::module_& m) {
     - ``DW_TAG_string_type``
     - ``DW_TAG_union_type``
     - ``DW_TAG_volatile_type``
-    - ``DW_TAG_typedef``
     - ``DW_TAG_unspecified_type``
+    - ``DW_TAG_typedef``
+    - ``DW_TAG_reference_type``
+    - ``DW_TAG_subroutine_type``
+    - ``DW_TAG_ptr_to_member_type``
+    - ``DW_TAG_set_type``
+    - ``DW_TAG_packed_type``
+    - ``DW_TAG_file_type``
+    - ``DW_TAG_thrown_type``
+    - ``DW_TAG_restrict_type``
+    - ``DW_TAG_interface_type``
+    - ``DW_TAG_shared_type``
+    - ``DW_TAG_rvalue_reference_type``
+    - ``DW_TAG_template_alias``
+    - ``DW_TAG_coarray_type``
+    - ``DW_TAG_dynamic_type``
+    - ``DW_TAG_atomic_type``
+    - ``DW_TAG_immutable_type``
+
     )doc"_doc
   );
 
@@ -52,6 +87,25 @@ void create<dw::Type>(nb::module_& m) {
     .value("STRUCT", Type::KIND::STRUCT)
     .value("UNION", Type::KIND::UNION)
     .value("TYPEDEF", Type::KIND::TYPEDEF)
+    .value("REF", Type::KIND::REF)
+    .value("SET_TYPE", Type::KIND::SET_TYPE)
+    .value("STRING", Type::KIND::STRING)
+    .value("SUBROUTINE", Type::KIND::SUBROUTINE)
+    .value("POINTER_MEMBER", Type::KIND::POINTER_MEMBER)
+    .value("PACKED", Type::KIND::PACKED)
+    .value("FILE", Type::KIND::FILE)
+    .value("THROWN", Type::KIND::THROWN)
+    .value("VOLATILE", Type::KIND::VOLATILE)
+    .value("RESTRICT", Type::KIND::RESTRICT)
+    .value("INTERFACE", Type::KIND::INTERFACE)
+    .value("SHARED", Type::KIND::SHARED)
+    .value("RVALREF", Type::KIND::RVALREF)
+    .value("TEMPLATE_ALIAS", Type::KIND::TEMPLATE_ALIAS)
+    .value("COARRAY", Type::KIND::COARRAY)
+    .value("DYNAMIC", Type::KIND::DYNAMIC)
+    .value("ATOMIC", Type::KIND::ATOMIC)
+    .value("IMMUTABLE", Type::KIND::IMMUTABLE)
+    .value("ENUM", Type::KIND::ENUM)
   ;
   type
     .def_prop_ro("kind", &dw::Type::kind,
@@ -106,6 +160,24 @@ void create<dw::Type>(nb::module_& m) {
   create<dw::types::Base>(types);
   create<dw::types::Array>(types);
   create<dw::types::Typedef>(types);
+  create<dw::types::Atomic>(types);
+  create<dw::types::Coarray>(types);
+  create<dw::types::Dynamic>(types);
+  create<dw::types::Enum>(types);
+  create<dw::types::File>(types);
+  create<dw::types::Immutable>(types);
+  create<dw::types::Interface>(types);
+  create<dw::types::PointerToMember>(types);
+  create<dw::types::RValueReference>(types);
+  create<dw::types::Reference>(types);
+  create<dw::types::Restrict>(types);
+  create<dw::types::SetTy>(types);
+  create<dw::types::Shared>(types);
+  create<dw::types::StringTy>(types);
+  create<dw::types::Subroutine>(types);
+  create<dw::types::TemplateAlias>(types);
+  create<dw::types::Thrown>(types);
+  create<dw::types::Volatile>(types);
 }
 
 }

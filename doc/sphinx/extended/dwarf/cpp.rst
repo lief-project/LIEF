@@ -1,5 +1,5 @@
-C++
--------
+:fa:`regular fa-file-code` C++
+--------------------------------
 
 .. note::
 
@@ -28,6 +28,35 @@ Function
 ********
 
 .. doxygenclass:: LIEF::dwarf::Function
+
+----------
+
+Parameter
+*********
+
+.. doxygenclass:: LIEF::dwarf::Parameter
+
+----------
+
+
+Formal Parameter
+****************
+
+.. doxygenclass:: LIEF::dwarf::parameters::Formal
+
+----------
+
+Template Value Parameter
+************************
+
+.. doxygenclass:: LIEF::dwarf::parameters::TemplateValue
+
+----------
+
+Template Type Parameter
+************************
+
+.. doxygenclass:: LIEF::dwarf::parameters::TemplateType
 
 ----------
 
@@ -99,6 +128,13 @@ Union
 
 ----------
 
+Packed
+******
+
+.. doxygenclass:: LIEF::dwarf::types::Packed
+
+----------
+
 Const
 *****
 
@@ -117,3 +153,129 @@ Typedef
 *******
 
 .. doxygenclass:: LIEF::dwarf::types::Typedef
+
+----------
+
+Atomic
+******
+
+.. doxygenclass:: LIEF::dwarf::types::Atomic
+
+----------
+
+Coarray
+*******
+
+.. doxygenclass:: LIEF::dwarf::types::Coarray
+
+----------
+
+Dynamic
+*******
+
+.. doxygenclass:: LIEF::dwarf::types::Dynamic
+
+----------
+
+Enum
+****
+
+.. doxygenclass:: LIEF::dwarf::types::Enum
+
+----------
+
+File
+****
+
+.. doxygenclass:: LIEF::dwarf::types::File
+
+----------
+
+Immutable
+*********
+
+.. doxygenclass:: LIEF::dwarf::types::Immutable
+
+----------
+
+Interface
+*********
+
+.. doxygenclass:: LIEF::dwarf::types::Interface
+
+----------
+
+PointerToMember
+***************
+
+.. doxygenclass:: LIEF::dwarf::types::PointerToMember
+
+----------
+
+RValueReference
+***************
+
+.. doxygenclass:: LIEF::dwarf::types::RValueReference
+
+----------
+
+Reference
+*********
+
+.. doxygenclass:: LIEF::dwarf::types::Reference
+
+----------
+
+Restrict
+********
+
+.. doxygenclass:: LIEF::dwarf::types::Restrict
+
+----------
+
+SetTy
+******
+
+.. doxygenclass:: LIEF::dwarf::types::SetTy
+
+----------
+
+Shared
+******
+
+.. doxygenclass:: LIEF::dwarf::types::Shared
+
+----------
+
+StringTy
+********
+
+.. doxygenclass:: LIEF::dwarf::types::StringTy
+
+----------
+
+Subroutine
+**********
+
+.. doxygenclass:: LIEF::dwarf::types::Subroutine
+
+----------
+
+TemplateAlias
+*************
+
+.. doxygenclass:: LIEF::dwarf::types::TemplateAlias
+
+----------
+
+Thrown
+******
+
+.. doxygenclass:: LIEF::dwarf::types::Thrown
+
+----------
+
+Volatile
+********
+
+.. doxygenclass:: LIEF::dwarf::types::Volatile

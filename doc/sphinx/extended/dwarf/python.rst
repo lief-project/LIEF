@@ -1,5 +1,5 @@
-Python
--------
+:fa:`brands fa-python` Python
+-----------------------------
 
 .. autofunction:: lief.dwarf.load
 
@@ -21,6 +21,46 @@ Function
 ********
 
 .. autoclass:: lief.dwarf.Function
+
+----------
+
+Parameter
+*********
+
+.. autoclass:: lief.dwarf.Parameter
+
+----------
+
+Formal Parameter
+****************
+
+.. lief-inheritance:: lief._lief.dwarf.parameters.Formal
+  :top-classes: lief._lief.dwarf.Parameter
+  :parts: 2
+
+.. autoclass:: lief.dwarf.parameters.Formal
+
+----------
+
+Template Value Parameter
+************************
+
+.. lief-inheritance:: lief._lief.dwarf.parameters.TemplateValue
+  :top-classes: lief._lief.dwarf.Parameter
+  :parts: 2
+
+.. autoclass:: lief.dwarf.parameters.TemplateValue
+
+----------
+
+Template Type Parameter
+***********************
+
+.. lief-inheritance:: lief._lief.dwarf.parameters.TemplateType
+  :top-classes: lief._lief.dwarf.Parameter
+  :parts: 2
+
+.. autoclass:: lief.dwarf.parameters.TemplateType
 
 ----------
 
@@ -123,6 +163,18 @@ Union
 ----------
 
 
+Packed
+******
+
+.. lief-inheritance:: lief._lief.dwarf.types.Packed
+  :top-classes: lief._lief.dwarf.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.types.Packed
+
+----------
+
+
 Const
 *****
 
@@ -154,3 +206,202 @@ Typedef
   :parts: 2
 
 .. autoclass:: lief.dwarf.types.Typedef
+
+----------
+
+Atomic
+******
+
+.. lief-inheritance:: lief._lief.dwarf.types.Atomic
+  :top-classes: lief._lief.dwarf.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.types.Atomic
+
+----------
+
+Coarray
+*******
+
+.. lief-inheritance:: lief._lief.dwarf.types.Coarray
+  :top-classes: lief._lief.dwarf.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.types.Coarray
+
+----------
+
+Dynamic
+*******
+
+.. lief-inheritance:: lief._lief.dwarf.types.Dynamic
+  :top-classes: lief._lief.dwarf.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.types.Dynamic
+
+----------
+
+Enum
+****
+
+.. lief-inheritance:: lief._lief.dwarf.types.Enum
+  :top-classes: lief._lief.dwarf.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.types.Enum
+
+----------
+
+File
+****
+
+.. lief-inheritance:: lief._lief.dwarf.types.File
+  :top-classes: lief._lief.dwarf.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.types.File
+
+----------
+
+Immutable
+*********
+
+.. lief-inheritance:: lief._lief.dwarf.types.Immutable
+  :top-classes: lief._lief.dwarf.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.types.Immutable
+
+----------
+
+Interface
+*********
+
+.. lief-inheritance:: lief._lief.dwarf.types.Interface
+  :top-classes: lief._lief.dwarf.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.types.Interface
+
+----------
+
+PointerToMember
+***************
+
+.. lief-inheritance:: lief._lief.dwarf.types.PointerToMember
+  :top-classes: lief._lief.dwarf.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.types.PointerToMember
+
+----------
+
+RValueReference
+***************
+
+.. lief-inheritance:: lief._lief.dwarf.types.RValueReference
+  :top-classes: lief._lief.dwarf.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.types.RValueReference
+
+----------
+
+Reference
+*********
+
+.. lief-inheritance:: lief._lief.dwarf.types.Reference
+  :top-classes: lief._lief.dwarf.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.types.Reference
+
+----------
+
+Restrict
+********
+
+.. lief-inheritance:: lief._lief.dwarf.types.Restrict
+  :top-classes: lief._lief.dwarf.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.types.Restrict
+
+----------
+
+SetTy
+*****
+
+.. lief-inheritance:: lief._lief.dwarf.types.SetTy
+  :top-classes: lief._lief.dwarf.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.types.SetTy
+
+----------
+
+Shared
+******
+
+.. lief-inheritance:: lief._lief.dwarf.types.Shared
+  :top-classes: lief._lief.dwarf.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.types.Shared
+
+----------
+
+StringTy
+********
+
+.. lief-inheritance:: lief._lief.dwarf.types.StringTy
+  :top-classes: lief._lief.dwarf.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.types.StringTy
+
+----------
+
+Subroutine
+**********
+
+.. lief-inheritance:: lief._lief.dwarf.types.Subroutine
+  :top-classes: lief._lief.dwarf.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.types.Subroutine
+
+----------
+
+TemplateAlias
+*************
+
+.. lief-inheritance:: lief._lief.dwarf.types.TemplateAlias
+  :top-classes: lief._lief.dwarf.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.types.TemplateAlias
+
+
+----------
+
+Thrown
+******
+
+.. lief-inheritance:: lief._lief.dwarf.types.Thrown
+  :top-classes: lief._lief.dwarf.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.types.Thrown
+
+----------
+
+Volatile
+********
+
+.. lief-inheritance:: lief._lief.dwarf.types.Volatile
+  :top-classes: lief._lief.dwarf.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.types.Volatile

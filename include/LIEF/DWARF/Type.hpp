@@ -34,17 +34,33 @@ class TypeIt;
 /// This class represents a DWARF Type which includes:
 ///
 /// - `DW_TAG_array_type`
-/// - `DW_TAG_const_type`
-/// - `DW_TAG_pointer_type`
-/// - `DW_TAG_structure_type`
+/// - `DW_TAG_atomic_type`
 /// - `DW_TAG_base_type`
 /// - `DW_TAG_class_type`
+/// - `DW_TAG_coarray_type`
+/// - `DW_TAG_const_type`
+/// - `DW_TAG_dynamic_type`
 /// - `DW_TAG_enumeration_type`
+/// - `DW_TAG_file_type`
+/// - `DW_TAG_immutable_type`
+/// - `DW_TAG_interface_type`
+/// - `DW_TAG_packed_type`
+/// - `DW_TAG_pointer_type`
+/// - `DW_TAG_ptr_to_member_type`
+/// - `DW_TAG_reference_type`
+/// - `DW_TAG_restrict_type`
+/// - `DW_TAG_rvalue_reference_type`
+/// - `DW_TAG_set_type`
+/// - `DW_TAG_shared_type`
 /// - `DW_TAG_string_type`
-/// - `DW_TAG_union_type`
-/// - `DW_TAG_volatile_type`
+/// - `DW_TAG_structure_type`
+/// - `DW_TAG_subroutine_type`
+/// - `DW_TAG_template_alias`
+/// - `DW_TAG_thrown_type`
 /// - `DW_TAG_typedef`
+/// - `DW_TAG_union_type`
 /// - `DW_TAG_unspecified_type`
+/// - `DW_TAG_volatile_type`
 class LIEF_API Type {
   public:
   class LIEF_API Iterator {
@@ -117,6 +133,25 @@ class LIEF_API Type {
     STRUCT,
     UNION,
     TYPEDEF,
+    REF,
+    SET_TYPE,
+    STRING,
+    SUBROUTINE,
+    POINTER_MEMBER,
+    PACKED,
+    FILE,
+    THROWN,
+    VOLATILE,
+    RESTRICT,
+    INTERFACE,
+    SHARED,
+    RVALREF,
+    TEMPLATE_ALIAS,
+    COARRAY,
+    DYNAMIC,
+    ATOMIC,
+    IMMUTABLE,
+    ENUM,
   };
 
   KIND kind() const;

@@ -114,6 +114,12 @@ class LIEF_API CompilationUnit {
       CPP,
       RUST,
       DART,
+      MODULA,
+      FORTRAN,
+      SWIFT,
+      D,
+      JAVA,
+      COBOL,
     };
 
     /// The language itself

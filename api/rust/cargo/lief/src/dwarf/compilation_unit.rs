@@ -27,6 +27,12 @@ pub enum Langs {
     CPP,
     RUST,
     DART,
+    MODULA,
+    FORTRAN,
+    SWIFT,
+    D,
+    JAVA,
+    COBOL,
     UNKNOWN(u32),
 }
 
@@ -37,6 +43,12 @@ impl From<u32> for Langs {
             0x00000002 => Langs::CPP,
             0x00000003 => Langs::RUST,
             0x00000004 => Langs::DART,
+            0x00000005 => Langs::MODULA,
+            0x00000006 => Langs::FORTRAN,
+            0x00000007 => Langs::SWIFT,
+            0x00000008 => Langs::D,
+            0x00000009 => Langs::JAVA,
+            0x0000000A => Langs::COBOL,
             _ => Langs::UNKNOWN(value),
 
         }
@@ -49,6 +61,12 @@ impl From<Langs> for u32 {
             Langs::CPP => 0x00000002,
             Langs::RUST => 0x00000003,
             Langs::DART => 0x00000004,
+            Langs::MODULA => 0x00000005,
+            Langs::FORTRAN => 0x00000006,
+            Langs::SWIFT => 0x00000007,
+            Langs::D => 0x00000008,
+            Langs::JAVA => 0x00000009,
+            Langs::COBOL => 0x0000000A,
             Langs::UNKNOWN(_) => 0,
         }
     }

@@ -4,6 +4,7 @@
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>
+#include <nanobind/make_iterator.h>
 
 #include "pyErr.hpp"
 
@@ -89,6 +90,13 @@ void create<dw::types::ClassLike>(nb::module_& m) {
       Try to find the attribute at the given offset
       )doc"_doc, "offset"_a
     )
+    .def_prop_ro("functions",
+        [] (dw::types::ClassLike& self) {
+          auto funcs = self.functions();
+          return nb::make_iterator(nb::type<dw::types::ClassLike>(), "functions_it", funcs);
+        }, nb::keep_alive<0, 1>(),
+        R"doc(Iterator over the functions defined by the class-like.)doc"_doc
+    )
   ;
 
   nb::class_<dw::types::Structure, dw::types::ClassLike> Struct(m, "Structure",
@@ -106,6 +114,13 @@ void create<dw::types::ClassLike>(nb::module_& m) {
   nb::class_<dw::types::Union, dw::types::ClassLike> Union(m, "Union",
     R"doc(
     This class represents a DWARF ``union`` type (``DW_TAG_union_type``)
+    )doc"_doc
+  );
+
+
+  nb::class_<dw::types::Packed, dw::types::ClassLike> Packed(m, "Packed",
+    R"doc(
+    This class represents a DWARF ``packed`` type (``DW_TAG_packed_type``)
     )doc"_doc
   );
 }

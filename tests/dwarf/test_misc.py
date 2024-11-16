@@ -97,7 +97,7 @@ def test_lief():
     assert f2.scope.name == "/workdir/branches/main/src/PE/Parser.cpp"
 
     params = f2.parameters
-    assert len(params) == 3
+    assert len(params) == 4
 
     assert params[0].name == "this"
     assert isinstance(params[0].type, lief.dwarf.types.Pointer)
@@ -106,13 +106,19 @@ def test_lief():
     assert len(params[0].type.underlying_type.members) == 5
 
     assert params[1].name == "import"
-    assert params[1].type.kind == lief.dwarf.Type.KIND.UNKNOWN
+    assert params[1].type.kind == lief.dwarf.Type.KIND.REF
 
     assert params[2].name == "names_offset"
-    assert params[2].type.kind == lief.dwarf.Type.KIND.TYPEDEF
-    assert params[2].type.name == "uint32_t"
-    assert params[2].type.underlying_type.kind == lief.dwarf.Type.KIND.TYPEDEF
-    assert params[2].type.underlying_type.name == "__uint32_t"
+    p2_type = params[2].type
+    assert p2_type.kind == lief.dwarf.Type.KIND.TYPEDEF
+    assert p2_type.name == "uint32_t"
+
+    assert isinstance(p2_type, lief.dwarf.types.Typedef)
+    assert p2_type.underlying_type.kind == lief.dwarf.Type.KIND.TYPEDEF
+    assert p2_type.underlying_type.name == "__uint32_t"
+
+    assert params[3].name == "PE_T"
+    assert isinstance(params[3], lief.dwarf.parameters.TemplateType)
 
     CUS = list(dbg_info.compilation_units)
     assert len(CUS) == 366

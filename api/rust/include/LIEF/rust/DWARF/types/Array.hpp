@@ -16,6 +16,22 @@
 #include "LIEF/DWARF/types/Array.hpp"
 #include "LIEF/rust/DWARF/Type.hpp"
 
+class DWARF_types_array_size_info :
+  private Mirror<LIEF::dwarf::types::Array::size_info_t>
+{
+  public:
+  using Mirror::Mirror;
+  using lief_t = LIEF::dwarf::types::Array::size_info_t;
+
+  auto name() const { return get().name; }
+
+  uint64_t size() const { return get().size; }
+
+  auto get_type() const {
+    return details::try_unique<DWARF_Type>(get().type.get()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+};
+
 class DWARF_types_Array : public DWARF_Type {
   public:
   using lief_t = LIEF::dwarf::types::Array;
@@ -26,6 +42,10 @@ class DWARF_types_Array : public DWARF_Type {
 
   auto underlying_type() const {
     return details::try_unique<DWARF_Type>(impl().underlying_type()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+
+  auto size_info() const {
+    return std::make_unique<DWARF_types_array_size_info>(impl().size_info());
   }
 
   private:

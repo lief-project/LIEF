@@ -27,6 +27,24 @@ class LIEF_API Array : public Type {
   public:
   using Type::Type;
 
+  /// Structure that wraps information about the dimension of this array
+  struct size_info_t {
+    /// Type of the **index** for this array.
+    ///
+    /// For instance in `uint8_t[3]` the index type could be set to a `size_t`.
+    std::unique_ptr<Type> type = nullptr;
+
+    /// Name of the index (usually not relevant like `__ARRAY_SIZE_TYPE__`)
+    std::string name;
+
+    /// Size of the array. For instance in `uint8_t[3]`, it returns 3
+    size_t size = 0;
+
+    operator bool() const {
+      return size != 0;
+    }
+  };
+
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::ARRAY;
   }
@@ -42,6 +60,12 @@ class LIEF_API Array : public Type {
     return *underlying_type();
   }
 
+  /// Return information about the size of this array.
+  ///
+  /// This size info is usually embedded in a `DW_TAG_subrange_type` DIE which
+  /// is represented by the size_info_t structure.
+  size_info_t size_info() const;
+
   ~Array() override;
 
   protected:
@@ -52,5 +76,3 @@ class LIEF_API Array : public Type {
 }
 }
 #endif
-
-

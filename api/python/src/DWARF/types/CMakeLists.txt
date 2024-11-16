@@ -5,4 +5,22 @@ target_sources(pyLIEF PRIVATE
   pyBase.cpp
   pyArray.cpp
   pyTypedef.cpp
+  pyAtomic.cpp
+  pyCoarray.cpp
+  pyDynamic.cpp
+  pyEnum.cpp
+  pyFile.cpp
+  pyImmutable.cpp
+  pyInterface.cpp
+  pyPointerToMember.cpp
+  pyRValueRef.cpp
+  pyReference.cpp
+  pyRestrict.cpp
+  pySetTy.cpp
+  pyShared.cpp
+  pyStringTy.cpp
+  pySubroutine.cpp
+  pyTemplateAlias.cpp
+  pyThrown.cpp
+  pyVolatile.cpp
 )

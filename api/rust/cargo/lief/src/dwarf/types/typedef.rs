@@ -31,9 +31,4 @@ impl Typedef<'_> {
     pub fn underlying_type(&self) -> Option<Type> {
         into_optional(self.ptr.underlying_type())
     }
-
-    /// Name of the typedef
-    pub fn name(&self) -> String {
-        self.ptr.name().to_string()
-    }
 }

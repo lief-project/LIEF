@@ -38,9 +38,6 @@ class LIEF_API Typedef : public Type {
     return *underlying_type();
   }
 
-  /// Name of the typedef
-  std::string name() const;
-
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::TYPEDEF;
   }

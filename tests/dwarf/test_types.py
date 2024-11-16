@@ -23,7 +23,7 @@ def test_vars_1():
     assert main_ret_type.encoding == lief.dwarf.types.Base.ENCODING.SIGNED
 
     types = list(cu.types)
-    assert len(types) == 766
+    assert len(types) == 918
 
     pointers = [ty for ty in types if ty.kind == lief.dwarf.Type.KIND.POINTER]
     assert len(pointers) == 142
@@ -136,3 +136,325 @@ def test_bitfield():
 
     assert members[2].offset == 5
     assert members[2].bit_offset == 40
+
+
+def test_DW_TAG_reference_type():
+    elf = lief.ELF.parse(get_sample("private/DWARF/types/DW_TAG_reference_type.o"))
+
+    dbg_info: lief.dwarf.DebugInfo = elf.debug_info
+    assert dbg_info is not None
+
+    F = dbg_info.find_function("_Z3foov")
+
+    ref: lief.dwarf.types.Reference = F.type
+    assert isinstance(ref, lief.dwarf.types.Reference)
+
+    assert ref.underlying_type.name == "int"
+
+
+def test_DW_TAG_atomic_type():
+    elf = lief.ELF.parse(get_sample("private/DWARF/types/DW_TAG_atomic_type.o"))
+
+    dbg_info: lief.dwarf.DebugInfo = elf.debug_info
+    assert dbg_info is not None
+
+    V = dbg_info.find_variable("i")
+
+    atomic: lief.dwarf.types.Atomic = V.type.underlying_type
+    assert isinstance(atomic, lief.dwarf.types.Atomic)
+
+    assert atomic.underlying_type.name == "int"
+
+def test_DW_TAG_template_alias():
+    elf = lief.ELF.parse(get_sample("private/DWARF/types/DW_TAG_template_alias.o"))
+
+    dbg_info: lief.dwarf.DebugInfo = elf.debug_info
+    assert dbg_info is not None
+
+    V = dbg_info.find_variable("a")
+
+    template_alias: lief.dwarf.types.TemplateAlias = V.type
+    assert isinstance(template_alias, lief.dwarf.types.TemplateAlias)
+
+    assert template_alias.name == "A"
+
+    params = template_alias.parameters
+    assert len(params) == 2
+
+    assert isinstance(params[0], lief.dwarf.parameters.TemplateType)
+    assert params[0].name == "B"
+    assert params[0].type.name == "int"
+
+    assert isinstance(params[1], lief.dwarf.parameters.TemplateValue)
+    assert params[1].name == "C"
+    assert params[1].type.name == "int"
+
+def test_DW_TAG_ptr_to_member_type():
+    elf = lief.ELF.parse(get_sample("private/DWARF/types/DW_TAG_ptr_to_member_type.o"))
+
+    dbg_info: lief.dwarf.DebugInfo = elf.debug_info
+    assert dbg_info is not None
+
+    V = dbg_info.find_variable("x")
+
+    ptr_member: lief.dwarf.types.PointerToMember = V.type
+    assert isinstance(ptr_member, lief.dwarf.types.PointerToMember)
+    assert ptr_member.underlying_type.name == "int"
+    assert ptr_member.containing_type.name == "S"
+    assert isinstance(ptr_member.containing_type, lief.dwarf.types.Structure)
+
+def test_DW_TAG_set_type():
+    elf = lief.ELF.parse(get_sample("private/DWARF/types/DW_TAG_set_type.o"))
+
+    dbg_info: lief.dwarf.DebugInfo = elf.debug_info
+    assert dbg_info is not None
+
+    CU = list(dbg_info.compilation_units)[0]
+    assert CU.language.lang == lief.dwarf.CompilationUnit.Language.LANG.MODULA
+    assert CU.language.version == 3
+
+    set_type: lief.dwarf.types.SetTy = dbg_info.find_type("ST")
+    assert isinstance(set_type, lief.dwarf.types.SetTy)
+
+    assert isinstance(set_type.underlying_type, lief.dwarf.types.Enum)
+    assert set_type.underlying_type.name == "Enum"
+
+def test_DW_TAG_rvalue_reference_type():
+    elf = lief.ELF.parse(get_sample("private/DWARF/types/DW_TAG_rvalue_reference_type.o"))
+
+    dbg_info: lief.dwarf.DebugInfo = elf.debug_info
+    assert dbg_info is not None
+
+    ty: lief.dwarf.types.Class = dbg_info.find_type("deleted")
+
+    functions: list[lief.dwarf.Function] = list(ty.functions)
+    assert len(functions) == 8
+
+    deleted = [f for f in functions if f.name == "deleted" and f.debug_location.line == 8]
+
+    assert len(deleted)
+
+    parameters = deleted[0].parameters
+    assert len(parameters) == 2
+
+    rval_ref: lief.dwarf.types.RValueReference = parameters[1].type
+    assert isinstance(rval_ref, lief.dwarf.types.RValueReference)
+    assert rval_ref.underlying_type.name == "deleted"
+
+
+def test_DW_TAG_immutable_type():
+    elf = lief.ELF.parse(get_sample("private/DWARF/types/DW_TAG_immutable_type.o"))
+
+    dbg_info: lief.dwarf.DebugInfo = elf.debug_info
+    assert dbg_info is not None
+
+    CU = list(dbg_info.compilation_units)[0]
+    assert CU.language.lang == lief.dwarf.CompilationUnit.Language.LANG.D
+    assert CU.language.version == 0
+
+    V = dbg_info.find_variable("a")
+
+    imm: lief.dwarf.types.Immutable = V.type
+
+    assert isinstance(imm, lief.dwarf.types.Immutable)
+    assert imm.underlying_type.name == "char"
+
+def test_DW_TAG_subroutine_type():
+    elf = lief.ELF.parse(get_sample("private/DWARF/types/DW_TAG_subroutine_type.o"))
+
+    dbg_info: lief.dwarf.DebugInfo = elf.debug_info
+    assert dbg_info is not None
+
+    V = dbg_info.find_variable("y")
+
+    ptr_member: lief.dwarf.types.PointerToMember = V.type
+
+    subroutine_ty: lief.dwarf.types.Subroutine = ptr_member.underlying_type
+    assert isinstance(subroutine_ty, lief.dwarf.types.Subroutine)
+    params = subroutine_ty.parameters
+    assert len(params) == 2
+
+    assert params[0].type.underlying_type.name == "S"
+    assert params[1].type.name == "int"
+
+def test_DW_TAG_enumeration_type():
+    elf = lief.ELF.parse(get_sample("private/DWARF/types/DW_TAG_enumeration_type.o"))
+
+    dbg_info: lief.dwarf.DebugInfo = elf.debug_info
+    assert dbg_info is not None
+
+    enum: lief.dwarf.types.Enum = dbg_info.find_type("Enum")
+
+    assert isinstance(enum, lief.dwarf.types.Enum)
+
+    loc = enum.location
+
+    assert loc.file == "/home/cm3/settest/src/Main.m3"
+    assert loc.line == 11
+
+def test_DW_TAG_string_type_cobol():
+    elf = lief.ELF.parse(get_sample("private/DWARF/cobol_hello.o"))
+
+    dbg_info: lief.dwarf.DebugInfo = elf.debug_info
+    assert dbg_info is not None
+
+    CU: lief.dwarf.CompilationUnit = next(dbg_info.compilation_units)
+
+    lang = CU.language
+
+    assert lang.lang == lief.dwarf.CompilationUnit.Language.LANG.COBOL
+    assert lang.version == 1985
+
+    string_ty = dbg_info.find_type("X(10)")
+    assert isinstance(string_ty, lief.dwarf.types.StringTy)
+
+def test_DW_TAG_string_type_fortran():
+    elf = lief.ELF.parse(get_sample("private/DWARF/types/DW_TAG_string_type.o"))
+
+    dbg_info: lief.dwarf.DebugInfo = elf.debug_info
+    assert dbg_info is not None
+
+    CU: lief.dwarf.CompilationUnit = next(dbg_info.compilation_units)
+
+    lang = CU.language
+
+    assert lang.lang == lief.dwarf.CompilationUnit.Language.LANG.FORTRAN
+    assert lang.version == 1995
+
+    string_ty = dbg_info.find_type("CHARACTER_2")
+    assert isinstance(string_ty, lief.dwarf.types.StringTy)
+    assert string_ty.size == 8
+
+def test_DW_TAG_volatile_type():
+    elf = lief.ELF.parse(get_sample("private/DWARF/types/DW_TAG_volatile_type.o"))
+
+    dbg_info: lief.dwarf.DebugInfo = elf.debug_info
+    assert dbg_info is not None
+
+    V = dbg_info.find_variable("sink")
+
+    volatile: lief.dwarf.types.Volatile = V.type
+    assert isinstance(volatile, lief.dwarf.types.Volatile)
+
+    assert volatile.underlying_type.name == "int"
+
+def test_DW_TAG_restrict_type():
+    elf = lief.ELF.parse(get_sample("private/DWARF/types/DW_TAG_restrict_type.o"))
+
+    dbg_info: lief.dwarf.DebugInfo = elf.debug_info
+    assert dbg_info is not None
+
+    F = dbg_info.find_function("foo")
+    params = F.parameters
+    assert len(params) == 2
+
+    restrict: lief.dwarf.types.Restrict = params[1].type.underlying_type
+    assert isinstance(restrict, lief.dwarf.types.Restrict)
+
+    assert restrict.underlying_type.underlying_type.name == "double"
+
+def test_DW_TAG_reference_type():
+    elf = lief.ELF.parse(get_sample("private/DWARF/types/DW_TAG_reference_type.o"))
+
+    dbg_info: lief.dwarf.DebugInfo = elf.debug_info
+    assert dbg_info is not None
+
+    F = dbg_info.find_function("foo")
+    ret: lief.dwarf.types.Reference = F.type
+
+    assert isinstance(ret, lief.dwarf.types.Reference)
+
+    assert ret.underlying_type.name == "int"
+
+def test_DW_TAG_subrange_type():
+    elf = lief.ELF.parse(get_sample("private/DWARF/types/DW_TAG_subrange_type.o"))
+
+    dbg_info: lief.dwarf.DebugInfo = elf.debug_info
+    assert dbg_info is not None
+
+    V = dbg_info.find_variable("elemnt")
+    array: lief.dwarf.types.Array = V.type
+
+    size_info = array.size_info
+
+    assert size_info.size == 1
+    assert size_info.name == ""
+    assert size_info.type.name == "__ARRAY_SIZE_TYPE__"
+
+    assert array.underlying_type.name == "CHARACTER_2"
+
+def test_DW_TAG_thrown_type():
+    elf = lief.ELF.parse(get_sample("private/DWARF/types/DW_TAG_thrown_type.o"))
+
+    dbg_info: lief.dwarf.DebugInfo = elf.debug_info
+    assert dbg_info is not None
+
+    CU = next(dbg_info.compilation_units)
+
+    lang = CU.language
+
+    assert lang.lang == lief.dwarf.CompilationUnit.Language.LANG.SWIFT
+    F = dbg_info.find_function("f")
+
+    thrown_types = F.thrown_types
+    assert len(thrown_types) == 2
+
+    assert isinstance(thrown_types[0], lief.dwarf.types.Thrown)
+    assert thrown_types[0].underlying_type.name == "Error"
+
+    assert isinstance(thrown_types[1], lief.dwarf.types.Thrown)
+    assert thrown_types[1].underlying_type.name == "DifferentError"
+
+def test_DW_TAG_packed_type():
+    elf = lief.ELF.parse(get_sample("private/DWARF/types/DW_TAG_packed_type.ps.o"))
+
+    dbg_info: lief.dwarf.DebugInfo = elf.debug_info
+    assert dbg_info is not None
+
+    packed: lief.dwarf.types.Packed = dbg_info.find_type("TFILEINFO")
+    assert isinstance(packed, lief.dwarf.types.Packed)
+
+    member = packed.members
+    assert len(member) == 10
+
+    assert member[5].offset == 10
+
+def test_DW_TAG_shared_type():
+    elf = lief.ELF.parse(get_sample("private/DWARF/D_test.bin"))
+
+    dbg_info: lief.dwarf.DebugInfo = elf.debug_info
+    assert dbg_info is not None
+
+    CU = next(dbg_info.compilation_units)
+
+    lang = CU.language
+
+    assert lang.lang == lief.dwarf.CompilationUnit.Language.LANG.D
+
+    V = dbg_info.find_variable("test.flag")
+
+    shared: lief.dwarf.types.Shared = V.type
+    assert isinstance(shared, lief.dwarf.types.Shared)
+    assert shared.underlying_type.name == "int"
+
+def test_DW_TAG_interface_type():
+    elf = lief.ELF.parse(get_sample("private/DWARF/java_Pig.o"))
+
+    dbg_info: lief.dwarf.DebugInfo = elf.debug_info
+    assert dbg_info is not None
+
+    CU = next(dbg_info.compilation_units)
+
+    lang = CU.language
+
+    assert lang.lang == lief.dwarf.CompilationUnit.Language.LANG.JAVA
+
+    V = dbg_info.find_variable("_CD_Pig")
+
+    array: lief.dwarf.types.Array = V.type
+    assert isinstance(array, lief.dwarf.types.Array)
+    assert array.size_info.type.name == "sizetype"
+    assert array.size_info.size == 3
+
+    interface: lief.dwarf.types.Interface = dbg_info.find_type("Animal")
+    assert isinstance(interface, lief.dwarf.types.Interface)
