@@ -124,8 +124,8 @@ class LIEF_API FatBinary {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const FatBinary& fatbinary);
 
   private:
-  FatBinary();
-  FatBinary(binaries_t binaries);
+  LIEF_LOCAL FatBinary();
+  LIEF_LOCAL FatBinary(binaries_t binaries);
   binaries_t binaries_;
 };
 

@@ -83,14 +83,14 @@ class LIEF_API Parser : public LIEF::Parser {
                                                       const ParserConfig& conf = ParserConfig::deep());
 
   private:
-  Parser(const std::string& file, const ParserConfig& conf);
-  Parser(std::vector<uint8_t> data, const ParserConfig& conf);
-  Parser();
+  LIEF_LOCAL Parser(const std::string& file, const ParserConfig& conf);
+  LIEF_LOCAL Parser(std::vector<uint8_t> data, const ParserConfig& conf);
+  LIEF_LOCAL Parser();
 
-  ok_error_t build();
-  ok_error_t build_fat();
+  LIEF_LOCAL ok_error_t build();
+  LIEF_LOCAL ok_error_t build_fat();
 
-  ok_error_t undo_reloc_bindings(uintptr_t base_address);
+  LIEF_LOCAL ok_error_t undo_reloc_bindings(uintptr_t base_address);
 
   std::unique_ptr<BinaryStream> stream_;
   std::vector<std::unique_ptr<Binary>> binaries_;

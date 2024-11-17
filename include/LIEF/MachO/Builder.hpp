@@ -83,113 +83,113 @@ class LIEF_API Builder {
 
   ~Builder();
   private:
-  ok_error_t build();
+  LIEF_LOCAL ok_error_t build();
 
-  const std::vector<uint8_t>& get_build();
-  ok_error_t write(const std::string& filename) const;
-  ok_error_t write(std::ostream& os) const;
+  LIEF_LOCAL const std::vector<uint8_t>& get_build();
+  LIEF_LOCAL ok_error_t write(const std::string& filename) const;
+  LIEF_LOCAL ok_error_t write(std::ostream& os) const;
 
-  Builder(Binary& binary, config_t config);
-  Builder(std::vector<Binary*> binaries, config_t config);
+  LIEF_LOCAL Builder(Binary& binary, config_t config);
+  LIEF_LOCAL Builder(std::vector<Binary*> binaries, config_t config);
 
-  static std::vector<uint8_t> build_raw(Binary& binary, config_t config);
-  static std::vector<uint8_t> build_raw(FatBinary& binary, config_t config);
-
-  template<typename T>
-  ok_error_t build();
-
-  ok_error_t build_fat();
-  ok_error_t build_fat_header();
-  ok_error_t build_load_commands();
+  LIEF_LOCAL static std::vector<uint8_t> build_raw(Binary& binary, config_t config);
+  LIEF_LOCAL static std::vector<uint8_t> build_raw(FatBinary& binary, config_t config);
 
   template<typename T>
-  ok_error_t build_header();
+  LIEF_LOCAL ok_error_t build();
+
+  LIEF_LOCAL ok_error_t build_fat();
+  LIEF_LOCAL ok_error_t build_fat_header();
+  LIEF_LOCAL ok_error_t build_load_commands();
 
   template<typename T>
-  ok_error_t build_linkedit();
+  LIEF_LOCAL ok_error_t build_header();
 
   template<typename T>
-  ok_error_t build(DylibCommand& library);
+  LIEF_LOCAL ok_error_t build_linkedit();
 
   template<typename T>
-  ok_error_t build(DylinkerCommand& linker);
+  LIEF_LOCAL ok_error_t build(DylibCommand& library);
+
+  template<typename T>
+  LIEF_LOCAL ok_error_t build(DylinkerCommand& linker);
 
   template<class T>
-  ok_error_t build(VersionMin& version_min);
+  LIEF_LOCAL ok_error_t build(VersionMin& version_min);
 
   template<class T>
-  ok_error_t build(SourceVersion& source_version);
+  LIEF_LOCAL ok_error_t build(SourceVersion& source_version);
 
   template<class T>
-  ok_error_t build(FunctionStarts& function_starts);
+  LIEF_LOCAL ok_error_t build(FunctionStarts& function_starts);
 
   template<class T>
-  ok_error_t build(MainCommand& main_cmd);
+  LIEF_LOCAL ok_error_t build(MainCommand& main_cmd);
 
   template<class T>
-  ok_error_t build(Routine& routine);
+  LIEF_LOCAL ok_error_t build(Routine& routine);
 
   template<class T>
-  ok_error_t build(RPathCommand& rpath_cmd);
+  LIEF_LOCAL ok_error_t build(RPathCommand& rpath_cmd);
 
   template<class T>
-  ok_error_t build(DyldInfo& dyld_info);
+  LIEF_LOCAL ok_error_t build(DyldInfo& dyld_info);
 
   template<class T>
-  ok_error_t build(SymbolCommand& symbol_command);
+  LIEF_LOCAL ok_error_t build(SymbolCommand& symbol_command);
 
   template<class T>
-  ok_error_t build(DynamicSymbolCommand& symbol_command);
+  LIEF_LOCAL ok_error_t build(DynamicSymbolCommand& symbol_command);
 
   template<class T>
-  ok_error_t build(DataInCode& datacode);
+  LIEF_LOCAL ok_error_t build(DataInCode& datacode);
 
   template<class T>
-  ok_error_t build(CodeSignature& code_signature);
+  LIEF_LOCAL ok_error_t build(CodeSignature& code_signature);
 
   template<class T>
-  ok_error_t build(SegmentSplitInfo& ssi);
+  LIEF_LOCAL ok_error_t build(SegmentSplitInfo& ssi);
 
   template<class T>
-  ok_error_t build(SubFramework& sf);
+  LIEF_LOCAL ok_error_t build(SubFramework& sf);
 
   template<class T>
-  ok_error_t build(SubClient& sf);
+  LIEF_LOCAL ok_error_t build(SubClient& sf);
 
   template<class T>
-  ok_error_t build(DyldEnvironment& de);
+  LIEF_LOCAL ok_error_t build(DyldEnvironment& de);
 
   template<class T>
-  ok_error_t build(ThreadCommand& tc);
+  LIEF_LOCAL ok_error_t build(ThreadCommand& tc);
 
   template<class T>
-  ok_error_t build(DyldChainedFixups& fixups);
+  LIEF_LOCAL ok_error_t build(DyldChainedFixups& fixups);
 
   template<class T>
-  ok_error_t build(DyldExportsTrie& exports);
+  LIEF_LOCAL ok_error_t build(DyldExportsTrie& exports);
 
   template<class T>
-  ok_error_t build(TwoLevelHints& two);
+  LIEF_LOCAL ok_error_t build(TwoLevelHints& two);
 
   template<class T>
-  ok_error_t build(LinkerOptHint& opt);
+  LIEF_LOCAL ok_error_t build(LinkerOptHint& opt);
 
   template<class T>
-  ok_error_t build(CodeSignatureDir& sig);
+  LIEF_LOCAL ok_error_t build(CodeSignatureDir& sig);
 
   template <typename T>
-  ok_error_t build_segments();
+  LIEF_LOCAL ok_error_t build_segments();
 
   template<class T>
-  ok_error_t build(BuildVersion& bv);
+  LIEF_LOCAL ok_error_t build(BuildVersion& bv);
 
   template <typename T>
-  ok_error_t build_symbols();
+  LIEF_LOCAL ok_error_t build_symbols();
 
-  ok_error_t build_uuid();
+  LIEF_LOCAL ok_error_t build_uuid();
 
   template <typename T>
-  ok_error_t update_fixups(DyldChainedFixups& fixups);
+  LIEF_LOCAL ok_error_t update_fixups(DyldChainedFixups& fixups);
 
   std::vector<Binary*> binaries_;
   Binary* binary_ = nullptr;

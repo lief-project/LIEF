@@ -946,26 +946,28 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   private:
   /// Default constructor
-  Binary();
+  LIEF_LOCAL Binary();
 
-  void shift_command(size_t width, uint64_t from_offset);
+  LIEF_LOCAL void shift_command(size_t width, uint64_t from_offset);
 
   /// Insert a Segment command in the cache field (segments_)
   /// and keep a consistent state of the indexes.
-  size_t add_cached_segment(SegmentCommand& segment);
+  LIEF_LOCAL size_t add_cached_segment(SegmentCommand& segment);
 
   template<class T>
-  LIEF_LOCAL ok_error_t patch_relocation(Relocation& relocation, uint64_t from, uint64_t shift);
+  LIEF_LOCAL ok_error_t patch_relocation(Relocation& relocation, uint64_t from,
+                                         uint64_t shift);
 
   LIEF::Header get_abstract_header() const override {
     return LIEF::Header::from(*this);
   }
-  LIEF::Binary::sections_t get_abstract_sections() override;
-  LIEF::Binary::symbols_t get_abstract_symbols() override;
-  LIEF::Binary::relocations_t get_abstract_relocations() override;
-  LIEF::Binary::functions_t get_abstract_exported_functions() const override;
-  LIEF::Binary::functions_t get_abstract_imported_functions() const override;
-  std::vector<std::string>  get_abstract_imported_libraries() const override;
+
+  LIEF_LOCAL LIEF::Binary::sections_t get_abstract_sections() override;
+  LIEF_LOCAL LIEF::Binary::symbols_t get_abstract_symbols() override;
+  LIEF_LOCAL LIEF::Binary::relocations_t get_abstract_relocations() override;
+  LIEF_LOCAL LIEF::Binary::functions_t get_abstract_exported_functions() const override;
+  LIEF_LOCAL LIEF::Binary::functions_t get_abstract_imported_functions() const override;
+  LIEF_LOCAL std::vector<std::string> get_abstract_imported_libraries() const override;
 
   relocations_t& relocations_list() {
     return this->relocations_;

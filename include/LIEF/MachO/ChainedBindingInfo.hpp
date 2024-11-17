@@ -112,7 +112,7 @@ class LIEF_API ChainedBindingInfo : public BindingInfo {
   }
 
   protected:
-  void clear();
+  LIEF_LOCAL void clear();
   enum class BIND_TYPES {
     UNKNOWN = 0,
 
@@ -126,12 +126,12 @@ class LIEF_API ChainedBindingInfo : public BindingInfo {
     PTR32_BIND,
   };
 
-  void set(const details::dyld_chained_ptr_arm64e_bind& bind);
-  void set(const details::dyld_chained_ptr_arm64e_auth_bind& bind);
-  void set(const details::dyld_chained_ptr_arm64e_bind24& bind);
-  void set(const details::dyld_chained_ptr_arm64e_auth_bind24& bind);
-  void set(const details::dyld_chained_ptr_64_bind& bind);
-  void set(const details::dyld_chained_ptr_32_bind& bind);
+  LIEF_LOCAL void set(const details::dyld_chained_ptr_arm64e_bind& bind);
+  LIEF_LOCAL void set(const details::dyld_chained_ptr_arm64e_auth_bind& bind);
+  LIEF_LOCAL void set(const details::dyld_chained_ptr_arm64e_bind24& bind);
+  LIEF_LOCAL void set(const details::dyld_chained_ptr_arm64e_auth_bind24& bind);
+  LIEF_LOCAL void set(const details::dyld_chained_ptr_64_bind& bind);
+  LIEF_LOCAL void set(const details::dyld_chained_ptr_32_bind& bind);
 
   DYLD_CHAINED_FORMAT format_;
   DYLD_CHAINED_PTR_FORMAT ptr_format_;

@@ -258,8 +258,8 @@ class LIEF_API SegmentCommand : public LoadCommand {
     return data_;
   }
 
-  void content_resize(size_t size);
-  void content_insert(size_t where, size_t size);
+  LIEF_LOCAL void content_resize(size_t size);
+  LIEF_LOCAL void content_insert(size_t where, size_t size);
 
   void content_extend(size_t width) {
     content_resize(data_.size() + width);

@@ -110,8 +110,8 @@ class LIEF_API DyldExportsTrie : public LoadCommand {
   }
 
   private:
-  DyldExportsTrie& operator=(DyldExportsTrie other);
-  DyldExportsTrie(const DyldExportsTrie& other);
+  LIEF_LOCAL DyldExportsTrie& operator=(DyldExportsTrie other);
+  LIEF_LOCAL DyldExportsTrie(const DyldExportsTrie& other);
 
   uint32_t data_offset_ = 0;
   uint32_t data_size_   = 0;

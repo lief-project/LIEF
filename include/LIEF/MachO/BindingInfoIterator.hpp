@@ -92,7 +92,7 @@ class LIEF_API BindingInfoIterator :
   const BindingInfo& operator*() const;
 
   private:
-  BindingInfoIterator() = default;
+  LIEF_LOCAL BindingInfoIterator() = default;
   size_t pos_ = 0;
   ORIGIN origin_ = ORIGIN::NONE;
   union {

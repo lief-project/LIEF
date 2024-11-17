@@ -148,11 +148,10 @@ class LIEF_API DylibCommand : public LoadCommand {
   }
 
   private:
-  static DylibCommand create(LoadCommand::TYPE type,
-                             const std::string& name,
-                             uint32_t timestamp,
-                             uint32_t current_version,
-                             uint32_t compat_version);
+  LIEF_LOCAL static DylibCommand create(
+    LoadCommand::TYPE type, const std::string& name, uint32_t timestamp,
+    uint32_t current_version, uint32_t compat_version);
+
   std::string name_;
   uint32_t timestamp_ = 0;
   uint32_t current_version_ = 0;

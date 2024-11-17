@@ -329,7 +329,7 @@ class LIEF_API Section : public LIEF::Section {
   template<class T>
   LIEF_LOCAL Section(const T& header, ARCH arch);
 
-  span<uint8_t> writable_content();
+  LIEF_LOCAL span<uint8_t> writable_content();
   ARCH arch_ = ARCH::NONE;
   TYPE type_ = TYPE::SHT_NULL_;
   uint64_t flags_ = 0;

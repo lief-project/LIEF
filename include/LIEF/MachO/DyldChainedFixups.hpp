@@ -202,9 +202,9 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
   }
 
   private:
-  void update_with(const details::dyld_chained_fixups_header& header);
-  DyldChainedFixups& operator=(const DyldChainedFixups& other);
-  DyldChainedFixups(const DyldChainedFixups& other);
+  LIEF_LOCAL void update_with(const details::dyld_chained_fixups_header& header);
+  LIEF_LOCAL DyldChainedFixups& operator=(const DyldChainedFixups& other);
+  LIEF_LOCAL DyldChainedFixups(const DyldChainedFixups& other);
 
   uint32_t data_offset_ = 0;
   uint32_t data_size_   = 0;

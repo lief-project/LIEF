@@ -135,10 +135,10 @@ class LIEF_API RelocationFixup : public Relocation {
     PTR32_REBASE,
   };
 
-  void set(const details::dyld_chained_ptr_arm64e_rebase& fixup);
-  void set(const details::dyld_chained_ptr_arm64e_auth_rebase& fixup);
-  void set(const details::dyld_chained_ptr_64_rebase& fixup);
-  void set(const details::dyld_chained_ptr_32_rebase& fixup);
+  LIEF_LOCAL void set(const details::dyld_chained_ptr_arm64e_rebase& fixup);
+  LIEF_LOCAL void set(const details::dyld_chained_ptr_arm64e_auth_rebase& fixup);
+  LIEF_LOCAL void set(const details::dyld_chained_ptr_64_rebase& fixup);
+  LIEF_LOCAL void set(const details::dyld_chained_ptr_32_rebase& fixup);
 
   DYLD_CHAINED_PTR_FORMAT ptr_fmt_ = DYLD_CHAINED_PTR_FORMAT::PTR_32;
   uint64_t imagebase_ = 0;

@@ -408,9 +408,11 @@ class LIEF_API DyldInfo : public LoadCommand {
   private:
   using bind_container_t = std::set<DyldBindingInfo*, std::function<bool(DyldBindingInfo*, DyldBindingInfo*)>>;
 
-  void show_bindings(std::ostream& os, span<const uint8_t> buffer, bool is_lazy = false) const;
+  LIEF_LOCAL void show_bindings(std::ostream& os, span<const uint8_t> buffer, bool is_lazy = false) const;
 
-  void show_trie(std::ostream& output, std::string output_prefix, BinaryStream& stream, uint64_t start, uint64_t end, const std::string& prefix) const;
+  LIEF_LOCAL void show_trie(std::ostream& output, std::string output_prefix,
+                            BinaryStream& stream, uint64_t start, uint64_t end,
+                            const std::string& prefix) const;
 
   LIEF_LOCAL DyldInfo& update_standard_bindings(const bind_container_t& bindings, vector_iostream& stream);
   LIEF_LOCAL DyldInfo& update_standard_bindings_v1(const bind_container_t& bindings, vector_iostream& stream);
