@@ -101,7 +101,8 @@ hashstream& hashstream::flush() {
 }
 
 hashstream::~hashstream() {
-  mbedtls_md_free(cast(this->ctx_));
+  mbedtls_md_free(cast(ctx_));
+  delete reinterpret_cast<mbedtls_md_context_t*>(ctx_.release())
 }
 
 
