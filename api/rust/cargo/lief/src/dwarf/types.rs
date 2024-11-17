@@ -1,4 +1,3 @@
-use lief_ffi::LIEF::PE::Import;
 use lief_ffi as ffi;
 
 use crate::{common::FromFFI, Error};

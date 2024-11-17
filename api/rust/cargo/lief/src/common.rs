@@ -79,7 +79,7 @@ macro_rules! declare_iterator_conv {
 #[macro_export]
 macro_rules! declare_iterator {
     ($name:ident, $from:ty, $ffi:ty, $parent:ty, $ffi_iterator:ty) => {
-        crate::declare_iterator_conv!($name, $from, $ffi, $parent, $ffi_iterator, |n| {
+        $crate::declare_iterator_conv!($name, $from, $ffi, $parent, $ffi_iterator, |n| {
             Self::Item::from_ffi(n)
         });
     };
@@ -124,7 +124,7 @@ macro_rules! declare_fwd_iterator_conv {
 #[macro_export]
 macro_rules! declare_fwd_iterator {
     ($name:ident, $from:ty, $ffi:ty, $parent:ty, $ffi_iterator:ty) => {
-        crate::declare_fwd_iterator_conv!($name, $from, $ffi, $parent, $ffi_iterator, |n| {
+        $crate::declare_fwd_iterator_conv!($name, $from, $ffi, $parent, $ffi_iterator, |n| {
             Self::Item::from_ffi(n)
         });
     };
@@ -154,7 +154,7 @@ macro_rules! to_result {
 
         let value = $func(&$self.ptr, $($arg),*, std::pin::Pin::new(&mut err));
         if err > 0 {
-            return Err(crate::Error::from(err));
+            return Err($crate::Error::from(err));
         }
         return Ok(value);
     };
@@ -163,7 +163,7 @@ macro_rules! to_result {
         let value = $func(&$self.ptr, std::pin::Pin::new(&mut err));
 
         if err > 0 {
-            return Err(crate::Error::from(err));
+            return Err($crate::Error::from(err));
         }
         return Ok(value);
     };
@@ -176,7 +176,7 @@ macro_rules! to_conv_result {
         let mut err: u32 = 0;
         let value = $func(&$self, $($arg),*, std::pin::Pin::new(&mut err));
         if err > 0 {
-            return Err(crate::Error::from(err));
+            return Err($crate::Error::from(err));
         }
         return Ok($conv(value));
     };
@@ -184,7 +184,7 @@ macro_rules! to_conv_result {
         let mut err: u32 = 0;
         let value = $func(&$self, std::pin::Pin::new(&mut err));
         if err > 0 {
-            return Err(crate::Error::from(err));
+            return Err($crate::Error::from(err));
         }
         return Ok($conv(value));
     };

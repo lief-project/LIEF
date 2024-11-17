@@ -1,9 +1,8 @@
 use lief_ffi as ffi;
 
-use crate::common::{into_optional, FromFFI};
+use crate::common::FromFFI;
 use std::marker::PhantomData;
 use crate::dwarf::types::DwarfType;
-use crate::dwarf::Type;
 
 /// This structure represents a `DW_TAG_dynamic_type`
 pub struct Dynamic<'a> {
