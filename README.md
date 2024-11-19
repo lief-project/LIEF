@@ -38,6 +38,10 @@
   <a href="https://twitter.com/LIEF_project">
    <img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/lief_project">
   </a>
+  &nbsp;
+  <a href="https://gurubase.io/g/lief">
+    <img src="https://img.shields.io/badge/Gurubase-Ask%20LIEF%20Guru-006BFF">
+  </a>
 </p>
 
 <br />
