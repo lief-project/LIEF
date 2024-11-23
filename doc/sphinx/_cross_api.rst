@@ -452,3 +452,9 @@
     :py:meth:`lief.dsc.DyldSharedCache.enable_caching`
     :cpp:func:`LIEF::dsc::DyldSharedCache::enable_caching`
 
+.. extended utils =============================================================
+
+.. |lief-extended-version-info| lief-api:: lief.extended_version_info()
+
+    :rust:func:`lief::extended_version_info`
+    :cpp:func:`LIEF::extended_version_info`

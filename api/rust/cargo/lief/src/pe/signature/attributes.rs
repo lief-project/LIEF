@@ -621,7 +621,7 @@ impl<'a> MsCounterSign<'a> {
         ContentInfo::from_ffi(self.ptr.content_info())
     }
 
-    /// Return list of [`crate::pe::X509`] certificates associated with this signature
+    /// Return list of [`crate::pe::signature::X509`] certificates associated with this signature
     pub fn certificates(&'a self) -> MsCounterCertificates<'a> {
         MsCounterCertificates::new(self.ptr.certificates())
     }

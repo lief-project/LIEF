@@ -72,8 +72,8 @@ LIEF exposes a demangling API for the following formats:
 
 :fa:`brands fa-rust` :rust:func:`lief::demangle`
 
-Is Extended?
-~~~~~~~~~~~~
+Extended Version
+~~~~~~~~~~~~~~~~
 
 To check if the current build is an :ref:`extended <extended-intro>` version
 you can use:
@@ -95,6 +95,10 @@ In C++ you can also check if the ``LIEF_EXTENDED`` is defined:
    #else
    // Regular version
    #endif
+
+To get details about the version of the current extended build:
+
+.. doxygenfunction:: LIEF::extended_version_info
 
 Android Platform
 ~~~~~~~~~~~~~~~~~

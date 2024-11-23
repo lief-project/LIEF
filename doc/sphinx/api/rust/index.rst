@@ -46,6 +46,8 @@ and download them either from Github (for release) or a S3 bucket for nightly
 builds.
 
 
+.. _lief-rust-precompiled:
+
 ``LIEF_RUST_PRECOMPILED``
 --------------------------
 
