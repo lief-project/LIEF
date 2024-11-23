@@ -62,6 +62,10 @@ class Engine {};
 // asm/Instruction.hpp
 // ----------------------------------------------------------------------------
 
+Instruction::Iterator::Iterator() :
+  impl_(nullptr)
+{}
+
 Instruction::Iterator::Iterator(std::unique_ptr<details::InstructionIt>) :
   impl_(nullptr)
 {}

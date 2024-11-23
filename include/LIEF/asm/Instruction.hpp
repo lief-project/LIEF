@@ -39,6 +39,8 @@ class LIEF_API Instruction {
     public:
     using implementation = details::InstructionIt;
 
+    LIEF_API Iterator();
+
     LIEF_API Iterator(std::unique_ptr<details::InstructionIt> impl);
     LIEF_API Iterator(const Iterator&);
     LIEF_API Iterator& operator=(const Iterator&);
