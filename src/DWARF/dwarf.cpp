@@ -183,6 +183,13 @@ std::unique_ptr<Parameter> Parameter::create(std::unique_ptr<details::Parameter>
 // ----------------------------------------------------------------------------
 Function::~Function() = default;
 
+Function::instructions_it Function::instructions() const {
+  return make_range<assembly::Instruction::Iterator>(
+      assembly::Instruction::Iterator(),
+      assembly::Instruction::Iterator()
+  );
+}
+
 std::unique_ptr<Scope> Function::scope() const {
   return nullptr;
 }

@@ -2,6 +2,7 @@ from typing import Any, ClassVar, Iterator, Optional
 
 from typing import overload
 import lief # type: ignore
+import lief.assembly # type: ignore
 import lief.dwarf # type: ignore
 import lief.dwarf.CompilationUnit # type: ignore
 import lief.dwarf.CompilationUnit.Language # type: ignore
@@ -92,6 +93,8 @@ class Function:
     def address(self) -> Optional[int]: ...
     @property
     def debug_location(self) -> lief.debug_location_t: ...
+    @property
+    def disassemble(self) -> Iterator[Optional[lief.assembly.Instruction]]: ...
     @property
     def is_artificial(self) -> bool: ...
     @property

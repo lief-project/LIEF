@@ -128,6 +128,17 @@ void create<dw::Function>(nb::module_& m) {
       Scope in which this function is defined
       )doc"_doc
     )
+    .def_prop_ro("instructions",
+      [] (dw::Function& self) {
+        auto insts = self.instructions();
+        return nb::make_iterator(
+            nb::type<dw::Function>(), "instructions_it", insts);
+      }, nb::keep_alive<0, 1>(),
+      R"doc(
+      Disassemble the current function by returning an iterator over the
+      :class:`lief.assembly.Instruction`.
+      )doc"_doc
+    )
   ;
 }
 

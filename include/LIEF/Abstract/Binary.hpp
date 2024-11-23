@@ -93,7 +93,7 @@ class LIEF_API Binary : public Object {
   /// Iterator that outputs const LIEF::Relocation&
   using it_const_relocations = const_ref_iterator<relocations_t>;
 
-  //! Instruction iterator
+  /// Instruction iterator
   using instructions_it = iterator_range<assembly::Instruction::Iterator>;
 
   public:

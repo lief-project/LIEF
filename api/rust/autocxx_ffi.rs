@@ -530,6 +530,8 @@ include_cpp! {
     block_constructors!("DWARF_Function_it_parameters")
     generate!("DWARF_Function_it_thrown_types")
     block_constructors!("DWARF_Function_it_thrown_types")
+    generate!("DWARF_Function_it_instructions")
+    block_constructors!("DWARF_Function_it_instructions")
     generate!("DWARF_CompilationUnit_it_functions")
     block_constructors!("DWARF_CompilationUnit_it_functions")
     generate!("DWARF_CompilationUnit_it_types")

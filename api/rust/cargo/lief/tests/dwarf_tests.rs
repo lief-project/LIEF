@@ -2,6 +2,7 @@ mod utils;
 use lief;
 use lief::dwarf::types::{Base, ClassLike, DwarfType};
 use lief::dwarf::{Parameter, Scope, Type};
+use lief::assembly::Instruction;
 use lief::generic::Binary;
 
 use std::path::{Path, PathBuf};
@@ -359,6 +360,11 @@ fn explore_function(name: &str, func: &lief::dwarf::Function) {
 
     for ty in func.thrown_types() {
         explore_type(name, &ty);
+    }
+
+    //println!("{} {}", name, func.name());
+    for inst in func.instructions() {
+        format!("{}", inst.to_string());
     }
 }
 

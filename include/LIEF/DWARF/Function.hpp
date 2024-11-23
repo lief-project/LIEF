@@ -24,6 +24,7 @@
 #include "LIEF/range.hpp"
 #include "LIEF/DWARF/Variable.hpp"
 #include "LIEF/DWARF/Type.hpp"
+#include "LIEF/asm/Instruction.hpp"
 
 namespace LIEF {
 namespace dwarf {
@@ -103,6 +104,8 @@ class LIEF_API Function {
   using parameters_t = std::vector<std::unique_ptr<Parameter>>;
   using thrown_types_t = std::vector<std::unique_ptr<Type>>;
 
+  using instructions_it = iterator_range<assembly::Instruction::Iterator>;
+
   Function(std::unique_ptr<details::Function> impl);
 
   /// The name of the function (`DW_AT_name`)
@@ -162,6 +165,10 @@ class LIEF_API Function {
 
   /// Return the scope in which this function is defined
   std::unique_ptr<Scope> scope() const;
+
+  /// Disassemble the current function by returning an iterator over
+  /// the assembly::Instruction
+  instructions_it instructions() const;
 
   ~Function();
   private:

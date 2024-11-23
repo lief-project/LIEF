@@ -23,6 +23,7 @@
 #include "LIEF/rust/range.hpp"
 #include "LIEF/rust/debug_location.hpp"
 #include "LIEF/rust/error.hpp"
+#include "LIEF/rust/asm/Instruction.hpp"
 
 class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
   public:
@@ -58,6 +59,15 @@ class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
     it_thrown_types(container_t content)
       : ContainerIterator(std::move(content)) { }
     auto next() { return ContainerIterator::next(); }
+  };
+
+  class it_instructions :
+      public ForwardIterator<asm_Instruction, LIEF::assembly::Instruction::Iterator>
+  {
+    public:
+    it_instructions(const DWARF_Function::lief_t& src)
+      : ForwardIterator(src.instructions()) { }
+    auto next() { return ForwardIterator::next(); }
   };
 
   auto name() const { return get().name(); }
@@ -96,5 +106,9 @@ class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
 
   auto scope() const {
     return details::try_unique<DWARF_Scope>(get().scope()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+
+  auto instructions() const {
+    return std::make_unique<it_instructions>(get());
   }
 };

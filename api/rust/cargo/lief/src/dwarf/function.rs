@@ -8,6 +8,7 @@ use crate::to_result;
 use crate::DebugLocation;
 use crate::Error;
 use crate::Range;
+use crate::assembly;
 use std::marker::PhantomData;
 
 /// This structure represents a DWARF function which can be associated with either:
@@ -108,6 +109,12 @@ impl Function<'_> {
     pub fn scope(&self) -> Option<Scope> {
         into_optional(self.ptr.scope())
     }
+
+    /// Disassemble the current function by returning an iterator over
+    /// the [`assembly::Instructions`]
+    pub fn instructions(&self) -> Instructions {
+        Instructions::new(self.ptr.instructions())
+    }
 }
 
 declare_fwd_iterator!(
@@ -132,4 +139,13 @@ declare_fwd_iterator!(
     ffi::DWARF_Type,
     ffi::DWARF_Function,
     ffi::DWARF_Function_it_thrown_types
+);
+
+
+declare_fwd_iterator!(
+    Instructions,
+    assembly::Instructions,
+    ffi::asm_Instruction,
+    ffi::DWARF_Function,
+    ffi::DWARF_Function_it_instructions
 );

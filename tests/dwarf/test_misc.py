@@ -152,3 +152,26 @@ def test_imported_functions():
     cu = units[0]
     functions = list(cu.imported_functions)
     assert len(functions) == 0
+
+def test_disassembler():
+    elf = lief.ELF.parse(get_sample("private/DWARF/libLIEF.so"))
+
+    dbg_info: lief.dwarf.DebugInfo = elf.debug_info
+    mbedtls_aes_free = dbg_info.find_function(0x2e6b40)
+
+    assert mbedtls_aes_free is not None
+    insts = list(mbedtls_aes_free.instructions)
+    assert len(insts) == 5
+
+def test_addr():
+    elf = lief.ELF.parse(get_sample("DWARF/vars_1.elf"))
+
+    dbg_info: lief.dwarf.DebugInfo = elf.debug_info
+    assert isinstance(dbg_info, lief.dwarf.DebugInfo)
+
+    main = dbg_info.find_function("main")
+    assert main is not None
+    assert main.address == 0x1180
+
+    insts = list(main.instructions)
+    assert len(insts) == 79
