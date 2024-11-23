@@ -11,7 +11,7 @@ pub trait Instruction {
 
     /// Address of the instruction
     fn address(&self) -> u64 {
-    self.as_generic().address()
+        self.as_generic().address()
     }
 
     /// Size of the instruction in bytes
