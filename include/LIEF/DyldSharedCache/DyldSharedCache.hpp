@@ -206,7 +206,7 @@ class LIEF_API DyldSharedCache {
   instructions_iterator disassemble(uint64_t va) const;
 
   /// Return the content at the specified virtual address
-  std::vector<uint8_t> get_content_from_va(uint64_t va, size_t size) const;
+  std::vector<uint8_t> get_content_from_va(uint64_t va, uint64_t size) const;
 
   /// Find the sub-DyldSharedCache that wraps the given virtual address
   std::unique_ptr<DyldSharedCache> cache_for_address(uint64_t va) const;
