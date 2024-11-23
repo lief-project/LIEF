@@ -9,4 +9,4 @@ Instruction
 Opcodes
 *******
 
-.. doxygenenum:: LIEF::assembly::ebpf::OPCODE
+See ``LIEF::assembly::ebpf::OPCODE`` in ``include/asm/ebpf/opcodes.hpp``

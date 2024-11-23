@@ -9,4 +9,4 @@ Instruction
 Opcodes
 *******
 
-.. doxygenenum:: LIEF::assembly::aarch64::OPCODE
+See ``LIEF::assembly::aarch64::OPCODE`` in ``include/asm/aarch64/opcodes.hpp``

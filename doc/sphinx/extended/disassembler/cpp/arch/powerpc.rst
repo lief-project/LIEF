@@ -9,4 +9,4 @@ Instruction
 Opcodes
 *******
 
-.. doxygenenum:: LIEF::assembly::powerpc::OPCODE
+See ``LIEF::assembly::powerpc::OPCODE`` in ``include/asm/powerpc/opcodes.hpp``

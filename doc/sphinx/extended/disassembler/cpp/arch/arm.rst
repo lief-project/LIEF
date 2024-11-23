@@ -6,7 +6,9 @@ Instruction
 
 .. doxygenclass:: LIEF::assembly::arm::Instruction
 
+
 Opcodes
 *******
 
-.. doxygenenum:: LIEF::assembly::arm::OPCODE
+See ``LIEF::assembly::arm::OPCODE`` in ``include/asm/arm/opcodes.hpp``
+

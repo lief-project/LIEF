@@ -13,4 +13,4 @@ Instruction
 Opcodes
 *******
 
-.. autoclass:: lief.assembly.powerpc.OPCODE
+See: ``lief.assembly.powerpc.OPCODE``

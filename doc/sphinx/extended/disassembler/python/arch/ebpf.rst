@@ -13,4 +13,4 @@ Instruction
 Opcodes
 *******
 
-.. autoclass:: lief.assembly.ebpf.OPCODE
+See: ``lief.assembly.ebpf.OPCODE``

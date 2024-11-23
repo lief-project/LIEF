@@ -9,4 +9,4 @@ Instruction
 Opcodes
 *******
 
-.. doxygenenum:: LIEF::assembly::riscv::OPCODE
+See ``LIEF::assembly::riscv::OPCODE`` in ``include/asm/riscv/opcodes.hpp``

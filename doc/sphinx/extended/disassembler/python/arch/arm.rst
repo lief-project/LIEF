@@ -13,4 +13,4 @@ Instruction
 Opcodes
 *******
 
-.. autoclass:: lief.assembly.arm.OPCODE
+See: ``lief.assembly.arm.OPCODE``

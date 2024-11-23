@@ -9,4 +9,4 @@ Instruction
 Opcodes
 *******
 
-.. doxygenenum:: LIEF::assembly::x86::OPCODE
+See ``LIEF::assembly::x86::OPCODE`` in ``include/asm/x86/opcodes.hpp``

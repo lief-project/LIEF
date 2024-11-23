@@ -13,4 +13,4 @@ Instruction
 Opcodes
 *******
 
-.. autoclass:: lief.assembly.riscv.OPCODE
+See: ``lief.assembly.riscv.OPCODE``

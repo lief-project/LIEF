@@ -9,4 +9,4 @@ Instruction
 Opcodes
 *******
 
-.. doxygenenum:: LIEF::assembly::mips::OPCODE
+See ``LIEF::assembly::mips::OPCODE`` in ``include/asm/mips/opcodes.hpp``

@@ -13,4 +13,4 @@ Instruction
 Opcodes
 *******
 
-.. autoclass:: lief.assembly.mips.OPCODE
+See: ``lief.assembly.mips.OPCODE``
