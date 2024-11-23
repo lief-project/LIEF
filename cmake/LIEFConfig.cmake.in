@@ -154,6 +154,11 @@ if(@LIEF_EXTERNAL_SPAN@)
   )
 endif()
 
+if(@LIEF_EXTENDED@)
+  set(LIEF_CORE_EXTENDED TRUE)
+else()
+  set(LIEF_CORE_EXTENDED FALSE)
+endif()
 
 # Set this for backwards compatibility. This isn't quite the path to the
 # actual library file, but using the target is strictly better because it
