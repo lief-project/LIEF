@@ -12,7 +12,12 @@ def test_arm64e():
     assert len(instructions) == 276
 
     assert instructions[0].to_string() == "0x016650: adrp x17, #106496"
+    assert isinstance(instructions[0], lief.assembly.aarch64.Instruction)
+    assert instructions[0].opcode == lief.assembly.aarch64.OPCODE.ADRP
+
     assert instructions[3].to_string() == "0x01665c: braa x16, x17"
+    assert isinstance(instructions[3], lief.assembly.aarch64.Instruction)
+    assert instructions[3].opcode == lief.assembly.aarch64.OPCODE.BRAA
 
 def test_pe_arm64():
     pe = lief.PE.parse(get_sample("PE/elf_reader.arm64.pe.exe"))
@@ -21,7 +26,12 @@ def test_pe_arm64():
     assert len(instructions) == 6245
 
     assert instructions[0].to_string() == "0x140001000: str x19, [sp, #-16]!"
+    assert isinstance(instructions[0], lief.assembly.aarch64.Instruction)
+    assert instructions[0].opcode == lief.assembly.aarch64.OPCODE.STRXpre
+
     assert instructions[4796].to_string() == "0x140005af0: ldr x30, [sp, #16]"
+    assert isinstance(instructions[4796], lief.assembly.aarch64.Instruction)
+    assert instructions[4796].opcode == lief.assembly.aarch64.OPCODE.LDRXui
 
 def test_elf_arm64():
     elf = lief.ELF.parse(get_sample("ELF/issue_975_aarch64.o"))
@@ -37,5 +47,5 @@ def test_elf_arm64():
     instructions = list(elf.disassemble(0x056c19b4, 16))
     assert len(instructions) == 4
     assert instructions[0].to_string() == "0x56c19b4: paciasp"
-
-
+    assert isinstance(instructions[0], lief.assembly.aarch64.Instruction)
+    assert instructions[0].opcode == lief.assembly.aarch64.OPCODE.PACIASP

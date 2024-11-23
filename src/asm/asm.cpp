@@ -14,6 +14,28 @@
  */
 #include "LIEF/asm/Instruction.hpp"
 #include "LIEF/asm/Engine.hpp"
+
+#include "LIEF/asm/aarch64/Instruction.hpp"
+#include "LIEF/asm/aarch64/registers.hpp"
+
+#include "LIEF/asm/x86/Instruction.hpp"
+#include "LIEF/asm/x86/registers.hpp"
+
+#include "LIEF/asm/arm/Instruction.hpp"
+#include "LIEF/asm/arm/registers.hpp"
+
+#include "LIEF/asm/mips/Instruction.hpp"
+#include "LIEF/asm/mips/registers.hpp"
+
+#include "LIEF/asm/ebpf/Instruction.hpp"
+#include "LIEF/asm/ebpf/registers.hpp"
+
+#include "LIEF/asm/riscv/Instruction.hpp"
+#include "LIEF/asm/riscv/registers.hpp"
+
+#include "LIEF/asm/powerpc/Instruction.hpp"
+#include "LIEF/asm/powerpc/registers.hpp"
+
 #include "LIEF/Abstract/Binary.hpp"
 
 #include "internal_utils.hpp"
@@ -146,5 +168,115 @@ Engine::instructions_it Engine::disassemble(const uint8_t*, size_t, uint64_t) {
 }
 
 Engine::~Engine() = default;
+
+// ----------------------------------------------------------------------------
+// asm/aarch64/Instruction.hpp
+// ----------------------------------------------------------------------------
+aarch64::OPCODE aarch64::Instruction::opcode() const {
+  return aarch64::OPCODE::INSTRUCTION_LIST_END;
+}
+
+bool aarch64::Instruction::classof(const assembly::Instruction*) {
+  return false;
+}
+
+const char* aarch64::get_register_name(aarch64::REG) {
+  return "";
+}
+
+const char* aarch64::get_register_name(aarch64::SYSREG) {
+  return "";
+}
+
+// ----------------------------------------------------------------------------
+// asm/x86/Instruction.hpp
+// ----------------------------------------------------------------------------
+x86::OPCODE x86::Instruction::opcode() const {
+  return x86::OPCODE::INSTRUCTION_LIST_END;
+}
+
+bool x86::Instruction::classof(const assembly::Instruction*) {
+  return false;
+}
+
+const char* x86::get_register_name(REG) {
+  return "";
+}
+
+// ----------------------------------------------------------------------------
+// asm/arm/Instruction.hpp
+// ----------------------------------------------------------------------------
+arm::OPCODE arm::Instruction::opcode() const {
+  return arm::OPCODE::INSTRUCTION_LIST_END;
+}
+
+bool arm::Instruction::classof(const assembly::Instruction*) {
+  return false;
+}
+
+const char* arm::get_register_name(REG) {
+  return "";
+}
+
+// ----------------------------------------------------------------------------
+// asm/mips/Instruction.hpp
+// ----------------------------------------------------------------------------
+mips::OPCODE mips::Instruction::opcode() const {
+  return mips::OPCODE::INSTRUCTION_LIST_END;
+}
+
+bool mips::Instruction::classof(const assembly::Instruction*) {
+  return false;
+}
+
+const char* mips::get_register_name(REG) {
+  return "";
+}
+
+// ----------------------------------------------------------------------------
+// asm/ebpf/Instruction.hpp
+// ----------------------------------------------------------------------------
+ebpf::OPCODE ebpf::Instruction::opcode() const {
+  return ebpf::OPCODE::INSTRUCTION_LIST_END;
+}
+
+bool ebpf::Instruction::classof(const assembly::Instruction*) {
+  return false;
+}
+
+const char* ebpf::get_register_name(REG) {
+  return "";
+}
+
+// ----------------------------------------------------------------------------
+// asm/riscv/Instruction.hpp
+// ----------------------------------------------------------------------------
+riscv::OPCODE riscv::Instruction::opcode() const {
+  return riscv::OPCODE::INSTRUCTION_LIST_END;
+}
+
+bool riscv::Instruction::classof(const assembly::Instruction*) {
+  return false;
+}
+
+const char* riscv::get_register_name(REG) {
+  return "";
+}
+
+// ----------------------------------------------------------------------------
+// asm/powerpc/Instruction.hpp
+// ----------------------------------------------------------------------------
+powerpc::OPCODE powerpc::Instruction::opcode() const {
+  return powerpc::OPCODE::INSTRUCTION_LIST_END;
+}
+
+bool powerpc::Instruction::classof(const assembly::Instruction*) {
+  return false;
+}
+
+const char* powerpc::get_register_name(REG) {
+  return "";
+}
+
 }
 }

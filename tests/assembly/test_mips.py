@@ -12,3 +12,6 @@ def test_mipsr3000():
 
     assert instructions[0].to_string() == "0x403664: lui $gp, 9"
     assert instructions[113272].to_string() == "0x472044: mflo $10"
+
+    assert isinstance(instructions[113272], lief.assembly.mips.Instruction)
+    assert instructions[113272].opcode == lief.assembly.mips.OPCODE.MFLO

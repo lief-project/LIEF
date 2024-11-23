@@ -468,7 +468,6 @@ impl DynamicEntry for Entries<'_> {
             }
         }
     }
-
 }
 
 impl FromFFI<ffi::ELF_DynamicEntry> for Entries<'_> {

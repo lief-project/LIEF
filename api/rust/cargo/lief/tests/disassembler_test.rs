@@ -1,15 +1,40 @@
 mod utils;
 use lief;
-use lief::assembly::Instruction;
+use lief::assembly::{Instruction, Instructions};
 use lief::dwarf::types::{Base, ClassLike, DwarfType};
 use lief::dwarf::{Parameter, Scope, Type};
 use lief::generic::{Binary, Section};
 
 use std::path::{Path, PathBuf};
 
-fn process_instruction(inst: &dyn lief::assembly::Instruction) {
+fn process_instruction(inst: &lief::assembly::Instructions) {
     format!("{} {} {} {}", inst.address(), inst.size(), inst.raw().len(), inst.mnemonic());
     format!("{}", inst.to_string());
+    match inst {
+        Instructions::AArch64(variant) => {
+            format!("{:?}", variant.opcode());
+        }
+        Instructions::ARM(variant) => {
+            format!("{:?}", variant.opcode());
+        }
+        Instructions::X86(variant) => {
+            format!("{:?}", variant.opcode());
+        }
+        Instructions::Mips(variant) => {
+            format!("{:?}", variant.opcode());
+        }
+        Instructions::PowerPC(variant) => {
+            format!("{:?}", variant.opcode());
+        }
+        Instructions::EBPF(variant) => {
+            format!("{:?}", variant.opcode());
+        }
+        Instructions::RiscV(variant) => {
+            format!("{:?}", variant.opcode());
+        }
+        Instructions::Generic(_) => {
+        }
+    }
 }
 
 fn get_binary(name: &str) -> lief::Binary {

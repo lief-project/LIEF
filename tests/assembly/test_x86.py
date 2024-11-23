@@ -16,6 +16,9 @@ def test_pe_x86():
 
     assert len(instructions) == 419
     assert instructions[0].to_string() == "0x4ad4ee70: pushal"
+    assert isinstance(instructions[0], lief.assembly.x86.Instruction)
+    assert instructions[0].opcode == lief.assembly.x86.OPCODE.PUSHA32
+
     assert instructions[5].to_string() == "0x4ad4ee7f: nop"
 
 def test_pe_x86_64():
@@ -25,6 +28,8 @@ def test_pe_x86_64():
     assert len(instructions) == 54785
     assert instructions[0].to_string() == "0x140200000: int3"
     assert instructions[8].to_string() == "0x140200008: mov rax, rsp"
+    assert isinstance(instructions[8], lief.assembly.x86.Instruction)
+    assert instructions[8].opcode == lief.assembly.x86.OPCODE.MOV64rr_REV
 
 def test_elf_x86():
     elf = lief.ELF.parse(get_sample("ELF/ELF32_x86_library_libshellx.so"))

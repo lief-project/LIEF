@@ -57,12 +57,14 @@ class LIEF_API Engine {
   ~Engine();
 
   /// \private
-  const details::Engine& impl() const {
+  LIEF_LOCAL const details::Engine& impl() const {
+    assert(impl_ != nullptr);
     return *impl_;
   }
 
   /// \private
-  details::Engine& impl() {
+  LIEF_LOCAL details::Engine& impl() {
+    assert(impl_ != nullptr);
     return *impl_;
   }
 

@@ -489,3 +489,45 @@
     :rust:enum:`lief::assembly::Instructions`
     :cpp:class:`LIEF::assembly::Instruction`
     :py:class:`lief.assembly.Instruction`
+
+.. |lief-asm-x86-instruction| lief-api:: lief.assembly.x86.Instruction
+
+    :rust:struct:`lief::assembly::x86::Instruction`
+    :cpp:class:`LIEF::assembly::x86::Instruction`
+    :py:class:`lief.assembly.x86.Instruction`
+
+.. |lief-asm-arm-instruction| lief-api:: lief.assembly.arm.Instruction
+
+    :rust:struct:`lief::assembly::arm::Instruction`
+    :cpp:class:`LIEF::assembly::arm::Instruction`
+    :py:class:`lief.assembly.arm.Instruction`
+
+.. |lief-asm-aarch64-instruction| lief-api:: lief.assembly.aarch64.Instruction
+
+    :rust:struct:`lief::assembly::aarch64::Instruction`
+    :cpp:class:`LIEF::assembly::aarch64::Instruction`
+    :py:class:`lief.assembly.aarch64.Instruction`
+
+.. |lief-asm-powerpc-instruction| lief-api:: lief.assembly.powerpc.Instruction
+
+    :rust:struct:`lief::assembly::powerpc::Instruction`
+    :cpp:class:`LIEF::assembly::powerpc::Instruction`
+    :py:class:`lief.assembly.powerpc.Instruction`
+
+.. |lief-asm-mips-instruction| lief-api:: lief.assembly.mips.Instruction
+
+    :rust:struct:`lief::assembly::mips::Instruction`
+    :cpp:class:`LIEF::assembly::mips::Instruction`
+    :py:class:`lief.assembly.mips.Instruction`
+
+.. |lief-asm-riscv-instruction| lief-api:: lief.assembly.riscv.Instruction
+
+    :rust:struct:`lief::assembly::riscv::Instruction`
+    :cpp:class:`LIEF::assembly::riscv::Instruction`
+    :py:class:`lief.assembly.riscv.Instruction`
+
+.. |lief-asm-ebpf-instruction| lief-api:: lief.assembly.ebpf.Instruction
+
+    :rust:struct:`lief::assembly::ebpf::Instruction`
+    :cpp:class:`LIEF::assembly::ebpf::Instruction`
+    :py:class:`lief.assembly.ebpf.Instruction`

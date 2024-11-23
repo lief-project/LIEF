@@ -14,6 +14,9 @@ def test_arm_thumb():
     assert instructions[1].to_string() == "0x468b704: sub sp, #76"
     assert instructions[8].to_string() == "0x468b712: strd r0, r0, [sp, #64]"
 
+    assert isinstance(instructions[8], lief.assembly.arm.Instruction)
+    assert instructions[8].opcode == lief.assembly.arm.OPCODE.t2STRDi8
+
 def test_arm():
     macho = lief.MachO.parse(get_sample("MachO/MachO32_ARM_binary_data-in-code-LLVM.bin")).at(0)
     instructions = list(macho.disassemble(0))
@@ -21,3 +24,6 @@ def test_arm():
 
     assert instructions[0].to_string() == "0x000000: andeq r0, r0, r10"
     assert instructions[1].to_string() == "0x000004: andeq r0, r0, r1"
+
+    assert isinstance(instructions[1], lief.assembly.arm.Instruction)
+    assert instructions[1].opcode == lief.assembly.arm.OPCODE.ANDrr

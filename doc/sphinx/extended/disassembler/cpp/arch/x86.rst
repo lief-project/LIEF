@@ -1,0 +1,12 @@
+:fa:`solid fa-microchip` X86/x86-64
+-----------------------------------
+
+Instruction
+************
+
+.. doxygenclass:: LIEF::assembly::x86::Instruction
+
+Opcodes
+*******
+
+.. doxygenenum:: LIEF::assembly::x86::OPCODE

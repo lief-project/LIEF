@@ -32,6 +32,7 @@ class InstructionIt;
 /// This class represents an assembly instruction
 class LIEF_API Instruction {
   public:
+  /// **Lazy-forward** iterator that outputs Instruction
   class Iterator final :
     public iterator_facade_base<Iterator, std::forward_iterator_tag, std::unique_ptr<Instruction>,
                                 std::ptrdiff_t, Instruction*, std::unique_ptr<Instruction>>
@@ -58,19 +59,14 @@ class LIEF_API Instruction {
       return !(LHS == RHS);
     }
 
+    /// Disassemble and output an Instruction at the current iterator's
+    /// position.
     LIEF_API std::unique_ptr<Instruction> operator*() const;
 
     private:
     std::unique_ptr<details::InstructionIt> impl_;
   };
   public:
-
-  /// \private
-  static LIEF_LOCAL std::unique_ptr<Instruction>
-    create(std::unique_ptr<details::Instruction> impl);
-
-  virtual ~Instruction();
-
   /// Address of the instruction
   uint64_t address() const;
 
@@ -86,13 +82,49 @@ class LIEF_API Instruction {
   /// Representation of the current instruction in a pretty assembly way
   std::string to_string() const;
 
+  /// This function can be used to **down cast** an Instruction instance:
+  ///
+  /// ```cpp
+  /// std::unique_ptr<assembly::Instruction> inst = get_inst();
+  /// if (const auto* arm = inst->as<assembly::arm::Instruction>()) {
+  ///   const arm::OPCODE op = arm->opcode();
+  /// }
+  /// ```
+  template<class T>
+  const T* as() const {
+    static_assert(std::is_base_of<Instruction, T>::value,
+                  "Require Instruction inheritance");
+    if (T::classof(this)) {
+      return static_cast<const T*>(this);
+    }
+    return nullptr;
+  }
+
   friend LIEF_API std::ostream& operator<<(std::ostream& os, const Instruction& inst) {
     os << inst.to_string();
     return os;
   }
 
+  virtual ~Instruction();
+
+  /// \private
+  static LIEF_LOCAL std::unique_ptr<Instruction>
+    create(std::unique_ptr<details::Instruction> impl);
+
+  /// \private
+  LIEF_LOCAL const details::Instruction& impl() const {
+    assert(impl_ != nullptr);
+    return *impl_;
+  }
+
+  /// \private
+  LIEF_LOCAL details::Instruction& impl() {
+    assert(impl_ != nullptr);
+    return *impl_;
+  }
+
   protected:
-  Instruction(std::unique_ptr<details::Instruction> impl);
+  LIEF_LOCAL Instruction(std::unique_ptr<details::Instruction> impl);
   std::unique_ptr<details::Instruction> impl_;
 };
 }

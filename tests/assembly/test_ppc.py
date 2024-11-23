@@ -12,3 +12,6 @@ def test_ppcbe():
 
     assert instructions[0].to_string() == "0x000b10: mflr 0"
     assert instructions[121].to_string() == "0x000cf4: stmw 27, -20(1)"
+
+    assert isinstance(instructions[121], lief.assembly.powerpc.Instruction)
+    assert instructions[121].opcode == lief.assembly.powerpc.OPCODE.STMW

@@ -65,6 +65,7 @@ Extended features:
   * [**DWARF/PDB** Support](https://lief.re/doc/latest/extended/debug_info/index.html)
   * [**Objective-C** Metadata](https://lief.re/doc/latest/extended/objc/index.html)
   * [**Dyld Shared Cache**](https://lief.re/doc/latest/extended/dsc/index.html) with support for extracting Dylib
+  * [**Disassembler**](https://lief.re/doc/latest/extended/disassembler/index.html): AArch64, x86/x86-64, ARM, RISC-V, Mips, PowerPC, eBPF
 
 # Content
 

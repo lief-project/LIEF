@@ -18,12 +18,10 @@
 
 #include "LIEF/rust/Mirror.hpp"
 
-
-class asm_Instruction : private Mirror<LIEF::assembly::Instruction> {
+class asm_Instruction : public Mirror<LIEF::assembly::Instruction> {
   public:
   using lief_t = LIEF::assembly::Instruction;
   using Mirror::Mirror;
-
 
   auto address() const { return get().address(); }
 

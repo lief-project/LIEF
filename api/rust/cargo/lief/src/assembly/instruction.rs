@@ -1,8 +1,18 @@
+//! Module related to assembly instructions
+
 use lief_ffi as ffi;
 
 use crate::to_slice;
 
 use crate::common::FromFFI;
+
+use super::aarch64;
+use super::x86;
+use super::arm;
+use super::mips;
+use super::powerpc;
+use super::riscv;
+use super::ebpf;
 
 /// This trait is shared by all [`Instructions`] supported by LIEF
 pub trait Instruction {
@@ -35,28 +45,132 @@ pub trait Instruction {
     }
 }
 
+/// All instruction variants supported by LIEF
 pub enum Instructions {
+    /// An AArch64 instruction
+    AArch64(aarch64::Instruction),
+
+    /// A x86/x86-64 instruction
+    X86(x86::Instruction),
+
+    /// An ARM/thumb instruction
+    ARM(arm::Instruction),
+
+    /// An eBPF instruction
+    EBPF(ebpf::Instruction),
+
+    /// A PowerPC (ppc64/ppc32) instruction
+    PowerPC(powerpc::Instruction),
+
+    /// A Mips (mips32/mips64) instruction
+    Mips(mips::Instruction),
+
+    /// A RISC-V (32 or 64 bit) instruction
+    RiscV(riscv::Instruction),
+
+    /// A generic instruction that doesn't have an extended structure
     Generic(Generic),
 }
 
 impl FromFFI<ffi::asm_Instruction> for Instructions {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::asm_Instruction>) -> Self {
-        Instructions::Generic(Generic::from_ffi(ptr))
+        unsafe {
+           let inst_ref = ptr.as_ref().unwrap();
+           if ffi::asm_aarch64_Instruction::classof(inst_ref) {
+               let raw = {
+                   type From = cxx::UniquePtr<ffi::asm_Instruction>;
+                   type To   = cxx::UniquePtr<ffi::asm_aarch64_Instruction>;
+                   std::mem::transmute::<From, To>(ptr)
+               };
+               return Instructions::AArch64(aarch64::Instruction::from_ffi(raw));
+           }
+           else if ffi::asm_x86_Instruction::classof(inst_ref) {
+               let raw = {
+                   type From = cxx::UniquePtr<ffi::asm_Instruction>;
+                   type To   = cxx::UniquePtr<ffi::asm_x86_Instruction>;
+                   std::mem::transmute::<From, To>(ptr)
+               };
+               return Instructions::X86(x86::Instruction::from_ffi(raw));
+           }
+           else if ffi::asm_arm_Instruction::classof(inst_ref) {
+               let raw = {
+                   type From = cxx::UniquePtr<ffi::asm_Instruction>;
+                   type To   = cxx::UniquePtr<ffi::asm_arm_Instruction>;
+                   std::mem::transmute::<From, To>(ptr)
+               };
+               return Instructions::ARM(arm::Instruction::from_ffi(raw));
+           }
+           else if ffi::asm_mips_Instruction::classof(inst_ref) {
+               let raw = {
+                   type From = cxx::UniquePtr<ffi::asm_Instruction>;
+                   type To   = cxx::UniquePtr<ffi::asm_mips_Instruction>;
+                   std::mem::transmute::<From, To>(ptr)
+               };
+               return Instructions::Mips(mips::Instruction::from_ffi(raw));
+           }
+           else if ffi::asm_powerpc_Instruction::classof(inst_ref) {
+               let raw = {
+                   type From = cxx::UniquePtr<ffi::asm_Instruction>;
+                   type To   = cxx::UniquePtr<ffi::asm_powerpc_Instruction>;
+                   std::mem::transmute::<From, To>(ptr)
+               };
+               return Instructions::PowerPC(powerpc::Instruction::from_ffi(raw));
+           }
+           else if ffi::asm_riscv_Instruction::classof(inst_ref) {
+               let raw = {
+                   type From = cxx::UniquePtr<ffi::asm_Instruction>;
+                   type To   = cxx::UniquePtr<ffi::asm_riscv_Instruction>;
+                   std::mem::transmute::<From, To>(ptr)
+               };
+               return Instructions::RiscV(riscv::Instruction::from_ffi(raw));
+           }
+
+           else if ffi::asm_ebpf_Instruction::classof(inst_ref) {
+               let raw = {
+                   type From = cxx::UniquePtr<ffi::asm_Instruction>;
+                   type To   = cxx::UniquePtr<ffi::asm_ebpf_Instruction>;
+                   std::mem::transmute::<From, To>(ptr)
+               };
+               return Instructions::EBPF(ebpf::Instruction::from_ffi(raw));
+           }
+           return Instructions::Generic(Generic::from_ffi(ptr));
+        }
     }
 }
-
 
 impl Instruction for Instructions {
     #[doc(hidden)]
     fn as_generic(&self) -> &ffi::asm_Instruction {
         match &self {
-            Instructions::Generic(cmd) => {
-                cmd.as_generic()
+            Instructions::Generic(inst) => {
+                inst.as_generic()
+            }
+            Instructions::AArch64(inst) => {
+                inst.as_generic()
+            }
+            Instructions::X86(inst) => {
+                inst.as_generic()
+            }
+            Instructions::ARM(inst) => {
+                inst.as_generic()
+            }
+            Instructions::Mips(inst) => {
+                inst.as_generic()
+            }
+            Instructions::PowerPC(inst) => {
+                inst.as_generic()
+            }
+            Instructions::EBPF(inst) => {
+                inst.as_generic()
+            }
+            Instructions::RiscV(inst) => {
+                inst.as_generic()
             }
         }
     }
 }
 
+/// Generic Instruction
 pub struct Generic {
     ptr: cxx::UniquePtr<ffi::asm_Instruction>,
 }

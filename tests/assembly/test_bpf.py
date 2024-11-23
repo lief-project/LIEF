@@ -11,4 +11,6 @@ def test_simple_bpf():
 
     assert len(instructions) == 21
     assert instructions[0].to_string() == "0x000000: call 14"
+    assert isinstance(instructions[0], lief.assembly.ebpf.Instruction)
+    assert instructions[0].opcode == lief.assembly.ebpf.OPCODE.JAL
     assert instructions[19].to_string() == "0x0000c0: r0 = 0"

@@ -695,5 +695,40 @@ include_cpp! {
     generate!("asm_Instruction")
     block_constructors!("asm_Instruction")
 
+    /* AArch64 { */
+        generate!("asm_aarch64_Instruction")
+        block_constructors!("asm_aarch64_Instruction")
+    /* } AArch64 */
+
+    /* X86 { */
+        generate!("asm_x86_Instruction")
+        block_constructors!("asm_x86_Instruction")
+    /* } X86 */
+
+    /* Mips { */
+        generate!("asm_mips_Instruction")
+        block_constructors!("asm_mips_Instruction")
+    /* } Mips */
+
+    /* PowerPC { */
+        generate!("asm_powerpc_Instruction")
+        block_constructors!("asm_powerpc_Instruction")
+    /* } PowerPC */
+
+    /* RISC-V { */
+        generate!("asm_riscv_Instruction")
+        block_constructors!("asm_riscv_Instruction")
+    /* } RISC-V */
+
+    /* ARM { */
+        generate!("asm_arm_Instruction")
+        block_constructors!("asm_arm_Instruction")
+    /* } ARM */
+
+    /* eBPF { */
+        generate!("asm_ebpf_Instruction")
+        block_constructors!("asm_ebpf_Instruction")
+    /* } eBPF */
+
     safety!(unsafe)
 }
