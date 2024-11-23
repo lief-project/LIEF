@@ -1078,7 +1078,8 @@ class LIEF_API Binary : public LIEF::Binary {
 
   template<bool LOADED>
   LIEF_LOCAL Section* add_section(const Section& section);
-  LIEF_LOCAL std::vector<Symbol*> symtab_dyn_symbols() const;
+
+  std::vector<Symbol*> symtab_dyn_symbols() const;
 
   LIEF_LOCAL std::string shstrtab_name() const;
   LIEF_LOCAL Section* add_frame_section(const Section& sec);
