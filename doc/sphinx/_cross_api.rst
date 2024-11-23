@@ -62,6 +62,13 @@
     :py:attr:`lief.Binary.debug_info`
     :cpp:func:`LIEF::Binary::debug_info`
 
+.. |lief-dwarf-function| lief-api:: lief.dwarf.Function
+
+    :rust:struct:`lief::dwarf::Function`
+    :py:class:`lief.dwarf.Function`
+    :cpp:class:`LIEF::dwarf::Function`
+
+
 .. |lief-dwarf-function-is-external| lief-api:: lief.dwarf.Function.is_external()
 
     :rust:method:`lief::dwarf::Function::is_external [struct]`
@@ -85,6 +92,12 @@
     :rust:func:`lief::dwarf::load`
     :py:func:`lief.dwarf.load`
     :cpp:func:`LIEF::dwarf::load`
+
+.. |lief-dwarf-function-instructions| lief-api:: lief.dwarf.Function.instructions()
+
+    :rust:method:`lief::dwarf::Function::instructions [struct]`
+    :cpp:func:`LIEF::dwarf::Function::instructions`
+    :py:attr:`lief.dwarf.Function.instructions`
 
 .. PDB =========================================================================
 
@@ -458,3 +471,21 @@
 
     :rust:func:`lief::extended_version_info`
     :cpp:func:`LIEF::extended_version_info`
+
+.. assembly ====================================================================
+
+.. |lief-disassemble| lief-api:: lief.Binary.disassemble()
+
+    :rust:method:`lief::generic::Binary::disassemble [trait]`
+    :rust:method:`lief::generic::Binary::disassemble_symbol [trait]`
+    :rust:method:`lief::generic::Binary::disassemble_address [trait]`
+    :rust:method:`lief::generic::Binary::disassemble_slice [trait]`
+    :cpp:func:`LIEF::Binary::disassemble`
+    :py:meth:`lief.Binary.disassemble`
+    :py:meth:`lief.Binary.disassemble_from_bytes`
+
+.. |lief-asm-instruction| lief-api:: lief.assembly.Instruction
+
+    :rust:enum:`lief::assembly::Instructions`
+    :cpp:class:`LIEF::assembly::Instruction`
+    :py:class:`lief.assembly.Instruction`
