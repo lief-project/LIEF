@@ -148,6 +148,22 @@ std::string Instruction::to_string() const {
   return "";
 }
 
+bool Instruction::is_branch() const {
+  return false;
+}
+
+bool Instruction::is_terminator() const {
+  return false;
+}
+
+bool Instruction::is_call() const {
+  return false;
+}
+
+bool Instruction::is_syscall() const {
+  return false;
+}
+
 // ----------------------------------------------------------------------------
 // asm/Engine.hpp
 // ----------------------------------------------------------------------------

@@ -33,4 +33,12 @@ class asm_Instruction : public Mirror<LIEF::assembly::Instruction> {
 
   auto to_string() const { return get().to_string(); }
 
+  auto is_call() const { return get().is_call(); }
+
+  auto is_terminator() const { return get().is_terminator(); }
+
+  auto is_branch() const { return get().is_branch(); }
+
+  auto is_syscall() const { return get().is_syscall(); }
+
 };

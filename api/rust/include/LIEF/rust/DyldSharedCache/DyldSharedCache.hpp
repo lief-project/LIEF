@@ -57,6 +57,15 @@ class dsc_DyldSharedCache : private Mirror<LIEF::dsc::DyldSharedCache> {
     auto size() const { return RandomRangeIterator::size(); }
   };
 
+  class it_instructions :
+      public ForwardIterator<asm_Instruction, LIEF::assembly::Instruction::Iterator>
+  {
+    public:
+    it_instructions(const dsc_DyldSharedCache::lief_t& src, uint64_t addr)
+      : ForwardIterator(src.disassemble(addr)) { }
+    auto next() { return ForwardIterator::next(); }
+  };
+
   static auto from_path(std::string file, std::string arch) { // NOLINT(performance-unnecessary-value-param)
     return std::make_unique<dsc_DyldSharedCache>(LIEF::dsc::DyldSharedCache::from_path(file, arch));
   }
@@ -99,5 +108,29 @@ class dsc_DyldSharedCache : private Mirror<LIEF::dsc::DyldSharedCache> {
 
   auto enable_caching(std::string dir) const { get().enable_caching(dir); }
   auto flush_cache() const { get().flush_cache(); }
+
+  auto disassemble(uint64_t addr) const {
+    return std::make_unique<it_instructions>(get(), addr);
+  }
+
+  auto cache_for_address(uint64_t addr) const {
+    return details::try_unique<dsc_DyldSharedCache>(get().cache_for_address(addr));
+  }
+
+  auto main_cache() const {
+    return details::try_unique<dsc_DyldSharedCache>(get().main_cache());
+  }
+
+  auto find_subcache(std::string filename) const {
+    return details::try_unique<dsc_DyldSharedCache>(get().find_subcache(filename));
+  }
+
+  uint64_t va_to_offset(uint64_t va, uint32_t& err) const {
+    return details::make_error(get().va_to_offset(va), err);
+  }
+
+  auto get_content_from_va(uint64_t va, uint64_t size) const {
+    return get().get_content_from_va(va, size);
+  }
 
 };

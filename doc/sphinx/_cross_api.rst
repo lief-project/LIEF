@@ -423,6 +423,12 @@
     :py:class:`lief.dsc.DyldSharedCache`
     :cpp:class:`LIEF::dsc::DyldSharedCache`
 
+.. |lief-dsc-dyldsharedcache-disassemble| lief-api:: lief.dsc.DyldSharedCache.disassemble()
+
+    :rust:method:`lief::dsc::DyldSharedCache::disassemble [struct]`
+    :py:meth:`lief.dsc.DyldSharedCache.disassemble`
+    :cpp:func:`LIEF::dsc::DyldSharedCache::disassemble`
+
 .. |lief-dsc-dyldsharedcache-libraries| lief-api:: lief.dsc.DyldSharedCache.libraries()
 
     :rust:method:`lief::dsc::DyldSharedCache::libraries [struct]`

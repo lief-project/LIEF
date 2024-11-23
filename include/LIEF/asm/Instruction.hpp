@@ -82,6 +82,18 @@ class LIEF_API Instruction {
   /// Representation of the current instruction in a pretty assembly way
   std::string to_string() const;
 
+  /// True if the instruction is a call
+  bool is_call() const;
+
+  /// True if the instruction marks the end of a basic block
+  bool is_terminator() const;
+
+  /// True if the instruction is a branch
+  bool is_branch() const;
+
+  /// True if the instruction is a syscall
+  bool is_syscall() const;
+
   /// This function can be used to **down cast** an Instruction instance:
   ///
   /// ```cpp

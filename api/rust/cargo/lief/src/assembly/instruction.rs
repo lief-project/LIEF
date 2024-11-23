@@ -43,6 +43,26 @@ pub trait Instruction {
     fn to_string(&self) -> String {
         self.as_generic().to_string().to_string()
     }
+
+    /// True if the instruction is a call
+    fn is_call(&self) -> bool {
+        self.as_generic().is_call()
+    }
+
+    /// True if the instruction marks the end of a basic block
+    fn is_terminator(&self) -> bool {
+        self.as_generic().is_terminator()
+    }
+
+    /// True if the instruction is a branch
+    fn is_branch(&self) -> bool {
+        self.as_generic().is_branch()
+    }
+
+    /// True if the instruction is a syscall
+    fn is_syscall(&self) -> bool {
+        self.as_generic().is_syscall()
+    }
 }
 
 /// All instruction variants supported by LIEF

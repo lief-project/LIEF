@@ -674,6 +674,9 @@ include_cpp! {
     generate!("dsc_DyldSharedCache_it_subcaches")
     block_constructors!("dsc_DyldSharedCache_it_subcaches")
 
+    generate!("dsc_DyldSharedCache_it_instructions")
+    block_constructors!("dsc_DyldSharedCache_it_instructions")
+
     generate!("dsc_Dylib")
     block_constructors!("dsc_Dylib")
 

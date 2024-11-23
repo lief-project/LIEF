@@ -7,6 +7,8 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>
 
+#include "nanobind/utils.hpp"
+
 namespace LIEF::assembly::py {
 template<>
 void create<assembly::Instruction>(nb::module_& m) {
@@ -34,9 +36,24 @@ void create<assembly::Instruction>(nb::module_& m) {
     )
 
     .def_prop_ro("raw", [] (const Instruction& inst) {
-        const std::vector<uint8_t>& raw = inst.raw();
-        return nb::bytes((const char*)raw.data(), raw.size());
+        return nb::to_bytes(inst.raw());
       }, R"doc(Raw bytes of the current instruction)doc"_doc
+    )
+
+    .def_prop_ro("is_call", &Instruction::is_call,
+      R"doc(True if the instruction is a call)doc"_doc
+    )
+
+    .def_prop_ro("is_terminator", &Instruction::is_terminator,
+      R"doc(True if the instruction marks the end of a basic block)doc"_doc
+    )
+
+    .def_prop_ro("is_branch", &Instruction::is_branch,
+      R"doc(True if the instruction is a branch)doc"_doc
+    )
+
+    .def_prop_ro("is_syscall", &Instruction::is_syscall,
+      R"doc(True if the instruction is a syscall)doc"_doc
     )
 
     LIEF_DEFAULT_STR(Instruction)

@@ -17,7 +17,8 @@ Introduction
 ************
 
 LIEF extended exposes a user-friendly API to disassemble code in different
-places of executable formats.
+places of executable formats for the following architectures:
+x86/x86-64, ARM, AArch64, RISC-V, Mips, PowerPC, eBPF.
 
 You can start disassembling code within a binary by using the |lief-disassemble|
 functions that is exposed in the abstraction layer:
@@ -112,7 +113,10 @@ Thus, you can write:
 Use Cases
 *********
 
-In addition to the regular |lief-disassemble| API one can use |lief-dwarf-function-instructions|
+DWARF Function
+~~~~~~~~~~~~~~
+
+In addition to the regular |lief-disassemble| API, one can use |lief-dwarf-function-instructions|
 to disassemble a :ref:`DWARF <extended-dwarf>` function.
 
 .. warning::
@@ -164,11 +168,52 @@ to disassemble a :ref:`DWARF <extended-dwarf>` function.
             }
         }
 
+Dyld Shared Cache
+~~~~~~~~~~~~~~~~~
+
+A disassembling API is also provided for the |lief-dsc-dyldsharedcache| object:
+|lief-dsc-dyldsharedcache-disassemble|:
+
+.. tabs::
+
+    .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        import lief
+
+        dyld_cache: lief.dsc.DylibSharedCache = lief.dsc.load("macos-15.0.1/")
+
+        for inst in dyld_cache:
+            print(inst)
+
+    .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        #include <LIEF/DyldSharedCache.hpp>
+
+        std::unique_ptr<LIEF::dsc::DyldSharedCache> dyld_cache = LIEF::dsc::load("macos-15.0.1/")
+
+        for (const auto& inst : dyld_cache->disassemble(0x1886f4a44)) {
+          std::cout << inst->to_string() << '\n';
+        }
+
+    .. tab:: :fa:`brands fa-rust` Rust
+
+      .. code-block:: rust
+
+        let dyld_cache = lief::dsc::load_from_path("macos-15.0.1/", "");
+
+        for inst in dyld_cache.disassemble(0x1886f4a44) {
+            println!("{}", inst.to_string());
+        }
+
 Technical Details
 *****************
 
 The disassembler is based on the LLVM's MC layer which is known to be efficient and
-accurate for disassembling code. This MC layer of LLVM has already been used by
+accurate for disassembling code. This LLVM's MC layer has already been used by
 other projects like `capstone <https://www.capstone-engine.org/>`_ or more
 recently `Nyxstone <https://github.com/emproof-com/nyxstone>`_.
 
@@ -183,7 +228,7 @@ hand, it does not expose a standalone API.
 The major difference between LIEF's disassembler and the other projects is that
 it **does not expose a standalone API** to disassemble
 arbitrary code. The disassembler is bound to the object from which the API is
-exposed (|lief-abstract-binary|, |lief-dwarf-function|, ...).
+exposed (|lief-abstract-binary|, |lief-dwarf-function|, |lief-dsc-dyldsharedcache-disassemble|, ...).
 
 :fa:`brands fa-python` :doc:`Python API <python/index>`
 
