@@ -79,6 +79,9 @@ LIEF_API result<std::u16string> u8tou16(const std::string& string);
 /// Whether this version of LIEF includes extended features
 LIEF_API bool is_extended();
 
+/// Details about the extended version
+LIEF_API std::string extended_version_info();
+
 /// Demangle the given input.
 ///
 /// This function only works with the extended version of LIEF

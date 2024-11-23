@@ -467,6 +467,8 @@ fn test_api() {
         return;
     }
 
+    println!("{}", lief::extended_version_info());
+
     let elf = lief::elf::Binary::parse("/bin/ls").unwrap();
     if let Some(lief::DebugInfo::Dwarf(dwarf)) = elf.debug_info() {}
 

@@ -99,5 +99,11 @@ result<std::string> demangle(const std::string&/*mangled*/) {
 }
 #endif
 
+#if !defined(LIEF_EXTENDED)
+std::string extended_version_info() {
+  return "";
+}
+#endif
+
 
 } // namespace LIEF

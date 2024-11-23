@@ -24,3 +24,7 @@ inline std::string demangle(std::string mangled, uint32_t& err) {
   return details::make_error<std::string>(LIEF::demangle(mangled), err);
 }
 
+inline std::string extended_version_info() {
+  return LIEF::extended_version_info();
+}
+

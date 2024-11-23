@@ -7,6 +7,7 @@ include_cpp! {
     name!(autocxx_ffi)
 
     generate!("is_extended")
+    generate!("extended_version_info")
     generate!("demangle")
 
     generate_pod!("Span")

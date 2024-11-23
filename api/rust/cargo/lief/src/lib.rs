@@ -116,6 +116,11 @@ pub fn is_extended() -> bool {
     lief_ffi::is_extended()
 }
 
+/// Return details about the extended version
+pub fn extended_version_info() -> String {
+    lief_ffi::extended_version_info().to_string()
+}
+
 /// Try to demangle the given input.
 ///
 /// This function requires the extended version of LIEF
