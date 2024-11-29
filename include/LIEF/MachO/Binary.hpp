@@ -982,6 +982,11 @@ class LIEF_API Binary : public LIEF::Binary  {
   LIEF_LOCAL LIEF::Binary::functions_t get_abstract_imported_functions() const override;
   LIEF_LOCAL std::vector<std::string> get_abstract_imported_libraries() const override;
 
+  /// Check that a gap between the load command table and
+  /// the first section is at least \p size bytes.
+  /// If there is not enough space, the gap is grown using \ref shift method.
+  ok_error_t ensure_command_space(size_t size);
+
   relocations_t& relocations_list() {
     return this->relocations_;
   }
@@ -1013,7 +1018,7 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   // Cached relocations from segment / sections
   mutable relocations_t relocations_;
-  int32_t available_command_space_ = 0;
+  size_t available_command_space_ = 0;
 
   // This is used to improve performances of
   // offset_to_virtual_address
