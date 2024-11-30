@@ -40,6 +40,14 @@ else()
   set(LIEF_VERSION_PATCH "0")
 endif()
 
+if (DEFINED ENV{LIEF_COMMIT})
+  set(LIEF_COMMIT_HASH "$ENV{LIEF_COMMIT}")
+endif()
+
+if (DEFINED ENV{LIEF_BRANCH})
+  set(LIEF_GIT_BRANCH "$ENV{LIEF_BRANCH}")
+endif()
+
 # LIEF Project
 # ============
 project(LIEF VERSION

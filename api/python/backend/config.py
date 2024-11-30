@@ -22,6 +22,7 @@ class EnvStringValidator:
                 python_version=os.getenv("LIEF_TARGET_PYTHON_VERSION", ""),
                 python_version_alt=os.getenv("LIEF_TARGET_PYTHON_VERSION", "").replace('.', ''),
                 architecture=os.getenv("LIEF_TARGET_ARCHITECTURE", ""),
+                ci_project_dir=os.getenv("CI_PROJECT_DIR", ""),
         )
         return formatted
 
