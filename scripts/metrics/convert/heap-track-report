@@ -1,0 +1,87 @@
+#!python
+import sys
+import re
+import argparse
+from pathlib import Path
+sys.path.insert(0, (Path(__file__).parent / "..").as_posix())
+from models import Metrics
+from models.cpp import Metrics as CppMetrics
+from models.cpp.memory import Metrics as MemoryMetrics
+
+PEAK_MEM_RE = re.compile(r"peak heap memory consumption:\s*(.*)")
+PEAK_RSS_RE = re.compile(r"peak RSS.*:\s*(.*)")
+LEAK_MEM_RE = re.compile(r"total memory leaked:\s*(.*)")
+MIN_HEAP_LINES = 10
+
+def convert_str_bytes(size: str) -> int:
+    unit = size[-1]
+    match unit:
+        case 'B':
+            return int(size[:-1])
+        case 'K':
+            return int(float(size[:-1]) * 1000)
+        case 'M':
+            return int(float(size[:-1]) * 1000 * 1000)
+        case 'G':
+            return int(float(size[:-1]) * 1000 * 1000 * 1000)
+        case 'T':
+            return int(float(size[:-1]) * 1000 * 1000 * 1000 * 1000)
+    print(f"Unknown unit: {unit} ({size})")
+    return 0
+
+
+def convert(content: str) -> str:
+    lines = content.splitlines()
+    memory_metrics = MemoryMetrics()
+    if len(lines) >= MIN_HEAP_LINES:
+        result_lines = lines[-MIN_HEAP_LINES:]
+        for line in result_lines:
+            if match := re.match(PEAK_MEM_RE, line):
+                memory_metrics.peak_heap = convert_str_bytes(match.group(1))
+            if match := re.match(PEAK_RSS_RE, line):
+                memory_metrics.peak_rss = convert_str_bytes(match.group(1))
+            if match := re.match(LEAK_MEM_RE, line):
+                memory_metrics.leak = convert_str_bytes(match.group(1))
+    print(memory_metrics.model_dump())
+    metrics = Metrics(
+        cpp=CppMetrics(
+            memory=memory_metrics
+        )
+    )
+    return metrics.model_dump_json()
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--input",
+        metavar="FILE",
+        type=Path,
+        dest='heaptrack',
+        required=True
+    )
+    parser.add_argument(
+        "--output",
+        metavar="FILE",
+        type=Path,
+        dest='json_output',
+        required=True
+    )
+
+    args = parser.parse_args()
+
+    input_file: Path = args.heaptrack
+    output_file: Path = args.json_output
+    if not input_file.is_file():
+        print(f"{input_file} does not exist")
+        return 1
+
+    content = input_file.read_text()
+    if len(content) == 0:
+        print(f"{input_file} is empty")
+        return 0
+
+    output_file.write_text(convert(content))
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())

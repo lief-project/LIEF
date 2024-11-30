@@ -1,0 +1,43 @@
+#!/python
+import sys
+from pathlib import Path
+sys.path.insert(0, (Path(__file__).parent / "..").as_posix())
+
+import lief
+import argparse
+from models import Metrics
+from models.python import Metrics as PythonMetric
+from models.python.native_library import Metrics as NativeLibraryMetric
+
+def collect_native_library_info() -> str:
+    lief_path = Path(lief._lief.__file__)
+
+    metrics = Metrics(
+        python=PythonMetric(
+            native_library=NativeLibraryMetric(
+                size=lief_path.stat().st_size
+            )
+        )
+    )
+
+    return metrics.model_dump_json(
+        exclude_none=True, exclude_unset=True
+    )
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--output",
+        metavar="OUTPUT",
+        type=Path,
+        dest='output',
+        required=True
+    )
+
+    args = parser.parse_args()
+    output: Path = args.output
+    output.write_text(collect_native_library_info())
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -8,13 +8,15 @@ cxx-compiler  = "clang++"
 c-compiler    = "clang"
 extra-targets = ["all"]
 extra-cmake-opt = [
-  "-DPython_VERSION=3.12",
+  "-DPython_VERSION={python_version}",
+  "-DCMAKE_C_COMPILER_LAUNCHER=ccache",
+  "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache",
   "-DCMAKE_COLOR_DIAGNOSTICS=ON",
   "-DCMAKE_CXX_COMPILER=clang++",
   "-DCMAKE_C_COMPILER=clang",
-  "-DCMAKE_TOOLCHAIN_FILE=/cmake/osx/toolchain.cmake",
-  "-DCMAKE_SYSTEM_PROCESSOR=x86_64",
-  "-DCMAKE_MODULE_PATH=/cmake/osx/",
+  "-DCMAKE_MSVC_RUNTIME=MultiThreaded",
+  "-DCMAKE_TOOLCHAIN_FILE=/cmake/windows/toolchain.cmake",
+  "-DCMAKE_MODULE_PATH=/cmake/windows/",
 ]
 
 [lief.formats]
@@ -36,6 +38,6 @@ enabled = true
 debug   = false
 
 [lief.cross-compilation]
-platform  = "macosx_11_0_x86_64"
-pyversion = "cp312"
-abi       = "cp312"
+platform  = "win_amd64"
+pyversion = "cp{python_version_alt}"
+abi       = "cp{python_version_alt}"

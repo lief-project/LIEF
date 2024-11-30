@@ -1,6 +1,6 @@
 set(PROFILING_FLAGS
     -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc
-    -fno-builtin-free -fno-omit-frame-pointer -g -O3)
+    -fno-builtin-free -fno-omit-frame-pointer -g -gdwarf-5 -O3)
 
 set(SRC_TARGETS
   elf_profiler.cpp
