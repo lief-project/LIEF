@@ -147,6 +147,7 @@
     * C++ SDK is now available
     * Rust package is now available
 
+  * Initial assembler support: :ref:`Assembler <extended-assembler>`
   * Initial disassembler support: :ref:`Disassembler <extended-disassembler>`
   * Linux Python wheels are now ``manylinux_2_27`` compliants. In other words,
     they are working with a glibc from at least 2018.

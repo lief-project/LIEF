@@ -42,6 +42,8 @@ You can find the differences between both versions in this table:
 +---------------------------------------------+-------------------+-------------------+----------------------------------------------------+
 | :ref:`Disassembler <extended-disassembler>` | :xmark:`mark`     | :fa-check:`check` | Support based on LLVM :ref:`[1] <extended-llvm>`   |
 +---------------------------------------------+-------------------+-------------------+----------------------------------------------------+
+| :ref:`Assembler <extended-assembler>`       | :xmark:`mark`     | :fa-check:`check` | Support based on LLVM :ref:`[1] <extended-llvm>`   |
++---------------------------------------------+-------------------+-------------------+----------------------------------------------------+
 
 To access the extended version, you must oauth-login with GitHub here: |lief-extended-url|.
 

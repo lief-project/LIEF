@@ -68,6 +68,11 @@ Binary::instructions_it Binary::disassemble(const uint8_t*, size_t, uint64_t) co
   return make_empty_iterator<assembly::Instruction>();
 }
 
+std::vector<uint8_t> Binary::assemble(uint64_t/*address*/, const std::string&/*Asm*/) {
+  LIEF_ERR(ASSEMBLY_NOT_SUPPORTED);
+  return {};
+}
+
 assembly::Engine* Binary::get_engine(uint64_t) const {
   return nullptr;
 }
@@ -144,7 +149,7 @@ std::string Instruction::mnemonic() const {
   return "";
 }
 
-std::string Instruction::to_string() const {
+std::string Instruction::to_string(bool/*with_address*/) const {
   return "";
 }
 
@@ -181,6 +186,16 @@ Engine& Engine::operator=(Engine&&) noexcept {
 
 Engine::instructions_it Engine::disassemble(const uint8_t*, size_t, uint64_t) {
   return make_empty_iterator<assembly::Instruction>();
+}
+
+std::vector<uint8_t> Engine::assemble(uint64_t/*address*/, const std::string&/*Asm*/) {
+  return {};
+}
+
+std::vector<uint8_t> Engine::assemble(uint64_t/*address*/, const std::string&/*Asm*/,
+                                      LIEF::Binary&/*bin*/)
+{
+  return {};
 }
 
 Engine::~Engine() = default;

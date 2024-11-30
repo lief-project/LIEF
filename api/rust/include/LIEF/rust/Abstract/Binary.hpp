@@ -89,4 +89,8 @@ class AbstractBinary : public Mirror<LIEF::Binary> {
     return std::make_unique<it_instructions>(get(), function);
   }
 
+  auto assemble(uint64_t address, std::string Asm) {
+    return get().assemble(address, Asm);
+  }
+
 };

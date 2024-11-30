@@ -348,6 +348,18 @@ class LIEF_API Binary : public Object {
     return disassemble(buffer.data(), buffer.size(), address);
   }
 
+  /// Assemble **and patch** the provided assembly code at the specified address.
+  ///
+  /// The function returns the generated assembly bytes
+  ///
+  /// ```cpp
+  /// bin->assemble(0x12000440, R"asm(
+  ///   xor rax, rbx;
+  ///   mov rcx, rax;
+  /// )asm");
+  /// ```
+  std::vector<uint8_t> assemble(uint64_t address, const std::string& Asm);
+
   protected:
   FORMATS format_ = FORMATS::UNKNOWN;
   mutable std::unique_ptr<DebugInfo> debug_info_;

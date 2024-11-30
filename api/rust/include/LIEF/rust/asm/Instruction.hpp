@@ -31,7 +31,8 @@ class asm_Instruction : public Mirror<LIEF::assembly::Instruction> {
 
   auto mnemonic() const { return get().mnemonic(); }
 
-  auto to_string() const { return get().to_string(); }
+  auto to_string() const { return get().to_string(/*with_address=*/true); }
+  auto to_string_no_address() const { return get().to_string(/*with_address=*/false); }
 
   auto is_call() const { return get().is_call(); }
 

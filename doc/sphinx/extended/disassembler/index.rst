@@ -110,6 +110,10 @@ Thus, you can write:
     }
   }
 
+.. note::
+
+   You can also check the assembler documentation here: :ref:`Assembler <extended-assembler>`
+
 Use Cases
 *********
 

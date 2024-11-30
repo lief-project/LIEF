@@ -44,6 +44,11 @@ pub trait Instruction {
         self.as_generic().to_string().to_string()
     }
 
+    /// Same as [`Instruction::to_string`] but without the address as prefix
+    fn to_string_no_address(&self) -> String {
+        self.as_generic().to_string_no_address().to_string()
+    }
+
     /// True if the instruction is a call
     fn is_call(&self) -> bool {
         self.as_generic().is_call()

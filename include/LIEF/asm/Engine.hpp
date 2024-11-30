@@ -21,6 +21,7 @@
 #include <memory>
 
 namespace LIEF {
+class Binary;
 
 /// Namespace related to assembly/disassembly support
 namespace assembly {
@@ -53,6 +54,10 @@ class LIEF_API Engine {
   instructions_it disassemble(const std::vector<uint8_t>& bytes, uint64_t addr) {
     return disassemble(bytes.data(), bytes.size(), addr);
   }
+
+  std::vector<uint8_t> assemble(uint64_t address, const std::string& Asm);
+  std::vector<uint8_t> assemble(uint64_t address, const std::string& Asm,
+                                LIEF::Binary& bin);
 
   ~Engine();
 

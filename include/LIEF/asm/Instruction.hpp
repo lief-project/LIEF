@@ -80,7 +80,7 @@ class LIEF_API Instruction {
   std::string mnemonic() const;
 
   /// Representation of the current instruction in a pretty assembly way
-  std::string to_string() const;
+  std::string to_string(bool with_address = true) const;
 
   /// True if the instruction is a call
   bool is_call() const;

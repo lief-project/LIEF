@@ -32,6 +32,7 @@ void create<assembly::Instruction>(nb::module_& m) {
     )
 
     .def("to_string", &Instruction::to_string,
+      "with_address"_a = true,
       R"doc(Representation of the current instruction in a pretty assembly way)doc"_doc
     )
 

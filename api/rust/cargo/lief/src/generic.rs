@@ -3,6 +3,8 @@ use crate::{to_slice, declare_fwd_iterator};
 use crate::common::{into_optional, FromFFI};
 use crate::assembly::Instructions;
 
+use std::pin::Pin;
+
 /// Trait shared by all the symbols in executable formats
 pub trait Symbol {
     #[doc(hidden)]
@@ -103,6 +105,9 @@ pub trait Binary {
     #[doc(hidden)]
     fn as_generic(&self) -> &ffi::AbstractBinary;
 
+    #[doc(hidden)]
+    fn as_pin_mut_generic(&mut self) -> Pin<&mut ffi::AbstractBinary>;
+
     /// Binary's entrypoint
     fn entrypoint(&self) -> u64 {
         self.as_generic().entrypoint()
@@ -188,14 +193,8 @@ pub trait Binary {
     fn disassemble_address(&self, address: u64) -> InstructionsIt {
         InstructionsIt::new(self.as_generic().disassemble_address(address))
     }
-    /// Disassemble code provided by the given slice at the specified `address` parameter
-    ///
-    /// ```
-    /// let insts = binary.disassemble_address(0xacde);
-    /// for inst in insts {
-    ///     println!("{}", inst.to_string());
-    /// }
-    /// ```
+
+    /// Disassemble code provided by the given slice at the specified `address` parameter.
     ///
     /// See also [`crate::assembly::Instruction`] and [`crate::assembly::Instructions`]
     fn disassemble_slice(&self, slice: &[u8], address: u64) -> InstructionsIt {
@@ -204,6 +203,22 @@ pub trait Binary {
                     slice.as_ptr(), slice.len().try_into().unwrap(),
                     address))
         }
+    }
+
+    /// Assemble **and patch** the provided assembly code at the specified address.
+    ///
+    /// The generated assembly is returned by the function
+    ///
+    /// ```
+    /// let mut bin = get_binary();
+    ///
+    /// let Vec<u8> bytes = bin.assemble(0x12000440, r#"
+    /// xor rax, rbx;
+    /// mov rcx, rax;
+    /// "#);
+    /// ```
+    fn assemble(&mut self, address: u64, asm: &str) -> Vec<u8> {
+        Vec::from(self.as_pin_mut_generic().assemble(address, asm).as_slice())
     }
 }
 

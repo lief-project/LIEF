@@ -25,6 +25,7 @@
 #include "pySafeString.hpp"
 #include "nanobind/extra/stl/lief_span.h"
 #include "pyIterator.hpp"
+#include "nanobind/utils.hpp"
 
 #include "LIEF/logging.hpp"
 
@@ -363,6 +364,25 @@ void create<Binary>(nb::module_& m) {
             print(inst)
 
       .. seealso:: :class:`lief.assembly.Instruction`
+      )doc"_doc
+    )
+
+    .def("assemble", [] (Binary& self, uint64_t address, const std::string& Asm) {
+        return nb::to_bytes(self.assemble(address, Asm));
+      }, "address"_a, "assembly"_a,
+      R"doc(
+      Assemble **and patch** the provided assembly code at the specified address.
+
+      The function returns the generated assembly bytes.
+
+      Example:
+
+      .. code-block:: python
+
+         bin.assemble(0x12000440, """
+         xor rax, rbx;
+         mov rcx, rax;
+         """)
       )doc"_doc
     )
 

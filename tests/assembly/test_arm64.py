@@ -14,10 +14,19 @@ def test_arm64e():
     assert instructions[0].to_string() == "0x016650: adrp x17, #106496"
     assert isinstance(instructions[0], lief.assembly.aarch64.Instruction)
     assert instructions[0].opcode == lief.assembly.aarch64.OPCODE.ADRP
+    new_inst = macho.assemble(0x016650, "adrp x17, #0x4000")
+    assert new_inst.hex(":") == "31:00:00:90"
+    assert next(macho.disassemble(0x016650)).to_string() == "0x016650: adrp x17, #16384"
 
     assert instructions[3].to_string() == "0x01665c: braa x16, x17"
     assert isinstance(instructions[3], lief.assembly.aarch64.Instruction)
     assert instructions[3].opcode == lief.assembly.aarch64.OPCODE.BRAA
+    assert instructions[3].is_branch
+    assert instructions[3].is_terminator
+
+    new_inst = macho.assemble(0x01665c, "braa x18, x19")
+    assert new_inst.hex(":") == "53:0a:1f:d7"
+    assert next(macho.disassemble(0x01665c)).to_string() == "0x01665c: braa x18, x19"
 
 def test_pe_arm64():
     pe = lief.PE.parse(get_sample("PE/elf_reader.arm64.pe.exe"))

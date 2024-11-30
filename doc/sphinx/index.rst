@@ -39,6 +39,7 @@ Welcome to LIEF's documentation!
   extended/objc/index
   extended/dsc/index
   extended/disassembler/index
+  extended/assembler/index
 
 .. toctree::
   :caption: <i class="fa-solid fa-layer-group">&nbsp;</i>Tutorials

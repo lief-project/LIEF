@@ -2,6 +2,7 @@ use lief_ffi as ffi;
 
 use num_traits::{cast, Num};
 use std::mem::size_of;
+use std::pin::Pin;
 
 use super::data_directory::{DataDirectories, DataDirectory};
 use super::debug;
@@ -317,6 +318,16 @@ impl std::fmt::Debug for Binary {
 impl generic::Binary for Binary {
     fn as_generic(&self) -> &ffi::AbstractBinary {
         self.ptr.as_ref().unwrap().as_ref()
+    }
+
+    fn as_pin_mut_generic(&mut self) -> Pin<&mut ffi::AbstractBinary> {
+        unsafe {
+            Pin::new_unchecked({
+                (self.ptr.as_ref().unwrap().as_ref()
+                    as *const ffi::AbstractBinary
+                    as *mut ffi::AbstractBinary).as_mut().unwrap()
+            })
+        }
     }
 }
 

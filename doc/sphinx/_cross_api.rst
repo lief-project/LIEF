@@ -490,6 +490,12 @@
     :py:meth:`lief.Binary.disassemble`
     :py:meth:`lief.Binary.disassemble_from_bytes`
 
+.. |lief-assemble| lief-api:: lief.Binary.assemble()
+
+    :rust:method:`lief::generic::Binary::assemble [trait]`
+    :cpp:func:`LIEF::Binary::assemble`
+    :py:meth:`lief.Binary.assemble`
+
 .. |lief-asm-instruction| lief-api:: lief.assembly.Instruction
 
     :rust:enum:`lief::assembly::Instructions`
