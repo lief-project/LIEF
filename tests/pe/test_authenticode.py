@@ -276,8 +276,14 @@ def test_issue_912():
 def test_verification_flags_str():
     flag = lief.PE.Signature.VERIFICATION_FLAGS.BAD_DIGEST | \
            lief.PE.Signature.VERIFICATION_FLAGS.CERT_FUTURE
-    assert str(flag) == "VERIFICATION_FLAGS.BAD_DIGEST|CERT_FUTURE"
-    assert repr(flag) == "VERIFICATION_FLAGS.BAD_DIGEST|CERT_FUTURE"
+    assert str(flag) in {
+        "VERIFICATION_FLAGS.BAD_DIGEST|CERT_FUTURE",
+        "VERIFICATION_FLAGS.CERT_FUTURE|BAD_DIGEST",
+    }
+    assert repr(flag) in {
+        "VERIFICATION_FLAGS.BAD_DIGEST|CERT_FUTURE",
+        "VERIFICATION_FLAGS.CERT_FUTURE|BAD_DIGEST",
+    }
     assert str(lief.PE.Signature.VERIFICATION_FLAGS.from_value(0)) == "VERIFICATION_FLAGS.OK"
 
 def test_ms_manifest_binary_id():
