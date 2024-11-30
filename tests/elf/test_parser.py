@@ -146,7 +146,7 @@ def test_975():
 def test_1058():
     elf = lief.ELF.parse(get_sample("private/ELF/cn-105.elf"))
 
-    original_init = elf.get(lief.ELF.DynamicEntry.TAG.INIT_ARRAY).array
+    original_init = elf.get(lief.ELF.DynamicEntry.TAG.INIT_ARRAY).array # type: ignore
     relocated_init = elf.get_relocated_dynamic_array(lief.ELF.DynamicEntry.TAG.INIT_ARRAY)
 
     assert original_init == [
@@ -161,7 +161,7 @@ def test_1058():
         0xebfc68, 0xec0898, 0xec0b98, 0xf52db0, 0xf8fb20, 0x0
     ]
 
-    original_fini = elf.get(lief.ELF.DynamicEntry.TAG.FINI_ARRAY).array
+    original_fini = elf.get(lief.ELF.DynamicEntry.TAG.FINI_ARRAY).array # type: ignore
     relocated_fini = elf.get_relocated_dynamic_array(lief.ELF.DynamicEntry.TAG.FINI_ARRAY)
 
     assert original_fini == [0xffffffffffffffff, 0x0]

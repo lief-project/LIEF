@@ -221,14 +221,14 @@ def test_qnx_note():
 def test_create_custom_note(tmp_path: Path):
     elf = lief.ELF.parse(get_sample("ELF/ELF64_x86-64_binary_hello-gdb.bin"))
 
-    elf += lief.ELF.Note.create(
+    elf += lief.ELF.Note.create( # type: ignore
         name="lief-testing",
         original_type=lief.ELF.Note.TYPE.UNKNOWN,
         description=list(b"some descriptions"),
         section_name=".lief.note.1"
     )
 
-    elf += lief.ELF.Note.create(
+    elf += lief.ELF.Note.create( # type: ignore
         name="lief-testing-alt",
         original_type=lief.ELF.Note.TYPE.UNKNOWN,
         description=list(b"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed"),

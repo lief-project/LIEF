@@ -31,7 +31,7 @@ void create<pdb::CompilationUnit>(nb::module_& m) {
     .def_prop_ro("sources",
         [] (const pdb::CompilationUnit& self) {
           auto sources = self.sources();
-          return nb::make_iterator(
+          return nb::make_iterator<nb::rv_policy::reference_internal>(
               nb::type<pdb::CompilationUnit>(), "sources_it", sources);
         },
       R"doc(
@@ -42,7 +42,7 @@ void create<pdb::CompilationUnit>(nb::module_& m) {
     .def_prop_ro("functions",
         [] (const pdb::CompilationUnit& self) {
           auto functions = self.functions();
-          return nb::make_iterator(
+          return nb::make_iterator<nb::rv_policy::reference_internal>(
               nb::type<pdb::CompilationUnit>(), "functions_it", functions);
         },
       R"doc(

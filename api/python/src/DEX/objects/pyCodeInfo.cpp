@@ -20,6 +20,8 @@
 #include <string>
 #include <sstream>
 
+#include <nanobind/stl/string.h>
+
 namespace LIEF::DEX::py {
 
 template<>

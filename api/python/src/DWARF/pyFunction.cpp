@@ -51,7 +51,7 @@ void create<dw::Function>(nb::module_& m) {
     .def_prop_ro("variables",
         [] (dw::Function& self) {
           auto vars = self.variables();
-          return nb::make_iterator(
+          return nb::make_iterator<nb::rv_policy::reference_internal>(
               nb::type<dw::Function>(), "variables_it", vars);
         }, nb::keep_alive<0, 1>(),
         R"delim(
@@ -131,7 +131,7 @@ void create<dw::Function>(nb::module_& m) {
     .def_prop_ro("instructions",
       [] (dw::Function& self) {
         auto insts = self.instructions();
-        return nb::make_iterator(
+        return nb::make_iterator<nb::rv_policy::reference_internal>(
             nb::type<dw::Function>(), "instructions_it", insts);
       }, nb::keep_alive<0, 1>(),
       R"doc(

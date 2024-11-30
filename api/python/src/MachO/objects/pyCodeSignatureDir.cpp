@@ -23,6 +23,7 @@
 
 #include "MachO/pyMachO.hpp"
 #include "nanobind/extra/stl/lief_span.h"
+#include "nanobind/stl/string.h"
 
 namespace LIEF::MachO::py {
 

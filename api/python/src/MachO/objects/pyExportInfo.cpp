@@ -46,7 +46,7 @@ void create<ExportInfo>(nb::module_& m) {
   #undef PY_ENUM
   ;
 
-  enum_<ExportInfo::FLAGS>(cls, "FLAGS", nb::is_arithmetic())
+  enum_<ExportInfo::FLAGS>(cls, "FLAGS", nb::is_flag())
   #define PY_ENUM(x) to_string(x), x
     .value(PY_ENUM(ExportInfo::FLAGS::WEAK_DEFINITION))
     .value(PY_ENUM(ExportInfo::FLAGS::REEXPORT))

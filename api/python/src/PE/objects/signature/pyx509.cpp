@@ -35,7 +35,7 @@ template<>
 void create<x509>(nb::module_& m) {
   nb::class_<x509, LIEF::Object> cls_x509(m, "x509", "Interface over a x509 certificate");
 
-  enum_<x509::VERIFICATION_FLAGS>(cls_x509, "VERIFICATION_FLAGS", nb::is_arithmetic(),
+  enum_<x509::VERIFICATION_FLAGS>(cls_x509, "VERIFICATION_FLAGS", nb::is_flag(),
       "Verification flags associated with " RST_METH_REF(lief.PE.x509.verify) ""_doc)
     .value("OK",                    x509::VERIFICATION_FLAGS::OK,                    "The verification succeed"_doc)
     .value("BADCERT_EXPIRED",       x509::VERIFICATION_FLAGS::BADCERT_EXPIRED,       "The certificate validity has expired"_doc)

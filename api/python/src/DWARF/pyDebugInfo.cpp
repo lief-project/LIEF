@@ -61,7 +61,7 @@ void create<dw::DebugInfo>(nb::module_& m) {
     .def_prop_ro("compilation_units",
         [] (DebugInfo& self) {
           auto units = self.compilation_units();
-          return nb::make_iterator(
+          return nb::make_iterator<nb::rv_policy::reference_internal>(
               nb::type<dw::DebugInfo>(), "compilation_units_it", units);
         }, nb::keep_alive<0, 1>(),
         "Iterator on the CompilationUnit embedded in this dwarf"_doc)

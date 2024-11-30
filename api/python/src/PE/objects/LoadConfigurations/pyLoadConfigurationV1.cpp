@@ -36,7 +36,7 @@ void create<LoadConfigurationV1>(nb::module_& m) {
 
 
   #define ENTRY(X) .value(to_string(LoadConfigurationV1::IMAGE_GUARD::X), LoadConfigurationV1::IMAGE_GUARD::X)
-  enum_<LoadConfigurationV1::IMAGE_GUARD>(Config, "IMAGE_GUARD", nb::is_arithmetic())
+  enum_<LoadConfigurationV1::IMAGE_GUARD>(Config, "IMAGE_GUARD", nb::is_flag())
     ENTRY(NONE)
     ENTRY(CF_INSTRUMENTED)
     ENTRY(CFW_INSTRUMENTED)

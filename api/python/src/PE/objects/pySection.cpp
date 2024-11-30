@@ -39,7 +39,7 @@ void create<Section>(nb::module_& m) {
       It extends the base class :class:`lief.Section`
       )delim"_doc);
 
-  enum_<Section::CHARACTERISTICS>(sec, "CHARACTERISTICS", nb::is_arithmetic())
+  enum_<Section::CHARACTERISTICS>(sec, "CHARACTERISTICS", nb::is_flag())
     .value(PY_ENUM(Section::CHARACTERISTICS::TYPE_NO_PAD))
     .value(PY_ENUM(Section::CHARACTERISTICS::CNT_CODE))
     .value(PY_ENUM(Section::CHARACTERISTICS::CNT_INITIALIZED_DATA))

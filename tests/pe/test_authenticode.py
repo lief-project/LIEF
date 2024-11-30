@@ -227,7 +227,7 @@ def test_ms_spc_nested_signature():
 
     ca_bundles = lief.PE.x509.parse(get_sample("pkcs7/windows-ca-bundle.pem"))
     assert self_signed_ca.is_trusted_by(ca_bundles) == lief.PE.x509.VERIFICATION_FLAGS.OK
-    assert int(nvidia_cert.is_trusted_by(ca_bundles)) == \
+    assert nvidia_cert.is_trusted_by(ca_bundles) == \
            lief.PE.x509.VERIFICATION_FLAGS.BADCERT_NOT_TRUSTED | lief.PE.x509.VERIFICATION_FLAGS.BADCERT_EXPIRED
 
     assert nested_sig.check() == lief.PE.Signature.VERIFICATION_FLAGS.OK
@@ -276,9 +276,9 @@ def test_issue_912():
 def test_verification_flags_str():
     flag = lief.PE.Signature.VERIFICATION_FLAGS.BAD_DIGEST | \
            lief.PE.Signature.VERIFICATION_FLAGS.CERT_FUTURE
-    assert str(flag) == "lief.PE.VERIFICATION_FLAGS.BAD_DIGEST | lief.PE.VERIFICATION_FLAGS.CERT_FUTURE"
-    assert repr(flag) == "<lief.PE.VERIFICATION_FLAGS.BAD_DIGEST | CERT_FUTURE: 2176>"
-    assert str(lief.PE.Signature.VERIFICATION_FLAGS.from_value(0)) == "lief.PE.VERIFICATION_FLAGS.OK"
+    assert str(flag) == "VERIFICATION_FLAGS.BAD_DIGEST|CERT_FUTURE"
+    assert repr(flag) == "VERIFICATION_FLAGS.BAD_DIGEST|CERT_FUTURE"
+    assert str(lief.PE.Signature.VERIFICATION_FLAGS.from_value(0)) == "VERIFICATION_FLAGS.OK"
 
 def test_ms_manifest_binary_id():
     acres = lief.PE.parse(get_sample("PE/AcRes.dll"))

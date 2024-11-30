@@ -147,7 +147,7 @@ void init_enums(nb::module_& m) {
     ENTRY(STXP7X)
     ENTRY(NDS32)
     ENTRY(ECOG1)
-    ENTRY(ECOG1X)
+    /* ENTRY(ECOG1X) */
     ENTRY(MAXQ30)
     ENTRY(XIMO16)
     ENTRY(MANIK)

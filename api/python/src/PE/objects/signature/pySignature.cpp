@@ -38,7 +38,7 @@ void create<Signature>(nb::module_& m) {
 
   nb::class_<Signature, LIEF::Object> signature(m, "Signature");
   enum_<Signature::VERIFICATION_FLAGS> verif_flags_enums
-    (signature, "VERIFICATION_FLAGS", nb::is_arithmetic());
+    (signature, "VERIFICATION_FLAGS", nb::is_flag());
   verif_flags_enums
     .value("OK",                            Signature::VERIFICATION_FLAGS::OK)
     .value("INVALID_SIGNER",                Signature::VERIFICATION_FLAGS::INVALID_SIGNER)
@@ -54,7 +54,7 @@ void create<Signature>(nb::module_& m) {
     .value("CERT_EXPIRED",                  Signature::VERIFICATION_FLAGS::CERT_EXPIRED)
     .value("CERT_FUTURE",                   Signature::VERIFICATION_FLAGS::CERT_FUTURE);
 
-  enum_<Signature::VERIFICATION_CHECKS>(signature, "VERIFICATION_CHECKS", nb::is_arithmetic(),
+  enum_<Signature::VERIFICATION_CHECKS>(signature, "VERIFICATION_CHECKS", nb::is_flag(),
     R"delim(
     Flags to tweak the verification process of the signature
     See :meth:`lief.PE.Signature.check` and :meth:`lief.PE.Binary.verify_signature`

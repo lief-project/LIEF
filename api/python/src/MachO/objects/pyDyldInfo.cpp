@@ -16,6 +16,7 @@
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 
 #include "LIEF/MachO/DyldInfo.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
@@ -82,7 +83,7 @@ void create<DyldInfo>(nb::module_& m) {
     .value(PY_ENUM(DyldInfo::BIND_OPCODES::DO_BIND_ADD_ADDR_ULEB))
     .value(PY_ENUM(DyldInfo::BIND_OPCODES::DO_BIND_ADD_ADDR_IMM_SCALED))
     .value(PY_ENUM(DyldInfo::BIND_OPCODES::DO_BIND_ULEB_TIMES_SKIPPING_ULEB))
-    .value(PY_ENUM(DyldInfo::BIND_OPCODES::THREADED))
+    /* .value(PY_ENUM(DyldInfo::BIND_OPCODES::THREADED)) */
     .value(PY_ENUM(DyldInfo::BIND_OPCODES::THREADED_APPLY))
     .value(PY_ENUM(DyldInfo::BIND_OPCODES::THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB))
   #undef PY_ENUM

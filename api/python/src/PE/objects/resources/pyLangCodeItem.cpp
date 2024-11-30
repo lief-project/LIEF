@@ -21,6 +21,7 @@
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/unordered_map.h>
 #include <nanobind/extra/stl/u16string.h>
 
 namespace LIEF::PE::py {

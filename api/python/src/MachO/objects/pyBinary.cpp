@@ -684,7 +684,9 @@ void create<Binary>(nb::module_& m) {
     .def_prop_ro("bindings",
         [] (const Binary& self) {
           auto bindings = self.bindings();
-          return nb::make_iterator(nb::type<Binary>(), "bindings_it", bindings);
+          return nb::make_iterator<nb::rv_policy::reference_internal>(
+            nb::type<Binary>(), "bindings_it", bindings
+          );
         }, nb::keep_alive<0, 1>(),
         R"doc(
         Return an iterator over the binding info which can come from either

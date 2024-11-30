@@ -44,7 +44,7 @@ void create<Section>(nb::module_& m) {
   init_ref_iterator<Section::it_segments>(sec, "it_segments");
 
   #define ENTRY(X) .value(to_string(Section::FLAGS::X), Section::FLAGS::X)
-  enum_<Section::FLAGS>(sec, "FLAGS", nb::is_arithmetic())
+  enum_<Section::FLAGS>(sec, "FLAGS", nb::is_flag())
     ENTRY(NONE)
     ENTRY(WRITE)
     ENTRY(ALLOC)

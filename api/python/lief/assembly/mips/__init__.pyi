@@ -1,0 +1,5798 @@
+import enum
+from typing import Iterator, Optional, Union
+
+import lief
+
+
+class Instruction(lief.assembly.Instruction):
+    @property
+    def opcode(self) -> OPCODE: ...
+
+class OPCODE(enum.Enum):
+    PHI = 0
+
+    INLINEASM = 1
+
+    INLINEASM_BR = 2
+
+    CFI_INSTRUCTION = 3
+
+    EH_LABEL = 4
+
+    GC_LABEL = 5
+
+    ANNOTATION_LABEL = 6
+
+    KILL = 7
+
+    EXTRACT_SUBREG = 8
+
+    INSERT_SUBREG = 9
+
+    IMPLICIT_DEF = 10
+
+    SUBREG_TO_REG = 11
+
+    COPY_TO_REGCLASS = 12
+
+    DBG_VALUE = 13
+
+    DBG_VALUE_LIST = 14
+
+    DBG_INSTR_REF = 15
+
+    DBG_PHI = 16
+
+    DBG_LABEL = 17
+
+    REG_SEQUENCE = 18
+
+    COPY = 19
+
+    BUNDLE = 20
+
+    LIFETIME_START = 21
+
+    LIFETIME_END = 22
+
+    PSEUDO_PROBE = 23
+
+    ARITH_FENCE = 24
+
+    STACKMAP = 25
+
+    FENTRY_CALL = 26
+
+    PATCHPOINT = 27
+
+    LOAD_STACK_GUARD = 28
+
+    PREALLOCATED_SETUP = 29
+
+    PREALLOCATED_ARG = 30
+
+    STATEPOINT = 31
+
+    LOCAL_ESCAPE = 32
+
+    FAULTING_OP = 33
+
+    PATCHABLE_OP = 34
+
+    PATCHABLE_FUNCTION_ENTER = 35
+
+    PATCHABLE_RET = 36
+
+    PATCHABLE_FUNCTION_EXIT = 37
+
+    PATCHABLE_TAIL_CALL = 38
+
+    PATCHABLE_EVENT_CALL = 39
+
+    PATCHABLE_TYPED_EVENT_CALL = 40
+
+    ICALL_BRANCH_FUNNEL = 41
+
+    MEMBARRIER = 42
+
+    JUMP_TABLE_DEBUG_INFO = 43
+
+    CONVERGENCECTRL_ENTRY = 44
+
+    CONVERGENCECTRL_ANCHOR = 45
+
+    CONVERGENCECTRL_LOOP = 46
+
+    CONVERGENCECTRL_GLUE = 47
+
+    G_ASSERT_SEXT = 48
+
+    G_ASSERT_ZEXT = 49
+
+    G_ASSERT_ALIGN = 50
+
+    G_ADD = 51
+
+    G_SUB = 52
+
+    G_MUL = 53
+
+    G_SDIV = 54
+
+    G_UDIV = 55
+
+    G_SREM = 56
+
+    G_UREM = 57
+
+    G_SDIVREM = 58
+
+    G_UDIVREM = 59
+
+    G_AND = 60
+
+    G_OR = 61
+
+    G_XOR = 62
+
+    G_IMPLICIT_DEF = 63
+
+    G_PHI = 64
+
+    G_FRAME_INDEX = 65
+
+    G_GLOBAL_VALUE = 66
+
+    G_PTRAUTH_GLOBAL_VALUE = 67
+
+    G_CONSTANT_POOL = 68
+
+    G_EXTRACT = 69
+
+    G_UNMERGE_VALUES = 70
+
+    G_INSERT = 71
+
+    G_MERGE_VALUES = 72
+
+    G_BUILD_VECTOR = 73
+
+    G_BUILD_VECTOR_TRUNC = 74
+
+    G_CONCAT_VECTORS = 75
+
+    G_PTRTOINT = 76
+
+    G_INTTOPTR = 77
+
+    G_BITCAST = 78
+
+    G_FREEZE = 79
+
+    G_CONSTANT_FOLD_BARRIER = 80
+
+    G_INTRINSIC_FPTRUNC_ROUND = 81
+
+    G_INTRINSIC_TRUNC = 82
+
+    G_INTRINSIC_ROUND = 83
+
+    G_INTRINSIC_LRINT = 84
+
+    G_INTRINSIC_LLRINT = 85
+
+    G_INTRINSIC_ROUNDEVEN = 86
+
+    G_READCYCLECOUNTER = 87
+
+    G_READSTEADYCOUNTER = 88
+
+    G_LOAD = 89
+
+    G_SEXTLOAD = 90
+
+    G_ZEXTLOAD = 91
+
+    G_INDEXED_LOAD = 92
+
+    G_INDEXED_SEXTLOAD = 93
+
+    G_INDEXED_ZEXTLOAD = 94
+
+    G_STORE = 95
+
+    G_INDEXED_STORE = 96
+
+    G_ATOMIC_CMPXCHG_WITH_SUCCESS = 97
+
+    G_ATOMIC_CMPXCHG = 98
+
+    G_ATOMICRMW_XCHG = 99
+
+    G_ATOMICRMW_ADD = 100
+
+    G_ATOMICRMW_SUB = 101
+
+    G_ATOMICRMW_AND = 102
+
+    G_ATOMICRMW_NAND = 103
+
+    G_ATOMICRMW_OR = 104
+
+    G_ATOMICRMW_XOR = 105
+
+    G_ATOMICRMW_MAX = 106
+
+    G_ATOMICRMW_MIN = 107
+
+    G_ATOMICRMW_UMAX = 108
+
+    G_ATOMICRMW_UMIN = 109
+
+    G_ATOMICRMW_FADD = 110
+
+    G_ATOMICRMW_FSUB = 111
+
+    G_ATOMICRMW_FMAX = 112
+
+    G_ATOMICRMW_FMIN = 113
+
+    G_ATOMICRMW_UINC_WRAP = 114
+
+    G_ATOMICRMW_UDEC_WRAP = 115
+
+    G_FENCE = 116
+
+    G_PREFETCH = 117
+
+    G_BRCOND = 118
+
+    G_BRINDIRECT = 119
+
+    G_INVOKE_REGION_START = 120
+
+    G_INTRINSIC = 121
+
+    G_INTRINSIC_W_SIDE_EFFECTS = 122
+
+    G_INTRINSIC_CONVERGENT = 123
+
+    G_INTRINSIC_CONVERGENT_W_SIDE_EFFECTS = 124
+
+    G_ANYEXT = 125
+
+    G_TRUNC = 126
+
+    G_CONSTANT = 127
+
+    G_FCONSTANT = 128
+
+    G_VASTART = 129
+
+    G_VAARG = 130
+
+    G_SEXT = 131
+
+    G_SEXT_INREG = 132
+
+    G_ZEXT = 133
+
+    G_SHL = 134
+
+    G_LSHR = 135
+
+    G_ASHR = 136
+
+    G_FSHL = 137
+
+    G_FSHR = 138
+
+    G_ROTR = 139
+
+    G_ROTL = 140
+
+    G_ICMP = 141
+
+    G_FCMP = 142
+
+    G_SCMP = 143
+
+    G_UCMP = 144
+
+    G_SELECT = 145
+
+    G_UADDO = 146
+
+    G_UADDE = 147
+
+    G_USUBO = 148
+
+    G_USUBE = 149
+
+    G_SADDO = 150
+
+    G_SADDE = 151
+
+    G_SSUBO = 152
+
+    G_SSUBE = 153
+
+    G_UMULO = 154
+
+    G_SMULO = 155
+
+    G_UMULH = 156
+
+    G_SMULH = 157
+
+    G_UADDSAT = 158
+
+    G_SADDSAT = 159
+
+    G_USUBSAT = 160
+
+    G_SSUBSAT = 161
+
+    G_USHLSAT = 162
+
+    G_SSHLSAT = 163
+
+    G_SMULFIX = 164
+
+    G_UMULFIX = 165
+
+    G_SMULFIXSAT = 166
+
+    G_UMULFIXSAT = 167
+
+    G_SDIVFIX = 168
+
+    G_UDIVFIX = 169
+
+    G_SDIVFIXSAT = 170
+
+    G_UDIVFIXSAT = 171
+
+    G_FADD = 172
+
+    G_FSUB = 173
+
+    G_FMUL = 174
+
+    G_FMA = 175
+
+    G_FMAD = 176
+
+    G_FDIV = 177
+
+    G_FREM = 178
+
+    G_FPOW = 179
+
+    G_FPOWI = 180
+
+    G_FEXP = 181
+
+    G_FEXP2 = 182
+
+    G_FEXP10 = 183
+
+    G_FLOG = 184
+
+    G_FLOG2 = 185
+
+    G_FLOG10 = 186
+
+    G_FLDEXP = 187
+
+    G_FFREXP = 188
+
+    G_FNEG = 189
+
+    G_FPEXT = 190
+
+    G_FPTRUNC = 191
+
+    G_FPTOSI = 192
+
+    G_FPTOUI = 193
+
+    G_SITOFP = 194
+
+    G_UITOFP = 195
+
+    G_FABS = 196
+
+    G_FCOPYSIGN = 197
+
+    G_IS_FPCLASS = 198
+
+    G_FCANONICALIZE = 199
+
+    G_FMINNUM = 200
+
+    G_FMAXNUM = 201
+
+    G_FMINNUM_IEEE = 202
+
+    G_FMAXNUM_IEEE = 203
+
+    G_FMINIMUM = 204
+
+    G_FMAXIMUM = 205
+
+    G_GET_FPENV = 206
+
+    G_SET_FPENV = 207
+
+    G_RESET_FPENV = 208
+
+    G_GET_FPMODE = 209
+
+    G_SET_FPMODE = 210
+
+    G_RESET_FPMODE = 211
+
+    G_PTR_ADD = 212
+
+    G_PTRMASK = 213
+
+    G_SMIN = 214
+
+    G_SMAX = 215
+
+    G_UMIN = 216
+
+    G_UMAX = 217
+
+    G_ABS = 218
+
+    G_LROUND = 219
+
+    G_LLROUND = 220
+
+    G_BR = 221
+
+    G_BRJT = 222
+
+    G_VSCALE = 223
+
+    G_INSERT_SUBVECTOR = 224
+
+    G_EXTRACT_SUBVECTOR = 225
+
+    G_INSERT_VECTOR_ELT = 226
+
+    G_EXTRACT_VECTOR_ELT = 227
+
+    G_SHUFFLE_VECTOR = 228
+
+    G_SPLAT_VECTOR = 229
+
+    G_VECTOR_COMPRESS = 230
+
+    G_CTTZ = 231
+
+    G_CTTZ_ZERO_UNDEF = 232
+
+    G_CTLZ = 233
+
+    G_CTLZ_ZERO_UNDEF = 234
+
+    G_CTPOP = 235
+
+    G_BSWAP = 236
+
+    G_BITREVERSE = 237
+
+    G_FCEIL = 238
+
+    G_FCOS = 239
+
+    G_FSIN = 240
+
+    G_FTAN = 241
+
+    G_FACOS = 242
+
+    G_FASIN = 243
+
+    G_FATAN = 244
+
+    G_FCOSH = 245
+
+    G_FSINH = 246
+
+    G_FTANH = 247
+
+    G_FSQRT = 248
+
+    G_FFLOOR = 249
+
+    G_FRINT = 250
+
+    G_FNEARBYINT = 251
+
+    G_ADDRSPACE_CAST = 252
+
+    G_BLOCK_ADDR = 253
+
+    G_JUMP_TABLE = 254
+
+    G_DYN_STACKALLOC = 255
+
+    G_STACKSAVE = 256
+
+    G_STACKRESTORE = 257
+
+    G_STRICT_FADD = 258
+
+    G_STRICT_FSUB = 259
+
+    G_STRICT_FMUL = 260
+
+    G_STRICT_FDIV = 261
+
+    G_STRICT_FREM = 262
+
+    G_STRICT_FMA = 263
+
+    G_STRICT_FSQRT = 264
+
+    G_STRICT_FLDEXP = 265
+
+    G_READ_REGISTER = 266
+
+    G_WRITE_REGISTER = 267
+
+    G_MEMCPY = 268
+
+    G_MEMCPY_INLINE = 269
+
+    G_MEMMOVE = 270
+
+    G_MEMSET = 271
+
+    G_BZERO = 272
+
+    G_TRAP = 273
+
+    G_DEBUGTRAP = 274
+
+    G_UBSANTRAP = 275
+
+    G_VECREDUCE_SEQ_FADD = 276
+
+    G_VECREDUCE_SEQ_FMUL = 277
+
+    G_VECREDUCE_FADD = 278
+
+    G_VECREDUCE_FMUL = 279
+
+    G_VECREDUCE_FMAX = 280
+
+    G_VECREDUCE_FMIN = 281
+
+    G_VECREDUCE_FMAXIMUM = 282
+
+    G_VECREDUCE_FMINIMUM = 283
+
+    G_VECREDUCE_ADD = 284
+
+    G_VECREDUCE_MUL = 285
+
+    G_VECREDUCE_AND = 286
+
+    G_VECREDUCE_OR = 287
+
+    G_VECREDUCE_XOR = 288
+
+    G_VECREDUCE_SMAX = 289
+
+    G_VECREDUCE_SMIN = 290
+
+    G_VECREDUCE_UMAX = 291
+
+    G_VECREDUCE_UMIN = 292
+
+    G_SBFX = 293
+
+    G_UBFX = 294
+
+    ABSMacro = 295
+
+    ADJCALLSTACKDOWN = 296
+
+    ADJCALLSTACKUP = 297
+
+    AND_V_D_PSEUDO = 298
+
+    AND_V_H_PSEUDO = 299
+
+    AND_V_W_PSEUDO = 300
+
+    ATOMIC_CMP_SWAP_I16 = 301
+
+    ATOMIC_CMP_SWAP_I16_POSTRA = 302
+
+    ATOMIC_CMP_SWAP_I32 = 303
+
+    ATOMIC_CMP_SWAP_I32_POSTRA = 304
+
+    ATOMIC_CMP_SWAP_I64 = 305
+
+    ATOMIC_CMP_SWAP_I64_POSTRA = 306
+
+    ATOMIC_CMP_SWAP_I8 = 307
+
+    ATOMIC_CMP_SWAP_I8_POSTRA = 308
+
+    ATOMIC_LOAD_ADD_I16 = 309
+
+    ATOMIC_LOAD_ADD_I16_POSTRA = 310
+
+    ATOMIC_LOAD_ADD_I32 = 311
+
+    ATOMIC_LOAD_ADD_I32_POSTRA = 312
+
+    ATOMIC_LOAD_ADD_I64 = 313
+
+    ATOMIC_LOAD_ADD_I64_POSTRA = 314
+
+    ATOMIC_LOAD_ADD_I8 = 315
+
+    ATOMIC_LOAD_ADD_I8_POSTRA = 316
+
+    ATOMIC_LOAD_AND_I16 = 317
+
+    ATOMIC_LOAD_AND_I16_POSTRA = 318
+
+    ATOMIC_LOAD_AND_I32 = 319
+
+    ATOMIC_LOAD_AND_I32_POSTRA = 320
+
+    ATOMIC_LOAD_AND_I64 = 321
+
+    ATOMIC_LOAD_AND_I64_POSTRA = 322
+
+    ATOMIC_LOAD_AND_I8 = 323
+
+    ATOMIC_LOAD_AND_I8_POSTRA = 324
+
+    ATOMIC_LOAD_MAX_I16 = 325
+
+    ATOMIC_LOAD_MAX_I16_POSTRA = 326
+
+    ATOMIC_LOAD_MAX_I32 = 327
+
+    ATOMIC_LOAD_MAX_I32_POSTRA = 328
+
+    ATOMIC_LOAD_MAX_I64 = 329
+
+    ATOMIC_LOAD_MAX_I64_POSTRA = 330
+
+    ATOMIC_LOAD_MAX_I8 = 331
+
+    ATOMIC_LOAD_MAX_I8_POSTRA = 332
+
+    ATOMIC_LOAD_MIN_I16 = 333
+
+    ATOMIC_LOAD_MIN_I16_POSTRA = 334
+
+    ATOMIC_LOAD_MIN_I32 = 335
+
+    ATOMIC_LOAD_MIN_I32_POSTRA = 336
+
+    ATOMIC_LOAD_MIN_I64 = 337
+
+    ATOMIC_LOAD_MIN_I64_POSTRA = 338
+
+    ATOMIC_LOAD_MIN_I8 = 339
+
+    ATOMIC_LOAD_MIN_I8_POSTRA = 340
+
+    ATOMIC_LOAD_NAND_I16 = 341
+
+    ATOMIC_LOAD_NAND_I16_POSTRA = 342
+
+    ATOMIC_LOAD_NAND_I32 = 343
+
+    ATOMIC_LOAD_NAND_I32_POSTRA = 344
+
+    ATOMIC_LOAD_NAND_I64 = 345
+
+    ATOMIC_LOAD_NAND_I64_POSTRA = 346
+
+    ATOMIC_LOAD_NAND_I8 = 347
+
+    ATOMIC_LOAD_NAND_I8_POSTRA = 348
+
+    ATOMIC_LOAD_OR_I16 = 349
+
+    ATOMIC_LOAD_OR_I16_POSTRA = 350
+
+    ATOMIC_LOAD_OR_I32 = 351
+
+    ATOMIC_LOAD_OR_I32_POSTRA = 352
+
+    ATOMIC_LOAD_OR_I64 = 353
+
+    ATOMIC_LOAD_OR_I64_POSTRA = 354
+
+    ATOMIC_LOAD_OR_I8 = 355
+
+    ATOMIC_LOAD_OR_I8_POSTRA = 356
+
+    ATOMIC_LOAD_SUB_I16 = 357
+
+    ATOMIC_LOAD_SUB_I16_POSTRA = 358
+
+    ATOMIC_LOAD_SUB_I32 = 359
+
+    ATOMIC_LOAD_SUB_I32_POSTRA = 360
+
+    ATOMIC_LOAD_SUB_I64 = 361
+
+    ATOMIC_LOAD_SUB_I64_POSTRA = 362
+
+    ATOMIC_LOAD_SUB_I8 = 363
+
+    ATOMIC_LOAD_SUB_I8_POSTRA = 364
+
+    ATOMIC_LOAD_UMAX_I16 = 365
+
+    ATOMIC_LOAD_UMAX_I16_POSTRA = 366
+
+    ATOMIC_LOAD_UMAX_I32 = 367
+
+    ATOMIC_LOAD_UMAX_I32_POSTRA = 368
+
+    ATOMIC_LOAD_UMAX_I64 = 369
+
+    ATOMIC_LOAD_UMAX_I64_POSTRA = 370
+
+    ATOMIC_LOAD_UMAX_I8 = 371
+
+    ATOMIC_LOAD_UMAX_I8_POSTRA = 372
+
+    ATOMIC_LOAD_UMIN_I16 = 373
+
+    ATOMIC_LOAD_UMIN_I16_POSTRA = 374
+
+    ATOMIC_LOAD_UMIN_I32 = 375
+
+    ATOMIC_LOAD_UMIN_I32_POSTRA = 376
+
+    ATOMIC_LOAD_UMIN_I64 = 377
+
+    ATOMIC_LOAD_UMIN_I64_POSTRA = 378
+
+    ATOMIC_LOAD_UMIN_I8 = 379
+
+    ATOMIC_LOAD_UMIN_I8_POSTRA = 380
+
+    ATOMIC_LOAD_XOR_I16 = 381
+
+    ATOMIC_LOAD_XOR_I16_POSTRA = 382
+
+    ATOMIC_LOAD_XOR_I32 = 383
+
+    ATOMIC_LOAD_XOR_I32_POSTRA = 384
+
+    ATOMIC_LOAD_XOR_I64 = 385
+
+    ATOMIC_LOAD_XOR_I64_POSTRA = 386
+
+    ATOMIC_LOAD_XOR_I8 = 387
+
+    ATOMIC_LOAD_XOR_I8_POSTRA = 388
+
+    ATOMIC_SWAP_I16 = 389
+
+    ATOMIC_SWAP_I16_POSTRA = 390
+
+    ATOMIC_SWAP_I32 = 391
+
+    ATOMIC_SWAP_I32_POSTRA = 392
+
+    ATOMIC_SWAP_I64 = 393
+
+    ATOMIC_SWAP_I64_POSTRA = 394
+
+    ATOMIC_SWAP_I8 = 395
+
+    ATOMIC_SWAP_I8_POSTRA = 396
+
+    B = 397
+
+    BAL_BR = 398
+
+    BAL_BR_MM = 399
+
+    BEQLImmMacro = 400
+
+    BGE = 401
+
+    BGEImmMacro = 402
+
+    BGEL = 403
+
+    BGELImmMacro = 404
+
+    BGEU = 405
+
+    BGEUImmMacro = 406
+
+    BGEUL = 407
+
+    BGEULImmMacro = 408
+
+    BGT = 409
+
+    BGTImmMacro = 410
+
+    BGTL = 411
+
+    BGTLImmMacro = 412
+
+    BGTU = 413
+
+    BGTUImmMacro = 414
+
+    BGTUL = 415
+
+    BGTULImmMacro = 416
+
+    BLE = 417
+
+    BLEImmMacro = 418
+
+    BLEL = 419
+
+    BLELImmMacro = 420
+
+    BLEU = 421
+
+    BLEUImmMacro = 422
+
+    BLEUL = 423
+
+    BLEULImmMacro = 424
+
+    BLT = 425
+
+    BLTImmMacro = 426
+
+    BLTL = 427
+
+    BLTLImmMacro = 428
+
+    BLTU = 429
+
+    BLTUImmMacro = 430
+
+    BLTUL = 431
+
+    BLTULImmMacro = 432
+
+    BNELImmMacro = 433
+
+    BPOSGE32_PSEUDO = 434
+
+    BSEL_D_PSEUDO = 435
+
+    BSEL_FD_PSEUDO = 436
+
+    BSEL_FW_PSEUDO = 437
+
+    BSEL_H_PSEUDO = 438
+
+    BSEL_W_PSEUDO = 439
+
+    B_MM = 440
+
+    B_MMR6_Pseudo = 441
+
+    B_MM_Pseudo = 442
+
+    BeqImm = 443
+
+    BneImm = 444
+
+    BteqzT8CmpX16 = 445
+
+    BteqzT8CmpiX16 = 446
+
+    BteqzT8SltX16 = 447
+
+    BteqzT8SltiX16 = 448
+
+    BteqzT8SltiuX16 = 449
+
+    BteqzT8SltuX16 = 450
+
+    BtnezT8CmpX16 = 451
+
+    BtnezT8CmpiX16 = 452
+
+    BtnezT8SltX16 = 453
+
+    BtnezT8SltiX16 = 454
+
+    BtnezT8SltiuX16 = 455
+
+    BtnezT8SltuX16 = 456
+
+    BuildPairF64 = 457
+
+    BuildPairF64_64 = 458
+
+    CFTC1 = 459
+
+    CONSTPOOL_ENTRY = 460
+
+    COPY_FD_PSEUDO = 461
+
+    COPY_FW_PSEUDO = 462
+
+    CTTC1 = 463
+
+    Constant32 = 464
+
+    DMULImmMacro = 465
+
+    DMULMacro = 466
+
+    DMULOMacro = 467
+
+    DMULOUMacro = 468
+
+    DROL = 469
+
+    DROLImm = 470
+
+    DROR = 471
+
+    DRORImm = 472
+
+    DSDivIMacro = 473
+
+    DSDivMacro = 474
+
+    DSRemIMacro = 475
+
+    DSRemMacro = 476
+
+    DUDivIMacro = 477
+
+    DUDivMacro = 478
+
+    DURemIMacro = 479
+
+    DURemMacro = 480
+
+    ERet = 481
+
+    ExtractElementF64 = 482
+
+    ExtractElementF64_64 = 483
+
+    FABS_D = 484
+
+    FABS_W = 485
+
+    FEXP2_D_1_PSEUDO = 486
+
+    FEXP2_W_1_PSEUDO = 487
+
+    FILL_FD_PSEUDO = 488
+
+    FILL_FW_PSEUDO = 489
+
+    GotPrologue16 = 490
+
+    INSERT_B_VIDX64_PSEUDO = 491
+
+    INSERT_B_VIDX_PSEUDO = 492
+
+    INSERT_D_VIDX64_PSEUDO = 493
+
+    INSERT_D_VIDX_PSEUDO = 494
+
+    INSERT_FD_PSEUDO = 495
+
+    INSERT_FD_VIDX64_PSEUDO = 496
+
+    INSERT_FD_VIDX_PSEUDO = 497
+
+    INSERT_FW_PSEUDO = 498
+
+    INSERT_FW_VIDX64_PSEUDO = 499
+
+    INSERT_FW_VIDX_PSEUDO = 500
+
+    INSERT_H_VIDX64_PSEUDO = 501
+
+    INSERT_H_VIDX_PSEUDO = 502
+
+    INSERT_W_VIDX64_PSEUDO = 503
+
+    INSERT_W_VIDX_PSEUDO = 504
+
+    JALR64Pseudo = 505
+
+    JALRHB64Pseudo = 506
+
+    JALRHBPseudo = 507
+
+    JALRPseudo = 508
+
+    JAL_MMR6 = 509
+
+    JalOneReg = 510
+
+    JalTwoReg = 511
+
+    LDMacro = 512
+
+    LDR_D = 513
+
+    LDR_W = 514
+
+    LD_F16 = 515
+
+    LOAD_ACC128 = 516
+
+    LOAD_ACC64 = 517
+
+    LOAD_ACC64DSP = 518
+
+    LOAD_CCOND_DSP = 519
+
+    LONG_BRANCH_ADDiu = 520
+
+    LONG_BRANCH_ADDiu2Op = 521
+
+    LONG_BRANCH_DADDiu = 522
+
+    LONG_BRANCH_DADDiu2Op = 523
+
+    LONG_BRANCH_LUi = 524
+
+    LONG_BRANCH_LUi2Op = 525
+
+    LONG_BRANCH_LUi2Op_64 = 526
+
+    LWM_MM = 527
+
+    LoadAddrImm32 = 528
+
+    LoadAddrImm64 = 529
+
+    LoadAddrReg32 = 530
+
+    LoadAddrReg64 = 531
+
+    LoadImm32 = 532
+
+    LoadImm64 = 533
+
+    LoadImmDoubleFGR = 534
+
+    LoadImmDoubleFGR_32 = 535
+
+    LoadImmDoubleGPR = 536
+
+    LoadImmSingleFGR = 537
+
+    LoadImmSingleGPR = 538
+
+    LwConstant32 = 539
+
+    MFTACX = 540
+
+    MFTC0 = 541
+
+    MFTC1 = 542
+
+    MFTDSP = 543
+
+    MFTGPR = 544
+
+    MFTHC1 = 545
+
+    MFTHI = 546
+
+    MFTLO = 547
+
+    MIPSeh_return32 = 548
+
+    MIPSeh_return64 = 549
+
+    MSA_FP_EXTEND_D_PSEUDO = 550
+
+    MSA_FP_EXTEND_W_PSEUDO = 551
+
+    MSA_FP_ROUND_D_PSEUDO = 552
+
+    MSA_FP_ROUND_W_PSEUDO = 553
+
+    MTTACX = 554
+
+    MTTC0 = 555
+
+    MTTC1 = 556
+
+    MTTDSP = 557
+
+    MTTGPR = 558
+
+    MTTHC1 = 559
+
+    MTTHI = 560
+
+    MTTLO = 561
+
+    MULImmMacro = 562
+
+    MULOMacro = 563
+
+    MULOUMacro = 564
+
+    MultRxRy16 = 565
+
+    MultRxRyRz16 = 566
+
+    MultuRxRy16 = 567
+
+    MultuRxRyRz16 = 568
+
+    NOP = 569
+
+    NORImm = 570
+
+    NORImm64 = 571
+
+    NOR_V_D_PSEUDO = 572
+
+    NOR_V_H_PSEUDO = 573
+
+    NOR_V_W_PSEUDO = 574
+
+    OR_V_D_PSEUDO = 575
+
+    OR_V_H_PSEUDO = 576
+
+    OR_V_W_PSEUDO = 577
+
+    PseudoCMPU_EQ_QB = 578
+
+    PseudoCMPU_LE_QB = 579
+
+    PseudoCMPU_LT_QB = 580
+
+    PseudoCMP_EQ_PH = 581
+
+    PseudoCMP_LE_PH = 582
+
+    PseudoCMP_LT_PH = 583
+
+    PseudoCVT_D32_W = 584
+
+    PseudoCVT_D64_L = 585
+
+    PseudoCVT_D64_W = 586
+
+    PseudoCVT_S_L = 587
+
+    PseudoCVT_S_W = 588
+
+    PseudoDMULT = 589
+
+    PseudoDMULTu = 590
+
+    PseudoDSDIV = 591
+
+    PseudoDUDIV = 592
+
+    PseudoD_SELECT_I = 593
+
+    PseudoD_SELECT_I64 = 594
+
+    PseudoIndirectBranch = 595
+
+    PseudoIndirectBranch64 = 596
+
+    PseudoIndirectBranch64R6 = 597
+
+    PseudoIndirectBranchR6 = 598
+
+    PseudoIndirectBranch_MM = 599
+
+    PseudoIndirectBranch_MMR6 = 600
+
+    PseudoIndirectHazardBranch = 601
+
+    PseudoIndirectHazardBranch64 = 602
+
+    PseudoIndrectHazardBranch64R6 = 603
+
+    PseudoIndrectHazardBranchR6 = 604
+
+    PseudoMADD = 605
+
+    PseudoMADDU = 606
+
+    PseudoMADDU_MM = 607
+
+    PseudoMADD_MM = 608
+
+    PseudoMFHI = 609
+
+    PseudoMFHI64 = 610
+
+    PseudoMFHI_MM = 611
+
+    PseudoMFLO = 612
+
+    PseudoMFLO64 = 613
+
+    PseudoMFLO_MM = 614
+
+    PseudoMSUB = 615
+
+    PseudoMSUBU = 616
+
+    PseudoMSUBU_MM = 617
+
+    PseudoMSUB_MM = 618
+
+    PseudoMTLOHI = 619
+
+    PseudoMTLOHI64 = 620
+
+    PseudoMTLOHI_DSP = 621
+
+    PseudoMTLOHI_MM = 622
+
+    PseudoMULT = 623
+
+    PseudoMULT_MM = 624
+
+    PseudoMULTu = 625
+
+    PseudoMULTu_MM = 626
+
+    PseudoPICK_PH = 627
+
+    PseudoPICK_QB = 628
+
+    PseudoReturn = 629
+
+    PseudoReturn64 = 630
+
+    PseudoSDIV = 631
+
+    PseudoSELECTFP_F_D32 = 632
+
+    PseudoSELECTFP_F_D64 = 633
+
+    PseudoSELECTFP_F_I = 634
+
+    PseudoSELECTFP_F_I64 = 635
+
+    PseudoSELECTFP_F_S = 636
+
+    PseudoSELECTFP_T_D32 = 637
+
+    PseudoSELECTFP_T_D64 = 638
+
+    PseudoSELECTFP_T_I = 639
+
+    PseudoSELECTFP_T_I64 = 640
+
+    PseudoSELECTFP_T_S = 641
+
+    PseudoSELECT_D32 = 642
+
+    PseudoSELECT_D64 = 643
+
+    PseudoSELECT_I = 644
+
+    PseudoSELECT_I64 = 645
+
+    PseudoSELECT_S = 646
+
+    PseudoTRUNC_W_D = 647
+
+    PseudoTRUNC_W_D32 = 648
+
+    PseudoTRUNC_W_S = 649
+
+    PseudoUDIV = 650
+
+    ROL = 651
+
+    ROLImm = 652
+
+    ROR = 653
+
+    RORImm = 654
+
+    RetRA = 655
+
+    RetRA16 = 656
+
+    SDC1_M1 = 657
+
+    SDIV_MM_Pseudo = 658
+
+    SDMacro = 659
+
+    SDivIMacro = 660
+
+    SDivMacro = 661
+
+    SEQIMacro = 662
+
+    SEQMacro = 663
+
+    SGE = 664
+
+    SGEImm = 665
+
+    SGEImm64 = 666
+
+    SGEU = 667
+
+    SGEUImm = 668
+
+    SGEUImm64 = 669
+
+    SGTImm = 670
+
+    SGTImm64 = 671
+
+    SGTUImm = 672
+
+    SGTUImm64 = 673
+
+    SLE = 674
+
+    SLEImm = 675
+
+    SLEImm64 = 676
+
+    SLEU = 677
+
+    SLEUImm = 678
+
+    SLEUImm64 = 679
+
+    SLTImm64 = 680
+
+    SLTUImm64 = 681
+
+    SNEIMacro = 682
+
+    SNEMacro = 683
+
+    SNZ_B_PSEUDO = 684
+
+    SNZ_D_PSEUDO = 685
+
+    SNZ_H_PSEUDO = 686
+
+    SNZ_V_PSEUDO = 687
+
+    SNZ_W_PSEUDO = 688
+
+    SRemIMacro = 689
+
+    SRemMacro = 690
+
+    STORE_ACC128 = 691
+
+    STORE_ACC64 = 692
+
+    STORE_ACC64DSP = 693
+
+    STORE_CCOND_DSP = 694
+
+    STR_D = 695
+
+    STR_W = 696
+
+    ST_F16 = 697
+
+    SWM_MM = 698
+
+    SZ_B_PSEUDO = 699
+
+    SZ_D_PSEUDO = 700
+
+    SZ_H_PSEUDO = 701
+
+    SZ_V_PSEUDO = 702
+
+    SZ_W_PSEUDO = 703
+
+    SaaAddr = 704
+
+    SaadAddr = 705
+
+    SelBeqZ = 706
+
+    SelBneZ = 707
+
+    SelTBteqZCmp = 708
+
+    SelTBteqZCmpi = 709
+
+    SelTBteqZSlt = 710
+
+    SelTBteqZSlti = 711
+
+    SelTBteqZSltiu = 712
+
+    SelTBteqZSltu = 713
+
+    SelTBtneZCmp = 714
+
+    SelTBtneZCmpi = 715
+
+    SelTBtneZSlt = 716
+
+    SelTBtneZSlti = 717
+
+    SelTBtneZSltiu = 718
+
+    SelTBtneZSltu = 719
+
+    SltCCRxRy16 = 720
+
+    SltiCCRxImmX16 = 721
+
+    SltiuCCRxImmX16 = 722
+
+    SltuCCRxRy16 = 723
+
+    SltuRxRyRz16 = 724
+
+    TAILCALL = 725
+
+    TAILCALL64R6REG = 726
+
+    TAILCALLHB64R6REG = 727
+
+    TAILCALLHBR6REG = 728
+
+    TAILCALLR6REG = 729
+
+    TAILCALLREG = 730
+
+    TAILCALLREG64 = 731
+
+    TAILCALLREGHB = 732
+
+    TAILCALLREGHB64 = 733
+
+    TAILCALLREG_MM = 734
+
+    TAILCALLREG_MMR6 = 735
+
+    TAILCALL_MM = 736
+
+    TAILCALL_MMR6 = 737
+
+    TRAP = 738
+
+    TRAP_MM = 739
+
+    UDIV_MM_Pseudo = 740
+
+    UDivIMacro = 741
+
+    UDivMacro = 742
+
+    URemIMacro = 743
+
+    URemMacro = 744
+
+    Ulh = 745
+
+    Ulhu = 746
+
+    Ulw = 747
+
+    Ush = 748
+
+    Usw = 749
+
+    XOR_V_D_PSEUDO = 750
+
+    XOR_V_H_PSEUDO = 751
+
+    XOR_V_W_PSEUDO = 752
+
+    ABSQ_S_PH = 753
+
+    ABSQ_S_PH_MM = 754
+
+    ABSQ_S_QB = 755
+
+    ABSQ_S_QB_MMR2 = 756
+
+    ABSQ_S_W = 757
+
+    ABSQ_S_W_MM = 758
+
+    ADD = 759
+
+    ADDIUPC = 760
+
+    ADDIUPC_MM = 761
+
+    ADDIUPC_MMR6 = 762
+
+    ADDIUR1SP_MM = 763
+
+    ADDIUR2_MM = 764
+
+    ADDIUS5_MM = 765
+
+    ADDIUSP_MM = 766
+
+    ADDIU_MMR6 = 767
+
+    ADDQH_PH = 768
+
+    ADDQH_PH_MMR2 = 769
+
+    ADDQH_R_PH = 770
+
+    ADDQH_R_PH_MMR2 = 771
+
+    ADDQH_R_W = 772
+
+    ADDQH_R_W_MMR2 = 773
+
+    ADDQH_W = 774
+
+    ADDQH_W_MMR2 = 775
+
+    ADDQ_PH = 776
+
+    ADDQ_PH_MM = 777
+
+    ADDQ_S_PH = 778
+
+    ADDQ_S_PH_MM = 779
+
+    ADDQ_S_W = 780
+
+    ADDQ_S_W_MM = 781
+
+    ADDR_PS64 = 782
+
+    ADDSC = 783
+
+    ADDSC_MM = 784
+
+    ADDS_A_B = 785
+
+    ADDS_A_D = 786
+
+    ADDS_A_H = 787
+
+    ADDS_A_W = 788
+
+    ADDS_S_B = 789
+
+    ADDS_S_D = 790
+
+    ADDS_S_H = 791
+
+    ADDS_S_W = 792
+
+    ADDS_U_B = 793
+
+    ADDS_U_D = 794
+
+    ADDS_U_H = 795
+
+    ADDS_U_W = 796
+
+    ADDU16_MM = 797
+
+    ADDU16_MMR6 = 798
+
+    ADDUH_QB = 799
+
+    ADDUH_QB_MMR2 = 800
+
+    ADDUH_R_QB = 801
+
+    ADDUH_R_QB_MMR2 = 802
+
+    ADDU_MMR6 = 803
+
+    ADDU_PH = 804
+
+    ADDU_PH_MMR2 = 805
+
+    ADDU_QB = 806
+
+    ADDU_QB_MM = 807
+
+    ADDU_S_PH = 808
+
+    ADDU_S_PH_MMR2 = 809
+
+    ADDU_S_QB = 810
+
+    ADDU_S_QB_MM = 811
+
+    ADDVI_B = 812
+
+    ADDVI_D = 813
+
+    ADDVI_H = 814
+
+    ADDVI_W = 815
+
+    ADDV_B = 816
+
+    ADDV_D = 817
+
+    ADDV_H = 818
+
+    ADDV_W = 819
+
+    ADDWC = 820
+
+    ADDWC_MM = 821
+
+    ADD_A_B = 822
+
+    ADD_A_D = 823
+
+    ADD_A_H = 824
+
+    ADD_A_W = 825
+
+    ADD_MM = 826
+
+    ADD_MMR6 = 827
+
+    ADDi = 828
+
+    ADDi_MM = 829
+
+    ADDiu = 830
+
+    ADDiu_MM = 831
+
+    ADDu = 832
+
+    ADDu_MM = 833
+
+    ALIGN = 834
+
+    ALIGN_MMR6 = 835
+
+    ALUIPC = 836
+
+    ALUIPC_MMR6 = 837
+
+    AND = 838
+
+    AND16_MM = 839
+
+    AND16_MMR6 = 840
+
+    AND64 = 841
+
+    ANDI16_MM = 842
+
+    ANDI16_MMR6 = 843
+
+    ANDI_B = 844
+
+    ANDI_MMR6 = 845
+
+    AND_MM = 846
+
+    AND_MMR6 = 847
+
+    AND_V = 848
+
+    ANDi = 849
+
+    ANDi64 = 850
+
+    ANDi_MM = 851
+
+    APPEND = 852
+
+    APPEND_MMR2 = 853
+
+    ASUB_S_B = 854
+
+    ASUB_S_D = 855
+
+    ASUB_S_H = 856
+
+    ASUB_S_W = 857
+
+    ASUB_U_B = 858
+
+    ASUB_U_D = 859
+
+    ASUB_U_H = 860
+
+    ASUB_U_W = 861
+
+    AUI = 862
+
+    AUIPC = 863
+
+    AUIPC_MMR6 = 864
+
+    AUI_MMR6 = 865
+
+    AVER_S_B = 866
+
+    AVER_S_D = 867
+
+    AVER_S_H = 868
+
+    AVER_S_W = 869
+
+    AVER_U_B = 870
+
+    AVER_U_D = 871
+
+    AVER_U_H = 872
+
+    AVER_U_W = 873
+
+    AVE_S_B = 874
+
+    AVE_S_D = 875
+
+    AVE_S_H = 876
+
+    AVE_S_W = 877
+
+    AVE_U_B = 878
+
+    AVE_U_D = 879
+
+    AVE_U_H = 880
+
+    AVE_U_W = 881
+
+    AddiuRxImmX16 = 882
+
+    AddiuRxPcImmX16 = 883
+
+    AddiuRxRxImm16 = 884
+
+    AddiuRxRxImmX16 = 885
+
+    AddiuRxRyOffMemX16 = 886
+
+    AddiuSpImm16 = 887
+
+    AddiuSpImmX16 = 888
+
+    AdduRxRyRz16 = 889
+
+    AndRxRxRy16 = 890
+
+    B16_MM = 891
+
+    BADDu = 892
+
+    BAL = 893
+
+    BALC = 894
+
+    BALC_MMR6 = 895
+
+    BALIGN = 896
+
+    BALIGN_MMR2 = 897
+
+    BBIT0 = 898
+
+    BBIT032 = 899
+
+    BBIT1 = 900
+
+    BBIT132 = 901
+
+    BC = 902
+
+    BC16_MMR6 = 903
+
+    BC1EQZ = 904
+
+    BC1EQZC_MMR6 = 905
+
+    BC1F = 906
+
+    BC1FL = 907
+
+    BC1F_MM = 908
+
+    BC1NEZ = 909
+
+    BC1NEZC_MMR6 = 910
+
+    BC1T = 911
+
+    BC1TL = 912
+
+    BC1T_MM = 913
+
+    BC2EQZ = 914
+
+    BC2EQZC_MMR6 = 915
+
+    BC2NEZ = 916
+
+    BC2NEZC_MMR6 = 917
+
+    BCLRI_B = 918
+
+    BCLRI_D = 919
+
+    BCLRI_H = 920
+
+    BCLRI_W = 921
+
+    BCLR_B = 922
+
+    BCLR_D = 923
+
+    BCLR_H = 924
+
+    BCLR_W = 925
+
+    BC_MMR6 = 926
+
+    BEQ = 927
+
+    BEQ64 = 928
+
+    BEQC = 929
+
+    BEQC64 = 930
+
+    BEQC_MMR6 = 931
+
+    BEQL = 932
+
+    BEQZ16_MM = 933
+
+    BEQZALC = 934
+
+    BEQZALC_MMR6 = 935
+
+    BEQZC = 936
+
+    BEQZC16_MMR6 = 937
+
+    BEQZC64 = 938
+
+    BEQZC_MM = 939
+
+    BEQZC_MMR6 = 940
+
+    BEQ_MM = 941
+
+    BGEC = 942
+
+    BGEC64 = 943
+
+    BGEC_MMR6 = 944
+
+    BGEUC = 945
+
+    BGEUC64 = 946
+
+    BGEUC_MMR6 = 947
+
+    BGEZ = 948
+
+    BGEZ64 = 949
+
+    BGEZAL = 950
+
+    BGEZALC = 951
+
+    BGEZALC_MMR6 = 952
+
+    BGEZALL = 953
+
+    BGEZALS_MM = 954
+
+    BGEZAL_MM = 955
+
+    BGEZC = 956
+
+    BGEZC64 = 957
+
+    BGEZC_MMR6 = 958
+
+    BGEZL = 959
+
+    BGEZ_MM = 960
+
+    BGTZ = 961
+
+    BGTZ64 = 962
+
+    BGTZALC = 963
+
+    BGTZALC_MMR6 = 964
+
+    BGTZC = 965
+
+    BGTZC64 = 966
+
+    BGTZC_MMR6 = 967
+
+    BGTZL = 968
+
+    BGTZ_MM = 969
+
+    BINSLI_B = 970
+
+    BINSLI_D = 971
+
+    BINSLI_H = 972
+
+    BINSLI_W = 973
+
+    BINSL_B = 974
+
+    BINSL_D = 975
+
+    BINSL_H = 976
+
+    BINSL_W = 977
+
+    BINSRI_B = 978
+
+    BINSRI_D = 979
+
+    BINSRI_H = 980
+
+    BINSRI_W = 981
+
+    BINSR_B = 982
+
+    BINSR_D = 983
+
+    BINSR_H = 984
+
+    BINSR_W = 985
+
+    BITREV = 986
+
+    BITREV_MM = 987
+
+    BITSWAP = 988
+
+    BITSWAP_MMR6 = 989
+
+    BLEZ = 990
+
+    BLEZ64 = 991
+
+    BLEZALC = 992
+
+    BLEZALC_MMR6 = 993
+
+    BLEZC = 994
+
+    BLEZC64 = 995
+
+    BLEZC_MMR6 = 996
+
+    BLEZL = 997
+
+    BLEZ_MM = 998
+
+    BLTC = 999
+
+    BLTC64 = 1000
+
+    BLTC_MMR6 = 1001
+
+    BLTUC = 1002
+
+    BLTUC64 = 1003
+
+    BLTUC_MMR6 = 1004
+
+    BLTZ = 1005
+
+    BLTZ64 = 1006
+
+    BLTZAL = 1007
+
+    BLTZALC = 1008
+
+    BLTZALC_MMR6 = 1009
+
+    BLTZALL = 1010
+
+    BLTZALS_MM = 1011
+
+    BLTZAL_MM = 1012
+
+    BLTZC = 1013
+
+    BLTZC64 = 1014
+
+    BLTZC_MMR6 = 1015
+
+    BLTZL = 1016
+
+    BLTZ_MM = 1017
+
+    BMNZI_B = 1018
+
+    BMNZ_V = 1019
+
+    BMZI_B = 1020
+
+    BMZ_V = 1021
+
+    BNE = 1022
+
+    BNE64 = 1023
+
+    BNEC = 1024
+
+    BNEC64 = 1025
+
+    BNEC_MMR6 = 1026
+
+    BNEGI_B = 1027
+
+    BNEGI_D = 1028
+
+    BNEGI_H = 1029
+
+    BNEGI_W = 1030
+
+    BNEG_B = 1031
+
+    BNEG_D = 1032
+
+    BNEG_H = 1033
+
+    BNEG_W = 1034
+
+    BNEL = 1035
+
+    BNEZ16_MM = 1036
+
+    BNEZALC = 1037
+
+    BNEZALC_MMR6 = 1038
+
+    BNEZC = 1039
+
+    BNEZC16_MMR6 = 1040
+
+    BNEZC64 = 1041
+
+    BNEZC_MM = 1042
+
+    BNEZC_MMR6 = 1043
+
+    BNE_MM = 1044
+
+    BNVC = 1045
+
+    BNVC_MMR6 = 1046
+
+    BNZ_B = 1047
+
+    BNZ_D = 1048
+
+    BNZ_H = 1049
+
+    BNZ_V = 1050
+
+    BNZ_W = 1051
+
+    BOVC = 1052
+
+    BOVC_MMR6 = 1053
+
+    BPOSGE32 = 1054
+
+    BPOSGE32C_MMR3 = 1055
+
+    BPOSGE32_MM = 1056
+
+    BREAK = 1057
+
+    BREAK16_MM = 1058
+
+    BREAK16_MMR6 = 1059
+
+    BREAK_MM = 1060
+
+    BREAK_MMR6 = 1061
+
+    BSELI_B = 1062
+
+    BSEL_V = 1063
+
+    BSETI_B = 1064
+
+    BSETI_D = 1065
+
+    BSETI_H = 1066
+
+    BSETI_W = 1067
+
+    BSET_B = 1068
+
+    BSET_D = 1069
+
+    BSET_H = 1070
+
+    BSET_W = 1071
+
+    BZ_B = 1072
+
+    BZ_D = 1073
+
+    BZ_H = 1074
+
+    BZ_V = 1075
+
+    BZ_W = 1076
+
+    BeqzRxImm16 = 1077
+
+    BeqzRxImmX16 = 1078
+
+    Bimm16 = 1079
+
+    BimmX16 = 1080
+
+    BnezRxImm16 = 1081
+
+    BnezRxImmX16 = 1082
+
+    Break16 = 1083
+
+    Bteqz16 = 1084
+
+    BteqzX16 = 1085
+
+    Btnez16 = 1086
+
+    BtnezX16 = 1087
+
+    CACHE = 1088
+
+    CACHEE = 1089
+
+    CACHEE_MM = 1090
+
+    CACHE_MM = 1091
+
+    CACHE_MMR6 = 1092
+
+    CACHE_R6 = 1093
+
+    CEIL_L_D64 = 1094
+
+    CEIL_L_D_MMR6 = 1095
+
+    CEIL_L_S = 1096
+
+    CEIL_L_S_MMR6 = 1097
+
+    CEIL_W_D32 = 1098
+
+    CEIL_W_D64 = 1099
+
+    CEIL_W_D_MMR6 = 1100
+
+    CEIL_W_MM = 1101
+
+    CEIL_W_S = 1102
+
+    CEIL_W_S_MM = 1103
+
+    CEIL_W_S_MMR6 = 1104
+
+    CEQI_B = 1105
+
+    CEQI_D = 1106
+
+    CEQI_H = 1107
+
+    CEQI_W = 1108
+
+    CEQ_B = 1109
+
+    CEQ_D = 1110
+
+    CEQ_H = 1111
+
+    CEQ_W = 1112
+
+    CFC1 = 1113
+
+    CFC1_MM = 1114
+
+    CFC2_MM = 1115
+
+    CFCMSA = 1116
+
+    CINS = 1117
+
+    CINS32 = 1118
+
+    CINS64_32 = 1119
+
+    CINS_i32 = 1120
+
+    CLASS_D = 1121
+
+    CLASS_D_MMR6 = 1122
+
+    CLASS_S = 1123
+
+    CLASS_S_MMR6 = 1124
+
+    CLEI_S_B = 1125
+
+    CLEI_S_D = 1126
+
+    CLEI_S_H = 1127
+
+    CLEI_S_W = 1128
+
+    CLEI_U_B = 1129
+
+    CLEI_U_D = 1130
+
+    CLEI_U_H = 1131
+
+    CLEI_U_W = 1132
+
+    CLE_S_B = 1133
+
+    CLE_S_D = 1134
+
+    CLE_S_H = 1135
+
+    CLE_S_W = 1136
+
+    CLE_U_B = 1137
+
+    CLE_U_D = 1138
+
+    CLE_U_H = 1139
+
+    CLE_U_W = 1140
+
+    CLO = 1141
+
+    CLO_MM = 1142
+
+    CLO_MMR6 = 1143
+
+    CLO_R6 = 1144
+
+    CLTI_S_B = 1145
+
+    CLTI_S_D = 1146
+
+    CLTI_S_H = 1147
+
+    CLTI_S_W = 1148
+
+    CLTI_U_B = 1149
+
+    CLTI_U_D = 1150
+
+    CLTI_U_H = 1151
+
+    CLTI_U_W = 1152
+
+    CLT_S_B = 1153
+
+    CLT_S_D = 1154
+
+    CLT_S_H = 1155
+
+    CLT_S_W = 1156
+
+    CLT_U_B = 1157
+
+    CLT_U_D = 1158
+
+    CLT_U_H = 1159
+
+    CLT_U_W = 1160
+
+    CLZ = 1161
+
+    CLZ_MM = 1162
+
+    CLZ_MMR6 = 1163
+
+    CLZ_R6 = 1164
+
+    CMPGDU_EQ_QB = 1165
+
+    CMPGDU_EQ_QB_MMR2 = 1166
+
+    CMPGDU_LE_QB = 1167
+
+    CMPGDU_LE_QB_MMR2 = 1168
+
+    CMPGDU_LT_QB = 1169
+
+    CMPGDU_LT_QB_MMR2 = 1170
+
+    CMPGU_EQ_QB = 1171
+
+    CMPGU_EQ_QB_MM = 1172
+
+    CMPGU_LE_QB = 1173
+
+    CMPGU_LE_QB_MM = 1174
+
+    CMPGU_LT_QB = 1175
+
+    CMPGU_LT_QB_MM = 1176
+
+    CMPU_EQ_QB = 1177
+
+    CMPU_EQ_QB_MM = 1178
+
+    CMPU_LE_QB = 1179
+
+    CMPU_LE_QB_MM = 1180
+
+    CMPU_LT_QB = 1181
+
+    CMPU_LT_QB_MM = 1182
+
+    CMP_AF_D_MMR6 = 1183
+
+    CMP_AF_S_MMR6 = 1184
+
+    CMP_EQ_D = 1185
+
+    CMP_EQ_D_MMR6 = 1186
+
+    CMP_EQ_PH = 1187
+
+    CMP_EQ_PH_MM = 1188
+
+    CMP_EQ_S = 1189
+
+    CMP_EQ_S_MMR6 = 1190
+
+    CMP_F_D = 1191
+
+    CMP_F_S = 1192
+
+    CMP_LE_D = 1193
+
+    CMP_LE_D_MMR6 = 1194
+
+    CMP_LE_PH = 1195
+
+    CMP_LE_PH_MM = 1196
+
+    CMP_LE_S = 1197
+
+    CMP_LE_S_MMR6 = 1198
+
+    CMP_LT_D = 1199
+
+    CMP_LT_D_MMR6 = 1200
+
+    CMP_LT_PH = 1201
+
+    CMP_LT_PH_MM = 1202
+
+    CMP_LT_S = 1203
+
+    CMP_LT_S_MMR6 = 1204
+
+    CMP_SAF_D = 1205
+
+    CMP_SAF_D_MMR6 = 1206
+
+    CMP_SAF_S = 1207
+
+    CMP_SAF_S_MMR6 = 1208
+
+    CMP_SEQ_D = 1209
+
+    CMP_SEQ_D_MMR6 = 1210
+
+    CMP_SEQ_S = 1211
+
+    CMP_SEQ_S_MMR6 = 1212
+
+    CMP_SLE_D = 1213
+
+    CMP_SLE_D_MMR6 = 1214
+
+    CMP_SLE_S = 1215
+
+    CMP_SLE_S_MMR6 = 1216
+
+    CMP_SLT_D = 1217
+
+    CMP_SLT_D_MMR6 = 1218
+
+    CMP_SLT_S = 1219
+
+    CMP_SLT_S_MMR6 = 1220
+
+    CMP_SUEQ_D = 1221
+
+    CMP_SUEQ_D_MMR6 = 1222
+
+    CMP_SUEQ_S = 1223
+
+    CMP_SUEQ_S_MMR6 = 1224
+
+    CMP_SULE_D = 1225
+
+    CMP_SULE_D_MMR6 = 1226
+
+    CMP_SULE_S = 1227
+
+    CMP_SULE_S_MMR6 = 1228
+
+    CMP_SULT_D = 1229
+
+    CMP_SULT_D_MMR6 = 1230
+
+    CMP_SULT_S = 1231
+
+    CMP_SULT_S_MMR6 = 1232
+
+    CMP_SUN_D = 1233
+
+    CMP_SUN_D_MMR6 = 1234
+
+    CMP_SUN_S = 1235
+
+    CMP_SUN_S_MMR6 = 1236
+
+    CMP_UEQ_D = 1237
+
+    CMP_UEQ_D_MMR6 = 1238
+
+    CMP_UEQ_S = 1239
+
+    CMP_UEQ_S_MMR6 = 1240
+
+    CMP_ULE_D = 1241
+
+    CMP_ULE_D_MMR6 = 1242
+
+    CMP_ULE_S = 1243
+
+    CMP_ULE_S_MMR6 = 1244
+
+    CMP_ULT_D = 1245
+
+    CMP_ULT_D_MMR6 = 1246
+
+    CMP_ULT_S = 1247
+
+    CMP_ULT_S_MMR6 = 1248
+
+    CMP_UN_D = 1249
+
+    CMP_UN_D_MMR6 = 1250
+
+    CMP_UN_S = 1251
+
+    CMP_UN_S_MMR6 = 1252
+
+    COPY_S_B = 1253
+
+    COPY_S_D = 1254
+
+    COPY_S_H = 1255
+
+    COPY_S_W = 1256
+
+    COPY_U_B = 1257
+
+    COPY_U_H = 1258
+
+    COPY_U_W = 1259
+
+    CRC32B = 1260
+
+    CRC32CB = 1261
+
+    CRC32CD = 1262
+
+    CRC32CH = 1263
+
+    CRC32CW = 1264
+
+    CRC32D = 1265
+
+    CRC32H = 1266
+
+    CRC32W = 1267
+
+    CTC1 = 1268
+
+    CTC1_MM = 1269
+
+    CTC2_MM = 1270
+
+    CTCMSA = 1271
+
+    CVT_D32_S = 1272
+
+    CVT_D32_S_MM = 1273
+
+    CVT_D32_W = 1274
+
+    CVT_D32_W_MM = 1275
+
+    CVT_D64_L = 1276
+
+    CVT_D64_S = 1277
+
+    CVT_D64_S_MM = 1278
+
+    CVT_D64_W = 1279
+
+    CVT_D64_W_MM = 1280
+
+    CVT_D_L_MMR6 = 1281
+
+    CVT_L_D64 = 1282
+
+    CVT_L_D64_MM = 1283
+
+    CVT_L_D_MMR6 = 1284
+
+    CVT_L_S = 1285
+
+    CVT_L_S_MM = 1286
+
+    CVT_L_S_MMR6 = 1287
+
+    CVT_PS_PW64 = 1288
+
+    CVT_PS_S64 = 1289
+
+    CVT_PW_PS64 = 1290
+
+    CVT_S_D32 = 1291
+
+    CVT_S_D32_MM = 1292
+
+    CVT_S_D64 = 1293
+
+    CVT_S_D64_MM = 1294
+
+    CVT_S_L = 1295
+
+    CVT_S_L_MMR6 = 1296
+
+    CVT_S_PL64 = 1297
+
+    CVT_S_PU64 = 1298
+
+    CVT_S_W = 1299
+
+    CVT_S_W_MM = 1300
+
+    CVT_S_W_MMR6 = 1301
+
+    CVT_W_D32 = 1302
+
+    CVT_W_D32_MM = 1303
+
+    CVT_W_D64 = 1304
+
+    CVT_W_D64_MM = 1305
+
+    CVT_W_S = 1306
+
+    CVT_W_S_MM = 1307
+
+    CVT_W_S_MMR6 = 1308
+
+    C_EQ_D32 = 1309
+
+    C_EQ_D32_MM = 1310
+
+    C_EQ_D64 = 1311
+
+    C_EQ_D64_MM = 1312
+
+    C_EQ_S = 1313
+
+    C_EQ_S_MM = 1314
+
+    C_F_D32 = 1315
+
+    C_F_D32_MM = 1316
+
+    C_F_D64 = 1317
+
+    C_F_D64_MM = 1318
+
+    C_F_S = 1319
+
+    C_F_S_MM = 1320
+
+    C_LE_D32 = 1321
+
+    C_LE_D32_MM = 1322
+
+    C_LE_D64 = 1323
+
+    C_LE_D64_MM = 1324
+
+    C_LE_S = 1325
+
+    C_LE_S_MM = 1326
+
+    C_LT_D32 = 1327
+
+    C_LT_D32_MM = 1328
+
+    C_LT_D64 = 1329
+
+    C_LT_D64_MM = 1330
+
+    C_LT_S = 1331
+
+    C_LT_S_MM = 1332
+
+    C_NGE_D32 = 1333
+
+    C_NGE_D32_MM = 1334
+
+    C_NGE_D64 = 1335
+
+    C_NGE_D64_MM = 1336
+
+    C_NGE_S = 1337
+
+    C_NGE_S_MM = 1338
+
+    C_NGLE_D32 = 1339
+
+    C_NGLE_D32_MM = 1340
+
+    C_NGLE_D64 = 1341
+
+    C_NGLE_D64_MM = 1342
+
+    C_NGLE_S = 1343
+
+    C_NGLE_S_MM = 1344
+
+    C_NGL_D32 = 1345
+
+    C_NGL_D32_MM = 1346
+
+    C_NGL_D64 = 1347
+
+    C_NGL_D64_MM = 1348
+
+    C_NGL_S = 1349
+
+    C_NGL_S_MM = 1350
+
+    C_NGT_D32 = 1351
+
+    C_NGT_D32_MM = 1352
+
+    C_NGT_D64 = 1353
+
+    C_NGT_D64_MM = 1354
+
+    C_NGT_S = 1355
+
+    C_NGT_S_MM = 1356
+
+    C_OLE_D32 = 1357
+
+    C_OLE_D32_MM = 1358
+
+    C_OLE_D64 = 1359
+
+    C_OLE_D64_MM = 1360
+
+    C_OLE_S = 1361
+
+    C_OLE_S_MM = 1362
+
+    C_OLT_D32 = 1363
+
+    C_OLT_D32_MM = 1364
+
+    C_OLT_D64 = 1365
+
+    C_OLT_D64_MM = 1366
+
+    C_OLT_S = 1367
+
+    C_OLT_S_MM = 1368
+
+    C_SEQ_D32 = 1369
+
+    C_SEQ_D32_MM = 1370
+
+    C_SEQ_D64 = 1371
+
+    C_SEQ_D64_MM = 1372
+
+    C_SEQ_S = 1373
+
+    C_SEQ_S_MM = 1374
+
+    C_SF_D32 = 1375
+
+    C_SF_D32_MM = 1376
+
+    C_SF_D64 = 1377
+
+    C_SF_D64_MM = 1378
+
+    C_SF_S = 1379
+
+    C_SF_S_MM = 1380
+
+    C_UEQ_D32 = 1381
+
+    C_UEQ_D32_MM = 1382
+
+    C_UEQ_D64 = 1383
+
+    C_UEQ_D64_MM = 1384
+
+    C_UEQ_S = 1385
+
+    C_UEQ_S_MM = 1386
+
+    C_ULE_D32 = 1387
+
+    C_ULE_D32_MM = 1388
+
+    C_ULE_D64 = 1389
+
+    C_ULE_D64_MM = 1390
+
+    C_ULE_S = 1391
+
+    C_ULE_S_MM = 1392
+
+    C_ULT_D32 = 1393
+
+    C_ULT_D32_MM = 1394
+
+    C_ULT_D64 = 1395
+
+    C_ULT_D64_MM = 1396
+
+    C_ULT_S = 1397
+
+    C_ULT_S_MM = 1398
+
+    C_UN_D32 = 1399
+
+    C_UN_D32_MM = 1400
+
+    C_UN_D64 = 1401
+
+    C_UN_D64_MM = 1402
+
+    C_UN_S = 1403
+
+    C_UN_S_MM = 1404
+
+    CmpRxRy16 = 1405
+
+    CmpiRxImm16 = 1406
+
+    CmpiRxImmX16 = 1407
+
+    DADD = 1408
+
+    DADDi = 1409
+
+    DADDiu = 1410
+
+    DADDu = 1411
+
+    DAHI = 1412
+
+    DALIGN = 1413
+
+    DATI = 1414
+
+    DAUI = 1415
+
+    DBITSWAP = 1416
+
+    DCLO = 1417
+
+    DCLO_R6 = 1418
+
+    DCLZ = 1419
+
+    DCLZ_R6 = 1420
+
+    DDIV = 1421
+
+    DDIVU = 1422
+
+    DERET = 1423
+
+    DERET_MM = 1424
+
+    DERET_MMR6 = 1425
+
+    DEXT = 1426
+
+    DEXT64_32 = 1427
+
+    DEXTM = 1428
+
+    DEXTU = 1429
+
+    DI = 1430
+
+    DINS = 1431
+
+    DINSM = 1432
+
+    DINSU = 1433
+
+    DIV = 1434
+
+    DIVU = 1435
+
+    DIVU_MMR6 = 1436
+
+    DIV_MMR6 = 1437
+
+    DIV_S_B = 1438
+
+    DIV_S_D = 1439
+
+    DIV_S_H = 1440
+
+    DIV_S_W = 1441
+
+    DIV_U_B = 1442
+
+    DIV_U_D = 1443
+
+    DIV_U_H = 1444
+
+    DIV_U_W = 1445
+
+    DI_MM = 1446
+
+    DI_MMR6 = 1447
+
+    DLSA = 1448
+
+    DLSA_R6 = 1449
+
+    DMFC0 = 1450
+
+    DMFC1 = 1451
+
+    DMFC2 = 1452
+
+    DMFC2_OCTEON = 1453
+
+    DMFGC0 = 1454
+
+    DMOD = 1455
+
+    DMODU = 1456
+
+    DMT = 1457
+
+    DMTC0 = 1458
+
+    DMTC1 = 1459
+
+    DMTC2 = 1460
+
+    DMTC2_OCTEON = 1461
+
+    DMTGC0 = 1462
+
+    DMUH = 1463
+
+    DMUHU = 1464
+
+    DMUL = 1465
+
+    DMULT = 1466
+
+    DMULTu = 1467
+
+    DMULU = 1468
+
+    DMUL_R6 = 1469
+
+    DOTP_S_D = 1470
+
+    DOTP_S_H = 1471
+
+    DOTP_S_W = 1472
+
+    DOTP_U_D = 1473
+
+    DOTP_U_H = 1474
+
+    DOTP_U_W = 1475
+
+    DPADD_S_D = 1476
+
+    DPADD_S_H = 1477
+
+    DPADD_S_W = 1478
+
+    DPADD_U_D = 1479
+
+    DPADD_U_H = 1480
+
+    DPADD_U_W = 1481
+
+    DPAQX_SA_W_PH = 1482
+
+    DPAQX_SA_W_PH_MMR2 = 1483
+
+    DPAQX_S_W_PH = 1484
+
+    DPAQX_S_W_PH_MMR2 = 1485
+
+    DPAQ_SA_L_W = 1486
+
+    DPAQ_SA_L_W_MM = 1487
+
+    DPAQ_S_W_PH = 1488
+
+    DPAQ_S_W_PH_MM = 1489
+
+    DPAU_H_QBL = 1490
+
+    DPAU_H_QBL_MM = 1491
+
+    DPAU_H_QBR = 1492
+
+    DPAU_H_QBR_MM = 1493
+
+    DPAX_W_PH = 1494
+
+    DPAX_W_PH_MMR2 = 1495
+
+    DPA_W_PH = 1496
+
+    DPA_W_PH_MMR2 = 1497
+
+    DPOP = 1498
+
+    DPSQX_SA_W_PH = 1499
+
+    DPSQX_SA_W_PH_MMR2 = 1500
+
+    DPSQX_S_W_PH = 1501
+
+    DPSQX_S_W_PH_MMR2 = 1502
+
+    DPSQ_SA_L_W = 1503
+
+    DPSQ_SA_L_W_MM = 1504
+
+    DPSQ_S_W_PH = 1505
+
+    DPSQ_S_W_PH_MM = 1506
+
+    DPSUB_S_D = 1507
+
+    DPSUB_S_H = 1508
+
+    DPSUB_S_W = 1509
+
+    DPSUB_U_D = 1510
+
+    DPSUB_U_H = 1511
+
+    DPSUB_U_W = 1512
+
+    DPSU_H_QBL = 1513
+
+    DPSU_H_QBL_MM = 1514
+
+    DPSU_H_QBR = 1515
+
+    DPSU_H_QBR_MM = 1516
+
+    DPSX_W_PH = 1517
+
+    DPSX_W_PH_MMR2 = 1518
+
+    DPS_W_PH = 1519
+
+    DPS_W_PH_MMR2 = 1520
+
+    DROTR = 1521
+
+    DROTR32 = 1522
+
+    DROTRV = 1523
+
+    DSBH = 1524
+
+    DSDIV = 1525
+
+    DSHD = 1526
+
+    DSLL = 1527
+
+    DSLL32 = 1528
+
+    DSLL64_32 = 1529
+
+    DSLLV = 1530
+
+    DSRA = 1531
+
+    DSRA32 = 1532
+
+    DSRAV = 1533
+
+    DSRL = 1534
+
+    DSRL32 = 1535
+
+    DSRLV = 1536
+
+    DSUB = 1537
+
+    DSUBu = 1538
+
+    DUDIV = 1539
+
+    DVP = 1540
+
+    DVPE = 1541
+
+    DVP_MMR6 = 1542
+
+    DivRxRy16 = 1543
+
+    DivuRxRy16 = 1544
+
+    EHB = 1545
+
+    EHB_MM = 1546
+
+    EHB_MMR6 = 1547
+
+    EI = 1548
+
+    EI_MM = 1549
+
+    EI_MMR6 = 1550
+
+    EMT = 1551
+
+    ERET = 1552
+
+    ERETNC = 1553
+
+    ERETNC_MMR6 = 1554
+
+    ERET_MM = 1555
+
+    ERET_MMR6 = 1556
+
+    EVP = 1557
+
+    EVPE = 1558
+
+    EVP_MMR6 = 1559
+
+    EXT = 1560
+
+    EXTP = 1561
+
+    EXTPDP = 1562
+
+    EXTPDPV = 1563
+
+    EXTPDPV_MM = 1564
+
+    EXTPDP_MM = 1565
+
+    EXTPV = 1566
+
+    EXTPV_MM = 1567
+
+    EXTP_MM = 1568
+
+    EXTRV_RS_W = 1569
+
+    EXTRV_RS_W_MM = 1570
+
+    EXTRV_R_W = 1571
+
+    EXTRV_R_W_MM = 1572
+
+    EXTRV_S_H = 1573
+
+    EXTRV_S_H_MM = 1574
+
+    EXTRV_W = 1575
+
+    EXTRV_W_MM = 1576
+
+    EXTR_RS_W = 1577
+
+    EXTR_RS_W_MM = 1578
+
+    EXTR_R_W = 1579
+
+    EXTR_R_W_MM = 1580
+
+    EXTR_S_H = 1581
+
+    EXTR_S_H_MM = 1582
+
+    EXTR_W = 1583
+
+    EXTR_W_MM = 1584
+
+    EXTS = 1585
+
+    EXTS32 = 1586
+
+    EXT_MM = 1587
+
+    EXT_MMR6 = 1588
+
+    FABS_D32 = 1589
+
+    FABS_D32_MM = 1590
+
+    FABS_D64 = 1591
+
+    FABS_D64_MM = 1592
+
+    FABS_S = 1593
+
+    FABS_S_MM = 1594
+
+    FADD_D = 1595
+
+    FADD_D32 = 1596
+
+    FADD_D32_MM = 1597
+
+    FADD_D64 = 1598
+
+    FADD_D64_MM = 1599
+
+    FADD_PS64 = 1600
+
+    FADD_S = 1601
+
+    FADD_S_MM = 1602
+
+    FADD_S_MMR6 = 1603
+
+    FADD_W = 1604
+
+    FCAF_D = 1605
+
+    FCAF_W = 1606
+
+    FCEQ_D = 1607
+
+    FCEQ_W = 1608
+
+    FCLASS_D = 1609
+
+    FCLASS_W = 1610
+
+    FCLE_D = 1611
+
+    FCLE_W = 1612
+
+    FCLT_D = 1613
+
+    FCLT_W = 1614
+
+    FCMP_D32 = 1615
+
+    FCMP_D32_MM = 1616
+
+    FCMP_D64 = 1617
+
+    FCMP_S32 = 1618
+
+    FCMP_S32_MM = 1619
+
+    FCNE_D = 1620
+
+    FCNE_W = 1621
+
+    FCOR_D = 1622
+
+    FCOR_W = 1623
+
+    FCUEQ_D = 1624
+
+    FCUEQ_W = 1625
+
+    FCULE_D = 1626
+
+    FCULE_W = 1627
+
+    FCULT_D = 1628
+
+    FCULT_W = 1629
+
+    FCUNE_D = 1630
+
+    FCUNE_W = 1631
+
+    FCUN_D = 1632
+
+    FCUN_W = 1633
+
+    FDIV_D = 1634
+
+    FDIV_D32 = 1635
+
+    FDIV_D32_MM = 1636
+
+    FDIV_D64 = 1637
+
+    FDIV_D64_MM = 1638
+
+    FDIV_S = 1639
+
+    FDIV_S_MM = 1640
+
+    FDIV_S_MMR6 = 1641
+
+    FDIV_W = 1642
+
+    FEXDO_H = 1643
+
+    FEXDO_W = 1644
+
+    FEXP2_D = 1645
+
+    FEXP2_W = 1646
+
+    FEXUPL_D = 1647
+
+    FEXUPL_W = 1648
+
+    FEXUPR_D = 1649
+
+    FEXUPR_W = 1650
+
+    FFINT_S_D = 1651
+
+    FFINT_S_W = 1652
+
+    FFINT_U_D = 1653
+
+    FFINT_U_W = 1654
+
+    FFQL_D = 1655
+
+    FFQL_W = 1656
+
+    FFQR_D = 1657
+
+    FFQR_W = 1658
+
+    FILL_B = 1659
+
+    FILL_D = 1660
+
+    FILL_H = 1661
+
+    FILL_W = 1662
+
+    FLOG2_D = 1663
+
+    FLOG2_W = 1664
+
+    FLOOR_L_D64 = 1665
+
+    FLOOR_L_D_MMR6 = 1666
+
+    FLOOR_L_S = 1667
+
+    FLOOR_L_S_MMR6 = 1668
+
+    FLOOR_W_D32 = 1669
+
+    FLOOR_W_D64 = 1670
+
+    FLOOR_W_D_MMR6 = 1671
+
+    FLOOR_W_MM = 1672
+
+    FLOOR_W_S = 1673
+
+    FLOOR_W_S_MM = 1674
+
+    FLOOR_W_S_MMR6 = 1675
+
+    FMADD_D = 1676
+
+    FMADD_W = 1677
+
+    FMAX_A_D = 1678
+
+    FMAX_A_W = 1679
+
+    FMAX_D = 1680
+
+    FMAX_W = 1681
+
+    FMIN_A_D = 1682
+
+    FMIN_A_W = 1683
+
+    FMIN_D = 1684
+
+    FMIN_W = 1685
+
+    FMOV_D32 = 1686
+
+    FMOV_D32_MM = 1687
+
+    FMOV_D64 = 1688
+
+    FMOV_D64_MM = 1689
+
+    FMOV_D_MMR6 = 1690
+
+    FMOV_S = 1691
+
+    FMOV_S_MM = 1692
+
+    FMOV_S_MMR6 = 1693
+
+    FMSUB_D = 1694
+
+    FMSUB_W = 1695
+
+    FMUL_D = 1696
+
+    FMUL_D32 = 1697
+
+    FMUL_D32_MM = 1698
+
+    FMUL_D64 = 1699
+
+    FMUL_D64_MM = 1700
+
+    FMUL_PS64 = 1701
+
+    FMUL_S = 1702
+
+    FMUL_S_MM = 1703
+
+    FMUL_S_MMR6 = 1704
+
+    FMUL_W = 1705
+
+    FNEG_D32 = 1706
+
+    FNEG_D32_MM = 1707
+
+    FNEG_D64 = 1708
+
+    FNEG_D64_MM = 1709
+
+    FNEG_S = 1710
+
+    FNEG_S_MM = 1711
+
+    FNEG_S_MMR6 = 1712
+
+    FORK = 1713
+
+    FRCP_D = 1714
+
+    FRCP_W = 1715
+
+    FRINT_D = 1716
+
+    FRINT_W = 1717
+
+    FRSQRT_D = 1718
+
+    FRSQRT_W = 1719
+
+    FSAF_D = 1720
+
+    FSAF_W = 1721
+
+    FSEQ_D = 1722
+
+    FSEQ_W = 1723
+
+    FSLE_D = 1724
+
+    FSLE_W = 1725
+
+    FSLT_D = 1726
+
+    FSLT_W = 1727
+
+    FSNE_D = 1728
+
+    FSNE_W = 1729
+
+    FSOR_D = 1730
+
+    FSOR_W = 1731
+
+    FSQRT_D = 1732
+
+    FSQRT_D32 = 1733
+
+    FSQRT_D32_MM = 1734
+
+    FSQRT_D64 = 1735
+
+    FSQRT_D64_MM = 1736
+
+    FSQRT_S = 1737
+
+    FSQRT_S_MM = 1738
+
+    FSQRT_W = 1739
+
+    FSUB_D = 1740
+
+    FSUB_D32 = 1741
+
+    FSUB_D32_MM = 1742
+
+    FSUB_D64 = 1743
+
+    FSUB_D64_MM = 1744
+
+    FSUB_PS64 = 1745
+
+    FSUB_S = 1746
+
+    FSUB_S_MM = 1747
+
+    FSUB_S_MMR6 = 1748
+
+    FSUB_W = 1749
+
+    FSUEQ_D = 1750
+
+    FSUEQ_W = 1751
+
+    FSULE_D = 1752
+
+    FSULE_W = 1753
+
+    FSULT_D = 1754
+
+    FSULT_W = 1755
+
+    FSUNE_D = 1756
+
+    FSUNE_W = 1757
+
+    FSUN_D = 1758
+
+    FSUN_W = 1759
+
+    FTINT_S_D = 1760
+
+    FTINT_S_W = 1761
+
+    FTINT_U_D = 1762
+
+    FTINT_U_W = 1763
+
+    FTQ_H = 1764
+
+    FTQ_W = 1765
+
+    FTRUNC_S_D = 1766
+
+    FTRUNC_S_W = 1767
+
+    FTRUNC_U_D = 1768
+
+    FTRUNC_U_W = 1769
+
+    GINVI = 1770
+
+    GINVI_MMR6 = 1771
+
+    GINVT = 1772
+
+    GINVT_MMR6 = 1773
+
+    HADD_S_D = 1774
+
+    HADD_S_H = 1775
+
+    HADD_S_W = 1776
+
+    HADD_U_D = 1777
+
+    HADD_U_H = 1778
+
+    HADD_U_W = 1779
+
+    HSUB_S_D = 1780
+
+    HSUB_S_H = 1781
+
+    HSUB_S_W = 1782
+
+    HSUB_U_D = 1783
+
+    HSUB_U_H = 1784
+
+    HSUB_U_W = 1785
+
+    HYPCALL = 1786
+
+    HYPCALL_MM = 1787
+
+    ILVEV_B = 1788
+
+    ILVEV_D = 1789
+
+    ILVEV_H = 1790
+
+    ILVEV_W = 1791
+
+    ILVL_B = 1792
+
+    ILVL_D = 1793
+
+    ILVL_H = 1794
+
+    ILVL_W = 1795
+
+    ILVOD_B = 1796
+
+    ILVOD_D = 1797
+
+    ILVOD_H = 1798
+
+    ILVOD_W = 1799
+
+    ILVR_B = 1800
+
+    ILVR_D = 1801
+
+    ILVR_H = 1802
+
+    ILVR_W = 1803
+
+    INS = 1804
+
+    INSERT_B = 1805
+
+    INSERT_D = 1806
+
+    INSERT_H = 1807
+
+    INSERT_W = 1808
+
+    INSV = 1809
+
+    INSVE_B = 1810
+
+    INSVE_D = 1811
+
+    INSVE_H = 1812
+
+    INSVE_W = 1813
+
+    INSV_MM = 1814
+
+    INS_MM = 1815
+
+    INS_MMR6 = 1816
+
+    J = 1817
+
+    JAL = 1818
+
+    JALR = 1819
+
+    JALR16_MM = 1820
+
+    JALR64 = 1821
+
+    JALRC16_MMR6 = 1822
+
+    JALRC_HB_MMR6 = 1823
+
+    JALRC_MMR6 = 1824
+
+    JALRS16_MM = 1825
+
+    JALRS_MM = 1826
+
+    JALR_HB = 1827
+
+    JALR_HB64 = 1828
+
+    JALR_MM = 1829
+
+    JALS_MM = 1830
+
+    JALX = 1831
+
+    JALX_MM = 1832
+
+    JAL_MM = 1833
+
+    JIALC = 1834
+
+    JIALC64 = 1835
+
+    JIALC_MMR6 = 1836
+
+    JIC = 1837
+
+    JIC64 = 1838
+
+    JIC_MMR6 = 1839
+
+    JR = 1840
+
+    JR16_MM = 1841
+
+    JR64 = 1842
+
+    JRADDIUSP = 1843
+
+    JRC16_MM = 1844
+
+    JRC16_MMR6 = 1845
+
+    JRCADDIUSP_MMR6 = 1846
+
+    JR_HB = 1847
+
+    JR_HB64 = 1848
+
+    JR_HB64_R6 = 1849
+
+    JR_HB_R6 = 1850
+
+    JR_MM = 1851
+
+    J_MM = 1852
+
+    Jal16 = 1853
+
+    JalB16 = 1854
+
+    JrRa16 = 1855
+
+    JrcRa16 = 1856
+
+    JrcRx16 = 1857
+
+    JumpLinkReg16 = 1858
+
+    LB = 1859
+
+    LB64 = 1860
+
+    LBE = 1861
+
+    LBE_MM = 1862
+
+    LBU16_MM = 1863
+
+    LBUX = 1864
+
+    LBUX_MM = 1865
+
+    LBU_MMR6 = 1866
+
+    LB_MM = 1867
+
+    LB_MMR6 = 1868
+
+    LBu = 1869
+
+    LBu64 = 1870
+
+    LBuE = 1871
+
+    LBuE_MM = 1872
+
+    LBu_MM = 1873
+
+    LD = 1874
+
+    LDC1 = 1875
+
+    LDC164 = 1876
+
+    LDC1_D64_MMR6 = 1877
+
+    LDC1_MM_D32 = 1878
+
+    LDC1_MM_D64 = 1879
+
+    LDC2 = 1880
+
+    LDC2_MMR6 = 1881
+
+    LDC2_R6 = 1882
+
+    LDC3 = 1883
+
+    LDI_B = 1884
+
+    LDI_D = 1885
+
+    LDI_H = 1886
+
+    LDI_W = 1887
+
+    LDL = 1888
+
+    LDPC = 1889
+
+    LDR = 1890
+
+    LDXC1 = 1891
+
+    LDXC164 = 1892
+
+    LD_B = 1893
+
+    LD_D = 1894
+
+    LD_H = 1895
+
+    LD_W = 1896
+
+    LEA_ADDiu = 1897
+
+    LEA_ADDiu64 = 1898
+
+    LEA_ADDiu_MM = 1899
+
+    LH = 1900
+
+    LH64 = 1901
+
+    LHE = 1902
+
+    LHE_MM = 1903
+
+    LHU16_MM = 1904
+
+    LHX = 1905
+
+    LHX_MM = 1906
+
+    LH_MM = 1907
+
+    LHu = 1908
+
+    LHu64 = 1909
+
+    LHuE = 1910
+
+    LHuE_MM = 1911
+
+    LHu_MM = 1912
+
+    LI16_MM = 1913
+
+    LI16_MMR6 = 1914
+
+    LL = 1915
+
+    LL64 = 1916
+
+    LL64_R6 = 1917
+
+    LLD = 1918
+
+    LLD_R6 = 1919
+
+    LLE = 1920
+
+    LLE_MM = 1921
+
+    LL_MM = 1922
+
+    LL_MMR6 = 1923
+
+    LL_R6 = 1924
+
+    LSA = 1925
+
+    LSA_MMR6 = 1926
+
+    LSA_R6 = 1927
+
+    LUI_MMR6 = 1928
+
+    LUXC1 = 1929
+
+    LUXC164 = 1930
+
+    LUXC1_MM = 1931
+
+    LUi = 1932
+
+    LUi64 = 1933
+
+    LUi_MM = 1934
+
+    LW = 1935
+
+    LW16_MM = 1936
+
+    LW64 = 1937
+
+    LWC1 = 1938
+
+    LWC1_MM = 1939
+
+    LWC2 = 1940
+
+    LWC2_MMR6 = 1941
+
+    LWC2_R6 = 1942
+
+    LWC3 = 1943
+
+    LWDSP = 1944
+
+    LWDSP_MM = 1945
+
+    LWE = 1946
+
+    LWE_MM = 1947
+
+    LWGP_MM = 1948
+
+    LWL = 1949
+
+    LWL64 = 1950
+
+    LWLE = 1951
+
+    LWLE_MM = 1952
+
+    LWL_MM = 1953
+
+    LWM16_MM = 1954
+
+    LWM16_MMR6 = 1955
+
+    LWM32_MM = 1956
+
+    LWPC = 1957
+
+    LWPC_MMR6 = 1958
+
+    LWP_MM = 1959
+
+    LWR = 1960
+
+    LWR64 = 1961
+
+    LWRE = 1962
+
+    LWRE_MM = 1963
+
+    LWR_MM = 1964
+
+    LWSP_MM = 1965
+
+    LWUPC = 1966
+
+    LWU_MM = 1967
+
+    LWX = 1968
+
+    LWXC1 = 1969
+
+    LWXC1_MM = 1970
+
+    LWXS_MM = 1971
+
+    LWX_MM = 1972
+
+    LW_MM = 1973
+
+    LW_MMR6 = 1974
+
+    LWu = 1975
+
+    LbRxRyOffMemX16 = 1976
+
+    LbuRxRyOffMemX16 = 1977
+
+    LhRxRyOffMemX16 = 1978
+
+    LhuRxRyOffMemX16 = 1979
+
+    LiRxImm16 = 1980
+
+    LiRxImmAlignX16 = 1981
+
+    LiRxImmX16 = 1982
+
+    LwRxPcTcp16 = 1983
+
+    LwRxPcTcpX16 = 1984
+
+    LwRxRyOffMemX16 = 1985
+
+    LwRxSpImmX16 = 1986
+
+    MADD = 1987
+
+    MADDF_D = 1988
+
+    MADDF_D_MMR6 = 1989
+
+    MADDF_S = 1990
+
+    MADDF_S_MMR6 = 1991
+
+    MADDR_Q_H = 1992
+
+    MADDR_Q_W = 1993
+
+    MADDU = 1994
+
+    MADDU_DSP = 1995
+
+    MADDU_DSP_MM = 1996
+
+    MADDU_MM = 1997
+
+    MADDV_B = 1998
+
+    MADDV_D = 1999
+
+    MADDV_H = 2000
+
+    MADDV_W = 2001
+
+    MADD_D32 = 2002
+
+    MADD_D32_MM = 2003
+
+    MADD_D64 = 2004
+
+    MADD_DSP = 2005
+
+    MADD_DSP_MM = 2006
+
+    MADD_MM = 2007
+
+    MADD_Q_H = 2008
+
+    MADD_Q_W = 2009
+
+    MADD_S = 2010
+
+    MADD_S_MM = 2011
+
+    MAQ_SA_W_PHL = 2012
+
+    MAQ_SA_W_PHL_MM = 2013
+
+    MAQ_SA_W_PHR = 2014
+
+    MAQ_SA_W_PHR_MM = 2015
+
+    MAQ_S_W_PHL = 2016
+
+    MAQ_S_W_PHL_MM = 2017
+
+    MAQ_S_W_PHR = 2018
+
+    MAQ_S_W_PHR_MM = 2019
+
+    MAXA_D = 2020
+
+    MAXA_D_MMR6 = 2021
+
+    MAXA_S = 2022
+
+    MAXA_S_MMR6 = 2023
+
+    MAXI_S_B = 2024
+
+    MAXI_S_D = 2025
+
+    MAXI_S_H = 2026
+
+    MAXI_S_W = 2027
+
+    MAXI_U_B = 2028
+
+    MAXI_U_D = 2029
+
+    MAXI_U_H = 2030
+
+    MAXI_U_W = 2031
+
+    MAX_A_B = 2032
+
+    MAX_A_D = 2033
+
+    MAX_A_H = 2034
+
+    MAX_A_W = 2035
+
+    MAX_D = 2036
+
+    MAX_D_MMR6 = 2037
+
+    MAX_S = 2038
+
+    MAX_S_B = 2039
+
+    MAX_S_D = 2040
+
+    MAX_S_H = 2041
+
+    MAX_S_MMR6 = 2042
+
+    MAX_S_W = 2043
+
+    MAX_U_B = 2044
+
+    MAX_U_D = 2045
+
+    MAX_U_H = 2046
+
+    MAX_U_W = 2047
+
+    MFC0 = 2048
+
+    MFC0_MMR6 = 2049
+
+    MFC1 = 2050
+
+    MFC1_D64 = 2051
+
+    MFC1_MM = 2052
+
+    MFC1_MMR6 = 2053
+
+    MFC2 = 2054
+
+    MFC2_MMR6 = 2055
+
+    MFGC0 = 2056
+
+    MFGC0_MM = 2057
+
+    MFHC0_MMR6 = 2058
+
+    MFHC1_D32 = 2059
+
+    MFHC1_D32_MM = 2060
+
+    MFHC1_D64 = 2061
+
+    MFHC1_D64_MM = 2062
+
+    MFHC2_MMR6 = 2063
+
+    MFHGC0 = 2064
+
+    MFHGC0_MM = 2065
+
+    MFHI = 2066
+
+    MFHI16_MM = 2067
+
+    MFHI64 = 2068
+
+    MFHI_DSP = 2069
+
+    MFHI_DSP_MM = 2070
+
+    MFHI_MM = 2071
+
+    MFLO = 2072
+
+    MFLO16_MM = 2073
+
+    MFLO64 = 2074
+
+    MFLO_DSP = 2075
+
+    MFLO_DSP_MM = 2076
+
+    MFLO_MM = 2077
+
+    MFTR = 2078
+
+    MINA_D = 2079
+
+    MINA_D_MMR6 = 2080
+
+    MINA_S = 2081
+
+    MINA_S_MMR6 = 2082
+
+    MINI_S_B = 2083
+
+    MINI_S_D = 2084
+
+    MINI_S_H = 2085
+
+    MINI_S_W = 2086
+
+    MINI_U_B = 2087
+
+    MINI_U_D = 2088
+
+    MINI_U_H = 2089
+
+    MINI_U_W = 2090
+
+    MIN_A_B = 2091
+
+    MIN_A_D = 2092
+
+    MIN_A_H = 2093
+
+    MIN_A_W = 2094
+
+    MIN_D = 2095
+
+    MIN_D_MMR6 = 2096
+
+    MIN_S = 2097
+
+    MIN_S_B = 2098
+
+    MIN_S_D = 2099
+
+    MIN_S_H = 2100
+
+    MIN_S_MMR6 = 2101
+
+    MIN_S_W = 2102
+
+    MIN_U_B = 2103
+
+    MIN_U_D = 2104
+
+    MIN_U_H = 2105
+
+    MIN_U_W = 2106
+
+    MOD = 2107
+
+    MODSUB = 2108
+
+    MODSUB_MM = 2109
+
+    MODU = 2110
+
+    MODU_MMR6 = 2111
+
+    MOD_MMR6 = 2112
+
+    MOD_S_B = 2113
+
+    MOD_S_D = 2114
+
+    MOD_S_H = 2115
+
+    MOD_S_W = 2116
+
+    MOD_U_B = 2117
+
+    MOD_U_D = 2118
+
+    MOD_U_H = 2119
+
+    MOD_U_W = 2120
+
+    MOVE16_MM = 2121
+
+    MOVE16_MMR6 = 2122
+
+    MOVEP_MM = 2123
+
+    MOVEP_MMR6 = 2124
+
+    MOVE_V = 2125
+
+    MOVF_D32 = 2126
+
+    MOVF_D32_MM = 2127
+
+    MOVF_D64 = 2128
+
+    MOVF_I = 2129
+
+    MOVF_I64 = 2130
+
+    MOVF_I_MM = 2131
+
+    MOVF_S = 2132
+
+    MOVF_S_MM = 2133
+
+    MOVN_I64_D64 = 2134
+
+    MOVN_I64_I = 2135
+
+    MOVN_I64_I64 = 2136
+
+    MOVN_I64_S = 2137
+
+    MOVN_I_D32 = 2138
+
+    MOVN_I_D32_MM = 2139
+
+    MOVN_I_D64 = 2140
+
+    MOVN_I_I = 2141
+
+    MOVN_I_I64 = 2142
+
+    MOVN_I_MM = 2143
+
+    MOVN_I_S = 2144
+
+    MOVN_I_S_MM = 2145
+
+    MOVT_D32 = 2146
+
+    MOVT_D32_MM = 2147
+
+    MOVT_D64 = 2148
+
+    MOVT_I = 2149
+
+    MOVT_I64 = 2150
+
+    MOVT_I_MM = 2151
+
+    MOVT_S = 2152
+
+    MOVT_S_MM = 2153
+
+    MOVZ_I64_D64 = 2154
+
+    MOVZ_I64_I = 2155
+
+    MOVZ_I64_I64 = 2156
+
+    MOVZ_I64_S = 2157
+
+    MOVZ_I_D32 = 2158
+
+    MOVZ_I_D32_MM = 2159
+
+    MOVZ_I_D64 = 2160
+
+    MOVZ_I_I = 2161
+
+    MOVZ_I_I64 = 2162
+
+    MOVZ_I_MM = 2163
+
+    MOVZ_I_S = 2164
+
+    MOVZ_I_S_MM = 2165
+
+    MSUB = 2166
+
+    MSUBF_D = 2167
+
+    MSUBF_D_MMR6 = 2168
+
+    MSUBF_S = 2169
+
+    MSUBF_S_MMR6 = 2170
+
+    MSUBR_Q_H = 2171
+
+    MSUBR_Q_W = 2172
+
+    MSUBU = 2173
+
+    MSUBU_DSP = 2174
+
+    MSUBU_DSP_MM = 2175
+
+    MSUBU_MM = 2176
+
+    MSUBV_B = 2177
+
+    MSUBV_D = 2178
+
+    MSUBV_H = 2179
+
+    MSUBV_W = 2180
+
+    MSUB_D32 = 2181
+
+    MSUB_D32_MM = 2182
+
+    MSUB_D64 = 2183
+
+    MSUB_DSP = 2184
+
+    MSUB_DSP_MM = 2185
+
+    MSUB_MM = 2186
+
+    MSUB_Q_H = 2187
+
+    MSUB_Q_W = 2188
+
+    MSUB_S = 2189
+
+    MSUB_S_MM = 2190
+
+    MTC0 = 2191
+
+    MTC0_MMR6 = 2192
+
+    MTC1 = 2193
+
+    MTC1_D64 = 2194
+
+    MTC1_D64_MM = 2195
+
+    MTC1_MM = 2196
+
+    MTC1_MMR6 = 2197
+
+    MTC2 = 2198
+
+    MTC2_MMR6 = 2199
+
+    MTGC0 = 2200
+
+    MTGC0_MM = 2201
+
+    MTHC0_MMR6 = 2202
+
+    MTHC1_D32 = 2203
+
+    MTHC1_D32_MM = 2204
+
+    MTHC1_D64 = 2205
+
+    MTHC1_D64_MM = 2206
+
+    MTHC2_MMR6 = 2207
+
+    MTHGC0 = 2208
+
+    MTHGC0_MM = 2209
+
+    MTHI = 2210
+
+    MTHI64 = 2211
+
+    MTHI_DSP = 2212
+
+    MTHI_DSP_MM = 2213
+
+    MTHI_MM = 2214
+
+    MTHLIP = 2215
+
+    MTHLIP_MM = 2216
+
+    MTLO = 2217
+
+    MTLO64 = 2218
+
+    MTLO_DSP = 2219
+
+    MTLO_DSP_MM = 2220
+
+    MTLO_MM = 2221
+
+    MTM0 = 2222
+
+    MTM1 = 2223
+
+    MTM2 = 2224
+
+    MTP0 = 2225
+
+    MTP1 = 2226
+
+    MTP2 = 2227
+
+    MTTR = 2228
+
+    MUH = 2229
+
+    MUHU = 2230
+
+    MUHU_MMR6 = 2231
+
+    MUH_MMR6 = 2232
+
+    MUL = 2233
+
+    MULEQ_S_W_PHL = 2234
+
+    MULEQ_S_W_PHL_MM = 2235
+
+    MULEQ_S_W_PHR = 2236
+
+    MULEQ_S_W_PHR_MM = 2237
+
+    MULEU_S_PH_QBL = 2238
+
+    MULEU_S_PH_QBL_MM = 2239
+
+    MULEU_S_PH_QBR = 2240
+
+    MULEU_S_PH_QBR_MM = 2241
+
+    MULQ_RS_PH = 2242
+
+    MULQ_RS_PH_MM = 2243
+
+    MULQ_RS_W = 2244
+
+    MULQ_RS_W_MMR2 = 2245
+
+    MULQ_S_PH = 2246
+
+    MULQ_S_PH_MMR2 = 2247
+
+    MULQ_S_W = 2248
+
+    MULQ_S_W_MMR2 = 2249
+
+    MULR_PS64 = 2250
+
+    MULR_Q_H = 2251
+
+    MULR_Q_W = 2252
+
+    MULSAQ_S_W_PH = 2253
+
+    MULSAQ_S_W_PH_MM = 2254
+
+    MULSA_W_PH = 2255
+
+    MULSA_W_PH_MMR2 = 2256
+
+    MULT = 2257
+
+    MULTU_DSP = 2258
+
+    MULTU_DSP_MM = 2259
+
+    MULT_DSP = 2260
+
+    MULT_DSP_MM = 2261
+
+    MULT_MM = 2262
+
+    MULTu = 2263
+
+    MULTu_MM = 2264
+
+    MULU = 2265
+
+    MULU_MMR6 = 2266
+
+    MULV_B = 2267
+
+    MULV_D = 2268
+
+    MULV_H = 2269
+
+    MULV_W = 2270
+
+    MUL_MM = 2271
+
+    MUL_MMR6 = 2272
+
+    MUL_PH = 2273
+
+    MUL_PH_MMR2 = 2274
+
+    MUL_Q_H = 2275
+
+    MUL_Q_W = 2276
+
+    MUL_R6 = 2277
+
+    MUL_S_PH = 2278
+
+    MUL_S_PH_MMR2 = 2279
+
+    Mfhi16 = 2280
+
+    Mflo16 = 2281
+
+    Move32R16 = 2282
+
+    MoveR3216 = 2283
+
+    NAL = 2284
+
+    NLOC_B = 2285
+
+    NLOC_D = 2286
+
+    NLOC_H = 2287
+
+    NLOC_W = 2288
+
+    NLZC_B = 2289
+
+    NLZC_D = 2290
+
+    NLZC_H = 2291
+
+    NLZC_W = 2292
+
+    NMADD_D32 = 2293
+
+    NMADD_D32_MM = 2294
+
+    NMADD_D64 = 2295
+
+    NMADD_S = 2296
+
+    NMADD_S_MM = 2297
+
+    NMSUB_D32 = 2298
+
+    NMSUB_D32_MM = 2299
+
+    NMSUB_D64 = 2300
+
+    NMSUB_S = 2301
+
+    NMSUB_S_MM = 2302
+
+    NOR = 2303
+
+    NOR64 = 2304
+
+    NORI_B = 2305
+
+    NOR_MM = 2306
+
+    NOR_MMR6 = 2307
+
+    NOR_V = 2308
+
+    NOT16_MM = 2309
+
+    NOT16_MMR6 = 2310
+
+    NegRxRy16 = 2311
+
+    NotRxRy16 = 2312
+
+    OR = 2313
+
+    OR16_MM = 2314
+
+    OR16_MMR6 = 2315
+
+    OR64 = 2316
+
+    ORI_B = 2317
+
+    ORI_MMR6 = 2318
+
+    OR_MM = 2319
+
+    OR_MMR6 = 2320
+
+    OR_V = 2321
+
+    ORi = 2322
+
+    ORi64 = 2323
+
+    ORi_MM = 2324
+
+    OrRxRxRy16 = 2325
+
+    PACKRL_PH = 2326
+
+    PACKRL_PH_MM = 2327
+
+    PAUSE = 2328
+
+    PAUSE_MM = 2329
+
+    PAUSE_MMR6 = 2330
+
+    PCKEV_B = 2331
+
+    PCKEV_D = 2332
+
+    PCKEV_H = 2333
+
+    PCKEV_W = 2334
+
+    PCKOD_B = 2335
+
+    PCKOD_D = 2336
+
+    PCKOD_H = 2337
+
+    PCKOD_W = 2338
+
+    PCNT_B = 2339
+
+    PCNT_D = 2340
+
+    PCNT_H = 2341
+
+    PCNT_W = 2342
+
+    PICK_PH = 2343
+
+    PICK_PH_MM = 2344
+
+    PICK_QB = 2345
+
+    PICK_QB_MM = 2346
+
+    PLL_PS64 = 2347
+
+    PLU_PS64 = 2348
+
+    POP = 2349
+
+    PRECEQU_PH_QBL = 2350
+
+    PRECEQU_PH_QBLA = 2351
+
+    PRECEQU_PH_QBLA_MM = 2352
+
+    PRECEQU_PH_QBL_MM = 2353
+
+    PRECEQU_PH_QBR = 2354
+
+    PRECEQU_PH_QBRA = 2355
+
+    PRECEQU_PH_QBRA_MM = 2356
+
+    PRECEQU_PH_QBR_MM = 2357
+
+    PRECEQ_W_PHL = 2358
+
+    PRECEQ_W_PHL_MM = 2359
+
+    PRECEQ_W_PHR = 2360
+
+    PRECEQ_W_PHR_MM = 2361
+
+    PRECEU_PH_QBL = 2362
+
+    PRECEU_PH_QBLA = 2363
+
+    PRECEU_PH_QBLA_MM = 2364
+
+    PRECEU_PH_QBL_MM = 2365
+
+    PRECEU_PH_QBR = 2366
+
+    PRECEU_PH_QBRA = 2367
+
+    PRECEU_PH_QBRA_MM = 2368
+
+    PRECEU_PH_QBR_MM = 2369
+
+    PRECRQU_S_QB_PH = 2370
+
+    PRECRQU_S_QB_PH_MM = 2371
+
+    PRECRQ_PH_W = 2372
+
+    PRECRQ_PH_W_MM = 2373
+
+    PRECRQ_QB_PH = 2374
+
+    PRECRQ_QB_PH_MM = 2375
+
+    PRECRQ_RS_PH_W = 2376
+
+    PRECRQ_RS_PH_W_MM = 2377
+
+    PRECR_QB_PH = 2378
+
+    PRECR_QB_PH_MMR2 = 2379
+
+    PRECR_SRA_PH_W = 2380
+
+    PRECR_SRA_PH_W_MMR2 = 2381
+
+    PRECR_SRA_R_PH_W = 2382
+
+    PRECR_SRA_R_PH_W_MMR2 = 2383
+
+    PREF = 2384
+
+    PREFE = 2385
+
+    PREFE_MM = 2386
+
+    PREFX_MM = 2387
+
+    PREF_MM = 2388
+
+    PREF_MMR6 = 2389
+
+    PREF_R6 = 2390
+
+    PREPEND = 2391
+
+    PREPEND_MMR2 = 2392
+
+    PUL_PS64 = 2393
+
+    PUU_PS64 = 2394
+
+    RADDU_W_QB = 2395
+
+    RADDU_W_QB_MM = 2396
+
+    RDDSP = 2397
+
+    RDDSP_MM = 2398
+
+    RDHWR = 2399
+
+    RDHWR64 = 2400
+
+    RDHWR_MM = 2401
+
+    RDHWR_MMR6 = 2402
+
+    RDPGPR_MMR6 = 2403
+
+    RECIP_D32 = 2404
+
+    RECIP_D32_MM = 2405
+
+    RECIP_D64 = 2406
+
+    RECIP_D64_MM = 2407
+
+    RECIP_S = 2408
+
+    RECIP_S_MM = 2409
+
+    REPLV_PH = 2410
+
+    REPLV_PH_MM = 2411
+
+    REPLV_QB = 2412
+
+    REPLV_QB_MM = 2413
+
+    REPL_PH = 2414
+
+    REPL_PH_MM = 2415
+
+    REPL_QB = 2416
+
+    REPL_QB_MM = 2417
+
+    RINT_D = 2418
+
+    RINT_D_MMR6 = 2419
+
+    RINT_S = 2420
+
+    RINT_S_MMR6 = 2421
+
+    ROTR = 2422
+
+    ROTRV = 2423
+
+    ROTRV_MM = 2424
+
+    ROTR_MM = 2425
+
+    ROUND_L_D64 = 2426
+
+    ROUND_L_D_MMR6 = 2427
+
+    ROUND_L_S = 2428
+
+    ROUND_L_S_MMR6 = 2429
+
+    ROUND_W_D32 = 2430
+
+    ROUND_W_D64 = 2431
+
+    ROUND_W_D_MMR6 = 2432
+
+    ROUND_W_MM = 2433
+
+    ROUND_W_S = 2434
+
+    ROUND_W_S_MM = 2435
+
+    ROUND_W_S_MMR6 = 2436
+
+    RSQRT_D32 = 2437
+
+    RSQRT_D32_MM = 2438
+
+    RSQRT_D64 = 2439
+
+    RSQRT_D64_MM = 2440
+
+    RSQRT_S = 2441
+
+    RSQRT_S_MM = 2442
+
+    Restore16 = 2443
+
+    RestoreX16 = 2444
+
+    SAA = 2445
+
+    SAAD = 2446
+
+    SAT_S_B = 2447
+
+    SAT_S_D = 2448
+
+    SAT_S_H = 2449
+
+    SAT_S_W = 2450
+
+    SAT_U_B = 2451
+
+    SAT_U_D = 2452
+
+    SAT_U_H = 2453
+
+    SAT_U_W = 2454
+
+    SB = 2455
+
+    SB16_MM = 2456
+
+    SB16_MMR6 = 2457
+
+    SB64 = 2458
+
+    SBE = 2459
+
+    SBE_MM = 2460
+
+    SB_MM = 2461
+
+    SB_MMR6 = 2462
+
+    SC = 2463
+
+    SC64 = 2464
+
+    SC64_R6 = 2465
+
+    SCD = 2466
+
+    SCD_R6 = 2467
+
+    SCE = 2468
+
+    SCE_MM = 2469
+
+    SC_MM = 2470
+
+    SC_MMR6 = 2471
+
+    SC_R6 = 2472
+
+    SD = 2473
+
+    SDBBP = 2474
+
+    SDBBP16_MM = 2475
+
+    SDBBP16_MMR6 = 2476
+
+    SDBBP_MM = 2477
+
+    SDBBP_MMR6 = 2478
+
+    SDBBP_R6 = 2479
+
+    SDC1 = 2480
+
+    SDC164 = 2481
+
+    SDC1_D64_MMR6 = 2482
+
+    SDC1_MM_D32 = 2483
+
+    SDC1_MM_D64 = 2484
+
+    SDC2 = 2485
+
+    SDC2_MMR6 = 2486
+
+    SDC2_R6 = 2487
+
+    SDC3 = 2488
+
+    SDIV = 2489
+
+    SDIV_MM = 2490
+
+    SDL = 2491
+
+    SDR = 2492
+
+    SDXC1 = 2493
+
+    SDXC164 = 2494
+
+    SEB = 2495
+
+    SEB64 = 2496
+
+    SEB_MM = 2497
+
+    SEH = 2498
+
+    SEH64 = 2499
+
+    SEH_MM = 2500
+
+    SELEQZ = 2501
+
+    SELEQZ64 = 2502
+
+    SELEQZ_D = 2503
+
+    SELEQZ_D_MMR6 = 2504
+
+    SELEQZ_MMR6 = 2505
+
+    SELEQZ_S = 2506
+
+    SELEQZ_S_MMR6 = 2507
+
+    SELNEZ = 2508
+
+    SELNEZ64 = 2509
+
+    SELNEZ_D = 2510
+
+    SELNEZ_D_MMR6 = 2511
+
+    SELNEZ_MMR6 = 2512
+
+    SELNEZ_S = 2513
+
+    SELNEZ_S_MMR6 = 2514
+
+    SEL_D = 2515
+
+    SEL_D_MMR6 = 2516
+
+    SEL_S = 2517
+
+    SEL_S_MMR6 = 2518
+
+    SEQ = 2519
+
+    SEQi = 2520
+
+    SH = 2521
+
+    SH16_MM = 2522
+
+    SH16_MMR6 = 2523
+
+    SH64 = 2524
+
+    SHE = 2525
+
+    SHE_MM = 2526
+
+    SHF_B = 2527
+
+    SHF_H = 2528
+
+    SHF_W = 2529
+
+    SHILO = 2530
+
+    SHILOV = 2531
+
+    SHILOV_MM = 2532
+
+    SHILO_MM = 2533
+
+    SHLLV_PH = 2534
+
+    SHLLV_PH_MM = 2535
+
+    SHLLV_QB = 2536
+
+    SHLLV_QB_MM = 2537
+
+    SHLLV_S_PH = 2538
+
+    SHLLV_S_PH_MM = 2539
+
+    SHLLV_S_W = 2540
+
+    SHLLV_S_W_MM = 2541
+
+    SHLL_PH = 2542
+
+    SHLL_PH_MM = 2543
+
+    SHLL_QB = 2544
+
+    SHLL_QB_MM = 2545
+
+    SHLL_S_PH = 2546
+
+    SHLL_S_PH_MM = 2547
+
+    SHLL_S_W = 2548
+
+    SHLL_S_W_MM = 2549
+
+    SHRAV_PH = 2550
+
+    SHRAV_PH_MM = 2551
+
+    SHRAV_QB = 2552
+
+    SHRAV_QB_MMR2 = 2553
+
+    SHRAV_R_PH = 2554
+
+    SHRAV_R_PH_MM = 2555
+
+    SHRAV_R_QB = 2556
+
+    SHRAV_R_QB_MMR2 = 2557
+
+    SHRAV_R_W = 2558
+
+    SHRAV_R_W_MM = 2559
+
+    SHRA_PH = 2560
+
+    SHRA_PH_MM = 2561
+
+    SHRA_QB = 2562
+
+    SHRA_QB_MMR2 = 2563
+
+    SHRA_R_PH = 2564
+
+    SHRA_R_PH_MM = 2565
+
+    SHRA_R_QB = 2566
+
+    SHRA_R_QB_MMR2 = 2567
+
+    SHRA_R_W = 2568
+
+    SHRA_R_W_MM = 2569
+
+    SHRLV_PH = 2570
+
+    SHRLV_PH_MMR2 = 2571
+
+    SHRLV_QB = 2572
+
+    SHRLV_QB_MM = 2573
+
+    SHRL_PH = 2574
+
+    SHRL_PH_MMR2 = 2575
+
+    SHRL_QB = 2576
+
+    SHRL_QB_MM = 2577
+
+    SH_MM = 2578
+
+    SH_MMR6 = 2579
+
+    SIGRIE = 2580
+
+    SIGRIE_MMR6 = 2581
+
+    SLDI_B = 2582
+
+    SLDI_D = 2583
+
+    SLDI_H = 2584
+
+    SLDI_W = 2585
+
+    SLD_B = 2586
+
+    SLD_D = 2587
+
+    SLD_H = 2588
+
+    SLD_W = 2589
+
+    SLL = 2590
+
+    SLL16_MM = 2591
+
+    SLL16_MMR6 = 2592
+
+    SLL64_32 = 2593
+
+    SLL64_64 = 2594
+
+    SLLI_B = 2595
+
+    SLLI_D = 2596
+
+    SLLI_H = 2597
+
+    SLLI_W = 2598
+
+    SLLV = 2599
+
+    SLLV_MM = 2600
+
+    SLL_B = 2601
+
+    SLL_D = 2602
+
+    SLL_H = 2603
+
+    SLL_MM = 2604
+
+    SLL_MMR6 = 2605
+
+    SLL_W = 2606
+
+    SLT = 2607
+
+    SLT64 = 2608
+
+    SLT_MM = 2609
+
+    SLTi = 2610
+
+    SLTi64 = 2611
+
+    SLTi_MM = 2612
+
+    SLTiu = 2613
+
+    SLTiu64 = 2614
+
+    SLTiu_MM = 2615
+
+    SLTu = 2616
+
+    SLTu64 = 2617
+
+    SLTu_MM = 2618
+
+    SNE = 2619
+
+    SNEi = 2620
+
+    SPLATI_B = 2621
+
+    SPLATI_D = 2622
+
+    SPLATI_H = 2623
+
+    SPLATI_W = 2624
+
+    SPLAT_B = 2625
+
+    SPLAT_D = 2626
+
+    SPLAT_H = 2627
+
+    SPLAT_W = 2628
+
+    SRA = 2629
+
+    SRAI_B = 2630
+
+    SRAI_D = 2631
+
+    SRAI_H = 2632
+
+    SRAI_W = 2633
+
+    SRARI_B = 2634
+
+    SRARI_D = 2635
+
+    SRARI_H = 2636
+
+    SRARI_W = 2637
+
+    SRAR_B = 2638
+
+    SRAR_D = 2639
+
+    SRAR_H = 2640
+
+    SRAR_W = 2641
+
+    SRAV = 2642
+
+    SRAV_MM = 2643
+
+    SRA_B = 2644
+
+    SRA_D = 2645
+
+    SRA_H = 2646
+
+    SRA_MM = 2647
+
+    SRA_W = 2648
+
+    SRL = 2649
+
+    SRL16_MM = 2650
+
+    SRL16_MMR6 = 2651
+
+    SRLI_B = 2652
+
+    SRLI_D = 2653
+
+    SRLI_H = 2654
+
+    SRLI_W = 2655
+
+    SRLRI_B = 2656
+
+    SRLRI_D = 2657
+
+    SRLRI_H = 2658
+
+    SRLRI_W = 2659
+
+    SRLR_B = 2660
+
+    SRLR_D = 2661
+
+    SRLR_H = 2662
+
+    SRLR_W = 2663
+
+    SRLV = 2664
+
+    SRLV_MM = 2665
+
+    SRL_B = 2666
+
+    SRL_D = 2667
+
+    SRL_H = 2668
+
+    SRL_MM = 2669
+
+    SRL_W = 2670
+
+    SSNOP = 2671
+
+    SSNOP_MM = 2672
+
+    SSNOP_MMR6 = 2673
+
+    ST_B = 2674
+
+    ST_D = 2675
+
+    ST_H = 2676
+
+    ST_W = 2677
+
+    SUB = 2678
+
+    SUBQH_PH = 2679
+
+    SUBQH_PH_MMR2 = 2680
+
+    SUBQH_R_PH = 2681
+
+    SUBQH_R_PH_MMR2 = 2682
+
+    SUBQH_R_W = 2683
+
+    SUBQH_R_W_MMR2 = 2684
+
+    SUBQH_W = 2685
+
+    SUBQH_W_MMR2 = 2686
+
+    SUBQ_PH = 2687
+
+    SUBQ_PH_MM = 2688
+
+    SUBQ_S_PH = 2689
+
+    SUBQ_S_PH_MM = 2690
+
+    SUBQ_S_W = 2691
+
+    SUBQ_S_W_MM = 2692
+
+    SUBSUS_U_B = 2693
+
+    SUBSUS_U_D = 2694
+
+    SUBSUS_U_H = 2695
+
+    SUBSUS_U_W = 2696
+
+    SUBSUU_S_B = 2697
+
+    SUBSUU_S_D = 2698
+
+    SUBSUU_S_H = 2699
+
+    SUBSUU_S_W = 2700
+
+    SUBS_S_B = 2701
+
+    SUBS_S_D = 2702
+
+    SUBS_S_H = 2703
+
+    SUBS_S_W = 2704
+
+    SUBS_U_B = 2705
+
+    SUBS_U_D = 2706
+
+    SUBS_U_H = 2707
+
+    SUBS_U_W = 2708
+
+    SUBU16_MM = 2709
+
+    SUBU16_MMR6 = 2710
+
+    SUBUH_QB = 2711
+
+    SUBUH_QB_MMR2 = 2712
+
+    SUBUH_R_QB = 2713
+
+    SUBUH_R_QB_MMR2 = 2714
+
+    SUBU_MMR6 = 2715
+
+    SUBU_PH = 2716
+
+    SUBU_PH_MMR2 = 2717
+
+    SUBU_QB = 2718
+
+    SUBU_QB_MM = 2719
+
+    SUBU_S_PH = 2720
+
+    SUBU_S_PH_MMR2 = 2721
+
+    SUBU_S_QB = 2722
+
+    SUBU_S_QB_MM = 2723
+
+    SUBVI_B = 2724
+
+    SUBVI_D = 2725
+
+    SUBVI_H = 2726
+
+    SUBVI_W = 2727
+
+    SUBV_B = 2728
+
+    SUBV_D = 2729
+
+    SUBV_H = 2730
+
+    SUBV_W = 2731
+
+    SUB_MM = 2732
+
+    SUB_MMR6 = 2733
+
+    SUBu = 2734
+
+    SUBu_MM = 2735
+
+    SUXC1 = 2736
+
+    SUXC164 = 2737
+
+    SUXC1_MM = 2738
+
+    SW = 2739
+
+    SW16_MM = 2740
+
+    SW16_MMR6 = 2741
+
+    SW64 = 2742
+
+    SWC1 = 2743
+
+    SWC1_MM = 2744
+
+    SWC2 = 2745
+
+    SWC2_MMR6 = 2746
+
+    SWC2_R6 = 2747
+
+    SWC3 = 2748
+
+    SWDSP = 2749
+
+    SWDSP_MM = 2750
+
+    SWE = 2751
+
+    SWE_MM = 2752
+
+    SWL = 2753
+
+    SWL64 = 2754
+
+    SWLE = 2755
+
+    SWLE_MM = 2756
+
+    SWL_MM = 2757
+
+    SWM16_MM = 2758
+
+    SWM16_MMR6 = 2759
+
+    SWM32_MM = 2760
+
+    SWP_MM = 2761
+
+    SWR = 2762
+
+    SWR64 = 2763
+
+    SWRE = 2764
+
+    SWRE_MM = 2765
+
+    SWR_MM = 2766
+
+    SWSP_MM = 2767
+
+    SWSP_MMR6 = 2768
+
+    SWXC1 = 2769
+
+    SWXC1_MM = 2770
+
+    SW_MM = 2771
+
+    SW_MMR6 = 2772
+
+    SYNC = 2773
+
+    SYNCI = 2774
+
+    SYNCI_MM = 2775
+
+    SYNCI_MMR6 = 2776
+
+    SYNC_MM = 2777
+
+    SYNC_MMR6 = 2778
+
+    SYSCALL = 2779
+
+    SYSCALL_MM = 2780
+
+    Save16 = 2781
+
+    SaveX16 = 2782
+
+    SbRxRyOffMemX16 = 2783
+
+    SebRx16 = 2784
+
+    SehRx16 = 2785
+
+    ShRxRyOffMemX16 = 2786
+
+    SllX16 = 2787
+
+    SllvRxRy16 = 2788
+
+    SltRxRy16 = 2789
+
+    SltiRxImm16 = 2790
+
+    SltiRxImmX16 = 2791
+
+    SltiuRxImm16 = 2792
+
+    SltiuRxImmX16 = 2793
+
+    SltuRxRy16 = 2794
+
+    SraX16 = 2795
+
+    SravRxRy16 = 2796
+
+    SrlX16 = 2797
+
+    SrlvRxRy16 = 2798
+
+    SubuRxRyRz16 = 2799
+
+    SwRxRyOffMemX16 = 2800
+
+    SwRxSpImmX16 = 2801
+
+    TEQ = 2802
+
+    TEQI = 2803
+
+    TEQI_MM = 2804
+
+    TEQ_MM = 2805
+
+    TGE = 2806
+
+    TGEI = 2807
+
+    TGEIU = 2808
+
+    TGEIU_MM = 2809
+
+    TGEI_MM = 2810
+
+    TGEU = 2811
+
+    TGEU_MM = 2812
+
+    TGE_MM = 2813
+
+    TLBGINV = 2814
+
+    TLBGINVF = 2815
+
+    TLBGINVF_MM = 2816
+
+    TLBGINV_MM = 2817
+
+    TLBGP = 2818
+
+    TLBGP_MM = 2819
+
+    TLBGR = 2820
+
+    TLBGR_MM = 2821
+
+    TLBGWI = 2822
+
+    TLBGWI_MM = 2823
+
+    TLBGWR = 2824
+
+    TLBGWR_MM = 2825
+
+    TLBINV = 2826
+
+    TLBINVF = 2827
+
+    TLBINVF_MMR6 = 2828
+
+    TLBINV_MMR6 = 2829
+
+    TLBP = 2830
+
+    TLBP_MM = 2831
+
+    TLBR = 2832
+
+    TLBR_MM = 2833
+
+    TLBWI = 2834
+
+    TLBWI_MM = 2835
+
+    TLBWR = 2836
+
+    TLBWR_MM = 2837
+
+    TLT = 2838
+
+    TLTI = 2839
+
+    TLTIU_MM = 2840
+
+    TLTI_MM = 2841
+
+    TLTU = 2842
+
+    TLTU_MM = 2843
+
+    TLT_MM = 2844
+
+    TNE = 2845
+
+    TNEI = 2846
+
+    TNEI_MM = 2847
+
+    TNE_MM = 2848
+
+    TRUNC_L_D64 = 2849
+
+    TRUNC_L_D_MMR6 = 2850
+
+    TRUNC_L_S = 2851
+
+    TRUNC_L_S_MMR6 = 2852
+
+    TRUNC_W_D32 = 2853
+
+    TRUNC_W_D64 = 2854
+
+    TRUNC_W_D_MMR6 = 2855
+
+    TRUNC_W_MM = 2856
+
+    TRUNC_W_S = 2857
+
+    TRUNC_W_S_MM = 2858
+
+    TRUNC_W_S_MMR6 = 2859
+
+    TTLTIU = 2860
+
+    UDIV = 2861
+
+    UDIV_MM = 2862
+
+    V3MULU = 2863
+
+    VMM0 = 2864
+
+    VMULU = 2865
+
+    VSHF_B = 2866
+
+    VSHF_D = 2867
+
+    VSHF_H = 2868
+
+    VSHF_W = 2869
+
+    WAIT = 2870
+
+    WAIT_MM = 2871
+
+    WAIT_MMR6 = 2872
+
+    WRDSP = 2873
+
+    WRDSP_MM = 2874
+
+    WRPGPR_MMR6 = 2875
+
+    WSBH = 2876
+
+    WSBH_MM = 2877
+
+    WSBH_MMR6 = 2878
+
+    XOR = 2879
+
+    XOR16_MM = 2880
+
+    XOR16_MMR6 = 2881
+
+    XOR64 = 2882
+
+    XORI_B = 2883
+
+    XORI_MMR6 = 2884
+
+    XOR_MM = 2885
+
+    XOR_MMR6 = 2886
+
+    XOR_V = 2887
+
+    XORi = 2888
+
+    XORi64 = 2889
+
+    XORi_MM = 2890
+
+    XorRxRxRy16 = 2891
+
+    YIELD = 2892
+
+    INSTRUCTION_LIST_END = 2893

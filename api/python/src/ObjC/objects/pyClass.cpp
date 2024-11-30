@@ -37,7 +37,9 @@ void create<objc::Class>(nb::module_& m) {
     .def_prop_ro("methods",
       [] (objc::Class& self) {
           auto methods = self.methods();
-          return nb::make_iterator(nb::type<objc::Class>(), "methods_it", methods);
+          return nb::make_iterator<nb::rv_policy::reference_internal>(
+            nb::type<objc::Class>(), "methods_it", methods
+          );
       }, nb::keep_alive<0, 1>(),
       R"doc(
       Iterator over the different methods defined by this class.
@@ -46,7 +48,9 @@ void create<objc::Class>(nb::module_& m) {
     .def_prop_ro("protocols",
       [] (objc::Class& self) {
           auto protocols = self.protocols();
-          return nb::make_iterator(nb::type<objc::Class>(), "protocols_it", protocols);
+          return nb::make_iterator<nb::rv_policy::reference_internal>(
+            nb::type<objc::Class>(), "protocols_it", protocols
+          );
       }, nb::keep_alive<0, 1>(),
       R"doc(
       Iterator over the different protocols implemented by this class.
@@ -55,7 +59,9 @@ void create<objc::Class>(nb::module_& m) {
     .def_prop_ro("properties",
       [] (objc::Class& self) {
           auto properties = self.properties();
-          return nb::make_iterator(nb::type<objc::Class>(), "properties_it", properties);
+          return nb::make_iterator<nb::rv_policy::reference_internal>(
+            nb::type<objc::Class>(), "properties_it", properties
+          );
       }, nb::keep_alive<0, 1>(),
       R"doc(
       Iterator over the properties of this class.
@@ -64,7 +70,9 @@ void create<objc::Class>(nb::module_& m) {
     .def_prop_ro("ivars",
       [] (objc::Class& self) {
           auto ivars = self.ivars();
-          return nb::make_iterator(nb::type<objc::Class>(), "ivars_it", ivars);
+          return nb::make_iterator<nb::rv_policy::reference_internal>(
+            nb::type<objc::Class>(), "ivars_it", ivars
+          );
       }, nb::keep_alive<0, 1>(),
       R"doc(
       Iterator over the different instance variables defined in this class.

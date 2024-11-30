@@ -356,7 +356,7 @@ void init_enums(nb::module_& m) {
     .value(PY_ENUM(CODE_PAGES::CP_UTF_7))
     .value(PY_ENUM(CODE_PAGES::CP_UTF_8));
 
-  enum_<ACCELERATOR_FLAGS>(m, "ACCELERATOR_FLAGS", nb::is_arithmetic())
+  enum_<ACCELERATOR_FLAGS>(m, "ACCELERATOR_FLAGS", nb::is_flag())
     .value(PY_ENUM(ACCELERATOR_FLAGS::FVIRTKEY))
     .value(PY_ENUM(ACCELERATOR_FLAGS::FNOINVERT))
     .value(PY_ENUM(ACCELERATOR_FLAGS::FSHIFT))

@@ -51,7 +51,7 @@ void create<OptionalHeader>(nb::module_& m) {
     .value(PY_ENUM(OptionalHeader::SUBSYSTEM::XBOX))
     .value(PY_ENUM(OptionalHeader::SUBSYSTEM::WINDOWS_BOOT_APPLICATION));
 
-  enum_<OptionalHeader::DLL_CHARACTERISTICS>(opt_header, "DLL_CHARACTERISTICS", nb::is_arithmetic())
+  enum_<OptionalHeader::DLL_CHARACTERISTICS>(opt_header, "DLL_CHARACTERISTICS", nb::is_flag(), nb::is_arithmetic())
     .value(PY_ENUM(OptionalHeader::DLL_CHARACTERISTICS::HIGH_ENTROPY_VA))
     .value(PY_ENUM(OptionalHeader::DLL_CHARACTERISTICS::DYNAMIC_BASE))
     .value(PY_ENUM(OptionalHeader::DLL_CHARACTERISTICS::FORCE_INTEGRITY))

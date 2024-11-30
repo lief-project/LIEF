@@ -231,8 +231,9 @@ void create<dsc::DyldSharedCache>(nb::module_& m) {
     .def("disassemble",
         [] (const DyldSharedCache& self, uint64_t addr) {
           auto insts = self.disassemble(addr);
-          return nb::make_iterator(
-            nb::type<DyldSharedCache>(), "instructions_iterator", insts);
+          return nb::make_iterator<nb::rv_policy::reference_internal>(
+            nb::type<DyldSharedCache>(), "instructions_iterator", insts
+          );
         }, nb::keep_alive<0, 1>(),
         R"doc(
         Disassemble instructions at the provided virtual address.

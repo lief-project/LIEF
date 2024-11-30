@@ -160,7 +160,9 @@ void create<dw::CompilationUnit>(nb::module_& m) {
     .def_prop_ro("types",
         [] (dw::CompilationUnit& self) {
           auto types = self.types();
-          return nb::make_iterator(nb::type<dw::CompilationUnit>(), "types_it", types);
+          return nb::make_iterator<nb::rv_policy::reference_internal>(
+            nb::type<dw::CompilationUnit>(), "types_it", types
+          );
         }, nb::keep_alive<0, 1>(),
         R"doc(
         Return an iterator over the different types defined in this
@@ -171,8 +173,9 @@ void create<dw::CompilationUnit>(nb::module_& m) {
     .def_prop_ro("functions",
         [] (dw::CompilationUnit& self) {
           auto functions = self.functions();
-          return nb::make_iterator(
-              nb::type<dw::CompilationUnit>(), "functions_it", functions);
+          return nb::make_iterator<nb::rv_policy::reference_internal>(
+            nb::type<dw::CompilationUnit>(), "functions_it", functions
+          );
         }, nb::keep_alive<0, 1>(),
         R"delim(
         Return an iterator over the functions implemented in this compilation
@@ -203,8 +206,9 @@ void create<dw::CompilationUnit>(nb::module_& m) {
     .def_prop_ro("imported_functions",
         [] (dw::CompilationUnit& self) {
           auto imported_functions = self.imported_functions();
-          return nb::make_iterator(
-              nb::type<dw::CompilationUnit>(), "functions_it", imported_functions);
+          return nb::make_iterator<nb::rv_policy::reference_internal>(
+            nb::type<dw::CompilationUnit>(), "functions_it", imported_functions
+          );
         }, nb::keep_alive<0, 1>(),
         R"delim(
         Return an iterator over the functions **imported** in this compilation
@@ -230,7 +234,7 @@ void create<dw::CompilationUnit>(nb::module_& m) {
     .def_prop_ro("variables",
         [] (dw::CompilationUnit& self) {
           auto variables = self.variables();
-          return nb::make_iterator(
+          return nb::make_iterator<nb::rv_policy::reference_internal>(
               nb::type<dw::CompilationUnit>(), "vars_it", variables);
         }, nb::keep_alive<0, 1>(),
         R"delim(

@@ -93,7 +93,9 @@ void create<dw::types::ClassLike>(nb::module_& m) {
     .def_prop_ro("functions",
         [] (dw::types::ClassLike& self) {
           auto funcs = self.functions();
-          return nb::make_iterator(nb::type<dw::types::ClassLike>(), "functions_it", funcs);
+          return nb::make_iterator<nb::rv_policy::reference_internal>(
+            nb::type<dw::types::ClassLike>(), "functions_it", funcs
+          );
         }, nb::keep_alive<0, 1>(),
         R"doc(Iterator over the functions defined by the class-like.)doc"_doc
     )

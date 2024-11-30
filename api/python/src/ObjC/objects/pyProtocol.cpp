@@ -24,7 +24,9 @@ void create<objc::Protocol>(nb::module_& m) {
     .def_prop_ro("optional_methods",
       [] (objc::Protocol& self) {
         auto methods = self.optional_methods();
-        return nb::make_iterator(nb::type<objc::Protocol>(), "optional_methods_it", methods);
+        return nb::make_iterator<nb::rv_policy::reference_internal>(
+          nb::type<objc::Protocol>(), "optional_methods_it", methods
+        );
       }, nb::keep_alive<0, 1>(),
       R"doc(
       Iterator over the methods that could be overridden
@@ -33,7 +35,9 @@ void create<objc::Protocol>(nb::module_& m) {
     .def_prop_ro("required_methods",
       [] (objc::Protocol& self) {
         auto methods = self.required_methods();
-        return nb::make_iterator(nb::type<objc::Protocol>(), "required_methods_it", methods);
+        return nb::make_iterator<nb::rv_policy::reference_internal>(
+          nb::type<objc::Protocol>(), "required_methods_it", methods
+        );
       }, nb::keep_alive<0, 1>(),
       R"doc(
       Iterator over the methods of this protocol that must be implemented
@@ -42,7 +46,9 @@ void create<objc::Protocol>(nb::module_& m) {
     .def_prop_ro("properties",
       [] (objc::Protocol& self) {
         auto props = self.properties();
-        return nb::make_iterator(nb::type<objc::Protocol>(), "properties_it", props);
+        return nb::make_iterator<nb::rv_policy::reference_internal>(
+          nb::type<objc::Protocol>(), "properties_it", props
+        );
       }, nb::keep_alive<0, 1>(),
       R"doc(
       Iterator over the properties defined in this protocol

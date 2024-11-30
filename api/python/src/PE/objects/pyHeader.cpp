@@ -60,7 +60,7 @@ void create<Header>(nb::module_& m) {
     .value(PY_ENUM(Header::MACHINE_TYPES::THUMB))
     .value(PY_ENUM(Header::MACHINE_TYPES::WCEMIPSV2));
 
-  enum_<Header::CHARACTERISTICS>(hdr, "CHARACTERISTICS", nb::is_arithmetic())
+  enum_<Header::CHARACTERISTICS>(hdr, "CHARACTERISTICS", nb::is_flag())
     .value(PY_ENUM(Header::CHARACTERISTICS::RELOCS_STRIPPED))
     .value(PY_ENUM(Header::CHARACTERISTICS::EXECUTABLE_IMAGE))
     .value(PY_ENUM(Header::CHARACTERISTICS::LINE_NUMS_STRIPPED))

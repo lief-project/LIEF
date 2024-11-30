@@ -71,7 +71,7 @@ void create<Segment>(nb::module_& m) {
   #undef ENTRY
 
   #define ENTRY(X) .value(to_string(Segment::FLAGS::X), Segment::FLAGS::X)
-  enum_<Segment::FLAGS>(seg, "FLAGS", nb::is_arithmetic())
+  enum_<Segment::FLAGS>(seg, "FLAGS", nb::is_flag())
     ENTRY(R)
     ENTRY(W)
     ENTRY(X)

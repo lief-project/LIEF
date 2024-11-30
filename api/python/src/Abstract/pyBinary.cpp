@@ -150,7 +150,7 @@ void create<Binary>(nb::module_& m) {
           return imported_libraries_encoded;
         },
         "Return binary's imported libraries (name)"_doc,
-        "(self) -> list[Union[str,bytes]]"_p)
+        nb::sig("def libraries(self) -> list[Union[str,bytes]]"))
 
     .def_prop_ro("symbols",
         nb::overload_cast<>(&Binary::symbols),
@@ -247,7 +247,7 @@ void create<Binary>(nb::module_& m) {
         R"delim(
         Return the abstract representation of the current binary (:class:`lief.Binary`)
         )delim"_doc,
-        "abstract(self) -> lief.Binary"_p,
+        nb::sig("def abstract(self) -> lief.Binary"),
         nb::rv_policy::reference_internal)
 
     .def_prop_ro("concrete",
@@ -260,7 +260,7 @@ void create<Binary>(nb::module_& m) {
 
         See also: :attr:`lief.Binary.abstract`
         )delim"_doc,
-        "concrete(self) -> lief.ELF.Binary | lief.PE.Binary | lief.MachO.Binary"_p,
+        nb::sig("def concrete(self) -> lief.ELF.Binary | lief.PE.Binary | lief.MachO.Binary"),
         nb::rv_policy::reference)
 
     .def_prop_ro("ctor_functions",
@@ -289,8 +289,9 @@ void create<Binary>(nb::module_& m) {
 
     .def("disassemble", [] (const Binary& self, uint64_t address) {
           auto insts = self.disassemble(address);
-          return nb::make_iterator(
-              nb::type<Binary>(), "instructions_it", insts);
+          return nb::make_iterator<nb::rv_policy::reference_internal>(
+            nb::type<Binary>(), "instructions_it", insts
+          );
       }, "address"_a, nb::keep_alive<0, 1>(),
       R"doc(
       Disassemble code starting a the given virtual address.
@@ -307,7 +308,7 @@ void create<Binary>(nb::module_& m) {
 
     .def("disassemble", [] (const Binary& self, uint64_t address, size_t size) {
           auto insts = self.disassemble(address, size);
-          return nb::make_iterator(
+          return nb::make_iterator<nb::rv_policy::reference_internal>(
               nb::type<Binary>(), "instructions_it", insts);
       }, "address"_a, "size"_a, nb::keep_alive<0, 1>(),
       R"doc(
@@ -326,7 +327,7 @@ void create<Binary>(nb::module_& m) {
 
     .def("disassemble", [] (const Binary& self, const std::string& function) {
           auto insts = self.disassemble(function);
-          return nb::make_iterator(
+          return nb::make_iterator<nb::rv_policy::reference_internal>(
               nb::type<Binary>(), "instructions_it", insts);
       }, "function_name"_a, nb::keep_alive<0, 1>(),
       R"doc(
@@ -348,7 +349,7 @@ void create<Binary>(nb::module_& m) {
             reinterpret_cast<const uint8_t*>(buffer.c_str()),
             buffer.size(), address
           );
-          return nb::make_iterator(
+          return nb::make_iterator<nb::rv_policy::reference_internal>(
               nb::type<Binary>(), "instructions_it", insts);
       }, "buffer"_a, "address"_a = 0, nb::keep_alive<0, 1>(), nb::keep_alive<0, 2>(),
       R"doc(

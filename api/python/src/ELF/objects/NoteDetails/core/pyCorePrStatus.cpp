@@ -220,7 +220,6 @@ void create<CorePrStatus>(nb::module_& m) {
     ENTRY(X13)
     ENTRY(X14)
     ENTRY(X15)
-    ENTRY(X15)
     ENTRY(X16)
     ENTRY(X17)
     ENTRY(X18)

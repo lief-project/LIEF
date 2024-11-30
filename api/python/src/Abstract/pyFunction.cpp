@@ -37,7 +37,7 @@ void create<Function>(nb::module_& m) {
       Class which represents a Function in an executable file format.
       )delim"_doc);
 
-  enum_<Function::FLAGS>(pyfunction, "FLAGS", nb::is_arithmetic())
+  enum_<Function::FLAGS>(pyfunction, "FLAGS", nb::is_flag())
     .value(PY_ENUM(Function::FLAGS::NONE))
     .value(PY_ENUM(Function::FLAGS::IMPORTED))
     .value(PY_ENUM(Function::FLAGS::EXPORTED))

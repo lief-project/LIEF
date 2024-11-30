@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys
+import pytest
 
 import lief
 from utils import get_sample
@@ -15,3 +16,11 @@ def test_abstract_concrete():
     assert isinstance(lief.parse(filepath).abstract.concrete, lief.PE.Binary)
     assert isinstance(lief.parse(filepath).concrete.abstract, lief.Binary)
     assert isinstance(lief.parse(filepath).concrete.abstract.concrete, lief.PE.Binary)
+
+def test_invalid_enum():
+    """From: issues/1128 """
+    with pytest.raises(ValueError) as error:
+        lief.ELF.Header.VERSION.from_value(2)
+
+    assert lief.ELF.Header.VERSION.from_value(0) == lief.ELF.Header.VERSION.NONE
+

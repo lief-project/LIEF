@@ -20,6 +20,8 @@
 
 #include "MachO/pyMachO.hpp"
 
+#include "nanobind/stl/string.h"
+
 namespace LIEF::MachO::py {
 
 template<>
