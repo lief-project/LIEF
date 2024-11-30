@@ -268,19 +268,19 @@ jobs:
             -e LIEF_S3_SECRET=$LIEF_S3_SECRET                 \
             liefproject/deploy                                \
             python3 /src/.github/deploy.py /runner_tmp/artifacts
-  documentation:
-    needs: [deploy]
-    runs-on: ubuntu-latest
-    container:
-      image: liefproject/manylinux_2_28_x86_64
-      env:
-        CIRCLE_CI_URL: "https://circleci.com/api/v2/project/gh/lief-project/doc/pipeline"
-        CIRCLE_CI_TOKEN: ${{ secrets.CIRCLE_CI_TOKEN }}
-    steps:
-      - name: Trigger documentation
-        if: github.ref == 'refs/heads/main'
-        run: |
-          curl --request POST --url ${CIRCLE_CI_URL}       \
-               --header "Circle-Token: ${CIRCLE_CI_TOKEN}" \
-               --header 'content-type: application/json'   \
-               --data '{"parameters":{"lief-branch":"main"}}'
+  #documentation:
+  #  needs: [deploy]
+  #  runs-on: ubuntu-latest
+  #  container:
+  #    image: liefproject/manylinux_2_28_x86_64
+  #    env:
+  #      CIRCLE_CI_URL: "https://circleci.com/api/v2/project/gh/lief-project/doc/pipeline"
+  #      CIRCLE_CI_TOKEN: ${{ secrets.CIRCLE_CI_TOKEN }}
+  #  steps:
+  #    - name: Trigger documentation
+  #      if: github.ref == 'refs/heads/main'
+  #      run: |
+  #        curl --request POST --url ${CIRCLE_CI_URL}       \
+  #             --header "Circle-Token: ${CIRCLE_CI_TOKEN}" \
+  #             --header 'content-type: application/json'   \
+  #             --data '{"parameters":{"lief-branch":"main"}}'
