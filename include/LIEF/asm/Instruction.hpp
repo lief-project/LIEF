@@ -22,6 +22,10 @@
 #include <memory>
 #include <string>
 
+namespace llvm {
+class MCInst;
+}
+
 namespace LIEF {
 namespace assembly {
 
@@ -155,6 +159,12 @@ class LIEF_API Instruction {
   /// Given a is_branch() instruction, try to evaluate the address of the
   /// destination.
   result<uint64_t> branch_target() const;
+
+  /// Return the underlying llvm::MCInst implementation.
+  ///
+  /// \warning Because of ABI compatibility, this MCInst can **only be used**
+  ///          with the **same** version of LLVM used by LIEF.
+  const llvm::MCInst& mcinst() const;
 
   /// This function can be used to **down cast** an Instruction instance:
   ///

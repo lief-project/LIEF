@@ -191,6 +191,11 @@ bool Instruction::is_syscall() const {
   return false;
 }
 
+const llvm::MCInst& Instruction::mcinst() const {
+  static uintptr_t FAKE = 0;
+  return *reinterpret_cast<llvm::MCInst*>(&FAKE);
+}
+
 bool Instruction::is_memory_access() const { return false; }
 bool Instruction::is_move_reg() const { return false; }
 bool Instruction::is_add() const { return false; }
