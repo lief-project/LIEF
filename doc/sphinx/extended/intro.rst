@@ -159,6 +159,7 @@ Then, you can enjoy all extended features in Rust:
 LIEF Extended & LLVM
 ********************
 
+
 LIEF extended relies on LLVM for some of its functionalities like the
 :ref:`disassembler <extended-disassembler>` and the
 :ref:`DWARF <extended-dwarf>`/:ref:`PDB <extended-pdb>` support.
@@ -166,6 +167,10 @@ LIEF extended relies on LLVM for some of its functionalities like the
 The LLVM version used by LIEF is fully based on the upstream version and integrated
 into LIEF extended such that users don't have to deal with the compilation of LLVM
 or its integration.
+
+.. note::
+
+  LIEF is currently using LLVM |lief-llvm-version|.
 
 Whenever it's possible and suitable, bug fixes and enhancements have been
 PR-submitted to the LLVM project:
