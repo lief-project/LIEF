@@ -45,12 +45,7 @@ You can find the differences between both versions in this table:
 | :ref:`Assembler <extended-assembler>`       | :xmark:`mark`     | :fa-check:`check` | Support based on LLVM :ref:`[1] <extended-llvm>`   |
 +---------------------------------------------+-------------------+-------------------+----------------------------------------------------+
 
-To access the extended version, you must oauth-login with GitHub here: |lief-extended-url|.
-
-.. warning::
-
-  LIEF extended is currently in a closed-beta state, please first reach out at
-  |lief-extended-email| to get the access.
+To access the extended version, you must **oauth-login** with **GitHub** here: |lief-extended-url|.
 
 Once logged in, you can download the package of your choice
 (e.g. LIEF Extended - Python 3.10 for macOS arm64)
