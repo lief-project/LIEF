@@ -309,6 +309,12 @@ impl DyldSharedCache {
     }
 
     /// Convert the given virtual address into an offset.
+    /// <div class="warning">
+    /// If the shared cache contains multiple subcaches,
+    /// this function needs to be called on the targeted subcache.
+    /// </div>
+    ///
+    /// See: [`DyldSharedCache::cache_for_address`]
     pub fn va_to_offset(&self, address: u64) -> Result<u64, Error> {
         to_result!(ffi::dsc_DyldSharedCache::va_to_offset, &self, address);
     }

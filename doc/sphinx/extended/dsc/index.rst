@@ -56,7 +56,7 @@ From this |lief-dsc-dyldsharedcache| object, we can inspect the embedded
 
         dyld_cache: lief.dsc.DylibSharedCache = ...
 
-        for dylib in dyld_cache.libraries():
+        for dylib in dyld_cache.libraries:
             print("0x{:016x}: {}".format(dylib.address, dylib.path))
 
     .. tab:: :fa:`regular fa-file-code` C++

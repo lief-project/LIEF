@@ -219,6 +219,10 @@ class LIEF_API DyldSharedCache {
   std::unique_ptr<DyldSharedCache> find_subcache(const std::string& filename) const;
 
   /// Convert the given virtual address into an offset.
+  ///
+  /// \warning If the shared cache contains multiple subcaches,
+  ///          this function needs to be called on the targeted subcache.
+  ///          See cache_for_address() to find the associated subcache.
   result<uint64_t> va_to_offset(uint64_t va) const;
 
   /// Return the stream associated with this dyld shared cache
