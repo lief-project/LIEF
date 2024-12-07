@@ -175,6 +175,8 @@ or its integration.
 Whenever it's possible and suitable, bug fixes and enhancements have been
 PR-submitted to the LLVM project:
 
+- :llvm-pr:`119057`
+- :llvm-pr:`119056`
 - :llvm-pr:`116480`
 - :llvm-pr:`116479`
 - :llvm-pr:`97954`
