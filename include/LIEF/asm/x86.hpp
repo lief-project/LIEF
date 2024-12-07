@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ASM_AARCH64_H
-#define LIEF_ASM_AARCH64_H
-#include <LIEF/asm/aarch64/Instruction.hpp>
-#include <LIEF/asm/aarch64/opcodes.hpp>
-#include <LIEF/asm/aarch64/registers.hpp>
+#ifndef LIEF_ASM_X86_H
+#define LIEF_ASM_X86_H
+#include <LIEF/asm/x86/Instruction.hpp>
+#include <LIEF/asm/x86/opcodes.hpp>
+#include <LIEF/asm/x86/registers.hpp>
+#include <LIEF/asm/x86/operands.hpp>
 #endif

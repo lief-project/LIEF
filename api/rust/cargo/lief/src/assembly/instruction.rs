@@ -2,9 +2,13 @@
 
 use lief_ffi as ffi;
 
+use bitflags::bitflags;
+
 use crate::to_slice;
 
 use crate::common::FromFFI;
+use crate::Error;
+use crate::to_conv_result;
 
 use super::aarch64;
 use super::x86;
@@ -13,6 +17,16 @@ use super::mips;
 use super::powerpc;
 use super::riscv;
 use super::ebpf;
+
+bitflags! {
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+    pub struct MemoryAccess: u64 {
+        const NONE = 0;
+        const READ = 1 << 0;
+        const WRITE = 1 << 1;
+    }
+}
+
 
 /// This trait is shared by all [`Instructions`] supported by LIEF
 pub trait Instruction {
@@ -67,6 +81,91 @@ pub trait Instruction {
     /// True if the instruction is a syscall
     fn is_syscall(&self) -> bool {
         self.as_generic().is_syscall()
+    }
+
+    /// True if the instruction performs a memory access
+    fn is_memory_access(&self) -> bool {
+        self.as_generic().is_memory_access()
+    }
+
+    /// True if the instruction is a register to register move.
+    fn is_move_reg(&self) -> bool {
+        self.as_generic().is_move_reg()
+    }
+
+    /// True if the instruction performs an arithmetic addition.
+    fn is_add(&self) -> bool {
+        self.as_generic().is_add()
+    }
+
+    /// True if the instruction is a trap.
+    ///
+    /// - On `x86/x86-64` this includes the `ud1/ud2` instructions
+    /// - On `AArch64` this includes the `brk/udf` instructions
+    fn is_trap(&self) -> bool {
+        self.as_generic().is_trap()
+    }
+
+    /// True if the instruction prevents executing the instruction
+    /// that immediatly follows the current. This includes return
+    /// or unconditional branch instructions
+    fn is_barrier(&self) -> bool {
+        self.as_generic().is_barrier()
+    }
+
+    /// True if the instruction is a return
+    fn is_return(&self) -> bool {
+        self.as_generic().is_return()
+    }
+
+    /// True if the instruction is and indirect branch.
+    ///
+    /// This includes instructions that branch through a register (e.g. `jmp rax`,
+    /// `br x1`).
+    fn is_indirect_branch(&self) -> bool {
+        self.as_generic().is_indirect_branch()
+    }
+
+    /// True if the instruction is **conditionally** jumping to the next
+    /// instruction **or** an instruction into some other basic block.
+    fn is_conditional_branch(&self) -> bool {
+        self.as_generic().is_conditional_branch()
+    }
+
+    /// True if the instruction is jumping (**unconditionally**) to some other
+    /// basic block.
+    fn is_unconditional_branch(&self) -> bool {
+        self.as_generic().is_unconditional_branch()
+    }
+
+    /// True if the instruction is a comparison
+    fn is_compare(&self) -> bool {
+        self.as_generic().is_compare()
+    }
+
+    /// True if the instruction is moving an immediate
+    fn is_move_immediate(&self) -> bool {
+        self.as_generic().is_move_immediate()
+    }
+
+    /// True if the instruction is doing a bitcast
+    fn is_bitcast(&self) -> bool {
+        self.as_generic().is_bitcast()
+    }
+
+    /// Memory access flags
+    fn memory_access(&self) -> MemoryAccess {
+        MemoryAccess::from_bits_truncate(self.as_generic().memory_access())
+    }
+
+    /// Given a [`Instruction::is_branch`] instruction, try to evaluate the address of the
+    /// destination.
+    fn branch_target(&self) -> Result<u64, Error> {
+        to_conv_result!(
+             ffi::asm_Instruction::branch_target,
+             self.as_generic(),
+             |value| value
+        );
     }
 }
 

@@ -3,4 +3,7 @@ target_sources(pyLIEF PRIVATE
   pyInstruction.cpp
   pyOpcode.cpp
   pyRegister.cpp
+  pyOperand.cpp
 )
+
+add_subdirectory(operands)

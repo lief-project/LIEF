@@ -188,7 +188,7 @@ A disassembling API is also provided for the |lief-dsc-dyldsharedcache| object:
 
         dyld_cache: lief.dsc.DylibSharedCache = lief.dsc.load("macos-15.0.1/")
 
-        for inst in dyld_cache:
+        for inst in dyld_cache.disassemble(0x1886f4a44):
             print(inst)
 
     .. tab:: :fa:`regular fa-file-code` C++

@@ -16,6 +16,7 @@
 #define LIEF_ASM_INST_H
 #include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
+#include "LIEF/errors.hpp"
 
 #include <ostream>
 #include <memory>
@@ -67,6 +68,14 @@ class LIEF_API Instruction {
     std::unique_ptr<details::InstructionIt> impl_;
   };
   public:
+  /// Memory operation flags
+  enum class MemoryAccess : uint8_t {
+    NONE  = 0,
+    READ  = 1 << 0,
+    WRITE = 1 << 1,
+    READ_WRITE = READ | WRITE,
+  };
+
   /// Address of the instruction
   uint64_t address() const;
 
@@ -93,6 +102,59 @@ class LIEF_API Instruction {
 
   /// True if the instruction is a syscall
   bool is_syscall() const;
+
+  /// True if the instruction performs a memory access
+  bool is_memory_access() const;
+
+  /// True if the instruction is a register to register move.
+  bool is_move_reg() const;
+
+  /// True if the instruction performs an arithmetic addition.
+  bool is_add() const;
+
+  /// True if the instruction is a trap.
+  ///
+  /// - On `x86/x86-64` this includes the `ud1/ud2` instructions
+  /// - On `AArch64` this includes the `brk/udf` instructions
+  bool is_trap() const;
+
+  /// True if the instruction prevents executing the instruction
+  /// that immediatly follows the current. This includes return
+  /// or unconditional branch instructions
+  bool is_barrier() const;
+
+  /// True if the instruction is a return
+  bool is_return() const;
+
+  /// True if the instruction is and indirect branch.
+  ///
+  /// This includes instructions that branch through a register (e.g. `jmp rax`,
+  /// `br x1`).
+  bool is_indirect_branch() const;
+
+  /// True if the instruction is **conditionally** jumping to the next
+  /// instruction **or** an instruction into some other basic block.
+  bool is_conditional_branch() const;
+
+  /// True if the instruction is jumping (**unconditionally**) to some other
+  /// basic block.
+  bool is_unconditional_branch() const;
+
+  /// True if the instruction is a comparison
+  bool is_compare() const;
+
+  /// True if the instruction is moving an immediate
+  bool is_move_immediate() const;
+
+  /// True if the instruction is doing a bitcast
+  bool is_bitcast() const;
+
+  /// Memory access flags
+  MemoryAccess memory_access() const;
+
+  /// Given a is_branch() instruction, try to evaluate the address of the
+  /// destination.
+  result<uint64_t> branch_target() const;
 
   /// This function can be used to **down cast** an Instruction instance:
   ///

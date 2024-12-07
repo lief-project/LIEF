@@ -10,3 +10,28 @@ Opcodes
 *******
 
 See ``LIEF::assembly::x86::OPCODE`` in ``include/asm/x86/opcodes.hpp``
+
+Operands
+********
+
+.. doxygenclass:: LIEF::assembly::x86::Operand
+
+Immediate
+~~~~~~~~~
+
+.. doxygenclass:: LIEF::assembly::x86::operands::Immediate
+
+Register
+~~~~~~~~
+
+.. doxygenclass:: LIEF::assembly::x86::operands::Register
+
+Memory
+~~~~~~
+
+.. doxygenclass:: LIEF::assembly::x86::operands::Memory
+
+PCRelative
+~~~~~~~~~~
+
+.. doxygenclass:: LIEF::assembly::x86::operands::PCRelative

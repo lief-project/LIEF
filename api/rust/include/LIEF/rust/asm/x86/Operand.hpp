@@ -13,16 +13,16 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/rust/asm/Instruction.hpp"
-#include "LIEF/rust/asm/Engine.hpp"
+#include "LIEF/asm/x86/Operand.hpp"
 
-#include "LIEF/rust/asm/aarch64/Instruction.hpp"
-#include "LIEF/rust/asm/x86/Instruction.hpp"
-#include "LIEF/rust/asm/x86/operands.hpp"
-#include "LIEF/rust/asm/x86/operands/Register.hpp"
+#include "LIEF/rust/Mirror.hpp"
 
-#include "LIEF/rust/asm/arm/Instruction.hpp"
-#include "LIEF/rust/asm/powerpc/Instruction.hpp"
-#include "LIEF/rust/asm/mips/Instruction.hpp"
-#include "LIEF/rust/asm/riscv/Instruction.hpp"
-#include "LIEF/rust/asm/ebpf/Instruction.hpp"
+class asm_x86_Operand : public Mirror<LIEF::assembly::x86::Operand> {
+  public:
+  using lief_t = LIEF::assembly::x86::Operand;
+  using Mirror::Mirror;
+
+  std::string to_string() const {
+    return get().to_string();
+  }
+};

@@ -13,34 +13,23 @@
  * limitations under the License.
  */
 #pragma once
-#include <LIEF/asm/x86/Instruction.hpp>
+#include <LIEF/asm/x86/operands/Memory.hpp>
 
-#include "LIEF/rust/asm/Instruction.hpp"
 #include "LIEF/rust/asm/x86/Operand.hpp"
 #include "LIEF/rust/helpers.hpp"
-#include "LIEF/rust/Iterator.hpp"
 
-class asm_x86_Instruction : public asm_Instruction {
+class asm_x86_operands_Memory : public asm_x86_Operand {
   public:
-  using lief_t = LIEF::assembly::x86::Instruction;
+  using lief_t = LIEF::assembly::x86::operands::Memory;
 
-  class it_operands :
-      public ForwardIterator<asm_x86_Operand, LIEF::assembly::x86::Operand::Iterator>
-  {
-    public:
-    it_operands(const asm_x86_Instruction::lief_t& src)
-      : ForwardIterator(src.operands()) { }
+  uint64_t base() const { return to_int(impl().base()); }
+  uint64_t scaled_register() const { return to_int(impl().scaled_register()); }
+  uint64_t segment_register() const { return to_int(impl().segment_register()); }
 
-    auto next() { return ForwardIterator::next(); }
-  };
+  auto scale() const { return impl().scale(); }
+  auto displacement() const { return impl().displacement(); }
 
-  uint64_t opcode() const { return to_int(impl().opcode()); }
-
-  auto operands() const {
-    return std::make_unique<it_operands>(impl());
-  }
-
-  static bool classof(const asm_Instruction& inst) {
+  static bool classof(const asm_x86_Operand& inst) {
     return lief_t::classof(&inst.get());
   }
 

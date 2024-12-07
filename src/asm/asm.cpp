@@ -19,7 +19,13 @@
 #include "LIEF/asm/aarch64/registers.hpp"
 
 #include "LIEF/asm/x86/Instruction.hpp"
+#include "LIEF/asm/x86/Operand.hpp"
 #include "LIEF/asm/x86/registers.hpp"
+
+#include "LIEF/asm/x86/operands/Immediate.hpp"
+#include "LIEF/asm/x86/operands/Register.hpp"
+#include "LIEF/asm/x86/operands/PCRelative.hpp"
+#include "LIEF/asm/x86/operands/Memory.hpp"
 
 #include "LIEF/asm/arm/Instruction.hpp"
 #include "LIEF/asm/arm/registers.hpp"
@@ -83,6 +89,11 @@ class Instruction {};
 class InstructionIt {};
 
 class Engine {};
+}
+
+namespace x86::details {
+class Operand {};
+class OperandIt {};
 }
 
 // ----------------------------------------------------------------------------
@@ -169,6 +180,24 @@ bool Instruction::is_syscall() const {
   return false;
 }
 
+bool Instruction::is_memory_access() const { return false; }
+bool Instruction::is_move_reg() const { return false; }
+bool Instruction::is_add() const { return false; }
+bool Instruction::is_trap() const { return false; }
+bool Instruction::is_barrier() const { return false; }
+bool Instruction::is_return() const { return false; }
+bool Instruction::is_indirect_branch() const { return false; }
+bool Instruction::is_conditional_branch() const { return false; }
+bool Instruction::is_unconditional_branch() const { return false; }
+bool Instruction::is_compare() const { return false; }
+bool Instruction::is_move_immediate() const { return false; }
+bool Instruction::is_bitcast() const { return false; }
+Instruction::MemoryAccess Instruction::memory_access() const { return MemoryAccess::NONE; }
+
+result<uint64_t> Instruction::branch_target() const {
+  return make_error_code(lief_errors::not_implemented);
+}
+
 // ----------------------------------------------------------------------------
 // asm/Engine.hpp
 // ----------------------------------------------------------------------------
@@ -232,6 +261,10 @@ bool x86::Instruction::classof(const assembly::Instruction*) {
 
 const char* x86::get_register_name(REG) {
   return "";
+}
+
+x86::Instruction::operands_it x86::Instruction::operands() const {
+  return make_empty_iterator<x86::Operand>();
 }
 
 // ----------------------------------------------------------------------------
@@ -309,5 +342,99 @@ const char* powerpc::get_register_name(REG) {
   return "";
 }
 
+// ----------------------------------------------------------------------------
+// asm/x86/Operand.hpp
+// ----------------------------------------------------------------------------
+x86::Operand::Iterator::Iterator() :
+  impl_(nullptr)
+{}
+
+x86::Operand::Iterator::Iterator(std::unique_ptr<details::OperandIt>) :
+  impl_(nullptr)
+{}
+
+x86::Operand::Iterator::Iterator(const Iterator&) :
+  impl_(nullptr)
+{}
+
+x86::Operand::Iterator&  x86::Operand::Iterator::operator=(const Iterator&) {
+  return *this;
+}
+
+x86::Operand::Iterator::Iterator(Iterator&&) noexcept = default;
+x86::Operand::Iterator& x86::Operand::Iterator::operator=(Iterator&&) noexcept = default;
+
+x86::Operand::Iterator& x86::Operand::Iterator::operator++() {
+  return *this;
+}
+
+std::unique_ptr<x86::Operand> x86::Operand::Iterator::operator*() const {
+  return nullptr;
+}
+
+bool x86::operator==(const x86::Operand::Iterator&, const x86::Operand::Iterator&) {
+  return true;
+}
+
+x86::Operand::Iterator::~Iterator() = default;
+
+x86::Operand::~Operand() = default;
+x86::Operand::Operand(std::unique_ptr<details::Operand>/*impl*/) :
+  impl_(nullptr)
+{}
+
+std::string x86::Operand::to_string() const {
+  return "";
+}
+
+std::unique_ptr<x86::Operand> x86::Operand::create(std::unique_ptr<details::Operand> /*impl*/) {
+  return nullptr;
+}
+
+// ----------------------------------------------------------------------------
+// asm/x86/Memory.hpp
+// ----------------------------------------------------------------------------
+bool x86::operands::Memory::classof(const Operand*) { return false; }
+
+x86::REG x86::operands::Memory::base() const { return x86::REG::NoRegister; }
+
+x86::REG x86::operands::Memory::scaled_register() const {
+  return x86::REG::NoRegister;
+}
+
+x86::REG x86::operands::Memory::segment_register() const {
+  return x86::REG::NoRegister;
+}
+
+uint64_t x86::operands::Memory::scale() const { return 0; }
+
+int64_t x86::operands::Memory::displacement() const { return 0; }
+
+// ----------------------------------------------------------------------------
+// asm/x86/PCRelative.hpp
+// ----------------------------------------------------------------------------
+bool x86::operands::PCRelative::classof(const Operand*) { return false; }
+
+int64_t x86::operands::PCRelative::value() const {
+  return 0;
+}
+
+// ----------------------------------------------------------------------------
+// asm/x86/Register.hpp
+// ----------------------------------------------------------------------------
+bool x86::operands::Register::classof(const Operand*) { return false; }
+
+x86::REG x86::operands::Register::value() const {
+  return REG::NoRegister;
+}
+
+// ----------------------------------------------------------------------------
+// asm/x86/Immediate.hpp
+// ----------------------------------------------------------------------------
+bool x86::operands::Immediate::classof(const Operand*) { return false; }
+
+int64_t x86::operands::Immediate::value() const {
+  return 0;
+}
 }
 }

@@ -706,6 +706,26 @@ include_cpp! {
     /* X86 { */
         generate!("asm_x86_Instruction")
         block_constructors!("asm_x86_Instruction")
+
+        generate!("asm_x86_Instruction_it_operands")
+        block_constructors!("asm_x86_Instruction_it_operands")
+
+        /* Operands { */
+            generate!("asm_x86_Operand")
+            block_constructors!("asm_x86_Operand")
+
+            generate!("asm_x86_operands_Register")
+            block_constructors!("asm_x86_operands_Register")
+
+            generate!("asm_x86_operands_Memory")
+            block_constructors!("asm_x86_operands_Memory")
+
+            generate!("asm_x86_operands_Immediate")
+            block_constructors!("asm_x86_operands_Immediate")
+
+            generate!("asm_x86_operands_PCRelative")
+            block_constructors!("asm_x86_operands_PCRelative")
+        /* } */
     /* } X86 */
 
     /* Mips { */

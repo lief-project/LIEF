@@ -1,5 +1,7 @@
 mod utils;
 use lief;
+use lief::assembly::x86;
+use lief::assembly::x86::Operand;
 use lief::assembly::{Instruction, Instructions};
 use lief::dwarf::types::{Base, ClassLike, DwarfType};
 use lief::dwarf::{Parameter, Scope, Type};
@@ -8,8 +10,36 @@ use lief::generic::{Binary, Section};
 use std::path::{Path, PathBuf};
 
 fn process_instruction(inst: &lief::assembly::Instructions) {
-    format!("{} {} {} {}", inst.address(), inst.size(), inst.raw().len(), inst.mnemonic());
+    //println!("{} {:#02x?}", inst.to_string(), inst.raw());
+    println!("{}", inst.to_string());
+    format!(
+        "{} {} {} {}",
+        inst.address(),
+        inst.size(),
+        inst.raw().len(),
+        inst.mnemonic()
+    );
     format!("{}", inst.to_string());
+    format!(
+        "{:?} {:?} {:?} {:?} {:?} {:?} {:?} {:?} {:?} {:?} {:?} {:?} {:?} {:?} {:?} {:?} {:?}",
+        inst.is_call(),
+        inst.is_syscall(),
+        inst.is_terminator(),
+        inst.is_branch(),
+        inst.is_memory_access(),
+        inst.is_move_reg(),
+        inst.is_add(),
+        inst.is_trap(),
+        inst.is_barrier(),
+        inst.is_return(),
+        inst.is_indirect_branch(),
+        inst.is_conditional_branch(),
+        inst.is_compare(),
+        inst.is_move_immediate(),
+        inst.is_bitcast(),
+        inst.memory_access(),
+        inst.branch_target().unwrap_or(0)
+    );
     match inst {
         Instructions::AArch64(variant) => {
             format!("{:?}", variant.opcode());
@@ -18,7 +48,36 @@ fn process_instruction(inst: &lief::assembly::Instructions) {
             format!("{:?}", variant.opcode());
         }
         Instructions::X86(variant) => {
+            //println!("{}", inst.to_string());
             format!("{:?}", variant.opcode());
+            for op in variant.operands() {
+                format!("{}", op.to_string());
+                match op {
+                    x86::Operands::Reg(reg) => {
+                        format!("{:?}", reg.value());
+                    }
+
+                    x86::Operands::Imm(imm) => {
+                        format!("{}", imm.value());
+                    }
+
+                    x86::Operands::PCRelative(pcr) => {
+                        format!("{}", pcr.value());
+                    }
+
+                    x86::Operands::Mem(mem) => {
+                        format!(
+                            "{:?}{:?}{:?}{}{}",
+                            mem.base(),
+                            mem.scaled_register(),
+                            mem.segment_register(),
+                            mem.scale(),
+                            mem.displacement()
+                        );
+                    }
+                    x86::Operands::Unknown(_) => {}
+                }
+            }
         }
         Instructions::Mips(variant) => {
             format!("{:?}", variant.opcode());
@@ -32,8 +91,7 @@ fn process_instruction(inst: &lief::assembly::Instructions) {
         Instructions::RiscV(variant) => {
             format!("{:?}", variant.opcode());
         }
-        Instructions::Generic(_) => {
-        }
+        Instructions::Generic(_) => {}
     }
 }
 
@@ -53,13 +111,13 @@ fn disa_from_address(name: &str, address: u64) {
             for inst in elf.disassemble_address(address) {
                 process_instruction(&inst);
             }
-        },
+        }
 
         lief::Binary::PE(pe) => {
             for inst in pe.disassemble_address(address) {
                 process_instruction(&inst);
             }
-        },
+        }
 
         lief::Binary::MachO(fat) => {
             for macho in fat.iter() {
@@ -67,10 +125,9 @@ fn disa_from_address(name: &str, address: u64) {
                     process_instruction(&inst);
                 }
             }
-        },
+        }
     }
 }
-
 
 fn disa_from_symbol(name: &str, symbol: &str) {
     let bin = get_binary(name);
@@ -80,13 +137,13 @@ fn disa_from_symbol(name: &str, symbol: &str) {
             for inst in elf.disassemble_symbol(symbol) {
                 process_instruction(&inst);
             }
-        },
+        }
 
         lief::Binary::PE(pe) => {
             for inst in pe.disassemble_symbol(symbol) {
                 process_instruction(&inst);
             }
-        },
+        }
 
         lief::Binary::MachO(fat) => {
             for macho in fat.iter() {
@@ -94,10 +151,9 @@ fn disa_from_symbol(name: &str, symbol: &str) {
                     process_instruction(&inst);
                 }
             }
-        },
+        }
     }
 }
-
 
 #[test]
 fn test_from_slice() {

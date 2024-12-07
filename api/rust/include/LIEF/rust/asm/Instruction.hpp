@@ -15,6 +15,8 @@
 #pragma once
 #include "LIEF/asm/Instruction.hpp"
 #include "LIEF/rust/Span.hpp"
+#include "LIEF/rust/helpers.hpp"
+#include "LIEF/rust/error.hpp"
 
 #include "LIEF/rust/Mirror.hpp"
 
@@ -41,5 +43,20 @@ class asm_Instruction : public Mirror<LIEF::assembly::Instruction> {
   auto is_branch() const { return get().is_branch(); }
 
   auto is_syscall() const { return get().is_syscall(); }
-
+  auto is_memory_access() const { return get().is_memory_access(); }
+  auto is_move_reg() const { return get().is_move_reg(); }
+  auto is_add() const { return get().is_add(); }
+  auto is_trap() const { return get().is_trap(); }
+  auto is_barrier() const { return get().is_barrier(); }
+  auto is_return() const { return get().is_return(); }
+  auto is_indirect_branch() const { return get().is_indirect_branch(); }
+  auto is_conditional_branch() const { return get().is_conditional_branch(); }
+  auto is_unconditional_branch() const { return get().is_unconditional_branch(); }
+  auto is_compare() const { return get().is_compare(); }
+  auto is_move_immediate() const { return get().is_move_immediate(); }
+  auto is_bitcast() const { return get().is_bitcast(); }
+  uint64_t memory_access() const { return to_int(get().memory_access()); }
+  uint64_t branch_target(uint32_t& err) const {
+    return details::make_error(get().branch_target(), err);
+  }
 };

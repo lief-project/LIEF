@@ -9,10 +9,10 @@ Architectures
   :maxdepth: 1
 
   arch/x86
-  arch/arm
   arch/aarch64
-  arch/ebpf
   arch/riscv
+  arch/arm
+  arch/ebpf
   arch/mips
   arch/powerpc
 

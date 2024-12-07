@@ -1,4 +1,4 @@
-/* Copyright 2022 - 2024 R. Thomas
+/* Copyright 2024 R. Thomas
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,22 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/rust/asm/Instruction.hpp"
-#include "LIEF/rust/asm/Engine.hpp"
+#include <LIEF/asm/x86/operands/PCRelative.hpp>
 
-#include "LIEF/rust/asm/aarch64/Instruction.hpp"
-#include "LIEF/rust/asm/x86/Instruction.hpp"
-#include "LIEF/rust/asm/x86/operands.hpp"
-#include "LIEF/rust/asm/x86/operands/Register.hpp"
+#include "LIEF/rust/asm/x86/Operand.hpp"
 
-#include "LIEF/rust/asm/arm/Instruction.hpp"
-#include "LIEF/rust/asm/powerpc/Instruction.hpp"
-#include "LIEF/rust/asm/mips/Instruction.hpp"
-#include "LIEF/rust/asm/riscv/Instruction.hpp"
-#include "LIEF/rust/asm/ebpf/Instruction.hpp"
+class asm_x86_operands_PCRelative : public asm_x86_Operand {
+  public:
+  using lief_t = LIEF::assembly::x86::operands::PCRelative;
+
+  auto value() const {
+    return impl().value();
+  }
+
+  static bool classof(const asm_x86_Operand& inst) {
+    return lief_t::classof(&inst.get());
+  }
+
+  private:
+  const lief_t& impl() const { return as<lief_t>(this); }
+};

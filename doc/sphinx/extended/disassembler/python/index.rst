@@ -8,8 +8,9 @@ Architectures
   :caption: <i class="fa-solid fa-microchip">&nbsp;</i>Architectures
   :maxdepth: 1
 
-  arch/arm
+  arch/x86
   arch/aarch64
+  arch/arm
   arch/ebpf
   arch/riscv
   arch/mips
