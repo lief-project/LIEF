@@ -701,6 +701,36 @@ include_cpp! {
     /* AArch64 { */
         generate!("asm_aarch64_Instruction")
         block_constructors!("asm_aarch64_Instruction")
+
+        generate!("asm_aarch64_Instruction_it_operands")
+        block_constructors!("asm_aarch64_Instruction_it_operands")
+
+        /* Operands { */
+            generate!("asm_aarch64_Operand")
+            block_constructors!("asm_aarch64_Operand")
+
+            generate!("asm_aarch64_operands_Register")
+            block_constructors!("asm_aarch64_operands_Register")
+
+            generate_pod!("asm_aarch64_operands_Register_reg_t")
+            block_constructors!("asm_aarch64_operands_Register_reg_t")
+
+            generate!("asm_aarch64_operands_Memory")
+            block_constructors!("asm_aarch64_operands_Memory")
+
+            generate_pod!("asm_aarch64_operands_Memory_offset_t")
+            block_constructors!("asm_aarch64_operands_Memory_offset_t")
+
+            generate_pod!("asm_aarch64_operands_Memory_shift_info_t")
+            block_constructors!("asm_aarch64_operands_Memory_shift_info_t")
+
+            generate!("asm_aarch64_operands_Immediate")
+            block_constructors!("asm_aarch64_operands_Immediate")
+
+            generate!("asm_aarch64_operands_PCRelative")
+            block_constructors!("asm_aarch64_operands_PCRelative")
+        /* } */
+
     /* } AArch64 */
 
     /* X86 { */

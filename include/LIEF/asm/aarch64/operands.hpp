@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_ASM_AARCH64_H
-#define LIEF_ASM_AARCH64_H
-#include <LIEF/asm/aarch64/Instruction.hpp>
-#include <LIEF/asm/aarch64/opcodes.hpp>
-#include <LIEF/asm/aarch64/registers.hpp>
-#include <LIEF/asm/aarch64/operands.hpp>
+#ifndef LIEF_ASM_AARCH64_OPERANDS_H
+#define LIEF_ASM_AARCH64_OPERANDS_H
+#include <LIEF/asm/aarch64/operands/Register.hpp>
+#include <LIEF/asm/aarch64/operands/Immediate.hpp>
+#include <LIEF/asm/aarch64/operands/PCRelative.hpp>
+#include <LIEF/asm/aarch64/operands/Memory.hpp>
 #endif

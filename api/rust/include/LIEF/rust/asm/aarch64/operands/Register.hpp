@@ -13,36 +13,30 @@
  * limitations under the License.
  */
 #pragma once
-#include <LIEF/asm/aarch64/Instruction.hpp>
+#include <LIEF/asm/aarch64/operands/Register.hpp>
 
-#include "LIEF/rust/asm/Instruction.hpp"
 #include "LIEF/rust/asm/aarch64/Operand.hpp"
-
 #include "LIEF/rust/helpers.hpp"
-#include "LIEF/rust/Iterator.hpp"
 
-class asm_aarch64_Instruction : public asm_Instruction {
+class asm_aarch64_operands_Register_reg_t {
   public:
-  using lief_t = LIEF::assembly::aarch64::Instruction;
+  uint64_t reg;
+  uint32_t enum_type;
+};
 
-  class it_operands :
-      public ForwardIterator<asm_aarch64_Operand, LIEF::assembly::aarch64::Operand::Iterator>
-  {
-    public:
-    it_operands(const asm_aarch64_Instruction::lief_t& src)
-      : ForwardIterator(src.operands()) { }
+class asm_aarch64_operands_Register : public asm_aarch64_Operand {
+  public:
+  using lief_t = LIEF::assembly::aarch64::operands::Register;
 
-    auto next() { return ForwardIterator::next(); }
-  };
-
-  uint64_t opcode() const {
-    return to_int(impl().opcode());
-  }
-  auto operands() const {
-    return std::make_unique<it_operands>(impl());
+  asm_aarch64_operands_Register_reg_t value() const {
+    lief_t::reg_t info = impl().value();
+    return {
+      /*.reg =*/(uint64_t)to_int(info.reg),
+      /*.enum_type =*/(uint32_t)to_int(info.type),
+    };
   }
 
-  static bool classof(const asm_Instruction& inst) {
+  static bool classof(const asm_aarch64_Operand& inst) {
     return lief_t::classof(&inst.get());
   }
 

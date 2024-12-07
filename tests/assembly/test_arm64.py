@@ -58,3 +58,7 @@ def test_elf_arm64():
     assert instructions[0].to_string() == "0x56c19b4: paciasp"
     assert isinstance(instructions[0], lief.assembly.aarch64.Instruction)
     assert instructions[0].opcode == lief.assembly.aarch64.OPCODE.PACIASP
+
+def test_arm64_operands():
+    elf = lief.ELF.parse(get_sample("ELF/libmonochrome-arm64.so"))
+    instructions = list(elf.disassemble(elf.get_section((".text").virtual_address)))

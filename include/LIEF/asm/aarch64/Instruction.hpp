@@ -18,6 +18,7 @@
 
 #include "LIEF/asm/Instruction.hpp"
 #include "LIEF/asm/aarch64/opcodes.hpp"
+#include "LIEF/asm/aarch64/Operand.hpp"
 
 namespace LIEF {
 namespace assembly {
@@ -30,8 +31,13 @@ class LIEF_API Instruction : public assembly::Instruction {
   public:
   using assembly::Instruction::Instruction;
 
+  using operands_it = iterator_range<Operand::Iterator>;
+
   /// The instruction opcode as defined in LLVM
   OPCODE opcode() const;
+
+  /// Iterator over the operands of the current instruction
+  operands_it operands() const;
 
   /// True if `inst` is an **effective** instance of aarch64::Instruction
   static bool classof(const assembly::Instruction* inst);

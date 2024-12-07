@@ -16,7 +16,13 @@
 #include "LIEF/asm/Engine.hpp"
 
 #include "LIEF/asm/aarch64/Instruction.hpp"
+#include "LIEF/asm/aarch64/Operand.hpp"
 #include "LIEF/asm/aarch64/registers.hpp"
+
+#include "LIEF/asm/aarch64/operands/Immediate.hpp"
+#include "LIEF/asm/aarch64/operands/Register.hpp"
+#include "LIEF/asm/aarch64/operands/PCRelative.hpp"
+#include "LIEF/asm/aarch64/operands/Memory.hpp"
 
 #include "LIEF/asm/x86/Instruction.hpp"
 #include "LIEF/asm/x86/Operand.hpp"
@@ -92,6 +98,11 @@ class Engine {};
 }
 
 namespace x86::details {
+class Operand {};
+class OperandIt {};
+}
+
+namespace aarch64::details {
 class Operand {};
 class OperandIt {};
 }
@@ -234,6 +245,10 @@ Engine::~Engine() = default;
 // ----------------------------------------------------------------------------
 aarch64::OPCODE aarch64::Instruction::opcode() const {
   return aarch64::OPCODE::INSTRUCTION_LIST_END;
+}
+
+aarch64::Instruction::operands_it aarch64::Instruction::operands() const {
+  return make_empty_iterator<aarch64::Operand>();
 }
 
 bool aarch64::Instruction::classof(const assembly::Instruction*) {
@@ -436,5 +451,99 @@ bool x86::operands::Immediate::classof(const Operand*) { return false; }
 int64_t x86::operands::Immediate::value() const {
   return 0;
 }
+
+// ----------------------------------------------------------------------------
+// asm/aarch64/Operand.hpp
+// ----------------------------------------------------------------------------
+aarch64::Operand::Iterator::Iterator() :
+  impl_(nullptr)
+{}
+
+aarch64::Operand::Iterator::Iterator(std::unique_ptr<details::OperandIt>) :
+  impl_(nullptr)
+{}
+
+aarch64::Operand::Iterator::Iterator(const Iterator&) :
+  impl_(nullptr)
+{}
+
+aarch64::Operand::Iterator&  aarch64::Operand::Iterator::operator=(const Iterator&) {
+  return *this;
+}
+
+aarch64::Operand::Iterator::Iterator(Iterator&&) noexcept = default;
+aarch64::Operand::Iterator& aarch64::Operand::Iterator::operator=(Iterator&&) noexcept = default;
+
+aarch64::Operand::Iterator& aarch64::Operand::Iterator::operator++() {
+  return *this;
+}
+
+std::unique_ptr<aarch64::Operand> aarch64::Operand::Iterator::operator*() const {
+  return nullptr;
+}
+
+bool aarch64::operator==(const aarch64::Operand::Iterator&, const aarch64::Operand::Iterator&) {
+  return true;
+}
+
+aarch64::Operand::Iterator::~Iterator() = default;
+
+aarch64::Operand::~Operand() = default;
+aarch64::Operand::Operand(std::unique_ptr<details::Operand>/*impl*/) :
+  impl_(nullptr)
+{}
+
+std::string aarch64::Operand::to_string() const {
+  return "";
+}
+
+std::unique_ptr<aarch64::Operand> aarch64::Operand::create(std::unique_ptr<details::Operand> /*impl*/) {
+  return nullptr;
+}
+
+// ----------------------------------------------------------------------------
+// asm/aarch64/Memory.hpp
+// ----------------------------------------------------------------------------
+bool aarch64::operands::Memory::classof(const Operand*) { return false; }
+
+aarch64::REG aarch64::operands::Memory::base() const {
+  return REG::NoRegister;
+}
+
+aarch64::operands::Memory::offset_t aarch64::operands::Memory::offset() const {
+  return {};
+}
+
+aarch64::operands::Memory::shift_info_t aarch64::operands::Memory::shift() const {
+  return {};
+}
+
+// ----------------------------------------------------------------------------
+// asm/aarch64/PCRelative.hpp
+// ----------------------------------------------------------------------------
+bool aarch64::operands::PCRelative::classof(const Operand*) { return false; }
+
+int64_t aarch64::operands::PCRelative::value() const {
+  return 0;
+}
+
+// ----------------------------------------------------------------------------
+// asm/aarch64/Register.hpp
+// ----------------------------------------------------------------------------
+bool aarch64::operands::Register::classof(const Operand*) { return false; }
+
+aarch64::operands::Register::reg_t aarch64::operands::Register::value() const {
+  return {};
+}
+
+// ----------------------------------------------------------------------------
+// asm/aarch64/Immediate.hpp
+// ----------------------------------------------------------------------------
+bool aarch64::operands::Immediate::classof(const Operand*) { return false; }
+
+int64_t aarch64::operands::Immediate::value() const {
+  return 0;
+}
+
 }
 }

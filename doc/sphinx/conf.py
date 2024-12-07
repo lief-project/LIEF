@@ -35,6 +35,11 @@ extlinks = {
     'llvm-pr': ("https://github.com/llvm/llvm-project/pull/%s", "llvm/llvm-project#%s"),
 }
 
+# Can be used for debugging breathe
+#breathe_debug_trace_directives = True
+#breathe_debug_trace_doxygen_ids = True
+#breathe_debug_trace_qualification = True
+
 master_doc = 'index'
 
 project    = 'LIEF'

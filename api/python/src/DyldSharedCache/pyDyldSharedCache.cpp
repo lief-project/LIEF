@@ -226,7 +226,7 @@ void create<dsc::DyldSharedCache>(nb::module_& m) {
         R"doc(
         Convert the given virtual address into an offset.
 
-        .. code-block:: warning
+        .. warning::
 
             If the shared cache contains multiple subcaches,
             this function needs to be called on the targeted subcache.

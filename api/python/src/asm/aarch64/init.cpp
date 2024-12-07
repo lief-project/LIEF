@@ -4,6 +4,7 @@ enum class OPCODE;
 enum class REG;
 enum class SYSREG;
 class Instruction;
+class Operand;
 }
 
 namespace LIEF::assembly::aarch64::py {
@@ -14,5 +15,6 @@ void init(nb::module_& m) {
   create<REG>(mod);
   create<SYSREG>(mod);
   create<Instruction>(mod);
+  create<Operand>(mod);
 }
 }

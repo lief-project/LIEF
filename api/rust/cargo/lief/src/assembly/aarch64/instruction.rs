@@ -4,6 +4,9 @@ use crate::common::FromFFI;
 use crate::assembly;
 use super::Opcode;
 
+use crate::declare_fwd_iterator;
+use crate::assembly::aarch64;
+
 /// This structure represents an AArch64 instruction
 pub struct Instruction {
     ptr: cxx::UniquePtr<ffi::asm_aarch64_Instruction>,
@@ -29,4 +32,18 @@ impl Instruction {
     pub fn opcode(&self) -> Opcode {
         Opcode::from(self.ptr.opcode())
     }
+
+    /// Return an iterator over the [`aarch64::Operands`] operands
+    pub fn operands(&self) -> Operands {
+        Operands::new(self.ptr.operands())
+    }
 }
+
+
+declare_fwd_iterator!(
+    Operands,
+    aarch64::Operands,
+    ffi::asm_Instruction,
+    ffi::asm_aarch64_Operand,
+    ffi::asm_aarch64_Instruction_it_operands
+);

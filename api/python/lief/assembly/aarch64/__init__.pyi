@@ -1,12 +1,16 @@
 import enum
 from typing import Iterator, Optional, Union
 
+from . import operands as operands
 import lief
 
 
 class Instruction(lief.assembly.Instruction):
     @property
     def opcode(self) -> OPCODE: ...
+
+    @property
+    def operands(self) -> Iterator[Optional[Operand]]: ...
 
 class OPCODE(enum.Enum):
     PHI = 0
@@ -16354,6 +16358,12 @@ class OPCODE(enum.Enum):
     ZIP_VG4_4Z4Z_S = 8171
 
     INSTRUCTION_LIST_END = 8172
+
+class Operand:
+    @property
+    def to_string(self) -> str: ...
+
+    def __str__(self) -> str: ...
 
 class REG(enum.Enum):
     NoRegister = 0

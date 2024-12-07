@@ -13,36 +13,19 @@
  * limitations under the License.
  */
 #pragma once
-#include <LIEF/asm/aarch64/Instruction.hpp>
+#include <LIEF/asm/aarch64/operands/Immediate.hpp>
 
-#include "LIEF/rust/asm/Instruction.hpp"
 #include "LIEF/rust/asm/aarch64/Operand.hpp"
 
-#include "LIEF/rust/helpers.hpp"
-#include "LIEF/rust/Iterator.hpp"
-
-class asm_aarch64_Instruction : public asm_Instruction {
+class asm_aarch64_operands_Immediate : public asm_aarch64_Operand {
   public:
-  using lief_t = LIEF::assembly::aarch64::Instruction;
+  using lief_t = LIEF::assembly::aarch64::operands::Immediate;
 
-  class it_operands :
-      public ForwardIterator<asm_aarch64_Operand, LIEF::assembly::aarch64::Operand::Iterator>
-  {
-    public:
-    it_operands(const asm_aarch64_Instruction::lief_t& src)
-      : ForwardIterator(src.operands()) { }
-
-    auto next() { return ForwardIterator::next(); }
-  };
-
-  uint64_t opcode() const {
-    return to_int(impl().opcode());
-  }
-  auto operands() const {
-    return std::make_unique<it_operands>(impl());
+  auto value() const {
+    return impl().value();
   }
 
-  static bool classof(const asm_Instruction& inst) {
+  static bool classof(const asm_aarch64_Operand& inst) {
     return lief_t::classof(&inst.get());
   }
 

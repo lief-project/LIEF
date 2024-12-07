@@ -18,7 +18,6 @@ See: ``lief.assembly.x86.OPCODE``
 Operands
 ********
 
-
 .. lief-inheritance:: lief._lief.assembly.x86.Operand
   :top-classes: lief._lief.assembly.x86.Operand
   :parts: 2
