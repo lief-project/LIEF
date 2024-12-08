@@ -114,7 +114,7 @@ Thus, you can write:
 
    You can also check the assembler documentation here: :ref:`Assembler <extended-assembler>`
 
-For the architectures ``x86/x86-64`` and ``AArch64`` one can also iterate over
+For the architectures ``x86/x86-64`` and ``AArch64`` we can also iterate over
 the instruction's operands:
 
 .. tabs::
