@@ -144,6 +144,7 @@
 
   .. note::
 
+    * `LIEF extended <https://extended.lief.re>`_ is now open to everyone
     * C++ SDK is now available
     * Rust package is now available
 

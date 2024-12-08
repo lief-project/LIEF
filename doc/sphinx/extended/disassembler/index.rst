@@ -114,6 +114,62 @@ Thus, you can write:
 
    You can also check the assembler documentation here: :ref:`Assembler <extended-assembler>`
 
+For the architectures ``x86/x86-64`` and ``AArch64`` one can also iterate over
+the instruction's operands:
+
+.. tabs::
+
+   .. tab:: :fa:`solid fa-microchip` AArch64
+
+      .. code-block:: python
+
+        import lief
+
+        inst: lief.assembly.aarch64.Instruction
+
+        for inst in macho.disassemble(0x400120):
+            print(inst)
+            # Check inst properties
+            if inst.is_branch:
+                print(f"Resolved: {inst.branch_target}")
+
+            for idx, operand in enumerate(inst.operands):
+                if isinstance(operand, lief.assembly.aarch64.operands.Register):
+                    print(f"op[{idx}]: REG - {operand.value}")
+                if isinstance(operand, lief.assembly.aarch64.operands.Memory):
+                    print(f"op[{idx}]: MEM - {operand.base}")
+                if isinstance(operand, lief.assembly.aarch64.operands.PCRelative):
+                    print(f"op[{idx}]: PCR - {operand.value}")
+                if isinstance(operand, lief.assembly.aarch64.operands.Immediate):
+                    print(f"op[{idx}]: IMM - {operand.value}")
+
+   .. tab:: :fa:`solid fa-microchip` x86/x86-64
+
+      .. code-block:: python
+
+        import lief
+
+        inst: lief.assembly.x86.Instruction
+
+        for inst in elf.disassemble(0x1000200):
+            print(inst)
+            # Check inst properties
+            if inst.is_branch:
+                print(f"Resolved: {inst.branch_target}")
+
+            for idx, operand in enumerate(inst.operands):
+                if isinstance(operand, lief.assembly.x86.operands.Register):
+                    print(f"op[{idx}]: REG - {operand.value}")
+                if isinstance(operand, lief.assembly.x86.operands.Memory):
+                    print(f"op[{idx}]: MEM - {operand.base}")
+                if isinstance(operand, lief.assembly.x86.operands.PCRelative):
+                    print(f"op[{idx}]: PCR - {operand.value}")
+                if isinstance(operand, lief.assembly.x86.operands.Immediate):
+                    print(f"op[{idx}]: IMM - {operand.value}")
+
+You can check the documentation of these architectures for more details about
+the exposed API.
+
 Use Cases
 *********
 
@@ -224,6 +280,10 @@ recently `Nyxstone <https://github.com/emproof-com/nyxstone>`_.
 Compared to Capstone, LIEF uses a mainstream LLVM version without any modification
 on the MC layer. On the other hand, it does not expose a C API, supports fewer
 architectures than Capstone, and does not expose a standalone API.
+
+.. note::
+
+  The current LLVM version is |lief-llvm-version|.
 
 Compared to Nyxstone's disassembler, LLVM is *hidden* from the public API
 which means that LLVM does not need to be installed on the system. On the other
