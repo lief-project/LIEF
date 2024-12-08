@@ -153,6 +153,10 @@ else()
                         MbedTLS::mbedcrypto MbedTLS::mbedx509)
 endif()
 
+target_compile_definitions(LIB_LIEF PRIVATE
+  -DMBEDTLS_CONFIG_FILE="${CMAKE_CURRENT_SOURCE_DIR}/config/mbedtls/config.h"
+)
+
 if(WIN32 AND BUILD_SHARED_LIBS)
   target_link_libraries(LIB_LIEF PRIVATE ws2_32)
 endif()
