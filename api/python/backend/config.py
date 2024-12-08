@@ -41,6 +41,7 @@ class BuildConfig(BaseModel):
     ninja: bool = False
     default_target: str = Field("pyLIEF", alias="default-target")
     parallel_jobs: int = Field(0, alias="parallel-jobs")
+    compilation_flags: List[str] = Field([], alias="compilation-flags")
     build_dir: Optional[EnvString] = Field(None, alias="build-dir")
     extra_targets: Union[List[EnvString], EnvString] = Field(None, alias="extra-targets")
     extra_cmake: Union[List[EnvString], EnvString] = Field(None, alias="extra-cmake-opt")
@@ -89,6 +90,13 @@ class BuildConfig(BaseModel):
             out.append(
                 f"-DCMAKE_CXX_COMPILER={self.cxx_compiler}"
             )
+
+        if len(self.compilation_flags) > 0:
+            flags = " ".join(self.compilation_flags)
+            out.extend((
+                f'-DCMAKE_CXX_FLAGS={flags}',
+                f'-DCMAKE_C_FLAGS={flags}',
+            ))
 
         return out
 
