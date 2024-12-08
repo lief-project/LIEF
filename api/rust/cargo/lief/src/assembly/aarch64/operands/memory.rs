@@ -35,6 +35,7 @@ impl Operand for Memory {
 }
 
 /// Wraps a memory offset as an integer offset or as a register offset
+#[derive(Debug)]
 pub enum Offset {
     /// Register offset
     Reg(Reg),
@@ -68,6 +69,7 @@ impl From<i32> for Shift {
 }
 
 /// This structure holds shift info (type + value)
+#[derive(Debug)]
 pub struct ShiftInfo {
     pub shift_type: Shift,
     pub value: i8,

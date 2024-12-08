@@ -34,6 +34,7 @@ impl Operand for Register {
     }
 }
 
+#[derive(Debug)]
 pub enum Value {
     Reg(Reg),
     SysReg(SysReg),
