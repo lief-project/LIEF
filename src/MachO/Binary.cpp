@@ -2336,6 +2336,9 @@ ExportInfo* Binary::add_exported_function(uint64_t address, const std::string& n
 void Binary::refresh_seg_offset() {
   offset_seg_.clear();
   for (SegmentCommand* segment : segments_) {
+    if (segment->file_offset_ == 0) {
+      continue;
+    }
     offset_seg_[segment->file_offset()] = segment;
   }
 }
