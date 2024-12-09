@@ -885,6 +885,10 @@ ok_error_t Binary::shift(size_t value) {
   }
 
   shift_command(value, loadcommands_end);
+  const uint64_t loadcommands_end_va = loadcommands_end + load_cmd_segment->virtual_address();
+
+  LIEF_DEBUG("loadcommands_end:    0x{:016x}", loadcommands_end);
+  LIEF_DEBUG("loadcommands_end_va: 0x{:016x}", loadcommands_end_va);
 
   // Shift Segment and sections
   // ==========================
@@ -904,19 +908,23 @@ ok_error_t Binary::shift(size_t value) {
         }
       }
     } else {
-      if (segment->file_offset() >= loadcommands_end) {
-        segment->file_offset(segment->file_offset() + value);
+      if (segment->virtual_address() >= loadcommands_end_va) {
         segment->virtual_address(segment->virtual_address() + value);
       }
 
+      if (segment->file_offset() >= loadcommands_end) {
+        segment->file_offset(segment->file_offset() + value);
+      }
+
       for (const std::unique_ptr<Section>& section : segment->sections_) {
-        if (section->offset() >= loadcommands_end) {
-          section->offset(section->offset() + value);
+        if (section->virtual_address() >= loadcommands_end_va ||
+            section->type() == Section::TYPE::ZEROFILL)
+        {
           section->virtual_address(section->virtual_address() + value);
         }
 
-        if (section->type() == Section::TYPE::ZEROFILL) {
-          section->virtual_address(section->virtual_address() + value);
+        if (section->offset() >= loadcommands_end_va) {
+          section->offset(section->offset() + value);
         }
       }
     }

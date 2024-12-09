@@ -31,3 +31,15 @@ def test_endianness():
     target = lief.MachO.parse(get_sample("MachO/macho-issue-1110.bin")).at(0)
 
     assert len(target.segments) == 3
+
+def test_1130(tmp_path: Path):
+    target = lief.MachO.parse(get_sample("MachO/issue_1130.macho")).at(0)
+    target.shift(0x4000)
+
+    output = tmp_path / "new.macho"
+    target.write(output.as_posix())
+
+    new = lief.MachO.parse(output).at(0)
+    assert lief.MachO.check_layout(new)[0]
+
+    assert new.get_segment("__DATA").virtual_address == 0x100008000
