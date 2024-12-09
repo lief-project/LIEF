@@ -336,6 +336,7 @@ fn test_mut_api() {
     let path = utils::get_macho_sample("FAT_MachO_x86_x86-64_library_libc++abi.dylib").unwrap();
     let Binary::MachO(fat) = Binary::parse(path.to_str().unwrap()).unwrap() else { panic!("Expecting an ELF"); };
     for mut bin in fat.iter() {
+        bin.add_library("this_is_a_dylib.dylib");
         let tmpfile = tempfile::NamedTempFile::new().unwrap();
         bin.write(tmpfile.path());
     }

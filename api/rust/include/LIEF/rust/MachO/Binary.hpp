@@ -290,6 +290,10 @@ class MachO_Binary : public AbstractBinary {
     });
   }
 
+  auto add_library(std::string name) {
+    return details::try_unique<MachO_Dylib>(impl().add_library(name)->cast<LIEF::MachO::DylibCommand>());
+  }
+
   static bool is_exported(const MachO_Symbol& symbol) {
     return lief_t::is_exported(static_cast<const LIEF::MachO::Symbol&>(symbol.get()));
   }

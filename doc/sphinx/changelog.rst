@@ -106,6 +106,7 @@
 
       - :rust:method:`lief::macho::Binary::write [struct]`
       - :rust:method:`lief::macho::Binary::write_with_config [struct]`
+      - :rust:method:`lief::macho::Binary::add_library [struct]`
 
   * Thanks to :github_user:`Huntragon` Rust bindings can be used without openssl (see: :pr:`1105`)
   * Rust precompiled Linux packages are now supported for Debian 10 & Ubuntu 19.10.

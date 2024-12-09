@@ -1,4 +1,3 @@
-
 /* Copyright 2017 - 2024 R. Thomas
  * Copyright 2017 - 2024 Quarkslab
  *
@@ -356,7 +355,7 @@ class LIEF_API Binary : public LIEF::Binary  {
     return add(command.clone());
   }
 
-  /// Insert a new LoadCommand at the specified ``index``
+  /// Insert a new LoadCommand at the specified `index`
   LoadCommand* add(const LoadCommand& command, size_t index);
 
   /// Insert the given DylibCommand
@@ -365,7 +364,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   /// Add a new LC_SEGMENT command from the given SegmentCommand
   LoadCommand* add(const SegmentCommand& segment);
 
-  /// Insert a new shared library through a ``LC_LOAD_DYLIB`` command
+  /// Insert a new shared library through a `LC_LOAD_DYLIB` command
   LoadCommand* add_library(const std::string& name);
 
   /// Add a new MachO::Section in the __TEXT segment
@@ -380,7 +379,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   /// Remove the section with the name provided in the first parameter.
   ///
   /// @param name     Name of the MachO::Section to remove
-  /// @param clear    If ``true`` clear the content of the section before removing
+  /// @param clear    If `true` clear the content of the section before removing
   void remove_section(const std::string& name, bool clear = false) override;
 
   /// Remove the section from the segment with the name
@@ -389,7 +388,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   ///
   /// @param segname     Name of the MachO::Segment
   /// @param secname     Name of the MachO::Section to remove
-  /// @param clear       If ``true`` clear the content of the section before removing
+  /// @param clear       If `true` clear the content of the section before removing
   void remove_section(const std::string& segname, const std::string& secname, bool clear = false);
 
   /// Remove the given LoadCommand
@@ -398,7 +397,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   /// Remove **all** LoadCommand with the given type (MachO::LoadCommand::TYPE)
   bool remove(LoadCommand::TYPE type);
 
-  /// Remove the Load Command at the provided ``index``
+  /// Remove the Load Command at the provided `index`
   bool remove_command(size_t index);
 
   /// Remove the LC_SIGNATURE command
@@ -410,18 +409,18 @@ class LIEF_API Binary : public LIEF::Binary  {
   /// Extend the **content** of the given SegmentCommand
   bool extend_segment(const SegmentCommand& segment, size_t size);
 
-  /// Remove the ``PIE`` flag
+  /// Remove the `PIE` flag
   bool disable_pie();
 
-  /// Return the binary's imagebase. ``0`` if not relevant
+  /// Return the binary's imagebase. `0` if not relevant
   uint64_t imagebase() const override;
 
-  /// Size of the binary in memory when mapped by the loader (``dyld``)
+  /// Size of the binary in memory when mapped by the loader (`dyld`)
   uint64_t virtual_size() const {
     return align(va_ranges().size(), (uint64_t)page_size());
   }
 
-  /// Return the binary's loader (e.g. ``/usr/lib/dyld``) or an
+  /// Return the binary's loader (e.g. `/usr/lib/dyld`) or an
   /// empty string if the binary does not use a loader/linker
   std::string loader() const;
 
@@ -481,14 +480,14 @@ class LIEF_API Binary : public LIEF::Binary  {
   bool unexport(const Symbol& sym);
 
   /// Return the MachO::Section that encompasses the provided offset.
-  /// If a section can't be found, it returns a null pointer (``nullptr``)
+  /// If a section can't be found, it returns a null pointer (`nullptr`)
   Section* section_from_offset(uint64_t offset) {
     return const_cast<Section*>(static_cast<const Binary*>(this)->section_from_offset(offset));
   }
   const Section* section_from_offset(uint64_t offset) const;
 
   /// Return the MachO::Section that encompasses the provided virtual address.
-  /// If a section can't be found, it returns a null pointer (``nullptr``)
+  /// If a section can't be found, it returns a null pointer (`nullptr`)
   Section* section_from_virtual_address(uint64_t virtual_address) {
     return const_cast<Section*>(static_cast<const Binary*>(this)->section_from_virtual_address(virtual_address));
   }
@@ -505,7 +504,7 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   /// Return the binary's SegmentCommand that encompasses the provided offset
   ///
-  /// If a SegmentCommand can't be found it returns a null pointer (``nullptr``).
+  /// If a SegmentCommand can't be found it returns a null pointer (`nullptr`).
   SegmentCommand* segment_from_offset(uint64_t offset) {
     return const_cast<SegmentCommand*>(static_cast<const Binary*>(this)->segment_from_offset(offset));
   }
@@ -514,7 +513,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   /// Return the index of the given SegmentCommand
   size_t segment_index(const SegmentCommand& segment) const;
 
-  /// Return binary's *fat offset*. ``0`` if not relevant.
+  /// Return binary's *fat offset*. `0` if not relevant.
   uint64_t fat_offset() const {
     return fat_offset_;
   }
@@ -539,7 +538,7 @@ class LIEF_API Binary : public LIEF::Binary  {
     return r.start <= address && address < r.end;
   }
 
-  /// Method so that the ``visitor`` can visit us
+  /// Method so that the `visitor` can visit us
   void accept(LIEF::Visitor& visitor) const override;
 
   std::ostream& print(std::ostream& os) const override;
@@ -577,7 +576,7 @@ class LIEF_API Binary : public LIEF::Binary  {
     return header().has(Header::FLAGS::PIE);
   }
 
-  /// Check if the binary uses ``NX`` protection
+  /// Check if the binary uses `NX` protection
   bool has_nx() const override {
     return !has_nx_stack();
   }
@@ -592,14 +591,14 @@ class LIEF_API Binary : public LIEF::Binary  {
     return !header().has(Header::FLAGS::NO_HEAP_EXECUTION);
   }
 
-  /// ``true`` if the binary has an entrypoint.
+  /// `true` if the binary has an entrypoint.
   ///
-  /// Basically for libraries it will return ``false``
+  /// Basically for libraries it will return `false`
   bool has_entrypoint() const {
     return has_main_command() || has_thread_command();
   }
 
-  /// ``true`` if the binary has a MachO::UUIDCommand command.
+  /// `true` if the binary has a MachO::UUIDCommand command.
   bool has_uuid() const {
     return uuid() != nullptr;
   }
@@ -608,7 +607,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   UUIDCommand* uuid();
   const UUIDCommand* uuid() const;
 
-  /// ``true`` if the binary has a MachO::MainCommand command.
+  /// `true` if the binary has a MachO::MainCommand command.
   bool has_main_command() const {
     return main_command() != nullptr;
   }
@@ -617,7 +616,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   MainCommand* main_command();
   const MainCommand* main_command() const;
 
-  /// ``true`` if the binary has a MachO::DylinkerCommand.
+  /// `true` if the binary has a MachO::DylinkerCommand.
   bool has_dylinker() const {
     return dylinker() != nullptr;
   }
@@ -626,7 +625,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   DylinkerCommand* dylinker();
   const DylinkerCommand* dylinker() const;
 
-  /// ``true`` if the binary has a MachO::DyldInfo command.
+  /// `true` if the binary has a MachO::DyldInfo command.
   bool has_dyld_info() const {
     return dyld_info() != nullptr;
   }
@@ -635,7 +634,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   DyldInfo* dyld_info();
   const DyldInfo* dyld_info() const;
 
-  /// ``true`` if the binary has a MachO::FunctionStarts command.
+  /// `true` if the binary has a MachO::FunctionStarts command.
   bool has_function_starts() const {
     return function_starts() != nullptr;
   }
@@ -644,7 +643,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   FunctionStarts* function_starts();
   const FunctionStarts* function_starts() const;
 
-  /// ``true`` if the binary has a MachO::SourceVersion command.
+  /// `true` if the binary has a MachO::SourceVersion command.
   bool has_source_version() const {
     return source_version() != nullptr;
   }
@@ -653,7 +652,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   SourceVersion* source_version();
   const SourceVersion* source_version() const;
 
-  /// ``true`` if the binary has a MachO::VersionMin command.
+  /// `true` if the binary has a MachO::VersionMin command.
   bool has_version_min() const {
     return version_min() != nullptr;
   }
@@ -662,7 +661,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   VersionMin* version_min();
   const VersionMin* version_min() const;
 
-  /// ``true`` if the binary has a MachO::ThreadCommand command.
+  /// `true` if the binary has a MachO::ThreadCommand command.
   bool has_thread_command() const {
     return thread_command() != nullptr;
   }
@@ -671,7 +670,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   ThreadCommand* thread_command();
   const ThreadCommand* thread_command() const;
 
-  /// ``true`` if the binary has a MachO::Routine command.
+  /// `true` if the binary has a MachO::Routine command.
   bool has_routine_command() const {
     return routine_command() != nullptr;
   }
@@ -680,7 +679,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   Routine* routine_command();
   const Routine* routine_command() const;
 
-  /// ``true`` if the binary has a MachO::RPathCommand command.
+  /// `true` if the binary has a MachO::RPathCommand command.
   bool has_rpath() const {
     return rpath() != nullptr;
   }
@@ -693,7 +692,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   it_rpaths rpaths();
   it_const_rpaths rpaths() const;
 
-  /// ``true`` if the binary has a MachO::SymbolCommand command.
+  /// `true` if the binary has a MachO::SymbolCommand command.
   bool has_symbol_command() const {
     return symbol_command() != nullptr;
   }
@@ -702,7 +701,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   SymbolCommand* symbol_command();
   const SymbolCommand* symbol_command() const;
 
-  /// ``true`` if the binary has a MachO::DynamicSymbolCommand command.
+  /// `true` if the binary has a MachO::DynamicSymbolCommand command.
   bool has_dynamic_symbol_command() const {
     return dynamic_symbol_command() != nullptr;
   }
@@ -711,7 +710,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   DynamicSymbolCommand* dynamic_symbol_command();
   const DynamicSymbolCommand* dynamic_symbol_command() const;
 
-  /// ``true`` if the binary is signed with `LC_CODE_SIGNATURE` command
+  /// `true` if the binary is signed with `LC_CODE_SIGNATURE` command
   bool has_code_signature() const {
     return code_signature() != nullptr;
   }
@@ -722,7 +721,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   }
   const CodeSignature* code_signature() const;
 
-  /// ``true`` if the binary is signed with the command `DYLIB_CODE_SIGN_DRS`
+  /// `true` if the binary is signed with the command `DYLIB_CODE_SIGN_DRS`
   bool has_code_signature_dir() const {
     return code_signature_dir() != nullptr;
   }
@@ -733,7 +732,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   }
   const CodeSignatureDir* code_signature_dir() const;
 
-  /// ``true`` if the binary has a MachO::DataInCode command.
+  /// `true` if the binary has a MachO::DataInCode command.
   bool has_data_in_code() const {
     return data_in_code() != nullptr;
   }
@@ -742,7 +741,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   DataInCode* data_in_code();
   const DataInCode* data_in_code() const;
 
-  /// ``true`` if the binary has segment split info.
+  /// `true` if the binary has segment split info.
   bool has_segment_split_info() const {
     return segment_split_info() != nullptr;
   }
@@ -751,12 +750,12 @@ class LIEF_API Binary : public LIEF::Binary  {
   SegmentSplitInfo* segment_split_info();
   const SegmentSplitInfo* segment_split_info() const;
 
-  /// ``true`` if the binary has a sub framework command.
+  /// `true` if the binary has a sub framework command.
   bool has_sub_framework() const {
     return sub_framework() != nullptr;
   }
 
-  /// ``true`` if the binary has Encryption Info.
+  /// `true` if the binary has Encryption Info.
   bool has_encryption_info() const {
     return encryption_info() != nullptr;
   }
@@ -775,7 +774,7 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   bool has_subclients() const;
 
-  /// ``true`` if the binary has Dyld envrionment variables.
+  /// `true` if the binary has Dyld envrionment variables.
   bool has_dyld_environment() const {
     return dyld_environment() != nullptr;
   }
@@ -784,7 +783,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   DyldEnvironment* dyld_environment();
   const DyldEnvironment* dyld_environment() const;
 
-  /// ``true`` if the binary has the BuildVersion command.
+  /// `true` if the binary has the BuildVersion command.
   bool has_build_version() const {
     return build_version() != nullptr;
   }
@@ -814,7 +813,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   }
 
 
-  /// ``true`` if the binary has the command LC_DYLD_CHAINED_FIXUPS.
+  /// `true` if the binary has the command LC_DYLD_CHAINED_FIXUPS.
   bool has_dyld_chained_fixups() const {
     return dyld_chained_fixups() != nullptr;
   }
@@ -823,7 +822,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   DyldChainedFixups* dyld_chained_fixups();
   const DyldChainedFixups* dyld_chained_fixups() const;
 
-  /// ``true`` if the binary has the command LC_DYLD_CHAINED_FIXUPS.
+  /// `true` if the binary has the command LC_DYLD_CHAINED_FIXUPS.
   bool has_dyld_exports_trie() const {
     return dyld_exports_trie() != nullptr;
   }
@@ -832,7 +831,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   DyldExportsTrie* dyld_exports_trie();
   const DyldExportsTrie* dyld_exports_trie() const;
 
-  /// ``true`` if the binary has the command LC_TWO_LEVEL_HINTS.
+  /// `true` if the binary has the command LC_TWO_LEVEL_HINTS.
   bool has_two_level_hints() const {
     return two_level_hints() != nullptr;
   }
@@ -843,7 +842,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   }
   const TwoLevelHints* two_level_hints() const;
 
-  /// ``true`` if the binary has the command LC_LINKER_OPTIMIZATION_HINT.
+  /// `true` if the binary has the command LC_LINKER_OPTIMIZATION_HINT.
   bool has_linker_opt_hint() const {
     return linker_opt_hint() != nullptr;
   }
@@ -899,10 +898,10 @@ class LIEF_API Binary : public LIEF::Binary  {
   /// Return all the functions found in this MachO
   LIEF::Binary::functions_t functions() const;
 
-  /// Return the functions found in the ``__unwind_info`` section
+  /// Return the functions found in the `__unwind_info` section
   LIEF::Binary::functions_t unwind_functions() const;
 
-  /// ``true`` if the binary has a LoadCommand::TYPE::FILESET_ENTRY command
+  /// `true` if the binary has a LoadCommand::TYPE::FILESET_ENTRY command
   bool has_filesets() const {
     return filesets_.empty();
   }

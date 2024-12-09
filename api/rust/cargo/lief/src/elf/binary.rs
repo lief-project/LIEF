@@ -301,6 +301,7 @@ impl Binary {
         self.ptr.as_mut().unwrap().write_with_config(output.to_str().unwrap(), config.to_ffi());
     }
 
+    /// Add a library as dependency
     pub fn add_library<'a>(&'a mut self, library: &str) -> Library<'a> {
         Library::from_ffi(self.ptr.as_mut().unwrap().add_library(library))
     }
