@@ -2648,6 +2648,16 @@ uint64_t Binary::relocate_phdr_table_v3() {
   // Reserve space for 10 user's segments
   static constexpr size_t USER_SEGMENTS = 10;
 
+  uint64_t last_off = 0;
+  for (const std::unique_ptr<Segment>& segment : segments_) {
+    if (segment != nullptr && segment->is_load()) {
+      last_off = std::max(last_off, segment->file_offset());
+      // Possible because segment are not overlapping
+      last_off += segment->physical_size();
+    }
+  }
+  last_off = align(last_off, static_cast<uint64_t>(get_pagesize(*this)));
+
   if (phdr_reloc_info_.new_offset > 0) {
     return phdr_reloc_info_.new_offset;
   }
@@ -2660,7 +2670,7 @@ uint64_t Binary::relocate_phdr_table_v3() {
     type() == Header::CLASS::ELF32 ? sizeof(details::ELF32::Elf_Phdr) :
                                      sizeof(details::ELF64::Elf_Phdr);
 
-  const uint64_t last_offset = virtual_size();
+  const uint64_t last_offset = last_off;
 
   LIEF_DEBUG("Moving segment table at the end of the binary (0x{:010x})",
              last_offset);
@@ -2688,7 +2698,7 @@ uint64_t Binary::relocate_phdr_table_v3() {
   phdr_load_segment->file_offset(phdr_reloc_info_.new_offset);
   phdr_load_segment->physical_size(new_segtbl_sz);
   phdr_load_segment->virtual_size(new_segtbl_sz);
-  phdr_load_segment->virtual_address(imagebase() + phdr_reloc_info_.new_offset);
+  phdr_load_segment->virtual_address(imagebase() + virtual_size());
   phdr_load_segment->physical_address(phdr_load_segment->virtual_address());
   phdr_load_segment->alignment(0x1000);
   phdr_load_segment->add(Segment::FLAGS::R);

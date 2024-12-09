@@ -364,12 +364,8 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment, ui
     return nullptr;
   }
 
-  //const uint64_t phdr_size = type() == ELF_CLASS::ELFCLASS32 ?
-  //                                     sizeof(details::ELF32::Elf_Phdr) : sizeof(details::ELF64::Elf_Phdr);
-
   // Add the segment itself
   // ====================================================================
-  //datahandler_->make_hole(new_phdr_offset + phdr_size * header.numberof_segments(), phdr_size);
   header.numberof_segments(header.numberof_segments() + 1);
   span<const uint8_t> content_ref = segment.content();
   std::vector<uint8_t> content{content_ref.data(), std::end(content_ref)};
@@ -377,6 +373,7 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment, ui
 
   uint64_t last_offset_sections = last_offset_section();
   uint64_t last_offset_segments = last_offset_segment();
+
 
   uint64_t last_offset = std::max<uint64_t>(last_offset_sections, last_offset_segments);
 
@@ -413,7 +410,7 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment, ui
   new_segment->content(content);
 
   if (header.section_headers_offset() <= new_segment->file_offset() + new_segment->physical_size()) {
-    header.section_headers_offset(header.section_headers_offset() + new_segment->file_offset() + new_segment->physical_size());
+    header.section_headers_offset(new_segment->file_offset() + new_segment->physical_size());
   }
 
   const auto it_new_segment_place = std::find_if(segments_.rbegin(), segments_.rend(),
