@@ -64,13 +64,14 @@ modify and abstract ELF, PE and MachO formats.
   * **Abstract**: Three formats have common features like sections, symbols, entry point... LIEF factors them.
   * **API**: LIEF can be used in C++, Python, Rust and C
 
-Extended features:
+**Extended features**:
 
   * [**DWARF/PDB** Support](https://lief.re/doc/latest/extended/debug_info/index.html)
   * [**Objective-C** Metadata](https://lief.re/doc/latest/extended/objc/index.html)
   * [**Dyld Shared Cache**](https://lief.re/doc/latest/extended/dsc/index.html) with support for extracting Dylib
   * [**Disassembler**](https://lief.re/doc/latest/extended/disassembler/index.html): AArch64, x86/x86-64, ARM, RISC-V, Mips, PowerPC, eBPF
   * [**Assembler**](https://lief.re/doc/latest/extended/assembler/index.html): AArch64, x86/x86-64
+
 
 # Content
 
@@ -138,6 +139,7 @@ pip install [--user] --force-reinstall --index-url https://lief.s3-website.fr-pa
 
 ### Packages
 
+- LIEF Extended: https://extended.lief.re (GitHub OAuth)
 - **Nightly**:
   * SDK: https://lief.s3-website.fr-par.scw.cloud/latest/sdk
   * Python Wheels: https://lief.s3-website.fr-par.scw.cloud/latest/lief
