@@ -53,7 +53,11 @@ include_cpp! {
     // ELF
     // -------------------------------------------------------------------------
     generate!("ELF_Binary")
-    block_constructors!("ELF_Binary")
+
+    generate_pod!("ELF_Binary_write_config_t")
+    block_constructors!("ELF_Binary_write_config_t")
+
+    block_constructors!("Span")
     generate!("ELF_Binary_it_segments")
     block_constructors!("ELF_Binary_it_segments")
     generate!("ELF_Binary_it_sections")
@@ -313,6 +317,10 @@ include_cpp! {
     // -------------------------------------------------------------------------
     generate!("MachO_Binary")
     block_constructors!("MachO_Binary")
+
+    generate_pod!("MachO_Binary_write_config_t")
+    block_constructors!("MachO_Binary_write_config_t")
+
     generate!("MachO_Binary_it_stubs")
     block_constructors!("MachO_Binary_it_stubs")
     generate!("MachO_Binary_it_symbols")

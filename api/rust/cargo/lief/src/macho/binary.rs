@@ -1,8 +1,10 @@
 use std::mem::size_of;
 use std::pin::Pin;
+use std::path::Path;
 use num_traits::{Num, cast};
 
 use crate::Error;
+use super::builder::Config;
 use super::commands::build_version::{BuildVersion, Platform};
 use super::commands::code_signature::CodeSignature;
 use super::commands::code_signature_dir::CodeSignatureDir;
@@ -304,6 +306,17 @@ impl Binary {
         }
 
         Err(Error::NotSupported)
+    }
+
+    /// Write back the current MachO binary into the file specified in parameter
+    pub fn write(&mut self, output: &Path) {
+        self.ptr.as_mut().unwrap().write(output.to_str().unwrap());
+    }
+
+    /// Write back the current MachO binary into the file specified in parameter with the
+    /// configuration provided in the second parameter.
+    pub fn write_with_config(&mut self, output: &Path, config: Config) {
+        self.ptr.as_mut().unwrap().write_with_config(output.to_str().unwrap(), config.to_ffi());
     }
 }
 

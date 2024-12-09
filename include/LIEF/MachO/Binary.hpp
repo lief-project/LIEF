@@ -27,6 +27,7 @@
 #include "LIEF/MachO/BindingInfoIterator.hpp"
 #include "LIEF/MachO/BuildVersion.hpp"
 #include "LIEF/MachO/Stub.hpp"
+#include "LIEF/MachO/Builder.hpp"
 
 #include "LIEF/visibility.h"
 #include "LIEF/utils.hpp"
@@ -319,6 +320,16 @@ class LIEF_API Binary : public LIEF::Binary  {
   ///
   /// @param filename Path to write the reconstructed binary
   void write(const std::string& filename) override;
+
+
+  /// Reconstruct the binary object and write the result in the given
+  /// `filename`.
+  ///
+  /// The second `config` parameter is used to tweak the building process
+  ///
+  /// @param filename Path to write the reconstructed binary
+  /// @param config   Builder configuration
+  void write(const std::string& filename, Builder::config_t config);
 
   /// Reconstruct the binary object and write the result in the given `os` stream
   ///

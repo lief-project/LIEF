@@ -2,6 +2,7 @@ mod utils;
 use std::path::Path;
 use std::env;
 use lief::logging;
+use lief::macho::builder::Config;
 use lief::macho::Relocation;
 use lief::generic::Binary as GenericBinary;
 use lief::macho::binding_info::{self, AsGeneric};
@@ -310,7 +311,6 @@ fn test_with_fullpath(name: &str, suffix: &str) {
 
 #[test]
 fn test_api() {
-
     let mut dir = env::temp_dir();
     dir.push("lief_macho_test.log");
     logging::set_path(dir.as_path());
@@ -330,3 +330,21 @@ fn test_api() {
     test_with("liblog_srp.dylib");
     test_with_fullpath("CoreFoundation", "private/MachO/CoreFoundation");
 }
+
+#[test]
+fn test_mut_api() {
+    let path = utils::get_macho_sample("FAT_MachO_x86_x86-64_library_libc++abi.dylib").unwrap();
+    let Binary::MachO(fat) = Binary::parse(path.to_str().unwrap()).unwrap() else { panic!("Expecting an ELF"); };
+    for mut bin in fat.iter() {
+        let tmpfile = tempfile::NamedTempFile::new().unwrap();
+        bin.write(tmpfile.path());
+    }
+
+    let path = utils::get_macho_sample("json_api.cpp_1.o").unwrap();
+    let Binary::MachO(fat) = Binary::parse(path.to_str().unwrap()).unwrap() else { panic!("Expecting an ELF"); };
+    for mut bin in fat.iter() {
+        let tmpfile = tempfile::NamedTempFile::new().unwrap();
+        bin.write_with_config(tmpfile.path(), Config::default());
+    }
+}
+

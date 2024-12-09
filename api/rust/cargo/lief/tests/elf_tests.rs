@@ -1,5 +1,6 @@
 mod utils;
 use std::env;
+use lief::elf::builder::Config;
 use lief::logging;
 use lief::elf::dynamic;
 use lief::elf::dynamic::DynamicEntry;
@@ -222,5 +223,18 @@ fn test_api() {
     test_with("ELF64_x86-64_binary_systemd-resolve.bin");
     test_with("art_reader.loongarch");
     test_with("simple-gcc-c.bin");
+}
+
+#[test]
+fn test_mut_api() {
+    let path = utils::get_elf_sample("elf_reader.mips.elf").unwrap();
+    let Binary::ELF(mut bin) = Binary::parse(path.to_str().unwrap()).unwrap() else { panic!("Expecting an ELF"); };
+    let tmpfile = tempfile::NamedTempFile::new().unwrap();
+    bin.write(tmpfile.path());
+
+    let path = utils::get_elf_sample("ELF_Core_issue_808.core").unwrap();
+    let Binary::ELF(mut bin) = Binary::parse(path.to_str().unwrap()).unwrap() else { panic!("Expecting an ELF"); };
+    let tmpfile = tempfile::NamedTempFile::new().unwrap();
+    bin.write_with_config(tmpfile.path(), Config::default());
 }
 

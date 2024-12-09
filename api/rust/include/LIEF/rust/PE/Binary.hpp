@@ -253,6 +253,9 @@ class PE_Binary : public AbstractBinary {
     return make_span(impl().get_content_from_virtual_address(virtual_address, size));
   }
 
+  void write(std::string output) { impl().write(output); }
+
   private:
   const lief_t& impl() const { return as<lief_t>(this); }
+  lief_t& impl() { return as<lief_t>(this); }
 };

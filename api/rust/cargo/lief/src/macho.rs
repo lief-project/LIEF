@@ -34,6 +34,7 @@ pub mod section;
 pub mod symbol;
 pub mod header;
 pub mod stub;
+pub mod builder;
 
 #[doc(inline)]
 pub use binary::Binary;

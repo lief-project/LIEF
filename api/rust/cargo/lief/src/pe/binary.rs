@@ -3,6 +3,7 @@ use lief_ffi as ffi;
 use num_traits::{cast, Num};
 use std::mem::size_of;
 use std::pin::Pin;
+use std::path::Path;
 
 use super::data_directory::{DataDirectories, DataDirectory};
 use super::debug;
@@ -306,6 +307,11 @@ impl Binary {
         }
 
         Err(Error::NotSupported)
+    }
+
+    /// Write back the current PE binary into the file specified in parameter
+    pub fn write(&mut self, output: &Path) {
+        self.ptr.as_mut().unwrap().write(output.to_str().unwrap());
     }
 }
 

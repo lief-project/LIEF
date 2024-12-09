@@ -1,11 +1,13 @@
 use std::mem::size_of;
 use std::pin::Pin;
+use std::path::Path;
 
 use num_traits::{Num, cast};
 
 use lief_ffi as ffi;
 
 use crate::Error;
+use super::builder::Config;
 use super::hash::{Sysv, Gnu};
 use super::dynamic::{self, DynamicEntries};
 use super::header::Header;
@@ -286,6 +288,17 @@ impl Binary {
         }
 
         Err(Error::NotSupported)
+    }
+
+    /// Write back the current ELF binary into the file specified in parameter
+    pub fn write(&mut self, output: &Path) {
+        self.ptr.as_mut().unwrap().write(output.to_str().unwrap());
+    }
+
+    /// Write back the current ELF binary into the file specified in parameter with the
+    /// configuration provided in the second parameter.
+    pub fn write_with_config(&mut self, output: &Path, config: Config) {
+        self.ptr.as_mut().unwrap().write_with_config(output.to_str().unwrap(), config.to_ffi());
     }
 }
 

@@ -340,6 +340,10 @@ void Binary::write(const std::string& filename) {
   Builder::write(*this, filename);
 }
 
+void Binary::write(const std::string& filename, Builder::config_t config) {
+  Builder::write(*this, filename, config);
+}
+
 void Binary::write(std::ostream& os) {
   Builder::write(*this, os);
 }

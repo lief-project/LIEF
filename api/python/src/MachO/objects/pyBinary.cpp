@@ -499,8 +499,17 @@ void create<Binary>(nb::module_& m) {
 
     .def("write",
         nb::overload_cast<const std::string&>(&Binary::write),
-        "Rebuild the binary and write and write its content if the file given in parameter"_doc,
+        "Rebuild the binary and write its content in the file given in the first parameter"_doc,
         "output"_a,
+        nb::rv_policy::reference_internal)
+
+    .def("write",
+        nb::overload_cast<const std::string&, Builder::config_t>(&Binary::write),
+        R"doc(
+        Rebuild the binary and write its content in the file given in the first parameter.
+        The ``config`` parameter can be used to tweak the building process.
+        )doc"_doc,
+        "output"_a, "config"_a,
         nb::rv_policy::reference_internal)
 
     .def("add",

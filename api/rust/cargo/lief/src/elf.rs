@@ -11,6 +11,7 @@
 //! ```
 
 pub mod binary;
+pub mod builder;
 pub mod dynamic;
 pub mod hash;
 pub mod header;
