@@ -90,6 +90,23 @@
 
 :Rust:
 
+  * Mutable API are progressively introduced:
+
+    - ELF:
+
+      - :rust:method:`lief::elf::Binary::write [struct]`
+      - :rust:method:`lief::elf::Binary::write_with_config [struct]`
+      - :rust:method:`lief::elf::Binary::add_library [struct]`
+
+    - PE:
+
+      - :rust:method:`lief::pe::Binary::write [struct]`
+
+    - MachO:
+
+      - :rust:method:`lief::macho::Binary::write [struct]`
+      - :rust:method:`lief::macho::Binary::write_with_config [struct]`
+
   * Thanks to :github_user:`Huntragon` Rust bindings can be used without openssl (see: :pr:`1105`)
   * Rust precompiled Linux packages are now supported for Debian 10 & Ubuntu 19.10.
     Before, they require at least Debian 11 & Ubuntu 20.04

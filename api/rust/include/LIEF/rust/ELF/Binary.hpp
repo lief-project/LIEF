@@ -356,6 +356,10 @@ class ELF_Binary : public AbstractBinary {
     return impl().is_targeting_android();
   }
 
+  auto add_library(std::string library) {
+    return std::make_unique<ELF_DynamicEntryLibrary>(impl().add_library(library));
+  }
+
   void write(std::string output) { impl().write(output); }
   void write_with_config(std::string output, ELF_Binary_write_config_t config) {
     impl().write(output, LIEF::ELF::Builder::config_t {

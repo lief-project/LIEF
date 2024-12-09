@@ -9,7 +9,7 @@ use lief_ffi as ffi;
 use crate::Error;
 use super::builder::Config;
 use super::hash::{Sysv, Gnu};
-use super::dynamic::{self, DynamicEntries};
+use super::dynamic::{self, DynamicEntries, Library};
 use super::header::Header;
 use super::section::{Sections, Section};
 use super::segment::Segments;
@@ -299,6 +299,10 @@ impl Binary {
     /// configuration provided in the second parameter.
     pub fn write_with_config(&mut self, output: &Path, config: Config) {
         self.ptr.as_mut().unwrap().write_with_config(output.to_str().unwrap(), config.to_ffi());
+    }
+
+    pub fn add_library<'a>(&'a mut self, library: &str) -> Library<'a> {
+        Library::from_ffi(self.ptr.as_mut().unwrap().add_library(library))
     }
 }
 

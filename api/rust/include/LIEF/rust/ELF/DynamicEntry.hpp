@@ -17,7 +17,7 @@
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/helpers.hpp"
 
-class ELF_DynamicEntry : public Mirror<LIEF::ELF::DynamicEntry>{
+class ELF_DynamicEntry : public Mirror<LIEF::ELF::DynamicEntry> {
   friend class ELF_DynamicEntryRpath;
   friend class ELF_DynamicEntryArray;
   friend class ELF_DynamicEntryFlags;

@@ -229,6 +229,7 @@ fn test_api() {
 fn test_mut_api() {
     let path = utils::get_elf_sample("elf_reader.mips.elf").unwrap();
     let Binary::ELF(mut bin) = Binary::parse(path.to_str().unwrap()).unwrap() else { panic!("Expecting an ELF"); };
+    bin.add_library("this_is_a_test.so");
     let tmpfile = tempfile::NamedTempFile::new().unwrap();
     bin.write(tmpfile.path());
 
