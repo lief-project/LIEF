@@ -279,7 +279,7 @@ ok_error_t BinaryParser::parse_load_commands() {
           segment->index_ = binary_->segments_.size();
           binary_->segments_.push_back(segment);
 
-          if (segment->file_size() > 0) {
+          if (Binary::can_cache_segment(*segment)) {
             binary_->offset_seg_[segment->file_offset()] = segment;
           }
 

@@ -944,6 +944,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   void sort_segments();
   void refresh_seg_offset();
 
+  /// Check if the given segment can go in the offset_seg_ cache
+  static LIEF_LOCAL bool can_cache_segment(const SegmentCommand& segment);
+
   private:
   /// Default constructor
   LIEF_LOCAL Binary();

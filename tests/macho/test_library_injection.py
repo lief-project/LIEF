@@ -5,6 +5,7 @@ import subprocess
 import pathlib
 import re
 import pytest
+from pathlib import Path
 from subprocess import Popen
 from utils import is_osx, get_sample, is_apple_m1
 
@@ -128,3 +129,23 @@ def test_all_x86_64(tmp_path):
     print(stdout)
 
     assert re.search(r'CTOR CALLED', stdout) is not None
+
+
+@pytest.mark.parametrize("sample", [
+    "MachO/MachO64_x86-64_binary_sshd.bin",
+    "MachO/issue_1130.macho",
+])
+def test_segment_caching(tmp_path: Path, sample):
+    bin_path = Path(get_sample(sample))
+    original = lief.MachO.parse(bin_path.as_posix()).at(0)
+    output = tmp_path / bin_path.name
+    library_path = "/private/var/folders/vb/jj4r3nc1657b19v26p3kpclc0000gp/T/pytest-of-github-runner/pytest-18/test_ssh0/libexample.dylib"
+
+    original.add_library(library_path)
+
+    original.remove_signature()
+    original.write(output.as_posix())
+    new = lief.MachO.parse(output).at(0)
+
+    checked, err = lief.MachO.check_layout(new)
+    assert checked, err

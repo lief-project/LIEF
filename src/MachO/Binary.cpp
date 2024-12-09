@@ -600,7 +600,9 @@ void Binary::sort_segments() {
   for (auto it = start; it != end; ++it) {
     SegmentCommand& seg = *(*it)->as<SegmentCommand>();
     seg.index_ = segments_.size();
-    offset_seg_[seg.file_offset()] = &seg;
+    if (can_cache_segment(seg)) {
+      offset_seg_[seg.file_offset()] = &seg;
+    }
     segments_.push_back(&seg);
   }
 }
@@ -2336,7 +2338,7 @@ ExportInfo* Binary::add_exported_function(uint64_t address, const std::string& n
 void Binary::refresh_seg_offset() {
   offset_seg_.clear();
   for (SegmentCommand* segment : segments_) {
-    if (segment->file_offset_ == 0) {
+    if (!can_cache_segment(*segment)) {
       continue;
     }
     offset_seg_[segment->file_offset()] = segment;
@@ -2383,6 +2385,21 @@ Binary::stub_iterator Binary::symbol_stubs() const {
   Stub::Iterator end({}, {}, total);
 
   return make_range(std::move(begin), std::move(end));
+}
+
+bool Binary::can_cache_segment(const SegmentCommand& segment) {
+  if (segment.file_offset() > 0 && segment.file_size() > 0) {
+    return true;
+  }
+
+  if (segment.name() == "__TEXT") {
+    // In some cases (c.f. <samples>/MachO/issue_1130.macho)
+    // the __TEXT segment can have a file_size set to 0 while it is logically
+    // revelant to cache it
+    return true;
+  }
+
+  return false;
 }
 
 Binary::~Binary() = default;
