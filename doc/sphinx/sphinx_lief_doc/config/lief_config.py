@@ -67,7 +67,7 @@ def setup(app: Sphinx):
     app.config.lief_doc_endpoint = "stable" if app.config.lief_is_release else "latest"
     app.config.lief_gh_repo = "LIEF"
     app.config.lief_gh_org = "lief-project"
-    app.config.lief_discord = "https://discord.com/invite/7hRFGWYedu"
+    app.config.lief_discord = "https://discord.gg/jGQtyAYChJ"
     app.config.lief_gh_repo_url = "https://github.com/lief-project/LIEF"
     app.config.lief_gh_sponsor_url = "https://github.com/sponsors/lief-project"
     app.config.lief_extended_url = "https://extended.lief.re/"
