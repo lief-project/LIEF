@@ -146,7 +146,7 @@ pip install [--user] --force-reinstall --index-url https://lief.s3-website.fr-pa
 Here are guides to install or integrate LIEF:
 
   * [Python](https://lief.re/doc/latest/installation.html#python)
-  * [VisualStudio](https://lief.re/doc/latest/installation.html#visual-studio-integration)
+  * [Visual Studio](https://lief.re/doc/latest/installation.html#visual-studio-integration)
   * [XCode](https://lief.re/doc/latest/installation.html#xcode-integration)
   * [CMake](https://lief.re/doc/latest/installation.html#cmake-integration)
 
@@ -255,7 +255,7 @@ int main(int argc, char** argv) {
 
 ### Authors
 
-Romain Thomas ([@rh0main](https://twitter.com/rh0main)) - [Quarkslab](https://www.quarkslab.com)
+Romain Thomas ([@rh0main](https://www.romainthomas.fr/)) - [Quarkslab](https://www.quarkslab.com)
 
 ### License
 
