@@ -924,7 +924,8 @@ ok_error_t Binary::shift(size_t value) {
 
       for (const std::unique_ptr<Section>& section : segment->sections_) {
         if (section->virtual_address() >= loadcommands_end_va ||
-            section->type() == Section::TYPE::ZEROFILL)
+            section->type() == Section::TYPE::ZEROFILL ||
+            section->type() == Section::TYPE::THREAD_LOCAL_ZEROFILL)
         {
           section->virtual_address(section->virtual_address() + value);
         }
@@ -1223,9 +1224,9 @@ bool Binary::extend_segment(const SegmentCommand& segment, size_t size) {
         section->offset(section->offset() + size_aligned);
         section->virtual_address(section->virtual_address() + size_aligned);
       }
-
-      if (section->type() == Section::TYPE::ZEROFILL &&
-          section->virtual_address() > last_va)
+      else if (section->virtual_address() > last_va &&
+          (section->type() == Section::TYPE::ZEROFILL ||
+           section->type() == Section::TYPE::THREAD_LOCAL_ZEROFILL))
       {
         section->virtual_address(section->virtual_address() + size_aligned);
       }
