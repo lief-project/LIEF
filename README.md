@@ -134,7 +134,7 @@ pip install lief
 To install nightly build:
 
 ```console
-pip install [--user] --force-reinstall --index-url https://lief.s3-website.fr-par.scw.cloud/latest lief==0.16.0.dev0
+pip install [--user] --force-reinstall --index-url https://lief.s3-website.fr-par.scw.cloud/latest lief==0.17.0.dev0
 ```
 
 ### Packages
