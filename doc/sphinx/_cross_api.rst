@@ -169,6 +169,7 @@
 
 .. |lief-pe-binary-write| lief-api:: lief.PE.Binary.write()
 
+    :rust:method:`lief::pe::Binary::write [struct]`
     :py:meth:`lief.PE.Binary.write`
     :cpp:func:`LIEF::PE::Binary::write`
 
@@ -268,6 +269,8 @@
 
 .. |lief-elf-binary-write| lief-api:: lief.ELF.Binary.write()
 
+    :rust:method:`lief::elf::Binary::write [struct]`
+    :rust:method:`lief::elf::Binary::write_with_config [struct]`
     :py:meth:`lief.ELF.Binary.write`
     :cpp:func:`LIEF::ELF::Binary::write`
 
@@ -390,6 +393,8 @@
 
 .. |lief-macho-binary-write| lief-api:: lief.MachO.Binary.write()
 
+    :rust:method:`lief::macho::Binary::write [struct]`
+    :rust:method:`lief::macho::Binary::write_with_config [struct]`
     :py:meth:`lief.MachO.Binary.write`
     :cpp:func:`LIEF::MachO::Binary::write`
 
