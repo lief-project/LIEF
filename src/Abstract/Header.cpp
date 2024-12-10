@@ -25,6 +25,7 @@
 #include "frozen.hpp"
 #include "fmt_formatter.hpp"
 #include "logging.hpp"
+#include "LIEF/config.h"
 
 FMT_FORMATTER(LIEF::Header::MODES, LIEF::to_string);
 
@@ -37,6 +38,10 @@ static constexpr auto ARRAY_MODES = {
 };
 
 Header Header::from(const ELF::Binary& elf) {
+  if constexpr (!lief_elf_support) {
+    return {};
+  }
+
   Header hdr;
   hdr.entrypoint_ = elf.entrypoint();
 
@@ -124,6 +129,10 @@ Header Header::from(const ELF::Binary& elf) {
 }
 
 Header Header::from(const PE::Binary& pe) {
+  if constexpr (!lief_pe_support) {
+    return {};
+  }
+
   Header hdr;
   hdr.entrypoint_ = pe.entrypoint();
   const PE::Header& pe_header = pe.header();
@@ -184,6 +193,10 @@ Header Header::from(const PE::Binary& pe) {
 }
 
 Header Header::from(const MachO::Binary& macho) {
+  if constexpr (!lief_macho_support) {
+    return {};
+  }
+
   Header hdr;
   {
     logging::Scoped scope(logging::LEVEL::OFF);
