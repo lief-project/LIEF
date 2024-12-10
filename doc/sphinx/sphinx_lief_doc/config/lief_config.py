@@ -58,10 +58,10 @@ def setup(app: Sphinx):
     app.config.version = get_version()
     app.config.release = get_release()
 
-    app.config.lief_is_release = lief.__is_tagged__ or \
-                                 os.getenv(_LIEF_RELEASE_ENV_KEY) is not None
+    app.config.lief_is_release = os.getenv(_LIEF_RELEASE_ENV_KEY) is not None or \
+                                 lief.__is_tagged__
 
-    app.config.lief_commit = lief.__commit__
+    app.config.lief_commit = os.getenv("LIEF_COMMIT") or lief.__commit__
     app.config.lief_public_website = "https://lief.re"
     app.config.lief_html_theme = "sphinx_lief"
     app.config.lief_doc_endpoint = "stable" if app.config.lief_is_release else "latest"
