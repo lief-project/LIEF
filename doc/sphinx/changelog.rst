@@ -3,8 +3,8 @@
 :fa:`solid fa-code-compare` Changelog
 =====================================
 
-0.16.0 - Not Released Yet
--------------------------
+0.16.0 - December 10th, 2024
+----------------------------
 
 :Abstraction:
 
