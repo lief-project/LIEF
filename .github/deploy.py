@@ -250,43 +250,25 @@ class GithubDeploy:
         return name in self._main_branches
 
     def should_be_deployed(self, branch: str) -> bool:
-        if GithubDeploy.is_tagged():
-            return True
-
         if any(re.match(s, branch) for s in self._branches):
-            return True
-
-        if any(branch.startswith(e) for e in RELEASE_KEYWORD):
             return True
 
         return False
 
     def deploy(self, directories: list[str]):
         s3dir = None
-        tag = None
-        if GithubDeploy.is_tagged():
-            s3dir = GithubDeploy.tag_name()
-            tag = s3dir if len(s3dir) > 0 else None
-            logger.info("Deployment for tag: %s", tag)
-        else:
-            branch = GithubDeploy.branch()
-            if branch is None:
-                logger.warning("Can't resolve the branch name")
-                sys.exit(1)
 
-            for rel_kwrd in RELEASE_KEYWORD:
-                if branch.startswith(rel_kwrd):
-                    _, s3dir = branch.split(rel_kwrd)
-            if s3dir is None:
+        branch = GithubDeploy.branch()
 
-                if self.is_main_branch(branch):
-                    s3dir = self._default_dir
-                else:
-                    s3dir = branch.replace("/", "-").replace("_", "-")
+        if branch is None:
+            logger.warning("Can't resolve the branch name")
+            sys.exit(1)
 
-            if not self.should_be_deployed(branch):
-                logger.info("Skipping deployment for branch: %s", branch)
-                return
+        s3dir = self._default_dir
+
+        if not self.should_be_deployed(branch):
+            logger.info("Skipping deployment for branch: %s", branch)
+            return
 
         if s3dir is None:
             logger.error("Target directory is not set")
