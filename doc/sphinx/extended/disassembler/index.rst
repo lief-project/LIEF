@@ -277,7 +277,7 @@ accurate for disassembling code. This LLVM's MC layer has already been used by
 other projects like `capstone <https://www.capstone-engine.org/>`_ or more
 recently `Nyxstone <https://github.com/emproof-com/nyxstone>`_.
 
-Compared to Capstone, LIEF uses a mainstream LLVM version without any modification
+Compared to Capstone, LIEF uses a mainstream LLVM version with limited modifications
 on the MC layer. On the other hand, it does not expose a C API, supports fewer
 architectures than Capstone, and does not expose a standalone API.
 
