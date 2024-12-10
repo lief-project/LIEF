@@ -1636,18 +1636,17 @@ bool Binary::remove(const Symbol& sym) {
   unexport(sym);
   const auto it_sym = std::find_if(std::begin(symbols_), std::end(symbols_),
       [&sym] (const std::unique_ptr<Symbol>& s) {
-        return s->name() == sym.name();
+        return s.get() == &sym;
       });
 
   if (it_sym == std::end(symbols_)) {
     return false;
   }
 
-  Symbol* symbol_to_remove = it_sym->get();
   if (DynamicSymbolCommand* dyst = dynamic_symbol_command()) {
     dyst->indirect_symbols_.erase(
         std::remove_if(std::begin(dyst->indirect_symbols_), std::end(dyst->indirect_symbols_),
-                       [symbol_to_remove] (const Symbol* s) { return s == symbol_to_remove;}),
+                       [&sym] (const Symbol* s) { return s == &sym; }),
         std::end(dyst->indirect_symbols_));
   }
 
