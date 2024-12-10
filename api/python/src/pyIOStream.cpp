@@ -29,7 +29,7 @@ result<PyIOStream> PyIOStream::from_python(nb::object object) {
   const nb::module_ mod_io = nb::module_::import_("io");
   const nb::object IOBase = mod_io.attr("IOBase");
 
-  if (!isinstance(object, IOBase)) {
+  if (!nb::isinstance(object, IOBase)) {
     logging::log(logging::LEVEL::ERR,
         "The provided io object does not sub-class io.IOBase");
     return make_error_code(lief_errors::read_error);
