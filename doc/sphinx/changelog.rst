@@ -3,6 +3,14 @@
 :fa:`solid fa-code-compare` Changelog
 =====================================
 
+0.16.X - TBD
+------------
+
+:MachO:
+
+  * Fix issue when building with ``-DLIEF_MACHO=ON`` (see: :issue:`1138`)
+
+
 0.16.0 - December 10th, 2024
 ----------------------------
 
