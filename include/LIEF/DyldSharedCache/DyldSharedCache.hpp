@@ -53,6 +53,7 @@ class LIEF_API DyldSharedCache {
     DYLD_832_7_1, ///< dyld-832.7.1 (2020-11-19)
     DYLD_940,     ///< dyld-940 (2021-02-09)
     DYLD_1042_1,  ///< dyld-1042.1 (2022-10-19)
+    DYLD_1231_3,  ///< dyld-1231.3 (2024-09-24)
 
     /// This value is used for versions of dyld not publicly released or not yet
     /// supported by LIEF
