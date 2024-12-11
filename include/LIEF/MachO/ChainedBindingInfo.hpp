@@ -99,9 +99,7 @@ class LIEF_API ChainedBindingInfo : public BindingInfo {
     return info->type() == TYPES::CHAINED;
   }
 
-  ~ChainedBindingInfo() override {
-    clear();
-  }
+  ~ChainedBindingInfo() override;
 
   void accept(Visitor& visitor) const override;
 
