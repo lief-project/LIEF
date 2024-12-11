@@ -46,6 +46,10 @@ ChainedBindingInfo::ChainedBindingInfo(DYLD_CHAINED_FORMAT fmt, bool is_weak) :
   is_weak_import_ = is_weak;
 }
 
+ChainedBindingInfo::~ChainedBindingInfo() {
+  clear();
+}
+
 ChainedBindingInfo& ChainedBindingInfo::operator=(ChainedBindingInfo other) {
   swap(other);
   return *this;
