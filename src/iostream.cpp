@@ -109,6 +109,20 @@ vector_iostream& vector_iostream::seekp(vector_iostream::off_type p, std::ios_ba
   return *this;
 }
 
+vector_iostream& vector_iostream::write(const std::u16string& s, bool with_null_char) {
+  const size_t nullchar = with_null_char ? 1 : 0;
+  const auto pos = static_cast<size_t>(tellp());
+  if (raw_.size() < (pos + s.size() + nullchar)) {
+    raw_.resize(pos + (s.size() + nullchar) * sizeof(char16_t));
+  }
+
+  std::copy(reinterpret_cast<const char16_t*>(s.data()),
+            reinterpret_cast<const char16_t*>(s.data()) + s.size(),
+            reinterpret_cast<char16_t*>(raw_.data() + current_pos_));
+  current_pos_ += (s.size() + nullchar) * sizeof(char16_t);
+  return *this;
+}
+
 vector_iostream& vector_iostream::align(size_t alignment, uint8_t fill) {
   if (raw_.size() % alignment == 0) {
     return *this;

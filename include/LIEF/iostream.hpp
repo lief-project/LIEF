@@ -47,12 +47,17 @@ class vector_iostream {
   }
 
   vector_iostream& write(std::vector<uint8_t> s) {
+    if (s.empty()) {
+      return *this;
+    }
     return write(s.data(), s.size());
   }
 
   vector_iostream& write(const std::string& s) {
     return write(reinterpret_cast<const uint8_t*>(s.c_str()), s.size() + 1);
   }
+
+  vector_iostream& write(const std::u16string& s, bool with_null_char);
 
   vector_iostream& write(size_t count, uint8_t value) {
     raw_.insert(std::end(raw_), count, value);
