@@ -26,7 +26,9 @@ class DyldSharedCache:
 
         DYLD_1042_1 = 8
 
-        UNRELEASED = 9
+        DYLD_1231_3 = 9
+
+        UNRELEASED = 10
 
     class PLATFORM(enum.Enum):
         UNKNOWN = 0

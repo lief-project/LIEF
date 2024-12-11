@@ -100,7 +100,6 @@ class vector_iostream {
     return *this;
   }
 
-
   template<typename T>
   vector_iostream& write(const std::vector<T>& elements) {
     for (const T& e : elements) {

@@ -36,10 +36,13 @@ namespace PE {
 /// or remove this information.
 class LIEF_API RichHeader : public Object {
   public:
-
   using entries_t        = std::vector<RichEntry>;
   using it_entries       = ref_iterator<entries_t&>;
   using it_const_entries = const_ref_iterator<const entries_t&>;
+
+  static constexpr uint8_t RICH_MAGIC[] = {'R', 'i', 'c', 'h'};
+  static constexpr uint32_t RICH_MAGIC_INT = 0x68636952; // 'Rich'
+  static constexpr uint32_t DANS_MAGIC_NUMBER = 0x536E6144; // 'Rich'
 
   RichHeader() = default;
   RichHeader(const RichHeader&) = default;

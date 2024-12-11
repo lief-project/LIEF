@@ -26,7 +26,6 @@
 #define LIEF_PE_FORCE_UNDEF
 #include "LIEF/PE/undef.h"
 
-#include "PE/Structures.hpp"
 #include "hash_stream.hpp"
 
 namespace LIEF {
@@ -37,11 +36,10 @@ void RichHeader::accept(LIEF::Visitor& visitor) const {
 }
 
 std::vector<uint8_t> RichHeader::raw(uint32_t xor_key) const {
-  static constexpr uint32_t RICH_MAGIC = 0x68636952;
   vector_iostream wstream;
 
   wstream
-    .write(details::DanS_Magic_number ^ xor_key)
+    .write(DANS_MAGIC_NUMBER ^ xor_key)
     /*
      * The first chunk needs to be aligned on 64-bit and padded
      * with 0-xor. We can't use vector_iostream::align as it would not
@@ -57,9 +55,8 @@ std::vector<uint8_t> RichHeader::raw(uint32_t xor_key) const {
     wstream
       .write(value ^ xor_key).write(entry.count() ^ xor_key);
   }
-
   wstream
-    .write(RICH_MAGIC).write(xor_key);
+    .write(RICH_MAGIC, std::size(RICH_MAGIC)).write(xor_key);
 
   return wstream.raw();
 }
