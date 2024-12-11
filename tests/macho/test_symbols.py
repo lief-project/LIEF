@@ -130,3 +130,23 @@ def test_demangling():
 
     assert macho.symbols[1].demangled_name == "void __cxxabiv1::(anonymous namespace)::demangle<__cxxabiv1::(anonymous namespace)::Db>(char const*, char const*, __cxxabiv1::(anonymous namespace)::Db&, int&)"
     assert macho.symbols[486].demangled_name == "___cxa_deleted_virtual"
+
+def test_symbol_shift(tmp_path):
+    bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_sym2remove.bin"))
+    bin = lief.parse(bin_path.as_posix())
+    output = f"{tmp_path}/{bin_path.name}"
+
+    shift = 0x4000
+    loadcommands_end = bin.imagebase + 32 + bin.header.sizeof_cmds # sizeof(mach_header_64) + size of load command table
+    def get_shifted_symbol(sym):
+        value = sym.value
+        if value > loadcommands_end:
+            value += shift
+        return (sym.name, value)
+
+    check_symbols = {get_shifted_symbol(sym) for sym in bin.symbols if sym.raw_type & 0x0E == lief.MachO.Symbol.TYPE.SECTION}
+    bin.shift(shift)
+    shifted_symbols = {(sym.name, sym.value) for sym in bin.symbols if sym.raw_type & 0x0E == lief.MachO.Symbol.TYPE.SECTION}
+
+    assert shifted_symbols == check_symbols
+
