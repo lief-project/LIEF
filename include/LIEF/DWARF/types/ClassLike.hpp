@@ -34,7 +34,7 @@ class LIEF_API ClassLike : public Type {
   using Type::Type;
 
   /// This represents a class/struct/union attribute
-  class Member {
+  class LIEF_API Member {
     public:
     Member(std::unique_ptr<details::Member> impl);
     Member(Member&& other) noexcept;

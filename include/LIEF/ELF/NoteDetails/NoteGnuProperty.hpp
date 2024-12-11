@@ -32,7 +32,7 @@ class LIEF_API NoteGnuProperty : public Note {
 
   /// This class wraps the different properties that can be used in a
   /// `NT_GNU_PROPERTY_TYPE_0` note
-  class Property {
+  class LIEF_API Property {
     public:
 
     /// LIEF's mirror types of the original `GNU_PROPERTY_` values
