@@ -187,6 +187,33 @@ def test_add_section_id(tmp_path):
         print(stdout)
         assert re.search(r'uid=', stdout) is not None
 
+def test_extend_section(tmp_path):
+    bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_id.bin"))
+    original = lief.MachO.parse(bin_path.as_posix()).at(0)
+    output = f"{tmp_path}/test_extend_section.bin"
+
+    text_segment = original.get_segment("__TEXT")
+    sections = []
+    for i in range(8, -1, -1):
+        section = lief.MachO.Section(f"__lief_{i}")
+        section.alignment = i
+        sections.append(original.add_section(text_segment, section))
+
+    checked, err = lief.MachO.check_layout(original)
+    assert checked, err
+
+    for i, section in enumerate(sections):
+        assert original.extend_section(section, 1 << section.alignment)
+
+    checked, err = lief.MachO.check_layout(original)
+    assert checked, err
+
+    original.write(output)
+    new = lief.MachO.parse(output).at(0)
+
+    checked, err = lief.MachO.check_layout(new)
+    assert checked, err
+
 @pytest.mark.skipif(is_github_ci(), reason="sshd does not work on Github Action")
 def test_add_section_ssh(tmp_path):
     bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_sshd.bin"))
