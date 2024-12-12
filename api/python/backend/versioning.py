@@ -59,6 +59,9 @@ class Versioning:
 
         if branch is not None and branch.startswith("release/"):
             _, version = branch.split("release/")
+            major, minor, patch = version.split('.')
+            if patch == 'x':
+                return f"{major}.{minor}"
             return version
 
         parts = version.split('-')
