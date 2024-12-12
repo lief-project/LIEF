@@ -187,6 +187,46 @@ def test_add_section_id(tmp_path):
         print(stdout)
         assert re.search(r'uid=', stdout) is not None
 
+def test_extend_section(tmp_path):
+    bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_id.bin"))
+    original = lief.MachO.parse(bin_path.as_posix()).at(0)
+    output = f"{tmp_path}/test_extend_section.bin"
+
+    text_segment = original.get_segment("__TEXT")
+    def make_section(name, alignment):
+        section = lief.MachO.Section(f"__lief_{alignment}")
+        section.alignment = alignment
+        return section
+
+    sections = [
+        make_section("__lief_8", 8),
+        make_section("__lief_7", 7),
+        make_section("__lief_6", 6),
+        make_section("__lief_5", 5),
+        make_section("__lief_4", 4),
+        make_section("__lief_3", 3),
+        make_section("__lief_2", 2),
+        make_section("__lief_1", 1),
+        make_section("__lief_0", 0),
+        make_section("__lief_00", 0),
+    ]
+    sections = [original.add_section(text_segment, s) for s in sections]
+
+    checked, err = lief.MachO.check_layout(original)
+    assert checked, err
+
+    for i, section in enumerate(sections):
+        assert original.extend_section(section, 1 << section.alignment)
+
+    checked, err = lief.MachO.check_layout(original)
+    assert checked, err
+
+    original.write(output)
+    new = lief.MachO.parse(output).at(0)
+
+    checked, err = lief.MachO.check_layout(new)
+    assert checked, err
+
 @pytest.mark.skipif(is_github_ci(), reason="sshd does not work on Github Action")
 def test_add_section_ssh(tmp_path):
     bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_sshd.bin"))
