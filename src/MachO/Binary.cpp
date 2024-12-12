@@ -618,7 +618,7 @@ void Binary::shift_command(size_t width, uint64_t from_offset) {
   uint64_t virtual_address = 0;
 
   if (segment != nullptr) {
-    virtual_address = segment->virtual_address() + from_offset;
+    virtual_address = segment->virtual_address() + from_offset - segment->file_offset();
   }
 
   if (const SegmentCommand* text = get_segment("__TEXT")) {
@@ -640,9 +640,8 @@ void Binary::shift_command(size_t width, uint64_t from_offset) {
 
     for (std::unique_ptr<Symbol>& s : symbols_) {
       if (s->type() == Symbol::TYPE::SECTION) {
-        uint64_t value = s->value();
-        if (value > from_offset) {
-          s->value(value + width);
+        if (s->value() > virtual_address) {
+          s->value(s->value() + width);
         }
       }
     }
