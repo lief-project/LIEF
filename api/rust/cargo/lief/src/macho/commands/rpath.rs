@@ -17,6 +17,11 @@ impl RPath<'_> {
     pub fn path(&self) -> String {
         self.ptr.path().to_string()
     }
+
+    /// Original string offset of the path
+    pub fn path_offset(&self) -> u32 {
+        self.ptr.path_offset()
+    }
 }
 
 impl std::fmt::Debug for RPath<'_> {

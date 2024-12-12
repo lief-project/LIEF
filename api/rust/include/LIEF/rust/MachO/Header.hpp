@@ -31,4 +31,7 @@ class MachO_Header : private Mirror<LIEF::MachO::Header> {
   auto sizeof_cmds() const { return get().sizeof_cmds(); }
   auto flags() const { return get().flags(); }
   auto reserved() const { return get().reserved(); }
+
+  bool is_32bit() const { return get().is_32bit(); }
+  bool is_64bit() const { return get().is_64bit(); }
 };

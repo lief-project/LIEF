@@ -31,7 +31,8 @@ RPathCommand::RPathCommand(std::string path) :
 }
 
 RPathCommand::RPathCommand(const details::rpath_command& rpath) :
-  LoadCommand::LoadCommand{LoadCommand::TYPE(rpath.cmd), rpath.cmdsize}
+  LoadCommand::LoadCommand{LoadCommand::TYPE(rpath.cmd), rpath.cmdsize},
+  path_offset_(rpath.path)
 {}
 
 void RPathCommand::accept(Visitor& visitor) const {

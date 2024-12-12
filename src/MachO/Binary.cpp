@@ -1554,6 +1554,12 @@ LoadCommand* Binary::add(const SegmentCommand& segment) {
     current_offset += section.size();
   }
 
+  if (DyldChainedFixups* fixup = dyld_chained_fixups()) {
+    DyldChainedFixups::chained_starts_in_segment new_info =
+      DyldChainedFixups::chained_starts_in_segment::create_empty_chained(*segment_added);
+    fixup->add(std::move(new_info));
+  }
+
   refresh_seg_offset();
   return segment_added;
 }

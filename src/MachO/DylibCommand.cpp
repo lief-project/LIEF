@@ -25,6 +25,7 @@ namespace MachO {
 
 DylibCommand::DylibCommand(const details::dylib_command& cmd) :
   LoadCommand::LoadCommand{static_cast<LoadCommand::TYPE>(cmd.cmd), cmd.cmdsize},
+  name_offset_{cmd.name},
   timestamp_{cmd.timestamp},
   current_version_{cmd.current_version},
   compatibility_version_{cmd.compatibility_version}

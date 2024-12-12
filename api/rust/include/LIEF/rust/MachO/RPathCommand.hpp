@@ -24,6 +24,8 @@ class MachO_RPathCommand : public MachO_Command {
   MachO_RPathCommand(const lief_t& base) : MachO_Command(base) {}
   std::string path() const { return impl().path(); };
 
+  auto path_offset() const { return impl().path_offset(); }
+
   static bool classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }

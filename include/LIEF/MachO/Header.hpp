@@ -193,6 +193,18 @@ class LIEF_API Header : public Object {
     flags_ = flags;
   }
 
+  /// True if the binary is 32-bit
+  bool is_32bit() const {
+    return magic_ == MACHO_TYPES::MH_MAGIC ||
+           magic_ == MACHO_TYPES::MH_CIGAM;
+  }
+
+  /// True if the binary is 64-bit
+  bool is_64bit() const {
+    return magic_ == MACHO_TYPES::MH_MAGIC_64 ||
+           magic_ == MACHO_TYPES::MH_CIGAM_64;
+  }
+
   void remove(FLAGS flag);
 
   void reserved(uint32_t reserved) {

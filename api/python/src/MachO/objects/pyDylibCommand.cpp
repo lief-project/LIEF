@@ -34,6 +34,9 @@ void create<DylibCommand>(nb::module_& m) {
         "Library's name"_doc,
         nb::rv_policy::reference_internal)
 
+    .def_prop_ro("name_offset", &DylibCommand::name_offset,
+                 "Original string offset of the name")
+
     .def_prop_rw("timestamp",
         nb::overload_cast<>(&DylibCommand::timestamp, nb::const_),
         nb::overload_cast<uint32_t>(&DylibCommand::timestamp),

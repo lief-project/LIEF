@@ -58,6 +58,11 @@ class LIEF_API RPathCommand : public LoadCommand {
     return path_;
   }
 
+  /// Original string offset of the path
+  uint32_t path_offset() const {
+    return path_offset_;
+  }
+
   void path(std::string path) {
     path_ = std::move(path);
   }
@@ -71,6 +76,7 @@ class LIEF_API RPathCommand : public LoadCommand {
   }
 
   private:
+  uint32_t path_offset_ = 0;
   std::string path_;
 };
 

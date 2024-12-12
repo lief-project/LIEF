@@ -228,6 +228,16 @@ impl Header<'_> {
     pub fn reserved(&self) -> u32 {
         self.ptr.reserved()
     }
+
+    /// True if the binary is 32-bit
+    pub fn is_32bit(&self) -> bool {
+        self.ptr.is_32bit()
+    }
+
+    /// True if the binary is 64-bit
+    pub fn is_64bit(&self) -> bool {
+        self.ptr.is_64bit()
+    }
 }
 
 impl fmt::Debug for Header<'_> {

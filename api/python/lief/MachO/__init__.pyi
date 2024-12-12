@@ -1431,6 +1431,9 @@ class DyldInfo(LoadCommand):
 class DylibCommand(LoadCommand):
     name: str
 
+    @property
+    def name_offset(self) -> int: ...
+
     timestamp: int
 
     current_version: list[int]
@@ -1797,6 +1800,12 @@ class Header(lief.Object):
     @property
     def flags_list(self) -> list[Header.FLAGS]: ...
 
+    @property
+    def is_32bit(self) -> bool: ...
+
+    @property
+    def is_64bit(self) -> bool: ...
+
     def add(self, flag: Header.FLAGS) -> None: ...
 
     def remove(self, flag: Header.FLAGS) -> None: ...
@@ -2061,6 +2070,9 @@ class ParserConfig:
 class RPathCommand(LoadCommand):
     @staticmethod
     def create(path: str) -> Optional[RPathCommand]: ...
+
+    @property
+    def path_offset(self) -> int: ...
 
     path: str
 
