@@ -78,12 +78,12 @@ Parser::Parser(std::unique_ptr<BinaryStream> stream) :
   stream_{std::move(stream)}
 {}
 
-void Parser::init(const ParserConfig& config) {
+ok_error_t Parser::init(const ParserConfig& config) {
   stream_->setpos(0);
   auto type = get_type_from_stream(*stream_);
   if (!type) {
     LIEF_ERR("Can't determine PE type.");
-    return;
+    return make_error_code(lief_errors::parsing_error);
   }
 
   type_   = type.value();
@@ -92,11 +92,8 @@ void Parser::init(const ParserConfig& config) {
   binary_->original_size_ = stream_->size();
   config_ = config;
 
-  if (type_ == PE_TYPE::PE32) {
-    parse<details::PE32>();
-  } else {
-    parse<details::PE64>();
-  }
+  return type_ == PE_TYPE::PE32 ? parse<details::PE32>() :
+                                  parse<details::PE64>();
 }
 
 ok_error_t Parser::parse_dos_stub() {
@@ -126,7 +123,8 @@ ok_error_t Parser::parse_rich_header() {
   const SpanStream stream(dos_stub);
 
   const auto* it_rich = std::search(std::begin(dos_stub), std::end(dos_stub),
-                                    std::begin(details::Rich_Magic), std::end(details::Rich_Magic));
+                                    std::begin(RichHeader::RICH_MAGIC),
+                                    std::end(RichHeader::RICH_MAGIC));
 
   if (it_rich == std::end(dos_stub)) {
     LIEF_DEBUG("Rich header not found!");
@@ -137,7 +135,7 @@ ok_error_t Parser::parse_rich_header() {
   const uint64_t end_offset_rich_header = std::distance(std::begin(dos_stub), it_rich);
   LIEF_DEBUG("Offset to rich header: 0x{:x}", end_offset_rich_header);
 
-  if (auto res_xor_key = stream.peek<uint32_t>(end_offset_rich_header + sizeof(details::Rich_Magic))) {
+  if (auto res_xor_key = stream.peek<uint32_t>(end_offset_rich_header + sizeof(RichHeader::RICH_MAGIC))) {
     rich_header->key(*res_xor_key);
   } else {
     return make_error_code(lief_errors::read_error);
@@ -146,7 +144,7 @@ ok_error_t Parser::parse_rich_header() {
   const uint32_t xor_key = rich_header->key();
   LIEF_DEBUG("XOR key: 0x{:x}", xor_key);
 
-  int64_t curent_offset = end_offset_rich_header - sizeof(details::Rich_Magic);
+  int64_t curent_offset = end_offset_rich_header - sizeof(RichHeader::RICH_MAGIC);
 
   std::vector<uint32_t> values;
   values.reserve(dos_stub.size() / sizeof(uint32_t));
@@ -175,8 +173,8 @@ ok_error_t Parser::parse_rich_header() {
       continue;
     }
 
-    if (value == details::DanS_Magic_number ||
-        count == details::DanS_Magic_number)
+    if (value == RichHeader::DANS_MAGIC_NUMBER ||
+        count == RichHeader::DANS_MAGIC_NUMBER)
     {
       break;
     }
@@ -416,6 +414,8 @@ Parser::parse_resource_node(const details::pe_resource_directory_table& director
     if ((id & 0x80000000) != 0u) {
       uint32_t offset        = id & (~ 0x80000000);
       uint32_t string_offset = base_offset + offset;
+      LIEF_ERR("base_offset=0x{:04x}, string_offset=0x{:04x}",
+               base_offset, string_offset);
 
       auto res_length = stream_->peek<uint16_t>(string_offset);
       if (res_length && *res_length <= 100) {

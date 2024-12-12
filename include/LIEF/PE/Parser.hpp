@@ -97,7 +97,7 @@ class LIEF_API Parser : public LIEF::Parser {
   ~Parser() override;
   Parser();
 
-  void init(const ParserConfig& config);
+  ok_error_t init(const ParserConfig& config);
 
   template<typename PE_T>
   ok_error_t parse();
