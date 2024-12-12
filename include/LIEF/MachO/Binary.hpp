@@ -45,6 +45,7 @@ class Metadata;
 /// Namespace related to the LIEF's Mach-O module
 namespace MachO {
 
+class AtomInfo;
 class BinaryParser;
 class Builder;
 class CodeSignature;
@@ -869,6 +870,17 @@ class LIEF_API Binary : public LIEF::Binary  {
   ///
   /// There are located in sections like: `__stubs,__auth_stubs,__symbol_stub,__picsymbolstub4`
   stub_iterator symbol_stubs() const;
+
+  /// `true` if the binary has the command LC_ATOM_INFO.
+  bool has_atom_info() const {
+    return atom_info() != nullptr;
+  }
+
+  /// Return the MachO::AtomInfo if present, a nullptr otherwise.
+  AtomInfo* atom_info() {
+    return const_cast<AtomInfo*>(static_cast<const Binary*>(this)->atom_info());
+  }
+  const AtomInfo* atom_info() const;
 
   template<class T>
   LIEF_LOCAL bool has_command() const;

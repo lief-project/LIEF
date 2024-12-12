@@ -14,6 +14,7 @@ pub mod dylinker;
 pub mod dynamic_symbol_command;
 pub mod encryption_info;
 pub mod functionstarts;
+pub mod atom_info;
 pub mod linker_opt_hint;
 pub mod main_cmd;
 pub mod rpath;
@@ -56,6 +57,8 @@ pub use dynamic_symbol_command::DynamicSymbolCommand;
 pub use encryption_info::EncryptionInfo;
 #[doc(inline)]
 pub use functionstarts::FunctionStarts;
+#[doc(inline)]
+pub use atom_info::AtomInfo;
 #[doc(inline)]
 pub use linker_opt_hint::LinkerOptHint;
 #[doc(inline)]
@@ -146,6 +149,7 @@ pub enum LoadCommandTypes {
     VersionMinMacOSX,
     VersionMinTvOS,
     VersionMinWatchOS,
+    AtomInfo,
 
     LiefUnknown,
     Unknown(u64),
@@ -205,6 +209,7 @@ impl LoadCommandTypes {
     const LC_VERSION_MIN_MACOSX: u64 = 0x00000024;
     const LC_VERSION_MIN_TVOS: u64 = 0x0000002F;
     const LC_VERSION_MIN_WATCHOS: u64 = 0x00000030;
+    const LC_ATOM_INFO: u64 = 0x00000036;
 
     const LIEF_UNKNOWN: u64 = 0xffee0001;
 
@@ -266,6 +271,7 @@ impl LoadCommandTypes {
             LoadCommandTypes::LC_VERSION_MIN_MACOSX => LoadCommandTypes::VersionMinMacOSX,
             LoadCommandTypes::LC_VERSION_MIN_TVOS => LoadCommandTypes::VersionMinTvOS,
             LoadCommandTypes::LC_VERSION_MIN_WATCHOS => LoadCommandTypes::VersionMinWatchOS,
+            LoadCommandTypes::LC_ATOM_INFO => LoadCommandTypes::AtomInfo,
             LoadCommandTypes::LIEF_UNKNOWN => LoadCommandTypes::LiefUnknown,
             _ => LoadCommandTypes::Unknown(value),
         }
@@ -304,6 +310,7 @@ pub enum Commands<'a> {
     TwoLevelHints(TwoLevelHints<'a>),
     UUID(UUID<'a>),
     VersionMin(VersionMin<'a>),
+    AtomInfo(AtomInfo<'a>),
     Unknown(Unknown<'a>),
 }
 
@@ -508,6 +515,13 @@ impl<'a> Commands<'a> {
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Commands::Unknown(Unknown::from_ffi(raw))
+            } else if ffi::MachO_AtomInfo::classof(cmd_ref) {
+                let raw = {
+                    type From = cxx::UniquePtr<ffi::MachO_Command>;
+                    type To = cxx::UniquePtr<ffi::MachO_AtomInfo>;
+                    std::mem::transmute::<From, To>(ffi_entry)
+                };
+                Commands::AtomInfo(AtomInfo::from_ffi(raw))
             } else {
                 Commands::Generic(Generic::from_ffi(ffi_entry))
             }
@@ -646,6 +660,9 @@ impl Command for Commands<'_> {
                 cmd.get_base()
             }
             Commands::VersionMin(cmd) => {
+                cmd.get_base()
+            }
+            Commands::AtomInfo(cmd) => {
                 cmd.get_base()
             }
             Commands::Unknown(cmd) => {

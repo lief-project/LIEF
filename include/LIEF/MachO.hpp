@@ -21,6 +21,7 @@
 #if defined(LIEF_MACHO_SUPPORT)
 
 #include "LIEF/MachO/Binary.hpp"
+#include "LIEF/MachO/AtomInfo.hpp"
 #include "LIEF/MachO/BinaryParser.hpp"
 #include "LIEF/MachO/BindingInfo.hpp"
 #include "LIEF/MachO/BindingInfoIterator.hpp"

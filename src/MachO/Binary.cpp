@@ -43,6 +43,7 @@
 #include "LIEF/MachO/EncryptionInfo.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
+#include "LIEF/MachO/AtomInfo.hpp"
 #include "LIEF/MachO/IndirectBindingInfo.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
@@ -2261,6 +2262,15 @@ const LinkerOptHint* Binary::linker_opt_hint() const {
 const TwoLevelHints* Binary::two_level_hints() const {
   if (const auto* cmd = get(LoadCommand::TYPE::TWOLEVEL_HINTS)) {
     return cmd->as<const TwoLevelHints>();
+  }
+  return nullptr;
+}
+
+// AtomInfo
+// ++++++++++++++++++++++++++++++++
+const AtomInfo* Binary::atom_info() const {
+  if (const auto* cmd = get(LoadCommand::TYPE::ATOM_INFO)) {
+    return cmd->as<const AtomInfo>();
   }
   return nullptr;
 }

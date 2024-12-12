@@ -16,6 +16,7 @@
 #include "logging.hpp"
 #include "LIEF/errors.hpp"
 
+#include "LIEF/MachO/AtomInfo.hpp"
 #include "LIEF/MachO/CodeSignature.hpp"
 #include "LIEF/MachO/CodeSignatureDir.hpp"
 #include "LIEF/MachO/DataInCode.hpp"
@@ -196,6 +197,12 @@ void LinkEdit::update_data(const update_fnc_t& f) {
       LIEF_WARN("Error while re-spanning the LC_DYLIB_CODE_SIGN_DRS in segment {}", name_);
     }
   }
+
+  if (atom_info_ != nullptr) {
+    if (!update_span(atom_info_->content_, original_data_addr, original_data_end, data_)) {
+      LIEF_WARN("Error while re-spanning the LC_ATOM_INFO in segment {}", name_);
+    }
+  }
 }
 
 void LinkEdit::update_data(const update_fnc_ws_t& f, size_t where, size_t size) {
@@ -281,6 +288,12 @@ void LinkEdit::update_data(const update_fnc_ws_t& f, size_t where, size_t size) 
   if (code_sig_dir_ != nullptr) {
     if (!update_span(code_sig_dir_->content_, original_data_addr, original_data_end, data_)) {
       LIEF_WARN("Error while re-spanning the LC_DYLIB_CODE_SIGN_DRS in segment {}", name_);
+    }
+  }
+
+  if (atom_info_ != nullptr) {
+    if (!update_span(atom_info_->content_, original_data_addr, original_data_end, data_)) {
+      LIEF_WARN("Error while re-spanning the LC_ATOM_INFO in segment {}", name_);
     }
   }
 }

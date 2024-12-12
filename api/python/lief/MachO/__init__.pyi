@@ -70,6 +70,16 @@ class ARM_RELOCATION(enum.Enum):
 
     HALF_SECTDIFF = 9
 
+class AtomInfo(LoadCommand):
+    data_offset: int
+
+    data_size: int
+
+    @property
+    def content(self) -> memoryview: ...
+
+    def __str__(self) -> str: ...
+
 class Binary(lief.Binary):
     class it_commands:
         def __getitem__(self, arg: int, /) -> LoadCommand: ...
@@ -378,6 +388,12 @@ class Binary(lief.Binary):
 
     @property
     def linker_opt_hint(self) -> LinkerOptHint: ...
+
+    @property
+    def has_atom_info(self) -> bool: ...
+
+    @property
+    def atom_info(self) -> AtomInfo: ...
 
     def virtual_address_to_offset(self, virtual_address: int) -> Union[int, lief.lief_errors]: ...
 
@@ -1911,6 +1927,8 @@ class LoadCommand(lief.Object):
         DYLD_CHAINED_FIXUPS = 2147483700
 
         FILESET_ENTRY = 2147483701
+
+        ATOM_INFO = 54
 
         LIEF_UNKNOWN = 4293787649
 

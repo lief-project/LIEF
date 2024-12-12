@@ -38,6 +38,7 @@ class BinaryStream;
 class SpanStream;
 
 namespace MachO {
+class AtomInfo;
 class ChainedBindingInfo;
 class CodeSignature;
 class CodeSignatureDir;
@@ -240,6 +241,9 @@ class LIEF_API BinaryParser : public LIEF::Parser {
 
   template<class MACHO_T>
   LIEF_LOCAL ok_error_t post_process(LinkerOptHint& cmd);
+
+  template<class MACHO_T>
+  LIEF_LOCAL ok_error_t post_process(AtomInfo& cmd);
 
   template<class MACHO_T>
   LIEF_LOCAL ok_error_t post_process(TwoLevelHints& cmd);

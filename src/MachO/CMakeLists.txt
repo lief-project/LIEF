@@ -1,4 +1,5 @@
 target_sources(LIB_LIEF PRIVATE
+  AtomInfo.cpp
   Binary.cpp
   Binary.tcc
   BinaryParser.cpp
@@ -15,7 +16,6 @@ target_sources(LIB_LIEF PRIVATE
   ChainedPointerAnalysis.cpp
   CodeSignature.cpp
   CodeSignatureDir.cpp
-  endianness_support.cpp
   DataCodeEntry.cpp
   DataInCode.cpp
   DyldBindingInfo.cpp
@@ -63,6 +63,7 @@ target_sources(LIB_LIEF PRIVATE
   UUIDCommand.cpp
   UnknownCommand.cpp
   VersionMin.cpp
+  endianness_support.cpp
   exports_trie.cpp
   hash.cpp
   json_api.cpp

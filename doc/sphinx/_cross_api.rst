@@ -413,6 +413,12 @@
     :py:class:`lief.MachO.Builder.config_t`
     :cpp:class:`LIEF::MachO::Builder::config_t`
 
+.. |lief-macho-atom-info| lief-api:: lief.MachO.AtomInfo
+
+    :rust:struct:`lief::macho::AtomInfo`
+    :py:class:`lief.MachO.AtomInfo`
+    :cpp:class:`LIEF::MachO::AtomInfo`
+
 .. dyld shared cache ===========================================================
 
 .. |lief-dsc-load| lief-api:: lief.dsc.load()

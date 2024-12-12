@@ -1,4 +1,5 @@
 target_sources(pyLIEF PRIVATE
+  pyAtomInfo.cpp
   pyBinary.cpp
   pyBindingInfo.cpp
   pyBuildVersion.cpp

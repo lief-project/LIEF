@@ -26,6 +26,7 @@
 namespace LIEF {
 namespace MachO {
 
+class AtomInfo;
 class Binary;
 class BuildVersion;
 class CodeSignature;
@@ -173,6 +174,9 @@ class LIEF_API Builder {
 
   template<class T>
   LIEF_LOCAL ok_error_t build(LinkerOptHint& opt);
+
+  template<class T>
+  LIEF_LOCAL ok_error_t build(AtomInfo& opt);
 
   template<class T>
   LIEF_LOCAL ok_error_t build(CodeSignatureDir& sig);

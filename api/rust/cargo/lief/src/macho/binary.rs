@@ -19,6 +19,7 @@ use super::commands::dynamic_symbol_command::DynamicSymbolCommand;
 use super::commands::encryption_info::EncryptionInfo;
 use super::commands::functionstarts::FunctionStarts;
 use super::commands::linker_opt_hint::LinkerOptHint;
+use super::commands::atom_info::AtomInfo;
 use super::commands::main_cmd::Main;
 use super::commands::rpath::RPath;
 use super::commands::routine::Routine;
@@ -221,6 +222,11 @@ impl Binary {
     /// Return the `LC_LINKER_OPTIMIZATION_HINT` command if present
     pub fn linker_opt_hint(&self) -> Option<LinkerOptHint> {
         into_optional(self.ptr.linker_opt_hint())
+    }
+
+    /// Return the `LC_ATOM_INFO` command if present
+    pub fn atom_info(&self) -> Option<AtomInfo> {
+        into_optional(self.ptr.atom_info())
     }
 
     /// Return the `LC_VERSION_MIN_MACOSX/VERSION_MIN_IPHONEOS` command if present

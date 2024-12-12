@@ -24,6 +24,7 @@
 namespace LIEF {
 namespace MachO {
 
+class AtomInfo;
 class Binary;
 class BinaryParser;
 class Builder;
@@ -84,6 +85,7 @@ class LIEF_API LinkEdit : public SegmentCommand {
   SymbolCommand* symtab_             = nullptr;
   TwoLevelHints* two_lvl_hint_       = nullptr;
   CodeSignature* code_sig_           = nullptr;
+  AtomInfo* atom_info_               = nullptr;
 };
 
 }

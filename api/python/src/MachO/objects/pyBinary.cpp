@@ -41,6 +41,7 @@
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
+#include "LIEF/MachO/AtomInfo.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
 #include "LIEF/MachO/Routine.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
@@ -441,7 +442,6 @@ void create<Binary>(nb::module_& m) {
         "Return the binary's " RST_CLASS_REF(lief.MachO.TwoLevelHints) " if any, or None"_doc,
         nb::rv_policy::reference_internal)
 
-
     .def_prop_ro("has_linker_opt_hint",
         &Binary::has_linker_opt_hint,
         "``True`` if the binary embeds the Linker optimization hint command (" RST_CLASS_REF(lief.MachO.LinkerOptHint) ")"_doc)
@@ -449,6 +449,15 @@ void create<Binary>(nb::module_& m) {
     .def_prop_ro("linker_opt_hint",
         nb::overload_cast<>(&Binary::linker_opt_hint),
         "Return the binary's " RST_CLASS_REF(lief.MachO.LinkerOptHint) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
+
+    .def_prop_ro("has_atom_info",
+        &Binary::has_atom_info,
+        "``True`` if the binary embeds the ``LC_ATOM_INFO`` command (" RST_CLASS_REF(lief.MachO.AtomInfo) ")"_doc)
+
+    .def_prop_ro("atom_info",
+        nb::overload_cast<>(&Binary::atom_info),
+        "Return the binary's " RST_CLASS_REF(lief.MachO.AtomInfo) " if any, or None"_doc,
         nb::rv_policy::reference_internal)
 
     .def("virtual_address_to_offset",

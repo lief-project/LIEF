@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #pragma once
+#include "LIEF/rust/MachO/AtomInfo.hpp"
 #include "LIEF/rust/MachO/Binary.hpp"
 #include "LIEF/rust/MachO/BindingInfo.hpp"
 #include "LIEF/rust/MachO/BuildToolVersion.hpp"

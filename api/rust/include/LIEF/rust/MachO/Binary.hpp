@@ -17,6 +17,7 @@
 #include <memory>
 #include <LIEF/MachO.hpp>
 
+#include "LIEF/rust/MachO/AtomInfo.hpp"
 #include "LIEF/rust/MachO/BuildVersion.hpp"
 #include "LIEF/rust/MachO/CodeSignature.hpp"
 #include "LIEF/rust/MachO/CodeSignatureDir.hpp"
@@ -262,6 +263,10 @@ class MachO_Binary : public AbstractBinary {
 
   auto linker_opt_hint() const {
     return details::try_unique<MachO_LinkerOptHint>(impl().linker_opt_hint());
+  }
+
+  auto atom_info() const {
+    return details::try_unique<MachO_AtomInfo>(impl().atom_info());
   }
 
   auto version_min() const {

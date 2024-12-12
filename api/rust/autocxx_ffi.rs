@@ -401,6 +401,8 @@ include_cpp! {
     block_constructors!("MachO_FatBinary")
     generate!("MachO_Fileset")
     block_constructors!("MachO_Fileset")
+    generate!("MachO_AtomInfo")
+    block_constructors!("MachO_AtomInfo")
     generate!("MachO_FunctionStarts")
     block_constructors!("MachO_FunctionStarts")
     generate!("MachO_Header")

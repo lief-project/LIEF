@@ -21,6 +21,10 @@
 
   * Fix symbol resolution issue: :issue:`1127`
 
+:Mach-O:
+
+  * Add support for |lief-macho-atom-info| command (``LC_ATOM_INFO``)
+
 0.16.0 - December 10th, 2024
 ----------------------------
 

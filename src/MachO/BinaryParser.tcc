@@ -24,6 +24,7 @@
 #include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/BinaryStream/MemoryStream.hpp"
 
+#include "LIEF/MachO/AtomInfo.hpp"
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/ChainedPointerAnalysis.hpp"
 #include "LIEF/MachO/BinaryParser.hpp"
@@ -180,6 +181,9 @@ ok_error_t BinaryParser::parse() {
   }
   if (LinkerOptHint* opt = binary_->linker_opt_hint()) {
     post_process<MACHO_T>(*opt);
+  }
+  if (AtomInfo* info = binary_->atom_info()) {
+    post_process<MACHO_T>(*info);
   }
 
   if (binary_->dyld_info() == nullptr &&
@@ -786,6 +790,25 @@ ok_error_t BinaryParser::parse_load_commands() {
             break;
           }
           load_command = std::make_unique<FunctionStarts>(*cmd);
+          break;
+        }
+
+
+      // ==================
+      // LC_ATOM_INFO
+      // ==================
+      case LoadCommand::TYPE::ATOM_INFO:
+        {
+          /*
+           * DO NOT FORGET TO UPDATE AtomInfo::classof
+           */
+          LIEF_DEBUG("[+] Parsing LC_ATOM_INFO");
+          const auto cmd = stream_->peek<details::linkedit_data_command>(loadcommands_offset);
+          if (!cmd) {
+            LIEF_ERR("Can't parse linkedit_data_command for LC_ATOM_INFO");
+            break;
+          }
+          load_command = std::make_unique<AtomInfo>(*cmd);
           break;
         }
 
@@ -3627,6 +3650,38 @@ ok_error_t BinaryParser::post_process(LinkerOptHint& cmd) {
     static_cast<LinkEdit*>(linkedit)->linker_opt_ = &cmd;
   } else {
     LIEF_WARN("Weird: LC_LINKER_OPTIMIZATION_HINT is not in the __LINKEDIT segment");
+  }
+  return ok();
+}
+
+
+template<class MACHO_T>
+ok_error_t BinaryParser::post_process(AtomInfo& cmd) {
+  LIEF_DEBUG("[^] Post processing LC_ATOM_INFO");
+
+  SegmentCommand* linkedit = config_.from_dyld_shared_cache ?
+                             binary_->get_segment("__LINKEDIT") :
+                             binary_->segment_from_offset(cmd.data_offset());
+
+  if (linkedit == nullptr) {
+    LIEF_WARN("Can't find the segment that contains the LC_ATOM_INFO");
+    return make_error_code(lief_errors::not_found);
+  }
+
+  span<uint8_t> content = linkedit->writable_content();
+
+  const uint64_t rel_offset = cmd.data_offset() - linkedit->file_offset();
+  if (rel_offset > content.size() || (rel_offset + cmd.data_size()) > content.size()) {
+    LIEF_ERR("The LC_ATOM_INFO is out of bounds of the segment '{}'", linkedit->name());
+    return make_error_code(lief_errors::read_out_of_bound);
+  }
+
+  cmd.content_ = content.subspan(rel_offset, cmd.data_size());
+
+  if (LinkEdit::segmentof(*linkedit)) {
+    static_cast<LinkEdit*>(linkedit)->atom_info_ = &cmd;
+  } else {
+    LIEF_WARN("Weird: LC_ATOM_INFO is not in the __LINKEDIT segment");
   }
   return ok();
 }

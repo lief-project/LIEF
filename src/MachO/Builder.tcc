@@ -16,6 +16,7 @@
 #include "logging.hpp"
 #include "LIEF/utils.hpp"
 
+#include "LIEF/MachO/AtomInfo.hpp"
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/BuildVersion.hpp"
 #include "LIEF/MachO/Builder.hpp"
@@ -99,6 +100,9 @@ ok_error_t Builder::build_linkedit() {
   }
   if (auto* code_signature = binary_->code_signature()) {
     build<T>(*code_signature);
+  }
+  if (auto* atom_info = binary_->atom_info()) {
+    build<T>(*atom_info);
   }
   const uint64_t original_size = linkedit->file_size();
   const uint64_t new_size      = linkedit_.size();
@@ -1597,6 +1601,33 @@ ok_error_t Builder::build(LinkerOptHint& opt) {
   opt.original_data_.resize(opt.size_);
 
   memcpy(opt.original_data_.data(), &raw_cmd, sizeof(details::linkedit_data_command));
+  return ok();
+}
+
+template<class T>
+ok_error_t Builder::build(AtomInfo& atom) {
+  details::linkedit_data_command raw_cmd;
+  std::memset(&raw_cmd, 0, sizeof(details::linkedit_data_command));
+
+  span<const uint8_t> sp = atom.content();
+
+  raw_cmd.cmd       = static_cast<uint32_t>(atom.command());
+  raw_cmd.cmdsize   = static_cast<uint32_t>(atom.size());
+  raw_cmd.dataoff   = linkedit_offset_ + linkedit_.size();
+  raw_cmd.datasize  = sp.size();
+
+  LIEF_DEBUG("LC_ATOM_INFO.offset: 0x{:06x} -> 0x{:x}",
+             atom.data_offset(), raw_cmd.dataoff);
+  LIEF_DEBUG("LC_ATOM_INFO.size:   0x{:06x} -> 0x{:x}",
+             atom.data_size(), raw_cmd.datasize);
+
+  linkedit_.write(sp.data(), sp.size());
+
+  atom.size_ = sizeof(details::linkedit_data_command);
+  atom.original_data_.clear();
+  atom.original_data_.resize(atom.size_);
+
+  memcpy(atom.original_data_.data(), &raw_cmd, sizeof(details::linkedit_data_command));
   return ok();
 }
 
