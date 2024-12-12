@@ -1336,36 +1336,46 @@ Section* Binary::add_section(const SegmentCommand& segment, const Section& secti
   span<const uint8_t> content_ref = section.content();
   Section::content_t content = {std::begin(content_ref), std::end(content_ref)};
 
-  const size_t sec_size = is64_ ? sizeof(details::section_64) :
-                                  sizeof(details::section_32);
-  const size_t size_aligned = align(content.size(), 1 << section.alignment());
-  if (auto result = ensure_command_space(sec_size + size_aligned); is_err(result)) {
-    LIEF_ERR("Failed to ensure command space {}: {}", sec_size + size_aligned, to_string(get_error(result)));
-    return nullptr;
-  }
-
-  if (!extend(*target_segment, sec_size)) { // adjusts available_command_space_
-    LIEF_ERR("Unable to extend segment '{}' by 0x{:x}", segment.name(), sec_size);
-    return nullptr;
-  }
-
-  available_command_space_ -= size_aligned;
-
   auto new_section = std::make_unique<Section>(section);
+
+  if (section.offset() == 0) {
+    // Section offset is not defined: we need to allocate space enough to fit its content.
+    const size_t hdr_size = is64_ ? sizeof(details::section_64) :
+                                    sizeof(details::section_32);
+    const size_t alignment = content.empty() ? 0 : 1 << section.alignment();
+    const size_t needed_size = hdr_size + content.size() + alignment;
+
+    // Request size with a gap of alignment, so we would have enough room
+    // to adjust section's offset to satisfy its alignment requirements.
+    if (auto result = ensure_command_space(needed_size); is_err(result)) {
+      LIEF_ERR("Failed to ensure command space {}: {}", needed_size, to_string(get_error(result)));
+      return nullptr;
+    }
+
+    if (!extend(*target_segment, hdr_size)) { // adjusts available_command_space_
+      LIEF_ERR("Unable to extend segment '{}' by 0x{:x}", segment.name(), hdr_size);
+      return nullptr;
+    }
+
+    const uint64_t loadcommands_start = is64_ ? sizeof(details::mach_header_64) :
+                                                sizeof(details::mach_header);
+    const uint64_t loadcommands_end = loadcommands_start + header().sizeof_cmds();
+
+    // let new_offset supposedly point to the contents of the first section
+    uint64_t new_offset = loadcommands_end + available_command_space_;
+    new_offset -= content.size();
+    new_offset = align_down(new_offset, alignment);
+
+    // put section data in front of the first section
+    new_section->offset(new_offset);
+
+    available_command_space_ = new_offset - loadcommands_end;
+  }
+
   // Compute offset, virtual address etc for the new section
   // =======================================================
-
-  // Section raw data will be located just after commands table
-  if (section.offset() == 0) {
-    uint64_t new_offset = is64_ ? sizeof(details::mach_header_64) :
-                                  sizeof(details::mach_header);
-    new_offset += header().sizeof_cmds();
-    new_offset += available_command_space_; // == space after mach_header minus size of section
-    new_section->offset(new_offset);
-  }
-
   if (section.size() == 0) {
-    new_section->size(size_aligned);
+    new_section->size(content.size());
   }
 
   if (section.virtual_address() == 0) {
