@@ -15,6 +15,7 @@ lief.logging.set_level(lief.logging.LEVEL.INFO)
 
 def align_to(value, alignment):
     # llvm::alignTo
+    assert (alignment & (alignment - 1)) == 0 # is power of two
     return (value + alignment - 1) & ~(alignment - 1)
 
 def dyld_check(path: str):
