@@ -33,6 +33,16 @@ inline uint64_t align(uint64_t value, uint64_t align_on) {
   return value;
 }
 
+inline uint64_t align_down(uint64_t value, uint64_t align_on) {
+  if (align_on == 0) {
+    return value;
+  }
+  const auto r = value % align_on;
+  if (r > 0) {
+    return value - r;
+  }
+  return value;
+}
 
 template<typename T>
 inline constexpr T round(T x) {

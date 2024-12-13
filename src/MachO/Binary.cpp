@@ -851,8 +851,16 @@ void Binary::shift_command(size_t width, uint64_t from_offset) {
 
 }
 
+ok_error_t Binary::ensure_command_space(size_t size) {
+  if (available_command_space_ < size) {
+    return shift(size);
+  }
+  return ok();
+}
 
 ok_error_t Binary::shift(size_t value) {
+  value = align(value, page_size());
+
   Header& header = this->header();
 
   // Offset of the load commands table
@@ -936,23 +944,19 @@ ok_error_t Binary::shift(size_t value) {
     }
   }
   refresh_seg_offset();
+  available_command_space_ += value;
   return ok();
 }
 
 LoadCommand* Binary::add(std::unique_ptr<LoadCommand> command) {
-  static constexpr uint32_t shift_value = 0x4000;
   const int32_t size_aligned = align(command->size(), pointer_size());
 
-  // Check there is enough spaces between the load command table
-  // and the raw content
-  if (available_command_space_ < size_aligned) {
-    if (!shift(shift_value)) {
-      return nullptr;
-    }
-    available_command_space_ += shift_value;
-    return add(std::move(command));
+  // Check there is enough space between the
+  // load command table and the raw content
+  if (auto result = ensure_command_space(size_aligned); is_err(result)) {
+    LIEF_ERR("Failed to ensure command space {}: {}", size_aligned, to_string(get_error(result)));
+    return nullptr;
   }
-
   available_command_space_ -= size_aligned;
 
   Header& header = this->header();
@@ -1000,27 +1004,20 @@ LoadCommand* Binary::add(std::unique_ptr<LoadCommand> command) {
 }
 
 LoadCommand* Binary::add(const LoadCommand& command, size_t index) {
-  static constexpr uint32_t shift_value = 0x4000;
-
   // If index is "too" large <=> push_back
   if (index >= commands_.size()) {
     return add(command);
   }
 
-  int32_t size_aligned = align(command.size(), pointer_size());
+  const size_t size_aligned = align(command.size(), pointer_size());
   LIEF_DEBUG("available_command_space_: 0x{:06x} (required: 0x{:06x})",
              available_command_space_, size_aligned);
 
-  // Check that we have enough space
-  if (available_command_space_ <= size_aligned) {
-    shift(shift_value);
-    available_command_space_ += shift_value;
-    return add(command, index);
+  if (auto result = ensure_command_space(size_aligned); is_err(result)) {
+    LIEF_ERR("Failed to ensure command space {}: {}", size_aligned, to_string(get_error(result)));
+    return nullptr;
   }
-  LIEF_DEBUG("No need to shift");
-
   available_command_space_ -= size_aligned;
-
 
   // Update the Header according to the new command
   Header& header = this->header();
@@ -1149,8 +1146,6 @@ const LoadCommand* Binary::get(LoadCommand::TYPE type) const {
 }
 
 bool Binary::extend(const LoadCommand& command, uint64_t size) {
-  static constexpr uint32_t shift_value = 0x10000;
-
   const auto it = std::find_if(
       std::begin(commands_), std::end(commands_),
       [&command] (const std::unique_ptr<LoadCommand>& cmd) {
@@ -1163,27 +1158,26 @@ bool Binary::extend(const LoadCommand& command, uint64_t size) {
   }
 
   LoadCommand* cmd = it->get();
-  const int32_t size_aligned = align(cmd->size() + size, pointer_size());
-  const uint32_t extension = size_aligned - cmd->size();
-  if (available_command_space_ < size_aligned) {
-    shift(shift_value);
-    available_command_space_ += shift_value;
-    return extend(command, size);
+  const size_t size_aligned = align(size, pointer_size());
+  if (auto result = ensure_command_space(size_aligned); is_err(result)) {
+    LIEF_ERR("Failed to ensure command space {}: {}", size_aligned, to_string(get_error(result)));
+    return false;
   }
+  available_command_space_ -= size_aligned;
 
   for (std::unique_ptr<LoadCommand>& lc : commands_) {
     if (lc->command_offset() > cmd->command_offset()) {
-      lc->command_offset(lc->command_offset() + extension);
+      lc->command_offset(lc->command_offset() + size_aligned);
     }
   }
 
-  cmd->size(size_aligned);
-  cmd->original_data_.resize(size_aligned);
+  cmd->size(cmd->size() + size_aligned);
+  cmd->original_data_.resize(cmd->original_data_.size() + size_aligned);
 
   // Update Header
   // =============
   Header& header = this->header();
-  header.sizeof_cmds(header.sizeof_cmds() + extension);
+  header.sizeof_cmds(header.sizeof_cmds() + size_aligned);
 
   return true;
 }
@@ -1326,7 +1320,6 @@ Section* Binary::add_section(const Section& section) {
   return add_section(*_TEXT_segment, section);
 }
 
-
 Section* Binary::add_section(const SegmentCommand& segment, const Section& section) {
 
   const auto it_segment = std::find_if(
@@ -1344,38 +1337,46 @@ Section* Binary::add_section(const SegmentCommand& segment, const Section& secti
   span<const uint8_t> content_ref = section.content();
   Section::content_t content = {std::begin(content_ref), std::end(content_ref)};
 
-  const size_t sec_size = is64_ ? sizeof(details::section_64) :
-                                  sizeof(details::section_32);
-  const size_t data_size = content.size();
-  const int32_t needed_size = align(sec_size + data_size, page_size());
-  if (available_command_space_ < needed_size) {
-    shift(needed_size);
-    available_command_space_ += needed_size;
-    return add_section(segment, section);
-  }
-
-  if (!extend(*target_segment, sec_size)) {
-    LIEF_ERR("Unable to extend segment '{}' by 0x{:x}", segment.name(), sec_size);
-    return nullptr;
-  }
-
-  available_command_space_ -= needed_size;
-
   auto new_section = std::make_unique<Section>(section);
+
+  if (section.offset() == 0) {
+    // Section offset is not defined: we need to allocate space enough to fit its content.
+    const size_t hdr_size = is64_ ? sizeof(details::section_64) :
+                                    sizeof(details::section_32);
+    const size_t alignment = content.empty() ? 0 : 1 << section.alignment();
+    const size_t needed_size = hdr_size + content.size() + alignment;
+
+    // Request size with a gap of alignment, so we would have enough room
+    // to adjust section's offset to satisfy its alignment requirements.
+    if (auto result = ensure_command_space(needed_size); is_err(result)) {
+      LIEF_ERR("Failed to ensure command space {}: {}", needed_size, to_string(get_error(result)));
+      return nullptr;
+    }
+
+    if (!extend(*target_segment, hdr_size)) { // adjusts available_command_space_
+      LIEF_ERR("Unable to extend segment '{}' by 0x{:x}", segment.name(), hdr_size);
+      return nullptr;
+    }
+
+    const uint64_t loadcommands_start = is64_ ? sizeof(details::mach_header_64) :
+                                                sizeof(details::mach_header);
+    const uint64_t loadcommands_end = loadcommands_start + header().sizeof_cmds();
+
+    // let new_offset supposedly point to the contents of the first section
+    uint64_t new_offset = loadcommands_end + available_command_space_;
+    new_offset -= content.size();
+    new_offset = align_down(new_offset, alignment);
+
+    // put section data in front of the first section
+    new_section->offset(new_offset);
+
+    available_command_space_ = new_offset - loadcommands_end;
+  }
+
   // Compute offset, virtual address etc for the new section
   // =======================================================
-
-  // Section raw data will be located just after commands table
-  if (section.offset() == 0) {
-    uint64_t new_offset = is64_ ? sizeof(details::mach_header_64) :
-                                  sizeof(details::mach_header);
-    new_offset += header().sizeof_cmds();
-    new_offset += available_command_space_;
-    new_section->offset(new_offset);
-  }
-
   if (section.size() == 0) {
-    new_section->size(data_size);
+    new_section->size(content.size());
   }
 
   if (section.virtual_address() == 0) {
