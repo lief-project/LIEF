@@ -57,6 +57,12 @@ class LIEF_API BuildVersion : public LoadCommand {
     VISIONOS_SIMULATOR = 12,
     FIRMWARE           = 13,
     SEPOS              = 14,
+    MACOS_EXCLAVE_CORE = 15,
+    MACOS_EXCLAVE_KIT  = 16,
+    IOS_EXCLAVE_CORE   = 17,
+    IOS_EXCLAVE_KIT    = 18,
+    TVOS_EXCLAVE_CORE  = 19,
+    TVOS_EXCLAVE_KIT   = 20,
 
     ANY                = 0xFFFFFFFF
   };

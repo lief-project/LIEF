@@ -79,6 +79,12 @@ void create<BuildVersion>(nb::module_& m) {
     .value(PY_ENUM(BuildVersion::PLATFORMS::VISIONOS_SIMULATOR))
     .value(PY_ENUM(BuildVersion::PLATFORMS::FIRMWARE))
     .value(PY_ENUM(BuildVersion::PLATFORMS::SEPOS))
+    .value(PY_ENUM(BuildVersion::PLATFORMS::MACOS_EXCLAVE_CORE))
+    .value(PY_ENUM(BuildVersion::PLATFORMS::MACOS_EXCLAVE_KIT))
+    .value(PY_ENUM(BuildVersion::PLATFORMS::IOS_EXCLAVE_CORE))
+    .value(PY_ENUM(BuildVersion::PLATFORMS::IOS_EXCLAVE_KIT))
+    .value(PY_ENUM(BuildVersion::PLATFORMS::TVOS_EXCLAVE_CORE))
+    .value(PY_ENUM(BuildVersion::PLATFORMS::TVOS_EXCLAVE_KIT))
     .value(PY_ENUM(BuildVersion::PLATFORMS::ANY))
   ;
 

@@ -625,6 +625,18 @@ class BuildVersion(LoadCommand):
 
         SEPOS = 14
 
+        MACOS_EXCLAVE_CORE = 15
+
+        MACOS_EXCLAVE_KIT = 16
+
+        IOS_EXCLAVE_CORE = 17
+
+        IOS_EXCLAVE_KIT = 18
+
+        TVOS_EXCLAVE_CORE = 19
+
+        TVOS_EXCLAVE_KIT = 20
+
         ANY = 4294967295
 
     platform: lief.MachO.BuildVersion.PLATFORMS
