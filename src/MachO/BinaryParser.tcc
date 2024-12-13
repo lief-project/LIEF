@@ -664,6 +664,8 @@ ok_error_t BinaryParser::parse_load_commands() {
 
       case LoadCommand::TYPE::VERSION_MIN_MACOSX:
       case LoadCommand::TYPE::VERSION_MIN_IPHONEOS:
+      case LoadCommand::TYPE::VERSION_MIN_TVOS:
+      case LoadCommand::TYPE::VERSION_MIN_WATCHOS:
         {
           /*
            * DO NOT FORGET TO UPDATE VersionMin::classof

@@ -71,7 +71,9 @@ class LIEF_API VersionMin : public LoadCommand {
   static bool classof(const LoadCommand* cmd) {
     const LoadCommand::TYPE type = cmd->command();
     return type == LoadCommand::TYPE::VERSION_MIN_MACOSX ||
-           type == LoadCommand::TYPE::VERSION_MIN_IPHONEOS;
+           type == LoadCommand::TYPE::VERSION_MIN_IPHONEOS ||
+           type == LoadCommand::TYPE::VERSION_MIN_TVOS ||
+           type == LoadCommand::TYPE::VERSION_MIN_WATCHOS;
   }
 
   private:
