@@ -26,7 +26,7 @@ RPathCommand::RPathCommand(std::string path) :
   LoadCommand::LoadCommand(LoadCommand::TYPE::RPATH, 0),
   path_(std::move(path))
 {
-  size_ = align(sizeof(details::rpath_command) + path.size() + 1, sizeof(uint64_t));
+  size_ = align(sizeof(details::rpath_command) + path_.size() + 1, sizeof(uint64_t));
   original_data_.resize(size_);
 }
 
