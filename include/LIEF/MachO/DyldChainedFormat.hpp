@@ -41,6 +41,7 @@ enum class DYLD_CHAINED_PTR_FORMAT {
   PTR_ARM64E_FIRMWARE        = 10, // stride 4, unauth target is vmaddr
   PTR_X86_64_KERNEL_CACHE    = 11, // stride 1, x86_64 kernel caches
   PTR_ARM64E_USERLAND24      = 12, // stride 8, unauth target is vm offset, 24-bit bind
+  PTR_ARM64E_SHARED_CACHE    = 13, // stride 8, regular/auth targets both vm offsets. Only A keys supported
 };
 
 LIEF_API const char* to_string(DYLD_CHAINED_FORMAT fmt);
