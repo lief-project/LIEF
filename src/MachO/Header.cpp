@@ -179,9 +179,13 @@ const char* to_string(Header::CPU_TYPE e) {
     ENTRY(X86_64),
     ENTRY(MIPS),
     ENTRY(MC98000),
+    ENTRY(HPPA),
     ENTRY(ARM),
     ENTRY(ARM64),
+    ENTRY(MC88000),
     ENTRY(SPARC),
+    ENTRY(I860),
+    ENTRY(ALPHA),
     ENTRY(POWERPC),
     ENTRY(POWERPC64),
   };

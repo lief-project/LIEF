@@ -97,9 +97,13 @@ class LIEF_API Header : public Object {
     X86_64    = 7 | ABI64,
     MIPS      = 8,
     MC98000   = 10,
+    HPPA      = 11,
     ARM       = 12,
     ARM64     = 12 | ABI64,
+    MC88000   = 13,
     SPARC     = 14,
+    I860      = 15,
+    ALPHA	    = 16,
     POWERPC   = 18,
     POWERPC64 = 18 | ABI64,
   };

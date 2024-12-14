@@ -1061,6 +1061,8 @@ class DYLD_CHAINED_PTR_FORMAT(enum.Enum):
 
     PTR_ARM64E_USERLAND24 = 12
 
+    PTR_ARM64E_SHARED_CACHE = 13
+
 class DataCodeEntry(lief.Object):
     class TYPES(enum.Enum):
         @staticmethod
@@ -1662,11 +1664,19 @@ class Header(lief.Object):
 
         MC98000 = 10
 
+        HPPA = 11
+
         ARM = 12
 
         ARM64 = 16777228
 
+        MC88000 = 13
+
         SPARC = 14
+
+        I860 = 15
+
+        ALPHA = 16
 
         POWERPC = 18
 

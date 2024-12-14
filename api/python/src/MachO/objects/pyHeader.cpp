@@ -41,9 +41,13 @@ void create<Header>(nb::module_& m) {
     .value(PY_ENUM(Header::CPU_TYPE::X86_64))
     .value(PY_ENUM(Header::CPU_TYPE::MIPS))
     .value(PY_ENUM(Header::CPU_TYPE::MC98000))
+    .value(PY_ENUM(Header::CPU_TYPE::HPPA))
     .value(PY_ENUM(Header::CPU_TYPE::ARM))
     .value(PY_ENUM(Header::CPU_TYPE::ARM64))
+    .value(PY_ENUM(Header::CPU_TYPE::MC88000))
     .value(PY_ENUM(Header::CPU_TYPE::SPARC))
+    .value(PY_ENUM(Header::CPU_TYPE::I860))
+    .value(PY_ENUM(Header::CPU_TYPE::ALPHA))
     .value(PY_ENUM(Header::CPU_TYPE::POWERPC))
     .value(PY_ENUM(Header::CPU_TYPE::POWERPC64))
   #undef PY_ENUM
