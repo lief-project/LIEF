@@ -257,7 +257,7 @@ int main(int argc, char** argv) {
 
 ### Authors
 
-Romain Thomas ([@rh0main](https://www.romainthomas.fr/)) - [Quarkslab](https://www.quarkslab.com)
+Romain Thomas ([@rh0main](https://www.romainthomas.fr/)) - Formerly at [Quarkslab](https://www.quarkslab.com)
 
 ### License
 
