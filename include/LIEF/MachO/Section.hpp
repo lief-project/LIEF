@@ -161,7 +161,7 @@ class LIEF_API Section : public LIEF::Section {
   }
 
   /// Type of the section. This value can help to determine
-  /// the purpose of the section (e.g. MACHO_SECTION_TYPES::MACHO_SECTION_TYPES)
+  /// the purpose of the section (e.g. TYPE::INTERPOSING)
   TYPE type() const {
     return TYPE(flags_ & TYPE_MASK);
   }

@@ -17,6 +17,11 @@ impl Dylib<'_> {
         self.ptr.name().to_string()
     }
 
+    /// Original string offset of the name
+    pub fn name_offset(&self) -> u32 {
+        self.ptr.name_offset()
+    }
+
     /// Date and Time when the shared library was built
     pub fn timestamp(&self) -> u32 {
         self.ptr.timestamp()

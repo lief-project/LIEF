@@ -25,6 +25,8 @@ class MachO_Dylib : public MachO_Command {
   std::string name() const { return impl().name(); }
   uint32_t timestamp() const { return impl().timestamp(); }
 
+  auto name_offset() const { return impl().name_offset(); }
+
   auto current_version() const {
     return details::make_vector(impl().current_version());
   }

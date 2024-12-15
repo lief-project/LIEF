@@ -34,6 +34,9 @@ void create<RPathCommand>(nb::module_& m) {
       "path"_a
     )
 
+    .def_prop_ro("path_offset", &RPathCommand::path_offset,
+                 "Original string offset of the path")
+
     .def_prop_rw("path",
         nb::overload_cast<>(&RPathCommand::path, nb::const_),
         nb::overload_cast<std::string>(&RPathCommand::path),

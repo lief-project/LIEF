@@ -67,6 +67,7 @@ target_sources(LIB_LIEF PRIVATE
   exports_trie.cpp
   hash.cpp
   json_api.cpp
+  layout_check.cpp
   utils.cpp
 )
 

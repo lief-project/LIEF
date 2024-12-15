@@ -79,6 +79,10 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
 
     LIEF_API friend std::ostream& operator<<(std::ostream& os, const chained_starts_in_segment& info);
 
+    static chained_starts_in_segment create_empty_chained(SegmentCommand& segment) {
+      return chained_starts_in_segment(0, segment);
+    }
+
     private:
     friend class BinaryParser;
     friend class DyldChainedFixupsCreator;
@@ -192,6 +196,10 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
   DYLD_CHAINED_FORMAT imports_format() const { return imports_format_; }
   void imports_format(DYLD_CHAINED_FORMAT fmt) { imports_format_ = fmt; }
 
+  chained_starts_in_segment& add(chained_starts_in_segment start_info) {
+    chained_starts_in_segment_.push_back(std::move(start_info));
+    return chained_starts_in_segment_.back();
+  }
 
   void accept(Visitor& visitor) const override;
 
