@@ -492,6 +492,7 @@ bool LayoutChecker::check_validate_linkedit() {
         case KIND::DYLD_EXPORT_TRIE: return "DYLD_EXPORT_TRIE";
         case KIND::DYLD_CHAINED_FIXUPS: return "DYLD_CHAINED_FIXUPS";
       }
+      return "UNKNOWN";
     }
     chunk_t() = delete;
     chunk_t(KIND kind, uint32_t align, uint32_t off, size_t size) :
