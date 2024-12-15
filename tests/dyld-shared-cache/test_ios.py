@@ -14,7 +14,7 @@ def test_ios_18():
     dsc = lief.dsc.load(get_dsc_sample("ios-18.1"))
     assert dsc is not None
     assert dsc.filename == "dyld_shared_cache_arm64e"
-    assert dsc.version == lief.dsc.DyldSharedCache.VERSION.UNRELEASED
+    assert dsc.version == lief.dsc.DyldSharedCache.VERSION.DYLD_1231_3
     assert dsc.load_address == 0x180000000
     assert dsc.arch == lief.dsc.DyldSharedCache.ARCH.ARM64E
     assert dsc.platform == lief.dsc.DyldSharedCache.PLATFORM.IOS
