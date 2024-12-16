@@ -1338,7 +1338,7 @@ Section* Binary::add_section(const SegmentCommand& segment, const Section& secti
     // Section offset is not defined: we need to allocate space enough to fit its content.
     const size_t hdr_size = is64_ ? sizeof(details::section_64) :
                                     sizeof(details::section_32);
-    const size_t alignment = content.empty() ? 0 : 1 << section.alignment();
+    const size_t alignment = 1 << section.alignment();
     const size_t needed_size = hdr_size + content.size() + alignment;
 
     // Request size with a gap of alignment, so we would have enough room
