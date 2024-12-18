@@ -159,25 +159,6 @@ def test_extend_cmd(tmp_path):
 
     assert new[lief.MachO.LoadCommand.TYPE.UUID].size == original_size + 0x4000
 
-def verify_sections_continuity(binary):
-    # Check that sections are continuous and non-overlapping in each segment
-    bad_section_types = [
-            lief.MachO.Section.TYPE.ZEROFILL,
-            lief.MachO.Section.TYPE.THREAD_LOCAL_ZEROFILL,
-            lief.MachO.Section.TYPE.GB_ZEROFILL,
-            ]
-    for segment in binary.segments:
-        if len(segment.sections) == 0:
-            continue
-        sections = sorted([s for s in segment.sections if s.type not in bad_section_types], key=lambda s: s.offset)
-        next_expected_offset = sections[0].offset
-        assert sections[0].offset % (1 << sections[0].alignment) == 0
-        for section in sections:
-            next_expected_offset = align_to(next_expected_offset, 1 << section.alignment)
-            assert section.offset % (1 << section.alignment) == 0
-            assert section.offset == next_expected_offset
-            next_expected_offset += section.size
-
 def test_add_section_id(tmp_path):
     bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_id.bin"))
     original = lief.MachO.parse(bin_path.as_posix()).at(0)
@@ -188,7 +169,8 @@ def test_add_section_id(tmp_path):
         section = lief.MachO.Section(f"__lief_{i}", [0x90] * 0x100)
         original.add_section(section)
 
-    verify_sections_continuity(original)
+    checked, err = lief.MachO.check_layout(original)
+    assert checked, err
 
     assert original.virtual_size % original.page_size == 0
 
