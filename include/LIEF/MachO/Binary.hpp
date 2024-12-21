@@ -410,6 +410,11 @@ class LIEF_API Binary : public LIEF::Binary  {
   /// Extend the **content** of the given SegmentCommand
   bool extend_segment(const SegmentCommand& segment, size_t size);
 
+  /// Extend the **content** of the given Section
+  ///
+  /// Note this method works only with sections that belong to the first segment.
+  bool extend_section(Section& section, size_t size);
+
   /// Remove the `PIE` flag
   bool disable_pie();
 

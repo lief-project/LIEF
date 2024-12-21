@@ -159,25 +159,6 @@ def test_extend_cmd(tmp_path):
 
     assert new[lief.MachO.LoadCommand.TYPE.UUID].size == original_size + 0x4000
 
-def verify_sections_continuity(binary):
-    # Check that sections are continuous and non-overlapping in each segment
-    bad_section_types = [
-            lief.MachO.Section.TYPE.ZEROFILL,
-            lief.MachO.Section.TYPE.THREAD_LOCAL_ZEROFILL,
-            lief.MachO.Section.TYPE.GB_ZEROFILL,
-            ]
-    for segment in binary.segments:
-        if len(segment.sections) == 0:
-            continue
-        sections = sorted([s for s in segment.sections if s.type not in bad_section_types], key=lambda s: s.offset)
-        next_expected_offset = sections[0].offset
-        assert sections[0].offset % (1 << sections[0].alignment) == 0
-        for section in sections:
-            next_expected_offset = align_to(next_expected_offset, 1 << section.alignment)
-            assert section.offset % (1 << section.alignment) == 0
-            assert section.offset == next_expected_offset
-            next_expected_offset += section.size
-
 def test_add_section_id(tmp_path):
     bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_id.bin"))
     original = lief.MachO.parse(bin_path.as_posix()).at(0)
@@ -188,7 +169,8 @@ def test_add_section_id(tmp_path):
         section = lief.MachO.Section(f"__lief_{i}", [0x90] * 0x100)
         original.add_section(section)
 
-    verify_sections_continuity(original)
+    checked, err = lief.MachO.check_layout(original)
+    assert checked, err
 
     assert original.virtual_size % original.page_size == 0
 
@@ -204,6 +186,46 @@ def test_add_section_id(tmp_path):
 
         print(stdout)
         assert re.search(r'uid=', stdout) is not None
+
+def test_extend_section(tmp_path):
+    bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_id.bin"))
+    original = lief.MachO.parse(bin_path.as_posix()).at(0)
+    output = f"{tmp_path}/test_extend_section.bin"
+
+    text_segment = original.get_segment("__TEXT")
+    def make_section(name, alignment):
+        section = lief.MachO.Section(f"__lief_{alignment}")
+        section.alignment = alignment
+        return section
+
+    sections = [
+        make_section("__lief_8", 8),
+        make_section("__lief_7", 7),
+        make_section("__lief_6", 6),
+        make_section("__lief_5", 5),
+        make_section("__lief_4", 4),
+        make_section("__lief_3", 3),
+        make_section("__lief_2", 2),
+        make_section("__lief_1", 1),
+        make_section("__lief_0", 0),
+        make_section("__lief_00", 0),
+    ]
+    sections = [original.add_section(text_segment, s) for s in sections]
+
+    checked, err = lief.MachO.check_layout(original)
+    assert checked, err
+
+    for i, section in enumerate(sections):
+        assert original.extend_section(section, 1 << section.alignment)
+
+    checked, err = lief.MachO.check_layout(original)
+    assert checked, err
+
+    original.write(output)
+    new = lief.MachO.parse(output).at(0)
+
+    checked, err = lief.MachO.check_layout(new)
+    assert checked, err
 
 @pytest.mark.skipif(is_github_ci(), reason="sshd does not work on Github Action")
 def test_add_section_ssh(tmp_path):

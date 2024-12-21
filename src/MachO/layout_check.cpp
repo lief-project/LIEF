@@ -845,6 +845,17 @@ bool LayoutChecker::check_section_contiguity() {
     // Skip this check for object file
     return true;
   }
+
+  // LIEF allocates space for new/extended sections between the last load command
+  // and the first section in the first segment.
+  // We are not willing to change the distance between the end of the `__text` section
+  // and start of `__DATA` segment, keeping `__text` section in a "fixed" position.
+  // Due to above there might happen a "reverse" alignment gap between `__text` section
+  // and a section that was allocated in front of it.
+  auto is_gap_reversed = [](const Section* LHS, const Section* RHS) {
+    return align_down(RHS->offset() - LHS->size(), LHS->alignment());
+  };
+
   for (const SegmentCommand& segment : binary.segments()) {
     std::vector<const Section*> sections_vec;
     auto sections = segment.sections();
@@ -874,28 +885,28 @@ bool LayoutChecker::check_section_contiguity() {
               });
 
     uint64_t next_expected_offset = sections_vec[0]->offset();
-    const uint32_t alignment = 1 << sections_vec[0]->alignment();
-    if (sections_vec[0]->offset() % (1 << sections_vec[0]->alignment()) != 0) {
-      return error("section '{}' offset (0x{:04x}) is misaligned (align=0x{:04x})",
-                   sections_vec[0]->name(), sections_vec[0]->offset(),
-                   alignment);
-    }
-
-    for (const Section* section : sections_vec) {
+    for (auto it = sections_vec.begin(); it != sections_vec.end(); ++it) {
+      const Section* section = *it;
       const uint32_t alignment = 1 << section->alignment();
-      if ((section->offset() % (1 << section->alignment())) != 0) {
-        return error("section '{}' offset (0x{:04x}) is misaligned (align=0x{:04x})",
+      if ((section->offset() % alignment) != 0) {
+        return error("section '{}' offset ({:#06x}) is misaligned (align={:#06x})",
                      section->name(), section->virtual_address(),
                      alignment);
       }
 
-      next_expected_offset = align(next_expected_offset, 1 << section->alignment());
+      next_expected_offset = align(next_expected_offset, alignment);
 
       if (section->offset() != next_expected_offset) {
-        return error("section '{}' is not at the expected offset: 0x{:04x} "
-                     "(expected: 0x{:04x}, alignment: 0x{:04x})",
-                     section->name(), section->offset(), next_expected_offset,
-                     section->alignment());
+        auto message = fmt::format("section '{}' is not at the expected offset: {:#06x} "
+                                   "(expected={:#06x}, align={:#06x})",
+                                   section->name(), section->offset(),
+                                   next_expected_offset, alignment);
+        if (it != sections_vec.begin() && is_gap_reversed(*std::prev(it), *it) && section->name() == "__text") {
+          LIEF_WARN("Permitting section gap which could be caused by LIEF add_section/extend_section: {}", message);
+          next_expected_offset = section->offset();
+        } else {
+          return error(message);
+        }
       }
       next_expected_offset += section->size();
     }
