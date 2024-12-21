@@ -768,7 +768,7 @@ void Binary::shift_command(size_t width, uint64_t from_offset) {
     // Shift Export Info
     // -----------------
     for (ExportInfo& info : dyld->exports()) {
-      if (info.address() > virtual_address) {
+      if (info.address() > from_offset) {
         info.address(info.address() + width);
       }
     }
@@ -815,7 +815,7 @@ void Binary::shift_command(size_t width, uint64_t from_offset) {
 
   if (DyldExportsTrie* exports = dyld_exports_trie()) {
     for (ExportInfo& info : exports->exports()) {
-      if (virtual_address >= info.address()) {
+      if (info.address() > from_offset) {
         info.address(info.address() + width);
       }
     }
