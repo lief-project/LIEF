@@ -415,7 +415,7 @@
 
 .. |lief-macho-atom-info| lief-api:: lief.MachO.AtomInfo
 
-    :rust:struct:`lief::macho::AtomInfo`
+    :rust:struct:`lief::macho::commands::AtomInfo`
     :py:class:`lief.MachO.AtomInfo`
     :cpp:class:`LIEF::MachO::AtomInfo`
 
