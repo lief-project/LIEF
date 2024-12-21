@@ -922,13 +922,10 @@ ok_error_t Binary::shift(size_t value) {
       }
 
       for (const std::unique_ptr<Section>& section : segment->sections_) {
-        if (section->virtual_address() >= loadcommands_end_va ||
-            section->type() == Section::TYPE::ZEROFILL)
-        {
+        if (section->virtual_address() >= loadcommands_end_va) {
           section->virtual_address(section->virtual_address() + value);
         }
-
-        if (section->offset() >= loadcommands_end_va) {
+        if (section->offset() >= loadcommands_end) {
           section->offset(section->offset() + value);
         }
       }
@@ -1212,21 +1209,19 @@ bool Binary::extend_segment(const SegmentCommand& segment, size_t size) {
   // Shift Segment and sections
   // ==========================
   for (SegmentCommand* segment : segments_) {
+    if (segment->virtual_address() >= last_va) {
+      segment->virtual_address(segment->virtual_address() + size_aligned);
+    }
     if (segment->file_offset() >= last_offset) {
       segment->file_offset(segment->file_offset() + size_aligned);
-      segment->virtual_address(segment->virtual_address() + size_aligned);
     }
 
     for (const std::unique_ptr<Section>& section : segment->sections_) {
-      if (section->offset() >= last_offset) {
-        section->offset(section->offset() + size_aligned);
+      if (section->virtual_address() >= last_va) {
         section->virtual_address(section->virtual_address() + size_aligned);
       }
-
-      if (section->type() == Section::TYPE::ZEROFILL &&
-          section->virtual_address() > last_va)
-      {
-        section->virtual_address(section->virtual_address() + size_aligned);
+      if (section->offset() >= last_offset) {
+        section->offset(section->offset() + size_aligned);
       }
     }
   }
