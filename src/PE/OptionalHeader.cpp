@@ -23,6 +23,7 @@
 #include "PE/Structures.hpp"
 
 #include <spdlog/fmt/fmt.h>
+#include <spdlog/fmt/ranges.h>
 
 namespace LIEF {
 namespace PE {

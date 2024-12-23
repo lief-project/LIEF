@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_INTERNAL_UTILS_HEADER
 #define LIEF_INTERNAL_UTILS_HEADER
+#include <memory>
 #include <string>
 #include <vector>
 #include <set>
@@ -22,6 +23,7 @@
 #include <unordered_map>
 #include <sstream>
 #include "spdlog/fmt/fmt.h"
+#include "spdlog/fmt/ranges.h"
 
 #include "LIEF/span.hpp"
 #include "LIEF/errors.hpp"
