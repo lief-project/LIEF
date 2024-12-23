@@ -24,6 +24,7 @@
 
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/fmt.h>
+#include <spdlog/fmt/ranges.h>
 
 #define LIEF_TRACE(...) LIEF::logging::Logger::instance().trace(__VA_ARGS__)
 #define LIEF_DEBUG(...) LIEF::logging::Logger::instance().debug(__VA_ARGS__)

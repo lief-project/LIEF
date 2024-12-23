@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "spdlog/fmt/fmt.h"
+#include "spdlog/fmt/ranges.h"
 #include "LIEF/Visitor.hpp"
 
 #include "LIEF/MachO/VersionMin.hpp"
