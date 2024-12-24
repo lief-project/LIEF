@@ -883,7 +883,7 @@ ok_error_t Binary::shift(size_t value) {
   // Segment that wraps this load command table
   SegmentCommand* load_cmd_segment = segment_from_offset(loadcommands_end);
   if (load_cmd_segment == nullptr) {
-    LIEF_WARN("Can't find segment associated with last load command");
+    LIEF_ERR("Can't find segment associated with load command space");
     return make_error_code(lief_errors::file_format_error);
   }
   LIEF_DEBUG("LC Table wrapped by {} / End offset: 0x{:x} (size: {:x})",
@@ -1229,6 +1229,88 @@ bool Binary::extend_segment(const SegmentCommand& segment, size_t size) {
   return true;
 }
 
+bool Binary::extend_section(Section& section, size_t size) {
+  // All sections must keep their requested alignment.
+  //
+  // As per current implementation of `shift` method, space is allocated between
+  // the last load command and the first section by shifting everything to the "right".
+  // After that we shift `section` and all other sections that come before it to the "left",
+  // so that we create a gap of at least `size` wide after the current `section`.
+  // Finally, we assign new size to the `section`.
+  //
+  // Let's say we are extending section S.
+  // There might be sections P that come prior S, and there might be sections A that come after S.
+  // We try to keep relative relationships between sections in groups P and A,
+  // such that relative offsets from one section to another one are unchanged,
+  // however preserving the same relationship between sections from different groups is impossible.
+  // We achieve this by shifting P and S to the left by size rounded up to the maximum common alignment factor.
+
+  const uint64_t loadcommands_start = is64_ ? sizeof(details::mach_header_64) :
+                                              sizeof(details::mach_header);
+  const uint64_t loadcommands_end = loadcommands_start + header().sizeof_cmds();
+  SegmentCommand* load_cmd_segment = segment_from_offset(loadcommands_end);
+  if (load_cmd_segment == nullptr) {
+    LIEF_ERR("Can't find segment associated with load command space");
+    return false;
+  }
+
+  if (section.segment() != load_cmd_segment) {
+    LIEF_ERR("Can't extend section that belongs to segment '{}' which is not the first one", section.segment_name());
+    return false;
+  }
+
+  // Select sections that we need to shift.
+  sections_cache_t sections_to_shift;
+  for (Section& s : sections()) {
+    if (s.offset() > section.offset() || s.offset() == 0) {
+      continue;
+    }
+    sections_to_shift.push_back(&s);
+  }
+  assert(!sections_to_shift.empty());
+
+  // Stable-sort by end_offset, preserving original order.
+  std::stable_sort(sections_to_shift.begin(), sections_to_shift.end(),
+            [](const Section* a, const Section* b) {
+              return a->offset() + a->size() > b->offset() + b->size();
+            });
+
+  // If we are extending an empty section, then there may be many sections at this offset,
+  // we do not want to shift sections which were added after the current one.
+  // Such that we preserve order of sections in which they were added to the binary.
+  if (section.size() == 0) {
+    auto it = std::find(sections_to_shift.begin(), sections_to_shift.end(), &section);
+    assert(it != sections_to_shift.end());
+    sections_to_shift.erase(std::next(it), sections_to_shift.end());
+  }
+
+  // Find maximum alignment
+  auto it_maxa = std::max_element(sections_to_shift.begin(), sections_to_shift.end(),
+            [](const Section* a, const Section* b) {
+              return a->alignment() < b->alignment();
+            });
+  const size_t max_alignment = 1 << (*it_maxa)->alignment();
+
+  // Resize command space, if needed.
+  const size_t shift_value = align(size, max_alignment);
+  if (auto result = ensure_command_space(shift_value); is_err(result)) {
+    LIEF_ERR("Failed to ensure command space {}: {}", shift_value, to_string(get_error(result)));
+    return false;
+  }
+  available_command_space_ -= shift_value;
+
+  // Shift selected sections to allocate requested space for `section`.
+  for (Section* s : sections_to_shift) {
+    s->offset(s->offset() - shift_value);
+    s->address(s->address() - shift_value);
+  }
+
+  // Extend the given `section`.
+  section.size(section.size() + size);
+
+  return true;
+}
+
 void Binary::remove_section(const std::string& name, bool clear) {
   Section* sec_to_delete = get_section(name);
   if (sec_to_delete == nullptr) {
@@ -1338,7 +1420,7 @@ Section* Binary::add_section(const SegmentCommand& segment, const Section& secti
     // Section offset is not defined: we need to allocate space enough to fit its content.
     const size_t hdr_size = is64_ ? sizeof(details::section_64) :
                                     sizeof(details::section_32);
-    const size_t alignment = content.empty() ? 0 : 1 << section.alignment();
+    const size_t alignment = 1 << section.alignment();
     const size_t needed_size = hdr_size + content.size() + alignment;
 
     // Request size with a gap of alignment, so we would have enough room

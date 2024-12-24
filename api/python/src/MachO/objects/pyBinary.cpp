@@ -630,6 +630,11 @@ void create<Binary>(nb::module_& m) {
         "section"_a,
         nb::rv_policy::reference_internal)
 
+    .def("extend_section",
+        nb::overload_cast<Section&, size_t>(&Binary::extend_section),
+        "Extend the **content** of the given " RST_CLASS_REF(lief.MachO.Section) " by ``size``"_doc,
+        "section"_a, "size"_a)
+
     .def("add_library",
         nb::overload_cast<const std::string&>(&Binary::add_library),
         "Add a new library dependency"_doc,
