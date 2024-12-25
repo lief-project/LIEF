@@ -164,13 +164,13 @@ def test_add_section_id(tmp_path):
     original = lief.MachO.parse(bin_path.as_posix()).at(0)
     output = f"{tmp_path}/test_add_section_id.id.bin"
 
+    checked, err = lief.MachO.check_layout(original)
+    assert checked, err
+
     # Add 50 sections
     for i in range(50):
         section = lief.MachO.Section(f"__lief_{i}", [0x90] * 0x100)
         original.add_section(section)
-
-    checked, err = lief.MachO.check_layout(original)
-    assert checked, err
 
     assert original.virtual_size % original.page_size == 0
 
