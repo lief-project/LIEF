@@ -171,7 +171,7 @@ class Header(lief.Object):
         def __next__(self) -> Header.element_t: ...
 
     class element_t:
-        key: lief.OAT.HEADER_KEYS
+        key: HEADER_KEYS
 
         value: str
 

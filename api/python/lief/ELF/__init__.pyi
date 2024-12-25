@@ -899,7 +899,7 @@ class Builder:
 
     def build(self) -> None: ...
 
-    config: lief.ELF.Builder.config_t
+    config: Builder.config_t
 
     def write(self, output: str) -> None: ...
 
@@ -1055,7 +1055,7 @@ class CoreFile(Note):
 
         def __str__(self) -> str: ...
 
-    files: lief.ELF.CoreFile.files_t
+    files: CoreFile.files_t
 
     def __len__(self) -> int: ...
 
@@ -1097,7 +1097,7 @@ class CorePrPsInfo(Note):
         @property
         def args_stripped(self) -> str: ...
 
-    info: Optional[lief.ELF.CorePrPsInfo.info_t]
+    info: Optional[CorePrPsInfo.info_t]
 
     def __str__(self) -> str: ...
 
@@ -1115,7 +1115,7 @@ class CorePrStatus(Note):
         signo: int
 
     class pr_status_t:
-        info: lief.ELF.CorePrStatus.siginfo_t
+        info: CorePrStatus.siginfo_t
 
         cursig: int
 
@@ -1133,13 +1133,13 @@ class CorePrStatus(Note):
 
         sid: int
 
-        utime: lief.ELF.CorePrStatus.timeval_t
+        utime: CorePrStatus.timeval_t
 
-        stime: lief.ELF.CorePrStatus.timeval_t
+        stime: CorePrStatus.timeval_t
 
-        cutime: lief.ELF.CorePrStatus.timeval_t
+        cutime: CorePrStatus.timeval_t
 
-        cstime: lief.ELF.CorePrStatus.timeval_t
+        cstime: CorePrStatus.timeval_t
 
     class Registers:
         class X86(enum.Enum):
@@ -1360,7 +1360,7 @@ class CorePrStatus(Note):
 
             PSTATE = 33
 
-    status: lief.ELF.CorePrStatus.pr_status_t
+    status: CorePrStatus.pr_status_t
 
     @property
     def architecture(self) -> ARCH: ...
@@ -1699,7 +1699,7 @@ class DynamicEntry(lief.Object):
 
         X86_64_PLTENT = 31943819267
 
-    tag: lief.ELF.DynamicEntry.TAG
+    tag: DynamicEntry.TAG
 
     value: int
 
@@ -2042,23 +2042,23 @@ class Header(lief.Object):
 
         MSB = 2
 
-    identity_class: lief.ELF.Header.CLASS
+    identity_class: Header.CLASS
 
-    identity_data: lief.ELF.Header.ELF_DATA
+    identity_data: Header.ELF_DATA
 
-    identity_version: lief.ELF.Header.VERSION
+    identity_version: Header.VERSION
 
-    identity_os_abi: lief.ELF.Header.OS_ABI
+    identity_os_abi: Header.OS_ABI
 
     identity_abi_version: int
 
     identity: list[int]
 
-    file_type: lief.ELF.Header.FILE_TYPE
+    file_type: Header.FILE_TYPE
 
-    machine_type: lief.ELF.ARCH
+    machine_type: ARCH
 
-    object_file_version: lief.ELF.Header.VERSION
+    object_file_version: Header.VERSION
 
     entrypoint: int
 
@@ -2474,7 +2474,7 @@ class ParserConfig:
 
     parse_overlay: bool
 
-    count_mtd: lief.ELF.ParserConfig.DYNSYM_COUNT
+    count_mtd: ParserConfig.DYNSYM_COUNT
 
     all: lief.ELF.ParserConfig = ...
 
@@ -4581,14 +4581,14 @@ class Relocation(lief.Relocation):
 
     info: int
 
-    purpose: lief.ELF.Relocation.PURPOSE
+    purpose: Relocation.PURPOSE
 
-    type: lief.ELF.Relocation.TYPE
+    type: Relocation.TYPE
 
     @property
     def has_symbol(self) -> bool: ...
 
-    symbol: lief.ELF.Symbol
+    symbol: Symbol
 
     @property
     def has_section(self) -> bool: ...
@@ -4789,7 +4789,7 @@ class Section(lief.Section):
     @property
     def is_frame(self) -> bool: ...
 
-    type: lief.ELF.Section.TYPE
+    type: Section.TYPE
 
     flags: int
 
@@ -4917,9 +4917,9 @@ class Segment(lief.Object):
     @staticmethod
     def from_raw(arg: bytes, /) -> Union[Segment, lief.lief_errors]: ...
 
-    type: lief.ELF.Segment.TYPE
+    type: Segment.TYPE
 
-    flags: lief.ELF.Segment.FLAGS
+    flags: Segment.FLAGS
 
     file_offset: int
 
@@ -5038,15 +5038,15 @@ class Symbol(lief.Symbol):
     @property
     def demangled_name(self) -> str: ...
 
-    type: lief.ELF.Symbol.TYPE
+    type: Symbol.TYPE
 
-    binding: lief.ELF.Symbol.BINDING
+    binding: Symbol.BINDING
 
     information: int
 
     other: int
 
-    visibility: lief.ELF.Symbol.VISIBILITY
+    visibility: Symbol.VISIBILITY
 
     value: int
 
@@ -5092,7 +5092,7 @@ class SymbolVersion(lief.Object):
     @property
     def has_auxiliary_version(self) -> bool: ...
 
-    symbol_version_auxiliary: lief.ELF.SymbolVersionAux
+    symbol_version_auxiliary: SymbolVersionAux
 
     def __str__(self) -> str: ...
 

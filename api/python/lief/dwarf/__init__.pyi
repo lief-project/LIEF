@@ -39,7 +39,7 @@ class CompilationUnit:
 
             COBOL = 10
 
-        lang: lief.dwarf.CompilationUnit.Language.LANG
+        lang: CompilationUnit.Language.LANG
 
         version: int
 

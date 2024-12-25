@@ -641,7 +641,7 @@ class BuildVersion(LoadCommand):
 
         ANY = 4294967295
 
-    platform: lief.MachO.BuildVersion.PLATFORMS
+    platform: BuildVersion.PLATFORMS
 
     minos: list[int]
 
@@ -1092,7 +1092,7 @@ class DataCodeEntry(lief.Object):
 
     length: int
 
-    type: lief.MachO.DataCodeEntry.TYPES
+    type: DataCodeEntry.TYPES
 
     def __str__(self) -> str: ...
 
@@ -1146,9 +1146,9 @@ class DyldBindingInfo(BindingInfo):
 
         TEXT_PCREL32 = 3
 
-    binding_class: lief.MachO.DyldBindingInfo.CLASS
+    binding_class: DyldBindingInfo.CLASS
 
-    binding_type: lief.MachO.DyldBindingInfo.TYPE
+    binding_type: DyldBindingInfo.TYPE
 
     @property
     def original_offset(self) -> int: ...
@@ -1229,7 +1229,7 @@ class DyldChainedFixups(LoadCommand):
 
     symbols_format: int
 
-    imports_format: lief.MachO.DYLD_CHAINED_FORMAT
+    imports_format: DYLD_CHAINED_FORMAT
 
     def __str__(self) -> str: ...
 
@@ -1783,13 +1783,13 @@ class Header(lief.Object):
 
         APP_EXTENSION_SAFE = 33554432
 
-    magic: lief.MachO.MACHO_TYPES
+    magic: MACHO_TYPES
 
-    cpu_type: lief.MachO.Header.CPU_TYPE
+    cpu_type: Header.CPU_TYPE
 
     cpu_subtype: int
 
-    file_type: lief.MachO.Header.FILE_TYPE
+    file_type: Header.FILE_TYPE
 
     flags: int
 
@@ -1965,7 +1965,7 @@ class LoadCommand(lief.Object):
 
         LIEF_UNKNOWN = 4293787649
 
-    command: lief.MachO.LoadCommand.TYPE
+    command: LoadCommand.TYPE
 
     size: int
 
@@ -2287,7 +2287,7 @@ class Section(lief.Section):
 
     numberof_relocations: int
 
-    type: lief.MachO.Section.TYPE
+    type: Section.TYPE
 
     @property
     def relocations(self) -> SegmentCommand.it_relocations: ...
@@ -2298,7 +2298,7 @@ class Section(lief.Section):
 
     reserved3: int
 
-    flags: lief.MachO.Section.FLAGS
+    flags: Section.FLAGS
 
     @property
     def flags_list(self) -> list[Section.FLAGS]: ...
@@ -2453,7 +2453,7 @@ class Stub:
         @overload
         def __init__(self, arg0: Header.CPU_TYPE, arg1: int, /) -> None: ...
 
-        arch: lief.MachO.Header.CPU_TYPE
+        arch: Header.CPU_TYPE
 
         subtype: int
 
@@ -2609,7 +2609,7 @@ class ThreadCommand(LoadCommand):
     @property
     def pc(self) -> int: ...
 
-    architecture: lief.MachO.Header.CPU_TYPE
+    architecture: Header.CPU_TYPE
 
     def __str__(self) -> str: ...
 

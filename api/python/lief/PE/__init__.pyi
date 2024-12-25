@@ -585,9 +585,9 @@ class Binary(lief.Binary):
 
     def section_from_rva(self, rva: int) -> Section: ...
 
-    tls: lief.PE.TLS
+    tls: TLS
 
-    rich_header: lief.PE.RichHeader
+    rich_header: RichHeader
 
     @property
     def has_rich_header(self) -> bool: ...
@@ -1756,7 +1756,7 @@ class Header(lief.Object):
 
     signature: list[int]
 
-    machine: lief.PE.Header.MACHINE_TYPES
+    machine: Header.MACHINE_TYPES
 
     numberof_sections: int
 
@@ -1892,7 +1892,7 @@ class LangCodeItem(lief.Object):
 
     sublang: int
 
-    code_page: lief.PE.CODE_PAGES
+    code_page: CODE_PAGES
 
     items: dict
 
@@ -2047,7 +2047,7 @@ class LoadConfigurationV1(LoadConfigurationV0):
 
     guard_cf_function_count: int
 
-    guard_flags: lief.PE.LoadConfigurationV1.IMAGE_GUARD
+    guard_flags: LoadConfigurationV1.IMAGE_GUARD
 
     def has(self, flag: LoadConfigurationV1.IMAGE_GUARD) -> bool: ...
 
@@ -2300,7 +2300,7 @@ class OptionalHeader(lief.Object):
     @staticmethod
     def create(type: PE_TYPE) -> OptionalHeader: ...
 
-    magic: lief.PE.PE_TYPE
+    magic: PE_TYPE
 
     major_linker_version: int
 
@@ -2344,7 +2344,7 @@ class OptionalHeader(lief.Object):
 
     checksum: int
 
-    subsystem: lief.PE.OptionalHeader.SUBSYSTEM
+    subsystem: OptionalHeader.SUBSYSTEM
 
     dll_characteristics: int
 
@@ -2776,7 +2776,7 @@ class RelocationEntry(lief.Relocation):
 
     position: int
 
-    type: lief.PE.RelocationEntry.BASE_TYPES
+    type: RelocationEntry.BASE_TYPES
 
     def __str__(self) -> str: ...
 
@@ -2964,11 +2964,11 @@ class ResourceFixedFileInfo(lief.Object):
 
     file_flags: int
 
-    file_os: lief.PE.FIXED_VERSION_OS
+    file_os: FIXED_VERSION_OS
 
-    file_type: lief.PE.FIXED_VERSION_FILE_TYPES
+    file_type: FIXED_VERSION_FILE_TYPES
 
-    file_subtype: lief.PE.FIXED_VERSION_FILE_SUB_TYPES
+    file_subtype: FIXED_VERSION_FILE_SUB_TYPES
 
     file_date_MS: int
 
@@ -3049,7 +3049,7 @@ class ResourceStringFileInfo(lief.Object):
 
     key: str
 
-    langcode_items: list[lief.PE.LangCodeItem]
+    langcode_items: list[LangCodeItem]
 
     def __str__(self) -> str: ...
 
@@ -3076,11 +3076,11 @@ class ResourceVersion(lief.Object):
 
     key: str
 
-    fixed_file_info: lief.PE.ResourceFixedFileInfo
+    fixed_file_info: ResourceFixedFileInfo
 
-    string_file_info: lief.PE.ResourceStringFileInfo
+    string_file_info: ResourceStringFileInfo
 
-    var_file_info: lief.PE.ResourceVarFileInfo
+    var_file_info: ResourceVarFileInfo
 
     @property
     def has_fixed_file_info(self) -> bool: ...
