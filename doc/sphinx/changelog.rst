@@ -25,6 +25,25 @@
 
   * Add support for |lief-macho-atom-info| command (``LC_ATOM_INFO``)
 
+
+0.16.1 - December 26th, 2024
+----------------------------
+
+:MachO:
+
+  * Various fixes from :github_user:`DzenIsRich` & :github_user:`peledins-zimperium`
+    Thanks to them, Mach-O modification is more reliable.
+
+  * Fix issue when building with ``-DLIEF_MACHO=ON`` (see: :issue:`1138`)
+
+:Rust:
+
+  * Fix min-rustc version issue (see: :commit:`75a27f0e`)
+
+:Compilation:
+
+  * Fix missing ``LIEF_API`` visibility (:commit:`e01f92a0`, :pr:`1140`)
+
 0.16.0 - December 10th, 2024
 ----------------------------
 
