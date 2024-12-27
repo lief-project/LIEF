@@ -25,6 +25,10 @@
 
   * Add support for |lief-macho-atom-info| command (``LC_ATOM_INFO``)
 
+:Extended:
+
+  * Fix issue in the Python bindings while trying to access ``lief.__LIEF_MAIN_COMMIT__``
+
 
 0.16.1 - December 26th, 2024
 ----------------------------
