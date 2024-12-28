@@ -159,7 +159,7 @@ class LIEF_API Stub {
   private:
   target_info_t target_info_;
   uint64_t address_ = 0;
-  mutable uint64_t target_addr_ = 0;
+  [[maybe_unused]] mutable uint64_t target_addr_ = 0;
   std::vector<uint8_t> raw_;
 };
 

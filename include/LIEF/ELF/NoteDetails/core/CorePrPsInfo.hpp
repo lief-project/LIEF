@@ -16,7 +16,6 @@
 #ifndef LIEF_ELF_CORE_PRPSINFO_H
 #define LIEF_ELF_CORE_PRPSINFO_H
 
-#include <vector>
 #include <ostream>
 
 #include "LIEF/visibility.h"
@@ -85,7 +84,7 @@ class LIEF_API CorePrPsInfo : public Note {
     return os;
   }
   private:
-  ARCH arch_ = ARCH::NONE;
+  [[maybe_unused]] ARCH arch_ = ARCH::NONE;
   Header::CLASS class_ = Header::CLASS::NONE;
 };
 

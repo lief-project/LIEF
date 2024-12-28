@@ -16,7 +16,6 @@
 #ifndef LIEF_ELF_CORE_SIGINFO_H
 #define LIEF_ELF_CORE_SIGINFO_H
 
-#include <vector>
 #include <ostream>
 #include <memory>
 

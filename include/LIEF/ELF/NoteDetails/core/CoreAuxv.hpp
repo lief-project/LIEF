@@ -16,7 +16,6 @@
 #ifndef LIEF_ELF_CORE_AUXV_H
 #define LIEF_ELF_CORE_AUXV_H
 
-#include <vector>
 #include <ostream>
 #include <map>
 #include <utility>
