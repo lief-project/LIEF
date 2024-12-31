@@ -91,6 +91,7 @@ Logger& Logger::instance(const char* name) {
 
   if (instances.empty()) {
     std::atexit([] {
+      std::lock_guard LK(mu);
       for (const auto& [name, instance] : instances) {
         delete instance;
       }
