@@ -79,27 +79,23 @@ LEVEL Logger::get_level() {
   return LEVEL::TRACE;
 }
 
+
 Logger& Logger::instance(const char* name) {
-  if (auto it = instances_.find(name); it != instances_.end()) {
+  static Logger::instances_t instances;
+  static std::mutex mu;
+  std::lock_guard LK(mu);
+
+  if (auto it = instances.find(name); it != instances.end()) {
     return *it->second;
   }
-  if (instances_.empty()) {
-    std::atexit(destroy);
-  }
+
   auto* impl = new Logger(default_logger(/*name=*/name));
-  instances_.insert({name, impl});
+  instances.insert({name, impl});
   return *impl;
 }
 
 void Logger::reset() {
   set_logger(default_logger());
-}
-
-void Logger::destroy() {
-  for (const auto& [name, instance] : instances_) {
-    delete instance;
-  }
-  instances_.clear();
 }
 
 Logger& Logger::set_log_path(const std::string& path) {

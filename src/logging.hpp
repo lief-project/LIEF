@@ -54,6 +54,7 @@ namespace logging {
 class Logger {
   public:
   static constexpr auto DEFAULT_NAME = "LIEF";
+  using instances_t = std::unordered_map<std::string, Logger*>;
   Logger(const Logger&) = delete;
   Logger& operator=(const Logger&) = delete;
 
@@ -128,8 +129,6 @@ class Logger {
   Logger(Logger&&) noexcept = default;
   Logger& operator=(Logger&&) noexcept = default;
 
-  static void destroy();
-  static inline std::unordered_map<std::string, Logger*> instances_;
   std::shared_ptr<spdlog::logger> sink_;
 };
 
