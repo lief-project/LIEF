@@ -29,6 +29,11 @@
 
   * Fix issue in the Python bindings while trying to access ``lief.__LIEF_MAIN_COMMIT__``
 
+:Build System:
+
+  * LIEF is now available in `vcpkg <https://github.com/microsoft/vcpkg/tree/master/ports/lief>`_.
+    Many thanks to :github_user:`luadebug` for this support.
+
 
 0.16.1 - December 26th, 2024
 ----------------------------
