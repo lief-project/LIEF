@@ -89,6 +89,15 @@ Logger& Logger::instance(const char* name) {
     return *it->second;
   }
 
+  if (instances.empty()) {
+    std::atexit([] {
+      for (const auto& [name, instance] : instances) {
+        delete instance;
+      }
+      instances.clear();
+    });
+  }
+
   auto* impl = new Logger(default_logger(/*name=*/name));
   instances.insert({name, impl});
   return *impl;
