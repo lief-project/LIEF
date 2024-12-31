@@ -93,6 +93,11 @@ macro(LIEF_load_targets lib_type)
     if(NOT @LIEF_DISABLE_FROZEN@ AND @LIEF_OPT_FROZEN_EXTERNAL@)
       find_dependency(frozen)
     endif()
+
+    if(@LIEF_OPT_EXTERNAL_EXPECTED@)
+      find_dependency(tl-expected)
+    endif()
+
   endif()
 
   # Include the respective targets file
