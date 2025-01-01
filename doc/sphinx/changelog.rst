@@ -3,6 +3,15 @@
 :fa:`solid fa-code-compare` Changelog
 =====================================
 
+
+0.16.2 - January 1st, 2025
+----------------------------
+
+:Compilation:
+
+  * Fix broken ``aarch64`` Python wheel which is related to a toolchain issue
+    (:issue:`1146`)
+
 0.16.1 - December 26th, 2024
 ----------------------------
 
