@@ -369,7 +369,40 @@ ok_error_t Parser::parse_symbol_version(uint64_t symbol_version_offset) {
 }
 
 
-result<uint64_t> Parser::get_dynamic_string_table_from_segments() const {
+result<uint64_t> Parser::get_dynamic_string_table_from_segments(BinaryStream* stream) const {
+  const ARCH arch = binary_->header().machine_type();
+  if (const DynamicEntry* dt_str = binary_->get(DynamicEntry::TAG::STRTAB)) {
+    return binary_->virtual_address_to_offset(dt_str->value());
+  }
+
+  if (stream != nullptr) {
+    size_t count = 0;
+    ScopedStream scope(*stream);
+    while (*scope) {
+      if (++count > Parser::NB_MAX_DYNAMIC_ENTRIES) {
+        break;
+      }
+      if (binary_->type_ == Header::CLASS::ELF32) {
+        auto dt = scope->read<details::Elf32_Dyn>();
+        if (!dt) {
+          break;
+        }
+        if (DynamicEntry::from_value(dt->d_tag, arch) == DynamicEntry::TAG::STRTAB) {
+          return binary_->virtual_address_to_offset(dt->d_un.d_val);
+        }
+      } else {
+        auto dt = scope->read<details::Elf64_Dyn>();
+        if (!dt) {
+          break;
+        }
+
+        if (DynamicEntry::from_value(dt->d_tag, arch) == DynamicEntry::TAG::STRTAB) {
+          return binary_->virtual_address_to_offset(dt->d_un.d_val);
+        }
+      }
+    }
+  }
+
   Segment* dyn_segment = binary_->get(Segment::TYPE::DYNAMIC);
   if (dyn_segment == nullptr) {
     return 0;
@@ -379,8 +412,6 @@ result<uint64_t> Parser::get_dynamic_string_table_from_segments() const {
   const uint64_t size   = dyn_segment->physical_size();
 
   stream_->setpos(offset);
-
-  const ARCH arch = binary_->header().machine_type();
 
   if (binary_->type_ == Header::CLASS::ELF32) {
     size_t nb_entries = size / sizeof(details::Elf32_Dyn);
@@ -432,8 +463,8 @@ uint64_t Parser::get_dynamic_string_table_from_sections() const {
   return (*it_dynamic_string_section)->file_offset();
 }
 
-uint64_t Parser::get_dynamic_string_table() const {
-  if (auto res = get_dynamic_string_table_from_segments()) {
+uint64_t Parser::get_dynamic_string_table(BinaryStream* stream) const {
+  if (auto res = get_dynamic_string_table_from_segments(stream)) {
     return *res;
   }
   return get_dynamic_string_table_from_sections();
