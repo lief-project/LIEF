@@ -126,10 +126,13 @@ ok_error_t Parser::parse_binary() {
 
       int64_t rel_offset = seg_dyn->virtual_address() - load_seg.virtual_address();
       assert(rel_offset >= 0);
-      span<const uint8_t> dynamic_content = load_seg.content().subspan(rel_offset);
-      SpanStream stream(dynamic_content);
-      stream.set_endian_swap(stream_->should_swap());
-      parse_dynamic_entries<ELF_T>(stream);
+      span<const uint8_t> seg_content = load_seg.content();
+      if (!seg_content.empty()) {
+        span<const uint8_t> dynamic_content = seg_content.subspan(rel_offset);
+        SpanStream stream(dynamic_content);
+        stream.set_endian_swap(stream_->should_swap());
+        parse_dynamic_entries<ELF_T>(stream);
+      }
     } else /* No PT_LOAD segment wrapping up the PT_DYNAMIC table */ {
       const Elf_Off offset = seg_dyn->file_offset();
       ScopedStream scoped(*stream_, offset);
