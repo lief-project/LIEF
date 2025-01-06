@@ -1259,30 +1259,29 @@ bool Binary::extend_section(Section& section, size_t size) {
     return false;
   }
 
-  // Select sections that we need to shift.
+  // Note: if we are extending an empty section, then there may be many zero-sized sections at
+  // this offset `section.offset()`, and one non-empty section.
+
+  // Select sections that we need to shift to the left.
+  // Sections that come after the current one are not considered for shifting.
+  // Note: we compare sections by end_offset to exclude non-empty section that starts at the current offset.
   sections_cache_t sections_to_shift;
   for (Section& s : sections()) {
-    if (s.offset() > section.offset() || s.offset() == 0) {
+    if (s.offset() == 0 || s.offset() + s.size() > section.offset() + section.size()) {
       continue;
     }
     sections_to_shift.push_back(&s);
   }
   assert(!sections_to_shift.empty());
 
-  // Stable-sort by end_offset, preserving original order.
+  // Stable-sort by offset in ascending order as well as preserving original order.
   std::stable_sort(sections_to_shift.begin(), sections_to_shift.end(),
-            [](const Section* a, const Section* b) {
-              return a->offset() + a->size() > b->offset() + b->size();
-            });
+            [](const Section* a, const Section* b) { return a->offset() < b->offset(); });
 
-  // If we are extending an empty section, then there may be many sections at this offset,
-  // we do not want to shift sections which were added after the current one.
-  // Such that we preserve order of sections in which they were added to the binary.
-  if (section.size() == 0) {
-    auto it = std::find(sections_to_shift.begin(), sections_to_shift.end(), &section);
-    assert(it != sections_to_shift.end());
-    sections_to_shift.erase(std::next(it), sections_to_shift.end());
-  }
+  // We do not want to shift empty sections that were added after the current one.
+  auto it = std::find(sections_to_shift.begin(), sections_to_shift.end(), &section);
+  assert(it != sections_to_shift.end());
+  sections_to_shift.erase(std::next(it), sections_to_shift.end());
 
   // Find maximum alignment
   auto it_maxa = std::max_element(sections_to_shift.begin(), sections_to_shift.end(),
