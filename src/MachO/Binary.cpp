@@ -1306,7 +1306,7 @@ bool Binary::extend_section(Section& section, size_t size) {
   }
 
   // Extend the given `section`.
-  section.size(section.size() + size);
+  section.size(section.size() + shift_value);
 
   return true;
 }
