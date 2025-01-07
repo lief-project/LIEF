@@ -37,6 +37,7 @@ void create<SpcIndirectData>(nb::module_& m) {
     .def_prop_ro("digest",
                  nb::overload_cast<>(&SpcIndirectData::digest, nb::const_))
     .def_prop_ro("file", &SpcIndirectData::file)
+    .def_prop_ro("url", &SpcIndirectData::url)
     LIEF_DEFAULT_STR(SpcIndirectData);
 }
 

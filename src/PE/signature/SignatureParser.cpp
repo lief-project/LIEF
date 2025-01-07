@@ -459,33 +459,54 @@ SignatureParser::parse_spc_indirect_data(BinaryStream& stream, range_t& range) {
   }
   const std::string& spc_attr_type_str = spc_attr_type.value();
   LIEF_DEBUG("spc-attribute-type-and-optional-value.type: {}", oid_to_string(spc_attr_type_str));
-  if (spc_attr_type_str != /* SPC_PE_IMAGE_DATA */ "1.3.6.1.4.1.311.2.1.15") {
-    LIEF_WARN("Expecting OID SPC_PE_IMAGE_DATA at {:d} but got {}",
+  if (spc_attr_type_str == /* SPC_PE_IMAGE_DATA */ "1.3.6.1.4.1.311.2.1.15") {
+    tag = asn1r.read_tag(/* SpcPeImageData ::= SEQUENCE */
+                         MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
+
+    if (!tag) {
+      LIEF_INFO("Wrong tag: {} (pos: {:d})", asn1r.get_str_tag(), stream.pos());
+      return make_error_code(tag.error());
+    }
+
+    /* SpcPeImageData */ {
+      const size_t length = tag.value();
+      SpanStream spc_data_stream{ stream.p(), length };
+      stream.increment_pos(spc_data_stream.size());
+      if (auto spc_data = parse_spc_pe_image_data(spc_data_stream)) {
+        const SpcPeImageData& spc_data_value = *spc_data;
+        indirect_data->file_ = spc_data_value.file;
+        indirect_data->flags_ = spc_data_value.flags;
+      }
+      else {
+        LIEF_INFO("Can't parse SpcPeImageData");
+      }
+    }
+  }
+  else if (spc_attr_type_str == /* SPC_LINK_(TYPE_2) */ "1.3.6.1.4.1.311.2.1.25" ||
+           spc_attr_type_str == /* SPC_LINK_(TYPE_3) */ "1.3.6.1.4.1.311.2.1.28")
+  {
+
+    tag = asn1r.read_tag(/* SpcLink / URL ::= STRING */
+                         MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_INTEGER);
+
+    if (!tag) {
+      LIEF_INFO("Wrong tag: {} (pos: {:d})", asn1r.get_str_tag(), stream.pos());
+      return make_error_code(tag.error());
+    }
+    const size_t length = tag.value();
+    SpanStream spc_data_stream{ stream.p(), length };
+    stream.increment_pos(spc_data_stream.size());
+    if (auto link = parse_spc_link(spc_data_stream)) {
+      LIEF_DEBUG("SpcIndirectData.url = {}", *link);
+      indirect_data->url_ = link.value();
+    } else {
+      LIEF_INFO("Can't parse SpcLink");
+    }
+  }
+  else {
+    LIEF_WARN("Expecting OID SPC_PE_IMAGE_DATA or SPC_LINK at {:d} but got {}",
               stream.pos(), oid_to_string(spc_attr_type_str));
     return make_error_code(lief_errors::read_error);
-  }
-
-
-  tag = asn1r.read_tag(/* SpcPeImageData ::= SEQUENCE */
-                       MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
-
-  if (!tag) {
-    LIEF_INFO("Wrong tag: {} (pos: {:d})", asn1r.get_str_tag(), stream.pos());
-    return make_error_code(tag.error());
-  }
-
-  /* SpcPeImageData */ {
-    const size_t length = tag.value();
-    SpanStream spc_data_stream{stream.p(), length};
-    stream.increment_pos(spc_data_stream.size());
-
-    if (auto spc_data = parse_spc_pe_image_data(spc_data_stream)) {
-      const SpcPeImageData& spc_data_value = *spc_data;
-      indirect_data->file_  = spc_data_value.file;
-      indirect_data->flags_ = spc_data_value.flags;
-    } else {
-      LIEF_INFO("Can't parse SpcPeImageData");
-    }
   }
 
   // ================================================

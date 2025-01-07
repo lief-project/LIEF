@@ -61,6 +61,10 @@ class LIEF_API SpcIndirectData : public ContentInfo::Content {
     return file_;
   }
 
+  const std::string& url() const {
+    return url_;
+  }
+
   void print(std::ostream& os) const override;
 
   void accept(Visitor& visitor) const override;
@@ -78,6 +82,7 @@ class LIEF_API SpcIndirectData : public ContentInfo::Content {
 
   private:
   std::string file_;
+  std::string url_;
   uint8_t flags_ = 0;
   ALGORITHMS digest_algorithm_ = ALGORITHMS::UNKNOWN;
   std::vector<uint8_t> digest_;

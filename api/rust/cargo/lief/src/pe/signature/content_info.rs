@@ -110,6 +110,11 @@ impl SpcIndirectData<'_> {
     pub fn file(&self) -> String {
         self.ptr.file().to_string()
     }
+
+    pub fn url(&self) -> String {
+        self.ptr.url().to_string()
+    }
+
     /// PE's authentihash
     ///
     /// See: [`crate::pe::Binary::authentihash`]
@@ -127,6 +132,7 @@ impl std::fmt::Debug for SpcIndirectData<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("SpcIndirectData")
             .field("file", &self.file())
+            .field("url", &self.url())
             .field("digest_algorithm", &self.digest_algorithm())
             .finish()
     }

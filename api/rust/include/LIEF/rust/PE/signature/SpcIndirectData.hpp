@@ -34,6 +34,10 @@ class PE_SpcIndirectData : public PE_ContentInfo_Content {
     return impl().file();
   }
 
+  std::string url() const {
+    return impl().url();
+  }
+
   static bool classof(const PE_ContentInfo_Content& info) {
     return lief_t::classof(&info.get());
   }

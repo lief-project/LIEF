@@ -346,3 +346,15 @@ def test_playready_signature():
 def test_pkcs1_15_padding():
     pe = lief.PE.parse(get_sample("PE/jar.exe"))
     assert pe.signatures[0].check() == lief.PE.Signature.VERIFICATION_FLAGS.OK
+
+
+def test_font_signature():
+    sig = lief.PE.Signature.parse(get_sample("pkcs7/pr_1153.p7b"))
+    assert sig.content_info.value.url == "\x00<\x00<\x00<\x00O\x00b\x00s\x00o\x00l\x00e\x00t\x00e\x00>\x00>\x00>"
+    assert sig.signers[0].authenticated_attributes[4].program_name == "this is a test"
+    assert sig.signers[0].authenticated_attributes[4].more_info == "Monotype"
+
+    sig = lief.PE.Signature.parse(get_sample("pkcs7/consolab.p7b"))
+    assert sig.content_info.value.url == "\x00<\x00<\x00<\x00O\x00b\x00s\x00o\x00l\x00e\x00t\x00e\x00>\x00>\x00>"
+    assert sig.signers[0].authenticated_attributes[3].program_name == "Microsoft Typography"
+    assert sig.signers[0].authenticated_attributes[3].more_info == "http://www.microsoft.com/Typography "

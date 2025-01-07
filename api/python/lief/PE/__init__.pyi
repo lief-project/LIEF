@@ -3785,6 +3785,9 @@ class SpcIndirectData(ContentInfo.Content):
     @property
     def file(self) -> str: ...
 
+    @property
+    def url(self) -> str: ...
+
     def __str__(self) -> str: ...
 
 class SpcRelaxedPeMarkerCheck(Attribute):
