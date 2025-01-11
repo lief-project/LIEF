@@ -263,6 +263,9 @@ class LIEF_API Parser : public LIEF::Parser {
   LIEF_LOCAL bool bind_symbol(Relocation& R);
   LIEF_LOCAL Relocation& insert_relocation(std::unique_ptr<Relocation> R);
 
+  template<class ELF_T>
+  LIEF_LOCAL ok_error_t parse_dyn_table(Segment& pt_dyn);
+
   std::unique_ptr<BinaryStream> stream_;
   std::unique_ptr<Binary> binary_;
   ParserConfig config_;

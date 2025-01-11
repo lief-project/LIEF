@@ -28,6 +28,14 @@
 namespace LIEF {
 namespace logging {
 
+
+std::shared_ptr<spdlog::logger>
+  create_basic_logger_mt(const std::string& name, const std::string& path, bool truncate = false)
+{
+  spdlog::filename_t fname(path.begin(), path.end());
+  return spdlog::basic_logger_mt(name, fname, truncate);
+}
+
 static std::shared_ptr<spdlog::logger> default_logger(
   [[maybe_unused]] const std::string& name = "LIEF",
   [[maybe_unused]] const std::string& logcat_tag = "lief",
@@ -45,7 +53,7 @@ static std::shared_ptr<spdlog::logger> default_logger(
 #endif
   }
   else if (current_platform() == PLATFORMS::PLAT_IOS) {
-    sink = spdlog::basic_logger_mt(name, filepath, truncate);
+    sink = create_basic_logger_mt(name, filepath, truncate);
   }
   else {
     sink = spdlog::stderr_color_mt(name);
@@ -111,7 +119,7 @@ void Logger::reset() {
 Logger& Logger::set_log_path(const std::string& path) {
   auto& registry = spdlog::details::registry::instance();
   registry.drop(DEFAULT_NAME);
-  auto logger = spdlog::basic_logger_mt(DEFAULT_NAME, path, /*truncate=*/true);
+  auto logger = create_basic_logger_mt(DEFAULT_NAME, path, /*truncate=*/true);
   set_logger(std::move(logger));
   return *this;
 }

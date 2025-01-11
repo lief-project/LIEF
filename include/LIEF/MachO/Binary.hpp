@@ -411,8 +411,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   bool extend_segment(const SegmentCommand& segment, size_t size);
 
   /// Extend the **content** of the given Section.
-  /// @note This method may create a gap between the current section and the next one, if `size`
-  ///       is not multiple of the maximum alignment of sections before the current one.
+  /// @note This method may extend the section more than `size` preventing creation a gap
+  ///       between the current section and the next one.
+  ///       This may happen trying to satisfy alignment requirement of sections.
   /// @note This method works only with sections that belong to the first segment.
   bool extend_section(Section& section, size_t size);
 
