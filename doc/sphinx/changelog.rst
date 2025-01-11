@@ -25,6 +25,11 @@
 
   * Add support for |lief-macho-atom-info| command (``LC_ATOM_INFO``)
 
+:ELF:
+
+  * Fix issue when parsing the dynamic table with an invalid offset (bug found
+    by :github_user:`lebr0nli`)
+
 :Extended:
 
   * Fix issue in the Python bindings while trying to access ``lief.__LIEF_MAIN_COMMIT__``
