@@ -3,6 +3,13 @@
 :fa:`solid fa-code-compare` Changelog
 =====================================
 
+0.16.3 - TBD
+------------
+
+:ELF:
+
+  * Fix issue when parsing the dynamic table with an invalid offset (bug found
+    by :github_user:`lebr0nli`)
 
 0.16.2 - January 1st, 2025
 ----------------------------

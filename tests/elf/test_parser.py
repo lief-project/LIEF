@@ -206,3 +206,10 @@ def test_ebpf_relocations():
     assert relocations[8].info == 1
     assert relocations[8].purpose == lief.ELF.Relocation.PURPOSE.OBJECT
     assert relocations[8].type == lief.ELF.Relocation.TYPE.BPF_64_NODYLD32
+
+
+def test_issue_dynamic_table():
+    elf = lief.ELF.parse(get_sample("ELF/issue_dynamic_table.elf"))
+    dyn_entries = list(elf.dynamic_entries)
+    assert len(dyn_entries) == 28
+    assert dyn_entries[0].name == "libselinux.so.1"

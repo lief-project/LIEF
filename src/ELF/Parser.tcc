@@ -82,16 +82,10 @@ ok_error_t Parser::parse_binary() {
     }
   }
 
-  // Parse Dynamic elements
-  // ======================
-
-  // Find the dynamic Segment
-  if (const Segment* seg_dyn = binary_->get(Segment::TYPE::DYNAMIC)) {
-    const Elf_Off offset = seg_dyn->file_offset();
-    const Elf_Off size   = seg_dyn->physical_size();
-
-    parse_dynamic_entries<ELF_T>(offset, size);
-    binary_->sizing_info_->dynamic = size;
+  if (Segment* seg_dyn = binary_->get(Segment::TYPE::DYNAMIC)) {
+    if (!parse_dyn_table<ELF_T>(*seg_dyn)) {
+      LIEF_WARN("PT_DYNAMIC parsing failed with error");
+    }
   }
 
   process_dynamic_table<ELF_T>();
@@ -182,6 +176,71 @@ ok_error_t Parser::parse_binary() {
   return ok();
 }
 
+
+template<class ELF_T>
+ok_error_t Parser::parse_dyn_table(Segment& pt_dyn) {
+  // Parse the dynamic table. To process this table, we can either process
+  // the content of the PT_DYNAMIC segment or process the content of the PT_LOAD
+  // segment that wraps the dynamic table. The second approach should be
+  // preferred since it uses a more accurate representation.
+  // (c.f. samples `issue_dynamic_table.elf` provided by @lebr0nli)
+  using Elf_Off = typename ELF_T::Elf_Off;
+  std::vector<Segment*> segments;
+
+  // Find the PT_LOAD segment that wraps the PT_DYNAMIC table.
+  // As demonstrated in the library: ELF32_x86_library_libshellx.so
+  // we need to consider overlapping segments and take the "latest" one since
+  // this is what the loader would do.
+  for (const std::unique_ptr<Segment>& segment : binary_->segments_) {
+    if (!segment->is_load()) {
+      continue;
+    }
+    const uint64_t dyn_start = pt_dyn.virtual_address();
+    const uint64_t dyn_end = dyn_start + pt_dyn.virtual_size();
+    const uint64_t load_start = segment->virtual_address();
+    const uint64_t load_end = load_start + segment->virtual_size();
+    if (!(load_start <= dyn_start && dyn_start < load_end)) {
+      continue;
+    }
+
+    if (!(load_start < dyn_end && dyn_end <= load_end)) {
+      continue;
+    }
+    segments.push_back(segment.get());
+  }
+
+  binary_->sizing_info_->dynamic = pt_dyn.physical_size();
+
+  // Usually #segments is 1 but we might have > 1 for overlapping segments
+  LIEF_DEBUG("Nb segments: {}", segments.size());
+
+  if (segments.empty()) {
+    // No PT_LOAD segment wrapping up the PT_DYNAMIC table
+    const Elf_Off offset = pt_dyn.file_offset();
+    ScopedStream scoped(*stream_, offset);
+    return parse_dynamic_entries<ELF_T>(*scoped);
+  }
+  const Segment& load_seg = *segments.back();
+  LIEF_DEBUG("Dynamic content wrapped by segment LOAD: [0x{:016x}, 0x{:016x}] "
+             "[0x{:016x}, 0x{:016x}]", load_seg.virtual_address(),
+             load_seg.virtual_address() + load_seg.virtual_size(),
+             load_seg.file_offset(), load_seg.file_offset() + load_seg.physical_size());
+
+  span<const uint8_t> seg_content = load_seg.content();
+  if (seg_content.empty()) {
+    return make_error_code(lief_errors::corrupted);
+  }
+
+  int64_t rel_offset = (int64_t)pt_dyn.virtual_address() - (int64_t)load_seg.virtual_address();
+  if (rel_offset < 0 || (uint64_t)rel_offset >= seg_content.size()) {
+    return make_error_code(lief_errors::corrupted);
+  }
+
+  span<const uint8_t> dynamic_content = seg_content.subspan(rel_offset);
+  SpanStream stream(dynamic_content);
+  stream.set_endian_swap(stream_->should_swap());
+  return parse_dynamic_entries<ELF_T>(stream);
+}
 
 template<typename ELF_T>
 ok_error_t Parser::process_dynamic_table() {
@@ -913,37 +972,38 @@ ok_error_t Parser::parse_segments() {
                                     DataHandler::Node::SEGMENT);
       segment->handler_size_ = read_size;
 
-      if (segment->file_offset() > stream_->size() || (segment->file_offset() + read_size) > stream_->size()) {
-        LIEF_WARN("Segment #{} has a corrupted file offset (0x{:x}) ", i, segment->file_offset());
-        break;
-      }
-      const Elf_Off offset_to_content = segment->file_offset();
-      auto alloc = binary_->datahandler_->reserve(segment->file_offset(), read_size);
-      if (!alloc) {
-        LIEF_ERR("Can't allocate memory");
-        break;
-      }
-      /* The DataHandlerStream interface references ELF data that are
-       * located in the ELF::DataHandler. Therefore, we can skip reading
-       * the data since they are already present in the data handler.
-       * This optimization saves memory (which is also performed in parse_sections<>(...))
-       */
-      if (stream_->type() != BinaryStream::STREAM_TYPE::ELF_DATA_HANDLER) {
-        std::vector<uint8_t> seg_content;
-        if (stream_->peek_data(seg_content, offset_to_content, read_size)) {
-          segment->content(std::move(seg_content));
-        } else {
-          LIEF_ERR("Unable to get the content of segment #{:d}", i);
-        }
-      }
+      const bool corrupted_offset = segment->file_offset() > stream_->size() ||
+                                    (segment->file_offset() + read_size) > stream_->size();
 
-      if (segment->is_interpreter()) {
-        auto interpreter = stream_->peek_string_at(offset_to_content, read_size);
-        if (!interpreter) {
-          LIEF_ERR("Can't read the interpreter string");
-        } else {
-          binary_->interpreter_ = *interpreter;
-          binary_->sizing_info_->interpreter = read_size;
+      if (!corrupted_offset) {
+        const Elf_Off offset_to_content = segment->file_offset();
+        auto alloc = binary_->datahandler_->reserve(segment->file_offset(), read_size);
+        if (!alloc) {
+          LIEF_ERR("Can't allocate memory");
+          break;
+        }
+        /* The DataHandlerStream interface references ELF data that are
+         * located in the ELF::DataHandler. Therefore, we can skip reading
+         * the data since they are already present in the data handler.
+         * This optimization saves memory (which is also performed in parse_sections<>(...))
+         */
+        if (stream_->type() != BinaryStream::STREAM_TYPE::ELF_DATA_HANDLER) {
+          std::vector<uint8_t> seg_content;
+          if (stream_->peek_data(seg_content, offset_to_content, read_size)) {
+            segment->content(std::move(seg_content));
+          } else {
+            LIEF_ERR("Unable to get the content of segment #{:d}", i);
+          }
+        }
+
+        if (segment->is_interpreter()) {
+          auto interpreter = stream_->peek_string_at(offset_to_content, read_size);
+          if (!interpreter) {
+            LIEF_ERR("Can't read the interpreter string");
+          } else {
+            binary_->interpreter_ = *interpreter;
+            binary_->sizing_info_->interpreter = read_size;
+          }
         }
       }
     } else {
@@ -1263,29 +1323,26 @@ ok_error_t Parser::parse_dynamic_symbols(uint64_t offset) {
     binary_->sizing_info_->dynstr = dt_strsz->value();
   }
   return ok();
-} // build_dynamic_sybols
+}
 
 
 template<typename ELF_T>
-ok_error_t Parser::parse_dynamic_entries(uint64_t offset, uint64_t size) {
+ok_error_t Parser::parse_dynamic_entries(BinaryStream& stream) {
   using Elf_Dyn  = typename ELF_T::Elf_Dyn;
   using uint__   = typename ELF_T::uint;
   using Elf_Addr = typename ELF_T::Elf_Addr;
   using Elf_Off  = typename ELF_T::Elf_Off;
 
-  LIEF_DEBUG("== Parsing dynamic section ==");
+  LIEF_DEBUG("Parsing dynamic entries");
 
-  uint32_t nb_entries = size / sizeof(Elf_Dyn);
-  nb_entries = std::min<uint32_t>(nb_entries, Parser::NB_MAX_DYNAMIC_ENTRIES);
+  uint32_t max_nb_entries = stream.size() / sizeof(Elf_Dyn);
+  max_nb_entries = std::min<uint32_t>(max_nb_entries, Parser::NB_MAX_DYNAMIC_ENTRIES);
 
-  LIEF_DEBUG(".dynamic@0x{:x}:0x{:x} #", offset, size, nb_entries);
-
-  Elf_Off dynamic_string_offset = get_dynamic_string_table();
+  Elf_Off dynamic_string_offset = get_dynamic_string_table(&stream);
 
   bool end_of_dynamic = false;
-  stream_->setpos(offset);
-  for (size_t dynIdx = 0; dynIdx < nb_entries; ++dynIdx) {
-    const auto res_entry = stream_->read<Elf_Dyn>();
+  while (stream) {
+    const auto res_entry = stream.read<Elf_Dyn>();
     if (!res_entry) {
       break;
     }
