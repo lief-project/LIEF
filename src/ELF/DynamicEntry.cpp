@@ -30,7 +30,17 @@ DynamicEntry::TAG DynamicEntry::from_value(uint64_t value, ARCH arch) {
   static constexpr auto LOPROC = 0x70000000;
   static constexpr auto HIPROC = 0x7FFFFFFF;
 
-  if (LOPROC <= value && value <= HIPROC) {
+  static constexpr auto LOOS = 0x60000000;
+  static constexpr auto HIOS = 0x6FFFFFFF;
+
+  const bool is_os_spec = (LOOS <= value && value <= HIOS);
+  const bool is_proc_spec = (LOPROC <= value && value <= HIPROC);
+
+  if (is_os_spec && arch == ARCH::IA_64) {
+    return TAG(IA_64_DISC + value);
+  }
+
+  if (is_proc_spec) {
     switch (arch) {
       case ARCH::AARCH64:
         return TAG(AARCH64_DISC + value);
@@ -53,6 +63,9 @@ DynamicEntry::TAG DynamicEntry::from_value(uint64_t value, ARCH arch) {
 
       case ARCH::X86_64:
         return TAG(X86_64_DISC + value);
+
+      case ARCH::IA_64:
+        return TAG(IA_64_DISC + value);
 
       default:
         LIEF_WARN("Dynamic tag: 0x{:04x} is not supported for the "
@@ -89,8 +102,13 @@ uint64_t DynamicEntry::to_value(DynamicEntry::TAG tag) {
   if (RISCV_DISC <= raw_value && raw_value < X86_64_DISC) {
     return raw_value - RISCV_DISC;
   }
+
   if (X86_64_DISC <= raw_value) {
     return raw_value - X86_64_DISC;
+  }
+
+  if (IA_64_DISC <= raw_value) {
+    return raw_value - IA_64_DISC;
   }
 
   return raw_value;
@@ -247,6 +265,38 @@ const char* to_string(DynamicEntry::TAG tag) {
     ENTRY(X86_64_PLT),
     ENTRY(X86_64_PLTSZ),
     ENTRY(X86_64_PLTENT),
+
+    ENTRY(IA_64_PLT_RESERVE),
+    ENTRY(IA_64_VMS_SUBTYPE),
+    ENTRY(IA_64_VMS_IMGIOCNT),
+    ENTRY(IA_64_VMS_LNKFLAGS),
+    ENTRY(IA_64_VMS_VIR_MEM_BLK_SIZ),
+    ENTRY(IA_64_VMS_IDENT),
+    ENTRY(IA_64_VMS_NEEDED_IDENT),
+    ENTRY(IA_64_VMS_IMG_RELA_CNT),
+    ENTRY(IA_64_VMS_SEG_RELA_CNT),
+    ENTRY(IA_64_VMS_FIXUP_RELA_CNT),
+    ENTRY(IA_64_VMS_FIXUP_NEEDED),
+    ENTRY(IA_64_VMS_SYMVEC_CNT),
+    ENTRY(IA_64_VMS_XLATED),
+    ENTRY(IA_64_VMS_STACKSIZE),
+    ENTRY(IA_64_VMS_UNWINDSZ),
+    ENTRY(IA_64_VMS_UNWIND_CODSEG),
+    ENTRY(IA_64_VMS_UNWIND_INFOSEG),
+    ENTRY(IA_64_VMS_LINKTIME),
+    ENTRY(IA_64_VMS_SEG_NO),
+    ENTRY(IA_64_VMS_SYMVEC_OFFSET),
+    ENTRY(IA_64_VMS_SYMVEC_SEG),
+    ENTRY(IA_64_VMS_UNWIND_OFFSET),
+    ENTRY(IA_64_VMS_UNWIND_SEG),
+    ENTRY(IA_64_VMS_STRTAB_OFFSET),
+    ENTRY(IA_64_VMS_SYSVER_OFFSET),
+    ENTRY(IA_64_VMS_IMG_RELA_OFF),
+    ENTRY(IA_64_VMS_SEG_RELA_OFF),
+    ENTRY(IA_64_VMS_FIXUP_RELA_OFF),
+    ENTRY(IA_64_VMS_PLTGOT_OFFSET),
+    ENTRY(IA_64_VMS_PLTGOT_SEG),
+    ENTRY(IA_64_VMS_FPMODE),
   };
   #undef ENTRY
 

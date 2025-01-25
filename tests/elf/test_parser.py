@@ -213,3 +213,9 @@ def test_issue_dynamic_table():
     dyn_entries = list(elf.dynamic_entries)
     assert len(dyn_entries) == 28
     assert dyn_entries[0].name == "libselinux.so.1"
+
+
+def test_i64_big_endian():
+    """From issue #1164"""
+    elf = lief.ELF.parse(get_sample("ELF/elf-HPUX-ia64-bash"))
+    assert elf.dynamic_entries[13].tag == lief.ELF.DynamicEntry.TAG.IA_64_VMS_IDENT

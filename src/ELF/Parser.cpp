@@ -80,7 +80,6 @@ Header::ELF_DATA determine_elf_endianess(ARCH machine) {
     case ARCH::CRIS:
     case ARCH::I386: // x86
     case ARCH::X86_64:
-    case ARCH::IA_64:
     case ARCH::LOONGARCH:
       return Header::ELF_DATA::LSB;
 
@@ -117,9 +116,10 @@ constexpr Header::ELF_DATA invert_endianess(Header::ELF_DATA endian) {
 }
 
 Header::ELF_DATA determine_elf_endianess(BinaryStream& stream) {
-  static const std::set<ARCH> BOTH_ENDIANESS = {
+  static constexpr auto BOTH_ENDIANESS = {
     ARCH::AARCH64, ARCH::ARM,  ARCH::SH,  ARCH::XTENSA,
     ARCH::ARC,     ARCH::MIPS, ARCH::PPC, ARCH::PPC64,
+    ARCH::IA_64,
   };
   Header::ELF_DATA from_ei_data   = Header::ELF_DATA::NONE;
   /* ELF_DATA from_e_machine = ELF_DATA::ELFDATANONE; */
@@ -165,6 +165,9 @@ Header::ELF_DATA determine_elf_endianess(BinaryStream& stream) {
     const Header::ELF_DATA endian      = determine_elf_endianess(machine);
     const Header::ELF_DATA endian_swap = determine_elf_endianess(machine_swap);
 
+    LIEF_DEBUG("Endian: {}",        to_string(endian));
+    LIEF_DEBUG("Endian (swap): {}", to_string(endian_swap));
+
     if (endian != Header::ELF_DATA::NONE) {
       return endian;
     }
@@ -173,12 +176,20 @@ Header::ELF_DATA determine_elf_endianess(BinaryStream& stream) {
       return endian_swap;
     }
 
-    if (BOTH_ENDIANESS.find(machine) != std::end(BOTH_ENDIANESS)) {
-      return get_endianess();
+    {
+      auto it = std::find(BOTH_ENDIANESS.begin(), BOTH_ENDIANESS.end(),
+                          machine);
+      if (it != BOTH_ENDIANESS.end()) {
+        return get_endianess();
+      }
     }
 
-    if (BOTH_ENDIANESS.find(machine_swap) != std::end(BOTH_ENDIANESS)) {
-      return invert_endianess(get_endianess());
+    {
+      auto it = std::find(BOTH_ENDIANESS.begin(), BOTH_ENDIANESS.end(),
+                          machine_swap);
+      if (it != BOTH_ENDIANESS.end()) {
+        return invert_endianess(get_endianess());
+      }
     }
   }
   return from_ei_data;
@@ -234,7 +245,6 @@ Header::CLASS determine_elf_class(BinaryStream& stream) {
       case ARCH::X86_64:
       case ARCH::PPC64:
       case ARCH::SPARCV9:
-      case ARCH::IA_64:
         {
           from_e_machine = Header::CLASS::ELF64;
           break;
@@ -299,6 +309,8 @@ ok_error_t Parser::init() {
     LIEF_ERR("Can't read ELF identity. Nothing to parse");
     return make_error_code(res_ident.error());
   }
+
+  LIEF_DEBUG("Should swap: {}", should_swap());
   stream_->set_endian_swap(should_swap());
 
   binary_->type_ = determine_elf_class(*stream_);

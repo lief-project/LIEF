@@ -42,6 +42,7 @@ class LIEF_API DynamicEntry : public Object {
   static constexpr uint64_t PPC64_DISC   = 0x500000000;
   static constexpr uint64_t RISCV_DISC   = 0x600000000;
   static constexpr uint64_t X86_64_DISC  = 0x700000000;
+  static constexpr uint64_t IA_64_DISC   = 0x800000000;
 
   enum class TAG : uint64_t {
     UNKNOWN                    = uint64_t(-1),
@@ -179,6 +180,38 @@ class LIEF_API DynamicEntry : public Object {
     X86_64_PLT                 = X86_64_DISC  + 0x70000000,
     X86_64_PLTSZ               = X86_64_DISC  + 0x70000001,
     X86_64_PLTENT              = X86_64_DISC  + 0x70000003,
+
+    IA_64_PLT_RESERVE          = IA_64_DISC + (0x70000000 + 0),
+    IA_64_VMS_SUBTYPE          = IA_64_DISC + (0x60000000 + 0),
+    IA_64_VMS_IMGIOCNT         = IA_64_DISC + (0x60000000 + 2),
+    IA_64_VMS_LNKFLAGS         = IA_64_DISC + (0x60000000 + 8),
+    IA_64_VMS_VIR_MEM_BLK_SIZ  = IA_64_DISC + (0x60000000 + 10),
+    IA_64_VMS_IDENT            = IA_64_DISC + (0x60000000 + 12),
+    IA_64_VMS_NEEDED_IDENT     = IA_64_DISC + (0x60000000 + 16),
+    IA_64_VMS_IMG_RELA_CNT     = IA_64_DISC + (0x60000000 + 18),
+    IA_64_VMS_SEG_RELA_CNT     = IA_64_DISC + (0x60000000 + 20),
+    IA_64_VMS_FIXUP_RELA_CNT   = IA_64_DISC + (0x60000000 + 22),
+    IA_64_VMS_FIXUP_NEEDED     = IA_64_DISC + (0x60000000 + 24),
+    IA_64_VMS_SYMVEC_CNT       = IA_64_DISC + (0x60000000 + 26),
+    IA_64_VMS_XLATED           = IA_64_DISC + (0x60000000 + 30),
+    IA_64_VMS_STACKSIZE        = IA_64_DISC + (0x60000000 + 32),
+    IA_64_VMS_UNWINDSZ         = IA_64_DISC + (0x60000000 + 34),
+    IA_64_VMS_UNWIND_CODSEG    = IA_64_DISC + (0x60000000 + 36),
+    IA_64_VMS_UNWIND_INFOSEG   = IA_64_DISC + (0x60000000 + 38),
+    IA_64_VMS_LINKTIME         = IA_64_DISC + (0x60000000 + 40),
+    IA_64_VMS_SEG_NO           = IA_64_DISC + (0x60000000 + 42),
+    IA_64_VMS_SYMVEC_OFFSET    = IA_64_DISC + (0x60000000 + 44),
+    IA_64_VMS_SYMVEC_SEG       = IA_64_DISC + (0x60000000 + 46),
+    IA_64_VMS_UNWIND_OFFSET    = IA_64_DISC + (0x60000000 + 48),
+    IA_64_VMS_UNWIND_SEG       = IA_64_DISC + (0x60000000 + 50),
+    IA_64_VMS_STRTAB_OFFSET    = IA_64_DISC + (0x60000000 + 52),
+    IA_64_VMS_SYSVER_OFFSET    = IA_64_DISC + (0x60000000 + 54),
+    IA_64_VMS_IMG_RELA_OFF     = IA_64_DISC + (0x60000000 + 56),
+    IA_64_VMS_SEG_RELA_OFF     = IA_64_DISC + (0x60000000 + 58),
+    IA_64_VMS_FIXUP_RELA_OFF   = IA_64_DISC + (0x60000000 + 60),
+    IA_64_VMS_PLTGOT_OFFSET    = IA_64_DISC + (0x60000000 + 62),
+    IA_64_VMS_PLTGOT_SEG       = IA_64_DISC + (0x60000000 + 64),
+    IA_64_VMS_FPMODE           = IA_64_DISC + (0x60000000 + 66),
   };
 
   static TAG from_value(uint64_t value, ARCH arch);
