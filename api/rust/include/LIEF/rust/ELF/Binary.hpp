@@ -360,6 +360,10 @@ class ELF_Binary : public AbstractBinary {
     return std::make_unique<ELF_DynamicEntryLibrary>(impl().add_library(library));
   }
 
+  auto functions() const {
+    return std::make_unique<AbstractBinary::it_functions>(impl().functions());
+  }
+
   void write(std::string output) { impl().write(output); }
   void write_with_config(std::string output, ELF_Binary_write_config_t config) {
     impl().write(output, LIEF::ELF::Builder::config_t {

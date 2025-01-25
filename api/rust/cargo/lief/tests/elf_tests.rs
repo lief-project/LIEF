@@ -19,6 +19,9 @@ fn explore_elf(name: &str, elf: &lief::elf::Binary) {
     format!("{} {} {}", elf.has_nx(), elf.original_size(), elf.virtual_size());
     format!("{}", elf.interpreter());
 
+    for func in elf.functions() {
+        format!("{func:?}");
+    }
 
     if let Some(sysv) = elf.sysv_hash() {
         format!("{sysv:?}");

@@ -1,27 +1,29 @@
 use std::mem::size_of;
-use std::pin::Pin;
 use std::path::Path;
+use std::pin::Pin;
 
-use num_traits::{Num, cast};
+use num_traits::{cast, Num};
 
 use lief_ffi as ffi;
 
-use crate::Error;
 use super::builder::Config;
-use super::hash::{Sysv, Gnu};
 use super::dynamic::{self, DynamicEntries, Library};
+use super::hash::{Gnu, Sysv};
 use super::header::Header;
-use super::section::{Sections, Section};
+use super::note::ItNotes;
+use super::relocation::{
+    DynamicRelocations, ObjectRelocations, PltGotRelocations, Relocation, Relocations,
+};
+use super::section::{Section, Sections};
 use super::segment::Segments;
 use super::symbol::{DynamicSymbols, ExportedSymbols, ImportedSymbols, SymtabSymbols};
-use super::note::ItNotes;
-use super::relocation::{Relocation, PltGotRelocations, DynamicRelocations, ObjectRelocations, Relocations};
 use super::symbol_versioning::{SymbolVersion, SymbolVersionDefinition, SymbolVersionRequirement};
 use super::{Segment, Symbol};
+use crate::Error;
 
-use crate::generic;
-use crate::{declare_iterator, to_slice, to_result, to_conv_result};
 use crate::common::{into_optional, FromFFI};
+use crate::generic;
+use crate::{declare_iterator, to_conv_result, to_result, to_slice};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ElfClass {
@@ -61,9 +63,7 @@ impl std::fmt::Debug for Binary {
 
 impl FromFFI<ffi::ELF_Binary> for Binary {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_Binary>) -> Self {
-        Self {
-            ptr,
-        }
+        Self { ptr }
     }
 }
 
@@ -243,7 +243,11 @@ impl Binary {
     /// Return the array defined by the given tag (e.g.
     /// [`dynamic::Tag::INIT_ARRAY`]) with relocations applied (if any)
     pub fn get_relocated_dynamic_array(&self, tag: dynamic::Tag) -> Vec<u64> {
-        Vec::from(self.ptr.get_relocated_dynamic_array(u64::from(tag)).as_slice())
+        Vec::from(
+            self.ptr
+                .get_relocated_dynamic_array(u64::from(tag))
+                .as_slice(),
+        )
     }
 
     /// True if the current binary is targeting Android
@@ -253,38 +257,55 @@ impl Binary {
 
     /// Get the integer value at the given virtual address
     pub fn get_int_from_virtual_address<T>(&self, addr: u64) -> Result<T, Error>
-        where T: Num + cast::FromPrimitive + cast::ToPrimitive
+    where
+        T: Num + cast::FromPrimitive + cast::ToPrimitive,
     {
         // Can't be in the generic trait because of:
         //   > for a trait to be "object safe" it needs to allow building a vtable to allow the call
         //   > to be resolvable dynamically; for more information visit
         //   > https://doc.rust-lang.org/reference/items/traits.html#object-safety
         if size_of::<T>() == size_of::<u8>() {
-            to_conv_result!(ffi::AbstractBinary::get_u8,
+            to_conv_result!(
+                ffi::AbstractBinary::get_u8,
                 self.ptr.as_ref().unwrap().as_ref(),
-                |value| { T::from_u8(value).expect(format!("Can't cast value: {}", value).as_str()) },
-                addr);
+                |value| {
+                    T::from_u8(value).expect(format!("Can't cast value: {}", value).as_str())
+                },
+                addr
+            );
         }
 
         if size_of::<T>() == size_of::<u16>() {
-            to_conv_result!(ffi::AbstractBinary::get_u16,
+            to_conv_result!(
+                ffi::AbstractBinary::get_u16,
                 self.ptr.as_ref().unwrap().as_ref(),
-                |value| { T::from_u16(value).expect(format!("Can't cast value: {}", value).as_str()) },
-                addr);
+                |value| {
+                    T::from_u16(value).expect(format!("Can't cast value: {}", value).as_str())
+                },
+                addr
+            );
         }
 
         if size_of::<T>() == size_of::<u32>() {
-            to_conv_result!(ffi::AbstractBinary::get_u32,
+            to_conv_result!(
+                ffi::AbstractBinary::get_u32,
                 self.ptr.as_ref().unwrap().as_ref(),
-                |value| { T::from_u32(value).expect(format!("Can't cast value: {}", value).as_str()) },
-                addr);
+                |value| {
+                    T::from_u32(value).expect(format!("Can't cast value: {}", value).as_str())
+                },
+                addr
+            );
         }
 
         if size_of::<T>() == size_of::<u64>() {
-            to_conv_result!(ffi::AbstractBinary::get_u64,
+            to_conv_result!(
+                ffi::AbstractBinary::get_u64,
                 self.ptr.as_ref().unwrap().as_ref(),
-                |value| { T::from_u64(value).expect(format!("Can't cast value: {}", value).as_str()) },
-                addr);
+                |value| {
+                    T::from_u64(value).expect(format!("Can't cast value: {}", value).as_str())
+                },
+                addr
+            );
         }
 
         Err(Error::NotSupported)
@@ -298,12 +319,19 @@ impl Binary {
     /// Write back the current ELF binary into the file specified in parameter with the
     /// configuration provided in the second parameter.
     pub fn write_with_config(&mut self, output: &Path, config: Config) {
-        self.ptr.as_mut().unwrap().write_with_config(output.to_str().unwrap(), config.to_ffi());
+        self.ptr
+            .as_mut()
+            .unwrap()
+            .write_with_config(output.to_str().unwrap(), config.to_ffi());
     }
 
     /// Add a library as dependency
     pub fn add_library<'a>(&'a mut self, library: &str) -> Library<'a> {
         Library::from_ffi(self.ptr.as_mut().unwrap().add_library(library))
+    }
+
+    pub fn functions(&self) -> generic::Functions {
+        generic::Functions::new(self.ptr.functions())
     }
 }
 
@@ -315,15 +343,33 @@ impl generic::Binary for Binary {
     fn as_pin_mut_generic(&mut self) -> Pin<&mut ffi::AbstractBinary> {
         unsafe {
             Pin::new_unchecked({
-                (self.ptr.as_ref().unwrap().as_ref()
-                    as *const ffi::AbstractBinary
-                    as *mut ffi::AbstractBinary).as_mut().unwrap()
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::AbstractBinary
+                    as *mut ffi::AbstractBinary)
+                    .as_mut()
+                    .unwrap()
             })
         }
     }
 }
 
-
-declare_iterator!(SymbolsVersion, SymbolVersion<'a>, ffi::ELF_SymbolVersion, ffi::ELF_Binary, ffi::ELF_Binary_it_symbols_version);
-declare_iterator!(SymbolsVersionRequirement, SymbolVersionRequirement<'a>, ffi::ELF_SymbolVersionRequirement, ffi::ELF_Binary, ffi::ELF_Binary_it_symbols_version_requirement);
-declare_iterator!(SymbolsVersionDefinition, SymbolVersionDefinition<'a>, ffi::ELF_SymbolVersionDefinition, ffi::ELF_Binary, ffi::ELF_Binary_it_symbols_version_definition);
+declare_iterator!(
+    SymbolsVersion,
+    SymbolVersion<'a>,
+    ffi::ELF_SymbolVersion,
+    ffi::ELF_Binary,
+    ffi::ELF_Binary_it_symbols_version
+);
+declare_iterator!(
+    SymbolsVersionRequirement,
+    SymbolVersionRequirement<'a>,
+    ffi::ELF_SymbolVersionRequirement,
+    ffi::ELF_Binary,
+    ffi::ELF_Binary_it_symbols_version_requirement
+);
+declare_iterator!(
+    SymbolsVersionDefinition,
+    SymbolVersionDefinition<'a>,
+    ffi::ELF_SymbolVersionDefinition,
+    ffi::ELF_Binary,
+    ffi::ELF_Binary_it_symbols_version_definition
+);

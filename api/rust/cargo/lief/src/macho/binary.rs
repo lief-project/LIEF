@@ -329,6 +329,10 @@ impl Binary {
     pub fn add_library<'a>(&'a mut self, libname: &str) -> Dylib<'a> {
         Dylib::from_ffi(self.ptr.as_mut().unwrap().add_library(libname))
     }
+
+    pub fn functions(&self) -> generic::Functions {
+        generic::Functions::new(self.ptr.functions())
+    }
 }
 
 impl generic::Binary for Binary {

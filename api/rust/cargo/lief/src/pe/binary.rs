@@ -253,6 +253,10 @@ impl Binary {
         to_slice!(self.ptr.get_content_from_virtual_address(address, size));
     }
 
+    pub fn functions(&self) -> generic::Functions {
+        generic::Functions::new(self.ptr.functions())
+    }
+
     /// Get the integer value at the given virtual address
     pub fn get_int_from_virtual_address<T>(&self, addr: u64) -> Result<T, Error>
     where

@@ -49,6 +49,12 @@ include_cpp! {
     generate!("AbstractBinary_it_instructions")
     block_constructors!("AbstractBinary_it_instructions")
 
+    generate!("AbstractBinary_it_functions")
+    block_constructors!("AbstractBinary_it_functions")
+
+    generate!("AbstractFunction")
+    block_constructors!("AbstractFunction")
+
     // -------------------------------------------------------------------------
     // ELF
     // -------------------------------------------------------------------------

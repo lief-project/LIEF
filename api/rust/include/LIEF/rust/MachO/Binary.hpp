@@ -285,6 +285,10 @@ class MachO_Binary : public AbstractBinary {
     return to_int(impl().platform());
   }
 
+  auto functions() const {
+    return std::make_unique<AbstractBinary::it_functions>(impl().functions());
+  }
+
   bool is_ios() const { return impl().is_ios(); }
   bool is_macos() const { return impl().is_macos(); }
 

@@ -1,4 +1,5 @@
 use lief_ffi as ffi;
+use bitflags::bitflags;
 use crate::{to_slice, declare_fwd_iterator};
 use crate::common::{into_optional, FromFFI};
 use crate::assembly::Instructions;
@@ -226,6 +227,105 @@ pub trait DebugInfo {
     #[doc(hidden)]
     fn as_generic(&self) -> &ffi::AbstracDebugInfo;
 }
+
+
+bitflags! {
+    /// Flags used to characterize the semantics of the function
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+    pub struct FunctionFlags: u32 {
+        const NONE = 0x0;
+        /// The function acts as constructor.
+        ///
+        /// Usually this flag is associated with functions
+        /// that are located in the `.init_array`, `__mod_init_func` or `.tls` sections
+        const CONSTRUCTOR = 0x1;
+
+        /// The function acts as a destructor.
+        ///
+        /// Usually this flag is associated with functions
+        /// that are located in the `.fini_array` or `__mod_term_func` sections
+        const DESTRUCTOR = 0x2;
+
+        /// The function is associated with Debug information
+        const DEBUG_INFO = 0x4;
+
+        /// The function is exported by the binary and the [`Function::address`]
+        /// returns its virtual address in the binary
+        const EXPORTED = 0x8;
+
+        /// The function is **imported** by the binary and the [`Function::address`]
+        /// should return 0
+        const IMPORTED = 0x10;
+    }
+}
+
+
+impl From<u32> for FunctionFlags {
+    fn from(value: u32) -> Self {
+        FunctionFlags::from_bits_truncate(value)
+    }
+}
+
+impl From<FunctionFlags> for u32 {
+    fn from(value: FunctionFlags) -> Self {
+        value.bits()
+    }
+}
+
+impl std::fmt::Display for FunctionFlags {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        bitflags::parser::to_writer(self, f)
+    }
+}
+
+/// Structure that represents a binary's function
+pub struct Function {
+    ptr: cxx::UniquePtr<ffi::AbstractFunction>,
+}
+
+impl FromFFI<ffi::AbstractFunction> for Function {
+    fn from_ffi(ptr: cxx::UniquePtr<ffi::AbstractFunction>) -> Self {
+        Self {
+            ptr,
+        }
+    }
+}
+
+impl Symbol for Function {
+    fn as_generic(&self) -> &lief_ffi::AbstractSymbol {
+        self.ptr.as_ref().unwrap().as_ref()
+    }
+}
+
+impl Function {
+    /// Flags characterizing the semantics of the function
+    pub fn flags(&self) -> FunctionFlags {
+        FunctionFlags::from(self.ptr.flags())
+    }
+
+    /// Address of the function (if not imported)
+    pub fn address(&self) -> u64 {
+        self.ptr.address()
+    }
+}
+
+impl std::fmt::Debug for Function {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Function")
+            .field("name", &self.name())
+            .field("address", &self.address())
+            .field("flags", &self.flags())
+            .finish()
+    }
+}
+
+declare_fwd_iterator!(
+    Functions,
+    Function,
+    ffi::AbstractFunction,
+    ffi::AbstractBinary,
+    ffi::AbstractBinary_it_functions
+);
 
 declare_fwd_iterator!(
     InstructionsIt,

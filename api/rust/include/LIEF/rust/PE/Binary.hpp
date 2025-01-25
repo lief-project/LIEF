@@ -108,7 +108,6 @@ class PE_Binary : public AbstractBinary {
     auto size() const { return Iterator::size(); }
   };
 
-
   PE_Binary(std::unique_ptr<LIEF::PE::Binary> bin) :
     AbstractBinary(std::move(bin))
   {}
@@ -251,6 +250,10 @@ class PE_Binary : public AbstractBinary {
 
   Span get_content_from_virtual_address(uint64_t virtual_address, uint64_t size) const {
     return make_span(impl().get_content_from_virtual_address(virtual_address, size));
+  }
+
+  auto functions() const {
+    return std::make_unique<AbstractBinary::it_functions>(impl().functions());
   }
 
   void write(std::string output) { impl().write(output); }

@@ -97,7 +97,7 @@ mod debug_location;
 pub use binary::Binary;
 
 #[doc(inline)]
-pub use generic::Relocation;
+pub use generic::{Relocation, Function};
 
 #[doc(inline)]
 pub use error::Error;

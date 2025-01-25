@@ -28,16 +28,16 @@ namespace LIEF {
 /// Class that represents a function in the binary
 class LIEF_API Function : public Symbol {
   public:
-  /// Flags used to characterize the semantic of the function
+  /// Flags used to characterize the semantics of the function
   enum class FLAGS : uint32_t {
     NONE = 0,
-    /// The function acts as constructor.
+    /// The function acts as a constructor.
     ///
     /// Usually this flag is associated with functions
     /// that are located in the `.init_array`, `__mod_init_func` or `.tls` sections
     CONSTRUCTOR = 1 << 0,
 
-    /// The function acts a destructor.
+    /// The function acts as a destructor.
     ///
     /// Usually this flag is associated with functions
     /// that are located in the `.fini_array` or `__mod_term_func` sections

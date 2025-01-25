@@ -15,6 +15,7 @@
 #pragma once
 #include <LIEF/Abstract/Binary.hpp>
 #include <LIEF/rust/Abstract/DebugInfo.hpp>
+#include <LIEF/rust/Abstract/Function.hpp>
 #include <LIEF/rust/asm/Instruction.hpp>
 #include <LIEF/rust/Mirror.hpp>
 #include <LIEF/rust/Iterator.hpp>
@@ -45,6 +46,16 @@ class AbstractBinary : public Mirror<LIEF::Binary> {
       : ForwardIterator(src.disassemble(ptr, size, address)) { }
 
     auto next() { return ForwardIterator::next(); }
+  };
+
+
+  class it_functions :
+    public ContainerIterator<AbstractFunction, LIEF::Binary::functions_t>
+  {
+    public:
+    it_functions(LIEF::Binary::functions_t content)
+      : ContainerIterator(std::move(content)) { }
+    auto next() { return ContainerIterator::next(); }
   };
 
   uint64_t entrypoint() const { return get().entrypoint(); }
@@ -91,6 +102,10 @@ class AbstractBinary : public Mirror<LIEF::Binary> {
 
   auto assemble(uint64_t address, std::string Asm) {
     return get().assemble(address, Asm);
+  }
+
+  auto functions() const {
+    //return get().func
   }
 
 };

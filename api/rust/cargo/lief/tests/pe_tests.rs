@@ -514,6 +514,10 @@ fn explore_pe(bin_name: &str, pe: &lief::pe::Binary) {
         }
     }
 
+    for func in pe.functions() {
+        format!("{func:?}");
+    }
+
     format!("overlay: {}, len: {}", pe.overlay_offset(), pe.overlay().len());
 
     assert!(pe.entrypoint() > 0);
