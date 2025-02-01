@@ -979,11 +979,25 @@ ok_error_t Parser::parse_exports() {
 
       // Split on '.'
       const size_t dot_pos = fwd_str.find('.');
+      bool is_valid_fwd = false;
       if (dot_pos != std::string::npos) {
         library  = fwd_str.substr(0, dot_pos);
         function = fwd_str.substr(dot_pos + 1);
+        is_valid_fwd = true;
       }
       entry.set_forward_info(std::move(library), std::move(function));
+
+      if (is_valid_fwd) {
+        if (auto name_offset = name_table_value(*stream_, name_table_offset, i)) {
+          if (auto name = stream_->peek_string_at(*name_offset)) {
+            const bool is_valid = !name->empty() &&
+              name->size() <= MAX_EXPORT_NAME_SIZE && is_printable(*name);
+            if (is_valid) {
+              entry.name_ = std::move(*name);
+            }
+          }
+        }
+      }
     }
   }
 
