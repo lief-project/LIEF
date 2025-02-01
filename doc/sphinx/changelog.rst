@@ -11,6 +11,10 @@
   * Fix issue when parsing the dynamic table with an invalid offset (bug found
     by :github_user:`lebr0nli`)
 
+:PE:
+
+  * Fix missing original forwarded function name (:issue:`1166`)
+
 0.16.2 - January 1st, 2025
 ----------------------------
 
