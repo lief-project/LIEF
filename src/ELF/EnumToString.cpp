@@ -201,6 +201,7 @@ const char* to_string(ARCH e) {
     ENTRY(BPF),
     ENTRY(CSKY),
     ENTRY(LOONGARCH),
+    ENTRY(ALPHA_ALT),
   };
   #undef ENTRY
 

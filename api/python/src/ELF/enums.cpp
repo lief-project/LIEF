@@ -201,6 +201,7 @@ void init_enums(nb::module_& m) {
     ENTRY(BPF)
     ENTRY(CSKY)
     ENTRY(LOONGARCH)
+    ENTRY(ALPHA_ALT)
   ;
   #undef ENTRY
 }

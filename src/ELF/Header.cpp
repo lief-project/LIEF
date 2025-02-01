@@ -268,8 +268,6 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
     [] (PROCESSOR_FLAGS f) { return to_string(f); }
   );
 
-  os << "FLIST: " << flags_str.size() << '\n';
-
   os << "ELF Header:\n"
      << fmt::format("{:<{}} {:02x}\n", "Magic:", PADDING, fmt::join(hdr.identity(), " "))
      << fmt::format("{:<{}} {}\n", "Class:", PADDING, to_string(hdr.identity_class()))

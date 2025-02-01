@@ -214,8 +214,16 @@ def test_issue_dynamic_table():
     assert len(dyn_entries) == 28
     assert dyn_entries[0].name == "libselinux.so.1"
 
-
 def test_i64_big_endian():
     """From issue #1164"""
     elf = lief.ELF.parse(get_sample("ELF/elf-HPUX-ia64-bash"))
     assert elf.dynamic_entries[13].tag == lief.ELF.DynamicEntry.TAG.IA_64_VMS_IDENT
+
+def test_i64_custom_types():
+    elf = lief.ELF.parse(get_sample("ELF/elf-HPUX-ia64-bash"))
+    assert elf.segments[11].type == lief.ELF.Segment.TYPE.HP_STACK
+    assert elf.segments[11].flags == lief.ELF.Segment.FLAGS.R | lief.ELF.Segment.FLAGS.W
+
+    elf = lief.ELF.parse(get_sample("ELF/elf-Linux-Alpha-bash"))
+    assert elf.segments[9].type == lief.ELF.Segment.TYPE.PAX_FLAGS
+    assert elf.segments[9].raw_flags == 10240

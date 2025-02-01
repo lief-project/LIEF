@@ -523,6 +523,7 @@ pub enum Arch {
     BPF,
     CSKY,
     LOONGARCH,
+    ALPHA_ALT,
     UNKNOWN(u32),
 }
 
@@ -708,6 +709,7 @@ impl From<u32> for Arch {
             0x000000f7 => Arch::BPF,
             0x000000fc => Arch::CSKY,
             0x00000102 => Arch::LOONGARCH,
+            0x00009026 => Arch::ALPHA_ALT,
             _ => Arch::UNKNOWN(value),
 
         }
@@ -895,6 +897,7 @@ impl From<Arch> for u32 {
             Arch::BPF => 0x000000f7,
             Arch::CSKY => 0x000000fc,
             Arch::LOONGARCH => 0x00000102,
+            Arch::ALPHA_ALT => 0x00009026,
             Arch::UNKNOWN(value) => value,
 
         }

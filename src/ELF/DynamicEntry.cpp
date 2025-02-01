@@ -17,6 +17,7 @@
 
 #include "LIEF/ELF/DynamicEntry.hpp"
 #include "ELF/Structures.hpp"
+#include "LIEF/ELF/EnumToString.hpp"
 
 #include <spdlog/fmt/fmt.h>
 
@@ -69,7 +70,7 @@ DynamicEntry::TAG DynamicEntry::from_value(uint64_t value, ARCH arch) {
 
       default:
         LIEF_WARN("Dynamic tag: 0x{:04x} is not supported for the "
-                  "current architecture", value);
+                  "current architecture ({})", value, to_string(arch));
         return TAG::UNKNOWN;
     }
   }

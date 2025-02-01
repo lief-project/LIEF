@@ -400,6 +400,8 @@ class ARCH(enum.Enum):
 
     LOONGARCH = 258
 
+    ALPHA_ALT = 36902
+
 class AndroidIdent(Note):
     sdk_version: int
 
@@ -5018,6 +5020,8 @@ class Segment(lief.Object):
 
         GNU_RELRO = 1685382482
 
+        PAX_FLAGS = 1694766464
+
         ARM_ARCHEXT = 10468982784
 
         ARM_EXIDX = 10468982785
@@ -5033,6 +5037,42 @@ class Segment(lief.Object):
         MIPS_ABIFLAGS = 27648851971
 
         RISCV_ATTRIBUTES = 36238786563
+
+        IA_64_EXT = 44828721152
+
+        IA_64_UNWIND = 44828721153
+
+        HP_TLS = 9007200865353728
+
+        HP_CORE_NONE = 9007200865353729
+
+        HP_CORE_VERSION = 9007200865353730
+
+        HP_CORE_KERNEL = 9007200865353731
+
+        HP_CORE_COMM = 9007200865353732
+
+        HP_CORE_PROC = 9007200865353733
+
+        HP_CORE_LOADABLE = 9007200865353734
+
+        HP_CORE_STACK = 9007200865353735
+
+        HP_CORE_SHM = 9007200865353736
+
+        HP_CORE_MMF = 9007200865353737
+
+        HP_PARALLEL = 9007200865353744
+
+        HP_FASTBIND = 9007200865353745
+
+        HP_OPT_ANNOT = 9007200865353746
+
+        HP_HSL_ANNOT = 9007200865353747
+
+        HP_STACK = 9007200865353748
+
+        HP_CORE_UTSNAME = 9007200865353749
 
     class FLAGS(enum.Flag):
         @staticmethod
@@ -5058,6 +5098,8 @@ class Segment(lief.Object):
     type: Segment.TYPE
 
     flags: Segment.FLAGS
+
+    raw_flags: int
 
     file_offset: int
 

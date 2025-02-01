@@ -59,6 +59,7 @@ void create<Segment>(nb::module_& m) {
     ENTRY(GNU_STACK)
     ENTRY(GNU_PROPERTY)
     ENTRY(GNU_RELRO)
+    ENTRY(PAX_FLAGS)
     ENTRY(ARM_ARCHEXT)
     ENTRY(ARM_EXIDX)
     ENTRY(AARCH64_MEMTAG_MTE)
@@ -67,6 +68,24 @@ void create<Segment>(nb::module_& m) {
     ENTRY(MIPS_OPTIONS)
     ENTRY(MIPS_ABIFLAGS)
     ENTRY(RISCV_ATTRIBUTES)
+    ENTRY(IA_64_EXT)
+    ENTRY(IA_64_UNWIND)
+    ENTRY(HP_TLS)
+    ENTRY(HP_CORE_NONE)
+    ENTRY(HP_CORE_VERSION)
+    ENTRY(HP_CORE_KERNEL)
+    ENTRY(HP_CORE_COMM)
+    ENTRY(HP_CORE_PROC)
+    ENTRY(HP_CORE_LOADABLE)
+    ENTRY(HP_CORE_STACK)
+    ENTRY(HP_CORE_SHM)
+    ENTRY(HP_CORE_MMF)
+    ENTRY(HP_PARALLEL)
+    ENTRY(HP_FASTBIND)
+    ENTRY(HP_OPT_ANNOT)
+    ENTRY(HP_HSL_ANNOT)
+    ENTRY(HP_STACK)
+    ENTRY(HP_CORE_UTSNAME)
   ;
   #undef ENTRY
 
@@ -94,9 +113,14 @@ void create<Segment>(nb::module_& m) {
         "Segment's type"_doc)
 
     .def_prop_rw("flags",
-        nb::overload_cast<>(&Segment::flags, nb::const_),
+        [] (const Segment& S) { return (Segment::FLAGS)((uint32_t)S.flags() & 7); },
         nb::overload_cast<Segment::FLAGS>(&Segment::flags),
         "The flag permissions associated with this segment"_doc)
+
+    .def_prop_rw("raw_flags",
+        [] (const Segment& S) { return (uint32_t)S.flags(); },
+        nb::overload_cast<uint32_t>(&Segment::flags),
+        "The flag permissions as an integer"_doc)
 
     .def_prop_rw("file_offset",
         nb::overload_cast<>(&Segment::file_offset, nb::const_),

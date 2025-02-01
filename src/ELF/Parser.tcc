@@ -942,7 +942,8 @@ ok_error_t Parser::parse_segments() {
 
   stream_->setpos(segment_headers_offset);
 
-  const ARCH arch = binary_->header().machine_type();
+  const ARCH arch = hdr.machine_type();
+  const Header::OS_ABI os = hdr.identity_os_abi();
 
   for (size_t i = 0; i < nbof_segments; ++i) {
     const auto elf_phdr = stream_->read<Elf_Phdr>();
@@ -951,7 +952,7 @@ ok_error_t Parser::parse_segments() {
       break;
     }
 
-    auto segment = std::unique_ptr<Segment>(new Segment(*elf_phdr, arch));
+    auto segment = std::unique_ptr<Segment>(new Segment(*elf_phdr, arch, os));
     segment->datahandler_ = binary_->datahandler_.get();
 
     if (0 < segment->physical_size() && segment->physical_size() < Parser::MAX_SEGMENT_SIZE) {

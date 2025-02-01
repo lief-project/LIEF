@@ -29,6 +29,10 @@
 
   * Fix issue when parsing the dynamic table with an invalid offset (bug found
     by :github_user:`lebr0nli`)
+  * Enhance support for IA64 architecture.
+  * Introduce :attr:`lief.ELF.Segment.raw_flags` to access the raw (integer)
+    value of the flag
+
 
 :PE:
 

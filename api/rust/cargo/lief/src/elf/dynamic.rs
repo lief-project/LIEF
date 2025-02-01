@@ -6,10 +6,11 @@ use bitflags::bitflags;
 use crate::common::FromFFI;
 use crate::declare_iterator;
 
+
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum Tag {
-    DT_NULL,
+    DT_NULL_,
     NEEDED,
     PLTRELSZ,
     PLTGOT,
@@ -131,13 +132,44 @@ pub enum Tag {
     X86_64_PLT,
     X86_64_PLTSZ,
     X86_64_PLTENT,
+    IA_64_PLT_RESERVE,
+    IA_64_VMS_SUBTYPE,
+    IA_64_VMS_IMGIOCNT,
+    IA_64_VMS_LNKFLAGS,
+    IA_64_VMS_VIR_MEM_BLK_SIZ,
+    IA_64_VMS_IDENT,
+    IA_64_VMS_NEEDED_IDENT,
+    IA_64_VMS_IMG_RELA_CNT,
+    IA_64_VMS_SEG_RELA_CNT,
+    IA_64_VMS_FIXUP_RELA_CNT,
+    IA_64_VMS_FIXUP_NEEDED,
+    IA_64_VMS_SYMVEC_CNT,
+    IA_64_VMS_XLATED,
+    IA_64_VMS_STACKSIZE,
+    IA_64_VMS_UNWINDSZ,
+    IA_64_VMS_UNWIND_CODSEG,
+    IA_64_VMS_UNWIND_INFOSEG,
+    IA_64_VMS_LINKTIME,
+    IA_64_VMS_SEG_NO,
+    IA_64_VMS_SYMVEC_OFFSET,
+    IA_64_VMS_SYMVEC_SEG,
+    IA_64_VMS_UNWIND_OFFSET,
+    IA_64_VMS_UNWIND_SEG,
+    IA_64_VMS_STRTAB_OFFSET,
+    IA_64_VMS_SYSVER_OFFSET,
+    IA_64_VMS_IMG_RELA_OFF,
+    IA_64_VMS_SEG_RELA_OFF,
+    IA_64_VMS_FIXUP_RELA_OFF,
+    IA_64_VMS_PLTGOT_OFFSET,
+    IA_64_VMS_PLTGOT_SEG,
+    IA_64_VMS_FPMODE,
     UNKNOWN(u64),
 }
 
 impl From<u64> for Tag {
     fn from(value: u64) -> Self {
         match value {
-            0x00000000 => Tag::DT_NULL,
+            0x00000000 => Tag::DT_NULL_,
             0x00000001 => Tag::NEEDED,
             0x00000002 => Tag::PLTRELSZ,
             0x00000003 => Tag::PLTGOT,
@@ -259,15 +291,47 @@ impl From<u64> for Tag {
             0x770000000 => Tag::X86_64_PLT,
             0x770000001 => Tag::X86_64_PLTSZ,
             0x770000003 => Tag::X86_64_PLTENT,
+            0x870000000 => Tag::IA_64_PLT_RESERVE,
+            0x860000000 => Tag::IA_64_VMS_SUBTYPE,
+            0x860000002 => Tag::IA_64_VMS_IMGIOCNT,
+            0x860000008 => Tag::IA_64_VMS_LNKFLAGS,
+            0x86000000a => Tag::IA_64_VMS_VIR_MEM_BLK_SIZ,
+            0x86000000c => Tag::IA_64_VMS_IDENT,
+            0x860000010 => Tag::IA_64_VMS_NEEDED_IDENT,
+            0x860000012 => Tag::IA_64_VMS_IMG_RELA_CNT,
+            0x860000014 => Tag::IA_64_VMS_SEG_RELA_CNT,
+            0x860000016 => Tag::IA_64_VMS_FIXUP_RELA_CNT,
+            0x860000018 => Tag::IA_64_VMS_FIXUP_NEEDED,
+            0x86000001a => Tag::IA_64_VMS_SYMVEC_CNT,
+            0x86000001e => Tag::IA_64_VMS_XLATED,
+            0x860000020 => Tag::IA_64_VMS_STACKSIZE,
+            0x860000022 => Tag::IA_64_VMS_UNWINDSZ,
+            0x860000024 => Tag::IA_64_VMS_UNWIND_CODSEG,
+            0x860000026 => Tag::IA_64_VMS_UNWIND_INFOSEG,
+            0x860000028 => Tag::IA_64_VMS_LINKTIME,
+            0x86000002a => Tag::IA_64_VMS_SEG_NO,
+            0x86000002c => Tag::IA_64_VMS_SYMVEC_OFFSET,
+            0x86000002e => Tag::IA_64_VMS_SYMVEC_SEG,
+            0x860000030 => Tag::IA_64_VMS_UNWIND_OFFSET,
+            0x860000032 => Tag::IA_64_VMS_UNWIND_SEG,
+            0x860000034 => Tag::IA_64_VMS_STRTAB_OFFSET,
+            0x860000036 => Tag::IA_64_VMS_SYSVER_OFFSET,
+            0x860000038 => Tag::IA_64_VMS_IMG_RELA_OFF,
+            0x86000003a => Tag::IA_64_VMS_SEG_RELA_OFF,
+            0x86000003c => Tag::IA_64_VMS_FIXUP_RELA_OFF,
+            0x86000003e => Tag::IA_64_VMS_PLTGOT_OFFSET,
+            0x860000040 => Tag::IA_64_VMS_PLTGOT_SEG,
+            0x860000042 => Tag::IA_64_VMS_FPMODE,
             _ => Tag::UNKNOWN(value),
 
         }
     }
 }
+
 impl From<Tag> for u64 {
     fn from(value: Tag) -> u64 {
         match value {
-            Tag::DT_NULL => 0x00000000,
+            Tag::DT_NULL_ => 0x00000000,
             Tag::NEEDED => 0x00000001,
             Tag::PLTRELSZ => 0x00000002,
             Tag::PLTGOT => 0x00000003,
@@ -389,11 +453,41 @@ impl From<Tag> for u64 {
             Tag::X86_64_PLT => 0x770000000,
             Tag::X86_64_PLTSZ => 0x770000001,
             Tag::X86_64_PLTENT => 0x770000003,
+            Tag::IA_64_PLT_RESERVE => 0x870000000,
+            Tag::IA_64_VMS_SUBTYPE => 0x860000000,
+            Tag::IA_64_VMS_IMGIOCNT => 0x860000002,
+            Tag::IA_64_VMS_LNKFLAGS => 0x860000008,
+            Tag::IA_64_VMS_VIR_MEM_BLK_SIZ => 0x86000000a,
+            Tag::IA_64_VMS_IDENT => 0x86000000c,
+            Tag::IA_64_VMS_NEEDED_IDENT => 0x860000010,
+            Tag::IA_64_VMS_IMG_RELA_CNT => 0x860000012,
+            Tag::IA_64_VMS_SEG_RELA_CNT => 0x860000014,
+            Tag::IA_64_VMS_FIXUP_RELA_CNT => 0x860000016,
+            Tag::IA_64_VMS_FIXUP_NEEDED => 0x860000018,
+            Tag::IA_64_VMS_SYMVEC_CNT => 0x86000001a,
+            Tag::IA_64_VMS_XLATED => 0x86000001e,
+            Tag::IA_64_VMS_STACKSIZE => 0x860000020,
+            Tag::IA_64_VMS_UNWINDSZ => 0x860000022,
+            Tag::IA_64_VMS_UNWIND_CODSEG => 0x860000024,
+            Tag::IA_64_VMS_UNWIND_INFOSEG => 0x860000026,
+            Tag::IA_64_VMS_LINKTIME => 0x860000028,
+            Tag::IA_64_VMS_SEG_NO => 0x86000002a,
+            Tag::IA_64_VMS_SYMVEC_OFFSET => 0x86000002c,
+            Tag::IA_64_VMS_SYMVEC_SEG => 0x86000002e,
+            Tag::IA_64_VMS_UNWIND_OFFSET => 0x860000030,
+            Tag::IA_64_VMS_UNWIND_SEG => 0x860000032,
+            Tag::IA_64_VMS_STRTAB_OFFSET => 0x860000034,
+            Tag::IA_64_VMS_SYSVER_OFFSET => 0x860000036,
+            Tag::IA_64_VMS_IMG_RELA_OFF => 0x860000038,
+            Tag::IA_64_VMS_SEG_RELA_OFF => 0x86000003a,
+            Tag::IA_64_VMS_FIXUP_RELA_OFF => 0x86000003c,
+            Tag::IA_64_VMS_PLTGOT_OFFSET => 0x86000003e,
+            Tag::IA_64_VMS_PLTGOT_SEG => 0x860000040,
+            Tag::IA_64_VMS_FPMODE => 0x860000042,
             Tag::UNKNOWN(value) => value,
         }
     }
 }
-
 
 #[derive(Debug)]
 /// Enum that represents the different variants of a dynamic entry

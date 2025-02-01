@@ -36,7 +36,11 @@ namespace ELF {
 static constexpr auto PT_LOPROC = 0x70000000;
 static constexpr auto PT_HIPROC = 0x7fffffff;
 
-Segment::TYPE Segment::type_from(uint64_t value, ARCH arch) {
+static constexpr auto PT_LOOS = 0x60000000;
+static constexpr auto PT_HIOS = 0x6fffffff;
+
+Segment::TYPE Segment::type_from(uint64_t value, ARCH arch, Header::OS_ABI os) {
+  using OS_ABI = Header::OS_ABI;
   if (PT_LOPROC <= value && value <= PT_HIPROC) {
     if (arch == ARCH::NONE) {
       LIEF_WARN("Segment type 0x{:08x} requires to know the architecture", value);
@@ -55,12 +59,22 @@ Segment::TYPE Segment::type_from(uint64_t value, ARCH arch) {
       case ARCH::RISCV:
         return TYPE(value | PT_RISCV);
 
+      case ARCH::IA_64:
+        return TYPE(value | PT_IA_64);
+
       default:
         {
           LIEF_WARN("Segment type 0x{:08x} is unknown for the architecture {}",
                      value, to_string(arch));
           return TYPE::UNKNOWN;
         }
+    }
+  }
+
+  // OS-specific type
+  if (PT_LOOS <= value && value <= PT_HIOS) {
+    if (os == OS_ABI::HPUX) {
+      return TYPE(value | PT_HPUX);
     }
   }
   return TYPE(value);
@@ -82,8 +96,8 @@ Segment::Segment(const Segment& other) :
 {}
 
 template<class T>
-Segment::Segment(const T& header, ARCH arch) :
-  type_{type_from(header.p_type, arch)},
+Segment::Segment(const T& header, ARCH arch, Header::OS_ABI os) :
+  type_{type_from(header.p_type, arch, os)},
   arch_(arch),
   flags_{header.p_flags},
   file_offset_{header.p_offset},
@@ -95,8 +109,8 @@ Segment::Segment(const T& header, ARCH arch) :
   handler_size_{header.p_filesz}
 {}
 
-template Segment::Segment(const details::Elf32_Phdr& header, ARCH);
-template Segment::Segment(const details::Elf64_Phdr& header, ARCH);
+template Segment::Segment(const details::Elf32_Phdr& header, ARCH, Header::OS_ABI);
+template Segment::Segment(const details::Elf64_Phdr& header, ARCH, Header::OS_ABI);
 
 void Segment::swap(Segment& other) {
   std::swap(type_,             other.type_);
@@ -378,8 +392,13 @@ std::ostream& operator<<(std::ostream& os, const Segment& segment) {
     flags[2] = 'x';
   }
 
+  std::string segment_ty = to_string(segment.type());
+  if (segment_ty == "UNKNOWN") {
+    segment_ty = fmt::format("UNKNOWN[0x{:08x}]", (uint32_t)segment.type());
+  }
+
   os << fmt::format("{} 0x{:08x}/0x{:06x} 0x{:06x} 0x{:04x}/0x{:04x} {} {}",
-                    to_string(segment.type()), segment.virtual_address(),
+                    segment_ty, segment.virtual_address(),
                     segment.file_offset(), segment.physical_address(),
                     segment.physical_size(), segment.virtual_size(),
                     segment.alignment(), flags);
@@ -401,6 +420,7 @@ const char* to_string(Segment::TYPE e) {
     ENTRY(GNU_STACK),
     ENTRY(GNU_PROPERTY),
     ENTRY(GNU_RELRO),
+    ENTRY(PAX_FLAGS),
     ENTRY(ARM_ARCHEXT),
     ENTRY(ARM_EXIDX),
     ENTRY(AARCH64_MEMTAG_MTE),
@@ -409,6 +429,24 @@ const char* to_string(Segment::TYPE e) {
     ENTRY(MIPS_OPTIONS),
     ENTRY(MIPS_ABIFLAGS),
     ENTRY(RISCV_ATTRIBUTES),
+    ENTRY(IA_64_EXT),
+    ENTRY(IA_64_UNWIND),
+    ENTRY(HP_TLS),
+    ENTRY(HP_CORE_NONE),
+    ENTRY(HP_CORE_VERSION),
+    ENTRY(HP_CORE_KERNEL),
+    ENTRY(HP_CORE_COMM),
+    ENTRY(HP_CORE_PROC),
+    ENTRY(HP_CORE_LOADABLE),
+    ENTRY(HP_CORE_STACK),
+    ENTRY(HP_CORE_SHM),
+    ENTRY(HP_CORE_MMF),
+    ENTRY(HP_PARALLEL),
+    ENTRY(HP_FASTBIND),
+    ENTRY(HP_OPT_ANNOT),
+    ENTRY(HP_HSL_ANNOT),
+    ENTRY(HP_STACK),
+    ENTRY(HP_CORE_UTSNAME),
   };
   #undef ENTRY
 

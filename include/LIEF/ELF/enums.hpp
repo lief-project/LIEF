@@ -206,7 +206,9 @@ enum class ARCH {
   RISCV         = 243, /**< RISC-V */
   BPF           = 247, /**< eBPF Filter */
   CSKY          = 252, /**< C-SKY */
-  LOONGARCH     = 258  /**< LoongArch */
+  LOONGARCH     = 258,  /**< LoongArch */
+
+  ALPHA_ALT     = 0x9026
 };
 
 }
