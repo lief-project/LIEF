@@ -8,7 +8,7 @@ These are the offical rust bindings for LIEF.
 
 ```toml
 [dependencies]
-lief = "0.16.2"
+lief = "0.16.3"
 ```
 
 The bindings require Rust edition 2021 and `rustc >= 1.74.0`
