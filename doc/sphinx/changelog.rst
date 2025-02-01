@@ -10,10 +10,15 @@
 
   * Fix issue when parsing the dynamic table with an invalid offset (bug found
     by :github_user:`lebr0nli`)
+  * Fix endianness issue with ``IA64`` binaries (:issue:`1164`)
 
 :PE:
 
   * Fix missing original forwarded function name (:issue:`1166`)
+
+:Misc:
+
+  * Add support for spdlog compiled with `SPDLOG_WCHAR_FILENAMES` (:issue:`1147`)
 
 0.16.2 - January 1st, 2025
 ----------------------------
