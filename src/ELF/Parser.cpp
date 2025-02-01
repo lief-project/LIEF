@@ -80,7 +80,6 @@ Header::ELF_DATA determine_elf_endianess(ARCH machine) {
     case ARCH::CRIS:
     case ARCH::I386: // x86
     case ARCH::X86_64:
-    case ARCH::IA_64:
     case ARCH::LOONGARCH:
       return Header::ELF_DATA::LSB;
 
@@ -120,6 +119,7 @@ Header::ELF_DATA determine_elf_endianess(BinaryStream& stream) {
   static const std::set<ARCH> BOTH_ENDIANESS = {
     ARCH::AARCH64, ARCH::ARM,  ARCH::SH,  ARCH::XTENSA,
     ARCH::ARC,     ARCH::MIPS, ARCH::PPC, ARCH::PPC64,
+    ARCH::IA_64,
   };
   Header::ELF_DATA from_ei_data   = Header::ELF_DATA::NONE;
   /* ELF_DATA from_e_machine = ELF_DATA::ELFDATANONE; */
@@ -234,7 +234,6 @@ Header::CLASS determine_elf_class(BinaryStream& stream) {
       case ARCH::X86_64:
       case ARCH::PPC64:
       case ARCH::SPARCV9:
-      case ARCH::IA_64:
         {
           from_e_machine = Header::CLASS::ELF64;
           break;
