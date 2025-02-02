@@ -414,7 +414,7 @@ Parser::parse_resource_node(const details::pe_resource_directory_table& director
     if ((id & 0x80000000) != 0u) {
       uint32_t offset        = id & (~ 0x80000000);
       uint32_t string_offset = base_offset + offset;
-      LIEF_ERR("base_offset=0x{:04x}, string_offset=0x{:04x}",
+      LIEF_DEBUG("base_offset=0x{:04x}, string_offset=0x{:04x}",
                base_offset, string_offset);
 
       auto res_length = stream_->peek<uint16_t>(string_offset);
