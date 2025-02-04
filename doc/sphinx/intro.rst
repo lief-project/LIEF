@@ -116,7 +116,7 @@ straightforward:
 
       .. code-block:: text
 
-        lief==0.16.2
+        lief==0.16.3
 
   .. tab:: :fa:`regular fa-file-code` C++
 
@@ -150,7 +150,7 @@ straightforward:
 
         # For a tagged release
         [dependencies]
-        lief = "0.16.2"
+        lief = "0.16.3"
 
 You can also find additional content in the `LIEF's blog </blog/>`_ post among those:
 
