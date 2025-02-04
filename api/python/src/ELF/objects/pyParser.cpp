@@ -26,12 +26,28 @@
 
 #include "LIEF/ELF/Parser.hpp"
 #include "LIEF/ELF/Binary.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 
 namespace LIEF::ELF::py {
 
 template<>
 void create<Parser>(nb::module_& m) {
   using namespace LIEF::py;
+
+  m.def("parse",
+    [] (nb::bytes bytes, const ParserConfig& config) {
+      auto strm = std::make_unique<SpanStream>(
+        reinterpret_cast<const uint8_t*>(bytes.data()), bytes.size());
+      return Parser::parse(std::move(strm), config);
+    },
+    R"delim(
+    Parse the ELF binary from the given bytes and return a :class:`lief.ELF.Binary` object.
+
+    The second argument is an optional configuration (:class:`~lief.ELF.ParserConfig`)
+    that can be used to define which part(s) of the ELF should be parsed or skipped.
+
+    )delim"_doc, "buffer"_a, "config"_a = ParserConfig::all(),
+    nb::rv_policy::take_ownership);
 
   m.def("parse",
     nb::overload_cast<const std::string&, const ParserConfig&>(&Parser::parse),

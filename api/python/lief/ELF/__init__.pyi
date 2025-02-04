@@ -5513,6 +5513,9 @@ class X86ISA(NoteGnuProperty.Property):
         AVX512_BF16 = 32
 
 @overload
+def parse(buffer: bytes, config: ParserConfig = ...) -> Optional[Binary]: ...
+
+@overload
 def parse(filename: str, config: ParserConfig = ...) -> Optional[Binary]: ...
 
 @overload

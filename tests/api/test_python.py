@@ -152,7 +152,7 @@ def test_iterator():
             next(items)
 
     with pytest.raises(IndexError) as e_info:
-           items[100]
+        items[100]
 
 
 def test_abstract_concrete():
@@ -161,3 +161,16 @@ def test_abstract_concrete():
     abstract = pe.abstract
     assert type(abstract) == lief.Binary
     assert type(abstract.concrete) == lief.PE.Binary
+
+def test_from_bytes():
+    input_path = Path(get_sample('PE/PE64_x86-64_binary_HelloWorld.exe'))
+    pe = lief.PE.parse(input_path.read_bytes())
+    assert pe is not None
+
+    input_path = Path(get_sample('ELF/python3.12d'))
+    elf = lief.ELF.parse(input_path.read_bytes())
+    assert elf is not None
+
+    input_path = Path(get_sample('MachO/MachO64_AArch64_weak-sym-fc.bin'))
+    macho = lief.MachO.parse(input_path.read_bytes())
+    assert macho is not None

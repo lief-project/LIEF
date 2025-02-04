@@ -25,6 +25,7 @@
 #include "LIEF/Abstract/Parser.hpp"
 #include "LIEF/Abstract/Binary.hpp"
 #include "LIEF/logging.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 
 namespace LIEF::py {
 
@@ -33,12 +34,9 @@ void create<Parser>(nb::module_& m) {
 
   m.def("parse",
       [] (nb::bytes bytes) {
-        std::string raw_str(bytes.c_str(), bytes.size());
-        const std::vector<uint8_t> raw = {
-          std::make_move_iterator(std::begin(raw_str)),
-          std::make_move_iterator(std::end(raw_str))
-        };
-        return Parser::parse(raw);
+        auto strm = std::make_unique<SpanStream>(
+          reinterpret_cast<const uint8_t*>(bytes.data()), bytes.size());
+        return Parser::parse(std::move(strm));
       },
       R"delim(
       Parse a binary supported by LIEF from the given bytes and return either:
@@ -48,9 +46,7 @@ void create<Parser>(nb::module_& m) {
       - :class:`lief.MachO.Binary`
 
       depending on the given binary format.
-      )delim"_doc,
-      "raw"_a,
-      nb::rv_policy::take_ownership);
+      )delim"_doc, "raw"_a, nb::rv_policy::take_ownership);
 
   m.def("parse", nb::overload_cast<const std::string&>(&Parser::parse),
       R"delim(

@@ -30,11 +30,28 @@
 #include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/Binary.hpp"
 
+#include "LIEF/BinaryStream/SpanStream.hpp"
+
 namespace LIEF::PE::py {
 
 template<>
 void create<Parser>(nb::module_& m) {
   using namespace LIEF::py;
+
+  m.def("parse",
+    [] (nb::bytes bytes, const ParserConfig& config) {
+      auto strm = std::make_unique<SpanStream>(
+        reinterpret_cast<const uint8_t*>(bytes.data()), bytes.size());
+      return Parser::parse(std::move(strm), config);
+    },
+    R"delim(
+    Parse the PE binary from the given bytes and return a :class:`lief.PE.Binary` object.
+
+    The second argument is an optional configuration (:class:`~lief.PE.ParserConfig`)
+    that can be used to define which part(s) of the PE should be parsed or skipped.
+
+    )delim"_doc, "buffer"_a, "config"_a = ParserConfig::all(),
+    nb::rv_policy::take_ownership);
 
   m.def("parse",
     static_cast<std::unique_ptr<Binary>(*)(const std::string&, const ParserConfig&)>(&Parser::parse),

@@ -26,6 +26,7 @@
 #include "LIEF/MachO/Parser.hpp"
 #include "LIEF/MachO/FatBinary.hpp"
 #include "LIEF/logging.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "MachO/pyMachO.hpp"
 
@@ -34,6 +35,19 @@ namespace LIEF::MachO::py {
 template<>
 void create<Parser>(nb::module_& m) {
   using namespace LIEF::py;
+
+  m.def("parse",
+    [] (nb::bytes bytes, const ParserConfig& config) {
+      auto strm = std::make_unique<SpanStream>(
+        reinterpret_cast<const uint8_t*>(bytes.data()), bytes.size());
+      return Parser::parse(std::move(strm), config);
+    },
+    R"delim(
+    Parse the given binary and return a :class:`~lief.MachO.FatBinary` object
+
+    One can configure the parsing with the ``config`` parameter. See :class:`~lief.MachO.ParserConfig`,
+    )delim"_doc, "buffer"_a, "config"_a = ParserConfig::deep(),
+    nb::rv_policy::take_ownership);
 
   m.def("parse",
     nb::overload_cast<const std::string&, const ParserConfig&>(&LIEF::MachO::Parser::parse),

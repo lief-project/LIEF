@@ -2721,6 +2721,9 @@ class it_data_in_code_entries:
     def __next__(self) -> DataCodeEntry: ...
 
 @overload
+def parse(buffer: bytes, config: ParserConfig = ...) -> Optional[FatBinary]: ...
+
+@overload
 def parse(filename: str, config: ParserConfig = ...) -> Optional[FatBinary]: ...
 
 @overload
