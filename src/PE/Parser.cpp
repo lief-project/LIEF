@@ -988,8 +988,9 @@ ok_error_t Parser::parse_exports() {
       entry.set_forward_info(std::move(library), std::move(function));
 
       if (is_valid_fwd) {
-        if (auto name_offset = name_table_value(*stream_, name_table_offset, i)) {
-          if (auto name = stream_->peek_string_at(*name_offset)) {
+        if (auto name_rva = name_table_value(*stream_, name_table_offset, i)) {
+          uint32_t name_offset = binary_->rva_to_offset(*name_rva);
+          if (auto name = stream_->peek_string_at(name_offset)) {
             const bool is_valid = !name->empty() &&
               name->size() <= MAX_EXPORT_NAME_SIZE && is_printable(*name);
             if (is_valid) {
