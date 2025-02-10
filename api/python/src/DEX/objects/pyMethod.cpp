@@ -65,6 +65,10 @@ void create<Method>(nb::module_& m) {
     .def("insert_dex2dex_info", &Method::insert_dex2dex_info,
         "Insert de-optimization information"_doc,
         "pc"_a, "index"_a)
+    
+    .def_prop_ro("code_info", nb::overload_cast<>(&Method::code_info, nb::const_),
+    "" RST_CLASS_REF(lief.DEX.CodeInfo) " associated with this method"_doc)
+
 
     LIEF_DEFAULT_STR(Method);
 }

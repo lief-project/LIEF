@@ -28,7 +28,9 @@ template<>
 void create<CodeInfo>(nb::module_& m) {
 
   nb::class_<CodeInfo, LIEF::Object>(m, "CodeInfo", "DEX CodeInfo representation"_doc)
-    LIEF_DEFAULT_STR(CodeInfo);
+    .def_prop_ro("nb_registers", nb::overload_cast<>(&CodeInfo::nb_registers, nb::const_),
+    "Number of registers used by the method"_doc)
 
+    LIEF_DEFAULT_STR(CodeInfo);
 }
 }

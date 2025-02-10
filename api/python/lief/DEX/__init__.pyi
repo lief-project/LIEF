@@ -1,11 +1,10 @@
-from collections.abc import Sequence
 import enum
 import io
 import os
+from collections.abc import Sequence
 from typing import Iterator, Optional, Union, overload
 
 import lief
-
 
 class ACCESS_FLAGS(enum.Enum):
     UNKNOWN = 0
@@ -130,6 +129,10 @@ class Class(lief.Object):
     def __str__(self) -> str: ...
 
 class CodeInfo(lief.Object):
+
+    @property
+    def nb_registers(self) -> int: ...
+
     def __str__(self) -> str: ...
 
 class Field(lief.Object):
@@ -429,6 +432,9 @@ class Method(lief.Object):
     def has(self, flag: ACCESS_FLAGS) -> bool: ...
 
     def insert_dex2dex_info(self, pc: int, index: int) -> None: ...
+
+    @property
+    def code_info(self) -> CodeInfo: ...
 
     def __str__(self) -> str: ...
 
