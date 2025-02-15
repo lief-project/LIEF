@@ -55,7 +55,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
 
   static std::unique_ptr<Symbol> parse(Parser& ctx, BinaryStream& stream, size_t* idx);
 
-  Symbol() = default;
+  Symbol();
   Symbol(const Symbol&);
   Symbol& operator=(const Symbol&);
 

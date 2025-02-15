@@ -56,6 +56,7 @@ static constexpr auto SYM16_SZ = 18;
 }
 
 
+Symbol::Symbol() = default;
 Symbol::Symbol(Symbol&&) = default;
 Symbol& Symbol::operator=(Symbol&&) = default;
 
