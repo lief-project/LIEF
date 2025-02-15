@@ -350,7 +350,7 @@ if(LIEF_ASAN)
 
   set_property(TARGET LIB_LIEF
                APPEND PROPERTY LINK_FLAGS -fsanitize=address)
-  target_link_libraries(LIB_LIEF INTERFACE asan)
+  target_link_libraries(LIB_LIEF INTERFACE libclang_rt.asan.so)
 endif()
 
 if(LIEF_LSAN)
