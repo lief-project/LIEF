@@ -7,8 +7,8 @@ from utils import lief_samples_dir
 
 samples_dir = Path(lief_samples_dir())
 macho_samples = chain(
-    samples_dir.glob("PE/*.bin"),
-    samples_dir.glob("PE/*.dylib"),
+    samples_dir.glob("MachO/*.bin"),
+    samples_dir.glob("MachO/*.dylib"),
 )
 
 BUILD_DIR = os.getenv("LIEF_BUILD_DIR", None)
