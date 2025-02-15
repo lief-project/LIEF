@@ -16,6 +16,7 @@
 #define LIEF_PDB_INFO_H
 #include <memory>
 #include <string>
+#include <ostream>
 
 #include "LIEF/iterators.hpp"
 #include "LIEF/Abstract/DebugInfo.hpp"
