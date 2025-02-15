@@ -48,6 +48,7 @@
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/Symbol.hpp"
 #include "LIEF/PE/ExceptionInfo.hpp"
+#include "LIEF/PE/LoadConfigurations/VolatileMetadata.hpp"
 #include "LIEF/PE/exceptions_info/RuntimeFunctionAArch64.hpp"
 #include "LIEF/PE/exceptions_info/RuntimeFunctionX64.hpp"
 #include "LIEF/PE/TLS.hpp"

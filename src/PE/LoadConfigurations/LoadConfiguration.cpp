@@ -44,6 +44,7 @@ FMT_FORMATTER(LIEF::PE::LoadConfiguration::IMAGE_GUARD, LIEF::PE::to_string);
 namespace LIEF {
 namespace PE {
 
+LoadConfiguration::LoadConfiguration() = default;
 LoadConfiguration::LoadConfiguration(LoadConfiguration&&) = default;
 LoadConfiguration& LoadConfiguration::operator=(LoadConfiguration&&) = default;
 LoadConfiguration::~LoadConfiguration() = default;

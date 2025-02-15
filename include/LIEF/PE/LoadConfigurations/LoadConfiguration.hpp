@@ -105,7 +105,7 @@ class LIEF_API LoadConfiguration : public Object {
   static LIEF_LOCAL
     std::unique_ptr<LoadConfiguration> parse(Parser& ctx, BinaryStream& stream);
 
-  LoadConfiguration() = default;
+  LoadConfiguration();
 
   LoadConfiguration& operator=(const LoadConfiguration&);
   LoadConfiguration(const LoadConfiguration&);
