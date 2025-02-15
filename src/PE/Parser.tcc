@@ -104,7 +104,7 @@ ok_error_t Parser::parse_nested_relocated() {
   class RelocatedStream : public BinaryStream {
     public:
     RelocatedStream(Parser& parent) :
-      parent_(parent)
+      parent_(&parent)
     {}
 
     ~RelocatedStream() override = default;
@@ -116,17 +116,17 @@ ok_error_t Parser::parse_nested_relocated() {
     RelocatedStream& operator=(RelocatedStream&& other) noexcept = default;
 
     uint64_t size() const override {
-      return parent_.stream_->size();
+      return parent_->stream_->size();
     }
 
     ok_error_t peek_in(void* dst, uint64_t offset, uint64_t size,
                        uint64_t va = 0) const override {
-      auto it_value = parent_.dyn_hdr_relocs_.lower_bound(offset);
-      if (it_value == parent_.dyn_hdr_relocs_.end()) {
-        return parent_.stream_->peek_in(dst, offset, size, va);
+      auto it_value = parent_->dyn_hdr_relocs_.lower_bound(offset);
+      if (it_value == parent_->dyn_hdr_relocs_.end()) {
+        return parent_->stream_->peek_in(dst, offset, size, va);
       }
 
-      auto is_ok = parent_.stream_->peek_in(dst, offset, size, va);
+      auto is_ok = parent_->stream_->peek_in(dst, offset, size, va);
       if (!is_ok) {
         return make_error_code(is_ok.error());
       }
@@ -140,7 +140,7 @@ ok_error_t Parser::parse_nested_relocated() {
         return ok();
       }
 
-      auto upper_bound = parent_.dyn_hdr_relocs_.upper_bound(offset + size);
+      auto upper_bound = parent_->dyn_hdr_relocs_.upper_bound(offset + size);
       for (; it_value != upper_bound; ++it_value) {
         int64_t delta_offset = (int64_t)it_value->first - (int64_t)offset;
         assert(delta_offset >= 0);
@@ -164,7 +164,7 @@ ok_error_t Parser::parse_nested_relocated() {
     }
 
     private:
-    Parser& parent_;
+    Parser* parent_ = nullptr;
   };
 
   if (!config_.parse_arm64x_binary || dyn_hdr_relocs_.empty()) {

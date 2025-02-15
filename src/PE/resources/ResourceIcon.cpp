@@ -89,7 +89,7 @@ result<ResourceIcon> ResourceIcon::from_serialization(const uint8_t* buffer, siz
   std::vector<uint8_t> pixels;
   stream.read_data(pixels, pixel_size);
   icon.pixels(std::move(pixels));
-  return std::move(icon);
+  return icon;
 }
 
 std::vector<uint8_t> ResourceIcon::serialize() const {

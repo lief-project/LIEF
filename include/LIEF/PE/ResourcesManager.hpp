@@ -105,12 +105,14 @@ class LIEF_API ResourcesManager : public Object {
   {}
 
   ResourcesManager(const ResourcesManager& other) :
+    Object(other),
     resources_(other.resources_)
     // Skip (on purpose) the `dialogs_` cache
   {}
 
   ResourcesManager& operator=(const ResourcesManager& other) {
     if (&other != this) {
+      Object::operator=(other);
       resources_ = other.resources_;
       // Skip (on purpose) the `dialogs_` cache
     }
