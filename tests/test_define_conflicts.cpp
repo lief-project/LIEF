@@ -1,6 +1,4 @@
 #if defined (WIN32)
-#include <winuser.h>
-#include <wingdi.h>
 #include <windows.h>
 #endif
 

@@ -361,7 +361,7 @@ bool Decoder::decode<OPCODES::PAC_SIGN_LR>(bool is_prologue) {
   return false;
 }
 
-static constexpr std::array HANDLERS = {
+static constexpr auto HANDLERS = {
   std::make_tuple(0xe0, 0x00, 1, &Decoder::decode<OPCODES::ALLOC_S>),
   std::make_tuple(0xe0, 0x20, 1, &Decoder::decode<OPCODES::SAVE_R19R20_X>),
   std::make_tuple(0xc0, 0x40, 1, &Decoder::decode<OPCODES::SAVE_FPLR>),
