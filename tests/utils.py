@@ -7,7 +7,7 @@ import re
 import subprocess
 import stat
 import time
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 from pathlib import Path
 from subprocess import Popen
 
@@ -188,7 +188,7 @@ def _win_gui_exec(executable: Path, timeout: int = 60) -> Optional[Tuple[int, st
 
 def win_exec(executable: Path, timeout: int = 60,
              gui: bool = True, universal_newlines: bool = True,
-             args: list[str] = ()) -> Optional[Tuple[int, str]]:
+             args: List[str] = ()) -> Optional[Tuple[int, str]]:
     if not is_windows():
         return None
 
