@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/AuxiliarySymbol.hpp"
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/Relocation.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"

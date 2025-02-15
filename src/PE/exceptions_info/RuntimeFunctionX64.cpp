@@ -21,6 +21,7 @@
 #include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/AuxiliarySymbol.hpp"
 
 #include "logging.hpp"
 #include "frozen.hpp"

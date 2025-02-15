@@ -19,6 +19,7 @@
 
 #include "PE/Structures.hpp"
 #include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/AuxiliarySymbol.hpp"
 #include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/Relocation.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"

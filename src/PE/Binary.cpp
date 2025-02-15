@@ -32,6 +32,7 @@
 #include "LIEF/PE/Builder.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
 #include "LIEF/PE/Debug.hpp"
+#include "LIEF/PE/AuxiliarySymbol.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/ExportEntry.hpp"

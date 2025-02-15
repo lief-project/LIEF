@@ -20,6 +20,7 @@
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/AuxiliarySymbol.hpp"
 
 #include "logging.hpp"
 #include "PE/exceptions_info/internal_arm64.hpp"

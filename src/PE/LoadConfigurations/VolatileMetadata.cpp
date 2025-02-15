@@ -16,6 +16,7 @@
 #include <sstream>
 #include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/AuxiliarySymbol.hpp"
 #include "LIEF/PE/LoadConfigurations/VolatileMetadata.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/AuxiliarySymbol.hpp"
 #include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/LoadConfigurations/EnclaveConfiguration.hpp"
 #include "LIEF/PE/LoadConfigurations/EnclaveImport.hpp"
