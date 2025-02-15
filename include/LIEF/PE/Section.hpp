@@ -241,7 +241,7 @@ class LIEF_API Section : public LIEF::Section {
   std::unique_ptr<SpanStream> stream() const;
 
   /// \private
-  LIEF_API Section& reserve(size_t size, uint8_t value = 0) {
+  LIEF_LOCAL Section& reserve(size_t size, uint8_t value = 0) {
     content_.resize(size, value);
     return *this;
   }
