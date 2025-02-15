@@ -35,7 +35,7 @@ void create<CoreAuxv>(nb::module_& m) {
   #define PY_ENUM(X) .value(LIEF::ELF::to_string(CoreAuxv::TYPE::X), CoreAuxv::TYPE::X)
   LIEF::enum_<CoreAuxv::TYPE>(cls, "TYPE")
     PY_ENUM(END)
-    PY_ENUM(IGNORE)
+    PY_ENUM(IGNORE_TY)
     PY_ENUM(EXECFD)
     PY_ENUM(PHDR)
     PY_ENUM(PHENT)

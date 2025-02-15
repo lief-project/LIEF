@@ -32,7 +32,7 @@ class LIEF_API CoreAuxv : public Note {
   public:
   enum class TYPE {
     END = 0,       /**< End of vector */
-    IGNORE,        /**< Entry should be ignored */
+    IGNORE_TY,     /**< Entry should be ignored */
     EXECFD,        /**< File descriptor of program */
     PHDR,          /**< Program headers for program */
     PHENT,         /**< Size of program header entry */
