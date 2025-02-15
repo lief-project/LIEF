@@ -44,7 +44,7 @@ void create<TLS>(nb::module_& m) {
         nb::overload_cast<>(&TLS::callbacks, nb::const_),
         nb::overload_cast<std::vector<uint64_t>>(&TLS::callbacks),
         R"delim(
-        List of the callback associated with the current TLS.
+        List of the callbacks associated with the current TLS.
 
         These functions are called before any other functions.
         )delim"_doc)
@@ -125,6 +125,11 @@ void create<TLS>(nb::module_& m) {
         nb::overload_cast<>(&TLS::section),
         "" RST_CLASS_REF(lief.PE.Section) " associated with the TLS object (or None if not linked)"_doc,
         nb::rv_policy::reference_internal)
+
+    .def("add_callback", &TLS::add_callback,
+         "Add a new TLS callback"_doc,
+         "addr"_a,
+         nb::rv_policy::reference_internal)
 
     LIEF_COPYABLE(TLS)
     LIEF_DEFAULT_STR(TLS);

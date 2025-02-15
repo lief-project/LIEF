@@ -31,18 +31,21 @@ class LIEF_API Symbol : public Object {
   Symbol(std::string name) :
     name_(std::move(name))
   {}
+
   Symbol(std::string name, uint64_t value) :
-    name_(std::move(name)),
-    value_(value)
+    name_(std::move(name)), value_(value)
   {}
+
   Symbol(std::string name, uint64_t value, uint64_t size) :
-    name_(std::move(name)),
-    value_(value),
-    size_(size)
+    name_(std::move(name)), value_(value), size_(size)
   {}
 
   Symbol(const Symbol&) = default;
   Symbol& operator=(const Symbol&) = default;
+
+  Symbol(Symbol&&) = default;
+  Symbol& operator=(Symbol&&) = default;
+
   ~Symbol() override = default;
 
   void swap(Symbol& other) noexcept;
@@ -51,6 +54,7 @@ class LIEF_API Symbol : public Object {
   virtual const std::string& name() const {
     return name_;
   }
+
   virtual std::string& name() {
     return name_;
   }

@@ -1,0 +1,326 @@
+.. _pe_0170_changelog:
+
+PE Changelog for LIEF 0.17.0
+============================
+
+Compared to LIEF v0.16.X, version 0.17.0 includes a significant refactoring
+of the PE parser and builder. These changes were necessary to align
+the PE functionalities of LIEF with those of ELF and Mach-O. If your codebase
+uses LIEF to process PE binaries, you may encounter issues when
+upgrading to LIEF 0.17.0. This page provides a comprehensive overview of the
+various changes, but it cannot cover every detail. If you encounter an API issue
+that is not described here, you can:
+
+1. Join Discord and ask your questions: |lief-discord|
+2. Review the git diff of the tests. Most of these changes are covered by tests,
+   so you should be able to find a relevant example.
+3. Email me at: ``me[at]romainthomas.fr``
+
+PE Modifications
+----------------
+
+To explore the new modifications features, you can check the following pages:
+
+.. toctree::
+  :maxdepth: 1
+
+  ../formats/pe/modifications/imports
+  ../formats/pe/modifications/resources
+  ../formats/pe/modifications/tls
+  ../formats/pe/modifications/debug
+  ../formats/pe/modifications/exports
+
+COFF String & COFF Symbol
+-------------------------
+
+As described in issue: :issue:`1043`, if a section's name exceeds
+8 bytes, the linker may allocate a longer name in the
+COFF string pool while setting the section's name with the offset in the COFF
+string pool.
+
+You can access this COFF string using |lief-pe-section-coff_string|, while
+the string representing the offset (e.g. ``/230``) remains in the
+section's name.
+
+Additionally, optional COFF symbols, along with any auxiliary symbols, are now
+processed correctly by LIEF:
+
+.. code-block:: python
+
+  import lief
+
+  pe = lief.PE.parse("libLIEF.dll")
+  section = pe.sections[10]
+  print(section.name) # --> '/19'
+  print(section.coff_string) # --> '.debug_info'
+
+  for symbol in pe.symbols:
+      print(symbol.name)
+      for aux in symbol.auxiliary_symbols:
+          print(aux)
+
+Although this example is written in Python, the API is also available in C++
+and Rust.
+
+Load Configuration
+------------------
+
+The ``IMAGE_LOAD_CONFIG_DIRECTORY`` structures, represented in LIEF by
+|lief-pe-loadconfig|, regularly evolves with new Windows releases.
+A new version of Windows may introduce new attributes to accommodate additional
+functionalities like Control Flow Guard. To manage these changes, |lief-pe-loadconfig|
+previously used a form of inheritance. For each new attribute, a new class, such
+as ``LoadConfigurationV12``, would inherit from ``LoadConfigurationV11``.
+This approach, though systematic, resulted in numerous modifications -- especially
+in Rust -- raising questions about the decision to use inheritance.
+
+Starting from LIEF v0.17.0, |lief-pe-loadconfig| has adopted a **flat** representation.
+In this new model, version-dependent attributes are represented with an ``option<>``-like
+container.
+
+.. tabs::
+
+  .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        import lief
+
+        pe = lief.PE.parse("demo.exe")
+        offset: Optional[int] = pe.load_configuration.hotpatch_table_offset
+
+  .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        auto pe = LIEF::PE::Parser::parse("demo.exe");
+
+        if (const LoadConfiguration* lconf = pe->load_configuration()) {
+          LIEF::optional<uint32_t> offset = lconf->hotpatch_table_offset();
+        }
+
+  .. tab:: :fa:`brands fa-rust` Rust
+
+      .. code-block:: rust
+
+        if let Some(lief::Binary::PE(pe)) = lief::Binary::parse("demo.exe") {
+            if let Some(lconf) = pe.load_configuration() {
+              let offset: Option<u32> = lconf.hotpatch_table_offset();
+            }
+        }
+
+Additionally, the |lief-pe-loadconfig| now provides an API that allows access to
+the internal data associated with this structure:
+
+- |lief-pe-chpe_metadata|
+- |lief-pe-dynamic-relocation|
+- |lief-pe-enclave-configuration|
+- |lief-pe-volatile-metadata|
+
+Some of these structures are important to correctly support ARM64EC/ARM64X
+PE Binary (\#teasing).
+
+Debug Information
+-----------------
+
+LIEF version 0.17.0 can manage larger types of debug entries and provides a
+user-friendly API:
+
+- |lief-pe-vcfeature|
+- |lief-pe-fpo|
+- |lief-pe-exdllcharacteristics|
+- |lief-pe-pdbchecksum|
+
+As described in the section: :ref:`Debug Modification <pe_debug_modification>`
+you can modify debug entries to perform various actions:
+
+.. code-block:: python
+
+  pe = lief.PE.parse("some.dll")
+  # Changing the PDB file path into an URL
+  pe.codeview_pdb.filename = "https://lief.re/"
+  pe.write("out.dll")
+
+
+Resources
+---------
+
+Some interfaces exposed by the |lief-pe-resource-manager| have been redesigned
+to make them more consistent with their underlying representation in the PE
+format.
+
+For instance, ``lief.PE.LangCodeItem`` has been renamed and refactored into
+|lief-pe-resourcestringtable|.
+
+Resources-related enums have been re-scoped to avoid definition conflicts
+between Windows's headers and LIEF:
+
++------------------------------------------+----------------------------------------------------------------------+
+| ``lief.PE.EXTENDED_WINDOW_STYLES``       | :class:`lief.PE.ResourceDialog.WINDOW_EXTENDED_STYLES`               |
++==========================================+======================================================================+
+| ``lief.PE.WINDOW_STYLES``                | :class:`lief.PE.ResourceDialog.WINDOW_STYLES`                        |
++------------------------------------------+----------------------------------------------------------------------+
+| ``lief.PE.DIALOG_BOX_STYLES``            | :class:`lief.PE.ResourceDialog.DIALOG_STYLES`                        |
++------------------------------------------+----------------------------------------------------------------------+
+| ``lief.PE.FIXED_VERSION_OS``             | :class:`lief.PE.ResourceVersion.fixed_file_info_t.VERSION_OS`        |
++------------------------------------------+----------------------------------------------------------------------+
+| ``lief.PE.FIXED_VERSION_FILE_FLAGS``     | :class:`lief.PE.ResourceVersion.fixed_file_info_t.FILE_FLAGS`        |
++------------------------------------------+----------------------------------------------------------------------+
+| ``lief.PE.FIXED_VERSION_FILE_SUB_TYPES`` | :class:`lief.PE.ResourceVersion.fixed_file_info_t.FILE_TYPE_DETAILS` |
++------------------------------------------+----------------------------------------------------------------------+
+| ``lief.PE.ACCELERATOR_FLAGS``            | :class:`lief.PE.ResourceAccelerator.FLAGS`                           |
++------------------------------------------+----------------------------------------------------------------------+
+| ``lief.PE.ACCELERATOR_VK_CODES``         | :class:`lief.PE.ACCELERATOR_CODES`                                   |
++------------------------------------------+----------------------------------------------------------------------+
+
+Exception Info
+--------------
+
+For x86-64 and ARM64 PE binaries, stack unwinding information is referenced by
+the data directory: ``IMAGE_DIRECTORY_ENTRY_EXCEPTION``. Even if your code is
+compiled without exception support, this information may still be generated by the linker.
+
+The entries of this data directory are represented by the
+|lief-pe-exceptioninfo| structure which is specialized for x64 and
+ARM64 functions. Regardless of the underlying architecture, each entry in this
+table exposes a function RVA.
+From a reverse engineering perspective, these RVAs offer a valuable set of
+function start addresses that can be used to begin disassembling the binary..
+
+Given a |lief-pe-binary| instance, one can iterate over these |lief-pe-exceptioninfo|
+using |lief-pe-binary-exceptions|:
+
+.. code-block:: python
+
+   pe = lief.PE.parse("Windows.Media.Protection.PlayReady.dll", lief.PE.ParserConfgi.all)
+   print(pe.exceptions[10])
+
+.. code-block:: text
+
+  RuntimeFunctionX64 {
+    RVA: [0x0c9350, 0x0c9382] (50 bytes)
+    Unwind info RVA: 0x68eb5c
+    unwind_info_t {
+      Version: 1
+      Flags: 0
+      Size of prologue: 20
+      Nb opcodes: 8 (6)
+      Opcodes: [
+        0x14 SAVE_NONVOL reg=RDI, offset=0x000078
+        0x14 SAVE_NONVOL reg=RBX, offset=0x000070
+        0x14 ALLOC_SMALL size=64
+        0x10 PUSH_NONVOL reg=R15
+        0x0e PUSH_NONVOL reg=R14
+        0x0c PUSH_NONVOL reg=R12
+      ];
+    }
+  }
+
+.. code-block:: python
+
+   pe = lief.PE.parse("win11_arm64x_Windows.Media.Protection.PlayReady.dll", lief.PE.ParserConfgi.all)
+   print(pe.exceptions[10])
+
+.. code-block:: text
+
+  Runtime Unpacked AArch64 Function {
+    Range(RVA): 0x00822bb8 - 0x00822c08
+    Unwind location (RVA): 0x00d63838
+    Length=80 Vers=0 X=0 E=0, CodeWords=8
+    Epilogs=1
+    Prolog unwind:
+      0x0000 e1...... mov fp, sp
+      0x0001 81...... stp x29, x30, [sp, #-16]!
+      0x0002 e6...... save next
+      0x0003 e6...... save next
+      0x0004 e6...... save next
+      0x0005 e6...... save next
+      0x0006 e76689.. stp q6, q7, [sp, #-160]!
+      0x0009 fc...... pacibsp
+      0x000a e4...... end
+    Epilog #1 unwind:  (Offset=10, Index=11, Reserved=0)
+      0x0000 81...... ldp x29, x30, [sp], #16
+      0x0001 e74e88.. ldp q14, q15, [sp, #128]
+      0x0004 e74c86.. ldp q12, q13, [sp, #96]
+      0x0007 e74a84.. ldp q10, q11, [sp, #64]
+      0x000a e74882.. ldp q8, q9, [sp, #32]
+      0x000d e76689.. ldp q6, q7, [sp], #160
+      0x0010 fc...... autibsp
+      0x0011 e3...... nop
+      0x0012 e3...... nop
+      0x0013 e4...... end
+  }
+
+.. admonition:: ARM64 - ``SAVE_ANY_REG``
+  :class: tip
+
+  Thank you to `Eli Friedman <https://github.com/efriedma-quic>`_ and `Martin Storsjö <https://github.com/mstorsjo>`_
+  for their work on reverse engineering this undocumented unwind opcode.
+
+LIEF provides a detailed API for the underlying structures involved in PE
+exception and stack unwinding support.
+
+.. admonition:: Performance Considerations
+  :class: warning
+
+  In-depth analysis of exceptions metadata can introduce significant overhead.
+  Therefore, |lief-pe-parser-config-parse_exceptions| must be
+  **explicitly** enabled.
+
+ARM64EC / ARM64X
+----------------
+
+With the recent release of SnapDragon X, ARM64-based Windows computers are
+becoming increasingly popular. This shift introduces some changes to
+the PE format. One notable change is the introduction of ARM64X binaries, which
+can be compared to the Mach-O FAT concept, where a single binary contains multiple
+architectures.
+
+In the case of ARM64X, a single PE file encapsulates ARM64 and ARM64EC architectures.
+LIEF v0.17.0 exposes the following helpers to determine whether the binary is
+ARM64X or ARM64EC: |lief-pe-binary-is_arm64ec|, |lief-pe-binary-is_arm64x|.
+
+For an ARM64X binary, you can use |lief-pe-binary-nested_pe_binary| to access the
+embedded ARM64EC **representation** of the binary.
+
+.. admonition:: Performance Considerations
+  :class: warning
+
+  Parsing nested ARM64EC binary can introduce additional overhead compared to
+  the 0.16.X version.
+  Therefore, |lief-pe-parser-config-parse_arm64x_binary| feature must be
+  **explicitly** enabled.
+
+Other Changes
+-------------
+
+The workaround involving ``undef.h`` has been removed. This file was used to ``#undef``
+certain Windows defines that conflicted with LIEF enum definitions. You can now
+safely include Windows headers alongside LIEF headers. If you encounter any
+conflicts, please report the issue..
+
+The *builder* engine has been refactored to resolve numerous errors and bugs
+associated with PE modifications. It now uses a more conservative approach.
+For more details, please refer to the :ref:`PE <format-pe>` page.
+
+The *"PE from Scratch"* feature is no longer available as it had significant bugs
+that often resulted in corrupted binaries. This feature will be reintroduced
+later in the project. If you rely on this feature, please reach out.
+
+:List of changes:
+
+  * Fix missing original forwarded function name (:issue:`1166`)
+
+  * |lief-pe-datadirectory| is now exposing |lief-pe-datadirectory-content| to
+    access the raw bytes wrapped by the data directory
+
+  * PE's resource tree can now be parsed in a standalone way using
+    |lief-pe-resource-node-parse|.
+
+    .. code-block:: python
+
+      resource_tree = bytes("....")
+      original_rva = 0x20000
+      tree: lief.PE.ResourceNode = lief.PE.ResourceNode.parse(resource_tree, original_rva)
+
+.. include:: ../_cross_api.rst

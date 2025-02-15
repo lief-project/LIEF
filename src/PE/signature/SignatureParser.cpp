@@ -185,7 +185,7 @@ result<Signature> SignatureParser::parse_signature(BinaryStream& stream) {
   auto version = asn1r.read_int();
   if (!version) {
     LIEF_INFO("Can't parse version (pos: {:d})", stream.pos());
-    return make_error_code(tag.error());
+    return make_error_code(version.error());
   }
   const int32_t version_val = version.value();
   LIEF_DEBUG("pkcs7-signed-data.version: {:d}", version_val);
@@ -1051,7 +1051,7 @@ result<std::unique_ptr<Attribute>> SignatureParser::parse_ms_counter_sign(Binary
     auto version = asn1r.read_int();
     if (!version) {
       LIEF_INFO("Can't parse version (pos: {:d})", stream.pos());
-      return make_error_code(tag.error());
+      return make_error_code(version.error());
     }
     const int32_t version_val = version.value();
     LIEF_DEBUG("ms_counter_sig.pkcs7-signed-data.version: {:d}", version_val);
@@ -1518,7 +1518,7 @@ result<std::unique_ptr<PKCS9TSTInfo>> SignatureParser::parse_pkcs9_tstinfo(Binar
         // TODO(romain): add field
       } else {
         LIEF_INFO("Can't read pkcs9-tstinfo.ordering (pos: {})", substream.pos());
-        return make_error_code(tag.error());
+        return make_error_code(ordering.error());
       }
     }
   }
@@ -1531,7 +1531,7 @@ result<std::unique_ptr<PKCS9TSTInfo>> SignatureParser::parse_pkcs9_tstinfo(Binar
         // TODO(romain): add field
       } else {
         LIEF_INFO("Can't read pkcs9-tstinfo.nonce (pos: {})", substream.pos());
-        return make_error_code(tag.error());
+        return make_error_code(nonce.error());
       }
     }
   }
@@ -1554,7 +1554,7 @@ result<std::unique_ptr<PKCS9TSTInfo>> SignatureParser::parse_pkcs9_tstinfo(Binar
         // TODO
       } else {
         LIEF_INFO("Can't read pkcs9-tstinfo.tsa (pos: {})", substream.pos());
-        return make_error_code(tag.error());
+        return make_error_code(ctx.error());
       }
     }
   }
@@ -1609,7 +1609,7 @@ SignatureParser::parse_signing_certificate_v2(BinaryStream& stream) {
         // Empty -> default value
         if (!asn1r.read_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE)) {
           LIEF_INFO("Wrong tag: {} (pos: {:d})", asn1r.get_str_tag(), stream.pos());
-          return make_error_code(tag.error());
+          return make_error_code(lief_errors::read_error);
         }
         // Default is algorithm id-sha256
       }
@@ -1619,7 +1619,7 @@ SignatureParser::parse_signing_certificate_v2(BinaryStream& stream) {
       } else {
         LIEF_INFO("Can't read SigningCertificateV2.certs.certHash. {} (pos: {:d})",
                   asn1r.get_str_tag(), stream.pos());
-        return make_error_code(tag.error());
+        return make_error_code(res.error());
       }
 
       /* issuerSerial IssuerSerial OPTIONAL */
@@ -1641,7 +1641,7 @@ SignatureParser::parse_signing_certificate_v2(BinaryStream& stream) {
         } else {
           LIEF_INFO("Can't read SigningCertificateV2.certs.issuerSerial.serial {} (pos: {:d})",
                     asn1r.get_str_tag(), stream.pos());
-          return make_error_code(tag.error());
+          return make_error_code(serial.error());
         }
       }
     }

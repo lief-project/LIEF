@@ -43,6 +43,8 @@ class PE_Import : private Mirror<LIEF::PE::Import> {
   uint32_t import_lookup_table_rva() const { return get().import_lookup_table_rva(); }
   std::string name() const { return get().name(); }
 
+  auto name_rva() const { return get().name_rva(); }
+
   auto directory() const {
     return details::try_unique<PE_DataDirectory>(get().directory()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
@@ -57,6 +59,19 @@ class PE_Import : private Mirror<LIEF::PE::Import> {
 
   auto entry_by_name(std::string name) const { // NOLINT(performance-unnecessary-value-param)
     return details::try_unique<PE_ImportEntry>(get().get_entry(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+
+  auto remove_entry_by_name(std::string name) {
+    return get().remove_entry(name);
+  }
+
+  auto remove_entry_by_ordinal(uint32_t ord) {
+    return get().remove_entry(ord);
+  }
+
+  /// Add a new import entry with the given name (i.e. an imported function)
+  auto add_entry_by_name(std::string name) {
+    return std::make_unique<PE_ImportEntry>(get().add_entry(name));
   }
 
 };

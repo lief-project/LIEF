@@ -35,7 +35,6 @@ inline std::vector<uint8_t> to_vector(nanobind::bytes bytes) {
   return {ptr, ptr + bytes.size()};
 }
 
-
 inline std::unique_ptr<LIEF::SpanStream> to_stream(nanobind::bytes bytes) {
   const auto* ptr = reinterpret_cast<const uint8_t*>(bytes.c_str());
   return std::make_unique<LIEF::SpanStream>(ptr, bytes.size());

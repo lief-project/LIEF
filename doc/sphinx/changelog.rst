@@ -21,6 +21,10 @@
 
   * Fix symbol resolution issue: :issue:`1127`
 
+:PE:
+
+  * Please check :ref:`LIEF 0.17.0 - PE changelog <pe_0170_changelog>`
+
 :Mach-O:
 
   * Add support for |lief-macho-atom-info| command (``LC_ATOM_INFO``)
@@ -33,11 +37,6 @@
   * Introduce :attr:`lief.ELF.Segment.raw_flags` to access the raw (integer)
     value of the flag
 
-
-:PE:
-
-  * Fix missing original forwarded function name (:issue:`1166`)
-
 :Extended:
 
   * Fix issue in the Python bindings while trying to access ``lief.__LIEF_MAIN_COMMIT__``
@@ -47,6 +46,9 @@
   * LIEF is now available in `vcpkg <https://github.com/microsoft/vcpkg/tree/master/ports/lief>`_.
     Many thanks to :github_user:`luadebug` for this support.
 
+:Utilities:
+
+  * Add |lief-dump|
 
 0.16.3 - February 1st, 2025
 ---------------------------
@@ -90,6 +92,7 @@
 :Compilation:
 
   * Fix missing ``LIEF_API`` visibility (:commit:`e01f92a0`, :pr:`1140`)
+
 
 0.16.0 - December 10th, 2024
 ----------------------------
@@ -1083,7 +1086,7 @@ This release contains several security fixes:
 
       :class:`lief.PE.IMPHASH_MODE` and :func:`lief.PE.get_imphash`
   * Remove the padding entry (0) from the rich header
-  * :attr:`~lief.PE.LangCodeItem.items` now returns a dictionary for which the values are **bytes** (instead of
+  * ``lief.PE.LangCodeItem.items`` now returns a dictionary for which the values are **bytes** (instead of
     ``str`` object). This change is related to ``utf-16`` support.
   * :github_user:`kohnakagawa` fixed wrong enums values: :commit:`c03125045e32a9cd65c613585eb4d0385350c6d2`, :commit:`6ee808a1e4611d09c6cf0aea82a612be69584db9`, :commit:`cd05f34bae681fc8af4b5e7cc28eaef816802b6f`
   * :github_user:`kohnakagawa` fixed a bug in the PE resources parser (:commit:`a7254d1ba935783f16effbc7faddf993c57e82f7`)
@@ -1738,7 +1741,7 @@ API
     * :class:`lief.PE.ResourceData`
     * :class:`lief.PE.ResourceDirectory`
     * :class:`lief.PE.ResourceNode`
-    * :class:`lief.PE.LangCodeItem`
+    * ``lief.PE.LangCodeItem``
     * :class:`lief.PE.ResourceDialog`
     * :class:`lief.PE.ResourceDialogItem`
     * :class:`lief.PE.ResourceFixedFileInfo`

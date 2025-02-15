@@ -1,3 +1,5 @@
+.. _tuto_elf_bin2lib:
+
 08 - Transforming an ELF executable into a library
 --------------------------------------------------
 

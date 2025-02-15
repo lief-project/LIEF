@@ -1,6 +1,5 @@
 /* Copyright 2017 - 2025 R. Thomas
 * Copyright 2017 - 2025 Quarkslab
-* Copyright 2017 - 2021 K. Nakagawa
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -64,12 +63,10 @@ LIEF_PE_FORWARD(ResourceDirectory)
 LIEF_PE_FORWARD(ResourcesManager)
 LIEF_PE_FORWARD(ResourceVersion)
 LIEF_PE_FORWARD(ResourceStringFileInfo)
-LIEF_PE_FORWARD(ResourceFixedFileInfo)
 LIEF_PE_FORWARD(ResourceVarFileInfo)
-LIEF_PE_FORWARD(LangCodeItem)
 LIEF_PE_FORWARD(ResourceIcon)
-LIEF_PE_FORWARD(ResourceDialog)
-LIEF_PE_FORWARD(ResourceDialogItem)
+LIEF_PE_FORWARD(ResourceDialogExtended)
+LIEF_PE_FORWARD(ResourceDialogRegular)
 LIEF_PE_FORWARD(ResourceStringTable)
 LIEF_PE_FORWARD(ResourceAccelerator)
 
@@ -96,18 +93,6 @@ LIEF_PE_FORWARD(SpcRelaxedPeMarkerCheck)
 
 LIEF_PE_FORWARD(CodeIntegrity)
 LIEF_PE_FORWARD(LoadConfiguration)
-LIEF_PE_FORWARD(LoadConfigurationV0)
-LIEF_PE_FORWARD(LoadConfigurationV1)
-LIEF_PE_FORWARD(LoadConfigurationV10)
-LIEF_PE_FORWARD(LoadConfigurationV11)
-LIEF_PE_FORWARD(LoadConfigurationV2)
-LIEF_PE_FORWARD(LoadConfigurationV3)
-LIEF_PE_FORWARD(LoadConfigurationV4)
-LIEF_PE_FORWARD(LoadConfigurationV5)
-LIEF_PE_FORWARD(LoadConfigurationV6)
-LIEF_PE_FORWARD(LoadConfigurationV7)
-LIEF_PE_FORWARD(LoadConfigurationV8)
-LIEF_PE_FORWARD(LoadConfigurationV9)
 LIEF_PE_FORWARD(Pogo)
 LIEF_PE_FORWARD(PogoEntry)
 LIEF_PE_FORWARD(Repro)
@@ -369,9 +354,6 @@ class LIEF_API Visitor {
   /// Method to visit a LIEF::PE::ResourceStringFileInfo
   LIEF_PE_VISITABLE(ResourceStringFileInfo)
 
-  /// Method to visit a LIEF::PE::ResourceFixedFileInfo
-  LIEF_PE_VISITABLE(ResourceFixedFileInfo)
-
   /// Method to visit a LIEF::PE::ResourceVarFileInfo
   LIEF_PE_VISITABLE(ResourceVarFileInfo)
 
@@ -381,17 +363,14 @@ class LIEF_API Visitor {
   /// Method to visit a LIEF::PE::ResourceAccelerator
   LIEF_PE_VISITABLE(ResourceAccelerator)
 
-  /// Method to visit a LIEF::PE::LangCodeItem
-  LIEF_PE_VISITABLE(LangCodeItem)
-
   /// Method to visit a LIEF::PE::ResourceIcon
   LIEF_PE_VISITABLE(ResourceIcon)
 
-  /// Method to visit a LIEF::PE::ResourceDialog
-  LIEF_PE_VISITABLE(ResourceDialog)
+  /// Method to visit a LIEF::PE::ResourceDialogExtended
+  LIEF_PE_VISITABLE(ResourceDialogExtended)
 
-  /// Method to visit a LIEF::PE::ResourceDialogItem
-  LIEF_PE_VISITABLE(ResourceDialogItem)
+  /// Method to visit a LIEF::PE::ResourceDialogRegular
+  LIEF_PE_VISITABLE(ResourceDialogRegular)
 
   /// Method to visit a LIEF::PE::Signature
   LIEF_PE_VISITABLE(Signature)
@@ -455,42 +434,6 @@ class LIEF_API Visitor {
 
   /// Method to visit a LIEF::PE::LoadConfiguration
   LIEF_PE_VISITABLE(LoadConfiguration)
-
-  /// Method to visit a LIEF::PE::LoadConfigurationV0
-  LIEF_PE_VISITABLE(LoadConfigurationV0)
-
-  /// Method to visit a LIEF::PE::LoadConfigurationV1
-  LIEF_PE_VISITABLE(LoadConfigurationV1)
-
-  /// Method to visit a LIEF::PE::LoadConfigurationV2
-  LIEF_PE_VISITABLE(LoadConfigurationV2)
-
-  /// Method to visit a LIEF::PE::LoadConfigurationV3
-  LIEF_PE_VISITABLE(LoadConfigurationV3)
-
-  /// Method to visit a LIEF::PE::LoadConfigurationV4
-  LIEF_PE_VISITABLE(LoadConfigurationV4)
-
-  /// Method to visit a LIEF::PE::LoadConfigurationV5
-  LIEF_PE_VISITABLE(LoadConfigurationV5)
-
-  /// Method to visit a LIEF::PE::LoadConfigurationV6
-  LIEF_PE_VISITABLE(LoadConfigurationV6)
-
-  /// Method to visit a LIEF::PE::LoadConfigurationV7
-  LIEF_PE_VISITABLE(LoadConfigurationV7)
-
-  /// Method to visit a LIEF::PE::LoadConfigurationV8
-  LIEF_PE_VISITABLE(LoadConfigurationV8)
-
-  /// Method to visit a LIEF::PE::LoadConfigurationV9
-  LIEF_PE_VISITABLE(LoadConfigurationV9)
-
-  /// Method to visit a LIEF::PE::LoadConfigurationV10
-  LIEF_PE_VISITABLE(LoadConfigurationV10)
-
-  /// Method to visit a LIEF::PE::LoadConfigurationV11
-  LIEF_PE_VISITABLE(LoadConfigurationV11)
 
   /// Method to visit a LIEF::PE::CodeIntegrity
   LIEF_PE_VISITABLE(CodeIntegrity)

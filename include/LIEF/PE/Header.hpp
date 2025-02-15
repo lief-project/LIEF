@@ -38,33 +38,118 @@ class LIEF_API Header : public Object {
   using signature_t = std::array<uint8_t, /* PE Magic */ 4>;
 
   enum class MACHINE_TYPES {
-    UNKNOWN   = 0x0,
-    AM33      = 0x1D3,  /**< Matsushita AM33                */
-    AMD64     = 0x8664, /**< AMD x64                        */
-    ARM       = 0x1C0,  /**< ARM little endian              */
-    ARMNT     = 0x1C4,  /**< ARMv7 Thumb mode only          */
-    ARM64     = 0xAA64, /**< ARMv8 in 64-bits mode          */
-    EBC       = 0xEBC,  /**< EFI byte code                  */
-    I386      = 0x14C,  /**< Intel 386 or later             */
-    IA64      = 0x200,  /**< Intel Itanium processor family */
-    M32R      = 0x9041, /**< Mitsubishi M32R little endian  */
-    MIPS16    = 0x266,  /**< MIPS16                         */
-    MIPSFPU   = 0x366,  /**< MIPS with FPU                  */
-    MIPSFPU16 = 0x466,  /**< MIPS16 with FPU                */
-    POWERPC   = 0x1F0,  /**< Power PC little endian         */
-    POWERPCFP = 0x1F1,  /**< Power PC with floating point   */
-    POWERPCBE = 0x1F2,  /**< Power PC big endian            */
-    R4000     = 0x166,  /**< MIPS with little endian        */
-    RISCV32   = 0x5032, /**< RISC-V 32-bit address space    */
-    RISCV64   = 0x5064, /**< RISC-V 64-bit address space    */
-    RISCV128  = 0x5128, /**< RISC-V 128-bit address space   */
-    SH3       = 0x1A2,  /**< Hitachi SH3                    */
-    SH3DSP    = 0x1A3,  /**< Hitachi SH3 DSP                */
-    SH4       = 0x1A6,  /**< Hitachi SH4                    */
-    SH5       = 0x1A8,  /**< Hitachi SH5                    */
-    THUMB     = 0x1C2,  /**< ARM or Thumb                   */
-    WCEMIPSV2 = 0x169   /**< MIPS little-endian WCE v2      */
+    UNKNOWN     = 0x0,
+    ALPHA       = 0x184 , /**< Alpha AXP, 32-bit address space */
+    ALPHA64     = 0x284 , /**< Alpha AXP, 64-bit address space */
+    AM33        = 0x1D3,  /**< Matsushita AM33                */
+    AMD64       = 0x8664, /**< AMD x64                        */
+    ARM         = 0x1C0,  /**< ARM little endian              */
+    ARMNT       = 0x1C4,  /**< ARMv7 Thumb mode only          */
+    ARM64       = 0xAA64, /**< ARMv8 in 64-bits mode          */
+    EBC         = 0xEBC,  /**< EFI byte code                  */
+    I386        = 0x14C,  /**< Intel 386 or later             */
+    IA64        = 0x200,  /**< Intel Itanium processor family */
+    LOONGARCH32 = 0x6232, /**< LoongArch 32-bit processor family  */
+    LOONGARCH64 = 0x6264, /**< LoongArch 64-bit processor family  */
+    M32R        = 0x9041, /**< Mitsubishi M32R little endian  */
+    MIPS16      = 0x266,  /**< MIPS16                         */
+    MIPSFPU     = 0x366,  /**< MIPS with FPU                  */
+    MIPSFPU16   = 0x466,  /**< MIPS16 with FPU                */
+    POWERPC     = 0x1F0,  /**< Power PC little endian         */
+    POWERPCFP   = 0x1F1,  /**< Power PC with floating point   */
+    POWERPCBE   = 0x1F2,  /**< Power PC big endian            */
+    R4000       = 0x166,  /**< MIPS with little endian        */
+    RISCV32     = 0x5032, /**< RISC-V 32-bit address space    */
+    RISCV64     = 0x5064, /**< RISC-V 64-bit address space    */
+    RISCV128    = 0x5128, /**< RISC-V 128-bit address space   */
+    SH3         = 0x1A2,  /**< Hitachi SH3                    */
+    SH3DSP      = 0x1A3,  /**< Hitachi SH3 DSP                */
+    SH4         = 0x1A6,  /**< Hitachi SH4                    */
+    SH5         = 0x1A8,  /**< Hitachi SH5                    */
+    THUMB       = 0x1C2,  /**< ARM or Thumb                   */
+    WCEMIPSV2   = 0x169,   /**< MIPS little-endian WCE v2      */
+    ARM64EC     = 0xa641,
+    ARM64X      = 0xa64e,
+    CHPE_X86    = 0x3a64,
   };
+
+  static bool is_arm(MACHINE_TYPES ty) {
+    switch (ty) {
+      default:
+        return false;
+      case MACHINE_TYPES::ARM:
+      case MACHINE_TYPES::THUMB:
+      case MACHINE_TYPES::ARMNT:
+        return true;
+    }
+    return false;
+  }
+
+  static bool is_riscv(MACHINE_TYPES ty) {
+    switch (ty) {
+      default:
+        return false;
+      case MACHINE_TYPES::RISCV32:
+      case MACHINE_TYPES::RISCV64:
+      case MACHINE_TYPES::RISCV128:
+        return true;
+    }
+    return false;
+  }
+
+  static bool is_loonarch(MACHINE_TYPES ty) {
+    switch (ty) {
+      default:
+        return false;
+      case MACHINE_TYPES::LOONGARCH32:
+      case MACHINE_TYPES::LOONGARCH64:
+        return true;
+    }
+    return false;
+  }
+
+
+  static bool is_arm64(MACHINE_TYPES ty) {
+    return ty == MACHINE_TYPES::ARM64;
+  }
+
+  static bool is_thumb(MACHINE_TYPES ty) {
+    return ty == MACHINE_TYPES::THUMB;
+  }
+
+  static bool x86(MACHINE_TYPES ty) {
+    return ty == MACHINE_TYPES::I386;
+  }
+
+  static bool x86_64(MACHINE_TYPES ty) {
+    return ty == MACHINE_TYPES::AMD64;
+  }
+
+  static bool is_mips(MACHINE_TYPES ty) {
+    switch (ty) {
+      default:
+        return false;
+      case MACHINE_TYPES::MIPS16:
+      case MACHINE_TYPES::MIPSFPU:
+      case MACHINE_TYPES::MIPSFPU16:
+      case MACHINE_TYPES::R4000:
+      case MACHINE_TYPES::WCEMIPSV2:
+        return true;
+    }
+    return false;
+  }
+
+  static bool is_ppc(MACHINE_TYPES ty) {
+    switch (ty) {
+      default:
+        return false;
+      case MACHINE_TYPES::POWERPC:
+      case MACHINE_TYPES::POWERPCFP:
+      case MACHINE_TYPES::POWERPCBE:
+        return true;
+    }
+    return false;
+  }
 
   enum class CHARACTERISTICS {
     NONE                    = 0x0000,
@@ -196,13 +281,15 @@ class LIEF_API Header : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Header& entry);
 
+  /// \private
+  LIEF_LOCAL Header() = default;
+
   private:
-  Header() = default;
   signature_t signature_;
   MACHINE_TYPES machine_ = MACHINE_TYPES::UNKNOWN;
   uint16_t nb_sections_ = 0;
   uint32_t timedatestamp_ = 0;
-  uint32_t pointerto_symtab_;
+  uint32_t pointerto_symtab_ = 0;
   uint32_t nb_symbols_ = 0;
   uint16_t sizeof_opt_header_ = 0;
   uint32_t characteristics_ = 0;

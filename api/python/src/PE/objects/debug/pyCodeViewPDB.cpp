@@ -30,7 +30,10 @@ template<>
 void create<CodeViewPDB>(nb::module_& m) {
   nb::class_<CodeViewPDB, CodeView>(m, "CodeViewPDB",
     R"delim(CodeView PDB specialization)delim"_doc)
-    .def(nb::init<>())
+    .def(nb::init<>(), "Default constructor"_doc)
+    .def(nb::init<std::string>(),
+         "Filename-based constructor"_doc,
+         "filename"_a)
 
     .def_prop_ro("parent",
         [] (nb::object& self) -> nb::object {

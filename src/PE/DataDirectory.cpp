@@ -18,6 +18,7 @@
 #include "LIEF/Visitor.hpp"
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "PE/Structures.hpp"
 
 #include "frozen.hpp"
@@ -38,13 +39,60 @@ void DataDirectory::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-std::ostream& operator<<(std::ostream& os, const DataDirectory& entry) {
-  os << fmt::format("[{}] 0x{:04x} (0x{:04x} bytes)",
-                    to_string(entry.type()), entry.RVA(), entry.size());
-  if (const Section* section = entry.section()) {
-    os << fmt::format(" - '{}'", section->name());
+std::unique_ptr<SpanStream> DataDirectory::stream(bool sized) const {
+  if (sized) {
+    return std::make_unique<SpanStream>(content());
   }
-  os << '\n';
+
+  if (section_ == nullptr) {
+    return nullptr;
+  }
+
+  span<const uint8_t> section_content = section_->content();
+  if (section_content.empty()) {
+    return std::make_unique<SpanStream>(section_content);
+  }
+
+  int64_t rel_offset = RVA() - section_->virtual_address();
+
+  if (rel_offset < 0 || (uint64_t)rel_offset >= section_content.size() ||
+      ((uint64_t)rel_offset + size()) > section_content.size())
+  {
+    return std::make_unique<SpanStream>(nullptr, 0);
+  }
+
+  span<uint8_t> buffer = section_->writable_content().subspan(rel_offset);
+  return std::make_unique<SpanStream>(buffer);
+}
+
+span<uint8_t> DataDirectory::content() {
+  if (section_ == nullptr) {
+    return {};
+  }
+
+  span<const uint8_t> section_content = section_->content();
+  if (section_content.empty()) {
+    return {};
+  }
+
+  int64_t rel_offset = RVA() - section_->virtual_address();
+
+  if (rel_offset < 0 || (uint64_t)rel_offset >= section_content.size() ||
+      ((uint64_t)rel_offset + size()) > section_content.size())
+  {
+    return {};
+  }
+
+  return section_->writable_content().subspan(rel_offset, size());
+}
+
+std::ostream& operator<<(std::ostream& os, const DataDirectory& entry) {
+  os << fmt::format("[{:>24}] [0x{:08x}, 0x{:08x}] ({} bytes)",
+                    to_string(entry.type()), entry.RVA(), entry.RVA() + entry.size(),
+                    entry.size());
+  if (const Section* section = entry.section()) {
+    os << fmt::format(" section: '{}'", section->name());
+  }
   return os;
 }
 

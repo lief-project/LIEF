@@ -37,7 +37,7 @@ def test_simple():
 
     assert strstra.name == "StrStrA"
     assert strstra.value == 0x00025d30
-    assert strstra.iat_value == 0x0300905a4d
+    assert strstra.iat_value == 0x140001983
     assert strstra.data == 0x23f68
     assert strstra.hint == 0x14d
 
@@ -60,7 +60,7 @@ def test_simple():
     assert messageboxa.ordinal == 0x3f72
     assert messageboxa.name == "MessageBoxA"
     assert messageboxa.value == 0x25d40
-    assert messageboxa.iat_value == 0x0300905a4d
+    assert messageboxa.iat_value == 0x140001a08
     assert messageboxa.data == 0x23f72
     assert messageboxa.hint == 0x285
     print(messageboxa)
@@ -92,7 +92,7 @@ def test_cmd():
 
     assert SHChangeNotify.name == "SHChangeNotify"
     assert SHChangeNotify.value == 0x0002e078
-    assert SHChangeNotify.iat_value == 0x0300905a4d
+    assert SHChangeNotify.iat_value == 0x4ad27bc8
     assert SHChangeNotify.data == 0x2a6ee
     assert SHChangeNotify.hint == 0
 
@@ -100,6 +100,6 @@ def test_cmd():
 
     assert ShellExecuteExW.name == "ShellExecuteExW"
     assert ShellExecuteExW.value == 0x0002e080
-    assert ShellExecuteExW.iat_value == 0xffff00000004
+    assert ShellExecuteExW.iat_value == 0x4ad155a0
     assert ShellExecuteExW.data == 0x2a700
     assert ShellExecuteExW.hint == 0

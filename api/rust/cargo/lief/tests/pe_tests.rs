@@ -1,22 +1,17 @@
 mod utils;
+use std::fmt::format;
 use std::io::Cursor;
 use std::env;
 use lief::logging;
+use lief::pe::ParserConfig;
 use lief::pe::debug::Entries as DebugEntries;
-use lief::pe::load_configuration::{
-    AsBase,
-    AsLoadConfigV0, AsLoadConfigV1, AsLoadConfigV2,
-    AsLoadConfigV3, AsLoadConfigV4, AsLoadConfigV5,
-    AsLoadConfigV6, AsLoadConfigV7, AsLoadConfigV8,
-    AsLoadConfigV9, AsLoadConfigV10,
-    LoadConfiguration
-};
+use lief::pe::load_configuration::LoadConfiguration;
 use lief::pe::resources::{Node, NodeBase};
 use lief::pe::signature::content_info::Content;
 use lief::pe::{data_directory, signature, Algorithms};
 use lief::pe::signature::attributes::Attribute;
 use lief::pe::signature::Signature;
-
+use lief::generic::Symbol;
 use lief::generic::Binary as GenericBinary;
 use lief::Binary;
 
@@ -207,11 +202,17 @@ fn explore_pe(bin_name: &str, pe: &lief::pe::Binary) {
     format!("{optional_header:?}");
     format!("checksum: {}, computed: {}", optional_header.checksum(), pe.compute_checksum());
 
-
     let header = pe.header();
     format!("{header:?}");
 
     format!("{} {}", pe.virtual_size(), pe.sizeof_headers());
+
+    if let Some(dir) = pe.data_directory_by_type(data_directory::Type::RESOURCE_TABLE) {
+        if !dir.content().is_empty() {
+            let tree = lief::pe::ResourceNode::from_slice(dir.content(), dir.rva() as u64);
+            assert!(tree.is_some());
+        }
+    }
 
     if let Some(tls) = pe.tls() {
         format!("{tls:?}");
@@ -249,203 +250,24 @@ fn explore_pe(bin_name: &str, pe: &lief::pe::Binary) {
         }
     }
 
+    for coff_str in pe.coff_string_table() {
+        format!("{}:{}", coff_str.str(), coff_str.offset());
+    }
+
     if let Some(config) = pe.load_configuration() {
         format!("{config:?}");
-        match config {
-            LoadConfiguration::Base(item) => {
-                format!("{:?}", item);
+
+        if let Some(enclave_config) = config.enclave_config() {
+            format!("{enclave_config:?} {enclave_config}");
+            for entry in enclave_config.imports() {
+                format!("{entry:?} {entry}");
             }
-            LoadConfiguration::V0(item) => {
-                let base = &item as &dyn AsBase;
-                format!("{:?}", item);
-                format!("{:?}", base);
-            }
-            LoadConfiguration::V1(item) => {
-                let base = &item as &dyn AsBase;
-                let v0 = &item as &dyn AsLoadConfigV0;
-                format!("{:?}", item);
-                format!("{:?}", v0);
-                format!("{:?}", base);
-            }
-            LoadConfiguration::V2(item) => {
-                let base = &item as &dyn AsBase;
-                let v0 = &item as &dyn AsLoadConfigV0;
-                let v1 = &item as &dyn AsLoadConfigV1;
-                format!("{:?}", item);
-                format!("{:?}", v1);
-                format!("{:?}", v0);
-                format!("{:?}", base);
-            }
-            LoadConfiguration::V3(item) => {
-                let base = &item as &dyn AsBase;
-                let v0 = &item as &dyn AsLoadConfigV0;
-                let v1 = &item as &dyn AsLoadConfigV1;
-                let v2 = &item as &dyn AsLoadConfigV2;
-                format!("{:?}", item);
-                format!("{:?}", v2);
-                format!("{:?}", v1);
-                format!("{:?}", v0);
-                format!("{:?}", base);
-            }
-            LoadConfiguration::V4(item) => {
-                let base = &item as &dyn AsBase;
-                let v0 = &item as &dyn AsLoadConfigV0;
-                let v1 = &item as &dyn AsLoadConfigV1;
-                let v2 = &item as &dyn AsLoadConfigV2;
-                let v3 = &item as &dyn AsLoadConfigV3;
-                format!("{:?}", item);
-                format!("{:?}", v3);
-                format!("{:?}", v2);
-                format!("{:?}", v1);
-                format!("{:?}", v0);
-                format!("{:?}", base);
-            }
-            LoadConfiguration::V5(item) => {
-                let base = &item as &dyn AsBase;
-                let v0 = &item as &dyn AsLoadConfigV0;
-                let v1 = &item as &dyn AsLoadConfigV1;
-                let v2 = &item as &dyn AsLoadConfigV2;
-                let v3 = &item as &dyn AsLoadConfigV3;
-                let v4 = &item as &dyn AsLoadConfigV4;
-                format!("{:?}", item);
-                format!("{:?}", v4);
-                format!("{:?}", v3);
-                format!("{:?}", v2);
-                format!("{:?}", v1);
-                format!("{:?}", v0);
-                format!("{:?}", base);
-            }
-            LoadConfiguration::V6(item) => {
-                let base = &item as &dyn AsBase;
-                let v0 = &item as &dyn AsLoadConfigV0;
-                let v1 = &item as &dyn AsLoadConfigV1;
-                let v2 = &item as &dyn AsLoadConfigV2;
-                let v3 = &item as &dyn AsLoadConfigV3;
-                let v4 = &item as &dyn AsLoadConfigV4;
-                let v5 = &item as &dyn AsLoadConfigV5;
-                format!("{:?}", item);
-                format!("{:?}", v5);
-                format!("{:?}", v4);
-                format!("{:?}", v3);
-                format!("{:?}", v2);
-                format!("{:?}", v1);
-                format!("{:?}", v0);
-                format!("{:?}", base);
-            }
-            LoadConfiguration::V7(item) => {
-                let base = &item as &dyn AsBase;
-                let v0 = &item as &dyn AsLoadConfigV0;
-                let v1 = &item as &dyn AsLoadConfigV1;
-                let v2 = &item as &dyn AsLoadConfigV2;
-                let v3 = &item as &dyn AsLoadConfigV3;
-                let v4 = &item as &dyn AsLoadConfigV4;
-                let v5 = &item as &dyn AsLoadConfigV5;
-                let v6 = &item as &dyn AsLoadConfigV6;
-                format!("{:?}", item);
-                format!("{:?}", v6);
-                format!("{:?}", v5);
-                format!("{:?}", v4);
-                format!("{:?}", v3);
-                format!("{:?}", v2);
-                format!("{:?}", v1);
-                format!("{:?}", v0);
-                format!("{:?}", base);
-            }
-            LoadConfiguration::V8(item) => {
-                let base = &item as &dyn AsBase;
-                let v0 = &item as &dyn AsLoadConfigV0;
-                let v1 = &item as &dyn AsLoadConfigV1;
-                let v2 = &item as &dyn AsLoadConfigV2;
-                let v3 = &item as &dyn AsLoadConfigV3;
-                let v4 = &item as &dyn AsLoadConfigV4;
-                let v5 = &item as &dyn AsLoadConfigV5;
-                let v6 = &item as &dyn AsLoadConfigV6;
-                let v7 = &item as &dyn AsLoadConfigV7;
-                format!("{:?}", item);
-                format!("{:?}", v7);
-                format!("{:?}", v6);
-                format!("{:?}", v5);
-                format!("{:?}", v4);
-                format!("{:?}", v3);
-                format!("{:?}", v2);
-                format!("{:?}", v1);
-                format!("{:?}", v0);
-                format!("{:?}", base);
-            }
-            LoadConfiguration::V9(item) => {
-                let base = &item as &dyn AsBase;
-                let v0 = &item as &dyn AsLoadConfigV0;
-                let v1 = &item as &dyn AsLoadConfigV1;
-                let v2 = &item as &dyn AsLoadConfigV2;
-                let v3 = &item as &dyn AsLoadConfigV3;
-                let v4 = &item as &dyn AsLoadConfigV4;
-                let v5 = &item as &dyn AsLoadConfigV5;
-                let v6 = &item as &dyn AsLoadConfigV6;
-                let v7 = &item as &dyn AsLoadConfigV7;
-                let v8 = &item as &dyn AsLoadConfigV8;
-                format!("{:?}", item);
-                format!("{:?}", v8);
-                format!("{:?}", v7);
-                format!("{:?}", v6);
-                format!("{:?}", v5);
-                format!("{:?}", v4);
-                format!("{:?}", v3);
-                format!("{:?}", v2);
-                format!("{:?}", v1);
-                format!("{:?}", v0);
-                format!("{:?}", base);
-            }
-            LoadConfiguration::V10(item) => {
-                let base = &item as &dyn AsBase;
-                let v0 = &item as &dyn AsLoadConfigV0;
-                let v1 = &item as &dyn AsLoadConfigV1;
-                let v2 = &item as &dyn AsLoadConfigV2;
-                let v3 = &item as &dyn AsLoadConfigV3;
-                let v4 = &item as &dyn AsLoadConfigV4;
-                let v5 = &item as &dyn AsLoadConfigV5;
-                let v6 = &item as &dyn AsLoadConfigV6;
-                let v7 = &item as &dyn AsLoadConfigV7;
-                let v8 = &item as &dyn AsLoadConfigV8;
-                let v9 = &item as &dyn AsLoadConfigV9;
-                format!("{:?}", item);
-                format!("{:?}", v9);
-                format!("{:?}", v8);
-                format!("{:?}", v7);
-                format!("{:?}", v6);
-                format!("{:?}", v5);
-                format!("{:?}", v4);
-                format!("{:?}", v3);
-                format!("{:?}", v2);
-                format!("{:?}", v1);
-                format!("{:?}", v0);
-                format!("{:?}", base);
-            }
-            LoadConfiguration::V11(item) => {
-                let base = &item as &dyn AsBase;
-                let v0 = &item as &dyn AsLoadConfigV0;
-                let v1 = &item as &dyn AsLoadConfigV1;
-                let v2 = &item as &dyn AsLoadConfigV2;
-                let v3 = &item as &dyn AsLoadConfigV3;
-                let v4 = &item as &dyn AsLoadConfigV4;
-                let v5 = &item as &dyn AsLoadConfigV5;
-                let v6 = &item as &dyn AsLoadConfigV6;
-                let v7 = &item as &dyn AsLoadConfigV7;
-                let v8 = &item as &dyn AsLoadConfigV8;
-                let v9 = &item as &dyn AsLoadConfigV9;
-                let v10 = &item as &dyn AsLoadConfigV10;
-                format!("{:?}", item);
-                format!("{:?}", v10);
-                format!("{:?}", v9);
-                format!("{:?}", v8);
-                format!("{:?}", v7);
-                format!("{:?}", v6);
-                format!("{:?}", v5);
-                format!("{:?}", v4);
-                format!("{:?}", v3);
-                format!("{:?}", v2);
-                format!("{:?}", v1);
-                format!("{:?}", v0);
-                format!("{:?}", base);
+        }
+
+        if let Some(volatile) = config.volatile_metadata() {
+            format!("{volatile:?} {volatile}");
+            for range in volatile.info_ranges() {
+                format!("{range:?}");
             }
         }
     }
@@ -473,9 +295,19 @@ fn explore_pe(bin_name: &str, pe: &lief::pe::Binary) {
         format!("{dir:?}");
     }
 
+    for sym in pe.symbols() {
+        format!("{sym:?}");
+        for aux in sym.auxiliary_symbols() {
+            format!("{aux:?}");
+        }
+    }
+
     for section in pe.sections() {
         format!("{section:?}");
         format!("{}", section.padding().len());
+        if let Some(coff_str) = section.coff_string() {
+            format!("{}", coff_str.str());
+        }
     }
 
     for relocation in pe.relocations() {
@@ -516,6 +348,14 @@ fn explore_pe(bin_name: &str, pe: &lief::pe::Binary) {
 
     for func in pe.functions() {
         format!("{func:?}");
+    }
+
+    for exception in pe.exceptions() {
+        format!("{exception:?}");
+    }
+
+    if let Some(nested) = pe.nested_pe_binary() {
+        explore_pe(bin_name, &nested);
     }
 
     format!("overlay: {}, len: {}", pe.overlay_offset(), pe.overlay().len());
@@ -563,13 +403,14 @@ fn explore_pe(bin_name: &str, pe: &lief::pe::Binary) {
         assert!(pe.delay_import_by_name("foo.dll").is_none());
         assert!(pe.delay_import_by_name("SHELL32.dll").is_some());
     }
+
 }
 
 fn test_with(bin_name: &str) {
     let path = utils::get_pe_sample(bin_name).unwrap();
     let path_str = path.to_str();
-    if let Some(Binary::PE(bin)) = Binary::parse(path_str.unwrap()) {
-        explore_pe(bin_name, &bin);
+    if let Some(pe) = lief::pe::Binary::parse_with_config(path_str.unwrap(), ParserConfig::with_all_options()) {
+        explore_pe(bin_name, &pe);
     }
 
     // Test Read + Seek interface
@@ -598,8 +439,12 @@ fn test_api() {
     test_with("PE64_x86-64_library_libLIEF.dll");
     test_with("PE32_x86-64_binary_avast-free-antivirus-setup-online.exe");
     test_with("PE32_x86-64_binary_self-signed.exe");
+    test_with("PE64_x86-64_binary_winhello64-mingw.exe");
     test_with("PE64_x86-64_binary_cmd.exe");
     test_with("steam.exe");
+    test_with("SFAPE.dll");
+    test_with("LIEF-win64.dll");
+    test_with("win11_arm64x_Windows.Media.Protection.PlayReady.dll");
 
     test_signature("cert0.p7b");
     test_signature("cert3.p7b");

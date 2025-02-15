@@ -211,9 +211,10 @@ class LIEF_API DosHeader : public Object {
 
   static DosHeader create(PE_TYPE type);
 
-  private:
-  DosHeader() = default;
+  /// \private
+  LIEF_LOCAL DosHeader() = default;
 
+  private:
   uint16_t    magic_ = 0;
   uint16_t    used_bytes_in_last_page_ = 0;
   uint16_t    file_sz_in_pages_ = 0;
@@ -228,10 +229,10 @@ class LIEF_API DosHeader : public Object {
   uint16_t    init_rel_cs_ = 0;
   uint16_t    addr_reloc_table_ = 0;
   uint16_t    overlay_number_ = 0;
-  reserved_t  reserved_;
+  reserved_t  reserved_ = {0};
   uint16_t    oem_id_ = 0;
   uint16_t    oem_info_ = 0;
-  reserved2_t reserved2_;
+  reserved2_t reserved2_ = {0};
   uint32_t    addr_new_exe_header_ = 0;
 };
 }

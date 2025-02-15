@@ -6,7 +6,6 @@ Demangling
 
 LIEF exposes a demangling API for the following formats:
 
-
 .. tabs::
 
   .. tab:: :fa:`brands fa-windows` MSVC
@@ -122,3 +121,29 @@ Python Leaks
 ~~~~~~~~~~~~~
 
 .. autofunction:: lief.disable_leak_warning
+
+Helpers
+~~~~~~~
+
+The ``lief.dump()`` utility can be used to pretty dump a buffer.
+
+For instance:
+
+.. code-block:: python
+
+  pe = lief.PE.parse("some.exe")
+  text = pe.get_section(".text")
+  print(lief.dump(text.content))
+
+.. autofunction:: lief.dump
+
+.. doxygenfunction:: LIEF::dump(const std::vector<uint8_t> &data, const std::string &title = "", const std::string &prefix = "", size_t limit = 0)
+
+.. doxygenfunction:: LIEF::dump(const uint8_t *buffer, size_t size, const std::string &title = "", const std::string &prefix = "", size_t limit = 0)
+
+.. doxygenfunction:: LIEF::dump(span<const uint8_t> data, const std::string &title = "", const std::string &prefix = "", size_t limit = 0)
+
+- :fa:`brands fa-rust` :rust:func:`lief::dump`
+- :fa:`brands fa-rust` :rust:func:`lief::dump_with_limit`
+
+.. include:: ../../_cross_api.rst

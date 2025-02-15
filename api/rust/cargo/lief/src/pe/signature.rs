@@ -183,7 +183,7 @@ impl<'a> Signature<'a> {
     }
 
     /// The original raw signature as a slice of bytes
-    pub fn raw_der(&'a self) -> &[u8] {
+    pub fn raw_der(&self) -> &[u8] {
         to_slice!(self.ptr.raw_der());
     }
 

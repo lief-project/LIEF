@@ -700,7 +700,7 @@ class LIEF_API Binary : public LIEF::Binary {
   /// (i.e. the binary can run).
   ///
   /// @param filename Path for the written ELF binary
-  void write(const std::string& filename) override;
+  void write(const std::string& filename);
 
   /// Reconstruct the binary object with the given config and write it in `filename`
   ///
@@ -717,7 +717,7 @@ class LIEF_API Binary : public LIEF::Binary {
   /// (i.e. the binary can run).
   ///
   /// @param os Output stream for the written ELF binary
-  void write(std::ostream& os) override;
+  void write(std::ostream& os);
 
   /// Reconstruct the binary object with the given config and write it in `os` stream
   ///

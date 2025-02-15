@@ -15,6 +15,7 @@
  */
 #include "PE/pyPE.hpp"
 #include "nanobind/extra/stl/lief_span.h"
+#include "nanobind/utils.hpp"
 
 #include "LIEF/PE/ResourceData.hpp"
 
@@ -35,7 +36,7 @@ void create<ResourceData>(nb::module_& m) {
         "Default constructor"_doc)
 
     .def(nb::init<const std::vector<uint8_t>&, uint32_t>(),
-        "content"_a, "code_page"_a)
+        "content"_a, "code_page"_a = 0)
 
     .def_prop_rw("code_page",
         nb::overload_cast<>(&ResourceData::code_page, nb::const_),
@@ -47,8 +48,9 @@ void create<ResourceData>(nb::module_& m) {
 
     .def_prop_rw("content",
         nb::overload_cast<>(&ResourceData::content, nb::const_),
-        nb::overload_cast<std::vector<uint8_t>>(&ResourceData::content),
-        "Resource content"_doc)
+        [] (ResourceData& self, nb::bytes bytes) {
+          self.content(nanobind::to_vector(bytes));
+        }, "Resource content"_doc)
 
     .def_prop_rw("reserved",
         nb::overload_cast<>(&ResourceData::reserved, nb::const_),

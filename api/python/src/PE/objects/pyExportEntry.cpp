@@ -37,7 +37,10 @@ void create<ExportEntry>(nb::module_& m) {
     LIEF_DEFAULT_STR(ExportEntry::forward_information_t);
 
   export_entry
-    .def(nb::init<>())
+    .def(nb::init<>(), "Default constructor"_doc)
+    .def(nb::init<std::string, uint32_t>(),
+         "name"_a, "addr"_a,
+         "Constructor with export name and address"_doc)
 
     .def_prop_rw("name",
         [] (const ExportEntry& obj) {

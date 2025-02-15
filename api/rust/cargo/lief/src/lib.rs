@@ -131,3 +131,28 @@ pub fn demangle(mangled: &str) -> Result<String, Error> {
         |e: cxx::UniquePtr<cxx::String>| { e.to_string() }
     );
 }
+
+/// Hexdump the provided buffer.
+///
+/// For instance:
+///
+/// ```text
+/// +---------------------------------------------------------------------+
+/// | 88 56 05 00 00 00 00 00 00 00 00 00 22 58 05 00  | .V.........."X.. |
+/// | 10 71 02 00 78 55 05 00 00 00 00 00 00 00 00 00  | .q..xU.......... |
+/// | 68 5c 05 00 00 70 02 00 00 00 00 00 00 00 00 00  | h\...p.......... |
+/// | 00 00 00 00 00 00 00 00 00 00 00 00              | ............     |
+/// +---------------------------------------------------------------------+
+/// ```
+pub fn dump(buffer: &[u8]) -> String {
+    unsafe {
+        lief_ffi::dump(buffer.as_ptr(), buffer.len()).to_string()
+    }
+}
+
+/// Same as [`dump`] but with a limit on the number of bytes to dump
+pub fn dump_with_limit(buffer: &[u8], limit: u64) -> String {
+    unsafe {
+        lief_ffi::dump_with_limit(buffer.as_ptr(), buffer.len(), limit).to_string()
+    }
+}

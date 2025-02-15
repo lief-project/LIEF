@@ -45,9 +45,27 @@ class LIEF_API Export : public Object {
   using it_const_entries = const_ref_iterator<const entries_t&>;
 
   Export() = default;
+
+  Export(std::string name, const entries_t& entries) :
+    name_(std::move(name))
+  {
+    for (const ExportEntry& E : entries) {
+      add_entry(E);
+    }
+  }
+
+  Export(std::string name) :
+    Export(std::move(name), {})
+  {}
+
   Export(const details::pe_export_directory_table& header);
+
   Export(const Export&) = default;
   Export& operator=(const Export&) = default;
+
+  Export(Export&&) = default;
+  Export& operator=(Export&&) = default;
+
   ~Export() override = default;
 
   /// According to the PE specifications this value is reserved
@@ -90,9 +108,40 @@ class LIEF_API Export : public Object {
     return entries_;
   }
 
+  /// Address of the ASCII DLL's name (RVA)
+  uint32_t name_rva() const {
+    return name_rva_;
+  }
+
+  /// RVA of the export address table
+  uint32_t export_addr_table_rva() const {
+    return exp_addr_table_rva_;
+  }
+
+  /// Number of entries in the export address table
+  uint32_t export_addr_table_cnt() const {
+    return exp_addr_table_cnt_;
+  }
+
+  /// RVA to the list of exported names
+  uint32_t names_addr_table_rva() const {
+    return names_addr_table_rva_;
+  }
+
+  /// Number of exports by name
+  uint32_t names_addr_table_cnt() const {
+    return names_addr_table_cnt_;
+  }
+
+  /// RVA to the list of exported ordinals
+  uint32_t ord_addr_table_rva() const {
+    return ord_addr_table_rva_;
+  }
+
   void export_flags(uint32_t flags) {
     export_flags_ = flags;
   }
+
   void timestamp(uint32_t timestamp) {
     timestamp_ = timestamp;
   }
@@ -104,6 +153,7 @@ class LIEF_API Export : public Object {
   void minor_version(uint16_t minor_version) {
     minor_version_ = minor_version;
   }
+
   void ordinal_base(uint32_t ordinal_base) {
     ordinal_base_ = ordinal_base;
   }
@@ -112,19 +162,72 @@ class LIEF_API Export : public Object {
     name_ = std::move(name);
   }
 
+  /// Find the export entry with the given name
+  const ExportEntry* find_entry(const std::string& name) const;
+
+  ExportEntry* find_entry(const std::string& name) {
+    return const_cast<ExportEntry*>(static_cast<const Export*>(this)->find_entry(name));
+  }
+
+  /// Find the export entry with the given ordinal number
+  const ExportEntry* find_entry(uint32_t ordinal) const;
+
+  ExportEntry* find_entry(uint32_t ordinal) {
+    return const_cast<ExportEntry*>(static_cast<const Export*>(this)->find_entry(ordinal));
+  }
+
+  /// Find the export entry at the provided RVA
+  const ExportEntry* find_entry_at(uint32_t rva) const;
+
+  ExportEntry* find_entry_at(uint32_t rva) {
+    return const_cast<ExportEntry*>(static_cast<const Export*>(this)->find_entry_at(rva));
+  }
+
+  /// Add the given export and return the newly created and added export
+  ExportEntry& add_entry(const ExportEntry& exp);
+
+  ExportEntry& add_entry(std::string name, uint32_t rva) {
+    return add_entry(ExportEntry(std::move(name), rva));
+  }
+
+  /// Remove the given export entry
+  bool remove_entry(const ExportEntry& exp);
+
+  /// Remove the export entry with the given name
+  bool remove_entry(const std::string& name) {
+    if (const ExportEntry* entry = find_entry(name)) {
+      return remove_entry(*entry);
+    }
+    return false;
+  }
+
+  /// Remove the export entry with the given RVA
+  bool remove_entry(uint32_t rva) {
+    if (const ExportEntry* entry = find_entry_at(rva)) {
+      return remove_entry(*entry);
+    }
+    return false;
+  }
+
   void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Export& exp);
 
   private:
   uint32_t export_flags_ = 0;
+  uint32_t name_rva_ = 0;
   uint32_t timestamp_ = 0;
   uint16_t major_version_ = 0;
   uint16_t minor_version_ = 0;
   uint32_t ordinal_base_ = 0;
+  uint32_t exp_addr_table_rva_ = 0;
+  uint32_t exp_addr_table_cnt_ = 0;
+  uint32_t names_addr_table_rva_ = 0;
+  uint32_t names_addr_table_cnt_ = 0;
+  uint32_t ord_addr_table_rva_ = 0;
+  uint32_t max_ordinal_ = 0;
   entries_t entries_;
   std::string name_;
-
 };
 
 }

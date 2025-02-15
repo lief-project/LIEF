@@ -23,7 +23,9 @@
 
 #include "LIEF/Visitor.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
+
 #include "LIEF/PE/Section.hpp"
+#include "LIEF/PE/COFFString.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -80,20 +82,13 @@ Section::Section(const details::pe_section& header) :
   offset_          = header.PointerToRawData;
 }
 
-Section::Section(const std::vector<uint8_t>& data, const std::string& name,
-                 uint32_t characteristics) :
-  Section::Section{}
-{
-  characteristics_ = characteristics;
-  name_            = name;
-  size_            = data.size();
-  content_         = data;
-}
-
-Section::Section(const std::string& name) :
-  Section::Section{}
-{
-  name_ = name;
+void Section::name(std::string name) {
+  if (name.size() > MAX_SECTION_NAME) {
+    LIEF_ERR("The max size of a section's name is {} vs {}", MAX_SECTION_NAME,
+             name.size());
+    return;
+  }
+  name_ = std::move(name);
 }
 
 uint32_t Section::sizeof_raw_data() const {
@@ -102,23 +97,6 @@ uint32_t Section::sizeof_raw_data() const {
 
 uint32_t Section::pointerto_raw_data() const {
   return offset();
-}
-
-const std::set<PE_SECTION_TYPES>& Section::types() const {
-  return types_;
-}
-
-bool Section::is_type(PE_SECTION_TYPES type) const {
-  return types_.count(type) != 0;
-}
-
-void Section::name(std::string name) {
-  if (name.size() > MAX_SECTION_NAME) {
-    LIEF_ERR("The max size of a section's name is {} vs {}", MAX_SECTION_NAME,
-             name.size());
-    return;
-  }
-  name_ = std::move(name);
 }
 
 std::vector<Section::CHARACTERISTICS> Section::characteristics_list() const {
@@ -135,30 +113,9 @@ void Section::content(const std::vector<uint8_t>& data) {
   content_ = data;
 }
 
-void Section::pointerto_raw_data(uint32_t pointerToRawData) {
-  offset(pointerToRawData);
-}
-
-void Section::sizeof_raw_data(uint32_t sizeOfRawData) {
-  size(sizeOfRawData);
-}
-
-void Section::type(PE_SECTION_TYPES type) {
-  types_ = {type};
-}
-
-void Section::remove_type(PE_SECTION_TYPES type) {
-  types_.erase(type);
-}
-
-void Section::add_type(PE_SECTION_TYPES type) {
-  types_.insert(type);
-}
-
 void Section::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }
-
 
 std::unique_ptr<SpanStream> Section::stream() const {
   return std::make_unique<SpanStream>(content());
@@ -169,6 +126,8 @@ void Section::clear(uint8_t c) {
 }
 
 std::ostream& operator<<(std::ostream& os, const Section& section) {
+  using namespace fmt;
+  static constexpr auto WIDTH = 24;
   const auto& list = section.characteristics_list();
   std::vector<std::string> list_str;
   list_str.reserve(list.size());
@@ -179,19 +138,29 @@ std::ostream& operator<<(std::ostream& os, const Section& section) {
   fullname_hex.reserve(section.name().size());
   std::transform(section.fullname().begin(), section.fullname().end(),
                  std::back_inserter(fullname_hex),
-                 [] (const char c) { return fmt::format("{:02x}", c); });
+                 [] (const char c) { return format("{:02x}", c); });
 
+  if (const COFFString* coff_str = section.coff_string()) {
+    os << format("{:{}} {} ({}, {})\n", "Name:", WIDTH, section.name(),
+                 join(fullname_hex, " "), coff_str->str());
+  } else {
+    os << format("{:{}} {} ({})\n", "Name:", WIDTH, section.name(),
+                 join(fullname_hex, " "));
+  }
 
-  os << fmt::format("Name:                    {} ({})\n", section.name(), fmt::join(fullname_hex, " "))
-     << fmt::format("Virtual size:            0x{:x}\n", section.virtual_size())
-     << fmt::format("Virtual address:         0x{:x}\n", section.virtual_address())
-     << fmt::format("Size of raw data:        0x{:x}\n", section.sizeof_raw_data())
-     << fmt::format("Pointer to raw data:     0x{:x}\n", section.pointerto_raw_data())
-     << fmt::format("Pointer to relocations:  0x{:x}\n", section.pointerto_relocation())
-     << fmt::format("Pointer to line numbers: 0x{:x}\n", section.pointerto_line_numbers())
-     << fmt::format("Number of relocations:   0x{:x}\n", section.numberof_relocations())
-     << fmt::format("Number of lines:         0x{:x}\n", section.numberof_line_numbers())
-     << fmt::format("Characteristics:         {}\n", fmt::join(list_str, ", "));
+  os << format("{:{}} 0x{:x}\n", "Virtual Size", WIDTH, section.virtual_size())
+     << format("{:{}} 0x{:x}\n", "Virtual Address", WIDTH, section.virtual_address())
+     << format("{:{}} [0x{:08x}, 0x{:08x}]\n", "Range", WIDTH,
+               section.virtual_address(), section.virtual_address() + section.virtual_size())
+     << format("{:{}} 0x{:x}\n", "Size of raw data", WIDTH, section.sizeof_raw_data())
+     << format("{:{}} 0x{:x}\n", "Pointer to raw data", WIDTH, section.pointerto_raw_data())
+     << format("{:{}} [0x{:08x}, 0x{:08x}]\n", "Range", WIDTH,
+               section.pointerto_raw_data(), section.pointerto_raw_data() + section.sizeof_raw_data())
+     << format("{:{}} 0x{:x}\n", "Pointer to relocations", WIDTH, section.pointerto_relocation())
+     << format("{:{}} 0x{:x}\n", "Pointer to line numbers", WIDTH, section.pointerto_line_numbers())
+     << format("{:{}} 0x{:x}\n", "Number of relocations", WIDTH, section.numberof_relocations())
+     << format("{:{}} 0x{:x}\n", "Number of lines", WIDTH, section.numberof_line_numbers())
+     << format("{:{}} {}", "Characteristics", WIDTH, join(list_str, ", "));
   return os;
 }
 

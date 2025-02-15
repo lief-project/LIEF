@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <sstream>
+
 #include "LIEF/PE/debug/CodeViewPDB.hpp"
 #include "LIEF/Visitor.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/endianness_support.hpp"
+#include "internal_utils.hpp"
 
 #include "spdlog/fmt/fmt.h"
 #include "spdlog/fmt/ranges.h"
@@ -27,12 +30,19 @@ namespace LIEF {
 namespace PE {
 
 CodeViewPDB::CodeViewPDB(const details::pe_debug& debug_info,
-                         const details::pe_pdb_70& pdb_70) :
-  CodeView{debug_info, SIGNATURES::PDB_70},
+                         const details::pe_pdb_70& pdb_70, Section* sec) :
+  CodeView{debug_info, SIGNATURES::PDB_70, sec},
   age_{pdb_70.age}
 {
   std::move(std::begin(pdb_70.signature), std::end(pdb_70.signature),
             std::begin(signature_));
+}
+
+CodeViewPDB::CodeViewPDB(const details::pe_debug& debug_info,
+                         const details::pe_pdb_20& pdb_20, Section* sec) :
+  CodeView{debug_info, SIGNATURES::PDB_20, sec},
+  age_{pdb_20.age}
+{
 }
 
 void CodeViewPDB::accept(Visitor& visitor) const {
@@ -59,14 +69,15 @@ std::string CodeViewPDB::guid() const {
   );
 }
 
-std::ostream& operator<<(std::ostream& os, const CodeViewPDB& entry) {
-  os << static_cast<const CodeView&>(entry) << '\n'
-     << fmt::format("[CV][PDB] age:       {}\n", entry.age())
-     << fmt::format("[CV][PDB] signature: {}\n", entry.signature())
-     << fmt::format("[CV][PDB] GUID:      {}\n", entry.guid())
-     << fmt::format("[CV][PDB] filename:  {}\n", entry.filename())
-  ;
-  return os;
+std::string CodeViewPDB::to_string() const {
+  using namespace fmt;
+  std::ostringstream os;
+  os << CodeView::to_string() << '\n'
+     << format("  age:       {}\n", age())
+     << format("  signature: {}\n", to_hex(signature(), 19))
+     << format("  GUID:      {}\n", guid())
+     << format("  filename:  {}", filename());
+  return os.str();
 }
 
 }

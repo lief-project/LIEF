@@ -14,6 +14,7 @@
  */
 #pragma once
 #include "LIEF/PE/Section.hpp"
+#include "LIEF/rust/PE/COFFString.hpp"
 #include "LIEF/rust/Abstract/Section.hpp"
 
 class PE_Section : public AbstractSection {
@@ -21,16 +22,22 @@ class PE_Section : public AbstractSection {
   using lief_t = LIEF::PE::Section;
   PE_Section(const lief_t& sec) : AbstractSection(sec) {}
 
-  uint32_t sizeof_raw_data() const { return impl().sizeof_raw_data(); }
-  uint32_t virtual_size() const { return impl().virtual_size(); }
-  uint32_t pointerto_raw_data() const { return impl().pointerto_raw_data(); }
-  uint32_t pointerto_relocation() const { return impl().pointerto_relocation(); }
-  uint32_t pointerto_line_numbers() const { return impl().pointerto_line_numbers(); }
-  uint32_t numberof_relocations() const { return impl().numberof_relocations(); }
-  uint32_t numberof_line_numbers() const { return impl().numberof_line_numbers(); }
-  uint64_t characteristics() const { return impl().characteristics(); }
+  auto sizeof_raw_data() const { return impl().sizeof_raw_data(); }
+  auto virtual_size() const { return impl().virtual_size(); }
+  auto pointerto_raw_data() const { return impl().pointerto_raw_data(); }
+  auto pointerto_relocation() const { return impl().pointerto_relocation(); }
+  auto pointerto_line_numbers() const { return impl().pointerto_line_numbers(); }
+  auto numberof_relocations() const { return impl().numberof_relocations(); }
+  auto numberof_line_numbers() const { return impl().numberof_line_numbers(); }
+  auto characteristics() const { return impl().characteristics(); }
+
+  auto is_discardable() const { return impl().is_discardable(); }
 
   Span padding() const { return make_span(impl().padding()); }
+
+  auto coff_string() const {
+    return details::try_unique<PE_COFFString>(impl().coff_string());
+  }
 
   private:
   const lief_t& impl() const { return as<lief_t>(this); }

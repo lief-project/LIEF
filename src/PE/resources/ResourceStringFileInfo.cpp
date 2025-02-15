@@ -13,43 +13,99 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-
+#include <sstream>
 #include "LIEF/Visitor.hpp"
 
 #include "LIEF/utils.hpp"
-#include "logging.hpp"
 
 #include "LIEF/PE/resources/ResourceStringFileInfo.hpp"
+#include "LIEF/PE/resources/ResourceStringTable.hpp"
+#include "LIEF/BinaryStream/BinaryStream.hpp"
+
+#include "logging.hpp"
+#include "internal_utils.hpp"
 
 namespace LIEF {
 namespace PE {
 
-ResourceStringFileInfo::ResourceStringFileInfo() :
-  key_{*u8tou16("StringFileInfo")}
-{}
 
-
-void ResourceStringFileInfo::key(const std::string& key) {
-  if (auto res = u8tou16(key)) {
-    key_ = std::move(*res);
-  } else {
-    LIEF_WARN("{} can't be converted in a UTF-16 string", key);
+result<ResourceStringFileInfo> ResourceStringFileInfo::parse(BinaryStream& stream) {
+  // typedef struct {
+  //   WORD        wLength;
+  //   WORD        wValueLength;
+  //   WORD        wType;
+  //   WCHAR       szKey;
+  //   WORD        Padding;
+  //   StringTable Children;
+  // } StringFileInfo;
+  ResourceStringFileInfo info;
+  auto wLength = stream.read<uint16_t>();
+  if (!wLength) {
+    LIEF_DEBUG("Error: {}:{}", __FUNCTION__, __LINE__);
+    return make_error_code(wLength.error());
   }
+
+  auto wValueLength = stream.read<uint16_t>();
+  if (!wValueLength) {
+    LIEF_DEBUG("Error: {}:{}", __FUNCTION__, __LINE__);
+    return make_error_code(wValueLength.error());
+  }
+
+  auto wType = stream.read<uint16_t>();
+  if (!wType) {
+    LIEF_DEBUG("Error: {}:{}", __FUNCTION__, __LINE__);
+    return make_error_code(wType.error());
+  }
+
+  if (*wType != 0 && wType != 1) {
+    LIEF_DEBUG("Error: {}:{}", __FUNCTION__, __LINE__);
+    return make_error_code(lief_errors::corrupted);
+  }
+
+  auto szKey = stream.read_u16string();
+  if (!szKey) {
+    LIEF_DEBUG("Error: {}:{}", __FUNCTION__, __LINE__);
+    return make_error_code(wType.error());
+  }
+
+  if (u16tou8(*szKey) != "StringFileInfo") {
+    LIEF_DEBUG("Error: {}:{}", __FUNCTION__, __LINE__);
+    return make_error_code(lief_errors::corrupted);
+  }
+
+  info
+    .type(*wType)
+    .key(std::move(*szKey));
+
+  stream.align(sizeof(uint32_t));
+  while (stream) {
+    auto item = ResourceStringTable::parse(stream);
+    if (!item) {
+      LIEF_WARN("Can't parse StringFileInfo.Children[{}]", info.children_.size());
+      break;
+    }
+    info.add_child(std::move(*item));
+  }
+  return info;
+}
+
+
+std::string ResourceStringFileInfo::key_u8() const {
+  return u16tou8(key());
 }
 
 void ResourceStringFileInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-std::ostream& operator<<(std::ostream& os, const ResourceStringFileInfo& string_file_info) {
-  os << std::hex << std::left;
-  os << std::setw(7) << std::setfill(' ') << "type: " << string_file_info.type()         << '\n';
-  os << std::setw(7) << std::setfill(' ') << "key: "  << u16tou8(string_file_info.key()) << '\n' << '\n';
-
-  for (const LangCodeItem& item : string_file_info.langcode_items()) {
-    os << item << '\n';
+std::ostream& operator<<(std::ostream& os, const ResourceStringFileInfo& info) {
+  os << fmt::format("BLOCK '{}' {{\n", info.key_u8());
+  for (const ResourceStringTable& table : info.children()) {
+    std::ostringstream oss;
+    oss << table;
+    os << indent(oss.str(), 2);
   }
+  os << '}';
   return os;
 }
 

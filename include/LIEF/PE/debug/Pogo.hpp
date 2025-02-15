@@ -47,15 +47,25 @@ class LIEF_API Pogo : public Debug {
     PGI     = 0x50474900, // PGI\0
   };
 
-  Pogo();
+  Pogo() {
+    type_ = Debug::TYPES::POGO;
+  }
+
   Pogo(SIGNATURES sig) :
     Debug{Debug::TYPES::POGO},
     sig_{sig}
   {}
 
-  Pogo(const details::pe_debug& debug, SIGNATURES sig);
+  Pogo(const details::pe_debug& debug, SIGNATURES sig, Section* sec) :
+    Debug(debug, sec),
+    sig_(sig)
+  {}
+
   Pogo(const Pogo&) = default;
   Pogo& operator=(const Pogo&) = default;
+
+  Pogo(Pogo&&) = default;
+  Pogo& operator=(Pogo&&) = default;
 
   std::unique_ptr<Debug> clone() const override {
     return std::unique_ptr<Debug>(new Pogo(*this));
@@ -84,7 +94,7 @@ class LIEF_API Pogo : public Debug {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Pogo& entry);
+  std::string to_string() const override;
 
   ~Pogo() override = default;
 

@@ -1,14 +1,14 @@
 target_sources(LIB_LIEF PRIVATE
-  LangCodeItem.cpp
+  AcceleratorCodes.cpp
   ResourceAccelerator.cpp
   ResourceDialog.cpp
-  ResourceDialogItem.cpp
-  ResourceFixedFileInfo.cpp
+  ResourceDialogExtended.cpp
+  ResourceDialogRegular.cpp
   ResourceIcon.cpp
   ResourceStringFileInfo.cpp
   ResourceStringTable.cpp
+  ResourceVar.cpp
   ResourceVarFileInfo.cpp
-  ResourceVersion.cpp
   ResourceVersion.cpp
 )
 

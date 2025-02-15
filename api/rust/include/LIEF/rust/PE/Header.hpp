@@ -28,11 +28,48 @@ class PE_Header : private Mirror<LIEF::PE::Header> {
     return details::make_vector(get().signature());
   }
 
-  uint32_t machine() const { return to_int(get().machine()); }
-  uint16_t numberof_sections() const { return get().numberof_sections(); }
-  uint32_t time_date_stamp() const { return get().time_date_stamp(); }
-  uint32_t pointerto_symbol_table() const { return get().pointerto_symbol_table(); }
-  uint32_t numberof_symbols() const { return get().numberof_symbols(); }
-  uint16_t sizeof_optional_header() const { return get().sizeof_optional_header(); }
-  uint32_t characteristics() const { return get().characteristics(); }
+  auto machine() const { return to_int(get().machine()); }
+  auto numberof_sections() const { return get().numberof_sections(); }
+  auto time_date_stamp() const { return get().time_date_stamp(); }
+  auto pointerto_symbol_table() const { return get().pointerto_symbol_table(); }
+  auto numberof_symbols() const { return get().numberof_symbols(); }
+  auto sizeof_optional_header() const { return get().sizeof_optional_header(); }
+  auto characteristics() const { return get().characteristics(); }
+
+  void set_machine(uint32_t value) {
+    get().machine((lief_t::MACHINE_TYPES)value);
+  }
+
+  void set_numberof_sections(uint16_t value) {
+    get().numberof_sections(value);
+  }
+
+  void set_time_date_stamp(uint32_t value) {
+    get().time_date_stamp(value);
+  }
+
+  void set_pointerto_symbol_table(uint32_t value) {
+    get().pointerto_symbol_table(value);
+  }
+
+  void set_numberof_symbols(uint32_t value) {
+    get().numberof_symbols(value);
+  }
+
+  void set_sizeof_optional_header(uint16_t value) {
+    get().sizeof_optional_header(value);
+  }
+
+  void set_characteristics(uint32_t value) {
+    get().characteristics(value);
+  }
+
+  void add_characteristic(uint32_t value) {
+    get().add_characteristic((lief_t::CHARACTERISTICS)value);
+  }
+
+  void remove_characteristic(uint32_t value) {
+    get().remove_characteristic((lief_t::CHARACTERISTICS)value);
+  }
+
 };

@@ -17,5 +17,4 @@
 #define C_LIEF_PE_H_
 
 #include "LIEF/PE/Binary.h"
-#include "LIEF/PE/EnumToString.h"
 #endif

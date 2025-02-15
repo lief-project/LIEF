@@ -87,6 +87,10 @@ std::string DebugInfo::guid() const {
   return "";
 }
 
+std::string DebugInfo::to_string() const {
+  return "";
+}
+
 std::unique_ptr<PublicSymbol>
 DebugInfo::find_public_symbol(const std::string&) const {
   return nullptr;

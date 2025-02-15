@@ -16,6 +16,7 @@
 #ifndef LIEF_PRIVATE_LOGGING_H
 #define LIEF_PRIVATE_LOGGING_H
 #include <memory>
+#include <sstream>
 
 #include "LIEF/logging.hpp" // Public interface
 #include "LIEF/config.h"
@@ -47,6 +48,16 @@
       std::abort();          \
     }                        \
   } while (false)
+
+#if defined (LIEF_LOGGING_DEBUG)
+#define LIEF_LOG_LOCATION()                             \
+  do {                                                  \
+    LIEF_DEBUG("{}:{}", __FUNCTION__, __LINE__); \
+  } while (false)
+#else
+#define LIEF_LOG_LOCATION()
+#endif
+
 
 namespace LIEF {
 namespace logging {
@@ -164,6 +175,54 @@ inline void needs_lief_extended() {
     Logger::instance().warn(NEEDS_EXTENDED_MSG);
   }
 }
+
+class Stream : public std::stringbuf {
+  public:
+  Stream(LEVEL lvl) :
+    lvl_(lvl)
+  {}
+
+  int sync() override {
+    switch (lvl_) {
+      case LEVEL::OFF:
+        break;
+
+      case LEVEL::TRACE:
+      case LEVEL::DEBUG:
+        {
+          LIEF_DEBUG("{}", str());
+          break;
+        }
+
+      case LEVEL::INFO:
+        {
+          LIEF_INFO("{}", str());
+          break;
+        }
+
+      case LEVEL::WARN:
+        {
+          LIEF_WARN("{}", str());
+          break;
+        }
+      case LEVEL::ERR:
+        {
+          LIEF_ERR("{}", str());
+          break;
+        }
+
+      case LEVEL::CRITICAL:
+        {
+          critical("{}", str());
+          break;
+        }
+    }
+    str("");
+    return 0;
+  }
+  protected:
+  LEVEL lvl_ = LEVEL::OFF;
+};
 
 }
 }

@@ -39,6 +39,13 @@ class LIEF_API ResourceDirectory : public ResourceNode {
   ResourceDirectory() :
     ResourceNode(ResourceNode::TYPE::DIRECTORY)
   {}
+
+  ResourceDirectory(uint32_t id) :
+    ResourceNode(ResourceNode::TYPE::DIRECTORY)
+  {
+    this->id(id);
+  }
+
   ResourceDirectory(const details::pe_resource_directory_table& header);
 
   ResourceDirectory(const ResourceDirectory& other) = default;
@@ -49,7 +56,7 @@ class LIEF_API ResourceDirectory : public ResourceNode {
   ~ResourceDirectory() override = default;
 
   std::unique_ptr<ResourceNode> clone() const override {
-    return std::unique_ptr<ResourceNode>(new ResourceDirectory{*this});
+    return std::unique_ptr<ResourceDirectory>(new ResourceDirectory{*this});
   }
 
   /// Resource characteristics. This field is reserved for future use.
@@ -113,8 +120,6 @@ class LIEF_API ResourceDirectory : public ResourceNode {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceDirectory& directory);
-
   private:
   uint32_t characteristics_ = 0;
   uint32_t timedatestamp_ = 0;
@@ -122,7 +127,6 @@ class LIEF_API ResourceDirectory : public ResourceNode {
   uint16_t minorversion_ = 0;
   uint16_t numberof_name_entries_ = 0;
   uint16_t numberof_id_entries_ = 0;
-
 };
 }
 }

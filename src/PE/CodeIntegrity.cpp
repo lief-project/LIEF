@@ -17,17 +17,42 @@
 
 #include "LIEF/PE/CodeIntegrity.hpp"
 #include "LIEF/Visitor.hpp"
-#include "PE/Structures.hpp"
+#include "LIEF/BinaryStream/BinaryStream.hpp"
 
 namespace LIEF {
 namespace PE {
 
-CodeIntegrity::CodeIntegrity(const details::pe_code_integrity& header) :
-  flags_{header.Flags},
-  catalog_{header.Catalog},
-  catalog_offset_{header.CatalogOffset},
-  reserved_{header.Reserved}
-{}
+result<CodeIntegrity> CodeIntegrity::parse(Parser&, BinaryStream& stream) {
+  auto flags = stream.read<uint16_t>();
+  if (!flags) {
+    return make_error_code(flags.error());
+  }
+
+  auto catalog = stream.read<uint16_t>();
+  if (!catalog) {
+    return make_error_code(catalog.error());
+  }
+
+  auto catalog_offset = stream.read<uint32_t>();
+  if (!catalog_offset) {
+    return make_error_code(catalog_offset.error());
+  }
+
+  auto reserved = stream.read<uint32_t>();
+  if (!reserved) {
+    return make_error_code(reserved.error());
+  }
+
+  CodeIntegrity code_integrity;
+
+  code_integrity
+    .flags(*flags)
+    .catalog(*catalog)
+    .catalog_offset(*catalog_offset)
+    .reserved(*reserved);
+
+  return code_integrity;
+}
 
 void CodeIntegrity::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);

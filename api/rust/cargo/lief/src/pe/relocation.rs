@@ -49,8 +49,9 @@ impl<'a> FromFFI<ffi::PE_Relocation> for Relocation<'a> {
     }
 }
 
+
 #[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum BaseType {
     ABS,
     HIGH,
@@ -58,45 +59,62 @@ pub enum BaseType {
     HIGHLOW,
     HIGHADJ,
     MIPS_JMPADDR,
-    ARM_MOV32A,
     ARM_MOV32,
     RISCV_HI20,
     SECTION,
-    REL,
-    ARM_MOV32T,
     THUMB_MOV32,
     RISCV_LOW12I,
     RISCV_LOW12S,
-    IA64_IMM64,
+    LOONARCH_MARK_LA,
     MIPS_JMPADDR16,
     DIR64,
     HIGH3ADJ,
     UNKNOWN(u32),
 }
 
-impl BaseType {
-    pub fn from_value(value: u32) -> Self {
+impl From<u32> for BaseType {
+    fn from(value: u32) -> Self {
         match value {
             0x00000000 => BaseType::ABS,
             0x00000001 => BaseType::HIGH,
             0x00000002 => BaseType::LOW,
             0x00000003 => BaseType::HIGHLOW,
             0x00000004 => BaseType::HIGHADJ,
-            0x00000005 => BaseType::MIPS_JMPADDR,
-            0x00000106 => BaseType::ARM_MOV32A,
-            0x00000107 => BaseType::ARM_MOV32,
-            0x00000108 => BaseType::RISCV_HI20,
+            0x00000105 => BaseType::MIPS_JMPADDR,
+            0x00000205 => BaseType::ARM_MOV32,
+            0x00000405 => BaseType::RISCV_HI20,
             0x00000006 => BaseType::SECTION,
-            0x00000007 => BaseType::REL,
-            0x00000208 => BaseType::ARM_MOV32T,
-            0x00000209 => BaseType::THUMB_MOV32,
-            0x0000020a => BaseType::RISCV_LOW12I,
-            0x00000008 => BaseType::RISCV_LOW12S,
-            0x00000009 => BaseType::IA64_IMM64,
-            0x00000309 => BaseType::MIPS_JMPADDR16,
+            0x00000807 => BaseType::THUMB_MOV32,
+            0x00001007 => BaseType::RISCV_LOW12I,
+            0x00002008 => BaseType::RISCV_LOW12S,
+            0x00004008 => BaseType::LOONARCH_MARK_LA,
+            0x00000009 => BaseType::MIPS_JMPADDR16,
             0x0000000a => BaseType::DIR64,
             0x0000000b => BaseType::HIGH3ADJ,
             _ => BaseType::UNKNOWN(value),
+        }
+    }
+}
+impl From<BaseType> for u32 {
+    fn from(value: BaseType) -> u32 {
+        match value {
+            BaseType::ABS => 0x00000000,
+            BaseType::HIGH => 0x00000001,
+            BaseType::LOW => 0x00000002,
+            BaseType::HIGHLOW => 0x00000003,
+            BaseType::HIGHADJ => 0x00000004,
+            BaseType::MIPS_JMPADDR => 0x00000105,
+            BaseType::ARM_MOV32 => 0x00000205,
+            BaseType::RISCV_HI20 => 0x00000405,
+            BaseType::SECTION => 0x00000006,
+            BaseType::THUMB_MOV32 => 0x00000807,
+            BaseType::RISCV_LOW12I => 0x00001007,
+            BaseType::RISCV_LOW12S => 0x00002008,
+            BaseType::LOONARCH_MARK_LA => 0x00004008,
+            BaseType::MIPS_JMPADDR16 => 0x00000009,
+            BaseType::DIR64 => 0x0000000a,
+            BaseType::HIGH3ADJ => 0x0000000b,
+            BaseType::UNKNOWN(value) => value,
         }
     }
 }
@@ -123,7 +141,7 @@ impl Entry<'_> {
 
     /// Type of the relocation
     pub fn get_type(&self) -> BaseType {
-        BaseType::from_value(self.ptr.get_type())
+        BaseType::from(self.ptr.get_type())
     }
 
     /// Raw data of the relocation:

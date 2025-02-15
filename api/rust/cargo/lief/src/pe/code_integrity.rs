@@ -5,7 +5,7 @@ use std::marker::PhantomData;
 
 pub struct CodeIntegrity<'a> {
     ptr: cxx::UniquePtr<ffi::PE_CodeIntegrity>,
-    _owner: PhantomData<&'a ffi::PE_LoadConfigurationV2>,
+    _owner: PhantomData<&'a ffi::PE_LoadConfiguration>,
 }
 
 impl std::fmt::Debug for CodeIntegrity<'_> {

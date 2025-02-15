@@ -34,6 +34,17 @@ endif()
 
 add_subdirectory(unittests)
 
+add_executable(test_define_conflicts
+  test_define_conflicts.cpp
+)
+
+set_target_properties(test_define_conflicts
+  PROPERTIES CXX_STANDARD           17
+             CXX_STANDARD_REQUIRED  ON)
+
+target_link_libraries(test_define_conflicts LIB_LIEF)
+
+
 if (CMAKE_CONFIGURATION_TYPES)
   add_custom_target(check-lief
     COMMAND ${CMAKE_CTEST_COMMAND} --parallel 1 --progress --output-on-failure --build-config "$<CONFIGURATION>")

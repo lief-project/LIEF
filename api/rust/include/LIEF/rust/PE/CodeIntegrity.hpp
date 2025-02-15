@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 #pragma once
-#include <cstdint>
 
 #include "LIEF/PE/CodeIntegrity.hpp"
 #include "LIEF/rust/Mirror.hpp"
@@ -23,8 +22,8 @@ class PE_CodeIntegrity : private Mirror<LIEF::PE::CodeIntegrity> {
   using lief_t = LIEF::PE::CodeIntegrity;
   using Mirror::Mirror;
 
-  uint16_t flags() const { return get().flags(); }
-  uint16_t catalog() const { return get().catalog(); }
-  uint32_t catalog_offset() const { return get().catalog_offset(); }
-  uint32_t reserved() const { return get().reserved(); }
+  auto flags() const { return get().flags(); }
+  auto catalog() const { return get().catalog(); }
+  auto catalog_offset() const { return get().catalog_offset(); }
+  auto reserved() const { return get().reserved(); }
 };

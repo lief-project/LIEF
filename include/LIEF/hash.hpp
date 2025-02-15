@@ -16,14 +16,14 @@
 #ifndef LIEF_HASH_H
 #define LIEF_HASH_H
 
-#include <ostream>
 #include <vector>
+#include <string>
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 #include "LIEF/Visitor.hpp"
 #include "LIEF/span.hpp"
-
+#include "LIEF/optional.hpp"
 
 namespace LIEF {
 
@@ -82,6 +82,14 @@ class LIEF_API Hash : public Visitor {
   template<class T>
   Hash& process(const std::set<T>& set) {
     process(std::begin(set), std::end(set));
+    return *this;
+  }
+
+  template<class T>
+  Hash& process(const optional<T>& opt) {
+    if (opt) {
+      return process(*opt);
+    }
     return *this;
   }
 

@@ -71,10 +71,6 @@ Basically the :ref:`hooking-code` replaces the ``__acrt_iob_func`` function and 
   As for tutorial :ref:`02-pe-from-scratch`, the address of ``MessageBoxA`` and ``ExitProcess`` can be found
   with the function:
 
-  .. automethod:: lief.PE.Binary.predict_function_rva
-    :noindex:
-
-
 First we create the ``.htext`` section which will hold the hooking code:
 
 .. code-block:: python

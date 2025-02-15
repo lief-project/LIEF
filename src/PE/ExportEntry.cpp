@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-
 #include "logging.hpp"
 
 #include "LIEF/config.h"
 #include "LIEF/utils.hpp"
 #include "LIEF/Visitor.hpp"
 #include "LIEF/PE/ExportEntry.hpp"
+
+#include "internal_utils.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -38,27 +38,16 @@ void ExportEntry::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-std::ostream& operator<<(std::ostream& os, const ExportEntry& export_entry) {
-  os << std::hex;
-  os << std::left;
-  std::string name = export_entry.name();
-  if (name.size() > 30) {
-    name = name.substr(0, 27) + "... ";
-  }
-  os << std::setw(33) << name;
-  os << std::setw(5)  << export_entry.ordinal();
-
-  if (!export_entry.is_extern()) {
-    os << std::setw(10) << export_entry.address();
-  } else {
-    os << std::setw(10) << "[Extern]";
-  }
-
-  if (export_entry.is_forwarded()) {
-    os << " " << export_entry.forward_information();
+std::ostream& operator<<(std::ostream& os, const ExportEntry& entry) {
+  using namespace fmt;
+  os << format("{:04d} {:5} 0x{:08x} {}",
+               entry.ordinal(), entry.is_extern() ? "[EXT]" : "",
+               entry.address(), entry.name());
+  if (entry.is_forwarded()) {
+    os << format(" ({})", LIEF::to_string(entry.forward_information()));
   }
   return os;
-}
+ }
 
 }
 }

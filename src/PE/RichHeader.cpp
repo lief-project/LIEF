@@ -23,9 +23,6 @@
 #include "frozen.hpp"
 #include "logging.hpp"
 
-#define LIEF_PE_FORCE_UNDEF
-#include "LIEF/PE/undef.h"
-
 #include "hash_stream.hpp"
 
 namespace LIEF {
@@ -84,9 +81,11 @@ std::vector<uint8_t> RichHeader::hash(ALGORITHMS algo, uint32_t xor_key) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const RichHeader& rich_header) {
-  os << "Key: " << std::hex << rich_header.key() << '\n';
+  using namespace fmt;
+  os << format("Key: 0x{:08x} ({} entries)\n", rich_header.key(),
+               rich_header.entries().size());
   for (const RichEntry& entry : rich_header.entries()) {
-    os << "  - " << entry << '\n';
+    os << "  " << entry << '\n';
   }
   return os;
 }

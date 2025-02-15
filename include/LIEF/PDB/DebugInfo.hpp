@@ -16,6 +16,7 @@
 #define LIEF_PDB_INFO_H
 #include <memory>
 #include <string>
+#include <ostream>
 
 #include "LIEF/iterators.hpp"
 #include "LIEF/Abstract/DebugInfo.hpp"
@@ -89,6 +90,15 @@ class LIEF_API DebugInfo : public LIEF::DebugInfo {
   /// Unique identifier of the PDB file
   std::string guid() const;
 
+  /// Pretty representation
+  std::string to_string() const;
+
+  friend LIEF_API
+    std::ostream& operator<<(std::ostream& os, const DebugInfo& dbg)
+  {
+    os << dbg.to_string();
+    return os;
+  }
 
   ~DebugInfo() override = default;
 };

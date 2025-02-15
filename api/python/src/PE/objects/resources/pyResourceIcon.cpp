@@ -15,8 +15,10 @@
  */
 #include "PE/pyPE.hpp"
 #include "nanobind/extra/stl/lief_span.h"
+#include "nanobind/utils.hpp"
 
 #include "LIEF/PE/resources/ResourceIcon.hpp"
+#include "pyErr.hpp"
 
 #include <vector>
 #include <string>
@@ -76,12 +78,23 @@ void create<ResourceIcon>(nb::module_& m) {
 
     .def_prop_rw("pixels",
         nb::overload_cast<>(&ResourceIcon::pixels, nb::const_),
-        nb::overload_cast<const std::vector<uint8_t>&>(&ResourceIcon::pixels))
+        nb::overload_cast<std::vector<uint8_t>>(&ResourceIcon::pixels))
 
-    .def("save",
-        &ResourceIcon::save,
+    .def("save", &ResourceIcon::save,
         "Save the icon to the given filepath"_doc,
         "filepath"_a)
+
+    .def("serialize", [] (ResourceIcon& self) {
+          return nb::to_bytes(self.serialize());
+        },
+        "Serialize the current icon into bytes"_doc)
+
+    .def_static("from_serialization", [] (nb::bytes bytes) {
+        return LIEF::py::error_or(
+          nb::overload_cast<const uint8_t*, size_t>(&ResourceIcon::from_serialization),
+          (const uint8_t*)bytes.data(), bytes.size());
+      },
+      "Create an icon instance from the serialized bytes"_doc)
 
     LIEF_DEFAULT_STR(ResourceIcon);
 }

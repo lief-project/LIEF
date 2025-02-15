@@ -1,6 +1,5 @@
 /* Copyright 2017 - 2025 R. Thomas
  * Copyright 2017 - 2025 Quarkslab
- * Copyright 2017 - 2021 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -208,12 +207,11 @@ void Hash::visit(const Symbol& symbol) {
   process(symbol.value());
   process(symbol.size());
 
-  process(symbol.section_number());
+  process(symbol.section_idx());
   process(symbol.type());
   process(symbol.base_type());
   process(symbol.complex_type());
   process(symbol.storage_class());
-  process(symbol.numberof_aux_symbols());
 }
 
 void Hash::visit(const Debug& debug) {
@@ -228,7 +226,7 @@ void Hash::visit(const Debug& debug) {
 }
 
 void Hash::visit(const CodeView& cv) {
-  visit(*cv.as<Debug>());
+  visit(static_cast<const Debug&>(cv));
   process(cv.signature());
 }
 
@@ -307,11 +305,8 @@ void Hash::visit(const ResourcesManager& resources_manager) {
   if (resources_manager.has_manifest()) {
     process(resources_manager.manifest());
   }
-
-  if (resources_manager.has_version()) {
-    if (auto version = resources_manager.version()) {
-      process(*version);
-    }
+  for (const ResourceVersion& version : resources_manager.version()) {
+    process(version);
   }
 
   if (resources_manager.has_icons()) {
@@ -323,60 +318,55 @@ void Hash::visit(const ResourcesManager& resources_manager) {
   }
 }
 
-void Hash::visit(const ResourceStringFileInfo& resource_sfi) {
-  process(resource_sfi.type());
-  process(resource_sfi.key());
-  process(std::begin(resource_sfi.langcode_items()), std::end(resource_sfi.langcode_items()));
-}
-
-void Hash::visit(const ResourceFixedFileInfo& resource_ffi) {
-  process(resource_ffi.signature());
-  process(resource_ffi.struct_version());
-  process(resource_ffi.file_version_MS());
-  process(resource_ffi.file_version_LS());
-  process(resource_ffi.product_version_MS());
-  process(resource_ffi.product_version_LS());
-  process(resource_ffi.file_flags_mask());
-  process(resource_ffi.file_flags());
-  process(resource_ffi.file_os());
-  process(resource_ffi.file_type());
-  process(resource_ffi.file_subtype());
-  process(resource_ffi.file_date_MS());
-  process(resource_ffi.file_date_LS());
-}
-
-void Hash::visit(const ResourceVarFileInfo& resource_vfi) {
-  process(resource_vfi.type());
-  process(resource_vfi.key());
-  process(resource_vfi.translations());
-}
-
-void Hash::visit(const LangCodeItem& resource_lci) {
-  process(resource_lci.type());
-  process(resource_lci.key());
-  for (const std::pair<const std::u16string, std::u16string>& p : resource_lci.items()) {
-    process(p.first);
-    process(p.second);
+void Hash::visit(const ResourceStringFileInfo& info) {
+  process(info.type());
+  process(info.key());
+  for (const ResourceStringTable& table : info.children()) {
+    for (const ResourceStringTable::entry_t& entry : table.entries()) {
+      process(entry.key);
+      process(entry.value);
+    }
   }
 }
 
+void Hash::visit(const ResourceVarFileInfo& info) {
+  process(info.type());
+  process(info.key());
+  for (const ResourceVar& var : info.vars()) {
+    for (uint32_t value : var.values()) {
+      process(value);
+    }
+  }
+}
 
-void Hash::visit(const ResourceVersion& resource_version) {
-  process(resource_version.type());
-  process(resource_version.key());
+void Hash::visit(const ResourceVersion& version) {
+  process(version.type());
+  process(version.key());
 
-  if (resource_version.has_fixed_file_info()) {
-    process(*resource_version.fixed_file_info());
+  {
+    const ResourceVersion::fixed_file_info_t& info = version.file_info();
+    process(info.signature);
+    process(info.struct_version);
+    process(info.file_version_ms);
+    process(info.file_version_ls);
+    process(info.product_version_ms);
+    process(info.product_version_ls);
+    process(info.file_flags_mask);
+    process(info.file_flags);
+    process(info.file_os);
+    process(info.file_type);
+    process(info.file_subtype);
+    process(info.file_date_ms);
+    process(info.file_date_ls);
   }
 
-  if (resource_version.has_string_file_info()) {
-    process(*resource_version.string_file_info());
+  if (const ResourceStringFileInfo* info = version.string_file_info()) {
+    process(*info);
   }
 
-  if (resource_version.has_var_file_info()) {
-    process(*resource_version.var_file_info());
+  if (const ResourceVarFileInfo* info = version.var_file_info()) {
+    process(*info);
   }
-
 }
 
 void Hash::visit(const ResourceIcon& resource_icon) {
@@ -395,48 +385,11 @@ void Hash::visit(const ResourceIcon& resource_icon) {
 
 }
 
-void Hash::visit(const ResourceDialog& dialog) {
-  process(dialog.x());
-  process(dialog.y());
-  process(dialog.cx());
-  process(dialog.cy());
-  process(dialog.style());
-  process(dialog.extended_style());
-
-  process(std::begin(dialog.items()), std::end(dialog.items()));
-
-  if (dialog.is_extended()) {
-    process(dialog.version());
-    process(dialog.signature());
-    process(dialog.help_id());
-    process(dialog.weight());
-    process(dialog.point_size());
-    process(static_cast<size_t>(dialog.is_italic()));
-    process(dialog.charset());
-    process(dialog.title());
-    process(dialog.typeface());
+void Hash::visit(const ResourceStringTable& table) {
+  for (const ResourceStringTable::entry_t& entry : table.entries()) {
+    process(entry.key);
+    process(entry.value);
   }
-
-}
-
-
-void Hash::visit(const ResourceDialogItem& dialog_item) {
-  process(dialog_item.x());
-  process(dialog_item.y());
-  process(dialog_item.cx());
-  process(dialog_item.cy());
-  process(dialog_item.id());
-  process(dialog_item.style());
-  process(dialog_item.extended_style());
-  if (dialog_item.is_extended()) {
-    process(dialog_item.help_id());
-    process(dialog_item.title());
-  }
-}
-
-void Hash::visit(const ResourceStringTable& string_table) {
-  process(string_table.length());
-  process(string_table.name());
 }
 
 void Hash::visit(const ResourceAccelerator& accelerator) {
@@ -591,88 +544,43 @@ void Hash::visit(const LoadConfiguration& config) {
   process(config.reserved1());
   process(config.editlist());
   process(config.security_cookie());
-}
-
-void Hash::visit(const LoadConfigurationV0& config) {
-  visit(*config.as<LoadConfiguration>());
   process(config.se_handler_table());
   process(config.se_handler_count());
-}
-
-void Hash::visit(const LoadConfigurationV1& config) {
-  visit(*config.as<LoadConfigurationV0>());
   process(config.guard_cf_check_function_pointer());
   process(config.guard_cf_dispatch_function_pointer());
   process(config.guard_cf_function_table());
   process(config.guard_cf_function_count());
   process(config.guard_flags());
-}
-
-void Hash::visit(const LoadConfigurationV2& config) {
-  visit(*config.as<LoadConfigurationV1>());
-  process(config.code_integrity());
-}
-
-void Hash::visit(const LoadConfigurationV3& config) {
-  visit(*config.as<LoadConfigurationV2>());
+  if (const CodeIntegrity* CI = config.code_integrity()) {
+    process(*CI);
+  }
   process(config.guard_address_taken_iat_entry_table());
   process(config.guard_address_taken_iat_entry_count());
   process(config.guard_long_jump_target_table());
   process(config.guard_long_jump_target_count());
-}
-
-void Hash::visit(const LoadConfigurationV4& config) {
-  visit(*config.as<LoadConfigurationV3>());
   process(config.dynamic_value_reloc_table());
   process(config.hybrid_metadata_pointer());
-}
-
-void Hash::visit(const LoadConfigurationV5& config) {
-  visit(*config.as<LoadConfigurationV4>());
   process(config.guard_rf_failure_routine());
   process(config.guard_rf_failure_routine_function_pointer());
   process(config.dynamic_value_reloctable_offset());
   process(config.dynamic_value_reloctable_section());
-}
-
-void Hash::visit(const LoadConfigurationV6& config) {
-  visit(*config.as<LoadConfigurationV5>());
   process(config.guard_rf_verify_stackpointer_function_pointer());
   process(config.hotpatch_table_offset());
-}
-
-void Hash::visit(const LoadConfigurationV7& config) {
-  visit(*config.as<LoadConfigurationV6>());
   process(config.reserved3());
-  process(config.addressof_unicode_string());
-}
-
-void Hash::visit(const LoadConfigurationV8& config) {
-  visit(*config.as<LoadConfigurationV7>());
+  process(config.enclave_configuration_ptr());
   process(config.volatile_metadata_pointer());
-}
-
-void Hash::visit(const LoadConfigurationV9& config) {
-  visit(*config.as<LoadConfigurationV8>());
   process(config.guard_eh_continuation_table());
   process(config.guard_eh_continuation_count());
-}
-
-void Hash::visit(const LoadConfigurationV10& config) {
-  visit(*config.as<LoadConfigurationV9>());
   process(config.guard_xfg_check_function_pointer());
   process(config.guard_xfg_dispatch_function_pointer());
   process(config.guard_xfg_table_dispatch_function_pointer());
-}
-
-void Hash::visit(const LoadConfigurationV11& config) {
-  visit(*config.as<LoadConfigurationV10>());
   process(config.cast_guard_os_determined_failure_mode());
+  process(config.guard_memcpy_function_pointer());
 }
 
 void Hash::visit(const Pogo& pogo) {
   Pogo::it_const_entries entries = pogo.entries();
-  visit(*pogo.as<Debug>());
+  visit(static_cast<const Debug&>(pogo));
   process(pogo.signature());
   process(std::begin(entries), std::end(entries));
 }
@@ -685,8 +593,71 @@ void Hash::visit(const PogoEntry& entry) {
 }
 
 void Hash::visit(const Repro& repro) {
-  visit(*repro.as<Debug>());
+  visit(static_cast<const Debug&>(repro));
   process(repro.hash());
+}
+
+void Hash::visit(const ResourceDialogRegular& dialog) {
+  process(dialog.style());
+  process(dialog.extended_style());
+  process(dialog.x());
+  process(dialog.y());
+  process(dialog.cx());
+  process(dialog.cy());
+  process(dialog.font().point_size);
+  process(dialog.font().name);
+  process(dialog.menu().ordinal.value_or(0));
+  process(dialog.menu().string);
+
+  for (const ResourceDialogRegular::Item& item : dialog.items()) {
+    process(item.id());
+    process(item.style());
+    process(item.extended_style());
+    process(item.x());
+    process(item.y());
+    process(item.cx());
+    process(item.cy());
+    process(item.clazz().ordinal.value_or(0));
+    process(item.clazz().string);
+    process(item.title().ordinal.value_or(0));
+    process(item.title().string);
+    process(item.creation_data());
+  }
+}
+
+void Hash::visit(const ResourceDialogExtended& dialog) {
+  process(dialog.help_id());
+  process(dialog.style());
+  process(dialog.extended_style());
+  process(dialog.x());
+  process(dialog.y());
+  process(dialog.cx());
+  process(dialog.cy());
+  process(dialog.font().point_size);
+  process(dialog.font().typeface);
+  process(dialog.font().italic);
+  process(dialog.font().charset);
+  process(dialog.font().weight);
+  process(dialog.menu().ordinal.value_or(0));
+  process(dialog.menu().string);
+
+
+  for (const ResourceDialogExtended::Item& item : dialog.items()) {
+    process(item.help_id());
+    process(item.id());
+    process(item.style());
+    process(item.extended_style());
+    process(item.x());
+    process(item.y());
+    process(item.cx());
+    process(item.cy());
+    process(item.clazz().ordinal.value_or(0));
+    process(item.clazz().string);
+    process(item.title().ordinal.value_or(0));
+    process(item.title().string);
+    process(item.creation_data());
+  }
+
 }
 
 } // namespace PE

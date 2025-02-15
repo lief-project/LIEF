@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-
 #include "logging.hpp"
 
 #include "LIEF/config.h"
@@ -24,28 +22,6 @@
 
 namespace LIEF {
 namespace PE {
-
-ImportEntry::ImportEntry(uint64_t data, const std::string& name) :
-  data_{data},
-  type_{PE_TYPE::PE32}
-{
-  name_ = name;
-}
-
-ImportEntry::ImportEntry(uint64_t data, PE_TYPE type, const std::string& name) :
-  data_{data},
-  type_{type}
-{
-  name_ = name;
-}
-
-ImportEntry::ImportEntry(const std::string& name) :
-  ImportEntry{0, name}
-{}
-
-ImportEntry::ImportEntry(const std::string& name, PE_TYPE type) :
-  ImportEntry{0, type, name}
-{}
 
 std::string ImportEntry::demangled_name() const {
   logging::needs_lief_extended();
@@ -59,13 +35,14 @@ std::string ImportEntry::demangled_name() const {
 
 bool ImportEntry::is_ordinal() const {
   // See: https://docs.microsoft.com/en-us/windows/desktop/debug/pe-format#the-idata-section
-  const uint64_t ORDINAL_MASK = type_ == PE_TYPE::PE32 ? 0x80000000 : 0x8000000000000000;
-  bool ordinal_bit_is_set = static_cast<bool>(data_ & ORDINAL_MASK);
+  const uint64_t ORDINAL_MASK = (type_ == PE_TYPE::PE32) ? 0x80000000 : 0x8000000000000000;
+  bool ordinal_bit_is_set = (data_ & ORDINAL_MASK) != 0;
 
   // Check that bit 31 / 63 is set
   if (!ordinal_bit_is_set) {
     return false;
   }
+
   // Check that bits 30-15 / 62-15 are set to 0.
   uint64_t val = (data_ & ~ORDINAL_MASK) >> 16;
   return val == 0;
@@ -76,14 +53,10 @@ void ImportEntry::accept(LIEF::Visitor& visitor) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const ImportEntry& entry) {
-  os << std::hex;
-  os << std::left;
-  if (!entry.is_ordinal()) {
-    os << std::setw(33) << entry.name();
-  }
-  os << std::setw(20) << entry.data();
-  os << std::setw(20) << entry.iat_value();
-  os << std::setw(20) << entry.hint();
+  using namespace fmt;
+  os << (!entry.is_ordinal() ?
+        format("0x{:04x}: {}", entry.hint(), entry.name()) :
+        format("0x{:04x}: {}", entry.hint(), entry.ordinal()));
   return os;
 }
 

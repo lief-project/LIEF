@@ -56,7 +56,7 @@ enum LIEF_PE_SUBSYSTEM {
 };
 
 struct Pe_OptionalHeader_t {
-  enum LIEF_PE_PE_TYPES  magic;
+  uint16_t       magic;
   uint8_t        major_linker_version;
   uint8_t        minor_linker_version;
   uint32_t       sizeof_code;

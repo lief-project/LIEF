@@ -1,16 +1,20 @@
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 import enum
 import io
 import lief.PE
 import os
 from typing import Iterator, Optional, Union, overload
 
+from . import (
+    unwind_aarch64 as unwind_aarch64,
+    unwind_x64 as unwind_x64
+)
 import lief
 
 
-class ACCELERATOR_FLAGS(enum.Flag):
+class ACCELERATOR_CODES(enum.Enum):
     @staticmethod
-    def from_value(arg: int, /) -> ACCELERATOR_FLAGS: ...
+    def from_value(arg: int, /) -> ACCELERATOR_CODES: ...
 
     def __eq__(self, arg, /) -> bool: ...
 
@@ -18,375 +22,347 @@ class ACCELERATOR_FLAGS(enum.Flag):
 
     def __int__(self) -> int: ...
 
-    FVIRTKEY = 1
+    LBUTTON = 1
 
-    FNOINVERT = 2
+    RBUTTON = 2
 
-    FSHIFT = 4
+    CANCEL = 3
 
-    FCONTROL = 8
+    MBUTTON = 4
 
-    FALT = 16
+    XBUTTON1_K = 5
 
-    END = 128
+    XBUTTON2_K = 6
 
-class ACCELERATOR_VK_CODES(enum.Enum):
-    @staticmethod
-    def from_value(arg: int, /) -> ACCELERATOR_VK_CODES: ...
+    BACK = 8
 
-    def __eq__(self, arg, /) -> bool: ...
+    TAB = 9
 
-    def __ne__(self, arg, /) -> bool: ...
+    CLEAR = 12
 
-    def __int__(self) -> int: ...
+    RETURN = 13
 
-    VK_LBUTTON = 1
+    SHIFT = 16
 
-    VK_RBUTTON = 2
+    CONTROL = 17
 
-    VK_CANCEL = 3
+    MENU = 18
 
-    VK_MBUTTON = 4
+    PAUSE = 19
 
-    VK_XBUTTON1 = 5
+    CAPITAL = 20
 
-    VK_XBUTTON2 = 6
+    KANA = 21
 
-    VK_BACK = 8
+    IME_ON = 22
 
-    VK_TAB = 9
+    JUNJA = 23
 
-    VK_CLEAR = 12
+    FINAL = 24
 
-    VK_RETURN = 13
+    KANJI = 25
 
-    VK_SHIFT = 16
+    IME_OFF = 26
 
-    VK_CONTROL = 17
+    ESCAPE = 27
 
-    VK_MENU = 18
+    CONVERT = 28
 
-    VK_PAUSE = 19
+    NONCONVERT = 29
 
-    VK_CAPITAL = 20
+    ACCEPT = 30
 
-    VK_KANA = 21
+    MODECHANGE = 31
 
-    VK_HANGUEL = 21
+    SPACE = 32
 
-    VK_HANGUL = 21
+    PRIOR = 33
 
-    VK_IME_ON = 22
+    NEXT = 34
 
-    VK_JUNJA = 23
+    END = 35
 
-    VK_FINAL = 24
+    HOME = 36
 
-    VK_HANJA = 25
+    LEFT = 37
 
-    VK_KANJI = 25
+    UP = 38
 
-    VK_IME_OFF = 26
+    RIGHT = 39
 
-    VK_ESCAPE = 27
+    DOWN = 40
 
-    VK_CONVERT = 28
+    SELECT = 41
 
-    VK_NONCONVERT = 29
+    PRINT = 42
 
-    VK_ACCEPT = 30
+    EXECUTE = 43
 
-    VK_MODECHANGE = 31
+    SNAPSHOT = 44
 
-    VK_SPACE = 32
+    INSERT = 45
 
-    VK_PRIOR = 33
+    DELETE_K = 46
 
-    VK_NEXT = 34
+    HELP = 47
 
-    VK_END = 35
+    NUM_0 = 48
 
-    VK_HOME = 36
+    NUM_1 = 49
 
-    VK_LEFT = 37
+    NUM_2 = 50
 
-    VK_UP = 38
+    NUM_3 = 51
 
-    VK_RIGHT = 39
+    NUM_4 = 52
 
-    VK_DOWN = 40
+    NUM_5 = 53
 
-    VK_SELECT = 41
+    NUM_6 = 54
 
-    VK_PRINT = 42
+    NUM_7 = 55
 
-    VK_EXECUTE = 43
+    NUM_8 = 56
 
-    VK_SNAPSHOT = 44
+    NUM_9 = 57
 
-    VK_INSERT = 45
+    A = 65
 
-    VK_DELETE = 46
+    B = 66
 
-    VK_HELP = 47
+    C = 67
 
-    VK_0 = 48
+    D = 68
 
-    VK_1 = 49
+    E = 69
 
-    VK_2 = 50
+    F = 70
 
-    VK_3 = 51
+    G = 71
 
-    VK_4 = 52
+    H = 72
 
-    VK_5 = 53
+    I = 73
 
-    VK_6 = 54
+    J = 74
 
-    VK_7 = 55
+    K = 75
 
-    VK_8 = 56
+    L = 76
 
-    VK_9 = 57
+    M = 77
 
-    VK_A = 65
+    N = 78
 
-    VK_B = 66
+    O = 79
 
-    VK_C = 67
+    P = 80
 
-    VK_D = 68
+    Q = 81
 
-    VK_E = 69
+    R = 82
 
-    VK_F = 70
+    S = 83
 
-    VK_G = 71
+    T = 84
 
-    VK_H = 72
+    U = 85
 
-    VK_I = 73
+    V = 86
 
-    VK_J = 74
+    W = 87
 
-    VK_K = 75
+    X = 88
 
-    VK_L = 76
+    Y = 89
 
-    VK_M = 77
+    Z = 90
 
-    VK_N = 78
+    LWIN = 91
 
-    VK_O = 79
+    RWIN = 92
 
-    VK_P = 80
+    APPS = 93
 
-    VK_Q = 81
+    SLEEP = 95
 
-    VK_R = 82
+    NUMPAD0 = 96
 
-    VK_S = 83
+    NUMPAD1 = 97
 
-    VK_T = 84
+    NUMPAD2 = 98
 
-    VK_U = 85
+    NUMPAD3 = 99
 
-    VK_V = 86
+    NUMPAD4 = 100
 
-    VK_W = 87
+    NUMPAD5 = 101
 
-    VK_X = 88
+    NUMPAD6 = 102
 
-    VK_Y = 89
+    NUMPAD7 = 103
 
-    VK_Z = 96
+    NUMPAD8 = 104
 
-    VK_LWIN = 91
+    NUMPAD9 = 105
 
-    VK_RWIN = 92
+    MULTIPLY = 106
 
-    VK_APPS = 93
+    ADD = 107
 
-    VK_SLEEP = 95
+    SEPARATOR = 108
 
-    VK_NUMPAD0 = 96
+    SUBTRACT = 109
 
-    VK_NUMPAD1 = 97
+    DECIMAL = 110
 
-    VK_NUMPAD2 = 98
+    DIVIDE = 111
 
-    VK_NUMPAD3 = 99
+    F1 = 112
 
-    VK_NUMPAD4 = 100
+    F2 = 113
 
-    VK_NUMPAD5 = 101
+    F3 = 114
 
-    VK_NUMPAD6 = 102
+    F4 = 115
 
-    VK_NUMPAD7 = 103
+    F5 = 116
 
-    VK_NUMPAD8 = 104
+    F6 = 117
 
-    VK_NUMPAD9 = 105
+    F7 = 118
 
-    VK_MULTIPLY = 106
+    F8 = 119
 
-    VK_ADD = 107
+    F9 = 120
 
-    VK_SEPARATOR = 108
+    F10 = 121
 
-    VK_SUBTRACT = 109
+    F11 = 122
 
-    VK_DECIMAL = 110
+    F12 = 123
 
-    VK_DIVIDE = 111
+    F13 = 124
 
-    VK_F1 = 112
+    F14 = 125
 
-    VK_F2 = 113
+    F15 = 126
 
-    VK_F3 = 114
+    F16 = 127
 
-    VK_F4 = 115
+    F17 = 128
 
-    VK_F5 = 116
+    F18 = 129
 
-    VK_F6 = 117
+    F19 = 130
 
-    VK_F7 = 118
+    F20 = 131
 
-    VK_F8 = 119
+    F21 = 132
 
-    VK_F9 = 120
+    F22 = 133
 
-    VK_F10 = 121
+    F23 = 134
 
-    VK_F11 = 122
+    F24 = 135
 
-    VK_F12 = 123
+    NUMLOCK = 144
 
-    VK_F13 = 124
+    SCROLL = 145
 
-    VK_F14 = 125
+    LSHIFT = 160
 
-    VK_F15 = 126
+    RSHIFT = 161
 
-    VK_F16 = 127
+    LCONTROL = 162
 
-    VK_F17 = 128
+    RCONTROL = 163
 
-    VK_F18 = 129
+    LMENU = 164
 
-    VK_F19 = 130
+    RMENU = 165
 
-    VK_F20 = 131
+    BROWSER_BACK = 166
 
-    VK_F21 = 132
+    BROWSER_FORWARD = 167
 
-    VK_F22 = 133
+    BROWSER_REFRESH = 168
 
-    VK_F23 = 134
+    BROWSER_STOP = 169
 
-    VK_F24 = 135
+    BROWSER_SEARCH = 170
 
-    VK_NUMLOCK = 144
+    BROWSER_FAVORITES = 171
 
-    VK_SCROLL = 145
+    BROWSER_HOME = 172
 
-    VK_LSHIFT = 160
+    VOLUME_MUTE = 173
 
-    VK_RSHIFT = 161
+    VOLUME_DOWN = 174
 
-    VK_LCONTROL = 162
+    VOLUME_UP = 175
 
-    VK_RCONTROL = 163
+    MEDIA_NEXT_TRACK = 176
 
-    VK_LMENU = 164
+    MEDIA_PREV_TRACK = 177
 
-    VK_RMENU = 165
+    MEDIA_STOP = 178
 
-    VK_BROWSER_BACK = 166
+    MEDIA_PLAY_PAUSE = 179
 
-    VK_BROWSER_FORWARD = 167
+    LAUNCH_MAIL = 180
 
-    VK_BROWSER_REFRESH = 168
+    LAUNCH_MEDIA_SELECT = 181
 
-    VK_BROWSER_STOP = 169
+    LAUNCH_APP1 = 182
 
-    VK_BROWSER_SEARCH = 170
+    LAUNCH_APP2 = 183
 
-    VK_BROWSER_FAVORITES = 171
+    OEM_1 = 186
 
-    VK_BROWSER_HOME = 172
+    OEM_PLUS = 187
 
-    VK_VOLUME_MUTE = 173
+    OEM_COMMA = 188
 
-    VK_VOLUME_DOWN = 174
+    OEM_MINUS = 189
 
-    VK_VOLUME_UP = 175
+    OEM_PERIOD = 190
 
-    VK_MEDIA_NEXT_TRACK = 176
+    OEM_2 = 191
 
-    VK_MEDIA_PREV_TRACK = 177
+    OEM_4 = 219
 
-    VK_MEDIA_STOP = 178
+    OEM_5 = 220
 
-    VK_MEDIA_PLAY_PAUSE = 179
+    OEM_6 = 221
 
-    VK_LAUNCH_MAIL = 180
+    OEM_7 = 222
 
-    VK_LAUNCH_MEDIA_SELECT = 181
+    OEM_8 = 223
 
-    VK_LAUNCH_APP1 = 182
+    OEM_102 = 226
 
-    VK_LAUNCH_APP2 = 183
+    PROCESSKEY = 229
 
-    VK_OEM_1 = 186
+    PACKET = 231
 
-    VK_OEM_PLUS = 187
+    ATTN = 246
 
-    VK_OEM_COMMA = 188
+    CRSEL = 247
 
-    VK_OEM_MINUS = 189
+    EXSEL = 248
 
-    VK_OEM_PERIOD = 190
+    EREOF = 249
 
-    VK_OEM_2 = 191
+    PLAY = 250
 
-    VK_OEM_4 = 219
+    ZOOM = 251
 
-    VK_OEM_5 = 220
+    NONAME = 252
 
-    VK_OEM_6 = 221
+    PA1 = 253
 
-    VK_OEM_7 = 222
-
-    VK_OEM_8 = 223
-
-    VK_OEM_102 = 226
-
-    VK_PROCESSKEY = 229
-
-    VK_PACKET = 231
-
-    VK_ATTN = 246
-
-    VK_CRSEL = 247
-
-    VK_EXSEL = 248
-
-    VK_EREOF = 249
-
-    VK_PLAY = 250
-
-    VK_ZOOM = 251
-
-    VK_NONAME = 252
-
-    VK_PA1 = 253
-
-    VK_OEM_CLEAR = 254
+    OEM_CLEAR = 254
 
 class ALGORITHMS(enum.Enum):
     @staticmethod
@@ -482,9 +458,106 @@ class Attribute(lief.Object):
 
     def __str__(self) -> str: ...
 
-class Binary(lief.Binary):
-    def __init__(self, type: PE_TYPE) -> None: ...
+class AuxiliaryCLRToken(AuxiliarySymbol):
+    pass
 
+class AuxiliaryFile(AuxiliarySymbol):
+    @property
+    def filename(self) -> str: ...
+
+class AuxiliaryFunctionDefinition(AuxiliarySymbol):
+    @property
+    def tag_index(self) -> int: ...
+
+    @property
+    def total_size(self) -> int: ...
+
+    @property
+    def ptr_to_line_number(self) -> int: ...
+
+    @property
+    def ptr_to_next_func(self) -> int: ...
+
+    @property
+    def padding(self) -> int: ...
+
+class AuxiliarySectionDefinition(AuxiliarySymbol):
+    @property
+    def length(self) -> int: ...
+
+    @property
+    def nb_relocs(self) -> int: ...
+
+    @property
+    def nb_line_numbers(self) -> int: ...
+
+    @property
+    def checksum(self) -> int: ...
+
+    @property
+    def section_idx(self) -> int: ...
+
+    @property
+    def selection(self) -> int: ...
+
+class AuxiliarySymbol:
+    class TYPE(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> AuxiliarySymbol.TYPE: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        UNKNOWN = 0
+
+        CLR_TOKEN = 1
+
+        FUNC_DEF = 2
+
+        BF_AND_EF = 3
+
+        WEAK_EXTERNAL = 4
+
+        FILE = 5
+
+        SEC_DEF = 6
+
+    @property
+    def type(self) -> AuxiliarySymbol.TYPE: ...
+
+    @property
+    def payload(self) -> memoryview: ...
+
+    def __str__(self) -> str: ...
+
+    def copy(self) -> Optional[AuxiliarySymbol]: ...
+
+class AuxiliaryWeakExternal(AuxiliarySymbol):
+    class CHARACTERISTICS(enum.Enum):
+        SEARCH_NOLIBRARY = 1
+
+        SEARCH_LIBRARY = 2
+
+        SEARCH_ALIAS = 3
+
+        ANTI_DEPENDENCY = 4
+
+    @property
+    def sym_idx(self) -> int: ...
+
+    @property
+    def characteristics(self) -> AuxiliaryWeakExternal.CHARACTERISTICS: ...
+
+    @property
+    def padding(self) -> memoryview: ...
+
+class AuxiliarybfAndefSymbol(AuxiliarySymbol):
+    pass
+
+class Binary(lief.Binary):
     class it_section:
         def __getitem__(self, arg: int, /) -> Section: ...
 
@@ -508,7 +581,7 @@ class Binary(lief.Binary):
 
         def __len__(self) -> int: ...
 
-        def __iter__(self) -> Binary.it_relocations: ...
+        def __iter__(self) -> DynamicFixupGeneric.it_relocations: ...
 
         def __next__(self) -> Relocation: ...
 
@@ -557,6 +630,24 @@ class Binary(lief.Binary):
 
         def __next__(self) -> Debug: ...
 
+    class it_strings_table:
+        def __getitem__(self, arg: int, /) -> COFFString: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> Binary.it_strings_table: ...
+
+        def __next__(self) -> COFFString: ...
+
+    class it_exceptions:
+        def __getitem__(self, arg: int, /) -> ExceptionInfo: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> Binary.it_exceptions: ...
+
+        def __next__(self) -> ExceptionInfo: ...
+
     @property
     def sections(self) -> Binary.it_section: ... # type: ignore
 
@@ -586,6 +677,8 @@ class Binary(lief.Binary):
     def section_from_rva(self, rva: int) -> Section: ...
 
     tls: TLS
+
+    def remove_tls(self) -> None: ...
 
     rich_header: RichHeader
 
@@ -628,8 +721,6 @@ class Binary(lief.Binary):
     @property
     def exception_functions(self) -> list[lief.Function]: ...
 
-    def predict_function_rva(self, library: str, function: str) -> int: ...
-
     @property
     def signatures(self) -> Binary.it_const_signatures: ...
 
@@ -656,6 +747,12 @@ class Binary(lief.Binary):
     @property
     def debug(self) -> Binary.it_debug: ...
 
+    def add_debug_info(self, entry: Debug) -> Debug: ...
+
+    def remove_debug(self, entry: Debug) -> bool: ...
+
+    def clear_debug(self) -> bool: ...
+
     @property
     def codeview_pdb(self) -> CodeViewPDB: ...
 
@@ -664,15 +761,17 @@ class Binary(lief.Binary):
 
     def get_export(self) -> Export: ...
 
+    def set_export(self, arg: Export, /) -> Export: ...
+
     @property
-    def symbols(self) -> list[Symbol]: ... # type: ignore
+    def symbols(self) -> Binary.it_symbols: ... # type: ignore
 
     def get_section(self, section_name: str) -> Section: ...
 
-    def add_section(self, section: Section, type: SECTION_TYPES = SECTION_TYPES.UNKNOWN) -> Section: ...
+    def add_section(self, section: Section) -> Section: ...
 
     @property
-    def relocations(self) -> Binary.it_relocations: ... # type: ignore
+    def relocations(self) -> DynamicFixupGeneric.it_relocations: ... # type: ignore
 
     def add_relocation(self, relocation: Relocation) -> Relocation: ...
 
@@ -716,332 +815,273 @@ class Binary(lief.Binary):
 
     dos_stub: memoryview
 
-    def add_import_function(self, import_name: str, function_name: str) -> ImportEntry: ...
+    def add_import(self, import_name: str) -> Import: ...
 
-    def add_library(self, import_name: str) -> Import: ...
+    def remove_import(self, name: str) -> bool: ...
 
-    def remove_library(self, import_name: str) -> None: ...
+    def remove_all_imports(self) -> None: ...
 
-    def remove_all_libraries(self) -> None: ...
+    def set_resources(self, new_tree: ResourceNode) -> ResourceNode: ...
 
-    def write(self, output_path: str) -> None: ...
+    @property
+    def exceptions(self) -> Binary.it_exceptions: ...
+
+    @property
+    def export_dir(self) -> DataDirectory: ...
+
+    @property
+    def import_dir(self) -> DataDirectory: ...
+
+    @property
+    def rsrc_dir(self) -> DataDirectory: ...
+
+    @property
+    def exceptions_dir(self) -> DataDirectory: ...
+
+    @property
+    def cert_dir(self) -> DataDirectory: ...
+
+    @property
+    def relocation_dir(self) -> DataDirectory: ...
+
+    @property
+    def debug_dir(self) -> DataDirectory: ...
+
+    @property
+    def tls_dir(self) -> DataDirectory: ...
+
+    @property
+    def load_config_dir(self) -> DataDirectory: ...
+
+    @property
+    def iat_dir(self) -> DataDirectory: ...
+
+    @property
+    def delay_dir(self) -> DataDirectory: ...
+
+    @property
+    def is_arm64ec(self) -> bool: ...
+
+    @property
+    def is_arm64x(self) -> bool: ...
+
+    @overload
+    def write(self, output_path: str) -> Optional[Builder]: ...
+
+    @overload
+    def write(self, output_path: str, config: Builder.config_t) -> Optional[Builder]: ...
+
+    @overload
+    def write_to_bytes(self, config: Builder.config_t) -> bytes: ...
+
+    @overload
+    def write_to_bytes(self) -> bytes: ...
+
+    def fill_address(self, address: int, size: int, value: int = 0, addr_type: lief.Binary.VA_TYPES = lief.Binary.VA_TYPES.AUTO) -> None: ...
+
+    @property
+    def coff_string_table(self) -> Binary.it_strings_table: ...
+
+    def find_coff_string(self, offset: int) -> COFFString: ...
+
+    def find_exception_at(self, rva: int) -> ExceptionInfo: ...
+
+    @property
+    def nested_pe_binary(self) -> Binary: ...
 
     def __str__(self) -> str: ...
 
 class Builder:
-    def __init__(self, pe_binary: Binary) -> None: ...
+    def __init__(self, binary: Binary, config: Builder.config_t) -> None: ...
+
+    class config_t:
+        def __init__(self) -> None: ...
+
+        imports: bool
+
+        exports: bool
+
+        resources: bool
+
+        relocations: bool
+
+        load_configuration: bool
+
+        tls: bool
+
+        overlay: bool
+
+        debug: bool
+
+        dos_stub: bool
+
+        rsrc_section: str
+
+        idata_section: str
+
+        tls_section: str
+
+        reloc_section: str
+
+        export_section: str
+
+        debug_section: str
+
+        resolved_iat_cbk: Callable[[Binary, Import, ImportEntry, int], None]
+
+        force_relocating: bool
+
+    @property
+    def rsrc_data(self) -> memoryview: ...
 
     def build(self) -> Union[lief.ok_t, lief.lief_errors]: ...
 
-    def build_imports(self, enable: bool = True) -> Builder: ...
-
-    def patch_imports(self, enable: bool = True) -> Builder: ...
-
-    def build_relocations(self, enable: bool = True) -> Builder: ...
-
-    def build_tls(self, enable: bool = True) -> Builder: ...
-
-    def build_resources(self, enable: bool = True) -> Builder: ...
-
-    def build_overlay(self, enable: bool = True) -> Builder: ...
-
-    def build_dos_stub(self, enable: bool = True) -> Builder: ...
-
     def write(self, output: str) -> None: ...
 
-    def get_build(self) -> list[int]: ...
+    def bytes(self) -> bytes: ...
+
+class CHPEMetadata:
+    class KIND(enum.Enum):
+        UNKNOWN = 0
+
+        ARM64 = 1
+
+        X86 = 2
+
+    @property
+    def version(self) -> int: ...
+
+    @property
+    def kind(self) -> CHPEMetadata.KIND: ...
+
+    def copy(self) -> Optional[CHPEMetadata]: ...
 
     def __str__(self) -> str: ...
 
-class CODE_PAGES(enum.Enum):
-    @staticmethod
-    def from_value(arg: int, /) -> CODE_PAGES: ...
+class CHPEMetadataARM64(CHPEMetadata):
+    class it_range_entries:
+        def __getitem__(self, arg: int, /) -> CHPEMetadataARM64.range_entry_t: ...
 
-    def __eq__(self, arg, /) -> bool: ...
+        def __len__(self) -> int: ...
 
-    def __ne__(self, arg, /) -> bool: ...
+        def __iter__(self) -> CHPEMetadataARM64.it_range_entries: ...
 
-    def __int__(self) -> int: ...
+        def __next__(self) -> CHPEMetadataARM64.range_entry_t: ...
 
-    IBM037 = 37
+    class it_redirection_entries:
+        def __getitem__(self, arg: int, /) -> CHPEMetadataARM64.redirection_entry_t: ...
 
-    IBM437 = 437
+        def __len__(self) -> int: ...
 
-    IBM500 = 500
+        def __iter__(self) -> CHPEMetadataARM64.it_redirection_entries: ...
 
-    ASMO_708 = 708
+        def __next__(self) -> CHPEMetadataARM64.redirection_entry_t: ...
 
-    DOS_720 = 720
+    class range_entry_t:
+        class TYPE(enum.Enum):
+            ARM64 = 0
 
-    IBM737 = 737
+            ARM64EC = 1
 
-    IBM775 = 775
+            AMD64 = 2
 
-    IBM850 = 850
+        start_offset: int
 
-    IBM852 = 852
+        length: int
 
-    IBM855 = 855
+        @property
+        def type(self) -> CHPEMetadataARM64.range_entry_t.TYPE: ...
 
-    IBM857 = 857
+        @property
+        def start(self) -> int: ...
 
-    IBM00858 = 858
+        @property
+        def end(self) -> int: ...
 
-    IBM860 = 860
+    class redirection_entry_t:
+        src: int
 
-    IBM861 = 861
+        dst: int
 
-    DOS_862 = 862
+    code_map: int
 
-    IBM863 = 863
+    code_map_count: int
 
-    IBM864 = 864
+    code_ranges_to_entrypoints: int
 
-    IBM865 = 865
+    redirection_metadata: int
 
-    CP866 = 866
+    os_arm64x_dispatch_call_no_redirect: int
 
-    IBM869 = 869
+    os_arm64x_dispatch_ret: int
 
-    IBM870 = 870
+    os_arm64x_dispatch_call: int
 
-    WINDOWS_874 = 874
+    os_arm64x_dispatch_icall: int
 
-    CP875 = 875
+    os_arm64x_dispatch_icall_cfg: int
 
-    SHIFT_JIS = 932
+    alternate_entry_point: int
 
-    GB2312 = 936
+    auxiliary_iat: int
 
-    KS_C_5601_1987 = 949
+    code_ranges_to_entry_points_count: int
 
-    BIG5 = 950
+    redirection_metadata_count: int
 
-    IBM1026 = 1026
+    get_x64_information_function_pointer: int
 
-    IBM01047 = 1047
+    set_x64_information_function_pointer: int
 
-    IBM01140 = 1140
+    extra_rfe_table: int
 
-    IBM01141 = 1141
+    extra_rfe_table_size: int
 
-    IBM01142 = 1142
+    os_arm64x_dispatch_fptr: int
 
-    IBM01143 = 1143
+    auxiliary_iat_copy: int
 
-    IBM01144 = 1144
+    auxiliary_delay_import: int
 
-    IBM01145 = 1145
+    auxiliary_delay_import_copy: int
 
-    IBM01146 = 1146
+    bitfield_info: int
 
-    IBM01147 = 1147
+    @property
+    def code_ranges(self) -> CHPEMetadataARM64.it_range_entries: ...
 
-    IBM01148 = 1148
+    @property
+    def redirections(self) -> CHPEMetadataARM64.it_redirection_entries: ...
 
-    IBM01149 = 1149
+class CHPEMetadataX86(CHPEMetadata):
+    chpe_code_address_range_offset: int
 
-    UTF_16 = 1200
+    chpe_code_address_range_count: int
 
-    UNICODEFFFE = 1201
+    wowa64_exception_handler_function_pointer: int
 
-    WINDOWS_1250 = 1250
+    wowa64_dispatch_call_function_pointer: int
 
-    WINDOWS_1251 = 1251
+    wowa64_dispatch_indirect_call_function_pointer: int
 
-    WINDOWS_1252 = 1252
+    wowa64_dispatch_indirect_call_cfg_function_pointer: int
 
-    WINDOWS_1253 = 1253
+    wowa64_dispatch_ret_function_pointer: int
 
-    WINDOWS_1254 = 1254
+    wowa64_dispatch_ret_leaf_function_pointer: int
 
-    WINDOWS_1255 = 1255
+    wowa64_dispatch_jump_function_pointer: int
 
-    WINDOWS_1256 = 1256
+    compiler_iat_pointer: int | None
 
-    WINDOWS_1257 = 1257
+    wowa64_rdtsc_function_pointer: int | None
 
-    WINDOWS_1258 = 1258
+class COFFString:
+    string: str
 
-    JOHAB = 1361
+    offset: int
 
-    MACINTOSH = 10000
-
-    X_MAC_JAPANESE = 10001
-
-    X_MAC_CHINESETRAD = 10002
-
-    X_MAC_KOREAN = 10003
-
-    X_MAC_ARABIC = 10004
-
-    X_MAC_HEBREW = 10005
-
-    X_MAC_GREEK = 10006
-
-    X_MAC_CYRILLIC = 10007
-
-    X_MAC_CHINESESIMP = 10008
-
-    X_MAC_ROMANIAN = 10010
-
-    X_MAC_UKRAINIAN = 10017
-
-    X_MAC_THAI = 10021
-
-    X_MAC_CE = 10029
-
-    X_MAC_ICELANDIC = 10079
-
-    X_MAC_TURKISH = 10081
-
-    X_MAC_CROATIAN = 10082
-
-    UTF_32 = 12000
-
-    UTF_32BE = 12001
-
-    X_CHINESE_CNS = 20000
-
-    X_CP20001 = 20001
-
-    X_CHINESE_ETEN = 20002
-
-    X_CP20003 = 20003
-
-    X_CP20004 = 20004
-
-    X_CP20005 = 20005
-
-    X_IA5 = 20105
-
-    X_IA5_GERMAN = 20106
-
-    X_IA5_SWEDISH = 20107
-
-    X_IA5_NORWEGIAN = 20108
-
-    US_ASCII = 20127
-
-    X_CP20261 = 20261
-
-    X_CP20269 = 20269
-
-    IBM273 = 20273
-
-    IBM277 = 20277
-
-    IBM278 = 20278
-
-    IBM280 = 20280
-
-    IBM284 = 20284
-
-    IBM285 = 20285
-
-    IBM290 = 20290
-
-    IBM297 = 20297
-
-    IBM420 = 20420
-
-    IBM423 = 20423
-
-    IBM424 = 20424
-
-    X_EBCDIC_KOREANEXTENDED = 20833
-
-    IBM_THAI = 20838
-
-    KOI8_R = 20866
-
-    IBM871 = 20871
-
-    IBM880 = 20880
-
-    IBM905 = 20905
-
-    IBM00924 = 20924
-
-    EUC_JP_JIS = 20932
-
-    X_CP20936 = 20936
-
-    X_CP20949 = 20949
-
-    CP1025 = 21025
-
-    KOI8_U = 21866
-
-    ISO_8859_1 = 28591
-
-    ISO_8859_2 = 28592
-
-    ISO_8859_3 = 28593
-
-    ISO_8859_4 = 28594
-
-    ISO_8859_5 = 28595
-
-    ISO_8859_6 = 28596
-
-    ISO_8859_7 = 28597
-
-    ISO_8859_8 = 28598
-
-    ISO_8859_9 = 28599
-
-    ISO_8859_13 = 28603
-
-    ISO_8859_15 = 28605
-
-    X_EUROPA = 29001
-
-    ISO_8859_8_I = 38598
-
-    ISO_2022_JP = 50220
-
-    CSISO2022JP = 50221
-
-    ISO_2022_JP_JIS = 50222
-
-    ISO_2022_KR = 50225
-
-    X_CP50227 = 50227
-
-    EUC_JP = 51932
-
-    EUC_CN = 51936
-
-    EUC_KR = 51949
-
-    HZ_GB_2312 = 52936
-
-    GB18030 = 54936
-
-    X_ISCII_DE = 57002
-
-    X_ISCII_BE = 57003
-
-    X_ISCII_TA = 57004
-
-    X_ISCII_TE = 57005
-
-    X_ISCII_AS = 57006
-
-    X_ISCII_OR = 57007
-
-    X_ISCII_KA = 57008
-
-    X_ISCII_MA = 57009
-
-    X_ISCII_GU = 57010
-
-    X_ISCII_PA = 57011
-
-    UTF_7 = 65000
-
-    UTF_8 = 65001
+    def __str__(self) -> str: ...
 
 class CodeIntegrity(lief.Object):
     def __init__(self) -> None: ...
@@ -1089,7 +1129,11 @@ class CodeView(Debug):
     def __str__(self) -> str: ...
 
 class CodeViewPDB(CodeView):
+    @overload
     def __init__(self) -> None: ...
+
+    @overload
+    def __init__(self, filename: str) -> None: ...
 
     @property
     def parent(self) -> lief.PE.CodeView: ...
@@ -1131,46 +1175,6 @@ class ContentInfo(lief.Object):
 class ContentType(Attribute):
     @property
     def oid(self) -> str: ...
-
-class DIALOG_BOX_STYLES(enum.Enum):
-    @staticmethod
-    def from_value(arg: int, /) -> DIALOG_BOX_STYLES: ...
-
-    def __eq__(self, arg, /) -> bool: ...
-
-    def __ne__(self, arg, /) -> bool: ...
-
-    def __int__(self) -> int: ...
-
-    ABSALIGN = 1
-
-    SYSMODAL = 2
-
-    LOCALEDIT = 32
-
-    SETFONT = 64
-
-    MODALFRAME = 128
-
-    NOIDLEMSG = 256
-
-    SETFOREGROUND = 512
-
-    D3DLOOK = 4
-
-    FIXEDSYS = 8
-
-    NOFAILCREATE = 16
-
-    CONTROL = 1024
-
-    CENTER = 2048
-
-    CENTERMOUSE = 4096
-
-    CONTEXTHELP = 8192
-
-    SHELLFONT = 72
 
 class DataDirectory(lief.Object):
     def __init__(self) -> None: ...
@@ -1227,6 +1231,9 @@ class DataDirectory(lief.Object):
     def section(self) -> Section: ...
 
     @property
+    def content(self) -> memoryview: ...
+
+    @property
     def type(self) -> DataDirectory.TYPES: ...
 
     @property
@@ -1269,7 +1276,7 @@ class Debug(lief.Object):
 
         BORLAND = 9
 
-        RESERVED = 10
+        RESERVED10 = 10
 
         CLSID = 11
 
@@ -1282,6 +1289,8 @@ class Debug(lief.Object):
         MPX = 15
 
         REPRO = 16
+
+        PDBCHECKSUM = 19
 
         EX_DLLCHARACTERISTICS = 20
 
@@ -1301,6 +1310,12 @@ class Debug(lief.Object):
     addressof_rawdata: int
 
     pointerto_rawdata: int
+
+    @property
+    def section(self) -> Section: ...
+
+    @property
+    def payload(self) -> memoryview: ...
 
     def copy(self) -> Optional[Debug]: ...
 
@@ -1409,56 +1424,329 @@ class DosHeader(lief.Object):
 
     def __str__(self) -> str: ...
 
-class EXTENDED_WINDOW_STYLES(enum.Enum):
-    @staticmethod
-    def from_value(arg: int, /) -> EXTENDED_WINDOW_STYLES: ...
+class DynamicFixup:
+    class KIND(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> DynamicFixup.KIND: ...
 
-    def __eq__(self, arg, /) -> bool: ...
+        def __eq__(self, arg, /) -> bool: ...
 
-    def __ne__(self, arg, /) -> bool: ...
+        def __ne__(self, arg, /) -> bool: ...
 
-    def __int__(self) -> int: ...
+        def __int__(self) -> int: ...
 
-    DLGMODALFRAME = 1
+        UNKNOWN = 0
 
-    NOPARENTNOTIFY = 4
+        GENERIC = 1
 
-    TOPMOST = 8
+        ARM64X = 2
 
-    ACCEPTFILES = 16
+        FUNCTION_OVERRIDE = 3
 
-    TRANSPARENT = 32
+        ARM64_KERNEL_IMPORT_CALL_TRANSFER = 4
 
-    MDICHILD = 64
+    @property
+    def kind(self) -> DynamicFixup.KIND: ...
 
-    TOOLWINDOW = 128
+    def __str__(self) -> str: ...
 
-    WINDOWEDGE = 256
+    def copy(self) -> Optional[DynamicFixup]: ...
 
-    CLIENTEDGE = 512
+class DynamicFixupARM64Kernel(DynamicFixup):
+    NO_IAT_INDEX: int = ...
 
-    CONTEXTHELP = 1024
+    class IMPORT_TYPE(enum.Enum):
+        STATIC = 0
 
-    RIGHT = 4096
+        DELAYED = 1
 
-    LEFT = 0
+    class it_relocations:
+        def __getitem__(self, arg: int, /) -> DynamicFixupARM64Kernel.reloc_entry_t: ...
 
-    RTLREADING = 8192
+        def __len__(self) -> int: ...
 
-    LTRREADING = 0
+        def __iter__(self) -> DynamicFixupARM64Kernel.it_relocations: ...
 
-    LEFTSCROLLBAR = 16384
+        def __next__(self) -> DynamicFixupARM64Kernel.reloc_entry_t: ...
 
-    RIGHTSCROLLBAR = 0
+    class reloc_entry_t:
+        rva: int
 
-    CONTROLPARENT = 65536
+        indirect_call: bool
 
-    STATICEDGE = 131072
+        register_index: int
 
-    APPWINDOW = 262144
+        import_type: DynamicFixupARM64Kernel.IMPORT_TYPE
+
+        iat_index: int
+
+        def __str__(self) -> str: ...
+
+    @property
+    def relocations(self) -> DynamicFixupARM64Kernel.it_relocations: ...
+
+class DynamicFixupARM64X(DynamicFixup):
+    class FIXUP_TYPE(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> DynamicFixupARM64X.FIXUP_TYPE: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        ZEROFILL = 0
+
+        VALUE = 1
+
+        DELTA = 2
+
+    class reloc_entry_t:
+        rva: int
+
+        type: DynamicFixupARM64X.FIXUP_TYPE
+
+        size: int
+
+        raw_bytes: list[int]
+
+        value: int
+
+        def __str__(self) -> str: ...
+
+    class it_relocations:
+        def __getitem__(self, arg: int, /) -> DynamicFixupARM64X.reloc_entry_t: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> DynamicFixupARM64X.it_relocations: ...
+
+        def __next__(self) -> DynamicFixupARM64X.reloc_entry_t: ...
+
+    @property
+    def relocations(self) -> DynamicFixupARM64X.it_relocations: ...
+
+class DynamicFixupControlTransfer(DynamicFixup):
+    NO_IAT_INDEX: int = ...
+
+    class it_relocations:
+        def __getitem__(self, arg: int, /) -> DynamicFixupControlTransfer.reloc_entry_t: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> DynamicFixupControlTransfer.it_relocations: ...
+
+        def __next__(self) -> DynamicFixupControlTransfer.reloc_entry_t: ...
+
+    class reloc_entry_t:
+        rva: int
+
+        is_call: bool
+
+        iat_index: int
+
+        def __str__(self) -> str: ...
+
+    @property
+    def relocations(self) -> DynamicFixupControlTransfer.it_relocations: ...
+
+class DynamicFixupGeneric(DynamicFixup):
+    class it_relocations:
+        def __getitem__(self, arg: int, /) -> Relocation: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> DynamicFixupGeneric.it_relocations: ...
+
+        def __next__(self) -> Relocation: ...
+
+    @property
+    def relocations(self) -> DynamicFixupGeneric.it_relocations: ...
+
+class DynamicFixupUnknown(DynamicFixup):
+    @property
+    def payload(self) -> memoryview: ...
+
+class DynamicRelocation:
+    class IMAGE_DYNAMIC_RELOCATION(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> DynamicRelocation.IMAGE_DYNAMIC_RELOCATION: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        RELOCATION_GUARD_RF_PROLOGUE = 1
+
+        RELOCATION_GUARD_RF_EPILOGUE = 2
+
+        RELOCATION_GUARD_IMPORT_CONTROL_TRANSFER = 3
+
+        RELOCATION_GUARD_INDIR_CONTROL_TRANSFER = 4
+
+        RELOCATION_GUARD_SWITCHTABLE_BRANCH = 5
+
+        RELOCATION_ARM64X = 6
+
+        RELOCATION_FUNCTION_OVERRIDE = 7
+
+        RELOCATION_ARM64_KERNEL_IMPORT_CALL_TRANSFER = 8
+
+    @property
+    def version(self) -> int: ...
+
+    symbol: int
+
+    @property
+    def fixups(self) -> DynamicFixup: ...
+
+    def __str__(self) -> str: ...
+
+    def copy(self) -> Optional[DynamicRelocation]: ...
+
+class DynamicRelocationV1(DynamicRelocation):
+    pass
+
+class DynamicRelocationV2(DynamicRelocation):
+    pass
+
+class EnclaveConfiguration:
+    class it_imports:
+        def __getitem__(self, arg: int, /) -> EnclaveImport: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> EnclaveConfiguration.it_imports: ...
+
+        def __next__(self) -> EnclaveImport: ...
+
+    size: int
+
+    min_required_config_size: int
+
+    policy_flags: int
+
+    @property
+    def is_debuggable(self) -> bool: ...
+
+    import_list_rva: int
+
+    import_entry_size: int
+
+    @property
+    def nb_imports(self) -> int: ...
+
+    @property
+    def imports(self) -> EnclaveConfiguration.it_imports: ...
+
+    family_id: list[int]
+
+    image_id: list[int]
+
+    image_version: int
+
+    security_version: int
+
+    enclave_size: int
+
+    nb_threads: int
+
+    enclave_flags: int
+
+    def __str__(self) -> str: ...
+
+class EnclaveImport:
+    class TYPE(enum.Enum):
+        NONE = 0
+
+        UNIQUE_ID = 1
+
+        AUTHOR_ID = 2
+
+        FAMILY_ID = 3
+
+        IMAGE_ID = 4
+
+    type: EnclaveImport.TYPE
+
+    min_security_version: int
+
+    id: list[int]
+
+    family_id: list[int]
+
+    image_id: list[int]
+
+    import_name_rva: int
+
+    import_name: str
+
+    reserved: int
+
+    def __str__(self) -> str: ...
+
+class ExDllCharacteristics(Debug):
+    class CHARACTERISTICS(enum.Flag):
+        @staticmethod
+        def from_value(arg: int, /) -> ExDllCharacteristics.CHARACTERISTICS: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        CET_COMPAT = 1
+
+        CET_COMPAT_STRICT_MODE = 2
+
+        CET_SET_CONTEXT_IP_VALIDATION_RELAXED_MODE = 4
+
+        CET_DYNAMIC_APIS_ALLOW_IN_PROC = 8
+
+        CET_RESERVED_1 = 16
+
+        CET_RESERVED_2 = 32
+
+        FORWARD_CFI_COMPAT = 64
+
+        HOTPATCH_COMPATIBLE = 128
+
+    def has(self, characteristic: ExDllCharacteristics.CHARACTERISTICS) -> bool: ...
+
+    @property
+    def ex_characteristics(self) -> ExDllCharacteristics.CHARACTERISTICS: ...
+
+    @property
+    def ex_characteristics_list(self) -> list[ExDllCharacteristics.CHARACTERISTICS]: ...
+
+class ExceptionInfo:
+    class ARCH(enum.Enum):
+        UNKNOWN = 0
+
+        ARM64 = 1
+
+        X86_64 = 2
+
+    @property
+    def arch(self) -> ExceptionInfo.ARCH: ...
+
+    @property
+    def rva_start(self) -> int: ...
+
+    def copy(self) -> Optional[ExceptionInfo]: ...
+
+    def __str__(self) -> str: ...
 
 class Export(lief.Object):
+    @overload
     def __init__(self) -> None: ...
+
+    @overload
+    def __init__(self, name: str, entries: Sequence[ExportEntry]) -> None: ...
 
     class it_entries:
         def __getitem__(self, arg: int, /) -> ExportEntry: ...
@@ -1484,12 +1772,57 @@ class Export(lief.Object):
     @property
     def entries(self) -> Export.it_entries: ...
 
+    @property
+    def name_rva(self) -> int: ...
+
+    @property
+    def export_addr_table_rva(self) -> int: ...
+
+    @property
+    def export_addr_table_cnt(self) -> int: ...
+
+    @property
+    def names_addr_table_rva(self) -> int: ...
+
+    @property
+    def names_addr_table_cnt(self) -> int: ...
+
+    @property
+    def ord_addr_table_rva(self) -> int: ...
+
+    @overload
+    def find_entry(self, name: str) -> ExportEntry: ...
+
+    @overload
+    def find_entry(self, ordinal: int) -> ExportEntry: ...
+
+    def find_entry_at(self, rva_addr: int) -> ExportEntry: ...
+
+    @overload
+    def add_entry(self, exp: ExportEntry) -> ExportEntry: ...
+
+    @overload
+    def add_entry(self, name: str, addr: int) -> ExportEntry: ...
+
+    @overload
+    def remove_entry(self, entry: ExportEntry) -> bool: ...
+
+    @overload
+    def remove_entry(self, name: str) -> bool: ...
+
+    @overload
+    def remove_entry(self, rva: int) -> bool: ...
+
     def copy(self) -> Export: ...
 
     def __str__(self) -> str: ...
 
 class ExportEntry(lief.Symbol):
+    @overload
     def __init__(self) -> None: ...
+
+    @overload
+    def __init__(self, name: str, addr: int) -> None: ...
 
     class forward_information_t:
         library: str
@@ -1520,129 +1853,144 @@ class ExportEntry(lief.Symbol):
 
     def __str__(self) -> str: ...
 
-class FIXED_VERSION_FILE_FLAGS(enum.Enum):
+class FPO(Debug):
+    class FRAME_TYPE(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> FPO.FRAME_TYPE: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        FPO = 0
+
+        TRAP = 1
+
+        TSS = 2
+
+        NON_FPO = 3
+
+    class entry_t:
+        rva: int
+
+        proc_size: int
+
+        nb_locals: int
+
+        parameters_size: int
+
+        prolog_size: int
+
+        nb_saved_regs: int
+
+        use_seh: bool
+
+        use_bp: bool
+
+        reserved: int
+
+        type: FPO.FRAME_TYPE
+
+        def __str__(self) -> str: ...
+
+    class it_entries:
+        def __getitem__(self, arg: int, /) -> FPO.entry_t: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> FPO.it_entries: ...
+
+        def __next__(self) -> FPO.entry_t: ...
+
+    @property
+    def entries(self) -> FPO.it_entries: ...
+
+class Factory:
     @staticmethod
-    def from_value(arg: int, /) -> FIXED_VERSION_FILE_FLAGS: ...
+    def create(arg: PE_TYPE, /) -> Optional[Factory]: ...
 
-    def __eq__(self, arg, /) -> bool: ...
+    def add_section(self, arg: Section, /) -> Factory: ...
 
-    def __ne__(self, arg, /) -> bool: ...
+    def get(self) -> Optional[Binary]: ...
 
-    def __int__(self) -> int: ...
+class FunctionOverride(DynamicFixup):
+    class image_bdd_dynamic_relocation_t:
+        left: int
 
-    DEBUG = 1
+        right: int
 
-    INFOINFERRED = 16
+        value: int
 
-    PATCHED = 4
+    class image_bdd_info_t:
+        version: int
 
-    PRERELEASE = 2
+        original_size: int
 
-    PRIVATEBUILD = 8
+        original_offset: int
 
-    SPECIALBUILD = 32
+        relocations: list[FunctionOverride.image_bdd_dynamic_relocation_t]
 
-class FIXED_VERSION_FILE_SUB_TYPES(enum.Enum):
-    @staticmethod
-    def from_value(arg: int, /) -> FIXED_VERSION_FILE_SUB_TYPES: ...
+        payload: list[int]
 
-    def __eq__(self, arg, /) -> bool: ...
+    class it_func_overriding_info:
+        def __getitem__(self, arg: int, /) -> FunctionOverrideInfo: ...
 
-    def __ne__(self, arg, /) -> bool: ...
+        def __len__(self) -> int: ...
 
-    def __int__(self) -> int: ...
+        def __iter__(self) -> FunctionOverride.it_func_overriding_info: ...
 
-    DRV_COMM = 10
+        def __next__(self) -> FunctionOverrideInfo: ...
 
-    DRV_DISPLAY = 4
+    class it_bdd_info:
+        def __getitem__(self, arg: int, /) -> FunctionOverride.image_bdd_info_t: ...
 
-    DRV_INSTALLABLE = 8
+        def __len__(self) -> int: ...
 
-    DRV_KEYBOARD = 2
+        def __iter__(self) -> FunctionOverride.it_bdd_info: ...
 
-    DRV_LANGUAGE = 3
+        def __next__(self) -> FunctionOverride.image_bdd_info_t: ...
 
-    DRV_MOUSE = 5
+    @property
+    def func_overriding_info(self) -> FunctionOverride.it_func_overriding_info: ...
 
-    DRV_NETWORK = 6
+    @property
+    def bdd_info(self) -> FunctionOverride.it_bdd_info: ...
 
-    DRV_PRINTER = 1
+    @overload
+    def find_bdd_info(self, arg: int, /) -> FunctionOverride.image_bdd_info_t: ...
 
-    DRV_SOUND = 9
+    @overload
+    def find_bdd_info(self, arg: FunctionOverrideInfo, /) -> FunctionOverride.image_bdd_info_t: ...
 
-    DRV_SYSTEM = 7
+class FunctionOverrideInfo:
+    class it_relocations:
+        def __getitem__(self, arg: int, /) -> Relocation: ...
 
-    DRV_VERSIONED_PRINTER = 12
+        def __len__(self) -> int: ...
 
-    FONT_RASTER = 1
+        def __iter__(self) -> DynamicFixupGeneric.it_relocations: ...
 
-    FONT_TRUETYPE = 3
+        def __next__(self) -> Relocation: ...
 
-    FONT_VECTOR = 2
+    original_rva: int
 
-    UNKNOWN = 0
+    bdd_offset: int
 
-class FIXED_VERSION_FILE_TYPES(enum.Enum):
-    @staticmethod
-    def from_value(arg: int, /) -> FIXED_VERSION_FILE_TYPES: ...
+    @property
+    def rva_size(self) -> int: ...
 
-    def __eq__(self, arg, /) -> bool: ...
+    @property
+    def base_reloc_size(self) -> int: ...
 
-    def __ne__(self, arg, /) -> bool: ...
+    @property
+    def relocations(self) -> DynamicFixupGeneric.it_relocations: ...
 
-    def __int__(self) -> int: ...
+    @property
+    def functions_rva(self) -> list[int]: ...
 
-    APP = 1
-
-    DLL = 2
-
-    DRV = 3
-
-    FONT = 4
-
-    STATIC_LIB = 7
-
-    UNKNOWN = 0
-
-    VXD = 5
-
-class FIXED_VERSION_OS(enum.Enum):
-    @staticmethod
-    def from_value(arg: int, /) -> FIXED_VERSION_OS: ...
-
-    def __eq__(self, arg, /) -> bool: ...
-
-    def __ne__(self, arg, /) -> bool: ...
-
-    def __int__(self) -> int: ...
-
-    UNKNOWN = 0
-
-    DOS = 65536
-
-    NT = 262144
-
-    WINDOWS16 = 1
-
-    WINDOWS32 = 4
-
-    OS216 = 131072
-
-    OS232 = 196608
-
-    PM16 = 2
-
-    PM32 = 3
-
-    DOS_WINDOWS16 = 65537
-
-    DOS_WINDOWS32 = 65540
-
-    NT_WINDOWS32 = 262148
-
-    OS216_PM16 = 131074
-
-    OS232_PM32 = 196611
+    def __str__(self) -> str: ...
 
 class GenericContent(ContentInfo.Content):
     pass
@@ -1667,6 +2015,10 @@ class Header(lief.Object):
 
         UNKNOWN = 0
 
+        ALPHA = 388
+
+        ALPHA64 = 644
+
         AM33 = 467
 
         AMD64 = 34404
@@ -1682,6 +2034,10 @@ class Header(lief.Object):
         I386 = 332
 
         IA64 = 512
+
+        LOONGARCH32 = 25138
+
+        LOONGARCH64 = 25188
 
         M32R = 36929
 
@@ -1710,6 +2066,12 @@ class Header(lief.Object):
         THUMB = 450
 
         WCEMIPSV2 = 361
+
+        ARM64EC = 42561
+
+        ARM64X = 42574
+
+        CHPE_X86 = 14948
 
     class CHARACTERISTICS(enum.Flag):
         @staticmethod
@@ -1839,6 +2201,15 @@ class Import(lief.Object):
 
     def get_entry(self, function_name: str) -> ImportEntry: ...
 
+    @property
+    def name_rva(self) -> int: ...
+
+    @overload
+    def remove_entry(self, name: str) -> bool: ...
+
+    @overload
+    def remove_entry(self, ord: int) -> bool: ...
+
     def __str__(self) -> str: ...
 
 class ImportEntry(lief.Symbol):
@@ -1849,13 +2220,7 @@ class ImportEntry(lief.Symbol):
     def __init__(self, import_name: str) -> None: ...
 
     @overload
-    def __init__(self, data: int, name: str = '') -> None: ...
-
-    @overload
-    def __init__(self, data: int, type: PE_TYPE, name: str = '') -> None: ...
-
-    @overload
-    def __init__(self, name: str, type: PE_TYPE) -> None: ...
+    def __init__(self, data: int, type: PE_TYPE) -> None: ...
 
     name: Union[str, bytes]
 
@@ -1877,131 +2242,42 @@ class ImportEntry(lief.Symbol):
     def iat_value(self) -> int: ...
 
     @property
+    def ilt_value(self) -> int: ...
+
+    @property
     def iat_address(self) -> int: ...
 
     def copy(self) -> ImportEntry: ...
 
     def __str__(self) -> str: ...
 
-class LangCodeItem(lief.Object):
-    type: int
-
-    key: str
-
-    lang: int
-
-    sublang: int
-
-    code_page: CODE_PAGES
-
-    items: dict
-
-    def __str__(self) -> str: ...
-
 class LoadConfiguration(lief.Object):
-    def __init__(self) -> None: ...
+    class guard_function_t:
+        rva: int
 
-    class VERSION(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> LoadConfiguration.VERSION: ...
+        extra: int
 
-        def __eq__(self, arg, /) -> bool: ...
+    class it_guard_functions:
+        def __getitem__(self, arg: int, /) -> LoadConfiguration.guard_function_t: ...
 
-        def __ne__(self, arg, /) -> bool: ...
+        def __len__(self) -> int: ...
 
-        def __int__(self) -> int: ...
+        def __iter__(self) -> LoadConfiguration.it_guard_functions: ...
 
-        UNKNOWN = 0
+        def __next__(self) -> LoadConfiguration.guard_function_t: ...
 
-        SEH = 1
+    class it_dynamic_relocations_t:
+        def __getitem__(self, arg: int, /) -> DynamicRelocation: ...
 
-        WIN_8_1 = 2
+        def __len__(self) -> int: ...
 
-        WIN_10_0_9879 = 3
+        def __iter__(self) -> LoadConfiguration.it_dynamic_relocations_t: ...
 
-        WIN_10_0_14286 = 4
-
-        WIN_10_0_14383 = 5
-
-        WIN_10_0_14901 = 6
-
-        WIN_10_0_15002 = 7
-
-        WIN_10_0_16237 = 8
-
-        WIN_10_0_18362 = 9
-
-        WIN_10_0_19534 = 10
-
-        WIN_10_0_MSVC_2019 = 11
-
-        WIN_10_0_MSVC_2019_16 = 12
-
-    @property
-    def version(self) -> LoadConfiguration.VERSION: ...
-
-    characteristics: int
-
-    @property
-    def size(self) -> int: ...
-
-    timedatestamp: int
-
-    major_version: int
-
-    minor_version: int
-
-    global_flags_clear: int
-
-    global_flags_set: int
-
-    critical_section_default_timeout: int
-
-    decommit_free_block_threshold: int
-
-    decommit_total_free_threshold: int
-
-    lock_prefix_table: int
-
-    maximum_allocation_size: int
-
-    virtual_memory_threshold: int
-
-    process_affinity_mask: int
-
-    process_heap_flags: int
-
-    csd_version: int
-
-    reserved1: int
-
-    dependent_load_flags: int
-
-    editlist: int
-
-    security_cookie: int
-
-    def copy(self) -> LoadConfiguration: ...
-
-    def __str__(self) -> str: ...
-
-class LoadConfigurationV0(LoadConfiguration):
-    def __init__(self) -> None: ...
-
-    se_handler_table: int
-
-    se_handler_count: int
-
-    def copy(self) -> LoadConfigurationV0: ...
-
-    def __str__(self) -> str: ...
-
-class LoadConfigurationV1(LoadConfigurationV0):
-    def __init__(self) -> None: ...
+        def __next__(self) -> DynamicRelocation: ...
 
     class IMAGE_GUARD(enum.Flag):
         @staticmethod
-        def from_value(arg: int, /) -> LoadConfigurationV1.IMAGE_GUARD: ...
+        def from_value(arg: int, /) -> LoadConfiguration.IMAGE_GUARD: ...
 
         def __eq__(self, arg, /) -> bool: ...
 
@@ -2037,143 +2313,146 @@ class LoadConfigurationV1(LoadConfigurationV0):
 
         RETPOLINE_PRESENT = 1048576
 
-        EH_CONTINUATION_TABLE_PRESENT = 2097152
+        EH_CONTINUATION_TABLE_PRESENT = 4194304
 
-    guard_cf_check_function_pointer: int
+    characteristics: int
 
-    guard_cf_dispatch_function_pointer: int
+    size: int
 
-    guard_cf_function_table: int
+    timedatestamp: int
 
-    guard_cf_function_count: int
+    major_version: int
 
-    guard_flags: LoadConfigurationV1.IMAGE_GUARD
+    minor_version: int
 
-    def has(self, flag: LoadConfigurationV1.IMAGE_GUARD) -> bool: ...
+    global_flags_clear: int
 
-    @property
-    def guard_cf_flags_list(self) -> list[LoadConfigurationV1.IMAGE_GUARD]: ...
+    global_flags_set: int
 
-    def __contains__(self, arg: LoadConfigurationV1.IMAGE_GUARD, /) -> bool: ...
+    critical_section_default_timeout: int
 
-    def copy(self) -> LoadConfigurationV1: ...
+    decommit_free_block_threshold: int
 
-    def __str__(self) -> str: ...
+    decommit_total_free_threshold: int
 
-class LoadConfigurationV10(LoadConfigurationV9):
-    def __init__(self) -> None: ...
+    lock_prefix_table: int
 
-    guard_xfg_check_function_pointer: int
+    maximum_allocation_size: int
 
-    guard_xfg_dispatch_function_pointer: int
+    virtual_memory_threshold: int
 
-    guard_xfg_table_dispatch_function_pointer: int
+    process_affinity_mask: int
 
-    def copy(self) -> LoadConfigurationV10: ...
+    process_heap_flags: int
 
-    def __str__(self) -> str: ...
+    csd_version: int
 
-class LoadConfigurationV11(LoadConfigurationV10):
-    def __init__(self) -> None: ...
+    dependent_load_flags: int
 
-    cast_guard_os_determined_failure_mode: int
+    reserved1: int
 
-    def copy(self) -> LoadConfigurationV11: ...
+    editlist: int
 
-    def __str__(self) -> str: ...
+    security_cookie: int
 
-class LoadConfigurationV2(LoadConfigurationV1):
-    def __init__(self) -> None: ...
+    se_handler_table: int | None
 
     @property
-    def code_integrity(self) -> CodeIntegrity: ...
+    def seh_functions(self) -> list[int]: ...
 
-    def copy(self) -> LoadConfigurationV2: ...
+    se_handler_count: int | None
 
-    def __str__(self) -> str: ...
+    guard_cf_check_function_pointer: int | None
 
-class LoadConfigurationV3(LoadConfigurationV2):
-    def __init__(self) -> None: ...
+    guard_cf_dispatch_function_pointer: int | None
 
-    guard_address_taken_iat_entry_table: int
+    guard_cf_function_table: int | None
 
-    guard_address_taken_iat_entry_count: int
+    guard_cf_function_count: int | None
 
-    guard_long_jump_target_table: int
+    @property
+    def guard_cf_functions(self) -> LoadConfiguration.it_guard_functions: ...
 
-    guard_long_jump_target_count: int
+    guard_flags: int | None
 
-    def copy(self) -> LoadConfigurationV3: ...
+    def has(self, arg: LoadConfiguration.IMAGE_GUARD, /) -> bool: ...
 
-    def __str__(self) -> str: ...
+    @property
+    def guard_cf_flags_list(self) -> list[LoadConfiguration.IMAGE_GUARD]: ...
 
-class LoadConfigurationV4(LoadConfigurationV3):
-    def __init__(self) -> None: ...
+    code_integrity: CodeIntegrity
 
-    dynamic_value_reloc_table: int
+    guard_address_taken_iat_entry_table: int | None
 
-    hybrid_metadata_pointer: int
+    guard_address_taken_iat_entry_count: int | None
 
-    def copy(self) -> LoadConfigurationV4: ...
+    @property
+    def guard_address_taken_iat_entries(self) -> LoadConfiguration.it_guard_functions: ...
 
-    def __str__(self) -> str: ...
+    guard_long_jump_target_table: int | None
 
-class LoadConfigurationV5(LoadConfigurationV4):
-    def __init__(self) -> None: ...
+    guard_long_jump_target_count: int | None
 
-    guard_rf_failure_routine: int
+    @property
+    def guard_long_jump_targets(self) -> LoadConfiguration.it_guard_functions: ...
 
-    guard_rf_failure_routine_function_pointer: int
+    dynamic_value_reloc_table: int | None
 
-    dynamic_value_reloctable_offset: int
+    hybrid_metadata_pointer: int | None
 
-    dynamic_value_reloctable_section: int
+    @property
+    def chpe_metadata_pointer(self) -> int | None: ...
 
-    reserved2: int
+    @property
+    def chpe_metadata(self) -> CHPEMetadata: ...
 
-    def copy(self) -> LoadConfigurationV5: ...
+    guard_rf_failure_routine: int | None
 
-    def __str__(self) -> str: ...
+    guard_rf_failure_routine_function_pointer: int | None
 
-class LoadConfigurationV6(LoadConfigurationV5):
-    def __init__(self) -> None: ...
+    dynamic_value_reloctable_offset: int | None
 
-    guard_rf_verify_stackpointer_function_pointer: int
+    dynamic_value_reloctable_section: int | None
 
-    hotpatch_table_offset: int
+    @property
+    def dynamic_relocations(self) -> LoadConfiguration.it_dynamic_relocations_t: ...
 
-    def copy(self) -> LoadConfigurationV6: ...
+    reserved2: int | None
 
-    def __str__(self) -> str: ...
+    guard_rf_verify_stackpointer_function_pointer: int | None
 
-class LoadConfigurationV7(LoadConfigurationV6):
-    def __init__(self) -> None: ...
+    hotpatch_table_offset: int | None
 
-    reserved3: int
+    reserved3: int | None
 
-    addressof_unicode_string: int
+    enclave_configuration_ptr: int | None
 
-    def copy(self) -> LoadConfigurationV7: ...
+    @property
+    def enclave_config(self) -> EnclaveConfiguration: ...
 
-    def __str__(self) -> str: ...
+    volatile_metadata_pointer: int | None
 
-class LoadConfigurationV8(LoadConfigurationV7):
-    def __init__(self) -> None: ...
+    @property
+    def volatile_metadata(self) -> VolatileMetadata: ...
 
-    volatile_metadata_pointer: int
+    guard_eh_continuation_table: int | None
 
-    def copy(self) -> LoadConfigurationV8: ...
+    guard_eh_continuation_count: int | None
 
-    def __str__(self) -> str: ...
+    @property
+    def guard_eh_continuation_functions(self) -> LoadConfiguration.it_guard_functions: ...
 
-class LoadConfigurationV9(LoadConfigurationV8):
-    def __init__(self) -> None: ...
+    guard_xfg_check_function_pointer: int | None
 
-    guard_eh_continuation_table: int
+    guard_xfg_dispatch_function_pointer: int | None
 
-    guard_eh_continuation_count: int
+    guard_xfg_table_dispatch_function_pointer: int | None
 
-    def copy(self) -> LoadConfigurationV9: ...
+    cast_guard_os_determined_failure_mode: int | None
+
+    guard_memcpy_function_pointer: int | None
+
+    def copy(self) -> LoadConfiguration: ...
 
     def __str__(self) -> str: ...
 
@@ -2379,6 +2658,20 @@ class OptionalHeader(lief.Object):
 
     def __str__(self) -> str: ...
 
+class PDBChecksum(Debug):
+    def __init__(self, algo: PDBChecksum.HASH_ALGO, hash: Sequence[int]) -> None: ...
+
+    class HASH_ALGO(enum.Enum):
+        UNKNOWN = 0
+
+        SHA256 = 1
+
+    hash: memoryview
+
+    algorithm: PDBChecksum.HASH_ALGO
+
+    def __str__(self) -> str: ...
+
 class PE_TYPE(enum.Enum):
     @staticmethod
     def from_value(arg: int, /) -> PE_TYPE: ...
@@ -2425,7 +2718,15 @@ class ParserConfig:
 
     parse_reloc: bool
 
+    parse_exceptions: bool
+
+    parse_arm64x_binary: bool
+
+    default_conf: lief.PE.ParserConfig = ...
+
     all: lief.PE.ParserConfig = ...
+
+    def __str__(self) -> str: ...
 
 class Pogo(Debug):
     def __init__(self) -> None: ...
@@ -2720,7 +3021,11 @@ class Relocation(lief.Object):
     def __str__(self) -> str: ...
 
 class RelocationEntry(lief.Relocation):
+    @overload
     def __init__(self) -> None: ...
+
+    @overload
+    def __init__(self, arg0: int, arg1: RelocationEntry.BASE_TYPES, /) -> None: ...
 
     class BASE_TYPES(enum.Enum):
         @staticmethod
@@ -2744,35 +3049,28 @@ class RelocationEntry(lief.Relocation):
 
         HIGHADJ = 4
 
-        MIPS_JMPADDR = 5
+        MIPS_JMPADDR = 261
 
-        ARM_MOV32A = 262
+        ARM_MOV32 = 517
 
-        ARM_MOV32 = 263
-
-        RISCV_HI20 = 264
+        RISCV_HI20 = 1029
 
         SECTION = 6
 
-        REL = 7
+        THUMB_MOV32 = 2055
 
-        ARM_MOV32T = 520
+        RISCV_LOW12I = 4103
 
-        THUMB_MOV32 = 521
+        RISCV_LOW12S = 8200
 
-        RISCV_LOW12I = 522
-
-        RISCV_LOW12S = 8
-
-        MIPS_JMPADDR16 = 777
-
-        IA64_IMM64 = 9
+        MIPS_JMPADDR16 = 9
 
         DIR64 = 10
 
         HIGH3ADJ = 11
 
-    data: int
+    @property
+    def data(self) -> int: ...
 
     position: int
 
@@ -2786,6 +3084,28 @@ class Repro(Debug):
     def __str__(self) -> str: ...
 
 class ResourceAccelerator(lief.Object):
+    class FLAGS(enum.Flag):
+        @staticmethod
+        def from_value(arg: int, /) -> ResourceAccelerator.FLAGS: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        VIRTKEY = 1
+
+        NOINVERT = 2
+
+        SHIFT = 4
+
+        CONTROL = 8
+
+        ALT = 16
+
+        END = 128
+
     @property
     def flags(self) -> int: ...
 
@@ -2793,10 +3113,19 @@ class ResourceAccelerator(lief.Object):
     def ansi(self) -> int: ...
 
     @property
+    def ansi_str(self) -> str: ...
+
+    @property
     def id(self) -> int: ...
 
     @property
     def padding(self) -> int: ...
+
+    def has(self, arg: ResourceAccelerator.FLAGS, /) -> bool: ...
+
+    def add(self, arg: ResourceAccelerator.FLAGS, /) -> ResourceAccelerator: ...
+
+    def remove(self, arg: ResourceAccelerator.FLAGS, /) -> ResourceAccelerator: ...
 
     def __str__(self) -> str: ...
 
@@ -2805,7 +3134,7 @@ class ResourceData(ResourceNode):
     def __init__(self) -> None: ...
 
     @overload
-    def __init__(self, content: Sequence[int], code_page: int) -> None: ...
+    def __init__(self, content: Sequence[int], code_page: int = 0) -> None: ...
 
     code_page: int
 
@@ -2819,17 +3148,291 @@ class ResourceData(ResourceNode):
     def __str__(self) -> str: ...
 
 class ResourceDialog(lief.Object):
-    class it_const_items:
-        def __getitem__(self, arg: int, /) -> ResourceDialogItem: ...
+    class DIALOG_STYLES(enum.Flag):
+        @staticmethod
+        def from_value(arg: int, /) -> ResourceDialog.DIALOG_STYLES: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        ABSALIGN = 1
+
+        SYSMODAL = 2
+
+        LOCALEDIT = 32
+
+        SETFONT = 64
+
+        MODALFRAME = 128
+
+        NOIDLEMSG = 256
+
+        SETFOREGROUND = 512
+
+        S3DLOOK = 4
+
+        FIXEDSYS = 8
+
+        NOFAILCREATE = 16
+
+        CONTROL = 1024
+
+        CENTER = 2048
+
+        CENTERMOUSE = 4096
+
+        CONTEXTHELP = 8192
+
+        SHELLFONT = 72
+
+    class WINDOW_STYLES(enum.Flag):
+        @staticmethod
+        def from_value(arg: int, /) -> ResourceDialog.WINDOW_STYLES: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        OVERLAPPED = 0
+
+        POPUP = 2147483648
+
+        CHILD = 1073741824
+
+        MINIMIZE = 536870912
+
+        VISIBLE = 268435456
+
+        DISABLED = 134217728
+
+        CLIPSIBLINGS = 67108864
+
+        CLIPCHILDREN = 33554432
+
+        MAXIMIZE = 16777216
+
+        CAPTION = 12582912
+
+        BORDER = 8388608
+
+        DLGFRAME = 4194304
+
+        VSCROLL = 2097152
+
+        HSCROLL = 1048576
+
+        SYSMENU = 524288
+
+        THICKFRAME = 262144
+
+        GROUP = 131072
+
+        TABSTOP = 65536
+
+    class WINDOW_EXTENDED_STYLES(enum.Flag):
+        @staticmethod
+        def from_value(arg: int, /) -> ResourceDialog.WINDOW_EXTENDED_STYLES: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        DLGMODALFRAME = 1
+
+        NOPARENTNOTIFY = 4
+
+        TOPMOST = 8
+
+        ACCEPTFILES = 16
+
+        TRANSPARENT_STY = 32
+
+        MDICHILD = 64
+
+        TOOLWINDOW = 128
+
+        WINDOWEDGE = 256
+
+        CLIENTEDGE = 512
+
+        CONTEXTHELP = 1024
+
+        RIGHT = 4096
+
+        LEFT = 0
+
+        RTLREADING = 8192
+
+        LEFTSCROLLBAR = 16384
+
+        CONTROLPARENT = 65536
+
+        STATICEDGE = 131072
+
+        APPWINDOW = 262144
+
+    class CONTROL_STYLES(enum.Flag):
+        @staticmethod
+        def from_value(arg: int, /) -> ResourceDialog.CONTROL_STYLES: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        TOP = 1
+
+        NOMOVEY = 2
+
+        BOTTOM = 3
+
+        NORESIZE = 4
+
+        NOPARENTALIGN = 8
+
+        ADJUSTABLE = 32
+
+        NODIVIDER = 64
+
+        VERT = 128
+
+        LEFT = 129
+
+        RIGHT = 131
+
+        NOMOVEX = 130
+
+    class TYPE(enum.Enum):
+        UNKNOWN = 0
+
+        REGULAR = 1
+
+        EXTENDED = 2
+
+    class Item:
+        style: int
+
+        extended_style: int
+
+        id: int
+
+        x: int
+
+        y: int
+
+        cx: int
+
+        cy: int
+
+        @overload
+        def has(self, style: ResourceDialog.WINDOW_STYLES) -> bool: ...
+
+        @overload
+        def has(self, style: ResourceDialog.CONTROL_STYLES) -> bool: ...
+
+        @property
+        def window_styles(self) -> list[ResourceDialog.WINDOW_STYLES]: ...
+
+        @property
+        def control_styles(self) -> list[ResourceDialog.CONTROL_STYLES]: ...
+
+        @property
+        def clazz(self) -> Optional[Union[int, str]]: ...
+
+        @property
+        def title(self) -> Optional[Union[int, str]]: ...
+
+        @property
+        def creation_data(self) -> memoryview: ...
+
+        def __str__(self) -> str: ...
+
+    @property
+    def type(self) -> ResourceDialog.TYPE: ...
+
+    style: int
+
+    extended_style: int
+
+    x: int
+
+    y: int
+
+    cx: int
+
+    cy: int
+
+    @overload
+    def has(self, arg: ResourceDialog.DIALOG_STYLES, /) -> bool: ...
+
+    @overload
+    def has(self, arg: ResourceDialog.WINDOW_STYLES, /) -> bool: ...
+
+    @overload
+    def has(self, arg: ResourceDialog.WINDOW_EXTENDED_STYLES, /) -> bool: ...
+
+    @property
+    def styles_list(self) -> list[ResourceDialog.DIALOG_STYLES]: ...
+
+    @property
+    def windows_styles_list(self) -> list[ResourceDialog.WINDOW_STYLES]: ...
+
+    @property
+    def windows_ext_styles_list(self) -> list[ResourceDialog.WINDOW_EXTENDED_STYLES]: ...
+
+    title: str
+
+    @property
+    def menu(self) -> Optional[Union[int, str]]: ...
+
+    @property
+    def window_class(self) -> Optional[Union[int, str]]: ...
+
+    def copy(self) -> Optional[ResourceDialog]: ...
+
+    def __str__(self) -> str: ...
+
+class ResourceDialogExtended(ResourceDialog):
+    def __init__(self) -> None: ...
+
+    class it_items:
+        def __getitem__(self, arg: int, /) -> ResourceDialogExtended.Item: ...
 
         def __len__(self) -> int: ...
 
-        def __iter__(self) -> ResourceDialog.it_const_items: ...
+        def __iter__(self) -> ResourceDialogExtended.it_items: ...
 
-        def __next__(self) -> ResourceDialogItem: ...
+        def __next__(self) -> ResourceDialogExtended.Item: ...
 
-    @property
-    def is_extended(self) -> bool: ...
+    class font_t:
+        point_size: int
+
+        weight: int
+
+        italic: bool
+
+        charset: int
+
+        typeface: str
+
+        def __bool__(self) -> bool: ...
+
+        def __str__(self) -> str: ...
+
+    class Item(ResourceDialog.Item):
+        def __init__(self) -> None: ...
+
+        help_id: int
+
+        def __str__(self) -> str: ...
 
     @property
     def version(self) -> int: ...
@@ -2841,97 +3444,60 @@ class ResourceDialog(lief.Object):
     def help_id(self) -> int: ...
 
     @property
-    def x(self) -> int: ...
+    def items(self) -> ResourceDialogExtended.it_items: ...
 
     @property
-    def y(self) -> int: ...
+    def font(self) -> ResourceDialogExtended.font_t: ...
 
-    @property
-    def cx(self) -> int: ...
-
-    @property
-    def cy(self) -> int: ...
-
-    @property
-    def title(self) -> str: ...
-
-    @property
-    def typeface(self) -> str: ...
-
-    @property
-    def weight(self) -> int: ...
-
-    @property
-    def point_size(self) -> int: ...
-
-    @property
-    def charset(self) -> int: ...
-
-    @property
-    def style_list(self) -> set[WINDOW_STYLES]: ...
-
-    @property
-    def dialogbox_style_list(self) -> set[DIALOG_BOX_STYLES]: ...
-
-    @property
-    def extended_style_list(self) -> set[DIALOG_BOX_STYLES]: ...
-
-    @property
-    def style(self) -> int: ...
-
-    @property
-    def extended_style(self) -> int: ...
-
-    @property
-    def items(self) -> ResourceDialog.it_const_items: ...
-
-    def has_style(self, style: WINDOW_STYLES) -> bool: ...
-
-    def has_dialogbox_style(self, style: DIALOG_BOX_STYLES) -> bool: ...
-
-    def has_extended_style(self, style: EXTENDED_WINDOW_STYLES) -> bool: ...
-
-    lang: int
-
-    sub_lang: int
+    def add_item(self, item: ResourceDialogExtended.Item) -> None: ...
 
     def __str__(self) -> str: ...
 
-class ResourceDialogItem(lief.Object):
-    @property
-    def is_extended(self) -> bool: ...
+class ResourceDialogRegular(ResourceDialog):
+    def __init__(self) -> None: ...
+
+    class it_items:
+        def __getitem__(self, arg: int, /) -> ResourceDialogRegular.Item: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> ResourceDialogRegular.it_items: ...
+
+        def __next__(self) -> ResourceDialogRegular.Item: ...
+
+    class font_t:
+        point_size: int
+
+        name: str
+
+        def __bool__(self) -> bool: ...
+
+        def __str__(self) -> str: ...
+
+    class Item(ResourceDialog.Item):
+        def __init__(self) -> None: ...
+
+        def __str__(self) -> str: ...
 
     @property
-    def help_id(self) -> int: ...
+    def nb_items(self) -> int: ...
 
     @property
-    def extended_style(self) -> int: ...
+    def items(self) -> ResourceDialogRegular.it_items: ...
 
     @property
-    def style(self) -> int: ...
+    def font(self) -> ResourceDialogRegular.font_t: ...
 
-    @property
-    def x(self) -> int: ...
-
-    @property
-    def y(self) -> int: ...
-
-    @property
-    def cx(self) -> int: ...
-
-    @property
-    def cy(self) -> int: ...
-
-    @property
-    def id(self) -> int: ...
-
-    @property
-    def title(self) -> str: ...
+    def add_item(self, item: ResourceDialogRegular.Item) -> None: ...
 
     def __str__(self) -> str: ...
 
 class ResourceDirectory(ResourceNode):
+    @overload
     def __init__(self) -> None: ...
+
+    @overload
+    def __init__(self, arg: int, /) -> None: ...
 
     characteristics: int
 
@@ -2944,35 +3510,6 @@ class ResourceDirectory(ResourceNode):
     numberof_name_entries: int
 
     numberof_id_entries: int
-
-    def __str__(self) -> str: ...
-
-class ResourceFixedFileInfo(lief.Object):
-    signature: int
-
-    struct_version: int
-
-    file_version_MS: int
-
-    file_version_LS: int
-
-    product_version_MS: int
-
-    product_version_LS: int
-
-    file_flags_mask: int
-
-    file_flags: int
-
-    file_os: FIXED_VERSION_OS
-
-    file_type: FIXED_VERSION_FILE_TYPES
-
-    file_subtype: FIXED_VERSION_FILE_SUB_TYPES
-
-    file_date_MS: int
-
-    file_date_LS: int
 
     def __str__(self) -> str: ...
 
@@ -2999,6 +3536,11 @@ class ResourceIcon(lief.Object):
 
     def save(self, filepath: str) -> None: ...
 
+    def serialize(self) -> bytes: ...
+
+    @staticmethod
+    def from_serialization(arg: bytes, /) -> Union[ResourceIcon, lief.lief_errors]: ...
+
     def __str__(self) -> str: ...
 
 class ResourceNode(lief.Object):
@@ -3011,6 +3553,9 @@ class ResourceNode(lief.Object):
 
         def __next__(self) -> ResourceNode: ...
 
+    @staticmethod
+    def parse(bytes: bytes, rva: int) -> Optional[ResourceNode]: ...
+
     id: int
 
     @property
@@ -3022,14 +3567,12 @@ class ResourceNode(lief.Object):
     @property
     def has_name(self) -> bool: ...
 
-    name: Union[str, bytes]
+    name: str
 
     @property
     def childs(self) -> ResourceNode.it_childs: ...
 
-    def add_directory_node(self, resource_directory: ResourceDirectory) -> ResourceNode: ...
-
-    def add_data_node(self, resource_data: ResourceData) -> ResourceNode: ...
+    def add_child(self, node: ResourceNode) -> ResourceNode: ...
 
     @overload
     def delete_child(self, node: ResourceNode) -> None: ...
@@ -3040,67 +3583,245 @@ class ResourceNode(lief.Object):
     @property
     def depth(self) -> int: ...
 
+    def __eq__(self, arg, /) -> bool: ...
+
+    def __ne__(self, arg, /) -> bool: ...
+
     def copy(self) -> Optional[ResourceNode]: ...
 
     def __str__(self) -> str: ...
 
 class ResourceStringFileInfo(lief.Object):
-    type: int
+    class it_elements:
+        def __getitem__(self, arg: int, /) -> ResourceStringTable: ...
 
-    key: str
+        def __len__(self) -> int: ...
 
-    langcode_items: list[LangCodeItem]
+        def __iter__(self) -> ResourceStringFileInfo.it_elements: ...
+
+        def __next__(self) -> ResourceStringTable: ...
+
+    @property
+    def type(self) -> int: ...
+
+    @property
+    def key(self) -> str: ...
+
+    @property
+    def children(self) -> ResourceStringFileInfo.it_elements: ...
 
     def __str__(self) -> str: ...
 
 class ResourceStringTable(lief.Object):
-    @property
-    def length(self) -> int: ...
+    class it_entries:
+        def __getitem__(self, arg: int, /) -> ResourceStringTable.entry_t: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> ResourceStringTable.it_entries: ...
+
+        def __next__(self) -> ResourceStringTable.entry_t: ...
+
+    class entry_t:
+        key: str
+
+        value: str
+
+        def __bool__(self) -> bool: ...
 
     @property
-    def name(self) -> str: ...
+    def key(self) -> str: ...
+
+    @property
+    def type(self) -> int: ...
+
+    @property
+    def entries(self) -> ResourceStringTable.it_entries: ...
+
+    def get(self, key: str) -> str | None: ...
+
+    def __getitem__(self, arg: str, /) -> str | None: ...
+
+class ResourceVar:
+    @property
+    def type(self) -> int: ...
+
+    @property
+    def key(self) -> str: ...
+
+    @property
+    def values(self) -> list[int]: ...
 
     def __str__(self) -> str: ...
 
 class ResourceVarFileInfo(lief.Object):
-    type: int
+    class it_vars:
+        def __getitem__(self, arg: int, /) -> ResourceVar: ...
 
-    key: str
+        def __len__(self) -> int: ...
 
-    translations: list[int]
+        def __iter__(self) -> ResourceVarFileInfo.it_vars: ...
+
+        def __next__(self) -> ResourceVar: ...
+
+    @property
+    def type(self) -> int: ...
+
+    @property
+    def key(self) -> str: ...
+
+    @property
+    def vars(self) -> ResourceVarFileInfo.it_vars: ...
 
     def __str__(self) -> str: ...
 
 class ResourceVersion(lief.Object):
-    type: int
+    class fixed_file_info_t:
+        class VERSION_OS(enum.Enum):
+            DOS_WINDOWS16 = 65537
 
-    key: str
+            DOS_WINDOWS32 = 65540
 
-    fixed_file_info: ResourceFixedFileInfo
+            NT = 262144
 
-    string_file_info: ResourceStringFileInfo
+            NT_WINDOWS32 = 262148
 
-    var_file_info: ResourceVarFileInfo
+            OS216 = 131072
+
+            OS216_PM16 = 131074
+
+            OS232 = 196608
+
+            OS232_PM32 = 196611
+
+            PM16 = 2
+
+            PM32 = 3
+
+            UNKNOWN = 0
+
+            WINCE = 327680
+
+            WINDOWS16 = 1
+
+            WINDOWS32 = 4
+
+        class FILE_TYPE(enum.Enum):
+            UNKNOWN = 0
+
+            APP = 1
+
+            DLL = 2
+
+            DRV = 3
+
+            FONT = 4
+
+            STATIC_LIB = 7
+
+            VXD = 5
+
+        class FILE_FLAGS(enum.Enum):
+            DEBUG = 1
+
+            INFO_INFERRED = 16
+
+            PATCHED = 4
+
+            PRERELEASE = 2
+
+            PRIVATEBUILD = 8
+
+            SPECIALBUILD = 32
+
+        class FILE_TYPE_DETAILS(enum.Enum):
+            DRV_COMM = 8589934602
+
+            DRV_DISPLAY = 8589934596
+
+            DRV_INPUTMETHOD = 8589934603
+
+            DRV_INSTALLABLE = 8589934600
+
+            DRV_KEYBOARD = 8589934594
+
+            DRV_LANGUAGE = 8589934595
+
+            DRV_MOUSE = 8589934597
+
+            DRV_NETWORK = 8589934598
+
+            DRV_PRINTER = 8589934593
+
+            DRV_SOUND = 8589934601
+
+            DRV_SYSTEM = 8589934599
+
+            DRV_VERSIONED_PRINTER = 12
+
+            FONT_RASTER = 17179869185
+
+            FONT_TRUETYPE = 17179869187
+
+            FONT_VECTOR = 17179869186
+
+            UNKNOWN = 0
+
+        signature: int
+
+        struct_version: int
+
+        file_version_ms: int
+
+        file_version_ls: int
+
+        product_version_ms: int
+
+        product_version_ls: int
+
+        file_flags_mask: int
+
+        file_flags: int
+
+        file_os: int
+
+        file_type: int
+
+        file_subtype: int
+
+        file_date_ms: int
+
+        file_date_ls: int
+
+        def has(self, flag: ResourceVersion.fixed_file_info_t.FILE_FLAGS) -> bool: ...
+
+        @property
+        def flags(self) -> list[ResourceVersion.fixed_file_info_t.FILE_FLAGS]: ...
+
+        @property
+        def file_type_details(self) -> ResourceVersion.fixed_file_info_t.FILE_TYPE_DETAILS: ...
+
+        def __str__(self) -> str: ...
 
     @property
-    def has_fixed_file_info(self) -> bool: ...
+    def key(self) -> str: ...
 
     @property
-    def has_string_file_info(self) -> bool: ...
+    def type(self) -> int: ...
 
     @property
-    def has_var_file_info(self) -> bool: ...
+    def file_info(self) -> ResourceVersion.fixed_file_info_t: ...
 
-    def remove_fixed_file_info(self) -> None: ...
+    @property
+    def string_file_info(self) -> ResourceStringFileInfo: ...
 
-    def remove_string_file_info(self) -> None: ...
-
-    def remove_var_file_info(self) -> None: ...
+    @property
+    def var_file_info(self) -> ResourceVarFileInfo: ...
 
     def __str__(self) -> str: ...
 
 class ResourcesManager(lief.Object):
-    def __init__(self, arg: ResourceNode, /) -> None: ...
+    def __init__(self, node: ResourceNode) -> None: ...
 
     class it_const_dialogs:
         def __getitem__(self, arg: int, /) -> ResourceDialog: ...
@@ -3120,15 +3841,6 @@ class ResourcesManager(lief.Object):
 
         def __next__(self) -> ResourceIcon: ...
 
-    class it_const_strings_table:
-        def __getitem__(self, arg: int, /) -> ResourceStringTable: ...
-
-        def __len__(self) -> int: ...
-
-        def __iter__(self) -> ResourcesManager.it_const_strings_table: ...
-
-        def __next__(self) -> ResourceStringTable: ...
-
     class it_const_accelerators:
         def __getitem__(self, arg: int, /) -> ResourceAccelerator: ...
 
@@ -3137,6 +3849,13 @@ class ResourcesManager(lief.Object):
         def __iter__(self) -> ResourcesManager.it_const_accelerators: ...
 
         def __next__(self) -> ResourceAccelerator: ...
+
+    class string_entry_t:
+        string: str
+
+        id: int
+
+        def __str__(self) -> str: ...
 
     class TYPE(enum.Enum):
         @staticmethod
@@ -3199,7 +3918,7 @@ class ResourcesManager(lief.Object):
     def has_version(self) -> bool: ...
 
     @property
-    def version(self) -> Union[ResourceVersion, lief.lief_errors]: ...
+    def version(self) -> list[ResourceVersion]: ...
 
     @property
     def has_icons(self) -> bool: ...
@@ -3226,7 +3945,7 @@ class ResourcesManager(lief.Object):
     def has_string_table(self) -> bool: ...
 
     @property
-    def string_table(self) -> ResourcesManager.it_const_strings_table: ...
+    def string_table(self) -> list[ResourcesManager.string_entry_t]: ...
 
     @property
     def has_html(self) -> bool: ...
@@ -3241,6 +3960,8 @@ class ResourcesManager(lief.Object):
     def accelerator(self) -> ResourcesManager.it_const_accelerators: ...
 
     def get_node_type(self, type: ResourcesManager.TYPE) -> ResourceNode: ...
+
+    def print(self, max_depth: int = 0) -> str: ...
 
     def __str__(self) -> str: ...
 
@@ -3330,174 +4051,160 @@ class RsaInfo:
 
     def __str__(self) -> str: ...
 
-class SECTION_TYPES(enum.Enum):
-    @staticmethod
-    def from_value(arg: int, /) -> SECTION_TYPES: ...
+class RuntimeFunctionAArch64(ExceptionInfo):
+    class PACKED_FLAGS(enum.Enum):
+        UNPACKED = 0
 
-    def __eq__(self, arg, /) -> bool: ...
+        PACKED = 1
 
-    def __ne__(self, arg, /) -> bool: ...
+        PACKED_FRAGMENT = 2
 
-    def __int__(self) -> int: ...
+        RESERVED = 3
 
-    TEXT = 0
+    @property
+    def length(self) -> int: ...
 
-    IDATA = 2
+    @property
+    def flag(self) -> RuntimeFunctionAArch64.PACKED_FLAGS: ...
 
-    DATA = 3
+    @property
+    def rva_end(self) -> int: ...
 
-    BSS = 4
+class RuntimeFunctionX64(ExceptionInfo):
+    class UNWIND_FLAGS(enum.Flag):
+        @staticmethod
+        def from_value(arg: int, /) -> RuntimeFunctionX64.UNWIND_FLAGS: ...
 
-    RESOURCE = 5
+        def __eq__(self, arg, /) -> bool: ...
 
-    RELOCATION = 6
+        def __ne__(self, arg, /) -> bool: ...
 
-    EXPORT = 7
+        def __int__(self) -> int: ...
 
-    UNKNOWN = 10
+        EXCEPTION_HANDLER = 1
 
-class SYMBOL_BASE_TYPES(enum.Enum):
-    @staticmethod
-    def from_value(arg: int, /) -> SYMBOL_BASE_TYPES: ...
+        TERMINATE_HANDLER = 2
 
-    def __eq__(self, arg, /) -> bool: ...
+        CHAIN_INFO = 4
 
-    def __ne__(self, arg, /) -> bool: ...
+    class UNWIND_OPCODES(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> RuntimeFunctionX64.UNWIND_OPCODES: ...
 
-    def __int__(self) -> int: ...
+        def __eq__(self, arg, /) -> bool: ...
 
-    NULL = 0
+        def __ne__(self, arg, /) -> bool: ...
 
-    VOID = 1
+        def __int__(self) -> int: ...
 
-    CHAR = 2
+        PUSH_NONVOL = 0
 
-    SHORT = 3
+        ALLOC_LARGE = 1
 
-    INT = 4
+        ALLOC_SMALL = 2
 
-    LONG = 5
+        SET_FPREG = 3
 
-    FLOAT = 6
+        SAVE_NONVOL = 4
 
-    DOUBLE = 7
+        SAVE_NONVOL_FAR = 5
 
-    STRUCT = 8
+        SAVE_XMM128 = 8
 
-    UNION = 9
+        SAVE_XMM128_FAR = 9
 
-    ENUM = 10
+        PUSH_MACHFRAME = 10
 
-    MOE = 11
+        EPILOG = 6
 
-    BYTE = 12
+        SPARE = 7
 
-    WORD = 13
+    class UNWIND_REG(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> RuntimeFunctionX64.UNWIND_REG: ...
 
-    UINT = 14
+        def __eq__(self, arg, /) -> bool: ...
 
-    DWORD = 15
+        def __ne__(self, arg, /) -> bool: ...
 
-class SYMBOL_COMPLEX_TYPES(enum.Enum):
-    @staticmethod
-    def from_value(arg: int, /) -> SYMBOL_COMPLEX_TYPES: ...
+        def __int__(self) -> int: ...
 
-    def __eq__(self, arg, /) -> bool: ...
+        RAX = 0
 
-    def __ne__(self, arg, /) -> bool: ...
+        RCX = 1
 
-    def __int__(self) -> int: ...
+        RDX = 2
 
-    NULL = 0
+        RBX = 3
 
-    POINTER = 1
+        RSP = 4
 
-    FUNCTION = 2
+        RBP = 5
 
-    ARRAY = 3
+        RSI = 6
 
-    COMPLEX_TYPE_SHIFT = 4
+        RDI = 7
 
-class SYMBOL_SECTION_NUMBER(enum.Enum):
-    @staticmethod
-    def from_value(arg: int, /) -> SYMBOL_SECTION_NUMBER: ...
+        R8 = 8
 
-    def __eq__(self, arg, /) -> bool: ...
+        R9 = 9
 
-    def __ne__(self, arg, /) -> bool: ...
+        R10 = 10
 
-    def __int__(self) -> int: ...
+        R11 = 11
 
-    DEBUG = -2
+        R12 = 12
 
-    ABSOLUTE = -1
+        R13 = 13
 
-    UNDEFINED = 0
+        R14 = 14
 
-class SYMBOL_STORAGE_CLASS(enum.Enum):
-    @staticmethod
-    def from_value(arg: int, /) -> SYMBOL_STORAGE_CLASS: ...
+        R15 = 15
 
-    def __eq__(self, arg, /) -> bool: ...
+    class unwind_info_t:
+        version: int
 
-    def __ne__(self, arg, /) -> bool: ...
+        flags: int
 
-    def __int__(self) -> int: ...
+        sizeof_prologue: int
 
-    END_OF_FUNCTION = -1
+        count_opcodes: int
 
-    NULL = 0
+        frame_reg: int
 
-    AUTOMATIC = 1
+        frame_reg_offset: int
 
-    EXTERNAL = 2
+        raw_opcodes: list[int]
 
-    STATIC = 3
+        handler: int | None
 
-    REGISTER = 4
+        chained: RuntimeFunctionX64
 
-    EXTERNAL_DEF = 5
+        def has(self, arg: RuntimeFunctionX64.UNWIND_FLAGS, /) -> bool: ...
 
-    LABEL = 6
+        @property
+        def opcodes(self) -> list[Optional[unwind_x64.Code]]: ...
 
-    UNDEFINED_LABEL = 7
+        def __str__(self) -> str: ...
 
-    MEMBER_OF_STRUCT = 8
+    @property
+    def rva_end(self) -> int: ...
 
-    UNION_TAG = 12
+    @property
+    def unwind_rva(self) -> int: ...
 
-    TYPE_DEFINITION = 13
+    @property
+    def size(self) -> int: ...
 
-    UDEFINED_STATIC = 14
-
-    ENUM_TAG = 15
-
-    MEMBER_OF_ENUM = 16
-
-    REGISTER_PARAM = 17
-
-    BIT_FIELD = 18
-
-    BLOCK = 100
-
-    FUNCTION = 101
-
-    END_OF_STRUCT = 102
-
-    FILE = 103
-
-    SECTION = 104
-
-    WEAK_EXTERNAL = 105
-
-    CLR_TOKEN = 107
+    @property
+    def unwind_info(self) -> RuntimeFunctionX64.unwind_info_t: ...
 
 class Section(lief.Section):
     @overload
     def __init__(self) -> None: ...
 
     @overload
-    def __init__(self, content: Sequence[int], name: str = '', characteristics: int = 0) -> None: ...
+    def __init__(self, name: str, content: Sequence[int]) -> None: ...
 
     @overload
     def __init__(self, name: str) -> None: ...
@@ -3602,6 +4309,12 @@ class Section(lief.Section):
     def characteristics_lists(self) -> list[Section.CHARACTERISTICS]: ...
 
     def has_characteristic(self, characteristic: Section.CHARACTERISTICS) -> bool: ...
+
+    @property
+    def is_discardable(self) -> bool: ...
+
+    @property
+    def coff_string(self) -> COFFString: ...
 
     @property
     def padding(self) -> bytes: ...
@@ -3802,33 +4515,172 @@ class SpcSpOpusInfo(Attribute):
     def more_info(self) -> Union[str, bytes]: ...
 
 class Symbol(lief.Symbol):
-    def __init__(self) -> None: ...
+    class it_auxiliary_symbols_t:
+        def __getitem__(self, arg: int, /) -> AuxiliarySymbol: ...
 
-    name: Union[str, bytes]
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> Symbol.it_auxiliary_symbols_t: ...
+
+        def __next__(self) -> AuxiliarySymbol: ...
+
+    class STORAGE_CLASS(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> Symbol.STORAGE_CLASS: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        END_OF_FUNCTION = -1
+
+        NONE = 0
+
+        AUTOMATIC = 1
+
+        EXTERNAL = 2
+
+        STATIC = 3
+
+        REGISTER = 4
+
+        EXTERNAL_DEF = 5
+
+        LABEL = 6
+
+        UNDEFINED_LABEL = 7
+
+        MEMBER_OF_STRUCT = 8
+
+        ARGUMENT = 9
+
+        STRUCT_TAG = 10
+
+        MEMBER_OF_UNION = 11
+
+        UNION_TAG = 12
+
+        TYPE_DEFINITION = 13
+
+        UNDEFINED_STATIC = 14
+
+        ENUM_TAG = 15
+
+        MEMBER_OF_ENUM = 16
+
+        REGISTER_PARAM = 17
+
+        BIT_FIELD = 18
+
+        BLOCK = 100
+
+        FUNCTION = 101
+
+        END_OF_STRUCT = 102
+
+        FILE = 103
+
+        SECTION = 104
+
+        WEAK_EXTERNAL = 105
+
+        CLR_TOKEN = 107
+
+    class BASE_TYPE(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> Symbol.BASE_TYPE: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        NULL = 0
+
+        VOID = 1
+
+        CHAR = 2
+
+        SHORT = 3
+
+        INT = 4
+
+        LONG = 5
+
+        FLOAT = 6
+
+        DOUBLE = 7
+
+        STRUCT = 8
+
+        UNION = 9
+
+        ENUM = 10
+
+        MOE = 11
+
+        BYTE = 12
+
+        WORD = 13
+
+        UINT = 14
+
+        DWORD = 15
+
+    class COMPLEX_TYPE(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> Symbol.COMPLEX_TYPE: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        NULL = 0
+
+        POINTER = 1
+
+        FUNCTION = 2
+
+        ARRAY = 3
+
+    type: int
 
     @property
-    def section_number(self) -> int: ...
+    def base_type(self) -> Symbol.BASE_TYPE: ...
 
     @property
-    def type(self) -> int: ...
+    def complex_type(self) -> Symbol.COMPLEX_TYPE: ...
 
     @property
-    def base_type(self) -> SYMBOL_BASE_TYPES: ...
+    def storage_class(self) -> Symbol.STORAGE_CLASS: ...
+
+    section_idx: int
 
     @property
-    def complex_type(self) -> SYMBOL_COMPLEX_TYPES: ...
+    def is_external(self) -> bool: ...
 
     @property
-    def storage_class(self) -> SYMBOL_STORAGE_CLASS: ...
+    def is_weak_external(self) -> bool: ...
 
     @property
-    def numberof_aux_symbols(self) -> int: ...
+    def is_undefined(self) -> bool: ...
 
     @property
-    def section(self) -> Section: ...
+    def is_function_line_info(self) -> bool: ...
 
     @property
-    def has_section(self) -> bool: ...
+    def is_file_record(self) -> bool: ...
+
+    @property
+    def auxiliary_symbols(self) -> Symbol.it_auxiliary_symbols_t: ...
+
+    @property
+    def coff_name(self) -> COFFString: ...
 
     def __str__(self) -> str: ...
 
@@ -3861,59 +4713,66 @@ class TLS(lief.Object):
     @property
     def section(self) -> Section: ...
 
+    def add_callback(self, addr: int) -> TLS: ...
+
     def copy(self) -> TLS: ...
 
     def __str__(self) -> str: ...
 
-class WINDOW_STYLES(enum.Enum):
-    @staticmethod
-    def from_value(arg: int, /) -> WINDOW_STYLES: ...
+class VCFeature(Debug):
+    pre_vcpp: int
 
-    def __eq__(self, arg, /) -> bool: ...
+    c_cpp: int
 
-    def __ne__(self, arg, /) -> bool: ...
+    gs: int
 
-    def __int__(self) -> int: ...
+    sdl: int
 
-    OVERLAPPED = 0
+    guards: int
 
-    POPUP = 2147483648
+class VolatileMetadata:
+    class range_t:
+        start: int
 
-    CHILD = 1073741824
+        size: int
 
-    MINIMIZE = 536870912
+        @property
+        def end(self) -> int: ...
 
-    VISIBLE = 268435456
+    class it_info_ranges_t:
+        def __getitem__(self, arg: int, /) -> VolatileMetadata.range_t: ...
 
-    DISABLED = 134217728
+        def __len__(self) -> int: ...
 
-    CLIPSIBLINGS = 67108864
+        def __iter__(self) -> VolatileMetadata.it_info_ranges_t: ...
 
-    CLIPCHILDREN = 33554432
+        def __next__(self) -> VolatileMetadata.range_t: ...
 
-    MAXIMIZE = 16777216
+    size: int
 
-    CAPTION = 12582912
+    min_version: int
 
-    BORDER = 8388608
+    max_version: int
 
-    DLGFRAME = 4194304
+    access_table_rva: int
 
-    VSCROLL = 2097152
+    @property
+    def access_table(self) -> list[int]: ...
 
-    HSCROLL = 1048576
+    @property
+    def access_table_size(self) -> int: ...
 
-    SYSMENU = 524288
+    info_range_rva: int
 
-    THICKFRAME = 262144
+    @property
+    def info_ranges_size(self) -> int: ...
 
-    GROUP = 131072
+    @property
+    def info_ranges(self) -> VolatileMetadata.it_info_ranges_t: ...
 
-    TABSTOP = 65536
+    def __str__(self) -> str: ...
 
-    MINIMIZEBOX = 131072
-
-    MAXIMIZEBOX = 65536
+def check_layout(binary: Binary) -> tuple[bool, str]: ...
 
 def get_imphash(binary: Binary, mode: IMPHASH_MODE = IMPHASH_MODE.DEFAULT) -> str: ...
 

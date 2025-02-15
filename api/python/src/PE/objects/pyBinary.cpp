@@ -20,11 +20,13 @@
 #include "LIEF/PE/RelocationEntry.hpp"
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/ResourceNode.hpp"
+#include "LIEF/PE/COFFString.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
 #include "LIEF/PE/TLS.hpp"
 #include "LIEF/PE/Debug.hpp"
 #include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/RichHeader.hpp"
+#include "LIEF/PE/ExceptionInfo.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
 
 #include "PE/pyPE.hpp"
@@ -61,11 +63,10 @@ void create<Binary>(nb::module_& m) {
   init_ref_iterator<Binary::it_symbols>(bin, "it_symbols");
   init_ref_iterator<Binary::it_const_signatures>(bin, "it_const_signatures");
   init_ref_iterator<Binary::it_debug_entries>(bin, "it_debug");
+  init_ref_iterator<Binary::it_strings_table>(bin, "it_strings_table");
+  init_ref_iterator<Binary::it_exceptions>(bin, "it_exceptions");
 
   bin
-    .def(nb::init<PE_TYPE>(),
-         "type"_a)
-
     .def_prop_ro("sections",
         nb::overload_cast<>(&Binary::sections),
         "Return binary's an iterator over the PE's " RST_CLASS_REF(lief.PE.Section) ""_doc,
@@ -153,6 +154,9 @@ void create<Binary>(nb::module_& m) {
       "" RST_CLASS_REF(lief.PE.TLS) " object (if present)"_doc,
       nb::rv_policy::reference_internal)
 
+    .def("remove_tls", &Binary::remove_tls,
+         "Remove the TLS from the binary"_doc)
+
     .def_prop_rw("rich_header",
       nb::overload_cast<>(&Binary::rich_header),
       nb::overload_cast<const RichHeader&>(&Binary::rich_header),
@@ -199,11 +203,6 @@ void create<Binary>(nb::module_& m) {
     .def_prop_ro("exception_functions",
         &Binary::exception_functions,
         "" RST_CLASS_REF(lief.Function) " found in the Exception directory"_doc)
-
-    .def("predict_function_rva",
-        nb::overload_cast<const std::string&, const std::string&>(&Binary::predict_function_rva),
-        "Try to predict the RVA of the given function name in the given import library name"_doc,
-        "library"_a, "function"_a)
 
     .def_prop_ro("signatures",
         nb::overload_cast<>(&Binary::signatures, nb::const_),
@@ -276,6 +275,17 @@ void create<Binary>(nb::module_& m) {
         "Return the " RST_CLASS_REF(lief.PE.Debug) ""_doc,
         nb::rv_policy::reference_internal)
 
+    .def("add_debug_info", &Binary::add_debug_info,
+         "Add a new debug entry"_doc,
+         "entry"_a, nb::rv_policy::reference_internal)
+
+    .def("remove_debug", &Binary::remove_debug,
+         "Remove a specific debug entry"_doc,
+         "entry"_a)
+
+    .def("clear_debug", &Binary::clear_debug,
+         "Remove all debug info from the binary"_doc)
+
     .def_prop_ro("codeview_pdb",
         nb::overload_cast<>(&Binary::codeview_pdb, nb::const_),
         "Return the :class:`~.CodeViewPDB` if present"_doc,
@@ -291,10 +301,14 @@ void create<Binary>(nb::module_& m) {
         "Return the " RST_CLASS_REF(lief.PE.Export) " object"_doc,
         nb::rv_policy::reference_internal)
 
+    .def("set_export", &Binary::set_export,
+        "Add or replace the export table"_doc,
+        nb::rv_policy::reference_internal)
+
     .def_prop_ro("symbols",
         nb::overload_cast<>(&Binary::symbols),
         "Return binary's " RST_CLASS_REF(lief.PE.Symbol) ""_doc,
-        nb::rv_policy::reference_internal)
+        nb::rv_policy::reference_internal, nb::keep_alive<0, 1>())
 
     .def("get_section",
         nb::overload_cast<const std::string&>(&Binary::get_section),
@@ -305,7 +319,7 @@ void create<Binary>(nb::module_& m) {
     .def("add_section",
         &Binary::add_section,
         "Add a " RST_CLASS_REF(lief.PE.Section) " to the binary."_doc,
-        "section"_a, nb::arg("type") = PE_SECTION_TYPES::UNKNOWN,
+        "section"_a,
         nb::rv_policy::reference_internal)
 
     .def_prop_ro("relocations",
@@ -349,7 +363,7 @@ void create<Binary>(nb::module_& m) {
 
     .def("get_import",
         nb::overload_cast<const std::string&>(&Binary::get_import),
-        "Return the " RST_CLASS_REF(lief.PE.Import) " from the given name or None if not not found"_doc,
+        "Return the :class:`~.Import` from the given name or None if it can't be found"_doc,
         "import_name"_a,
         nb::rv_policy::reference_internal)
 
@@ -395,31 +409,162 @@ void create<Binary>(nb::module_& m) {
         nb::overload_cast<std::vector<uint8_t>>(&Binary::dos_stub),
         "DOS stub content as a ``list`` of bytes"_doc)
 
-    .def("add_import_function",
-        &Binary::add_import_function,
-        "Add a function to the given " RST_CLASS_REF(lief.PE.Import) " name"_doc,
-        "import_name"_a, "function_name"_a,
-        nb::rv_policy::reference_internal)
-
-    .def("add_library",
-        &Binary::add_library,
-        "Add an " RST_CLASS_REF(lief.PE.Import) " by name"_doc,
+    .def("add_import", &Binary::add_import,
+        "Add an imported library (i.e. ``DLL``) to the binary"_doc,
         "import_name"_a,
         nb::rv_policy::reference_internal)
 
-    .def("remove_library",
-        &Binary::remove_library,
-        "Remove the " RST_CLASS_REF(lief.PE.Import) " from the given name"_doc,
-        "import_name"_a)
+    .def("remove_import", &Binary::remove_import,
+        "Remove the imported library with the given name"_doc,
+        "name"_a)
 
-    .def("remove_all_libraries",
-        &Binary::remove_all_libraries,
+    .def("remove_all_imports", &Binary::remove_all_imports,
         "Remove all imported libraries"_doc)
+
+    .def("set_resources",
+         nb::overload_cast<const ResourceNode&>(&Binary::set_resources),
+         R"doc(
+         Change or set the current resource tree with the new one provided in
+         parameter.
+         )doc"_doc, "new_tree"_a,
+         nb::rv_policy::reference_internal
+      )
+
+    .def_prop_ro("exceptions", nb::overload_cast<>(&Binary::exceptions),
+      R"doc(
+      Iterator over the exception (``_RUNTIME_FUNCTION``) functions.
+
+      .. warning::
+
+        This property requires that the option :attr:`lief.PE.ParserConfig.parse_exceptions`
+        was turned on (default is ``False``) when parsing the binary.
+      )doc"_doc,
+      nb::keep_alive<0, 1>(), nb::rv_policy::reference_internal)
+
+    .def_prop_ro("export_dir", nb::overload_cast<>(&Binary::export_dir),
+      "Return the data directory associated with the export table"_doc
+    )
+
+    .def_prop_ro("import_dir", nb::overload_cast<>(&Binary::import_dir),
+      "Return the data directory associated with the import table"_doc
+    )
+
+    .def_prop_ro("rsrc_dir", nb::overload_cast<>(&Binary::rsrc_dir),
+      "Return the data directory associated with the resources tree"_doc
+    )
+
+    .def_prop_ro("exceptions_dir", nb::overload_cast<>(&Binary::exceptions_dir),
+      "Return the data directory associated with the exceptions"_doc
+    )
+
+    .def_prop_ro("cert_dir", nb::overload_cast<>(&Binary::cert_dir),
+      R"doc(
+      Return the data directory associated with the certificate table
+      (authenticode).
+      )doc"_doc
+    )
+
+    .def_prop_ro("relocation_dir", nb::overload_cast<>(&Binary::relocation_dir),
+      "Return the data directory associated with the relocation table"_doc
+    )
+
+    .def_prop_ro("debug_dir", nb::overload_cast<>(&Binary::debug_dir),
+      "Return the data directory associated with the debug table"_doc
+    )
+
+    .def_prop_ro("tls_dir", nb::overload_cast<>(&Binary::tls_dir),
+      "Return the data directory associated with TLS"_doc
+    )
+
+    .def_prop_ro("load_config_dir", nb::overload_cast<>(&Binary::load_config_dir),
+      "Return the data directory associated with the load config"_doc
+    )
+
+    .def_prop_ro("iat_dir", nb::overload_cast<>(&Binary::iat_dir),
+      "Return the data directory associated with the IAT"_doc
+    )
+
+    .def_prop_ro("delay_dir", nb::overload_cast<>(&Binary::delay_dir),
+      "Return the data directory associated with delayed imports"_doc
+    )
+
+    .def_prop_ro("is_arm64ec", &Binary::is_arm64ec,
+      "True if this binary is compiled in ARM64EC mode (emulation compatible)"_doc
+    )
+
+    .def_prop_ro("is_arm64x", &Binary::is_arm64x,
+      R"doc(
+      True if this binary is compiled in ARM64X mode (contains both ARM64 and
+      ARM64EC)doc"_doc
+    )
 
     .def("write",
         nb::overload_cast<const std::string&>(&Binary::write),
-        "Build the binary and write the result to the given ``output`` file"_doc,
+        "Build the binary and write the result in the given ``output`` file"_doc,
         "output_path"_a)
+
+    .def("write",
+        nb::overload_cast<const std::string&, const Builder::config_t&>(&Binary::write),
+        "Build the binary with the given config and write the result in the given ``output`` file"_doc,
+        "output_path"_a, "config"_a)
+
+    .def("write_to_bytes", [] (Binary& bin, const Builder::config_t& config) -> nb::bytes {
+          std::ostringstream out;
+          bin.write(out, config);
+          return nb::to_bytes(out.str());
+        }, "config"_a)
+
+    .def("write_to_bytes", [] (Binary& bin) -> nb::bytes {
+          std::ostringstream out;
+          bin.write(out);
+          return nb::to_bytes(out.str());
+        })
+
+    .def("fill_address", &Binary::fill_address,
+         "Fill the content at the provided with a fixed value"_doc,
+         "address"_a, "size"_a, "value"_a = 0, "addr_type"_a = Binary::VA_TYPES::AUTO)
+
+    .def_prop_ro("coff_string_table", nb::overload_cast<>(&Binary::coff_string_table),
+                 "Iterator over the strings located in the COFF string table"_doc,
+                 nb::keep_alive<0, 1>())
+
+    .def("find_coff_string", nb::overload_cast<uint32_t>(&Binary::find_coff_string),
+        R"doc(
+        Try to find the COFF string at the given offset in the COFF string table.
+
+        .. warning::
+
+            This offset must include the first 4 bytes holding the size of
+            the table. Hence, the first string starts a the offset 4.
+        )doc"_doc, "offset"_a,
+        nb::rv_policy::reference_internal)
+
+    .def("find_exception_at", nb::overload_cast<uint32_t>(&Binary::find_exception_at),
+        R"doc(
+        Try to find the exception info at the given RVA.
+
+        .. warning::
+
+          This property requires that the option :attr:`lief.PE.ParserConfig.parse_exceptions`
+          was turned on (default is ``False``) when parsing the binary.
+        )doc"_doc, "rva"_a,
+        nb::rv_policy::reference_internal)
+
+    .def_prop_ro("nested_pe_binary", nb::overload_cast<>(&Binary::nested_pe_binary),
+      R"doc(
+      If the current binary contains dynamic relocations
+      (e.g. :class:`lief.PE.DynamicFixupARM64X`), this function returns the
+      **relocated** view of the current PE.
+
+      This can be used to get the alternative PE binary, targeting a different
+      architecture.
+
+      .. warning::
+
+        This property requires that the option :attr:`lief.PE.ParserConfig.parse_arm64x_binary`
+        was turned on (default is ``False``) when parsing the binary.
+      )doc"_doc,
+      nb::rv_policy::reference_internal)
 
     LIEF_DEFAULT_STR(Binary);
 

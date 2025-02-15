@@ -1,14 +1,16 @@
 target_sources(pyLIEF PRIVATE
-  pyResourceNode.cpp
+  pyAcceleratorCodes.cpp
+  pyResourceAccelerator.cpp
   pyResourceData.cpp
+  pyResourceDialog.cpp
+  pyResourceDialogExtended.cpp
+  pyResourceDialogRegular.cpp
   pyResourceDirectory.cpp
   pyResourceIcon.cpp
-  pyResourceVersion.cpp
-  pyResourceVarFileInfo.cpp
-  pyResourceFixedFileInfo.cpp
+  pyResourceNode.cpp
   pyResourceStringFileInfo.cpp
-  pyLangCodeItem.cpp
-  pyResourceDialog.cpp
-  pyResourceDialogItem.cpp
   pyResourceStringTable.cpp
-  pyResourceAccelerator.cpp)
+  pyResourceVar.cpp
+  pyResourceVarFileInfo.cpp
+  pyResourceVersion.cpp
+)

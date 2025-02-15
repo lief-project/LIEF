@@ -16,9 +16,9 @@
 #ifndef LIEF_PE_PARSER_H
 #define LIEF_PE_PARSER_H
 
-#include <set>
 #include <string>
 #include <vector>
+#include <map>
 
 #include "LIEF/visibility.h"
 #include "LIEF/utils.hpp"
@@ -27,18 +27,23 @@
 #include "LIEF/Abstract/Parser.hpp"
 #include "LIEF/PE/enums.hpp"
 #include "LIEF/PE/ParserConfig.hpp"
+#include "LIEF/PE/COFFString.hpp"
 
 namespace LIEF {
 class BinaryStream;
+class SpanStream;
 
 namespace PE {
 class Debug;
 class ResourceNode;
 class Binary;
 class DelayImport;
+class Section;
+class ExceptionInfo;
+class LoadConfiguration;
+class RelocationEntry;
 
 namespace details {
-struct pe_resource_directory_table;
 struct pe_debug;
 }
 
@@ -76,20 +81,62 @@ class LIEF_API Parser : public LIEF::Parser {
   public:
   /// Parse a PE binary from the given filename
   static std::unique_ptr<Binary> parse(const std::string& filename,
-                                       const ParserConfig& conf = ParserConfig::all());
+                                       const ParserConfig& conf = ParserConfig::default_conf());
 
   /// Parse a PE binary from a data buffer
   static std::unique_ptr<Binary> parse(std::vector<uint8_t> data,
-                                       const ParserConfig& conf = ParserConfig::all());
+                                       const ParserConfig& conf = ParserConfig::default_conf());
+
+  static std::unique_ptr<Binary> parse(const uint8_t* buffer, size_t size,
+                                       const ParserConfig& conf = ParserConfig::default_conf());
 
   /// Parse a PE binary from the given BinaryStream
   static std::unique_ptr<Binary> parse(std::unique_ptr<BinaryStream> stream,
-                                       const ParserConfig& conf = ParserConfig::all());
+                                       const ParserConfig& conf = ParserConfig::default_conf());
 
   Parser& operator=(const Parser& copy) = delete;
   Parser(const Parser& copy)            = delete;
 
+  COFFString* find_coff_string(uint32_t offset) const;
+
+  ExceptionInfo* find_exception_info(uint32_t rva) const {
+    auto it = memoize_exception_info_.find(rva);
+    return it == memoize_exception_info_.end() ? nullptr : it->second;
+  }
+
+  const Binary& bin() const {
+    return *binary_;
+  }
+
+  Binary& bin() {
+    return *binary_;
+  }
+
+  BinaryStream& stream() {
+    return *stream_;
+  }
+
+  const ParserConfig& config() const {
+    return config_;
+  }
+
+  void memoize(ExceptionInfo& info);
+  void memoize(COFFString str);
+
+  void add_non_resolved(ExceptionInfo& info, uint32_t target) {
+    unresolved_chains_.emplace_back(&info, target);
+  }
+
+  std::unique_ptr<SpanStream> stream_from_rva(uint32_t rva, size_t size = 0);
+
+  void record_relocation(uint32_t rva, span<const uint8_t> data);
+  ok_error_t record_delta_relocation(uint32_t rva, int64_t delta, size_t size);
+
   private:
+  struct relocation_t {
+    uint64_t size = 0;
+    uint64_t value = 0;
+  };
   Parser(const std::string& file);
   Parser(std::vector<uint8_t> data);
   Parser(std::unique_ptr<BinaryStream> stream);
@@ -120,20 +167,32 @@ class LIEF_API Parser : public LIEF::Parser {
   ok_error_t parse_delay_imports();
 
   template<typename PE_T>
-  ok_error_t parse_delay_names_table(DelayImport& import, uint32_t names_offset);
+  ok_error_t parse_delay_names_table(DelayImport& import, uint32_t names_offset,
+                                     uint32_t iat_offset);
 
   ok_error_t parse_export_table();
   ok_error_t parse_debug();
 
-  std::unique_ptr<Debug> parse_code_view(const details::pe_debug& debug_info);
-  std::unique_ptr<Debug> parse_pogo(const details::pe_debug& debug_info);
-  std::unique_ptr<Debug> parse_repro(const details::pe_debug& debug_info);
+  ok_error_t parse_exceptions();
+
+  std::unique_ptr<Debug> parse_code_view(const details::pe_debug& debug_info,
+                                         Section* sec, span<uint8_t> payload);
+  std::unique_ptr<Debug> parse_pogo(const details::pe_debug& debug_info,
+                                    Section* sec, span<uint8_t> payload);
+  std::unique_ptr<Debug> parse_repro(const details::pe_debug& debug_info,
+                                     Section* sec, span<uint8_t> payload);
 
   template<typename PE_T>
   ok_error_t parse_tls();
 
   template<typename PE_T>
   ok_error_t parse_load_config();
+
+  template<typename PE_T>
+  ok_error_t process_load_config(LoadConfiguration& config);
+
+  template<typename PE_T>
+  ok_error_t parse_nested_relocated();
 
   ok_error_t parse_relocations();
   ok_error_t parse_resources();
@@ -143,16 +202,15 @@ class LIEF_API Parser : public LIEF::Parser {
   ok_error_t parse_overlay();
   ok_error_t parse_dos_stub();
   ok_error_t parse_rich_header();
-
-  std::unique_ptr<ResourceNode> parse_resource_node(
-      const details::pe_resource_directory_table& directory_table,
-      uint32_t base_offset, uint32_t current_offset, uint32_t depth = 0);
-
+  ok_error_t parse_chpe_exceptions();
 
   PE_TYPE type_ = PE_TYPE::PE32_PLUS;
   std::unique_ptr<Binary> binary_;
-  std::set<uint32_t> resource_visited_;
   std::unique_ptr<BinaryStream> stream_;
+  std::map<uint32_t, size_t> memoize_coff_str_;
+  std::map<uint32_t, ExceptionInfo*> memoize_exception_info_;
+  std::map<uint32_t, relocation_t> dyn_hdr_relocs_;
+  std::vector<std::pair<ExceptionInfo*, uint32_t>> unresolved_chains_;
   ParserConfig config_;
 };
 

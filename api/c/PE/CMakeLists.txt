@@ -5,7 +5,6 @@ target_sources(LIB_LIEF PRIVATE
   OptionalHeader.cpp
   Section.cpp
   DataDirectory.cpp
-  EnumToString.cpp
   Import.cpp
   ImportEntry.cpp
 )

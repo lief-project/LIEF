@@ -16,6 +16,7 @@
 #include "PE/pyPE.hpp"
 
 #include "LIEF/PE/Debug.hpp"
+#include "LIEF/PE/Section.hpp"
 
 #include "enums_wrapper.hpp"
 
@@ -23,6 +24,8 @@
 #include <sstream>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>
+
+#include "nanobind/extra/stl/lief_span.h"
 
 #define PY_ENUM(x) to_string(x), x
 
@@ -34,7 +37,7 @@ void create<Debug>(nb::module_& m) {
     R"delim(
     This class represents a generic entry in the debug data directory.
     For known types, this class is extended to provide a dedicated API
-    (see: ! CodeCodeView)
+    (see: :class:`~.CodeCodeView`)
     )delim"_doc);
 
   enum_<Debug::TYPES>(debug, "TYPES", "The entry types")
@@ -55,6 +58,7 @@ void create<Debug>(nb::module_& m) {
     .value(PY_ENUM(Debug::TYPES::ILTCG))
     .value(PY_ENUM(Debug::TYPES::MPX))
     .value(PY_ENUM(Debug::TYPES::REPRO), "PE determinism or reproducibility"_doc)
+    .value(PY_ENUM(Debug::TYPES::PDBCHECKSUM), "Checksum of the PDB file content"_doc)
     .value(PY_ENUM(Debug::TYPES::EX_DLLCHARACTERISTICS));
 
   debug
@@ -98,6 +102,14 @@ void create<Debug>(nb::module_& m) {
         nb::overload_cast<>(&Debug::pointerto_rawdata, nb::const_),
         nb::overload_cast<uint32_t>(&Debug::pointerto_rawdata),
         "File offset of the debug data"_doc)
+
+    .def_prop_ro("section", nb::overload_cast<>(&Debug::section),
+                 "The section where debug data is located"_doc,
+                 nb::rv_policy::reference_internal)
+
+    .def_prop_ro("payload", nb::overload_cast<>(&Debug::payload, nb::const_),
+                 "Debug data associated with this entry"_doc,
+                 nb::rv_policy::reference_internal)
 
     LIEF_CLONABLE(Debug)
     LIEF_DEFAULT_STR(Debug);

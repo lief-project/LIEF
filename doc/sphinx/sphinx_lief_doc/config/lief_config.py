@@ -31,6 +31,8 @@ class Substitutions(SphinxTransform):
                 text = self.config.lief_extended_email
             elif refname == 'lief-llvm-version':
                 text = self.config.lief_llvm_version
+            elif refname == 'lief-discord':
+                text = self.config.lief_discord
 
             if text is None:
                 continue

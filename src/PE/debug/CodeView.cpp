@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <sstream>
+
 #include <LIEF/PE/debug/CodeView.hpp>
 #include "LIEF/Visitor.hpp"
 #include "spdlog/fmt/fmt.h"
@@ -21,31 +23,29 @@
 namespace LIEF {
 namespace PE {
 
-CodeView::CodeView(const details::pe_debug& debug, SIGNATURES sig) :
-  Debug{debug},
-  sig_{sig}
-{}
-
 void CodeView::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-std::ostream& operator<<(std::ostream& os, const CodeView& entry) {
-  os << static_cast<const Debug&>(entry)
-     << fmt::format("[CV] Signature: {}", to_string(entry.signature()))
-  ;
-  return os;
+std::string CodeView::to_string() const {
+  std::ostringstream os;
+  os << Debug::to_string() << '\n'
+     << "CodeView:\n"
+     << fmt::format("  Signature: {}", PE::to_string(signature()));
+  return os.str();
 }
 
 const char* to_string(CodeView::SIGNATURES e) {
-  CONST_MAP(CodeView::SIGNATURES, const char*, 5) Enum2Str {
-    { CodeView::SIGNATURES::UNKNOWN, "UNKNOWN" },
-    { CodeView::SIGNATURES::PDB_70,  "PDB_70"  },
-    { CodeView::SIGNATURES::PDB_20,  "PDB_20"  },
-    { CodeView::SIGNATURES::CV_50,   "CV_50"   },
-    { CodeView::SIGNATURES::CV_41,   "CV_41"   },
+  #define ENTRY(X) std::pair(CodeView::SIGNATURES::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(UNKNOWN),
+    ENTRY(PDB_70),
+    ENTRY(PDB_20),
+    ENTRY(CV_50),
+    ENTRY(CV_41),
   };
-  if (const auto it = Enum2Str.find(e); it != Enum2Str.end()) {
+  #undef ENTRY
+  if (const auto it = enums2str.find(e); it != enums2str.end()) {
     return it->second;
   }
   return "UNKNOWN";

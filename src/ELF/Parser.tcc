@@ -54,7 +54,6 @@ namespace LIEF {
 namespace ELF {
 template<typename ELF_T>
 ok_error_t Parser::parse_binary() {
-  using Elf_Off  = typename ELF_T::Elf_Off;
 
   LIEF_DEBUG("Start parsing");
   // Parse header

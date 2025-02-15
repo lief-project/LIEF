@@ -13,322 +13,401 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <fstream>
-#include <iterator>
-#include <algorithm>
-#include <numeric>
-#include "logging.hpp"
+#include "LIEF/PE/ResourceData.hpp"
+#include "LIEF/PE/resources/ResourceDialog.hpp"
+#include "LIEF/PE/resources/ResourceDialogRegular.hpp"
+#include "LIEF/PE/resources/ResourceDialogExtended.hpp"
 
-#include "LIEF/PE/hash.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/utils.hpp"
 
-#include "LIEF/PE/EnumToString.hpp"
-#include "PE/Structures.hpp"
+#include "logging.hpp"
+#include "frozen.hpp"
+#include "fmt_formatter.hpp"
 
-#include "LIEF/PE/resources/ResourceDialog.hpp"
+#include "PE/resources/styles_array.hpp"
 
-namespace LIEF {
-namespace PE {
+FMT_FORMATTER(LIEF::PE::ResourceDialog::DIALOG_STYLES, LIEF::PE::to_string);
+FMT_FORMATTER(LIEF::PE::ResourceDialog::WINDOW_EXTENDED_STYLES, LIEF::PE::to_string);
+FMT_FORMATTER(LIEF::PE::ResourceDialog::WINDOW_STYLES, LIEF::PE::to_string);
 
-ResourceDialog::ResourceDialog(const ResourceDialog&) = default;
-ResourceDialog& ResourceDialog::operator=(const ResourceDialog&) = default;
-ResourceDialog::~ResourceDialog() = default;
+namespace LIEF::PE {
 
-ResourceDialog::ResourceDialog() :
-  version_{0},
-  signature_{0},
-  help_id_{0},
-  ext_style_{0},
-  style_{0},
-  x_{0},
-  y_{0},
-  cx_{0},
-  cy_{0},
-  point_size_{0},
-  weight_{0},
-  italic_{false},
-  charset_{0},
-  lang_{0},
-  sublang_{0}
-{}
-
-
-ResourceDialog::ResourceDialog(const details::pe_dialog_template_ext& header) :
-  version_{header.version},
-  signature_{header.signature},
-  help_id_{header.help_id},
-  ext_style_{header.ext_style},
-  style_{header.style},
-  x_{header.x},
-  y_{header.y},
-  cx_{header.cx},
-  cy_{header.cy},
-  point_size_{0},
-  weight_{0},
-  italic_{false},
-  charset_{0},
-  lang_{0},
-  sublang_{0}
-{}
-
-
-ResourceDialog::ResourceDialog(const details::pe_dialog_template& header) :
-  version_{0},
-  signature_{0},
-  help_id_{0},
-  ext_style_{header.ext_style},
-  style_{header.style},
-  x_{header.x},
-  y_{header.y},
-  cx_{header.cx},
-  cy_{header.cy},
-  point_size_{0},
-  weight_{0},
-  italic_{false},
-  charset_{0},
-  lang_{0},
-  sublang_{0}
-{}
-
-
-bool ResourceDialog::is_extended() const {
-  return signature_ == 0xFFFF;
+static bool is_extended(BinaryStream& strm) {
+  ScopedStream scope(strm);
+  auto version = scope->read<uint16_t>().value_or(0);
+  auto signature = scope->read<uint16_t>().value_or(0);
+  return version == 1 && signature == 0xFFFF;
 }
 
-uint32_t ResourceDialog::extended_style() const {
-  return ext_style_;
-}
-
-std::set<EXTENDED_WINDOW_STYLES> ResourceDialog::extended_style_list() const {
-  std::set<EXTENDED_WINDOW_STYLES> ext_styles;
-  std::copy_if(
-      std::begin(details::extended_window_styles_array),
-      std::end(details::extended_window_styles_array),
-      std::inserter(ext_styles, std::begin(ext_styles)),
-      [this] (EXTENDED_WINDOW_STYLES f) { return has_extended_style(f); });
-
-  return ext_styles;
-
-}
-
-bool ResourceDialog::has_extended_style(EXTENDED_WINDOW_STYLES style) const {
-  return (ext_style_ & static_cast<uint32_t>(style)) != 0;
-}
-
-uint32_t ResourceDialog::style() const {
-  return style_;
-}
-
-std::set<WINDOW_STYLES> ResourceDialog::style_list() const {
-  std::set<WINDOW_STYLES> styles;
-  std::copy_if(
-      std::begin(details::window_styles_array),
-      std::end(details::window_styles_array),
-      std::inserter(styles, std::begin(styles)),
-      [this] (WINDOW_STYLES f) { return has_style(f); });
-
-  return styles;
-}
-
-bool ResourceDialog::has_style(WINDOW_STYLES style) const {
-  return (style_ & static_cast<uint32_t>(style)) != 0;
-}
-
-
-std::set<DIALOG_BOX_STYLES> ResourceDialog::dialogbox_style_list() const {
-  std::set<DIALOG_BOX_STYLES> styles;
-  std::copy_if(
-      std::begin(details::dialog_box_styles_array),
-      std::end(details::dialog_box_styles_array),
-      std::inserter(styles, std::begin(styles)),
-      [this] (DIALOG_BOX_STYLES f) { return has_dialogbox_style(f); });
-
-  return styles;
-}
-
-bool ResourceDialog::has_dialogbox_style(DIALOG_BOX_STYLES style) const {
-  return (style_ & static_cast<uint32_t>(style)) != 0;
-}
-
-int16_t ResourceDialog::x() const {
-  return x_;
-}
-
-int16_t ResourceDialog::y() const {
-  return y_;
-}
-
-int16_t ResourceDialog::cx() const {
-  return cx_;
-}
-
-int16_t ResourceDialog::cy() const {
-  return cy_;
-}
-
-
-ResourceDialog::it_const_items ResourceDialog::items() const {
-  return items_;
-}
-
-
-uint32_t ResourceDialog::lang() const {
-  return lang_;
-}
-
-uint32_t ResourceDialog::sub_lang() const {
-  return sublang_;
-}
-
-void ResourceDialog::lang(uint32_t lang) {
-  lang_ = lang;
-}
-
-void ResourceDialog::sub_lang(uint32_t sub_lang) {
-  sublang_ = sub_lang;
-}
-
-
-// Extended API
-// ============
-uint16_t ResourceDialog::version() const {
-  if (!is_extended()) {
-    LIEF_WARN("This dialog is not an extended one. DLGTEMPLATEEX.dlgVer does not exist");
+ResourceDialog::dialogs_t ResourceDialog::parse(const uint8_t* buffer, size_t size) {
+  if (size == 0) {
+    return {};
   }
-  return version_;
-}
+  dialogs_t dialogs;
 
-uint16_t ResourceDialog::signature() const {
-  if (!is_extended()) {
-    LIEF_WARN("This dialog is not an extended one. DLGTEMPLATEEX.signature does not exist");
-  }
-  return signature_;
-}
+  SpanStream strm(buffer, size);
+  LIEF_DEBUG("Parsing dialogs from stream size: 0x{:08x}", size);
+  while (strm) {
+    std::unique_ptr<ResourceDialog> dia;
+    if (is_extended(strm)) {
+      dia = ResourceDialogExtended::create(strm);
+    } else {
+      dia = ResourceDialogRegular::create(strm);
+    }
 
-uint32_t ResourceDialog::help_id() const {
-  if (!is_extended()) {
-    LIEF_WARN("This dialog is not an extended one. DLGTEMPLATEEX.helpID does not exist");
-  }
-  return help_id_;
-}
+    if (dia != nullptr) {
+      dialogs.push_back(std::move(dia));
+    }
 
-
-uint16_t ResourceDialog::weight() const {
-  if (!is_extended()) {
-    LIEF_WARN("This dialog is not an extended one. DLGTEMPLATEEX.weight does not exist");
-  }
-  return weight_;
-}
-
-
-uint8_t ResourceDialog::charset() const {
-  if (!is_extended()) {
-    LIEF_WARN("This dialog is not an extended one. DLGTEMPLATEEX.charset does not exist");
-  }
-  return charset_;
-}
-
-
-uint16_t ResourceDialog::point_size() const {
-  if (!is_extended()) {
-    LIEF_WARN("This dialog is not an extended one. DLGTEMPLATEEX.pointsize does not exist");
-  }
-  return point_size_;
-}
-
-
-bool ResourceDialog::is_italic() const {
-  if (!is_extended()) {
-    LIEF_WARN("This dialog is not an extended one. DLGTEMPLATEEX.italic does not exist");
-  }
-  return italic_;
-}
-
-const std::u16string& ResourceDialog::title() const {
-  if (!is_extended()) {
-    LIEF_WARN("This dialog is not an extended one. DLGTEMPLATEEX.title does not exist");
+    break;
   }
 
-  return title_;
+  LIEF_DEBUG("{} bytes left", (int64_t)size - (int64_t)strm.pos());
+  return dialogs;
 }
 
-
-const std::u16string& ResourceDialog::typeface() const {
-  if (!is_extended()) {
-    LIEF_WARN("This dialog is not an extended one. DLGTEMPLATEEX.typeface does not exist");
+ResourceDialog::dialogs_t ResourceDialog::parse(const ResourceData& node) {
+  span<const uint8_t> content = node.content();
+  if (content.empty()) {
+    return {};
   }
 
-  return typeface_;
+  return parse(content.data(), content.size());
 }
 
-void ResourceDialog::accept(Visitor& visitor) const {
-  visitor.visit(*this);
-}
-
-
-
-
-std::ostream& operator<<(std::ostream& os, const ResourceDialog& dialog) {
-
-  const std::set<WINDOW_STYLES>& styles = dialog.style_list();
-  std::string styles_str = std::accumulate(
-     std::begin(styles),
-     std::end(styles), std::string{},
-     [] (const std::string& a, WINDOW_STYLES b) {
-         return a.empty() ? to_string(b) : a + ", " + to_string(b);
-     });
-
-
-  const std::set<DIALOG_BOX_STYLES>& dialogbox_styles = dialog.dialogbox_style_list();
-  std::string dialogbox_styles_str = std::accumulate(
-     std::begin(dialogbox_styles),
-     std::end(dialogbox_styles), std::string{},
-     [] (const std::string& a, DIALOG_BOX_STYLES b) {
-         return a.empty() ? to_string(b) : a + ", " + to_string(b);
-     });
-
-
-  const std::set<EXTENDED_WINDOW_STYLES>& ext_styles = dialog.extended_style_list();
-  std::string ext_styles_str = std::accumulate(
-     std::begin(ext_styles),
-     std::end(ext_styles), std::string{},
-     [] (const std::string& a, EXTENDED_WINDOW_STYLES b) {
-         return a.empty() ? to_string(b) : a + ", " + to_string(b);
-     });
-
-  if (dialog.is_extended()) {
-    os << "DIALOGEX ";
-  } else {
-    os << "DIALOG ";
-  }
-  os << std::dec << dialog.x() << ", " << dialog.y() << ", " << dialog.cx() << ", " << dialog.cy() << '\n';
-  os << "Version: "           << std::dec << dialog.version()      << '\n';
-  os << "Signature: "         << std::hex << dialog.signature()      << '\n';
-  os << "Styles: "            << styles_str            << '\n';
-  os << "Dialog box styles: " << dialogbox_styles_str  << '\n';
-  os << "Extended styles: "   << ext_styles_str        << '\n';
-  os << "Lang: "              << dialog.lang() << " / " << dialog.sub_lang() << '\n';
-
-  if (dialog.is_extended()) {
-    os << "Title: \"" << u16tou8(dialog.title()) << "\"" << '\n';
-    os << "Font: \""
-       << std::dec << dialog.point_size()
-       << " " << u16tou8(dialog.typeface()) << "\""
-       << ", " << std::boolalpha << dialog.is_italic()
-       << ", " << std::dec << static_cast<uint32_t>(dialog.charset()) << '\n';
+ok_error_t ResourceDialog::parse_menu(ResourceDialog& dialog, BinaryStream& stream) {
+  auto menu = stream.read<uint16_t>();
+  if (!menu) {
+    return make_error_code(menu.error());
   }
 
-  os << "{" << '\n';
-  for (const ResourceDialogItem& item : dialog.items()) {
-    os << "    " << item << '\n';
+  switch (*menu) {
+    case 0x0000:
+      break;
+    case 0xFFFF:
+      {
+        auto ordinal = stream.read<uint16_t>();
+        if (!ordinal) {
+          return make_error_code(ordinal.error());
+        }
+        dialog.menu(*ordinal);
+        break;
+      }
+
+    default:
+      {
+        stream.decrement_pos(2); // because of the first read<uint16_t>
+        auto name = stream.read_u16string();
+        if (!name) {
+          return make_error_code(name.error());
+        }
+        dialog.menu(std::move(*name));
+        break;
+      }
+  }
+  stream.align(sizeof(uint16_t));
+  return ok();
+}
+
+ok_error_t ResourceDialog::parse_class(ResourceDialog& dialog, BinaryStream& stream) {
+  auto clazz = stream.read<uint16_t>();
+  if (!clazz) {
+    return make_error_code(clazz.error());
   }
 
-  os << "}" << '\n';
-  return os;
+  switch (*clazz) {
+    case 0x0000:
+      break;
+    case 0xFFFF:
+      {
+        auto ordinal = stream.read<uint16_t>();
+        if (!ordinal) {
+          return make_error_code(ordinal.error());
+        }
+        dialog.window_class(*ordinal);
+        break;
+      }
+    default:
+      {
+        stream.decrement_pos(2);
+        auto name = stream.read_u16string();
+        if (!name) {
+          return make_error_code(name.error());
+        }
+        dialog.window_class(std::move(*name));
+        break;
+      }
+  }
+  stream.align(sizeof(uint16_t));
+  return ok();
+}
+
+ok_error_t ResourceDialog::parse_class(ResourceDialog::Item& item,
+                                       BinaryStream& stream)
+{
+  auto clazz = stream.read<uint16_t>();
+  if (!clazz) {
+    return make_error_code(clazz.error());
+  }
+
+  switch (*clazz) {
+    case 0xFFFF:
+      {
+        auto ordinal = stream.read<uint16_t>();
+        if (!ordinal) {
+          return make_error_code(ordinal.error());
+        }
+        item.clazz(*ordinal);
+        break;
+      }
+    default:
+      {
+        stream.decrement_pos(2);
+        auto name = stream.read_u16string();
+        if (!name) {
+          return make_error_code(name.error());
+        }
+        item.clazz(std::move(*name));
+        break;
+      }
+  }
+  stream.align(sizeof(uint16_t));
+  return ok();
 }
 
 
+ok_error_t ResourceDialog::parse_title(ResourceDialog& dialog, BinaryStream& stream) {
+  auto title = stream.read_u16string();
 
+  if (!title) {
+    return make_error_code(title.error());
+  }
+
+  dialog.title(std::move(*title));
+  stream.align(sizeof(uint16_t));
+  return ok();
 }
+
+ok_error_t ResourceDialog::parse_title(ResourceDialog::Item& item,
+                                       BinaryStream& stream)
+{
+  auto info = stream.read<uint16_t>();
+  if (!info) {
+    return make_error_code(info.error());
+  }
+
+  switch (*info) {
+    case 0xFFFF:
+      {
+        auto ordinal = stream.read<uint16_t>();
+        if (!ordinal) {
+          return make_error_code(ordinal.error());
+        }
+        item.title(*ordinal);
+        break;
+      }
+    default:
+      {
+        stream.decrement_pos(2);
+        auto name = stream.read_u16string();
+        if (!name) {
+          return make_error_code(name.error());
+        }
+        item.title(std::move(*name));
+        break;
+      }
+  }
+  stream.align(sizeof(uint16_t));
+  return ok();
+}
+
+ok_error_t ResourceDialog::parse_creation_data(
+  ResourceDialog::Item& item, BinaryStream& stream)
+{
+  auto size = stream.read<uint16_t>();
+  if (!size) {
+    return make_error_code(size.error());
+  }
+  std::vector<uint8_t> raw;
+  auto is_ok = stream.read_data(raw, *size);
+
+  item.data(std::move(raw));
+  return is_ok;
+}
+
+std::vector<ResourceDialog::DIALOG_STYLES> ResourceDialog::styles_list() const {
+  std::vector<DIALOG_STYLES> flags;
+  std::copy_if(std::begin(DIALOG_STYLES_ARRAY), std::end(DIALOG_STYLES_ARRAY),
+               std::back_inserter(flags),
+               [this] (DIALOG_STYLES f) { return has(f); });
+  return flags;
+}
+
+std::vector<ResourceDialog::WINDOW_STYLES> ResourceDialog::windows_styles_list() const {
+  std::vector<WINDOW_STYLES> flags;
+  std::copy_if(std::begin(WINDOW_STYLES_ARRAY), std::end(WINDOW_STYLES_ARRAY),
+               std::back_inserter(flags),
+               [this] (WINDOW_STYLES f) { return has(f); });
+  return flags;
+}
+
+std::vector<ResourceDialog::WINDOW_EXTENDED_STYLES> ResourceDialog::windows_ext_styles_list() const {
+  std::vector<WINDOW_EXTENDED_STYLES> flags;
+  std::copy_if(std::begin(WINDOW_EXTENDED_STYLES_ARRAY), std::end(WINDOW_EXTENDED_STYLES_ARRAY),
+               std::back_inserter(flags),
+               [this] (WINDOW_EXTENDED_STYLES f) { return has(f); });
+  return flags;
+}
+
+
+std::string ResourceDialog::title_utf8() const {
+  return u16tou8(title_);
+}
+
+std::string ResourceDialog::ordinal_or_str_t::to_string() const {
+  if (ordinal) {
+    return fmt::format("ord={}", *ordinal);
+  }
+  return u16tou8(string);
+}
+
+std::vector<ResourceDialog::WINDOW_STYLES>
+  ResourceDialog::Item::window_styles() const {
+  std::vector<WINDOW_STYLES> flags;
+  std::copy_if(std::begin(WINDOW_STYLES_ARRAY), std::end(WINDOW_STYLES_ARRAY),
+               std::back_inserter(flags),
+               [this] (WINDOW_STYLES f) { return has(f); });
+  return flags;
+}
+
+std::vector<ResourceDialog::CONTROL_STYLES>
+  ResourceDialog::Item::control_styles() const
+{
+  std::vector<CONTROL_STYLES> flags;
+  std::copy_if(std::begin(CONTROL_STYLES_ARRAY), std::end(CONTROL_STYLES_ARRAY),
+               std::back_inserter(flags),
+               [this] (CONTROL_STYLES f) { return has(f); });
+  return flags;
+}
+
+ResourceDialog& ResourceDialog::title(const std::string& title) {
+  if (auto u16 = u8tou16(title)) {
+    return this->title(std::move(*u16));
+  }
+  return *this;
+}
+
+
+const char* to_string(ResourceDialog::DIALOG_STYLES e) {
+  #define ENTRY(X) std::pair(ResourceDialog::DIALOG_STYLES::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(ABSALIGN),
+    ENTRY(SYSMODAL),
+    ENTRY(LOCALEDIT),
+    ENTRY(SETFONT),
+    ENTRY(MODALFRAME),
+    ENTRY(NOIDLEMSG),
+    ENTRY(SETFOREGROUND),
+    ENTRY(S3DLOOK),
+    ENTRY(FIXEDSYS),
+    ENTRY(NOFAILCREATE),
+    ENTRY(CONTROL),
+    ENTRY(CENTER),
+    ENTRY(CENTERMOUSE),
+    ENTRY(CONTEXTHELP),
+    ENTRY(SHELLFONT),
+  };
+  #undef ENTRY
+
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
+  }
+  return "UNKNOWN";
+}
+
+const char* to_string(ResourceDialog::WINDOW_STYLES e) {
+  #define ENTRY(X) std::pair(ResourceDialog::WINDOW_STYLES::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(OVERLAPPED),
+    ENTRY(POPUP),
+    ENTRY(CHILD),
+    ENTRY(MINIMIZE),
+    ENTRY(VISIBLE),
+    ENTRY(DISABLED),
+    ENTRY(CLIPSIBLINGS),
+    ENTRY(CLIPCHILDREN),
+    ENTRY(MAXIMIZE),
+    ENTRY(CAPTION),
+    ENTRY(BORDER),
+    ENTRY(DLGFRAME),
+    ENTRY(VSCROLL),
+    ENTRY(HSCROLL),
+    ENTRY(SYSMENU),
+    ENTRY(THICKFRAME),
+    ENTRY(GROUP),
+    ENTRY(TABSTOP),
+  };
+  #undef ENTRY
+
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
+  }
+  return "UNKNOWN";
+}
+
+
+const char* to_string(ResourceDialog::WINDOW_EXTENDED_STYLES e) {
+  #define ENTRY(X) std::pair(ResourceDialog::WINDOW_EXTENDED_STYLES::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(DLGMODALFRAME),
+    ENTRY(NOPARENTNOTIFY),
+    ENTRY(TOPMOST),
+    ENTRY(ACCEPTFILES),
+    ENTRY(TRANSPARENT_STY),
+    ENTRY(MDICHILD),
+    ENTRY(TOOLWINDOW),
+    ENTRY(WINDOWEDGE),
+    ENTRY(CLIENTEDGE),
+    ENTRY(CONTEXTHELP),
+    ENTRY(RIGHT),
+    ENTRY(LEFT),
+    ENTRY(RTLREADING),
+    ENTRY(LEFTSCROLLBAR),
+    ENTRY(CONTROLPARENT),
+    ENTRY(STATICEDGE),
+    ENTRY(APPWINDOW),
+  };
+  #undef ENTRY
+
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
+  }
+  return "UNKNOWN";
+}
+
+const char* to_string(ResourceDialog::CONTROL_STYLES e) {
+  #define ENTRY(X) std::pair(ResourceDialog::CONTROL_STYLES::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(TOP),
+    ENTRY(NOMOVEY),
+    ENTRY(BOTTOM),
+    ENTRY(NORESIZE),
+    ENTRY(NOPARENTALIGN),
+    ENTRY(ADJUSTABLE),
+    ENTRY(NODIVIDER),
+    ENTRY(VERT),
+    ENTRY(LEFT),
+    ENTRY(RIGHT),
+    ENTRY(NOMOVEX),
+  };
+  #undef ENTRY
+
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
+  }
+  return "UNKNOWN";
+}
+
 }
 

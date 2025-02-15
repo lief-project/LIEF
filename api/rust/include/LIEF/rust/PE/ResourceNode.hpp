@@ -34,11 +34,28 @@ class PE_ResourceNode : public Mirror<LIEF::PE::ResourceNode> {
     auto size() const { return Iterator::size(); }
   };
 
-  uint32_t id() const { return get().id(); }
-  uint32_t depth() const { return get().depth(); }
-  bool is_directory() const { return get().is_directory(); }
-  bool is_data() const { return get().is_data(); }
+  static auto from_slice(const uint8_t* buffer, size_t size, uint64_t rva) {
+    return details::try_unique<PE_ResourceNode>(LIEF::PE::ResourceNode::parse(buffer, size, rva));
+  }
+
+  auto has_name() const { return get().has_name(); }
+  auto name() const { return get().utf8_name(); }
+
+  auto id() const { return get().id(); }
+  auto depth() const { return get().depth(); }
+  auto is_directory() const { return get().is_directory(); }
+  auto is_data() const { return get().is_data(); }
   auto childs() const {
     return std::make_unique<it_childs>(get());
   }
+
+  auto add_child(const PE_ResourceNode& node) {
+    return std::make_unique<PE_ResourceNode>(get().add_child(node.get()));
+  }
+
+  void delete_child(uint32_t id) {
+    get().delete_child(id);
+  }
+
+  auto print() const { return get().to_string(); }
 };

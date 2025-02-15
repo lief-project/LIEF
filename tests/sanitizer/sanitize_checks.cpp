@@ -37,8 +37,8 @@ void check_abstract(LIEF::Binary& bin) {
 void check(LIEF::PE::Binary& bin) {
   std::stringstream ss;
   ss << bin;
-  LIEF::PE::Builder builder{bin};
-  builder.build();
+  std::ostringstream os;
+  bin.write(os);
 }
 
 void check(std::unique_ptr<LIEF::MachO::FatBinary> bin) {

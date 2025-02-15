@@ -77,7 +77,6 @@ class LIEF_API BinaryStream {
                                uint64_t offset, uint64_t size,
                                uint64_t virtual_address = 0)
   {
-
     if (size == 0) {
       return ok();
     }
@@ -106,9 +105,16 @@ class LIEF_API BinaryStream {
     return ok();
   }
 
+  ok_error_t read_data(std::vector<uint8_t>& container) {
+    const size_t size = this->size() - this->pos();
+    return read_data(container, size);
+  }
 
   template<class T>
   ok_error_t read_objects(std::vector<T>& container, uint64_t count) {
+    if (count == 0) {
+      return ok();
+    }
     const size_t size = count * sizeof(T);
     auto ret = peek_objects(container, count);
     if (!ret) {
@@ -125,6 +131,9 @@ class LIEF_API BinaryStream {
 
   template<class T>
   ok_error_t peek_objects_at(uint64_t offset, std::vector<T>& container, uint64_t count) {
+    if (count == 0) {
+      return ok();
+    }
     const auto current_p = pos();
     setpos(offset);
 
@@ -150,8 +159,9 @@ class LIEF_API BinaryStream {
     pos_ = pos;
   }
 
-  void increment_pos(size_t value) const {
+  const BinaryStream& increment_pos(size_t value) const {
     pos_ += value;
+    return *this;
   }
 
   void decrement_pos(size_t value) const {
@@ -172,6 +182,37 @@ class LIEF_API BinaryStream {
 
   template<class T>
   const T* read_array(size_t size) const;
+
+  template<class T, size_t N>
+  ok_error_t peek_array(std::array<T, N>& dst) const {
+    if constexpr (N == 0) {
+      return ok();
+    }
+    // Even though offset + size < ... => offset < ...
+    // the addition could overflow so it's worth checking both
+    const bool read_ok = pos_ <= size() && (pos_ + N) <= size()
+      /* Check for an overflow */
+      && (static_cast<int64_t>(pos_) >= 0 && static_cast<int64_t>(N) >= 0)
+      && (static_cast<int64_t>(pos_ + N) >= 0);
+
+    if (!read_ok) {
+      return make_error_code(lief_errors::read_error);
+    }
+    if (peek_in(dst.data(), pos_, N)) {
+      return ok();
+    }
+    return make_error_code(lief_errors::read_error);
+  }
+
+  template<class T, size_t N>
+  ok_error_t read_array(std::array<T, N>& dst) const {
+    if (!peek_array<T, N>(dst)) {
+      return make_error_code(lief_errors::read_error);
+    }
+
+    increment_pos(N);
+    return ok();
+  }
 
   template<class T>
   result<T> peek() const;
@@ -239,8 +280,6 @@ class LIEF_API BinaryStream {
     return nullptr;
   }
 
-  protected:
-  BinaryStream() = default;
   virtual result<const void*> read_at(uint64_t offset, uint64_t size,
                                       uint64_t virtual_address = 0) const = 0;
   virtual ok_error_t peek_in(void* dst, uint64_t offset, uint64_t size,
@@ -261,6 +300,10 @@ class LIEF_API BinaryStream {
     }
     return make_error_code(lief_errors::read_error);
   }
+
+  protected:
+  BinaryStream() = default;
+
   mutable size_t pos_ = 0;
   bool endian_swap_ = false;
   STREAM_TYPE stype_ = STREAM_TYPE::UNKNOWN;

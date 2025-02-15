@@ -37,6 +37,8 @@ void create<Header>(nb::module_& m) {
 
   enum_<Header::MACHINE_TYPES>(hdr, "MACHINE_TYPES")
     .value(PY_ENUM(Header::MACHINE_TYPES::UNKNOWN))
+    .value(PY_ENUM(Header::MACHINE_TYPES::ALPHA))
+    .value(PY_ENUM(Header::MACHINE_TYPES::ALPHA64))
     .value(PY_ENUM(Header::MACHINE_TYPES::AM33))
     .value(PY_ENUM(Header::MACHINE_TYPES::AMD64))
     .value(PY_ENUM(Header::MACHINE_TYPES::ARM))
@@ -45,6 +47,8 @@ void create<Header>(nb::module_& m) {
     .value(PY_ENUM(Header::MACHINE_TYPES::EBC))
     .value(PY_ENUM(Header::MACHINE_TYPES::I386))
     .value(PY_ENUM(Header::MACHINE_TYPES::IA64))
+    .value(PY_ENUM(Header::MACHINE_TYPES::LOONGARCH32))
+    .value(PY_ENUM(Header::MACHINE_TYPES::LOONGARCH64))
     .value(PY_ENUM(Header::MACHINE_TYPES::M32R))
     .value(PY_ENUM(Header::MACHINE_TYPES::MIPS16))
     .value(PY_ENUM(Header::MACHINE_TYPES::MIPSFPU))
@@ -58,7 +62,11 @@ void create<Header>(nb::module_& m) {
     .value(PY_ENUM(Header::MACHINE_TYPES::SH4))
     .value(PY_ENUM(Header::MACHINE_TYPES::SH5))
     .value(PY_ENUM(Header::MACHINE_TYPES::THUMB))
-    .value(PY_ENUM(Header::MACHINE_TYPES::WCEMIPSV2));
+    .value(PY_ENUM(Header::MACHINE_TYPES::WCEMIPSV2))
+    .value(PY_ENUM(Header::MACHINE_TYPES::ARM64EC))
+    .value(PY_ENUM(Header::MACHINE_TYPES::ARM64X))
+    .value(PY_ENUM(Header::MACHINE_TYPES::CHPE_X86))
+  ;
 
   enum_<Header::CHARACTERISTICS>(hdr, "CHARACTERISTICS", nb::is_flag())
     .value(PY_ENUM(Header::CHARACTERISTICS::RELOCS_STRIPPED))

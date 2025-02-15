@@ -20,82 +20,88 @@
 #include <vector>
 
 #include "LIEF/visibility.h"
-
 #include "LIEF/Object.hpp"
+#include "LIEF/errors.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/PE/resources/ResourceVar.hpp"
 
 namespace LIEF {
+class BinaryStream;
 namespace PE {
 
-class ResourcesManager;
-class ResourceVersion;
-struct ResourcesParser;
-
-/// This object describes information about languages supported by the application
+/// Representation of the `VarFileInfo` structure
 ///
-/// @see LIEF::PE::ResourceVersion
+/// This structure represents the organization of data in a file-version resource.
+/// It contains version information not dependent on a particular language and
+/// code page combination.
+///
+/// See: https://learn.microsoft.com/en-us/windows/win32/menurc/varfileinfo
 class LIEF_API ResourceVarFileInfo : public Object {
-
-  friend class ResourcesManager;
-  friend class ResourceVersion;
-  friend struct ResourcesParser;
-
   public:
-  ResourceVarFileInfo();
-  ResourceVarFileInfo(uint16_t type, std::u16string key);
+  using vars_t = std::vector<ResourceVar>;
+
+  using it_vars = ref_iterator<vars_t&>;
+  using it_const_vars = const_ref_iterator<const vars_t&>;
+
+  static result<ResourceVarFileInfo> parse(BinaryStream& stream);
+
+  ResourceVarFileInfo() = default;
+
   ResourceVarFileInfo(const ResourceVarFileInfo&) = default;
   ResourceVarFileInfo& operator=(const ResourceVarFileInfo&) = default;
+
+  ResourceVarFileInfo(ResourceVarFileInfo&&) = default;
+  ResourceVarFileInfo& operator=(ResourceVarFileInfo&&) = default;
+
   ~ResourceVarFileInfo() override = default;
 
   /// The type of data in the version resource
-  /// * ``1`` if it contains text data
-  /// * ``0`` if it contains binary data
+  /// * `1` if it contains text data
+  /// * `0` if it contains binary data
   uint16_t type() const {
     return type_;
   }
 
-  /// Signature of the structure:
-  /// Must be the unicode string "VarFileInfo"
+  /// Signature of the structure. Must be the unicode string "VarFileInfo"
   const std::u16string& key() const {
     return key_;
   }
 
-  /// List of languages that the application supports
-  ///
-  /// The **least** significant 16-bits  must contain a Microsoft language identifier,
-  /// and the **most** significant 16-bits must contain the PE::CODE_PAGES
-  /// Either **most** or **least** 16-bits can be zero, indicating that the file is language or code page independent.
-  const std::vector<uint32_t>& translations() const {
-    return translations_;
+  /// Key as an utf8 string
+  std::string key_u8() const;
+
+  /// Iterator over the embedded variables associated to the structure
+  it_vars vars() {
+    return vars_;
   }
 
-  std::vector<uint32_t>& translations() {
-    return translations_;
+  it_const_vars vars() const {
+    return vars_;
   }
 
-  void type(uint16_t type) {
+  ResourceVarFileInfo& type(uint16_t type) {
     type_ = type;
+    return *this;
   }
 
-  void key(std::u16string key) {
+  ResourceVarFileInfo& key(std::u16string key) {
     key_ = std::move(key);
+    return *this;
   }
 
-  void key(const std::string& key);
-
-  void translations(std::vector<uint32_t> translations) {
-    translations_ = std::move(translations);
+  void add_var(ResourceVar var) {
+    vars_.push_back(std::move(var));
   }
 
   void accept(Visitor& visitor) const override;
 
-
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceVarFileInfo& entry);
+  LIEF_API friend
+    std::ostream& operator<<(std::ostream& os, const ResourceVarFileInfo& entry);
 
   private:
-  uint16_t  type_ = 0;
+  uint16_t type_ = 0;
   std::u16string key_;
-  std::vector<uint32_t> translations_;
-
+  vars_t vars_;
 };
 }
 }

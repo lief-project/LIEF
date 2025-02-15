@@ -1,4 +1,4 @@
-//! This examples prints the `.dll` needed by a PE including whether it's using
+//! This example prints the `.dll` needed by a PE including whether it's using
 //! ordinal-based imports.
 
 use std::process::ExitCode;

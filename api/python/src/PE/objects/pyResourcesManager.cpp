@@ -1,6 +1,5 @@
 /* Copyright 2017 - 2025 R. Thomas
  * Copyright 2017 - 2025 Quarkslab
- * Copyright 2017 - 2021 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +25,7 @@
 #include <string>
 #include <sstream>
 
+#include "nanobind/extra/stl/u16string.h"
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/set.h>
 #include <nanobind/stl/vector.h>
@@ -40,8 +40,14 @@ void create<ResourcesManager>(nb::module_& m) {
 
   init_ref_iterator<ResourcesManager::it_const_dialogs>(manager, "it_const_dialogs");
   init_ref_iterator<ResourcesManager::it_const_icons>(manager, "it_const_icons");
-  init_ref_iterator<ResourcesManager::it_const_strings_table>(manager, "it_const_strings_table");
   init_ref_iterator<ResourcesManager::it_const_accelerators>(manager, "it_const_accelerators");
+
+  nb::class_<ResourcesManager::string_entry_t>(manager, "string_entry_t")
+    .def_rw("string", &ResourcesManager::string_entry_t::string)
+    .def_rw("id", &ResourcesManager::string_entry_t::id)
+    LIEF_DEFAULT_STR(ResourcesManager::string_entry_t);
+  ;
+
   #define ENTRY(X) .value(to_string(ResourcesManager::TYPE::X), ResourcesManager::TYPE::X)
   enum_<ResourcesManager::TYPE>(manager, "TYPE")
     ENTRY(CURSOR)
@@ -69,7 +75,9 @@ void create<ResourcesManager>(nb::module_& m) {
   #undef ENTRY
 
   manager
-    .def(nb::init<ResourceNode&>(), nb::keep_alive<0, 1>())
+    .def(nb::init<ResourceNode&>(), nb::keep_alive<0, 1>(),
+         "node"_a)
+
     .def_prop_ro("has_manifest",
         &ResourcesManager::has_manifest,
         "``True`` if the resources contain a Manifest element"_doc)
@@ -86,11 +94,8 @@ void create<ResourcesManager>(nb::module_& m) {
         &ResourcesManager::has_version,
         "``true`` if the resources contain a " RST_CLASS_REF(lief.PE.ResourceVersion) ""_doc)
 
-    .def_prop_ro("version",
-        [] (ResourcesManager& self) {
-          return error_or(&ResourcesManager::version, self);
-        },
-        "Return the " RST_CLASS_REF(lief.PE.ResourceVersion) ""_doc)
+    .def_prop_ro("version", &ResourcesManager::version,
+                 "Return a list of verison info (``VS_VERSIONINFO``)."_doc)
 
     .def_prop_ro("has_icons",
         &ResourcesManager::has_icons,
@@ -133,8 +138,7 @@ void create<ResourcesManager>(nb::module_& m) {
       "``True`` if resources contain " RST_CLASS_REF(lief.PE.ResourceStringTable) ""_doc)
 
     .def_prop_ro("string_table", &ResourcesManager::string_table,
-      "Return list of " RST_CLASS_REF(lief.PE.ResourceStringTable) " present in the resource"_doc,
-      nb::keep_alive<1, 0>())
+      "Return the list of the strings embedded in the string table (``RT_STRING``)"_doc)
 
     .def_prop_ro("has_html",
       &ResourcesManager::has_html,
@@ -160,6 +164,10 @@ void create<ResourcesManager>(nb::module_& m) {
       )delim"_doc,
       "type"_a,
       nb::rv_policy::reference_internal)
+
+    .def("print", &ResourcesManager::print,
+         "Print the current resource tree",
+         "max_depth"_a = 0)
 
     LIEF_DEFAULT_STR(ResourcesManager);
 }

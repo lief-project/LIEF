@@ -18,11 +18,15 @@
 
 #include <cstdint>
 #include <ostream>
+#include <memory>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
+#include "LIEF/span.hpp"
 
 namespace LIEF {
+class SpanStream;
+
 namespace PE {
 
 class Builder;
@@ -91,15 +95,23 @@ class LIEF_API DataDirectory : public Object {
   }
 
   /// Check if the content of this data directory is associated
-  /// with a PE Cection
+  /// with a PE Section
   bool has_section() const {
     return section_ != nullptr;
   }
+
+  /// Raw content (bytes) referenced by this data directory
+  span<const uint8_t> content() const {
+    return const_cast<DataDirectory*>(this)->content();
+  }
+
+  span<uint8_t> content();
 
   /// Section associated with the DataDirectory
   Section* section() {
     return section_;
   }
+
   const Section* section() const {
     return section_;
   }
@@ -119,7 +131,12 @@ class LIEF_API DataDirectory : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const DataDirectory& entry);
+  LIEF_API friend
+    std::ostream& operator<<(std::ostream& os, const DataDirectory& entry);
+
+  /// \private
+  LIEF_LOCAL
+    std::unique_ptr<SpanStream> stream(bool sized = true) const;
 
   private:
   uint32_t rva_ = 0;

@@ -17,89 +17,91 @@
 #define LIEF_PE_RESOURCE_STRING_FILE_INFO_H
 #include <ostream>
 #include <vector>
+#include <cstdint>
 
 #include "LIEF/visibility.h"
 
 #include "LIEF/Object.hpp"
-#include "LIEF/PE/resources/LangCodeItem.hpp"
+#include "LIEF/errors.hpp"
+#include "LIEF/iterators.hpp"
+
+#include "LIEF/PE/resources/ResourceStringTable.hpp"
 
 namespace LIEF {
+class BinaryStream;
+
 namespace PE {
-
-class ResourcesManager;
-class ResourceVersion;
-struct ResourcesParser;
-
-/// Representation of the ``StringFileInfo`` structure
+/// Representation of the `StringFileInfo` structure
 ///
-/// It contains version information that can be displayed for a particular language and code page.
+/// It contains version information that can be displayed for a particular
+/// language and code page.
 ///
-/// See: https://docs.microsoft.com/en-us/windows/win32/menurc/stringfileinfo
+/// See: https://learn.microsoft.com/en-us/windows/win32/menurc/stringfileinfo
 class LIEF_API ResourceStringFileInfo : public Object {
-
-  friend class ResourcesManager;
-  friend class ResourceVersion;
-  friend struct ResourcesParser;
-
   public:
-  ResourceStringFileInfo();
-  ResourceStringFileInfo(uint16_t type, std::u16string key) :
-    type_(type),
-    key_(std::move(key))
-  {}
+  using elements_t = std::vector<ResourceStringTable>;
+  using it_const_elements = const_ref_iterator<const elements_t&>;
+  using it_elements = ref_iterator<elements_t&>;
+
+  static result<ResourceStringFileInfo> parse(BinaryStream& stream);
+
+  ResourceStringFileInfo() = default;
+
   ResourceStringFileInfo(const ResourceStringFileInfo&) = default;
   ResourceStringFileInfo& operator=(const ResourceStringFileInfo&) = default;
+
+  ResourceStringFileInfo(ResourceStringFileInfo&&) = default;
+  ResourceStringFileInfo& operator=(ResourceStringFileInfo&&) = default;
+
   ~ResourceStringFileInfo() override = default;
 
   /// The type of data in the version resource
-  /// * ``1`` if it contains text data
-  /// * ``0`` if it contains binary data
+  /// * `1` if it contains text data
+  /// * `0` if it contains binary data
   uint16_t type() const {
     return type_;
   }
 
-  /// Signature of the structure:
-  /// Must be the unicode string "StringFileInfo"
+  /// Signature of the structure. Must be the unicode string "StringFileInfo"
   const std::u16string& key() const {
     return key_;
   }
 
-  /// List of the LangCodeItem items.
-  ///
-  /// Each LangCodeItem::key indicates the appropriate
-  /// language and code page for displaying the ``key: value`` of
-  /// LangCodeItem::items
-  const std::vector<LangCodeItem>& langcode_items() const {
-    return childs_;
-  }
-  std::vector<LangCodeItem>& langcode_items() {
-    return childs_;
+  /// Iterator over the children values
+  it_const_elements children() const {
+    return children_;
   }
 
-  void type(uint16_t type) {
+  it_elements children() {
+    return children_;
+  }
+
+  /// The key as an utf8 string
+  std::string key_u8() const;
+
+  ResourceStringFileInfo& type(uint16_t type) {
     type_ = type;
+    return *this;
   }
 
-  void key(std::u16string key) {
+  ResourceStringFileInfo& key(std::u16string key) {
     key_ = std::move(key);
+    return *this;
   }
-  void key(const std::string& key);
 
-  void langcode_items(std::vector<LangCodeItem> items) {
-    childs_ = std::move(items);
+  void add_child(ResourceStringTable table) {
+    children_.push_back(std::move(table));
   }
 
   void accept(Visitor& visitor) const override;
 
-
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceStringFileInfo& string_file_info);
+  LIEF_API friend
+    std::ostream& operator<<(std::ostream& os, const ResourceStringFileInfo& info);
 
   private:
-  uint16_t       type_ = 0;
+  uint16_t type_ = 0;
   std::u16string key_;
-  std::vector<LangCodeItem> childs_;
-
-
+  elements_t children_;
 };
 
 
