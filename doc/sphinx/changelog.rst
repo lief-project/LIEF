@@ -37,6 +37,10 @@
   * Introduce :attr:`lief.ELF.Segment.raw_flags` to access the raw (integer)
     value of the flag
 
+:DWARF:
+
+  * LIEF extended can now process DWARF debug info in PE binaries
+
 :Extended:
 
   * Fix issue in the Python bindings while trying to access ``lief.__LIEF_MAIN_COMMIT__``
