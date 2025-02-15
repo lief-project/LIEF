@@ -25,6 +25,7 @@
 #include "LIEF/PE/utils.hpp"
 #include "LIEF/PE/ImportEntry.hpp"
 #include "LIEF/PE/Import.hpp"
+#include "LIEF/PE/AuxiliarySymbol.hpp"
 #include "LIEF/PE/Debug.hpp"
 #include "LIEF/PE/debug/PDBChecksum.hpp"
 #include "LIEF/PE/debug/ExDllCharacteristics.hpp"
