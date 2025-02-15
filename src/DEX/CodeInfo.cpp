@@ -37,6 +37,9 @@ void CodeInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
+uint16_t CodeInfo::nb_registers() const {
+  return nb_registers_;
+}
 
 
 std::ostream& operator<<(std::ostream& os, const CodeInfo& /*cinfo*/) {

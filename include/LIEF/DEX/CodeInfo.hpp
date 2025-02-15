@@ -42,6 +42,7 @@ class LIEF_API CodeInfo : public Object {
 
   void accept(Visitor& visitor) const override;
 
+  uint16_t nb_registers() const;
 
   ~CodeInfo() override;
 

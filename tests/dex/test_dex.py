@@ -55,6 +55,7 @@ def test_kik_methods():
 
     assert len(methods) == 65254
 
+    # external method: defined in the framework
     ValueAnimator = KIK.get_class("android.animation.ValueAnimator")
     m0 = ValueAnimator.get_method("setRepeatMode")[0]
 
@@ -66,7 +67,19 @@ def test_kik_methods():
     #assert m0.is_virtual == False # TODO
     assert m0.prototype.return_type.value == lief.DEX.Type.PRIMITIVES.VOID_T
     assert m0.access_flags == []
+    assert m0.code_info.nb_registers == 0 # defined in the framework, only the prototype is defined in this dex file
 
+    # internal method: defined in the current dex file
+    SafetyNetValidator = KIK.get_class("kik.android.challenge.SafetyNetValidator")
+    m1 = SafetyNetValidator.get_method("onConnected")[0]
+    assert m1.name == "onConnected"
+    assert m1.cls.pretty_name == "kik.android.challenge.SafetyNetValidator"
+    assert m1.code_offset == 0x46db88
+    assert m1.bytecode == [0x55, 0x10, 0xc0, 0x72, 0x38, 0x00, 0x08, 0x00, 0x12, 0x00, 0x5c, 0x10, 0xc0, 0x72, 0x70,
+                           0x10, 0x76, 0xd0, 0x01, 0x00, 0x0e, 0x00]
+    assert m1.prototype.return_type.value == lief.DEX.Type.PRIMITIVES.VOID_T
+    assert m1.access_flags == [lief.DEX.ACCESS_FLAGS.PUBLIC]
+    assert m1.code_info.nb_registers == 3
 
 def test_kik_fields():
     fields = KIK.fields
