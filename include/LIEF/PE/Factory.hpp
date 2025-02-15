@@ -18,6 +18,7 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/AuxiliarySymbol.hpp"
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/Import.hpp"
 #include <memory>
