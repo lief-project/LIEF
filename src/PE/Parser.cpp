@@ -485,7 +485,7 @@ span<uint8_t> get_payload(Binary& bin, const details::pe_debug& dbg, Section*& s
       return {};
     }
 
-    if (check_overflow((uint32_t)delta, dbg.SizeOfData, overlay.size())) {
+    if (check_overflow<uint64_t>((uint32_t)delta, dbg.SizeOfData, overlay.size())) {
       return {};
     }
 

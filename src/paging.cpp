@@ -18,6 +18,7 @@
 #include "LIEF/ELF/Binary.hpp"
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/AuxiliarySymbol.hpp"
 
 namespace LIEF {
 

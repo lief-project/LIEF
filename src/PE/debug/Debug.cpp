@@ -43,7 +43,7 @@ span<uint8_t> Debug::get_payload(Section& section, uint32_t /*rva*/,
     return {};
   }
 
-  if (check_overflow((uint32_t)rel_offset, size, content.size())) {
+  if (check_overflow<uint64_t>((uint32_t)rel_offset, size, content.size())) {
     return {};
   }
 
