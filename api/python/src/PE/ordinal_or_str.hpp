@@ -21,14 +21,14 @@ struct type_caster<LIEF::PE::ResourceDialog::ordinal_or_str_t> {
                          rv_policy rp, cleanup_list *cl) noexcept
   {
     if (val.ordinal) {
-      return int_(*val.ordinal);
+      return int_(*val.ordinal).release();
     }
 
     if (val.string.empty()) {
       return none().release();
     }
 
-    return type_caster<std::u16string>::from_cpp(val.string, rp, cl);
+    return type_caster<std::u16string>::from_cpp(val.string, rp, cl).inc_ref();
   }
 };
 
