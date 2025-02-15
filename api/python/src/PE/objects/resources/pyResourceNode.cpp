@@ -28,6 +28,7 @@
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>
+#include <nanobind/operators.h>
 
 namespace LIEF::PE::py {
 
@@ -38,63 +39,85 @@ void create<ResourceNode>(nb::module_& m) {
   nb::class_<ResourceNode, LIEF::Object> res_node(m, "ResourceNode",
       R"delim(
       Class which represents a Node in the resource tree.
+
       It is extended by :class:`lief.PE.ResourceData` and :class:`lief.PE.ResourceNode`
       )delim"_doc);
 
   init_ref_iterator<ResourceNode::it_childs>(res_node, "it_childs");
 
   res_node
+    .def_static("parse", [] (nb::bytes bytes, uint64_t rva) {
+        return ResourceNode::parse((const uint8_t*)bytes.data(), bytes.size(), rva);
+      },
+      R"doc(
+      Parse the resource tree from the provided bytes and
+      with the original RVA provided in the second parameter.
+
+      The RVA value should be come from the :attr:`lief.PE.DataDirectory.rva` associated with
+      the resource tree.
+      )doc"_doc,
+      "bytes"_a, "rva"_a, nb::rv_policy::take_ownership
+    )
+
     .def_prop_rw("id",
-        nb::overload_cast<>(&ResourceNode::id, nb::const_),
-        nb::overload_cast<uint32_t>(&ResourceNode::id),
-        "Integer that identifies the Type, Name, or "
-        "Language ID entry."_doc)
+      nb::overload_cast<>(&ResourceNode::id, nb::const_),
+      nb::overload_cast<uint32_t>(&ResourceNode::id),
+      "Integer that identifies the Type, Name, or Language ID entry."_doc
+    )
 
     .def_prop_ro("is_directory", &ResourceNode::is_directory,
-        "``True`` if the current resource is a " RST_CLASS_REF(lief.PE.ResourceDirectory) ""_doc)
+      "``True`` if the current node is a :class:`~.ResourceDirectory`"_doc
+    )
 
     .def_prop_ro("is_data", &ResourceNode::is_data,
-        "``True`` if the current resource is a " RST_CLASS_REF(lief.PE.ResourceData) ""_doc)
+      "``True`` if the current node is a :class:`~.ResourceData`"_doc
+    )
 
     .def_prop_ro("has_name", &ResourceNode::has_name,
-        "``True`` if the current resource uses a name"_doc)
+      "``True`` if the current node uses a name"_doc
+    )
 
     .def_prop_rw("name",
-        [] (const ResourceNode& node) {
-          return safe_string(LIEF::u16tou8(node.name()));
-        },
-        nb::overload_cast<const std::string&>(&ResourceNode::name),
-        "Resource's name"_doc)
+      &ResourceNode::utf8_name,
+      nb::overload_cast<const std::string&>(&ResourceNode::name),
+      "Resource's name"_doc
+    )
 
     .def_prop_ro("childs", nb::overload_cast<>(&ResourceNode::childs),
-        "Node's childs"_doc,
-        nb::keep_alive<0, 1>())
+      "Node's children"_doc, nb::keep_alive<0, 1>()
+    )
 
-    .def("add_directory_node",
-        nb::overload_cast<const ResourceDirectory&>(&ResourceNode::add_child),
-        "Add a " RST_CLASS_REF(lief.PE.ResourceDirectory) " to the current node"_doc,
-        "resource_directory"_a,
-        nb::rv_policy::reference_internal)
-
-    .def("add_data_node",
-        nb::overload_cast<const ResourceData&>(&ResourceNode::add_child),
-        "Add a " RST_CLASS_REF(lief.PE.ResourceData) " to the current node"_doc,
-        "resource_data"_a,
-        nb::rv_policy::reference_internal)
+    .def("add_child",
+      nb::overload_cast<const ResourceNode&>(&ResourceNode::add_child),
+      "Add a new child to the current node"_doc,
+      "node"_a, nb::rv_policy::reference_internal
+    )
 
     .def("delete_child",
-        nb::overload_cast<const ResourceNode&>(&ResourceNode::delete_child),
-        "Delete the given " RST_CLASS_REF(lief.PE.ResourceNode) " from childs"_doc,
-        "node"_a)
+      nb::overload_cast<const ResourceNode&>(&ResourceNode::delete_child),
+      "Delete the given :class:`~.ResourceNode` from the current children"_doc,
+      "node"_a
+    )
 
     .def("delete_child",
-        nb::overload_cast<uint32_t>(&ResourceNode::delete_child),
-        "Delete the " RST_CLASS_REF(lief.PE.ResourceNode) " with the given :attr:`~lief.PE.ResourceNode.id` from childs"_doc,
-        "id"_a)
+      nb::overload_cast<uint32_t>(&ResourceNode::delete_child),
+      R"doc(
+      Delete the :class:`~.ResourceNode` with the given :attr:`~.ResourceNode.id`
+      from the current children
+      )doc"_doc, "id"_a
+    )
 
-    .def_prop_ro("depth",
-        &ResourceNode::depth,
-        "Current depth of the entry in the resource tree"_doc)
+    .def_prop_ro("depth", &ResourceNode::depth,
+      "Current depth of the node in the resource tree"_doc
+    )
+
+    .def("__eq__", [] (const ResourceNode& lhs, const ResourceNode& rhs) {
+      return lhs == rhs;
+    }, nb::is_operator())
+
+    .def("__ne__", [] (const ResourceNode& lhs, const ResourceNode& rhs) {
+      return lhs != rhs;
+    }, nb::is_operator())
 
     LIEF_CLONABLE(ResourceNode)
     LIEF_DEFAULT_STR(ResourceNode);

@@ -9,6 +9,8 @@ include_cpp! {
     generate!("is_extended")
     generate!("extended_version_info")
     generate!("demangle")
+    generate!("dump")
+    generate!("dump_with_limit")
 
     generate_pod!("Span")
     block_constructors!("Span")
@@ -146,6 +148,13 @@ include_cpp! {
     // -------------------------------------------------------------------------
     generate!("PE_Binary")
     block_constructors!("PE_Binary")
+
+    generate!("PE_Binary_write_config_t")
+    block_constructors!("PE_Binary_write_config_t")
+
+    generate!("PE_ParserConfig")
+    block_constructors!("PE_ParserConfig")
+
     generate!("PE_Binary_it_debug")
     block_constructors!("PE_Binary_it_debug")
     generate!("PE_Binary_it_sections")
@@ -160,7 +169,42 @@ include_cpp! {
     block_constructors!("PE_Binary_it_data_directories")
     generate!("PE_Binary_it_signatures")
     block_constructors!("PE_Binary_it_signatures")
+    generate!("PE_Binary_it_strings_table")
+    block_constructors!("PE_Binary_it_strings_table")
+    generate!("PE_Binary_it_symbols")
+    block_constructors!("PE_Binary_it_symbols")
+    generate!("PE_Binary_it_exceptions")
+    block_constructors!("PE_Binary_it_exceptions")
 
+    generate!("PE_Symbol")
+    block_constructors!("PE_Symbol")
+
+    generate!("PE_Symbol_it_auxiliary_symbols")
+    block_constructors!("PE_Symbol_it_auxiliary_symbols")
+
+    generate!("PE_AuxiliarySymbol")
+    block_constructors!("PE_AuxiliarySymbol")
+
+    generate!("PE_AuxiliarySectionDefinition")
+    block_constructors!("PE_AuxiliarySectionDefinition")
+
+    generate!("PE_AuxiliaryCLRToken")
+    block_constructors!("PE_AuxiliaryCLRToken")
+
+    generate!("PE_AuxiliaryFile")
+    block_constructors!("PE_AuxiliaryFile")
+
+    generate!("PE_AuxiliaryFunctionDefinition")
+    block_constructors!("PE_AuxiliaryFunctionDefinition")
+
+    generate!("PE_AuxiliaryWeakExternal")
+    block_constructors!("PE_AuxiliaryWeakExternal")
+
+    generate!("PE_AuxiliarybfAndefSymbol")
+    block_constructors!("PE_AuxiliarybfAndefSymbol")
+
+    generate!("PE_COFFString")
+    block_constructors!("PE_COFFString")
     generate!("PE_CodeIntegrity")
     block_constructors!("PE_CodeIntegrity")
     generate!("PE_ContentInfo")
@@ -236,6 +280,18 @@ include_cpp! {
     block_constructors!("PE_PogoEntry")
     generate!("PE_Repro")
     block_constructors!("PE_Repro")
+    generate!("PE_PDBChecksum")
+    block_constructors!("PE_PDBChecksum")
+    generate!("PE_VCFeature")
+    block_constructors!("PE_VCFeature")
+    generate!("PE_ExDllCharacteristics")
+    block_constructors!("PE_ExDllCharacteristics")
+    generate!("PE_FPO")
+    block_constructors!("PE_FPO")
+    generate!("PE_FPO_it_entries")
+    block_constructors!("PE_FPO_it_entries")
+    generate!("PE_FPO_entry_t")
+    block_constructors!("PE_FPO_entry_t")
     generate!("PE_Signature")
     block_constructors!("PE_Signature")
     generate!("PE_Signature_it_signers")
@@ -293,30 +349,188 @@ include_cpp! {
 
     generate!("PE_LoadConfiguration")
     block_constructors!("PE_LoadConfiguration")
-    generate!("PE_LoadConfigurationV0")
-    block_constructors!("PE_LoadConfigurationV0")
-    generate!("PE_LoadConfigurationV1")
-    block_constructors!("PE_LoadConfigurationV1")
-    generate!("PE_LoadConfigurationV2")
-    block_constructors!("PE_LoadConfigurationV2")
-    generate!("PE_LoadConfigurationV3")
-    block_constructors!("PE_LoadConfigurationV3")
-    generate!("PE_LoadConfigurationV4")
-    block_constructors!("PE_LoadConfigurationV4")
-    generate!("PE_LoadConfigurationV5")
-    block_constructors!("PE_LoadConfigurationV5")
-    generate!("PE_LoadConfigurationV6")
-    block_constructors!("PE_LoadConfigurationV6")
-    generate!("PE_LoadConfigurationV7")
-    block_constructors!("PE_LoadConfigurationV7")
-    generate!("PE_LoadConfigurationV8")
-    block_constructors!("PE_LoadConfigurationV8")
-    generate!("PE_LoadConfigurationV9")
-    block_constructors!("PE_LoadConfigurationV9")
-    generate!("PE_LoadConfigurationV10")
-    block_constructors!("PE_LoadConfigurationV10")
-    generate!("PE_LoadConfigurationV11")
-    block_constructors!("PE_LoadConfigurationV11")
+
+    generate!("PE_LoadConfiguration_guard_function_t")
+    block_constructors!("PE_LoadConfiguration_guard_function_t")
+
+    generate!("PE_LoadConfiguration_it_guard_cf_functions")
+    block_constructors!("PE_LoadConfiguration_it_guard_cf_functions")
+
+    generate!("PE_LoadConfiguration_it_guard_address_taken_iat_entries")
+    block_constructors!("PE_LoadConfiguration_it_guard_address_taken_iat_entries")
+
+    generate!("PE_LoadConfiguration_it_guard_long_jump_targets")
+    block_constructors!("PE_LoadConfiguration_it_guard_long_jump_targets")
+
+    generate!("PE_LoadConfiguration_it_dynamic_relocations")
+    block_constructors!("PE_LoadConfiguration_it_dynamic_relocations")
+
+    generate!("PE_LoadConfiguration_it_guard_eh_continuation")
+    block_constructors!("PE_LoadConfiguration_it_guard_eh_continuation")
+
+    generate!("PE_CHPEMetadata")
+    block_constructors!("PE_CHPEMetadata")
+
+    generate!("PE_CHPEMetadataARM64")
+    block_constructors!("PE_CHPEMetadataARM64")
+
+    generate!("PE_CHPEMetadataX86")
+    block_constructors!("PE_CHPEMetadataX86")
+
+    generate!("PE_CHPEMetadataARM64_it_const_range_entries")
+    block_constructors!("PE_CHPEMetadataARM64_it_const_range_entries")
+
+    generate!("PE_CHPEMetadataARM64_it_const_redirection_entries")
+    block_constructors!("PE_CHPEMetadataARM64_it_const_redirection_entries")
+
+    generate!("PE_CHPEMetadataARM64_range_entry_t")
+    block_constructors!("PE_CHPEMetadataARM64_range_entry_t")
+
+    generate!("PE_CHPEMetadataARM64_redirection_entry_t")
+    block_constructors!("PE_CHPEMetadataARM64_redirection_entry_t")
+
+    generate!("PE_ExceptionInfo")
+    block_constructors!("PE_ExceptionInfo")
+
+    generate!("PE_RuntimeFunctionX64")
+    block_constructors!("PE_RuntimeFunctionX64")
+
+    generate!("PE_RuntimeFunctionX64_unwind_info_t")
+    block_constructors!("PE_RuntimeFunctionX64_unwind_info_t")
+
+    generate!("PE_RuntimeFunctionX64_unwind_info_t_it_opcodes")
+    block_constructors!("PE_RuntimeFunctionX64_unwind_info_t_it_opcodes")
+
+    generate!("PE_unwind_x64_Code")
+    block_constructors!("PE_unwind_x64_Code")
+
+    generate!("PE_unwind_x64_Alloc")
+    block_constructors!("PE_unwind_x64_Alloc")
+
+    generate!("PE_unwind_x64_PushNonVol")
+    block_constructors!("PE_unwind_x64_PushNonVol")
+
+    generate!("PE_unwind_x64_PushMachFrame")
+    block_constructors!("PE_unwind_x64_PushMachFrame")
+
+    generate!("PE_unwind_x64_SetFPReg")
+    block_constructors!("PE_unwind_x64_SetFPReg")
+
+    generate!("PE_unwind_x64_SaveNonVolatile")
+    block_constructors!("PE_unwind_x64_SaveNonVolatile")
+
+    generate!("PE_unwind_x64_SaveXMM128")
+    block_constructors!("PE_unwind_x64_SaveXMM128")
+
+    generate!("PE_unwind_x64_Epilog")
+    block_constructors!("PE_unwind_x64_Epilog")
+
+    generate!("PE_unwind_x64_Spare")
+    block_constructors!("PE_unwind_x64_Spare")
+
+    generate!("PE_RuntimeFunctionAArch64")
+    block_constructors!("PE_RuntimeFunctionAArch64")
+
+    generate!("PE_unwind_aarch64_PackedFunction")
+    block_constructors!("PE_unwind_aarch64_PackedFunction")
+
+    generate!("PE_unwind_aarch64_UnpackedFunction")
+    block_constructors!("PE_unwind_aarch64_UnpackedFunction")
+
+    generate!("PE_unwind_aarch64_UnpackedFunction_epilog_scope_t")
+    block_constructors!("PE_unwind_aarch64_UnpackedFunction_epilog_scope_t")
+
+    generate!("PE_unwind_aarch64_UnpackedFunction_it_const_epilog_scopes")
+    block_constructors!("PE_unwind_aarch64_UnpackedFunction_it_const_epilog_scopes")
+
+    generate!("PE_DynamicRelocation")
+    block_constructors!("PE_DynamicRelocation")
+
+    generate!("PE_DynamicRelocationV1")
+    block_constructors!("PE_DynamicRelocationV1")
+
+    generate!("PE_DynamicRelocationV2")
+    block_constructors!("PE_DynamicRelocationV2")
+
+    generate!("PE_DynamicFixup")
+    block_constructors!("PE_DynamicFixup")
+
+    generate!("PE_DynamicFixupARM64Kernel")
+    block_constructors!("PE_DynamicFixupARM64Kernel")
+
+    generate!("PE_DynamicFixupARM64Kernel_entry")
+    block_constructors!("PE_DynamicFixupARM64Kernel_entry")
+
+    generate!("PE_DynamicFixupARM64Kernel_it_relocations")
+    block_constructors!("PE_DynamicFixupARM64Kernel_it_relocations")
+
+    generate!("PE_DynamicFixupARM64X")
+    block_constructors!("PE_DynamicFixupARM64X")
+
+    generate!("PE_DynamicFixupARM64X_entry")
+    block_constructors!("PE_DynamicFixupARM64X_entry")
+    generate!("PE_DynamicFixupARM64X_it_relocations")
+    block_constructors!("PE_DynamicFixupARM64X_it_relocations")
+
+    generate!("PE_DynamicFixupControlTransfer")
+    block_constructors!("PE_DynamicFixupControlTransfer")
+
+    generate!("PE_DynamicFixupControlTransfer_entry")
+    block_constructors!("PE_DynamicFixupControlTransfer_entry")
+
+    generate!("PE_DynamicFixupControlTransfer_it_relocations")
+    block_constructors!("PE_DynamicFixupControlTransfer_it_relocations")
+
+    generate!("PE_DynamicFixupGeneric")
+    block_constructors!("PE_DynamicFixupGeneric")
+
+    generate!("PE_DynamicFixupGeneric_it_relocations")
+    block_constructors!("PE_DynamicFixupGeneric_it_relocations")
+
+    generate!("PE_DynamicFixupUnknown")
+    block_constructors!("PE_DynamicFixupUnknown")
+
+    generate!("PE_FunctionOverride")
+    block_constructors!("PE_FunctionOverride")
+
+    generate!("PE_FunctionOverride_it_func_overriding_info")
+    block_constructors!("PE_FunctionOverride_it_func_overriding_info")
+
+    generate!("PE_FunctionOverride_it_bdd_info")
+    block_constructors!("PE_FunctionOverride_it_bdd_info")
+
+    generate!("PE_FunctionOverrideInfo")
+    block_constructors!("PE_FunctionOverrideInfo")
+
+    generate!("PE_FunctionOverride_image_bdd_dynamic_relocation_t")
+    block_constructors!("PE_FunctionOverride_image_bdd_dynamic_relocation_t")
+
+    generate!("PE_FunctionOverride_image_bdd_info_t")
+    block_constructors!("PE_FunctionOverride_image_bdd_info_t")
+
+    generate!("PE_FunctionOverride_image_bdd_info_t_it_relocations")
+    block_constructors!("PE_FunctionOverride_image_bdd_info_t_it_relocations")
+
+    generate!("PE_FunctionOverrideInfo_it_relocations")
+    block_constructors!("PE_FunctionOverrideInfo_it_relocations")
+
+    generate!("PE_EnclaveImport")
+    block_constructors!("PE_EnclaveImport")
+
+    generate!("PE_EnclaveConfiguration")
+    block_constructors!("PE_EnclaveConfiguration")
+
+    generate!("PE_EnclaveConfiguration_it_imports")
+    block_constructors!("PE_EnclaveConfiguration_it_imports")
+
+    generate!("PE_VolatileMetadata_range_t")
+    block_constructors!("PE_VolatileMetadata_range_t")
+
+    generate!("PE_VolatileMetadata")
+    block_constructors!("PE_VolatileMetadata")
+
+    generate!("PE_VolatileMetadata_it_ranges")
+    block_constructors!("PE_VolatileMetadata_it_ranges")
 
     // -------------------------------------------------------------------------
     // Mach-O

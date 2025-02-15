@@ -11,6 +11,16 @@
   python
   rust
 
+.. toctree::
+  :caption: <i class="fa-solid fa-gears">&nbsp;</i>Modifications
+  :maxdepth: 1
+
+  modifications/imports
+  modifications/resources
+  modifications/tls
+  modifications/debug
+  modifications/exports
+
 ----
 
 Introduction
@@ -58,7 +68,7 @@ PE binaries can be parsed with LIEF using the |lief-pe-parse| function.
 
 .. note::
 
-  In Python, you can also use :py:func:`lief.parse` which returns a
+  In Python, you can also use the generic :py:func:`lief.parse` which returns a
   :class:`lief.PE.Binary` object.
 
 From this parsed PE binary you can use all the API exposed by the |lief-pe-binary|
@@ -105,8 +115,8 @@ object to inspect or modify the binary itself.
             println!("{} {}", section.name(), section.content().len());
         }
 
-Upon a |lief-pe-binary| modification, one can use the method
-|lief-pe-binary-write| to write back the PE binary object into a raw PE
+When |lief-pe-binary| modifications are done, one can commit the changes
+with |lief-pe-binary-write| to write back the PE binary object into a raw PE
 file.
 
 .. tabs::
@@ -143,16 +153,25 @@ file.
 Advance Parsing/Writing
 ***********************
 
+.. toctree::
+  :caption: <i class="fa-solid fa-gears">&nbsp;</i>Modifications
+  :maxdepth: 1
+
+  modifications/imports
+  modifications/resources
+  modifications/tls
+
 |lief-pe-parse| can take an extra |lief-pe-parser-config| parameter to specify
-some parts of the ELF format to skip during parsing.
+some parts of the PE format to ignore during parsing.
 
 .. warning::
 
    Generally speaking, |lief-pe-binary-write| requires a **complete** initial
    parsing of the PE file.
 
-Similarly, |lief-pe-builder| can be configured to avoid reconstructing
-some parts of the PE binary
+Similarly, |lief-pe-binary-write| can take an extra |lief-pe-builder-config|
+parameter to include or ignore some parts of the PE binary during the build
+process.
 
 .. tabs::
 
@@ -165,12 +184,10 @@ some parts of the PE binary
 
         pe: lief.PE.Binary = lief.PE.parse("some.exe", parser_config)
 
-        builder = lief.PE.Builder(pe)
-        builder.build_imports(False)
-        builder.patch_imports(False)
+        builder_config = lief.PE.Builder.config_t()
+        builder_config.imports = True
 
-        builder.build()
-        builder.write("new.exe")
+        pe.write("new.exe", builder_config)
 
   .. tab:: :fa:`regular fa-file-code` C++
 
@@ -180,16 +197,25 @@ some parts of the PE binary
         parser_config.parse_signature = false;
 
         auto pe = LIEF::PE::Parser::parse("some.exe", parser_config);
-        LIEF::PE::Builder builder(*pe);
 
-        builder.build_imports(false);
-        builder.patch_imports(false);
+        LIEF::PE::Builder::config_t builder_config;
+        builder_config.imports = true;
 
-        builder.build();
-        builder.write("new.exe");
+        pe->write("new.exe", builder_config);
 
-Accessing PDB
-*************
+
+  .. tab:: :fa:`brands fa-rust` Rust
+
+      .. code-block:: rust
+
+        let mut pe = ...;
+
+        let config = lief::pe::builder::Config::default();
+        pe.write_with_config("new.exe", config);
+
+
+PDB Support
+***********
 
 Using :ref:`LIEF Extended <extended-intro>`, one can access PDB debug info
 (|lief-pdb-debug-info|) using the function: |lief-pdb-binary-debug-info|.

@@ -57,20 +57,19 @@ autodoc_default_options = {
     'members': True,
 }
 
-exclude_patterns = [
+#exclude_patterns = [
+#    "api",
 #    "tutorials/*.rst",
-#    "extended/*.rst",
+#    "extended",
+#    "formats/android",
+#    "formats/elf",
+#    "formats/macho",
 #    "changelog.rst",
-#    "formats/*.rst",
-#    "api/python/abstract.rst",
-#    "api/c/*.rst",
-#    "api/cpp/*.rst",
-#    "api/python/pe.rst",
-#    "api/python/macho.rst",
-#    "api/python/oat.rst",
-#    "api/python/vdex.rst",
-#    "api/python/dex.rst",
-]
+#    "references.rst",
+#    "intro.rst",
+#    "installation.rst",
+#    "compilation.rst",
+#]
 
 
 def setup(app: Sphinx):

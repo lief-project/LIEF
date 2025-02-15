@@ -319,8 +319,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   /// Reconstruct the binary object and write the result in the given `filename`
   ///
   /// @param filename Path to write the reconstructed binary
-  void write(const std::string& filename) override;
-
+  void write(const std::string& filename);
 
   /// Reconstruct the binary object and write the result in the given
   /// `filename`.
@@ -334,7 +333,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   /// Reconstruct the binary object and write the result in the given `os` stream
   ///
   /// @param os Output stream to write the reconstructed binary
-  void write(std::ostream& os) override;
+  void write(std::ostream& os);
 
   /// Reconstruct the binary object and return its content as bytes
   std::vector<uint8_t> raw();

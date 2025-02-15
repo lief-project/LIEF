@@ -13,8 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <sstream>
 #include "LIEF/PE/debug/Repro.hpp"
 #include "LIEF/Visitor.hpp"
+
+#include "internal_utils.hpp"
 
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/fmt/ranges.h>
@@ -26,9 +29,15 @@ void Repro::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-std::ostream& operator<<(std::ostream& os, const Repro& entry) {
-  os << fmt::format("Hash: {}", entry.hash());
-  return os;
+std::string Repro::to_string() const {
+  std::ostringstream os;
+  if (hash().empty()) {
+    os << "  Repro (empty hash)";
+  }
+
+  os << Debug::to_string() << '\n'
+     << fmt::format("  Repro: {}", to_hex(hash(), 19));
+  return os.str();
 }
 
 } // namespace PE

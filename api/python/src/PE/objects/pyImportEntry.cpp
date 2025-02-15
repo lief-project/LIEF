@@ -37,20 +37,11 @@ void create<ImportEntry>(nb::module_& m) {
     .def(nb::init<>())
 
     .def(nb::init<const std::string&>(),
-        "Constructor from a :attr:`~lief.PE.ImportEntry.name`"_doc,
+        "Constructor from a :attr:`~ImportEntry.name`"_doc,
         "import_name"_a)
 
-    .def(nb::init<uint64_t, const std::string&>(),
-        "Constructor from a :attr:`~lief.PE.ImportEntry.data` and an optionally :attr:`~lief.PE.ImportEntry.name`"_doc,
-        "data"_a, "name"_a = "")
-
-    .def(nb::init<uint64_t, PE_TYPE, const std::string&>(),
-        "Constructor from a :attr:`~lief.PE.ImportEntry.data`, a :attr:`~lief.PE.ImportEntry.type` and an optional :attr:`~lief.PE.ImportEntry.name`"_doc,
-        "data"_a, "type"_a, "name"_a = "")
-
-    .def(nb::init<const std::string&, PE_TYPE>(),
-        "Constructor from a :attr:`~lief.PE.ImportEntry.name`, and a :attr:`~lief.PE.ImportEntry.type`"_doc,
-        "name"_a, "type"_a)
+    .def(nb::init<uint64_t, PE_TYPE>(),
+        "data"_a, "type"_a)
 
     .def_prop_rw("name",
         [] (const ImportEntry& obj) {
@@ -88,8 +79,16 @@ void create<ImportEntry>(nb::module_& m) {
         &ImportEntry::iat_value,
         "Value of the current entry in the Import Address Table. It should match the lookup table value."_doc)
 
+    .def_prop_ro("ilt_value", &ImportEntry::ilt_value,
+      R"doc(
+      Original value in the import lookup table.
+
+      This value should match the :attr:`~ImportEntry.iat_value`
+      )doc"_doc
+    )
+
     .def_prop_ro("iat_address",
-        &ImportEntry::iat_address,
+        nb::overload_cast<>(&ImportEntry::iat_address, nb::const_),
         "**Original** address of the entry in the Import Address Table"_doc)
 
     LIEF_COPYABLE(ImportEntry)

@@ -16,8 +16,10 @@
 #ifndef LIEF_UTILS_HEADER
 #define LIEF_UTILS_HEADER
 #include <string>
+#include <vector>
 
 #include "LIEF/visibility.h"
+#include "LIEF/span.hpp"
 
 #include "LIEF/errors.hpp"
 
@@ -96,6 +98,36 @@ LIEF_API std::string extended_version_info();
 ///
 /// This function only works with the extended version of LIEF
 LIEF_API result<std::string> demangle(const std::string& mangled);
+
+/// Hexdump the provided buffer.
+///
+/// For instance:
+///
+/// ```text
+/// +---------------------------------------------------------------------+
+/// | 88 56 05 00 00 00 00 00 00 00 00 00 22 58 05 00  | .V.........."X.. |
+/// | 10 71 02 00 78 55 05 00 00 00 00 00 00 00 00 00  | .q..xU.......... |
+/// | 68 5c 05 00 00 70 02 00 00 00 00 00 00 00 00 00  | h\...p.......... |
+/// | 00 00 00 00 00 00 00 00 00 00 00 00              | ............     |
+/// +---------------------------------------------------------------------+
+/// ```
+std::string dump(const uint8_t* buffer, size_t size,
+                 const std::string& title = "", const std::string& prefix = "",
+                 size_t limit = 0);
+
+inline std::string dump(span<const uint8_t> data, const std::string& title = "",
+                        const std::string& prefix = "", size_t limit = 0)
+{
+  return dump(data.data(), data.size(), title, prefix, limit);
+}
+
+inline std::string dump(const std::vector<uint8_t>& data,
+                        const std::string& title = "",
+                        const std::string& prefix = "",
+                        size_t limit = 0)
+{
+  return dump(data.data(), data.size(), title, prefix, limit);
+}
 }
 
 

@@ -10,21 +10,22 @@ def test_without_imports():
     """
     By convention if a binary hasn't import, imphash is '0'
     """
-    binary = lief.PE.Binary(lief.PE.PE_TYPE.PE32)
+    factory = lief.PE.Factory.create(lief.PE.PE_TYPE.PE32)
+    pe = factory.get()
 
-    assert int(lief.PE.get_imphash(binary), 16) == 0
+    assert int(lief.PE.get_imphash(pe), 16) == 0
 
 def test_casse():
     """
     Test that casse doesn't change the hash
     """
-    binary_lhs = lief.PE.Binary(lief.PE.PE_TYPE.PE32)
-    binary_rhs = lief.PE.Binary(lief.PE.PE_TYPE.PE32)
+    binary_lhs = lief.PE.Factory.create(lief.PE.PE_TYPE.PE32).get()
+    binary_rhs = lief.PE.Factory.create(lief.PE.PE_TYPE.PE32).get()
 
-    kernel32_lhs = binary_lhs.add_library("KERNEL32.dll")
+    kernel32_lhs = binary_lhs.add_import("KERNEL32.dll")
     kernel32_lhs.add_entry("CreateMutexA")
 
-    kernel32_rhs = binary_rhs.add_library("kernel32.dll")
+    kernel32_rhs = binary_rhs.add_import("kernel32.dll")
     kernel32_rhs.add_entry("CrEatEMutExa")
 
     assert lief.PE.get_imphash(binary_lhs) == lief.PE.get_imphash(binary_rhs)
@@ -34,16 +35,16 @@ def test_order():
     """
     Test that import order doesn't change the hash
     """
-    binary_lhs = lief.PE.Binary(lief.PE.PE_TYPE.PE32)
-    binary_rhs = lief.PE.Binary(lief.PE.PE_TYPE.PE32)
+    binary_lhs = lief.PE.Factory.create(lief.PE.PE_TYPE.PE32).get()
+    binary_rhs = lief.PE.Factory.create(lief.PE.PE_TYPE.PE32).get()
     fonctions = ["GetStringTypeW", "LCMapStringW", "GetCommandLineA", "TerminateProcess"]
 
-    kernel32_lhs = binary_lhs.add_library("kernel32.dll")
+    kernel32_lhs = binary_lhs.add_import("kernel32.dll")
     random.shuffle(fonctions)
     list(map(kernel32_lhs.add_entry, fonctions))
     print(kernel32_lhs)
 
-    kernel32_rhs = binary_rhs.add_library("kernel32.dll")
+    kernel32_rhs = binary_rhs.add_import("kernel32.dll")
     random.shuffle(fonctions)
     list(map(kernel32_rhs.add_entry, fonctions))
     print(kernel32_rhs)
@@ -54,8 +55,8 @@ def test_ordinal():
     """
     Test import by ordinal
     """
-    binary_lhs = lief.PE.Binary(lief.PE.PE_TYPE.PE32)
-    binary_rhs = lief.PE.Binary(lief.PE.PE_TYPE.PE32)
+    binary_lhs = lief.PE.Factory.create(lief.PE.PE_TYPE.PE32).get()
+    binary_rhs = lief.PE.Factory.create(lief.PE.PE_TYPE.PE32).get()
 
     fonctions = [
             "GetStringTypeW",
@@ -65,13 +66,13 @@ def test_ordinal():
             "Beep",
             "CheckRemoteDebuggerPresent",
             ]
-    kernel32_lhs = binary_lhs.add_library("kernel32.dll")
+    kernel32_lhs = binary_lhs.add_import("kernel32.dll")
     list(map(kernel32_lhs.add_entry, fonctions))
 
-    kernel32_rhs = binary_rhs.add_library("kernel32.dll")
+    kernel32_rhs = binary_rhs.add_import("kernel32.dll")
     for f in fonctions:
         if f == "Beep":
-            imp = lief.PE.ImportEntry(0x8000001d) # Ordinal number
+            imp = lief.PE.ImportEntry(0x8000001d, lief.PE.PE_TYPE.PE32) # Ordinal number
             kernel32_rhs.add_entry(imp)
         else:
             kernel32_rhs.add_entry(f)
@@ -82,8 +83,8 @@ def test_order_2():
     """
     Test that import order doesn't change the hash (More complex)
     """
-    binary_lhs = lief.PE.Binary(lief.PE.PE_TYPE.PE32)
-    binary_rhs = lief.PE.Binary(lief.PE.PE_TYPE.PE32)
+    binary_lhs = lief.PE.Factory.create(lief.PE.PE_TYPE.PE32).get()
+    binary_rhs = lief.PE.Factory.create(lief.PE.PE_TYPE.PE32).get()
 
 
     libraries = {
@@ -110,7 +111,7 @@ def test_order_2():
     keys = list(libraries.keys())
     random.shuffle(keys)
     for k in keys:
-        lib_lhs = binary_lhs.add_library(k)
+        lib_lhs = binary_lhs.add_import(k)
         v = libraries[k]
         random.shuffle(v)
         for e in v:
@@ -119,7 +120,7 @@ def test_order_2():
     keys = list(libraries.keys())
     random.shuffle(keys)
     for k in keys:
-        lib_rhs = binary_rhs.add_library(k)
+        lib_rhs = binary_rhs.add_import(k)
         v = libraries[k]
         random.shuffle(v)
         for e in v:
@@ -133,8 +134,8 @@ def test_different():
     Check that different imports have different hashes
     """
 
-    binary_lhs = lief.PE.Binary(lief.PE.PE_TYPE.PE32)
-    binary_rhs = lief.PE.Binary(lief.PE.PE_TYPE.PE32)
+    binary_lhs = lief.PE.Factory.create(lief.PE.PE_TYPE.PE32).get()
+    binary_rhs = lief.PE.Factory.create(lief.PE.PE_TYPE.PE32).get()
 
 
     libraries = {
@@ -161,7 +162,7 @@ def test_different():
     keys = list(libraries.keys())
     random.shuffle(keys)
     for k in keys:
-        lib_lhs = binary_lhs.add_library(k)
+        lib_lhs = binary_lhs.add_import(k)
         v = libraries[k]
         random.shuffle(v)
         for e in v:
@@ -170,7 +171,7 @@ def test_different():
     keys = list(libraries.keys())
     random.shuffle(keys)
     for k in keys:
-        lib_rhs = binary_rhs.add_library(k)
+        lib_rhs = binary_rhs.add_import(k)
         v = libraries[k]
         random.shuffle(v)
         for e in filter(lambda e: len(e) % 2 == 0, v):

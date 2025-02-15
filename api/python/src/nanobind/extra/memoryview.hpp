@@ -42,6 +42,14 @@ public:
     static memoryview from_memory(const void *mem, ssize_t size) {
         return memoryview::from_memory(const_cast<void *>(mem), size, true);
     }
+
+    const uint8_t* data() const {
+        return (const uint8_t*)PyMemoryView_GET_BUFFER(this->ptr())->buf;
+    }
+
+    size_t size() const {
+        return PyMemoryView_GET_BUFFER(this->ptr())->len;
+    }
 };
 
 NAMESPACE_END(NB_NAMESPACE)

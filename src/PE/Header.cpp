@@ -19,8 +19,10 @@
 
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/Header.hpp"
+
 #include "PE/Structures.hpp"
 #include "frozen.hpp"
+#include "internal_utils.hpp"
 
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/fmt/ranges.h>
@@ -55,6 +57,7 @@ Header Header::create(PE_TYPE type) {
   hdr.sizeof_optional_header(type == PE_TYPE::PE32 ?
                              sizeof(details::pe32_optional_header) :
                              sizeof(details::pe64_optional_header) + sizeof_dirs);
+  hdr.machine(MACHINE_TYPES::AMD64);
   return hdr;
 }
 
@@ -105,66 +108,84 @@ std::ostream& operator<<(std::ostream& os, const Header& entry) {
      << fmt::format("Number of symbols:       {}\n", entry.numberof_symbols())
      << fmt::format("Size of optional header: 0x{:x}\n", entry.sizeof_optional_header())
      << fmt::format("Characteristics:         {}\n", fmt::join(list_str, ", "))
-     << fmt::format("Timtestamp:              {}\n", entry.time_date_stamp());
+     << fmt::format("Timtestamp:              {} ({})\n",
+                    entry.time_date_stamp(), ts_to_str(entry.time_date_stamp()));
 
   return os;
 
 }
 
 const char* to_string(Header::MACHINE_TYPES e) {
-  CONST_MAP(Header::MACHINE_TYPES, const char*, 26) enumStrings {
-    { Header::MACHINE_TYPES::UNKNOWN,   "UNKNOWN" },
-    { Header::MACHINE_TYPES::AM33,      "AM33" },
-    { Header::MACHINE_TYPES::AMD64,     "AMD64" },
-    { Header::MACHINE_TYPES::ARM,       "ARM" },
-    { Header::MACHINE_TYPES::ARMNT,     "ARMNT" },
-    { Header::MACHINE_TYPES::ARM64,     "ARM64" },
-    { Header::MACHINE_TYPES::EBC,       "EBC" },
-    { Header::MACHINE_TYPES::I386,      "I386" },
-    { Header::MACHINE_TYPES::IA64,      "IA64" },
-    { Header::MACHINE_TYPES::M32R,      "M32R" },
-    { Header::MACHINE_TYPES::MIPS16,    "MIPS16" },
-    { Header::MACHINE_TYPES::MIPSFPU,   "MIPSFPU" },
-    { Header::MACHINE_TYPES::MIPSFPU16, "MIPSFPU16" },
-    { Header::MACHINE_TYPES::POWERPC,   "POWERPC" },
-    { Header::MACHINE_TYPES::POWERPCFP, "POWERPCFP" },
-    { Header::MACHINE_TYPES::POWERPCBE, "POWERPCBE" },
-    { Header::MACHINE_TYPES::R4000,     "R4000" },
-    { Header::MACHINE_TYPES::RISCV32,   "RISCV32" },
-    { Header::MACHINE_TYPES::RISCV64,   "RISCV64" },
-    { Header::MACHINE_TYPES::RISCV128,  "RISCV128" },
-    { Header::MACHINE_TYPES::SH3,       "SH3" },
-    { Header::MACHINE_TYPES::SH3DSP,    "SH3DSP" },
-    { Header::MACHINE_TYPES::SH4,       "SH4" },
-    { Header::MACHINE_TYPES::SH5,       "SH5" },
-    { Header::MACHINE_TYPES::THUMB,     "THUMB" },
-    { Header::MACHINE_TYPES::WCEMIPSV2, "WCEMIPSV2" }
+  #define ENTRY(X) std::pair(Header::MACHINE_TYPES::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(UNKNOWN),
+    ENTRY(ALPHA),
+    ENTRY(ALPHA64),
+    ENTRY(AM33),
+    ENTRY(AMD64),
+    ENTRY(ARM),
+    ENTRY(ARMNT),
+    ENTRY(ARM64),
+    ENTRY(EBC),
+    ENTRY(I386),
+    ENTRY(IA64),
+    ENTRY(LOONGARCH32),
+    ENTRY(LOONGARCH64),
+    ENTRY(M32R),
+    ENTRY(MIPS16),
+    ENTRY(MIPSFPU),
+    ENTRY(MIPSFPU16),
+    ENTRY(POWERPC),
+    ENTRY(POWERPCFP),
+    ENTRY(POWERPCBE),
+    ENTRY(R4000),
+    ENTRY(RISCV32),
+    ENTRY(RISCV64),
+    ENTRY(RISCV128),
+    ENTRY(SH3),
+    ENTRY(SH3DSP),
+    ENTRY(SH4),
+    ENTRY(SH5),
+    ENTRY(THUMB),
+    ENTRY(WCEMIPSV2),
+    ENTRY(ARM64EC),
+    ENTRY(ARM64X),
+    ENTRY(CHPE_X86),
   };
-  const auto it = enumStrings.find(e);
-  return it == enumStrings.end() ? "UNKNOWN" : it->second;
+  #undef ENTRY
+
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
+  }
+  return "UNKNOWN";
 }
 
 const char* to_string(Header::CHARACTERISTICS e) {
-  CONST_MAP(Header::CHARACTERISTICS, const char*, 16) enumStrings {
-    { Header::CHARACTERISTICS::NONE,                    "NONE" },
-    { Header::CHARACTERISTICS::RELOCS_STRIPPED,         "RELOCS_STRIPPED" },
-    { Header::CHARACTERISTICS::EXECUTABLE_IMAGE,        "EXECUTABLE_IMAGE" },
-    { Header::CHARACTERISTICS::LINE_NUMS_STRIPPED,      "LINE_NUMS_STRIPPED" },
-    { Header::CHARACTERISTICS::LOCAL_SYMS_STRIPPED,     "LOCAL_SYMS_STRIPPED" },
-    { Header::CHARACTERISTICS::AGGRESSIVE_WS_TRIM,      "AGGRESSIVE_WS_TRIM" },
-    { Header::CHARACTERISTICS::LARGE_ADDRESS_AWARE,     "LARGE_ADDRESS_AWARE" },
-    { Header::CHARACTERISTICS::BYTES_REVERSED_LO,       "BYTES_REVERSED_LO" },
-    { Header::CHARACTERISTICS::NEED_32BIT_MACHINE,      "NEED_32BIT_MACHINE" },
-    { Header::CHARACTERISTICS::DEBUG_STRIPPED,          "DEBUG_STRIPPED" },
-    { Header::CHARACTERISTICS::REMOVABLE_RUN_FROM_SWAP, "REMOVABLE_RUN_FROM_SWAP" },
-    { Header::CHARACTERISTICS::NET_RUN_FROM_SWAP,       "NET_RUN_FROM_SWAP" },
-    { Header::CHARACTERISTICS::SYSTEM,                  "SYSTEM" },
-    { Header::CHARACTERISTICS::DLL,                     "DLL" },
-    { Header::CHARACTERISTICS::UP_SYSTEM_ONLY,          "UP_SYSTEM_ONLY" },
-    { Header::CHARACTERISTICS::BYTES_REVERSED_HI,       "BYTES_REVERSED_HI" }
+  #define ENTRY(X) std::pair(Header::CHARACTERISTICS::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(NONE),
+    ENTRY(RELOCS_STRIPPED),
+    ENTRY(EXECUTABLE_IMAGE),
+    ENTRY(LINE_NUMS_STRIPPED),
+    ENTRY(LOCAL_SYMS_STRIPPED),
+    ENTRY(AGGRESSIVE_WS_TRIM),
+    ENTRY(LARGE_ADDRESS_AWARE),
+    ENTRY(BYTES_REVERSED_LO),
+    ENTRY(NEED_32BIT_MACHINE),
+    ENTRY(DEBUG_STRIPPED),
+    ENTRY(REMOVABLE_RUN_FROM_SWAP),
+    ENTRY(NET_RUN_FROM_SWAP),
+    ENTRY(SYSTEM),
+    ENTRY(DLL),
+    ENTRY(UP_SYSTEM_ONLY),
+    ENTRY(BYTES_REVERSED_HI),
   };
-  const auto it = enumStrings.find(e);
-  return it == enumStrings.end() ? "NONE" : it->second;
+  #undef ENTRY
+
+  if (auto it = enums2str.find(e); it != enums2str.end()) {
+    return it->second;
+  }
+  return "NONE";
 }
 
 

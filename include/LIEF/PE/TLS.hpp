@@ -30,6 +30,7 @@ class Parser;
 class Builder;
 class DataDirectory;
 class Section;
+class Binary;
 
 namespace details {
 struct pe32_tls;
@@ -42,11 +43,14 @@ struct pe64_tls;
 class LIEF_API TLS : public Object {
   friend class Parser;
   friend class Builder;
+  friend class Binary;
 
   public:
   TLS() = default;
-  TLS(const details::pe32_tls& header);
-  TLS(const details::pe64_tls& header);
+
+  LIEF_LOCAL TLS(const details::pe32_tls& header);
+  LIEF_LOCAL TLS(const details::pe64_tls& header);
+
   ~TLS() override = default;
 
   TLS(const TLS& copy) = default;
@@ -57,19 +61,24 @@ class LIEF_API TLS : public Object {
 
   /// List of the callback associated with the current TLS.
   ///
-  /// These functions are called before any other functions .
+  /// These functions are called before any other functions.
   const std::vector<uint64_t>& callbacks() const {
     return callbacks_;
   }
 
-  /// Pair ``(start address, end address)`` of the TLS template.
-  /// The template is a block of data that is used to initialize TLS data.
-  /// The system copies all of this data each time a thread is created, so it must not be
-  /// corrupted.
+  /// Add a new TLS callback
+  TLS& add_callback(uint64_t addr) {
+    callbacks_.push_back(addr);
+    return *this;
+  }
 
-  /// @note
-  /// These addresses are not RVA. It is addresses for which there should be a rebase
-  /// relocation in the ``.reloc`` section.
+  /// Pair `(start address, end address)` of the TLS template.
+  /// The template is a block of data that is used to initialize TLS data.
+  /// The system copies all of this data each time a thread is created, so it
+  /// must not be corrupted.
+  ///
+  /// \note These addresses are not RVA. It is addresses for which there
+  ///       should be a rebase relocation in the `.reloc` section.
   const std::pair<uint64_t, uint64_t>& addressof_raw_data() const {
     return va_rawdata_;
   }
@@ -83,7 +92,7 @@ class LIEF_API TLS : public Object {
   /// Pointer to an array of TLS callback functions.
   ///
   /// The array is null-terminated, so if there is no callback function
-  /// this field points to 4 bytes set to zero.
+  /// this field points to **4 bytes** set to zero.
   uint64_t addressof_callbacks() const {
     return addressof_callbacks_;
   }

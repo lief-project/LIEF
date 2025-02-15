@@ -1,37 +1,42 @@
 target_sources(LIB_LIEF PRIVATE
+  AuxiliarySymbol.cpp
   Binary.cpp
   Builder.cpp
   Builder.tcc
   CodeIntegrity.cpp
-  endianness_support.cpp
+  CodePage.cpp
   DataDirectory.cpp
   DelayImport.cpp
   DelayImportEntry.cpp
   DosHeader.cpp
   EnumToString.cpp
+  ExceptionInfo.cpp
   Export.cpp
   ExportEntry.cpp
+  Factory.cpp
   Header.cpp
   Import.cpp
   ImportEntry.cpp
   OptionalHeader.cpp
   Parser.cpp
   Parser.tcc
+  ParserConfig.cpp
   Relocation.cpp
   RelocationEntry.cpp
   ResourceData.cpp
   ResourceDirectory.cpp
   ResourceNode.cpp
   ResourcesManager.cpp
-  ResourcesParser.cpp
   RichEntry.cpp
   RichHeader.cpp
   Section.cpp
   Symbol.cpp
   TLS.cpp
   checksum.cpp
+  endianness_support.cpp
   hash.cpp
   json_api.cpp
+  layout_check.cpp
   utils.cpp
 )
 
@@ -39,6 +44,8 @@ add_subdirectory(signature)
 add_subdirectory(LoadConfigurations)
 add_subdirectory(resources)
 add_subdirectory(debug)
+add_subdirectory(AuxiliarySymbols)
+add_subdirectory(exceptions_info)
 
 if(LIEF_ENABLE_JSON)
   target_sources(LIB_LIEF PRIVATE json.cpp)

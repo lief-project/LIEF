@@ -1,6 +1,5 @@
 #ifndef LIEF_PE_C_ENUMS_H_
 #define LIEF_PE_C_ENUMS_H_
-#include "LIEF/PE/undef.h"
 
 #ifdef __cplusplus
 extern "C" {

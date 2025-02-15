@@ -21,4 +21,7 @@
 #include <LIEF/PE/debug/PogoEntry.hpp>
 #include <LIEF/PE/debug/Repro.hpp>
 #include <LIEF/PE/debug/CodeViewPDB.hpp>
+#include <LIEF/PE/debug/VCFeature.hpp>
+#include <LIEF/PE/debug/ExDllCharacteristics.hpp>
+#include <LIEF/PE/debug/FPO.hpp>
 #endif

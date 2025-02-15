@@ -20,10 +20,9 @@
 #include "mbedtls/md5.h"
 
 #include "LIEF/PE/utils.hpp"
-#define LIEF_PE_FORCE_UNDEF
-#include "LIEF/PE/undef.h"
 #include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/Import.hpp"
+#include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/ImportEntry.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/BinaryStream/FileStream.hpp"
@@ -166,7 +165,6 @@ std::string get_imphash_std(const Binary& binary) {
   bool first_entry = true;
   hashstream hs(hashstream::HASH::MD5);
   for (const Import& imp : binary.imports()) {
-    std::string libname = imp.name();
     Import resolved = imp;
     if (auto resolution = resolve_ordinals(imp, /* strict */ false, /* use_std */ true)) {
       resolved = std::move(*resolution);
@@ -389,7 +387,6 @@ ALGORITHMS algo_from_oid(const std::string& oid) {
   }
   return it->second;
 }
-
 
 }
 }

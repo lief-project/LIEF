@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <sstream>
 #include <string>
 #include <nanobind/stl/string.h>
 
@@ -27,7 +28,7 @@ void create<ParserConfig>(nb::module_& m) {
 
   nb::class_<ParserConfig>(m, "ParserConfig",
       R"delim(
-      This class is used to tweak the PE Parser (:class:`~lief.PE.Parser`)
+      This class is used to tweak the PE Parser (:func:`lief.PE.parse`)
       )delim"_doc)
 
     .def(nb::init<>())
@@ -46,12 +47,32 @@ void create<ParserConfig>(nb::module_& m) {
     .def_rw("parse_reloc", &ParserConfig::parse_reloc,
              "Parse PE relocations"_doc)
 
+    .def_rw("parse_exceptions", &ParserConfig::parse_exceptions,
+      R"doc(
+      Whether it should parse in-depth exceptions metadata.
+
+      This option is set to off by default since it can introduce a certain
+      overhead.
+      )doc"_doc
+    )
+
+    .def_rw("parse_arm64x_binary", &ParserConfig::parse_arm64x_binary,
+      R"doc(
+      Whether it should parse nested ARM64X binary
+
+      This option is set to off by default since it can introduce a certain
+      overhead.
+      )doc"_doc)
+
+    .def_prop_ro_static("default_conf",
+      [] (const nb::object& /* self */) { return ParserConfig::default_conf(); },
+      "Default configuration"_doc)
+
     .def_prop_ro_static("all",
       [] (const nb::object& /* self */) { return ParserConfig::all(); },
-      R"delim(
-      Return a parser configuration such as all the objects supported by LIEF are parsed
-      )delim"_doc);
+      "Configuration with **all** the options enabled"_doc)
 
+    LIEF_DEFAULT_STR(ParserConfig);
 }
 
 }

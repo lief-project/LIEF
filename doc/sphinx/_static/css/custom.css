@@ -16,3 +16,7 @@ li .fixed-paragraph {
   margin-top: 0;
   margin-bottom: 0rem;
 }
+
+.align-default {
+  text-align: inherit;
+}

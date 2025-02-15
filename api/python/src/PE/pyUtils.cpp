@@ -23,6 +23,7 @@
 #include "LIEF/PE/signature/OIDToString.hpp"
 
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/pair.h>
 #include <nanobind/stl/vector.h>
 
 namespace LIEF::PE::py {
@@ -39,6 +40,7 @@ void init_utils(nb::module_& m) {
 
   m.def("oid_to_string", &oid_to_string,
         "Convert an OID to a human-readable string"_doc);
+
 
   lief_mod->def("is_pe",
       nb::overload_cast<const std::string&>(&is_pe),
@@ -102,5 +104,17 @@ void init_utils(nb::module_& m) {
       )delim",
       "imp"_a, "strict"_a = false, "use_std"_a = false,
       nb::rv_policy::copy);
+
+  m.def("check_layout", [] (const Binary& bin) -> std::pair<bool, std::string> {
+    std::string error;
+    if (!check_layout(bin, &error)) {
+      return std::make_pair(false, std::move(error));
+    }
+    return std::make_pair(true, "");
+  },
+  R"doc(
+  Check that the layout of the given binary is correct from the Windows loader
+  perspective.
+  )doc"_doc, "binary"_a);
 }
 }

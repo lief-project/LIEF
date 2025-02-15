@@ -78,28 +78,25 @@ class LIEF_API Import : public Object {
     return entries_;
   }
 
-  /// The RVA of the import address table (``IAT``). The content of this table is
-  /// **identical** to the content of the Import Lookup Table (``ILT``) until the
+  /// The RVA of the import address table (`IAT`). The content of this table is
+  /// **identical** to the content of the Import Lookup Table (`ILT`) until the
   /// image is bound.
   ///
-  /// @warning
-  /// This address could change when re-building the binary
+  /// \warning This address could change when re-building the binary
   uint32_t import_address_table_rva() const {
-    return import_address_table_RVA_;
+    return iat_rva_;
   }
 
   /// Return the relative virtual address of the import lookup table.
   ///
-  /// @warning
-  /// This address could change when re-building the binary
+  /// \warning This address could change when re-building the binary
   uint32_t import_lookup_table_rva() const {
-    return import_lookup_table_RVA_;
+    return ilt_rva_;
   }
 
   /// Return the Function's RVA from the import address table (`IAT`)
   ///
-  /// @warning
-  /// This address could change when re-building the binary
+  /// \warning This address could change when re-building the binary
   result<uint32_t> get_function_rva_from_iat(const std::string& function) const;
 
   /// Return the imported function with the given name
@@ -118,6 +115,11 @@ class LIEF_API Import : public Object {
     name_ = std::move(name);
   }
 
+  /// The original name rva
+  uint32_t name_rva() const {
+    return name_rva_;
+  }
+
   /// Return the PE::DataDirectory associated with this import.
   /// It should be the one at index PE::DataDirectory::TYPES::IMPORT_TABLE
   ///
@@ -125,6 +127,7 @@ class LIEF_API Import : public Object {
   DataDirectory* directory() {
     return directory_;
   }
+
   const DataDirectory* directory() const {
     return directory_;
   }
@@ -136,6 +139,7 @@ class LIEF_API Import : public Object {
   DataDirectory* iat_directory() {
     return iat_directory_;
   }
+
   const DataDirectory* iat_directory() const {
     return iat_directory_;
   }
@@ -152,11 +156,27 @@ class LIEF_API Import : public Object {
     return entries_.back();
   }
 
+  /// Remove the import entry with the given name.
+  ///
+  /// Return true if the deletion succeed, false otherwise
+  bool remove_entry(const std::string& name);
+
+  /// Remove the import entry with the given ordinal number
+  ///
+  /// Return true if the deletion succeed, false otherwise
+  bool remove_entry(uint32_t ordinal);
+
   void import_lookup_table_rva(uint32_t rva) {
-    import_lookup_table_RVA_ = rva;
+    ilt_rva_ = rva;
   }
+
   void import_address_table_rva(uint32_t rva) {
-    import_address_table_RVA_ = rva;
+    iat_rva_ = rva;
+  }
+
+  /// \private
+  LIEF_LOCAL size_t nb_original_func() const {
+    return nb_original_func_;
   }
 
   void accept(Visitor& visitor) const override;
@@ -164,16 +184,17 @@ class LIEF_API Import : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Import& entry);
 
   private:
-  entries_t        entries_;
-  DataDirectory*   directory_ = nullptr;
-  DataDirectory*   iat_directory_ = nullptr;
-  uint32_t         import_lookup_table_RVA_ = 0;
-  uint32_t         timedatestamp_ = 0;
-  uint32_t         forwarder_chain_ = 0;
-  uint32_t         name_RVA_ = 0;
-  uint32_t         import_address_table_RVA_ = 0;
-  std::string      name_;
-  PE_TYPE          type_ = PE_TYPE::PE32;
+  entries_t entries_;
+  DataDirectory* directory_ = nullptr;
+  DataDirectory* iat_directory_ = nullptr;
+  uint32_t ilt_rva_ = 0;
+  uint32_t timedatestamp_ = 0;
+  uint32_t forwarder_chain_ = 0;
+  uint32_t name_rva_ = 0;
+  uint32_t iat_rva_ = 0;
+  std::string name_;
+  PE_TYPE type_ = PE_TYPE::PE32;
+  size_t nb_original_func_ = 0;
 };
 
 }

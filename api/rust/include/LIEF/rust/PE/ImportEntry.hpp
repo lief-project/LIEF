@@ -27,6 +27,7 @@ class PE_ImportEntry : public AbstractSymbol {
   uint64_t hint_name_rva() const { return impl().hint_name_rva(); }
   uint16_t hint() const { return impl().hint(); }
   uint64_t iat_value() const { return impl().iat_value(); }
+  auto ilt_value() const { return impl().ilt_value(); }
   uint64_t data() const { return impl().data(); }
   uint64_t iat_address() const { return impl().iat_address(); }
 

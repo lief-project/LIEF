@@ -2,9 +2,12 @@ import lief
 import json
 from utils import get_sample
 from typing import cast
+from pathlib import Path
+from hashlib import md5
+from textwrap import dedent
 
 def test_pgo():
-    path   = get_sample("PE/PE32_x86_binary_PGO-LTCG.exe")
+    path  = get_sample("PE/PE32_x86_binary_PGO-LTCG.exe")
     sample = lief.PE.parse(path)
 
     debugs = sample.debug
@@ -12,6 +15,9 @@ def test_pgo():
     assert debugs[0].type == lief.PE.Debug.TYPES.CODEVIEW
     assert debugs[1].type == lief.PE.Debug.TYPES.VC_FEATURE
     assert debugs[2].type == lief.PE.Debug.TYPES.POGO
+
+    assert debugs[0].section.name == ".rdata"
+    assert md5(debugs[0].payload).hexdigest() == "5eba9e8204124f6d760e2d93948c3155"
 
     vc_feature = debugs[1]
     assert vc_feature.copy() == vc_feature
@@ -48,18 +54,18 @@ def test_pgo():
 def test_guid():
     path = get_sample('PE/ntoskrnl.exe')
     sample = lief.PE.parse(path)
-    cv: lief.PE.CodeViewPDB = sample.codeview_pdb
-    assert cv is not None
-    assert cv.guid == "fcb9afc6-a352-f97b-17cf-5f981382c782"
+    cv_1 = sample.codeview_pdb
+    assert cv_1 is not None
+    assert cv_1.guid == "fcb9afc6-a352-f97b-17cf-5f981382c782"
 
     path = get_sample('PE/PE64_x86-64_binary_ConsoleApplication1.exe')
     sample = lief.PE.parse(path)
-    cv: lief.PE.CodeViewPDB = sample.codeview_pdb
-    assert cv is not None
-    assert cv.guid == "b6e3d9f5-7147-4f01-a203-aa477c4aba54"
+    cv_2 = sample.codeview_pdb
+    assert cv_2 is not None
+    assert cv_2.guid == "b6e3d9f5-7147-4f01-a203-aa477c4aba54"
 
 def test_code_view_pdb():
-    path = get_sample('PE/PE64_x86-64_binary_ConsoleApplication1.exe')
+    path = Path(get_sample('PE/PE64_x86-64_binary_ConsoleApplication1.exe'))
     sample = lief.PE.parse(path)
 
     assert sample.has_debug
@@ -138,3 +144,149 @@ def test_repro():
     }
 
     assert sample.is_reproducible_build
+
+def test_overlay_dbg():
+    # Debug info can be located in the 'overlay' area.
+    # Make sure we can process them
+    input_path = get_sample("PE/sqlwid.dll")
+    pe = lief.PE.parse(input_path)
+
+    assert len(pe.debug) == 1
+
+    cv: lief.PE.CodeView = pe.debug[0]
+    assert isinstance(cv, lief.PE.CodeView)
+    assert cv.cv_signature == lief.PE.CodeView.SIGNATURES.PDB_20
+    assert isinstance(cv, lief.PE.CodeViewPDB)
+    assert cv.filename == "sqlwid.pdb"
+
+def test_pdbchecksum(tmp_path: Path):
+    input_path = Path(get_sample("PE/WinStore.Instrumentation.dll"))
+    pe = lief.PE.parse(input_path)
+
+    pdbchecksum: lief.PE.PDBChecksum = pe.debug[1]
+    assert isinstance(pdbchecksum, lief.PE.PDBChecksum)
+
+    assert bytes(pdbchecksum.hash).hex(":") == "a0:d9:eb:9c:15:9f:77:2f:27:a5:84:b2:a6:a9:b7:a5:58:5c:ca:af:4d:9d:9a:d5:17:b1:bd:7c:62:fb:cd:73"
+    assert pdbchecksum.algorithm == lief.PE.PDBChecksum.HASH_ALGO.SHA256
+
+    pdbchecksum.hash = [1] * len(pdbchecksum.hash)
+
+    output_path = tmp_path / input_path.name
+    pe.write(output_path.as_posix())
+
+    new_pe = lief.PE.parse(output_path)
+    pdbchecksum: lief.PE.PDBChecksum = new_pe.debug[1]
+    assert list(pdbchecksum.hash) == [1] * len(pdbchecksum.hash)
+
+def test_empty_repro():
+    input_path = get_sample("PE/WinStore.Instrumentation.dll")
+    pe = lief.PE.parse(input_path)
+
+    assert len(pe.debug) == 3
+    for d in pe.debug:
+        print(d)
+
+    assert pe.debug[2].type == lief.PE.Debug.TYPES.REPRO
+
+
+def test_vc_features(tmp_path: Path):
+    """
+    According to link.exe /dump:
+        Counts: Pre-VC++ 11.00=0, C/C++=33, /GS=33, /sdl=2, guardN=31
+    """
+    input_path = Path(get_sample("PE/PE32_x86_binary_HelloWorld.exe"))
+    pe = lief.PE.parse(input_path)
+    vcfeat: lief.PE.VCFeature = pe.debug[1]
+
+    assert isinstance(vcfeat, lief.PE.VCFeature)
+
+    assert str(vcfeat) == dedent("""\
+    Characteristics:     0x0
+    Timestamp:           0x59047153
+    Major/Minor version: 0.0
+    Type:                VC_FEATURE
+    Size of data:        0x14
+    Address of rawdata:  0x2254
+    Pointer to rawdata:  0x1454
+      Counts: Pre-VC++ 11.00=0, C/C++=33, /GS=33, /sdl=2, guardN=31""")
+
+    assert vcfeat.pre_vcpp == 0
+    assert vcfeat.c_cpp == 33
+    assert vcfeat.gs == 33
+    assert vcfeat.guards == 31
+
+    vcfeat.gs = 39
+    output_path = tmp_path / input_path.name
+    pe.write(output_path.as_posix())
+
+    new_pe = lief.PE.parse(output_path)
+    vcfeat: lief.PE.VCFeature = new_pe.debug[1]
+    assert vcfeat.gs == 39
+
+
+def test_ex_dll_characteristics(tmp_path: Path):
+    input_path = Path(get_sample("PE/arm64x_ImagingEngine.dll"))
+    pe = lief.PE.parse(input_path)
+    entry: lief.PE.ExDllCharacteristics = pe.debug[3]
+    assert isinstance(entry, lief.PE.ExDllCharacteristics)
+    assert str(entry) == dedent("""\
+    Characteristics:     0x0
+    Timestamp:           0x9aa794d9
+    Major/Minor version: 0.0
+    Type:                EX_DLLCHARACTERISTICS
+    Size of data:        0x4
+    Address of rawdata:  0x33073c
+    Pointer to rawdata:  0x32e13c
+      Characteristics: HOTPATCH_COMPATIBLE""")
+    assert entry.has(lief.PE.ExDllCharacteristics.CHARACTERISTICS.HOTPATCH_COMPATIBLE)
+    assert not entry.has(lief.PE.ExDllCharacteristics.CHARACTERISTICS.CET_COMPAT_STRICT_MODE)
+    assert entry.ex_characteristics == lief.PE.ExDllCharacteristics.CHARACTERISTICS.HOTPATCH_COMPATIBLE
+    assert entry.ex_characteristics_list == [lief.PE.ExDllCharacteristics.CHARACTERISTICS.HOTPATCH_COMPATIBLE]
+
+    entry.characteristics = (
+        lief.PE.ExDllCharacteristics.CHARACTERISTICS.CET_COMPAT |
+        lief.PE.ExDllCharacteristics.CHARACTERISTICS.HOTPATCH_COMPATIBLE
+    )
+    output_path = tmp_path / input_path.name
+    pe.write(output_path.as_posix())
+
+    new_pe = lief.PE.parse(output_path)
+    entry: lief.PE.ExDllCharacteristics = new_pe.debug[3]
+    assert entry.characteristics == (
+        lief.PE.ExDllCharacteristics.CHARACTERISTICS.HOTPATCH_COMPATIBLE |
+        lief.PE.ExDllCharacteristics.CHARACTERISTICS.CET_COMPAT
+    )
+
+def test_fpo(tmp_path: Path):
+    input_path = Path(get_sample("PE/chnginbx.exe"))
+    pe = lief.PE.parse(input_path)
+    fpo: lief.PE.FPO = pe.debug[1]
+
+    assert isinstance(fpo, lief.PE.FPO)
+    assert len(fpo.entries) == 247
+    assert fpo.entries[0].rva == 0x00001fc0
+    assert fpo.entries[0].proc_size == 283
+    assert fpo.entries[0].nb_locals == 28
+    assert fpo.entries[0].nb_saved_regs == 3
+    assert fpo.entries[0].prolog_size == 283
+    assert fpo.entries[0].use_bp
+    assert not fpo.entries[0].use_seh
+    assert fpo.entries[0].type == lief.PE.FPO.FRAME_TYPE.NON_FPO
+    assert fpo.entries[0].parameters_size == 0
+
+    assert fpo.entries[246].rva == 0x0000f820
+    assert fpo.entries[246].proc_size == 329
+    assert fpo.entries[246].nb_locals == 0
+    assert fpo.entries[246].nb_saved_regs == 2
+    assert fpo.entries[246].prolog_size == 329
+    assert not fpo.entries[246].use_bp
+    assert not fpo.entries[246].use_seh
+    assert fpo.entries[246].type == lief.PE.FPO.FRAME_TYPE.FPO
+    assert fpo.entries[246].parameters_size == 8
+
+    output_path = tmp_path / input_path.name
+    pe.write(output_path.as_posix())
+
+    new_pe = lief.PE.parse(output_path)
+    fpo: lief.PE.FPO = new_pe.debug[1]
+    assert len(fpo.entries) == 247

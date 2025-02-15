@@ -6,6 +6,8 @@ use crate::common::into_optional;
 use crate::common::FromFFI;
 use crate::declare_iterator;
 use crate::pe::Section;
+use crate::to_slice;
+
 use lief_ffi as ffi;
 
 pub struct DataDirectory<'a> {
@@ -124,6 +126,11 @@ impl DataDirectory<'_> {
     /// are located.
     pub fn section(&self) -> Option<Section> {
         into_optional(self.ptr.section())
+    }
+
+    /// Content bytes wraped with this data directory
+    pub fn content(&self) -> &[u8] {
+        to_slice!(self.ptr.content());
     }
 }
 

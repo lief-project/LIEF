@@ -18,13 +18,12 @@
 #include <ostream>
 #include <vector>
 #include <string>
-#include <set>
 #include <memory>
 
+#include "LIEF/iostream.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/Abstract/Section.hpp"
 #include "LIEF/enums.hpp"
-#include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
 class SpanStream;
@@ -34,6 +33,7 @@ namespace PE {
 class Parser;
 class Builder;
 class Binary;
+class COFFString;
 
 namespace details {
 struct pe_section;
@@ -90,9 +90,18 @@ class LIEF_API Section : public LIEF::Section {
 
   Section(const details::pe_section& header);
   Section() = default;
-  Section(const std::vector<uint8_t>& data,
-          const std::string& name = "", uint32_t characteristics = 0);
-  Section(const std::string& name);
+  Section(std::string name) :
+    Section::Section()
+  {
+    name_ = std::move(name);
+  }
+
+  Section(std::string name, std::vector<uint8_t> content) :
+    Section(std::move(name))
+  {
+    content_ = std::move(content);
+    size_ = content_.size();
+  }
 
   Section& operator=(const Section&) = default;
   Section(const Section&) = default;
@@ -154,21 +163,22 @@ class LIEF_API Section : public LIEF::Section {
     return characteristics_;
   }
 
-  /// Deprecated do not use. It will likely change in a future release of LIEF
-  bool is_type(PE_SECTION_TYPES type) const;
-
-  /// Deprecated do not use. It will likely change in a future release of LIEF
-  const std::set<PE_SECTION_TYPES>& types() const;
-
   /// Check if the section has the given CHARACTERISTICS
   bool has_characteristic(CHARACTERISTICS c) const {
-    return (characteristics() & static_cast<size_t>(c)) > 0;
+    return (characteristics() & (uint32_t)c) > 0;
   }
 
-  /// List of the section characteristics as a std::set
+  /// List of the section characteristics
   std::vector<CHARACTERISTICS> characteristics_list() const;
 
-  /// Fill the content of the section with the given ``char``
+  /// True if the section can be discarded as needed.
+  ///
+  /// This is typically the case for debug-related sections
+  bool is_discardable() const {
+    return has_characteristic(CHARACTERISTICS::MEM_DISCARDABLE);
+  }
+
+  /// Fill the content of the section with the given `char`
   void clear(uint8_t c);
   void content(const std::vector<uint8_t>& data) override;
 
@@ -178,7 +188,9 @@ class LIEF_API Section : public LIEF::Section {
     virtual_size_ = virtual_sz;
   }
 
-  void pointerto_raw_data(uint32_t ptr);
+  void pointerto_raw_data(uint32_t ptr) {
+    offset(ptr);
+  }
 
   void pointerto_relocation(uint32_t ptr) {
     pointer_to_relocations_ = ptr;
@@ -196,15 +208,25 @@ class LIEF_API Section : public LIEF::Section {
     number_of_linenumbers_ = nb;
   }
 
-  void sizeof_raw_data(uint32_t sizeOfRawData);
+  void sizeof_raw_data(uint32_t size) {
+    this->size(size);
+  }
 
   void characteristics(uint32_t characteristics) {
     characteristics_ = characteristics;
   }
 
-  void type(PE_SECTION_TYPES type);
-  void add_type(PE_SECTION_TYPES type);
-  void remove_type(PE_SECTION_TYPES type);
+  /// Return the COFF string associated with the section's name (or a nullptr)
+  ///
+  /// This coff string is usually present for long section names whose length
+  /// does not fit in the 8 bytes allocated by the PE format.
+  COFFString* coff_string() {
+    return coff_string_;
+  }
+
+  const COFFString* coff_string() const {
+    return coff_string_;
+  }
 
   Section& remove_characteristic(CHARACTERISTICS characteristic) {
     characteristics_ &= ~static_cast<size_t>(characteristic);
@@ -218,15 +240,26 @@ class LIEF_API Section : public LIEF::Section {
 
   std::unique_ptr<SpanStream> stream() const;
 
+  /// \private
+  LIEF_API Section& reserve(size_t size, uint8_t value = 0) {
+    content_.resize(size, value);
+    return *this;
+  }
+
+  /// \private
+  LIEF_LOCAL vector_iostream edit() {
+    return vector_iostream(content_);
+  }
+
+  span<uint8_t> writable_content() {
+    return content_;
+  }
+
   void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Section& section);
 
   private:
-  span<uint8_t> writable_content() {
-    return content_;
-  }
-
   std::vector<uint8_t> content_;
   std::vector<uint8_t> padding_;
   uint32_t virtual_size_           = 0;
@@ -235,7 +268,8 @@ class LIEF_API Section : public LIEF::Section {
   uint16_t number_of_relocations_  = 0;
   uint16_t number_of_linenumbers_  = 0;
   uint32_t characteristics_        = 0;
-  std::set<PE_SECTION_TYPES> types_ = {PE_SECTION_TYPES::UNKNOWN};
+
+  COFFString* coff_string_ = nullptr;
 };
 
 LIEF_API const char* to_string(Section::CHARACTERISTICS e);

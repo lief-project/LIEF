@@ -513,6 +513,7 @@ impl SpcSpOpusInfo<'_> {
 }
 
 pub struct SpcRelaxedPeMarkerCheck<'a> {
+    #[allow(dead_code)]
     ptr: cxx::UniquePtr<ffi::PE_SpcRelaxedPeMarkerCheck>,
     _owner: PhantomData<&'a ffi::PE_SignerInfo>,
 }
@@ -561,6 +562,7 @@ impl SpcRelaxedPeMarkerCheck<'_> {
 /// }
 /// ```
 pub struct SigningCertificateV2<'a> {
+    #[allow(dead_code)]
     ptr: cxx::UniquePtr<ffi::PE_SigningCertificateV2>,
     _owner: PhantomData<&'a ffi::PE_SignerInfo>,
 }

@@ -16,15 +16,14 @@
 #include "PE/pyPE.hpp"
 
 #include "LIEF/PE/Section.hpp"
+#include "LIEF/PE/COFFString.hpp"
 #include "enums_wrapper.hpp"
 
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
-#include <nanobind/stl/set.h>
 #include <nanobind/stl/vector.h>
 #include "nanobind/utils.hpp"
-
 
 #define PY_ENUM(x) to_string(x), x
 
@@ -78,16 +77,10 @@ void create<Section>(nb::module_& m) {
 
   sec
     .def(nb::init<>())
-    .def(nb::init<const std::vector<uint8_t>&, const std::string&, uint32_t>(),
-        "Constructor from "
-        ":attr:`~lief.PE.Section.content`, "
-        ":attr:`~lief.PE.Section.name` and "
-        ":attr:`~lief.PE.Section.characteristics`"_doc,
-        "content"_a, nb::arg("name") = "", nb::arg("characteristics") = 0)
+    .def(nb::init<std::string, std::vector<uint8_t>>(),
+         "name"_a, "content"_a)
 
-    .def(nb::init<const std::string&>(),
-        "Constructor from a "
-        ":attr:`~lief.PE.Section.name`"_doc,
+    .def(nb::init<std::string>(),
         "name"_a)
 
     .def_prop_rw("virtual_size",
@@ -166,6 +159,23 @@ void create<Section>(nb::module_& m) {
         &Section::has_characteristic,
         "``True`` if the section has the given " RST_CLASS_REF(lief.PE.Section.CHARACTERISTICS) ""_doc,
         "characteristic"_a)
+
+    .def_prop_ro("is_discardable", &Section::is_discardable,
+      R"doc(
+      True if the section can be discarded as needed.
+
+      This is typically the case for debug-related sections.
+      )doc"_doc
+    )
+
+    .def_prop_ro("coff_string", nb::overload_cast<>(&Section::coff_string),
+      R"doc(
+      Return the COFF string associated with the section's name (or None)
+
+      This coff string is usually present for long section names whose length
+      does not fit in the 8 bytes allocated by the PE format.
+      )doc"_doc
+    )
 
     .def_prop_ro("padding",
         [] (const Section& sec) {

@@ -15,15 +15,47 @@
  */
 #include "LIEF/Visitor.hpp"
 #include "LIEF/PE/debug/Debug.hpp"
+#include "LIEF/PE/Section.hpp"
 #include "PE/Structures.hpp"
 
 #include "frozen.hpp"
+#include "logging.hpp"
 #include "spdlog/fmt/fmt.h"
+#include "overflow_check.hpp"
 
 namespace LIEF {
 namespace PE {
 
-Debug::Debug(const details::pe_debug& debug_s) :
+span<uint8_t> Debug::get_payload(Section& section, uint32_t /*rva*/,
+                                 uint32_t offset, uint32_t size)
+{
+  span<uint8_t> content = section.writable_content();
+  if (size == 0 || content.empty() || content.size() < size) {
+    return {};
+  }
+
+  int32_t rel_offset = (int32_t)offset - (int32_t)section.offset();
+  if (rel_offset < 0) {
+    return {};
+  }
+
+  if ((size_t)rel_offset >= content.size() || (rel_offset + size) > content.size()) {
+    return {};
+  }
+
+  if (check_overflow((uint32_t)rel_offset, size, content.size())) {
+    return {};
+  }
+
+  return content.subspan((uint32_t)rel_offset, size);
+}
+
+span<uint8_t> Debug::get_payload(Section& section, const details::pe_debug& hdr) {
+  return get_payload(section, hdr.AddressOfRawData, hdr.PointerToRawData,
+                     hdr.SizeOfData);
+}
+
+Debug::Debug(const details::pe_debug& debug_s, Section* sec) :
   type_{static_cast<TYPES>(debug_s.Type)},
   characteristics_{debug_s.Characteristics},
   timestamp_{debug_s.TimeDateStamp},
@@ -31,48 +63,60 @@ Debug::Debug(const details::pe_debug& debug_s) :
   minor_version_{debug_s.MinorVersion},
   sizeof_data_{debug_s.SizeOfData},
   addressof_rawdata_{debug_s.AddressOfRawData},
-  pointerto_rawdata_{debug_s.PointerToRawData}
+  pointerto_rawdata_{debug_s.PointerToRawData},
+  section_{sec}
 {}
+
+span<uint8_t> Debug::payload() {
+  if (section_ == nullptr) {
+    return {};
+  }
+  return get_payload(*section_, *this);
+}
 
 void Debug::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-std::ostream& operator<<(std::ostream& os, const Debug& entry) {
-  os << fmt::format("Characteristics:    0x{:x}\n", entry.characteristics())
-     << fmt::format("Timestamp:          0x{:x}\n", entry.timestamp())
-     << fmt::format("Major/Minor version 0x{:x}/0x{:x}\n", entry.major_version(),
-                                                         entry.minor_version())
-     << fmt::format("Type:               {}\n", to_string(entry.type()))
-     << fmt::format("Size of data:       0x{:x}\n", entry.sizeof_data())
-     << fmt::format("Address of rawdata: 0x{:x}\n", entry.addressof_rawdata())
-     << fmt::format("Pointer to rawdata: 0x{:x}\n", entry.pointerto_rawdata())
-  ;
-  return os;
+std::string Debug::to_string() const {
+  using namespace fmt;
+  std::ostringstream os;
+  os << format("Characteristics:     0x{:x}\n", characteristics())
+     << format("Timestamp:           0x{:x}\n", timestamp())
+     << format("Major/Minor version: {}.{}\n", major_version(), minor_version())
+     << format("Type:                {}\n", PE::to_string(type()))
+     << format("Size of data:        0x{:x}\n", sizeof_data())
+     << format("Address of rawdata:  0x{:x}\n", addressof_rawdata())
+     << format("Pointer to rawdata:  0x{:x}", pointerto_rawdata());
+  return os.str();
 }
 
 const char* to_string(Debug::TYPES e) {
-  CONST_MAP(Debug::TYPES, const char*, 18) Enum2Str {
-    { Debug::TYPES::UNKNOWN,               "UNKNOWN"               },
-    { Debug::TYPES::COFF,                  "COFF"                  },
-    { Debug::TYPES::CODEVIEW,              "CODEVIEW"              },
-    { Debug::TYPES::FPO,                   "FPO"                   },
-    { Debug::TYPES::MISC,                  "MISC"                  },
-    { Debug::TYPES::EXCEPTION,             "EXCEPTION"             },
-    { Debug::TYPES::FIXUP,                 "FIXUP"                 },
-    { Debug::TYPES::OMAP_TO_SRC,           "OMAP_TO_SRC"           },
-    { Debug::TYPES::OMAP_FROM_SRC,         "OMAP_FROM_SRC"         },
-    { Debug::TYPES::BORLAND,               "BORLAND"               },
-    { Debug::TYPES::RESERVED10,            "RESERVED"              },
-    { Debug::TYPES::CLSID,                 "CLSID"                 },
-    { Debug::TYPES::VC_FEATURE,            "VC_FEATURE"            },
-    { Debug::TYPES::POGO,                  "POGO"                  },
-    { Debug::TYPES::ILTCG,                 "ILTCG"                 },
-    { Debug::TYPES::MPX,                   "MPX"                   },
-    { Debug::TYPES::REPRO,                 "REPRO"                 },
-    { Debug::TYPES::EX_DLLCHARACTERISTICS, "EX_DLLCHARACTERISTICS" },
+  #define ENTRY(X) std::pair(Debug::TYPES::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(UNKNOWN),
+    ENTRY(COFF),
+    ENTRY(CODEVIEW),
+    ENTRY(FPO),
+    ENTRY(MISC),
+    ENTRY(EXCEPTION),
+    ENTRY(FIXUP),
+    ENTRY(OMAP_TO_SRC),
+    ENTRY(OMAP_FROM_SRC),
+    ENTRY(BORLAND),
+    ENTRY(RESERVED10),
+    ENTRY(CLSID),
+    ENTRY(VC_FEATURE),
+    ENTRY(POGO),
+    ENTRY(ILTCG),
+    ENTRY(MPX),
+    ENTRY(REPRO),
+    ENTRY(PDBCHECKSUM),
+    ENTRY(EX_DLLCHARACTERISTICS),
   };
-  if (const auto it = Enum2Str.find(e); it != Enum2Str.end()) {
+  #undef ENTRY
+
+  if (const auto it = enums2str.find(e); it != enums2str.end()) {
     return it->second;
   }
   return "UNKNOWN";

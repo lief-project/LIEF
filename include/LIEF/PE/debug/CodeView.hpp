@@ -47,10 +47,16 @@ class LIEF_API CodeView : public Debug {
     sig_{sig}
   {}
 
-  CodeView(const details::pe_debug& debug, SIGNATURES sig);
+  CodeView(const details::pe_debug& debug, SIGNATURES sig, Section* sec) :
+    Debug(debug, sec),
+    sig_(sig)
+  {}
 
   CodeView(const CodeView& other) = default;
   CodeView& operator=(const CodeView& other) = default;
+
+  CodeView(CodeView&& other) = default;
+  CodeView& operator=(CodeView&& other) = default;
 
   ~CodeView() override = default;
 
@@ -67,8 +73,9 @@ class LIEF_API CodeView : public Debug {
     return debug->type() == Debug::TYPES::CODEVIEW;
   }
 
+  std::string to_string() const override;
+
   void accept(Visitor& visitor) const override;
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const CodeView& entry);
 
   protected:
   SIGNATURES sig_ = SIGNATURES::UNKNOWN;

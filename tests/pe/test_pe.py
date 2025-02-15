@@ -26,14 +26,14 @@ def test_remove_section(tmp_path):
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-    if ret := win_exec(output, gui = False):
+    if ret := win_exec(output, gui=False):
         ret_code, stdout = ret
         assert "Hello World" in stdout
 
 def test_unwind():
 
     path = get_sample("PE/PE64_x86-64_binary_cmd.exe")
-    sample = lief.parse(path)
+    sample = lief.PE.parse(path, lief.PE.ParserConfig.all)
 
     assert sample.original_size == Path(path).stat().st_size
 

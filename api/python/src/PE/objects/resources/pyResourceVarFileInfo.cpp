@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 #include "PE/pyPE.hpp"
+#include "pyIterator.hpp"
 
 #include "LIEF/PE/resources/ResourceVarFileInfo.hpp"
+#include "LIEF/PE/resources/ResourceVar.hpp"
 
 #include <string>
 #include <sstream>
@@ -27,37 +29,39 @@ namespace LIEF::PE::py {
 
 template<>
 void create<ResourceVarFileInfo>(nb::module_& m) {
-  nb::class_<ResourceVarFileInfo, LIEF::Object>(m, "ResourceVarFileInfo",
-      "This object describes information about languages supported by the application"_doc)
+  nb::class_<ResourceVarFileInfo, LIEF::Object> obj(m, "ResourceVarFileInfo",
+    R"doc(
+    Representation of the ``VarFileInfo`` structure
 
-    .def_prop_rw("type",
-        nb::overload_cast<>(&ResourceVarFileInfo::type, nb::const_),
-        nb::overload_cast<uint16_t>(&ResourceVarFileInfo::type),
-        R"delim(
-        The type of data in the version resource
+    This structure represents the organization of data in a file-version resource.
+    It contains version information not dependent on a particular language and
+    code page combination.
 
-          * ``1`` if it contains text data
-          * ``0`` if it contains binary data
-        )delim"_doc)
+    See: https://learn.microsoft.com/en-us/windows/win32/menurc/varfileinfo
+    )doc"_doc
+  );
+  LIEF::py::init_ref_iterator<ResourceVarFileInfo::it_vars>(obj, "it_vars");
 
+  obj
+    .def_prop_ro("type", nb::overload_cast<>(&ResourceVarFileInfo::type, nb::const_),
+      R"doc(
+      The type of data in the version resource:
+        * ``1`` if it contains text data
+        * ``0`` if it contains binary data
+      )doc"_doc
+    )
 
-    .def_prop_rw("key",
-        nb::overload_cast<>(&ResourceVarFileInfo::key, nb::const_),
-        nb::overload_cast<const std::string&>(&ResourceVarFileInfo::key),
-        "Signature of the structure. Must be ``VarFileInfo``"_doc)
+    .def_prop_ro("key", nb::overload_cast<>(&ResourceVarFileInfo::key_u8, nb::const_),
+      R"doc(Signature of the structure. Must be the unicode string "VarFileInfo")doc"_doc
+    )
 
-    .def_prop_rw("translations",
-        nb::overload_cast<>(&ResourceVarFileInfo::translations),
-        nb::overload_cast<std::vector<uint32_t>>(&ResourceVarFileInfo::translations),
-        R"delim(
-        List of languages that the application supports
-
-        The **least** significant 16-bits  must contain a Microsoft language identifier,
-        and the **most** significant 16-bits must contain the :class:`~lief.PE.CODE_PAGES`
-        Either **most** or **least** 16-bits can be zero, indicating that the file is language or code page independent.
-        )delim"_doc)
+    .def_prop_ro("vars", nb::overload_cast<>(&ResourceVarFileInfo::vars),
+      R"doc(Iterator over the embedded variables associated to the structure)doc"_doc
+    )
 
     LIEF_DEFAULT_STR(ResourceVarFileInfo);
+
+
 }
 
 }

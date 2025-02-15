@@ -30,6 +30,9 @@ void create<ResourceDirectory>(nb::module_& m) {
     .def(nb::init<>(),
         "Default constructor"_doc)
 
+    .def(nb::init<uint32_t>(),
+        "Constructor from an ID"_doc)
+
     .def_prop_rw("characteristics",
         nb::overload_cast<>(&ResourceDirectory::characteristics, nb::const_),
         nb::overload_cast<uint32_t>(&ResourceDirectory::characteristics),

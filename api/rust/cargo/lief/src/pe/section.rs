@@ -7,7 +7,9 @@ use lief_ffi as ffi;
 use crate::declare_iterator;
 use crate::to_slice;
 use crate::{common::FromFFI, generic};
+use super::coff;
 use bitflags::bitflags;
+use crate::common::into_optional;
 
 /// This structure defines a regular PE section.
 ///
@@ -20,7 +22,7 @@ pub struct Section<'a> {
 
 bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-    pub struct Characteristics: u64 {
+    pub struct Characteristics: u32 {
         const TYPE_NO_PAD = 0x8;
         const CNT_CODE = 0x20;
         const CNT_INITIALIZED_DATA = 0x40;
@@ -60,12 +62,12 @@ bitflags! {
 }
 
 
-impl From<u64> for Characteristics {
-    fn from(value: u64) -> Self {
+impl From<u32> for Characteristics {
+    fn from(value: u32) -> Self {
         Characteristics::from_bits_truncate(value)
     }
 }
-impl From<Characteristics> for u64 {
+impl From<Characteristics> for u32 {
     fn from(value: Characteristics) -> Self {
         value.bits()
     }
@@ -112,12 +114,12 @@ impl Section<'_> {
     }
 
     /// No longer used in recent PE binaries produced by Visual Studio
-    pub fn numberof_relocations(&self) -> u32 {
+    pub fn numberof_relocations(&self) -> u16 {
         self.ptr.numberof_relocations()
     }
 
     /// No longer used in recent PE binaries produced by Visual Studio
-    pub fn numberof_line_numbers(&self) -> u32 {
+    pub fn numberof_line_numbers(&self) -> u16 {
         self.ptr.numberof_line_numbers()
     }
 
@@ -131,6 +133,21 @@ impl Section<'_> {
     /// Content of the section's padding area
     pub fn padding(&self) -> &[u8] {
         to_slice!(self.ptr.padding());
+    }
+
+    /// True if the section can be discarded as needed.
+    ///
+    /// This is typically the case for debug-related sections
+    pub fn is_discardable(&self) -> bool {
+        self.ptr.is_discardable()
+    }
+
+    /// Return the COFF string associated with the section's name (or a None)
+    ///
+    /// This coff string is usually present for long section names whose length
+    /// does not fit in the 8 bytes allocated by the PE format.
+    pub fn coff_string(&self) -> Option<coff::String> {
+        into_optional(self.ptr.coff_string())
     }
 }
 

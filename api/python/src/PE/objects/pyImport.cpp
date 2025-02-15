@@ -138,6 +138,28 @@ void create<Import>(nb::module_& m) {
       "function_name"_a,
       nb::rv_policy::reference_internal)
 
+    .def_prop_ro("name_rva", &Import::name_rva,
+      "The original name rva"_doc
+    )
+
+    .def("remove_entry",
+      nb::overload_cast<const std::string&>(&Import::remove_entry),
+      R"doc(
+      Remove the import entry with the given name.
+
+      Return true if the deletion succeed, false otherwise
+      )doc"_doc, "name"_a
+    )
+
+    .def("remove_entry",
+      nb::overload_cast<uint32_t>(&Import::remove_entry),
+      R"doc(
+      Remove the import entry with the given ordinal number
+
+      Return True if the deletion succeed, false otherwise
+      )doc"_doc, "ord"_a
+    )
+
     LIEF_DEFAULT_STR(Import);
 
 }

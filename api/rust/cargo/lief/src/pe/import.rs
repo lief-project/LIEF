@@ -87,6 +87,30 @@ impl Import<'_> {
     pub fn entry_by_name(&self, name: &str) -> Option<ImportEntry> {
         into_optional(self.ptr.entry_by_name(name))
     }
+
+    /// The original name rva
+    pub fn name_rva(&self) -> u32 {
+        self.ptr.name_rva()
+    }
+
+    /// Remove the import entry with the given name.
+    ///
+    /// Return true if the deletion succeed, false otherwise
+    pub fn remove_entry_by_name(&mut self, name: &str) -> bool {
+        self.ptr.pin_mut().remove_entry_by_name(name)
+    }
+
+    /// Remove the import entry with the given ordinal number
+    ///
+    /// Return true if the deletion succeed, false otherwise
+    pub fn remove_entry_by_ordinal(&mut self, ord: u32) -> bool {
+        self.ptr.pin_mut().remove_entry_by_ordinal(ord)
+    }
+
+    /// Add a new entry with the given name
+    pub fn add_entry_by_name<'a>(&'a mut self, name: &str) -> ImportEntry<'a> {
+        ImportEntry::from_ffi(self.ptr.pin_mut().add_entry_by_name(name))
+    }
 }
 
 /// Structure that represents an entry (i.e. an import) in the regular import table.
@@ -121,6 +145,13 @@ impl ImportEntry<'_> {
     /// It should match the lookup table value
     pub fn iat_value(&self) -> u64 {
         self.ptr.iat_value()
+    }
+
+    /// Original value in the import lookup table.
+    ///
+    /// This value should match the [`ImportEntry::iat_value`].
+    pub fn ilt_value(&self) -> u64 {
+        self.ptr.ilt_value()
     }
 
     /// Raw value

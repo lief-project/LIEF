@@ -13,46 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <sstream>
+
 #include "LIEF/PE/debug/Pogo.hpp"
 #include "LIEF/Visitor.hpp"
+
 #include "frozen.hpp"
+
 #include <spdlog/fmt/fmt.h>
 
 namespace LIEF {
 namespace PE {
 
-Pogo::Pogo() {
-  type_ = Debug::TYPES::POGO;
-}
-
-Pogo::Pogo(const details::pe_debug& debug, SIGNATURES sig) :
-  Debug{debug},
-  sig_{sig}
-{}
-
 void Pogo::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-std::ostream& operator<<(std::ostream& os, const Pogo& entry) {
-  os << static_cast<const Debug&>(entry)
-     << fmt::format("[POGO] Signature:    {}\n", to_string(entry.signature()));
+std::string Pogo::to_string() const {
+  using namespace fmt;
+  std::ostringstream os;
+  os << Debug::to_string() << '\n'
+     << "Pogo:\n"
+     << format("  Signature: {} (0x{:06x})\n",
+                    PE::to_string(signature()), (uint32_t)signature());
 
-  for (const PogoEntry& pentry : entry.entries()) {
-    os << ' ' << pentry << '\n';
+  for (const PogoEntry& pentry : entries()) {
+    os << "    " << pentry << '\n';
   }
-  return os;
+
+  return os.str();
 }
 
 const char* to_string(Pogo::SIGNATURES e) {
-  CONST_MAP(Pogo::SIGNATURES, const char*, 4) Enum2Str {
-    { Pogo::SIGNATURES::UNKNOWN, "UNKNOWN" },
-    { Pogo::SIGNATURES::ZERO,    "ZERO"    },
-    { Pogo::SIGNATURES::LCTG,    "LCTG"    },
-    { Pogo::SIGNATURES::PGI,     "PGI"     },
+  #define ENTRY(X) std::pair(Pogo::SIGNATURES::X, #X)
+  STRING_MAP enums2str {
+    ENTRY(UNKNOWN),
+    ENTRY(ZERO),
+    ENTRY(LCTG),
+    ENTRY(PGI),
   };
-
-  if (const auto it = Enum2Str.find(e); it != Enum2Str.end()) {
+  #undef ENTRY
+  if (const auto it = enums2str.find(e); it != enums2str.end()) {
     return it->second;
   }
   return "UNKNOWN";

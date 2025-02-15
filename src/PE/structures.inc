@@ -4,11 +4,6 @@ static const int32_t MaxNumberOfSections16 = 65279;
 /// The PE signature bytes that follows the DOS stub header.
 static const char PE_Magic[] = { 'P', 'E', '\0', '\0' };
 
-static const char Rich_Magic[] = {'R', 'i', 'c', 'h'};
-static const char DanS_Magic[] = {'D', 'a', 'n', 'S'};
-
-static const uint32_t DanS_Magic_number = 0x536E6144;
-
 static const char BigObjMagic[] = {
   '\xc7', '\xa1', '\xba', '\xd1', '\xee', '\xba', '\xa9', '\x4b',
   '\xaf', '\x20', '\xfa', '\xf6', '\x6a', '\xa4', '\xdc', '\xb8',

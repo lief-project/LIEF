@@ -25,8 +25,10 @@
 #include "third-party/utfcpp.hpp"
 
 #include "LIEF/config.h"
+
 #include "logging.hpp"
 #include "messages.hpp"
+#include "internal_utils.hpp"
 
 namespace LIEF {
 
@@ -87,6 +89,67 @@ result<std::u16string> u8tou16(const std::string& string) {
   }
   return name;
 }
+
+inline std::string pretty_hex(char c) {
+  if (is_printable(c)) {
+    return std::string("") + c;
+  }
+  return ".";
+}
+
+std::string dump(const uint8_t* buffer, size_t size, const std::string& title,
+                 const std::string& prefix, size_t limit)
+{
+  if (size < 2) {
+    return "";
+  }
+
+  std::string out;
+  std::string banner;
+
+  if (!title.empty()) {
+    banner  = prefix + "+" + std::string(22 * 3, '-') + "---+" + "\n" + prefix + "| ";
+    banner += title;
+    if (title.size() < 68) {
+      banner += std::string(68 - title.size(), ' ');
+    }
+    banner += "|\n";
+  }
+
+  out = std::string(22 * 3, '-') + "\n";
+  std::string lhs, rhs;
+  if (limit > 0) {
+    size = std::min<size_t>(size, limit);
+  }
+
+  for (size_t i = 0; i < size; ++i) {
+    if (i == 0) {
+      out = prefix + "+" + std::string(22 * 3, '-') + "---+" + "\n" + prefix + "| ";
+    }
+
+    if (i > 0 && i % 16 == 0) {
+      out += "\n" + prefix + "| ";
+    }
+
+    rhs += pretty_hex((char)(buffer[i]));
+    out += fmt::format("{:02x} ", buffer[i]);
+
+    if (i % 16 == 15 || i == (size - 1)) {
+      if (i == (size - 1)) {
+        out += std::string(((16 - ((size - 1) % 16) - 1)) * 3, ' ');
+        rhs += std::string(((16 - ((size - 1) % 16) - 1)) * 1, ' ');
+      }
+      out += " | ";
+      out += rhs + " |";
+      rhs = "";
+    }
+
+  }
+
+  out += std::string("\n") + prefix + '+' + std::string(22 * 3, '-') + "---+";
+  return banner + out;
+}
+
 
 bool is_extended() {
   return lief_extended;

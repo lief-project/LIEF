@@ -24,33 +24,41 @@ class PE_OptionalHeader : private Mirror<LIEF::PE::OptionalHeader>  {
   using lief_t = LIEF::PE::OptionalHeader;
   using Mirror::Mirror;
 
-  uint8_t major_linker_version() const { return get().major_linker_version(); }
-  uint8_t minor_linker_version() const { return get().minor_linker_version(); }
-  uint32_t sizeof_code() const { return get().sizeof_code(); }
-  uint32_t sizeof_initialized_data() const { return get().sizeof_initialized_data(); }
-  uint32_t sizeof_uninitialized_data() const { return get().sizeof_uninitialized_data(); }
-  uint32_t addressof_entrypoint() const { return get().addressof_entrypoint(); }
-  uint32_t baseof_code() const { return get().baseof_code(); }
-  uint32_t baseof_data() const { return get().baseof_data(); }
-  uint64_t imagebase() const { return get().imagebase(); }
-  uint32_t section_alignment() const { return get().section_alignment(); }
-  uint32_t file_alignment() const { return get().file_alignment(); }
-  uint32_t major_operating_system_version() const { return get().major_operating_system_version(); }
-  uint32_t minor_operating_system_version() const { return get().minor_operating_system_version(); }
-  uint32_t major_image_version() const { return get().major_image_version(); }
-  uint32_t minor_image_version() const { return get().minor_image_version(); }
-  uint32_t major_subsystem_version() const { return get().major_subsystem_version(); }
-  uint32_t minor_subsystem_version() const { return get().minor_subsystem_version(); }
-  uint32_t win32_version_value() const { return get().win32_version_value(); }
-  uint32_t sizeof_image() const { return get().sizeof_image(); }
-  uint32_t sizeof_headers() const { return get().sizeof_headers(); }
-  uint32_t checksum() const { return get().checksum(); }
+  auto major_linker_version() const { return get().major_linker_version(); }
+  auto minor_linker_version() const { return get().minor_linker_version(); }
+  auto sizeof_code() const { return get().sizeof_code(); }
+  auto sizeof_initialized_data() const { return get().sizeof_initialized_data(); }
+  auto sizeof_uninitialized_data() const { return get().sizeof_uninitialized_data(); }
+  auto addressof_entrypoint() const { return get().addressof_entrypoint(); }
+  auto baseof_code() const { return get().baseof_code(); }
+  auto baseof_data() const { return get().baseof_data(); }
+  auto imagebase() const { return get().imagebase(); }
+  auto section_alignment() const { return get().section_alignment(); }
+  auto file_alignment() const { return get().file_alignment(); }
+  auto major_operating_system_version() const { return get().major_operating_system_version(); }
+  auto minor_operating_system_version() const { return get().minor_operating_system_version(); }
+  auto major_image_version() const { return get().major_image_version(); }
+  auto minor_image_version() const { return get().minor_image_version(); }
+  auto major_subsystem_version() const { return get().major_subsystem_version(); }
+  auto minor_subsystem_version() const { return get().minor_subsystem_version(); }
+  auto win32_version_value() const { return get().win32_version_value(); }
+  auto sizeof_image() const { return get().sizeof_image(); }
+  auto sizeof_headers() const { return get().sizeof_headers(); }
+  auto checksum() const { return get().checksum(); }
   auto subsystem() const { return to_int(get().subsystem()); }
   auto dll_characteristics() const { return get().dll_characteristics(); }
-  uint64_t sizeof_stack_reserve() const { return get().sizeof_stack_reserve(); }
-  uint64_t sizeof_stack_commit() const { return get().sizeof_stack_commit(); }
-  uint64_t sizeof_heap_reserve() const { return get().sizeof_heap_reserve(); }
-  uint64_t sizeof_heap_commit() const { return get().sizeof_heap_commit(); }
-  uint32_t loader_flags() const { return get().loader_flags(); }
-  uint32_t numberof_rva_and_size() const { return get().numberof_rva_and_size(); }
+  auto sizeof_stack_reserve() const { return get().sizeof_stack_reserve(); }
+  auto sizeof_stack_commit() const { return get().sizeof_stack_commit(); }
+  auto sizeof_heap_reserve() const { return get().sizeof_heap_reserve(); }
+  auto sizeof_heap_commit() const { return get().sizeof_heap_commit(); }
+  auto loader_flags() const { return get().loader_flags(); }
+  auto numberof_rva_and_size() const { return get().numberof_rva_and_size(); }
+
+  void set_addressof_entrypoint(uint32_t value) {
+    get().addressof_entrypoint(value);
+  }
+
+  void set_imagebase(uint64_t value) {
+    get().imagebase(value);
+  }
 };

@@ -21,6 +21,7 @@
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
+#include <nanobind/extra/memoryview.hpp>
 
 #include "LIEF/utils.hpp"
 #include "LIEF/hash.hpp"
@@ -248,6 +249,25 @@ void init(nb::module_& m) {
         This function only works with the extended version of LIEF
     )doc"_doc,
     "mangled"_a
+  );
+
+  m.def("dump", [] (nb::memoryview view, const std::string& title,
+                    const std::string& prefix, size_t limit)
+    {
+      return LIEF::dump(view.data(), view.size(), title, prefix, limit);
+    }, "buffer"_a, "title"_a = "", "prefix"_a = "", "limit"_a = 0,
+    R"doc(
+    Hexdump the provided buffer:
+
+    .. code-block:: text
+
+      +---------------------------------------------------------------------+
+      | 88 56 05 00 00 00 00 00 00 00 00 00 22 58 05 00  | .V.........."X.. |
+      | 10 71 02 00 78 55 05 00 00 00 00 00 00 00 00 00  | .q..xU.......... |
+      | 68 5c 05 00 00 70 02 00 00 00 00 00 00 00 00 00  | h\...p.......... |
+      | 00 00 00 00 00 00 00 00 00 00 00 00              | ............     |
+      +---------------------------------------------------------------------+
+    )doc"_doc
   );
 
   LIEF::py::init_extension(m);

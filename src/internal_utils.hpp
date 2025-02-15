@@ -201,24 +201,32 @@ inline std::string hex_str(uint8_t c) {
 }
 
 std::string hex_dump(const std::vector<uint8_t>& data,
-                              const std::string& sep = ":");
+                     const std::string& sep = ":");
 
 std::string hex_dump(span<const uint8_t> data,
                      const std::string& sep = ":");
 
-std::string dump(const uint8_t* buffer, size_t size,
-                 const std::string& title = "", const std::string& prefix = "", size_t limit = 0);
+std::string indent(const std::string& input, size_t level);
 
-inline std::string dump(span<const uint8_t> data,
-                 const std::string& title = "", const std::string& prefix = "", size_t limit = 0) {
-  return dump(data.data(), data.size(), title, prefix, limit);
+inline bool is_digit(char c) {
+  return '0' <= c && c <= '9';
 }
 
-inline std::string dump(const std::vector<uint8_t>& data,
-                 const std::string& title = "", const std::string& prefix = "", size_t limit = 0) {
-  return dump(data.data(), data.size(), title, prefix, limit);
+inline bool is_digit(const std::string& str) {
+  return std::all_of(str.begin(), str.end(), (bool(*)(char))&is_digit);
 }
 
+inline bool is_digit(const char* str) {
+  while (*str != 0) {
+    if (!is_digit(*str)) {
+      return false;
+    }
+    ++str;
+  }
+  return true;
+}
+
+std::string ts_to_str(uint64_t timestamp);
 
 }
 

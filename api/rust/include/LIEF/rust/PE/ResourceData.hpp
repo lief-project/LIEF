@@ -23,13 +23,36 @@ class PE_ResourceData : public PE_ResourceNode {
   public:
   using lief_t = LIEF::PE::ResourceData;
   PE_ResourceData(const lief_t& obj) : PE_ResourceNode(obj) {}
+  PE_ResourceData(std::unique_ptr<lief_t> obj) : PE_ResourceNode(std::move(obj)) {}
 
-  uint32_t code_page() const { return impl().code_page(); }
-  uint32_t reserved() const { return impl().reserved(); }
-  uint32_t offset() const { return impl().offset(); }
+  static auto create_from_data(const uint8_t* buffer, size_t size) {
+    return std::make_unique<PE_ResourceData>(
+      std::make_unique<lief_t>(std::vector<uint8_t>{buffer, buffer + size}));
+  }
+
+  static auto create() {
+    return std::make_unique<PE_ResourceData>(std::make_unique<lief_t>());
+  }
+
+
+  auto code_page() const { return impl().code_page(); }
+  auto reserved() const { return impl().reserved(); }
+  auto offset() const { return impl().offset(); }
 
   auto content() const {
     return make_span(impl().content());
+  }
+
+  void set_code_page(uint32_t value) {
+    impl().code_page(value);
+  }
+
+  void set_reserved(uint32_t value) {
+    impl().reserved(value);
+  }
+
+  void set_content(const uint8_t* ptr, size_t size) {
+    impl().content(ptr, size);
   }
 
   static bool classof(const PE_ResourceNode& node) {
@@ -38,4 +61,5 @@ class PE_ResourceData : public PE_ResourceNode {
 
   private:
   const lief_t& impl() const { return as<lief_t>(this); }
+  lief_t& impl() { return as<lief_t>(this); }
 };

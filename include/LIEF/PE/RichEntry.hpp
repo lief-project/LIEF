@@ -66,7 +66,8 @@ class LIEF_API RichEntry : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const RichEntry& rich_entry);
+  LIEF_API friend
+    std::ostream& operator<<(std::ostream& os, const RichEntry& rich_entry);
 
   private:
   uint16_t id_ = 0;

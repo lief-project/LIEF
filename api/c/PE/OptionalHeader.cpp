@@ -22,7 +22,7 @@ namespace PE {
 void init_c_optional_header(Pe_Binary_t* c_binary, Binary* binary) {
 
   const OptionalHeader& optional_header = binary->optional_header();
-  c_binary->optional_header.magic                          = static_cast<enum LIEF_PE_PE_TYPES>(optional_header.magic());
+  c_binary->optional_header.magic                          = static_cast<uint16_t>(optional_header.magic());
   c_binary->optional_header.major_linker_version           = optional_header.major_linker_version();
   c_binary->optional_header.minor_linker_version           = optional_header.minor_linker_version();
   c_binary->optional_header.sizeof_code                    = optional_header.sizeof_code();

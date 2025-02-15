@@ -23,7 +23,10 @@
 #include "LIEF/PE/DelayImport.hpp"
 #include "LIEF/PE/Symbol.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
+#include "LIEF/PE/Builder.hpp"
 #include "LIEF/PE/ResourcesManager.hpp"
+#include "LIEF/PE/COFFString.hpp"
+#include "LIEF/PE/ExceptionInfo.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
 
 #include "LIEF/Abstract/Binary.hpp"
@@ -34,7 +37,7 @@ namespace LIEF {
 
 /// Namespace related to the LIEF's PE module
 namespace PE {
-class Builder;
+class ExceptionInfo;
 class CodeViewPDB;
 class Debug;
 class Export;
@@ -46,12 +49,14 @@ class ResourceDirectory;
 class ResourceNode;
 class RichHeader;
 class TLS;
+class Factory;
 
 /// Class which represents a PE binary
 /// This is the main interface to manage and modify a PE executable
 class LIEF_API Binary : public LIEF::Binary {
   friend class Parser;
   friend class Builder;
+  friend class Factory;
 
   public:
   /// Internal container for storing PE's Section
@@ -109,16 +114,16 @@ class LIEF_API Binary : public LIEF::Binary {
   using it_const_debug_entries = const_ref_iterator<const debug_entries_t&, const Debug*>;
 
   /// Internal container for storing COFF Symbols
-  using symbols_t = std::vector<Symbol>;
+  using symbols_t = std::vector<std::unique_ptr<Symbol>>;
 
   /// Iterator that outputs Symbol&
-  using it_symbols = ref_iterator<symbols_t&>;
+  using it_symbols = ref_iterator<symbols_t&, Symbol*>;
 
   /// Iterator that outputs const Symbol&
-  using it_const_symbols = const_ref_iterator<const symbols_t&>;
+  using it_const_symbols = const_ref_iterator<const symbols_t&, const Symbol*>;
 
   /// Internal container for storing strings
-  using strings_table_t = std::vector<std::string>;
+  using strings_table_t = std::vector<COFFString>;
 
   /// Iterator that outputs std::string&
   using it_strings_table = ref_iterator<strings_table_t&>;
@@ -135,8 +140,16 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Iterator that outputs const Signature&
   using it_const_signatures = const_ref_iterator<const signatures_t&>;
 
-  Binary(PE_TYPE type);
+  /// Internal container for storing runtime function associated with exceptions
+  using exceptions_t = std::vector<std::unique_ptr<ExceptionInfo>>;
 
+  /// Iterator that outputs ExceptionInfo&
+  using it_exceptions = ref_iterator<exceptions_t&, ExceptionInfo*>;
+
+  /// Iterator that outputs const ExceptionInfo&
+  using it_const_exceptions = const_ref_iterator<const exceptions_t&, const ExceptionInfo*>;
+
+  Binary();
   ~Binary() override;
 
   /// Return `PE32` or `PE32+`
@@ -152,7 +165,10 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Convert the **absolute** virtual address into an offset.
   /// @see rva_to_offset
-  uint64_t va_to_offset(uint64_t VA) const;
+  uint64_t va_to_offset(uint64_t VA) const {
+    uint64_t rva = VA - optional_header().imagebase();
+    return rva_to_offset(rva);
+  }
 
   /// Convert the given offset into a virtual address.
   ///
@@ -244,12 +260,15 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Set a TLS object in the current Binary
-  void tls(const TLS& tls);
+  TLS& tls(const TLS& tls);
 
   /// Check if the current binary has a TLS object
   bool has_tls() const {
     return tls_ != nullptr;
   }
+
+  /// Remove the TLS from the binary.
+  void remove_tls();
 
   /// Check if the current binary contains imports
   ///
@@ -279,7 +298,7 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Check if the current binary has exceptions
   bool has_exceptions() const {
-    return has(DataDirectory::TYPES::EXCEPTION_TABLE);
+    return exceptions_dir()->size() != 0;
   }
 
   /// Check if the current binary has relocations
@@ -296,10 +315,11 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Check if the current binary has a load configuration
   bool has_configuration() const {
-    return load_configuration_ != nullptr;
+    return loadconfig_ != nullptr;
   }
 
-  /// Check if the current binary is *reproducible build*, replacing timestamps by a compile hash.
+  /// Check if the current binary is *reproducible build*, replacing timestamps
+  /// by a compile hash.
   ///
   /// @see Repro
   bool is_reproducible_build() const;
@@ -339,20 +359,6 @@ class LIEF_API Binary : public LIEF::Binary {
   /// parameter
   std::vector<uint8_t> authentihash(ALGORITHMS algo) const;
 
-  /// Try to predict the RVA of the function `function` in the import library `library`
-  ///
-  /// @warning
-  /// The value could be chang if imports change
-  ///
-  /// @note
-  /// It should be used with:
-  /// LIEF::PE::Builder::build_imports set to ``true``
-  ///
-  /// @param[in] library  Library name in which the function is located
-  /// @param[in] function Function name
-  /// @return The address of the function (``IAT``)  in the new import table
-  uint32_t predict_function_rva(const std::string& library, const std::string& function);
-
   /// Return the Export object
   Export* get_export() {
     return export_.get();
@@ -362,13 +368,41 @@ class LIEF_API Binary : public LIEF::Binary {
     return export_.get();
   }
 
+  Export& set_export(const Export& export_table);
+
   /// Return binary Symbols
-  std::vector<Symbol>& symbols() {
+  it_symbols symbols() {
     return symbols_;
   }
 
-  const std::vector<Symbol>& symbols() const {
+  it_const_symbols symbols() const {
     return symbols_;
+  }
+
+  /// Iterator over the strings located in the COFF string table
+  it_const_strings_table coff_string_table() const {
+    return strings_table_;
+  }
+
+  it_strings_table coff_string_table() {
+    return strings_table_;
+  }
+
+  /// Try to find the COFF string at the given offset in the COFF string table.
+  ///
+  /// \warning This offset must include the first 4 bytes holding the size of
+  ///          the table. Hence, the first string starts a the offset 4.
+  COFFString* find_coff_string(uint32_t offset) {
+    auto it = std::find_if(strings_table_.begin(), strings_table_.end(),
+      [offset] (const COFFString& item) {
+        return offset == item.offset();
+      }
+    );
+    return it == strings_table_.end() ? nullptr : &*it;
+  }
+
+  const COFFString* find_coff_string(uint32_t offset) const {
+    return const_cast<Binary*>(this)->find_coff_string(offset);
   }
 
   /// Return resources as a tree or a nullptr if there is no resources
@@ -380,11 +414,11 @@ class LIEF_API Binary : public LIEF::Binary {
     return resources_.get();
   }
 
-  /// Set a new resource tree
-  void set_resources(const ResourceDirectory& resource);
+  /// Change or set the current resource tree with the new one provided in
+  /// parameter.
+  ResourceNode* set_resources(const ResourceNode& root);
 
-  /// Set a new resource tree
-  void set_resources(const ResourceData& resource);
+  ResourceNode* set_resources(std::unique_ptr<ResourceNode> root);
 
   /// Return the ResourcesManager (class to manage resources more easily than the tree one)
   result<ResourcesManager> resources_manager() const;
@@ -418,8 +452,7 @@ class LIEF_API Binary : public LIEF::Binary {
   void remove(const Section& section, bool clear = false);
 
   /// Add a section to the binary and return the section added.
-  Section* add_section(const Section& section,
-                       PE_SECTION_TYPES type = PE_SECTION_TYPES::UNKNOWN);
+  Section* add_section(const Section& section);
 
   /// Return an iterator over the PE's Relocation
   it_relocations relocations() {
@@ -430,7 +463,7 @@ class LIEF_API Binary : public LIEF::Binary {
     return relocations_;
   }
 
-  /// Add a PE::Relocation
+  /// Add a new PE Relocation
   Relocation& add_relocation(const Relocation& relocation);
 
   /// Remove all the relocations
@@ -465,17 +498,26 @@ class LIEF_API Binary : public LIEF::Binary {
     return debug_;
   }
 
+  /// Add a new debug entry
+  Debug* add_debug_info(const Debug& entry);
+
+  /// Remove a specific debug entry
+  bool remove_debug(const Debug& entry);
+
+  /// Remove all debug info from the binary
+  bool clear_debug();
+
   /// Return the CodeViewPDB object if present
   const CodeViewPDB* codeview_pdb() const;
 
-  /// Retrun the LoadConfiguration object or a nullptr
-  /// if the binary does not use the LoadConfiguration
+  /// Retrun the LoadConfiguration object or a nullptr if the binary does not
+  /// use the LoadConfiguration
   const LoadConfiguration* load_configuration() const {
-    return load_configuration_.get();
+    return loadconfig_.get();
   }
 
   LoadConfiguration* load_configuration() {
-    return load_configuration_.get();
+    return loadconfig_.get();
   }
 
   /// Return the overlay content
@@ -506,9 +548,6 @@ class LIEF_API Binary : public LIEF::Binary {
     dos_stub_ = std::move(content);
   }
 
-  // Rich Header
-  // -----------
-
   /// Return a reference to the RichHeader object
   RichHeader* rich_header() {
     return rich_header_.get();
@@ -535,26 +574,21 @@ class LIEF_API Binary : public LIEF::Binary {
     return imports_;
   }
 
-  /// Returns the PE::Import from the given name. If it can't be
-  /// found, return a nullptr
+  /// Return the Import matching the provided name (case sensitive)
   ///
-  /// @param[in] import_name Name of the import
+  /// If the import can't be found, it returns a nullptr
   Import* get_import(const std::string& import_name) {
     return const_cast<Import*>(static_cast<const Binary*>(this)->get_import(import_name));
   }
+
   const Import* get_import(const std::string& import_name) const;
 
-  /// ``True`` if the binary imports the given library name
-  ///
-  /// @param[in] import_name Name of the import
+  /// `True` if the binary imports the given library name
   bool has_import(const std::string& import_name) const {
     return get_import(import_name) != nullptr;
   }
 
   /// Check if the current binary contains delay imports
-  ///
-  /// @see DelayImport
-  /// @see has_import
   bool has_delay_imports() const {
     return !delay_imports_.empty();
   }
@@ -568,56 +602,55 @@ class LIEF_API Binary : public LIEF::Binary {
     return delay_imports_;
   }
 
-  /// Returns the PE::DelayImport from the given name. If it can't be
-  /// found, return a nullptr
-  ///
-  /// @param[in] import_name Name of the delay import
+  /// Returns the DelayImport matching the given name. If it can't be
+  /// found, it returns a nullptr
   DelayImport* get_delay_import(const std::string& import_name) {
     return const_cast<DelayImport*>(static_cast<const Binary*>(this)->get_delay_import(import_name));
   }
   const DelayImport* get_delay_import(const std::string& import_name) const;
 
 
-  /// ``True`` if the binary delay-imports the given library name
-  ///
-  /// @param[in] import_name Name of the delay import
+  /// `True` if the binary delay-imports the given library name
   bool has_delay_import(const std::string& import_name) const {
     return get_delay_import(import_name) != nullptr;
   }
 
-
-  /// Add the function @p function of the library @p library.
-  /// If the function fails, it returns a nullptr
-  ///
-  /// @param[in] library  Library name of the function
-  /// @param[in] function Function's name from the library to import
-  ImportEntry* add_import_function(const std::string& library, const std::string& function);
-
   /// Add an imported library (i.e. `DLL`) to the binary
-  Import& add_library(const std::string& name) {
+  Import& add_import(const std::string& name) {
     imports_.emplace_back(name);
     return imports_.back();
   }
 
-  /// Remove the library with the given `name`
-  void remove_library(const std::string& name);
+  /// Remove the imported library with the given `name`
+  ///
+  /// Return true if the deletion succeed, false otherwise.
+  bool remove_import(const std::string& name);
 
   /// Remove all libraries in the binary
-  void remove_all_libraries() {
+  void remove_all_imports() {
     imports_.clear();
   }
 
   /// Reconstruct the binary object and write the raw PE in `filename`
-  ///
-  /// Rebuild a PE binary from the current Binary object.
-  /// When rebuilding, import table and relocations are not rebuilt.
-  void write(const std::string& filename) override;
+  std::unique_ptr<Builder> write(const std::string& filename) {
+    return write(filename, Builder::config_t());
+  }
+
+  /// Reconstruct the binary object with the given configuration and write it in
+  /// `filename`
+  std::unique_ptr<Builder> write(const std::string& filename,
+                                 const Builder::config_t& config);
 
   /// Reconstruct the binary object and write the raw PE in `os` stream
   ///
   /// Rebuild a PE binary from the current Binary object.
   /// When rebuilding, import table and relocations are not rebuilt.
-  void write(std::ostream& os) override;
+  std::unique_ptr<Builder> write(std::ostream& os) {
+    return write(os, Builder::config_t());
+  }
+
+  std::unique_ptr<Builder> write(std::ostream& os,
+                                 const Builder::config_t& config);
 
   void accept(Visitor& visitor) const override;
 
@@ -627,7 +660,7 @@ class LIEF_API Binary : public LIEF::Binary {
   /// @param[in] patch_value  Patch to apply
   /// @param[in] addr_type    Type of the Virtual address: VA or RVA. Default: Auto
   void patch_address(uint64_t address, const std::vector<uint8_t>& patch_value,
-                     LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) override;
+                     VA_TYPES addr_type = VA_TYPES::AUTO) override;
 
 
   /// Patch the address with the given value
@@ -637,7 +670,12 @@ class LIEF_API Binary : public LIEF::Binary {
   /// @param[in] size           Size of the value in **bytes** (1, 2, ... 8)
   /// @param[in] addr_type      Type of the Virtual address: VA or RVA. Default: Auto
   void patch_address(uint64_t address, uint64_t patch_value, size_t size = sizeof(uint64_t),
-                     LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) override;
+                     VA_TYPES addr_type = VA_TYPES::AUTO) override;
+
+
+  /// Fill the content at the provided with a fixed value
+  void fill_address(uint64_t address, size_t size, uint8_t value = 0,
+                    VA_TYPES addr_type = VA_TYPES::AUTO);
 
   /// Return the content located at the provided virtual address
   ///
@@ -663,6 +701,108 @@ class LIEF_API Binary : public LIEF::Binary {
     return optional_header_.has(OptionalHeader::DLL_CHARACTERISTICS::NX_COMPAT);
   }
 
+  uint64_t last_section_offset() const;
+
+  /// Return the data directory associated with the export table
+  DataDirectory* export_dir() {
+    return data_directory(DataDirectory::TYPES::EXPORT_TABLE);
+  }
+
+  const DataDirectory* export_dir() const {
+    return data_directory(DataDirectory::TYPES::EXPORT_TABLE);
+  }
+
+  /// Return the data directory associated with the import table
+  DataDirectory* import_dir() {
+    return data_directory(DataDirectory::TYPES::IMPORT_TABLE);
+  }
+
+  const DataDirectory* import_dir() const {
+    return data_directory(DataDirectory::TYPES::IMPORT_TABLE);
+  }
+
+  /// Return the data directory associated with the resources tree
+  DataDirectory* rsrc_dir() {
+    return data_directory(DataDirectory::TYPES::RESOURCE_TABLE);
+  }
+
+  const DataDirectory* rsrc_dir() const {
+    return data_directory(DataDirectory::TYPES::RESOURCE_TABLE);
+  }
+
+  /// Return the data directory associated with the exceptions
+  DataDirectory* exceptions_dir() {
+    return data_directory(DataDirectory::TYPES::EXCEPTION_TABLE);
+  }
+
+  const DataDirectory* exceptions_dir() const {
+    return data_directory(DataDirectory::TYPES::EXCEPTION_TABLE);
+  }
+
+  /// Return the data directory associated with the certificate table
+  /// (authenticode)
+  DataDirectory* cert_dir() {
+    return data_directory(DataDirectory::TYPES::CERTIFICATE_TABLE);
+  }
+
+  const DataDirectory* cert_dir() const {
+    return data_directory(DataDirectory::TYPES::CERTIFICATE_TABLE);
+  }
+
+  /// Return the data directory associated with the relocation table
+  DataDirectory* relocation_dir() {
+    return data_directory(DataDirectory::TYPES::BASE_RELOCATION_TABLE);
+  }
+
+  const DataDirectory* relocation_dir() const {
+    return data_directory(DataDirectory::TYPES::BASE_RELOCATION_TABLE);
+  }
+
+  /// Return the data directory associated with the debug table
+  DataDirectory* debug_dir() {
+    return data_directory(DataDirectory::TYPES::DEBUG_DIR);
+  }
+
+  const DataDirectory* debug_dir() const {
+    return data_directory(DataDirectory::TYPES::DEBUG_DIR);
+  }
+
+  /// Return the data directory associated with TLS
+  DataDirectory* tls_dir() {
+    return data_directory(DataDirectory::TYPES::TLS_TABLE);
+  }
+
+  const DataDirectory* tls_dir() const {
+    return data_directory(DataDirectory::TYPES::TLS_TABLE);
+  }
+
+  /// Return the data directory associated with the load config
+  DataDirectory* load_config_dir() {
+    return data_directory(DataDirectory::TYPES::LOAD_CONFIG_TABLE);
+  }
+
+  const DataDirectory* load_config_dir() const {
+    return data_directory(DataDirectory::TYPES::LOAD_CONFIG_TABLE);
+  }
+
+  /// Return the data directory associated with the IAT
+  DataDirectory* iat_dir() {
+    return data_directory(DataDirectory::TYPES::IAT);
+  }
+
+  const DataDirectory* iat_dir() const {
+    return data_directory(DataDirectory::TYPES::IAT);
+  }
+
+  /// Return the data directory associated with delayed imports
+  DataDirectory* delay_dir() {
+    return data_directory(DataDirectory::TYPES::DELAY_IMPORT_DESCRIPTOR);
+  }
+
+  const DataDirectory* delay_dir() const {
+    return data_directory(DataDirectory::TYPES::DELAY_IMPORT_DESCRIPTOR);
+  }
+
   /// Return the list of the binary constructors.
   ///
   /// In a PE file, we consider a constructors as a callback in the TLS object
@@ -674,18 +814,80 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Functions found in the Exception table directory
   LIEF::Binary::functions_t exception_functions() const;
 
+  /// Iterator over the exception (`_RUNTIME_FUNCTION`) functions
+  ///
+  /// \warning This function requires that the option
+  /// LIEF::PE::ParserConfig::parse_exceptions was turned on (default is false)
+  /// when parsing the binary
+  it_exceptions exceptions() {
+    return exceptions_;
+  }
+
+  it_const_exceptions exceptions() const {
+    return exceptions_;
+  }
+
+  /// Try to find the exception info at the given RVA
+  ///
+  /// \warning This function requires that the option
+  /// LIEF::PE::ParserConfig::parse_exceptions was turned on (default is false)
+  /// when parsing the binary
+  ExceptionInfo* find_exception_at(uint32_t rva);
+
+  const ExceptionInfo* find_exception_at(uint32_t rva) const {
+    return const_cast<Binary*>(this)->find_exception_at(rva);
+  }
+
+  /// True if this binary is compiled in ARM64EC mode (emulation compatible)
+  bool is_arm64ec() const;
+
+  /// True if this binary is compiled in ARM64X mode (contains both ARM64 and
+  /// ARM64EC code)
+  bool is_arm64x() const;
+
+  /// If the current binary contains dynamic relocations
+  /// (e.g. LIEF::PE::DynamicFixupARM64X), this function returns the
+  /// **relocated** view of the current PE.
+  ///
+  /// This can be used to get the alternative PE binary, targeting a different
+  /// architectures.
+  ///
+  /// \warning This function requires that the option
+  /// LIEF::PE::ParserConfig::parse_arm64x_binary was turned on (default is false)
+  /// when parsing the binary
+  const Binary* nested_pe_binary() const {
+    return nested_.get();
+  }
+
+  Binary* nested_pe_binary() {
+    return nested_.get();
+  }
+
   static bool classof(const LIEF::Binary* bin) {
     return bin->format() == Binary::FORMATS::PE;
   }
 
   std::ostream& print(std::ostream& os) const override;
 
+
+  /// \private
+  ///
+  /// Should only be used for the Rust bindings
+  LIEF_LOCAL std::unique_ptr<Binary> move_nested_pe_binary() {
+    auto ret = std::move(nested_);
+    nested_ = nullptr;
+    return ret;
+  }
+
   private:
-  Binary();
+  struct sizing_info_t {
+    uint32_t nb_tls_callbacks = 0;
+    uint32_t load_config_size = 0;
+  };
 
   /// Make space between the last section header and the beginning of the
   /// content of first section
-  void make_space_for_new_section();
+  result<uint64_t> make_space_for_new_section();
 
   /// Return binary's symbols as LIEF::Symbol
   LIEF::Binary::symbols_t get_abstract_symbols() override;
@@ -705,23 +907,25 @@ class LIEF_API Binary : public LIEF::Binary {
 
   void update_lookup_address_table_offset();
   void update_iat();
+  void shift(uint64_t from, uint64_t by);
 
-  PE_TYPE        type_ = PE_TYPE::PE32_PLUS;
-  DosHeader      dos_header_;
-  Header         header_;
+  PE_TYPE type_ = PE_TYPE::PE32_PLUS;
+  DosHeader dos_header_;
+  Header header_;
   OptionalHeader optional_header_;
 
   int32_t available_sections_space_ = 0;
 
   signatures_t signatures_;
-  sections_t           sections_;
-  data_directories_t   data_directories_;
-  symbols_t            symbols_;
-  strings_table_t      strings_table_;
-  relocations_t        relocations_;
-  imports_t            imports_;
-  delay_imports_t      delay_imports_;
-  debug_entries_t      debug_;
+  sections_t sections_;
+  data_directories_t data_directories_;
+  symbols_t symbols_;
+  strings_table_t strings_table_;
+  relocations_t relocations_;
+  imports_t imports_;
+  delay_imports_t delay_imports_;
+  debug_entries_t debug_;
+  exceptions_t exceptions_;
   uint64_t overlay_offset_ = 0;
   std::vector<uint8_t> overlay_;
   std::vector<uint8_t> dos_stub_;
@@ -731,7 +935,10 @@ class LIEF_API Binary : public LIEF::Binary {
   std::unique_ptr<Export> export_;
   std::unique_ptr<ResourceNode> resources_;
   std::unique_ptr<TLS> tls_;
-  std::unique_ptr<LoadConfiguration> load_configuration_;
+  std::unique_ptr<LoadConfiguration> loadconfig_;
+  std::unique_ptr<Binary> nested_;
+
+  sizing_info_t sizing_info_;
 };
 
 }

@@ -18,23 +18,28 @@
 #include <ostream>
 #include <cstdint>
 
+#include "LIEF/errors.hpp"
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {
+class BinaryStream;
+
 namespace PE {
-namespace details {
-struct pe_code_integrity;
-}
+class Parser;
 
 class LIEF_API CodeIntegrity : public Object {
   public:
+  static result<CodeIntegrity> parse(Parser& ctx, BinaryStream& stream);
   CodeIntegrity() = default;
-  CodeIntegrity(const details::pe_code_integrity& header);
+
   ~CodeIntegrity() override = default;
 
   CodeIntegrity& operator=(const CodeIntegrity&) = default;
   CodeIntegrity(const CodeIntegrity&) = default;
+
+  CodeIntegrity& operator=(CodeIntegrity&&) = default;
+  CodeIntegrity(CodeIntegrity&&) = default;
 
   /// Flags to indicate if CI information is available, etc.
   uint16_t flags() const {
@@ -45,6 +50,7 @@ class LIEF_API CodeIntegrity : public Object {
   uint16_t catalog() const {
     return catalog_;
   }
+
   uint32_t catalog_offset() const {
     return catalog_offset_;
   }
@@ -54,17 +60,24 @@ class LIEF_API CodeIntegrity : public Object {
     return reserved_;
   }
 
-  void flags(uint16_t flags) {
+  CodeIntegrity& flags(uint16_t flags) {
     flags_ = flags;
+    return *this;
   }
-  void catalog(uint16_t catalog) {
+
+  CodeIntegrity& catalog(uint16_t catalog) {
     catalog_ = catalog;
+    return *this;
   }
-  void catalog_offset(uint32_t catalog_offset) {
+
+  CodeIntegrity& catalog_offset(uint32_t catalog_offset) {
     catalog_offset_ = catalog_offset;
+    return *this;
   }
-  void reserved(uint32_t reserved) {
+
+  CodeIntegrity& reserved(uint32_t reserved) {
     reserved_ = reserved;
+    return *this;
   }
 
   void accept(Visitor& visitor) const override;
@@ -77,7 +90,6 @@ class LIEF_API CodeIntegrity : public Object {
 
   uint32_t catalog_offset_ = 0;
   uint32_t reserved_ = 0;
-
 };
 }
 }

@@ -16,6 +16,7 @@
 
 #include "LIEF/OAT/DexFile.hpp"
 #include "LIEF/OAT/hash.hpp"
+#include <ostream>
 
 namespace LIEF {
 namespace OAT {

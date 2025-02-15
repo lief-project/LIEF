@@ -4,6 +4,13 @@
     :py:func:`lief.demangle`
     :cpp:func:`LIEF::demangle`
 
+.. |lief-dump| lief-api:: LIEF.dump()
+
+    :rust:func:`lief::dump`
+    :rust:func:`lief::dump_with_limit`
+    :py:func:`lief.dump`
+    :cpp:func:`LIEF::dump`
+
 .. |get_int_from_virtual_address| lief-api:: LIEF.get_int_from_virtual_address()
 
     :rust:method:`lief::elf::Binary::get_int_from_virtual_address [struct]`
@@ -123,8 +130,21 @@
 
 .. |lief-pe-parser-config| lief-api:: lief.PE.ParserConfig
 
+    :rust:struct:`lief::pe::ParserConfig`
     :py:class:`lief.PE.ParserConfig`
     :cpp:class:`LIEF::PE::ParserConfig`
+
+.. |lief-pe-parser-config-parse_exceptions| lief-api:: lief.PE.ParserConfig.parse_exceptions
+
+    :rust:member:`lief::pe::ParserConfig::parse_exceptions [struct]`
+    :py:attr:`lief.PE.ParserConfig.parse_exceptions`
+    :cpp:member:`LIEF::PE::ParserConfig::parse_exceptions`
+
+.. |lief-pe-parser-config-parse_arm64x_binary| lief-api:: lief.PE.ParserConfig.parse_arm64x_binary
+
+    :rust:member:`lief::pe::ParserConfig::parse_arm64x_binary [struct]`
+    :py:attr:`lief.PE.ParserConfig.parse_arm64x_binary`
+    :cpp:member:`LIEF::PE::ParserConfig::parse_arm64x_binary`
 
 .. |lief-pe-builder| lief-api:: lief.PE.Builder
 
@@ -142,6 +162,61 @@
     :rust:struct:`lief::pe::Binary`
     :py:class:`lief.PE.Binary`
     :cpp:class:`LIEF::PE::Binary`
+
+.. |lief-pe-tls| lief-api:: lief.PE.TLS
+
+    :rust:struct:`lief::pe::TLS`
+    :py:class:`lief.PE.TLS`
+    :cpp:class:`LIEF::PE::TLS`
+
+.. |lief-pe-binary-exceptions| lief-api:: lief.PE.Binary
+
+    :rust:method:`lief::pe::Binary::exceptions [struct]`
+    :py:attr:`lief.PE.Binary.exceptions`
+    :cpp:func:`LIEF::PE::Binary::exceptions`
+
+.. |lief-pe-loadconfig| lief-api:: lief.PE.LoadConfiguration
+
+    :rust:struct:`lief::pe::LoadConfiguration`
+    :py:class:`lief.PE.LoadConfiguration`
+    :cpp:class:`LIEF::PE::LoadConfiguration`
+
+.. |lief-pe-chpe_metadata| lief-api:: lief.PE.CHPEMetadata
+
+    :rust:enum:`lief::pe::CHPEMetadata`
+    :py:class:`lief.PE.CHPEMetadata`
+    :cpp:class:`LIEF::PE::CHPEMetadata`
+
+.. |lief-pe-dynamic-relocation| lief-api:: lief.PE.DynamicRelocation
+
+    :rust:enum:`lief::pe::DynamicRelocation`
+    :py:class:`lief.PE.DynamicRelocation`
+    :cpp:class:`LIEF::PE::DynamicRelocation`
+
+.. |lief-pe-enclave-configuration| lief-api:: lief.PE.EnclaveConfiguration
+
+    :rust:struct:`lief::pe::EnclaveConfiguration`
+    :py:class:`lief.PE.EnclaveConfiguration`
+    :cpp:class:`LIEF::PE::EnclaveConfiguration`
+
+.. |lief-pe-volatile-metadata| lief-api:: lief.PE.VolatileMetadata
+
+    :rust:struct:`lief::pe::VolatileMetadata`
+    :py:class:`lief.PE.VolatileMetadata`
+    :cpp:class:`LIEF::PE::VolatileMetadata`
+
+
+.. |lief-pe-exceptioninfo| lief-api:: lief.PE.ExceptionInfo
+
+    :rust:enum:`lief::pe::exception::RuntimeExceptionFunction`
+    :py:class:`lief.PE.ExceptionInfo`
+    :cpp:class:`LIEF::PE::ExceptionInfo`
+
+.. |lief-pe-section-coff_string| lief-api:: lief.PE.Section.coff_string
+
+    :rust:method:`lief::pe::Section::coff_string [struct]`
+    :py:attr:`lief.PE.Section.coff_string`
+    :cpp:func:`LIEF::PE::Section::coff_string`
 
 .. |lief-pe-codeviewpdb-filename| lief-api:: lief.PE.CodeViewPDB.filename()
 
@@ -167,6 +242,12 @@
     :py:attr:`lief.PE.ExportEntry.demangled_name`
     :cpp:func:`LIEF::PE::ExportEntry::demangled_name`
 
+.. |lief-pe-export-entry| lief-api:: lief.PE.ExportEntry
+
+    :rust:struct:`lief::pe::export::Entry`
+    :py:class:`lief.PE.ExportEntry`
+    :cpp:class:`LIEF::PE::ExportEntry`
+
 .. |lief-pe-binary-write| lief-api:: lief.PE.Binary.write()
 
     :rust:method:`lief::pe::Binary::write [struct]`
@@ -178,6 +259,24 @@
     :rust:method:`lief::pe::Binary::signatures [struct]`
     :py:attr:`lief.PE.Binary.signatures`
     :cpp:func:`LIEF::PE::Binary::signatures`
+
+.. |lief-pe-binary-is_arm64ec| lief-api:: lief.PE.Binary.is_arm64ec()
+
+    :rust:method:`lief::pe::Binary::is_arm64ec [struct]`
+    :py:attr:`lief.PE.Binary.is_arm64ec`
+    :cpp:func:`LIEF::PE::Binary::is_arm64ec`
+
+.. |lief-pe-binary-is_arm64x| lief-api:: lief.PE.Binary.is_arm64x()
+
+    :rust:method:`lief::pe::Binary::is_arm64x [struct]`
+    :py:attr:`lief.PE.Binary.is_arm64x`
+    :cpp:func:`LIEF::PE::Binary::is_arm64x`
+
+.. |lief-pe-binary-nested_pe_binary| lief-api:: lief.PE.Binary.nested_pe_binary()
+
+    :rust:method:`lief::pe::Binary::nested_pe_binary [struct]`
+    :py:attr:`lief.PE.Binary.nested_pe_binary`
+    :cpp:func:`LIEF::PE::Binary::nested_pe_binary`
 
 .. |lief-pe-signature| lief-api:: lief.PE.Signature
 
@@ -196,6 +295,199 @@
     :rust:method:`lief::pe::Binary::verify_signature [struct]`
     :py:meth:`lief.PE.Binary.verify_signature`
     :cpp:func:`LIEF::PE::Binary::verify_signature`
+
+.. |lief-pe-datadirectory| lief-api:: lief.PE.DataDirectory
+
+    :rust:struct:`lief::pe::DataDirectory`
+    :py:class:`lief.PE.DataDirectory`
+    :cpp:class:`LIEF::PE::DataDirectory`
+
+.. |lief-pe-datadirectory-content| lief-api:: lief.PE.DataDirectory.content()
+
+    :rust:method:`lief::pe::DataDirectory::content [struct]`
+    :py:attr:`lief.PE.DataDirectory.content`
+    :cpp:func:`LIEF::PE::DataDirectory::content`
+
+.. |lief-pe-resource-node-parse| lief-api:: lief.PE.ResourceNode.parse()
+
+    :rust:method:`lief::pe::ResourceNode::from_slice [enum]`
+    :py:func:`lief.PE.ResourceNode.parse`
+    :cpp:func:`LIEF::PE::ResourceNode::parse`
+
+.. |lief-pe-binary-remove-import| lief-api:: lief.PE.Binary.remove_import()
+
+    :rust:method:`lief::pe::Binary::remove_import [struct]`
+    :py:func:`lief.PE.Binary.remove_import`
+    :cpp:func:`LIEF::PE::Binary::remove_import`
+
+.. |lief-pe-binary-remove-all-import| lief-api:: lief.PE.Binary.remove_all_imports()
+
+    :rust:method:`lief::pe::Binary::remove_all_imports [struct]`
+    :py:func:`lief.PE.Binary.remove_all_imports`
+    :cpp:func:`LIEF::PE::Binary::remove_all_imports`
+
+.. |lief-pe-binary-add-import| lief-api:: lief.PE.Binary.add_import()
+
+    :rust:method:`lief::pe::Binary::add_import [struct]`
+    :py:func:`lief.PE.Binary.add_import`
+    :cpp:func:`LIEF::PE::Binary::add_import`
+
+.. |lief-pe-import-add-entry| lief-api:: lief.PE.Import.add_entry()
+
+    :rust:method:`lief::pe::import::Import::add_entry_by_name [struct]`
+    :py:func:`lief.PE.Import.add_entry`
+    :cpp:func:`LIEF::PE::Import::add_entry`
+
+.. |lief-pe-import| lief-api:: lief.PE.Import
+
+    :rust:struct:`lief::pe::import::Import`
+    :py:class:`lief.PE.Import`
+    :cpp:class:`LIEF::PE::Import`
+
+.. |lief-pe-importentry| lief-api:: lief.PE.ImportEntry
+
+    :rust:struct:`lief::pe::import::ImportEntry`
+    :py:class:`lief.PE.ImportEntry`
+    :cpp:class:`LIEF::PE::ImportEntry`
+
+.. |lief-pe-importentry-iat-address| lief-api:: lief.PE.ImportEntry.iat_address()
+
+    :rust:method:`lief::pe::import::ImportEntry::iat_address [struct]`
+    :py:attr:`lief.PE.ImportEntry.iat_address`
+    :cpp:func:`LIEF::PE::ImportEntry::iat_address`
+
+.. |lief-pe-builder-config-resolved_iat_cbk| lief-api:: lief.PE.Builder.config_t.resolved_iat_cbk
+
+    :py:attr:`lief.PE.Builder.config_t.resolved_iat_cbk`
+    :cpp:member:`LIEF::PE::Builder::config_t::resolved_iat_cbk`
+
+.. |lief-pe-builder-config-imports| lief-api:: lief.PE.Builder.config_t.imports
+
+    :rust:member:`lief::pe::builder::Config::imports [struct]`
+    :py:attr:`lief.PE.Builder.config_t.imports`
+    :cpp:member:`LIEF::PE::Builder::config_t::imports`
+
+.. |lief-pe-builder-config-exports| lief-api:: lief.PE.Builder.config_t.exports
+
+    :rust:member:`lief::pe::builder::Config::exports [struct]`
+    :py:attr:`lief.PE.Builder.config_t.exports`
+    :cpp:member:`LIEF::PE::Builder::config_t::exports`
+
+.. |lief-pe-builder-config-export_section| lief-api:: lief.PE.Builder.config_t.export_section
+
+    :rust:member:`lief::pe::builder::Config::export_section [struct]`
+    :py:attr:`lief.PE.Builder.config_t.export_section`
+    :cpp:member:`LIEF::PE::Builder::config_t::export_section`
+
+.. |lief-pe-builder-config| lief-api:: lief.PE.Builder.config_t
+
+    :rust:struct:`lief::pe::::builder::Config`
+    :py:class:`lief.PE.Builder.config_t`
+    :cpp:class:`LIEF::PE::Builder::config_t`
+
+.. |lief-pe-import-remove-entry| lief-api:: lief.PE.Import.remove_entry
+
+    :rust:method:`lief::pe::import::Import::remove_entry_by_name [struct]`
+    :rust:method:`lief::pe::import::Import::remove_entry_by_ordinal [struct]`
+    :py:func:`lief.PE.Import.remove_entry`
+    :cpp:func:`LIEF::PE::Import::remove_entry`
+
+.. |lief-pe-resource-manager| lief-api:: lief.PE.ResourcesManager
+
+    :rust:struct:`lief::pe::resources::Manager`
+    :py:class:`lief.PE.ResourcesManager`
+    :cpp:class:`LIEF::PE::ResourcesManager`
+
+.. |lief-pe-resourcestringtable| lief-api:: lief.PE.ResourceStringTable
+
+    :py:class:`lief.PE.ResourceStringTable`
+    :cpp:class:`LIEF::PE::ResourceStringTable`
+
+
+.. |lief-pe-resource-node| lief-api:: lief.PE.ResourceNode
+
+    :rust:enum:`lief::pe::resources::Node`
+    :py:class:`lief.PE.ResourceNode`
+    :cpp:class:`LIEF::PE::ResourceNode`
+
+.. |lief-pe-resource-node-add-child| lief-api:: lief.PE.ResourceNode.add_child()
+
+    :rust:method:`lief::pe::resources::NodeBase::add_child [trait]`
+    :py:meth:`lief.PE.ResourceNode.add_child`
+    :cpp:func:`LIEF::PE::ResourceNode::add_child`
+
+.. |lief-pe-resource-node-remove-child| lief-api:: lief.PE.ResourceNode.delete_child()
+
+    :rust:method:`lief::pe::resources::NodeBase::delete_child [trait]`
+    :py:meth:`lief.PE.ResourceNode.delete_child`
+    :cpp:func:`LIEF::PE::ResourceNode::delete_child`
+
+.. |lief-pe-binary-resources| lief-api:: lief.PE.Binary.resources()
+
+    :rust:method:`lief::pe::Binary::resources [struct]`
+    :py:attr:`lief.PE.Binary.resources`
+    :cpp:func:`LIEF::PE::Binary::resources`
+
+.. |lief-pe-binary-set_resources| lief-api:: lief.PE.Binary.set_resources()
+
+    :rust:method:`lief::pe::Binary::set_resources [struct]`
+    :py:func:`lief.PE.Binary.set_resources`
+    :cpp:func:`LIEF::PE::Binary::set_resources`
+
+.. |lief-pe-debug| lief-api:: lief.PE.Debug
+
+    :rust:enum:`lief::pe::debug::Entries`
+    :py:class:`lief.PE.Debug`
+    :cpp:class:`LIEF::PE::Debug`
+
+.. |lief-pe-codeviewpdb| lief-api:: lief.PE.CodeViewPDB
+
+    :rust:struct:`lief::pe::debug::CodeViewPDB`
+    :py:class:`lief.PE.CodeViewPDB`
+    :cpp:class:`LIEF::PE::CodeViewPDB`
+
+.. |lief-pe-binary-clear-debug| lief-api:: lief.PE.Binary.clear_debug
+
+    :rust:method:`lief::pe::Binary::clear_debug [struct]`
+    :py:func:`lief.PE.Binary.clear_debug`
+    :cpp:func:`LIEF::PE::Binary::clear_debug`
+
+.. |lief-pe-binary-remove-debug| lief-api:: lief.PE.Binary.remove_debug
+
+    :rust:method:`lief::pe::Binary::remove_debug [struct]`
+    :py:func:`lief.PE.Binary.remove_debug`
+    :cpp:func:`LIEF::PE::Binary::remove_debug`
+
+
+.. |lief-pe-binary-add-debug-info| lief-api:: lief.PE.Binary.add_debug_info
+
+    :rust:method:`lief::pe::Binary::add_debug_info [struct]`
+    :py:func:`lief.PE.Binary.add_debug_info`
+    :cpp:func:`LIEF::PE::Binary::add_debug_info`
+
+.. |lief-pe-vcfeature| lief-api:: lief.PE.VCFeature
+
+    :rust:struct:`lief::pe::debug::VCFeature`
+    :py:class:`lief.PE.VCFeature`
+    :cpp:class:`LIEF::PE::VCFeature`
+
+.. |lief-pe-fpo| lief-api:: lief.PE.FPO
+
+    :rust:struct:`lief::pe::debug::FPO`
+    :py:class:`lief.PE.FPO`
+    :cpp:class:`LIEF::PE::FPO`
+
+.. |lief-pe-exdllcharacteristics| lief-api:: lief.PE.ExDllCharacteristics
+
+    :rust:struct:`lief::pe::debug::ExDllCharacteristics`
+    :py:class:`lief.PE.ExDllCharacteristics`
+    :cpp:class:`LIEF::PE::ExDllCharacteristics`
+
+.. |lief-pe-pdbchecksum| lief-api:: lief.PE.PDBChecksum
+
+    :rust:struct:`lief::pe::debug::PDBChecksum`
+    :py:class:`lief.PE.PDBChecksum`
+    :cpp:class:`LIEF::PE::PDBChecksum`
 
 .. Abstract ====================================================================
 
@@ -410,6 +702,7 @@
 
 .. |lief-macho-builder-config| lief-api:: lief.MachO.Builder.config_t
 
+    :rust:struct:`lief::pe::builder::Config`
     :py:class:`lief.MachO.Builder.config_t`
     :cpp:class:`LIEF::MachO::Builder::config_t`
 

@@ -13,66 +13,78 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
 #include <sstream>
-#include <numeric>
-
-#include "LIEF/PE/hash.hpp"
-#include "logging.hpp"
 
 #include "LIEF/utils.hpp"
-#include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/Visitor.hpp"
 
-#include "LIEF/PE/ResourcesManager.hpp"
 #include "LIEF/PE/resources/ResourceVarFileInfo.hpp"
+#include "LIEF/PE/resources/ResourceVar.hpp"
+#include "LIEF/BinaryStream/BinaryStream.hpp"
+
+#include "internal_utils.hpp"
+#include "logging.hpp"
 
 namespace LIEF {
 namespace PE {
 
-ResourceVarFileInfo::ResourceVarFileInfo(uint16_t type, std::u16string key) :
-  type_{type},
-  key_{std::move(key)}
-{}
+result<ResourceVarFileInfo> ResourceVarFileInfo::parse(BinaryStream& stream) {
+  ResourceVarFileInfo info;
+  auto wLength = stream.read<uint16_t>();
+  if (!wLength) { return make_error_code(wLength.error()); }
 
-ResourceVarFileInfo::ResourceVarFileInfo() :
-  key_{*u8tou16("VarFileInfo")}
-{}
+  auto wValueLength = stream.read<uint16_t>();
+  if (!wValueLength) { return make_error_code(wValueLength.error()); }
 
+  auto wType = stream.read<uint16_t>();
+  if (!wType) { return make_error_code(wType.error()); }
 
-void ResourceVarFileInfo::key(const std::string& key) {
-  if (auto res = u8tou16(key)) {
-    return this->key(std::move(*res));
+  if (*wType != 0 && wType != 1) {
+    return make_error_code(lief_errors::corrupted);
   }
-  LIEF_WARN("{} can't be converted to a UTF-16 string", key);
-}
 
+  auto szKey = stream.read_u16string();
+  if (!szKey) { return make_error_code(wType.error()); }
+
+  if (u16tou8(*szKey) != "VarFileInfo") {
+    return make_error_code(lief_errors::corrupted);
+  }
+
+  info
+    .type(*wType)
+    .key(std::move(*szKey));
+
+
+  while (stream) {
+    stream.align(sizeof(uint32_t));
+    auto var = ResourceVar::parse(stream);
+    if (!var) {
+      LIEF_WARN("Can't parse resource var #{}", info.vars_.size());
+      return info;
+    }
+    info.add_var(std::move(*var));
+  }
+
+  return info;
+}
 
 void ResourceVarFileInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
 
-std::ostream& operator<<(std::ostream& os, const ResourceVarFileInfo& entry) {
-  std::string translation_str = std::accumulate(
-     std::begin(entry.translations()), std::end(entry.translations()), std::string{},
-     [] (const std::string& a, uint32_t t) {
-       std::stringstream ss;
-       uint16_t lsb = t & 0xFFFF;
-       uint16_t msb = t >> 16;
-       auto cp = static_cast<CODE_PAGES>(msb);
+std::string ResourceVarFileInfo::key_u8() const {
+  return u16tou8(key());
+}
 
-       uint32_t lang = ResourcesManager::lang_from_id(lsb);
-       uint32_t sublang = ResourcesManager::sublang_from_id(lsb);
-
-       ss << to_string(cp) << "/" << lang << "/" << sublang;
-       return a.empty() ? ss.str() : a + " - " + ss.str();
-     });
-
-  os << std::hex << std::left;
-  os << std::setw(14) << std::setfill(' ') << "type:"          << entry.type()         << '\n';
-  os << std::setw(14) << std::setfill(' ') << "key:"           << u16tou8(entry.key()) << '\n';
-  os << std::setw(14) << std::setfill(' ') << "Translations:"  << translation_str      << '\n';
-
+std::ostream& operator<<(std::ostream& os, const ResourceVarFileInfo& info) {
+  os << fmt::format("BLOCK '{}' {{\n", info.key_u8());
+  for (const ResourceVar& var : info.vars()) {
+    std::ostringstream oss;
+    oss << var;
+    os << indent(oss.str(), 2);
+  }
+  os << '}';
   return os;
 }
 

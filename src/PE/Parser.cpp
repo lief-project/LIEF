@@ -18,7 +18,6 @@
 #include <numeric>
 #include "logging.hpp"
 
-
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
@@ -34,6 +33,10 @@
 #include "LIEF/PE/debug/Pogo.hpp"
 #include "LIEF/PE/debug/Repro.hpp"
 #include "LIEF/PE/debug/PogoEntry.hpp"
+#include "LIEF/PE/debug/PDBChecksum.hpp"
+#include "LIEF/PE/debug/VCFeature.hpp"
+#include "LIEF/PE/debug/FPO.hpp"
+#include "LIEF/PE/debug/ExDllCharacteristics.hpp"
 #include "LIEF/PE/Relocation.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"
 #include "LIEF/PE/ResourceData.hpp"
@@ -44,15 +47,11 @@
 #include "LIEF/PE/Symbol.hpp"
 #include "LIEF/PE/TLS.hpp"
 #include "LIEF/PE/utils.hpp"
+#include "LIEF/PE/exceptions_info/RuntimeFunctionX64.hpp"
 
 #include "internal_utils.hpp"
+#include "overflow_check.hpp"
 #include "Parser.tcc"
-
-// Issue with VS2017
-#if defined(IMAGE_FILE_MACHINE_UNKNOWN)
-#define LIEF_PE_FORCE_UNDEF
-#include "LIEF/PE/undef.h"
-#endif
 
 namespace LIEF {
 namespace PE {
@@ -197,7 +196,6 @@ ok_error_t Parser::parse_sections() {
   static constexpr size_t NB_MAX_SECTIONS = 1000;
   LIEF_DEBUG("Parsing sections");
 
-
   const uint32_t pe_header_off   = binary_->dos_header().addressof_new_exeheader();
   const uint32_t opt_header_off  = pe_header_off + sizeof(details::pe_header);
   const uint32_t sections_offset = opt_header_off + binary_->header().sizeof_optional_header();
@@ -274,6 +272,16 @@ ok_error_t Parser::parse_sections() {
         LIEF_ERR("Can't read the padding content of section '{}'", section->name());
       }
     }
+
+    if (const std::string& name = section->name();
+        name.size() > 1 && name[0] == '/')
+    {
+      char* endptr = nullptr;
+      uint32_t offset = std::strtol(name.c_str() + 1, &endptr, /*base=*/10);
+      if (COFFString* coff_str = binary_->find_coff_string(offset)) {
+        section->coff_string_ = coff_str;
+      }
+    }
     binary_->sections_.push_back(std::move(section));
   }
 
@@ -292,7 +300,8 @@ ok_error_t Parser::parse_relocations() {
   static constexpr size_t MAX_RELOCATION_ENTRIES = 100000;
   LIEF_DEBUG("Parsing relocations");
 
-  const DataDirectory* reloc_dir = binary_->data_directory(DataDirectory::TYPES::BASE_RELOCATION_TABLE);
+  const DataDirectory* reloc_dir = binary_->relocation_dir();
+  const Header::MACHINE_TYPES arch = binary_->header().machine();
 
   if (reloc_dir == nullptr) {
     return make_error_code(lief_errors::not_found);
@@ -313,12 +322,14 @@ ok_error_t Parser::parse_relocations() {
     auto relocation = std::make_unique<Relocation>(raw_struct);
 
     if (raw_struct.BlockSize < sizeof(details::pe_base_relocation_block)) {
-      LIEF_ERR("Relocation corrupted: BlockSize is too small");
+      LIEF_ERR("Relocation corrupted: BlockSize is too small ({})",
+               raw_struct.BlockSize);
       break;
     }
 
     if (raw_struct.BlockSize > binary_->optional_header().sizeof_image()) {
-      LIEF_ERR("Relocation corrupted: BlockSize is out of bound the binary's virtual size");
+      LIEF_ERR("Relocation corrupted: BlockSize is out of bound the "
+               "binary's virtual size: {}", raw_struct.BlockSize);
       break;
     }
 
@@ -338,7 +349,12 @@ ok_error_t Parser::parse_relocations() {
         LIEF_ERR("Can't parse relocation entry #{}", i);
         break;
       }
-      auto entry = std::make_unique<RelocationEntry>(RelocationEntry::from_raw(this->binary_->header().machine(), *res_entry));
+
+      uint16_t data = *res_entry;
+      uint16_t pos = RelocationEntry::get_position(data);
+      RelocationEntry::BASE_TYPES ty = RelocationEntry::type_from_data(arch, data);
+      auto entry = std::make_unique<RelocationEntry>(pos, ty);
+
       entry->relocation_ = relocation.get();
       relocation->entries_.push_back(std::move(entry));
     }
@@ -353,7 +369,7 @@ ok_error_t Parser::parse_relocations() {
 
 ok_error_t Parser::parse_resources() {
   LIEF_DEBUG("Parsing resources");
-  const DataDirectory* res_dir = binary_->data_directory(DataDirectory::TYPES::RESOURCE_TABLE);
+  const DataDirectory* res_dir = binary_->rsrc_dir();
 
   if (res_dir == nullptr) {
     return make_error_code(lief_errors::not_found);
@@ -365,264 +381,136 @@ ok_error_t Parser::parse_resources() {
   const uint32_t offset = binary_->rva_to_offset(resources_rva);
   LIEF_DEBUG("Resources Offset: 0x{:04x}", offset);
 
-  const auto res_directory_table = stream_->peek<details::pe_resource_directory_table>(offset);
-  if (!res_directory_table) {
+  ScopedStream scoped(*stream_, offset);
+  binary_->resources_ = ResourceNode::parse(*scoped, *binary_);
+
+  if (binary_->resources_ == nullptr) {
+    LIEF_WARN("Can't parse resource tree");
     return make_error_code(lief_errors::read_error);
   }
-
-  binary_->resources_ = parse_resource_node(*res_directory_table, offset, offset);
   return ok();
-}
-
-std::unique_ptr<ResourceNode>
-Parser::parse_resource_node(const details::pe_resource_directory_table& directory_table,
-                            uint32_t base_offset, uint32_t current_offset,
-                            uint32_t depth)
-{
-  const uint32_t numberof_ID_entries   = directory_table.NumberOfIDEntries;
-  const uint32_t numberof_name_entries = directory_table.NumberOfNameEntries;
-
-  //const pe_resource_directory_entries* entries_array = reinterpret_cast<const pe_resource_directory_entries*>(directory_table + 1);
-  size_t directory_array_offset = current_offset + sizeof(details::pe_resource_directory_table);
-  details::pe_resource_directory_entries entries_array;
-
-  if (auto res_entries_array = stream_->peek<details::pe_resource_directory_entries>(directory_array_offset)) {
-    entries_array = *res_entries_array;
-  } else {
-    return nullptr;
-  }
-
-  auto directory = std::make_unique<ResourceDirectory>(directory_table);
-  directory->depth_ = depth;
-
-  // Iterate over the childs
-  for (size_t idx = 0; idx < (numberof_name_entries + numberof_ID_entries); ++idx) {
-
-    uint32_t data_rva = entries_array.RVA;
-    uint32_t id       = entries_array.NameID.IntegerID;
-
-    directory_array_offset += sizeof(details::pe_resource_directory_entries);
-    if (auto res_entries_array = stream_->peek<details::pe_resource_directory_entries>(directory_array_offset)) {
-      entries_array = *res_entries_array;
-    } else {
-      break;
-    }
-
-    result<std::u16string> name;
-
-    // Get the resource name
-    if ((id & 0x80000000) != 0u) {
-      uint32_t offset        = id & (~ 0x80000000);
-      uint32_t string_offset = base_offset + offset;
-      LIEF_DEBUG("base_offset=0x{:04x}, string_offset=0x{:04x}",
-               base_offset, string_offset);
-
-      auto res_length = stream_->peek<uint16_t>(string_offset);
-      if (res_length && *res_length <= 100) {
-        name = stream_->peek_u16string_at(string_offset + sizeof(uint16_t), *res_length);
-        if (!name) {
-          LIEF_ERR("Node's name for the node id: {} is corrupted", id);
-        }
-      }
-    }
-
-    if ((0x80000000 & data_rva) == 0) { // We are on a leaf
-      uint32_t offset = base_offset + data_rva;
-      details::pe_resource_data_entry data_entry;
-
-      if (!resource_visited_.insert(offset).second) {
-        if (resource_visited_.size() == 1) {
-          // Only print once
-          LIEF_WARN("Infinite loop detected on resources");
-        }
-        break;
-      }
-
-      if (auto res_data_entry = stream_->peek<details::pe_resource_data_entry>(offset)) {
-        data_entry = *res_data_entry;
-      } else {
-        break;
-      }
-
-      uint32_t content_offset = binary_->rva_to_offset(data_entry.DataRVA);
-      uint32_t content_size   = data_entry.Size;
-      uint32_t code_page      = data_entry.Codepage;
-
-      std::vector<uint8_t> leaf_data;
-      if (stream_->peek_data(leaf_data, content_offset, content_size,
-                             data_entry.DataRVA))
-      {
-        auto node = std::make_unique<ResourceData>(std::move(leaf_data), code_page);
-
-        node->depth_ = depth + 1;
-        node->id(id);
-        node->offset_ = content_offset;
-        if (name) {
-          node->name(*name);
-        }
-
-        directory->childs_.push_back(std::move(node));
-      } else {
-        LIEF_DEBUG("The leaf of the node id {} is corrupted", id);
-        break;
-      }
-    } else { // We are on a directory
-      const uint32_t directory_rva = data_rva & (~ 0x80000000);
-      const uint32_t offset        = base_offset + directory_rva;
-      if (!resource_visited_.insert(offset).second) {
-        if (resource_visited_.size() == 1) {
-          // Only print once
-          LIEF_WARN("Infinite loop detected on resources");
-        }
-        break;
-      }
-
-      if (auto res_next_dir_table = stream_->peek<details::pe_resource_directory_table>(offset)) {
-        if (auto node = parse_resource_node(*res_next_dir_table, base_offset, offset, depth + 1)) {
-          if (name) {
-            node->name(*name);
-          }
-          node->id(id);
-          directory->childs_.push_back(std::move(node));
-        } else {
-          // node is a nullptr
-          continue;
-        }
-      } else {
-        LIEF_WARN("The directory of the node id {} is corrupted", id);
-        break;
-      }
-    }
-  }
-  return directory;
 }
 
 ok_error_t Parser::parse_string_table() {
-  LIEF_DEBUG("Parsing string table");
-  uint32_t string_table_offset =
-    binary_->header().pointerto_symbol_table() +
-    binary_->header().numberof_symbols() * details::sizes::SYMBOL_16;
+  // PE is using the "Symbol16" format
+  static constexpr auto SYMBOL16_SZ = 18;
+  const Header& hdr = binary_->header();
 
-  auto res_size = stream_->peek<uint32_t>(string_table_offset);
-  if (!res_size) {
-    return make_error_code(res_size.error());
-  }
-
-  auto size = *res_size;
-  if (size < 4) {
+  if (hdr.pointerto_symbol_table() == 0) {
     return ok();
   }
-  size -= 4;
-  uint32_t current_size = 0;
+  LIEF_DEBUG("Parsing string table");
 
-  while (current_size < size) {
-    auto res_name = stream_->peek_string_at(string_table_offset + sizeof(uint32_t) + current_size);
-    if (!res_name) {
+  const uint32_t string_tbl_offset =
+    hdr.pointerto_symbol_table() + hdr.numberof_symbols() * SYMBOL16_SZ;
+
+  LIEF_DEBUG("String table offset: 0x{:08x}", string_tbl_offset);
+  stream_->setpos(string_tbl_offset);
+  auto table_sz = stream_->read<uint32_t>();
+  if (!table_sz) {
+    return make_error_code(table_sz.error());
+  }
+
+  if (*table_sz <= 4) {
+    return ok();
+  }
+
+  std::vector<uint8_t> buffer;
+  if (auto is_ok = stream_->read_data(buffer, *table_sz - 4); !is_ok) {
+    return make_error_code(is_ok.error());
+  }
+
+  SpanStream string_strm(buffer);
+
+  while (string_strm) {
+    size_t pos = string_strm.pos() + 4;
+    auto str = string_strm.read_string();
+    if (!str) {
       break;
     }
-    std::string name = *res_name;
-    current_size += name.size() + 1;
-    binary_->strings_table_.push_back(name);
+
+    LIEF_DEBUG("string[0x{:06x}]: {}", pos, *str);
+    memoize(COFFString(pos, std::move(*str)));
   }
+  LIEF_DEBUG("#{} strings found", binary_->strings_table_.size());
+
   return ok();
 }
-
 
 ok_error_t Parser::parse_symbols() {
   LIEF_DEBUG("Parsing symbols");
-  uint32_t symbol_table_offset = binary_->header().pointerto_symbol_table();
-  uint32_t nb_symbols          = binary_->header().numberof_symbols();
-  uint32_t current_offset      = symbol_table_offset;
+  const Header& hdr = binary_->header();
+  if (hdr.pointerto_symbol_table() == 0 || hdr.numberof_symbols() == 0) {
+    return ok();
+  }
 
-  uint32_t idx = 0;
-  while (idx < nb_symbols) {
-
-
-    auto res_raw_symbol = stream_->peek<details::pe_symbol>(current_offset);
-    if (!res_raw_symbol) {
+  const uint32_t nb_symbols = hdr.numberof_symbols();
+  const uint32_t symtab_off = hdr.pointerto_symbol_table();
+  stream_->setpos(symtab_off);
+  for (size_t idx = 0; idx < nb_symbols;) {
+    std::unique_ptr<Symbol> sym = Symbol::parse(*this, *stream_, &idx);
+    if (sym == nullptr) {
+      LIEF_ERR("Failed to parse COFF symbol #{}", idx);
       break;
     }
-    auto raw_symbol = *res_raw_symbol;
-    Symbol symbol = raw_symbol;
-
-    const auto stream_max_size = stream_->size();
-    if ((raw_symbol.Name.Name.Zeroes & 0xffff) != 0) {
-      std::string shortname{raw_symbol.Name.ShortName, sizeof(raw_symbol.Name.ShortName)};
-      symbol.name_ = shortname.c_str();
-    } else {
-      uint64_t offset_name =
-        binary_->header().pointerto_symbol_table() +
-        binary_->header().numberof_symbols() * details::sizes::SYMBOL_16 +
-        raw_symbol.Name.Name.Offset;
-      auto res_string = stream_->peek_string_at(offset_name, stream_max_size - offset_name);
-      if (res_string) {
-        symbol.name_ = std::move(*res_string);
-      }
-    }
-
-    if (symbol.section_number() > 0 &&
-        static_cast<uint32_t>(symbol.section_number()) <= binary_->sections_.size()) {
-      symbol.section_ = binary_->sections_[symbol.section_number()-1].get();
-    }
-
-    for (uint32_t i = 0; i < raw_symbol.NumberOfAuxSymbols; ++i) {
-      // Auxiliary Format 1: Function Definitions
-      // * Storage class : EXTERNAL
-      // * Type          : 0x20 (Function)
-      // * Section Number: > 0
-      if (symbol.storage_class() == SYMBOL_STORAGE_CLASS::IMAGE_SYM_CLASS_EXTERNAL &&
-          symbol.type() == 0x20 && symbol.section_number() > 0) {
-        LIEF_DEBUG("Format1");
-      }
-
-
-      // Auxiliary Format 2: .bf and .ef Symbols
-      // * Storage class : FUNCTION
-      if (symbol.storage_class() == SYMBOL_STORAGE_CLASS::IMAGE_SYM_CLASS_FUNCTION) {
-        LIEF_DEBUG("Function");
-      }
-
-      // Auxiliary Format 3: Weak Externals
-      // * Storage class : EXTERNAL
-      // * Section Number: UNDEF
-      // * Value         : 0
-      if (symbol.storage_class() == SYMBOL_STORAGE_CLASS::IMAGE_SYM_CLASS_EXTERNAL &&
-          symbol.value() == 0 && static_cast<SYMBOL_SECTION_NUMBER>(symbol.section_number()) == SYMBOL_SECTION_NUMBER::IMAGE_SYM_UNDEFINED) {
-        LIEF_DEBUG("Format 3");
-      }
-
-      // Auxiliary Format 4: Files
-      // * Storage class     : FILE
-      // * Name **SHOULD** be: .file
-      if (symbol.storage_class() == SYMBOL_STORAGE_CLASS::IMAGE_SYM_CLASS_FILE) {
-        LIEF_DEBUG("Format 4");
-        //std::cout << reinterpret_cast<char*>(
-      }
-
-      // Auxiliary Format 5: Section Definitions
-      // * Storage class     : STATIC
-      if (symbol.storage_class() == SYMBOL_STORAGE_CLASS::IMAGE_SYM_CLASS_STATIC) {
-        LIEF_DEBUG("Format 5");
-      }
-
-      current_offset += details::sizes::SYMBOL_16;
-    }
-
-    current_offset += details::sizes::SYMBOL_16;
-    idx += 1 + raw_symbol.NumberOfAuxSymbols;
-    binary_->symbols_.push_back(std::move(symbol));
+    binary_->symbols_.push_back(std::move(sym));
   }
 
   return ok();
 }
 
+span<uint8_t> get_payload(Binary& bin, const details::pe_debug& dbg, Section*& sec) {
+  if (dbg.SizeOfData == 0) {
+    return {};
+  }
+
+  LIEF_DEBUG("payload.rva:    0x{:06x}", dbg.AddressOfRawData);
+  LIEF_DEBUG("payload.offset: 0x{:06x}", dbg.PointerToRawData);
+  LIEF_DEBUG("payload.size:   0x{:06x}", dbg.SizeOfData);
+
+  sec = bin.section_from_offset(dbg.PointerToRawData);
+  if (sec == nullptr) {
+    sec = bin.section_from_rva(dbg.AddressOfRawData);
+  }
+  // Can be in the "overlay" area
+  if (sec == nullptr && !bin.overlay().empty() &&
+      bin.overlay_offset() <= dbg.PointerToRawData)
+  {
+    if (dbg.PointerToRawData == 0) {
+      return {};
+    }
+    span<uint8_t> overlay = bin.overlay();
+    int32_t delta = (int32_t)dbg.PointerToRawData - (int32_t)bin.overlay_offset();
+    if (delta < 0 || (uint32_t)delta >= overlay.size()) {
+      return {};
+    }
+
+    if (check_overflow((uint32_t)delta, dbg.SizeOfData, overlay.size())) {
+      return {};
+    }
+
+    return overlay.subspan((uint32_t)delta, dbg.SizeOfData);
+  }
+
+  if (sec == nullptr) {
+    LIEF_WARN("Can't find section associated with debug payload at offset: "
+              "0x{:08x}, VA: 0x{:08x}", dbg.PointerToRawData, dbg.AddressOfRawData);
+    return {};
+  }
+
+  return Debug::get_payload(*sec, dbg);
+}
 
 ok_error_t Parser::parse_debug() {
   LIEF_DEBUG("Parsing debug directory");
 
-  DataDirectory* dir = binary_->data_directory(DataDirectory::TYPES::DEBUG_DIR);
+  DataDirectory* dir = binary_->debug_dir();
   if (dir == nullptr) {
     return make_error_code(lief_errors::not_found);
+  }
+
+  if (dir->RVA() == 0 || dir->size() == 0) {
+    return ok();
   }
 
   const uint32_t debug_rva = dir->RVA();
@@ -630,18 +518,24 @@ ok_error_t Parser::parse_debug() {
   const uint32_t debug_sz  = dir->size();
   const uint32_t debug_end = debug_off + debug_sz;
 
+  if (debug_sz == 0) {
+    return ok();
+  }
+
   stream_->setpos(debug_off);
   while (stream_->pos() < debug_end) {
     auto res = stream_->read<details::pe_debug>();
     if (!res) {
       break;
     }
+    Section* sec = nullptr;
+    span<uint8_t> payload = get_payload(*binary_, *res, sec);
     const auto type = static_cast<Debug::TYPES>(res->Type);
     LIEF_DEBUG("Type is: {}", to_string(type));
     switch (type) {
       case Debug::TYPES::CODEVIEW:
         {
-          if (std::unique_ptr<Debug> cv = parse_code_view(*res)) {
+          if (std::unique_ptr<Debug> cv = parse_code_view(*res, sec, payload)) {
             binary_->debug_.push_back(std::move(cv));
           } else {
             LIEF_WARN("Can't parse PE CodeView");
@@ -651,7 +545,7 @@ ok_error_t Parser::parse_debug() {
 
       case Debug::TYPES::POGO:
         {
-          if (std::unique_ptr<Debug> pogo = parse_pogo(*res)) {
+          if (std::unique_ptr<Debug> pogo = parse_pogo(*res, sec, payload)) {
             binary_->debug_.push_back(std::move(pogo));
           } else {
             LIEF_WARN("Can't parse PE POGO");
@@ -661,7 +555,7 @@ ok_error_t Parser::parse_debug() {
 
       case Debug::TYPES::REPRO:
         {
-          if (std::unique_ptr<Debug> repro = parse_repro(*res)) {
+          if (std::unique_ptr<Debug> repro = parse_repro(*res, sec, payload)) {
             binary_->debug_.push_back(std::move(repro));
           } else {
             LIEF_WARN("Can't parse PE Repro");
@@ -669,9 +563,49 @@ ok_error_t Parser::parse_debug() {
           break;
         }
 
+      case Debug::TYPES::PDBCHECKSUM:
+        {
+          if (std::unique_ptr<Debug> checksum = PDBChecksum::parse(*res, sec, payload)) {
+            binary_->debug_.push_back(std::move(checksum));
+            break;
+          }
+          LIEF_WARN("Failed to parse PE PDB checksum");
+          break;
+        }
+
+      case Debug::TYPES::VC_FEATURE:
+        {
+          if (std::unique_ptr<Debug> vcfeature = VCFeature::parse(*res, sec, payload)) {
+            binary_->debug_.push_back(std::move(vcfeature));
+            break;
+          }
+          LIEF_WARN("Failed to parse PE VC Feature");
+          break;
+        }
+
+      case Debug::TYPES::EX_DLLCHARACTERISTICS:
+        {
+          if (std::unique_ptr<Debug> exdll = ExDllCharacteristics::parse(*res, sec, payload)) {
+            binary_->debug_.push_back(std::move(exdll));
+            break;
+          }
+          LIEF_WARN("Failed to parse PE EX_DLLCHARACTERISTICS");
+          break;
+        }
+
+      case Debug::TYPES::FPO:
+        {
+          if (std::unique_ptr<Debug> fpo = FPO::parse(*res, sec, payload)) {
+            binary_->debug_.push_back(std::move(fpo));
+            break;
+          }
+          LIEF_WARN("Failed to parse PE FPO");
+          break;
+        }
+
       default:
         {
-          binary_->debug_.push_back(std::make_unique<Debug>(*res));
+          binary_->debug_.push_back(std::make_unique<Debug>(*res, sec));
           break;
         }
     }
@@ -679,33 +613,170 @@ ok_error_t Parser::parse_debug() {
   return ok();
 }
 
-std::unique_ptr<Debug> Parser::parse_code_view(const details::pe_debug& debug_info) {
-  LIEF_DEBUG("Parsing Debug Code View");
-  const uint32_t debug_off = debug_info.PointerToRawData;
 
-  ScopedStream sscoped(*stream_, debug_off);
+ok_error_t Parser::parse_exceptions() {
+  if (!config_.parse_exceptions) {
+    return ok();
+  }
 
-  auto res_sig = sscoped->peek<uint32_t>(debug_off);
+  const DataDirectory* exception_dir = binary_->exceptions_dir();
+  if (exception_dir->RVA() == 0 || exception_dir->size() == 0) {
+    return ok();
+  }
+
+  LIEF_DEBUG("Parsing exceptions [0x{:06x}, 0x{:06x}] ({} bytes)",
+             exception_dir->RVA(), exception_dir->RVA() + exception_dir->size(),
+             exception_dir->size());
+
+  span<const uint8_t> pdata = exception_dir->content();
+  if (pdata.empty()) {
+    LIEF_DEBUG("{}:{}", __FUNCTION__, __LINE__);
+    return make_error_code(lief_errors::read_error);
+  }
+
+  LIEF_DEBUG("Span size: {}", pdata.size());
+  LIEF_DEBUG("Section size: {}", exception_dir->section()->sizeof_raw_data());
+
+  std::unique_ptr<SpanStream> stream = exception_dir->stream();
+  if (stream == nullptr) {
+    LIEF_DEBUG("{}:{}", __FUNCTION__, __LINE__);
+    return make_error_code(lief_errors::corrupted);
+  }
+
+  [[maybe_unused]] size_t idx = 0;
+  while (*stream) {
+    auto ptr = ExceptionInfo::parse(*this, *stream);
+    if (ptr == nullptr) {
+      LIEF_INFO("Failed to parse exception info index: {}", idx);
+      break;
+    }
+    binary_->exceptions_.push_back(std::move(ptr));
+    ++idx;
+  }
+
+  for (auto& [f, rva] : unresolved_chains_) {
+    if (auto* func = f->as<RuntimeFunctionX64>()) {
+      auto it = memoize_exception_info_.find(rva);
+      if (it == memoize_exception_info_.end()) {
+        LIEF_DEBUG("RuntimeFunctionX64 0x{:06x}: Can't find linked chained info at 0x{:06x}",
+                  func->rva_start(), rva);
+        continue;
+      }
+      assert(func->unwind_info() != nullptr);
+      func->unwind_info()->chained = it->second->as<RuntimeFunctionX64>();
+    }
+  }
+  unresolved_chains_.clear();
+
+  if (!parse_chpe_exceptions()) {
+    LIEF_INFO("CHPE exceptions parsing finished with errors");
+  }
+
+  return ok();
+}
+
+
+ok_error_t Parser::parse_chpe_exceptions() {
+  const LoadConfiguration* lconf = binary_->load_configuration();
+  if (lconf == nullptr) {
+    return ok();
+  }
+
+  const CHPEMetadata* metadata = lconf->chpe_metadata();
+
+  if (metadata == nullptr) {
+    return ok();
+  }
+
+  const auto* arm64 = metadata->as<CHPEMetadataARM64>();
+
+  if (arm64 == nullptr) {
+    return ok();
+  }
+
+  if (arm64->extra_rfe_table() == 0 || arm64->extra_rfe_table_size() == 0) {
+    return ok();
+  }
+
+  std::unique_ptr<SpanStream> stream =
+    stream_from_rva(arm64->extra_rfe_table(), arm64->extra_rfe_table_size());
+
+  if (stream == nullptr) {
+    return make_error_code(lief_errors::read_error);
+  }
+  Header::MACHINE_TYPES target_arch = bin().header().machine();
+  switch (target_arch) {
+    // ARM64EC
+    case Header::MACHINE_TYPES::AMD64:
+      target_arch = Header::MACHINE_TYPES::ARM64;
+      break;
+
+    // ARM64X: CHPE is used to refer ARM64EC binary (which uses a AMD64 machine type)
+    case Header::MACHINE_TYPES::ARM64:
+      target_arch = Header::MACHINE_TYPES::AMD64;
+      break;
+
+    default:
+      break;
+  }
+
+  [[maybe_unused]] size_t idx = 0;
+  while (*stream) {
+    auto ptr = ExceptionInfo::parse(*this, *stream, target_arch);
+    if (ptr == nullptr) {
+      LIEF_INFO("Failed to parse exception info index: {}", idx);
+      break;
+    }
+    binary_->exceptions_.push_back(std::move(ptr));
+    ++idx;
+  }
+
+  return ok();
+}
+
+std::unique_ptr<Debug>
+  Parser::parse_code_view(const details::pe_debug& debug_info, Section* sec,
+                          span<uint8_t> payload)
+{
+  LIEF_DEBUG("Parsing Debug Code View (payload: {} bytes)", payload.size());
+  SpanStream stream(payload);
+
+  auto res_sig = stream.peek<uint32_t>();
   if (!res_sig) {
     return nullptr;
   }
 
   const auto signature = static_cast<CodeView::SIGNATURES>(*res_sig);
-  auto default_value = std::make_unique<CodeView>(debug_info, signature);
+  auto default_value = std::make_unique<CodeView>(debug_info, signature, sec);
 
   switch (signature) {
     case CodeView::SIGNATURES::PDB_70:
       {
-        const auto pdb_s = sscoped->read<details::pe_pdb_70>();
+        const auto pdb_s = stream.read<details::pe_pdb_70>();
         if (!pdb_s) {
           return default_value;
         }
 
-        auto cv_pdb70 = std::make_unique<CodeViewPDB>(debug_info, *pdb_s);
-        if (auto fname = stream_->read_string()) {
+        auto cv_pdb70 = std::make_unique<CodeViewPDB>(debug_info, *pdb_s, sec);
+        if (auto fname = stream.read_string()) {
           cv_pdb70->filename(std::move(*fname));
         }
         return cv_pdb70;
+      }
+
+
+    case CodeView::SIGNATURES::PDB_20:
+      {
+        const auto pdb_s = stream.read<details::pe_pdb_20>();
+        if (!pdb_s) {
+          return default_value;
+        }
+
+        auto cv_pdb20 = std::make_unique<CodeViewPDB>(debug_info, *pdb_s, sec);
+        if (auto fname = stream.read_string()) {
+          cv_pdb20->filename(std::move(*fname));
+        }
+        return cv_pdb20;
       }
 
     default:
@@ -717,39 +788,38 @@ std::unique_ptr<Debug> Parser::parse_code_view(const details::pe_debug& debug_in
   return default_value;
 }
 
-std::unique_ptr<Debug> Parser::parse_pogo(const details::pe_debug& debug_info) {
+std::unique_ptr<Debug>
+  Parser::parse_pogo(const details::pe_debug& debug_info, Section* sec,
+                     span<uint8_t> payload)
+{
   LIEF_DEBUG("Parsing POGO");
-  const uint32_t debug_size = debug_info.SizeOfData;
-  const uint32_t debug_off  = debug_info.PointerToRawData;
-  const uint32_t debug_end  = debug_off + debug_size;
+  SpanStream stream(payload);
 
-  ScopedStream sscoped(*stream_, debug_off);
-
-  auto res_sig = sscoped->read<uint32_t>();
+  auto res_sig = stream.read<uint32_t>();
   if (!res_sig) {
     return nullptr;
   }
 
   const auto signature = static_cast<Pogo::SIGNATURES>(*res_sig);
-  auto pogo = std::make_unique<Pogo>(debug_info, signature);
+  auto pogo = std::make_unique<Pogo>(debug_info, signature, sec);
 
   switch (signature) {
     case Pogo::SIGNATURES::ZERO: // zero-signature may contain valid entries
     case Pogo::SIGNATURES::LCTG:
       {
-        while (sscoped->pos() < debug_end) {
-          auto raw = sscoped->read<details::pe_pogo>();
+        while (stream) {
+          auto raw = stream.read<details::pe_pogo>();
           if (!raw) {
             break;
           }
 
           PogoEntry entry{raw->start_rva, raw->size};
-          if (auto name = sscoped->read_string()) {
+          if (auto name = stream.read_string()) {
             entry.name(std::move(*name));
           }
 
           pogo->add(std::move(entry));
-          sscoped->align(4);
+          stream.align(4);
         }
 
         return pogo;
@@ -764,26 +834,29 @@ std::unique_ptr<Debug> Parser::parse_pogo(const details::pe_debug& debug_info) {
   return pogo;
 }
 
-std::unique_ptr<Debug> Parser::parse_repro(const details::pe_debug& debug_info) {
+std::unique_ptr<Debug>
+  Parser::parse_repro(const details::pe_debug& debug_info, Section* sec,
+                      span<uint8_t> payload)
+{
   LIEF_DEBUG("Parsing Debug Repro");
-  const uint32_t debug_off  = debug_info.PointerToRawData;
+  if (payload.empty()) {
+    return std::make_unique<Repro>(debug_info,  sec);
+  }
 
-  /* const uint32_t debug_size = debug_info.SizeOfData; */
-  /* const uint32_t debug_end  = debug_off + debug_size; */
-  ScopedStream sscoped(*stream_, debug_off);
+  SpanStream stream(payload);
+  auto res_size = stream.read<uint32_t>();
 
-  auto res_size = sscoped->read<uint32_t>();
   if (!res_size) {
     return nullptr;
   }
   LIEF_DEBUG("Size: 0x{:x}", *res_size);
 
   std::vector<uint8_t> hash;
-  if (!sscoped->read_data(hash, *res_size)) {
+  if (!stream.read_data(hash, *res_size)) {
     LIEF_INFO("Can't read debug reproducible build hash");
   }
 
-  return std::make_unique<Repro>(debug_info, std::move(hash));
+  return std::make_unique<Repro>(debug_info, std::move(hash), sec);
 }
 
 
@@ -829,7 +902,7 @@ ok_error_t Parser::parse_exports() {
     uint32_t start;
     uint32_t end;
   };
-  const DataDirectory* export_dir = binary_->data_directory(DataDirectory::TYPES::EXPORT_TABLE);
+  const DataDirectory* export_dir = binary_->export_dir();
 
   if (export_dir == nullptr) {
     return make_error_code(lief_errors::not_found);
@@ -841,16 +914,15 @@ ok_error_t Parser::parse_exports() {
   range_t range = {exports_rva, exports_rva + exports_size};
 
   // First Export directory
-  details::pe_export_directory_table export_dir_tbl;
-  if (auto res = stream_->peek<details::pe_export_directory_table>(exports_offset)) {
-    export_dir_tbl = *res;
-  } else {
+  auto export_dir_tbl = stream_->peek<details::pe_export_directory_table>(exports_offset);
+
+  if (!export_dir_tbl) {
     LIEF_WARN("Can't read the export table at 0x{:x}", exports_offset);
     return make_error_code(lief_errors::read_error);
   }
 
-  auto export_object = std::make_unique<Export>(export_dir_tbl);
-  uint32_t name_offset = binary_->rva_to_offset(export_dir_tbl.NameRVA);
+  auto export_object = std::make_unique<Export>(*export_dir_tbl);
+  uint32_t name_offset = binary_->rva_to_offset(export_dir_tbl->NameRVA);
   if (auto res_name = stream_->peek_string_at(name_offset, Parser::MAX_DLL_NAME_SIZE)) {
     std::string name = *res_name;
     if (is_valid_dll_name(name)) {
@@ -866,14 +938,14 @@ ok_error_t Parser::parse_exports() {
   } else {
     LIEF_INFO("DLL name seems corrupted");
   }
-  const uint32_t nbof_addr_entries = export_dir_tbl.AddressTableEntries;
-  const uint32_t nbof_name_ptr     = export_dir_tbl.NumberOfNamePointers;
+  const uint32_t nbof_addr_entries = export_dir_tbl->AddressTableEntries;
+  const uint32_t nbof_name_ptr     = export_dir_tbl->NumberOfNamePointers;
 
-  const uint16_t ordinal_base = export_dir_tbl.OrdinalBase;
+  const uint16_t ordinal_base = export_dir_tbl->OrdinalBase;
 
-  const uint32_t address_table_offset = binary_->rva_to_offset(export_dir_tbl.ExportAddressTableRVA);
-  const uint32_t ordinal_table_offset = binary_->rva_to_offset(export_dir_tbl.OrdinalTableRVA);
-  const uint32_t name_table_offset    = binary_->rva_to_offset(export_dir_tbl.NamePointerRVA);
+  const uint32_t address_table_offset = binary_->rva_to_offset(export_dir_tbl->ExportAddressTableRVA);
+  const uint32_t ordinal_table_offset = binary_->rva_to_offset(export_dir_tbl->OrdinalTableRVA);
+  const uint32_t name_table_offset    = binary_->rva_to_offset(export_dir_tbl->NamePointerRVA);
 
   LIEF_DEBUG("Number of entries:   {}", nbof_addr_entries);
   LIEF_DEBUG("Number of names ptr: {}", nbof_name_ptr);
@@ -956,6 +1028,7 @@ ok_error_t Parser::parse_exports() {
         corrupted_entries.insert(entry.ordinal_);
         continue;
       }
+      LIEF_DEBUG("names[{:03d}]: 0x{:06x}", i, name_offset);
       if (auto res = stream_->peek_string_at(name_offset)) {
         std::string name = *res;
         if (name.empty() || name.size() > MAX_EXPORT_NAME_SIZE) {
@@ -979,15 +1052,10 @@ ok_error_t Parser::parse_exports() {
 
       // Split on '.'
       const size_t dot_pos = fwd_str.find('.');
-      bool is_valid_fwd = false;
       if (dot_pos != std::string::npos) {
         library  = fwd_str.substr(0, dot_pos);
         function = fwd_str.substr(dot_pos + 1);
-        is_valid_fwd = true;
-      }
-      entry.set_forward_info(std::move(library), std::move(function));
 
-      if (is_valid_fwd) {
         if (auto name_rva = name_table_value(*stream_, name_table_offset, i)) {
           uint32_t name_offset = binary_->rva_to_offset(*name_rva);
           if (auto name = stream_->peek_string_at(name_offset)) {
@@ -999,13 +1067,17 @@ ok_error_t Parser::parse_exports() {
           }
         }
       }
+      entry.set_forward_info(std::move(library), std::move(function));
     }
   }
 
   for (ExportEntry& entry : export_entries) {
-    if (corrupted_entries.count(entry.ordinal()) == 0) {
-      export_object->entries_.push_back(std::move(entry));
+    if (corrupted_entries.count(entry.ordinal()) != 0) {
+      continue;
     }
+    export_object->max_ordinal_ =
+      std::max<uint32_t>(export_object->max_ordinal_, entry.ordinal());
+    export_object->entries_.push_back(std::move(entry));
   }
 
   binary_->export_ = std::move(export_object);
@@ -1018,7 +1090,7 @@ ok_error_t Parser::parse_signature() {
 
   /*** /!\ In this data directory, RVA is used as an **OFFSET** /!\ ****/
   /*********************************************************************/
-  const DataDirectory* cert_dir = binary_->data_directory(DataDirectory::TYPES::CERTIFICATE_TABLE);
+  const DataDirectory* cert_dir = binary_->cert_dir();
   if (cert_dir == nullptr) {
     return make_error_code(lief_errors::not_found);
   }
@@ -1106,6 +1178,8 @@ ok_error_t Parser::parse_overlay() {
   return ok();
 }
 
+
+
 std::unique_ptr<Binary> Parser::parse(const std::string& filename,
                                       const ParserConfig& conf) {
   if (!is_pe(filename)) {
@@ -1124,6 +1198,12 @@ std::unique_ptr<Binary> Parser::parse(std::vector<uint8_t> data,
   Parser parser{std::move(data)};
   parser.init(conf);
   return std::move(parser.binary_);
+}
+
+std::unique_ptr<Binary> Parser::parse(const uint8_t* buffer, size_t size,
+                                      const ParserConfig& conf) {
+  auto strm = std::make_unique<SpanStream>(buffer, size);
+  return parse(std::move(strm), conf);
 }
 
 std::unique_ptr<Binary> Parser::parse(std::unique_ptr<BinaryStream> stream,
@@ -1166,6 +1246,145 @@ bool Parser::is_valid_dll_name(const std::string& name) {
   }
 
   return true;
+}
+
+void Parser::memoize(ExceptionInfo& info) {
+  memoize_exception_info_[info.rva_start()] = &info;
+}
+
+
+void Parser::memoize(COFFString str) {
+  const uint32_t offset = str.offset();
+  memoize_coff_str_[offset] = binary_->strings_table_.size();
+  binary_->strings_table_.push_back(std::move(str));
+}
+
+
+COFFString* Parser::find_coff_string(uint32_t offset) const {
+  auto it = memoize_coff_str_.find(offset);
+  if (it == memoize_coff_str_.end()) {
+    return nullptr;
+  }
+  return &binary_->strings_table_[it->second];
+}
+
+std::unique_ptr<SpanStream> Parser::stream_from_rva(uint32_t rva, size_t size) {
+  Section* sec = bin().section_from_rva(rva);
+  if (sec == nullptr) {
+    return std::make_unique<SpanStream>(nullptr, 0);
+  }
+
+  span<const uint8_t> content = sec->content();
+  if (content.empty()) {
+    return std::make_unique<SpanStream>(content);
+  }
+
+  int64_t delta = (int64_t)rva - (int64_t)sec->virtual_address();
+  if (delta < 0) {
+    return std::make_unique<SpanStream>(nullptr, 0);
+  }
+
+  if ((uint64_t)delta >= content.size() || ((uint64_t)delta + size) > content.size()) {
+    return std::make_unique<SpanStream>(nullptr, 0);
+  }
+
+  if (check_overflow((uint64_t)delta, size, content.size())) {
+    return std::make_unique<SpanStream>(nullptr, 0);
+  }
+
+  return std::make_unique<SpanStream>(size > 0 ? content.subspan(delta, size) :
+                                                 content.subspan(delta));
+}
+
+void Parser::record_relocation(uint32_t rva, span<const uint8_t> data) {
+  uint64_t value = 0;
+  switch (data.size()) {
+    case sizeof(uint8_t):
+      value = *reinterpret_cast<const uint8_t*>(data.data());
+      break;
+
+    case sizeof(uint16_t):
+      value = *reinterpret_cast<const uint16_t*>(data.data());
+      break;
+
+    case sizeof(uint32_t):
+      value = *reinterpret_cast<const uint32_t*>(data.data());
+      break;
+
+    case sizeof(uint64_t):
+      value = *reinterpret_cast<const uint64_t*>(data.data());
+      break;
+
+    default:
+      LIEF_DEBUG("Error: {}:{}: unsupported size ({})", __FUNCTION__,
+                 __LINE__, data.size());
+      return;
+  }
+
+  uint32_t offset = bin().rva_to_offset(rva);
+  LIEF_DEBUG("ARM64X[0x{:08x}]: 0x{:08x} ({} bytes)", rva, value, data.size());
+  dyn_hdr_relocs_.insert({offset, {data.size(), value}});
+}
+
+ok_error_t Parser::record_delta_relocation(uint32_t rva, int64_t delta, size_t size) {
+  uint32_t offset = bin().rva_to_offset(rva);
+
+  switch (size) {
+    case sizeof(uint8_t):
+      {
+        auto value = stream_->peek<uint8_t>(offset);
+        if (!value) {
+          return make_error_code(value.error());
+        }
+        LIEF_DEBUG("ARM64X[0x{:08x}]: 0x{:08x} (1 bytes)", rva,
+                   (uint64_t)((int64_t)*value + delta));
+        dyn_hdr_relocs_.insert({offset, {size, (uint64_t)((int64_t)*value + delta)}});
+        return ok();
+      }
+
+    case sizeof(uint16_t):
+      {
+        auto value = stream_->peek<uint16_t>(offset);
+        if (!value) {
+          return make_error_code(value.error());
+        }
+        LIEF_DEBUG("ARM64X[0x{:08x}]: 0x{:08x} (2 bytes)", rva,
+                   (uint64_t)((int64_t)*value + delta));
+        dyn_hdr_relocs_.insert({offset, {size, (uint64_t)((int64_t)*value + delta)}});
+        return ok();
+      }
+
+    case sizeof(uint32_t):
+      {
+        auto value = stream_->peek<uint32_t>(offset);
+        if (!value) {
+          return make_error_code(value.error());
+        }
+        LIEF_DEBUG("ARM64X[0x{:08x}]: 0x{:08x} (4 bytes)", rva,
+                   (uint64_t)((int64_t)*value + delta));
+        dyn_hdr_relocs_.insert({offset, {size, (uint64_t)((int64_t)*value + delta)}});
+        return ok();
+      }
+
+    case sizeof(uint64_t):
+      {
+        auto value = stream_->peek<uint64_t>(offset);
+        if (!value) {
+          return make_error_code(value.error());
+        }
+        LIEF_DEBUG("ARM64X[0x{:08x}]: 0x{:08x} (8 bytes)", rva,
+                   (uint64_t)((int64_t)*value + delta));
+        dyn_hdr_relocs_.insert({offset, {size, (uint64_t)((int64_t)*value + delta)}});
+        return ok();
+      }
+
+    default:
+      LIEF_DEBUG("Error: {}:{}: unsupported size ({})", __FUNCTION__,
+                 __LINE__, size);
+      return make_error_code(lief_errors::not_supported);
+  }
+
+  return make_error_code(lief_errors::not_supported);
 }
 
 }

@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
   Pe_OptionalHeader_t optional_header = pe_binary->optional_header;
   fprintf(stdout, "Optional Header\n");
   fprintf(stdout, "===============\n");
-  fprintf(stdout, "Magic: %s\n", PE_TYPES_to_string(optional_header.magic));
+  fprintf(stdout, "Magic: 0x%x\n",                          optional_header.magic);
   fprintf(stdout, "Major linker version: 0x%x\n",           optional_header.major_linker_version);
   fprintf(stdout, "Minor linker version: 0x%x\n",           optional_header.minor_linker_version);
   fprintf(stdout, "Size ofcode: 0x%x\n",                    optional_header.sizeof_code);

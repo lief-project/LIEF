@@ -109,6 +109,83 @@ Symbol
 
 ----------
 
+AuxiliarySymbol
+***************
+
+.. lief-inheritance:: lief._lief.PE.AuxiliarySymbol
+  :top-classes: lief._lief.PE.AuxiliarySymbol
+  :parts: 2
+
+.. autoclass:: lief.PE.AuxiliarySymbol
+
+----------
+
+AuxiliaryCLRToken
+*****************
+
+.. lief-inheritance:: lief._lief.PE.AuxiliaryCLRToken
+  :top-classes: lief._lief.PE.AuxiliarySymbol
+  :parts: 2
+
+.. autoclass:: lief.PE.AuxiliarySymbol
+
+----------
+
+AuxiliaryFunctionDefinition
+***************************
+
+.. lief-inheritance:: lief._lief.PE.AuxiliaryFunctionDefinition
+  :top-classes: lief._lief.PE.AuxiliarySymbol
+  :parts: 2
+
+.. autoclass:: lief.PE.AuxiliaryFunctionDefinition
+
+----------
+
+AuxiliaryWeakExternal
+*********************
+
+.. lief-inheritance:: lief._lief.PE.AuxiliaryWeakExternal
+  :top-classes: lief._lief.PE.AuxiliarySymbol
+  :parts: 2
+
+.. autoclass:: lief.PE.AuxiliaryWeakExternal
+
+----------
+
+AuxiliarybfAndefSymbol
+**********************
+
+.. lief-inheritance:: lief._lief.PE.AuxiliarybfAndefSymbol
+  :top-classes: lief._lief.PE.AuxiliarySymbol
+  :parts: 2
+
+.. autoclass:: lief.PE.AuxiliarybfAndefSymbol
+
+----------
+
+AuxiliarySectionDefinition
+**************************
+
+.. lief-inheritance:: lief._lief.PE.AuxiliarySectionDefinition
+  :top-classes: lief._lief.PE.AuxiliarySymbol
+  :parts: 2
+
+.. autoclass:: lief.PE.AuxiliarySectionDefinition
+
+----------
+
+AuxiliaryFile
+*************
+
+.. lief-inheritance:: lief._lief.PE.AuxiliaryFile
+  :top-classes: lief._lief.PE.AuxiliarySymbol
+  :parts: 2
+
+.. autoclass:: lief.PE.AuxiliaryFile
+
+----------
+
 Relocation
 **********
 
@@ -416,14 +493,33 @@ Resource Icon
 Resource Dialog
 ***************
 
+.. lief-inheritance:: lief._lief.PE.ResourceDialog
+  :top-classes: lief._lief.PE.ResourceDialog
+  :parts: 2
+
 .. autoclass:: lief.PE.ResourceDialog
 
 ----------
 
-Resource Dialog Item
-*********************
+Resource Dialog -- Regular
+**************************
 
-.. autoclass:: lief.PE.ResourceDialogItem
+.. lief-inheritance:: lief._lief.PE.ResourceDialogRegular
+  :top-classes: lief._lief.PE.ResourceDialog
+  :parts: 2
+
+.. autoclass:: lief.PE.ResourceDialogRegular
+
+----------
+
+Resource Dialog -- Extended
+***************************
+
+.. lief-inheritance:: lief._lief.PE.ResourceDialogExtended
+  :top-classes: lief._lief.PE.ResourceDialog
+  :parts: 2
+
+.. autoclass:: lief.PE.ResourceDialogExtended
 
 ----------
 
@@ -434,10 +530,10 @@ Resource Version
 
 ----------
 
-Resource Fixed File Info
-************************
+Resource Var File Info
+**********************
 
-.. autoclass:: lief.PE.ResourceFixedFileInfo
+.. autoclass:: lief.PE.ResourceVarFileInfo
 
 ----------
 
@@ -448,17 +544,10 @@ Resource Var File Info
 
 ----------
 
-Resource String File Info
-*************************
+Resource Var
+************
 
-.. autoclass:: lief.PE.ResourceStringFileInfo
-
-----------
-
-Lang code item
-**************
-
-.. autoclass:: lief.PE.LangCodeItem
+.. autoclass:: lief.PE.ResourceVar
 
 ----------
 
@@ -466,6 +555,13 @@ Resource String Table
 *********************
 
 .. autoclass:: lief.PE.ResourceStringTable
+
+----------
+
+Resource Accelerator
+********************
+
+.. autoclass:: lief.PE.ResourceAccelerator
 
 ----------
 
@@ -553,82 +649,370 @@ Repro
 
 ----------
 
+PDBChecksum
+***********
+
+.. lief-inheritance:: lief._lief.PE.PDBChecksum
+  :top-classes: lief._lief.PE.Debug
+  :parts: 2
+
+.. autoclass:: lief.PE.PDBChecksum
+
+----------
+
+
+VCFeature
+*********
+
+.. lief-inheritance:: lief._lief.PE.VCFeature
+  :top-classes: lief._lief.PE.Debug
+  :parts: 2
+
+.. autoclass:: lief.PE.VCFeature
+
+----------
+
+ExDllCharacteristics
+********************
+
+.. lief-inheritance:: lief._lief.PE.ExDllCharacteristics
+  :top-classes: lief._lief.PE.Debug
+  :parts: 2
+
+.. autoclass:: lief.PE.ExDllCharacteristics
+
+----------
+
+Frame Pointer Omission (FPO)
+****************************
+
+.. lief-inheritance:: lief._lief.PE.FPO
+  :top-classes: lief._lief.PE.Debug
+  :parts: 2
+
+.. autoclass:: lief.PE.FPO
+
+----------
+
+COFF String
+***********
+
+.. autoclass:: lief.PE.COFFString
+
+----------
+
+Exception Info
+**************
+
+.. lief-inheritance:: lief._lief.PE.ExceptionInfo
+  :top-classes: lief._lief.PE.ExceptionInfo
+  :parts: 2
+
+.. autoclass:: lief.PE.ExceptionInfo
+
+----------
+
+RuntimeFunctionX64
+******************
+
+.. lief-inheritance:: lief._lief.PE.RuntimeFunctionX64
+  :top-classes: lief._lief.PE.ExceptionInfo
+  :parts: 2
+
+.. autoclass:: lief.PE.RuntimeFunctionX64
+
+----------
+
+unwind_x64 - Code
+*****************
+
+.. lief-inheritance:: lief._lief.PE.unwind_x64.Code
+  :top-classes: lief._lief.PE.unwind_x64.Code
+  :parts: 2
+
+.. autoclass:: lief.PE.unwind_x64.Code
+
+----------
+
+unwind_x64 - Alloc
+******************
+
+.. lief-inheritance:: lief._lief.PE.unwind_x64.Alloc
+  :top-classes: lief._lief.PE.unwind_x64.Code
+  :parts: 2
+
+.. autoclass:: lief.PE.unwind_x64.Alloc
+
+----------
+
+unwind_x64 - PushNonVol
+***********************
+
+.. lief-inheritance:: lief._lief.PE.unwind_x64.PushNonVol
+  :top-classes: lief._lief.PE.unwind_x64.Code
+  :parts: 2
+
+.. autoclass:: lief.PE.unwind_x64.PushNonVol
+
+----------
+
+unwind_x64 - PushMachFrame
+**************************
+
+.. lief-inheritance:: lief._lief.PE.unwind_x64.PushMachFrame
+  :top-classes: lief._lief.PE.unwind_x64.Code
+  :parts: 2
+
+.. autoclass:: lief.PE.unwind_x64.PushMachFrame
+
+----------
+
+unwind_x64 - SetFPReg
+*********************
+
+.. lief-inheritance:: lief._lief.PE.unwind_x64.SetFPReg
+  :top-classes: lief._lief.PE.unwind_x64.Code
+  :parts: 2
+
+.. autoclass:: lief.PE.unwind_x64.SetFPReg
+
+----------
+
+unwind_x64 - SaveNonVolatile
+****************************
+
+.. lief-inheritance:: lief._lief.PE.unwind_x64.SaveNonVolatile
+  :top-classes: lief._lief.PE.unwind_x64.Code
+  :parts: 2
+
+.. autoclass:: lief.PE.unwind_x64.SaveNonVolatile
+
+----------
+
+unwind_x64 - SaveXMM128
+***********************
+
+.. lief-inheritance:: lief._lief.PE.unwind_x64.SaveXMM128
+  :top-classes: lief._lief.PE.unwind_x64.Code
+  :parts: 2
+
+.. autoclass:: lief.PE.unwind_x64.SaveXMM128
+
+----------
+
+unwind_x64 - Epilog
+*******************
+
+.. lief-inheritance:: lief._lief.PE.unwind_x64.Epilog
+  :top-classes: lief._lief.PE.unwind_x64.Code
+  :parts: 2
+
+.. autoclass:: lief.PE.unwind_x64.Epilog
+
+----------
+
+unwind_x64 - Spare
+******************
+
+.. lief-inheritance:: lief._lief.PE.unwind_x64.Spare
+  :top-classes: lief._lief.PE.unwind_x64.Code
+  :parts: 2
+
+.. autoclass:: lief.PE.unwind_x64.Spare
+
+----------
+
+RuntimeFunctionAArch64
+**********************
+
+.. lief-inheritance:: lief._lief.PE.RuntimeFunctionAArch64
+  :top-classes: lief._lief.PE.ExceptionInfo
+  :parts: 2
+
+.. autoclass:: lief.PE.RuntimeFunctionAArch64
+
+Runtime AArch64 (Packed) Function
+*********************************
+
+.. lief-inheritance:: lief._lief.PE.unwind_aarch64.PackedFunction
+  :top-classes: lief._lief.PE.ExceptionInfo
+  :parts: 2
+
+.. autoclass:: lief.PE.unwind_aarch64.PackedFunction
+
+
+Runtime AArch64 (UnpackedFunction) Function
+*******************************************
+
+.. lief-inheritance:: lief._lief.PE.unwind_aarch64.UnpackedFunction
+  :top-classes: lief._lief.PE.ExceptionInfo
+  :parts: 2
+
+.. autoclass:: lief.PE.unwind_aarch64.UnpackedFunction
+
+----------
+
 Load Configuration
 ******************
 
 .. autoclass:: lief.PE.LoadConfiguration
 
-Load Configuration V0
-~~~~~~~~~~~~~~~~~~~~~
+----------
 
-.. autoclass:: lief.PE.LoadConfigurationV0
-  :show-inheritance:
+CHPEMetadata
+************
 
-Load Configuration V1
-~~~~~~~~~~~~~~~~~~~~~
+.. lief-inheritance:: lief._lief.PE.CHPEMetadata
+  :top-classes: lief._lief.PE.CHPEMetadata
+  :parts: 2
 
-.. autoclass:: lief.PE.LoadConfigurationV1
-  :show-inheritance:
+.. autoclass:: lief.PE.CHPEMetadata
 
-Load Configuration V2
-~~~~~~~~~~~~~~~~~~~~~
+----------
 
-.. autoclass:: lief.PE.LoadConfigurationV2
-  :show-inheritance:
+CHPEMetadata (ARM64)
+*********************
 
-Load Configuration V3
-~~~~~~~~~~~~~~~~~~~~~
+.. lief-inheritance:: lief._lief.PE.CHPEMetadataARM64
+  :top-classes: lief._lief.PE.CHPEMetadata
+  :parts: 2
 
-.. autoclass:: lief.PE.LoadConfigurationV3
-  :show-inheritance:
+.. autoclass:: lief.PE.CHPEMetadataARM64
 
-Load Configuration V4
-~~~~~~~~~~~~~~~~~~~~~
+CHPEMetadata (X86)
+******************
 
-.. autoclass:: lief.PE.LoadConfigurationV4
-  :show-inheritance:
+.. lief-inheritance:: lief._lief.PE.CHPEMetadataX86
+  :top-classes: lief._lief.PE.CHPEMetadata
+  :parts: 2
 
-Load Configuration V5
-~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: lief.PE.CHPEMetadataX86
 
-.. autoclass:: lief.PE.LoadConfigurationV5
-  :show-inheritance:
+----------
 
-Load Configuration V6
-~~~~~~~~~~~~~~~~~~~~~
+DynamicRelocation
+*****************
 
-.. autoclass:: lief.PE.LoadConfigurationV6
-  :show-inheritance:
+.. lief-inheritance:: lief._lief.PE.DynamicRelocation
+  :top-classes: lief._lief.PE.DynamicRelocation
+  :parts: 2
 
-Load Configuration V7
-~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: lief.PE.DynamicRelocation
 
-.. autoclass:: lief.PE.LoadConfigurationV7
-  :show-inheritance:
+DynamicRelocationV1
+*******************
 
-Load Configuration V8
-~~~~~~~~~~~~~~~~~~~~~
+.. lief-inheritance:: lief._lief.PE.DynamicRelocationV1
+  :top-classes: lief._lief.PE.DynamicRelocation
+  :parts: 2
 
-.. autoclass:: lief.PE.LoadConfigurationV8
-  :show-inheritance:
+.. autoclass:: lief.PE.DynamicRelocationV1
 
-Load Configuration V9
-~~~~~~~~~~~~~~~~~~~~~
+DynamicRelocationV2
+*******************
 
-.. autoclass:: lief.PE.LoadConfigurationV9
-  :show-inheritance:
+.. lief-inheritance:: lief._lief.PE.DynamicRelocationV2
+  :top-classes: lief._lief.PE.DynamicRelocation
+  :parts: 2
 
-Load Configuration V10
-~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: lief.PE.DynamicRelocationV2
 
-.. autoclass:: lief.PE.LoadConfigurationV10
-  :show-inheritance:
+----------
 
-Load Configuration V11
-~~~~~~~~~~~~~~~~~~~~~~
+DynamicFixup
+************
 
-.. autoclass:: lief.PE.LoadConfigurationV11
-  :show-inheritance:
+.. lief-inheritance:: lief._lief.PE.DynamicFixup
+  :top-classes: lief._lief.PE.DynamicFixup
+  :parts: 2
+
+.. autoclass:: lief.PE.DynamicFixup
+
+
+DynamicFixupControlTransfer
+***************************
+
+.. lief-inheritance:: lief._lief.PE.DynamicFixupControlTransfer
+  :top-classes: lief._lief.PE.DynamicFixup
+  :parts: 2
+
+.. autoclass:: lief.PE.DynamicFixupControlTransfer
+
+DynamicFixupARM64Kernel
+***********************
+
+.. lief-inheritance:: lief._lief.PE.DynamicFixupARM64Kernel
+  :top-classes: lief._lief.PE.DynamicFixup
+  :parts: 2
+
+.. autoclass:: lief.PE.DynamicFixupARM64Kernel
+
+DynamicFixupARM64X
+******************
+
+.. lief-inheritance:: lief._lief.PE.DynamicFixupARM64X
+  :top-classes: lief._lief.PE.DynamicFixup
+  :parts: 2
+
+.. autoclass:: lief.PE.DynamicFixupARM64X
+
+
+DynamicFixupGeneric
+*******************
+
+.. lief-inheritance:: lief._lief.PE.DynamicFixupGeneric
+  :top-classes: lief._lief.PE.DynamicFixup
+  :parts: 2
+
+.. autoclass:: lief.PE.DynamicFixupGeneric
+
+DynamicFixupUnknown
+*******************
+
+.. lief-inheritance:: lief._lief.PE.DynamicFixupUnknown
+  :top-classes: lief._lief.PE.DynamicFixup
+  :parts: 2
+
+.. autoclass:: lief.PE.DynamicFixupUnknown
+
+FunctionOverride
+****************
+
+.. lief-inheritance:: lief._lief.PE.FunctionOverride
+  :top-classes: lief._lief.PE.DynamicFixup
+  :parts: 2
+
+.. autoclass:: lief.PE.FunctionOverride
+
+
+FunctionOverrideInfo
+********************
+
+.. autoclass:: lief.PE.FunctionOverrideInfo
+
+
+----------
+
+EnclaveConfiguration
+********************
+
+.. autoclass:: lief.PE.EnclaveConfiguration
+
+----------
+
+EnclaveImport
+*************
+
+.. autoclass:: lief.PE.EnclaveImport
+
+----------
+
+Volatile Metadata
+*****************
+
+.. autoclass:: lief.PE.VolatileMetadata
+
+----------
 
 Utilities
 *********
@@ -655,103 +1039,17 @@ PE_TYPE
 
 ----------
 
-SECTION_TYPES
-~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.SECTION_TYPES
-
-----------
-
-SYMBOL_BASE_TYPES
-~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.SYMBOL_BASE_TYPES
-
-----------
-
-SYMBOL_COMPLEX_TYPES
-~~~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.SYMBOL_COMPLEX_TYPES
-
-----------
-
-SYMBOL_SECTION_NUMBER
-~~~~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.SYMBOL_SECTION_NUMBER
-
-----------
-
-SYMBOL_STORAGE_CLASS
-~~~~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.SYMBOL_STORAGE_CLASS
-
-----------
-
-FIXED_VERSION_FILE_SUB_TYPES
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.CODE_PAGES
-
-----------
-
-WINDOW_STYLES
-~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.WINDOW_STYLES
-
-----------
-
-EXTENDED_WINDOW_STYLES
-~~~~~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.EXTENDED_WINDOW_STYLES
-
-----------
-
-DIALOG_BOX_STYLES
-~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.DIALOG_BOX_STYLES
-
-----------
-
-FIXED_VERSION_OS
-~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.FIXED_VERSION_OS
-
-----------
-
-FIXED_VERSION_FILE_FLAGS
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.FIXED_VERSION_FILE_FLAGS
-
-----------
-
-FIXED_VERSION_FILE_TYPES
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.FIXED_VERSION_FILE_TYPES
-
-----------
-
 RESOURCE_LANGS
 ~~~~~~~~~~~~~~
 
 .. autoclass:: lief.PE.RESOURCE_LANGS
 
+ACCELERATOR_CODES
+~~~~~~~~~~~~~~~~~
+
+.. autoclass:: lief.PE.ACCELERATOR_CODES
+
 -----------
-
-FIXED_VERSION_FILE_SUB_TYPES
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: lief.PE.FIXED_VERSION_FILE_SUB_TYPES
-
-----------
 
 ALGORITHMS
 ~~~~~~~~~~

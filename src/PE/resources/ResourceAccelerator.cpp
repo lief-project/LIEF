@@ -1,6 +1,5 @@
 /* Copyright 2017 - 2025 R. Thomas
  * Copyright 2017 - 2025 Quarkslab
- * Copyright 2017 - 2021 K. Nakagawa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,54 +15,71 @@
  */
 #include <algorithm>
 
+#include <spdlog/fmt/fmt.h>
+
 #include "LIEF/Visitor.hpp"
-#include "LIEF/PE/EnumToString.hpp"
 #include "PE/Structures.hpp"
+#include "fmt_formatter.hpp"
 
 #include "LIEF/PE/resources/ResourceAccelerator.hpp"
 
+FMT_FORMATTER(LIEF::PE::ResourceAccelerator::FLAGS, LIEF::PE::to_string);
+
 namespace LIEF {
 namespace PE {
+
+static constexpr auto ARRAY_FLAGS = {
+  ResourceAccelerator::FLAGS::VIRTKEY, ResourceAccelerator::FLAGS::NOINVERT,
+  ResourceAccelerator::FLAGS::SHIFT, ResourceAccelerator::FLAGS::CONTROL,
+  ResourceAccelerator::FLAGS::ALT, ResourceAccelerator::FLAGS::END,
+};
 
 ResourceAccelerator::ResourceAccelerator(const details::pe_resource_acceltableentry& entry) :
   flags_{entry.fFlags},
   ansi_{entry.wAnsi},
   id_{static_cast<uint16_t>(entry.wId)},
-  padding_{entry.padding} {}
+  padding_{entry.padding}
+{}
 
 void ResourceAccelerator::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
 std::ostream& operator<<(std::ostream& os, const ResourceAccelerator& acc) {
-  os << "flags: ";
-  for (const ACCELERATOR_FLAGS c : acc.flags_list()) {
-    os << to_string(c) << " ";
-  }
-  os << '\n';
-  os << "ansi: " << acc.ansi_str() << '\n';
-  os << std::hex << "id: " << acc.id() << '\n';
-  os << std::hex << "padding: " << acc.padding() << '\n';
+  const auto& flags = acc.flags_list();
+  os << fmt::format("{} (0x{:04x}) id: 0x{:04x}, flags: {}",
+                    acc.ansi_str(), acc.ansi(), acc.id(),
+                    fmt::to_string(flags));
   return os;
 }
 
-std::string ResourceAccelerator::ansi_str() const {
-  return to_string(static_cast<ACCELERATOR_VK_CODES>(ansi_));
+std::vector<ResourceAccelerator::FLAGS> ResourceAccelerator::flags_list() const {
+  std::vector<FLAGS> flags;
+  std::copy_if(std::begin(ARRAY_FLAGS), std::end(ARRAY_FLAGS),
+               std::back_inserter(flags),
+               [this] (FLAGS f) { return has(f); });
+  return flags;
 }
 
-std::set<ACCELERATOR_FLAGS> ResourceAccelerator::flags_list() const {
-  std::set<ACCELERATOR_FLAGS> flags_set;
+const char* to_string(ResourceAccelerator::FLAGS flag) {
+  switch (flag) {
+    case ResourceAccelerator::FLAGS::VIRTKEY:
+      return "VIRTKEY";
+    case ResourceAccelerator::FLAGS::NOINVERT:
+      return "NOINVERT";
+    case ResourceAccelerator::FLAGS::SHIFT:
+      return "SHIFT";
+    case ResourceAccelerator::FLAGS::CONTROL:
+      return "CONTROL";
+    case ResourceAccelerator::FLAGS::ALT:
+      return "ALT";
+    case ResourceAccelerator::FLAGS::END:
+      return "END";
+    default:
+      return "UNKNOWN";
+  }
 
-  const auto flags_tmp = flags_;
-  std::copy_if(
-    std::cbegin(details::accelerator_array),
-    std::cend(details::accelerator_array),
-    std::inserter(flags_set, std::begin(flags_set)),
-    [flags_tmp](ACCELERATOR_FLAGS c) {
-      return (static_cast<uint16_t>(flags_tmp) & static_cast<uint16_t>(c)) > 0;
-    }
-  );
-  return flags_set;
+  return "UNKNOWN";
 }
 
 }

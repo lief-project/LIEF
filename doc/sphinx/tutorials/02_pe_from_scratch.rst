@@ -1,7 +1,11 @@
 .. _02-pe-from-scratch:
 
-02 - Create a PE from scratch
------------------------------
+02 - Create a PE from scratch (Deprecated)
+------------------------------------------
+
+.. warning::
+
+  This tutorial is no longer working and accurate for LIEF version >= ``0.17.0``.
 
 In this tutorial we introduce LIEF API to create a simple PE executable from scratch
 
@@ -96,11 +100,7 @@ Same for ``ExitProcess`` (``kernel32.dll``):
 
 Once needed libraries and functions are added to the binary, we have to determine their addresses (**I**\mport **A**\ddress **T**\able).
 
-For that, we can use the :meth:`~lief.PE.Binary.predict_function_rva` method which will return the ``IAT`` address set by the :class:`~lief.PE.Builder`:
-
-
-.. automethod:: lief.PE.Binary.predict_function_rva
-  :noindex:
+For that, we can use the ``lief.PE.Binary.predict_function_rva`` method which will return the ``IAT`` address set by the :class:`~lief.PE.Builder`:
 
 
 .. code-block:: python

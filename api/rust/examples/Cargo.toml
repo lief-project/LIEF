@@ -37,4 +37,7 @@ name = "objc_inspect"
 name = "disassembler"
 
 [[bin]]
+name = "pe_exceptions"
+
+[[bin]]
 name = "test_run_examples"

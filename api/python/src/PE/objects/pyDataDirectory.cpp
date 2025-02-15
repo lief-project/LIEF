@@ -16,6 +16,7 @@
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
+#include "nanobind/extra/stl/lief_span.h"
 
 #include "enums_wrapper.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
@@ -69,6 +70,9 @@ void create<DataDirectory>(nb::module_& m) {
         nb::overload_cast<>(&DataDirectory::section),
         "" RST_CLASS_REF(lief.PE.Section) " associated with the current data directory or None if not linked"_doc,
         nb::rv_policy::reference_internal)
+
+    .def_prop_ro("content", nb::overload_cast<>(&DataDirectory::content, nb::const_),
+        "Raw content (bytes) referenced by this data directory"_doc)
 
     .def_prop_ro("type",
         &DataDirectory::type,

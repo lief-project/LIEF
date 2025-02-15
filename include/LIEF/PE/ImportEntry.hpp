@@ -39,10 +39,15 @@ class LIEF_API ImportEntry : public LIEF::Symbol {
 
   public:
   ImportEntry() = default;
-  ImportEntry(uint64_t data, const std::string& name = "");
-  ImportEntry(uint64_t data, PE_TYPE type, const std::string& name);
-  ImportEntry(const std::string& name);
-  ImportEntry(const std::string& name, PE_TYPE type);
+
+  ImportEntry(uint64_t data, PE_TYPE type) :
+    data_(data), type_(type)
+  {}
+
+  ImportEntry(std::string name) {
+    this->name(std::move(name));
+  }
+
   ImportEntry(const ImportEntry&) = default;
   ImportEntry& operator=(const ImportEntry&) = default;
   ~ImportEntry() override = default;
@@ -77,6 +82,12 @@ class LIEF_API ImportEntry : public LIEF::Symbol {
     return iat_value_;
   }
 
+  /// Original value in the import lookup table.
+  /// This value should match the iat_value().
+  uint64_t ilt_value() const {
+    return ilt_value_;
+  }
+
   /// Raw value
   uint64_t data() const {
     return data_;
@@ -93,13 +104,18 @@ class LIEF_API ImportEntry : public LIEF::Symbol {
 
   void accept(Visitor& visitor) const override;
 
-
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const ImportEntry& entry);
+
+  /// \private Internal use **only**
+  LIEF_LOCAL void iat_address(uint64_t rva) {
+    rva_ = rva;
+  }
 
   private:
   uint64_t data_ = 0;
   uint16_t hint_ = 0;
   uint64_t iat_value_ = 0;
+  uint64_t ilt_value_ = 0;
   uint64_t rva_ = 0;
   PE_TYPE  type_ = PE_TYPE::PE32_PLUS;
 };

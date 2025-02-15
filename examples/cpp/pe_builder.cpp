@@ -24,21 +24,15 @@ int main(int argc, char **argv) {
   std::cout << "PE Rebuilder" << '\n';
   if (argc != 3) {
     std::cerr << "Usage: " << argv[0] << " <Input Binary> <Output Binary>" << '\n';
-    return -1;
+    return EXIT_FAILURE;
   }
 
-  std::unique_ptr<Binary> binary{Parser::parse(argv[1])};
-  Builder builder{*binary};
+  std::unique_ptr<Binary> binary = Parser::parse(argv[1]);
+  if (binary == nullptr) {
+    return EXIT_FAILURE;
+  }
 
-  builder
-    .build_imports(false)
-    .patch_imports(false)
-    .build_tls(false)
-    .build_resources(false);
-
-  builder.build();
-  builder.write(argv[2]);
-  std::cout << argv[1] << '\n';
-
-  return 0;
+  Builder::config_t config;
+  binary->write(argv[2], config);
+  return EXIT_SUCCESS;
 }

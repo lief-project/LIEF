@@ -20,16 +20,21 @@
 #include "LIEF/rust/PE/DataDirectories.hpp"
 #include "LIEF/rust/Mirror.hpp"
 
-class PE_TLS : private Mirror<LIEF::PE::TLS> {
+class PE_TLS : public Mirror<LIEF::PE::TLS> {
   public:
   using lief_t = LIEF::PE::TLS;
   using Mirror::Mirror;
 
+  static auto create() {
+    return std::make_unique<PE_TLS>(std::make_unique<lief_t>());
+  }
+
   std::vector<uint64_t> callbacks() const { return get().callbacks(); }
-  uint64_t addressof_index() const { return get().addressof_index(); }
-  uint64_t addressof_callbacks() const { return get().addressof_callbacks(); }
-  uint64_t sizeof_zero_fill() const { return get().sizeof_zero_fill(); }
-  uint64_t characteristics() const { return get().characteristics(); }
+
+  auto addressof_index() const { return get().addressof_index(); }
+  auto addressof_callbacks() const { return get().addressof_callbacks(); }
+  auto sizeof_zero_fill() const { return get().sizeof_zero_fill(); }
+  auto characteristics() const { return get().characteristics(); }
 
   auto data_template() const { return make_span(get().data_template()); }
   auto addressof_raw_data() const {
@@ -43,5 +48,31 @@ class PE_TLS : private Mirror<LIEF::PE::TLS> {
     return details::try_unique<PE_DataDirectory>(get().directory()); // NOLINT(lang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
+  void add_callback(uint64_t addr) {
+    get().add_callback(addr);
+  }
 
+  void set_callbacks(const uint64_t* ptr, size_t size) {
+    get().callbacks({ptr, ptr + size});
+  }
+
+  void set_addressof_index(uint64_t value) {
+    get().addressof_index(value);
+  }
+
+  void set_addressof_callback(uint64_t value) {
+    get().addressof_callbacks(value);
+  }
+
+  void set_sizeof_zero_fill(uint32_t value) {
+    get().sizeof_zero_fill(value);
+  }
+
+  void set_characteristics(uint32_t value) {
+    get().characteristics(value);
+  }
+
+  void set_data_template(const uint8_t* ptr, size_t size) {
+    get().data_template({ptr, ptr + size});
+  }
 };

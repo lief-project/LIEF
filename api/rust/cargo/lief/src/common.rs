@@ -10,6 +10,14 @@ pub trait FromFFI<T: UniquePtrTarget> {
 }
 
 #[doc(hidden)]
+pub trait AsFFI<U> {
+    fn as_ffi(&self) -> &U;
+
+    #[allow(dead_code)]
+    fn as_mut_ffi(&mut self) -> std::pin::Pin<&mut U>;
+}
+
+#[doc(hidden)]
 pub fn into_optional<T: FromFFI<U>, U: UniquePtrTarget>(raw_ffi: cxx::UniquePtr<U>) -> Option<T> {
     if raw_ffi.is_null() {
         None
@@ -189,3 +197,51 @@ macro_rules! to_conv_result {
         return Ok($conv(value));
     };
 }
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! to_opt {
+    ($func: expr, $self: expr, $($arg:tt)*) => {
+        let mut _is_set: u32 = 0;
+
+        let value = $func(&$self.ptr, $($arg),*, std::pin::Pin::new(&mut _is_set));
+        if _is_set == 0 {
+            return None;
+        }
+        return Some(value.into());
+    };
+    ($func: expr, $self: expr) => {
+        let mut _is_set: u32 = 0;
+        let value = $func(&$self.ptr, std::pin::Pin::new(&mut _is_set));
+
+        if _is_set == 0 {
+            return None;
+        }
+        return Some(value.into());
+    };
+}
+
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! to_conv_opt {
+    ($func: expr, $self: expr, $conv: expr, $($arg:tt)*) => {
+        let mut _is_set: u32 = 0;
+
+        let value = $func(&$self.ptr, $($arg),*, std::pin::Pin::new(&mut _is_set));
+        if _is_set == 0 {
+            return None;
+        }
+        return Some($conv(value.into()));
+    };
+    ($func: expr, $self: expr, $conv: expr) => {
+        let mut _is_set: u32 = 0;
+        let value = $func(&$self.ptr, std::pin::Pin::new(&mut _is_set));
+
+        if _is_set == 0 {
+            return None;
+        }
+        return Some($conv(value.into()));
+    };
+}
+

@@ -22,6 +22,16 @@ class PE_ResourceDirectory : public PE_ResourceNode {
   public:
   using lief_t = LIEF::PE::ResourceDirectory;
   PE_ResourceDirectory(const lief_t& obj) : PE_ResourceNode(obj) {}
+  PE_ResourceDirectory(std::unique_ptr<lief_t> obj) : PE_ResourceNode(std::move(obj)) {}
+
+  static auto create_from_id(uint32_t id) {
+    return std::make_unique<PE_ResourceDirectory>(std::make_unique<lief_t>(id));
+  }
+
+  static auto create() {
+    return std::make_unique<PE_ResourceDirectory>(std::make_unique<lief_t>());
+  }
+
 
   uint32_t characteristics() const { return impl().characteristics(); }
   uint32_t time_date_stamp() const { return impl().time_date_stamp(); }

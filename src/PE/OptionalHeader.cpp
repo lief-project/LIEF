@@ -125,11 +125,7 @@ OptionalHeader OptionalHeader::create(PE_TYPE type) {
   header.sizeof_heap_commit(0x1000);
   header.sizeof_headers(0x400);
 
-  if (type == PE_TYPE::PE32) {
-    header.imagebase(0x400000);
-  } else {
-    header.imagebase(0x140000000);
-  }
+  header.imagebase(type == PE_TYPE::PE32 ? 0x400000 : 0x140000000);
   return header;
 }
 
@@ -154,32 +150,32 @@ std::ostream& operator<<(std::ostream& os, const OptionalHeader& entry) {
   std::transform(list.begin(), list.end(), std::back_inserter(list_str),
                  [] (const auto c) { return to_string(c); });
 
-  os << fmt::format("Magic:                         0x{:x}\n", static_cast<uint32_t>(entry.magic()))
-     << fmt::format("Major/Minor linker version:    {}/{}\n", entry.major_linker_version(), entry.minor_linker_version())
-     << fmt::format("Size of code:                  0x{:x}\n", entry.sizeof_code())
-     << fmt::format("Size of initialized data:      0x{:x}\n", entry.sizeof_initialized_data())
-     << fmt::format("Size of uninitialized data:    0x{:x}\n", entry.sizeof_uninitialized_data())
-     << fmt::format("Entrypoint:                    0x{:x}\n", entry.addressof_entrypoint())
-     << fmt::format("Base of code:                  0x{:x}\n", entry.baseof_code())
-     << fmt::format("Base of data:                  0x{:x}\n", entry.baseof_data())
-     << fmt::format("Imagebase:                     0x{:x}\n", entry.imagebase())
-     << fmt::format("Section alignment:             0x{:x}\n", entry.section_alignment())
-     << fmt::format("File alignment:                0x{:x}\n", entry.file_alignment())
-     << fmt::format("Major/Minor operating system:  {}/{}\n", entry.major_operating_system_version(), entry.minor_operating_system_version())
-     << fmt::format("Major/Minor image version:     {}/{}\n", entry.major_image_version(), entry.minor_image_version())
-     << fmt::format("Major/Minor subsystem version: {}/{}\n", entry.major_subsystem_version(), entry.minor_subsystem_version())
-     << fmt::format("Win32 Version Value:           0x{:x}\n", entry.win32_version_value())
-     << fmt::format("Size of image:                 0x{:x}\n", entry.sizeof_image())
-     << fmt::format("Size of headers:               0x{:x}\n", entry.sizeof_headers())
-     << fmt::format("Checksum:                      0x{:x}\n", entry.checksum())
-     << fmt::format("Subsystem:                     {}\n", to_string(entry.subsystem()))
-     << fmt::format("Dll characteristics:           {}\n", fmt::join(list_str, ", "))
-     << fmt::format("Size of stack reserve:         0x{:x}\n", entry.sizeof_stack_reserve())
-     << fmt::format("Size of stack commit:          0x{:x}\n", entry.sizeof_stack_commit())
-     << fmt::format("Size of heap reserve:          0x{:x}\n", entry.sizeof_heap_reserve())
-     << fmt::format("Size of heap commit:           0x{:x}\n", entry.sizeof_heap_commit())
-     << fmt::format("Loader flags:                  0x{:x}\n", entry.loader_flags())
-     << fmt::format("Number of rva and size:        {}\n", entry.numberof_rva_and_size());
+  os << fmt::format("Magic:                      0x{:04x} ({})\n", (uint32_t)entry.magic(), to_string(entry.magic()))
+     << fmt::format("Linker version:             {}.{}\n", entry.major_linker_version(), entry.minor_linker_version())
+     << fmt::format("Size of code:               0x{:x}\n", entry.sizeof_code())
+     << fmt::format("Size of initialized data:   0x{:x}\n", entry.sizeof_initialized_data())
+     << fmt::format("Size of uninitialized data: 0x{:x}\n", entry.sizeof_uninitialized_data())
+     << fmt::format("Entrypoint:                 0x{:x}\n", entry.addressof_entrypoint())
+     << fmt::format("Base of code:               0x{:x}\n", entry.baseof_code())
+     << fmt::format("Base of data:               0x{:x}\n", entry.baseof_data())
+     << fmt::format("Imagebase:                  0x{:x}\n", entry.imagebase())
+     << fmt::format("Section alignment:          0x{:x}\n", entry.section_alignment())
+     << fmt::format("File alignment:             0x{:x}\n", entry.file_alignment())
+     << fmt::format("Operating system version:   {}.{}\n", entry.major_operating_system_version(), entry.minor_operating_system_version())
+     << fmt::format("Image version:              {}.{}\n", entry.major_image_version(), entry.minor_image_version())
+     << fmt::format("Subsystem version:          {}.{}\n", entry.major_subsystem_version(), entry.minor_subsystem_version())
+     << fmt::format("Win32 Version Value:        0x{:x}\n", entry.win32_version_value())
+     << fmt::format("Size of image:              0x{:x}\n", entry.sizeof_image())
+     << fmt::format("Size of headers:            0x{:x}\n", entry.sizeof_headers())
+     << fmt::format("Checksum:                   0x{:x}\n", entry.checksum())
+     << fmt::format("Subsystem:                  {}\n", to_string(entry.subsystem()))
+     << fmt::format("Dll characteristics:        {}\n", fmt::join(list_str, ", "))
+     << fmt::format("Size of stack reserve:      0x{:x}\n", entry.sizeof_stack_reserve())
+     << fmt::format("Size of stack commit:       0x{:x}\n", entry.sizeof_stack_commit())
+     << fmt::format("Size of heap reserve:       0x{:x}\n", entry.sizeof_heap_reserve())
+     << fmt::format("Size of heap commit:        0x{:x}\n", entry.sizeof_heap_commit())
+     << fmt::format("Loader flags:               0x{:x}\n", entry.loader_flags())
+     << fmt::format("Number of directories:      {}\n", entry.numberof_rva_and_size());
   return os;
 }
 

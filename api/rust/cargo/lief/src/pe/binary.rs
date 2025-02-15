@@ -5,22 +5,28 @@ use std::mem::size_of;
 use std::pin::Pin;
 use std::path::Path;
 
+use super::builder::Config;
+use super::parser_config::Config as ParserConfig;
 use super::data_directory::{DataDirectories, DataDirectory};
-use super::debug;
+use super::debug::{self, Entries, DebugEntry};
 use super::delay_import::{DelayImport, DelayImports};
 use super::export::Export;
 use super::import::{Import, Imports};
 use super::load_configuration::LoadConfiguration;
 use super::relocation::Relocations;
-use super::resources::Manager as ResourcesManager;
+use super::resources::{Manager as ResourcesManager, NodeBase};
 use super::resources::Node as ResourceNode;
 use super::rich_header::RichHeader;
 use super::section::{Section, Sections};
 use super::signature::Signatures;
 use super::tls::TLS;
 use super::{data_directory, signature};
+use super::debug::CodeViewPDB;
+use super::symbol::Symbol;
+use super::exception::RuntimeExceptionFunction;
+use super::coff;
 
-use crate::common::{into_optional, FromFFI};
+use crate::common::{into_optional, FromFFI, AsFFI};
 use crate::declare_iterator;
 use crate::generic;
 use crate::to_conv_result;
@@ -56,6 +62,16 @@ impl Binary {
     /// Parse from a file path given as a string
     pub fn parse(path: &str) -> Option<Self> {
         let ffi = ffi::PE_Binary::parse(path);
+        if ffi.is_null() {
+            return None;
+        }
+        Some(Binary::from_ffi(ffi))
+    }
+
+    /// Parse from a string file path and with a provided configuration
+    pub fn parse_with_config(path: &str, config: ParserConfig) -> Option<Self> {
+        let ffi_config = config.to_ffi();
+        let ffi = ffi::PE_Binary::parse_with_config(path, &ffi_config);
         if ffi.is_null() {
             return None;
         }
@@ -98,7 +114,7 @@ impl Binary {
         into_optional(self.ptr.get_export())
     }
 
-    /// Return the root of the PE's resource's tree
+    /// Return the root of the PE's resource tree
     pub fn resources(&self) -> Option<ResourceNode> {
         into_optional(self.ptr.resources())
     }
@@ -238,7 +254,7 @@ impl Binary {
         )
     }
 
-    /// Find an import by its DLL name
+    /// Find an import by its DLL name (case insensitive)
     pub fn import_by_name(&self, name: &str) -> Option<Import> {
         into_optional(self.ptr.import_by_name(name))
     }
@@ -255,6 +271,62 @@ impl Binary {
 
     pub fn functions(&self) -> generic::Functions {
         generic::Functions::new(self.ptr.functions())
+    }
+
+    /// Return the data directory associated with the export table
+    pub fn export_dir(&self) -> Option<DataDirectory> {
+        into_optional(self.ptr.export_dir())
+    }
+
+    /// Return the data directory associated with the import table
+    pub fn import_dir(&self) -> Option<DataDirectory> {
+        into_optional(self.ptr.import_dir())
+    }
+
+    /// Return the data directory associated with the resources tree
+    pub fn rsrc_dir(&self) -> Option<DataDirectory> {
+        into_optional(self.ptr.rsrc_dir())
+    }
+
+    /// Return the data directory associated with the exceptions
+    pub fn exceptions_dir(&self) -> Option<DataDirectory> {
+        into_optional(self.ptr.exceptions_dir())
+    }
+
+    /// Return the data directory associated with the certificate table
+    /// (authenticode)
+    pub fn cert_dir(&self) -> Option<DataDirectory> {
+        into_optional(self.ptr.cert_dir())
+    }
+
+    /// Return the data directory associated with the relocation table
+    pub fn relocation_dir(&self) -> Option<DataDirectory> {
+        into_optional(self.ptr.relocation_dir())
+    }
+
+    /// Return the data directory associated with the debug table
+    pub fn debug_dir(&self) -> Option<DataDirectory> {
+        into_optional(self.ptr.debug_dir())
+    }
+
+    /// Return the data directory associated with TLS
+    pub fn tls_dir(&self) -> Option<DataDirectory> {
+        into_optional(self.ptr.tls_dir())
+    }
+
+    /// Return the data directory associated with the load config
+    pub fn load_config_dir(&self) -> Option<DataDirectory> {
+        into_optional(self.ptr.load_config_dir())
+    }
+
+    /// Return the data directory associated with the IAT
+    pub fn iat_dir(&self) -> Option<DataDirectory> {
+        into_optional(self.ptr.iat_dir())
+    }
+
+    /// Return the data directory associated with delayed imports
+    pub fn export_delay_dirdir(&self) -> Option<DataDirectory> {
+        into_optional(self.ptr.delay_dir())
     }
 
     /// Get the integer value at the given virtual address
@@ -313,9 +385,136 @@ impl Binary {
         Err(Error::NotSupported)
     }
 
+    /// Add an imported library (i.e. `DLL`) to the binary
+    pub fn add_import<'a>(&'a mut self, name: &str) -> Import<'a> {
+        Import::from_ffi(self.ptr.pin_mut().add_import(name))
+    }
+
+    /// Remove the imported library with the given `name`
+    pub fn remove_import(&mut self, name: &str) {
+        self.ptr.pin_mut().remove_import(name);
+    }
+
+    /// Remove all libraries in the binary
+    pub fn remove_all_imports(&mut self) {
+        self.ptr.pin_mut().remove_all_imports();
+    }
+
+    /// Remove the TLS from the binary
+    pub fn remove_tls(&mut self) {
+        self.ptr.pin_mut().remove_tls();
+    }
+
+    /// Set or change the TLS information
+    pub fn set_tls(&mut self, tls: &TLS) {
+        self.ptr.pin_mut().set_tls(tls.as_ffi());
+    }
+
+    /// Change or set the resources tree to given node
+    pub fn set_resources(&mut self, node: &dyn NodeBase) {
+        self.ptr.pin_mut().set_resources(node.get_base());
+    }
+
+    /// Add a new debug entry
+    pub fn add_debug_info<'a>(&'a mut self, entry: &dyn DebugEntry) -> Option<Entries<'a>> {
+        into_optional(self.ptr.pin_mut().add_debug_info(entry.get_base()))
+    }
+
+    /// Remove a specific debug entry
+    pub fn remove_debug<'a>(&'a mut self, entry: &dyn DebugEntry) -> bool {
+        self.ptr.pin_mut().remove_debug(entry.get_base())
+    }
+
+    /// Remove all debug info
+    pub fn clear_debug<'a>(&'a mut self) -> bool {
+        self.ptr.pin_mut().clear_debug()
+    }
+
+    /// Return the [`CodeViewPDB`] object if present
+    pub fn codeview_pdb(&self) -> Option<CodeViewPDB> {
+        into_optional(self.ptr.codeview_pdb())
+    }
+
     /// Write back the current PE binary into the file specified in parameter
     pub fn write(&mut self, output: &Path) {
         self.ptr.as_mut().unwrap().write(output.to_str().unwrap());
+    }
+
+    /// Write back the current PE binary into the file specified in parameter with the
+    /// configuration provided in the second parameter.
+    pub fn write_with_config(&mut self, output: &Path, config: Config) {
+        let ffi_config = config.to_ffi();
+        self.ptr.as_mut().unwrap().write_with_config(output.to_str().unwrap(),
+            &ffi_config.as_ref().unwrap());
+    }
+
+    /// Iterator over the strings located in the COFF string table
+    pub fn coff_string_table(&self) -> COFFStrings {
+        COFFStrings::new(self.ptr.coff_string_table())
+    }
+
+    /// Return an iterator over the binary (COFF) symbols (if any).
+    pub fn symbols(&self) -> Symbols {
+        Symbols::new(self.ptr.symbols())
+    }
+
+    /// Try to find the COFF string at the given offset in the COFF string table.
+    ///
+    /// <div class="warning">
+    /// This offset must include the first 4 bytes holding the size of the table.
+    /// Hence, the first string starts a the offset 4.
+    /// </div>
+    pub fn find_coff_string_at(&self, offset: u32) -> Option<coff::String> {
+        into_optional(self.ptr.find_coff_string_at(offset))
+    }
+
+    /// Iterator over the exception (`_RUNTIME_FUNCTION`) functions
+    ///
+    /// This function requires that the option [`ParserConfig::parse_exceptions`] was turned on
+    /// (default is `false`) when parsing the binary.
+    pub fn exceptions(&self) -> Exceptions {
+        Exceptions::new(self.ptr.exceptions())
+    }
+
+    /// Try to find the exception info at the given RVA
+    ///
+    /// This function requires that the option [`ParserConfig::parse_exceptions`] was turned on
+    /// (default is `false`) when parsing the binary.
+    pub fn find_exception_at(&self, rva: u32) -> Option<RuntimeExceptionFunction> {
+        into_optional(self.ptr.find_exception_at(rva))
+    }
+
+    /// True if this binary is compiled in ARM64EC mode (emulation compatible)
+    pub fn is_arm64ec(&self) -> bool {
+        self.ptr.is_arm64ec()
+    }
+
+    /// True if this binary is compiled in ARM64X mode (contains both ARM64 and ARM64EC).
+    pub fn is_arm64x(&self) -> bool {
+        self.ptr.is_arm64x()
+    }
+
+    /// If the current binary contains dynamic relocations
+    /// (e.g. LIEF::PE::DynamicFixupARM64X), this function returns the
+    /// **relocated** view of the current PE.
+    ///
+    /// This can be used to get the alternative PE binary, targeting a different
+    /// architectures.
+    ///
+    /// <div class="warning">
+    /// This function is <b>moving</b> and taking the ownership of the nested
+    /// PE binary. This means that subsequent calls to this function will return None.
+    /// </div>
+    ///
+    /// This function requires that the option [`ParserConfig::parse_arm64x_binary`] was turned on
+    /// (default is `false`) when parsing the binary.
+    pub fn nested_pe_binary(&self) -> Option<Binary> {
+        into_optional(self.ptr.nested_pe_binary())
+    }
+
+    /// Set or change the export table
+    pub fn set_export(&mut self, export: &Export) {
+        self.ptr.pin_mut().set_export(export.as_ffi());
     }
 }
 
@@ -347,4 +546,29 @@ declare_iterator!(
     ffi::PE_Debug,
     ffi::PE_Binary,
     ffi::PE_Binary_it_debug
+);
+
+
+declare_iterator!(
+    COFFStrings,
+    coff::String<'a>,
+    ffi::PE_COFFString,
+    ffi::PE_Binary,
+    ffi::PE_Binary_it_strings_table
+);
+
+declare_iterator!(
+    Symbols,
+    Symbol<'a>,
+    ffi::PE_Symbol,
+    ffi::PE_Binary,
+    ffi::PE_Binary_it_symbols
+);
+
+declare_iterator!(
+    Exceptions,
+    RuntimeExceptionFunction<'a>,
+    ffi::PE_ExceptionInfo,
+    ffi::PE_Binary,
+    ffi::PE_Binary_it_exceptions
 );

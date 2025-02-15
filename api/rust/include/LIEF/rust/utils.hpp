@@ -28,3 +28,11 @@ inline std::string extended_version_info() {
   return LIEF::extended_version_info();
 }
 
+inline std::string dump(const uint8_t* buffer, size_t size) {
+  return LIEF::dump(buffer, size);
+}
+
+inline std::string dump_with_limit(const uint8_t* buffer, size_t size,
+                                   uint64_t limit) {
+  return LIEF::dump(buffer, size, /*title=*/"", /*prefix=*/"", limit);
+}

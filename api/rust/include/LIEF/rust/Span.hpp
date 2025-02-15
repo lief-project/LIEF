@@ -33,3 +33,8 @@ inline Span make_span(LIEF::span<const uint8_t> content) {
 inline Span make_span(const std::vector<uint8_t>& content) {
   return Span{const_cast<uint8_t*>(content.data()), content.size()};
 }
+
+template<size_t N>
+inline Span make_span(const std::array<uint8_t, N>& array) {
+  return Span{const_cast<uint8_t*>(array.data()), N};
+}

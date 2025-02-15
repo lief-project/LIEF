@@ -399,13 +399,13 @@ endif()
 # Fuzzing options
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if(LIEF_FUZZING)
-  set(FUZZING_FLAGS -fno-omit-frame-pointer -g -O2 -fsanitize=address,fuzzer-no-link)
-  set(FUZZING_LINKER_FLAGS -fsanitize=address,fuzzer-no-link)
+  set(FUZZING_FLAGS -fno-omit-frame-pointer -g -O2 -fsanitize=fuzzer-no-link)
+  set(FUZZING_LINKER_FLAGS -fsanitize=fuzzer-no-link)
   set_property(TARGET LIB_LIEF
                APPEND PROPERTY LINK_FLAGS ${FUZZING_LINKER_FLAGS})
 
   target_compile_options(LIB_LIEF PRIVATE ${FUZZING_FLAGS})
-  target_link_libraries(LIB_LIEF PUBLIC asan pthread)
+  target_link_libraries(LIB_LIEF PUBLIC pthread)
   add_subdirectory(fuzzing)
 endif()
 

@@ -22,17 +22,46 @@
 #include "LIEF/PE/Import.hpp"
 #include "PE/Structures.hpp"
 
+#include <spdlog/fmt/fmt.h>
+
 namespace LIEF {
 namespace PE {
 
 Import::Import(const details::pe_import& import) :
-  import_lookup_table_RVA_(import.ImportLookupTableRVA),
+  ilt_rva_(import.ImportLookupTableRVA),
   timedatestamp_(import.TimeDateStamp),
   forwarder_chain_(import.ForwarderChain),
-  name_RVA_(import.NameRVA),
-  import_address_table_RVA_(import.ImportAddressTableRVA)
+  name_rva_(import.NameRVA),
+  iat_rva_(import.ImportAddressTableRVA)
 {}
 
+bool Import::remove_entry(const std::string& name) {
+  auto it = std::find_if(entries_.begin(), entries_.end(),
+    [&name] (const ImportEntry& entry) {
+      return entry.name() == name;
+    }
+  );
+  if (it == entries_.end()) {
+    return false;
+  }
+
+  entries_.erase(it);
+  return true;
+}
+
+bool Import::remove_entry(uint32_t ordinal) {
+  auto it = std::find_if(entries_.begin(), entries_.end(),
+    [ordinal] (const ImportEntry& entry) {
+      return entry.is_ordinal() && entry.ordinal() == ordinal;
+    }
+  );
+  if (it == entries_.end()) {
+    return false;
+  }
+
+  entries_.erase(it);
+  return true;
+}
 
 const ImportEntry* Import::get_entry(const std::string& name) const {
   const auto it_entry = std::find_if(std::begin(entries_), std::end(entries_),
@@ -69,17 +98,22 @@ void Import::accept(LIEF::Visitor& visitor) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Import& entry) {
-  os << std::hex;
-  os << std::left
-     << std::setw(20) << entry.name()
-     << std::setw(10) << entry.import_lookup_table_rva()
-     << std::setw(10) << entry.import_address_table_rva()
-     << std::setw(10) << entry.forwarder_chain()
-     << std::setw(10) << entry.timedatestamp()
-     << '\n';
-
+  os << fmt::format(
+  R"delim(
+  Name: {} {{
+    Name(RVA): 0x{:06x}
+    IAT(RVA):  0x{:06x}
+    ILT(RVA):  0x{:06x}
+    FWD Chain: 0x{:06x}
+    Timestamp: 0x{:06x}
+  }}
+  )delim",
+  entry.name(), entry.name_rva_, entry.import_address_table_rva(),
+  entry.import_lookup_table_rva(), entry.forwarder_chain(),
+  entry.timedatestamp());
+  os << '\n';
   for (const ImportEntry& functions: entry.entries()) {
-    os << "\t - " << functions << '\n';
+    os << "    " << functions << '\n';
   }
 
   return os;

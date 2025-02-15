@@ -16,18 +16,10 @@
 #ifndef LIEF_PE_LOAD_CONFIGURATIONS_H
 #define LIEF_PE_LOAD_CONFIGURATIONS_H
 
-#include "LIEF/PE/LoadConfigurations/LoadConfigurationV11.hpp"
-#include "LIEF/PE/LoadConfigurations/LoadConfigurationV10.hpp"
-#include "LIEF/PE/LoadConfigurations/LoadConfigurationV9.hpp"
-#include "LIEF/PE/LoadConfigurations/LoadConfigurationV8.hpp"
-#include "LIEF/PE/LoadConfigurations/LoadConfigurationV7.hpp"
-#include "LIEF/PE/LoadConfigurations/LoadConfigurationV6.hpp"
-#include "LIEF/PE/LoadConfigurations/LoadConfigurationV5.hpp"
-#include "LIEF/PE/LoadConfigurations/LoadConfigurationV4.hpp"
-#include "LIEF/PE/LoadConfigurations/LoadConfigurationV3.hpp"
-#include "LIEF/PE/LoadConfigurations/LoadConfigurationV2.hpp"
-#include "LIEF/PE/LoadConfigurations/LoadConfigurationV1.hpp"
-#include "LIEF/PE/LoadConfigurations/LoadConfigurationV0.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
+#include "LIEF/PE/LoadConfigurations/CHPEMetadata.hpp"
+#include "LIEF/PE/LoadConfigurations/DynamicRelocation.hpp"
+#include "LIEF/PE/LoadConfigurations/EnclaveConfiguration.hpp"
+#include "LIEF/PE/LoadConfigurations/VolatileMetadata.hpp"
 
 #endif

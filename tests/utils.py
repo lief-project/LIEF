@@ -61,6 +61,9 @@ def is_x86_64() -> bool:
     machine = platform.machine().lower()
     return machine in ("x86_64", "amd64")
 
+def is_windows_x86_64():
+    return is_windows() and is_x86_64()
+
 def is_apple_m1() -> bool:
     return is_aarch64() and is_osx()
 
@@ -183,22 +186,26 @@ def _win_gui_exec(executable: Path, timeout: int = 60) -> Optional[Tuple[int, st
             except subprocess.TimeoutExpired:
                 return None
 
-def win_exec(executable: Path, timeout: int = 60, gui: bool = True) -> Optional[Tuple[int, str]]:
+def win_exec(executable: Path, timeout: int = 60,
+             gui: bool = True, universal_newlines: bool = True,
+             args: list[str] = ()) -> Optional[Tuple[int, str]]:
     if not is_windows():
         return None
+
+    executable.chmod(executable.stat().st_mode | stat.S_IEXEC)
 
     if gui:
         return _win_gui_exec(executable, timeout)
 
     popen_args = {
-        "universal_newlines": True,
+        "universal_newlines": universal_newlines,
         "shell": True,
         "stdout": subprocess.PIPE,
         "stderr": subprocess.STDOUT,
         "creationflags": 0x8000000  # win32con.CREATE_NO_WINDOW
     }
 
-    with Popen([executable.as_posix()], **popen_args) as proc: # type: ignore[call-overload]
+    with Popen([executable.as_posix(), *args], **popen_args) as proc: # type: ignore[call-overload]
         try:
             stdout, _ = proc.communicate(timeout)
             print("stdout:", stdout)

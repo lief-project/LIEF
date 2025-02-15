@@ -55,13 +55,10 @@ void DelayImportEntry::accept(LIEF::Visitor& visitor) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const DelayImportEntry& entry) {
-  if (entry.is_ordinal()) {
-    os << "#" << entry.ordinal();
-  } else {
-    os << fmt::format("{:<20}", entry.name());
-  }
-
-  os << fmt::format(": 0x{:x}", entry.iat_value());
+  os << fmt::format("0x{:08x} 0x{:04x} {}",
+                    entry.iat_value(), entry.hint(),
+                    entry.is_ordinal() ? std::to_string(entry.ordinal()) :
+                                         entry.name());
   return os;
 }
 

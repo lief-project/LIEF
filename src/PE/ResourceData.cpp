@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
 #include <utility>
 
 #include "LIEF/Visitor.hpp"
@@ -33,14 +32,6 @@ void ResourceData::swap(ResourceData& other) noexcept {
 
 void ResourceData::accept(Visitor& visitor) const {
   visitor.visit(*this);
-}
-
-std::ostream& operator<<(std::ostream& os, const ResourceData& data) {
-  os << static_cast<const ResourceNode&>(data) << '\n';
-  os << "    " << std::setw(13) << std::left << std::setfill(' ') << "Code page :" << data.code_page()                       << '\n';
-  os << "    " << std::setw(13) << std::left << std::setfill(' ') << "Reserved :"  << data.reserved()                        << '\n';
-  os << "    " << std::setw(13) << std::left << std::setfill(' ') << "Size :"      << data.content().size()                  << '\n';
-  return os;
 }
 
 

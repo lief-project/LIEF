@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 #include "internal_utils.hpp"
+#include <ctime>
+#include <chrono>
+
 namespace LIEF {
 
 std::string printable_string(const std::string& str) {
@@ -51,50 +54,46 @@ inline std::string pretty_hex(char c) {
   return ".";
 }
 
-std::string dump(const uint8_t* buffer, size_t size,
-                 const std::string& title, const std::string& prefix, size_t limit)
-{
-
-  std::string out;
-  std::string banner;
-
-  if (!title.empty()) {
-    banner  = prefix + "+" + std::string(22 * 3, '-') + "---+" + "\n" + prefix + "| ";
-    banner += title;
-    banner += std::string(68 - title.size(), ' ') + "|\n";
+std::vector<std::string> split(const std::string& input, char c = '\n') {
+  // Not really efficient but does not aim to
+  std::stringstream strm(input);
+  std::vector<std::string> out;
+  std::string element;
+  while (std::getline(strm, element, c)) {
+    out.push_back(element);
   }
+  return out;
+}
 
-  out = std::string(22 * 3, '-') + "\n";
-  std::string lhs, rhs;
-  if (limit > 0) {
-    size = std::min<size_t>(size, limit);
+std::string indent(const std::string& input, size_t level) {
+  if (input.empty()) {
+    return "";
   }
-  for (size_t i = 0; i < size; ++i) {
-    if (i == 0) {
-      out = prefix + "+" + std::string(22 * 3, '-') + "---+" + "\n" + prefix + "| ";
+  std::vector<std::string> lines = split(input);
+  std::string output;
+  output.reserve(input.size());
+  for (const std::string& line : lines) {
+    if (line.empty()) {
+      output += '\n';
+      continue;
     }
-
-    if (i > 0 && i % 16 == 0) {
-      out += "\n" + prefix + "| ";
-    }
-
-    rhs += pretty_hex((char)(buffer[i]));
-    out += fmt::format("{:02x} ", buffer[i]);
-
-    if (i % 16 == 15 || i == (size - 1)) {
-      if (i == (size - 1)) {
-        out += std::string(((16 - ((size - 1) % 16) - 1)) * 3, ' ');
-        rhs += std::string(((16 - ((size - 1) % 16) - 1)) * 1, ' ');
-      }
-      out += " | ";
-      out += rhs + " |";
-      rhs = "";
-    }
-
+    output += std::string(level, ' ') + line + '\n';
   }
+  if (output.empty()) {
+    output.pop_back();
+  }
+  return output;
+}
 
-  out += std::string("\n") + prefix + "+" + std::string(22 * 3, '-') + "---+";
-  return banner + out;
+
+std::string ts_to_str(uint64_t timestamp) {
+  using namespace fmt;
+  using namespace std::chrono;
+  system_clock::time_point tp = system_clock::time_point(std::chrono::seconds(timestamp));
+  std::time_t t = std::chrono::system_clock::to_time_t(tp);
+  std::string ts = std::ctime(&t);
+  ts.resize(ts.size() - 1);
+  return ts;
 }
 
 }

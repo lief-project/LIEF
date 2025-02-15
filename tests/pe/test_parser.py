@@ -1,8 +1,10 @@
 import lief
 import hashlib
 import pytest
+from hashlib import md5
 from pathlib import Path
-from utils import get_sample, is_64bits_platform
+from textwrap import dedent
+from utils import get_sample, is_64bits_platform, has_private_samples
 
 winhello64 = lief.PE.parse(get_sample('PE/PE64_x86-64_binary_winhello64-mingw.exe'))
 atapi      = lief.PE.parse(get_sample('PE/PE64_x86-64_atapi.sys'))
@@ -96,35 +98,55 @@ def test_data_directories():
     assert dirs[0].rva == 0x0
     assert dirs[0].size == 0x0
     assert not dirs[0].has_section
+    assert atapi.export_dir.section is None
+    assert len(atapi.export_dir.content) == 0
 
     assert dirs[1].rva == 0x7084
     assert dirs[1].size == 0x3c
     assert dirs[1].has_section
     assert dirs[1].section.name == "INIT"
 
+    assert atapi.import_dir.section.name == "INIT"
+    assert md5(atapi.import_dir.content).hexdigest() == "5306ea0dad00863a03848629a835e3d3"
+
     assert dirs[2].rva == 0x8000
     assert dirs[2].size == 0x3f0
     assert dirs[2].has_section
     assert dirs[2].section.name == ".rsrc"
+
+    assert atapi.rsrc_dir.section.name == ".rsrc"
+    assert md5(atapi.rsrc_dir.content).hexdigest() == "1b3742663d5767289e49e90596221bdb"
 
     assert dirs[3].rva == 0x6000
     assert dirs[3].size == 0x1e0
     assert dirs[3].has_section
     assert dirs[3].section.name == ".pdata"
 
+    assert atapi.exceptions_dir.section.name == ".pdata"
+    assert md5(atapi.exceptions_dir.content).hexdigest() == "8bb93cd186e1457855901a8f0f2fc43b"
+
     assert dirs[4].rva == 0x4200
     assert dirs[4].size == 0x1c40
     assert dirs[4].has_section
     assert dirs[4].section.name == ".rdata"
 
+    assert atapi.cert_dir.section.name == ".rdata"
+    assert md5(atapi.cert_dir.content).hexdigest() == "d41d8cd98f00b204e9800998ecf8427e"
+
     assert dirs[5].rva == 0x0
     assert dirs[5].size == 0x0
     assert not dirs[5].has_section
+
+    assert atapi.relocation_dir.section is None
+    assert len(atapi.relocation_dir.content) == 0
 
     assert dirs[6].rva == 0x40d0
     assert dirs[6].size == 0x1c
     assert dirs[6].has_section
     assert dirs[6].section.name == ".rdata"
+
+    assert atapi.debug_dir.section.name == ".rdata"
+    assert md5(atapi.debug_dir.content).hexdigest() == "2f88ed87466be93a75658cb122e42430"
 
     assert dirs[7].rva == 0x0
     assert dirs[7].size == 0x0
@@ -138,9 +160,15 @@ def test_data_directories():
     assert dirs[9].size == 0x0
     assert not dirs[9].has_section
 
+    assert atapi.tls_dir.section is None
+    assert len(atapi.tls_dir.content) == 0
+
     assert dirs[10].rva == 0x0
     assert dirs[10].size == 0x0
     assert not dirs[10].has_section
+
+    assert atapi.load_config_dir.section is None
+    assert len(atapi.load_config_dir.content) == 0
 
     assert dirs[11].rva == 0x0
     assert dirs[11].size == 0x0
@@ -150,6 +178,9 @@ def test_data_directories():
     assert dirs[12].size == 0xd0
     assert dirs[12].has_section
     assert dirs[12].section.name == ".rdata"
+
+    assert atapi.iat_dir.section.name == ".rdata"
+    assert md5(atapi.iat_dir.content).hexdigest() == "c84142a5e1179115100f642dde18ee75"
 
     assert dirs[13].rva == 0x0
     assert dirs[13].size == 0x0
@@ -165,6 +196,7 @@ def test_data_directories():
 
     assert dirs[1].copy() == dirs[1]
     print(dirs[1])
+
 
 def test_sections():
     sections = winhello64.sections
@@ -270,7 +302,7 @@ def test_sections():
     # make sure we can't write more than the size of a name
     custom_section = lief.PE.Section(".test")
     custom_section.name = 'a' * 30
-    custom_section.content = [1] * 10
+    custom_section.content = [1] * 10  # type: ignore
     assert custom_section.content[0] == 1
     assert custom_section.name == ".test"
 
@@ -498,23 +530,152 @@ def test_relocations():
     r3 = lief.PE.RelocationEntry()
     r3.type = lief.PE.RelocationEntry.BASE_TYPES.ABS
     assert r3.size == 0
-    r3.data = 0xBAAA
-    assert r3.position == 0xAAA
-    assert r3.type == 0xB
-    assert r2 != r3
 
     assert relocation.copy() == relocation
 
 
 def test_symbols():
-    symbols = winhello64.symbols
+    input_path = Path(get_sample('PE/PE64_x86-64_binary_winhello64-mingw.exe'))
+    pe = lief.PE.parse(input_path)
+    symbols = pe.symbols
     assert len(symbols) == 1097
 
-    symbol = symbols[1]
-    assert symbol.name == "__mingw_invalidParameterHandler"
-    assert symbol.value == 0
-    assert symbol.section_number == 1
-    assert symbol.type == 32
+    assert symbols[0].name == ".file"
+    assert symbols[0].value == 102
+    assert symbols[0].section_idx == -2
+    assert symbols[0].storage_class == lief.PE.Symbol.STORAGE_CLASS.FILE
+    assert len(symbols[0].auxiliary_symbols) == 1
+    assert isinstance(symbols[0].auxiliary_symbols[0], lief.PE.AuxiliaryFile)
+    assert symbols[0].auxiliary_symbols[0].filename == "crtexe.c"
+
+    assert len(symbols[0].auxiliary_symbols) == 1
+    assert isinstance(symbols[0].auxiliary_symbols[0], lief.PE.AuxiliaryFile)
+    assert symbols[0].auxiliary_symbols[0].filename == "crtexe.c"
+
+    assert symbols[1].name == "__mingw_invalidParameterHandler"
+    assert symbols[1].value == 0
+    assert symbols[1].section_idx == 1
+    assert symbols[1].storage_class == lief.PE.Symbol.STORAGE_CLASS.STATIC
+    assert symbols[1].complex_type == lief.PE.Symbol.COMPLEX_TYPE.FUNCTION
+    assert len(symbols[1].auxiliary_symbols) == 1
+    assert isinstance(symbols[1].auxiliary_symbols[0], lief.PE.AuxiliarySectionDefinition)
+    assert symbols[1].auxiliary_symbols[0].length == 0
+    assert symbols[1].auxiliary_symbols[0].nb_relocs == 0
+    assert symbols[1].auxiliary_symbols[0].nb_line_numbers == 0
+    assert symbols[1].auxiliary_symbols[0].checksum == 0
+    assert symbols[1].auxiliary_symbols[0].section_idx == 0
+    assert symbols[1].auxiliary_symbols[0].selection == 0
+    assert str(symbols[1]) == dedent("""\
+    Symbol {
+      Name: __mingw_invalidParameterHandler
+      Value: 0
+      Section index: 1
+      Base type: NULL (0)
+      Complex type: FUNCTION (2)
+      Storage class: STATIC (3)
+      Nb auxiliary symbols: 1
+      AuxiliarySectionDefinition {
+        Length: 0x000000
+        Number of relocations: 0
+        Number of line numbers: 0
+        Checksum: 0x00000000
+        Section index: 0
+        Selection: 0
+      }
+
+    }
+    """)
+
+    assert symbols[3].name == ".rdata$.refptr.mingw_initltsdrot_force"
+    assert symbols[3].auxiliary_symbols[0].selection == 2
+
+    assert symbols[317].name == "__mingw_SEH_error_handler"
+    assert symbols[317].value == 4240
+    assert symbols[317].section_idx == 1
+    assert symbols[317].storage_class == lief.PE.Symbol.STORAGE_CLASS.EXTERNAL
+    assert symbols[317].complex_type == lief.PE.Symbol.COMPLEX_TYPE.FUNCTION
+    assert len(symbols[317].auxiliary_symbols) == 1
+    assert isinstance(symbols[317].auxiliary_symbols[0], lief.PE.AuxiliaryFunctionDefinition)
+    assert symbols[317].auxiliary_symbols[0].tag_index == 0
+    assert symbols[317].auxiliary_symbols[0].total_size == 0
+    assert symbols[317].auxiliary_symbols[0].ptr_to_line_number == 0
+    assert symbols[317].auxiliary_symbols[0].ptr_to_next_func == 0
+    assert symbols[317].auxiliary_symbols[0].padding == 0
+    assert str(symbols[317]) == dedent("""\
+    Symbol {
+      Name: __mingw_SEH_error_handler
+      Value: 4240
+      Section index: 1
+      Base type: NULL (0)
+      Complex type: FUNCTION (2)
+      Storage class: EXTERNAL (2)
+      Nb auxiliary symbols: 1
+      AuxiliaryFunctionDefinition {
+        Tag index: 0x000000
+        Total size: 0x000000
+        Pointer to line number: 0x000000
+        Pointer to next function: 0
+      }
+
+    }
+    """)
+
+    assert symbols[1087].name == "_Jv_RegisterClasses"
+    assert len(symbols[1087].auxiliary_symbols) == 1
+    assert isinstance(symbols[1087].auxiliary_symbols[0], lief.PE.AuxiliaryWeakExternal)
+    assert symbols[1087].auxiliary_symbols[0].sym_idx == 21
+    assert symbols[1087].auxiliary_symbols[0].characteristics == lief.PE.AuxiliaryWeakExternal.CHARACTERISTICS.SEARCH_NOLIBRARY
+
+    assert str(symbols[1087]) == dedent("""\
+    Symbol {
+      Name: _Jv_RegisterClasses
+      Value: 0
+      Section index: 0
+      Base type: NULL (0)
+      Complex type: FUNCTION (2)
+      Storage class: EXTERNAL (2)
+      Nb auxiliary symbols: 1
+      AuxiliaryWeakExternal {
+        Symbol index: 21
+        Characteristics: SEARCH_NOLIBRARY (1)
+      }
+
+    }
+    """)
+
+    assert symbols[1096].name == "__security_cookie"
+    assert symbols[1096].value == 128
+    assert symbols[1096].section_idx == 2
+    assert symbols[1096].storage_class == lief.PE.Symbol.STORAGE_CLASS.EXTERNAL
+
+    assert str(symbols[1096]) == dedent("""\
+    Symbol {
+      Name: __security_cookie
+      Value: 128
+      Section index: 2
+      Base type: NULL (0)
+      Complex type: NULL (0)
+      Storage class: EXTERNAL (2)
+      Nb auxiliary symbols: 0
+    }
+    """)
+
+def test_coff_string_table():
+    input_path = Path(get_sample("PE/PE64_x86-64_library_libLIEF.dll"))
+    pe = lief.PE.parse(input_path)
+
+    assert len(pe.coff_string_table) == 24336
+    assert pe.coff_string_table[0].offset == 4
+    assert pe.coff_string_table[0].string == ".debug_aranges"
+
+    assert pe.coff_string_table[24335].offset == 1516905
+    assert pe.coff_string_table[24335].string == "_ZTISt9basic_iosIwSt11char_traitsIwEE"
+
+    assert pe.find_coff_string(1516905).string == "_ZTISt9basic_iosIwSt11char_traitsIwEE"
+
+    assert pe.sections[0].coff_string is None
+    assert pe.sections[11].coff_string.offset == 4
+    assert pe.sections[11].coff_string.string == ".debug_aranges"
 
 @pytest.mark.parametrize("input_file", [
     "PE/PE64_x86-64_binary_winhello64-mingw.exe",
@@ -573,3 +734,184 @@ def test_large_ordinal():
     assert imp.name == "abcd.dll"
 
     assert imp.entries[0].ordinal == 0xc8c6
+
+def test_exceptions_x64():
+    input_path = Path(get_sample("PE/LIEF-win64.dll"))
+    pe = lief.PE.parse(input_path, lief.PE.ParserConfig.all)
+
+    assert len(pe.exceptions) == 7066
+
+    assert len(list(pe.exceptions)) == 7066
+
+    for e in pe.exceptions:
+        str(e)
+
+    func: lief.PE.RuntimeFunctionX64 = pe.find_exception_at(0x003b60) # type: ignore
+
+    info = func.unwind_info
+    opcodes = info.opcodes
+    assert len(opcodes) == 13
+
+    assert opcodes[0].opcode == lief.PE.RuntimeFunctionX64.UNWIND_OPCODES.SAVE_XMM128
+    assert isinstance(opcodes[0],  lief.PE.unwind_x64.SaveXMM128)
+    assert opcodes[0].num == 9
+    assert opcodes[0].offset == 0xb0
+
+
+def test_exceptions_x64_v2():
+    """
+    Some of these entries are using the v2 format
+    """
+    input_path = Path(get_sample("PE/hostfxr.dll"))
+    pe = lief.PE.parse(input_path, lief.PE.ParserConfig.all)
+
+    assert len(pe.exceptions) == 1010
+
+    v2: lief.PE.RuntimeFunctionX64 = pe.find_exception_at(0x3A4C0) # type: ignore
+    assert v2 is not None
+    assert isinstance(v2, lief.PE.RuntimeFunctionX64)
+
+    assert v2.rva_start == 0x3A4C0
+    assert v2.rva_end == 0x3A4D0
+    assert v2.unwind_rva == 0x54700
+    assert v2.size == 16
+
+    info = v2.unwind_info
+    assert info.version == 2
+    assert info.flags == 0
+    assert info.sizeof_prologue == 2
+    assert info.count_opcodes == 4
+    assert info.handler is None
+    assert info.chained is None
+
+    opcodes = info.opcodes
+    assert len(opcodes) == 3
+
+    assert opcodes[0].opcode == lief.PE.RuntimeFunctionX64.UNWIND_OPCODES.EPILOG
+    assert isinstance(opcodes[0], lief.PE.unwind_x64.Epilog)
+    assert opcodes[0].flags == 1
+    assert opcodes[0].size == 3
+
+    assert opcodes[1].opcode == lief.PE.RuntimeFunctionX64.UNWIND_OPCODES.PUSH_NONVOL
+    assert isinstance(opcodes[1], lief.PE.unwind_x64.PushNonVol)
+    assert opcodes[1].reg == lief.PE.RuntimeFunctionX64.UNWIND_REG.RSI
+
+    assert opcodes[2].opcode == lief.PE.RuntimeFunctionX64.UNWIND_OPCODES.PUSH_NONVOL
+    assert isinstance(opcodes[2], lief.PE.unwind_x64.PushNonVol)
+    assert opcodes[2].reg == lief.PE.RuntimeFunctionX64.UNWIND_REG.RDI
+
+
+    v2: lief.PE.RuntimeFunctionX64 = pe.find_exception_at(0x3B814) # type: ignore[no-redef]
+
+    assert v2.unwind_info.version == 1
+    opcodes = v2.unwind_info.opcodes
+    assert len(opcodes) == 9
+    assert v2.unwind_info.flags == 3
+    assert v2.unwind_info.has(lief.PE.RuntimeFunctionX64.UNWIND_FLAGS.EXCEPTION_HANDLER)
+    assert v2.unwind_info.has(lief.PE.RuntimeFunctionX64.UNWIND_FLAGS.TERMINATE_HANDLER)
+    assert v2.unwind_info.has(
+        lief.PE.RuntimeFunctionX64.UNWIND_FLAGS.TERMINATE_HANDLER |
+        lief.PE.RuntimeFunctionX64.UNWIND_FLAGS.TERMINATE_HANDLER
+    )
+
+    assert v2.unwind_info.handler == 0x00039298
+
+    assert opcodes[0].opcode == lief.PE.RuntimeFunctionX64.UNWIND_OPCODES.ALLOC_LARGE
+    assert isinstance(opcodes[0], lief.PE.unwind_x64.Alloc)
+    assert opcodes[0].size == 0x188
+
+    v2: lief.PE.RuntimeFunctionX64 = pe.find_exception_at(0x3C140) # type: ignore[no-redef]
+
+    opcodes = v2.unwind_info.opcodes
+
+    assert opcodes[0].opcode == lief.PE.RuntimeFunctionX64.UNWIND_OPCODES.SAVE_NONVOL
+    assert isinstance(opcodes[0], lief.PE.unwind_x64.SaveNonVolatile)
+    assert opcodes[0].reg == lief.PE.RuntimeFunctionX64.UNWIND_REG.RDI
+    assert opcodes[0].offset == 0x48
+
+    v2: lief.PE.RuntimeFunctionX64 = pe.find_exception_at(0x1000) # type: ignore[no-redef]
+
+    opcodes = v2.unwind_info.opcodes
+
+    assert opcodes[0].opcode == lief.PE.RuntimeFunctionX64.UNWIND_OPCODES.ALLOC_SMALL
+    assert isinstance(opcodes[0], lief.PE.unwind_x64.Alloc)
+    assert opcodes[0].size == 0x28
+
+    v2: lief.PE.RuntimeFunctionX64 = pe.find_exception_at(0x38450) # type: ignore[no-redef]
+    assert v2.unwind_info.frame_reg == lief.PE.RuntimeFunctionX64.UNWIND_REG.RBP.value
+
+    v2: lief.PE.RuntimeFunctionX64 = pe.find_exception_at(0x2e8e) # type: ignore[no-redef]
+    assert v2.unwind_info.chained is not None
+    assert v2.unwind_info.has(lief.PE.RuntimeFunctionX64.UNWIND_FLAGS.CHAIN_INFO)
+    assert v2.unwind_info.chained.rva_start == 0x2e70
+    assert v2.unwind_info.chained.rva_end == 0x2e8e
+    assert v2.unwind_info.chained.unwind_rva == 0x4f3d0
+
+    assert v2.unwind_info.opcodes[0].offset == 0x30 # type: ignore
+
+@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+def test_exceptions_x64_llvm():
+    input_path = Path(get_sample("private/PE/lief-ld-link.pyd"))
+
+    pe = lief.PE.parse(input_path, lief.PE.ParserConfig.all)
+
+    func: lief.PE.RuntimeFunctionX64 = pe.exceptions[0] # type: ignore
+    assert func.rva_start == 0x001000
+
+    assert func.unwind_info.opcodes[0].opcode == lief.PE.RuntimeFunctionX64.UNWIND_OPCODES.SET_FPREG
+    assert isinstance(func.unwind_info.opcodes[0], lief.PE.unwind_x64.SetFPReg)
+    assert func.unwind_info.opcodes[0].reg == lief.PE.RuntimeFunctionX64.UNWIND_REG.RBP
+
+@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+def test_exceptions_x64_corrupted():
+    input_path = Path(get_sample("private/PE/vgc.exe"))
+    pe = lief.PE.parse(input_path, lief.PE.ParserConfig.all)
+    assert len(pe.exceptions) == 15426
+
+    for e in pe.exceptions:
+        assert str(e)
+
+def test_exceptions_ahead_chained():
+    input_path = Path(get_sample("PE/ntoskrnl.exe"))
+    pe = lief.PE.parse(input_path, lief.PE.ParserConfig.all)
+
+    assert len(pe.exceptions) == 38926
+
+    func: lief.PE.RuntimeFunctionX64 = pe.find_exception_at(0x20fcb4) # type: ignore
+    assert func.unwind_info.chained is not None
+    assert func.unwind_info.chained.rva_start == 0x20fd87
+
+def test_exceptions_arm64x():
+    input_path = Path(get_sample("PE/win11_arm64x_Windows.Media.Protection.PlayReady.dll"))
+    pe = lief.PE.parse(input_path)
+    assert pe.is_arm64x
+
+def test_chpe_x86():
+    input_path = Path(get_sample("PE/Windows.Media.dll"))
+    pe = lief.PE.parse(input_path)
+
+    metadata: lief.PE.CHPEMetadataX86 = pe.load_configuration.chpe_metadata # type: ignore
+    assert metadata is not None
+    assert isinstance(metadata, lief.PE.CHPEMetadataX86)
+    assert metadata.chpe_code_address_range_offset == 0x10c8f0
+    assert metadata.chpe_code_address_range_count == 4
+    assert metadata.wowa64_exception_handler_function_pointer == 0x73a00c
+    assert metadata.wowa64_dispatch_call_function_pointer == 0x73a000
+    assert metadata.wowa64_dispatch_indirect_call_function_pointer == 0x73a004
+    assert metadata.wowa64_dispatch_indirect_call_cfg_function_pointer == 0x73a008
+    assert metadata.wowa64_dispatch_ret_function_pointer == 0x73a010
+    assert metadata.wowa64_dispatch_ret_leaf_function_pointer == 0x73a014
+    assert metadata.wowa64_dispatch_jump_function_pointer == 0x73a018
+    assert metadata.compiler_iat_pointer is None
+    assert metadata.wowa64_rdtsc_function_pointer is None
+
+    assert str(metadata) == """\
+                  4 Version
+           0x73a00c WowA64 exception handler function pointer
+           0x73a000 WowA64 dispatch call function pointer
+           0x73a004 WowA64 dispatch indirect call function pointer
+           0x73a008 WowA64 dispatch indirect call function pointer (with CFG check)
+           0x73a010 WowA64 dispatch return function pointer
+           0x73a014 WowA64 dispatch leaf return function pointer
+           0x73a018 WowA64 dispatch jump function pointer
+      0x10c8f0[0x4] Hybrid code address range"""
