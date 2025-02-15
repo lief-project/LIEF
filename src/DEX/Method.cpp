@@ -108,9 +108,9 @@ Prototype* Method::prototype() {
   return const_cast<Prototype*>(static_cast<const Method*>(this)->prototype());
 }
 
-const CodeInfo Method::code_info() const {
+const CodeInfo& Method::code_info() const {
   return code_info_;
-} 
+}
 
 void Method::accept(Visitor& visitor) const {
   visitor.visit(*this);

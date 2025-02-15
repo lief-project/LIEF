@@ -87,7 +87,7 @@ class LIEF_API Method : public Object {
   access_flags_list_t access_flags() const;
 
   // CodeInfo to get additional data about a method i.e. argument count
-  const CodeInfo code_info() const;
+  const CodeInfo& code_info() const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Method& mtd);
 
