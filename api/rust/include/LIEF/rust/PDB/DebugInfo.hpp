@@ -82,6 +82,10 @@ class PDB_DebugInfo : public AbstracDebugInfo {
     return details::try_unique<PDB_Type>(impl().find_type(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
+  std::string to_string() const {
+    return impl().to_string();
+  }
+
   static bool classof(const AbstracDebugInfo& reloc) {
     return lief_t::classof(static_cast<const AbstracDebugInfo::lief_t*>(&reloc.get()));
   }

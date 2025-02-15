@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "LIEF/Abstract/DebugInfo.hpp"
 #include "LIEF/PDB/DebugInfo.hpp"
 #include "PDB/pyPDB.hpp"
@@ -79,7 +81,8 @@ void create<pdb::DebugInfo>(nb::module_& m) {
       R"doc(
       Return an iterator over the different types registered in this PDB file
       )doc"_doc, nb::keep_alive<0, 1>())
-  ;
+
+    LIEF_DEFAULT_STR(DebugInfo);
 }
 
 }

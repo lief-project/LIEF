@@ -82,3 +82,10 @@ impl generic::DebugInfo for DebugInfo<'_> {
         self.ptr.as_ref().unwrap().as_ref()
     }
 }
+
+
+impl std::fmt::Display for DebugInfo<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.ptr.to_string())
+    }
+}
