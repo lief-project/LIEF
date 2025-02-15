@@ -1288,7 +1288,7 @@ std::unique_ptr<SpanStream> Parser::stream_from_rva(uint32_t rva, size_t size) {
     return std::make_unique<SpanStream>(nullptr, 0);
   }
 
-  if (check_overflow((uint64_t)delta, size, content.size())) {
+  if (check_overflow<uint64_t>((uint64_t)delta, size, content.size())) {
     return std::make_unique<SpanStream>(nullptr, 0);
   }
 
