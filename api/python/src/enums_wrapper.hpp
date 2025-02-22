@@ -41,7 +41,13 @@ class LIEF_LOCAL enum_ : public nanobind::enum_<Type> {
   {
     constexpr bool is_arithmetic = (std::is_same_v<nanobind::is_arithmetic, Extra> || ...);
     constexpr bool is_flag = (std::is_same_v<nanobind::is_flag, Extra> || ...);
-    def_static("from_value", [] (Underlying i) { return static_cast<Type>(i); });
+    def_static("from_value", [] (Underlying i) -> Type {
+      nb::object out = nb::cast(static_cast<Type>(i));
+      if (nb::isinstance<nb::int_>(out)) {
+        throw nb::value_error("Conversion error");
+      }
+      return static_cast<Type>(i);
+    });
 
     def("__eq__", [](const Type &value, Underlying value2) { return (Underlying) value == value2; });
     def("__eq__", [](const Type &value, Type value2) { return (Underlying) value == (Underlying) value2; });
