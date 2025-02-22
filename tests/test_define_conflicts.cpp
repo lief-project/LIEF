@@ -1,6 +1,7 @@
 #if defined (WIN32) || defined(_MSC_VER)
 #include <windows.h>
 #include <WinBase.h>
+#include <minwindef.h>
 #endif
 
 #if defined (__linux__)

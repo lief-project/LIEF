@@ -25,7 +25,7 @@ void create<pdb::BuildMetadata>(nb::module_& m) {
     .value("CPP", LANG::CPP)
     .value("FORTRAN", LANG::FORTRAN)
     .value("MASM", LANG::MASM)
-    .value("PASCAL", LANG::PASCAL)
+    .value("PASCAL_LANG", LANG::PASCAL_LANG)
     .value("BASIC", LANG::BASIC)
     .value("COBOL", LANG::COBOL)
     .value("LINK", LANG::LINK)
