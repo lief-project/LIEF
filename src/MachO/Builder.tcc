@@ -588,7 +588,7 @@ inline ok_error_t write_symbol(vector_iostream& nlist_table, Symbol& sym,
 
   nlist_t nl;
   nl.n_strx  = static_cast<uint32_t>(it_name->second);
-  nl.n_type  = static_cast<uint8_t>(sym.type());
+  nl.n_type  = static_cast<uint8_t>(sym.raw_type());
   nl.n_sect  = static_cast<uint32_t>(sym.numberof_sections());
   nl.n_desc  = static_cast<uint16_t>(sym.description());
   nl.n_value = static_cast<typename MACHO_T::uint>(sym.value());

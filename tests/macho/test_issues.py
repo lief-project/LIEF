@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import lief
-from utils import get_sample
+import pytest
+from utils import get_sample, has_private_samples
 from pathlib import Path
 
 def test_945():
@@ -57,3 +58,13 @@ def test_1132():
         if can_cache_segment(seg):
             assert binary.segment_from_offset(seg.file_offset) == seg
 
+@pytest.mark.skipif(not has_private_samples(), reason="need private samples")
+def test_issue_ntype(tmp_path: Path):
+    macho = lief.MachO.parse(get_sample('private/MachO/amfid.arm64e')).at(0)
+    output = tmp_path / "amfid_out.arm64e"
+
+    assert macho.symbols[0].raw_type == 60
+
+    macho.write(output.as_posix())
+    new = lief.MachO.parse(output).at(0)
+    assert new.symbols[0].raw_type == 60
