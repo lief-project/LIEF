@@ -15,7 +15,6 @@
 #ifndef LIEF_MACHO_ENUMS_H
 #define LIEF_MACHO_ENUMS_H
 
-#include "LIEF/MachO/undef.h"
 #include <cstdint>
 
 namespace LIEF {

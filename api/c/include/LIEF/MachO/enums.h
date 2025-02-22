@@ -1,6 +1,5 @@
 #ifndef LIEF_MACHO_C_ENUMS_H_
 #define LIEF_MACHO_C_ENUMS_H_
-#include "LIEF/MachO/undef.h"
 
 #ifdef __cplusplus
 extern "C" {

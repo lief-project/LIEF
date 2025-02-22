@@ -3,6 +3,16 @@
 #include <WinBase.h>
 #endif
 
+#if defined (__linux__)
+#include <elf.h>
+#include <link.h>
+#endif
+
+#if defined (__APPLE__)
+#include <mach-o/dyld.h>
+#include <mach-o/dyld_images.h>
+#endif
+
 #include "LIEF/LIEF.hpp"
 
 int main() {
