@@ -20,7 +20,7 @@ if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
   cmake_policy(SET CMP0135 NEW)
 endif()
 
-if (LIEF_EXTERNAL_NANOBINDS)
+if (LIEF_EXTERNAL_NANOBIND)
   find_package(nanobind REQUIRED)
 else()
   set(NANOBIND_VERSION 2.4.0.r9.g81da6e9)

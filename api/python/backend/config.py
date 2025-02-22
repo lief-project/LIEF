@@ -102,6 +102,7 @@ class BuildConfig(BaseModel):
 
 class ThridParty(BaseModel):
     spdlog: Optional[EnvString] = None
+    nanobind: Optional[EnvString] = None
 
     def cmake_dump(self) -> List[str]:
         out: List[str] = []
@@ -109,6 +110,12 @@ class ThridParty(BaseModel):
             out.extend((
                 "-DLIEF_EXTERNAL_SPDLOG=ON",
                 f"-Dspdlog_DIR={self.spdlog}"
+            ))
+
+        if self.nanobind is not None:
+            out.extend((
+                "-DLIEF_OPT_NANOBIND_EXTERNAL=ON",
+                f"-Dnanobind_DIR={self.nanobind}"
             ))
 
         return out
