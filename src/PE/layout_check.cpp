@@ -22,6 +22,7 @@
 #include "LIEF/PE/TLS.hpp"
 #include <spdlog/fmt/fmt.h>
 #include "LIEF/utils.hpp"
+#include "LIEF/PE/utils.hpp"
 
 #include "PE/Structures.hpp"
 

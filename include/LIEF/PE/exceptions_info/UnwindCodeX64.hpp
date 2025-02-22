@@ -80,7 +80,7 @@ class LIEF_API Code {
 
 /// This class represents a stack-allocation operation
 /// (UNWIND_OPCODES::ALLOC_SMALL or UNWIND_OPCODES::ALLOC_LARGE).
-class Alloc : public Code {
+class LIEF_API Alloc : public Code {
   public:
   Alloc(OPCODE op, size_t pos, uint32_t size) :
     Code(op, pos),
@@ -105,7 +105,7 @@ class Alloc : public Code {
 };
 
 /// Push a nonvolatile integer register, decrementing RSP by 8
-class PushNonVol : public Code {
+class LIEF_API PushNonVol : public Code {
   public:
   PushNonVol() = delete;
   PushNonVol(REG reg, size_t pos) :
@@ -131,7 +131,7 @@ class PushNonVol : public Code {
 };
 
 /// Push a machine frame
-class PushMachFrame : public Code {
+class LIEF_API PushMachFrame : public Code {
   public:
   PushMachFrame() = delete;
   PushMachFrame(uint8_t value, size_t pos) :
@@ -158,7 +158,7 @@ class PushMachFrame : public Code {
 
 /// Establish the frame pointer register by setting the register to some offset
 /// of the current RSP
-class SetFPReg : public Code {
+class LIEF_API SetFPReg : public Code {
   public:
   SetFPReg() = delete;
   SetFPReg(REG value, size_t pos) :
@@ -185,7 +185,7 @@ class SetFPReg : public Code {
 
 /// Save a nonvolatile integer register on the stack using a `MOV` instead of a
 /// `PUSH`.
-class SaveNonVolatile : public Code {
+class LIEF_API SaveNonVolatile : public Code {
   public:
   SaveNonVolatile() = delete;
   SaveNonVolatile(OPCODE op, REG value, size_t pos, uint32_t offset) :
@@ -216,7 +216,7 @@ class SaveNonVolatile : public Code {
   uint32_t offset_ = 0;
 };
 
-class SaveXMM128 : public Code {
+class LIEF_API SaveXMM128 : public Code {
   public:
   SaveXMM128() = delete;
   SaveXMM128(OPCODE op, uint8_t num, size_t pos, uint32_t offset) :
@@ -248,7 +248,7 @@ class SaveXMM128 : public Code {
 };
 
 /// Describes the function's epilog
-class Epilog : public Code {
+class LIEF_API Epilog : public Code {
   public:
   Epilog() = delete;
 
@@ -280,7 +280,7 @@ class Epilog : public Code {
   uint8_t size_ = 0;
 };
 
-class Spare : public Code {
+class LIEF_API Spare : public Code {
   public:
   Spare() :
     Code(OPCODE::SPARE, 0)

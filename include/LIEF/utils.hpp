@@ -111,9 +111,9 @@ LIEF_API result<std::string> demangle(const std::string& mangled);
 /// | 00 00 00 00 00 00 00 00 00 00 00 00              | ............     |
 /// +---------------------------------------------------------------------+
 /// ```
-std::string dump(const uint8_t* buffer, size_t size,
-                 const std::string& title = "", const std::string& prefix = "",
-                 size_t limit = 0);
+LIEF_API std::string dump(
+  const uint8_t* buffer, size_t size, const std::string& title = "",
+  const std::string& prefix = "", size_t limit = 0);
 
 inline std::string dump(span<const uint8_t> data, const std::string& title = "",
                         const std::string& prefix = "", size_t limit = 0)
