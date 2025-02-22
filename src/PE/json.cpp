@@ -618,7 +618,7 @@ void JsonVisitor::visit(const ResourceVarFileInfo& info) {
   node_["key"]  = info.key_u8();
   std::vector<json> j_vars;
   for (const ResourceVar& var : info.vars()) {
-    j_vars.push_back(std::unordered_map {
+    j_vars.push_back(std::unordered_map<std::string, json> {
       std::make_pair("key", json(var.key_u8())),
       std::make_pair("type", json(var.type())),
       std::make_pair("values", json(var.values())),
@@ -632,7 +632,7 @@ void JsonVisitor::visit(const ResourceVersion& version) {
   node_["key"] = version.key_u8();
   {
     const ResourceVersion::fixed_file_info_t& info = version.file_info();
-    node_["file_info"] = std::unordered_map {
+    node_["file_info"] = std::unordered_map<std::string, json> {
       std::make_pair("signature", info.signature),
       std::make_pair("struct_version", info.struct_version),
       std::make_pair("file_version_ms", info.file_version_ms),
