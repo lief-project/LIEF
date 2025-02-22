@@ -3,6 +3,22 @@
 :fa:`solid fa-code-compare` Changelog
 =====================================
 
+0.16.4 - Not Released Yet
+-------------------------
+
+:Python:
+
+  * Relax checks on the enum verification. As described in :issue:`1170` and
+    :issue:`1172`, an invalid enum led to an unrecoverable error. The new
+    behavior now returns the raw ``int`` value if it can't be converted into the
+    given enum.
+
+  * Upgrade nanobind to version ``v2.5.0``
+
+:PE:
+
+  * Fix export forwarding issue (:issue:`1168`)
+
 0.16.3 - February 1st, 2025
 ---------------------------
 
