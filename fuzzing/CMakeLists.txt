@@ -8,7 +8,7 @@ set(LIEF_FUZZER_SRC
 
 foreach(fuzzer ${LIEF_FUZZER_SRC})
   string(REGEX REPLACE ".cpp\$" "" output "${fuzzer}")
-  add_executable("${output}"        "${fuzzer}")
+  add_executable("${output}" "${fuzzer}")
 
   set_target_properties(
     "${output}"
