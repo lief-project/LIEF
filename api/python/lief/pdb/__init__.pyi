@@ -15,7 +15,7 @@ class BuildMetadata:
 
         MASM = 3
 
-        PASCAL = 4
+        PASCAL_LANG = 4
 
         BASIC = 5
 
