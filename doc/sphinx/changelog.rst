@@ -108,6 +108,10 @@
 
   * Fix export forwarding issue (:issue:`1168`)
 
+:MachO:
+
+  * Fix truncated ``nlist_t.n_type`` when rewriting a Mach-O binary
+
 0.16.3 - February 1st, 2025
 ---------------------------
 
