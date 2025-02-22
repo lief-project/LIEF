@@ -17,6 +17,13 @@ CompilationUnit
 
 ----------
 
+BuildMetadata
+*************
+
+.. autoclass:: lief.pdb.BuildMetadata
+
+----------
+
 PublicSymbol
 ************
 

@@ -53,6 +53,12 @@ impl PublicSymbol<'_> {
     }
 }
 
+impl std::fmt::Display for PublicSymbol<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.ptr.to_string())
+    }
+}
+
 declare_fwd_iterator!(
     PublicSymbols,
     PublicSymbol<'a>,

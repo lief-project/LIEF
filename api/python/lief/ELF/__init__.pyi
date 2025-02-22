@@ -920,7 +920,7 @@ class CoreAuxv(Note):
 
         END = 0
 
-        IGNORE = 1
+        IGNORE_TY = 1
 
         EXECFD = 2
 

@@ -734,6 +734,9 @@ include_cpp! {
     generate!("PDB_types_Method")
     block_constructors!("PDB_types_Method")
 
+    generate!("PDB_BuildMetadata")
+    block_constructors!("PDB_BuildMetadata")
+
     // -------------------------------------------------------------------------
     // DWARF
     // -------------------------------------------------------------------------

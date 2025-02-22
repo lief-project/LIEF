@@ -1,3 +1,4 @@
+#include <sstream>
 #include "LIEF/PDB/PublicSymbol.hpp"
 #include "PDB/pyPDB.hpp"
 
@@ -35,7 +36,8 @@ void create<PublicSymbol>(nb::module_& m) {
 
     .def_prop_ro("demangled_name", &PublicSymbol::demangled_name,
                  "Demangled representation of the symbol"_doc)
-  ;
+
+  LIEF_DEFAULT_STR(PublicSymbol);
 }
 
 }

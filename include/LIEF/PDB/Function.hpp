@@ -97,6 +97,15 @@ class LIEF_API Function {
   /// Original source code location
   debug_location_t debug_location() const;
 
+  std::string to_string() const;
+
+  LIEF_API friend
+    std::ostream& operator<<(std::ostream& os, const Function& F)
+  {
+    os << F.to_string();
+    return os;
+  }
+
   private:
   std::unique_ptr<details::Function> impl_;
 };

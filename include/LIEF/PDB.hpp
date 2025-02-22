@@ -19,6 +19,7 @@
 #include <LIEF/PDB/Function.hpp>
 #include <LIEF/PDB/PublicSymbol.hpp>
 #include <LIEF/PDB/DebugInfo.hpp>
+#include <LIEF/PDB/BuildMetadata.hpp>
 #include <LIEF/PDB/Type.hpp>
 #include <LIEF/PDB/types.hpp>
 #endif

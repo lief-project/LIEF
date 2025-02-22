@@ -4,10 +4,11 @@ use lief_ffi as ffi;
 
 use std::marker::PhantomData;
 
-use crate::common::FromFFI;
+use crate::common::{FromFFI, into_optional};
 use crate::declare_fwd_iterator;
 
 use super::function::Functions;
+use super::build_metadata::BuildMetadata;
 
 /// This structure represents a CompilationUnit (or Module) in a PDB file
 pub struct CompilationUnit<'a> {
@@ -50,6 +51,18 @@ impl CompilationUnit<'_> {
     /// These files include the **header** (`.h, .hpp`, ...).
     pub fn sources(&self) -> Sources {
         Sources::new(self.ptr.sources())
+    }
+
+    /// Return build metadata such as the version of the compiler or
+    /// the original source language of this compilation unit
+    pub fn build_metadata(&self) -> Option<BuildMetadata> {
+        into_optional(self.ptr.build_metadata())
+    }
+}
+
+impl std::fmt::Display for CompilationUnit<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.ptr.to_string())
     }
 }
 

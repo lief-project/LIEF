@@ -41,6 +41,44 @@
 
   * LIEF extended can now process DWARF debug info in PE binaries
 
+:PDB:
+
+  * Add support for CodeView symbols: ``S_COMPILE3, S_COMPILE2, S_BUILDINFO, S_ENVBLOCK``.
+    These symbols are exposed through the interface |lief-pdb-buildmetadata|,
+    which can be accessed using |lief-pdb-compilationunit-buildmetadata|.
+    This metadata provides build time information such as:
+
+    .. code-block:: text
+
+        Module Name : * Linker *
+        Build Metadata:
+          Frontend Version: 0.0.0.0
+          Backend Version : 14.37.32825.0
+          Tool Version    : Microsoft (R) LINK
+          Language        : LINK
+          Target          : X64
+          Environment:
+            cwd: C:\Users\romai\dev\rust\ast-grep
+            exe: C:\Program Files\Microsoft Visual Studio\2022\Community\[...]
+            pdb: C:\Users\romai\dev\rust\ast-grep\target\debug\deps\ast_grep.pdb
+            cmd:  /NOLOGO /LIBPATH:C:\Users\romai\dev\rust\ast-grep\target\[...]
+
+
+        Module Name : std-4ee9ee8805e6ac55.std.ddad90bab7781587-cgu.0.rcgu.o
+        Object      : C:\Users\romai\scoop\persist\rustup\.rustup\toolchains\[...]
+        Build Metadata:
+          Frontend Version: 1.74.0.0
+          Backend Version : 17004.0.0.0
+          Tool Version    : clang LLVM (rustc version 1.74.0 (79e9716c9 2023-11-13))
+          Language        : RUST
+          Target          : X64
+          Build Info:
+            Current directory: /rustc/79e9716c980570bfd1f666e3b16ac583f0168962
+            Build tool       : C:\a\rust\rust\build\x86_64-pc-windows-msvc\stage1\bin\rustc.exe
+            Source file      : library\std\src\lib.rs\@\std.ddad90bab7781587-cgu.0
+            Command line     : "-cc1" "--crate-name" "std" "--edition=2021" [...]
+
+
 :Extended:
 
   * Fix issue in the Python bindings while trying to access ``lief.__LIEF_MAIN_COMMIT__``

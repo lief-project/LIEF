@@ -1,3 +1,4 @@
+#include <sstream>
 #include "LIEF/PDB/Function.hpp"
 #include "PDB/pyPDB.hpp"
 
@@ -27,7 +28,8 @@ void create<pdb::Function>(nb::module_& m) {
 
     .def_prop_ro("debug_location", &pdb::Function::debug_location,
                  "Original source code location."_doc)
-  ;
+
+  LIEF_DEFAULT_STR(Function);
 
 }
 

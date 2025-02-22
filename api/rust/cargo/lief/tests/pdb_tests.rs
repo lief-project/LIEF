@@ -145,6 +145,10 @@ fn explore_pdb(name: &str, pdb: &lief::pdb::DebugInfo) {
                 func.debug_location()
             );
         }
+
+        if let Some(metadata) = cu.build_metadata() {
+            println!("{:?}{}", metadata, metadata);
+        }
     }
 }
 

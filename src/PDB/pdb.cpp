@@ -16,6 +16,7 @@
 #include "LIEF/PDB/CompilationUnit.hpp"
 #include "LIEF/PDB/PublicSymbol.hpp"
 #include "LIEF/PDB/Function.hpp"
+#include "LIEF/PDB/BuildMetadata.hpp"
 #include "LIEF/PDB/Type.hpp"
 
 #include "LIEF/PDB/types/Simple.hpp"
@@ -50,6 +51,8 @@ class FunctionIt {};
 
 class Type {};
 class TypeIt {};
+
+class BuildMetadata {};
 }
 
 namespace types::details {
@@ -128,6 +131,10 @@ CompilationUnit::function_iterator CompilationUnit::functions() const {
   return make_empty_iterator<Function>();
 }
 
+std::unique_ptr<BuildMetadata> CompilationUnit::build_metadata() const {
+  return nullptr;
+}
+
 CompilationUnit::Iterator::Iterator(std::unique_ptr<details::CompilationUnitIt>) :
   impl_(nullptr)
 {}
@@ -158,6 +165,10 @@ CompilationUnit::Iterator& CompilationUnit::Iterator::operator--() {
 
 std::unique_ptr<CompilationUnit> CompilationUnit::Iterator::operator*() const {
   return nullptr;
+}
+
+std::string CompilationUnit::to_string() const {
+  return "";
 }
 
 // ----------------------------------------------------------------------------
@@ -211,6 +222,10 @@ uint32_t PublicSymbol::RVA() const {
 }
 
 std::string PublicSymbol::demangled_name() const {
+  return "";
+}
+
+std::string PublicSymbol::to_string() const {
   return "";
 }
 
@@ -270,6 +285,10 @@ std::string Function::section_name() const {
 
 debug_location_t Function::debug_location() const {
   return {};
+}
+
+std::string Function::to_string() const {
+  return "";
 }
 
 // ----------------------------------------------------------------------------
@@ -488,4 +507,53 @@ std::string Method::name() const {
 Method::~Method() = default;
 
 }
+
+// ----------------------------------------------------------------------------
+// PDB/BuildMetadata.hpp
+// ----------------------------------------------------------------------------
+BuildMetadata::BuildMetadata(std::unique_ptr<details::BuildMetadata> /*impl*/) :
+  impl_(nullptr)
+{}
+
+BuildMetadata::~BuildMetadata() = default;
+
+BuildMetadata::version_t BuildMetadata::frontend_version() const {
+  return {};
+}
+
+BuildMetadata::version_t BuildMetadata::backend_version() const {
+  return {};
+}
+
+std::string BuildMetadata::version() const {
+  return "";
+}
+
+std::string BuildMetadata::to_string() const {
+  return "";
+}
+
+BuildMetadata::LANG BuildMetadata::language() const {
+  return LANG::UNKNOWN;
+}
+
+BuildMetadata::CPU BuildMetadata::target_cpu() const {
+  return CPU::UNKNOWN;
+}
+
+optional<BuildMetadata::build_info_t> BuildMetadata::build_info() const {
+  return nullopt();
+}
+
+std::vector<std::string> BuildMetadata::env() const {
+  return {};
+}
+
+const char* to_string(BuildMetadata::CPU) {
+  return "";
+}
+const char* to_string(BuildMetadata::LANG) {
+  return "";
+}
+
 }

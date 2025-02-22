@@ -126,6 +126,19 @@
     :py:func:`lief.pdb.load`
     :cpp:func:`LIEF::pdb::load`
 
+.. |lief-pdb-buildmetadata| lief-api:: lief.pdb.BuildMetadata
+
+    :rust:struct:`lief::pdb::BuildMetadata`
+    :py:class:`lief.pdb.BuildMetadata`
+    :cpp:class:`LIEF::pdb::BuildMetadata`
+
+.. |lief-pdb-compilationunit-buildmetadata| lief-api:: lief.pdb.CompilationUnit.build_metadata()
+
+    :rust:method:`lief::pdb::CompilationUnit::build_metadata [struct]`
+    :py:attr:`lief.pdb.CompilationUnit.build_metadata`
+    :cpp:func:`LIEF::pdb::CompilationUnit::build_metadata`
+
+
 .. PE ==========================================================================
 
 .. |lief-pe-parser-config| lief-api:: lief.PE.ParserConfig

@@ -17,6 +17,7 @@
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/PDB/Function.hpp"
+#include "LIEF/rust/PDB/BuildMetadata.hpp"
 #include "LIEF/PDB/CompilationUnit.hpp"
 
 class PDB_CompilationUnit : private Mirror<LIEF::pdb::CompilationUnit> {
@@ -61,4 +62,10 @@ class PDB_CompilationUnit : private Mirror<LIEF::pdb::CompilationUnit> {
   auto functions() const {
     return std::make_unique<it_functions>(get());
   }
+
+  auto build_metadata() const {
+    return details::try_unique<PDB_BuildMetadata>(get().build_metadata());
+  }
+
+  auto to_string() const { return get().to_string(); }
 };

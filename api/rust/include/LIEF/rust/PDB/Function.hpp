@@ -30,4 +30,6 @@ class PDB_Function : private Mirror<LIEF::pdb::Function> {
   auto debug_location() const {
     return details::make_location(get().debug_location());
   }
+
+  auto to_string() const { return get().to_string(); }
 };

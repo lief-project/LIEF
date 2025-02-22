@@ -1,4 +1,6 @@
+#include <sstream>
 #include "LIEF/PDB/CompilationUnit.hpp"
+#include "LIEF/PDB/BuildMetadata.hpp"
 #include "PDB/pyPDB.hpp"
 
 #include <nanobind/stl/string.h>
@@ -51,7 +53,9 @@ void create<pdb::CompilationUnit>(nb::module_& m) {
       an empty iterator.
       )doc"_doc, nb::keep_alive<0, 1>()
     )
-  ;
+    .def_prop_ro("build_metadata", &CompilationUnit::build_metadata,
+                 nb::rv_policy::take_ownership, nb::keep_alive<0, 1>())
+  LIEF_DEFAULT_STR(CompilationUnit);
 }
 
 }

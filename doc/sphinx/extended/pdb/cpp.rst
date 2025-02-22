@@ -31,6 +31,13 @@ CompilationUnit
 
 ----------
 
+BuildMetadata
+*************
+
+.. doxygenclass:: LIEF::pdb::BuildMetadata
+
+----------
+
 Function
 ********
 

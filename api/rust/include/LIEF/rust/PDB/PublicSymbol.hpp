@@ -26,4 +26,6 @@ class PDB_PublicSymbol : private Mirror<LIEF::pdb::PublicSymbol> {
   auto demangled_name() const { return get().demangled_name(); }
   auto section_name() const { return get().section_name(); }
   auto RVA() const { return get().RVA(); }
+
+  auto to_string() const { return get().to_string(); }
 };

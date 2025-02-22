@@ -24,6 +24,7 @@ pub mod compilation_unit;
 pub mod public_symbol;
 pub mod function;
 pub mod types;
+pub mod build_metadata;
 
 #[doc(inline)]
 pub use debug_info::DebugInfo;
@@ -39,6 +40,9 @@ pub use function::Function;
 
 #[doc(inline)]
 pub use types::Type;
+
+#[doc(inline)]
+pub use build_metadata::BuildMetadata;
 
 /// Load a PDB from its file path
 pub fn load(path: &str) -> Option<DebugInfo> {

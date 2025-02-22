@@ -17,6 +17,7 @@
 #include "LIEF/rust/PDB/CompilationUnit.hpp"
 #include "LIEF/rust/PDB/Function.hpp"
 #include "LIEF/rust/PDB/PublicSymbol.hpp"
+#include "LIEF/rust/PDB/BuildMetadata.hpp"
 #include "LIEF/rust/PDB/Type.hpp"
 #include "LIEF/rust/PDB/types/Simple.hpp"
 #include "LIEF/rust/PDB/types/Array.hpp"
