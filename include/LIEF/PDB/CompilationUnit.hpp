@@ -17,6 +17,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <ostream>
 
 #include "LIEF/iterators.hpp"
 #include "LIEF/PDB/Function.hpp"

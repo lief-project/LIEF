@@ -16,6 +16,7 @@
 #define LIEF_PDB_PUBLIC_SYMBOL_H
 #include <memory>
 #include <string>
+#include <ostream>
 
 #include "LIEF/visibility.h"
 

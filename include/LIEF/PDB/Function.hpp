@@ -16,6 +16,7 @@
 #define LIEF_PDB_FUNCTION_H
 #include <memory>
 #include <string>
+#include <ostream>
 
 #include "LIEF/visibility.h"
 #include "LIEF/debug_loc.hpp"
