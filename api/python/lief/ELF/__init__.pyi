@@ -2540,7 +2540,7 @@ class ParserConfig:
 
     count_mtd: ParserConfig.DYNSYM_COUNT
 
-    all: lief.ELF.ParserConfig = ...
+    all: ParserConfig = ...
 
 class QNXStack(Note):
     stack_size: int
@@ -5265,7 +5265,7 @@ class SymbolVersion(lief.Object):
     @overload
     def __init__(self, arg: int, /) -> None: ...
 
-    local: lief.ELF.SymbolVersion = ...
+    local: SymbolVersion = ...
 
     value: int
 
