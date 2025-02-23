@@ -22,7 +22,7 @@ num-traits = "0.2"
 num-derive = "0.4"
 num-bigint = "0.4"
 tempfile   = "3.14.0"
-lief-ffi   = { version = "0.16.3", path = "../lief-ffi" }
+lief-ffi   = { version = "0.16.4", path = "../lief-ffi" }
 
 [features]
 default = ["rustls-tls"]

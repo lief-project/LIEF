@@ -3,8 +3,8 @@
 :fa:`solid fa-code-compare` Changelog
 =====================================
 
-0.16.4 - Not Released Yet
--------------------------
+0.16.4 - February 23rd, 2025
+----------------------------
 
 :Python:
 
