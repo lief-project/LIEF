@@ -7,12 +7,12 @@ authors.workspace = true
 license.workspace = true
 
 [dependencies]
-cxx     = { version = "1.0.117", features = [ "c++17" ] }
-autocxx = "0.26"
+cxx     = { version = "=1.0.117", features = [ "c++17" ] }
+autocxx = "=0.26"
 
 [build-dependencies]
-lief-build = { version="0.16.4", path = "../lief-build" }
-miette     = { version="5.10", features = [ "fancy" ] }
+lief-build = { version="0.17.0", path = "../lief-build" }
+miette     = { version="=5.10", features = [ "fancy" ] }
 
 [features]
 default = ["rustls-tls"]
