@@ -20,7 +20,13 @@
 #include "logging.hpp"
 
 #include "spdlog/spdlog.h"
+
+#if !defined(SPDLOG_FMT_EXTERNAL)
 #include "spdlog/fmt/bundled/args.h"
+#else
+#include "fmt/args.h"
+#endif
+
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/android_sink.h"
