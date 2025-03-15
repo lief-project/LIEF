@@ -15,6 +15,7 @@ extra-cmake-opt = [
   "-DCMAKE_CXX_COMPILER=clang++",
   "-DCMAKE_C_COMPILER=clang",
   "-DCMAKE_MSVC_RUNTIME=MultiThreaded",
+  "-DCMAKE_SYSTEM_PROCESSOR={architecture}",
   "-DCMAKE_TOOLCHAIN_FILE=/cmake/windows/toolchain.cmake",
   "-DCMAKE_MODULE_PATH=/cmake/windows/",
 ]
@@ -38,6 +39,6 @@ enabled = true
 debug   = false
 
 [lief.cross-compilation]
-platform  = "win_amd64"
+platform  = "win_{winpy_architecture}"
 pyversion = "cp{python_version_alt}"
 abi       = "cp{python_version_alt}"

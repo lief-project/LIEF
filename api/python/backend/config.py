@@ -18,10 +18,14 @@ def cmake_serialize(field: Any):
 
 class EnvStringValidator:
     def _get_env_string(self, string: str) -> str:
+        winpy_architecture = os.getenv("LIEF_TARGET_ARCHITECTURE", "")
+        if winpy_architecture == "x86_64":
+            winpy_architecture = "amd64"
         formatted = string.format(
                 python_version=os.getenv("LIEF_TARGET_PYTHON_VERSION", ""),
                 python_version_alt=os.getenv("LIEF_TARGET_PYTHON_VERSION", "").replace('.', ''),
                 architecture=os.getenv("LIEF_TARGET_ARCHITECTURE", ""),
+                winpy_architecture=winpy_architecture,
                 ci_project_dir=os.getenv("CI_PROJECT_DIR", ""),
         )
         return formatted
