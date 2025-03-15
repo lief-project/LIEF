@@ -168,6 +168,56 @@ void critical(const std::string& fmt, const Args &... args) {
 }
 
 // -----------------------------------------------------------------------------
+namespace named {
+/// Get the logging level for the logger with the given name
+LIEF_API LEVEL get_level(const char* name);
+
+/// Disable the logger with the given name
+LIEF_API void disable(const char* name);
+
+/// Enable the logger with the given name
+LIEF_API void enable(const char* name);
+
+/// Set the log level for the logger with the given name
+LIEF_API void set_level(const char* name, LEVEL level);
+
+/// Change the logger with the given as a file-base logging and set its path
+LIEF_API void set_path(const char* name, const std::string& path);
+
+/// Log a message with the logger whose name in provided in the first parameter
+LIEF_API void log(const char* name, LEVEL level, const std::string& msg);
+
+/// Set a spdlog sink for the logger with the given name
+LIEF_API void set_logger(const char* name, std::shared_ptr<spdlog::logger> logger);
+
+/// Reset the logger with the given name
+LIEF_API void reset(const char* name);
+
+/// Enable debug logging for the logger with the given name
+inline void enable_debug(const char* name) {
+  set_level(name, LEVEL::DEBUG);
+}
+
+inline void debug(const char* name, const std::string& msg) {
+  log(name, LEVEL::DEBUG, msg);
+}
+
+inline void info(const char* name, const std::string& msg) {
+  log(name, LEVEL::INFO, msg);
+}
+
+inline void warn(const char* name, const std::string& msg) {
+  log(name, LEVEL::WARN, msg);
+}
+
+inline void err(const char* name, const std::string& msg) {
+  log(name, LEVEL::ERR, msg);
+}
+
+inline void critical(const char* name, const std::string& msg) {
+  log(name, LEVEL::CRITICAL, msg);
+}
+}
 
 
 class Scoped {

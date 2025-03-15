@@ -272,6 +272,53 @@ void log(LEVEL level, const std::string& fmt,
   log(level, result);
 }
 
+namespace named {
+LEVEL get_level(const char* name) {
+  return Logger::instance(name).get_level();
+}
+
+void disable(const char* name) {
+  Logger::instance(name).disable();
+}
+
+void enable(const char* name) {
+  Logger::instance(name).enable();
+}
+
+void set_level(const char* name, LEVEL level) {
+  Logger::instance(name).set_level(level);
+}
+
+void set_path(const char* name, const std::string& path) {
+  Logger::instance(name).set_log_path(path);
+}
+
+void log(const char* name, LEVEL level, const std::string& msg) {
+  switch (level) {
+    case LEVEL::OFF:
+      return;
+    case LEVEL::TRACE:
+    case LEVEL::DEBUG:
+      return Logger::instance(name).debug("{}", msg);
+    case LEVEL::INFO:
+      return Logger::instance(name).info("{}", msg);
+    case LEVEL::WARN:
+      return Logger::instance(name).warn("{}", msg);
+    case LEVEL::ERR:
+      return Logger::instance(name).err("{}", msg);
+    case LEVEL::CRITICAL:
+      return Logger::instance(name).critial("{}", msg);
+  }
+}
+
+void set_logger(const char* name, std::shared_ptr<spdlog::logger> logger) {
+  Logger::instance(name).set_logger(std::move(logger));
+}
+
+void reset(const char* name) {
+  Logger::instance(name).reset();
+}
+}
 
 }
 }

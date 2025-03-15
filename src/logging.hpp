@@ -129,6 +129,13 @@ class Logger {
     }
   }
 
+  template <typename... Args>
+  void critial(const char *fmt, const Args &... args) {
+    if constexpr (lief_logging_support) {
+      sink_->critical(fmt::runtime(fmt), args...);
+    }
+  }
+
   void set_logger(std::shared_ptr<spdlog::logger> logger);
 
   ~Logger() = default;
