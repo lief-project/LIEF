@@ -31,6 +31,22 @@
 namespace LIEF {
 namespace PE {
 
+Relocation::Relocation(Relocation&&) = default;
+Relocation& Relocation::operator=(Relocation&& other) = default;
+Relocation::~Relocation() = default;
+
+Relocation::Relocation() = default;
+
+Relocation::Relocation(uint32_t base, uint32_t block_size) :
+  Object(),
+  block_size_(block_size),
+  virtual_address_(base)
+{}
+
+Relocation::Relocation(uint32_t base) :
+  Relocation(base, 0)
+{}
+
 Relocation::Relocation(const Relocation& other) :
   Object{other},
   block_size_{other.block_size_},
