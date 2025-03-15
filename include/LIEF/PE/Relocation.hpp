@@ -43,11 +43,19 @@ class LIEF_API Relocation : public Object {
   using it_entries       = ref_iterator<entries_t&, RelocationEntry*>;
   using it_const_entries = const_ref_iterator<const entries_t&, RelocationEntry*>;
 
-  Relocation() = default;
+
+  Relocation();
+  Relocation(uint32_t base, uint32_t block_size);
+  Relocation(uint32_t base);
+
   Relocation(const Relocation& other);
   Relocation& operator=(Relocation other);
+
+  Relocation(Relocation&&);
+  Relocation& operator=(Relocation&& other);
+
   Relocation(const details::pe_base_relocation_block& header);
-  ~Relocation() override = default;
+  ~Relocation() override;
 
   void swap(Relocation& other);
 
@@ -82,7 +90,6 @@ class LIEF_API Relocation : public Object {
   void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Relocation& relocation);
-
   private:
   uint32_t  block_size_ = 0;
   uint32_t  virtual_address_ = 0;
