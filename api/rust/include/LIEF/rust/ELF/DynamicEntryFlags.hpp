@@ -19,13 +19,23 @@
 class ELF_DynamicEntryFlags : public ELF_DynamicEntry {
   public:
   using lief_t = LIEF::ELF::DynamicEntryFlags;
-
+  ELF_DynamicEntryFlags(const lief_t& impl) :
+    ELF_DynamicEntry(impl.clone())
+  {}
   auto flags() const {
     return impl().raw_flags();
   }
 
   static bool classof(const ELF_DynamicEntry& entry) {
     return lief_t::classof(&entry.get());
+  }
+
+  static auto create_dt_flag(uint64_t value) {
+    return std::make_unique<ELF_DynamicEntryFlags>(lief_t::create_dt_flag(value));
+  }
+
+  static auto create_dt_flag_1(uint64_t value) {
+    return std::make_unique<ELF_DynamicEntryFlags>(lief_t::create_dt_flag_1(value));
   }
 
   private:

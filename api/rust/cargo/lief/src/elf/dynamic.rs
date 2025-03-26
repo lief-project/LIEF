@@ -832,6 +832,14 @@ impl Flags<'_> {
     pub fn flags(&self) -> DtFlags {
         DtFlags::from(self.ptr.flags())
     }
+
+    pub fn create_dt_flag(value: u64) -> Self {
+        Self::from_ffi(ffi::ELF_DynamicEntryFlags::create_dt_flag(value))
+    }
+
+    pub fn create_dt_flag_1(value: u64) -> Self {
+        Self::from_ffi(ffi::ELF_DynamicEntryFlags::create_dt_flag_1(value))
+    }
 }
 
 impl FromFFI<ffi::ELF_DynamicEntryFlags> for Flags<'_> {
