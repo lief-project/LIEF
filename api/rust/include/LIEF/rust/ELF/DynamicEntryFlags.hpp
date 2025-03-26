@@ -28,6 +28,14 @@ class ELF_DynamicEntryFlags : public ELF_DynamicEntry {
     return lief_t::classof(&entry.get());
   }
 
+  static auto create_dt_flag(uint64_t value) {
+    return LIEF::ELF::DynamicEntryFlags::create_dt_flag(value).clone();
+  }
+
+  static auto create_dt_flag_1(uint64_t value) {
+    return LIEF::ELF::DynamicEntryFlags::create_dt_flag_1(value).clone();
+  }
+
   private:
   const lief_t& impl() const { return as<lief_t>(this); }
 };
