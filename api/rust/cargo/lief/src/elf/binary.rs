@@ -118,6 +118,11 @@ impl Binary {
         DynamicEntries::new(self.ptr.dynamic_entries())
     }
 
+    /// Remove **all** dynamic entries with the given tag
+    pub fn remove_dynamic_entries_by_tag(&mut self, tag: dynamic::Tag) {
+        self.ptr.as_mut().unwrap().remove_dynamic_entries_by_tag(tag.into())
+    }
+
     /// Return an iterator over the dynamic [`crate::elf::Symbol`] of the binary
     pub fn dynamic_symbols(&self) -> DynamicSymbols {
         DynamicSymbols::new(self.ptr.dynamic_symbols())

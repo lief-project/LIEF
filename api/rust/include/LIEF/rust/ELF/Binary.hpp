@@ -242,6 +242,10 @@ class ELF_Binary : public AbstractBinary {
     return std::make_unique<it_dynamic_entries>(impl());
   }
 
+  void remove_dynamic_entries_by_tag(uint64_t tag) {
+    impl().remove(LIEF::ELF::DynamicEntry::TAG(tag));
+  }
+
   auto dynamic_symbols() const {
     return std::make_unique<it_dynamic_symbols>(impl());
   }
