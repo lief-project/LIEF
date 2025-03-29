@@ -74,7 +74,7 @@ def setup(app: Sphinx):
     app.config.lief_gh_sponsor_url = "https://github.com/sponsors/lief-project"
     app.config.lief_extended_url = "https://extended.lief.re/"
     app.config.lief_extended_email = "extended@lief.re"
-    app.config.lief_llvm_version = "19.1.2"
+    app.config.lief_llvm_version = "20.1.2"
 
     app.config.lief_rust_doc_base_url = "https://lief.re/doc/stable/rust"
     app.config.lief_rust_doc = f"{app.config.lief_rust_doc_base_url}/lief"
