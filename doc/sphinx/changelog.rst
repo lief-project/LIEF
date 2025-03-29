@@ -82,11 +82,16 @@
 :Extended:
 
   * Fix issue in the Python bindings while trying to access ``lief.__LIEF_MAIN_COMMIT__``
+  * Use LLVM 20.1.2
 
 :Build System:
 
   * LIEF is now available in `vcpkg <https://github.com/microsoft/vcpkg/tree/master/ports/lief>`_.
     Many thanks to :github_user:`luadebug` for this support.
+
+:Dependencies:
+
+  * Move to spdlog 1.15.1
 
 :Utilities:
 
