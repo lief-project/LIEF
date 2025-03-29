@@ -191,6 +191,10 @@ target_compile_definitions(LIB_LIEF PRIVATE SPDLOG_DISABLE_DEFAULT_LOGGER
                                             SPDLOG_NO_EXCEPTIONS
                                             SPDLOG_FUNCTION=)
 
+if (MSVC AND NOT CLANG_CL AND NOT LIEF_EXTERNAL_SPDLOG)
+  target_compile_definitions(LIB_LIEF PRIVATE FMT_UNICODE=0)
+endif()
+
 if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
   target_compile_definitions(LIB_LIEF PRIVATE SPDLOG_NO_THREAD_ID)
 endif()
