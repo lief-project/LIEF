@@ -47,7 +47,7 @@
         "Duplicate the current instance of this object"_doc, \
         nb::rv_policy::take_ownership)
 
-constexpr const char* operator "" _doc(const char* value, size_t) {
+constexpr const char* operator ""_doc(const char* value, size_t) {
   return value;
 }
 
