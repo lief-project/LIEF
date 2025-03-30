@@ -70,7 +70,7 @@ set_target_properties(pyLIEF PROPERTIES
 )
 
 if (MSVC AND NOT CLANG_CL AND NOT LIEF_EXTERNAL_SPDLOG)
-  target_compile_definitions(LIB_LIEF PRIVATE FMT_UNICODE=0)
+  target_compile_definitions(pyLIEF PRIVATE FMT_UNICODE=0)
 endif()
 
 target_link_libraries(pyLIEF PUBLIC ${LIEF_TARGET} lief_spdlog)
