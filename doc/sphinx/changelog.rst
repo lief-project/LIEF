@@ -84,6 +84,10 @@
   * Fix issue in the Python bindings while trying to access ``lief.__LIEF_MAIN_COMMIT__``
   * Use LLVM 20.1.2
 
+:Rust:
+
+  * Add support for ARM64 on Windows (``aarch64-pc-windows-msvc``)
+
 :Build System:
 
   * LIEF is now available in `vcpkg <https://github.com/microsoft/vcpkg/tree/master/ports/lief>`_.
