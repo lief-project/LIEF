@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_MACHO_TRIE_NODE_H_
 #define LIEF_MACHO_TRIE_NODE_H_
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <memory>

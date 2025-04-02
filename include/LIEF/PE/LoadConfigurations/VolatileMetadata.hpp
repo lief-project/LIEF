@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_PE_LOAD_CONFIGURATION_VOLATILE_METADATA_H
 #define LIEF_PE_LOAD_CONFIGURATION_VOLATILE_METADATA_H
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>

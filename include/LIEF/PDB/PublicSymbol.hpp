@@ -14,6 +14,7 @@
  */
 #ifndef LIEF_PDB_PUBLIC_SYMBOL_H
 #define LIEF_PDB_PUBLIC_SYMBOL_H
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <ostream>

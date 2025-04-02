@@ -15,6 +15,7 @@
 #ifndef LIEF_DWARF_SCOPE_H
 #define LIEF_DWARF_SCOPE_H
 
+#include <cstdint>
 #include <memory>
 #include <string>
 

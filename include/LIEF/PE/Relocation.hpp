@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_PE_RELOCATION_H
 #define LIEF_PE_RELOCATION_H
+#include <cstdint>
 #include <vector>
 #include <ostream>
 #include <memory>
