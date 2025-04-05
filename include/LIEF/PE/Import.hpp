@@ -18,6 +18,7 @@
 
 #include <string>
 #include <ostream>
+#include <memory>
 
 #include "LIEF/errors.hpp"
 #include "LIEF/Object.hpp"
@@ -42,9 +43,9 @@ class LIEF_API Import : public Object {
   friend class Builder;
 
   public:
-  using entries_t        = std::vector<ImportEntry>;
-  using it_entries       = ref_iterator<entries_t&>;
-  using it_const_entries = const_ref_iterator<const entries_t&>;
+  using entries_t        = std::vector<std::unique_ptr<ImportEntry>>;
+  using it_entries       = ref_iterator<entries_t&, ImportEntry*>;
+  using it_const_entries = const_ref_iterator<const entries_t&, const ImportEntry*>;
 
   Import(const details::pe_import& import);
   Import(std::string name) :
@@ -53,10 +54,11 @@ class LIEF_API Import : public Object {
   Import() = default;
   ~Import() override = default;
 
-  Import(const Import& other) = default;
+  Import(const Import& other);
+  Import& operator=(const Import& other);
+
   Import(Import&& other) noexcept = default;
   Import& operator=(Import&& other) noexcept = default;
-  Import& operator=(const Import& other) = default;
 
   /// The index of the first forwarder reference
   uint32_t forwarder_chain() const {
@@ -146,14 +148,14 @@ class LIEF_API Import : public Object {
 
   /// Add a new import entry (i.e. an imported function)
   ImportEntry& add_entry(ImportEntry entry) {
-    entries_.push_back(std::move(entry));
-    return entries_.back();
+    entries_.emplace_back(new ImportEntry(std::move(entry)));
+    return *entries_.back();
   }
 
   /// Add a new import entry with the given name (i.e. an imported function)
   ImportEntry& add_entry(const std::string& name) {
-    entries_.emplace_back(name);
-    return entries_.back();
+    entries_.emplace_back(new ImportEntry(name));
+  return *entries_.back();
   }
 
   /// Remove the import entry with the given name.

@@ -310,3 +310,32 @@ def test_remove_import(tmp_path: Path, sample: str):
     check, msg = lief.PE.check_layout(new)
     assert check, msg
     _run_sample(input_path, output)
+
+
+def test_issue_multiple(tmp_path: Path):
+    pe = lief.PE.parse(get_sample("PE/pe_reader.exe"))
+
+    crt_stdio = pe.add_import("api-ms-win-crt-stdio-l1-1-0.dll")
+    crt_string = pe.add_import("api-ms-win-crt-string-l1-1-0.dll")
+
+    crt_stdio.add_entry("__stdio_common_vfprintf")
+    crt_stdio.add_entry("__acrt_iob_func")
+    crt_string.add_entry("strlen")
+
+    config = lief.PE.Builder.config_t()
+    config.exports = True
+    config.resources = False
+    config.imports = True
+
+    out = tmp_path / "out.exe"
+    pe.write(out.as_posix(), config)
+
+    new = lief.PE.parse(out)
+    assert lief.PE.check_layout(new)
+
+    imp = new.get_import("api-ms-win-crt-stdio-l1-1-0.dll")
+    assert len(imp.entries) == 2
+
+    imp = new.get_import("api-ms-win-crt-string-l1-1-0.dll")
+    assert len(imp.entries) == 1
+

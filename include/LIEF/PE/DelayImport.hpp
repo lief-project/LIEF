@@ -18,6 +18,7 @@
 
 #include <string>
 #include <ostream>
+#include <memory>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
@@ -39,9 +40,9 @@ class LIEF_API DelayImport : public Object {
   friend class Builder;
 
   public:
-  using entries_t        = std::vector<DelayImportEntry>;
-  using it_entries       = ref_iterator<entries_t&>;
-  using it_const_entries = const_ref_iterator<const entries_t&>;
+  using entries_t        = std::vector<std::unique_ptr<DelayImportEntry>>;
+  using it_entries       = ref_iterator<entries_t&, DelayImportEntry*>;
+  using it_const_entries = const_ref_iterator<const entries_t&, const DelayImportEntry*>;
 
   DelayImport() = default;
   DelayImport(const details::delay_imports& import, PE_TYPE type);
@@ -51,8 +52,11 @@ class LIEF_API DelayImport : public Object {
 
   ~DelayImport() override = default;
 
-  DelayImport(const DelayImport&) = default;
-  DelayImport& operator=(const DelayImport&) = default;
+  DelayImport(const DelayImport& other);
+  DelayImport& operator=(DelayImport other) {
+    swap(other);
+    return *this;
+  }
 
   DelayImport(DelayImport&&) noexcept = default;
   DelayImport& operator=(DelayImport&&) noexcept = default;

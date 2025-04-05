@@ -1088,7 +1088,7 @@ ok_error_t Builder::build_exports() {
   std::vector<ExportEntry*> entries;
   entries.reserve(exp->entries_.size());
   std::transform(exp->entries_.begin(), exp->entries_.end(),
-    std::back_inserter(entries), [] (ExportEntry& E) { return &E; });
+    std::back_inserter(entries), [] (std::unique_ptr<ExportEntry>& E) { return E.get(); });
 
   std::stable_sort(entries.begin(), entries.end(),
     [] (const ExportEntry* lhs, const ExportEntry* rhs) {

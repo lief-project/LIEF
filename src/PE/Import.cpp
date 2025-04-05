@@ -35,10 +35,59 @@ Import::Import(const details::pe_import& import) :
   iat_rva_(import.ImportAddressTableRVA)
 {}
 
+
+Import::Import(const Import& other) :
+  Object(other),
+  directory_(other.directory_),
+  iat_directory_(other.iat_directory_),
+  ilt_rva_(other.ilt_rva_),
+  timedatestamp_(other.timedatestamp_),
+  forwarder_chain_(other.forwarder_chain_),
+  name_rva_(other.name_rva_),
+  iat_rva_(other.iat_rva_),
+  name_(other.name_),
+  type_(other.type_),
+  nb_original_func_(other.nb_original_func_)
+{
+  if (!other.entries_.empty()) {
+    entries_.reserve(other.entries_.size());
+    for (const ImportEntry& entry : other.entries()) {
+      entries_.emplace_back(new ImportEntry(entry));
+    }
+  }
+}
+
+
+Import& Import::operator=(const Import& other) {
+  if (&other == this) {
+    return *this;
+  }
+
+  directory_ = other.directory_;
+  iat_directory_ = other.iat_directory_;
+  ilt_rva_ = other.ilt_rva_;
+  timedatestamp_ = other.timedatestamp_;
+  forwarder_chain_ = other.forwarder_chain_;
+  name_rva_ = other.name_rva_;
+  iat_rva_ = other.iat_rva_;
+  name_ = other.name_;
+  type_ = other.type_;
+  nb_original_func_ = other.nb_original_func_;
+
+  if (!other.entries_.empty()) {
+    entries_.reserve(other.entries_.size());
+    for (const ImportEntry& entry : other.entries()) {
+      entries_.emplace_back(new ImportEntry(entry));
+    }
+  }
+
+  return *this;
+}
+
 bool Import::remove_entry(const std::string& name) {
   auto it = std::find_if(entries_.begin(), entries_.end(),
-    [&name] (const ImportEntry& entry) {
-      return entry.name() == name;
+    [&name] (const std::unique_ptr<ImportEntry>& entry) {
+      return entry->name() == name;
     }
   );
   if (it == entries_.end()) {
@@ -51,8 +100,8 @@ bool Import::remove_entry(const std::string& name) {
 
 bool Import::remove_entry(uint32_t ordinal) {
   auto it = std::find_if(entries_.begin(), entries_.end(),
-    [ordinal] (const ImportEntry& entry) {
-      return entry.is_ordinal() && entry.ordinal() == ordinal;
+    [ordinal] (const std::unique_ptr<ImportEntry>& entry) {
+      return entry->is_ordinal() && entry->ordinal() == ordinal;
     }
   );
   if (it == entries_.end()) {
@@ -65,19 +114,19 @@ bool Import::remove_entry(uint32_t ordinal) {
 
 const ImportEntry* Import::get_entry(const std::string& name) const {
   const auto it_entry = std::find_if(std::begin(entries_), std::end(entries_),
-      [&name] (const ImportEntry& entry) {
-        return entry.name() == name;
+      [&name] (const std::unique_ptr<ImportEntry>& entry) {
+        return entry->name() == name;
       });
   if (it_entry == std::end(entries_)) {
     return nullptr;
   }
-  return &*it_entry;
+  return &**it_entry;
 }
 
 result<uint32_t> Import::get_function_rva_from_iat(const std::string& function) const {
   const auto it_function = std::find_if(std::begin(entries_), std::end(entries_),
-      [&function] (const ImportEntry& entry) {
-        return entry.name() == function;
+      [&function] (const std::unique_ptr<ImportEntry>& entry) {
+        return entry->name() == function;
       });
 
   if (it_function == std::end(entries_)) {

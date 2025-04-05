@@ -993,7 +993,7 @@ ok_error_t Parser::parse_exports() {
     const bool is_extern   = range.start <= addr_value && addr_value < range.end;
     const uint32_t address = is_extern ? 0 : addr_value;
 
-    ExportEntry entry{address, is_extern, ordinal, addr_value};
+    auto entry = std::make_unique<ExportEntry>(address, is_extern, ordinal, addr_value);
     if (addr_value == 0) {
       corrupted_entries.insert(ordinal);
     }
@@ -1001,11 +1001,11 @@ ok_error_t Parser::parse_exports() {
     if (is_extern && addr_value > 0) {
       uint32_t name_offset = binary_->rva_to_offset(addr_value);
       if (auto res = stream_->peek_string_at(name_offset)) {
-        entry.name_ = std::move(*res);
-        if (entry.name_.size() > MAX_EXPORT_NAME_SIZE || !is_printable(entry.name_)) {
-          LIEF_INFO("'{}' is not a valid export name", printable_string(entry.name_));
-          entry = ExportEntry{address, is_extern, ordinal, addr_value};
-          entry.name_.clear();
+        entry->name_ = std::move(*res);
+        if (entry->name_.size() > MAX_EXPORT_NAME_SIZE || !is_printable(entry->name_)) {
+          LIEF_INFO("'{}' is not a valid export name", printable_string(entry->name_));
+          entry = std::make_unique<ExportEntry>(address, is_extern, ordinal, addr_value);
+          entry->name_.clear();
         }
       }
     }
@@ -1027,7 +1027,7 @@ ok_error_t Parser::parse_exports() {
       break;
     }
 
-    ExportEntry& entry = export_entries[ordinal];
+    ExportEntry& entry = *export_entries[ordinal];
 
     if (entry.name_.empty()) {
       uint32_t name_offset = 0;
@@ -1081,12 +1081,12 @@ ok_error_t Parser::parse_exports() {
     }
   }
 
-  for (ExportEntry& entry : export_entries) {
-    if (corrupted_entries.count(entry.ordinal()) != 0) {
+  for (std::unique_ptr<ExportEntry>& entry : export_entries) {
+    if (corrupted_entries.count(entry->ordinal()) != 0) {
       continue;
     }
     export_object->max_ordinal_ =
-      std::max<uint32_t>(export_object->max_ordinal_, entry.ordinal());
+      std::max<uint32_t>(export_object->max_ordinal_, entry->ordinal());
     export_object->entries_.push_back(std::move(entry));
   }
 

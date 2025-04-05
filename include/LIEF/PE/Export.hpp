@@ -18,6 +18,7 @@
 
 #include <ostream>
 #include <string>
+#include <memory>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
@@ -40,13 +41,13 @@ class LIEF_API Export : public Object {
   friend class Parser;
 
   public:
-  using entries_t        = std::vector<ExportEntry>;
-  using it_entries       = ref_iterator<entries_t&>;
-  using it_const_entries = const_ref_iterator<const entries_t&>;
+  using entries_t        = std::vector<std::unique_ptr<ExportEntry>>;
+  using it_entries       = ref_iterator<entries_t&, ExportEntry*>;
+  using it_const_entries = const_ref_iterator<const entries_t&, const ExportEntry*>;
 
   Export() = default;
 
-  Export(std::string name, const entries_t& entries) :
+  Export(std::string name, const std::vector<ExportEntry>& entries) :
     name_(std::move(name))
   {
     for (const ExportEntry& E : entries) {
@@ -60,8 +61,8 @@ class LIEF_API Export : public Object {
 
   Export(const details::pe_export_directory_table& header);
 
-  Export(const Export&) = default;
-  Export& operator=(const Export&) = default;
+  Export(const Export&);
+  Export& operator=(const Export&);
 
   Export(Export&&) = default;
   Export& operator=(Export&&) = default;

@@ -39,7 +39,7 @@ void create<Export>(nb::module_& m) {
 
   exp
     .def(nb::init<>(), "Default constructor"_doc)
-    .def(nb::init<std::string, const Export::entries_t&>(),
+    .def(nb::init<std::string, const std::vector<ExportEntry>&>(),
          "name"_a, "entries"_a,
          "Constructor from DLL name and its exports"_doc)
 

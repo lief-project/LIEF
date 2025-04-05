@@ -343,21 +343,21 @@ ok_error_t Parser::parse_import_table() {
       break;
     }
 
-    Import import           = raw_imp;
-    import.directory_       = import_dir;
-    import.iat_directory_   = iat_dir;
-    import.type_            = type_;
+    auto import = std::make_unique<Import>(raw_imp);
+    import->directory_       = import_dir;
+    import->iat_directory_   = iat_dir;
+    import->type_            = type_;
 
-    if (import.name_rva_ == 0) {
+    if (import->name_rva_ == 0) {
       LIEF_DEBUG("Name's RVA is null");
       break;
     }
 
     // Offset to the Import (Library) name
-    const uint64_t offset_name = binary_->rva_to_offset(import.name_rva_);
+    const uint64_t offset_name = binary_->rva_to_offset(import->name_rva_);
 
     if (auto res_name = stream_->peek_string_at(offset_name))  {
-      import.name_ = std::move(*res_name);
+      import->name_ = std::move(*res_name);
     } else {
       LIEF_ERR("Can't read the import name (offset: 0x{:x})", offset_name);
       continue;
@@ -365,7 +365,7 @@ ok_error_t Parser::parse_import_table() {
 
 
     // We assume that a DLL name should be at least 4 length size and "printable
-    const std::string& imp_name = import.name();
+    const std::string& imp_name = import->name();
     if (!is_valid_dll_name(imp_name)) {
       if (!imp_name.empty()) {
         LIEF_WARN("'{}' is not a valid import name and will be discarded", imp_name);
@@ -377,19 +377,19 @@ ok_error_t Parser::parse_import_table() {
     last_imp_offset = std::max<uint64_t>(last_imp_offset, offset_name + imp_name.size() + 1);
 
     // Offset to import lookup table
-    uint64_t LT_offset = import.import_lookup_table_rva() > 0 ?
-                         binary_->rva_to_offset(import.import_lookup_table_rva()) :
+    uint64_t LT_offset = import->import_lookup_table_rva() > 0 ?
+                         binary_->rva_to_offset(import->import_lookup_table_rva()) :
                          0;
 
 
     // Offset to the import address table
-    uint64_t IAT_offset = import.import_address_table_rva() > 0 ?
-                          binary_->rva_to_offset(import.import_address_table_rva()) :
+    uint64_t IAT_offset = import->import_address_table_rva() > 0 ?
+                          binary_->rva_to_offset(import->import_address_table_rva()) :
                           0;
     LIEF_DEBUG("IAT Offset: 0x{:08x}", IAT_offset);
-    LIEF_DEBUG("IAT RVA:    0x{:08x}", import.import_address_table_rva());
+    LIEF_DEBUG("IAT RVA:    0x{:08x}", import->import_address_table_rva());
     LIEF_DEBUG("ILT Offset: 0x{:08x}", LT_offset);
-    LIEF_DEBUG("ILT RVA:    0x{:08x}", import.import_lookup_table_rva());
+    LIEF_DEBUG("ILT RVA:    0x{:08x}", import->import_lookup_table_rva());
 
     uint IAT = 0;
     uint table = 0;
@@ -412,39 +412,39 @@ ok_error_t Parser::parse_import_table() {
     size_t idx = 0;
 
     while (table != 0 || IAT != 0) {
-      ImportEntry entry;
-      entry.iat_value_ = IAT;
-      entry.ilt_value_ = table;
-      entry.data_      = table > 0 ? table : IAT; // In some cases, ILT can be corrupted
-      entry.type_      = type_;
-      entry.rva_       = import.iat_rva_ + sizeof(uint) * (idx++);
+      auto entry = std::make_unique<ImportEntry>();
+      entry->iat_value_ = IAT;
+      entry->ilt_value_ = table;
+      entry->data_      = table > 0 ? table : IAT; // In some cases, ILT can be corrupted
+      entry->type_      = type_;
+      entry->rva_       = import->iat_rva_ + sizeof(uint) * (idx++);
 
       LIEF_DEBUG("IAT: 0x{:08x} | ILT: 0x{:08x}", IAT, table);
 
-      if (!entry.is_ordinal()) {
-        const size_t hint_off = binary_->rva_to_offset(entry.hint_name_rva());
+      if (!entry->is_ordinal()) {
+        const size_t hint_off = binary_->rva_to_offset(entry->hint_name_rva());
         const size_t name_off = hint_off + sizeof(uint16_t);
         if (auto entry_name = stream_->peek_string_at(name_off)) {
-          entry.name_ = std::move(*entry_name);
+          entry->name_ = std::move(*entry_name);
         } else {
           LIEF_ERR("Can't read import entry name");
         }
         if (auto hint = stream_->peek<uint16_t>(hint_off)) {
-          entry.hint_ = *hint;
+          entry->hint_ = *hint;
         } else {
           LIEF_INFO("Can't read hint value @0x{:x}", hint_off);
         }
 
-        last_imp_offset = std::max<uint64_t>(last_imp_offset, name_off + entry.name().size() + 1);
+        last_imp_offset = std::max<uint64_t>(last_imp_offset, name_off + entry->name().size() + 1);
 
         // Check that the import name is valid
-        if (is_valid_import_name(entry.name())) {
-          import.entries_.push_back(std::move(entry));
-        } else if (!entry.name().empty()){
-          LIEF_INFO("'{}' is an invalid import name and will be discarded", entry.name());
+        if (is_valid_import_name(entry->name())) {
+          import->entries_.push_back(std::move(entry));
+        } else if (!entry->name().empty()){
+          LIEF_INFO("'{}' is an invalid import name and will be discarded", entry->name());
         }
       } else {
-        import.entries_.push_back(std::move(entry));
+        import->entries_.push_back(std::move(entry));
       }
 
       if (IAT_offset > 0) {
@@ -472,7 +472,7 @@ ok_error_t Parser::parse_import_table() {
         table = 0;
       }
     }
-    import.nb_original_func_ = import.entries_.size();
+    import->nb_original_func_ = import->entries_.size();
     binary_->imports_.push_back(std::move(import));
   }
 
@@ -495,30 +495,30 @@ ok_error_t Parser::parse_delay_names_table(DelayImport& import,
   }
 
   while (*nstream && entry_val && *entry_val != 0) {
-    DelayImportEntry entry(*entry_val, type_);
+    auto entry = std::make_unique<DelayImportEntry>(*entry_val, type_);
     // Index of the current entry (-1 as we start with a read())
     const size_t index = (nstream->pos() - names_offset) / sizeof(ptr_t) - 1;
     const uint32_t iat_pos = index * sizeof(ptr_t);
 
     if (auto iat_value = stream_->peek<ptr_t>(iat_offset + iat_pos)) {
-      entry.value_ =import.iat() + iat_pos; // Symbol's value for the base class
-      entry.iat_value_ = *iat_value;
-      LIEF_DEBUG("  [{}].iat : 0x{:010x}", index, entry.iat_value_);
+      entry->value_ =import.iat() + iat_pos; // Symbol's value for the base class
+      entry->iat_value_ = *iat_value;
+      LIEF_DEBUG("  [{}].iat : 0x{:010x}", index, entry->iat_value_);
     }
 
-    if (!entry.is_ordinal()) {
-      uint64_t hint_off = binary_->rva_to_offset(entry.hint_name_rva());
+    if (!entry->is_ordinal()) {
+      uint64_t hint_off = binary_->rva_to_offset(entry->hint_name_rva());
       const uint64_t name_off = hint_off + sizeof(uint16_t);
 
       if (auto entry_name = stream_->peek_string_at(name_off)) {
-        entry.name_ = std::move(*entry_name);
+        entry->name_ = std::move(*entry_name);
       }
 
       if (auto hint = stream_->peek<uint16_t>(hint_off)) {
-        entry.hint_ = *hint;
+        entry->hint_ = *hint;
       }
 
-      if (Parser::is_valid_import_name(entry.name())) {
+      if (Parser::is_valid_import_name(entry->name())) {
         import.entries_.push_back(std::move(entry));
       }
     }
@@ -558,7 +558,7 @@ ok_error_t Parser::parse_delay_imports() {
       return make_error_code(import.error());
     }
 
-    DelayImport imp(*import, type_);
+    auto imp = std::make_unique<DelayImport>(*import, type_);
 
     if (BinaryStream::is_all_zero(*import)) {
       return ok();
@@ -568,10 +568,10 @@ ok_error_t Parser::parse_delay_imports() {
     auto dll_name = stream_->peek_string_at(name_offset);
 
     if (dll_name && !dll_name->empty() && is_valid_dll_name(*dll_name)) {
-      imp.name_ = std::move(*dll_name);
+      imp->name_ = std::move(*dll_name);
     }
 
-    LIEF_DEBUG("  delay_imports.name:       {}",       imp.name_);
+    LIEF_DEBUG("  delay_imports.name:       {}",       imp->name_);
     LIEF_DEBUG("  delay_imports.attribute:  {}",       import->attribute);
     LIEF_DEBUG("  delay_imports.handle:     0x{:04x}", import->handle);
     LIEF_DEBUG("  delay_imports.iat:        0x{:04x}", import->iat);
@@ -592,7 +592,7 @@ ok_error_t Parser::parse_delay_imports() {
     LIEF_DEBUG("  [Names]: 0x{:04x}", names_offset);
 
     if (names_offset > 0) {
-      auto is_ok = parse_delay_names_table<PE_T>(imp, names_offset,
+      auto is_ok = parse_delay_names_table<PE_T>(*imp, names_offset,
                                                  IAT_offset);
       if (!is_ok) {
         LIEF_WARN("Delay imports names table parsed with errors ('{}')",

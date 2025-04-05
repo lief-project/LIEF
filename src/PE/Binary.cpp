@@ -285,14 +285,14 @@ LIEF::Binary::symbols_t Binary::get_abstract_symbols() {
     }
   }
 
-  for (Import& imp : imports_) {
-    for (ImportEntry& entry : imp.entries()) {
+  for (std::unique_ptr<Import>& imp : imports_) {
+    for (ImportEntry& entry : imp->entries()) {
       lief_symbols.push_back(&entry);
     }
   }
 
-  for (DelayImport& imp : delay_imports_) {
-    for (DelayImportEntry& entry : imp.entries()) {
+  for (std::unique_ptr<DelayImport>& imp : delay_imports_) {
+    for (DelayImportEntry& entry : imp->entries()) {
       lief_symbols.push_back(&entry);
     }
   }
@@ -533,7 +533,7 @@ LIEF::Binary::relocations_t Binary::get_abstract_relocations() {
 
 bool Binary::remove_import(const std::string& name) {
   auto it = std::find_if(imports_.begin(), imports_.end(),
-    [&name] (const Import& imp) { return imp.name() == name; }
+    [&name] (const std::unique_ptr<Import>& imp) { return imp->name() == name; }
   );
 
   if (it == imports_.end()) {
@@ -546,15 +546,15 @@ bool Binary::remove_import(const std::string& name) {
 
 const Import* Binary::get_import(const std::string& import_name) const {
   const auto it_import = std::find_if(std::begin(imports_), std::end(imports_),
-      [&import_name] (const Import& import) {
-        return import.name() == import_name;
+      [&import_name] (const std::unique_ptr<Import>& import) {
+        return import->name() == import_name;
       });
 
   if (it_import == std::end(imports_)) {
     return nullptr;
   }
 
-  return &*it_import;
+  return &**it_import;
 }
 
 ResourceNode* Binary::set_resources(const ResourceNode& resource) {
@@ -1244,15 +1244,15 @@ LIEF::Binary::functions_t Binary::exception_functions() const {
 
 const DelayImport* Binary::get_delay_import(const std::string& import_name) const {
   const auto it_import = std::find_if(std::begin(delay_imports_), std::end(delay_imports_),
-      [&import_name] (const DelayImport& import) {
-        return import.name() == import_name;
+      [&import_name] (const std::unique_ptr<DelayImport>& import) {
+        return import->name() == import_name;
       });
 
   if (it_import == std::end(delay_imports_)) {
     return nullptr;
   }
 
-  return &*it_import;
+  return &**it_import;
 }
 
 const CodeViewPDB* Binary::codeview_pdb() const {

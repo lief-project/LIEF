@@ -88,22 +88,22 @@ class LIEF_API Binary : public LIEF::Binary {
   using it_const_relocations = const_ref_iterator<const relocations_t&, const Relocation*>;
 
   /// Internal container for storing PE's Import
-  using imports_t = std::vector<Import>;
+  using imports_t = std::vector<std::unique_ptr<Import>>;
 
   /// Iterator that output Import&
-  using it_imports = ref_iterator<imports_t&>;
+  using it_imports = ref_iterator<imports_t&, Import*>;
 
   /// Iterator that outputs const Import&
-  using it_const_imports = const_ref_iterator<const imports_t&>;
+  using it_const_imports = const_ref_iterator<const imports_t&, const Import*>;
 
   /// Internal container for storing PE's DelayImport
-  using delay_imports_t = std::vector<DelayImport>;
+  using delay_imports_t = std::vector<std::unique_ptr<DelayImport>>;
 
   /// Iterator that output DelayImport&
-  using it_delay_imports = ref_iterator<delay_imports_t&>;
+  using it_delay_imports = ref_iterator<delay_imports_t&, DelayImport*>;
 
   /// Iterator that outputs const DelayImport&
-  using it_const_delay_imports = const_ref_iterator<const delay_imports_t&>;
+  using it_const_delay_imports = const_ref_iterator<const delay_imports_t&, const DelayImport*>;
 
   /// Internal container for storing Debug information
   using debug_entries_t = std::vector<std::unique_ptr<Debug>>;
@@ -618,8 +618,8 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Add an imported library (i.e. `DLL`) to the binary
   Import& add_import(const std::string& name) {
-    imports_.emplace_back(name);
-    return imports_.back();
+    imports_.push_back(std::unique_ptr<Import>(new Import(name)));
+    return *imports_.back();
   }
 
   /// Remove the imported library with the given `name`

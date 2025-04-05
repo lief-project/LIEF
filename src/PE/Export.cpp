@@ -41,6 +41,59 @@ Export::Export(const details::pe_export_directory_table& header) :
   ord_addr_table_rva_{header.OrdinalTableRVA}
 {}
 
+
+Export::Export(const Export& other) :
+  Object(other),
+  export_flags_(other.export_flags_),
+  name_rva_(other.name_rva_),
+  timestamp_(other.timestamp_),
+  major_version_(other.major_version_),
+  minor_version_(other.minor_version_),
+  ordinal_base_(other.ordinal_base_),
+  exp_addr_table_rva_(other.exp_addr_table_rva_),
+  exp_addr_table_cnt_(other.exp_addr_table_cnt_),
+  names_addr_table_rva_(other.names_addr_table_rva_),
+  names_addr_table_cnt_(other.names_addr_table_cnt_),
+  ord_addr_table_rva_(other.ord_addr_table_rva_),
+  max_ordinal_(other.max_ordinal_),
+  name_(other.name_)
+{
+  if (!other.entries_.empty()) {
+    entries_.reserve(other.entries_.size());
+    for (const ExportEntry& entry : other.entries()) {
+      entries_.emplace_back(new ExportEntry(entry));
+    }
+  }
+}
+
+Export& Export::operator=(const Export& other) {
+  if (&other == this) {
+    return *this;
+  }
+
+  export_flags_ = other.export_flags_;
+  name_rva_ = other.name_rva_;
+  timestamp_ = other.timestamp_;
+  major_version_ = other.major_version_;
+  minor_version_ = other.minor_version_;
+  ordinal_base_ = other.ordinal_base_;
+  exp_addr_table_rva_ = other.exp_addr_table_rva_;
+  exp_addr_table_cnt_ = other.exp_addr_table_cnt_;
+  names_addr_table_rva_ = other.names_addr_table_rva_;
+  names_addr_table_cnt_ = other.names_addr_table_cnt_;
+  ord_addr_table_rva_ = other.ord_addr_table_rva_;
+  max_ordinal_ = other.max_ordinal_;
+  name_ = other.name_;
+
+  if (!other.entries_.empty()) {
+    entries_.reserve(other.entries_.size());
+    for (const ExportEntry& entry : other.entries()) {
+      entries_.emplace_back(new ExportEntry(entry));
+    }
+  }
+  return *this;
+}
+
 void Export::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
@@ -48,11 +101,11 @@ void Export::accept(Visitor& visitor) const {
 
 const ExportEntry* Export::find_entry(const std::string& name) const {
   auto it = std::find_if(entries_.begin(), entries_.end(),
-    [&name] (const ExportEntry& E) {
+    [&name] (const std::unique_ptr<ExportEntry>& E) {
       if constexpr (lief_extended) {
-        return E.name() == name || E.demangled_name() == name;
+        return E->name() == name || E->demangled_name() == name;
       } else {
-        return E.name() == name;
+        return E->name() == name;
       }
     }
   );
@@ -61,13 +114,13 @@ const ExportEntry* Export::find_entry(const std::string& name) const {
     return nullptr;
   }
 
-  return &*it;
+  return &**it;
 }
 
 const ExportEntry* Export::find_entry(uint32_t ordinal) const {
   auto it = std::find_if(entries_.begin(), entries_.end(),
-    [ordinal] (const ExportEntry& E) {
-      return E.ordinal() == ordinal;
+    [ordinal] (const std::unique_ptr<ExportEntry>& E) {
+      return E->ordinal() == ordinal;
     }
   );
 
@@ -75,13 +128,13 @@ const ExportEntry* Export::find_entry(uint32_t ordinal) const {
     return nullptr;
   }
 
-  return &*it;
+  return &**it;
 }
 
 const ExportEntry* Export::find_entry_at(uint32_t rva) const {
   auto it = std::find_if(entries_.begin(), entries_.end(),
-    [rva] (const ExportEntry& E) {
-      return E.address() == rva;
+    [rva] (const std::unique_ptr<ExportEntry>& E) {
+      return E->address() == rva;
     }
   );
 
@@ -89,13 +142,13 @@ const ExportEntry* Export::find_entry_at(uint32_t rva) const {
     return nullptr;
   }
 
-  return &*it;
+  return &**it;
 }
 
 ExportEntry& Export::add_entry(const ExportEntry& exp) {
-  entries_.push_back(exp);
+  entries_.emplace_back(new ExportEntry(exp));
   ++max_ordinal_;
-  ExportEntry& new_entry = entries_.back();
+  ExportEntry& new_entry = *entries_.back();
   new_entry.ordinal(max_ordinal_);
   return new_entry;
 }
@@ -103,7 +156,7 @@ ExportEntry& Export::add_entry(const ExportEntry& exp) {
 
 bool Export::remove_entry(const ExportEntry& exp) {
   auto it = std::find_if(entries_.begin(), entries_.end(),
-    [&exp] (const ExportEntry& E) { return &exp == &E; }
+    [&exp] (const std::unique_ptr<ExportEntry>& E) { return &exp == E.get(); }
   );
 
   if (it == entries_.end()) {

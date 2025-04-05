@@ -546,7 +546,7 @@ ok_error_t Builder::build_imports() {
   headers_ilt.init_fixups(_FX_CNT);
   iat_stream.init_fixups(_FX_CNT);
 
-  for (const Import& imp : binary_->imports()) {
+  for (Import& imp : binary_->imports()) {
     const bool has_existing_iat = imp.import_address_table_rva() != 0;
 
     const std::string& imp_name = imp.name();

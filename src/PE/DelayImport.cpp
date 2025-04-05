@@ -48,6 +48,27 @@ DelayImport::DelayImport(const details::delay_imports& import, PE_TYPE type) :
   type_{type}
 {}
 
+
+DelayImport::DelayImport(const DelayImport& other) :
+  Object(other),
+  attribute_(other.attribute_),
+  name_(other.name_),
+  handle_(other.handle_),
+  iat_(other.iat_),
+  names_table_(other.names_table_),
+  bound_iat_(other.bound_iat_),
+  unload_iat_(other.unload_iat_),
+  timestamp_(other.timestamp_),
+  type_(other.type_)
+{
+  if (!other.entries_.empty()) {
+    entries_.reserve(other.entries_.size());
+    for (const DelayImportEntry& entry : other.entries()) {
+      entries_.emplace_back(new DelayImportEntry(entry));
+    }
+  }
+}
+
 void DelayImport::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }
