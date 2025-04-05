@@ -16,6 +16,7 @@
 #define LIEF_OBJC_METHOD_H
 #include <LIEF/visibility.h>
 
+#include <cstdint>
 #include <memory>
 #include <string>
 

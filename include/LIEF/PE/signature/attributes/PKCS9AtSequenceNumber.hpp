@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_PE_ATTRIBUTES_PKCS9_AT_SEQUENCE_NUMBER_H
 #define LIEF_PE_ATTRIBUTES_PKCS9_AT_SEQUENCE_NUMBER_H
+#include <cstdint>
 
 #include "LIEF/visibility.h"
 #include "LIEF/PE/signature/Attribute.hpp"

@@ -17,6 +17,7 @@
 
 #include "LIEF/visibility.h"
 
+#include <cstdint>
 #include <string>
 #include <memory>
 
