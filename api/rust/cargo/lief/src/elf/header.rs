@@ -28,8 +28,8 @@ pub enum FileType {
 }
 
 
-impl FileType {
-    pub fn from_value(value: u32) -> Self {
+impl From<u32> for FileType {
+    fn from(value: u32) -> Self {
         match value {
             0x00000000 => FileType::NONE,
             0x00000001 => FileType::REL,
@@ -55,8 +55,8 @@ pub enum Version {
     UNKNOWN(u32),
 }
 
-impl Version {
-    pub fn from_value(value: u32) -> Self {
+impl From<u32> for Version {
+    fn from(value: u32) -> Self {
         match value {
             0x00000000 => Version::NONE,
             0x00000001 => Version::CURRENT,
@@ -82,8 +82,8 @@ pub enum Class {
     UNKNOWN(u32),
 }
 
-impl Class {
-    pub fn from_value(value: u32) -> Self {
+impl From<u32> for Class {
+    fn from(value: u32) -> Self {
         match value {
             0x00000000 => Class::NONE,
             0x00000001 => Class::ELF32,
@@ -149,8 +149,8 @@ pub enum OsAbi {
 }
 
 
-impl OsAbi {
-    pub fn from_value(value: u32) -> Self {
+impl From<u32> for OsAbi {
+    fn from(value: u32) -> Self {
         match value {
             0x00000000 => OsAbi::SYSTEMV,
             0x00000001 => OsAbi::HPUX,
@@ -194,8 +194,8 @@ pub enum ElfData {
     UNKNOWN(u32),
 }
 
-impl ElfData {
-    pub fn from_value(value: u32) -> Self {
+impl From<u32> for ElfData {
+    fn from(value: u32) -> Self {
         match value {
             0x00000000 => ElfData::NONE,
             0x00000001 => ElfData::LSB,
@@ -230,32 +230,32 @@ impl Header<'_> {
 
     /// Define the object file type. (e.g. executable, library...)
     pub fn file_type(&self) -> FileType {
-        FileType::from_value(self.ptr.file_type())
+        FileType::from(self.ptr.file_type())
     }
 
     /// Version of the object file format
     pub fn object_file_version(&self) -> Version {
-        Version::from_value(self.ptr.object_file_version())
+        Version::from(self.ptr.object_file_version())
     }
 
     /// Return the object's class. `ELF64` or `ELF32`
     pub fn identity_class(&self) -> Class {
-        Class::from_value(self.ptr.identity_class())
+        Class::from(self.ptr.identity_class())
     }
 
     /// Specify the data encoding
     pub fn identity_data(&self) -> ElfData {
-        ElfData::from_value(self.ptr.identity_data())
+        ElfData::from(self.ptr.identity_data())
     }
 
     /// See: [`Header::object_file_version`]
     pub fn identity_version(&self) -> Version {
-        Version::from_value(self.ptr.identity_version())
+        Version::from(self.ptr.identity_version())
     }
 
     /// Identifies the version of the ABI for which the object is prepared
     pub fn identity_os_abi(&self) -> OsAbi {
-        OsAbi::from_value(self.ptr.identity_os_abi())
+        OsAbi::from(self.ptr.identity_os_abi())
     }
 
     /// Target architecture
