@@ -31,6 +31,7 @@
 
 :ELF:
 
+  * Relax the condition over the ``DT_SYMENT`` entry (:issue:`1177`)
   * Fix issue when parsing the dynamic table with an invalid offset (bug found
     by :github_user:`lebr0nli`)
   * Enhance support for IA64 architecture.

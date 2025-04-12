@@ -227,3 +227,7 @@ def test_i64_custom_types():
     elf = lief.ELF.parse(get_sample("ELF/elf-Linux-Alpha-bash"))
     assert elf.segments[9].type == lief.ELF.Segment.TYPE.PAX_FLAGS
     assert elf.segments[9].raw_flags == 10240
+
+def test_issue_1177():
+    elf = lief.ELF.parse(get_sample("ELF/main_issue_1177.bin"))
+    assert len(elf.dynamic_symbols) == 5
