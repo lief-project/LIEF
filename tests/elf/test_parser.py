@@ -213,3 +213,7 @@ def test_issue_dynamic_table():
     dyn_entries = list(elf.dynamic_entries)
     assert len(dyn_entries) == 28
     assert dyn_entries[0].name == "libselinux.so.1"
+
+def test_issue_1177():
+    elf = lief.ELF.parse(get_sample("ELF/main_issue_1177.bin"))
+    assert len(elf.dynamic_symbols) == 5

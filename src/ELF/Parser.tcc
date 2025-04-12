@@ -248,7 +248,11 @@ ok_error_t Parser::process_dynamic_table() {
     DynamicEntry* dt_symtab = binary_->get(DynamicEntry::TAG::SYMTAB);
     DynamicEntry* dt_syment = binary_->get(DynamicEntry::TAG::SYMENT);
 
-    if (dt_symtab != nullptr && dt_syment != nullptr && config_.parse_dyn_symbols) {
+    if (dt_syment != nullptr && dt_syment->value() != sizeof(typename ELF_T::Elf_Sym)) {
+      LIEF_WARN("DT_SYMTENT is corrupted");
+    }
+
+    if (dt_symtab != nullptr && config_.parse_dyn_symbols) {
       const uint64_t virtual_address = dt_symtab->value();
       if (auto res = binary_->virtual_address_to_offset(virtual_address)) {
         parse_dynamic_symbols<ELF_T>(*res);
