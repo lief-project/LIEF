@@ -1,18 +1,7 @@
 from typing import Iterator, Optional, Union
 
-import lief
+import lief.PE
 
-
-class PackedFunction(lief.PE.RuntimeFunctionAArch64):
-    frame_size: int
-
-    reg_I: int
-
-    reg_F: int
-
-    H: int
-
-    CR: int
 
 class UnpackedFunction(lief.PE.RuntimeFunctionAArch64):
     class epilog_scope_t:
@@ -53,3 +42,14 @@ class UnpackedFunction(lief.PE.RuntimeFunctionAArch64):
 
     @property
     def epilog_scopes(self) -> UnpackedFunction.it_epilog_scopes: ...
+
+class PackedFunction(lief.PE.RuntimeFunctionAArch64):
+    frame_size: int
+
+    reg_I: int
+
+    reg_F: int
+
+    H: int
+
+    CR: int

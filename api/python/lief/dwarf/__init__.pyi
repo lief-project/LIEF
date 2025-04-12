@@ -3,161 +3,10 @@ from typing import Iterator, Optional, Union, overload
 
 from . import parameters as parameters, types as types
 import lief
+import lief.assembly
 
 
-class CompilationUnit:
-    class Language:
-        class LANG(enum.Enum):
-            @staticmethod
-            def from_value(arg: int, /) -> CompilationUnit.Language.LANG: ...
-
-            def __eq__(self, arg, /) -> bool: ...
-
-            def __ne__(self, arg, /) -> bool: ...
-
-            def __int__(self) -> int: ...
-
-            UNKNOWN = 0
-
-            C = 1
-
-            CPP = 2
-
-            RUST = 3
-
-            DART = 4
-
-            MODULA = 5
-
-            FORTRAN = 6
-
-            SWIFT = 7
-
-            D = 8
-
-            JAVA = 9
-
-            COBOL = 10
-
-        lang: CompilationUnit.Language.LANG
-
-        version: int
-
-    @property
-    def name(self) -> str: ...
-
-    @property
-    def producer(self) -> str: ...
-
-    @property
-    def compilation_dir(self) -> str: ...
-
-    @property
-    def language(self) -> CompilationUnit.Language: ...
-
-    @property
-    def low_address(self) -> int: ...
-
-    @property
-    def high_address(self) -> int: ...
-
-    @property
-    def size(self) -> int: ...
-
-    @property
-    def ranges(self) -> list[lief.range_t]: ...
-
-    @overload
-    def find_function(self, name: str) -> Optional[Function]: ...
-
-    @overload
-    def find_function(self, addr: int) -> Optional[Function]: ...
-
-    @overload
-    def find_variable(self, addr: int) -> Optional[Variable]: ...
-
-    @overload
-    def find_variable(self, name: str) -> Optional[Variable]: ...
-
-    @property
-    def types(self) -> Iterator[Optional[Type]]: ...
-
-    @property
-    def functions(self) -> Iterator[Optional[Function]]: ...
-
-    @property
-    def imported_functions(self) -> Iterator[Optional[Function]]: ...
-
-    @property
-    def variables(self) -> Iterator[Optional[Variable]]: ...
-
-class DebugInfo(lief.DebugInfo):
-    @overload
-    def find_function(self, name: str) -> Optional[Function]: ...
-
-    @overload
-    def find_function(self, addr: int) -> Optional[Function]: ...
-
-    @overload
-    def find_variable(self, addr: int) -> Optional[Variable]: ...
-
-    @overload
-    def find_variable(self, name: str) -> Optional[Variable]: ...
-
-    def find_type(self, name: str) -> Optional[Type]: ...
-
-    @property
-    def compilation_units(self) -> Iterator[Optional[CompilationUnit]]: ...
-
-class Function:
-    @property
-    def name(self) -> str: ...
-
-    @property
-    def linkage_name(self) -> str: ...
-
-    @property
-    def address(self) -> Optional[int]: ...
-
-    @property
-    def variables(self) -> Iterator[Optional[Variable]]: ...
-
-    @property
-    def is_artificial(self) -> bool: ...
-
-    @property
-    def is_external(self) -> bool: ...
-
-    @property
-    def size(self) -> int: ...
-
-    @property
-    def ranges(self) -> list[lief.range_t]: ...
-
-    @property
-    def debug_location(self) -> lief.debug_location_t: ...
-
-    @property
-    def type(self) -> Optional[Type]: ...
-
-    @property
-    def parameters(self) -> list[Optional[Parameter]]: ...
-
-    @property
-    def thrown_types(self) -> list[Optional[Type]]: ...
-
-    @property
-    def scope(self) -> Optional[Scope]: ...
-
-    @property
-    def instructions(self) -> Iterator[Optional[lief.assembly.Instruction]]: ...
-
-class Parameter:
-    @property
-    def name(self) -> str: ...
-
-    @property
-    def type(self) -> Optional[Type]: ...
+def load(path: str) -> Optional[DebugInfo]: ...
 
 class Scope:
     class TYPE(enum.Enum):
@@ -289,4 +138,156 @@ class Variable:
     @property
     def scope(self) -> Optional[Scope]: ...
 
-def load(path: str) -> Optional[DebugInfo]: ...
+class Function:
+    @property
+    def name(self) -> str: ...
+
+    @property
+    def linkage_name(self) -> str: ...
+
+    @property
+    def address(self) -> Optional[int]: ...
+
+    @property
+    def variables(self) -> Iterator[Optional[Variable]]: ...
+
+    @property
+    def is_artificial(self) -> bool: ...
+
+    @property
+    def is_external(self) -> bool: ...
+
+    @property
+    def size(self) -> int: ...
+
+    @property
+    def ranges(self) -> list[lief.range_t]: ...
+
+    @property
+    def debug_location(self) -> lief.debug_location_t: ...
+
+    @property
+    def type(self) -> Optional[Type]: ...
+
+    @property
+    def parameters(self) -> list[Optional[Parameter]]: ...
+
+    @property
+    def thrown_types(self) -> list[Optional[Type]]: ...
+
+    @property
+    def scope(self) -> Optional[Scope]: ...
+
+    @property
+    def instructions(self) -> Iterator[Optional[lief.assembly.Instruction]]: ...
+
+class Parameter:
+    @property
+    def name(self) -> str: ...
+
+    @property
+    def type(self) -> Optional[Type]: ...
+
+class CompilationUnit:
+    class Language:
+        class LANG(enum.Enum):
+            @staticmethod
+            def from_value(arg: int, /) -> CompilationUnit.Language.LANG: ...
+
+            def __eq__(self, arg, /) -> bool: ...
+
+            def __ne__(self, arg, /) -> bool: ...
+
+            def __int__(self) -> int: ...
+
+            UNKNOWN = 0
+
+            C = 1
+
+            CPP = 2
+
+            RUST = 3
+
+            DART = 4
+
+            MODULA = 5
+
+            FORTRAN = 6
+
+            SWIFT = 7
+
+            D = 8
+
+            JAVA = 9
+
+            COBOL = 10
+
+        lang: CompilationUnit.Language.LANG
+
+        version: int
+
+    @property
+    def name(self) -> str: ...
+
+    @property
+    def producer(self) -> str: ...
+
+    @property
+    def compilation_dir(self) -> str: ...
+
+    @property
+    def language(self) -> CompilationUnit.Language: ...
+
+    @property
+    def low_address(self) -> int: ...
+
+    @property
+    def high_address(self) -> int: ...
+
+    @property
+    def size(self) -> int: ...
+
+    @property
+    def ranges(self) -> list[lief.range_t]: ...
+
+    @overload
+    def find_function(self, name: str) -> Optional[Function]: ...
+
+    @overload
+    def find_function(self, addr: int) -> Optional[Function]: ...
+
+    @overload
+    def find_variable(self, addr: int) -> Optional[Variable]: ...
+
+    @overload
+    def find_variable(self, name: str) -> Optional[Variable]: ...
+
+    @property
+    def types(self) -> Iterator[Optional[Type]]: ...
+
+    @property
+    def functions(self) -> Iterator[Optional[Function]]: ...
+
+    @property
+    def imported_functions(self) -> Iterator[Optional[Function]]: ...
+
+    @property
+    def variables(self) -> Iterator[Optional[Variable]]: ...
+
+class DebugInfo(lief.DebugInfo):
+    @overload
+    def find_function(self, name: str) -> Optional[Function]: ...
+
+    @overload
+    def find_function(self, addr: int) -> Optional[Function]: ...
+
+    @overload
+    def find_variable(self, addr: int) -> Optional[Variable]: ...
+
+    @overload
+    def find_variable(self, name: str) -> Optional[Variable]: ...
+
+    def find_type(self, name: str) -> Optional[Type]: ...
+
+    @property
+    def compilation_units(self) -> Iterator[Optional[CompilationUnit]]: ...

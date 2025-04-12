@@ -1,25 +1,15 @@
 from typing import Iterator, Optional, Union as _Union
 
-import lief
+import lief.pdb
 
+
+class Simple(lief.pdb.Type):
+    pass
 
 class Array(lief.pdb.Type):
     pass
 
-class Attribute:
-    @property
-    def name(self) -> str: ...
-
-    @property
-    def type(self) -> Optional[lief.pdb.Type]: ...
-
-    @property
-    def field_offset(self) -> int: ...
-
 class BitField(lief.pdb.Type):
-    pass
-
-class Class(ClassLike):
     pass
 
 class ClassLike(lief.pdb.Type):
@@ -38,18 +28,34 @@ class ClassLike(lief.pdb.Type):
     @property
     def size(self) -> int: ...
 
-class Enum(lief.pdb.Type):
+class Class(ClassLike):
     pass
 
-class Function(lief.pdb.Type):
+class Structure(ClassLike):
     pass
 
 class Interface(ClassLike):
     pass
 
+class Attribute:
+    @property
+    def name(self) -> str: ...
+
+    @property
+    def type(self) -> Optional[lief.pdb.Type]: ...
+
+    @property
+    def field_offset(self) -> int: ...
+
 class Method:
     @property
     def name(self) -> str: ...
+
+class Enum(lief.pdb.Type):
+    pass
+
+class Function(lief.pdb.Type):
+    pass
 
 class Modifier(lief.pdb.Type):
     @property
@@ -58,12 +64,6 @@ class Modifier(lief.pdb.Type):
 class Pointer(lief.pdb.Type):
     @property
     def underlying_type(self) -> Optional[lief.pdb.Type]: ...
-
-class Simple(lief.pdb.Type):
-    pass
-
-class Structure(ClassLike):
-    pass
 
 class Union(ClassLike):
     pass

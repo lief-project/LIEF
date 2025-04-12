@@ -2,6 +2,9 @@ from collections.abc import Sequence
 import enum
 import io
 import lief
+import lief.ELF
+import lief.MachO
+import lief.PE
 import os
 from typing import Iterator, Optional, Union, overload
 
@@ -22,6 +25,246 @@ from . import (
     pdb as pdb
 )
 
+
+__tag__: str = ...
+
+__commit__: str = ...
+
+__is_tagged__: bool = ...
+
+def disable_leak_warning() -> None: ...
+
+def demangle(mangled: str) -> Optional[str]: ...
+
+def dump(buffer: memoryview, title: str = '', prefix: str = '', limit: int = 0) -> str: ...
+
+__extended__: bool = ...
+
+class range_t:
+    low: int
+
+    high: int
+
+    @property
+    def size(self) -> int: ...
+
+    def __repr__(self) -> str: ...
+
+    def __str__(self) -> str: ...
+
+class debug_location_t:
+    line: int
+
+    file: str
+
+    def __repr__(self) -> str: ...
+
+class PLATFORMS(enum.Enum):
+    @staticmethod
+    def from_value(arg: int, /) -> PLATFORMS: ...
+
+    def __eq__(self, arg, /) -> bool: ...
+
+    def __ne__(self, arg, /) -> bool: ...
+
+    def __int__(self) -> int: ...
+
+    UNKNOWN = 3
+
+    LINUX = 1
+
+    ANDROID = 2
+
+    WINDOWS = 3
+
+    IOS = 4
+
+    OSX = 5
+
+def current_platform() -> PLATFORMS: ...
+
+class Object:
+    def __hash__(self) -> int: ...
+
+    def __eq__(self, arg, /) -> bool: ...
+
+class ok_t:
+    def __bool__(self) -> bool: ...
+
+class ok_error_t:
+    @property
+    def is_error(self) -> bool: ...
+
+    @property
+    def is_value(self) -> bool: ...
+
+    @property
+    def error(self) -> lief_errors: ...
+
+    @property
+    def value(self) -> ok_t: ...
+
+    def __bool__(self) -> bool: ...
+
+class lief_errors(enum.Enum):
+    read_error = 1
+
+    not_found = 2
+
+    not_implemented = 3
+
+    not_supported = 4
+
+    corrupted = 5
+
+    conversion_error = 6
+
+    read_out_of_bound = 7
+
+    asn1_bad_tag = 8
+
+    file_error = 9
+
+    file_format_error = 10
+
+    parsing_error = 11
+
+    build_error = 12
+
+    data_too_large = 13
+
+    require_extended_version = 14
+
+@overload
+def hash(arg: Object, /) -> int: ... # type: ignore
+
+@overload
+def hash(arg: Sequence[int], /) -> int: ... # type: ignore
+
+@overload
+def hash(arg: bytes, /) -> int: ... # type: ignore
+
+@overload
+def hash(arg: str, /) -> int: ... # type: ignore
+
+def to_json(arg: Object, /) -> str: ...
+
+class Header(Object):
+    class ARCHITECTURES(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> Header.ARCHITECTURES: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        UNKNOWN = 0
+
+        ARM = 1
+
+        ARM64 = 2
+
+        MIPS = 3
+
+        X86 = 4
+
+        X86_64 = 5
+
+        PPC = 6
+
+        SPARC = 7
+
+        SYSZ = 8
+
+        XCORE = 9
+
+        RISCV = 10
+
+        LOONGARCH = 11
+
+    class ENDIANNESS(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> Header.ENDIANNESS: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        UNKNOWN = 0
+
+        BIG = 1
+
+        LITTLE = 2
+
+    class MODES(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> Header.MODES: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        NONE = 0
+
+        BITS_16 = 1
+
+        BITS_32 = 2
+
+        BITS_64 = 4
+
+        THUMB = 8
+
+        ARM64E = 16
+
+    class OBJECT_TYPES(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> Header.OBJECT_TYPES: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        UNKNOWN = 0
+
+        EXECUTABLE = 1
+
+        LIBRARY = 2
+
+        OBJECT = 3
+
+    @property
+    def architecture(self) -> Header.ARCHITECTURES: ...
+
+    @property
+    def modes(self) -> Header.MODES: ...
+
+    @property
+    def modes_list(self) -> list[Header.MODES]: ...
+
+    @property
+    def entrypoint(self) -> int: ...
+
+    @property
+    def object_type(self) -> Header.OBJECT_TYPES: ...
+
+    @property
+    def endianness(self) -> Header.ENDIANNESS: ...
+
+    @property
+    def is_32(self) -> bool: ...
+
+    @property
+    def is_64(self) -> bool: ...
+
+    def __str__(self) -> str: ...
 
 class Binary(Object):
     class VA_TYPES(enum.Enum):
@@ -157,25 +400,64 @@ class Binary(Object):
 
     def __str__(self) -> str: ...
 
-class DebugInfo:
-    class FORMAT(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> DebugInfo.FORMAT: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        UNKNOWN = 0
-
-        DWARF = 1
-
-        PDB = 2
+class Section(Object):
+    name: Union[str, bytes]
 
     @property
-    def format(self) -> DebugInfo.FORMAT: ...
+    def fullname(self) -> bytes: ...
+
+    size: int
+
+    offset: int
+
+    virtual_address: int
+
+    content: memoryview
+
+    @property
+    def entropy(self) -> float: ...
+
+    @overload
+    def search(self, number: int, pos: int = 0, size: int = 0) -> Optional[int]: ...
+
+    @overload
+    def search(self, str: str, pos: int = 0) -> Optional[int]: ...
+
+    @overload
+    def search(self, bytes: bytes, pos: int = 0) -> Optional[int]: ...
+
+    @overload
+    def search_all(self, number: int, size: int = 0) -> list[int]: ...
+
+    @overload
+    def search_all(self, str: str) -> list[int]: ...
+
+    def __str__(self) -> str: ...
+
+class Symbol(Object):
+    name: Union[str, bytes]
+
+    value: int
+
+    size: int
+
+    def __str__(self) -> str: ...
+
+@overload
+def parse(raw: bytes) -> Optional[Binary]: ...
+
+@overload
+def parse(filepath: str) -> Optional[Binary]: ...
+
+@overload
+def parse(obj: Union[io.IOBase | os.PathLike]) -> Optional[Binary]: ...
+
+class Relocation(Object):
+    address: int
+
+    size: int
+
+    def __str__(self) -> str: ...
 
 class Function(Symbol):
     @overload
@@ -226,10 +508,10 @@ class Function(Symbol):
 
     def __str__(self) -> str: ...
 
-class Header(Object):
-    class ARCHITECTURES(enum.Enum):
+class DebugInfo:
+    class FORMAT(enum.Enum):
         @staticmethod
-        def from_value(arg: int, /) -> Header.ARCHITECTURES: ...
+        def from_value(arg: int, /) -> DebugInfo.FORMAT: ...
 
         def __eq__(self, arg, /) -> bool: ...
 
@@ -239,239 +521,24 @@ class Header(Object):
 
         UNKNOWN = 0
 
-        ARM = 1
+        DWARF = 1
 
-        ARM64 = 2
-
-        MIPS = 3
-
-        X86 = 4
-
-        X86_64 = 5
-
-        PPC = 6
-
-        SPARC = 7
-
-        SYSZ = 8
-
-        XCORE = 9
-
-        RISCV = 10
-
-        LOONGARCH = 11
-
-    class ENDIANNESS(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> Header.ENDIANNESS: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        UNKNOWN = 0
-
-        BIG = 1
-
-        LITTLE = 2
-
-    class MODES(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> Header.MODES: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        NONE = 0
-
-        BITS_16 = 1
-
-        BITS_32 = 2
-
-        BITS_64 = 4
-
-        THUMB = 8
-
-        ARM64E = 16
-
-    class OBJECT_TYPES(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> Header.OBJECT_TYPES: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        UNKNOWN = 0
-
-        EXECUTABLE = 1
-
-        LIBRARY = 2
-
-        OBJECT = 3
+        PDB = 2
 
     @property
-    def architecture(self) -> Header.ARCHITECTURES: ...
-
-    @property
-    def modes(self) -> Header.MODES: ...
-
-    @property
-    def modes_list(self) -> list[Header.MODES]: ...
-
-    @property
-    def entrypoint(self) -> int: ...
-
-    @property
-    def object_type(self) -> Header.OBJECT_TYPES: ...
-
-    @property
-    def endianness(self) -> Header.ENDIANNESS: ...
-
-    @property
-    def is_32(self) -> bool: ...
-
-    @property
-    def is_64(self) -> bool: ...
-
-    def __str__(self) -> str: ...
-
-class Object:
-    def __hash__(self) -> int: ...
-
-    def __eq__(self, arg, /) -> bool: ...
-
-class PLATFORMS(enum.Enum):
-    @staticmethod
-    def from_value(arg: int, /) -> PLATFORMS: ...
-
-    def __eq__(self, arg, /) -> bool: ...
-
-    def __ne__(self, arg, /) -> bool: ...
-
-    def __int__(self) -> int: ...
-
-    UNKNOWN = 3
-
-    LINUX = 1
-
-    ANDROID = 2
-
-    WINDOWS = 3
-
-    IOS = 4
-
-    OSX = 5
-
-class Relocation(Object):
-    address: int
-
-    size: int
-
-    def __str__(self) -> str: ...
-
-class Section(Object):
-    name: Union[str, bytes]
-
-    @property
-    def fullname(self) -> bytes: ...
-
-    size: int
-
-    offset: int
-
-    virtual_address: int
-
-    content: memoryview
-
-    @property
-    def entropy(self) -> float: ...
-
-    @overload
-    def search(self, number: int, pos: int = 0, size: int = 0) -> Optional[int]: ...
-
-    @overload
-    def search(self, str: str, pos: int = 0) -> Optional[int]: ...
-
-    @overload
-    def search(self, bytes: bytes, pos: int = 0) -> Optional[int]: ...
-
-    @overload
-    def search_all(self, number: int, size: int = 0) -> list[int]: ...
-
-    @overload
-    def search_all(self, str: str) -> list[int]: ...
-
-    def __str__(self) -> str: ...
-
-class Symbol(Object):
-    name: Union[str, bytes]
-
-    value: int
-
-    size: int
-
-    def __str__(self) -> str: ...
-
-__commit__: str = ...
-
-__extended__: bool = ...
-
-__is_tagged__: bool = ...
-
-__tag__: str = ...
-
-def current_platform() -> PLATFORMS: ...
-
-class debug_location_t:
-    line: int
-
-    file: str
-
-    def __repr__(self) -> str: ...
-
-def demangle(mangled: str) -> Optional[str]: ...
-
-def disable_leak_warning() -> None: ...
-
-def dump(buffer: memoryview, title: str = '', prefix: str = '', limit: int = 0) -> str: ...
-
-@overload
-def hash(arg: Object, /) -> int: ... # type: ignore
-
-@overload
-def hash(arg: Sequence[int], /) -> int: ... # type: ignore
-
-@overload
-def hash(arg: bytes, /) -> int: ... # type: ignore
-
-@overload
-def hash(arg: str, /) -> int: ... # type: ignore
-
-@overload
-def is_art(path: str) -> bool: ...
-
-@overload
-def is_art(raw: Sequence[int]) -> bool: ...
-
-@overload
-def is_dex(path: str) -> bool: ...
-
-@overload
-def is_dex(raw: Sequence[int]) -> bool: ...
+    def format(self) -> DebugInfo.FORMAT: ...
 
 @overload
 def is_elf(filename: str) -> bool: ...
 
 @overload
 def is_elf(raw: Sequence[int]) -> bool: ...
+
+@overload
+def is_pe(file: str) -> bool: ...
+
+@overload
+def is_pe(raw: Sequence[int]) -> bool: ...
 
 @overload
 def is_macho(filename: str) -> bool: ...
@@ -489,10 +556,10 @@ def is_oat(path: str) -> bool: ...
 def is_oat(raw: Sequence[int]) -> bool: ...
 
 @overload
-def is_pe(file: str) -> bool: ...
+def is_dex(path: str) -> bool: ...
 
 @overload
-def is_pe(raw: Sequence[int]) -> bool: ...
+def is_dex(raw: Sequence[int]) -> bool: ...
 
 @overload
 def is_vdex(path: str) -> bool: ...
@@ -500,72 +567,8 @@ def is_vdex(path: str) -> bool: ...
 @overload
 def is_vdex(raw: Sequence[int]) -> bool: ...
 
-class lief_errors(enum.Enum):
-    read_error = 1
-
-    not_found = 2
-
-    not_implemented = 3
-
-    not_supported = 4
-
-    corrupted = 5
-
-    conversion_error = 6
-
-    read_out_of_bound = 7
-
-    asn1_bad_tag = 8
-
-    file_error = 9
-
-    file_format_error = 10
-
-    parsing_error = 11
-
-    build_error = 12
-
-    data_too_large = 13
-
-    require_extended_version = 14
-
-class ok_error_t:
-    @property
-    def is_error(self) -> bool: ...
-
-    @property
-    def is_value(self) -> bool: ...
-
-    @property
-    def error(self) -> lief_errors: ...
-
-    @property
-    def value(self) -> ok_t: ...
-
-    def __bool__(self) -> bool: ...
-
-class ok_t:
-    def __bool__(self) -> bool: ...
+@overload
+def is_art(path: str) -> bool: ...
 
 @overload
-def parse(raw: bytes) -> Optional[Binary]: ...
-
-@overload
-def parse(filepath: str) -> Optional[Binary]: ...
-
-@overload
-def parse(obj: Union[io.IOBase | os.PathLike]) -> Optional[Binary]: ...
-
-class range_t:
-    low: int
-
-    high: int
-
-    @property
-    def size(self) -> int: ...
-
-    def __repr__(self) -> str: ...
-
-    def __str__(self) -> str: ...
-
-def to_json(arg: Object, /) -> str: ...
+def is_art(raw: Sequence[int]) -> bool: ...

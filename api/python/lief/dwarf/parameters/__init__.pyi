@@ -1,14 +1,14 @@
 from typing import Iterator, Optional, Union
 
-import lief
+import lief.dwarf
 
 
 class Formal(lief.dwarf.Parameter):
     @property
     def type(self) -> Optional[lief.dwarf.Type]: ...
 
-class TemplateType(lief.dwarf.Parameter):
+class TemplateValue(lief.dwarf.Parameter):
     pass
 
-class TemplateValue(lief.dwarf.Parameter):
+class TemplateType(lief.dwarf.Parameter):
     pass

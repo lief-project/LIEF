@@ -1,6 +1,24 @@
 from typing import Iterator, Optional, Union
 
 
+class DeclOpt:
+    def __init__(self) -> None: ...
+
+    show_annotations: bool
+
+class Metadata:
+    def to_decl(self, opt: DeclOpt = ...) -> str: ...
+
+    @property
+    def classes(self) -> Iterator[Optional[Class]]: ...
+
+    @property
+    def protocols(self) -> Iterator[Optional[Protocol]]: ...
+
+    def get_class(self, name: str) -> Optional[Class]: ...
+
+    def get_protocol(self, name: str) -> Optional[Protocol]: ...
+
 class Class:
     @property
     def name(self) -> str: ...
@@ -28,11 +46,6 @@ class Class:
 
     def to_decl(self, opt: DeclOpt = ...) -> str: ...
 
-class DeclOpt:
-    def __init__(self) -> None: ...
-
-    show_annotations: bool
-
 class IVar:
     @property
     def name(self) -> str: ...
@@ -40,18 +53,20 @@ class IVar:
     @property
     def mangled_type(self) -> str: ...
 
-class Metadata:
+class Protocol:
+    @property
+    def mangled_name(self) -> str: ...
+
+    @property
+    def optional_methods(self) -> Iterator[Optional[Method]]: ...
+
+    @property
+    def required_methods(self) -> Iterator[Optional[Method]]: ...
+
+    @property
+    def properties(self) -> Iterator[Optional[Property]]: ...
+
     def to_decl(self, opt: DeclOpt = ...) -> str: ...
-
-    @property
-    def classes(self) -> Iterator[Optional[Class]]: ...
-
-    @property
-    def protocols(self) -> Iterator[Optional[Protocol]]: ...
-
-    def get_class(self, name: str) -> Optional[Class]: ...
-
-    def get_protocol(self, name: str) -> Optional[Protocol]: ...
 
 class Method:
     @property
@@ -72,18 +87,3 @@ class Property:
 
     @property
     def attribute(self) -> str: ...
-
-class Protocol:
-    @property
-    def mangled_name(self) -> str: ...
-
-    @property
-    def optional_methods(self) -> Iterator[Optional[Method]]: ...
-
-    @property
-    def required_methods(self) -> Iterator[Optional[Method]]: ...
-
-    @property
-    def properties(self) -> Iterator[Optional[Property]]: ...
-
-    def to_decl(self, opt: DeclOpt = ...) -> str: ...

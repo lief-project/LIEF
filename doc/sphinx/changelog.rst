@@ -98,7 +98,8 @@
 
 :Dependencies:
 
-  * Move to spdlog 1.15.1
+  * Move to spdlog ``1.15.1``
+  * Upgrade nanobind to version ``v2.6.x``
 
 :Utilities:
 

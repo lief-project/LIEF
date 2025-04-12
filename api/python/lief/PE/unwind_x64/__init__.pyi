@@ -1,11 +1,7 @@
 from typing import Iterator, Optional, Union
 
-import lief
+import lief.PE
 
-
-class Alloc(Code):
-    @property
-    def size(self) -> int: ...
 
 class Code:
     @property
@@ -16,18 +12,19 @@ class Code:
 
     def __str__(self) -> str: ...
 
-class Epilog(Code):
-    @property
-    def flags(self) -> int: ...
-
+class Alloc(Code):
     @property
     def size(self) -> int: ...
+
+class PushNonVol(Code):
+    @property
+    def reg(self) -> lief.PE.RuntimeFunctionX64.UNWIND_REG: ...
 
 class PushMachFrame(Code):
     @property
     def value(self) -> int: ...
 
-class PushNonVol(Code):
+class SetFPReg(Code):
     @property
     def reg(self) -> lief.PE.RuntimeFunctionX64.UNWIND_REG: ...
 
@@ -45,9 +42,12 @@ class SaveXMM128(Code):
     @property
     def offset(self) -> int: ...
 
-class SetFPReg(Code):
+class Epilog(Code):
     @property
-    def reg(self) -> lief.PE.RuntimeFunctionX64.UNWIND_REG: ...
+    def flags(self) -> int: ...
+
+    @property
+    def size(self) -> int: ...
 
 class Spare(Code):
     pass

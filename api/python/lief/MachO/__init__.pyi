@@ -5,8 +5,158 @@ import lief.MachO
 import os
 from typing import Iterator, Optional, Union, overload
 
-import lief
 
+import lief
+import lief.objc
+
+
+class MACHO_TYPES(enum.Enum):
+    @staticmethod
+    def from_value(arg: int, /) -> MACHO_TYPES: ...
+
+    def __eq__(self, arg, /) -> bool: ...
+
+    def __ne__(self, arg, /) -> bool: ...
+
+    def __int__(self) -> int: ...
+
+    MAGIC = 4277009102
+
+    CIGAM = 3472551422
+
+    MAGIC_64 = 4277009103
+
+    CIGAM_64 = 3489328638
+
+    FAT_MAGIC = 3405691582
+
+    FAT_CIGAM = 3199925962
+
+    NEURAL_MODEL = 3203398350
+
+class X86_RELOCATION(enum.Enum):
+    @staticmethod
+    def from_value(arg: int, /) -> X86_RELOCATION: ...
+
+    def __eq__(self, arg, /) -> bool: ...
+
+    def __ne__(self, arg, /) -> bool: ...
+
+    def __int__(self) -> int: ...
+
+    VANILLA = 0
+
+    PAIR = 1
+
+    SECTDIFF = 2
+
+    PB_LA_PTR = 3
+
+    LOCAL_SECTDIFF = 4
+
+    TLV = 5
+
+class X86_64_RELOCATION(enum.Enum):
+    @staticmethod
+    def from_value(arg: int, /) -> X86_64_RELOCATION: ...
+
+    def __eq__(self, arg, /) -> bool: ...
+
+    def __ne__(self, arg, /) -> bool: ...
+
+    def __int__(self) -> int: ...
+
+    UNSIGNED = 0
+
+    SIGNED = 1
+
+    BRANCH = 2
+
+    GOT_LOAD = 3
+
+    GOT = 4
+
+    SUBTRACTOR = 5
+
+    SIGNED_1 = 6
+
+    SIGNED_2 = 7
+
+    SIGNED_4 = 8
+
+    TLV = 9
+
+class PPC_RELOCATION(enum.Enum):
+    @staticmethod
+    def from_value(arg: int, /) -> PPC_RELOCATION: ...
+
+    def __eq__(self, arg, /) -> bool: ...
+
+    def __ne__(self, arg, /) -> bool: ...
+
+    def __int__(self) -> int: ...
+
+    VANILLA = 0
+
+    PAIR = 1
+
+    BR14 = 2
+
+    BR24 = 3
+
+    HI16 = 4
+
+    LO16 = 5
+
+    HA16 = 6
+
+    LO14 = 7
+
+    SECTDIFF = 8
+
+    PB_LA_PTR = 9
+
+    HI16_SECTDIFF = 10
+
+    LO16_SECTDIFF = 11
+
+    HA16_SECTDIFF = 12
+
+    JBSR = 13
+
+    LO14_SECTDIFF = 14
+
+    LOCAL_SECTDIFF = 15
+
+class ARM_RELOCATION(enum.Enum):
+    @staticmethod
+    def from_value(arg: int, /) -> ARM_RELOCATION: ...
+
+    def __eq__(self, arg, /) -> bool: ...
+
+    def __ne__(self, arg, /) -> bool: ...
+
+    def __int__(self) -> int: ...
+
+    VANILLA = 0
+
+    PAIR = 1
+
+    SECTDIFF = 2
+
+    LOCAL_SECTDIFF = 3
+
+    PB_LA_PTR = 4
+
+    BR24 = 5
+
+    THUMB_RELOC_BR22 = 6
+
+    THUMB_32BIT_BRANCH = 7
+
+    HALF = 8
+
+    HALF_SECTDIFF = 9
 
 class ARM64_RELOCATION(enum.Enum):
     @staticmethod
@@ -40,9 +190,9 @@ class ARM64_RELOCATION(enum.Enum):
 
     ADDEND = 10
 
-class ARM_RELOCATION(enum.Enum):
+class DYLD_CHAINED_FORMAT(enum.Enum):
     @staticmethod
-    def from_value(arg: int, /) -> ARM_RELOCATION: ...
+    def from_value(arg: int, /) -> DYLD_CHAINED_FORMAT: ...
 
     def __eq__(self, arg, /) -> bool: ...
 
@@ -50,33 +200,412 @@ class ARM_RELOCATION(enum.Enum):
 
     def __int__(self) -> int: ...
 
-    VANILLA = 0
+    IMPORT = 1
 
-    PAIR = 1
+    IMPORT_ADDEND = 2
 
-    SECTDIFF = 2
+    IMPORT_ADDEND64 = 3
 
-    LOCAL_SECTDIFF = 3
+class DYLD_CHAINED_PTR_FORMAT(enum.Enum):
+    @staticmethod
+    def from_value(arg: int, /) -> DYLD_CHAINED_PTR_FORMAT: ...
 
-    PB_LA_PTR = 4
+    def __eq__(self, arg, /) -> bool: ...
 
-    BR24 = 5
+    def __ne__(self, arg, /) -> bool: ...
 
-    THUMB_RELOC_BR22 = 6
+    def __int__(self) -> int: ...
 
-    THUMB_32BIT_BRANCH = 7
+    NONE = 0
 
-    HALF = 8
+    PTR_ARM64E = 1
 
-    HALF_SECTDIFF = 9
+    PTR_64 = 2
 
-class AtomInfo(LoadCommand):
-    data_offset: int
+    PTR_32 = 3
 
-    data_size: int
+    PTR_32_CACHE = 4
+
+    PTR_32_FIRMWARE = 5
+
+    PTR_64_OFFSET = 6
+
+    PTR_ARM64E_KERNEL = 7
+
+    PTR_64_KERNEL_CACHE = 8
+
+    PTR_ARM64E_USERLAND = 9
+
+    PTR_ARM64E_FIRMWARE = 10
+
+    PTR_X86_64_KERNEL_CACHE = 11
+
+    PTR_ARM64E_USERLAND24 = 12
+
+    PTR_ARM64E_SHARED_CACHE = 13
+
+class ParserConfig:
+    def __init__(self) -> None: ...
+
+    parse_dyld_exports: bool
+
+    parse_dyld_bindings: bool
+
+    parse_dyld_rebases: bool
+
+    fix_from_memory: bool
+
+    from_dyld_shared_cache: bool
+
+    def full_dyldinfo(self, flag: bool) -> ParserConfig: ...
+
+    deep: ParserConfig = ...
+
+    quick: ParserConfig = ...
+
+@overload
+def parse(buffer: bytes, config: ParserConfig = ...) -> Optional[FatBinary]: ...
+
+@overload
+def parse(filename: str, config: ParserConfig = ...) -> Optional[FatBinary]: ...
+
+@overload
+def parse(raw: Sequence[int], config: ParserConfig = ...) -> Optional[FatBinary]: ...
+
+@overload
+def parse(obj: Union[io.IOBase | os.PathLike], config: ParserConfig = ...) -> Optional[FatBinary]: ...
+
+def parse_from_memory(address: int, config: ParserConfig = ...) -> Optional[FatBinary]: ...
+
+class ChainedPointerAnalysis:
+    class dyld_chained_ptr_arm64e_rebase_t:
+        @property
+        def unpack_target(self) -> int: ...
+
+        @property
+        def target(self) -> int: ...
+
+        @property
+        def high8(self) -> int: ...
+
+        @property
+        def next(self) -> int: ...
+
+        @property
+        def bind(self) -> bool: ...
+
+        @property
+        def auth(self) -> bool: ...
+
+        def __str__(self) -> str: ...
+
+    class dyld_chained_ptr_arm64e_bind_t:
+        @property
+        def ordinal(self) -> int: ...
+
+        @property
+        def zero(self) -> int: ...
+
+        @property
+        def addend(self) -> int: ...
+
+        @property
+        def next(self) -> int: ...
+
+        @property
+        def bind(self) -> bool: ...
+
+        @property
+        def auth(self) -> bool: ...
+
+        def __str__(self) -> str: ...
+
+    class dyld_chained_ptr_arm64e_auth_rebase_t:
+        @property
+        def target(self) -> int: ...
+
+        @property
+        def diversity(self) -> int: ...
+
+        @property
+        def addr_div(self) -> int: ...
+
+        @property
+        def key(self) -> int: ...
+
+        @property
+        def next(self) -> int: ...
+
+        @property
+        def bind(self) -> bool: ...
+
+        @property
+        def auth(self) -> int: ...
+
+        def __str__(self) -> str: ...
+
+    class dyld_chained_ptr_arm64e_auth_bind_t:
+        @property
+        def ordinal(self) -> int: ...
+
+        @property
+        def zero(self) -> int: ...
+
+        @property
+        def diversity(self) -> int: ...
+
+        @property
+        def addr_div(self) -> int: ...
+
+        @property
+        def key(self) -> int: ...
+
+        @property
+        def next(self) -> int: ...
+
+        @property
+        def bind(self) -> bool: ...
+
+        @property
+        def auth(self) -> bool: ...
+
+        def __str__(self) -> str: ...
+
+    class dyld_chained_ptr_64_rebase_t:
+        @property
+        def unpack_target(self) -> int: ...
+
+        @property
+        def target(self) -> int: ...
+
+        @property
+        def high8(self) -> int: ...
+
+        @property
+        def reserved(self) -> int: ...
+
+        @property
+        def next(self) -> int: ...
+
+        @property
+        def bind(self) -> bool: ...
+
+        def __str__(self) -> str: ...
+
+    class dyld_chained_ptr_arm64e_bind24_t:
+        @property
+        def ordinal(self) -> int: ...
+
+        @property
+        def zero(self) -> int: ...
+
+        @property
+        def addend(self) -> int: ...
+
+        @property
+        def next(self) -> int: ...
+
+        @property
+        def bind(self) -> bool: ...
+
+        @property
+        def auth(self) -> bool: ...
+
+        def __str__(self) -> str: ...
+
+    class dyld_chained_ptr_arm64e_auth_bind24_t:
+        @property
+        def ordinal(self) -> int: ...
+
+        @property
+        def zero(self) -> int: ...
+
+        @property
+        def diversity(self) -> int: ...
+
+        @property
+        def addr_div(self) -> int: ...
+
+        @property
+        def key(self) -> int: ...
+
+        @property
+        def next(self) -> int: ...
+
+        @property
+        def bind(self) -> bool: ...
+
+        @property
+        def auth(self) -> bool: ...
+
+        def __str__(self) -> str: ...
+
+    class dyld_chained_ptr_64_bind_t:
+        @property
+        def ordinal(self) -> int: ...
+
+        @property
+        def addend(self) -> int: ...
+
+        @property
+        def reserved(self) -> int: ...
+
+        @property
+        def next(self) -> int: ...
+
+        @property
+        def bind(self) -> bool: ...
+
+        def __str__(self) -> str: ...
+
+    class dyld_chained_ptr_64_kernel_cache_rebase_t:
+        @property
+        def ordinal(self) -> int: ...
+
+        @property
+        def cache_level(self) -> int: ...
+
+        @property
+        def diversity(self) -> int: ...
+
+        @property
+        def addr_div(self) -> int: ...
+
+        @property
+        def key(self) -> int: ...
+
+        @property
+        def next(self) -> int: ...
+
+        @property
+        def is_auth(self) -> bool: ...
+
+        def __str__(self) -> str: ...
+
+    class dyld_chained_ptr_32_rebase_t:
+        @property
+        def target(self) -> int: ...
+
+        @property
+        def next(self) -> int: ...
+
+        @property
+        def bind(self) -> int: ...
+
+        def __str__(self) -> str: ...
+
+    class dyld_chained_ptr_32_bind_t:
+        @property
+        def ordinal(self) -> int: ...
+
+        @property
+        def addend(self) -> int: ...
+
+        @property
+        def next(self) -> int: ...
+
+        @property
+        def bind(self) -> bool: ...
+
+        def __str__(self) -> str: ...
+
+    class dyld_chained_ptr_32_cache_rebase_t:
+        @property
+        def target(self) -> int: ...
+
+        @property
+        def next(self) -> int: ...
+
+        def __str__(self) -> str: ...
+
+    class dyld_chained_ptr_32_firmware_rebase_t:
+        @property
+        def target(self) -> int: ...
+
+        @property
+        def next(self) -> int: ...
+
+        def __str__(self) -> str: ...
+
+    @staticmethod
+    def stride(fmt: DYLD_CHAINED_PTR_FORMAT) -> int: ...
+
+    @staticmethod
+    def from_value(ptr: int, size: int) -> Optional[ChainedPointerAnalysis]: ...
 
     @property
-    def content(self) -> memoryview: ...
+    def value(self) -> int: ...
+
+    @property
+    def size(self) -> int: ...
+
+    @property
+    def dyld_chained_ptr_arm64e_rebase(self) -> ChainedPointerAnalysis.dyld_chained_ptr_arm64e_rebase_t: ...
+
+    @property
+    def dyld_chained_ptr_arm64e_bind(self) -> ChainedPointerAnalysis.dyld_chained_ptr_arm64e_bind_t: ...
+
+    @property
+    def dyld_chained_ptr_arm64e_auth_rebase(self) -> ChainedPointerAnalysis.dyld_chained_ptr_arm64e_auth_rebase_t: ...
+
+    @property
+    def dyld_chained_ptr_arm64e_auth_bind(self) -> ChainedPointerAnalysis.dyld_chained_ptr_arm64e_auth_bind_t: ...
+
+    @property
+    def dyld_chained_ptr_64_rebase(self) -> ChainedPointerAnalysis.dyld_chained_ptr_64_rebase_t: ...
+
+    @property
+    def dyld_chained_ptr_arm64e_bind24(self) -> ChainedPointerAnalysis.dyld_chained_ptr_arm64e_bind24_t: ...
+
+    @property
+    def dyld_chained_ptr_arm64e_auth_bind24(self) -> ChainedPointerAnalysis.dyld_chained_ptr_arm64e_auth_bind24_t: ...
+
+    @property
+    def dyld_chained_ptr_64_bind(self) -> ChainedPointerAnalysis.dyld_chained_ptr_64_bind_t: ...
+
+    @property
+    def dyld_chained_ptr_64_kernel_cache_rebase(self) -> ChainedPointerAnalysis.dyld_chained_ptr_64_kernel_cache_rebase_t: ...
+
+    @property
+    def dyld_chained_ptr_32_rebase(self) -> ChainedPointerAnalysis.dyld_chained_ptr_32_rebase_t: ...
+
+    @property
+    def dyld_chained_ptr_32_bind(self) -> ChainedPointerAnalysis.dyld_chained_ptr_32_bind_t: ...
+
+    @property
+    def dyld_chained_ptr_32_cache_rebase(self) -> ChainedPointerAnalysis.dyld_chained_ptr_32_cache_rebase_t: ...
+
+    @property
+    def dyld_chained_ptr_32_firmware_rebase(self) -> ChainedPointerAnalysis.dyld_chained_ptr_32_firmware_rebase_t: ...
+
+    def get_as(self, arg: DYLD_CHAINED_PTR_FORMAT, /) -> Union[lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_arm64e_rebase_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_arm64e_bind_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_arm64e_auth_rebase_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_arm64e_auth_bind_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_64_rebase_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_arm64e_bind24_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_arm64e_auth_bind24_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_64_bind_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_64_kernel_cache_rebase_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_32_rebase_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_32_bind_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_32_cache_rebase_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_32_firmware_rebase_t, int, None]: ...
+
+class FatBinary:
+    class it_binaries:
+        def __getitem__(self, arg: int, /) -> Binary: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> FatBinary.it_binaries: ...
+
+        def __next__(self) -> Binary: ...
+
+    @property
+    def size(self) -> int: ...
+
+    def at(self, index: int) -> Binary: ...
+
+    def take(self, cpu: Header.CPU_TYPE) -> Optional[Binary]: ...
+
+    def write(self, filename: str) -> None: ...
+
+    def raw(self) -> list[int]: ...
+
+    def __len__(self) -> int: ...
+
+    def __getitem__(self, arg: int, /) -> Binary: ...
+
+    def __iter__(self) -> FatBinary.it_binaries: ...
 
     def __str__(self) -> str: ...
 
@@ -528,1124 +1057,6 @@ class Binary(lief.Binary):
 
     def __str__(self) -> str: ...
 
-class BindingInfo(lief.Object):
-    address: int
-
-    library_ordinal: int
-
-    addend: int
-
-    weak_import: bool
-
-    @property
-    def has_library(self) -> bool: ...
-
-    @property
-    def library(self) -> DylibCommand: ...
-
-    @property
-    def has_segment(self) -> bool: ...
-
-    @property
-    def segment(self) -> SegmentCommand: ...
-
-    @property
-    def has_symbol(self) -> bool: ...
-
-    @property
-    def symbol(self) -> Symbol: ...
-
-    def __str__(self) -> str: ...
-
-class BuildToolVersion(lief.Object):
-    @property
-    def tool(self) -> BuildToolVersion.TOOLS: ...
-
-    @property
-    def version(self) -> list[int]: ...
-
-    def __str__(self) -> str: ...
-
-    class TOOLS(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> BuildToolVersion.TOOLS: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        UNKNOWN = 0
-
-        CLANG = 1
-
-        SWIFT = 2
-
-        LD = 3
-
-        LLD = 4
-
-class BuildVersion(LoadCommand):
-    class PLATFORMS(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> BuildVersion.PLATFORMS: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        UNKNOWN = 0
-
-        MACOS = 1
-
-        IOS = 2
-
-        TVOS = 3
-
-        WATCHOS = 4
-
-        BRIDGEOS = 5
-
-        MAC_CATALYST = 6
-
-        IOS_SIMULATOR = 7
-
-        TVOS_SIMULATOR = 8
-
-        WATCHOS_SIMULATOR = 9
-
-        DRIVERKIT = 10
-
-        VISIONOS = 11
-
-        VISIONOS_SIMULATOR = 12
-
-        FIRMWARE = 13
-
-        SEPOS = 14
-
-        MACOS_EXCLAVE_CORE = 15
-
-        MACOS_EXCLAVE_KIT = 16
-
-        IOS_EXCLAVE_CORE = 17
-
-        IOS_EXCLAVE_KIT = 18
-
-        TVOS_EXCLAVE_CORE = 19
-
-        TVOS_EXCLAVE_KIT = 20
-
-        ANY = 4294967295
-
-    platform: BuildVersion.PLATFORMS
-
-    minos: list[int]
-
-    sdk: list[int]
-
-    @property
-    def tools(self) -> list[BuildToolVersion]: ...
-
-    def __str__(self) -> str: ...
-
-class Builder:
-    class config_t:
-        def __init__(self) -> None: ...
-
-        linkedit: bool
-
-    @overload
-    @staticmethod
-    def write(binary: Binary, output: str) -> Union[lief.ok_t, lief.lief_errors]: ...
-
-    @overload
-    @staticmethod
-    def write(binary: Binary, output: str, config: Builder.config_t) -> Union[lief.ok_t, lief.lief_errors]: ...
-
-    @overload
-    @staticmethod
-    def write(fat_binary: FatBinary, output: str) -> Union[lief.ok_t, lief.lief_errors]: ...
-
-    @overload
-    @staticmethod
-    def write(fat_binary: FatBinary, output: str, config: Builder.config_t) -> Union[lief.ok_t, lief.lief_errors]: ...
-
-class ChainedBindingInfo(BindingInfo):
-    @property
-    def format(self) -> DYLD_CHAINED_FORMAT: ...
-
-    @property
-    def ptr_format(self) -> DYLD_CHAINED_PTR_FORMAT: ...
-
-    offset: int
-
-    @property
-    def sign_extended_addend(self) -> int: ...
-
-    def __str__(self) -> str: ...
-
-class ChainedPointerAnalysis:
-    class dyld_chained_ptr_arm64e_rebase_t:
-        @property
-        def unpack_target(self) -> int: ...
-
-        @property
-        def target(self) -> int: ...
-
-        @property
-        def high8(self) -> int: ...
-
-        @property
-        def next(self) -> int: ...
-
-        @property
-        def bind(self) -> bool: ...
-
-        @property
-        def auth(self) -> bool: ...
-
-        def __str__(self) -> str: ...
-
-    class dyld_chained_ptr_arm64e_bind_t:
-        @property
-        def ordinal(self) -> int: ...
-
-        @property
-        def zero(self) -> int: ...
-
-        @property
-        def addend(self) -> int: ...
-
-        @property
-        def next(self) -> int: ...
-
-        @property
-        def bind(self) -> bool: ...
-
-        @property
-        def auth(self) -> bool: ...
-
-        def __str__(self) -> str: ...
-
-    class dyld_chained_ptr_arm64e_auth_rebase_t:
-        @property
-        def target(self) -> int: ...
-
-        @property
-        def diversity(self) -> int: ...
-
-        @property
-        def addr_div(self) -> int: ...
-
-        @property
-        def key(self) -> int: ...
-
-        @property
-        def next(self) -> int: ...
-
-        @property
-        def bind(self) -> bool: ...
-
-        @property
-        def auth(self) -> int: ...
-
-        def __str__(self) -> str: ...
-
-    class dyld_chained_ptr_arm64e_auth_bind_t:
-        @property
-        def ordinal(self) -> int: ...
-
-        @property
-        def zero(self) -> int: ...
-
-        @property
-        def diversity(self) -> int: ...
-
-        @property
-        def addr_div(self) -> int: ...
-
-        @property
-        def key(self) -> int: ...
-
-        @property
-        def next(self) -> int: ...
-
-        @property
-        def bind(self) -> bool: ...
-
-        @property
-        def auth(self) -> bool: ...
-
-        def __str__(self) -> str: ...
-
-    class dyld_chained_ptr_64_rebase_t:
-        @property
-        def unpack_target(self) -> int: ...
-
-        @property
-        def target(self) -> int: ...
-
-        @property
-        def high8(self) -> int: ...
-
-        @property
-        def reserved(self) -> int: ...
-
-        @property
-        def next(self) -> int: ...
-
-        @property
-        def bind(self) -> bool: ...
-
-        def __str__(self) -> str: ...
-
-    class dyld_chained_ptr_arm64e_bind24_t:
-        @property
-        def ordinal(self) -> int: ...
-
-        @property
-        def zero(self) -> int: ...
-
-        @property
-        def addend(self) -> int: ...
-
-        @property
-        def next(self) -> int: ...
-
-        @property
-        def bind(self) -> bool: ...
-
-        @property
-        def auth(self) -> bool: ...
-
-        def __str__(self) -> str: ...
-
-    class dyld_chained_ptr_arm64e_auth_bind24_t:
-        @property
-        def ordinal(self) -> int: ...
-
-        @property
-        def zero(self) -> int: ...
-
-        @property
-        def diversity(self) -> int: ...
-
-        @property
-        def addr_div(self) -> int: ...
-
-        @property
-        def key(self) -> int: ...
-
-        @property
-        def next(self) -> int: ...
-
-        @property
-        def bind(self) -> bool: ...
-
-        @property
-        def auth(self) -> bool: ...
-
-        def __str__(self) -> str: ...
-
-    class dyld_chained_ptr_64_bind_t:
-        @property
-        def ordinal(self) -> int: ...
-
-        @property
-        def addend(self) -> int: ...
-
-        @property
-        def reserved(self) -> int: ...
-
-        @property
-        def next(self) -> int: ...
-
-        @property
-        def bind(self) -> bool: ...
-
-        def __str__(self) -> str: ...
-
-    class dyld_chained_ptr_64_kernel_cache_rebase_t:
-        @property
-        def ordinal(self) -> int: ...
-
-        @property
-        def cache_level(self) -> int: ...
-
-        @property
-        def diversity(self) -> int: ...
-
-        @property
-        def addr_div(self) -> int: ...
-
-        @property
-        def key(self) -> int: ...
-
-        @property
-        def next(self) -> int: ...
-
-        @property
-        def is_auth(self) -> bool: ...
-
-        def __str__(self) -> str: ...
-
-    class dyld_chained_ptr_32_rebase_t:
-        @property
-        def target(self) -> int: ...
-
-        @property
-        def next(self) -> int: ...
-
-        @property
-        def bind(self) -> int: ...
-
-        def __str__(self) -> str: ...
-
-    class dyld_chained_ptr_32_bind_t:
-        @property
-        def ordinal(self) -> int: ...
-
-        @property
-        def addend(self) -> int: ...
-
-        @property
-        def next(self) -> int: ...
-
-        @property
-        def bind(self) -> bool: ...
-
-        def __str__(self) -> str: ...
-
-    class dyld_chained_ptr_32_cache_rebase_t:
-        @property
-        def target(self) -> int: ...
-
-        @property
-        def next(self) -> int: ...
-
-        def __str__(self) -> str: ...
-
-    class dyld_chained_ptr_32_firmware_rebase_t:
-        @property
-        def target(self) -> int: ...
-
-        @property
-        def next(self) -> int: ...
-
-        def __str__(self) -> str: ...
-
-    @staticmethod
-    def stride(fmt: DYLD_CHAINED_PTR_FORMAT) -> int: ...
-
-    @staticmethod
-    def from_value(ptr: int, size: int) -> Optional[ChainedPointerAnalysis]: ...
-
-    @property
-    def value(self) -> int: ...
-
-    @property
-    def size(self) -> int: ...
-
-    @property
-    def dyld_chained_ptr_arm64e_rebase(self) -> ChainedPointerAnalysis.dyld_chained_ptr_arm64e_rebase_t: ...
-
-    @property
-    def dyld_chained_ptr_arm64e_bind(self) -> ChainedPointerAnalysis.dyld_chained_ptr_arm64e_bind_t: ...
-
-    @property
-    def dyld_chained_ptr_arm64e_auth_rebase(self) -> ChainedPointerAnalysis.dyld_chained_ptr_arm64e_auth_rebase_t: ...
-
-    @property
-    def dyld_chained_ptr_arm64e_auth_bind(self) -> ChainedPointerAnalysis.dyld_chained_ptr_arm64e_auth_bind_t: ...
-
-    @property
-    def dyld_chained_ptr_64_rebase(self) -> ChainedPointerAnalysis.dyld_chained_ptr_64_rebase_t: ...
-
-    @property
-    def dyld_chained_ptr_arm64e_bind24(self) -> ChainedPointerAnalysis.dyld_chained_ptr_arm64e_bind24_t: ...
-
-    @property
-    def dyld_chained_ptr_arm64e_auth_bind24(self) -> ChainedPointerAnalysis.dyld_chained_ptr_arm64e_auth_bind24_t: ...
-
-    @property
-    def dyld_chained_ptr_64_bind(self) -> ChainedPointerAnalysis.dyld_chained_ptr_64_bind_t: ...
-
-    @property
-    def dyld_chained_ptr_64_kernel_cache_rebase(self) -> ChainedPointerAnalysis.dyld_chained_ptr_64_kernel_cache_rebase_t: ...
-
-    @property
-    def dyld_chained_ptr_32_rebase(self) -> ChainedPointerAnalysis.dyld_chained_ptr_32_rebase_t: ...
-
-    @property
-    def dyld_chained_ptr_32_bind(self) -> ChainedPointerAnalysis.dyld_chained_ptr_32_bind_t: ...
-
-    @property
-    def dyld_chained_ptr_32_cache_rebase(self) -> ChainedPointerAnalysis.dyld_chained_ptr_32_cache_rebase_t: ...
-
-    @property
-    def dyld_chained_ptr_32_firmware_rebase(self) -> ChainedPointerAnalysis.dyld_chained_ptr_32_firmware_rebase_t: ...
-
-    def get_as(self, arg: DYLD_CHAINED_PTR_FORMAT, /) -> Union[lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_arm64e_rebase_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_arm64e_bind_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_arm64e_auth_rebase_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_arm64e_auth_bind_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_64_rebase_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_arm64e_bind24_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_arm64e_auth_bind24_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_64_bind_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_64_kernel_cache_rebase_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_32_rebase_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_32_bind_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_32_cache_rebase_t, lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_32_firmware_rebase_t, int, None]: ...
-
-class CodeSignature(LoadCommand):
-    data_offset: int
-
-    data_size: int
-
-    @property
-    def content(self) -> memoryview: ...
-
-    def __str__(self) -> str: ...
-
-class CodeSignatureDir(LoadCommand):
-    data_offset: int
-
-    data_size: int
-
-    @property
-    def content(self) -> memoryview: ...
-
-    def __str__(self) -> str: ...
-
-class DYLD_CHAINED_FORMAT(enum.Enum):
-    @staticmethod
-    def from_value(arg: int, /) -> DYLD_CHAINED_FORMAT: ...
-
-    def __eq__(self, arg, /) -> bool: ...
-
-    def __ne__(self, arg, /) -> bool: ...
-
-    def __int__(self) -> int: ...
-
-    IMPORT = 1
-
-    IMPORT_ADDEND = 2
-
-    IMPORT_ADDEND64 = 3
-
-class DYLD_CHAINED_PTR_FORMAT(enum.Enum):
-    @staticmethod
-    def from_value(arg: int, /) -> DYLD_CHAINED_PTR_FORMAT: ...
-
-    def __eq__(self, arg, /) -> bool: ...
-
-    def __ne__(self, arg, /) -> bool: ...
-
-    def __int__(self) -> int: ...
-
-    NONE = 0
-
-    PTR_ARM64E = 1
-
-    PTR_64 = 2
-
-    PTR_32 = 3
-
-    PTR_32_CACHE = 4
-
-    PTR_32_FIRMWARE = 5
-
-    PTR_64_OFFSET = 6
-
-    PTR_ARM64E_KERNEL = 7
-
-    PTR_64_KERNEL_CACHE = 8
-
-    PTR_ARM64E_USERLAND = 9
-
-    PTR_ARM64E_FIRMWARE = 10
-
-    PTR_X86_64_KERNEL_CACHE = 11
-
-    PTR_ARM64E_USERLAND24 = 12
-
-    PTR_ARM64E_SHARED_CACHE = 13
-
-class DataCodeEntry(lief.Object):
-    class TYPES(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> DataCodeEntry.TYPES: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        UNKNOWN = 0
-
-        DATA = 1
-
-        JUMP_TABLE_8 = 2
-
-        JUMP_TABLE_16 = 3
-
-        JUMP_TABLE_32 = 4
-
-        ABS_JUMP_TABLE_32 = 5
-
-    offset: int
-
-    length: int
-
-    type: DataCodeEntry.TYPES
-
-    def __str__(self) -> str: ...
-
-class DataInCode(LoadCommand):
-    data_offset: int
-
-    data_size: int
-
-    @property
-    def entries(self) -> it_data_in_code_entries: ...
-
-    def add(self, entry: DataCodeEntry) -> DataInCode: ...
-
-    @property
-    def content(self) -> memoryview: ...
-
-    def __str__(self) -> str: ...
-
-class DyldBindingInfo(BindingInfo):
-    class CLASS(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> DyldBindingInfo.CLASS: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        WEAK = 1
-
-        LAZY = 2
-
-        STANDARD = 3
-
-        THREADED = 100
-
-    class TYPE(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> DyldBindingInfo.TYPE: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        POINTER = 1
-
-        TEXT_ABSOLUTE32 = 2
-
-        TEXT_PCREL32 = 3
-
-    binding_class: DyldBindingInfo.CLASS
-
-    binding_type: DyldBindingInfo.TYPE
-
-    @property
-    def original_offset(self) -> int: ...
-
-    def __str__(self) -> str: ...
-
-class DyldChainedFixups(LoadCommand):
-    class it_binding_info:
-        def __getitem__(self, arg: int, /) -> ChainedBindingInfo: ...
-
-        def __len__(self) -> int: ...
-
-        def __iter__(self) -> DyldChainedFixups.it_binding_info: ...
-
-        def __next__(self) -> ChainedBindingInfo: ...
-
-    class it_chained_starts_in_segments_t:
-        def __getitem__(self, arg: int, /) -> DyldChainedFixups.chained_starts_in_segment: ...
-
-        def __len__(self) -> int: ...
-
-        def __iter__(self) -> DyldChainedFixups.it_chained_starts_in_segments_t: ...
-
-        def __next__(self) -> DyldChainedFixups.chained_starts_in_segment: ...
-
-    class chained_starts_in_segment:
-        @property
-        def offset(self) -> int: ...
-
-        @property
-        def size(self) -> int: ...
-
-        @property
-        def page_size(self) -> int: ...
-
-        @property
-        def segment_offset(self) -> int: ...
-
-        @property
-        def page_start(self) -> list[int]: ...
-
-        @property
-        def pointer_format(self) -> DYLD_CHAINED_PTR_FORMAT: ...
-
-        @property
-        def max_valid_pointer(self) -> int: ...
-
-        @property
-        def page_count(self) -> int: ...
-
-        @property
-        def segment(self) -> SegmentCommand: ...
-
-        def __str__(self) -> str: ...
-
-    data_offset: int
-
-    data_size: int
-
-    @property
-    def payload(self) -> memoryview: ...
-
-    @property
-    def bindings(self) -> DyldChainedFixups.it_binding_info: ...
-
-    @property
-    def chained_starts_in_segments(self) -> DyldChainedFixups.it_chained_starts_in_segments_t: ...
-
-    fixups_version: int
-
-    starts_offset: int
-
-    imports_offset: int
-
-    symbols_offset: int
-
-    imports_count: int
-
-    symbols_format: int
-
-    imports_format: DYLD_CHAINED_FORMAT
-
-    def __str__(self) -> str: ...
-
-class DyldEnvironment(LoadCommand):
-    value: str
-
-    def __str__(self) -> str: ...
-
-class DyldExportsTrie(LoadCommand):
-    class it_export_info:
-        def __getitem__(self, arg: int, /) -> ExportInfo: ...
-
-        def __len__(self) -> int: ...
-
-        def __iter__(self) -> DyldExportsTrie.it_export_info: ...
-
-        def __next__(self) -> ExportInfo: ...
-
-    data_offset: int
-
-    data_size: int
-
-    @property
-    def content(self) -> memoryview: ...
-
-    @property
-    def exports(self) -> DyldExportsTrie.it_export_info: ...
-
-    def show_export_trie(self) -> str: ...
-
-    def __str__(self) -> str: ...
-
-class DyldInfo(LoadCommand):
-    class REBASE_TYPE(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> DyldInfo.REBASE_TYPE: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        POINTER = 1
-
-        TEXT_ABSOLUTE32 = 2
-
-        TEXT_PCREL32 = 3
-
-        THREADED = 102
-
-    class REBASE_OPCODES(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> DyldInfo.REBASE_OPCODES: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        DONE = 0
-
-        SET_TYPE_IMM = 16
-
-        SET_SEGMENT_AND_OFFSET_ULEB = 32
-
-        ADD_ADDR_ULEB = 48
-
-        ADD_ADDR_IMM_SCALED = 64
-
-        DO_REBASE_IMM_TIMES = 80
-
-        DO_REBASE_ULEB_TIMES = 96
-
-        DO_REBASE_ADD_ADDR_ULEB = 112
-
-        DO_REBASE_ULEB_TIMES_SKIPPING_ULEB = 128
-
-    class BIND_OPCODES(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> DyldInfo.BIND_OPCODES: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        DONE = 0
-
-        SET_DYLIB_ORDINAL_IMM = 16
-
-        SET_DYLIB_ORDINAL_ULEB = 32
-
-        SET_DYLIB_SPECIAL_IMM = 48
-
-        SET_SYMBOL_TRAILING_FLAGS_IMM = 64
-
-        SET_TYPE_IMM = 80
-
-        SET_ADDEND_SLEB = 96
-
-        SET_SEGMENT_AND_OFFSET_ULEB = 112
-
-        ADD_ADDR_ULEB = 128
-
-        DO_BIND = 144
-
-        DO_BIND_ADD_ADDR_ULEB = 160
-
-        DO_BIND_ADD_ADDR_IMM_SCALED = 176
-
-        DO_BIND_ULEB_TIMES_SKIPPING_ULEB = 192
-
-        THREADED_APPLY = 209
-
-        THREADED = 208
-
-    class it_binding_info:
-        def __getitem__(self, arg: int, /) -> DyldBindingInfo: ...
-
-        def __len__(self) -> int: ...
-
-        def __iter__(self) -> DyldInfo.it_binding_info: ...
-
-        def __next__(self) -> DyldBindingInfo: ...
-
-    class it_export_info:
-        def __getitem__(self, arg: int, /) -> ExportInfo: ...
-
-        def __len__(self) -> int: ...
-
-        def __iter__(self) -> DyldInfo.it_export_info: ...
-
-        def __next__(self) -> ExportInfo: ...
-
-    rebase: tuple[int, int]
-
-    rebase_opcodes: memoryview
-
-    @property
-    def show_rebases_opcodes(self) -> str: ...
-
-    bind: tuple[int, int]
-
-    bind_opcodes: memoryview
-
-    @property
-    def show_bind_opcodes(self) -> str: ...
-
-    weak_bind: tuple[int, int]
-
-    weak_bind_opcodes: memoryview
-
-    @property
-    def show_weak_bind_opcodes(self) -> str: ...
-
-    lazy_bind: tuple[int, int]
-
-    lazy_bind_opcodes: memoryview
-
-    @property
-    def show_lazy_bind_opcodes(self) -> str: ...
-
-    @property
-    def bindings(self) -> DyldInfo.it_binding_info: ...
-
-    export_info: tuple[int, int]
-
-    export_trie: memoryview
-
-    @property
-    def exports(self) -> DyldExportsTrie.it_export_info: ...
-
-    @property
-    def show_export_trie(self) -> str: ...
-
-    def set_rebase_offset(self, offset: int) -> None: ...
-
-    def set_rebase_size(self, size: int) -> None: ...
-
-    def set_bind_offset(self, offset: int) -> None: ...
-
-    def set_bind_size(self, size: int) -> None: ...
-
-    def set_weak_bind_offset(self, offset: int) -> None: ...
-
-    def set_weak_bind_size(self, size: int) -> None: ...
-
-    def set_lazy_bind_offset(self, offset: int) -> None: ...
-
-    def set_lazy_bind_size(self, size: int) -> None: ...
-
-    def set_export_offset(self, offset: int) -> None: ...
-
-    def set_export_size(self, size: int) -> None: ...
-
-    def __str__(self) -> str: ...
-
-class DylibCommand(LoadCommand):
-    name: str
-
-    @property
-    def name_offset(self) -> int: ...
-
-    timestamp: int
-
-    current_version: list[int]
-
-    compatibility_version: list[int]
-
-    @staticmethod
-    def weak_lib(name: str, timestamp: int = 0, current_version: int = 0, compat_version: int = 0) -> DylibCommand: ...
-
-    @staticmethod
-    def id_dylib(name: str, timestamp: int = 0, current_version: int = 0, compat_version: int = 0) -> DylibCommand: ...
-
-    @staticmethod
-    def load_dylib(name: str, timestamp: int = 0, current_version: int = 0, compat_version: int = 0) -> DylibCommand: ...
-
-    @staticmethod
-    def reexport_dylib(name: str, timestamp: int = 0, current_version: int = 0, compat_version: int = 0) -> DylibCommand: ...
-
-    @staticmethod
-    def load_upward_dylib(name: str, timestamp: int = 0, current_version: int = 0, compat_version: int = 0) -> DylibCommand: ...
-
-    @staticmethod
-    def lazy_load_dylib(name: str, timestamp: int = 0, current_version: int = 0, compat_version: int = 0) -> DylibCommand: ...
-
-    def __str__(self) -> str: ...
-
-class DylinkerCommand(LoadCommand):
-    def __init__(self, arg: str, /) -> None: ...
-
-    name: str
-
-    def __str__(self) -> str: ...
-
-class DynamicSymbolCommand(LoadCommand):
-    class it_indirect_symbols:
-        def __getitem__(self, arg: int, /) -> Symbol: ...
-
-        def __len__(self) -> int: ...
-
-        def __iter__(self) -> DynamicSymbolCommand.it_indirect_symbols: ...
-
-        def __next__(self) -> Symbol: ...
-
-    idx_local_symbol: int
-
-    nb_local_symbols: int
-
-    idx_external_define_symbol: int
-
-    nb_external_define_symbols: int
-
-    idx_undefined_symbol: int
-
-    nb_undefined_symbols: int
-
-    toc_offset: int
-
-    nb_toc: int
-
-    module_table_offset: int
-
-    nb_module_table: int
-
-    external_reference_symbol_offset: int
-
-    nb_external_reference_symbols: int
-
-    indirect_symbol_offset: int
-
-    nb_indirect_symbols: int
-
-    external_relocation_offset: int
-
-    nb_external_relocations: int
-
-    local_relocation_offset: int
-
-    nb_local_relocations: int
-
-    @property
-    def indirect_symbols(self) -> DynamicSymbolCommand.it_indirect_symbols: ...
-
-    def __str__(self) -> str: ...
-
-class EncryptionInfo(LoadCommand):
-    crypt_offset: int
-
-    crypt_size: int
-
-    crypt_id: int
-
-    def __str__(self) -> str: ...
-
-class ExportInfo(lief.Object):
-    class KIND(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> ExportInfo.KIND: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        REGULAR = 0
-
-        THREAD_LOCAL_KIND = 1
-
-        ABSOLUTE_KIND = 2
-
-    class FLAGS(enum.Flag):
-        @staticmethod
-        def from_value(arg: int, /) -> ExportInfo.FLAGS: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        WEAK_DEFINITION = 4
-
-        REEXPORT = 8
-
-        STUB_AND_RESOLVER = 16
-
-    @property
-    def node_offset(self) -> int: ...
-
-    @property
-    def kind(self) -> ExportInfo.KIND: ...
-
-    @property
-    def flags_list(self) -> list[ExportInfo.FLAGS]: ...
-
-    flags: int
-
-    address: int
-
-    @property
-    def alias(self) -> Symbol: ...
-
-    @property
-    def alias_library(self) -> DylibCommand: ...
-
-    @property
-    def has_symbol(self) -> bool: ...
-
-    def has(self, flag: ExportInfo.FLAGS) -> bool: ...
-
-    @property
-    def symbol(self) -> Symbol: ...
-
-    def __str__(self) -> str: ...
-
-class FatBinary:
-    class it_binaries:
-        def __getitem__(self, arg: int, /) -> Binary: ...
-
-        def __len__(self) -> int: ...
-
-        def __iter__(self) -> FatBinary.it_binaries: ...
-
-        def __next__(self) -> Binary: ...
-
-    @property
-    def size(self) -> int: ...
-
-    def at(self, index: int) -> Binary: ...
-
-    def take(self, cpu: Header.CPU_TYPE) -> Optional[Binary]: ...
-
-    def write(self, filename: str) -> None: ...
-
-    def raw(self) -> list[int]: ...
-
-    def __len__(self) -> int: ...
-
-    def __getitem__(self, arg: int, /) -> Binary: ...
-
-    def __iter__(self) -> FatBinary.it_binaries: ...
-
-    def __str__(self) -> str: ...
-
-class FilesetCommand(LoadCommand):
-    name: str
-
-    virtual_address: int
-
-    file_offset: int
-
-    @property
-    def binary(self) -> Binary: ...
-
-    def __str__(self) -> str: ...
-
-class FunctionStarts(LoadCommand):
-    data_offset: int
-
-    data_size: int
-
-    functions: list[int]
-
-    def add_function(self, address: int) -> None: ...
-
-    @property
-    def content(self) -> memoryview: ...
-
-    def __str__(self) -> str: ...
-
 class Header(lief.Object):
     def __init__(self) -> None: ...
 
@@ -1822,22 +1233,6 @@ class Header(lief.Object):
 
     def __str__(self) -> str: ...
 
-class IndirectBindingInfo(BindingInfo):
-    pass
-
-class LinkEdit(SegmentCommand):
-    pass
-
-class LinkerOptHint(LoadCommand):
-    data_offset: int
-
-    data_size: int
-
-    @property
-    def content(self) -> memoryview: ...
-
-    def __str__(self) -> str: ...
-
 class LoadCommand(lief.Object):
     def __init__(self) -> None: ...
 
@@ -1975,115 +1370,55 @@ class LoadCommand(lief.Object):
 
     def __str__(self) -> str: ...
 
-class MACHO_TYPES(enum.Enum):
-    @staticmethod
-    def from_value(arg: int, /) -> MACHO_TYPES: ...
-
-    def __eq__(self, arg, /) -> bool: ...
-
-    def __ne__(self, arg, /) -> bool: ...
-
-    def __int__(self) -> int: ...
-
-    MAGIC = 4277009102
-
-    CIGAM = 3472551422
-
-    MAGIC_64 = 4277009103
-
-    CIGAM_64 = 3489328638
-
-    FAT_MAGIC = 3405691582
-
-    FAT_CIGAM = 3199925962
-
-    NEURAL_MODEL = 3203398350
-
-class MainCommand(LoadCommand):
-    def __init__(self, arg0: int, arg1: int, /) -> None: ...
-
-    entrypoint: int
-
-    stack_size: int
+class UUIDCommand(LoadCommand):
+    uuid: list[int]
 
     def __str__(self) -> str: ...
 
-class PPC_RELOCATION(enum.Enum):
-    @staticmethod
-    def from_value(arg: int, /) -> PPC_RELOCATION: ...
-
-    def __eq__(self, arg, /) -> bool: ...
-
-    def __ne__(self, arg, /) -> bool: ...
-
-    def __int__(self) -> int: ...
-
-    VANILLA = 0
-
-    PAIR = 1
-
-    BR14 = 2
-
-    BR24 = 3
-
-    HI16 = 4
-
-    LO16 = 5
-
-    HA16 = 6
-
-    LO14 = 7
-
-    SECTDIFF = 8
-
-    PB_LA_PTR = 9
-
-    HI16_SECTDIFF = 10
-
-    LO16_SECTDIFF = 11
-
-    HA16_SECTDIFF = 12
-
-    JBSR = 13
-
-    LO14_SECTDIFF = 14
-
-    LOCAL_SECTDIFF = 15
-
-class ParserConfig:
+class SymbolCommand(LoadCommand):
     def __init__(self) -> None: ...
 
-    parse_dyld_exports: bool
+    symbol_offset: int
 
-    parse_dyld_bindings: bool
+    numberof_symbols: int
 
-    parse_dyld_rebases: bool
+    strings_offset: int
 
-    fix_from_memory: bool
-
-    from_dyld_shared_cache: bool
-
-    def full_dyldinfo(self, flag: bool) -> ParserConfig: ...
-
-    deep: ParserConfig = ...
-
-    quick: ParserConfig = ...
-
-class RPathCommand(LoadCommand):
-    @staticmethod
-    def create(path: str) -> Optional[RPathCommand]: ...
-
-    @property
-    def path_offset(self) -> int: ...
-
-    path: str
+    strings_size: int
 
     def __str__(self) -> str: ...
 
-class Relocation(lief.Relocation):
-    class ORIGIN(enum.Enum):
+class SegmentCommand(LoadCommand):
+    @overload
+    def __init__(self) -> None: ...
+
+    @overload
+    def __init__(self, arg: str, /) -> None: ...
+
+    @overload
+    def __init__(self, arg0: str, arg1: Sequence[int], /) -> None: ...
+
+    class it_sections:
+        def __getitem__(self, arg: int, /) -> Section: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> SegmentCommand.it_sections: ...
+
+        def __next__(self) -> Section: ...
+
+    class it_relocations:
+        def __getitem__(self, arg: int, /) -> Relocation: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> SegmentCommand.it_relocations: ...
+
+        def __next__(self) -> Relocation: ...
+
+    class VM_PROTECTIONS(enum.Enum):
         @staticmethod
-        def from_value(arg: int, /) -> Relocation.ORIGIN: ...
+        def from_value(arg: int, /) -> SegmentCommand.VM_PROTECTIONS: ...
 
         def __eq__(self, arg, /) -> bool: ...
 
@@ -2091,90 +1426,73 @@ class Relocation(lief.Relocation):
 
         def __int__(self) -> int: ...
 
-        UNKNOWN = 0
+        R = 1
 
-        DYLDINFO = 1
+        W = 2
 
-        RELOC_TABLE = 2
+        X = 4
 
-        CHAINED_FIXUPS = 3
+    class FLAGS(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> SegmentCommand.FLAGS: ...
 
-    address: int
+        def __eq__(self, arg, /) -> bool: ...
 
-    pc_relative: bool
+        def __ne__(self, arg, /) -> bool: ...
 
-    type: Union[lief.MachO.X86_RELOCATION, lief.MachO.X86_64_RELOCATION, lief.MachO.PPC_RELOCATION, lief.MachO.ARM_RELOCATION, lief.MachO.ARM64_RELOCATION, lief.MachO.DyldInfo.REBASE_TYPE, ]
+        def __int__(self) -> int: ...
+
+        HIGHVM = 1
+
+        FVMLIB = 2
+
+        NORELOC = 4
+
+        PROTECTED_VERSION_1 = 8
+
+        READ_ONLY = 16
+
+    name: Union[str, bytes]
+
+    virtual_address: int
+
+    virtual_size: int
+
+    file_size: int
+
+    file_offset: int
+
+    max_protection: int
+
+    init_protection: int
+
+    numberof_sections: int
 
     @property
-    def architecture(self) -> Header.CPU_TYPE: ...
+    def sections(self) -> SegmentCommand.it_sections: ...
 
     @property
-    def has_symbol(self) -> bool: ...
+    def relocations(self) -> SegmentCommand.it_relocations: ...
 
     @property
-    def symbol(self) -> Symbol: ...
+    def index(self) -> int: ...
 
-    @property
-    def has_section(self) -> bool: ...
+    content: memoryview
 
-    @property
-    def section(self) -> Section: ...
+    flags: int
 
-    @property
-    def origin(self) -> Relocation.ORIGIN: ...
+    def has(self, section: Section) -> bool: ...
 
-    @property
-    def has_segment(self) -> bool: ...
+    def has_section(self, section_name: str) -> bool: ...
 
-    @property
-    def segment(self) -> SegmentCommand: ...
+    def add_section(self, section: Section) -> Section: ...
+
+    def get_section(self, name: str) -> Section: ...
 
     def __str__(self) -> str: ...
 
-class RelocationDyld(Relocation):
-    def __le__(self, arg: RelocationDyld, /) -> bool: ...
-
-    def __lt__(self, arg: RelocationDyld, /) -> bool: ...
-
-    def __ge__(self, arg: RelocationDyld, /) -> bool: ...
-
-    def __gt__(self, arg: RelocationDyld, /) -> bool: ...
-
-    def __str__(self) -> str: ...
-
-class RelocationFixup(Relocation):
-    target: int
-
-    next: int
-
-    def __str__(self) -> str: ...
-
-class RelocationObject(Relocation):
-    value: int
-
-    @property
-    def is_scattered(self) -> bool: ...
-
-    def __str__(self) -> str: ...
-
-class Routine(LoadCommand):
-    init_address: int
-
-    init_module: int
-
-    reserved1: int
-
-    reserved2: int
-
-    reserved3: int
-
-    reserved4: int
-
-    reserved5: int
-
-    reserved6: int
-
-    def __str__(self) -> str: ...
+class LinkEdit(SegmentCommand):
+    pass
 
 class Section(lief.Section):
     @overload
@@ -2325,110 +1643,329 @@ class Section(lief.Section):
 
     def __str__(self) -> str: ...
 
-class SegmentCommand(LoadCommand):
-    @overload
-    def __init__(self) -> None: ...
+class MainCommand(LoadCommand):
+    def __init__(self, arg0: int, arg1: int, /) -> None: ...
 
-    @overload
-    def __init__(self, arg: str, /) -> None: ...
+    entrypoint: int
 
-    @overload
-    def __init__(self, arg0: str, arg1: Sequence[int], /) -> None: ...
-
-    class it_sections:
-        def __getitem__(self, arg: int, /) -> Section: ...
-
-        def __len__(self) -> int: ...
-
-        def __iter__(self) -> SegmentCommand.it_sections: ...
-
-        def __next__(self) -> Section: ...
-
-    class it_relocations:
-        def __getitem__(self, arg: int, /) -> Relocation: ...
-
-        def __len__(self) -> int: ...
-
-        def __iter__(self) -> SegmentCommand.it_relocations: ...
-
-        def __next__(self) -> Relocation: ...
-
-    class VM_PROTECTIONS(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> SegmentCommand.VM_PROTECTIONS: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        R = 1
-
-        W = 2
-
-        X = 4
-
-    class FLAGS(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> SegmentCommand.FLAGS: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        HIGHVM = 1
-
-        FVMLIB = 2
-
-        NORELOC = 4
-
-        PROTECTED_VERSION_1 = 8
-
-        READ_ONLY = 16
-
-    name: Union[str, bytes]
-
-    virtual_address: int
-
-    virtual_size: int
-
-    file_size: int
-
-    file_offset: int
-
-    max_protection: int
-
-    init_protection: int
-
-    numberof_sections: int
-
-    @property
-    def sections(self) -> SegmentCommand.it_sections: ...
-
-    @property
-    def relocations(self) -> SegmentCommand.it_relocations: ...
-
-    @property
-    def index(self) -> int: ...
-
-    content: memoryview
-
-    flags: int
-
-    def has(self, section: Section) -> bool: ...
-
-    def has_section(self, section_name: str) -> bool: ...
-
-    def add_section(self, section: Section) -> Section: ...
-
-    def get_section(self, name: str) -> Section: ...
+    stack_size: int
 
     def __str__(self) -> str: ...
 
-class SegmentSplitInfo(LoadCommand):
+class DynamicSymbolCommand(LoadCommand):
+    class it_indirect_symbols:
+        def __getitem__(self, arg: int, /) -> Symbol: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> DynamicSymbolCommand.it_indirect_symbols: ...
+
+        def __next__(self) -> Symbol: ...
+
+    idx_local_symbol: int
+
+    nb_local_symbols: int
+
+    idx_external_define_symbol: int
+
+    nb_external_define_symbols: int
+
+    idx_undefined_symbol: int
+
+    nb_undefined_symbols: int
+
+    toc_offset: int
+
+    nb_toc: int
+
+    module_table_offset: int
+
+    nb_module_table: int
+
+    external_reference_symbol_offset: int
+
+    nb_external_reference_symbols: int
+
+    indirect_symbol_offset: int
+
+    nb_indirect_symbols: int
+
+    external_relocation_offset: int
+
+    nb_external_relocations: int
+
+    local_relocation_offset: int
+
+    nb_local_relocations: int
+
+    @property
+    def indirect_symbols(self) -> DynamicSymbolCommand.it_indirect_symbols: ...
+
+    def __str__(self) -> str: ...
+
+class DylinkerCommand(LoadCommand):
+    def __init__(self, arg: str, /) -> None: ...
+
+    name: str
+
+    def __str__(self) -> str: ...
+
+class DyldInfo(LoadCommand):
+    class REBASE_TYPE(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> DyldInfo.REBASE_TYPE: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        POINTER = 1
+
+        TEXT_ABSOLUTE32 = 2
+
+        TEXT_PCREL32 = 3
+
+        THREADED = 102
+
+    class REBASE_OPCODES(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> DyldInfo.REBASE_OPCODES: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        DONE = 0
+
+        SET_TYPE_IMM = 16
+
+        SET_SEGMENT_AND_OFFSET_ULEB = 32
+
+        ADD_ADDR_ULEB = 48
+
+        ADD_ADDR_IMM_SCALED = 64
+
+        DO_REBASE_IMM_TIMES = 80
+
+        DO_REBASE_ULEB_TIMES = 96
+
+        DO_REBASE_ADD_ADDR_ULEB = 112
+
+        DO_REBASE_ULEB_TIMES_SKIPPING_ULEB = 128
+
+    class BIND_OPCODES(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> DyldInfo.BIND_OPCODES: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        DONE = 0
+
+        SET_DYLIB_ORDINAL_IMM = 16
+
+        SET_DYLIB_ORDINAL_ULEB = 32
+
+        SET_DYLIB_SPECIAL_IMM = 48
+
+        SET_SYMBOL_TRAILING_FLAGS_IMM = 64
+
+        SET_TYPE_IMM = 80
+
+        SET_ADDEND_SLEB = 96
+
+        SET_SEGMENT_AND_OFFSET_ULEB = 112
+
+        ADD_ADDR_ULEB = 128
+
+        DO_BIND = 144
+
+        DO_BIND_ADD_ADDR_ULEB = 160
+
+        DO_BIND_ADD_ADDR_IMM_SCALED = 176
+
+        DO_BIND_ULEB_TIMES_SKIPPING_ULEB = 192
+
+        THREADED_APPLY = 209
+
+        THREADED = 208
+
+    class it_binding_info:
+        def __getitem__(self, arg: int, /) -> DyldBindingInfo: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> DyldInfo.it_binding_info: ...
+
+        def __next__(self) -> DyldBindingInfo: ...
+
+    class it_export_info:
+        def __getitem__(self, arg: int, /) -> ExportInfo: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> DyldInfo.it_export_info: ...
+
+        def __next__(self) -> ExportInfo: ...
+
+    rebase: tuple[int, int]
+
+    rebase_opcodes: memoryview
+
+    @property
+    def show_rebases_opcodes(self) -> str: ...
+
+    bind: tuple[int, int]
+
+    bind_opcodes: memoryview
+
+    @property
+    def show_bind_opcodes(self) -> str: ...
+
+    weak_bind: tuple[int, int]
+
+    weak_bind_opcodes: memoryview
+
+    @property
+    def show_weak_bind_opcodes(self) -> str: ...
+
+    lazy_bind: tuple[int, int]
+
+    lazy_bind_opcodes: memoryview
+
+    @property
+    def show_lazy_bind_opcodes(self) -> str: ...
+
+    @property
+    def bindings(self) -> DyldInfo.it_binding_info: ...
+
+    export_info: tuple[int, int]
+
+    export_trie: memoryview
+
+    @property
+    def exports(self) -> DyldExportsTrie.it_export_info: ...
+
+    @property
+    def show_export_trie(self) -> str: ...
+
+    def set_rebase_offset(self, offset: int) -> None: ...
+
+    def set_rebase_size(self, size: int) -> None: ...
+
+    def set_bind_offset(self, offset: int) -> None: ...
+
+    def set_bind_size(self, size: int) -> None: ...
+
+    def set_weak_bind_offset(self, offset: int) -> None: ...
+
+    def set_weak_bind_size(self, size: int) -> None: ...
+
+    def set_lazy_bind_offset(self, offset: int) -> None: ...
+
+    def set_lazy_bind_size(self, size: int) -> None: ...
+
+    def set_export_offset(self, offset: int) -> None: ...
+
+    def set_export_size(self, size: int) -> None: ...
+
+    def __str__(self) -> str: ...
+
+class DyldChainedFixups(LoadCommand):
+    class it_binding_info:
+        def __getitem__(self, arg: int, /) -> ChainedBindingInfo: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> DyldChainedFixups.it_binding_info: ...
+
+        def __next__(self) -> ChainedBindingInfo: ...
+
+    class it_chained_starts_in_segments_t:
+        def __getitem__(self, arg: int, /) -> DyldChainedFixups.chained_starts_in_segment: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> DyldChainedFixups.it_chained_starts_in_segments_t: ...
+
+        def __next__(self) -> DyldChainedFixups.chained_starts_in_segment: ...
+
+    class chained_starts_in_segment:
+        @property
+        def offset(self) -> int: ...
+
+        @property
+        def size(self) -> int: ...
+
+        @property
+        def page_size(self) -> int: ...
+
+        @property
+        def segment_offset(self) -> int: ...
+
+        @property
+        def page_start(self) -> list[int]: ...
+
+        @property
+        def pointer_format(self) -> DYLD_CHAINED_PTR_FORMAT: ...
+
+        @property
+        def max_valid_pointer(self) -> int: ...
+
+        @property
+        def page_count(self) -> int: ...
+
+        @property
+        def segment(self) -> SegmentCommand: ...
+
+        def __str__(self) -> str: ...
+
+    data_offset: int
+
+    data_size: int
+
+    @property
+    def payload(self) -> memoryview: ...
+
+    @property
+    def bindings(self) -> DyldChainedFixups.it_binding_info: ...
+
+    @property
+    def chained_starts_in_segments(self) -> DyldChainedFixups.it_chained_starts_in_segments_t: ...
+
+    fixups_version: int
+
+    starts_offset: int
+
+    imports_offset: int
+
+    symbols_offset: int
+
+    imports_count: int
+
+    symbols_format: int
+
+    imports_format: DYLD_CHAINED_FORMAT
+
+    def __str__(self) -> str: ...
+
+class DyldExportsTrie(LoadCommand):
+    class it_export_info:
+        def __getitem__(self, arg: int, /) -> ExportInfo: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> DyldExportsTrie.it_export_info: ...
+
+        def __next__(self) -> ExportInfo: ...
+
     data_offset: int
 
     data_size: int
@@ -2436,45 +1973,69 @@ class SegmentSplitInfo(LoadCommand):
     @property
     def content(self) -> memoryview: ...
 
+    @property
+    def exports(self) -> DyldExportsTrie.it_export_info: ...
+
+    def show_export_trie(self) -> str: ...
+
     def __str__(self) -> str: ...
 
-class SourceVersion(LoadCommand):
-    version: list[int]
-
-    def __str__(self) -> str: ...
-
-class Stub:
-    def __init__(self, target_info: Stub.target_info_t, address: int, raw_stub: Sequence[int]) -> None: ...
-
-    class target_info_t:
-        @overload
-        def __init__(self) -> None: ...
-
-        @overload
-        def __init__(self, arg0: Header.CPU_TYPE, arg1: int, /) -> None: ...
-
-        arch: Header.CPU_TYPE
-
-        subtype: int
+class DylibCommand(LoadCommand):
+    name: str
 
     @property
-    def address(self) -> int: ...
+    def name_offset(self) -> int: ...
 
-    @property
-    def raw(self) -> memoryview: ...
+    timestamp: int
 
-    @property
-    def target(self) -> Union[int, lief.lief_errors]: ...
+    current_version: list[int]
+
+    compatibility_version: list[int]
+
+    @staticmethod
+    def weak_lib(name: str, timestamp: int = 0, current_version: int = 0, compat_version: int = 0) -> DylibCommand: ...
+
+    @staticmethod
+    def id_dylib(name: str, timestamp: int = 0, current_version: int = 0, compat_version: int = 0) -> DylibCommand: ...
+
+    @staticmethod
+    def load_dylib(name: str, timestamp: int = 0, current_version: int = 0, compat_version: int = 0) -> DylibCommand: ...
+
+    @staticmethod
+    def reexport_dylib(name: str, timestamp: int = 0, current_version: int = 0, compat_version: int = 0) -> DylibCommand: ...
+
+    @staticmethod
+    def load_upward_dylib(name: str, timestamp: int = 0, current_version: int = 0, compat_version: int = 0) -> DylibCommand: ...
+
+    @staticmethod
+    def lazy_load_dylib(name: str, timestamp: int = 0, current_version: int = 0, compat_version: int = 0) -> DylibCommand: ...
 
     def __str__(self) -> str: ...
 
-class SubClient(LoadCommand):
-    client: str
+class ThreadCommand(LoadCommand):
+    def __init__(self, arg0: int, arg1: int, arg2: Header.CPU_TYPE, /) -> None: ...
+
+    flavor: int
+
+    state: memoryview
+
+    count: int
+
+    @property
+    def pc(self) -> int: ...
+
+    architecture: Header.CPU_TYPE
 
     def __str__(self) -> str: ...
 
-class SubFramework(LoadCommand):
-    umbrella: str
+class RPathCommand(LoadCommand):
+    @staticmethod
+    def create(path: str) -> Optional[RPathCommand]: ...
+
+    @property
+    def path_offset(self) -> int: ...
+
+    path: str
 
     def __str__(self) -> str: ...
 
@@ -2584,32 +2145,500 @@ class Symbol(lief.Symbol):
 
     def __str__(self) -> str: ...
 
-class SymbolCommand(LoadCommand):
-    def __init__(self) -> None: ...
+class Relocation(lief.Relocation):
+    class ORIGIN(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> Relocation.ORIGIN: ...
 
-    symbol_offset: int
+        def __eq__(self, arg, /) -> bool: ...
 
-    numberof_symbols: int
+        def __ne__(self, arg, /) -> bool: ...
 
-    strings_offset: int
+        def __int__(self) -> int: ...
 
-    strings_size: int
+        UNKNOWN = 0
+
+        DYLDINFO = 1
+
+        RELOC_TABLE = 2
+
+        CHAINED_FIXUPS = 3
+
+    address: int
+
+    pc_relative: bool
+
+    type: Union[lief.MachO.X86_RELOCATION, lief.MachO.X86_64_RELOCATION, lief.MachO.PPC_RELOCATION, lief.MachO.ARM_RELOCATION, lief.MachO.ARM64_RELOCATION, lief.MachO.DyldInfo.REBASE_TYPE, ]
+
+    @property
+    def architecture(self) -> Header.CPU_TYPE: ...
+
+    @property
+    def has_symbol(self) -> bool: ...
+
+    @property
+    def symbol(self) -> Symbol: ...
+
+    @property
+    def has_section(self) -> bool: ...
+
+    @property
+    def section(self) -> Section: ...
+
+    @property
+    def origin(self) -> Relocation.ORIGIN: ...
+
+    @property
+    def has_segment(self) -> bool: ...
+
+    @property
+    def segment(self) -> SegmentCommand: ...
 
     def __str__(self) -> str: ...
 
-class ThreadCommand(LoadCommand):
-    def __init__(self, arg0: int, arg1: int, arg2: Header.CPU_TYPE, /) -> None: ...
-
-    flavor: int
-
-    state: memoryview
-
-    count: int
+class RelocationObject(Relocation):
+    value: int
 
     @property
-    def pc(self) -> int: ...
+    def is_scattered(self) -> bool: ...
 
-    architecture: Header.CPU_TYPE
+    def __str__(self) -> str: ...
+
+class RelocationDyld(Relocation):
+    def __le__(self, arg: RelocationDyld, /) -> bool: ...
+
+    def __lt__(self, arg: RelocationDyld, /) -> bool: ...
+
+    def __ge__(self, arg: RelocationDyld, /) -> bool: ...
+
+    def __gt__(self, arg: RelocationDyld, /) -> bool: ...
+
+    def __str__(self) -> str: ...
+
+class RelocationFixup(Relocation):
+    target: int
+
+    next: int
+
+    def __str__(self) -> str: ...
+
+class BindingInfo(lief.Object):
+    address: int
+
+    library_ordinal: int
+
+    addend: int
+
+    weak_import: bool
+
+    @property
+    def has_library(self) -> bool: ...
+
+    @property
+    def library(self) -> DylibCommand: ...
+
+    @property
+    def has_segment(self) -> bool: ...
+
+    @property
+    def segment(self) -> SegmentCommand: ...
+
+    @property
+    def has_symbol(self) -> bool: ...
+
+    @property
+    def symbol(self) -> Symbol: ...
+
+    def __str__(self) -> str: ...
+
+class DyldBindingInfo(BindingInfo):
+    class CLASS(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> DyldBindingInfo.CLASS: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        WEAK = 1
+
+        LAZY = 2
+
+        STANDARD = 3
+
+        THREADED = 100
+
+    class TYPE(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> DyldBindingInfo.TYPE: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        POINTER = 1
+
+        TEXT_ABSOLUTE32 = 2
+
+        TEXT_PCREL32 = 3
+
+    binding_class: DyldBindingInfo.CLASS
+
+    binding_type: DyldBindingInfo.TYPE
+
+    @property
+    def original_offset(self) -> int: ...
+
+    def __str__(self) -> str: ...
+
+class ExportInfo(lief.Object):
+    class KIND(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> ExportInfo.KIND: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        REGULAR = 0
+
+        THREAD_LOCAL_KIND = 1
+
+        ABSOLUTE_KIND = 2
+
+    class FLAGS(enum.Flag):
+        @staticmethod
+        def from_value(arg: int, /) -> ExportInfo.FLAGS: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        WEAK_DEFINITION = 4
+
+        REEXPORT = 8
+
+        STUB_AND_RESOLVER = 16
+
+    @property
+    def node_offset(self) -> int: ...
+
+    @property
+    def kind(self) -> ExportInfo.KIND: ...
+
+    @property
+    def flags_list(self) -> list[ExportInfo.FLAGS]: ...
+
+    flags: int
+
+    address: int
+
+    @property
+    def alias(self) -> Symbol: ...
+
+    @property
+    def alias_library(self) -> DylibCommand: ...
+
+    @property
+    def has_symbol(self) -> bool: ...
+
+    def has(self, flag: ExportInfo.FLAGS) -> bool: ...
+
+    @property
+    def symbol(self) -> Symbol: ...
+
+    def __str__(self) -> str: ...
+
+class FunctionStarts(LoadCommand):
+    data_offset: int
+
+    data_size: int
+
+    functions: list[int]
+
+    def add_function(self, address: int) -> None: ...
+
+    @property
+    def content(self) -> memoryview: ...
+
+    def __str__(self) -> str: ...
+
+class AtomInfo(LoadCommand):
+    data_offset: int
+
+    data_size: int
+
+    @property
+    def content(self) -> memoryview: ...
+
+    def __str__(self) -> str: ...
+
+class CodeSignature(LoadCommand):
+    data_offset: int
+
+    data_size: int
+
+    @property
+    def content(self) -> memoryview: ...
+
+    def __str__(self) -> str: ...
+
+class CodeSignatureDir(LoadCommand):
+    data_offset: int
+
+    data_size: int
+
+    @property
+    def content(self) -> memoryview: ...
+
+    def __str__(self) -> str: ...
+
+class it_data_in_code_entries:
+    def __getitem__(self, arg: int, /) -> DataCodeEntry: ...
+
+    def __len__(self) -> int: ...
+
+    def __iter__(self) -> it_data_in_code_entries: ...
+
+    def __next__(self) -> DataCodeEntry: ...
+
+class DataInCode(LoadCommand):
+    data_offset: int
+
+    data_size: int
+
+    @property
+    def entries(self) -> it_data_in_code_entries: ...
+
+    def add(self, entry: DataCodeEntry) -> DataInCode: ...
+
+    @property
+    def content(self) -> memoryview: ...
+
+    def __str__(self) -> str: ...
+
+class DataCodeEntry(lief.Object):
+    class TYPES(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> DataCodeEntry.TYPES: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        UNKNOWN = 0
+
+        DATA = 1
+
+        JUMP_TABLE_8 = 2
+
+        JUMP_TABLE_16 = 3
+
+        JUMP_TABLE_32 = 4
+
+        ABS_JUMP_TABLE_32 = 5
+
+    offset: int
+
+    length: int
+
+    type: DataCodeEntry.TYPES
+
+    def __str__(self) -> str: ...
+
+class SourceVersion(LoadCommand):
+    version: list[int]
+
+    def __str__(self) -> str: ...
+
+class Routine(LoadCommand):
+    init_address: int
+
+    init_module: int
+
+    reserved1: int
+
+    reserved2: int
+
+    reserved3: int
+
+    reserved4: int
+
+    reserved5: int
+
+    reserved6: int
+
+    def __str__(self) -> str: ...
+
+class VersionMin(LoadCommand):
+    version: list[int]
+
+    sdk: list[int]
+
+    def __str__(self) -> str: ...
+
+class SegmentSplitInfo(LoadCommand):
+    data_offset: int
+
+    data_size: int
+
+    @property
+    def content(self) -> memoryview: ...
+
+    def __str__(self) -> str: ...
+
+class SubFramework(LoadCommand):
+    umbrella: str
+
+    def __str__(self) -> str: ...
+
+class SubClient(LoadCommand):
+    client: str
+
+    def __str__(self) -> str: ...
+
+class DyldEnvironment(LoadCommand):
+    value: str
+
+    def __str__(self) -> str: ...
+
+class EncryptionInfo(LoadCommand):
+    crypt_offset: int
+
+    crypt_size: int
+
+    crypt_id: int
+
+    def __str__(self) -> str: ...
+
+class BuildVersion(LoadCommand):
+    class PLATFORMS(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> BuildVersion.PLATFORMS: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        UNKNOWN = 0
+
+        MACOS = 1
+
+        IOS = 2
+
+        TVOS = 3
+
+        WATCHOS = 4
+
+        BRIDGEOS = 5
+
+        MAC_CATALYST = 6
+
+        IOS_SIMULATOR = 7
+
+        TVOS_SIMULATOR = 8
+
+        WATCHOS_SIMULATOR = 9
+
+        DRIVERKIT = 10
+
+        VISIONOS = 11
+
+        VISIONOS_SIMULATOR = 12
+
+        FIRMWARE = 13
+
+        SEPOS = 14
+
+        MACOS_EXCLAVE_CORE = 15
+
+        MACOS_EXCLAVE_KIT = 16
+
+        IOS_EXCLAVE_CORE = 17
+
+        IOS_EXCLAVE_KIT = 18
+
+        TVOS_EXCLAVE_CORE = 19
+
+        TVOS_EXCLAVE_KIT = 20
+
+        ANY = 4294967295
+
+    platform: BuildVersion.PLATFORMS
+
+    minos: list[int]
+
+    sdk: list[int]
+
+    @property
+    def tools(self) -> list[BuildToolVersion]: ...
+
+    def __str__(self) -> str: ...
+
+class BuildToolVersion(lief.Object):
+    @property
+    def tool(self) -> BuildToolVersion.TOOLS: ...
+
+    @property
+    def version(self) -> list[int]: ...
+
+    def __str__(self) -> str: ...
+
+    class TOOLS(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> BuildToolVersion.TOOLS: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        UNKNOWN = 0
+
+        CLANG = 1
+
+        SWIFT = 2
+
+        LD = 3
+
+        LLD = 4
+
+class FilesetCommand(LoadCommand):
+    name: str
+
+    virtual_address: int
+
+    file_offset: int
+
+    @property
+    def binary(self) -> Binary: ...
+
+    def __str__(self) -> str: ...
+
+class ChainedBindingInfo(BindingInfo):
+    @property
+    def format(self) -> DYLD_CHAINED_FORMAT: ...
+
+    @property
+    def ptr_format(self) -> DYLD_CHAINED_PTR_FORMAT: ...
+
+    offset: int
+
+    @property
+    def sign_extended_addend(self) -> int: ...
 
     def __str__(self) -> str: ...
 
@@ -2631,10 +2660,18 @@ class TwoLevelHints(LoadCommand):
 
     def __str__(self) -> str: ...
 
-class UUIDCommand(LoadCommand):
-    uuid: list[int]
+class LinkerOptHint(LoadCommand):
+    data_offset: int
+
+    data_size: int
+
+    @property
+    def content(self) -> memoryview: ...
 
     def __str__(self) -> str: ...
+
+class IndirectBindingInfo(BindingInfo):
+    pass
 
 class UnknownCommand(LoadCommand):
     @property
@@ -2642,94 +2679,59 @@ class UnknownCommand(LoadCommand):
 
     def __str__(self) -> str: ...
 
-class VersionMin(LoadCommand):
-    version: list[int]
+class Stub:
+    def __init__(self, target_info: Stub.target_info_t, address: int, raw_stub: Sequence[int]) -> None: ...
 
-    sdk: list[int]
+    class target_info_t:
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, arg0: Header.CPU_TYPE, arg1: int, /) -> None: ...
+
+        arch: Header.CPU_TYPE
+
+        subtype: int
+
+    @property
+    def address(self) -> int: ...
+
+    @property
+    def raw(self) -> memoryview: ...
+
+    @property
+    def target(self) -> Union[int, lief.lief_errors]: ...
 
     def __str__(self) -> str: ...
 
-class X86_64_RELOCATION(enum.Enum):
+class Builder:
+    class config_t:
+        def __init__(self) -> None: ...
+
+        linkedit: bool
+
+    @overload
     @staticmethod
-    def from_value(arg: int, /) -> X86_64_RELOCATION: ...
+    def write(binary: Binary, output: str) -> Union[lief.ok_t, lief.lief_errors]: ...
 
-    def __eq__(self, arg, /) -> bool: ...
-
-    def __ne__(self, arg, /) -> bool: ...
-
-    def __int__(self) -> int: ...
-
-    UNSIGNED = 0
-
-    SIGNED = 1
-
-    BRANCH = 2
-
-    GOT_LOAD = 3
-
-    GOT = 4
-
-    SUBTRACTOR = 5
-
-    SIGNED_1 = 6
-
-    SIGNED_2 = 7
-
-    SIGNED_4 = 8
-
-    TLV = 9
-
-class X86_RELOCATION(enum.Enum):
+    @overload
     @staticmethod
-    def from_value(arg: int, /) -> X86_RELOCATION: ...
+    def write(binary: Binary, output: str, config: Builder.config_t) -> Union[lief.ok_t, lief.lief_errors]: ...
 
-    def __eq__(self, arg, /) -> bool: ...
+    @overload
+    @staticmethod
+    def write(fat_binary: FatBinary, output: str) -> Union[lief.ok_t, lief.lief_errors]: ...
 
-    def __ne__(self, arg, /) -> bool: ...
+    @overload
+    @staticmethod
+    def write(fat_binary: FatBinary, output: str, config: Builder.config_t) -> Union[lief.ok_t, lief.lief_errors]: ...
 
-    def __int__(self) -> int: ...
+def is_fat(file: str) -> bool: ...
 
-    VANILLA = 0
-
-    PAIR = 1
-
-    SECTDIFF = 2
-
-    PB_LA_PTR = 3
-
-    LOCAL_SECTDIFF = 4
-
-    TLV = 5
+def is_64(file: str) -> bool: ...
 
 @overload
 def check_layout(file: Binary) -> tuple[bool, str]: ...
 
 @overload
 def check_layout(file: FatBinary) -> tuple[bool, str]: ...
-
-def is_64(file: str) -> bool: ...
-
-def is_fat(file: str) -> bool: ...
-
-class it_data_in_code_entries:
-    def __getitem__(self, arg: int, /) -> DataCodeEntry: ...
-
-    def __len__(self) -> int: ...
-
-    def __iter__(self) -> it_data_in_code_entries: ...
-
-    def __next__(self) -> DataCodeEntry: ...
-
-@overload
-def parse(buffer: bytes, config: ParserConfig = ...) -> Optional[FatBinary]: ...
-
-@overload
-def parse(filename: str, config: ParserConfig = ...) -> Optional[FatBinary]: ...
-
-@overload
-def parse(raw: Sequence[int], config: ParserConfig = ...) -> Optional[FatBinary]: ...
-
-@overload
-def parse(obj: Union[io.IOBase | os.PathLike], config: ParserConfig = ...) -> Optional[FatBinary]: ...
-
-def parse_from_memory(address: int, config: ParserConfig = ...) -> Optional[FatBinary]: ...

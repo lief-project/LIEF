@@ -5,7 +5,24 @@ import os
 from typing import Iterator, Optional, Union, overload
 
 import lief
+import lief.Android
 
+
+class STORAGE_MODES(enum.Enum):
+    UNCOMPRESSED = 0
+
+    LZ4 = 1
+
+    LZ4HC = 2
+
+@overload
+def parse(filename: str) -> Optional[File]: ...
+
+@overload
+def parse(raw: Sequence[int], name: str = '') -> Optional[File]: ...
+
+@overload
+def parse(obj: Union[io.IOBase | os.PathLike], name: str = '') -> Optional[File]: ...
 
 class File(lief.Object):
     @property
@@ -76,26 +93,10 @@ class Header(lief.Object):
 
     def __str__(self) -> str: ...
 
-class STORAGE_MODES(enum.Enum):
-    UNCOMPRESSED = 0
-
-    LZ4 = 1
-
-    LZ4HC = 2
-
-def android_version(art_version: int) -> lief.Android.ANDROID_VERSIONS: ...
-
-@overload
-def parse(filename: str) -> Optional[File]: ...
-
-@overload
-def parse(raw: Sequence[int], name: str = '') -> Optional[File]: ...
-
-@overload
-def parse(obj: Union[io.IOBase | os.PathLike], name: str = '') -> Optional[File]: ...
-
 @overload
 def version(file: str) -> int: ...
 
 @overload
 def version(raw: Sequence[int]) -> int: ...
+
+def android_version(art_version: int) -> lief.Android.ANDROID_VERSIONS: ...
