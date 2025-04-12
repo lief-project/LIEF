@@ -39,20 +39,21 @@ class DyldInfo;
 class DylibCommand;
 class DylinkerCommand;
 class DynamicSymbolCommand;
+class EncryptionInfo;
 class FatBinary;
 class FunctionStarts;
 class LinkerOptHint;
 class MainCommand;
+class RPathCommand;
 class Routine;
 class SegmentSplitInfo;
 class SourceVersion;
-class SubFramework;
 class SubClient;
+class SubFramework;
 class SymbolCommand;
 class ThreadCommand;
 class TwoLevelHints;
 class VersionMin;
-class RPathCommand;
 
 /// Class used to rebuild a Mach-O file
 class LIEF_API Builder {
@@ -180,6 +181,9 @@ class LIEF_API Builder {
 
   template<class T>
   LIEF_LOCAL ok_error_t build(CodeSignatureDir& sig);
+
+  template<class T>
+  LIEF_LOCAL ok_error_t build(EncryptionInfo& tc);
 
   template <typename T>
   LIEF_LOCAL ok_error_t build_segments();

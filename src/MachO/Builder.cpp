@@ -131,6 +131,11 @@ ok_error_t Builder::build() {
       build<T>(*cmd->as<RPathCommand>());
       continue;
     }
+
+    if (EncryptionInfo::classof(cmd.get())) {
+      build<T>(*cmd->as<EncryptionInfo>());
+      continue;
+    }
   }
 
   build_segments<T>();

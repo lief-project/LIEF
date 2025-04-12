@@ -27,6 +27,8 @@
 
 :Mach-O:
 
+  * Modifications on |lief-macho-encryptioninfo| are now committed when doing a
+    ``write()``. See: :issue:`1173`
   * Add support for |lief-macho-atom-info| command (``LC_ATOM_INFO``)
 
 :ELF:
