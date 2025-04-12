@@ -413,6 +413,12 @@
     :py:class:`lief.MachO.Builder.config_t`
     :cpp:class:`LIEF::MachO::Builder::config_t`
 
+.. |lief-macho-encryptioninfo| lief-api:: lief.MachO.EncryptionInfo
+
+    :rust:struct:`lief::macho::commands::EncryptionInfo`
+    :py:class:`lief.MachO.EncryptionInfo`
+    :cpp:class:`LIEF::MachO::EncryptionInfo`
+
 .. dyld shared cache ===========================================================
 
 .. |lief-dsc-load| lief-api:: lief.dsc.load()

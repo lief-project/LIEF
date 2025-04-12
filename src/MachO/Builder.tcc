@@ -47,6 +47,7 @@
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/SymbolCommand.hpp"
 #include "LIEF/MachO/ThreadCommand.hpp"
+#include "LIEF/MachO/EncryptionInfo.hpp"
 #include "LIEF/MachO/TwoLevelHints.hpp"
 #include "LIEF/MachO/VersionMin.hpp"
 
@@ -1110,6 +1111,24 @@ ok_error_t Builder::build(ThreadCommand& tc) {
   return ok();
 }
 
+template<class T>
+ok_error_t Builder::build(EncryptionInfo& info) {
+  details::encryption_info_command raw_cmd;
+  std::memset(&raw_cmd, 0, sizeof(details::encryption_info_command));
+
+  raw_cmd.cmd       = static_cast<uint32_t>(info.command());
+  raw_cmd.cmdsize   = info.size();
+  raw_cmd.cryptoff  = info.crypt_offset();
+  raw_cmd.cryptsize = info.crypt_size();
+  raw_cmd.cryptid   = info.crypt_id();
+
+  info.original_data_.clear();
+
+  std::copy(reinterpret_cast<uint8_t*>(&raw_cmd),
+            reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
+            std::back_inserter(info.original_data_));
+  return ok();
+}
 
 template <typename T>
 ok_error_t Builder::update_fixups(DyldChainedFixups& command) {
