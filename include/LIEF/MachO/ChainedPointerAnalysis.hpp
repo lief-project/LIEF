@@ -208,7 +208,7 @@ class LIEF_API ChainedPointerAnalysis {
       std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_32_firmware_rebase_t& chain);
   };
 
-  enum class PTR_TYPE {
+  enum class PTR_TYPE : uint64_t {
     UNKNOWN = 0,
     DYLD_CHAINED_PTR_ARM64E_REBASE,
     DYLD_CHAINED_PTR_ARM64E_BIND,
