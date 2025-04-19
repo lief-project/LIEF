@@ -27,17 +27,12 @@
 
 :Mach-O:
 
-  * Modifications on |lief-macho-encryptioninfo| are now committed when doing a
-    ``write()``. See: :issue:`1173`
   * Add support for |lief-macho-atom-info| command (``LC_ATOM_INFO``)
 
 :ELF:
 
   * LIEF inserted sections are not compatible with a ``strip`` after the
     modification of the binary (see: :ref:`Adding a section/segment <format-elf-section-segment>`)
-  * Relax the condition over the ``DT_SYMENT`` entry (:issue:`1177`)
-  * Fix issue when parsing the dynamic table with an invalid offset (bug found
-    by :github_user:`lebr0nli`)
   * Enhance support for IA64 architecture.
   * Introduce :attr:`lief.ELF.Segment.raw_flags` to access the raw (integer)
     value of the flag
@@ -89,10 +84,6 @@
   * Fix issue in the Python bindings while trying to access ``lief.__LIEF_MAIN_COMMIT__``
   * Use LLVM 20.1.2
 
-:Rust:
-
-  * Add support for ARM64 on Windows (``aarch64-pc-windows-msvc``)
-
 :Build System:
 
   * LIEF is now available in `vcpkg <https://github.com/microsoft/vcpkg/tree/master/ports/lief>`_.
@@ -106,6 +97,31 @@
 :Utilities:
 
   * Add |lief-dump|
+
+0.16.5 - April 19th, 2025
+-------------------------
+
+:ELF:
+
+  * Relax the condition over the ``DT_SYMENT`` entry (:issue:`1177`)
+
+:Mach-O:
+
+  * Modifications on |lief-macho-encryptioninfo| are now committed when doing a
+    ``write()``. See: :issue:`1173`
+
+:Compilation:
+
+  * Fix compilation issue when targeting Linux i386/i686 (:issue:`1189`)
+  * Better support for external ``fmt`` library
+  * Fix ``fmt`` unicode issue
+  * Fix missing ``cstdio`` (:issue:`1184`)
+
+:Packages:
+
+  * Add Python, Rust, SDK packages for Windows ARM64 (``aarch64-pc-windows-msvc``)
+  * Add Python, Rust, SDK packages for Linux Musl ARM64 (``aarch64-unknown-linux-musl``)
+  * Add Python, Rust, SDK packages for Linux Musl i686 (``i686-unknown-linux-musl``)
 
 0.16.4 - February 23rd, 2025
 ----------------------------
