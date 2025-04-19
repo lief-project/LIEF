@@ -9,6 +9,7 @@ import sys
 import pytest
 import shutil
 from pathlib import Path
+from textwrap import dedent
 
 from subprocess import Popen
 from utils import (
@@ -365,3 +366,24 @@ def test_smart_insert_2(tmp_path: Path):
         elf_strip = lief.ELF.parse(output)
         lief_test_section: lief.ELF.Section = elf_strip.get_section(".lief_section_to_strip")
         assert lief_test_section is None
+
+def test_issue_1175_missing_segment(tmp_path: Path):
+    elf = lief.ELF.parse(get_sample("ELF/issue_1175.elf"))
+    for i in range(2):
+        section = lief.ELF.Section(f".lief.dummy.{i + 1}")
+        section.content = list(b"Hello World")
+        elf.add(section)
+
+    output = tmp_path / "issue_1175.elf"
+    elf.write(output.as_posix())
+
+    new = lief.ELF.parse(output)
+    assert new.get(lief.ELF.Segment.TYPE.RISCV_ATTRIBUTES) is not None
+    stacksize_content = lief.dump(new.get_section(".stack_sizes").content)
+    #print("\n" + stacksize_content)
+    assert stacksize_content == dedent("""\
+    +---------------------------------------------------------------------+
+    | 9c 00 02 00 10 9c 01 02 00 10 14 02 02 00 00 6e  | ...............n |
+    | 02 02 00 00 70 02 02 00 00 72 02 02 00 00 74 02  | ....p....r....t. |
+    | 02 00 00 80 02 02 00 00                          | ........         |
+    +---------------------------------------------------------------------+""")

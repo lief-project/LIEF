@@ -2651,12 +2651,10 @@ uint64_t Binary::relocate_phdr_table_v3() {
   uint64_t last_off = 0;
   for (const std::unique_ptr<Segment>& segment : segments_) {
     if (segment != nullptr && segment->is_load()) {
-      last_off = std::max(last_off, segment->file_offset());
-      // Possible because segment are not overlapping
-      last_off += segment->physical_size();
+      last_off = std::max(last_off, segment->physical_size() + segment->file_offset());
     }
   }
-  last_off = align(last_off, static_cast<uint64_t>(get_pagesize(*this)));
+  uint64_t last_off_aligned = align(last_off, static_cast<uint64_t>(get_pagesize(*this)));
 
   if (phdr_reloc_info_.new_offset > 0) {
     return phdr_reloc_info_.new_offset;
@@ -2669,19 +2667,17 @@ uint64_t Binary::relocate_phdr_table_v3() {
   const uint64_t phdr_size =
     type() == Header::CLASS::ELF32 ? sizeof(details::ELF32::Elf_Phdr) :
                                      sizeof(details::ELF64::Elf_Phdr);
-
-  const uint64_t last_offset = last_off;
-
   LIEF_DEBUG("Moving segment table at the end of the binary (0x{:010x})",
-             last_offset);
+             last_off_aligned);
 
-  phdr_reloc_info_.new_offset = last_offset;
-  header.program_headers_offset(last_offset);
+  phdr_reloc_info_.new_offset = last_off_aligned;
+  header.program_headers_offset(last_off_aligned);
 
   const size_t new_segtbl_sz = (header.numberof_segments() + USER_SEGMENTS) * phdr_size;
+  const uint64_t delta = last_off_aligned - last_off + new_segtbl_sz;
+  shift_sections(last_off, delta);
 
-  uint64_t sections_tbl_off = header.section_headers_offset() + new_segtbl_sz;
-
+  uint64_t sections_tbl_off = header.section_headers_offset() + delta;
   header.section_headers_offset(sections_tbl_off);
 
   auto alloc = datahandler_->make_hole(phdr_reloc_info_.new_offset,
@@ -2708,7 +2704,6 @@ uint64_t Binary::relocate_phdr_table_v3() {
                              DataHandler::Node::SEGMENT};
   datahandler_->add(std::move(new_node));
 
-
   const auto it_new_place = std::find_if(
       segments_.rbegin(), segments_.rend(),
       [] (const auto& s) { return s->is_load(); });
@@ -2721,6 +2716,7 @@ uint64_t Binary::relocate_phdr_table_v3() {
                      std::move(phdr_load_segment));
   }
 
+  header.numberof_segments(header.numberof_segments() + 1);
   phdr_reloc_info_.nb_segments = USER_SEGMENTS - /* For the PHDR LOAD */ 1;
   return phdr_reloc_info_.new_offset;
 }
