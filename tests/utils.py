@@ -119,7 +119,7 @@ def ci_runner_tags() -> list[str]:
         return []
     return json.loads(value)
 
-def ci_runner_arch() -> Optional[str]:
+def ci_runner_arch() -> str:
     return os.getenv('CI_RUNNER_EXECUTABLE_ARCH', '')
 
 def has_private_samples() -> bool:

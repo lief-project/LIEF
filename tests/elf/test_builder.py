@@ -11,7 +11,10 @@ import shutil
 from pathlib import Path
 
 from subprocess import Popen
-from utils import is_linux, glibc_version, get_sample, has_private_samples
+from utils import (
+    is_linux, glibc_version, get_sample,
+    has_private_samples, is_server_ci, ci_runner_arch
+)
 
 SAMPLE_DIR = pathlib.Path(os.getenv("LIEF_SAMPLES_DIR", ""))
 
@@ -278,6 +281,8 @@ def test_smart_insert_1(tmp_path: Path):
     info (or not) and we insert a new section/segment, the section is inserted
     prior the debug info so that stripping the binary works
     """
+    if is_server_ci() and not ci_runner_arch().startswith("linux/"):
+        pytest.skip("skipping: needs linux runner")
     input_path = Path(get_sample("private/ELF/libclang-cpp.so.20.1"))
     elf = lief.ELF.parse(input_path)
 
