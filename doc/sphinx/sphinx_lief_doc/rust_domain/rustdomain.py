@@ -14,7 +14,7 @@ from docutils.statemachine import StringList
 from sphinx import addnodes
 from sphinx.addnodes import desc_signature, pending_xref
 from sphinx.directives import ObjectDescription
-from sphinx.domains import Domain, ObjType, TitleGetter
+from sphinx.domains import Domain, ObjType
 from sphinx.locale import _, __
 from sphinx.roles import EmphasizedLiteral, XRefRole
 from sphinx.util import docname_join, logging, ws_re
