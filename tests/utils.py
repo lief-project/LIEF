@@ -7,6 +7,7 @@ import re
 import subprocess
 import stat
 import time
+import json
 from typing import Optional, Tuple, List
 from pathlib import Path
 from subprocess import Popen
@@ -111,6 +112,15 @@ def is_github_ci() -> bool:
 
 def is_server_ci() -> bool:
     return os.getenv('CI_SERVER_HOST', '') == 'gitlab.server'
+
+def ci_runner_tags() -> list[str]:
+    value = os.getenv('CI_RUNNER_TAGS', None)
+    if value is None:
+        return []
+    return json.loads(value)
+
+def ci_runner_arch() -> Optional[str]:
+    return os.getenv('CI_RUNNER_EXECUTABLE_ARCH', '')
 
 def has_private_samples() -> bool:
     return (Path(lief_samples_dir()) / "private").is_dir()
