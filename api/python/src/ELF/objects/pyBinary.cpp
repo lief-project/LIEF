@@ -104,6 +104,30 @@ void create<Binary>(nb::module_& m) {
            enforcement.
            )delim"_doc);
 
+  nb::enum_<Binary::SEC_INSERT_POS>(bin, "SEC_INSERT_POS", R"delim(
+    This enum defines where the content of a newly added section should be
+    inserted.
+    )delim"_doc)
+    .value("AUTO", Binary::SEC_INSERT_POS::AUTO,
+      "Defer the choice to LIEF"_doc
+    )
+    .value("POST_SECTION", Binary::SEC_INSERT_POS::POST_SECTION,
+      R"doc(
+      Insert the section after the last valid offset in the **segments** table.
+
+      With this choice, the section is inserted after the loaded content but
+      before any debug information.
+      )doc"_doc
+    )
+    .value("POST_SEGMENT", Binary::SEC_INSERT_POS::POST_SEGMENT,
+      R"doc(
+      Insert the section after the last valid offset in the **section** table.
+
+      With this choice, the section is inserted at the very end of the binary.
+      )doc"_doc
+    )
+  ;
+
   bin
     .def_prop_ro("type",
         &Binary::type,
@@ -476,14 +500,14 @@ void create<Binary>(nb::module_& m) {
         "virtual_address"_a)
 
     .def("add",
-        nb::overload_cast<const Section&, bool>(&Binary::add),
+        nb::overload_cast<const Section&, bool, Binary::SEC_INSERT_POS>(&Binary::add),
         R"delim(
         Add the given :class:`~lief.ELF.Section` to the binary.
 
         If the section does not aim at being loaded in memory,
         the ``loaded`` parameter has to be set to ``False`` (default: ``True``)
         )delim"_doc,
-        "section"_a, "loaded"_a = true,
+        "section"_a, "loaded"_a = true, "pos"_a = Binary::SEC_INSERT_POS::AUTO,
         nb::rv_policy::reference_internal)
 
     .def("add",
@@ -732,6 +756,22 @@ void create<Binary>(nb::module_& m) {
 
     .def_prop_ro("is_targeting_android", &Binary::is_targeting_android,
       R"doc(True if the current is targeting Android)doc"_doc
+    )
+
+    .def("get_section_idx", [] (const Binary& self, const Section& sec) {
+        return error_or(
+         nb::overload_cast<const Section&>(&Binary::get_section_idx, nb::const_),
+         self, sec);
+      },
+      R"doc(Find the index of the section given in the first parameter)doc"_doc
+    )
+
+    .def("get_section_idx", [] (const Binary& self, const std::string& name) {
+        return error_or(
+         nb::overload_cast<const std::string&>(&Binary::get_section_idx, nb::const_),
+         self, name);
+      },
+      R"doc(Find the index of the section with the name given in the first parameter)doc"_doc
     )
 
     .def_prop_rw("overlay",

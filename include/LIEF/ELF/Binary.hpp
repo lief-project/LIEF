@@ -223,6 +223,25 @@ class LIEF_API Binary : public LIEF::Binary {
     SEGMENT_GAP,
   };
 
+  /// This enum defines where the content of a newly added section should be
+  /// inserted.
+  enum class SEC_INSERT_POS {
+    /// Defer the choice to LIEF
+    AUTO = 0,
+
+    /// Insert the section after the last valid offset in the **segments**
+    /// table.
+    ///
+    /// With this choice, the section is inserted after the loaded content but
+    /// before any debug information.
+    POST_SEGMENT,
+
+    /// Insert the section after the last valid offset in the **section** table.
+    ///
+    /// With this choice, the section is inserted at the very end of the binary.
+    POST_SECTION,
+  };
+
   public:
   Binary& operator=(const Binary& ) = delete;
   Binary(const Binary& copy) = delete;
@@ -595,14 +614,16 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Add a new section in the binary
   ///
-  /// @param[in] section    The section object to insert
-  /// @param[in] loaded     Boolean value to indicate that section's data must be loaded
-  ///                       by a PT_LOAD segment
+  /// @param[in] section  The section object to insert
+  /// @param[in] loaded   Boolean value to indicate that section's data must be loaded
+  ///                     by a PT_LOAD segment
+  /// @param[in] pos      Position where to insert the data in the sections table
   ///
   /// @return The section added. The `size` and the `virtual address` might change.
   ///
   /// This function requires a well-formed ELF binary
-  Section* add(const Section& section, bool loaded = true);
+  Section* add(const Section& section, bool loaded = true,
+               SEC_INSERT_POS pos = SEC_INSERT_POS::AUTO);
 
   Section* extend(const Section& section, uint64_t size);
 
@@ -940,6 +961,18 @@ class LIEF_API Binary : public LIEF::Binary {
     return std::distance(sections_.begin(), it);
   }
 
+  uint8_t ptr_size() const {
+    switch (type()) {
+      case Header::CLASS::ELF32:
+        return sizeof(uint32_t);
+      case Header::CLASS::ELF64:
+        return sizeof(uint64_t);
+      default:
+        return 0;
+    }
+    return 0;
+  }
+
   static bool classof(const LIEF::Binary* bin) {
     return bin->format() == Binary::FORMATS::ELF ||
            bin->format() == Binary::FORMATS::OAT;
@@ -1077,12 +1110,13 @@ class LIEF_API Binary : public LIEF::Binary {
   LIEF_LOCAL Segment* extend_segment(const Segment& segment, uint64_t size);
 
   template<bool LOADED>
-  LIEF_LOCAL Section* add_section(const Section& section);
+  LIEF_LOCAL Section* add_section(const Section& section, SEC_INSERT_POS pos);
 
   std::vector<Symbol*> symtab_dyn_symbols() const;
 
   LIEF_LOCAL std::string shstrtab_name() const;
   LIEF_LOCAL Section* add_frame_section(const Section& sec);
+  LIEF_LOCAL Section* add_section(std::unique_ptr<Section> sec);
 
   LIEF_LOCAL LIEF::Binary::functions_t tor_functions(DynamicEntry::TAG tag) const;
 

@@ -562,6 +562,13 @@ class Binary(lief.Binary):
 
         SEGMENT_GAP = 4
 
+    class SEC_INSERT_POS(enum.Enum):
+        AUTO = 0
+
+        POST_SECTION = 2
+
+        POST_SEGMENT = 1
+
     @property
     def type(self) -> Header.CLASS: ...
 
@@ -581,7 +588,7 @@ class Binary(lief.Binary):
     def add(self, arg: DynamicEntry, /) -> DynamicEntry: ...
 
     @overload
-    def add(self, section: Section, loaded: bool = True) -> Section: ...
+    def add(self, section: Section, loaded: bool = True, pos: Binary.SEC_INSERT_POS = Binary.SEC_INSERT_POS.AUTO) -> Section: ...
 
     @overload
     def add(self, segment: Segment, base: int = 0) -> Segment: ...
@@ -829,6 +836,12 @@ class Binary(lief.Binary):
 
     @property
     def is_targeting_android(self) -> bool: ...
+
+    @overload
+    def get_section_idx(self, arg: Section, /) -> Union[int, lief.lief_errors]: ...
+
+    @overload
+    def get_section_idx(self, arg: str, /) -> Union[int, lief.lief_errors]: ...
 
     overlay: memoryview
 

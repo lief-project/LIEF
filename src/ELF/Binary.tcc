@@ -32,6 +32,36 @@
 namespace LIEF {
 namespace ELF {
 
+inline void init_alignment(Segment& segment, uintptr_t pagesize, uintptr_t ptrsz) {
+  if (segment.alignment() > 0) {
+    return;
+  }
+
+  switch (segment.type()) {
+    case Segment::TYPE::LOAD:
+      segment.alignment(pagesize);
+      break;
+    case Segment::TYPE::PHDR:
+    case Segment::TYPE::DYNAMIC:
+    case Segment::TYPE::TLS:
+      segment.alignment(ptrsz);
+      break;
+    case Segment::TYPE::NOTE:
+    case Segment::TYPE::GNU_EH_FRAME:
+      segment.alignment(sizeof(uint32_t));
+      break;
+    case Segment::TYPE::GNU_RELRO:
+      segment.alignment(1);
+      break;
+    case Segment::TYPE::GNU_STACK:
+      segment.alignment(0x10);
+      break;
+    default:
+      segment.alignment(ptrsz);
+      break;
+  }
+}
+
 // ===============
 // ARM Relocations
 // ===============
@@ -394,9 +424,9 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment, ui
   new_segment->physical_size(segmentsize);
   new_segment->virtual_size(segmentsize);
 
-  if (new_segment->alignment() == 0) {
-    new_segment->alignment(psize);
-  }
+
+  init_alignment(*new_segment, psize, this->ptr_size());
+
   new_segment->datahandler_ = datahandler_.get();
 
   DataHandler::Node new_node{new_segment->file_offset(), new_segment->physical_size(),
@@ -432,12 +462,11 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment, ui
 // =======================
 template<>
 Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment, uint64_t base) {
-  const auto psize = static_cast<uint64_t>(get_pagesize(*this));
-
+  const auto psize = (uint64_t)get_pagesize(*this);
+  const auto ptr_size = this->ptr_size();
   /*const uint64_t new_phdr_offset = */ relocate_phdr_table_auto();
 
-  span<const uint8_t> content_ref = segment.content();
-  std::vector<uint8_t> content{content_ref.data(), std::end(content_ref)};
+  std::vector<uint8_t> content = as_vector(segment.content());
 
   auto new_segment = std::make_unique<Segment>(segment);
   new_segment->datahandler_ = datahandler_.get();
@@ -446,29 +475,32 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment, uin
                              DataHandler::Node::SEGMENT};
   datahandler_->add(new_node);
 
-  const uint64_t last_offset_sections = last_offset_section();
+  init_alignment(*new_segment, psize, ptr_size);
+
   const uint64_t last_offset_segments = last_offset_segment();
-  const uint64_t last_offset          = std::max<uint64_t>(last_offset_sections, last_offset_segments);
-  const uint64_t last_offset_aligned  = align(last_offset, psize);
+  const uint64_t last_offset          = last_offset_segments;
+  const uint64_t last_offset_aligned  = align(last_offset, 0x10);
+  if (base == 0) {
+    base = align(next_virtual_address(), psize);
+  }
+
+  uint64_t segmentsize = align(content.size(), 0x10);
+
+  const uint64_t delta = last_offset_aligned + segmentsize - last_offset;
+
+  shift_sections(last_offset, delta);
 
   new_segment->file_offset(last_offset_aligned);
   new_segment->virtual_address(new_segment->file_offset() + base);
   new_segment->physical_address(new_segment->virtual_address());
 
-  uint64_t segmentsize = align(content.size(), 0x10);
-  //uint64_t segmentsize = content.size();
   new_segment->handler_size_ = content.size();
   new_segment->physical_size(segmentsize);
   new_segment->virtual_size(segmentsize);
 
-  if (new_segment->alignment() == 0) {
-    new_segment->alignment(psize);
-  }
-
   // Patch SHDR
   Header& header = this->header();
-  const uint64_t new_section_hdr_offset = new_segment->file_offset() + new_segment->physical_size();
-  header.section_headers_offset(new_section_hdr_offset);
+  header.section_headers_offset(header.section_headers_offset() + delta);
 
   auto alloc = datahandler_->make_hole(last_offset_aligned, new_segment->physical_size());
 
@@ -486,7 +518,9 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment, uin
       [&new_segment] (const std::unique_ptr<Segment>& s) {
         return s->type() == new_segment->type();
       });
+
   Segment* seg_ptr = new_segment.get();
+
   if (it_new_segment_place == segments_.rend()) {
     segments_.push_back(std::move(new_segment));
   } else {
@@ -563,14 +597,12 @@ Segment* Binary::extend_segment<Segment::TYPE::LOAD>(const Segment& segment, uin
   return segment_to_extend.get();
 }
 
-
-template<>
-Section* Binary::add_section<true>(const Section& section) {
-  LIEF_DEBUG("Adding section '{}' as LOADED", section.name());
-  // Create a Segment:
+inline Segment seg_for_section(const Section& section) {
   Segment new_segment;
+
+  // Create the segment associated with the section
   span<const uint8_t> content_ref = section.content();
-  new_segment.content({std::begin(content_ref), std::end(content_ref)});
+  new_segment.content(as_vector(content_ref));
   new_segment.type(Segment::TYPE::LOAD);
 
   new_segment.virtual_address(section.virtual_address());
@@ -589,8 +621,20 @@ Section* Binary::add_section<true>(const Section& section) {
   if (section.has(Section::FLAGS::EXECINSTR)) {
     new_segment.add(Segment::FLAGS::X);
   }
+  return new_segment;
+}
 
-  Segment* segment_added = add(new_segment);
+template<>
+Section* Binary::add_section</*loaded=*/true>(const Section& section,
+                                              SEC_INSERT_POS pos)
+{
+  LIEF_DEBUG("Adding section '{}' as LOADED", section.name());
+  if (pos != SEC_INSERT_POS::AUTO && pos != SEC_INSERT_POS::POST_SEGMENT) {
+    LIEF_ERR("Unsupported position for inserting loaded section");
+    return nullptr;
+  }
+
+  Segment* segment_added = add(seg_for_section(section));
   if (segment_added == nullptr) {
     LIEF_ERR("Can't add a LOAD segment of the section");
     return nullptr;
@@ -615,16 +659,14 @@ Section* Binary::add_section<true>(const Section& section) {
   segment_added->sections_.push_back(new_section.get());
 
   header().numberof_sections(header().numberof_sections() + 1);
-
-  Section* sec_ptr = new_section.get();
-  sections_.push_back(std::move(new_section));
-  return sec_ptr;
+  return add_section(std::move(new_section));
 }
 
 // Add a non-loaded section
 template<>
-Section* Binary::add_section<false>(const Section& section) {
-
+Section* Binary::add_section</*loaded=*/false>(const Section& section,
+                                               SEC_INSERT_POS pos)
+{
   auto new_section = std::make_unique<Section>(section);
   new_section->datahandler_ = datahandler_.get();
 
@@ -634,7 +676,20 @@ Section* Binary::add_section<false>(const Section& section) {
 
   const uint64_t last_offset_sections = last_offset_section();
   const uint64_t last_offset_segments = last_offset_segment();
-  const uint64_t last_offset          = std::max<uint64_t>(last_offset_sections, last_offset_segments);
+
+  uint64_t last_offset = 0;
+  switch (pos) {
+    case SEC_INSERT_POS::AUTO:
+    case SEC_INSERT_POS::POST_SEGMENT:
+      last_offset = last_offset_segments;
+      break;
+    case SEC_INSERT_POS::POST_SECTION:
+      last_offset = std::max(last_offset_segments, last_offset_sections);
+      break;
+  }
+
+  const uint64_t delta = section.size();
+  shift_sections(last_offset, delta);
 
   auto alloc = datahandler_->make_hole(last_offset, section.size());
   if (!alloc) {
@@ -646,17 +701,13 @@ Section* Binary::add_section<false>(const Section& section) {
   new_section->size(section.size());
 
   // Copy original content in the data handler
-  span<const uint8_t> content_ref = section.content();
-  new_section->content({std::begin(content_ref), std::end(content_ref)});
-
-  header().numberof_sections(header().numberof_sections() + 1);
+  new_section->content(as_vector(section.content()));
 
   Header& header = this->header();
-  const uint64_t new_section_hdr_offset = new_section->offset() + new_section->size();
+  header.numberof_sections(header.numberof_sections() + 1);
+  const uint64_t new_section_hdr_offset = header.section_headers_offset() + delta;
   header.section_headers_offset(new_section_hdr_offset);
-  Section* sec_ptr = new_section.get();
-  sections_.push_back(std::move(new_section));
-  return sec_ptr;
+  return add_section(std::move(new_section));
 }
 
 template<class ELF_T>

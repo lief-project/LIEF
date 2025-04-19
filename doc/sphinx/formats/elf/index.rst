@@ -130,6 +130,125 @@ file.
 
   :ref:`binary-abstraction`
 
+.. _format-elf-section-segment:
+
+Adding a Section/Segment
+************************
+
+The ELF format uses two tables to represent the different slices of the binary:
+
+1. The sections table
+2. The segments table
+
+While the sections table offers a detailed view of the binary,
+it is primarily needed by the **compiler** and the **linker**. In particular,
+this table is not required for **loading** and **executing** an ELF file.
+The Android loader enforces the existence of a sections table and requires
+certain specific sections but from a loading perspective, this table is not used.
+
+If you intend to modify an ELF file to load additional content into memory
+(such as code or data), it is recommended to add a |lief-elf-segment| instead of
+a section:
+
+.. tabs::
+
+  .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        elf: lief.ELF.Binary = ...
+
+        segment = lief.ELF.Segment()
+        segment.type = lief.ELF.Segment.TYPES.LOAD
+        segment.content = list(b'Hello World')
+
+        new_segment: lief.ELF.Segment = elf.add(segment)
+
+        elf.write("new.elf")
+
+  .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        std::unique_ptr<LIEF::ELF::Binary> elf;
+
+        LIEF::ELF::Segment segment;
+        segment.type(LIEF::ELF::Segment::TYPES::LOAD);
+        segment.content({1, 2, 3});
+
+        LIEF::ELF::Segment* new_segment = elf.add(segment);
+        elf.write("new.elf");
+
+You can also achieve this modification by creating a |lief-elf-section| that will
+**implicitly** create an associated ``PT_LOAD`` segment:
+
+.. tabs::
+
+  .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        elf: lief.ELF.Binary = ...
+
+        section = lief.ELF.Section(".lief_demo")
+        section.content = list(b'Hello World')
+
+        new_section: lief.ELF.Section = elf.add(section, loaded=True)
+
+        elf.write("new.elf")
+
+  .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        std::unique_ptr<LIEF::ELF::Binary> elf;
+
+        LIEF::ELF::Section section(".lief_demo");
+        section.content({1, 2, 3});
+
+        LIEF::ELF::Section* new_section = elf.add(section, /*loaded=*/true);
+        elf.write("new.elf");
+
+As mentioned above, the segments table matters from a loading perspective over
+the sections table. Therefore, it makes more sense to explicitly add a new
+segment rather than adding a section that implicitly adds a segment.
+
+On the other hand, for debugging purposes or specific
+tools, one might want to add a **non-loaded** section. In this case, the data
+of the section is inserted at the end of the binary right after all the data wrapped
+by the segments:
+
+.. tabs::
+
+  .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        elf: lief.ELF.Binary = ...
+
+        section = lief.ELF.Section(".metadata")
+        section.content = list(b'version: 1.2.3')
+
+        # /!\ Note that loaded is set to False here
+        # ------------------------------------------
+        new_section: lief.ELF.Section = elf.add(section, loaded=False)
+
+        elf.write("new.elf")
+
+  .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        std::unique_ptr<LIEF::ELF::Binary> elf;
+
+        LIEF::ELF::Section section(".metadata");
+        section.content({1, 2, 3});
+
+        LIEF::ELF::Section* new_section = elf.add(section, /*loaded=*/false);
+        elf.write("new.elf");
+
+See: |lief-elf-binary-add| for the details about the API
+
 Advance Parsing/Writing
 ***********************
 

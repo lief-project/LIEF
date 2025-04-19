@@ -579,6 +579,12 @@
     :py:meth:`lief.ELF.Binary.write`
     :cpp:func:`LIEF::ELF::Binary::write`
 
+
+.. |lief-elf-binary-add| lief-api:: lief.ELF.Binary.add()
+
+    :py:func:`lief.ELF.Binary.add`
+    :cpp:func:`LIEF::ELF::Binary::add`
+
 .. |lief-elf-aarch64pauth| lief-api:: lief.ELF.AArch64PAuth
 
     :py:class:`lief.ELF.AArch64PAuth`
@@ -591,6 +597,17 @@
     :py:func:`lief.ELF.Relocation.resolve`
     :cpp:func:`LIEF::ELF::Relocation::resolve`
 
+.. |lief-elf-segment| lief-api:: lief.ELF.Segment
+
+    :rust:struct:`lief::elf::Segment`
+    :py:class:`lief.ELF.Segment`
+    :cpp:class:`LIEF::ELF::Segment`
+
+.. |lief-elf-section| lief-api:: lief.ELF.Section
+
+    :rust:struct:`lief::elf::Section`
+    :py:class:`lief.ELF.Section`
+    :cpp:class:`LIEF::ELF::Section`
 
 .. Mach-O ======================================================================
 

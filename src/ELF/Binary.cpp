@@ -972,14 +972,14 @@ result<uint64_t> Binary::get_function_address(const std::string& func_name, bool
   return (*it_symbol)->value();
 }
 
-Section* Binary::add(const Section& section, bool loaded) {
+Section* Binary::add(const Section& section, bool loaded, SEC_INSERT_POS pos) {
   if (section.is_frame()) {
     return add_frame_section(section);
   }
   if (loaded) {
-    return add_section<true>(section);
+    return add_section<true>(section, pos);
   }
-  return add_section<false>(section);
+  return add_section<false>(section, pos);
 }
 
 
@@ -3130,6 +3130,34 @@ bool Binary::is_targeting_android() const {
   }
 
   return false;
+}
+
+
+Section* Binary::add_section(std::unique_ptr<Section> sec) {
+  Section* sec_ptr = sec.get();
+
+  const auto it_new_sec_place = std::find_if(
+    sections_.begin(), sections_.end(), [sec_ptr] (const std::unique_ptr<Section>& S) {
+      return S->file_offset() > sec_ptr->file_offset();
+    });
+
+  if (it_new_sec_place == sections_.end()) {
+    sections_.push_back(std::move(sec));
+  } else {
+    size_t idx = std::distance(sections_.begin(), it_new_sec_place);
+    for (size_t i = 0; i < sections_.size(); ++i) {
+      const uint32_t link = sections_[i]->link();
+      if (link >= idx) {
+        sections_[i]->link(link + 1);
+      }
+    }
+    if (header_.section_name_table_idx() >= idx) {
+      header_.section_name_table_idx(header_.section_name_table_idx() + 1);
+    }
+    sections_.insert(it_new_sec_place, std::move(sec));
+  }
+
+  return sec_ptr;
 }
 
 std::ostream& Binary::print(std::ostream& os) const {

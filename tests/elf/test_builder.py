@@ -7,10 +7,11 @@ import stat
 import subprocess
 import sys
 import pytest
+import shutil
 from pathlib import Path
 
 from subprocess import Popen
-from utils import is_linux, glibc_version, get_sample
+from utils import is_linux, glibc_version, get_sample, has_private_samples
 
 SAMPLE_DIR = pathlib.Path(os.getenv("LIEF_SAMPLES_DIR", ""))
 
@@ -259,7 +260,6 @@ def test_issue_970(tmp_path: Path):
     assert svd_0.auxiliary_symbols[0].name == "libcudart.so.12"
     assert svd_1.auxiliary_symbols[0].name == "libcudart.so.12"
 
-
 def test_issue_1121(tmp_path: Path):
     elf = lief.ELF.parse(get_sample("ELF/issue_1121.elf"))
     elf.get_symbol("main").name = "main_test"
@@ -269,3 +269,94 @@ def test_issue_1121(tmp_path: Path):
 
     new = lief.ELF.parse(out)
     assert new.has_symbol("main_test")
+
+
+@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+def test_smart_insert_1(tmp_path: Path):
+    """
+    The purpose of this test is to make sure that when we have a binary with debug
+    info (or not) and we insert a new section/segment, the section is inserted
+    prior the debug info so that stripping the binary works
+    """
+    input_path = Path(get_sample("private/ELF/libclang-cpp.so.20.1"))
+    elf = lief.ELF.parse(input_path)
+
+    section = lief.ELF.Section(".lief_test")
+    section.content = list(b"This is a test")
+    elf.add(section)
+
+    output = tmp_path / input_path.name
+    elf.write(output.as_posix())
+
+    new_elf = lief.ELF.parse(output)
+
+    sec = new_elf.get_section(".lief_test")
+    assert new_elf.get_section_idx(sec) == 27
+
+    if is_linux():
+        llvm_strip = shutil.which("llvm-strip")
+        assert llvm_strip is not None
+        print(f"Using llvm-strip: {llvm_strip}")
+        popen_args = {
+            "universal_newlines": True,
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.STDOUT,
+        }
+
+        args = [
+            llvm_strip,
+            output.as_posix()
+        ]
+        with Popen(args, **popen_args) as proc: # type: ignore[call-overload]
+            stdout, _ = proc.communicate(10)
+            print("stdout:", stdout)
+            assert proc.returncode == 0
+            assert len(stdout) == 0
+
+        elf_strip = lief.ELF.parse(output)
+        lief_test_section: lief.ELF.Section = elf_strip.get_section(".lief_test")
+        assert lief_test_section is not None
+        print(bytes(lief_test_section.content))
+        assert bytes(lief_test_section.content) == b'This is a test\x00\x00'
+
+@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+def test_smart_insert_2(tmp_path: Path):
+    input_path = Path(get_sample("private/ELF/libhwui.so"))
+    elf = lief.ELF.parse(input_path)
+
+    section = lief.ELF.Section(".lief_section_to_strip")
+    section.content = list(b"The content of this section needs to be removed")
+    elf.add(section, loaded=False)
+
+    output = tmp_path / input_path.name
+    elf.write(output.as_posix())
+
+    new_elf = lief.ELF.parse(output)
+
+    sec = new_elf.get_section(".lief_section_to_strip")
+    assert new_elf.get_section_idx(sec) == 25
+
+    if is_linux():
+        llvm_strip = shutil.which("llvm-strip")
+        assert llvm_strip is not None
+        print(f"Using llvm-strip: {llvm_strip}")
+        popen_args = {
+            "universal_newlines": True,
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.STDOUT,
+        }
+
+        args = [
+            llvm_strip,
+            output.as_posix()
+        ]
+
+        with Popen(args, **popen_args) as proc: # type: ignore[call-overload]
+            stdout, _ = proc.communicate(10)
+            print("stdout:", stdout)
+            assert proc.returncode == 0
+            assert len(stdout) == 0
+
+        elf_strip = lief.ELF.parse(output)
+        lief_test_section: lief.ELF.Section = elf_strip.get_section(".lief_section_to_strip")
+        assert lief_test_section is None

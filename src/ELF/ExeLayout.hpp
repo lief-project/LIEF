@@ -962,7 +962,8 @@ class LIEF_LOCAL ExeLayout : public Layout {
       binary_->remove(*string_names_section, /* clear */ true);
       Section sec_str_section(sec_name, Section::TYPE::STRTAB);
       sec_str_section.content(std::vector<uint8_t>(raw_shstrtab_.size()));
-      binary_->add(sec_str_section, /* loaded */ false);
+      binary_->add(sec_str_section, /*loaded=*/false,
+                   /*pos=*/Binary::SEC_INSERT_POS::POST_SECTION);
 
       // Default behavior: push_back => index = binary_->sections_.size() - 1
       hdr.section_name_table_idx(binary_->sections_.size() - 1);
@@ -1567,7 +1568,8 @@ class LIEF_LOCAL ExeLayout : public Layout {
       Section strtab{".strtab", Section::TYPE::STRTAB};
       strtab.content(raw_strtab_);
       strtab.alignment(1);
-      Section* new_strtab = binary_->add(strtab, /* loaded */ false);
+      Section* new_strtab = binary_->add(
+        strtab, /*loaded=*/false, /*pos=*/Binary::SEC_INSERT_POS::POST_SECTION);
 
       strtab_idx = binary_->sections().size() - 1;
 
@@ -1624,7 +1626,8 @@ class LIEF_LOCAL ExeLayout : public Layout {
       symtab.entry_size(sizeof_sym);
       symtab.alignment(8);
       symtab.link(strtab_idx);
-      Section* new_symtab = binary_->add(symtab, /* loaded */ false);
+      Section* new_symtab = binary_->add(
+        symtab, /*loaded=*/false, /*pos=*/Binary::SEC_INSERT_POS::POST_SECTION);
       if (new_symtab == nullptr) {
         LIEF_ERR("Can't add a new .symbtab section");
         return make_error_code(lief_errors::build_error);
@@ -1664,7 +1667,8 @@ class LIEF_LOCAL ExeLayout : public Layout {
           Section section{sec_name, Section::TYPE::NOTE};
           section += Section::FLAGS::ALLOC;
 
-          Section* section_added = binary_->add(section, /*loaded */ false);
+          Section* section_added = binary_->add(
+            section, /*loaded=*/false, /*pos=*/Binary::SEC_INSERT_POS::POST_SECTION);
           if (section_added == nullptr) {
             LIEF_ERR("Can't add SHT_NOTE section");
             return make_error_code(lief_errors::build_error);
