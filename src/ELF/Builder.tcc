@@ -766,8 +766,7 @@ ok_error_t Builder::build_segments() {
     pheaders.write<Elf_Phdr>(phdr);
   }
 
-  Segment* phdr_segment = binary_->get(Segment::TYPE::PHDR);
-  if (phdr_segment != nullptr) {
+  if (Segment* phdr_segment = binary_->get(Segment::TYPE::PHDR)) {
     phdr_segment->content(pheaders.raw());
   }
 
@@ -787,7 +786,7 @@ ok_error_t Builder::build_segments() {
 
   const Elf_Off segment_header_offset = binary_->header().program_headers_offset();
 
-  LIEF_DEBUG("Write segments header 0x{} -> 0x{}",
+  LIEF_DEBUG("Write segments header 0x{:010x} -> 0x{:010x}",
              segment_header_offset, segment_header_offset + pheaders.size());
   ios_.seekp(segment_header_offset);
   ios_.write(std::move(pheaders.raw()));
@@ -1315,9 +1314,7 @@ ok_error_t Builder::build_section_relocations() {
     }
   }
 
-  for (auto& p : section_content) {
-    Section* sec = p.first;
-    vector_iostream& ios = p.second;
+  for (const auto& [sec, ios] : section_content) {
     LIEF_DEBUG("Fill section {} with 0x{:x} bytes", sec->name(), ios.raw().size());
     sec->content(ios.raw());
   }
