@@ -301,7 +301,8 @@ def test_smart_insert_1(tmp_path: Path):
 
     if is_linux():
         llvm_strip = shutil.which("llvm-strip")
-        assert llvm_strip is not None
+        if llvm_strip is None:
+            pytest.skip("skipping: missing 'llvm-strip'")
         print(f"Using llvm-strip: {llvm_strip}")
         popen_args = {
             "universal_newlines": True,
@@ -344,7 +345,9 @@ def test_smart_insert_2(tmp_path: Path):
 
     if is_linux():
         llvm_strip = shutil.which("llvm-strip")
-        assert llvm_strip is not None
+        if llvm_strip is None:
+            pytest.skip("skipping: missing 'llvm-strip'")
+
         print(f"Using llvm-strip: {llvm_strip}")
         popen_args = {
             "universal_newlines": True,
