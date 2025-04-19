@@ -120,7 +120,7 @@ version = "0.0.1"
 edition = "2021"
 
 [dependencies]
-lief = "0.16.4"
+lief = "0.16.5"
 ```
 
 ## Python
@@ -143,7 +143,7 @@ pip install [--user] --force-reinstall --index-url https://lief.s3-website.fr-pa
 - **Nightly**:
   * SDK: https://lief.s3-website.fr-par.scw.cloud/latest/sdk
   * Python Wheels: https://lief.s3-website.fr-par.scw.cloud/latest/lief
-- **v0.16.4**: https://github.com/lief-project/LIEF/releases/tag/0.16.4
+- **v0.16.5**: https://github.com/lief-project/LIEF/releases/tag/0.16.5
 
 Here are guides to install or integrate LIEF:
 
@@ -261,7 +261,7 @@ Romain Thomas ([@rh0main](https://www.romainthomas.fr/)) - [Quarkslab](https://w
 
 ### License
 
-LIEF is provided under the [Apache 2.0 license](https://github.com/lief-project/LIEF/blob/0.16.4/LICENSE).
+LIEF is provided under the [Apache 2.0 license](https://github.com/lief-project/LIEF/blob/0.16.5/LICENSE).
 
 ### Bibtex
 

@@ -3,6 +3,31 @@
 :fa:`solid fa-code-compare` Changelog
 =====================================
 
+0.16.5 - April 19th, 2025
+-------------------------
+
+:ELF:
+
+  * Relax the condition over the ``DT_SYMENT`` entry (:issue:`1177`)
+
+:Mach-O:
+
+  * Modifications on |lief-macho-encryptioninfo| are now committed when doing a
+    ``write()``. See: :issue:`1173`
+
+:Compilation:
+
+  * Fix compilation issue when targeting Linux i386/i686 (:issue:`1189`)
+  * Better support for external ``fmt`` library
+  * Fix ``fmt`` unicode issue
+  * Fix missing ``cstdio`` (:issue:`1184`)
+
+:Packages:
+
+  * Add Python, Rust, SDK packages for Windows ARM64 (``aarch64-pc-windows-msvc``)
+  * Add Python, Rust, SDK packages for Linux Musl ARM64 (``aarch64-unknown-linux-musl``)
+  * Add Python, Rust, SDK packages for Linux Musl i686 (``i686-unknown-linux-musl``)
+
 0.16.4 - February 23rd, 2025
 ----------------------------
 
