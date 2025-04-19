@@ -101,12 +101,12 @@ def _get_hooked_config(is_editable: bool) -> Optional[dict[str, Union[str, List[
     config_settings = {
         "logging.level": "DEBUG",
         "build-dir": config.build_dir,
+        "build.targets": config.build.targets,
         "install.strip": config.strip,
         "backport.find-python": "0",
         "wheel.py-api":  config.build.py_api,
         "cmake.source-dir": SRC_DIR.as_posix(),
         "cmake.build-type": config.build.build_type,
-        "cmake.targets": config.build.targets,
         "cmake.args": [
             *config.cmake_generator,
             *config.get_cmake_args(is_editable),
