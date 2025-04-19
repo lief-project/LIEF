@@ -86,7 +86,7 @@ jobs:
     container:
       image: liefproject/manylinux_2_28_x86_64
       env:
-        PYTHON_BINARY: "/opt/python/cp38-cp38/bin/python3.8"
+        PYTHON_BINARY: "/opt/python/cp312-cp312/bin/python3.12"
         LIEF_SAMPLES_DIR: "/tmp/samples"
         LIEF_BUILD_DIR: "/tmp/lief-build"
         LIEF_VENV: "/tmp/venv"
@@ -184,7 +184,7 @@ jobs:
       options: --user 1001:1001
     strategy:
       matrix:
-        python-version: [3.8, 3.9, '3.10', '3.11', '3.12', '3.13']
+        python-version: [3.9, '3.10', '3.11', '3.12', '3.13']
     steps:
       - uses: actions/checkout@v4
         with:
