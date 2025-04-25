@@ -18,6 +18,8 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <sstream>
+#include <cstdint>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
