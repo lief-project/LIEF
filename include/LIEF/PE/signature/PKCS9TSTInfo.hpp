@@ -84,7 +84,7 @@ class LIEF_API PKCS9TSTInfo : public ContentInfo::Content {
   }
 
   private:
-  uint32_t version_;
+  uint32_t version_ = 0;
 };
 }
 }
