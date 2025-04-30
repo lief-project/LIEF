@@ -82,7 +82,8 @@
 :Extended:
 
   * Fix issue in the Python bindings while trying to access ``lief.__LIEF_MAIN_COMMIT__``
-  * Use LLVM 20.1.2
+  * Fix CMake issue with ``find_package(lief-extended)``
+  * Use LLVM 20.1.3
 
 :Build System:
 
