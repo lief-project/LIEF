@@ -444,7 +444,7 @@ bool LayoutChecker::check_load_config() {
 
   // NOTE(romain): dynamic_value_reloctable_section starts by indexing from 1
   if (auto value = config->dynamic_value_reloctable_section(); value.value_or(0) > 0) {
-    if ((*value - 1) >= pe.sections().size()) {
+    if ((*value - 1) < 0 || static_cast<size_t>((*value - 1)) >= pe.sections().size()) {
       return false;
     }
   }
