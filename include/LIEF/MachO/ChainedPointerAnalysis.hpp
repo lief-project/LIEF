@@ -18,6 +18,7 @@
 #include <memory>
 #include <ostream>
 #include <functional>
+#include <cstring>
 
 #include "LIEF/MachO/DyldChainedFormat.hpp"
 #include "LIEF/errors.hpp"
@@ -304,55 +305,81 @@ class LIEF_API ChainedPointerAnalysis {
   }
 
   const dyld_chained_ptr_arm64e_rebase_t dyld_chained_ptr_arm64e_rebase() const {
-    return *reinterpret_cast<const dyld_chained_ptr_arm64e_rebase_t*>(&value_);
+    dyld_chained_ptr_arm64e_rebase_t result;
+    std::memcpy(&result, &value_, sizeof(result));
+    return result;
   }
 
-  const dyld_chained_ptr_arm64e_bind_t& dyld_chained_ptr_arm64e_bind() const {
-    return *reinterpret_cast<const dyld_chained_ptr_arm64e_bind_t*>(&value_);
+  const dyld_chained_ptr_arm64e_bind_t dyld_chained_ptr_arm64e_bind() const {
+    dyld_chained_ptr_arm64e_bind_t result;
+    std::memcpy(&result, &value_, sizeof(result));
+    return result;
   }
 
   const dyld_chained_ptr_arm64e_auth_rebase_t dyld_chained_ptr_arm64e_auth_rebase() const {
-    return *reinterpret_cast<const dyld_chained_ptr_arm64e_auth_rebase_t*>(&value_);
+    dyld_chained_ptr_arm64e_auth_rebase_t result;
+    std::memcpy(&result, &value_, sizeof(result));
+    return result;
   }
 
   const dyld_chained_ptr_arm64e_auth_bind_t dyld_chained_ptr_arm64e_auth_bind() const {
-    return *reinterpret_cast<const dyld_chained_ptr_arm64e_auth_bind_t*>(&value_);
+    dyld_chained_ptr_arm64e_auth_bind_t result;
+    std::memcpy(&result, &value_, sizeof(result));
+    return result;
   }
 
   const dyld_chained_ptr_64_rebase_t dyld_chained_ptr_64_rebase() const {
-    return *reinterpret_cast<const dyld_chained_ptr_64_rebase_t*>(&value_);
+    dyld_chained_ptr_64_rebase_t result;
+    std::memcpy(&result, &value_, sizeof(result));
+    return result;
   }
 
   const dyld_chained_ptr_arm64e_bind24_t dyld_chained_ptr_arm64e_bind24() const {
-    return *reinterpret_cast<const dyld_chained_ptr_arm64e_bind24_t*>(&value_);
+    dyld_chained_ptr_arm64e_bind24_t result;
+    std::memcpy(&result, &value_, sizeof(result));
+    return result;
   }
 
   const dyld_chained_ptr_arm64e_auth_bind24_t dyld_chained_ptr_arm64e_auth_bind24() const {
-    return *reinterpret_cast<const dyld_chained_ptr_arm64e_auth_bind24_t*>(&value_);
+    dyld_chained_ptr_arm64e_auth_bind24_t result;
+    std::memcpy(&result, &value_, sizeof(result));
+    return result;
   }
 
   const dyld_chained_ptr_64_bind_t dyld_chained_ptr_64_bind() const {
-    return *reinterpret_cast<const dyld_chained_ptr_64_bind_t*>(&value_);
+    dyld_chained_ptr_64_bind_t result;
+    std::memcpy(&result, &value_, sizeof(result));
+    return result;
   }
 
   const dyld_chained_ptr_64_kernel_cache_rebase_t dyld_chained_ptr_64_kernel_cache_rebase() const {
-    return *reinterpret_cast<const dyld_chained_ptr_64_kernel_cache_rebase_t*>(&value_);
+    dyld_chained_ptr_64_kernel_cache_rebase_t result;
+    std::memcpy(&result, &value_, sizeof(result));
+    return result;
   }
 
   const dyld_chained_ptr_32_rebase_t dyld_chained_ptr_32_rebase() const {
-    return *reinterpret_cast<const dyld_chained_ptr_32_rebase_t*>(&value_);
+    dyld_chained_ptr_32_rebase_t result;
+    std::memcpy(&result, &value_, sizeof(result));
+    return result;
   }
 
   const dyld_chained_ptr_32_bind_t dyld_chained_ptr_32_bind() const {
-    return *reinterpret_cast<const dyld_chained_ptr_32_bind_t*>(&value_);
+    dyld_chained_ptr_32_bind_t result;
+    std::memcpy(&result, &value_, sizeof(result));
+    return result;
   }
 
   const dyld_chained_ptr_32_cache_rebase_t dyld_chained_ptr_32_cache_rebase() const {
-    return *reinterpret_cast<const dyld_chained_ptr_32_cache_rebase_t*>(&value_);
+    dyld_chained_ptr_32_cache_rebase_t result;
+    std::memcpy(&result, &value_, sizeof(result));
+    return result;
   }
 
   const dyld_chained_ptr_32_firmware_rebase_t dyld_chained_ptr_32_firmware_rebase() const {
-    return *reinterpret_cast<const dyld_chained_ptr_32_firmware_rebase_t*>(&value_);
+    dyld_chained_ptr_32_firmware_rebase_t result;
+    std::memcpy(&result, &value_, sizeof(result));
+    return result;
   }
 
   struct union_pointer_t {
