@@ -39,8 +39,6 @@ class LIEF_LOCAL enum_ : public nanobind::enum_<Type> {
   NB_INLINE enum_(nanobind::handle scope, const char *name, const Extra &... extra) :
     nanobind::enum_<Type>{scope, name, extra...}
   {
-    constexpr bool is_arithmetic = (std::is_same_v<nanobind::is_arithmetic, Extra> || ...);
-    constexpr bool is_flag = (std::is_same_v<nanobind::is_flag, Extra> || ...);
     def_static("from_value", [] (Underlying i) -> Type {
       nb::object out = nb::cast(static_cast<Type>(i));
       if (nb::isinstance<nb::int_>(out)) {

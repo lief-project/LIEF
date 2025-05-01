@@ -392,8 +392,10 @@ std::unique_ptr<x86::Operand> x86::Operand::Iterator::operator*() const {
   return nullptr;
 }
 
-bool x86::operator==(const x86::Operand::Iterator&, const x86::Operand::Iterator&) {
+namespace x86 {
+bool operator==(const x86::Operand::Iterator&, const x86::Operand::Iterator&) {
   return true;
+}
 }
 
 x86::Operand::Iterator::~Iterator() = default;
@@ -487,8 +489,10 @@ std::unique_ptr<aarch64::Operand> aarch64::Operand::Iterator::operator*() const 
   return nullptr;
 }
 
-bool aarch64::operator==(const aarch64::Operand::Iterator&, const aarch64::Operand::Iterator&) {
+namespace aarch64 {
+bool operator==(const aarch64::Operand::Iterator&, const aarch64::Operand::Iterator&) {
   return true;
+}
 }
 
 aarch64::Operand::Iterator::~Iterator() = default;
