@@ -32,7 +32,7 @@ namespace details {
 //                                     // 0x7FFF is a special value indicating no index.
 // } IMAGE_IMPORT_CONTROL_TRANSFER_ARM64_RELOCATION;
 // typedef IMAGE_IMPORT_CONTROL_TRANSFER_ARM64_RELOCATION UNALIGNED * PIMAGE_IMPORT_CONTROL_TRANSFER_ARM64_RELOCATION;
-struct reloc_t {
+struct arm64e_kernel_reloc_t {
   uint32_t page_relative_offset : 10;
   uint32_t indirect_call        :  1;
   uint32_t register_index       :  5;
@@ -40,7 +40,7 @@ struct reloc_t {
   uint32_t iat_index            : 15;
 };
 
-static_assert(sizeof(reloc_t) == sizeof(uint32_t));
+static_assert(sizeof(arm64e_kernel_reloc_t) == sizeof(uint32_t));
 }
 
 std::string DynamicFixupARM64Kernel::reloc_entry_t::to_string() const {
@@ -80,7 +80,7 @@ std::unique_ptr<DynamicFixupARM64Kernel>
     strm.increment_pos(*BlockSize - 8);
 
     while (*block_strm) {
-      auto value = block_strm->read<details::reloc_t>();
+      auto value = block_strm->read<details::arm64e_kernel_reloc_t>();
       if (!value) {
         return fixup;
       }
