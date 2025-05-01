@@ -2649,9 +2649,9 @@ uint64_t Binary::relocate_phdr_table_v3() {
   static constexpr size_t USER_SEGMENTS = 10;
 
   uint64_t last_off = 0;
-  for (const std::unique_ptr<Segment>& segment : segments_) {
-    if (segment != nullptr && segment->is_load()) {
-      last_off = std::max(last_off, segment->physical_size() + segment->file_offset());
+  for (const std::unique_ptr<Section>& section : sections_) {
+    if (section != nullptr) {
+      last_off = std::max(last_off, section->size() + section->file_offset());
     }
   }
   uint64_t last_off_aligned = align(last_off, static_cast<uint64_t>(get_pagesize(*this)));
