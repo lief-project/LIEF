@@ -102,6 +102,8 @@ endif()
 cmake_dependent_option(LIEF_OPT_FROZEN_EXTERNAL "Use an external provided version of Frozen" OFF
                        "_LIEF_USE_FROZEN" OFF)
 
+option(LIEF_USE_MELKOR "Build Melkor for testing" ON)
+
 # This option enables the install target in the cmake
 option(LIEF_INSTALL "Generate the install target." ON)
 
