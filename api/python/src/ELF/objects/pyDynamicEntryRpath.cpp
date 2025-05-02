@@ -33,7 +33,7 @@ void create<DynamicEntryRpath>(nb::module_& m) {
   nb::class_<DynamicEntryRpath, DynamicEntry>(m, "DynamicEntryRpath",
       R"delim(
       Class which represents a ``DT_RPATH`` entry. This attribute is
-      deprecated (cf. ``man ld``) in favour of ``DT_RUNPATH`` (See :class:`~lief.ELF.DynamicRunPath`)
+      deprecated (cf. ``man ld``) in favour of ``DT_RUNPATH`` (See :class:`~lief.ELF.DynamicEntryRunPath`)
       )delim"_doc)
 
     .def(nb::init<const std::string &>(),
