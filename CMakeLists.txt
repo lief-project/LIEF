@@ -113,19 +113,7 @@ message(STATUS "CMAKE_CXX_IMPLICIT_LINK_LIBRARIES: ${CMAKE_CXX_IMPLICIT_LINK_LIB
 message(STATUS "CMAKE_SYSTEM_PROCESSOR:            ${CMAKE_SYSTEM_PROCESSOR}")
 message(STATUS "CMAKE_MSVC_RUNTIME_LIBRARY:        ${CMAKE_MSVC_RUNTIME_LIBRARY}")
 
-if(LIEF_INSTALL)
-  if(UNIX)
-    include(GNUInstallDirs)
-    set(CMAKE_INSTALL_LIBDIR "lib")
-  else()
-    set(CMAKE_INSTALL_LIBDIR      "lib")
-    set(CMAKE_INSTALL_DATADIR     "share")
-    set(CMAKE_INSTALL_INCLUDEDIR  "include")
-    set(CMAKE_INSTALL_BINDIR      "bin")
-    set(CMAKE_INSTALL_DATAROOTDIR "share")
-    message(STATUS "Setting installation destination to: ${CMAKE_INSTALL_PREFIX}")
-  endif()
-endif()
+include(GNUInstallDirs)
 
 # LIEF Source definition
 # ======================

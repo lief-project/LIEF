@@ -114,7 +114,7 @@ endforeach()
 if (LIEF_INSTALL)
   install(
     DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
-    DESTINATION share/LIEF/examples/cpp
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/LIEF/examples/cpp
     COMPONENT examples
     FILES_MATCHING REGEX "(.*).(hpp|h|cpp)$"
   )
