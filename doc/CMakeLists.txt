@@ -48,13 +48,13 @@ else()
       DIRECTORY
       ${CMAKE_CURRENT_BINARY_DIR}/doxygen/html/
       DESTINATION
-      share/LIEF/doc/doxygen
+      ${CMAKE_INSTALL_DOCDIR}/doxygen
       COMPONENT doc)
 
     install(
       DIRECTORY
       ${CMAKE_CURRENT_BINARY_DIR}/sphinx-doc/
       DESTINATION
-      share/LIEF/doc/sphinx
+      ${CMAKE_INSTALL_DOCDIR}/sphinx
       COMPONENT doc)
 endif()

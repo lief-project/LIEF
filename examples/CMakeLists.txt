@@ -7,7 +7,7 @@ endif()
 if (LIEF_INSTALL)
   install(
     DIRECTORY cmake
-    DESTINATION share/LIEF/examples
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/LIEF/examples
     COMPONENT examples
   )
 endif()

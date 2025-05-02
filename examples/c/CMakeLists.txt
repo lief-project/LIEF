@@ -64,7 +64,7 @@ endif()
 if (LIEF_INSTALL)
   install(
     DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
-    DESTINATION share/LIEF/examples/c
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/LIEF/examples/c
     COMPONENT examples
     FILES_MATCHING REGEX "(.*).(hpp|h|c)$"
   )
