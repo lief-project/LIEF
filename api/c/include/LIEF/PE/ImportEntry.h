@@ -27,7 +27,7 @@ extern "C" {
 #endif
 
 struct Pe_ImportEntry_t {
-  bool        is_ordinal;
+  uint8_t     is_ordinal;
   const char* name;
   uint16_t    ordinal;
   uint64_t    hint_name_rva;
