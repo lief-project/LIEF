@@ -7,8 +7,8 @@ set(__add_lief_dependencies ON)
 # ----
 if(LIEF_ENABLE_JSON)
   if(NOT LIEF_OPT_NLOHMANN_JSON_EXTERNAL)
-    set(LIBJSON_VERSION 3.11.2)
-    set(LIBJSON_SHA256 SHA256=62b1d12b8c7e4afcf96827d05426ca6d9184b9eefdfac512dd533726b98ad8f7)
+    set(LIBJSON_VERSION 3.12.0)
+    set(LIBJSON_SHA256 SHA256=6a2249e5d61c2a8351abfac218e08e9a43426dddb493950d30f3b8acfbbc648d)
     set(LIBJSON_URL "${THIRD_PARTY_DIRECTORY}/json-${LIBJSON_VERSION}.zip" CACHE STRING "URL to the JSON lib repo")
     ExternalProject_Add(lief_libjson
       URL               ${LIBJSON_URL}
