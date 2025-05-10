@@ -414,6 +414,12 @@ set_target_properties(LIB_LIEF PROPERTIES
                       EXPORT_NAME LIEF
                       CLEAN_DIRECT_OUTPUT 1)
 
+if (LIEF_SO_VERSION)
+  set_target_properties(LIB_LIEF PROPERTIES
+    VERSION "${LIEF_VERSION_MAJOR}.${LIEF_VERSION_MINOR}.${LIEF_VERSION_PATCH}"
+    SOVERSION "${LIEF_VERSION_MAJOR}"
+  )
+endif()
 
 # Set a default build type if none was specified
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
