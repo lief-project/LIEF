@@ -59,7 +59,7 @@ def process_property(name: str, obj, options, signature: str,
         sig = signature_from_str(hint)
         return_annotation = sig.return_annotation
         if return_annotation == inspect.Parameter.empty:
-            logger.warn(f"Can't generate annotation for {name}")
+            logger.warning(f"Can't generate annotation for {name}")
             return_annotation = None
 
         return "()", return_annotation
@@ -102,7 +102,7 @@ def process_function(name: str, obj, options, signature: str,
             arg, ret = process_function_signature(signature, is_overloaded)
             rettypes.add(str(ret))
         except Exception as e:
-            logger.warn(f"Error with {name}: {line} ({e})")
+            logger.warning(f"Error with {name}: {line} ({e})")
 
     if len(rettypes) == 0 or arg is None:
         return signature, return_annotation
