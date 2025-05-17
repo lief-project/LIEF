@@ -951,8 +951,10 @@ result<uint64_t> Binary::get_function_address(const std::string& func_name) cons
 }
 
 result<uint64_t> Binary::get_function_address(const std::string& func_name, bool demangled) const {
-  const auto it_symbol = std::find_if(std::begin(symtab_symbols_), std::end(symtab_symbols_),
-      [&func_name, demangled] (const std::unique_ptr<Symbol>& symbol) {
+
+  const auto it_dynsym = std::find_if(
+    dynamic_symbols_.begin(), dynamic_symbols_.end(),
+    [&func_name, demangled] (const std::unique_ptr<Symbol>& symbol) {
         std::string sname;
         if (demangled) {
           sname = symbol->demangled_name();
@@ -961,15 +963,36 @@ result<uint64_t> Binary::get_function_address(const std::string& func_name, bool
         if (sname.empty()) {
           sname = symbol->name();
         }
+
         return sname == func_name &&
                symbol->type() == Symbol::TYPE::FUNC;
       });
 
-  if (it_symbol == std::end(symtab_symbols_)) {
-    return make_error_code(lief_errors::not_found);
+  if (it_dynsym != dynamic_symbols_.end()) {
+    return (*it_dynsym)->value();
   }
 
-  return (*it_symbol)->value();
+  const auto it_symtab = std::find_if(
+    symtab_symbols_.begin(), symtab_symbols_.end(),
+    [&func_name, demangled] (const std::unique_ptr<Symbol>& symbol) {
+        std::string sname;
+        if (demangled) {
+          sname = symbol->demangled_name();
+        }
+
+        if (sname.empty()) {
+          sname = symbol->name();
+        }
+
+        return sname == func_name &&
+               symbol->type() == Symbol::TYPE::FUNC;
+      });
+
+  if (it_symtab != symtab_symbols_.end()) {
+    return (*it_symtab)->value();
+  }
+  return make_error_code(lief_errors::not_found);
+
 }
 
 Section* Binary::add(const Section& section, bool loaded, SEC_INSERT_POS pos) {

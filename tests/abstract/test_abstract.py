@@ -101,6 +101,8 @@ def test_function():
     assert binary.get_function_address("foo") == lief.lief_errors.not_found
     assert binary.get_function_address("add") == 0x6a0
 
+    binary: lief.ELF.Binary = lief.parse(get_sample('ELF/libip4tc.so.2.0.0'))
+    assert binary.get_function_address("iptc_commit") == 0x3070
 
 def test_entropy():
     """
