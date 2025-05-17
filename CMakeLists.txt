@@ -450,11 +450,6 @@ if(LIEF_TESTS)
   add_subdirectory(tests)
 endif()
 
-if(LIEF_DOC)
-  add_subdirectory(doc)
-endif()
-
-
 # Post-build operations
 # ======================
 if(BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Release")

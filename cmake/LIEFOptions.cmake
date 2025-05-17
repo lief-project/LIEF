@@ -5,7 +5,6 @@ set(__add_lief_options ON)
 include(CMakeDependentOption)
 
 option(LIEF_TESTS                      "Enable tests"                               OFF)
-option(LIEF_DOC                        "Enable documentation"                       OFF)
 option(LIEF_PYTHON_API                 "Enable Python Bindings"                     OFF)
 option(LIEF_C_API                      "C API"                                      ON)
 option(LIEF_EXAMPLES                   "Build LIEF C++ examples"                    ON)
