@@ -226,11 +226,9 @@ ok_error_t Builder::build_load_commands() {
   for (size_t i = 0; i < binary_->commands_.size(); ++i) {
     const std::unique_ptr<LoadCommand>& command = binary_->commands_[i];
     span<const uint8_t> data = command->data();
-    //uint64_t offset = command->command_offset();
-    uint64_t offset = start_offset;
 
     LIEF_DEBUG("Writing command #{:02d} {:30} offset=0x{:08x} size=0x{:08x}",
-               i, to_string(command->command()), offset, data.size());
+               i, to_string(command->command()), raw_.tellp(), data.size());
 
     raw_.write(data);
   }
