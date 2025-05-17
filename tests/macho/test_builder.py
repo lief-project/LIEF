@@ -649,3 +649,14 @@ def test_encryption_info(tmp_path: Path):
     assert new.encryption_info.crypt_id == 0
     assert new.encryption_info.crypt_size == 0
     assert new.encryption_info.crypt_offset == 0
+
+
+def test_issue_1206(tmp_path: Path):
+    # c.f. https://github.com/lief-project/LIEF/issues/1173
+    macho = lief.MachO.parse(get_sample("MachO/issue_1206.bin")).at(0)
+
+    output = f"{tmp_path.as_posix()}/new.macho"
+    macho.write(output)
+
+    new = lief.MachO.parse(output).at(0)
+    assert lief.MachO.check_layout(new)[0]

@@ -1126,11 +1126,12 @@ ok_error_t Builder::build(EncryptionInfo& info) {
   raw_cmd.cryptsize = info.crypt_size();
   raw_cmd.cryptid   = info.crypt_id();
 
-  info.original_data_.clear();
+  std::fill(info.original_data_.begin(), info.original_data_.end(), 0);
 
   std::copy(reinterpret_cast<uint8_t*>(&raw_cmd),
             reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
-            std::back_inserter(info.original_data_));
+            reinterpret_cast<uint8_t*>(info.original_data_.data()));
+
   return ok();
 }
 
