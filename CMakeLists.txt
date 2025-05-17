@@ -408,8 +408,6 @@ if(LIEF_PROFILING)
 endif()
 
 set_target_properties(LIB_LIEF PROPERTIES
-                      VERSION "${LIEF_VERSION_MAJOR}.${LIEF_VERSION_MINOR}.${LIEF_VERSION_PATCH}"
-                      SOVERSION "${LIEF_VERSION_MAJOR}"
                       OUTPUT_NAME LIEF
                       EXPORT_NAME LIEF
                       CLEAN_DIRECT_OUTPUT 1)
