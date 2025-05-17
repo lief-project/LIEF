@@ -104,7 +104,7 @@ class BuildConfig(BaseModel):
 
         return out
 
-class ThridParty(BaseModel):
+class ThirdParty(BaseModel):
     spdlog: Optional[EnvString] = None
     nanobind: Optional[EnvString] = None
 
@@ -182,7 +182,7 @@ class Features(BaseModel):
 class ConfigT(BaseModel):
     build: BuildConfig = BuildConfig()
     formats: Formats = Formats()
-    third_party: ThridParty = Field(ThridParty(), alias="third-party")
+    third_party: ThirdParty = Field(ThirdParty(), alias="third-party")
     features: Features = Features()
     logging: Logging = Logging()
     cross_compilation: CrossCompilation = Field(CrossCompilation(),
