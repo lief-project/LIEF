@@ -74,7 +74,7 @@ bool Builder::should_swap() const {
 #if  defined(__ORDER_LITTLE_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
     case LIEF::Header::ENDIANNESS::BIG:
 #elif defined(__ORDER_BIG_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
-    case LIEF::Header::LITTLE:
+    case LIEF::Header::ENDIANNESS::LITTLE:
 #endif
       return true;
 #endif // __BYTE_ORDER__
