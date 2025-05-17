@@ -228,7 +228,8 @@ ok_error_t Builder::build_load_commands() {
     span<const uint8_t> data = command->data();
 
     LIEF_DEBUG("Writing command #{:02d} {:30} offset=0x{:08x} size=0x{:08x}",
-               i, to_string(command->command()), raw_.tellp(), data.size());
+               i, to_string(command->command()), (uint64_t)raw_.tellp(),
+               data.size());
 
     raw_.write(data);
   }
