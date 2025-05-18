@@ -18,6 +18,7 @@
 
 #include <cstdint>
 #include <ostream>
+#include <vector>
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
@@ -26,6 +27,13 @@ namespace LIEF {
 namespace DEX {
 namespace details {
 struct code_item;
+struct trycatch_item {
+  uint32_t start_addr;
+  uint32_t insn_count;
+  // holds type_idx, handler_offset
+  std::vector<std::pair<uint32_t, uint32_t>> handlers;
+  uint32_t catch_all_addr;
+};
 }
 
 class Parser;
@@ -44,6 +52,8 @@ class LIEF_API CodeInfo : public Object {
 
   uint16_t nb_registers() const;
 
+  const std::vector<details::trycatch_item>& exceptions() const;
+
   ~CodeInfo() override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const CodeInfo& cinfo);
@@ -52,6 +62,7 @@ class LIEF_API CodeInfo : public Object {
   uint16_t nb_registers_ = 0;
   uint16_t args_input_sizes_ = 0;
   uint16_t output_sizes_ = 0;
+  std::vector<details::trycatch_item> trycatch_items_;
 
 };
 
