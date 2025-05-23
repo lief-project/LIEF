@@ -29,7 +29,7 @@ result<FileStream> FileStream::from_file(const std::string& file) {
   ifs.seekg(0, std::ios::end);
   const auto size = static_cast<uint64_t>(ifs.tellg());
   ifs.seekg(0, std::ios::beg);
-  return FileStream{std::move(ifs), size};
+  return result<FileStream>(tl::in_place, std::move(ifs), size);
 }
 
 
