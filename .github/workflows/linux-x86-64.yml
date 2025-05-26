@@ -239,7 +239,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     if: ${{ always() }}
-    needs: [linux-sdk, pywheels]
+    needs: [pywheels]
     steps:
       - uses: actions/checkout@v4
         with:

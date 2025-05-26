@@ -186,7 +186,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     if: ${{ always() }}
-    needs: [osx-sdk, wheels]
+    needs: [wheels]
     steps:
       - uses: actions/checkout@v4
         with:

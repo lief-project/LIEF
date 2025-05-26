@@ -227,7 +227,8 @@ jobs:
   deploy:
     if: ${{ always() }}
     runs-on: ubuntu-latest
-    needs: [build-sdk, wheels]
+    #needs: [build-sdk, wheels]
+    needs: [wheels]
     steps:
       - uses: actions/checkout@v4
         with:
