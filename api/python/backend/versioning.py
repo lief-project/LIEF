@@ -25,7 +25,7 @@ class Versioning:
     IS_TAGGED_CMD   = '{git} tag --list --points-at=HEAD'
     FMT_DEV         = '{tag}.dev0'
     FMT_TAGGED      = '{tag}'
-    CMAKE_VERSION_R = r"set\(LIEF_VERSION_(MAJOR|MINOR|PATCH)\s\"(\d+)\"\)"
+    CMAKE_VERSION_R = r"set\(LIEF_VERSION_(MAJOR|MINOR|PATCH)\s(\d+)\)"
 
     def __init__(self):
         self._git = which("git")
