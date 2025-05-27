@@ -49,6 +49,7 @@
 
   * LIEF extended can now process DWARF debug info in PE binaries
   * Add support for creating DWARF: :ref:`DWARF Editor <extended-dwarf-editor>`
+    (require extended version ``>= 0.17.0.2623``)
 
 :PDB:
 
