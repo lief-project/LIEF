@@ -182,6 +182,119 @@ instantiated debug info:
         dbg.variable_by_name("std::out_of_range::out_of_range(char const*)");
         dbg.variable_by_addr(0x137a70);
 
+.. _extended-dwarf-editor:
+
+DWARF Editor
+************
+
+.. admonition:: Editing Existing DWARF
+  :class: warning
+
+  Currently, LIEF **does not** support modifying an **existing** DWARF file
+
+LIEF provides a comprehensive high-level API to create DWARF files programmatically.
+This works by using the |lief-dwarf-editor| interface that can be instantiated using
+|lief-dwarf-editor-from_binary|:
+
+.. tabs::
+
+   .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        import lief
+
+        pe = lief.PE.parse("demo.exe")
+
+        editor: lief.dwarf.Editor = lief.dwarf.Editor.from_binary(pe)
+
+   .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        std::unique_ptr<LIEF::PE::Binary> pe = LIEF::PE::Parser::parse("demo.exe");
+
+        std::unique_ptr<LIEF::dwarf::Editor> editor =
+          LIEF::dwarf::Editor::from_binary(*pe);
+
+
+   .. tab:: :fa:`brands fa-rust` Rust
+
+      .. code-block:: rust
+
+        let mut bin = lief::pe::Binary::parse(&path).unwrap();
+        let editor = lief::dwarf::Editor::from_binary(&mut bin);
+
+
+Given this |lief-dwarf-editor|, one can create one or several |lief-dwarf-editor-CompilationUnit|
+that own the different |lief-dwarf-editor-Function|, |lief-dwarf-editor-Variable|, |lief-dwarf-editor-Type|
+
+.. tabs::
+
+   .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        unit: lief.dwarf.editor.CompilationUnit = editor.create_compilation_unit()
+        unit.set_producer("LIEF")
+
+        func: lief.dwarf.editor.Function = unit.create_function("hello")
+        func.set_address(0x123)
+        func.set_return_type(
+            unit.create_structure("my_struct_t").pointer_to()
+        )
+
+        var: lief.dwarf.editor.Variable = func.create_stack_variable("local_var")
+        var.set_stack_offset(8)
+
+        editor.write("/tmp/out.debug")
+
+   .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        std::unique_ptr<LIEF::dwarf::editor::CompilationUnit>
+          unit = editor->create_compilation_unit();
+        unit->set_producer("LIEF");
+
+        std::unique_ptr<LIEF::dwarf::editor::Function>
+          func = unit->create_function("hello");
+        func->set_address(0x123);
+
+        func->set_return_type(
+          *unit->create_structure("my_struct_t")->pointer_to()
+        );
+
+        std::unique_ptr<LIEF::dwarf::editor::Variable> var =
+          func->create_stack_variable("local_var");
+
+        var->set_stack_offset(8);
+        editor->write("/tmp/out.debug");
+
+   .. tab:: :fa:`brands fa-rust` Rust
+
+      .. code-block:: rust
+
+        let mut unit = editor.create_compile_unit().unwrap();
+        unit.set_producer("LIEF");
+
+        let mut func = unit.create_function("hello").unwrap();
+        func.set_address(0x123);
+        func.set_return_type(
+            &unit.create_structure("my_struct_t").pointer_to()
+        );
+
+        let mut var = func.create_stack_variable("local_var");
+        var.set_stack_offset(8);
+
+        editor.write("/tmp/out.debug");
+
+.. admonition:: BinaryNinja & Ghidra
+  :class: note
+
+  This feature is provided as a plugin for: :ref:`BinaryNinja <plugins-binaryninja-dwarf>`
+  and :ref:`Ghidra <plugins-binaryninja>`
+
 ----
 
 API

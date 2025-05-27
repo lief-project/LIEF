@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_UTILS_HEADER
 #define LIEF_UTILS_HEADER
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -82,6 +83,22 @@ constexpr size_t operator ""_GB(unsigned long long gbs)
     return 1024LLU * 1024LLU * 1024LLU * gbs;
 }
 
+struct lief_version_t {
+  uint64_t major = 0;
+  uint64_t minor = 0;
+  uint64_t patch = 0;
+  uint64_t id    = 0;
+
+  std::string to_string() const;
+
+  friend LIEF_API
+    std::ostream& operator<<(std::ostream& os, const lief_version_t& version)
+  {
+    os << version.to_string();
+    return os;
+  }
+};
+
 /// Convert a UTF-16 string to a UTF-8 one
 LIEF_API std::string u16tou8(const std::u16string& string, bool remove_null_char = false);
 
@@ -93,6 +110,9 @@ LIEF_API bool is_extended();
 
 /// Details about the extended version
 LIEF_API std::string extended_version_info();
+
+/// Return the extended version
+LIEF_API lief_version_t extended_version();
 
 /// Demangle the given input.
 ///

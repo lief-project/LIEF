@@ -257,7 +257,7 @@ impl FromFFI<ffi::asm_Instruction> for Instructions {
                };
                return Instructions::EBPF(ebpf::Instruction::from_ffi(raw));
            }
-           return Instructions::Generic(Generic::from_ffi(ptr));
+           Instructions::Generic(Generic::from_ffi(ptr))
         }
     }
 }

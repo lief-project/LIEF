@@ -33,6 +33,10 @@ class Substitutions(SphinxTransform):
                 text = self.config.lief_llvm_version
             elif refname == 'lief-discord':
                 text = self.config.lief_discord
+            elif refname == 'lief-plugin-url':
+                text = f"{self.config.lief_plugin_url}/index.html"
+            elif refname == 'lief-sdk-url':
+                text = f"{self.config.lief_sdk_url}/index.html"
 
             if text is None:
                 continue
@@ -79,9 +83,15 @@ def setup(app: Sphinx):
     app.config.lief_rust_doc_base_url = "https://lief.re/doc/stable/rust"
     app.config.lief_rust_doc = f"{app.config.lief_rust_doc_base_url}/lief"
 
-    app.config.lief_rust_doc_nightly_base_url = "https://lief-rs.s3.fr-par.scw.cloud/doc/latest"
+    app.config.lief_rust_s3_url_prefix = "https://lief-rs.s3.fr-par.scw.cloud"
+    app.config.lief_s3_url_prefix = "https://lief.s3.fr-par.scw.cloud"
+
+    app.config.lief_rust_doc_nightly_base_url = f"{app.config.lief_rust_s3_url_prefix}/doc/latest"
     app.config.lief_rust_doc_nightly = f"{app.config.lief_rust_doc_nightly_base_url}/lief/index.html"
 
     app.config.lief_rust_doc_check = get_rust_doc_check()
+
+    app.config.lief_plugin_url = f"{app.config.lief_s3_url_prefix}/latest/plugins"
+    app.config.lief_sdk_url = f"{app.config.lief_s3_url_prefix}/latest/sdk"
 
     app.add_transform(Substitutions)

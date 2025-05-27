@@ -28,6 +28,9 @@ name = "list_macho_encryption"
 name = "dwarf_inspect"
 
 [[bin]]
+name = "dwarf_editor"
+
+[[bin]]
 name = "pdb_inspect"
 
 [[bin]]

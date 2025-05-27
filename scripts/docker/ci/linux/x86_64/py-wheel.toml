@@ -5,7 +5,7 @@ ninja            = true
 parallel-jobs    = 0
 cxx-compiler     = "clang++"
 c-compiler       = "clang"
-lief-install-dir = "{ci_project_dir}/lief-static-install/"
+lief-install-dir = "{ci_project_dir}/lief-install/x86_64/static"
 extra-cmake-opt  = [
   "--toolchain /cmake/linux/linux-glibc28.cmake",
   "-DPython_VERSION={python_version}",

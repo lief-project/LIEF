@@ -84,7 +84,7 @@ impl FromFFI<ffi::asm_x86_Operand> for Operands {
                 };
                 return Operands::PCRelative(PCRelative::from_ffi(raw));
             }
-            return Operands::Unknown(Unknown::from_ffi(ptr));
+            Operands::Unknown(Unknown::from_ffi(ptr))
         }
     }
 }

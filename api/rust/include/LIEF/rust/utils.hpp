@@ -16,6 +16,14 @@
 #include "LIEF/utils.hpp"
 #include "LIEF/rust/error.hpp"
 
+class LIEFVersion {
+  public:
+  uint64_t major = 0;
+  uint64_t minor = 0;
+  uint64_t patch = 0;
+  uint64_t id = 0;
+};
+
 inline bool is_extended() {
   return LIEF::is_extended();
 }
@@ -26,6 +34,11 @@ inline std::string demangle(std::string mangled, uint32_t& err) {
 
 inline std::string extended_version_info() {
   return LIEF::extended_version_info();
+}
+
+inline LIEFVersion extended_version() {
+  auto version = LIEF::extended_version();
+  return {version.major, version.minor, version.patch, version.id};
 }
 
 inline std::string dump(const uint8_t* buffer, size_t size) {

@@ -19,6 +19,18 @@
 #include "LIEF/DWARF/Type.hpp"
 #include "LIEF/DWARF/Scope.hpp"
 #include "LIEF/DWARF/Parameter.hpp"
+#include "LIEF/DWARF/Editor.hpp"
+#include "LIEF/DWARF/editor/CompilationUnit.hpp"
+#include "LIEF/DWARF/editor/Variable.hpp"
+#include "LIEF/DWARF/editor/Function.hpp"
+#include "LIEF/DWARF/editor/Type.hpp"
+#include "LIEF/DWARF/editor/PointerType.hpp"
+#include "LIEF/DWARF/editor/EnumType.hpp"
+#include "LIEF/DWARF/editor/BaseType.hpp"
+#include "LIEF/DWARF/editor/ArrayType.hpp"
+#include "LIEF/DWARF/editor/FunctionType.hpp"
+#include "LIEF/DWARF/editor/TypeDef.hpp"
+#include "LIEF/DWARF/editor/StructType.hpp"
 
 #include "LIEF/DWARF/types/ClassLike.hpp"
 #include "LIEF/DWARF/types/Pointer.hpp"
@@ -70,10 +82,24 @@ class Type {};
 class TypeIt {};
 
 class Scope {};
+class Editor {};
 }
 
 namespace types::details {
 class Member {};
+}
+
+namespace editor::details {
+class CompilationUnit {};
+class Function {};
+class Variable {};
+class Type {};
+class EnumValue {};
+class FunctionTyParameter {};
+class FunctionParameter {};
+class FunctionLexicalBlock {};
+class FunctionLabel {};
+class StructMember {};
 }
 
 // ----------------------------------------------------------------------------
@@ -764,5 +790,303 @@ const Type* Volatile::underlying_type() const {
 } // namespace types
 
 
+// ----------------------------------------------------------------------------
+// DWARF/Editor.hpp
+// ----------------------------------------------------------------------------
+Editor::Editor(std::unique_ptr<details::Editor> impl) :
+  impl_(std::move(impl))
+{}
 
+Editor::~Editor()= default;
+
+std::unique_ptr<Editor> Editor::from_binary(LIEF::Binary& /*bin*/) {
+  logging::needs_lief_extended();
+  return nullptr;
+}
+
+
+std::unique_ptr<editor::CompilationUnit> Editor::create_compilation_unit() {
+  return nullptr;
+}
+
+void Editor::write(const std::string& /*output*/) {
+  return;
+}
+
+namespace editor {
+// ----------------------------------------------------------------------------
+// DWARF/editor/CompilationUnit.hpp
+// ----------------------------------------------------------------------------
+CompilationUnit::CompilationUnit(std::unique_ptr<details::CompilationUnit> impl) :
+  impl_(std::move(impl))
+{}
+
+
+CompilationUnit& CompilationUnit::set_producer(const std::string&) {
+  return *this;
+}
+
+std::unique_ptr<Function> CompilationUnit::create_function(const std::string&/*name*/) {
+  return nullptr;
+}
+
+std::unique_ptr<Variable> CompilationUnit::create_variable(const std::string&/*name*/) {
+  return nullptr;
+}
+
+std::unique_ptr<Type> CompilationUnit::create_generic_type(const std::string& /*name*/) {
+  return nullptr;
+}
+
+std::unique_ptr<EnumType> CompilationUnit::create_enum(const std::string&) {
+  return nullptr;
+}
+
+std::unique_ptr<TypeDef>
+  CompilationUnit::create_typedef(const std::string&, const Type&)
+{
+  return nullptr;
+}
+
+std::unique_ptr<StructType> CompilationUnit::create_structure(
+  const std::string&, StructType::TYPE)
+{
+  return nullptr;
+}
+
+std::unique_ptr<BaseType>
+  CompilationUnit::create_base_type(const std::string&, size_t, BaseType::ENCODING)
+{
+  return nullptr;
+}
+
+std::unique_ptr<FunctionType>
+  CompilationUnit::create_function_type(const std::string&)
+{
+  return nullptr;
+}
+
+std::unique_ptr<Type> CompilationUnit::create_void_type() {
+  return nullptr;
+}
+
+std::unique_ptr<ArrayType>
+  CompilationUnit::create_array(const std::string&, const Type&, size_t)
+{
+  return nullptr;
+}
+
+CompilationUnit::~CompilationUnit() = default;
+
+// ----------------------------------------------------------------------------
+// DWARF/editor/Variable.hpp
+// ----------------------------------------------------------------------------
+Variable::Variable(std::unique_ptr<details::Variable> impl) :
+  impl_(std::move(impl))
+{}
+
+Variable& Variable::set_external() {
+  return *this;
+}
+
+Variable& Variable::set_addr(uint64_t /*address*/) {
+  return *this;
+}
+
+Variable& Variable::set_stack_offset(uint64_t /*address*/) {
+  return *this;
+}
+
+Variable& Variable::set_type(const Type&) {
+  return *this;
+}
+
+Variable::~Variable() = default;
+
+// ----------------------------------------------------------------------------
+// DWARF/editor/Function.hpp
+// ----------------------------------------------------------------------------
+Function::Function(std::unique_ptr<details::Function> impl) :
+  impl_(std::move(impl))
+{}
+
+Function& Function::set_address(uint64_t /*addr*/) {
+  return *this;
+}
+
+Function& Function::set_low_high(uint64_t /*low*/, uint64_t /*high*/) {
+  return *this;
+}
+
+Function& Function::set_ranges(const std::vector<range_t>& /*ranges*/) {
+  return *this;
+}
+
+Function& Function::set_external() {
+  return *this;
+}
+
+
+Function& Function::set_return_type(const Type&) {
+  return *this;
+}
+
+std::unique_ptr<Function::Parameter>
+  Function::add_parameter(const std::string&, const Type&)
+{
+  return nullptr;
+}
+
+std::unique_ptr<Variable> Function::create_stack_variable(const std::string&) {
+  return nullptr;
+}
+
+std::unique_ptr<Function::LexicalBlock> Function::add_lexical_block(uint64_t, uint64_t) {
+  return nullptr;
+}
+
+std::unique_ptr<Function::Label> Function::add_label(uint64_t, const std::string&) {
+  return nullptr;
+}
+
+Function::Parameter::Parameter(std::unique_ptr<details::FunctionParameter> impl) :
+  impl_(std::move(impl))
+{}
+
+Function::Parameter::~Parameter() = default;
+
+
+Function::LexicalBlock::LexicalBlock(std::unique_ptr<details::FunctionLexicalBlock> impl) :
+  impl_(std::move(impl))
+{}
+
+Function::LexicalBlock::~LexicalBlock() = default;
+
+Function::Label::Label(std::unique_ptr<details::FunctionLabel> impl) :
+  impl_(std::move(impl))
+{}
+
+Function::Label::~Label() = default;
+
+Function::~Function() = default;
+
+// ----------------------------------------------------------------------------
+// DWARF/editor/Type.hpp
+// ----------------------------------------------------------------------------
+
+Type::Type(std::unique_ptr<details::Type> impl) :
+  impl_(std::move(impl))
+{}
+
+std::unique_ptr<Type> Type::create(std::unique_ptr<details::Type> /*impl*/) {
+  return nullptr;
+}
+
+
+std::unique_ptr<PointerType> Type::pointer_to() const {
+  return nullptr;
+}
+
+Type::~Type() = default;
+
+// ----------------------------------------------------------------------------
+// DWARF/editor/PointerType.hpp
+// ----------------------------------------------------------------------------
+bool PointerType::classof(const Type */*type*/) {
+  return false;
+}
+
+// ----------------------------------------------------------------------------
+// DWARF/editor/EnumType.hpp
+// ----------------------------------------------------------------------------
+bool EnumType::classof(const Type */*type*/) {
+  return false;
+}
+
+EnumType& EnumType::set_size(uint64_t /*size*/) {
+  return *this;
+}
+
+std::unique_ptr<EnumType::Value>
+  EnumType::add_value(const std::string& /*name*/, int64_t /*value*/)
+{
+  return nullptr;
+}
+
+EnumType::Value::Value(std::unique_ptr<details::EnumValue> impl) :
+  impl_(std::move(impl))
+{}
+
+EnumType::Value::~Value() = default;
+
+// ----------------------------------------------------------------------------
+// DWARF/editor/BaseType.hpp
+// ----------------------------------------------------------------------------
+bool BaseType::classof(const Type */*type*/) {
+  return false;
+}
+
+// ----------------------------------------------------------------------------
+// DWARF/editor/ArrayType.hpp
+// ----------------------------------------------------------------------------
+bool ArrayType::classof(const Type */*type*/) {
+  return false;
+}
+
+// ----------------------------------------------------------------------------
+// DWARF/editor/FunctionType.hpp
+// ----------------------------------------------------------------------------
+bool FunctionType::classof(const Type */*type*/) {
+  return false;
+}
+
+FunctionType& FunctionType::set_return_type(const Type& /*type*/) {
+  return *this;
+}
+
+std::unique_ptr<FunctionType::Parameter>
+  FunctionType::add_parameter(const Type& /*type*/)
+{
+  return nullptr;
+}
+
+FunctionType::Parameter::Parameter(std::unique_ptr<details::FunctionTyParameter> impl) :
+  impl_(std::move(impl))
+{}
+
+FunctionType::Parameter::~Parameter() = default;
+
+// ----------------------------------------------------------------------------
+// DWARF/editor/TypeDef.hpp
+// ----------------------------------------------------------------------------
+bool TypeDef::classof(const Type */*type*/) {
+  return false;
+}
+
+// ----------------------------------------------------------------------------
+// DWARF/editor/StructType.hpp
+// ----------------------------------------------------------------------------
+bool StructType::classof(const Type */*type*/) {
+  return false;
+}
+
+StructType& StructType::set_size(uint64_t /*size*/) {
+  return *this;
+}
+
+/// Add a member to the current struct-like
+std::unique_ptr<StructType::Member>
+  StructType::add_member(const std::string& /*name*/, const Type& /*type*/,
+                         int64_t /*offset*/)
+{
+  return nullptr;
+}
+
+StructType::Member::Member(std::unique_ptr<details::StructMember> impl) :
+  impl_(std::move(impl))
+{}
+
+StructType::Member::~Member() = default;
+
+}
 }

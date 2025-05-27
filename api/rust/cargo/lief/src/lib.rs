@@ -111,6 +111,13 @@ pub use range::Range;
 #[doc(inline)]
 pub use debug_location::DebugLocation;
 
+pub struct Version {
+    pub major: u64,
+    pub minor: u64,
+    pub patch: u64,
+    pub id: u64,
+}
+
 /// Whether it is an extended version of LIEF
 pub fn is_extended() -> bool {
     lief_ffi::is_extended()
@@ -119,6 +126,15 @@ pub fn is_extended() -> bool {
 /// Return details about the extended version
 pub fn extended_version_info() -> String {
     lief_ffi::extended_version_info().to_string()
+}
+
+/// Return the extended version
+pub fn extended_version() -> Version {
+    let ffi_version = lief_ffi::extended_version();
+    Version {
+        major: ffi_version.major, minor: ffi_version.minor,
+        patch: ffi_version.patch, id: ffi_version.id
+    }
 }
 
 /// Try to demangle the given input.

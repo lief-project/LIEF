@@ -1,7 +1,11 @@
 import enum
 from typing import Iterator, Optional, Union, overload
 
-from . import parameters as parameters, types as types
+from . import (
+    editor as editor,
+    parameters as parameters,
+    types as types
+)
 import lief
 import lief.assembly
 
@@ -291,3 +295,11 @@ class DebugInfo(lief.DebugInfo):
 
     @property
     def compilation_units(self) -> Iterator[Optional[CompilationUnit]]: ...
+
+class Editor:
+    @staticmethod
+    def from_binary(bin: lief.Binary) -> Optional[Editor]: ...
+
+    def create_compilation_unit(self) -> Optional[editor.CompilationUnit]: ...
+
+    def write(self, output: str) -> None: ...

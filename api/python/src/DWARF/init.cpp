@@ -3,6 +3,7 @@
 
 #include "LIEF/DWARF/DebugInfo.hpp"
 #include "LIEF/DWARF/Variable.hpp"
+#include "LIEF/DWARF/Editor.hpp"
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>
@@ -24,5 +25,6 @@ void init(nb::module_& m) {
   create<LIEF::dwarf::Parameter>(dwarf);
   create<LIEF::dwarf::CompilationUnit>(dwarf);
   create<LIEF::dwarf::DebugInfo>(dwarf);
+  create<LIEF::dwarf::Editor>(dwarf);
 }
 }

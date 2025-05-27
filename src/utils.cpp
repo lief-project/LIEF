@@ -155,6 +155,13 @@ bool is_extended() {
   return lief_extended;
 }
 
+std::string lief_version_t::to_string() const {
+  if (id == 0) {
+    return fmt::format("{}.{}.{}", major, minor, patch);
+  }
+  return fmt::format("{}.{}.{}.{}", major, minor, patch, id);
+}
+
 #if !defined(LIEF_EXTENDED)
 result<std::string> demangle(const std::string&/*mangled*/) {
   logging::needs_lief_extended();
@@ -168,5 +175,10 @@ std::string extended_version_info() {
 }
 #endif
 
+#if !defined(LIEF_EXTENDED)
+lief_version_t extended_version() {
+  return {};
+}
+#endif
 
 } // namespace LIEF

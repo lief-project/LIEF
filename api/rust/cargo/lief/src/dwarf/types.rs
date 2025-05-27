@@ -118,7 +118,7 @@ pub use thrown::Thrown;
 #[doc(inline)]
 pub use volatile::Volatile;
 
-/// This class represents a DWARF Type which includes:
+/// This enum represents a DWARF Type which includes:
 ///
 /// - `DW_TAG_array_type`
 /// - `DW_TAG_atomic_type`

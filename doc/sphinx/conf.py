@@ -11,6 +11,8 @@ from sphinx_lief_doc.inheritance_diagram import LIEFInheritanceDiagram
 from sphinx_lief_doc.python_typing import setup as setup_python_typing
 from sphinx_lief_doc.config import init_config as lief_init_config
 from sphinx_lief_doc.lief_api import setup as setup_lief_api
+from sphinx_lief_doc.plugin_package import setup as setup_plugin_packages
+from sphinx_lief_doc.sdk_package import setup as setup_sdk_packages
 
 from typing import TYPE_CHECKING
 
@@ -61,9 +63,7 @@ autodoc_default_options = {
 #    "api",
 #    "tutorials/*.rst",
 #    "extended",
-#    "formats/android",
-#    "formats/elf",
-#    "formats/macho",
+#    "formats",
 #    "changelog.rst",
 #    "references.rst",
 #    "intro.rst",
@@ -81,6 +81,8 @@ def setup(app: Sphinx):
     setup_python_typing(app)
     setup_roles(app)
     setup_lief_api(app)
+    setup_plugin_packages(app)
+    setup_sdk_packages(app)
 
     app.add_directive('lief-inheritance', LIEFInheritanceDiagram)
     app.set_translator('html', HTML5Translator)

@@ -106,6 +106,43 @@
     :cpp:func:`LIEF::dwarf::Function::instructions`
     :py:attr:`lief.dwarf.Function.instructions`
 
+.. |lief-dwarf-editor| lief-api:: lief.dwarf.Editor
+
+    :rust:struct:`lief::dwarf::Editor`
+    :py:class:`lief.dwarf.Editor`
+    :cpp:class:`LIEF::dwarf::Editor`
+
+.. |lief-dwarf-editor-from_binary| lief-api:: lief.dwarf.Editor.from_binary()
+
+    :rust:method:`lief::dwarf::Editor::from_binary [struct]`
+    :cpp:func:`LIEF::dwarf::Editor::from_binary`
+    :py:func:`lief.dwarf.Editor.from_binary`
+
+.. |lief-dwarf-editor-CompilationUnit| lief-api:: lief.dwarf.editor.CompilationUnit
+
+    :rust:struct:`lief::dwarf::editor::CompilationUnit`
+    :py:class:`lief.dwarf.editor.CompilationUnit`
+    :cpp:class:`LIEF::dwarf::editor::CompilationUnit`
+
+.. |lief-dwarf-editor-Function| lief-api:: lief.dwarf.editor.Function
+
+    :rust:struct:`lief::dwarf::editor::Function`
+    :py:class:`lief.dwarf.editor.Function`
+    :cpp:class:`LIEF::dwarf::editor::Function`
+
+.. |lief-dwarf-editor-Variable| lief-api:: lief.dwarf.editor.Variable
+
+    :rust:struct:`lief::dwarf::editor::Variable`
+    :py:class:`lief.dwarf.editor.Variable`
+    :cpp:class:`LIEF::dwarf::editor::Variable`
+
+.. |lief-dwarf-editor-Type| lief-api:: lief.dwarf.editor.Type
+
+    :rust:enum:`lief::dwarf::editor::Type`
+    :py:class:`lief.dwarf.editor.Type`
+    :cpp:class:`LIEF::dwarf::editor::Type`
+
+
 .. PDB =========================================================================
 
 .. |lief-pdb-binary-debug-info| lief-api:: lief.Binary.debug_info()

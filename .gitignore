@@ -1,7 +1,11 @@
 build/
 *.so
 *.whl
+*.dll
+*.dylib
+*.lib
 lief.egg-info/
 dist/
 api/rust/cargo/target/*
 api/rust/examples/target/*
+plugins/ghidra/bin/

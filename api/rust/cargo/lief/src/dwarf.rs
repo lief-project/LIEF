@@ -32,6 +32,7 @@ pub mod variable;
 pub mod types;
 pub mod scope;
 pub mod parameters;
+pub mod editor;
 
 use crate::common::into_optional;
 
@@ -52,6 +53,9 @@ pub use scope::Scope;
 
 #[doc(inline)]
 pub use types::Type;
+
+#[doc(inline)]
+pub use editor::Editor;
 
 #[doc(inline)]
 pub use parameters::{Parameter, Parameters};

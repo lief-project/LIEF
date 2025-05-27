@@ -73,6 +73,11 @@ modify and abstract ELF, PE and MachO formats.
   * [**Assembler**](https://lief.re/doc/latest/extended/assembler/index.html): AArch64, x86/x86-64
 
 
+**Plugins**:
+
+  * [**Ghidra**](https://lief.re/doc/latest/plugins/ghidra/index.html)
+  * [**BinaryNinja**](https://lief.re/doc/latest/plugins/binaryninja/index.html)
+
 # Content
 
 - [About](#about)

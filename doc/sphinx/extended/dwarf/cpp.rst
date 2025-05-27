@@ -279,3 +279,91 @@ Volatile
 ********
 
 .. doxygenclass:: LIEF::dwarf::types::Volatile
+
+
+----------
+
+Editor
+******
+
+.. doxygenclass:: LIEF::dwarf::Editor
+
+----------
+
+Editor - CompilationUnit
+************************
+
+.. doxygenclass:: LIEF::dwarf::editor::CompilationUnit
+
+----------
+
+Editor - Function
+*****************
+
+.. doxygenclass:: LIEF::dwarf::editor::Function
+
+----------
+
+Editor - Variable
+*****************
+
+.. doxygenclass:: LIEF::dwarf::editor::Variable
+
+
+----------
+
+Editor - Type
+**************
+
+.. doxygenclass:: LIEF::dwarf::editor::Type
+
+----------
+
+Editor - PointerType
+********************
+
+.. doxygenclass:: LIEF::dwarf::editor::PointerType
+
+----------
+
+Editor - EnumType
+*****************
+
+.. doxygenclass:: LIEF::dwarf::editor::EnumType
+
+----------
+
+Editor - BaseType
+*****************
+
+.. doxygenclass:: LIEF::dwarf::editor::BaseType
+
+----------
+
+Editor - ArrayType
+******************
+
+.. doxygenclass:: LIEF::dwarf::editor::ArrayType
+
+----------
+
+Editor - FunctionType
+*********************
+
+.. doxygenclass:: LIEF::dwarf::editor::FunctionType
+
+
+----------
+
+Editor - TypeDef
+****************
+
+.. doxygenclass:: LIEF::dwarf::editor::TypeDef
+
+
+----------
+
+Editor - StructType
+*******************
+
+.. doxygenclass:: LIEF::dwarf::editor::StructType

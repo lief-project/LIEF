@@ -32,6 +32,7 @@ class Mirror {
 
   T& get() { return *impl_; }
   const T& get() const { return *impl_; }
+  T& force_get() const { return const_cast<T&>(*impl_); }
 
   private:
   LIEF::details::canbe_unique<T> impl_;

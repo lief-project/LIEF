@@ -25,5 +25,18 @@
 #include "LIEF/DWARF/Type.hpp"
 #include "LIEF/DWARF/types.hpp"
 #include "LIEF/DWARF/Parameter.hpp"
+#include "LIEF/DWARF/Editor.hpp"
+
+#include "LIEF/DWARF/editor/CompilationUnit.hpp"
+#include "LIEF/DWARF/editor/Function.hpp"
+#include "LIEF/DWARF/editor/Variable.hpp"
+#include "LIEF/DWARF/editor/Type.hpp"
+#include "LIEF/DWARF/editor/PointerType.hpp"
+#include "LIEF/DWARF/editor/EnumType.hpp"
+#include "LIEF/DWARF/editor/BaseType.hpp"
+#include "LIEF/DWARF/editor/ArrayType.hpp"
+#include "LIEF/DWARF/editor/FunctionType.hpp"
+#include "LIEF/DWARF/editor/TypeDef.hpp"
+#include "LIEF/DWARF/editor/StructType.hpp"
 
 #endif

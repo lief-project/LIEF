@@ -8,6 +8,7 @@ include_cpp! {
 
     generate!("is_extended")
     generate!("extended_version_info")
+    generate!("extended_version")
     generate!("demangle")
     generate!("dump")
     generate!("dump_with_limit")
@@ -15,8 +16,14 @@ include_cpp! {
     generate_pod!("Span")
     block_constructors!("Span")
 
+    generate_pod!("LIEFVersion")
+    block_constructors!("LIEFVersion")
+
     generate_pod!("Range")
     block_constructors!("Range")
+
+    generate_pod!("DWARF_editor_Function_Range")
+    block_constructors!("DWARF_editor_Function_Range")
 
     generate!("RustStream")
     block_constructors!("RustStream")
@@ -742,6 +749,62 @@ include_cpp! {
     // -------------------------------------------------------------------------
     generate!("DWARF_DebugInfo")
     block_constructors!("DWARF_DebugInfo")
+    generate!("DWARF_Editor")
+    block_constructors!("DWARF_Editor")
+    generate!("DWARF_editor_CompilationUnit")
+    block_constructors!("DWARF_editor_CompilationUnit")
+
+    generate!("DWARF_editor_Function")
+    block_constructors!("DWARF_editor_Function")
+
+    generate!("DWARF_editor_Function_Parameter")
+    block_constructors!("DWARF_editor_Function_Parameter")
+
+    generate!("DWARF_editor_Function_LexicalBlock")
+    block_constructors!("DWARF_editor_Function_LexicalBlock")
+
+    generate!("DWARF_editor_Function_Label")
+    block_constructors!("DWARF_editor_Function_Label")
+
+    generate!("DWARF_editor_Variable")
+    block_constructors!("DWARF_editor_Variable")
+
+    generate!("DWARF_editor_Type")
+    block_constructors!("DWARF_editor_Type")
+
+    generate!("DWARF_editor_PointerType")
+    block_constructors!("DWARF_editor_PointerType")
+
+    generate!("DWARF_editor_EnumType_Value")
+    block_constructors!("DWARF_editor_EnumType_Value")
+
+    generate!("DWARF_editor_EnumType")
+    block_constructors!("DWARF_editor_EnumType")
+
+    generate!("DWARF_editor_BaseType")
+    block_constructors!("DWARF_editor_BaseType")
+
+    generate!("DWARF_editor_ArrayType")
+    block_constructors!("DWARF_editor_ArrayType")
+
+    generate!("DWARF_editor_FunctionType_Parameter")
+    block_constructors!("DWARF_editor_FunctionType_Parameter")
+
+    generate!("DWARF_editor_FunctionType")
+    block_constructors!("DWARF_editor_FunctionType")
+
+    generate!("DWARF_editor_TypeDef")
+    block_constructors!("DWARF_editor_TypeDef")
+
+    generate!("DWARF_editor_FunctionType")
+    block_constructors!("DWARF_editor_FunctionType")
+
+    generate!("DWARF_editor_StructType_Member")
+    block_constructors!("DWARF_editor_StructType_Member")
+
+    generate!("DWARF_editor_StructType")
+    block_constructors!("DWARF_editor_StructType")
+
     generate!("DWARF_DebugInfo_it_compilation_units")
     block_constructors!("DWARF_DebugInfo_it_compilation_units")
     generate!("DWARF_CompilationUnit")

@@ -258,7 +258,7 @@ impl Arm64XRelocEntry<'_> {
             if raw.size > 0 {
                 return Some(std::slice::from_raw_parts_mut(raw.ptr, raw.size as usize));
             }
-            return Some(&[]);
+            Some(&[])
         }
     }
 

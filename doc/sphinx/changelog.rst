@@ -6,6 +6,14 @@
 0.17.0 - Not Released Yet
 -------------------------
 
+.. admonition:: BinaryNinja & Ghidra Plugins
+  :class: tip
+
+  LIEF-based plugins for Binary Ninja and Ghidra have been bootstrapped here:
+
+  - :ref:`Ghidra plugin <plugins-ghidra>`
+  - :ref:`BinaryNinja plugin <plugins-binaryninja>`
+
 :DSC:
 
   * Add enum for the latest dyld shared cache version introducing
@@ -40,6 +48,7 @@
 :DWARF:
 
   * LIEF extended can now process DWARF debug info in PE binaries
+  * Add support for creating DWARF: :ref:`DWARF Editor <extended-dwarf-editor>`
 
 :PDB:
 

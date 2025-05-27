@@ -405,3 +405,120 @@ Volatile
   :parts: 2
 
 .. autoclass:: lief.dwarf.types.Volatile
+
+----------
+
+Editor
+******
+
+.. autoclass:: lief.dwarf.Editor
+
+----------
+
+Editor - CompilationUnit
+************************
+
+.. autoclass:: lief.dwarf.editor.CompilationUnit
+
+----------
+
+Editor - Function
+*****************
+
+.. autoclass:: lief.dwarf.editor.Function
+
+----------
+
+Editor - Variable
+*****************
+
+.. autoclass:: lief.dwarf.editor.Variable
+
+----------
+
+Editor - Type
+*************
+
+
+.. lief-inheritance:: lief._lief.dwarf.editor.Type
+  :top-classes: lief._lief.dwarf.editor.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.editor.Type
+
+----------
+
+Editor - PointerType
+********************
+
+.. lief-inheritance:: lief._lief.dwarf.editor.PointerType
+  :top-classes: lief._lief.dwarf.editor.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.editor.PointerType
+
+----------
+
+Editor - EnumType
+*****************
+
+.. lief-inheritance:: lief._lief.dwarf.editor.EnumType
+  :top-classes: lief._lief.dwarf.editor.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.editor.EnumType
+
+----------
+
+Editor - BaseType
+*****************
+
+.. lief-inheritance:: lief._lief.dwarf.editor.BaseType
+  :top-classes: lief._lief.dwarf.editor.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.editor.BaseType
+
+----------
+
+Editor - ArrayType
+******************
+
+.. lief-inheritance:: lief._lief.dwarf.editor.ArrayType
+  :top-classes: lief._lief.dwarf.editor.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.editor.ArrayType
+
+----------
+
+Editor - FunctionType
+*********************
+
+.. lief-inheritance:: lief._lief.dwarf.editor.FunctionType
+  :top-classes: lief._lief.dwarf.editor.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.editor.FunctionType
+
+----------
+
+Editor - TypeDef
+****************
+
+.. lief-inheritance:: lief._lief.dwarf.editor.TypeDef
+  :top-classes: lief._lief.dwarf.editor.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.editor.TypeDef
+
+----------
+
+Editor - StructType
+*******************
+
+.. lief-inheritance:: lief._lief.dwarf.editor.StructType
+  :top-classes: lief._lief.dwarf.editor.Type
+  :parts: 2
+
+.. autoclass:: lief.dwarf.editor.StructType

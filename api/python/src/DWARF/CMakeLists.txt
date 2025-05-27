@@ -1,12 +1,14 @@
 target_sources(pyLIEF PRIVATE
   init.cpp
   pyCompilationUnit.cpp
-  pyParameter.cpp
   pyDebugInfo.cpp
+  pyEditor.cpp
   pyFunction.cpp
+  pyParameter.cpp
   pyScope.cpp
   pyType.cpp
   pyVariable.cpp
 )
 
 add_subdirectory(types)
+add_subdirectory(editor)

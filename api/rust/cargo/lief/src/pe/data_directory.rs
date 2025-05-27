@@ -63,9 +63,9 @@ impl From<u32> for Type {
         }
     }
 }
-impl Into<u32> for Type {
-    fn into(self) -> u32 {
-        match self {
+impl From<Type> for u32 {
+    fn from(ty: Type) -> Self {
+        match ty {
             Type::EXPORT_TABLE => 0x00000000,
             Type::IMPORT_TABLE => 0x00000001,
             Type::RESOURCE_TABLE => 0x00000002,
@@ -99,7 +99,7 @@ impl std::fmt::Debug for DataDirectory<'_> {
     }
 }
 
-impl<'a> FromFFI<ffi::PE_DataDirectory> for DataDirectory<'a> {
+impl FromFFI<ffi::PE_DataDirectory> for DataDirectory<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_DataDirectory>) -> Self {
         DataDirectory {
             ptr,

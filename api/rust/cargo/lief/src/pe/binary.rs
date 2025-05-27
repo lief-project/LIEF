@@ -421,12 +421,12 @@ impl Binary {
     }
 
     /// Remove a specific debug entry
-    pub fn remove_debug<'a>(&'a mut self, entry: &dyn DebugEntry) -> bool {
+    pub fn remove_debug(&mut self, entry: &dyn DebugEntry) -> bool {
         self.ptr.pin_mut().remove_debug(entry.get_base())
     }
 
     /// Remove all debug info
-    pub fn clear_debug<'a>(&'a mut self) -> bool {
+    pub fn clear_debug(&mut self) -> bool {
         self.ptr.pin_mut().clear_debug()
     }
 
@@ -445,7 +445,7 @@ impl Binary {
     pub fn write_with_config(&mut self, output: &Path, config: Config) {
         let ffi_config = config.to_ffi();
         self.ptr.as_mut().unwrap().write_with_config(output.to_str().unwrap(),
-            &ffi_config.as_ref().unwrap());
+            ffi_config.as_ref().unwrap());
     }
 
     /// Iterator over the strings located in the COFF string table

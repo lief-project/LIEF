@@ -27,7 +27,6 @@ Welcome to LIEF's documentation!
   api/logging/index
   api/cpp/index
   api/rust/index
-
 .. toctree::
   :caption: <i class="fa-solid fa-hat-wizard">&nbsp;</i>LIEF Extended
   :maxdepth: 1
@@ -40,6 +39,13 @@ Welcome to LIEF's documentation!
   extended/dsc/index
   extended/disassembler/index
   extended/assembler/index
+
+.. toctree::
+  :caption: <i class="fa-solid fa-puzzle-piece">&nbsp;</i>Plugins
+  :maxdepth: 1
+
+  plugins/ghidra/index
+  plugins/binaryninja/index
 
 .. toctree::
   :caption: <i class="fa-solid fa-layer-group">&nbsp;</i>Tutorials

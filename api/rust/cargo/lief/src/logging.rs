@@ -44,9 +44,9 @@ impl From<u32> for Level {
     }
 }
 
-impl Into<u32> for Level {
-    fn into(self) -> u32 {
-        match self {
+impl From<Level> for u32 {
+    fn from(value: Level) -> Self {
+        match value {
             Level::OFF => 0x00000000,
             Level::TRACE => 0x00000001,
             Level::DEBUG => 0x00000002,
