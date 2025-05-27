@@ -20,3 +20,7 @@ li .fixed-paragraph {
 .align-default {
   text-align: inherit;
 }
+
+a.btn:visited {
+  color: #fff;
+}

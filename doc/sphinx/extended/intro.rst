@@ -45,6 +45,18 @@ You can find the differences between both versions in this table:
 | :ref:`Assembler <extended-assembler>`       | :xmark:`mark`     | :fa-check:`check` | Support based on LLVM :ref:`[1] <extended-llvm>`   |
 +---------------------------------------------+-------------------+-------------------+----------------------------------------------------+
 
+
+.. raw:: html
+
+  <div class="card shadow-light">
+    <div class="card-body">
+      <h5 class="card-title"><i class="fab fa-github text-darkblue  mr-2"></i>Get Access</h5>
+      <p class="card-text">To access the extended version, you must <b>oauth-login</b> with <b>GitHub</b> here:</p>
+      <a href="https://extended.lief.re/" target="_blank" class="btn btn-pink text-uppercase-bold-sm shadow-sm mx-2 hover-lift-light"><i class="fa-solid fa-cubes mr-2"></i>LIEF Extended</a>
+    </div>
+  </div>
+  <br />
+
 To access the extended version, you must **oauth-login** with **GitHub** here: |lief-extended-url|.
 
 Once logged in, you can download the package of your choice
