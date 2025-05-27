@@ -123,7 +123,8 @@ class S3Manager:
             self._s3_push(index, dst)
 
     def process_sdk_wheels(self, directory: Path, maxdepth: int = 0,
-                           depth: int = 0, recurse: bool = True):
+                           depth: int = 0, recurse: bool = True,
+                           skip_sdk: bool = False):
         logger.info("Processing directory: %s", directory)
         for item in directory.iterdir():
             if item.is_dir() and recurse:
@@ -133,7 +134,7 @@ class S3Manager:
                     self.process_sdk_wheels(item, maxdepth, depth + 1, recurse)
             elif item.is_file():
                 extension = item.suffix
-                if extension in (".zip", ".gz"):
+                if extension in (".zip", ".gz") and not skip_sdk:
                     logger.info("[SDK  ] Uploading '%s'", item.as_posix())
                     self.push_sdk(item.as_posix())
                 elif extension in (".whl", ):
@@ -141,9 +142,10 @@ class S3Manager:
                     self.push_wheel(item.as_posix())
 
 
-    def upload_wheels_sdk(self, src_dir: Path, maxdepth: int):
+    def upload_wheels_sdk(self, src_dir: Path, maxdepth: int, skip_sdk: bool):
         logger.info("Looking for wheels and sdk from: %s", src_dir)
-        self.process_sdk_wheels(src_dir, maxdepth=maxdepth, recurse=True)
+        self.process_sdk_wheels(src_dir, maxdepth=maxdepth, recurse=True,
+                                skip_sdk=skip_sdk)
 
         wheels_index = self.generate_index(self.s3_lief_wheel,
                                            DEFAULT_TEMPLATE,
@@ -255,7 +257,7 @@ class GithubDeploy:
 
         return False
 
-    def deploy(self, directories: list[str]):
+    def deploy(self, directories: list[str], skip_sdk: bool = False):
         s3dir = None
 
         branch = GithubDeploy.branch()
@@ -278,12 +280,14 @@ class GithubDeploy:
         self.s3_manager.change_dir(s3dir)
         for dirname in directories:
             dirpath = Path(dirname).resolve().absolute().expanduser()
-            self.s3_manager.upload_wheels_sdk(dirpath, maxdepth=1)
+            self.s3_manager.upload_wheels_sdk(dirpath, maxdepth=1,
+                                              skip_sdk=skip_sdk)
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", "-c")
     parser.add_argument("--dry-run", "-n", action="store_true", default=False)
+    parser.add_argument("--skip-sdk", action="store_true", default=False)
     parser.add_argument("directories", nargs="+")
 
     args = parser.parse_args()
@@ -298,7 +302,7 @@ def main():
         sys.exit(1)
 
     gh_deploy = GithubDeploy.from_config(config_path)
-    gh_deploy.deploy(args.directories)
+    gh_deploy.deploy(args.directories, args.skip_sdk)
 
 if __name__ == "__main__":
     main()

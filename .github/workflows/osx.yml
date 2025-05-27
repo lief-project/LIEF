@@ -216,6 +216,6 @@ jobs:
             -e LIEF_S3_KEY=$LIEF_S3_KEY                       \
             -e LIEF_S3_SECRET=$LIEF_S3_SECRET                 \
             liefproject/deploy                                \
-            python3 /src/.github/deploy.py /runner_tmp/artifacts
+            python3 /src/.github/deploy.py --skip-sdk /runner_tmp/artifacts
 
 
