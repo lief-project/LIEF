@@ -1,6 +1,6 @@
 /// This example shows how to create a DWARF file by using LIEF's API
 
-use std::process::{ExitCode};
+use std::process::ExitCode;
 use lief::dwarf::editor::types::EditorType;
 
 fn main() -> ExitCode {

@@ -45,6 +45,9 @@ fn main() -> ExitCode {
     call_example_with(example_dir.clone(), "elf_deps",
         get_sample("ELF", "ELF64_x86-64_binary_etterlog.bin", false));
 
+    call_example_with(example_dir.clone(), "dwarf_editor",
+        get_sample("PE", "PE32_x86-64_binary_avast-free-antivirus-setup-online.exe", false));
+
     ExitCode::SUCCESS
 }
 
