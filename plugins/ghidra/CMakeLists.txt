@@ -21,6 +21,7 @@ find_file(JNI_BIND "jni_bind.h"
     ${CMAKE_CURRENT_SOURCE_DIR}/jni-bind
     ${CMAKE_CURRENT_SOURCE_DIR}/../jni-bind
     ${CMAKE_CURRENT_SOURCE_DIR}/../../jni-bind
+    ${JNI_BIND_HINT}
   REQUIRED
 )
 cmake_path(GET JNI_BIND PARENT_PATH JNI_BIND_DIR)
