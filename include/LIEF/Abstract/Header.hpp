@@ -52,6 +52,7 @@ class LIEF_API Header : public Object {
     XCORE,
     RISCV,
     LOONGARCH,
+    PPC64,
   };
 
   enum class ENDIANNESS {
