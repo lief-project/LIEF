@@ -585,7 +585,7 @@ class LIEF_API Binary : public LIEF::Binary  {
 
   /// Check if the binary uses `NX` protection
   bool has_nx() const override {
-    return !has_nx_stack();
+    return has_nx_stack();
   }
 
   /// Return True if the **heap** is flagged as non-executable. False otherwise
