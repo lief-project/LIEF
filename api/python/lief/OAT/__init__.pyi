@@ -5,7 +5,107 @@ import os
 from typing import Iterator, Optional, Union, overload
 
 import lief
+import lief.Android
+import lief.DEX
+import lief.ELF
 
+
+class OAT_CLASS_TYPES(enum.Enum):
+    ALL_COMPILED = 0
+
+    SOME_COMPILED = 1
+
+    NONE_COMPILED = 2
+
+class OAT_CLASS_STATUS(enum.Enum):
+    RETIRED = -2
+
+    ERROR = -1
+
+    NOTREADY = 0
+
+    IDX = 1
+
+    LOADED = 2
+
+    RESOLVING = 3
+
+    RESOLVED = 4
+
+    VERIFYING = 5
+
+    VERIFICATION_AT_RUNTIME = 6
+
+    VERIFYING_AT_RUNTIME = 7
+
+    VERIFIED = 8
+
+    INITIALIZING = 9
+
+    INITIALIZED = 10
+
+class HEADER_KEYS(enum.Enum):
+    IMAGE_LOCATION = 0
+
+    DEX2OAT_CMD_LINE = 1
+
+    DEX2OAT_HOST = 2
+
+    PIC = 3
+
+    HAS_PATCH_INFO = 4
+
+    DEBUGGABLE = 5
+
+    NATIVE_DEBUGGABLE = 6
+
+    COMPILER_FILTER = 7
+
+    CLASS_PATH = 8
+
+    BOOT_CLASS_PATH = 9
+
+    CONCURRENT_COPYING = 10
+
+class INSTRUCTION_SETS(enum.Enum):
+    NONE = 0
+
+    ARM = 1
+
+    ARM_64 = 2
+
+    THUMB2 = 3
+
+    X86 = 4
+
+    X86_64 = 5
+
+    MIPS = 6
+
+    MIPS_64 = 7
+
+@overload
+def version(binary: lief.ELF.Binary) -> int: ...
+
+@overload
+def version(file: str) -> int: ...
+
+@overload
+def version(raw: Sequence[int]) -> int: ...
+
+def android_version(arg: int, /) -> lief.Android.ANDROID_VERSIONS: ...
+
+@overload
+def parse(oat_file: str) -> Optional[Binary]: ...
+
+@overload
+def parse(oat_file: str, vdex_file: str) -> Optional[Binary]: ...
+
+@overload
+def parse(raw: Sequence[int]) -> Optional[Binary]: ...
+
+@overload
+def parse(obj: Union[io.IOBase | os.PathLike]) -> Optional[Binary]: ...
 
 class Binary(lief.ELF.Binary):
     class it_dex_files:
@@ -72,92 +172,6 @@ class Binary(lief.ELF.Binary):
 
     def __str__(self) -> str: ...
 
-class Class(lief.Object):
-    def __init__(self) -> None: ...
-
-    class it_methods:
-        def __getitem__(self, arg: int, /) -> Method: ...
-
-        def __len__(self) -> int: ...
-
-        def __iter__(self) -> Class.it_methods: ...
-
-        def __next__(self) -> Method: ...
-
-    def has_dex_class(self) -> bool: ...
-
-    @property
-    def status(self) -> OAT_CLASS_STATUS: ...
-
-    @property
-    def type(self) -> OAT_CLASS_TYPES: ...
-
-    @property
-    def fullname(self) -> str: ...
-
-    @property
-    def index(self) -> int: ...
-
-    @property
-    def methods(self) -> Class.it_methods: ...
-
-    @property
-    def bitmap(self) -> list[int]: ...
-
-    @overload
-    def is_quickened(self, dex_method: lief.DEX.Method) -> bool: ...
-
-    @overload
-    def is_quickened(self, method_index: int) -> bool: ...
-
-    @overload
-    def method_offsets_index(self, arg: lief.DEX.Method, /) -> int: ...
-
-    @overload
-    def method_offsets_index(self, arg: int, /) -> int: ...
-
-    def __str__(self) -> str: ...
-
-class DexFile(lief.Object):
-    def __init__(self) -> None: ...
-
-    location: str
-
-    checksum: int
-
-    dex_offset: int
-
-    @property
-    def has_dex_file(self) -> bool: ...
-
-    @property
-    def dex_file(self) -> lief.DEX.File: ...
-
-    def __str__(self) -> str: ...
-
-class HEADER_KEYS(enum.Enum):
-    IMAGE_LOCATION = 0
-
-    DEX2OAT_CMD_LINE = 1
-
-    DEX2OAT_HOST = 2
-
-    PIC = 3
-
-    HAS_PATCH_INFO = 4
-
-    DEBUGGABLE = 5
-
-    NATIVE_DEBUGGABLE = 6
-
-    COMPILER_FILTER = 7
-
-    CLASS_PATH = 8
-
-    BOOT_CLASS_PATH = 9
-
-    CONCURRENT_COPYING = 10
-
 class Header(lief.Object):
     def __init__(self) -> None: ...
 
@@ -171,7 +185,7 @@ class Header(lief.Object):
         def __next__(self) -> Header.element_t: ...
 
     class element_t:
-        key: lief.OAT.HEADER_KEYS
+        key: HEADER_KEYS
 
         value: str
 
@@ -248,22 +262,68 @@ class Header(lief.Object):
 
     def __str__(self) -> str: ...
 
-class INSTRUCTION_SETS(enum.Enum):
-    NONE = 0
+class DexFile(lief.Object):
+    def __init__(self) -> None: ...
 
-    ARM = 1
+    location: str
 
-    ARM_64 = 2
+    checksum: int
 
-    THUMB2 = 3
+    dex_offset: int
 
-    X86 = 4
+    @property
+    def has_dex_file(self) -> bool: ...
 
-    X86_64 = 5
+    @property
+    def dex_file(self) -> lief.DEX.File: ...
 
-    MIPS = 6
+    def __str__(self) -> str: ...
 
-    MIPS_64 = 7
+class Class(lief.Object):
+    def __init__(self) -> None: ...
+
+    class it_methods:
+        def __getitem__(self, arg: int, /) -> Method: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> Class.it_methods: ...
+
+        def __next__(self) -> Method: ...
+
+    def has_dex_class(self) -> bool: ...
+
+    @property
+    def status(self) -> OAT_CLASS_STATUS: ...
+
+    @property
+    def type(self) -> OAT_CLASS_TYPES: ...
+
+    @property
+    def fullname(self) -> str: ...
+
+    @property
+    def index(self) -> int: ...
+
+    @property
+    def methods(self) -> Class.it_methods: ...
+
+    @property
+    def bitmap(self) -> list[int]: ...
+
+    @overload
+    def is_quickened(self, dex_method: lief.DEX.Method) -> bool: ...
+
+    @overload
+    def is_quickened(self, method_index: int) -> bool: ...
+
+    @overload
+    def method_offsets_index(self, arg: lief.DEX.Method, /) -> int: ...
+
+    @overload
+    def method_offsets_index(self, arg: int, /) -> int: ...
+
+    def __str__(self) -> str: ...
 
 class Method(lief.Object):
     def __init__(self) -> None: ...
@@ -289,60 +349,3 @@ class Method(lief.Object):
     quick_code: list[int]
 
     def __str__(self) -> str: ...
-
-class OAT_CLASS_STATUS(enum.Enum):
-    RETIRED = -2
-
-    ERROR = -1
-
-    NOTREADY = 0
-
-    IDX = 1
-
-    LOADED = 2
-
-    RESOLVING = 3
-
-    RESOLVED = 4
-
-    VERIFYING = 5
-
-    VERIFICATION_AT_RUNTIME = 6
-
-    VERIFYING_AT_RUNTIME = 7
-
-    VERIFIED = 8
-
-    INITIALIZING = 9
-
-    INITIALIZED = 10
-
-class OAT_CLASS_TYPES(enum.Enum):
-    ALL_COMPILED = 0
-
-    SOME_COMPILED = 1
-
-    NONE_COMPILED = 2
-
-def android_version(arg: int, /) -> lief.Android.ANDROID_VERSIONS: ...
-
-@overload
-def parse(oat_file: str) -> Optional[Binary]: ...
-
-@overload
-def parse(oat_file: str, vdex_file: str) -> Optional[Binary]: ...
-
-@overload
-def parse(raw: Sequence[int]) -> Optional[Binary]: ...
-
-@overload
-def parse(obj: Union[io.IOBase | os.PathLike]) -> Optional[Binary]: ...
-
-@overload
-def version(binary: lief.ELF.Binary) -> int: ...
-
-@overload
-def version(file: str) -> int: ...
-
-@overload
-def version(raw: Sequence[int]) -> int: ...

@@ -7,33 +7,6 @@ from typing import Iterator, Optional, Union, overload
 import lief
 
 
-class AArch64Feature(NoteGnuProperty.Property):
-    @property
-    def features(self) -> list[AArch64Feature.FEATURE]: ...
-
-    class FEATURE(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> AArch64Feature.FEATURE: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        UNKNOWN = 0
-
-        BTI = 1
-
-        PAC = 2
-
-class AArch64PAuth(NoteGnuProperty.Property):
-    @property
-    def platform(self) -> int: ...
-
-    @property
-    def version(self) -> int: ...
-
 class ARCH(enum.Enum):
     @staticmethod
     def from_value(arg: int, /) -> ARCH: ...
@@ -400,12 +373,67 @@ class ARCH(enum.Enum):
 
     LOONGARCH = 258
 
-class AndroidIdent(Note):
-    sdk_version: int
+class ParserConfig:
+    def __init__(self) -> None: ...
 
-    ndk_version: str
+    class DYNSYM_COUNT(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> ParserConfig.DYNSYM_COUNT: ...
 
-    ndk_build_number: str
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        AUTO = 0
+
+        SECTION = 1
+
+        HASH = 2
+
+        RELOCATIONS = 3
+
+    parse_relocations: bool
+
+    parse_dyn_symbols: bool
+
+    parse_symtab_symbols: bool
+
+    parse_symbol_versions: bool
+
+    parse_notes: bool
+
+    parse_overlay: bool
+
+    count_mtd: ParserConfig.DYNSYM_COUNT
+
+    all: ParserConfig = ...
+
+@overload
+def parse(filename: str, config: ParserConfig = ...) -> Optional[Binary]: ...
+
+@overload
+def parse(raw: Sequence[int], config: ParserConfig = ...) -> Optional[Binary]: ...
+
+@overload
+def parse(obj: Union[io.IOBase | os.PathLike], config: ParserConfig = ...) -> Optional[Binary]: ...
+
+class SymbolVersion(lief.Object):
+    @overload
+    def __init__(self) -> None: ...
+
+    @overload
+    def __init__(self, arg: int, /) -> None: ...
+
+    local: SymbolVersion = ...
+
+    value: int
+
+    @property
+    def has_auxiliary_version(self) -> bool: ...
+
+    symbol_version_auxiliary: SymbolVersionAux
 
     def __str__(self) -> str: ...
 
@@ -853,1446 +881,6 @@ class Binary(lief.Binary):
 
     def __str__(self) -> str: ...
 
-class Builder:
-    def __init__(self, elf_binary: Binary) -> None: ...
-
-    class config_t:
-        def __init__(self) -> None: ...
-
-        force_relocate: bool
-
-        dt_hash: bool
-
-        dyn_str: bool
-
-        dynamic_section: bool
-
-        fini_array: bool
-
-        init_array: bool
-
-        interpreter: bool
-
-        jmprel: bool
-
-        notes: bool
-
-        preinit_array: bool
-
-        relr: bool
-
-        android_rela: bool
-
-        rela: bool
-
-        static_symtab: bool
-
-        sym_verdef: bool
-
-        sym_verneed: bool
-
-        sym_versym: bool
-
-        symtab: bool
-
-        coredump_notes: bool
-
-    def build(self) -> None: ...
-
-    config: lief.ELF.Builder.config_t
-
-    def write(self, output: str) -> None: ...
-
-    def get_build(self) -> list[int]: ...
-
-class CoreAuxv(Note):
-    class TYPE(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> CoreAuxv.TYPE: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        END = 0
-
-        IGNORE = 1
-
-        EXECFD = 2
-
-        PHDR = 3
-
-        PHENT = 4
-
-        PHNUM = 5
-
-        PAGESZ = 6
-
-        BASE = 7
-
-        FLAGS = 8
-
-        ENTRY = 9
-
-        NOTELF = 10
-
-        UID = 11
-
-        EUID = 12
-
-        GID = 13
-
-        EGID = 14
-
-        TGT_PLATFORM = 15
-
-        HWCAP = 16
-
-        CLKTCK = 17
-
-        FPUCW = 18
-
-        DCACHEBSIZE = 19
-
-        ICACHEBSIZE = 20
-
-        UCACHEBSIZE = 21
-
-        IGNOREPPC = 22
-
-        SECURE = 23
-
-        BASE_PLATFORM = 24
-
-        RANDOM = 25
-
-        HWCAP2 = 26
-
-        EXECFN = 31
-
-        SYSINFO = 32
-
-        SYSINFO_EHDR = 33
-
-    @property
-    def values(self) -> dict[CoreAuxv.TYPE, int]: ...
-
-    def get(self, type: CoreAuxv.TYPE) -> Optional[int]: ...
-
-    def __getitem__(self, arg: CoreAuxv.TYPE, /) -> Optional[int]: ...
-
-    @overload
-    def set(self, type: CoreAuxv.TYPE, value: int) -> bool: ...
-
-    @overload
-    def set(self, arg: Mapping[CoreAuxv.TYPE, int], /) -> bool: ...
-
-    @overload
-    def __setitem__(self, arg0: CoreAuxv.TYPE, arg1: int, /) -> bool: ...
-
-    @overload
-    def __setitem__(self, arg: Mapping[CoreAuxv.TYPE, int], /) -> bool: ...
-
-    def __str__(self) -> str: ...
-
-class CoreFile(Note):
-    class files_t:
-        @overload
-        def __init__(self) -> None: ...
-
-        @overload
-        def __init__(self, arg: CoreFile.files_t) -> None: ...
-
-        @overload
-        def __init__(self, arg: Iterable[CoreFile.entry_t], /) -> None: ...
-
-        def __len__(self) -> int: ...
-
-        def __bool__(self) -> bool: ...
-
-        def __repr__(self) -> str: ...
-
-        def __iter__(self) -> Iterator[CoreFile.entry_t]: ...
-
-        @overload
-        def __getitem__(self, arg: int, /) -> CoreFile.entry_t: ...
-
-        @overload
-        def __getitem__(self, arg: slice, /) -> CoreFile.files_t: ...
-
-        def clear(self) -> None: ...
-
-        def append(self, arg: CoreFile.entry_t, /) -> None: ...
-
-        def insert(self, arg0: int, arg1: CoreFile.entry_t, /) -> None: ...
-
-        def pop(self, index: int = -1) -> CoreFile.entry_t: ...
-
-        def extend(self, arg: CoreFile.files_t, /) -> None: ...
-
-        @overload
-        def __setitem__(self, arg0: int, arg1: CoreFile.entry_t, /) -> None: ...
-
-        @overload
-        def __setitem__(self, arg0: slice, arg1: CoreFile.files_t, /) -> None: ...
-
-        @overload
-        def __delitem__(self, arg: int, /) -> None: ...
-
-        @overload
-        def __delitem__(self, arg: slice, /) -> None: ...
-
-    class entry_t:
-        start: int
-
-        end: int
-
-        file_ofs: int
-
-        path: str
-
-        def __str__(self) -> str: ...
-
-    files: lief.ELF.CoreFile.files_t
-
-    def __len__(self) -> int: ...
-
-    def __iter__(self) -> Iterator[CoreFile.entry_t]: ...
-
-    def __str__(self) -> str: ...
-
-class CorePrPsInfo(Note):
-    class info_t:
-        state: int
-
-        sname: str
-
-        zombie: bool
-
-        nice: int
-
-        flag: int
-
-        uid: int
-
-        gid: int
-
-        pid: int
-
-        ppid: int
-
-        pgrp: int
-
-        sid: int
-
-        filename: str
-
-        args: str
-
-        @property
-        def filename_stripped(self) -> str: ...
-
-        @property
-        def args_stripped(self) -> str: ...
-
-    info: Optional[lief.ELF.CorePrPsInfo.info_t]
-
-    def __str__(self) -> str: ...
-
-class CorePrStatus(Note):
-    class timeval_t:
-        sec: int
-
-        usec: int
-
-    class siginfo_t:
-        sicode: int
-
-        errno: int
-
-        signo: int
-
-    class pr_status_t:
-        info: lief.ELF.CorePrStatus.siginfo_t
-
-        cursig: int
-
-        reserved: int
-
-        sigpend: int
-
-        sighold: int
-
-        pid: int
-
-        ppid: int
-
-        pgrp: int
-
-        sid: int
-
-        utime: lief.ELF.CorePrStatus.timeval_t
-
-        stime: lief.ELF.CorePrStatus.timeval_t
-
-        cutime: lief.ELF.CorePrStatus.timeval_t
-
-        cstime: lief.ELF.CorePrStatus.timeval_t
-
-    class Registers:
-        class X86(enum.Enum):
-            @staticmethod
-            def from_value(arg: int, /) -> CorePrStatus.Registers.X86: ...
-
-            def __eq__(self, arg, /) -> bool: ...
-
-            def __ne__(self, arg, /) -> bool: ...
-
-            def __int__(self) -> int: ...
-
-            EBX = 0
-
-            ECX = 1
-
-            EDX = 2
-
-            ESI = 3
-
-            EDI = 4
-
-            EBP = 5
-
-            EAX = 6
-
-            DS = 7
-
-            ES = 8
-
-            FS = 9
-
-            GS = 10
-
-            ORIG_EAX = 11
-
-            EIP = 12
-
-            CS = 13
-
-            EFLAGS = 14
-
-            ESP = 15
-
-            SS = 16
-
-        class X86_64(enum.Enum):
-            @staticmethod
-            def from_value(arg: int, /) -> CorePrStatus.Registers.X86_64: ...
-
-            def __eq__(self, arg, /) -> bool: ...
-
-            def __ne__(self, arg, /) -> bool: ...
-
-            def __int__(self) -> int: ...
-
-            R15 = 0
-
-            R14 = 1
-
-            R13 = 2
-
-            R12 = 3
-
-            RBP = 4
-
-            RBX = 5
-
-            R11 = 6
-
-            R10 = 7
-
-            R9 = 8
-
-            R8 = 9
-
-            RAX = 10
-
-            RCX = 11
-
-            RDX = 12
-
-            RSI = 13
-
-            RDI = 14
-
-            ORIG_RAX = 15
-
-            RIP = 16
-
-            CS = 17
-
-            EFLAGS = 18
-
-            RSP = 19
-
-            SS = 20
-
-        class ARM(enum.Enum):
-            @staticmethod
-            def from_value(arg: int, /) -> CorePrStatus.Registers.ARM: ...
-
-            def __eq__(self, arg, /) -> bool: ...
-
-            def __ne__(self, arg, /) -> bool: ...
-
-            def __int__(self) -> int: ...
-
-            R0 = 0
-
-            R1 = 1
-
-            R2 = 2
-
-            R3 = 3
-
-            R4 = 4
-
-            R5 = 5
-
-            R6 = 6
-
-            R7 = 7
-
-            R8 = 8
-
-            R9 = 9
-
-            R10 = 10
-
-            R11 = 11
-
-            R12 = 12
-
-            R13 = 13
-
-            R14 = 14
-
-            R15 = 15
-
-            CPSR = 16
-
-        class AARCH64(enum.Enum):
-            @staticmethod
-            def from_value(arg: int, /) -> CorePrStatus.Registers.AARCH64: ...
-
-            def __eq__(self, arg, /) -> bool: ...
-
-            def __ne__(self, arg, /) -> bool: ...
-
-            def __int__(self) -> int: ...
-
-            X0 = 0
-
-            X1 = 1
-
-            X2 = 2
-
-            X3 = 3
-
-            X4 = 4
-
-            X5 = 5
-
-            X6 = 6
-
-            X7 = 7
-
-            X8 = 8
-
-            X9 = 9
-
-            X10 = 10
-
-            X11 = 11
-
-            X12 = 12
-
-            X13 = 13
-
-            X14 = 14
-
-            X15 = 15
-
-            X16 = 16
-
-            X17 = 17
-
-            X18 = 18
-
-            X19 = 19
-
-            X20 = 20
-
-            X21 = 21
-
-            X22 = 22
-
-            X23 = 23
-
-            X24 = 24
-
-            X25 = 25
-
-            X26 = 26
-
-            X27 = 27
-
-            X28 = 28
-
-            X29 = 29
-
-            X30 = 30
-
-            X31 = 31
-
-            PC = 32
-
-            PSTATE = 33
-
-    status: lief.ELF.CorePrStatus.pr_status_t
-
-    @property
-    def architecture(self) -> ARCH: ...
-
-    @property
-    def pc(self) -> Optional[int]: ...
-
-    @property
-    def sp(self) -> Optional[int]: ...
-
-    @property
-    def return_value(self) -> Optional[int]: ...
-
-    @property
-    def register_values(self) -> list[int]: ...
-
-    @overload
-    def get(self, reg: CorePrStatus.Registers.X86) -> Optional[int]: ...
-
-    @overload
-    def get(self, reg: CorePrStatus.Registers.X86_64) -> Optional[int]: ...
-
-    @overload
-    def get(self, reg: CorePrStatus.Registers.ARM) -> Optional[int]: ...
-
-    @overload
-    def get(self, reg: CorePrStatus.Registers.AARCH64) -> Optional[int]: ...
-
-    @overload
-    def __getitem__(self, arg: CorePrStatus.Registers.X86, /) -> Optional[int]: ...
-
-    @overload
-    def __getitem__(self, arg: CorePrStatus.Registers.X86_64, /) -> Optional[int]: ...
-
-    @overload
-    def __getitem__(self, arg: CorePrStatus.Registers.ARM, /) -> Optional[int]: ...
-
-    @overload
-    def __getitem__(self, arg: CorePrStatus.Registers.AARCH64, /) -> Optional[int]: ...
-
-    @overload
-    def set(self, reg: CorePrStatus.Registers.X86, value: int) -> lief.ok_error_t: ...
-
-    @overload
-    def set(self, reg: CorePrStatus.Registers.X86_64, value: int) -> lief.ok_error_t: ...
-
-    @overload
-    def set(self, reg: CorePrStatus.Registers.ARM, value: int) -> lief.ok_error_t: ...
-
-    @overload
-    def set(self, reg: CorePrStatus.Registers.AARCH64, value: int) -> lief.ok_error_t: ...
-
-    @overload
-    def __setitem__(self, arg0: CorePrStatus.Registers.X86, arg1: int, /) -> lief.ok_error_t: ...
-
-    @overload
-    def __setitem__(self, arg0: CorePrStatus.Registers.X86_64, arg1: int, /) -> lief.ok_error_t: ...
-
-    @overload
-    def __setitem__(self, arg0: CorePrStatus.Registers.ARM, arg1: int, /) -> lief.ok_error_t: ...
-
-    @overload
-    def __setitem__(self, arg0: CorePrStatus.Registers.AARCH64, arg1: int, /) -> lief.ok_error_t: ...
-
-    def __str__(self) -> str: ...
-
-class CoreSigInfo(Note):
-    signo: Optional[int]
-
-    sigcode: Optional[int]
-
-    sigerrno: Optional[int]
-
-    def __str__(self) -> str: ...
-
-class DynamicEntry(lief.Object):
-    @overload
-    def __init__(self) -> None: ...
-
-    @overload
-    def __init__(self, tag: DynamicEntry.TAG, value: int) -> None: ...
-
-    class TAG(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> DynamicEntry.TAG: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        UNKNOWN = 18446744073709551615
-
-        NULL = 0
-
-        NEEDED = 1
-
-        PLTRELSZ = 2
-
-        PLTGOT = 3
-
-        HASH = 4
-
-        STRTAB = 5
-
-        SYMTAB = 6
-
-        RELA = 7
-
-        RELASZ = 8
-
-        RELAENT = 9
-
-        STRSZ = 10
-
-        SYMENT = 11
-
-        INIT = 12
-
-        FINI = 13
-
-        SONAME = 14
-
-        RPATH = 15
-
-        SYMBOLIC = 16
-
-        REL = 17
-
-        RELSZ = 18
-
-        RELENT = 19
-
-        PLTREL = 20
-
-        DEBUG_TAG = 21
-
-        TEXTREL = 22
-
-        JMPREL = 23
-
-        BIND_NOW = 24
-
-        INIT_ARRAY = 25
-
-        FINI_ARRAY = 26
-
-        INIT_ARRAYSZ = 27
-
-        FINI_ARRAYSZ = 28
-
-        RUNPATH = 29
-
-        FLAGS = 30
-
-        PREINIT_ARRAY = 32
-
-        PREINIT_ARRAYSZ = 33
-
-        SYMTAB_SHNDX = 34
-
-        RELRSZ = 35
-
-        RELR = 36
-
-        RELRENT = 37
-
-        GNU_HASH = 1879047925
-
-        RELACOUNT = 1879048185
-
-        RELCOUNT = 1879048186
-
-        FLAGS_1 = 1879048187
-
-        VERSYM = 1879048176
-
-        VERDEF = 1879048188
-
-        VERDEFNUM = 1879048189
-
-        VERNEED = 1879048190
-
-        VERNEEDNUM = 1879048191
-
-        ANDROID_REL_OFFSET = 1610612749
-
-        ANDROID_REL_SIZE = 1610612750
-
-        ANDROID_REL = 1610612751
-
-        ANDROID_RELSZ = 1610612752
-
-        ANDROID_RELA = 1610612753
-
-        ANDROID_RELASZ = 1610612754
-
-        ANDROID_RELR = 1879040000
-
-        ANDROID_RELRSZ = 1879040001
-
-        ANDROID_RELRENT = 1879040003
-
-        ANDROID_RELRCOUNT = 1879040005
-
-        MIPS_RLD_VERSION = 6174015489
-
-        MIPS_TIME_STAMP = 6174015490
-
-        MIPS_ICHECKSUM = 6174015491
-
-        MIPS_IVERSION = 6174015492
-
-        MIPS_FLAGS = 6174015493
-
-        MIPS_BASE_ADDRESS = 6174015494
-
-        MIPS_MSYM = 6174015495
-
-        MIPS_CONFLICT = 6174015496
-
-        MIPS_LIBLIST = 6174015497
-
-        MIPS_LOCAL_GOTNO = 6174015498
-
-        MIPS_CONFLICTNO = 6174015499
-
-        MIPS_LIBLISTNO = 6174015504
-
-        MIPS_SYMTABNO = 6174015505
-
-        MIPS_UNREFEXTNO = 6174015506
-
-        MIPS_GOTSYM = 6174015507
-
-        MIPS_HIPAGENO = 6174015508
-
-        MIPS_RLD_MAP = 6174015510
-
-        MIPS_DELTA_CLASS = 6174015511
-
-        MIPS_DELTA_CLASS_NO = 6174015512
-
-        MIPS_DELTA_INSTANCE = 6174015513
-
-        MIPS_DELTA_INSTANCE_NO = 6174015514
-
-        MIPS_DELTA_RELOC = 6174015515
-
-        MIPS_DELTA_RELOC_NO = 6174015516
-
-        MIPS_DELTA_SYM = 6174015517
-
-        MIPS_DELTA_SYM_NO = 6174015518
-
-        MIPS_DELTA_CLASSSYM = 6174015520
-
-        MIPS_DELTA_CLASSSYM_NO = 6174015521
-
-        MIPS_CXX_FLAGS = 6174015522
-
-        MIPS_PIXIE_INIT = 6174015523
-
-        MIPS_SYMBOL_LIB = 6174015524
-
-        MIPS_LOCALPAGE_GOTIDX = 6174015525
-
-        MIPS_LOCAL_GOTIDX = 6174015526
-
-        MIPS_HIDDEN_GOTIDX = 6174015527
-
-        MIPS_PROTECTED_GOTIDX = 6174015528
-
-        MIPS_OPTIONS = 6174015529
-
-        MIPS_INTERFACE = 6174015530
-
-        MIPS_DYNSTR_ALIGN = 6174015531
-
-        MIPS_INTERFACE_SIZE = 6174015532
-
-        MIPS_RLD_TEXT_RESOLVE_ADDR = 6174015533
-
-        MIPS_PERF_SUFFIX = 6174015534
-
-        MIPS_COMPACT_SIZE = 6174015535
-
-        MIPS_GP_VALUE = 6174015536
-
-        MIPS_AUX_DYNAMIC = 6174015537
-
-        MIPS_PLTGOT = 6174015538
-
-        MIPS_RWPLT = 6174015540
-
-        MIPS_RLD_MAP_REL = 6174015541
-
-        MIPS_XHASH = 6174015542
-
-        AARCH64_BTI_PLT = 10468982785
-
-        AARCH64_PAC_PLT = 10468982787
-
-        AARCH64_VARIANT_PCS = 10468982789
-
-        AARCH64_MEMTAG_MODE = 10468982793
-
-        AARCH64_MEMTAG_HEAP = 10468982795
-
-        AARCH64_MEMTAG_STACK = 10468982796
-
-        AARCH64_MEMTAG_GLOBALS = 10468982797
-
-        AARCH64_MEMTAG_GLOBALSSZ = 10468982799
-
-        HEXAGON_SYMSZ = 14763950080
-
-        HEXAGON_VER = 14763950081
-
-        HEXAGON_PLT = 14763950082
-
-        PPC_GOT = 19058917376
-
-        PPC_OPT = 19058917377
-
-        PPC64_GLINK = 23353884672
-
-        PPC64_OPT = 23353884675
-
-        RISCV_VARIANT_CC = 27648851971
-
-        X86_64_PLT = 31943819264
-
-        X86_64_PLTSZ = 31943819265
-
-        X86_64_PLTENT = 31943819267
-
-    tag: lief.ELF.DynamicEntry.TAG
-
-    value: int
-
-    def __str__(self) -> str: ...
-
-class DynamicEntryArray(DynamicEntry):
-    def __init__(self, tag: DynamicEntry.TAG, array: Sequence[int]) -> None: ...
-
-    array: list[int]
-
-    def insert(self, pos: int, function: int) -> DynamicEntryArray: ...
-
-    def append(self, function: int) -> DynamicEntryArray: ...
-
-    def remove(self, function: int) -> DynamicEntryArray: ...
-
-    def __iadd__(self, arg: int, /) -> DynamicEntryArray: ...
-
-    def __isub__(self, arg: int, /) -> DynamicEntryArray: ...
-
-    def __getitem__(self, arg: int, /) -> int: ...
-
-    def __len__(self) -> int: ...
-
-    def __str__(self) -> str: ...
-
-class DynamicEntryFlags(DynamicEntry):
-    class FLAG(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> DynamicEntryFlags.FLAG: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        ORIGIN = 1
-
-        SYMBOLIC = 2
-
-        TEXTREL = 4
-
-        BIND_NOW = 8
-
-        STATIC_TLS = 16
-
-        NOW = 4294967297
-
-        GLOBAL = 4294967298
-
-        GROUP = 4294967300
-
-        NODELETE = 4294967304
-
-        LOADFLTR = 4294967312
-
-        INITFIRST = 4294967328
-
-        NOOPEN = 4294967360
-
-        HANDLE_ORIGIN = 4294967424
-
-        DIRECT = 4294967552
-
-        TRANS = 4294967808
-
-        INTERPOSE = 4294968320
-
-        NODEFLIB = 4294969344
-
-        NODUMP = 4294971392
-
-        CONFALT = 4294975488
-
-        ENDFILTEE = 4294983680
-
-        DISPRELDNE = 4295000064
-
-        DISPRELPND = 4295032832
-
-        NODIRECT = 4295098368
-
-        IGNMULDEF = 4295229440
-
-        NOKSYMS = 4295491584
-
-        NOHDR = 4296015872
-
-        EDITED = 4297064448
-
-        NORELOC = 4299161600
-
-        SYMINTPOSE = 4303355904
-
-        GLOBAUDIT = 4311744512
-
-        SINGLETON = 4328521728
-
-        PIE = 4429185024
-
-        KMOD = 4563402752
-
-        WEAKFILTER = 4831838208
-
-        NOCOMMON = 5368709120
-
-    @property
-    def flags(self) -> list[DynamicEntryFlags.FLAG]: ...
-
-    def has(self, flag: DynamicEntryFlags.FLAG) -> bool: ...
-
-    def add(self, flag: DynamicEntryFlags.FLAG) -> None: ...
-
-    def remove(self, flag: DynamicEntryFlags.FLAG) -> None: ...
-
-    def __iadd__(self, arg: DynamicEntryFlags.FLAG, /) -> DynamicEntryFlags: ...
-
-    def __isub__(self, arg: DynamicEntryFlags.FLAG, /) -> DynamicEntryFlags: ...
-
-    def __contains__(self, arg: DynamicEntryFlags.FLAG, /) -> bool: ...
-
-    def __str__(self) -> str: ...
-
-class DynamicEntryLibrary(DynamicEntry):
-    def __init__(self, library_name: str) -> None: ...
-
-    name: Union[str, bytes]
-
-    def __str__(self) -> str: ...
-
-class DynamicEntryRpath(DynamicEntry):
-    @overload
-    def __init__(self, path: str = '') -> None: ...
-
-    @overload
-    def __init__(self, paths: Sequence[str]) -> None: ...
-
-    rpath: Union[str, bytes]
-
-    paths: list[str]
-
-    def insert(self, position: int, path: str) -> DynamicEntryRpath: ...
-
-    def append(self, path: str) -> DynamicEntryRpath: ...
-
-    def remove(self, path: str) -> DynamicEntryRpath: ...
-
-    def __iadd__(self, arg: str, /) -> DynamicEntryRpath: ...
-
-    def __isub__(self, arg: str, /) -> DynamicEntryRpath: ...
-
-    def __str__(self) -> str: ...
-
-class DynamicEntryRunPath(DynamicEntry):
-    @overload
-    def __init__(self, path: str = '') -> None: ...
-
-    @overload
-    def __init__(self, paths: Sequence[str]) -> None: ...
-
-    runpath: Union[str, bytes]
-
-    paths: list[str]
-
-    def insert(self, position: int, path: str) -> DynamicEntryRunPath: ...
-
-    def append(self, path: str) -> DynamicEntryRunPath: ...
-
-    def remove(self, path: str) -> DynamicEntryRunPath: ...
-
-    def __iadd__(self, arg: str, /) -> DynamicEntryRunPath: ...
-
-    def __isub__(self, arg: str, /) -> DynamicEntryRunPath: ...
-
-    def __str__(self) -> str: ...
-
-class DynamicSharedObject(DynamicEntry):
-    def __init__(self, library_name: str) -> None: ...
-
-    name: Union[str, bytes]
-
-    def __str__(self) -> str: ...
-
-class Generic(NoteGnuProperty.Property):
-    @property
-    def raw_type(self) -> int: ...
-
-class GnuHash(lief.Object):
-    def __init__(self) -> None: ...
-
-    @property
-    def nb_buckets(self) -> int: ...
-
-    @property
-    def symbol_index(self) -> int: ...
-
-    @property
-    def shift2(self) -> int: ...
-
-    @property
-    def bloom_filters(self) -> list[int]: ...
-
-    @property
-    def buckets(self) -> list[int]: ...
-
-    @property
-    def hash_values(self) -> list[int]: ...
-
-    def check_bloom_filter(self, hash: int) -> bool: ...
-
-    def check_bucket(self, hash: int) -> bool: ...
-
-    @overload
-    def check(self, symbol_name: str) -> bool: ...
-
-    @overload
-    def check(self, hash_value: int) -> bool: ...
-
-    def __str__(self) -> str: ...
-
-class Header(lief.Object):
-    def __init__(self) -> None: ...
-
-    class FILE_TYPE(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> Header.FILE_TYPE: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        NONE = 0
-
-        REL = 1
-
-        EXEC = 2
-
-        DYN = 3
-
-        CORE = 4
-
-    class VERSION(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> Header.VERSION: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        NONE = 0
-
-        CURRENT = 1
-
-    class CLASS(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> Header.CLASS: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        NONE = 0
-
-        ELF32 = 1
-
-        ELF64 = 2
-
-    class OS_ABI(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> Header.OS_ABI: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        SYSTEMV = 0
-
-        HPUX = 1
-
-        NETBSD = 2
-
-        LINUX = 3
-
-        HURD = 4
-
-        SOLARIS = 6
-
-        AIX = 7
-
-        IRIX = 8
-
-        FREEBSD = 9
-
-        TRU64 = 10
-
-        MODESTO = 11
-
-        OPENBSD = 12
-
-        OPENVMS = 13
-
-        NSK = 14
-
-        AROS = 15
-
-        FENIXOS = 16
-
-        CLOUDABI = 17
-
-        AMDGPU_HSA = 64
-
-        C6000_LINUX = 65
-
-        ARM = 97
-
-        STANDALONE = 255
-
-    class ELF_DATA(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> Header.ELF_DATA: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        NONE = 0
-
-        LSB = 1
-
-        MSB = 2
-
-    identity_class: lief.ELF.Header.CLASS
-
-    identity_data: lief.ELF.Header.ELF_DATA
-
-    identity_version: lief.ELF.Header.VERSION
-
-    identity_os_abi: lief.ELF.Header.OS_ABI
-
-    identity_abi_version: int
-
-    identity: list[int]
-
-    file_type: lief.ELF.Header.FILE_TYPE
-
-    machine_type: lief.ELF.ARCH
-
-    object_file_version: lief.ELF.Header.VERSION
-
-    entrypoint: int
-
-    program_header_offset: int
-
-    section_header_offset: int
-
-    processor_flag: int
-
-    def has(self, arg: PROCESSOR_FLAGS, /) -> bool: ...
-
-    @property
-    def flags_list(self) -> list[PROCESSOR_FLAGS]: ...
-
-    header_size: int
-
-    program_header_size: int
-
-    numberof_segments: int
-
-    section_header_size: int
-
-    numberof_sections: int
-
-    section_name_table_idx: int
-
-    def __str__(self) -> str: ...
-
-class Note(lief.Object):
-    class TYPE(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> Note.TYPE: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        UNKNOWN = 0
-
-        GNU_ABI_TAG = 1
-
-        GNU_HWCAP = 2
-
-        GNU_BUILD_ID = 3
-
-        GNU_GOLD_VERSION = 4
-
-        GNU_PROPERTY_TYPE_0 = 5
-
-        GNU_BUILD_ATTRIBUTE_OPEN = 6
-
-        GNU_BUILD_ATTRIBUTE_FUNC = 7
-
-        CRASHPAD = 8
-
-        CORE_PRSTATUS = 9
-
-        CORE_FPREGSET = 10
-
-        CORE_PRPSINFO = 11
-
-        CORE_TASKSTRUCT = 12
-
-        CORE_AUXV = 13
-
-        CORE_PSTATUS = 14
-
-        CORE_FPREGS = 15
-
-        CORE_PSINFO = 16
-
-        CORE_LWPSTATUS = 17
-
-        CORE_LWPSINFO = 18
-
-        CORE_WIN32PSTATUS = 19
-
-        CORE_FILE = 20
-
-        CORE_PRXFPREG = 21
-
-        CORE_SIGINFO = 22
-
-        CORE_ARM_VFP = 23
-
-        CORE_ARM_TLS = 24
-
-        CORE_ARM_HW_BREAK = 25
-
-        CORE_ARM_HW_WATCH = 26
-
-        CORE_ARM_SYSTEM_CALL = 27
-
-        CORE_ARM_SVE = 28
-
-        CORE_ARM_PAC_MASK = 29
-
-        CORE_ARM_PACA_KEYS = 30
-
-        CORE_ARM_PACG_KEYS = 31
-
-        CORE_TAGGED_ADDR_CTRL = 32
-
-        CORE_PAC_ENABLED_KEYS = 33
-
-        CORE_X86_TLS = 34
-
-        CORE_X86_IOPERM = 35
-
-        CORE_X86_XSTATE = 36
-
-        CORE_X86_CET = 37
-
-        ANDROID_MEMTAG = 39
-
-        ANDROID_KUSER = 40
-
-        ANDROID_IDENT = 38
-
-        GO_BUILDID = 41
-
-        STAPSDT = 42
-
-        QNX_STACK = 43
-
-    @overload
-    @staticmethod
-    def create(name: str, original_type: int, description: Sequence[int], section_name: str, file_type: Header.FILE_TYPE = Header.FILE_TYPE.NONE, arch: ARCH = ARCH.NONE, cls: Header.CLASS = Header.CLASS.NONE) -> Optional[Note]: ...
-
-    @overload
-    @staticmethod
-    def create(raw: bytes, section_name: str = '', file_type: Header.FILE_TYPE = Header.FILE_TYPE.NONE, arch: ARCH = ARCH.NONE, cls: Header.CLASS = Header.CLASS.NONE) -> Optional[Note]: ...
-
-    @overload
-    @staticmethod
-    def create(name: str, type: Note.TYPE, description: Sequence[int], section_name: str, arch: ARCH = ARCH.NONE, cls: Header.CLASS = Header.CLASS.NONE) -> Optional[Note]: ...
-
-    name: str
-
-    @property
-    def original_type(self) -> int: ...
-
-    @property
-    def type(self) -> Note.TYPE: ...
-
-    description: memoryview
-
-    @property
-    def size(self) -> int: ...
-
-    def copy(self) -> Optional[Note]: ...
-
-    def __str__(self) -> str: ...
-
-class NoteAbi(Note):
-    class ABI(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> NoteAbi.ABI: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        LINUX = 0
-
-        GNU = 1
-
-        SOLARIS2 = 2
-
-        FREEBSD = 3
-
-        NETBSD = 4
-
-        SYLLABLE = 5
-
-        NACL = 6
-
-    @property
-    def abi(self) -> Optional[NoteAbi.ABI]: ...
-
-    @property
-    def version(self) -> Optional[list[int]]: ...
-
-    def __str__(self) -> str: ...
-
-class NoteGnuProperty(Note):
-    class Property:
-        @property
-        def type(self) -> NoteGnuProperty.Property.TYPE: ...
-
-        def __str__(self) -> str: ...
-
-        class TYPE(enum.Enum):
-            @staticmethod
-            def from_value(arg: int, /) -> NoteGnuProperty.Property.TYPE: ...
-
-            def __eq__(self, arg, /) -> bool: ...
-
-            def __ne__(self, arg, /) -> bool: ...
-
-            def __int__(self) -> int: ...
-
-            UNKNOWN = 0
-
-            GENERIC = 1
-
-            AARCH64_FEATURES = 2
-
-            AARCH64_PAUTH = 3
-
-            STACK_SIZE = 4
-
-            NO_COPY_ON_PROTECTED = 5
-
-            X86_ISA = 6
-
-            X86_FEATURE = 7
-
-            NEEDED = 8
-
-    @property
-    def properties(self) -> list[Optional[NoteGnuProperty.Property]]: ...
-
-    def find(self, arg: NoteGnuProperty.Property.TYPE, /) -> Optional[NoteGnuProperty.Property]: ...
-
-    def __str__(self) -> str: ...
-
-class NoteNoCopyOnProtected(NoteGnuProperty.Property):
-    pass
-
 class PROCESSOR_FLAGS(enum.Enum):
     @staticmethod
     def from_value(arg: int, /) -> PROCESSOR_FLAGS: ...
@@ -2441,12 +1029,12 @@ class PROCESSOR_FLAGS(enum.Enum):
 
     RISCV_FLOAT_ABI_TSO = 43980465111056
 
-class ParserConfig:
+class Header(lief.Object):
     def __init__(self) -> None: ...
 
-    class DYNSYM_COUNT(enum.Enum):
+    class FILE_TYPE(enum.Enum):
         @staticmethod
-        def from_value(arg: int, /) -> ParserConfig.DYNSYM_COUNT: ...
+        def from_value(arg: int, /) -> Header.FILE_TYPE: ...
 
         def __eq__(self, arg, /) -> bool: ...
 
@@ -2454,36 +1042,610 @@ class ParserConfig:
 
         def __int__(self) -> int: ...
 
-        AUTO = 0
+        NONE = 0
 
-        SECTION = 1
+        REL = 1
 
-        HASH = 2
+        EXEC = 2
 
-        RELOCATIONS = 3
+        DYN = 3
 
-    parse_relocations: bool
+        CORE = 4
 
-    parse_dyn_symbols: bool
+    class VERSION(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> Header.VERSION: ...
 
-    parse_symtab_symbols: bool
+        def __eq__(self, arg, /) -> bool: ...
 
-    parse_symbol_versions: bool
+        def __ne__(self, arg, /) -> bool: ...
 
-    parse_notes: bool
+        def __int__(self) -> int: ...
 
-    parse_overlay: bool
+        NONE = 0
 
-    count_mtd: lief.ELF.ParserConfig.DYNSYM_COUNT
+        CURRENT = 1
 
-    all: lief.ELF.ParserConfig = ...
+    class CLASS(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> Header.CLASS: ...
 
-class QNXStack(Note):
-    stack_size: int
+        def __eq__(self, arg, /) -> bool: ...
 
-    stack_allocated: int
+        def __ne__(self, arg, /) -> bool: ...
 
-    is_executable: bool
+        def __int__(self) -> int: ...
+
+        NONE = 0
+
+        ELF32 = 1
+
+        ELF64 = 2
+
+    class OS_ABI(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> Header.OS_ABI: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        SYSTEMV = 0
+
+        HPUX = 1
+
+        NETBSD = 2
+
+        LINUX = 3
+
+        HURD = 4
+
+        SOLARIS = 6
+
+        AIX = 7
+
+        IRIX = 8
+
+        FREEBSD = 9
+
+        TRU64 = 10
+
+        MODESTO = 11
+
+        OPENBSD = 12
+
+        OPENVMS = 13
+
+        NSK = 14
+
+        AROS = 15
+
+        FENIXOS = 16
+
+        CLOUDABI = 17
+
+        AMDGPU_HSA = 64
+
+        C6000_LINUX = 65
+
+        ARM = 97
+
+        STANDALONE = 255
+
+    class ELF_DATA(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> Header.ELF_DATA: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        NONE = 0
+
+        LSB = 1
+
+        MSB = 2
+
+    identity_class: Header.CLASS
+
+    identity_data: Header.ELF_DATA
+
+    identity_version: Header.VERSION
+
+    identity_os_abi: Header.OS_ABI
+
+    identity_abi_version: int
+
+    identity: list[int]
+
+    file_type: Header.FILE_TYPE
+
+    machine_type: ARCH
+
+    object_file_version: Header.VERSION
+
+    entrypoint: int
+
+    program_header_offset: int
+
+    section_header_offset: int
+
+    processor_flag: int
+
+    def has(self, arg: PROCESSOR_FLAGS, /) -> bool: ...
+
+    @property
+    def flags_list(self) -> list[PROCESSOR_FLAGS]: ...
+
+    header_size: int
+
+    program_header_size: int
+
+    numberof_segments: int
+
+    section_header_size: int
+
+    numberof_sections: int
+
+    section_name_table_idx: int
+
+    def __str__(self) -> str: ...
+
+class Section(lief.Section):
+    @overload
+    def __init__(self) -> None: ...
+
+    @overload
+    def __init__(self, name: str, type: Section.TYPE = Section.TYPE.PROGBITS) -> None: ...
+
+    class it_segments:
+        def __getitem__(self, arg: int, /) -> Segment: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> Section.it_segments: ...
+
+        def __next__(self) -> Segment: ...
+
+    class FLAGS(enum.Flag):
+        @staticmethod
+        def from_value(arg: int, /) -> Section.FLAGS: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        NONE = 0
+
+        WRITE = 1
+
+        ALLOC = 2
+
+        EXECINSTR = 4
+
+        MERGE = 16
+
+        STRINGS = 32
+
+        INFO_LINK = 64
+
+        LINK_ORDER = 128
+
+        OS_NONCONFORMING = 256
+
+        GROUP = 512
+
+        TLS = 1024
+
+        COMPRESSED = 2048
+
+        GNU_RETAIN = 2097152
+
+        EXCLUDE = 2147483648
+
+        XCORE_SHF_DP_SECTION = 4563402752
+
+        XCORE_SHF_CP_SECTION = 4831838208
+
+        X86_64_LARGE = 8858370048
+
+        HEX_GPREL = 13153337344
+
+        MIPS_NODUPES = 17196646400
+
+        MIPS_NAMES = 17213423616
+
+        MIPS_LOCAL = 17246978048
+
+        MIPS_NOSTRIP = 17314086912
+
+        MIPS_GPREL = 17448304640
+
+        MIPS_MERGE = 17716740096
+
+        MIPS_ADDR = 18253611008
+
+        MIPS_STRING = 19327352832
+
+        ARM_PURECODE = 22011707392
+
+    class TYPE(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> Section.TYPE: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        PROGBITS = 1
+
+        SYMTAB = 2
+
+        STRTAB = 3
+
+        RELA = 4
+
+        HASH = 5
+
+        DYNAMIC = 6
+
+        NOTE = 7
+
+        NOBITS = 8
+
+        REL = 9
+
+        SHLIB = 10
+
+        DYNSYM = 11
+
+        INIT_ARRAY = 14
+
+        FINI_ARRAY = 15
+
+        PREINIT_ARRAY = 16
+
+        GROUP = 17
+
+        SYMTAB_SHNDX = 18
+
+        RELR = 19
+
+        ANDROID_REL = 1610612737
+
+        ANDROID_RELA = 1610612738
+
+        LLVM_ADDRSIG = 1879002115
+
+        ANDROID_RELR = 1879047936
+
+        GNU_ATTRIBUTES = 1879048181
+
+        GNU_HASH = 1879048182
+
+        GNU_VERDEF = 1879048189
+
+        GNU_VERNEED = 1879048190
+
+        GNU_VERSYM = 1879048191
+
+        ARM_EXIDX = 6174015489
+
+        ARM_PREEMPTMAP = 6174015490
+
+        ARM_ATTRIBUTES = 6174015491
+
+        ARM_DEBUGOVERLAY = 6174015492
+
+        ARM_OVERLAYSECTION = 6174015493
+
+        HEX_ORDERED = 10468982784
+
+        X86_64_UNWIND = 10468982785
+
+        MIPS_REGINFO = 14763950086
+
+        MIPS_OPTIONS = 14763950093
+
+        MIPS_ABIFLAGS = 14763950122
+
+        RISCV_ATTRIBUTES = 19058917379
+
+    def as_frame(self) -> Section: ...
+
+    @property
+    def is_frame(self) -> bool: ...
+
+    type: Section.TYPE
+
+    flags: int
+
+    @property
+    def flags_list(self) -> list[Section.FLAGS]: ...
+
+    file_offset: int
+
+    @property
+    def original_size(self) -> int: ...
+
+    alignment: int
+
+    information: int
+
+    entry_size: int
+
+    link: int
+
+    @property
+    def segments(self) -> Section.it_segments: ...
+
+    def clear(self, value: int = 0) -> Section: ...
+
+    def add(self, flag: Section.FLAGS) -> None: ...
+
+    def remove(self, flag: Section.FLAGS) -> None: ...
+
+    @overload
+    def has(self, flag: Section.FLAGS) -> bool: ...
+
+    @overload
+    def has(self, segment: Segment) -> bool: ...
+
+    def __iadd__(self, arg: Section.FLAGS, /) -> Section: ...
+
+    def __isub__(self, arg: Section.FLAGS, /) -> Section: ...
+
+    @overload
+    def __contains__(self, arg: Section.FLAGS, /) -> bool: ...
+
+    @overload
+    def __contains__(self, arg: Segment, /) -> bool: ...
+
+    def __str__(self) -> str: ...
+
+class Segment(lief.Object):
+    def __init__(self) -> None: ...
+
+    class it_sections:
+        def __getitem__(self, arg: int, /) -> Section: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> Segment.it_sections: ...
+
+        def __next__(self) -> Section: ...
+
+    class TYPE(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> Segment.TYPE: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        LOAD = 1
+
+        DYNAMIC = 2
+
+        INTERP = 3
+
+        NOTE = 4
+
+        SHLIB = 5
+
+        PHDR = 6
+
+        TLS = 7
+
+        GNU_EH_FRAME = 1685382480
+
+        GNU_STACK = 1685382481
+
+        GNU_PROPERTY = 1685382483
+
+        GNU_RELRO = 1685382482
+
+        ARM_ARCHEXT = 10468982784
+
+        ARM_EXIDX = 10468982785
+
+        AARCH64_MEMTAG_MTE = 19058917378
+
+        MIPS_REGINFO = 27648851968
+
+        MIPS_RTPROC = 27648851969
+
+        MIPS_OPTIONS = 27648851970
+
+        MIPS_ABIFLAGS = 27648851971
+
+        RISCV_ATTRIBUTES = 36238786563
+
+    class FLAGS(enum.Flag):
+        @staticmethod
+        def from_value(arg: int, /) -> Segment.FLAGS: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        R = 4
+
+        W = 2
+
+        X = 1
+
+        NONE = 0
+
+    @staticmethod
+    def from_raw(arg: bytes, /) -> Union[Segment, lief.lief_errors]: ...
+
+    type: Segment.TYPE
+
+    flags: Segment.FLAGS
+
+    file_offset: int
+
+    virtual_address: int
+
+    physical_address: int
+
+    physical_size: int
+
+    virtual_size: int
+
+    alignment: int
+
+    content: memoryview
+
+    def add(self, flag: Segment.FLAGS) -> None: ...
+
+    def remove(self, flag: Segment.FLAGS) -> None: ...
+
+    @overload
+    def has(self, flag: Segment.FLAGS) -> bool: ...
+
+    @overload
+    def has(self, section: Section) -> bool: ...
+
+    @overload
+    def has(self, section_name: str) -> bool: ...
+
+    @property
+    def sections(self) -> Segment.it_sections: ...
+
+    def __iadd__(self, arg: Segment.FLAGS, /) -> Segment: ...
+
+    def __isub__(self, arg: Segment.FLAGS, /) -> Segment: ...
+
+    @overload
+    def __contains__(self, arg: Segment.FLAGS, /) -> bool: ...
+
+    @overload
+    def __contains__(self, arg: Section, /) -> bool: ...
+
+    @overload
+    def __contains__(self, arg: str, /) -> bool: ...
+
+    def __str__(self) -> str: ...
+
+class Symbol(lief.Symbol):
+    def __init__(self) -> None: ...
+
+    class BINDING(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> Symbol.BINDING: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        LOCAL = 0
+
+        GLOBAL = 1
+
+        WEAK = 2
+
+        GNU_UNIQUE = 10
+
+    class TYPE(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> Symbol.TYPE: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        NOTYPE = 0
+
+        OBJECT = 1
+
+        FUNC = 2
+
+        SECTION = 3
+
+        FILE = 4
+
+        COMMON = 5
+
+        TLS = 6
+
+        GNU_IFUNC = 10
+
+    class VISIBILITY(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> Symbol.VISIBILITY: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        DEFAULT = 0
+
+        INTERNAL = 1
+
+        HIDDEN = 2
+
+        PROTECTED = 3
+
+    @property
+    def demangled_name(self) -> str: ...
+
+    type: Symbol.TYPE
+
+    binding: Symbol.BINDING
+
+    information: int
+
+    other: int
+
+    visibility: Symbol.VISIBILITY
+
+    value: int
+
+    size: int
+
+    shndx: int
+
+    @property
+    def has_version(self) -> bool: ...
+
+    @property
+    def symbol_version(self) -> SymbolVersion: ...
+
+    @property
+    def section(self) -> Section: ...
+
+    @property
+    def is_static(self) -> bool: ...
+
+    @property
+    def is_function(self) -> bool: ...
+
+    @property
+    def is_variable(self) -> bool: ...
+
+    exported: bool
+
+    imported: bool
 
     def __str__(self) -> str: ...
 
@@ -4581,14 +3743,14 @@ class Relocation(lief.Relocation):
 
     info: int
 
-    purpose: lief.ELF.Relocation.PURPOSE
+    purpose: Relocation.PURPOSE
 
-    type: lief.ELF.Relocation.TYPE
+    type: Relocation.TYPE
 
     @property
     def has_symbol(self) -> bool: ...
 
-    symbol: lief.ELF.Symbol
+    symbol: Symbol
 
     @property
     def has_section(self) -> bool: ...
@@ -4617,482 +3779,6 @@ class Relocation(lief.Relocation):
     def encoding(self) -> Relocation.ENCODING: ...
 
     def resolve(self, base_address: int = 0) -> Union[int, lief.lief_errors]: ...
-
-    def __str__(self) -> str: ...
-
-class Section(lief.Section):
-    @overload
-    def __init__(self) -> None: ...
-
-    @overload
-    def __init__(self, name: str, type: Section.TYPE = Section.TYPE.PROGBITS) -> None: ...
-
-    class it_segments:
-        def __getitem__(self, arg: int, /) -> Segment: ...
-
-        def __len__(self) -> int: ...
-
-        def __iter__(self) -> Section.it_segments: ...
-
-        def __next__(self) -> Segment: ...
-
-    class FLAGS(enum.Flag):
-        @staticmethod
-        def from_value(arg: int, /) -> Section.FLAGS: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        NONE = 0
-
-        WRITE = 1
-
-        ALLOC = 2
-
-        EXECINSTR = 4
-
-        MERGE = 16
-
-        STRINGS = 32
-
-        INFO_LINK = 64
-
-        LINK_ORDER = 128
-
-        OS_NONCONFORMING = 256
-
-        GROUP = 512
-
-        TLS = 1024
-
-        COMPRESSED = 2048
-
-        GNU_RETAIN = 2097152
-
-        EXCLUDE = 2147483648
-
-        XCORE_SHF_DP_SECTION = 4563402752
-
-        XCORE_SHF_CP_SECTION = 4831838208
-
-        X86_64_LARGE = 8858370048
-
-        HEX_GPREL = 13153337344
-
-        MIPS_NODUPES = 17196646400
-
-        MIPS_NAMES = 17213423616
-
-        MIPS_LOCAL = 17246978048
-
-        MIPS_NOSTRIP = 17314086912
-
-        MIPS_GPREL = 17448304640
-
-        MIPS_MERGE = 17716740096
-
-        MIPS_ADDR = 18253611008
-
-        MIPS_STRING = 19327352832
-
-        ARM_PURECODE = 22011707392
-
-    class TYPE(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> Section.TYPE: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        PROGBITS = 1
-
-        SYMTAB = 2
-
-        STRTAB = 3
-
-        RELA = 4
-
-        HASH = 5
-
-        DYNAMIC = 6
-
-        NOTE = 7
-
-        NOBITS = 8
-
-        REL = 9
-
-        SHLIB = 10
-
-        DYNSYM = 11
-
-        INIT_ARRAY = 14
-
-        FINI_ARRAY = 15
-
-        PREINIT_ARRAY = 16
-
-        GROUP = 17
-
-        SYMTAB_SHNDX = 18
-
-        RELR = 19
-
-        ANDROID_REL = 1610612737
-
-        ANDROID_RELA = 1610612738
-
-        LLVM_ADDRSIG = 1879002115
-
-        ANDROID_RELR = 1879047936
-
-        GNU_ATTRIBUTES = 1879048181
-
-        GNU_HASH = 1879048182
-
-        GNU_VERDEF = 1879048189
-
-        GNU_VERNEED = 1879048190
-
-        GNU_VERSYM = 1879048191
-
-        ARM_EXIDX = 6174015489
-
-        ARM_PREEMPTMAP = 6174015490
-
-        ARM_ATTRIBUTES = 6174015491
-
-        ARM_DEBUGOVERLAY = 6174015492
-
-        ARM_OVERLAYSECTION = 6174015493
-
-        HEX_ORDERED = 10468982784
-
-        X86_64_UNWIND = 10468982785
-
-        MIPS_REGINFO = 14763950086
-
-        MIPS_OPTIONS = 14763950093
-
-        MIPS_ABIFLAGS = 14763950122
-
-        RISCV_ATTRIBUTES = 19058917379
-
-    def as_frame(self) -> Section: ...
-
-    @property
-    def is_frame(self) -> bool: ...
-
-    type: lief.ELF.Section.TYPE
-
-    flags: int
-
-    @property
-    def flags_list(self) -> list[Section.FLAGS]: ...
-
-    file_offset: int
-
-    @property
-    def original_size(self) -> int: ...
-
-    alignment: int
-
-    information: int
-
-    entry_size: int
-
-    link: int
-
-    @property
-    def segments(self) -> Section.it_segments: ...
-
-    def clear(self, value: int = 0) -> Section: ...
-
-    def add(self, flag: Section.FLAGS) -> None: ...
-
-    def remove(self, flag: Section.FLAGS) -> None: ...
-
-    @overload
-    def has(self, flag: Section.FLAGS) -> bool: ...
-
-    @overload
-    def has(self, segment: Segment) -> bool: ...
-
-    def __iadd__(self, arg: Section.FLAGS, /) -> Section: ...
-
-    def __isub__(self, arg: Section.FLAGS, /) -> Section: ...
-
-    @overload
-    def __contains__(self, arg: Section.FLAGS, /) -> bool: ...
-
-    @overload
-    def __contains__(self, arg: Segment, /) -> bool: ...
-
-    def __str__(self) -> str: ...
-
-class Segment(lief.Object):
-    def __init__(self) -> None: ...
-
-    class it_sections:
-        def __getitem__(self, arg: int, /) -> Section: ...
-
-        def __len__(self) -> int: ...
-
-        def __iter__(self) -> Segment.it_sections: ...
-
-        def __next__(self) -> Section: ...
-
-    class TYPE(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> Segment.TYPE: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        LOAD = 1
-
-        DYNAMIC = 2
-
-        INTERP = 3
-
-        NOTE = 4
-
-        SHLIB = 5
-
-        PHDR = 6
-
-        TLS = 7
-
-        GNU_EH_FRAME = 1685382480
-
-        GNU_STACK = 1685382481
-
-        GNU_PROPERTY = 1685382483
-
-        GNU_RELRO = 1685382482
-
-        ARM_ARCHEXT = 10468982784
-
-        ARM_EXIDX = 10468982785
-
-        AARCH64_MEMTAG_MTE = 19058917378
-
-        MIPS_REGINFO = 27648851968
-
-        MIPS_RTPROC = 27648851969
-
-        MIPS_OPTIONS = 27648851970
-
-        MIPS_ABIFLAGS = 27648851971
-
-        RISCV_ATTRIBUTES = 36238786563
-
-    class FLAGS(enum.Flag):
-        @staticmethod
-        def from_value(arg: int, /) -> Segment.FLAGS: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        R = 4
-
-        W = 2
-
-        X = 1
-
-        NONE = 0
-
-    @staticmethod
-    def from_raw(arg: bytes, /) -> Union[Segment, lief.lief_errors]: ...
-
-    type: lief.ELF.Segment.TYPE
-
-    flags: lief.ELF.Segment.FLAGS
-
-    file_offset: int
-
-    virtual_address: int
-
-    physical_address: int
-
-    physical_size: int
-
-    virtual_size: int
-
-    alignment: int
-
-    content: memoryview
-
-    def add(self, flag: Segment.FLAGS) -> None: ...
-
-    def remove(self, flag: Segment.FLAGS) -> None: ...
-
-    @overload
-    def has(self, flag: Segment.FLAGS) -> bool: ...
-
-    @overload
-    def has(self, section: Section) -> bool: ...
-
-    @overload
-    def has(self, section_name: str) -> bool: ...
-
-    @property
-    def sections(self) -> Segment.it_sections: ...
-
-    def __iadd__(self, arg: Segment.FLAGS, /) -> Segment: ...
-
-    def __isub__(self, arg: Segment.FLAGS, /) -> Segment: ...
-
-    @overload
-    def __contains__(self, arg: Segment.FLAGS, /) -> bool: ...
-
-    @overload
-    def __contains__(self, arg: Section, /) -> bool: ...
-
-    @overload
-    def __contains__(self, arg: str, /) -> bool: ...
-
-    def __str__(self) -> str: ...
-
-class StackSize(NoteGnuProperty.Property):
-    @property
-    def stack_size(self) -> int: ...
-
-class Symbol(lief.Symbol):
-    def __init__(self) -> None: ...
-
-    class BINDING(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> Symbol.BINDING: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        LOCAL = 0
-
-        GLOBAL = 1
-
-        WEAK = 2
-
-        GNU_UNIQUE = 10
-
-    class TYPE(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> Symbol.TYPE: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        NOTYPE = 0
-
-        OBJECT = 1
-
-        FUNC = 2
-
-        SECTION = 3
-
-        FILE = 4
-
-        COMMON = 5
-
-        TLS = 6
-
-        GNU_IFUNC = 10
-
-    class VISIBILITY(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> Symbol.VISIBILITY: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        DEFAULT = 0
-
-        INTERNAL = 1
-
-        HIDDEN = 2
-
-        PROTECTED = 3
-
-    @property
-    def demangled_name(self) -> str: ...
-
-    type: lief.ELF.Symbol.TYPE
-
-    binding: lief.ELF.Symbol.BINDING
-
-    information: int
-
-    other: int
-
-    visibility: lief.ELF.Symbol.VISIBILITY
-
-    value: int
-
-    size: int
-
-    shndx: int
-
-    @property
-    def has_version(self) -> bool: ...
-
-    @property
-    def symbol_version(self) -> SymbolVersion: ...
-
-    @property
-    def section(self) -> Section: ...
-
-    @property
-    def is_static(self) -> bool: ...
-
-    @property
-    def is_function(self) -> bool: ...
-
-    @property
-    def is_variable(self) -> bool: ...
-
-    exported: bool
-
-    imported: bool
-
-    def __str__(self) -> str: ...
-
-class SymbolVersion(lief.Object):
-    @overload
-    def __init__(self) -> None: ...
-
-    @overload
-    def __init__(self, arg: int, /) -> None: ...
-
-    local: lief.ELF.SymbolVersion = ...
-
-    value: int
-
-    @property
-    def has_auxiliary_version(self) -> bool: ...
-
-    symbol_version_auxiliary: lief.ELF.SymbolVersionAux
 
     def __str__(self) -> str: ...
 
@@ -5156,6 +3842,487 @@ class SymbolVersionRequirement(lief.Object):
 
     def __str__(self) -> str: ...
 
+class DynamicEntry(lief.Object):
+    @overload
+    def __init__(self) -> None: ...
+
+    @overload
+    def __init__(self, tag: DynamicEntry.TAG, value: int) -> None: ...
+
+    class TAG(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> DynamicEntry.TAG: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        UNKNOWN = 18446744073709551615
+
+        NULL = 0
+
+        NEEDED = 1
+
+        PLTRELSZ = 2
+
+        PLTGOT = 3
+
+        HASH = 4
+
+        STRTAB = 5
+
+        SYMTAB = 6
+
+        RELA = 7
+
+        RELASZ = 8
+
+        RELAENT = 9
+
+        STRSZ = 10
+
+        SYMENT = 11
+
+        INIT = 12
+
+        FINI = 13
+
+        SONAME = 14
+
+        RPATH = 15
+
+        SYMBOLIC = 16
+
+        REL = 17
+
+        RELSZ = 18
+
+        RELENT = 19
+
+        PLTREL = 20
+
+        DEBUG_TAG = 21
+
+        TEXTREL = 22
+
+        JMPREL = 23
+
+        BIND_NOW = 24
+
+        INIT_ARRAY = 25
+
+        FINI_ARRAY = 26
+
+        INIT_ARRAYSZ = 27
+
+        FINI_ARRAYSZ = 28
+
+        RUNPATH = 29
+
+        FLAGS = 30
+
+        PREINIT_ARRAY = 32
+
+        PREINIT_ARRAYSZ = 33
+
+        SYMTAB_SHNDX = 34
+
+        RELRSZ = 35
+
+        RELR = 36
+
+        RELRENT = 37
+
+        GNU_HASH = 1879047925
+
+        RELACOUNT = 1879048185
+
+        RELCOUNT = 1879048186
+
+        FLAGS_1 = 1879048187
+
+        VERSYM = 1879048176
+
+        VERDEF = 1879048188
+
+        VERDEFNUM = 1879048189
+
+        VERNEED = 1879048190
+
+        VERNEEDNUM = 1879048191
+
+        ANDROID_REL_OFFSET = 1610612749
+
+        ANDROID_REL_SIZE = 1610612750
+
+        ANDROID_REL = 1610612751
+
+        ANDROID_RELSZ = 1610612752
+
+        ANDROID_RELA = 1610612753
+
+        ANDROID_RELASZ = 1610612754
+
+        ANDROID_RELR = 1879040000
+
+        ANDROID_RELRSZ = 1879040001
+
+        ANDROID_RELRENT = 1879040003
+
+        ANDROID_RELRCOUNT = 1879040005
+
+        MIPS_RLD_VERSION = 6174015489
+
+        MIPS_TIME_STAMP = 6174015490
+
+        MIPS_ICHECKSUM = 6174015491
+
+        MIPS_IVERSION = 6174015492
+
+        MIPS_FLAGS = 6174015493
+
+        MIPS_BASE_ADDRESS = 6174015494
+
+        MIPS_MSYM = 6174015495
+
+        MIPS_CONFLICT = 6174015496
+
+        MIPS_LIBLIST = 6174015497
+
+        MIPS_LOCAL_GOTNO = 6174015498
+
+        MIPS_CONFLICTNO = 6174015499
+
+        MIPS_LIBLISTNO = 6174015504
+
+        MIPS_SYMTABNO = 6174015505
+
+        MIPS_UNREFEXTNO = 6174015506
+
+        MIPS_GOTSYM = 6174015507
+
+        MIPS_HIPAGENO = 6174015508
+
+        MIPS_RLD_MAP = 6174015510
+
+        MIPS_DELTA_CLASS = 6174015511
+
+        MIPS_DELTA_CLASS_NO = 6174015512
+
+        MIPS_DELTA_INSTANCE = 6174015513
+
+        MIPS_DELTA_INSTANCE_NO = 6174015514
+
+        MIPS_DELTA_RELOC = 6174015515
+
+        MIPS_DELTA_RELOC_NO = 6174015516
+
+        MIPS_DELTA_SYM = 6174015517
+
+        MIPS_DELTA_SYM_NO = 6174015518
+
+        MIPS_DELTA_CLASSSYM = 6174015520
+
+        MIPS_DELTA_CLASSSYM_NO = 6174015521
+
+        MIPS_CXX_FLAGS = 6174015522
+
+        MIPS_PIXIE_INIT = 6174015523
+
+        MIPS_SYMBOL_LIB = 6174015524
+
+        MIPS_LOCALPAGE_GOTIDX = 6174015525
+
+        MIPS_LOCAL_GOTIDX = 6174015526
+
+        MIPS_HIDDEN_GOTIDX = 6174015527
+
+        MIPS_PROTECTED_GOTIDX = 6174015528
+
+        MIPS_OPTIONS = 6174015529
+
+        MIPS_INTERFACE = 6174015530
+
+        MIPS_DYNSTR_ALIGN = 6174015531
+
+        MIPS_INTERFACE_SIZE = 6174015532
+
+        MIPS_RLD_TEXT_RESOLVE_ADDR = 6174015533
+
+        MIPS_PERF_SUFFIX = 6174015534
+
+        MIPS_COMPACT_SIZE = 6174015535
+
+        MIPS_GP_VALUE = 6174015536
+
+        MIPS_AUX_DYNAMIC = 6174015537
+
+        MIPS_PLTGOT = 6174015538
+
+        MIPS_RWPLT = 6174015540
+
+        MIPS_RLD_MAP_REL = 6174015541
+
+        MIPS_XHASH = 6174015542
+
+        AARCH64_BTI_PLT = 10468982785
+
+        AARCH64_PAC_PLT = 10468982787
+
+        AARCH64_VARIANT_PCS = 10468982789
+
+        AARCH64_MEMTAG_MODE = 10468982793
+
+        AARCH64_MEMTAG_HEAP = 10468982795
+
+        AARCH64_MEMTAG_STACK = 10468982796
+
+        AARCH64_MEMTAG_GLOBALS = 10468982797
+
+        AARCH64_MEMTAG_GLOBALSSZ = 10468982799
+
+        HEXAGON_SYMSZ = 14763950080
+
+        HEXAGON_VER = 14763950081
+
+        HEXAGON_PLT = 14763950082
+
+        PPC_GOT = 19058917376
+
+        PPC_OPT = 19058917377
+
+        PPC64_GLINK = 23353884672
+
+        PPC64_OPT = 23353884675
+
+        RISCV_VARIANT_CC = 27648851971
+
+        X86_64_PLT = 31943819264
+
+        X86_64_PLTSZ = 31943819265
+
+        X86_64_PLTENT = 31943819267
+
+    tag: DynamicEntry.TAG
+
+    value: int
+
+    def __str__(self) -> str: ...
+
+class DynamicEntryLibrary(DynamicEntry):
+    def __init__(self, library_name: str) -> None: ...
+
+    name: Union[str, bytes]
+
+    def __str__(self) -> str: ...
+
+class DynamicSharedObject(DynamicEntry):
+    def __init__(self, library_name: str) -> None: ...
+
+    name: Union[str, bytes]
+
+    def __str__(self) -> str: ...
+
+class DynamicEntryArray(DynamicEntry):
+    def __init__(self, tag: DynamicEntry.TAG, array: Sequence[int]) -> None: ...
+
+    array: list[int]
+
+    def insert(self, pos: int, function: int) -> DynamicEntryArray: ...
+
+    def append(self, function: int) -> DynamicEntryArray: ...
+
+    def remove(self, function: int) -> DynamicEntryArray: ...
+
+    def __iadd__(self, arg: int, /) -> DynamicEntryArray: ...
+
+    def __isub__(self, arg: int, /) -> DynamicEntryArray: ...
+
+    def __getitem__(self, arg: int, /) -> int: ...
+
+    def __len__(self) -> int: ...
+
+    def __str__(self) -> str: ...
+
+class DynamicEntryRpath(DynamicEntry):
+    @overload
+    def __init__(self, path: str = '') -> None: ...
+
+    @overload
+    def __init__(self, paths: Sequence[str]) -> None: ...
+
+    rpath: Union[str, bytes]
+
+    paths: list[str]
+
+    def insert(self, position: int, path: str) -> DynamicEntryRpath: ...
+
+    def append(self, path: str) -> DynamicEntryRpath: ...
+
+    def remove(self, path: str) -> DynamicEntryRpath: ...
+
+    def __iadd__(self, arg: str, /) -> DynamicEntryRpath: ...
+
+    def __isub__(self, arg: str, /) -> DynamicEntryRpath: ...
+
+    def __str__(self) -> str: ...
+
+class DynamicEntryRunPath(DynamicEntry):
+    @overload
+    def __init__(self, path: str = '') -> None: ...
+
+    @overload
+    def __init__(self, paths: Sequence[str]) -> None: ...
+
+    runpath: Union[str, bytes]
+
+    paths: list[str]
+
+    def insert(self, position: int, path: str) -> DynamicEntryRunPath: ...
+
+    def append(self, path: str) -> DynamicEntryRunPath: ...
+
+    def remove(self, path: str) -> DynamicEntryRunPath: ...
+
+    def __iadd__(self, arg: str, /) -> DynamicEntryRunPath: ...
+
+    def __isub__(self, arg: str, /) -> DynamicEntryRunPath: ...
+
+    def __str__(self) -> str: ...
+
+class DynamicEntryFlags(DynamicEntry):
+    class FLAG(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> DynamicEntryFlags.FLAG: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        ORIGIN = 1
+
+        SYMBOLIC = 2
+
+        TEXTREL = 4
+
+        BIND_NOW = 8
+
+        STATIC_TLS = 16
+
+        NOW = 4294967297
+
+        GLOBAL = 4294967298
+
+        GROUP = 4294967300
+
+        NODELETE = 4294967304
+
+        LOADFLTR = 4294967312
+
+        INITFIRST = 4294967328
+
+        NOOPEN = 4294967360
+
+        HANDLE_ORIGIN = 4294967424
+
+        DIRECT = 4294967552
+
+        TRANS = 4294967808
+
+        INTERPOSE = 4294968320
+
+        NODEFLIB = 4294969344
+
+        NODUMP = 4294971392
+
+        CONFALT = 4294975488
+
+        ENDFILTEE = 4294983680
+
+        DISPRELDNE = 4295000064
+
+        DISPRELPND = 4295032832
+
+        NODIRECT = 4295098368
+
+        IGNMULDEF = 4295229440
+
+        NOKSYMS = 4295491584
+
+        NOHDR = 4296015872
+
+        EDITED = 4297064448
+
+        NORELOC = 4299161600
+
+        SYMINTPOSE = 4303355904
+
+        GLOBAUDIT = 4311744512
+
+        SINGLETON = 4328521728
+
+        PIE = 4429185024
+
+        KMOD = 4563402752
+
+        WEAKFILTER = 4831838208
+
+        NOCOMMON = 5368709120
+
+    @property
+    def flags(self) -> list[DynamicEntryFlags.FLAG]: ...
+
+    def has(self, flag: DynamicEntryFlags.FLAG) -> bool: ...
+
+    def add(self, flag: DynamicEntryFlags.FLAG) -> None: ...
+
+    def remove(self, flag: DynamicEntryFlags.FLAG) -> None: ...
+
+    def __iadd__(self, arg: DynamicEntryFlags.FLAG, /) -> DynamicEntryFlags: ...
+
+    def __isub__(self, arg: DynamicEntryFlags.FLAG, /) -> DynamicEntryFlags: ...
+
+    def __contains__(self, arg: DynamicEntryFlags.FLAG, /) -> bool: ...
+
+    def __str__(self) -> str: ...
+
+class GnuHash(lief.Object):
+    def __init__(self) -> None: ...
+
+    @property
+    def nb_buckets(self) -> int: ...
+
+    @property
+    def symbol_index(self) -> int: ...
+
+    @property
+    def shift2(self) -> int: ...
+
+    @property
+    def bloom_filters(self) -> list[int]: ...
+
+    @property
+    def buckets(self) -> list[int]: ...
+
+    @property
+    def hash_values(self) -> list[int]: ...
+
+    def check_bloom_filter(self, hash: int) -> bool: ...
+
+    def check_bucket(self, hash: int) -> bool: ...
+
+    @overload
+    def check(self, symbol_name: str) -> bool: ...
+
+    @overload
+    def check(self, hash_value: int) -> bool: ...
+
+    def __str__(self) -> str: ...
+
 class SysvHash(lief.Object):
     def __init__(self) -> None: ...
 
@@ -5171,6 +4338,255 @@ class SysvHash(lief.Object):
     def chains(self) -> list[int]: ...
 
     def __str__(self) -> str: ...
+
+class Builder:
+    def __init__(self, elf_binary: Binary) -> None: ...
+
+    class config_t:
+        def __init__(self) -> None: ...
+
+        force_relocate: bool
+
+        dt_hash: bool
+
+        dyn_str: bool
+
+        dynamic_section: bool
+
+        fini_array: bool
+
+        init_array: bool
+
+        interpreter: bool
+
+        jmprel: bool
+
+        notes: bool
+
+        preinit_array: bool
+
+        relr: bool
+
+        android_rela: bool
+
+        rela: bool
+
+        static_symtab: bool
+
+        sym_verdef: bool
+
+        sym_verneed: bool
+
+        sym_versym: bool
+
+        symtab: bool
+
+        coredump_notes: bool
+
+    def build(self) -> None: ...
+
+    config: Builder.config_t
+
+    def write(self, output: str) -> None: ...
+
+    def get_build(self) -> list[int]: ...
+
+class Note(lief.Object):
+    class TYPE(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> Note.TYPE: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        UNKNOWN = 0
+
+        GNU_ABI_TAG = 1
+
+        GNU_HWCAP = 2
+
+        GNU_BUILD_ID = 3
+
+        GNU_GOLD_VERSION = 4
+
+        GNU_PROPERTY_TYPE_0 = 5
+
+        GNU_BUILD_ATTRIBUTE_OPEN = 6
+
+        GNU_BUILD_ATTRIBUTE_FUNC = 7
+
+        CRASHPAD = 8
+
+        CORE_PRSTATUS = 9
+
+        CORE_FPREGSET = 10
+
+        CORE_PRPSINFO = 11
+
+        CORE_TASKSTRUCT = 12
+
+        CORE_AUXV = 13
+
+        CORE_PSTATUS = 14
+
+        CORE_FPREGS = 15
+
+        CORE_PSINFO = 16
+
+        CORE_LWPSTATUS = 17
+
+        CORE_LWPSINFO = 18
+
+        CORE_WIN32PSTATUS = 19
+
+        CORE_FILE = 20
+
+        CORE_PRXFPREG = 21
+
+        CORE_SIGINFO = 22
+
+        CORE_ARM_VFP = 23
+
+        CORE_ARM_TLS = 24
+
+        CORE_ARM_HW_BREAK = 25
+
+        CORE_ARM_HW_WATCH = 26
+
+        CORE_ARM_SYSTEM_CALL = 27
+
+        CORE_ARM_SVE = 28
+
+        CORE_ARM_PAC_MASK = 29
+
+        CORE_ARM_PACA_KEYS = 30
+
+        CORE_ARM_PACG_KEYS = 31
+
+        CORE_TAGGED_ADDR_CTRL = 32
+
+        CORE_PAC_ENABLED_KEYS = 33
+
+        CORE_X86_TLS = 34
+
+        CORE_X86_IOPERM = 35
+
+        CORE_X86_XSTATE = 36
+
+        CORE_X86_CET = 37
+
+        ANDROID_MEMTAG = 39
+
+        ANDROID_KUSER = 40
+
+        ANDROID_IDENT = 38
+
+        GO_BUILDID = 41
+
+        STAPSDT = 42
+
+        QNX_STACK = 43
+
+    @overload
+    @staticmethod
+    def create(name: str, original_type: int, description: Sequence[int], section_name: str, file_type: Header.FILE_TYPE = Header.FILE_TYPE.NONE, arch: ARCH = ARCH.NONE, cls: Header.CLASS = Header.CLASS.NONE) -> Optional[Note]: ...
+
+    @overload
+    @staticmethod
+    def create(raw: bytes, section_name: str = '', file_type: Header.FILE_TYPE = Header.FILE_TYPE.NONE, arch: ARCH = ARCH.NONE, cls: Header.CLASS = Header.CLASS.NONE) -> Optional[Note]: ...
+
+    @overload
+    @staticmethod
+    def create(name: str, type: Note.TYPE, description: Sequence[int], section_name: str, arch: ARCH = ARCH.NONE, cls: Header.CLASS = Header.CLASS.NONE) -> Optional[Note]: ...
+
+    name: str
+
+    @property
+    def original_type(self) -> int: ...
+
+    @property
+    def type(self) -> Note.TYPE: ...
+
+    description: memoryview
+
+    @property
+    def size(self) -> int: ...
+
+    def copy(self) -> Optional[Note]: ...
+
+    def __str__(self) -> str: ...
+
+class NoteGnuProperty(Note):
+    class Property:
+        @property
+        def type(self) -> NoteGnuProperty.Property.TYPE: ...
+
+        def __str__(self) -> str: ...
+
+        class TYPE(enum.Enum):
+            @staticmethod
+            def from_value(arg: int, /) -> NoteGnuProperty.Property.TYPE: ...
+
+            def __eq__(self, arg, /) -> bool: ...
+
+            def __ne__(self, arg, /) -> bool: ...
+
+            def __int__(self) -> int: ...
+
+            UNKNOWN = 0
+
+            GENERIC = 1
+
+            AARCH64_FEATURES = 2
+
+            AARCH64_PAUTH = 3
+
+            STACK_SIZE = 4
+
+            NO_COPY_ON_PROTECTED = 5
+
+            X86_ISA = 6
+
+            X86_FEATURE = 7
+
+            NEEDED = 8
+
+    @property
+    def properties(self) -> list[Optional[NoteGnuProperty.Property]]: ...
+
+    def find(self, arg: NoteGnuProperty.Property.TYPE, /) -> Optional[NoteGnuProperty.Property]: ...
+
+    def __str__(self) -> str: ...
+
+class AArch64Feature(NoteGnuProperty.Property):
+    @property
+    def features(self) -> list[AArch64Feature.FEATURE]: ...
+
+    class FEATURE(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> AArch64Feature.FEATURE: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        UNKNOWN = 0
+
+        BTI = 1
+
+        PAC = 2
+
+class AArch64PAuth(NoteGnuProperty.Property):
+    @property
+    def platform(self) -> int: ...
+
+    @property
+    def version(self) -> int: ...
 
 class X86Features(NoteGnuProperty.Property):
     @property
@@ -5332,11 +4748,595 @@ class X86ISA(NoteGnuProperty.Property):
 
         AVX512_BF16 = 32
 
-@overload
-def parse(filename: str, config: ParserConfig = ...) -> Optional[Binary]: ...
+class StackSize(NoteGnuProperty.Property):
+    @property
+    def stack_size(self) -> int: ...
 
-@overload
-def parse(raw: Sequence[int], config: ParserConfig = ...) -> Optional[Binary]: ...
+class NoteNoCopyOnProtected(NoteGnuProperty.Property):
+    pass
 
-@overload
-def parse(obj: Union[io.IOBase | os.PathLike], config: ParserConfig = ...) -> Optional[Binary]: ...
+class Generic(NoteGnuProperty.Property):
+    @property
+    def raw_type(self) -> int: ...
+
+class AndroidIdent(Note):
+    sdk_version: int
+
+    ndk_version: str
+
+    ndk_build_number: str
+
+    def __str__(self) -> str: ...
+
+class NoteAbi(Note):
+    class ABI(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> NoteAbi.ABI: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        LINUX = 0
+
+        GNU = 1
+
+        SOLARIS2 = 2
+
+        FREEBSD = 3
+
+        NETBSD = 4
+
+        SYLLABLE = 5
+
+        NACL = 6
+
+    @property
+    def abi(self) -> Optional[NoteAbi.ABI]: ...
+
+    @property
+    def version(self) -> Optional[list[int]]: ...
+
+    def __str__(self) -> str: ...
+
+class CoreAuxv(Note):
+    class TYPE(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> CoreAuxv.TYPE: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        END = 0
+
+        IGNORE = 1
+
+        EXECFD = 2
+
+        PHDR = 3
+
+        PHENT = 4
+
+        PHNUM = 5
+
+        PAGESZ = 6
+
+        BASE = 7
+
+        FLAGS = 8
+
+        ENTRY = 9
+
+        NOTELF = 10
+
+        UID = 11
+
+        EUID = 12
+
+        GID = 13
+
+        EGID = 14
+
+        TGT_PLATFORM = 15
+
+        HWCAP = 16
+
+        CLKTCK = 17
+
+        FPUCW = 18
+
+        DCACHEBSIZE = 19
+
+        ICACHEBSIZE = 20
+
+        UCACHEBSIZE = 21
+
+        IGNOREPPC = 22
+
+        SECURE = 23
+
+        BASE_PLATFORM = 24
+
+        RANDOM = 25
+
+        HWCAP2 = 26
+
+        EXECFN = 31
+
+        SYSINFO = 32
+
+        SYSINFO_EHDR = 33
+
+    @property
+    def values(self) -> dict[CoreAuxv.TYPE, int]: ...
+
+    def get(self, type: CoreAuxv.TYPE) -> Optional[int]: ...
+
+    def __getitem__(self, arg: CoreAuxv.TYPE, /) -> Optional[int]: ...
+
+    @overload
+    def set(self, type: CoreAuxv.TYPE, value: int) -> bool: ...
+
+    @overload
+    def set(self, arg: Mapping[CoreAuxv.TYPE, int], /) -> bool: ...
+
+    @overload
+    def __setitem__(self, arg0: CoreAuxv.TYPE, arg1: int, /) -> bool: ...
+
+    @overload
+    def __setitem__(self, arg: Mapping[CoreAuxv.TYPE, int], /) -> bool: ...
+
+    def __str__(self) -> str: ...
+
+class CoreFile(Note):
+    class files_t:
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, arg: CoreFile.files_t) -> None: ...
+
+        @overload
+        def __init__(self, arg: Iterable[CoreFile.entry_t], /) -> None: ...
+
+        def __len__(self) -> int: ...
+
+        def __bool__(self) -> bool: ...
+
+        def __repr__(self) -> str: ...
+
+        def __iter__(self) -> Iterator[CoreFile.entry_t]: ...
+
+        @overload
+        def __getitem__(self, arg: int, /) -> CoreFile.entry_t: ...
+
+        @overload
+        def __getitem__(self, arg: slice, /) -> CoreFile.files_t: ...
+
+        def clear(self) -> None: ...
+
+        def append(self, arg: CoreFile.entry_t, /) -> None: ...
+
+        def insert(self, arg0: int, arg1: CoreFile.entry_t, /) -> None: ...
+
+        def pop(self, index: int = -1) -> CoreFile.entry_t: ...
+
+        def extend(self, arg: CoreFile.files_t, /) -> None: ...
+
+        @overload
+        def __setitem__(self, arg0: int, arg1: CoreFile.entry_t, /) -> None: ...
+
+        @overload
+        def __setitem__(self, arg0: slice, arg1: CoreFile.files_t, /) -> None: ...
+
+        @overload
+        def __delitem__(self, arg: int, /) -> None: ...
+
+        @overload
+        def __delitem__(self, arg: slice, /) -> None: ...
+
+    class entry_t:
+        start: int
+
+        end: int
+
+        file_ofs: int
+
+        path: str
+
+        def __str__(self) -> str: ...
+
+    files: CoreFile.files_t
+
+    def __len__(self) -> int: ...
+
+    def __iter__(self) -> Iterator[CoreFile.entry_t]: ...
+
+    def __str__(self) -> str: ...
+
+class CorePrPsInfo(Note):
+    class info_t:
+        state: int
+
+        sname: str
+
+        zombie: bool
+
+        nice: int
+
+        flag: int
+
+        uid: int
+
+        gid: int
+
+        pid: int
+
+        ppid: int
+
+        pgrp: int
+
+        sid: int
+
+        filename: str
+
+        args: str
+
+        @property
+        def filename_stripped(self) -> str: ...
+
+        @property
+        def args_stripped(self) -> str: ...
+
+    info: Optional[CorePrPsInfo.info_t]
+
+    def __str__(self) -> str: ...
+
+class CoreSigInfo(Note):
+    signo: Optional[int]
+
+    sigcode: Optional[int]
+
+    sigerrno: Optional[int]
+
+    def __str__(self) -> str: ...
+
+class CorePrStatus(Note):
+    class timeval_t:
+        sec: int
+
+        usec: int
+
+    class siginfo_t:
+        sicode: int
+
+        errno: int
+
+        signo: int
+
+    class pr_status_t:
+        info: CorePrStatus.siginfo_t
+
+        cursig: int
+
+        reserved: int
+
+        sigpend: int
+
+        sighold: int
+
+        pid: int
+
+        ppid: int
+
+        pgrp: int
+
+        sid: int
+
+        utime: CorePrStatus.timeval_t
+
+        stime: CorePrStatus.timeval_t
+
+        cutime: CorePrStatus.timeval_t
+
+        cstime: CorePrStatus.timeval_t
+
+    class Registers:
+        class X86(enum.Enum):
+            @staticmethod
+            def from_value(arg: int, /) -> CorePrStatus.Registers.X86: ...
+
+            def __eq__(self, arg, /) -> bool: ...
+
+            def __ne__(self, arg, /) -> bool: ...
+
+            def __int__(self) -> int: ...
+
+            EBX = 0
+
+            ECX = 1
+
+            EDX = 2
+
+            ESI = 3
+
+            EDI = 4
+
+            EBP = 5
+
+            EAX = 6
+
+            DS = 7
+
+            ES = 8
+
+            FS = 9
+
+            GS = 10
+
+            ORIG_EAX = 11
+
+            EIP = 12
+
+            CS = 13
+
+            EFLAGS = 14
+
+            ESP = 15
+
+            SS = 16
+
+        class X86_64(enum.Enum):
+            @staticmethod
+            def from_value(arg: int, /) -> CorePrStatus.Registers.X86_64: ...
+
+            def __eq__(self, arg, /) -> bool: ...
+
+            def __ne__(self, arg, /) -> bool: ...
+
+            def __int__(self) -> int: ...
+
+            R15 = 0
+
+            R14 = 1
+
+            R13 = 2
+
+            R12 = 3
+
+            RBP = 4
+
+            RBX = 5
+
+            R11 = 6
+
+            R10 = 7
+
+            R9 = 8
+
+            R8 = 9
+
+            RAX = 10
+
+            RCX = 11
+
+            RDX = 12
+
+            RSI = 13
+
+            RDI = 14
+
+            ORIG_RAX = 15
+
+            RIP = 16
+
+            CS = 17
+
+            EFLAGS = 18
+
+            RSP = 19
+
+            SS = 20
+
+        class ARM(enum.Enum):
+            @staticmethod
+            def from_value(arg: int, /) -> CorePrStatus.Registers.ARM: ...
+
+            def __eq__(self, arg, /) -> bool: ...
+
+            def __ne__(self, arg, /) -> bool: ...
+
+            def __int__(self) -> int: ...
+
+            R0 = 0
+
+            R1 = 1
+
+            R2 = 2
+
+            R3 = 3
+
+            R4 = 4
+
+            R5 = 5
+
+            R6 = 6
+
+            R7 = 7
+
+            R8 = 8
+
+            R9 = 9
+
+            R10 = 10
+
+            R11 = 11
+
+            R12 = 12
+
+            R13 = 13
+
+            R14 = 14
+
+            R15 = 15
+
+            CPSR = 16
+
+        class AARCH64(enum.Enum):
+            @staticmethod
+            def from_value(arg: int, /) -> CorePrStatus.Registers.AARCH64: ...
+
+            def __eq__(self, arg, /) -> bool: ...
+
+            def __ne__(self, arg, /) -> bool: ...
+
+            def __int__(self) -> int: ...
+
+            X0 = 0
+
+            X1 = 1
+
+            X2 = 2
+
+            X3 = 3
+
+            X4 = 4
+
+            X5 = 5
+
+            X6 = 6
+
+            X7 = 7
+
+            X8 = 8
+
+            X9 = 9
+
+            X10 = 10
+
+            X11 = 11
+
+            X12 = 12
+
+            X13 = 13
+
+            X14 = 14
+
+            X15 = 15
+
+            X16 = 16
+
+            X17 = 17
+
+            X18 = 18
+
+            X19 = 19
+
+            X20 = 20
+
+            X21 = 21
+
+            X22 = 22
+
+            X23 = 23
+
+            X24 = 24
+
+            X25 = 25
+
+            X26 = 26
+
+            X27 = 27
+
+            X28 = 28
+
+            X29 = 29
+
+            X30 = 30
+
+            X31 = 31
+
+            PC = 32
+
+            PSTATE = 33
+
+    status: CorePrStatus.pr_status_t
+
+    @property
+    def architecture(self) -> ARCH: ...
+
+    @property
+    def pc(self) -> Optional[int]: ...
+
+    @property
+    def sp(self) -> Optional[int]: ...
+
+    @property
+    def return_value(self) -> Optional[int]: ...
+
+    @property
+    def register_values(self) -> list[int]: ...
+
+    @overload
+    def get(self, reg: CorePrStatus.Registers.X86) -> Optional[int]: ...
+
+    @overload
+    def get(self, reg: CorePrStatus.Registers.X86_64) -> Optional[int]: ...
+
+    @overload
+    def get(self, reg: CorePrStatus.Registers.ARM) -> Optional[int]: ...
+
+    @overload
+    def get(self, reg: CorePrStatus.Registers.AARCH64) -> Optional[int]: ...
+
+    @overload
+    def __getitem__(self, arg: CorePrStatus.Registers.X86, /) -> Optional[int]: ...
+
+    @overload
+    def __getitem__(self, arg: CorePrStatus.Registers.X86_64, /) -> Optional[int]: ...
+
+    @overload
+    def __getitem__(self, arg: CorePrStatus.Registers.ARM, /) -> Optional[int]: ...
+
+    @overload
+    def __getitem__(self, arg: CorePrStatus.Registers.AARCH64, /) -> Optional[int]: ...
+
+    @overload
+    def set(self, reg: CorePrStatus.Registers.X86, value: int) -> lief.ok_error_t: ...
+
+    @overload
+    def set(self, reg: CorePrStatus.Registers.X86_64, value: int) -> lief.ok_error_t: ...
+
+    @overload
+    def set(self, reg: CorePrStatus.Registers.ARM, value: int) -> lief.ok_error_t: ...
+
+    @overload
+    def set(self, reg: CorePrStatus.Registers.AARCH64, value: int) -> lief.ok_error_t: ...
+
+    @overload
+    def __setitem__(self, arg0: CorePrStatus.Registers.X86, arg1: int, /) -> lief.ok_error_t: ...
+
+    @overload
+    def __setitem__(self, arg0: CorePrStatus.Registers.X86_64, arg1: int, /) -> lief.ok_error_t: ...
+
+    @overload
+    def __setitem__(self, arg0: CorePrStatus.Registers.ARM, arg1: int, /) -> lief.ok_error_t: ...
+
+    @overload
+    def __setitem__(self, arg0: CorePrStatus.Registers.AARCH64, arg1: int, /) -> lief.ok_error_t: ...
+
+    def __str__(self) -> str: ...
+
+class QNXStack(Note):
+    stack_size: int
+
+    stack_allocated: int
+
+    is_executable: bool
+
+    def __str__(self) -> str: ...

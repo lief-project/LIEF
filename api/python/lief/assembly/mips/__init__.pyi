@@ -1,12 +1,8 @@
 import enum
 from typing import Iterator, Optional, Union
 
-import lief
+import lief.assembly
 
-
-class Instruction(lief.assembly.Instruction):
-    @property
-    def opcode(self) -> OPCODE: ...
 
 class OPCODE(enum.Enum):
     PHI = 0
@@ -5796,3 +5792,7 @@ class OPCODE(enum.Enum):
     YIELD = 2892
 
     INSTRUCTION_LIST_END = 2893
+
+class Instruction(lief.assembly.Instruction):
+    @property
+    def opcode(self) -> OPCODE: ...

@@ -2,12 +2,16 @@ import enum
 import lief.assembly.aarch64
 from typing import Iterator, Optional, Union
 
-import lief
+import lief.assembly.aarch64
 
 
 class Immediate(lief.assembly.aarch64.Operand):
     @property
     def value(self) -> int: ...
+
+class Register(lief.assembly.aarch64.Operand):
+    @property
+    def value(self) -> Optional[Union[lief.assembly.aarch64.REG, lief.assembly.aarch64.SYSREG]]: ...
 
 class Memory(lief.assembly.aarch64.Operand):
     class SHIFT(enum.Enum):
@@ -42,7 +46,3 @@ class Memory(lief.assembly.aarch64.Operand):
 class PCRelative(lief.assembly.aarch64.Operand):
     @property
     def value(self) -> int: ...
-
-class Register(lief.assembly.aarch64.Operand):
-    @property
-    def value(self) -> Optional[Union[lief.assembly.aarch64.REG, lief.assembly.aarch64.SYSREG]]: ...

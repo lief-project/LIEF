@@ -1,11 +1,15 @@
 from typing import Iterator, Optional, Union
 
-import lief
+import lief.assembly.x86
 
 
 class Immediate(lief.assembly.x86.Operand):
     @property
     def value(self) -> int: ...
+
+class Register(lief.assembly.x86.Operand):
+    @property
+    def value(self) -> lief.assembly.x86.REG: ...
 
 class Memory(lief.assembly.x86.Operand):
     @property
@@ -26,7 +30,3 @@ class Memory(lief.assembly.x86.Operand):
 class PCRelative(lief.assembly.x86.Operand):
     @property
     def value(self) -> int: ...
-
-class Register(lief.assembly.x86.Operand):
-    @property
-    def value(self) -> lief.assembly.x86.REG: ...

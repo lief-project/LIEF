@@ -4,7 +4,15 @@ import os
 from typing import Iterator, Optional, Union, overload
 
 import lief
+import lief.MachO
+import lief.assembly
 
+
+@overload
+def enable_cache() -> bool: ...
+
+@overload
+def enable_cache(target_cache_dir: str) -> bool: ...
 
 class DyldSharedCache:
     class VERSION(enum.Enum):
@@ -142,6 +150,12 @@ class DyldSharedCache:
 
     def flush_cache(self) -> None: ...
 
+@overload
+def load(files: Sequence[str]) -> Optional[DyldSharedCache]: ...
+
+@overload
+def load(path: os.PathLike, arch: str = '') -> Optional[DyldSharedCache]: ...
+
 class Dylib:
     class extract_opt_t:
         def __init__(self) -> None: ...
@@ -175,6 +189,19 @@ class Dylib:
 
     def get(self, opt: Dylib.extract_opt_t = ...) -> Optional[lief.MachO.Binary]: ...
 
+class SubCache:
+    @property
+    def uuid(self) -> list[int]: ...
+
+    @property
+    def vm_offset(self) -> int: ...
+
+    @property
+    def suffix(self) -> str: ...
+
+    @property
+    def cache(self) -> Optional[DyldSharedCache]: ...
+
 class MappingInfo:
     @property
     def address(self) -> int: ...
@@ -193,28 +220,3 @@ class MappingInfo:
 
     @property
     def init_prot(self) -> int: ...
-
-class SubCache:
-    @property
-    def uuid(self) -> list[int]: ...
-
-    @property
-    def vm_offset(self) -> int: ...
-
-    @property
-    def suffix(self) -> str: ...
-
-    @property
-    def cache(self) -> Optional[DyldSharedCache]: ...
-
-@overload
-def enable_cache() -> bool: ...
-
-@overload
-def enable_cache(target_cache_dir: str) -> bool: ...
-
-@overload
-def load(files: Sequence[str]) -> Optional[DyldSharedCache]: ...
-
-@overload
-def load(path: os.PathLike, arch: str = '') -> Optional[DyldSharedCache]: ...
