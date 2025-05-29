@@ -84,6 +84,10 @@ Header Header::from(const ELF::Binary& elf) {
       hdr.architecture_ = ARCHITECTURES::PPC;
       break;
 
+    case ELF::ARCH::PPC64:
+      hdr.architecture_ = ARCHITECTURES::PPC64;
+      break;
+
     case ELF::ARCH::RISCV:
       hdr.architecture_ = ARCHITECTURES::RISCV;
       break;
@@ -248,8 +252,12 @@ Header Header::from(const MachO::Binary& macho) {
       hdr.architecture_ = ARCHITECTURES::MIPS;
       break;
 
-    case MachO::Header::CPU_TYPE::POWERPC:
     case MachO::Header::CPU_TYPE::POWERPC64:
+      hdr.architecture_ = ARCHITECTURES::PPC64;
+      hdr.endianness_ = ENDIANNESS::BIG;
+      break;
+
+    case MachO::Header::CPU_TYPE::POWERPC:
       hdr.architecture_ = ARCHITECTURES::PPC;
       hdr.endianness_ = ENDIANNESS::BIG;
       break;
@@ -319,6 +327,7 @@ const char* to_string(Header::ARCHITECTURES e) {
     ENTRY(XCORE),
     ENTRY(RISCV),
     ENTRY(LOONGARCH),
+    ENTRY(PPC64),
   };
   #undef ENTRY
   if (auto it = enums2str.find(e); it != enums2str.end()) {

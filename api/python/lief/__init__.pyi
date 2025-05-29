@@ -201,6 +201,8 @@ class Header(Object):
 
         LOONGARCH = 11
 
+        PPC64 = 12
+
     class ENDIANNESS(enum.Enum):
         @staticmethod
         def from_value(arg: int, /) -> Header.ENDIANNESS: ...

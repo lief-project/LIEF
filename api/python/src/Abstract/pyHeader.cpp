@@ -47,6 +47,7 @@ void create<Header>(nb::module_& m) {
     ENTRY(XCORE)
     ENTRY(RISCV)
     ENTRY(LOONGARCH)
+    ENTRY(PPC64)
   ;
   #undef ENTRY
 

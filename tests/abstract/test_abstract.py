@@ -115,3 +115,7 @@ def test_entropy():
 
     assert weird_section_0 >= 0
     assert weird_section_1 >= 0
+
+def test_issue_1217():
+    elf = lief.ELF.parse(get_sample("ELF/bitcoin_ppc_be"))
+    assert elf.abstract.header.architecture == lief.Header.ARCHITECTURES.PPC64
