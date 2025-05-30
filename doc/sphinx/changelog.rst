@@ -122,6 +122,29 @@
 
   * Add |lief-dump|
 
+0.16.6 - May 29th, 2025
+-----------------------
+
+:Compilation:
+
+  * Fix missing header (:issue:`1192`)
+  * Fix GCC 15 issue (:issue:`1203`)
+  * Fix :issue:`1210`
+
+:Mach-O:
+
+  * Fix use-after-move (:issue:`1212`)
+  * Fix :issue:`1206`
+
+:Python:
+
+  * Fix Python logger warning
+
+:Other:
+
+  * :issue:`1217`
+  * :pr:`1216`
+
 0.16.5 - April 19th, 2025
 -------------------------
 

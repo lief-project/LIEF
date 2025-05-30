@@ -54,7 +54,7 @@ One can add LIEF as a dependency of a Rust project as follows:
 
   # For a tagged release
   [dependencies]
-  lief = "0.16.5"
+  lief = "0.16.6"
 
 You can find more details in the :ref:`Rust API section <lief_rust_bindings>`
 
