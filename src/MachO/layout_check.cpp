@@ -380,11 +380,22 @@ bool LayoutChecker::check_load_commands() {
     binary.header().is_32bit() ? sizeof(details::mach_header) :
                                  sizeof(details::mach_header_64);
 
-  if (binary.header().sizeof_cmds() + sizeof_header > binary.original_size()) {
+  const size_t last_cmd_offset = sizeof_header + binary.header().sizeof_cmds();
+
+  if (last_cmd_offset > binary.original_size()) {
     return error("Load commands exceed length of file");
   }
 
-  for (const LoadCommand& cmd : binary.commands()) {
+  const auto& commands = binary.commands();
+  for (size_t i = 0; i < commands.size(); ++i) {
+    const LoadCommand& cmd = commands[i];
+    if (cmd.command_offset() > last_cmd_offset ||
+        (cmd.command_offset() + cmd.size()) > last_cmd_offset)
+    {
+      return error("Command #{} ({}) pasts the end of the commands", i,
+                   to_string(cmd.command()));
+    }
+
     if (const auto* lib = cmd.cast<DylibCommand>()) {
       if (lib->name_offset() > lib->size()) {
         return error("{}: load command {} name offset ({}) outside its size ({})",
