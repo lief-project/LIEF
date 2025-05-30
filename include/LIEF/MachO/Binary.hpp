@@ -588,12 +588,12 @@ class LIEF_API Binary : public LIEF::Binary  {
     return has_nx_stack();
   }
 
-  /// Return True if the **heap** is flagged as non-executable. False otherwise
+  /// Return True if the **stack** is flagged as non-executable. False otherwise
   bool has_nx_stack() const {
     return !header().has(Header::FLAGS::ALLOW_STACK_EXECUTION);
   }
 
-  /// Return True if the **stack** is flagged as non-executable. False otherwise
+  /// Return True if the **heap** is flagged as non-executable. False otherwise
   bool has_nx_heap() const {
     return !header().has(Header::FLAGS::NO_HEAP_EXECUTION);
   }
