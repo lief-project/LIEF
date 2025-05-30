@@ -1055,6 +1055,9 @@ class Binary(lief.Binary):
     @property
     def overlay(self) -> memoryview: ...
 
+    @property
+    def available_command_space(self) -> int: ...
+
     def __str__(self) -> str: ...
 
 class Header(lief.Object):

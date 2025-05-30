@@ -975,6 +975,11 @@ class LIEF_API Binary : public LIEF::Binary  {
   /// Check if the given segment can go in the offset_seg_ cache
   static LIEF_LOCAL bool can_cache_segment(const SegmentCommand& segment);
 
+  /// \private
+  LIEF_LOCAL size_t available_command_space() const {
+    return available_command_space_;
+  }
+
   private:
   /// Default constructor
   LIEF_LOCAL Binary();
@@ -1003,7 +1008,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   /// Check that a gap between the load command table and
   /// the first section is at least \p size bytes.
   /// If there is not enough space, the gap is grown using \ref shift method.
-  ok_error_t ensure_command_space(size_t size);
+  ok_error_t ensure_command_space(size_t size) {
+    return available_command_space_ < size ? shift(size) : ok();
+  }
 
   relocations_t& relocations_list() {
     return this->relocations_;

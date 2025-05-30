@@ -770,6 +770,8 @@ void create<Binary>(nb::module_& m) {
     .def_prop_ro("overlay",
         nb::overload_cast<>(&Binary::overlay, nb::const_))
 
+    .def_prop_ro("available_command_space", &Binary::available_command_space)
+
     LIEF_DEFAULT_STR(Binary);
 }
 }

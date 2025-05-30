@@ -851,13 +851,6 @@ void Binary::shift_command(size_t width, uint64_t from_offset) {
 
 }
 
-ok_error_t Binary::ensure_command_space(size_t size) {
-  if (available_command_space_ < size) {
-    return shift(size);
-  }
-  return ok();
-}
-
 ok_error_t Binary::shift(size_t value) {
   value = align(value, page_size());
 

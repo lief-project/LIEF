@@ -43,6 +43,7 @@ class EncryptionInfo;
 class FatBinary;
 class FunctionStarts;
 class LinkerOptHint;
+class LoadCommand;
 class MainCommand;
 class RPathCommand;
 class Routine;
@@ -96,6 +97,9 @@ class LIEF_API Builder {
 
   LIEF_LOCAL static std::vector<uint8_t> build_raw(Binary& binary, config_t config);
   LIEF_LOCAL static std::vector<uint8_t> build_raw(FatBinary& binary, config_t config);
+
+  template<class T>
+  LIEF_LOCAL static size_t get_cmd_size(const LoadCommand& cmd);
 
   template<typename T>
   LIEF_LOCAL ok_error_t build();

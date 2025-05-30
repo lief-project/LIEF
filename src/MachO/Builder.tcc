@@ -62,6 +62,47 @@
 namespace LIEF {
 namespace MachO {
 
+
+template<class T>
+size_t Builder::get_cmd_size(const LoadCommand& cmd) {
+  if (const auto* dylib = cmd.cast<DylibCommand>()) {
+    return align(sizeof(details::dylib_command) + dylib->name().size() + 1,
+                 sizeof(typename T::uint));
+  }
+
+  if (const auto* linker = cmd.cast<DylinkerCommand>()) {
+    return align(sizeof(details::dylinker_command) + linker->name().size() + 1,
+                 sizeof(typename T::uint));
+  }
+
+  if (const auto* rpath = cmd.cast<RPathCommand>()) {
+    return align(sizeof(details::rpath_command) + rpath->path().size() + 1,
+                 sizeof(typename T::uint));
+  }
+
+  if (const auto* subframework = cmd.cast<SubFramework>()) {
+    return align(sizeof(details::sub_framework_command) + subframework->umbrella().size() + 1,
+                 sizeof(typename T::uint));
+  }
+
+  if (const auto* subclient = cmd.cast<SubClient>()) {
+    return align(sizeof(details::sub_client_command) + subclient->client().size() + 1,
+                 sizeof(typename T::uint));
+  }
+
+  if (const auto* dyldenv = cmd.cast<DyldEnvironment>()) {
+    return align(sizeof(details::dylinker_command) + dyldenv->value().size() + 1,
+                 sizeof(typename T::uint));
+  }
+
+  if (const auto* bversion = cmd.cast<BuildVersion>()) {
+    return align(sizeof(details::build_version_command) +
+                 bversion->tools().size() * sizeof(details::build_tool_version),
+                 sizeof(typename T::uint));
+  }
+  return cmd.size();
+}
+
 template<typename T>
 ok_error_t Builder::build_linkedit() {
   SegmentCommand* linkedit = binary_->get_segment("__LINKEDIT");

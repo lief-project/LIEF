@@ -652,6 +652,7 @@ def test_encryption_info(tmp_path: Path):
 
 
 def test_issue_1206(tmp_path: Path):
+    # c.f. https://github.com/lief-project/LIEF/issues/1206
     # c.f. https://github.com/lief-project/LIEF/issues/1173
     macho = lief.MachO.parse(get_sample("MachO/issue_1206.bin")).at(0)
 
@@ -660,3 +661,23 @@ def test_issue_1206(tmp_path: Path):
 
     new = lief.MachO.parse(output).at(0)
     assert lief.MachO.check_layout(new)[0]
+
+def test_issue_1204(tmp_path: Path):
+    macho = lief.MachO.parse(get_sample("MachO/lief-dwarf-plugin-darwin-arm64.dylib")).at(0)
+    macho.rpath.path += '/a/very/long/path/that/needs/expansion'
+    out = tmp_path / "out.macho"
+    macho.write(out.as_posix())
+
+    new = lief.MachO.parse(out).at(0)
+    lief.MachO.check_layout(new)
+    assert new.rpath.path == '@loader_path/../a/very/long/path/that/needs/expansion'
+
+    macho = lief.MachO.parse(get_sample("MachO/lief-dwarf-plugin-darwin-arm64.dylib")).at(0)
+    macho.rpath.path += '/a/very/long/path/that/needs/expansion/' + 'a' * (macho.available_command_space + 10)
+    rpath = macho.rpath.path
+    out = tmp_path / "out2.macho"
+    macho.write(out.as_posix())
+
+    new = lief.MachO.parse(out).at(0)
+    lief.MachO.check_layout(new)
+    assert new.rpath.path == rpath

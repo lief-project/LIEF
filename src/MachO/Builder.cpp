@@ -65,6 +65,40 @@ ok_error_t Builder::build() {
     return make_error_code(lief_errors::build_error);
   }
 
+  // Check if we need to extend some commands
+  {
+    int32_t original_size = 0;
+    int32_t required_size = 0;
+    for (std::unique_ptr<LoadCommand>& cmd : binary_->commands_) {
+      original_size += cmd->original_data_.size();
+      required_size += get_cmd_size<T>(*cmd);
+    }
+
+    int32_t delta = required_size - original_size;
+
+    LIEF_DEBUG("Original commands size:   0x{:08x}", original_size);
+    LIEF_DEBUG("Required commands size:   0x{:08x}", required_size);
+    LIEF_DEBUG("Delta:                    0x{:08x}", delta);
+    LIEF_DEBUG("available_command_space:  0x{:08x}", binary_->available_command_space_);
+    ok_error_t is_ok = binary_->ensure_command_space(delta);
+    if (!is_ok) {
+      return make_error_code(lief_errors::build_error);
+    }
+    uint64_t cmd_offset = sizeof(typename T::header);
+    for (std::unique_ptr<LoadCommand>& cmd : binary_->commands_) {
+      const size_t cmd_size = get_cmd_size<T>(*cmd);
+      cmd->command_offset_ = cmd_offset;
+      cmd_offset += cmd_size;
+      if (cmd->original_data_.size() < cmd_size) {
+        LIEF_DEBUG("Resizing: {} (+{} bytes)", to_string(cmd->command()),
+                   cmd_size - cmd->original_data_.size());
+        cmd->original_data_.resize(cmd_size);
+        cmd->size_ = cmd_size;
+      }
+    }
+    binary_->header().sizeof_cmds(required_size);
+  }
+
   build_uuid();
 
   if (config_.linkedit) {
