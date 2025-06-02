@@ -18,6 +18,7 @@
 #include "LIEF/json.hpp"
 
 #if defined(LIEF_JSON_SUPPORT)
+  #include "visitors/json.hpp"
   #if defined(LIEF_PE_SUPPORT)
     #include "PE/json_internal.hpp"
   #endif
