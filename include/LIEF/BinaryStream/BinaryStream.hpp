@@ -185,7 +185,7 @@ class LIEF_API BinaryStream {
 
   template<class T, size_t N>
   ok_error_t peek_array(std::array<T, N>& dst) const {
-    if constexpr (N == 0) {
+    if /*constexpr*/ (N == 0) {
       return ok();
     }
     // Even though offset + size < ... => offset < ...

@@ -62,7 +62,7 @@ class LIEF_API SpanStream : public BinaryStream {
   {}
 
   std::unique_ptr<SpanStream> clone() const {
-    return std::make_unique<SpanStream>(*this);
+    return std::unique_ptr<SpanStream>(new SpanStream(*this));
   }
 
   SpanStream() = delete;
