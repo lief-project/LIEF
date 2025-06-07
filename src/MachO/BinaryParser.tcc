@@ -976,7 +976,7 @@ ok_error_t BinaryParser::parse_load_commands() {
           auto type = static_cast<MACHO_TYPES>(*res_type);
 
           // Fat binary
-          if (type == MACHO_TYPES::FAT_MAGIC || type == MACHO_TYPES::FAT_CIGAM) {
+          if (type == MACHO_TYPES::MAGIC_FAT || type == MACHO_TYPES::CIGAM_FAT) {
             LIEF_ERR("Mach-O is corrupted with a FAT Mach-O inside a fileset ?");
             break;
           }

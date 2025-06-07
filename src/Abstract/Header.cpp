@@ -210,14 +210,14 @@ Header Header::from(const MachO::Binary& macho) {
   }
   const MachO::Header& macho_hdr = macho.header();
   const MachO::MACHO_TYPES magic = macho_hdr.magic();
-  if (magic == MachO::MACHO_TYPES::MH_MAGIC_64 ||
-      magic == MachO::MACHO_TYPES::MH_CIGAM_64)
+  if (magic == MachO::MACHO_TYPES::MAGIC_64 ||
+      magic == MachO::MACHO_TYPES::CIGAM_64)
   {
     hdr.modes_ |= MODES::BITS_64;
   }
 
-  if (magic == MachO::MACHO_TYPES::MH_MAGIC ||
-      magic == MachO::MACHO_TYPES::MH_CIGAM)
+  if (magic == MachO::MACHO_TYPES::MAGIC ||
+      magic == MachO::MACHO_TYPES::CIGAM)
   {
     hdr.modes_ |= MODES::BITS_32;
   }

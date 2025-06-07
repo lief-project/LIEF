@@ -125,16 +125,16 @@ ok_error_t BinaryParser::init_and_parse() {
   }
   const auto type = static_cast<MACHO_TYPES>(*stream_->peek<uint32_t>());
 
-  is64_ = type == MACHO_TYPES::MH_MAGIC_64 ||
-          type == MACHO_TYPES::MH_CIGAM_64 ||
+  is64_ = type == MACHO_TYPES::MAGIC_64 ||
+          type == MACHO_TYPES::CIGAM_64 ||
           type == MACHO_TYPES::NEURAL_MODEL;
 
   binary_->is64_ = is64_;
   type_          = type;
   binary_->original_size_ = stream_->size();
 
-  bool should_swap = type == MACHO_TYPES::MH_CIGAM_64 ||
-                     type == MACHO_TYPES::MH_CIGAM;
+  bool should_swap = type == MACHO_TYPES::CIGAM_64 ||
+                     type == MACHO_TYPES::CIGAM;
 
   stream_->set_endian_swap(should_swap);
 

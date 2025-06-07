@@ -213,7 +213,7 @@ ok_error_t Builder::build_fat_header() {
 
   std::memset(&header, 0, sizeof(details::fat_header));
 
-  header.magic     = static_cast<uint32_t>(MACHO_TYPES::FAT_CIGAM);
+  header.magic     = static_cast<uint32_t>(MACHO_TYPES::CIGAM_FAT);
   header.nfat_arch = get_swapped_endian<uint32_t>(binaries_.size());
 
   raw_.seekp(0);

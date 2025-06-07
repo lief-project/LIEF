@@ -49,6 +49,39 @@
       for rpath in macho.rpaths:
           rpath.path += '/a/very/long/path/that/needs/expansion'
 
+  * To void ``#define`` conflicts with Apple SDK, the following enums have been renamed:
+
+    .. tabs::
+
+       .. tab:: :fa:`brands fa-python` Python
+
+          .. code-block:: diff
+
+            - lief.MachO.FAT_MAGIC
+            + lief.MachO.MAGIC_FAT
+
+            - lief.MachO.FAT_CIGAM
+            + lief.MachO.CIGAM_FAT
+
+
+       .. tab:: :fa:`regular fa-file-code` C++
+
+          .. code-block:: diff
+
+            - MACHO_TYPES::MH_MAGIC
+            - MACHO_TYPES::MH_CIGAM
+            - MACHO_TYPES::MH_MAGIC_64
+            - MACHO_TYPES::MH_CIGAM_64
+            - MACHO_TYPES::FAT_MAGIC
+            - MACHO_TYPES::FAT_CIGAM
+
+            + MACHO_TYPES::MAGIC
+            + MACHO_TYPES::CIGAM
+            + MACHO_TYPES::MAGIC_64
+            + MACHO_TYPES::CIGAM_64
+            + MACHO_TYPES::MAGIC_FAT
+            + MACHO_TYPES::CIGAM_FAT
+
 :ELF:
 
   * LIEF inserted sections are not compatible with a ``strip`` after the

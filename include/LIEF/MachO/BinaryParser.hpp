@@ -269,7 +269,7 @@ class LIEF_API BinaryParser : public LIEF::Parser {
 
   std::unique_ptr<BinaryStream>  stream_;
   std::unique_ptr<Binary>        binary_;
-  MACHO_TYPES                    type_ = MACHO_TYPES::MH_MAGIC_64;
+  MACHO_TYPES                    type_ = MACHO_TYPES::MAGIC_64;
   bool                           is64_ = true;
   ParserConfig                   config_;
   std::set<uint64_t>             visited_;

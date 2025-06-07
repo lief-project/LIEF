@@ -50,12 +50,12 @@ inline result<MACHO_TYPES> magic_from_stream(BinaryStream& stream,
 bool is_macho(BinaryStream& stream) {
   if (auto magic_res = magic_from_stream(stream)) {
     const MACHO_TYPES magic = *magic_res;
-    return (magic == MACHO_TYPES::MH_MAGIC ||
-            magic == MACHO_TYPES::MH_CIGAM ||
-            magic == MACHO_TYPES::MH_MAGIC_64 ||
-            magic == MACHO_TYPES::MH_CIGAM_64 ||
-            magic == MACHO_TYPES::FAT_MAGIC ||
-            magic == MACHO_TYPES::FAT_CIGAM ||
+    return (magic == MACHO_TYPES::MAGIC ||
+            magic == MACHO_TYPES::CIGAM ||
+            magic == MACHO_TYPES::MAGIC_64 ||
+            magic == MACHO_TYPES::CIGAM_64 ||
+            magic == MACHO_TYPES::MAGIC_FAT ||
+            magic == MACHO_TYPES::CIGAM_FAT ||
             magic == MACHO_TYPES::NEURAL_MODEL);
   }
   return false;
@@ -79,8 +79,8 @@ bool is_fat(const std::string& file) {
   if (auto stream = FileStream::from_file(file)) {
     if (auto magic_res = magic_from_stream(*stream)) {
       const MACHO_TYPES magic = *magic_res;
-      return magic == MACHO_TYPES::FAT_MAGIC ||
-             magic == MACHO_TYPES::FAT_CIGAM;
+      return magic == MACHO_TYPES::MAGIC_FAT ||
+             magic == MACHO_TYPES::CIGAM_FAT;
     }
   }
   return false;
@@ -90,8 +90,8 @@ bool is_64(BinaryStream& stream) {
   ScopedStream scoped(stream, 0);
   if (auto magic_res = magic_from_stream(*scoped)) {
     const MACHO_TYPES magic = *magic_res;
-    return magic == MACHO_TYPES::MH_MAGIC_64 ||
-           magic == MACHO_TYPES::MH_CIGAM_64;
+    return magic == MACHO_TYPES::MAGIC_64 ||
+           magic == MACHO_TYPES::CIGAM_64;
   }
   return false;
 }
@@ -145,16 +145,16 @@ void foreach_segment(BinaryStream& stream, const segment_callback_t cbk) {
 
   const MACHO_TYPES magic = *magic_res;
 
-  if (magic == MACHO_TYPES::FAT_MAGIC || magic == MACHO_TYPES::FAT_CIGAM) {
+  if (magic == MACHO_TYPES::MAGIC_FAT || magic == MACHO_TYPES::CIGAM_FAT) {
     LIEF_WARN("Can't get the file size of a FAT Macho-O");
     return;
   }
 
-  const bool is64 = magic == MACHO_TYPES::MH_MAGIC_64 ||
-                    magic == MACHO_TYPES::MH_CIGAM_64;
+  const bool is64 = magic == MACHO_TYPES::MAGIC_64 ||
+                    magic == MACHO_TYPES::CIGAM_64;
 
-  const bool is32 = magic == MACHO_TYPES::MH_MAGIC ||
-                    magic == MACHO_TYPES::MH_CIGAM;
+  const bool is32 = magic == MACHO_TYPES::MAGIC ||
+                    magic == MACHO_TYPES::CIGAM;
 
   if (!is64 && !is32) {
     return;

@@ -26,12 +26,12 @@ namespace LIEF::MachO::py {
 void init_enums(nb::module_& m) {
 
   enum_<MACHO_TYPES>(m, "MACHO_TYPES")
-    .value(PY_ENUM(MACHO_TYPES::MH_MAGIC))
-    .value(PY_ENUM(MACHO_TYPES::MH_CIGAM))
-    .value(PY_ENUM(MACHO_TYPES::MH_MAGIC_64))
-    .value(PY_ENUM(MACHO_TYPES::MH_CIGAM_64))
-    .value(PY_ENUM(MACHO_TYPES::FAT_MAGIC))
-    .value(PY_ENUM(MACHO_TYPES::FAT_CIGAM))
+    .value(PY_ENUM(MACHO_TYPES::MAGIC))
+    .value(PY_ENUM(MACHO_TYPES::CIGAM))
+    .value(PY_ENUM(MACHO_TYPES::MAGIC_64))
+    .value(PY_ENUM(MACHO_TYPES::CIGAM_64))
+    .value(PY_ENUM(MACHO_TYPES::MAGIC_FAT))
+    .value(PY_ENUM(MACHO_TYPES::CIGAM_FAT))
     .value(PY_ENUM(MACHO_TYPES::NEURAL_MODEL))
   ;
 

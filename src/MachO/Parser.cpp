@@ -191,7 +191,7 @@ ok_error_t Parser::build() {
   auto type = static_cast<MACHO_TYPES>(*res_type);
 
   // Fat binary
-  if (type == MACHO_TYPES::FAT_MAGIC || type == MACHO_TYPES::FAT_CIGAM) {
+  if (type == MACHO_TYPES::MAGIC_FAT || type == MACHO_TYPES::CIGAM_FAT) {
     if (!build_fat()) {
       LIEF_WARN("Errors while parsing the Fat MachO");
     }

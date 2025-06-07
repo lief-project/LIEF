@@ -22,12 +22,12 @@ namespace MachO {
 
 const char* to_string(MACHO_TYPES e) {
   CONST_MAP(MACHO_TYPES, const char*, 7) enumStrings {
-      { MACHO_TYPES::MH_MAGIC,     "MAGIC"},
-      { MACHO_TYPES::MH_CIGAM,     "CIGAM"},
-      { MACHO_TYPES::MH_MAGIC_64,  "MAGIC_64"},
-      { MACHO_TYPES::MH_CIGAM_64,  "CIGAM_64"},
-      { MACHO_TYPES::FAT_MAGIC,    "FAT_MAGIC"},
-      { MACHO_TYPES::FAT_CIGAM,    "FAT_CIGAM"},
+      { MACHO_TYPES::MAGIC,        "MAGIC"},
+      { MACHO_TYPES::CIGAM,        "CIGAM"},
+      { MACHO_TYPES::MAGIC_64,     "MAGIC_64"},
+      { MACHO_TYPES::CIGAM_64,     "CIGAM_64"},
+      { MACHO_TYPES::MAGIC_FAT,    "MAGIC_FAT"},
+      { MACHO_TYPES::CIGAM_FAT,    "CIGAM_FAT"},
       { MACHO_TYPES::NEURAL_MODEL, "NEURAL_MODEL"}
   };
   const auto it = enumStrings.find(e);
