@@ -37,7 +37,7 @@ enum class IMPHASH_MODE {
   VT = PEFILE,    /**< Same as IMPHASH_MODE::PEFILE since Virus Total is using pefile */
 };
 
-//Check if the given stream wraps a PE binary
+/// Check if the given stream wraps a PE binary
 LIEF_API bool is_pe(BinaryStream& stream);
 
 /// check if the `file` is a PE file
