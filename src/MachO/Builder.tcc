@@ -687,7 +687,7 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
 
   /* 1. Fille the n_list table */ {
     for (Symbol& s : binary_->symbols()) {
-      if (s.origin() != Symbol::ORIGIN::LC_SYMTAB) {
+      if (s.origin() != Symbol::ORIGIN::SYMTAB) {
         continue;
       }
       all_syms.push_back(&s);

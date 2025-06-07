@@ -49,7 +49,7 @@ Symbol::Symbol(const details::nlist_32& cmd) :
   type_{cmd.n_type},
   numberof_sections_{cmd.n_sect},
   description_{static_cast<uint16_t>(cmd.n_desc)},
-  origin_{ORIGIN::LC_SYMTAB}
+  origin_{ORIGIN::SYMTAB}
 {
   value_ = cmd.n_value;
 }
@@ -58,7 +58,7 @@ Symbol::Symbol(const details::nlist_64& cmd) :
   type_{cmd.n_type},
   numberof_sections_{cmd.n_sect},
   description_{cmd.n_desc},
-  origin_{ORIGIN::LC_SYMTAB}
+  origin_{ORIGIN::SYMTAB}
 {
   value_ = cmd.n_value;
 }
@@ -133,7 +133,7 @@ const char* to_string(Symbol::ORIGIN e) {
     ENTRY(UNKNOWN),
     ENTRY(DYLD_EXPORT),
     ENTRY(DYLD_BIND),
-    ENTRY(LC_SYMTAB),
+    ENTRY(SYMTAB),
   };
   #undef ENTRY
 

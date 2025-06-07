@@ -71,7 +71,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
     UNKNOWN     = 0,
     DYLD_EXPORT = 1,
     DYLD_BIND   = 2, /// The symbol comes from the binding opcodes
-    LC_SYMTAB   = 3,
+    SYMTAB      = 3, /// The symbol comes from the LC_SYMTAB command
   };
 
   enum class TYPE : uint32_t{
@@ -94,7 +94,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
     type_{n_type},
     numberof_sections_{n_sect},
     description_{n_desc},
-    origin_{ORIGIN::LC_SYMTAB}
+    origin_{ORIGIN::SYMTAB}
   {
     value_ = value;
   }

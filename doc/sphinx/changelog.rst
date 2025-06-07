@@ -63,6 +63,18 @@
             - lief.MachO.FAT_CIGAM
             + lief.MachO.CIGAM_FAT
 
+            - lief.MachO.Symbol.ORIGIN.LC_SYMTAB
+            + lief.MachO.Symbol.ORIGIN.SYMTAB
+
+            - lief.MachO.Section.TYPE.S_4BYTE_LITERALS
+            + lief.MachO.Section.TYPE.IS_4BYTE_LITERALS
+
+            - lief.MachO.Section.TYPE.S_8BYTE_LITERALS
+            + lief.MachO.Section.TYPE.IS_8BYTE_LITERALS
+
+            - lief.MachO.Section.TYPE.S_16BYTE_LITERALS
+            + lief.MachO.Section.TYPE.IS_16BYTE_LITERALS
+
 
        .. tab:: :fa:`regular fa-file-code` C++
 
@@ -81,6 +93,18 @@
             + MACHO_TYPES::CIGAM_64
             + MACHO_TYPES::MAGIC_FAT
             + MACHO_TYPES::CIGAM_FAT
+
+            - Section::TYPE::S_16BYTE_LITERALS
+            + Section::TYPE::IS_16BYTE_LITERALS
+
+            - Section::TYPE::S_4BYTE_LITERALS
+            + Section::TYPE::IS_4BYTE_LITERALS
+
+            - Section::TYPE::S_8BYTE_LITERALS
+            + Section::TYPE::IS_8BYTE_LITERALS
+
+            - Symbol::ORIGIN::LC_SYMTAB
+            + Symbol::ORIGIN::SYMTAB
 
 :ELF:
 

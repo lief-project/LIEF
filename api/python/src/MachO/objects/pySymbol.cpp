@@ -57,7 +57,7 @@ void create<Symbol>(nb::module_& m) {
     .value("UNKNOWN",        Symbol::ORIGIN::UNKNOWN)
     .value("DYLD_EXPORT",    Symbol::ORIGIN::DYLD_EXPORT)
     .value("DYLD_BIND",      Symbol::ORIGIN::DYLD_BIND)
-    .value("LC_SYMTAB",      Symbol::ORIGIN::LC_SYMTAB)
+    .value("SYMTAB",         Symbol::ORIGIN::SYMTAB)
   ;
 
   enum_<Symbol::TYPE>(symbol, "TYPE")

@@ -3569,7 +3569,7 @@ ok_error_t BinaryParser::post_process(DynamicSymbolCommand& cmd) {
   symtab.reserve(binary_->symbols_.size());
   size_t isym = 0;
   for (const std::unique_ptr<Symbol>& sym : binary_->symbols_) {
-    if (sym->origin() != Symbol::ORIGIN::LC_SYMTAB) {
+    if (sym->origin() != Symbol::ORIGIN::SYMTAB) {
       continue;
     }
 

@@ -68,8 +68,8 @@ class LIEF_API Section : public LIEF::Section {
     REGULAR                             = 0x00u, ///< Regular section.
     ZEROFILL                            = 0x01u, ///< Zero fill on demand section.
     CSTRING_LITERALS                    = 0x02u, ///< Section with literal C strings.
-    S_4BYTE_LITERALS                    = 0x03u, ///< Section with 4 byte literals.
-    S_8BYTE_LITERALS                    = 0x04u, ///< Section with 8 byte literals.
+    IS_4BYTE_LITERALS                    = 0x03u, ///< Section with 4 byte literals.
+    IS_8BYTE_LITERALS                    = 0x04u, ///< Section with 8 byte literals.
     LITERAL_POINTERS                    = 0x05u, ///< Section with pointers to literals.
     NON_LAZY_SYMBOL_POINTERS            = 0x06u, ///< Section with non-lazy symbol pointers.
     LAZY_SYMBOL_POINTERS                = 0x07u, ///< Section with lazy symbol pointers.
@@ -79,7 +79,7 @@ class LIEF_API Section : public LIEF::Section {
     COALESCED                           = 0x0bu, ///< Section contains symbols that are to be coalesced.
     GB_ZEROFILL                         = 0x0cu, ///< Zero fill on demand section (that can be larger than 4 gigabytes).
     INTERPOSING                         = 0x0du, ///< Section with only pairs of function pointers for interposing.
-    S_16BYTE_LITERALS                   = 0x0eu, ///< Section with only 16 byte literals.
+    IS_16BYTE_LITERALS                   = 0x0eu, ///< Section with only 16 byte literals.
     DTRACE_DOF                          = 0x0fu, ///< Section contains DTrace Object Format.
     LAZY_DYLIB_SYMBOL_POINTERS          = 0x10u, ///< Section with lazy symbol pointers to lazy loaded dylibs.
     THREAD_LOCAL_REGULAR                = 0x11u, ///< Thread local data section.

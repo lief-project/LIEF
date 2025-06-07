@@ -108,8 +108,8 @@ class LIEF_API Header : public Object {
     POWERPC64 = 18 | ABI64,
   };
 
-  static constexpr uint32_t CPU_SUBTYPE_MASK = 0xff000000;
-  static constexpr uint32_t CPU_SUBTYPE_LIB64 = 0x80000000;
+  static constexpr uint32_t SUBTYPE_MASK = 0xff000000;
+  static constexpr uint32_t SUBTYPE_LIB64 = 0x80000000;
 
   static constexpr auto CPU_SUBTYPE_ARM64_ARM64E = 2;
 

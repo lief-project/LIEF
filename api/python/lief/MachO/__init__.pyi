@@ -1532,9 +1532,9 @@ class Section(lief.Section):
 
         CSTRING_LITERALS = 2
 
-        S_4BYTE_LITERALS = 3
+        IS_4BYTE_LITERALS = 3
 
-        S_8BYTE_LITERALS = 4
+        IS_8BYTE_LITERALS = 4
 
         LITERAL_POINTERS = 5
 
@@ -1554,7 +1554,7 @@ class Section(lief.Section):
 
         INTERPOSING = 13
 
-        S_16BYTE_LITERALS = 14
+        IS_16BYTE_LITERALS = 14
 
         DTRACE_DOF = 15
 
@@ -2085,7 +2085,7 @@ class Symbol(lief.Symbol):
 
         DYLD_BIND = 2
 
-        LC_SYMTAB = 3
+        SYMTAB = 3
 
     class TYPE(enum.Enum):
         @staticmethod

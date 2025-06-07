@@ -2385,7 +2385,7 @@ Symbol* Binary::add_local_symbol(uint64_t address, const std::string& name) {
 
   auto sym = std::make_unique<Symbol>();
   sym->category_          = Symbol::CATEGORY::LOCAL;
-  sym->origin_            = Symbol::ORIGIN::LC_SYMTAB;
+  sym->origin_            = Symbol::ORIGIN::SYMTAB;
   sym->numberof_sections_ = 0;
   sym->description_       = static_cast<uint16_t>(/* N_NO_DEAD_STRIP */0x20);
 
