@@ -2,10 +2,8 @@ from collections.abc import Sequence
 import enum
 import io
 import lief
-import lief.COFF
 import lief.ELF
 import lief.MachO
-import lief.OAT
 import lief.PE
 import os
 from typing import Iterator, Optional, Union, overload
@@ -465,7 +463,7 @@ class Symbol(Object):
 
     def __str__(self) -> str: ...
 
-def parse(obj: Union[io.IOBase | os.PathLike | bytes | list[int]]) -> Union[lief.PE.Binary,lief.OAT.Binary,lief.ELF.Binary,lief.MachO.Binary,lief.COFF.Binary,None]: ...
+def parse(obj: Union[io.IOBase | os.PathLike | bytes | list[int]]) -> PE.Binary | OAT.Binary | ELF.Binary | MachO.Binary | COFF.Binary | None: ...
 
 class Relocation(Object):
     address: int

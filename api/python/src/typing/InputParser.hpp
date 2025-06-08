@@ -15,15 +15,65 @@
  */
 #ifndef PY_LIEF_TYPING_INPUT_PARSER_H
 #define PY_LIEF_TYPING_INPUT_PARSER_H
+#include "pyLIEF.hpp"
 #include "typing.hpp"
 #include "LIEF/config.h"
 #include <memory>
+#include <nanobind/nanobind.h>
+
+#if LIEF_PE_SUPPORT
+#include "LIEF/PE/Binary.hpp"
+#endif
+
+#if LIEF_ELF_SUPPORT
+#include "LIEF/ELF/Binary.hpp"
+#endif
+
+#if LIEF_OAT_SUPPORT
+#include "LIEF/OAT/Binary.hpp"
+#endif
+
+#if LIEF_MACHO_SUPPORT
+#include "LIEF/MachO/Binary.hpp"
+#endif
+
+#if LIEF_COFF_SUPPORT
+#include "LIEF/COFF/Binary.hpp"
+#endif
 
 namespace LIEF {
 class BinaryStream;
 }
 
+
 namespace LIEF::py::typing {
+
+constexpr auto out_descr() {
+  return nb::detail::union_name(
+#if LIEF_PE_SUPPORT
+      nb::detail::make_caster<LIEF::PE::Binary>::Name,
+#endif
+
+#if LIEF_OAT_SUPPORT
+      nb::detail::make_caster<LIEF::OAT::Binary>::Name,
+#endif
+
+#if LIEF_ELF_SUPPORT
+      nb::detail::make_caster<LIEF::ELF::Binary>::Name,
+#endif
+
+#if LIEF_MACHO_SUPPORT
+      nb::detail::make_caster<LIEF::MachO::Binary>::Name,
+#endif
+
+#if LIEF_COFF_SUPPORT
+      nb::detail::make_caster<LIEF::COFF::Binary>::Name,
+#endif
+
+      nb::detail::const_name("None")
+  );
+}
+
 struct InputParser : public nanobind::object {
   LIEF_PY_DEFAULT_CTOR(InputParser, nanobind::object);
 
@@ -39,29 +89,8 @@ struct InputParser : public nanobind::object {
 struct OutputParser : public nanobind::object {
   LIEF_PY_DEFAULT_CTOR(OutputParser, nanobind::object);
 
-  NB_OBJECT_DEFAULT(OutputParser, object,
-  "Union["
-#if LIEF_PE_SUPPORT
-  "lief.PE.Binary,"
-#endif
-
-#if LIEF_OAT_SUPPORT
-  "lief.OAT.Binary,"
-#endif
-
-#if LIEF_ELF_SUPPORT
-  "lief.ELF.Binary,"
-#endif
-
-#if LIEF_MACHO_SUPPORT
-  "lief.MachO.Binary,"
-#endif
-
-#if LIEF_COFF_SUPPORT
-  "lief.COFF.Binary,"
-#endif
-
-  "None]", check);
+  static constexpr auto Name = out_descr();
+  NB_OBJECT_DEFAULT_NONAME(OutputParser, object, check);
 
   static bool check(handle h) {
     return true;
