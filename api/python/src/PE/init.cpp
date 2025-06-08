@@ -24,7 +24,6 @@
 #include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/ParserConfig.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"
-#include "LIEF/PE/COFFString.hpp"
 #include "LIEF/PE/ExceptionInfo.hpp"
 #include "LIEF/PE/RichHeader.hpp"
 #include "LIEF/PE/TLS.hpp"
@@ -124,13 +123,10 @@ void init_objects(nb::module_& m) {
   CREATE(Export, m);
   CREATE(ExportEntry, m);
   CREATE(TLS, m);
-  CREATE(AuxiliarySymbol, m);
-  CREATE(Symbol, m);
   CREATE(Import, m);
   CREATE(ImportEntry, m);
   CREATE(DelayImport, m);
   CREATE(DelayImportEntry, m);
-  CREATE(COFFString, m);
   CREATE(ExceptionInfo, m);
   {
     init_debug(m);

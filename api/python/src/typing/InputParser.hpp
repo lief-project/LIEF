@@ -16,12 +16,52 @@
 #ifndef PY_LIEF_TYPING_INPUT_PARSER_H
 #define PY_LIEF_TYPING_INPUT_PARSER_H
 #include "typing.hpp"
+#include "LIEF/config.h"
+#include <memory>
+
+namespace LIEF {
+class BinaryStream;
+}
 
 namespace LIEF::py::typing {
 struct InputParser : public nanobind::object {
   LIEF_PY_DEFAULT_CTOR(InputParser, nanobind::object);
 
-  NB_OBJECT_DEFAULT(InputParser, object, "Union[io.IOBase | os.PathLike]", check)
+  NB_OBJECT_DEFAULT(InputParser, object, "Union[io.IOBase | os.PathLike | bytes | list[int]]", check)
+
+  std::unique_ptr<BinaryStream> into_stream();
+
+  static bool check(handle h) {
+    return true;
+  }
+};
+
+struct OutputParser : public nanobind::object {
+  LIEF_PY_DEFAULT_CTOR(OutputParser, nanobind::object);
+
+  NB_OBJECT_DEFAULT(OutputParser, object,
+  "Union["
+#if LIEF_PE_SUPPORT
+  "lief.PE.Binary,"
+#endif
+
+#if LIEF_OAT_SUPPORT
+  "lief.OAT.Binary,"
+#endif
+
+#if LIEF_ELF_SUPPORT
+  "lief.ELF.Binary,"
+#endif
+
+#if LIEF_MACHO_SUPPORT
+  "lief.MachO.Binary,"
+#endif
+
+#if LIEF_COFF_SUPPORT
+  "lief.COFF.Binary,"
+#endif
+
+  "None]", check);
 
   static bool check(handle h) {
     return true;

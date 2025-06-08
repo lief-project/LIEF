@@ -28,12 +28,15 @@
 namespace LIEF {
 class SpanStream;
 
+namespace COFF {
+class String;
+}
+
 namespace PE {
 
 class Parser;
 class Builder;
 class Binary;
-class COFFString;
 
 namespace details {
 struct pe_section;
@@ -169,7 +172,9 @@ class LIEF_API Section : public LIEF::Section {
   }
 
   /// List of the section characteristics
-  std::vector<CHARACTERISTICS> characteristics_list() const;
+  std::vector<CHARACTERISTICS> characteristics_list() const {
+    return characteristics_to_list(characteristics_);
+  }
 
   /// True if the section can be discarded as needed.
   ///
@@ -220,11 +225,11 @@ class LIEF_API Section : public LIEF::Section {
   ///
   /// This coff string is usually present for long section names whose length
   /// does not fit in the 8 bytes allocated by the PE format.
-  COFFString* coff_string() {
+  COFF::String* coff_string() {
     return coff_string_;
   }
 
-  const COFFString* coff_string() const {
+  const COFF::String* coff_string() const {
     return coff_string_;
   }
 
@@ -259,6 +264,8 @@ class LIEF_API Section : public LIEF::Section {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Section& section);
 
+  static std::vector<CHARACTERISTICS> characteristics_to_list(uint32_t value);
+
   private:
   std::vector<uint8_t> content_;
   std::vector<uint8_t> padding_;
@@ -269,7 +276,7 @@ class LIEF_API Section : public LIEF::Section {
   uint16_t number_of_linenumbers_  = 0;
   uint32_t characteristics_        = 0;
 
-  COFFString* coff_string_ = nullptr;
+  COFF::String* coff_string_ = nullptr;
 };
 
 LIEF_API const char* to_string(Section::CHARACTERISTICS e);

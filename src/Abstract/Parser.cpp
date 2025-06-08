@@ -38,7 +38,6 @@
 #include "LIEF/PE/utils.hpp"
 #include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/Binary.hpp"
-#include "LIEF/PE/AuxiliarySymbol.hpp"
 #endif
 
 #if defined(LIEF_MACHO_SUPPORT)

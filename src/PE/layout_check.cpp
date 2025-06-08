@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 #include "LIEF/PE/Binary.hpp"
-#include "LIEF/PE/AuxiliarySymbol.hpp"
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/Relocation.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"
 #include "LIEF/PE/LoadConfigurations.hpp"
 #include "LIEF/PE/TLS.hpp"
-#include <spdlog/fmt/fmt.h>
 #include "LIEF/utils.hpp"
 #include "LIEF/PE/utils.hpp"
 
 #include "PE/Structures.hpp"
+
+#include <spdlog/fmt/fmt.h>
 
 namespace LIEF {
 namespace PE {

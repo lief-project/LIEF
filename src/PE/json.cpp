@@ -177,16 +177,6 @@ void JsonVisitor::visit(const Binary& binary) {
     node_["signatures"] = sigs;
   }
 
-  std::vector<json> symbols;
-  for (const Symbol& symbol : binary.symbols()) {
-    JsonVisitor visitor;
-    visitor(symbol);
-    symbols.emplace_back(visitor.get());
-  }
-  if (!symbols.empty()) {
-    node_["symbols"] = symbols;
-  }
-
   // Load Configuration
   if (binary.has_configuration()) {
     JsonVisitor visitor;
@@ -382,10 +372,6 @@ void JsonVisitor::visit(const TLS& tls) {
   if (tls.has_section()) {
     node_["section"] = escape_non_ascii(tls.section()->name());
   }
-}
-
-void JsonVisitor::visit(const Symbol& symbol) {
-  node_["name"] = symbol.name();
 }
 
 void JsonVisitor::visit(const Debug& debug) {
@@ -978,10 +964,6 @@ void JsonVisitor::visit(const ResourceDialogExtended& dialog) {
 // LIEF Abstract
 void JsonVisitor::visit(const LIEF::Binary& binary) {
   visit(static_cast<const LIEF::PE::Binary&>(binary));
-}
-
-void JsonVisitor::visit(const LIEF::Symbol& symbol) {
-  visit(static_cast<const LIEF::PE::Symbol&>(symbol));
 }
 
 void JsonVisitor::visit(const LIEF::Section& section) {

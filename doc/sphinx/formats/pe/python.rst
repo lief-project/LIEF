@@ -98,94 +98,6 @@ TLS
 
 ----------
 
-Symbol
-*******
-
-.. lief-inheritance:: lief._lief.PE.Symbol
-  :top-classes: lief._lief.Symbol
-  :parts: 2
-
-.. autoclass:: lief.PE.Symbol
-
-----------
-
-AuxiliarySymbol
-***************
-
-.. lief-inheritance:: lief._lief.PE.AuxiliarySymbol
-  :top-classes: lief._lief.PE.AuxiliarySymbol
-  :parts: 2
-
-.. autoclass:: lief.PE.AuxiliarySymbol
-
-----------
-
-AuxiliaryCLRToken
-*****************
-
-.. lief-inheritance:: lief._lief.PE.AuxiliaryCLRToken
-  :top-classes: lief._lief.PE.AuxiliarySymbol
-  :parts: 2
-
-.. autoclass:: lief.PE.AuxiliarySymbol
-
-----------
-
-AuxiliaryFunctionDefinition
-***************************
-
-.. lief-inheritance:: lief._lief.PE.AuxiliaryFunctionDefinition
-  :top-classes: lief._lief.PE.AuxiliarySymbol
-  :parts: 2
-
-.. autoclass:: lief.PE.AuxiliaryFunctionDefinition
-
-----------
-
-AuxiliaryWeakExternal
-*********************
-
-.. lief-inheritance:: lief._lief.PE.AuxiliaryWeakExternal
-  :top-classes: lief._lief.PE.AuxiliarySymbol
-  :parts: 2
-
-.. autoclass:: lief.PE.AuxiliaryWeakExternal
-
-----------
-
-AuxiliarybfAndefSymbol
-**********************
-
-.. lief-inheritance:: lief._lief.PE.AuxiliarybfAndefSymbol
-  :top-classes: lief._lief.PE.AuxiliarySymbol
-  :parts: 2
-
-.. autoclass:: lief.PE.AuxiliarybfAndefSymbol
-
-----------
-
-AuxiliarySectionDefinition
-**************************
-
-.. lief-inheritance:: lief._lief.PE.AuxiliarySectionDefinition
-  :top-classes: lief._lief.PE.AuxiliarySymbol
-  :parts: 2
-
-.. autoclass:: lief.PE.AuxiliarySectionDefinition
-
-----------
-
-AuxiliaryFile
-*************
-
-.. lief-inheritance:: lief._lief.PE.AuxiliaryFile
-  :top-classes: lief._lief.PE.AuxiliarySymbol
-  :parts: 2
-
-.. autoclass:: lief.PE.AuxiliaryFile
-
-----------
-
 Relocation
 **********
 
@@ -691,13 +603,6 @@ Frame Pointer Omission (FPO)
   :parts: 2
 
 .. autoclass:: lief.PE.FPO
-
-----------
-
-COFF String
-***********
-
-.. autoclass:: lief.PE.COFFString
 
 ----------
 

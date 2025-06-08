@@ -51,7 +51,6 @@ LIEF_PE_FORWARD(RelocationEntry)
 LIEF_PE_FORWARD(Export)
 LIEF_PE_FORWARD(ExportEntry)
 LIEF_PE_FORWARD(TLS)
-LIEF_PE_FORWARD(Symbol)
 LIEF_PE_FORWARD(Debug)
 LIEF_PE_FORWARD(CodeView)
 LIEF_PE_FORWARD(CodeViewPDB)
@@ -296,9 +295,6 @@ class LIEF_API Visitor {
 
   /// Method to visit a LIEF::PE::TLS
   LIEF_PE_VISITABLE(TLS)
-
-  /// Method to visit a LIEF::PE::Symbol
-  LIEF_PE_VISITABLE(Symbol)
 
   /// Method to visit a LIEF::PE::Section
   LIEF_PE_VISITABLE(Section)

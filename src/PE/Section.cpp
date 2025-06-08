@@ -25,7 +25,7 @@
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "LIEF/PE/Section.hpp"
-#include "LIEF/PE/COFFString.hpp"
+#include "LIEF/COFF/String.hpp"
 
 namespace LIEF {
 namespace PE {
@@ -99,12 +99,12 @@ uint32_t Section::pointerto_raw_data() const {
   return offset();
 }
 
-std::vector<Section::CHARACTERISTICS> Section::characteristics_list() const {
+std::vector<Section::CHARACTERISTICS> Section::characteristics_to_list(uint32_t value) {
   std::vector<Section::CHARACTERISTICS> list;
   list.reserve(3);
   std::copy_if(CHARACTERISTICS_LIST.begin(), CHARACTERISTICS_LIST.end(),
                std::back_inserter(list),
-               [this] (CHARACTERISTICS c) { return has_characteristic(c); });
+               [value] (CHARACTERISTICS c) { return (value & (uint32_t)c) != 0; });
 
   return list;
 }
@@ -140,7 +140,7 @@ std::ostream& operator<<(std::ostream& os, const Section& section) {
                  std::back_inserter(fullname_hex),
                  [] (const char c) { return format("{:02x}", c); });
 
-  if (const COFFString* coff_str = section.coff_string()) {
+  if (const COFF::String* coff_str = section.coff_string()) {
     os << format("{:{}} {} ({}, {})\n", "Name:", WIDTH, section.name(),
                  join(fullname_hex, " "), coff_str->str());
   } else {

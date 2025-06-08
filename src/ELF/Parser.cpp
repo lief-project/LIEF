@@ -353,6 +353,10 @@ std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& data,
 
 std::unique_ptr<Binary> Parser::parse(std::unique_ptr<BinaryStream> stream,
                                       const ParserConfig& conf) {
+  if (stream == nullptr) {
+    return nullptr;
+  }
+
   if (!is_elf(*stream)) {
     return nullptr;
   }

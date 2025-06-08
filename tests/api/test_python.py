@@ -16,7 +16,7 @@ def test_wrong_obj(capsys):
         pass
     _ = lief.parse(Empty())
     captured = capsys.readouterr()
-    assert "LIEF parser interface does not support Python object: test_python.Empty" in captured.err
+    assert "LIEF parser interface does not support this Python object: test_python.Empty" in captured.err
 
 def test_pathlib():
     lspath = Path(get_sample('ELF/ELF64_x86-64_binary_ls.bin'))

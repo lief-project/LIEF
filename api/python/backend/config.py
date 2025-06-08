@@ -142,6 +142,7 @@ class Formats(BaseModel):
     elf: bool = True
     pe: bool = True
     macho: bool = True
+    coff: bool = True
     dex: bool = True
     art: bool = True
     oat: bool = True
@@ -152,6 +153,7 @@ class Formats(BaseModel):
             f"-DLIEF_ELF={cmake_serialize(self.elf)}",
             f"-DLIEF_PE={cmake_serialize(self.pe)}",
             f"-DLIEF_MACHO={cmake_serialize(self.macho)}",
+            f"-DLIEF_COFF={cmake_serialize(self.coff)}",
             f"-DLIEF_DEX={cmake_serialize(self.dex)}",
             f"-DLIEF_OAT={cmake_serialize(self.oat)}",
             f"-DLIEF_ART={cmake_serialize(self.art)}",

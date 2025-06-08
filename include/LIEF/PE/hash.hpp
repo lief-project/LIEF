@@ -35,7 +35,6 @@ class RelocationEntry;
 class Export;
 class ExportEntry;
 class TLS;
-class Symbol;
 class Debug;
 class CodeView;
 class CodeViewPDB;
@@ -104,7 +103,6 @@ class LIEF_API Hash : public LIEF::Hash {
   void visit(const Export& export_)                       override;
   void visit(const ExportEntry& export_entry)             override;
   void visit(const TLS& tls)                              override;
-  void visit(const Symbol& Symbol)                        override;
   void visit(const Debug& debug)                          override;
   void visit(const CodeView& cv)                          override;
   void visit(const CodeViewPDB& cvpdb)                    override;

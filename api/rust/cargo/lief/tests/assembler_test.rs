@@ -74,6 +74,9 @@ fn reassemble_from(name: &str, address: u64, count: usize) {
                 }
             }
         },
+        lief::Binary::COFF(_) => {
+            todo!();
+        }
     }
 
 }

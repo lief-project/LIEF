@@ -26,10 +26,13 @@
 #include "LIEF/platforms/android.hpp"
 
 namespace LIEF {
+class BinaryStream;
 namespace ELF {
 class Binary;
 }
 namespace OAT {
+
+LIEF_API bool is_oat(BinaryStream& stream);
 
 /// Check if the given LIEF::ELF::Binary is an OAT one.
 LIEF_API bool is_oat(const LIEF::ELF::Binary& elf_binary);

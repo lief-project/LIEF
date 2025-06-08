@@ -5,7 +5,7 @@ from utils import get_sample
 lief.logging.set_level(lief.logging.LEVEL.INFO)
 
 def test_header_key_values():
-    CallDeviceId = lief.parse(get_sample('OAT/OAT_079_x86-64_CallDeviceId.oat'))
+    CallDeviceId = lief.OAT.parse(get_sample('OAT/OAT_079_x86-64_CallDeviceId.oat'))
     header = CallDeviceId.header
 
     assert header[lief.OAT.HEADER_KEYS.IMAGE_LOCATION] == \
@@ -40,4 +40,3 @@ def test_header_key_values():
         x.value = "foo"
 
     assert all(k == "foo" for k in header.values)
-

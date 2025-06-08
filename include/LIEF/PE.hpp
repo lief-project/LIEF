@@ -47,7 +47,6 @@
 #include "LIEF/PE/resources/ResourceVersion.hpp"
 #include "LIEF/PE/RichEntry.hpp"
 #include "LIEF/PE/RichHeader.hpp"
-#include "LIEF/PE/Symbol.hpp"
 #include "LIEF/PE/Relocation.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"
 #include "LIEF/PE/Builder.hpp"
@@ -57,9 +56,7 @@
 #include "LIEF/PE/Header.hpp"
 #include "LIEF/PE/OptionalHeader.hpp"
 #include "LIEF/PE/LoadConfigurations.hpp"
-#include "LIEF/PE/AuxiliarySymbol.hpp"
 #include "LIEF/PE/CodeIntegrity.hpp"
-#include "LIEF/PE/COFFString.hpp"
 #include "LIEF/PE/Factory.hpp"
 #include "LIEF/PE/ExceptionInfo.hpp"
 #include "LIEF/PE/exceptions_info/RuntimeFunctionAArch64.hpp"
@@ -82,18 +79,13 @@
 #include "LIEF/PE/signature/GenericContent.hpp"
 #include "LIEF/PE/signature/PKCS9TSTInfo.hpp"
 
-#include "LIEF/PE/AuxiliarySymbol.hpp"
-#include "LIEF/PE/AuxiliarySymbols/AuxiliaryCLRToken.hpp"
-#include "LIEF/PE/AuxiliarySymbols/AuxiliaryFunctionDefinition.hpp"
-#include "LIEF/PE/AuxiliarySymbols/AuxiliaryWeakExternal.hpp"
-#include "LIEF/PE/AuxiliarySymbols/AuxiliarybfAndefSymbol.hpp"
-#include "LIEF/PE/AuxiliarySymbols/AuxiliarySectionDefinition.hpp"
-#include "LIEF/PE/AuxiliarySymbols/AuxiliaryFile.hpp"
-
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/enums.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/utils.hpp"
+
+#include "LIEF/COFF/Symbol.hpp"
+#include "LIEF/COFF/String.hpp"
 
 #endif
 

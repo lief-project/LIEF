@@ -48,6 +48,9 @@ static constexpr std::array CHARACTERISTICS_LIST = {
   Header::CHARACTERISTICS::BYTES_REVERSED_HI
 };
 
+bool Header::is_known_machine(uint16_t machine) {
+  return to_string((MACHINE_TYPES)machine) != std::string("UNKNOWN");
+}
 
 Header Header::create(PE_TYPE type) {
   Header hdr;

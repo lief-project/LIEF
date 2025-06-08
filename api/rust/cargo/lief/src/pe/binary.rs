@@ -22,9 +22,9 @@ use super::signature::Signatures;
 use super::tls::TLS;
 use super::{data_directory, signature};
 use super::debug::CodeViewPDB;
-use super::symbol::Symbol;
 use super::exception::RuntimeExceptionFunction;
-use super::coff;
+use crate::coff;
+use crate::coff::Symbol;
 
 use crate::common::{into_optional, FromFFI, AsFFI};
 use crate::declare_iterator;

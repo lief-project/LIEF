@@ -2,7 +2,7 @@ import lief
 from utils import get_sample
 
 def test_header():
-    CallDeviceId = lief.parse(get_sample("OAT/OAT_131_x86_CallDeviceId.oat"))
+    CallDeviceId = lief.OAT.parse(get_sample("OAT/OAT_131_x86_CallDeviceId.oat"))
     header = CallDeviceId.header
 
     assert header.magic == [111, 97, 116, 10]
@@ -28,7 +28,7 @@ def test_header():
     assert header.image_file_location_oat_data_begin == 0x716a9000
 
 def test_oat_dex_files():
-    CallDeviceId = lief.parse(get_sample("OAT/OAT_131_x86_CallDeviceId.oat"))
+    CallDeviceId = lief.OAT.parse(get_sample("OAT/OAT_131_x86_CallDeviceId.oat"))
     assert len(CallDeviceId.oat_dex_files) == 1
 
     # OAT Dex File 0

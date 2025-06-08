@@ -4,8 +4,8 @@
 //! using either: [`crate::pe::parse`], [`crate::pe::Binary::parse`] or [`crate::Binary::parse`]
 //!
 //! ```
-//! let pe = lief::elf::parse("demo.exe").unwrap();
-//! for section in elf.sections() {
+//! let pe = lief::pe::parse("demo.exe").unwrap();
+//! for section in pe.sections() {
 //!     println!("section: {}", section.name());
 //! }
 //! ```
@@ -26,8 +26,6 @@ pub mod signature;
 pub mod tls;
 pub mod code_integrity;
 pub mod builder;
-pub mod coff;
-pub mod symbol;
 pub mod exception;
 pub mod exception_x64;
 pub mod exception_aarch64;
@@ -65,10 +63,6 @@ pub use tls::TLS;
 pub use import::Import;
 #[doc(inline)]
 pub use signature::Signature;
-#[doc(inline)]
-pub use coff::String as COFFString;
-#[doc(inline)]
-pub use symbol::Symbol;
 #[doc(inline)]
 pub use exception::{RuntimeExceptionFunction, ExceptionInfo};
 #[doc(inline)]

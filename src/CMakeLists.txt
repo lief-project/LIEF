@@ -34,6 +34,10 @@ if(LIEF_MACHO)
   add_subdirectory(MachO)
 endif()
 
+if(LIEF_COFF)
+  add_subdirectory(COFF)
+endif()
+
 if(LIEF_OAT)
   add_subdirectory(OAT)
 endif()

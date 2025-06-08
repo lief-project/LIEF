@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
 #include <memory>
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
 
 #include "typing/InputParser.hpp"
-#include "pyutils.hpp"
-#include "pyIOStream.hpp"
 
 #include "LIEF/MachO/Parser.hpp"
 #include "LIEF/MachO/FatBinary.hpp"
-#include "LIEF/logging.hpp"
-#include "LIEF/BinaryStream/SpanStream.hpp"
+
+#include "LIEF/BinaryStream/BinaryStream.hpp"
 
 #include "MachO/pyMachO.hpp"
 
@@ -36,37 +33,6 @@ template<>
 void create<Parser>(nb::module_& m) {
   using namespace LIEF::py;
 
-  m.def("parse",
-    [] (nb::bytes bytes, const ParserConfig& config) {
-      auto strm = std::make_unique<SpanStream>(
-        reinterpret_cast<const uint8_t*>(bytes.data()), bytes.size());
-      return Parser::parse(std::move(strm), config);
-    },
-    R"delim(
-    Parse the given binary and return a :class:`~lief.MachO.FatBinary` object
-
-    One can configure the parsing with the ``config`` parameter. See :class:`~lief.MachO.ParserConfig`,
-    )delim"_doc, "buffer"_a, "config"_a = ParserConfig::deep(),
-    nb::rv_policy::take_ownership);
-
-  m.def("parse",
-    nb::overload_cast<const std::string&, const ParserConfig&>(&LIEF::MachO::Parser::parse),
-    R"delim(
-    Parse the given binary and return a :class:`~lief.MachO.FatBinary` object
-
-    One can configure the parsing with the ``config`` parameter. See :class:`~lief.MachO.ParserConfig`,
-    )delim"_doc, "filename"_a, "config"_a = ParserConfig::deep(),
-    nb::rv_policy::take_ownership);
-
-
-  m.def("parse",
-    nb::overload_cast<const std::vector<uint8_t>&, const ParserConfig&>(&LIEF::MachO::Parser::parse),
-    R"delim(
-    Parse the given binary (from raw bytes) and return a :class:`~lief.MachO.FatBinary` object
-
-    One can configure the parsing with the ``config`` parameter. See :class:`~lief.MachO.ParserConfig`
-    )delim"_doc, "raw"_a, "config"_a = ParserConfig::deep(),
-    nb::rv_policy::take_ownership);
 
   m.def("parse_from_memory",
     nb::overload_cast<uintptr_t, const ParserConfig&>(&MachO::Parser::parse_from_memory),
@@ -77,19 +43,7 @@ void create<Parser>(nb::module_& m) {
 
   m.def("parse",
     [] (typing::InputParser obj, const ParserConfig& config) -> std::unique_ptr<FatBinary> {
-      if (auto path_str = path_to_str(obj)) {
-        return MachO::Parser::parse(std::move(*path_str));
-      }
-
-      if (auto stream = PyIOStream::from_python(obj)) {
-        auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
-        return MachO::Parser::parse(std::move(ptr), config);
-      }
-
-      logging::log(logging::LEVEL::ERR,
-                   "LIEF parser interface does not support Python object: " +
-                   type2str(obj));
-      return nullptr;
+      return Parser::parse(obj.into_stream(), config);
     },
     R"delim(
     Parse the given binary from the given input and return a :class:`~lief.MachO.FatBinary` object

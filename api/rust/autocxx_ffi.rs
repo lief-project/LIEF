@@ -183,35 +183,6 @@ include_cpp! {
     generate!("PE_Binary_it_exceptions")
     block_constructors!("PE_Binary_it_exceptions")
 
-    generate!("PE_Symbol")
-    block_constructors!("PE_Symbol")
-
-    generate!("PE_Symbol_it_auxiliary_symbols")
-    block_constructors!("PE_Symbol_it_auxiliary_symbols")
-
-    generate!("PE_AuxiliarySymbol")
-    block_constructors!("PE_AuxiliarySymbol")
-
-    generate!("PE_AuxiliarySectionDefinition")
-    block_constructors!("PE_AuxiliarySectionDefinition")
-
-    generate!("PE_AuxiliaryCLRToken")
-    block_constructors!("PE_AuxiliaryCLRToken")
-
-    generate!("PE_AuxiliaryFile")
-    block_constructors!("PE_AuxiliaryFile")
-
-    generate!("PE_AuxiliaryFunctionDefinition")
-    block_constructors!("PE_AuxiliaryFunctionDefinition")
-
-    generate!("PE_AuxiliaryWeakExternal")
-    block_constructors!("PE_AuxiliaryWeakExternal")
-
-    generate!("PE_AuxiliarybfAndefSymbol")
-    block_constructors!("PE_AuxiliarybfAndefSymbol")
-
-    generate!("PE_COFFString")
-    block_constructors!("PE_COFFString")
     generate!("PE_CodeIntegrity")
     block_constructors!("PE_CodeIntegrity")
     generate!("PE_ContentInfo")
@@ -1078,6 +1049,83 @@ include_cpp! {
         generate!("asm_ebpf_Instruction")
         block_constructors!("asm_ebpf_Instruction")
     /* } eBPF */
+
+
+    // -------------------------------------------------------------------------
+    // COFF Support
+    // -------------------------------------------------------------------------
+
+    generate!("COFF_Symbol")
+    block_constructors!("COFF_Symbol")
+
+    generate!("COFF_Symbol_it_auxiliary_symbols")
+    block_constructors!("COFF_Symbol_it_auxiliary_symbols")
+
+    generate!("COFF_AuxiliarySymbol")
+    block_constructors!("COFF_AuxiliarySymbol")
+
+    generate!("COFF_AuxiliarySectionDefinition")
+    block_constructors!("COFF_AuxiliarySectionDefinition")
+
+    generate!("COFF_AuxiliaryCLRToken")
+    block_constructors!("COFF_AuxiliaryCLRToken")
+
+    generate!("COFF_AuxiliaryFile")
+    block_constructors!("COFF_AuxiliaryFile")
+
+    generate!("COFF_AuxiliaryFunctionDefinition")
+    block_constructors!("COFF_AuxiliaryFunctionDefinition")
+
+    generate!("COFF_AuxiliaryWeakExternal")
+    block_constructors!("COFF_AuxiliaryWeakExternal")
+
+    generate!("COFF_AuxiliarybfAndefSymbol")
+    block_constructors!("COFF_AuxiliarybfAndefSymbol")
+
+    generate!("COFF_String")
+    block_constructors!("COFF_String")
+
+    generate!("COFF_Section")
+    block_constructors!("COFF_Section")
+
+    generate!("COFF_Section_it_relocations")
+    block_constructors!("COFF_Section_it_relocations")
+
+    generate!("COFF_Section_it_symbols")
+    block_constructors!("COFF_Section_it_symbols")
+
+    generate!("COFF_Binary")
+    block_constructors!("COFF_Binary")
+
+    generate!("COFF_Binary_it_relocations")
+    block_constructors!("COFF_Binary_it_relocations")
+
+    generate!("COFF_Binary_it_symbols")
+    block_constructors!("COFF_Binary_it_symbols")
+
+    generate!("COFF_Binary_it_sections")
+    block_constructors!("COFF_Binary_it_sections")
+
+    generate!("COFF_Binary_it_strings")
+    block_constructors!("COFF_Binary_it_strings")
+
+    generate!("COFF_Relocation")
+    block_constructors!("COFF_Relocation")
+
+    generate!("COFF_Header")
+    block_constructors!("COFF_Header")
+
+    generate!("COFF_RegularHeader")
+    block_constructors!("COFF_RegularHeader")
+
+    generate!("COFF_BigObjHeader")
+    block_constructors!("COFF_BigObjHeader")
+
+    generate!("COFF_Utils")
+    block_constructors!("COFF_Utils")
+
+    generate!("COFF_Section_ComdataInfo")
+    block_constructors!("COFF_Section_ComdataInfo")
 
     safety!(unsafe)
 }

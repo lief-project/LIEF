@@ -7,7 +7,7 @@ use lief_ffi as ffi;
 use crate::declare_iterator;
 use crate::to_slice;
 use crate::{common::FromFFI, generic};
-use super::coff;
+use crate::coff;
 use bitflags::bitflags;
 use crate::common::into_optional;
 

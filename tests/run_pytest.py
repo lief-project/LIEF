@@ -24,6 +24,7 @@ def run(junit_xml: Optional[str] = None):
         (CWD / "dyld-shared-cache"),
         (CWD / "assembly"),
         (CWD / "abstract"),
+        (CWD / "coff"),
         "--verbose"
     ]
     if junit_xml is not None:

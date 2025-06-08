@@ -21,13 +21,14 @@
 #include "LIEF/PE/DosHeader.hpp"
 #include "LIEF/PE/Import.hpp"
 #include "LIEF/PE/DelayImport.hpp"
-#include "LIEF/PE/Symbol.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
 #include "LIEF/PE/Builder.hpp"
 #include "LIEF/PE/ResourcesManager.hpp"
-#include "LIEF/PE/COFFString.hpp"
 #include "LIEF/PE/ExceptionInfo.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
+
+#include "LIEF/COFF/Symbol.hpp"
+#include "LIEF/COFF/String.hpp"
 
 #include "LIEF/Abstract/Binary.hpp"
 
@@ -114,21 +115,21 @@ class LIEF_API Binary : public LIEF::Binary {
   using it_const_debug_entries = const_ref_iterator<const debug_entries_t&, const Debug*>;
 
   /// Internal container for storing COFF Symbols
-  using symbols_t = std::vector<std::unique_ptr<Symbol>>;
+  using symbols_t = std::vector<std::unique_ptr<COFF::Symbol>>;
 
   /// Iterator that outputs Symbol&
-  using it_symbols = ref_iterator<symbols_t&, Symbol*>;
+  using it_symbols = ref_iterator<symbols_t&, COFF::Symbol*>;
 
   /// Iterator that outputs const Symbol&
-  using it_const_symbols = const_ref_iterator<const symbols_t&, const Symbol*>;
+  using it_const_symbols = const_ref_iterator<const symbols_t&, const COFF::Symbol*>;
 
   /// Internal container for storing strings
-  using strings_table_t = std::vector<COFFString>;
+  using strings_table_t = std::vector<COFF::String>;
 
-  /// Iterator that outputs std::string&
+  /// Iterator that outputs COFF::String&
   using it_strings_table = ref_iterator<strings_table_t&>;
 
-  /// Iterator that outputs const std::string&
+  /// Iterator that outputs const COFF::String&
   using it_const_strings_table = const_ref_iterator<const strings_table_t&>;
 
   /// Internal container for storing PE's authenticode Signature
@@ -392,16 +393,16 @@ class LIEF_API Binary : public LIEF::Binary {
   ///
   /// \warning This offset must include the first 4 bytes holding the size of
   ///          the table. Hence, the first string starts a the offset 4.
-  COFFString* find_coff_string(uint32_t offset) {
+  COFF::String* find_coff_string(uint32_t offset) {
     auto it = std::find_if(strings_table_.begin(), strings_table_.end(),
-      [offset] (const COFFString& item) {
+      [offset] (const COFF::String& item) {
         return offset == item.offset();
       }
     );
     return it == strings_table_.end() ? nullptr : &*it;
   }
 
-  const COFFString* find_coff_string(uint32_t offset) const {
+  const COFF::String* find_coff_string(uint32_t offset) const {
     return const_cast<Binary*>(this)->find_coff_string(offset);
   }
 

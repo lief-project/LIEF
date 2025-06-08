@@ -2,7 +2,7 @@ import lief
 from utils import get_sample
 
 def test_header():
-    CallDeviceId = lief.parse(get_sample("OAT/OAT_138_AArch64_android.uid.systemui.oat"))
+    CallDeviceId = lief.OAT.parse(get_sample("OAT/OAT_138_AArch64_android.uid.systemui.oat"))
     header = CallDeviceId.header
 
     assert header.magic == [111, 97, 116, 10]

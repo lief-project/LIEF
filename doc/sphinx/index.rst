@@ -15,6 +15,7 @@ Welcome to LIEF's documentation!
   formats/elf/index
   formats/macho/index
   formats/pe/index
+  formats/coff/index
   formats/android/index
 
 .. toctree::

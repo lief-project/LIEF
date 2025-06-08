@@ -17,6 +17,7 @@
 #include <vector>
 #include <memory>
 #include "LIEF/errors.hpp"
+#include "LIEF/optional.hpp"
 #include "LIEF/canbe_unique.hpp"
 
 #pragma once
@@ -69,6 +70,11 @@ inline std::unique_ptr<T> try_unique(std::unique_ptr<V> value) {
 template<class T, class V>
 inline std::unique_ptr<T> try_unique(std::unique_ptr<const V> value) {
   return try_unique<T, V>(std::unique_ptr<V>(const_cast<V*>(value.release())));
+}
+
+template<class T, class V>
+inline std::unique_ptr<T> try_unique(LIEF::optional<V> value) {
+  return value ? std::make_unique<T>(std::move(*value)) : nullptr;
 }
 
 template<class T, class V>

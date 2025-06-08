@@ -3,15 +3,24 @@ use lief_ffi as ffi;
 use super::elf;
 use super::macho;
 use super::pe;
+use super::coff;
 use crate::common::FromFFI;
 use std::io::{Read, Seek};
 
 #[derive(Debug)]
 /// Enum that wraps all the executable formats supported by LIEF
 pub enum Binary {
+    /// An ELF binary
     ELF(elf::Binary),
+
+    /// A PE binary
     PE(pe::Binary),
+
+    /// A Mach-O (FAT) binary
     MachO(macho::FatBinary),
+
+    /// A COFF binary object
+    COFF(coff::Binary)
 }
 
 impl Binary {
@@ -38,6 +47,13 @@ impl Binary {
         if ffi::MachO_Utils::is_macho(path) {
             if let Some(fat) = macho::FatBinary::parse(path) {
                 return Some(Binary::MachO(fat));
+            }
+            return None;
+        }
+
+        if ffi::COFF_Utils::is_coff(path) {
+            if let Some(coff) = coff::Binary::parse(path) {
+                return Some(Binary::COFF(coff));
             }
             return None;
         }
@@ -74,6 +90,12 @@ impl Binary {
         if ffi_stream.is_pe() {
             return Some(Binary::PE(pe::Binary::from_ffi(
                 ffi_stream.pin_mut().as_pe(),
+            )));
+        }
+
+        if ffi_stream.is_coff() {
+            return Some(Binary::COFF(coff::Binary::from_ffi(
+                ffi_stream.pin_mut().as_coff(),
             )));
         }
         None

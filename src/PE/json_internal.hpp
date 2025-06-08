@@ -22,7 +22,6 @@
 namespace LIEF {
 
 class Binary;
-class Symbol;
 class Section;
 
 namespace PE {
@@ -40,7 +39,6 @@ class RelocationEntry;
 class Export;
 class ExportEntry;
 class TLS;
-class Symbol;
 class Debug;
 class CodeView;
 class CodeViewPDB;
@@ -103,7 +101,6 @@ class JsonVisitor : public LIEF::JsonVisitor {
   void visit(const Export& export_)                       override;
   void visit(const ExportEntry& export_entry)             override;
   void visit(const TLS& tls)                              override;
-  void visit(const Symbol& Symbol)                        override;
   void visit(const Debug& debug)                          override;
   void visit(const CodeView& dv)                          override;
   void visit(const CodeViewPDB& cvpdb)                    override;
@@ -151,7 +148,6 @@ class JsonVisitor : public LIEF::JsonVisitor {
   void visit(const Repro& entry)      override;
 
   void visit(const LIEF::Binary& binary)   override;
-  void visit(const LIEF::Symbol& symbol)   override;
   void visit(const LIEF::Section& section) override;
 };
 

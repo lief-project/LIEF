@@ -27,7 +27,7 @@
 #include "LIEF/Abstract/Parser.hpp"
 #include "LIEF/PE/enums.hpp"
 #include "LIEF/PE/ParserConfig.hpp"
-#include "LIEF/PE/COFFString.hpp"
+#include "LIEF/COFF/String.hpp"
 
 namespace LIEF {
 class BinaryStream;
@@ -97,7 +97,7 @@ class LIEF_API Parser : public LIEF::Parser {
   Parser& operator=(const Parser& copy) = delete;
   Parser(const Parser& copy)            = delete;
 
-  COFFString* find_coff_string(uint32_t offset) const;
+  COFF::String* find_coff_string(uint32_t offset) const;
 
   ExceptionInfo* find_exception_info(uint32_t rva) const {
     auto it = memoize_exception_info_.find(rva);
@@ -121,7 +121,7 @@ class LIEF_API Parser : public LIEF::Parser {
   }
 
   void memoize(ExceptionInfo& info);
-  void memoize(COFFString str);
+  void memoize(COFF::String str);
 
   void add_non_resolved(ExceptionInfo& info, uint32_t target) {
     unresolved_chains_.emplace_back(&info, target);

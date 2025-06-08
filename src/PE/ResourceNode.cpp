@@ -21,7 +21,6 @@
 #include "LIEF/utils.hpp"
 
 #include "LIEF/PE/Binary.hpp"
-#include "LIEF/PE/AuxiliarySymbol.hpp"
 #include "LIEF/PE/ResourceNode.hpp"
 #include "LIEF/PE/ResourceDirectory.hpp"
 #include "LIEF/PE/ResourceData.hpp"

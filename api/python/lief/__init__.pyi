@@ -2,8 +2,10 @@ from collections.abc import Sequence
 import enum
 import io
 import lief
+import lief.COFF
 import lief.ELF
 import lief.MachO
+import lief.OAT
 import lief.PE
 import os
 from typing import Iterator, Optional, Union, overload
@@ -11,6 +13,7 @@ from typing import Iterator, Optional, Union, overload
 from . import (
     ART as ART,
     Android as Android,
+    COFF as COFF,
     DEX as DEX,
     ELF as ELF,
     MachO as MachO,
@@ -462,14 +465,7 @@ class Symbol(Object):
 
     def __str__(self) -> str: ...
 
-@overload
-def parse(raw: bytes) -> Optional[Binary]: ...
-
-@overload
-def parse(filepath: str) -> Optional[Binary]: ...
-
-@overload
-def parse(obj: Union[io.IOBase | os.PathLike]) -> Optional[Binary]: ...
+def parse(obj: Union[io.IOBase | os.PathLike | bytes | list[int]]) -> Union[lief.PE.Binary,lief.OAT.Binary,lief.ELF.Binary,lief.MachO.Binary,lief.COFF.Binary,None]: ...
 
 class Relocation(Object):
     address: int
@@ -591,3 +587,5 @@ def is_art(path: str) -> bool: ...
 
 @overload
 def is_art(raw: Sequence[int]) -> bool: ...
+
+def is_coff(file: str) -> bool: ...

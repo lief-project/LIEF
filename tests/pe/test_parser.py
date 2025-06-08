@@ -543,28 +543,28 @@ def test_symbols():
     assert symbols[0].name == ".file"
     assert symbols[0].value == 102
     assert symbols[0].section_idx == -2
-    assert symbols[0].storage_class == lief.PE.Symbol.STORAGE_CLASS.FILE
+    assert symbols[0].storage_class == lief.COFF.Symbol.STORAGE_CLASS.FILE
     assert len(symbols[0].auxiliary_symbols) == 1
-    assert isinstance(symbols[0].auxiliary_symbols[0], lief.PE.AuxiliaryFile)
+    assert isinstance(symbols[0].auxiliary_symbols[0], lief.COFF.AuxiliaryFile)
     assert symbols[0].auxiliary_symbols[0].filename == "crtexe.c"
 
     assert len(symbols[0].auxiliary_symbols) == 1
-    assert isinstance(symbols[0].auxiliary_symbols[0], lief.PE.AuxiliaryFile)
+    assert isinstance(symbols[0].auxiliary_symbols[0], lief.COFF.AuxiliaryFile)
     assert symbols[0].auxiliary_symbols[0].filename == "crtexe.c"
 
     assert symbols[1].name == "__mingw_invalidParameterHandler"
     assert symbols[1].value == 0
     assert symbols[1].section_idx == 1
-    assert symbols[1].storage_class == lief.PE.Symbol.STORAGE_CLASS.STATIC
-    assert symbols[1].complex_type == lief.PE.Symbol.COMPLEX_TYPE.FUNCTION
+    assert symbols[1].storage_class == lief.COFF.Symbol.STORAGE_CLASS.STATIC
+    assert symbols[1].complex_type == lief.COFF.Symbol.COMPLEX_TYPE.FUNCTION
     assert len(symbols[1].auxiliary_symbols) == 1
-    assert isinstance(symbols[1].auxiliary_symbols[0], lief.PE.AuxiliarySectionDefinition)
+    assert isinstance(symbols[1].auxiliary_symbols[0], lief.COFF.AuxiliarySectionDefinition)
     assert symbols[1].auxiliary_symbols[0].length == 0
     assert symbols[1].auxiliary_symbols[0].nb_relocs == 0
     assert symbols[1].auxiliary_symbols[0].nb_line_numbers == 0
     assert symbols[1].auxiliary_symbols[0].checksum == 0
     assert symbols[1].auxiliary_symbols[0].section_idx == 0
-    assert symbols[1].auxiliary_symbols[0].selection == 0
+    assert symbols[1].auxiliary_symbols[0].selection == lief.COFF.AuxiliarySectionDefinition.COMDAT_SELECTION.NONE
     assert str(symbols[1]) == dedent("""\
     Symbol {
       Name: __mingw_invalidParameterHandler
@@ -580,22 +580,23 @@ def test_symbols():
         Number of line numbers: 0
         Checksum: 0x00000000
         Section index: 0
-        Selection: 0
+        Selection: NONE
+        Reserved: 0
       }
 
     }
     """)
 
     assert symbols[3].name == ".rdata$.refptr.mingw_initltsdrot_force"
-    assert symbols[3].auxiliary_symbols[0].selection == 2
+    assert symbols[3].auxiliary_symbols[0].selection == lief.COFF.AuxiliarySectionDefinition.COMDAT_SELECTION.ANY
 
     assert symbols[317].name == "__mingw_SEH_error_handler"
     assert symbols[317].value == 4240
     assert symbols[317].section_idx == 1
-    assert symbols[317].storage_class == lief.PE.Symbol.STORAGE_CLASS.EXTERNAL
-    assert symbols[317].complex_type == lief.PE.Symbol.COMPLEX_TYPE.FUNCTION
+    assert symbols[317].storage_class == lief.COFF.Symbol.STORAGE_CLASS.EXTERNAL
+    assert symbols[317].complex_type == lief.COFF.Symbol.COMPLEX_TYPE.FUNCTION
     assert len(symbols[317].auxiliary_symbols) == 1
-    assert isinstance(symbols[317].auxiliary_symbols[0], lief.PE.AuxiliaryFunctionDefinition)
+    assert isinstance(symbols[317].auxiliary_symbols[0], lief.COFF.AuxiliaryFunctionDefinition)
     assert symbols[317].auxiliary_symbols[0].tag_index == 0
     assert symbols[317].auxiliary_symbols[0].total_size == 0
     assert symbols[317].auxiliary_symbols[0].ptr_to_line_number == 0
@@ -622,9 +623,9 @@ def test_symbols():
 
     assert symbols[1087].name == "_Jv_RegisterClasses"
     assert len(symbols[1087].auxiliary_symbols) == 1
-    assert isinstance(symbols[1087].auxiliary_symbols[0], lief.PE.AuxiliaryWeakExternal)
+    assert isinstance(symbols[1087].auxiliary_symbols[0], lief.COFF.AuxiliaryWeakExternal)
     assert symbols[1087].auxiliary_symbols[0].sym_idx == 21
-    assert symbols[1087].auxiliary_symbols[0].characteristics == lief.PE.AuxiliaryWeakExternal.CHARACTERISTICS.SEARCH_NOLIBRARY
+    assert symbols[1087].auxiliary_symbols[0].characteristics == lief.COFF.AuxiliaryWeakExternal.CHARACTERISTICS.SEARCH_NOLIBRARY
 
     assert str(symbols[1087]) == dedent("""\
     Symbol {
@@ -646,7 +647,7 @@ def test_symbols():
     assert symbols[1096].name == "__security_cookie"
     assert symbols[1096].value == 128
     assert symbols[1096].section_idx == 2
-    assert symbols[1096].storage_class == lief.PE.Symbol.STORAGE_CLASS.EXTERNAL
+    assert symbols[1096].storage_class == lief.COFF.Symbol.STORAGE_CLASS.EXTERNAL
 
     assert str(symbols[1096]) == dedent("""\
     Symbol {

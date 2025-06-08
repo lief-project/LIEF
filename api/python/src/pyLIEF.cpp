@@ -70,6 +70,10 @@
   #include "ART/init.hpp"
 #endif
 
+#if defined(LIEF_COFF_SUPPORT)
+  #include "COFF/init.hpp"
+#endif
+
 
 nb::module_* lief_mod = nullptr;
 
@@ -341,6 +345,10 @@ void init(nb::module_& m) {
 
 #if defined(LIEF_ART_SUPPORT)
   LIEF::ART::py::init(m);
+#endif
+
+#if defined(LIEF_COFF_SUPPORT)
+  LIEF::COFF::py::init(m);
 #endif
 
 }

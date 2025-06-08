@@ -25,6 +25,7 @@
 #include <LIEF/DEX.hpp>
 #include <LIEF/ELF.hpp>
 #include <LIEF/PE.hpp>
+#include <LIEF/COFF.hpp>
 #include <LIEF/MachO.hpp>
 #include <LIEF/DWARF.hpp>
 #include <LIEF/PDB.hpp>

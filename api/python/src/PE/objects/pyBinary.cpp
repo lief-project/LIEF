@@ -20,7 +20,7 @@
 #include "LIEF/PE/RelocationEntry.hpp"
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/ResourceNode.hpp"
-#include "LIEF/PE/COFFString.hpp"
+#include "LIEF/COFF/String.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
 #include "LIEF/PE/TLS.hpp"
 #include "LIEF/PE/Debug.hpp"

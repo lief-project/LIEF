@@ -73,6 +73,8 @@ class LIEF_API Header : public Object {
     CHPE_X86    = 0x3a64,
   };
 
+  static bool is_known_machine(uint16_t machine);
+
   static bool is_arm(MACHINE_TYPES ty) {
     switch (ty) {
       default:

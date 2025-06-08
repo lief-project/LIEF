@@ -1,8 +1,6 @@
 target_sources(pyLIEF PRIVATE
-  pyAuxiliarySymbol.cpp
   pyBinary.cpp
   pyBuilder.cpp
-  pyCOFFString.cpp
   pyCodeIntegrity.cpp
   pyDataDirectory.cpp
   pyDelayImport.cpp
@@ -25,7 +23,6 @@ target_sources(pyLIEF PRIVATE
   pyRichEntry.cpp
   pyRichHeader.cpp
   pySection.cpp
-  pySymbol.cpp
   pyTLS.cpp
 )
 
@@ -33,5 +30,4 @@ add_subdirectory(resources)
 add_subdirectory(signature)
 add_subdirectory(LoadConfigurations)
 add_subdirectory(debug)
-add_subdirectory(AuxiliarySymbols)
 add_subdirectory(exceptions_info)

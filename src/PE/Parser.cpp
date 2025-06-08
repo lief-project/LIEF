@@ -24,7 +24,6 @@
 #include "LIEF/PE/signature/Signature.hpp"
 #include "LIEF/PE/signature/SignatureParser.hpp"
 #include "LIEF/PE/Binary.hpp"
-#include "LIEF/PE/AuxiliarySymbol.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/Export.hpp"
@@ -45,10 +44,12 @@
 #include "LIEF/PE/ResourceNode.hpp"
 #include "LIEF/PE/RichHeader.hpp"
 #include "LIEF/PE/Section.hpp"
-#include "LIEF/PE/Symbol.hpp"
 #include "LIEF/PE/TLS.hpp"
 #include "LIEF/PE/utils.hpp"
 #include "LIEF/PE/exceptions_info/RuntimeFunctionX64.hpp"
+
+#include "LIEF/COFF/Symbol.hpp"
+#include "LIEF/COFF/AuxiliarySymbol.hpp"
 
 #include "internal_utils.hpp"
 #include "overflow_check.hpp"
@@ -279,7 +280,7 @@ ok_error_t Parser::parse_sections() {
     {
       char* endptr = nullptr;
       uint32_t offset = std::strtol(name.c_str() + 1, &endptr, /*base=*/10);
-      if (COFFString* coff_str = binary_->find_coff_string(offset)) {
+      if (COFF::String* coff_str = binary_->find_coff_string(offset)) {
         section->coff_string_ = coff_str;
       }
     }
@@ -431,7 +432,7 @@ ok_error_t Parser::parse_string_table() {
     }
 
     LIEF_DEBUG("string[0x{:06x}]: {}", pos, *str);
-    memoize(COFFString(pos, std::move(*str)));
+    memoize(COFF::String(pos, std::move(*str)));
   }
   LIEF_DEBUG("#{} strings found", binary_->strings_table_.size());
 
@@ -448,8 +449,16 @@ ok_error_t Parser::parse_symbols() {
   const uint32_t nb_symbols = hdr.numberof_symbols();
   const uint32_t symtab_off = hdr.pointerto_symbol_table();
   stream_->setpos(symtab_off);
+
+  COFF::Symbol::parsing_context_t ctx {
+    /*.find_string =*/ [this] (uint32_t offset) {
+      return this->find_coff_string(offset);
+    },
+    /*is_bigobj=*/false
+  };
+
   for (size_t idx = 0; idx < nb_symbols;) {
-    std::unique_ptr<Symbol> sym = Symbol::parse(*this, *stream_, &idx);
+    std::unique_ptr<COFF::Symbol> sym = COFF::Symbol::parse(ctx, *stream_, &idx);
     if (sym == nullptr) {
       LIEF_ERR("Failed to parse COFF symbol #{}", idx);
       break;
@@ -1209,6 +1218,10 @@ std::unique_ptr<Binary> Parser::parse(const uint8_t* buffer, size_t size,
 
 std::unique_ptr<Binary> Parser::parse(std::unique_ptr<BinaryStream> stream,
                                       const ParserConfig& conf) {
+  if (stream == nullptr) {
+    return nullptr;
+  }
+
   if (!is_pe(*stream)) {
     return nullptr;
   }
@@ -1254,14 +1267,14 @@ void Parser::memoize(ExceptionInfo& info) {
 }
 
 
-void Parser::memoize(COFFString str) {
+void Parser::memoize(COFF::String str) {
   const uint32_t offset = str.offset();
   memoize_coff_str_[offset] = binary_->strings_table_.size();
   binary_->strings_table_.push_back(std::move(str));
 }
 
 
-COFFString* Parser::find_coff_string(uint32_t offset) const {
+COFF::String* Parser::find_coff_string(uint32_t offset) const {
   auto it = memoize_coff_str_.find(offset);
   if (it == memoize_coff_str_.end()) {
     return nullptr;

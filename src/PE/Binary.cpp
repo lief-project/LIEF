@@ -32,7 +32,6 @@
 #include "LIEF/PE/Builder.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
 #include "LIEF/PE/Debug.hpp"
-#include "LIEF/PE/AuxiliarySymbol.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/ExportEntry.hpp"
@@ -46,13 +45,14 @@
 #include "LIEF/PE/RichHeader.hpp"
 #include "LIEF/PE/RichEntry.hpp"
 #include "LIEF/PE/Section.hpp"
-#include "LIEF/PE/Symbol.hpp"
 #include "LIEF/PE/ExceptionInfo.hpp"
 #include "LIEF/PE/LoadConfigurations/VolatileMetadata.hpp"
 #include "LIEF/PE/exceptions_info/RuntimeFunctionAArch64.hpp"
 #include "LIEF/PE/exceptions_info/RuntimeFunctionX64.hpp"
 #include "LIEF/PE/TLS.hpp"
 #include "LIEF/PE/utils.hpp"
+
+#include "LIEF/COFF/Symbol.hpp"
 
 #include "LIEF/PE/signature/SpcIndirectData.hpp"
 
@@ -275,7 +275,7 @@ Export& Binary::set_export(const Export& export_table) {
 
 LIEF::Binary::symbols_t Binary::get_abstract_symbols() {
   LIEF::Binary::symbols_t lief_symbols;
-  for (Symbol& s : symbols()) {
+  for (COFF::Symbol& s : symbols()) {
     lief_symbols.push_back(&s);
   }
 

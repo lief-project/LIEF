@@ -1,5 +1,4 @@
 target_sources(LIB_LIEF PRIVATE
-  AuxiliarySymbol.cpp
   Binary.cpp
   Builder.cpp
   Builder.tcc
@@ -30,7 +29,6 @@ target_sources(LIB_LIEF PRIVATE
   RichEntry.cpp
   RichHeader.cpp
   Section.cpp
-  Symbol.cpp
   TLS.cpp
   checksum.cpp
   endianness_support.cpp
@@ -44,7 +42,6 @@ add_subdirectory(signature)
 add_subdirectory(LoadConfigurations)
 add_subdirectory(resources)
 add_subdirectory(debug)
-add_subdirectory(AuxiliarySymbols)
 add_subdirectory(exceptions_info)
 
 if(LIEF_ENABLE_JSON)

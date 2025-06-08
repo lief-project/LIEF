@@ -1,50 +1,8 @@
 <p align="center" >
 <img width="90%" src="https://github.com/lief-project/LIEF/blob/main/.github/images/architecture.png"/><br />
 </p>
-
-<p align="center">
-  <a href="https://discord.gg/jGQtyAYChJ">
-    <img src="https://img.shields.io/discord/1117013848914931762">
-  </a>
-  &nbsp;
-  <a href="https://github.com/lief-project/LIEF/actions/workflows/linux-x86-64.yml">
-    <img alt="Linux x86-64 CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/linux-x86-64.yml?branch=main&label=Linux%20x86-64&logo=github">
-  </a>
-  &nbsp;
-  <a href="https://github.com/lief-project/LIEF/actions/workflows/linux-aarch64.yml">
-    <img alt="Linux AArch64 CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/linux-aarch64.yml?branch=main&label=Linux%20AArch64&logo=github">
-  </a>
-  &nbsp;
-  <a href="https://github.com/lief-project/LIEF/actions/workflows/android.yml">
-    <img alt="Android CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/android.yml?branch=main&label=Android&logo=github">
-  </a>
-  &nbsp;
-  <a href="https://github.com/lief-project/LIEF/actions/workflows/osx.yml">
-    <img alt="macOS CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/osx.yml?branch=main&label=macOS&logo=github">
-  </a>
-  &nbsp;
-  <a href="https://github.com/lief-project/LIEF/actions/workflows/ios.yml">
-    <img alt="iOS CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/ios.yml?branch=main&label=iOS&logo=github">
-  </a>
-  &nbsp;
-  <a href="https://github.com/lief-project/LIEF/actions/workflows/windows-all.yml">
-    <img alt="Windows CI status" src="https://img.shields.io/github/actions/workflow/status/lief-project/LIEF/windows-all.yml?branch=main&label=Windows&logo=github">
-  </a>
-  &nbsp;
-  <a href="https://github.com/lief-project/LIEF/releases">
-    <img src="https://img.shields.io/github/v/release/lief-project/LIEF?style=flat-square">
-  </a>
-  &nbsp;
-  <a href="https://twitter.com/LIEF_project">
-   <img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/lief_project">
-  </a>
-  &nbsp;
-  <a href="https://gurubase.io/g/lief">
-    <img src="https://img.shields.io/badge/Gurubase-Ask%20LIEF%20Guru-006BFF">
-  </a>
-</p>
-
 <br />
+
 <p align="center">
   <a href="https://lief.re/blog/"><b>Blog</b></a> •
   <a href="https://lief.re/doc/latest/index.html"><b>Documentation</b></a> •
@@ -59,10 +17,10 @@ modify and abstract ELF, PE and MachO formats.
 
 **Main features**:
 
-  * **Parsing**: LIEF can parse ELF, PE, MachO, OAT, DEX, VDEX, ART and provides an user-friendly API to access to internals.
+  * **Parsing**: LIEF can parse [ELF](https://lief.re/doc/latest/formats/elf/index.html), [PE](https://lief.re/doc/latest/formats/pe/index.html), [MachO](https://lief.re/doc/latest/formats/macho/index.html), [COFF](https://lief.re/doc/latest/formats/coff/index.html), OAT, DEX, VDEX, ART and provides an user-friendly API to access to internals.
   * **Modify**: LIEF can use to modify some parts of these formats (adding a section, changing a symbol's name, ...)
   * **Abstract**: Three formats have common features like sections, symbols, entry point... LIEF factors them.
-  * **API**: LIEF can be used in C++, Python, Rust and C
+  * **API**: LIEF can be used in [C++](https://lief.re/doc/latest/doxygen/), Python, [Rust](https://lief-rs.s3.fr-par.scw.cloud/doc/latest/lief/index.html) and C
 
 **Extended features**:
 
@@ -71,7 +29,6 @@ modify and abstract ELF, PE and MachO formats.
   * [**Dyld Shared Cache**](https://lief.re/doc/latest/extended/dsc/index.html) with support for extracting Dylib
   * [**Disassembler**](https://lief.re/doc/latest/extended/disassembler/index.html): AArch64, x86/x86-64, ARM, RISC-V, Mips, PowerPC, eBPF
   * [**Assembler**](https://lief.re/doc/latest/extended/assembler/index.html): AArch64, x86/x86-64
-
 
 **Plugins**:
 
@@ -83,17 +40,14 @@ modify and abstract ELF, PE and MachO formats.
 - [About](#about)
 - [Download / Install](#downloads--install)
 - [Getting started](#getting-started)
+- [Blog](https://lief.re/blog/)
 - [Documentation](#documentation)
   - [Rust](https://lief.re/doc/stable/rust/lief/)
   - [Sphinx](https://lief.re/doc/latest/index.html)
   - [Doxygen](https://lief.re/doc/latest/doxygen/index.html)
   - Tutorials:
     - [Parse and manipulate formats](https://lief.re/doc/latest/tutorials/01_play_with_formats.html)
-    - [Create a PE from scratch](https://lief.re/doc/latest/tutorials/02_pe_from_scratch.html)
     - [Play with ELF symbols](https://lief.re/doc/latest/tutorials/03_elf_change_symbols.html)
-    - [ELF Hooking](https://lief.re/doc/latest/tutorials/04_elf_hooking.html)
-    - [Infecting the plt/got](https://lief.re/doc/latest/tutorials/05_elf_infect_plt_got.html)
-    - [PE Hooking](https://lief.re/doc/latest/tutorials/06_pe_hooking.html)
     - [PE Resources](https://lief.re/doc/latest/tutorials/07_pe_resource.html)
     - [Transforming an ELF executable into a library](https://lief.re/doc/latest/tutorials/08_elf_bin2lib.html)
     - [How to use frida on a non-rooted device](https://lief.re/doc/latest/tutorials/09_frida_lief.html)

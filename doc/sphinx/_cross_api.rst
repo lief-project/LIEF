@@ -17,6 +17,12 @@
     :py:meth:`lief.Binary.get_int_from_virtual_address`
     :cpp:func:`LIEF::Binary::get_int_from_virtual_address`
 
+.. |lief-parse| lief-api:: lief.parse()
+
+    :rust:method:`lief::Binary::parse [enum]`
+    :rust:method:`lief::Binary::from [enum]`
+    :py:func:`lief.parse`
+
 .. ObjC ==========================================================================
 
 .. |lief-objc-metadata| lief-api:: lief.ObjC.Metadata
@@ -920,3 +926,18 @@
     :rust:struct:`lief::assembly::ebpf::Instruction`
     :cpp:class:`LIEF::assembly::ebpf::Instruction`
     :py:class:`lief.assembly.ebpf.Instruction`
+
+.. COFF Format ================================================================
+
+.. |lief-coff-parse| lief-api:: lief.COFF.parse()
+
+    :rust:method:`lief::coff::Binary::parse [struct]`
+    :py:func:`lief.COFF.parse`
+    :cpp:func:`LIEF::COFF::Parser::parse`
+
+
+.. |lief-coff-Binary| lief-api:: lief.COFF.Binary
+
+    :rust:struct:`lief::coff::Binary`
+    :py:class:`lief.COFF.Binary`
+    :cpp:class:`LIEF::COFF::Binary`

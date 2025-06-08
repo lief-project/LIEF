@@ -16,7 +16,7 @@
 #include "PE/pyPE.hpp"
 
 #include "LIEF/PE/Section.hpp"
-#include "LIEF/PE/COFFString.hpp"
+#include "LIEF/COFF/String.hpp"
 #include "enums_wrapper.hpp"
 
 #include <string>

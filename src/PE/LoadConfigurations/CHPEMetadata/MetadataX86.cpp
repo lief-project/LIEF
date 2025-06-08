@@ -17,7 +17,6 @@
 #include "LIEF/PE/LoadConfigurations/CHPEMetadata/MetadataX86.hpp"
 #include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/Binary.hpp"
-#include "LIEF/PE/AuxiliarySymbol.hpp"
 
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 

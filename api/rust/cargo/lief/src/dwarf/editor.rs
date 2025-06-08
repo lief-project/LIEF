@@ -1,6 +1,6 @@
 use lief_ffi as ffi;
 
-use std::{io::Write, option::Option};
+use std::option::Option;
 use std::marker::PhantomData;
 use crate::{common::FromFFI, generic, common::into_optional};
 

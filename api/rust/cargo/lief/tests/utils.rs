@@ -35,6 +35,12 @@ pub fn get_pe_sample(name: &str) -> Option<PathBuf> {
 }
 
 #[allow(dead_code)]
+pub fn get_coff_sample(name: &str) -> Option<PathBuf> {
+    let suffix = Path::new("COFF").join(name);
+    get_sample(suffix.as_path())
+}
+
+#[allow(dead_code)]
 pub fn get_macho_sample(name: &str) -> Option<PathBuf> {
     let suffix = Path::new("MachO").join(name);
     get_sample(suffix.as_path())

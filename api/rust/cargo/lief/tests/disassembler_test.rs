@@ -126,6 +126,9 @@ fn disa_from_address(name: &str, address: u64) {
                 }
             }
         }
+        lief::Binary::COFF(_) => {
+            todo!();
+        }
     }
 }
 
@@ -151,6 +154,9 @@ fn disa_from_symbol(name: &str, symbol: &str) {
                     process_instruction(&inst);
                 }
             }
+        }
+        lief::Binary::COFF(_) => {
+            todo!();
         }
     }
 }

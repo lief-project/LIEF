@@ -14,8 +14,6 @@
  */
 #pragma once
 #include "LIEF/rust/PE/Binary.hpp"
-#include "LIEF/rust/PE/Symbol.hpp"
-#include "LIEF/rust/PE/COFFString.hpp"
 #include "LIEF/rust/PE/CodeIntegrity.hpp"
 #include "LIEF/rust/PE/DataDirectories.hpp"
 #include "LIEF/rust/PE/DelayImport.hpp"
@@ -37,15 +35,7 @@
 #include "LIEF/rust/PE/RichHeader.hpp"
 #include "LIEF/rust/PE/Section.hpp"
 #include "LIEF/rust/PE/TLS.hpp"
-#include "LIEF/rust/PE/AuxiliarySymbol.hpp"
 #include "LIEF/rust/PE/utils.hpp"
-
-#include "LIEF/rust/PE/AuxiliarySymbols/AuxiliaryCLRToken.hpp"
-#include "LIEF/rust/PE/AuxiliarySymbols/AuxiliaryFile.hpp"
-#include "LIEF/rust/PE/AuxiliarySymbols/AuxiliaryFunctionDefinition.hpp"
-#include "LIEF/rust/PE/AuxiliarySymbols/AuxiliaryWeakExternal.hpp"
-#include "LIEF/rust/PE/AuxiliarySymbols/AuxiliarybfAndefSymbol.hpp"
-#include "LIEF/rust/PE/AuxiliarySymbols/AuxiliarySectionDefinition.hpp"
 
 #include "LIEF/rust/PE/debug/Debug.hpp"
 #include "LIEF/rust/PE/debug/CodeView.hpp"

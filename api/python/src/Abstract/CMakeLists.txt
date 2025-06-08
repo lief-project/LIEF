@@ -1,6 +1,5 @@
 target_sources(pyLIEF PRIVATE
   init.cpp
-  pyParser.cpp
   pyHeader.cpp
   pySymbol.cpp
   pyRelocation.cpp

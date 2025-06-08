@@ -43,6 +43,9 @@
 //!        Some(lief::Binary::MachO(macho)) => {
 //!            // Process Mach-O file (including FatMachO)
 //!        },
+//!        Some(lief::Binary::COFF(coff)) => {
+//!            // Process coff file
+//!        },
 //!        None => {
 //!            // Parsing error
 //!        }
@@ -69,6 +72,8 @@ pub mod generic;
 pub mod macho;
 
 pub mod pe;
+
+pub mod coff;
 
 pub mod pdb;
 

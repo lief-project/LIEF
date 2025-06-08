@@ -14,7 +14,7 @@
  */
 #pragma once
 #include "LIEF/PE/Section.hpp"
-#include "LIEF/rust/PE/COFFString.hpp"
+#include "LIEF/rust/COFF/String.hpp"
 #include "LIEF/rust/Abstract/Section.hpp"
 
 class PE_Section : public AbstractSection {
@@ -36,7 +36,7 @@ class PE_Section : public AbstractSection {
   Span padding() const { return make_span(impl().padding()); }
 
   auto coff_string() const {
-    return details::try_unique<PE_COFFString>(impl().coff_string());
+    return details::try_unique<COFF_String>(impl().coff_string());
   }
 
   private:

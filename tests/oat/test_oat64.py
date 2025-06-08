@@ -4,12 +4,12 @@ from utils import get_sample
 lief.logging.set_level(lief.logging.LEVEL.INFO)
 
 def test_multidex():
-    WallpaperCropper2 = lief.parse(get_sample("OAT/OAT_064_AArch64_WallpaperCropper2.oat"))
+    WallpaperCropper2 = lief.OAT.parse(get_sample("OAT/OAT_064_AArch64_WallpaperCropper2.oat"))
 
     assert len(WallpaperCropper2.dex_files) == 3
 
 def test_header():
-    WallpaperCropper2 = lief.parse(get_sample("OAT/OAT_064_AArch64_WallpaperCropper2.oat"))
+    WallpaperCropper2 = lief.OAT.parse(get_sample("OAT/OAT_064_AArch64_WallpaperCropper2.oat"))
     header = WallpaperCropper2.header
 
     assert header.magic == [111, 97, 116, 10]
@@ -35,7 +35,7 @@ def test_header():
     assert header.image_file_location_oat_data_begin == 1897058304
 
 def test_dex_files():
-    WallpaperCropper2 = lief.parse(get_sample("OAT/OAT_064_AArch64_WallpaperCropper2.oat"))
+    WallpaperCropper2 = lief.OAT.parse(get_sample("OAT/OAT_064_AArch64_WallpaperCropper2.oat"))
     dex_files = WallpaperCropper2.dex_files
 
     assert len(dex_files) == WallpaperCropper2.header.nb_dex_files
@@ -60,7 +60,7 @@ def test_dex_files():
 
 
 def test_oat_dex_files():
-    WallpaperCropper2 = lief.parse(get_sample("OAT/OAT_064_AArch64_WallpaperCropper2.oat"))
+    WallpaperCropper2 = lief.OAT.parse(get_sample("OAT/OAT_064_AArch64_WallpaperCropper2.oat"))
     assert len(WallpaperCropper2.oat_dex_files) == 3
 
     # OAT Dex File 0
@@ -88,7 +88,7 @@ def test_oat_dex_files():
     assert oat_dex_file.has_dex_file
 
 def test_oat_classes():
-    WallpaperCropper2 = lief.parse(get_sample("OAT/OAT_064_AArch64_WallpaperCropper2.oat"))
+    WallpaperCropper2 = lief.OAT.parse(get_sample("OAT/OAT_064_AArch64_WallpaperCropper2.oat"))
     assert len(WallpaperCropper2.classes) == 1992
 
     # OAT Class 0
@@ -125,7 +125,7 @@ def test_oat_classes():
     # assert len(WallpaperCropper2.classes) == dex_sum
 
 def test_oat_methods():
-    WallpaperCropper2 = lief.parse(get_sample("OAT/OAT_064_AArch64_WallpaperCropper2.oat"))
+    WallpaperCropper2 = lief.OAT.parse(get_sample("OAT/OAT_064_AArch64_WallpaperCropper2.oat"))
     assert len(WallpaperCropper2.methods) == 13830
 
     assert all(m.is_compiled for m in WallpaperCropper2.methods)

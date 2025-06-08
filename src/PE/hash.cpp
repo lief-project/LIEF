@@ -37,7 +37,6 @@ void Hash::visit(const Binary& binary) {
   process(std::begin(binary.imports()), std::end(binary.imports()));
   process(std::begin(binary.delay_imports()), std::end(binary.delay_imports()));
   process(std::begin(binary.relocations()), std::end(binary.relocations()));
-  process(std::begin(binary.symbols()), std::end(binary.symbols()));
 
   if (binary.has_debug()) {
     process(std::begin(binary.debug()), std::end(binary.debug()));
@@ -200,18 +199,6 @@ void Hash::visit(const TLS& tls) {
   process(tls.characteristics());
   process(tls.data_template());
   process(tls.callbacks());
-}
-
-void Hash::visit(const Symbol& symbol) {
-  process(symbol.name());
-  process(symbol.value());
-  process(symbol.size());
-
-  process(symbol.section_idx());
-  process(symbol.type());
-  process(symbol.base_type());
-  process(symbol.complex_type());
-  process(symbol.storage_class());
 }
 
 void Hash::visit(const Debug& debug) {

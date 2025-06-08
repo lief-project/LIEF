@@ -8,8 +8,10 @@ target_sources(pyLIEF PRIVATE
   pyErr.cpp
   pyIOStream.cpp
   pyutils.cpp
+  pyParser.cpp
 )
 
+add_subdirectory(typing)
 add_subdirectory(Abstract)
 add_subdirectory(platforms)
 
@@ -29,6 +31,10 @@ endif()
 
 if(LIEF_MACHO)
   add_subdirectory(MachO)
+endif()
+
+if(LIEF_COFF)
+  add_subdirectory(COFF)
 endif()
 
 if(LIEF_OAT)

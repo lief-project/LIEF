@@ -228,6 +228,24 @@ inline bool is_digit(const char* str) {
 
 std::string ts_to_str(uint64_t timestamp);
 
+template <size_t N>
+inline std::string uuid_to_str_impl(uint8_t (&uuid)[N]) {
+  std::vector<std::string> hexstr;
+  std::transform(std::begin(uuid), std::end(uuid), std::back_inserter(hexstr),
+    [] (uint8_t x) { return fmt::format("{:02x}", x); }
+  );
+  return fmt::to_string(fmt::join(hexstr, ":"));
+}
+
+template <size_t N>
+inline std::string uuid_to_str_impl(const std::array<uint8_t, N>& uuid) {
+  std::vector<std::string> hexstr;
+  std::transform(std::begin(uuid), std::end(uuid), std::back_inserter(hexstr),
+    [] (uint8_t x) { return fmt::format("{:02x}", x); }
+  );
+  return fmt::to_string(fmt::join(hexstr, ":"));
+}
+
 }
 
 #endif

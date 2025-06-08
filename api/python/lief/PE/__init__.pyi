@@ -10,6 +10,7 @@ from . import (
     unwind_x64 as unwind_x64
 )
 import lief
+import lief.COFF
 
 
 class PE_TYPE(enum.Enum):
@@ -99,17 +100,7 @@ class ParserConfig:
 
     def __str__(self) -> str: ...
 
-@overload
-def parse(buffer: bytes, config: ParserConfig = ...) -> Optional[Binary]: ...
-
-@overload
-def parse(filename: str, config: ParserConfig = ...) -> Optional[Binary]: ...
-
-@overload
-def parse(raw: Sequence[int], config: ParserConfig = ...) -> Optional[Binary]: ...
-
-@overload
-def parse(obj: Union[io.IOBase | os.PathLike], config: ParserConfig = ...) -> Optional[Binary]: ...
+def parse(obj: Union[io.IOBase | os.PathLike | bytes | list[int]], config: ParserConfig = ...) -> Optional[Binary]: ...
 
 class DosHeader(lief.Object):
     @staticmethod
@@ -689,7 +680,7 @@ class Section(lief.Section):
     def is_discardable(self) -> bool: ...
 
     @property
-    def coff_string(self) -> COFFString: ...
+    def coff_string(self) -> lief.COFF.String: ...
 
     @property
     def padding(self) -> bytes: ...
@@ -928,275 +919,6 @@ class TLS(lief.Object):
 
     def __str__(self) -> str: ...
 
-class AuxiliarySymbol:
-    class TYPE(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> AuxiliarySymbol.TYPE: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        UNKNOWN = 0
-
-        CLR_TOKEN = 1
-
-        FUNC_DEF = 2
-
-        BF_AND_EF = 3
-
-        WEAK_EXTERNAL = 4
-
-        FILE = 5
-
-        SEC_DEF = 6
-
-    @property
-    def type(self) -> AuxiliarySymbol.TYPE: ...
-
-    @property
-    def payload(self) -> memoryview: ...
-
-    def __str__(self) -> str: ...
-
-    def copy(self) -> Optional[AuxiliarySymbol]: ...
-
-class AuxiliaryCLRToken(AuxiliarySymbol):
-    pass
-
-class AuxiliaryFunctionDefinition(AuxiliarySymbol):
-    @property
-    def tag_index(self) -> int: ...
-
-    @property
-    def total_size(self) -> int: ...
-
-    @property
-    def ptr_to_line_number(self) -> int: ...
-
-    @property
-    def ptr_to_next_func(self) -> int: ...
-
-    @property
-    def padding(self) -> int: ...
-
-class AuxiliaryWeakExternal(AuxiliarySymbol):
-    class CHARACTERISTICS(enum.Enum):
-        SEARCH_NOLIBRARY = 1
-
-        SEARCH_LIBRARY = 2
-
-        SEARCH_ALIAS = 3
-
-        ANTI_DEPENDENCY = 4
-
-    @property
-    def sym_idx(self) -> int: ...
-
-    @property
-    def characteristics(self) -> AuxiliaryWeakExternal.CHARACTERISTICS: ...
-
-    @property
-    def padding(self) -> memoryview: ...
-
-class AuxiliarybfAndefSymbol(AuxiliarySymbol):
-    pass
-
-class AuxiliarySectionDefinition(AuxiliarySymbol):
-    @property
-    def length(self) -> int: ...
-
-    @property
-    def nb_relocs(self) -> int: ...
-
-    @property
-    def nb_line_numbers(self) -> int: ...
-
-    @property
-    def checksum(self) -> int: ...
-
-    @property
-    def section_idx(self) -> int: ...
-
-    @property
-    def selection(self) -> int: ...
-
-class AuxiliaryFile(AuxiliarySymbol):
-    @property
-    def filename(self) -> str: ...
-
-class Symbol(lief.Symbol):
-    class it_auxiliary_symbols_t:
-        def __getitem__(self, arg: int, /) -> AuxiliarySymbol: ...
-
-        def __len__(self) -> int: ...
-
-        def __iter__(self) -> Symbol.it_auxiliary_symbols_t: ...
-
-        def __next__(self) -> AuxiliarySymbol: ...
-
-    class STORAGE_CLASS(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> Symbol.STORAGE_CLASS: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        END_OF_FUNCTION = -1
-
-        NONE = 0
-
-        AUTOMATIC = 1
-
-        EXTERNAL = 2
-
-        STATIC = 3
-
-        REGISTER = 4
-
-        EXTERNAL_DEF = 5
-
-        LABEL = 6
-
-        UNDEFINED_LABEL = 7
-
-        MEMBER_OF_STRUCT = 8
-
-        ARGUMENT = 9
-
-        STRUCT_TAG = 10
-
-        MEMBER_OF_UNION = 11
-
-        UNION_TAG = 12
-
-        TYPE_DEFINITION = 13
-
-        UNDEFINED_STATIC = 14
-
-        ENUM_TAG = 15
-
-        MEMBER_OF_ENUM = 16
-
-        REGISTER_PARAM = 17
-
-        BIT_FIELD = 18
-
-        BLOCK = 100
-
-        FUNCTION = 101
-
-        END_OF_STRUCT = 102
-
-        FILE = 103
-
-        SECTION = 104
-
-        WEAK_EXTERNAL = 105
-
-        CLR_TOKEN = 107
-
-    class BASE_TYPE(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> Symbol.BASE_TYPE: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        NULL = 0
-
-        VOID = 1
-
-        CHAR = 2
-
-        SHORT = 3
-
-        INT = 4
-
-        LONG = 5
-
-        FLOAT = 6
-
-        DOUBLE = 7
-
-        STRUCT = 8
-
-        UNION = 9
-
-        ENUM = 10
-
-        MOE = 11
-
-        BYTE = 12
-
-        WORD = 13
-
-        UINT = 14
-
-        DWORD = 15
-
-    class COMPLEX_TYPE(enum.Enum):
-        @staticmethod
-        def from_value(arg: int, /) -> Symbol.COMPLEX_TYPE: ...
-
-        def __eq__(self, arg, /) -> bool: ...
-
-        def __ne__(self, arg, /) -> bool: ...
-
-        def __int__(self) -> int: ...
-
-        NULL = 0
-
-        POINTER = 1
-
-        FUNCTION = 2
-
-        ARRAY = 3
-
-    type: int
-
-    @property
-    def base_type(self) -> Symbol.BASE_TYPE: ...
-
-    @property
-    def complex_type(self) -> Symbol.COMPLEX_TYPE: ...
-
-    @property
-    def storage_class(self) -> Symbol.STORAGE_CLASS: ...
-
-    section_idx: int
-
-    @property
-    def is_external(self) -> bool: ...
-
-    @property
-    def is_weak_external(self) -> bool: ...
-
-    @property
-    def is_undefined(self) -> bool: ...
-
-    @property
-    def is_function_line_info(self) -> bool: ...
-
-    @property
-    def is_file_record(self) -> bool: ...
-
-    @property
-    def auxiliary_symbols(self) -> Symbol.it_auxiliary_symbols_t: ...
-
-    @property
-    def coff_name(self) -> COFFString: ...
-
-    def __str__(self) -> str: ...
-
 class Import(lief.Object):
     @overload
     def __init__(self) -> None: ...
@@ -1352,13 +1074,6 @@ class DelayImportEntry(lief.Symbol):
     def iat_value(self) -> int: ...
 
     def copy(self) -> DelayImportEntry: ...
-
-    def __str__(self) -> str: ...
-
-class COFFString:
-    string: str
-
-    offset: int
 
     def __str__(self) -> str: ...
 
@@ -4595,13 +4310,13 @@ class Binary(lief.Binary):
         def __next__(self) -> DelayImport: ...
 
     class it_symbols:
-        def __getitem__(self, arg: int, /) -> Symbol: ...
+        def __getitem__(self, arg: int, /) -> lief.COFF.Symbol: ...
 
         def __len__(self) -> int: ...
 
         def __iter__(self) -> Binary.it_symbols: ...
 
-        def __next__(self) -> Symbol: ...
+        def __next__(self) -> lief.COFF.Symbol: ...
 
     class it_const_signatures:
         def __getitem__(self, arg: int, /) -> Signature: ...
@@ -4622,13 +4337,13 @@ class Binary(lief.Binary):
         def __next__(self) -> Debug: ...
 
     class it_strings_table:
-        def __getitem__(self, arg: int, /) -> COFFString: ...
+        def __getitem__(self, arg: int, /) -> lief.COFF.String: ...
 
         def __len__(self) -> int: ...
 
         def __iter__(self) -> Binary.it_strings_table: ...
 
-        def __next__(self) -> COFFString: ...
+        def __next__(self) -> lief.COFF.String: ...
 
     class it_exceptions:
         def __getitem__(self, arg: int, /) -> ExceptionInfo: ...
@@ -4873,7 +4588,7 @@ class Binary(lief.Binary):
     @property
     def coff_string_table(self) -> Binary.it_strings_table: ...
 
-    def find_coff_string(self, offset: int) -> COFFString: ...
+    def find_coff_string(self, offset: int) -> lief.COFF.String: ...
 
     def find_exception_at(self, rva: int) -> ExceptionInfo: ...
 

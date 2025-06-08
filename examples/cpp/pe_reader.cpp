@@ -81,7 +81,7 @@ int main(int argc, char **argv) {
 
   if (!binary->symbols().empty()) {
     std::cout << "== Symbols ==" << '\n';
-    for (const Symbol& symbol : binary->symbols()) {
+    for (const LIEF::COFF::Symbol& symbol : binary->symbols()) {
       std::cout << symbol << '\n';
     }
   }

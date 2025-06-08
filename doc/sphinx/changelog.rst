@@ -33,6 +33,10 @@
 
   * Please check :ref:`LIEF 0.17.0 - PE changelog <pe_0170_changelog>`
 
+:COFF:
+
+  * Initial support for the COFF format: see the :ref:`COFF section <format-coff>`
+
 :Mach-O:
 
   * Add support for |lief-macho-atom-info| command (``LC_ATOM_INFO``)
@@ -157,6 +161,22 @@
             Source file      : library\std\src\lib.rs\@\std.ddad90bab7781587-cgu.0
             Command line     : "-cc1" "--crate-name" "std" "--edition=2021" [...]
 
+:OAT:
+
+  * Parsing Android OAT files requires to **explicitly** use :func:`lief.OAT.parse`
+
+  .. code-block:: python
+
+    import lief
+
+    # Before LIEF 0.17.0 this function returned a lief.OAT.Binary object
+    lief.parse("CallDeviceId.oat")
+
+    # Since LIEF 0.17.0 this function returns a lief.ELF.Binary object
+    lief.parse("CallDeviceId.oat")
+
+    # Return a lief.OAT.Binary object
+    lief.OAT.parse("CallDeviceId.oat")
 
 :Extended:
 

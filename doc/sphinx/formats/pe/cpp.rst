@@ -111,64 +111,6 @@ Code View PDB
 
 ----------
 
-
-Symbol
-*******
-
-.. doxygenclass:: LIEF::PE::Symbol
-
-----------
-
-
-AuxiliarySymbol
-***************
-
-.. doxygenclass:: LIEF::PE::AuxiliarySymbol
-
-----------
-
-AuxiliaryCLRToken
-*****************
-
-.. doxygenclass:: LIEF::PE::AuxiliaryCLRToken
-
-----------
-
-AuxiliaryFunctionDefinition
-***************************
-
-.. doxygenclass:: LIEF::PE::AuxiliaryFunctionDefinition
-
-----------
-
-AuxiliaryWeakExternal
-*********************
-
-.. doxygenclass:: LIEF::PE::AuxiliaryWeakExternal
-
-----------
-
-AuxiliarybfAndefSymbol
-**********************
-
-.. doxygenclass:: LIEF::PE::AuxiliarybfAndefSymbol
-
-----------
-
-AuxiliarySectionDefinition
-**************************
-
-.. doxygenclass:: LIEF::PE::AuxiliarySectionDefinition
-
-----------
-
-AuxiliaryFile
-*************
-
-.. doxygenclass:: LIEF::PE::AuxiliaryFile
-
-----------
-
 Relocation
 **********
 
@@ -576,12 +518,6 @@ Frame Pointer Omission (FPO)
 ----------
 
 
-COFF String
-***********
-
-.. doxygenclass:: LIEF::PE::COFFString
-
-----------
 
 Exception Info
 **************

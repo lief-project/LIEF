@@ -48,7 +48,7 @@ Basically the ELF associated exports few symbols:
 
   import lief
 
-  oat = lief.parse("SomeOAT")
+  oat = lief.OAT.parse("SomeOAT")
   for s in oat.dynamic_symbols:
     print(s)
 
@@ -205,7 +205,7 @@ To express the fact that OAT files are first ELF, the :class:`lief.OAT.Binary` c
 .. code-block:: python
 
   >>> import lief
-  >>> oat = lief.parse("classes.odex")
+  >>> oat = lief.OAT.parse("classes.odex")
   >>> type(oat)
   _pylief.OAT.Binary
   >>> isinstance(oat, lief.ELF.Binary)
@@ -237,7 +237,7 @@ If the VDEX file is not provided then :class:`lief.OAT.Binary` will have limited
 .. code-block:: python
 
   # Without VDEX file
-  >>> oat_oreo = lief.parse("KeyChain.odex")
+  >>> oat_oreo = lief.OAT.parse("KeyChain.odex")
   >>> len(oat_oreo.dex_files)
   0
   >>> len(oat_oreo.classes)
@@ -294,7 +294,7 @@ The main API for a DEX file is in the :class:`lief.DEX.File` object. This object
 
 .. code-block:: python
 
-  >>> oat = lief.parse("SecSettings2.odex")
+  >>> oat = lief.OAT.parse("SecSettings2.odex")
   >>> type(oat.dex_files[0])
   _pylief.DEX.File
 

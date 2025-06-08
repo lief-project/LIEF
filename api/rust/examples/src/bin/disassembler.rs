@@ -45,5 +45,8 @@ fn main() -> ExitCode {
             let fit = fat.iter().nth(0).unwrap();
             return disassemble(&fit, addr);
         }
+        lief::Binary::COFF(_) => {
+            return ExitCode::SUCCESS;
+        }
     }
 }

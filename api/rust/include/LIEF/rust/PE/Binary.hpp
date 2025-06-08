@@ -30,12 +30,13 @@
 #include "LIEF/rust/PE/RichHeader.hpp"
 #include "LIEF/rust/PE/ResourceNode.hpp"
 #include "LIEF/rust/PE/ResourcesManager.hpp"
-#include "LIEF/rust/PE/Symbol.hpp"
 #include "LIEF/rust/PE/ExceptionInfo.hpp"
 #include "LIEF/rust/PE/LoadConfiguration/LoadConfiguration.hpp"
 #include "LIEF/rust/PE/signature/Signature.hpp"
 #include "LIEF/rust/PE/debug/CodeViewPDB.hpp"
 #include "LIEF/rust/Abstract/Binary.hpp"
+
+#include "LIEF/rust/COFF/Symbol.hpp"
 
 class PE_Binary_write_config_t {
   public:
@@ -227,7 +228,7 @@ class PE_Binary : public AbstractBinary {
   };
 
   class it_strings_table :
-      public Iterator<PE_COFFString, LIEF::PE::Binary::it_const_strings_table>
+      public Iterator<COFF_String, LIEF::PE::Binary::it_const_strings_table>
   {
     public:
     it_strings_table(const PE_Binary::lief_t& src)
@@ -237,7 +238,7 @@ class PE_Binary : public AbstractBinary {
   };
 
   class it_symbols :
-      public Iterator<PE_Symbol, LIEF::PE::Binary::it_const_symbols>
+      public Iterator<COFF_Symbol, LIEF::PE::Binary::it_const_symbols>
   {
     public:
     it_symbols(const PE_Binary::lief_t& src)
@@ -501,7 +502,7 @@ class PE_Binary : public AbstractBinary {
   }
 
   auto find_coff_string_at(uint32_t offset) const {
-    return details::try_unique<PE_COFFString>(impl().find_coff_string(offset));
+    return details::try_unique<COFF_String>(impl().find_coff_string(offset));
   }
 
   auto symbols() const {

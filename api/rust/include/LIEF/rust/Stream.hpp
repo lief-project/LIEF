@@ -29,6 +29,10 @@
 #include "LIEF/MachO/utils.hpp"
 #include "LIEF/MachO/Parser.hpp"
 
+#include "LIEF/rust/COFF/Binary.hpp"
+#include "LIEF/COFF/utils.hpp"
+#include "LIEF/COFF/Parser.hpp"
+
 #include "LIEF/visibility.h"
 
 struct IRustStream;
@@ -54,6 +58,10 @@ class RustStream {
     return LIEF::MachO::is_macho(*stream_);
   }
 
+  bool is_coff() const {
+    return LIEF::COFF::is_coff(*stream_);
+  }
+
   auto as_elf() {
     return details::try_unique<ELF_Binary>(LIEF::ELF::Parser::parse(std::move(stream_))); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
@@ -64,6 +72,10 @@ class RustStream {
 
   auto as_pe() {
     return details::try_unique<PE_Binary>(LIEF::PE::Parser::parse(std::move(stream_))); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+
+  auto as_coff() {
+    return details::try_unique<COFF_Binary>(LIEF::COFF::Parser::parse(std::move(stream_))); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   ~RustStream() = default;

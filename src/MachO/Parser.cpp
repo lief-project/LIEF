@@ -86,6 +86,10 @@ std::unique_ptr<FatBinary> Parser::parse(const std::vector<uint8_t>& data,
 
 std::unique_ptr<FatBinary> Parser::parse(std::unique_ptr<BinaryStream> stream,
                                          const ParserConfig& conf) {
+  if (stream == nullptr) {
+    return nullptr;
+  }
+
   {
     ScopedStream scoped(*stream, 0);
     if (!is_macho(*stream)) {
