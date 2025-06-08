@@ -110,6 +110,29 @@ impl RelocationBase for Relocation<'_> {
     }
 }
 
+impl generic::Relocation for Relocation<'_> {
+    fn as_generic(&self) -> &ffi::AbstractRelocation {
+        match &self {
+            Relocation::Dyld(reloc) => {
+                reloc.as_generic()
+            }
+
+            Relocation::Fixup(reloc) => {
+                reloc.as_generic()
+            }
+
+            Relocation::Object(reloc) => {
+                reloc.as_generic()
+            }
+
+            Relocation::Generic(reloc) => {
+                reloc.as_generic()
+            }
+        }
+    }
+}
+
+
 impl std::fmt::Debug for &dyn RelocationBase {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("Section")
@@ -175,6 +198,13 @@ impl RelocationBase for Dyld<'_> {
     }
 }
 
+
+impl generic::Relocation for Dyld<'_> {
+    fn as_generic(&self) -> &ffi::AbstractRelocation {
+        self.ptr.as_ref().unwrap().as_ref().as_ref()
+    }
+}
+
 impl std::fmt::Debug for Dyld<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let base = self as &dyn RelocationBase;
@@ -226,6 +256,12 @@ impl RelocationBase for Fixup<'_> {
     }
 }
 
+impl generic::Relocation for Fixup<'_> {
+    fn as_generic(&self) -> &ffi::AbstractRelocation {
+        self.ptr.as_ref().unwrap().as_ref().as_ref()
+    }
+}
+
 impl std::fmt::Debug for Fixup<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let base = self as &dyn RelocationBase;
@@ -256,6 +292,12 @@ impl FromFFI<ffi::MachO_RelocationObject> for Object<'_> {
 impl RelocationBase for Object<'_> {
     fn get_base(&self) -> &ffi::MachO_Relocation {
         self.ptr.as_ref().unwrap().as_ref()
+    }
+}
+
+impl generic::Relocation for Object<'_> {
+    fn as_generic(&self) -> &ffi::AbstractRelocation {
+        self.ptr.as_ref().unwrap().as_ref().as_ref()
     }
 }
 
