@@ -163,7 +163,7 @@ class LIEF_API Instruction {
   /// Return the underlying llvm::MCInst implementation.
   ///
   /// \warning Because of ABI compatibility, this MCInst can **only be used**
-  ///          with the **same** version of LLVM used by LIEF.
+  ///          with the **same** version of LLVM used by LIEF (see documentation)
   const llvm::MCInst& mcinst() const;
 
   /// This function can be used to **down cast** an Instruction instance:

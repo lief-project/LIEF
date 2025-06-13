@@ -59,6 +59,12 @@ class LIEF_API Engine {
   std::vector<uint8_t> assemble(uint64_t address, const std::string& Asm,
                                 LIEF::Binary& bin);
 
+  std::vector<uint8_t> assemble(uint64_t address, const llvm::MCInst& inst,
+                                LIEF::Binary& bin);
+
+  std::vector<uint8_t> assemble(
+      uint64_t address, const std::vector<llvm::MCInst>& inst, LIEF::Binary& bin);
+
   ~Engine();
 
   /// \private

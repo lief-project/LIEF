@@ -86,6 +86,17 @@ std::vector<uint8_t> Binary::assemble(uint64_t/*address*/, const std::string&/*A
   return {};
 }
 
+std::vector<uint8_t> Binary::assemble(uint64_t/*address*/, const llvm::MCInst&/*inst*/) {
+  LIEF_ERR(ASSEMBLY_NOT_SUPPORTED);
+  return {};
+}
+
+
+std::vector<uint8_t> Binary::assemble(uint64_t/*address*/, const std::vector<llvm::MCInst>&/*inst*/) {
+  LIEF_ERR(ASSEMBLY_NOT_SUPPORTED);
+  return {};
+}
+
 assembly::Engine* Binary::get_engine(uint64_t) const {
   return nullptr;
 }
