@@ -95,9 +95,9 @@ to process and access COFF information:
 Disassembler
 ************
 
-The |lief-coff-Binary| object exposes a disassembler API to iterate over the
-the instructions of a COFF binary function. One can disassemble a function using
-the |lief-coff-binary-disassemble| API:
+The |lief-coff-Binary| object exposes a disassembler API to iterate over
+the instructions of a COFF binary. One can disassemble a function with
+|lief-coff-binary-disassemble|:
 
 .. tabs::
 

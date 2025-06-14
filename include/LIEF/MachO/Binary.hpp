@@ -335,6 +335,13 @@ class LIEF_API Binary : public LIEF::Binary  {
   /// @param os Output stream to write the reconstructed binary
   void write(std::ostream& os);
 
+  /// Reconstruct the binary object and write the result in the given `os` stream
+  /// for the given configuration
+  ///
+  /// @param os Output stream to write the reconstructed binary
+  /// @param config Builder configuration
+  void write(std::ostream& os, Builder::config_t config);
+
   /// Reconstruct the binary object and return its content as bytes
   std::vector<uint8_t> raw();
 

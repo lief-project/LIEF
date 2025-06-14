@@ -15,6 +15,8 @@
  */
 #include <string>
 #include <sstream>
+
+#include "nanobind/utils.hpp"
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>
@@ -520,6 +522,18 @@ void create<Binary>(nb::module_& m) {
         )doc"_doc,
         "output"_a, "config"_a,
         nb::rv_policy::reference_internal)
+
+    .def("write_to_bytes", [] (Binary& bin, const Builder::config_t& config) -> nb::bytes {
+          std::ostringstream out;
+          bin.write(out, config);
+          return nb::to_bytes(out.str());
+        }, "config"_a)
+
+    .def("write_to_bytes", [] (Binary& bin) -> nb::bytes {
+          std::ostringstream out;
+          bin.write(out);
+          return nb::to_bytes(out.str());
+        })
 
     .def("add",
         nb::overload_cast<const DylibCommand&>(&Binary::add),

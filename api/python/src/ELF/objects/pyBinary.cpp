@@ -15,6 +15,7 @@
  */
 #include <sstream>
 
+#include "nanobind/utils.hpp"
 #include <nanobind/operators.h>
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
@@ -602,6 +603,18 @@ void create<Binary>(nb::module_& m) {
         "Rebuild the binary with the given configuration and write it in a file"_doc,
         "output"_a, "config"_a,
         nb::rv_policy::reference_internal)
+
+    .def("write_to_bytes", [] (Binary& bin, const Builder::config_t& config) -> nb::bytes {
+          std::ostringstream out;
+          bin.write(out, config);
+          return nb::to_bytes(out.str());
+        }, "config"_a)
+
+    .def("write_to_bytes", [] (Binary& bin) -> nb::bytes {
+          std::ostringstream out;
+          bin.write(out);
+          return nb::to_bytes(out.str());
+        })
 
     .def_prop_ro("last_offset_section",
         &Binary::last_offset_section,

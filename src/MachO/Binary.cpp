@@ -349,6 +349,10 @@ void Binary::write(std::ostream& os) {
   Builder::write(*this, os);
 }
 
+void Binary::write(std::ostream& os, Builder::config_t config) {
+  Builder::write(*this, os, config);
+}
+
 const Section* Binary::section_from_offset(uint64_t offset) const {
   const auto it_section = std::find_if(
       sections_.cbegin(), sections_.cend(),
