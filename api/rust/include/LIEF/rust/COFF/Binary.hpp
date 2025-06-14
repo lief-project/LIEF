@@ -149,7 +149,8 @@ class COFF_Binary : Mirror<LIEF::COFF::Binary> {
   }
 
   auto disassemble_symbol(const COFF_Symbol& sym) const {
-    return std::make_unique<it_instructions>(get(), *sym.get().as<COFF_Symbol::lief_t>());
+    return std::make_unique<it_instructions>(get(),
+        static_cast<const COFF_Symbol::lief_t&>(sym.get()));
   }
 
   auto to_string() const {
