@@ -45,6 +45,10 @@ fn explore_coff(bin_name: &str, coff: &lief::coff::Binary) {
         }
     }
 
+    for function in coff.functions() {
+        format!("{function:?} {function}");
+    }
+
     assert!(coff.find_string(0).is_none());
     assert!(coff.find_string(4).is_some());
 }

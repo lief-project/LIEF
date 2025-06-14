@@ -46,7 +46,7 @@ functions that is exposed in the abstraction layer:
 
         std::unique_ptr<LIEF::assembly::Instruction> inst;
 
-        for (inst : pe->disassemble("_WinRT")) {
+        for (const auto& inst : pe->disassemble("_WinRT")) {
           std::cout << inst->to_string() << '\n';
         }
 
@@ -268,6 +268,14 @@ A disassembling API is also provided for the |lief-dsc-dyldsharedcache| object:
         for inst in dyld_cache.disassemble(0x1886f4a44) {
             println!("{}", inst.to_string());
         }
+
+COFF Support
+~~~~~~~~~~~~
+
+The |lief-coff-Binary| interface does not inherit from the generic |lief-abstract-binary|,
+but it also exposes an API to disassemble code in COFF object files: |lief-coff-binary-disassemble|.
+
+For more details, please check the :ref:`COFF Disassembler <format-coff-disassembler>` section
 
 Technical Details
 *****************

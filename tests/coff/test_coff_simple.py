@@ -119,6 +119,9 @@ def test_simple_coff():
     assert coff.string_table[24].offset == 498
     assert coff.string_table[24].string == "_RTC_Shutdown.rtc$TMZ"
 
+    assert len(coff.functions) == 8
+    assert coff.find_function("NONE") is None
+    assert coff.find_function("main") is not None
 
 def test_bigobj_coff():
     assert lief.is_coff(get_sample("COFF/x64_debug_cl_bigobj.obj"))

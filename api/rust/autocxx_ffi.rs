@@ -1103,11 +1103,17 @@ include_cpp! {
     generate!("COFF_Binary_it_symbols")
     block_constructors!("COFF_Binary_it_symbols")
 
+    generate!("COFF_Binary_it_functions")
+    block_constructors!("COFF_Binary_it_functions")
+
     generate!("COFF_Binary_it_sections")
     block_constructors!("COFF_Binary_it_sections")
 
     generate!("COFF_Binary_it_strings")
     block_constructors!("COFF_Binary_it_strings")
+
+    generate!("COFF_Binary_it_instructions")
+    block_constructors!("COFF_Binary_it_instructions")
 
     generate!("COFF_Relocation")
     block_constructors!("COFF_Relocation")

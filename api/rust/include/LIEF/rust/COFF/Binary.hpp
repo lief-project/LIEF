@@ -17,11 +17,15 @@
 
 #include "LIEF/COFF/Binary.hpp"
 #include "LIEF/COFF/Parser.hpp"
+
 #include "LIEF/rust/COFF/Relocation.hpp"
 #include "LIEF/rust/COFF/Symbol.hpp"
 #include "LIEF/rust/COFF/String.hpp"
 #include "LIEF/rust/COFF/Section.hpp"
 #include "LIEF/rust/COFF/Header.hpp"
+
+#include "LIEF/rust/asm/Instruction.hpp"
+
 #include "LIEF/rust/Mirror.hpp"
 
 class COFF_Binary : Mirror<LIEF::COFF::Binary> {
@@ -69,6 +73,33 @@ class COFF_Binary : Mirror<LIEF::COFF::Binary> {
     auto size() const { return Iterator::size(); }
   };
 
+  class it_functions :
+      public Iterator<COFF_Symbol, LIEF::COFF::Binary::it_const_function>
+  {
+    public:
+    it_functions(const COFF_Binary::lief_t& src)
+      : Iterator(std::move(src.functions())) { } // NOLINT(performance-move-const-arg)
+    auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
+  };
+
+  class it_instructions :
+      public ForwardIterator<asm_Instruction, LIEF::assembly::Instruction::Iterator>
+  {
+    public:
+    it_instructions(const COFF_Binary::lief_t& src, const std::string& func)
+      : ForwardIterator(src.disassemble(func)) { }
+
+    it_instructions(const COFF_Binary::lief_t& src, const LIEF::COFF::Symbol& sym)
+      : ForwardIterator(src.disassemble(sym)) { }
+
+    it_instructions(const COFF_Binary::lief_t& src, const uint8_t* ptr,
+                    size_t size, uint64_t address)
+      : ForwardIterator(src.disassemble(ptr, size, address)) { }
+
+    auto next() { return ForwardIterator::next(); }
+  };
+
   static auto parse(std::string path) { // NOLINT(performance-unnecessary-value-param)
     return details::try_unique<COFF_Binary>(LIEF::COFF::Parser::parse(path));
   }
@@ -95,6 +126,30 @@ class COFF_Binary : Mirror<LIEF::COFF::Binary> {
 
   auto find_string(uint32_t offset) const {
     return details::try_unique<COFF_String>(get().find_string(offset));
+  }
+
+  auto find_function(std::string name) const {
+    return details::try_unique<COFF_Symbol>(get().find_function(name));
+  }
+
+  auto find_demangled_function(std::string name) const {
+    return details::try_unique<COFF_Symbol>(get().find_demangled_function(name));
+  }
+
+  auto functions() const {
+    return std::make_unique<it_functions>(get());
+  }
+
+  auto disassemble_buffer(const uint8_t* ptr, uint64_t size, uint64_t addr) const {
+    return std::make_unique<it_instructions>(get(), ptr, size, addr);
+  }
+
+  auto disassemble_function(std::string function) const {
+    return std::make_unique<it_instructions>(get(), function);
+  }
+
+  auto disassemble_symbol(const COFF_Symbol& sym) const {
+    return std::make_unique<it_instructions>(get(), *sym.get().as<COFF_Symbol::lief_t>());
   }
 
   auto to_string() const {

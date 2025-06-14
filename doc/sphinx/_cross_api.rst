@@ -941,3 +941,12 @@
     :rust:struct:`lief::coff::Binary`
     :py:class:`lief.COFF.Binary`
     :cpp:class:`LIEF::COFF::Binary`
+
+.. |lief-coff-binary-disassemble| lief-api:: lief.COFF.Binary.disassemble()
+
+    :rust:method:`lief::coff::Binary::disassemble_slice [struct]`
+    :rust:method:`lief::coff::Binary::disassemble_function [struct]`
+    :rust:method:`lief::coff::Binary::disassemble_symbol [struct]`
+    :py:meth:`lief.COFF.Binary.disassemble`
+    :py:meth:`lief.COFF.Binary.disassemble_from_bytes`
+    :cpp:func:`LIEF::COFF::Binary::disassemble`

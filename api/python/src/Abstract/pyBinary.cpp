@@ -295,7 +295,7 @@ void create<Binary>(nb::module_& m) {
           );
       }, "address"_a, nb::keep_alive<0, 1>(),
       R"doc(
-      Disassemble code starting a the given virtual address.
+      Disassemble code starting at the given virtual address.
 
       .. code-block:: python
 

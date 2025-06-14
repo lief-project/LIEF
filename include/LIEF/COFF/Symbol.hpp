@@ -200,6 +200,10 @@ class LIEF_API Symbol : public LIEF::Symbol {
     return storage_class() == STORAGE_CLASS::FUNCTION;
   }
 
+  bool is_function() const {
+    return complex_type() == COMPLEX_TYPE::TY_FUNCTION;
+  }
+
   bool is_file_record() const {
     return storage_class() == STORAGE_CLASS::FILE;
   }

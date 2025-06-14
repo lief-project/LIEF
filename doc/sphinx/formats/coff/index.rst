@@ -90,5 +90,63 @@ to process and access COFF information:
             println!("{section:?} {section}");
         }
 
+.. _format-coff-disassembler:
+
+Disassembler
+************
+
+The |lief-coff-Binary| object exposes a disassembler API to iterate over the
+the instructions of a COFF binary function. One can disassemble a function using
+the |lief-coff-binary-disassemble| API:
+
+.. tabs::
+
+  .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        coff: lief.COFF.Binary = ...
+
+        for inst in coff.disassemble("?foo@@YAHHH@Z")
+            print(inst)
+
+        # Using demangled representation
+        for inst in coff.disassemble("int __cdecl bar(int, int)")
+            print(inst)
+
+  .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        #include <LIEF/COFF.hpp>
+
+        std::unique_ptr<LIEF::COFF::Binary> coff;
+
+        for (const auto& inst : coff->disassemble("?foo@@YAHHH@Z")) {
+          std::cout << inst->to_string() << '\n';
+        }
+
+        // Using demangled representation
+        for (const auto& inst : coff->disassemble("int __cdecl bar(int, int)")) {
+          std::cout << inst->to_string() << '\n';
+        }
+
+  .. tab:: :fa:`brands fa-rust` Rust
+
+      .. code-block:: rust
+
+        let coff: lief::coff::Binary;
+
+        for inst in coff.disassemble_function("?foo@@YAHHH@Z") {
+            println!("{}", inst.to_string());
+        }
+
+        // Using demangled representation
+        for inst in coff.disassemble_function("int __cdecl bar(int, int)") {
+            println!("{}", inst.to_string());
+        }
+
+For more details about the disassembler and the |lief-asm-instruction| API,
+please refer to the :ref:`Disassembler section <extended-disassembler>`.
 
 .. include:: ../../_cross_api.rst

@@ -49,6 +49,7 @@
 #include "LIEF/asm/powerpc/registers.hpp"
 
 #include "LIEF/Abstract/Binary.hpp"
+#include "LIEF/COFF/Binary.hpp"
 
 #include "internal_utils.hpp"
 #include "messages.hpp"
@@ -87,6 +88,30 @@ std::vector<uint8_t> Binary::assemble(uint64_t/*address*/, const std::string&/*A
 
 assembly::Engine* Binary::get_engine(uint64_t) const {
   return nullptr;
+}
+
+
+namespace COFF {
+assembly::Engine* Binary::get_engine(uint64_t) const {
+  return nullptr;
+}
+
+Binary::instructions_it Binary::disassemble(const std::string& /*symbol*/) const {
+  LIEF_ERR(ASSEMBLY_NOT_SUPPORTED);
+  return make_empty_iterator<assembly::Instruction>();
+}
+
+Binary::instructions_it Binary::disassemble(const Symbol& /*symbol*/) const {
+  LIEF_ERR(ASSEMBLY_NOT_SUPPORTED);
+  return make_empty_iterator<assembly::Instruction>();
+}
+
+Binary::instructions_it Binary::disassemble(const uint8_t* /*buffer*/, size_t /*size*/,
+                                            uint64_t /*address*/) const
+{
+  LIEF_ERR(ASSEMBLY_NOT_SUPPORTED);
+  return make_empty_iterator<assembly::Instruction>();
+}
 }
 
 namespace assembly {

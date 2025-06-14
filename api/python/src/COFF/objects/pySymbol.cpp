@@ -163,6 +163,7 @@ void create<Symbol>(nb::module_& m) {
     .def_prop_ro("is_undefined", nb::overload_cast<>(&Symbol::is_undefined, nb::const_))
     .def_prop_ro("is_function_line_info", nb::overload_cast<>(&Symbol::is_function_line_info, nb::const_))
     .def_prop_ro("is_file_record", nb::overload_cast<>(&Symbol::is_file_record, nb::const_))
+    .def_prop_ro("is_function", nb::overload_cast<>(&Symbol::is_function, nb::const_))
 
     .def_prop_ro("auxiliary_symbols", nb::overload_cast<>(&Symbol::auxiliary_symbols),
                  "Auxiliary symbols associated with this symbol."_doc)

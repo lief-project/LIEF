@@ -19,6 +19,9 @@
 #include "LIEF/COFF/Symbol.hpp"
 #include "LIEF/COFF/Relocation.hpp"
 
+#include "LIEF/asm/Engine.hpp"
+#include "LIEF/asm/Instruction.hpp"
+
 #include "internal_utils.hpp"
 
 #include <spdlog/fmt/fmt.h>
@@ -27,6 +30,39 @@
 namespace LIEF::COFF {
 Binary::Binary() = default;
 Binary::~Binary() = default;
+
+
+Binary::it_const_function Binary::functions() const {
+  return {symbols_, [] (const std::unique_ptr<Symbol>& sym) {
+    return sym->is_function();
+    }
+  };
+}
+
+Binary::it_functions Binary::functions() {
+  return {symbols_, [] (const std::unique_ptr<Symbol>& sym) {
+    return sym->is_function();
+    }
+  };
+}
+
+const Symbol* Binary::find_function(const std::string& name) const {
+  for (const Symbol& func : functions()) {
+    if (func.name() == name) {
+      return &func;
+    }
+  }
+  return nullptr;
+}
+
+const Symbol* Binary::find_demangled_function(const std::string& name) const {
+  for (const Symbol& func : functions()) {
+    if (func.demangled_name() == name) {
+      return &func;
+    }
+  }
+  return nullptr;
+}
 
 std::string Binary::to_string() const {
   using namespace fmt;

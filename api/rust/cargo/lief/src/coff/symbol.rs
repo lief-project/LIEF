@@ -230,7 +230,7 @@ impl From<ComplexType> for u32 {
 ///
 /// Reference: <https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#coff-symbol-table>
 pub struct Symbol<'a> {
-    ptr: cxx::UniquePtr<ffi::COFF_Symbol>,
+    pub(crate) ptr: cxx::UniquePtr<ffi::COFF_Symbol>,
     _owner: PhantomData<&'a ()>
 }
 
@@ -328,6 +328,10 @@ impl Symbol<'_> {
 
     pub fn is_file_record(&self) -> bool {
         self.ptr.is_file_record()
+    }
+
+    pub fn is_function(&self) -> bool {
+        self.ptr.is_function()
     }
 
     /// Demangled representation of the symbol or an empty string if it can't be demangled

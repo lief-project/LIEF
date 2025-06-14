@@ -1,10 +1,11 @@
 import enum
 import io
 import os
-from typing import Iterator, Optional, Union
+from typing import Iterator, Optional, Union, overload
 
 import lief
 import lief.PE
+import lief.assembly
 
 
 class Header:
@@ -88,6 +89,15 @@ class Binary:
 
         def __next__(self) -> String: ...
 
+    class it_functions:
+        def __getitem__(self, arg: int, /) -> Symbol: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> Binary.it_functions: ...
+
+        def __next__(self) -> Symbol: ...
+
     @property
     def header(self) -> Header: ...
 
@@ -101,9 +111,24 @@ class Binary:
     def symbols(self) -> lief.PE.Binary.it_symbols: ...
 
     @property
+    def functions(self) -> Binary.it_functions: ...
+
+    @property
     def string_table(self) -> lief.PE.Binary.it_strings_table: ...
 
     def find_string(self, offset: int) -> String: ...
+
+    def find_function(self, name: str) -> Symbol: ...
+
+    def find_demangled_function(self, name: str) -> Symbol: ...
+
+    @overload
+    def disassemble(self, function: Symbol) -> Iterator[Optional[lief.assembly.Instruction]]: ...
+
+    @overload
+    def disassemble(self, function_name: str) -> Iterator[Optional[lief.assembly.Instruction]]: ...
+
+    def disassemble_from_bytes(self, buffer: bytes, address: int = 0) -> Iterator[Optional[lief.assembly.Instruction]]: ...
 
     def __str__(self) -> str: ...
 
@@ -288,6 +313,9 @@ class Symbol(lief.Symbol):
 
     @property
     def is_file_record(self) -> bool: ...
+
+    @property
+    def is_function(self) -> bool: ...
 
     @property
     def auxiliary_symbols(self) -> Symbol.it_auxiliary_symbols_t: ...

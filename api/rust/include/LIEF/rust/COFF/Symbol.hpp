@@ -62,6 +62,10 @@ class COFF_Symbol : public AbstractSymbol {
     return impl().is_external();
   }
 
+  auto is_function() const {
+    return impl().is_function();
+  }
+
   auto is_absolute() const {
     return impl().is_absolute();
   }

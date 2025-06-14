@@ -17,13 +17,22 @@
 #define LIEF_COFF_BINARY_H
 #include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
+#include "LIEF/span.hpp"
 
 #include "LIEF/COFF/String.hpp"
 
+#include "LIEF/asm/Instruction.hpp"
+
 #include <memory>
 #include <vector>
+#include <unordered_map>
 
 namespace LIEF {
+
+namespace assembly {
+class Engine;
+}
+
 namespace COFF {
 class Header;
 class Parser;
@@ -71,6 +80,15 @@ class LIEF_API Binary {
 
   /// Iterator that outputs Symbol& object
   using it_const_symbols = const_ref_iterator<const symbols_t&, const Symbol*>;
+
+  /// Instruction iterator
+  using instructions_it = iterator_range<assembly::Instruction::Iterator>;
+
+  /// Iterator which outputs COFF symbols representing functions
+  using it_functions = filter_iterator<symbols_t&, Symbol*>;
+
+  /// Iterator which outputs COFF symbols representing functions
+  using it_const_function = const_filter_iterator<const symbols_t&, const Symbol*>;
 
   /// The COFF header
   const Header& header() const {
@@ -134,6 +152,76 @@ class LIEF_API Binary {
     return const_cast<Binary*>(this)->find_string(offset);
   }
 
+  /// Iterator over the functions implemented in this COFF
+  it_const_function functions() const;
+
+  it_functions functions();
+
+  /// Try to find the function (symbol) with the given name
+  const Symbol* find_function(const std::string& name) const;
+
+  Symbol* find_function(const std::string& name) {
+    return const_cast<Symbol*>(static_cast<const Binary*>(this)->find_function(name));
+  }
+
+  /// Try to find the function (symbol) with the given **demangled** name
+  const Symbol* find_demangled_function(const std::string& name) const;
+
+  Symbol* find_demangled_function(const std::string& name) {
+    return const_cast<Symbol*>(static_cast<const Binary*>(this)->find_demangled_function(name));
+  }
+
+  /// Disassemble code for the given symbol
+  ///
+  /// ```cpp
+  /// const Symbol* func = binary->find_demangled_function("int __cdecl my_function(int, int)");
+  /// auto insts = binary->disassemble(*func);
+  /// for (std::unique_ptr<assembly::Instruction> inst : insts) {
+  ///   std::cout << inst->to_string() << '\n';
+  /// }
+  /// ```
+  ///
+  /// \see LIEF::assembly::Instruction
+  instructions_it disassemble(const Symbol& symbol) const;
+
+  /// Disassemble code for the given symbol name
+  ///
+  /// ```cpp
+  /// auto insts = binary->disassemble("main");
+  /// for (std::unique_ptr<assembly::Instruction> inst : insts) {
+  ///   std::cout << inst->to_string() << '\n';
+  /// }
+  /// ```
+  ///
+  /// \see LIEF::assembly::Instruction
+  instructions_it disassemble(const std::string& symbol) const;
+
+  /// Disassemble code provided by the given buffer at the specified
+  /// `address` parameter.
+  ///
+  /// \see LIEF::assembly::Instruction
+  instructions_it disassemble(const uint8_t* buffer, size_t size,
+                              uint64_t address = 0) const;
+
+
+  /// Disassemble code provided by the given vector of bytes at the specified
+  /// `address` parameter.
+  ///
+  /// \see LIEF::assembly::Instruction
+  instructions_it disassemble(const std::vector<uint8_t>& buffer,
+                              uint64_t address = 0) const {
+    return disassemble(buffer.data(), buffer.size(), address);
+  }
+
+  instructions_it disassemble(LIEF::span<const uint8_t> buffer,
+                              uint64_t address = 0) const {
+    return disassemble(buffer.data(), buffer.size(), address);
+  }
+
+  instructions_it disassemble(LIEF::span<uint8_t> buffer, uint64_t address = 0) const {
+    return disassemble(buffer.data(), buffer.size(), address);
+  }
+
   std::string to_string() const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Binary& bin) {
@@ -150,6 +238,13 @@ class LIEF_API Binary {
   relocations_t relocations_;
   strings_table_t strings_table_;
   symbols_t symbols_;
+
+  mutable std::unordered_map<uint32_t, std::unique_ptr<assembly::Engine>> engines_;
+
+  assembly::Engine* get_engine(uint64_t address) const;
+
+  template<uint32_t Key, class F>
+  LIEF_LOCAL assembly::Engine* get_cache_engine(uint64_t address, F&& f) const;
 };
 
 }
