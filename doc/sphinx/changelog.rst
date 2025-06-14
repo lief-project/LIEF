@@ -41,7 +41,7 @@
 
   * Add support for |lief-macho-atom-info| command (``LC_ATOM_INFO``)
   * Add support for modifying Mach-O commands that embed variable-length data
-    (:issue: `1204`, :issue:`1125`):
+    (:issue:`1204`, :issue:`1125`):
 
     .. code-block:: python
 
