@@ -122,7 +122,7 @@ int lief_mbedtls_x509_dn_gets( char *buf, size_t size, const mbedtls_x509_name *
                 out.push_back('\\');
             }
 
-            if( c < 32 || c >= 127 )
+            if( c < 32 )
               continue;
             //else s[i] = c;
             out.push_back(c);
