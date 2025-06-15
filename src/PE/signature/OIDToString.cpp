@@ -2246,9 +2246,14 @@ const char* oid_to_string(const oid_t& oid) {
     { "1.3.6.1.4.1.311.10.3.28",          "szOID_PLATFORM_MANIFEST_BINARY_ID" },
     { "1.3.6.1.4.1.311.2.6.1",            "SPC_RELAXED_PE_MARKER_CHECK_OBJID" },
   };
-  auto   it  = oid_to_str.find(oid);
-  return it == oid_to_str.end() ? oid.c_str() : it->second;
+  auto it = oid_to_str.find(oid);
+  if (it != oid_to_str.end()) {
+    return it->second;
+  }
+  // Safe fallback: store in thread_local static string
+  thread_local static std::string fallback;
+  fallback = oid;
+  return fallback.c_str();
 }
-
 }
 }
