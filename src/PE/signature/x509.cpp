@@ -104,10 +104,15 @@ int lief_mbedtls_x509_dn_gets( char *buf, size_t size, const mbedtls_x509_name *
             ret = mbedtls_snprintf( p, n, "%s=", short_name );
         } else {
             // Get OID numeric string and return x509 friendly name or OID numeric string
-            char oid_str[64] = {0};
-            mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &name->oid);
-            const char* friendly_name = LIEF::PE::oid_to_string(oid_str);
-            ret = mbedtls_snprintf(p, n, "%s=", friendly_name);
+            std::string oid_str(64, 0);
+            int size = mbedtls_oid_get_numeric_string(oid_str.data(), oid_str.size(), &name->oid);
+            if (size >= 0 && size != MBEDTLS_ERR_OID_BUF_TOO_SMALL) {
+              oid_str.resize(size);
+              const char* friendly_name = LIEF::PE::oid_to_string(oid_str);
+              ret = mbedtls_snprintf(p, n, "%s=", friendly_name);
+            } else {
+              ret = size;
+            }
         }
         MBEDTLS_X509_SAFE_SNPRINTF;
 
