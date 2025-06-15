@@ -32,6 +32,8 @@
 :PE:
 
   * Please check :ref:`LIEF 0.17.0 - PE changelog <pe_0170_changelog>`
+  * :github_user:`luadebug` added support for pretty printing OID value and
+    non-roman characters in X509 certificates (see: :pr:`1226`, :issue:`1219`)
 
 :COFF:
 
