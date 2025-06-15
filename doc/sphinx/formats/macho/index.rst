@@ -142,6 +142,36 @@ the (FAT) MachO binary object into a raw MachO file.
         macho->at(LIEF::MachO::Header::CPU_TYPE::ARM64)->write("fit.macho");
         macho->write("fat.macho");
 
+You can also use |lief-macho-binary-write_to_bytes| to get the new MachO binary
+as a buffer of bytes:
+
+.. note::
+
+   This API can also take an extra |lief-macho-builder-config| parameter
+
+.. tabs::
+
+  .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        macho: lief.MachO.Binary = ...
+        new_macho: bytes = macho.write_to_bytes()
+
+  .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        std::unique_ptr<LIEF::MachO::Binary> macho;
+
+        std::ostringstream os;
+        macho->write(os);
+        std::string buffer = os.str();
+
+        const auto* start = reinterpret_cast<const uint8_t>(buffer.data());
+        size_t size = buffer.size();
+
+
 Advance Parsing/Writing
 ***********************
 

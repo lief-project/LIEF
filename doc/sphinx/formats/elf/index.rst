@@ -130,6 +130,35 @@ file.
 
   :ref:`binary-abstraction`
 
+You can also use |lief-elf-binary-write_to_bytes| to get the new ELF binary
+as a buffer of bytes:
+
+.. note::
+
+   This API can also take an extra |lief-elf-builder-config| parameter
+
+.. tabs::
+
+  .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        elf: lief.ELF.Binary = ...
+        new_elf: bytes = elf.write_to_bytes()
+
+  .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        std::unique_ptr<LIEF::ELF::Binary> elf;
+
+        std::ostringstream os;
+        elf->write(os);
+        std::string buffer = os.str();
+
+        const auto* start = reinterpret_cast<const uint8_t>(buffer.data());
+        size_t size = buffer.size();
+
 .. _format-elf-section-segment:
 
 Adding a Section/Segment

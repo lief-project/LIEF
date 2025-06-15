@@ -213,6 +213,34 @@ process.
         let config = lief::pe::builder::Config::default();
         pe.write_with_config("new.exe", config);
 
+You can also use |lief-pe-binary-write_to_bytes| to get the new PE binary
+as a buffer of bytes:
+
+.. note::
+
+   This API can also take an extra |lief-pe-builder-config| parameter
+
+.. tabs::
+
+  .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        pe: lief.PE.Binary = ...
+        new_pe: bytes = pe.write_to_bytes()
+
+  .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        std::unique_ptr<LIEF::PE::Binary> pe;
+
+        std::ostringstream os;
+        pe->write(os);
+        std::string buffer = os.str();
+
+        const auto* start = reinterpret_cast<const uint8_t>(buffer.data());
+        size_t size = buffer.size();
 
 PDB Support
 ***********
