@@ -103,13 +103,11 @@ int lief_mbedtls_x509_dn_gets( char *buf, size_t size, const mbedtls_x509_name *
         if( ret == 0 ) {
             ret = mbedtls_snprintf( p, n, "%s=", short_name );
         } else {
-            // Get the numeric OID string
+            // Get OID numeric string and return x509 friendly name or OID numeric string
             char oid_str[64] = {0};
             mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &name->oid);
-
-            // Use your friendly name mapping
-            const char* friendly = LIEF::PE::oid_to_string(oid_str);
-            ret = mbedtls_snprintf(p, n, "%s=", friendly);
+            const char* friendly_name = LIEF::PE::oid_to_string(oid_str);
+            ret = mbedtls_snprintf(p, n, "%s=", friendly_name);
         }
         MBEDTLS_X509_SAFE_SNPRINTF;
 
