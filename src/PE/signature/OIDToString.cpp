@@ -2249,6 +2249,5 @@ const char* oid_to_string(const oid_t& oid) {
   auto   it  = oid_to_str.find(oid);
   return it == oid_to_str.end() ? oid.c_str() : it->second;
 }
-
 }
 }

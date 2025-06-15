@@ -358,3 +358,9 @@ def test_font_signature():
     assert sig.content_info.value.url == "\x00<\x00<\x00<\x00O\x00b\x00s\x00o\x00l\x00e\x00t\x00e\x00>\x00>\x00>"
     assert sig.signers[0].authenticated_attributes[3].program_name == "Microsoft Typography"
     assert sig.signers[0].authenticated_attributes[3].more_info == "http://www.microsoft.com/Typography "
+
+
+def test_issue_1219():
+    pe = lief.PE.parse(get_sample("PE/issue_1219_be5d6c4aa4b27548a06c2afaef3b4035abf65566e9a8bfd642b4a2032729656e.exe_MALWARE"))
+    cert = pe.signatures[0].signers[0].cert
+    assert "JURISDICTION_OF_INCORPORATION_C=CN" in str(cert.subject)

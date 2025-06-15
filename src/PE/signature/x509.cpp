@@ -35,6 +35,7 @@
 #include "LIEF/PE/signature/x509.hpp"
 #include "LIEF/PE/signature/RsaInfo.hpp"
 #include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/PE/signature/OIDToString.hpp"
 
 namespace {
   // Copy this function from mbedtls since it is not exported
@@ -99,10 +100,20 @@ int lief_mbedtls_x509_dn_gets( char *buf, size_t size, const mbedtls_x509_name *
 
         ret = mbedtls_oid_get_attr_short_name( &name->oid, &short_name );
 
-        if( ret == 0 )
+        if( ret == 0 ) {
             ret = mbedtls_snprintf( p, n, "%s=", short_name );
-        else
-            ret = mbedtls_snprintf( p, n, "\?\?=" );
+        } else {
+            // Get OID numeric string and return x509 friendly name or OID numeric string
+            std::string oid_str(64, 0);
+            int size = mbedtls_oid_get_numeric_string(oid_str.data(), oid_str.size(), &name->oid);
+            if (size >= 0 && size != MBEDTLS_ERR_OID_BUF_TOO_SMALL) {
+              oid_str.resize(size);
+              const char* friendly_name = LIEF::PE::oid_to_string(oid_str);
+              ret = mbedtls_snprintf(p, n, "%s=", friendly_name);
+            } else {
+              ret = size;
+            }
+        }
         MBEDTLS_X509_SAFE_SNPRINTF;
 
         std::string out;
@@ -122,7 +133,7 @@ int lief_mbedtls_x509_dn_gets( char *buf, size_t size, const mbedtls_x509_name *
                 out.push_back('\\');
             }
 
-            if( c < 32 || c >= 127 )
+            if( c < 32 )
               continue;
             //else s[i] = c;
             out.push_back(c);
