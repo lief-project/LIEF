@@ -56,6 +56,13 @@ void create<ParserConfig>(nb::module_& m) {
             (:class:`lief.ELF.DYNSYM_COUNT_METHODS`). By default, the value is set to
             :attr:`lief.ELF.DYNSYM_COUNT_METHODS.COUNT_AUTO`
             )delim"_doc)
+    .def_rw("page_size", &ParserConfig::page_size,
+      R"doc(
+      Memory page size if the binary uses a non-standard value.
+
+      For instance, SPARCV9 binary can use a page size from 0x2000 to 0x100000.
+      )doc"_doc
+    )
 
     .def_prop_ro_static("all",
       [] (const nb::object& /* self */) { return ParserConfig::all(); },

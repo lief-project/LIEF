@@ -120,6 +120,8 @@
   * Enhance support for IA64 architecture.
   * Introduce :attr:`lief.ELF.Segment.raw_flags` to access the raw (integer)
     value of the flag
+  * If an ELF binary uses a custom page size, its value can be defined in the
+    parser configuration: |lief-elf-parserconfig-page_size|.
 
 :DWARF:
 

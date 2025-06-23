@@ -72,6 +72,9 @@ include_cpp! {
     generate_pod!("ELF_Binary_write_config_t")
     block_constructors!("ELF_Binary_write_config_t")
 
+    generate!("ELF_ParserConfig")
+    block_constructors!("ELF_ParserConfig")
+
     block_constructors!("Span")
     generate!("ELF_Binary_it_segments")
     block_constructors!("ELF_Binary_it_segments")

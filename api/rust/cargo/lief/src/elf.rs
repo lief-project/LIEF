@@ -21,6 +21,7 @@ pub mod section;
 pub mod segment;
 pub mod symbol;
 pub mod symbol_versioning;
+pub mod parser_config;
 
 #[doc(inline)]
 pub use binary::Binary;
@@ -58,7 +59,15 @@ pub use symbol_versioning::{
     SymbolVersionRequirement,
 };
 
+#[doc(inline)]
+pub use parser_config::Config as ParserConfig;
+
 /// Parse an ELF file from the given file path
 pub fn parse(path: &str) -> Option<Binary> {
     Binary::parse(path)
+}
+
+/// Parse an ELF file from the given file path and configuration
+pub fn parse_with_config(path: &str, config: ParserConfig) -> Option<Binary> {
+    Binary::parse_with_config(path, config)
 }

@@ -374,7 +374,7 @@ class LIEF_API Binary : public Object {
 
   /// Get the default memory page size according to the architecture and
   /// the format of the current binary
-  uint64_t page_size() const;
+  virtual uint64_t page_size() const;
 
   protected:
   FORMATS format_ = FORMATS::UNKNOWN;

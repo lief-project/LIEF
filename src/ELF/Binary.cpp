@@ -3179,6 +3179,13 @@ Section* Binary::add_section(std::unique_ptr<Section> sec) {
   return sec_ptr;
 }
 
+uint64_t Binary::page_size() const {
+  if (pagesize_ > 0) {
+    return pagesize_;
+  }
+  return LIEF::Binary::page_size();
+}
+
 std::ostream& Binary::print(std::ostream& os) const {
 
   os << "Header" << '\n';

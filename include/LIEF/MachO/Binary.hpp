@@ -976,8 +976,6 @@ class LIEF_API Binary : public LIEF::Binary  {
   /// DyldInfo or DyldChainedFixups commands.
   it_bindings bindings() const;
 
-  uint32_t page_size() const;
-
   static bool classof(const LIEF::Binary* bin) {
     return bin->format() == Binary::FORMATS::MACHO;
   }

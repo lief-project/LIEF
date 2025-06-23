@@ -6,8 +6,9 @@ use num_traits::{cast, Num};
 
 use lief_ffi as ffi;
 
+use super::parser_config::Config as ParserConfig;
 use super::builder::Config;
-use super::dynamic::{self, DynamicEntries, DynamicEntry, Library};
+use super::dynamic::{self, DynamicEntries, Library};
 use super::hash::{Gnu, Sysv};
 use super::header::Header;
 use super::note::ItNotes;
@@ -75,6 +76,17 @@ impl Binary {
             return None;
         }
         Some(Binary::from_ffi(bin))
+    }
+
+
+    /// Parse from a string file path and with a provided configuration
+    pub fn parse_with_config(path: &str, config: ParserConfig) -> Option<Self> {
+        let ffi_config = config.to_ffi();
+        let ffi = ffi::ELF_Binary::parse_with_config(path, &ffi_config);
+        if ffi.is_null() {
+            return None;
+        }
+        Some(Binary::from_ffi(ffi))
     }
 
     /// Return the main ELF header

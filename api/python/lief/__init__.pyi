@@ -418,6 +418,9 @@ class Binary(Object):
 
     def assemble(self, address: int, assembly: str) -> bytes: ...
 
+    @property
+    def page_size(self) -> int: ...
+
     def __str__(self) -> str: ...
 
 class Section(Object):

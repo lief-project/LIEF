@@ -668,6 +668,12 @@
     :py:class:`lief.ELF.Section`
     :cpp:class:`LIEF::ELF::Section`
 
+.. |lief-elf-parser-config-page_size| lief-api:: lief.ELF.ParserConfig.page_size
+
+    :rust:member:`lief::elf::ParserConfig::page_size [struct]`
+    :py:attr:`lief.ELF.ParserConfig.page_size`
+    :cpp:member:`LIEF::ELF::ParserConfig::page_size`
+
 .. Mach-O ======================================================================
 
 .. |lief-macho-binary| lief-api:: lief.MachO.Binary

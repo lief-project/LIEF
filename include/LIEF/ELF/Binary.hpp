@@ -973,6 +973,8 @@ class LIEF_API Binary : public LIEF::Binary {
     return 0;
   }
 
+  uint64_t page_size() const override;
+
   static bool classof(const LIEF::Binary* bin) {
     return bin->format() == Binary::FORMATS::ELF ||
            bin->format() == Binary::FORMATS::OAT;
@@ -1140,6 +1142,7 @@ class LIEF_API Binary : public LIEF::Binary {
   std::string interpreter_;
   std::vector<uint8_t> overlay_;
   std::unique_ptr<sizing_info_t> sizing_info_;
+  uint64_t pagesize_ = 0;
 };
 
 }

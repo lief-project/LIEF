@@ -1026,9 +1026,6 @@ class Binary(lief.Binary):
     def add_local_symbol(self, address: int, name: str) -> Symbol: ...
 
     @property
-    def page_size(self) -> int: ...
-
-    @property
     def bindings(self) -> Iterator[BindingInfo]: ...
 
     @property

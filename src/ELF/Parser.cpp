@@ -295,6 +295,7 @@ ok_error_t Parser::init() {
   }
 
   binary_->original_size_ = stream_->size();
+  binary_->pagesize_ = config_.page_size;
 
   auto res = DataHandler::Handler::from_stream(stream_);
   if (!res) {

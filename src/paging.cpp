@@ -25,8 +25,50 @@ using LIEF::operator""_KB;
 
 static constexpr auto DEFAULT_PAGESZ = 4_KB;
 
-uint32_t get_pagesize(const ELF::Binary&) {
-  return 4_KB;
+struct page_sizes_t {
+  uint32_t common = 0;
+  uint32_t max = 0;
+};
+
+page_sizes_t get_pagesize(const ELF::Binary& elf) {
+  // These page sizes are coming from lld's ELF linker.
+  //
+  // Some architectures can have different page sizes for which
+  // LLVM define a "Common" (`defaultCommonPageSize`) page size and a "Max"
+  // page size (`defaultMaxPageSize`). In LIEF we return the Common page size
+  // and users can still configure another page size with
+  // LIEF::ELF::ParserConfig::page_size
+  switch (elf.header().machine_type()) {
+    default:
+      return {4_KB, 4_KB};
+
+    case ELF::ARCH::X86_64:
+    case ELF::ARCH::I386:
+    case ELF::ARCH::AMDGPU:
+      return {4_KB, 4_KB};
+
+    case ELF::ARCH::ARM:
+    case ELF::ARCH::AARCH64:
+      return {4_KB, 64_KB};
+
+    case ELF::ARCH::LOONGARCH:
+      return {16_KB, 64_KB};
+
+    case ELF::ARCH::SPARCV9:
+      return {8_KB, 1024_KB};
+
+    case ELF::ARCH::HEXAGON:
+      return {4_KB, 64_KB};
+
+    case ELF::ARCH::MIPS:
+    case ELF::ARCH::MIPS_RS3_LE:
+      return {4_KB, 64_KB};
+
+    case ELF::ARCH::PPC:
+    case ELF::ARCH::PPC64:
+      return {4_KB, 64_KB};
+  }
+  return {4_KB, 4_KB};
 }
 
 uint32_t get_pagesize(const PE::Binary& pe) {
@@ -73,7 +115,8 @@ uint32_t get_pagesize(const MachO::Binary& macho) {
 
 uint32_t get_pagesize(const Binary& bin) {
   if (ELF::Binary::classof(&bin)) {
-    return get_pagesize(*bin.as<ELF::Binary>());
+    const auto& [common, max] = get_pagesize(*bin.as<ELF::Binary>());
+    return common;
   }
 
   if (PE::Binary::classof(&bin)) {

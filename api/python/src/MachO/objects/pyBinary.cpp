@@ -722,10 +722,6 @@ void create<Binary>(nb::module_& m) {
         "address"_a, "name"_a,
         nb::rv_policy::reference_internal)
 
-    .def_prop_ro("page_size",
-        &Binary::page_size,
-        "Return the binary's page size"_doc)
-
     .def_prop_ro("bindings",
         [] (const Binary& self) {
           auto bindings = self.bindings();

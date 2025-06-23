@@ -59,6 +59,53 @@ class ELF_Binary_write_config_t {
   bool force_relocate;
 };
 
+class ELF_ParserConfig {
+  public:
+  static auto create() {
+    return std::make_unique<ELF_ParserConfig>();
+  }
+
+  const LIEF::ELF::ParserConfig& conf() const {
+    return config_;
+  }
+
+  void set_parse_relocations(bool value) {
+    config_.parse_relocations = value;
+  }
+
+  void set_parse_dyn_symbols(bool value) {
+    config_.parse_dyn_symbols = value;
+  }
+
+  void set_parse_symtab_symbols(bool value) {
+    config_.parse_symtab_symbols = value;
+  }
+
+  void set_parse_symbol_versions(bool value) {
+    config_.parse_symbol_versions = value;
+  }
+
+  void set_parse_notes(bool value) {
+    config_.parse_notes = value;
+  }
+
+  void set_parse_overlay(bool value) {
+    config_.parse_overlay = value;
+  }
+
+  void set_count_mtd(uint32_t value) {
+    config_.count_mtd = (LIEF::ELF::ParserConfig::DYNSYM_COUNT)value;
+  }
+
+  void set_page_size(uint64_t value) {
+    config_.page_size = value;
+  }
+
+  private:
+  LIEF::ELF::ParserConfig config_;
+};
+
+
 class ELF_Binary : public AbstractBinary {
   public:
   using lief_t = LIEF::ELF::Binary;
@@ -66,6 +113,10 @@ class ELF_Binary : public AbstractBinary {
 
   static auto parse(std::string path) { // NOLINT(performance-unnecessary-value-param)
     return details::try_unique<ELF_Binary>(LIEF::ELF::Parser::parse(path));
+  }
+
+  static auto parse_with_config(std::string path, const ELF_ParserConfig& config) { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<ELF_Binary>(LIEF::ELF::Parser::parse(path, config.conf()));
   }
 
   class it_sections :

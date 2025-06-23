@@ -410,6 +410,8 @@ class ParserConfig:
 
     count_mtd: ParserConfig.DYNSYM_COUNT
 
+    page_size: int
+
     all: ParserConfig = ...
 
 def parse(obj: Union[io.IOBase | os.PathLike | bytes | list[int]], config: ParserConfig = ...) -> Optional[Binary]: ...

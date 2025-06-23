@@ -569,10 +569,6 @@ ok_error_t Binary::shift_linkedit(size_t width) {
   return ok();
 }
 
-uint32_t Binary::page_size() const {
-  return get_pagesize(*this);
-}
-
 void Binary::sort_segments() {
   commands_t::iterator start = commands_.end();
   commands_t::iterator end = commands_.end();
