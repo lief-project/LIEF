@@ -19,6 +19,7 @@
 
 #include "logging.hpp"
 #include "frozen.hpp"
+#include "paging.hpp"
 
 #include "LIEF/Abstract/Section.hpp"
 #include "LIEF/Abstract/Symbol.hpp"
@@ -67,6 +68,11 @@ std::vector<uint64_t> Binary::xref(uint64_t address) const {
   }
 
   return result;
+}
+
+
+uint64_t Binary::page_size() const {
+  return get_pagesize(*this);
 }
 
 void Binary::accept(Visitor& visitor) const {

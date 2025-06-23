@@ -372,6 +372,10 @@ class LIEF_API Binary : public Object {
   std::vector<uint8_t> assemble(uint64_t address,
                                 const std::vector<llvm::MCInst>& insts);
 
+  /// Get the default memory page size according to the architecture and
+  /// the format of the current binary
+  uint64_t page_size() const;
+
   protected:
   FORMATS format_ = FORMATS::UNKNOWN;
   mutable std::unique_ptr<DebugInfo> debug_info_;

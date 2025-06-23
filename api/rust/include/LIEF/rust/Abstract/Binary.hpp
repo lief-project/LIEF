@@ -104,8 +104,7 @@ class AbstractBinary : public Mirror<LIEF::Binary> {
     return get().assemble(address, Asm);
   }
 
-  auto functions() const {
-    //return get().func
+  uint64_t page_size() const {
+    return get().page_size();
   }
-
 };

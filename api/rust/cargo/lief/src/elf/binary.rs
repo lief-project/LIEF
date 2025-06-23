@@ -124,7 +124,7 @@ impl Binary {
     }
 
     /// Add the given dynamic entry and return the new entry
-    pub fn add_dynamic_entry(&mut self, entry: &dynamic::Entries) -> dynamic::Entries {
+    pub fn add_dynamic_entry(&mut self, entry: &dyn dynamic::DynamicEntry) -> dynamic::Entries {
         dynamic::Entries::from_ffi(self.ptr.as_mut().unwrap().add_dynamic_entry(entry.as_base()))
     }
 
@@ -340,8 +340,14 @@ impl Binary {
         Library::from_ffi(self.ptr.as_mut().unwrap().add_library(library))
     }
 
+    /// Iterator over the functions found in this binary
     pub fn functions(&self) -> generic::Functions {
         generic::Functions::new(self.ptr.functions())
+    }
+
+    /// Try to find the dynamic entry associated with the given tag
+    pub fn dynamic_entry_by_tag(&self, tag: dynamic::Tag) -> Option<dynamic::Entries> {
+        into_optional(self.ptr.dynamic_entry_by_tag(tag.into()))
     }
 }
 

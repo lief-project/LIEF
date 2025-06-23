@@ -181,6 +181,10 @@
     # Return a lief.OAT.Binary object
     lief.OAT.parse("CallDeviceId.oat")
 
+:Abstraction:
+
+  * Expose |lief-abstract-binary-page_size|
+
 :Extended:
 
   * Fix issue in the Python bindings while trying to access ``lief.__LIEF_MAIN_COMMIT__``

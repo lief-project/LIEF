@@ -372,6 +372,10 @@ class ELF_Binary : public AbstractBinary {
     return std::make_unique<AbstractBinary::it_functions>(impl().functions());
   }
 
+  auto dynamic_entry_by_tag(uint64_t tag) const {
+    return details::try_unique<ELF_DynamicEntry>(impl().get((LIEF::ELF::DynamicEntry::TAG)tag));
+  }
+
   void write(std::string output) { impl().write(output); }
   void write_with_config(std::string output, ELF_Binary_write_config_t config) {
     impl().write(output, LIEF::ELF::Builder::config_t {

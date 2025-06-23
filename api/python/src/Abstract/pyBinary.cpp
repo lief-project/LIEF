@@ -386,6 +386,13 @@ void create<Binary>(nb::module_& m) {
       )doc"_doc
     )
 
+    .def_prop_ro("page_size", &Binary::page_size,
+      R"doc(
+      Get the default memory page size according to the architecture and the
+      format of the current binary
+      )doc"_doc
+    )
+
     LIEF_DEFAULT_STR(Binary);
 
 }

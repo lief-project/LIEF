@@ -584,6 +584,11 @@
     :py:class:`lief.Header.ENDIANNESS`
     :cpp:enum:`LIEF::Header::ENDIANNESS`
 
+.. |lief-abstract-binary-page_size| lief-api:: lief.abstract.Binary.page_size()
+
+    :rust:method:`lief::generic::Binary::page_size [trait]`
+    :py:attr:`lief.Binary.page_size`
+    :cpp:func:`LIEF::Binary::page_size`
 
 .. ELF =========================================================================
 

@@ -796,8 +796,16 @@ pub struct SharedObject<'a> {
 }
 
 impl SharedObject<'_> {
+    pub fn new(name: &str) -> SharedObject<'static> {
+        SharedObject::from_ffi(lief_ffi::ELF_DynamicSharedObject::create(name.to_string()))
+    }
+
     pub fn name(&self) -> String {
         self.ptr.name().to_string()
+    }
+
+    pub fn set_name(&mut self, name: &str) {
+        self.ptr.pin_mut().set_name(name.to_string());
     }
 }
 

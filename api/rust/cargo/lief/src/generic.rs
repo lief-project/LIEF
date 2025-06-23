@@ -221,6 +221,12 @@ pub trait Binary {
     fn assemble(&mut self, address: u64, asm: &str) -> Vec<u8> {
         Vec::from(self.as_pin_mut_generic().assemble(address, asm).as_slice())
     }
+
+    /// Get the default memory page size according to the architecture and the format of the
+    /// current binary
+    fn page_size(&self) -> u64 {
+        self.as_generic().page_size()
+    }
 }
 
 pub trait DebugInfo {
