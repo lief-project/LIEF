@@ -34,10 +34,7 @@ LIEF_API inline bool is_coff(BinaryStream& stream) {
 }
 
 /// Check if the `file` is a COFF
-LIEF_API inline bool is_coff(const std::string& file) {
-  auto fs = LIEF::FileStream::from_file(file);
-  return fs ? is_coff(*fs) : false;
-}
+LIEF_API inline bool is_coff(const std::string& file);
 
 /// Check if the given buffer points to a COFF file
 LIEF_API inline bool is_coff(const uint8_t* buffer, size_t size) {

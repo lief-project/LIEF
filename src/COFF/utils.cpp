@@ -18,6 +18,11 @@
 
 namespace LIEF::COFF {
 
+bool is_coff(const std::string& file) {
+  result<FileStream> fs = LIEF::FileStream::from_file(file);
+  return fs ? is_coff(*fs) : false;
+}
+
 Header::KIND get_kind(BinaryStream& stream) {
   ScopedStream scoped(stream, 0);
 
