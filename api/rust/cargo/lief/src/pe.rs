@@ -164,3 +164,8 @@ impl From<Algorithms> for u32 {
 pub fn parse(path: &str) -> Option<Binary> {
     Binary::parse(path)
 }
+
+/// Parse a PE file from the given file path and configuration
+pub fn parse_with_config(path: &str, config: &ParserConfig) -> Option<Binary> {
+    Binary::parse_with_config(path, config)
+}

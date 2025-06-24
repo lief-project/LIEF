@@ -80,7 +80,7 @@ impl Binary {
 
 
     /// Parse from a string file path and with a provided configuration
-    pub fn parse_with_config(path: &str, config: ParserConfig) -> Option<Self> {
+    pub fn parse_with_config(path: &str, config: &ParserConfig) -> Option<Self> {
         let ffi_config = config.to_ffi();
         let ffi = ffi::ELF_Binary::parse_with_config(path, &ffi_config);
         if ffi.is_null() {

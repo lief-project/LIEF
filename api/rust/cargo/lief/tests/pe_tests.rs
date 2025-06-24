@@ -409,7 +409,7 @@ fn explore_pe(bin_name: &str, pe: &lief::pe::Binary) {
 fn test_with(bin_name: &str) {
     let path = utils::get_pe_sample(bin_name).unwrap();
     let path_str = path.to_str();
-    if let Some(pe) = lief::pe::Binary::parse_with_config(path_str.unwrap(), ParserConfig::with_all_options()) {
+    if let Some(pe) = lief::pe::Binary::parse_with_config(path_str.unwrap(), &ParserConfig::with_all_options()) {
         explore_pe(bin_name, &pe);
     }
 
