@@ -52,6 +52,11 @@ class LIEF_API BindingInfo : public Object {
 
   BindingInfo() = default;
   BindingInfo(const BindingInfo& other);
+  BindingInfo& operator=(const BindingInfo& other);
+
+  BindingInfo(BindingInfo&&) noexcept = default;
+  BindingInfo& operator=(BindingInfo&&) noexcept = default;
+
   void swap(BindingInfo& other) noexcept;
 
   /// Check if a MachO::SegmentCommand is associated with this binding

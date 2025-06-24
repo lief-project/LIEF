@@ -43,8 +43,8 @@ class LIEF_API IndirectBindingInfo : public BindingInfo {
   IndirectBindingInfo& operator=(const IndirectBindingInfo& other) = default;
   IndirectBindingInfo(const IndirectBindingInfo& other) = default;
 
+  IndirectBindingInfo& operator=(IndirectBindingInfo&&) noexcept = default;
   IndirectBindingInfo(IndirectBindingInfo&&) noexcept = default;
-
 
   BindingInfo::TYPES type() const override {
     return BindingInfo::TYPES::INDIRECT_SYMBOL;
