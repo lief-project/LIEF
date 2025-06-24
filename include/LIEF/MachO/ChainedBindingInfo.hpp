@@ -58,7 +58,9 @@ class LIEF_API ChainedBindingInfo : public BindingInfo {
 
   ChainedBindingInfo& operator=(ChainedBindingInfo other);
   ChainedBindingInfo(const ChainedBindingInfo& other);
+
   ChainedBindingInfo(ChainedBindingInfo&&) noexcept;
+  ChainedBindingInfo& operator=(ChainedBindingInfo&&) noexcept;
 
   void swap(ChainedBindingInfo& other) noexcept;
 

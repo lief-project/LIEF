@@ -32,6 +32,19 @@ BindingInfo::BindingInfo(const BindingInfo& other) :
   address_{other.address_}
 {}
 
+
+BindingInfo& BindingInfo::operator=(const BindingInfo& other) {
+  if (&other == this) {
+    return *this;
+  }
+  Object::operator=(other);
+  library_ordinal_ = other.library_ordinal_;
+  addend_ = other.addend_;
+  is_weak_import_ = other.is_weak_import_;
+  address_ = other.address_;
+  return *this;
+}
+
 void BindingInfo::swap(BindingInfo& other) noexcept {
   std::swap(segment_,         other.segment_);
   std::swap(symbol_,          other.symbol_);

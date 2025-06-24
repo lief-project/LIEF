@@ -58,6 +58,7 @@ class LIEF_API DyldBindingInfo : public BindingInfo {
   DyldBindingInfo& operator=(const DyldBindingInfo& other) = default;
   DyldBindingInfo(const DyldBindingInfo& other) = default;
 
+  DyldBindingInfo& operator=(DyldBindingInfo&&) noexcept = default;
   DyldBindingInfo(DyldBindingInfo&&) noexcept = default;
 
   void swap(DyldBindingInfo& other) noexcept;
