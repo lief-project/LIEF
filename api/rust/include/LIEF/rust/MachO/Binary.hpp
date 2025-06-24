@@ -292,6 +292,10 @@ class MachO_Binary : public AbstractBinary {
   bool is_ios() const { return impl().is_ios(); }
   bool is_macos() const { return impl().is_macos(); }
 
+  auto find_library(std::string name) const {
+    return details::try_unique<MachO_Dylib>(impl().find_library(name));
+  }
+
   void write(std::string output) { impl().write(output); }
   void write_with_config(std::string output, MachO_Binary_write_config_t config) {
     impl().write(output, {

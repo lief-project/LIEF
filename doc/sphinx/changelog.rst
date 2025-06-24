@@ -43,7 +43,7 @@
 
   * Add support for |lief-macho-atom-info| command (``LC_ATOM_INFO``)
   * Add support for modifying Mach-O commands that embed variable-length data
-    (:issue:`1204`, :issue:`1125`):
+    (:issue:`1204`, :issue:`1125`). See: :ref:`RPath and Library Path Modification <format-macho-rpath>`.
 
     .. code-block:: python
 
@@ -55,6 +55,7 @@
       for rpath in macho.rpaths:
           rpath.path += '/a/very/long/path/that/needs/expansion'
 
+  * Add |lief-macho-binary-find_library|
   * To void ``#define`` conflicts with Apple SDK, the following enums have been renamed:
 
     .. tabs::

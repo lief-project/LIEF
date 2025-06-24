@@ -644,6 +644,14 @@ void create<Binary>(nb::module_& m) {
         "section"_a,
         nb::rv_policy::reference_internal)
 
+    .def("find_library", nb::overload_cast<const std::string&>(&Binary::find_library),
+      R"doc(
+      Try to find the library with the given library name.
+
+      This function tries to match the fullpath of the :class:`~.DylibCommand` or the
+      library name suffix.
+      )doc"_doc, "name"_a, nb::rv_policy::reference_internal)
+
     .def("extend_section",
         nb::overload_cast<Section&, size_t>(&Binary::extend_section),
         "Extend the **content** of the given " RST_CLASS_REF(lief.MachO.Section) " by ``size``"_doc,

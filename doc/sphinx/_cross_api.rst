@@ -809,6 +809,18 @@
     :py:class:`lief.MachO.EncryptionInfo`
     :cpp:class:`LIEF::MachO::EncryptionInfo`
 
+.. |lief-macho-binary-find_library| lief-api:: lief.MachO.Binary.find_library()
+
+    :rust:method:`lief::macho::Binary::find_library [struct]`
+    :py:meth:`lief.MachO.Binary.find_library`
+    :cpp:func:`LIEF::MachO::Binary::find_library`
+
+.. |lief-macho-rpath| lief-api:: lief.MachO.RPathCommand
+
+    :rust:struct:`lief::macho::commands::RPath`
+    :py:class:`lief.MachO.RPathCommand`
+    :cpp:class:`LIEF::MachO::RPathCommand`
+
 .. dyld shared cache ===========================================================
 
 .. |lief-dsc-load| lief-api:: lief.dsc.load()

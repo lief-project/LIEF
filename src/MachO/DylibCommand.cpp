@@ -38,7 +38,7 @@ void DylibCommand::accept(Visitor& visitor) const {
 }
 
 std::ostream& DylibCommand::print(std::ostream& os) const {
-  LoadCommand::print(os);
+  LoadCommand::print(os) << '\n';
   os << fmt::format("name={}, timestamp={}, "
                     "current_version={},  compatibility_version={}",
                     name(), timestamp(),

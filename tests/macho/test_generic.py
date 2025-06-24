@@ -348,3 +348,10 @@ def test_routine():
 def test_arm64e():
     sample = lief.MachO.parse(get_sample("private/MachO/libCoreKE_arm64e.dylib")).at(0)
     assert sample.support_arm64_ptr_auth
+
+def test_find_library():
+    macho = lief.MachO.parse(get_sample("MachO/lief-dwarf-plugin-darwin-arm64.dylib")).at(0)
+    assert macho.find_library("/foo/lief-dwarf-plugin-darwin-arm64.dylib") is None
+    assert macho.find_library("lief-dwarf-plugin-darwin-arm64.dylib") is not None
+    assert macho.find_library("@rpath/lief-dwarf-plugin-darwin-arm64.dylib") is not None
+    assert macho.find_library("/usr/lib/libSystem.B.dylib") is not None

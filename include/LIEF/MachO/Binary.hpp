@@ -377,6 +377,16 @@ class LIEF_API Binary : public LIEF::Binary  {
   /// Add a new MachO::Section in the __TEXT segment
   Section* add_section(const Section& section);
 
+  /// Try to find the library with the given library name.
+  ///
+  /// This function tries to match the fullpath of the DylibCommand or the
+  /// library name suffix.
+  const DylibCommand* find_library(const std::string& name) const;
+
+  DylibCommand* find_library(const std::string& name) {
+    return const_cast<DylibCommand*>(static_cast<const Binary*>(this)->find_library(name));
+  }
+
   /// Add a section in the given MachO::SegmentCommand.
   ///
   /// @warning This method may corrupt the file if the segment is not the first one

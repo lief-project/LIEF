@@ -30,7 +30,7 @@ void create<RPathCommand>(nb::module_& m) {
   nb::class_<RPathCommand, LoadCommand>(m, "RPathCommand")
 
     .def_static("create", &RPathCommand::create,
-      R"doc(Create a new RPathCommand for the provided ``path``)doc"_doc,
+      "Create a new RPathCommand for the provided ``path``"_doc,
       "path"_a
     )
 

@@ -220,6 +220,101 @@ to specify which parts of the MachO should be re-built or not.
 
   :ref:`binary-abstraction`
 
+.. _format-macho-rpath:
+
+RPath and Library Path Modification
+***********************************
+
+Sometimes, we need to modify the Mach-O rpath commands or the (absolute) path of
+a linked library in an executable. When recompiling or linking the executable
+is not possible, LIEF can be used for these modifications.
+
+For instance, let's consider a binary with the following dependencies:
+
+.. code-block:: bash
+
+  $ otool -L hello.bin
+  hello:
+        /Users/romain/dev/libmylib.dylib (compatibility version 0.0.0, current version 0.0.0)
+        /usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 1700.255.0)
+        /usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1345.100.2)
+
+One can change the directory of ``libmylib.dylib`` with the following code:
+
+.. tabs::
+
+  .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        macho = lief.MachO.parse("hello.bin")
+        lib: lief.MachO.DylibCommand = macho.find_library("libmylib.dylib")
+        lib.name = "/opt/hombrew/my_package/libmylib.dylib"
+
+        macho.write("hello_fixed.bin")
+
+  .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        std::unique_ptr<LIEF::MachO::Binary> macho = LIEF::MachO::Parser::parse("hello.bin").take(0);
+        LIEF::MachO::DylibCommand* lib = macho->find_library("libmylib.dylib");
+        lib->name("/opt/hombrew/my_package/libmylib.dylib");
+
+        macho->write("hello_fixed.bin");
+
+.. note::
+
+   It is worth mentioning that LIEF does not have restrictions on the length of
+   the modified library path. LIEF manages all the internal modifications to
+   support both longer and shorter library paths.
+
+
+This kind of modification can be used in pair with the ``@rpath`` feature of
+Mach-O binaries:
+
+1. We can add an extra ``LC_RPATH`` (|lief-macho-rpath|) command to ``hello.bin``:
+
+.. tabs::
+
+  .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        macho = lief.MachO.parse("hello.bin")
+        rpath = lief.MachO.RPathCommand.create("/opt/hombrew/my_package")
+        macho.add(rpath)
+
+  .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        std::unique_ptr<LIEF::MachO::Binary> macho = LIEF::MachO::Parser::parse("hello.bin").take(0);
+        auto rpath = LIEF::MachO::RPathCommand::create("/opt/hombrew/my_package");
+        macho->add(*rpath);
+
+2. Then, we can change the library path of ``libmylib.dylib`` to include the rpath prefix:
+
+.. tabs::
+
+  .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        lib: lief.MachO.DylibCommand = macho.find_library("libmylib.dylib")
+        lib.name = "@rpath/libmylib.dylib"
+
+        macho.write("hello_fixed.bin")
+
+  .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        LIEF::MachO::DylibCommand* lib = macho->find_library("libmylib.dylib");
+        lib->name("@rpath/libmylib.dylib");
+
+        macho->write("hello_fixed.bin");
+
 Objective-C Support
 ********************
 

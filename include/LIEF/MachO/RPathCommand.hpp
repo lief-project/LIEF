@@ -29,10 +29,10 @@ namespace details {
 struct rpath_command;
 }
 
-/// Class that represents the LC_RPATH command.
+/// Class that represents the `LC_RPATH` command.
 ///
 /// This command is used to add path for searching libraries
-/// associated with the ``@rpath`` prefix.
+/// associated with the `@rpath` prefix.
 class LIEF_API RPathCommand : public LoadCommand {
   public:
   RPathCommand() = default;

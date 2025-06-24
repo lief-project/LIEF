@@ -26,6 +26,7 @@
 #include "spdlog/fmt/ranges.h"
 
 #include "LIEF/span.hpp"
+#include "LIEF/optional.hpp"
 #include "LIEF/errors.hpp"
 #include "LIEF/iterators.hpp"
 
@@ -244,6 +245,21 @@ inline std::string uuid_to_str_impl(const std::array<uint8_t, N>& uuid) {
     [] (uint8_t x) { return fmt::format("{:02x}", x); }
   );
   return fmt::to_string(fmt::join(hexstr, ":"));
+}
+
+inline bool endswith(const std::string& str, const std::string& suffix) {
+  if (suffix.size() > str.size()) {
+    return false;
+  }
+  return std::equal(suffix.rbegin(), suffix.rend(), str.rbegin());
+}
+
+inline optional<std::string> libname(const std::string& path, char sep = '/') {
+  size_t pos = path.rfind(sep);
+  if (pos == std::string::npos) {
+    return nullopt();
+  }
+  return path.substr(pos + 1);
 }
 
 }

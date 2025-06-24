@@ -2428,6 +2428,17 @@ ExportInfo* Binary::add_exported_function(uint64_t address, const std::string& n
 }
 
 
+const DylibCommand* Binary::find_library(const std::string& name) const {
+  auto it = std::find_if(libraries_.begin(), libraries_.end(),
+    [&name] (const DylibCommand* cmd) {
+      const std::string& libpath = cmd->name();
+      return libpath == name || libname(libpath).value_or("") == name;
+    }
+  );
+  return it == libraries_.end() ? nullptr : *it;
+}
+
+
 void Binary::refresh_seg_offset() {
   offset_seg_.clear();
   for (SegmentCommand* segment : segments_) {

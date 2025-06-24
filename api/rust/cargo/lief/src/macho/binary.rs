@@ -274,6 +274,14 @@ impl Binary {
         self.ptr.is_macos()
     }
 
+    /// Try to find the library with the given library name.
+    ///
+    /// This function tries to match the fullpath of the DylibCommand or the
+    /// library name suffix.
+    pub fn find_library(&self, name: &str) -> Option<Dylib> {
+        into_optional(self.ptr.find_library(name.to_string()))
+    }
+
 
     /// Get the integer value at the given virtual address
     pub fn get_int_from_virtual_address<T>(&self, addr: u64) -> Result<T, Error>
