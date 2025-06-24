@@ -11,6 +11,9 @@ pub trait Symbol {
     #[doc(hidden)]
     fn as_generic(&self) -> &ffi::AbstractSymbol;
 
+    #[doc(hidden)]
+    fn as_pin_mut_generic(&mut self) -> Pin<&mut ffi::AbstractSymbol>;
+
     /// Symbol's name
     fn name(&self) -> String {
         self.as_generic().name().to_string()
@@ -23,6 +26,18 @@ pub trait Symbol {
     /// Size of the symbol (can be 0)
     fn size(&self) -> u64 {
         self.as_generic().size()
+    }
+
+    fn set_name(&mut self, name: &str) {
+        self.as_pin_mut_generic().set_name(name.to_string());
+    }
+
+    fn set_value(&mut self, value: u64) {
+        self.as_pin_mut_generic().set_value(value);
+    }
+
+    fn set_size(&mut self, size: u64) {
+        self.as_pin_mut_generic().set_size(size);
     }
 }
 
@@ -300,6 +315,17 @@ impl FromFFI<ffi::AbstractFunction> for Function {
 impl Symbol for Function {
     fn as_generic(&self) -> &lief_ffi::AbstractSymbol {
         self.ptr.as_ref().unwrap().as_ref()
+    }
+
+    fn as_pin_mut_generic(&mut self) -> Pin<&mut ffi::AbstractSymbol> {
+        unsafe {
+            Pin::new_unchecked({
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::AbstractSymbol
+                    as *mut ffi::AbstractSymbol)
+                    .as_mut()
+                    .unwrap()
+            })
+        }
     }
 }
 

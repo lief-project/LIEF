@@ -41,6 +41,11 @@ inline LIEFVersion extended_version() {
   return {version.major, version.minor, version.patch, version.id};
 }
 
+inline LIEFVersion version() {
+  auto version = LIEF::version();
+  return {version.major, version.minor, version.patch, version.id};
+}
+
 inline std::string dump(const uint8_t* buffer, size_t size) {
   return LIEF::dump(buffer, size);
 }

@@ -18,19 +18,55 @@
 #include "LIEF/rust/helpers.hpp"
 #include "LIEF/rust/Span.hpp"
 
-class ELF_Segment : private Mirror<LIEF::ELF::Segment> {
+class ELF_Segment : public Mirror<LIEF::ELF::Segment> {
   public:
   using lief_t = LIEF::ELF::Segment;
   using Mirror::Mirror;
 
-  uint64_t stype() const { return to_int(get().type()); }
-  uint32_t flags() const { return to_int(get().flags()); }
-  uint64_t file_offset() const { return get().file_offset(); }
-  uint64_t virtual_address() const { return get().virtual_address(); }
-  uint64_t physical_address() const { return get().physical_address(); }
-  uint64_t physical_size() const { return get().physical_size(); }
-  uint64_t virtual_size() const { return get().virtual_size(); }
-  uint64_t alignment() const { return get().alignment(); }
+  static auto create() {
+    return std::make_unique<ELF_Segment>(std::make_unique<lief_t>());
+  }
+
+  auto stype() const { return to_int(get().type()); }
+  auto flags() const { return to_int(get().flags()); }
+  auto file_offset() const { return get().file_offset(); }
+  auto virtual_address() const { return get().virtual_address(); }
+  auto physical_address() const { return get().physical_address(); }
+  auto physical_size() const { return get().physical_size(); }
+  auto virtual_size() const { return get().virtual_size(); }
+  auto alignment() const { return get().alignment(); }
+
+  auto set_flags(uint32_t value) {
+    get().flags(value);
+  }
+
+  auto set_type(uint64_t ty) {
+    get().type((lief_t::TYPE)ty);
+  }
+
+  void set_file_offset(uint64_t value) {
+    get().file_offset(value);
+  }
+
+  void set_virtual_address(uint64_t value) {
+    get().virtual_address(value);
+  }
+
+  void set_physical_address(uint64_t value) {
+    get().physical_address(value);
+  }
+
+  void set_virtual_size(uint64_t value) {
+    get().virtual_size(value);
+  }
+
+  void set_alignment(uint64_t value) {
+    get().alignment(value);
+  }
+
+  void set_content(const uint8_t* ptr, uint64_t size) {
+    get().content({ptr, ptr + size});
+  }
 
   Span content() const { return make_span(get().content()); }
 

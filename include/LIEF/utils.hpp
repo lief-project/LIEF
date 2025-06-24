@@ -114,6 +114,9 @@ LIEF_API std::string extended_version_info();
 /// Return the extended version
 LIEF_API lief_version_t extended_version();
 
+/// Return the current version
+LIEF_API lief_version_t version();
+
 /// Demangle the given input.
 ///
 /// This function only works with the extended version of LIEF

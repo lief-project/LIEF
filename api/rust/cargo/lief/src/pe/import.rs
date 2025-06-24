@@ -1,5 +1,6 @@
 //! This module represents PE's Imports
 
+use std::pin::Pin;
 use std::marker::PhantomData;
 
 use crate::common::into_optional;
@@ -183,6 +184,17 @@ impl<'a> FromFFI<ffi::PE_ImportEntry> for ImportEntry<'a> {
 impl generic::Symbol for ImportEntry<'_> {
     fn as_generic(&self) -> &ffi::AbstractSymbol {
         self.ptr.as_ref().unwrap().as_ref()
+    }
+
+    fn as_pin_mut_generic(&mut self) -> Pin<&mut ffi::AbstractSymbol> {
+        unsafe {
+            Pin::new_unchecked({
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::AbstractSymbol
+                    as *mut ffi::AbstractSymbol)
+                    .as_mut()
+                    .unwrap()
+            })
+        }
     }
 }
 

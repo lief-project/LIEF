@@ -68,8 +68,8 @@ pub enum Type {
     UNKNOWN(u64),
 }
 
-impl Type {
-    pub fn from_value(value: u64) -> Self {
+impl From<u64> for Type {
+    fn from(value: u64) -> Self {
         match value {
             0x00000000 => Type::PT_NULL,
             0x00000001 => Type::LOAD,
@@ -115,8 +115,53 @@ impl Type {
         }
     }
 }
-
-
+impl From<Type> for u64 {
+    fn from(value: Type) -> u64 {
+        match value {
+            Type::PT_NULL => 0x00000000,
+            Type::LOAD => 0x00000001,
+            Type::DYNAMIC => 0x00000002,
+            Type::INTERP => 0x00000003,
+            Type::NOTE => 0x00000004,
+            Type::SHLIB => 0x00000005,
+            Type::PHDR => 0x00000006,
+            Type::TLS => 0x00000007,
+            Type::GNU_EH_FRAME => 0x6474e550,
+            Type::GNU_STACK => 0x6474e551,
+            Type::GNU_PROPERTY => 0x6474e553,
+            Type::GNU_RELRO => 0x6474e552,
+            Type::PAX_FLAGS => 0x65041580,
+            Type::ARM_ARCHEXT => 0x270000000,
+            Type::ARM_EXIDX => 0x270000001,
+            Type::ARM_UNWIND => 0x270000001,
+            Type::AARCH64_MEMTAG_MTE => 0x470000002,
+            Type::MIPS_REGINFO => 0x670000000,
+            Type::MIPS_RTPROC => 0x670000001,
+            Type::MIPS_OPTIONS => 0x670000002,
+            Type::MIPS_ABIFLAGS => 0x670000003,
+            Type::RISCV_ATTRIBUTES => 0x870000003,
+            Type::IA_64_EXT => 0xa70000000,
+            Type::IA_64_UNWIND => 0xa70000001,
+            Type::HP_TLS => 0x20000060000000,
+            Type::HP_CORE_NONE => 0x20000060000001,
+            Type::HP_CORE_VERSION => 0x20000060000002,
+            Type::HP_CORE_KERNEL => 0x20000060000003,
+            Type::HP_CORE_COMM => 0x20000060000004,
+            Type::HP_CORE_PROC => 0x20000060000005,
+            Type::HP_CORE_LOADABLE => 0x20000060000006,
+            Type::HP_CORE_STACK => 0x20000060000007,
+            Type::HP_CORE_SHM => 0x20000060000008,
+            Type::HP_CORE_MMF => 0x20000060000009,
+            Type::HP_PARALLEL => 0x20000060000010,
+            Type::HP_FASTBIND => 0x20000060000011,
+            Type::HP_OPT_ANNOT => 0x20000060000012,
+            Type::HP_HSL_ANNOT => 0x20000060000013,
+            Type::HP_STACK => 0x20000060000014,
+            Type::HP_CORE_UTSNAME => 0x20000060000015,
+            Type::UNKNOWN(value) => value,
+        }
+    }
+}
 
 bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -133,11 +178,15 @@ impl Flags {
     pub fn from_value(value: u32) -> Self {
         Flags::from_bits_truncate(value)
     }
+
+    pub fn to_value(&self) -> u32 {
+        self.bits() as u32
+    }
 }
 
 /// Structure which reprents an ELF segment
 pub struct Segment<'a> {
-    ptr: cxx::UniquePtr<ffi::ELF_Segment>,
+    pub(super) ptr: cxx::UniquePtr<ffi::ELF_Segment>,
     _owner: PhantomData<&'a ffi::ELF_Binary>
 }
 
@@ -165,7 +214,12 @@ impl FromFFI<ffi::ELF_Segment> for Segment<'_> {
     }
 }
 
-impl<'a> Segment<'a> {
+impl Segment<'_> {
+    /// Create a new segment
+    pub fn new() -> Segment<'static> {
+        Segment::from_ffi(lief_ffi::ELF_Segment::create())
+    }
+
     /// Content of the segment as a slice of bytes
     pub fn content(&self) -> &[u8] {
         to_slice!(self.ptr.content());
@@ -173,7 +227,7 @@ impl<'a> Segment<'a> {
 
     /// The segment's type (LOAD, DYNAMIC, ...)
     pub fn p_type(&self) -> Type {
-        Type::from_value(self.ptr.stype())
+        Type::from(self.ptr.stype())
     }
 
     /// The flag permissions associated with this segment
@@ -214,6 +268,43 @@ impl<'a> Segment<'a> {
     /// The offset alignment of the segment
     pub fn alignment(&self) -> u64 {
         self.ptr.alignment()
+    }
+
+    pub fn set_type(&mut self, ty: Type) {
+        self.ptr.pin_mut().set_type(ty.into());
+    }
+
+    pub fn set_flags(&mut self, flags: Flags) {
+        self.ptr.pin_mut().set_flags(flags.to_value())
+    }
+
+    pub fn set_file_offset(&mut self, offset: u64) {
+        self.ptr.pin_mut().set_file_offset(offset);
+    }
+
+    pub fn set_virtual_address(&mut self, va: u64) {
+        self.ptr.pin_mut().set_virtual_address(va);
+    }
+
+    pub fn set_physical_address(&mut self, addr: u64) {
+        self.ptr.pin_mut().set_physical_address(addr);
+    }
+
+    pub fn set_virtual_size(&mut self, vsize: u64) {
+        self.ptr.pin_mut().set_virtual_size(vsize);
+    }
+
+    pub fn set_alignment(&mut self, alignment: u64) {
+        self.ptr.pin_mut().set_alignment(alignment);
+    }
+
+    pub fn set_content(&mut self, content: &[u8]) {
+        unsafe {
+            self.ptr.pin_mut().set_content(
+                content.as_ptr(),
+                content.len().try_into().unwrap()
+            );
+        }
     }
 }
 

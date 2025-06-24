@@ -1,6 +1,6 @@
 //! PE Delayed import module
 use std::marker::PhantomData;
-
+use std::pin::Pin;
 use crate::{common::FromFFI, declare_iterator, generic};
 use lief_ffi as ffi;
 
@@ -142,6 +142,17 @@ impl DelayImportEntry<'_> {
 impl generic::Symbol for DelayImportEntry<'_> {
     fn as_generic(&self) -> &ffi::AbstractSymbol {
         self.ptr.as_ref().unwrap().as_ref()
+    }
+
+    fn as_pin_mut_generic(&mut self) -> Pin<&mut ffi::AbstractSymbol> {
+        unsafe {
+            Pin::new_unchecked({
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::AbstractSymbol
+                    as *mut ffi::AbstractSymbol)
+                    .as_mut()
+                    .unwrap()
+            })
+        }
     }
 }
 

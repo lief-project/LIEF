@@ -9,6 +9,7 @@ include_cpp! {
     generate!("is_extended")
     generate!("extended_version_info")
     generate!("extended_version")
+    generate!("version")
     generate!("demangle")
     generate!("dump")
     generate!("dump_with_limit")

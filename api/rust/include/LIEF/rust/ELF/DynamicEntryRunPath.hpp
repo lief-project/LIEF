@@ -23,8 +23,34 @@ class ELF_DynamicEntryRunPath : public ELF_DynamicEntry {
   public:
   using lief_t = LIEF::ELF::DynamicEntryRunPath;
 
+  ELF_DynamicEntryRunPath(std::unique_ptr<lief_t> impl) :
+    ELF_DynamicEntry(std::move(impl))
+  {}
+
+  static auto create(std::string name) {
+    return std::make_unique<ELF_DynamicEntryRunPath>(
+        std::make_unique<lief_t>(std::move(name))
+    );
+  }
+
   std::string runpath() const { return impl().runpath(); }
   std::vector<std::string> paths() const { return impl().paths(); }
+
+  void insert(uint32_t pos, std::string name) {
+    impl().insert(pos, name);
+  }
+
+  void append(std::string name) {
+    impl().append(name);
+  }
+
+  void remove(std::string path) {
+    impl().remove(path);
+  }
+
+  void set_runpath(std::string path) {
+    impl().runpath(std::move(path));
+  }
 
   static bool classof(const ELF_DynamicEntry& entry) {
     return lief_t::classof(&entry.get());
@@ -32,5 +58,6 @@ class ELF_DynamicEntryRunPath : public ELF_DynamicEntry {
 
   private:
   const lief_t& impl() const { return as<lief_t>(this); }
+  lief_t& impl() { return as<lief_t>(this); }
 
 };

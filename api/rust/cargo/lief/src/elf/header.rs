@@ -180,6 +180,37 @@ impl From<u32> for OsAbi {
     }
 }
 
+impl From<OsAbi> for u32 {
+    fn from(value: OsAbi) -> u32 {
+        match value {
+            OsAbi::SYSTEMV => 0x00000000,
+            OsAbi::HPUX => 0x00000001,
+            OsAbi::NETBSD => 0x00000002,
+            OsAbi::GNU => 0x00000003,
+            OsAbi::LINUX => 0x00000003,
+            OsAbi::HURD => 0x00000004,
+            OsAbi::SOLARIS => 0x00000006,
+            OsAbi::AIX => 0x00000007,
+            OsAbi::IRIX => 0x00000008,
+            OsAbi::FREEBSD => 0x00000009,
+            OsAbi::TRU64 => 0x0000000a,
+            OsAbi::MODESTO => 0x0000000b,
+            OsAbi::OPENBSD => 0x0000000c,
+            OsAbi::OPENVMS => 0x0000000d,
+            OsAbi::NSK => 0x0000000e,
+            OsAbi::AROS => 0x0000000f,
+            OsAbi::FENIXOS => 0x00000010,
+            OsAbi::CLOUDABI => 0x00000011,
+            OsAbi::C6000_ELFABI => 0x00000040,
+            OsAbi::AMDGPU_HSA => 0x00000040,
+            OsAbi::C6000_LINUX => 0x00000041,
+            OsAbi::ARM => 0x00000061,
+            OsAbi::STANDALONE => 0x000000ff,
+            OsAbi::UNKNOWN(value) => value,
+        }
+    }
+}
+
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -314,6 +345,10 @@ impl Header<'_> {
     /// Return the section's index which contains sections' names
     pub fn section_name_table_idx(&self) -> u32 {
         self.ptr.section_name_table_idx()
+    }
+
+    pub fn set_osabi(&mut self, osabi: OsAbi) {
+        self.ptr.pin_mut().set_osabi(osabi.into());
     }
 }
 

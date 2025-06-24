@@ -123,6 +123,12 @@ pub struct Version {
     pub id: u64,
 }
 
+impl std::fmt::Display for Version {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}.{}.{}.{}", self.major, self.minor, self.patch, self.id)
+    }
+}
+
 /// Whether it is an extended version of LIEF
 pub fn is_extended() -> bool {
     lief_ffi::is_extended()
@@ -136,6 +142,15 @@ pub fn extended_version_info() -> String {
 /// Return the extended version
 pub fn extended_version() -> Version {
     let ffi_version = lief_ffi::extended_version();
+    Version {
+        major: ffi_version.major, minor: ffi_version.minor,
+        patch: ffi_version.patch, id: ffi_version.id
+    }
+}
+
+/// Return the current version
+pub fn version() -> Version {
+    let ffi_version = lief_ffi::version();
     Version {
         major: ffi_version.major, minor: ffi_version.minor,
         patch: ffi_version.patch, id: ffi_version.id

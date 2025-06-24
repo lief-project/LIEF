@@ -297,6 +297,10 @@ class ELF_Binary : public AbstractBinary {
     impl().remove(LIEF::ELF::DynamicEntry::TAG(tag));
   }
 
+  void remove_dynamic_entry(const ELF_DynamicEntry& entry) {
+    impl().remove(entry.get());
+  }
+
   auto add_dynamic_entry(const ELF_DynamicEntry& entry) {
      return std::make_unique<ELF_DynamicEntry>(impl().add(entry.get()));
   }
@@ -407,6 +411,10 @@ class ELF_Binary : public AbstractBinary {
     return impl().interpreter();
   }
 
+  void set_interpreter(std::string name) {
+    impl().interpreter(name);
+  }
+
   auto get_relocated_dynamic_array(uint64_t tag) const {
     return impl().get_relocated_dynamic_array(LIEF::ELF::DynamicEntry::TAG(tag));
   }
@@ -425,6 +433,20 @@ class ELF_Binary : public AbstractBinary {
 
   auto dynamic_entry_by_tag(uint64_t tag) const {
     return details::try_unique<ELF_DynamicEntry>(impl().get((LIEF::ELF::DynamicEntry::TAG)tag));
+  }
+
+  auto segment_by_type(uint64_t ty) const {
+    return details::try_unique<ELF_Segment>(impl().get((LIEF::ELF::Segment::TYPE)ty));
+  }
+
+  void remove_library(std::string name) {
+    impl().remove_library(name);
+  }
+
+  auto add_segment(const ELF_Segment& segment) {
+    return details::try_unique<ELF_Segment>(
+        impl().add(segment.get())
+    );
   }
 
   void write(std::string output) { impl().write(output); }

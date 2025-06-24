@@ -16,13 +16,19 @@
 #include "LIEF/Visitor.hpp"
 
 #include "LIEF/ELF/DynamicEntry.hpp"
-#include "ELF/Structures.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
+#include "LIEF/ELF/DynamicEntryLibrary.hpp"
+#include "LIEF/ELF/DynamicEntryArray.hpp"
+#include "LIEF/ELF/DynamicEntryFlags.hpp"
+#include "LIEF/ELF/DynamicEntryRpath.hpp"
+#include "LIEF/ELF/DynamicEntryRunPath.hpp"
+#include "LIEF/ELF/DynamicSharedObject.hpp"
 
 #include <spdlog/fmt/fmt.h>
 
 #include "frozen.hpp"
 #include "logging.hpp"
+#include "ELF/Structures.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -113,6 +119,37 @@ uint64_t DynamicEntry::to_value(DynamicEntry::TAG tag) {
   }
 
   return raw_value;
+}
+
+
+std::unique_ptr<DynamicEntry> DynamicEntry::create(TAG tag, uint64_t value) {
+  switch (tag) {
+    default:
+      return std::make_unique<DynamicEntry>(tag, value);
+    case TAG::NEEDED:
+      return std::make_unique<DynamicEntryLibrary>();
+
+    case TAG::SONAME:
+      return std::make_unique<DynamicSharedObject>();
+
+    case TAG::RUNPATH:
+      return std::make_unique<DynamicEntryRunPath>();
+
+    case TAG::RPATH:
+      return std::make_unique<DynamicEntryRpath>();
+
+    case TAG::FLAGS_1:
+      return DynamicEntryFlags::create_dt_flag_1(value).clone();
+
+    case TAG::FLAGS:
+      return DynamicEntryFlags::create_dt_flag(value).clone();
+
+    case TAG::INIT_ARRAY:
+    case TAG::FINI_ARRAY:
+    case TAG::PREINIT_ARRAY:
+      return std::make_unique<DynamicEntryArray>(tag, DynamicEntryArray::array_t());
+  }
+  return std::make_unique<DynamicEntry>(tag, value);
 }
 
 DynamicEntry::DynamicEntry(const details::Elf64_Dyn& header, ARCH arch) :

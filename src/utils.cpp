@@ -21,6 +21,7 @@
 
 #include "LIEF/utils.hpp"
 #include "LIEF/errors.hpp"
+#include "LIEF/version.h"
 
 #include "third-party/utfcpp.hpp"
 
@@ -160,6 +161,13 @@ std::string lief_version_t::to_string() const {
     return fmt::format("{}.{}.{}", major, minor, patch);
   }
   return fmt::format("{}.{}.{}.{}", major, minor, patch, id);
+}
+
+lief_version_t version() {
+  if (lief_extended) {
+    return extended_version();
+  }
+  return {LIEF_VERSION_MAJOR, LIEF_VERSION_MINOR, LIEF_VERSION_PATCH, 0};
 }
 
 #if !defined(LIEF_EXTENDED)

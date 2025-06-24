@@ -2,6 +2,7 @@
 
 use lief_ffi as ffi;
 
+use std::pin::Pin;
 use crate::common::into_optional;
 use crate::common::{FromFFI, AsFFI};
 use crate::declare_iterator;
@@ -254,6 +255,17 @@ impl Entry<'_> {
 impl generic::Symbol for Entry<'_> {
     fn as_generic(&self) -> &ffi::AbstractSymbol {
         self.ptr.as_ref().unwrap().as_ref()
+    }
+
+    fn as_pin_mut_generic(&mut self) -> Pin<&mut ffi::AbstractSymbol> {
+        unsafe {
+            Pin::new_unchecked({
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::AbstractSymbol
+                    as *mut ffi::AbstractSymbol)
+                    .as_mut()
+                    .unwrap()
+            })
+        }
     }
 }
 

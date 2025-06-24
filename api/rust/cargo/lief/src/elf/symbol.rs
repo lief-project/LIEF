@@ -1,5 +1,6 @@
 use lief_ffi as ffi;
 use std::fmt;
+use std::pin::Pin;
 use std::marker::PhantomData;
 
 use crate::common::{FromFFI, into_optional};
@@ -189,6 +190,17 @@ impl FromFFI<ffi::ELF_Symbol> for Symbol<'_> {
 impl generic::Symbol for Symbol<'_> {
     fn as_generic(&self) -> &ffi::AbstractSymbol {
         self.ptr.as_ref().unwrap().as_ref()
+    }
+
+    fn as_pin_mut_generic(&mut self) -> Pin<&mut ffi::AbstractSymbol> {
+        unsafe {
+            Pin::new_unchecked({
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::AbstractSymbol
+                    as *mut ffi::AbstractSymbol)
+                    .as_mut()
+                    .unwrap()
+            })
+        }
     }
 }
 

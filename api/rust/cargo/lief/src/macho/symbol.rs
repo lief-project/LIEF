@@ -1,4 +1,5 @@
 use std::marker::PhantomData;
+use std::pin::Pin;
 
 use crate::common::{into_optional, FromFFI};
 use crate::declare_iterator;
@@ -143,6 +144,17 @@ impl<'a> FromFFI<ffi::MachO_Symbol> for Symbol<'a> {
 impl generic::Symbol for Symbol<'_> {
     fn as_generic(&self) -> &ffi::AbstractSymbol {
         self.ptr.as_ref().unwrap().as_ref()
+    }
+
+    fn as_pin_mut_generic(&mut self) -> Pin<&mut ffi::AbstractSymbol> {
+        unsafe {
+            Pin::new_unchecked({
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::AbstractSymbol
+                    as *mut ffi::AbstractSymbol)
+                    .as_mut()
+                    .unwrap()
+            })
+        }
     }
 }
 

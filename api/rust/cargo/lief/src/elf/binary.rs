@@ -16,7 +16,7 @@ use super::relocation::{
     DynamicRelocations, ObjectRelocations, PltGotRelocations, Relocation, Relocations,
 };
 use super::section::{Section, Sections};
-use super::segment::Segments;
+use super::segment::{self, Segments};
 use super::symbol::{DynamicSymbols, ExportedSymbols, ImportedSymbols, SymtabSymbols};
 use super::symbol_versioning::{SymbolVersion, SymbolVersionDefinition, SymbolVersionRequirement};
 use super::{Segment, Symbol};
@@ -360,6 +360,33 @@ impl Binary {
     /// Try to find the dynamic entry associated with the given tag
     pub fn dynamic_entry_by_tag(&self, tag: dynamic::Tag) -> Option<dynamic::Entries> {
         into_optional(self.ptr.dynamic_entry_by_tag(tag.into()))
+    }
+
+    /// Look for the segment with the given type. If there are multiple segment
+    /// with the same type, it returns the first one.
+    pub fn segment_by_type(&self, seg_type: segment::Type) -> Option<Segment> {
+        into_optional(self.ptr.segment_by_type(seg_type.into()))
+    }
+
+    /// Remove the given dynamic entry
+    pub fn remove_dynamic_entry(&mut self, entry: impl dynamic::DynamicEntry) {
+        self.ptr.pin_mut().remove_dynamic_entry(entry.as_base());
+    }
+
+    /// Remove the `DT_NEEDED` dependency with the given name
+    pub fn remove_library(&mut self, name: &str) {
+        self.ptr.pin_mut().remove_library(name.to_string());
+    }
+
+    /// Add the provided segment to the binary. This function returns the
+    /// newly added segment which could define additional attributes like the virtual address.
+    pub fn add_segment(&mut self, segment: &Segment) -> Option<Segment> {
+        into_optional(self.ptr.pin_mut().add_segment(segment.ptr.as_ref().unwrap()))
+    }
+
+    /// Change the path to the interpreter
+    pub fn set_interpreter(&mut self, interpreter: &str) {
+        self.ptr.pin_mut().set_interpreter(interpreter.to_string());
     }
 }
 
