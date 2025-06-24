@@ -142,6 +142,6 @@ LIEF_API const char* to_string(Header::MODES e);
 LIEF_API const char* to_string(Header::ENDIANNESS e);
 }
 
-ENABLE_BITMASK_OPERATORS(LIEF::Header::MODES)
+ENABLE_BITMASK_OPERATORS(LIEF::Header::MODES);
 
 #endif

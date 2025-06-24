@@ -298,5 +298,6 @@ LIEF_API const char* to_string(Section::FLAGS flag);
 }
 }
 
-ENABLE_BITMASK_OPERATORS(LIEF::MachO::Section::FLAGS)
+ENABLE_BITMASK_OPERATORS(LIEF::MachO::Section::FLAGS);
+
 #endif

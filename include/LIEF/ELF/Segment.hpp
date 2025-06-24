@@ -323,6 +323,6 @@ LIEF_API const char* to_string(Segment::FLAGS e);
 }
 
 
-ENABLE_BITMASK_OPERATORS(LIEF::ELF::Segment::FLAGS)
+ENABLE_BITMASK_OPERATORS(LIEF::ELF::Segment::FLAGS);
 
 #endif /* _ELF_SEGMENT_H */

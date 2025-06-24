@@ -293,7 +293,7 @@ LIEF_API const char* to_string(SegmentCommand::VM_PROTECTIONS protection);
 }
 }
 
-ENABLE_BITMASK_OPERATORS(LIEF::MachO::SegmentCommand::FLAGS)
-ENABLE_BITMASK_OPERATORS(LIEF::MachO::SegmentCommand::VM_PROTECTIONS)
+ENABLE_BITMASK_OPERATORS(LIEF::MachO::SegmentCommand::FLAGS);
+ENABLE_BITMASK_OPERATORS(LIEF::MachO::SegmentCommand::VM_PROTECTIONS);
 
 #endif

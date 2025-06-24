@@ -40,17 +40,17 @@ char swap_integer_endian<char>(char u) {
   return intmem::bswap((uint8_t)u);
 }
 
-TMPL_DECL(char);
-TMPL_DECL(char16_t);
+TMPL_DECL(char)
+TMPL_DECL(char16_t)
 
-TMPL_DECL(uint8_t);
-TMPL_DECL(uint16_t);
-TMPL_DECL(uint32_t);
-TMPL_DECL(uint64_t);
+TMPL_DECL(uint8_t)
+TMPL_DECL(uint16_t)
+TMPL_DECL(uint32_t)
+TMPL_DECL(uint64_t)
 
-TMPL_DECL(int8_t);
-TMPL_DECL(int16_t);
-TMPL_DECL(int32_t);
-TMPL_DECL(int64_t);
+TMPL_DECL(int8_t)
+TMPL_DECL(int16_t)
+TMPL_DECL(int32_t)
+TMPL_DECL(int64_t)
 
 }

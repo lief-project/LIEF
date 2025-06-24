@@ -744,25 +744,25 @@ ok_error_t Note::write_string_at(size_t offset, const std::string& value) {
   return ok();
 }
 
-IMPL_READ_AT(bool);
-IMPL_READ_AT(uint8_t);
-IMPL_READ_AT(int8_t);
-IMPL_READ_AT(uint16_t);
-IMPL_READ_AT(int16_t);
-IMPL_READ_AT(uint32_t);
-IMPL_READ_AT(int32_t);
-IMPL_READ_AT(uint64_t);
-IMPL_READ_AT(int64_t);
+IMPL_READ_AT(bool)
+IMPL_READ_AT(uint8_t)
+IMPL_READ_AT(int8_t)
+IMPL_READ_AT(uint16_t)
+IMPL_READ_AT(int16_t)
+IMPL_READ_AT(uint32_t)
+IMPL_READ_AT(int32_t)
+IMPL_READ_AT(uint64_t)
+IMPL_READ_AT(int64_t)
 
-IMPL_WRITE_AT(bool);
-IMPL_WRITE_AT(uint8_t);
-IMPL_WRITE_AT(int8_t);
-IMPL_WRITE_AT(uint16_t);
-IMPL_WRITE_AT(int16_t);
-IMPL_WRITE_AT(uint32_t);
-IMPL_WRITE_AT(int32_t);
-IMPL_WRITE_AT(uint64_t);
-IMPL_WRITE_AT(int64_t);
+IMPL_WRITE_AT(bool)
+IMPL_WRITE_AT(uint8_t)
+IMPL_WRITE_AT(int8_t)
+IMPL_WRITE_AT(uint16_t)
+IMPL_WRITE_AT(int16_t)
+IMPL_WRITE_AT(uint32_t)
+IMPL_WRITE_AT(int32_t)
+IMPL_WRITE_AT(uint64_t)
+IMPL_WRITE_AT(int64_t)
 
 } // namespace ELF
 } // namespace LIEF

@@ -136,5 +136,5 @@ LIEF_API const char* to_string(ResourceAccelerator::FLAGS e);
 }
 }
 
-ENABLE_BITMASK_OPERATORS(LIEF::PE::ResourceAccelerator::FLAGS)
+ENABLE_BITMASK_OPERATORS(LIEF::PE::ResourceAccelerator::FLAGS);
 #endif

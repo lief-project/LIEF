@@ -101,7 +101,7 @@ class Decoder {
   BinaryStream* stream_ = nullptr;
   outstream_opt_t opt_;
 };
-};
+}
 
 #endif
 

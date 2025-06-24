@@ -26,7 +26,7 @@ template<>                           \
 struct EnableBitMaskOperators<X>     \
 {                                    \
   static const bool bit_mask_enabled = true;   \
-};
+}
 
 template<typename Enum>
 struct EnableBitMaskOperators

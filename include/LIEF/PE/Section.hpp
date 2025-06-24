@@ -284,6 +284,6 @@ LIEF_API const char* to_string(Section::CHARACTERISTICS e);
 } // namespace PE
 } // namespace LIEF
 
-ENABLE_BITMASK_OPERATORS(LIEF::PE::Section::CHARACTERISTICS)
+ENABLE_BITMASK_OPERATORS(LIEF::PE::Section::CHARACTERISTICS);
 
 #endif
