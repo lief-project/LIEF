@@ -662,7 +662,7 @@ uint32_t Parser::max_relocation_index(uint64_t relocations_offset, uint64_t size
   static_assert(std::is_same<REL_T, typename ELF_T::Elf_Rel>::value ||
                 std::is_same<REL_T, typename ELF_T::Elf_Rela>::value, "REL_T must be Elf_Rel || Elf_Rela");
 
-  const uint8_t shift = std::is_same<ELF_T, details::ELF32>::value ? 8 : 32;
+  const uint8_t shift = ELF_T::r_info_shift;;
 
   const auto nb_entries = static_cast<uint32_t>(size / sizeof(REL_T));
 
@@ -677,8 +677,6 @@ uint32_t Parser::max_relocation_index(uint64_t relocations_offset, uint64_t size
   }
   return idx + 1;
 } // max_relocation_index
-
-
 
 template<typename ELF_T>
 result<uint32_t> Parser::nb_dynsym_section() const {
@@ -1632,7 +1630,7 @@ ok_error_t Parser::parse_section_relocations(const Section& section) {
     symbol_table = binary_->sections_[sh_link].get();
   }
 
-  constexpr uint8_t shift = std::is_same_v<ELF_T, details::ELF32> ? 8 : 32;
+  constexpr uint8_t shift = ELF_T::r_info_shift;
 
   const ARCH arch = binary_->header_.machine_type();
 

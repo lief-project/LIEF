@@ -64,6 +64,7 @@ struct Elf32_Prpsinfo
 
 class ELF32 {
   public:
+  static constexpr auto r_info_shift = 8;
   typedef Elf32_Addr    Elf_Addr;
   typedef Elf32_Off     Elf_Off;
   typedef Elf32_Half    Elf_Half;
@@ -98,6 +99,7 @@ class ELF32 {
 
 class ELF64 {
   public:
+  static constexpr auto r_info_shift = 32;
   typedef Elf64_Addr    Elf_Addr;
   typedef Elf64_Off     Elf_Off;
   typedef Elf64_Half    Elf_Half;
@@ -127,7 +129,14 @@ class ELF64 {
   typedef Elf64_Prstatus  Elf_Prstatus;
 
   typedef Elf64_timeval   Elf_timeval;
- };
+};
+
+class ELF32_x32 : public ELF32 {
+};
+
+class ELF32_arm64 : public ELF32 {
+};
+
 
 } /* end namespace details */
 } /* end namespace ELF */

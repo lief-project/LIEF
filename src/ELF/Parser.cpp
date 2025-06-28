@@ -38,6 +38,11 @@
 namespace LIEF {
 namespace ELF {
 
+struct Target {
+  Header::CLASS clazz = Header::CLASS::NONE;
+  ARCH arch = ARCH::NONE;
+};
+
 Parser::Parser() = default;
 Parser::~Parser() = default;
 
@@ -208,7 +213,7 @@ bool Parser::should_swap() const {
   return false;
 }
 
-Header::CLASS determine_elf_class(BinaryStream& stream) {
+Target determine_elf_target(BinaryStream& stream) {
   auto from_ei_class  = Header::CLASS::NONE;
   auto from_e_machine = Header::CLASS::NONE;
   auto file_type = Header::FILE_TYPE::NONE;
@@ -238,8 +243,9 @@ Header::CLASS determine_elf_class(BinaryStream& stream) {
   //     ....
   // } ElfN_Ehdr;
   constexpr size_t e_machine_off = offsetof(details::Elf32_Ehdr, e_machine);
+  auto machine = ARCH::NONE;
   if (auto res = stream.peek<uint16_t>(e_machine_off)) {
-    const auto machine = static_cast<ARCH>(*res);
+    machine = (ARCH)*res;
     switch (machine) {
       case ARCH::AARCH64:
       case ARCH::X86_64:
@@ -267,11 +273,21 @@ Header::CLASS determine_elf_class(BinaryStream& stream) {
       from_ei_class != Header::CLASS::NONE)
   {
     if (from_e_machine == from_ei_class) {
-      return from_ei_class;
+      return {from_ei_class, machine};
     }
 
     if (file_type == Header::FILE_TYPE::REL) {
-      return from_ei_class;
+      return {from_ei_class, machine};
+    }
+
+    if (machine == ARCH::X86_64 && from_ei_class == Header::CLASS::ELF32) {
+      LIEF_DEBUG("ELF32-X86_64: x32");
+      return {from_ei_class, machine};
+    }
+
+    if (machine == ARCH::AARCH64 && from_ei_class == Header::CLASS::ELF32) {
+      LIEF_DEBUG("ELF32-arm64: arm64ilp32");
+      return {from_ei_class, machine};
     }
 
     LIEF_WARN("ELF class from machine type ('{}') does not match ELF class from "
@@ -279,12 +295,12 @@ Header::CLASS determine_elf_class(BinaryStream& stream) {
               to_string(from_e_machine), to_string(from_ei_class));
     // Make the priority on Elf_Ehdr.e_machine as it is
     // this value that is used by the kernel.
-    return from_e_machine;
+    return {from_e_machine, machine};
   }
   if (from_e_machine != Header::CLASS::NONE) {
-    return from_e_machine;
+    return {from_e_machine, machine};
   }
-  return from_ei_class;
+  return {from_ei_class, machine};
 }
 
 
@@ -313,11 +329,22 @@ ok_error_t Parser::init() {
 
   LIEF_DEBUG("Should swap: {}", should_swap());
   stream_->set_endian_swap(should_swap());
+  Target elf_target = determine_elf_target(*stream_);
+  binary_->type_ = elf_target.clazz;
 
-  binary_->type_ = determine_elf_class(*stream_);
+  switch (elf_target.clazz) {
+    case Header::CLASS::ELF32:
+      {
+        if (elf_target.arch == ARCH::X86_64) {
+          return parse_binary<details::ELF32_x32>();
+        }
 
-  switch (binary_->type_) {
-    case Header::CLASS::ELF32: return parse_binary<details::ELF32>();
+        if (elf_target.arch == ARCH::AARCH64) {
+          return parse_binary<details::ELF32_arm64>();
+        }
+
+        return parse_binary<details::ELF32>();
+      }
     case Header::CLASS::ELF64: return parse_binary<details::ELF64>();
     case Header::CLASS::NONE:
       {

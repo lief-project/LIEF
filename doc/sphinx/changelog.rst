@@ -123,6 +123,7 @@
   * If an ELF binary uses a custom page size, its value can be defined in the
     parser configuration: |lief-elf-parserconfig-page_size|.
   * Add support for SH4
+  * Add suport for x32/ILP32 ELF binaries (:issue:`1225`)
 
 :DWARF:
 
