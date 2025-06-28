@@ -17,12 +17,16 @@
 #include "VarEngine.hpp"
 #include "TypeEngine.hpp"
 
+#include "binaryninja/api_compat.hpp"
+
 #include "log.hpp"
 
 namespace bn = BinaryNinja;
 namespace dw = LIEF::dwarf::editor;
 
 namespace dwarf_plugin {
+
+using namespace binaryninja;
 
 dw::Variable* VarEngine::add_variable(const bn::DataVariable& var) {
   if (auto it = vars_.find(var.address); it != vars_.end()) {
@@ -50,7 +54,7 @@ dw::Variable* VarEngine::add_variable(const bn::DataVariable& var) {
   std::unique_ptr<dw::Variable> dw_var = unit_.create_variable(name);
 
   dw_var->set_addr(var.address);
-  dw_var->set_type(types_.add_type(var.type->GetTypeName(), *var.type));
+  dw_var->set_type(types_.add_type(var.type->GetTypeName(), api_compat::get_type(var.type)));
 
   if (is_external) {
     dw_var->set_external();

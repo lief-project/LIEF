@@ -20,12 +20,16 @@
 #include <LIEF/DWARF/editor/ArrayType.hpp>
 #include <LIEF/DWARF/editor/FunctionType.hpp>
 
+#include "binaryninja/api_compat.hpp"
+
 #include "log.hpp"
 
 namespace bn = BinaryNinja;
 namespace dw = LIEF::dwarf;
 
 namespace dwarf_plugin {
+
+using namespace binaryninja;
 
 std::string to_string(const bn::QualifiedName& name) {
   if (name.IsEmpty()) {
@@ -143,9 +147,9 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(
 
     case PointerTypeClass:
       {
-        bn::Ref<bn::Type> child = type.GetChildType();
+        auto child = type.GetChildType();
         BN_DEBUG("Adding {} as pointer", to_string(child->GetTypeName()));
-        dw::editor::Type& child_pointer = add_type(child->GetTypeName(), *child);
+        dw::editor::Type& child_pointer = add_type(child->GetTypeName(), api_compat::get_type(child));
         std::unique_ptr<dw::editor::PointerType> pointer = child_pointer.pointer_to();
         return *mapping_.insert(
           {type.GetObject(), std::move(pointer)}
@@ -182,9 +186,9 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(
 
         for (const bn::StructureMember& member : bn_struct->GetMembers()) {
           BN_DEBUG(" Adding {} to {}", member.name, name_str);
-          bn::Ref<bn::Type> member_type = member.type;
+          auto member_type = member.type;
           struct_type_ptr->add_member(member.name,
-              add_type(member_type->GetTypeName() , *member_type),
+              add_type(member_type->GetTypeName() , api_compat::get_type(member_type)),
               member.offset
           );
         }
@@ -250,10 +254,10 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(
       {
         std::string array_name = fmt::format("__array_{}__", ++array_id_);
         BN_DEBUG("Adding array {}", array_name);
-        bn::Ref<bn::Type> element_type = type.GetChildType();
-        if (element_type != nullptr) {
+        auto element_type = type.GetChildType();
+        if (api_compat::as_bool(element_type)) {
           dw::editor::Type& dw_element_type =
-            add_type(element_type->GetTypeName(), *element_type);
+            add_type(element_type->GetTypeName(), api_compat::get_type(element_type));
 
           std::unique_ptr<dw::editor::ArrayType> array =
             unit_.create_array(name_str, dw_element_type, type.GetElementCount());
@@ -292,16 +296,16 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(
                              name_str;
 
         BN_DEBUG("Adding {} as function type", func_type_name);
-        bn::Ref<bn::Type> ret_type = type.GetChildType();
+        auto ret_type = type.GetChildType();
         std::unique_ptr<dw::editor::FunctionType> func_type =
           unit_.create_function_type(func_type_name);
 
         if (!ret_type->IsVoid()) {
-          func_type->set_return_type(add_type(ret_type->GetTypeName(), *ret_type));
+          func_type->set_return_type(add_type(ret_type->GetTypeName(), api_compat::get_type(ret_type)));
         }
 
         for (const bn::FunctionParameter& p : type.GetParameters()) {
-          func_type->add_parameter(add_type(p.name, *p.type));
+          func_type->add_parameter(add_type(p.name, api_compat::get_type(p.type)));
         }
 
         return *mapping_.insert(

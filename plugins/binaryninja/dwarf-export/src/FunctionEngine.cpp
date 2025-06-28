@@ -16,6 +16,7 @@
 
 #include "FunctionEngine.hpp"
 #include "TypeEngine.hpp"
+#include "binaryninja/api_compat.hpp"
 
 #include "log.hpp"
 
@@ -23,6 +24,8 @@ namespace bn = BinaryNinja;
 namespace dw = LIEF::dwarf::editor;
 
 namespace dwarf_plugin {
+
+using namespace binaryninja;
 
 dw::Function* FunctionEngine::add_function(bn::Function& func) {
   bn::Ref<bn::Symbol> sym = func.GetSymbol();
@@ -47,14 +50,14 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
 
   auto ret_type = func.GetReturnType();
   if (!ret_type->IsVoid()) {
-    dw_func->set_return_type(types_.add_type(ret_type->GetTypeName(), *ret_type));
+    dw_func->set_return_type(types_.add_type(ret_type->GetTypeName(), api_compat::get_type(ret_type)));
   }
 
   std::vector<bn::FunctionParameter> parameters = func.GetType()->GetParameters();
   for (size_t i = 0; i < parameters.size(); ++i) {
     const bn::FunctionParameter& p = parameters[i];
     std::string name = p.name.empty() ? fmt::format("arg_{}", i) : p.name;
-    dw::Type& type = types_.add_type(p.type->GetTypeName(), *p.type);
+    dw::Type& type = types_.add_type(p.type->GetTypeName(), api_compat::get_type(p.type));
     dw_func->add_parameter(name, type);
   }
 
@@ -63,8 +66,8 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
       if (!info.autoDefined) {
         std::unique_ptr<dw::Variable> dw_var = dw_func->create_stack_variable(info.name);
         dw_var->set_stack_offset(std::abs(addr));
-        if (bn::Ref<bn::Type> var_type = info.type) {
-          dw::Type& dw_type = types_.add_type(var_type->GetTypeName(), *var_type);
+        if (auto var_type = info.type; api_compat::as_bool(var_type)) {
+          dw::Type& dw_type = types_.add_type(var_type->GetTypeName(), api_compat::get_type(var_type));
           dw_var->set_type(dw_type);
         }
       }
