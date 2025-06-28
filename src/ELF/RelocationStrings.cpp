@@ -188,6 +188,20 @@ const char* to_string<Relocation::R_BPF>(Relocation::TYPE type) {
   return "UNKNOWN";
 }
 
+template<>
+const char* to_string<Relocation::R_SH4>(Relocation::TYPE type) {
+  #define ENTRY(X) std::pair(Relocation::TYPE::X, #X)
+  STRING_MAP enums2str {
+    #include "LIEF/ELF/Relocations/SH4.def"
+  };
+  #undef ENTRY
+
+  if (auto it = enums2str.find(type); it != enums2str.end()) {
+    return it->second;
+  }
+  return "UNKNOWN";
+}
+
 const char* to_string(Relocation::TYPE type) {
   auto raw_type = static_cast<uint64_t>(type);
 
@@ -243,6 +257,10 @@ const char* to_string(Relocation::TYPE type) {
 
   if (ID == Relocation::R_BPF) {
     return to_string<Relocation::R_BPF>(type);
+  }
+
+  if (ID == Relocation::R_SH4) {
+    return to_string<Relocation::R_SH4>(type);
   }
 
   return "UNKNOWN";

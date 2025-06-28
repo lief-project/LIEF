@@ -122,6 +122,7 @@
     value of the flag
   * If an ELF binary uses a custom page size, its value can be defined in the
     parser configuration: |lief-elf-parserconfig-page_size|.
+  * Add support for SH4
 
 :DWARF:
 

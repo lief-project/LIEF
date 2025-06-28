@@ -321,6 +321,36 @@ void Binary::patch_relocations<ARCH::RISCV>(uint64_t from, uint64_t shift) {
   }
 }
 
+// ==================
+// SH4 Relocations
+// ==================
+template<>
+void Binary::patch_relocations<ARCH::SH>(uint64_t from, uint64_t shift) {
+  for (Relocation& relocation : relocations()) {
+    if (relocation.address() >= from) {
+      relocation.address(relocation.address() + shift);
+    }
+
+    const Relocation::TYPE type = relocation.type();
+    switch (type) {
+      case Relocation::TYPE::SH_RELATIVE:
+      case Relocation::TYPE::SH_GLOB_DAT:
+      case Relocation::TYPE::SH_DIR32:
+      case Relocation::TYPE::SH_REL32:
+      case Relocation::TYPE::SH_JMP_SLOT:
+        {
+          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
+          patch_addend<uint32_t>(relocation, from, shift);
+          break;
+        }
+      default:
+        {
+          LIEF_DEBUG("Relocation {} is not patched", to_string(type));
+        }
+    }
+  }
+}
+
 template<class T>
 void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift) {
   if (static_cast<uint64_t>(relocation.addend()) >= from) {

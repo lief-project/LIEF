@@ -833,6 +833,75 @@ int32_t get_R_RISCV(Relocation::TYPE R) {
   return it == SIZES.end() ? -1 : it->second;
 }
 
+
+int32_t get_R_SH4(Relocation::TYPE R) {
+  CONST_MAP_ALT SIZES {
+    std::pair(Relocation::TYPE::SH_NONE, 0 * 8),
+    std::pair(Relocation::TYPE::SH_DIR32, 4 * 8),
+    std::pair(Relocation::TYPE::SH_REL32, 4 * 8),
+    std::pair(Relocation::TYPE::SH_DIR8WPN, 2 * 8),
+    std::pair(Relocation::TYPE::SH_IND12W, 2 * 8),
+    std::pair(Relocation::TYPE::SH_DIR8WPL, 2 * 8),
+    std::pair(Relocation::TYPE::SH_DIR8WPZ, 2 * 8),
+    std::pair(Relocation::TYPE::SH_DIR8BP, 2 * 8),
+    std::pair(Relocation::TYPE::SH_DIR8W, 2 * 8),
+    std::pair(Relocation::TYPE::SH_DIR8L, 2 * 8),
+    std::pair(Relocation::TYPE::SH_LOOP_START, 2 * 8),
+    std::pair(Relocation::TYPE::SH_LOOP_END, 2 * 8),
+    std::pair(Relocation::TYPE::SH_GNU_VTINHERIT, 4 * 8),
+    std::pair(Relocation::TYPE::SH_GNU_VTENTRY, 4 * 8),
+    std::pair(Relocation::TYPE::SH_SWITCH8, 1 * 8),
+    std::pair(Relocation::TYPE::SH_SWITCH16, 2 * 8),
+    std::pair(Relocation::TYPE::SH_SWITCH32, 4 * 8),
+    std::pair(Relocation::TYPE::SH_USES, 2 * 8),
+    std::pair(Relocation::TYPE::SH_COUNT, 2 * 8),
+    std::pair(Relocation::TYPE::SH_ALIGN, 2 * 8),
+    std::pair(Relocation::TYPE::SH_CODE, 2 * 8),
+    std::pair(Relocation::TYPE::SH_DATA, 2 * 8),
+    std::pair(Relocation::TYPE::SH_LABEL, 2 * 8),
+    std::pair(Relocation::TYPE::SH_DIR16, 2 * 8),
+    std::pair(Relocation::TYPE::SH_DIR8, 1 * 8),
+    std::pair(Relocation::TYPE::SH_DIR8UL, 1 * 8),
+    std::pair(Relocation::TYPE::SH_DIR8UW, 1 * 8),
+    std::pair(Relocation::TYPE::SH_DIR8U, 1 * 8),
+    std::pair(Relocation::TYPE::SH_DIR8SW, 1 * 8),
+    std::pair(Relocation::TYPE::SH_DIR8S, 1 * 8),
+    std::pair(Relocation::TYPE::SH_DIR4UL, 1 * 8),
+    std::pair(Relocation::TYPE::SH_DIR4UW, 1 * 8),
+    std::pair(Relocation::TYPE::SH_DIR4U, 1 * 8),
+    std::pair(Relocation::TYPE::SH_PSHA, 2 * 8),
+    std::pair(Relocation::TYPE::SH_PSHL, 2 * 8),
+    std::pair(Relocation::TYPE::SH_DIR16S, 2 * 8),
+    std::pair(Relocation::TYPE::SH_TLS_GD_32, 4 * 8),
+    std::pair(Relocation::TYPE::SH_TLS_LD_32, 4 * 8),
+    std::pair(Relocation::TYPE::SH_TLS_LDO_32, 4 * 8),
+    std::pair(Relocation::TYPE::SH_TLS_IE_32, 4 * 8),
+    std::pair(Relocation::TYPE::SH_TLS_LE_32, 4 * 8),
+    std::pair(Relocation::TYPE::SH_TLS_DTPMOD32, 4 * 8),
+    std::pair(Relocation::TYPE::SH_TLS_DTPOFF32, 4 * 8),
+    std::pair(Relocation::TYPE::SH_TLS_TPOFF32, 4 * 8),
+    std::pair(Relocation::TYPE::SH_GOT32, 4 * 8),
+    std::pair(Relocation::TYPE::SH_PLT32, 4 * 8),
+    std::pair(Relocation::TYPE::SH_COPY, 4 * 8),
+    std::pair(Relocation::TYPE::SH_GLOB_DAT, 4 * 8),
+    std::pair(Relocation::TYPE::SH_JMP_SLOT, 4 * 8),
+    std::pair(Relocation::TYPE::SH_RELATIVE, 4 * 8),
+    std::pair(Relocation::TYPE::SH_GOTOFF, 4 * 8),
+    std::pair(Relocation::TYPE::SH_GOTPC, 4 * 8),
+    std::pair(Relocation::TYPE::SH_GOTPLT32, 4 * 8),
+    std::pair(Relocation::TYPE::SH_GOT20, 4 * 8),
+    std::pair(Relocation::TYPE::SH_GOTOFF20, 4 * 8),
+    std::pair(Relocation::TYPE::SH_GOTFUNCDESC, 4 * 8),
+    std::pair(Relocation::TYPE::SH_GOTFUNCDESC20, 4 * 8),
+    std::pair(Relocation::TYPE::SH_GOTOFFFUNCDESC, 4 * 8),
+    std::pair(Relocation::TYPE::SH_GOTOFFFUNCDESC20, 4 * 8),
+    std::pair(Relocation::TYPE::SH_FUNCDESC, 4 * 8),
+    std::pair(Relocation::TYPE::SH_FUNCDESC_VALUE, 4 * 8),
+  };
+  const auto it = SIZES.find(R);
+  return it == SIZES.end() ? -1 : it->second;
+}
+
 int32_t get_reloc_size(Relocation::TYPE type) {
   auto raw_type = static_cast<uint64_t>(type);
   const uint64_t ID = (raw_type >> Relocation::R_BIT) << Relocation::R_BIT;
@@ -863,6 +932,9 @@ int32_t get_reloc_size(Relocation::TYPE type) {
   }
   if (ID == Relocation::R_RISCV) {
     return get_R_RISCV(type);
+  }
+  if (ID == Relocation::R_SH4) {
+    return get_R_SH4(type);
   }
   return -1;
 }

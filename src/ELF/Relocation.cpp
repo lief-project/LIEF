@@ -61,6 +61,8 @@ Relocation::TYPE Relocation::type_from(uint32_t value, ARCH arch) {
       return TYPE(value | R_RISCV);
     case ARCH::BPF:
       return TYPE(value | R_BPF);
+    case ARCH::SH:
+      return TYPE(value | R_SH4);
     default:
       {
         if (ERR.insert(arch).second) {
@@ -143,6 +145,9 @@ Relocation::Relocation(uint64_t address, TYPE type, ENCODING encoding) :
     }
     else if (ID == Relocation::R_BPF) {
       architecture_ = ARCH::BPF;
+    }
+    else if (ID == Relocation::R_SH4) {
+      architecture_ = ARCH::SH;
     }
   }
 }
@@ -389,7 +394,6 @@ result<uint64_t> Relocation::resolve(uint64_t base_address) const {
       case TYPE::LARCH_SUB64:
         return (Q() - (S + A));
     /* } */
-
     default:
       break;
   }
