@@ -22,8 +22,16 @@ class ELF_SymbolVersion : private Mirror<LIEF::ELF::SymbolVersion> {
   using lief_t = LIEF::ELF::SymbolVersion;
   using Mirror::Mirror;
 
-  uint16_t value() const { return get().value();  }
+  auto value() const { return get().value();  }
+
   auto symbol_version_auxiliary() const {
     return details::try_unique<ELF_SymbolVersionAux>(get().symbol_version_auxiliary());
   }
+
+  auto drop_version(uint16_t value) {
+    get().drop_version(value);
+  }
+
+  auto as_local() { get().as_local(); }
+  auto as_global() { get().as_global(); }
 };

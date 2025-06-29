@@ -26,6 +26,25 @@ impl SymbolVersion<'_> {
     pub fn symbol_version_auxiliary(&self) -> Option<SymbolVersionAux> {
         into_optional(self.ptr.symbol_version_auxiliary())
     }
+
+    /// Drop the versioning requirement and replace the value (local/global)
+    pub fn drop_version(&mut self, value: u16) {
+        self.ptr.pin_mut().drop_version(value)
+    }
+
+    /// Redefine this version as local by dropping its auxiliary version
+    ///
+    /// See: [`SymbolVersion::as_global`], [`SymbolVersion::drop_version`]
+    pub fn as_local(&mut self) {
+        self.ptr.pin_mut().as_local()
+    }
+
+    /// Redefine this version as global by dropping its auxiliary version
+    ///
+    /// See: [`SymbolVersion::as_local`], [`SymbolVersion::drop_version`]
+    pub fn as_global(&mut self) {
+        self.ptr.pin_mut().as_global()
+    }
 }
 
 impl fmt::Debug for SymbolVersion<'_> {

@@ -17,6 +17,7 @@
 #define LIEF_ELF_SYMBOL_VERSION_H
 #include <ostream>
 #include <cstdint>
+#include <cassert>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
@@ -33,6 +34,9 @@ class LIEF_API SymbolVersion : public Object {
   friend class Parser;
 
   public:
+  static constexpr auto LOCAL_VERSION = 0;
+  static constexpr auto GLOBAL_VERSION = 1;
+
   SymbolVersion(uint16_t value) :
     value_(value)
   {}
@@ -40,12 +44,12 @@ class LIEF_API SymbolVersion : public Object {
 
   /// Generate a *local* SymbolVersion
   static SymbolVersion local() {
-    return SymbolVersion(0);
+    return SymbolVersion(LOCAL_VERSION);
   }
 
   /// Generate a *global* SymbolVersion
   static SymbolVersion global() {
-    return SymbolVersion(1);
+    return SymbolVersion(GLOBAL_VERSION);
   }
 
   ~SymbolVersion() override = default;
@@ -85,6 +89,30 @@ class LIEF_API SymbolVersion : public Object {
   /// On can add a new SymbolVersionAuxRequirement by using
   /// SymbolVersionRequirement::add_aux_requirement
   void symbol_version_auxiliary(SymbolVersionAuxRequirement& svauxr);
+
+  /// Drop the versioning requirement and replace the value (local/global)
+  void drop_version(uint16_t value) {
+    if (symbol_aux_ == nullptr) {
+      return;
+    }
+    assert(value == LOCAL_VERSION || value == GLOBAL_VERSION);
+    value_ = value;
+    symbol_aux_ = nullptr;
+  }
+
+  /// Redefine this version as global by dropping its auxiliary version
+  ///
+  /// \see as_local() drop_version()
+  void as_global() {
+    return drop_version(GLOBAL_VERSION);
+  }
+
+  /// Redefine this version as local by dropping its auxiliary version
+  ///
+  /// \see as_global() drop_version()
+  void as_local() {
+    return drop_version(LOCAL_VERSION);
+  }
 
   void value(uint16_t v) {
     value_ = v;

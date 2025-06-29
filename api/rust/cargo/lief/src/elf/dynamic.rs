@@ -1077,6 +1077,14 @@ impl Flags<'_> {
         DtFlags::from(self.ptr.flags())
     }
 
+    pub fn add_flag(&mut self, flag: DtFlags) {
+        self.ptr.pin_mut().add_flag(flag.into())
+    }
+
+    pub fn remove_flag(&mut self, flag: DtFlags) {
+        self.ptr.pin_mut().remove_flag(flag.into())
+    }
+
     pub fn create_dt_flag(value: u64) -> Self {
         Self::from_ffi(ffi::ELF_DynamicEntryFlags::create_dt_flag(value))
     }

@@ -22,8 +22,17 @@ class ELF_DynamicEntryFlags : public ELF_DynamicEntry {
   ELF_DynamicEntryFlags(const lief_t& impl) :
     ELF_DynamicEntry(impl.clone())
   {}
+
   auto flags() const {
     return impl().raw_flags();
+  }
+
+  void add_flag(uint64_t f) {
+    impl().add(lief_t::FLAG(f));
+  }
+
+  void remove_flag(uint64_t f) {
+    impl().remove(lief_t::FLAG(f));
   }
 
   static bool classof(const ELF_DynamicEntry& entry) {
@@ -40,4 +49,5 @@ class ELF_DynamicEntryFlags : public ELF_DynamicEntry {
 
   private:
   const lief_t& impl() const { return as<lief_t>(this); }
+  lief_t& impl() { return as<lief_t>(this); }
 };

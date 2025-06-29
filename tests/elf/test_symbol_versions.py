@@ -44,3 +44,20 @@ def test_issue_1014(tmp_path: Path):
     lib.write(out.as_posix())
     new_lib = lief.ELF.parse(out.as_posix())
     check_lib(new_lib)
+
+def test_remove_symbol(tmp_path: Path):
+    elf = lief.ELF.parse(get_sample('ELF/lib_symbol_versions.so'))
+
+    sym: lief.ELF.Symbol = elf.get_symbol("puts")
+
+    version: lief.ELF.SymbolVersion = sym.symbol_version
+    assert version is not None
+    assert str(version) == "GLIBC_2.2.5(4)"
+    version.as_global()
+
+    output = tmp_path / "lib_symbol_versions.so"
+
+    elf.write(output.as_posix())
+
+    new = lief.ELF.parse(output)
+    assert str(new.get_symbol("puts").symbol_version) == "* Global *"

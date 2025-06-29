@@ -16,6 +16,7 @@
 #ifndef LIEF_ELF_SYMBOL_VERSION_REQUIREMENTS_H
 #define LIEF_ELF_SYMBOL_VERSION_REQUIREMENTS_H
 
+#include <cstdint>
 #include <string>
 #include <ostream>
 #include <vector>
