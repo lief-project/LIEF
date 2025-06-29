@@ -14,7 +14,8 @@ from textwrap import dedent
 from subprocess import Popen
 from utils import (
     is_linux, glibc_version, get_sample,
-    has_private_samples, is_server_ci, ci_runner_arch
+    has_private_samples, is_server_ci, ci_runner_arch,
+    is_x86_64
 )
 
 SAMPLE_DIR = pathlib.Path(os.getenv("LIEF_SAMPLES_DIR", ""))
@@ -390,3 +391,23 @@ def test_issue_1175_missing_segment(tmp_path: Path):
     | 02 02 00 00 70 02 02 00 00 72 02 02 00 00 74 02  | ....p....r....t. |
     | 02 00 00 80 02 02 00 00                          | ........         |
     +---------------------------------------------------------------------+""")
+
+def test_ld_relocations(tmp_path: Path):
+    elf = lief.ELF.parse(get_sample("ELF/ld-linux-x32.so.2"))
+    elf.relocate_phdr_table()
+
+    config = lief.ELF.Builder.config_t()
+    config.force_relocate = True
+    output = tmp_path / "ld.so"
+    elf.write(output.as_posix(), config)
+    output.chmod(0o755)
+
+    new = lief.ELF.parse(output)
+    assert new.header.program_header_offset == 0x36000
+
+    if is_linux() and is_x86_64():
+        with Popen([output.as_posix(), "--version"], universal_newlines=True,
+                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
+            stdout = proc.stdout.read()
+            proc.poll()
+            assert "version 2.41" in stdout

@@ -2543,21 +2543,31 @@ uint64_t Binary::relocate_phdr_table_auto() {
     return phdr_reloc_info_.new_offset;
   }
 
+  const bool has_phdr_s = has(Segment::TYPE::PHDR);
+  const bool has_interp_s = has(Segment::TYPE::INTERP);
+  const bool is_dyn = header_.file_type() == Header::FILE_TYPE::DYN;
+  const bool is_exec = header_.file_type() == Header::FILE_TYPE::EXEC;
+  const bool has_ep = entrypoint() > 0;
+
   uint64_t offset = 0;
-  if (header_.file_type() == Header::FILE_TYPE::DYN) {
-    offset = relocate_phdr_table_pie();
-    if (offset == 0) {
-      LIEF_ERR("Can't relocated phdr table for this PIE binary");
-    } else {
+  if (is_dyn && (has_phdr_s || has_interp_s)) {
+    if (offset = relocate_phdr_table_pie(); offset > 0) {
+      return offset;
+    }
+    LIEF_ERR("Can't relocated phdr table for this PIE binary");
+  }
+
+  if (is_dyn && !(has_phdr_s || has_interp_s) && !has_ep) {
+    // See libm-ubuntu24.so
+    if (offset = relocate_phdr_table_pie(); offset > 0) {
       return offset;
     }
   }
 
   /* This is typically static binaries */
   const bool is_valid_for_v3 =
-    header_.file_type() == Header::FILE_TYPE::EXEC &&
-                           get(Segment::TYPE::PHDR)   == nullptr &&
-                           get(Segment::TYPE::INTERP) == nullptr;
+    (is_dyn || is_exec) && !has_phdr_s && !has_interp_s;
+
   if (is_valid_for_v3) {
     LIEF_DEBUG("Try v3 relocator");
     offset = relocate_phdr_table_v3();
