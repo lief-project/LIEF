@@ -411,3 +411,27 @@ def test_ld_relocations(tmp_path: Path):
             stdout = proc.stdout.read()
             proc.poll()
             assert "version 2.41" in stdout
+
+
+def test_s390x(tmp_path: Path):
+    elf = lief.ELF.parse(get_sample("ELF/s390x-linux-gnu-libc.so"))
+
+    r = elf.get_relocation("_dl_exception_create")
+    assert r.address == 0x1c5008
+    assert int.from_bytes(elf.get_content_from_virtual_address(r.address, 8), byteorder='big') == 0x2b07e
+
+    output = tmp_path / "s390x-linux-gnu-libc.so"
+
+    elf.relocate_phdr_table()
+
+    config = lief.ELF.Builder.config_t()
+    config.force_relocate = True
+
+    elf.write(output.as_posix(), config)
+    new = lief.ELF.parse(output)
+
+    r = new.get_relocation("_dl_exception_create")
+    assert r.address == 0x1c6008
+    assert int.from_bytes(elf.get_content_from_virtual_address(r.address, 8), byteorder='big') == 0x2c07e
+
+    assert new.dynamic_entries[18].flags == [lief.ELF.DynamicEntryFlags.FLAG.STATIC_TLS]

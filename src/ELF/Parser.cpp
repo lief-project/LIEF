@@ -310,6 +310,7 @@ ok_error_t Parser::init() {
     return make_error_code(lief_errors::parsing_error);
   }
 
+  binary_->should_swap_ = should_swap();
   binary_->original_size_ = stream_->size();
   binary_->pagesize_ = config_.page_size;
 

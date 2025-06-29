@@ -63,6 +63,8 @@ Relocation::TYPE Relocation::type_from(uint32_t value, ARCH arch) {
       return TYPE(value | R_BPF);
     case ARCH::SH:
       return TYPE(value | R_SH4);
+    case ARCH::S390:
+      return TYPE(value | R_SYSZ);
     default:
       {
         if (ERR.insert(arch).second) {
@@ -148,6 +150,9 @@ Relocation::Relocation(uint64_t address, TYPE type, ENCODING encoding) :
     }
     else if (ID == Relocation::R_SH4) {
       architecture_ = ARCH::SH;
+    }
+    else if (ID == Relocation::R_SYSZ) {
+      architecture_ = ARCH::S390;
     }
   }
 }
@@ -418,6 +423,12 @@ std::ostream& operator<<(std::ostream& os, const Relocation& entry) {
     if (symbol_name.empty()) {
       symbol_name = symbol->name();
     }
+  }
+  if (entry.size() == uint64_t(-1)) {
+    os << fmt::format("0x{:06x} {} 0x{:04x} 0x{:02x} {}",
+                      entry.address(), to_string(entry.type()),
+                      entry.addend(), entry.info(), symbol_name);
+    return os;
   }
 
   os << fmt::format("0x{:06x} {} ({}) 0x{:04x} 0x{:02x} {}",

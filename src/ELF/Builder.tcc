@@ -885,7 +885,7 @@ ok_error_t Builder::build_dynamic_section() {
   LIEF_DEBUG("[+] Building .dynamic");
 
   const auto& dynstr_map = static_cast<ExeLayout*>(layout_.get())->dynstr_map();
-  vector_iostream dynamic_table_raw;
+  vector_iostream dynamic_table_raw(should_swap());
   for (std::unique_ptr<DynamicEntry>& entry : binary_->dynamic_entries_) {
 
     switch (entry->tag()) {

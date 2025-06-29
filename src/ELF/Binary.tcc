@@ -257,6 +257,7 @@ void Binary::patch_relocations<ARCH::PPC>(uint64_t from, uint64_t shift) {
 
     switch (type) {
       case Relocation::TYPE::PPC_RELATIVE:
+      case Relocation::TYPE::PPC_JMP_SLOT:
         {
           LIEF_DEBUG("Patch addend of {}", to_string(relocation));
           patch_addend<uint32_t>(relocation, from, shift);
@@ -351,6 +352,68 @@ void Binary::patch_relocations<ARCH::SH>(uint64_t from, uint64_t shift) {
   }
 }
 
+// ==================
+// PPC64 Relocations
+// ==================
+template<>
+void Binary::patch_relocations<ARCH::PPC64>(uint64_t from, uint64_t shift) {
+  for (Relocation& relocation : relocations()) {
+    if (relocation.address() >= from) {
+      relocation.address(relocation.address() + shift);
+    }
+
+    const Relocation::TYPE type = relocation.type();
+    switch (type) {
+      case Relocation::TYPE::PPC64_JMP_SLOT:
+      case Relocation::TYPE::PPC64_RELATIVE:
+        {
+          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
+          patch_addend<uint64_t>(relocation, from, shift);
+          break;
+        }
+      default:
+        {
+          LIEF_DEBUG("Relocation {} is not patched", to_string(type));
+        }
+    }
+  }
+}
+
+// ==================
+// S390 Relocations
+// ==================
+template<>
+void Binary::patch_relocations<ARCH::S390>(uint64_t from, uint64_t shift) {
+
+  const bool is64 = this->type_ == Header::CLASS::ELF64;
+
+  for (Relocation& relocation : relocations()) {
+    if (relocation.address() >= from) {
+      relocation.address(relocation.address() + shift);
+    }
+
+    const Relocation::TYPE type = relocation.type();
+    switch (type) {
+      case Relocation::TYPE::SYSZ_JMP_SLOT:
+      case Relocation::TYPE::SYSZ_RELATIVE:
+      case Relocation::TYPE::SYSZ_IRELATIVE:
+      case Relocation::TYPE::SYSZ_GLOB_DAT:
+      case Relocation::TYPE::SYSZ_64:
+        {
+          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
+          is64 ? patch_addend<uint64_t>(relocation, from, shift) :
+                 patch_addend<uint32_t>(relocation, from, shift);
+          break;
+        }
+      default:
+        {
+          LIEF_DEBUG("Relocation {} is not patched", to_string(type));
+        }
+    }
+  }
+}
+
+
 template<class T>
 void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift) {
   if (static_cast<uint64_t>(relocation.addend()) >= from) {
@@ -384,11 +447,17 @@ void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift)
   }
 
   auto value = segment->get_content_value<T>(relative_offset);
+  if (should_swap()) {
+    swap_endian(&value);
+  }
 
   if (value >= from) {
     value += shift;
   }
 
+  if (should_swap()) {
+    swap_endian(&value);
+  }
   segment->set_content_value(relative_offset, value);
 }
 

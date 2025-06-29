@@ -195,6 +195,10 @@ class vector_iostream {
     endian_swap_ = swap;
   }
 
+  bool endian_swap() const {
+    return endian_swap_;
+  }
+
   template<class T>
   vector_iostream& reloc(uint64_t offset, T shift, RELOC_OP op = RELOC_OP::ADD) {
     static_assert(std::numeric_limits<T>::is_integer, "Requires integer type");

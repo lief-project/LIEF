@@ -53,7 +53,7 @@ size_t Layout::section_strtab_size() {
     return 0;
   }
 
-  vector_iostream raw_strtab;
+  vector_iostream raw_strtab(should_swap());
   raw_strtab.write<uint8_t>(0);
 
   size_t offset_counter = raw_strtab.tellp();
@@ -79,7 +79,7 @@ size_t Layout::section_shstr_size() {
     return raw_shstrtab_.size();
   }
 
-  vector_iostream raw_shstrtab;
+  vector_iostream raw_shstrtab(should_swap());
 
   // In the ELF format all the .str sections
   // start with a null entry.

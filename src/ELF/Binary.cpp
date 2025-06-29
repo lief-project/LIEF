@@ -1926,15 +1926,21 @@ void Binary::shift_relocations(uint64_t from, uint64_t shift) {
     case ARCH::PPC:
       patch_relocations<ARCH::PPC>(from, shift); return;
 
+    case ARCH::PPC64:
+      patch_relocations<ARCH::PPC64>(from, shift); return;
+
     case ARCH::RISCV:
       patch_relocations<ARCH::RISCV>(from, shift); return;
 
     case ARCH::SH:
       patch_relocations<ARCH::SH>(from, shift); return;
 
+    case ARCH::S390:
+      patch_relocations<ARCH::S390>(from, shift); return;
+
     default:
       {
-        LIEF_DEBUG("Relocations for architecture {} is not handled", to_string(arch));
+        LIEF_DEBUG("Relocations for architecture {} are not supported", to_string(arch));
       }
   }
 }

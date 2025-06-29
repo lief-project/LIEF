@@ -112,7 +112,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     }
 
     // Start with dynamic entries: NEEDED / SONAME etc
-    vector_iostream raw_dynstr;
+    vector_iostream raw_dynstr(should_swap());
     raw_dynstr.write<uint8_t>(0);
 
     std::vector<std::string> opt_list;
@@ -223,7 +223,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       return raw_notes_.size();
     }
 
-    vector_iostream raw_notes/*(should_swap())*/;
+    vector_iostream raw_notes(should_swap());
     for (const Note& note : binary_->notes()) {
       size_t pos = raw_notes.tellp();
       // First we have to write the length of the Note's name
@@ -339,7 +339,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       });
     Binary::it_dynamic_symbols dynamic_symbols = binary_->dynamic_symbols();
 
-    vector_iostream raw_gnuhash;
+    vector_iostream raw_gnuhash(should_swap());
     raw_gnuhash.reserve(
         4 * sizeof(uint32_t) +          // header
         maskwords * sizeof(uint) +    // bloom filters
@@ -594,7 +594,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     uint64_t offset = 0;
     uint64_t addend = 0;
 
-    vector_iostream ios;
+    vector_iostream ios(should_swap());
     ios.write('A')
        .write('P')
        .write('S')
@@ -706,7 +706,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     const size_t wordsize = sizeof(Elf_Addr);
     const size_t nbits = wordsize * 8 - 1;
 
-    vector_iostream raw_relr;
+    vector_iostream raw_relr(should_swap());
 
     for (size_t i = 0, e = relr_relocs.size(); i != e;) {
       raw_relr.write<Elf_Addr>(offsets[i]);

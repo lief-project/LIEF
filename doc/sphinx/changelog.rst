@@ -124,6 +124,8 @@
     parser configuration: |lief-elf-parserconfig-page_size|.
   * Add support for SH4
   * Add suport for x32/ILP32 ELF binaries (:issue:`1225`)
+  * Add support for S390x
+  * Better endianess support when writing back a binary.
 
 :DWARF:
 

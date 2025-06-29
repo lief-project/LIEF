@@ -1057,6 +1057,10 @@ class LIEF_API Binary : public LIEF::Binary {
     return get(type);
   }
 
+  bool should_swap() const {
+    return should_swap_;
+  }
+
   protected:
   struct phdr_relocation_info_t {
     uint64_t new_offset = 0;
@@ -1143,6 +1147,7 @@ class LIEF_API Binary : public LIEF::Binary {
   std::vector<uint8_t> overlay_;
   std::unique_ptr<sizing_info_t> sizing_info_;
   uint64_t pagesize_ = 0;
+  bool should_swap_ = false;
 };
 
 }

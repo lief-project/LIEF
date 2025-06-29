@@ -255,9 +255,6 @@ void Segment::set_content_value(size_t offset, T value) {
 
     if (offset + sizeof(T) > binary_content.size()) {
       datahandler_->reserve(node.offset(), offset + sizeof(T));
-
-      LIEF_INFO("You up to bytes in the segment {}@0x{:x} which is 0x{:x} wide",
-        offset + sizeof(T), to_string(type()), virtual_size(), binary_content.size());
     }
     physical_size(node.size());
     memcpy(binary_content.data() + node.offset() + offset, &value, sizeof(T));

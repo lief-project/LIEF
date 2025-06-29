@@ -47,13 +47,13 @@ Builder::Builder(Binary& binary) :
     case Header::FILE_TYPE::DYN:
     case Header::FILE_TYPE::EXEC:
       {
-        layout_ = std::make_unique<ExeLayout>(binary);
+        layout_ = std::make_unique<ExeLayout>(binary, should_swap());
         break;
       }
 
     case Header::FILE_TYPE::REL:
       {
-        layout_ = std::make_unique<ObjectFileLayout>(binary);
+        layout_ = std::make_unique<ObjectFileLayout>(binary, should_swap());
         break;
       }
 
