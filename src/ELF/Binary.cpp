@@ -926,7 +926,7 @@ uint64_t Binary::virtual_size() const {
       virtual_size = std::max(virtual_size, segment->virtual_address() + segment->virtual_size());
     }
   }
-  virtual_size = align(virtual_size, static_cast<uint64_t>(get_pagesize(*this)));
+  virtual_size = align(virtual_size, page_size());
   return virtual_size - imagebase();
 }
 
@@ -1120,7 +1120,7 @@ Segment* Binary::replace(const Segment& new_segment, const Segment& original_seg
   const uint64_t last_offset_segments = last_offset_segment();
   const uint64_t last_offset          = std::max<uint64_t>(last_offset_sections, last_offset_segments);
 
-  const auto psize = static_cast<uint64_t>(get_pagesize(*this));
+  const auto psize = page_size();
   const uint64_t last_offset_aligned = align(last_offset, psize);
   new_segment_ptr->file_offset(last_offset_aligned);
 
@@ -2696,7 +2696,7 @@ uint64_t Binary::relocate_phdr_table_v3() {
       last_off = std::max(last_off, segment->physical_size() + segment->file_offset());
     }
   }
-  uint64_t last_off_aligned = align(last_off, static_cast<uint64_t>(get_pagesize(*this)));
+  uint64_t last_off_aligned = align(last_off, page_size());
 
   if (phdr_reloc_info_.new_offset > 0) {
     return phdr_reloc_info_.new_offset;

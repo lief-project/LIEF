@@ -27,19 +27,34 @@
 #include "ELF/DataHandler/Handler.hpp"
 
 #include "internal_utils.hpp"
-#include "paging.hpp"
 
 namespace LIEF {
 namespace ELF {
 
-inline void init_alignment(Segment& segment, uintptr_t pagesize, uintptr_t ptrsz) {
+uint64_t default_segment_alignment(const Binary& bin) {
+  std::set<uint64_t> values;
+  for (const Segment& segment : bin.segments()) {
+    if (!segment.is_load()) {
+      continue;
+    }
+    values.insert(segment.alignment());
+  }
+
+  if (values.size() == 1) {
+    return *values.begin();
+  }
+
+  return bin.page_size();
+}
+
+inline void init_alignment(Binary& bin, Segment& segment, uintptr_t ptrsz) {
   if (segment.alignment() > 0) {
     return;
   }
 
   switch (segment.type()) {
     case Segment::TYPE::LOAD:
-      segment.alignment(pagesize);
+      segment.alignment(default_segment_alignment(bin));
       break;
     case Segment::TYPE::PHDR:
     case Segment::TYPE::DYNAMIC:
@@ -506,7 +521,7 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment, ui
 
   uint64_t last_offset = std::max<uint64_t>(last_offset_sections, last_offset_segments);
 
-  const auto psize = static_cast<uint64_t>(get_pagesize(*this));
+  const auto psize = page_size();
   const uint64_t last_offset_aligned = align(last_offset, psize);
   new_segment->file_offset(last_offset_aligned);
 
@@ -524,7 +539,7 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment, ui
   new_segment->virtual_size(segmentsize);
 
 
-  init_alignment(*new_segment, psize, this->ptr_size());
+  init_alignment(*this, *new_segment, this->ptr_size());
 
   new_segment->datahandler_ = datahandler_.get();
 
@@ -561,7 +576,7 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment, ui
 // =======================
 template<>
 Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment, uint64_t base) {
-  const auto psize = (uint64_t)get_pagesize(*this);
+  const auto psize = page_size();
   const auto ptr_size = this->ptr_size();
   /*const uint64_t new_phdr_offset = */ relocate_phdr_table_auto();
 
@@ -574,7 +589,7 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment, uin
                              DataHandler::Node::SEGMENT};
   datahandler_->add(new_node);
 
-  init_alignment(*new_segment, psize, ptr_size);
+  init_alignment(*this, *new_segment, ptr_size);
 
   const uint64_t last_offset_segments = last_offset_segment();
   const uint64_t last_offset          = last_offset_segments;
@@ -821,7 +836,7 @@ void Binary::fix_got_entries(uint64_t from, uint64_t shift) {
   span<const uint8_t> content = get_content_from_virtual_address(addr, 3 * sizeof(ptr_t));
   std::vector<uint8_t> content_vec(content.begin(), content.end());
   if (content.size() != 3 * sizeof(ptr_t)) {
-    LIEF_ERR("Cant't read got entries!");
+    LIEF_ERR("Can't read got entries!");
     return;
   }
 

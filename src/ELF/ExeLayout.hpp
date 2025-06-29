@@ -876,7 +876,6 @@ class LIEF_LOCAL ExeLayout : public Layout {
      *    .rela.plt
      *    .relr.dyn
      * Perm: READ ONLY
-     * Align: 0x1000
      */
     uint64_t read_segment = interp_size_ +  sysv_size_ + dynsym_size_ +
                             sver_size_ + sverd_size_ + sverr_size_ +
@@ -905,7 +904,6 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
     if (read_segment > 0) {
       Segment rsegment;
-      rsegment.alignment(0x1000);
       rsegment.type(Segment::TYPE::LOAD);
       rsegment.add(Segment::FLAGS::R);
       rsegment.content(std::vector<uint8_t>(read_segment));
@@ -928,14 +926,12 @@ class LIEF_LOCAL ExeLayout : public Layout {
      *  .got
      *  .got.plt
      * Perm: READ | WRITE
-     * Align: 0x1000
      */
     const uint64_t read_write_segment = init_size_ + preinit_size_ + fini_size_ + dynamic_size_ ;
 
     Segment* new_rwsegment = nullptr;
     Segment rwsegment;
     if (read_write_segment > 0) {
-      rwsegment.alignment(0x1000);
       rwsegment.type(Segment::TYPE::LOAD);
       rwsegment.add(Segment::FLAGS::R | Segment::FLAGS::W);
       rwsegment.content(std::vector<uint8_t>(read_write_segment));
