@@ -92,6 +92,36 @@ class LIEF_API SymbolVersionRequirement : public Object {
   /// Add a version auxiliary requirement to the existing list
   SymbolVersionAuxRequirement& add_aux_requirement(const SymbolVersionAuxRequirement& aux_requirement);
 
+  /// Try to find the SymbolVersionAuxRequirement with the given name (e.g. `GLIBC_2.27`)
+  const SymbolVersionAuxRequirement* find_aux(const std::string& name) const;
+
+  SymbolVersionAuxRequirement* find_aux(const std::string& name) {
+    return const_cast<SymbolVersionAuxRequirement*>(static_cast<const SymbolVersionRequirement*>(this)->find_aux(name));
+  }
+
+  /// Try to remove the auxiliary requirement symbol with the given name.
+  /// The function returns true if the operation succeed, false otherwise.
+  ///
+  /// \warning this function invalidates all the references (pointers) of
+  ///          SymbolVersionAuxRequirement. Therefore, the user is reponsible
+  ///          to ensure that the auxiliary requirement is no longer used in the
+  ///          ELF binary (e.g. in SymbolVersion)
+  bool remove_aux_requirement(const std::string& name) {
+    if (SymbolVersionAuxRequirement* aux = find_aux(name)) {
+      return remove_aux_requirement(*aux);
+    }
+    return false;
+  }
+
+  /// Try to remove the given auxiliary requirement symbol.
+  /// The function returns true if the operation succeed, false otherwise.
+  ///
+  /// \warning this function invalidates all the references (pointers) of
+  ///          SymbolVersionAuxRequirement. Therefore, the user is reponsible
+  ///          to ensure that the auxiliary requirement is no longer used in the
+  ///          ELF binary (e.g. in SymbolVersion)
+  bool remove_aux_requirement(SymbolVersionAuxRequirement& aux);
+
   void accept(Visitor& visitor) const override;
 
   LIEF_API friend

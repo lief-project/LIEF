@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_ELF_SYMBOL_VERSION_DEFINITION_H
 #define LIEF_ELF_SYMBOL_VERSION_DEFINITION_H
+#include <cstdint>
 #include <ostream>
 #include <memory>
 

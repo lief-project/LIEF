@@ -24,10 +24,6 @@ class ELF_SymbolVersionRequirement : private Mirror<LIEF::ELF::SymbolVersionRequ
   using lief_t = LIEF::ELF::SymbolVersionRequirement;
   using Mirror::Mirror;
 
-  uint16_t version() const { return get().version(); }
-  uint32_t cnt() const { return get().cnt(); }
-  std::string name() const { return get().name(); }
-
   class it_auxiliary_symbols :
       public Iterator<ELF_SymbolVersionAuxRequirement, LIEF::ELF::SymbolVersionRequirement::it_const_aux_requirement>
   {
@@ -38,7 +34,28 @@ class ELF_SymbolVersionRequirement : private Mirror<LIEF::ELF::SymbolVersionRequ
     auto size() const { return Iterator::size(); }
   };
 
+  auto version() const { return get().version(); }
+  uint32_t cnt() const { return get().cnt(); }
+  std::string name() const { return get().name(); }
+
   auto auxiliary_symbols() const {
     return std::make_unique<it_auxiliary_symbols>(get());
   }
+
+  auto set_version(uint16_t version) {
+    get().version(version);
+  }
+
+  auto set_name(std::string name) {
+    get().name(name);
+  }
+
+  auto find_aux(std::string name) const {
+    return details::try_unique<ELF_SymbolVersionAuxRequirement>(get().find_aux(name));
+  }
+
+  auto remove_aux_requirement_by_name(std::string name) {
+    return get().remove_aux_requirement(name);
+  }
+
 };

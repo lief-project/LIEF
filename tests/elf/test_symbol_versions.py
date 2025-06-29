@@ -1,9 +1,11 @@
 import pytest
+import subprocess
 
 import lief
 from pathlib import Path
+from subprocess import Popen
 
-from utils import get_sample
+from utils import get_sample, is_linux, is_x86_64
 
 def test_issue_749():
     lib_path = get_sample('ELF/lib_symbol_versions.so')
@@ -61,3 +63,34 @@ def test_remove_symbol(tmp_path: Path):
 
     new = lief.ELF.parse(output)
     assert str(new.get_symbol("puts").symbol_version) == "* Global *"
+
+def test_remove_all_version(tmp_path: Path):
+    elf = lief.ELF.parse(get_sample("ELF/ELF64_x86-64_binary_all.bin"))
+    to_delete = set()
+    for s in elf.symbols:
+        version = s.symbol_version
+        if version is None:
+            continue
+        aux = version.symbol_version_auxiliary
+        if aux is None or not aux.name.startswith("GLIBC_"):
+            continue
+
+        to_delete.add(aux.name)
+        version.as_global()
+
+    for req in elf.symbols_version_requirement:
+        for version in to_delete:
+            req.remove_aux_requirement(version)
+
+    out = tmp_path / "out.elf"
+    elf.write(out.as_posix())
+    new = lief.ELF.parse(out)
+    assert new.get_symbol("__libc_start_main").symbol_version.symbol_version_auxiliary is None
+    out.chmod(0o755)
+
+    if is_linux() and is_x86_64():
+        with Popen([out.as_posix()], universal_newlines=True,
+                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
+            stdout = proc.stdout.read()
+            proc.poll()
+            assert "Hello World: 1" in stdout

@@ -59,6 +59,38 @@ SymbolVersionAuxRequirement& SymbolVersionRequirement::add_aux_requirement(const
   return *aux_requirements_.back();
 }
 
+
+bool SymbolVersionRequirement::remove_aux_requirement(SymbolVersionAuxRequirement& aux) {
+  auto it = std::find_if(aux_requirements_.begin(), aux_requirements_.end(),
+      [&aux] (const std::unique_ptr<SymbolVersionAuxRequirement>& element) {
+        return &aux == element.get();
+      }
+  );
+
+  if (it == aux_requirements_.end()) {
+    return false;
+  }
+
+  aux_requirements_.erase(it);
+  return true;
+}
+
+const SymbolVersionAuxRequirement*
+  SymbolVersionRequirement::find_aux(const std::string& name) const
+{
+  auto it = std::find_if(aux_requirements_.begin(), aux_requirements_.end(),
+      [&name] (const std::unique_ptr<SymbolVersionAuxRequirement>& aux) {
+        return aux->name() == name;
+      }
+  );
+
+  if (it == aux_requirements_.end()) {
+    return nullptr;
+  }
+
+  return it->get();
+}
+
 void SymbolVersionRequirement::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }

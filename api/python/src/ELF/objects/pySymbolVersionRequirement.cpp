@@ -56,6 +56,39 @@ void create<SymbolVersionRequirement>(nb::module_& m) {
         static_cast<SymbolVersionAuxRequirement& (SymbolVersionRequirement::*)(const SymbolVersionAuxRequirement&)>(&SymbolVersionRequirement::add_aux_requirement),
         "Add an auxiliary version requirement to the existing entries"_doc)
 
+    .def("find_aux", nb::overload_cast<const std::string&>(&SymbolVersionRequirement::find_aux),
+        R"doc(
+        Try to find the :class:`~.SymbolVersionAuxRequirement` with the given name
+        (e.g. ``GLIBC_2.27``)
+        )doc"_doc,
+        nb::rv_policy::reference_internal, "name"_a)
+
+    .def("remove_aux_requirement", nb::overload_cast<const std::string&>(&SymbolVersionRequirement::remove_aux_requirement),
+        R"doc(
+        Try to remove the auxiliary requirement symbol with the given name.
+        The function returns true if the operation succeed, false otherwise.
+
+        .. warning::
+
+            This function invalidates all the references (pointers) of
+            :class:`~.SymbolVersionAuxRequirement`. Therefore, the user is reponsible
+            to ensure that the auxiliary requirement is no longer used in the
+            ELF binary (e.g. in :class:`~.SymbolVersion`)
+        )doc"_doc, "name"_a)
+
+    .def("remove_aux_requirement", nb::overload_cast<SymbolVersionAuxRequirement&>(&SymbolVersionRequirement::remove_aux_requirement),
+        R"doc(
+        Try to remove the given auxiliary requirement symbol.
+        The function returns true if the operation succeed, false otherwise.
+
+        .. warning::
+
+            This function invalidates all the references (pointers) of
+            :class:`~.SymbolVersionAuxRequirement`. Therefore, the user is reponsible
+            to ensure that the auxiliary requirement is no longer used in the
+            ELF binary (e.g. in :class:`~.SymbolVersion`)
+        )doc"_doc, "aux"_a)
+
     LIEF_DEFAULT_STR(SymbolVersionRequirement);
 }
 
