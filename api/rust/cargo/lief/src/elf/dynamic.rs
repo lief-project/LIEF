@@ -545,6 +545,13 @@ pub trait DynamicEntry {
     }
 }
 
+
+impl std::fmt::Display for &dyn DynamicEntry {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.as_base().to_string())
+    }
+}
+
 impl DynamicEntry for Entries<'_> {
     fn as_base(&self) -> &ffi::ELF_DynamicEntry {
         match &self {

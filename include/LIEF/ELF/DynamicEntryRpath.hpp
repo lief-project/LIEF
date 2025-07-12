@@ -26,7 +26,7 @@ namespace LIEF {
 namespace ELF {
 
 /// Class which represents a ``DT_RPATH`` entry. This attribute is
-/// deprecated (cf. ``man ld``) in favour of ``DT_RUNPATH`` (See DynamicEntryRunPath)
+/// deprecated (cf. ``man ld``) in favor of ``DT_RUNPATH`` (See DynamicEntryRunPath)
 class LIEF_API DynamicEntryRpath : public DynamicEntry {
   public:
   static constexpr char delimiter = ':';

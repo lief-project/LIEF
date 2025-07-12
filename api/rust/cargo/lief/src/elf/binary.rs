@@ -6,12 +6,12 @@ use num_traits::{cast, Num};
 
 use lief_ffi as ffi;
 
-use super::parser_config::Config as ParserConfig;
 use super::builder::Config;
 use super::dynamic::{self, DynamicEntries, Library};
 use super::hash::{Gnu, Sysv};
 use super::header::Header;
 use super::note::ItNotes;
+use super::parser_config::Config as ParserConfig;
 use super::relocation::{
     DynamicRelocations, ObjectRelocations, PltGotRelocations, Relocation, Relocations,
 };
@@ -20,6 +20,7 @@ use super::segment::{self, Segments};
 use super::symbol::{DynamicSymbols, ExportedSymbols, ImportedSymbols, SymtabSymbols};
 use super::symbol_versioning::{SymbolVersion, SymbolVersionDefinition, SymbolVersionRequirement};
 use super::{Segment, Symbol};
+use crate::elf::dynamic::DynamicEntry;
 use crate::Error;
 
 use crate::common::{into_optional, FromFFI};
@@ -78,7 +79,6 @@ impl Binary {
         Some(Binary::from_ffi(bin))
     }
 
-
     /// Parse from a string file path and with a provided configuration
     pub fn parse_with_config(path: &str, config: &ParserConfig) -> Option<Self> {
         let ffi_config = config.to_ffi();
@@ -132,12 +132,20 @@ impl Binary {
 
     /// Remove **all** dynamic entries with the given tag
     pub fn remove_dynamic_entries_by_tag(&mut self, tag: dynamic::Tag) {
-        self.ptr.as_mut().unwrap().remove_dynamic_entries_by_tag(tag.into())
+        self.ptr
+            .as_mut()
+            .unwrap()
+            .remove_dynamic_entries_by_tag(tag.into())
     }
 
     /// Add the given dynamic entry and return the new entry
     pub fn add_dynamic_entry(&mut self, entry: &dyn dynamic::DynamicEntry) -> dynamic::Entries {
-        dynamic::Entries::from_ffi(self.ptr.as_mut().unwrap().add_dynamic_entry(entry.as_base()))
+        dynamic::Entries::from_ffi(
+            self.ptr
+                .as_mut()
+                .unwrap()
+                .add_dynamic_entry(entry.as_base()),
+        )
     }
 
     /// Return an iterator over the dynamic [`crate::elf::Symbol`] of the binary
@@ -373,6 +381,28 @@ impl Binary {
         self.ptr.pin_mut().remove_dynamic_entry(entry.as_base());
     }
 
+    /// Remove the dynamic entries matching the given predicate.
+    ///
+    /// The function returns the number of entries that have been deleted.
+    pub fn remove_dynamic_entry_if<P>(&mut self, predicate: P) -> usize
+    where
+        P: Fn(&dynamic::Entries) -> bool,
+    {
+        let entries = self.dynamic_entries()
+            .filter(predicate)
+            .map(|e| e.as_base().raw_ptr() )
+            .collect::<Vec<_>>();
+
+        let cnt = entries.len();
+
+        for ffi_entry in entries {
+            unsafe {
+                self.ptr.pin_mut().remove_dynamic_entry_from_ptr(ffi_entry);
+            }
+        }
+        cnt
+    }
+
     /// Remove the `DT_NEEDED` dependency with the given name
     pub fn remove_library(&mut self, name: &str) {
         self.ptr.pin_mut().remove_library(name.to_string());
@@ -381,7 +411,11 @@ impl Binary {
     /// Add the provided segment to the binary. This function returns the
     /// newly added segment which could define additional attributes like the virtual address.
     pub fn add_segment(&mut self, segment: &Segment) -> Option<Segment> {
-        into_optional(self.ptr.pin_mut().add_segment(segment.ptr.as_ref().unwrap()))
+        into_optional(
+            self.ptr
+                .pin_mut()
+                .add_segment(segment.ptr.as_ref().unwrap()),
+        )
     }
 
     /// Change the path to the interpreter
@@ -404,13 +438,17 @@ impl Binary {
     /// library name.
     /// </div>
     pub fn remove_version_requirement(&mut self, libname: &str) -> bool {
-        self.ptr.pin_mut().remove_version_requirement(libname.to_string())
+        self.ptr
+            .pin_mut()
+            .remove_version_requirement(libname.to_string())
     }
 
     /// Remove the given segment. If `clear` is set, the original content of the
     /// segment will be filled with zeros before removal.
     pub fn remove_segment(&mut self, segment: Segment, clear: bool) {
-        self.ptr.pin_mut().remove_segment(segment.ptr.as_ref().unwrap(), clear)
+        self.ptr
+            .pin_mut()
+            .remove_segment(segment.ptr.as_ref().unwrap(), clear)
     }
 
     /// Remove all segments associated with the given type.

@@ -265,6 +265,8 @@ class LIEF_API DynamicEntry : public Object {
 
   virtual std::ostream& print(std::ostream& os) const;
 
+  std::string to_string() const;
+
   LIEF_API friend
   std::ostream& operator<<(std::ostream& os, const DynamicEntry& entry) {
     return entry.print(os);

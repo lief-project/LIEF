@@ -25,7 +25,7 @@
 namespace LIEF {
 namespace ELF {
 
-/// Class that represents a ``DT_RUNPATH`` wich is used by the loader
+/// Class that represents a ``DT_RUNPATH`` which is used by the loader
 /// to resolve libraries (DynamicEntryLibrary).
 class LIEF_API DynamicEntryRunPath : public DynamicEntry {
 

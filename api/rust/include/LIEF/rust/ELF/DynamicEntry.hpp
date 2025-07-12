@@ -42,5 +42,12 @@ class ELF_DynamicEntry : public Mirror<LIEF::ELF::DynamicEntry> {
     get().value(value);
   }
 
+  std::string to_string() const {
+    return get().to_string();
+  }
+
+  const void* raw_ptr() const {
+    return &get();
+  }
 
 };

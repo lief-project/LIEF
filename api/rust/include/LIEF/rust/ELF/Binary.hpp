@@ -303,6 +303,10 @@ class ELF_Binary : public AbstractBinary {
     impl().remove(entry.get());
   }
 
+  void remove_dynamic_entry_from_ptr(const void* ptr) {
+    impl().remove(*reinterpret_cast<const LIEF::ELF::DynamicEntry*>(ptr));
+  }
+
   auto add_dynamic_entry(const ELF_DynamicEntry& entry) {
      return std::make_unique<ELF_DynamicEntry>(impl().add(entry.get()));
   }

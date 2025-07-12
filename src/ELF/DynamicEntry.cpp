@@ -76,7 +76,7 @@ DynamicEntry::TAG DynamicEntry::from_value(uint64_t value, ARCH arch) {
 
       default:
         LIEF_WARN("Dynamic tag: 0x{:04x} is not supported for the "
-                  "current architecture ({})", value, to_string(arch));
+                  "current architecture ({})", value, ELF::to_string(arch));
         return TAG::UNKNOWN;
     }
   }
@@ -167,8 +167,14 @@ void DynamicEntry::accept(Visitor& visitor) const {
 }
 
 std::ostream& DynamicEntry::print(std::ostream& os) const {
-  os << fmt::format("{:<20}: 0x{:06x} ", to_string(tag()), value());
+  os << fmt::format("{:<20}: 0x{:06x} ", ELF::to_string(tag()), value());
   return os;
+}
+
+std::string DynamicEntry::to_string() const {
+  std::ostringstream oss;
+  print(oss);
+  return oss.str();
 }
 
 const char* to_string(DynamicEntry::TAG tag) {

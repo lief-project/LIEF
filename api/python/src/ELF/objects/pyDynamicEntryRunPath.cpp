@@ -32,7 +32,7 @@ template<>
 void create<DynamicEntryRunPath>(nb::module_& m) {
   nb::class_<DynamicEntryRunPath, DynamicEntry>(m, "DynamicEntryRunPath",
       R"delim(
-      Class that represents a ``DT_RUNPATH`` wich is used by the loader
+      Class that represents a ``DT_RUNPATH`` which is used by the loader
       to resolve libraries (:class:`~lief.ELF.DynamicEntryLibrary`).
       )delim"_doc)
 

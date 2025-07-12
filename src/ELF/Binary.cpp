@@ -151,29 +151,25 @@ Note& Binary::add(const Note& note) {
   return *notes_.back();
 }
 
-
 void Binary::remove(const DynamicEntry& entry) {
   const auto it_entry = std::find_if(std::begin(dynamic_entries_), std::end(dynamic_entries_),
       [&entry] (const std::unique_ptr<DynamicEntry>& e) {
-        return *e == entry;
+        return e.get() == &entry;
       });
 
   if (it_entry == std::end(dynamic_entries_)) {
-    LIEF_WARN("Can't find {} in the dynamic table. This entry can't be removed", to_string(entry));
+    LIEF_WARN("Can't find {} in the dynamic table. This entry can't be removed",
+              to_string(entry));
     return;
   }
   dynamic_entries_.erase(it_entry);
 }
 
-
 void Binary::remove(DynamicEntry::TAG tag) {
-  for (auto it = std::begin(dynamic_entries_); it != std::end(dynamic_entries_);) {
-    if ((*it)->tag() == tag) {
-      it = dynamic_entries_.erase(it);
-    } else {
-      ++it;
-    }
-  }
+  dynamic_entries_.erase(
+      std::remove_if(dynamic_entries_.begin(), dynamic_entries_.end(),
+        [tag] (const std::unique_ptr<DynamicEntry>& E) { return E->tag() == tag; }
+      ), dynamic_entries_.end());
 }
 
 void Binary::remove(const Section& section, bool clear) {
