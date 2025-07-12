@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.24)
 
 project(lief-rust-ffi)
 
+option(INSTALL_LIEF_CORE "Whether the libLIEF library should be installed along with lief-sys" ON)
+
 if (NOT DEFINED LIEF_RUST_FFI_SRC)
   message(FATAL_ERROR "'LIEF_RUST_FFI_SRC' is not set")
 endif()
@@ -17,6 +19,7 @@ set_target_properties(lief-sys PROPERTIES
   CXX_STANDARD_REQUIRED        ON
   CXX_VISIBILITY_PRESET        hidden
   C_VISIBILITY_PRESET          hidden
+  OUTPUT_NAME                  "lief-sys"
 )
 
 target_compile_options(lief-sys PRIVATE
@@ -33,7 +36,9 @@ install(TARGETS lief-sys
         RUNTIME DESTINATION lib/
 )
 
-install(FILES ${LIEF_LIB_LOCATION} DESTINATION lib/)
+if (INSTALL_LIEF_CORE)
+  install(FILES ${LIEF_LIB_LOCATION} DESTINATION lib/)
+endif()
 
 install(DIRECTORY ${LIEF_RUST_FFI_SRC}/rs/
         DESTINATION rs/)
