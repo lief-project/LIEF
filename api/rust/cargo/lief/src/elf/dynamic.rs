@@ -852,7 +852,7 @@ impl Rpath<'_> {
 
     /// Change the rpath value with the given slice
     pub fn set_rpath_with_value(&mut self, values: &[&str]) {
-        self.ptr.pin_mut().set_rpath(&values.join(":"));
+        self.ptr.pin_mut().set_rpath(values.join(":"));
     }
 
     /// The specified paths as a list of string
@@ -962,7 +962,7 @@ impl RunPath<'_> {
 
     /// Change the runpath value with the given slice
     pub fn set_runpath_with_value(&mut self, values: &[&str]) {
-        self.ptr.pin_mut().set_runpath(&values.join(":"));
+        self.ptr.pin_mut().set_runpath(values.join(":"));
     }
 
     /// Insert a `path` at the given `position`

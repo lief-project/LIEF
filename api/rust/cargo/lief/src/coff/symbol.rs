@@ -290,14 +290,14 @@ impl Symbol<'_> {
     /// into the section table. Some values have special meaning:
     ///
     /// * 0: The symbol record is not yet assigned a section. A value of zero
-    ///      indicates that a reference to an external symbol is defined elsewhere.
-    ///      A value of non-zero is a common symbol with a size that is specified
-    ///      by the value.
+    ///   indicates that a reference to an external symbol is defined elsewhere.
+    ///   A value of non-zero is a common symbol with a size that is specified
+    ///   by the value.
     /// * -1: The symbol has an absolute (non-relocatable) value and is not an
-    ///       address.
+    ///   address.
     /// * -2: The symbol provides general type or debugging information but does
-    ///       not correspond to a section. Microsoft tools use this setting along
-    ///       with `.file` records
+    ///   not correspond to a section. Microsoft tools use this setting along
+    ///   with `.file` records
     pub fn section_idx(&self) -> i16 {
         self.ptr.section_idx()
     }

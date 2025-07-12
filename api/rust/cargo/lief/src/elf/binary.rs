@@ -291,7 +291,7 @@ impl Binary {
                 ffi::AbstractBinary::get_u8,
                 self.ptr.as_ref().unwrap().as_ref(),
                 |value| {
-                    T::from_u8(value).expect(format!("Can't cast value: {}", value).as_str())
+                    T::from_u8(value).unwrap_or_else(|| panic!("Can't cast value: {value}"))
                 },
                 addr
             );
@@ -302,7 +302,7 @@ impl Binary {
                 ffi::AbstractBinary::get_u16,
                 self.ptr.as_ref().unwrap().as_ref(),
                 |value| {
-                    T::from_u16(value).expect(format!("Can't cast value: {}", value).as_str())
+                    T::from_u16(value).unwrap_or_else(|| panic!("Can't cast value: {value}"))
                 },
                 addr
             );
@@ -313,7 +313,7 @@ impl Binary {
                 ffi::AbstractBinary::get_u32,
                 self.ptr.as_ref().unwrap().as_ref(),
                 |value| {
-                    T::from_u32(value).expect(format!("Can't cast value: {}", value).as_str())
+                    T::from_u32(value).unwrap_or_else(|| panic!("Can't cast value: {value}"))
                 },
                 addr
             );
@@ -324,7 +324,7 @@ impl Binary {
                 ffi::AbstractBinary::get_u64,
                 self.ptr.as_ref().unwrap().as_ref(),
                 |value| {
-                    T::from_u64(value).expect(format!("Can't cast value: {}", value).as_str())
+                    T::from_u64(value).unwrap_or_else(|| panic!("Can't cast value: {value}"))
                 },
                 addr
             );
@@ -387,6 +387,24 @@ impl Binary {
     /// Change the path to the interpreter
     pub fn set_interpreter(&mut self, interpreter: &str) {
         self.ptr.pin_mut().set_interpreter(interpreter.to_string());
+    }
+
+    /// Try to find the SymbolVersionRequirement associated with the given library
+    /// name (e.g. `libc.so.6`)
+    pub fn find_version_requirement(&self, libname: &str) -> Option<SymbolVersionRequirement> {
+        into_optional(self.ptr.find_version_requirement(libname.to_string()))
+    }
+
+    /// Deletes all required symbol versions linked to the specified library name.
+    /// The function returns true if the operation succeed, false otherwise.
+    ///
+    /// <div class='warning'>
+    /// To maintain consistency, this function also removes versions
+    /// associated with dynamic symbols that are linked to the specified
+    /// library name.
+    /// </div>
+    pub fn remove_version_requirement(&mut self, libname: &str) -> bool {
+        self.ptr.pin_mut().remove_version_requirement(libname.to_string())
     }
 }
 

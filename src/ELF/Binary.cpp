@@ -932,11 +932,10 @@ uint64_t Binary::virtual_size() const {
 
 
 std::vector<uint8_t> Binary::raw() {
-  Builder builder{*this};
+  Builder builder{*this, Builder::config_t{}};
   builder.build();
   return builder.get_build();
 }
-
 
 result<uint64_t> Binary::get_function_address(const std::string& func_name) const {
   if (auto res = get_function_address(func_name, /* demangle */true)) {
@@ -1627,29 +1626,14 @@ bool Binary::has_interpreter() const {
   return it_segment_interp != std::end(segments_) && !interpreter_.empty();
 }
 
-void Binary::write(const std::string& filename) {
-  Builder builder{*this};
-  builder.build();
-  builder.write(filename);
-}
-
-
 void Binary::write(const std::string& filename, Builder::config_t config) {
-  Builder builder{*this};
-  builder.set_config(config);
+  Builder builder{*this, config};
   builder.build();
   builder.write(filename);
-}
-
-void Binary::write(std::ostream& os) {
-  Builder builder{*this};
-  builder.build();
-  builder.write(os);
 }
 
 void Binary::write(std::ostream& os, Builder::config_t config) {
-  Builder builder{*this};
-  builder.set_config(config);
+  Builder builder{*this, config};
   builder.build();
   builder.write(os);
 }
@@ -3203,6 +3187,63 @@ uint64_t Binary::page_size() const {
     return pagesize_;
   }
   return LIEF::Binary::page_size();
+}
+
+const SymbolVersionRequirement* Binary::find_version_requirement(const std::string& libname) const {
+  auto it = std::find_if(
+      symbol_version_requirements_.begin(), symbol_version_requirements_.end(),
+      [&libname] (const std::unique_ptr<SymbolVersionRequirement>& symver) {
+        return symver->name() == libname;
+      }
+  );
+
+  if (it == symbol_version_requirements_.end()) {
+    return nullptr;
+  }
+
+  return (*it).get();
+}
+
+bool Binary::remove_version_requirement(const std::string& libname) {
+  auto it = std::find_if(
+      symbol_version_requirements_.begin(), symbol_version_requirements_.end(),
+      [&libname] (const std::unique_ptr<SymbolVersionRequirement>& symver) {
+        return symver->name() == libname;
+      }
+  );
+
+  if (it == symbol_version_requirements_.end()) {
+    return false;
+  }
+  std::set<std::string> versions;
+
+  SymbolVersionRequirement* sym_ver_req = it->get();
+  auto aux = sym_ver_req->auxiliary_symbols();
+  std::transform(aux.begin(), aux.end(), std::inserter(versions, versions.begin()),
+    [] (const SymbolVersionAuxRequirement& req) {
+      return req.name();
+    }
+  );
+
+  for (Symbol& sym : dynamic_symbols()) {
+    SymbolVersion* symver = sym.symbol_version();
+    if (symver == nullptr) {
+      continue;
+    }
+
+    if (const SymbolVersionAux* vers = symver->symbol_version_auxiliary();
+        vers != nullptr && versions.count(vers->name()))
+    {
+      symver->as_global();
+    }
+  }
+
+  symbol_version_requirements_.erase(it);
+  if (DynamicEntry* dt = get(DynamicEntry::TAG::VERNEEDNUM)) {
+    dt->value(symbol_version_requirements_.size());
+  }
+
+  return true;
 }
 
 std::ostream& Binary::print(std::ostream& os) const {

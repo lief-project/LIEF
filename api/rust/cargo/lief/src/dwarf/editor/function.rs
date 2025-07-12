@@ -26,6 +26,7 @@ pub struct Range {
 
 
 /// This structure represents a parameter of the current function (`DW_TAG_formal_parameter`)
+#[allow(dead_code)]
 pub struct Parameter {
     ptr: cxx::UniquePtr<ffi::DWARF_editor_Function_Parameter>,
 }
@@ -39,6 +40,7 @@ impl FromFFI<ffi::DWARF_editor_Function_Parameter> for Parameter {
 }
 
 /// This structure mirrors the `DW_TAG_lexical_block` DWARF tag
+#[allow(dead_code)]
 pub struct LexicalBlock {
     ptr: cxx::UniquePtr<ffi::DWARF_editor_Function_LexicalBlock>,
 }
@@ -52,6 +54,7 @@ impl FromFFI<ffi::DWARF_editor_Function_LexicalBlock> for LexicalBlock {
 }
 
 /// This class mirrors the `DW_TAG_label` DWARF tag
+#[allow(dead_code)]
 pub struct Label {
     ptr: cxx::UniquePtr<ffi::DWARF_editor_Function_Label>,
 }

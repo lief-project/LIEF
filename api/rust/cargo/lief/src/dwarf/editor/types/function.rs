@@ -36,6 +36,7 @@ impl Function {
 }
 
 /// This structure represents a function's parameter
+#[allow(dead_code)]
 pub struct Parameter {
     ptr: cxx::UniquePtr<ffi::DWARF_editor_FunctionType_Parameter>,
 }

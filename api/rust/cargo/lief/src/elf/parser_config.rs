@@ -1,6 +1,6 @@
 use lief_ffi as ffi;
 
-/// This structure is used to tweak the ELF parser: [`lief::elf::Binary::parse_with_config`]
+/// This structure is used to tweak the ELF parser: [`crate::elf::Binary::parse_with_config`]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Config {
     /// Whether relocations (including plt-like relocations) should be parsed.

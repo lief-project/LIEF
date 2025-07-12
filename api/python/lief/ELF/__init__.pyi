@@ -414,7 +414,7 @@ class ParserConfig:
 
     all: ParserConfig = ...
 
-def parse(obj: Union[io.IOBase | os.PathLike | bytes | list[int]], config: ParserConfig = ...) -> Optional[Binary]: ...
+def parse(obj: Union[str | io.IOBase | os.PathLike | bytes | list[int]], config: ParserConfig = ...) -> Optional[Binary]: ...
 
 class SymbolVersion(lief.Object):
     @overload
@@ -852,6 +852,10 @@ class Binary(lief.Binary):
     def relocate_phdr_table(self, type: Binary.PHDR_RELOC = Binary.PHDR_RELOC.AUTO) -> int: ...
 
     def get_relocated_dynamic_array(self, array_tag: DynamicEntry.TAG) -> list[int]: ...
+
+    def find_version_requirement(self, libname: str) -> SymbolVersionRequirement: ...
+
+    def remove_version_requirement(self, libname: str) -> bool: ...
 
     @overload
     def __iadd__(self, arg: Segment, /) -> Binary: ...
@@ -4776,12 +4780,18 @@ class SysvHash(lief.Object):
     def __str__(self) -> str: ...
 
 class Builder:
-    def __init__(self, elf_binary: Binary) -> None: ...
+    @overload
+    def __init__(self, elf: Binary) -> None: ...
+
+    @overload
+    def __init__(self, elf: Binary, config: Builder.config_t) -> None: ...
 
     class config_t:
         def __init__(self) -> None: ...
 
         force_relocate: bool
+
+        skip_dynamic: bool
 
         dt_hash: bool
 
@@ -4819,9 +4829,12 @@ class Builder:
 
         coredump_notes: bool
 
+        keep_empty_version_requirement: bool
+
     def build(self) -> None: ...
 
-    config: Builder.config_t
+    @property
+    def config(self) -> Builder.config_t: ...
 
     def write(self, output: str) -> None: ...
 

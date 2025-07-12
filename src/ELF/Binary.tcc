@@ -225,6 +225,9 @@ template<>
 void Binary::patch_relocations<ARCH::X86_64>(uint64_t from, uint64_t shift) {
   for (Relocation& relocation : relocations()) {
     if (relocation.address() >= from) {
+      LIEF_DEBUG("{:23}: 0x{:010x} -> 0x{:010x}",
+          to_string(relocation.type()), relocation.address(),
+          relocation.address() + shift);
       relocation.address(relocation.address() + shift);
     }
 
@@ -237,14 +240,12 @@ void Binary::patch_relocations<ARCH::X86_64>(uint64_t from, uint64_t shift) {
       case Relocation::TYPE::X86_64_GLOB_DAT:
       case Relocation::TYPE::X86_64_64:
         {
-          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
           patch_addend<uint64_t>(relocation, from, shift);
           break;
         }
 
       case Relocation::TYPE::X86_64_32:
         {
-          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
           patch_addend<uint32_t>(relocation, from, shift);
           break;
         }
@@ -432,11 +433,13 @@ void Binary::patch_relocations<ARCH::S390>(uint64_t from, uint64_t shift) {
 template<class T>
 void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift) {
   if (static_cast<uint64_t>(relocation.addend()) >= from) {
+    LIEF_DEBUG("(addend) {:23}: 0x{:010x} -> 0x{:010x}",
+        to_string(relocation.type()), relocation.addend(),
+        relocation.addend() + shift);
     relocation.addend(relocation.addend() + shift);
   }
 
   const uint64_t address = relocation.address();
-  LIEF_DEBUG("Patch addend relocation at address: 0x{:x}", address);
   Segment* segment = segment_from_virtual_address(address);
   if (segment == nullptr) {
     LIEF_ERR("Can't find segment with the virtual address 0x{:x}", address);

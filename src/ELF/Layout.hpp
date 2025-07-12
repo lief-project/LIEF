@@ -19,6 +19,7 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
+#include "LIEF/ELF/Builder.hpp"
 
 namespace LIEF {
 namespace ELF {
@@ -26,9 +27,10 @@ class Section;
 class Binary;
 class Layout {
   public:
-  Layout(Binary& bin, bool should_swap) :
+  Layout(Binary& bin, bool should_swap, const Builder::config_t& config) :
     binary_(&bin),
-    should_swap_(should_swap)
+    should_swap_(should_swap),
+    config_(&config)
   {}
 
   virtual const std::unordered_map<std::string, size_t>& shstr_map() const {
@@ -78,6 +80,7 @@ class Layout {
   Section* strtab_section_ = nullptr;
   int32_t new_symndx_ = -1;
   bool should_swap_ = false;
+  const Builder::config_t* config_ = nullptr;
 };
 }
 }

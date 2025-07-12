@@ -78,6 +78,7 @@ impl EditorType for Struct {
     }
 }
 
+#[allow(dead_code)]
 pub struct Member {
     ptr: cxx::UniquePtr<ffi::DWARF_editor_StructType_Member>,
 }

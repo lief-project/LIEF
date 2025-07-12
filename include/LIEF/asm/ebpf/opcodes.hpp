@@ -15,7 +15,7 @@
 #ifndef LIEF_ASM_EBPF_OPCODE_H
 #define LIEF_ASM_EBPF_OPCODE_H
 
-/* Generated from LLVM: 20.1.2 */
+/* Generated from LLVM: 20.1.7 */
 
 namespace LIEF {
 namespace assembly {

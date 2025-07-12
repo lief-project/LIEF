@@ -73,21 +73,23 @@ class LIEF_API Builder {
     bool symtab          = true;  /// Rebuild DT_SYMTAB
     bool coredump_notes  = true;  /// Rebuild the Coredump notes
     bool force_relocate  = false; /// Force to relocating all the ELF structures that are supported by LIEF (mostly for testing)
+    bool skip_dynamic    = false; /// Skip relocating the PT_DYNAMIC segment (only relevant if force_relocate is set)
+
+    /// Remove entries in `.gnu.version_r` if they are not associated with at
+    /// least one version
+    bool keep_empty_version_requirement = false;
   };
 
-  Builder(Binary& binary);
+  Builder(Binary& binary, const config_t& config);
+  Builder(Binary& binary) :
+    Builder(binary, config_t())
+  {}
 
   Builder() = delete;
   ~Builder();
 
   /// Perform the build of the provided ELF binary
   void build();
-
-  /// Tweak the ELF builder with the provided config parameter
-  Builder& set_config(config_t conf) {
-    config_ = conf;
-    return *this;
-  }
 
   config_t& config() {
     return config_;
@@ -190,7 +192,7 @@ class LIEF_API Builder {
 
   config_t config_;
   mutable vector_iostream ios_;
-  Binary* binary_{nullptr};
+  Binary* binary_ = nullptr;
   std::unique_ptr<Layout> layout_;
 };
 

@@ -816,6 +816,26 @@ void create<Binary>(nb::module_& m) {
       "array_tag"_a
     )
 
+    .def("find_version_requirement",
+      nb::overload_cast<const std::string&>(&Binary::find_version_requirement),
+      R"doc(
+      Try to find the :class:`~.SymbolVersionRequirement` associated with the given library
+      name (e.g. ``libc.so.6``)
+      )doc"_doc, "libname"_a, nb::rv_policy::reference_internal
+    )
+
+    .def("remove_version_requirement", &Binary::remove_version_requirement,
+      R"doc(
+      Deletes all required symbol versions linked to the specified library name.
+      The function returns true if the operation succeed, false otherwise.
+
+      .. warning::
+
+          To maintain consistency, this function also removes versions associated
+          with dynamic symbols that are linked to the specified library name.
+      )doc"_doc, "libname"_a
+    )
+
     .def(nb::self += Segment(), nb::rv_policy::reference_internal)
     .def(nb::self += Section(), nb::rv_policy::reference_internal)
     .def(nb::self += DynamicEntry(), nb::rv_policy::reference_internal)

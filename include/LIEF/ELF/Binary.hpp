@@ -721,7 +721,9 @@ class LIEF_API Binary : public LIEF::Binary {
   /// (i.e. the binary can run).
   ///
   /// @param filename Path for the written ELF binary
-  void write(const std::string& filename);
+  void write(const std::string& filename) {
+    return write(filename, Builder::config_t{});
+  }
 
   /// Reconstruct the binary object with the given config and write it in `filename`
   ///
@@ -738,7 +740,9 @@ class LIEF_API Binary : public LIEF::Binary {
   /// (i.e. the binary can run).
   ///
   /// @param os Output stream for the written ELF binary
-  void write(std::ostream& os);
+  void write(std::ostream& os) {
+    return write(os, Builder::config_t{});
+  }
 
   /// Reconstruct the binary object with the given config and write it in `os` stream
   ///
@@ -960,6 +964,23 @@ class LIEF_API Binary : public LIEF::Binary {
     }
     return std::distance(sections_.begin(), it);
   }
+
+  /// Try to find the SymbolVersionRequirement associated with the given library
+  /// name (e.g. `libc.so.6`)
+  const SymbolVersionRequirement*
+    find_version_requirement(const std::string& libname) const;
+
+  SymbolVersionRequirement* find_version_requirement(const std::string& name) {
+      return const_cast<SymbolVersionRequirement*>(static_cast<const Binary*>(this)->find_version_requirement(name));
+  }
+
+  /// Deletes all required symbol versions linked to the specified library name.
+  /// The function returns true if the operation succeed, false otherwise.
+  ///
+  /// \warning To maintain consistency, this function also removes versions
+  ///          associated with dynamic symbols that are linked to the specified
+  ///          library name.
+  bool remove_version_requirement(const std::string& libname);
 
   uint8_t ptr_size() const {
     switch (type()) {

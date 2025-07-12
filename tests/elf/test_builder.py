@@ -18,6 +18,8 @@ from utils import (
     is_x86_64
 )
 
+# pyright: reportOptionalMemberAccess=false
+
 SAMPLE_DIR = pathlib.Path(os.getenv("LIEF_SAMPLES_DIR", ""))
 
 OUTPUT = """
@@ -435,3 +437,24 @@ def test_s390x(tmp_path: Path):
     assert int.from_bytes(elf.get_content_from_virtual_address(r.address, 8), byteorder='big') == 0x2c07e
 
     assert new.dynamic_entries[18].flags == [lief.ELF.DynamicEntryFlags.FLAG.STATIC_TLS]
+
+def test_patchelf(tmp_path: Path):
+    elf = lief.ELF.parse(get_sample("ELF/lief-patchelf"))
+    elf.relocate_phdr_table()
+
+    config = lief.ELF.Builder.config_t()
+    config.force_relocate = True
+    config.skip_dynamic = True
+
+    output = tmp_path / "lief-patchelf"
+
+    elf.write(output.as_posix(), config)
+
+    output.chmod(0o755)
+
+    if is_linux() and is_x86_64():
+        with Popen([output.as_posix(), "--version"], universal_newlines=True,
+                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
+            stdout = proc.stdout.read()
+            proc.poll()
+            assert "0.17.0.0" in stdout

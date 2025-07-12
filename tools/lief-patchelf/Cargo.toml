@@ -1,0 +1,14 @@
+[package]
+name = "lief-patchelf"
+version = "0.17.0"
+edition = "2021"
+authors = ["Romain Thomas <me@romainthomas.fr>"]
+
+[dependencies]
+lief = { path = "../../api/rust/cargo/lief" }
+anyhow = "1.0.86"
+clap  = { version="4.5.40" }
+clap_complete = "4.5.54"
+thiserror = "2.0.11"
+indoc = "2"
+clap_mangen = "0.2.27"

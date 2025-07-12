@@ -180,7 +180,7 @@ impl Flags {
     }
 
     pub fn to_value(&self) -> u32 {
-        self.bits() as u32
+        self.bits()
     }
 }
 

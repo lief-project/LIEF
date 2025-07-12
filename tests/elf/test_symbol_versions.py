@@ -84,8 +84,10 @@ def test_remove_all_version(tmp_path: Path):
 
     out = tmp_path / "out.elf"
     elf.write(out.as_posix())
+
     new = lief.ELF.parse(out)
     assert new.get_symbol("__libc_start_main").symbol_version.symbol_version_auxiliary is None
+    assert new.find_version_requirement("libc.so.6") is None
     out.chmod(0o755)
 
     if is_linux() and is_x86_64():
@@ -94,3 +96,31 @@ def test_remove_all_version(tmp_path: Path):
             stdout = proc.stdout.read()
             proc.poll()
             assert "Hello World: 1" in stdout
+
+
+def test_remove_req(tmp_path: Path):
+    elf = lief.ELF.parse(get_sample("ELF/test_897.elf"))
+    assert len(elf.symbols_version_requirement) == 2
+    assert elf.symbols_version_requirement[0].name == "libm.so.6"
+    assert elf.symbols_version_requirement[1].name == "libc.so.6"
+
+    assert elf.remove_version_requirement("libm.so.6")
+
+    out = tmp_path / "out.elf"
+    elf.write(out.as_posix())
+
+    new = lief.ELF.parse(out)
+
+    assert new.find_version_requirement("libm.so.6") is None
+    assert new.find_version_requirement("libc.so.6") is not None
+
+    assert len(new.symbols_version_requirement) == 1
+
+    out.chmod(0o755)
+
+    if is_linux() and is_x86_64():
+        with Popen([out.as_posix()], universal_newlines=True,
+                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
+            stdout = proc.stdout.read()
+            proc.poll()
+            assert "fun6!" in stdout

@@ -3231,7 +3231,7 @@ impl From<u64> for SysReg {
           34880 => SysReg::TRCEVENTCTL0R,
           34882 => SysReg::TRCVDCTLR,
           34884 => SysReg::TRCEXTINSELR,
-          34884 => SysReg::TRCEXTINSELR0,
+
           34885 => SysReg::TRCCNTVR0,
           34887 => SysReg::TRCIDR0,
           34888 => SysReg::TRCEVENTCTL1R,
@@ -3513,7 +3513,7 @@ impl From<u64> for SysReg {
           38920 => SysReg::MDCCSR_EL0,
           38944 => SysReg::DBGDTR_EL0,
           38952 => SysReg::DBGDTRRX_EL0,
-          38952 => SysReg::DBGDTRTX_EL0,
+
           40160 => SysReg::SPMCR_EL0,
           40161 => SysReg::SPMCNTENSET_EL0,
           40162 => SysReg::SPMCNTENCLR_EL0,
@@ -4026,7 +4026,7 @@ impl From<u64> for SysReg {
           57506 => SysReg::CPTRMASK_EL2,
           57507 => SysReg::SCTLR2MASK_EL2,
           57600 => SysReg::TTBR0_EL2,
-          57600 => SysReg::VSCTLR_EL2,
+
           57601 => SysReg::TTBR1_EL2,
           57602 => SysReg::TCR_EL2,
           57603 => SysReg::TCR2_EL2,

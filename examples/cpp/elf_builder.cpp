@@ -37,15 +37,9 @@ int main(int argc, char **argv) {
   LIEF::logging::set_level(LIEF::logging::LEVEL::DEBUG);
   //LIEF::logging::set_level(LIEF::logging::LEVEL::LOG_WARN);
   //binary->get(LIEF::ELF::SEGMENT_TYPES::PT_GNU_RELRO).type(LIEF::ELF::SEGMENT_TYPES::PT_NULL);
-  LIEF::ELF::Builder builder{*binary};
   LIEF::ELF::Builder::config_t config;
   config.force_relocate = true;
 
-  builder.set_config(config);
-  builder.build();
-  builder.write(argv[2]);
-
-  //binary->write(argv[2]);
-
+  binary->write(argv[2], config);
   return 0;
 }

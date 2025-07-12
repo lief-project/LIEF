@@ -37,9 +37,9 @@ namespace ELF {
 
 Builder::~Builder() = default;
 
-Builder::Builder(Binary& binary) :
-  binary_{&binary},
-  layout_{nullptr}
+Builder::Builder(Binary& binary, const config_t& config) :
+  config_{config},
+  binary_{&binary}
 {
   const Header::FILE_TYPE type = binary.header().file_type();
   switch (type) {
@@ -47,13 +47,13 @@ Builder::Builder(Binary& binary) :
     case Header::FILE_TYPE::DYN:
     case Header::FILE_TYPE::EXEC:
       {
-        layout_ = std::make_unique<ExeLayout>(binary, should_swap());
+        layout_ = std::make_unique<ExeLayout>(binary, should_swap(), config_);
         break;
       }
 
     case Header::FILE_TYPE::REL:
       {
-        layout_ = std::make_unique<ObjectFileLayout>(binary, should_swap());
+        layout_ = std::make_unique<ObjectFileLayout>(binary, should_swap(), config_);
         break;
       }
 

@@ -62,6 +62,12 @@ pub struct Config {
 
     /// Force to relocating all the ELF structures that are supported by LIEF (mostly for testing)
     pub force_relocate: bool,
+
+    /// Remove entries in `.gnu.version_r` if they are not associated with at least one version
+    pub keep_empty_version_requirement: bool,
+
+    /// Skip relocating the `PT_DYNAMIC` segment (only relevant if [`Config::keep_empty_version_requirement`] is set)
+    pub skip_dynamic: bool,
 }
 
 impl Default for Config {
@@ -87,6 +93,8 @@ impl Default for Config {
             symtab: true,
             coredump_notes: true,
             force_relocate: false,
+            keep_empty_version_requirement: false,
+            skip_dynamic: false,
         }
     }
 }
@@ -115,6 +123,8 @@ impl Config {
             symtab: self.symtab,
             coredump_notes: self.coredump_notes,
             force_relocate: self.force_relocate,
+            keep_empty_version_requirement: self.keep_empty_version_requirement,
+            skip_dynamic: self.skip_dynamic
         }
     }
 }

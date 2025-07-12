@@ -57,6 +57,8 @@ class ELF_Binary_write_config_t {
   bool symtab;
   bool coredump_notes;
   bool force_relocate;
+  bool keep_empty_version_requirement;
+  bool skip_dynamic;
 };
 
 class ELF_ParserConfig {
@@ -449,6 +451,14 @@ class ELF_Binary : public AbstractBinary {
     );
   }
 
+  auto find_version_requirement(std::string libname) const {
+    return details::try_unique<ELF_SymbolVersionRequirement>(impl().find_version_requirement(libname));
+  }
+
+  auto remove_version_requirement(std::string libname) {
+    return impl().remove_version_requirement(libname);
+  }
+
   void write(std::string output) { impl().write(output); }
   void write_with_config(std::string output, ELF_Binary_write_config_t config) {
     impl().write(output, LIEF::ELF::Builder::config_t {
@@ -472,6 +482,7 @@ class ELF_Binary : public AbstractBinary {
       config.symtab,
       config.coredump_notes,
       config.force_relocate,
+      config.keep_empty_version_requirement,
     });
   }
 

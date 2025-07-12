@@ -343,7 +343,7 @@ impl Binary {
                 ffi::AbstractBinary::get_u8,
                 self.ptr.as_ref().unwrap().as_ref(),
                 |value| {
-                    T::from_u8(value).expect(format!("Can't cast value: {}", value).as_str())
+                    T::from_u8(value).unwrap_or_else(|| panic!("Can't cast value: {value}"))
                 },
                 addr
             );
@@ -354,7 +354,7 @@ impl Binary {
                 ffi::AbstractBinary::get_u16,
                 self.ptr.as_ref().unwrap().as_ref(),
                 |value| {
-                    T::from_u16(value).expect(format!("Can't cast value: {}", value).as_str())
+                    T::from_u16(value).unwrap_or_else(|| panic!("Can't cast value: {value}"))
                 },
                 addr
             );
@@ -365,7 +365,7 @@ impl Binary {
                 ffi::AbstractBinary::get_u32,
                 self.ptr.as_ref().unwrap().as_ref(),
                 |value| {
-                    T::from_u32(value).expect(format!("Can't cast value: {}", value).as_str())
+                    T::from_u32(value).unwrap_or_else(|| panic!("Can't cast value: {value}"))
                 },
                 addr
             );
@@ -376,7 +376,7 @@ impl Binary {
                 ffi::AbstractBinary::get_u64,
                 self.ptr.as_ref().unwrap().as_ref(),
                 |value| {
-                    T::from_u64(value).expect(format!("Can't cast value: {}", value).as_str())
+                    T::from_u64(value).unwrap_or_else(|| panic!("Can't cast value: {value}"))
                 },
                 addr
             );

@@ -1,6 +1,6 @@
 use lief_ffi as ffi;
 
-/// This structure is used to tweak the PE parser: [`lief::pe::Binary::parse_with_config`]
+/// This structure is used to tweak the PE parser: [`crate::pe::Binary::parse_with_config`]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Config {
     /// Parse PE authenticode signature

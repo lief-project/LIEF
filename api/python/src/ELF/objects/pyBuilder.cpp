@@ -37,6 +37,9 @@ void create<Builder>(nb::module_& m) {
     .def_rw("force_relocate", &Builder::config_t::force_relocate,
             "Force to relocate all the ELF structures that can be relocated (mostly for testing)"_doc)
 
+    .def_rw("skip_dynamic", &Builder::config_t::skip_dynamic,
+            "Skip relocating the PT_DYNAMIC segment (only relevant if :attr:`~.force_relocate` is set)"_doc)
+
     .def_rw("dt_hash",         &Builder::config_t::dt_hash, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.HASH`"_doc)
     .def_rw("dyn_str",         &Builder::config_t::dyn_str, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.STRTAB`"_doc)
     .def_rw("dynamic_section", &Builder::config_t::dynamic_section, "Rebuild the `PT_DYNAMIC` segment"_doc)
@@ -54,12 +57,21 @@ void create<Builder>(nb::module_& m) {
     .def_rw("sym_verneed",     &Builder::config_t::sym_verneed, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.VERNEED`"_doc)
     .def_rw("sym_versym",      &Builder::config_t::sym_versym, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.VERSYM`"_doc)
     .def_rw("symtab",          &Builder::config_t::symtab, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.SYMTAB`"_doc)
-    .def_rw("coredump_notes",  &Builder::config_t::coredump_notes, "Rebuild the Coredump notes"_doc);
+    .def_rw("coredump_notes",  &Builder::config_t::coredump_notes, "Rebuild the Coredump notes"_doc)
+    .def_rw("keep_empty_version_requirement",  &Builder::config_t::keep_empty_version_requirement,
+      R"doc(
+      Remove entries in ``.gnu.version_r`` if they are not associated with at least
+      one version
+      )doc"_doc
+    )
+  ;
 
   builder
     .def(nb::init<Binary&>(),
-        "Constructor that takes a " RST_CLASS_REF(lief.ELF.Binary) ""_doc,
-        "elf_binary"_a)
+        "elf"_a)
+
+    .def(nb::init<Binary&, const Builder::config_t&>(),
+        "elf"_a, "config"_a)
 
     .def("build",
         [] (Builder& self) {
@@ -67,11 +79,11 @@ void create<Builder>(nb::module_& m) {
         },
         "Perform the build of the provided ELF binary"_doc)
 
-    .def_prop_rw("config", &Builder::config, &Builder::set_config,
-        "Tweak the ELF builder with the provided config parameter"_doc,
+    .def_prop_ro("config", &Builder::config,
+        "Configuration of the builder"_doc,
         nb::rv_policy::reference_internal)
 
-    .def("write",
+     .def("write",
         nb::overload_cast<const std::string&>(&Builder::write, nb::const_),
         "Write the build result into the ``output`` file"_doc,
         "output"_a)

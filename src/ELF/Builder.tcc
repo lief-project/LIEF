@@ -62,6 +62,38 @@ ok_error_t Builder::build() {
   const char* type = ((binary_->type_ == Header::CLASS::ELF32) ? "ELF32" : "ELF64");
   LIEF_DEBUG("== Re-building {} ==", type);
 
+  if (!config_.keep_empty_version_requirement) {
+    binary_->symbol_version_requirements_.erase(
+      std::remove_if(binary_->symbol_version_requirements_.begin(), binary_->symbol_version_requirements_.end(),
+        [] (const std::unique_ptr<SymbolVersionRequirement>& req) {
+          if constexpr (lief_logging_debug) {
+            if (req->auxiliary_symbols().empty()) {
+              LIEF_DEBUG("Removing: {}", req->name());
+            }
+          }
+          return req->auxiliary_symbols().empty();
+        }
+      ), binary_->symbol_version_requirements_.end());
+    if (DynamicEntry* dt = binary_->get(DynamicEntry::TAG::VERNEEDNUM)) {
+      dt->value(binary_->symbol_version_requirements_.size());
+    }
+  }
+
+  if (binary_->symbol_version_requirements_.empty()) {
+    if (DynamicEntry* dt = binary_->get(DynamicEntry::TAG::VERNEED)) {
+      if (Section* sec = binary_->section_from_virtual_address(dt->value());
+          sec != nullptr && !sec->is_frame())
+      {
+        binary_->remove(*sec);
+      }
+      binary_->remove(*dt);
+    }
+
+    if (DynamicEntry* dt = binary_->get(DynamicEntry::TAG::VERNEEDNUM)) {
+      binary_->remove(*dt);
+    }
+  }
+
   const Header::FILE_TYPE file_type = binary_->header().file_type();
   switch (file_type) {
     case Header::FILE_TYPE::DYN:
@@ -173,7 +205,8 @@ ok_error_t Builder::build_exe_lib() {
   if (binary_->has(Segment::TYPE::DYNAMIC) && config_.dynamic_section) {
     const size_t dynamic_needed_size = layout->dynamic_size<ELF_T>();
     const uint64_t osize = binary_->sizing_info_->dynamic;
-    const bool should_relocate = dynamic_needed_size > osize || config_.force_relocate;
+    const bool should_relocate = dynamic_needed_size > osize ||
+                                 (config_.force_relocate && !config_.skip_dynamic);
     if (should_relocate) {
       LIEF_DEBUG("[-] Need to relocate .dynamic section (0x{:x} new bytes)", dynamic_needed_size - osize);
       layout->relocate_dynamic(dynamic_needed_size);
@@ -1605,7 +1638,7 @@ ok_error_t Builder::build_symbol_requirement() {
     return make_error_code(lief_errors::not_found);
   }
   const Elf_Addr svr_address = dt_verneed->value();
-  const auto svr_nb          = static_cast<uint32_t>(dt_verneednum->value());
+  const auto svr_nb = static_cast<uint32_t>(dt_verneednum->value());
 
   if (svr_nb != binary_->symbol_version_requirements_.size()) {
     LIEF_WARN("The number of symbol version requirement "
@@ -1681,6 +1714,13 @@ ok_error_t Builder::build_symbol_requirement() {
       ++svar_idx;
     }
     ++svr_idx;
+  }
+
+  if (Section* sec = binary_->section_from_virtual_address(svr_address);
+      sec != nullptr && !sec->is_frame())
+  {
+    sec->information(binary_->symbol_version_requirements_.size());
+    sec->size(svr_raw.size());
   }
 
   binary_->patch_address(svr_address, svr_raw.raw());

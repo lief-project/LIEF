@@ -38,6 +38,7 @@ impl EditorType for Enum {
 
 
 /// This structure represents an enum value.
+#[allow(dead_code)]
 pub struct Value {
     ptr: cxx::UniquePtr<ffi::DWARF_editor_EnumType_Value>,
 }
