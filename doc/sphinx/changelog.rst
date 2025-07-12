@@ -14,6 +14,14 @@
   - :ref:`Ghidra plugin <plugins-ghidra>`
   - :ref:`BinaryNinja plugin <plugins-binaryninja>`
 
+.. admonition:: LIEF Tools
+  :class: tip
+
+  I initiated a ``Tools`` section which aims at providing utilities based on LIEF (mostly
+  CLI):
+
+  - :ref:`lief-patchelf <tools-lief-patchelf>`
+
 :DSC:
 
   * Add enum for the latest dyld shared cache version introducing
@@ -115,7 +123,7 @@
 
 :ELF:
 
-  * LIEF inserted sections are not compatible with a ``strip`` after the
+  * LIEF newly-inserted sections are now compatible with a ``strip`` after the
     modification of the binary (see: :ref:`Adding a section/segment <format-elf-section-segment>`)
   * Enhance support for IA64 architecture.
   * Introduce :attr:`lief.ELF.Segment.raw_flags` to access the raw (integer)
@@ -127,6 +135,10 @@
   * Add support for S390x
   * Better endianess support when writing back a binary.
   * Enhance support for removing segments (:issue:`1233`): |lief-elf-binary-remove-segment|
+  * Enhance support for removing or modifying symbol versions (related to the
+    :ref:`lief-patchelf <tools-lief-patchelf>` initiative)
+  * New doc section: :ref:`Symbol Versions <format-elf-symbols-version>`
+  * New doc section: :ref:`R[UN]PATH Modification <format-elf-rpath-modification>`
 
 :DWARF:
 

@@ -318,7 +318,7 @@ def test_smart_insert_1(tmp_path: Path):
             output.as_posix()
         ]
         with Popen(args, **popen_args) as proc: # type: ignore[call-overload]
-            stdout, _ = proc.communicate(10)
+            stdout, _ = proc.communicate(timeout=10)
             print("stdout:", stdout)
             assert proc.returncode == 0
             assert len(stdout) == 0
@@ -364,7 +364,7 @@ def test_smart_insert_2(tmp_path: Path):
         ]
 
         with Popen(args, **popen_args) as proc: # type: ignore[call-overload]
-            stdout, _ = proc.communicate(10)
+            stdout, _ = proc.communicate(timeout=10)
             print("stdout:", stdout)
             assert proc.returncode == 0
             assert len(stdout) == 0

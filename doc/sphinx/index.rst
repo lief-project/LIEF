@@ -49,6 +49,12 @@ Welcome to LIEF's documentation!
   plugins/binaryninja/index
 
 .. toctree::
+  :caption: <i class="fa-solid fa-toolbox">&nbsp;</i>Tools
+  :maxdepth: 1
+
+  tools/lief-patchelf/index
+
+.. toctree::
   :caption: <i class="fa-solid fa-layer-group">&nbsp;</i>Tutorials
   :maxdepth: 1
 

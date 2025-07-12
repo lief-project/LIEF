@@ -103,7 +103,7 @@ class LIEF_API SymbolVersionRequirement : public Object {
   /// The function returns true if the operation succeed, false otherwise.
   ///
   /// \warning this function invalidates all the references (pointers) of
-  ///          SymbolVersionAuxRequirement. Therefore, the user is reponsible
+  ///          SymbolVersionAuxRequirement. Therefore, the user is responsible
   ///          to ensure that the auxiliary requirement is no longer used in the
   ///          ELF binary (e.g. in SymbolVersion)
   bool remove_aux_requirement(const std::string& name) {
@@ -117,7 +117,7 @@ class LIEF_API SymbolVersionRequirement : public Object {
   /// The function returns true if the operation succeed, false otherwise.
   ///
   /// \warning this function invalidates all the references (pointers) of
-  ///          SymbolVersionAuxRequirement. Therefore, the user is reponsible
+  ///          SymbolVersionAuxRequirement. Therefore, the user is responsible
   ///          to ensure that the auxiliary requirement is no longer used in the
   ///          ELF binary (e.g. in SymbolVersion)
   bool remove_aux_requirement(SymbolVersionAuxRequirement& aux);

@@ -682,6 +682,18 @@
     :cpp:func:`void LIEF::ELF::Binary::remove(const Segment &, bool)`
     :cpp:func:`void LIEF::ELF::Binary::remove(Segment::TYPE, bool)`
 
+.. |lief-elf-DynamicEntryRpath| lief-api:: lief.ELF.DynamicEntryRpath
+
+    :rust:struct:`lief::elf::dynamic::Rpath`
+    :py:class:`lief.ELF.DynamicEntryRpath`
+    :cpp:class:`LIEF::ELF::DynamicEntryRpath`
+
+.. |lief-elf-DynamicEntryRunPath| lief-api:: lief.ELF.DynamicEntryRunPath
+
+    :rust:struct:`lief::elf::dynamic::RunPath`
+    :py:class:`lief.ELF.DynamicEntryRunPath`
+    :cpp:class:`LIEF::ELF::DynamicEntryRunPath`
+
 .. Mach-O ======================================================================
 
 .. |lief-macho-binary| lief-api:: lief.MachO.Binary

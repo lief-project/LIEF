@@ -71,7 +71,7 @@ void create<SymbolVersionRequirement>(nb::module_& m) {
         .. warning::
 
             This function invalidates all the references (pointers) of
-            :class:`~.SymbolVersionAuxRequirement`. Therefore, the user is reponsible
+            :class:`~.SymbolVersionAuxRequirement`. Therefore, the user is responsible
             to ensure that the auxiliary requirement is no longer used in the
             ELF binary (e.g. in :class:`~.SymbolVersion`)
         )doc"_doc, "name"_a)
@@ -84,7 +84,7 @@ void create<SymbolVersionRequirement>(nb::module_& m) {
         .. warning::
 
             This function invalidates all the references (pointers) of
-            :class:`~.SymbolVersionAuxRequirement`. Therefore, the user is reponsible
+            :class:`~.SymbolVersionAuxRequirement`. Therefore, the user is responsible
             to ensure that the auxiliary requirement is no longer used in the
             ELF binary (e.g. in :class:`~.SymbolVersion`)
         )doc"_doc, "aux"_a)

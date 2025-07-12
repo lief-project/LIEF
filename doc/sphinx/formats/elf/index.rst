@@ -331,4 +331,405 @@ to access the underlying |lief-dwarf-debug-info| object.
 Note that this support is only available in the :ref:`extended <extended-intro>`
 version of LIEF.
 
+.. _format-elf-rpath-modification:
+
+R[UN]PATH Modification
+**********************
+
+LIEF provides all the facilities to manipulate binary's RPATH/RUNPATH.
+
+.. admonition:: DT_RPATH vs DT_RUNPATH
+  :class: tip
+
+  ``DT_RPATH`` and ``DT_RUNPATH`` are both dynamic tags that are used to
+  specify runtime library search paths.
+
+  The ``DT_RPATH`` is now considered as legacy since it does not respect the
+  precedence of the ``LD_LIBRARY_PATH`` environment variable. This means that
+  if the ``LD_LIBRARY_PATH`` is set to a valid directory where the library can
+  be found, it will be ignored in favor of the ``DT_RPATH`` value.
+  Therefore, the ``DT_RUNPATH`` tag should be prefered ``DT_RPATH``.
+
+  Please note that if both tags are present, the loader will use the ``DT_RUNPATH``
+  entry over the legacy ``DT_RPATH``.
+
+
+The ``DT_RPATH`` tag is represented by the |lief-elf-DynamicEntryRpath|
+interface and the ``DT_RUNPATH`` tag by |lief-elf-DynamicEntryRunPath|
+
+The RPATH/RUNPATH modifications supported by LIEF include:
+
+**Adding a new entry**
+
+.. tabs::
+
+  .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        elf: lief.ELF.Binary = ...
+
+        runpath = lief.ELF.DynamicEntryRunPath("$ORIGIN:/opt/lib64")
+
+        elf.add(runpath)
+
+        other_runpath = lief.ELF.DynamicEntryRunPath([
+          '$ORIGIN', '/opt/lib64'
+        ])
+
+        elf.add(other_runpath)
+
+        elf.write("updated.elf")
+
+  .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        std::unique_ptr<LIEF::ELF::Binary> elf = ...;
+
+        LIEF::ELF::DynamicEntryRunPath runpath("$ORIGIN:/opt/lib64");
+
+        elf->add(runpath);
+
+        LIEF::ELF::DynamicEntryRunPath other_runpath(
+          std::vector<std::string> {
+            "$ORIGIN", "/opt/lib64"
+          }
+        );
+
+        elf->add(other_runpath);
+
+        elf->write("updated.elf");
+
+  .. tab:: :fa:`brands fa-rust` Rust
+
+      .. code-block:: rust
+
+        let mut elf: lief::elf::Binary = ...
+
+        let runpath = lief::elf::dynamic::RunPath::new("$ORIGIN:/opt/lib64");
+
+        elf.add_dynamic_entry(&runpath);
+
+        let other_runpath = lief::elf::dynamic::RunPath::with_paths(
+          &vec!["$ORIGIN", "/opt/lib64"]
+        );
+
+        elf.add_dynamic_entry(&other_runpath);
+
+        let output = PathBuf::from("updated.elf");
+
+        elf.write(output.as_path());
+
+**Changing an entry**
+
+.. tabs::
+
+  .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        elf: lief.ELF.Binary = ...
+
+        runpath = elf.get(lief.ELF.DynamicEntry.TAG.RUNPATH)
+        assert runpath is not None
+
+        runpath.runpath = "$ORIGIN:/opt/lib64"
+        runpath.append("lib-x86_64-gnu")
+
+        elf.write(output.as_path());
+
+  .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        std::unique_ptr<LIEF::ELF::Binary> elf = ...;
+
+        LIEF::ELF::DynamicEntryRunPath* runpath =
+          elf->get(LIEF::ELF::DynamicEntry::TAG::RUNPATH);
+
+        assert(runpath != nullptr);
+
+        runpath->runpath("$ORIGIN:/opt/lib64");
+        runpath->append("lib-x86_64-gnu");
+
+        elf->write("updated.elf");
+
+  .. tab:: :fa:`brands fa-rust` Rust
+
+      .. code-block:: rust
+
+        let mut elf: lief::elf::Binary = ...
+
+        if let Some(dynamic::Entries::RunPath(mut runpath)) =
+            elf.dynamic_entry_by_tag(dynamic::Tag::RUNPATH)
+        {
+          runpath.set_runpath("$ORIGIN:/opt/lib64");
+          runpath.append("lib-x86_64-gnu");
+        }
+
+        let output = PathBuf::from("updated.elf");
+
+        elf.write(output.as_path());
+
+**Removing entries**
+
+.. tabs::
+
+  .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        elf: lief.ELF.Binary = ...
+
+        # Remove **all** DT_RUNPATH entries
+        elf.remove(lief.ELF.DynamicEntry.TAG.RUNPATH)
+
+        # Remove all entries that contain '$ORIGIN'
+        to_remove: list[lief.ELF.DynamicEntryRunPath] = []
+        for dt_entry in elf.dynamic_entries:
+            if not isinstance(dt_entry, lief.ELF.DynamicEntryRunPath):
+                continue
+
+            if "$ORIGIN" in dt_entry.runpath:
+                to_remove.append(dt_entry)
+
+        for entry in to_remove:
+            elf.remove(dt_entry)
+
+        elf.write("updated.elf")
+
+
+  .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        std::unique_ptr<LIEF::ELF::Binary> elf = ...;
+
+        // Remove **all** DT_RUNPATH entries
+        elf->remove(LIEF::ELF::DynamicEntry::TAG::RUNPATH);
+
+        // Remove all entries that contain '$ORIGIN'
+        std::vector<LIEF::ELF::DynamicEntryRunPath*> to_remove;
+        for (DynamicEntry& entry : elf->dynamic_entries()) {
+          if (auto* dt_entry = entry.cast<LIEF::ELF::DynamicEntryRunPath>()) {
+            if (dt_entry->runpath().find("$ORIGIN") != std::string::npos) {
+              to_remove.push_back(dt_entry);
+            }
+          }
+        }
+
+        for (LIEF::ELF::DynamicEntryRunPath* entry : to_remove) {
+          elf->remove(*entry);
+        }
+
+        elf->write("updated.elf");
+
+  .. tab:: :fa:`brands fa-rust` Rust
+
+      .. code-block:: rust
+
+        let mut elf: lief::elf::Binary = ...
+
+        // Remove **all** DT_RUNPATH entries
+        elf.remove_dynamic_entries_by_tag(elf::dynamic::Tag::RUNPATH);
+
+        // Remove all entries that contain '$ORIGIN'
+        elf.remove_dynamic_entry_if(|e| {
+            if let elf::dynamic::Entries::RunPath(runpath) = e {
+                return runpath.runpath().contains("$ORIGIN");
+            }
+            false
+        });
+
+        let output = PathBuf::from("updated.elf");
+        elf.write(output.as_path());
+
+You can also check the :ref:`lief-patchelf <tools-lief-patchelf>` section for a
+command-line interface.
+
+.. _format-elf-symbols-version:
+
+Symbol Versions
+***************
+
+The ELF format supports symbol versioning, allowing multiple versions of
+the same function or variable to coexist within a single shared object.
+
+During compilation, the linker selects the appropriate symbols and versions based
+on the libraries provided as input. For example, if the program uses
+the function ``printf`` and is linked with a version of ``libc.so`` that exposes
+``printf@@GLIBC_2.40``, the compiled executable will require at least that
+version of the ``libc`` to run.
+
+This requirement regarding versioning can be problematic if we want to create
+an executable or library compatible with a wide range of Linux distributions.
+
+The **best way** to ensure maximum compatibility is to provide the minimum supported version of
+the Glibc. For instance, if we aim to support Linux
+distributions with at least Glibc version ``2.28`` (released in 2018),
+we should specifically provide that version of ``libc.so``:
+
+.. code-block:: console
+
+   $ ld --sysroot=/sysroot/glibc-2.28/ my_program.o -o my_program.elf
+   $ ld -L /sysroot/glibc-2.28/lib64/ my_program.o -o my_program.elf -lc
+
+
+There are situations where we don't have that control over the link step, and
+for which we want to change the versioning **post-compilation**. LIEF can be
+used in these situations to perform the following modifications on the symbol
+versions.
+
+**Remove the version for a specific symbol**
+
+In this example, we remove the version attached to the ``printf`` symbol
+by setting the versioning as global (the default setting for imported functions).
+
+.. tabs::
+
+  .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        elf: lief.ELF.Binary = ...
+
+        sym = elf.get_dynamic_symbol("printf")
+
+        sym.symbol_version.as_global()
+
+        elf.write("updated.elf")
+
+  .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        std::unique_ptr<LIEF::ELF::Binary> elf = ...;
+
+        LIEF::ELF::Symbol* sym = elf->get_dynamic_symbol("printf");
+
+        assert(sym != nullptr);
+
+        sym->symbol_version()->as_global();
+
+        elf->write("updated.elf")
+
+
+  .. tab:: :fa:`brands fa-rust` Rust
+
+      .. code-block:: rust
+
+        let mut elf: lief::elf::Binary = ...
+
+        if let Some(sym) = elf.dynamic_symbol_by_name("printf") {
+            if let Some(mut symver) = dynsym.symbol_version() {
+                symver.as_global();
+            }
+        }
+
+        let output = PathBuf::from("updated.elf");
+        elf.write(output.as_path());
+
+**Remove all the versions for a specific library**
+
+In this example, we remove all the symbol versions associated with an imported
+library (``libm.so.6``):
+
+.. tabs::
+
+  .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        elf: lief.ELF.Binary = ...
+
+        elf.remove_version_requirement("libm.so.6")
+
+        elf.write("updated.elf")
+
+  .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        std::unique_ptr<LIEF::ELF::Binary> elf = ...;
+
+        elf->remove_version_requirement("libm.so.6");
+
+        elf->write("updated.elf")
+
+
+  .. tab:: :fa:`brands fa-rust` Rust
+
+      .. code-block:: rust
+
+        let mut elf: lief::elf::Binary = ...
+
+        elf.remove_version_requirement("libm.so.6");
+
+        let output = PathBuf::from("updated.elf");
+        elf.write(output.as_path());
+
+.. tabs::
+
+  .. tab:: :fa:`solid fa-terminal` Before
+
+      .. code-block:: console
+
+        $ readelf -V input.elf
+
+        Version symbols section '.gnu.version' contains 48 entries:
+         Addr: 00000000000009bc  Offset: 0x0009bc  Link: 6 (.dynsym)
+          000:   0 (*local*)       2 (GLIBC_2.2.5)   3 (GLIBC_2.2.5)   2 (GLIBC_2.2.5)
+          004:   2 (GLIBC_2.2.5)   0 (*local*)       4 (GLIBC_2.17)    3 (GLIBC_2.2.5)
+          008:   2 (GLIBC_2.2.5)   5 (GLIBC_2.27)    2 (GLIBC_2.2.5)   3 (GLIBC_2.2.5)
+          00c:   3 (GLIBC_2.2.5)   2 (GLIBC_2.2.5)   6 (GLIBC_2.4)     2 (GLIBC_2.2.5)
+          010:   3 (GLIBC_2.2.5)   2 (GLIBC_2.2.5)   3 (GLIBC_2.2.5)   3 (GLIBC_2.2.5)
+          014:   2 (GLIBC_2.2.5)   3 (GLIBC_2.2.5)   3 (GLIBC_2.2.5)   0 (*local*)
+          018:   3 (GLIBC_2.2.5)   3 (GLIBC_2.2.5)   2 (GLIBC_2.2.5)   3 (GLIBC_2.2.5)
+          01c:   3 (GLIBC_2.2.5)   3 (GLIBC_2.2.5)   2 (GLIBC_2.2.5)   2 (GLIBC_2.2.5)
+          020:   2 (GLIBC_2.2.5)   3 (GLIBC_2.2.5)   2 (GLIBC_2.2.5)   2 (GLIBC_2.2.5)
+          024:   3 (GLIBC_2.2.5)   3 (GLIBC_2.2.5)   2 (GLIBC_2.2.5)   3 (GLIBC_2.2.5)
+          028:   3 (GLIBC_2.2.5)   0 (*local*)       3 (GLIBC_2.2.5)   3 (GLIBC_2.2.5)
+          02c:   3 (GLIBC_2.2.5)   7 (GLIBC_2.29)    2 (GLIBC_2.2.5)   2 (GLIBC_2.2.5)
+
+        Version needs section '.gnu.version_r' contains 2 entries:
+         Addr: 0000000000000a20  Offset: 0x000a20  Link: 7 (.dynstr)
+          0x0000: Version: 1  File: libm.so.6  Cnt: 3
+          0x0010:   Name: GLIBC_2.29  Flags: none  Version: 7
+          0x0020:   Name: GLIBC_2.27  Flags: none  Version: 5
+          0x0030:   Name: GLIBC_2.2.5  Flags: none  Version: 3
+          0x0040: Version: 1  File: libc.so.6  Cnt: 3
+          0x0050:   Name: GLIBC_2.4  Flags: none  Version: 6
+          0x0060:   Name: GLIBC_2.17  Flags: none  Version: 4
+          0x0070:   Name: GLIBC_2.2.5  Flags: none  Version: 2
+
+
+  .. tab:: :fa:`solid fa-terminal` After
+
+      .. code-block:: console
+
+        $ readelf -V updated.elf
+
+        Version symbols section '.gnu.version' contains 48 entries:
+         Addr: 00000000000009bc  Offset: 0x0009bc  Link: 6 (.dynsym)
+          000:   0 (*local*)       1 (*global*)      1 (*global*)      1 (*global*)
+          004:   1 (*global*)      0 (*local*)       4 (GLIBC_2.17)    1 (*global*)
+          008:   1 (*global*)      1 (*global*)      1 (*global*)      1 (*global*)
+          00c:   1 (*global*)      1 (*global*)      6 (GLIBC_2.4)     1 (*global*)
+          010:   1 (*global*)      1 (*global*)      1 (*global*)      1 (*global*)
+          014:   1 (*global*)      1 (*global*)      1 (*global*)      0 (*local*)
+          018:   1 (*global*)      1 (*global*)      1 (*global*)      1 (*global*)
+          01c:   1 (*global*)      1 (*global*)      1 (*global*)      1 (*global*)
+          020:   1 (*global*)      1 (*global*)      1 (*global*)      1 (*global*)
+          024:   1 (*global*)      1 (*global*)      1 (*global*)      1 (*global*)
+          028:   1 (*global*)      0 (*local*)       1 (*global*)      1 (*global*)
+          02c:   1 (*global*)      1 (*global*)      1 (*global*)      1 (*global*)
+
+        Version needs section '.gnu.version_r' contains 1 entries:
+         Addr: 0000000000000a20  Offset: 0x000a20  Link: 7 (.dynstr)
+          0x0000: Version: 1  File: libc.so.6  Cnt: 3
+          0x0010:   Name: GLIBC_2.4  Flags: none  Version: 6
+          0x0020:   Name: GLIBC_2.17  Flags: none  Version: 4
+          0x0030:   Name: GLIBC_2.2.5  Flags: none  Version: 2
+
 .. include:: ../../_cross_api.rst
