@@ -565,6 +565,21 @@ void create<Binary>(nb::module_& m) {
         "section"_a, "clear"_a = false)
 
     .def("remove",
+        nb::overload_cast<const Segment&, bool>(&Binary::remove),
+        R"doc(
+        Remove the segment provided in parameter. If ``clear`` is set, the
+        original content of the segment will be filled with zeros before removal.
+        )doc"_doc, "segment"_a, "clear"_a = false)
+
+
+    .def("remove",
+        nb::overload_cast<Segment::TYPE, bool>(&Binary::remove),
+        R"doc(
+        Remove **all** segments with the given type. If ``clear`` is set, the
+        original content of the segment will be filled with zeros before removal.
+        )doc"_doc, "type"_a, "clear"_a = false)
+
+    .def("remove",
         nb::overload_cast<const Note&>(&Binary::remove),
         "Remove the given " RST_CLASS_REF(lief.ELF.Note) ""_doc,
         "note"_a)

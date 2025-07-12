@@ -406,6 +406,20 @@ impl Binary {
     pub fn remove_version_requirement(&mut self, libname: &str) -> bool {
         self.ptr.pin_mut().remove_version_requirement(libname.to_string())
     }
+
+    /// Remove the given segment. If `clear` is set, the original content of the
+    /// segment will be filled with zeros before removal.
+    pub fn remove_segment(&mut self, segment: Segment, clear: bool) {
+        self.ptr.pin_mut().remove_segment(segment.ptr.as_ref().unwrap(), clear)
+    }
+
+    /// Remove all segments associated with the given type.
+    ///
+    /// If `clear` is set, the original content of the segments will be filled
+    /// with zeros before removal.
+    pub fn remove_segments_by_type(&mut self, ty: segment::Type, clear: bool) {
+        self.ptr.pin_mut().remove_segments_by_type(ty.into(), clear)
+    }
 }
 
 impl generic::Binary for Binary {

@@ -126,6 +126,7 @@
   * Add suport for x32/ILP32 ELF binaries (:issue:`1225`)
   * Add support for S390x
   * Better endianess support when writing back a binary.
+  * Enhance support for removing segments (:issue:`1233`): |lief-elf-binary-remove-segment|
 
 :DWARF:
 

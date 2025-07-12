@@ -458,3 +458,27 @@ def test_patchelf(tmp_path: Path):
             stdout = proc.stdout.read()
             proc.poll()
             assert "0.17.0.0" in stdout
+
+def test_remove_segment(tmp_path: Path):
+    elf = lief.ELF.parse(get_sample("ELF/lief-patchelf"))
+
+    elf.remove(lief.ELF.Segment.TYPE.GNU_RELRO)
+    elf.remove(lief.ELF.Segment.TYPE.GNU_STACK)
+    elf.remove(lief.ELF.Segment.TYPE.NOTE)
+    elf.remove(lief.ELF.Segment.TYPE.GNU_EH_FRAME)
+
+    output = tmp_path / "lief-patchelf"
+
+    elf.write(output.as_posix())
+
+    new = lief.ELF.parse(output)
+
+    assert new.get(lief.ELF.Segment.TYPE.GNU_EH_FRAME) is None
+
+    if is_linux() and is_x86_64():
+        output.chmod(0o755)
+        with Popen([output.as_posix(), "--version"], universal_newlines=True,
+                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
+            stdout = proc.stdout.read()
+            proc.poll()
+            assert "0.17.0.0" in stdout

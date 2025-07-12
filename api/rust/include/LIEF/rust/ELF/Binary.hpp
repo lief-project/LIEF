@@ -459,6 +459,14 @@ class ELF_Binary : public AbstractBinary {
     return impl().remove_version_requirement(libname);
   }
 
+  void remove_segment(const ELF_Segment& segment, bool clear) {
+    impl().remove(segment.get(), clear);
+  }
+
+  void remove_segments_by_type(uint64_t ty, bool clear) {
+    impl().remove(LIEF::ELF::Segment::TYPE(ty), clear);
+  }
+
   void write(std::string output) { impl().write(output); }
   void write_with_config(std::string output, ELF_Binary_write_config_t config) {
     impl().write(output, LIEF::ELF::Builder::config_t {

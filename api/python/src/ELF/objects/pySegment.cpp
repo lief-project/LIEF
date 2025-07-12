@@ -202,6 +202,13 @@ void create<Segment>(nb::module_& m) {
         "in :attr:`~lief.ELF.Segment.sections`"_doc,
         "section_name"_a)
 
+    .def("clear", &Segment::clear, "Clear the content of this segment"_doc)
+
+    .def("fill", &Segment::fill,
+      "value"_a,
+      "Fill the content of this segment with the value provided in parameter"_doc
+    )
+
     .def_prop_ro("sections",
       nb::overload_cast<>(&Segment::sections),
       "Iterator over the " RST_CLASS_REF(lief.ELF.Section) " wrapped by this segment"_doc,

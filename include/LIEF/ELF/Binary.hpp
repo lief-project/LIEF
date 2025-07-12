@@ -328,8 +328,15 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Remove **all** notes with the given type
   void remove(Note::TYPE type);
 
-  /// Remove the given segment
-  void remove(const Segment& seg);
+  /// Remove the given segment. If \p clear is set, the original content of the
+  /// segment will be filled with zeros before removal.
+  void remove(const Segment& seg, bool clear = false);
+
+  /// Remove all segments associated with the given type.
+  ///
+  /// If \p clear is set, the original content of the segment will be filled
+  /// with zeros before removal.
+  void remove(Segment::TYPE type, bool clear = false);
 
   /// Return an iterator over the binary's dynamic symbols
   /// The dynamic symbols are those located in the ``.dynsym`` section

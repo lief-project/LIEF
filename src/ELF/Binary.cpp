@@ -1175,11 +1175,11 @@ Segment* Binary::replace(const Segment& new_segment, const Segment& original_seg
 }
 
 
-void Binary::remove(const Segment& segment) {
+void Binary::remove(const Segment& segment, bool clear) {
   const auto it_segment = std::find_if(
       std::begin(segments_), std::end(segments_),
       [&segment] (const std::unique_ptr<Segment>& s) {
-         return *s == segment;
+         return s.get() == &segment;
       });
 
   if (it_segment == std::end(segments_)) {
@@ -1188,6 +1188,11 @@ void Binary::remove(const Segment& segment) {
   }
 
   std::unique_ptr<Segment> local_segment = std::move(*it_segment);
+
+  if (clear) {
+    local_segment->clear();
+  }
+
   datahandler_->remove(local_segment->file_offset(), local_segment->physical_size(),
                        DataHandler::Node::SEGMENT);
   if (phdr_reloc_info_.new_offset > 0) {
@@ -1196,6 +1201,23 @@ void Binary::remove(const Segment& segment) {
   header().numberof_segments(header().numberof_segments() - 1);
 
   segments_.erase(it_segment);
+}
+
+void Binary::remove(Segment::TYPE type, bool clear) {
+  std::vector<Segment*> to_remove;
+  for (std::unique_ptr<Segment>& S : segments_) {
+    if (S->type() == type) {
+      to_remove.push_back(S.get());
+    }
+  }
+
+  if (to_remove.empty()) {
+    return;
+  }
+
+  for (Segment* S : to_remove) {
+    remove(*S, clear);
+  }
 }
 
 

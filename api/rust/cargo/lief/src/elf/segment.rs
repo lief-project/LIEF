@@ -306,6 +306,16 @@ impl Segment<'_> {
             );
         }
     }
+
+    /// Clear the content of this segment
+    pub fn clear(&mut self) {
+        self.ptr.pin_mut().clear()
+    }
+
+    /// Fill the content of this segment with the value provided in parameter
+    pub fn fill(&mut self, value: char) {
+        self.ptr.pin_mut().fill(value as i8)
+    }
 }
 
 impl fmt::Display for Segment<'_> {

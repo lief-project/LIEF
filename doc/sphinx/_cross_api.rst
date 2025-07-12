@@ -674,6 +674,14 @@
     :py:attr:`lief.ELF.ParserConfig.page_size`
     :cpp:member:`LIEF::ELF::ParserConfig::page_size`
 
+.. |lief-elf-binary-remove-segment| lief-api:: lief.ELF.Binary.remove_segment()
+
+    :rust:method:`lief::elf::Binary::remove_segment [struct]`
+    :rust:method:`lief::elf::Binary::remove_segments_by_type [struct]`
+    :py:meth:`lief.ELF.Binary.remove`
+    :cpp:func:`void LIEF::ELF::Binary::remove(const Segment &, bool)`
+    :cpp:func:`void LIEF::ELF::Binary::remove(Segment::TYPE, bool)`
+
 .. Mach-O ======================================================================
 
 .. |lief-macho-binary| lief-api:: lief.MachO.Binary

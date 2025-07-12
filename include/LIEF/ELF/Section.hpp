@@ -44,7 +44,7 @@ class ExeLayout;
 class ObjectFileLayout;
 
 
-/// Class wich represents an ELF Section
+/// Class which represents an ELF Section
 class LIEF_API Section : public LIEF::Section {
   friend class Parser;
   friend class Binary;
@@ -256,7 +256,7 @@ class LIEF_API Section : public LIEF::Section {
 
   /// Original size of the section's data.
   ///
-  /// This value is used by the ELF::Builder to determines if it needs
+  /// This value is used by the ELF::Builder to determine if it needs
   /// to be relocated to avoid an override of the data
   uint64_t original_size() const {
     return original_size_;

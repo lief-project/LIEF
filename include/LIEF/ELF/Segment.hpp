@@ -265,6 +265,15 @@ class LIEF_API Segment : public Object {
 
   void content(std::vector<uint8_t> content);
 
+  /// Fill the content of this segment with the value provided in parameter
+  void fill(char c) {
+    span<uint8_t> buffer = writable_content();
+    std::fill(buffer.begin(), buffer.end(), c);
+  }
+
+  /// Clear the content of this segment
+  void clear() { fill('\0'); }
+
   template<typename T> T get_content_value(size_t offset) const;
   template<typename T> void set_content_value(size_t offset, T value);
   size_t get_content_size() const;

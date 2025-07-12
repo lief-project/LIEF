@@ -70,5 +70,8 @@ class ELF_Segment : public Mirror<LIEF::ELF::Segment> {
 
   Span content() const { return make_span(get().content()); }
 
+  void fill(char c) { get().fill(c); }
+  void clear() { get().clear(); }
+
   std::string to_string() const { return details::to_string(get()); }
 };
