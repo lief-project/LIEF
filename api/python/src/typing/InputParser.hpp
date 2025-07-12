@@ -77,7 +77,7 @@ constexpr auto out_descr() {
 struct InputParser : public nanobind::object {
   LIEF_PY_DEFAULT_CTOR(InputParser, nanobind::object);
 
-  NB_OBJECT_DEFAULT(InputParser, object, "Union[io.IOBase | os.PathLike | bytes | list[int]]", check)
+  NB_OBJECT_DEFAULT(InputParser, object, "Union[str | io.IOBase | os.PathLike | bytes | list[int]]", check)
 
   std::unique_ptr<BinaryStream> into_stream();
 
