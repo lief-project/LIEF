@@ -314,7 +314,7 @@ impl Segment<'_> {
 
     /// Fill the content of this segment with the value provided in parameter
     pub fn fill(&mut self, value: char) {
-        self.ptr.pin_mut().fill(value as i8)
+        self.ptr.pin_mut().fill((value as i8).try_into().unwrap())
     }
 }
 
