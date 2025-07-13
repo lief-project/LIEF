@@ -102,3 +102,20 @@ class Instruction:
     def branch_target(self) -> Union[int, lief.lief_errors]: ...
 
     def __str__(self) -> str: ...
+
+class AssemblerConfig:
+    def __init__(self) -> None: ...
+
+    class DIALECT(enum.Enum):
+        DEFAULT_DIALECT = 0
+
+        X86_INTEL = 1
+
+        X86_ATT = 2
+
+    @staticmethod
+    def default_config() -> AssemblerConfig: ...
+
+    dialect: AssemblerConfig.DIALECT
+
+    def resolve_symbol(self, name: str) -> int | None: ...

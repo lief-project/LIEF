@@ -1,3 +1,4 @@
+from typing import override
 import lief
 import pytest
 from utils import get_sample
@@ -136,3 +137,37 @@ def test_arm64_operands():
 
     assert isinstance(operands[1], lief.assembly.aarch64.operands.PCRelative)
     assert operands[1].value == 1
+
+
+def test_asm_context():
+    class Config(lief.assembly.AssemblerConfig):
+        def __init__(self, elf: lief.ELF.Binary):
+            super().__init__()
+
+            self._elf = elf
+
+        @override
+        def resolve_symbol(self, name: str) -> int | None:
+            sym = self._elf.get_symtab_symbol(name)
+            if sym is None or sym.type != lief.ELF.Symbol.TYPE.FUNC:
+                return super().resolve_symbol(name)
+            return sym.value
+
+    elf = lief.ELF.parse(get_sample("ELF/ELF64_AArch64_piebinary_ndkr16.bin"))
+    assert elf is not None
+
+    config = Config(elf)
+
+    addr = 0x00000e80
+    elf.assemble(addr, """
+    adrp x0, _ZNSt6__ndk113basic_ostreamIcNS_11char_traitsIcEEE3putEc;
+    add x0, x0, :lo12:_ZNSt6__ndk113basic_ostreamIcNS_11char_traitsIcEEE3putEc;
+    br x0;
+    bl _ZNSt6__ndk113basic_ostreamIcNS_11char_traitsIcEEE3putEc
+    """, config)
+
+    insts = list(elf.disassemble(addr))
+    assert insts[0].to_string() == "0x000e80: adrp x0, #4096"
+    assert insts[1].to_string() == "0x000e84: add x0, x0, #1280"
+    assert insts[2].to_string() == "0x000e88: br x0"
+    assert insts[3].to_string() == "0x000e8c: bl #1652"

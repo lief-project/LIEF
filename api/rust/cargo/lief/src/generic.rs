@@ -2,7 +2,7 @@ use lief_ffi as ffi;
 use bitflags::bitflags;
 use crate::{to_slice, declare_fwd_iterator};
 use crate::common::{into_optional, FromFFI};
-use crate::assembly::Instructions;
+use crate::assembly::{Instructions, AssemblerConfig};
 
 use std::pin::Pin;
 
@@ -229,12 +229,19 @@ pub trait Binary {
     /// let mut bin = get_binary();
     ///
     /// let Vec<u8> bytes = bin.assemble(0x12000440, r#"
-    /// xor rax, rbx;
-    /// mov rcx, rax;
+    ///     xor rax, rbx;
+    ///     mov rcx, rax;
     /// "#);
     /// ```
     fn assemble(&mut self, address: u64, asm: &str) -> Vec<u8> {
         Vec::from(self.as_pin_mut_generic().assemble(address, asm).as_slice())
+    }
+
+    /// Same as [`Binary::assemble`] but this function takes an extra [`AssemblerConfig`] that
+    /// is used to configure the assembly engine: dialect, symbols definitions.
+    fn assemble_with_config(&mut self, address: u64, asm: &str, config: &AssemblerConfig) -> Vec<u8> {
+        let ffi_config = config.into_ffi();
+        Vec::from(self.as_pin_mut_generic().assemble_with_config(address, asm, ffi_config.as_ref()).as_slice())
     }
 
     /// Get the default memory page size according to the architecture and the format of the

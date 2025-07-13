@@ -5,3 +5,8 @@
 
 - :class:`lief.assembly.Engine`
 
+
+AssemblerConfig
+***************
+
+.. autoclass:: lief.assembly.AssemblerConfig

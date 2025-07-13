@@ -988,6 +988,13 @@
     :cpp:class:`LIEF::assembly::ebpf::Instruction`
     :py:class:`lief.assembly.ebpf.Instruction`
 
+
+.. |lief-asm-AssemblerConfig| lief-api:: lief.assembly.AssemblerConfig
+
+    :rust:struct:`lief::assembly::AssemblerConfig`
+    :cpp:class:`LIEF::assembly::AssemblerConfig`
+    :py:class:`lief.assembly.AssemblerConfig`
+
 .. COFF Format ================================================================
 
 .. |lief-coff-parse| lief-api:: lief.COFF.parse()

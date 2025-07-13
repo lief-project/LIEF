@@ -12,6 +12,7 @@
 namespace LIEF::assembly {
 class Engine;
 class Instruction;
+class AssemblerConfig;
 }
 
 namespace LIEF::assembly::py {
@@ -20,6 +21,7 @@ void init(nb::module_& m) {
 
   create<LIEF::assembly::Engine>(mod);
   create<LIEF::assembly::Instruction>(mod);
+  create<LIEF::assembly::AssemblerConfig>(mod);
 
   aarch64::py::init(mod);
   x86::py::init(mod);

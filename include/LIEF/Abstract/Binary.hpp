@@ -30,6 +30,7 @@
 #include "LIEF/Abstract/Function.hpp"
 
 #include "LIEF/asm/Instruction.hpp"
+#include "LIEF/asm/AssemblerConfig.hpp"
 
 namespace llvm {
 class MCInst;
@@ -357,7 +358,11 @@ class LIEF_API Binary : public Object {
   ///   mov rcx, rax;
   /// )asm");
   /// ```
-  std::vector<uint8_t> assemble(uint64_t address, const std::string& Asm);
+  ///
+  /// If you need to configure the assembly engine or to define addresses for
+  /// symbols, you can provide your own assembly::AssemblerConfig.
+  std::vector<uint8_t> assemble(uint64_t address, const std::string& Asm,
+      assembly::AssemblerConfig& config = assembly::AssemblerConfig::default_config());
 
   /// Assemble **and patch** the address with the given LLVM MCInst.
   ///

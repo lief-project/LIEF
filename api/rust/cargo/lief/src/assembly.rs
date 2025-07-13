@@ -34,6 +34,10 @@ pub mod powerpc;
 pub mod riscv;
 pub mod mips;
 pub mod ebpf;
+pub mod config;
 
 #[doc(inline)]
 pub use instruction::{Instructions, Instruction};
+
+#[doc(inline)]
+pub use config::AssemblerConfig;

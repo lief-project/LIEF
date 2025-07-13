@@ -22,6 +22,10 @@
 
   - :ref:`lief-patchelf <tools-lief-patchelf>`
 
+:Assembler:
+
+  * Add support for :ref:`Contextual Assembly Patching <extended-assembler-contextual-patching>`
+
 :DSC:
 
   * Add enum for the latest dyld shared cache version introducing
@@ -129,7 +133,7 @@
   * Introduce :attr:`lief.ELF.Segment.raw_flags` to access the raw (integer)
     value of the flag
   * If an ELF binary uses a custom page size, its value can be defined in the
-    parser configuration: |lief-elf-parserconfig-page_size|.
+    parser configuration: |lief-elf-parser-config-page_size|.
   * Add support for SH4
   * Add suport for x32/ILP32 ELF binaries (:issue:`1225`)
   * Add support for S390x

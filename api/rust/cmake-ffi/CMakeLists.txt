@@ -11,7 +11,11 @@ endif()
 find_package(LIEF REQUIRED)
 
 message(STATUS "Rust FFI source: ${LIEF_RUST_FFI_SRC}")
-add_library(lief-sys STATIC ${LIEF_RUST_FFI_SRC}/cxx/gen0.cxx)
+
+add_library(lief-sys STATIC
+  ${LIEF_RUST_FFI_SRC}/cxx/gen0.cxx
+  rust_cpp_bridge.cpp
+)
 
 set_target_properties(lief-sys PROPERTIES
   POSITION_INDEPENDENT_CODE    ON

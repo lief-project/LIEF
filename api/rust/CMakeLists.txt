@@ -10,7 +10,8 @@ if(LIEF_INSTALL)
     COMPONENT headers)
 
   install(
-    FILES ${CMAKE_CURRENT_SOURCE_DIR}/autocxx_ffi.rs
+    FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/autocxx_ffi.rs
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/LIEF/)
 endif()
 

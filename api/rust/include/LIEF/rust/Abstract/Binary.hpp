@@ -19,6 +19,7 @@
 #include <LIEF/rust/asm/Instruction.hpp>
 #include <LIEF/rust/Mirror.hpp>
 #include <LIEF/rust/Iterator.hpp>
+#include <LIEF/rust/asm/AssemblerConfig.hpp>
 
 #include "LIEF/rust/error.hpp"
 
@@ -102,6 +103,12 @@ class AbstractBinary : public Mirror<LIEF::Binary> {
 
   auto assemble(uint64_t address, std::string Asm) {
     return get().assemble(address, Asm);
+  }
+
+  auto assemble_with_config(uint64_t address, std::string Asm, const AssemblerConfig_r& ffi_config) {
+    std::unique_ptr<LIEF::assembly::AssemblerConfig> config = from_rust(ffi_config);
+    assert(config != nullptr);
+    return get().assemble(address, Asm, *config);
   }
 
   uint64_t page_size() const {

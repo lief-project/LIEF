@@ -1139,3 +1139,13 @@ include_cpp! {
 
     safety!(unsafe)
 }
+
+#[autocxx::extern_rust::extern_rust_function]
+pub struct AssemblerConfig_r {}
+
+impl AssemblerConfig_r {
+    #[autocxx::extern_rust::extern_rust_function]
+    fn resolve_symbol(&self, name: &str) -> i64 {
+        unimplemented!();
+    }
+}

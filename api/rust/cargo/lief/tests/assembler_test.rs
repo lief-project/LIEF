@@ -6,6 +6,7 @@ use lief::dwarf::{Parameter, Scope, Type};
 use lief::generic::{Binary, Section};
 
 use std::path::{Path, PathBuf};
+use std::sync::Arc;
 fn get_binary(name: &str) -> lief::Binary {
     let path = utils::get_sample(Path::new(name)).unwrap();
     let path_str = path.to_str().unwrap();
@@ -92,4 +93,23 @@ fn test_api() {
     reassemble_from("ELF/ELF32_x86_library_libshellx.so", 0x000010c0, 300);
     //reassemble_from("ELF/libmonochrome-armv7.so", 0x0468b701, 300); // Thumb
     //reassemble_from("ELF/i872_risv.elf", 0x80000000, 300);
+
+    if let lief::Binary::PE(mut pe) = get_binary("PE/ntoskrnl.exe") {
+        let imagebase = pe.imagebase();
+
+        let mut config = lief::assembly::AssemblerConfig::default();
+
+        let entrypoint = pe.entrypoint();
+        let resolver = Arc::new(move |symbol: &str| {
+            if symbol == "entrypoint" {
+                return Some(entrypoint);
+            }
+            None
+        });
+
+        config.symbol_resolver = Some(resolver);
+        pe.assemble_with_config(pe.entrypoint() - imagebase, r#"
+        call entrypoint
+        "#, &config);
+    }
 }

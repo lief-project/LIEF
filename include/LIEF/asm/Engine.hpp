@@ -16,7 +16,9 @@
 #define LIEF_ASM_ENGINE_H
 #include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
+
 #include "LIEF/asm/Instruction.hpp"
+#include "LIEF/asm/AssemblerConfig.hpp"
 
 #include <memory>
 
@@ -55,9 +57,11 @@ class LIEF_API Engine {
     return disassemble(bytes.data(), bytes.size(), addr);
   }
 
-  std::vector<uint8_t> assemble(uint64_t address, const std::string& Asm);
   std::vector<uint8_t> assemble(uint64_t address, const std::string& Asm,
-                                LIEF::Binary& bin);
+      AssemblerConfig& config = AssemblerConfig::default_config());
+
+  std::vector<uint8_t> assemble(uint64_t address, const std::string& Asm,
+      LIEF::Binary& bin, AssemblerConfig& config = AssemblerConfig::default_config());
 
   std::vector<uint8_t> assemble(uint64_t address, const llvm::MCInst& inst,
                                 LIEF::Binary& bin);

@@ -2,6 +2,7 @@ target_sources(pyLIEF PRIVATE
   init.cpp
   pyEngine.cpp
   pyInstruction.cpp
+  pyAssemblerConfig.cpp
 )
 
 add_subdirectory(aarch64)

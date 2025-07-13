@@ -311,13 +311,14 @@ void init(nb::module_& m) {
   LIEF::py::init_hash(m);
   LIEF::py::init_json(m);
 
+  LIEF::assembly::py::init(m);
+
   LIEF::py::init_abstract(m);
 
   LIEF::dwarf::py::init(m);
   LIEF::pdb::py::init(m);
   LIEF::objc::py::init(m);
   LIEF::dsc::py::init(m);
-  LIEF::assembly::py::init(m);
 
 #if defined(LIEF_ELF_SUPPORT)
   LIEF::ELF::py::init(m);
