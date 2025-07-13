@@ -1,4 +1,3 @@
-from typing import override
 import lief
 import pytest
 from utils import get_sample
@@ -146,7 +145,6 @@ def test_asm_context():
 
             self._elf = elf
 
-        @override
         def resolve_symbol(self, name: str) -> int | None:
             sym = self._elf.get_symtab_symbol(name)
             if sym is None or sym.type != lief.ELF.Symbol.TYPE.FUNC:
