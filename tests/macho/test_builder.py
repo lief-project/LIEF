@@ -681,3 +681,20 @@ def test_issue_1204(tmp_path: Path):
     new = lief.MachO.parse(out).at(0)
     lief.MachO.check_layout(new)
     assert new.rpath.path == rpath
+
+def test_issue_1236(tmp_path: Path):
+    macho = lief.MachO.parse(get_sample("MachO/libmamba.4.0.1.dylib")).at(0)
+
+    checked, err = lief.MachO.check_layout(macho)
+    assert checked, err
+
+    for cmd in macho.commands:
+        if isinstance(cmd, lief.MachO.DylibCommand):
+            cmd.name = "/Users/random" + cmd.name
+
+    output = tmp_path / "out.macho"
+    macho.write(output.as_posix())
+    new = lief.MachO.parse(output)
+
+    checked, err = lief.MachO.check_layout(new)
+    assert checked, err
