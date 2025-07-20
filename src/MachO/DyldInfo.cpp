@@ -2117,7 +2117,7 @@ void DyldInfo::add(std::unique_ptr<ExportInfo> info) {
 }
 
 std::ostream& DyldInfo::print(std::ostream& os) const {
-  LoadCommand::print(os);
+  LoadCommand::print(os) << '\n';
 
   os << fmt::format("{:11}: {:10} {:10}", "Type", "Offset", "Size") << '\n'
      << fmt::format("{:11}: {:10} {:10}", "Rebase", std::get<0>(rebase()), std::get<1>(rebase())) << '\n'

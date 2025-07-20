@@ -30,7 +30,7 @@ void SubClient::accept(Visitor& visitor) const {
 }
 
 std::ostream& SubClient::print(std::ostream& os) const {
-  LoadCommand::print(os);
+  LoadCommand::print(os) << '\n';
   os << "client: " << client();
   return os;
 }

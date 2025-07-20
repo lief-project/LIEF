@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <spdlog/fmt/fmt.h>
+
 #include "LIEF/Visitor.hpp"
 #include "LIEF/MachO/EncryptionInfo.hpp"
 #include "MachO/Structures.hpp"
@@ -32,7 +34,9 @@ void EncryptionInfo::accept(Visitor& visitor) const {
 }
 
 std::ostream& EncryptionInfo::print(std::ostream& os) const {
-  LoadCommand::print(os);
+  LoadCommand::print(os) << '\n';
+  os << fmt::format("crypt offset=0x{:06x}, crypt size=0x{:06x}, crypt id={}",
+                     crypt_offset(), crypt_size(), crypt_id());
   return os;
 }
 

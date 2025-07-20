@@ -40,7 +40,7 @@ void DylinkerCommand::accept(Visitor& visitor) const {
 }
 
 std::ostream& DylinkerCommand::print(std::ostream& os) const {
-  LoadCommand::print(os);
+  LoadCommand::print(os) << '\n';
   os << name();
   return os;
 }

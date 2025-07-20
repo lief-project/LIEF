@@ -76,7 +76,7 @@ std::string DyldExportsTrie::show_export_trie() const {
 }
 
 std::ostream& DyldExportsTrie::print(std::ostream& os) const {
-  LoadCommand::print(os);
+  LoadCommand::print(os) << '\n';
   os << fmt::format("offset=0x{:06x}, size=0x{:06x}",
                      data_offset(), data_size());
   return os;

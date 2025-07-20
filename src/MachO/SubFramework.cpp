@@ -31,7 +31,7 @@ void SubFramework::accept(Visitor& visitor) const {
 }
 
 std::ostream& SubFramework::print(std::ostream& os) const {
-  LoadCommand::print(os);
+  LoadCommand::print(os) << '\n';
   os << "Umbrella:" << umbrella();
   return os;
 }

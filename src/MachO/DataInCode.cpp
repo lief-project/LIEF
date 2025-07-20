@@ -34,7 +34,7 @@ void DataInCode::accept(Visitor& visitor) const {
 }
 
 std::ostream& DataInCode::print(std::ostream& os) const {
-  LoadCommand::print(os);
+  LoadCommand::print(os) << '\n';
   os << fmt::format("offset=0x{:06x}, size=0x{:06x}",
                      data_offset(), data_size());
   return os;

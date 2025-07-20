@@ -58,7 +58,7 @@ void BuildVersion::accept(Visitor& visitor) const {
 }
 
 std::ostream& BuildVersion::print(std::ostream& os) const {
-  LoadCommand::print(os);
+  LoadCommand::print(os) << '\n';
   os << fmt::format("Platform: {}", to_string(platform())) << '\n';
   os << fmt::format("Min OS:   {}", fmt::join(minos(), ".")) << '\n';
   os << fmt::format("SDK:      {}", fmt::join(sdk(), ".")) << '\n';

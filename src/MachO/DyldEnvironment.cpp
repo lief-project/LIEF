@@ -29,7 +29,7 @@ void DyldEnvironment::accept(Visitor& visitor) const {
 }
 
 std::ostream& DyldEnvironment::print(std::ostream& os) const {
-  LoadCommand::print(os);
+  LoadCommand::print(os) << '\n';
   os << value();
   return os;
 }

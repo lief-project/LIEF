@@ -34,7 +34,7 @@ void UUIDCommand::accept(Visitor& visitor) const {
 }
 
 std::ostream& UUIDCommand::print(std::ostream& os) const {
-  LoadCommand::print(os);
+  LoadCommand::print(os) << '\n';
   for (uint32_t x : uuid()) {
     os << fmt::format("{:02x}", x) << ' ';
   }

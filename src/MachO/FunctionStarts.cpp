@@ -33,9 +33,9 @@ void FunctionStarts::accept(Visitor& visitor) const {
 }
 
 std::ostream& FunctionStarts::print(std::ostream& os) const {
-  LoadCommand::print(os);
+  LoadCommand::print(os) << '\n';
   const std::vector<uint64_t> funcs = functions();
-  os << fmt::format("offset=0x{:06}, size=0x{:06x}, #functions={}",
+  os << fmt::format("offset=0x{:06x}, size=0x{:06x}, #functions={}",
                      data_offset(), data_size(), funcs.size()) << '\n';
   for (size_t i = 0; i < funcs.size(); ++i) {
     os << fmt::format("  [{}] __TEXT + 0x{:06x}\n", i, funcs[i]);

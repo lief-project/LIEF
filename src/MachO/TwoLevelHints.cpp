@@ -32,7 +32,7 @@ void TwoLevelHints::accept(Visitor& visitor) const {
 }
 
 std::ostream& TwoLevelHints::print(std::ostream& os) const {
-  LoadCommand::print(os);
+  LoadCommand::print(os) << '\n';
   return os;
 }
 
