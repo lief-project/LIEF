@@ -50,6 +50,10 @@ void create<Header>(nb::module_& m) {
     .value(PY_ENUM(Header::CPU_TYPE::ALPHA))
     .value(PY_ENUM(Header::CPU_TYPE::POWERPC))
     .value(PY_ENUM(Header::CPU_TYPE::POWERPC64))
+    .value(PY_ENUM(Header::CPU_TYPE::APPLE_GPU))
+    .value(PY_ENUM(Header::CPU_TYPE::AMD_GPU))
+    .value(PY_ENUM(Header::CPU_TYPE::INTEL_GPU))
+    .value(PY_ENUM(Header::CPU_TYPE::AIR64))
   #undef PY_ENUM
   ;
 

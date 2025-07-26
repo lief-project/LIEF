@@ -78,6 +78,10 @@ pub enum CpuType {
     ALPHA,
     POWERPC,
     POWERPC64,
+    APPLE_GPU,
+    AMD_GPU,
+    INTEL_GPU,
+    AIR64,
     UNKNOWN(i32),
 }
 
@@ -98,6 +102,10 @@ impl From<i32> for CpuType {
             0x00000010 => CpuType::ALPHA,
             0x00000012 => CpuType::POWERPC,
             0x01000012 => CpuType::POWERPC64,
+            0x01000013 => CpuType::APPLE_GPU,
+            0x01000014 => CpuType::AMD_GPU,
+            0x01000015 => CpuType::INTEL_GPU,
+            0x01000017 => CpuType::AIR64,
             _ => CpuType::UNKNOWN(value),
 
         }
@@ -120,6 +128,10 @@ impl From<CpuType> for i32 {
             CpuType::ALPHA => 0x00000010,
             CpuType::POWERPC => 0x00000012,
             CpuType::POWERPC64 => 0x01000012,
+            CpuType::APPLE_GPU => 0x01000013,
+            CpuType::AMD_GPU => 0x01000014,
+            CpuType::INTEL_GPU => 0x01000015,
+            CpuType::AIR64 => 0x01000017,
             CpuType::UNKNOWN(_) => -1,
         }
     }

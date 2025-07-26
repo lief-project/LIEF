@@ -106,6 +106,10 @@ class LIEF_API Header : public Object {
     ALPHA	    = 16,
     POWERPC   = 18,
     POWERPC64 = 18 | ABI64,
+    APPLE_GPU = 19 | ABI64,
+    AMD_GPU   = 20 | ABI64,
+    INTEL_GPU = 21 | ABI64,
+    AIR64     = 23 | ABI64,
   };
 
   static constexpr uint32_t SUBTYPE_MASK = 0xff000000;

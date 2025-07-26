@@ -1096,6 +1096,14 @@ class Header(lief.Object):
 
         POWERPC64 = 16777234
 
+        APPLE_GPU = 16777235
+
+        AMD_GPU = 16777236
+
+        INTEL_GPU = 16777237
+
+        AIR64 = 16777239
+
     class FILE_TYPE(enum.Enum):
         @staticmethod
         def from_value(arg: int, /) -> Header.FILE_TYPE: ...

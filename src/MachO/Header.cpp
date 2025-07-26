@@ -188,6 +188,10 @@ const char* to_string(Header::CPU_TYPE e) {
     ENTRY(ALPHA),
     ENTRY(POWERPC),
     ENTRY(POWERPC64),
+    ENTRY(APPLE_GPU),
+    ENTRY(AMD_GPU),
+    ENTRY(INTEL_GPU),
+    ENTRY(AIR64),
   };
   #undef ENTRY
 
