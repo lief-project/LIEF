@@ -111,6 +111,9 @@ bool chained_fixup::is_rebase(uint16_t ptr_format) const {
       {
         return true;
       }
+    case LIEF::MachO::DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_SEGMENTED:
+      return true;
+
     default:
       {
         LIEF_ERR("Unknown pointer format: 0x{:04x}", ptr_format);

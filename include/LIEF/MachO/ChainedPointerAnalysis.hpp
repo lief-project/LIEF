@@ -209,6 +209,34 @@ class LIEF_API ChainedPointerAnalysis {
       std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_32_firmware_rebase_t& chain);
   };
 
+  // DYLD_CHAINED_PTR_ARM64E_SEGMENTED
+  struct dyld_chained_ptr_arm64e_segmented_rebase_t
+  {
+    uint32_t    target_seg_offset : 28,
+                target_seg_index  :  4;
+    uint32_t    padding           : 19,
+                next              : 12,
+                auth              :  1;
+
+    friend LIEF_API
+      std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_arm64e_segmented_rebase_t& chain);
+  };
+
+  // DYLD_CHAINED_PTR_ARM64E_SEGMENTED
+  struct dyld_chained_ptr_arm64e_auth_segmented_rebase_t
+  {
+      uint32_t    target_seg_offset : 28,
+                  target_seg_index  :  4;
+      uint32_t    diversity         : 16,
+                  addr_div          :  1,
+                  key               :  2,
+                  next              : 12,
+                  auth              :  1;
+    friend LIEF_API
+      std::ostream& operator<<(std::ostream& os, const dyld_chained_ptr_arm64e_auth_segmented_rebase_t& chain);
+  };
+
+
   enum class PTR_TYPE : uint64_t {
     UNKNOWN = 0,
     DYLD_CHAINED_PTR_ARM64E_REBASE,
@@ -223,7 +251,9 @@ class LIEF_API ChainedPointerAnalysis {
     DYLD_CHAINED_PTR_32_REBASE,
     DYLD_CHAINED_PTR_32_BIND,
     DYLD_CHAINED_PTR_32_CACHE_REBASE,
-    DYLD_CHAINED_PTR_32_FIRMWARE_REBASE
+    DYLD_CHAINED_PTR_32_FIRMWARE_REBASE,
+    DYLD_CHAINED_PTR_ARM64E_SEGMENTED_REBASE,
+    DYLD_CHAINED_PTR_ARM64E_AUTH_SEGMENTED_REBASE,
   };
 
   static std::unique_ptr<ChainedPointerAnalysis> from_value(uint64_t value,
@@ -251,6 +281,7 @@ class LIEF_API ChainedPointerAnalysis {
         case DYLD_CHAINED_PTR_FORMAT::PTR_32:
         case DYLD_CHAINED_PTR_FORMAT::PTR_32_CACHE:
         case DYLD_CHAINED_PTR_FORMAT::PTR_64_KERNEL_CACHE:
+        case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_SEGMENTED:
             return 4;
 
         case DYLD_CHAINED_PTR_FORMAT::PTR_X86_64_KERNEL_CACHE:
@@ -273,6 +304,7 @@ class LIEF_API ChainedPointerAnalysis {
         case DYLD_CHAINED_PTR_FORMAT::PTR_64_KERNEL_CACHE:
         case DYLD_CHAINED_PTR_FORMAT::PTR_X86_64_KERNEL_CACHE:
         case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_SHARED_CACHE:
+        case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_SEGMENTED:
           return sizeof(uint64_t);
 
         case DYLD_CHAINED_PTR_FORMAT::PTR_32_FIRMWARE:
@@ -382,6 +414,18 @@ class LIEF_API ChainedPointerAnalysis {
     return result;
   }
 
+  const dyld_chained_ptr_arm64e_segmented_rebase_t dyld_chained_ptr_arm64e_segmented_rebase() const {
+    dyld_chained_ptr_arm64e_segmented_rebase_t result;
+    std::memcpy(&result, &value_, sizeof(result));
+    return result;
+  }
+
+  const dyld_chained_ptr_arm64e_auth_segmented_rebase_t dyld_chained_ptr_arm64e_auth_segmented_rebase() const {
+    dyld_chained_ptr_arm64e_auth_segmented_rebase_t result;
+    std::memcpy(&result, &value_, sizeof(result));
+    return result;
+  }
+
   struct union_pointer_t {
     PTR_TYPE type = PTR_TYPE::UNKNOWN;
     union {
@@ -398,6 +442,9 @@ class LIEF_API ChainedPointerAnalysis {
       dyld_chained_ptr_32_bind_t ptr_32_bind;
       dyld_chained_ptr_32_cache_rebase_t ptr_32_cache_rebase;
       dyld_chained_ptr_32_firmware_rebase_t ptr_32_firmware_rebase;
+
+      dyld_chained_ptr_arm64e_segmented_rebase_t ptr_arm64e_segmented_rebase;
+      dyld_chained_ptr_arm64e_auth_segmented_rebase_t ptr_arm64e_auth_segmented_rebase;
       uint64_t raw;
     };
     uint32_t next() const;

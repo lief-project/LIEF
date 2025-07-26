@@ -1245,6 +1245,20 @@ ok_error_t Builder::update_fixups(DyldChainedFixups& command) {
             break;
           }
 
+        case RelocationFixup::REBASE_TYPES::SEGMENTED:
+          {
+            [[maybe_unused]] auto& raw_fixup = *reinterpret_cast<details::dyld_chained_ptr_arm64e_segmented_rebase*>(sdata.data() + rel_offset);
+            LIEF_ERR("dyld_chained_ptr_arm64e_segmented_rebase is not supported ({})", __LINE__);
+            break;
+          }
+
+        case RelocationFixup::REBASE_TYPES::AUTH_SEGMENTED:
+          {
+            [[maybe_unused]] auto& raw_fixup = *reinterpret_cast<details::dyld_chained_ptr_arm64e_auth_segmented_rebase*>(sdata.data() + rel_offset);
+            LIEF_ERR("dyld_chained_ptr_arm64e_auth_segmented_rebase is not supported ({})", __LINE__);
+            break;
+          }
+
         case RelocationFixup::REBASE_TYPES::UNKNOWN:
           {
             break;

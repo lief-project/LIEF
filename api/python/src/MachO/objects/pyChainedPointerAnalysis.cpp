@@ -45,6 +45,8 @@ struct ChainedPointer : public nanobind::object {
       "lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_32_bind_t, "
       "lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_32_cache_rebase_t, "
       "lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_32_firmware_rebase_t, "
+      "lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_arm64e_segmented_rebase_t, "
+      "lief.MachO.ChainedPointerAnalysis.dyld_chained_ptr_arm64e_auth_segmented_rebase_t, "
       "int, "
       "None"
       "]",
@@ -471,6 +473,76 @@ void create<ChainedPointerAnalysis>(nb::module_& m) {
     )
     LIEF_DEFAULT_STR(ChainedPointerAnalysis::dyld_chained_ptr_32_firmware_rebase_t);
   ;
+  nb::class_<ChainedPointerAnalysis::dyld_chained_ptr_arm64e_segmented_rebase_t>(
+    clazz, "dyld_chained_ptr_arm64e_segmented_rebase_t"
+  )
+    .def_prop_ro("target_seg_offset",
+      [] (const ChainedPointerAnalysis::dyld_chained_ptr_arm64e_segmented_rebase_t& ptr) {
+        return (uint32_t)ptr.target_seg_offset;
+      }
+    )
+    .def_prop_ro("target_seg_index",
+      [] (const ChainedPointerAnalysis::dyld_chained_ptr_arm64e_segmented_rebase_t& ptr) {
+        return (uint32_t)ptr.target_seg_index;
+      }
+    )
+    .def_prop_ro("padding",
+      [] (const ChainedPointerAnalysis::dyld_chained_ptr_arm64e_segmented_rebase_t& ptr) {
+        return (uint32_t)ptr.padding;
+      }
+    )
+    .def_prop_ro("next",
+      [] (const ChainedPointerAnalysis::dyld_chained_ptr_arm64e_segmented_rebase_t& ptr) {
+        return (uint32_t)ptr.next;
+      }
+    )
+    .def_prop_ro("auth",
+      [] (const ChainedPointerAnalysis::dyld_chained_ptr_arm64e_segmented_rebase_t& ptr) {
+        return (bool)ptr.auth;
+      }
+    )
+    LIEF_DEFAULT_STR(ChainedPointerAnalysis::dyld_chained_ptr_arm64e_segmented_rebase_t);
+  ;
+  nb::class_<ChainedPointerAnalysis::dyld_chained_ptr_arm64e_auth_segmented_rebase_t>(
+    clazz, "dyld_chained_ptr_arm64e_auth_segmented_rebase_t"
+  )
+    .def_prop_ro("target_seg_offset",
+      [] (const ChainedPointerAnalysis::dyld_chained_ptr_arm64e_auth_segmented_rebase_t& ptr) {
+        return (uint32_t)ptr.target_seg_offset;
+      }
+    )
+    .def_prop_ro("target_seg_index",
+      [] (const ChainedPointerAnalysis::dyld_chained_ptr_arm64e_auth_segmented_rebase_t& ptr) {
+        return (uint32_t)ptr.target_seg_index;
+      }
+    )
+    .def_prop_ro("diversity",
+      [] (const ChainedPointerAnalysis::dyld_chained_ptr_arm64e_auth_segmented_rebase_t& ptr) {
+        return (uint32_t)ptr.diversity;
+      }
+    )
+    .def_prop_ro("addr_div",
+      [] (const ChainedPointerAnalysis::dyld_chained_ptr_arm64e_auth_segmented_rebase_t& ptr) {
+        return (uint32_t)ptr.addr_div;
+      }
+    )
+    .def_prop_ro("key",
+      [] (const ChainedPointerAnalysis::dyld_chained_ptr_arm64e_auth_segmented_rebase_t& ptr) {
+        return (uint32_t)ptr.key;
+      }
+    )
+    .def_prop_ro("next",
+      [] (const ChainedPointerAnalysis::dyld_chained_ptr_arm64e_auth_segmented_rebase_t& ptr) {
+        return (uint32_t)ptr.next;
+      }
+    )
+    .def_prop_ro("auth",
+      [] (const ChainedPointerAnalysis::dyld_chained_ptr_arm64e_auth_segmented_rebase_t& ptr) {
+        return (bool)ptr.auth;
+      }
+    )
+    LIEF_DEFAULT_STR(ChainedPointerAnalysis::dyld_chained_ptr_arm64e_segmented_rebase_t);
+  ;
   clazz
     .def_static("stride",
                 &ChainedPointerAnalysis::stride, "fmt"_a)
@@ -506,6 +578,10 @@ void create<ChainedPointerAnalysis>(nb::module_& m) {
                   &ChainedPointerAnalysis::dyld_chained_ptr_32_cache_rebase)
     .def_prop_ro("dyld_chained_ptr_32_firmware_rebase",
                   &ChainedPointerAnalysis::dyld_chained_ptr_32_firmware_rebase)
+    .def_prop_ro("dyld_chained_ptr_arm64e_segmented_rebase",
+                  &ChainedPointerAnalysis::dyld_chained_ptr_arm64e_segmented_rebase)
+    .def_prop_ro("dyld_chained_ptr_arm64e_auth_segmented_rebase",
+                  &ChainedPointerAnalysis::dyld_chained_ptr_arm64e_auth_segmented_rebase)
     .def("get_as",
       [] (const ChainedPointerAnalysis& self, DYLD_CHAINED_PTR_FORMAT fmt) -> ChainedPointer {
          ChainedPointerAnalysis::union_pointer_t ptr = self.get_as(fmt);
@@ -551,6 +627,12 @@ void create<ChainedPointerAnalysis>(nb::module_& m) {
 
           case ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_32_FIRMWARE_REBASE:
             return nb::cast(ptr.ptr_32_firmware_rebase);
+
+          case ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_ARM64E_SEGMENTED_REBASE:
+            return nb::cast(ptr.ptr_arm64e_segmented_rebase);
+
+          case ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_ARM64E_AUTH_SEGMENTED_REBASE:
+            return nb::cast(ptr.ptr_arm64e_auth_segmented_rebase);
          }
          return nb::none();
       }

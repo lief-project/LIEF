@@ -65,6 +65,7 @@ struct dyld_chained_fixups_header;
 union dyld_chained_ptr_arm64e;
 union dyld_chained_ptr_generic64;
 union dyld_chained_ptr_generic32;
+union dyld_chained_ptr_arm64e_segmented;
 }
 
 /// Class used to parse a **single** binary (i.e. non-FAT)
@@ -223,6 +224,11 @@ class LIEF_API BinaryParser : public LIEF::Parser {
     SegmentCommand& segment, uint64_t chain_address, uint32_t chain_offset,
     const details::dyld_chained_starts_in_segment& seg_info,
     const details::dyld_chained_ptr_generic32 & fixup);
+
+  LIEF_LOCAL ok_error_t do_chained_fixup(
+    SegmentCommand& segment, uint64_t chain_address, uint32_t chain_offset,
+    const details::dyld_chained_starts_in_segment& seg_info,
+    const details::dyld_chained_ptr_arm64e_segmented& fixup);
 
   template<class MACHO_T>
   LIEF_LOCAL ok_error_t post_process(SymbolCommand& cmd);

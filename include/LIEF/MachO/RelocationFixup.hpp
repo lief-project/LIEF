@@ -31,6 +31,8 @@ struct dyld_chained_ptr_arm64e_rebase;
 struct dyld_chained_ptr_arm64e_auth_rebase;
 struct dyld_chained_ptr_64_rebase;
 struct dyld_chained_ptr_32_rebase;
+struct dyld_chained_ptr_arm64e_segmented_rebase;
+struct dyld_chained_ptr_arm64e_auth_segmented_rebase;
 }
 
 class BinaryParser;
@@ -133,12 +135,16 @@ class LIEF_API RelocationFixup : public Relocation {
     ARM64E_AUTH_REBASE,
     PTR64_REBASE,
     PTR32_REBASE,
+    SEGMENTED,
+    AUTH_SEGMENTED,
   };
 
   LIEF_LOCAL void set(const details::dyld_chained_ptr_arm64e_rebase& fixup);
   LIEF_LOCAL void set(const details::dyld_chained_ptr_arm64e_auth_rebase& fixup);
   LIEF_LOCAL void set(const details::dyld_chained_ptr_64_rebase& fixup);
   LIEF_LOCAL void set(const details::dyld_chained_ptr_32_rebase& fixup);
+  LIEF_LOCAL void set(const details::dyld_chained_ptr_arm64e_segmented_rebase& fixup);
+  LIEF_LOCAL void set(const details::dyld_chained_ptr_arm64e_auth_segmented_rebase& fixup);
 
   DYLD_CHAINED_PTR_FORMAT ptr_fmt_ = DYLD_CHAINED_PTR_FORMAT::PTR_32;
   uint64_t imagebase_ = 0;
@@ -151,6 +157,8 @@ class LIEF_API RelocationFixup : public Relocation {
     details::dyld_chained_ptr_arm64e_auth_rebase* arm64_auth_rebase_;
     details::dyld_chained_ptr_64_rebase*          p64_rebase_;
     details::dyld_chained_ptr_32_rebase*          p32_rebase_;
+    details::dyld_chained_ptr_arm64e_segmented_rebase* segmented_rebase_;
+    details::dyld_chained_ptr_arm64e_auth_segmented_rebase* auth_segmented_rebase_;
   };
 };
 

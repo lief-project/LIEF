@@ -2956,6 +2956,27 @@ result<uint64_t> BinaryParser::next_chain(uint64_t& chain_address, uint64_t chai
         chain_address += delta;
         return chain.next * stride;
       }
+
+    case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_SEGMENTED:
+      {
+        details::dyld_chained_ptr_arm64e_segmented_rebase chain;
+
+        if (auto res = stream_->peek<decltype(chain)>(chain_offset)) {
+          chain = *res;
+        } else {
+          LIEF_ERR("Can't read the dyld chain at 0x{:x}", chain_offset);
+          return make_error_code(res.error());
+        }
+
+        if (chain.next == 0) {
+          return CHAIN_END;
+        }
+
+        int32_t delta = chain.next * stride - chain_offset;
+        chain_address += delta;
+        return chain.next * stride;
+      }
+
     default:
       {
         LIEF_ERR("Unknown pointer format: 0x{:04x}", seg_info.pointer_format);
@@ -3036,6 +3057,24 @@ ok_error_t BinaryParser::process_fixup(SegmentCommand& segment,
                   "the attached binary", to_string(ptr_fmt));
         return make_error_code(lief_errors::not_implemented);
       }
+    case LIEF::MachO::DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_SEGMENTED:
+      {
+        details::dyld_chained_ptr_arm64e_segmented fixup;
+        if (auto res = stream_->peek<decltype(fixup)>(chain_offset)) {
+          fixup = *res;
+        } else {
+          LIEF_ERR("Can't read the dyld chain at 0x{:x}", chain_offset);
+          return make_error_code(res.error());
+        }
+
+        auto is_ok = do_chained_fixup(segment, chain_address, chain_offset, seg_info, fixup);
+        if (!is_ok) {
+          LIEF_WARN("Can't process the fixup {} - 0x{:x}", segment.name(), chain_offset);
+          return make_error_code(is_ok.error());
+        }
+        return ok();
+      }
+
     default:
       {
         LIEF_ERR("Unknown pointer format: 0x{:04x}", seg_info.pointer_format);
@@ -3364,6 +3403,15 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
 
   segment.relocations_.push_back(std::move(reloc));
   return ok();
+}
+
+ok_error_t BinaryParser::do_chained_fixup(
+    SegmentCommand& /*segment*/, uint64_t /*chain_address*/, uint32_t /*chain_offset*/,
+    const details::dyld_chained_starts_in_segment& /*seg_info*/,
+    const details::dyld_chained_ptr_arm64e_segmented& /*fixup*/)
+{
+  LIEF_ERR("Segmented chained rebase is not supported");
+  return make_error_code(lief_errors::not_supported);
 }
 
 

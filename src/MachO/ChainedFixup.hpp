@@ -203,6 +203,28 @@ struct dyld_chained_ptr_32_firmware_rebase
                 next     :  6;   // 4-byte stride
 };
 
+// DYLD_CHAINED_PTR_ARM64E_SEGMENTED
+struct dyld_chained_ptr_arm64e_segmented_rebase
+{
+    uint32_t    target_seg_offset : 28,   // offset in segment
+                target_seg_index  :  4;   // index into segment address table
+    uint32_t    padding           : 19,
+                next              : 12,   // 4-byte stide
+                auth              :  1;   // == 0
+};
+
+// DYLD_CHAINED_PTR_ARM64E_SEGMENTED
+struct dyld_chained_ptr_arm64e_auth_segmented_rebase
+{
+    uint32_t    target_seg_offset : 28,   // offset in segment
+                target_seg_index  :  4;   // index into segment address table
+    uint32_t    diversity         : 16,
+                addr_div          :  1,
+                key               :  2,
+                next              : 12,   // 4-byte stide
+                auth              :  1;   // == 1
+};
+
 struct dyld_chained_import {
   uint32_t lib_ordinal :  8,
            weak_import :  1,
@@ -239,15 +261,21 @@ uint64_t sign_extended_addend(const dyld_chained_ptr_arm64e_bind24& bind);
 uint64_t sign_extended_addend(const dyld_chained_ptr_64_bind& bind);
 
 union dyld_chained_ptr_arm64e {
-  dyld_chained_ptr_arm64e_auth_rebase auth_rebase;
-  dyld_chained_ptr_arm64e_auth_bind   auth_bind;
-  dyld_chained_ptr_arm64e_rebase      rebase;
-  dyld_chained_ptr_arm64e_bind        bind;
-  dyld_chained_ptr_arm64e_bind24      bind24;
-  dyld_chained_ptr_arm64e_auth_bind24 auth_bind24;
+  dyld_chained_ptr_arm64e_auth_rebase           auth_rebase;
+  dyld_chained_ptr_arm64e_auth_bind             auth_bind;
+  dyld_chained_ptr_arm64e_rebase                rebase;
+  dyld_chained_ptr_arm64e_bind                  bind;
+  dyld_chained_ptr_arm64e_bind24                bind24;
+  dyld_chained_ptr_arm64e_auth_bind24           auth_bind24;
+
   uint64_t sign_extended_addend() const;
   uint64_t unpack_target() const;
   void pack_target(uint64_t value);
+};
+
+union dyld_chained_ptr_arm64e_segmented {
+  dyld_chained_ptr_arm64e_segmented_rebase      seg_rebase;
+  dyld_chained_ptr_arm64e_auth_segmented_rebase auth_seg_rebase;
 };
 
 union dyld_chained_ptr_generic64 {
