@@ -139,7 +139,7 @@ std::unique_ptr<FatBinary> Parser::parse_from_memory(uintptr_t address, const Pa
 }
 
 ok_error_t Parser::build_fat() {
-  static constexpr size_t MAX_FAT_ARCH = 10;
+  static constexpr size_t MAX_FAT_ARCH = 30;
   stream_->setpos(0);
   const auto header = stream_->read<details::fat_header>();
   if (!header) {
@@ -147,7 +147,7 @@ ok_error_t Parser::build_fat() {
     return make_error_code(lief_errors::read_error);
   }
   uint32_t nb_arch = Swap4Bytes(header->nfat_arch);
-  LIEF_DEBUG("In this Fat binary there is #{:d} archs", nb_arch);
+  LIEF_DEBUG("#{:d} architectures", nb_arch);
 
   if (nb_arch > MAX_FAT_ARCH) {
     LIEF_ERR("Too many architectures");
