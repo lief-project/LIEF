@@ -41,6 +41,8 @@
 #include "LIEF/MachO/EncryptionInfo.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
+#include "LIEF/MachO/FunctionVariants.hpp"
+#include "LIEF/MachO/FunctionVariantFixups.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/AtomInfo.hpp"
@@ -462,6 +464,24 @@ void create<Binary>(nb::module_& m) {
     .def_prop_ro("atom_info",
         nb::overload_cast<>(&Binary::atom_info),
         "Return the binary's " RST_CLASS_REF(lief.MachO.AtomInfo) " if any, or None"_doc,
+        nb::rv_policy::reference_internal)
+
+    .def_prop_ro("has_function_variants",
+        &Binary::has_function_variants,
+        "``True`` if the binary has a ``LC_FUNCTION_VARIANTS`` command"_doc)
+
+    .def_prop_ro("function_variants",
+        nb::overload_cast<>(&Binary::function_variants),
+        "Return ``LC_FUNCTION_VARIANTS`` command"_doc,
+        nb::rv_policy::reference_internal)
+
+    .def_prop_ro("has_function_variant_fixups",
+        &Binary::has_function_variants,
+        "``True`` if the binary has a ``LC_FUNCTION_VARIANT_FIXUPS`` command"_doc)
+
+    .def_prop_ro("function_variant_fixups",
+        nb::overload_cast<>(&Binary::function_variants),
+        "Return ``LC_FUNCTION_VARIANT_FIXUPS`` command"_doc,
         nb::rv_policy::reference_internal)
 
     .def("virtual_address_to_offset",

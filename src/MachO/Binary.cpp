@@ -43,6 +43,8 @@
 #include "LIEF/MachO/EncryptionInfo.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
+#include "LIEF/MachO/FunctionVariants.hpp"
+#include "LIEF/MachO/FunctionVariantFixups.hpp"
 #include "LIEF/MachO/AtomInfo.hpp"
 #include "LIEF/MachO/IndirectBindingInfo.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
@@ -558,6 +560,18 @@ ok_error_t Binary::shift_linkedit(size_t width) {
     two->offset(two->offset() + width);
   }
 
+  if (AtomInfo* info = atom_info()) {
+    info->data_offset(info->data_offset() + width);
+  }
+
+  if (FunctionVariants* func_variants = function_variants()) {
+    func_variants->data_offset(func_variants->data_offset() + width);
+  }
+
+  if (FunctionVariantFixups* func_variant_fixups = function_variant_fixups()) {
+    func_variant_fixups->data_offset(func_variant_fixups->data_offset() + width);
+  }
+
   linkedit->file_offset(linkedit->file_offset() + width);
   linkedit->virtual_address(linkedit->virtual_address() + width);
   for (const std::unique_ptr<Section>& section : linkedit->sections_) {
@@ -841,6 +855,24 @@ void Binary::shift_command(size_t width, uint64_t from_offset) {
   if (Routine* routine = routine_command()) {
     if (routine->init_address() > virtual_address) {
       routine->init_address(routine->init_address() + width);
+    }
+  }
+
+  if (AtomInfo* info = atom_info()) {
+    if (info->data_offset() > from_offset) {
+      info->data_offset(info->data_offset() + width);
+    }
+  }
+
+  if (FunctionVariants* func_variants = function_variants()) {
+    if (func_variants->data_offset() > from_offset) {
+      func_variants->data_offset(func_variants->data_offset() + width);
+    }
+  }
+
+  if (FunctionVariantFixups* func_variant_fixups = function_variant_fixups()) {
+    if (func_variant_fixups->data_offset() > from_offset) {
+      func_variant_fixups->data_offset(func_variant_fixups->data_offset() + width);
     }
   }
 
@@ -2370,6 +2402,24 @@ Binary::it_const_notes Binary::notes() const {
   return {commands_, [] (const std::unique_ptr<LoadCommand>& cmd) {
     return NoteCommand::classof(cmd.get());
   }};
+}
+
+// FunctionVariants
+// ++++++++++++++++++++++++++++++++
+const FunctionVariants* Binary::function_variants() const {
+  if (const auto* cmd = get(LoadCommand::TYPE::FUNCTION_VARIANTS)) {
+    return cmd->as<const FunctionVariants>();
+  }
+  return nullptr;
+}
+
+// FunctionVariantFixups
+// ++++++++++++++++++++++++++++++++
+const FunctionVariantFixups* Binary::function_variant_fixups() const {
+  if (const auto* cmd = get(LoadCommand::TYPE::FUNCTION_VARIANT_FIXUPS)) {
+    return cmd->as<const FunctionVariantFixups>();
+  }
+  return nullptr;
 }
 
 Binary::it_bindings Binary::bindings() const {

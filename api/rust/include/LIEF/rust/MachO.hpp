@@ -29,6 +29,8 @@
 #include "LIEF/rust/MachO/FatBinary.hpp"
 #include "LIEF/rust/MachO/Fileset.hpp"
 #include "LIEF/rust/MachO/FunctionStarts.hpp"
+#include "LIEF/rust/MachO/FunctionVariants.hpp"
+#include "LIEF/rust/MachO/FunctionVariantFixups.hpp"
 #include "LIEF/rust/MachO/Header.hpp"
 #include "LIEF/rust/MachO/IndirectBindingInfo.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"

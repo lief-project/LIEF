@@ -42,6 +42,8 @@ class DynamicSymbolCommand;
 class EncryptionInfo;
 class FatBinary;
 class FunctionStarts;
+class FunctionVariants;
+class FunctionVariantFixups;
 class LinkerOptHint;
 class LoadCommand;
 class MainCommand;
@@ -192,6 +194,12 @@ class LIEF_API Builder {
 
   template<class T>
   LIEF_LOCAL ok_error_t build(EncryptionInfo& tc);
+
+  template<class T>
+  LIEF_LOCAL ok_error_t build(FunctionVariants& func);
+
+  template<class T>
+  LIEF_LOCAL ok_error_t build(FunctionVariantFixups& func);
 
   template <typename T>
   LIEF_LOCAL ok_error_t build_segments();

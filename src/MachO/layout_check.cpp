@@ -31,6 +31,8 @@
 #include "LIEF/MachO/DylibCommand.hpp"
 #include "LIEF/MachO/DynamicSymbolCommand.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
+#include "LIEF/MachO/FunctionVariants.hpp"
+#include "LIEF/MachO/FunctionVariantFixups.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
@@ -115,6 +117,9 @@ class LayoutChecker {
   // Check from PR #1136
   // See: https://github.com/lief-project/LIEF/pull/1136/files#r1882625692
   bool check_section_contiguity();
+
+  // From FunctionVariants::valid()
+  bool check_function_variants();
 
   bool check_linkedit_end();
 
@@ -976,6 +981,10 @@ bool LayoutChecker::check() {
     return false;
   }
 
+  if (!check_function_variants()) {
+    return false;
+  }
+
   if (!check_section_contiguity()) {
     return false;
   }
@@ -986,7 +995,7 @@ bool LayoutChecker::check() {
 
 
 
-  // The following checks are only revelant for non-object files
+  // The following checks are only relevant for non-object files
   if (binary.header().file_type() == Header::FILE_TYPE::OBJECT) {
     return true;
   }
@@ -1077,6 +1086,30 @@ bool LayoutChecker::check() {
     offset += exports->data_size();
   }
 
+  if (const FunctionVariants* variants = binary.function_variants()) {
+    if (variants->data_offset() != 0) {
+      if (variants->data_offset() != offset) {
+        return error(R"delim(
+        LC_FUNCTION_VARIANTS out of place in __LINKEDIT:
+          Expecting offset: 0x{:x} while it is 0x{:x}
+        )delim", offset, variants->data_offset());
+      }
+    }
+    offset += variants->data_size();
+  }
+
+  if (const FunctionVariantFixups* fixups = binary.function_variant_fixups()) {
+    if (fixups->data_offset() != 0) {
+      if (fixups->data_offset() != offset) {
+        return error(R"delim(
+        LC_FUNCTION_VARIANT_FIXUPS out of place in __LINKEDIT:
+          Expecting offset: 0x{:x} while it is 0x{:x}
+        )delim", offset, fixups->data_offset());
+      }
+    }
+    offset += fixups->data_size();
+  }
+
   const DynamicSymbolCommand* dyst = binary.dynamic_symbol_command();
   if (dyst == nullptr) {
     return error("LC_DYSYMTAB not found");
@@ -1123,6 +1156,16 @@ bool LayoutChecker::check() {
       )delim", offset, dic->data_offset());
     }
     offset += dic->data_size();
+  }
+
+  if (const AtomInfo* info = binary.atom_info()) {
+    if (info->data_offset() != 0 && info->data_offset() != offset) {
+      return error(R"delim(
+      LC_ATOM_INFO out of place:
+        Expecting offset: 0x{:x} while it is 0x{:x}
+      )delim", offset, info->data_offset());
+    }
+    offset += info->data_size();
   }
 
   if (const CodeSignatureDir* cs = binary.code_signature_dir()) {
@@ -1470,6 +1513,40 @@ bool LayoutChecker::check_chained_fixups() {
     }
   }
 
+  return true;
+}
+
+
+bool LayoutChecker::check_function_variants() {
+  using KIND = FunctionVariants::RuntimeTable::KIND;
+  const FunctionVariants* variants = binary.function_variants();
+  if (variants == nullptr) {
+    return true;
+  }
+
+  for (const FunctionVariants::RuntimeTable& entry : variants->runtime_table()) {
+    switch (entry.kind()) {
+      case KIND::ARM64:
+      case KIND::PER_PROCESS:
+      case KIND::SYSTEM_WIDE:
+      case KIND::X86_64:
+        break;
+      default:
+        return error("unknown FunctionVariants::RuntimeTable::KIND ({})",
+            (uint32_t)entry.kind());
+    }
+
+    // Check that the last entry is "default"
+    auto entries = entry.entries();
+    if (entries.empty()) {
+      return error("Missing entries in FunctionVariants::RuntimeTable (offset=0x{:06x})", entry.offset());
+    }
+
+    const FunctionVariants::RuntimeTableEntry& last = entries[entries.size() - 1];
+    if (last.flag_bit_nums()[0] != 0) {
+      return error("last entry in FunctionVariants::RuntimeTable entries is not 'default'");
+    }
+  }
   return true;
 }
 

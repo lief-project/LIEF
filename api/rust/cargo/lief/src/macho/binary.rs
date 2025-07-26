@@ -20,6 +20,8 @@ use super::commands::encryption_info::EncryptionInfo;
 use super::commands::functionstarts::FunctionStarts;
 use super::commands::linker_opt_hint::LinkerOptHint;
 use super::commands::atom_info::AtomInfo;
+use super::commands::function_variants::FunctionVariants;
+use super::commands::function_variant_fixups::FunctionVariantFixups;
 use super::commands::main_cmd::Main;
 use super::commands::note::Note;
 use super::commands::rpath::RPath;
@@ -230,6 +232,16 @@ impl Binary {
         into_optional(self.ptr.atom_info())
     }
 
+    /// Return the `LC_FUNCTION_VARIANTS` command if present
+    pub fn function_variants(&self) -> Option<FunctionVariants> {
+        into_optional(self.ptr.function_variants())
+    }
+
+    /// Return the `LC_FUNCTION_VARIANT_FIXUPS` command if present
+    pub fn function_variant_fixups(&self) -> Option<FunctionVariantFixups> {
+        into_optional(self.ptr.function_variant_fixups())
+    }
+
     /// Return the `LC_VERSION_MIN_MACOSX/VERSION_MIN_IPHONEOS` command if present
     pub fn version_min(&self) -> Option<VersionMin> {
         into_optional(self.ptr.version_min())
@@ -364,7 +376,6 @@ impl generic::Binary for Binary {
         }
     }
 }
-
 
 declare_fwd_iterator!(
     BindingsInfo,

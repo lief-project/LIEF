@@ -24,6 +24,8 @@
 #include "LIEF/MachO/DyldExportsTrie.hpp"
 #include "LIEF/MachO/DyldInfo.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
+#include "LIEF/MachO/FunctionVariants.hpp"
+#include "LIEF/MachO/FunctionVariantFixups.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
@@ -203,6 +205,18 @@ void LinkEdit::update_data(const update_fnc_t& f) {
       LIEF_WARN("Error while re-spanning the LC_ATOM_INFO in segment {}", name_);
     }
   }
+
+  if (func_variants_ != nullptr) {
+    if (!update_span(func_variants_->content_, original_data_addr, original_data_end, data_)) {
+      LIEF_WARN("Error while re-spanning the LC_FUNCTION_VARIANTS in segment {}", name_);
+    }
+  }
+
+  if (func_variant_fixups_ != nullptr) {
+    if (!update_span(func_variant_fixups_->content_, original_data_addr, original_data_end, data_)) {
+      LIEF_WARN("Error while re-spanning the LC_FUNCTION_VARIANT_FIXUPS in segment {}", name_);
+    }
+  }
 }
 
 void LinkEdit::update_data(const update_fnc_ws_t& f, size_t where, size_t size) {
@@ -294,6 +308,18 @@ void LinkEdit::update_data(const update_fnc_ws_t& f, size_t where, size_t size) 
   if (atom_info_ != nullptr) {
     if (!update_span(atom_info_->content_, original_data_addr, original_data_end, data_)) {
       LIEF_WARN("Error while re-spanning the LC_ATOM_INFO in segment {}", name_);
+    }
+  }
+
+  if (func_variants_ != nullptr) {
+    if (!update_span(func_variants_->content_, original_data_addr, original_data_end, data_)) {
+      LIEF_WARN("Error while re-spanning the LC_FUNCTION_VARIANTS in segment {}", name_);
+    }
+  }
+
+  if (func_variant_fixups_ != nullptr) {
+    if (!update_span(func_variant_fixups_->content_, original_data_addr, original_data_end, data_)) {
+      LIEF_WARN("Error while re-spanning the LC_FUNCTION_VARIANT_FIXUPS in segment {}", name_);
     }
   }
 }

@@ -34,6 +34,8 @@ class DyldChainedFixups;
 class DyldExportsTrie;
 class DyldInfo;
 class FunctionStarts;
+class FunctionVariants;
+class FunctionVariantFixups;
 class LinkerOptHint;
 class SymbolCommand;
 class TwoLevelHints;
@@ -74,18 +76,20 @@ class LIEF_API LinkEdit : public SegmentCommand {
                               size_t where, size_t size) override;
 
   //x-ref to keep the spans in a consistent state
-  DyldInfo* dyld_                    = nullptr;
+  DyldInfo* dyld_ = nullptr;
   DyldChainedFixups* chained_fixups_ = nullptr;
-  DyldExportsTrie* exports_trie_     = nullptr;
-  SegmentSplitInfo* seg_split_       = nullptr;
-  FunctionStarts* fstarts_           = nullptr;
-  DataInCode* data_code_             = nullptr;
-  CodeSignatureDir* code_sig_dir_    = nullptr;
-  LinkerOptHint* linker_opt_         = nullptr;
-  SymbolCommand* symtab_             = nullptr;
-  TwoLevelHints* two_lvl_hint_       = nullptr;
-  CodeSignature* code_sig_           = nullptr;
-  AtomInfo* atom_info_               = nullptr;
+  DyldExportsTrie* exports_trie_ = nullptr;
+  SegmentSplitInfo* seg_split_ = nullptr;
+  FunctionStarts* fstarts_ = nullptr;
+  DataInCode* data_code_ = nullptr;
+  CodeSignatureDir* code_sig_dir_ = nullptr;
+  LinkerOptHint* linker_opt_ = nullptr;
+  SymbolCommand* symtab_ = nullptr;
+  TwoLevelHints* two_lvl_hint_ = nullptr;
+  CodeSignature* code_sig_ = nullptr;
+  AtomInfo* atom_info_ = nullptr;
+  FunctionVariants*  func_variants_ = nullptr;
+  FunctionVariantFixups* func_variant_fixups_ = nullptr;
 };
 
 }

@@ -118,6 +118,7 @@ const char* to_string(ExportInfo::FLAGS e) {
     ENTRY(WEAK_DEFINITION),
     ENTRY(REEXPORT),
     ENTRY(STUB_AND_RESOLVER),
+    ENTRY(STATIC_RESOLVER),
   };
   #undef ENTRY
 

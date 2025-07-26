@@ -39,6 +39,7 @@ bitflags! {
         const WEAK_DEFINITION = 0x4;
         const REEXPORT = 0x8;
         const STUB_AND_RESOLVER = 0x10;
+        const STATIC_RESOLVER = 0x20;
     }
 }
 

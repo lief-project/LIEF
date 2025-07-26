@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LIEF_MACHO_ATOM_INFO_COMMAND_H
-#define LIEF_MACHO_ATOM_INFO_COMMAND_H
+#ifndef LIEF_MACHO_FUNCTION_VARIANT_FIXUPS_COMMAND_H
+#define LIEF_MACHO_FUNCTION_VARIANT_FIXUPS_COMMAND_H
 #include <ostream>
 
 #include "LIEF/visibility.h"
 
-#include "LIEF/span.hpp"
 #include "LIEF/MachO/LoadCommand.hpp"
 
 namespace LIEF {
@@ -31,20 +30,20 @@ namespace details {
 struct linkedit_data_command;
 }
 
-/// Class which represents the LC_ATOM_INFO command
-class LIEF_API AtomInfo : public LoadCommand {
+/// Class which represents the `LC_FUNCTION_VARIANT_FIXUPS` command
+class LIEF_API FunctionVariantFixups : public LoadCommand {
   friend class BinaryParser;
   friend class LinkEdit;
 
   public:
-  AtomInfo();
-  AtomInfo(const details::linkedit_data_command& cmd);
+  FunctionVariantFixups() = default;
+  FunctionVariantFixups(const details::linkedit_data_command& cmd);
 
-  AtomInfo& operator=(const AtomInfo& copy) = default;
-  AtomInfo(const AtomInfo& copy) = default;
+  FunctionVariantFixups& operator=(const FunctionVariantFixups& copy) = default;
+  FunctionVariantFixups(const FunctionVariantFixups& copy) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<AtomInfo>(new AtomInfo(*this));
+    return std::unique_ptr<FunctionVariantFixups>(new FunctionVariantFixups(*this));
   }
 
   /// Offset in the `__LINKEDIT` SegmentCommand where the payload starts
@@ -60,6 +59,7 @@ class LIEF_API AtomInfo : public LoadCommand {
   void data_offset(uint32_t offset) {
     data_offset_ = offset;
   }
+
   void data_size(uint32_t size) {
     data_size_ = size;
   }
@@ -72,14 +72,13 @@ class LIEF_API AtomInfo : public LoadCommand {
     return content_;
   }
 
-  ~AtomInfo() override = default;
 
-  void accept(Visitor& visitor) const override;
+  ~FunctionVariantFixups() override = default;
 
   std::ostream& print(std::ostream& os) const override;
 
   static bool classof(const LoadCommand* cmd) {
-    return cmd->command() == LoadCommand::TYPE::ATOM_INFO;
+    return cmd->command() == LoadCommand::TYPE::FUNCTION_VARIANT_FIXUPS;
   }
 
   private:

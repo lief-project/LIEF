@@ -198,6 +198,30 @@ Function starts
 
 ----------
 
+Function Variants
+*****************
+
+.. lief-inheritance:: lief._lief.MachO.FunctionVariants
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
+
+.. autoclass:: lief.MachO.FunctionVariants
+
+----------
+
+Function Variant Fixups
+***********************
+
+.. lief-inheritance:: lief._lief.MachO.FunctionVariantFixups
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
+
+.. autoclass:: lief.MachO.FunctionVariantFixups
+
+----------
+
 Source Version
 **************
 
@@ -397,7 +421,6 @@ Sub Framework
 .. autoclass:: lief.MachO.SubFramework
 
 ----------
-
 
 Sub Client
 **********

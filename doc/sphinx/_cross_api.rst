@@ -858,6 +858,18 @@
     :py:class:`lief.MachO.NoteCommand`
     :cpp:class:`LIEF::MachO::NoteCommand`
 
+.. |lief-macho-function-variants-command| lief-api:: lief.MachO.FunctionVariants
+
+    :rust:struct:`lief::macho::commands::FunctionVariants`
+    :py:class:`lief.MachO.FunctionVariants`
+    :cpp:class:`LIEF::MachO::FunctionVariants`
+
+.. |lief-macho-function-variant-fixups-command| lief-api:: lief.MachO.FunctionVariantFixups
+
+    :rust:struct:`lief::macho::commands::FunctionVariantFixups`
+    :py:class:`lief.MachO.FunctionVariantFixups`
+    :cpp:class:`LIEF::MachO::FunctionVariantFixups`
+
 .. dyld shared cache ===========================================================
 
 .. |lief-dsc-load| lief-api:: lief.dsc.load()

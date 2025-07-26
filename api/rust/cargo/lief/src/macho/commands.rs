@@ -14,6 +14,8 @@ pub mod dylinker;
 pub mod dynamic_symbol_command;
 pub mod encryption_info;
 pub mod functionstarts;
+pub mod function_variants;
+pub mod function_variant_fixups;
 pub mod atom_info;
 pub mod linker_opt_hint;
 pub mod main_cmd;
@@ -58,6 +60,10 @@ pub use dynamic_symbol_command::DynamicSymbolCommand;
 pub use encryption_info::EncryptionInfo;
 #[doc(inline)]
 pub use functionstarts::FunctionStarts;
+#[doc(inline)]
+pub use function_variants::FunctionVariants;
+#[doc(inline)]
+pub use function_variant_fixups::FunctionVariantFixups;
 #[doc(inline)]
 pub use atom_info::AtomInfo;
 #[doc(inline)]
@@ -324,6 +330,8 @@ pub enum Commands<'a> {
     VersionMin(VersionMin<'a>),
     AtomInfo(AtomInfo<'a>),
     Note(Note<'a>),
+    FunctionVariants(FunctionVariants<'a>),
+    FunctionVariantFixups(FunctionVariantFixups<'a>),
     Unknown(Unknown<'a>),
 }
 
@@ -542,6 +550,20 @@ impl<'a> Commands<'a> {
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Commands::Note(Note::from_ffi(raw))
+            } else if ffi::MachO_FunctionVariants::classof(cmd_ref) {
+                let raw = {
+                    type From = cxx::UniquePtr<ffi::MachO_Command>;
+                    type To = cxx::UniquePtr<ffi::MachO_FunctionVariants>;
+                    std::mem::transmute::<From, To>(ffi_entry)
+                };
+                Commands::FunctionVariants(FunctionVariants::from_ffi(raw))
+            } else if ffi::MachO_FunctionVariantFixups::classof(cmd_ref) {
+                let raw = {
+                    type From = cxx::UniquePtr<ffi::MachO_Command>;
+                    type To = cxx::UniquePtr<ffi::MachO_FunctionVariantFixups>;
+                    std::mem::transmute::<From, To>(ffi_entry)
+                };
+                Commands::FunctionVariantFixups(FunctionVariantFixups::from_ffi(raw))
             } else {
                 Commands::Generic(Generic::from_ffi(ffi_entry))
             }
@@ -686,6 +708,12 @@ impl Command for Commands<'_> {
                 cmd.get_base()
             }
             Commands::Note(cmd) => {
+                cmd.get_base()
+            }
+            Commands::FunctionVariants(cmd) => {
+                cmd.get_base()
+            }
+            Commands::FunctionVariantFixups(cmd) => {
                 cmd.get_base()
             }
             Commands::Unknown(cmd) => {

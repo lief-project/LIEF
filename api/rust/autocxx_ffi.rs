@@ -609,6 +609,23 @@ include_cpp! {
     block_constructors!("MachO_AtomInfo")
     generate!("MachO_FunctionStarts")
     block_constructors!("MachO_FunctionStarts")
+    generate!("MachO_FunctionVariants")
+    block_constructors!("MachO_FunctionVariants")
+
+    generate!("MachO_FunctionVariants_it_runtime_table")
+    block_constructors!("MachO_FunctionVariants_it_runtime_table")
+
+    generate!("MachO_FunctionVariants_RuntimeTable")
+    block_constructors!("MachO_FunctionVariants_RuntimeTable")
+
+    generate!("MachO_FunctionVariants_RuntimeTable_it_entries")
+    block_constructors!("MachO_FunctionVariants_RuntimeTable_it_entries")
+
+    generate!("MachO_FunctionVariants_RuntimeTableEntry")
+    block_constructors!("MachO_FunctionVariants_RuntimeTableEntry")
+
+    generate!("MachO_FunctionVariantFixups")
+    block_constructors!("MachO_FunctionVariantFixups")
     generate!("MachO_Header")
     block_constructors!("MachO_Header")
     generate!("MachO_LinkerOptHint")

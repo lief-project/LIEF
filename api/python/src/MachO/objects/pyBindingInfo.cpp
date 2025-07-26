@@ -34,7 +34,7 @@ void create<BindingInfo>(nb::module_& m) {
 
       This class does not represent a structure that exists in the Mach-O format
       specifications but it provides a *view* of a binding operation that is performed
-      by the Dyld binding bytecode (`LC_DYLD_INFO`) or the Dyld chained fixups (`DYLD_CHAINED_FIXUPS`)
+      by the Dyld binding bytecode (``LC_DYLD_INFO``) or the Dyld chained fixups (``DYLD_CHAINED_FIXUPS``)
 
       See: :class:`~lief.MachO.ChainedBindingInfo`, :class:`~lief.MachO.DyldBindingInfo`
       )delim"_doc)

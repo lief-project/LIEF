@@ -51,6 +51,7 @@ void create<ExportInfo>(nb::module_& m) {
     .value(PY_ENUM(ExportInfo::FLAGS::WEAK_DEFINITION))
     .value(PY_ENUM(ExportInfo::FLAGS::REEXPORT))
     .value(PY_ENUM(ExportInfo::FLAGS::STUB_AND_RESOLVER))
+    .value(PY_ENUM(ExportInfo::FLAGS::STATIC_RESOLVER))
   #undef PY_ENUM
   ;
 

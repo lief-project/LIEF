@@ -50,7 +50,8 @@ class LIEF_API ExportInfo : public Object {
   enum class FLAGS: uint64_t  {
     WEAK_DEFINITION     = 0x04u,
     REEXPORT            = 0x08u,
-    STUB_AND_RESOLVER   = 0x10u
+    STUB_AND_RESOLVER   = 0x10u,
+    STATIC_RESOLVER     = 0x20u,
   };
 
   using flag_list_t = std::vector<FLAGS>;

@@ -34,6 +34,8 @@ target_sources(LIB_LIEF PRIVATE
   FatBinary.cpp
   FilesetCommand.cpp
   FunctionStarts.cpp
+  FunctionVariants.cpp
+  FunctionVariantFixups.cpp
   Header.cpp
   IndirectBindingInfo.cpp
   LinkEdit.cpp

@@ -31,6 +31,8 @@
 #include "LIEF/rust/MachO/DynamicSymbolCommand.hpp"
 #include "LIEF/rust/MachO/EncryptionInfo.hpp"
 #include "LIEF/rust/MachO/FunctionStarts.hpp"
+#include "LIEF/rust/MachO/FunctionVariants.hpp"
+#include "LIEF/rust/MachO/FunctionVariantFixups.hpp"
 #include "LIEF/rust/MachO/Header.hpp"
 #include "LIEF/rust/MachO/LinkerOptHint.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
@@ -279,6 +281,14 @@ class MachO_Binary : public AbstractBinary {
 
   auto atom_info() const {
     return details::try_unique<MachO_AtomInfo>(impl().atom_info());
+  }
+
+  auto function_variants() const {
+    return details::try_unique<MachO_FunctionVariants>(impl().function_variants());
+  }
+
+  auto function_variant_fixups() const {
+    return details::try_unique<MachO_FunctionVariantFixups>(impl().function_variant_fixups());
   }
 
   auto version_min() const {

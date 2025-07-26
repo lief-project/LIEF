@@ -155,6 +155,7 @@ Dyld Info
 .. doxygenclass:: LIEF::MachO::DyldInfo
    :project: lief
 
+----------
 
 Function starts
 ***************
@@ -162,6 +163,21 @@ Function starts
 .. doxygenclass:: LIEF::MachO::FunctionStarts
    :project: lief
 
+----------
+
+Function Variants
+*****************
+
+.. doxygenclass:: LIEF::MachO::FunctionVariants
+   :project: lief
+
+----------
+
+Function Variant Fixups
+***********************
+
+.. doxygenclass:: LIEF::MachO::FunctionVariantFixups
+   :project: lief
 
 ----------
 

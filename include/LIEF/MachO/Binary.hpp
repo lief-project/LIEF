@@ -61,6 +61,8 @@ class DynamicSymbolCommand;
 class EncryptionInfo;
 class ExportInfo;
 class FunctionStarts;
+class FunctionVariants;
+class FunctionVariantFixups;
 class Header;
 class IndirectBindingInfo;
 class LinkerOptHint;
@@ -920,6 +922,30 @@ class LIEF_API Binary : public LIEF::Binary  {
   bool has_notes() const {
     return get(LoadCommand::TYPE::NOTE) != nullptr;
   }
+
+  /// `true` if the binary has the command `LC_FUNCTION_VARIANTS`.
+  bool has_function_variants() const {
+    return function_variants() != nullptr;
+  }
+
+  /// Return the FunctionVariants if present, a nullptr otherwise.
+  FunctionVariants* function_variants() {
+    return const_cast<FunctionVariants*>(static_cast<const Binary*>(this)->function_variants());
+  }
+
+  const FunctionVariants* function_variants() const;
+
+  /// `true` if the binary has the command `LC_FUNCTION_VARIANT_FIXUPS`.
+  bool has_function_variant_fixups() const {
+    return function_variant_fixups() != nullptr;
+  }
+
+  /// Return the FunctionVariantFixups if present, a nullptr otherwise.
+  FunctionVariantFixups* function_variant_fixups() {
+    return const_cast<FunctionVariantFixups*>(static_cast<const Binary*>(this)->function_variant_fixups());
+  }
+
+  const FunctionVariantFixups* function_variant_fixups() const;
 
   template<class T>
   LIEF_LOCAL bool has_command() const;

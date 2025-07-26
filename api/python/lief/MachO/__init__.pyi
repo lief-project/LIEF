@@ -973,6 +973,18 @@ class Binary(lief.Binary):
     @property
     def atom_info(self) -> AtomInfo: ...
 
+    @property
+    def has_function_variants(self) -> bool: ...
+
+    @property
+    def function_variants(self) -> FunctionVariants: ...
+
+    @property
+    def has_function_variant_fixups(self) -> bool: ...
+
+    @property
+    def function_variant_fixups(self) -> FunctionVariants: ...
+
     def virtual_address_to_offset(self, virtual_address: int) -> Union[int, lief.lief_errors]: ...
 
     def has_section(self, name: str) -> bool: ...
@@ -2431,6 +2443,8 @@ class ExportInfo(lief.Object):
 
         STUB_AND_RESOLVER = 16
 
+        STATIC_RESOLVER = 32
+
     @property
     def node_offset(self) -> int: ...
 
@@ -2468,6 +2482,228 @@ class FunctionStarts(LoadCommand):
     functions: list[int]
 
     def add_function(self, address: int) -> None: ...
+
+    @property
+    def content(self) -> memoryview: ...
+
+    def __str__(self) -> str: ...
+
+class FunctionVariants(LoadCommand):
+    class RuntimeTableEntry:
+        class FLAGS(enum.Enum):
+            ARM64_DEFAULT = 3145728
+
+            ARM64_FLAGM = 3145729
+
+            ARM64_FLAGM2 = 3145730
+
+            ARM64_FHM = 3145731
+
+            ARM64_DOTPROD = 3145732
+
+            ARM64_SHA3 = 3145733
+
+            ARM64_RDM = 3145734
+
+            ARM64_LSE = 3145735
+
+            ARM64_SHA256 = 3145736
+
+            ARM64_SHA512 = 3145737
+
+            ARM64_SHA1 = 3145738
+
+            ARM64_AES = 3145739
+
+            ARM64_PMULL = 3145740
+
+            ARM64_SPECRES = 3145741
+
+            ARM64_SB = 3145742
+
+            ARM64_FRINTTS = 3145743
+
+            ARM64_LRCPC = 3145744
+
+            ARM64_LRCPC2 = 3145745
+
+            ARM64_FCMA = 3145746
+
+            ARM64_JSCVT = 3145747
+
+            ARM64_PAUTH = 3145748
+
+            ARM64_PAUTH2 = 3145749
+
+            ARM64_FPAC = 3145750
+
+            ARM64_DPB = 3145751
+
+            ARM64_DPB2 = 3145752
+
+            ARM64_BF16 = 3145753
+
+            ARM64_I8MM = 3145754
+
+            ARM64_WFXT = 3145755
+
+            ARM64_RPRES = 3145756
+
+            ARM64_ECV = 3145757
+
+            ARM64_AFP = 3145758
+
+            ARM64_LSE2 = 3145759
+
+            ARM64_CSV2 = 3145760
+
+            ARM64_CVS3 = 3145761
+
+            ARM64_DIT = 3145762
+
+            ARM64_FP16 = 3145763
+
+            ARM64_SSBS = 3145764
+
+            ARM64_BTI = 3145765
+
+            ARM64_SME = 3145772
+
+            ARM64_SME2 = 3145773
+
+            ARM64_SMEF64F64 = 3145774
+
+            ARM64_SMEI16I64 = 3145775
+
+            ARM64_SMEF32F32 = 3145776
+
+            ARM64_SMEBI32I32 = 3145777
+
+            ARM64_SMEB16F32 = 3145778
+
+            ARM64_SMEF16F32 = 3145779
+
+            ARM64_SMEI8I32 = 3145780
+
+            ARM64_SMEI16I32 = 3145781
+
+            ARM64_ADVSIMD = 3145782
+
+            ARM64_ADVSIMDHPFP = 3145783
+
+            ARM64_CRC32 = 3145784
+
+            PER_PROCESS_DEFAULT = 1048576
+
+            PER_PROCESS_TRANSLATED = 1048577
+
+            PER_PROCESS_NO_OVERREAD = 1048579
+
+            SYSTEM_WIDE_DEFAULT = 2097152
+
+            SYSTEM_WIDE_INTERNAL_INSTALL = 2097153
+
+            SYSTEM_WIDE_CUSTOMER_INSTALL = 2097154
+
+            SYSTEM_WIDE_LOCKDOWN = 2097155
+
+            X86_64_DEFAULT = 4194304
+
+            X86_64_SSE41 = 4194305
+
+            X86_64_FMA = 4194306
+
+            X86_64_AVX = 4194307
+
+            X86_64_AVX2 = 4194308
+
+            X86_64_AVX512F = 4194309
+
+            X86_64_AVX512BW = 4194310
+
+            X86_64_BMI1 = 4194311
+
+            X86_64_ROSETTA = 4194312
+
+            X86_64_HASWELL = 4194313
+
+            X86_64_IVYBRIDGE = 4194314
+
+            X86_64_NEHALEM = 4194315
+
+            UNKNOWN = 0
+
+        @property
+        def impl(self) -> int: ...
+
+        @property
+        def another_table(self) -> bool: ...
+
+        @property
+        def flag_bit_nums(self) -> memoryview: ...
+
+        @property
+        def flags(self) -> list[FunctionVariants.RuntimeTableEntry.FLAGS]: ...
+
+        def __str__(self) -> str: ...
+
+    class RuntimeTable:
+        class KIND(enum.Enum):
+            UNKNOWN = 0
+
+            PER_PROCESS = 1
+
+            SYSTEM_WIDE = 2
+
+            ARM64 = 3
+
+            X86_64 = 4
+
+        class it_entries:
+            def __getitem__(self, arg: int, /) -> FunctionVariants.RuntimeTableEntry: ...
+
+            def __len__(self) -> int: ...
+
+            def __iter__(self) -> FunctionVariants.RuntimeTable.it_entries: ...
+
+            def __next__(self) -> FunctionVariants.RuntimeTableEntry: ...
+
+        @property
+        def kind(self) -> FunctionVariants.RuntimeTable.KIND: ...
+
+        @property
+        def offset(self) -> int: ...
+
+        @property
+        def entries(self) -> FunctionVariants.RuntimeTable.it_entries: ...
+
+        def __str__(self) -> str: ...
+
+    class it_runtime_table:
+        def __getitem__(self, arg: int, /) -> FunctionVariants.RuntimeTable: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> FunctionVariants.it_runtime_table: ...
+
+        def __next__(self) -> FunctionVariants.RuntimeTable: ...
+
+    data_offset: int
+
+    data_size: int
+
+    @property
+    def content(self) -> memoryview: ...
+
+    @property
+    def runtime_table(self) -> FunctionVariants.it_runtime_table: ...
+
+    def __str__(self) -> str: ...
+
+class FunctionVariantFixups(LoadCommand):
+    data_offset: int
+
+    data_size: int
 
     @property
     def content(self) -> memoryview: ...

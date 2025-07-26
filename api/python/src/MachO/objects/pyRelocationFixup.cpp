@@ -31,14 +31,14 @@ void create<RelocationFixup>(nb::module_& m) {
 
       This class extends :class:`lief.Relocation` (and :class:`lief.MachO.Relocation`) in which
       :attr:`~lief.Relocation.address` is set to the absolute virtual address
-      where the relocation must take place (e.g. `0x10000d270`).
+      where the relocation must take place (e.g. ``0x10000d270``).
 
       On the other hand, :attr:`~lief.MachO.RelocationFixup.target` contains the value
       that should be set at :attr:`~lief.Relocation.address` if the
-      imagebase is :attr:`~lief.Binary.imagebase` (e.g. `0x1000073a8`).
+      imagebase is :attr:`~lief.Binary.imagebase` (e.g. ``0x1000073a8``).
 
-      If the Mach-O loader chooses another base address (like 0x7ff100000), it must set
-      `0x10000d270` to `0x7ff1073a8`.
+      If the Mach-O loader chooses another base address (like ``0x7ff100000``), it must set
+      ``0x10000d270`` to ``0x7ff1073a8``.
       )delim"_doc)
 
     .def_prop_rw("target",

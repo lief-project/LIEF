@@ -48,6 +48,8 @@ class DylibCommand;
 class DynamicSymbolCommand;
 class ExportInfo;
 class FunctionStarts;
+class FunctionVariants;
+class FunctionVariantFixups;
 class LinkerOptHint;
 class Parser;
 class Section;
@@ -172,7 +174,6 @@ class LIEF_API BinaryParser : public LIEF::Parser {
   /*
    * This set of functions are related to the parsing of LC_DYLD_CHAINED_FIXUPS
    */
-
   template<class MACHO_T>
   LIEF_LOCAL ok_error_t parse_chained_payload(SpanStream& stream);
 
@@ -259,6 +260,12 @@ class LIEF_API BinaryParser : public LIEF::Parser {
 
   template<class MACHO_T>
   LIEF_LOCAL ok_error_t post_process(CodeSignatureDir& cmd);
+
+  template<class MACHO_T>
+  LIEF_LOCAL ok_error_t post_process(FunctionVariants& cmd);
+
+  template<class MACHO_T>
+  LIEF_LOCAL ok_error_t post_process(FunctionVariantFixups& cmd);
 
   LIEF_LOCAL ok_error_t parse_overlay();
 

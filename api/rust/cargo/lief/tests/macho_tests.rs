@@ -145,6 +145,16 @@ fn explore_macho(_: &str, macho: &lief::macho::Binary) {
                 println!("Note {note:?}");
             }
 
+            Commands::FunctionVariants(func) => {
+                println!("{func:?}");
+                for runtime_table in func.runtime_table() {
+                    println!("{runtime_table:?} {runtime_table}");
+                    for entry in runtime_table.entries() {
+                        println!("{entry:?} {entry}")
+                    }
+                }
+            }
+
             Commands::Unknown(ukn) => {
                 println!("Original: {:?}", ukn.original_command());
             }
@@ -343,6 +353,7 @@ fn test_api() {
     test_with("StocksAnalytics");
     test_with("liblog_srp.dylib");
     test_with("binary.metallib");
+    test_with("variants_alt.dylib");
     test_with_fullpath("CoreFoundation", "private/MachO/CoreFoundation");
 }
 

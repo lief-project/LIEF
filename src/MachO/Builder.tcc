@@ -33,6 +33,8 @@
 #include "LIEF/MachO/DynamicSymbolCommand.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
+#include "LIEF/MachO/FunctionVariants.hpp"
+#include "LIEF/MachO/FunctionVariantFixups.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
@@ -106,6 +108,8 @@ size_t Builder::get_cmd_size(const LoadCommand& cmd) {
 
 template<typename T>
 ok_error_t Builder::build_linkedit() {
+  // NOTE(romain): the order in which the linkedit_data_command are placed
+  // in the __LINKEDIT segment, needs to follow cctools / checkout.c / dyld_order()
   SegmentCommand* linkedit = binary_->get_segment("__LINKEDIT");
   if (linkedit == nullptr) {
     return ok();
@@ -120,6 +124,12 @@ ok_error_t Builder::build_linkedit() {
   if (auto* exports_trie = binary_->dyld_exports_trie()) {
     build<T>(*exports_trie);
   }
+  if (auto* func_variants = binary_->function_variants()) {
+    build<T>(*func_variants);
+  }
+  if (auto* func_variant_fixups = binary_->function_variant_fixups()) {
+    build<T>(*func_variant_fixups);
+  }
   if (auto* split_info = binary_->segment_split_info()) {
     build<T>(*split_info);
   }
@@ -128,6 +138,9 @@ ok_error_t Builder::build_linkedit() {
   }
   if (auto* data = binary_->data_in_code()) {
     build<T>(*data);
+  }
+  if (auto* atom_info = binary_->atom_info()) {
+    build<T>(*atom_info);
   }
   if (auto* sig_dir = binary_->code_signature_dir()) {
     build<T>(*sig_dir);
@@ -144,9 +157,7 @@ ok_error_t Builder::build_linkedit() {
   if (auto* code_signature = binary_->code_signature()) {
     build<T>(*code_signature);
   }
-  if (auto* atom_info = binary_->atom_info()) {
-    build<T>(*atom_info);
-  }
+
   const uint64_t original_size = linkedit->file_size();
   const uint64_t new_size      = linkedit_.size();
   if (original_size < new_size) {
@@ -1762,6 +1773,64 @@ ok_error_t Builder::build(TwoLevelHints& two) {
   return ok();
 }
 
+template<class T>
+ok_error_t Builder::build(FunctionVariants& func_variants) {
+  LIEF_DEBUG("Build '{}'", to_string(func_variants.command()));
+  details::linkedit_data_command raw_cmd;
+  std::memset(&raw_cmd, 0, sizeof(details::linkedit_data_command));
+  raw_cmd.dataoff = linkedit_.size();
+
+  span<const uint8_t> sp = func_variants.content();
+
+  // TODO(romain): We need to reconstruct the data in depth
+  linkedit_.write(sp);
+
+  raw_cmd.cmd       = static_cast<uint32_t>(func_variants.command());
+  raw_cmd.cmdsize   = static_cast<uint32_t>(func_variants.size());
+  raw_cmd.datasize  = linkedit_.size() - raw_cmd.dataoff;
+  raw_cmd.dataoff   += linkedit_offset_;
+
+  LIEF_DEBUG("LC_FUNCTION_VARIANTS.offset: 0x{:06x} -> 0x{:x}",
+             func_variants.data_offset(), raw_cmd.dataoff);
+  LIEF_DEBUG("LC_FUNCTION_VARIANTS.size:   0x{:06x} -> 0x{:x}",
+             func_variants.data_size(), raw_cmd.datasize);
+
+  func_variants.size_ = sizeof(details::linkedit_data_command);
+  func_variants.original_data_.clear();
+  func_variants.original_data_.resize(func_variants.size_);
+  memcpy(func_variants.original_data_.data(), &raw_cmd, sizeof(details::linkedit_data_command));
+  return ok();
+}
+
+template<class T>
+ok_error_t Builder::build(FunctionVariantFixups& func_variant_fixups) {
+  LIEF_DEBUG("Build '{}'", to_string(func_variant_fixups.command()));
+  details::linkedit_data_command raw_cmd;
+  std::memset(&raw_cmd, 0, sizeof(details::linkedit_data_command));
+  raw_cmd.dataoff = linkedit_.size();
+
+  // TODO(romain): We need to reconstruct the data in depth
+  linkedit_.write(func_variant_fixups.content());
+
+  linkedit_.align(sizeof(typename T::uint));
+
+  raw_cmd.cmd       = static_cast<uint32_t>(func_variant_fixups.command());
+  raw_cmd.cmdsize   = static_cast<uint32_t>(func_variant_fixups.size());
+  raw_cmd.datasize  = linkedit_.size() - raw_cmd.dataoff;
+  raw_cmd.dataoff   += linkedit_offset_;
+
+
+  LIEF_DEBUG("LC_FUNCTION_VARIANT_FIXUPS.offset: 0x{:06x} -> 0x{:x}",
+             func_variant_fixups.data_offset(), raw_cmd.dataoff);
+  LIEF_DEBUG("LC_FUNCTION_VARIANT_FIXUPS.size:   0x{:06x} -> 0x{:x}",
+             func_variant_fixups.data_size(), raw_cmd.datasize);
+
+  func_variant_fixups.size_ = sizeof(details::linkedit_data_command);
+  func_variant_fixups.original_data_.clear();
+  func_variant_fixups.original_data_.resize(func_variant_fixups.size_);
+  memcpy(func_variant_fixups.original_data_.data(), &raw_cmd, sizeof(details::linkedit_data_command));
+  return ok();
+}
 template<class MACHO_T>
 ok_error_t Builder::build_header() {
   using header_t = typename MACHO_T::header;

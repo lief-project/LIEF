@@ -32,12 +32,12 @@ void create<Routine>(nb::module_& m) {
       Class that represents the ``LC_ROUTINE/LC_ROUTINE64`` commands.
       Accodring to the Mach-O ``loader.h`` documentation:
 
-      > The routines command contains the address of the dynamic shared library
-      > initialization routine and an index into the module table for the module
-      > that defines the routine. Before any modules are used from the library the
-      > dynamic linker fully binds the module that defines the initialization routine
-      > and then calls it. This gets called before any module initialization
-      > routines (used for C++ static constructors) in the library.
+      The routines command contains the address of the dynamic shared library
+      initialization routine and an index into the module table for the module
+      that defines the routine. Before any modules are used from the library the
+      dynamic linker fully binds the module that defines the initialization routine
+      and then calls it. This gets called before any module initialization
+      routines (used for C++ static constructors) in the library.
       )delim"_doc)
 
     .def_prop_rw("init_address",
