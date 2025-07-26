@@ -122,7 +122,7 @@ impl LoadConfiguration<'_> {
     }
 
     /// Reserved for use by the system.
-    pub fn editlist(&self) -> u32 {
+    pub fn editlist(&self) -> u64 {
         self.ptr.editlist()
     }
 

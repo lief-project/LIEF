@@ -216,7 +216,7 @@ class LIEF_API LoadConfiguration : public Object {
   }
 
   /// Reserved for use by the system.
-  uint32_t editlist() const {
+  uint64_t editlist() const {
     return editlist_;
   }
 
@@ -559,7 +559,7 @@ class LIEF_API LoadConfiguration : public Object {
     return *this;
   }
 
-  LoadConfiguration& editlist(uint32_t editlist) {
+  LoadConfiguration& editlist(uint64_t editlist) {
     editlist_ = editlist;
     return *this;
   }

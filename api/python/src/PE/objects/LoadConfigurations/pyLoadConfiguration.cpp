@@ -225,7 +225,7 @@ void create<LoadConfiguration>(nb::module_& m) {
 
     .def_prop_rw("editlist",
       nb::overload_cast<>(&LoadConfiguration::editlist, nb::const_),
-      nb::overload_cast<uint32_t>(&LoadConfiguration::editlist),
+      nb::overload_cast<uint64_t>(&LoadConfiguration::editlist),
       "Reserved for use by the system."_doc, nb::rv_policy::reference_internal
     )
 
