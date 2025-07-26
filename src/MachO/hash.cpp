@@ -106,6 +106,10 @@ void Hash::visit(const MainCommand& maincmd) {
   process(maincmd.stack_size());
 }
 
+void Hash::visit(const NoteCommand& note) {
+  visit(*note.as<LoadCommand>());
+}
+
 void Hash::visit(const DynamicSymbolCommand& dynamic_symbol) {
   visit(*dynamic_symbol.as<LoadCommand>());
   process(dynamic_symbol.idx_local_symbol());

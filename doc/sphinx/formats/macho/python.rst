@@ -128,6 +128,17 @@ MainCommand
 ----------
 
 
+NoteCommand
+***********
+
+.. lief-inheritance:: lief._lief.MachO.NoteCommand
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
+.. autoclass:: lief.MachO.NoteCommand
+
+----------
+
 Symbol
 ******
 

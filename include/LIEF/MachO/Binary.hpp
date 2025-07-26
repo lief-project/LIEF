@@ -203,6 +203,12 @@ class LIEF_API Binary : public LIEF::Binary  {
   /// Iterator type for Symbol's stub
   using stub_iterator = iterator_range<Stub::Iterator>;
 
+  /// Iterator which outputs NoteCommand&
+  using it_notes = filter_iterator<commands_t&, NoteCommand*>;
+
+  /// Iterator which outputs const NoteCommand&
+  using it_const_notes = const_filter_iterator<const commands_t&, const NoteCommand*>;
+
   public:
   Binary(const Binary&) = delete;
   Binary& operator=(const Binary&) = delete;
@@ -904,6 +910,16 @@ class LIEF_API Binary : public LIEF::Binary  {
     return const_cast<AtomInfo*>(static_cast<const Binary*>(this)->atom_info());
   }
   const AtomInfo* atom_info() const;
+
+  /// Iterator over the different `LC_NOTE` commands
+  it_notes notes();
+
+  it_const_notes notes() const;
+
+  /// True if the binary contains `LC_NOTE` command(s)
+  bool has_notes() const {
+    return get(LoadCommand::TYPE::NOTE) != nullptr;
+  }
 
   template<class T>
   LIEF_LOCAL bool has_command() const;

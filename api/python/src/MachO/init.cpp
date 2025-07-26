@@ -45,6 +45,7 @@
 #include <LIEF/MachO/LinkerOptHint.hpp>
 #include <LIEF/MachO/LoadCommand.hpp>
 #include <LIEF/MachO/MainCommand.hpp>
+#include <LIEF/MachO/NoteCommand.hpp>
 #include <LIEF/MachO/Parser.hpp>
 #include <LIEF/MachO/ParserConfig.hpp>
 #include <LIEF/MachO/RPathCommand.hpp>
@@ -87,6 +88,7 @@ void init_objects(nb::module_& m) {
   CREATE(SegmentCommand, m);
   CREATE(Section, m);
   CREATE(MainCommand, m);
+  CREATE(NoteCommand, m);
   CREATE(DynamicSymbolCommand, m);
   CREATE(DylinkerCommand, m);
   CREATE(DyldInfo, m);

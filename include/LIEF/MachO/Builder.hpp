@@ -45,6 +45,7 @@ class FunctionStarts;
 class LinkerOptHint;
 class LoadCommand;
 class MainCommand;
+class NoteCommand;
 class RPathCommand;
 class Routine;
 class SegmentSplitInfo;
@@ -131,6 +132,9 @@ class LIEF_API Builder {
 
   template<class T>
   LIEF_LOCAL ok_error_t build(MainCommand& main_cmd);
+
+  template<class T>
+  LIEF_LOCAL ok_error_t build(NoteCommand& main_cmd);
 
   template<class T>
   LIEF_LOCAL ok_error_t build(Routine& routine);

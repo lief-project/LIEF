@@ -53,6 +53,7 @@
 
 :Mach-O:
 
+  * Add support for |lief-macho-note-command| command (``LC_NOTE``)
   * Add support for |lief-macho-atom-info| command (``LC_ATOM_INFO``)
   * Add support for modifying Mach-O commands that embed variable-length data
     (:issue:`1204`, :issue:`1125`). See: :ref:`RPath and Library Path Modification <format-macho-rpath>`.

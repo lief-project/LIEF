@@ -395,6 +395,14 @@ struct linker_option_command {
   uint32_t count;
 };
 
+struct note_command {
+  uint32_t cmd;        /* LC_NOTE */
+  uint32_t cmdsize;    /* sizeof(struct note_command) */
+  char data_owner[16]; /* owner name for this LC_NOTE */
+  uint64_t offset;     /* file offset of this data */
+  uint64_t size;       /* length of data region */
+};
+
 struct symseg_command {
   uint32_t cmd;
   uint32_t cmdsize;

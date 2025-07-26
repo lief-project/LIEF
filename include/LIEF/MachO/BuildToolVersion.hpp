@@ -43,6 +43,14 @@ class LIEF_API BuildToolVersion : public Object {
     SWIFT   = 2,
     LD      = 3,
     LLD     = 4,
+
+    METAL           = 1024,
+    AIRLLD          = 1025,
+    AIRNT           = 1026,
+    AIRNT_PLUGIN    = 1027,
+    AIRPACK         = 1028,
+    GPUARCHIVER     = 1031,
+    METAL_FRAMEWORK = 1032,
   };
 
   public:

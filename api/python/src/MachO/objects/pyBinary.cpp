@@ -45,6 +45,7 @@
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/AtomInfo.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
+#include "LIEF/MachO/NoteCommand.hpp"
 #include "LIEF/MachO/Routine.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
 #include "LIEF/MachO/Relocation.hpp"
@@ -88,6 +89,7 @@ void create<Binary>(nb::module_& m) {
   init_ref_iterator<Binary::it_relocations>(bin, "it_relocations");
   init_ref_iterator<Binary::it_rpaths>(bin, "it_rpaths");
   init_ref_iterator<Binary::it_sub_clients>(bin, "it_sub_clients");
+  init_ref_iterator<Binary::it_notes>(bin, "it_notes");
 
   nb::class_<Binary::range_t>(bin, "range_t")
     .def_rw("start", &Binary::range_t::start)
@@ -777,6 +779,14 @@ void create<Binary>(nb::module_& m) {
         This is only available with the extended version of LIEF.
       )doc"_doc
     )
+
+    .def_prop_ro("notes",
+        nb::overload_cast<>(&Binary::notes),
+        "Iterator over the different ``LC_NOTE`` commands"_doc,
+        nb::keep_alive<0, 1>())
+
+    .def_prop_ro("has_notes", &Binary::has_notes,
+      "True if the binary contains ``LC_NOTE`` command(s)")
 
     .def("__getitem__",
         nb::overload_cast<LoadCommand::TYPE>(&Binary::operator[]),

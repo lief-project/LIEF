@@ -46,6 +46,7 @@ class Header;
 class LinkerOptHint;
 class LoadCommand;
 class MainCommand;
+class NoteCommand;
 class Routine;
 class RPathCommand;
 class Relocation;
@@ -95,6 +96,7 @@ class JsonVisitor : public LIEF::JsonVisitor {
   void visit(const LinkerOptHint& e)                      override;
   void visit(const LoadCommand& cmd)                      override;
   void visit(const MainCommand& maincmd)                  override;
+  void visit(const NoteCommand& note)                     override;
   void visit(const Routine& rpath)                        override;
   void visit(const RPathCommand& rpath)                   override;
   void visit(const Relocation& relocation)                override;

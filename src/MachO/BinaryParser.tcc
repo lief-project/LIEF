@@ -48,6 +48,7 @@
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
+#include "LIEF/MachO/NoteCommand.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
 #include "LIEF/MachO/Relocation.hpp"
 #include "LIEF/MachO/RelocationDyld.hpp"
@@ -1103,6 +1104,16 @@ ok_error_t BinaryParser::parse_load_commands() {
             load_command = std::make_unique<LinkerOptHint>(*cmd);
           } else {
             LIEF_ERR("Can't parse linkedit_data_command for LC_LINKER_OPTIMIZATION_HINT");
+          }
+          break;
+        }
+
+      case LoadCommand::TYPE::NOTE:
+        {
+          if (const auto cmd = stream_->peek<details::note_command>(loadcommands_offset)) {
+            load_command = std::make_unique<NoteCommand>(*cmd);
+          } else {
+            LIEF_ERR("Can't parse note_command for LC_NOTE");
           }
           break;
         }

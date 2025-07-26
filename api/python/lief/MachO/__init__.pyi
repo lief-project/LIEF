@@ -681,6 +681,15 @@ class Binary(lief.Binary):
 
         def __next__(self) -> SubClient: ...
 
+    class it_notes:
+        def __getitem__(self, arg: int, /) -> NoteCommand: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> Binary.it_notes: ...
+
+        def __next__(self) -> NoteCommand: ...
+
     class range_t:
         start: int
 
@@ -1043,6 +1052,12 @@ class Binary(lief.Binary):
     @property
     def objc_metadata(self) -> Optional[lief.objc.Metadata]: ...
 
+    @property
+    def notes(self) -> Binary.it_notes: ...
+
+    @property
+    def has_notes(self) -> bool: ...
+
     def __getitem__(self, arg: LoadCommand.TYPE, /) -> LoadCommand: ...
 
     def __contains__(self, arg: LoadCommand.TYPE, /) -> bool: ...
@@ -1138,6 +1153,12 @@ class Header(lief.Object):
 
         KEXT_BUNDLE = 11
 
+        FILESET = 12
+
+        GPU_EXECUTE = 13
+
+        GPU_DYLIB = 14
+
     class FLAGS(enum.Flag):
         @staticmethod
         def from_value(arg: int, /) -> Header.FLAGS: ...
@@ -1199,6 +1220,14 @@ class Header(lief.Object):
         NO_HEAP_EXECUTION = 16777216
 
         APP_EXTENSION_SAFE = 33554432
+
+        NLIST_OUTOFSYNC_WITH_DYLDINFO = 67108864
+
+        SIM_SUPPORT = 134217728
+
+        IMPLICIT_PAGEZERO = 268435456
+
+        DYLIB_IN_CACHE = 2147483648
 
     magic: MACHO_TYPES
 
@@ -1363,6 +1392,12 @@ class LoadCommand(lief.Object):
         FILESET_ENTRY = 2147483701
 
         ATOM_INFO = 54
+
+        FUNCTION_VARIANTS = 55
+
+        FUNCTION_VARIANT_FIXUPS = 56
+
+        TARGET_TRIPLE = 57
 
         LIEF_UNKNOWN = 4293787649
 
@@ -1655,6 +1690,18 @@ class MainCommand(LoadCommand):
     entrypoint: int
 
     stack_size: int
+
+    def __str__(self) -> str: ...
+
+class NoteCommand(LoadCommand):
+    note_offset: int
+
+    note_size: int
+
+    @property
+    def owner_str(self) -> str: ...
+
+    owner: memoryview
 
     def __str__(self) -> str: ...
 
@@ -2580,6 +2627,14 @@ class BuildVersion(LoadCommand):
 
         TVOS_EXCLAVE_KIT = 20
 
+        WATCHOS_EXCLAVE_CORE = 21
+
+        WATCHOS_EXCLAVE_KIT = 22
+
+        VISIONOS_EXCLAVE_CORE = 23
+
+        VISIONOS_EXCLAVE_KIT = 24
+
         ANY = 4294967295
 
     platform: BuildVersion.PLATFORMS
@@ -2621,6 +2676,20 @@ class BuildToolVersion(lief.Object):
         LD = 3
 
         LLD = 4
+
+        METAL = 1024
+
+        AIRLLD = 1025
+
+        AIRNT = 1026
+
+        AIRNT_PLUGIN = 1027
+
+        AIRPACK = 1028
+
+        GPUARCHIVER = 1031
+
+        METAL_FRAMEWORK = 1032
 
 class FilesetCommand(LoadCommand):
     name: str

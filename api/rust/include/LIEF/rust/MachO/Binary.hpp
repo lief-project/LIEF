@@ -35,6 +35,7 @@
 #include "LIEF/rust/MachO/LinkerOptHint.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
 #include "LIEF/rust/MachO/Main.hpp"
+#include "LIEF/rust/MachO/NoteCommand.hpp"
 #include "LIEF/rust/MachO/RPathCommand.hpp"
 #include "LIEF/rust/MachO/Relocation.hpp"
 #include "LIEF/rust/MachO/Routine.hpp"
@@ -153,6 +154,16 @@ class MachO_Binary : public AbstractBinary {
     auto size() const { return RandomRangeIterator::size(); }
   };
 
+  class it_notes :
+      public Iterator<MachO_NoteCommand, LIEF::MachO::Binary::it_const_notes>
+  {
+    public:
+    it_notes(const MachO_Binary::lief_t& src)
+      : Iterator(std::move(src.notes())) { }
+    auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
+  };
+
   MachO_Binary(const lief_t& bin) : AbstractBinary(bin) {}
   MachO_Binary(std::unique_ptr<lief_t> ptr) : AbstractBinary(std::move(ptr)) {}
 
@@ -168,6 +179,7 @@ class MachO_Binary : public AbstractBinary {
   auto relocations() const { return std::make_unique<it_relocations>(impl()); }
   auto bindings() const { return std::make_unique<it_bindings_info>(impl()); }
   auto symbol_stubs() const { return std::make_unique<it_stubs>(impl()); }
+  auto notes() const { return std::make_unique<it_notes>(impl()); }
 
   auto dyld_info() const {
     return details::try_unique<MachO_DyldInfo>(impl().dyld_info());

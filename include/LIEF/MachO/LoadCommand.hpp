@@ -98,6 +98,9 @@ class LIEF_API LoadCommand : public Object {
     DYLD_CHAINED_FIXUPS      = 0x80000034u,
     FILESET_ENTRY            = 0x80000035u,
     ATOM_INFO                = 0x00000036u,
+    FUNCTION_VARIANTS        = 0x00000037u,
+    FUNCTION_VARIANT_FIXUPS  = 0x00000038u,
+    TARGET_TRIPLE            = 0x00000039u,
 
     LIEF_UNKNOWN             = 0xffee0001u
   };

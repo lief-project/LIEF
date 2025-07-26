@@ -60,6 +60,14 @@ void create<BuildVersion>(nb::module_& m) {
     .value(PY_ENUM(BuildToolVersion::TOOLS::SWIFT))
     .value(PY_ENUM(BuildToolVersion::TOOLS::LD))
     .value(PY_ENUM(BuildToolVersion::TOOLS::LLD))
+
+    .value(PY_ENUM(BuildToolVersion::TOOLS::METAL))
+    .value(PY_ENUM(BuildToolVersion::TOOLS::AIRLLD))
+    .value(PY_ENUM(BuildToolVersion::TOOLS::AIRNT))
+    .value(PY_ENUM(BuildToolVersion::TOOLS::AIRNT_PLUGIN))
+    .value(PY_ENUM(BuildToolVersion::TOOLS::AIRPACK))
+    .value(PY_ENUM(BuildToolVersion::TOOLS::GPUARCHIVER))
+    .value(PY_ENUM(BuildToolVersion::TOOLS::METAL_FRAMEWORK))
   ;
 
 
@@ -85,6 +93,10 @@ void create<BuildVersion>(nb::module_& m) {
     .value(PY_ENUM(BuildVersion::PLATFORMS::IOS_EXCLAVE_KIT))
     .value(PY_ENUM(BuildVersion::PLATFORMS::TVOS_EXCLAVE_CORE))
     .value(PY_ENUM(BuildVersion::PLATFORMS::TVOS_EXCLAVE_KIT))
+    .value(PY_ENUM(BuildVersion::PLATFORMS::WATCHOS_EXCLAVE_CORE))
+    .value(PY_ENUM(BuildVersion::PLATFORMS::WATCHOS_EXCLAVE_KIT))
+    .value(PY_ENUM(BuildVersion::PLATFORMS::VISIONOS_EXCLAVE_CORE))
+    .value(PY_ENUM(BuildVersion::PLATFORMS::VISIONOS_EXCLAVE_KIT))
     .value(PY_ENUM(BuildVersion::PLATFORMS::ANY))
   ;
 

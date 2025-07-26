@@ -21,6 +21,7 @@ use super::commands::functionstarts::FunctionStarts;
 use super::commands::linker_opt_hint::LinkerOptHint;
 use super::commands::atom_info::AtomInfo;
 use super::commands::main_cmd::Main;
+use super::commands::note::Note;
 use super::commands::rpath::RPath;
 use super::commands::routine::Routine;
 use super::commands::segment::Segments;
@@ -341,6 +342,11 @@ impl Binary {
     pub fn functions(&self) -> generic::Functions {
         generic::Functions::new(self.ptr.functions())
     }
+
+    /// Return an iterator over the `LC_NOTE` commands
+    pub fn notes(&self) -> Notes {
+        Notes::new(self.ptr.notes())
+    }
 }
 
 impl generic::Binary for Binary {
@@ -374,4 +380,12 @@ declare_iterator!(
     ffi::MachO_Stub,
     ffi::MachO_Binary,
     ffi::MachO_Binary_it_stubs
+);
+
+declare_iterator!(
+    Notes,
+    Note<'a>,
+    ffi::MachO_NoteCommand,
+    ffi::MachO_Binary,
+    ffi::MachO_Binary_it_notes
 );

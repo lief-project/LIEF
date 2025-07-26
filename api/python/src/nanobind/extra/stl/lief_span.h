@@ -10,7 +10,8 @@ NAMESPACE_BEGIN(detail)
 
 template<class T>
 struct type_caster<LIEF::span<T>> {
-  static_assert(std::is_same_v<uint8_t, std::remove_const_t<T>>,
+  static_assert(std::is_same_v<uint8_t, std::remove_const_t<T>> ||
+                std::is_same_v<char, std::remove_const_t<T>>,
                 "Need uint8_t type");
 
   static constexpr auto IsRO = std::is_const_v<T>;

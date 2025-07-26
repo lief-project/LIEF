@@ -48,6 +48,7 @@
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
+#include "LIEF/MachO/NoteCommand.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
 #include "LIEF/MachO/Relocation.hpp"
 #include "LIEF/MachO/RelocationFixup.hpp"
@@ -846,6 +847,12 @@ void Binary::shift_command(size_t width, uint64_t from_offset) {
   for_commands<EncryptionInfo>([from_offset, width] (EncryptionInfo& enc) {
     if (enc.crypt_offset() > from_offset) {
       enc.crypt_offset(enc.crypt_offset() + width);
+    }
+  });
+
+  for_commands<NoteCommand>([from_offset, width] (NoteCommand& note) {
+    if (note.note_offset() > from_offset) {
+      note.note_offset(note.note_offset() + width);
     }
   });
 
@@ -2351,6 +2358,19 @@ const AtomInfo* Binary::atom_info() const {
   return nullptr;
 }
 
+// Notes
+// ++++++++++++++++++++++++++++++++
+Binary::it_notes Binary::notes() {
+  return {commands_, [] (const std::unique_ptr<LoadCommand>& cmd) {
+    return NoteCommand::classof(cmd.get());
+  }};
+}
+
+Binary::it_const_notes Binary::notes() const {
+  return {commands_, [] (const std::unique_ptr<LoadCommand>& cmd) {
+    return NoteCommand::classof(cmd.get());
+  }};
+}
 
 Binary::it_bindings Binary::bindings() const {
   if (const DyldInfo* dyld = dyld_info()) {

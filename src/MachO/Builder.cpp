@@ -172,6 +172,11 @@ ok_error_t Builder::build() {
       build<T>(*cmd->as<EncryptionInfo>());
       continue;
     }
+
+    if (NoteCommand::classof(cmd.get())) {
+      build<T>(*cmd->as<NoteCommand>());
+      continue;
+    }
   }
 
   build_segments<T>();

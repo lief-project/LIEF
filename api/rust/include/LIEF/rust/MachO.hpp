@@ -33,6 +33,7 @@
 #include "LIEF/rust/MachO/IndirectBindingInfo.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
 #include "LIEF/rust/MachO/Main.hpp"
+#include "LIEF/rust/MachO/NoteCommand.hpp"
 #include "LIEF/rust/MachO/RPathCommand.hpp"
 #include "LIEF/rust/MachO/Relocation.hpp"
 #include "LIEF/rust/MachO/RelocationDyld.hpp"

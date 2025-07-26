@@ -94,6 +94,9 @@ void create<LoadCommand>(nb::module_& m) {
     .value(PY_ENUM(LoadCommand::TYPE::DYLD_CHAINED_FIXUPS))
     .value(PY_ENUM(LoadCommand::TYPE::FILESET_ENTRY))
     .value(PY_ENUM(LoadCommand::TYPE::ATOM_INFO))
+    .value(PY_ENUM(LoadCommand::TYPE::FUNCTION_VARIANTS))
+    .value(PY_ENUM(LoadCommand::TYPE::FUNCTION_VARIANT_FIXUPS))
+    .value(PY_ENUM(LoadCommand::TYPE::TARGET_TRIPLE))
     .value(PY_ENUM(LoadCommand::TYPE::LIEF_UNKNOWN))
   #undef PY_ENUM
   ;

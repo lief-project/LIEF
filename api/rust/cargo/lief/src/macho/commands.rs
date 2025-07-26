@@ -29,6 +29,7 @@ pub mod thread_command;
 pub mod two_level_hints;
 pub mod uuid;
 pub mod version_min;
+pub mod note;
 pub mod unknown;
 
 #[doc(inline)]
@@ -87,6 +88,8 @@ pub use two_level_hints::TwoLevelHints;
 pub use uuid::UUID;
 #[doc(inline)]
 pub use version_min::VersionMin;
+#[doc(inline)]
+pub use note::Note;
 #[doc(inline)]
 pub use unknown::Unknown;
 
@@ -150,6 +153,9 @@ pub enum LoadCommandTypes {
     VersionMinTvOS,
     VersionMinWatchOS,
     AtomInfo,
+    FunctionVariants,
+    FunctionVariantsFixups,
+    TargetTriple,
 
     LiefUnknown,
     Unknown(u64),
@@ -210,6 +216,9 @@ impl LoadCommandTypes {
     const LC_VERSION_MIN_TVOS: u64 = 0x0000002F;
     const LC_VERSION_MIN_WATCHOS: u64 = 0x00000030;
     const LC_ATOM_INFO: u64 = 0x00000036;
+    const LC_FUNCTION_VARIANTS: u64 = 0x00000037;
+    const LC_FUNCTION_VARIANT_FIXUPS: u64 = 0x00000038;
+    const LC_TARGET_TRIPLE: u64 = 0x00000039;
 
     const LIEF_UNKNOWN: u64 = 0xffee0001;
 
@@ -272,6 +281,9 @@ impl LoadCommandTypes {
             LoadCommandTypes::LC_VERSION_MIN_TVOS => LoadCommandTypes::VersionMinTvOS,
             LoadCommandTypes::LC_VERSION_MIN_WATCHOS => LoadCommandTypes::VersionMinWatchOS,
             LoadCommandTypes::LC_ATOM_INFO => LoadCommandTypes::AtomInfo,
+            LoadCommandTypes::LC_FUNCTION_VARIANTS => LoadCommandTypes::FunctionVariants,
+            LoadCommandTypes::LC_FUNCTION_VARIANT_FIXUPS => LoadCommandTypes::FunctionVariantsFixups,
+            LoadCommandTypes::LC_TARGET_TRIPLE => LoadCommandTypes::TargetTriple,
             LoadCommandTypes::LIEF_UNKNOWN => LoadCommandTypes::LiefUnknown,
             _ => LoadCommandTypes::Unknown(value),
         }
@@ -311,6 +323,7 @@ pub enum Commands<'a> {
     UUID(UUID<'a>),
     VersionMin(VersionMin<'a>),
     AtomInfo(AtomInfo<'a>),
+    Note(Note<'a>),
     Unknown(Unknown<'a>),
 }
 
@@ -522,6 +535,13 @@ impl<'a> Commands<'a> {
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Commands::AtomInfo(AtomInfo::from_ffi(raw))
+            } else if ffi::MachO_NoteCommand::classof(cmd_ref) {
+                let raw = {
+                    type From = cxx::UniquePtr<ffi::MachO_Command>;
+                    type To = cxx::UniquePtr<ffi::MachO_NoteCommand>;
+                    std::mem::transmute::<From, To>(ffi_entry)
+                };
+                Commands::Note(Note::from_ffi(raw))
             } else {
                 Commands::Generic(Generic::from_ffi(ffi_entry))
             }
@@ -554,7 +574,7 @@ pub trait Command {
     #[doc(hidden)]
     fn get_base(&self) -> &ffi::MachO_Command;
 
-    /// Size of the command (should be greather than ``sizeof(load_command)``)
+    /// Size of the command (should be greater than ``sizeof(load_command)``)
     fn size(&self) -> u32 {
         self.get_base().size()
     }
@@ -663,6 +683,9 @@ impl Command for Commands<'_> {
                 cmd.get_base()
             }
             Commands::AtomInfo(cmd) => {
+                cmd.get_base()
+            }
+            Commands::Note(cmd) => {
                 cmd.get_base()
             }
             Commands::Unknown(cmd) => {

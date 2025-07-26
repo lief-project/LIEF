@@ -190,6 +190,11 @@ void JsonVisitor::visit(const MainCommand& maincmd) {
   node_["stack_size"] = maincmd.stack_size();
 }
 
+
+void JsonVisitor::visit(const NoteCommand& note) {
+  visit(*note.as<LoadCommand>());
+}
+
 void JsonVisitor::visit(const DynamicSymbolCommand& dynamic_symbol) {
   visit(*dynamic_symbol.as<LoadCommand>());
 

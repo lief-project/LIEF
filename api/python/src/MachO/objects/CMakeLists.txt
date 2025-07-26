@@ -28,6 +28,7 @@ target_sources(pyLIEF PRIVATE
   pyLinkerOptHint.cpp
   pyLoadCommand.cpp
   pyMainCommand.cpp
+  pyNoteCommand.cpp
   pyParser.cpp
   pyParserConfig.cpp
   pyRPathCommand.cpp

@@ -852,6 +852,12 @@
     :py:class:`lief.MachO.RPathCommand`
     :cpp:class:`LIEF::MachO::RPathCommand`
 
+.. |lief-macho-note-command| lief-api:: lief.MachO.Note
+
+    :rust:struct:`lief::macho::commands::Note`
+    :py:class:`lief.MachO.NoteCommand`
+    :cpp:class:`LIEF::MachO::NoteCommand`
+
 .. dyld shared cache ===========================================================
 
 .. |lief-dsc-load| lief-api:: lief.dsc.load()

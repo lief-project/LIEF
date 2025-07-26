@@ -34,6 +34,10 @@ pub enum Platform {
     IOS_EXCLAVE_KIT,
     TVOS_EXCLAVE_CORE,
     TVOS_EXCLAVE_KIT,
+    WATCHOS_EXCLAVE_CORE,
+    WATCHOS_EXCLAVE_KIT,
+    VISIONOS_EXCLAVE_CORE,
+    VISIONOS_EXCLAVE_KIT,
     ANY,
     UNKNOWN(u32),
 }
@@ -61,6 +65,10 @@ impl From<u32> for Platform {
             0x00000012 => Platform::IOS_EXCLAVE_KIT,
             0x00000013 => Platform::TVOS_EXCLAVE_CORE,
             0x00000014 => Platform::TVOS_EXCLAVE_KIT,
+            0x00000015 => Platform::WATCHOS_EXCLAVE_CORE,
+            0x00000016 => Platform::WATCHOS_EXCLAVE_KIT,
+            0x00000017 => Platform::VISIONOS_EXCLAVE_CORE,
+            0x00000018 => Platform::VISIONOS_EXCLAVE_KIT,
             0xFFFFFFFF => Platform::ANY,
             _ => Platform::UNKNOWN(value),
         }

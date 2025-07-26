@@ -96,6 +96,14 @@ MainCommand
 
 ----------
 
+NoteCommand
+***********
+
+.. doxygenclass:: LIEF::MachO::NoteCommand
+   :project: lief
+
+----------
+
 Section
 *******
 

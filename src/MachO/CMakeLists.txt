@@ -40,6 +40,7 @@ target_sources(LIB_LIEF PRIVATE
   LinkerOptHint.cpp
   LoadCommand.cpp
   MainCommand.cpp
+  NoteCommand.cpp
   Parser.cpp
   ParserConfig.cpp
   RPathCommand.cpp

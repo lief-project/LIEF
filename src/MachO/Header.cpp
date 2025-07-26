@@ -47,6 +47,8 @@ static constexpr auto HEADER_FLAGS = {
   Header::FLAGS::NO_REEXPORTED_DYLIBS, Header::FLAGS::PIE,
   Header::FLAGS::DEAD_STRIPPABLE_DYLIB, Header::FLAGS::HAS_TLV_DESCRIPTORS,
   Header::FLAGS::NO_HEAP_EXECUTION, Header::FLAGS::APP_EXTENSION_SAFE,
+  Header::FLAGS::NLIST_OUTOFSYNC_WITH_DYLDINFO, Header::FLAGS::SIM_SUPPORT,
+  Header::FLAGS::IMPLICIT_PAGEZERO, Header::FLAGS::DYLIB_IN_CACHE,
 };
 
 template<class T>
@@ -101,7 +103,7 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
   os << fmt::format("Magic: 0x{:08x}\n", uint32_t(hdr.magic()));
   os << fmt::format("CPU: {}\n", to_string(hdr.cpu_type()));
   os << fmt::format("CPU subtype: 0x{:08x}\n", hdr.cpu_subtype());
-  os << fmt::format("File type: {}\n", to_string(hdr.file_type()));
+  os << fmt::format("File type: {} ({:#x})\n", to_string(hdr.file_type()), (uint32_t)hdr.file_type());
   os << fmt::format("Flags: {}\n", hdr.flags());
   os << fmt::format("Reserved: 0x{:x}\n", hdr.reserved());
   os << fmt::format("Nb cmds: {}\n", hdr.nb_cmds());
@@ -138,6 +140,10 @@ const char* to_string(Header::FLAGS e) {
     ENTRY(HAS_TLV_DESCRIPTORS),
     ENTRY(NO_HEAP_EXECUTION),
     ENTRY(APP_EXTENSION_SAFE),
+    ENTRY(NLIST_OUTOFSYNC_WITH_DYLDINFO),
+    ENTRY(SIM_SUPPORT),
+    ENTRY(IMPLICIT_PAGEZERO),
+    ENTRY(DYLIB_IN_CACHE),
   };
   #undef ENTRY
 
@@ -162,6 +168,9 @@ const char* to_string(Header::FILE_TYPE e) {
     ENTRY(DYLIB_STUB),
     ENTRY(DSYM),
     ENTRY(KEXT_BUNDLE),
+    ENTRY(FILESET),
+    ENTRY(GPU_EXECUTE),
+    ENTRY(GPU_DYLIB),
   };
   #undef ENTRY
 

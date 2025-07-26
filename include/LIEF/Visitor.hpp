@@ -140,6 +140,7 @@ LIEF_MACHO_FORWARD(SymbolCommand)
 LIEF_MACHO_FORWARD(SegmentCommand)
 LIEF_MACHO_FORWARD(Section)
 LIEF_MACHO_FORWARD(MainCommand)
+LIEF_MACHO_FORWARD(NoteCommand)
 LIEF_MACHO_FORWARD(DynamicSymbolCommand)
 LIEF_MACHO_FORWARD(DylinkerCommand)
 LIEF_MACHO_FORWARD(DylibCommand)
@@ -468,6 +469,9 @@ class LIEF_API Visitor {
 
   /// Method to visit a LIEF::MachO::MainCommand
   LIEF_MACHO_VISITABLE(MainCommand)
+
+  /// Method to visit a LIEF::MachO::NoteCommand
+  LIEF_MACHO_VISITABLE(NoteCommand)
 
   /// Method to visit a LIEF::MachO::DynamicSymbolCommand
   LIEF_MACHO_VISITABLE(DynamicSymbolCommand)

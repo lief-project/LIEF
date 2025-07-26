@@ -36,6 +36,7 @@
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
+#include "LIEF/MachO/NoteCommand.hpp"
 #include "LIEF/MachO/Routine.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
 #include "LIEF/MachO/RelocationFixup.hpp"
@@ -500,6 +501,31 @@ ok_error_t Builder::build(MainCommand& main_cmd) {
   return ok();
 }
 
+template<class T>
+ok_error_t Builder::build(NoteCommand& note) {
+  LIEF_DEBUG("Build '{}'", to_string(note.command()));
+  details::note_command raw_cmd;
+  std::memset(&raw_cmd, 0, sizeof(details::note_command));
+
+  raw_cmd.cmd = static_cast<uint32_t>(note.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(note.size());
+
+  raw_cmd.offset = static_cast<uint32_t>(note.note_offset());
+  raw_cmd.size = static_cast<uint32_t>(note.note_size());
+
+  span<const char> owner = note.owner();
+  std::copy(owner.begin(), owner.end(), std::begin(raw_cmd.data_owner));
+
+  note.size_ = sizeof(details::note_command);
+
+  std::fill(note.original_data_.begin(), note.original_data_.end(), 0);
+
+  std::copy(reinterpret_cast<uint8_t*>(&raw_cmd),
+            reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
+            reinterpret_cast<uint8_t*>(note.original_data_.data()));
+
+  return ok();
+}
 
 template<class T>
 ok_error_t Builder::build(DyldInfo& dyld_info) {
