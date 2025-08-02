@@ -241,765 +241,797 @@ class OPCODE(enum.Enum):
 
     G_ATOMICRMW_FMIN = 117
 
-    G_ATOMICRMW_UINC_WRAP = 118
+    G_ATOMICRMW_FMAXIMUM = 118
 
-    G_ATOMICRMW_UDEC_WRAP = 119
+    G_ATOMICRMW_FMINIMUM = 119
 
-    G_ATOMICRMW_USUB_COND = 120
+    G_ATOMICRMW_UINC_WRAP = 120
 
-    G_ATOMICRMW_USUB_SAT = 121
+    G_ATOMICRMW_UDEC_WRAP = 121
 
-    G_FENCE = 122
+    G_ATOMICRMW_USUB_COND = 122
 
-    G_PREFETCH = 123
+    G_ATOMICRMW_USUB_SAT = 123
 
-    G_BRCOND = 124
+    G_FENCE = 124
 
-    G_BRINDIRECT = 125
+    G_PREFETCH = 125
 
-    G_INVOKE_REGION_START = 126
+    G_BRCOND = 126
 
-    G_INTRINSIC = 127
+    G_BRINDIRECT = 127
 
-    G_INTRINSIC_W_SIDE_EFFECTS = 128
+    G_INVOKE_REGION_START = 128
 
-    G_INTRINSIC_CONVERGENT = 129
+    G_INTRINSIC = 129
 
-    G_INTRINSIC_CONVERGENT_W_SIDE_EFFECTS = 130
+    G_INTRINSIC_W_SIDE_EFFECTS = 130
 
-    G_ANYEXT = 131
+    G_INTRINSIC_CONVERGENT = 131
 
-    G_TRUNC = 132
+    G_INTRINSIC_CONVERGENT_W_SIDE_EFFECTS = 132
 
-    G_CONSTANT = 133
+    G_ANYEXT = 133
 
-    G_FCONSTANT = 134
+    G_TRUNC = 134
 
-    G_VASTART = 135
+    G_TRUNC_SSAT_S = 135
 
-    G_VAARG = 136
+    G_TRUNC_SSAT_U = 136
 
-    G_SEXT = 137
+    G_TRUNC_USAT_U = 137
 
-    G_SEXT_INREG = 138
+    G_CONSTANT = 138
 
-    G_ZEXT = 139
+    G_FCONSTANT = 139
 
-    G_SHL = 140
+    G_VASTART = 140
 
-    G_LSHR = 141
+    G_VAARG = 141
 
-    G_ASHR = 142
+    G_SEXT = 142
 
-    G_FSHL = 143
+    G_SEXT_INREG = 143
 
-    G_FSHR = 144
+    G_ZEXT = 144
 
-    G_ROTR = 145
+    G_SHL = 145
 
-    G_ROTL = 146
+    G_LSHR = 146
 
-    G_ICMP = 147
+    G_ASHR = 147
 
-    G_FCMP = 148
+    G_FSHL = 148
 
-    G_SCMP = 149
+    G_FSHR = 149
 
-    G_UCMP = 150
+    G_ROTR = 150
 
-    G_SELECT = 151
+    G_ROTL = 151
 
-    G_UADDO = 152
+    G_ICMP = 152
 
-    G_UADDE = 153
+    G_FCMP = 153
 
-    G_USUBO = 154
+    G_SCMP = 154
 
-    G_USUBE = 155
+    G_UCMP = 155
 
-    G_SADDO = 156
+    G_SELECT = 156
 
-    G_SADDE = 157
+    G_UADDO = 157
 
-    G_SSUBO = 158
+    G_UADDE = 158
 
-    G_SSUBE = 159
+    G_USUBO = 159
 
-    G_UMULO = 160
+    G_USUBE = 160
 
-    G_SMULO = 161
+    G_SADDO = 161
 
-    G_UMULH = 162
+    G_SADDE = 162
 
-    G_SMULH = 163
+    G_SSUBO = 163
 
-    G_UADDSAT = 164
+    G_SSUBE = 164
 
-    G_SADDSAT = 165
+    G_UMULO = 165
 
-    G_USUBSAT = 166
+    G_SMULO = 166
 
-    G_SSUBSAT = 167
+    G_UMULH = 167
 
-    G_USHLSAT = 168
+    G_SMULH = 168
 
-    G_SSHLSAT = 169
+    G_UADDSAT = 169
 
-    G_SMULFIX = 170
+    G_SADDSAT = 170
 
-    G_UMULFIX = 171
+    G_USUBSAT = 171
 
-    G_SMULFIXSAT = 172
+    G_SSUBSAT = 172
 
-    G_UMULFIXSAT = 173
+    G_USHLSAT = 173
 
-    G_SDIVFIX = 174
+    G_SSHLSAT = 174
 
-    G_UDIVFIX = 175
+    G_SMULFIX = 175
 
-    G_SDIVFIXSAT = 176
+    G_UMULFIX = 176
 
-    G_UDIVFIXSAT = 177
+    G_SMULFIXSAT = 177
 
-    G_FADD = 178
+    G_UMULFIXSAT = 178
 
-    G_FSUB = 179
+    G_SDIVFIX = 179
 
-    G_FMUL = 180
+    G_UDIVFIX = 180
 
-    G_FMA = 181
+    G_SDIVFIXSAT = 181
 
-    G_FMAD = 182
+    G_UDIVFIXSAT = 182
 
-    G_FDIV = 183
+    G_FADD = 183
 
-    G_FREM = 184
+    G_FSUB = 184
 
-    G_FPOW = 185
+    G_FMUL = 185
 
-    G_FPOWI = 186
+    G_FMA = 186
 
-    G_FEXP = 187
+    G_FMAD = 187
 
-    G_FEXP2 = 188
+    G_FDIV = 188
 
-    G_FEXP10 = 189
+    G_FREM = 189
 
-    G_FLOG = 190
+    G_FPOW = 190
 
-    G_FLOG2 = 191
+    G_FPOWI = 191
 
-    G_FLOG10 = 192
+    G_FEXP = 192
 
-    G_FLDEXP = 193
+    G_FEXP2 = 193
 
-    G_FFREXP = 194
+    G_FEXP10 = 194
 
-    G_FNEG = 195
+    G_FLOG = 195
 
-    G_FPEXT = 196
+    G_FLOG2 = 196
 
-    G_FPTRUNC = 197
+    G_FLOG10 = 197
 
-    G_FPTOSI = 198
+    G_FLDEXP = 198
 
-    G_FPTOUI = 199
+    G_FFREXP = 199
 
-    G_SITOFP = 200
+    G_FNEG = 200
 
-    G_UITOFP = 201
+    G_FPEXT = 201
 
-    G_FPTOSI_SAT = 202
+    G_FPTRUNC = 202
 
-    G_FPTOUI_SAT = 203
+    G_FPTOSI = 203
 
-    G_FABS = 204
+    G_FPTOUI = 204
 
-    G_FCOPYSIGN = 205
+    G_SITOFP = 205
 
-    G_IS_FPCLASS = 206
+    G_UITOFP = 206
 
-    G_FCANONICALIZE = 207
+    G_FPTOSI_SAT = 207
 
-    G_FMINNUM = 208
+    G_FPTOUI_SAT = 208
 
-    G_FMAXNUM = 209
+    G_FABS = 209
 
-    G_FMINNUM_IEEE = 210
+    G_FCOPYSIGN = 210
 
-    G_FMAXNUM_IEEE = 211
+    G_IS_FPCLASS = 211
 
-    G_FMINIMUM = 212
+    G_FCANONICALIZE = 212
 
-    G_FMAXIMUM = 213
+    G_FMINNUM = 213
 
-    G_GET_FPENV = 214
+    G_FMAXNUM = 214
 
-    G_SET_FPENV = 215
+    G_FMINNUM_IEEE = 215
 
-    G_RESET_FPENV = 216
+    G_FMAXNUM_IEEE = 216
 
-    G_GET_FPMODE = 217
+    G_FMINIMUM = 217
 
-    G_SET_FPMODE = 218
+    G_FMAXIMUM = 218
 
-    G_RESET_FPMODE = 219
+    G_FMINIMUMNUM = 219
 
-    G_PTR_ADD = 220
+    G_FMAXIMUMNUM = 220
 
-    G_PTRMASK = 221
+    G_GET_FPENV = 221
 
-    G_SMIN = 222
+    G_SET_FPENV = 222
 
-    G_SMAX = 223
+    G_RESET_FPENV = 223
 
-    G_UMIN = 224
+    G_GET_FPMODE = 224
 
-    G_UMAX = 225
+    G_SET_FPMODE = 225
 
-    G_ABS = 226
+    G_RESET_FPMODE = 226
 
-    G_LROUND = 227
+    G_GET_ROUNDING = 227
 
-    G_LLROUND = 228
+    G_PTR_ADD = 228
 
-    G_BR = 229
+    G_PTRMASK = 229
 
-    G_BRJT = 230
+    G_SMIN = 230
 
-    G_VSCALE = 231
+    G_SMAX = 231
 
-    G_INSERT_SUBVECTOR = 232
+    G_UMIN = 232
 
-    G_EXTRACT_SUBVECTOR = 233
+    G_UMAX = 233
 
-    G_INSERT_VECTOR_ELT = 234
+    G_ABS = 234
 
-    G_EXTRACT_VECTOR_ELT = 235
+    G_LROUND = 235
 
-    G_SHUFFLE_VECTOR = 236
+    G_LLROUND = 236
 
-    G_SPLAT_VECTOR = 237
+    G_BR = 237
 
-    G_STEP_VECTOR = 238
+    G_BRJT = 238
 
-    G_VECTOR_COMPRESS = 239
+    G_VSCALE = 239
 
-    G_CTTZ = 240
+    G_INSERT_SUBVECTOR = 240
 
-    G_CTTZ_ZERO_UNDEF = 241
+    G_EXTRACT_SUBVECTOR = 241
 
-    G_CTLZ = 242
+    G_INSERT_VECTOR_ELT = 242
 
-    G_CTLZ_ZERO_UNDEF = 243
+    G_EXTRACT_VECTOR_ELT = 243
 
-    G_CTPOP = 244
+    G_SHUFFLE_VECTOR = 244
 
-    G_BSWAP = 245
+    G_SPLAT_VECTOR = 245
 
-    G_BITREVERSE = 246
+    G_STEP_VECTOR = 246
 
-    G_FCEIL = 247
+    G_VECTOR_COMPRESS = 247
 
-    G_FCOS = 248
+    G_CTTZ = 248
 
-    G_FSIN = 249
+    G_CTTZ_ZERO_UNDEF = 249
 
-    G_FSINCOS = 250
+    G_CTLZ = 250
 
-    G_FTAN = 251
+    G_CTLZ_ZERO_UNDEF = 251
 
-    G_FACOS = 252
+    G_CTPOP = 252
 
-    G_FASIN = 253
+    G_BSWAP = 253
 
-    G_FATAN = 254
+    G_BITREVERSE = 254
 
-    G_FATAN2 = 255
+    G_FCEIL = 255
 
-    G_FCOSH = 256
+    G_FCOS = 256
 
-    G_FSINH = 257
+    G_FSIN = 257
 
-    G_FTANH = 258
+    G_FSINCOS = 258
 
-    G_FSQRT = 259
+    G_FTAN = 259
 
-    G_FFLOOR = 260
+    G_FACOS = 260
 
-    G_FRINT = 261
+    G_FASIN = 261
 
-    G_FNEARBYINT = 262
+    G_FATAN = 262
 
-    G_ADDRSPACE_CAST = 263
+    G_FATAN2 = 263
 
-    G_BLOCK_ADDR = 264
+    G_FCOSH = 264
 
-    G_JUMP_TABLE = 265
+    G_FSINH = 265
 
-    G_DYN_STACKALLOC = 266
+    G_FTANH = 266
 
-    G_STACKSAVE = 267
+    G_FSQRT = 267
 
-    G_STACKRESTORE = 268
+    G_FFLOOR = 268
 
-    G_STRICT_FADD = 269
+    G_FRINT = 269
 
-    G_STRICT_FSUB = 270
+    G_FNEARBYINT = 270
 
-    G_STRICT_FMUL = 271
+    G_ADDRSPACE_CAST = 271
 
-    G_STRICT_FDIV = 272
+    G_BLOCK_ADDR = 272
 
-    G_STRICT_FREM = 273
+    G_JUMP_TABLE = 273
 
-    G_STRICT_FMA = 274
+    G_DYN_STACKALLOC = 274
 
-    G_STRICT_FSQRT = 275
+    G_STACKSAVE = 275
 
-    G_STRICT_FLDEXP = 276
+    G_STACKRESTORE = 276
 
-    G_READ_REGISTER = 277
+    G_STRICT_FADD = 277
 
-    G_WRITE_REGISTER = 278
+    G_STRICT_FSUB = 278
 
-    G_MEMCPY = 279
+    G_STRICT_FMUL = 279
 
-    G_MEMCPY_INLINE = 280
+    G_STRICT_FDIV = 280
 
-    G_MEMMOVE = 281
+    G_STRICT_FREM = 281
 
-    G_MEMSET = 282
+    G_STRICT_FMA = 282
 
-    G_BZERO = 283
+    G_STRICT_FSQRT = 283
 
-    G_TRAP = 284
+    G_STRICT_FLDEXP = 284
 
-    G_DEBUGTRAP = 285
+    G_READ_REGISTER = 285
 
-    G_UBSANTRAP = 286
+    G_WRITE_REGISTER = 286
 
-    G_VECREDUCE_SEQ_FADD = 287
+    G_MEMCPY = 287
 
-    G_VECREDUCE_SEQ_FMUL = 288
+    G_MEMCPY_INLINE = 288
 
-    G_VECREDUCE_FADD = 289
+    G_MEMMOVE = 289
 
-    G_VECREDUCE_FMUL = 290
+    G_MEMSET = 290
 
-    G_VECREDUCE_FMAX = 291
+    G_BZERO = 291
 
-    G_VECREDUCE_FMIN = 292
+    G_TRAP = 292
 
-    G_VECREDUCE_FMAXIMUM = 293
+    G_DEBUGTRAP = 293
 
-    G_VECREDUCE_FMINIMUM = 294
+    G_UBSANTRAP = 294
 
-    G_VECREDUCE_ADD = 295
+    G_VECREDUCE_SEQ_FADD = 295
 
-    G_VECREDUCE_MUL = 296
+    G_VECREDUCE_SEQ_FMUL = 296
 
-    G_VECREDUCE_AND = 297
+    G_VECREDUCE_FADD = 297
 
-    G_VECREDUCE_OR = 298
+    G_VECREDUCE_FMUL = 298
 
-    G_VECREDUCE_XOR = 299
+    G_VECREDUCE_FMAX = 299
 
-    G_VECREDUCE_SMAX = 300
+    G_VECREDUCE_FMIN = 300
 
-    G_VECREDUCE_SMIN = 301
+    G_VECREDUCE_FMAXIMUM = 301
 
-    G_VECREDUCE_UMAX = 302
+    G_VECREDUCE_FMINIMUM = 302
 
-    G_VECREDUCE_UMIN = 303
+    G_VECREDUCE_ADD = 303
 
-    G_SBFX = 304
+    G_VECREDUCE_MUL = 304
 
-    G_UBFX = 305
+    G_VECREDUCE_AND = 305
 
-    ADJCALLSTACKDOWN = 306
+    G_VECREDUCE_OR = 306
 
-    ADJCALLSTACKUP = 307
+    G_VECREDUCE_XOR = 307
 
-    FI_ri = 308
+    G_VECREDUCE_SMAX = 308
 
-    MEMCPY = 309
+    G_VECREDUCE_SMIN = 309
 
-    Select = 310
+    G_VECREDUCE_UMAX = 310
 
-    Select_32 = 311
+    G_VECREDUCE_UMIN = 311
 
-    Select_32_64 = 312
+    G_SBFX = 312
 
-    Select_64_32 = 313
+    G_UBFX = 313
 
-    Select_Ri = 314
+    ADJCALLSTACKDOWN = 314
 
-    Select_Ri_32 = 315
+    ADJCALLSTACKUP = 315
 
-    Select_Ri_32_64 = 316
+    FI_ri = 316
 
-    Select_Ri_64_32 = 317
+    MEMCPY = 317
 
-    ADDR_SPACE_CAST = 318
+    Select = 318
 
-    ADD_ri = 319
+    Select_32 = 319
 
-    ADD_ri_32 = 320
+    Select_32_64 = 320
 
-    ADD_rr = 321
+    Select_64_32 = 321
 
-    ADD_rr_32 = 322
+    Select_Ri = 322
 
-    AND_ri = 323
+    Select_Ri_32 = 323
 
-    AND_ri_32 = 324
+    Select_Ri_32_64 = 324
 
-    AND_rr = 325
+    Select_Ri_64_32 = 325
 
-    AND_rr_32 = 326
+    ADDR_SPACE_CAST = 326
 
-    BE16 = 327
+    ADD_ri = 327
 
-    BE32 = 328
+    ADD_ri_32 = 328
 
-    BE64 = 329
+    ADD_rr = 329
 
-    BSWAP16 = 330
+    ADD_rr_32 = 330
 
-    BSWAP32 = 331
+    AND_ri = 331
 
-    BSWAP64 = 332
+    AND_ri_32 = 332
 
-    CMPXCHGD = 333
+    AND_rr = 333
 
-    CMPXCHGW32 = 334
+    AND_rr_32 = 334
 
-    CORE_LD32 = 335
+    BE16 = 335
 
-    CORE_LD64 = 336
+    BE32 = 336
 
-    CORE_SHIFT = 337
+    BE64 = 337
 
-    CORE_ST = 338
+    BSWAP16 = 338
 
-    DIV_ri = 339
+    BSWAP32 = 339
 
-    DIV_ri_32 = 340
+    BSWAP64 = 340
 
-    DIV_rr = 341
+    CMPXCHGD = 341
 
-    DIV_rr_32 = 342
+    CMPXCHGW32 = 342
 
-    JAL = 343
+    CORE_LD32 = 343
 
-    JALX = 344
+    CORE_LD64 = 344
 
-    JCOND = 345
+    CORE_SHIFT = 345
 
-    JEQ_ri = 346
+    CORE_ST = 346
 
-    JEQ_ri_32 = 347
+    DIV_ri = 347
 
-    JEQ_rr = 348
+    DIV_ri_32 = 348
 
-    JEQ_rr_32 = 349
+    DIV_rr = 349
 
-    JMP = 350
+    DIV_rr_32 = 350
 
-    JMPL = 351
+    JAL = 351
 
-    JNE_ri = 352
+    JALX = 352
 
-    JNE_ri_32 = 353
+    JCOND = 353
 
-    JNE_rr = 354
+    JEQ_ri = 354
 
-    JNE_rr_32 = 355
+    JEQ_ri_32 = 355
 
-    JSET_ri = 356
+    JEQ_rr = 356
 
-    JSET_ri_32 = 357
+    JEQ_rr_32 = 357
 
-    JSET_rr = 358
+    JMP = 358
 
-    JSET_rr_32 = 359
+    JMPL = 359
 
-    JSGE_ri = 360
+    JNE_ri = 360
 
-    JSGE_ri_32 = 361
+    JNE_ri_32 = 361
 
-    JSGE_rr = 362
+    JNE_rr = 362
 
-    JSGE_rr_32 = 363
+    JNE_rr_32 = 363
 
-    JSGT_ri = 364
+    JSET_ri = 364
 
-    JSGT_ri_32 = 365
+    JSET_ri_32 = 365
 
-    JSGT_rr = 366
+    JSET_rr = 366
 
-    JSGT_rr_32 = 367
+    JSET_rr_32 = 367
 
-    JSLE_ri = 368
+    JSGE_ri = 368
 
-    JSLE_ri_32 = 369
+    JSGE_ri_32 = 369
 
-    JSLE_rr = 370
+    JSGE_rr = 370
 
-    JSLE_rr_32 = 371
+    JSGE_rr_32 = 371
 
-    JSLT_ri = 372
+    JSGT_ri = 372
 
-    JSLT_ri_32 = 373
+    JSGT_ri_32 = 373
 
-    JSLT_rr = 374
+    JSGT_rr = 374
 
-    JSLT_rr_32 = 375
+    JSGT_rr_32 = 375
 
-    JUGE_ri = 376
+    JSLE_ri = 376
 
-    JUGE_ri_32 = 377
+    JSLE_ri_32 = 377
 
-    JUGE_rr = 378
+    JSLE_rr = 378
 
-    JUGE_rr_32 = 379
+    JSLE_rr_32 = 379
 
-    JUGT_ri = 380
+    JSLT_ri = 380
 
-    JUGT_ri_32 = 381
+    JSLT_ri_32 = 381
 
-    JUGT_rr = 382
+    JSLT_rr = 382
 
-    JUGT_rr_32 = 383
+    JSLT_rr_32 = 383
 
-    JULE_ri = 384
+    JUGE_ri = 384
 
-    JULE_ri_32 = 385
+    JUGE_ri_32 = 385
 
-    JULE_rr = 386
+    JUGE_rr = 386
 
-    JULE_rr_32 = 387
+    JUGE_rr_32 = 387
 
-    JULT_ri = 388
+    JUGT_ri = 388
 
-    JULT_ri_32 = 389
+    JUGT_ri_32 = 389
 
-    JULT_rr = 390
+    JUGT_rr = 390
 
-    JULT_rr_32 = 391
+    JUGT_rr_32 = 391
 
-    LDB = 392
+    JULE_ri = 392
 
-    LDB32 = 393
+    JULE_ri_32 = 393
 
-    LDBSX = 394
+    JULE_rr = 394
 
-    LDD = 395
+    JULE_rr_32 = 395
 
-    LDH = 396
+    JULT_ri = 396
 
-    LDH32 = 397
+    JULT_ri_32 = 397
 
-    LDHSX = 398
+    JULT_rr = 398
 
-    LDW = 399
+    JULT_rr_32 = 399
 
-    LDW32 = 400
+    LDB = 400
 
-    LDWSX = 401
+    LDB32 = 401
 
-    LD_ABS_B = 402
+    LDBACQ32 = 402
 
-    LD_ABS_H = 403
+    LDBSX = 403
 
-    LD_ABS_W = 404
+    LDD = 404
 
-    LD_IND_B = 405
+    LDDACQ = 405
 
-    LD_IND_H = 406
+    LDH = 406
 
-    LD_IND_W = 407
+    LDH32 = 407
 
-    LD_imm64 = 408
+    LDHACQ32 = 408
 
-    LD_pseudo = 409
+    LDHSX = 409
 
-    LE16 = 410
+    LDW = 410
 
-    LE32 = 411
+    LDW32 = 411
 
-    LE64 = 412
+    LDWACQ32 = 412
 
-    MOD_ri = 413
+    LDWSX = 413
 
-    MOD_ri_32 = 414
+    LD_ABS_B = 414
 
-    MOD_rr = 415
+    LD_ABS_H = 415
 
-    MOD_rr_32 = 416
+    LD_ABS_W = 416
 
-    MOVSX_rr_16 = 417
+    LD_IND_B = 417
 
-    MOVSX_rr_32 = 418
+    LD_IND_H = 418
 
-    MOVSX_rr_32_16 = 419
+    LD_IND_W = 419
 
-    MOVSX_rr_32_8 = 420
+    LD_imm64 = 420
 
-    MOVSX_rr_8 = 421
+    LD_pseudo = 421
 
-    MOV_32_64 = 422
+    LE16 = 422
 
-    MOV_ri = 423
+    LE32 = 423
 
-    MOV_ri_32 = 424
+    LE64 = 424
 
-    MOV_rr = 425
+    MOD_ri = 425
 
-    MOV_rr_32 = 426
+    MOD_ri_32 = 426
 
-    MUL_ri = 427
+    MOD_rr = 427
 
-    MUL_ri_32 = 428
+    MOD_rr_32 = 428
 
-    MUL_rr = 429
+    MOVSX_rr_16 = 429
 
-    MUL_rr_32 = 430
+    MOVSX_rr_32 = 430
 
-    NEG_32 = 431
+    MOVSX_rr_32_16 = 431
 
-    NEG_64 = 432
+    MOVSX_rr_32_8 = 432
 
-    NOP = 433
+    MOVSX_rr_8 = 433
 
-    OR_ri = 434
+    MOV_32_64 = 434
 
-    OR_ri_32 = 435
+    MOV_ri = 435
 
-    OR_rr = 436
+    MOV_ri_32 = 436
 
-    OR_rr_32 = 437
+    MOV_rr = 437
 
-    RET = 438
+    MOV_rr_32 = 438
 
-    SDIV_ri = 439
+    MUL_ri = 439
 
-    SDIV_ri_32 = 440
+    MUL_ri_32 = 440
 
-    SDIV_rr = 441
+    MUL_rr = 441
 
-    SDIV_rr_32 = 442
+    MUL_rr_32 = 442
 
-    SLL_ri = 443
+    NEG_32 = 443
 
-    SLL_ri_32 = 444
+    NEG_64 = 444
 
-    SLL_rr = 445
+    NOP = 445
 
-    SLL_rr_32 = 446
+    OR_ri = 446
 
-    SMOD_ri = 447
+    OR_ri_32 = 447
 
-    SMOD_ri_32 = 448
+    OR_rr = 448
 
-    SMOD_rr = 449
+    OR_rr_32 = 449
 
-    SMOD_rr_32 = 450
+    RET = 450
 
-    SRA_ri = 451
+    SDIV_ri = 451
 
-    SRA_ri_32 = 452
+    SDIV_ri_32 = 452
 
-    SRA_rr = 453
+    SDIV_rr = 453
 
-    SRA_rr_32 = 454
+    SDIV_rr_32 = 454
 
-    SRL_ri = 455
+    SLL_ri = 455
 
-    SRL_ri_32 = 456
+    SLL_ri_32 = 456
 
-    SRL_rr = 457
+    SLL_rr = 457
 
-    SRL_rr_32 = 458
+    SLL_rr_32 = 458
 
-    STB = 459
+    SMOD_ri = 459
 
-    STB32 = 460
+    SMOD_ri_32 = 460
 
-    STB_imm = 461
+    SMOD_rr = 461
 
-    STD = 462
+    SMOD_rr_32 = 462
 
-    STD_imm = 463
+    SRA_ri = 463
 
-    STH = 464
+    SRA_ri_32 = 464
 
-    STH32 = 465
+    SRA_rr = 465
 
-    STH_imm = 466
+    SRA_rr_32 = 466
 
-    STW = 467
+    SRL_ri = 467
 
-    STW32 = 468
+    SRL_ri_32 = 468
 
-    STW_imm = 469
+    SRL_rr = 469
 
-    SUB_ri = 470
+    SRL_rr_32 = 470
 
-    SUB_ri_32 = 471
+    STB = 471
 
-    SUB_rr = 472
+    STB32 = 472
 
-    SUB_rr_32 = 473
+    STBREL32 = 473
 
-    XADDD = 474
+    STB_imm = 474
 
-    XADDW = 475
+    STD = 475
 
-    XADDW32 = 476
+    STDREL = 476
 
-    XANDD = 477
+    STD_imm = 477
 
-    XANDW32 = 478
+    STH = 478
 
-    XCHGD = 479
+    STH32 = 479
 
-    XCHGW32 = 480
+    STHREL32 = 480
 
-    XFADDD = 481
+    STH_imm = 481
 
-    XFADDW32 = 482
+    STW = 482
 
-    XFANDD = 483
+    STW32 = 483
 
-    XFANDW32 = 484
+    STWREL32 = 484
 
-    XFORD = 485
+    STW_imm = 485
 
-    XFORW32 = 486
+    SUB_ri = 486
 
-    XFXORD = 487
+    SUB_ri_32 = 487
 
-    XFXORW32 = 488
+    SUB_rr = 488
 
-    XORD = 489
+    SUB_rr_32 = 489
 
-    XORW32 = 490
+    XADDD = 490
 
-    XOR_ri = 491
+    XADDW = 491
 
-    XOR_ri_32 = 492
+    XADDW32 = 492
 
-    XOR_rr = 493
+    XANDD = 493
 
-    XOR_rr_32 = 494
+    XANDW32 = 494
 
-    XXORD = 495
+    XCHGD = 495
 
-    XXORW32 = 496
+    XCHGW32 = 496
 
-    INSTRUCTION_LIST_END = 497
+    XFADDD = 497
+
+    XFADDW32 = 498
+
+    XFANDD = 499
+
+    XFANDW32 = 500
+
+    XFORD = 501
+
+    XFORW32 = 502
+
+    XFXORD = 503
+
+    XFXORW32 = 504
+
+    XORD = 505
+
+    XORW32 = 506
+
+    XOR_ri = 507
+
+    XOR_ri_32 = 508
+
+    XOR_rr = 509
+
+    XOR_rr_32 = 510
+
+    XXORD = 511
+
+    XXORW32 = 512
+
+    INSTRUCTION_LIST_END = 513
 
 class Instruction(lief.assembly.Instruction):
     @property

@@ -241,5503 +241,5585 @@ class OPCODE(enum.Enum):
 
     G_ATOMICRMW_FMIN = 117
 
-    G_ATOMICRMW_UINC_WRAP = 118
+    G_ATOMICRMW_FMAXIMUM = 118
 
-    G_ATOMICRMW_UDEC_WRAP = 119
+    G_ATOMICRMW_FMINIMUM = 119
 
-    G_ATOMICRMW_USUB_COND = 120
+    G_ATOMICRMW_UINC_WRAP = 120
 
-    G_ATOMICRMW_USUB_SAT = 121
+    G_ATOMICRMW_UDEC_WRAP = 121
 
-    G_FENCE = 122
+    G_ATOMICRMW_USUB_COND = 122
 
-    G_PREFETCH = 123
+    G_ATOMICRMW_USUB_SAT = 123
 
-    G_BRCOND = 124
+    G_FENCE = 124
 
-    G_BRINDIRECT = 125
+    G_PREFETCH = 125
 
-    G_INVOKE_REGION_START = 126
+    G_BRCOND = 126
 
-    G_INTRINSIC = 127
+    G_BRINDIRECT = 127
 
-    G_INTRINSIC_W_SIDE_EFFECTS = 128
+    G_INVOKE_REGION_START = 128
 
-    G_INTRINSIC_CONVERGENT = 129
+    G_INTRINSIC = 129
 
-    G_INTRINSIC_CONVERGENT_W_SIDE_EFFECTS = 130
+    G_INTRINSIC_W_SIDE_EFFECTS = 130
 
-    G_ANYEXT = 131
+    G_INTRINSIC_CONVERGENT = 131
 
-    G_TRUNC = 132
+    G_INTRINSIC_CONVERGENT_W_SIDE_EFFECTS = 132
 
-    G_CONSTANT = 133
+    G_ANYEXT = 133
 
-    G_FCONSTANT = 134
+    G_TRUNC = 134
 
-    G_VASTART = 135
+    G_TRUNC_SSAT_S = 135
 
-    G_VAARG = 136
+    G_TRUNC_SSAT_U = 136
 
-    G_SEXT = 137
+    G_TRUNC_USAT_U = 137
 
-    G_SEXT_INREG = 138
+    G_CONSTANT = 138
 
-    G_ZEXT = 139
+    G_FCONSTANT = 139
 
-    G_SHL = 140
+    G_VASTART = 140
 
-    G_LSHR = 141
+    G_VAARG = 141
 
-    G_ASHR = 142
+    G_SEXT = 142
 
-    G_FSHL = 143
+    G_SEXT_INREG = 143
 
-    G_FSHR = 144
+    G_ZEXT = 144
 
-    G_ROTR = 145
+    G_SHL = 145
 
-    G_ROTL = 146
+    G_LSHR = 146
 
-    G_ICMP = 147
+    G_ASHR = 147
 
-    G_FCMP = 148
+    G_FSHL = 148
 
-    G_SCMP = 149
+    G_FSHR = 149
 
-    G_UCMP = 150
+    G_ROTR = 150
 
-    G_SELECT = 151
+    G_ROTL = 151
 
-    G_UADDO = 152
+    G_ICMP = 152
 
-    G_UADDE = 153
+    G_FCMP = 153
 
-    G_USUBO = 154
+    G_SCMP = 154
 
-    G_USUBE = 155
+    G_UCMP = 155
 
-    G_SADDO = 156
+    G_SELECT = 156
 
-    G_SADDE = 157
+    G_UADDO = 157
 
-    G_SSUBO = 158
+    G_UADDE = 158
 
-    G_SSUBE = 159
+    G_USUBO = 159
 
-    G_UMULO = 160
+    G_USUBE = 160
 
-    G_SMULO = 161
+    G_SADDO = 161
 
-    G_UMULH = 162
+    G_SADDE = 162
 
-    G_SMULH = 163
+    G_SSUBO = 163
 
-    G_UADDSAT = 164
+    G_SSUBE = 164
 
-    G_SADDSAT = 165
+    G_UMULO = 165
 
-    G_USUBSAT = 166
+    G_SMULO = 166
 
-    G_SSUBSAT = 167
+    G_UMULH = 167
 
-    G_USHLSAT = 168
+    G_SMULH = 168
 
-    G_SSHLSAT = 169
+    G_UADDSAT = 169
 
-    G_SMULFIX = 170
+    G_SADDSAT = 170
 
-    G_UMULFIX = 171
+    G_USUBSAT = 171
 
-    G_SMULFIXSAT = 172
+    G_SSUBSAT = 172
 
-    G_UMULFIXSAT = 173
+    G_USHLSAT = 173
 
-    G_SDIVFIX = 174
+    G_SSHLSAT = 174
 
-    G_UDIVFIX = 175
+    G_SMULFIX = 175
 
-    G_SDIVFIXSAT = 176
+    G_UMULFIX = 176
 
-    G_UDIVFIXSAT = 177
+    G_SMULFIXSAT = 177
 
-    G_FADD = 178
+    G_UMULFIXSAT = 178
 
-    G_FSUB = 179
+    G_SDIVFIX = 179
 
-    G_FMUL = 180
+    G_UDIVFIX = 180
 
-    G_FMA = 181
+    G_SDIVFIXSAT = 181
 
-    G_FMAD = 182
+    G_UDIVFIXSAT = 182
 
-    G_FDIV = 183
+    G_FADD = 183
 
-    G_FREM = 184
+    G_FSUB = 184
 
-    G_FPOW = 185
+    G_FMUL = 185
 
-    G_FPOWI = 186
+    G_FMA = 186
 
-    G_FEXP = 187
+    G_FMAD = 187
 
-    G_FEXP2 = 188
+    G_FDIV = 188
 
-    G_FEXP10 = 189
+    G_FREM = 189
 
-    G_FLOG = 190
+    G_FPOW = 190
 
-    G_FLOG2 = 191
+    G_FPOWI = 191
 
-    G_FLOG10 = 192
+    G_FEXP = 192
 
-    G_FLDEXP = 193
+    G_FEXP2 = 193
 
-    G_FFREXP = 194
+    G_FEXP10 = 194
 
-    G_FNEG = 195
+    G_FLOG = 195
 
-    G_FPEXT = 196
+    G_FLOG2 = 196
 
-    G_FPTRUNC = 197
+    G_FLOG10 = 197
 
-    G_FPTOSI = 198
+    G_FLDEXP = 198
 
-    G_FPTOUI = 199
+    G_FFREXP = 199
 
-    G_SITOFP = 200
+    G_FNEG = 200
 
-    G_UITOFP = 201
+    G_FPEXT = 201
 
-    G_FPTOSI_SAT = 202
+    G_FPTRUNC = 202
 
-    G_FPTOUI_SAT = 203
+    G_FPTOSI = 203
 
-    G_FABS = 204
+    G_FPTOUI = 204
 
-    G_FCOPYSIGN = 205
+    G_SITOFP = 205
 
-    G_IS_FPCLASS = 206
+    G_UITOFP = 206
 
-    G_FCANONICALIZE = 207
+    G_FPTOSI_SAT = 207
 
-    G_FMINNUM = 208
+    G_FPTOUI_SAT = 208
 
-    G_FMAXNUM = 209
+    G_FABS = 209
 
-    G_FMINNUM_IEEE = 210
+    G_FCOPYSIGN = 210
 
-    G_FMAXNUM_IEEE = 211
+    G_IS_FPCLASS = 211
 
-    G_FMINIMUM = 212
+    G_FCANONICALIZE = 212
 
-    G_FMAXIMUM = 213
+    G_FMINNUM = 213
 
-    G_GET_FPENV = 214
+    G_FMAXNUM = 214
 
-    G_SET_FPENV = 215
+    G_FMINNUM_IEEE = 215
 
-    G_RESET_FPENV = 216
+    G_FMAXNUM_IEEE = 216
 
-    G_GET_FPMODE = 217
+    G_FMINIMUM = 217
 
-    G_SET_FPMODE = 218
+    G_FMAXIMUM = 218
 
-    G_RESET_FPMODE = 219
+    G_FMINIMUMNUM = 219
 
-    G_PTR_ADD = 220
+    G_FMAXIMUMNUM = 220
 
-    G_PTRMASK = 221
+    G_GET_FPENV = 221
 
-    G_SMIN = 222
+    G_SET_FPENV = 222
 
-    G_SMAX = 223
+    G_RESET_FPENV = 223
 
-    G_UMIN = 224
+    G_GET_FPMODE = 224
 
-    G_UMAX = 225
+    G_SET_FPMODE = 225
 
-    G_ABS = 226
+    G_RESET_FPMODE = 226
 
-    G_LROUND = 227
+    G_GET_ROUNDING = 227
 
-    G_LLROUND = 228
+    G_PTR_ADD = 228
 
-    G_BR = 229
+    G_PTRMASK = 229
 
-    G_BRJT = 230
+    G_SMIN = 230
 
-    G_VSCALE = 231
+    G_SMAX = 231
 
-    G_INSERT_SUBVECTOR = 232
+    G_UMIN = 232
 
-    G_EXTRACT_SUBVECTOR = 233
+    G_UMAX = 233
 
-    G_INSERT_VECTOR_ELT = 234
+    G_ABS = 234
 
-    G_EXTRACT_VECTOR_ELT = 235
+    G_LROUND = 235
 
-    G_SHUFFLE_VECTOR = 236
+    G_LLROUND = 236
 
-    G_SPLAT_VECTOR = 237
+    G_BR = 237
 
-    G_STEP_VECTOR = 238
+    G_BRJT = 238
 
-    G_VECTOR_COMPRESS = 239
+    G_VSCALE = 239
 
-    G_CTTZ = 240
+    G_INSERT_SUBVECTOR = 240
 
-    G_CTTZ_ZERO_UNDEF = 241
+    G_EXTRACT_SUBVECTOR = 241
 
-    G_CTLZ = 242
+    G_INSERT_VECTOR_ELT = 242
 
-    G_CTLZ_ZERO_UNDEF = 243
+    G_EXTRACT_VECTOR_ELT = 243
 
-    G_CTPOP = 244
+    G_SHUFFLE_VECTOR = 244
 
-    G_BSWAP = 245
+    G_SPLAT_VECTOR = 245
 
-    G_BITREVERSE = 246
+    G_STEP_VECTOR = 246
 
-    G_FCEIL = 247
+    G_VECTOR_COMPRESS = 247
 
-    G_FCOS = 248
+    G_CTTZ = 248
 
-    G_FSIN = 249
+    G_CTTZ_ZERO_UNDEF = 249
 
-    G_FSINCOS = 250
+    G_CTLZ = 250
 
-    G_FTAN = 251
+    G_CTLZ_ZERO_UNDEF = 251
 
-    G_FACOS = 252
+    G_CTPOP = 252
 
-    G_FASIN = 253
+    G_BSWAP = 253
 
-    G_FATAN = 254
+    G_BITREVERSE = 254
 
-    G_FATAN2 = 255
+    G_FCEIL = 255
 
-    G_FCOSH = 256
+    G_FCOS = 256
 
-    G_FSINH = 257
+    G_FSIN = 257
 
-    G_FTANH = 258
+    G_FSINCOS = 258
 
-    G_FSQRT = 259
+    G_FTAN = 259
 
-    G_FFLOOR = 260
+    G_FACOS = 260
 
-    G_FRINT = 261
+    G_FASIN = 261
 
-    G_FNEARBYINT = 262
+    G_FATAN = 262
 
-    G_ADDRSPACE_CAST = 263
+    G_FATAN2 = 263
 
-    G_BLOCK_ADDR = 264
+    G_FCOSH = 264
 
-    G_JUMP_TABLE = 265
+    G_FSINH = 265
 
-    G_DYN_STACKALLOC = 266
+    G_FTANH = 266
 
-    G_STACKSAVE = 267
+    G_FSQRT = 267
 
-    G_STACKRESTORE = 268
+    G_FFLOOR = 268
 
-    G_STRICT_FADD = 269
+    G_FRINT = 269
 
-    G_STRICT_FSUB = 270
+    G_FNEARBYINT = 270
 
-    G_STRICT_FMUL = 271
+    G_ADDRSPACE_CAST = 271
 
-    G_STRICT_FDIV = 272
+    G_BLOCK_ADDR = 272
 
-    G_STRICT_FREM = 273
+    G_JUMP_TABLE = 273
 
-    G_STRICT_FMA = 274
+    G_DYN_STACKALLOC = 274
 
-    G_STRICT_FSQRT = 275
+    G_STACKSAVE = 275
 
-    G_STRICT_FLDEXP = 276
+    G_STACKRESTORE = 276
 
-    G_READ_REGISTER = 277
+    G_STRICT_FADD = 277
 
-    G_WRITE_REGISTER = 278
+    G_STRICT_FSUB = 278
 
-    G_MEMCPY = 279
+    G_STRICT_FMUL = 279
 
-    G_MEMCPY_INLINE = 280
+    G_STRICT_FDIV = 280
 
-    G_MEMMOVE = 281
+    G_STRICT_FREM = 281
 
-    G_MEMSET = 282
+    G_STRICT_FMA = 282
 
-    G_BZERO = 283
+    G_STRICT_FSQRT = 283
 
-    G_TRAP = 284
+    G_STRICT_FLDEXP = 284
 
-    G_DEBUGTRAP = 285
+    G_READ_REGISTER = 285
 
-    G_UBSANTRAP = 286
+    G_WRITE_REGISTER = 286
 
-    G_VECREDUCE_SEQ_FADD = 287
+    G_MEMCPY = 287
 
-    G_VECREDUCE_SEQ_FMUL = 288
+    G_MEMCPY_INLINE = 288
 
-    G_VECREDUCE_FADD = 289
+    G_MEMMOVE = 289
 
-    G_VECREDUCE_FMUL = 290
+    G_MEMSET = 290
 
-    G_VECREDUCE_FMAX = 291
+    G_BZERO = 291
 
-    G_VECREDUCE_FMIN = 292
+    G_TRAP = 292
 
-    G_VECREDUCE_FMAXIMUM = 293
+    G_DEBUGTRAP = 293
 
-    G_VECREDUCE_FMINIMUM = 294
+    G_UBSANTRAP = 294
 
-    G_VECREDUCE_ADD = 295
+    G_VECREDUCE_SEQ_FADD = 295
 
-    G_VECREDUCE_MUL = 296
+    G_VECREDUCE_SEQ_FMUL = 296
 
-    G_VECREDUCE_AND = 297
+    G_VECREDUCE_FADD = 297
 
-    G_VECREDUCE_OR = 298
+    G_VECREDUCE_FMUL = 298
 
-    G_VECREDUCE_XOR = 299
+    G_VECREDUCE_FMAX = 299
 
-    G_VECREDUCE_SMAX = 300
+    G_VECREDUCE_FMIN = 300
 
-    G_VECREDUCE_SMIN = 301
+    G_VECREDUCE_FMAXIMUM = 301
 
-    G_VECREDUCE_UMAX = 302
+    G_VECREDUCE_FMINIMUM = 302
 
-    G_VECREDUCE_UMIN = 303
+    G_VECREDUCE_ADD = 303
 
-    G_SBFX = 304
+    G_VECREDUCE_MUL = 304
 
-    G_UBFX = 305
+    G_VECREDUCE_AND = 305
 
-    ATOMIC_CMP_SWAP_I128 = 306
+    G_VECREDUCE_OR = 306
 
-    ATOMIC_LOAD_ADD_I128 = 307
+    G_VECREDUCE_XOR = 307
 
-    ATOMIC_LOAD_AND_I128 = 308
+    G_VECREDUCE_SMAX = 308
 
-    ATOMIC_LOAD_NAND_I128 = 309
+    G_VECREDUCE_SMIN = 309
 
-    ATOMIC_LOAD_OR_I128 = 310
+    G_VECREDUCE_UMAX = 310
 
-    ATOMIC_LOAD_SUB_I128 = 311
+    G_VECREDUCE_UMIN = 311
 
-    ATOMIC_LOAD_XOR_I128 = 312
+    G_SBFX = 312
 
-    ATOMIC_SWAP_I128 = 313
+    G_UBFX = 313
 
-    BUILD_QUADWORD = 314
+    ATOMIC_CMP_SWAP_I128 = 314
 
-    BUILD_UACC = 315
+    ATOMIC_LOAD_ADD_I128 = 315
 
-    CFENCE = 316
+    ATOMIC_LOAD_AND_I128 = 316
 
-    CFENCE8 = 317
+    ATOMIC_LOAD_NAND_I128 = 317
 
-    CLRLSLDI = 318
+    ATOMIC_LOAD_OR_I128 = 318
 
-    CLRLSLDI_rec = 319
+    ATOMIC_LOAD_SUB_I128 = 319
 
-    CLRLSLWI = 320
+    ATOMIC_LOAD_XOR_I128 = 320
 
-    CLRLSLWI_rec = 321
+    ATOMIC_SWAP_I128 = 321
 
-    CLRRDI = 322
+    BUILD_QUADWORD = 322
 
-    CLRRDI_rec = 323
+    BUILD_UACC = 323
 
-    CLRRWI = 324
+    CFENCE = 324
 
-    CLRRWI_rec = 325
+    CFENCE8 = 325
 
-    DCBFL = 326
+    CLRLSLDI = 326
 
-    DCBFLP = 327
+    CLRLSLDI_rec = 327
 
-    DCBFPS = 328
+    CLRLSLWI = 328
 
-    DCBFx = 329
+    CLRLSLWI_rec = 329
 
-    DCBSTPS = 330
+    CLRRDI = 330
 
-    DCBTCT = 331
+    CLRRDI_rec = 331
 
-    DCBTDS = 332
+    CLRRWI = 332
 
-    DCBTSTCT = 333
+    CLRRWI_rec = 333
 
-    DCBTSTDS = 334
+    DCBFL = 334
 
-    DCBTSTT = 335
+    DCBFLP = 335
 
-    DCBTSTx = 336
+    DCBFPS = 336
 
-    DCBTT = 337
+    DCBFx = 337
 
-    DCBTx = 338
+    DCBSTPS = 338
 
-    DFLOADf32 = 339
+    DCBTCT = 339
 
-    DFLOADf64 = 340
+    DCBTDS = 340
 
-    DFSTOREf32 = 341
+    DCBTSTCT = 341
 
-    DFSTOREf64 = 342
+    DCBTSTDS = 342
 
-    EXTLDI = 343
+    DCBTSTT = 343
 
-    EXTLDI_rec = 344
+    DCBTSTx = 344
 
-    EXTLWI = 345
+    DCBTT = 345
 
-    EXTLWI_rec = 346
+    DCBTx = 346
 
-    EXTRDI = 347
+    DFLOADf32 = 347
 
-    EXTRDI_rec = 348
+    DFLOADf64 = 348
 
-    EXTRWI = 349
+    DFSTOREf32 = 349
 
-    EXTRWI_rec = 350
+    DFSTOREf64 = 350
 
-    INSLWI = 351
+    EXTLDI = 351
 
-    INSLWI_rec = 352
+    EXTLDI_rec = 352
 
-    INSRDI = 353
+    EXTLWI = 353
 
-    INSRDI_rec = 354
+    EXTLWI_rec = 354
 
-    INSRWI = 355
+    EXTRDI = 355
 
-    INSRWI_rec = 356
+    EXTRDI_rec = 356
 
-    KILL_PAIR = 357
+    EXTRWI = 357
 
-    LAx = 358
+    EXTRWI_rec = 358
 
-    LIWAX = 359
+    INSLWI = 359
 
-    LIWZX = 360
+    INSLWI_rec = 360
 
-    PPCLdFixedAddr = 361
+    INSRDI = 361
 
-    PSUBI = 362
+    INSRDI_rec = 362
 
-    RLWIMIbm = 363
+    INSRWI = 363
 
-    RLWIMIbm_rec = 364
+    INSRWI_rec = 364
 
-    RLWINMbm = 365
+    KILL_PAIR = 365
 
-    RLWINMbm_rec = 366
+    LAx = 366
 
-    RLWNMbm = 367
+    LIWAX = 367
 
-    RLWNMbm_rec = 368
+    LIWZX = 368
 
-    ROTRDI = 369
+    PPCLdFixedAddr = 369
 
-    ROTRDI_rec = 370
+    PSUBI = 370
 
-    ROTRWI = 371
+    RLWIMIbm = 371
 
-    ROTRWI_rec = 372
+    RLWIMIbm_rec = 372
 
-    SLDI = 373
+    RLWINMbm = 373
 
-    SLDI_rec = 374
+    RLWINMbm_rec = 374
 
-    SLWI = 375
+    RLWNMbm = 375
 
-    SLWI_rec = 376
+    RLWNMbm_rec = 376
 
-    SPILLTOVSR_LD = 377
+    ROTRDI = 377
 
-    SPILLTOVSR_LDX = 378
+    ROTRDI_rec = 378
 
-    SPILLTOVSR_ST = 379
+    ROTRWI = 379
 
-    SPILLTOVSR_STX = 380
+    ROTRWI_rec = 380
 
-    SRDI = 381
+    SLDI = 381
 
-    SRDI_rec = 382
+    SLDI_rec = 382
 
-    SRWI = 383
+    SLWI = 383
 
-    SRWI_rec = 384
+    SLWI_rec = 384
 
-    STIWX = 385
+    SPILLTOVSR_LD = 385
 
-    SUBI = 386
+    SPILLTOVSR_LDX = 386
 
-    SUBIC = 387
+    SPILLTOVSR_ST = 387
 
-    SUBIC_rec = 388
+    SPILLTOVSR_STX = 388
 
-    SUBIS = 389
+    SRDI = 389
 
-    SUBPCIS = 390
+    SRDI_rec = 390
 
-    XFLOADf32 = 391
+    SRWI = 391
 
-    XFLOADf64 = 392
+    SRWI_rec = 392
 
-    XFSTOREf32 = 393
+    STIWX = 393
 
-    XFSTOREf64 = 394
+    SUBI = 394
 
-    ADD4 = 395
+    SUBIC = 395
 
-    ADD4O = 396
+    SUBIC_rec = 396
 
-    ADD4O_rec = 397
+    SUBIS = 397
 
-    ADD4TLS = 398
+    SUBPCIS = 398
 
-    ADD4_rec = 399
+    XFLOADf32 = 399
 
-    ADD8 = 400
+    XFLOADf64 = 400
 
-    ADD8O = 401
+    XFSTOREf32 = 401
 
-    ADD8O_rec = 402
+    XFSTOREf64 = 402
 
-    ADD8TLS = 403
+    ADD4 = 403
 
-    ADD8_rec = 405
+    ADD4O = 404
 
-    ADDC = 406
+    ADD4O_rec = 405
 
-    ADDC8 = 407
+    ADD4TLS = 406
 
-    ADDC8O = 408
+    ADD4_rec = 407
 
-    ADDC8O_rec = 409
+    ADD8 = 408
 
-    ADDC8_rec = 410
+    ADD8O = 409
 
-    ADDCO = 411
+    ADD8O_rec = 410
 
-    ADDCO_rec = 412
+    ADD8TLS = 411
 
-    ADDC_rec = 413
+    ADD8_rec = 413
 
-    ADDE = 414
+    ADDC = 414
 
-    ADDE8 = 415
+    ADDC8 = 415
 
-    ADDE8O = 416
+    ADDC8O = 416
 
-    ADDE8O_rec = 417
+    ADDC8O_rec = 417
 
-    ADDE8_rec = 418
+    ADDC8_rec = 418
 
-    ADDEO = 419
+    ADDCO = 419
 
-    ADDEO_rec = 420
+    ADDCO_rec = 420
 
-    ADDEX = 421
+    ADDC_rec = 421
 
-    ADDEX8 = 422
+    ADDE = 422
 
-    ADDE_rec = 423
+    ADDE8 = 423
 
-    ADDG6S = 424
+    ADDE8O = 424
 
-    ADDG6S8 = 425
+    ADDE8O_rec = 425
 
-    ADDI = 426
+    ADDE8_rec = 426
 
-    ADDI8 = 427
+    ADDEO = 427
 
-    ADDIC = 428
+    ADDEO_rec = 428
 
-    ADDIC8 = 429
+    ADDEX = 429
 
-    ADDIC_rec = 430
+    ADDEX8 = 430
 
-    ADDIS = 431
+    ADDE_rec = 431
 
-    ADDIS8 = 432
+    ADDG6S = 432
 
-    ADDISdtprelHA = 433
+    ADDG6S8 = 433
 
-    ADDISdtprelHA32 = 434
+    ADDI = 434
 
-    ADDISgotTprelHA = 435
+    ADDI8 = 435
 
-    ADDIStlsgdHA = 436
+    ADDIC = 436
 
-    ADDIStlsldHA = 437
+    ADDIC8 = 437
 
-    ADDIStocHA = 438
+    ADDIC_rec = 438
 
-    ADDIStocHA8 = 439
+    ADDIS = 439
 
-    ADDIdtprelL = 440
+    ADDIS8 = 440
 
-    ADDIdtprelL32 = 441
+    ADDISdtprelHA = 441
 
-    ADDItlsgdL = 442
+    ADDISdtprelHA32 = 442
 
-    ADDItlsgdL32 = 443
+    ADDISgotTprelHA = 443
 
-    ADDItlsgdLADDR = 444
+    ADDIStlsgdHA = 444
 
-    ADDItlsgdLADDR32 = 445
+    ADDIStlsldHA = 445
 
-    ADDItlsldL = 446
+    ADDIStocHA = 446
 
-    ADDItlsldL32 = 447
+    ADDIStocHA8 = 447
 
-    ADDItlsldLADDR = 448
+    ADDIdtprelL = 448
 
-    ADDItlsldLADDR32 = 449
+    ADDIdtprelL32 = 449
 
-    ADDItoc = 450
+    ADDItlsgdL = 450
 
-    ADDItoc8 = 451
+    ADDItlsgdL32 = 451
 
-    ADDItocL = 452
+    ADDItlsgdLADDR = 452
 
-    ADDItocL8 = 453
+    ADDItlsgdLADDR32 = 453
 
-    ADDME = 454
+    ADDItlsldL = 454
 
-    ADDME8 = 455
+    ADDItlsldL32 = 455
 
-    ADDME8O = 456
+    ADDItlsldLADDR = 456
 
-    ADDME8O_rec = 457
+    ADDItlsldLADDR32 = 457
 
-    ADDME8_rec = 458
+    ADDItoc = 458
 
-    ADDMEO = 459
+    ADDItoc8 = 459
 
-    ADDMEO_rec = 460
+    ADDItocL = 460
 
-    ADDME_rec = 461
+    ADDItocL8 = 461
 
-    ADDPCIS = 462
+    ADDME = 462
 
-    ADDZE = 463
+    ADDME8 = 463
 
-    ADDZE8 = 464
+    ADDME8O = 464
 
-    ADDZE8O = 465
+    ADDME8O_rec = 465
 
-    ADDZE8O_rec = 466
+    ADDME8_rec = 466
 
-    ADDZE8_rec = 467
+    ADDMEO = 467
 
-    ADDZEO = 468
+    ADDMEO_rec = 468
 
-    ADDZEO_rec = 469
+    ADDME_rec = 469
 
-    ADDZE_rec = 470
+    ADDPCIS = 470
 
-    ADJCALLSTACKDOWN = 471
+    ADDZE = 471
 
-    ADJCALLSTACKUP = 472
+    ADDZE8 = 472
 
-    AND = 473
+    ADDZE8O = 473
 
-    AND8 = 474
+    ADDZE8O_rec = 474
 
-    AND8_rec = 475
+    ADDZE8_rec = 475
 
-    ANDC = 476
+    ADDZEO = 476
 
-    ANDC8 = 477
+    ADDZEO_rec = 477
 
-    ANDC8_rec = 478
+    ADDZE_rec = 478
 
-    ANDC_rec = 479
+    ADJCALLSTACKDOWN = 479
 
-    ANDI8_rec = 480
+    ADJCALLSTACKUP = 480
 
-    ANDIS8_rec = 481
+    AND = 481
 
-    ANDIS_rec = 482
+    AND8 = 482
 
-    ANDI_rec = 483
+    AND8_rec = 483
 
-    ANDI_rec_1_EQ_BIT = 484
+    ANDC = 484
 
-    ANDI_rec_1_EQ_BIT8 = 485
+    ANDC8 = 485
 
-    ANDI_rec_1_GT_BIT = 486
+    ANDC8_rec = 486
 
-    ANDI_rec_1_GT_BIT8 = 487
+    ANDC_rec = 487
 
-    AND_rec = 488
+    ANDI8_rec = 488
 
-    ATOMIC_CMP_SWAP_I16 = 489
+    ANDIS8_rec = 489
 
-    ATOMIC_CMP_SWAP_I32 = 490
+    ANDIS_rec = 490
 
-    ATOMIC_CMP_SWAP_I64 = 491
+    ANDI_rec = 491
 
-    ATOMIC_CMP_SWAP_I8 = 492
+    ANDI_rec_1_EQ_BIT = 492
 
-    ATOMIC_LOAD_ADD_I16 = 493
+    ANDI_rec_1_EQ_BIT8 = 493
 
-    ATOMIC_LOAD_ADD_I32 = 494
+    ANDI_rec_1_GT_BIT = 494
 
-    ATOMIC_LOAD_ADD_I64 = 495
+    ANDI_rec_1_GT_BIT8 = 495
 
-    ATOMIC_LOAD_ADD_I8 = 496
+    AND_rec = 496
 
-    ATOMIC_LOAD_AND_I16 = 497
+    ATOMIC_CMP_SWAP_I16 = 497
 
-    ATOMIC_LOAD_AND_I32 = 498
+    ATOMIC_CMP_SWAP_I32 = 498
 
-    ATOMIC_LOAD_AND_I64 = 499
+    ATOMIC_CMP_SWAP_I64 = 499
 
-    ATOMIC_LOAD_AND_I8 = 500
+    ATOMIC_CMP_SWAP_I8 = 500
 
-    ATOMIC_LOAD_MAX_I16 = 501
+    ATOMIC_LOAD_ADD_I16 = 501
 
-    ATOMIC_LOAD_MAX_I32 = 502
+    ATOMIC_LOAD_ADD_I32 = 502
 
-    ATOMIC_LOAD_MAX_I64 = 503
+    ATOMIC_LOAD_ADD_I64 = 503
 
-    ATOMIC_LOAD_MAX_I8 = 504
+    ATOMIC_LOAD_ADD_I8 = 504
 
-    ATOMIC_LOAD_MIN_I16 = 505
+    ATOMIC_LOAD_AND_I16 = 505
 
-    ATOMIC_LOAD_MIN_I32 = 506
+    ATOMIC_LOAD_AND_I32 = 506
 
-    ATOMIC_LOAD_MIN_I64 = 507
+    ATOMIC_LOAD_AND_I64 = 507
 
-    ATOMIC_LOAD_MIN_I8 = 508
+    ATOMIC_LOAD_AND_I8 = 508
 
-    ATOMIC_LOAD_NAND_I16 = 509
+    ATOMIC_LOAD_MAX_I16 = 509
 
-    ATOMIC_LOAD_NAND_I32 = 510
+    ATOMIC_LOAD_MAX_I32 = 510
 
-    ATOMIC_LOAD_NAND_I64 = 511
+    ATOMIC_LOAD_MAX_I64 = 511
 
-    ATOMIC_LOAD_NAND_I8 = 512
+    ATOMIC_LOAD_MAX_I8 = 512
 
-    ATOMIC_LOAD_OR_I16 = 513
+    ATOMIC_LOAD_MIN_I16 = 513
 
-    ATOMIC_LOAD_OR_I32 = 514
+    ATOMIC_LOAD_MIN_I32 = 514
 
-    ATOMIC_LOAD_OR_I64 = 515
+    ATOMIC_LOAD_MIN_I64 = 515
 
-    ATOMIC_LOAD_OR_I8 = 516
+    ATOMIC_LOAD_MIN_I8 = 516
 
-    ATOMIC_LOAD_SUB_I16 = 517
+    ATOMIC_LOAD_NAND_I16 = 517
 
-    ATOMIC_LOAD_SUB_I32 = 518
+    ATOMIC_LOAD_NAND_I32 = 518
 
-    ATOMIC_LOAD_SUB_I64 = 519
+    ATOMIC_LOAD_NAND_I64 = 519
 
-    ATOMIC_LOAD_SUB_I8 = 520
+    ATOMIC_LOAD_NAND_I8 = 520
 
-    ATOMIC_LOAD_UMAX_I16 = 521
+    ATOMIC_LOAD_OR_I16 = 521
 
-    ATOMIC_LOAD_UMAX_I32 = 522
+    ATOMIC_LOAD_OR_I32 = 522
 
-    ATOMIC_LOAD_UMAX_I64 = 523
+    ATOMIC_LOAD_OR_I64 = 523
 
-    ATOMIC_LOAD_UMAX_I8 = 524
+    ATOMIC_LOAD_OR_I8 = 524
 
-    ATOMIC_LOAD_UMIN_I16 = 525
+    ATOMIC_LOAD_SUB_I16 = 525
 
-    ATOMIC_LOAD_UMIN_I32 = 526
+    ATOMIC_LOAD_SUB_I32 = 526
 
-    ATOMIC_LOAD_UMIN_I64 = 527
+    ATOMIC_LOAD_SUB_I64 = 527
 
-    ATOMIC_LOAD_UMIN_I8 = 528
+    ATOMIC_LOAD_SUB_I8 = 528
 
-    ATOMIC_LOAD_XOR_I16 = 529
+    ATOMIC_LOAD_UMAX_I16 = 529
 
-    ATOMIC_LOAD_XOR_I32 = 530
+    ATOMIC_LOAD_UMAX_I32 = 530
 
-    ATOMIC_LOAD_XOR_I64 = 531
+    ATOMIC_LOAD_UMAX_I64 = 531
 
-    ATOMIC_LOAD_XOR_I8 = 532
+    ATOMIC_LOAD_UMAX_I8 = 532
 
-    ATOMIC_SWAP_I16 = 533
+    ATOMIC_LOAD_UMIN_I16 = 533
 
-    ATOMIC_SWAP_I32 = 534
+    ATOMIC_LOAD_UMIN_I32 = 534
 
-    ATOMIC_SWAP_I64 = 535
+    ATOMIC_LOAD_UMIN_I64 = 535
 
-    ATOMIC_SWAP_I8 = 536
+    ATOMIC_LOAD_UMIN_I8 = 536
 
-    ATTN = 537
+    ATOMIC_LOAD_XOR_I16 = 537
 
-    B = 538
+    ATOMIC_LOAD_XOR_I32 = 538
 
-    BA = 539
+    ATOMIC_LOAD_XOR_I64 = 539
 
-    BC = 540
+    ATOMIC_LOAD_XOR_I8 = 540
 
-    BCC = 541
+    ATOMIC_SWAP_I16 = 541
 
-    BCCA = 542
+    ATOMIC_SWAP_I32 = 542
 
-    BCCCTR = 543
+    ATOMIC_SWAP_I64 = 543
 
-    BCCCTR8 = 544
+    ATOMIC_SWAP_I8 = 544
 
-    BCCCTRL = 545
+    ATTN = 545
 
-    BCCCTRL8 = 546
+    B = 546
 
-    BCCL = 547
+    BA = 547
 
-    BCCLA = 548
+    BC = 548
 
-    BCCLR = 549
+    BCC = 549
 
-    BCCLRL = 550
+    BCCA = 550
 
-    BCCTR = 551
+    BCCCTR = 551
 
-    BCCTR8 = 552
+    BCCCTR8 = 552
 
-    BCCTR8n = 553
+    BCCCTRL = 553
 
-    BCCTRL = 554
+    BCCCTRL8 = 554
 
-    BCCTRL8 = 555
+    BCCL = 555
 
-    BCCTRL8n = 556
+    BCCLA = 556
 
-    BCCTRLn = 557
+    BCCLR = 557
 
-    BCCTRn = 558
+    BCCLRL = 558
 
-    BCDADD_rec = 559
+    BCCTR = 559
 
-    BCDCFN_rec = 560
+    BCCTR8 = 560
 
-    BCDCFSQ_rec = 561
+    BCCTR8n = 561
 
-    BCDCFZ_rec = 562
+    BCCTRL = 562
 
-    BCDCPSGN_rec = 563
+    BCCTRL8 = 563
 
-    BCDCTN_rec = 564
+    BCCTRL8n = 564
 
-    BCDCTSQ_rec = 565
+    BCCTRLn = 565
 
-    BCDCTZ_rec = 566
+    BCCTRn = 566
 
-    BCDSETSGN_rec = 567
+    BCDADD_rec = 567
 
-    BCDSR_rec = 568
+    BCDCFN_rec = 568
 
-    BCDSUB_rec = 569
+    BCDCFSQ_rec = 569
 
-    BCDS_rec = 570
+    BCDCFZ_rec = 570
 
-    BCDTRUNC_rec = 571
+    BCDCPSGN_rec = 571
 
-    BCDUS_rec = 572
+    BCDCTN_rec = 572
 
-    BCDUTRUNC_rec = 573
+    BCDCTSQ_rec = 573
 
-    BCL = 574
+    BCDCTZ_rec = 574
 
-    BCLR = 575
+    BCDSETSGN_rec = 575
 
-    BCLRL = 576
+    BCDSR_rec = 576
 
-    BCLRLn = 577
+    BCDSUB_rec = 577
 
-    BCLRn = 578
+    BCDS_rec = 578
 
-    BCLalways = 579
+    BCDTRUNC_rec = 579
 
-    BCLn = 580
+    BCDUS_rec = 580
 
-    BCTR = 581
+    BCDUTRUNC_rec = 581
 
-    BCTR8 = 582
+    BCL = 582
 
-    BCTRL = 583
+    BCLR = 583
 
-    BCTRL8 = 584
+    BCLRL = 584
 
-    BCTRL8_LDinto_toc = 585
+    BCLRLn = 585
 
-    BCTRL8_LDinto_toc_RM = 586
+    BCLRn = 586
 
-    BCTRL8_RM = 587
+    BCLalways = 587
 
-    BCTRL_LWZinto_toc = 588
+    BCLn = 588
 
-    BCTRL_LWZinto_toc_RM = 589
+    BCTR = 589
 
-    BCTRL_RM = 590
+    BCTR8 = 590
 
-    BCn = 591
+    BCTRL = 591
 
-    BDNZ = 592
+    BCTRL8 = 592
 
-    BDNZ8 = 593
+    BCTRL8_LDinto_toc = 593
 
-    BDNZA = 594
+    BCTRL8_LDinto_toc_RM = 594
 
-    BDNZAm = 595
+    BCTRL8_RM = 595
 
-    BDNZAp = 596
+    BCTRL_LWZinto_toc = 596
 
-    BDNZL = 597
+    BCTRL_LWZinto_toc_RM = 597
 
-    BDNZLA = 598
+    BCTRL_RM = 598
 
-    BDNZLAm = 599
+    BCn = 599
 
-    BDNZLAp = 600
+    BDNZ = 600
 
-    BDNZLR = 601
+    BDNZ8 = 601
 
-    BDNZLR8 = 602
+    BDNZA = 602
 
-    BDNZLRL = 603
+    BDNZAm = 603
 
-    BDNZLRLm = 604
+    BDNZAp = 604
 
-    BDNZLRLp = 605
+    BDNZL = 605
 
-    BDNZLRm = 606
+    BDNZLA = 606
 
-    BDNZLRp = 607
+    BDNZLAm = 607
 
-    BDNZLm = 608
+    BDNZLAp = 608
 
-    BDNZLp = 609
+    BDNZLR = 609
 
-    BDNZm = 610
+    BDNZLR8 = 610
 
-    BDNZp = 611
+    BDNZLRL = 611
 
-    BDZ = 612
+    BDNZLRLm = 612
 
-    BDZ8 = 613
+    BDNZLRLp = 613
 
-    BDZA = 614
+    BDNZLRm = 614
 
-    BDZAm = 615
+    BDNZLRp = 615
 
-    BDZAp = 616
+    BDNZLm = 616
 
-    BDZL = 617
+    BDNZLp = 617
 
-    BDZLA = 618
+    BDNZm = 618
 
-    BDZLAm = 619
+    BDNZp = 619
 
-    BDZLAp = 620
+    BDZ = 620
 
-    BDZLR = 621
+    BDZ8 = 621
 
-    BDZLR8 = 622
+    BDZA = 622
 
-    BDZLRL = 623
+    BDZAm = 623
 
-    BDZLRLm = 624
+    BDZAp = 624
 
-    BDZLRLp = 625
+    BDZL = 625
 
-    BDZLRm = 626
+    BDZLA = 626
 
-    BDZLRp = 627
+    BDZLAm = 627
 
-    BDZLm = 628
+    BDZLAp = 628
 
-    BDZLp = 629
+    BDZLR = 629
 
-    BDZm = 630
+    BDZLR8 = 630
 
-    BDZp = 631
+    BDZLRL = 631
 
-    BL = 632
+    BDZLRLm = 632
 
-    BL8 = 633
+    BDZLRLp = 633
 
-    BL8_NOP = 634
+    BDZLRm = 634
 
-    BL8_NOP_RM = 635
+    BDZLRp = 635
 
-    BL8_NOP_TLS = 636
+    BDZLm = 636
 
-    BL8_NOTOC = 637
+    BDZLp = 637
 
-    BL8_NOTOC_RM = 638
+    BDZm = 638
 
-    BL8_NOTOC_TLS = 639
+    BDZp = 639
 
-    BL8_RM = 640
+    BL = 640
 
-    BL8_TLS = 641
+    BL8 = 641
 
-    BLA = 643
+    BL8_NOP = 642
 
-    BLA8 = 644
+    BL8_NOP_RM = 643
 
-    BLA8_NOP = 645
+    BL8_NOP_TLS = 644
 
-    BLA8_NOP_RM = 646
+    BL8_NOTOC = 645
 
-    BLA8_RM = 647
+    BL8_NOTOC_RM = 646
 
-    BLA_RM = 648
+    BL8_NOTOC_TLS = 647
 
-    BLR = 649
+    BL8_RM = 648
 
-    BLR8 = 650
+    BL8_TLS = 649
 
-    BLRL = 651
+    BLA = 651
 
-    BL_NOP = 652
+    BLA8 = 652
 
-    BL_NOP_RM = 653
+    BLA8_NOP = 653
 
-    BL_RM = 654
+    BLA8_NOP_RM = 654
 
-    BL_TLS = 655
+    BLA8_RM = 655
 
-    BPERMD = 656
+    BLA_RM = 656
 
-    BRD = 657
+    BLR = 657
 
-    BRH = 658
+    BLR8 = 658
 
-    BRH8 = 659
+    BLRL = 659
 
-    BRINC = 660
+    BL_NOP = 660
 
-    BRW = 661
+    BL_NOP_RM = 661
 
-    BRW8 = 662
+    BL_RM = 662
 
-    CBCDTD = 663
+    BL_TLS = 663
 
-    CBCDTD8 = 664
+    BPERMD = 664
 
-    CDTBCD = 665
+    BRD = 665
 
-    CDTBCD8 = 666
+    BRH = 666
 
-    CFUGED = 667
+    BRH8 = 667
 
-    CLRBHRB = 668
+    BRINC = 668
 
-    CMPB = 669
+    BRW = 669
 
-    CMPB8 = 670
+    BRW8 = 670
 
-    CMPD = 671
+    CBCDTD = 671
 
-    CMPDI = 672
+    CBCDTD8 = 672
 
-    CMPEQB = 673
+    CDTBCD = 673
 
-    CMPLD = 674
+    CDTBCD8 = 674
 
-    CMPLDI = 675
+    CFUGED = 675
 
-    CMPLW = 676
+    CLRBHRB = 676
 
-    CMPLWI = 677
+    CMPB = 677
 
-    CMPRB = 678
+    CMPB8 = 678
 
-    CMPRB8 = 679
+    CMPD = 679
 
-    CMPW = 680
+    CMPDI = 680
 
-    CMPWI = 681
+    CMPEQB = 681
 
-    CNTLZD = 682
+    CMPLD = 682
 
-    CNTLZDM = 683
+    CMPLDI = 683
 
-    CNTLZD_rec = 684
+    CMPLW = 684
 
-    CNTLZW = 685
+    CMPLWI = 685
 
-    CNTLZW8 = 686
+    CMPRB = 686
 
-    CNTLZW8_rec = 687
+    CMPRB8 = 687
 
-    CNTLZW_rec = 688
+    CMPW = 688
 
-    CNTTZD = 689
+    CMPWI = 689
 
-    CNTTZDM = 690
+    CNTLZD = 690
 
-    CNTTZD_rec = 691
+    CNTLZDM = 691
 
-    CNTTZW = 692
+    CNTLZD_rec = 692
 
-    CNTTZW8 = 693
+    CNTLZW = 693
 
-    CNTTZW8_rec = 694
+    CNTLZW8 = 694
 
-    CNTTZW_rec = 695
+    CNTLZW8_rec = 695
 
-    CP_ABORT = 696
+    CNTLZW_rec = 696
 
-    CP_COPY = 697
+    CNTTZD = 697
 
-    CP_COPY8 = 698
+    CNTTZDM = 698
 
-    CP_PASTE8_rec = 699
+    CNTTZD_rec = 699
 
-    CP_PASTE_rec = 700
+    CNTTZW = 700
 
-    CR6SET = 701
+    CNTTZW8 = 701
 
-    CR6UNSET = 702
+    CNTTZW8_rec = 702
 
-    CRAND = 703
+    CNTTZW_rec = 703
 
-    CRANDC = 704
+    CP_ABORT = 704
 
-    CREQV = 705
+    CP_COPY = 705
 
-    CRNAND = 706
+    CP_COPY8 = 706
 
-    CRNOR = 707
+    CP_PASTE8_rec = 707
 
-    CRNOT = 708
+    CP_PASTE_rec = 708
 
-    CROR = 709
+    CR6SET = 709
 
-    CRORC = 710
+    CR6UNSET = 710
 
-    CRSET = 711
+    CRAND = 711
 
-    CRUNSET = 712
+    CRANDC = 712
 
-    CRXOR = 713
+    CREQV = 713
 
-    CTRL_DEP = 714
+    CRNAND = 714
 
-    DADD = 715
+    CRNOR = 715
 
-    DADDQ = 716
+    CRNOT = 716
 
-    DADDQ_rec = 717
+    CROR = 717
 
-    DADD_rec = 718
+    CRORC = 718
 
-    DARN = 719
+    CRSET = 719
 
-    DCBA = 720
+    CRUNSET = 720
 
-    DCBF = 721
+    CRXOR = 721
 
-    DCBFEP = 722
+    CTRL_DEP = 722
 
-    DCBI = 723
+    DADD = 723
 
-    DCBST = 724
+    DADDQ = 724
 
-    DCBSTEP = 725
+    DADDQ_rec = 725
 
-    DCBT = 726
+    DADD_rec = 726
 
-    DCBTEP = 727
+    DARN = 727
 
-    DCBTST = 728
+    DCBA = 728
 
-    DCBTSTEP = 729
+    DCBF = 729
 
-    DCBZ = 730
+    DCBFEP = 730
 
-    DCBZEP = 731
+    DCBI = 731
 
-    DCBZL = 732
+    DCBST = 732
 
-    DCBZLEP = 733
+    DCBSTEP = 733
 
-    DCCCI = 734
+    DCBT = 734
 
-    DCFFIX = 735
+    DCBTEP = 735
 
-    DCFFIXQ = 736
+    DCBTST = 736
 
-    DCFFIXQQ = 737
+    DCBTSTEP = 737
 
-    DCFFIXQ_rec = 738
+    DCBZ = 738
 
-    DCFFIX_rec = 739
+    DCBZEP = 739
 
-    DCMPO = 740
+    DCBZL = 740
 
-    DCMPOQ = 741
+    DCBZLEP = 741
 
-    DCMPU = 742
+    DCCCI = 742
 
-    DCMPUQ = 743
+    DCFFIX = 743
 
-    DCTDP = 744
+    DCFFIXQ = 744
 
-    DCTDP_rec = 745
+    DCFFIXQQ = 745
 
-    DCTFIX = 746
+    DCFFIXQ_rec = 746
 
-    DCTFIXQ = 747
+    DCFFIX_rec = 747
 
-    DCTFIXQQ = 748
+    DCMPO = 748
 
-    DCTFIXQ_rec = 749
+    DCMPOQ = 749
 
-    DCTFIX_rec = 750
+    DCMPU = 750
 
-    DCTQPQ = 751
+    DCMPUQ = 751
 
-    DCTQPQ_rec = 752
+    DCTDP = 752
 
-    DDEDPD = 753
+    DCTDP_rec = 753
 
-    DDEDPDQ = 754
+    DCTFIX = 754
 
-    DDEDPDQ_rec = 755
+    DCTFIXQ = 755
 
-    DDEDPD_rec = 756
+    DCTFIXQQ = 756
 
-    DDIV = 757
+    DCTFIXQ_rec = 757
 
-    DDIVQ = 758
+    DCTFIX_rec = 758
 
-    DDIVQ_rec = 759
+    DCTQPQ = 759
 
-    DDIV_rec = 760
+    DCTQPQ_rec = 760
 
-    DENBCD = 761
+    DDEDPD = 761
 
-    DENBCDQ = 762
+    DDEDPDQ = 762
 
-    DENBCDQ_rec = 763
+    DDEDPDQ_rec = 763
 
-    DENBCD_rec = 764
+    DDEDPD_rec = 764
 
-    DIEX = 765
+    DDIV = 765
 
-    DIEXQ = 766
+    DDIVQ = 766
 
-    DIEXQ_rec = 767
+    DDIVQ_rec = 767
 
-    DIEX_rec = 768
+    DDIV_rec = 768
 
-    DIVD = 769
+    DENBCD = 769
 
-    DIVDE = 770
+    DENBCDQ = 770
 
-    DIVDEO = 771
+    DENBCDQ_rec = 771
 
-    DIVDEO_rec = 772
+    DENBCD_rec = 772
 
-    DIVDEU = 773
+    DIEX = 773
 
-    DIVDEUO = 774
+    DIEXQ = 774
 
-    DIVDEUO_rec = 775
+    DIEXQ_rec = 775
 
-    DIVDEU_rec = 776
+    DIEX_rec = 776
 
-    DIVDE_rec = 777
+    DIVD = 777
 
-    DIVDO = 778
+    DIVDE = 778
 
-    DIVDO_rec = 779
+    DIVDEO = 779
 
-    DIVDU = 780
+    DIVDEO_rec = 780
 
-    DIVDUO = 781
+    DIVDEU = 781
 
-    DIVDUO_rec = 782
+    DIVDEUO = 782
 
-    DIVDU_rec = 783
+    DIVDEUO_rec = 783
 
-    DIVD_rec = 784
+    DIVDEU_rec = 784
 
-    DIVW = 785
+    DIVDE_rec = 785
 
-    DIVWE = 786
+    DIVDO = 786
 
-    DIVWEO = 787
+    DIVDO_rec = 787
 
-    DIVWEO_rec = 788
+    DIVDU = 788
 
-    DIVWEU = 789
+    DIVDUO = 789
 
-    DIVWEUO = 790
+    DIVDUO_rec = 790
 
-    DIVWEUO_rec = 791
+    DIVDU_rec = 791
 
-    DIVWEU_rec = 792
+    DIVD_rec = 792
 
-    DIVWE_rec = 793
+    DIVW = 793
 
-    DIVWO = 794
+    DIVWE = 794
 
-    DIVWO_rec = 795
+    DIVWEO = 795
 
-    DIVWU = 796
+    DIVWEO_rec = 796
 
-    DIVWUO = 797
+    DIVWEU = 797
 
-    DIVWUO_rec = 798
+    DIVWEUO = 798
 
-    DIVWU_rec = 799
+    DIVWEUO_rec = 799
 
-    DIVW_rec = 800
+    DIVWEU_rec = 800
 
-    DMMR = 801
+    DIVWE_rec = 801
 
-    DMSETDMRZ = 802
+    DIVWO = 802
 
-    DMUL = 803
+    DIVWO_rec = 803
 
-    DMULQ = 804
+    DIVWU = 804
 
-    DMULQ_rec = 805
+    DIVWUO = 805
 
-    DMUL_rec = 806
+    DIVWUO_rec = 806
 
-    DMXOR = 807
+    DIVWU_rec = 807
 
-    DMXXEXTFDMR256 = 808
+    DIVW_rec = 808
 
-    DMXXEXTFDMR512 = 809
+    DMMR = 809
 
-    DMXXEXTFDMR512_HI = 810
+    DMSETDMRZ = 810
 
-    DMXXINSTFDMR256 = 811
+    DMSHA2HASH = 811
 
-    DMXXINSTFDMR512 = 812
+    DMSHA3HASH = 812
 
-    DMXXINSTFDMR512_HI = 813
+    DMUL = 813
 
-    DQUA = 814
+    DMULQ = 814
 
-    DQUAI = 815
+    DMULQ_rec = 815
 
-    DQUAIQ = 816
+    DMUL_rec = 816
 
-    DQUAIQ_rec = 817
+    DMXOR = 817
 
-    DQUAI_rec = 818
+    DMXVBF16GERX2 = 818
 
-    DQUAQ = 819
+    DMXVBF16GERX2NN = 819
 
-    DQUAQ_rec = 820
+    DMXVBF16GERX2NP = 820
 
-    DQUA_rec = 821
+    DMXVBF16GERX2PN = 821
 
-    DRDPQ = 822
+    DMXVBF16GERX2PP = 822
 
-    DRDPQ_rec = 823
+    DMXVF16GERX2 = 823
 
-    DRINTN = 824
+    DMXVF16GERX2NN = 824
 
-    DRINTNQ = 825
+    DMXVF16GERX2NP = 825
 
-    DRINTNQ_rec = 826
+    DMXVF16GERX2PN = 826
 
-    DRINTN_rec = 827
+    DMXVF16GERX2PP = 827
 
-    DRINTX = 828
+    DMXVI8GERX4 = 828
 
-    DRINTXQ = 829
+    DMXVI8GERX4PP = 829
 
-    DRINTXQ_rec = 830
+    DMXVI8GERX4SPP = 830
 
-    DRINTX_rec = 831
+    DMXXEXTFDMR256 = 831
 
-    DRRND = 832
+    DMXXEXTFDMR512 = 832
 
-    DRRNDQ = 833
+    DMXXEXTFDMR512_HI = 833
 
-    DRRNDQ_rec = 834
+    DMXXINSTDMR256 = 834
 
-    DRRND_rec = 835
+    DMXXINSTDMR512 = 835
 
-    DRSP = 836
+    DMXXINSTDMR512_HI = 836
 
-    DRSP_rec = 837
+    DMXXSETACCZ = 837
 
-    DSCLI = 838
+    DMXXSHAPAD = 838
 
-    DSCLIQ = 839
+    DQUA = 839
 
-    DSCLIQ_rec = 840
+    DQUAI = 840
 
-    DSCLI_rec = 841
+    DQUAIQ = 841
 
-    DSCRI = 842
+    DQUAIQ_rec = 842
 
-    DSCRIQ = 843
+    DQUAI_rec = 843
 
-    DSCRIQ_rec = 844
+    DQUAQ = 844
 
-    DSCRI_rec = 845
+    DQUAQ_rec = 845
 
-    DSS = 846
+    DQUA_rec = 846
 
-    DSSALL = 847
+    DRDPQ = 847
 
-    DST = 848
+    DRDPQ_rec = 848
 
-    DST64 = 849
+    DRINTN = 849
 
-    DSTST = 850
+    DRINTNQ = 850
 
-    DSTST64 = 851
+    DRINTNQ_rec = 851
 
-    DSTSTT = 852
+    DRINTN_rec = 852
 
-    DSTSTT64 = 853
+    DRINTX = 853
 
-    DSTT = 854
+    DRINTXQ = 854
 
-    DSTT64 = 855
+    DRINTXQ_rec = 855
 
-    DSUB = 856
+    DRINTX_rec = 856
 
-    DSUBQ = 857
+    DRRND = 857
 
-    DSUBQ_rec = 858
+    DRRNDQ = 858
 
-    DSUB_rec = 859
+    DRRNDQ_rec = 859
 
-    DTSTDC = 860
+    DRRND_rec = 860
 
-    DTSTDCQ = 861
+    DRSP = 861
 
-    DTSTDG = 862
+    DRSP_rec = 862
 
-    DTSTDGQ = 863
+    DSCLI = 863
 
-    DTSTEX = 864
+    DSCLIQ = 864
 
-    DTSTEXQ = 865
+    DSCLIQ_rec = 865
 
-    DTSTSF = 866
+    DSCLI_rec = 866
 
-    DTSTSFI = 867
+    DSCRI = 867
 
-    DTSTSFIQ = 868
+    DSCRIQ = 868
 
-    DTSTSFQ = 869
+    DSCRIQ_rec = 869
 
-    DXEX = 870
+    DSCRI_rec = 870
 
-    DXEXQ = 871
+    DSS = 871
 
-    DXEXQ_rec = 872
+    DSSALL = 872
 
-    DXEX_rec = 873
+    DST = 873
 
-    DYNALLOC = 874
+    DST64 = 874
 
-    DYNALLOC8 = 875
+    DSTST = 875
 
-    DYNAREAOFFSET = 876
+    DSTST64 = 876
 
-    DYNAREAOFFSET8 = 877
+    DSTSTT = 877
 
-    DecreaseCTR8loop = 878
+    DSTSTT64 = 878
 
-    DecreaseCTRloop = 879
+    DSTT = 879
 
-    EFDABS = 880
+    DSTT64 = 880
 
-    EFDADD = 881
+    DSUB = 881
 
-    EFDCFS = 882
+    DSUBQ = 882
 
-    EFDCFSF = 883
+    DSUBQ_rec = 883
 
-    EFDCFSI = 884
+    DSUB_rec = 884
 
-    EFDCFSID = 885
+    DTSTDC = 885
 
-    EFDCFUF = 886
+    DTSTDCQ = 886
 
-    EFDCFUI = 887
+    DTSTDG = 887
 
-    EFDCFUID = 888
+    DTSTDGQ = 888
 
-    EFDCMPEQ = 889
+    DTSTEX = 889
 
-    EFDCMPGT = 890
+    DTSTEXQ = 890
 
-    EFDCMPLT = 891
+    DTSTSF = 891
 
-    EFDCTSF = 892
+    DTSTSFI = 892
 
-    EFDCTSI = 893
+    DTSTSFIQ = 893
 
-    EFDCTSIDZ = 894
+    DTSTSFQ = 894
 
-    EFDCTSIZ = 895
+    DXEX = 895
 
-    EFDCTUF = 896
+    DXEXQ = 896
 
-    EFDCTUI = 897
+    DXEXQ_rec = 897
 
-    EFDCTUIDZ = 898
+    DXEX_rec = 898
 
-    EFDCTUIZ = 899
+    DYNALLOC = 899
 
-    EFDDIV = 900
+    DYNALLOC8 = 900
 
-    EFDMUL = 901
+    DYNAREAOFFSET = 901
 
-    EFDNABS = 902
+    DYNAREAOFFSET8 = 902
 
-    EFDNEG = 903
+    DecreaseCTR8loop = 903
 
-    EFDSUB = 904
+    DecreaseCTRloop = 904
 
-    EFDTSTEQ = 905
+    EFDABS = 905
 
-    EFDTSTGT = 906
+    EFDADD = 906
 
-    EFDTSTLT = 907
+    EFDCFS = 907
 
-    EFSABS = 908
+    EFDCFSF = 908
 
-    EFSADD = 909
+    EFDCFSI = 909
 
-    EFSCFD = 910
+    EFDCFSID = 910
 
-    EFSCFSF = 911
+    EFDCFUF = 911
 
-    EFSCFSI = 912
+    EFDCFUI = 912
 
-    EFSCFUF = 913
+    EFDCFUID = 913
 
-    EFSCFUI = 914
+    EFDCMPEQ = 914
 
-    EFSCMPEQ = 915
+    EFDCMPGT = 915
 
-    EFSCMPGT = 916
+    EFDCMPLT = 916
 
-    EFSCMPLT = 917
+    EFDCTSF = 917
 
-    EFSCTSF = 918
+    EFDCTSI = 918
 
-    EFSCTSI = 919
+    EFDCTSIDZ = 919
 
-    EFSCTSIZ = 920
+    EFDCTSIZ = 920
 
-    EFSCTUF = 921
+    EFDCTUF = 921
 
-    EFSCTUI = 922
+    EFDCTUI = 922
 
-    EFSCTUIZ = 923
+    EFDCTUIDZ = 923
 
-    EFSDIV = 924
+    EFDCTUIZ = 924
 
-    EFSMUL = 925
+    EFDDIV = 925
 
-    EFSNABS = 926
+    EFDMUL = 926
 
-    EFSNEG = 927
+    EFDNABS = 927
 
-    EFSSUB = 928
+    EFDNEG = 928
 
-    EFSTSTEQ = 929
+    EFDSUB = 929
 
-    EFSTSTGT = 930
+    EFDTSTEQ = 930
 
-    EFSTSTLT = 931
+    EFDTSTGT = 931
 
-    EH_SjLj_LongJmp32 = 932
+    EFDTSTLT = 932
 
-    EH_SjLj_LongJmp64 = 933
+    EFSABS = 933
 
-    EH_SjLj_SetJmp32 = 934
+    EFSADD = 934
 
-    EH_SjLj_SetJmp64 = 935
+    EFSCFD = 935
 
-    EH_SjLj_Setup = 936
+    EFSCFSF = 936
 
-    EQV = 937
+    EFSCFSI = 937
 
-    EQV8 = 938
+    EFSCFUF = 938
 
-    EQV8_rec = 939
+    EFSCFUI = 939
 
-    EQV_rec = 940
+    EFSCMPEQ = 940
 
-    EVABS = 941
+    EFSCMPGT = 941
 
-    EVADDIW = 942
+    EFSCMPLT = 942
 
-    EVADDSMIAAW = 943
+    EFSCTSF = 943
 
-    EVADDSSIAAW = 944
+    EFSCTSI = 944
 
-    EVADDUMIAAW = 945
+    EFSCTSIZ = 945
 
-    EVADDUSIAAW = 946
+    EFSCTUF = 946
 
-    EVADDW = 947
+    EFSCTUI = 947
 
-    EVAND = 948
+    EFSCTUIZ = 948
 
-    EVANDC = 949
+    EFSDIV = 949
 
-    EVCMPEQ = 950
+    EFSMUL = 950
 
-    EVCMPGTS = 951
+    EFSNABS = 951
 
-    EVCMPGTU = 952
+    EFSNEG = 952
 
-    EVCMPLTS = 953
+    EFSSUB = 953
 
-    EVCMPLTU = 954
+    EFSTSTEQ = 954
 
-    EVCNTLSW = 955
+    EFSTSTGT = 955
 
-    EVCNTLZW = 956
+    EFSTSTLT = 956
 
-    EVDIVWS = 957
+    EH_SjLj_LongJmp32 = 957
 
-    EVDIVWU = 958
+    EH_SjLj_LongJmp64 = 958
 
-    EVEQV = 959
+    EH_SjLj_SetJmp32 = 959
 
-    EVEXTSB = 960
+    EH_SjLj_SetJmp64 = 960
 
-    EVEXTSH = 961
+    EH_SjLj_Setup = 961
 
-    EVFSABS = 962
+    EQV = 962
 
-    EVFSADD = 963
+    EQV8 = 963
 
-    EVFSCFSF = 964
+    EQV8_rec = 964
 
-    EVFSCFSI = 965
+    EQV_rec = 965
 
-    EVFSCFUF = 966
+    EVABS = 966
 
-    EVFSCFUI = 967
+    EVADDIW = 967
 
-    EVFSCMPEQ = 968
+    EVADDSMIAAW = 968
 
-    EVFSCMPGT = 969
+    EVADDSSIAAW = 969
 
-    EVFSCMPLT = 970
+    EVADDUMIAAW = 970
 
-    EVFSCTSF = 971
+    EVADDUSIAAW = 971
 
-    EVFSCTSI = 972
+    EVADDW = 972
 
-    EVFSCTSIZ = 973
+    EVAND = 973
 
-    EVFSCTUF = 974
+    EVANDC = 974
 
-    EVFSCTUI = 975
+    EVCMPEQ = 975
 
-    EVFSCTUIZ = 976
+    EVCMPGTS = 976
 
-    EVFSDIV = 977
+    EVCMPGTU = 977
 
-    EVFSMUL = 978
+    EVCMPLTS = 978
 
-    EVFSNABS = 979
+    EVCMPLTU = 979
 
-    EVFSNEG = 980
+    EVCNTLSW = 980
 
-    EVFSSUB = 981
+    EVCNTLZW = 981
 
-    EVFSTSTEQ = 982
+    EVDIVWS = 982
 
-    EVFSTSTGT = 983
+    EVDIVWU = 983
 
-    EVFSTSTLT = 984
+    EVEQV = 984
 
-    EVLDD = 985
+    EVEXTSB = 985
 
-    EVLDDX = 986
+    EVEXTSH = 986
 
-    EVLDH = 987
+    EVFSABS = 987
 
-    EVLDHX = 988
+    EVFSADD = 988
 
-    EVLDW = 989
+    EVFSCFSF = 989
 
-    EVLDWX = 990
+    EVFSCFSI = 990
 
-    EVLHHESPLAT = 991
+    EVFSCFUF = 991
 
-    EVLHHESPLATX = 992
+    EVFSCFUI = 992
 
-    EVLHHOSSPLAT = 993
+    EVFSCMPEQ = 993
 
-    EVLHHOSSPLATX = 994
+    EVFSCMPGT = 994
 
-    EVLHHOUSPLAT = 995
+    EVFSCMPLT = 995
 
-    EVLHHOUSPLATX = 996
+    EVFSCTSF = 996
 
-    EVLWHE = 997
+    EVFSCTSI = 997
 
-    EVLWHEX = 998
+    EVFSCTSIZ = 998
 
-    EVLWHOS = 999
+    EVFSCTUF = 999
 
-    EVLWHOSX = 1000
+    EVFSCTUI = 1000
 
-    EVLWHOU = 1001
+    EVFSCTUIZ = 1001
 
-    EVLWHOUX = 1002
+    EVFSDIV = 1002
 
-    EVLWHSPLAT = 1003
+    EVFSMUL = 1003
 
-    EVLWHSPLATX = 1004
+    EVFSNABS = 1004
 
-    EVLWWSPLAT = 1005
+    EVFSNEG = 1005
 
-    EVLWWSPLATX = 1006
+    EVFSSUB = 1006
 
-    EVMERGEHI = 1007
+    EVFSTSTEQ = 1007
 
-    EVMERGEHILO = 1008
+    EVFSTSTGT = 1008
 
-    EVMERGELO = 1009
+    EVFSTSTLT = 1009
 
-    EVMERGELOHI = 1010
+    EVLDD = 1010
 
-    EVMHEGSMFAA = 1011
+    EVLDDX = 1011
 
-    EVMHEGSMFAN = 1012
+    EVLDH = 1012
 
-    EVMHEGSMIAA = 1013
+    EVLDHX = 1013
 
-    EVMHEGSMIAN = 1014
+    EVLDW = 1014
 
-    EVMHEGUMIAA = 1015
+    EVLDWX = 1015
 
-    EVMHEGUMIAN = 1016
+    EVLHHESPLAT = 1016
 
-    EVMHESMF = 1017
+    EVLHHESPLATX = 1017
 
-    EVMHESMFA = 1018
+    EVLHHOSSPLAT = 1018
 
-    EVMHESMFAAW = 1019
+    EVLHHOSSPLATX = 1019
 
-    EVMHESMFANW = 1020
+    EVLHHOUSPLAT = 1020
 
-    EVMHESMI = 1021
+    EVLHHOUSPLATX = 1021
 
-    EVMHESMIA = 1022
+    EVLWHE = 1022
 
-    EVMHESMIAAW = 1023
+    EVLWHEX = 1023
 
-    EVMHESMIANW = 1024
+    EVLWHOS = 1024
 
-    EVMHESSF = 1025
+    EVLWHOSX = 1025
 
-    EVMHESSFA = 1026
+    EVLWHOU = 1026
 
-    EVMHESSFAAW = 1027
+    EVLWHOUX = 1027
 
-    EVMHESSFANW = 1028
+    EVLWHSPLAT = 1028
 
-    EVMHESSIAAW = 1029
+    EVLWHSPLATX = 1029
 
-    EVMHESSIANW = 1030
+    EVLWWSPLAT = 1030
 
-    EVMHEUMI = 1031
+    EVLWWSPLATX = 1031
 
-    EVMHEUMIA = 1032
+    EVMERGEHI = 1032
 
-    EVMHEUMIAAW = 1033
+    EVMERGEHILO = 1033
 
-    EVMHEUMIANW = 1034
+    EVMERGELO = 1034
 
-    EVMHEUSIAAW = 1035
+    EVMERGELOHI = 1035
 
-    EVMHEUSIANW = 1036
+    EVMHEGSMFAA = 1036
 
-    EVMHOGSMFAA = 1037
+    EVMHEGSMFAN = 1037
 
-    EVMHOGSMFAN = 1038
+    EVMHEGSMIAA = 1038
 
-    EVMHOGSMIAA = 1039
+    EVMHEGSMIAN = 1039
 
-    EVMHOGSMIAN = 1040
+    EVMHEGUMIAA = 1040
 
-    EVMHOGUMIAA = 1041
+    EVMHEGUMIAN = 1041
 
-    EVMHOGUMIAN = 1042
+    EVMHESMF = 1042
 
-    EVMHOSMF = 1043
+    EVMHESMFA = 1043
 
-    EVMHOSMFA = 1044
+    EVMHESMFAAW = 1044
 
-    EVMHOSMFAAW = 1045
+    EVMHESMFANW = 1045
 
-    EVMHOSMFANW = 1046
+    EVMHESMI = 1046
 
-    EVMHOSMI = 1047
+    EVMHESMIA = 1047
 
-    EVMHOSMIA = 1048
+    EVMHESMIAAW = 1048
 
-    EVMHOSMIAAW = 1049
+    EVMHESMIANW = 1049
 
-    EVMHOSMIANW = 1050
+    EVMHESSF = 1050
 
-    EVMHOSSF = 1051
+    EVMHESSFA = 1051
 
-    EVMHOSSFA = 1052
+    EVMHESSFAAW = 1052
 
-    EVMHOSSFAAW = 1053
+    EVMHESSFANW = 1053
 
-    EVMHOSSFANW = 1054
+    EVMHESSIAAW = 1054
 
-    EVMHOSSIAAW = 1055
+    EVMHESSIANW = 1055
 
-    EVMHOSSIANW = 1056
+    EVMHEUMI = 1056
 
-    EVMHOUMI = 1057
+    EVMHEUMIA = 1057
 
-    EVMHOUMIA = 1058
+    EVMHEUMIAAW = 1058
 
-    EVMHOUMIAAW = 1059
+    EVMHEUMIANW = 1059
 
-    EVMHOUMIANW = 1060
+    EVMHEUSIAAW = 1060
 
-    EVMHOUSIAAW = 1061
+    EVMHEUSIANW = 1061
 
-    EVMHOUSIANW = 1062
+    EVMHOGSMFAA = 1062
 
-    EVMRA = 1063
+    EVMHOGSMFAN = 1063
 
-    EVMWHSMF = 1064
+    EVMHOGSMIAA = 1064
 
-    EVMWHSMFA = 1065
+    EVMHOGSMIAN = 1065
 
-    EVMWHSMI = 1066
+    EVMHOGUMIAA = 1066
 
-    EVMWHSMIA = 1067
+    EVMHOGUMIAN = 1067
 
-    EVMWHSSF = 1068
+    EVMHOSMF = 1068
 
-    EVMWHSSFA = 1069
+    EVMHOSMFA = 1069
 
-    EVMWHUMI = 1070
+    EVMHOSMFAAW = 1070
 
-    EVMWHUMIA = 1071
+    EVMHOSMFANW = 1071
 
-    EVMWLSMIAAW = 1072
+    EVMHOSMI = 1072
 
-    EVMWLSMIANW = 1073
+    EVMHOSMIA = 1073
 
-    EVMWLSSIAAW = 1074
+    EVMHOSMIAAW = 1074
 
-    EVMWLSSIANW = 1075
+    EVMHOSMIANW = 1075
 
-    EVMWLUMI = 1076
+    EVMHOSSF = 1076
 
-    EVMWLUMIA = 1077
+    EVMHOSSFA = 1077
 
-    EVMWLUMIAAW = 1078
+    EVMHOSSFAAW = 1078
 
-    EVMWLUMIANW = 1079
+    EVMHOSSFANW = 1079
 
-    EVMWLUSIAAW = 1080
+    EVMHOSSIAAW = 1080
 
-    EVMWLUSIANW = 1081
+    EVMHOSSIANW = 1081
 
-    EVMWSMF = 1082
+    EVMHOUMI = 1082
 
-    EVMWSMFA = 1083
+    EVMHOUMIA = 1083
 
-    EVMWSMFAA = 1084
+    EVMHOUMIAAW = 1084
 
-    EVMWSMFAN = 1085
+    EVMHOUMIANW = 1085
 
-    EVMWSMI = 1086
+    EVMHOUSIAAW = 1086
 
-    EVMWSMIA = 1087
+    EVMHOUSIANW = 1087
 
-    EVMWSMIAA = 1088
+    EVMRA = 1088
 
-    EVMWSMIAN = 1089
+    EVMWHSMF = 1089
 
-    EVMWSSF = 1090
+    EVMWHSMFA = 1090
 
-    EVMWSSFA = 1091
+    EVMWHSMI = 1091
 
-    EVMWSSFAA = 1092
+    EVMWHSMIA = 1092
 
-    EVMWSSFAN = 1093
+    EVMWHSSF = 1093
 
-    EVMWUMI = 1094
+    EVMWHSSFA = 1094
 
-    EVMWUMIA = 1095
+    EVMWHUMI = 1095
 
-    EVMWUMIAA = 1096
+    EVMWHUMIA = 1096
 
-    EVMWUMIAN = 1097
+    EVMWLSMIAAW = 1097
 
-    EVNAND = 1098
+    EVMWLSMIANW = 1098
 
-    EVNEG = 1099
+    EVMWLSSIAAW = 1099
 
-    EVNOR = 1100
+    EVMWLSSIANW = 1100
 
-    EVOR = 1101
+    EVMWLUMI = 1101
 
-    EVORC = 1102
+    EVMWLUMIA = 1102
 
-    EVRLW = 1103
+    EVMWLUMIAAW = 1103
 
-    EVRLWI = 1104
+    EVMWLUMIANW = 1104
 
-    EVRNDW = 1105
+    EVMWLUSIAAW = 1105
 
-    EVSEL = 1106
+    EVMWLUSIANW = 1106
 
-    EVSLW = 1107
+    EVMWSMF = 1107
 
-    EVSLWI = 1108
+    EVMWSMFA = 1108
 
-    EVSPLATFI = 1109
+    EVMWSMFAA = 1109
 
-    EVSPLATI = 1110
+    EVMWSMFAN = 1110
 
-    EVSRWIS = 1111
+    EVMWSMI = 1111
 
-    EVSRWIU = 1112
+    EVMWSMIA = 1112
 
-    EVSRWS = 1113
+    EVMWSMIAA = 1113
 
-    EVSRWU = 1114
+    EVMWSMIAN = 1114
 
-    EVSTDD = 1115
+    EVMWSSF = 1115
 
-    EVSTDDX = 1116
+    EVMWSSFA = 1116
 
-    EVSTDH = 1117
+    EVMWSSFAA = 1117
 
-    EVSTDHX = 1118
+    EVMWSSFAN = 1118
 
-    EVSTDW = 1119
+    EVMWUMI = 1119
 
-    EVSTDWX = 1120
+    EVMWUMIA = 1120
 
-    EVSTWHE = 1121
+    EVMWUMIAA = 1121
 
-    EVSTWHEX = 1122
+    EVMWUMIAN = 1122
 
-    EVSTWHO = 1123
+    EVNAND = 1123
 
-    EVSTWHOX = 1124
+    EVNEG = 1124
 
-    EVSTWWE = 1125
+    EVNOR = 1125
 
-    EVSTWWEX = 1126
+    EVOR = 1126
 
-    EVSTWWO = 1127
+    EVORC = 1127
 
-    EVSTWWOX = 1128
+    EVRLW = 1128
 
-    EVSUBFSMIAAW = 1129
+    EVRLWI = 1129
 
-    EVSUBFSSIAAW = 1130
+    EVRNDW = 1130
 
-    EVSUBFUMIAAW = 1131
+    EVSEL = 1131
 
-    EVSUBFUSIAAW = 1132
+    EVSLW = 1132
 
-    EVSUBFW = 1133
+    EVSLWI = 1133
 
-    EVSUBIFW = 1134
+    EVSPLATFI = 1134
 
-    EVXOR = 1135
+    EVSPLATI = 1135
 
-    EXTSB = 1136
+    EVSRWIS = 1136
 
-    EXTSB8 = 1137
+    EVSRWIU = 1137
 
-    EXTSB8_32_64 = 1138
+    EVSRWS = 1138
 
-    EXTSB8_rec = 1139
+    EVSRWU = 1139
 
-    EXTSB_rec = 1140
+    EVSTDD = 1140
 
-    EXTSH = 1141
+    EVSTDDX = 1141
 
-    EXTSH8 = 1142
+    EVSTDH = 1142
 
-    EXTSH8_32_64 = 1143
+    EVSTDHX = 1143
 
-    EXTSH8_rec = 1144
+    EVSTDW = 1144
 
-    EXTSH_rec = 1145
+    EVSTDWX = 1145
 
-    EXTSW = 1146
+    EVSTWHE = 1146
 
-    EXTSWSLI = 1147
+    EVSTWHEX = 1147
 
-    EXTSWSLI_32_64 = 1148
+    EVSTWHO = 1148
 
-    EXTSWSLI_32_64_rec = 1149
+    EVSTWHOX = 1149
 
-    EXTSWSLI_rec = 1150
+    EVSTWWE = 1150
 
-    EXTSW_32 = 1151
+    EVSTWWEX = 1151
 
-    EXTSW_32_64 = 1152
+    EVSTWWO = 1152
 
-    EXTSW_32_64_rec = 1153
+    EVSTWWOX = 1153
 
-    EXTSW_rec = 1154
+    EVSUBFSMIAAW = 1154
 
-    EnforceIEIO = 1155
+    EVSUBFSSIAAW = 1155
 
-    FABSD = 1156
+    EVSUBFUMIAAW = 1156
 
-    FABSD_rec = 1157
+    EVSUBFUSIAAW = 1157
 
-    FABSS = 1158
+    EVSUBFW = 1158
 
-    FABSS_rec = 1159
+    EVSUBIFW = 1159
 
-    FADD = 1160
+    EVXOR = 1160
 
-    FADDS = 1161
+    EXTSB = 1161
 
-    FADDS_rec = 1162
+    EXTSB8 = 1162
 
-    FADD_rec = 1163
+    EXTSB8_32_64 = 1163
 
-    FADDrtz = 1164
+    EXTSB8_rec = 1164
 
-    FCFID = 1165
+    EXTSB_rec = 1165
 
-    FCFIDS = 1166
+    EXTSH = 1166
 
-    FCFIDS_rec = 1167
+    EXTSH8 = 1167
 
-    FCFIDU = 1168
+    EXTSH8_32_64 = 1168
 
-    FCFIDUS = 1169
+    EXTSH8_rec = 1169
 
-    FCFIDUS_rec = 1170
+    EXTSH_rec = 1170
 
-    FCFIDU_rec = 1171
+    EXTSW = 1171
 
-    FCFID_rec = 1172
+    EXTSWSLI = 1172
 
-    FCMPOD = 1173
+    EXTSWSLI_32_64 = 1173
 
-    FCMPOS = 1174
+    EXTSWSLI_32_64_rec = 1174
 
-    FCMPUD = 1175
+    EXTSWSLI_rec = 1175
 
-    FCMPUS = 1176
+    EXTSW_32 = 1176
 
-    FCPSGND = 1177
+    EXTSW_32_64 = 1177
 
-    FCPSGND_rec = 1178
+    EXTSW_32_64_rec = 1178
 
-    FCPSGNS = 1179
+    EXTSW_rec = 1179
 
-    FCPSGNS_rec = 1180
+    EnforceIEIO = 1180
 
-    FCTID = 1181
+    FABSD = 1181
 
-    FCTIDU = 1182
+    FABSD_rec = 1182
 
-    FCTIDUZ = 1183
+    FABSS = 1183
 
-    FCTIDUZ_rec = 1184
+    FABSS_rec = 1184
 
-    FCTIDU_rec = 1185
+    FADD = 1185
 
-    FCTIDZ = 1186
+    FADDS = 1186
 
-    FCTIDZ_rec = 1187
+    FADDS_rec = 1187
 
-    FCTID_rec = 1188
+    FADD_rec = 1188
 
-    FCTIW = 1189
+    FADDrtz = 1189
 
-    FCTIWU = 1190
+    FCFID = 1190
 
-    FCTIWUZ = 1191
+    FCFIDS = 1191
 
-    FCTIWUZ_rec = 1192
+    FCFIDS_rec = 1192
 
-    FCTIWU_rec = 1193
+    FCFIDU = 1193
 
-    FCTIWZ = 1194
+    FCFIDUS = 1194
 
-    FCTIWZ_rec = 1195
+    FCFIDUS_rec = 1195
 
-    FCTIW_rec = 1196
+    FCFIDU_rec = 1196
 
-    FDIV = 1197
+    FCFID_rec = 1197
 
-    FDIVS = 1198
+    FCMPOD = 1198
 
-    FDIVS_rec = 1199
+    FCMPOS = 1199
 
-    FDIV_rec = 1200
+    FCMPUD = 1200
 
-    FENCE = 1201
+    FCMPUS = 1201
 
-    FMADD = 1202
+    FCPSGND = 1202
 
-    FMADDS = 1203
+    FCPSGND_rec = 1203
 
-    FMADDS_rec = 1204
+    FCPSGNS = 1204
 
-    FMADD_rec = 1205
+    FCPSGNS_rec = 1205
 
-    FMR = 1206
+    FCTID = 1206
 
-    FMR_rec = 1207
+    FCTIDU = 1207
 
-    FMSUB = 1208
+    FCTIDUZ = 1208
 
-    FMSUBS = 1209
+    FCTIDUZ_rec = 1209
 
-    FMSUBS_rec = 1210
+    FCTIDU_rec = 1210
 
-    FMSUB_rec = 1211
+    FCTIDZ = 1211
 
-    FMUL = 1212
+    FCTIDZ_rec = 1212
 
-    FMULS = 1213
+    FCTID_rec = 1213
 
-    FMULS_rec = 1214
+    FCTIW = 1214
 
-    FMUL_rec = 1215
+    FCTIWU = 1215
 
-    FNABSD = 1216
+    FCTIWUZ = 1216
 
-    FNABSD_rec = 1217
+    FCTIWUZ_rec = 1217
 
-    FNABSS = 1218
+    FCTIWU_rec = 1218
 
-    FNABSS_rec = 1219
+    FCTIWZ = 1219
 
-    FNEGD = 1220
+    FCTIWZ_rec = 1220
 
-    FNEGD_rec = 1221
+    FCTIW_rec = 1221
 
-    FNEGS = 1222
+    FDIV = 1222
 
-    FNEGS_rec = 1223
+    FDIVS = 1223
 
-    FNMADD = 1224
+    FDIVS_rec = 1224
 
-    FNMADDS = 1225
+    FDIV_rec = 1225
 
-    FNMADDS_rec = 1226
+    FENCE = 1226
 
-    FNMADD_rec = 1227
+    FMADD = 1227
 
-    FNMSUB = 1228
+    FMADDS = 1228
 
-    FNMSUBS = 1229
+    FMADDS_rec = 1229
 
-    FNMSUBS_rec = 1230
+    FMADD_rec = 1230
 
-    FNMSUB_rec = 1231
+    FMR = 1231
 
-    FRE = 1232
+    FMR_rec = 1232
 
-    FRES = 1233
+    FMSUB = 1233
 
-    FRES_rec = 1234
+    FMSUBS = 1234
 
-    FRE_rec = 1235
+    FMSUBS_rec = 1235
 
-    FRIMD = 1236
+    FMSUB_rec = 1236
 
-    FRIMD_rec = 1237
+    FMUL = 1237
 
-    FRIMS = 1238
+    FMULS = 1238
 
-    FRIMS_rec = 1239
+    FMULS_rec = 1239
 
-    FRIND = 1240
+    FMUL_rec = 1240
 
-    FRIND_rec = 1241
+    FNABSD = 1241
 
-    FRINS = 1242
+    FNABSD_rec = 1242
 
-    FRINS_rec = 1243
+    FNABSS = 1243
 
-    FRIPD = 1244
+    FNABSS_rec = 1244
 
-    FRIPD_rec = 1245
+    FNEGD = 1245
 
-    FRIPS = 1246
+    FNEGD_rec = 1246
 
-    FRIPS_rec = 1247
+    FNEGS = 1247
 
-    FRIZD = 1248
+    FNEGS_rec = 1248
 
-    FRIZD_rec = 1249
+    FNMADD = 1249
 
-    FRIZS = 1250
+    FNMADDS = 1250
 
-    FRIZS_rec = 1251
+    FNMADDS_rec = 1251
 
-    FRSP = 1252
+    FNMADD_rec = 1252
 
-    FRSP_rec = 1253
+    FNMSUB = 1253
 
-    FRSQRTE = 1254
+    FNMSUBS = 1254
 
-    FRSQRTES = 1255
+    FNMSUBS_rec = 1255
 
-    FRSQRTES_rec = 1256
+    FNMSUB_rec = 1256
 
-    FRSQRTE_rec = 1257
+    FRE = 1257
 
-    FSELD = 1258
+    FRES = 1258
 
-    FSELD_rec = 1259
+    FRES_rec = 1259
 
-    FSELS = 1260
+    FRE_rec = 1260
 
-    FSELS_rec = 1261
+    FRIMD = 1261
 
-    FSQRT = 1262
+    FRIMD_rec = 1262
 
-    FSQRTS = 1263
+    FRIMS = 1263
 
-    FSQRTS_rec = 1264
+    FRIMS_rec = 1264
 
-    FSQRT_rec = 1265
+    FRIND = 1265
 
-    FSUB = 1266
+    FRIND_rec = 1266
 
-    FSUBS = 1267
+    FRINS = 1267
 
-    FSUBS_rec = 1268
+    FRINS_rec = 1268
 
-    FSUB_rec = 1269
+    FRIPD = 1269
 
-    FTDIV = 1270
+    FRIPD_rec = 1270
 
-    FTSQRT = 1271
+    FRIPS = 1271
 
-    GETtlsADDR = 1272
+    FRIPS_rec = 1272
 
-    GETtlsADDR32 = 1273
+    FRIZD = 1273
 
-    GETtlsADDR32AIX = 1274
+    FRIZD_rec = 1274
 
-    GETtlsADDR64AIX = 1275
+    FRIZS = 1275
 
-    GETtlsADDRPCREL = 1276
+    FRIZS_rec = 1276
 
-    GETtlsMOD32AIX = 1277
+    FRSP = 1277
 
-    GETtlsMOD64AIX = 1278
+    FRSP_rec = 1278
 
-    GETtlsTpointer32AIX = 1279
+    FRSQRTE = 1279
 
-    GETtlsldADDR = 1280
+    FRSQRTES = 1280
 
-    GETtlsldADDR32 = 1281
+    FRSQRTES_rec = 1281
 
-    GETtlsldADDRPCREL = 1282
+    FRSQRTE_rec = 1282
 
-    HASHCHK = 1283
+    FSELD = 1283
 
-    HASHCHK8 = 1284
+    FSELD_rec = 1284
 
-    HASHCHKP = 1285
+    FSELS = 1285
 
-    HASHCHKP8 = 1286
+    FSELS_rec = 1286
 
-    HASHST = 1287
+    FSQRT = 1287
 
-    HASHST8 = 1288
+    FSQRTS = 1288
 
-    HASHSTP = 1289
+    FSQRTS_rec = 1289
 
-    HASHSTP8 = 1290
+    FSQRT_rec = 1290
 
-    HRFID = 1291
+    FSUB = 1291
 
-    ICBI = 1292
+    FSUBS = 1292
 
-    ICBIEP = 1293
+    FSUBS_rec = 1293
 
-    ICBLC = 1294
+    FSUB_rec = 1294
 
-    ICBLQ = 1295
+    FTDIV = 1295
 
-    ICBT = 1296
+    FTSQRT = 1296
 
-    ICBTLS = 1297
+    GETtlsADDR = 1297
 
-    ICCCI = 1298
+    GETtlsADDR32 = 1298
 
-    ISEL = 1299
+    GETtlsADDR32AIX = 1299
 
-    ISEL8 = 1300
+    GETtlsADDR64AIX = 1300
 
-    ISYNC = 1301
+    GETtlsADDRPCREL = 1301
 
-    LA = 1302
+    GETtlsMOD32AIX = 1302
 
-    LA8 = 1303
+    GETtlsMOD64AIX = 1303
 
-    LBARX = 1304
+    GETtlsTpointer32AIX = 1304
 
-    LBARXL = 1305
+    GETtlsldADDR = 1305
 
-    LBEPX = 1306
+    GETtlsldADDR32 = 1306
 
-    LBZ = 1307
+    GETtlsldADDRPCREL = 1307
 
-    LBZ8 = 1308
+    HASHCHK = 1308
 
-    LBZCIX = 1309
+    HASHCHK8 = 1309
 
-    LBZU = 1310
+    HASHCHKP = 1310
 
-    LBZU8 = 1311
+    HASHCHKP8 = 1311
 
-    LBZUX = 1312
+    HASHST = 1312
 
-    LBZUX8 = 1313
+    HASHST8 = 1313
 
-    LBZX = 1314
+    HASHSTP = 1314
 
-    LBZX8 = 1315
+    HASHSTP8 = 1315
 
-    LBZXTLS = 1316
+    HRFID = 1316
 
-    LBZXTLS_32 = 1318
+    ICBI = 1317
 
-    LD = 1319
+    ICBIEP = 1318
 
-    LDARX = 1320
+    ICBLC = 1319
 
-    LDARXL = 1321
+    ICBLQ = 1320
 
-    LDAT = 1322
+    ICBT = 1321
 
-    LDBRX = 1323
+    ICBTLS = 1322
 
-    LDCIX = 1324
+    ICCCI = 1323
 
-    LDU = 1325
+    ISEL = 1324
 
-    LDUX = 1326
+    ISEL8 = 1325
 
-    LDX = 1327
+    ISYNC = 1326
 
-    LDXTLS = 1328
+    LA = 1327
 
-    LDgotTprelL = 1330
+    LA8 = 1328
 
-    LDgotTprelL32 = 1331
+    LBARX = 1329
 
-    LDtoc = 1332
+    LBARXL = 1330
 
-    LDtocBA = 1333
+    LBEPX = 1331
 
-    LDtocCPT = 1334
+    LBZ = 1332
 
-    LDtocJTI = 1335
+    LBZ8 = 1333
 
-    LDtocL = 1336
+    LBZCIX = 1334
 
-    LFD = 1337
+    LBZU = 1335
 
-    LFDEPX = 1338
+    LBZU8 = 1336
 
-    LFDU = 1339
+    LBZUX = 1337
 
-    LFDUX = 1340
+    LBZUX8 = 1338
 
-    LFDX = 1341
+    LBZX = 1339
 
-    LFDXTLS = 1342
+    LBZX8 = 1340
 
-    LFIWAX = 1344
+    LBZXTLS = 1341
 
-    LFIWZX = 1345
+    LBZXTLS_32 = 1343
 
-    LFS = 1346
+    LD = 1344
 
-    LFSU = 1347
+    LDARX = 1345
 
-    LFSUX = 1348
+    LDARXL = 1346
 
-    LFSX = 1349
+    LDAT = 1347
 
-    LFSXTLS = 1350
+    LDBRX = 1348
 
-    LHA = 1352
+    LDCIX = 1349
 
-    LHA8 = 1353
+    LDU = 1350
 
-    LHARX = 1354
+    LDUX = 1351
 
-    LHARXL = 1355
+    LDX = 1352
 
-    LHAU = 1356
+    LDXTLS = 1353
 
-    LHAU8 = 1357
+    LDgotTprelL = 1355
 
-    LHAUX = 1358
+    LDgotTprelL32 = 1356
 
-    LHAUX8 = 1359
+    LDtoc = 1357
 
-    LHAX = 1360
+    LDtocBA = 1358
 
-    LHAX8 = 1361
+    LDtocCPT = 1359
 
-    LHAXTLS = 1362
+    LDtocJTI = 1360
 
-    LHAXTLS_32 = 1364
+    LDtocL = 1361
 
-    LHBRX = 1365
+    LFD = 1362
 
-    LHBRX8 = 1366
+    LFDEPX = 1363
 
-    LHEPX = 1367
+    LFDU = 1364
 
-    LHZ = 1368
+    LFDUX = 1365
 
-    LHZ8 = 1369
+    LFDX = 1366
 
-    LHZCIX = 1370
+    LFDXTLS = 1367
 
-    LHZU = 1371
+    LFIWAX = 1369
 
-    LHZU8 = 1372
+    LFIWZX = 1370
 
-    LHZUX = 1373
+    LFS = 1371
 
-    LHZUX8 = 1374
+    LFSU = 1372
 
-    LHZX = 1375
+    LFSUX = 1373
 
-    LHZX8 = 1376
+    LFSX = 1374
 
-    LHZXTLS = 1377
+    LFSXTLS = 1375
 
-    LHZXTLS_32 = 1379
+    LHA = 1377
 
-    LI = 1380
+    LHA8 = 1378
 
-    LI8 = 1381
+    LHARX = 1379
 
-    LIS = 1382
+    LHARXL = 1380
 
-    LIS8 = 1383
+    LHAU = 1381
 
-    LMW = 1384
+    LHAU8 = 1382
 
-    LQ = 1385
+    LHAUX = 1383
 
-    LQARX = 1386
+    LHAUX8 = 1384
 
-    LQARXL = 1387
+    LHAX = 1385
 
-    LQX_PSEUDO = 1388
+    LHAX8 = 1386
 
-    LSWI = 1389
+    LHAXTLS = 1387
 
-    LVEBX = 1390
+    LHAXTLS_32 = 1389
 
-    LVEHX = 1391
+    LHBRX = 1390
 
-    LVEWX = 1392
+    LHBRX8 = 1391
 
-    LVSL = 1393
+    LHEPX = 1392
 
-    LVSR = 1394
+    LHZ = 1393
 
-    LVX = 1395
+    LHZ8 = 1394
 
-    LVXL = 1396
+    LHZCIX = 1395
 
-    LWA = 1397
+    LHZU = 1396
 
-    LWARX = 1398
+    LHZU8 = 1397
 
-    LWARXL = 1399
+    LHZUX = 1398
 
-    LWAT = 1400
+    LHZUX8 = 1399
 
-    LWAUX = 1401
+    LHZX = 1400
 
-    LWAX = 1402
+    LHZX8 = 1401
 
-    LWAXTLS = 1403
+    LHZXTLS = 1402
 
-    LWAXTLS_32 = 1405
+    LHZXTLS_32 = 1404
 
-    LWAX_32 = 1406
+    LI = 1405
 
-    LWA_32 = 1407
+    LI8 = 1406
 
-    LWBRX = 1408
+    LIS = 1407
 
-    LWBRX8 = 1409
+    LIS8 = 1408
 
-    LWEPX = 1410
+    LMW = 1409
 
-    LWZ = 1411
+    LQ = 1410
 
-    LWZ8 = 1412
+    LQARX = 1411
 
-    LWZCIX = 1413
+    LQARXL = 1412
 
-    LWZU = 1414
+    LQX_PSEUDO = 1413
 
-    LWZU8 = 1415
+    LSWI = 1414
 
-    LWZUX = 1416
+    LVEBX = 1415
 
-    LWZUX8 = 1417
+    LVEHX = 1416
 
-    LWZX = 1418
+    LVEWX = 1417
 
-    LWZX8 = 1419
+    LVSL = 1418
 
-    LWZXTLS = 1420
+    LVSR = 1419
 
-    LWZXTLS_32 = 1422
+    LVX = 1420
 
-    LWZtoc = 1423
+    LVXL = 1421
 
-    LWZtocL = 1424
+    LWA = 1422
 
-    LXSD = 1425
+    LWARX = 1423
 
-    LXSDX = 1426
+    LWARXL = 1424
 
-    LXSIBZX = 1427
+    LWAT = 1425
 
-    LXSIHZX = 1428
+    LWAUX = 1426
 
-    LXSIWAX = 1429
+    LWAX = 1427
 
-    LXSIWZX = 1430
+    LWAXTLS = 1428
 
-    LXSSP = 1431
+    LWAXTLS_32 = 1430
 
-    LXSSPX = 1432
+    LWAX_32 = 1431
 
-    LXV = 1433
+    LWA_32 = 1432
 
-    LXVB16X = 1434
+    LWBRX = 1433
 
-    LXVD2X = 1435
+    LWBRX8 = 1434
 
-    LXVDSX = 1436
+    LWEPX = 1435
 
-    LXVH8X = 1437
+    LWZ = 1436
 
-    LXVKQ = 1438
+    LWZ8 = 1437
 
-    LXVL = 1439
+    LWZCIX = 1438
 
-    LXVLL = 1440
+    LWZU = 1439
 
-    LXVP = 1441
+    LWZU8 = 1440
 
-    LXVPRL = 1442
+    LWZUX = 1441
 
-    LXVPRLL = 1443
+    LWZUX8 = 1442
 
-    LXVPX = 1444
+    LWZX = 1443
 
-    LXVRBX = 1445
+    LWZX8 = 1444
 
-    LXVRDX = 1446
+    LWZXTLS = 1445
 
-    LXVRHX = 1447
+    LWZXTLS_32 = 1447
 
-    LXVRL = 1448
+    LWZtoc = 1448
 
-    LXVRLL = 1449
+    LWZtocL = 1449
 
-    LXVRWX = 1450
+    LXSD = 1450
 
-    LXVW4X = 1451
+    LXSDX = 1451
 
-    LXVWSX = 1452
+    LXSIBZX = 1452
 
-    LXVX = 1453
+    LXSIHZX = 1453
 
-    MADDHD = 1454
+    LXSIWAX = 1454
 
-    MADDHDU = 1455
+    LXSIWZX = 1455
 
-    MADDLD = 1456
+    LXSSP = 1456
 
-    MADDLD8 = 1457
+    LXSSPX = 1457
 
-    MBAR = 1458
+    LXV = 1458
 
-    MCRF = 1459
+    LXVB16X = 1459
 
-    MCRFS = 1460
+    LXVD2X = 1460
 
-    MCRXRX = 1461
+    LXVDSX = 1461
 
-    MFBHRBE = 1462
+    LXVH8X = 1462
 
-    MFCR = 1463
+    LXVKQ = 1463
 
-    MFCR8 = 1464
+    LXVL = 1464
 
-    MFCTR = 1465
+    LXVLL = 1465
 
-    MFCTR8 = 1466
+    LXVP = 1466
 
-    MFDCR = 1467
+    LXVPRL = 1467
 
-    MFFS = 1468
+    LXVPRLL = 1468
 
-    MFFSCDRN = 1469
+    LXVPX = 1469
 
-    MFFSCDRNI = 1470
+    LXVRBX = 1470
 
-    MFFSCE = 1471
+    LXVRDX = 1471
 
-    MFFSCRN = 1472
+    LXVRHX = 1472
 
-    MFFSCRNI = 1473
+    LXVRL = 1473
 
-    MFFSL = 1474
+    LXVRLL = 1474
 
-    MFFS_rec = 1475
+    LXVRWX = 1475
 
-    MFLR = 1476
+    LXVW4X = 1476
 
-    MFLR8 = 1477
+    LXVWSX = 1477
 
-    MFMSR = 1478
+    LXVX = 1478
 
-    MFOCRF = 1479
+    MADDHD = 1479
 
-    MFOCRF8 = 1480
+    MADDHDU = 1480
 
-    MFPMR = 1481
+    MADDLD = 1481
 
-    MFSPR = 1482
+    MADDLD8 = 1482
 
-    MFSPR8 = 1483
+    MBAR = 1483
 
-    MFSR = 1484
+    MCRF = 1484
 
-    MFSRIN = 1485
+    MCRFS = 1485
 
-    MFTB = 1486
+    MCRXRX = 1486
 
-    MFTB8 = 1487
+    MFBHRBE = 1487
 
-    MFUDSCR = 1488
+    MFCR = 1488
 
-    MFVRD = 1489
+    MFCR8 = 1489
 
-    MFVRSAVE = 1490
+    MFCTR = 1490
 
-    MFVRSAVEv = 1491
+    MFCTR8 = 1491
 
-    MFVRWZ = 1492
+    MFDCR = 1492
 
-    MFVSCR = 1493
+    MFFS = 1493
 
-    MFVSRD = 1494
+    MFFSCDRN = 1494
 
-    MFVSRLD = 1495
+    MFFSCDRNI = 1495
 
-    MFVSRWZ = 1496
+    MFFSCE = 1496
 
-    MODSD = 1497
+    MFFSCRN = 1497
 
-    MODSW = 1498
+    MFFSCRNI = 1498
 
-    MODUD = 1499
+    MFFSL = 1499
 
-    MODUW = 1500
+    MFFS_rec = 1500
 
-    MSGSYNC = 1501
+    MFLR = 1501
 
-    MSYNC = 1502
+    MFLR8 = 1502
 
-    MTCRF = 1503
+    MFMSR = 1503
 
-    MTCRF8 = 1504
+    MFOCRF = 1504
 
-    MTCTR = 1505
+    MFOCRF8 = 1505
 
-    MTCTR8 = 1506
+    MFPMR = 1506
 
-    MTCTR8loop = 1507
+    MFSPR = 1507
 
-    MTCTRloop = 1508
+    MFSPR8 = 1508
 
-    MTDCR = 1509
+    MFSR = 1509
 
-    MTFSB0 = 1510
+    MFSRIN = 1510
 
-    MTFSB1 = 1511
+    MFTB = 1511
 
-    MTFSF = 1512
+    MFTB8 = 1512
 
-    MTFSFI = 1513
+    MFUDSCR = 1513
 
-    MTFSFI_rec = 1514
+    MFVRD = 1514
 
-    MTFSFIb = 1515
+    MFVRSAVE = 1515
 
-    MTFSF_rec = 1516
+    MFVRSAVEv = 1516
 
-    MTFSFb = 1517
+    MFVRWZ = 1517
 
-    MTLR = 1518
+    MFVSCR = 1518
 
-    MTLR8 = 1519
+    MFVSRD = 1519
 
-    MTMSR = 1520
+    MFVSRLD = 1520
 
-    MTMSRD = 1521
+    MFVSRWZ = 1521
 
-    MTOCRF = 1522
+    MODSD = 1522
 
-    MTOCRF8 = 1523
+    MODSW = 1523
 
-    MTPMR = 1524
+    MODUD = 1524
 
-    MTSPR = 1525
+    MODUW = 1525
 
-    MTSPR8 = 1526
+    MSGSYNC = 1526
 
-    MTSR = 1527
+    MSYNC = 1527
 
-    MTSRIN = 1528
+    MTCRF = 1528
 
-    MTUDSCR = 1529
+    MTCRF8 = 1529
 
-    MTVRD = 1530
+    MTCTR = 1530
 
-    MTVRSAVE = 1531
+    MTCTR8 = 1531
 
-    MTVRSAVEv = 1532
+    MTCTR8loop = 1532
 
-    MTVRWA = 1533
+    MTCTRloop = 1533
 
-    MTVRWZ = 1534
+    MTDCR = 1534
 
-    MTVSCR = 1535
+    MTFSB0 = 1535
 
-    MTVSRBM = 1536
+    MTFSB1 = 1536
 
-    MTVSRBMI = 1537
+    MTFSF = 1537
 
-    MTVSRD = 1538
+    MTFSFI = 1538
 
-    MTVSRDD = 1539
+    MTFSFI_rec = 1539
 
-    MTVSRDM = 1540
+    MTFSFIb = 1540
 
-    MTVSRHM = 1541
+    MTFSF_rec = 1541
 
-    MTVSRQM = 1542
+    MTFSFb = 1542
 
-    MTVSRWA = 1543
+    MTLR = 1543
 
-    MTVSRWM = 1544
+    MTLR8 = 1544
 
-    MTVSRWS = 1545
+    MTMSR = 1545
 
-    MTVSRWZ = 1546
+    MTMSRD = 1546
 
-    MULHD = 1547
+    MTOCRF = 1547
 
-    MULHDU = 1548
+    MTOCRF8 = 1548
 
-    MULHDU_rec = 1549
+    MTPMR = 1549
 
-    MULHD_rec = 1550
+    MTSPR = 1550
 
-    MULHW = 1551
+    MTSPR8 = 1551
 
-    MULHWU = 1552
+    MTSR = 1552
 
-    MULHWU_rec = 1553
+    MTSRIN = 1553
 
-    MULHW_rec = 1554
+    MTUDSCR = 1554
 
-    MULLD = 1555
+    MTVRD = 1555
 
-    MULLDO = 1556
+    MTVRSAVE = 1556
 
-    MULLDO_rec = 1557
+    MTVRSAVEv = 1557
 
-    MULLD_rec = 1558
+    MTVRWA = 1558
 
-    MULLI = 1559
+    MTVRWZ = 1559
 
-    MULLI8 = 1560
+    MTVSCR = 1560
 
-    MULLW = 1561
+    MTVSRBM = 1561
 
-    MULLWO = 1562
+    MTVSRBMI = 1562
 
-    MULLWO_rec = 1563
+    MTVSRD = 1563
 
-    MULLW_rec = 1564
+    MTVSRDD = 1564
 
-    MoveGOTtoLR = 1565
+    MTVSRDM = 1565
 
-    MovePCtoLR = 1566
+    MTVSRHM = 1566
 
-    MovePCtoLR8 = 1567
+    MTVSRQM = 1567
 
-    NAND = 1568
+    MTVSRWA = 1568
 
-    NAND8 = 1569
+    MTVSRWM = 1569
 
-    NAND8_rec = 1570
+    MTVSRWS = 1570
 
-    NAND_rec = 1571
+    MTVSRWZ = 1571
 
-    NAP = 1572
+    MULHD = 1572
 
-    NEG = 1573
+    MULHDU = 1573
 
-    NEG8 = 1574
+    MULHDU_rec = 1574
 
-    NEG8O = 1575
+    MULHD_rec = 1575
 
-    NEG8O_rec = 1576
+    MULHW = 1576
 
-    NEG8_rec = 1577
+    MULHWU = 1577
 
-    NEGO = 1578
+    MULHWU_rec = 1578
 
-    NEGO_rec = 1579
+    MULHW_rec = 1579
 
-    NEG_rec = 1580
+    MULLD = 1580
 
-    NOP = 1581
+    MULLDO = 1581
 
-    NOP_GT_PWR6 = 1582
+    MULLDO_rec = 1582
 
-    NOP_GT_PWR7 = 1583
+    MULLD_rec = 1583
 
-    NOR = 1584
+    MULLI = 1584
 
-    NOR8 = 1585
+    MULLI8 = 1585
 
-    NOR8_rec = 1586
+    MULLW = 1586
 
-    NOR_rec = 1587
+    MULLWO = 1587
 
-    OR = 1588
+    MULLWO_rec = 1588
 
-    OR8 = 1589
+    MULLW_rec = 1589
 
-    OR8_rec = 1590
+    MoveGOTtoLR = 1590
 
-    ORC = 1591
+    MovePCtoLR = 1591
 
-    ORC8 = 1592
+    MovePCtoLR8 = 1592
 
-    ORC8_rec = 1593
+    NAND = 1593
 
-    ORC_rec = 1594
+    NAND8 = 1594
 
-    ORI = 1595
+    NAND8_rec = 1595
 
-    ORI8 = 1596
+    NAND_rec = 1596
 
-    ORIS = 1597
+    NAP = 1597
 
-    ORIS8 = 1598
+    NEG = 1598
 
-    OR_rec = 1599
+    NEG8 = 1599
 
-    PADDI = 1600
+    NEG8O = 1600
 
-    PADDI8 = 1601
+    NEG8O_rec = 1601
 
-    PADDI8pc = 1602
+    NEG8_rec = 1602
 
-    PADDIdtprel = 1603
+    NEGO = 1603
 
-    PADDIpc = 1604
+    NEGO_rec = 1604
 
-    PDEPD = 1605
+    NEG_rec = 1605
 
-    PEXTD = 1606
+    NOP = 1606
 
-    PLA = 1607
+    NOP_GT_PWR6 = 1607
 
-    PLA8 = 1608
+    NOP_GT_PWR7 = 1608
 
-    PLA8pc = 1609
+    NOR = 1609
 
-    PLApc = 1610
+    NOR8 = 1610
 
-    PLBZ = 1611
+    NOR8_rec = 1611
 
-    PLBZ8 = 1612
+    NOR_rec = 1612
 
-    PLBZ8nopc = 1613
+    OR = 1613
 
-    PLBZ8onlypc = 1614
+    OR8 = 1614
 
-    PLBZ8pc = 1615
+    OR8_rec = 1615
 
-    PLBZnopc = 1616
+    ORC = 1616
 
-    PLBZonlypc = 1617
+    ORC8 = 1617
 
-    PLBZpc = 1618
+    ORC8_rec = 1618
 
-    PLD = 1619
+    ORC_rec = 1619
 
-    PLDnopc = 1620
+    ORI = 1620
 
-    PLDonlypc = 1621
+    ORI8 = 1621
 
-    PLDpc = 1622
+    ORIS = 1622
 
-    PLFD = 1623
+    ORIS8 = 1623
 
-    PLFDnopc = 1624
+    OR_rec = 1624
 
-    PLFDonlypc = 1625
+    PADDI = 1625
 
-    PLFDpc = 1626
+    PADDI8 = 1626
 
-    PLFS = 1627
+    PADDI8pc = 1627
 
-    PLFSnopc = 1628
+    PADDIdtprel = 1628
 
-    PLFSonlypc = 1629
+    PADDIpc = 1629
 
-    PLFSpc = 1630
+    PDEPD = 1630
 
-    PLHA = 1631
+    PEXTD = 1631
 
-    PLHA8 = 1632
+    PLA = 1632
 
-    PLHA8nopc = 1633
+    PLA8 = 1633
 
-    PLHA8onlypc = 1634
+    PLA8pc = 1634
 
-    PLHA8pc = 1635
+    PLApc = 1635
 
-    PLHAnopc = 1636
+    PLBZ = 1636
 
-    PLHAonlypc = 1637
+    PLBZ8 = 1637
 
-    PLHApc = 1638
+    PLBZ8nopc = 1638
 
-    PLHZ = 1639
+    PLBZ8onlypc = 1639
 
-    PLHZ8 = 1640
+    PLBZ8pc = 1640
 
-    PLHZ8nopc = 1641
+    PLBZnopc = 1641
 
-    PLHZ8onlypc = 1642
+    PLBZonlypc = 1642
 
-    PLHZ8pc = 1643
+    PLBZpc = 1643
 
-    PLHZnopc = 1644
+    PLD = 1644
 
-    PLHZonlypc = 1645
+    PLDnopc = 1645
 
-    PLHZpc = 1646
+    PLDonlypc = 1646
 
-    PLI = 1647
+    PLDpc = 1647
 
-    PLI8 = 1648
+    PLFD = 1648
 
-    PLWA = 1649
+    PLFDnopc = 1649
 
-    PLWA8 = 1650
+    PLFDonlypc = 1650
 
-    PLWA8nopc = 1651
+    PLFDpc = 1651
 
-    PLWA8onlypc = 1652
+    PLFS = 1652
 
-    PLWA8pc = 1653
+    PLFSnopc = 1653
 
-    PLWAnopc = 1654
+    PLFSonlypc = 1654
 
-    PLWAonlypc = 1655
+    PLFSpc = 1655
 
-    PLWApc = 1656
+    PLHA = 1656
 
-    PLWZ = 1657
+    PLHA8 = 1657
 
-    PLWZ8 = 1658
+    PLHA8nopc = 1658
 
-    PLWZ8nopc = 1659
+    PLHA8onlypc = 1659
 
-    PLWZ8onlypc = 1660
+    PLHA8pc = 1660
 
-    PLWZ8pc = 1661
+    PLHAnopc = 1661
 
-    PLWZnopc = 1662
+    PLHAonlypc = 1662
 
-    PLWZonlypc = 1663
+    PLHApc = 1663
 
-    PLWZpc = 1664
+    PLHZ = 1664
 
-    PLXSD = 1665
+    PLHZ8 = 1665
 
-    PLXSDnopc = 1666
+    PLHZ8nopc = 1666
 
-    PLXSDonlypc = 1667
+    PLHZ8onlypc = 1667
 
-    PLXSDpc = 1668
+    PLHZ8pc = 1668
 
-    PLXSSP = 1669
+    PLHZnopc = 1669
 
-    PLXSSPnopc = 1670
+    PLHZonlypc = 1670
 
-    PLXSSPonlypc = 1671
+    PLHZpc = 1671
 
-    PLXSSPpc = 1672
+    PLI = 1672
 
-    PLXV = 1673
+    PLI8 = 1673
 
-    PLXVP = 1674
+    PLWA = 1674
 
-    PLXVPnopc = 1675
+    PLWA8 = 1675
 
-    PLXVPonlypc = 1676
+    PLWA8nopc = 1676
 
-    PLXVPpc = 1677
+    PLWA8onlypc = 1677
 
-    PLXVnopc = 1678
+    PLWA8pc = 1678
 
-    PLXVonlypc = 1679
+    PLWAnopc = 1679
 
-    PLXVpc = 1680
+    PLWAonlypc = 1680
 
-    PMXVBF16GER2 = 1681
+    PLWApc = 1681
 
-    PMXVBF16GER2NN = 1682
+    PLWZ = 1682
 
-    PMXVBF16GER2NP = 1683
+    PLWZ8 = 1683
 
-    PMXVBF16GER2PN = 1684
+    PLWZ8nopc = 1684
 
-    PMXVBF16GER2PP = 1685
+    PLWZ8onlypc = 1685
 
-    PMXVBF16GER2W = 1686
+    PLWZ8pc = 1686
 
-    PMXVBF16GER2WNN = 1687
+    PLWZnopc = 1687
 
-    PMXVBF16GER2WNP = 1688
+    PLWZonlypc = 1688
 
-    PMXVBF16GER2WPN = 1689
+    PLWZpc = 1689
 
-    PMXVBF16GER2WPP = 1690
+    PLXSD = 1690
 
-    PMXVF16GER2 = 1691
+    PLXSDnopc = 1691
 
-    PMXVF16GER2NN = 1692
+    PLXSDonlypc = 1692
 
-    PMXVF16GER2NP = 1693
+    PLXSDpc = 1693
 
-    PMXVF16GER2PN = 1694
+    PLXSSP = 1694
 
-    PMXVF16GER2PP = 1695
+    PLXSSPnopc = 1695
 
-    PMXVF16GER2W = 1696
+    PLXSSPonlypc = 1696
 
-    PMXVF16GER2WNN = 1697
+    PLXSSPpc = 1697
 
-    PMXVF16GER2WNP = 1698
+    PLXV = 1698
 
-    PMXVF16GER2WPN = 1699
+    PLXVP = 1699
 
-    PMXVF16GER2WPP = 1700
+    PLXVPnopc = 1700
 
-    PMXVF32GER = 1701
+    PLXVPonlypc = 1701
 
-    PMXVF32GERNN = 1702
+    PLXVPpc = 1702
 
-    PMXVF32GERNP = 1703
+    PLXVnopc = 1703
 
-    PMXVF32GERPN = 1704
+    PLXVonlypc = 1704
 
-    PMXVF32GERPP = 1705
+    PLXVpc = 1705
 
-    PMXVF32GERW = 1706
+    PMDMXVBF16GERX2 = 1706
 
-    PMXVF32GERWNN = 1707
+    PMDMXVBF16GERX2NN = 1707
 
-    PMXVF32GERWNP = 1708
+    PMDMXVBF16GERX2NP = 1708
 
-    PMXVF32GERWPN = 1709
+    PMDMXVBF16GERX2PN = 1709
 
-    PMXVF32GERWPP = 1710
+    PMDMXVBF16GERX2PP = 1710
 
-    PMXVF64GER = 1711
+    PMDMXVF16GERX2 = 1711
 
-    PMXVF64GERNN = 1712
+    PMDMXVF16GERX2NN = 1712
 
-    PMXVF64GERNP = 1713
+    PMDMXVF16GERX2NP = 1713
 
-    PMXVF64GERPN = 1714
+    PMDMXVF16GERX2PN = 1714
 
-    PMXVF64GERPP = 1715
+    PMDMXVF16GERX2PP = 1715
 
-    PMXVF64GERW = 1716
+    PMDMXVI8GERX4 = 1716
 
-    PMXVF64GERWNN = 1717
+    PMDMXVI8GERX4PP = 1717
 
-    PMXVF64GERWNP = 1718
+    PMDMXVI8GERX4SPP = 1718
 
-    PMXVF64GERWPN = 1719
+    PMXVBF16GER2 = 1719
 
-    PMXVF64GERWPP = 1720
+    PMXVBF16GER2NN = 1720
 
-    PMXVI16GER2 = 1721
+    PMXVBF16GER2NP = 1721
 
-    PMXVI16GER2PP = 1722
+    PMXVBF16GER2PN = 1722
 
-    PMXVI16GER2S = 1723
+    PMXVBF16GER2PP = 1723
 
-    PMXVI16GER2SPP = 1724
+    PMXVBF16GER2W = 1724
 
-    PMXVI16GER2SW = 1725
+    PMXVBF16GER2WNN = 1725
 
-    PMXVI16GER2SWPP = 1726
+    PMXVBF16GER2WNP = 1726
 
-    PMXVI16GER2W = 1727
+    PMXVBF16GER2WPN = 1727
 
-    PMXVI16GER2WPP = 1728
+    PMXVBF16GER2WPP = 1728
 
-    PMXVI4GER8 = 1729
+    PMXVF16GER2 = 1729
 
-    PMXVI4GER8PP = 1730
+    PMXVF16GER2NN = 1730
 
-    PMXVI4GER8W = 1731
+    PMXVF16GER2NP = 1731
 
-    PMXVI4GER8WPP = 1732
+    PMXVF16GER2PN = 1732
 
-    PMXVI8GER4 = 1733
+    PMXVF16GER2PP = 1733
 
-    PMXVI8GER4PP = 1734
+    PMXVF16GER2W = 1734
 
-    PMXVI8GER4SPP = 1735
+    PMXVF16GER2WNN = 1735
 
-    PMXVI8GER4W = 1736
+    PMXVF16GER2WNP = 1736
 
-    PMXVI8GER4WPP = 1737
+    PMXVF16GER2WPN = 1737
 
-    PMXVI8GER4WSPP = 1738
+    PMXVF16GER2WPP = 1738
 
-    POPCNTB = 1739
+    PMXVF32GER = 1739
 
-    POPCNTB8 = 1740
+    PMXVF32GERNN = 1740
 
-    POPCNTD = 1741
+    PMXVF32GERNP = 1741
 
-    POPCNTW = 1742
+    PMXVF32GERPN = 1742
 
-    PPC32GOT = 1743
+    PMXVF32GERPP = 1743
 
-    PPC32PICGOT = 1744
+    PMXVF32GERW = 1744
 
-    PREPARE_PROBED_ALLOCA_32 = 1745
+    PMXVF32GERWNN = 1745
 
-    PREPARE_PROBED_ALLOCA_64 = 1746
+    PMXVF32GERWNP = 1746
 
-    PREPARE_PROBED_ALLOCA_NEGSIZE_SAME_REG_32 = 1747
+    PMXVF32GERWPN = 1747
 
-    PREPARE_PROBED_ALLOCA_NEGSIZE_SAME_REG_64 = 1748
+    PMXVF32GERWPP = 1748
 
-    PROBED_ALLOCA_32 = 1749
+    PMXVF64GER = 1749
 
-    PROBED_ALLOCA_64 = 1750
+    PMXVF64GERNN = 1750
 
-    PROBED_STACKALLOC_32 = 1751
+    PMXVF64GERNP = 1751
 
-    PROBED_STACKALLOC_64 = 1752
+    PMXVF64GERPN = 1752
 
-    PSTB = 1753
+    PMXVF64GERPP = 1753
 
-    PSTB8 = 1754
+    PMXVF64GERW = 1754
 
-    PSTB8nopc = 1755
+    PMXVF64GERWNN = 1755
 
-    PSTB8onlypc = 1756
+    PMXVF64GERWNP = 1756
 
-    PSTB8pc = 1757
+    PMXVF64GERWPN = 1757
 
-    PSTBnopc = 1758
+    PMXVF64GERWPP = 1758
 
-    PSTBonlypc = 1759
+    PMXVI16GER2 = 1759
 
-    PSTBpc = 1760
+    PMXVI16GER2PP = 1760
 
-    PSTD = 1761
+    PMXVI16GER2S = 1761
 
-    PSTDnopc = 1762
+    PMXVI16GER2SPP = 1762
 
-    PSTDonlypc = 1763
+    PMXVI16GER2SW = 1763
 
-    PSTDpc = 1764
+    PMXVI16GER2SWPP = 1764
 
-    PSTFD = 1765
+    PMXVI16GER2W = 1765
 
-    PSTFDnopc = 1766
+    PMXVI16GER2WPP = 1766
 
-    PSTFDonlypc = 1767
+    PMXVI4GER8 = 1767
 
-    PSTFDpc = 1768
+    PMXVI4GER8PP = 1768
 
-    PSTFS = 1769
+    PMXVI4GER8W = 1769
 
-    PSTFSnopc = 1770
+    PMXVI4GER8WPP = 1770
 
-    PSTFSonlypc = 1771
+    PMXVI8GER4 = 1771
 
-    PSTFSpc = 1772
+    PMXVI8GER4PP = 1772
 
-    PSTH = 1773
+    PMXVI8GER4SPP = 1773
 
-    PSTH8 = 1774
+    PMXVI8GER4W = 1774
 
-    PSTH8nopc = 1775
+    PMXVI8GER4WPP = 1775
 
-    PSTH8onlypc = 1776
+    PMXVI8GER4WSPP = 1776
 
-    PSTH8pc = 1777
+    POPCNTB = 1777
 
-    PSTHnopc = 1778
+    POPCNTB8 = 1778
 
-    PSTHonlypc = 1779
+    POPCNTD = 1779
 
-    PSTHpc = 1780
+    POPCNTW = 1780
 
-    PSTW = 1781
+    PPC32GOT = 1781
 
-    PSTW8 = 1782
+    PPC32PICGOT = 1782
 
-    PSTW8nopc = 1783
+    PREPARE_PROBED_ALLOCA_32 = 1783
 
-    PSTW8onlypc = 1784
+    PREPARE_PROBED_ALLOCA_64 = 1784
 
-    PSTW8pc = 1785
+    PREPARE_PROBED_ALLOCA_NEGSIZE_SAME_REG_32 = 1785
 
-    PSTWnopc = 1786
+    PREPARE_PROBED_ALLOCA_NEGSIZE_SAME_REG_64 = 1786
 
-    PSTWonlypc = 1787
+    PROBED_ALLOCA_32 = 1787
 
-    PSTWpc = 1788
+    PROBED_ALLOCA_64 = 1788
 
-    PSTXSD = 1789
+    PROBED_STACKALLOC_32 = 1789
 
-    PSTXSDnopc = 1790
+    PROBED_STACKALLOC_64 = 1790
 
-    PSTXSDonlypc = 1791
+    PSTB = 1791
 
-    PSTXSDpc = 1792
+    PSTB8 = 1792
 
-    PSTXSSP = 1793
+    PSTB8nopc = 1793
 
-    PSTXSSPnopc = 1794
+    PSTB8onlypc = 1794
 
-    PSTXSSPonlypc = 1795
+    PSTB8pc = 1795
 
-    PSTXSSPpc = 1796
+    PSTBnopc = 1796
 
-    PSTXV = 1797
+    PSTBonlypc = 1797
 
-    PSTXVP = 1798
+    PSTBpc = 1798
 
-    PSTXVPnopc = 1799
+    PSTD = 1799
 
-    PSTXVPonlypc = 1800
+    PSTDnopc = 1800
 
-    PSTXVPpc = 1801
+    PSTDonlypc = 1801
 
-    PSTXVnopc = 1802
+    PSTDpc = 1802
 
-    PSTXVonlypc = 1803
+    PSTFD = 1803
 
-    PSTXVpc = 1804
+    PSTFDnopc = 1804
 
-    PseudoEIEIO = 1805
+    PSTFDonlypc = 1805
 
-    RESTORE_ACC = 1806
+    PSTFDpc = 1806
 
-    RESTORE_CR = 1807
+    PSTFS = 1807
 
-    RESTORE_CRBIT = 1808
+    PSTFSnopc = 1808
 
-    RESTORE_QUADWORD = 1809
+    PSTFSonlypc = 1809
 
-    RESTORE_UACC = 1810
+    PSTFSpc = 1810
 
-    RESTORE_WACC = 1811
+    PSTH = 1811
 
-    RFCI = 1812
+    PSTH8 = 1812
 
-    RFDI = 1813
+    PSTH8nopc = 1813
 
-    RFEBB = 1814
+    PSTH8onlypc = 1814
 
-    RFI = 1815
+    PSTH8pc = 1815
 
-    RFID = 1816
+    PSTHnopc = 1816
 
-    RFMCI = 1817
+    PSTHonlypc = 1817
 
-    RLDCL = 1818
+    PSTHpc = 1818
 
-    RLDCL_rec = 1819
+    PSTW = 1819
 
-    RLDCR = 1820
+    PSTW8 = 1820
 
-    RLDCR_rec = 1821
+    PSTW8nopc = 1821
 
-    RLDIC = 1822
+    PSTW8onlypc = 1822
 
-    RLDICL = 1823
+    PSTW8pc = 1823
 
-    RLDICL_32 = 1824
+    PSTWnopc = 1824
 
-    RLDICL_32_64 = 1825
+    PSTWonlypc = 1825
 
-    RLDICL_32_rec = 1826
+    PSTWpc = 1826
 
-    RLDICL_rec = 1827
+    PSTXSD = 1827
 
-    RLDICR = 1828
+    PSTXSDnopc = 1828
 
-    RLDICR_32 = 1829
+    PSTXSDonlypc = 1829
 
-    RLDICR_rec = 1830
+    PSTXSDpc = 1830
 
-    RLDIC_rec = 1831
+    PSTXSSP = 1831
 
-    RLDIMI = 1832
+    PSTXSSPnopc = 1832
 
-    RLDIMI_rec = 1833
+    PSTXSSPonlypc = 1833
 
-    RLWIMI = 1834
+    PSTXSSPpc = 1834
 
-    RLWIMI8 = 1835
+    PSTXV = 1835
 
-    RLWIMI8_rec = 1836
+    PSTXVP = 1836
 
-    RLWIMI_rec = 1837
+    PSTXVPnopc = 1837
 
-    RLWINM = 1838
+    PSTXVPonlypc = 1838
 
-    RLWINM8 = 1839
+    PSTXVPpc = 1839
 
-    RLWINM8_rec = 1840
+    PSTXVnopc = 1840
 
-    RLWINM_rec = 1841
+    PSTXVonlypc = 1841
 
-    RLWNM = 1842
+    PSTXVpc = 1842
 
-    RLWNM8 = 1843
+    PseudoEIEIO = 1843
 
-    RLWNM8_rec = 1844
+    RESTORE_ACC = 1844
 
-    RLWNM_rec = 1845
+    RESTORE_CR = 1845
 
-    ReadTB = 1846
+    RESTORE_CRBIT = 1846
 
-    SC = 1847
+    RESTORE_DMR = 1847
 
-    SCV = 1848
+    RESTORE_DMRP = 1848
 
-    SELECT_CC_F16 = 1849
+    RESTORE_QUADWORD = 1849
 
-    SELECT_CC_F4 = 1850
+    RESTORE_UACC = 1850
 
-    SELECT_CC_F8 = 1851
+    RESTORE_WACC = 1851
 
-    SELECT_CC_I4 = 1852
+    RFCI = 1852
 
-    SELECT_CC_I8 = 1853
+    RFDI = 1853
 
-    SELECT_CC_SPE = 1854
+    RFEBB = 1854
 
-    SELECT_CC_SPE4 = 1855
+    RFI = 1855
 
-    SELECT_CC_VRRC = 1856
+    RFID = 1856
 
-    SELECT_CC_VSFRC = 1857
+    RFMCI = 1857
 
-    SELECT_CC_VSRC = 1858
+    RLDCL = 1858
 
-    SELECT_CC_VSSRC = 1859
+    RLDCL_rec = 1859
 
-    SELECT_F16 = 1860
+    RLDCR = 1860
 
-    SELECT_F4 = 1861
+    RLDCR_rec = 1861
 
-    SELECT_F8 = 1862
+    RLDIC = 1862
 
-    SELECT_I4 = 1863
+    RLDICL = 1863
 
-    SELECT_I8 = 1864
+    RLDICL_32 = 1864
 
-    SELECT_SPE = 1865
+    RLDICL_32_64 = 1865
 
-    SELECT_SPE4 = 1866
+    RLDICL_32_rec = 1866
 
-    SELECT_VRRC = 1867
+    RLDICL_rec = 1867
 
-    SELECT_VSFRC = 1868
+    RLDICR = 1868
 
-    SELECT_VSRC = 1869
+    RLDICR_32 = 1869
 
-    SELECT_VSSRC = 1870
+    RLDICR_rec = 1870
 
-    SETB = 1871
+    RLDIC_rec = 1871
 
-    SETB8 = 1872
+    RLDIMI = 1872
 
-    SETBC = 1873
+    RLDIMI_rec = 1873
 
-    SETBC8 = 1874
+    RLWIMI = 1874
 
-    SETBCR = 1875
+    RLWIMI8 = 1875
 
-    SETBCR8 = 1876
+    RLWIMI8_rec = 1876
 
-    SETFLM = 1877
+    RLWIMI_rec = 1877
 
-    SETNBC = 1878
+    RLWINM = 1878
 
-    SETNBC8 = 1879
+    RLWINM8 = 1879
 
-    SETNBCR = 1880
+    RLWINM8_rec = 1880
 
-    SETNBCR8 = 1881
+    RLWINM_rec = 1881
 
-    SETRND = 1882
+    RLWNM = 1882
 
-    SETRNDi = 1883
+    RLWNM8 = 1883
 
-    SLBFEE_rec = 1884
+    RLWNM8_rec = 1884
 
-    SLBIA = 1885
+    RLWNM_rec = 1885
 
-    SLBIE = 1886
+    ReadTB = 1886
 
-    SLBIEG = 1887
+    SC = 1887
 
-    SLBMFEE = 1888
+    SCV = 1888
 
-    SLBMFEV = 1889
+    SELECT_CC_F16 = 1889
 
-    SLBMTE = 1890
+    SELECT_CC_F4 = 1890
 
-    SLBSYNC = 1891
+    SELECT_CC_F8 = 1891
 
-    SLD = 1892
+    SELECT_CC_I4 = 1892
 
-    SLD_rec = 1893
+    SELECT_CC_I8 = 1893
 
-    SLW = 1894
+    SELECT_CC_SPE = 1894
 
-    SLW8 = 1895
+    SELECT_CC_SPE4 = 1895
 
-    SLW8_rec = 1896
+    SELECT_CC_VRRC = 1896
 
-    SLW_rec = 1897
+    SELECT_CC_VSFRC = 1897
 
-    SPELWZ = 1898
+    SELECT_CC_VSRC = 1898
 
-    SPELWZX = 1899
+    SELECT_CC_VSSRC = 1899
 
-    SPESTW = 1900
+    SELECT_F16 = 1900
 
-    SPESTWX = 1901
+    SELECT_F4 = 1901
 
-    SPILL_ACC = 1902
+    SELECT_F8 = 1902
 
-    SPILL_CR = 1903
+    SELECT_I4 = 1903
 
-    SPILL_CRBIT = 1904
+    SELECT_I8 = 1904
 
-    SPILL_QUADWORD = 1905
+    SELECT_SPE = 1905
 
-    SPILL_UACC = 1906
+    SELECT_SPE4 = 1906
 
-    SPILL_WACC = 1907
+    SELECT_VRRC = 1907
 
-    SPLIT_QUADWORD = 1908
+    SELECT_VSFRC = 1908
 
-    SRAD = 1909
+    SELECT_VSRC = 1909
 
-    SRADI = 1910
+    SELECT_VSSRC = 1910
 
-    SRADI_32 = 1911
+    SETB = 1911
 
-    SRADI_rec = 1912
+    SETB8 = 1912
 
-    SRAD_rec = 1913
+    SETBC = 1913
 
-    SRAW = 1914
+    SETBC8 = 1914
 
-    SRAW8 = 1915
+    SETBCR = 1915
 
-    SRAW8_rec = 1916
+    SETBCR8 = 1916
 
-    SRAWI = 1917
+    SETFLM = 1917
 
-    SRAWI8 = 1918
+    SETNBC = 1918
 
-    SRAWI8_rec = 1919
+    SETNBC8 = 1919
 
-    SRAWI_rec = 1920
+    SETNBCR = 1920
 
-    SRAW_rec = 1921
+    SETNBCR8 = 1921
 
-    SRD = 1922
+    SETRND = 1922
 
-    SRD_rec = 1923
+    SETRNDi = 1923
 
-    SRW = 1924
+    SLBFEE_rec = 1924
 
-    SRW8 = 1925
+    SLBIA = 1925
 
-    SRW8_rec = 1926
+    SLBIE = 1926
 
-    SRW_rec = 1927
+    SLBIEG = 1927
 
-    STB = 1928
+    SLBMFEE = 1928
 
-    STB8 = 1929
+    SLBMFEV = 1929
 
-    STBCIX = 1930
+    SLBMTE = 1930
 
-    STBCX = 1931
+    SLBSYNC = 1931
 
-    STBEPX = 1932
+    SLD = 1932
 
-    STBU = 1933
+    SLD_rec = 1933
 
-    STBU8 = 1934
+    SLW = 1934
 
-    STBUX = 1935
+    SLW8 = 1935
 
-    STBUX8 = 1936
+    SLW8_rec = 1936
 
-    STBX = 1937
+    SLW_rec = 1937
 
-    STBX8 = 1938
+    SPELWZ = 1938
 
-    STBXTLS = 1939
+    SPELWZX = 1939
 
-    STBXTLS_32 = 1941
+    SPESTW = 1940
 
-    STD = 1942
+    SPESTWX = 1941
 
-    STDAT = 1943
+    SPILL_ACC = 1942
 
-    STDBRX = 1944
+    SPILL_CR = 1943
 
-    STDCIX = 1945
+    SPILL_CRBIT = 1944
 
-    STDCX = 1946
+    SPILL_DMR = 1945
 
-    STDU = 1947
+    SPILL_DMRP = 1946
 
-    STDUX = 1948
+    SPILL_QUADWORD = 1947
 
-    STDX = 1949
+    SPILL_UACC = 1948
 
-    STDXTLS = 1950
+    SPILL_WACC = 1949
 
-    STFD = 1952
+    SPLIT_QUADWORD = 1950
 
-    STFDEPX = 1953
+    SRAD = 1951
 
-    STFDU = 1954
+    SRADI = 1952
 
-    STFDUX = 1955
+    SRADI_32 = 1953
 
-    STFDX = 1956
+    SRADI_rec = 1954
 
-    STFDXTLS = 1957
+    SRAD_rec = 1955
 
-    STFIWX = 1959
+    SRAW = 1956
 
-    STFS = 1960
+    SRAW8 = 1957
 
-    STFSU = 1961
+    SRAW8_rec = 1958
 
-    STFSUX = 1962
+    SRAWI = 1959
 
-    STFSX = 1963
+    SRAWI8 = 1960
 
-    STFSXTLS = 1964
+    SRAWI8_rec = 1961
 
-    STH = 1966
+    SRAWI_rec = 1962
 
-    STH8 = 1967
+    SRAW_rec = 1963
 
-    STHBRX = 1968
+    SRD = 1964
 
-    STHCIX = 1969
+    SRD_rec = 1965
 
-    STHCX = 1970
+    SRW = 1966
 
-    STHEPX = 1971
+    SRW8 = 1967
 
-    STHU = 1972
+    SRW8_rec = 1968
 
-    STHU8 = 1973
+    SRW_rec = 1969
 
-    STHUX = 1974
+    STB = 1970
 
-    STHUX8 = 1975
+    STB8 = 1971
 
-    STHX = 1976
+    STBCIX = 1972
 
-    STHX8 = 1977
+    STBCX = 1973
 
-    STHXTLS = 1978
+    STBEPX = 1974
 
-    STHXTLS_32 = 1980
+    STBU = 1975
 
-    STMW = 1981
+    STBU8 = 1976
 
-    STOP = 1982
+    STBUX = 1977
 
-    STQ = 1983
+    STBUX8 = 1978
 
-    STQCX = 1984
+    STBX = 1979
 
-    STQX_PSEUDO = 1985
+    STBX8 = 1980
 
-    STSWI = 1986
+    STBXTLS = 1981
 
-    STVEBX = 1987
+    STBXTLS_32 = 1983
 
-    STVEHX = 1988
+    STD = 1984
 
-    STVEWX = 1989
+    STDAT = 1985
 
-    STVX = 1990
+    STDBRX = 1986
 
-    STVXL = 1991
+    STDCIX = 1987
 
-    STW = 1992
+    STDCX = 1988
 
-    STW8 = 1993
+    STDU = 1989
 
-    STWAT = 1994
+    STDUX = 1990
 
-    STWBRX = 1995
+    STDX = 1991
 
-    STWCIX = 1996
+    STDXTLS = 1992
 
-    STWCX = 1997
+    STFD = 1994
 
-    STWEPX = 1998
+    STFDEPX = 1995
 
-    STWU = 1999
+    STFDU = 1996
 
-    STWU8 = 2000
+    STFDUX = 1997
 
-    STWUX = 2001
+    STFDX = 1998
 
-    STWUX8 = 2002
+    STFDXTLS = 1999
 
-    STWX = 2003
+    STFIWX = 2001
 
-    STWX8 = 2004
+    STFS = 2002
 
-    STWXTLS = 2005
+    STFSU = 2003
 
-    STWXTLS_32 = 2007
+    STFSUX = 2004
 
-    STXSD = 2008
+    STFSX = 2005
 
-    STXSDX = 2009
+    STFSXTLS = 2006
 
-    STXSIBX = 2010
+    STH = 2008
 
-    STXSIBXv = 2011
+    STH8 = 2009
 
-    STXSIHX = 2012
+    STHBRX = 2010
 
-    STXSIHXv = 2013
+    STHCIX = 2011
 
-    STXSIWX = 2014
+    STHCX = 2012
 
-    STXSSP = 2015
+    STHEPX = 2013
 
-    STXSSPX = 2016
+    STHU = 2014
 
-    STXV = 2017
+    STHU8 = 2015
 
-    STXVB16X = 2018
+    STHUX = 2016
 
-    STXVD2X = 2019
+    STHUX8 = 2017
 
-    STXVH8X = 2020
+    STHX = 2018
 
-    STXVL = 2021
+    STHX8 = 2019
 
-    STXVLL = 2022
+    STHXTLS = 2020
 
-    STXVP = 2023
+    STHXTLS_32 = 2022
 
-    STXVPRL = 2024
+    STMW = 2023
 
-    STXVPRLL = 2025
+    STOP = 2024
 
-    STXVPX = 2026
+    STQ = 2025
 
-    STXVRBX = 2027
+    STQCX = 2026
 
-    STXVRDX = 2028
+    STQX_PSEUDO = 2027
 
-    STXVRHX = 2029
+    STSWI = 2028
 
-    STXVRL = 2030
+    STVEBX = 2029
 
-    STXVRLL = 2031
+    STVEHX = 2030
 
-    STXVRWX = 2032
+    STVEWX = 2031
 
-    STXVW4X = 2033
+    STVX = 2032
 
-    STXVX = 2034
+    STVXL = 2033
 
-    SUBF = 2035
+    STW = 2034
 
-    SUBF8 = 2036
+    STW8 = 2035
 
-    SUBF8O = 2037
+    STWAT = 2036
 
-    SUBF8O_rec = 2038
+    STWBRX = 2037
 
-    SUBF8_rec = 2039
+    STWCIX = 2038
 
-    SUBFC = 2040
+    STWCX = 2039
 
-    SUBFC8 = 2041
+    STWEPX = 2040
 
-    SUBFC8O = 2042
+    STWU = 2041
 
-    SUBFC8O_rec = 2043
+    STWU8 = 2042
 
-    SUBFC8_rec = 2044
+    STWUX = 2043
 
-    SUBFCO = 2045
+    STWUX8 = 2044
 
-    SUBFCO_rec = 2046
+    STWX = 2045
 
-    SUBFC_rec = 2047
+    STWX8 = 2046
 
-    SUBFE = 2048
+    STWXTLS = 2047
 
-    SUBFE8 = 2049
+    STWXTLS_32 = 2049
 
-    SUBFE8O = 2050
+    STXSD = 2050
 
-    SUBFE8O_rec = 2051
+    STXSDX = 2051
 
-    SUBFE8_rec = 2052
+    STXSIBX = 2052
 
-    SUBFEO = 2053
+    STXSIBXv = 2053
 
-    SUBFEO_rec = 2054
+    STXSIHX = 2054
 
-    SUBFE_rec = 2055
+    STXSIHXv = 2055
 
-    SUBFIC = 2056
+    STXSIWX = 2056
 
-    SUBFIC8 = 2057
+    STXSSP = 2057
 
-    SUBFME = 2058
+    STXSSPX = 2058
 
-    SUBFME8 = 2059
+    STXV = 2059
 
-    SUBFME8O = 2060
+    STXVB16X = 2060
 
-    SUBFME8O_rec = 2061
+    STXVD2X = 2061
 
-    SUBFME8_rec = 2062
+    STXVH8X = 2062
 
-    SUBFMEO = 2063
+    STXVL = 2063
 
-    SUBFMEO_rec = 2064
+    STXVLL = 2064
 
-    SUBFME_rec = 2065
+    STXVP = 2065
 
-    SUBFO = 2066
+    STXVPRL = 2066
 
-    SUBFO_rec = 2067
+    STXVPRLL = 2067
 
-    SUBFUS = 2068
+    STXVPX = 2068
 
-    SUBFUS_rec = 2069
+    STXVRBX = 2069
 
-    SUBFZE = 2070
+    STXVRDX = 2070
 
-    SUBFZE8 = 2071
+    STXVRHX = 2071
 
-    SUBFZE8O = 2072
+    STXVRL = 2072
 
-    SUBFZE8O_rec = 2073
+    STXVRLL = 2073
 
-    SUBFZE8_rec = 2074
+    STXVRWX = 2074
 
-    SUBFZEO = 2075
+    STXVW4X = 2075
 
-    SUBFZEO_rec = 2076
+    STXVX = 2076
 
-    SUBFZE_rec = 2077
+    SUBF = 2077
 
-    SUBF_rec = 2078
+    SUBF8 = 2078
 
-    SYNC = 2079
+    SUBF8O = 2079
 
-    SYNCP10 = 2080
+    SUBF8O_rec = 2080
 
-    TABORT = 2081
+    SUBF8_rec = 2081
 
-    TABORTDC = 2082
+    SUBFC = 2082
 
-    TABORTDCI = 2083
+    SUBFC8 = 2083
 
-    TABORTWC = 2084
+    SUBFC8O = 2084
 
-    TABORTWCI = 2085
+    SUBFC8O_rec = 2085
 
-    TAILB = 2086
+    SUBFC8_rec = 2086
 
-    TAILB8 = 2087
+    SUBFCO = 2087
 
-    TAILBA = 2088
+    SUBFCO_rec = 2088
 
-    TAILBA8 = 2089
+    SUBFC_rec = 2089
 
-    TAILBCTR = 2090
+    SUBFE = 2090
 
-    TAILBCTR8 = 2091
+    SUBFE8 = 2091
 
-    TBEGIN = 2092
+    SUBFE8O = 2092
 
-    TBEGIN_RET = 2093
+    SUBFE8O_rec = 2093
 
-    TCHECK = 2094
+    SUBFE8_rec = 2094
 
-    TCHECK_RET = 2095
+    SUBFEO = 2095
 
-    TCRETURNai = 2096
+    SUBFEO_rec = 2096
 
-    TCRETURNai8 = 2097
+    SUBFE_rec = 2097
 
-    TCRETURNdi = 2098
+    SUBFIC = 2098
 
-    TCRETURNdi8 = 2099
+    SUBFIC8 = 2099
 
-    TCRETURNri = 2100
+    SUBFME = 2100
 
-    TCRETURNri8 = 2101
+    SUBFME8 = 2101
 
-    TD = 2102
+    SUBFME8O = 2102
 
-    TDI = 2103
+    SUBFME8O_rec = 2103
 
-    TEND = 2104
+    SUBFME8_rec = 2104
 
-    TLBIA = 2105
+    SUBFMEO = 2105
 
-    TLBIE = 2106
+    SUBFMEO_rec = 2106
 
-    TLBIEL = 2107
+    SUBFME_rec = 2107
 
-    TLBILX = 2108
+    SUBFO = 2108
 
-    TLBIVAX = 2109
+    SUBFO_rec = 2109
 
-    TLBLD = 2110
+    SUBFUS = 2110
 
-    TLBLI = 2111
+    SUBFUS_rec = 2111
 
-    TLBRE = 2112
+    SUBFZE = 2112
 
-    TLBRE2 = 2113
+    SUBFZE8 = 2113
 
-    TLBSX = 2114
+    SUBFZE8O = 2114
 
-    TLBSX2 = 2115
+    SUBFZE8O_rec = 2115
 
-    TLBSX2D = 2116
+    SUBFZE8_rec = 2116
 
-    TLBSYNC = 2117
+    SUBFZEO = 2117
 
-    TLBWE = 2118
+    SUBFZEO_rec = 2118
 
-    TLBWE2 = 2119
+    SUBFZE_rec = 2119
 
-    TLSGDAIX = 2120
+    SUBF_rec = 2120
 
-    TLSGDAIX8 = 2121
+    SYNC = 2121
 
-    TLSLDAIX = 2122
+    SYNCP10 = 2122
 
-    TLSLDAIX8 = 2123
+    TABORT = 2123
 
-    TRAP = 2124
+    TABORTDC = 2124
 
-    TRECHKPT = 2125
+    TABORTDCI = 2125
 
-    TRECLAIM = 2126
+    TABORTWC = 2126
 
-    TSR = 2127
+    TABORTWCI = 2127
 
-    TW = 2128
+    TAILB = 2128
 
-    TWI = 2129
+    TAILB8 = 2129
 
-    UNENCODED_NOP = 2130
+    TAILBA = 2130
 
-    UpdateGBR = 2131
+    TAILBA8 = 2131
 
-    VABSDUB = 2132
+    TAILBCTR = 2132
 
-    VABSDUH = 2133
+    TAILBCTR8 = 2133
 
-    VABSDUW = 2134
+    TBEGIN = 2134
 
-    VADDCUQ = 2135
+    TBEGIN_RET = 2135
 
-    VADDCUW = 2136
+    TCHECK = 2136
 
-    VADDECUQ = 2137
+    TCHECK_RET = 2137
 
-    VADDEUQM = 2138
+    TCRETURNai = 2138
 
-    VADDFP = 2139
+    TCRETURNai8 = 2139
 
-    VADDSBS = 2140
+    TCRETURNdi = 2140
 
-    VADDSHS = 2141
+    TCRETURNdi8 = 2141
 
-    VADDSWS = 2142
+    TCRETURNri = 2142
 
-    VADDUBM = 2143
+    TCRETURNri8 = 2143
 
-    VADDUBS = 2144
+    TD = 2144
 
-    VADDUDM = 2145
+    TDI = 2145
 
-    VADDUHM = 2146
+    TEND = 2146
 
-    VADDUHS = 2147
+    TLBIA = 2147
 
-    VADDUQM = 2148
+    TLBIE = 2148
 
-    VADDUWM = 2149
+    TLBIEL = 2149
 
-    VADDUWS = 2150
+    TLBILX = 2150
 
-    VAND = 2151
+    TLBIVAX = 2151
 
-    VANDC = 2152
+    TLBLD = 2152
 
-    VAVGSB = 2153
+    TLBLI = 2153
 
-    VAVGSH = 2154
+    TLBRE = 2154
 
-    VAVGSW = 2155
+    TLBRE2 = 2155
 
-    VAVGUB = 2156
+    TLBSX = 2156
 
-    VAVGUH = 2157
+    TLBSX2 = 2157
 
-    VAVGUW = 2158
+    TLBSX2D = 2158
 
-    VBPERMD = 2159
+    TLBSYNC = 2159
 
-    VBPERMQ = 2160
+    TLBWE = 2160
 
-    VCFSX = 2161
+    TLBWE2 = 2161
 
-    VCFSX_0 = 2162
+    TLSGDAIX = 2162
 
-    VCFUGED = 2163
+    TLSGDAIX8 = 2163
 
-    VCFUX = 2164
+    TLSLDAIX = 2164
 
-    VCFUX_0 = 2165
+    TLSLDAIX8 = 2165
 
-    VCIPHER = 2166
+    TRAP = 2166
 
-    VCIPHERLAST = 2167
+    TRECHKPT = 2167
 
-    VCLRLB = 2168
+    TRECLAIM = 2168
 
-    VCLRRB = 2169
+    TSR = 2169
 
-    VCLZB = 2170
+    TW = 2170
 
-    VCLZD = 2171
+    TWI = 2171
 
-    VCLZDM = 2172
+    UNENCODED_NOP = 2172
 
-    VCLZH = 2173
+    UpdateGBR = 2173
 
-    VCLZLSBB = 2174
+    VABSDUB = 2174
 
-    VCLZW = 2175
+    VABSDUH = 2175
 
-    VCMPBFP = 2176
+    VABSDUW = 2176
 
-    VCMPBFP_rec = 2177
+    VADDCUQ = 2177
 
-    VCMPEQFP = 2178
+    VADDCUW = 2178
 
-    VCMPEQFP_rec = 2179
+    VADDECUQ = 2179
 
-    VCMPEQUB = 2180
+    VADDEUQM = 2180
 
-    VCMPEQUB_rec = 2181
+    VADDFP = 2181
 
-    VCMPEQUD = 2182
+    VADDSBS = 2182
 
-    VCMPEQUD_rec = 2183
+    VADDSHS = 2183
 
-    VCMPEQUH = 2184
+    VADDSWS = 2184
 
-    VCMPEQUH_rec = 2185
+    VADDUBM = 2185
 
-    VCMPEQUQ = 2186
+    VADDUBS = 2186
 
-    VCMPEQUQ_rec = 2187
+    VADDUDM = 2187
 
-    VCMPEQUW = 2188
+    VADDUHM = 2188
 
-    VCMPEQUW_rec = 2189
+    VADDUHS = 2189
 
-    VCMPGEFP = 2190
+    VADDUQM = 2190
 
-    VCMPGEFP_rec = 2191
+    VADDUWM = 2191
 
-    VCMPGTFP = 2192
+    VADDUWS = 2192
 
-    VCMPGTFP_rec = 2193
+    VAND = 2193
 
-    VCMPGTSB = 2194
+    VANDC = 2194
 
-    VCMPGTSB_rec = 2195
+    VAVGSB = 2195
 
-    VCMPGTSD = 2196
+    VAVGSH = 2196
 
-    VCMPGTSD_rec = 2197
+    VAVGSW = 2197
 
-    VCMPGTSH = 2198
+    VAVGUB = 2198
 
-    VCMPGTSH_rec = 2199
+    VAVGUH = 2199
 
-    VCMPGTSQ = 2200
+    VAVGUW = 2200
 
-    VCMPGTSQ_rec = 2201
+    VBPERMD = 2201
 
-    VCMPGTSW = 2202
+    VBPERMQ = 2202
 
-    VCMPGTSW_rec = 2203
+    VCFSX = 2203
 
-    VCMPGTUB = 2204
+    VCFSX_0 = 2204
 
-    VCMPGTUB_rec = 2205
+    VCFUGED = 2205
 
-    VCMPGTUD = 2206
+    VCFUX = 2206
 
-    VCMPGTUD_rec = 2207
+    VCFUX_0 = 2207
 
-    VCMPGTUH = 2208
+    VCIPHER = 2208
 
-    VCMPGTUH_rec = 2209
+    VCIPHERLAST = 2209
 
-    VCMPGTUQ = 2210
+    VCLRLB = 2210
 
-    VCMPGTUQ_rec = 2211
+    VCLRRB = 2211
 
-    VCMPGTUW = 2212
+    VCLZB = 2212
 
-    VCMPGTUW_rec = 2213
+    VCLZD = 2213
 
-    VCMPNEB = 2214
+    VCLZDM = 2214
 
-    VCMPNEB_rec = 2215
+    VCLZH = 2215
 
-    VCMPNEH = 2216
+    VCLZLSBB = 2216
 
-    VCMPNEH_rec = 2217
+    VCLZW = 2217
 
-    VCMPNEW = 2218
+    VCMPBFP = 2218
 
-    VCMPNEW_rec = 2219
+    VCMPBFP_rec = 2219
 
-    VCMPNEZB = 2220
+    VCMPEQFP = 2220
 
-    VCMPNEZB_rec = 2221
+    VCMPEQFP_rec = 2221
 
-    VCMPNEZH = 2222
+    VCMPEQUB = 2222
 
-    VCMPNEZH_rec = 2223
+    VCMPEQUB_rec = 2223
 
-    VCMPNEZW = 2224
+    VCMPEQUD = 2224
 
-    VCMPNEZW_rec = 2225
+    VCMPEQUD_rec = 2225
 
-    VCMPSQ = 2226
+    VCMPEQUH = 2226
 
-    VCMPUQ = 2227
+    VCMPEQUH_rec = 2227
 
-    VCNTMBB = 2228
+    VCMPEQUQ = 2228
 
-    VCNTMBD = 2229
+    VCMPEQUQ_rec = 2229
 
-    VCNTMBH = 2230
+    VCMPEQUW = 2230
 
-    VCNTMBW = 2231
+    VCMPEQUW_rec = 2231
 
-    VCTSXS = 2232
+    VCMPGEFP = 2232
 
-    VCTSXS_0 = 2233
+    VCMPGEFP_rec = 2233
 
-    VCTUXS = 2234
+    VCMPGTFP = 2234
 
-    VCTUXS_0 = 2235
+    VCMPGTFP_rec = 2235
 
-    VCTZB = 2236
+    VCMPGTSB = 2236
 
-    VCTZD = 2237
+    VCMPGTSB_rec = 2237
 
-    VCTZDM = 2238
+    VCMPGTSD = 2238
 
-    VCTZH = 2239
+    VCMPGTSD_rec = 2239
 
-    VCTZLSBB = 2240
+    VCMPGTSH = 2240
 
-    VCTZW = 2241
+    VCMPGTSH_rec = 2241
 
-    VDIVESD = 2242
+    VCMPGTSQ = 2242
 
-    VDIVESQ = 2243
+    VCMPGTSQ_rec = 2243
 
-    VDIVESW = 2244
+    VCMPGTSW = 2244
 
-    VDIVEUD = 2245
+    VCMPGTSW_rec = 2245
 
-    VDIVEUQ = 2246
+    VCMPGTUB = 2246
 
-    VDIVEUW = 2247
+    VCMPGTUB_rec = 2247
 
-    VDIVSD = 2248
+    VCMPGTUD = 2248
 
-    VDIVSQ = 2249
+    VCMPGTUD_rec = 2249
 
-    VDIVSW = 2250
+    VCMPGTUH = 2250
 
-    VDIVUD = 2251
+    VCMPGTUH_rec = 2251
 
-    VDIVUQ = 2252
+    VCMPGTUQ = 2252
 
-    VDIVUW = 2253
+    VCMPGTUQ_rec = 2253
 
-    VEQV = 2254
+    VCMPGTUW = 2254
 
-    VEXPANDBM = 2255
+    VCMPGTUW_rec = 2255
 
-    VEXPANDDM = 2256
+    VCMPNEB = 2256
 
-    VEXPANDHM = 2257
+    VCMPNEB_rec = 2257
 
-    VEXPANDQM = 2258
+    VCMPNEH = 2258
 
-    VEXPANDWM = 2259
+    VCMPNEH_rec = 2259
 
-    VEXPTEFP = 2260
+    VCMPNEW = 2260
 
-    VEXTDDVLX = 2261
+    VCMPNEW_rec = 2261
 
-    VEXTDDVRX = 2262
+    VCMPNEZB = 2262
 
-    VEXTDUBVLX = 2263
+    VCMPNEZB_rec = 2263
 
-    VEXTDUBVRX = 2264
+    VCMPNEZH = 2264
 
-    VEXTDUHVLX = 2265
+    VCMPNEZH_rec = 2265
 
-    VEXTDUHVRX = 2266
+    VCMPNEZW = 2266
 
-    VEXTDUWVLX = 2267
+    VCMPNEZW_rec = 2267
 
-    VEXTDUWVRX = 2268
+    VCMPSQ = 2268
 
-    VEXTRACTBM = 2269
+    VCMPUQ = 2269
 
-    VEXTRACTD = 2270
+    VCNTMBB = 2270
 
-    VEXTRACTDM = 2271
+    VCNTMBD = 2271
 
-    VEXTRACTHM = 2272
+    VCNTMBH = 2272
 
-    VEXTRACTQM = 2273
+    VCNTMBW = 2273
 
-    VEXTRACTUB = 2274
+    VCTSXS = 2274
 
-    VEXTRACTUH = 2275
+    VCTSXS_0 = 2275
 
-    VEXTRACTUW = 2276
+    VCTUXS = 2276
 
-    VEXTRACTWM = 2277
+    VCTUXS_0 = 2277
 
-    VEXTSB2D = 2278
+    VCTZB = 2278
 
-    VEXTSB2Ds = 2279
+    VCTZD = 2279
 
-    VEXTSB2W = 2280
+    VCTZDM = 2280
 
-    VEXTSB2Ws = 2281
+    VCTZH = 2281
 
-    VEXTSD2Q = 2282
+    VCTZLSBB = 2282
 
-    VEXTSH2D = 2283
+    VCTZW = 2283
 
-    VEXTSH2Ds = 2284
+    VDIVESD = 2284
 
-    VEXTSH2W = 2285
+    VDIVESQ = 2285
 
-    VEXTSH2Ws = 2286
+    VDIVESW = 2286
 
-    VEXTSW2D = 2287
+    VDIVEUD = 2287
 
-    VEXTSW2Ds = 2288
+    VDIVEUQ = 2288
 
-    VEXTUBLX = 2289
+    VDIVEUW = 2289
 
-    VEXTUBRX = 2290
+    VDIVSD = 2290
 
-    VEXTUHLX = 2291
+    VDIVSQ = 2291
 
-    VEXTUHRX = 2292
+    VDIVSW = 2292
 
-    VEXTUWLX = 2293
+    VDIVUD = 2293
 
-    VEXTUWRX = 2294
+    VDIVUQ = 2294
 
-    VGBBD = 2295
+    VDIVUW = 2295
 
-    VGNB = 2296
+    VEQV = 2296
 
-    VINSBLX = 2297
+    VEXPANDBM = 2297
 
-    VINSBRX = 2298
+    VEXPANDDM = 2298
 
-    VINSBVLX = 2299
+    VEXPANDHM = 2299
 
-    VINSBVRX = 2300
+    VEXPANDQM = 2300
 
-    VINSD = 2301
+    VEXPANDWM = 2301
 
-    VINSDLX = 2302
+    VEXPTEFP = 2302
 
-    VINSDRX = 2303
+    VEXTDDVLX = 2303
 
-    VINSERTB = 2304
+    VEXTDDVRX = 2304
 
-    VINSERTD = 2305
+    VEXTDUBVLX = 2305
 
-    VINSERTH = 2306
+    VEXTDUBVRX = 2306
 
-    VINSERTW = 2307
+    VEXTDUHVLX = 2307
 
-    VINSHLX = 2308
+    VEXTDUHVRX = 2308
 
-    VINSHRX = 2309
+    VEXTDUWVLX = 2309
 
-    VINSHVLX = 2310
+    VEXTDUWVRX = 2310
 
-    VINSHVRX = 2311
+    VEXTRACTBM = 2311
 
-    VINSW = 2312
+    VEXTRACTD = 2312
 
-    VINSWLX = 2313
+    VEXTRACTDM = 2313
 
-    VINSWRX = 2314
+    VEXTRACTHM = 2314
 
-    VINSWVLX = 2315
+    VEXTRACTQM = 2315
 
-    VINSWVRX = 2316
+    VEXTRACTUB = 2316
 
-    VLOGEFP = 2317
+    VEXTRACTUH = 2317
 
-    VMADDFP = 2318
+    VEXTRACTUW = 2318
 
-    VMAXFP = 2319
+    VEXTRACTWM = 2319
 
-    VMAXSB = 2320
+    VEXTSB2D = 2320
 
-    VMAXSD = 2321
+    VEXTSB2Ds = 2321
 
-    VMAXSH = 2322
+    VEXTSB2W = 2322
 
-    VMAXSW = 2323
+    VEXTSB2Ws = 2323
 
-    VMAXUB = 2324
+    VEXTSD2Q = 2324
 
-    VMAXUD = 2325
+    VEXTSH2D = 2325
 
-    VMAXUH = 2326
+    VEXTSH2Ds = 2326
 
-    VMAXUW = 2327
+    VEXTSH2W = 2327
 
-    VMHADDSHS = 2328
+    VEXTSH2Ws = 2328
 
-    VMHRADDSHS = 2329
+    VEXTSW2D = 2329
 
-    VMINFP = 2330
+    VEXTSW2Ds = 2330
 
-    VMINSB = 2331
+    VEXTUBLX = 2331
 
-    VMINSD = 2332
+    VEXTUBRX = 2332
 
-    VMINSH = 2333
+    VEXTUHLX = 2333
 
-    VMINSW = 2334
+    VEXTUHRX = 2334
 
-    VMINUB = 2335
+    VEXTUWLX = 2335
 
-    VMINUD = 2336
+    VEXTUWRX = 2336
 
-    VMINUH = 2337
+    VGBBD = 2337
 
-    VMINUW = 2338
+    VGNB = 2338
 
-    VMLADDUHM = 2339
+    VINSBLX = 2339
 
-    VMODSD = 2340
+    VINSBRX = 2340
 
-    VMODSQ = 2341
+    VINSBVLX = 2341
 
-    VMODSW = 2342
+    VINSBVRX = 2342
 
-    VMODUD = 2343
+    VINSD = 2343
 
-    VMODUQ = 2344
+    VINSDLX = 2344
 
-    VMODUW = 2345
+    VINSDRX = 2345
 
-    VMRGEW = 2346
+    VINSERTB = 2346
 
-    VMRGHB = 2347
+    VINSERTD = 2347
 
-    VMRGHH = 2348
+    VINSERTH = 2348
 
-    VMRGHW = 2349
+    VINSERTW = 2349
 
-    VMRGLB = 2350
+    VINSHLX = 2350
 
-    VMRGLH = 2351
+    VINSHRX = 2351
 
-    VMRGLW = 2352
+    VINSHVLX = 2352
 
-    VMRGOW = 2353
+    VINSHVRX = 2353
 
-    VMSUMCUD = 2354
+    VINSW = 2354
 
-    VMSUMMBM = 2355
+    VINSWLX = 2355
 
-    VMSUMSHM = 2356
+    VINSWRX = 2356
 
-    VMSUMSHS = 2357
+    VINSWVLX = 2357
 
-    VMSUMUBM = 2358
+    VINSWVRX = 2358
 
-    VMSUMUDM = 2359
+    VLOGEFP = 2359
 
-    VMSUMUHM = 2360
+    VMADDFP = 2360
 
-    VMSUMUHS = 2361
+    VMAXFP = 2361
 
-    VMUL10CUQ = 2362
+    VMAXSB = 2362
 
-    VMUL10ECUQ = 2363
+    VMAXSD = 2363
 
-    VMUL10EUQ = 2364
+    VMAXSH = 2364
 
-    VMUL10UQ = 2365
+    VMAXSW = 2365
 
-    VMULESB = 2366
+    VMAXUB = 2366
 
-    VMULESD = 2367
+    VMAXUD = 2367
 
-    VMULESH = 2368
+    VMAXUH = 2368
 
-    VMULESW = 2369
+    VMAXUW = 2369
 
-    VMULEUB = 2370
+    VMHADDSHS = 2370
 
-    VMULEUD = 2371
+    VMHRADDSHS = 2371
 
-    VMULEUH = 2372
+    VMINFP = 2372
 
-    VMULEUW = 2373
+    VMINSB = 2373
 
-    VMULHSD = 2374
+    VMINSD = 2374
 
-    VMULHSW = 2375
+    VMINSH = 2375
 
-    VMULHUD = 2376
+    VMINSW = 2376
 
-    VMULHUW = 2377
+    VMINUB = 2377
 
-    VMULLD = 2378
+    VMINUD = 2378
 
-    VMULOSB = 2379
+    VMINUH = 2379
 
-    VMULOSD = 2380
+    VMINUW = 2380
 
-    VMULOSH = 2381
+    VMLADDUHM = 2381
 
-    VMULOSW = 2382
+    VMODSD = 2382
 
-    VMULOUB = 2383
+    VMODSQ = 2383
 
-    VMULOUD = 2384
+    VMODSW = 2384
 
-    VMULOUH = 2385
+    VMODUD = 2385
 
-    VMULOUW = 2386
+    VMODUQ = 2386
 
-    VMULUWM = 2387
+    VMODUW = 2387
 
-    VNAND = 2388
+    VMRGEW = 2388
 
-    VNCIPHER = 2389
+    VMRGHB = 2389
 
-    VNCIPHERLAST = 2390
+    VMRGHH = 2390
 
-    VNEGD = 2391
+    VMRGHW = 2391
 
-    VNEGW = 2392
+    VMRGLB = 2392
 
-    VNMSUBFP = 2393
+    VMRGLH = 2393
 
-    VNOR = 2394
+    VMRGLW = 2394
 
-    VOR = 2395
+    VMRGOW = 2395
 
-    VORC = 2396
+    VMSUMCUD = 2396
 
-    VPDEPD = 2397
+    VMSUMMBM = 2397
 
-    VPERM = 2398
+    VMSUMSHM = 2398
 
-    VPERMR = 2399
+    VMSUMSHS = 2399
 
-    VPERMXOR = 2400
+    VMSUMUBM = 2400
 
-    VPEXTD = 2401
+    VMSUMUDM = 2401
 
-    VPKPX = 2402
+    VMSUMUHM = 2402
 
-    VPKSDSS = 2403
+    VMSUMUHS = 2403
 
-    VPKSDUS = 2404
+    VMUL10CUQ = 2404
 
-    VPKSHSS = 2405
+    VMUL10ECUQ = 2405
 
-    VPKSHUS = 2406
+    VMUL10EUQ = 2406
 
-    VPKSWSS = 2407
+    VMUL10UQ = 2407
 
-    VPKSWUS = 2408
+    VMULESB = 2408
 
-    VPKUDUM = 2409
+    VMULESD = 2409
 
-    VPKUDUS = 2410
+    VMULESH = 2410
 
-    VPKUHUM = 2411
+    VMULESW = 2411
 
-    VPKUHUS = 2412
+    VMULEUB = 2412
 
-    VPKUWUM = 2413
+    VMULEUD = 2413
 
-    VPKUWUS = 2414
+    VMULEUH = 2414
 
-    VPMSUMB = 2415
+    VMULEUW = 2415
 
-    VPMSUMD = 2416
+    VMULHSD = 2416
 
-    VPMSUMH = 2417
+    VMULHSW = 2417
 
-    VPMSUMW = 2418
+    VMULHUD = 2418
 
-    VPOPCNTB = 2419
+    VMULHUW = 2419
 
-    VPOPCNTD = 2420
+    VMULLD = 2420
 
-    VPOPCNTH = 2421
+    VMULOSB = 2421
 
-    VPOPCNTW = 2422
+    VMULOSD = 2422
 
-    VPRTYBD = 2423
+    VMULOSH = 2423
 
-    VPRTYBQ = 2424
+    VMULOSW = 2424
 
-    VPRTYBW = 2425
+    VMULOUB = 2425
 
-    VREFP = 2426
+    VMULOUD = 2426
 
-    VRFIM = 2427
+    VMULOUH = 2427
 
-    VRFIN = 2428
+    VMULOUW = 2428
 
-    VRFIP = 2429
+    VMULUWM = 2429
 
-    VRFIZ = 2430
+    VNAND = 2430
 
-    VRLB = 2431
+    VNCIPHER = 2431
 
-    VRLD = 2432
+    VNCIPHERLAST = 2432
 
-    VRLDMI = 2433
+    VNEGD = 2433
 
-    VRLDNM = 2434
+    VNEGW = 2434
 
-    VRLH = 2435
+    VNMSUBFP = 2435
 
-    VRLQ = 2436
+    VNOR = 2436
 
-    VRLQMI = 2437
+    VOR = 2437
 
-    VRLQNM = 2438
+    VORC = 2438
 
-    VRLW = 2439
+    VPDEPD = 2439
 
-    VRLWMI = 2440
+    VPERM = 2440
 
-    VRLWNM = 2441
+    VPERMR = 2441
 
-    VRSQRTEFP = 2442
+    VPERMXOR = 2442
 
-    VSBOX = 2443
+    VPEXTD = 2443
 
-    VSEL = 2444
+    VPKPX = 2444
 
-    VSHASIGMAD = 2445
+    VPKSDSS = 2445
 
-    VSHASIGMAW = 2446
+    VPKSDUS = 2446
 
-    VSL = 2447
+    VPKSHSS = 2447
 
-    VSLB = 2448
+    VPKSHUS = 2448
 
-    VSLD = 2449
+    VPKSWSS = 2449
 
-    VSLDBI = 2450
+    VPKSWUS = 2450
 
-    VSLDOI = 2451
+    VPKUDUM = 2451
 
-    VSLH = 2452
+    VPKUDUS = 2452
 
-    VSLO = 2453
+    VPKUHUM = 2453
 
-    VSLQ = 2454
+    VPKUHUS = 2454
 
-    VSLV = 2455
+    VPKUWUM = 2455
 
-    VSLW = 2456
+    VPKUWUS = 2456
 
-    VSPLTB = 2457
+    VPMSUMB = 2457
 
-    VSPLTBs = 2458
+    VPMSUMD = 2458
 
-    VSPLTH = 2459
+    VPMSUMH = 2459
 
-    VSPLTHs = 2460
+    VPMSUMW = 2460
 
-    VSPLTISB = 2461
+    VPOPCNTB = 2461
 
-    VSPLTISH = 2462
+    VPOPCNTD = 2462
 
-    VSPLTISW = 2463
+    VPOPCNTH = 2463
 
-    VSPLTW = 2464
+    VPOPCNTW = 2464
 
-    VSR = 2465
+    VPRTYBD = 2465
 
-    VSRAB = 2466
+    VPRTYBQ = 2466
 
-    VSRAD = 2467
+    VPRTYBW = 2467
 
-    VSRAH = 2468
+    VREFP = 2468
 
-    VSRAQ = 2469
+    VRFIM = 2469
 
-    VSRAW = 2470
+    VRFIN = 2470
 
-    VSRB = 2471
+    VRFIP = 2471
 
-    VSRD = 2472
+    VRFIZ = 2472
 
-    VSRDBI = 2473
+    VRLB = 2473
 
-    VSRH = 2474
+    VRLD = 2474
 
-    VSRO = 2475
+    VRLDMI = 2475
 
-    VSRQ = 2476
+    VRLDNM = 2476
 
-    VSRV = 2477
+    VRLH = 2477
 
-    VSRW = 2478
+    VRLQ = 2478
 
-    VSTRIBL = 2479
+    VRLQMI = 2479
 
-    VSTRIBL_rec = 2480
+    VRLQNM = 2480
 
-    VSTRIBR = 2481
+    VRLW = 2481
 
-    VSTRIBR_rec = 2482
+    VRLWMI = 2482
 
-    VSTRIHL = 2483
+    VRLWNM = 2483
 
-    VSTRIHL_rec = 2484
+    VRSQRTEFP = 2484
 
-    VSTRIHR = 2485
+    VSBOX = 2485
 
-    VSTRIHR_rec = 2486
+    VSEL = 2486
 
-    VSUBCUQ = 2487
+    VSHASIGMAD = 2487
 
-    VSUBCUW = 2488
+    VSHASIGMAW = 2488
 
-    VSUBECUQ = 2489
+    VSL = 2489
 
-    VSUBEUQM = 2490
+    VSLB = 2490
 
-    VSUBFP = 2491
+    VSLD = 2491
 
-    VSUBSBS = 2492
+    VSLDBI = 2492
 
-    VSUBSHS = 2493
+    VSLDOI = 2493
 
-    VSUBSWS = 2494
+    VSLH = 2494
 
-    VSUBUBM = 2495
+    VSLO = 2495
 
-    VSUBUBS = 2496
+    VSLQ = 2496
 
-    VSUBUDM = 2497
+    VSLV = 2497
 
-    VSUBUHM = 2498
+    VSLW = 2498
 
-    VSUBUHS = 2499
+    VSPLTB = 2499
 
-    VSUBUQM = 2500
+    VSPLTBs = 2500
 
-    VSUBUWM = 2501
+    VSPLTH = 2501
 
-    VSUBUWS = 2502
+    VSPLTHs = 2502
 
-    VSUM2SWS = 2503
+    VSPLTISB = 2503
 
-    VSUM4SBS = 2504
+    VSPLTISH = 2504
 
-    VSUM4SHS = 2505
+    VSPLTISW = 2505
 
-    VSUM4UBS = 2506
+    VSPLTW = 2506
 
-    VSUMSWS = 2507
+    VSR = 2507
 
-    VUPKHPX = 2508
+    VSRAB = 2508
 
-    VUPKHSB = 2509
+    VSRAD = 2509
 
-    VUPKHSH = 2510
+    VSRAH = 2510
 
-    VUPKHSW = 2511
+    VSRAQ = 2511
 
-    VUPKLPX = 2512
+    VSRAW = 2512
 
-    VUPKLSB = 2513
+    VSRB = 2513
 
-    VUPKLSH = 2514
+    VSRD = 2514
 
-    VUPKLSW = 2515
+    VSRDBI = 2515
 
-    VXOR = 2516
+    VSRH = 2516
 
-    V_SET0 = 2517
+    VSRO = 2517
 
-    V_SET0B = 2518
+    VSRQ = 2518
 
-    V_SET0H = 2519
+    VSRV = 2519
 
-    V_SETALLONES = 2520
+    VSRW = 2520
 
-    V_SETALLONESB = 2521
+    VSTRIBL = 2521
 
-    V_SETALLONESH = 2522
+    VSTRIBL_rec = 2522
 
-    WAIT = 2523
+    VSTRIBR = 2523
 
-    WAITP10 = 2524
+    VSTRIBR_rec = 2524
 
-    WRTEE = 2525
+    VSTRIHL = 2525
 
-    WRTEEI = 2526
+    VSTRIHL_rec = 2526
 
-    XOR = 2527
+    VSTRIHR = 2527
 
-    XOR8 = 2528
+    VSTRIHR_rec = 2528
 
-    XOR8_rec = 2529
+    VSUBCUQ = 2529
 
-    XORI = 2530
+    VSUBCUW = 2530
 
-    XORI8 = 2531
+    VSUBECUQ = 2531
 
-    XORIS = 2532
+    VSUBEUQM = 2532
 
-    XORIS8 = 2533
+    VSUBFP = 2533
 
-    XOR_rec = 2534
+    VSUBSBS = 2534
 
-    XSABSDP = 2535
+    VSUBSHS = 2535
 
-    XSABSQP = 2536
+    VSUBSWS = 2536
 
-    XSADDDP = 2537
+    VSUBUBM = 2537
 
-    XSADDQP = 2538
+    VSUBUBS = 2538
 
-    XSADDQPO = 2539
+    VSUBUDM = 2539
 
-    XSADDSP = 2540
+    VSUBUHM = 2540
 
-    XSCMPEQDP = 2541
+    VSUBUHS = 2541
 
-    XSCMPEQQP = 2542
+    VSUBUQM = 2542
 
-    XSCMPEXPDP = 2543
+    VSUBUWM = 2543
 
-    XSCMPEXPQP = 2544
+    VSUBUWS = 2544
 
-    XSCMPGEDP = 2545
+    VSUM2SWS = 2545
 
-    XSCMPGEQP = 2546
+    VSUM4SBS = 2546
 
-    XSCMPGTDP = 2547
+    VSUM4SHS = 2547
 
-    XSCMPGTQP = 2548
+    VSUM4UBS = 2548
 
-    XSCMPODP = 2549
+    VSUMSWS = 2549
 
-    XSCMPOQP = 2550
+    VUPKHPX = 2550
 
-    XSCMPUDP = 2551
+    VUPKHSB = 2551
 
-    XSCMPUQP = 2552
+    VUPKHSH = 2552
 
-    XSCPSGNDP = 2553
+    VUPKHSW = 2553
 
-    XSCPSGNQP = 2554
+    VUPKLPX = 2554
 
-    XSCVDPHP = 2555
+    VUPKLSB = 2555
 
-    XSCVDPQP = 2556
+    VUPKLSH = 2556
 
-    XSCVDPSP = 2557
+    VUPKLSW = 2557
 
-    XSCVDPSPN = 2558
+    VXOR = 2558
 
-    XSCVDPSXDS = 2559
+    V_SET0 = 2559
 
-    XSCVDPSXDSs = 2560
+    V_SET0B = 2560
 
-    XSCVDPSXWS = 2561
+    V_SET0H = 2561
 
-    XSCVDPSXWSs = 2562
+    V_SETALLONES = 2562
 
-    XSCVDPUXDS = 2563
+    V_SETALLONESB = 2563
 
-    XSCVDPUXDSs = 2564
+    V_SETALLONESH = 2564
 
-    XSCVDPUXWS = 2565
+    WAIT = 2565
 
-    XSCVDPUXWSs = 2566
+    WAITP10 = 2566
 
-    XSCVHPDP = 2567
+    WRTEE = 2567
 
-    XSCVQPDP = 2568
+    WRTEEI = 2568
 
-    XSCVQPDPO = 2569
+    XOR = 2569
 
-    XSCVQPSDZ = 2570
+    XOR8 = 2570
 
-    XSCVQPSQZ = 2571
+    XOR8_rec = 2571
 
-    XSCVQPSWZ = 2572
+    XORI = 2572
 
-    XSCVQPUDZ = 2573
+    XORI8 = 2573
 
-    XSCVQPUQZ = 2574
+    XORIS = 2574
 
-    XSCVQPUWZ = 2575
+    XORIS8 = 2575
 
-    XSCVSDQP = 2576
+    XOR_rec = 2576
 
-    XSCVSPDP = 2577
+    XSABSDP = 2577
 
-    XSCVSPDPN = 2578
+    XSABSQP = 2578
 
-    XSCVSQQP = 2579
+    XSADDDP = 2579
 
-    XSCVSXDDP = 2580
+    XSADDQP = 2580
 
-    XSCVSXDSP = 2581
+    XSADDQPO = 2581
 
-    XSCVUDQP = 2582
+    XSADDSP = 2582
 
-    XSCVUQQP = 2583
+    XSCMPEQDP = 2583
 
-    XSCVUXDDP = 2584
+    XSCMPEQQP = 2584
 
-    XSCVUXDSP = 2585
+    XSCMPEXPDP = 2585
 
-    XSDIVDP = 2586
+    XSCMPEXPQP = 2586
 
-    XSDIVQP = 2587
+    XSCMPGEDP = 2587
 
-    XSDIVQPO = 2588
+    XSCMPGEQP = 2588
 
-    XSDIVSP = 2589
+    XSCMPGTDP = 2589
 
-    XSIEXPDP = 2590
+    XSCMPGTQP = 2590
 
-    XSIEXPQP = 2591
+    XSCMPODP = 2591
 
-    XSMADDADP = 2592
+    XSCMPOQP = 2592
 
-    XSMADDASP = 2593
+    XSCMPUDP = 2593
 
-    XSMADDMDP = 2594
+    XSCMPUQP = 2594
 
-    XSMADDMSP = 2595
+    XSCPSGNDP = 2595
 
-    XSMADDQP = 2596
+    XSCPSGNQP = 2596
 
-    XSMADDQPO = 2597
+    XSCVDPHP = 2597
 
-    XSMAXCDP = 2598
+    XSCVDPQP = 2598
 
-    XSMAXCQP = 2599
+    XSCVDPSP = 2599
 
-    XSMAXDP = 2600
+    XSCVDPSPN = 2600
 
-    XSMAXJDP = 2601
+    XSCVDPSXDS = 2601
 
-    XSMINCDP = 2602
+    XSCVDPSXDSs = 2602
 
-    XSMINCQP = 2603
+    XSCVDPSXWS = 2603
 
-    XSMINDP = 2604
+    XSCVDPSXWSs = 2604
 
-    XSMINJDP = 2605
+    XSCVDPUXDS = 2605
 
-    XSMSUBADP = 2606
+    XSCVDPUXDSs = 2606
 
-    XSMSUBASP = 2607
+    XSCVDPUXWS = 2607
 
-    XSMSUBMDP = 2608
+    XSCVDPUXWSs = 2608
 
-    XSMSUBMSP = 2609
+    XSCVHPDP = 2609
 
-    XSMSUBQP = 2610
+    XSCVQPDP = 2610
 
-    XSMSUBQPO = 2611
+    XSCVQPDPO = 2611
 
-    XSMULDP = 2612
+    XSCVQPSDZ = 2612
 
-    XSMULQP = 2613
+    XSCVQPSQZ = 2613
 
-    XSMULQPO = 2614
+    XSCVQPSWZ = 2614
 
-    XSMULSP = 2615
+    XSCVQPUDZ = 2615
 
-    XSNABSDP = 2616
+    XSCVQPUQZ = 2616
 
-    XSNABSDPs = 2617
+    XSCVQPUWZ = 2617
 
-    XSNABSQP = 2618
+    XSCVSDQP = 2618
 
-    XSNEGDP = 2619
+    XSCVSPDP = 2619
 
-    XSNEGQP = 2620
+    XSCVSPDPN = 2620
 
-    XSNMADDADP = 2621
+    XSCVSQQP = 2621
 
-    XSNMADDASP = 2622
+    XSCVSXDDP = 2622
 
-    XSNMADDMDP = 2623
+    XSCVSXDSP = 2623
 
-    XSNMADDMSP = 2624
+    XSCVUDQP = 2624
 
-    XSNMADDQP = 2625
+    XSCVUQQP = 2625
 
-    XSNMADDQPO = 2626
+    XSCVUXDDP = 2626
 
-    XSNMSUBADP = 2627
+    XSCVUXDSP = 2627
 
-    XSNMSUBASP = 2628
+    XSDIVDP = 2628
 
-    XSNMSUBMDP = 2629
+    XSDIVQP = 2629
 
-    XSNMSUBMSP = 2630
+    XSDIVQPO = 2630
 
-    XSNMSUBQP = 2631
+    XSDIVSP = 2631
 
-    XSNMSUBQPO = 2632
+    XSIEXPDP = 2632
 
-    XSRDPI = 2633
+    XSIEXPQP = 2633
 
-    XSRDPIC = 2634
+    XSMADDADP = 2634
 
-    XSRDPIM = 2635
+    XSMADDASP = 2635
 
-    XSRDPIP = 2636
+    XSMADDMDP = 2636
 
-    XSRDPIZ = 2637
+    XSMADDMSP = 2637
 
-    XSREDP = 2638
+    XSMADDQP = 2638
 
-    XSRESP = 2639
+    XSMADDQPO = 2639
 
-    XSRQPI = 2640
+    XSMAXCDP = 2640
 
-    XSRQPIX = 2641
+    XSMAXCQP = 2641
 
-    XSRQPXP = 2642
+    XSMAXDP = 2642
 
-    XSRSP = 2643
+    XSMAXJDP = 2643
 
-    XSRSQRTEDP = 2644
+    XSMINCDP = 2644
 
-    XSRSQRTESP = 2645
+    XSMINCQP = 2645
 
-    XSSQRTDP = 2646
+    XSMINDP = 2646
 
-    XSSQRTQP = 2647
+    XSMINJDP = 2647
 
-    XSSQRTQPO = 2648
+    XSMSUBADP = 2648
 
-    XSSQRTSP = 2649
+    XSMSUBASP = 2649
 
-    XSSUBDP = 2650
+    XSMSUBMDP = 2650
 
-    XSSUBQP = 2651
+    XSMSUBMSP = 2651
 
-    XSSUBQPO = 2652
+    XSMSUBQP = 2652
 
-    XSSUBSP = 2653
+    XSMSUBQPO = 2653
 
-    XSTDIVDP = 2654
+    XSMULDP = 2654
 
-    XSTSQRTDP = 2655
+    XSMULQP = 2655
 
-    XSTSTDCDP = 2656
+    XSMULQPO = 2656
 
-    XSTSTDCQP = 2657
+    XSMULSP = 2657
 
-    XSTSTDCSP = 2658
+    XSNABSDP = 2658
 
-    XSXEXPDP = 2659
+    XSNABSDPs = 2659
 
-    XSXEXPQP = 2660
+    XSNABSQP = 2660
 
-    XSXSIGDP = 2661
+    XSNEGDP = 2661
 
-    XSXSIGQP = 2662
+    XSNEGQP = 2662
 
-    XVABSDP = 2663
+    XSNMADDADP = 2663
 
-    XVABSSP = 2664
+    XSNMADDASP = 2664
 
-    XVADDDP = 2665
+    XSNMADDMDP = 2665
 
-    XVADDSP = 2666
+    XSNMADDMSP = 2666
 
-    XVBF16GER2 = 2667
+    XSNMADDQP = 2667
 
-    XVBF16GER2NN = 2668
+    XSNMADDQPO = 2668
 
-    XVBF16GER2NP = 2669
+    XSNMSUBADP = 2669
 
-    XVBF16GER2PN = 2670
+    XSNMSUBASP = 2670
 
-    XVBF16GER2PP = 2671
+    XSNMSUBMDP = 2671
 
-    XVBF16GER2W = 2672
+    XSNMSUBMSP = 2672
 
-    XVBF16GER2WNN = 2673
+    XSNMSUBQP = 2673
 
-    XVBF16GER2WNP = 2674
+    XSNMSUBQPO = 2674
 
-    XVBF16GER2WPN = 2675
+    XSRDPI = 2675
 
-    XVBF16GER2WPP = 2676
+    XSRDPIC = 2676
 
-    XVCMPEQDP = 2677
+    XSRDPIM = 2677
 
-    XVCMPEQDP_rec = 2678
+    XSRDPIP = 2678
 
-    XVCMPEQSP = 2679
+    XSRDPIZ = 2679
 
-    XVCMPEQSP_rec = 2680
+    XSREDP = 2680
 
-    XVCMPGEDP = 2681
+    XSRESP = 2681
 
-    XVCMPGEDP_rec = 2682
+    XSRQPI = 2682
 
-    XVCMPGESP = 2683
+    XSRQPIX = 2683
 
-    XVCMPGESP_rec = 2684
+    XSRQPXP = 2684
 
-    XVCMPGTDP = 2685
+    XSRSP = 2685
 
-    XVCMPGTDP_rec = 2686
+    XSRSQRTEDP = 2686
 
-    XVCMPGTSP = 2687
+    XSRSQRTESP = 2687
 
-    XVCMPGTSP_rec = 2688
+    XSSQRTDP = 2688
 
-    XVCPSGNDP = 2689
+    XSSQRTQP = 2689
 
-    XVCPSGNSP = 2690
+    XSSQRTQPO = 2690
 
-    XVCVBF16SPN = 2691
+    XSSQRTSP = 2691
 
-    XVCVDPSP = 2692
+    XSSUBDP = 2692
 
-    XVCVDPSXDS = 2693
+    XSSUBQP = 2693
 
-    XVCVDPSXWS = 2694
+    XSSUBQPO = 2694
 
-    XVCVDPUXDS = 2695
+    XSSUBSP = 2695
 
-    XVCVDPUXWS = 2696
+    XSTDIVDP = 2696
 
-    XVCVHPSP = 2697
+    XSTSQRTDP = 2697
 
-    XVCVSPBF16 = 2698
+    XSTSTDCDP = 2698
 
-    XVCVSPDP = 2699
+    XSTSTDCQP = 2699
 
-    XVCVSPHP = 2700
+    XSTSTDCSP = 2700
 
-    XVCVSPSXDS = 2701
+    XSXEXPDP = 2701
 
-    XVCVSPSXWS = 2702
+    XSXEXPQP = 2702
 
-    XVCVSPUXDS = 2703
+    XSXSIGDP = 2703
 
-    XVCVSPUXWS = 2704
+    XSXSIGQP = 2704
 
-    XVCVSXDDP = 2705
+    XVABSDP = 2705
 
-    XVCVSXDSP = 2706
+    XVABSSP = 2706
 
-    XVCVSXWDP = 2707
+    XVADDDP = 2707
 
-    XVCVSXWSP = 2708
+    XVADDSP = 2708
 
-    XVCVUXDDP = 2709
+    XVBF16GER2 = 2709
 
-    XVCVUXDSP = 2710
+    XVBF16GER2NN = 2710
 
-    XVCVUXWDP = 2711
+    XVBF16GER2NP = 2711
 
-    XVCVUXWSP = 2712
+    XVBF16GER2PN = 2712
 
-    XVDIVDP = 2713
+    XVBF16GER2PP = 2713
 
-    XVDIVSP = 2714
+    XVBF16GER2W = 2714
 
-    XVF16GER2 = 2715
+    XVBF16GER2WNN = 2715
 
-    XVF16GER2NN = 2716
+    XVBF16GER2WNP = 2716
 
-    XVF16GER2NP = 2717
+    XVBF16GER2WPN = 2717
 
-    XVF16GER2PN = 2718
+    XVBF16GER2WPP = 2718
 
-    XVF16GER2PP = 2719
+    XVCMPEQDP = 2719
 
-    XVF16GER2W = 2720
+    XVCMPEQDP_rec = 2720
 
-    XVF16GER2WNN = 2721
+    XVCMPEQSP = 2721
 
-    XVF16GER2WNP = 2722
+    XVCMPEQSP_rec = 2722
 
-    XVF16GER2WPN = 2723
+    XVCMPGEDP = 2723
 
-    XVF16GER2WPP = 2724
+    XVCMPGEDP_rec = 2724
 
-    XVF32GER = 2725
+    XVCMPGESP = 2725
 
-    XVF32GERNN = 2726
+    XVCMPGESP_rec = 2726
 
-    XVF32GERNP = 2727
+    XVCMPGTDP = 2727
 
-    XVF32GERPN = 2728
+    XVCMPGTDP_rec = 2728
 
-    XVF32GERPP = 2729
+    XVCMPGTSP = 2729
 
-    XVF32GERW = 2730
+    XVCMPGTSP_rec = 2730
 
-    XVF32GERWNN = 2731
+    XVCPSGNDP = 2731
 
-    XVF32GERWNP = 2732
+    XVCPSGNSP = 2732
 
-    XVF32GERWPN = 2733
+    XVCVBF16SPN = 2733
 
-    XVF32GERWPP = 2734
+    XVCVDPSP = 2734
 
-    XVF64GER = 2735
+    XVCVDPSXDS = 2735
 
-    XVF64GERNN = 2736
+    XVCVDPSXWS = 2736
 
-    XVF64GERNP = 2737
+    XVCVDPUXDS = 2737
 
-    XVF64GERPN = 2738
+    XVCVDPUXWS = 2738
 
-    XVF64GERPP = 2739
+    XVCVHPSP = 2739
 
-    XVF64GERW = 2740
+    XVCVSPBF16 = 2740
 
-    XVF64GERWNN = 2741
+    XVCVSPDP = 2741
 
-    XVF64GERWNP = 2742
+    XVCVSPHP = 2742
 
-    XVF64GERWPN = 2743
+    XVCVSPSXDS = 2743
 
-    XVF64GERWPP = 2744
+    XVCVSPSXWS = 2744
 
-    XVI16GER2 = 2745
+    XVCVSPUXDS = 2745
 
-    XVI16GER2PP = 2746
+    XVCVSPUXWS = 2746
 
-    XVI16GER2S = 2747
+    XVCVSXDDP = 2747
 
-    XVI16GER2SPP = 2748
+    XVCVSXDSP = 2748
 
-    XVI16GER2SW = 2749
+    XVCVSXWDP = 2749
 
-    XVI16GER2SWPP = 2750
+    XVCVSXWSP = 2750
 
-    XVI16GER2W = 2751
+    XVCVUXDDP = 2751
 
-    XVI16GER2WPP = 2752
+    XVCVUXDSP = 2752
 
-    XVI4GER8 = 2753
+    XVCVUXWDP = 2753
 
-    XVI4GER8PP = 2754
+    XVCVUXWSP = 2754
 
-    XVI4GER8W = 2755
+    XVDIVDP = 2755
 
-    XVI4GER8WPP = 2756
+    XVDIVSP = 2756
 
-    XVI8GER4 = 2757
+    XVF16GER2 = 2757
 
-    XVI8GER4PP = 2758
+    XVF16GER2NN = 2758
 
-    XVI8GER4SPP = 2759
+    XVF16GER2NP = 2759
 
-    XVI8GER4W = 2760
+    XVF16GER2PN = 2760
 
-    XVI8GER4WPP = 2761
+    XVF16GER2PP = 2761
 
-    XVI8GER4WSPP = 2762
+    XVF16GER2W = 2762
 
-    XVIEXPDP = 2763
+    XVF16GER2WNN = 2763
 
-    XVIEXPSP = 2764
+    XVF16GER2WNP = 2764
 
-    XVMADDADP = 2765
+    XVF16GER2WPN = 2765
 
-    XVMADDASP = 2766
+    XVF16GER2WPP = 2766
 
-    XVMADDMDP = 2767
+    XVF32GER = 2767
 
-    XVMADDMSP = 2768
+    XVF32GERNN = 2768
 
-    XVMAXDP = 2769
+    XVF32GERNP = 2769
 
-    XVMAXSP = 2770
+    XVF32GERPN = 2770
 
-    XVMINDP = 2771
+    XVF32GERPP = 2771
 
-    XVMINSP = 2772
+    XVF32GERW = 2772
 
-    XVMSUBADP = 2773
+    XVF32GERWNN = 2773
 
-    XVMSUBASP = 2774
+    XVF32GERWNP = 2774
 
-    XVMSUBMDP = 2775
+    XVF32GERWPN = 2775
 
-    XVMSUBMSP = 2776
+    XVF32GERWPP = 2776
 
-    XVMULDP = 2777
+    XVF64GER = 2777
 
-    XVMULSP = 2778
+    XVF64GERNN = 2778
 
-    XVNABSDP = 2779
+    XVF64GERNP = 2779
 
-    XVNABSSP = 2780
+    XVF64GERPN = 2780
 
-    XVNEGDP = 2781
+    XVF64GERPP = 2781
 
-    XVNEGSP = 2782
+    XVF64GERW = 2782
 
-    XVNMADDADP = 2783
+    XVF64GERWNN = 2783
 
-    XVNMADDASP = 2784
+    XVF64GERWNP = 2784
 
-    XVNMADDMDP = 2785
+    XVF64GERWPN = 2785
 
-    XVNMADDMSP = 2786
+    XVF64GERWPP = 2786
 
-    XVNMSUBADP = 2787
+    XVI16GER2 = 2787
 
-    XVNMSUBASP = 2788
+    XVI16GER2PP = 2788
 
-    XVNMSUBMDP = 2789
+    XVI16GER2S = 2789
 
-    XVNMSUBMSP = 2790
+    XVI16GER2SPP = 2790
 
-    XVRDPI = 2791
+    XVI16GER2SW = 2791
 
-    XVRDPIC = 2792
+    XVI16GER2SWPP = 2792
 
-    XVRDPIM = 2793
+    XVI16GER2W = 2793
 
-    XVRDPIP = 2794
+    XVI16GER2WPP = 2794
 
-    XVRDPIZ = 2795
+    XVI4GER8 = 2795
 
-    XVREDP = 2796
+    XVI4GER8PP = 2796
 
-    XVRESP = 2797
+    XVI4GER8W = 2797
 
-    XVRSPI = 2798
+    XVI4GER8WPP = 2798
 
-    XVRSPIC = 2799
+    XVI8GER4 = 2799
 
-    XVRSPIM = 2800
+    XVI8GER4PP = 2800
 
-    XVRSPIP = 2801
+    XVI8GER4SPP = 2801
 
-    XVRSPIZ = 2802
+    XVI8GER4W = 2802
 
-    XVRSQRTEDP = 2803
+    XVI8GER4WPP = 2803
 
-    XVRSQRTESP = 2804
+    XVI8GER4WSPP = 2804
 
-    XVSQRTDP = 2805
+    XVIEXPDP = 2805
 
-    XVSQRTSP = 2806
+    XVIEXPSP = 2806
 
-    XVSUBDP = 2807
+    XVMADDADP = 2807
 
-    XVSUBSP = 2808
+    XVMADDASP = 2808
 
-    XVTDIVDP = 2809
+    XVMADDMDP = 2809
 
-    XVTDIVSP = 2810
+    XVMADDMSP = 2810
 
-    XVTLSBB = 2811
+    XVMAXDP = 2811
 
-    XVTSQRTDP = 2812
+    XVMAXSP = 2812
 
-    XVTSQRTSP = 2813
+    XVMINDP = 2813
 
-    XVTSTDCDP = 2814
+    XVMINSP = 2814
 
-    XVTSTDCSP = 2815
+    XVMSUBADP = 2815
 
-    XVXEXPDP = 2816
+    XVMSUBASP = 2816
 
-    XVXEXPSP = 2817
+    XVMSUBMDP = 2817
 
-    XVXSIGDP = 2818
+    XVMSUBMSP = 2818
 
-    XVXSIGSP = 2819
+    XVMULDP = 2819
 
-    XXBLENDVB = 2820
+    XVMULSP = 2820
 
-    XXBLENDVD = 2821
+    XVNABSDP = 2821
 
-    XXBLENDVH = 2822
+    XVNABSSP = 2822
 
-    XXBLENDVW = 2823
+    XVNEGDP = 2823
 
-    XXBRD = 2824
+    XVNEGSP = 2824
 
-    XXBRH = 2825
+    XVNMADDADP = 2825
 
-    XXBRQ = 2826
+    XVNMADDASP = 2826
 
-    XXBRW = 2827
+    XVNMADDMDP = 2827
 
-    XXEVAL = 2828
+    XVNMADDMSP = 2828
 
-    XXEXTRACTUW = 2829
+    XVNMSUBADP = 2829
 
-    XXGENPCVBM = 2830
+    XVNMSUBASP = 2830
 
-    XXGENPCVDM = 2831
+    XVNMSUBMDP = 2831
 
-    XXGENPCVHM = 2832
+    XVNMSUBMSP = 2832
 
-    XXGENPCVWM = 2833
+    XVRDPI = 2833
 
-    XXINSERTW = 2834
+    XVRDPIC = 2834
 
-    XXLAND = 2835
+    XVRDPIM = 2835
 
-    XXLANDC = 2836
+    XVRDPIP = 2836
 
-    XXLEQV = 2837
+    XVRDPIZ = 2837
 
-    XXLEQVOnes = 2838
+    XVREDP = 2838
 
-    XXLNAND = 2839
+    XVRESP = 2839
 
-    XXLNOR = 2840
+    XVRSPI = 2840
 
-    XXLOR = 2841
+    XVRSPIC = 2841
 
-    XXLORC = 2842
+    XVRSPIM = 2842
 
-    XXLORf = 2843
+    XVRSPIP = 2843
 
-    XXLXOR = 2844
+    XVRSPIZ = 2844
 
-    XXLXORdpz = 2845
+    XVRSQRTEDP = 2845
 
-    XXLXORspz = 2846
+    XVRSQRTESP = 2846
 
-    XXLXORz = 2847
+    XVSQRTDP = 2847
 
-    XXMFACC = 2848
+    XVSQRTSP = 2848
 
-    XXMFACCW = 2849
+    XVSUBDP = 2849
 
-    XXMRGHW = 2850
+    XVSUBSP = 2850
 
-    XXMRGLW = 2851
+    XVTDIVDP = 2851
 
-    XXMTACC = 2852
+    XVTDIVSP = 2852
 
-    XXMTACCW = 2853
+    XVTLSBB = 2853
 
-    XXPERM = 2854
+    XVTSQRTDP = 2854
 
-    XXPERMDI = 2855
+    XVTSQRTSP = 2855
 
-    XXPERMDIs = 2856
+    XVTSTDCDP = 2856
 
-    XXPERMR = 2857
+    XVTSTDCSP = 2857
 
-    XXPERMX = 2858
+    XVXEXPDP = 2858
 
-    XXSEL = 2859
+    XVXEXPSP = 2859
 
-    XXSETACCZ = 2860
+    XVXSIGDP = 2860
 
-    XXSETACCZW = 2861
+    XVXSIGSP = 2861
 
-    XXSLDWI = 2862
+    XXBLENDVB = 2862
 
-    XXSLDWIs = 2863
+    XXBLENDVD = 2863
 
-    XXSPLTI32DX = 2864
+    XXBLENDVH = 2864
 
-    XXSPLTIB = 2865
+    XXBLENDVW = 2865
 
-    XXSPLTIDP = 2866
+    XXBRD = 2866
 
-    XXSPLTIW = 2867
+    XXBRH = 2867
 
-    XXSPLTW = 2868
+    XXBRQ = 2868
 
-    XXSPLTWs = 2869
+    XXBRW = 2869
 
-    gBC = 2870
+    XXEVAL = 2870
 
-    gBCA = 2871
+    XXEXTRACTUW = 2871
 
-    gBCAat = 2872
+    XXGENPCVBM = 2872
 
-    gBCCTR = 2873
+    XXGENPCVDM = 2873
 
-    gBCCTRL = 2874
+    XXGENPCVHM = 2874
 
-    gBCL = 2875
+    XXGENPCVWM = 2875
 
-    gBCLA = 2876
+    XXINSERTW = 2876
 
-    gBCLAat = 2877
+    XXLAND = 2877
 
-    gBCLR = 2878
+    XXLANDC = 2878
 
-    gBCLRL = 2879
+    XXLEQV = 2879
 
-    gBCLat = 2880
+    XXLEQVOnes = 2880
 
-    gBCat = 2881
+    XXLNAND = 2881
 
-    INSTRUCTION_LIST_END = 2882
+    XXLNOR = 2882
+
+    XXLOR = 2883
+
+    XXLORC = 2884
+
+    XXLORf = 2885
+
+    XXLXOR = 2886
+
+    XXLXORdpz = 2887
+
+    XXLXORspz = 2888
+
+    XXLXORz = 2889
+
+    XXMFACC = 2890
+
+    XXMFACCW = 2891
+
+    XXMRGHW = 2892
+
+    XXMRGLW = 2893
+
+    XXMTACC = 2894
+
+    XXMTACCW = 2895
+
+    XXPERM = 2896
+
+    XXPERMDI = 2897
+
+    XXPERMDIs = 2898
+
+    XXPERMR = 2899
+
+    XXPERMX = 2900
+
+    XXSEL = 2901
+
+    XXSETACCZ = 2902
+
+    XXSLDWI = 2903
+
+    XXSLDWIs = 2904
+
+    XXSPLTI32DX = 2905
+
+    XXSPLTIB = 2906
+
+    XXSPLTIDP = 2907
+
+    XXSPLTIW = 2908
+
+    XXSPLTW = 2909
+
+    XXSPLTWs = 2910
+
+    gBC = 2911
+
+    gBCA = 2912
+
+    gBCAat = 2913
+
+    gBCCTR = 2914
+
+    gBCCTRL = 2915
+
+    gBCL = 2916
+
+    gBCLA = 2917
+
+    gBCLAat = 2918
+
+    gBCLR = 2919
+
+    gBCLRL = 2920
+
+    gBCLat = 2921
+
+    gBCat = 2922
+
+    INSTRUCTION_LIST_END = 2923
 
 class Instruction(lief.assembly.Instruction):
     @property
