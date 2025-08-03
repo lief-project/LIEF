@@ -72,7 +72,10 @@ namespace LIEF {
 ///
 /// See https://tl.tartanllama.xyz/en/latest/api/expected.html for more details
 template<typename T>
-using result = tl::expected<T, lief_errors>;
+ class [[maybe_unused]]result : public tl::expected<T, lief_errors> {
+  public:
+  using tl::expected<T, lief_errors>::expected;
+};
 
 /// Get the error code associated with the result
 template<class T>
@@ -106,7 +109,10 @@ inline ok_t ok() {
 ///   return ok();
 /// }
 /// \endcode
-using ok_error_t = result<ok_t>;
+class [[maybe_unused]] ok_error_t : public result<ok_t> {
+  public:
+  using result<ok_t>::result;
+};
 
 inline bool is_ok(const ok_error_t& val) {
   return val.has_value();
