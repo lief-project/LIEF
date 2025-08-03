@@ -224,6 +224,7 @@
 
 :Dependencies:
 
+  * Move to mbedtls ``3.6.4``
   * Move to spdlog ``1.15.3``
   * Move to ``nlohmann/json`` ``3.12.0``
   * Upgrade nanobind to version ``v2.8.x``
