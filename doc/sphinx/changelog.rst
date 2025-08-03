@@ -224,6 +224,7 @@
 
 :Dependencies:
 
+  * Move to tl-expected ``1.2.0``
   * Move to utfcpp ``4.0.6``
   * Move to mbedtls ``3.6.4``
   * Move to spdlog ``1.15.3``
