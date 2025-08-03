@@ -226,7 +226,7 @@
 
   * Move to spdlog ``1.15.1``
   * Move to ``nlohmann/json`` ``3.12.0``
-  * Upgrade nanobind to version ``v2.6.x``
+  * Upgrade nanobind to version ``v2.8.x``
 
 :Utilities:
 
