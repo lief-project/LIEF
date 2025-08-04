@@ -30,6 +30,8 @@ pub enum Version {
     DYLD_1042_1,
     /// dyld-1231.3 (2024-09-24)
     DYLD_1231_3,
+    /// dyld-1284.13 (2025-04-25)
+    DYLD_1284_13,
     /// This value is used for versions of dyld not publicly released or not yet
     /// supported by LIEF
     UNRELEASED,
@@ -48,7 +50,8 @@ impl From<u32> for Version {
             0x00000007 => Version::DYLD_940,
             0x00000008 => Version::DYLD_1042_1,
             0x00000009 => Version::DYLD_1231_3,
-            0x0000000A => Version::UNRELEASED,
+            0x0000000A => Version::DYLD_1284_13,
+            0x0000000B => Version::UNRELEASED,
             _ => Version::UNKNOWN(value),
 
         }
@@ -66,7 +69,8 @@ impl From<Version> for u32 {
             Version::DYLD_940     => 0x00000007,
             Version::DYLD_1042_1  => 0x00000008,
             Version::DYLD_1231_3  => 0x00000009,
-            Version::UNRELEASED   => 0x0000000A,
+            Version::DYLD_1284_13 => 0x0000000A,
+            Version::UNRELEASED   => 0x0000000B,
             Version::UNKNOWN(_) => 0,
 
         }

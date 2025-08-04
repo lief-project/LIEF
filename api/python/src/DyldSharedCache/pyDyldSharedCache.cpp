@@ -53,6 +53,8 @@ void create<dsc::DyldSharedCache>(nb::module_& m) {
            "dyld-1042.1 (2022-10-19)"_doc)
     .value("DYLD_1231_3", dsc::DyldSharedCache::VERSION::DYLD_1231_3,
            "dyld-1231.3 (2024-09-24)"_doc)
+    .value("DYLD_1284_13", dsc::DyldSharedCache::VERSION::DYLD_1284_13,
+           "dyld-1284.4 (2025-04-25)"_doc)
     .value("UNRELEASED", dsc::DyldSharedCache::VERSION::UNRELEASED,
            R"doc(
            This value is used for versions of dyld not publicly released or
