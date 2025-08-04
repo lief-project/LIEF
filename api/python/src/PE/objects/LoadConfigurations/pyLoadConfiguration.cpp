@@ -504,6 +504,10 @@ void create<LoadConfiguration>(nb::module_& m) {
       nb::overload_cast<>(&LoadConfiguration::guard_memcpy_function_pointer, nb::const_),
       nb::overload_cast<uint64_t>(&LoadConfiguration::guard_memcpy_function_pointer))
 
+    .def_prop_rw("uma_function_pointers",
+      nb::overload_cast<>(&LoadConfiguration::uma_function_pointers, nb::const_),
+      nb::overload_cast<uint64_t>(&LoadConfiguration::uma_function_pointers))
+
   LIEF_COPYABLE(LoadConfiguration)
   LIEF_DEFAULT_STR(LoadConfiguration);
 }

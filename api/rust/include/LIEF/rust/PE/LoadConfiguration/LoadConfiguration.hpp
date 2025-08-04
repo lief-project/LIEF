@@ -270,6 +270,10 @@ class PE_LoadConfiguration : public Mirror<LIEF::PE::LoadConfiguration> {
     return details::make_optional(get().guard_memcpy_function_pointer(), is_set);
   }
 
+  uint64_t uma_function_pointers(uint32_t& is_set) const {
+    return details::make_optional(get().uma_function_pointers(), is_set);
+  }
+
   void set_characteristics(uint32_t characteristics) {
     get().characteristics(characteristics);
   }
@@ -468,5 +472,9 @@ class PE_LoadConfiguration : public Mirror<LIEF::PE::LoadConfiguration> {
 
   void set_guard_memcpy_function_pointer(uint64_t value) {
     get().guard_memcpy_function_pointer(value);
+  }
+
+  void set_uma_function_pointers(uint64_t value) {
+    get().uma_function_pointers(value);
   }
 };

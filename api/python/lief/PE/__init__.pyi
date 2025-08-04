@@ -4259,6 +4259,8 @@ class LoadConfiguration(lief.Object):
 
     guard_memcpy_function_pointer: int | None
 
+    uma_function_pointers: int | None
+
     def copy(self) -> LoadConfiguration: ...
 
     def __str__(self) -> str: ...

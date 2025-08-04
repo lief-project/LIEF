@@ -411,6 +411,13 @@ impl LoadConfiguration<'_> {
             &self
         );
     }
+
+    pub fn uma_function_pointers(&self) -> Option<u64> {
+        to_opt!(
+            &lief_ffi::PE_LoadConfiguration::uma_function_pointers,
+            &self
+        );
+    }
 }
 
 impl<'a> FromFFI<ffi::PE_LoadConfiguration> for LoadConfiguration<'a> {
@@ -540,6 +547,10 @@ impl std::fmt::Debug for LoadConfiguration<'_> {
             .field(
                 "guard_memcpy_function_pointer",
                 &self.guard_memcpy_function_pointer(),
+            )
+            .field(
+                "uma_function_pointers",
+                &self.uma_function_pointers(),
             )
             .finish()
     }

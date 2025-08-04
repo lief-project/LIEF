@@ -34,6 +34,7 @@ class LIEF_API EnclaveConfiguration {
   static constexpr auto MIN_SIZE = 0x4C; // sizeof(IMAGE_ENCLAVE_CONFIG32)
 
   static constexpr auto POLICY_DEBUGGABLE = 0x00000001;
+  static constexpr auto POLICY_STRICT_MEMORY = 0x00000002;
 
   using id_array_t = std::array<uint8_t, 16>;
 

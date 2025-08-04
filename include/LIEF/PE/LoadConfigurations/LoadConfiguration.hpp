@@ -470,6 +470,10 @@ class LIEF_API LoadConfiguration : public Object {
     return guard_memcpy_function_pointer_;
   }
 
+  optional<uint64_t> uma_function_pointers() const {
+    return uma_function_pointers_;
+  }
+
   LoadConfiguration& characteristics(uint32_t characteristics) {
     characteristics_ = characteristics;
     return *this;
@@ -729,6 +733,11 @@ class LIEF_API LoadConfiguration : public Object {
     return *this;
   }
 
+  LoadConfiguration& uma_function_pointers(uint64_t value) {
+    uma_function_pointers_ = value;
+    return *this;
+  }
+
   ~LoadConfiguration() override;
 
   void accept(Visitor& visitor) const override;
@@ -838,6 +847,8 @@ class LIEF_API LoadConfiguration : public Object {
   optional<uint64_t> cast_guard_os_determined_failure_mode_;
 
   optional<uint64_t> guard_memcpy_function_pointer_;
+
+  optional<uint64_t> uma_function_pointers_;
 
   std::unique_ptr<CHPEMetadata> chpe_;
   std::vector<uint32_t> seh_rva_;

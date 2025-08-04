@@ -471,6 +471,15 @@ std::unique_ptr<LoadConfiguration>
       return config;
     }
   }
+
+  /* V13 */ {
+    if (!read_lc<ptr_t>(
+          overload_cast<uint64_t>(&LoadConfiguration::uma_function_pointers),
+          config.get(), stream, start_off, *Characteristics)
+    ) {
+      return config;
+    }
+  }
   return config;
 }
 
@@ -743,6 +752,8 @@ LoadConfiguration::LoadConfiguration(const LoadConfiguration& other) :
   guard_xfg_table_dispatch_function_pointer_(other.guard_xfg_table_dispatch_function_pointer_),
   cast_guard_os_determined_failure_mode_(other.cast_guard_os_determined_failure_mode_),
   guard_memcpy_function_pointer_(other.guard_memcpy_function_pointer_),
+  uma_function_pointers_(other.uma_function_pointers_),
+
   seh_rva_(other.seh_rva_),
   guard_cf_functions_(other.guard_cf_functions_),
   guard_address_taken_iat_entries_(other.guard_address_taken_iat_entries_),
@@ -824,6 +835,7 @@ LoadConfiguration& LoadConfiguration::operator=(const LoadConfiguration& other) 
   guard_xfg_table_dispatch_function_pointer_ = other.guard_xfg_table_dispatch_function_pointer_;
   cast_guard_os_determined_failure_mode_ = other.cast_guard_os_determined_failure_mode_;
   guard_memcpy_function_pointer_ = other.guard_memcpy_function_pointer_;
+  uma_function_pointers_ = other.uma_function_pointers_;
 
   seh_rva_ = other.seh_rva_;
   guard_cf_functions_ = other.guard_cf_functions_;
@@ -1005,6 +1017,10 @@ std::string LoadConfiguration::to_string() const {
 
   if (auto val = guard_memcpy_function_pointer()) {
     oss << format("{:{}} 0x{:016x}\n", "Guard memcpy function pointer", WIDTH, *val);
+  }
+
+  if (auto val = uma_function_pointers()) {
+    oss << format("{:{}} 0x{:016x}\n", "UMA function pointers", WIDTH, *val);
   }
 
   if (const CHPEMetadata* metadata = chpe_metadata()) {
