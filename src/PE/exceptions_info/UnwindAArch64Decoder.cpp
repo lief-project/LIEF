@@ -179,6 +179,20 @@ bool Decoder::decode<OPCODES::SAVE_FREG_X>(bool is_prologue) {
 }
 
 template<>
+bool Decoder::decode<OPCODES::ALLOC_Z>(bool is_prologue) {
+  // The logic of this function is taken from LLVM:
+  // <llvm_root>/llvm/tools/llvm-readobj/ARMWinEHPrinter.cpp
+  //
+  // Commit: 312d6b48 by Eli Friedman <efriedma@quicinc.com>
+  [[maybe_unused]] auto _ = read_u8();
+  auto CH1 = read_u8();
+
+  uint32_t offset = CH1;
+  log("addvl sp, #{}", is_prologue ? -(int32_t)offset : (int32_t)offset);
+  return false;
+}
+
+template<>
 bool Decoder::decode<OPCODES::ALLOC_L>(bool is_prologue) {
   [[maybe_unused]] auto _ = read_u8();
   auto CH1 = read_u8();
@@ -237,6 +251,7 @@ bool Decoder::decode<OPCODES::SAVE_NEXT>(bool is_prologue) {
   is_prologue ? log("save next") : log("restore next");
   return false;
 }
+
 
 template<>
 bool Decoder::decode<OPCODES::SAVE_ANY_REG>(bool is_prologue) {
@@ -319,6 +334,71 @@ bool Decoder::decode<OPCODES::SAVE_ANY_REG>(bool is_prologue) {
   return false;
 }
 
+
+template<>
+bool Decoder::decode<OPCODES::SAVE_ZREG>(bool is_prologue) {
+  // The logic of this function is taken from LLVM:
+  // <llvm_root>/llvm/tools/llvm-readobj/ARMWinEHPrinter.cpp
+  //
+  // Commit: 312d6b48 by Eli Friedman <efriedma@quicinc.com>
+
+  [[maybe_unused]] auto _ = read_u8();
+  auto CH1 = read_u8();
+  auto CH2 = read_u8();
+
+  const uint32_t reg = (CH1 & 0x0F) + 8;
+  const uint32_t off = ((CH1 & 0x60) << 1) | (CH2 & 0x3f);
+
+  log("{} z{}, [sp, #{}, mul vl]", is_prologue ? "str" : "ldr", reg, off);
+  return false;
+}
+
+template<>
+bool Decoder::decode<OPCODES::SAVE_PREG>(bool is_prologue) {
+  // The logic of this function is taken from LLVM:
+  // <llvm_root>/llvm/tools/llvm-readobj/ARMWinEHPrinter.cpp
+  //
+  // Commit: 312d6b48 by Eli Friedman <efriedma@quicinc.com>
+
+  [[maybe_unused]] auto _ = read_u8();
+  auto CH1 = read_u8();
+  auto CH2 = read_u8();
+
+  const uint32_t reg = (CH1 & 0x0F) + 8;
+  const uint32_t off = ((CH1 & 0x60) << 1) | (CH2 & 0x3f);
+
+  log("{} p{}, [sp, #{}, mul vl]", is_prologue ? "str" : "ldr", reg, off);
+  return false;
+}
+
+template<>
+bool Decoder::decode<OPCODES::E7>(bool is_prologue) {
+  // The logic of this function is taken from LLVM:
+  // <llvm_root>/llvm/tools/llvm-readobj/ARMWinEHPrinter.cpp
+  //
+  // Commit: 312d6b48 by Eli Friedman <efriedma@quicinc.com>
+
+  [[maybe_unused]] auto _ = read_u8();
+  auto CH1 = read_u8();
+  auto CH2 = read_u8();
+
+  if ((CH1 & 0x80) == 0x80) {
+    log("reserved encondig");
+    return false;
+  }
+
+  rewind(3);
+
+  if ((CH2 & 0xC0) == 0xC0) {
+    if ((CH1 & 0x10) == 0) {
+      return decode<OPCODES::SAVE_ZREG>(is_prologue);
+    }
+    return decode<OPCODES::SAVE_PREG>(is_prologue);
+  }
+
+  return decode<OPCODES::SAVE_ANY_REG>(is_prologue);
+}
+
 template<>
 bool Decoder::decode<OPCODES::TRAP_FRAME>(bool /*is_prologue*/) {
   [[maybe_unused]] auto _ = read_u8();
@@ -376,6 +456,7 @@ static constexpr auto HANDLERS = {
   std::make_tuple(0xfe, 0xda, 2, &Decoder::decode<OPCODES::SAVE_FREGP_X>),
   std::make_tuple(0xfe, 0xdc, 2, &Decoder::decode<OPCODES::SAVE_FREG>),
   std::make_tuple(0xff, 0xde, 2, &Decoder::decode<OPCODES::SAVE_FREG_X>),
+  std::make_tuple(0xff, 0xdf, 2, &Decoder::decode<OPCODES::ALLOC_Z>),
   std::make_tuple(0xff, 0xe0, 4, &Decoder::decode<OPCODES::ALLOC_L>),
   std::make_tuple(0xff, 0xe1, 1, &Decoder::decode<OPCODES::SETFP>),
   std::make_tuple(0xff, 0xe2, 2, &Decoder::decode<OPCODES::ADDFP>),
@@ -383,7 +464,7 @@ static constexpr auto HANDLERS = {
   std::make_tuple(0xff, 0xe4, 1, &Decoder::decode<OPCODES::END>),
   std::make_tuple(0xff, 0xe5, 1, &Decoder::decode<OPCODES::END_C>),
   std::make_tuple(0xff, 0xe6, 1, &Decoder::decode<OPCODES::SAVE_NEXT>),
-  std::make_tuple(0xff, 0xe7, 3, &Decoder::decode<OPCODES::SAVE_ANY_REG>),
+  std::make_tuple(0xff, 0xe7, 3, &Decoder::decode<OPCODES::E7>),
   std::make_tuple(0xff, 0xe8, 1, &Decoder::decode<OPCODES::TRAP_FRAME>),
   std::make_tuple(0xff, 0xe9, 1, &Decoder::decode<OPCODES::MACHINE_FRAME>),
   std::make_tuple(0xff, 0xea, 1, &Decoder::decode<OPCODES::CONTEXT>),

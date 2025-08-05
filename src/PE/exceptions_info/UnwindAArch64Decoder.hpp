@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_PE_RUNTIME_FUNCTION_AARCH64_UNWIND_DECODED_H
 #define LIEF_PE_RUNTIME_FUNCTION_AARCH64_UNWIND_DECODED_H
-
+#include <cassert>
 #include <spdlog/fmt/fmt.h>
 #include "LIEF/errors.hpp"
 #include "LIEF/PE/exceptions_info/UnwindCodeAArch64.hpp"
@@ -30,7 +30,7 @@ class BinaryStream;
 namespace LIEF::PE::unwind_aarch64 {
 
 
-/// This class is an helper to decode the content of the AArch64 unwind code.
+/// This class is a helper to decode the content of the AArch64 unwind code.
 ///
 /// It is partially based on the LLVM implementation (especially the `11100111`
 /// -- save_any_reg operation) by Eli Friedman and
@@ -94,6 +94,12 @@ class Decoder {
 
   uint8_t read_u8() {
     return read<uint8_t>();
+  }
+
+  Decoder& rewind(size_t count) {
+    assert((int64_t)stream_->pos() - count >= 0);
+    stream_->decrement_pos(count);
+    return *this;
   }
 
   private:
