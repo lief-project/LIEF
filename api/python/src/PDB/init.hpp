@@ -4,5 +4,6 @@
 
 namespace LIEF::pdb::py {
 void init(nb::module_& m);
+void init_utils(nb::module_& m);
 }
 #endif

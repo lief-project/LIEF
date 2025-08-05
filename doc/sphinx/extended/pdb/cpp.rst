@@ -147,3 +147,9 @@ Union
 ********
 
 .. doxygenclass:: LIEF::pdb::types::Union
+
+
+Utilities
+*********
+
+.. doxygenfunction:: LIEF::PDB::is_pdb(const std::string&)

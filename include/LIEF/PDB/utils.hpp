@@ -1,3 +1,4 @@
+
 /* Copyright 2017 - 2025 R. Thomas
  * Copyright 2017 - 2025 Quarkslab
  *
@@ -13,14 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef  LIEF_PDB_H
-#define  LIEF_PDB_H
-#include <LIEF/PDB/CompilationUnit.hpp>
-#include <LIEF/PDB/Function.hpp>
-#include <LIEF/PDB/PublicSymbol.hpp>
-#include <LIEF/PDB/DebugInfo.hpp>
-#include <LIEF/PDB/BuildMetadata.hpp>
-#include <LIEF/PDB/Type.hpp>
-#include <LIEF/PDB/types.hpp>
-#include <LIEF/PDB/utils.hpp>
+#ifndef LIEF_PDB_UTILS_H
+#define LIEF_PDB_UTILS_H
+
+#include "LIEF/visibility.h"
+#include <string>
+
+namespace LIEF {
+namespace pdb {
+
+/// Check if the file given in parameter points to a PDB file
+LIEF_API bool is_pdb(const std::string& pdb_path);
+
+}
+}
 #endif

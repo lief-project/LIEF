@@ -684,6 +684,8 @@ include_cpp! {
     // -------------------------------------------------------------------------
     // PDB
     // -------------------------------------------------------------------------
+    generate!("PDB_Utils")
+    block_constructors!("PDB_Utils")
     generate!("PDB_DebugInfo")
     block_constructors!("PDB_DebugInfo")
     generate!("PDB_DebugInfo_it_compilation_units")

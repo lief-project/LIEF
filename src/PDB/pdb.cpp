@@ -105,6 +105,14 @@ std::unique_ptr<DebugInfo> DebugInfo::from_file(const std::string&) {
 }
 
 // ----------------------------------------------------------------------------
+// PDB/Utils.hpp
+// ----------------------------------------------------------------------------
+bool is_pdb(const std::string& /*path*/) {
+  LIEF_ERR(DEBUG_FMT_NOT_SUPPORTED);
+  return false;
+}
+
+// ----------------------------------------------------------------------------
 // PDB/CompilationUnit.hpp
 // ----------------------------------------------------------------------------
 CompilationUnit::CompilationUnit(std::unique_ptr<details::CompilationUnit> impl) :

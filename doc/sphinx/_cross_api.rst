@@ -181,6 +181,11 @@
     :py:attr:`lief.pdb.CompilationUnit.build_metadata`
     :cpp:func:`LIEF::pdb::CompilationUnit::build_metadata`
 
+.. |lief-pdb-is_pdb| lief-api:: lief.pdb.is_pdb
+
+    :rust:func:`lief::pdb::is_pdb`
+    :py:meth:`lief.is_pdb`
+    :cpp:func:`bool LIEF::pdb::is_pdb(const std::std::string &)`
 
 .. PE ==========================================================================
 

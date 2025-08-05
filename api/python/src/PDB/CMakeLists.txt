@@ -6,5 +6,6 @@ target_sources(pyLIEF PRIVATE
   pyFunction.cpp
   pyPublicSymbol.cpp
   pyType.cpp
+  pyUtils.cpp
 )
 add_subdirectory(types)

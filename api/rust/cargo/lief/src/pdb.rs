@@ -44,7 +44,12 @@ pub use types::Type;
 #[doc(inline)]
 pub use build_metadata::BuildMetadata;
 
-/// Load a PDB from its file path
+/// Load a PDB from its filepath
 pub fn load(path: &str) -> Option<DebugInfo> {
     into_optional(ffi::PDB_DebugInfo::from_file(path))
+}
+
+/// Check if the given file is a `PDB`
+pub fn is_pdb(path: &str) -> bool {
+    ffi::PDB_Utils::is_pdb(path.to_string())
 }

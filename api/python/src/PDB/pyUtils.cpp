@@ -1,5 +1,5 @@
-/* Copyright 2017 - 2025 R. Thomas
- * Copyright 2017 - 2025 Quarkslab
+/* Copyright 2025 R. Thomas
+ * Copyright 2025 Quarkslab
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef  LIEF_PDB_H
-#define  LIEF_PDB_H
-#include <LIEF/PDB/CompilationUnit.hpp>
-#include <LIEF/PDB/Function.hpp>
-#include <LIEF/PDB/PublicSymbol.hpp>
-#include <LIEF/PDB/DebugInfo.hpp>
-#include <LIEF/PDB/BuildMetadata.hpp>
-#include <LIEF/PDB/Type.hpp>
-#include <LIEF/PDB/types.hpp>
-#include <LIEF/PDB/utils.hpp>
-#endif
+#include "PDB/pyPDB.hpp"
+#include "LIEF/PDB/utils.hpp"
+
+#include <nanobind/stl/string.h>
+
+namespace LIEF::pdb::py {
+
+void init_utils(nb::module_& m) {
+  lief_mod->def("is_pdb", nb::overload_cast<const std::string&>(&is_pdb),
+    "Check if the given file is a ``PDB``"_doc,
+    "file"_a
+  );
+}
+}

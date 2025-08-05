@@ -14,6 +14,7 @@
  */
 #pragma once
 #include "LIEF/rust/PDB/DebugInfo.hpp"
+#include "LIEF/rust/PDB/utils.hpp"
 #include "LIEF/rust/PDB/CompilationUnit.hpp"
 #include "LIEF/rust/PDB/Function.hpp"
 #include "LIEF/rust/PDB/PublicSymbol.hpp"

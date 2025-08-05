@@ -155,6 +155,7 @@
 
 :PDB:
 
+  * Add |lief-pdb-is_pdb|
   * Add support for CodeView symbols: ``S_COMPILE3, S_COMPILE2, S_BUILDINFO, S_ENVBLOCK``.
     These symbols are exposed through the interface |lief-pdb-buildmetadata|,
     which can be accessed using |lief-pdb-compilationunit-buildmetadata|.

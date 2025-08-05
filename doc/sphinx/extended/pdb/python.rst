@@ -205,3 +205,10 @@ Union
   :parts: 2
 
 .. autoclass:: lief.pdb.types.Union
+
+----------
+
+Utilities
+*********
+
+.. autofunction:: lief.is_pdb

@@ -1,5 +1,4 @@
-/* Copyright 2017 - 2025 R. Thomas
- * Copyright 2017 - 2025 Quarkslab
+/* Copyright 2024 - 2025 R. Thomas
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +12,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef  LIEF_PDB_H
-#define  LIEF_PDB_H
-#include <LIEF/PDB/CompilationUnit.hpp>
-#include <LIEF/PDB/Function.hpp>
-#include <LIEF/PDB/PublicSymbol.hpp>
-#include <LIEF/PDB/DebugInfo.hpp>
-#include <LIEF/PDB/BuildMetadata.hpp>
-#include <LIEF/PDB/Type.hpp>
-#include <LIEF/PDB/types.hpp>
-#include <LIEF/PDB/utils.hpp>
-#endif
+
+#pragma once
+#include <string>
+#include "LIEF/PDB/utils.hpp"
+
+class PDB_Utils {
+  public:
+  static bool is_pdb(std::string file)  {
+    return LIEF::pdb::is_pdb(file);
+  }
+};

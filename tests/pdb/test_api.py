@@ -6,6 +6,7 @@ if not lief.__extended__:
     pytest.skip("skipping: extended version only", allow_module_level=True)
 
 def test_kernel():
+    assert lief.is_pdb(get_sample("PDB/ntkrnlmp.pdb"))
     pdb = lief.pdb.load(get_sample("PDB/ntkrnlmp.pdb"))
     assert isinstance(pdb, lief.pdb.DebugInfo)
 
