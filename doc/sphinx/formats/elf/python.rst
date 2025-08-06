@@ -398,3 +398,9 @@ Processor Flags
 ~~~~~~~~~~~~~~~
 
 .. autoclass:: lief.ELF.PROCESSOR_FLAGS
+
+
+Utilities
+*********
+
+.. autofunction:: lief.is_elf
