@@ -36,6 +36,8 @@ pub mod header;
 pub mod stub;
 pub mod builder;
 
+use std::path::Path;
+
 #[doc(inline)]
 pub use binary::Binary;
 #[doc(inline)]
@@ -58,6 +60,6 @@ pub use header::Header;
 pub use stub::Stub;
 
 /// Parse a Mach-O file from the given file path
-pub fn parse(path: &str) -> Option<FatBinary> {
+pub fn parse<P: AsRef<Path>>(path: P) -> Option<FatBinary> {
     FatBinary::parse(path)
 }

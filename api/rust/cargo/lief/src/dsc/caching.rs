@@ -1,4 +1,5 @@
 use lief_ffi as ffi;
+use std::path::Path;
 
 /// Enable globally cache/memoization. One can also leverage this function
 /// by setting the environment variable `DYLDSC_ENABLE_CACHE` to `1`
@@ -27,6 +28,6 @@ pub fn enable_cache() -> bool {
 }
 
 /// Same behavior as [`enable_cache`] but with a user-provided cache directory
-pub fn enable_cache_from_dir(target_dir: &str) -> bool {
-    ffi::dsc_enable_cache_from_dir(target_dir)
+pub fn enable_cache_from_dir<P: AsRef<Path>>(target_dir: P) -> bool {
+    ffi::dsc_enable_cache_from_dir(target_dir.as_ref().to_str().unwrap())
 }

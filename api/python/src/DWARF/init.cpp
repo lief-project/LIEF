@@ -7,12 +7,13 @@
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>
+#include "nanobind/extra/stl/pathlike.h"
 
 namespace LIEF::dwarf::py {
 void init(nb::module_& m) {
   nb::module_ dwarf = m.def_submodule("dwarf");
 
-  dwarf.def("load", &LIEF::dwarf::load,
+  dwarf.def("load", [] (nb::PathLike path) { return load(path); },
     R"doc(
     Load the DWARF from the given path
     )doc"_doc, "path"_a

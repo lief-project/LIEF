@@ -5,6 +5,7 @@ use super::macho;
 use super::pe;
 use super::coff;
 use crate::common::FromFFI;
+use std::path::Path;
 use std::io::{Read, Seek};
 
 #[derive(Debug)]
@@ -31,27 +32,28 @@ impl Binary {
     ///     // ...
     /// }
     /// ```
-    pub fn parse(path: &str) -> Option<Binary> {
-        if ffi::ELF_Utils::is_elf(path) {
+    pub fn parse<P: AsRef<Path>>(path: P) -> Option<Binary> {
+        let path_str = path.as_ref().to_str().unwrap();
+        if ffi::ELF_Utils::is_elf(path_str) {
             if let Some(elf) = elf::Binary::parse(path) {
                 return Some(Binary::ELF(elf));
             }
             return None;
         }
-        if ffi::PE_Utils::is_pe(path) {
+        if ffi::PE_Utils::is_pe(path_str) {
             if let Some(pe) = pe::Binary::parse(path) {
                 return Some(Binary::PE(pe));
             }
             return None;
         }
-        if ffi::MachO_Utils::is_macho(path) {
+        if ffi::MachO_Utils::is_macho(path_str) {
             if let Some(fat) = macho::FatBinary::parse(path) {
                 return Some(Binary::MachO(fat));
             }
             return None;
         }
 
-        if ffi::COFF_Utils::is_coff(path) {
+        if ffi::COFF_Utils::is_coff(path_str) {
             if let Some(coff) = coff::Binary::parse(path) {
                 return Some(Binary::COFF(coff));
             }

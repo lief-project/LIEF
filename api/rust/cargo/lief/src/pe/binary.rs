@@ -59,9 +59,9 @@ impl FromFFI<ffi::PE_Binary> for Binary {
 }
 
 impl Binary {
-    /// Parse from a file path given as a string
-    pub fn parse(path: &str) -> Option<Self> {
-        let ffi = ffi::PE_Binary::parse(path);
+    /// Parse from a filepath given as a string
+    pub fn parse<P: AsRef<Path>>(path: P) -> Option<Self> {
+        let ffi = ffi::PE_Binary::parse(path.as_ref().to_str().unwrap());
         if ffi.is_null() {
             return None;
         }
@@ -69,9 +69,9 @@ impl Binary {
     }
 
     /// Parse from a string file path and with a provided configuration
-    pub fn parse_with_config(path: &str, config: &ParserConfig) -> Option<Self> {
+    pub fn parse_with_config<P: AsRef<Path>>(path: P, config: &ParserConfig) -> Option<Self> {
         let ffi_config = config.to_ffi();
-        let ffi = ffi::PE_Binary::parse_with_config(path, &ffi_config);
+        let ffi = ffi::PE_Binary::parse_with_config(path.as_ref().to_str().unwrap(), &ffi_config);
         if ffi.is_null() {
             return None;
         }
@@ -84,7 +84,7 @@ impl Binary {
     }
 
     /// Header that follows the [`Binary::header`]. It is named
-    /// *optional* from the COFF specfication but it is mandatory in a PE file.
+    /// *optional* from the COFF specification but it is mandatory in a PE file.
     pub fn optional_header(&self) -> OptionalHeader {
         OptionalHeader::from_ffi(self.ptr.optional_header())
     }
@@ -436,15 +436,15 @@ impl Binary {
     }
 
     /// Write back the current PE binary into the file specified in parameter
-    pub fn write(&mut self, output: &Path) {
-        self.ptr.as_mut().unwrap().write(output.to_str().unwrap());
+    pub fn write<P: AsRef<Path>>(&mut self, output: P) {
+        self.ptr.as_mut().unwrap().write(output.as_ref().to_str().unwrap());
     }
 
     /// Write back the current PE binary into the file specified in parameter with the
     /// configuration provided in the second parameter.
-    pub fn write_with_config(&mut self, output: &Path, config: Config) {
+    pub fn write_with_config<P: AsRef<Path>>(&mut self, output: P, config: Config) {
         let ffi_config = config.to_ffi();
-        self.ptr.as_mut().unwrap().write_with_config(output.to_str().unwrap(),
+        self.ptr.as_mut().unwrap().write_with_config(output.as_ref().to_str().unwrap(),
             ffi_config.as_ref().unwrap());
     }
 

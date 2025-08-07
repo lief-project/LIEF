@@ -25,6 +25,7 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/pair.h>
 #include <nanobind/stl/vector.h>
+#include "nanobind/extra/stl/pathlike.h"
 
 namespace LIEF::PE::py {
 
@@ -43,9 +44,9 @@ void init_utils(nb::module_& m) {
 
 
   lief_mod->def("is_pe",
-      nb::overload_cast<const std::string&>(&is_pe),
-      "Check if the given file is a ``PE``"_doc,
-      "file"_a);
+    [] (nb::PathLike path) { return is_pe(path); },
+    "Check if the given file is a ``PE``"_doc,
+    "file"_a);
 
   lief_mod->def("is_pe",
       nb::overload_cast<const std::vector<uint8_t>&>(&is_pe),
@@ -53,7 +54,7 @@ void init_utils(nb::module_& m) {
       "raw"_a);
 
   m.def("get_type",
-      [] (const std::string& file) {
+      [] (nb::PathLike file) {
         return error_or(static_cast<result<PE_TYPE> (*)(const std::string&)>(&get_type), file);
       },
       R"delim(

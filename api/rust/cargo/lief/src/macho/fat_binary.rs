@@ -2,6 +2,7 @@ use super::binary::Binary;
 use lief_ffi as ffi;
 
 use crate::common::FromFFI;
+use std::path::Path;
 
 /// This structure represents a FAT Mach-O
 pub struct FatBinary {
@@ -34,8 +35,8 @@ pub struct FatBinaryIterator<'a> {
 
 impl FatBinary {
     /// Create a FatBinary from the given Mach-O path.
-    pub fn parse(path: &str) -> Option<Self> {
-        let ffi = ffi::MachO_FatBinary::parse(path);
+    pub fn parse<P: AsRef<Path>>(path: P) -> Option<Self> {
+        let ffi = ffi::MachO_FatBinary::parse(path.as_ref().to_str().unwrap());
         if ffi.is_null() {
             return None;
         }

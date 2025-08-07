@@ -10,6 +10,8 @@
 //! }
 //! ```
 
+use std::path::Path;
+
 pub mod binary;
 pub mod data_directory;
 pub mod debug;
@@ -161,11 +163,11 @@ impl From<Algorithms> for u32 {
 }
 
 /// Parse a PE file from the given file path
-pub fn parse(path: &str) -> Option<Binary> {
+pub fn parse<P: AsRef<Path>>(path: P) -> Option<Binary> {
     Binary::parse(path)
 }
 
 /// Parse a PE file from the given file path and configuration
-pub fn parse_with_config(path: &str, config: &ParserConfig) -> Option<Binary> {
+pub fn parse_with_config<P: AsRef<Path>>(path: P, config: &ParserConfig) -> Option<Binary> {
     Binary::parse_with_config(path, config)
 }

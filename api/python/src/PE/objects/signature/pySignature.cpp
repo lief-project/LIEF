@@ -18,6 +18,7 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/unique_ptr.h>
+#include "nanobind/extra/stl/pathlike.h"
 #include "nanobind/utils.hpp"
 
 #include "enums_wrapper.hpp"
@@ -82,7 +83,7 @@ void create<Signature>(nb::module_& m) {
 
   signature
     .def_static("parse",
-        [] (const std::string& path) -> std::unique_ptr<Signature> {
+        [] (nb::PathLike path) -> std::unique_ptr<Signature> {
           auto sig = SignatureParser::parse(path);
           if (!sig) {
             return nullptr;

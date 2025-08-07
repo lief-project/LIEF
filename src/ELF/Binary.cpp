@@ -1644,13 +1644,13 @@ bool Binary::has_interpreter() const {
   return it_segment_interp != std::end(segments_) && !interpreter_.empty();
 }
 
-void Binary::write(const std::string& filename, Builder::config_t config) {
+void Binary::write(const std::string& filename, const Builder::config_t& config) {
   Builder builder{*this, config};
   builder.build();
   builder.write(filename);
 }
 
-void Binary::write(std::ostream& os, Builder::config_t config) {
+void Binary::write(std::ostream& os, const Builder::config_t& config) {
   Builder builder{*this, config};
   builder.build();
   builder.write(os);

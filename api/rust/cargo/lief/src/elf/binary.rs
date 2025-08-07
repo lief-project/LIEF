@@ -71,8 +71,8 @@ impl FromFFI<ffi::ELF_Binary> for Binary {
 
 impl Binary {
     /// Create a [`Binary`] from the given file path
-    pub fn parse(path: &str) -> Option<Self> {
-        let bin = ffi::ELF_Binary::parse(path);
+    pub fn parse<P: AsRef<Path>>(path: P) -> Option<Self> {
+        let bin = ffi::ELF_Binary::parse(path.as_ref().to_str().unwrap());
         if bin.is_null() {
             return None;
         }
@@ -80,9 +80,9 @@ impl Binary {
     }
 
     /// Parse from a string file path and with a provided configuration
-    pub fn parse_with_config(path: &str, config: &ParserConfig) -> Option<Self> {
+    pub fn parse_with_config<P: AsRef<Path>>(path: P, config: &ParserConfig) -> Option<Self> {
         let ffi_config = config.to_ffi();
-        let ffi = ffi::ELF_Binary::parse_with_config(path, &ffi_config);
+        let ffi = ffi::ELF_Binary::parse_with_config(path.as_ref().to_str().unwrap(), &ffi_config);
         if ffi.is_null() {
             return None;
         }
@@ -342,17 +342,17 @@ impl Binary {
     }
 
     /// Write back the current ELF binary into the file specified in parameter
-    pub fn write(&mut self, output: &Path) {
-        self.ptr.as_mut().unwrap().write(output.to_str().unwrap());
+    pub fn write<P: AsRef<Path>>(&mut self, output: P) {
+        self.ptr.as_mut().unwrap().write(output.as_ref().to_str().unwrap());
     }
 
     /// Write back the current ELF binary into the file specified in parameter with the
     /// configuration provided in the second parameter.
-    pub fn write_with_config(&mut self, output: &Path, config: Config) {
+    pub fn write_with_config<P: AsRef<Path>>(&mut self, output: P, config: Config) {
         self.ptr
             .as_mut()
             .unwrap()
-            .write_with_config(output.to_str().unwrap(), config.to_ffi());
+            .write_with_config(output.as_ref().to_str().unwrap(), config.to_ffi());
     }
 
     /// Add a library as dependency
@@ -419,8 +419,8 @@ impl Binary {
     }
 
     /// Change the path to the interpreter
-    pub fn set_interpreter(&mut self, interpreter: &str) {
-        self.ptr.pin_mut().set_interpreter(interpreter.to_string());
+    pub fn set_interpreter<P: AsRef<Path>>(&mut self, interpreter: P) {
+        self.ptr.pin_mut().set_interpreter(interpreter.as_ref().to_str().unwrap());
     }
 
     /// Try to find the SymbolVersionRequirement associated with the given library

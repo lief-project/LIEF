@@ -336,14 +336,14 @@ impl Binary {
     }
 
     /// Write back the current MachO binary into the file specified in parameter
-    pub fn write(&mut self, output: &Path) {
-        self.ptr.as_mut().unwrap().write(output.to_str().unwrap());
+    pub fn write<P: AsRef<Path>>(&mut self, output: P) {
+        self.ptr.as_mut().unwrap().write(output.as_ref().to_str().unwrap());
     }
 
     /// Write back the current MachO binary into the file specified in parameter with the
     /// configuration provided in the second parameter.
-    pub fn write_with_config(&mut self, output: &Path, config: Config) {
-        self.ptr.as_mut().unwrap().write_with_config(output.to_str().unwrap(), config.to_ffi());
+    pub fn write_with_config<P: AsRef<Path>>(&mut self, output: P, config: Config) {
+        self.ptr.as_mut().unwrap().write_with_config(output.as_ref().to_str().unwrap(), config.to_ffi());
     }
 
     /// Insert a new shared library through a `LC_LOAD_DYLIB` command

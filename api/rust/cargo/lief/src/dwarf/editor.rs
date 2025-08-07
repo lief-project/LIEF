@@ -1,5 +1,6 @@
 use lief_ffi as ffi;
 
+use std::path::Path;
 use std::option::Option;
 use std::marker::PhantomData;
 use crate::{common::FromFFI, generic, common::into_optional};
@@ -48,8 +49,8 @@ impl<'a> Editor<'a> {
     }
 
     /// Write the DWARF file to the specified output
-    pub fn write(&mut self, output: &str) {
-        self.ptr.pin_mut().write(output)
+    pub fn write<P: AsRef<Path>>(&mut self, output: P) {
+        self.ptr.pin_mut().write(output.as_ref().to_str().unwrap())
     }
 }
 

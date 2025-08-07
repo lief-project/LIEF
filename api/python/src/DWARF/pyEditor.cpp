@@ -6,6 +6,7 @@
 
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
+#include "nanobind/extra/stl/pathlike.h"
 
 namespace LIEF::dwarf::py {
 template<>
@@ -31,7 +32,9 @@ void create<dw::Editor>(nb::module_& m) {
     .def("create_compilation_unit", &dw::Editor::create_compilation_unit,
       "Create a new compilation unit"_doc
     )
-    .def("write", &dw::Editor::write,
+    .def("write", [] (dw::Editor& self, nb::PathLike path) {
+        self.write(path);
+      },
       "Write the DWARF file to the specified output"_doc,
       "output"_a
     )

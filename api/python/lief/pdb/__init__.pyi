@@ -1,4 +1,5 @@
 import enum
+import os
 from typing import Iterator, Optional, Union
 
 from . import types as types
@@ -266,7 +267,7 @@ class DebugInfo(lief.DebugInfo):
     def guid(self) -> str: ...
 
     @staticmethod
-    def from_file(filepath: str) -> Optional[DebugInfo]: ...
+    def from_file(filepath: Union[str | os.PathLike]) -> Optional[DebugInfo]: ...
 
     def find_type(self, name: str) -> Optional[Type]: ...
 

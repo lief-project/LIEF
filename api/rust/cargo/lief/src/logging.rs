@@ -89,8 +89,8 @@ pub fn set_level(level: Level) {
 /// tmp.push("lief_log.log");
 /// logging::set_path(dir.as_path());
 /// ```
-pub fn set_path(path: &Path) {
-    ffi::LIEF_Logging::set_path(path.to_str().expect("Can't convert into string"))
+pub fn set_path<P: AsRef<Path>>(path: P) {
+    ffi::LIEF_Logging::set_path(path.as_ref().to_str().expect("Can't convert into string"))
 }
 
 /// Log a message with the logger

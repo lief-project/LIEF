@@ -1,5 +1,6 @@
 use lief_ffi as ffi;
 
+use std::path::Path;
 use crate::Error;
 use crate::common::{FromFFI, into_optional};
 use crate::{declare_iterator, declare_fwd_iterator, to_result};
@@ -253,8 +254,8 @@ impl DyldSharedCache {
     }
 
     /// Find the [`Dylib`] whose [`Dylib::path`] matches the provided path.
-    pub fn find_lib_from_path(&self, path: &str) -> Option<Dylib> {
-        into_optional(self.ptr.find_lib_from_path(path))
+    pub fn find_lib_from_path<P: AsRef<Path>>(&self, path: P) -> Option<Dylib> {
+        into_optional(self.ptr.find_lib_from_path(path.as_ref().to_str().unwrap()))
     }
 
     /// Find the [`Dylib`] whose filename of [`Dylib::path`] matches the provided name.
@@ -346,8 +347,8 @@ impl DyldSharedCache {
     /// One can also enable this cache optimization **globally** using the
     /// function: [`crate::dsc::enable_cache`] or by setting the environment variable
     /// `DYLDSC_ENABLE_CACHE` to 1.
-    pub fn enable_caching(&self, target_cache_dir: &str) {
-        self.ptr.enable_caching(target_cache_dir)
+    pub fn enable_caching<P: AsRef<Path>>(&self, target_cache_dir: P) {
+        self.ptr.enable_caching(target_cache_dir.as_ref().to_str().unwrap())
     }
 
     /// Flush internal information into the on-disk cache (see: enable_caching)

@@ -5,6 +5,7 @@
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/make_iterator.h>
+#include <nanobind/extra/stl/pathlike.h>
 
 #include "nanobind/extra/random_access_iterator.hpp"
 #include "nanobind/utils.hpp"
@@ -12,17 +13,6 @@
 #include "typing.hpp"
 #include "pyutils.hpp"
 #include "pyErr.hpp"
-
-struct PathLike : public nanobind::object {
-  LIEF_PY_DEFAULT_CTOR(PathLike, nanobind::object);
-
-  NB_OBJECT_DEFAULT(PathLike, object, "os.PathLike", check)
-
-  static bool check(handle h) {
-    return true;
-  }
-};
-
 
 namespace LIEF::dsc::py {
 template<>
@@ -298,11 +288,8 @@ void create<dsc::DyldSharedCache>(nb::module_& m) {
           cache = lief.dsc.load(files);
         )doc"_doc, "files"_a);
 
-  m.def("load", [] (PathLike path, const std::string& arch) -> std::unique_ptr<DyldSharedCache> {
-          if (auto path_str = LIEF::py::path_to_str(path)) {
-            return load(*path_str, arch);
-          }
-          return nullptr;
+  m.def("load", [] (nb::PathLike path, const std::string& arch) {
+          return load(path, arch);
         },
         R"doc(
         Load a shared cache from the a single file or from a directory specified

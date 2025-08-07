@@ -16,14 +16,16 @@
 #include "PDB/pyPDB.hpp"
 #include "LIEF/PDB/utils.hpp"
 
+#include "nanobind/extra/stl/pathlike.h"
 #include <nanobind/stl/string.h>
 
 namespace LIEF::pdb::py {
 
 void init_utils(nb::module_& m) {
-  lief_mod->def("is_pdb", nb::overload_cast<const std::string&>(&is_pdb),
-    "Check if the given file is a ``PDB``"_doc,
-    "file"_a
+  lief_mod->def("is_pdb", [] (nb::PathLike path) {
+      return is_pdb(path);
+    },
+    "Check if the given file is a ``PDB``"_doc, "file"_a
   );
 }
 }

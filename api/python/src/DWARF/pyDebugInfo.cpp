@@ -15,7 +15,8 @@ void create<dw::DebugInfo>(nb::module_& m) {
     This class represents a DWARF debug information. It can embed different
     compilation units which can be accessed through :attr:`~.compilation_units`.
 
-    This class can be instantiated from :attr:`lief.Binary.debug_info`
+    This class can be instantiated from :attr:`lief.Binary.debug_info` or
+    :func:`lief.dwarf.load`
     )doc"_doc
   );
 

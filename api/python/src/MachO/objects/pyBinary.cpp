@@ -21,6 +21,7 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>
 #include "nanobind/extra/stl/lief_span.h"
+#include "nanobind/extra/stl/pathlike.h"
 #include "nanobind/extra/random_access_iterator.hpp"
 
 #include "LIEF/MachO/Binary.hpp"
@@ -531,13 +532,15 @@ void create<Binary>(nb::module_& m) {
         "address"_a)
 
     .def("write",
-        nb::overload_cast<const std::string&>(&Binary::write),
+        [] (Binary& self, nb::PathLike path) { return self.write(path); },
         "Rebuild the binary and write its content in the file given in the first parameter"_doc,
         "output"_a,
         nb::rv_policy::reference_internal)
 
     .def("write",
-        nb::overload_cast<const std::string&, Builder::config_t>(&Binary::write),
+        [] (Binary& self, nb::PathLike path, const Builder::config_t& config) {
+          return self.write(path, config);
+        },
         R"doc(
         Rebuild the binary and write its content in the file given in the first parameter.
         The ``config`` parameter can be used to tweak the building process.

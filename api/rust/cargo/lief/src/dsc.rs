@@ -21,6 +21,7 @@
 //! See: [`crate::dsc::enable_cache`] and [`crate::dsc::enable_cache_from_dir`]
 use lief_ffi as ffi;
 use std::ffi::{CString, c_char};
+use std::path::Path;
 use crate::common::into_optional;
 
 pub mod dyld_shared_cache;
@@ -72,15 +73,15 @@ pub use caching::enable_cache_from_dir;
 /// // From a directory with multiple architectures
 /// let cache = LIEF::dsc::load("macos-12.6/", /*arch=*/"x86_64h");
 /// ```
-pub fn load_from_path(path: &str, arch: &str) -> Option<DyldSharedCache> {
-    into_optional(ffi::dsc_DyldSharedCache::from_path(path, arch))
+pub fn load_from_path<P: AsRef<Path>>(path: P, arch: &str) -> Option<DyldSharedCache> {
+    into_optional(ffi::dsc_DyldSharedCache::from_path(path.as_ref().to_str().unwrap(), arch))
 }
 
-pub fn load_from_files(files: &[String]) -> Option<DyldSharedCache> {
+pub fn load_from_files<P: AsRef<Path>>(files: &[P]) -> Option<DyldSharedCache> {
     let mut c_strings = Vec::new();
     let mut c_ptrs = Vec::new();
     for file in files.iter() {
-        let c_str = CString::new(file.as_str()).unwrap();
+        let c_str = CString::new(file.as_ref().to_str().unwrap()).unwrap();
         c_strings.push(c_str);
         let c_ptr = c_strings.last().unwrap().as_ptr() as *const c_char;
         c_ptrs.push(c_ptr);

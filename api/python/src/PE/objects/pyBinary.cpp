@@ -34,6 +34,7 @@
 #include "pyErr.hpp"
 #include "pyIterator.hpp"
 #include "nanobind/extra/stl/lief_span.h"
+#include "nanobind/extra/stl/pathlike.h"
 #include "nanobind/utils.hpp"
 
 #include <nanobind/stl/string.h>
@@ -499,14 +500,16 @@ void create<Binary>(nb::module_& m) {
     )
 
     .def("write",
-        nb::overload_cast<const std::string&>(&Binary::write),
-        "Build the binary and write the result in the given ``output`` file"_doc,
-        "output_path"_a)
+      [] (Binary& self, nb::PathLike path) { self.write(path); },
+      "Build the binary and write the result in the given ``output`` file"_doc,
+      "output_path"_a)
 
     .def("write",
-        nb::overload_cast<const std::string&, const Builder::config_t&>(&Binary::write),
-        "Build the binary with the given config and write the result in the given ``output`` file"_doc,
-        "output_path"_a, "config"_a)
+      [] (Binary& self, nb::PathLike path, const Builder::config_t& config) {
+        self.write(path, config);
+      },
+      "Build the binary with the given config and write the result in the given ``output`` file"_doc,
+      "output_path"_a, "config"_a)
 
     .def("write_to_bytes", [] (Binary& bin, const Builder::config_t& config) -> nb::bytes {
           std::ostringstream out;

@@ -24,6 +24,7 @@
 //! ```
 
 use lief_ffi as ffi;
+use std::path::Path;
 
 pub mod debug_info;
 pub mod compilation_unit;
@@ -61,6 +62,6 @@ pub use editor::Editor;
 pub use parameters::{Parameter, Parameters};
 
 /// Load a DWARF from its file path
-pub fn load(path: &str) -> Option<DebugInfo> {
-    into_optional(ffi::DWARF_DebugInfo::from_file(path))
+pub fn load<P: AsRef<Path>>(path: P) -> Option<DebugInfo<'static>> {
+    into_optional(ffi::DWARF_DebugInfo::from_file(path.as_ref().to_str().unwrap()))
 }

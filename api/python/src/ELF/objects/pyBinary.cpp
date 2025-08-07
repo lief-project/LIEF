@@ -21,6 +21,7 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
 #include "nanobind/extra/stl/lief_span.h"
+#include "nanobind/extra/stl/pathlike.h"
 
 #include "ELF/pyELF.hpp"
 
@@ -608,13 +609,15 @@ void create<Binary>(nb::module_& m) {
         "permutation"_a)
 
     .def("write",
-        nb::overload_cast<const std::string&>(&Binary::write),
+        [] (Binary& self, nb::PathLike path) { return self.write(path); },
         "Rebuild the binary and write it in a file"_doc,
         "output"_a,
         nb::rv_policy::reference_internal)
 
     .def("write",
-        nb::overload_cast<const std::string&, Builder::config_t>(&Binary::write),
+        [] (Binary& self, nb::PathLike path, const Builder::config_t& config) {
+          return self.write(path, config);
+        },
         "Rebuild the binary with the given configuration and write it in a file"_doc,
         "output"_a, "config"_a,
         nb::rv_policy::reference_internal)

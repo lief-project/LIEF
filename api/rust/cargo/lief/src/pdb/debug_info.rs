@@ -1,5 +1,6 @@
 use lief_ffi as ffi;
 
+use std::path::Path;
 use std::marker::PhantomData;
 use crate::common::{FromFFI, into_optional};
 use crate::generic;
@@ -29,8 +30,8 @@ impl FromFFI<ffi::PDB_DebugInfo> for DebugInfo<'_> {
 
 impl DebugInfo<'_> {
     /// Create a DebugInfo from a PDB file path
-    pub fn from(path: &str) -> Option<DebugInfo> {
-        into_optional(ffi::PDB_DebugInfo::from_file(path))
+    pub fn from<P: AsRef<Path>>(path: P) -> Option<DebugInfo<'static>> {
+        into_optional(ffi::PDB_DebugInfo::from_file(path.as_ref().to_str().unwrap()))
     }
 
     /// The number of times the PDB file has been written.

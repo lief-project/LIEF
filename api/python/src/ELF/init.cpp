@@ -19,6 +19,7 @@
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
+#include "nanobind/extra/stl/pathlike.h"
 
 #include "LIEF/ELF/Builder.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
@@ -101,9 +102,10 @@ void init_objects(nb::module_& m) {
 
 inline void init_utils(nb::module_&) {
   lief_mod->def("is_elf",
-      nb::overload_cast<const std::string&>(&is_elf),
-      "Check if the given file is an ``ELF``",
-      "filename"_a);
+    [] (nb::PathLike path) {
+      return is_elf(path);
+    }, "Check if the given file is an ``ELF``", "filename"_a
+  );
 
   lief_mod->def("is_elf",
       nb::overload_cast<const std::vector<uint8_t>&>(&is_elf),

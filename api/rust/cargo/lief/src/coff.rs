@@ -10,6 +10,8 @@
 //! }
 //! ```
 
+use std::path::Path;
+
 pub mod string;
 pub mod symbol;
 pub mod binary;
@@ -36,10 +38,10 @@ pub use relocation::Relocation;
 pub use header::{Header, RegularHeader, BigObjHeader};
 
 /// Parse a COFF file from the given file path
-pub fn parse(path: &str) -> Option<Binary> {
+pub fn parse<P: AsRef<Path>>(path: P) -> Option<Binary> {
     Binary::parse(path)
 }
 
-pub fn is_coff(path: &str) -> bool {
-    lief_ffi::COFF_Utils::is_coff(path)
+pub fn is_coff<P: AsRef<Path>>(path: P) -> bool {
+    lief_ffi::COFF_Utils::is_coff(path.as_ref().to_str().unwrap())
 }

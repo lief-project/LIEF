@@ -7,6 +7,7 @@
 #include <nanobind/make_iterator.h>
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
+#include <nanobind/extra/stl/pathlike.h>
 
 namespace LIEF::pdb::py {
 template<>
@@ -26,7 +27,8 @@ void create<pdb::DebugInfo>(nb::module_& m) {
     .def_prop_ro("guid", &pdb::DebugInfo::guid,
                  "Unique identifier of the PDB file."_doc)
 
-    .def_static("from_file", &pdb::DebugInfo::from_file,
+    .def_static("from_file",
+      [] (nb::PathLike path) { return pdb::DebugInfo::from_file(path); },
       R"doc(
       Instantiate this class from the given PDB file. It returns ``None``
       if the PDB can't be processed.

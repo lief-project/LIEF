@@ -1,4 +1,5 @@
 use lief_ffi as ffi;
+use std::path::Path;
 use crate::common::FromFFI;
 use crate::declare_fwd_iterator;
 use crate::common::into_optional;
@@ -18,8 +19,8 @@ impl FromFFI<ffi::COFF_Binary> for Binary {
 
 impl Binary {
     /// Parse from a file path given as a string
-    pub fn parse(path: &str) -> Option<Self> {
-        let ffi = ffi::COFF_Binary::parse(path);
+    pub fn parse<P: AsRef<Path>>(path: P) -> Option<Self> {
+        let ffi = ffi::COFF_Binary::parse(path.as_ref().to_str().unwrap());
         if ffi.is_null() {
             return None;
         }

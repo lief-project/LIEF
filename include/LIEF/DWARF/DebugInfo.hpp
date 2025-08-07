@@ -84,8 +84,8 @@ class LIEF_API DebugInfo : public LIEF::DebugInfo {
 
 
 /// Load DWARF file from the given path
-inline std::unique_ptr<DebugInfo> load(const std::string& pdb_path) {
-  return DebugInfo::from_file(pdb_path);
+inline std::unique_ptr<DebugInfo> load(const std::string& dwarf_path) {
+  return DebugInfo::from_file(dwarf_path);
 }
 
 }

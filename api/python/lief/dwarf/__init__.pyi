@@ -1,4 +1,5 @@
 import enum
+import os
 from typing import Iterator, Optional, Union, overload
 
 from . import (
@@ -10,7 +11,7 @@ import lief
 import lief.assembly
 
 
-def load(path: str) -> Optional[DebugInfo]: ...
+def load(path: Union[str | os.PathLike]) -> Optional[DebugInfo]: ...
 
 class Scope:
     class TYPE(enum.Enum):
@@ -302,4 +303,4 @@ class Editor:
 
     def create_compilation_unit(self) -> Optional[editor.CompilationUnit]: ...
 
-    def write(self, output: str) -> None: ...
+    def write(self, output: Union[str | os.PathLike]) -> None: ...
