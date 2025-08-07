@@ -109,3 +109,12 @@ def test_libobjc2():
     loc = functions[3].debug_location
     assert loc.file == r"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Tools\MSVC\14.16.27023\include\xstring"
     assert loc.line == 4004
+
+def test_external_load():
+    pe = lief.PE.parse(get_sample("private/PE/LIEF-arm64.dll"))
+    assert pe is not None
+    pe.load_debug_info(get_sample("private/PDB/LIEF-arm64.pdb"))
+    assert pe.debug_info is not None
+    assert isinstance(pe.debug_info, lief.pdb.DebugInfo)
+
+    assert len(list(pe.disassemble("??_7Header@ELF@LIEF@@6B@"))) == 19

@@ -211,6 +211,10 @@
 :Abstraction:
 
   * Expose |lief-abstract-binary-page_size|
+  * Add |lief-abstract-binary-load_debug_info| to attach an external debug file
+    to a |lief-abstract-binary|. See these sections for more details:
+    :ref:`DWARF: Loading an external debug file <extended-dwarf-load-ext>`
+    :ref:`PDB: Loading an external debug file <extended-pdb-load-ext>`
 
 :Extended:
 

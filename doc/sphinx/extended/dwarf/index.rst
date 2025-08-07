@@ -16,11 +16,13 @@
 Introduction
 ************
 
-DWARF debug info can be embedded in the binary itself (default behavior for ELF)
-or externalized in a dedicated file.
+DWARF debug information can be included directly in the binary
+(which is the default behavior for ELF binaries) or stored in a separate
+dedicated file.
 
-If the DWARF debug info are embedded in the binary itself, one can use the
-attribute: |lief-dwarf-binary-debug-info| to access an instance of |lief-dwarf-debug-info|:
+When the DWARF debug information is embedded within the binary,
+you can access it using the following attribute: |lief-dwarf-binary-debug-info|.
+This attribute returns a |lief-dwarf-debug-info|:
 
 .. tabs::
 
@@ -55,8 +57,8 @@ attribute: |lief-dwarf-binary-debug-info| to access an instance of |lief-dwarf-d
             // DWARF debug info
         }
 
-On the other hand, we can also use the function: |lief-dwarf-load| to load a
-DWARF file regardless whether it is embedded or not:
+Additionally, we can use the function: |lief-dwarf-load| to load a
+DWARF file, regardless of whether it is embedded or not:
 
 .. tabs::
 
@@ -181,6 +183,98 @@ instantiated debug info:
         dbg.variable_by_name("_ZNSt12out_of_rangeC1EPKc");
         dbg.variable_by_name("std::out_of_range::out_of_range(char const*)");
         dbg.variable_by_addr(0x137a70);
+
+
+.. _extended-dwarf-load-ext:
+
+In the case of an external DWARF file, you can bind this debug file to
+a |lief-abstract-binary| by using the function: |lief-abstract-binary-load_debug_info|.
+
+Here's an example:
+
+.. tabs::
+
+   .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        import lief
+
+        binary: lief.Binary = ... # Can be an ELF/PE/Mach-O [...]
+
+        dbg: lief.DebugInfo = binary.load_debug_info("/home/romain/dev/LIEF/some.dwo")
+
+   .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        std::unique_ptr<LIEF::Binary> binary; // Can be an ELF/PE/Mach-O
+
+        binary->load_debug_info("/home/romain/dev/LIEF/some.dwo");
+
+   .. tab:: :fa:`brands fa-rust` Rust
+
+      .. code-block:: rust
+
+        bin: &mut dyn lief::generic::Binary = ...;
+
+        let path = PathBuf::from("/home/romain/dev/LIEF/some.dwo");
+
+        bin.load_debug_info(&path);
+
+This external loading API is useful for adding debug information that might not
+already be present in the binary. For instance, the |lief-disassemble| function
+can leverage this additional debug information to disassemble functions
+defined in the debug file previously loaded:
+
+.. tabs::
+
+   .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        import lief
+
+        binary: lief.Binary = ... # Can be an ELF/PE/Mach-O [...]
+
+        dbg: lief.DebugInfo = binary.load_debug_info("/home/romain/dev/LIEF/some.dwo")
+
+        # The location (address/size) of `my_function` is defined in some.dwo
+        for inst in binary.disassemble("my_function"):
+            print(inst)
+
+   .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        std::unique_ptr<LIEF::Binary> binary; // Can be an ELF/PE/Mach-O
+
+        binary->load_debug_info("/home/romain/dev/LIEF/some.dwo");
+
+        // The location (address/size) of `my_function` is defined in some.dwo
+        for (std::unique_ptr<LIEF::asm::Instruction> inst : binary->disassemble("my_function")) {
+          std::cout << *inst << '\n';
+        }
+
+   .. tab:: :fa:`brands fa-rust` Rust
+
+      .. code-block:: rust
+
+        bin: &mut dyn lief::generic::Binary = ...;
+
+        let path = PathBuf::from("/home/romain/dev/LIEF/some.dwo");
+
+        bin.load_debug_info(&path);
+
+        // The location (address/size) of `my_function` is defined in some.dwo
+        for inst in bin.disassemble_symbol("my_function") {
+            println!("{inst}");
+        }
+
+Additionally, you may want to check out the
+:ref:`BinaryNinja <plugins-binaryninja-dwarf>` and
+:ref:`Ghidra <plugins-ghidra-dwarf>` DWARF export plugin which can generate
+debug information based on the analyses performed by these frameworks.
 
 .. _extended-dwarf-editor:
 

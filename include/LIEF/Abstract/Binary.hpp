@@ -48,16 +48,28 @@ namespace assembly {
 class Engine;
 }
 
-/// Abstract binary that exposes an uniform API for the
-/// different executable file formats
+/// Generic interface representing a binary executable.
+///
+/// This class provides a unified interface across multiple binary formats
+/// such as ELF, PE, Mach-O, and others. It enables users to access binary
+/// components like headers, sections, symbols, relocations,
+/// and functions in a format-agnostic way.
+///
+/// Subclasses like LIEF::PE::Binary implement format-specific API
 class LIEF_API Binary : public Object {
   public:
 
-  /// Type of a virtual address
+  /// Enumeration of virtual address types used for patching and memory access.
   enum class VA_TYPES {
-    AUTO = 0, ///< Try to guess if it's relative or not
-    RVA  = 1, ///< Relative
-    VA   = 2, ///< Absolute
+    /// Automatically determine if the address is absolute or relative
+    /// (default behavior).
+    AUTO = 0,
+
+    /// Relative Virtual Address (RVA), offset from image base.
+    RVA = 1,
+
+    /// Absolute Virtual Address.
+    VA = 2
   };
 
   enum FORMATS {
@@ -285,7 +297,7 @@ class LIEF_API Binary : public Object {
   /// **always** return a nullptr
   DebugInfo* debug_info() const;
 
-  /// Disassemble code starting a the given virtual address and with the given
+  /// Disassemble code starting at the given virtual address and with the given
   /// size.
   ///
   /// ```cpp
@@ -298,7 +310,7 @@ class LIEF_API Binary : public Object {
   /// \see LIEF::assembly::Instruction
   instructions_it disassemble(uint64_t address, size_t size) const;
 
-  /// Disassemble code starting a the given virtual address
+  /// Disassemble code starting at the given virtual address
   ///
   /// ```cpp
   /// auto insts = binary->disassemble(0xacde);
@@ -380,6 +392,23 @@ class LIEF_API Binary : public Object {
   /// Get the default memory page size according to the architecture and
   /// the format of the current binary
   virtual uint64_t page_size() const;
+
+  /// Load and associate an external debug file (e.g., DWARF or PDB) with this binary.
+  ///
+  /// This method attempts to load the debug information from the file located at the given path,
+  /// and binds it to the current binary instance. If successful, it returns a pointer to the
+  /// loaded DebugInfo object.
+  ///
+  /// \param path Path to the external debug file (e.g., `.dwarf`, `.pdb`)
+  /// \return Pointer to the loaded DebugInfo object on success, or `nullptr` on failure.
+  ///
+  /// \warning It is the caller's responsibility to ensure that the debug file is
+  ///          compatible with the binary. Incorrect associations may lead to
+  ///          inconsistent or invalid results.
+  ///
+  /// \note This function does not verify that the debug file matches the binary's unique
+  ///       identifier (e.g., build ID, GUID).
+  DebugInfo* load_debug_info(const std::string& path);
 
   protected:
   FORMATS format_ = FORMATS::UNKNOWN;

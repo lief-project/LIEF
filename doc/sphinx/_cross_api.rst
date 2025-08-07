@@ -595,6 +595,12 @@
     :py:attr:`lief.Binary.page_size`
     :cpp:func:`LIEF::Binary::page_size`
 
+.. |lief-abstract-binary-load_debug_info| lief-api:: lief.abstract.Binary.load_debug_info()
+
+    :rust:method:`lief::generic::Binary::load_debug_info [trait]`
+    :py:meth:`lief.Binary.load_debug_info`
+    :cpp:func:`LIEF::Binary::load_debug_info`
+
 .. ELF =========================================================================
 
 .. |lief-elf-symbol-demangled_name| lief-api:: lief.ELF.Symbol.demangled_name()

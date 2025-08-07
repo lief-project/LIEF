@@ -27,3 +27,11 @@ def test_lief():
     assert variables[0].name == "None" # static Relocation None;
     assert variables[0].address == 0x370710
     assert variables[0].size == 80
+
+def test_external_load():
+    macho = lief.MachO.parse(get_sample("DWARF/dSYM/example")).at(0)
+
+    assert len(list(macho.disassemble("main"))) == 0
+    macho.load_debug_info(get_sample("DWARF/dSYM/example.dSYM/Contents/Resources/DWARF/example"))
+
+    assert len(list(macho.disassemble("main"))) == 375

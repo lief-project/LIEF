@@ -31,6 +31,12 @@ DebugInfo* Binary::debug_info() const {
   return nullptr;
 }
 
+DebugInfo* Binary::load_debug_info(const std::string& /*path*/) {
+  LIEF_ERR(DEBUG_FMT_NOT_SUPPORTED);
+  return nullptr;
+}
+
+
 // ----------------------------------------------------------------------------
 // DebugInfo/DebugInfo.hpp
 // ----------------------------------------------------------------------------

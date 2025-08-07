@@ -161,6 +161,98 @@ the PDB debug info:
             }
         }
 
+.. _extended-pdb-load-ext:
+
+You can also use the function |lief-abstract-binary-load_debug_info| to bind
+an PDB file to an existing |lief-abstract-binary|:
+
+.. tabs::
+
+   .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        import lief
+
+        binary: lief.Binary = ... # Can be an ELF/PE/Mach-O [...]
+
+        dbg: lief.DebugInfo = binary.load_debug_info(r"C:\Users\romain\LIEF.pdb")
+
+   .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        std::unique_ptr<LIEF::Binary> binary; // Can be an ELF/PE/Mach-O
+
+        binary->load_debug_info("C:\\Users\\romain\\LIEF.pdb");
+
+   .. tab:: :fa:`brands fa-rust` Rust
+
+      .. code-block:: rust
+
+        bin: &mut dyn lief::generic::Binary = ...;
+
+        let path = PathBuf::from("C:\\Users\\romain\\LIEF.pdb");
+
+        bin.load_debug_info(&path);
+
+Note that |lief-abstract-binary-load_debug_info| can also attach an external
+DWARF file on a PE binary even if this is not the regular use case.
+For instance, :ref:`BinaryNinja <plugins-binaryninja-dwarf>` and
+:ref:`Ghidra <plugins-ghidra-dwarf>` DWARF export plugin can generate
+a DWARF file based on the analyses performed by these frameworks for a PE
+binary.
+
+This external loading API is useful for adding debug information that might not
+already be present in the binary. For instance, the |lief-disassemble| function
+can leverage this additional debug information to disassemble functions
+defined in the debug file previously loaded:
+
+.. tabs::
+
+   .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        import lief
+
+        binary: lief.Binary = ... # Can be an ELF/PE/Mach-O [...]
+
+        dbg: lief.DebugInfo = binary.load_debug_info(r"C:\Users\romain\LIEF.pdb")
+
+        # The location (address/size) of `my_function` is defined in LIEF.pdb
+        for inst in binary.disassemble("my_function"):
+            print(inst)
+
+   .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        std::unique_ptr<LIEF::Binary> binary; // Can be an ELF/PE/Mach-O
+
+        binary->load_debug_info("C:\\Users\\romain\\LIEF.pdb");
+
+        // The location (address/size) of `my_function` is defined in LIEF.pdb
+        for (std::unique_ptr<LIEF::asm::Instruction> inst : binary->disassemble("my_function")) {
+          std::cout << *inst << '\n';
+        }
+
+   .. tab:: :fa:`brands fa-rust` Rust
+
+      .. code-block:: rust
+
+        bin: &mut dyn lief::generic::Binary = ...;
+
+        let path = PathBuf::from("C:\\Users\\romain\\LIEF.pdb");
+
+        bin.load_debug_info(&path);
+
+        // The location (address/size) of `my_function` is defined in LIEF.pdb
+        for inst in bin.disassemble_symbol("my_function") {
+            println!("{inst}");
+        }
+
+
 ----
 
 API

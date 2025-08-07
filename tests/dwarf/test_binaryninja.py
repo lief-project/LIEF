@@ -87,3 +87,9 @@ def test_variables():
     assert binaryninja_liblinker.find_variable("protected_lib").address == 0x30000
     assert binaryninja_liblinker.find_variable(0x30000).name == "protected_lib"
 
+
+def test_external_load():
+    elf = lief.ELF.parse(get_sample("private/DWARF/binaryninja/dexprotector/libdp.so"))
+    assert len(list(elf.disassemble("dp_sys_mprotect"))) == 0
+    elf.load_debug_info(get_sample("private/DWARF/binaryninja/dexprotector/libdp.dwarf"))
+    assert len(list(elf.disassemble("dp_sys_mprotect"))) == 17

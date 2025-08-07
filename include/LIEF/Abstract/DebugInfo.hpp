@@ -18,12 +18,15 @@
 #include "LIEF/visibility.h"
 namespace LIEF {
 
+class Binary;
+
 namespace details {
 class DebugInfo;
 }
 
 class LIEF_API DebugInfo {
   public:
+  friend class Binary;
   enum class FORMAT {
     UNKNOWN = 0,
     DWARF, PDB,

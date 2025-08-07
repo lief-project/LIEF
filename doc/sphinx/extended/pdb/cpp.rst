@@ -152,4 +152,4 @@ Union
 Utilities
 *********
 
-.. doxygenfunction:: LIEF::PDB::is_pdb(const std::string&)
+.. doxygenfunction:: bool LIEF::pdb::is_pdb(const std::string&)

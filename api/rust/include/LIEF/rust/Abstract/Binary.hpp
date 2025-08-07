@@ -111,6 +111,10 @@ class AbstractBinary : public Mirror<LIEF::Binary> {
     return get().assemble(address, Asm, *config);
   }
 
+  auto load_debug_info(std::string file) {
+    return details::try_unique<AbstracDebugInfo>(get().load_debug_info(file));
+  }
+
   uint64_t page_size() const {
     return get().page_size();
   }

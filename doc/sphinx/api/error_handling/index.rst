@@ -70,23 +70,17 @@ C++
 ++++++++
 
 
-.. doxygentypedef:: LIEF::result
-   :project: lief
+.. doxygenclass:: LIEF::result
 
 .. doxygenfunction:: LIEF::as_lief_err
-   :project: lief
 
 .. doxygenenum:: lief_errors
-   :project: lief
 
-.. doxygentypedef:: LIEF::ok_error_t
-   :project: lief
+.. doxygenclass:: LIEF::ok_error_t
 
 .. doxygenfunction:: LIEF::ok
-   :project: lief
 
 .. doxygenstruct:: LIEF::ok_t
-   :project: lief
 
 Python
 ++++++++

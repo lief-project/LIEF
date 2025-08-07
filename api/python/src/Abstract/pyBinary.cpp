@@ -24,6 +24,7 @@
 #include "pyErr.hpp"
 #include "pySafeString.hpp"
 #include "nanobind/extra/stl/lief_span.h"
+#include "nanobind/extra/stl/pathlike.h"
 #include "pyIterator.hpp"
 #include "nanobind/utils.hpp"
 
@@ -40,35 +41,42 @@
 #include "LIEF/asm/Engine.hpp"
 #include "LIEF/asm/Instruction.hpp"
 
+#include "Abstract/pyDebugInfoTyHook.hpp"
+
 namespace LIEF::py {
 template<>
 void create<Binary>(nb::module_& m) {
   nb::class_<Binary, Object> pybinary(m, "Binary",
-      R"delim(
-      File format abstract representation.
+    R"doc(
+    Generic interface representing a binary executable.
 
-      This object represents the abstraction of an executable file format.
-      It enables to access common features (like the :attr:`~lief.Binary.entrypoint`) regardless
-      of the concrete format (e.g. :attr:`lief.ELF.Binary.entrypoint`)
-      )delim"_doc);
+    This class provides a unified interface across multiple binary formats
+    such as ELF, PE, Mach-O, and others. It enables users to access binary
+    components like headers, sections, symbols, relocations,
+    and functions in a format-agnostic way.
 
-# define ENTRY(X) .value(to_string(Binary::VA_TYPES::X), Binary::VA_TYPES::X)
-  nb::enum_<Binary::VA_TYPES>(pybinary, "VA_TYPES")
-    ENTRY(AUTO)
-    ENTRY(VA)
-    ENTRY(RVA)
-  ;
-# undef ENTRY
+    Subclasses (like :class:`lief.PE.Binary`) implement format-specific API
+    )doc"_doc);
 
-# define ENTRY(X) .value(to_string(Binary::FORMATS::X), Binary::FORMATS::X)
+  nb::enum_<Binary::VA_TYPES>(pybinary, "VA_TYPES",
+    "Enumeration of virtual address types used for patching and memory access."_doc
+  )
+  .value("AUTO", Binary::VA_TYPES::AUTO,
+    "Automatically determine if the address is absolute or relative (default behavior)"_doc
+  )
+  .value("RVA", Binary::VA_TYPES::RVA,
+    "Relative Virtual Address (RVA), offset from image base."_doc
+  )
+  .value("VA", Binary::VA_TYPES::VA,
+    "Absolute Virtual Address."
+  );
+
   nb::enum_<Binary::FORMATS>(pybinary, "FORMATS")
-    ENTRY(UNKNOWN)
-    ENTRY(ELF)
-    ENTRY(PE)
-    ENTRY(MACHO)
-    ENTRY(OAT)
-  ;
-# undef ENTRY
+    .value("UNKNOWN", Binary::FORMATS::UNKNOWN)
+    .value("ELF", Binary::FORMATS::ELF)
+    .value("PE", Binary::FORMATS::PE)
+    .value("MACHO", Binary::FORMATS::MACHO)
+    .value("OAT", Binary::FORMATS::OAT);
 
   init_ref_iterator<Binary::it_sections>(pybinary, "it_sections");
   init_ref_iterator<Binary::it_symbols>(pybinary, "it_symbols");
@@ -313,7 +321,7 @@ void create<Binary>(nb::module_& m) {
               nb::type<Binary>(), "instructions_it", insts);
       }, "address"_a, "size"_a, nb::keep_alive<0, 1>(),
       R"doc(
-      Disassemble code starting a the given virtual address and with the given
+      Disassemble code starting at the given virtual address and with the given
       size.
 
       .. code-block:: python
@@ -396,6 +404,30 @@ void create<Binary>(nb::module_& m) {
       R"doc(
       Get the default memory page size according to the architecture and the
       format of the current binary
+      )doc"_doc
+    )
+
+    .def("load_debug_info", [] (Binary& self, const nb::PathLike& pathlike) {
+        return self.load_debug_info(pathlike);
+      }, "path"_a, nb::rv_policy::reference_internal,
+      R"doc(
+      Load and associate an external debug file (e.g., DWARF or PDB) with this
+      binary.
+
+      This method attempts to load the debug information from the file located
+      at the given path, and binds it to the current binary instance. If
+      successful, it returns the loaded :class:`~.DebugInfo` object.
+
+      .. warning::
+
+        It is the caller's responsibility to ensure that the debug file is
+        compatible with the binary. Incorrect associations may lead to
+        inconsistent or invalid results.
+
+      .. note::
+
+          This function does not verify that the debug file matches the binary's
+          unique identifier (e.g., build ID, GUID).
       )doc"_doc
     )
 

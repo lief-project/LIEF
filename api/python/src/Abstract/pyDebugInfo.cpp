@@ -1,3 +1,4 @@
+#include "pyLIEF.hpp"
 #include "LIEF/Abstract/DebugInfo.hpp"
 #include "Abstract/init.hpp"
 
@@ -13,9 +14,9 @@ void create<DebugInfo>(nb::module_& m) {
     .value("PDB", DebugInfo::FORMAT::PDB);
 
   dbg_info.def_prop_ro("format", &DebugInfo::format,
-    R"delim(
+    R"doc(
     Debug format (PDB/DWARF)
-    )delim"
+    )doc"_doc
   );
 }
 
