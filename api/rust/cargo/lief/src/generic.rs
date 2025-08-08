@@ -1,6 +1,6 @@
 use lief_ffi as ffi;
 use bitflags::bitflags;
-use crate::{to_slice, declare_fwd_iterator};
+use crate::{to_slice, declare_fwd_iterator, to_opt_trait};
 use crate::common::{into_optional, FromFFI};
 use crate::assembly::{Instructions, AssemblerConfig};
 
@@ -277,11 +277,26 @@ pub trait Binary {
     }
 }
 
+/// This class provides a generic interface for accessing debug information
+/// from different formats such as DWARF and PDB.
+///
+/// Users can use this interface to access high-level debug features like
+/// resolving function addresses.
+///
+/// See: [`crate::pdb::DebugInfo`], [`crate::dwarf::DebugInfo`]
 pub trait DebugInfo {
     #[doc(hidden)]
     fn as_generic(&self) -> &ffi::AbstracDebugInfo;
-}
 
+    /// Attempt to resolve the address of the function specified by `name`.
+    fn find_function_address(&self, name: &str) -> Option<u64> {
+        to_opt_trait!(
+            &lief_ffi::AbstracDebugInfo::find_function_address,
+            self.as_generic(),
+            name
+        );
+    }
+}
 
 bitflags! {
     /// Flags used to characterize the semantics of the function

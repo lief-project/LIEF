@@ -215,6 +215,7 @@
     to a |lief-abstract-binary|. See these sections for more details:
     :ref:`DWARF: Loading an external debug file <extended-dwarf-load-ext>`
     :ref:`PDB: Loading an external debug file <extended-pdb-load-ext>`
+  * Add |lief-debug-info-find_function_address|
 
 :Extended:
 

@@ -15,9 +15,14 @@
 #pragma once
 #include <LIEF/Abstract/DebugInfo.hpp>
 #include <LIEF/rust/Mirror.hpp>
+#include <LIEF/rust/optional.hpp>
 
 class AbstracDebugInfo : public Mirror<LIEF::DebugInfo> {
   public:
   using Mirror::Mirror;
   using lief_t = LIEF::DebugInfo;
+
+  uint64_t find_function_address(std::string name, uint32_t& is_set) const {
+    return details::make_optional(get().find_function_address(name), is_set);
+  }
 };

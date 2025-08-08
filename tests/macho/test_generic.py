@@ -355,3 +355,10 @@ def test_find_library():
     assert macho.find_library("lief-dwarf-plugin-darwin-arm64.dylib") is not None
     assert macho.find_library("@rpath/lief-dwarf-plugin-darwin-arm64.dylib") is not None
     assert macho.find_library("/usr/lib/libSystem.B.dylib") is not None
+
+def test_resolve_function():
+    macho = lief.MachO.parse(get_sample("MachO/lief-dwarf-plugin-darwin-arm64.dylib")).at(0)
+    assert macho.get_function_address("CorePluginABIVersion") == 0x1cf0
+
+    macho = lief.MachO.parse(get_sample("MachO/RNCryptor.bin")).at(0)
+    assert macho.get_function_address("_RNCryptorVersionString") == 0x00012988

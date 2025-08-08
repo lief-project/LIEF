@@ -117,4 +117,4 @@ def test_external_load():
     assert pe.debug_info is not None
     assert isinstance(pe.debug_info, lief.pdb.DebugInfo)
 
-    assert len(list(pe.disassemble("??_7Header@ELF@LIEF@@6B@"))) == 19
+    assert len(list(pe.disassemble("??1?$digit_grouping@D@detail@v10@fmt@@QEAA@XZ"))) == 9538

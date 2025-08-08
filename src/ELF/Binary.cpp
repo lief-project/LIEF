@@ -942,7 +942,7 @@ result<uint64_t> Binary::get_function_address(const std::string& func_name) cons
     return *res;
   }
 
-  return make_error_code(lief_errors::not_found);
+  return LIEF::Binary::get_function_address(func_name);;
 }
 
 result<uint64_t> Binary::get_function_address(const std::string& func_name, bool demangled) const {
@@ -984,7 +984,10 @@ result<uint64_t> Binary::get_function_address(const std::string& func_name, bool
       });
 
   if (it_symtab != symtab_symbols_.end()) {
-    return (*it_symtab)->value();
+    uint64_t value = (*it_symtab)->value();
+    if (value > 0) {
+      return value;
+    }
   }
   return make_error_code(lief_errors::not_found);
 

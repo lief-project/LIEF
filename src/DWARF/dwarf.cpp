@@ -329,6 +329,10 @@ std::unique_ptr<Type> DebugInfo::find_type(const std::string&/*name*/) const {
   return nullptr;
 }
 
+optional<uint64_t> DebugInfo::find_function_address(const std::string& /*name*/) const {
+  return nullopt();
+}
+
 DebugInfo::compilation_units_it DebugInfo::compilation_units() const {
   return make_empty_iterator<CompilationUnit>();
 }

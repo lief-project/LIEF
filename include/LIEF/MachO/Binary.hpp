@@ -1018,6 +1018,9 @@ class LIEF_API Binary : public LIEF::Binary  {
   /// DyldInfo or DyldChainedFixups commands.
   it_bindings bindings() const;
 
+  /// Try to get the address for the function's name given in parameter
+  result<uint64_t> get_function_address(const std::string& name) const override;
+
   static bool classof(const LIEF::Binary* bin) {
     return bin->format() == Binary::FORMATS::MACHO;
   }

@@ -864,6 +864,9 @@ class LIEF_API Binary : public LIEF::Binary {
     return nested_.get();
   }
 
+  /// Attempt to resolve the address of the function specified by `name`.
+  result<uint64_t> get_function_address(const std::string& name) const override;
+
   static bool classof(const LIEF::Binary* bin) {
     return bin->format() == Binary::FORMATS::PE;
   }

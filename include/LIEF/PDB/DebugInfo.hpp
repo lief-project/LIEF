@@ -84,6 +84,9 @@ class LIEF_API DebugInfo : public LIEF::DebugInfo {
   /// ```
   std::unique_ptr<PublicSymbol> find_public_symbol(const std::string& name) const;
 
+  /// Attempt to resolve the address of the function specified by `name`.
+  optional<uint64_t> find_function_address(const std::string& name) const override;
+
   /// The number of times the PDB file has been written.
   uint32_t age() const;
 

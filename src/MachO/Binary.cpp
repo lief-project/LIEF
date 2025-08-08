@@ -2441,6 +2441,19 @@ Binary::it_bindings Binary::bindings() const {
   return make_range(std::move(begin), std::move(end));
 }
 
+result<uint64_t> Binary::get_function_address(const std::string& name) const {
+  const std::string alt_name = '_' + name;
+  for (const Symbol& sym : symbols()) {
+    if (sym.value() == 0) {
+      continue;
+    }
+    if (sym.name() == name || sym.name() == alt_name) {
+      return sym.value();
+    }
+  }
+  return LIEF::Binary::get_function_address(name);
+}
+
 void Binary::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }

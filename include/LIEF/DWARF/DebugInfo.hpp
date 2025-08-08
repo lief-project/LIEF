@@ -71,6 +71,9 @@ class LIEF_API DebugInfo : public LIEF::DebugInfo {
   /// Iterator on the CompilationUnit embedded in this dwarf
   compilation_units_it compilation_units() const;
 
+  /// Attempt to resolve the address of the function specified by `name`.
+  optional<uint64_t> find_function_address(const std::string& name) const override;
+
   FORMAT format() const override {
     return LIEF::DebugInfo::FORMAT::DWARF;
   }

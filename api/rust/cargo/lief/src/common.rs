@@ -245,3 +245,25 @@ macro_rules! to_conv_opt {
     };
 }
 
+#[doc(hidden)]
+#[macro_export]
+macro_rules! to_opt_trait {
+    ($func: expr, $self: expr, $($arg:tt)*) => {
+        let mut _is_set: u32 = 0;
+
+        let value = $func(&$self, $($arg),*, std::pin::Pin::new(&mut _is_set));
+        if _is_set == 0 {
+            return None;
+        }
+        return Some(value.into());
+    };
+    ($func: expr, $self: expr) => {
+        let mut _is_set: u32 = 0;
+        let value = $func(&$self, std::pin::Pin::new(&mut _is_set));
+
+        if _is_set == 0 {
+            return None;
+        }
+        return Some(value.into());
+    };
+}

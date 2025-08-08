@@ -67,6 +67,14 @@
     :py:class:`lief.objc.DeclOpt`
     :cpp:struct:`LIEF::objc::DeclOpt`
 
+.. DebugInfo ===================================================================
+
+.. |lief-debug-info-find_function_address| lief-api:: lief.DebugInfo.find_function_address()
+
+    :rust:method:`lief::generic::DebugInfo::find_function_address [trait]`
+    :py:meth:`lief.DebugInfo.find_function_address`
+    :cpp:func:`LIEF::DebugInfo::find_function_address`
+
 .. DWARF =======================================================================
 
 .. |lief-dwarf-binary-debug-info| lief-api:: lief.Binary.debug_info()

@@ -16,6 +16,7 @@
 #include "LIEF/Abstract/Binary.hpp"
 
 #include "LIEF/Visitor.hpp"
+#include "LIEF/config.h"
 
 #include "logging.hpp"
 #include "frozen.hpp"
@@ -51,10 +52,15 @@ const Symbol* Binary::get_symbol(const std::string& name) const {
   return *it_symbol;
 }
 
-
-result<uint64_t> Binary::get_function_address(const std::string&) const {
-  LIEF_ERR("Not implemented for this format");
-  return make_error_code(lief_errors::not_implemented);
+result<uint64_t> Binary::get_function_address(const std::string& name) const {
+  if constexpr (lief_extended) {
+    if (const DebugInfo* dbg = debug_info()) {
+      if (auto addr = dbg->find_function_address(name)) {
+        return *addr;
+      }
+    }
+  }
+  return make_error_code(lief_errors::not_found);
 }
 
 std::vector<uint64_t> Binary::xref(uint64_t address) const {

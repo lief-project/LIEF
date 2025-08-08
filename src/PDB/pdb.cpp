@@ -104,6 +104,10 @@ std::unique_ptr<DebugInfo> DebugInfo::from_file(const std::string&) {
   return nullptr;
 }
 
+optional<uint64_t> DebugInfo::find_function_address(const std::string& /*name*/) const {
+  return nullopt();
+}
+
 // ----------------------------------------------------------------------------
 // PDB/Utils.hpp
 // ----------------------------------------------------------------------------

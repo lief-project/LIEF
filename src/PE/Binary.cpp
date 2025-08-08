@@ -1330,6 +1330,34 @@ ExceptionInfo* Binary::find_exception_at(uint32_t rva) {
   return it->get();
 }
 
+result<uint64_t> Binary::get_function_address(const std::string& name) const {
+  if (const Export* exp = get_export()) {
+    if (const ExportEntry* entry = exp->find_entry(name)) {
+      uint32_t rva = entry->address();
+      if (rva > 0) {
+        return rva;
+      }
+    }
+  }
+
+  const std::string alt_name = '_' + name;
+
+  for (const COFF::Symbol& sym : symbols()) {
+    if (sym.complex_type() != COFF::Symbol::COMPLEX_TYPE::TY_FUNCTION) {
+      continue;
+    }
+    if (sym.value() == 0) {
+      continue;
+    }
+
+    if (sym.name() == name || sym.name() == alt_name) {
+      return sym.value();
+    }
+  }
+
+  return LIEF::Binary::get_function_address(name);
+}
+
 bool Binary::is_arm64ec() const {
   return has_hybrid_metadata_ptr(*this) &&
          header().machine() == Header::MACHINE_TYPES::AMD64;
