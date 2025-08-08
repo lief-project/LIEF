@@ -29,6 +29,7 @@ def test_ios_18():
     assert dsc.find_lib_from_name("liblockdown.Y.dylib") is None
 
     assert Path(dsc.filepath).as_posix().endswith("ios-18.1/dyld_shared_cache_arm64e")
+    assert lief.is_shared_cache(Path(dsc.filepath))
 
     libraries = dsc.libraries
 

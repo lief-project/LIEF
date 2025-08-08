@@ -20,4 +20,5 @@
 #include <LIEF/DyldSharedCache/MappingInfo.hpp>
 #include <LIEF/DyldSharedCache/SubCache.hpp>
 #include <LIEF/DyldSharedCache/caching.hpp>
+#include <LIEF/DyldSharedCache/utils.hpp>
 #endif

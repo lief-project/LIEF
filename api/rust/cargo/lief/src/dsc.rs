@@ -91,3 +91,8 @@ pub fn load_from_files<P: AsRef<Path>>(files: &[P]) -> Option<DyldSharedCache> {
         into_optional(ffi::dsc_DyldSharedCache::from_files(files_ptr as *const c_char, c_ptrs.len()))
     }
 }
+
+/// Check if the given file is a dyld shared cache
+pub fn is_shared_cache<P: AsRef<Path>>(path: P) -> bool {
+    ffi::dsc_Utils::is_shared_cache(path.as_ref().to_str().unwrap())
+}

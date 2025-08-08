@@ -35,3 +35,7 @@ SubCache
 
 .. autoclass:: lief.dsc.SubCache
 
+Utilities
+*********
+
+.. autofunction:: lief.is_shared_cache

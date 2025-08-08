@@ -4,5 +4,6 @@ target_sources(pyLIEF PRIVATE
   pyDylib.cpp
   pyMappingInfo.cpp
   pySubCache.cpp
+  pyUtils.cpp
 )
 

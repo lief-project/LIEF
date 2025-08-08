@@ -16,6 +16,7 @@ class MappingInfo;
 namespace LIEF::dsc::py {
 void init(nb::module_& m) {
   nb::module_ mod = m.def_submodule("dsc");
+  init_utils(m);
 
   mod.def("enable_cache", nb::overload_cast<>(&enable_cache),
     R"doc(

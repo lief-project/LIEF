@@ -1,5 +1,4 @@
-/* Copyright 2017 - 2025 R. Thomas
- * Copyright 2017 - 2025 Quarkslab
+/* Copyright 2024 - 2025 R. Thomas
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +12,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "COFF/pyCOFF.hpp"
 
-#include "LIEF/COFF/utils.hpp"
+#pragma once
+#include <string>
+#include "LIEF/DyldSharedCache/utils.hpp"
 
-#include <nanobind/stl/string.h>
-#include <nanobind/stl/vector.h>
-#include "nanobind/extra/stl/pathlike.h"
-
-namespace LIEF::COFF::py {
-
-void init_utils(nb::module_& m) {
-  lief_mod->def("is_coff",
-    [] (nb::PathLike path) { return is_coff(path); },
-    "Check if the given file is a COFF"_doc,
-    "file"_a
-  );
-}
-}
+class dsc_Utils {
+  public:
+  static bool is_shared_cache(std::string file)  {
+    return LIEF::dsc::is_shared_cache(file);
+  }
+};

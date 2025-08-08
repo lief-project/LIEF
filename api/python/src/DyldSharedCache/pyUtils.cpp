@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "COFF/pyCOFF.hpp"
+#include "DyldSharedCache/pyDyldSharedCache.hpp"
+#include "DyldSharedCache/init.hpp"
 
-#include "LIEF/COFF/utils.hpp"
+#include "LIEF/DyldSharedCache/utils.hpp"
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
 #include "nanobind/extra/stl/pathlike.h"
 
-namespace LIEF::COFF::py {
+namespace LIEF::dsc::py {
 
 void init_utils(nb::module_& m) {
-  lief_mod->def("is_coff",
-    [] (nb::PathLike path) { return is_coff(path); },
-    "Check if the given file is a COFF"_doc,
+  lief_mod->def("is_shared_cache",
+    [] (nb::PathLike path) { return is_shared_cache(path); },
+    "Check if the given file is a dyld shared cache"_doc,
     "file"_a
   );
 }

@@ -17,6 +17,7 @@
 #include "LIEF/DyldSharedCache/MappingInfo.hpp"
 #include "LIEF/DyldSharedCache/SubCache.hpp"
 #include "LIEF/DyldSharedCache/caching.hpp"
+#include "LIEF/DyldSharedCache/utils.hpp"
 
 #include "LIEF/MachO/Binary.hpp"
 
@@ -35,6 +36,14 @@ class MappingInfoIt {};
 
 class SubCache {};
 class SubCacheIt {};
+}
+
+// ----------------------------------------------------------------------------
+// utils
+// ----------------------------------------------------------------------------
+bool is_shared_cache(BinaryStream& /*stream*/) {
+  LIEF_ERR(DSC_NOT_SUPPORTED);
+  return false;
 }
 
 // ----------------------------------------------------------------------------

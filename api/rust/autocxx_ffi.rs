@@ -956,6 +956,9 @@ include_cpp! {
     generate!("dsc_enable_cache")
     generate!("dsc_enable_cache_from_dir")
 
+    generate!("dsc_Utils")
+    block_constructors!("dsc_Utils")
+
     generate!("dsc_DyldSharedCache")
     block_constructors!("dsc_DyldSharedCache")
 
