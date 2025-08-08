@@ -25,7 +25,11 @@ void create<ParserConfig>(nb::module_& m) {
     .def(nb::init<>())
     .def_prop_ro_static("default_conf",
       [] (const nb::object& /* self */) { return ParserConfig::default_conf(); },
-      "Default configuration"_doc);
+      "Default configuration"_doc)
+
+    .def_prop_ro_static("all",
+      [] (const nb::object& /* self */) { return ParserConfig::all(); },
+      "All parsing options enabled"_doc);
 
 }
 

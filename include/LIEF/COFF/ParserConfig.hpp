@@ -27,6 +27,11 @@ class LIEF_API ParserConfig {
     static const ParserConfig DEFAULT;
     return DEFAULT;
   }
+
+  static const ParserConfig& all() {
+    // To be updated when there is options that are off by default
+    return default_conf();
+  }
 };
 }
 }
