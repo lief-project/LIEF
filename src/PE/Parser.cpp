@@ -638,6 +638,8 @@ ok_error_t Parser::parse_exceptions() {
              exception_dir->RVA(), exception_dir->RVA() + exception_dir->size(),
              exception_dir->size());
 
+  uint32_t base_offset = binary_->rva_to_offset(exception_dir->RVA());
+
   span<const uint8_t> pdata = exception_dir->content();
   if (pdata.empty()) {
     LIEF_DEBUG("{}:{}", __FUNCTION__, __LINE__);
@@ -660,6 +662,7 @@ ok_error_t Parser::parse_exceptions() {
       LIEF_INFO("Failed to parse exception info index: {}", idx);
       break;
     }
+    ptr->offset(base_offset + ptr->offset());
     binary_->exceptions_.push_back(std::move(ptr));
     ++idx;
   }
@@ -714,6 +717,9 @@ ok_error_t Parser::parse_chpe_exceptions() {
   if (stream == nullptr) {
     return make_error_code(lief_errors::read_error);
   }
+
+  uint64_t base_offset = binary_->rva_to_offset(arm64->extra_rfe_table());
+
   Header::MACHINE_TYPES target_arch = bin().header().machine();
   switch (target_arch) {
     // ARM64EC
@@ -737,6 +743,8 @@ ok_error_t Parser::parse_chpe_exceptions() {
       LIEF_INFO("Failed to parse exception info index: {}", idx);
       break;
     }
+    ptr->offset(base_offset + ptr->offset());
+
     binary_->exceptions_.push_back(std::move(ptr));
     ++idx;
   }

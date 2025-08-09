@@ -22,6 +22,10 @@ def test_exception_issue():
 
     assert len(pe.exceptions) == 9123
 
+    assert pe.exceptions[0].offset == 0x368a00 + 0
+    assert pe.exceptions[1].offset == 0x368a00 + 8
+    assert pe.exceptions[2].offset == 0x368a00 + 16
+
     # Indent regression check
     for e in pe.exceptions:
         assert str(e)
@@ -115,6 +119,15 @@ def test_photo():
       0x00002050 --> 0x0007f3f0
       0x00002060 --> 0x0007f3f0
       0x00002070 --> 0x00078de0
+    Arm64X X64 Code Ranges to Entrypoint:
+      [0x00002000, 0x00002010] --> 0x00002000
+      [0x00002010, 0x00002020] --> 0x00002010
+      [0x00002020, 0x00002030] --> 0x00002020
+      [0x00002030, 0x00002040] --> 0x00002030
+      [0x00002040, 0x00002050] --> 0x00002040
+      [0x00002050, 0x00002060] --> 0x00002050
+      [0x00002060, 0x00002070] --> 0x00002060
+      [0x00002070, 0x00002080] --> 0x00002070
     """)
 
 def test_empty_tls():

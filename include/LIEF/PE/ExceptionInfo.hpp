@@ -71,6 +71,12 @@ class LIEF_API ExceptionInfo {
     return rva_;
   }
 
+  /// Offset in the binary where the raw exception information associated with
+  /// this entry is defined
+  uint64_t offset() const {
+    return offset_;
+  }
+
   virtual std::string to_string() const = 0;
 
   virtual ~ExceptionInfo() = default;
@@ -91,6 +97,11 @@ class LIEF_API ExceptionInfo {
     return const_cast<ExceptionInfo*>(this)->as<T>();
   }
 
+  /// \private
+  void offset(uint64_t value) {
+    offset_ = value;
+  }
+
   LIEF_API friend
     std::ostream& operator<<(std::ostream& os, const ExceptionInfo& info)
   {
@@ -101,6 +112,7 @@ class LIEF_API ExceptionInfo {
   protected:
   ARCH arch_ = ARCH::UNKNOWN;
   uint32_t rva_ = 0;
+  uint32_t offset_ = 0;
 };
 
 }

@@ -9,7 +9,7 @@ use crate::common::FromFFI;
 /// Enum that wraps the different kinds of runtime functions associated with exceptions
 #[derive(Debug)]
 pub enum RuntimeExceptionFunction<'a> {
-    /// An x86_64 exception entry
+    /// A x86_64 exception entry
     X86_64(exception_x64::RuntimeFunction<'a>),
 
     /// An ARM64 exception entry
@@ -49,6 +49,12 @@ pub trait ExceptionInfo {
     /// Function start address
     fn rva_start(&self) -> u32 {
         self.as_generic().rva_start()
+    }
+
+    /// Offset in the binary where the raw exception information associated with
+    /// this entry is defined
+    fn offset(&self) -> u64 {
+        self.as_generic().offset()
     }
 }
 

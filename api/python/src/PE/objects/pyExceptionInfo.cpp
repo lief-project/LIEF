@@ -50,6 +50,10 @@ void create<ExceptionInfo>(nb::module_& m) {
     .def_prop_ro("rva_start", &ExceptionInfo::rva_start,
       "Function start address"_doc
     )
+    .def_prop_ro("offset", nb::overload_cast<>(&ExceptionInfo::offset, nb::const_),
+      "Offset in the binary where the raw exception information associated with "
+      "this entry is defined"_doc
+    )
     LIEF_CLONABLE(ExceptionInfo)
     LIEF_DEFAULT_STR(ExceptionInfo);
 

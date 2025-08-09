@@ -78,6 +78,7 @@ class LIEF_API RuntimeFunctionAArch64 : public ExceptionInfo {
     return rva_start() + length();
   }
 
+
   std::string to_string() const override;
 
   static bool classof(const ExceptionInfo* info) {

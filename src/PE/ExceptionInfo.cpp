@@ -26,11 +26,25 @@ namespace LIEF::PE {
 std::unique_ptr<ExceptionInfo>
   ExceptionInfo::parse(Parser& ctx, BinaryStream& strm, Header::MACHINE_TYPES arch)
 {
+  uint64_t pos = strm.pos();
   switch (arch) {
     case Header::MACHINE_TYPES::AMD64:
-      return RuntimeFunctionX64::parse(ctx, strm);
+      {
+        if (auto F = RuntimeFunctionX64::parse(ctx, strm)) {
+          F->offset(pos);
+          return F;
+        }
+        return nullptr;
+      }
     case Header::MACHINE_TYPES::ARM64:
-      return RuntimeFunctionAArch64::parse(ctx, strm);
+      {
+        if (auto F = RuntimeFunctionAArch64::parse(ctx, strm)) {
+          F->offset(pos);
+          return F;
+        }
+        return nullptr;
+      }
+
     default:
       return nullptr;
   }

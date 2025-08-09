@@ -26,6 +26,10 @@ class PE_ExceptionInfo : public Mirror<LIEF::PE::ExceptionInfo> {
     return get().rva_start();
   }
 
+  auto offset() const {
+    return get().offset();
+  }
+
   std::string to_string() const {
     return get().to_string();
   }
