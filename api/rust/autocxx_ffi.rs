@@ -365,11 +365,17 @@ include_cpp! {
     generate!("PE_CHPEMetadataARM64_it_const_redirection_entries")
     block_constructors!("PE_CHPEMetadataARM64_it_const_redirection_entries")
 
+    generate!("PE_CHPEMetadataARM64_it_const_code_range_entry_point")
+    block_constructors!("PE_CHPEMetadataARM64_it_const_code_range_entry_point")
+
     generate!("PE_CHPEMetadataARM64_range_entry_t")
     block_constructors!("PE_CHPEMetadataARM64_range_entry_t")
 
     generate!("PE_CHPEMetadataARM64_redirection_entry_t")
     block_constructors!("PE_CHPEMetadataARM64_redirection_entry_t")
+
+    generate!("PE_CHPEMetadataARM64_code_range_entry_point_t")
+    block_constructors!("PE_CHPEMetadataARM64_code_range_entry_point_t")
 
     generate!("PE_ExceptionInfo")
     block_constructors!("PE_ExceptionInfo")

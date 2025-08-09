@@ -26,7 +26,13 @@
 namespace LIEF {
 namespace PE {
 
-/// This class represents hybrid metadata for ARM64EC or ARM64X.
+/// This class represents ARM64-specific metadata used in CHPE
+/// (Compatible Hybrid PE) binaries, particularly for hybrid architectures like
+/// ARM64EC and ARM64X.
+///
+/// It extends the CHPEMetadata base class and provides access to metadata
+/// describing code ranges, redirections, entry points, and other hybrid-specific
+/// information relevant for binary analysis or instrumentation.
 class LIEF_API CHPEMetadataARM64 : public CHPEMetadata {
   public:
   /// Structure that describes architecture-specific ranges
@@ -34,8 +40,13 @@ class LIEF_API CHPEMetadataARM64 : public CHPEMetadata {
     static constexpr uint32_t TYPE_MASK = 3;
 
     enum class TYPE {
+      /// Pure ARM64 code
       ARM64 = 0,
+
+      /// ARM64EC hybrid code (compatible with x64).
       ARM64EC = 1,
+
+      /// x64 code.
       AMD64 = 2,
     };
 
@@ -67,6 +78,19 @@ class LIEF_API CHPEMetadataARM64 : public CHPEMetadata {
     uint32_t dst = 0;
   };
 
+  /// Mirror of `IMAGE_ARM64EC_CODE_RANGE_ENTRY_POINT`:
+  /// Represents a mapping between code range and its entry point.
+  struct code_range_entry_point_t {
+    /// Start of the code range.
+    uint32_t start_rva = 0;
+
+    /// End of the code range (RVA).
+    uint32_t end_rva = 0;
+
+    /// RVA of the entry point for this range.
+    uint32_t entrypoint = 0;
+  };
+
   using range_entries_t = std::vector<range_entry_t>;
   using it_range_entries = ref_iterator<range_entries_t&>;
   using it_const_range_entries = const_ref_iterator<const range_entries_t&>;
@@ -74,6 +98,10 @@ class LIEF_API CHPEMetadataARM64 : public CHPEMetadata {
   using redirection_entries_t = std::vector<redirection_entry_t>;
   using it_redirection_entries = ref_iterator<redirection_entries_t&>;
   using it_const_redirection_entries = const_ref_iterator<const redirection_entries_t&>;
+
+  using code_range_entry_point_entries = std::vector<code_range_entry_point_t>;
+  using it_code_range_entry_point = ref_iterator<code_range_entry_point_entries&>;
+  using it_const_code_range_entry_point = const_ref_iterator<const code_range_entry_point_entries&>;
 
   CHPEMetadataARM64(uint32_t version) :
     CHPEMetadata(KIND::ARM64, version)
@@ -95,6 +123,9 @@ class LIEF_API CHPEMetadataARM64 : public CHPEMetadata {
   static ok_error_t parse_code_map(Parser& ctx, CHPEMetadataARM64& metadata);
 
   static ok_error_t parse_redirections(Parser& ctx, CHPEMetadataARM64& metadata);
+
+  static ok_error_t parse_code_ranges_to_entry_points(
+      Parser& ctx, CHPEMetadataARM64& metadata);
 
   /// RVA to the array that describes architecture-specific ranges
   uint32_t code_map() const {
@@ -202,6 +233,14 @@ class LIEF_API CHPEMetadataARM64 : public CHPEMetadata {
 
   it_const_redirection_entries redirections() const {
     return redirection_entries_;
+  }
+
+  it_code_range_entry_point code_range_entry_point() {
+    return code_range_entry_point_entries_;
+  }
+
+  it_const_code_range_entry_point code_range_entry_point() const {
+    return code_range_entry_point_entries_;
   }
 
   CHPEMetadataARM64& code_map(uint32_t value) {
@@ -348,6 +387,7 @@ class LIEF_API CHPEMetadataARM64 : public CHPEMetadata {
 
   range_entries_t range_entries_;
   redirection_entries_t redirection_entries_;
+  code_range_entry_point_entries code_range_entry_point_entries_;
 
 };
 

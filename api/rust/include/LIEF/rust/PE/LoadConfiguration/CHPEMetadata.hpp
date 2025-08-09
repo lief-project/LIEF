@@ -30,10 +30,11 @@ class PE_CHPEMetadata : public Mirror<LIEF::PE::CHPEMetadata> {
   auto to_string() const { return get().to_string(); }
 };
 
-
-class PE_CHPEMetadataARM64_range_entry_t : public Mirror<LIEF::PE::CHPEMetadataARM64::range_entry_t> {
+class PE_CHPEMetadataARM64_range_entry_t :
+  public Mirror<LIEF::PE::CHPEMetadataARM64::range_entry_t>
+{
   public:
-  using lief_t = LIEF::PE::CHPEMetadata;
+  using lief_t = LIEF::PE::CHPEMetadataARM64::range_entry_t;
   using Mirror::Mirror;
 
   auto start_offset() const { return get().start_offset; }
@@ -44,12 +45,25 @@ class PE_CHPEMetadataARM64_range_entry_t : public Mirror<LIEF::PE::CHPEMetadataA
 };
 
 
-class PE_CHPEMetadataARM64_redirection_entry_t : public Mirror<LIEF::PE::CHPEMetadataARM64::redirection_entry_t> {
+class PE_CHPEMetadataARM64_redirection_entry_t :
+  public Mirror<LIEF::PE::CHPEMetadataARM64::redirection_entry_t>
+{
   public:
-  using lief_t = LIEF::PE::CHPEMetadata;
+  using lief_t = LIEF::PE::CHPEMetadataARM64::redirection_entry_t;
   using Mirror::Mirror;
   auto src() const { return get().src; }
   auto dst() const { return get().dst; }
+};
+
+class PE_CHPEMetadataARM64_code_range_entry_point_t :
+  public Mirror<LIEF::PE::CHPEMetadataARM64::code_range_entry_point_t>
+{
+  public:
+  using lief_t = LIEF::PE::CHPEMetadataARM64::code_range_entry_point_t;
+  using Mirror::Mirror;
+  auto start_rva() const { return get().start_rva; }
+  auto end_rva() const { return get().end_rva; }
+  auto entrypoint() const { return get().entrypoint; }
 };
 
 class PE_CHPEMetadataARM64 : public PE_CHPEMetadata {
@@ -72,6 +86,16 @@ class PE_CHPEMetadataARM64 : public PE_CHPEMetadata {
     public:
     it_const_redirection_entries(const PE_CHPEMetadataARM64::lief_t& src)
       : Iterator(std::move(src.redirections())) { } // NOLINT(performance-move-const-arg)
+    auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
+  };
+
+  class it_const_code_range_entry_point :
+      public Iterator<PE_CHPEMetadataARM64_code_range_entry_point_t, LIEF::PE::CHPEMetadataARM64::it_const_code_range_entry_point>
+  {
+    public:
+    it_const_code_range_entry_point(const PE_CHPEMetadataARM64::lief_t& src)
+      : Iterator(std::move(src.code_range_entry_point())) { } // NOLINT(performance-move-const-arg)
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -105,6 +129,10 @@ class PE_CHPEMetadataARM64 : public PE_CHPEMetadata {
 
   auto redirections() const {
     return std::make_unique<it_const_redirection_entries>(impl());
+  }
+
+  auto code_range_entry_point() const {
+    return std::make_unique<it_const_code_range_entry_point>(impl());
   }
 
   static bool classof(const PE_CHPEMetadata* meta) {

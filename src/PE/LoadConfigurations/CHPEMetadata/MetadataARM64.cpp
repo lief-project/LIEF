@@ -29,6 +29,7 @@ std::unique_ptr<CHPEMetadataARM64>
   // The structure defining Hybrid metadata for ARM64(EC) is located in
   // `ntimage.h` and named: `_IMAGE_ARM64EC_METADATA`
   //
+  // ```
   // typedef struct _IMAGE_ARM64EC_METADATA {
   //     ULONG  Version;
   //     ULONG  CodeMap;
@@ -51,6 +52,7 @@ std::unique_ptr<CHPEMetadataARM64>
   //     ULONG  __os_arm64x_dispatch_fptr;
   //     ULONG  AuxiliaryIATCopy;
   // } IMAGE_ARM64EC_METADATA;
+  // ```
   auto CodeMap = stream.read<uint32_t>();
   if (!CodeMap) {
     LIEF_DEBUG("Failed to read Compiled Hybrid Metadata[ARM64]: CodeMap");
@@ -222,6 +224,12 @@ std::unique_ptr<CHPEMetadataARM64>
     }
   }
 
+  if (metadata->code_ranges_to_entry_points_count() > 0) {
+    if (!parse_code_ranges_to_entry_points(ctx, *metadata)) {
+      LIEF_DEBUG("Code ranges to entrypoint parsing finished with error");
+    }
+  }
+
   return metadata;
 }
 
@@ -283,6 +291,53 @@ ok_error_t CHPEMetadataARM64::parse_redirections(Parser& ctx,
   return ok();
 }
 
+ok_error_t CHPEMetadataARM64::parse_code_ranges_to_entry_points(
+    Parser& ctx, CHPEMetadataARM64& metadata)
+{
+  uint32_t offset = ctx.bin().rva_to_offset(metadata.code_ranges_to_entrypoints());
+  const size_t count = metadata.code_ranges_to_entry_points_count();
+
+  ScopedStream stream(ctx.stream(), offset);
+  // std::min to prevent corrupted count
+  size_t reserved = std::min<size_t>(count, 15);
+  metadata.redirection_entries_.reserve(reserved);
+
+  // Definition in ntimage.h:
+  //
+  // ```
+  // typedef struct _IMAGE_ARM64EC_CODE_RANGE_ENTRY_POINT {
+  //     ULONG StartRva;
+  //     ULONG EndRva;
+  //     ULONG EntryPoint;
+  // } IMAGE_ARM64EC_CODE_RANGE_ENTRY_POINT;
+  // ```
+  for (size_t i = 0; i < count; ++i) {
+    auto StartRva = stream->read<uint32_t>();
+    if (!StartRva) {
+      LIEF_DEBUG("Failed to read IMAGE_ARM64EC_CODE_RANGE_ENTRY_POINT.StartRva");
+      return make_error_code(StartRva.error());
+    }
+
+    auto EndRva = stream->read<uint32_t>();
+    if (!EndRva) {
+      LIEF_DEBUG("Failed to read IMAGE_ARM64EC_CODE_RANGE_ENTRY_POINT.EndRva");
+      return make_error_code(EndRva.error());
+    }
+
+    auto EntryPoint = stream->read<uint32_t>();
+    if (!EntryPoint) {
+      LIEF_DEBUG("Failed to read IMAGE_ARM64EC_CODE_RANGE_ENTRY_POINT.EntryPoint");
+      return make_error_code(EntryPoint.error());
+    }
+
+    metadata.code_range_entry_point_entries_.push_back(
+      code_range_entry_point_t{*StartRva, *EndRva, *EntryPoint}
+    );
+  }
+  return ok();
+}
+
+
 std::string CHPEMetadataARM64::to_string() const {
   using namespace fmt;
   static constexpr auto WIDTH = 19;
@@ -338,6 +393,14 @@ std::string CHPEMetadataARM64::to_string() const {
     oss << "Arm64X Redirection Metadata Table:\n";
     for (const redirection_entry_t& entry : redirections()) {
       oss << format("  0x{:08x} --> 0x{:08x}\n", entry.src, entry.dst);
+    }
+  }
+
+  if (!code_range_entry_point_entries_.empty()) {
+    oss << "Arm64X X64 Code Ranges to Entrypoint:\n";
+    for (const code_range_entry_point_t& entry : code_range_entry_point()) {
+      oss << format("  [0x{:08x}, 0x{:08x}] --> 0x{:08x}\n",
+          entry.start_rva, entry.end_rva, entry.entrypoint);
     }
   }
 

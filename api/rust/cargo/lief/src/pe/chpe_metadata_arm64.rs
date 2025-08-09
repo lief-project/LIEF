@@ -4,7 +4,12 @@ use crate::declare_iterator;
 use lief_ffi as ffi;
 use std::marker::PhantomData;
 
-/// This structure represents hybrid metadata for ARM64EC or ARM64X.
+/// This class represents ARM64-specific metadata used in CHPE
+/// (Compatible Hybrid PE) binaries, particularly for hybrid architectures like
+/// ARM64EC and ARM64X.
+///
+/// It provides access to metadata describing code ranges, redirections, entry points, and other
+/// hybrid-specific information relevant for binary analysis
 pub struct CHPEMetadata<'a> {
     ptr: cxx::UniquePtr<ffi::PE_CHPEMetadataARM64>,
     _owner: PhantomData<&'a ffi::PE_LoadConfiguration>,
@@ -111,6 +116,10 @@ impl CHPEMetadata<'_> {
     pub fn redirections(&self) -> Redirections {
         Redirections::new(self.ptr.redirections())
     }
+
+    pub fn code_range_entry_point(&self) -> CodeRangeEntrypoints {
+        CodeRangeEntrypoints::new(self.ptr.code_range_entry_point())
+    }
 }
 
 impl AsCHPEMetadata for CHPEMetadata<'_> {
@@ -185,8 +194,13 @@ impl<'a> FromFFI<ffi::PE_CHPEMetadataARM64_range_entry_t> for RangeEntry<'a> {
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum RangeType {
+    /// Pure ARM64 code
     ARM64,
+
+    /// ARM64EC hybrid code (compatible with x64)
     ARM64EC,
+
+    /// x64 code
     AMD64,
     UNKNOWN(u32),
 }
@@ -275,6 +289,50 @@ impl std::fmt::Debug for RedirectionEntry<'_> {
     }
 }
 
+/// Mirror of `IMAGE_ARM64EC_CODE_RANGE_ENTRY_POINT`:
+/// Represents a mapping between code range and its entry point.
+pub struct CodeRangeEntrypoint<'a> {
+    ptr: cxx::UniquePtr<ffi::PE_CHPEMetadataARM64_code_range_entry_point_t>,
+    _owner: PhantomData<&'a ffi::PE_LoadConfiguration>,
+}
+
+impl<'a> FromFFI<ffi::PE_CHPEMetadataARM64_code_range_entry_point_t> for CodeRangeEntrypoint<'a> {
+    fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_CHPEMetadataARM64_code_range_entry_point_t>) -> Self {
+        Self {
+            ptr,
+            _owner: PhantomData,
+        }
+    }
+}
+
+impl CodeRangeEntrypoint<'_> {
+    /// Start of the code range.
+    pub fn start_rva(&self) -> u32 {
+        self.ptr.start_rva()
+    }
+
+    /// End of the code range (RVA).
+    pub fn end_rva(&self) -> u32 {
+        self.ptr.end_rva()
+    }
+
+    /// RVA of the entry point for this range.
+    pub fn entrypoint(&self) -> u32 {
+        self.ptr.entrypoint()
+    }
+}
+
+impl std::fmt::Debug for CodeRangeEntrypoint<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("CodeRangeEntrypoint")
+            .field("start_rva", &self.start_rva())
+            .field("end_rva", &self.end_rva())
+            .field("entrypoint", &self.entrypoint())
+            .finish()
+    }
+}
+
+
 declare_iterator!(
     CodeRanges,
     RangeEntry<'a>,
@@ -289,4 +347,12 @@ declare_iterator!(
     ffi::PE_CHPEMetadataARM64_redirection_entry_t,
     ffi::PE_CHPEMetadataARM64,
     ffi::PE_CHPEMetadataARM64_it_const_redirection_entries
+);
+
+declare_iterator!(
+    CodeRangeEntrypoints,
+    CodeRangeEntrypoint<'a>,
+    ffi::PE_CHPEMetadataARM64_code_range_entry_point_t,
+    ffi::PE_CHPEMetadataARM64,
+    ffi::PE_CHPEMetadataARM64_it_const_code_range_entry_point
 );

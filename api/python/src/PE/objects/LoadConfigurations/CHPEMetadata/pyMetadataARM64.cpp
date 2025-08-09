@@ -30,11 +30,18 @@ void create<CHPEMetadataARM64>(nb::module_& m) {
   using namespace LIEF::py;
   nb::class_<CHPEMetadataARM64, CHPEMetadata> meta(m, "CHPEMetadataARM64",
     R"doc(
-    This class represents hybrid metadata for ARM64EC or ARM64X.
+    This class represents ARM64-specific metadata used in CHPE
+    (Compatible Hybrid PE) binaries, particularly for hybrid architectures like
+    ARM64EC and ARM64X.
+
+    It extends the :class:`~.CHPEMetadata` base class and provides access to metadata
+    describing code ranges, redirections, entry points, and other hybrid-specific
+    information relevant for binary analysis.
     )doc"_doc);
 
   init_ref_iterator<CHPEMetadataARM64::it_range_entries>(meta, "it_range_entries");
   init_ref_iterator<CHPEMetadataARM64::it_redirection_entries>(meta, "it_redirection_entries");
+  init_ref_iterator<CHPEMetadataARM64::it_code_range_entry_point>(meta, "it_code_range_entry_point");
 
   /* Code range */ {
     using range_entry_t = CHPEMetadataARM64::range_entry_t;
@@ -42,9 +49,10 @@ void create<CHPEMetadataARM64>(nb::module_& m) {
       "Structure that describes architecture-specific ranges"_doc
     );
     nb::enum_<range_entry_t::TYPE>(range, "TYPE")
-      .value("ARM64", range_entry_t::TYPE::ARM64)
-      .value("ARM64EC", range_entry_t::TYPE::ARM64EC)
-      .value("AMD64", range_entry_t::TYPE::AMD64);
+      .value("ARM64", range_entry_t::TYPE::ARM64, "Pure ARM64 code"_doc)
+      .value("ARM64EC", range_entry_t::TYPE::ARM64EC,
+             "ARM64EC hybrid code (compatible with x64)."_doc)
+      .value("AMD64", range_entry_t::TYPE::AMD64, "x64 code"_doc);
 
     range
       .def_rw("start_offset", &range_entry_t::start_offset,
@@ -72,6 +80,26 @@ void create<CHPEMetadataARM64>(nb::module_& m) {
     )
       .def_rw("src", &redirection_entry_t::src)
       .def_rw("dst", &redirection_entry_t::dst)
+    ;
+  }
+
+  /* Code range entrypoint */ {
+    using code_range_entry_point_t = CHPEMetadataARM64::code_range_entry_point_t;
+    nb::class_<code_range_entry_point_t>(meta, "code_range_entry_point_t",
+      R"doc(
+      Mirror of `IMAGE_ARM64EC_CODE_RANGE_ENTRY_POINT`:
+      Represents a mapping between code range and its entry point.
+      )doc"_doc
+    )
+      .def_rw("start_rva", &code_range_entry_point_t::start_rva,
+        "Start of the code range."_doc
+      )
+      .def_rw("end_rva", &code_range_entry_point_t::end_rva,
+        "End of the code range (RVA)."_doc
+      )
+      .def_rw("entrypoint", &code_range_entry_point_t::entrypoint,
+        "RVA of the entry point for this range."_doc
+      )
     ;
   }
 
@@ -192,6 +220,10 @@ void create<CHPEMetadataARM64>(nb::module_& m) {
 
    .def_prop_ro("redirections",
       nb::overload_cast<>(&CHPEMetadataARM64::redirections),
+      nb::rv_policy::reference_internal, nb::keep_alive<0, 1>())
+
+   .def_prop_ro("code_range_entry_point",
+      nb::overload_cast<>(&CHPEMetadataARM64::code_range_entry_point),
       nb::rv_policy::reference_internal, nb::keep_alive<0, 1>())
   ;
 

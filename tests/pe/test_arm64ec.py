@@ -59,6 +59,12 @@ def test_chpe_simple():
     assert redirections[0].src == 0x0000f000
     assert redirections[0].dst == 0x00006ac8
 
+    code_range_entry_point = metadata.code_range_entry_point
+    assert len(code_range_entry_point) == 1
+    assert code_range_entry_point[0].start_rva == 0x0000f000
+    assert code_range_entry_point[0].end_rva == 0x0000f010
+    assert code_range_entry_point[0].entrypoint == 0x0000f000
+
     assert str(metadata) == dedent("""\
                       2 Version
                 0x11000 Arm64X dispatch call function pointer (no redirection)
@@ -83,6 +89,8 @@ def test_chpe_simple():
          AMD64 [0x0000e000, 0x0000f010]
     Arm64X Redirection Metadata Table:
       0x0000f000 --> 0x00006ac8
+    Arm64X X64 Code Ranges to Entrypoint:
+      [0x0000f000, 0x0000f010] --> 0x0000f000
     """)
 
 

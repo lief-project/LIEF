@@ -3576,6 +3576,15 @@ class CHPEMetadataARM64(CHPEMetadata):
 
         def __next__(self) -> CHPEMetadataARM64.redirection_entry_t: ...
 
+    class it_code_range_entry_point:
+        def __getitem__(self, arg: int, /) -> CHPEMetadataARM64.code_range_entry_point_t: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> CHPEMetadataARM64.it_code_range_entry_point: ...
+
+        def __next__(self) -> CHPEMetadataARM64.code_range_entry_point_t: ...
+
     class range_entry_t:
         class TYPE(enum.Enum):
             ARM64 = 0
@@ -3601,6 +3610,13 @@ class CHPEMetadataARM64(CHPEMetadata):
         src: int
 
         dst: int
+
+    class code_range_entry_point_t:
+        start_rva: int
+
+        end_rva: int
+
+        entrypoint: int
 
     code_map: int
 
@@ -3651,6 +3667,9 @@ class CHPEMetadataARM64(CHPEMetadata):
 
     @property
     def redirections(self) -> CHPEMetadataARM64.it_redirection_entries: ...
+
+    @property
+    def code_range_entry_point(self) -> CHPEMetadataARM64.it_code_range_entry_point: ...
 
 class CHPEMetadataX86(CHPEMetadata):
     chpe_code_address_range_offset: int
