@@ -26,7 +26,7 @@
 #include "frozen.hpp"
 #include "internal_utils.hpp"
 
-#include "PE/exceptions_info/internal_x64.hpp"
+#include "LIEF/PE/exceptions_info/internal_x64.hpp"
 
 namespace LIEF::PE {
 

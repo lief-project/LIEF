@@ -31,7 +31,7 @@ namespace unwind_aarch64 {
 class LIEF_API UnpackedFunction : public RuntimeFunctionAArch64 {
   public:
 
-  /// This strucure describes an epilog scope.
+  /// This structure describes an epilog scope.
   struct epilog_scope_t {
     static epilog_scope_t from_raw(uint32_t raw);
     /// Offset of the epilog relatives to the start of the function

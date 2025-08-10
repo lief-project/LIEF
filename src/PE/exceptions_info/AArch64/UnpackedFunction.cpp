@@ -19,7 +19,7 @@
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/PE/exceptions_info/AArch64/UnpackedFunction.hpp"
 
-#include "PE/exceptions_info/internal_arm64.hpp"
+#include "LIEF/PE/exceptions_info/internal_arm64.hpp"
 #include "PE/exceptions_info/UnwindAArch64Decoder.hpp"
 
 #include "logging.hpp"

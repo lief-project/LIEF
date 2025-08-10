@@ -97,7 +97,7 @@ class Decoder {
   }
 
   Decoder& rewind(size_t count) {
-    assert((int64_t)stream_->pos() - count >= 0);
+    assert(((int64_t)stream_->pos() - (int64_t)count) >= 0);
     stream_->decrement_pos(count);
     return *this;
   }

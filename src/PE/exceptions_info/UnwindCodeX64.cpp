@@ -16,7 +16,7 @@
 #include "LIEF/PE/exceptions_info/UnwindCodeX64.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
-#include "PE/exceptions_info/internal_x64.hpp"
+#include "LIEF/PE/exceptions_info/internal_x64.hpp"
 
 #include "logging.hpp"
 

@@ -17,7 +17,7 @@
 #include "LIEF/PE/exceptions_info/AArch64/PackedFunction.hpp"
 #include "logging.hpp"
 
-#include "PE/exceptions_info/internal_arm64.hpp"
+#include "LIEF/PE/exceptions_info/internal_arm64.hpp"
 
 namespace LIEF::PE::unwind_aarch64 {
 std::unique_ptr<PackedFunction> PackedFunction::parse(
