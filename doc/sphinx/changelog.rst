@@ -29,6 +29,21 @@
 :DSC:
 
   * Add enum for the latest dyld shared cache version introducing
+    changes in the header layout (``dyld-1284.13 - 2025-04-25``)
+
+    .. code-block:: diff
+
+         uint64_t    dynamicDataOffset;
+         uint64_t    dynamicDataMaxSize;
+         uint32_t    tproMappingsOffset;
+         uint32_t    tproMappingsCount;
+      +  uint64_t    functionVariantInfoAddr;
+      +  uint64_t    functionVariantInfoSize;
+      +  uint64_t    prewarmingDataOffset;
+      +  uint64_t    prewarmingDataSize;
+      };
+
+  * Add enum for the latest dyld shared cache version introducing
     changes in the header layout (``dyld-1231.3 - 2024-09-24``)
 
     .. code-block:: diff
