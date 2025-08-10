@@ -63,8 +63,10 @@ std::unique_ptr<UnpackedFunction> UnpackedFunction::parse(
     .E(unpacked.E())
     .epilog_cnt_offset(unpacked.epilog_count())
     .code_words(unpacked.code_words())
+    .is_extended(unpacked.is_extended())
   ;
 
+  LIEF_DEBUG("  {:{}}: {}", "Extended", WIDTH, unpacked.is_extended());
   LIEF_DEBUG("  {:{}}: 0x{:04x}", "Function RVA", WIDTH, rva);
   LIEF_DEBUG("  {:{}}: 0x{:04x}", "Function Length", WIDTH, unpacked.function_length());
   LIEF_DEBUG("  {:{}}: 0x{:04x}", "Version", WIDTH, unpacked.version());

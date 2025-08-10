@@ -135,6 +135,11 @@ void create<UnpackedFunction>(nb::module_& m) {
       nb::rv_policy::reference_internal, nb::keep_alive<0, 1>(),
       "Iterator over the epilog scopes"_doc
     )
+
+    .def_prop_ro("is_extended",
+      nb::overload_cast<>(&UnpackedFunction::is_extended, nb::const_),
+      "Whether it uses 2-words encoding"_doc
+    )
   ;
 }
 

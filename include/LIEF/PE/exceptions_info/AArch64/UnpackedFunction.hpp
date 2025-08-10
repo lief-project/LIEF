@@ -125,6 +125,11 @@ class LIEF_API UnpackedFunction : public RuntimeFunctionAArch64 {
     return unwind_code_;
   }
 
+  /// Whether it uses 2-words encoding
+  bool is_extended() const {
+    return is_extended_;
+  }
+
   /// Iterator over the epilog scopes
   it_epilog_scopes epilog_scopes() {
     return epilog_scopes_;
@@ -179,6 +184,11 @@ class LIEF_API UnpackedFunction : public RuntimeFunctionAArch64 {
     return *this;
   }
 
+  UnpackedFunction& is_extended(bool value) {
+    is_extended_ = value;
+    return *this;
+  }
+
   static bool classof(const ExceptionInfo* info) {
     if (!RuntimeFunctionAArch64::classof(info)) {
       return false;
@@ -201,6 +211,7 @@ class LIEF_API UnpackedFunction : public RuntimeFunctionAArch64 {
 
   epilog_scopes_t epilog_scopes_;
   std::vector<uint8_t> unwind_code_;
+  bool is_extended_ = false;
 };
 }
 }

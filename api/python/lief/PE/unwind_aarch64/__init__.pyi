@@ -43,6 +43,9 @@ class UnpackedFunction(lief.PE.RuntimeFunctionAArch64):
     @property
     def epilog_scopes(self) -> UnpackedFunction.it_epilog_scopes: ...
 
+    @property
+    def is_extended(self) -> bool: ...
+
 class PackedFunction(lief.PE.RuntimeFunctionAArch64):
     frame_size: int
 
