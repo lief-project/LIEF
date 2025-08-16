@@ -36,4 +36,6 @@ target_compile_definitions(lief-binaryninja-libraries INTERFACE
   BN_VERSION_PATCH=${BN_VERSION_PATCH}
 )
 
+add_subdirectory(src)
 add_subdirectory(dwarf-export)
+add_subdirectory(analysis)

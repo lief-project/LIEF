@@ -14,10 +14,41 @@
  */
 package lief.pe;
 
+import java.util.Optional;
+
 public class Binary extends lief.generic.Binary {
     private Binary(long impl) {
         super(impl);
     }
 
     public static native Binary parse(String path);
+
+    public native Optional<LoadConfiguration> getLoadConfiguration();
+
+    public native Optional<DataDirectory> getLoadConfigurationDir();
+
+    public native ExceptionsIterator getExceptions();
+
+    public static class ExceptionsIterator extends lief.Iterator<ExceptionInfo>
+                                           implements Iterable<ExceptionInfo>
+    {
+        public ExceptionsIterator(long impl) {
+            super(impl);
+        }
+
+        @Override
+        public ExceptionsIterator iterator() {
+            return this;
+        }
+
+        @Override
+        protected native void destroy();
+
+        @Override
+        public native boolean hasNext();
+
+        @Override
+        public native ExceptionInfo next();
+    }
+
 }

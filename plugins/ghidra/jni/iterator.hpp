@@ -21,6 +21,14 @@ template<class T, class V, class J,
   jni::metaprogramming::StringLiteral holder = "impl">
 class Iterator {
   public:
+  Iterator() = delete;
+
+  Iterator(const Iterator&) = delete;
+  Iterator& operator=(const Iterator&) = delete;
+
+  Iterator(Iterator&&) = default;
+  Iterator& operator=(Iterator&&) = default;
+
   auto&& next() {
     return *it_++;
   }

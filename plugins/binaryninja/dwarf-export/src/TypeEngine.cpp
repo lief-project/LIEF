@@ -21,6 +21,7 @@
 #include <LIEF/DWARF/editor/FunctionType.hpp>
 
 #include "binaryninja/api_compat.hpp"
+#include "binaryninja/lief_utils.hpp"
 
 #include "log.hpp"
 
@@ -30,18 +31,6 @@ namespace dw = LIEF::dwarf;
 namespace dwarf_plugin {
 
 using namespace binaryninja;
-
-std::string to_string(const bn::QualifiedName& name) {
-  if (name.IsEmpty()) {
-    return "";
-  }
-
-  if (name.size() == 1) {
-    return name.GetString();
-  }
-
-  return fmt::to_string(fmt::join(name, name.GetJoinString()));
-}
 
 std::string infer_interger_name(size_t width, bool is_signed) {
   if (width == sizeof(uint8_t)) {
@@ -82,7 +71,7 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(
 
   BNTypeClass class_type = type.GetClass();
 
-  std::string name_str = to_string(name);
+  std::string name_str = binaryninja::to_string(name);
 
   if (name_str.empty() && class_type == IntegerTypeClass) {
     name_str = infer_interger_name(type.GetWidth(), type.IsSigned());
@@ -148,7 +137,7 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(
     case PointerTypeClass:
       {
         auto child = type.GetChildType();
-        BN_DEBUG("Adding {} as pointer", to_string(child->GetTypeName()));
+        BN_DEBUG("Adding {} as pointer", binaryninja::to_string(child->GetTypeName()));
         dw::editor::Type& child_pointer = add_type(child->GetTypeName(), api_compat::get_type(child));
         std::unique_ptr<dw::editor::PointerType> pointer = child_pointer.pointer_to();
         return *mapping_.insert(
@@ -227,16 +216,16 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(
           ).first->second;
         }
 
-        std::string qualname_str = to_string(name);
+        std::string qualname_str = binaryninja::to_string(name);
 
         BN_DEBUG("name_str:             {}", name_str);
         BN_DEBUG("qualname_str:         {}", qualname_str);
-        BN_DEBUG("ntr->GetName():       {}", to_string(ntr->GetName()));
-        BN_DEBUG("alias->GetTypeName(): {}", to_string(alias->GetTypeName()));
+        BN_DEBUG("ntr->GetName():       {}", binaryninja::to_string(ntr->GetName()));
+        BN_DEBUG("alias->GetTypeName(): {}", binaryninja::to_string(alias->GetTypeName()));
 
-        if (qualname_str != to_string(ntr->GetName())) {
+        if (qualname_str != binaryninja::to_string(ntr->GetName())) {
           std::unique_ptr<dw::editor::TypeDef> typdef_type =
-            unit_.create_typedef(to_string(ntr->GetName()),
+            unit_.create_typedef(binaryninja::to_string(ntr->GetName()),
                                  add_type(ntr->GetName(), *alias));
           return *mapping_.insert(
             {type.GetObject(), std::move(typdef_type)}

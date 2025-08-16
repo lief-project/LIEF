@@ -34,14 +34,17 @@ class Utils {
   };
 
   static jboolean jni_is_extended(JNIEnv* /*env*/, jclass /*clazz*/) {
+    jni::ThreadGuard TG;
     return LIEF::is_extended();
   }
 
   static jstring jni_get_extended_version_info(JNIEnv* env, jclass /*jclass*/) {
+    jni::ThreadGuard TG;
     return jni::LocalString(LIEF::extended_version_info()).Release();
   }
 
   static jobject jni_get_extended_version(JNIEnv* env, jclass/*clazz*/) {
+    jni::ThreadGuard TG;
     LIEF::lief_version_t version = LIEF::extended_version();
     return jni::LocalObject<Version::kClass>{
       (jlong)version.major, (jlong)version.minor, (jlong)version.patch,
@@ -51,6 +54,7 @@ class Utils {
 
 
   static jobject jni_get_version(JNIEnv* env, jclass/*clazz*/) {
+    jni::ThreadGuard TG;
     LIEF::lief_version_t version = LIEF::extended_version();
     return jni::LocalObject<Version::kClass>{
       (jlong)LIEF_VERSION_MAJOR, (jlong)LIEF_VERSION_MINOR,

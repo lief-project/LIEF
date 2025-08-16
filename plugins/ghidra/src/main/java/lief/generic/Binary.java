@@ -14,6 +14,8 @@
  */
 package lief.generic;
 
+import java.util.OptionalLong;
+
 public class Binary extends lief.Base {
     @Override
     protected native void destroy();
@@ -23,4 +25,11 @@ public class Binary extends lief.Base {
     }
 
     public native long getImageBase();
+
+    public native OptionalLong offsetToVirtualAddress(long offset, long slide);
+
+    public OptionalLong offsetToVirtualAddress(long offset) {
+        return offsetToVirtualAddress(offset, /*slide=*/0);
+    }
+
 }

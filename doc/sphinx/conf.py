@@ -13,6 +13,7 @@ from sphinx_lief_doc.config import init_config as lief_init_config
 from sphinx_lief_doc.lief_api import setup as setup_lief_api
 from sphinx_lief_doc.plugin_package import setup as setup_plugin_packages
 from sphinx_lief_doc.sdk_package import setup as setup_sdk_packages
+from sphinx_lief_doc.img_comparison import setup as setup_img_comparison
 
 from typing import TYPE_CHECKING
 
@@ -62,6 +63,7 @@ autodoc_default_options = {
 #exclude_patterns = [
 #    "api",
 #    "tutorials/*.rst",
+#    "changelog/*.rst",
 #    "extended",
 #    "formats",
 #    "changelog.rst",
@@ -81,6 +83,7 @@ def setup(app: Sphinx):
     setup_python_typing(app)
     setup_roles(app)
     setup_lief_api(app)
+    setup_img_comparison(app)
     setup_plugin_packages(app)
     setup_sdk_packages(app)
 

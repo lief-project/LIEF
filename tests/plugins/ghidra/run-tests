@@ -1,0 +1,150 @@
+#!/bin/python3
+import os
+import sys
+import logging
+import shutil
+import argparse
+import subprocess
+from tempfile import gettempdir
+from subprocess import Popen
+from pathlib import Path
+from functools import lru_cache
+
+logger = logging.getLogger(__name__)
+
+CWD = Path(__file__).parent
+
+@lru_cache()
+def tmp_dir() -> Path:
+    target = Path(gettempdir()) / "ghidra"
+    target.mkdir(exist_ok=True, parents=True)
+    return target
+
+@lru_cache()
+def _lief_samples_dir() -> Path:
+    dir_path = Path(os.environ["LIEF_SAMPLES_DIR"])
+    assert dir_path.is_dir()
+    return dir_path
+
+@lru_cache()
+def find_program(name: str) -> Path:
+    target_paths = os.getenv("PATH", "").split(":")
+    target_paths.append(str(_lief_samples_dir() / "ELF"))
+
+    target = shutil.which(name, path=':'.join(target_paths))
+    assert target is not None
+    return Path(target)
+
+@lru_cache()
+def find_check_file(name: str) -> Path:
+    candidates = [
+        _lief_samples_dir() / "private/ghidra" / name,
+        _lief_samples_dir() / "ghidra" / name,
+    ]
+
+    for candidate in candidates:
+        if candidate.is_file():
+            logger.debug("%s -> %s", name, candidate.resolve().absolute())
+            return candidate
+    raise FileNotFoundError(f"Can't find path for '{name}''")
+
+
+@lru_cache()
+def _project_dir() -> Path:
+    return _lief_samples_dir() / "private/ghidra/projects"
+
+def run_test(name: str, target: str, check_file: str, verbose: bool):
+    filecheck = find_program("FileCheck")
+
+    check_file_path = find_check_file(check_file)
+    run_script = CWD / "run-script"
+    prefix = f"{name}_"
+    project_name = "lief-tests"
+
+    run_script_args = [
+        run_script.resolve().absolute(),
+        "--script", CWD / "../../../plugins/ghidra/ghidra_scripts/RunAnalyzers.java",
+        "--project-dir", _project_dir(), "--project-name", project_name,
+        "--target", target,
+        "--prefix", prefix,
+    ]
+
+    if verbose:
+        run_script_args.append("--verbose")
+
+    env = os.environ
+
+    args = {
+        'stdout': subprocess.PIPE,
+        'stderr': subprocess.PIPE,
+        'universal_newlines': True,
+        'env': env,
+    }
+
+    with Popen(run_script_args, **args) as P:
+        stdout = P.stdout.read()
+        stderr = P.stderr.read()
+
+        logger.debug("-- STDOUT --\n%s", stdout)
+        logger.debug("-- STDERR --\n%s", stderr)
+
+        P.communicate()
+
+        assert P.returncode == 0
+
+    new = tmp_dir() / "lief-tests" / f"{prefix}updated.txt"
+
+    file_check_args = [
+        filecheck, '-vv', '--color',
+        "--input-file", new,
+        check_file_path
+    ]
+    logger.debug("%s", " ".join(map(str, file_check_args)))
+
+    with Popen(file_check_args, **args) as P:
+        stdout = P.stdout.read()
+        stderr = P.stderr.read()
+
+        logger.debug("-- STDOUT --\n%s", stdout)
+        logger.debug("-- STDERR --\n%s", stderr)
+
+        P.communicate()
+
+        (tmp_dir() / f"{prefix}file_check.stdout.txt").write_text(stdout)
+        (tmp_dir() / f"{prefix}file_check.stderr.txt").write_text(stderr)
+
+        assert P.returncode == 0
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--verbose", action='store_true', default=False)
+    args = parser.parse_args()
+
+    log_level = logging.INFO if not args.verbose else logging.DEBUG
+
+    formatter = logging.Formatter('%(asctime)s - %(funcName)s - %(levelname)s - %(message)s')
+
+    stdout = logging.StreamHandler(stream=sys.stdout)
+    stdout.setLevel(log_level)
+    stdout.setFormatter(formatter)
+
+    fh = logging.FileHandler(tmp_dir() / "log.txt")
+    fh.setFormatter(formatter)
+    fh.setLevel(log_level)
+
+    logger.addHandler(stdout)
+    logger.addHandler(fh)
+
+
+    logger.setLevel(log_level)
+
+    run_test(
+        "arm64ec_hello_world_2025",
+        "arm64ec_hello_world_2025.exe",
+        "arm64ec_hello_world_2025.check",
+        args.verbose
+    )
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())

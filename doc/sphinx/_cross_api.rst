@@ -256,6 +256,12 @@
     :py:class:`lief.PE.CHPEMetadata`
     :cpp:class:`LIEF::PE::CHPEMetadata`
 
+.. |lief-pe-chpe_metadata-arm64| lief-api:: lief.PE.CHPEMetadataARM64
+
+    :rust:struct:`lief::pe::chpe_metadata_arm64::CHPEMetadata`
+    :py:class:`lief.PE.CHPEMetadataARM64`
+    :cpp:class:`LIEF::PE::CHPEMetadataARM64`
+
 .. |lief-pe-dynamic-relocation| lief-api:: lief.PE.DynamicRelocation
 
     :rust:enum:`lief::pe::DynamicRelocation`

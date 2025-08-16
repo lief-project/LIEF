@@ -15,6 +15,8 @@
 #include <binaryninja/binaryninjaapi.h>
 #include <binaryninja/binaryninjacore.h>
 
+#include "binaryninja/lief_utils.hpp"
+
 #include <LIEF/MachO/utils.hpp>
 #include <LIEF/MachO/Parser.hpp>
 #include <LIEF/MachO/Binary.hpp>
@@ -50,54 +52,8 @@ DwarfExport::DwarfExport(BinaryNinja::BinaryView& bv) :
   bv_{&bv}
 {}
 
-std::unique_ptr<LIEF::Binary> get_bin(bn::BinaryView& bv) {
-  std::string original_file = bv.GetFile()->GetOriginalFilename();
-  if (LIEF::MachO::is_macho(original_file)) {
-    bn::Ref<bn::Architecture> arch = bv.GetDefaultArchitecture();
-    std::unique_ptr<LIEF::MachO::FatBinary> fat = LIEF::MachO::Parser::parse(original_file);
-    if (fat == nullptr) {
-      return nullptr;
-    }
-
-    if (fat->size() == 1) {
-      return fat->take(0);
-    }
-
-    const std::string arch_name = arch->GetName();
-    if (arch_name == "aarch64") {
-      return fat->take(LIEF::MachO::Header::CPU_TYPE::ARM64);
-    }
-
-    if (arch_name == "armv7" || arch_name == "thumb2") {
-      return fat->take(LIEF::MachO::Header::CPU_TYPE::ARM);
-    }
-
-    if (arch_name == "x86_64") {
-      return fat->take(LIEF::MachO::Header::CPU_TYPE::X86_64);
-    }
-
-    if (arch_name == "x86") {
-      return fat->take(LIEF::MachO::Header::CPU_TYPE::X86);
-    }
-
-    if (arch_name == "ppc") {
-      return fat->take(LIEF::MachO::Header::CPU_TYPE::POWERPC);
-    }
-
-    if (arch_name == "ppc64") {
-      return fat->take(LIEF::MachO::Header::CPU_TYPE::POWERPC64);
-    }
-
-    BN_ERR("Unsupported architecture: {} ({})",
-           arch_name, bv.GetDefaultPlatform()->GetName());
-    return nullptr;
-  }
-
-  return LIEF::Parser::parse(original_file);
-}
-
 dw::CompilationUnit* DwarfExport::create() {
-  bin_ = get_bin(*bv_);
+  bin_ = binaryninja::get_bin(*bv_);
   if (bin_ == nullptr) {
     BN_WARN("Can't parse {} with LIEF", bv_->GetFile()->GetOriginalFilename());
     return nullptr;

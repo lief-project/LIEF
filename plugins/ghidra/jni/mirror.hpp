@@ -156,9 +156,6 @@ class JNIEnum {
       (jstring)jni::LocalString(C(value))
     ).Release();
   }
-
 };
-
-
 
 }

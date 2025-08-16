@@ -41,7 +41,7 @@ class DwarfExport {
   public:
   DwarfExport(BinaryNinja::BinaryView& bv);
 
-  /// Instanciate a DWARF exporter for the given BinaryView object
+  /// Instantiate a DWARF exporter for the given BinaryView object
   static std::unique_ptr<DwarfExport> from_bv(BinaryNinja::BinaryView& bv) {
     return std::make_unique<DwarfExport>(bv);
   }

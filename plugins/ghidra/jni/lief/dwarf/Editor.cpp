@@ -41,6 +41,7 @@ jobject Editor::jni_create_compilation_unit(JNIEnv* env, jobject thiz) {
 }
 
 jobject Editor::jni_for_binary(JNIEnv* env, jclass clazz, jobject bin) {
+  jni::ThreadGuard TG;
   return Editor::create(
     LIEF::dwarf::Editor::from_binary(
       generic::Binary::from_jni(bin)->impl()

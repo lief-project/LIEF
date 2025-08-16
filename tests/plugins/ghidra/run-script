@@ -1,0 +1,139 @@
+#!/bin/python3
+import os
+import sys
+import argparse
+import logging
+import shutil
+import subprocess
+from pathlib import Path
+from tempfile import gettempdir
+from subprocess import Popen
+from functools import lru_cache
+
+logger = logging.getLogger(__name__)
+
+@lru_cache()
+def _ghidra_install_dir() -> Path:
+    target = Path(os.environ['GHIDRA_INSTALL_DIR'])
+    assert target.is_dir()
+    return target
+
+@lru_cache()
+def _tmp_dir(name: str) -> Path:
+    target = Path(gettempdir()) / "ghidra" / name
+    target.mkdir(exist_ok=True, parents=True)
+    return target
+
+def run(project_dir: Path, project_name: str, target: str, script: Path,
+        prefix: str = "") -> int:
+    logger.debug("project-dir:  %s", project_dir)
+    logger.debug("project-name: %s", project_name)
+    logger.debug("target:       %s", target)
+    logger.debug("script:       %s", script)
+    logger.debug("prefix:       '%s'", prefix)
+
+    java = "/lib/jvm/java-21-openjdk/bin/java"
+    tmp_dir = _tmp_dir(project_name)
+
+    ghidra_install_dir = _ghidra_install_dir()
+    crash_dir = tmp_dir / "crashes"
+    args = [
+        java,
+        f"-XX:ErrorFile={crash_dir}/hs_err_pid%p.log",
+        f"-Dlief.test.dir={tmp_dir}",
+        f"-Dlief.test.prefix={prefix}",
+        "-Djava.system.class.loader=ghidra.GhidraClassLoader",
+        "-Dfile.encoding=UTF8",
+        "-Duser.country=US",
+        "-Duser.language=en",
+        "-Duser.variant=",
+        "-Dsun.java2d.opengl=false",
+        "-Djdk.tls.client.protocols=TLSv1.2,TLSv1.3",
+        "-Dcpu.core.limit=",
+        "-Dcpu.core.override=",
+        "-Dfont.size.override=",
+        "-Dpython.console.encoding=UTF-8",
+        "-Xshare:off",
+        "-ea",
+        f'-Dlog4j.configurationFile={ghidra_install_dir}/support/debug.log4j.xml',
+        '-cp', f'{script.parent}/build:{ghidra_install_dir}/Ghidra/Framework/Utility/lib/Utility.jar',
+        'ghidra.GhidraLauncher', 'ghidra.app.util.headless.AnalyzeHeadless',
+        project_dir, project_name, '-recursive', '-process', f'{target}', '-noanalysis',
+        '-scriptPath', script.parent,
+        '-postScript', script.name
+    ]
+    logger.debug("Command: %s", " ".join(map(str, args)))
+
+    env = dict(os.environ)
+
+    popen_kwargs = {
+        'stdout': subprocess.PIPE,
+        'stderr': subprocess.PIPE,
+        'universal_newlines': True,
+        'env': env,
+    }
+
+    with Popen(args, **popen_kwargs) as P:
+        stdout = P.stdout.read()
+        stderr = P.stderr.read()
+
+        logger.debug("-- STDOUT --\n%s", stdout)
+        logger.debug("-- STDERR --\n%s", stderr)
+
+        P.communicate()
+
+        (tmp_dir / "analysis.stdout.txt").write_text(stdout)
+        (tmp_dir / "analysis.stderr.txt").write_text(stderr)
+
+        return P.returncode
+
+def bootstrap(args: argparse.Namespace) -> int:
+    script: Path = args.script.resolve().absolute()
+    project_dir: Path = args.project_dir.resolve().absolute()
+    project_name: str = args.project_name
+    target: str = args.target
+    if not script.is_file():
+        logger.error("%s is not a valid file", script)
+        return 1
+
+    if not project_dir.is_dir():
+        logger.error("%s is not a valid directory", project_dir)
+        return 1
+    tmp_project = _tmp_dir(project_name) / "tmp_project"
+    shutil.rmtree(tmp_project, ignore_errors=True)
+    shutil.copytree(project_dir, tmp_project, dirs_exist_ok=True)
+    return run(tmp_project, project_name, target, script, args.prefix)
+
+def setup_logger(args: argparse.Namespace):
+    log_level = logging.INFO if not args.verbose else logging.DEBUG
+
+    formatter = logging.Formatter('%(asctime)s - %(funcName)s - %(levelname)s - %(message)s')
+
+    stdout = logging.StreamHandler(stream=sys.stdout)
+    stdout.setLevel(log_level)
+    stdout.setFormatter(formatter)
+
+    fh = logging.FileHandler(_tmp_dir(args.project_name) / "log.txt")
+    fh.setFormatter(formatter)
+    fh.setLevel(log_level)
+
+    logger.addHandler(stdout)
+    logger.addHandler(fh)
+
+    logger.setLevel(log_level)
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--script", type=Path, required=True)
+    parser.add_argument("--project-dir", type=Path, required=True)
+    parser.add_argument("--project-name", type=str, required=True)
+    parser.add_argument("--target", type=str, required=True)
+    parser.add_argument("--verbose", action='store_true', default=False)
+    parser.add_argument("--prefix", type=str, required=False, default="")
+
+    args = parser.parse_args()
+    setup_logger(args)
+    return bootstrap(args)
+
+if __name__ == "__main__":
+    sys.exit(main())

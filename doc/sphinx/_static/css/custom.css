@@ -24,3 +24,7 @@ li .fixed-paragraph {
 a.btn:visited {
   color: #fff;
 }
+
+.img-comparison-slider-div {
+    overflow-y: auto;
+}

@@ -27,6 +27,7 @@ class Utils {
   static jboolean jni_is_pe(JNIEnv* /*env*/, jclass /*clazz*/,
                             jstring path)
   {
+    jni::ThreadGuard TG;
     jni::LocalString jpath(path);
     return LIEF::PE::is_pe(std::string(jpath.Pin().ToString()));
   }

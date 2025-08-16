@@ -33,6 +33,7 @@ class Binary : public generic::Binary {
   };
 
   static jobject jni_parse(JNIEnv* env, jobject thiz, jstring path) {
+    jni::ThreadGuard TG;
     jni::LocalString jpath = path;
     return Binary::create<Binary>(
       LIEF::Parser::parse(

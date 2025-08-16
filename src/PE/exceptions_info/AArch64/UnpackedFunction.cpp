@@ -37,6 +37,8 @@ std::unique_ptr<UnpackedFunction> UnpackedFunction::parse(
 
   LIEF_DEBUG("Parsing unpacked function 0x{:08x}", rva);
 
+  const uint64_t strm_offset = strm.pos();
+
   auto word1 = strm.read<uint32_t>();
   if (!word1) {
     LIEF_WARN("Can't read unpacked exception info (word1, line: {})", __LINE__);
@@ -85,6 +87,7 @@ std::unique_ptr<UnpackedFunction> UnpackedFunction::parse(
   /// is required.
   std::vector<uint32_t> scopes;
   if (unpacked.E() == 0) {
+    func->epilog_scopes_offset_ = strm.pos() - strm_offset;
     if (!strm.read_objects(scopes, ecount)) {
       LIEF_DEBUG("Can't read #{} epilog scopes", ecount);
       return func;
@@ -97,15 +100,18 @@ std::unique_ptr<UnpackedFunction> UnpackedFunction::parse(
     );
   }
 
-  std::vector<uint8_t> unwind_bytecode;
-  if (!strm.read_data(unwind_bytecode, unpacked.code_words() * sizeof(uint32_t))) {
-    LIEF_DEBUG("Can't read unwind bytecode");
-    return func;
+  {
+    func->unwind_code_offset_ = strm.pos() - strm_offset;
+    std::vector<uint8_t> unwind_bytecode;
+    if (!strm.read_data(unwind_bytecode, unpacked.code_words() * sizeof(uint32_t))) {
+      LIEF_DEBUG("Can't read unwind bytecode");
+      return func;
+    }
+    func->unwind_code(std::move(unwind_bytecode));
   }
 
-  func->unwind_code(std::move(unwind_bytecode));
-
   if (unpacked.X()) {
+    func->exception_handler_offset_ = strm.pos() - strm_offset;
     auto ehandler_rva = strm.read<uint32_t>();
     if (!ehandler_rva) {
       LIEF_DEBUG("Can't read Exception Handler RVA");

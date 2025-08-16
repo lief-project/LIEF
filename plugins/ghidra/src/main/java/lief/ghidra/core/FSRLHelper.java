@@ -16,6 +16,8 @@
 package lief.ghidra.core;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import ghidra.formats.gfilesystem.FSRL;
 import ghidra.formats.gfilesystem.FSRLRoot;
@@ -28,6 +30,16 @@ import lief.macho.Header;
 public class FSRLHelper {
     // See: Features/FileFormats/src/main/java/ghidra/file/formats/ubi/UniversalBinaryFileSystem.java
     public static final String UNIVERSAL_BINARY = "universalbinary";
+
+    private static Map<String, Object> binaryCache = new HashMap<>();
+
+    private static Object cache(String path, Object binary) {
+        if (binary == null) {
+            return null;
+        }
+        binaryCache.put(path, binary);
+        return binary;
+    }
 
     public static File getContainerPath(FSRL fsrl) throws Exception {
         FSRLRoot root = fsrl.getFS();
@@ -97,16 +109,20 @@ public class FSRLHelper {
         String protocol = fsrl.getFS().getProtocol();
         String path = container.getPath();
 
+        if (binaryCache.containsKey(path)) {
+            return binaryCache.get(path);
+        }
+
         switch (protocol) {
             case LocalFileSystem.FSTYPE: {
                 if (lief.pe.Utils.isPE(path)) {
-                    return lief.pe.Binary.parse(path);
+                    return cache(path, lief.pe.Binary.parse(path));
                 }
                 else if (lief.elf.Utils.isELF(path)) {
-                    return lief.elf.Binary.parse(path);
+                    return cache(path, lief.elf.Binary.parse(path));
                 }
                 else if (lief.macho.Utils.isMachO(path)) {
-                    return lief.macho.Binary.parse(path);
+                    return cache(path, lief.macho.Binary.parse(path));
                 }
             }
 
@@ -141,7 +157,7 @@ public class FSRLHelper {
                     int subtype = header.getCpuSubType();
 
                     if (isEquivalent(cputype, subtype, chunks)) {
-                        return fit;
+                        return cache(path, fit);
                     }
                 }
 

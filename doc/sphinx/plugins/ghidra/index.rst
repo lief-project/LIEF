@@ -12,10 +12,12 @@ Similarly to the :ref:`BinaryNinja plugin <plugins-binaryninja>`, LIEF can be us
 as a Ghidra plugin.
 
 .. toctree::
-  :caption: <i class="fa-solid fa-puzzle-piece">&nbsp;</i>Plugins
+  :caption: <i class="fa-solid fa-puzzle-piece">&nbsp;</i>Features
   :maxdepth: 1
 
   dwarf/index
+  analyzers/loadconfig-analyzer/index
+  analyzers/exceptions-analyzer/index
 
 .. plugin-package:: ghidra
    :file: latest/plugins/index.json

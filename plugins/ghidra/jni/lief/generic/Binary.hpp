@@ -17,6 +17,7 @@
 #include <jni_bind.h>
 #include "jni/mirror.hpp"
 #include "jni/canbe_unique.hpp"
+#include "jni/java/util/Optional.hpp"
 
 #include <LIEF/Abstract/Binary.hpp>
 
@@ -35,6 +36,10 @@ class Binary : public JNI<
 
   static jlong jni_get_imagebase(JNIEnv* env, jobject thiz) {
     return (jlong)from_jni(thiz)->impl().imagebase();
+  }
+
+  static jobject jni_offset_to_virtual_address(JNIEnv* env, jobject thiz, jlong offset, jlong slide) {
+    return java::util::make_optional(from_jni(thiz)->impl().offset_to_virtual_address(offset, slide));
   }
 
   static int register_natives(JNIEnv* env);

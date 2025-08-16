@@ -18,6 +18,9 @@
 #include "jni/log.hpp"
 #include "jni/jni_utils.hpp"
 
+thread_local int jni::ThreadGuard::thread_guard_count_ = 0;
+thread_local jni::ThreadLocalGuardDestructor jni::ThreadGuard::thread_local_guard_destructor{};
+
 namespace lief_jni {
 
 int Utils::register_natives(JNIEnv* env) {

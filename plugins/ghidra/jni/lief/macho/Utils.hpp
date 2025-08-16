@@ -27,6 +27,7 @@ class Utils {
   static jboolean jni_is_macho(JNIEnv* /*env*/, jclass /*clazz*/,
                                jstring path)
   {
+    jni::ThreadGuard TG;
     jni::LocalString jpath(path);
     return LIEF::MachO::is_macho(std::string(jpath.Pin().ToString()));
   }
@@ -35,6 +36,7 @@ class Utils {
   static jboolean jni_is_fat(JNIEnv* /*env*/, jclass /*clazz*/,
                              jstring path)
   {
+    jni::ThreadGuard TG;
     jni::LocalString jpath(path);
     return LIEF::MachO::is_fat(std::string(jpath.Pin().ToString()));
   }

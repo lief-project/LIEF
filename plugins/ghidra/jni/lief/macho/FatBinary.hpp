@@ -57,6 +57,7 @@ class FatBinary : public JNI<
   static int register_natives(JNIEnv* env);
 
   static jobject jni_parse(JNIEnv* env, jobject thiz, jstring path) {
+    jni::ThreadGuard TG;
     jni::LocalString jpath = path;
     return FatBinary::create(
       LIEF::MachO::Parser::parse(
