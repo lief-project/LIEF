@@ -595,20 +595,60 @@ bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct ImageGuardFlags: u32 {
         const NONE = 0x0;
+
+        /// Module performs control flow integrity checks using system-supplied
+        /// support.
         const CF_INSTRUMENTED = 0x100;
+
+        /// Module performs control flow and write integrity checks.
         const CFW_INSTRUMENTED = 0x200;
+
+        /// Module contains valid control flow target metadata.
         const CF_FUNCTION_TABLE_PRESENT = 0x400;
+
+        /// Module does not make use of the /GS security cookie.
         const SECURITY_COOKIE_UNUSED = 0x800;
+
+        /// Module supports read only delay load IAT.
         const PROTECT_DELAYLOAD_IAT = 0x1000;
+
+        /// Delayload import table in its own .didat section (with nothing else in it)
+        /// that can be freely reprotected.
         const DELAYLOAD_IAT_IN_ITS_OWN_SECTION = 0x2000;
+
+        /// Module contains suppressed export information. This also infers that the
+        /// address taken IAT table is also present in the load config.
         const CF_EXPORT_SUPPRESSION_INFO_PRESENT = 0x4000;
+
+        /// Module enables suppression of exports.
         const CF_ENABLE_EXPORT_SUPPRESSION = 0x8000;
+
+        /// Module contains longjmp target information.
         const CF_LONGJUMP_TABLE_PRESENT = 0x10000;
+
+        /// Module contains return flow instrumentation and metadata
         const RF_INSTRUMENTED = 0x20000;
+
+        /// Module requests that the OS enable return flow protection
         const RF_ENABLE = 0x40000;
+
+        /// Module requests that the OS enable return flow protection in strict mode
         const RF_STRICT = 0x80000;
+
+        /// Module was built with retpoline support
         const RETPOLINE_PRESENT = 0x100000;
+
+        /// Module contains EH continuation target information.
         const EH_CONTINUATION_TABLE_PRESENT = 0x200000;
+
+        /// Module was built with xfg (deprecated)
+        const XFG_ENABLED = 0x00800000;
+
+        /// Module has CastGuard instrumentation present
+        const CASTGUARD_PRESENT = 0x01000000;
+
+        /// Module has Guarded Memcpy instrumentation present
+        const MEMCPY_PRESENT = 0x02000000;
     }
 }
 

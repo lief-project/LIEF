@@ -76,6 +76,9 @@ void create<LoadConfiguration>(nb::module_& m) {
       ENTRY(RF_STRICT)
       ENTRY(RETPOLINE_PRESENT)
       ENTRY(EH_CONTINUATION_TABLE_PRESENT)
+      ENTRY(XFG_ENABLED)
+      ENTRY(CASTGUARD_PRESENT)
+      ENTRY(MEMCPY_PRESENT)
     #undef ENTRY
   ;
 

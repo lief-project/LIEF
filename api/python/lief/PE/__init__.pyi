@@ -4144,6 +4144,12 @@ class LoadConfiguration(lief.Object):
 
         EH_CONTINUATION_TABLE_PRESENT = 4194304
 
+        XFG_ENABLED = 8388608
+
+        CASTGUARD_PRESENT = 16777216
+
+        MEMCPY_PRESENT = 33554432
+
     characteristics: int
 
     size: int
