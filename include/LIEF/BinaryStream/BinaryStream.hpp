@@ -54,8 +54,8 @@ class LIEF_API BinaryStream {
     return stype_;
   }
 
-  result<uint64_t> read_uleb128() const;
-  result<uint64_t> read_sleb128() const;
+  result<uint64_t> read_uleb128(size_t* size = nullptr) const;
+  result<uint64_t> read_sleb128(size_t* size = nullptr) const;
 
   result<int64_t> read_dwarf_encoded(uint8_t encoding) const;
 

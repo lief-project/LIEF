@@ -17,10 +17,11 @@
 #define LIEF_ENDIANNESS_SUPPORT_H
 #include <cstdint>
 #include "LIEF/config.h"
+#include "LIEF/visibility.h"
 
 #define LIEF_ENDIAN_SUPPORT(X) \
   template<> \
-  void swap_endian<X>(X* hdr)
+  LIEF_API void swap_endian<X>(X* hdr)
 
 namespace LIEF {
 

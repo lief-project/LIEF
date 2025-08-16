@@ -14,13 +14,19 @@
  */
 #pragma once
 #include <memory>
+#include <vector>
+
 #include "../Analyzer.hpp"
+
+#include "ELF/AnalyzerBase.hpp"
 
 #include "LIEF/ELF.hpp"
 
 namespace analysis_plugin::elf {
 class Analyzer : public analysis_plugin::Analyzer {
   public:
+  using analyzers_t = std::vector<std::unique_ptr<AnalyzerBase>>;
+
   Analyzer() = delete;
   Analyzer(std::unique_ptr<LIEF::ELF::Binary> impl, BinaryNinja::BinaryView& bv);
 
@@ -32,5 +38,6 @@ class Analyzer : public analysis_plugin::Analyzer {
 
   protected:
   std::unique_ptr<LIEF::ELF::Binary> elf_;
+  analyzers_t analyzers_;
 };
 }

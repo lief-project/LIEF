@@ -23,6 +23,7 @@
 namespace analysis_plugin {
 class AnalyzerBase {
   public:
+  using force_callback_t = std::function<bool(BinaryNinja::DataVariable&)>;
   AnalyzerBase() = delete;
   AnalyzerBase(BinaryNinja::BinaryView& bv) :
     bv_(bv)
@@ -36,6 +37,11 @@ class AnalyzerBase {
       uint64_t address, BinaryNinja::Ref<BinaryNinja::Type> type,
       std::optional<std::string> name = std::nullopt,
       bool force = false);
+
+  void define_type_at(
+      uint64_t address, BinaryNinja::Ref<BinaryNinja::Type> type,
+      force_callback_t force,
+      std::optional<std::string> name = std::nullopt);
 
   void define_struct_at(
       uint64_t address, BinaryNinja::Ref<BinaryNinja::Type> type,

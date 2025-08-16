@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+    viewBox="0 0 700 175" width="700" height="175">
+    <g font-family="JetBrains Mono" font-size="12px" font-weight="600">
+
+<rect x="0" y="0" width="700" height="175" fill="#27272a" />
+
+    <text x="22" y="22"  xml:space="preserve"><tspan fill="#a5b4fc">.rela.dyn</tspan><tspan fill="#e4e4e7">&#160;section&#160;started</tspan><tspan>&#160;&#160;</tspan><tspan fill="#a5b4fc">{</tspan><tspan fill="#86efac">0x40a950</tspan><tspan fill="#e4e4e7">-</tspan><tspan fill="#86efac">0x40a9b6</tspan><tspan fill="#a5b4fc">}</tspan><tspan fill="#e4e4e7"></tspan></text>
+<text x="22" y="39"   xml:space="preserve"><tspan fill="#86efac">0040a950</tspan><tspan>&#160;&#160;</tspan><tspan fill="#f0abfc">char</tspan><tspan>&#160;</tspan><tspan fill="#fca5a5">format</tspan><tspan fill="#e4e4e7">[</tspan><tspan fill="#86efac">0x4</tspan><tspan fill="#e4e4e7">]</tspan><tspan>&#160;</tspan><tspan fill="#e4e4e7">=</tspan><tspan>&#160;</tspan><tspan fill="#a5b4fc">"APS2"</tspan><tspan fill="#e4e4e7"></tspan></text>
+<text x="22" y="56"   xml:space="preserve"><tspan fill="#86efac">0040a954</tspan><tspan>&#160;&#160;</tspan><tspan fill="#f0abfc">sleb128</tspan><tspan>&#160;</tspan><tspan fill="#fca5a5">nb_relocs</tspan><tspan>&#160;</tspan><tspan fill="#e4e4e7">=</tspan><tspan>&#160;</tspan><tspan fill="#86efac">0xb</tspan><tspan fill="#e4e4e7"></tspan></text>
+<text x="22" y="73"   xml:space="preserve"><tspan fill="#86efac">0040a955</tspan><tspan>&#160;&#160;</tspan><tspan fill="#f0abfc">sleb128</tspan><tspan>&#160;</tspan><tspan fill="#fca5a5">reloc_offset</tspan><tspan>&#160;</tspan><tspan fill="#e4e4e7">=</tspan><tspan>&#160;</tspan><tspan fill="#86efac">0x0</tspan><tspan fill="#e4e4e7"></tspan></text>
+<text x="22" y="90"   xml:space="preserve"><tspan fill="#86efac">0040a956</tspan><tspan>&#160;&#160;</tspan><tspan fill="#f0abfc">sleb128</tspan><tspan>&#160;</tspan><tspan fill="#fca5a5">group_size</tspan><tspan>&#160;</tspan><tspan fill="#e4e4e7">=</tspan><tspan>&#160;</tspan><tspan fill="#86efac">0xb</tspan><tspan fill="#e4e4e7"></tspan></text>
+<text x="22" y="107"   xml:space="preserve"><tspan fill="#86efac">0040a957</tspan><tspan>&#160;&#160;</tspan><tspan fill="#f0abfc">sleb128</tspan><tspan>&#160;</tspan><tspan fill="#fca5a5">group_flags</tspan><tspan>&#160;</tspan><tspan fill="#e4e4e7">=</tspan><tspan>&#160;</tspan><tspan fill="#86efac">0x8</tspan><tspan fill="#e4e4e7"></tspan></text>
+<text x="22" y="124"   xml:space="preserve"><tspan fill="#86efac">0040a958</tspan><tspan>&#160;&#160;</tspan><tspan fill="#f0abfc">sleb128</tspan><tspan>&#160;</tspan><tspan fill="#fca5a5">reloc_offset</tspan><tspan fill="#e4e4e7">_</tspan><tspan fill="#e4e4e7">0</tspan><tspan>&#160;</tspan><tspan fill="#e4e4e7">=</tspan><tspan>&#160;</tspan><tspan fill="#e4e4e7">.</tspan><tspan fill="#e4e4e7">.</tspan><tspan fill="#e4e4e7">.</tspan><tspan fill="#e4e4e7"></tspan></text>
+<text x="22" y="141"   xml:space="preserve"><tspan fill="#86efac">0040a95b</tspan><tspan>&#160;&#160;</tspan><tspan fill="#e4e4e7">.</tspan><tspan fill="#e4e4e7">.</tspan><tspan fill="#e4e4e7">.</tspan><tspan fill="#e4e4e7"></tspan></text>
+<text x="22" y="158"   xml:space="preserve"><tspan fill="#a5b4fc">.rela.dyn</tspan><tspan fill="#e4e4e7">&#160;section&#160;ended</tspan><tspan>&#160;&#160;</tspan><tspan fill="#a5b4fc">{</tspan><tspan fill="#86efac">0x40a950</tspan><tspan fill="#e4e4e7">-</tspan><tspan fill="#86efac">0x40a9b6</tspan><tspan fill="#a5b4fc">}</tspan><tspan fill="#e4e4e7"></tspan></text>
+<text x="22" y="175"   xml:space="preserve"></text>
+
+    </g>
+</svg>
+        

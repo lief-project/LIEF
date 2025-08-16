@@ -136,7 +136,10 @@ def run_test(name: str, bndb: Path, check_file: Path, verbose: bool):
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--verbose", action='store_true', default=False)
+    parser.add_argument("--name", type=str, default='')
     args = parser.parse_args()
+
+    test_name = args.name
 
     log_level = logging.INFO if not args.verbose else logging.DEBUG
 
@@ -156,19 +159,38 @@ def main() -> int:
 
     logger.setLevel(log_level)
 
-    run_test(
-        "arm64ec_hello_world_2025",
-        find_bndb("arm64ec_hello_world_2025.exe.bndb"),
-        find_check_file("arm64ec_hello_world_2025.check"),
-        args.verbose
+    if test_name in ('', 'arm64ec_hello_world_2025'):
+        run_test(
+            "arm64ec_hello_world_2025",
+            find_bndb("arm64ec_hello_world_2025.exe.bndb"),
+            find_check_file("arm64ec_hello_world_2025.check"),
+            args.verbose
+        )
+
+    if test_name in ('', 'hostfxr'):
+        run_test(
+            "hostfxr",
+            find_bndb("hostfxr.dll.bndb"),
+            find_check_file("hostfxr.check"),
+            args.verbose
     )
 
-    run_test(
-        "hostfxr",
-        find_bndb("hostfxr.dll.bndb"),
-        find_check_file("hostfxr.check"),
-        args.verbose
-    )
+    if test_name in ('', 'hello-android-packed.aarch64.elf'):
+        run_test(
+            "hello-android-packed.aarch64.elf",
+            find_bndb("hello-android-packed.aarch64.elf.bndb"),
+            find_check_file("hello-android-packed.aarch64.elf.check"),
+            args.verbose
+        )
+
+
+    if test_name in ('', 'libnl.so'):
+        run_test(
+            "libnl.so",
+            find_bndb("libnl.so.bndb"),
+            find_check_file("libnl.so.check"),
+            args.verbose
+        )
     return 0
 
 if __name__ == "__main__":

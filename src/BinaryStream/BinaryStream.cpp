@@ -65,10 +65,13 @@ result<int64_t> BinaryStream::read_dwarf_encoded(uint8_t encoding) const {
 
 }
 
-result<uint64_t> BinaryStream::read_uleb128() const {
+result<uint64_t> BinaryStream::read_uleb128(size_t* size) const {
   uint64_t value = 0;
   unsigned shift = 0;
   result<uint8_t> byte_read = 0;
+
+  const uint64_t opos = pos();
+
   do {
     byte_read = read<uint8_t>();
     if (!byte_read) {
@@ -78,13 +81,18 @@ result<uint64_t> BinaryStream::read_uleb128() const {
     shift += 7;
   } while (byte_read && *byte_read >= 128);
 
+  if (size != nullptr) {
+    *size = pos() - opos;
+  }
+
   return value;
 }
 
-result<uint64_t> BinaryStream::read_sleb128() const {
+result<uint64_t> BinaryStream::read_sleb128(size_t* size) const {
   int64_t  value = 0;
   unsigned shift = 0;
   result<uint8_t> byte_read = 0;
+  const uint64_t opos = pos();
   do {
     byte_read = read<uint8_t>();
     if (!byte_read) {
@@ -98,6 +106,10 @@ result<uint64_t> BinaryStream::read_sleb128() const {
   // Sign extend
   if ((*byte_read & 0x40) != 0) {
     value |= -1llu << shift;
+  }
+
+  if (size != nullptr) {
+    *size = pos() - opos;
   }
 
   return value;

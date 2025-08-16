@@ -28,6 +28,11 @@ class TypeBuilder {
     bv_(bv)
   {}
 
+  template<class T>
+  static constexpr bool is_power_of_2(T x) {
+    return (x & (x - 1)) == 0;
+  }
+
   static std::string format_type(std::string name) {
     return std::string(TYPE_PREFIX) + '_' + std::move(name);
   }
@@ -40,8 +45,12 @@ class TypeBuilder {
     return BinaryNinja::Type::VoidType();
   }
 
-  BinaryNinja::Ref<BinaryNinja::Type> u8() {
-    return BinaryNinja::Type::IntegerType(/*width=*/1, /*sign=*/false, "uint8_t");
+  BinaryNinja::Ref<BinaryNinja::Type> u8(const std::string& name = "uint8_t") {
+    return BinaryNinja::Type::IntegerType(/*width=*/1, /*sign=*/false, name);
+  }
+
+  BinaryNinja::Ref<BinaryNinja::Type> char_() {
+    return BinaryNinja::Type::IntegerType(/*width=*/1, /*sign=*/true, "char");
   }
 
   BinaryNinja::Ref<BinaryNinja::Type> u16() {
@@ -54,6 +63,20 @@ class TypeBuilder {
 
   BinaryNinja::Ref<BinaryNinja::Type> u64() {
     return BinaryNinja::Type::IntegerType(/*width=*/8, /*sign=*/false, "uint64_t");
+  }
+
+  BinaryNinja::Ref<BinaryNinja::Type> uleb128(size_t size) {
+    if (is_power_of_2(size)) {
+      return BinaryNinja::Type::IntegerType(/*width=*/size, /*sign=*/false, "uleb128");
+    }
+    return BinaryNinja::Type::ArrayType(u8("uleb128"), size);
+  }
+
+  BinaryNinja::Ref<BinaryNinja::Type> sleb128(size_t size) {
+    if (is_power_of_2(size)) {
+      return BinaryNinja::Type::IntegerType(/*width=*/size, /*sign=*/false, "sleb128");
+    }
+    return BinaryNinja::Type::ArrayType(u8("sleb128"), size);
   }
 
   BinaryNinja::Ref<BinaryNinja::Type> ptr_t()
@@ -85,6 +108,16 @@ class TypeBuilder {
       target_arch = bv_.GetDefaultArchitecture();
     }
     return BinaryNinja::Type::PointerType(target_arch, type, /*cnst=*/true);
+  }
+
+  BinaryNinja::Ref<BinaryNinja::Type> c_str(
+     BinaryNinja::Architecture* arch = nullptr)
+  {
+    BinaryNinja::Architecture* target_arch = arch;
+    if (target_arch == nullptr) {
+      target_arch = bv_.GetDefaultArchitecture();
+    }
+    return make_const_pointer(char_(), target_arch);
   }
 
   BinaryNinja::Ref<BinaryNinja::Type>

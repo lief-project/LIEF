@@ -13,11 +13,11 @@ as a BinaryNinja plugin.
 
 .. toctree::
   :caption: <i class="fa-solid fa-puzzle-piece">&nbsp;</i>Features
-  :maxdepth: 1
+  :maxdepth: 2
 
   dwarf/index
-  analyzers/loadconfig-analyzer/index
-  analyzers/exceptions-analyzer/index
+  analyzers/elf/index
+  analyzers/pe/index
 
 .. plugin-package:: binaryninja
    :file: latest/plugins/index.json

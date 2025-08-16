@@ -19,13 +19,37 @@
 #include <binaryninja/binaryninjaapi.h>
 #include <binaryninja/binaryninjacore.h>
 
+#include "analyzers/AndroidPackedRelocations.hpp"
+#include "analyzers/Relocations.hpp"
+#include "analyzers/RelativeRelocations.hpp"
+
 using namespace LIEF;
 
 namespace analysis_plugin::elf {
 Analyzer::Analyzer(std::unique_ptr<LIEF::ELF::Binary> impl, BinaryNinja::BinaryView& bv) :
   analysis_plugin::Analyzer(bv, std::make_unique<TypeBuilder>(bv)),
   elf_(std::move(impl))
-{}
+{
+  using namespace analyzers;
+
+  if (Relocations::can_run(*bv_, *elf_)) {
+    analyzers_.push_back(std::make_unique<Relocations>(
+      *bv_, *elf_, static_cast<elf::TypeBuilder&>(*type_builder_)
+    ));
+  }
+
+  if (AndroidPackedRelocations::can_run(*bv_, *elf_)) {
+    analyzers_.push_back(std::make_unique<AndroidPackedRelocations>(
+      *bv_, *elf_, static_cast<elf::TypeBuilder&>(*type_builder_)
+    ));
+  }
+
+  if (RelativeRelocations::can_run(*bv_, *elf_)) {
+    analyzers_.push_back(std::make_unique<RelativeRelocations>(
+      *bv_, *elf_, static_cast<elf::TypeBuilder&>(*type_builder_)
+    ));
+  }
+}
 
 std::unique_ptr<Analyzer> Analyzer::from_bv(BinaryNinja::BinaryView& bv) {
   static const ELF::ParserConfig CONFIG = ELF::ParserConfig::all();
@@ -41,7 +65,9 @@ std::unique_ptr<Analyzer> Analyzer::from_bv(BinaryNinja::BinaryView& bv) {
 }
 
 void Analyzer::run() {
-
+  for (const std::unique_ptr<AnalyzerBase>& analyzer : analyzers_) {
+    analyzer->run();
+  }
 }
 
 }

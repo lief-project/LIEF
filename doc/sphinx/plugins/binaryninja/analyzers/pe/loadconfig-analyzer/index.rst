@@ -1,7 +1,7 @@
 .. _plugins-binaryninja-analyzers-loadconfig:
 
-:fa:`solid fa-object-ungroup` BinaryNinja - Analyzers - LoadConfiguration
--------------------------------------------------------------------------
+:fa:`solid fa-object-ungroup` LoadConfiguration
+------------------------------------------------
 This analyzer enhances the representation and underlying data of the PE
 LoadConfiguration structure within BinaryNinja.
 
@@ -23,4 +23,4 @@ functions and pointers, leading to deeper insights during reverse engineering.
   :left: img/chpe_metadata_before.svg
   :right: img/chpe_metadata_after.svg
 
-.. include:: ../../../../_cross_api.rst
+.. include:: ../../../../../_cross_api.rst

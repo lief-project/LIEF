@@ -1,7 +1,7 @@
 .. _plugins-binaryninja-analyzers-exceptions:
 
-:fa:`solid fa-object-ungroup` BinaryNinja - Analyzers - Exceptions
-------------------------------------------------------------------
+:fa:`solid fa-object-ungroup` Exceptions
+-----------------------------------------
 
 This analyzer improves the representation and underlying data of PE exceptions
 metadata, primarily for ARM64 and ARM64EC binaries.
@@ -24,3 +24,10 @@ This results in a more accurate representation of the binary, as illustrated in 
 .. img-comparison::
   :left: img/featmap_before.svg
   :right: img/featmap_after.svg
+
+.. seealso::
+
+  See also this blog post: https://lief.re/blog/2025-02-16-arm64ec-pe-support/#binaryninja-arm64ec-support
+
+
+.. include:: ../../../../../_cross_api.rst

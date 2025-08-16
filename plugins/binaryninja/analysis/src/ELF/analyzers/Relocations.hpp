@@ -14,14 +14,21 @@
  */
 #pragma once
 
-#include "../TypeBuilder.hpp"
+#include "ELF/AnalyzerBase.hpp"
 
-namespace analysis_plugin::elf {
+namespace binaryninja {
+class BNStream;
+}
 
-class TypeBuilder : public analysis_plugin::TypeBuilder {
+namespace analysis_plugin::elf::analyzers {
+class Relocations : public AnalyzerBase {
   public:
-  using analysis_plugin::TypeBuilder::TypeBuilder;
+  using AnalyzerBase::AnalyzerBase;
+  static bool can_run(BinaryNinja::BinaryView& bv, LIEF::ELF::Binary& elf);
 
-  ~TypeBuilder() override = default;
+  void run() override;
+
+  ~Relocations() override = default;
 };
+
 }

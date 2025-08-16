@@ -39,7 +39,28 @@ void AnalyzerBase::define_type_at(
   }
 
   if (name) {
-    auto bn_sym = new Symbol(DataSymbol, *name, address, NoBinding);
+    Ref<Symbol> bn_sym = new Symbol(DataSymbol, *name, address, NoBinding);
+    bv_.DefineAutoSymbolAndVariableOrFunction(
+        bv_.GetDefaultPlatform(), bn_sym, type);
+  } else {
+    bv_.DefineDataVariable(address, type);
+  }
+}
+
+
+void AnalyzerBase::define_type_at(
+    uint64_t address, BinaryNinja::Ref<BinaryNinja::Type> type,
+    force_callback_t force, std::optional<std::string> name)
+{
+  if (auto var = get_defined_var(address)) {
+    if (!force(*var)) {
+      return;
+    }
+    bv_.UndefineDataVariable(address, /*blacklist=*/false);
+  }
+
+  if (name) {
+    Ref<Symbol> bn_sym = new Symbol(DataSymbol, *name, address, NoBinding);
     bv_.DefineAutoSymbolAndVariableOrFunction(
         bv_.GetDefaultPlatform(), bn_sym, type);
   } else {

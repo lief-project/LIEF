@@ -14,14 +14,28 @@
  */
 #pragma once
 
-#include "../TypeBuilder.hpp"
+#include "ELF/AnalyzerBase.hpp"
 
-namespace analysis_plugin::elf {
+namespace binaryninja {
+class BNStream;
+}
 
-class TypeBuilder : public analysis_plugin::TypeBuilder {
+namespace LIEF::ELF {
+class DynamicEntry;
+}
+
+namespace analysis_plugin::elf::analyzers {
+class AndroidPackedRelocations : public AnalyzerBase {
   public:
-  using analysis_plugin::TypeBuilder::TypeBuilder;
+  using AnalyzerBase::AnalyzerBase;
+  static bool can_run(BinaryNinja::BinaryView& bv, LIEF::ELF::Binary& elf);
 
-  ~TypeBuilder() override = default;
+  void run() override;
+
+  void process_packed(binaryninja::BNStream& stream);
+  void process_packed(const LIEF::ELF::DynamicEntry& entry);
+
+  ~AndroidPackedRelocations() override = default;
 };
+
 }
