@@ -103,7 +103,7 @@ struct arm64_epilog_scope_t {
     return (raw & 0x000f0000) >> 18;
   }
 
-  uint8_t start_index() const {
+  uint16_t start_index() const {
     return (raw & 0xffc00000) >> 22;
   }
 };
