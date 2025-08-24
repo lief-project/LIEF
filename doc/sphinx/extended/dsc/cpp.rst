@@ -50,10 +50,8 @@ SubCache
 Utilities
 *********
 
-.. doxygenfunction:: bool LIEF::dsc::is_shared_cache(const std::string&)
+.. doxygenfunction:: LIEF::dsc::is_shared_cache(BinaryStream&)
 
-.. doxygenfunction:: bool LIEF::dsc::is_shared_cache(const BinaryStream&)
+.. doxygenfunction:: LIEF::dsc::is_shared_cache(const std::vector< uint8_t > &)
 
-.. doxygenfunction:: LIEF::COFF::is_shared_cache(const std::vector< uint8_t > &)
-
-.. doxygenfunction:: LIEF::COFF::is_shared_cache(const uint8_t *, size_t)
+.. doxygenfunction:: LIEF::dsc::is_shared_cache(const uint8_t *, size_t)
