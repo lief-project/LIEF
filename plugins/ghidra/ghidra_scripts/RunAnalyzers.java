@@ -32,13 +32,17 @@ public class RunAnalyzers extends GhidraScript {
         exporter.export(original, currentProgram, null, monitor);
         {
             Analyzer analyzer = new LoadConfigurationAnalyzer();
-            analyzer.added(currentProgram, currentProgram.getAddressFactory().getAddressSet(),
-                           monitor, log);
+            if (analyzer.canAnalyze(currentProgram)) {
+                analyzer.added(currentProgram, currentProgram.getAddressFactory().getAddressSet(),
+                               monitor, log);
+            }
         }
         {
             Analyzer analyzer = new ExceptionsAnalyzer();
-            analyzer.added(currentProgram, currentProgram.getAddressFactory().getAddressSet(),
-                           monitor, log);
+            if (analyzer.canAnalyze(currentProgram)) {
+                analyzer.added(currentProgram, currentProgram.getAddressFactory().getAddressSet(),
+                               monitor, log);
+            }
         }
         log.write(RunAnalyzers.class, "RunAnalyzers");
 
