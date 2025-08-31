@@ -118,11 +118,19 @@ ok_error_t Parser::parse_binary() {
   }
 
 
-  if (DynamicEntry* dt_gnu_hash = binary_->get(DynamicEntry::TAG::GNU_HASH)) {
-    if (auto res = binary_->virtual_address_to_offset(dt_gnu_hash->value())) {
-      parse_symbol_gnu_hash<ELF_T>(*res);
-    } else {
-      LIEF_WARN("Can't convert DT_GNU_HASH.virtual_address into an offset (0x{:x})", dt_gnu_hash->value());
+  if (DynamicEntry* dt = binary_->get(DynamicEntry::TAG::GNU_HASH)) {
+    if (Segment* seg = binary_->segment_from_virtual_address(dt->value())) {
+      const auto dynsymcount = (uint64_t)(binary_->dynamic_symbols_.size());
+      std::unique_ptr<SpanStream> strm = seg->stream();
+      const uint64_t addr = dt->value();
+      if (strm != nullptr) {
+        strm->set_endian_swap(stream_->should_swap());
+        assert(addr >= seg->virtual_address());
+        uint64_t offset = addr - seg->virtual_address();
+        strm->setpos(offset);
+        binary_->gnu_hash_ = GnuHash::parse<ELF_T>(*strm, dynsymcount);
+        binary_->sizing_info_->gnu_hash = binary_->gnu_hash_->original_size();
+      }
     }
   }
 
@@ -736,88 +744,26 @@ result<uint32_t> Parser::nb_dynsym_sysv_hash() const {
 
 template<typename ELF_T>
 result<uint32_t> Parser::nb_dynsym_gnu_hash() const {
-  using uint__ = typename ELF_T::uint;
-  using Elf_Off  = typename ELF_T::Elf_Off;
-
   const DynamicEntry* dyn_hash = binary_->get(DynamicEntry::TAG::GNU_HASH);
   if (dyn_hash == nullptr) {
     LIEF_ERR("Can't find DT_GNU_HASH");
     return make_error_code(lief_errors::not_found);
   }
-  Elf_Off gnu_hash_offset = 0;
 
-  if (auto res = binary_->virtual_address_to_offset(dyn_hash->value())) {
-    gnu_hash_offset = *res;
-  } else {
-    return make_error_code(res.error());
-  }
+  const uint64_t addr = dyn_hash->value();
 
-  stream_->setpos(gnu_hash_offset);
-  const auto res_nbuckets = stream_->read<uint32_t>();
-  if (!res_nbuckets) {
-    return 0;
-  }
-
-  const auto res_symndx = stream_->read<uint32_t>();
-  if (!res_symndx) {
-    return 0;
-  }
-
-  const auto res_maskwords = stream_->read<uint32_t>();
-  if (!res_maskwords) {
-    return 0;
-  }
-
-  const auto nbuckets  = *res_nbuckets;
-  const auto symndx    = *res_symndx;
-  const auto maskwords = *res_maskwords;
-
-  // skip shift2, unused as we don't need the bloom filter to count syms.
-  stream_->increment_pos(sizeof(uint32_t));
-
-  if (maskwords & (maskwords - 1)) {
-    LIEF_WARN("maskwords is not a power of 2");
-    return 0;
-  }
-
-  if (maskwords > Parser::NB_MAX_MASKWORD) {
-    return 0;
-  }
-
-  // skip bloom filter mask words
-  stream_->increment_pos(sizeof(uint__) * (maskwords));
-
-  uint32_t max_bucket = 0;
-  for (size_t i = 0; i < nbuckets; ++i) {
-    auto bucket = stream_->read<uint32_t>();
-    if (!bucket) {
-      break;
+  if (Segment* seg = binary_->segment_from_virtual_address(addr)) {
+    std::unique_ptr<SpanStream> stream = seg->stream();
+    if (stream == nullptr) {
+      return make_error_code(lief_errors::read_error);
     }
-    if (*bucket > max_bucket) {
-      max_bucket = *bucket;
-    }
+    uint64_t rel_offset = addr - seg->virtual_address();
+    stream->setpos(rel_offset);
+    stream->set_endian_swap(stream_->should_swap());
+    return GnuHash::nb_symbols<ELF_T>(*stream);
   }
 
-  if (max_bucket == 0) {
-    return 0;
-  }
-
-  // Skip to the contents of the bucket with the largest symbol index
-  stream_->increment_pos(sizeof(uint32_t) * (max_bucket - symndx));
-
-  // Count values in the bucket
-  uint32_t hash_value = 0;
-  size_t nsyms = 0;
-  do {
-    if (!stream_->can_read<uint32_t>()) {
-      return 0;
-    }
-    hash_value = *stream_->read<uint32_t>();
-
-    nsyms++;
-  } while ((hash_value & 1) == 0); // "It is set to 1 when a symbol is the last symbol in a given hash bucket"
-
-  return max_bucket + nsyms;
+  return make_error_code(lief_errors::not_found);
 }
 
 template<typename ELF_T>
@@ -1844,117 +1790,6 @@ ok_error_t Parser::parse_symbol_version_definition(uint64_t offset, uint32_t nb_
   }
   return ok();
 }
-
-// See: https://github.com/lattera/glibc/blob/master/elf/dl-lookup.c#L860
-// and  https://github.com/lattera/glibc/blob/master/elf/dl-lookup.c#L226
-template<typename ELF_T>
-ok_error_t Parser::parse_symbol_gnu_hash(uint64_t offset) {
-  using uint__  = typename ELF_T::uint;
-
-  static constexpr uint32_t NB_MAX_WORDS   = 90000;
-  static constexpr uint32_t NB_MAX_BUCKETS = 90000;
-  static constexpr uint32_t MAX_NB_HASH    = 1000000;
-
-  LIEF_DEBUG("== Parse symbol GNU hash ==");
-  auto gnuhash = std::make_unique<GnuHash>();
-  gnuhash->c_ = sizeof(uint__) * 8;
-
-  stream_->setpos(offset);
-
-  uint32_t nbuckets  = 0;
-  uint32_t maskwords = 0;
-
-  if (auto res = stream_->read<uint32_t>()) {
-    nbuckets = std::min(*res, NB_MAX_BUCKETS);
-  } else {
-    LIEF_ERR("Can't read the number of buckets");
-    return make_error_code(lief_errors::read_error);
-  }
-
-  if (auto res = stream_->read<uint32_t>()) {
-    gnuhash->symbol_index_ = *res;
-  } else {
-    LIEF_ERR("Can't read the symndx");
-    return make_error_code(lief_errors::read_error);
-  }
-
-  if (auto res = stream_->read<uint32_t>()) {
-    maskwords = std::min(*res, NB_MAX_MASKWORD);
-  } else {
-    LIEF_ERR("Can't read the maskwords");
-    return make_error_code(lief_errors::read_error);
-  }
-
-  if (auto res = stream_->read<uint32_t>()) {
-    gnuhash->shift2_ = *res;
-  } else {
-    LIEF_ERR("Can't read the shift2");
-    return make_error_code(lief_errors::read_error);
-  }
-
-  if (maskwords & (maskwords - 1)) {
-    LIEF_WARN("maskwords is not a power of 2");
-  }
-
-  if (maskwords < NB_MAX_WORDS) {
-    gnuhash->bloom_filters_.reserve(maskwords);
-
-    for (size_t i = 0; i < maskwords; ++i) {
-      if (auto maskword = stream_->read<uint__>()) {
-        gnuhash->bloom_filters_.push_back(*maskword);
-      } else {
-        LIEF_ERR("Can't read maskwords #{:d}", i);
-        break;
-      }
-    }
-  } else {
-    LIEF_ERR("GNU Hash, maskwords corrupted");
-  }
-
-  if (nbuckets > NB_MAX_BUCKETS) {
-    LIEF_ERR("Number of bucket corrupted! (Too big)");
-    return make_error_code(lief_errors::corrupted);
-  }
-
-  gnuhash->buckets_.reserve(nbuckets);
-
-  for (size_t i = 0; i < nbuckets; ++i) {
-    if (auto res = stream_->read<uint32_t>()) {
-      gnuhash->buckets_.push_back(*res);
-    } else {
-      LIEF_ERR("Can't read bucket #{}", i);
-      break;
-    }
-  }
-
-  if (config_.parse_dyn_symbols) {
-    const auto dynsymcount = static_cast<uint32_t>(binary_->dynamic_symbols_.size());
-    if (dynsymcount >= gnuhash->symbol_index_) {
-      const uint32_t nb_hash = dynsymcount - gnuhash->symbol_index_;
-
-      if (nb_hash < MAX_NB_HASH) {
-        gnuhash->hash_values_.reserve(nb_hash);
-        for (size_t i = 0; i < nb_hash; ++i) {
-          if (auto res = stream_->read<uint32_t>()) {
-            gnuhash->hash_values_.push_back(*res);
-          } else {
-            LIEF_ERR("Can't read hash #{}", i);
-            break;
-          }
-        }
-      } else {
-        LIEF_ERR("The number of hash entries seems too high ({:d})", nb_hash);
-      }
-    } else {
-      LIEF_ERR("GNU Hash, symndx corrupted");
-    }
-  }
-  binary_->gnu_hash_ = std::move(gnuhash);
-  binary_->sizing_info_->gnu_hash = stream_->pos() - offset;
-  return ok();
-}
-
-
 
 }
 }
