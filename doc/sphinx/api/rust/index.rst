@@ -77,6 +77,8 @@ As of now, the following targets are supported with pre-compilation:
 +=================================+========================================================+
 | ``x86_64-unknown-linux-gnu``    | Regular Linux x86-64 (Ubuntu 19.10, Debian 10, ...)    |
 +---------------------------------+--------------------------------------------------------+
+| ``i686-unknown-linux-gnu``      | Regular Linux i686 (Ubuntu 19.10, Debian 10, ...)      |
++---------------------------------+--------------------------------------------------------+
 | ``x86_64-unknown-linux-musl``   | Musl target that allows full static build              |
 +---------------------------------+--------------------------------------------------------+
 | ``i686-unknown-linux-musl``     | Linux i686 with Musl                                   |
