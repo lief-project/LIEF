@@ -19,16 +19,20 @@
 #include <vector>
 #include <ostream>
 #include <cstdint>
+#include <memory>
 
+#include "LIEF/errors.hpp"
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {
+class SpanStream;
 namespace ELF {
 
 class Parser;
 class Builder;
 class Binary;
+class Segment;
 
 /// Class which provides a view over the GNU Hash implementation.
 /// Most of the fields are read-only since the values
@@ -43,8 +47,13 @@ class LIEF_API GnuHash : public Object {
   GnuHash() = default;
   GnuHash(uint32_t symbol_idx, uint32_t shift2,
           std::vector<uint64_t> bloom_filters, std::vector<uint32_t> buckets,
-          std::vector<uint32_t> hash_values = {});
-
+          std::vector<uint32_t> hash_values = {}) :
+    symbol_index_{symbol_idx},
+    shift2_{shift2},
+    bloom_filters_{std::move(bloom_filters)},
+    buckets_{std::move(buckets)},
+    hash_values_{std::move(hash_values)}
+  {}
 
   GnuHash& operator=(const GnuHash& copy) = default;
   GnuHash(const GnuHash& copy) = default;
@@ -117,6 +126,16 @@ class LIEF_API GnuHash : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const GnuHash& gnuhash);
 
+  template<class ELF_T>
+  static LIEF_LOCAL std::unique_ptr<GnuHash> parse(SpanStream& strm, uint64_t dynsymcount);
+
+  template<class ELF_T>
+  static LIEF_LOCAL result<uint32_t> nb_symbols(SpanStream& strm);
+
+  LIEF_LOCAL uint64_t original_size() const {
+    return original_size_;
+  }
+
   private:
   uint32_t symbol_index_ = 0;
   uint32_t shift2_       = 0;
@@ -126,6 +145,7 @@ class LIEF_API GnuHash : public Object {
   std::vector<uint32_t> hash_values_;
 
   size_t c_ = 0;
+  uint64_t original_size_ = 0;
 };
 
 
