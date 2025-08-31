@@ -14,7 +14,7 @@ const GIT_VERSION: &str = git_version!(
 const GH_URL: &str = "https://github.com/lief-project/LIEF/releases/download";
 const DEFAULT_S3_URL: &str = "https://lief-rs.s3.fr-par.scw.cloud";
 
-const SUPPORTED_TARGETS: &[&str; 10] = &[
+const SUPPORTED_TARGETS: &[&str; 11] = &[
     "aarch64-apple-darwin",
     "aarch64-apple-ios",
     "aarch64-pc-windows-msvc",
@@ -24,6 +24,7 @@ const SUPPORTED_TARGETS: &[&str; 10] = &[
     "x86_64-apple-darwin",
     "x86_64-pc-windows-msvc",
     "x86_64-unknown-linux-gnu",
+    "i686-unknown-linux-gnu",
     "x86_64-unknown-linux-musl",
 ];
 
