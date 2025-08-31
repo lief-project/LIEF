@@ -17,11 +17,17 @@ package lief.ghidra.plugins.analyzers;
 
 import ghidra.app.services.AbstractAnalyzer;
 import ghidra.app.services.AnalyzerType;
+import ghidra.app.util.opinion.ElfLoader;
+import ghidra.program.model.listing.Program;
 import lief.ghidra.core.NativeBridge;
 
 public abstract class LIEFAbstractAnalyzer extends AbstractAnalyzer {
     public LIEFAbstractAnalyzer(String name, String description, AnalyzerType type) {
         super(name, description, type);
         NativeBridge.init();
+    }
+
+    protected boolean isELF(Program program) {
+      return ElfLoader.ELF_NAME.equals(program.getExecutableFormat());
     }
 }

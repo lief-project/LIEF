@@ -16,18 +16,40 @@
 
 #include <jni_bind.h>
 #include "jni/lief/generic/Binary.hpp"
+#include "jni/lief/elf/Relocation.hpp"
+#include "jni/iterator.hpp"
 
 #include <LIEF/ELF/Binary.hpp>
+#include <LIEF/ELF/Relocation.hpp>
 #include <LIEF/ELF/Parser.hpp>
 
 namespace lief_jni::elf {
 
 class Binary : public generic::Binary {
   public:
+  using lief_t = LIEF::ELF::Binary;
   using generic::Binary::Binary;
   static constexpr jni::Class kClass {
     "lief/elf/Binary",
     jni::Constructor{ jlong{} },
+  };
+
+  class RelocationsIterator : public lief_jni::Iterator<
+    RelocationsIterator, LIEF::ELF::Binary::it_relocations, lief_jni::elf::Relocation
+  >
+  {
+    public:
+    static constexpr jni::Class kClass {
+      "lief/elf/Binary$RelocationsIterator",
+      jni::Constructor{ jlong{} },
+      jni::Field { "impl", jlong{}, }
+    };
+
+    static void jni_destroy(JNIEnv* env, jobject thiz) {
+      destroy(thiz);
+    }
+
+    static int register_natives(JNIEnv* env);
   };
 
   static int register_natives(JNIEnv* env);
@@ -41,6 +63,12 @@ class Binary : public generic::Binary {
       )
     );
   }
+
+  static jobject jni_get_relocations(JNIEnv* env, jobject thiz) {
+    jni::ThreadGuard TG;
+    return RelocationsIterator::create(from_jni(thiz)->cast<lief_t>().relocations());
+  }
+
 
   static void jni_destroy(JNIEnv* env, jobject thiz) {
     destroy(thiz);

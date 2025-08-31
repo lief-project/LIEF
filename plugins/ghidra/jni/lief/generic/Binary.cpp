@@ -15,6 +15,8 @@
 #include <array>
 
 #include "jni/lief/generic/Binary.hpp"
+#include "jni/lief/generic/Relocation.hpp"
+
 #include "jni/log.hpp"
 #include "jni/jni_utils.hpp"
 
@@ -42,7 +44,10 @@ int Binary::register_natives(JNIEnv* env) {
     NATIVE_METHODS.data(), NATIVE_METHODS.size()
   );
 
+  Relocation::register_natives(env);
+
   GHIDRA_DEBUG("'{}' registered", kClass.name_);
+
 
   return JNI_OK;
 }

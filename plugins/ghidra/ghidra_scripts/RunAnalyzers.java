@@ -1,5 +1,6 @@
 import lief.ghidra.plugins.analyzers.pe.LoadConfigurationAnalyzer;
 import lief.ghidra.plugins.analyzers.pe.ExceptionsAnalyzer;
+import lief.ghidra.plugins.analyzers.elf.RelocationsAnalyzer;
 import ghidra.app.script.GhidraScript;
 import ghidra.app.services.Analyzer;
 import ghidra.app.util.exporter.AsciiExporter;
@@ -39,6 +40,14 @@ public class RunAnalyzers extends GhidraScript {
         }
         {
             Analyzer analyzer = new ExceptionsAnalyzer();
+            if (analyzer.canAnalyze(currentProgram)) {
+                analyzer.added(currentProgram, currentProgram.getAddressFactory().getAddressSet(),
+                               monitor, log);
+            }
+        }
+
+        {
+            Analyzer analyzer = new RelocationsAnalyzer();
             if (analyzer.canAnalyze(currentProgram)) {
                 analyzer.added(currentProgram, currentProgram.getAddressFactory().getAddressSet(),
                                monitor, log);

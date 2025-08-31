@@ -19,5 +19,29 @@ public class Binary extends lief.generic.Binary {
         super(impl);
     }
 
+    public static class RelocationsIterator extends lief.Iterator<Relocation>
+                                            implements Iterable<Relocation>
+    {
+        public RelocationsIterator(long impl) {
+            super(impl);
+        }
+
+        @Override
+        public RelocationsIterator iterator() {
+            return this;
+        }
+
+        @Override
+        protected native void destroy();
+
+        @Override
+        public native boolean hasNext();
+
+        @Override
+        public native Relocation next();
+    }
+
     public static native Binary parse(String path);
+
+    public native RelocationsIterator getRelocations();
 }
