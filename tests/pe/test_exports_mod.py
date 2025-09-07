@@ -98,7 +98,6 @@ def test_exports_simple(tmp_path: Path, sample: str):
 
     if sample.startswith("private/") and not has_private_samples():
         pytest.skip(reason="needs private samples")
-        return
 
     input_path = Path(get_sample(sample))
 
@@ -168,7 +167,7 @@ def test_exports_creation(tmp_path: Path, sample: str):
     assert check, msg
 
     new_exp = new.get_export()
-    new_exp.name == "lief_test.dll"
+    assert new_exp.name == "lief_test.dll"
     entries = new_exp.entries
     assert len(entries) == 2
     assert entries[0].name == "test_1"
@@ -295,3 +294,42 @@ def test_exe2dll(tmp_path: Path):
         p.start()
         p.join()
         assert p.exitcode == 0
+
+def test_feat_1238(tmp_path: Path):
+    input_path = Path(get_sample("PE/PE64_x86-64_binary_HelloWorld.exe"))
+
+    pe = lief.PE.parse(input_path)
+    check, msg = lief.PE.check_layout(pe)
+    assert check, msg
+
+    fwd_entry =  lief.PE.ExportEntry("test_1", 0x1234)
+    fwd_entry.set_forward_info("NTDLL", "RtlInterlockedPushListSList")
+    assert fwd_entry.is_forwarded
+
+    exp = lief.PE.Export("lief_test.dll", [
+        fwd_entry,
+    ])
+
+    pe.set_export(exp)
+
+    config = lief.PE.Builder.config_t()
+    config.imports = False
+    config.exports = True
+    config.resources = False
+    config.relocations = False
+    config.load_configuration = False
+    config.tls = False
+    config.overlay = False
+    config.debug = False
+    config.export_section = ".myedata"
+
+    output = tmp_path / input_path.name
+    pe.write(output.as_posix(), config)
+
+
+    new = lief.PE.parse(output)
+
+    new_fwd_entry = new.get_export().find_entry("test_1")
+    assert new_fwd_entry.is_forwarded
+    assert new_fwd_entry.forward_information.library == "NTDLL"
+    assert new_fwd_entry.forward_information.function == "RtlInterlockedPushListSList"

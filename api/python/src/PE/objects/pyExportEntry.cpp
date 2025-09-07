@@ -77,6 +77,9 @@ void create<ExportEntry>(nb::module_& m) {
       )doc"_doc
     )
 
+    .def("set_forward_info", &ExportEntry::set_forward_info,
+         "lib"_a, "function"_a)
+
     LIEF_DEFAULT_STR(ExportEntry);
 
 }
