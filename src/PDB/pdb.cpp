@@ -18,6 +18,7 @@
 #include "LIEF/PDB/Function.hpp"
 #include "LIEF/PDB/BuildMetadata.hpp"
 #include "LIEF/PDB/Type.hpp"
+#include "LIEF/PDB/utils.hpp"
 
 #include "LIEF/PDB/types/Simple.hpp"
 #include "LIEF/PDB/types/Array.hpp"

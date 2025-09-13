@@ -309,7 +309,7 @@ class LIEF_API Segment : public Object {
                      Header::OS_ABI os = Header::OS_ABI::SYSTEMV);
 
   LIEF_LOCAL uint64_t handler_size() const;
-  LIEF_LOCAL span<uint8_t> writable_content();
+  span<uint8_t> writable_content();
 
   TYPE type_ = TYPE::PT_NULL_;
   ARCH arch_ = ARCH::NONE;

@@ -89,7 +89,7 @@ struct lief_version_t {
   uint64_t patch = 0;
   uint64_t id    = 0;
 
-  std::string to_string() const;
+  LIEF_API std::string to_string() const;
 
   friend LIEF_API
     std::ostream& operator<<(std::ostream& os, const lief_version_t& version)
