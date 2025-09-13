@@ -17,7 +17,7 @@
 #include <LIEF/utils.hpp>
 #include <LIEF/version.h>
 
-#include "commands.hpp"
+#include "binaryninja/analysis/commands.hpp"
 #include "log.hpp"
 #include "Analyzer.hpp"
 

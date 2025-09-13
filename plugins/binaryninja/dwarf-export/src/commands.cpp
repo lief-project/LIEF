@@ -16,9 +16,9 @@
 
 #include <LIEF/utils.hpp>
 #include <LIEF/version.h>
-#include "commands.hpp"
-#include "log.hpp"
-#include "DwarfExport.hpp"
+#include "binaryninja/dwarf-export/commands.hpp"
+#include "binaryninja/dwarf-export/log.hpp"
+#include "binaryninja/dwarf-export/DwarfExport.hpp"
 
 namespace bn = BinaryNinja;
 

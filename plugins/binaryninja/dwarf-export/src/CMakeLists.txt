@@ -1,4 +1,4 @@
-target_sources(dwarf-core PUBLIC
+target_sources(dwarf-core PRIVATE
   commands.cpp
   DwarfExport.cpp
   TypeEngine.cpp

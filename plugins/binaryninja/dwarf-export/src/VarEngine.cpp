@@ -14,8 +14,8 @@
  */
 #include <LIEF/DWARF/editor/Variable.hpp>
 
-#include "VarEngine.hpp"
-#include "TypeEngine.hpp"
+#include "binaryninja/dwarf-export/VarEngine.hpp"
+#include "binaryninja/dwarf-export/TypeEngine.hpp"
 
 #include "binaryninja/api_compat.hpp"
 

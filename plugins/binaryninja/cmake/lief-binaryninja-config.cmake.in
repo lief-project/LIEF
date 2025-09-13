@@ -1,0 +1,7 @@
+@PACKAGE_INIT@
+
+set(config_targets_file @config_targets_file@)
+
+include("${CMAKE_CURRENT_LIST_DIR}/${config_targets_file}")
+
+check_required_components(lief-binaryninja)

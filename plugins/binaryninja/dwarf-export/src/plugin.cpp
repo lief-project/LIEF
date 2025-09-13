@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 #include "binaryninja/binaryninjacore.h"
-#include "commands.hpp"
+#include "binaryninja/dwarf-export/commands.hpp"
 
 extern "C" {
 BN_DECLARE_CORE_ABI_VERSION

@@ -1,4 +1,4 @@
-target_sources(analysis-core PUBLIC
+target_sources(analysis-core PRIVATE
   Analyzer.cpp
   AnalyzerBase.cpp
   TypeBuilder.cpp

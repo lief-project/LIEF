@@ -34,10 +34,11 @@
 #include <LIEF/Abstract/Binary.hpp>
 #include <LIEF/Abstract/Parser.hpp>
 
-#include "DwarfExport.hpp"
-#include "FunctionEngine.hpp"
-#include "VarEngine.hpp"
-#include "TypeEngine.hpp"
+#include "binaryninja/dwarf-export/log.hpp"
+#include "binaryninja/dwarf-export/DwarfExport.hpp"
+#include "binaryninja/dwarf-export/FunctionEngine.hpp"
+#include "binaryninja/dwarf-export/VarEngine.hpp"
+#include "binaryninja/dwarf-export/TypeEngine.hpp"
 #include "log.hpp"
 
 namespace bn = BinaryNinja;

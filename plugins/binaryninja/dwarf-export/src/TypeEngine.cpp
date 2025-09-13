@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "TypeEngine.hpp"
+#include "binaryninja/dwarf-export/TypeEngine.hpp"
 #include <LIEF/DWARF/editor/StructType.hpp>
 #include <LIEF/DWARF/editor/EnumType.hpp>
 #include <LIEF/DWARF/editor/TypeDef.hpp>
@@ -23,7 +23,7 @@
 #include "binaryninja/api_compat.hpp"
 #include "binaryninja/lief_utils.hpp"
 
-#include "log.hpp"
+#include "binaryninja/dwarf-export/log.hpp"
 
 namespace bn = BinaryNinja;
 namespace dw = LIEF::dwarf;

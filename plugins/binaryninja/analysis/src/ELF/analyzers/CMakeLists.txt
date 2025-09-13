@@ -1,4 +1,4 @@
-target_sources(analysis-core PUBLIC
+target_sources(analysis-core PRIVATE
   AndroidPackedRelocations.cpp
   RelativeRelocations.cpp
   Relocations.cpp

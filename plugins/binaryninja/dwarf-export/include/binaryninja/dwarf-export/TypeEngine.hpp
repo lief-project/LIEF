@@ -15,7 +15,7 @@
 #pragma once
 #include <unordered_map>
 #include <LIEF/DWARF/editor/CompilationUnit.hpp>
-#include <binaryninjaapi.h>
+#include <binaryninja/binaryninjaapi.h>
 
 namespace dwarf_plugin {
 class TypeEngine {
