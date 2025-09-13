@@ -44,7 +44,7 @@ std::shared_ptr<spdlog::logger>
 
 static std::shared_ptr<spdlog::logger> default_logger(
   [[maybe_unused]] const std::string& name = "LIEF",
-  [[maybe_unused]] const std::string& logcat_tag = "lief",
+  [[maybe_unused]] const std::string& logcat_tag = "",
   [[maybe_unused]] const std::string& filepath = "/tmp/lief.log",
   [[maybe_unused]] bool truncate = true
 )
