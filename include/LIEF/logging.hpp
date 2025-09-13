@@ -190,6 +190,8 @@ LIEF_API void log(const char* name, LEVEL level, const std::string& msg);
 /// Set a spdlog sink for the logger with the given name
 LIEF_API void set_logger(const char* name, std::shared_ptr<spdlog::logger> logger);
 
+LIEF_API spdlog::logger& get_sink(const char* name);
+
 /// Reset the logger with the given name
 LIEF_API void reset(const char* name);
 

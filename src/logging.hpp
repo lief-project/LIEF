@@ -138,6 +138,11 @@ class Logger {
 
   void set_logger(std::shared_ptr<spdlog::logger> logger);
 
+  spdlog::logger& sink() {
+    assert(sink_ != nullptr);
+    return *sink_;
+  }
+
   ~Logger() = default;
   Logger() = delete;
   private:

@@ -324,6 +324,10 @@ void set_logger(const char* name, std::shared_ptr<spdlog::logger> logger) {
 void reset(const char* name) {
   Logger::instance(name).reset();
 }
+
+spdlog::logger& get_sink(const char* name) {
+  return Logger::instance(name).sink();
+}
 }
 
 }
