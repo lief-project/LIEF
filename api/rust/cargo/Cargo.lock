@@ -1073,7 +1073,7 @@ dependencies = [
 
 [[package]]
 name = "lief"
-version = "0.17.0"
+version = "1.0.0"
 dependencies = [
  "bitflags 2.9.0",
  "cxx",
@@ -1086,7 +1086,7 @@ dependencies = [
 
 [[package]]
 name = "lief-build"
-version = "0.17.0"
+version = "1.0.0"
 dependencies = [
  "git-version",
  "miette",
@@ -1097,7 +1097,7 @@ dependencies = [
 
 [[package]]
 name = "lief-ffi"
-version = "0.17.0"
+version = "1.0.0"
 dependencies = [
  "autocxx",
  "cxx",
@@ -1107,7 +1107,7 @@ dependencies = [
 
 [[package]]
 name = "lief-ffigen"
-version = "0.17.0"
+version = "1.0.0"
 dependencies = [
  "autocxx-build",
  "cc",

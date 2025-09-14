@@ -747,7 +747,7 @@ checksum = "1171693293099992e19cddea4e8b849964e9846f4acee11b3948bcc337be8776"
 
 [[package]]
 name = "lief"
-version = "0.17.0"
+version = "1.0.0"
 dependencies = [
  "bitflags 2.9.1",
  "cxx",
@@ -760,7 +760,7 @@ dependencies = [
 
 [[package]]
 name = "lief-build"
-version = "0.17.0"
+version = "1.0.0"
 dependencies = [
  "git-version",
  "miette",
@@ -771,7 +771,7 @@ dependencies = [
 
 [[package]]
 name = "lief-ffi"
-version = "0.17.0"
+version = "1.0.0"
 dependencies = [
  "autocxx",
  "cxx",
