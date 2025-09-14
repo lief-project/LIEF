@@ -3,8 +3,8 @@
 :fa:`solid fa-code-compare` Changelog
 =====================================
 
-0.17.0 - Not Released Yet
--------------------------
+0.17.0 - September 14th, 2025
+-----------------------------
 
 .. admonition:: BinaryNinja & Ghidra Plugins
   :class: tip
