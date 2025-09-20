@@ -124,6 +124,10 @@ public class FSRLHelper {
                 else if (lief.macho.Utils.isMachO(path)) {
                     return cache(path, lief.macho.Binary.parse(path));
                 }
+
+                throw new Exception(String.format(
+                    "DWARF exporter requires an ELF, PE or Mach-O (%s)", path
+                ));
             }
 
             case UNIVERSAL_BINARY: {
