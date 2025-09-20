@@ -200,6 +200,10 @@ std::unique_ptr<Type> Parameter::type() const {
   return nullptr;
 }
 
+std::unique_ptr<Parameter::Location> Parameter::location() const {
+  return nullptr;
+}
+
 std::unique_ptr<Parameter> Parameter::create(std::unique_ptr<details::Parameter>/*impl*/) {
   return nullptr;
 }
@@ -956,6 +960,14 @@ std::unique_ptr<Function::Label> Function::add_label(uint64_t, const std::string
 Function::Parameter::Parameter(std::unique_ptr<details::FunctionParameter> impl) :
   impl_(std::move(impl))
 {}
+
+Function::Parameter& Function::Parameter::assign_register(const std::string& /*name*/) {
+  return *this;
+}
+
+Function::Parameter& Function::Parameter::assign_register(uint64_t /*reg*/) {
+  return *this;
+}
 
 Function::Parameter::~Parameter() = default;
 

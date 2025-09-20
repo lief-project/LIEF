@@ -6,6 +6,20 @@
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
 
+namespace nanobind::detail {
+template<> struct type_hook<LIEF::dwarf::Parameter::Location> {
+  static const std::type_info* get(const LIEF::dwarf::Parameter::Location *src) {
+    using Parameter = LIEF::dwarf::Parameter;
+    if (src) {
+      if (Parameter::RegisterLoc::classof(src)) {
+        return &typeid(Parameter::RegisterLoc);
+      }
+    }
+    return &typeid(Parameter::Location);
+  }
+};
+}
+
 namespace LIEF::dwarf::py {
 template<>
 void create<dw::Parameter>(nb::module_& m) {
@@ -18,6 +32,28 @@ void create<dw::Parameter>(nb::module_& m) {
     )doc"_doc
   );
 
+  using Location = dw::Parameter::Location;
+  using RegisterLoc = dw::Parameter::RegisterLoc;
+
+  nb::class_<Location> loc(param, "Location",
+    R"doc(
+    This class exposes information about the location of a parameter
+    )doc"_doc);
+
+  nb::enum_<dw::Parameter::Location::Type>(loc, "Type")
+    .value("UNKNOWN", Location::Type::UNKNOWN)
+    .value("REGISTER", Location::Type::REG);
+
+  loc
+    .def_ro("type", &Location::type);
+
+  nb::class_<RegisterLoc, Location>(param, "RegisterLoc",
+    R"doc(
+    This class represents a register location
+    )doc"_doc)
+
+    .def_ro("id", &RegisterLoc::id, "DWARF id of the register"_doc);
+
   param
     .def_prop_ro("name", &dw::Parameter::name,
       R"doc(
@@ -28,6 +64,13 @@ void create<dw::Parameter>(nb::module_& m) {
     .def_prop_ro("type", &dw::Parameter::type,
       R"doc(
       Type of this parameter
+      )doc"_doc
+    )
+
+    .def_prop_ro("location", &dw::Parameter::location,
+      R"doc(
+      Location of this parameter. For instance it can be a specific register
+      that is not following the calling convention.
       )doc"_doc
     )
   ;

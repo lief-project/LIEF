@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #include <LIEF/DWARF/editor/Variable.hpp>
+#include <LIEF/DWARF/editor/Function.hpp>
 
 #include "binaryninja/dwarf-export/FunctionEngine.hpp"
 #include "binaryninja/dwarf-export/TypeEngine.hpp"
@@ -59,7 +60,18 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
     const bn::FunctionParameter& p = parameters[i];
     std::string name = p.name.empty() ? fmt::format("arg_{}", i) : p.name;
     dw::Type& type = types_.add_type(p.type->GetTypeName(), api_compat::get_type(p.type));
-    dw_func->add_parameter(name, type);
+    std::unique_ptr<dw::Function::Parameter> P = dw_func->add_parameter(name, type);
+    if (!p.defaultLocation) {
+      if (p.location.type == BNVariableSourceType::RegisterVariableSourceType) {
+        int64_t reg = p.location.storage;
+        if (bn::Ref<bn::Platform> platform = func.GetPlatform()) {
+          std::string reg_name = platform->GetArchitecture()->GetRegisterName(reg);
+          if (!reg_name.empty()) {
+            P->assign_register(reg_name);
+          }
+        }
+      }
+    }
   }
 
   for (const auto& [addr, stack_var] : func.GetStackLayout()) {

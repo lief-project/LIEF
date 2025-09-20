@@ -30,6 +30,14 @@ class DWARF_editor_Function_Parameter : public Mirror<LIEF::dwarf::editor::Funct
   public:
   using Mirror::Mirror;
   using lief_t = LIEF::dwarf::editor::Function::Parameter;
+
+  void assign_register_by_name(std::string name) {
+    get().assign_register(name);
+  }
+
+  void assign_register_by_id(uint64_t id) {
+    get().assign_register(id);
+  }
 };
 
 class DWARF_editor_Function_LexicalBlock : public Mirror<LIEF::dwarf::editor::Function::LexicalBlock> {

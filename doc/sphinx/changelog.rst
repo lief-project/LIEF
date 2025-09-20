@@ -10,6 +10,10 @@
 
   * Add :ref:`Android JNI Analyzer <plugins-binaryninja-analyzers-android-jni>`
 
+:DWARF:
+
+  * Add support to read or assign a register to a function's parameter
+
 0.17.0 - September 14th, 2025
 -----------------------------
 

@@ -53,6 +53,13 @@ class LIEF_API Function {
     Parameter(std::unique_ptr<details::FunctionParameter> impl);
 
     ~Parameter();
+
+    /// Assign this parameter to a specific named register.
+    Parameter& assign_register(const std::string& name);
+
+    /// Assign this parameter to the given DWARF register id (e.g. `DW_OP_reg0`).
+    Parameter& assign_register(uint64_t reg);
+
     private:
     std::unique_ptr<details::FunctionParameter> impl_;
   };

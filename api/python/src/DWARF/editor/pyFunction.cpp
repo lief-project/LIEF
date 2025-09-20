@@ -23,11 +23,22 @@ void create<dw::editor::Function>(nb::module_& m) {
     .def_rw("start", &dw::editor::Function::range_t::start)
     .def_rw("end", &dw::editor::Function::range_t::end);
 
-  nb::class_<dw::editor::Function::Parameter> FP(F, "Parameter",
+  using Parameter = dw::editor::Function::Parameter;
+  nb::class_<Parameter> FP(F, "Parameter",
     R"doc(
     This class represents a parameter of the current function (``DW_TAG_formal_parameter``)
     )doc"_doc
   );
+
+  FP
+    .def("assign_register", nb::overload_cast<const std::string&>(&Parameter::assign_register),
+      "Assign this parameter to a specific named register."_doc,
+      nb::rv_policy::reference_internal
+    )
+    .def("assign_register", nb::overload_cast<uint64_t>(&Parameter::assign_register),
+      R"doc(Assign this parameter to the given DWARF register id (e.g. ``DW_OP_reg0``))doc"_doc,
+      nb::rv_policy::reference_internal
+    );
 
   nb::class_<dw::editor::Function::LexicalBlock> FLB(F, "LexicalBlock",
     "This class mirrors the `DW_TAG_lexical_block` DWARF tag"_doc

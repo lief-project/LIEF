@@ -72,3 +72,22 @@ def test_simple(tmp_path: Path):
 
     output = tmp_path / "simple.dwarf"
     editor.write(output.as_posix())
+
+
+def test_register_param(tmp_path: Path):
+    elf = lief.ELF.parse(get_sample("ELF/ELF64_x86-64_binary_hello-cpp.bin"))
+    editor = lief.dwarf.Editor.from_binary(elf)
+    cu = editor.create_compilation_unit()
+    cu.set_producer("LIEF TEST")
+
+    func = cu.create_function("test_func_1")
+    func.set_address(0x1000)
+    param = func.add_parameter("arg0", cu.create_void_type().pointer_to())
+    param.assign_register("r15")
+
+    output = tmp_path / "reg.dwarf"
+    editor.write(output.as_posix())
+
+    dbg = lief.dwarf.load(output)
+    func = dbg.find_function("test_func_1")
+    assert func.parameters[0].location.id == 15

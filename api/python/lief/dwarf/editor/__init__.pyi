@@ -77,7 +77,11 @@ class Function:
         end: int
 
     class Parameter:
-        pass
+        @overload
+        def assign_register(self, arg: str, /) -> Function.Parameter: ...
+
+        @overload
+        def assign_register(self, arg: int, /) -> Function.Parameter: ...
 
     class LexicalBlock:
         pass

@@ -19,6 +19,12 @@ pub trait Parameter {
     fn get_type(&self) -> Option<Type> {
         into_optional(self.get_base().get_type())
     }
+
+    /// Location of this parameter. For instance it can be a specific register
+    /// that is not following the calling convention.
+    fn location(&self) -> Option<Location> {
+        into_optional(self.get_base().location())
+    }
 }
 
 pub enum Parameters<'a> {
@@ -134,5 +140,52 @@ impl FromFFI<ffi::DWARF_parameters_TemplateType> for TemplateType<'_> {
 impl Parameter for TemplateType<'_> {
     fn get_base(&self) -> &ffi::DWARF_Parameter {
         self.ptr.as_ref().unwrap().as_ref()
+    }
+}
+
+/// Enum that represents the different type of locations for a parameters
+pub enum Location<'a> {
+    /// Register location (e.g. `r8, x13`)
+    Register(RegisterLocation<'a>)
+}
+
+impl FromFFI<ffi::DWARF_Parameter_Location> for Location<'_> {
+    fn from_ffi(ffi_entry: cxx::UniquePtr<ffi::DWARF_Parameter_Location>) -> Self {
+        unsafe {
+            let loc_ref = ffi_entry.as_ref().unwrap();
+
+            if ffi::DWARF_Parameter_RegisterLocation::classof(loc_ref) {
+                let raw = {
+                    type From = cxx::UniquePtr<ffi::DWARF_Parameter_Location>;
+                    type To = cxx::UniquePtr<ffi::DWARF_Parameter_RegisterLocation>;
+                    std::mem::transmute::<From, To>(ffi_entry)
+                };
+                Location::Register(RegisterLocation::from_ffi(raw))
+            } else {
+                panic!("Unknown Parameter");
+            }
+        }
+    }
+}
+
+/// Location as a register
+pub struct RegisterLocation<'a> {
+    ptr: cxx::UniquePtr<ffi::DWARF_Parameter_RegisterLocation>,
+    _owner: PhantomData<&'a ()>,
+}
+
+impl FromFFI<ffi::DWARF_Parameter_RegisterLocation> for RegisterLocation<'_> {
+    fn from_ffi(ptr: cxx::UniquePtr<ffi::DWARF_Parameter_RegisterLocation>) -> Self {
+        Self {
+            ptr,
+            _owner: PhantomData,
+        }
+    }
+}
+
+impl RegisterLocation<'_> {
+    /// DWARF id of the register (e.g. `DW_OP_reg0`)
+    pub fn id(&self) -> u64 {
+        self.ptr.id()
     }
 }

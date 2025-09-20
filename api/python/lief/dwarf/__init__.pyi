@@ -187,11 +187,27 @@ class Function:
     def instructions(self) -> Iterator[Optional[lief.assembly.Instruction]]: ...
 
 class Parameter:
+    class Location:
+        class Type(enum.Enum):
+            UNKNOWN = 0
+
+            REGISTER = 1
+
+        @property
+        def type(self) -> Parameter.Location.Type: ...
+
+    class RegisterLoc(Parameter.Location):
+        @property
+        def id(self) -> int: ...
+
     @property
     def name(self) -> str: ...
 
     @property
     def type(self) -> Optional[Type]: ...
+
+    @property
+    def location(self) -> Optional[Parameter.Location]: ...
 
 class CompilationUnit:
     class Language:

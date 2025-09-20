@@ -26,9 +26,22 @@ pub struct Range {
 
 
 /// This structure represents a parameter of the current function (`DW_TAG_formal_parameter`)
-#[allow(dead_code)]
 pub struct Parameter {
     ptr: cxx::UniquePtr<ffi::DWARF_editor_Function_Parameter>,
+}
+
+impl Parameter {
+    /// Assign this parameter to a specific named register.
+    pub fn assign_register_by_name(&mut self, name: &str) -> &mut Self {
+        self.ptr.pin_mut().assign_register_by_name(name);
+        self
+    }
+
+    /// Assign this parameter to the given DWARF register id (e.g. `DW_OP_reg0`).
+    pub fn assign_register_by_id(&mut self, id: u64) -> &mut Self {
+        self.ptr.pin_mut().assign_register_by_id(id);
+        self
+    }
 }
 
 impl FromFFI<ffi::DWARF_editor_Function_Parameter> for Parameter {
