@@ -140,6 +140,11 @@ pub trait Binary {
         self.as_generic().imagebase()
     }
 
+    /// Size of the binary when mapped in memory
+    fn virtual_size(&self) -> u64 {
+        self.as_generic().virtual_size()
+    }
+
     /// Whether the current binary is **an executable** and **position independent**
     fn is_pie(&self) -> bool {
         self.as_generic().is_pie()

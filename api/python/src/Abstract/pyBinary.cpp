@@ -431,6 +431,10 @@ void create<Binary>(nb::module_& m) {
       )doc"_doc
     )
 
+    .def_prop_ro("virtual_size",
+      &Binary::virtual_size,
+      "Size of the binary when mapped in memory"_a)
+
     LIEF_DEFAULT_STR(Binary);
 
 }

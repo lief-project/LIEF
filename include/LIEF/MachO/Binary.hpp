@@ -85,7 +85,7 @@ class UUIDCommand;
 class VersionMin;
 
 /// Class which represents a MachO binary
-class LIEF_API Binary : public LIEF::Binary  {
+class LIEF_API Binary : public LIEF::Binary {
 
   friend class Parser;
   friend class BinaryParser;
@@ -448,7 +448,7 @@ class LIEF_API Binary : public LIEF::Binary  {
   uint64_t imagebase() const override;
 
   /// Size of the binary in memory when mapped by the loader (`dyld`)
-  uint64_t virtual_size() const {
+  uint64_t virtual_size() const override {
     return align(va_ranges().size(), (uint64_t)page_size());
   }
 

@@ -423,6 +423,9 @@ class Binary(Object):
 
     def load_debug_info(self, path: Union[str | os.PathLike]) -> DebugInfo: ...
 
+    @property
+    def virtual_size(self) -> int: ...
+
     def __str__(self) -> str: ...
 
 class Section(Object):

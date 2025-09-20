@@ -524,7 +524,7 @@ class LIEF_API Binary : public LIEF::Binary {
   uint64_t imagebase() const override;
 
   /// Return the size of the mapped binary
-  uint64_t virtual_size() const;
+  uint64_t virtual_size() const override;
 
   /// Check if the binary uses a loader (also named linker or interpreter)
   /// @see interpreter

@@ -410,6 +410,11 @@ class LIEF_API Binary : public Object {
   ///       identifier (e.g., build ID, GUID).
   DebugInfo* load_debug_info(const std::string& path);
 
+  /// Size of the binary when mapped in memory
+  virtual uint64_t virtual_size() const {
+    return 0;
+  }
+
   protected:
   FORMATS format_ = FORMATS::UNKNOWN;
   mutable std::unique_ptr<DebugInfo> debug_info_;

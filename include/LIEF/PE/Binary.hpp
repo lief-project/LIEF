@@ -246,7 +246,7 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Compute the binary's virtual size.
   /// It should match OptionalHeader::sizeof_image
-  uint64_t virtual_size() const;
+  uint64_t virtual_size() const override;
 
   /// Compute the size of all the headers
   uint32_t sizeof_headers() const;
