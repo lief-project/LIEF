@@ -12,12 +12,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/config.h"
 #include "paging.hpp"
 #include "Object.tcc"
 #include "LIEF/utils.hpp"
+
+#if defined(LIEF_ELF_SUPPORT)
 #include "LIEF/ELF/Binary.hpp"
+#endif
+
+#if defined(LIEF_MACHO_SUPPORT)
 #include "LIEF/MachO/Binary.hpp"
+#endif
+
+#if defined(LIEF_PE_SUPPORT)
 #include "LIEF/PE/Binary.hpp"
+#endif
 
 namespace LIEF {
 
@@ -30,6 +40,7 @@ struct page_sizes_t {
   uint32_t max = 0;
 };
 
+#if defined(LIEF_ELF_SUPPORT)
 page_sizes_t get_pagesize(const ELF::Binary& elf) {
   // These page sizes are coming from lld's ELF linker.
   //
@@ -70,7 +81,9 @@ page_sizes_t get_pagesize(const ELF::Binary& elf) {
   }
   return {4_KB, 4_KB};
 }
+#endif
 
+#if defined(LIEF_PE_SUPPORT)
 uint32_t get_pagesize(const PE::Binary& pe) {
   // According to: https://devblogs.microsoft.com/oldnewthing/20210510-00/?p=105200
   switch (pe.header().machine()) {
@@ -95,8 +108,9 @@ uint32_t get_pagesize(const PE::Binary& pe) {
   }
   return DEFAULT_PAGESZ;
 }
+#endif
 
-
+#if defined (LIEF_MACHO_SUPPORT)
 uint32_t get_pagesize(const MachO::Binary& macho) {
   switch (macho.header().cpu_type()) {
     case MachO::Header::CPU_TYPE::X86:
@@ -112,20 +126,28 @@ uint32_t get_pagesize(const MachO::Binary& macho) {
   }
   return DEFAULT_PAGESZ;
 }
+#endif
 
 uint32_t get_pagesize(const Binary& bin) {
+
+#if defined(LIEF_ELF_SUPPORT)
   if (ELF::Binary::classof(&bin)) {
     const auto& [common, max] = get_pagesize(*bin.as<ELF::Binary>());
     return common;
   }
+#endif
 
+#if defined(LIEF_PE_SUPPORT)
   if (PE::Binary::classof(&bin)) {
     return get_pagesize(*bin.as<PE::Binary>());
   }
+#endif
 
+#if defined (LIEF_MACHO_SUPPORT)
   if (MachO::Binary::classof(&bin)) {
     return get_pagesize(*bin.as<MachO::Binary>());
   }
+#endif
 
   return DEFAULT_PAGESZ;
 }
