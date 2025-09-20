@@ -12,21 +12,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "binaryninja/analysis/PE/AnalyzerBase.hpp"
-#include "LIEF/PE.hpp"
+#pragma once
+#include <memory>
+#include "binaryninja/analysis/Analyzer.hpp"
 
-namespace analysis_plugin::pe {
-uint64_t AnalyzerBase::get_va(uint64_t rva) const {
-  if (rva > pe_.imagebase()) {
-    return rva;
-  }
-  return pe_.imagebase() + rva;
-}
+#include "LIEF/MachO.hpp"
 
-uint64_t AnalyzerBase::translate_addr(uint64_t addr) const {
-  if (addr >= pe_.imagebase()) {
-    return (addr - pe_.imagebase()) + bv_.GetImageBase();
-  }
-  return addr;
-}
+namespace analysis_plugin::macho {
+class Analyzer : public analysis_plugin::Analyzer {
+  public:
+  Analyzer() = delete;
+  Analyzer(std::unique_ptr<LIEF::MachO::Binary> impl, BinaryNinja::BinaryView& bv);
+
+  void run() override;
+
+  static std::unique_ptr<Analyzer> from_bv(BinaryNinja::BinaryView& bv);
+
+  ~Analyzer() override = default;
+
+  protected:
+  std::unique_ptr<LIEF::MachO::Binary> macho_;
+};
 }

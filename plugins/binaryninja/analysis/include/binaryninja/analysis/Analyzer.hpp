@@ -14,31 +14,36 @@
  */
 #pragma once
 #include <memory>
-#include <vector>
+#include <cassert>
 
-#include "../Analyzer.hpp"
+namespace BinaryNinja {
+class BinaryView;
+}
 
-#include "PE/AnalyzerBase.hpp"
-
-#include "LIEF/PE.hpp"
-
-namespace analysis_plugin::pe {
-
-class Analyzer : public analysis_plugin::Analyzer {
+namespace analysis_plugin {
+class TypeBuilder;
+class Analyzer {
   public:
-  using analyzers_t = std::vector<std::unique_ptr<AnalyzerBase>>;
-
-  Analyzer() = delete;
-  Analyzer(std::unique_ptr<LIEF::PE::Binary> impl, BinaryNinja::BinaryView& bv);
-
-  void run() override;
+  Analyzer(BinaryNinja::BinaryView& bv, std::unique_ptr<TypeBuilder> ty_builder);
 
   static std::unique_ptr<Analyzer> from_bv(BinaryNinja::BinaryView& bv);
 
-  ~Analyzer() override = default;
+  virtual void run() = 0;
+
+  BinaryNinja::BinaryView& bv() {
+    assert(bv_ != nullptr);
+    return *bv_;
+  }
+
+  TypeBuilder& tyb() {
+    assert(type_builder_ != nullptr);
+    return *type_builder_;
+  }
+
+  virtual ~Analyzer();
 
   protected:
-  std::unique_ptr<LIEF::PE::Binary> pe_;
-  analyzers_t analyzers_;
+  BinaryNinja::BinaryView* bv_ = nullptr;
+  std::unique_ptr<TypeBuilder> type_builder_;
 };
 }

@@ -13,26 +13,22 @@
  * limitations under the License.
  */
 #pragma once
-#include <memory>
 
-namespace BinaryNinja {
-class BinaryView;
+#include "binaryninja/analysis/ELF/AnalyzerBase.hpp"
+
+namespace binaryninja {
+class BNStream;
 }
 
-namespace analysis_plugin {
-class TypeBuilder;
-class Analyzer {
+namespace analysis_plugin::elf::analyzers {
+class Relocations : public AnalyzerBase {
   public:
-  Analyzer(BinaryNinja::BinaryView& bv, std::unique_ptr<TypeBuilder> ty_builder);
+  using AnalyzerBase::AnalyzerBase;
+  static bool can_run(BinaryNinja::BinaryView& bv, LIEF::ELF::Binary& elf);
 
-  static std::unique_ptr<Analyzer> from_bv(BinaryNinja::BinaryView& bv);
+  void run() override;
 
-  virtual void run() = 0;
-
-  virtual ~Analyzer();
-
-  protected:
-  BinaryNinja::BinaryView* bv_ = nullptr;
-  std::unique_ptr<TypeBuilder> type_builder_;
+  ~Relocations() override = default;
 };
+
 }

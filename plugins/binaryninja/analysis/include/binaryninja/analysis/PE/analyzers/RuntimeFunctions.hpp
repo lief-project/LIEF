@@ -14,7 +14,7 @@
  */
 #pragma once
 
-#include "PE/AnalyzerBase.hpp"
+#include "binaryninja/analysis/PE/AnalyzerBase.hpp"
 
 #include "LIEF/PE/ExceptionInfo.hpp"
 #include "LIEF/PE/exceptions_info/RuntimeFunctionX64.hpp"

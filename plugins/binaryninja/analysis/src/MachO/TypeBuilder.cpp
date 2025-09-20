@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "TypeBuilder.hpp"
+#include "binaryninja/analysis/MachO/TypeBuilder.hpp"
 namespace analysis_plugin::macho {
 
 }

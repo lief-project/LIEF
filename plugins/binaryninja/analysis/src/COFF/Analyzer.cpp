@@ -12,9 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "Analyzer.hpp"
+#include "binaryninja/analysis/COFF/Analyzer.hpp"
 #include "log.hpp"
-#include "TypeBuilder.hpp"
+#include "binaryninja/analysis/COFF/TypeBuilder.hpp"
 
 #include <binaryninja/binaryninjaapi.h>
 #include <binaryninja/binaryninjacore.h>

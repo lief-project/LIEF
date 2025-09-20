@@ -12,16 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "Analyzer.hpp"
+#include "binaryninja/analysis/ELF/Analyzer.hpp"
 #include "log.hpp"
-#include "TypeBuilder.hpp"
+#include "binaryninja/analysis/ELF/TypeBuilder.hpp"
 
 #include <binaryninja/binaryninjaapi.h>
 #include <binaryninja/binaryninjacore.h>
 
-#include "analyzers/AndroidPackedRelocations.hpp"
-#include "analyzers/Relocations.hpp"
-#include "analyzers/RelativeRelocations.hpp"
+#include "binaryninja/analysis/ELF/analyzers/AndroidPackedRelocations.hpp"
+#include "binaryninja/analysis/ELF/analyzers/Relocations.hpp"
+#include "binaryninja/analysis/ELF/analyzers/RelativeRelocations.hpp"
+#include "binaryninja/analysis/ELF/analyzers/AndroidJNI.hpp"
 
 using namespace LIEF;
 
@@ -33,21 +34,19 @@ Analyzer::Analyzer(std::unique_ptr<LIEF::ELF::Binary> impl, BinaryNinja::BinaryV
   using namespace analyzers;
 
   if (Relocations::can_run(*bv_, *elf_)) {
-    analyzers_.push_back(std::make_unique<Relocations>(
-      *bv_, *elf_, static_cast<elf::TypeBuilder&>(*type_builder_)
-    ));
+    analyzers_.push_back(instantiate<Relocations>());
   }
 
   if (AndroidPackedRelocations::can_run(*bv_, *elf_)) {
-    analyzers_.push_back(std::make_unique<AndroidPackedRelocations>(
-      *bv_, *elf_, static_cast<elf::TypeBuilder&>(*type_builder_)
-    ));
+    analyzers_.push_back(instantiate<AndroidPackedRelocations>());
   }
 
   if (RelativeRelocations::can_run(*bv_, *elf_)) {
-    analyzers_.push_back(std::make_unique<RelativeRelocations>(
-      *bv_, *elf_, static_cast<elf::TypeBuilder&>(*type_builder_)
-    ));
+    analyzers_.push_back(instantiate<RelativeRelocations>());
+  }
+
+  if (AndroidJNI::can_run(*bv_, *elf_)) {
+    analyzers_.push_back(instantiate<AndroidJNI>());
   }
 }
 

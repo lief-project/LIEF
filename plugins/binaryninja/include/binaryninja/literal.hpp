@@ -12,23 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #pragma once
-
-#include "ELF/AnalyzerBase.hpp"
-
+#include <binaryninja/binaryninjaapi.h>
 namespace binaryninja {
-class BNStream;
+
+inline BinaryNinja::QualifiedName operator ""_qn(const char* name, size_t) {
+  return BinaryNinja::QualifiedName(name);
 }
 
-namespace analysis_plugin::elf::analyzers {
-class Relocations : public AnalyzerBase {
-  public:
-  using AnalyzerBase::AnalyzerBase;
-  static bool can_run(BinaryNinja::BinaryView& bv, LIEF::ELF::Binary& elf);
-
-  void run() override;
-
-  ~Relocations() override = default;
-};
 
 }
+

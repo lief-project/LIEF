@@ -13,28 +13,28 @@
  * limitations under the License.
  */
 #pragma once
+#include <memory>
+#include "binaryninja/analysis/Analyzer.hpp"
+#include "binaryninja/analysis/TypeBuilder.hpp"
 
-#include "ELF/AnalyzerBase.hpp"
+#include "LIEF/DyldSharedCache.hpp"
 
-namespace binaryninja {
-class BNStream;
-}
-
-namespace LIEF::ELF {
-class DynamicEntry;
-}
-
-namespace analysis_plugin::elf::analyzers {
-class RelativeRelocations : public AnalyzerBase {
+namespace analysis_plugin::dsc {
+class Analyzer : public analysis_plugin::Analyzer {
   public:
-  using AnalyzerBase::AnalyzerBase;
-  static bool can_run(BinaryNinja::BinaryView& bv, LIEF::ELF::Binary& elf);
+  Analyzer() = delete;
+  Analyzer(std::unique_ptr<LIEF::dsc::DyldSharedCache> impl, BinaryNinja::BinaryView& bv) :
+    analysis_plugin::Analyzer(bv, std::make_unique<TypeBuilder>(bv)),
+    dsc_(std::move(impl))
+  {}
 
   void run() override;
 
-  void process_relative(uint64_t addr, uint64_t size);
+  static std::unique_ptr<Analyzer> from_bv(BinaryNinja::BinaryView& bv);
 
-  ~RelativeRelocations() override = default;
+  ~Analyzer() override = default;
+
+  protected:
+  std::unique_ptr<LIEF::dsc::DyldSharedCache> dsc_;
 };
-
 }

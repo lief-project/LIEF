@@ -5,7 +5,7 @@
 
 #include <filesystem>
 
-#include "Analyzer.hpp"
+#include "binaryninja/analysis/Analyzer.hpp"
 
 namespace bn = BinaryNinja;
 

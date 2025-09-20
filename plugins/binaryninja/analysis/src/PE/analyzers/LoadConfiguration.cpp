@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 #include "log.hpp"
-#include "TypeBuilder.hpp"
+#include "binaryninja/analysis/PE/TypeBuilder.hpp"
 #include "binaryninja/lief_utils.hpp"
 #include "LIEF/PE/Binary.hpp"
-#include "PE/analyzers/LoadConfiguration.hpp"
+#include "binaryninja/analysis/PE/analyzers/LoadConfiguration.hpp"
 
 #include <binaryninja/binaryninjaapi.h>
 #include <binaryninja/binaryninjacore.h>

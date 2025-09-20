@@ -14,19 +14,22 @@
  */
 #pragma once
 #include <memory>
-#include "../Analyzer.hpp"
-#include "TypeBuilder.hpp"
+#include <vector>
 
-#include "LIEF/DyldSharedCache.hpp"
+#include "binaryninja/analysis/Analyzer.hpp"
 
-namespace analysis_plugin::dsc {
+#include "binaryninja/analysis/PE/AnalyzerBase.hpp"
+
+#include "LIEF/PE.hpp"
+
+namespace analysis_plugin::pe {
+
 class Analyzer : public analysis_plugin::Analyzer {
   public:
+  using analyzers_t = std::vector<std::unique_ptr<AnalyzerBase>>;
+
   Analyzer() = delete;
-  Analyzer(std::unique_ptr<LIEF::dsc::DyldSharedCache> impl, BinaryNinja::BinaryView& bv) :
-    analysis_plugin::Analyzer(bv, std::make_unique<TypeBuilder>(bv)),
-    dsc_(std::move(impl))
-  {}
+  Analyzer(std::unique_ptr<LIEF::PE::Binary> impl, BinaryNinja::BinaryView& bv);
 
   void run() override;
 
@@ -35,6 +38,7 @@ class Analyzer : public analysis_plugin::Analyzer {
   ~Analyzer() override = default;
 
   protected:
-  std::unique_ptr<LIEF::dsc::DyldSharedCache> dsc_;
+  std::unique_ptr<LIEF::PE::Binary> pe_;
+  analyzers_t analyzers_;
 };
 }

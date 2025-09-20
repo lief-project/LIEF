@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 #include "log.hpp"
-#include "TypeBuilder.hpp"
+#include "binaryninja/analysis/PE/TypeBuilder.hpp"
 #include "binaryninja/lief_utils.hpp"
 
 #include "LIEF/PE/Binary.hpp"
@@ -21,7 +21,7 @@
 #include "LIEF/PE/exceptions_info/RuntimeFunctionAArch64.hpp"
 #include "LIEF/PE/exceptions_info/AArch64/UnpackedFunction.hpp"
 #include "LIEF/PE/exceptions_info/AArch64/PackedFunction.hpp"
-#include "PE/analyzers/RuntimeFunctions.hpp"
+#include "binaryninja/analysis/PE/analyzers/RuntimeFunctions.hpp"
 
 #include <binaryninja/binaryninjaapi.h>
 #include <binaryninja/binaryninjacore.h>

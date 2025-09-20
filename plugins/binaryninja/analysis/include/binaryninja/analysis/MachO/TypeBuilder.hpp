@@ -14,9 +14,9 @@
  */
 #pragma once
 
-#include "../TypeBuilder.hpp"
+#include "binaryninja/analysis/TypeBuilder.hpp"
 
-namespace analysis_plugin::dsc {
+namespace analysis_plugin::macho {
 
 class TypeBuilder : public analysis_plugin::TypeBuilder {
   public:

@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 #include "log.hpp"
-#include "TypeBuilder.hpp"
+#include "binaryninja/analysis/ELF/TypeBuilder.hpp"
 #include "binaryninja/lief_utils.hpp"
 #include "LIEF/ELF/Binary.hpp"
 #include "LIEF/ELF/Relocation.hpp"
-#include "ELF/analyzers/Relocations.hpp"
+#include "binaryninja/analysis/ELF/analyzers/Relocations.hpp"
 
 #include <binaryninja/binaryninjacore.h>
 #include <binaryninja/binaryninjaapi.h>

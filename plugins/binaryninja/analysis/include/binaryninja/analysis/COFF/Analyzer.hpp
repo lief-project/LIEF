@@ -13,15 +13,24 @@
  * limitations under the License.
  */
 #pragma once
+#include <memory>
+#include "binaryninja/analysis/Analyzer.hpp"
 
-#include "../TypeBuilder.hpp"
+#include "LIEF/COFF.hpp"
 
-namespace analysis_plugin::macho {
-
-class TypeBuilder : public analysis_plugin::TypeBuilder {
+namespace analysis_plugin::coff {
+class Analyzer : public analysis_plugin::Analyzer {
   public:
-  using analysis_plugin::TypeBuilder::TypeBuilder;
+  Analyzer() = delete;
+  Analyzer(std::unique_ptr<LIEF::COFF::Binary> impl, BinaryNinja::BinaryView& bv);
 
-  ~TypeBuilder() override = default;
+  void run() override;
+
+  static std::unique_ptr<Analyzer> from_bv(BinaryNinja::BinaryView& bv);
+
+  ~Analyzer() override = default;
+
+  protected:
+  std::unique_ptr<LIEF::COFF::Binary> coff_;
 };
 }

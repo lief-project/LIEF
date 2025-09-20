@@ -6,6 +6,10 @@
 1.0.0 - Not Released Yet
 ------------------------
 
+:BinaryNinja:
+
+  * Add :ref:`Android JNI Analyzer <plugins-binaryninja-analyzers-android-jni>`
+
 0.17.0 - September 14th, 2025
 -----------------------------
 

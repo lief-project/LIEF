@@ -94,4 +94,6 @@ if(LIEF_BINARYNINJA_STATIC)
 
   write_basic_package_version_file("${version_config_file}" COMPATIBILITY SameMajorVersion)
   install(FILES "${project_config_out}" "${version_config_file}" DESTINATION "${export_dest_dir}")
+else()
+  install(DIRECTORY typelib DESTINATION lief-binaryninja)
 endif()

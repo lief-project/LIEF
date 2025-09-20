@@ -14,29 +14,31 @@
  */
 #pragma once
 
-#include "PE/AnalyzerBase.hpp"
+#include <binaryninja/binaryninjaapi.h>
+#include "binaryninja/analysis/ELF/AnalyzerBase.hpp"
 
-#include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
-#include "LIEF/PE/LoadConfigurations/CHPEMetadata/MetadataARM64.hpp"
+namespace binaryninja {
+class BNStream;
+}
 
-namespace analysis_plugin::pe::analyzers {
-class LoadConfiguration : public AnalyzerBase {
+namespace LIEF::ELF {
+class DynamicEntry;
+}
+
+namespace analysis_plugin::elf::analyzers {
+class AndroidJNI : public AnalyzerBase {
   public:
+  static constexpr auto ANDROID_JNI_FUNC_TAG = "LIEF - Android JNI Function";
   using AnalyzerBase::AnalyzerBase;
-  static bool can_run(BinaryNinja::BinaryView& bv, LIEF::PE::Binary& pe);
+  static bool can_run(BinaryNinja::BinaryView& bv, LIEF::ELF::Binary& elf);
 
+  void init();
   void run() override;
 
-  ~LoadConfiguration() override = default;
+  void process_JNI_OnLoad(BinaryNinja::Function& F);
+  void process_JNI_function(BinaryNinja::Function& F);
 
-  private:
-  void update_loadconfig_ty();
-
-  BinaryNinja::Ref<BinaryNinja::Type>
-    process(const LIEF::PE::CHPEMetadataARM64& arm64);
-
-  LIEF::PE::LoadConfiguration* load_config_ = nullptr;
-  LIEF::PE::CHPEMetadataARM64* arm64_metadata_ = nullptr;
+  ~AndroidJNI() override = default;
 };
 
 }

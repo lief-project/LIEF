@@ -15,7 +15,7 @@
 #include <cctype>
 
 #include "log.hpp"
-#include "ELF/AnalyzerBase.hpp"
+#include "binaryninja/analysis/ELF/AnalyzerBase.hpp"
 #include "LIEF/ELF.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
 

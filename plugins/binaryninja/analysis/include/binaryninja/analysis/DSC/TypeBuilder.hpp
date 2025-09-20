@@ -12,21 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "binaryninja/analysis/PE/AnalyzerBase.hpp"
-#include "LIEF/PE.hpp"
+#pragma once
 
-namespace analysis_plugin::pe {
-uint64_t AnalyzerBase::get_va(uint64_t rva) const {
-  if (rva > pe_.imagebase()) {
-    return rva;
-  }
-  return pe_.imagebase() + rva;
-}
+#include "binaryninja/analysis/TypeBuilder.hpp"
 
-uint64_t AnalyzerBase::translate_addr(uint64_t addr) const {
-  if (addr >= pe_.imagebase()) {
-    return (addr - pe_.imagebase()) + bv_.GetImageBase();
-  }
-  return addr;
-}
+namespace analysis_plugin::dsc {
+
+class TypeBuilder : public analysis_plugin::TypeBuilder {
+  public:
+  using analysis_plugin::TypeBuilder::TypeBuilder;
+
+  ~TypeBuilder() override = default;
+};
 }

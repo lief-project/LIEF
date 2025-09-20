@@ -61,6 +61,29 @@ class AnalyzerBase {
 
   std::optional<BinaryNinja::DataVariable> get_defined_var(uint64_t addr);
 
+  BinaryNinja::Ref<BinaryNinja::TagType> get_or_create_tag(const std::string& name) {
+    using namespace BinaryNinja;
+    if (Ref<TagType> T = bv_.GetTagTypeByName(name)) {
+      return T;
+    }
+
+    Ref<TagType> T = new TagType(&bv_);
+    T->SetName(name);
+    T->SetVisible(true);
+    bv_.AddTagType(T);
+    return T;
+  }
+
+  void tag_once(BinaryNinja::Function& F,
+                BinaryNinja::Ref<BinaryNinja::TagType> type)
+  {
+    if (!F.GetTagReferencesOfType(type).empty()) {
+      return;
+    }
+
+    F.AddUserFunctionTag(new BinaryNinja::Tag(type));
+  }
+
   protected:
   BinaryNinja::BinaryView& bv_;
 };

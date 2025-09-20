@@ -15,7 +15,7 @@
 #include "binaryninja/lief_utils.hpp"
 #include "LIEF/ELF/Binary.hpp"
 #include "LIEF/ELF/Relocation.hpp"
-#include "ELF/analyzers/RelativeRelocations.hpp"
+#include "binaryninja/analysis/ELF/analyzers/RelativeRelocations.hpp"
 
 #include <binaryninja/binaryninjacore.h>
 #include <binaryninja/binaryninjaapi.h>

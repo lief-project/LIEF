@@ -13,24 +13,29 @@
  * limitations under the License.
  */
 #pragma once
-#include <memory>
-#include "../Analyzer.hpp"
 
-#include "LIEF/MachO.hpp"
+#include "binaryninja/analysis/ELF/AnalyzerBase.hpp"
 
-namespace analysis_plugin::macho {
-class Analyzer : public analysis_plugin::Analyzer {
+namespace binaryninja {
+class BNStream;
+}
+
+namespace LIEF::ELF {
+class DynamicEntry;
+}
+
+namespace analysis_plugin::elf::analyzers {
+class AndroidPackedRelocations : public AnalyzerBase {
   public:
-  Analyzer() = delete;
-  Analyzer(std::unique_ptr<LIEF::MachO::Binary> impl, BinaryNinja::BinaryView& bv);
+  using AnalyzerBase::AnalyzerBase;
+  static bool can_run(BinaryNinja::BinaryView& bv, LIEF::ELF::Binary& elf);
 
   void run() override;
 
-  static std::unique_ptr<Analyzer> from_bv(BinaryNinja::BinaryView& bv);
+  void process_packed(binaryninja::BNStream& stream);
+  void process_packed(const LIEF::ELF::DynamicEntry& entry);
 
-  ~Analyzer() override = default;
-
-  protected:
-  std::unique_ptr<LIEF::MachO::Binary> macho_;
+  ~AndroidPackedRelocations() override = default;
 };
+
 }

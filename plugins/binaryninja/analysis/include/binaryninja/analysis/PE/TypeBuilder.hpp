@@ -14,7 +14,7 @@
  */
 #pragma once
 
-#include "../TypeBuilder.hpp"
+#include "binaryninja/analysis/TypeBuilder.hpp"
 
 namespace analysis_plugin::pe {
 

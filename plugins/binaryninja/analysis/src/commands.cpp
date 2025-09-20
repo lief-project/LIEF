@@ -19,7 +19,7 @@
 
 #include "binaryninja/analysis/commands.hpp"
 #include "log.hpp"
-#include "Analyzer.hpp"
+#include "binaryninja/analysis/Analyzer.hpp"
 
 namespace bn = BinaryNinja;
 

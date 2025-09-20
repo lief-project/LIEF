@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "TypeBuilder.hpp"
+#include "binaryninja/analysis/PE/TypeBuilder.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
 
 using namespace BinaryNinja;

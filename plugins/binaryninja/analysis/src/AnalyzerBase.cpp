@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "AnalyzerBase.hpp"
+#include "binaryninja/analysis/AnalyzerBase.hpp"
 #include "log.hpp"
 
 #include "binaryninja/lief_utils.hpp"

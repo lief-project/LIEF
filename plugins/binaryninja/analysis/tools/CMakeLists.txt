@@ -71,3 +71,28 @@ install(TARGETS create-bndb
   LIBRARY DESTINATION lief-binaryninja
   RUNTIME DESTINATION lief-binaryninja)
 
+
+# ------------------------------------------------------------------------------
+# android-jni-typelib
+# ------------------------------------------------------------------------------
+add_executable(android-jni-typelib android-jni-typelib.cpp)
+
+set_target_properties(android-jni-typelib PROPERTIES
+  PREFIX                    ""
+  OUTPUT_NAME               lief-android-jni-typelib-${CMAKE_SYSTEM_NAME_LOWER}-${CMAKE_SYSTEM_PROCESSOR_LOWER}
+  VISIBILITY_INLINES_HIDDEN ON
+  CXX_VISIBILITY_PRESET     hidden
+  C_VISIBILITY_PRESET       hidden
+)
+
+target_link_libraries(android-jni-typelib PUBLIC
+  lief-binaryninja-libraries
+  analysis-core
+  binaryninja-api::binaryninjaapi
+)
+
+install(TARGETS android-jni-typelib
+  ARCHIVE DESTINATION lief-binaryninja
+  LIBRARY DESTINATION lief-binaryninja
+  RUNTIME DESTINATION lief-binaryninja)
+

@@ -14,28 +14,29 @@
  */
 #pragma once
 
-#include "ELF/AnalyzerBase.hpp"
+#include "binaryninja/analysis/PE/AnalyzerBase.hpp"
 
-namespace binaryninja {
-class BNStream;
-}
+#include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
+#include "LIEF/PE/LoadConfigurations/CHPEMetadata/MetadataARM64.hpp"
 
-namespace LIEF::ELF {
-class DynamicEntry;
-}
-
-namespace analysis_plugin::elf::analyzers {
-class AndroidPackedRelocations : public AnalyzerBase {
+namespace analysis_plugin::pe::analyzers {
+class LoadConfiguration : public AnalyzerBase {
   public:
   using AnalyzerBase::AnalyzerBase;
-  static bool can_run(BinaryNinja::BinaryView& bv, LIEF::ELF::Binary& elf);
+  static bool can_run(BinaryNinja::BinaryView& bv, LIEF::PE::Binary& pe);
 
   void run() override;
 
-  void process_packed(binaryninja::BNStream& stream);
-  void process_packed(const LIEF::ELF::DynamicEntry& entry);
+  ~LoadConfiguration() override = default;
 
-  ~AndroidPackedRelocations() override = default;
+  private:
+  void update_loadconfig_ty();
+
+  BinaryNinja::Ref<BinaryNinja::Type>
+    process(const LIEF::PE::CHPEMetadataARM64& arm64);
+
+  LIEF::PE::LoadConfiguration* load_config_ = nullptr;
+  LIEF::PE::CHPEMetadataARM64* arm64_metadata_ = nullptr;
 };
 
 }

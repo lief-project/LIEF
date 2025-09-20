@@ -14,23 +14,35 @@
  */
 #pragma once
 #include <memory>
-#include "../Analyzer.hpp"
+#include <vector>
 
-#include "LIEF/COFF.hpp"
+#include "binaryninja/analysis/Analyzer.hpp"
 
-namespace analysis_plugin::coff {
+#include "binaryninja/analysis/ELF/AnalyzerBase.hpp"
+
+#include "LIEF/ELF.hpp"
+
+namespace analysis_plugin::elf {
 class Analyzer : public analysis_plugin::Analyzer {
   public:
+  using analyzers_t = std::vector<std::unique_ptr<AnalyzerBase>>;
+
   Analyzer() = delete;
-  Analyzer(std::unique_ptr<LIEF::COFF::Binary> impl, BinaryNinja::BinaryView& bv);
+  Analyzer(std::unique_ptr<LIEF::ELF::Binary> impl, BinaryNinja::BinaryView& bv);
 
   void run() override;
 
   static std::unique_ptr<Analyzer> from_bv(BinaryNinja::BinaryView& bv);
 
+  template<class T>
+  std::unique_ptr<T> instantiate() {
+    return std::make_unique<T>(*bv_, *elf_, static_cast<elf::TypeBuilder&>(*type_builder_));
+  }
+
   ~Analyzer() override = default;
 
   protected:
-  std::unique_ptr<LIEF::COFF::Binary> coff_;
+  std::unique_ptr<LIEF::ELF::Binary> elf_;
+  analyzers_t analyzers_;
 };
 }

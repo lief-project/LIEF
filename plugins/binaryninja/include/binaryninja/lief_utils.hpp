@@ -14,6 +14,7 @@
  */
 #pragma once
 #include <memory>
+#include <optional>
 
 #include <LIEF/PE/ParserConfig.hpp>
 #include <LIEF/ELF/ParserConfig.hpp>
@@ -45,4 +46,6 @@ std::string to_string(BinaryNinja::BinaryView& bv);
 std::string to_string(const BinaryNinja::LinearDisassemblyLine& line);
 
 void linear_export(BinaryNinja::BinaryView& bv, const std::string& file);
+
+std::optional<std::string> find_typelib(const std::string& name);
 }

@@ -14,34 +14,37 @@
  */
 #pragma once
 
-#include "../AnalyzerBase.hpp"
-#include "TypeBuilder.hpp"
+#include "binaryninja/analysis/AnalyzerBase.hpp"
+#include "binaryninja/analysis/ELF/TypeBuilder.hpp"
 
-namespace LIEF::PE {
+namespace LIEF::ELF {
 class Binary;
+class Relocation;
 }
 namespace BinaryNinja {
 class BinaryView;
 class Structure;
 }
 
-namespace analysis_plugin::pe {
+namespace analysis_plugin::elf {
 class AnalyzerBase : public analysis_plugin::AnalyzerBase {
   public:
-  static constexpr auto DEFAULT_TYPE_SRC = "lief-pe";
+  static constexpr auto DEFAULT_TYPE_SRC = "lief-elf";
+  AnalyzerBase(BinaryNinja::BinaryView& bv, LIEF::ELF::Binary& elf,
+               TypeBuilder& type_builder);
   AnalyzerBase() = delete;
-  AnalyzerBase(BinaryNinja::BinaryView& bv, LIEF::PE::Binary& pe,
-               TypeBuilder& type_builder) :
-    analysis_plugin::AnalyzerBase(bv), pe_(pe), type_builder_(type_builder)
-  {}
+
 
   ~AnalyzerBase() override = default;
 
-  uint64_t get_va(uint64_t rva) const;
-  uint64_t translate_addr(uint64_t addr) const;
+  uint64_t translate_addr(uint64_t addr, bool revert = false) const;
+  bool apply_relocation(const LIEF::ELF::Relocation& R);
+  virtual void define_relocated_type(const LIEF::ELF::Relocation& R, uint64_t target);
 
   protected:
-  LIEF::PE::Binary& pe_;
+  LIEF::ELF::Binary& elf_;
   TypeBuilder& type_builder_;
+  uint64_t default_image_base_ = 0;
+  uint64_t default_virtual_size = 0;
 };
 }

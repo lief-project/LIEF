@@ -4,7 +4,7 @@
 #include <binaryninja/binaryninjacore.h>
 #include "binaryninja/lief_utils.hpp"
 
-#include "Analyzer.hpp"
+#include "binaryninja/analysis/Analyzer.hpp"
 
 namespace bn = BinaryNinja;
 

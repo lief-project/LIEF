@@ -141,6 +141,31 @@ class TypeBuilder {
     return Type::PointerType(target_arch, Type::FunctionType(ret_type, CC, {}));
   }
 
+  BinaryNinja::Ref<BinaryNinja::Type>
+    make_function(BinaryNinja::Ref<BinaryNinja::Type> ret,
+        std::vector<BinaryNinja::Ref<BinaryNinja::Type>> args,
+        BinaryNinja::Architecture* arch = nullptr)
+  {
+    using namespace BinaryNinja;
+
+    Architecture* target_arch = arch;
+    if (target_arch == nullptr) {
+      target_arch = bv_.GetDefaultArchitecture();
+    }
+
+    assert(target_arch != nullptr);
+    std::vector<FunctionParameter> params;
+    std::transform(args.begin(), args.end(), std::back_inserter(params),
+      [] (Ref<Type> type) {
+        return FunctionParameter(/*name=*/"", type);
+      }
+    );
+
+    Confidence<Ref<CallingConvention>> CC = bv_.GetDefaultPlatform()->GetDefaultCallingConvention();
+
+    return Type::PointerType(target_arch, Type::FunctionType(ret, CC, std::move(params)));
+  }
+
   virtual std::string default_type_src() const {
     return "lief";
   }
@@ -165,6 +190,9 @@ class TypeBuilder {
   BinaryNinja::Ref<BinaryNinja::Type>
     create_struct(BinaryNinja::Structure& S, const std::string& name,
                   std::optional<std::string> typedef_ = std::nullopt);
+
+  BinaryNinja::Ref<BinaryNinja::Type> create_typedef(
+      const std::string& name, const std::string& target);
 
   virtual ~TypeBuilder() = default;
 
