@@ -25,14 +25,25 @@
 namespace bn = BinaryNinja;
 namespace dw = LIEF::dwarf::editor;
 
+template <> class fmt::formatter<bn::InstructionTextToken> {
+public:
+  constexpr auto parse (format_parse_context& ctx) { return ctx.begin(); }
+  template <typename Context>
+  constexpr auto format (const bn::InstructionTextToken& T, Context& ctx) const {
+    // or: format_to(ctx.out(), "{}", T.text);
+    return detail::write(ctx.out(), T.text.c_str());
+  }
+};
+
 namespace dwarf_plugin {
 
 using namespace binaryninja;
 
 dw::Function* FunctionEngine::add_function(bn::Function& func) {
   bn::Ref<bn::Symbol> sym = func.GetSymbol();
-  std::unique_ptr<dw::Function> dw_func = unit_.create_function(sym->GetShortName());
-  BN_DEBUG("Adding function: {}", sym->GetShortName());
+  const std::string& func_name = sym->GetShortName();
+  std::unique_ptr<dw::Function> dw_func = unit_.create_function(func_name);
+  BN_DEBUG("Adding function: {}", func_name);
   std::vector<BNAddressRange> ranges = func.GetAddressRanges();
   if (ranges.size() == 1) {
     dw_func->set_low_high(ranges[0].start, ranges[0].end);
@@ -51,9 +62,7 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
   }
 
   auto ret_type = func.GetReturnType();
-  if (!ret_type->IsVoid()) {
-    dw_func->set_return_type(types_.add_type(api_compat::get_type(ret_type)));
-  }
+  dw_func->set_return_type(types_.add_type(api_compat::get_type(ret_type)));
 
   std::vector<bn::FunctionParameter> parameters = func.GetType()->GetParameters();
   for (size_t i = 0; i < parameters.size(); ++i) {
@@ -88,10 +97,82 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
       }
     }
   }
+  std::vector<uint64_t> commented_addresses = func.GetCommentedAddresses();
+  std::stable_sort(commented_addresses.begin(), commented_addresses.end());
+
   std::vector<bn::Ref<bn::BasicBlock>> blocks = func.GetBasicBlocks();
+
   if (blocks.size() > 1) {
     for (bn::Ref<bn::BasicBlock> BB : blocks) {
-      dw_func->add_lexical_block(BB->GetStart(), BB->GetEnd());
+      std::unique_ptr<dw::Function::LexicalBlock> LB =
+        dw_func->add_lexical_block(BB->GetStart(), BB->GetEnd());
+      if (LB == nullptr) {
+        BN_WARN("Failed to add lexical block {}:[0x{:010x}, 0x{:010x}]", func_name,
+                BB->GetStart(), BB->GetEnd());
+        continue;
+      }
+      std::string comment = func.GetCommentForAddress(BB->GetStart());
+      if (!comment.empty()) {
+        LB->add_description(comment);
+      }
+
+      auto it = std::lower_bound(commented_addresses.begin(), commented_addresses.end(),
+        BB->GetStart() + 1
+      );
+
+      if (it != commented_addresses.end()) {
+        for (; it != commented_addresses.end() && *it < BB->GetEnd(); ++it) {
+          const uint64_t addr = *it;
+          size_t inst_size = bv_.GetInstructionLength(func.GetArchitecture(), addr);
+          const std::string& comment = func.GetCommentForAddress(addr);
+          assert(inst_size > 0);
+          assert(!comment.empty());
+          BN_DEBUG("Adding comment for: {:#x}: {}", addr, comment);
+
+          std::unique_ptr<dw::Function::LexicalBlock> inst_block =
+            LB->add_block(addr, addr + inst_size);
+          if (inst_block == nullptr) {
+            BN_WARN("Failed to create inst block for addr: {}:{:#x}", func_name,
+                    addr);
+            continue;
+          }
+
+          inst_block->add_description(comment);
+        }
+      }
+    }
+  } else if (blocks.size() == 1) {
+    bn::Ref<bn::BasicBlock> main_block = blocks[0];
+    std::string comment = func.GetCommentForAddress(main_block->GetStart());
+    if (!comment.empty()) {
+      dw_func->add_description(comment);
+    }
+
+    auto it = std::lower_bound(commented_addresses.begin(), commented_addresses.end(),
+      main_block->GetStart() + 1
+    );
+
+    if (it != commented_addresses.end()) {
+      for (; it != commented_addresses.end() && *it < main_block->GetEnd(); ++it) {
+        const uint64_t addr = *it;
+        const std::string& comment = func.GetCommentForAddress(addr);
+        size_t inst_size = bv_.GetInstructionLength(func.GetArchitecture(), addr);
+
+        assert(inst_size > 0);
+        assert(!comment.empty());
+
+        BN_DEBUG("Adding comment for: {:#x}: {}", addr, comment);
+
+        std::unique_ptr<dw::Function::LexicalBlock> inst_block =
+          dw_func->add_lexical_block(addr, addr + inst_size);
+        if (inst_block == nullptr) {
+          BN_WARN("Failed to create inst block for addr: {}:{:#x}", func_name,
+                  addr);
+          continue;
+        }
+
+        inst_block->add_description(comment);
+      }
     }
   }
 
@@ -105,4 +186,26 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
     {func.GetStart(), std::move(dw_func)}
   ).first->second.get();
 }
+
+std::string FunctionEngine::get_hlil_for_addr(BinaryNinja::Function& F, uint64_t addr) {
+  std::string out;
+  bn::Ref<bn::HighLevelILFunction> HLIL = F.GetHighLevelIL();
+  if (HLIL == nullptr) {
+    return out;
+  }
+  HLIL->VisitAllExprs([&] (const bn::HighLevelILInstruction& I) {
+      for (const bn::DisassemblyTextLine& T : HLIL->GetExprText(I)) {
+        if (T.addr != addr) {
+          continue;
+        }
+        out = fmt::format("{:#x} {}", T.addr, fmt::join(T.tokens, ""));
+        return true;
+      }
+
+      return false;
+    }
+  );
+  return out;
+}
+
 }

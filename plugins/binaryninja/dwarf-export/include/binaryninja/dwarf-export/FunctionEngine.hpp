@@ -39,6 +39,8 @@ class FunctionEngine {
 
   LIEF::dwarf::editor::Function* add_function(BinaryNinja::Function& func);
 
+  std::string get_hlil_for_addr(BinaryNinja::Function& F, uint64_t addr);
+
   ~FunctionEngine() = default;
 
   private:
