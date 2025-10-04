@@ -921,6 +921,10 @@ include_cpp! {
     block_constructors!("DWARF_types_Volatile")
     generate!("DWARF_types_Enum")
     block_constructors!("DWARF_types_Enum")
+    generate!("DWARF_types_Enum_it_entries")
+    block_constructors!("DWARF_types_Enum_it_entries")
+    generate!("DWARF_types_Enum_Entry")
+    block_constructors!("DWARF_types_Enum_Entry")
     generate!("DWARF_Scope")
     block_constructors!("DWARF_Scope")
 

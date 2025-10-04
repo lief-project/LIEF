@@ -105,7 +105,15 @@ class Dynamic(lief.dwarf.Type):
     pass
 
 class Enum(lief.dwarf.Type):
-    pass
+    class Entry:
+        @property
+        def name(self) -> str: ...
+
+        @property
+        def value(self) -> int | None: ...
+
+    @property
+    def entries(self) -> list[Enum.Entry]: ...
 
 class File(lief.dwarf.Type):
     pass

@@ -91,6 +91,7 @@ class LexicalBlockIt {};
 
 namespace types::details {
 class Member {};
+class EnumEntry {};
 }
 
 namespace editor::details {
@@ -760,6 +761,27 @@ Dynamic::~Dynamic()= default;
 // ----------------------------------------------------------------------------
 // DWARF/types/Enum.hpp
 // ----------------------------------------------------------------------------
+Enum::Entry::Entry(Entry&& other) noexcept = default;
+Enum::Entry& Enum::Entry::operator=(Entry&& other) noexcept = default;
+
+Enum::Entry::~Entry() = default;
+
+Enum::Entry::Entry(std::unique_ptr<details::EnumEntry> impl) :
+  impl_(std::move(impl))
+{}
+
+std::string Enum::Entry::name() const {
+  return "";
+}
+
+optional<int64_t> Enum::Entry::value() const {
+  return nullopt();
+}
+
+std::vector<Enum::Entry> Enum::entries() const {
+  return {};
+}
+
 Enum::~Enum()= default;
 
 // ----------------------------------------------------------------------------

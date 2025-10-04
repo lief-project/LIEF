@@ -16,16 +16,44 @@
 #define LIEF_DWARF_TYPE_ENUM_H
 
 #include "LIEF/visibility.h"
+#include "LIEF/optional.hpp"
 #include "LIEF/DWARF/Type.hpp"
 
 namespace LIEF {
 namespace dwarf {
 namespace types {
 
+namespace details {
+class EnumEntry;
+}
+
 /// This class represents a `DW_TAG_enumeration_type`
 class LIEF_API Enum : public Type {
   public:
   using Type::Type;
+
+  /// This class represents an enum entry which is essentially
+  /// composed of a name and its value (integer).
+  class LIEF_API Entry {
+    public:
+    Entry(std::unique_ptr<details::EnumEntry> impl);
+    Entry(Entry&& other) noexcept;
+    Entry& operator=(Entry&& other) noexcept;
+
+    /// Enum entry's name
+    std::string name() const;
+
+    /// Enum entry's value (if any)
+    optional<int64_t> value() const;
+
+    ~Entry();
+
+    private:
+    std::unique_ptr<details::EnumEntry> impl_;
+  };
+
+  /// Return the different entries associated with this enum
+  std::vector<Entry> entries() const;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::ENUM;
