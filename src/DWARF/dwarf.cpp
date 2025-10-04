@@ -849,6 +849,10 @@ StringTy::~StringTy()= default;
 // ----------------------------------------------------------------------------
 Subroutine::~Subroutine()= default;
 
+std::unique_ptr<Type> Subroutine::return_type() const {
+  return {};
+}
+
 Subroutine::parameters_t Subroutine::parameters() const {
   return {};
 }

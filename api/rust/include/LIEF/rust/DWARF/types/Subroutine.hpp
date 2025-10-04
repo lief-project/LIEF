@@ -38,6 +38,10 @@ class DWARF_types_Subroutine : public DWARF_Type {
     return lief_t::classof(&type.get());
   }
 
+  auto return_type() const {
+    return details::try_unique<DWARF_Type>(impl().return_type()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+
   auto parameters() const {
     return std::make_unique<it_parameters>(impl().parameters());
   }

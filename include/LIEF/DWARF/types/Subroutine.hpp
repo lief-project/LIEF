@@ -31,6 +31,10 @@ class LIEF_API Subroutine : public Type {
 
   using parameters_t = std::vector<std::unique_ptr<Parameter>>;
 
+  /// Return the dwarf::Type associated with the **return type** of this
+  /// function
+  std::unique_ptr<Type> return_type() const;
+
   /// Parameters of this subroutine
   parameters_t parameters() const;
 

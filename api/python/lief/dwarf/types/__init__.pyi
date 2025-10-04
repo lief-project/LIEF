@@ -149,6 +149,9 @@ class StringTy(lief.dwarf.Type):
 
 class Subroutine(lief.dwarf.Type):
     @property
+    def return_type(self) -> Optional[lief.dwarf.Type]: ...
+
+    @property
     def parameters(self) -> list[Optional[lief.dwarf.Parameter]]: ...
 
 class TemplateAlias(lief.dwarf.Type):

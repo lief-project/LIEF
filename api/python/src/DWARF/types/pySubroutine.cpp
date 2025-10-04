@@ -16,6 +16,12 @@ void create<dw::types::Subroutine>(nb::module_& m) {
   );
 
   type
+    .def_prop_ro("return_type", &dw::types::Subroutine::return_type,
+      R"doc(
+      Return the :class:`~.dwarf.Type` associated with the **return type** of this
+      function
+      )doc"_doc
+    )
     .def_prop_ro("parameters", &dw::types::Subroutine::parameters,
       R"doc(
       Parameters of this subroutine
