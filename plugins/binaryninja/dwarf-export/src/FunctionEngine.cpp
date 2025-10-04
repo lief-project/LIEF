@@ -52,14 +52,14 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
 
   auto ret_type = func.GetReturnType();
   if (!ret_type->IsVoid()) {
-    dw_func->set_return_type(types_.add_type(ret_type->GetTypeName(), api_compat::get_type(ret_type)));
+    dw_func->set_return_type(types_.add_type(api_compat::get_type(ret_type)));
   }
 
   std::vector<bn::FunctionParameter> parameters = func.GetType()->GetParameters();
   for (size_t i = 0; i < parameters.size(); ++i) {
     const bn::FunctionParameter& p = parameters[i];
     std::string name = p.name.empty() ? fmt::format("arg_{}", i) : p.name;
-    dw::Type& type = types_.add_type(p.type->GetTypeName(), api_compat::get_type(p.type));
+    dw::Type& type = types_.add_type(api_compat::get_type(p.type));
     std::unique_ptr<dw::Function::Parameter> P = dw_func->add_parameter(name, type);
     if (!p.defaultLocation) {
       if (p.location.type == BNVariableSourceType::RegisterVariableSourceType) {
@@ -76,27 +76,24 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
 
   for (const auto& [addr, stack_var] : func.GetStackLayout()) {
     for (const bn::VariableNameAndType& info : stack_var) {
-      if (!info.autoDefined) {
-        std::unique_ptr<dw::Variable> dw_var = dw_func->create_stack_variable(info.name);
-        dw_var->set_stack_offset(std::abs(addr));
-        if (auto var_type = info.type; api_compat::as_bool(var_type)) {
-          dw::Type& dw_type = types_.add_type(var_type->GetTypeName(), api_compat::get_type(var_type));
-          dw_var->set_type(dw_type);
-        }
+      if (info.autoDefined) {
+        continue;
+      }
+
+      std::unique_ptr<dw::Variable> dw_var = dw_func->create_stack_variable(info.name);
+      dw_var->set_stack_offset(std::abs(addr));
+      if (auto var_type = info.type; api_compat::as_bool(var_type)) {
+        dw::Type& dw_type = types_.add_type(api_compat::get_type(var_type));
+        dw_var->set_type(dw_type);
       }
     }
   }
-
-  for (const bn::Ref<bn::BasicBlock>& BB : func.GetBasicBlocks()) {
-    dw_func->add_lexical_block(BB->GetStart(), BB->GetEnd());
+  std::vector<bn::Ref<bn::BasicBlock>> blocks = func.GetBasicBlocks();
+  if (blocks.size() > 1) {
+    for (bn::Ref<bn::BasicBlock> BB : blocks) {
+      dw_func->add_lexical_block(BB->GetStart(), BB->GetEnd());
+    }
   }
-
-  //for (uint64_t addr : func.GetCommentedAddresses()) {
-  //  const std::string& comment = func.GetCommentForAddress(addr);
-  //  if (!comment.empty()) {
-  //    dw_func->add_label(addr, comment);
-  //  }
-  //}
 
   BNSymbolBinding binding = sym->GetBinding();
   const bool is_external = binding == GlobalBinding || binding == WeakBinding;

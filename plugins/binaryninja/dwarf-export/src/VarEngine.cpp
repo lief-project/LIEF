@@ -54,7 +54,7 @@ dw::Variable* VarEngine::add_variable(const bn::DataVariable& var) {
   std::unique_ptr<dw::Variable> dw_var = unit_.create_variable(name);
 
   dw_var->set_addr(var.address);
-  dw_var->set_type(types_.add_type(var.type->GetTypeName(), api_compat::get_type(var.type)));
+  dw_var->set_type(types_.add_type(api_compat::get_type(var.type)));
 
   if (is_external) {
     dw_var->set_external();
