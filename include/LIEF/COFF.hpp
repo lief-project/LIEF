@@ -18,12 +18,12 @@
 #include "LIEF/config.h"
 
 #if defined(LIEF_COFF_SUPPORT)
+#include "LIEF/COFF/Binary.hpp"
 #include "LIEF/COFF/utils.hpp"
 #include "LIEF/COFF/Parser.hpp"
 #include "LIEF/COFF/Header.hpp"
 #include "LIEF/COFF/BigObjHeader.hpp"
 #include "LIEF/COFF/RegularHeader.hpp"
-#include "LIEF/COFF/Binary.hpp"
 #include "LIEF/COFF/ParserConfig.hpp"
 #include "LIEF/COFF/Section.hpp"
 #include "LIEF/COFF/Relocation.hpp"
