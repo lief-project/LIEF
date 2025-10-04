@@ -2556,12 +2556,13 @@ uint64_t Binary::relocate_phdr_table_auto() {
 
   const bool has_phdr_s = has(Segment::TYPE::PHDR);
   const bool has_interp_s = has(Segment::TYPE::INTERP);
+  const bool has_soname = has(DynamicEntry::TAG::SONAME);
   const bool is_dyn = header_.file_type() == Header::FILE_TYPE::DYN;
   const bool is_exec = header_.file_type() == Header::FILE_TYPE::EXEC;
   const bool has_ep = entrypoint() > 0;
 
   uint64_t offset = 0;
-  if (is_dyn && (has_phdr_s || has_interp_s)) {
+  if (is_dyn && (has_phdr_s || has_interp_s || has_soname)) {
     if (offset = relocate_phdr_table_pie(); offset > 0) {
       return offset;
     }
