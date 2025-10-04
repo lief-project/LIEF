@@ -16,6 +16,7 @@
 #include <sstream>
 #include <spdlog/fmt/fmt.h>
 #include "LIEF/COFF/Section.hpp"
+#include "LIEF/COFF/String.hpp"
 #include "LIEF/COFF/Symbol.hpp"
 #include "LIEF/COFF/AuxiliarySymbol.hpp"
 #include "LIEF/COFF/AuxiliarySymbols/AuxiliarySectionDefinition.hpp"
@@ -121,8 +122,13 @@ std::string Section::to_string() const {
                  std::back_inserter(fullname_hex),
                  [] (const char c) { return format("{:02x}", c); });
 
-  os << format("{:{}} {} ({})\n", "Name:", WIDTH, name(),
-               join(fullname_hex, " "));
+  if (const String* coff_str = coff_string()) {
+    os << format("{:{}} {} ({}, {})\n", "Name:", WIDTH, name(),
+                 join(fullname_hex, " "), coff_str->str());
+  } else {
+    os << format("{:{}} {} ({})\n", "Name:", WIDTH, name(),
+                 join(fullname_hex, " "));
+  }
 
   os << format("{:{}} 0x{:x}\n", "Virtual Size", WIDTH, virtual_size())
      << format("{:{}} 0x{:x}\n", "Virtual Address", WIDTH, virtual_address())

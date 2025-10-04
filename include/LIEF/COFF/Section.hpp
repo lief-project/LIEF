@@ -217,6 +217,18 @@ class LIEF_API Section : public LIEF::Section {
     characteristics_ = characteristics;
   }
 
+  /// Return the COFF string associated with the section's name (or a nullptr)
+  ///
+  /// This coff string is usually present for long section names whose length
+  /// does not fit in the 8 bytes allocated by the COFF format.
+  String* coff_string() {
+    return coff_string_;
+  }
+
+  const String* coff_string() const {
+    return coff_string_;
+  }
+
   std::string to_string() const;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Section& sec) {
@@ -239,6 +251,8 @@ class LIEF_API Section : public LIEF::Section {
 
   relocations_t relocations_;
   symbols_t symbols_;
+
+  String* coff_string_ = nullptr;
 };
 
 inline const char* to_string(Section::CHARACTERISTICS e) {

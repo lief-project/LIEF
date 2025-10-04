@@ -14,6 +14,12 @@
 
   * Add support to read or assign a register to a function's parameter
 
+
+:COFF:
+
+  * Add |lief-coff-section-coff_string| for accessing the full section name when
+    this name does not fit in 8 bytes.
+
 0.17.0 - September 14th, 2025
 -----------------------------
 

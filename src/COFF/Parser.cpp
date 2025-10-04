@@ -136,6 +136,16 @@ ok_error_t Parser::parse_sections() {
       sec->symbols_.push_back(it->symbol);
     }
 
+    if (const std::string& name = sec->name();
+        name.size() > 1 && name[0] == '/')
+    {
+      char* endptr = nullptr;
+      uint32_t offset = std::strtol(name.c_str() + 1, &endptr, /*base=*/10);
+      if (String* coff_str = bin_->find_string(offset)) {
+        sec->coff_string_ = coff_str;
+      }
+    }
+
     bin_->sections_.push_back(std::move(sec));
   }
   return ok();

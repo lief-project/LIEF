@@ -18,6 +18,7 @@
 #include "LIEF/COFF/Section.hpp"
 #include "LIEF/COFF/Relocation.hpp"
 #include "LIEF/COFF/Symbol.hpp"
+#include "LIEF/COFF/String.hpp"
 
 #include <string>
 #include <sstream>
@@ -152,6 +153,15 @@ void create<Section>(nb::module_& m) {
       R"doc(
       Return comdat infomration (only if the section has the
       :attr:`lief.PE.Section.CHARACTERISTICS.LNK_COMDAT` characteristic)
+      )doc"_doc
+    )
+
+    .def_prop_ro("coff_string", nb::overload_cast<>(&Section::coff_string),
+      R"doc(
+      Return the COFF string associated with the section's name (or None)
+
+      This coff string is usually present for long section names whose length
+      does not fit in the 8 bytes allocated by the COFF format.
       )doc"_doc
     )
 

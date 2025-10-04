@@ -101,10 +101,18 @@ impl Section<'_> {
         Symbols::new(self.ptr.symbols())
     }
 
-    /// Return comdat infomration (only if the section has the
+    /// Return comdat information (only if the section has the
     /// [`crate::pe::section::Characteristics::LNK_COMDAT`] characteristic)
     pub fn comdat_info(&self) -> Option<ComdatInfo> {
         into_optional(self.ptr.comdat_info())
+    }
+
+    /// Return the COFF string associated with the section's name (or a None)
+    ///
+    /// This coff string is usually present for long section names whose length
+    /// does not fit in the 8 bytes allocated by the COFF format.
+    pub fn coff_string(&self) -> Option<coff::String> {
+        into_optional(self.ptr.coff_string())
     }
 }
 

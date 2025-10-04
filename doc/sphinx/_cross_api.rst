@@ -1046,6 +1046,11 @@
     :py:func:`lief.COFF.parse`
     :cpp:func:`LIEF::COFF::Parser::parse`
 
+.. |lief-coff-section-coff_string| lief-api:: lief.COFF.Section.coff_string
+
+    :rust:method:`lief::coff::Section::coff_string [struct]`
+    :py:attr:`lief.COFF.Section.coff_string`
+    :cpp:func:`LIEF::COFF::Section::coff_string`
 
 .. |lief-coff-Binary| lief-api:: lief.COFF.Binary
 

@@ -392,6 +392,9 @@ class Section(lief.Section):
     @property
     def comdat_info(self) -> Section.ComdatInfo | None: ...
 
+    @property
+    def coff_string(self) -> String: ...
+
     def __str__(self) -> str: ...
 
 class Relocation(lief.Relocation):
