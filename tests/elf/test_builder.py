@@ -405,7 +405,7 @@ def test_ld_relocations(tmp_path: Path):
     output.chmod(0o755)
 
     new = lief.ELF.parse(output)
-    assert new.header.program_header_offset == 0x36000
+    assert new.header.program_header_offset == 52
 
     if is_linux() and is_x86_64():
         with Popen([output.as_posix(), "--version"], universal_newlines=True,
@@ -482,3 +482,7 @@ def test_remove_segment(tmp_path: Path):
             stdout = proc.stdout.read()
             proc.poll()
             assert "0.17.0.0" in stdout
+
+def test_issue_1251():
+    elf = lief.ELF.parse(get_sample("ELF/libmmkv.so"))
+    assert elf.relocate_phdr_table() == 64
