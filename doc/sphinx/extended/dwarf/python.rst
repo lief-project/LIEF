@@ -79,6 +79,12 @@ Variable
 
 ----------
 
+LexicalBlock
+************
+
+.. autoclass:: lief.dwarf.LexicalBlock
+
+----------
 
 Type
 ****

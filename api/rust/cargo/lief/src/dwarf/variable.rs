@@ -8,9 +8,8 @@ use crate::{declare_fwd_iterator, to_result, Error};
 use std::marker::PhantomData;
 use crate::dwarf::Scope;
 
-/// Return an iterator of the variable `DW_TAG_variable` defined within the
-/// scope of this function. This includes regular stack-based variables as
-/// well as static ones.
+/// This class represents a DWARF variable which can be owned by a
+/// [`crate::dwarf::Function`] or a [`crate::dwarf::CompilationUnit`]
 pub struct Variable<'a> {
     ptr: cxx::UniquePtr<ffi::DWARF_Variable>,
     _owner: PhantomData<&'a ()>,
@@ -80,6 +79,11 @@ impl Variable<'_> {
     /// The scope in which this variable is defined
     pub fn scope(&self) -> Option<Scope> {
         into_optional(self.ptr.scope())
+    }
+
+    /// Description (`DW_AT_description`) of the variable or an empty string
+    pub fn description(&self) -> String {
+        self.ptr.description().to_string()
     }
 }
 

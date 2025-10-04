@@ -32,6 +32,14 @@ public class Function extends lief.Base {
         @Override
         protected native void destroy();
 
+        public native LexicalBlock addBlock(long start, long end);
+
+        public native LexicalBlock addBlock(List<Range> ranges);
+
+        public native LexicalBlock addDescription(String desc);
+
+        public native LexicalBlock addName(String name);
+
         private LexicalBlock(long impl) {
             super(impl);
         }
@@ -70,4 +78,6 @@ public class Function extends lief.Base {
     public native LexicalBlock addLexicalBlock(long start, long end);
 
     public native Label addLabel(long addr, String label);
+
+    public native Function addDescription(String desc);
 };

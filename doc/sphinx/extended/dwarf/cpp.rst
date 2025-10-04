@@ -75,6 +75,13 @@ Variable
 
 ----------
 
+LexicalBlock
+************
+
+.. doxygenclass:: LIEF::dwarf::LexicalBlock
+
+----------
+
 
 Type
 ****

@@ -42,6 +42,11 @@ int Variable::register_natives(JNIEnv* env) {
       "(Llief/dwarf/editor/Type;)Llief/dwarf/editor/Variable;",
       &jni_set_type
     ),
+    make(
+      "addDescription",
+      "(Ljava/lang/String;)Llief/dwarf/editor/Variable;",
+      &jni_add_description
+    ),
     make_destroy(
       (void*)&jni_destroy
     ),

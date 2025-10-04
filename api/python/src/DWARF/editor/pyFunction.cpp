@@ -17,11 +17,12 @@ void create<dw::editor::Function>(nb::module_& m) {
     )doc"_doc
   );
 
-  nb::class_<dw::editor::Function::range_t>(F, "range_t")
+  using range_t = dw::editor::Function::range_t;
+  nb::class_<range_t>(F, "range_t")
     .def(nb::init<>())
     .def(nb::init<uint64_t, uint64_t>(), "start"_a, "end"_a)
-    .def_rw("start", &dw::editor::Function::range_t::start)
-    .def_rw("end", &dw::editor::Function::range_t::end);
+    .def_rw("start", &range_t::start)
+    .def_rw("end", &range_t::end);
 
   using Parameter = dw::editor::Function::Parameter;
   nb::class_<Parameter> FP(F, "Parameter",
@@ -40,9 +41,43 @@ void create<dw::editor::Function>(nb::module_& m) {
       nb::rv_policy::reference_internal
     );
 
-  nb::class_<dw::editor::Function::LexicalBlock> FLB(F, "LexicalBlock",
-    "This class mirrors the `DW_TAG_lexical_block` DWARF tag"_doc
+  using LexicalBlock = dw::editor::Function::LexicalBlock;
+  nb::class_<LexicalBlock> FLB(F, "LexicalBlock",
+    "This class mirrors the ``DW_TAG_lexical_block`` DWARF tag"_doc
   );
+
+  FLB
+    .def("add_block", nb::overload_cast<uint64_t, uint64_t>(&LexicalBlock::add_block),
+      R"doc(
+      Create a sub-block with the given low/high addresses.
+
+      If the function managed to create the new block, it returns
+      the newly created block, otherwise it returns the current block
+      )doc"_doc, "start"_a, "end"_a, nb::rv_policy::reference_internal
+    )
+
+    .def("add_block", nb::overload_cast<const std::vector<range_t>&>(&LexicalBlock::add_block),
+      R"doc(
+      Create a sub-block with the given range of addresses.
+
+      If the function managed to create the new block, it returns
+      the newly created block, otherwise it returns the current block
+      )doc"_doc, "range"_a, nb::rv_policy::reference_internal
+    )
+
+    .def("add_description", &LexicalBlock::add_description,
+      R"doc(
+      Create a ``DW_AT_description`` entry with the description
+      provided in parameter.
+      )doc"_doc, "description"_a, nb::rv_policy::reference_internal
+    )
+
+    .def("add_name", &LexicalBlock::add_name,
+      R"doc(
+      Create a ``DW_AT_name`` entry to associate a name to this entry
+      )doc"_doc, "name"_a, nb::rv_policy::reference_internal
+    )
+  ;
 
   nb::class_<dw::editor::Function::Label> FL(F, "Label",
     "This class mirrors the ``DW_TAG_label`` DWARF tag"_doc
@@ -94,6 +129,12 @@ void create<dw::editor::Function>(nb::module_& m) {
     .def("add_label", &dw::editor::Function::add_label,
          "Add a label at the given address"_doc,
          "addr"_a, "label"_a)
+
+    .def("add_description", &dw::editor::Function::add_description,
+      R"doc(
+      Create a `DW_AT_description` entry with the description
+      provided in parameter.
+      )doc"_doc, "description"_a, nb::rv_policy::reference_internal)
   ;
 }
 

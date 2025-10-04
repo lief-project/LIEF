@@ -20,6 +20,7 @@
 #include "LIEF/rust/DWARF/Scope.hpp"
 #include "LIEF/rust/DWARF/Type.hpp"
 #include "LIEF/rust/DWARF/Parameter.hpp"
+#include "LIEF/rust/DWARF/LexicalBlock.hpp"
 
 #include "LIEF/rust/DWARF/types/ClassLike.hpp"
 #include "LIEF/rust/DWARF/types/Pointer.hpp"

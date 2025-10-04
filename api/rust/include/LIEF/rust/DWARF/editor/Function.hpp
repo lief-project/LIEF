@@ -14,6 +14,7 @@
  */
 #pragma once
 #include <algorithm>
+#include <LIEF/range.hpp>
 #include <LIEF/DWARF/editor/Function.hpp>
 #include "LIEF/rust/Mirror.hpp"
 
@@ -44,6 +45,33 @@ class DWARF_editor_Function_LexicalBlock : public Mirror<LIEF::dwarf::editor::Fu
   public:
   using Mirror::Mirror;
   using lief_t = LIEF::dwarf::editor::Function::LexicalBlock;
+
+  auto add_block(uint64_t start, uint64_t end) {
+    return details::try_unique<DWARF_editor_Function_LexicalBlock>(
+      get().add_block(start, end)
+    );
+  }
+
+  auto add_block_from_range(const std::vector<DWARF_editor_Function_Range>& ranges) {
+    std::vector<LIEF::dwarf::editor::Function::range_t> conv_ranges;
+    conv_ranges.reserve(ranges.size());
+    std::transform(ranges.begin(), ranges.end(), std::back_inserter(conv_ranges),
+      [] (const DWARF_editor_Function_Range& R) {
+        return LIEF::dwarf::editor::Function::range_t{R.start, R.end};
+      });
+
+    return details::try_unique<DWARF_editor_Function_LexicalBlock>(
+      get().add_block(conv_ranges)
+    );
+  }
+
+  auto add_name(std::string name) {
+    get().add_name(name);
+  }
+
+  auto add_description(std::string name) {
+    get().add_description(name);
+  }
 };
 
 class DWARF_editor_Function_Label : public Mirror<LIEF::dwarf::editor::Function::Label> {
@@ -97,4 +125,6 @@ class DWARF_editor_Function : public Mirror<LIEF::dwarf::editor::Function> {
       get().add_label(addr, label)
     );
   }
+
+  auto add_description(std::string desc) { get().add_description(desc); }
 };

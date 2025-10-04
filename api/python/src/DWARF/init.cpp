@@ -27,5 +27,6 @@ void init(nb::module_& m) {
   create<LIEF::dwarf::CompilationUnit>(dwarf);
   create<LIEF::dwarf::DebugInfo>(dwarf);
   create<LIEF::dwarf::Editor>(dwarf);
+  create<LIEF::dwarf::LexicalBlock>(dwarf);
 }
 }

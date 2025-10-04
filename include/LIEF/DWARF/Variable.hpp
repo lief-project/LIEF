@@ -131,6 +131,9 @@ class LIEF_API Variable {
   /// Return the scope in which this variable is defined
   std::unique_ptr<Scope> scope() const;
 
+  /// Description (`DW_AT_description`) of the variable or an empty string
+  std::string description() const;
+
   ~Variable();
   private:
   std::unique_ptr<details::Variable> impl_;

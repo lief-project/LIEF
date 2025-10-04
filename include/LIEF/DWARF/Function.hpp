@@ -24,6 +24,7 @@
 #include "LIEF/range.hpp"
 #include "LIEF/DWARF/Variable.hpp"
 #include "LIEF/DWARF/Type.hpp"
+#include "LIEF/DWARF/LexicalBlock.hpp"
 #include "LIEF/asm/Instruction.hpp"
 
 namespace LIEF {
@@ -104,6 +105,8 @@ class LIEF_API Function {
   using parameters_t = std::vector<std::unique_ptr<Parameter>>;
   using thrown_types_t = std::vector<std::unique_ptr<Type>>;
 
+  using lexical_blocks_it = iterator_range<LexicalBlock::Iterator>;
+
   using instructions_it = iterator_range<assembly::Instruction::Iterator>;
 
   Function(std::unique_ptr<details::Function> impl);
@@ -169,6 +172,12 @@ class LIEF_API Function {
   /// Disassemble the current function by returning an iterator over
   /// the assembly::Instruction
   instructions_it instructions() const;
+
+  /// Iterator over the LexicalBlock owned by this function
+  lexical_blocks_it lexical_blocks() const;
+
+  /// Description (`DW_AT_description`) of this function or an empty string
+  std::string description() const;
 
   ~Function();
   private:

@@ -29,4 +29,6 @@ public class Variable extends lief.Base {
     public native Variable setExternal();
 
     public native Variable setType(Type ty);
+
+    public native Function addDescription(String desc);
 };

@@ -16,6 +16,7 @@
 #define LIEF_DWARF_EDITOR_VARIABLE_H
 #include <cstdint>
 #include <memory>
+#include <string>
 
 #include "LIEF/visibility.h"
 
@@ -36,7 +37,7 @@ class LIEF_API Variable {
   Variable(std::unique_ptr<details::Variable> impl);
 
   /// Set the global address of this variable. Setting this address is only
-  /// revelant in the case of a static global variable. For stack variable, you
+  /// relevant in the case of a static global variable. For stack variable, you
   /// should use set_stack_offset.
   ///
   /// This function set the `DW_AT_location` attribute
@@ -52,6 +53,10 @@ class LIEF_API Variable {
 
   /// Set the type of the current variable
   Variable& set_type(const Type& type);
+
+  /// Create a `DW_AT_description` entry with the description
+  /// provided in parameter.
+  Variable& add_description(const std::string& description);
 
   ~Variable();
 

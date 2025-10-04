@@ -61,5 +61,11 @@ class Variable : public JNI<
     );
     return thiz;
   }
+
+  static jobject jni_add_description(JNIEnv* env, jobject thiz, jstring desc) {
+    jni::LocalString jdesc = desc;
+    from_jni(thiz)->impl().add_description(std::string(jdesc.Pin().ToString()));
+    return thiz;
+  }
 };
 }

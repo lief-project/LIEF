@@ -51,4 +51,8 @@ class DWARF_Variable : private Mirror<LIEF::dwarf::Variable> {
   auto scope() const {
     return details::try_unique<DWARF_Scope>(get().scope());
   }
+
+  auto description() const {
+    return get().description();
+  }
 };

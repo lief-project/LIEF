@@ -1,6 +1,7 @@
 use lief_ffi as ffi;
 
 use super::variable::Variables;
+use super::lexical_block::LexicalBlock;
 use super::{Scope, Type, Parameters};
 use crate::common::{into_optional, into_ranges, FromFFI};
 use crate::declare_fwd_iterator;
@@ -115,6 +116,16 @@ impl Function<'_> {
     pub fn instructions(&self) -> Instructions {
         Instructions::new(self.ptr.instructions())
     }
+
+    /// Description (`DW_AT_description`) of this function or an empty string
+    pub fn description(&self) -> String {
+        self.ptr.description().to_string()
+    }
+
+    /// Iterator over the [`crate::dwarf::LexicalBlock`] owned by this function
+    pub fn lexical_blocks(&self) -> LexicalBlocks {
+        LexicalBlocks::new(self.ptr.lexical_blocks())
+    }
 }
 
 declare_fwd_iterator!(
@@ -148,4 +159,13 @@ declare_fwd_iterator!(
     ffi::asm_Instruction,
     ffi::DWARF_Function,
     ffi::DWARF_Function_it_instructions
+);
+
+
+declare_fwd_iterator!(
+    LexicalBlocks,
+    LexicalBlock<'a>,
+    ffi::DWARF_LexicalBlock,
+    ffi::DWARF_Function,
+    ffi::DWARF_Function_it_lexical_blocks
 );

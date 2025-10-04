@@ -13,6 +13,14 @@
 :DWARF:
 
   * Add support to read or assign a register to a function's parameter
+  * Add support to read or assign a description (``DW_AT_description``) to
+    a |lief-dwarf-function|, |lief-dwarf-variable|, |lief-dwarf-lexical-block|:
+
+    - |lief-dwarf-function-description|
+    - |lief-dwarf-variable-description|
+    - |lief-dwarf-lexical-block-description|
+
+  * Add support created nested |lief-dwarf-editor-Function-lexical-block|
 
 
 :COFF:

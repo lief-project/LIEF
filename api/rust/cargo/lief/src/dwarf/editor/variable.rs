@@ -47,4 +47,11 @@ impl Variable {
         self.ptr.pin_mut().set_type(ty.get_base());
         self
     }
+
+    /// Create a `DW_AT_description` entry with the description
+    /// provided in parameter.
+    pub fn add_description(&mut self, description: &str) -> &mut Self {
+        self.ptr.pin_mut().add_description(description);
+        self
+    }
 }

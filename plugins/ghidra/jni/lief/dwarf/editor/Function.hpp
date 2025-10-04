@@ -71,6 +71,28 @@ class Function : public JNI<
       jni::Field { "impl", jlong{}, }
     };
 
+    static jobject jni_add_description(JNIEnv* env, jobject thiz, jstring desc) {
+      jni::LocalString jdesc = desc;
+      from_jni(thiz)->impl().add_description(std::string(jdesc.Pin().ToString()));
+      return thiz;
+    }
+
+    static jobject jni_add_name(JNIEnv* env, jobject thiz, jstring name) {
+      jni::LocalString jname = name;
+      from_jni(thiz)->impl().add_name(std::string(jname.Pin().ToString()));
+      return thiz;
+    }
+
+
+    static jobject jni_add_block(JNIEnv* env, jobject thiz, jlong start, jlong end) {
+      return LexicalBlock::create(
+        from_jni(thiz)->impl().add_block(start, end)
+      );
+    }
+
+    static jobject jni_add_block_from_range(JNIEnv* env, jobject thiz,
+                                            jobject ranges);
+
     static void jni_destroy(JNIEnv* env, jobject thiz) {
       destroy(thiz);
     }
@@ -117,6 +139,12 @@ class Function : public JNI<
 
   static jobject jni_set_exeternal(JNIEnv* env, jobject thiz) {
     from_jni(thiz)->impl().set_external();
+    return thiz;
+  }
+
+  static jobject jni_add_description(JNIEnv* env, jobject thiz, jstring desc) {
+    jni::LocalString jdesc = desc;
+    from_jni(thiz)->impl().add_description(std::string(jdesc.Pin().ToString()));
     return thiz;
   }
 

@@ -26,6 +26,7 @@
 #include "LIEF/DWARF/types.hpp"
 #include "LIEF/DWARF/Parameter.hpp"
 #include "LIEF/DWARF/Editor.hpp"
+#include "LIEF/DWARF/LexicalBlock.hpp"
 
 #include "LIEF/DWARF/editor/CompilationUnit.hpp"
 #include "LIEF/DWARF/editor/Function.hpp"

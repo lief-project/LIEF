@@ -82,6 +82,12 @@ void create<dw::Variable>(nb::module_& m) {
       Scope in which this variable is defined
       )doc"_doc
     )
+
+    .def_prop_ro("description", &dw::Variable::description,
+      R"doc(
+      Description (``DW_AT_description``) of the variable or an empty string.
+      )doc"_doc
+    )
   ;
 }
 

@@ -139,6 +139,21 @@ void create<dw::Function>(nb::module_& m) {
       :class:`lief.assembly.Instruction`.
       )doc"_doc
     )
+
+    .def_prop_ro("lexical_blocks",
+      [] (dw::Function& self) {
+        auto lexical_blocks = self.lexical_blocks();
+        return nb::make_iterator<nb::rv_policy::reference_internal>(
+            nb::type<dw::Function>(), "lexical_blocks_it", lexical_blocks);
+      }, nb::keep_alive<0, 1>(),
+      R"delim(
+      Iterator over the :class:`~.LexicalBlock` owned by this function
+      )delim"_doc
+    )
+
+    .def_prop_ro("description", &dw::Function::description,
+      "Description (``DW_AT_description``) of this function or an empty string"_doc
+    )
   ;
 }
 
