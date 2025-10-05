@@ -282,6 +282,27 @@
 
   * Add |lief-dump|
 
+0.16.7 - October 5th, 2025
+--------------------------
+
+:Python:
+
+  * Add wheels for Python 3.14
+
+:Mach-O:
+
+  * Fix ``has_nx`` (:pr:`1218`)
+  * Fix :issue:`1228`
+
+:ELF:
+
+  * Fix :issue:`1241`
+
+:Other:
+
+  * :pr:`1220`
+
+
 0.16.6 - May 29th, 2025
 -----------------------
 
