@@ -27,6 +27,12 @@ impl Enum {
     pub fn add_value(&mut self, name: &str, value: i64) -> Value {
         Value::from_ffi(self.ptr.pin_mut().add_value(name, value))
     }
+
+    /// Set the underlying type that is used to encode this enum
+    pub fn set_underlying_type(&mut self, ty: &dyn EditorType) -> &mut Self {
+        self.ptr.pin_mut().set_underlying_type(ty.get_base());
+        self
+    }
 }
 
 

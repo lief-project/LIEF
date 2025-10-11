@@ -782,6 +782,10 @@ std::vector<Enum::Entry> Enum::entries() const {
   return {};
 }
 
+const Type* Enum::underlying_type() const {
+  return nullptr;
+}
+
 Enum::~Enum()= default;
 
 // ----------------------------------------------------------------------------
@@ -1155,6 +1159,10 @@ bool PointerType::classof(const Type */*type*/) {
 // ----------------------------------------------------------------------------
 bool EnumType::classof(const Type */*type*/) {
   return false;
+}
+
+EnumType& EnumType::set_underlying_type(const Type& /*type*/) {
+  return *this;
 }
 
 EnumType& EnumType::set_size(uint64_t /*size*/) {

@@ -38,6 +38,10 @@ class DWARF_editor_EnumType : public DWARF_editor_Type {
     );
   }
 
+  auto set_underlying_type(const DWARF_editor_Type& ty) {
+    impl().set_underlying_type(ty.get());
+  }
+
   static bool classof(const DWARF_editor_Type& type) {
     return lief_t::classof(&type.get());
   }

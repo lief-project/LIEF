@@ -25,6 +25,11 @@ void create<dw::editor::EnumType>(nb::module_& m) {
       enumeration (``DW_AT_byte_size``).
       )doc"_doc, "size"_a, nb::rv_policy::reference_internal)
 
+    .def("set_underlying_type", &dw::editor::EnumType::set_underlying_type,
+      "Set the underlying type that is used to encode this enum"_doc,
+      "type"_a, nb::rv_policy::reference_internal
+    )
+
     .def("add_value", &dw::editor::EnumType::add_value,
       R"doc(
       Add an enum value by specifying its name and its integer value.

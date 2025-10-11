@@ -48,6 +48,9 @@ class LIEF_API EnumType : public Type {
   /// enumeration (`DW_AT_byte_size`).
   EnumType& set_size(uint64_t size);
 
+  /// Set the underlying type that is used to encode this enum
+  EnumType& set_underlying_type(const Type& type);
+
   /// Add an enum value by specifying its name and its integer value
   std::unique_ptr<Value> add_value(const std::string& name, int64_t value);
 

@@ -115,6 +115,9 @@ class Enum(lief.dwarf.Type):
     @property
     def entries(self) -> list[Enum.Entry]: ...
 
+    @property
+    def underlying_type(self) -> lief.dwarf.Type: ...
+
 class File(lief.dwarf.Type):
     pass
 

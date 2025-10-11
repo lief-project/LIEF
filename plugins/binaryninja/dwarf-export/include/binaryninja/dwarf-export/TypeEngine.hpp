@@ -25,6 +25,10 @@ class TypeEngine {
   // (Previously BinaryNinja::Type::GetObject())
   using type_map_t = std::unordered_map<
     std::string, std::unique_ptr<LIEF::dwarf::editor::Type>>;
+
+  using anon_types_t = std::vector<
+    std::unique_ptr<LIEF::dwarf::editor::Type>>;
+
   TypeEngine() = delete;
   TypeEngine(LIEF::dwarf::editor::CompilationUnit& CU,
              BinaryNinja::BinaryView& bv) :
@@ -47,6 +51,7 @@ class TypeEngine {
   size_t array_id_ = 0;
   size_t func_id_ = 0;
   type_map_t mapping_;
+  anon_types_t anon_types_;
   LIEF::dwarf::editor::CompilationUnit& unit_;
   BinaryNinja::BinaryView& bv_;
 };

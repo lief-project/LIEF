@@ -36,6 +36,11 @@ void create<dw::types::Enum>(nb::module_& m) {
     .def_prop_ro("entries", &Enum::entries,
       "Entries associated with this enum"_doc
     )
+
+    .def_prop_ro("underlying_type", &Enum::underlying_type,
+      "The underlying type that is used to encode this enum"_doc,
+      nb::rv_policy::reference_internal
+    )
   ;
 }
 

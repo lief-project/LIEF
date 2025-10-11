@@ -140,19 +140,17 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(const BinaryNinja::Type& type) {
     case StructureTypeClass:
       {
         std::string struct_name = type.GetStructureName().GetString();
-        if (struct_name.empty()) {
-          struct_name = name_str;
-        }
         BN_DEBUG("Adding {} as structure ({})", name_str, struct_name);
         bn::Ref<bn::Structure> bn_struct = type.GetStructure();
 
-        std::unique_ptr<dw::editor::StructType> struct_type;
         if (bn_struct == nullptr) {
-          BN_ERR("Can't get structure for type: {}", struct_name);
+          BN_ERR("Can't get structure for type: {} ({})", struct_name, name_str);
           return *mapping_.insert(
             {name_str, unit_.create_void_type()}
           ).first->second;
         }
+        std::unique_ptr<dw::editor::StructType> struct_type;
+
         switch (bn_struct->GetStructureType()) {
           case ClassStructureType:
             struct_type = unit_.create_structure(struct_name, dw::editor::StructType::TYPE::CLASS);
@@ -174,7 +172,11 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(const BinaryNinja::Type& type) {
 
         LIEF::dwarf::editor::StructType* struct_type_ptr = struct_type.get();
 
-        mapping_.insert({name_str, std::move(struct_type)});
+        if (!struct_name.empty()) {
+          mapping_.insert({name_str, std::move(struct_type)});
+        } else {
+          anon_types_.push_back(std::move(struct_type));
+        }
 
         for (const bn::StructureMember& member : bn_struct->GetMembers()) {
           BN_DEBUG(" Adding {} to {}", member.name, struct_name);
@@ -189,13 +191,59 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(const BinaryNinja::Type& type) {
 
     case EnumerationTypeClass:
       {
-        BN_DEBUG("Adding {} as enum", name_str);
-        std::unique_ptr<dw::editor::EnumType> enum_type = unit_.create_enum(name_str);
+        // NOTE(romain): Yes, this is intended to use GetStructureName to access
+        // the enum name
+        const std::string& enum_name = type.GetStructureName().GetString();
+        BN_DEBUG("Adding {} as enum ({})", enum_name, name_str);
+        std::unique_ptr<dw::editor::EnumType> enum_type = unit_.create_enum(enum_name);
         bn::Ref<bn::Enumeration> bn_enum = type.GetEnumeration();
         enum_type->set_size(type.GetWidth());
+
+        switch (type.GetWidth()) {
+          case sizeof(uint8_t):
+            {
+              enum_type->set_underlying_type(
+                  *unit_.create_base_type("uint8_t", sizeof(uint8_t),
+                    LIEF::dwarf::editor::BaseType::ENCODING::UNSIGNED));
+              break;
+            }
+
+          case sizeof(uint16_t):
+            {
+              enum_type->set_underlying_type(
+                  *unit_.create_base_type("uint16_t", sizeof(uint16_t),
+                    LIEF::dwarf::editor::BaseType::ENCODING::UNSIGNED));
+              break;
+            }
+
+          case sizeof(uint32_t):
+            {
+              enum_type->set_underlying_type(
+                  *unit_.create_base_type("uint32_t", sizeof(uint32_t),
+                    LIEF::dwarf::editor::BaseType::ENCODING::UNSIGNED));
+              break;
+            }
+
+          case sizeof(uint64_t):
+            {
+              enum_type->set_underlying_type(
+                  *unit_.create_base_type("uint64_t", sizeof(uint64_t),
+                    LIEF::dwarf::editor::BaseType::ENCODING::UNSIGNED));
+              break;
+            }
+
+          default:
+            break;
+        }
+
         for (const bn::EnumerationMember& e : type.GetEnumeration()->GetMembers()) {
           enum_type->add_value(e.name, e.value);
         }
+
+        if (enum_name.empty()) {
+          return *anon_types_.insert(anon_types_.end(), std::move(enum_type))->get();
+        }
+
         return *mapping_.insert(
           {name_str, std::move(enum_type)}
         ).first->second;

@@ -1,8 +1,8 @@
 use lief_ffi as ffi;
 
-use crate::common:: FromFFI;
+use crate::common::{FromFFI, into_optional};
 use std::marker::PhantomData;
-use crate::dwarf::types::DwarfType;
+use crate::dwarf::types::{DwarfType, Type};
 
 use crate::{declare_fwd_iterator, to_opt};
 
@@ -16,6 +16,11 @@ impl Enum<'_> {
     /// Entries associated with this enum
     pub fn entries(&self) -> Entries<'_> {
         Entries::new(self.ptr.entries())
+    }
+
+    /// The underlying type that is used to encode this enum
+    pub fn underlying_type(&self) -> Option<Type> {
+        into_optional(self.ptr.underlying_type())
     }
 }
 

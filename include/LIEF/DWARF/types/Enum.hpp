@@ -55,11 +55,17 @@ class LIEF_API Enum : public Type {
   /// Return the different entries associated with this enum
   std::vector<Entry> entries() const;
 
+  /// The underlying type that is used to encode this enum
+  const Type* underlying_type() const;
+
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::ENUM;
   }
 
   ~Enum() override;
+
+  protected:
+  mutable std::unique_ptr<Type> underlying_;
 };
 
 }
