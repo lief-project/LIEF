@@ -66,6 +66,11 @@ impl Variable<'_> {
         self.ptr.is_constexpr()
     }
 
+    /// Whether this variable is allocated on the stack
+    pub fn is_stack_based(&self) -> bool {
+        self.ptr.is_stack_based()
+    }
+
     /// The original source location where the variable is defined.
     pub fn debug_location(&self) -> DebugLocation {
         DebugLocation::from_ffi(self.ptr.debug_location())

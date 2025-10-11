@@ -138,6 +138,10 @@ bool Variable::is_constexpr() const {
   return true;
 }
 
+bool Variable::is_stack_based() const {
+  return true;
+}
+
 std::unique_ptr<Type> Variable::type() const {
   return nullptr;
 }

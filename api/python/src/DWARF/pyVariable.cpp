@@ -66,6 +66,10 @@ void create<dw::Variable>(nb::module_& m) {
       Whether it's a ``constexpr`` variable.
       )doc"_doc
     )
+    .def_prop_ro("is_stack_based",
+      &dw::Variable::is_stack_based,
+      "Whether this variable is allocated on the stack"_doc
+    )
     .def_prop_ro("debug_location",
       &dw::Variable::debug_location,
       R"doc(

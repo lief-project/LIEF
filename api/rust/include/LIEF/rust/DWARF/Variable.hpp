@@ -44,6 +44,10 @@ class DWARF_Variable : private Mirror<LIEF::dwarf::Variable> {
     return get().is_constexpr();
   }
 
+  auto is_stack_based() const {
+    return get().is_stack_based();
+  }
+
   auto get_type() const {
     return details::try_unique<DWARF_Type>(get().type()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }

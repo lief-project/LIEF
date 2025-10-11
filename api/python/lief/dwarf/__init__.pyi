@@ -135,6 +135,9 @@ class Variable:
     def is_constexpr(self) -> bool: ...
 
     @property
+    def is_stack_based(self) -> bool: ...
+
+    @property
     def debug_location(self) -> lief.debug_location_t: ...
 
     @property
