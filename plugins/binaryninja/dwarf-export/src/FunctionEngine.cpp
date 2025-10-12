@@ -42,9 +42,12 @@ using namespace binaryninja;
 dw::Function* FunctionEngine::add_function(bn::Function& func) {
   bn::Ref<bn::Symbol> sym = func.GetSymbol();
   const std::string& func_name = sym->GetShortName();
+
   std::unique_ptr<dw::Function> dw_func = unit_.create_function(func_name);
   BN_DEBUG("Adding function: {}", func_name);
+
   std::vector<BNAddressRange> ranges = func.GetAddressRanges();
+
   if (ranges.size() == 1) {
     dw_func->set_low_high(ranges[0].start, ranges[0].end);
   } else {
@@ -59,6 +62,10 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
 
   if (ranges[0].start != func.GetStart()) {
     dw_func->set_address(func.GetStart());
+  }
+
+  if (std::string comment = func.GetComment(); !comment.empty()) {
+    dw_func->add_description(comment);
   }
 
   auto ret_type = func.GetReturnType();
