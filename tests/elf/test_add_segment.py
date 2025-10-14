@@ -139,3 +139,30 @@ def test_add_segment(tmp_path: Path, binpath):
         stdout = P.stdout.read().decode("utf8")
         print(stdout)
         assert re.search(r'LIEF is Working', stdout) is not None
+
+def test_add_segment_alignment_dyn(tmp_path: Path):
+    dyn_elf = lief.ELF.parse((CWD / "hello_lief.bin").as_posix())
+
+    # For ease of testing, just try to duplicate the second segment.
+    # It is a LOAD segment with an alignment of 0x200000 and a non-zero page offset, so the result should be similarly aligned.
+    old_segment = dyn_elf.segments[1]
+    new_segment = dyn_elf.add(old_segment)
+
+    # Ensure that we have actually added an independent segment.
+    assert old_segment.file_offset != new_segment.file_offset
+    assert old_segment.physical_address != new_segment.physical_address
+    assert old_segment.virtual_address != new_segment.virtual_address
+
+    # Ensure that the alignment information made it through.
+    assert old_segment.alignment == new_segment.alignment
+
+    # Ensure that the page offset has been kept in all relevant attributes.
+    # We cannot reasonably do page offset alignment adjustments on all platforms.
+    assert old_segment.file_offset % dyn_elf.page_size == new_segment.file_offset % dyn_elf.page_size
+    assert old_segment.physical_address % dyn_elf.page_size == new_segment.physical_address % dyn_elf.page_size
+    assert old_segment.virtual_address % dyn_elf.page_size == new_segment.virtual_address % dyn_elf.page_size
+
+    # The given alignment needs to be reflected in the chosen virtual address.
+    # To make sure that we don't misunderstand ELF, check that property for the input segment as well.
+    assert old_segment.virtual_address % old_segment.alignment == old_segment.file_offset % old_segment.alignment
+    assert new_segment.virtual_address % new_segment.alignment == new_segment.file_offset % new_segment.alignment
