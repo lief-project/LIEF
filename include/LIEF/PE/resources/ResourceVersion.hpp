@@ -42,7 +42,7 @@ class LIEF_API ResourceVersion : public Object {
 
   /// This structure represents the `VS_FIXEDFILEINFO` structure defined
   /// in `verrsrc.h`.
-  struct fixed_file_info_t {
+  struct LIEF_API fixed_file_info_t {
     enum class VERSION_OS : uint32_t {
       /// The operating system for which the file was designed is unknown to the system.
       UNKNOWN = 0x00000000,

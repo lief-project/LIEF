@@ -151,7 +151,7 @@ class LIEF_API ResourceDialog : public Object {
   /// This class is inherited by the regular or extended dialog's item:
   /// - ResourceDialogRegular::Item
   /// - ResourceDialogExtended::Item
-  class Item {
+  class LIEF_API Item {
     public:
     Item() = default;
     Item(const Item&) = default;
