@@ -68,7 +68,7 @@ class LIEF_API ResourceDialogExtended : public ResourceDialog {
 
   /// Font information for the font to use for the text in the dialog box and
   /// its controls
-  struct font_t {
+  struct LIEF_API font_t {
     /// The point size of the font
     uint16_t point_size = 0;
 
