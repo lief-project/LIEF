@@ -55,7 +55,7 @@ class LIEF_API ResourceDialogRegular : public ResourceDialog {
 
   /// This structure represents additional font information that might be
   /// embedded at the end of the DLGTEMPLATE stream
-  struct font_t {
+  struct LIEF_API font_t {
     uint16_t point_size = 0;
     std::u16string name;
 

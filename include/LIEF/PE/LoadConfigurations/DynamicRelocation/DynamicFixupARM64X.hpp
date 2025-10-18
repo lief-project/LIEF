@@ -32,7 +32,7 @@ class LIEF_API DynamicFixupARM64X : public DynamicFixup {
     DELTA = 2,
   };
 
-  struct reloc_entry_t {
+  struct LIEF_API reloc_entry_t {
     /// RVA where the fixup takes place
     uint32_t rva = 0;
 
