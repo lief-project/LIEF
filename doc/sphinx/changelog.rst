@@ -3,6 +3,19 @@
 :fa:`solid fa-code-compare` Changelog
 =====================================
 
+0.17.1 - October 25th, 2025
+---------------------------
+
+:ELF:
+
+  * Fix :issue:`1251`
+
+:Compilation:
+
+  * Fix missing visibility (:pr:`1254`)
+  * Fix incorrect paging computations that occurred when only a subset of formats was enabled.
+  * Fix include issue with the COFF format
+
 0.17.0 - September 14th, 2025
 -----------------------------
 

@@ -1,6 +1,6 @@
 [package]
 name = "lief-patchelf"
-version = "0.17.0"
+version = "0.17.1"
 edition = "2021"
 authors = ["Romain Thomas <me@romainthomas.fr>"]
 
