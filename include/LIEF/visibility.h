@@ -41,5 +41,5 @@
   #define LIEF_API
   #define LIEF_LOCAL LIEF_HELPER_LOCAL
 #endif
-
+  #include <stdint.h>
 #endif
