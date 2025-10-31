@@ -48,17 +48,57 @@ inline result<MACHO_TYPES> magic_from_stream(BinaryStream& stream,
 }
 
 bool is_macho(BinaryStream& stream) {
-  if (auto magic_res = magic_from_stream(stream)) {
-    const MACHO_TYPES magic = *magic_res;
-    return (magic == MACHO_TYPES::MAGIC ||
-            magic == MACHO_TYPES::CIGAM ||
-            magic == MACHO_TYPES::MAGIC_64 ||
-            magic == MACHO_TYPES::CIGAM_64 ||
-            magic == MACHO_TYPES::MAGIC_FAT ||
-            magic == MACHO_TYPES::CIGAM_FAT ||
-            magic == MACHO_TYPES::NEURAL_MODEL);
+  auto original_pos = stream.pos();
+  stream.setpos(0);
+
+  uint8_t header[8];
+  for (int i = 0; i < 8; ++i) {
+    auto byte = stream.peek<uint8_t>(i);
+    // file is too short or bytes can't be read so break early
+    if (!byte) {
+      stream.setpos(original_pos);
+      return false;
+    }
+    header[i] = *byte;
   }
-  return false;
+
+  // Check for Java class file: CA FE BA BE + valid minor/major version
+  bool is_java_class = false;
+  if (header[0] == 0xCA &&
+      header[1] == 0xFE &&
+      header[2] == 0xBA &&
+      header[3] == 0xBE) {
+    // combine bytes 4 & 5 to get the minor version
+    uint16_t minor = (header[4] << 8) | header[5];
+    // combine bytes 6 & 7 to get the major version
+    uint16_t major = (header[6] << 8) | header[7];
+    // ranges of current java minor and major versions
+    if (minor >= 0 && minor <= 65535 && major >= 45 && major <= 69) {
+      is_java_class = true;
+    }
+  }
+
+  if (is_java_class) {
+    stream.setpos(original_pos);
+    return false;
+  }
+
+  auto magic_res = MachO::magic_from_stream(stream);
+  if (!magic_res) {
+    stream.setpos(original_pos);
+    return false;
+  }
+  const MachO::MACHO_TYPES magic = *magic_res;
+
+  stream.setpos(original_pos);
+
+  return (magic == MachO::MACHO_TYPES::MAGIC ||
+          magic == MachO::MACHO_TYPES::CIGAM ||
+          magic == MachO::MACHO_TYPES::MAGIC_64 ||
+          magic == MachO::MACHO_TYPES::CIGAM_64 ||
+          magic == MachO::MACHO_TYPES::MAGIC_FAT ||
+          magic == MachO::MACHO_TYPES::CIGAM_FAT ||
+          magic == MachO::MACHO_TYPES::NEURAL_MODEL);
 }
 
 bool is_macho(const std::string& file) {
