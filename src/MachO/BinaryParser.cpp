@@ -143,6 +143,18 @@ ok_error_t BinaryParser::init_and_parse() {
 }
 
 
+void BinaryParser::populate_symbol_cache() {
+  if (!memoized_symbols_.empty()) {
+    return;  // Already populated
+  }
+  for (const auto& sym : binary_->symbols_) {
+    const std::string& name = sym->name();
+    if (!name.empty()) {
+      memoized_symbols_[name] = sym.get();
+    }
+  }
+}
+
 ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
                                            BinaryStream& stream,
                                            uint64_t start,
@@ -152,6 +164,25 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
   if (!stream) {
     return make_error_code(lief_errors::read_error);
   }
+
+  // Pre-populate the symbol cache to avoid O(n) searches for each export
+  // This is idempotent - returns early if already populated
+  populate_symbol_cache();
+
+  // Prevent excessive recursion depth (typical trie depth should be < 100)
+  static thread_local size_t recursion_depth = 0;
+  if (recursion_depth > 10000) {
+    LIEF_WARN("Export trie recursion depth exceeded 10000, possible infinite loop or malformed binary");
+    return make_error_code(lief_errors::parsing_error);
+  }
+
+  // RAII guard to automatically decrement on function exit
+  struct DepthGuard {
+    size_t& depth;
+    DepthGuard(size_t& d) : depth(d) { ++depth; }
+    ~DepthGuard() { --depth; }
+  };
+  DepthGuard guard(recursion_depth);
 
   const auto terminal_size = stream.read<uint8_t>();
   if (!terminal_size) {
@@ -177,7 +208,8 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
     if (search != memoized_symbols_.end()) {
       symbol = search->second;
     } else {
-      symbol = binary_->get_symbol(symbol_name);
+      LIEF_DEBUG("Cache miss for symbol: {}", symbol_name);
+      symbol = nullptr;
     }
     if (symbol != nullptr) {
       export_info->symbol_ = symbol;
@@ -195,6 +227,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
       // Weak bind of the pointer
       symbol->export_info_       = export_info.get();
       export_info->symbol_       = symbol.get();
+      memoized_symbols_[symbol_name] = symbol.get();
       binary_->symbols_.push_back(std::move(symbol));
     }
 
@@ -226,7 +259,8 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
       if (search != memoized_symbols_.end()) {
         symbol = search->second;
       } else {
-        symbol = binary_->get_symbol(imported_name);
+        LIEF_DEBUG("Cache miss for symbol: {}", imported_name);
+        symbol = nullptr;
       }
       if (symbol != nullptr) {
         export_info->alias_  = symbol;
@@ -244,6 +278,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
         // Weak bind of the pointer
         symbol->export_info_      = export_info.get();
         export_info->alias_       = symbol.get();
+        memoized_symbols_[symbol_name] = symbol.get();
         binary_->symbols_.push_back(std::move(symbol));
       }
 
@@ -283,6 +318,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
     LIEF_ERR("Can't read nb_children");
     return make_error_code(lief_errors::parsing_error);
   }
+
   for (size_t i = 0; i < *nb_children; ++i) {
     auto suffix = stream.read_string();
     if (!suffix) {
@@ -310,6 +346,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
     }
 
     if (!visited_.insert(child_node_offet).second) {
+      LIEF_DEBUG("Cycle detected in export trie at offset 0x{:x}", child_node_offet);
       break;
     }
 
@@ -318,6 +355,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
       parse_export_trie(exports, *scoped, start, name, invalid_names);
     }
   }
+
   return ok();
 }
 

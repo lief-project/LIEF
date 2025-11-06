@@ -278,6 +278,8 @@ class LIEF_API BinaryParser : public LIEF::Parser {
     exports_list_t& exports, BinaryStream& stream,
     uint64_t start, const std::string& prefix, bool* invalid_names);
 
+  LIEF_LOCAL void populate_symbol_cache();
+
   LIEF_LOCAL void copy_from(ChainedBindingInfo& to, ChainedBindingInfo& from);
 
   std::unique_ptr<BinaryStream>  stream_;
