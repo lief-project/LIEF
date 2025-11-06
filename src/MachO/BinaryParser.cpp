@@ -153,6 +153,15 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
     return make_error_code(lief_errors::read_error);
   }
 
+  // Pre-populate the symbol cache to avoid O(n) searches for each export
+  if (memoized_symbols_.empty()) {
+    for (const std::unique_ptr<LIEF::MachO::Symbol>& sym : binary_->symbols_) {
+      if (const std::string& name = sym->name(); !name.empty()) {
+        memoized_symbols_[name] = sym.get();
+      }
+    }
+  }
+
   const auto terminal_size = stream.read<uint8_t>();
   if (!terminal_size) {
     LIEF_ERR("Can't read terminal size");
@@ -177,7 +186,8 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
     if (search != memoized_symbols_.end()) {
       symbol = search->second;
     } else {
-      symbol = binary_->get_symbol(symbol_name);
+      LIEF_DEBUG("Cache miss for symbol: {}", symbol_name);
+      symbol = nullptr;
     }
     if (symbol != nullptr) {
       export_info->symbol_ = symbol;
@@ -195,6 +205,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
       // Weak bind of the pointer
       symbol->export_info_       = export_info.get();
       export_info->symbol_       = symbol.get();
+      memoized_symbols_[symbol_name] = symbol.get();
       binary_->symbols_.push_back(std::move(symbol));
     }
 
@@ -226,7 +237,8 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
       if (search != memoized_symbols_.end()) {
         symbol = search->second;
       } else {
-        symbol = binary_->get_symbol(imported_name);
+        LIEF_DEBUG("Cache miss for symbol: {}", imported_name);
+        symbol = nullptr;
       }
       if (symbol != nullptr) {
         export_info->alias_  = symbol;
@@ -244,6 +256,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
         // Weak bind of the pointer
         symbol->export_info_      = export_info.get();
         export_info->alias_       = symbol.get();
+        memoized_symbols_[symbol_name] = symbol.get();
         binary_->symbols_.push_back(std::move(symbol));
       }
 
@@ -283,6 +296,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
     LIEF_ERR("Can't read nb_children");
     return make_error_code(lief_errors::parsing_error);
   }
+
   for (size_t i = 0; i < *nb_children; ++i) {
     auto suffix = stream.read_string();
     if (!suffix) {
@@ -310,6 +324,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
     }
 
     if (!visited_.insert(child_node_offet).second) {
+      LIEF_DEBUG("Cycle detected in export trie at offset 0x{:x}", child_node_offet);
       break;
     }
 
@@ -318,6 +333,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
       parse_export_trie(exports, *scoped, start, name, invalid_names);
     }
   }
+
   return ok();
 }
 

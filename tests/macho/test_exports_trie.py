@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import lief
 import subprocess
-from utils import get_sample, is_apple_m1, sign, chmod_exe
+from utils import get_sample, has_private_samples, is_apple_m1, sign, chmod_exe
+import pytest
 
 def process(target: lief.MachO.Binary):
     assert target.has(lief.MachO.LoadCommand.TYPE.DYLD_EXPORTS_TRIE)
@@ -50,3 +51,9 @@ def test_write(tmp_path):
             stdout = proc.stdout.read()
             assert "CAMELLIA-256-CCM*-NO-TAG" in stdout
             assert "AES-128-CCM*-NO-TAG" in stdout
+
+@pytest.mark.skipif(not has_private_samples, reason="need private samples")
+def test_issue_1262():
+    macho = lief.MachO.parse(get_sample("private/MachO/issue-1262.macho")).at(0)
+
+    assert len(macho.dyld_exports_trie.exports) == 312478
