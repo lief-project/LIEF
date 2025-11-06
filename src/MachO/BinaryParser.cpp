@@ -143,18 +143,6 @@ ok_error_t BinaryParser::init_and_parse() {
 }
 
 
-void BinaryParser::populate_symbol_cache() {
-  if (!memoized_symbols_.empty()) {
-    return;  // Already populated
-  }
-  for (const auto& sym : binary_->symbols_) {
-    const std::string& name = sym->name();
-    if (!name.empty()) {
-      memoized_symbols_[name] = sym.get();
-    }
-  }
-}
-
 ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
                                            BinaryStream& stream,
                                            uint64_t start,
@@ -166,8 +154,14 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
   }
 
   // Pre-populate the symbol cache to avoid O(n) searches for each export
-  // This is idempotent - returns early if already populated
-  populate_symbol_cache();
+  if (memoized_symbols_.empty()) {
+    for (const auto& sym : binary_->symbols_) {
+      const std::string& name = sym->name();
+      if (!name.empty()) {
+        memoized_symbols_[name] = sym.get();
+      }
+    }
+  }
 
   // Prevent excessive recursion depth (typical trie depth should be < 100)
   static thread_local size_t recursion_depth = 0;
