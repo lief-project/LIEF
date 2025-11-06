@@ -49,7 +49,9 @@
 #include "LIEF/asm/powerpc/registers.hpp"
 
 #include "LIEF/Abstract/Binary.hpp"
+#if defined(LIEF_COFF_SUPPORT)
 #include "LIEF/COFF/Binary.hpp"
+#endif
 
 #include "internal_utils.hpp"
 #include "messages.hpp"
@@ -104,6 +106,7 @@ assembly::Engine* Binary::get_engine(uint64_t) const {
 }
 
 
+#if defined(LIEF_COFF_SUPPORT)
 namespace COFF {
 assembly::Engine* Binary::get_engine(uint64_t) const {
   return nullptr;
@@ -126,6 +129,7 @@ Binary::instructions_it Binary::disassemble(const uint8_t* /*buffer*/, size_t /*
   return make_empty_iterator<assembly::Instruction>();
 }
 }
+#endif
 
 namespace assembly {
 namespace details {
