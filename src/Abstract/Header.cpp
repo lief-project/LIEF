@@ -16,9 +16,15 @@
 #include "LIEF/Visitor.hpp"
 #include "LIEF/Abstract/Header.hpp"
 
+#if defined(LIEF_ELF_SUPPORT)
 #include "LIEF/ELF/Binary.hpp"
+#endif
+#if defined(LIEF_MACHO_SUPPORT)
 #include "LIEF/MachO/Binary.hpp"
+#endif
+#if defined(LIEF_PE_SUPPORT)
 #include "LIEF/PE/Binary.hpp"
+#endif
 
 #include <spdlog/fmt/fmt.h>
 
@@ -37,6 +43,7 @@ static constexpr auto ARRAY_MODES = {
   Header::MODES::BITS_64, Header::MODES::THUMB,
 };
 
+#if defined(LIEF_ELF_SUPPORT)
 Header Header::from(const ELF::Binary& elf) {
   if constexpr (!lief_elf_support) {
     return {};
@@ -131,7 +138,9 @@ Header Header::from(const ELF::Binary& elf) {
 
   return hdr;
 }
+#endif
 
+#if defined(LIEF_PE_SUPPORT)
 Header Header::from(const PE::Binary& pe) {
   if constexpr (!lief_pe_support) {
     return {};
@@ -195,7 +204,9 @@ Header Header::from(const PE::Binary& pe) {
   }
   return hdr;
 }
+#endif
 
+#if defined(LIEF_MACHO_SUPPORT)
 Header Header::from(const MachO::Binary& macho) {
   if constexpr (!lief_macho_support) {
     return {};
@@ -290,6 +301,7 @@ Header Header::from(const MachO::Binary& macho) {
 
   return hdr;
 }
+#endif
 
 std::vector<Header::MODES> Header::modes_list() const {
   std::vector<MODES> flags;
