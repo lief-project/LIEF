@@ -48,49 +48,41 @@ inline result<MACHO_TYPES> magic_from_stream(BinaryStream& stream,
 }
 
 bool is_macho(BinaryStream& stream) {
-  auto original_pos = stream.pos();
-  stream.setpos(0);
+  ScopedStream scoped(stream, 0);
 
-  uint8_t header[8];
-  for (int i = 0; i < 8; ++i) {
-    auto byte = stream.peek<uint8_t>(i);
-    // file is too short or bytes can't be read so break early
-    if (!byte) {
-      stream.setpos(original_pos);
-      return false;
-    }
-    header[i] = *byte;
+  std::array<uint8_t, 8> header = {0};
+  if (!scoped->peek_array(header)) {
+    return false;
   }
 
   // Check for Java class file: CA FE BA BE + valid minor/major version
-  bool is_java_class = false;
   if (header[0] == 0xCA &&
       header[1] == 0xFE &&
       header[2] == 0xBA &&
-      header[3] == 0xBE) {
+      header[3] == 0xBE)
+  {
+    static constexpr auto MIN_JAVA_VERSION = 45;
+    static constexpr auto MAX_JAVA_VERSION = 69;
+
     // combine bytes 4 & 5 to get the minor version
     uint16_t minor = (header[4] << 8) | header[5];
     // combine bytes 6 & 7 to get the major version
     uint16_t major = (header[6] << 8) | header[7];
+
     // ranges of current java minor and major versions
-    if (minor >= 0 && minor <= 65535 && major >= 45 && major <= 69) {
-      is_java_class = true;
+    if (minor <= std::numeric_limits<uint16_t>::max() &&
+        MIN_JAVA_VERSION <= major && major <= MAX_JAVA_VERSION)
+    {
+      // This is a Java file
+      return false;
     }
   }
 
-  if (is_java_class) {
-    stream.setpos(original_pos);
-    return false;
-  }
-
-  auto magic_res = MachO::magic_from_stream(stream);
+  auto magic_res = MachO::magic_from_stream(*scoped);
   if (!magic_res) {
-    stream.setpos(original_pos);
     return false;
   }
   const MachO::MACHO_TYPES magic = *magic_res;
-
-  stream.setpos(original_pos);
 
   return (magic == MachO::MACHO_TYPES::MAGIC ||
           magic == MachO::MACHO_TYPES::CIGAM ||
