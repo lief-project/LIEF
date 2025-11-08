@@ -58,6 +58,9 @@ class LIEF_API Enum : public Type {
   /// The underlying type that is used to encode this enum
   const Type* underlying_type() const;
 
+  /// Try to find the enum matching the given value
+  optional<Entry> find_entry(int64_t value) const;
+
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::ENUM;
   }

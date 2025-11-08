@@ -118,6 +118,8 @@ class Enum(lief.dwarf.Type):
     @property
     def underlying_type(self) -> lief.dwarf.Type: ...
 
+    def find_entry(self, value: int) -> Enum.Entry | None: ...
+
 class File(lief.dwarf.Type):
     pass
 

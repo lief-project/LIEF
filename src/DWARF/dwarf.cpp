@@ -786,6 +786,10 @@ std::vector<Enum::Entry> Enum::entries() const {
   return {};
 }
 
+optional<Enum::Entry> Enum::find_entry(int64_t /*value*/) const {
+  return nullopt();
+}
+
 const Type* Enum::underlying_type() const {
   return nullptr;
 }

@@ -286,6 +286,7 @@ def test_DW_TAG_enumeration_type():
     enum: lief.dwarf.types.Enum = dbg_info.find_type("Enum")
 
     assert isinstance(enum, lief.dwarf.types.Enum)
+    assert enum.find_entry(4).name == "epsilon"
 
     loc = enum.location
 

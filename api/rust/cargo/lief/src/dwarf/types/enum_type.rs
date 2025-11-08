@@ -22,6 +22,11 @@ impl Enum<'_> {
     pub fn underlying_type(&self) -> Option<Type> {
         into_optional(self.ptr.underlying_type())
     }
+
+    /// Try to find the enum entry matching the given value
+    pub fn entry_by_value(&self, value: i64) -> Option<Entry<'_>> {
+        into_optional(self.ptr.find_entry(value))
+    }
 }
 
 impl FromFFI<ffi::DWARF_types_Enum> for Enum<'_> {

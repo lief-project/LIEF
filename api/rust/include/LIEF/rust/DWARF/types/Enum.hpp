@@ -54,6 +54,13 @@ class DWARF_types_Enum : public DWARF_Type {
     return details::try_unique<DWARF_Type>(impl().underlying_type()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
+  std::unique_ptr<DWARF_types_Enum_Entry> find_entry(int64_t value) const {
+    if (auto entry = impl().find_entry(value)) {
+      return std::make_unique<DWARF_types_Enum_Entry>(*entry);
+    }
+    return nullptr;
+  }
+
   static bool classof(const DWARF_Type& type) {
     return lief_t::classof(&type.get());
   }

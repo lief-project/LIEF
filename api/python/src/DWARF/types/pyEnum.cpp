@@ -41,6 +41,11 @@ void create<dw::types::Enum>(nb::module_& m) {
       "The underlying type that is used to encode this enum"_doc,
       nb::rv_policy::reference_internal
     )
+
+    .def("find_entry", &Enum::find_entry,
+      "Try to find the entry matching the given value"_doc,
+      "value"_a
+    )
   ;
 }
 
