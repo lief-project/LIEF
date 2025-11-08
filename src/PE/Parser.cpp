@@ -331,7 +331,7 @@ ok_error_t Parser::parse_relocations() {
 
     if (raw_struct.BlockSize > binary_->optional_header().sizeof_image()) {
       LIEF_ERR("Relocation corrupted: BlockSize is out of bound the "
-               "binary's virtual size: {}", raw_struct.BlockSize);
+               "binary's virtual size: {0} ({0:#10x})", raw_struct.BlockSize);
       break;
     }
 

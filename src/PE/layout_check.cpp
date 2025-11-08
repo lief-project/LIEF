@@ -53,6 +53,7 @@ class LayoutChecker {
   bool check_load_config();
   bool check_imports();
   bool check_tls();
+  bool check_relocations();
 
   bool is_legacy_arch() const {
     return arch == Header::MACHINE_TYPES::I386 ||
@@ -93,6 +94,10 @@ class LayoutChecker {
     }
 
     if (!check_tls()) {
+      return false;
+    }
+
+    if (!check_relocations()) {
       return false;
     }
 
@@ -649,6 +654,57 @@ bool LayoutChecker::check_tls() {
                    expected_hdr_reloc, nb_hdr_reloc);
     }
   }
+  return true;
+}
+
+
+bool LayoutChecker::check_relocations() {
+  auto relocations = pe.relocations();
+  if (relocations.empty()) {
+    return true;
+  }
+
+  const DataDirectory* reloc_dir = pe.relocation_dir();
+  if (reloc_dir == nullptr) {
+    return false;
+  }
+
+  const uint64_t vsize = pe.virtual_size();
+
+  const uint64_t size = reloc_dir->size();
+  uint64_t computed_size = 0;
+
+  for (const Relocation& R : relocations) {
+    if (R.block_size() % 4) {
+      return error("Relocation block {:#x} is not correctly aligned",
+                   R.virtual_address());
+    }
+
+    if (R.virtual_address() > vsize) {
+      return error("Relocation block {:#x} is beyond the binary virtual size",
+                   R.virtual_address());
+    }
+
+    if (R.entries().size() != (R.block_size() - sizeof(details::pe_base_relocation_block)) / sizeof(uint16_t)) {
+      return error("Relocation block {:#x} is corrupted",
+                   R.virtual_address());
+    }
+
+    computed_size += R.block_size();
+
+    for (const RelocationEntry& E : R.entries()) {
+      if (E.address() > vsize) {
+        return error("Relocation {:#x} is beyond the binary virtual size",
+                     E.address());
+      }
+    }
+  }
+
+  if (computed_size != size) {
+    return error("Size mismatch. DataDirectory={:#06x}, Computed={:#06x}",
+                 size, computed_size);
+  }
+
   return true;
 }
 
