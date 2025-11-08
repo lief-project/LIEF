@@ -97,6 +97,32 @@ def test_issue_952(tmp_path: Path):
     assert checked, msg
 
 
+def test_issue_1261(tmp_path: Path):
+    pe = lief.PE.parse(get_sample("PE/ANCUtility.dll"))
+
+    rtype = lief.PE.RelocationEntry.BASE_TYPES.HIGHLOW
+
+    R1 = lief.PE.Relocation()
+    R1.virtual_address = 0x1000
+    R1.add_entry(lief.PE.RelocationEntry(0x10, rtype))
+    pe.add_relocation(R1)
+
+    R2 = lief.PE.Relocation()
+    R2.virtual_address = 0x2000
+    R2.add_entry(lief.PE.RelocationEntry(0x20, rtype))
+    pe.add_relocation(R2)
+
+    config = lief.PE.Builder.config_t()
+    config.relocations = True
+
+    output = tmp_path / "issue_1261.pe"
+    pe.write(str(output), config)
+
+    new = lief.PE.parse(output)
+
+    checked, msg = lief.PE.check_layout(new)
+    assert checked, msg
+
 def test_code_injection(tmp_path: Path):
     def resolved_import(pe: lief.PE.Binary, imp: lief.PE.Import,
                         entry: lief.PE.ImportEntry, rva: int):

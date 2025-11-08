@@ -338,10 +338,14 @@ ok_error_t Builder::build_relocations() {
       .write<uint32_t>(reloc.virtual_address())
       .write<uint32_t>(align(block_size, sizeof(uint32_t)))
     ;
+
     for (const RelocationEntry& entry : reloc.entries()) {
       ios.write(entry.data());
     }
+
+    ios.align(sizeof(uint32_t));
   }
+
   ios
     .align(sizeof(uint32_t))
     .move(reloc_data_);
