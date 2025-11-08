@@ -286,6 +286,7 @@ ok_error_t Builder::build_tls() {
     LIEF_DEBUG("relocations[callbacks]: #{:04d}", cbk_relocations.size());
 
     // Erase relocations associated with callbacks
+    size_t rm_entries = 0;
     for (RelocationEntry* E : cbk_relocations) {
       Relocation* parent = E->parent();
 
@@ -293,13 +294,18 @@ ok_error_t Builder::build_tls() {
         LIEF_WARN("Missing parent relocation");
         continue;
       }
-
+      size_t count = parent->entries_.size();
       parent->entries_.erase(
         std::remove_if(parent->entries_.begin(), parent->entries_.end(),
           [E] (std::unique_ptr<RelocationEntry>& F) {
             return E == F.get();
         }), parent->entries_.end());
+      rm_entries += count - parent->entries_.size();
     }
+
+    uint64_t reloc_size = binary_->relocation_dir()->size();
+    reloc_size -= rm_entries * sizeof(uint16_t);
+    binary_->relocation_dir()->size(reloc_size);
 
     // Relocation that need to be created:
     const size_t req_relocs = tls->callbacks().size();
@@ -337,8 +343,12 @@ ok_error_t Builder::build_tls() {
             return tls_callbacks_start <= addr && addr < tls_callbacks_end;
           }
         ), entries.end());
-        [[maybe_unused]] const size_t S2 = R.entries_.size();
-        LIEF_DEBUG("#{} relocation deleted", S1 - S2);
+        const size_t S2 = R.entries_.size();
+        size_t rm_count = S1 - S2;
+        LIEF_DEBUG("#{} relocation deleted", rm_count);
+        uint64_t reloc_size = binary_->relocation_dir()->size();
+        reloc_size -= rm_count * sizeof(uint16_t);
+        binary_->relocation_dir()->size(reloc_size);
       }
 
       binary_->fill_address(tls_callbacks_start, original_callback_size, 0);
