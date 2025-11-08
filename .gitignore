@@ -6,6 +6,7 @@ build/
 *.lib
 lief.egg-info/
 dist/
+**/target/*
 api/rust/cargo/target/*
 api/rust/examples/target/*
 tools/target/*
