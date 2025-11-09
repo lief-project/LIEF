@@ -41,6 +41,7 @@
 #include "ObjC/init.hpp"
 #include "DyldSharedCache/init.hpp"
 #include "asm/init.hpp"
+#include "BinaryStream/init.hpp"
 
 #if defined(LIEF_ELF_SUPPORT)
   #include "ELF/init.hpp"
@@ -310,6 +311,8 @@ void init(nb::module_& m) {
   LIEF::py::init_logger(m);
   LIEF::py::init_hash(m);
   LIEF::py::init_json(m);
+
+  LIEF::py::init_binarystream(m);
 
   LIEF::assembly::py::init(m);
 

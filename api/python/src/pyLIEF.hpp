@@ -57,4 +57,9 @@ extern nb::module_* lief_mod;
 
 using namespace nb::literals;
 
+namespace LIEF::py {
+template<class T>
+void create(nb::module_&);
+}
+
 #endif

@@ -176,8 +176,12 @@ class LIEF_API BinaryStream {
     return pos_;
   }
 
-  operator bool() const {
+  bool is_valid() const {
     return pos_ < size();
+  }
+
+  operator bool() const {
+    return is_valid();
   }
 
   template<class T>
