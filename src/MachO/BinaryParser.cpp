@@ -155,28 +155,12 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
 
   // Pre-populate the symbol cache to avoid O(n) searches for each export
   if (memoized_symbols_.empty()) {
-    for (const auto& sym : binary_->symbols_) {
-      const std::string& name = sym->name();
-      if (!name.empty()) {
+    for (const std::unique_ptr<LIEF::MachO::Symbol>& sym : binary_->symbols_) {
+      if (const std::string& name = sym->name(); !name.empty()) {
         memoized_symbols_[name] = sym.get();
       }
     }
   }
-
-  // Prevent excessive recursion depth (typical trie depth should be < 100)
-  static thread_local size_t recursion_depth = 0;
-  if (recursion_depth > 10000) {
-    LIEF_WARN("Export trie recursion depth exceeded 10000, possible infinite loop or malformed binary");
-    return make_error_code(lief_errors::parsing_error);
-  }
-
-  // RAII guard to automatically decrement on function exit
-  struct DepthGuard {
-    size_t& depth;
-    DepthGuard(size_t& d) : depth(d) { ++depth; }
-    ~DepthGuard() { --depth; }
-  };
-  DepthGuard guard(recursion_depth);
 
   const auto terminal_size = stream.read<uint8_t>();
   if (!terminal_size) {
