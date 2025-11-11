@@ -594,11 +594,14 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment, uin
 
   init_alignment(*this, *new_segment, ptr_size);
 
+  // We attempt to carry over the in-page offset for purpose of code or data alignment.
+  const uint64_t in_page_offset       = segment.file_offset() % psize;
+
   const uint64_t last_offset_segments = last_offset_segment();
   const uint64_t last_offset          = last_offset_segments;
-  const uint64_t last_offset_aligned  = align(last_offset, 0x10);
+  const uint64_t last_offset_aligned  = align_with_offset(last_offset, psize, in_page_offset);
   if (base == 0) {
-    base = align(next_virtual_address(), psize);
+    base = align(next_virtual_address(), new_segment->alignment());
   }
 
   uint64_t segmentsize = align(content.size(), 0x10);

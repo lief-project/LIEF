@@ -47,6 +47,10 @@ inline uint64_t align_down(uint64_t value, uint64_t align_on) {
   return value;
 }
 
+inline uint64_t align_with_offset(uint64_t value, uint64_t align_on, uint64_t offset) {
+  return align(value - offset, align_on) + offset;
+}
+
 template<typename T>
 inline constexpr T round(T x) {
   return static_cast<T>(round<uint64_t>(x));
