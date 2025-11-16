@@ -174,6 +174,14 @@ Class::it_const_named_fields Class::fields(const std::string& name) const {
   }};
 }
 
+Class::it_interfaces Class::interfaces() {
+  return interfaces_;
+}
+
+Class::it_const_interfaces Class::interfaces() const {
+  return interfaces_;
+}
+
 size_t Class::index() const {
   return original_index_;
 }
