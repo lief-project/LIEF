@@ -58,6 +58,33 @@ One can add LIEF as a dependency of a Rust project as follows:
 
 You can find more details in the :ref:`Rust API section <lief_rust_bindings>`
 
+:fa:`brands fa-node-js` Node.js (Unofficial)
+--------------------------------------------
+
+Node.js bindings for LIEF are available as the `node-lief <https://www.npmjs.com/package/node-lief>`_ package:
+
+.. tabs ::
+
+  .. tab:: npm
+
+    .. code-block:: console
+
+      $ npm install node-lief
+
+  .. tab:: yarn
+
+    .. code-block:: console
+
+      $ yarn add node-lief
+
+  .. tab:: pnpm
+
+    .. code-block:: console
+
+      $ pnpm add node-lief
+
+See https://github.com/Piebald-AI/node-lief for more information.
+
 CMake Integration
 -----------------
 
