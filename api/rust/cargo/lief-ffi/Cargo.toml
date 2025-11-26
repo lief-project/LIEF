@@ -7,8 +7,8 @@ authors.workspace = true
 license.workspace = true
 
 [dependencies]
-cxx     = { version = "=1.0.117", features = [ "c++17" ] }
-autocxx = { git = "https://github.com/romainthomas/autocxx.git", branch = "0.26.0", version="0.26.0" }
+cxx     = { version = "1.0.189", features = [ "c++17" ] }
+autocxx ="0.30.0" 
 
 [build-dependencies]
 lief-build = { version="1.0.0", path = "../lief-build" }
