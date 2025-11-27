@@ -639,7 +639,8 @@ ok_error_t LoadConfiguration::parse_dyn_relocs_entries(
     }
 
     if constexpr (version == 2) {
-      continue;
+      LIEF_WARN("Dynamic (v2) dynamic relocation parsing not implemented");
+      break;
     }
   }
   return ok();
