@@ -622,6 +622,12 @@ class LIEF_API Binary : public LIEF::Binary {
     return *imports_.back();
   }
 
+  /// Add an imported library (i.e. `DLL`) to the front of the import list
+  Import& add_import_front(const std::string& name) {
+    imports_.insert(imports_.begin(), std::unique_ptr<Import>(new Import(name)));
+    return *imports_.front();
+  }
+
   /// Remove the imported library with the given `name`
   ///
   /// Return true if the deletion succeed, false otherwise.

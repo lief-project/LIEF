@@ -415,6 +415,11 @@ void create<Binary>(nb::module_& m) {
         "import_name"_a,
         nb::rv_policy::reference_internal)
 
+    .def("add_import_front", &Binary::add_import_front,
+        "Add an imported library (i.e. ``DLL``) to the front of the import list"_doc,
+        "import_name"_a,
+        nb::rv_policy::reference_internal)
+
     .def("remove_import", &Binary::remove_import,
         "Remove the imported library with the given name"_doc,
         "name"_a)
