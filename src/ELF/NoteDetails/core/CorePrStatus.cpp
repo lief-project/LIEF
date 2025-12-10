@@ -481,6 +481,10 @@ const char* to_string(CorePrStatus::Registers::X86_64 e) {
     ENTRY(EFLAGS),
     ENTRY(RSP),
     ENTRY(SS),
+    ENTRY(FS_BASE),
+    ENTRY(GS_BASE),
+    ENTRY(DS),
+    ENTRY(ES),
   };
   #undef ENTRY
 
