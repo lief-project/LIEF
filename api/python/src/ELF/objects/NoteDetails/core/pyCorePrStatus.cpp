@@ -171,6 +171,10 @@ void create<CorePrStatus>(nb::module_& m) {
     ENTRY(EFLAGS)
     ENTRY(RSP)
     ENTRY(SS)
+    ENTRY(FS_BASE)
+    ENTRY(GS_BASE)
+    ENTRY(DS)
+    ENTRY(ES)
   ;
   #undef ENTRY
 
