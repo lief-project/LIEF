@@ -104,6 +104,11 @@ class LIEF_API FatBinary {
     return at(index);
   }
 
+  /// Get a pointer to the MachO::Binary with the specified architecture (``cpu_type``)
+  /// It returns a nullptr if the binary of the given architecture does not exist.
+  Binary* operator[](Header::CPU_TYPE cpu_type);
+  const Binary* operator[](Header::CPU_TYPE cpu_type) const;
+
   /// Extract a MachO::Binary object. Gives ownership to the caller, and
   /// remove it from this FatBinary object.
   ///

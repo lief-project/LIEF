@@ -1,6 +1,7 @@
 from collections.abc import Sequence
 import enum
 import io
+import typing
 import lief.MachO
 import os
 from typing import Iterator, Optional, Union, overload
@@ -643,7 +644,11 @@ class FatBinary:
 
     def __len__(self) -> int: ...
 
+    @typing.overload
     def __getitem__(self, arg: int, /) -> Binary: ...
+
+    @typing.overload
+    def __getitem__(self, arg: Header.CPU_TYPE) -> Binary: ...
 
     def __iter__(self) -> FatBinary.it_binaries: ...
 

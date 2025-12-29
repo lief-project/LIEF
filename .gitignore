@@ -11,3 +11,5 @@ api/rust/cargo/target/*
 api/rust/examples/target/*
 tools/target/*
 plugins/ghidra/bin/
+plugins/ghidra/.gradle
+api/python/*/__pycache__
