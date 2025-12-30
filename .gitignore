@@ -13,3 +13,4 @@ tools/target/*
 plugins/ghidra/bin/
 plugins/ghidra/.gradle
 api/python/*/__pycache__
+.vscode

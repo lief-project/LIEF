@@ -680,6 +680,7 @@ class LIEF_API Binary : public LIEF::Binary {
 
   Segment* extend(const Segment& segment, uint64_t size);
 
+  using LIEF::Binary::patch_address;
 
   /// Patch the content at virtual address @p address with @p patch_value
   ///

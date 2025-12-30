@@ -210,6 +210,20 @@ void create<Binary>(nb::module_& m) {
         )delim"_doc,
         "address"_a, "patch_value"_a, "size"_a = 8, "va_type"_a = Binary::VA_TYPES::AUTO)
 
+    .def("patch_address", 
+        nb::overload_cast<uint64_t, std::string, Binary::VA_TYPES>(&Binary::patch_address),
+        R"delim(
+        Patch the binary at the given virtual address with the provided hex string.
+        )delim"_doc,
+        "address"_a, "patch_value"_a, "addr_type"_a = Binary::VA_TYPES::AUTO)
+
+    .def("patch_address", 
+        nb::overload_cast<uint64_t, std::string, std::string, Binary::VA_TYPES>(&Binary::patch_address),
+        R"delim(
+        Patch the binary at the given virtual address with the provided hex string 
+        ONLY if the current content matches expected_value.
+        )delim"_doc,
+        "address"_a, "patch_value"_a, "expected_value"_a, "addr_type"_a = Binary::VA_TYPES::AUTO)
 
     .def("get_content_from_virtual_address", &Binary::get_content_from_virtual_address,
        R"delim(
