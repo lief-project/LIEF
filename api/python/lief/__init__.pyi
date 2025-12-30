@@ -537,6 +537,9 @@ class Binary(Object):
     def patch_address(self, address: int, patch_value: Sequence[int], va_type: Binary.VA_TYPES = Binary.VA_TYPES.AUTO) -> None: ...
 
     @overload
+    def patch_address(self, address: int, patch_value: Sequence[int], expected_value: Sequence[int], va_type: Binary.VA_TYPES = Binary.VA_TYPES.AUTO) -> None: ...
+
+    @overload
     def patch_address(self, address: int, patch_value: int, size: int = 8, va_type: Binary.VA_TYPES = Binary.VA_TYPES.AUTO) -> None: ...
 
     @overload

@@ -200,6 +200,17 @@ void create<Binary>(nb::module_& m) {
         "address"_a, "patch_value"_a, "va_type"_a = Binary::VA_TYPES::AUTO)
 
     .def("patch_address",
+        nb::overload_cast<uint64_t, const std::vector<uint8_t>&, const std::vector<uint8_t>&, Binary::VA_TYPES>(&Binary::patch_address),
+        R"delim(
+        Patch the address with the given list of bytes ONLY if the current content matches expected_value.
+        The virtual address is specified in the first argument and the content in the second (as a list of bytes).
+
+        If the underlying binary is a PE, one can specify if the virtual address is a :attr:`~lief.Binary.VA_TYPES.RVA` or
+        a :attr:`~lief.Binary.VA_TYPES.VA`. By default, it is set to :attr:`~lief.Binary.VA_TYPES.AUTO`.
+        )delim"_doc,
+        "address"_a, "patch_value"_a, "expected_value"_a, "va_type"_a = Binary::VA_TYPES::AUTO)
+
+    .def("patch_address",
         nb::overload_cast<uint64_t, uint64_t, size_t, Binary::VA_TYPES>(&Binary::patch_address),
         R"delim(
         Patch the address with the given integer value.
@@ -211,14 +222,14 @@ void create<Binary>(nb::module_& m) {
         "address"_a, "patch_value"_a, "size"_a = 8, "va_type"_a = Binary::VA_TYPES::AUTO)
 
     .def("patch_address", 
-        nb::overload_cast<uint64_t, std::string, Binary::VA_TYPES>(&Binary::patch_address),
+        nb::overload_cast<uint64_t, const std::string, Binary::VA_TYPES>(&Binary::patch_address),
         R"delim(
         Patch the binary at the given virtual address with the provided hex string.
         )delim"_doc,
         "address"_a, "patch_value"_a, "addr_type"_a = Binary::VA_TYPES::AUTO)
 
     .def("patch_address", 
-        nb::overload_cast<uint64_t, std::string, std::string, Binary::VA_TYPES>(&Binary::patch_address),
+        nb::overload_cast<uint64_t, const std::string, const std::string, Binary::VA_TYPES>(&Binary::patch_address),
         R"delim(
         Patch the binary at the given virtual address with the provided hex string 
         ONLY if the current content matches expected_value.
