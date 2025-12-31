@@ -239,7 +239,7 @@ class LIEF_API Binary : public Object {
   /// @param[in] address          Address to patch
   /// @param[in] patch_value      Patch to apply (string format)
   /// @param[in] addr_type        Specify if the address should be used as an absolute virtual address or an RVA
-  virtual void patch_address(uint64_t address, const std::string patch_value, VA_TYPES addr_type = VA_TYPES::AUTO);
+  virtual void patch_address(uint64_t address, const std::string& patch_value, VA_TYPES addr_type = VA_TYPES::AUTO);
 
   /// Patch the binary at the given address with the provided hex string 
   /// ONLY if the current content matches expected_value.
@@ -248,7 +248,7 @@ class LIEF_API Binary : public Object {
   /// @param[in] patch_value      Patch to apply (string format)
   /// @param[in] expected_value   Data that should be at address before patching
   /// @param[in] addr_type        Specify if the address should be used as an absolute virtual address or an RVA
-  virtual void patch_address(uint64_t address, const std::string patch_value, const std::string expected_value, VA_TYPES addr_type = VA_TYPES::AUTO);
+  virtual void patch_address(uint64_t address, const std::string& patch_value, const std::string& expected_value, VA_TYPES addr_type = VA_TYPES::AUTO);
 
 
   /// Return the content located at the given virtual address

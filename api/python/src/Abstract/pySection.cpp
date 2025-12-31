@@ -16,6 +16,7 @@
 #include <sstream>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
+#include <nanobind/ndarray.h>
 
 #include "Abstract/init.hpp"
 
@@ -98,19 +99,6 @@ void create<Section>(nb::module_& m) {
         "number"_a, "pos"_a = 0, "size"_a = 0)
 
     .def("search",
-        [] (const Section& self,
-            const std::string& str, size_t pos) -> search_result
-        {
-          size_t res = self.search(str, pos);
-          if (res == Section::npos) {
-            return nb::none();
-          }
-          return nb::cast(res);
-        },
-        "Look for **string** within the current section"_doc,
-        "str"_a, "pos"_a = 0)
-
-    .def("search",
         [] (const Section& self, nb::bytes bytes, size_t pos) -> search_result
         {
           std::string raw_str(bytes.c_str(), bytes.size());
@@ -127,12 +115,71 @@ void create<Section>(nb::module_& m) {
         "Look for the given bytes within the current section"_doc,
         "bytes"_a, "pos"_a = 0)
 
+    .def("search",
+        [](const Section& self, nb::ndarray<const uint8_t, nb::ndim<1>, nb::c_contig> buffer, size_t pos) -> search_result
+        {
+          LIEF::span<const uint8_t> view{buffer.data(), buffer.size()};
+        
+          size_t res = self.search(view, pos);
+          if (res == Section::npos) {
+              return nb::none();
+          }
+          return nb::cast(res);
+        },
+        "Look for the given bytes (memoryview/bytes) within the current section"_doc,
+        "buffer"_a, "pos"_a = 0)
+
+    .def("search",
+        [] (const Section& self,
+            const std::string& str, size_t pos) -> search_result
+        {
+          size_t res = self.search(str, pos);
+          if (res == Section::npos) {
+            return nb::none();
+          }
+          return nb::cast(res);
+        },
+        "Look for the given bytes in string format within the current section"_doc,
+        "str"_a, "pos"_a = 0)
+
+    .def("search_string",
+        [] (const Section& self,
+            const std::string& str, size_t pos) -> search_result
+        {
+          size_t res = self.search_string(str, pos);
+          if (res == Section::npos) {
+            return nb::none();
+          }
+          return nb::cast(res);
+        },
+        "Look for **string** within the current section"_doc,
+        "str"_a, "pos"_a = 0)
+
     .def("search_all",
         nb::overload_cast<uint64_t, size_t>(&Section::search_all, nb::const_),
         "Look for **all** integers within the current section"_doc,
         "number"_a, "size"_a = 0)
 
     .def("search_all",
+        nb::overload_cast<const std::vector<uint8_t>&>(&Section::search_all, nb::const_),
+        "Look for all occurrences of the given bytes in string format within the current section"_doc,
+        "number"_a)
+
+    .def("search_all",
+        [](const Section& self, nb::ndarray<const uint8_t, nb::ndim<1>, nb::c_contig> buffer) 
+        {
+          LIEF::span<const uint8_t> view{buffer.data(), buffer.size()};
+          return self.search_all(view);
+        },
+        "Look for all occurrences of the given bytes (memoryview/bytes) within the current section"_doc,
+        "buffer"_a)
+
+    .def("search_all",
+        nb::overload_cast<const std::string&>(&Section::search_all, nb::const_),
+        "Look for all occurrences of the given **list of bytes** within the current section"_doc,
+        "number"_a)
+
+    .def("search_string_all",
         nb::overload_cast<const std::string&>(&Section::search_all, nb::const_),
         "Look for all **strings** within the current section"_doc,
         "str"_a)

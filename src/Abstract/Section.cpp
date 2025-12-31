@@ -30,6 +30,8 @@
 
 #include "Section.tcc"
 
+#include"LIEF/utils.hpp"
+
 namespace LIEF {
 
 // Search functions
@@ -76,7 +78,26 @@ size_t Section::search(const std::vector<uint8_t>& pattern, size_t pos) const {
   return std::distance(std::begin(content), it_found);
 }
 
+size_t Section::search(span<const uint8_t> pattern, size_t pos) const {
+  span<const uint8_t> content = this->content();
+  if (pos >= content.size() || pattern.empty()) return Section::npos;
+
+  const auto* it_found = std::search(
+    content.begin() + pos, content.end(),
+    pattern.begin(), pattern.end());
+
+  if (it_found == content.end()) return npos;
+  return std::distance(content.begin(), it_found);
+}
+
 size_t Section::search(const std::string& pattern, size_t pos) const {
+  result<std::vector<uint8_t>> pattern_data = hex_to_bytes(pattern);
+  if (pattern_data)
+    return this->search(*pattern_data, pos);
+  return 0;
+}
+
+size_t Section::search_string(const std::string& pattern, size_t pos) const {
   std::vector<uint8_t> pattern_formated = {std::begin(pattern), std::end(pattern)};
   return search(pattern_formated, pos);
 }
@@ -107,7 +128,22 @@ std::vector<size_t> Section::search_all(uint64_t v) const {
   return search_all(v, 0);
 }
 
+std::vector<size_t> Section::search_all(const std::vector<uint8_t>& v) const {
+  return search_all_<std::vector<uint8_t>>(v);
+}
+
+std::vector<size_t> Section::search_all(span<const uint8_t> v) const {
+  return search_all_<span<const uint8_t>>(v);
+}
+
 std::vector<size_t> Section::search_all(const std::string& v) const {
+  result<std::vector<uint8_t>> data = hex_to_bytes(v);
+  if (data)
+    return search_all(*data);
+  return std::vector<size_t>();
+}
+
+std::vector<size_t> Section::search_string_all(const std::string& v) const {
   return search_all_<std::string>(v);
 }
 

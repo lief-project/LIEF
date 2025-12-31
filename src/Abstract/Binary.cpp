@@ -86,20 +86,20 @@ void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_v
     this->patch_address(address, patch_value, addr_type);
 }
 
-void Binary::patch_address(uint64_t address, const std::string patch_value, VA_TYPES addr_type) {
+void Binary::patch_address(uint64_t address, const std::string& patch_value, VA_TYPES addr_type) {
   result<std::vector<uint8_t>> patch_data = hex_to_bytes(patch_value);
   if (patch_data)
     this->patch_address(address, *patch_data, addr_type);
 }
 
-void Binary::patch_address(uint64_t address, const std::string patch_value, const std::string expected_value, VA_TYPES addr_type) {
+void Binary::patch_address(uint64_t address, const std::string& patch_value, const std::string& expected_value, VA_TYPES addr_type) {
   result<std::vector<uint8_t>> expected_data = hex_to_bytes(expected_value);
-  if (!expected_data || (*expected_data).empty()) return;
+  if (!expected_data || expected_data->empty()) return;
 
-  span<const uint8_t> current_data = get_content_from_virtual_address(address, (*expected_data).size(), addr_type);
-  if (current_data.empty() || current_data.size() != expected_value.size()) return;
+  span<const uint8_t> current_data = get_content_from_virtual_address(address, expected_data->size(), addr_type);
+  if (current_data.empty() || current_data.size() != expected_data->size()) return;
 
-  if (std::equal(current_data.begin(), current_data.end(), (*expected_data).begin()))
+  if (std::equal(current_data.begin(), current_data.end(), expected_data->begin()))
     patch_address(address, patch_value, addr_type);
 }
 
