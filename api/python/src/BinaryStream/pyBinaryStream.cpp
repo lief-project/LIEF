@@ -162,6 +162,15 @@ void create<BinaryStream>(nb::module_& m) {
     .def("peek_u64", nb::overload_cast<size_t>(&BinaryStream::peek<uint64_t>, nb::const_), "offset"_a)
     .def("peek_i64", nb::overload_cast<>(&BinaryStream::peek<uint64_t>, nb::const_))
     .def("peek_i64", nb::overload_cast<size_t>(&BinaryStream::peek<int64_t>, nb::const_), "offset"_a)
+
+    .def_prop_ro("start", nb::overload_cast<>(&BinaryStream::start))
+    .def_prop_ro("start_addr", [] (BinaryStream& self) { return (uintptr_t)self.start(); })
+
+    .def_prop_ro("end", nb::overload_cast<>(&BinaryStream::end))
+    .def_prop_ro("end_addr", [] (BinaryStream& self) { return (uintptr_t)self.end(); })
+
+    .def_prop_ro("p", nb::overload_cast<>(&BinaryStream::p))
+    .def_prop_ro("p_addr", [] (BinaryStream& self) { return (uintptr_t)self.p(); })
   ;
 }
 }
