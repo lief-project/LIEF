@@ -86,3 +86,7 @@ def test_issue_1097(tmp_path: Path):
     new_deps = [entry.name for entry in new.dynamic_entries if isinstance(entry, lief.ELF.DynamicEntryLibrary)]
 
     assert new_deps == deps
+
+def test_issue_1277():
+    elf = lief.ELF.parse(get_sample("ELF/issue_1277.elf"))
+    assert elf is not None
