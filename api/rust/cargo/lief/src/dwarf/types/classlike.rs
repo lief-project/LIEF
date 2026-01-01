@@ -55,7 +55,12 @@ impl Member<'_> {
     ///
     /// Usually, `offset() * 8 == bit_offset()`
     pub fn bit_offset(&self) -> Result<u64, Error> {
-        to_result!(ffi::DWARF_types_ClassLike_Member::offset, self);
+        to_result!(ffi::DWARF_types_ClassLike_Member::bit_offset, self);
+    }
+
+    /// If the current member is a bit-field, this function returns its size in bits
+    pub fn bit_size(&self) -> Result<u64, Error> {
+        to_result!(ffi::DWARF_types_ClassLike_Member::bit_size, self);
     }
 
     /// Type of the current member

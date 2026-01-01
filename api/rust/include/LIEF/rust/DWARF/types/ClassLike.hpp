@@ -32,6 +32,12 @@ class DWARF_types_ClassLike_Member : private Mirror<LIEF::dwarf::types::ClassLik
     );
   }
 
+  uint64_t bit_size(uint32_t& err) const {
+    return details::make_error<uint64_t>(
+        get().bit_size(), err
+    );
+  }
+
   uint64_t offset(uint32_t& err) const {
     return details::make_error<uint64_t>(
         get().offset(), err

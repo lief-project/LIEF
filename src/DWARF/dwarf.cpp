@@ -665,6 +665,10 @@ result<uint64_t> ClassLike::Member::bit_offset() const {
   return make_error_code(lief_errors::not_implemented);
 }
 
+result<uint64_t> ClassLike::Member::bit_size() const {
+  return make_error_code(lief_errors::not_implemented);
+}
+
 bool ClassLike::Member::is_external() const {
   return false;
 }

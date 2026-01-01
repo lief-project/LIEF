@@ -65,10 +65,12 @@ class LIEF_API ClassLike : public Type {
     /// If the offset can't be resolved it returns a lief_errors
     result<uint64_t> bit_offset() const;
 
+    /// If the current member is a bit-field, this function returns its size in
+    /// bits.
+    result<uint64_t> bit_size() const;
+
     /// Type of the current member
     std::unique_ptr<Type> type() const;
-
-
 
     bool is_external() const;
 

@@ -12,6 +12,7 @@
 
 :DWARF:
 
+  * Add support to access bit size of bit-fields declaration (:issue:`1265`)
   * Add support to access Enum entries: |lief-dwarf-types-Enum-entries|
   * Add support to read or assign a register to a function's parameter
   * Add support to read or assign a description (``DW_AT_description``) to

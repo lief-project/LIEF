@@ -185,3 +185,5 @@ def test_issue_1259():
 
     ty = dbg_info.find_variable("my_bitfield").type
     assert [m.bit_offset for m in ty.members] == [7, 4, 0]
+
+    assert [m.bit_size for m in ty.members] == [1, 2, 4]
