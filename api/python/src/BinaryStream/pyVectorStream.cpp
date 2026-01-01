@@ -29,7 +29,11 @@ void create<VectorStream>(nb::module_& m) {
   nb::class_<VectorStream, BinaryStream>(m, "VectorStream")
     .def_static("from_file", [] (typing::StrOrPath path) {
       return VectorStream::from_file(*path.to_string());
-    })
+    }, "path"_a)
+
+    .def_static("from_bytes", [] (nb::bytes buffer) {
+      return std::make_unique<VectorStream>(nb::to_vector(buffer));
+    }, "buffer"_a)
 
     .def_prop_ro("content", [] (VectorStream& self) {
       return nb::to_memoryview(self.content());
