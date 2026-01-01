@@ -43,6 +43,8 @@
 #include "asm/init.hpp"
 #include "BinaryStream/init.hpp"
 
+#include "pyWriteStream.hpp"
+
 #if defined(LIEF_ELF_SUPPORT)
   #include "ELF/init.hpp"
 #endif
@@ -313,6 +315,7 @@ void init(nb::module_& m) {
   LIEF::py::init_json(m);
 
   LIEF::py::init_binarystream(m);
+  LIEF::py::init_writerstream(m);
 
   LIEF::assembly::py::init(m);
 

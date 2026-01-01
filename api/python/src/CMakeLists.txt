@@ -9,6 +9,7 @@ target_sources(pyLIEF PRIVATE
   pyIOStream.cpp
   pyutils.cpp
   pyParser.cpp
+  pyWriteStream.cpp
 )
 
 add_subdirectory(typing)
