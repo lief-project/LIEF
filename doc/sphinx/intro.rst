@@ -6,7 +6,8 @@ modify, and abstract :ref:`ELF <format-elf>`, :ref:`PE <format-pe>`, and
 :ref:`Mach-O <format-macho>` formats.
 
 From a technical standpoint, the library is written in C++ with a C++11 public
-interface and exposes bindings for Python and Rust.
+interface and exposes bindings for Python and Rust, with community bindings
+available for `Node.js <https://github.com/Piebald-AI/node-lief>`_.
 
 Hence, you can use LIEF with an idiomatic API in these languages:
 
@@ -82,6 +83,28 @@ Hence, you can use LIEF with an idiomatic API in these languages:
           }
       }
 
+
+  .. tab:: :fa:`brands fa-node-js` Node.js (unofficial)
+
+    .. code-block:: javascript
+
+      const LIEF = require('node-lief');
+
+      // ELF
+      const elf = LIEF.parse('/usr/bin/ls');
+      for (const section of elf.sections()) {
+        console.log(section.name, section.virtualAddress.toString(16));
+      }
+
+      // PE
+      const pe = LIEF.parse('C:\\Windows\\explorer.exe');
+      console.log(pe.optionalHeader.imagebase.toString(16));
+
+      // Mach-O
+      const fat = LIEF.MachO.parse('/usr/bin/ls');
+      const macho = fat.at(0);
+      console.log(macho.header.cpuType);
+
 This project is also attached to provide comprehensive documentation as well
 as development best practices:
 
@@ -151,6 +174,26 @@ straightforward:
         # For a tagged release
         [dependencies]
         lief = "0.17.1"
+
+  .. tab:: :fa:`brands fa-node-js` Node.js (unofficial)
+
+     **With npm**
+
+     .. code-block:: console
+
+       npm install node-lief
+
+     **With yarn**
+
+     .. code-block:: console
+
+       yarn add node-lief
+
+     **With pnpm**
+
+     .. code-block:: console
+
+       pnpm add node-lief
 
 You can also find additional content in the `LIEF's blog </blog/>`_ post among those:
 

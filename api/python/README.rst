@@ -9,7 +9,7 @@ Main features:
   * **Parsing**: LIEF can parse ELF, PE, MachO, OAT, DEX, VDEX, ART and provides an user-friendly API to access to format internals.
   * **Modify**: LIEF enables to modify some parts of these formats
   * **Abstract**: Three formats have common features like sections, symbols, entry point... LIEF factors them.
-  * **API**: LIEF can be used in C, C++, Python and Rust
+  * **API**: LIEF can be used in C, C++, Python, Rust and `Node.js (unofficial) <https://github.com/Piebald-AI/node-lief>`_
 
 LIEF Extended:
 

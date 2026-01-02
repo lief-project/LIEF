@@ -20,7 +20,7 @@ modify and abstract ELF, PE and MachO formats.
   * **Parsing**: LIEF can parse [ELF](https://lief.re/doc/latest/formats/elf/index.html), [PE](https://lief.re/doc/latest/formats/pe/index.html), [MachO](https://lief.re/doc/latest/formats/macho/index.html), [COFF](https://lief.re/doc/latest/formats/coff/index.html), OAT, DEX, VDEX, ART and provides an user-friendly API to access to internals.
   * **Modify**: LIEF can use to modify some parts of these formats (adding a section, changing a symbol's name, ...)
   * **Abstract**: Three formats have common features like sections, symbols, entry point... LIEF factors them.
-  * **API**: LIEF can be used in [C++](https://lief.re/doc/latest/doxygen/), Python, [Rust](https://lief-rs.s3.fr-par.scw.cloud/doc/latest/lief/index.html) and C
+  * **API**: LIEF can be used in [C++](https://lief.re/doc/latest/doxygen/), Python, [Rust](https://lief-rs.s3.fr-par.scw.cloud/doc/latest/lief/index.html), C and [Node.js (unofficial)](https://github.com/Piebald-AI/node-lief)
 
 **Extended features**:
 
@@ -111,6 +111,20 @@ Here are guides to install or integrate LIEF:
   * [XCode](https://lief.re/doc/latest/installation.html#xcode-integration)
   * [CMake](https://lief.re/doc/latest/installation.html#cmake-integration)
 
+## Node.js (Unofficial)
+
+```console
+npm install node-lief
+```
+or
+```console
+yarn add node-lief
+```
+or
+```console
+pnpm add node-lief
+```
+
 ## Getting started
 
 ### Python
@@ -199,6 +213,27 @@ int main(int argc, char** argv) {
   elf_binary_destroy(elf);
   return 0;
 }
+```
+
+### Node.js (Unofficial)
+
+```javascript
+const LIEF = require('node-lief');
+
+// ELF
+const elf = LIEF.parse('/usr/bin/ls');
+for (const section of elf.sections()) {
+  console.log(section.name, section.virtualAddress.toString(16));
+}
+
+// PE
+const pe = LIEF.parse('C:\\Windows\\explorer.exe');
+console.log(pe.optionalHeader.imagebase.toString(16));
+
+// Mach-O
+const fat = LIEF.MachO.parse('/usr/bin/ls');
+const macho = fat.at(0);
+console.log(macho.header.cpuType);
 ```
 
 ## Documentation
