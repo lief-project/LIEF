@@ -16,6 +16,7 @@
 #include "pyWriteStream.hpp"
 
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 
 #include "nanobind/utils.hpp"
 
