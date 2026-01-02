@@ -17,6 +17,19 @@ package lief.dwarf;
 import lief.dwarf.editor.CompilationUnit;
 
 public class Editor extends lief.Base {
+    public enum Format {
+        ELF,
+        MACHO,
+        PE,
+    }
+
+    public enum Arch {
+        X64,
+        X86,
+        AARCH64,
+        ARM,
+    }
+
     @Override
     protected native void destroy();
 
@@ -25,6 +38,8 @@ public class Editor extends lief.Base {
     }
 
     public native static Editor forBinary(lief.generic.Binary binary);
+
+    public native static Editor create(Format fmt, Arch arch);
 
     public native CompilationUnit createCompilationUnit();
 

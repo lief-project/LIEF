@@ -63,7 +63,6 @@ class DwarfExport {
   private:
   BinaryNinja::BinaryView* bv_ = nullptr;
   std::unique_ptr<LIEF::dwarf::editor::CompilationUnit> unit_;
-  std::unique_ptr<LIEF::Binary> bin_;
   std::unique_ptr<LIEF::dwarf::Editor> editor_;
 };
 }

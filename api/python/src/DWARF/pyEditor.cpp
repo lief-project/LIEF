@@ -24,10 +24,27 @@ void create<dw::Editor>(nb::module_& m) {
     )doc"_doc
   );
 
+  nb::enum_<dw::Editor::ARCH>(editor, "ARCH")
+    .value("X64", dw::Editor::ARCH::X64)
+    .value("X86", dw::Editor::ARCH::X86)
+    .value("AARCH64", dw::Editor::ARCH::AARCH64)
+    .value("ARM", dw::Editor::ARCH::ARM)
+  ;
+
+  nb::enum_<dw::Editor::FORMAT>(editor, "FORMAT")
+    .value("ELF", dw::Editor::FORMAT::ELF)
+    .value("PE", dw::Editor::FORMAT::PE)
+    .value("MACHO", dw::Editor::FORMAT::MACHO)
+  ;
+
   editor
     .def_static("from_binary", &dw::Editor::from_binary,
       "Instantiate an editor for the given binary object"_doc,
       "bin"_a
+    )
+    .def_static("create", &dw::Editor::create,
+      "Instantiate an editor for the given format and arch"_doc,
+      "fmt"_a, "arch"_a
     )
     .def("create_compilation_unit", &dw::Editor::create_compilation_unit,
       "Create a new compilation unit"_doc

@@ -326,8 +326,27 @@ class DebugInfo(lief.DebugInfo):
     def compilation_units(self) -> Iterator[Optional[CompilationUnit]]: ...
 
 class Editor:
+    class ARCH(enum.Enum):
+        X64 = 0
+
+        X86 = 1
+
+        AARCH64 = 2
+
+        ARM = 3
+
+    class FORMAT(enum.Enum):
+        ELF = 0
+
+        PE = 2
+
+        MACHO = 1
+
     @staticmethod
     def from_binary(bin: lief.Binary) -> Optional[Editor]: ...
+
+    @staticmethod
+    def create(fmt: Editor.FORMAT, arch: Editor.ARCH) -> Optional[Editor]: ...
 
     def create_compilation_unit(self) -> Optional[editor.CompilationUnit]: ...
 

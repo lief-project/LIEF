@@ -35,5 +35,7 @@ class DWARF_Editor : public Mirror<LIEF::dwarf::Editor> {
     return details::try_unique<DWARF_Editor>(lief_t::from_binary(bin.get()));
   }
 
-
+  static auto create(uint32_t fmt, uint32_t arch) {
+    return details::try_unique<DWARF_Editor>(lief_t::create((lief_t::FORMAT)fmt, (lief_t::ARCH)arch));
+  }
 };

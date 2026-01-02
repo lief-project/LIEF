@@ -943,6 +943,10 @@ std::unique_ptr<Editor> Editor::from_binary(LIEF::Binary& /*bin*/) {
   return nullptr;
 }
 
+std::unique_ptr<Editor> Editor::create(FORMAT /*fmt*/, ARCH /*arch*/) {
+  logging::needs_lief_extended();
+  return nullptr;
+}
 
 std::unique_ptr<editor::CompilationUnit> Editor::create_compilation_unit() {
   return nullptr;
