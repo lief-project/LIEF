@@ -46,6 +46,18 @@ class DWARF_editor_StructType : public DWARF_editor_Type {
     );
   }
 
+  auto add_bitfield(std::string name, const DWARF_editor_Type& ty, uint64_t bitsize) {
+    return details::try_unique<DWARF_editor_StructType_Member>(
+      impl().add_bitfield(name, ty.get(), bitsize)
+    );
+  }
+
+  auto add_bitfield_with_offset(std::string name, const DWARF_editor_Type& ty, uint64_t bitsize, uint64_t offset) {
+    return details::try_unique<DWARF_editor_StructType_Member>(
+      impl().add_bitfield(name, ty.get(), bitsize, offset)
+    );
+  }
+
   static bool classof(const DWARF_editor_Type& type) {
     return lief_t::classof(&type.get());
   }

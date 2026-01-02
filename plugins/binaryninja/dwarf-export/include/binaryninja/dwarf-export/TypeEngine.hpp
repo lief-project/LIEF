@@ -47,6 +47,10 @@ class TypeEngine {
   private:
   void init();
 
+  void add_member(
+    const BinaryNinja::StructureMember& member,
+    LIEF::dwarf::editor::StructType& S);
+
   size_t id_ = 0;
   size_t array_id_ = 0;
   size_t func_id_ = 0;

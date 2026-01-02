@@ -37,9 +37,13 @@ void create<dw::editor::StructType>(nb::module_& m) {
       This function defines the ``DW_AT_byte_size`` attribute
       )doc"_doc, "size"_a, nb::rv_policy::reference_internal)
 
-    .def("add_member", &dw::editor::StructType::add_member,
-         "mber to the current struct-like"_doc,
-         "name"_a, "type"_a, "offset"_a = -1)
+    .def("add_member", &editor::StructType::add_member,
+      "Adds a member to the current struct-like"_doc,
+      "name"_a, "type"_a, "offset"_a = -1)
+
+    .def("add_bitfield", &editor::StructType::add_bitfield,
+      "Adds a member to the current struct-like"_doc,
+      "name"_a, "type"_a, "bitsize"_a, "bitoffset"_a = -1)
   ;
 }
 

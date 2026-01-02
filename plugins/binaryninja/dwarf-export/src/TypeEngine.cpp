@@ -180,10 +180,7 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(const BinaryNinja::Type& type) {
 
         for (const bn::StructureMember& member : bn_struct->GetMembers()) {
           BN_DEBUG(" Adding {} to {}", member.name, struct_name);
-          auto member_type = member.type;
-          struct_type_ptr->add_member(member.name,
-              add_type(api_compat::get_type(member_type)), member.offset
-          );
+          add_member(member, *struct_type_ptr);
         }
 
         return *struct_type_ptr;
@@ -364,6 +361,31 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(const BinaryNinja::Type& type) {
         ).first->second;
       }
   }
+}
+
+void TypeEngine::add_member(const BinaryNinja::StructureMember& member,
+                            LIEF::dwarf::editor::StructType& S)
+{
+
+#if BN_BITFIELD_SUPPORT
+  auto member_type = member.type;
+  if (member.bitWidth > 0) {
+    S.add_bitfield(member.name,
+      add_type(api_compat::get_type(member_type)),
+        member.bitWidth, member.offset * 8 + member.bitPosition
+    );
+    return;
+  }
+
+  S.add_member(member.name,
+    add_type(api_compat::get_type(member_type)), member.offset
+  );
+#else
+  auto member_type = member.type;
+  S.add_member(member.name,
+    add_type(api_compat::get_type(member_type)), member.offset
+  );
+#endif
 }
 
 }

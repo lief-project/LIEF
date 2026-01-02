@@ -61,9 +61,13 @@ class LIEF_API StructType : public Type {
   /// This function defines the `DW_AT_byte_size` attribute
   StructType& set_size(uint64_t size);
 
-  /// Add a member to the current struct-like
+  /// Adds a member to the current struct-like
   std::unique_ptr<Member> add_member(const std::string& name, const Type& type,
                                      int64_t offset = -1);
+
+  /// Adds a bitfield member to the current structure.
+  std::unique_ptr<Member> add_bitfield(const std::string& name, const Type& type,
+                                       uint64_t bitsize, int64_t bitoffset = -1);
 
   static bool classof(const Type* type);
 

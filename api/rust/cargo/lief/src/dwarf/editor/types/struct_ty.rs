@@ -70,6 +70,16 @@ impl Struct {
     pub fn add_member_at_offset(&mut self, name: &str, ty: &mut dyn EditorType, offset: u64) -> Member {
         Member::from_ffi(self.ptr.pin_mut().add_member_with_offset(name, ty.get_base(), offset))
     }
+
+    /// Add a bitfield to the current struct-like
+    pub fn add_bitfield(&mut self, name: &str, ty: &mut dyn EditorType, bitsize: u64) -> Member {
+        Member::from_ffi(self.ptr.pin_mut().add_bitfield(name, ty.get_base(), bitsize))
+    }
+
+    /// Add a bitfield to the current struct-like at the specified offset
+    pub fn add_bitfield_at_offset(&mut self, name: &str, ty: &mut dyn EditorType, bitsize: u64, bitoffset: u64) -> Member {
+        Member::from_ffi(self.ptr.pin_mut().add_bitfield_with_offset(name, ty.get_base(), bitsize, bitoffset))
+    }
 }
 
 impl EditorType for Struct {

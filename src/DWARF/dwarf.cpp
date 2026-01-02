@@ -1248,10 +1248,16 @@ StructType& StructType::set_size(uint64_t /*size*/) {
   return *this;
 }
 
-/// Add a member to the current struct-like
 std::unique_ptr<StructType::Member>
   StructType::add_member(const std::string& /*name*/, const Type& /*type*/,
                          int64_t /*offset*/)
+{
+  return nullptr;
+}
+
+std::unique_ptr<StructType::Member>
+  StructType::add_bitfield(const std::string& /*name*/, const Type& /*type*/,
+                           uint64_t /*bitsize*/, int64_t /*bitoffset*/)
 {
   return nullptr;
 }

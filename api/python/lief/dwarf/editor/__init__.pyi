@@ -66,6 +66,8 @@ class StructType(Type):
 
     def add_member(self, name: str, type: Type, offset: int = -1) -> Optional[StructType.Member]: ...
 
+    def add_bitfield(self, name: str, type: Type, bitsize: int, bitoffset: int = -1) -> Optional[StructType.Member]: ...
+
 class Function:
     class range_t:
         @overload
