@@ -77,6 +77,15 @@ void create<dw::types::ClassLike>(nb::module_& m) {
       If the offset can't be resolved it returns None
       )doc"_doc
     )
+
+    .def_prop_ro("bit_size",
+      [] (const dw::types::ClassLike::Member& self) {
+        return LIEF::py::value_or_none(&dw::types::ClassLike::Member::bit_size, self);
+      },
+      R"doc(
+      If the current member is a bit-field, this function returns its size in bits.
+      )doc"_doc
+    )
   ;
 
   class_like

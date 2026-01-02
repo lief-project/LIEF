@@ -30,5 +30,5 @@ public class Variable extends lief.Base {
 
     public native Variable setType(Type ty);
 
-    public native Function addDescription(String desc);
+    public native Variable addDescription(String desc);
 };

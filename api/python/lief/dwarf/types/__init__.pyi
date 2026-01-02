@@ -24,6 +24,9 @@ class ClassLike(lief.dwarf.Type):
         @property
         def bit_offset(self) -> Optional[int]: ...
 
+        @property
+        def bit_size(self) -> Optional[int]: ...
+
     @property
     def members(self) -> list[ClassLike.Member]: ...
 

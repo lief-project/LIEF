@@ -12,17 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "binaryninja/api_compat.hpp"
 #include "binaryninja/analysis/PE/TypeBuilder.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
 
 using namespace BinaryNinja;
 
 namespace analysis_plugin::pe {
-
-/* Note#packed:
- * As of BinaryNinja >= 5.1.8005 the API does not support bitfield as
- * described here: https://github.com/Vector35/binaryninja-api/issues/694
- */
 
 Ref<Type> TypeBuilder::get_or_create(const std::string& name) {
 
@@ -155,12 +151,20 @@ Ref<Type> TypeBuilder::get_or_create(const std::string& name) {
 
 
   if (name == "IMAGE_ARM64EC_METADATA_CODE_RANGE") {
-    // See Note#packed
     StructureBuilder builder;
+#if BN_BITFIELD_SUPPORT
+    builder
+      .SetPacked(true)
+      .AddMemberAtBitOffset(u32(), "Type", /*bitOffset=*/0, /*bitWidth=*/2)
+      .AddMemberAtBitOffset(u32(), "RVA", /*bitOffset=*/2, /*bitWidth=*/30)
+    ;
+#else
     builder
       .AddMember(u32(), "RVAType")
       .AddMember(u32(), "Length")
     ;
+#endif
+
 
     Ref<Structure> S = builder.Finalize();
     return create_struct(
@@ -204,20 +208,40 @@ Ref<Type> TypeBuilder::get_or_create(const std::string& name) {
   }
 
   if (name == "IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY_XDATA") {
-    // See Note#packed
     StructureBuilder builder;
+
+#if BN_BITFIELD_SUPPORT
+    builder
+      .SetPacked(true)
+      .AddMemberAtBitOffset(u32(), "FunctionLength", /*bitOffset=*/0, /*bitWidth=*/18)
+      .AddMemberAtBitOffset(u32(), "Version", /*bitOffset=*/18, /*bitWidth=*/2)
+      .AddMemberAtBitOffset(u32(), "ExceptionDataPresent", /*bitOffset=*/20, /*bitWidth=*/1)
+      .AddMemberAtBitOffset(u32(), "EpilogInHeader", /*bitOffset=*/21, /*bitWidth=*/1)
+      .AddMemberAtBitOffset(u32(), "EpilogCount", /*bitOffset=*/22, /*bitWidth=*/5)
+      .AddMemberAtBitOffset(u32(), "CodeWords", /*bitOffset=*/27, /*bitWidth=*/5)
+    ;
+#else
     builder
       .AddMember(u32(), "HeaderData");
+#endif
 
     Ref<Structure> S = builder.Finalize();
     return create_struct(*S, format_type(name));
   }
 
   if (name == "IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY_XDATA_EXTENDED") {
-    // See Note#packed
     StructureBuilder builder;
+
+#if BN_BITFIELD_SUPPORT
+    builder
+      .SetPacked(true)
+      .AddMemberAtBitOffset(u32(), "ExtendedEpilogCount", /*bitOffset=*/0, /*bitWidth=*/16)
+      .AddMemberAtBitOffset(u32(), "ExtendedCodeWords", /*bitOffset=*/16, /*bitWidth=*/8)
+    ;
+#else
     builder
       .AddMember(u32(), "ExtendedHeaderData");
+#endif
 
     Ref<Structure> S = builder.Finalize();
     return create_struct(*S,format_type(name));

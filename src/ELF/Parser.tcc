@@ -129,7 +129,9 @@ ok_error_t Parser::parse_binary() {
         uint64_t offset = addr - seg->virtual_address();
         strm->setpos(offset);
         binary_->gnu_hash_ = GnuHash::parse<ELF_T>(*strm, dynsymcount);
-        binary_->sizing_info_->gnu_hash = binary_->gnu_hash_->original_size();
+        if (binary_->gnu_hash_ != nullptr) {
+          binary_->sizing_info_->gnu_hash = binary_->gnu_hash_->original_size();
+        }
       }
     }
   }

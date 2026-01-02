@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import lief
+import pytest
 from pathlib import Path
-from utils import get_sample
+from utils import get_sample, has_private_samples
 from functools import lru_cache
 from textwrap import dedent
 
@@ -462,3 +463,8 @@ def test_volatile_metadata():
 
     assert metadata.info_ranges[6].start == 0x002abef0
     assert metadata.info_ranges[6].end == 0x002c23bb
+
+@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+def test_issue_1273():
+    pe = lief.PE.parse(get_sample("private/PE/issue_1273.pe"))
+    assert pe is not None
