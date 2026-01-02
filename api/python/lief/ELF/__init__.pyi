@@ -5602,6 +5602,14 @@ class CorePrStatus(Note):
 
             SS = 20
 
+            FS_BASE = 21
+
+            GS_BASE = 22
+
+            DS = 23
+
+            ES = 24
+
         class ARM(enum.Enum):
             @staticmethod
             def from_value(arg: int, /) -> CorePrStatus.Registers.ARM: ...
