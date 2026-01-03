@@ -30,6 +30,32 @@
   * Add |lief-coff-section-coff_string| for accessing the full section name when
     this name does not fit in 8 bytes.
 
+
+0.17.2 - January 3rd, 2026
+---------------------------
+
+:Mach-O:
+
+  * Differentiate Mach-O FAT magic bytes and Java class (by :github_user:`wangmot`, :issue:`1215`)
+
+:Compilation:
+
+  * Fix MinGW compilation for some configuration (by :github_user:`TheBrokenRail`, :commit:`dabbb72`)
+
+:PE:
+
+  * Fix alignment issue when rebuilding PE relocations (:issue:`1261`)
+  * Fix infinite loop when processing v2 dynamic relocation (by :github_user:`chengyongru` fixing :issue:`1273`)
+
+:ELF:
+
+  * Ensure that added DYN ELF sections are properly aligned (by :github_user:`schmchrt` fixing :issue:`1261`)
+  * Fix GnuHash null dereference (:issue:`1277`)
+
+:Mach-O:
+
+  * Fix strong performance issue when parsing certain Mach-O (by :github_user:`trevor-e` fixing :issue:`1262`)
+
 0.17.1 - October 25th, 2025
 ---------------------------
 
