@@ -72,6 +72,18 @@ const Binary* FatBinary::front() const {
   return binaries_.front().get();
 }
 
+Binary* FatBinary::operator[](Header::CPU_TYPE cpu_type) {
+  for (std::unique_ptr<Binary>& bin : binaries_) {
+    if (bin->header().cpu_type() == cpu_type)
+      return bin.get();
+  }
+  return nullptr;
+}
+
+const Binary* FatBinary::operator[](Header::CPU_TYPE cpu_type) const {
+  return const_cast<FatBinary*>(this)->operator[](cpu_type);
+}
+
 std::unique_ptr<Binary> FatBinary::take(Header::CPU_TYPE cpu) {
   auto it = std::find_if(std::begin(binaries_), std::end(binaries_),
       [cpu] (const std::unique_ptr<Binary>& bin) {

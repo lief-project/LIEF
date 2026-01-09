@@ -155,6 +155,11 @@ inline std::string dump(const std::vector<uint8_t>& data,
 {
   return dump(data.data(), data.size(), title, prefix, limit);
 }
+
+/// Convert an HEX String "AA BB 99 FF" into a byte vector
+result<std::vector<uint8_t>> hex_to_bytes(const std::string& hex);
+
+
 }
 
 

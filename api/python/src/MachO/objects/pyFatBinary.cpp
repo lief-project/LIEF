@@ -68,6 +68,11 @@ void create<FatBinary>(nb::module_& m) {
         nb::overload_cast<size_t>(&FatBinary::operator[]),
         nb::rv_policy::reference_internal)
 
+    .def("__getitem__",
+        nb::overload_cast<Header::CPU_TYPE>(&FatBinary::operator[]),
+        "cpu_type"_a,
+        nb::rv_policy::reference_internal)
+
     .def("__iter__",
         nb::overload_cast<>(&FatBinary::begin),
         nb::rv_policy::reference_internal)

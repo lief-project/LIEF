@@ -655,6 +655,8 @@ class LIEF_API Binary : public LIEF::Binary {
 
   void accept(Visitor& visitor) const override;
 
+  using LIEF::Binary::patch_address;
+
   /// Patch the content at virtual address @p address with @p patch_value
   ///
   /// @param[in] address      Address to patch

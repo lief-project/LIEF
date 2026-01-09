@@ -189,4 +189,53 @@ lief_version_t extended_version() {
 }
 #endif
 
+// Helper that convert a single hex char to an int
+inline LIEF::result<uint8_t> hex_char_to_int(char c) {
+  if (c >= '0' && c <= '9') return static_cast<uint8_t>(c - '0');
+  if (c >= 'a' && c <= 'f') return static_cast<uint8_t>(c - 'a' + 10);
+  if (c >= 'A' && c <= 'F') return static_cast<uint8_t>(c - 'A' + 10);
+  return make_error_code(lief_errors::parsing_error);
+}
+
+result<std::vector<uint8_t>> hex_to_bytes(const std::string& hex) {
+  std::vector<uint8_t> bytes;
+  std::string cleaned;
+  bool checkPrefix = true;
+
+  cleaned.reserve(hex.length());
+
+  for (size_t i = 0; i < hex.length(); ++i) {
+    if (std::isspace(hex[i])) continue;   // remove spaces
+
+    // check if there is a 0x prefix
+    if (checkPrefix && hex[i] == '0' && i + 1 < hex.length() && std::tolower(hex[i+1]) == 'x') {
+      checkPrefix = false;
+      i++;
+      continue;
+    }
+
+    // check invalid HEX character
+    if (!std::isxdigit(static_cast<unsigned char>(hex[i])))
+      return make_error_code(lief_errors::parsing_error);
+
+    cleaned += hex[i];
+    checkPrefix = false;
+  }
+
+  if (cleaned.length() % 2 != 0)
+    return make_error_code(lief_errors::parsing_error);
+
+  bytes.reserve(cleaned.length() / 2);
+  for (size_t i = 0; i < cleaned.length(); i += 2) {
+    auto high_nibble = hex_char_to_int(cleaned[i]);
+    auto low_nibble  = hex_char_to_int(cleaned[i + 1]);
+
+    if (!high_nibble || !low_nibble) return make_error_code(lief_errors::parsing_error);
+
+    uint8_t byte = (static_cast<uint8_t>(*high_nibble) << 4) | static_cast<uint8_t>(*low_nibble);
+    bytes.push_back(byte);
+  }
+  return bytes;
+}
+
 } // namespace LIEF
