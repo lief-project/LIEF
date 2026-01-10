@@ -24,7 +24,7 @@ class PDB_types_Simple : public PDB_Type {
     return to_int(impl().type());
   }
 
-  auto mode() const {
+  auto modes() const {
     return to_int(impl().modes());
   }
 

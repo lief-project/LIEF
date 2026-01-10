@@ -584,6 +584,14 @@ std::string Method::name() const {
   return "";
 }
 
+Method::TYPE Method::type() const {
+  return TYPE::VANILLA;
+}
+
+Method::ACCESS Method::access() const {
+  return ACCESS::NONE;
+}
+
 Method::~Method() = default;
 
 }

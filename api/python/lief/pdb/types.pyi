@@ -168,8 +168,38 @@ class Attribute:
     def field_offset(self) -> int: ...
 
 class Method:
+    class TYPE(enum.Enum):
+        VANILLA = 0
+
+        VIRTUAL = 1
+
+        STATIC = 2
+
+        FRIEND = 3
+
+        INTRODUCING_VIRTUAL = 4
+
+        PURE_VIRTUAL = 5
+
+        PURE_INTRODUCING_VIRTUAL = 6
+
+    class ACCESS(enum.Enum):
+        NONE = 0
+
+        PRIVATE = 1
+
+        PROTECTED = 2
+
+        PUBLIC = 3
+
     @property
     def name(self) -> str: ...
+
+    @property
+    def type(self) -> Method.TYPE: ...
+
+    @property
+    def access(self) -> Method.ACCESS: ...
 
 class Enum(lief.pdb.Type):
     class Entry:

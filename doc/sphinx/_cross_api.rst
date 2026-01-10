@@ -261,6 +261,12 @@
     :py:class:`lief.pdb.types.Simple`
     :cpp:class:`LIEF::pdb::types::Simple`
 
+.. |lief-pdb-types-Method| lief-api:: lief.pdb.types.Method
+
+    :rust:struct:`lief::pdb::types::Method`
+    :py:class:`lief.pdb.types.Method`
+    :cpp:class:`LIEF::pdb::types::Method`
+
 .. PE ==========================================================================
 
 .. |lief-pe-parser-config| lief-api:: lief.PE.ParserConfig

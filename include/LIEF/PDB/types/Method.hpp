@@ -19,6 +19,7 @@
 
 #include <string>
 #include <memory>
+#include <cstdint>
 
 namespace LIEF {
 namespace pdb {
@@ -31,7 +32,7 @@ class MethodIt;
 }
 
 /// This class represents a Method (`LF_ONEMETHOD`) that can be defined in
-/// ClassLike PDB type
+/// a ClassLike PDB type (Class, Structure, Union, Interface).
 class LIEF_API Method {
   public:
   class LIEF_API Iterator {
@@ -84,10 +85,35 @@ class LIEF_API Method {
     std::unique_ptr<details::MethodIt> impl_;
   };
   public:
+  /// The type (or property) of the method.
+  enum class TYPE {
+    VANILLA = 0x00,                  //!< Regular instance method
+    VIRTUAL = 0x01,                  //!< Virtual method
+    STATIC = 0x02,                   //!< Static method
+    FRIEND = 0x03,                   //!< Friend method
+    INTRODUCING_VIRTUAL = 0x04,      //!< Virtual method that introduces a new vtable slot
+    PURE_VIRTUAL = 0x05,             //!< Pure virtual method (abstract)
+    PURE_INTRODUCING_VIRTUAL = 0x06  //!< Pure virtual method that introduces a new vtable slot
+  };
+
+  /// Visibility access for the method.
+  enum class ACCESS : uint8_t {
+    NONE = 0,      //!< No access specifier (or unknown)
+    PRIVATE = 1,   //!< Private access
+    PROTECTED = 2, //!< Protected access
+    PUBLIC = 3     //!< Public access
+  };
+
   Method(std::unique_ptr<details::Method> impl);
 
   /// Name of the method
   std::string name() const;
+
+  /// Type/Properties of the method (virtual, static, etc.)
+  TYPE type() const;
+
+  /// Visibility access (public, private, ...)
+  ACCESS access() const;
 
   ~Method();
 
