@@ -443,6 +443,14 @@ Enum::~Enum() = default;
 // ----------------------------------------------------------------------------
 // PDB/types/Function.hpp
 // ----------------------------------------------------------------------------
+std::unique_ptr<Type> Function::return_type() const {
+  return nullptr;
+}
+
+Function::parameters_t Function::parameters() const {
+  return {};
+}
+
 Function::~Function() = default;
 
 // ----------------------------------------------------------------------------

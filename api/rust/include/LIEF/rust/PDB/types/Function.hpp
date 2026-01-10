@@ -16,9 +16,30 @@
 #include "LIEF/PDB/types/Function.hpp"
 #include "LIEF/rust/PDB/Type.hpp"
 
+#include "LIEF/rust/Iterator.hpp"
+
 class PDB_types_Function : public PDB_Type {
   public:
   using lief_t = LIEF::pdb::types::Function;
+
+  class it_parameters :
+      public ContainerIterator<
+        PDB_Type, std::vector<std::unique_ptr<LIEF::pdb::Type>>>
+  {
+    public:
+    using container_t = std::vector<std::unique_ptr<LIEF::pdb::Type>>;
+    it_parameters(container_t content)
+      : ContainerIterator(std::move(content)) { }
+    auto next() { return ContainerIterator::next(); }
+  };
+
+  auto return_type() const {
+    return details::try_unique<PDB_Type>(impl().return_type());
+  }
+
+  auto parameters() const {
+    return std::make_unique<it_parameters>(impl().parameters());
+  }
 
   static bool classof(const PDB_Type& type) {
     return lief_t::classof(&type.get());

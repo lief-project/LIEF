@@ -32,6 +32,7 @@
 :PDB:
 
   * Improve the support and the API for ``LF_ENUM``: |lief-pdb-types-Enum|
+  * Improve the support and the API for ``LF_PROCEDURE``: |lief-pdb-types-Function|
 
 :COFF:
 

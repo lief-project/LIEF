@@ -62,10 +62,14 @@ class Enum(lief.pdb.Type):
     @property
     def underlying_type(self) -> lief.pdb.Type: ...
 
-    def find_entry(self, arg: int, /) -> Enum.Entry | None: ...
+    def find_entry(self, value: int) -> Enum.Entry | None: ...
 
 class Function(lief.pdb.Type):
-    pass
+    @property
+    def return_type(self) -> Optional[lief.pdb.Type]: ...
+
+    @property
+    def parameters(self) -> list[Optional[lief.pdb.Type]]: ...
 
 class Modifier(lief.pdb.Type):
     @property

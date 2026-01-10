@@ -1,8 +1,10 @@
 use lief_ffi as ffi;
 
-use crate::common::FromFFI;
+use crate::common::{FromFFI, into_optional};
 use std::marker::PhantomData;
 use crate::pdb::types::PdbType;
+use super::Type;
+use crate::declare_fwd_iterator;
 
 /// This structure wraps a `LF_PROCEDURE` PDB type
 pub struct Function<'a> {
@@ -20,6 +22,15 @@ impl FromFFI<ffi::PDB_types_Function> for Function<'_> {
 }
 
 impl Function<'_> {
+    /// [`Type`] returned by the function
+    pub fn return_type(&self) -> Option<Type<'_>> {
+        into_optional(self.ptr.return_type())
+    }
+
+    /// [`Type`] of the function's parameters
+    pub fn parameters(&self) -> ParametersIt<'_> {
+        ParametersIt::new(self.ptr.parameters())
+    }
 }
 
 impl PdbType for Function<'_> {
@@ -27,3 +38,11 @@ impl PdbType for Function<'_> {
         self.ptr.as_ref().unwrap().as_ref()
     }
 }
+
+declare_fwd_iterator!(
+    ParametersIt,
+    Type<'a>,
+    ffi::PDB_Type,
+    ffi::PDB_types_Function,
+    ffi::PDB_types_Function_it_parameters
+);

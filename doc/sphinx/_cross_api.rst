@@ -243,6 +243,12 @@
     :py:class:`lief.pdb.types.Enum`
     :cpp:class:`LIEF::pdb::types::Enum`
 
+.. |lief-pdb-types-Function| lief-api:: lief.pdb.types.Function
+
+    :rust:struct:`lief::pdb::types::Function`
+    :py:class:`lief.pdb.types.Function`
+    :cpp:class:`LIEF::pdb::types::Function`
+
 .. PE ==========================================================================
 
 .. |lief-pe-parser-config| lief-api:: lief.PE.ParserConfig

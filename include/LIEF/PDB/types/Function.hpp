@@ -26,6 +26,13 @@ namespace types {
 class LIEF_API Function : public Type {
   public:
   using Type::Type;
+  using parameters_t = std::vector<std::unique_ptr<Type>>;
+
+  /// Type returned by the function
+  std::unique_ptr<Type> return_type() const;
+
+  /// Types of the function's parameters
+  parameters_t parameters() const;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::FUNCTION;

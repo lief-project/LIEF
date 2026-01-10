@@ -738,6 +738,8 @@ include_cpp! {
     block_constructors!("PDB_types_Enum")
     generate!("PDB_types_Function")
     block_constructors!("PDB_types_Function")
+    generate!("PDB_types_Function_it_parameters")
+    block_constructors!("PDB_types_Function_it_parameters")
     generate!("PDB_types_Modifier")
     block_constructors!("PDB_types_Modifier")
     generate!("PDB_types_Pointer")
