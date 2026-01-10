@@ -46,7 +46,23 @@ class Method:
     def name(self) -> str: ...
 
 class Enum(lief.pdb.Type):
-    pass
+    class Entry:
+        @property
+        def name(self) -> str: ...
+
+        @property
+        def value(self) -> int: ...
+
+    @property
+    def unique_name(self) -> str: ...
+
+    @property
+    def entries(self) -> list[Enum.Entry]: ...
+
+    @property
+    def underlying_type(self) -> lief.pdb.Type: ...
+
+    def find_entry(self, arg: int, /) -> Enum.Entry | None: ...
 
 class Function(lief.pdb.Type):
     pass

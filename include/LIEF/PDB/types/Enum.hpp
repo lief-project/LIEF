@@ -22,16 +22,55 @@ namespace LIEF {
 namespace pdb {
 namespace types {
 
+namespace details {
+class EnumEntry;
+}
+
 /// This class represents a `LF_ENUM` PDB type
 class LIEF_API Enum : public Type {
   public:
   using Type::Type;
+
+  /// This class represents an enum entry which is essentially
+  /// composed of a name and its value (integer).
+  class LIEF_API Entry {
+    public:
+    Entry(std::unique_ptr<details::EnumEntry> impl);
+    Entry(Entry&& other) noexcept;
+    Entry& operator=(Entry&& other) noexcept;
+
+    /// Enum entry's name
+    std::string name() const;
+
+    /// Enum entry's value (if any)
+    int64_t value() const;
+
+    ~Entry();
+
+    private:
+    std::unique_ptr<details::EnumEntry> impl_;
+  };
+
+  /// Enum's mangled name
+  std::string unique_name() const;
+
+  /// Return the different entries associated with this enum
+  std::vector<Entry> entries() const;
+
+  /// The underlying type that is used to encode this enum
+  const Type* underlying_type() const;
+
+  /// Try to find the enum matching the given value
+  optional<Entry> find_entry(int64_t value) const;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::ENUM;
   }
 
   ~Enum() override;
+
+  protected:
+  mutable std::unique_ptr<Type> underlying_;
 };
 
 }

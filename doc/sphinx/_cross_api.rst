@@ -237,6 +237,12 @@
     :py:meth:`lief.is_pdb`
     :cpp:func:`bool LIEF::pdb::is_pdb(const std::std::string &)`
 
+.. |lief-pdb-types-Enum| lief-api:: lief.pdb.types.Enum
+
+    :rust:struct:`lief::pdb::types::Enum`
+    :py:class:`lief.pdb.types.Enum`
+    :cpp:class:`LIEF::pdb::types::Enum`
+
 .. PE ==========================================================================
 
 .. |lief-pe-parser-config| lief-api:: lief.PE.ParserConfig

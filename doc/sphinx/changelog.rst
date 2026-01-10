@@ -29,6 +29,10 @@
 
   * Enabled the creation of nested |lief-dwarf-editor-Function-lexical-block|
 
+:PDB:
+
+  * Improve the support and the API for ``LF_ENUM``: |lief-pdb-types-Enum|
+
 :COFF:
 
   * Add |lief-coff-section-coff_string| for accessing the full section name when

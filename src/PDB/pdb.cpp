@@ -62,6 +62,8 @@ class AttributeIt {};
 
 class Method {};
 class MethodIt {};
+
+class EnumEntry {};
 }
 
 // ----------------------------------------------------------------------------
@@ -403,6 +405,39 @@ Interface::~Interface() = default;
 // ----------------------------------------------------------------------------
 // PDB/types/Enum.hpp
 // ----------------------------------------------------------------------------
+Enum::Entry::Entry(Entry&& other) noexcept = default;
+Enum::Entry& Enum::Entry::operator=(Entry&& other) noexcept = default;
+
+Enum::Entry::~Entry() = default;
+
+Enum::Entry::Entry(std::unique_ptr<details::EnumEntry> impl) :
+  impl_(std::move(impl))
+{}
+
+std::string Enum::Entry::name() const {
+  return "";
+}
+
+int64_t Enum::Entry::value() const {
+  return 0;
+}
+
+std::string Enum::unique_name() const {
+  return "";
+}
+
+std::vector<Enum::Entry> Enum::entries() const {
+  return {};
+}
+
+const Type* Enum::underlying_type() const {
+  return nullptr;
+}
+
+optional<Enum::Entry> Enum::find_entry(int64_t /*value*/) const {
+  return nullopt();
+}
+
 Enum::~Enum() = default;
 
 // ----------------------------------------------------------------------------
