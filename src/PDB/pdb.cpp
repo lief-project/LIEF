@@ -369,6 +369,14 @@ namespace types {
 // ----------------------------------------------------------------------------
 // PDB/types/Simple.hpp
 // ----------------------------------------------------------------------------
+Simple::TYPES Simple::type() const {
+  return TYPES::UNKNOWN;
+}
+
+Simple::MODES Simple::modes() const {
+  return MODES::DIRECT;
+}
+
 Simple::~Simple() = default;
 
 // ----------------------------------------------------------------------------
@@ -624,6 +632,7 @@ std::vector<std::string> BuildMetadata::env() const {
 const char* to_string(BuildMetadata::CPU) {
   return "";
 }
+
 const char* to_string(BuildMetadata::LANG) {
   return "";
 }

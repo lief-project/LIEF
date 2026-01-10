@@ -20,6 +20,22 @@ class PDB_types_Simple : public PDB_Type {
   public:
   using lief_t = LIEF::pdb::types::Simple;
 
+  auto get_type() const {
+    return to_int(impl().type());
+  }
+
+  auto mode() const {
+    return to_int(impl().modes());
+  }
+
+  bool is_pointer() const {
+    return impl().is_pointer();
+  }
+
+  bool is_signed() const {
+    return impl().is_signed();
+  }
+
   static bool classof(const PDB_Type& type) {
     return lief_t::classof(&type.get());
   }
