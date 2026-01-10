@@ -249,6 +249,12 @@
     :py:class:`lief.pdb.types.Function`
     :cpp:class:`LIEF::pdb::types::Function`
 
+.. |lief-pdb-types-Array| lief-api:: lief.pdb.types.Array
+
+    :rust:struct:`lief::pdb::types::Array`
+    :py:class:`lief.pdb.types.Array`
+    :cpp:class:`LIEF::pdb::types::Array`
+
 .. PE ==========================================================================
 
 .. |lief-pe-parser-config| lief-api:: lief.PE.ParserConfig

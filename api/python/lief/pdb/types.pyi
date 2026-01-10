@@ -7,7 +7,14 @@ class Simple(lief.pdb.Type):
     pass
 
 class Array(lief.pdb.Type):
-    pass
+    @property
+    def numberof_elements(self) -> int: ...
+
+    @property
+    def element_type(self) -> Optional[lief.pdb.Type]: ...
+
+    @property
+    def index_type(self) -> Optional[lief.pdb.Type]: ...
 
 class BitField(lief.pdb.Type):
     pass

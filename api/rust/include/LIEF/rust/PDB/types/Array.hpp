@@ -20,6 +20,18 @@ class PDB_types_Array : public PDB_Type {
   public:
   using lief_t = LIEF::pdb::types::Array;
 
+  uint64_t numberof_elements() const {
+    return impl().numberof_elements();
+  }
+
+  auto element_type() const {
+    return details::try_unique<PDB_Type>(impl().element_type());
+  }
+
+  auto index_type() const {
+    return details::try_unique<PDB_Type>(impl().index_type());
+  }
+
   static bool classof(const PDB_Type& type) {
     return lief_t::classof(&type.get());
   }

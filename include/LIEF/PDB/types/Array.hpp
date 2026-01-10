@@ -27,6 +27,15 @@ class LIEF_API Array : public Type {
   public:
   using Type::Type;
 
+  /// The number of element in this array
+  size_t numberof_elements() const;
+
+  /// Type of the elements
+  std::unique_ptr<Type> element_type() const;
+
+  /// Type of the index
+  std::unique_ptr<Type> index_type() const;
+
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::ARRAY;
   }

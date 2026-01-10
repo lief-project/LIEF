@@ -374,6 +374,18 @@ Simple::~Simple() = default;
 // ----------------------------------------------------------------------------
 // PDB/types/Array.hpp
 // ----------------------------------------------------------------------------
+size_t Array::numberof_elements() const {
+  return 0;
+}
+
+std::unique_ptr<Type> Array::element_type() const {
+  return nullptr;
+}
+
+std::unique_ptr<Type> Array::index_type() const {
+  return nullptr;
+}
+
 Array::~Array() = default;
 
 // ----------------------------------------------------------------------------

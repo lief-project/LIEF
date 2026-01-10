@@ -1,6 +1,6 @@
 use lief_ffi as ffi;
 
-use crate::common::FromFFI;
+use crate::{common::{FromFFI, into_optional}, pdb::Type};
 use std::marker::PhantomData;
 use crate::pdb::types::PdbType;
 
@@ -20,6 +20,20 @@ impl FromFFI<ffi::PDB_types_Array> for Array<'_> {
 }
 
 impl Array<'_> {
+    /// The number of element in this array
+    pub fn numberof_elements(&self) -> u64 {
+        self.ptr.numberof_elements()
+    }
+
+    /// Type of the elements
+    pub fn element_type(&self) -> Option<Type<'_>> {
+        into_optional(self.ptr.element_type())
+    }
+
+    /// Type of the index
+    pub fn index_type(&self) -> Option<Type<'_>> {
+        into_optional(self.ptr.index_type())
+    }
 }
 
 impl PdbType for Array<'_> {
