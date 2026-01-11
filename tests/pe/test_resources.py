@@ -929,3 +929,20 @@ def test_driver_rsrc():
     assert version.file_info.file_subtype == 0
     assert version.file_info.file_date_ms == 0
     assert version.file_info.file_date_ls == 0
+
+
+def test_issue_1282(tmp_path: Path):
+    input_file = Path(get_sample("PE/test.debug.repro.exe"))
+    pe = lief.PE.parse(input_file)
+    assert pe.get_section(".rsrc") is None
+
+    node = lief.PE.ResourceData([1,2,3])
+    pe.set_resources(node)
+    print(pe.resources)
+
+    out_path = tmp_path/ input_file.name
+    pe.write(out_path)
+
+    new = lief.PE.parse(out_path)
+    assert new.get_section(".rsrc") is not None
+    assert new.resources is not None
