@@ -383,6 +383,10 @@ ok_error_t Builder::build_resources() {
   ResourceNode* node = binary_->resources();
 
   if (node == nullptr) {
+    if (rsrc_dir->section() == nullptr) {
+      return ok(); // No resources, no resources section, nothing to do
+    }
+
     if (rsrc_dir->RVA() == 0 && rsrc_dir->size() == 0) {
       return ok();
     }
@@ -419,11 +423,6 @@ ok_error_t Builder::build_resources() {
   if (new_size > original_size || config_.force_relocating) {
     const uint64_t delta = new_size - original_size;
     LIEF_DEBUG("Need to relocate RESOURCE_TABLE (0x{:06x} new bytes)", delta);
-    Section* section = rsrc_dir->section();
-    if (section == nullptr) {
-      LIEF_ERR("Can't find section associated with the RESOURCE_TABLE");
-      return make_error_code(lief_errors::build_error);
-    }
 
     // Note(romain): We could/should leverage this optimization:
     //
