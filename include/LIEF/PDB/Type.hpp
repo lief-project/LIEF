@@ -20,6 +20,7 @@
 
 #include "LIEF/visibility.h"
 #include "LIEF/optional.hpp"
+#include "LIEF/DebugDeclOpt.hpp"
 
 namespace LIEF {
 namespace pdb {
@@ -106,6 +107,9 @@ class LIEF_API Type {
 
   /// Type's name (if present)
   optional<std::string> name() const;
+
+  /// Generates a C/C++ definition for this type
+  std::string to_decl(const DeclOpt& opt = DeclOpt()) const;
 
   template<class T>
   const T* as() const {

@@ -80,6 +80,10 @@
 
 nb::module_* lief_mod = nullptr;
 
+namespace LIEF {
+struct DeclOpt;
+}
+
 namespace LIEF::py {
 
 void init_extension(nb::module_& m) {
@@ -320,6 +324,8 @@ void init(nb::module_& m) {
   LIEF::assembly::py::init(m);
 
   LIEF::py::init_abstract(m);
+
+  LIEF::py::create<DeclOpt>(m);
 
   LIEF::dwarf::py::init(m);
   LIEF::pdb::py::init(m);

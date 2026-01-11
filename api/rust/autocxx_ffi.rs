@@ -687,6 +687,9 @@ include_cpp! {
     generate!("MachO_UnknownCommand")
     block_constructors!("MachO_UnknownCommand")
 
+    generate!("LIEF_DeclOpt")
+    block_constructors!("LIEF_DeclOpt")
+
     // -------------------------------------------------------------------------
     // PDB
     // -------------------------------------------------------------------------

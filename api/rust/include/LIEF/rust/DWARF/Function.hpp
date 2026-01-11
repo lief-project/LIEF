@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #pragma once
+#include "LIEF/rust/DebugDeclOpt.hpp"
 #include "LIEF/DWARF/Function.hpp"
 #include "LIEF/rust/DWARF/Variable.hpp"
 #include "LIEF/rust/DWARF/LexicalBlock.hpp"
@@ -128,5 +129,13 @@ class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
 
   auto lexical_blocks() const {
     return std::make_unique<it_lexical_blocks>(get());
+  }
+
+  auto to_decl() const {
+    return get().to_decl();
+  }
+
+  auto to_decl_with_opt(const LIEF_DeclOpt& opt) const {
+    return get().to_decl(opt.conf());
   }
 };

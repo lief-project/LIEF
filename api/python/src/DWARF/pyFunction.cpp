@@ -154,6 +154,11 @@ void create<dw::Function>(nb::module_& m) {
     .def_prop_ro("description", &dw::Function::description,
       "Description (``DW_AT_description``) of this function or an empty string"_doc
     )
+
+    .def("to_decl", &dw::Function::to_decl,
+      "Generates a C/C++ definition for this function"_doc,
+      "opt"_a = DeclOpt()
+    )
   ;
 }
 

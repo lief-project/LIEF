@@ -329,6 +329,10 @@ optional<uint64_t> Type::size() const {
   return nullopt();
 }
 
+std::string Type::to_decl(const DeclOpt& /*opt*/) const {
+  return "";
+}
+
 Type::~Type() = default;
 
 

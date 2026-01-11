@@ -21,6 +21,7 @@
 #include "LIEF/errors.hpp"
 #include "LIEF/debug_loc.hpp"
 #include "LIEF/canbe_unique.hpp"
+#include "LIEF/DebugDeclOpt.hpp"
 
 namespace LIEF {
 namespace dwarf {
@@ -175,6 +176,9 @@ class LIEF_API Type {
 
   /// Return the scope in which this type is defined
   std::unique_ptr<Scope> scope() const;
+
+  /// Generates a C/C++ definition for this type
+  std::string to_decl(const DeclOpt& opt = DeclOpt()) const;
 
   template<class T>
   const T* as() const {

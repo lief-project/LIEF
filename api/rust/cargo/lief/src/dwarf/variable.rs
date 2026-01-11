@@ -3,7 +3,7 @@ use lief_ffi as ffi;
 use super::Type;
 use crate::common::into_optional;
 use crate::common::FromFFI;
-use crate::DebugLocation;
+use crate::{DebugLocation, DeclOpt};
 use crate::{declare_fwd_iterator, to_result, Error};
 use std::marker::PhantomData;
 use crate::dwarf::Scope;
@@ -89,6 +89,16 @@ impl Variable<'_> {
     /// Description (`DW_AT_description`) of the variable or an empty string
     pub fn description(&self) -> String {
         self.ptr.description().to_string()
+    }
+
+    /// Generates a C/C++ definition for this variable
+    pub fn to_decl(&self) -> String {
+        self.ptr.to_decl().to_string()
+    }
+
+    /// Generates a C/C++ definition for this variable with the given configuration
+    pub fn to_decl_with_opt(&self, opt: &DeclOpt) -> String {
+        self.ptr.to_decl_with_opt(&opt.to_ffi()).to_string()
     }
 }
 

@@ -19,6 +19,7 @@
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/error.hpp"
 #include "LIEF/rust/debug_location.hpp"
+#include "LIEF/rust/DebugDeclOpt.hpp"
 
 class DWARF_Variable : private Mirror<LIEF::dwarf::Variable> {
   public:
@@ -58,5 +59,13 @@ class DWARF_Variable : private Mirror<LIEF::dwarf::Variable> {
 
   auto description() const {
     return get().description();
+  }
+
+  auto to_decl() const {
+    return get().to_decl();
+  }
+
+  auto to_decl_with_opt(const LIEF_DeclOpt& opt) const {
+    return get().to_decl(opt.conf());
   }
 };

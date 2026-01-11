@@ -18,6 +18,7 @@
 #include "LIEF/rust/DWARF/Scope.hpp"
 #include "LIEF/rust/error.hpp"
 #include "LIEF/rust/debug_location.hpp"
+#include "LIEF/rust/DebugDeclOpt.hpp"
 
 class DWARF_Type : public Mirror<LIEF::dwarf::Type> {
   public:
@@ -42,5 +43,13 @@ class DWARF_Type : public Mirror<LIEF::dwarf::Type> {
 
   auto scope() const {
     return details::try_unique<DWARF_Scope>(get().scope()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+
+  auto to_decl() const {
+    return get().to_decl();
+  }
+
+  auto to_decl_with_opt(const LIEF_DeclOpt& opt) const {
+    return get().to_decl(opt.conf());
   }
 };

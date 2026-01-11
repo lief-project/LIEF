@@ -92,6 +92,11 @@ void create<dw::Variable>(nb::module_& m) {
       Description (``DW_AT_description``) of the variable or an empty string.
       )doc"_doc
     )
+
+    .def("to_decl", &dw::Variable::to_decl,
+      "Generates a C/C++ definition for this variable"_doc,
+      "opt"_a = DeclOpt()
+    )
   ;
 }
 

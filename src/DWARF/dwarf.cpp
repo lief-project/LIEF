@@ -154,6 +154,10 @@ std::string Variable::description() const {
   return "";
 }
 
+std::string Variable::to_decl(const DeclOpt& /*opt*/) const {
+  return "";
+}
+
 Variable::~Variable() = default;
 
 Variable::Iterator::Iterator(std::unique_ptr<details::VariableIt>) :
@@ -286,6 +290,10 @@ Function::lexical_blocks_it Function::lexical_blocks() const {
 }
 
 std::string Function::description() const {
+  return "";
+}
+
+std::string Function::to_decl(const DeclOpt& /*opt*/) const {
   return "";
 }
 
@@ -494,6 +502,10 @@ result<uint64_t> Type::size() const {
 
 debug_location_t Type::location() const {
   return {};
+}
+
+std::string Type::to_decl(const DeclOpt& /*opt*/) const {
+  return "";
 }
 
 Type::Type(std::unique_ptr<details::Type> impl) :

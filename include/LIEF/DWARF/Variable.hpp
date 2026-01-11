@@ -137,6 +137,9 @@ class LIEF_API Variable {
   /// Description (`DW_AT_description`) of the variable or an empty string
   std::string description() const;
 
+  /// Generates a C/C++ definition for this variable
+  std::string to_decl(const DeclOpt& opt = DeclOpt()) const;
+
   ~Variable();
   private:
   std::unique_ptr<details::Variable> impl_;

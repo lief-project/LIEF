@@ -14,6 +14,7 @@
  */
 #pragma once
 #include "LIEF/PDB/Type.hpp"
+#include "LIEF/rust/DebugDeclOpt.hpp"
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/helpers.hpp"
 #include "LIEF/rust/optional.hpp"
@@ -31,5 +32,13 @@ class PDB_Type : public Mirror<LIEF::pdb::Type> {
 
   uint64_t size(uint32_t& is_set) const {
     return details::make_optional(get().size(), is_set);
+  }
+
+  auto to_decl() const {
+    return get().to_decl();
+  }
+
+  auto to_decl_with_opt(const LIEF_DeclOpt& opt) const {
+    return get().to_decl(opt.conf());
   }
 };

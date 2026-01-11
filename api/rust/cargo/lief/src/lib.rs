@@ -98,6 +98,8 @@ mod common;
 
 mod debug_location;
 
+mod decl_opt;
+
 #[doc(inline)]
 pub use binary::Binary;
 
@@ -115,6 +117,9 @@ pub use range::Range;
 
 #[doc(inline)]
 pub use debug_location::DebugLocation;
+
+#[doc(inline)]
+pub use decl_opt::DeclOpt;
 
 pub struct Version {
     pub major: u64,

@@ -179,6 +179,9 @@ class LIEF_API Function {
   /// Description (`DW_AT_description`) of this function or an empty string
   std::string description() const;
 
+  /// Generates a C/C++ definition for this function
+  std::string to_decl(const DeclOpt& opt = DeclOpt()) const;
+
   ~Function();
   private:
   std::unique_ptr<details::Function> impl_;

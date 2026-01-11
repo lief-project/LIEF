@@ -118,6 +118,8 @@ class Type:
     @property
     def scope(self) -> Optional[Scope]: ...
 
+    def to_decl(self, opt: lief.DeclOpt = ...) -> str: ...
+
 class Variable:
     @property
     def name(self) -> str: ...
@@ -148,6 +150,8 @@ class Variable:
 
     @property
     def description(self) -> str: ...
+
+    def to_decl(self, opt: lief.DeclOpt = ...) -> str: ...
 
 class Function:
     @property
@@ -197,6 +201,8 @@ class Function:
 
     @property
     def description(self) -> str: ...
+
+    def to_decl(self, opt: lief.DeclOpt = ...) -> str: ...
 
 class Parameter:
     class Location:

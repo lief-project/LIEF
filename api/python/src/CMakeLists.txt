@@ -10,6 +10,7 @@ target_sources(pyLIEF PRIVATE
   pyutils.cpp
   pyParser.cpp
   pyWriteStream.cpp
+  pyDebugDeclOpt.cpp
 )
 
 add_subdirectory(typing)

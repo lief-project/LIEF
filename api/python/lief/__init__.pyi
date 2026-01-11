@@ -801,6 +801,19 @@ class DebugInfo:
 
     def find_function_address(self, name: str) -> int | None: ...
 
+class DeclOpt:
+    def __init__(self) -> None: ...
+
+    indentation: int
+
+    is_cpp: bool
+
+    show_extended_annotations: bool
+
+    include_types: bool
+
+    desugar: bool
+
 def is_pdb(file: Union[str | os.PathLike]) -> bool: ...
 
 def is_shared_cache(file: Union[str | os.PathLike]) -> bool: ...

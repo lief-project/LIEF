@@ -35,6 +35,7 @@
 #include <LIEF/logging.hpp>
 #include <LIEF/platforms.hpp>
 #include <LIEF/debug_loc.hpp>
+#include <LIEF/DebugDeclOpt.hpp>
 
 
 #endif

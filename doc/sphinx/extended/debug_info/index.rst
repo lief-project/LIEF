@@ -19,6 +19,11 @@ debug_location_t
 
 .. doxygenstruct:: LIEF::debug_location_t
 
+DeclOpt
+*******
+
+.. doxygenstruct:: LIEF::DeclOpt
+
 ----
 
 :fa:`brands fa-python` Python
@@ -36,6 +41,11 @@ debug_location_t
 
 .. autoclass:: lief.debug_location_t
 
+DeclOpt
+*******
+
+.. autoclass:: lief.DeclOpt
+
 ----
 
 :fa:`brands fa-rust` Rust
@@ -44,4 +54,6 @@ debug_location_t
 - :rust:trait:`lief::generic::DebugInfo`
 
 - :rust:struct:`lief::DebugLocation`
+
+- :rust:struct:`lief::DeclOpt`
 

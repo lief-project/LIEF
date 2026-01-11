@@ -56,6 +56,11 @@ void create<pdb::Type>(nb::module_& m) {
       applied to this type.
       )doc"_doc
     )
+
+    .def("to_decl", &pdb::Type::to_decl,
+      "Generates a C/C++ definition for this type"_doc,
+      "opt"_a = DeclOpt()
+    )
   ;
 
   create<pdb::types::Simple>(types);

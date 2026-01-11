@@ -8,6 +8,7 @@ use crate::debug_location::DebugLocation;
 use crate::dwarf::Scope;
 use crate::common::into_optional;
 use crate::declare_fwd_iterator;
+use crate::DeclOpt;
 
 pub mod classlike;
 pub mod pointer;
@@ -488,6 +489,16 @@ pub trait DwarfType {
     /// The scope in which this function is defined
     fn scope(&self) -> Option<Scope<'_>> {
         into_optional(self.get_base().scope())
+    }
+
+    /// Generates a C/C++ definition for this type
+    fn to_decl(&self) -> String {
+        self.get_base().to_decl().to_string()
+    }
+
+    /// Generates a C/C++ definition for this type with the given configuration
+    fn to_decl_with_opt(&self, opt: &DeclOpt) -> String {
+        self.get_base().to_decl_with_opt(&opt.to_ffi()).to_string()
     }
 }
 

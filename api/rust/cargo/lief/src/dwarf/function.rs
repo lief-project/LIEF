@@ -6,7 +6,7 @@ use super::{Scope, Type, Parameters};
 use crate::common::{into_optional, into_ranges, FromFFI};
 use crate::declare_fwd_iterator;
 use crate::to_result;
-use crate::DebugLocation;
+use crate::{DebugLocation, DeclOpt};
 use crate::Error;
 use crate::Range;
 use crate::assembly;
@@ -125,6 +125,16 @@ impl Function<'_> {
     /// Iterator over the [`crate::dwarf::LexicalBlock`] owned by this function
     pub fn lexical_blocks(&self) -> LexicalBlocks<'_> {
         LexicalBlocks::new(self.ptr.lexical_blocks())
+    }
+
+    /// Generates a C/C++ definition for this function
+    pub fn to_decl(&self) -> String {
+        self.ptr.to_decl().to_string()
+    }
+
+    /// Generates a C/C++ definition for this function with the given configuration
+    pub fn to_decl_with_opt(&self, opt: &DeclOpt) -> String {
+        self.ptr.to_decl_with_opt(&opt.to_ffi()).to_string()
     }
 }
 

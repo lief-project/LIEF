@@ -3,7 +3,7 @@ use lief_ffi as ffi;
 use crate::{common::FromFFI, to_opt_trait, to_opt_trait_conv};
 
 use std::marker::PhantomData;
-use crate::declare_fwd_iterator;
+use crate::{declare_fwd_iterator, DeclOpt};
 
 pub mod simple;
 pub mod array;
@@ -210,6 +210,16 @@ pub trait PdbType {
             self.get_base(),
             |e: cxx::UniquePtr<cxx::String>| e.to_string()
         );
+    }
+
+    /// Generates a C/C++ definition for this type
+    fn to_decl(&self) -> String {
+        self.get_base().to_decl().to_string()
+    }
+
+    /// Generates a C/C++ definition for this type with the given configuration
+    fn to_decl_with_opt(&self, opt: &DeclOpt) -> String {
+        self.get_base().to_decl_with_opt(&opt.to_ffi()).to_string()
     }
 }
 
