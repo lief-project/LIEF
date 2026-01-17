@@ -23,12 +23,13 @@
 #include <vector>
 #include <array>
 
+#include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
 #include "LIEF/optional.hpp"
 #include "LIEF/endianness_support.hpp"
 
 namespace LIEF {
-class vector_iostream {
+class LIEF_API vector_iostream {
   public:
   static size_t uleb128_size(uint64_t value);
   static size_t sleb128_size(int64_t value);
