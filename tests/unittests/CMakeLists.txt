@@ -1,7 +1,7 @@
 include(FetchContent)
 
-set(CATCH_VERSION 3.5.4)
-set(CATCH_SHA256 SHA256=190a236fe0772ac4f5eebfdebfc18f92eeecfd270c55a1e5095ae4f10be2343f)
+set(CATCH_VERSION 3.12.0)
+set(CATCH_SHA256 SHA256=e1e1592dbc971d9196b379aef1882f7d427ceaf0ecf6cae40b575d580dd83648)
 set(CATCH_URL "${THIRD_PARTY_DIRECTORY}/Catch2-${CATCH_VERSION}.zip" CACHE STRING "URL to the Catch")
 
 FetchContent_Declare(Catch2
