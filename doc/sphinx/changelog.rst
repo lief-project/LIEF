@@ -33,6 +33,7 @@
 :Dependencies:
 
   * Update nanobind to version ``v2.10.x``
+  * Update tl-expected to version ``1.3.1``
 
 :Python:
 
