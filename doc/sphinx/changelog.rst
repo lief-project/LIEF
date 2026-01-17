@@ -35,6 +35,7 @@
   * Update nanobind to version ``v2.10.x``
   * Update tl-expected to version ``1.3.1``
   * Update utfcpp to version ``4.0.9``
+  * Update frozen to commit ``61dce5a``
 
 :Python:
 
