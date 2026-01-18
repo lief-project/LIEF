@@ -351,10 +351,12 @@ ok_error_t Builder::build_tls() {
         binary_->relocation_dir()->size(reloc_size);
       }
 
-      binary_->fill_address(tls_callbacks_start, original_callback_size, 0);
+      binary_->fill_address(tls_callbacks_start, original_callback_size, 0,
+                            Binary::VA_TYPES::RVA);
       tls->addressof_callbacks(0);
     } else {
-      binary_->patch_address(tls_callbacks_start, tls_data_.callbacks);
+      binary_->patch_address(tls_callbacks_start, tls_data_.callbacks,
+                             Binary::VA_TYPES::VA);
     }
   }
 
@@ -374,7 +376,7 @@ ok_error_t Builder::build_tls() {
       LIEF_WARN("TLS Header is larger than the original. original=0x{:08x}, "
                 "new=0x{:08x}", dir->size(), tls_data_.header.size());
     }
-    binary_->patch_address(dir->RVA(), tls_data_.header);
+    binary_->patch_address(dir->RVA(), tls_data_.header, Binary::VA_TYPES::RVA);
   }
 
   return ok();
@@ -629,7 +631,8 @@ ok_error_t Builder::build_imports() {
         }
 
         if (!is_last && has_existing_iat) {
-          binary_->patch_address(IAT_pos, entry.iat_value(), sizeof(uint__));
+          binary_->patch_address(IAT_pos, entry.iat_value(), sizeof(uint__),
+                                 Binary::VA_TYPES::RVA);
         }
         IAT_pos += sizeof(uint__);
       }
@@ -835,7 +838,8 @@ ok_error_t Builder::build_load_config() {
 
   if (lconf == nullptr) {
     if (lconf_dir->RVA() > 0 && lconf_dir->size() > 0) {
-      binary_->fill_address(lconf_dir->RVA(), lconf_dir->size());
+      binary_->fill_address(lconf_dir->RVA(), lconf_dir->size(), /*value=*/0,
+                            Binary::VA_TYPES::RVA);
     }
     lconf_dir->RVA(0);
     lconf_dir->size(0);

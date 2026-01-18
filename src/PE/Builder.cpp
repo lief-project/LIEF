@@ -372,7 +372,7 @@ ok_error_t Builder::build_relocations() {
     LIEF_DEBUG("BASE_RELOCATION_TABLE -0x{:06x}",
                original_size - reloc_data_.size());
 
-    binary_->patch_address(reloc_dir->RVA(), reloc_data_);
+    binary_->patch_address(reloc_dir->RVA(), reloc_data_, Binary::VA_TYPES::RVA);
   }
 
   return ok();
@@ -391,7 +391,8 @@ ok_error_t Builder::build_resources() {
       return ok();
     }
 
-    binary_->fill_address(rsrc_dir->RVA(), rsrc_dir->size());
+    binary_->fill_address(rsrc_dir->RVA(), rsrc_dir->size(), /*value=*/0,
+                          Binary::VA_TYPES::RVA);
     rsrc_dir->RVA(0);
     rsrc_dir->size(0);
     return ok();
@@ -718,7 +719,8 @@ ok_error_t Builder::build_debug_info() {
 
   if (binary_->debug_.empty()) {
     if (debug_dir->RVA() > 0 && debug_dir->size() > 0) {
-      binary_->fill_address(debug_dir->RVA(), debug_dir->size());
+      binary_->fill_address(debug_dir->RVA(), debug_dir->size(),
+                            /*value=*/0, Binary::VA_TYPES::RVA);
     }
     debug_dir->RVA(0);
     debug_dir->size(0);
@@ -1073,7 +1075,8 @@ ok_error_t Builder::build_exports() {
 
   if (exp == nullptr) {
     if (exp_dir->RVA() > 0 && exp_dir->size() > 0) {
-      binary_->fill_address(exp_dir->RVA(), exp_dir->size());
+      binary_->fill_address(exp_dir->RVA(), exp_dir->size(),
+                            /*value=*/0, Binary::VA_TYPES::RVA);
     }
     exp_dir->RVA(0);
     exp_dir->size(0);
