@@ -131,12 +131,12 @@ void Binary::remove_tls() {
   uint32_t tls_cbk_end = 0;
 
   // Clear the TLS header with 0
-  fill_address(tls_dir->RVA(), tls_dir->size(), 0);
+  fill_address(tls_dir->RVA(), tls_dir->size(), /*value=*/0, VA_TYPES::RVA);
 
   // Clear the callbacks
   if (uint64_t addr = tls_->addressof_callbacks(); addr > 0) {
     const size_t cbk_size = tls_->callbacks().size() * ptr_size;
-    fill_address(addr, cbk_size, 0);
+    fill_address(addr, cbk_size, /*value=*/0, Binary::VA_TYPES::VA);
     tls_cbk_start = addr - imagebase;
     tls_cbk_end = tls_cbk_start + cbk_size;
   }
@@ -144,7 +144,7 @@ void Binary::remove_tls() {
   // Clear the template data
   if (const auto& data = tls_->addressof_raw_data(); data.first > 0) {
     const size_t size = data.second - data.first;
-    fill_address(data.first, size, 0);
+    fill_address(data.first, size, 0, Binary::VA_TYPES::VA);
   }
 
   // Remove relocations associated with the TLS structure
@@ -1309,7 +1309,8 @@ bool Binary::clear_debug() {
   }
 
   debug_.clear();
-  this->fill_address(dbg_dir->RVA(), dbg_dir->size());
+  fill_address(dbg_dir->RVA(), dbg_dir->size(), /*value=*/0,
+               Binary::VA_TYPES::RVA);
   dbg_dir->RVA(0);
   dbg_dir->size(0);
   return true;

@@ -206,3 +206,26 @@ def test_code_injection(tmp_path: Path):
             print("stdout:", stdout)
             assert proc.returncode == 0
             assert "Hello World" in stdout
+
+@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+def test_issue_1284(tmp_path: Path):
+    input_path = Path(get_sample("private/PE/ig2_AddOn.exe"))
+    pe = lief.PE.parse(input_path)
+    pe.relocations[0].virtual_address = 0xdeadc0de
+
+    config = lief.PE.Builder.config_t()
+    config.resources = False
+    config.debug = False
+    config.tls = False
+    config.load_configuration = False
+
+    config.dos_stub = True
+    config.overlay = True
+    config.relocations = True
+
+    out_path = tmp_path / input_path.name
+    pe.write(out_path, config)
+
+    new_pe = lief.PE.parse(out_path)
+    assert new_pe.relocations[0].virtual_address == 0xdeadc0de
+
