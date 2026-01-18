@@ -371,7 +371,7 @@ result<Note::TYPE> Note::convert_type(Header::FILE_TYPE ftype, uint32_t type,
   }
 
   if (norm_name == NT_QNX) {
-    if (auto it = QNX_TYPES.find(type); it != CRASHPAD_TYPES.end()) {
+    if (auto it = QNX_TYPES.find(type); it != QNX_TYPES.end()) {
       return it->second;
     }
     return make_error_code(lief_errors::not_found);
