@@ -3,6 +3,7 @@ from pathlib import Path
 import os
 import sys
 import sysconfig
+import platform
 from functools import lru_cache
 from typing import Optional, Union, List
 
@@ -117,6 +118,10 @@ def _get_hooked_config(is_editable: bool) -> Optional[dict[str, Union[str, List[
 
 def _get_build_requirements(is_editable: bool) -> List[str]:
     build_req_file = BINDING_DIR / "build-requirements.txt"
+    if not build_req_file.is_file() and not (BINDING_DIR / "src").is_dir():
+        # By convention this is an mocked sdist
+        print(f"LIEF does not provide precompiled wheels for '{sys.platform} - {platform.machine()}'", file=sys.stderr)
+        sys.exit(1)
     reqs = [line for line in build_req_file.read_text().splitlines() if not line.startswith("#")]
     return reqs
 
@@ -168,4 +173,16 @@ def build_sdist(
     sdist_directory: str,
     config_settings: Optional[dict[str, Union[str, List[str]]]] = None,
 ) -> str:
-    raise RuntimeError("LIEF does not support Python source distribution ('sdist')")
+    from scikit_build_core.build.sdist import build_sdist as _impl
+    config_settings = _get_hooked_config(is_editable=False)
+    config_settings['sdist.exclude'].extend([
+        '*'
+    ])
+    config_settings['sdist.include'] = [
+        'pyproject.toml',
+        'backend/setup.py',
+        'backend/versioning.py',
+        'backend/config.py',
+        'backend/dynamic_provider.py',
+    ]
+    return _impl(sdist_directory, config_settings)
