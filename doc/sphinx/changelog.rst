@@ -30,10 +30,13 @@
   * Add |lief-coff-section-coff_string| for accessing the full section name when
     this name does not fit in 8 bytes.
 
-
 :Dependencies:
 
   * Update nanobind to version ``v2.10.x``
+
+:Python:
+
+  * Python 3.8 is no longer supported
 
 0.17.2 - January 3rd, 2026
 ---------------------------
