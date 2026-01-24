@@ -29,7 +29,7 @@ jobject Type::jni_get_pointer_to(JNIEnv* env, jobject thiz) {
 }
 
 int Type::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make(
       "getPointerTo",
       "()Llief/dwarf/editor/PointerType;",

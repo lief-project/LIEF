@@ -62,7 +62,7 @@ jobject Editor::jni_create(JNIEnv* env, jclass clazz, jobject fmt, jobject arch)
 }
 
 int Editor::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make(
       "forBinary",
       "(Llief/generic/Binary;)Llief/dwarf/Editor;",

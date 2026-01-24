@@ -18,13 +18,13 @@
 namespace lief_jni {
 
 template<class T>
-constexpr JNINativeMethod make(const char* name, const char* proto, T impl) {
+JNINativeMethod make(const char* name, const char* proto, T impl) {
   return {(char*)name, (char*)proto, (void*)impl};
 }
 
 
 template<class T>
-constexpr JNINativeMethod make_destroy(T impl) {
+JNINativeMethod make_destroy(T impl) {
   return {(char*)"destroy", (char*)"()V", (void*)impl};
 }
 

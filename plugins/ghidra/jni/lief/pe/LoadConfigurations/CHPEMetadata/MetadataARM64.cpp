@@ -21,7 +21,7 @@
 namespace lief_jni::pe {
 
 int CHPEMetadataARM64::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make("getCodeMap", "()I", jni_get_code_map),
     make("getCodeMapCount", "()I", jni_get_code_map_count),
     make("getCodeRangesToEntrypoints", "()I", jni_get_code_ranges_to_entrypoints),

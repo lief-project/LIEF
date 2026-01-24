@@ -23,7 +23,7 @@
 namespace lief_jni::generic {
 
 int Binary::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make(
       "getImageBase",
       "()J",

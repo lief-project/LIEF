@@ -21,7 +21,7 @@
 namespace lief_jni::dwarf::editor {
 
 int Variable::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make(
       "setAddr",
       "(J)Llief/dwarf/editor/Variable;",

@@ -154,7 +154,7 @@ jobject CompilationUnit::jni_create_array(
 }
 
 int CompilationUnit::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make(
       "setProducer",
       "(Ljava/lang/String;)V",

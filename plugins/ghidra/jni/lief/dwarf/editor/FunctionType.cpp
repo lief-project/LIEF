@@ -21,7 +21,7 @@
 namespace lief_jni::dwarf::editor {
 
 int FunctionType::Parameter::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make_destroy(
       (void*)&jni_destroy
     ),
@@ -38,7 +38,7 @@ int FunctionType::Parameter::register_natives(JNIEnv* env) {
 }
 
 int FunctionType::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make(
       "setReturnType",
       "(Llief/dwarf/editor/Type;)Llief/dwarf/editor/FunctionType;",

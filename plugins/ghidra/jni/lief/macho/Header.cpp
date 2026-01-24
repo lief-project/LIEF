@@ -21,7 +21,7 @@
 namespace lief_jni::macho {
 
 int Header::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make(
       "getCpuType",
       "()Llief/macho/Header$CpuType;",

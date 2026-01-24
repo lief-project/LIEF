@@ -21,7 +21,7 @@
 namespace lief_jni::pe::aarch64 {
 
 int UnpackedFunction::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make(
       "isExtended",
       "()Z",

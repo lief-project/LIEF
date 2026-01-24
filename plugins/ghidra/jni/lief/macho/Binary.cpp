@@ -21,7 +21,7 @@
 namespace lief_jni::macho {
 
 int Binary::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make(
       "parse",
       "(Ljava/lang/String;)Llief/macho/Binary;",

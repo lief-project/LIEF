@@ -21,7 +21,7 @@
 namespace lief_jni::pe {
 
 int DataDirectory::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make(
       "getRVA",
       "()I",

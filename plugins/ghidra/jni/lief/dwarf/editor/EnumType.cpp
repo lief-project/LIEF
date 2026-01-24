@@ -21,7 +21,7 @@
 namespace lief_jni::dwarf::editor {
 
 int EnumType::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make(
       "setSize",
       "(J)Llief/dwarf/editor/EnumType;",
@@ -50,7 +50,7 @@ int EnumType::register_natives(JNIEnv* env) {
 }
 
 int EnumType::Value::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make_destroy(
       &jni_destroy
     ),

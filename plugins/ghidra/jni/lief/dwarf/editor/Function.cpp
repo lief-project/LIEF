@@ -41,7 +41,7 @@ jobject Function::jni_set_ranges(JNIEnv* env, jobject thiz, jobject ranges) {
 
 
 int Function::Parameter::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make_destroy(
       &jni_destroy
     ),
@@ -75,7 +75,7 @@ jobject Function::LexicalBlock::jni_add_block_from_range(
 }
 
 int Function::LexicalBlock::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make(
       "addDescription",
       "(Ljava/lang/String;)Llief/dwarf/editor/Function$LexicalBlock;",
@@ -112,7 +112,7 @@ int Function::LexicalBlock::register_natives(JNIEnv* env) {
 }
 
 int Function::Label::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make_destroy(
       &jni_destroy
     ),
@@ -130,7 +130,7 @@ int Function::Label::register_natives(JNIEnv* env) {
 
 
 int Function::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make(
       "setAddress",
       "(J)Llief/dwarf/editor/Function;",

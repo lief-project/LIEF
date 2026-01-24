@@ -22,7 +22,7 @@
 namespace lief_jni::elf {
 
 int Binary::RelocationsIterator::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make(
       "hasNext",
       "()Z",
@@ -50,7 +50,7 @@ int Binary::RelocationsIterator::register_natives(JNIEnv* env) {
 
 
 int Binary::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make(
       "parse",
       "(Ljava/lang/String;)Llief/elf/Binary;",

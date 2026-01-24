@@ -21,7 +21,7 @@
 namespace lief_jni::macho {
 
 int FatBinary::Iterator::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make(
       "hasNext",
       "()Z",
@@ -49,7 +49,7 @@ int FatBinary::Iterator::register_natives(JNIEnv* env) {
 
 
 int FatBinary::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make(
       "parse",
       "(Ljava/lang/String;)Llief/macho/FatBinary;",

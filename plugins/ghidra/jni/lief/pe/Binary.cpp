@@ -20,7 +20,7 @@
 
 namespace lief_jni::pe {
 int Binary::ExceptionsIterator::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make(
       "hasNext",
       "()Z",
@@ -47,7 +47,7 @@ int Binary::ExceptionsIterator::register_natives(JNIEnv* env) {
 }
 
 int Binary::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make(
       "parse",
       "(Ljava/lang/String;)Llief/pe/Binary;",

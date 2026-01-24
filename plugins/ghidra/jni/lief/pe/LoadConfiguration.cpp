@@ -23,7 +23,7 @@
 namespace lief_jni::pe {
 
 int LoadConfiguration::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make(
       "getSize",
       "()I",

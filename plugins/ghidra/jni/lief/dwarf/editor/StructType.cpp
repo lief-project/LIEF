@@ -21,7 +21,7 @@
 namespace lief_jni::dwarf::editor {
 
 int StructType::Member::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make_destroy(
       &jni_destroy
     ),
@@ -39,7 +39,7 @@ int StructType::Member::register_natives(JNIEnv* env) {
 
 
 int StructType::register_natives(JNIEnv* env) {
-  static constexpr std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS {
     make(
       "setSize",
       "(I)Llief/dwarf/editor/StructType;",
