@@ -41,7 +41,7 @@ class LIEF_API FatBinary {
 
   public:
 
-  /// Internal containter used to store Binary objects within a Fat Mach-O
+  /// Internal container used to store Binary objects within a Fat Mach-O
   using binaries_t = std::vector<std::unique_ptr<Binary>>;
 
   /// Iterator that outputs Binary&
@@ -80,7 +80,11 @@ class LIEF_API FatBinary {
     return it_const_binaries(binaries_).end();
   }
 
-  void release_all_binaries();
+  void release_all_binaries() {
+    for (auto& bin : binaries_) {
+      bin.release(); // NOLINT(bugprone-unused-return-value)
+    }
+  }
 
   /// Get a pointer to the last MachO::Binary object presents in this Fat Binary.
   /// It returns a nullptr if no binary are present.
@@ -88,14 +92,31 @@ class LIEF_API FatBinary {
 
   /// Get a pointer to the MachO::Binary specified by the ``index``.
   /// It returns a nullptr if the binary does not exist at the given index.
-  Binary*       at(size_t index);
-  const Binary* at(size_t index) const;
+  Binary* at(size_t index) {
+    return const_cast<Binary*>(static_cast<const FatBinary*>(this)->at(index));
+  }
 
-  Binary*       back();
-  const Binary* back() const;
+  const Binary* at(size_t index) const {
+    if (index >= size()) {
+      return nullptr;
+    }
+    return binaries_[index].get();
+  }
 
-  Binary*       front();
-  const Binary* front() const;
+  Binary* back() {
+    return const_cast<Binary*>(static_cast<const FatBinary*>(this)->back());
+  }
+  const Binary* back() const {
+    return binaries_.empty() ? nullptr : binaries_.back().get();
+  }
+
+  Binary* front() {
+    return const_cast<Binary*>(static_cast<const FatBinary*>(this)->front());
+  }
+
+  const Binary* front() const {
+    return binaries_.empty() ? nullptr : binaries_.front().get();
+  }
 
   Binary* operator[](size_t index) {
     return at(index);

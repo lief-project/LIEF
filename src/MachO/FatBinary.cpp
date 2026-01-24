@@ -38,40 +38,6 @@ std::unique_ptr<Binary> FatBinary::pop_back() {
   return last;
 }
 
-Binary* FatBinary::at(size_t index) {
-  return const_cast<Binary*>(static_cast<const FatBinary*>(this)->at(index));
-}
-
-const Binary* FatBinary::at(size_t index) const {
-  if (index >= size()) {
-    return nullptr;
-  }
-  return binaries_[index].get();
-}
-
-
-Binary* FatBinary::back() {
-  return const_cast<Binary*>(static_cast<const FatBinary*>(this)->back());
-}
-
-const Binary* FatBinary::back() const {
-  if (binaries_.empty()) {
-    return nullptr;
-  }
-  return binaries_.back().get();
-}
-
-Binary* FatBinary::front() {
-  return const_cast<Binary*>(static_cast<const FatBinary*>(this)->front());
-}
-
-const Binary* FatBinary::front() const {
-  if (binaries_.empty()) {
-    return nullptr;
-  }
-  return binaries_.front().get();
-}
-
 std::unique_ptr<Binary> FatBinary::take(Header::CPU_TYPE cpu) {
   auto it = std::find_if(std::begin(binaries_), std::end(binaries_),
       [cpu] (const std::unique_ptr<Binary>& bin) {
@@ -106,12 +72,6 @@ std::vector<uint8_t> FatBinary::raw() {
   std::vector<uint8_t> buffer;
   Builder::write(*this, buffer);
   return buffer;
-}
-
-void FatBinary::release_all_binaries() {
-  for (auto& bin : binaries_) {
-    bin.release(); // NOLINT(bugprone-unused-return-value)
-  }
 }
 
 std::ostream& operator<<(std::ostream& os, const FatBinary& fatbinary) {
