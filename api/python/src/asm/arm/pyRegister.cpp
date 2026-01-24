@@ -17,6 +17,7 @@ void create<LIEF::assembly::arm::REG>(nb::module_& m) {
   .value("FPSCR", LIEF::assembly::arm::REG::FPSCR)
   .value("FPSCR_NZCV", LIEF::assembly::arm::REG::FPSCR_NZCV)
   .value("FPSCR_NZCVQC", LIEF::assembly::arm::REG::FPSCR_NZCVQC)
+  .value("FPSCR_RM", LIEF::assembly::arm::REG::FPSCR_RM)
   .value("FPSID", LIEF::assembly::arm::REG::FPSID)
   .value("ITSTATE", LIEF::assembly::arm::REG::ITSTATE)
   .value("LR", LIEF::assembly::arm::REG::LR)

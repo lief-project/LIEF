@@ -134,7 +134,7 @@ def test_arm64_operands():
     assert isinstance(operands[0], lief.assembly.aarch64.operands.Register)
     assert operands[0].value == lief.assembly.aarch64.REG.X0
 
-    assert isinstance(operands[1], lief.assembly.aarch64.operands.PCRelative)
+    assert isinstance(operands[1], lief.assembly.aarch64.operands.Immediate)
     assert operands[1].value == 1
 
 

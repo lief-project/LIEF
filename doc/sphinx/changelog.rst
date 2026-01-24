@@ -38,6 +38,10 @@
   * Update frozen to commit ``61dce5a``
   * Update spdlog to version ``1.17.0``
 
+:Extended:
+
+  * Use LLVM ``22.x``
+
 :Python:
 
   * Python 3.8 is no longer supported
