@@ -3,6 +3,14 @@
 :fa:`solid fa-code-compare` Changelog
 =====================================
 
+0.17.3 - January 24th, 2026
+---------------------------
+
+:PE:
+
+  * Fix bug with resources. (:issue:`1281`)
+  * Fix VA/RVA confusion in the PE's builder (:issue:`1284`)
+
 0.17.2 - January 3rd, 2026
 ---------------------------
 
