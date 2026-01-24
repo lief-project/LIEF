@@ -22,8 +22,7 @@
     - |lief-dwarf-variable-description|
     - |lief-dwarf-lexical-block-description|
 
-  * Add support created nested |lief-dwarf-editor-Function-lexical-block|
-
+  * Add support to create nested |lief-dwarf-editor-Function-lexical-block|
 
 :COFF:
 
