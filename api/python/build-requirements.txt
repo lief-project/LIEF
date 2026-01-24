@@ -7,4 +7,4 @@ pydantic==2.12.5
 # Implicit from scikit-build-core
 pathspec==1.0.3
 build==1.4.0
-wheel==0.45.1
+wheel==0.46.2
