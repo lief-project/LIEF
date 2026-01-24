@@ -1,12 +1,10 @@
 from collections.abc import Sequence
 import enum
 import io
-import lief
-import lief.ELF
-import lief.MachO
-import lief.PE
 import os
 from typing import Iterator, Optional, Union, overload
+
+import lief
 
 from . import (
     ART as ART,

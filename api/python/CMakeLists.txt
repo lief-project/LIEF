@@ -23,8 +23,8 @@ if (LIEF_EXTERNAL_NANOBIND)
   find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
   find_package(nanobind REQUIRED)
 else()
-  set(NANOBIND_VERSION 2.8.0.r19.g617d5a0)
-  set(NANOBIND_SHA256 SHA256=dfe63078063cb49979517130664e74b373d8f6f981a5636e1ee0201877aa46ee)
+  set(NANOBIND_VERSION 2.10.2.r21.g838bbc5)
+  set(NANOBIND_SHA256 SHA256=b3c22710233d7d4688daf58781f898403ca04c3a7f7220e7fff492cd7e1c9886)
   set(NANOBIND_URL "${THIRD_PARTY_DIRECTORY}/nanobind-${NANOBIND_VERSION}.zip"
       CACHE STRING "URL to the Nanobind")
   FetchContent_Declare(nanobind

@@ -1,9 +1,10 @@
 from collections.abc import Callable, Sequence
 import enum
 import io
-import lief.PE
 import os
 from typing import Iterator, Optional, Union, overload
+
+import lief
 
 from . import (
     unwind_aarch64 as unwind_aarch64,

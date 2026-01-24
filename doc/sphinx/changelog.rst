@@ -31,6 +31,10 @@
     this name does not fit in 8 bytes.
 
 
+:Dependencies:
+
+  * Update nanobind to version ``v2.10.x``
+
 0.17.2 - January 3rd, 2026
 ---------------------------
 

@@ -1,10 +1,10 @@
 from collections.abc import Sequence
 import enum
 import io
-import lief.MachO
 import os
 from typing import Iterator, Optional, Union, overload
 
+import lief
 
 import lief
 import lief.objc
