@@ -4,7 +4,7 @@ import io
 import os
 from typing import Iterator, Optional, Union, overload
 
-import lief
+import lief.MachO
 
 import lief
 import lief.objc

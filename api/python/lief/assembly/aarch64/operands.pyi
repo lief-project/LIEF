@@ -1,7 +1,6 @@
 import enum
+import lief.assembly.aarch64
 from typing import Iterator, Optional, Union
-
-import lief
 
 import lief.assembly.aarch64
 
