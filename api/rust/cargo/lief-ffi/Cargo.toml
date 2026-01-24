@@ -11,7 +11,7 @@ cxx     = { version = "=1.0.117", features = [ "c++17" ] }
 autocxx = { git = "https://github.com/romainthomas/autocxx.git", branch = "0.26.0", version="0.26.0" }
 
 [build-dependencies]
-lief-build = { version="0.17.2", path = "../lief-build" }
+lief-build = { version="0.17.3", path = "../lief-build" }
 miette     = { version="=5.10", features = [ "fancy" ] }
 
 [features]
