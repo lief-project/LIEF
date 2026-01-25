@@ -35,4 +35,11 @@ class MachO_FatBinary : private Mirror<LIEF::MachO::FatBinary> {
     }
     return nullptr;
   }
+
+  std::unique_ptr<MachO_Binary> binary_from_arch(int32_t cpu) const {
+    if (auto* bin = get().get((LIEF::MachO::Header::CPU_TYPE)cpu)) {
+      return std::make_unique<MachO_Binary>(*bin);
+    }
+    return nullptr;
+  }
 };

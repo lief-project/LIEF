@@ -62,10 +62,18 @@ void create<FatBinary>(nb::module_& m) {
     .def("raw", &FatBinary::raw,
         "Build a Mach-O universal binary and return its bytes"_doc)
 
+    .def("get", nb::overload_cast<Header::CPU_TYPE>(&FatBinary::get),
+        "Gets the :class:`~.Binary` that matches the given architecture"_doc,
+        nb::rv_policy::reference_internal)
+
     .def("__len__", &FatBinary::size)
 
     .def("__getitem__",
         nb::overload_cast<size_t>(&FatBinary::operator[]),
+        nb::rv_policy::reference_internal)
+
+    .def("__getitem__",
+        nb::overload_cast<Header::CPU_TYPE>(&FatBinary::operator[]),
         nb::rv_policy::reference_internal)
 
     .def("__iter__",

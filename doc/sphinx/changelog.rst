@@ -22,12 +22,16 @@
     - |lief-dwarf-variable-description|
     - |lief-dwarf-lexical-block-description|
 
-  * Add support to create nested |lief-dwarf-editor-Function-lexical-block|
+  * Enabled the creation of nested |lief-dwarf-editor-Function-lexical-block|
 
 :COFF:
 
   * Add |lief-coff-section-coff_string| for accessing the full section name when
     this name does not fit in 8 bytes.
+
+:Mach-O:
+
+  * Introduced an API to select a specific Mach-O binary by architecture from a FAT binary (:pr:`1283`)
 
 :Dependencies:
 

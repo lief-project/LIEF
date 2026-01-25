@@ -34,7 +34,6 @@ class Binary;
 /// Class which represent a Mach-O (fat) binary
 /// This object is also used for representing Mach-O binaries that are **NOT FAT**
 class LIEF_API FatBinary {
-
   friend class LIEF::Parser;
   friend class Parser;
   friend class Builder;
@@ -141,6 +140,21 @@ class LIEF_API FatBinary {
 
   /// Reconstruct the Fat binary object and return his content as bytes
   std::vector<uint8_t> raw();
+
+  Binary* get(Header::CPU_TYPE cpu) {
+    return const_cast<Binary*>(static_cast<const FatBinary*>(this)->get(cpu));
+  }
+
+  /// Gets a pointer to the MachO::Binary that matches the given architecture
+  const Binary* get(Header::CPU_TYPE cpu) const;
+
+  Binary* operator[](Header::CPU_TYPE cpu) {
+    return get(cpu);
+  }
+
+  const Binary* operator[](Header::CPU_TYPE cpu) const {
+    return get(cpu);
+  }
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const FatBinary& fatbinary);
 

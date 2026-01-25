@@ -53,6 +53,19 @@ std::unique_ptr<Binary> FatBinary::take(Header::CPU_TYPE cpu) {
   return ret;
 }
 
+
+const Binary* FatBinary::get(Header::CPU_TYPE cpu) const {
+  auto it = std::find_if(binaries_.begin(), binaries_.end(),
+    [cpu] (const std::unique_ptr<Binary>& bin) {
+      return bin->header().cpu_type() == cpu;
+    }
+  );
+  if (it == binaries_.end()) {
+    return nullptr;
+  }
+  return it->get();
+}
+
 std::unique_ptr<Binary> FatBinary::take(size_t index) {
   if (index >= binaries_.size()) {
     return nullptr;

@@ -9,6 +9,7 @@ use lief::macho::binding_info::{self, AsGeneric};
 use lief::macho::commands::{Command, Commands};
 use lief::generic::Symbol;
 use lief::Binary;
+use lief::macho::header::CpuType;
 
 fn print_binding(binding: &binding_info::BindingInfo) {
     format!("{:?}", binding);
@@ -311,6 +312,8 @@ fn test_with(bin_name: &str) {
         for bin in fat.iter() {
             explore_macho(bin_name, &bin);
         }
+        fat.with_cpu(CpuType::ARM64);
+        fat.with_cpu(CpuType::HPPA);
     }
 
     // Test Read + Seek interface

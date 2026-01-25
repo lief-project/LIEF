@@ -173,6 +173,11 @@ def test_unwind():
 
 def test_build_version():
     binary = lief.MachO.parse(get_sample('MachO/FAT_MachO_arm-arm64-binary-helloworld.bin'))
+    assert binary is not None
+    assert binary[lief.MachO.Header.CPU_TYPE.ARM64] is not None
+    assert binary.get(lief.MachO.Header.CPU_TYPE.ARM) is not None
+    assert binary[lief.MachO.Header.CPU_TYPE.X86_64] is None
+
     target = binary[1]
 
     assert target.has_build_version
