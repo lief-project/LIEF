@@ -35,6 +35,15 @@ modify and abstract ELF, PE and MachO formats.
   * [**Ghidra**](https://lief.re/doc/latest/plugins/ghidra/index.html)
   * [**BinaryNinja**](https://lief.re/doc/latest/plugins/binaryninja/index.html)
 
+# Sponsors
+
+<br />
+<p align="center">
+<a href="https://quansight.com/" target="_blank">
+<img width="300px" src="https://lief.re/quansight_logo.jpg"/><br />
+</a>
+</p>
+
 # Content
 
 - [About](#about)
