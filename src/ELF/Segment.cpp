@@ -232,15 +232,15 @@ T Segment::get_content_value(size_t offset) const {
     const std::vector<uint8_t>& binary_content = datahandler_->content();
     DataHandler::Node& node = res.value();
     // Check for overflow in offset calculation
-    uint64_t total_offset = static_cast<uint64_t>(node.offset()) + static_cast<uint64_t>(offset);
+    uint64_t absolute_offset = static_cast<uint64_t>(node.offset()) + static_cast<uint64_t>(offset);
     // Prevent overflow in final bounds check
-    if (binary_content.size() < sizeof(T) || total_offset > binary_content.size() - sizeof(T)) {
+    if (binary_content.size() < sizeof(T) || absolute_offset > binary_content.size() - sizeof(T)) {
       LIEF_WARN("Out of bounds read at offset {} (node offset: {}) in binary content (size: {})",
                 offset, node.offset(), binary_content.size());
       memset(&ret, 0, sizeof(T));
       return ret;
     }
-    memcpy(&ret, binary_content.data() + total_offset, sizeof(T));
+    memcpy(&ret, binary_content.data() + absolute_offset, sizeof(T));
   }
   return ret;
 }

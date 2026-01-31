@@ -119,12 +119,12 @@ std::unique_ptr<ResourceNode> TreeParser::parse_resource_node(
     if ((id & 0x80000000) != 0u) {
       uint32_t offset        = id & (~ 0x80000000);
       // Check for overflow in string_offset calculation
-      uint64_t string_offset_calc = static_cast<uint64_t>(base_offset) + static_cast<uint64_t>(offset);
-      if (string_offset_calc > UINT32_MAX) {
+      uint64_t calculated_string_offset = static_cast<uint64_t>(base_offset) + static_cast<uint64_t>(offset);
+      if (calculated_string_offset > UINT32_MAX) {
         LIEF_WARN("Resource name offset overflow at base_offset=0x{:x}, offset=0x{:x}",
                   base_offset, offset);
       } else {
-        uint32_t string_offset = static_cast<uint32_t>(string_offset_calc);
+        uint32_t string_offset = static_cast<uint32_t>(calculated_string_offset);
         LIEF_DEBUG("base_offset=0x{:04x}, string_offset=0x{:04x}",
                    base_offset, string_offset);
 

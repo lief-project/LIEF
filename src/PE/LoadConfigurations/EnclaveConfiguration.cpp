@@ -182,13 +182,13 @@ std::unique_ptr<EnclaveConfiguration>
 
   for (size_t i = 0; i < *NumberOfImports; ++i) {
     // Check for overflow in offset calculation
-    uint64_t offset_calc = static_cast<uint64_t>(base_offset) + 
-                           static_cast<uint64_t>(i) * static_cast<uint64_t>(*ImportEntrySize);
-    if (offset_calc > UINT32_MAX) {
+    uint64_t calculated_offset = static_cast<uint64_t>(base_offset) + 
+                                  static_cast<uint64_t>(i) * static_cast<uint64_t>(*ImportEntrySize);
+    if (calculated_offset > UINT32_MAX) {
       LIEF_WARN("Offset overflow in enclave import at index {}", i);
       break;
     }
-    uint32_t offset = static_cast<uint32_t>(offset_calc);
+    uint32_t offset = static_cast<uint32_t>(calculated_offset);
     ScopedStream scope(ctx.stream(), offset);
     auto import = EnclaveImport::parse(ctx, *scope);
     if (!import) {
