@@ -326,6 +326,8 @@ class OptionalHeader(lief.Object):
 
         WINDOWS_BOOT_APPLICATION = 16
 
+        XBOX_CODE_CATALOG = 17
+
     class DLL_CHARACTERISTICS(enum.IntFlag):
         def __repr__(self, /): ...
 

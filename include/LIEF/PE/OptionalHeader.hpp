@@ -72,7 +72,8 @@ class LIEF_API OptionalHeader : public Object {
     EFI_RUNTIME_DRIVER       = 12, ///< An EFI driver with run-time services.
     EFI_ROM                  = 13, ///< An EFI ROM image.
     XBOX                     = 14, ///< XBOX.
-    WINDOWS_BOOT_APPLICATION = 16  ///< A BCD application.
+    WINDOWS_BOOT_APPLICATION = 16, ///< A BCD application.
+    XBOX_CODE_CATALOG        = 17, ///< Security Metadata Containers
   };
 
   OptionalHeader(const details::pe32_optional_header& header);

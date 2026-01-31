@@ -198,7 +198,7 @@ const char* to_string(OptionalHeader::DLL_CHARACTERISTICS e) {
 }
 
 const char* to_string(OptionalHeader::SUBSYSTEM e) {
-  CONST_MAP(OptionalHeader::SUBSYSTEM, const char*, 14) enumStrings {
+  CONST_MAP(OptionalHeader::SUBSYSTEM, const char*, 15) enumStrings {
     { OptionalHeader::SUBSYSTEM::UNKNOWN,                  "UNKNOWN" },
     { OptionalHeader::SUBSYSTEM::NATIVE,                   "NATIVE" },
     { OptionalHeader::SUBSYSTEM::WINDOWS_GUI,              "WINDOWS_GUI" },
@@ -213,6 +213,7 @@ const char* to_string(OptionalHeader::SUBSYSTEM e) {
     { OptionalHeader::SUBSYSTEM::EFI_ROM,                  "EFI_ROM" },
     { OptionalHeader::SUBSYSTEM::XBOX,                     "XBOX" },
     { OptionalHeader::SUBSYSTEM::WINDOWS_BOOT_APPLICATION, "WINDOWS_BOOT_APPLICATION" },
+    { OptionalHeader::SUBSYSTEM::XBOX_CODE_CATALOG,        "XBOX_CODE_CATALOG" },
   };
   const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNKNOWN" : it->second;
