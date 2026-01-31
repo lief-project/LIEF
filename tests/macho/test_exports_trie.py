@@ -52,7 +52,7 @@ def test_write(tmp_path):
             assert "CAMELLIA-256-CCM*-NO-TAG" in stdout
             assert "AES-128-CCM*-NO-TAG" in stdout
 
-@pytest.mark.skipif(not has_private_samples, reason="need private samples")
+@pytest.mark.skipif(not has_private_samples(), reason="need private samples")
 def test_issue_1262():
     macho = lief.MachO.parse(get_sample("private/MachO/issue-1262.macho")).at(0)
 

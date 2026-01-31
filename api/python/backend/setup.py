@@ -45,6 +45,18 @@ def _compute_best(cls, *arg, **kwargs):
 
     return WheelTag(pyvers, abis, archs)
 
+def _get_vc_env(vc_arch: str) -> dict[str, str]:
+    try:
+        from setuptools import distutils  # type: ignore[import,attr-defined]
+
+        return distutils._msvccompiler._get_vc_env(vc_arch)  # type: ignore[no-any-return]
+    except AttributeError:
+        from setuptools._distutils import (
+            _msvccompiler,  # type: ignore[import,attr-defined]
+        )
+
+        return _msvccompiler._get_vc_env(vc_arch)  # type: ignore[no-any-return,attr-defined]
+
 def _fix_env():
     config = get_config()
     if sys.platform.startswith("win"):
@@ -52,7 +64,7 @@ def _fix_env():
             from setuptools import msvc
             is64 = sys.maxsize > 2**32
             arch = 'x64' if is64 else 'x86'
-            ninja_env = msvc.msvc14_get_vc_env(arch)
+            ninja_env = _get_vc_env(arch)
             os.environ.update(ninja_env)
 
     if sys.platform.startswith("darwin"):

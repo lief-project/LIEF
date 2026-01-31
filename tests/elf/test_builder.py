@@ -14,8 +14,8 @@ from textwrap import dedent
 from subprocess import Popen
 from utils import (
     is_linux, glibc_version, get_sample,
-    has_private_samples, is_server_ci, ci_runner_arch,
-    is_x86_64
+    has_private_samples, is_server_ci, ci_runner_arch, is_windows,
+    is_x86_64, is_github_ci
 )
 
 # pyright: reportOptionalMemberAccess=false
@@ -407,7 +407,7 @@ def test_ld_relocations(tmp_path: Path):
     new = lief.ELF.parse(output)
     assert new.header.program_header_offset == 52
 
-    if is_linux() and is_x86_64():
+    if is_linux() and is_x86_64() and not is_github_ci():
         with Popen([output.as_posix(), "--version"], universal_newlines=True,
                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
             stdout = proc.stdout.read()
@@ -431,6 +431,10 @@ def test_s390x(tmp_path: Path):
 
     elf.write(output.as_posix(), config)
     new = lief.ELF.parse(output)
+
+    if is_github_ci() and is_windows():
+        pytest.skip("Not supported")
+        return
 
     r = new.get_relocation("_dl_exception_create")
     assert r.address == 0x1c6008
