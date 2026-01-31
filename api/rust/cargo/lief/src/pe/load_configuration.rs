@@ -181,7 +181,7 @@ impl LoadConfiguration<'_> {
 
     /// Iterator over the Control Flow Guard functions referenced by
     /// [`LoadConfiguration::guard_cf_function_table`]
-    pub fn guard_cf_functions(&self) -> GuardCFFunctions {
+    pub fn guard_cf_functions(&self) -> GuardCFFunctions<'_> {
         GuardCFFunctions::new(self.ptr.guard_cf_functions())
     }
 
@@ -218,7 +218,7 @@ impl LoadConfiguration<'_> {
 
     /// Iterator over the functions referenced by
     /// [`LoadConfiguration::guard_address_taken_iat_entry_table`]
-    pub fn guard_address_taken_iat_entries(&self) -> GuardAddressTakenIATEntries {
+    pub fn guard_address_taken_iat_entries(&self) -> GuardAddressTakenIATEntries<'_> {
         GuardAddressTakenIATEntries::new(self.ptr.guard_address_taken_iat_entries())
     }
 
@@ -241,7 +241,7 @@ impl LoadConfiguration<'_> {
 
     /// Iterator over the functions referenced by
     /// [`LoadConfiguration::guard_long_jump_target_table`]
-    pub fn guard_long_jump_targets(&self) -> GuardLongJumpTargets {
+    pub fn guard_long_jump_targets(&self) -> GuardLongJumpTargets<'_> {
         GuardLongJumpTargets::new(self.ptr.guard_long_jump_targets())
     }
 
@@ -373,7 +373,7 @@ impl LoadConfiguration<'_> {
 
     /// Iterator over the Guard EH continuation functions referenced by
     /// [`LoadConfiguration::guard_eh_continuation_table`]
-    pub fn guard_eh_continuation_functions(&self) -> GuardEhContinuationFunctions {
+    pub fn guard_eh_continuation_functions(&self) -> GuardEhContinuationFunctions<'_> {
         GuardEhContinuationFunctions::new(self.ptr.guard_eh_continuation_functions())
     }
 

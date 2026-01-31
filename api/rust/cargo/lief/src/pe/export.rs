@@ -52,7 +52,7 @@ impl Export<'_> {
     }
 
     /// Iterator over the different [`Entry`] exported by this table
-    pub fn entries(&self) -> ExportEntries {
+    pub fn entries(&self) -> ExportEntries<'_> {
         ExportEntries::new(self.ptr.entries())
     }
 

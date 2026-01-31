@@ -26,12 +26,12 @@ impl FromFFI<ffi::ObjC_Metadata> for Metadata<'_> {
 
 impl Metadata<'_> {
     /// Return an iterator over the different Objective-C classes (`@interface`)
-    pub fn classes(&self) -> Classes {
+    pub fn classes(&self) -> Classes<'_> {
         Classes::new(self.ptr.classes())
     }
 
     /// Return an iterator over the Objective-C protocols declared in this binary (`@protocol`).
-    pub fn protocols(&self) -> Protocols {
+    pub fn protocols(&self) -> Protocols<'_> {
         Protocols::new(self.ptr.protocols())
     }
 

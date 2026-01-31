@@ -60,7 +60,7 @@ impl DelayImport<'_> {
     }
 
     /// Iterator over the DelayImport's entries ([`DelayImportEntry`])
-    pub fn entries(&self) -> Entries {
+    pub fn entries(&self) -> Entries<'_> {
         Entries::new(self.ptr.entries())
     }
 }

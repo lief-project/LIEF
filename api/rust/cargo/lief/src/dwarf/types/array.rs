@@ -31,7 +31,7 @@ impl Array<'_> {
     ///
     /// This size info is usually embedded in a `DW_TAG_subrange_type` DIE which
     /// is represented by the [`SizeInfo`] structure.
-    pub fn size_info(&self) -> SizeInfo {
+    pub fn size_info(&self) -> SizeInfo<'_> {
         SizeInfo::from_ffi(self.ptr.size_info())
     }
 }

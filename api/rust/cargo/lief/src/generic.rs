@@ -384,7 +384,7 @@ impl Symbol for Function {
 
 impl Function {
     /// Flags characterizing the semantics of the function
-    pub fn flags(&self) -> FunctionFlags {
+    pub fn flags(&self) -> FunctionFlags<'_> {
         FunctionFlags::from(self.ptr.flags())
     }
 

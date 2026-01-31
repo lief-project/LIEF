@@ -279,13 +279,13 @@ impl DyldSharedCache {
 
     /// Return an iterator over the different [`MappingInfo`] associated
     /// with this dyld shared cache
-    pub fn mapping_info(&self) -> MappingInfoIt {
+    pub fn mapping_info(&self) -> MappingInfoIt<'_> {
         MappingInfoIt::new(self.ptr.mapping_info())
     }
 
     /// Return an interator over the subcaches associated with this (main) dyld shared
     /// cache.
-    pub fn subcaches(&self) -> SubCacheIt {
+    pub fn subcaches(&self) -> SubCacheIt<'_> {
         SubCacheIt::new(self.ptr.subcaches())
     }
 

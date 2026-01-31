@@ -296,7 +296,7 @@ impl UnwindInfo<'_> {
     }
 
     /// See: [`UnwindFlags`]
-    pub fn flags(&self) -> UnwindFlags {
+    pub fn flags(&self) -> UnwindFlags<'_> {
         UnwindFlags::from(self.ptr.flags())
     }
 
@@ -333,7 +333,7 @@ impl UnwindInfo<'_> {
     }
 
     /// Iterator over the unwind code which outputs [`Opcodes`]
-    pub fn opcodes(&self) -> OpcodesIterator {
+    pub fn opcodes(&self) -> OpcodesIterator<'_> {
         OpcodesIterator::new(self.ptr.opcodes())
     }
 

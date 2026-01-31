@@ -35,7 +35,7 @@ impl TemplateAlias<'_> {
     }
 
     /// [`Parameters`] associated with the underlying template
-    pub fn parameters(&self) -> ParametersIt {
+    pub fn parameters(&self) -> ParametersIt<'_> {
         ParametersIt::new(self.ptr.parameters())
     }
 }

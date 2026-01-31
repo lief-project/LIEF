@@ -52,7 +52,7 @@ impl FatBinary {
     }
 
     /// Iterator over the [`crate::macho::Binary`]
-    pub fn iter(&self) -> FatBinaryIterator {
+    pub fn iter(&self) -> FatBinaryIterator<'_> {
         FatBinaryIterator {
             index: 0,
             fat: self,

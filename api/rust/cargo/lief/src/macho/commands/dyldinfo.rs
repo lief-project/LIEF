@@ -65,7 +65,7 @@ impl<'a> DyldInfo<'a> {
 
     /// Return an iterator over the [`crate::macho::BindingInfo::Dyld`] associated with this
     /// command
-    pub fn bindings(&self) -> BindingInfos {
+    pub fn bindings(&self) -> BindingInfos<'_> {
         BindingInfos::new(self.ptr.bindings())
     }
 

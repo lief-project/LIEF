@@ -135,7 +135,7 @@ impl DynamicSymbolCommand<'_> {
     }
 
     /// Iterator over the indirect symbols indexed by this command
-    pub fn indirect_symbols(&self) -> IndirectSymbols {
+    pub fn indirect_symbols(&self) -> IndirectSymbols<'_> {
         IndirectSymbols::new(self.ptr.indirect_symbols())
     }
 }

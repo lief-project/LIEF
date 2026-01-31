@@ -1080,7 +1080,7 @@ pub struct Flags<'a> {
 }
 
 impl Flags<'_> {
-    pub fn flags(&self) -> DtFlags {
+    pub fn flags(&self) -> DtFlags<'_> {
         DtFlags::from(self.ptr.flags())
     }
 

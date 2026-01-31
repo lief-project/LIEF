@@ -31,7 +31,7 @@ impl LexicalBlock<'_> {
     }
 
     /// Return an iterator over the sub-LexicalBlock owned by this block.
-    pub fn sub_blocks(&self) -> LexicalBlocks {
+    pub fn sub_blocks(&self) -> LexicalBlocks<'_> {
         LexicalBlocks::new(self.ptr.sub_blocks())
     }
 

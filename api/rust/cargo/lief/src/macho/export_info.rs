@@ -78,7 +78,7 @@ impl ExportInfo<'_> {
         self.ptr.node_offset()
     }
 
-    pub fn flags(&self) -> Flags {
+    pub fn flags(&self) -> Flags<'_> {
         Flags::from(self.ptr.flags())
     }
 

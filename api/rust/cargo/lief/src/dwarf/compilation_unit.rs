@@ -195,7 +195,7 @@ impl CompilationUnit<'_> {
     /// The iterator will only return **one function** for `main` since
     /// `get_secret_env` is inlined and thus, its implementation is located in
     /// `main`.
-    pub fn functions(&self) -> Functions {
+    pub fn functions(&self) -> Functions<'_> {
         Functions::new(self.ptr.functions())
     }
 
@@ -216,7 +216,7 @@ impl CompilationUnit<'_> {
     /// the iterator. On the other hand, `main()` is implemented in this
     /// compilation unit so it is not returned by [`CompilationUnit::imported_functions`] but
     /// [`CompilationUnit::functions`].
-    pub fn imported_functions(&self) -> Functions {
+    pub fn imported_functions(&self) -> Functions<'_> {
         Functions::new(self.ptr.imported_functions())
     }
 
@@ -236,7 +236,7 @@ impl CompilationUnit<'_> {
         CompilationUnitVariables::new(self.ptr.variables())
     }
 
-    pub fn types(&self) -> Types {
+    pub fn types(&self) -> Types<'_> {
         Types::new(self.ptr.types())
     }
 

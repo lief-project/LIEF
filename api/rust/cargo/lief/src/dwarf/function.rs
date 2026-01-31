@@ -86,7 +86,7 @@ impl Function<'_> {
     }
 
     /// Return an iterator over the [`Parameters`] of this function
-    pub fn parameters(&self) -> ParametersIt {
+    pub fn parameters(&self) -> ParametersIt<'_> {
         ParametersIt::new(self.ptr.parameters())
     }
 
@@ -102,7 +102,7 @@ impl Function<'_> {
     ///
     /// [`Function::thrown_types`] returns one element associated with the [`Type`]:
     /// `StatisticsError`.
-    pub fn thrown_types(&self) -> ThrownTypes {
+    pub fn thrown_types(&self) -> ThrownTypes<'_> {
         ThrownTypes::new(self.ptr.thrown_types())
     }
 
@@ -113,7 +113,7 @@ impl Function<'_> {
 
     /// Disassemble the current function by returning an iterator over
     /// the [`assembly::Instructions`]
-    pub fn instructions(&self) -> Instructions {
+    pub fn instructions(&self) -> Instructions<'_> {
         Instructions::new(self.ptr.instructions())
     }
 
@@ -123,7 +123,7 @@ impl Function<'_> {
     }
 
     /// Iterator over the [`crate::dwarf::LexicalBlock`] owned by this function
-    pub fn lexical_blocks(&self) -> LexicalBlocks {
+    pub fn lexical_blocks(&self) -> LexicalBlocks<'_> {
         LexicalBlocks::new(self.ptr.lexical_blocks())
     }
 }

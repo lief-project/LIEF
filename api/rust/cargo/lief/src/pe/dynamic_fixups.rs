@@ -313,12 +313,12 @@ impl std::fmt::Display for FunctionOverride<'_> {
 
 impl FunctionOverride<'_> {
     /// Iterator over the overriding info
-    pub fn func_overriding_info(&self) -> ItFuncOverrideInfo {
+    pub fn func_overriding_info(&self) -> ItFuncOverrideInfo<'_> {
         ItFuncOverrideInfo::new(self.ptr.func_overriding_info())
     }
 
     /// Find the `IMAGE_BDD_INFO` associated with the given info
-    pub fn bdd_info(&self) -> ItImageBddInfo {
+    pub fn bdd_info(&self) -> ItImageBddInfo<'_> {
         ItImageBddInfo::new(self.ptr.bdd_info())
     }
 

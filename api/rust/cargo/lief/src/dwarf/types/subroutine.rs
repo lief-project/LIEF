@@ -35,7 +35,7 @@ impl Subroutine<'_> {
     }
 
     /// [`Parameters`] of this subroutine
-    pub fn parameters(&self) -> ParametersIt {
+    pub fn parameters(&self) -> ParametersIt<'_> {
         ParametersIt::new(self.ptr.parameters())
     }
 }

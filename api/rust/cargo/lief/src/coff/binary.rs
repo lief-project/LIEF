@@ -48,12 +48,12 @@ impl Binary {
     }
 
     /// Iterator over the functions implemented in this COFF
-    pub fn functions(&self) -> Functions {
+    pub fn functions(&self) -> Functions<'_> {
         Functions::new(self.ptr.functions())
     }
 
     /// Iterator over the COFF's strings
-    pub fn string_table(&self) -> Strings {
+    pub fn string_table(&self) -> Strings<'_> {
         Strings::new(self.ptr.string_table())
     }
 

@@ -266,7 +266,7 @@ impl std::fmt::Display for Symbol<'_> {
 
 impl Symbol<'_> {
     /// Auxiliary symbols associated with this symbol.
-    pub fn auxiliary_symbols(&self) -> ItAuxiliarySymbols {
+    pub fn auxiliary_symbols(&self) -> ItAuxiliarySymbols<'_> {
         ItAuxiliarySymbols::new(self.ptr.auxiliary_symbols())
     }
 

@@ -21,7 +21,7 @@ impl Section<'_> {
     }
 
     /// Sections flags
-    pub fn flags(&self) -> Flags {
+    pub fn flags(&self) -> Flags<'_> {
         Flags::from_value(self.ptr.flags())
     }
 

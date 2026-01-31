@@ -177,7 +177,7 @@ impl SymbolVersionDefinition<'_> {
     }
 
     /// Iterator over the [`SymbolVersionAux`] associated with this entry
-    pub fn auxiliary_symbols(&self) -> DefAuxiliarySymbols {
+    pub fn auxiliary_symbols(&self) -> DefAuxiliarySymbols<'_> {
         DefAuxiliarySymbols::new(self.ptr.sym_aux())
     }
 }
@@ -229,7 +229,7 @@ impl SymbolVersionRequirement<'_> {
     }
 
     /// Auxiliary entries as an iterator over [`SymbolVersionAuxRequirement`]
-    pub fn auxiliary_symbols(&self) -> AuxiliarySymbols {
+    pub fn auxiliary_symbols(&self) -> AuxiliarySymbols<'_> {
         AuxiliarySymbols::new(self.ptr.auxiliary_symbols())
     }
 

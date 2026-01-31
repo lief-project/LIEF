@@ -168,7 +168,7 @@ impl Section<'_> {
     }
 
     /// Section's flags masked with `SECTION_FLAGS_MASK`
-    pub fn flags(&self) -> Flags {
+    pub fn flags(&self) -> Flags<'_> {
         Flags::from_bits_truncate(self.ptr.flags())
     }
 

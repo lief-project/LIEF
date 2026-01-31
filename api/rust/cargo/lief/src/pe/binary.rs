@@ -151,12 +151,12 @@ impl Binary {
     }
 
     /// Return an iterator over the [`signature::Signature`] if the current PE is authenticode-signed.
-    pub fn signatures(&self) -> Signatures {
+    pub fn signatures(&self) -> Signatures<'_> {
         Signatures::new(self.ptr.signatures())
     }
 
     /// Return an iterator over the [`debug::Entries`] of the binary.
-    pub fn debug(&self) -> DebugEntries {
+    pub fn debug(&self) -> DebugEntries<'_> {
         DebugEntries::new(self.ptr.debug())
     }
 
@@ -449,7 +449,7 @@ impl Binary {
     }
 
     /// Iterator over the strings located in the COFF string table
-    pub fn coff_string_table(&self) -> COFFStrings {
+    pub fn coff_string_table(&self) -> COFFStrings<'_> {
         COFFStrings::new(self.ptr.coff_string_table())
     }
 
@@ -472,7 +472,7 @@ impl Binary {
     ///
     /// This function requires that the option [`ParserConfig::parse_exceptions`] was turned on
     /// (default is `false`) when parsing the binary.
-    pub fn exceptions(&self) -> Exceptions {
+    pub fn exceptions(&self) -> Exceptions<'_> {
         Exceptions::new(self.ptr.exceptions())
     }
 

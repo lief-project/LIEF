@@ -30,7 +30,7 @@ impl FromFFI<ffi::DWARF_DebugInfo> for DebugInfo<'_> {
 
 impl DebugInfo<'_> {
     /// Iterator on the [`crate::dwarf::CompilationUnit`] embedded in this dwarf
-    pub fn compilation_units(&self) -> CompilationUnits {
+    pub fn compilation_units(&self) -> CompilationUnits<'_> {
         CompilationUnits::new(self.ptr.compilation_units())
     }
 

@@ -39,7 +39,7 @@ impl<'a> FromFFI<ffi::PE_Import> for Import<'a> {
 
 impl Import<'_> {
     /// Iterator over the [`ImportEntry`]
-    pub fn entries(&self) -> ImportEntries {
+    pub fn entries(&self) -> ImportEntries<'_> {
         ImportEntries::new(self.ptr.entries())
     }
 

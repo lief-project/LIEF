@@ -72,12 +72,12 @@ impl<'a> SignerInfo<'a> {
     }
 
     /// Iterator over the **authenticated** [`Attribute`]
-    pub fn authenticated_attributes(&self) -> AuthenticatedAttributes {
+    pub fn authenticated_attributes(&self) -> AuthenticatedAttributes<'_> {
         AuthenticatedAttributes::new(self.ptr.authenticated_attributes())
     }
 
     /// Iterator over the **unauthenticated** [`Attribute`]
-    pub fn unauthenticated_attributes(&self) -> UnAuthenticatedAttributes {
+    pub fn unauthenticated_attributes(&self) -> UnAuthenticatedAttributes<'_> {
         UnAuthenticatedAttributes::new(self.ptr.unauthenticated_attributes())
     }
 

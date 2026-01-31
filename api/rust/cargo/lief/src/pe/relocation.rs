@@ -26,7 +26,7 @@ impl Relocation<'_> {
         self.ptr.block_size()
     }
     /// Iterator over the Relocation [`Entry`]
-    pub fn entries(&self) -> RelocationEntries {
+    pub fn entries(&self) -> RelocationEntries<'_> {
         RelocationEntries::new(self.ptr.entries())
     }
 }

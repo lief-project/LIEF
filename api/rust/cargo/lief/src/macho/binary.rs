@@ -77,7 +77,7 @@ impl Binary {
 
     /// Return an iterator over the different [`crate::macho::Commands`] used by the
     /// Mach-O binary
-    pub fn commands(&self) -> CommandsIter {
+    pub fn commands(&self) -> CommandsIter<'_> {
         CommandsIter::new(self.ptr.commands())
     }
 
@@ -193,7 +193,7 @@ impl Binary {
     }
 
     /// Return the `LC_SUBCLIENT` command if present
-    pub fn subclients(&self) -> SubClients {
+    pub fn subclients(&self) -> SubClients<'_> {
         SubClients::new(self.ptr.subclients())
     }
 
@@ -253,7 +253,7 @@ impl Binary {
     }
 
     /// Return an iterator over the bindings located in [`DyldInfo`] or [`DyldChainedFixups`]
-    pub fn bindings(&self) -> BindingsInfo {
+    pub fn bindings(&self) -> BindingsInfo<'_> {
         BindingsInfo::new(self.ptr.bindings())
     }
 

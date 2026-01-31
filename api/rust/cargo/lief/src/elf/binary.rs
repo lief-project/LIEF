@@ -164,7 +164,7 @@ impl Binary {
     }
 
     /// Return an iterator over the symtab-debug [`crate::elf::Symbol`] of the binary
-    pub fn symtab_symbols(&self) -> SymtabSymbols {
+    pub fn symtab_symbols(&self) -> SymtabSymbols<'_> {
         SymtabSymbols::new(self.ptr.symtab_symbols())
     }
 
