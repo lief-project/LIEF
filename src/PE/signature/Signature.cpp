@@ -97,9 +97,7 @@ Signature::VERIFICATION_FLAGS verify_ts_counter_signature(const SignerInfo& sign
 
   if (!check_sig) {
     LIEF_WARN("Authenticated signature (counter signature) mismatch");
-    //return flags | VERIFICATION_FLAGS::BAD_SIGNATURE;
   }
-
 
   /* According to Microsoft documentation:
    * The Authenticode timestamp SignerInfo structure contains the following authenticated attributes values:

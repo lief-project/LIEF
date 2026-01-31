@@ -118,7 +118,6 @@ void SegmentCommand::swap(SegmentCommand& other) noexcept {
   std::swap(data_,            other.data_);
   std::swap(sections_,        other.sections_);
   std::swap(relocations_,     other.relocations_);
-  //std::swap(dyld_,            other.dyld_);
 }
 
 void SegmentCommand::content(SegmentCommand::content_t data) {

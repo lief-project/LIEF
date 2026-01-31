@@ -177,7 +177,6 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
       return make_error_code(lief_errors::read_error);
     }
     uint64_t flags = *res_flags;
-    //uint64_t address = stream_->read_uleb128();
 
     const std::string& symbol_name = prefix;
     auto export_info = std::make_unique<ExportInfo>(0, flags, offset);

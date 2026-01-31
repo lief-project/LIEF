@@ -2174,7 +2174,6 @@ ok_error_t BinaryParser::parse_dyldinfo_lazy_bind() {
 
   uint64_t end_offset = offset + size;
 
-  //uint32_t    lazy_offset     = 0;
   std::string symbol_name;
   uint8_t     segment_idx     = 0;
   uint64_t    segment_offset  = 0;

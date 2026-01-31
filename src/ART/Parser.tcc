@@ -223,7 +223,6 @@ template<typename ART_T, typename PTR_T>
 void Parser::parse_jstring(size_t offset) {
   using jstring_t    = typename ART_T::template jstring_t<>;
   const jstring_t* jstring = reinterpret_cast<const jstring_t*>(stream_->read(offset, sizeof(jstring_t)));
-  //std::cout << "Class leng: " << std::dec << jstring->count << '\n';
 
   uint64_t value_offset = offset + offsetof(jstring_t, value);
 
@@ -305,8 +304,6 @@ void Parser::parse_objects(size_t offset, size_t size) {
   using jstring_t = typename ART_T::template jstring_t<>;
 
   VLOG(VDEBUG) << "Paring objects at " << std::hex << offset << '\n';
-  //const jarray_t* array = reinterpret_cast<const jarray_t*>(stream_->read(offset, sizeof(jarray_t)));
-  //std::cout << std::dec << "nb elements " << array->length << '\n';;
 }
 
 

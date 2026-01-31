@@ -351,34 +351,7 @@ void Parser::parse_header_keys() {
 
 template<typename OAT_T>
 void Parser::parse_type_lookup_table() {
-  //using oat_header           = typename OAT_T::oat_header;
-  //using dex_file             = typename OAT_T::dex_file;
-  //using lookup_table_entry_t = typename OAT_T::lookup_table_entry_t;
-
-
-  //VLOG(VDEBUG) << "Parsing TypeLookupTable";
-  //for (size_t i = 0; i < oat.dex_files_.size(); ++i) {
-
-  //  const DexFile* oat_dex_file = oat.oat_dex_files_[i];
-  //  uint64_t tlt_offset = oat_dex_file->lookup_table_offset();
-
-  //  VLOG(VDEBUG) << "Getting TypeLookupTable for DexFile "
-  //                << oat_dex_file->location()
-  //                << " (#" << std::dec << oat_dex_file->dex_file().header().nb_classes() << ")";
-  //  for (size_t j = 0; j < oat_dex_file->dex_file().header().nb_classes();) {
-  //    const lookup_table_entry_t* entry = reinterpret_cast<const lookup_table_entry_t*>(stream_->read(tlt_offset, sizeof(lookup_table_entry_t)));
-
-  //    if (entry->str_offset) {
-  //      uint64_t string_offset = oat_dex_file->dex_offset() + entry->str_offset;
-  //      std::pair<uint64_t, uint64_t> len_size = stream_->read_uleb128(string_offset);
-  //      string_offset += len_size.second;
-  //      std::string class_name = stream_->get_string(string_offset);
-  //      //VLOG(VDEBUG) << "    " << "#" << std::dec << j << " " << class_name;
-  //      ++j;
-  //    }
-  //    tlt_offset += sizeof(lookup_table_entry_t);
-  //  }
-  //}
+  // Type lookup table parsing is not yet implemented
 }
 
 

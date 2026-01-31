@@ -2341,10 +2341,7 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
       LIEF_DEBUG("cie_pointer 0x{:x}", *cie_pointer);
       LIEF_DEBUG("cie_offset 0x{:x}", cie_offset);
 
-
       // Go to CIE structure
-      //uint8_t augmentation_data = static_cast<uint8_t>(dwarf::EH_ENCODING::OMIT);
-
       const size_t saved_pos = vs.pos();
       uint8_t augmentation_data = 0;
       vs.setpos(cie_offset);

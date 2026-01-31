@@ -893,16 +893,6 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
       ios.write(overlay());
     }
   }
-  // When something gets wrong with the hash:
-  // std::vector<uint8_t> out = ios.raw();
-  // std::ofstream output_file{"/tmp/hash.blob", std::ios::out | std::ios::binary | std::ios::trunc};
-  // if (output_file) {
-  //   std::copy(
-  //       std::begin(out),
-  //       std::end(out),
-  //       std::ostreambuf_iterator<char>(output_file));
-  // }
-  // std::vector<uint8_t> hash = hashstream(hash_type).write(out).raw();
 
   std::vector<uint8_t> hash = ios.raw();
   LIEF_DEBUG("{}", hex_dump(hash));

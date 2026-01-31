@@ -1481,10 +1481,7 @@ result<std::unique_ptr<PKCS9TSTInfo>> SignatureParser::parse_pkcs9_tstinfo(Binar
   /* genTime GeneralizedTime */ {
     if (auto tag = reader.read_tag(MBEDTLS_ASN1_GENERALIZED_TIME)) {
       substream.increment_pos(*tag);
-      //std::unique_ptr<mbedtls_x509_time> time = std::move(*res);
-      //LIEF_DEBUG("pkcs9-tstinfo.gen_time {}/{}/{}",
-      //           time->day, time->mon, time->year);
-      // TODO
+      // TODO: Parse and expose genTime field
     } else {
       LIEF_INFO("Can't read pkcs9-tstinfo.gen_time (pos: {})",
                  substream.pos());
@@ -1651,7 +1648,7 @@ SignatureParser::parse_signing_certificate_v2(BinaryStream& stream) {
     /* policies SEQUENCE OF PolicyInformation OPTIONAL */
     // TODO(romain): to parse
   }
-  //auto res = reader.is_tag(MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
+
   LIEF_DEBUG("signing-certificate-v2 remaining bytes: {}", stream.size() - stream.pos());
   return scertv2;
 }
