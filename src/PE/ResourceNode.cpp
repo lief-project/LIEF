@@ -130,15 +130,9 @@ std::unique_ptr<ResourceNode> TreeParser::parse_resource_node(
 
         auto res_length = stream_.peek<uint16_t>(string_offset);
         if (res_length && *res_length <= 100) {
-          // Check for overflow in final offset calculation
-          uint64_t name_offset_calc = static_cast<uint64_t>(string_offset) + sizeof(uint16_t);
-          if (name_offset_calc > UINT32_MAX) {
-            LIEF_WARN("Resource name data offset overflow at string_offset=0x{:x}", string_offset);
-          } else {
-            name = stream_.peek_u16string_at(static_cast<uint32_t>(name_offset_calc), *res_length);
-            if (!name) {
-              LIEF_ERR("Node's name for the node id: {} is corrupted", id);
-            }
+          name = stream_.peek_u16string_at(string_offset + sizeof(uint16_t), *res_length);
+          if (!name) {
+            LIEF_ERR("Node's name for the node id: {} is corrupted", id);
           }
         }
       }

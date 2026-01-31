@@ -214,8 +214,8 @@ T Segment::get_content_value(size_t offset) const {
   if (datahandler_ == nullptr) {
     LIEF_DEBUG("Get content of segment {}@0x{:x} from cache",
                to_string(type()), virtual_address());
-    // Check bounds before memcpy
-    if (offset + sizeof(T) > content_c_.size()) {
+    // Check bounds before memcpy - prevent overflow in addition
+    if (content_c_.size() < sizeof(T) || offset > content_c_.size() - sizeof(T)) {
       LIEF_WARN("Out of bounds read at offset {} in segment content (size: {})",
                 offset, content_c_.size());
       memset(&ret, 0, sizeof(T));
@@ -233,7 +233,8 @@ T Segment::get_content_value(size_t offset) const {
     DataHandler::Node& node = res.value();
     // Check for overflow in offset calculation
     uint64_t total_offset = static_cast<uint64_t>(node.offset()) + static_cast<uint64_t>(offset);
-    if (total_offset + sizeof(T) > binary_content.size()) {
+    // Prevent overflow in final bounds check
+    if (binary_content.size() < sizeof(T) || total_offset > binary_content.size() - sizeof(T)) {
       LIEF_WARN("Out of bounds read at offset {} (node offset: {}) in binary content (size: {})",
                 offset, node.offset(), binary_content.size());
       memset(&ret, 0, sizeof(T));
