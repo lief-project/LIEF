@@ -15,12 +15,12 @@ pub trait ClassLike {
     fn get_classlike(&self) -> &ffi::DWARF_types_ClassLike;
 
     /// Return this list of all the attributes defined in this class-like type
-    fn members(&self) -> Members {
+    fn members(&self) -> Members<'_> {
         Members::new(self.get_classlike().members())
     }
 
     /// Iterator over the functions defined by the class-like.
-    fn functions(&self) -> Functions {
+    fn functions(&self) -> Functions<'_> {
         Functions::new(self.get_classlike().functions())
     }
 }
@@ -64,7 +64,7 @@ impl Member<'_> {
     }
 
     /// Type of the current member
-    pub fn get_type(&self) -> Option<Type> {
+    pub fn get_type(&self) -> Option<Type<'_>> {
         into_optional(self.ptr.get_type())
     }
 

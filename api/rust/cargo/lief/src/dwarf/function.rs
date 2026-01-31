@@ -50,7 +50,7 @@ impl Function<'_> {
     /// Return an iterator of variables (`DW_TAG_variable`) defined within the
     /// scope of this function. This includes regular stack-based variables as
     /// well as static ones.
-    pub fn variables(&self) -> Variables {
+    pub fn variables(&self) -> Variables<'_> {
         Variables::new(self.ptr.variables())
     }
 
@@ -81,12 +81,12 @@ impl Function<'_> {
     }
 
     /// Return the [`Type`] associated with the **return type** of this function.
-    pub fn return_type(&self) -> Option<Type> {
+    pub fn return_type(&self) -> Option<Type<'_>> {
         into_optional(self.ptr.get_type())
     }
 
     /// Return an iterator over the [`Parameters`] of this function
-    pub fn parameters(&self) -> ParametersIt {
+    pub fn parameters(&self) -> ParametersIt<'_> {
         ParametersIt::new(self.ptr.parameters())
     }
 
@@ -102,18 +102,18 @@ impl Function<'_> {
     ///
     /// [`Function::thrown_types`] returns one element associated with the [`Type`]:
     /// `StatisticsError`.
-    pub fn thrown_types(&self) -> ThrownTypes {
+    pub fn thrown_types(&self) -> ThrownTypes<'_> {
         ThrownTypes::new(self.ptr.thrown_types())
     }
 
     /// The scope in which this function is defined
-    pub fn scope(&self) -> Option<Scope> {
+    pub fn scope(&self) -> Option<Scope<'_>> {
         into_optional(self.ptr.scope())
     }
 
     /// Disassemble the current function by returning an iterator over
     /// the [`assembly::Instructions`]
-    pub fn instructions(&self) -> Instructions {
+    pub fn instructions(&self) -> Instructions<'_> {
         Instructions::new(self.ptr.instructions())
     }
 
@@ -123,7 +123,7 @@ impl Function<'_> {
     }
 
     /// Iterator over the [`crate::dwarf::LexicalBlock`] owned by this function
-    pub fn lexical_blocks(&self) -> LexicalBlocks {
+    pub fn lexical_blocks(&self) -> LexicalBlocks<'_> {
         LexicalBlocks::new(self.ptr.lexical_blocks())
     }
 }

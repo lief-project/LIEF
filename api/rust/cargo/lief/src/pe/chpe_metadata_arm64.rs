@@ -109,15 +109,15 @@ impl CHPEMetadata<'_> {
         self.ptr.bitfield_info()
     }
 
-    pub fn code_ranges(&self) -> CodeRanges {
+    pub fn code_ranges(&self) -> CodeRanges<'_> {
         CodeRanges::new(self.ptr.code_ranges())
     }
 
-    pub fn redirections(&self) -> Redirections {
+    pub fn redirections(&self) -> Redirections<'_> {
         Redirections::new(self.ptr.redirections())
     }
 
-    pub fn code_range_entry_point(&self) -> CodeRangeEntrypoints {
+    pub fn code_range_entry_point(&self) -> CodeRangeEntrypoints<'_> {
         CodeRangeEntrypoints::new(self.ptr.code_range_entry_point())
     }
 }

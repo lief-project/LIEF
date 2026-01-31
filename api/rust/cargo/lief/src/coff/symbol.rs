@@ -266,7 +266,7 @@ impl std::fmt::Display for Symbol<'_> {
 
 impl Symbol<'_> {
     /// Auxiliary symbols associated with this symbol.
-    pub fn auxiliary_symbols(&self) -> ItAuxiliarySymbols {
+    pub fn auxiliary_symbols(&self) -> ItAuxiliarySymbols<'_> {
         ItAuxiliarySymbols::new(self.ptr.auxiliary_symbols())
     }
 
@@ -303,7 +303,7 @@ impl Symbol<'_> {
     }
 
     /// Section associated with this symbol (if any)
-    pub fn section(&self) -> Option<Section> {
+    pub fn section(&self) -> Option<Section<'_>> {
         into_optional(self.ptr.section())
     }
 
@@ -512,7 +512,7 @@ impl AuxiliaryCLRToken<'_> {
     }
 
     /// Symbol referenced by [`AuxiliaryCLRToken::symbol_idx`] (if resolved)
-    pub fn symbol(&self) -> Option<Symbol> {
+    pub fn symbol(&self) -> Option<Symbol<'_>> {
         into_optional(self.ptr.symbol())
     }
 

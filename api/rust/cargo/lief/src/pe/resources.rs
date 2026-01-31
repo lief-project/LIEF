@@ -26,7 +26,7 @@ pub enum Node<'a> {
 impl Node<'_> {
     /// Parse a resource tree from the provided slice. The original RVA must be provided
     /// to resolve the content of the data nodes.
-    pub fn from_slice(content: &[u8], rva: u64) -> Option<Node> {
+    pub fn from_slice(content: &[u8], rva: u64) -> Option<Node<'_>> {
         unsafe {
             let ptr = ffi::PE_ResourceNode::from_slice(content.as_ptr(), content.len(), rva);
             if ptr.is_null() {
@@ -57,7 +57,7 @@ pub trait NodeBase {
     }
 
     /// Iterator on node's children
-    fn children(&self) -> Children {
+    fn children(&self) -> Children<'_> {
         Children::new(self.get_base().childs())
     }
 
@@ -70,7 +70,7 @@ pub trait NodeBase {
     }
 
     /// Add a new child node to the current and return the newly-added node
-    fn add_child(&mut self, node: &Node) -> Node {
+    fn add_child(&mut self, node: &Node) -> Node<'_> {
         Node::from_ffi(self.base_as_pin_mut().add_child(node.get_base()))
     }
 
@@ -460,7 +460,7 @@ impl Manager<'_> {
     ///
     /// This type corresponds to the [`Node::id`] at the **level 1** of the
     /// resource tree.
-    pub fn find_by_type(&self, res_type: Types) -> Option<Node> {
+    pub fn find_by_type(&self, res_type: Types) -> Option<Node<'_>> {
         into_optional(self.ptr.find_node_type(res_type.into()))
     }
 

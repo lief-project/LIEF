@@ -195,7 +195,7 @@ impl CompilationUnit<'_> {
     /// The iterator will only return **one function** for `main` since
     /// `get_secret_env` is inlined and thus, its implementation is located in
     /// `main`.
-    pub fn functions(&self) -> Functions {
+    pub fn functions(&self) -> Functions<'_> {
         Functions::new(self.ptr.functions())
     }
 
@@ -216,7 +216,7 @@ impl CompilationUnit<'_> {
     /// the iterator. On the other hand, `main()` is implemented in this
     /// compilation unit so it is not returned by [`CompilationUnit::imported_functions`] but
     /// [`CompilationUnit::functions`].
-    pub fn imported_functions(&self) -> Functions {
+    pub fn imported_functions(&self) -> Functions<'_> {
         Functions::new(self.ptr.imported_functions())
     }
 
@@ -232,33 +232,33 @@ impl CompilationUnit<'_> {
     ///   return C;
     /// }
     /// ```
-    pub fn variables(&self) -> CompilationUnitVariables {
+    pub fn variables(&self) -> CompilationUnitVariables<'_> {
         CompilationUnitVariables::new(self.ptr.variables())
     }
 
-    pub fn types(&self) -> Types {
+    pub fn types(&self) -> Types<'_> {
         Types::new(self.ptr.types())
     }
 
     /// Try to find the function whose name is given in parameter.
     ///
     /// The provided name can be demangled.
-    pub fn function_by_name(&self, name: &str) -> Option<Function> {
+    pub fn function_by_name(&self, name: &str) -> Option<Function<'_>> {
         into_optional(self.ptr.function_by_name(name))
     }
 
     /// Try to find the function at the given address
-    pub fn function_by_addr(&self, address: u64) -> Option<Function> {
+    pub fn function_by_addr(&self, address: u64) -> Option<Function<'_>> {
         into_optional(self.ptr.function_by_address(address))
     }
 
     /// Try to find the variable whose name is given in parameter.
-    pub fn variable_by_name(&self, name: &str) -> Option<Variable> {
+    pub fn variable_by_name(&self, name: &str) -> Option<Variable<'_>> {
         into_optional(self.ptr.variable_by_name(name))
     }
 
     /// Try to find the variable at the given address
-    pub fn variable_by_addr(&self, address: u64) -> Option<Variable> {
+    pub fn variable_by_addr(&self, address: u64) -> Option<Variable<'_>> {
         into_optional(self.ptr.variable_by_address(address))
     }
 }

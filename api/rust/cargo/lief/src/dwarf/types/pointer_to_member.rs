@@ -28,12 +28,12 @@ impl DwarfType for PointerToMember<'_> {
 
 impl PointerToMember<'_> {
     /// The type of the member referenced by this pointer
-    pub fn underlying_type(&self) -> Option<Type> {
+    pub fn underlying_type(&self) -> Option<Type<'_>> {
         into_optional(self.ptr.underlying_type())
     }
 
     /// The type that embeds this member
-    pub fn containing_type(&self) -> Option<Type> {
+    pub fn containing_type(&self) -> Option<Type<'_>> {
         into_optional(self.ptr.containing_type())
     }
 }

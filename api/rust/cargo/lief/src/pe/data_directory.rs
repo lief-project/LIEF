@@ -124,7 +124,7 @@ impl DataDirectory<'_> {
     }
     /// The (optional) section in which the data associated with the data directory
     /// are located.
-    pub fn section(&self) -> Option<Section> {
+    pub fn section(&self) -> Option<Section<'_>> {
         into_optional(self.ptr.section())
     }
 

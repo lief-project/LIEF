@@ -23,7 +23,7 @@ impl FromFFI<ffi::PDB_types_Pointer> for Pointer<'_> {
 
 impl Pointer<'_> {
     /// Underlying type targeted by this modifier
-    pub fn underlying_type(&self) -> Option<Type> {
+    pub fn underlying_type(&self) -> Option<Type<'_>> {
         into_optional(self.ptr.underlying_type())
     }
 }

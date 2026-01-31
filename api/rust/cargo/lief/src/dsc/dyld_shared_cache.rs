@@ -249,12 +249,12 @@ impl DyldSharedCache {
     }
 
     /// Find the [`Dylib`] that encompasses the given virtual address.
-    pub fn find_lib_from_va(&self, va: u64) -> Option<Dylib> {
+    pub fn find_lib_from_va(&self, va: u64) -> Option<Dylib<'_>> {
         into_optional(self.ptr.find_lib_from_va(va))
     }
 
     /// Find the [`Dylib`] whose [`Dylib::path`] matches the provided path.
-    pub fn find_lib_from_path<P: AsRef<Path>>(&self, path: P) -> Option<Dylib> {
+    pub fn find_lib_from_path<P: AsRef<Path>>(&self, path: P) -> Option<Dylib<'_>> {
         into_optional(self.ptr.find_lib_from_path(path.as_ref().to_str().unwrap()))
     }
 
@@ -262,7 +262,7 @@ impl DyldSharedCache {
     ///
     /// If multiple libraries have the same name (but with a different path),
     /// the **first one** matching the provided name is returned.
-    pub fn find_lib_from_name(&self, name: &str) -> Option<Dylib> {
+    pub fn find_lib_from_name(&self, name: &str) -> Option<Dylib<'_>> {
         into_optional(self.ptr.find_lib_from_name(name))
     }
 
@@ -273,26 +273,26 @@ impl DyldSharedCache {
 
     /// Return an iterator over the different [`Dylib`] libraries embedded
     /// in this dyld shared cache
-    pub fn libraries(&self) -> Dylibs {
+    pub fn libraries(&self) -> Dylibs<'_> {
         Dylibs::new(self.ptr.libraries())
     }
 
     /// Return an iterator over the different [`MappingInfo`] associated
     /// with this dyld shared cache
-    pub fn mapping_info(&self) -> MappingInfoIt {
+    pub fn mapping_info(&self) -> MappingInfoIt<'_> {
         MappingInfoIt::new(self.ptr.mapping_info())
     }
 
     /// Return an interator over the subcaches associated with this (main) dyld shared
     /// cache.
-    pub fn subcaches(&self) -> SubCacheIt {
+    pub fn subcaches(&self) -> SubCacheIt<'_> {
         SubCacheIt::new(self.ptr.subcaches())
     }
 
     /// Disassemble instructions at the provided virtual address.
     ///
     /// This function returns an iterator over [`assembly::Instructions`].
-    pub fn disassemble(&self, address: u64) -> Instructions {
+    pub fn disassemble(&self, address: u64) -> Instructions<'_> {
         Instructions::new(self.ptr.disassemble(address))
     }
 

@@ -35,7 +35,7 @@ impl Relocation<'_> {
     }
 
     /// Symbol associated with the relocation (if any)
-    pub fn symbol(&self) -> Option<Symbol> {
+    pub fn symbol(&self) -> Option<Symbol<'_>> {
         into_optional(self.ptr.symbol())
     }
 
@@ -45,7 +45,7 @@ impl Relocation<'_> {
     }
 
     /// Section in which the relocation takes place
-    pub fn section(&self) -> Option<Section> {
+    pub fn section(&self) -> Option<Section<'_>> {
         into_optional(self.ptr.section())
     }
 }

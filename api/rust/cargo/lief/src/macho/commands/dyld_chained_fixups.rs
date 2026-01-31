@@ -88,7 +88,7 @@ impl DyldChainedFixups<'_> {
 
     /// Iterator over the bindings [`crate::macho::BindingInfo::Chained`]
     /// associated with this command
-    pub fn bindings(&self) -> Bindings {
+    pub fn bindings(&self) -> Bindings<'_> {
         Bindings::new(self.ptr.bindings())
     }
 

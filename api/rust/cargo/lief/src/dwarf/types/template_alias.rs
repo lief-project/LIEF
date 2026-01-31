@@ -30,12 +30,12 @@ impl DwarfType for TemplateAlias<'_> {
 
 impl TemplateAlias<'_> {
     /// The underlying type aliased by this type.
-    pub fn underlying_type(&self) -> Option<Type> {
+    pub fn underlying_type(&self) -> Option<Type<'_>> {
         into_optional(self.ptr.underlying_type())
     }
 
     /// [`Parameters`] associated with the underlying template
-    pub fn parameters(&self) -> ParametersIt {
+    pub fn parameters(&self) -> ParametersIt<'_> {
         ParametersIt::new(self.ptr.parameters())
     }
 }

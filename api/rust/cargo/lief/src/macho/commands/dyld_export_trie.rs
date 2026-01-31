@@ -33,7 +33,7 @@ impl DyldExportsTrie<'_> {
     }
 
     /// Iterator over the [`crate::macho::ExportInfo`] associated with this command
-    pub fn exports(&self) -> ExportInfos {
+    pub fn exports(&self) -> ExportInfos<'_> {
         ExportInfos::new(self.ptr.exports())
     }
 }

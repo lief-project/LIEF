@@ -79,13 +79,13 @@ impl Binary {
     }
 
     /// DosHeader which starts the PE files
-    pub fn dos_header(&self) -> DosHeader {
+    pub fn dos_header(&self) -> DosHeader<'_> {
         DosHeader::from_ffi(self.ptr.dos_header())
     }
 
     /// Header that follows the [`Binary::header`]. It is named
     /// *optional* from the COFF specification but it is mandatory in a PE file.
-    pub fn optional_header(&self) -> OptionalHeader {
+    pub fn optional_header(&self) -> OptionalHeader<'_> {
         OptionalHeader::from_ffi(self.ptr.optional_header())
     }
 
@@ -95,68 +95,68 @@ impl Binary {
     }
 
     /// Next header after the [`Binary::dos_header`]
-    pub fn header(&self) -> Header {
+    pub fn header(&self) -> Header<'_> {
         Header::from_ffi(self.ptr.header())
     }
 
     /// Return TLS information if present
-    pub fn tls(&self) -> Option<TLS> {
+    pub fn tls(&self) -> Option<TLS<'_>> {
         into_optional(self.ptr.tls())
     }
 
     /// Return rich header information if present.
-    pub fn rich_header(&self) -> Option<RichHeader> {
+    pub fn rich_header(&self) -> Option<RichHeader<'_>> {
         into_optional(self.ptr.rich_header())
     }
 
     /// Return export information
-    pub fn export(&self) -> Option<Export> {
+    pub fn export(&self) -> Option<Export<'_>> {
         into_optional(self.ptr.get_export())
     }
 
     /// Return the root of the PE's resource tree
-    pub fn resources(&self) -> Option<ResourceNode> {
+    pub fn resources(&self) -> Option<ResourceNode<'_>> {
         into_optional(self.ptr.resources())
     }
 
     /// Return a manager interface to read and manipulate the resources tree with a user friendly
     /// interface.
-    pub fn resources_manager(&self) -> Option<ResourcesManager> {
+    pub fn resources_manager(&self) -> Option<ResourcesManager<'_>> {
         into_optional(self.ptr.resources_manager())
     }
 
     /// Return the imports as an **iterator** over the [`Import`] structure
-    pub fn imports(&self) -> Imports {
+    pub fn imports(&self) -> Imports<'_> {
         Imports::new(self.ptr.imports())
     }
 
     /// Return the data directories as an iterator over the [`DataDirectory`] structure
-    pub fn data_directories(&self) -> DataDirectories {
+    pub fn data_directories(&self) -> DataDirectories<'_> {
         DataDirectories::new(self.ptr.data_directories())
     }
 
     /// Return the sections as an iterator over the [`Section`] structure
-    pub fn sections(&self) -> Sections {
+    pub fn sections(&self) -> Sections<'_> {
         Sections::new(self.ptr.sections())
     }
 
     /// Return the relocations as an iterator over the [`super::Relocation`] structure
-    pub fn relocations(&self) -> Relocations {
+    pub fn relocations(&self) -> Relocations<'_> {
         Relocations::new(self.ptr.relocations())
     }
 
     /// Return the delayed imports as an iterator over the [`DelayImport`] structure
-    pub fn delay_imports(&self) -> DelayImports {
+    pub fn delay_imports(&self) -> DelayImports<'_> {
         DelayImports::new(self.ptr.delay_imports())
     }
 
     /// Return an iterator over the [`signature::Signature`] if the current PE is authenticode-signed.
-    pub fn signatures(&self) -> Signatures {
+    pub fn signatures(&self) -> Signatures<'_> {
         Signatures::new(self.ptr.signatures())
     }
 
     /// Return an iterator over the [`debug::Entries`] of the binary.
-    pub fn debug(&self) -> DebugEntries {
+    pub fn debug(&self) -> DebugEntries<'_> {
         DebugEntries::new(self.ptr.debug())
     }
 
@@ -166,7 +166,7 @@ impl Binary {
     }
 
     /// Return load configuration info if present.
-    pub fn load_configuration(&self) -> Option<LoadConfiguration> {
+    pub fn load_configuration(&self) -> Option<LoadConfiguration<'_>> {
         into_optional(self.ptr.load_configuration())
     }
 
@@ -206,22 +206,22 @@ impl Binary {
     }
 
     /// Find a section by its offset
-    pub fn section_from_offset(&self, offset: u64) -> Option<Section> {
+    pub fn section_from_offset(&self, offset: u64) -> Option<Section<'_>> {
         into_optional(self.ptr.section_from_offset(offset))
     }
 
     /// Find a section by its **relative** virtual address
-    pub fn section_from_rva(&self, rva: u64) -> Option<Section> {
+    pub fn section_from_rva(&self, rva: u64) -> Option<Section<'_>> {
         into_optional(self.ptr.section_from_rva(rva))
     }
 
     /// Find a section by its name
-    pub fn section_by_name(&self, name: &str) -> Option<Section> {
+    pub fn section_by_name(&self, name: &str) -> Option<Section<'_>> {
         into_optional(self.ptr.section_by_name(name))
     }
 
     /// Find the data directory with the given type
-    pub fn data_directory_by_type(&self, dir_type: data_directory::Type) -> Option<DataDirectory> {
+    pub fn data_directory_by_type(&self, dir_type: data_directory::Type) -> Option<DataDirectory<'_>> {
         into_optional(self.ptr.data_directory_by_type(dir_type.into()))
     }
 
@@ -255,12 +255,12 @@ impl Binary {
     }
 
     /// Find an import by its DLL name (case insensitive)
-    pub fn import_by_name(&self, name: &str) -> Option<Import> {
+    pub fn import_by_name(&self, name: &str) -> Option<Import<'_>> {
         into_optional(self.ptr.import_by_name(name))
     }
 
     /// Find a delayed import by its name
-    pub fn delay_import_by_name(&self, name: &str) -> Option<DelayImport> {
+    pub fn delay_import_by_name(&self, name: &str) -> Option<DelayImport<'_>> {
         into_optional(self.ptr.delay_import_by_name(name))
     }
 
@@ -269,63 +269,63 @@ impl Binary {
         to_slice!(self.ptr.get_content_from_virtual_address(address, size));
     }
 
-    pub fn functions(&self) -> generic::Functions {
+    pub fn functions(&self) -> generic::Functions<'_> {
         generic::Functions::new(self.ptr.functions())
     }
 
     /// Return the data directory associated with the export table
-    pub fn export_dir(&self) -> Option<DataDirectory> {
+    pub fn export_dir(&self) -> Option<DataDirectory<'_>> {
         into_optional(self.ptr.export_dir())
     }
 
     /// Return the data directory associated with the import table
-    pub fn import_dir(&self) -> Option<DataDirectory> {
+    pub fn import_dir(&self) -> Option<DataDirectory<'_>> {
         into_optional(self.ptr.import_dir())
     }
 
     /// Return the data directory associated with the resources tree
-    pub fn rsrc_dir(&self) -> Option<DataDirectory> {
+    pub fn rsrc_dir(&self) -> Option<DataDirectory<'_>> {
         into_optional(self.ptr.rsrc_dir())
     }
 
     /// Return the data directory associated with the exceptions
-    pub fn exceptions_dir(&self) -> Option<DataDirectory> {
+    pub fn exceptions_dir(&self) -> Option<DataDirectory<'_>> {
         into_optional(self.ptr.exceptions_dir())
     }
 
     /// Return the data directory associated with the certificate table
     /// (authenticode)
-    pub fn cert_dir(&self) -> Option<DataDirectory> {
+    pub fn cert_dir(&self) -> Option<DataDirectory<'_>> {
         into_optional(self.ptr.cert_dir())
     }
 
     /// Return the data directory associated with the relocation table
-    pub fn relocation_dir(&self) -> Option<DataDirectory> {
+    pub fn relocation_dir(&self) -> Option<DataDirectory<'_>> {
         into_optional(self.ptr.relocation_dir())
     }
 
     /// Return the data directory associated with the debug table
-    pub fn debug_dir(&self) -> Option<DataDirectory> {
+    pub fn debug_dir(&self) -> Option<DataDirectory<'_>> {
         into_optional(self.ptr.debug_dir())
     }
 
     /// Return the data directory associated with TLS
-    pub fn tls_dir(&self) -> Option<DataDirectory> {
+    pub fn tls_dir(&self) -> Option<DataDirectory<'_>> {
         into_optional(self.ptr.tls_dir())
     }
 
     /// Return the data directory associated with the load config
-    pub fn load_config_dir(&self) -> Option<DataDirectory> {
+    pub fn load_config_dir(&self) -> Option<DataDirectory<'_>> {
         into_optional(self.ptr.load_config_dir())
     }
 
     /// Return the data directory associated with the IAT
-    pub fn iat_dir(&self) -> Option<DataDirectory> {
+    pub fn iat_dir(&self) -> Option<DataDirectory<'_>> {
         into_optional(self.ptr.iat_dir())
     }
 
     /// Return the data directory associated with delayed imports
-    pub fn export_delay_dirdir(&self) -> Option<DataDirectory> {
+    pub fn export_delay_dirdir(&self) -> Option<DataDirectory<'_>> {
         into_optional(self.ptr.delay_dir())
     }
 
@@ -431,7 +431,7 @@ impl Binary {
     }
 
     /// Return the [`CodeViewPDB`] object if present
-    pub fn codeview_pdb(&self) -> Option<CodeViewPDB> {
+    pub fn codeview_pdb(&self) -> Option<CodeViewPDB<'_>> {
         into_optional(self.ptr.codeview_pdb())
     }
 
@@ -449,12 +449,12 @@ impl Binary {
     }
 
     /// Iterator over the strings located in the COFF string table
-    pub fn coff_string_table(&self) -> COFFStrings {
+    pub fn coff_string_table(&self) -> COFFStrings<'_> {
         COFFStrings::new(self.ptr.coff_string_table())
     }
 
     /// Return an iterator over the binary (COFF) symbols (if any).
-    pub fn symbols(&self) -> Symbols {
+    pub fn symbols(&self) -> Symbols<'_> {
         Symbols::new(self.ptr.symbols())
     }
 
@@ -464,7 +464,7 @@ impl Binary {
     /// This offset must include the first 4 bytes holding the size of the table.
     /// Hence, the first string starts a the offset 4.
     /// </div>
-    pub fn find_coff_string_at(&self, offset: u32) -> Option<coff::String> {
+    pub fn find_coff_string_at(&self, offset: u32) -> Option<coff::String<'_>> {
         into_optional(self.ptr.find_coff_string_at(offset))
     }
 
@@ -472,7 +472,7 @@ impl Binary {
     ///
     /// This function requires that the option [`ParserConfig::parse_exceptions`] was turned on
     /// (default is `false`) when parsing the binary.
-    pub fn exceptions(&self) -> Exceptions {
+    pub fn exceptions(&self) -> Exceptions<'_> {
         Exceptions::new(self.ptr.exceptions())
     }
 
@@ -480,7 +480,7 @@ impl Binary {
     ///
     /// This function requires that the option [`ParserConfig::parse_exceptions`] was turned on
     /// (default is `false`) when parsing the binary.
-    pub fn find_exception_at(&self, rva: u32) -> Option<RuntimeExceptionFunction> {
+    pub fn find_exception_at(&self, rva: u32) -> Option<RuntimeExceptionFunction<'_>> {
         into_optional(self.ptr.find_exception_at(rva))
     }
 

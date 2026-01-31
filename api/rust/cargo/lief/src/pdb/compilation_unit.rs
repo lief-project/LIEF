@@ -43,19 +43,19 @@ impl CompilationUnit<'_> {
     /// Return an iterator over the [`crate::pdb::Function`] defined in this compilation unit.
     /// If the PDB does not contain or has an empty DBI stream, it returns
     /// an empty iterator.
-    pub fn functions(&self) -> Functions {
+    pub fn functions(&self) -> Functions<'_> {
         Functions::new(self.ptr.functions())
     }
 
     /// Iterator over the sources files (as string) that compose this compilation unit.
     /// These files include the **header** (`.h, .hpp`, ...).
-    pub fn sources(&self) -> Sources {
+    pub fn sources(&self) -> Sources<'_> {
         Sources::new(self.ptr.sources())
     }
 
     /// Return build metadata such as the version of the compiler or
     /// the original source language of this compilation unit
-    pub fn build_metadata(&self) -> Option<BuildMetadata> {
+    pub fn build_metadata(&self) -> Option<BuildMetadata<'_>> {
         into_optional(self.ptr.build_metadata())
     }
 }

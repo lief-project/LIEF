@@ -77,12 +77,12 @@ impl Variable<'_> {
     }
 
     /// Return the type of this variable
-    pub fn get_type(&self) -> Option<Type> {
+    pub fn get_type(&self) -> Option<Type<'_>> {
         into_optional(self.ptr.get_type())
     }
 
     /// The scope in which this variable is defined
-    pub fn scope(&self) -> Option<Scope> {
+    pub fn scope(&self) -> Option<Scope<'_>> {
         into_optional(self.ptr.scope())
     }
 

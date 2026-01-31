@@ -28,7 +28,7 @@ impl DwarfType for SetTy<'_> {
 
 impl SetTy<'_> {
     /// The underlying type referenced by this set-type.
-    pub fn underlying_type(&self) -> Option<Type> {
+    pub fn underlying_type(&self) -> Option<Type<'_>> {
         into_optional(self.ptr.underlying_type())
     }
 }

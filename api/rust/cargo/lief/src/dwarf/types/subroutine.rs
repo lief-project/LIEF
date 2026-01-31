@@ -30,12 +30,12 @@ impl DwarfType for Subroutine<'_> {
 
 impl Subroutine<'_> {
     /// Return the [`Type`] associated with the **return type** of this function.
-    pub fn return_type(&self) -> Option<Type> {
+    pub fn return_type(&self) -> Option<Type<'_>> {
         into_optional(self.ptr.return_type())
     }
 
     /// [`Parameters`] of this subroutine
-    pub fn parameters(&self) -> ParametersIt {
+    pub fn parameters(&self) -> ParametersIt<'_> {
         ParametersIt::new(self.ptr.parameters())
     }
 }

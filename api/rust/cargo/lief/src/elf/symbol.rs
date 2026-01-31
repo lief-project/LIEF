@@ -146,12 +146,12 @@ impl Symbol<'_> {
     }
 
     /// Section associated with the symbol (if any)
-    pub fn section(&self) -> Option<Section> {
+    pub fn section(&self) -> Option<Section<'_>> {
         into_optional(self.ptr.section())
     }
 
     /// Return the SymbolVersion associated with this symbol (if any)
-    pub fn symbol_version(&self) -> Option<SymbolVersion> {
+    pub fn symbol_version(&self) -> Option<SymbolVersion<'_>> {
         into_optional(self.ptr.symbol_version())
     }
 

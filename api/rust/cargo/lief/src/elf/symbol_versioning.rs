@@ -23,7 +23,7 @@ impl SymbolVersion<'_> {
     }
 
     /// SymbolVersionAux associated with the current Version if any.
-    pub fn symbol_version_auxiliary(&self) -> Option<SymbolVersionAux> {
+    pub fn symbol_version_auxiliary(&self) -> Option<SymbolVersionAux<'_>> {
         into_optional(self.ptr.symbol_version_auxiliary())
     }
 
@@ -177,7 +177,7 @@ impl SymbolVersionDefinition<'_> {
     }
 
     /// Iterator over the [`SymbolVersionAux`] associated with this entry
-    pub fn auxiliary_symbols(&self) -> DefAuxiliarySymbols {
+    pub fn auxiliary_symbols(&self) -> DefAuxiliarySymbols<'_> {
         DefAuxiliarySymbols::new(self.ptr.sym_aux())
     }
 }
@@ -229,7 +229,7 @@ impl SymbolVersionRequirement<'_> {
     }
 
     /// Auxiliary entries as an iterator over [`SymbolVersionAuxRequirement`]
-    pub fn auxiliary_symbols(&self) -> AuxiliarySymbols {
+    pub fn auxiliary_symbols(&self) -> AuxiliarySymbols<'_> {
         AuxiliarySymbols::new(self.ptr.auxiliary_symbols())
     }
 
@@ -242,7 +242,7 @@ impl SymbolVersionRequirement<'_> {
     }
 
     /// Try to find the [`SymbolVersionAuxRequirement`] with the given name (e.g. `GLIBC_2.27`)
-    pub fn find_aux(&self, name: &str) -> Option<SymbolVersionAuxRequirement> {
+    pub fn find_aux(&self, name: &str) -> Option<SymbolVersionAuxRequirement<'_>> {
         into_optional(self.ptr.find_aux(name.to_string()))
     }
 

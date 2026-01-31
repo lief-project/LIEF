@@ -16,13 +16,13 @@ pub trait Parameter {
     }
 
     /// Return the type of the parameter
-    fn get_type(&self) -> Option<Type> {
+    fn get_type(&self) -> Option<Type<'_>> {
         into_optional(self.get_base().get_type())
     }
 
     /// Location of this parameter. For instance it can be a specific register
     /// that is not following the calling convention.
-    fn location(&self) -> Option<Location> {
+    fn location(&self) -> Option<Location<'_>> {
         into_optional(self.get_base().location())
     }
 }

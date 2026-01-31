@@ -39,7 +39,7 @@ impl<'a> FromFFI<ffi::PE_Import> for Import<'a> {
 
 impl Import<'_> {
     /// Iterator over the [`ImportEntry`]
-    pub fn entries(&self) -> ImportEntries {
+    pub fn entries(&self) -> ImportEntries<'_> {
         ImportEntries::new(self.ptr.entries())
     }
 
@@ -75,17 +75,17 @@ impl Import<'_> {
     }
 
     /// Return the [`DataDirectory`] associated with this import.
-    pub fn directory(&self) -> Option<DataDirectory> {
+    pub fn directory(&self) -> Option<DataDirectory<'_>> {
         into_optional(self.ptr.directory())
     }
 
     /// Return the [`DataDirectory`] associated with the IAT (import address table).
-    pub fn iat_directory(&self) -> Option<DataDirectory> {
+    pub fn iat_directory(&self) -> Option<DataDirectory<'_>> {
         into_optional(self.ptr.iat_directory())
     }
 
     /// Try to find an [`ImportEntry`] by its name
-    pub fn entry_by_name(&self, name: &str) -> Option<ImportEntry> {
+    pub fn entry_by_name(&self, name: &str) -> Option<ImportEntry<'_>> {
         into_optional(self.ptr.entry_by_name(name))
     }
 

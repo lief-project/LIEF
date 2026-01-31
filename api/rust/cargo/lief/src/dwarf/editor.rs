@@ -116,7 +116,7 @@ impl<'a> Editor<'a> {
     }
 
     /// Create a new compilation unit
-    pub fn create_compile_unit(&mut self) -> Option<CompilationUnit> {
+    pub fn create_compile_unit(&mut self) -> Option<CompilationUnit<'_>> {
         into_optional(self.ptr.pin_mut().create_compilation_unit())
     }
 

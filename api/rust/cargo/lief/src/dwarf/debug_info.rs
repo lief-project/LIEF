@@ -30,7 +30,7 @@ impl FromFFI<ffi::DWARF_DebugInfo> for DebugInfo<'_> {
 
 impl DebugInfo<'_> {
     /// Iterator on the [`crate::dwarf::CompilationUnit`] embedded in this dwarf
-    pub fn compilation_units(&self) -> CompilationUnits {
+    pub fn compilation_units(&self) -> CompilationUnits<'_> {
         CompilationUnits::new(self.ptr.compilation_units())
     }
 
@@ -44,28 +44,28 @@ impl DebugInfo<'_> {
     ///     // Found
     /// }
     /// ```
-    pub fn function_by_name(&self, name: &str) -> Option<Function> {
+    pub fn function_by_name(&self, name: &str) -> Option<Function<'_>> {
         into_optional(self.ptr.function_by_name(name))
     }
 
     /// Try to find the function at the given **virtual** address
-    pub fn function_by_addr(&self, addr: u64) -> Option<Function> {
+    pub fn function_by_addr(&self, addr: u64) -> Option<Function<'_>> {
         into_optional(self.ptr.function_by_addr(addr))
     }
 
     /// Try to find the variable with the given name. This name can be mangled or
     /// not.
-    pub fn variable_by_name(&self, name: &str) -> Option<Variable> {
+    pub fn variable_by_name(&self, name: &str) -> Option<Variable<'_>> {
         into_optional(self.ptr.variable_by_name(name))
     }
 
     /// Try to find the (static) variable at the given **virtual** address
-    pub fn variable_by_addr(&self, addr: u64) -> Option<Variable> {
+    pub fn variable_by_addr(&self, addr: u64) -> Option<Variable<'_>> {
         into_optional(self.ptr.variable_by_addr(addr))
     }
 
     /// Try to find the (static) variable at the given **virtual** address
-    pub fn type_by_name(&self, name: &str) -> Option<Type> {
+    pub fn type_by_name(&self, name: &str) -> Option<Type<'_>> {
         into_optional(self.ptr.type_by_name(name))
     }
 }

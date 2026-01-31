@@ -34,7 +34,7 @@ impl Instruction {
     }
 
     /// Return an iterator over the [`x86::Operands`] operands
-    pub fn operands(&self) -> Operands {
+    pub fn operands(&self) -> Operands<'_> {
         Operands::new(self.ptr.operands())
     }
 }

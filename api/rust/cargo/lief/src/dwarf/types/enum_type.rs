@@ -19,7 +19,7 @@ impl Enum<'_> {
     }
 
     /// The underlying type that is used to encode this enum
-    pub fn underlying_type(&self) -> Option<Type> {
+    pub fn underlying_type(&self) -> Option<Type<'_>> {
         into_optional(self.ptr.underlying_type())
     }
 

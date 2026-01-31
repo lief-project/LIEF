@@ -28,7 +28,7 @@ impl DwarfType for Reference<'_> {
 
 impl Reference<'_> {
     /// The underlying type referenced by this ref-type.
-    pub fn underlying_type(&self) -> Option<Type> {
+    pub fn underlying_type(&self) -> Option<Type<'_>> {
         into_optional(self.ptr.underlying_type())
     }
 }

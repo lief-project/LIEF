@@ -131,7 +131,7 @@ pub trait DebugEntry {
     }
 
     /// The section where debug data is located
-    fn section(&self) -> Option<Section> {
+    fn section(&self) -> Option<Section<'_>> {
         into_optional(self.get_base().section())
     }
 
@@ -351,7 +351,7 @@ pub struct Pogo<'a> {
 
 impl Pogo<'_> {
     /// An iterator over the different POGO elements: [`PogoEntry`]
-    pub fn entries(&self) -> PogoEntries {
+    pub fn entries(&self) -> PogoEntries<'_> {
         PogoEntries::new(self.ptr.entries())
     }
 }
@@ -846,7 +846,7 @@ pub struct FPO<'a> {
 }
 
 impl FPO<'_> {
-    pub fn entries(&self) -> FPOEntries {
+    pub fn entries(&self) -> FPOEntries<'_> {
         FPOEntries::new(self.ptr.entries())
     }
 }

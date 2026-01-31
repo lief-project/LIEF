@@ -27,7 +27,7 @@ impl DwarfType for Atomic<'_> {
 }
 
 impl Atomic<'_> {
-    pub fn underlying_type(&self) -> Option<Type> {
+    pub fn underlying_type(&self) -> Option<Type<'_>> {
         into_optional(self.ptr.underlying_type())
     }
 }

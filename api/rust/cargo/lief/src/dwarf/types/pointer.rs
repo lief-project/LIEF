@@ -28,7 +28,7 @@ impl DwarfType for Pointer<'_> {
 
 impl Pointer<'_> {
     /// The type pointed by this pointer
-    pub fn underlying_type(&self) -> Option<Type> {
+    pub fn underlying_type(&self) -> Option<Type<'_>> {
         into_optional(self.ptr.underlying_type())
     }
 }

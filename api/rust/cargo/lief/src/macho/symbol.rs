@@ -95,17 +95,17 @@ impl Symbol<'_> {
     }
 
     /// Export info associated with this symbol (if any)
-    pub fn export_info(&self) -> Option<ExportInfo> {
+    pub fn export_info(&self) -> Option<ExportInfo<'_>> {
         into_optional(self.ptr.export_info())
     }
 
     /// Binding info associated with this symbol (if any)
-    pub fn binding_info(&self) -> Option<BindingInfo> {
+    pub fn binding_info(&self) -> Option<BindingInfo<'_>> {
         into_optional(self.ptr.binding_info())
     }
 
     /// Return the library in which this symbol is defined (if any)
-    pub fn library(&self) -> Option<Dylib> {
+    pub fn library(&self) -> Option<Dylib<'_>> {
         into_optional(self.ptr.library())
     }
 

@@ -28,32 +28,32 @@ impl Binary {
     }
 
     /// The COFF header
-    pub fn header(&self) -> Header {
+    pub fn header(&self) -> Header<'_> {
         Header::from_ffi(self.ptr.header())
     }
 
     /// Iterator over the different sections located in this COFF binary
-    pub fn sections(&self) -> Sections {
+    pub fn sections(&self) -> Sections<'_> {
         Sections::new(self.ptr.sections())
     }
 
     /// Iterator over **all** the relocations used by this COFF binary
-    pub fn relocations(&self) -> Relocations {
+    pub fn relocations(&self) -> Relocations<'_> {
         Relocations::new(self.ptr.relocations())
     }
 
     /// Iterator over the COFF's symbols
-    pub fn symbols(&self) -> Symbols {
+    pub fn symbols(&self) -> Symbols<'_> {
         Symbols::new(self.ptr.symbols())
     }
 
     /// Iterator over the functions implemented in this COFF
-    pub fn functions(&self) -> Functions {
+    pub fn functions(&self) -> Functions<'_> {
         Functions::new(self.ptr.functions())
     }
 
     /// Iterator over the COFF's strings
-    pub fn string_table(&self) -> Strings {
+    pub fn string_table(&self) -> Strings<'_> {
         Strings::new(self.ptr.string_table())
     }
 
@@ -63,24 +63,24 @@ impl Binary {
     /// This offset must include the first 4 bytes holding the size of the table. Hence,
     /// the first string starts a the offset 4.
     /// </div>
-    pub fn find_string(&self, offset: u32) -> Option<String> {
+    pub fn find_string(&self, offset: u32) -> Option<String<'_>> {
         into_optional(self.ptr.find_string(offset))
     }
 
     /// Try to find the function (symbol) with the given name
-    pub fn find_function(&self, name: &str) -> Option<Symbol> {
+    pub fn find_function(&self, name: &str) -> Option<Symbol<'_>> {
         into_optional(self.ptr.find_function(name))
     }
 
     /// Try to find the function (symbol) with the given **demangled** name
-    pub fn find_demangled_function(&self, name: &str) -> Option<Symbol> {
+    pub fn find_demangled_function(&self, name: &str) -> Option<Symbol<'_>> {
         into_optional(self.ptr.find_demangled_function(name))
     }
 
     /// Disassemble code provided by the given slice at the specified `address` parameter.
     ///
     /// See also [`crate::assembly::Instruction`] and [`crate::assembly::Instructions`]
-    pub fn disassemble_slice(&self, slice: &[u8], address: u64) -> InstructionsIt {
+    pub fn disassemble_slice(&self, slice: &[u8], address: u64) -> InstructionsIt<'_> {
         unsafe {
             InstructionsIt::new(self.ptr.disassemble_buffer(
                     slice.as_ptr(), slice.len().try_into().unwrap(),
@@ -98,7 +98,7 @@ impl Binary {
     /// ```
     ///
     /// See also [`crate::assembly::Instruction`] and [`crate::assembly::Instructions`]
-    pub fn disassemble_function(&self, name: &str) -> InstructionsIt {
+    pub fn disassemble_function(&self, name: &str) -> InstructionsIt<'_> {
         InstructionsIt::new(self.ptr.disassemble_function(name.to_string()))
     }
 
@@ -114,7 +114,7 @@ impl Binary {
     /// ```
     ///
     /// See also [`crate::assembly::Instruction`] and [`crate::assembly::Instructions`]
-    pub fn disassemble_symbol(&self, symbol: &Symbol) -> InstructionsIt {
+    pub fn disassemble_symbol(&self, symbol: &Symbol) -> InstructionsIt<'_> {
         InstructionsIt::new(self.ptr.disassemble_symbol(symbol.ptr.as_ref().unwrap()))
     }
 }

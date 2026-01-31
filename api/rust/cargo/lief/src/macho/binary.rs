@@ -71,179 +71,179 @@ impl FromFFI<ffi::MachO_Binary> for Binary {
 
 impl Binary {
     /// Return the main Mach-O header
-    pub fn header(&self) -> Header {
+    pub fn header(&self) -> Header<'_> {
         Header::from_ffi(self.ptr.header())
     }
 
     /// Return an iterator over the different [`crate::macho::Commands`] used by the
     /// Mach-O binary
-    pub fn commands(&self) -> CommandsIter {
+    pub fn commands(&self) -> CommandsIter<'_> {
         CommandsIter::new(self.ptr.commands())
     }
 
     /// Return an iterator over the different [`crate::macho::Section`] of the binary
-    pub fn sections(&self) -> Sections {
+    pub fn sections(&self) -> Sections<'_> {
         Sections::new(self.ptr.sections())
     }
 
     /// Return an iterator over the different [`crate::macho::commands::Segment`] (`LC_SEGMENT/LC_SIGNATURE`)
     /// of the binary.
-    pub fn segments(&self) -> Segments {
+    pub fn segments(&self) -> Segments<'_> {
         Segments::new(self.ptr.segments())
     }
 
     /// Return an iterator over the [`crate::macho::commands::Dylib`] used by this binary
-    pub fn libraries(&self) -> Libraries {
+    pub fn libraries(&self) -> Libraries<'_> {
         Libraries::new(self.ptr.libraries())
     }
 
     /// Return an iterator over the different [`crate::macho::Relocation`] of this binary
-    pub fn relocations(&self) -> Relocations {
+    pub fn relocations(&self) -> Relocations<'_> {
         Relocations::new(self.ptr.relocations())
     }
 
     /// Return an iterator over the different [`crate::macho::Symbol`] of this binary
-    pub fn symbols(&self) -> Symbols {
+    pub fn symbols(&self) -> Symbols<'_> {
         Symbols::new(self.ptr.symbols())
     }
 
     /// Return the `LC_DYLD_INFO/LC_DYLD_INFO_ONLY` command if present
-    pub fn dyld_info(&self) -> Option<DyldInfo> {
+    pub fn dyld_info(&self) -> Option<DyldInfo<'_>> {
         into_optional(self.ptr.dyld_info())
     }
 
     /// Return the `LC_UUID` command if present
-    pub fn uuid(&self) -> Option<UUID> {
+    pub fn uuid(&self) -> Option<UUID<'_>> {
         into_optional(self.ptr.uuid())
     }
 
     /// Return the `LC_MAIN` command if present
-    pub fn main_command(&self) -> Option<Main> {
+    pub fn main_command(&self) -> Option<Main<'_>> {
         into_optional(self.ptr.main_command())
     }
 
     /// Return the `LC_LOAD_DYLINKER/LC_ID_DYLINKER` command if present
-    pub fn dylinker(&self) -> Option<Dylinker> {
+    pub fn dylinker(&self) -> Option<Dylinker<'_>> {
         into_optional(self.ptr.dylinker())
     }
 
     /// Return the `LC_FUNCTION_STARTS` command if present
-    pub fn function_starts(&self) -> Option<FunctionStarts> {
+    pub fn function_starts(&self) -> Option<FunctionStarts<'_>> {
         into_optional(self.ptr.function_starts())
     }
 
     /// Return the `LC_SOURCE_VERSION` command if present
-    pub fn source_version(&self) -> Option<SourceVersion> {
+    pub fn source_version(&self) -> Option<SourceVersion<'_>> {
         into_optional(self.ptr.source_version())
     }
 
     /// Return the `LC_THREAD/LC_UNIXTHREAD` command if present
-    pub fn thread_command(&self) -> Option<ThreadCommand> {
+    pub fn thread_command(&self) -> Option<ThreadCommand<'_>> {
         into_optional(self.ptr.thread_command())
     }
 
     /// Return the `LC_RPATH` command if present
-    pub fn rpath(&self) -> Option<RPath> {
+    pub fn rpath(&self) -> Option<RPath<'_>> {
         into_optional(self.ptr.rpath())
     }
 
     /// Return the `LC_ROUTINE/LC_ROUTINE64` command if present
-    pub fn routine(&self) -> Option<Routine> {
+    pub fn routine(&self) -> Option<Routine<'_>> {
         into_optional(self.ptr.routine_command())
     }
 
     /// Return the `LC_SYMTAB` command if present
-    pub fn symbol_command(&self) -> Option<SymbolCommand> {
+    pub fn symbol_command(&self) -> Option<SymbolCommand<'_>> {
         into_optional(self.ptr.symbol_command())
     }
 
     /// Return the `LC_DYSYMTAB` command if present
-    pub fn dynamic_symbol(&self) -> Option<DynamicSymbolCommand> {
+    pub fn dynamic_symbol(&self) -> Option<DynamicSymbolCommand<'_>> {
         into_optional(self.ptr.dynamic_symbol_command())
     }
 
     /// Return the `LC_CODE_SIGNATURE` command if present
-    pub fn code_signature(&self) -> Option<CodeSignature> {
+    pub fn code_signature(&self) -> Option<CodeSignature<'_>> {
         into_optional(self.ptr.code_signature())
     }
 
     /// Return the `LC_DYLIB_CODE_SIGN_DRS` command if present
-    pub fn code_signature_dir(&self) -> Option<CodeSignatureDir> {
+    pub fn code_signature_dir(&self) -> Option<CodeSignatureDir<'_>> {
         into_optional(self.ptr.code_signature_dir())
     }
 
     /// Return the `LC_DATA_IN_CODE` command if present
-    pub fn data_in_code(&self) -> Option<DataInCode> {
+    pub fn data_in_code(&self) -> Option<DataInCode<'_>> {
         into_optional(self.ptr.data_in_code())
     }
 
     /// Return the `LC_SEGMENT_SPLIT_INFO` command if present
-    pub fn segment_split_info(&self) -> Option<SegmentSplitInfo> {
+    pub fn segment_split_info(&self) -> Option<SegmentSplitInfo<'_>> {
         into_optional(self.ptr.segment_split_info())
     }
 
     /// Return the `LC_ENCRYPTION_INFO/LC_ENCRYPTION_INFO_64` command if present
-    pub fn encryption_info(&self) -> Option<EncryptionInfo> {
+    pub fn encryption_info(&self) -> Option<EncryptionInfo<'_>> {
         into_optional(self.ptr.encryption_info())
     }
 
     /// Return the `LC_SUB_FRAMEWORK` command if present
-    pub fn sub_framework(&self) -> Option<SubFramework> {
+    pub fn sub_framework(&self) -> Option<SubFramework<'_>> {
         into_optional(self.ptr.sub_framework())
     }
 
     /// Return the `LC_SUBCLIENT` command if present
-    pub fn subclients(&self) -> SubClients {
+    pub fn subclients(&self) -> SubClients<'_> {
         SubClients::new(self.ptr.subclients())
     }
 
     /// Return the `LC_DYLD_ENVIRONMENT` command if present
-    pub fn dyld_environment(&self) -> Option<DyldEnvironment> {
+    pub fn dyld_environment(&self) -> Option<DyldEnvironment<'_>> {
         into_optional(self.ptr.dyld_environment())
     }
 
     /// Return the `LC_BUILD_VERSION` command if present
-    pub fn build_version(&self) -> Option<BuildVersion> {
+    pub fn build_version(&self) -> Option<BuildVersion<'_>> {
         into_optional(self.ptr.build_version())
     }
 
     /// Return the `LC_DYLD_CHAINED_FIXUPS` command if present
-    pub fn dyld_chained_fixups(&self) -> Option<DyldChainedFixups> {
+    pub fn dyld_chained_fixups(&self) -> Option<DyldChainedFixups<'_>> {
         into_optional(self.ptr.dyld_chained_fixups())
     }
 
     /// Return the `LC_DYLD_EXPORTS_TRIE` command if present
-    pub fn dyld_exports_trie(&self) -> Option<DyldExportsTrie> {
+    pub fn dyld_exports_trie(&self) -> Option<DyldExportsTrie<'_>> {
         into_optional(self.ptr.dyld_exports_trie())
     }
 
     /// Return the `LC_TWOLEVEL_HINTS` command if present
-    pub fn two_level_hints(&self) -> Option<TwoLevelHints> {
+    pub fn two_level_hints(&self) -> Option<TwoLevelHints<'_>> {
         into_optional(self.ptr.two_level_hints())
     }
 
     /// Return the `LC_LINKER_OPTIMIZATION_HINT` command if present
-    pub fn linker_opt_hint(&self) -> Option<LinkerOptHint> {
+    pub fn linker_opt_hint(&self) -> Option<LinkerOptHint<'_>> {
         into_optional(self.ptr.linker_opt_hint())
     }
 
     /// Return the `LC_ATOM_INFO` command if present
-    pub fn atom_info(&self) -> Option<AtomInfo> {
+    pub fn atom_info(&self) -> Option<AtomInfo<'_>> {
         into_optional(self.ptr.atom_info())
     }
 
     /// Return the `LC_FUNCTION_VARIANTS` command if present
-    pub fn function_variants(&self) -> Option<FunctionVariants> {
+    pub fn function_variants(&self) -> Option<FunctionVariants<'_>> {
         into_optional(self.ptr.function_variants())
     }
 
     /// Return the `LC_FUNCTION_VARIANT_FIXUPS` command if present
-    pub fn function_variant_fixups(&self) -> Option<FunctionVariantFixups> {
+    pub fn function_variant_fixups(&self) -> Option<FunctionVariantFixups<'_>> {
         into_optional(self.ptr.function_variant_fixups())
     }
 
     /// Return the `LC_VERSION_MIN_MACOSX/VERSION_MIN_IPHONEOS` command if present
-    pub fn version_min(&self) -> Option<VersionMin> {
+    pub fn version_min(&self) -> Option<VersionMin<'_>> {
         into_optional(self.ptr.version_min())
     }
 
@@ -253,7 +253,7 @@ impl Binary {
     }
 
     /// Return an iterator over the bindings located in [`DyldInfo`] or [`DyldChainedFixups`]
-    pub fn bindings(&self) -> BindingsInfo {
+    pub fn bindings(&self) -> BindingsInfo<'_> {
         BindingsInfo::new(self.ptr.bindings())
     }
 
@@ -263,12 +263,12 @@ impl Binary {
     /// similar to the ELF's plt/got mechanism.
     ///
     /// There are located in sections like: `__stubs,__auth_stubs,__symbol_stub,__picsymbolstub4`
-    pub fn symbol_stubs(&self) -> Stubs {
+    pub fn symbol_stubs(&self) -> Stubs<'_> {
         Stubs::new(self.ptr.symbol_stubs())
     }
 
     /// Return Objective-C metadata if present
-    pub fn objc_metadata(&self) -> Option<Metadata> {
+    pub fn objc_metadata(&self) -> Option<Metadata<'_>> {
         into_optional(self.ptr.objc_metadata())
     }
 
@@ -291,7 +291,7 @@ impl Binary {
     ///
     /// This function tries to match the fullpath of the DylibCommand or the
     /// library name suffix.
-    pub fn find_library(&self, name: &str) -> Option<Dylib> {
+    pub fn find_library(&self, name: &str) -> Option<Dylib<'_>> {
         into_optional(self.ptr.find_library(name.to_string()))
     }
 
@@ -351,12 +351,12 @@ impl Binary {
         Dylib::from_ffi(self.ptr.as_mut().unwrap().add_library(libname))
     }
 
-    pub fn functions(&self) -> generic::Functions {
+    pub fn functions(&self) -> generic::Functions<'_> {
         generic::Functions::new(self.ptr.functions())
     }
 
     /// Return an iterator over the `LC_NOTE` commands
-    pub fn notes(&self) -> Notes {
+    pub fn notes(&self) -> Notes<'_> {
         Notes::new(self.ptr.notes())
     }
 }

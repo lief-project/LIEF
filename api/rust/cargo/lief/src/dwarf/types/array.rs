@@ -23,7 +23,7 @@ impl FromFFI<ffi::DWARF_types_Array> for Array<'_> {
 
 impl Array<'_> {
     /// The underlying type of this array
-    pub fn underlying_type(&self) -> Option<Type> {
+    pub fn underlying_type(&self) -> Option<Type<'_>> {
         into_optional(self.ptr.underlying_type())
     }
 
@@ -31,7 +31,7 @@ impl Array<'_> {
     ///
     /// This size info is usually embedded in a `DW_TAG_subrange_type` DIE which
     /// is represented by the [`SizeInfo`] structure.
-    pub fn size_info(&self) -> SizeInfo {
+    pub fn size_info(&self) -> SizeInfo<'_> {
         SizeInfo::from_ffi(self.ptr.size_info())
     }
 }
@@ -71,7 +71,7 @@ impl SizeInfo<'_> {
     /// Type of the **index** for this array.
     ///
     /// For instance in `uint8_t[3]` the index type could be set to a `size_t`.
-    pub fn get_type(&self) -> Option<Type> {
+    pub fn get_type(&self) -> Option<Type<'_>> {
         into_optional(self.ptr.get_type())
     }
 }

@@ -52,7 +52,7 @@ impl Export<'_> {
     }
 
     /// Iterator over the different [`Entry`] exported by this table
-    pub fn entries(&self) -> ExportEntries {
+    pub fn entries(&self) -> ExportEntries<'_> {
         ExportEntries::new(self.ptr.entries())
     }
 
@@ -117,27 +117,27 @@ impl Export<'_> {
     }
 
     /// Find the export entry with the given name
-    pub fn entry_by_name(&self, name: &str) -> Option<Entry> {
+    pub fn entry_by_name(&self, name: &str) -> Option<Entry<'_>> {
         into_optional(self.ptr.entry_by_name(name))
     }
 
     /// Find the export entry with the given ordinal number
-    pub fn entry_by_ordinal(&self, ordinal: u32) -> Option<Entry> {
+    pub fn entry_by_ordinal(&self, ordinal: u32) -> Option<Entry<'_>> {
         into_optional(self.ptr.entry_by_ordinal(ordinal))
     }
 
     /// Find the export entry at the provided RVA
-    pub fn entry_at_rva(&self, rva: u32) -> Option<Entry> {
+    pub fn entry_at_rva(&self, rva: u32) -> Option<Entry<'_>> {
         into_optional(self.ptr.entry_at_rva(rva))
     }
 
     /// Add the given export and return the newly created and added export
-    pub fn add_entry(&mut self, entry: &Entry) -> Entry {
+    pub fn add_entry(&mut self, entry: &Entry) -> Entry<'_> {
         Entry::from_ffi(self.ptr.pin_mut().add_entry(entry.ptr.as_ref().unwrap()))
     }
 
     /// Add a new export entry given its name and its RVA
-    pub fn add_entry_by_name(&mut self, name: &str, rva: u32) -> Entry {
+    pub fn add_entry_by_name(&mut self, name: &str, rva: u32) -> Entry<'_> {
         Entry::from_ffi(self.ptr.pin_mut().add_entry_by_name(name, rva))
     }
 

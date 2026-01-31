@@ -135,7 +135,7 @@ impl X509<'_> {
     }
 
     /// **If** the underlying public-key scheme is RSA, return the RSA information.
-    pub fn rsa_info(&self) -> Option<RsaInfo> {
+    pub fn rsa_info(&self) -> Option<RsaInfo<'_>> {
         into_optional(self.ptr.rsa_info())
     }
 

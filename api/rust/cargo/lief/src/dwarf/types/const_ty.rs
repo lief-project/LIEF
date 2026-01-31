@@ -22,7 +22,7 @@ impl FromFFI<ffi::DWARF_types_Const> for Const<'_> {
 
 impl Const<'_> {
     /// The underlying type being const-ed by this type.
-    pub fn underlying_type(&self) -> Option<Type> {
+    pub fn underlying_type(&self) -> Option<Type<'_>> {
         into_optional(self.ptr.underlying_type())
     }
 }

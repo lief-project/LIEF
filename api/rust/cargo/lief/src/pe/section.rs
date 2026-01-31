@@ -146,7 +146,7 @@ impl Section<'_> {
     ///
     /// This coff string is usually present for long section names whose length
     /// does not fit in the 8 bytes allocated by the PE format.
-    pub fn coff_string(&self) -> Option<coff::String> {
+    pub fn coff_string(&self) -> Option<coff::String<'_>> {
         into_optional(self.ptr.coff_string())
     }
 }

@@ -63,7 +63,7 @@ impl EnclaveConfiguration<'_> {
     }
 
     /// Return an iterator over the enclave's imports
-    pub fn imports(&self) -> Imports {
+    pub fn imports(&self) -> Imports<'_> {
         Imports::new(self.ptr.imports())
     }
 

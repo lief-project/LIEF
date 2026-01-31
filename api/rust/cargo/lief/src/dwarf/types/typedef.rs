@@ -28,7 +28,7 @@ impl DwarfType for Typedef<'_> {
 
 impl Typedef<'_> {
     /// The type aliased by this typedef
-    pub fn underlying_type(&self) -> Option<Type> {
+    pub fn underlying_type(&self) -> Option<Type<'_>> {
         into_optional(self.ptr.underlying_type())
     }
 }

@@ -196,12 +196,12 @@ impl Section<'_> {
     }
 
     /// Segment bound to this section
-    pub fn segment(&self) -> Option<Segment> {
+    pub fn segment(&self) -> Option<Segment<'_>> {
         into_optional(self.ptr.segment())
     }
 
     /// Iterator over the [`crate::macho::Relocation`] associated with thi section
-    pub fn relocations(&self) -> Relocations {
+    pub fn relocations(&self) -> Relocations<'_> {
         Relocations::new(self.ptr.relocations())
     }
 }

@@ -28,7 +28,7 @@ impl DwarfType for Volatile<'_> {
 
 impl Volatile<'_> {
     /// This underlying type
-    pub fn underlying_type(&self) -> Option<Type> {
+    pub fn underlying_type(&self) -> Option<Type<'_>> {
         into_optional(self.ptr.underlying_type())
     }
 }
