@@ -50,7 +50,7 @@ impl Function<'_> {
     /// Return an iterator of variables (`DW_TAG_variable`) defined within the
     /// scope of this function. This includes regular stack-based variables as
     /// well as static ones.
-    pub fn variables(&self) -> Variables {
+    pub fn variables(&self) -> Variables<'_> {
         Variables::new(self.ptr.variables())
     }
 

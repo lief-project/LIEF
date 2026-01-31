@@ -201,7 +201,7 @@ impl Section<'_> {
     }
 
     /// Iterator over the [`crate::macho::Relocation`] associated with thi section
-    pub fn relocations(&self) -> Relocations {
+    pub fn relocations(&self) -> Relocations<'_> {
         Relocations::new(self.ptr.relocations())
     }
 }

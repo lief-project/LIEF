@@ -307,7 +307,7 @@ impl LoadConfiguration<'_> {
     }
 
     /// Return an iterator over the Dynamic relocations (DVRT)
-    pub fn dynamic_relocations(&self) -> DynamicRelocations {
+    pub fn dynamic_relocations(&self) -> DynamicRelocations<'_> {
         DynamicRelocations::new(self.ptr.dynamic_relocations())
     }
 

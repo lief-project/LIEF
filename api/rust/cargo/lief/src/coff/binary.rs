@@ -33,17 +33,17 @@ impl Binary {
     }
 
     /// Iterator over the different sections located in this COFF binary
-    pub fn sections(&self) -> Sections {
+    pub fn sections(&self) -> Sections<'_> {
         Sections::new(self.ptr.sections())
     }
 
     /// Iterator over **all** the relocations used by this COFF binary
-    pub fn relocations(&self) -> Relocations {
+    pub fn relocations(&self) -> Relocations<'_> {
         Relocations::new(self.ptr.relocations())
     }
 
     /// Iterator over the COFF's symbols
-    pub fn symbols(&self) -> Symbols {
+    pub fn symbols(&self) -> Symbols<'_> {
         Symbols::new(self.ptr.symbols())
     }
 

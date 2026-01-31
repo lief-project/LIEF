@@ -232,7 +232,7 @@ impl CompilationUnit<'_> {
     ///   return C;
     /// }
     /// ```
-    pub fn variables(&self) -> CompilationUnitVariables {
+    pub fn variables(&self) -> CompilationUnitVariables<'_> {
         CompilationUnitVariables::new(self.ptr.variables())
     }
 

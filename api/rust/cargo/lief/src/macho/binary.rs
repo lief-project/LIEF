@@ -82,28 +82,28 @@ impl Binary {
     }
 
     /// Return an iterator over the different [`crate::macho::Section`] of the binary
-    pub fn sections(&self) -> Sections {
+    pub fn sections(&self) -> Sections<'_> {
         Sections::new(self.ptr.sections())
     }
 
     /// Return an iterator over the different [`crate::macho::commands::Segment`] (`LC_SEGMENT/LC_SIGNATURE`)
     /// of the binary.
-    pub fn segments(&self) -> Segments {
+    pub fn segments(&self) -> Segments<'_> {
         Segments::new(self.ptr.segments())
     }
 
     /// Return an iterator over the [`crate::macho::commands::Dylib`] used by this binary
-    pub fn libraries(&self) -> Libraries {
+    pub fn libraries(&self) -> Libraries<'_> {
         Libraries::new(self.ptr.libraries())
     }
 
     /// Return an iterator over the different [`crate::macho::Relocation`] of this binary
-    pub fn relocations(&self) -> Relocations {
+    pub fn relocations(&self) -> Relocations<'_> {
         Relocations::new(self.ptr.relocations())
     }
 
     /// Return an iterator over the different [`crate::macho::Symbol`] of this binary
-    pub fn symbols(&self) -> Symbols {
+    pub fn symbols(&self) -> Symbols<'_> {
         Symbols::new(self.ptr.symbols())
     }
 
@@ -263,7 +263,7 @@ impl Binary {
     /// similar to the ELF's plt/got mechanism.
     ///
     /// There are located in sections like: `__stubs,__auth_stubs,__symbol_stub,__picsymbolstub4`
-    pub fn symbol_stubs(&self) -> Stubs {
+    pub fn symbol_stubs(&self) -> Stubs<'_> {
         Stubs::new(self.ptr.symbol_stubs())
     }
 
@@ -356,7 +356,7 @@ impl Binary {
     }
 
     /// Return an iterator over the `LC_NOTE` commands
-    pub fn notes(&self) -> Notes {
+    pub fn notes(&self) -> Notes<'_> {
         Notes::new(self.ptr.notes())
     }
 }

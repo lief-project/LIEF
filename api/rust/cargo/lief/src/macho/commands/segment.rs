@@ -66,7 +66,7 @@ impl Segment<'_> {
     }
 
     /// Iterator over the [`crate::macho::Section`] owned by this segment
-    pub fn sections(&self) -> Sections {
+    pub fn sections(&self) -> Sections<'_> {
         Sections::new(self.ptr.sections())
     }
 
@@ -75,7 +75,7 @@ impl Segment<'_> {
     /// For Mach-O executable or library this iterator should be empty as
     /// the relocations are managed by the Dyld's rebase opcodes.
     /// On the other hand, for object files (`.o`) this iterator should not be empty.
-    pub fn relocations(&self) -> Relocations {
+    pub fn relocations(&self) -> Relocations<'_> {
         Relocations::new(self.ptr.relocations())
     }
 }

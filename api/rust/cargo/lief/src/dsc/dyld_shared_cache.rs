@@ -273,7 +273,7 @@ impl DyldSharedCache {
 
     /// Return an iterator over the different [`Dylib`] libraries embedded
     /// in this dyld shared cache
-    pub fn libraries(&self) -> Dylibs {
+    pub fn libraries(&self) -> Dylibs<'_> {
         Dylibs::new(self.ptr.libraries())
     }
 

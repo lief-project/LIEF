@@ -116,17 +116,17 @@ impl Binary {
     }
 
     /// Return an iterator over the [`crate::elf::Section`] of the binary
-    pub fn sections(&self) -> Sections {
+    pub fn sections(&self) -> Sections<'_> {
         Sections::new(self.ptr.sections())
     }
 
     /// Return an iterator over the [`crate::elf::Segment`] of the binary
-    pub fn segments(&self) -> Segments {
+    pub fn segments(&self) -> Segments<'_> {
         Segments::new(self.ptr.segments())
     }
 
     /// Return an iterator over the [`crate::elf::DynamicEntries`] of the binary
-    pub fn dynamic_entries(&self) -> DynamicEntries {
+    pub fn dynamic_entries(&self) -> DynamicEntries<'_> {
         DynamicEntries::new(self.ptr.dynamic_entries())
     }
 
@@ -149,17 +149,17 @@ impl Binary {
     }
 
     /// Return an iterator over the dynamic [`crate::elf::Symbol`] of the binary
-    pub fn dynamic_symbols(&self) -> DynamicSymbols {
+    pub fn dynamic_symbols(&self) -> DynamicSymbols<'_> {
         DynamicSymbols::new(self.ptr.dynamic_symbols())
     }
 
     /// Return an iterator over the **exported** [`crate::elf::Symbol`] of the binary
-    pub fn exported_symbols(&self) -> ExportedSymbols {
+    pub fn exported_symbols(&self) -> ExportedSymbols<'_> {
         ExportedSymbols::new(self.ptr.exported_symbols())
     }
 
     /// Return an iterator over the **imported** [`crate::elf::Symbol`] of the binary
-    pub fn imported_symbols(&self) -> ImportedSymbols {
+    pub fn imported_symbols(&self) -> ImportedSymbols<'_> {
         ImportedSymbols::new(self.ptr.imported_symbols())
     }
 
@@ -169,42 +169,42 @@ impl Binary {
     }
 
     /// Return an iterator over the  [`crate::elf::SymbolVersion`] of the binary
-    pub fn symbols_version(&self) -> SymbolsVersion {
+    pub fn symbols_version(&self) -> SymbolsVersion<'_> {
         SymbolsVersion::new(self.ptr.symbols_version())
     }
 
     /// Return an iterator over the  [`crate::elf::SymbolVersionRequirement`] of the binary
-    pub fn symbols_version_requirement(&self) -> SymbolsVersionRequirement {
+    pub fn symbols_version_requirement(&self) -> SymbolsVersionRequirement<'_> {
         SymbolsVersionRequirement::new(self.ptr.symbols_version_requirement())
     }
 
     /// Return an iterator over the  [`crate::elf::SymbolVersionDefinition`] of the binary
-    pub fn symbols_version_definition(&self) -> SymbolsVersionDefinition {
+    pub fn symbols_version_definition(&self) -> SymbolsVersionDefinition<'_> {
         SymbolsVersionDefinition::new(self.ptr.symbols_version_definition())
     }
 
     /// Return an iterator over the  [`crate::elf::Notes`] of the binary
-    pub fn notes(&self) -> ItNotes {
+    pub fn notes(&self) -> ItNotes<'_> {
         ItNotes::new(self.ptr.notes())
     }
 
     /// Return an iterator over the `.plt.got` [`crate::elf::Relocation`] of the binary
-    pub fn pltgot_relocations(&self) -> PltGotRelocations {
+    pub fn pltgot_relocations(&self) -> PltGotRelocations<'_> {
         PltGotRelocations::new(self.ptr.pltgot_relocations())
     }
 
     /// Return an iterator over the regular [`crate::elf::Relocation`] of the binary
-    pub fn dynamic_relocations(&self) -> DynamicRelocations {
+    pub fn dynamic_relocations(&self) -> DynamicRelocations<'_> {
         DynamicRelocations::new(self.ptr.dynamic_relocations())
     }
 
     /// Return an iterator over the object-file (`.o`) [`crate::elf::Relocation`]
-    pub fn object_relocations(&self) -> ObjectRelocations {
+    pub fn object_relocations(&self) -> ObjectRelocations<'_> {
         ObjectRelocations::new(self.ptr.object_relocations())
     }
 
     /// Return an iterator over **all** [`crate::elf::Relocation`] of the binary
-    pub fn relocations(&self) -> Relocations {
+    pub fn relocations(&self) -> Relocations<'_> {
         Relocations::new(self.ptr.relocations())
     }
 

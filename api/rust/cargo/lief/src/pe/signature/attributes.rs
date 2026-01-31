@@ -371,7 +371,7 @@ impl<'a> FromFFI<ffi::PE_PKCS9CounterSignature> for PKCS9CounterSignature<'a> {
 
 impl PKCS9CounterSignature<'_> {
     /// SignerInfo as described in the RFC #2985
-    pub fn signer(&self) -> SignerInfo {
+    pub fn signer(&self) -> SignerInfo<'_> {
         SignerInfo::from_ffi(self.ptr.signer())
     }
 }

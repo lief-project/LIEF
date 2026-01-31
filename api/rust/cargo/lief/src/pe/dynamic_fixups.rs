@@ -159,7 +159,7 @@ impl std::fmt::Display for Generic<'_> {
 
 impl Generic<'_> {
     /// Iterator over the (regular) relocations
-    pub fn relocations(&self) -> GenericRelocations {
+    pub fn relocations(&self) -> GenericRelocations<'_> {
         GenericRelocations::new(self.ptr.relocations())
     }
 }
@@ -202,7 +202,7 @@ impl std::fmt::Display for Arm64X<'_> {
 
 impl Arm64X<'_> {
     /// Iterator over the relocations
-    pub fn relocations(&self) -> Arm64XRelocEntries {
+    pub fn relocations(&self) -> Arm64XRelocEntries<'_> {
         Arm64XRelocEntries::new(self.ptr.relocations())
     }
 }
@@ -396,7 +396,7 @@ impl ImageBddInfo<'_> {
     }
 
     /// If [`ImageBddInfo::version`] is not 1
-    pub fn relocations(&self) -> ImageBddDynRelocations {
+    pub fn relocations(&self) -> ImageBddDynRelocations<'_> {
         ImageBddDynRelocations::new(self.ptr.relocations())
     }
 }
@@ -440,7 +440,7 @@ impl FunctionOverrideInfo<'_> {
         Vec::from(self.ptr.functions_rva().as_slice())
     }
 
-    pub fn relocations(&self) -> FuncOverrideRelocations {
+    pub fn relocations(&self) -> FuncOverrideRelocations<'_> {
         FuncOverrideRelocations::new(self.ptr.relocations())
     }
 }
@@ -482,7 +482,7 @@ impl std::fmt::Display for ARM64Kernel<'_> {
 
 impl ARM64Kernel<'_> {
     /// Iterator over the different relocations
-    pub fn relocations(&self) -> ARM64KernelEntries {
+    pub fn relocations(&self) -> ARM64KernelEntries<'_> {
         ARM64KernelEntries::new(self.ptr.relocations())
     }
 }
@@ -563,7 +563,7 @@ impl std::fmt::Display for ControlTransfer<'_> {
 
 impl ControlTransfer<'_> {
     /// Iterator over the relocations
-    pub fn relocations(&self) -> ControlTransferEntries {
+    pub fn relocations(&self) -> ControlTransferEntries<'_> {
         ControlTransferEntries::new(self.ptr.relocations())
     }
 }

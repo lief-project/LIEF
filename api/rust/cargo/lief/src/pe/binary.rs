@@ -126,27 +126,27 @@ impl Binary {
     }
 
     /// Return the imports as an **iterator** over the [`Import`] structure
-    pub fn imports(&self) -> Imports {
+    pub fn imports(&self) -> Imports<'_> {
         Imports::new(self.ptr.imports())
     }
 
     /// Return the data directories as an iterator over the [`DataDirectory`] structure
-    pub fn data_directories(&self) -> DataDirectories {
+    pub fn data_directories(&self) -> DataDirectories<'_> {
         DataDirectories::new(self.ptr.data_directories())
     }
 
     /// Return the sections as an iterator over the [`Section`] structure
-    pub fn sections(&self) -> Sections {
+    pub fn sections(&self) -> Sections<'_> {
         Sections::new(self.ptr.sections())
     }
 
     /// Return the relocations as an iterator over the [`super::Relocation`] structure
-    pub fn relocations(&self) -> Relocations {
+    pub fn relocations(&self) -> Relocations<'_> {
         Relocations::new(self.ptr.relocations())
     }
 
     /// Return the delayed imports as an iterator over the [`DelayImport`] structure
-    pub fn delay_imports(&self) -> DelayImports {
+    pub fn delay_imports(&self) -> DelayImports<'_> {
         DelayImports::new(self.ptr.delay_imports())
     }
 
@@ -454,7 +454,7 @@ impl Binary {
     }
 
     /// Return an iterator over the binary (COFF) symbols (if any).
-    pub fn symbols(&self) -> Symbols {
+    pub fn symbols(&self) -> Symbols<'_> {
         Symbols::new(self.ptr.symbols())
     }
 
