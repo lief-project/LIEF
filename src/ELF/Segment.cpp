@@ -214,6 +214,13 @@ T Segment::get_content_value(size_t offset) const {
   if (datahandler_ == nullptr) {
     LIEF_DEBUG("Get content of segment {}@0x{:x} from cache",
                to_string(type()), virtual_address());
+    // Check bounds before memcpy
+    if (offset + sizeof(T) > content_c_.size()) {
+      LIEF_WARN("Out of bounds read at offset {} in segment content (size: {})",
+                offset, content_c_.size());
+      memset(&ret, 0, sizeof(T));
+      return ret;
+    }
     memcpy(&ret, content_c_.data() + offset, sizeof(T));
   } else {
     auto res = datahandler_->get(file_offset(), handler_size(), DataHandler::Node::SEGMENT);
@@ -224,7 +231,15 @@ T Segment::get_content_value(size_t offset) const {
     }
     const std::vector<uint8_t>& binary_content = datahandler_->content();
     DataHandler::Node& node = res.value();
-    memcpy(&ret, binary_content.data() + node.offset() + offset, sizeof(T));
+    // Check for overflow in offset calculation
+    uint64_t total_offset = static_cast<uint64_t>(node.offset()) + static_cast<uint64_t>(offset);
+    if (total_offset + sizeof(T) > binary_content.size()) {
+      LIEF_WARN("Out of bounds read at offset {} (node offset: {}) in binary content (size: {})",
+                offset, node.offset(), binary_content.size());
+      memset(&ret, 0, sizeof(T));
+      return ret;
+    }
+    memcpy(&ret, binary_content.data() + total_offset, sizeof(T));
   }
   return ret;
 }

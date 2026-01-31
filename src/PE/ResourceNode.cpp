@@ -118,15 +118,28 @@ std::unique_ptr<ResourceNode> TreeParser::parse_resource_node(
     // Get the resource name
     if ((id & 0x80000000) != 0u) {
       uint32_t offset        = id & (~ 0x80000000);
-      uint32_t string_offset = base_offset + offset;
-      LIEF_DEBUG("base_offset=0x{:04x}, string_offset=0x{:04x}",
-                 base_offset, string_offset);
+      // Check for overflow in string_offset calculation
+      uint64_t string_offset_calc = static_cast<uint64_t>(base_offset) + static_cast<uint64_t>(offset);
+      if (string_offset_calc > UINT32_MAX) {
+        LIEF_WARN("Resource name offset overflow at base_offset=0x{:x}, offset=0x{:x}",
+                  base_offset, offset);
+      } else {
+        uint32_t string_offset = static_cast<uint32_t>(string_offset_calc);
+        LIEF_DEBUG("base_offset=0x{:04x}, string_offset=0x{:04x}",
+                   base_offset, string_offset);
 
-      auto res_length = stream_.peek<uint16_t>(string_offset);
-      if (res_length && *res_length <= 100) {
-        name = stream_.peek_u16string_at(string_offset + sizeof(uint16_t), *res_length);
-        if (!name) {
-          LIEF_ERR("Node's name for the node id: {} is corrupted", id);
+        auto res_length = stream_.peek<uint16_t>(string_offset);
+        if (res_length && *res_length <= 100) {
+          // Check for overflow in final offset calculation
+          uint64_t name_offset_calc = static_cast<uint64_t>(string_offset) + sizeof(uint16_t);
+          if (name_offset_calc > UINT32_MAX) {
+            LIEF_WARN("Resource name data offset overflow at string_offset=0x{:x}", string_offset);
+          } else {
+            name = stream_.peek_u16string_at(static_cast<uint32_t>(name_offset_calc), *res_length);
+            if (!name) {
+              LIEF_ERR("Node's name for the node id: {} is corrupted", id);
+            }
+          }
         }
       }
     }

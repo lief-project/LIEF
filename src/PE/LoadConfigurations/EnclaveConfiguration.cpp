@@ -171,10 +171,24 @@ std::unique_ptr<EnclaveConfiguration>
     return config;
   }
 
+  // Check for multiplication overflow: i * ImportEntrySize
+  if (*NumberOfImports > UINT32_MAX / *ImportEntrySize) {
+    LIEF_WARN("Potential integer overflow in enclave imports: {} imports * {} size",
+              *NumberOfImports, *ImportEntrySize);
+    return config;
+  }
+
   uint32_t base_offset = ctx.bin().rva_to_offset(*ImportList);
 
   for (size_t i = 0; i < *NumberOfImports; ++i) {
-    uint32_t offset = base_offset + i * (*ImportEntrySize);
+    // Check for overflow in offset calculation
+    uint64_t offset_calc = static_cast<uint64_t>(base_offset) + 
+                           static_cast<uint64_t>(i) * static_cast<uint64_t>(*ImportEntrySize);
+    if (offset_calc > UINT32_MAX) {
+      LIEF_WARN("Offset overflow in enclave import at index {}", i);
+      break;
+    }
+    uint32_t offset = static_cast<uint32_t>(offset_calc);
     ScopedStream scope(ctx.stream(), offset);
     auto import = EnclaveImport::parse(ctx, *scope);
     if (!import) {
