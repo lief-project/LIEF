@@ -172,7 +172,7 @@ class LIEF_API Parser : public LIEF::Parser {
   /// The section containing symbols name is found with the `link` attribute.
   template<typename ELF_T>
   LIEF_LOCAL ok_error_t
-    parse_symtab_symbols(uint64_t offset, uint32_t nb_symbols,
+    parse_symtab_symbols(const Section& symtab_section,
                          const Section& string_section);
 
   /// Parse Dynamic relocations
