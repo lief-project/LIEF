@@ -7,7 +7,7 @@ env:
 
 jobs:
   osx:
-    runs-on: macos-26-arm64
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
         with:
