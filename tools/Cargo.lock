@@ -781,7 +781,7 @@ dependencies = [
 
 [[package]]
 name = "lief-patchelf"
-version = "0.17.1"
+version = "1.0.0"
 dependencies = [
  "anyhow",
  "clap",
