@@ -516,7 +516,10 @@ ok_error_t Parser::parse_debug() {
 
   DataDirectory* dir = binary_->debug_dir();
   if (dir == nullptr) {
-    return make_error_code(lief_errors::not_found);
+    // YZhan: to support varied-length data directories
+    // return make_error_code(lief_errors::not_found);
+    LIEF_DEBUG("No such a data directory - debug");
+    return ok();
   }
 
   if (dir->RVA() == 0 || dir->size() == 0) {

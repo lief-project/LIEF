@@ -226,7 +226,9 @@ ok_error_t Parser::parse_data_directories() {
   using pe_optional_header = typename PE_T::pe_optional_header;
   const uint32_t directories_offset = binary_->dos_header().addressof_new_exeheader() +
                                       sizeof(details::pe_header) + sizeof(pe_optional_header);
-  static constexpr auto NB_DIR = DataDirectory::DEFAULT_NB;
+  // YZhan: to make it support varied-length type
+  // static constexpr auto NB_DIR = DataDirectory::DEFAULT_NB;
+  uint32_t NB_DIR = binary_->optional_header().numberof_rva_and_size();
   binary_->data_directories_.resize(NB_DIR);
   // Make sure the data_directory array is correctly initialized
   for (size_t i = 0; i < NB_DIR; ++i) {
@@ -681,7 +683,13 @@ ok_error_t Parser::parse_tls() {
 template<typename PE_T>
 ok_error_t Parser::parse_load_config() {
   const DataDirectory* lconf_dir = bin().load_config_dir();
-  assert(lconf_dir != nullptr);
+
+  // YZhan: to support varied-length data directories
+  // assert(lconf_dir != nullptr);
+  if (lconf_dir == nullptr) {
+    LIEF_DEBUG("No such a data directory - load config");
+    return ok();
+  }
 
   if (lconf_dir->RVA() == 0 || lconf_dir->size() == 0) {
     return ok();
