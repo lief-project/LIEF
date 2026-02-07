@@ -26,7 +26,6 @@ pub fn into_optional<T: FromFFI<U>, U: UniquePtrTarget>(raw_ffi: cxx::UniquePtr<
     }
 }
 
-
 #[doc(hidden)]
 pub fn into_ranges(raw_ffi: cxx::UniquePtr<cxx::CxxVector<ffi::Range>>) -> Vec<Range> {
     let cxx_vec = raw_ffi.as_ref().unwrap();
@@ -156,137 +155,77 @@ macro_rules! to_slice {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! to_result {
-    ($func: expr, $self: expr, $($arg:tt)*) => {
+macro_rules! __to_result {
+    ($func: expr, $self: expr, $conv: expr $(, $args:tt)*) => {
         let mut err: u32 = 0;
 
-        let value = $func(&$self.ptr, $($arg),*, std::pin::Pin::new(&mut err));
+        let value = $func(&$self, $($args,)* std::pin::Pin::new(&mut err));
         if err > 0 {
             return Err($crate::Error::from(err));
         }
-        return Ok(value);
+        return Ok($conv(value));
     };
-    ($func: expr, $self: expr) => {
-        let mut err: u32 = 0;
-        let value = $func(&$self.ptr, std::pin::Pin::new(&mut err));
+}
 
-        if err > 0 {
-            return Err($crate::Error::from(err));
-        }
-        return Ok(value);
+#[doc(hidden)]
+#[macro_export]
+macro_rules! to_result {
+    ($func: expr, $self: expr $(, $args:tt)*) => {
+        $crate::__to_result!($func, $self.ptr, |x| x $(, $args)*)
     };
 }
 
 #[doc(hidden)]
 #[macro_export]
 macro_rules! to_conv_result {
-    ($func: expr, $self: expr, $conv: expr, $($arg:tt)*) => {
-        let mut err: u32 = 0;
-        let value = $func(&$self, $($arg),*, std::pin::Pin::new(&mut err));
-        if err > 0 {
-            return Err($crate::Error::from(err));
-        }
-        return Ok($conv(value));
+    ($func: expr, $self: expr, $conv: expr $(, $args:tt)*) => {
+        $crate::__to_result!($func, $self, $conv $(, $args)*)
     };
-    ($func: expr, $self: expr, $conv: expr) => {
-        let mut err: u32 = 0;
-        let value = $func(&$self, std::pin::Pin::new(&mut err));
-        if err > 0 {
-            return Err($crate::Error::from(err));
+}
+
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __to_opt {
+    ($func: expr, $self: expr, $conv: expr $(, $args:tt)*) => {
+        let mut _is_set: u32 = 0;
+
+        let value = $func(&$self, $($args,)* std::pin::Pin::new(&mut _is_set));
+        if _is_set == 0 {
+            return None;
         }
-        return Ok($conv(value));
+        return Some($conv(value.into()));
     };
 }
 
 #[doc(hidden)]
 #[macro_export]
 macro_rules! to_opt {
-    ($func: expr, $self: expr, $($arg:tt)*) => {
-        let mut _is_set: u32 = 0;
-
-        let value = $func(&$self.ptr, $($arg),*, std::pin::Pin::new(&mut _is_set));
-        if _is_set == 0 {
-            return None;
-        }
-        return Some(value.into());
-    };
-    ($func: expr, $self: expr) => {
-        let mut _is_set: u32 = 0;
-        let value = $func(&$self.ptr, std::pin::Pin::new(&mut _is_set));
-
-        if _is_set == 0 {
-            return None;
-        }
-        return Some(value.into());
+    ($func: expr, $self: expr $(, $args:tt)*) => {
+        $crate::__to_opt!($func, $self.ptr, |x| x $(, $args)*)
     };
 }
-
 
 #[doc(hidden)]
 #[macro_export]
 macro_rules! to_conv_opt {
-    ($func: expr, $self: expr, $conv: expr, $($arg:tt)*) => {
-        let mut _is_set: u32 = 0;
-
-        let value = $func(&$self.ptr, $($arg),*, std::pin::Pin::new(&mut _is_set));
-        if _is_set == 0 {
-            return None;
-        }
-        return Some($conv(value.into()));
-    };
-    ($func: expr, $self: expr, $conv: expr) => {
-        let mut _is_set: u32 = 0;
-        let value = $func(&$self.ptr, std::pin::Pin::new(&mut _is_set));
-
-        if _is_set == 0 {
-            return None;
-        }
-        return Some($conv(value.into()));
+    ($func: expr, $self: expr, $conv: expr $(, $args:tt)*) => {
+        $crate::__to_opt!($func, $self.ptr, $conv $(, $args)*)
     };
 }
 
 #[doc(hidden)]
 #[macro_export]
 macro_rules! to_opt_trait {
-    ($func: expr, $self: expr, $($arg:tt)*) => {
-        let mut _is_set: u32 = 0;
-
-        let value = $func(&$self, $($arg),*, std::pin::Pin::new(&mut _is_set));
-        if _is_set == 0 {
-            return None;
-        }
-        return Some(value.into());
-    };
-    ($func: expr, $self: expr) => {
-        let mut _is_set: u32 = 0;
-        let value = $func(&$self, std::pin::Pin::new(&mut _is_set));
-
-        if _is_set == 0 {
-            return None;
-        }
-        return Some(value.into());
+    ($func: expr, $self: expr $(, $args:tt)*) => {
+        $crate::__to_opt!($func, $self, |x| x $(, $args)*)
     };
 }
 
 #[doc(hidden)]
 #[macro_export]
 macro_rules! to_opt_trait_conv {
-    ($func: expr, $self: expr, $conv: expr, $($arg:tt)*) => {
-        let mut _is_set: u32 = 0;
-
-        let value = $func(&$self, $($arg),*, std::pin::Pin::new(&mut _is_set));
-        if _is_set == 0 {
-            return None;
-        }
-        return Some($conv(value.into()));
-    };
-    ($func: expr, $self: expr, $conv: expr) => {
-        let mut _is_set: u32 = 0;
-        let value = $func(&$self, std::pin::Pin::new(&mut _is_set));
-
-        if _is_set == 0 {
-            return None;
-        }
-        return Some($conv(value.into()));
+    ($func: expr, $self: expr, $conv: expr $(, $args:tt)*) => {
+        $crate::__to_opt!($func, $self, $conv $(, $args)*)
     };
 }
