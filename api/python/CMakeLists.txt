@@ -102,7 +102,7 @@ endif()
 
 
 if (WIN32)
-  target_link_libraries(pyLIEF PUBLIC ${PYTHON_LIBRARIES})
+  target_link_libraries(pyLIEF PUBLIC ${PYTHON_LIBRARIES} bcrypt)
 endif()
 
 if(SKBUILD)

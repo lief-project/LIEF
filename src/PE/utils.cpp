@@ -17,7 +17,7 @@
 #include <iterator>
 
 #include "logging.hpp"
-#include "mbedtls/md5.h"
+#include "psa/crypto_builtin_primitives.h"
 
 #include "LIEF/PE/utils.hpp"
 #include "LIEF/PE/Binary.hpp"

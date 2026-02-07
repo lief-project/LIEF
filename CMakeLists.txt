@@ -127,7 +127,11 @@ endif()
 if(NOT LIEF_OPT_MBEDTLS_EXTERNAL)
   set_source_files_properties(${mbedtls_src_files} PROPERTIES GENERATED TRUE)
   target_sources(LIB_LIEF PRIVATE ${mbedtls_src_files})
-  target_compile_definitions(LIB_LIEF PRIVATE -DMBEDTLS_NO_PLATFORM_ENTROPY)
+  target_compile_definitions(LIB_LIEF PRIVATE
+    -DMBEDTLS_X509_USE_C
+    -DMBEDTLS_PK_PARSE_C
+    -DMBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
+  )
 
   target_include_directories(LIB_LIEF SYSTEM PRIVATE
                              ${MBEDTLS_INCLUDE_DIRS}
@@ -136,14 +140,21 @@ if(NOT LIEF_OPT_MBEDTLS_EXTERNAL)
 
   add_dependencies(LIB_LIEF lief_mbed_tls)
 else()
-  find_package(MbedTLS REQUIRED)
+  find_package(MbedTLS 4.0.0 REQUIRED)
   target_link_libraries(LIB_LIEF PRIVATE
-                        MbedTLS::mbedcrypto MbedTLS::mbedx509)
+                        MbedTLS::tfpsacrypto MbedTLS::mbedx509)
 endif()
 
 target_compile_definitions(LIB_LIEF PRIVATE
   -DMBEDTLS_CONFIG_FILE="${CMAKE_CURRENT_SOURCE_DIR}/config/mbedtls/config.h"
+  -DMBEDTLS_X509_USE_C
+  -DMBEDTLS_PK_PARSE_C
+  -DMBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
 )
+
+if (WIN32)
+  target_link_libraries(LIB_LIEF PRIVATE bcrypt)
+endif()
 
 if(WIN32 AND BUILD_SHARED_LIBS)
   target_link_libraries(LIB_LIEF PRIVATE ws2_32)

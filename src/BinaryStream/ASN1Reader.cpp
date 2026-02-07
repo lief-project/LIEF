@@ -17,12 +17,13 @@
 #include "logging.hpp"
 
 #include <array>
+
+#include "mbedtls_wraps.h"
+
 #include <mbedtls/platform.h>
 #include <mbedtls/asn1.h>
 #include <mbedtls/error.h>
-#include <mbedtls/oid.h>
 #include <mbedtls/x509_crt.h>
-#include <mbedtls/bignum.h>
 
 extern "C" {
 int mbedtls_x509_get_name(unsigned char **p, const unsigned char *end,
@@ -159,7 +160,7 @@ result<std::string> ASN1Reader::read_oid() {
   buf.tag = MBEDTLS_ASN1_OID;
 
   int ret = mbedtls_oid_get_numeric_string(oid_str.data(), oid_str.size(), &buf);
-  if (ret == MBEDTLS_ERR_OID_BUF_TOO_SMALL) {
+  if (ret == MBEDTLS_ERR_ASN1_BUF_TOO_SMALL) {
     LIEF_DEBUG("asn1_read_oid: mbedtls_oid_get_numeric_string return MBEDTLS_ERR_OID_BUF_TOO_SMALL");
     return make_error_code(lief_errors::read_error);
   }

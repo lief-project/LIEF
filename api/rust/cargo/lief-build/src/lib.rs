@@ -124,6 +124,12 @@ fn emit_cargo_directives(root: &Path) -> miette::Result<()> {
 
     println!("cargo:rustc-link-lib=lief-sys");
     println!("cargo:rustc-link-lib=LIEF");
+
+    let os = env::var("CARGO_CFG_TARGET_OS").expect("Can't access 'CARGO_CFG_TARGET_OS");
+    if os.to_lowercase() == "windows" {
+        println!("cargo:rustc-link-lib=bcrypt");
+    }
+
     Ok(())
 }
 

@@ -40,6 +40,7 @@
   * Update utfcpp to version ``4.0.9``
   * Update frozen to commit ``61dce5a``
   * Update spdlog to version ``1.17.0``
+  * Update mbedtls to version ``4.0.0``
 
 :Extended:
 

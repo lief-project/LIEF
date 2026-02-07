@@ -18,10 +18,10 @@
 #include <fstream>
 
 #include <mbedtls/platform.h>
-#include "mbedtls/x509_crt.h"
-#include "mbedtls/asn1.h"
-#include "mbedtls/oid.h"
-#include "mbedtls/error.h"
+#include <mbedtls/x509_crt.h>
+#include <mbedtls/asn1.h>
+#include <mbedtls/asn1write.h>
+#include <mbedtls/error.h>
 
 #include "logging.hpp"
 #include "frozen.hpp"
@@ -36,6 +36,8 @@
 #include "LIEF/PE/signature/RsaInfo.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/signature/OIDToString.hpp"
+
+#include "mbedtls_wraps.h"
 
 namespace {
   // Copy this function from mbedtls since it is not exported
@@ -98,7 +100,7 @@ int lief_mbedtls_x509_dn_gets( char *buf, size_t size, const mbedtls_x509_name *
             MBEDTLS_X509_SAFE_SNPRINTF;
         }
 
-        ret = mbedtls_oid_get_attr_short_name( &name->oid, &short_name );
+        ret = mbedtls_x509_oid_get_attr_short_name( &name->oid, &short_name );
 
         if( ret == 0 ) {
             ret = mbedtls_snprintf( p, n, "%s=", short_name );
@@ -106,7 +108,7 @@ int lief_mbedtls_x509_dn_gets( char *buf, size_t size, const mbedtls_x509_name *
             // Get OID numeric string and return x509 friendly name or OID numeric string
             std::string oid_str(64, 0);
             int size = mbedtls_oid_get_numeric_string(oid_str.data(), oid_str.size(), &name->oid);
-            if (size >= 0 && size != MBEDTLS_ERR_OID_BUF_TOO_SMALL) {
+            if (size >= 0 && size != PSA_ERROR_BUFFER_TOO_SMALL) {
               oid_str.resize(size);
               const char* friendly_name = LIEF::PE::oid_to_string(oid_str);
               ret = mbedtls_snprintf(p, n, "%s=", friendly_name);
@@ -420,13 +422,12 @@ std::vector<uint8_t> x509::raw() const {
 
 
 x509::KEY_TYPES x509::key_type() const {
-  CONST_MAP(mbedtls_pk_type_t, x509::KEY_TYPES, 7) mtype2asi = {
+  CONST_MAP(mbedtls_pk_type_t, x509::KEY_TYPES, 6) mtype2asi = {
     {MBEDTLS_PK_NONE,       KEY_TYPES::NONE       },
     {MBEDTLS_PK_RSA,        KEY_TYPES::RSA        },
     {MBEDTLS_PK_ECKEY,      KEY_TYPES::ECKEY      },
     {MBEDTLS_PK_ECKEY_DH,   KEY_TYPES::ECKEY_DH   },
     {MBEDTLS_PK_ECDSA,      KEY_TYPES::ECDSA      },
-    {MBEDTLS_PK_RSA_ALT,    KEY_TYPES::RSA_ALT    },
     {MBEDTLS_PK_RSASSA_PSS, KEY_TYPES::RSASSA_PSS },
   };
 
@@ -443,8 +444,12 @@ x509::KEY_TYPES x509::key_type() const {
 
 std::unique_ptr<RsaInfo> x509::rsa_info() const {
   if (key_type() == KEY_TYPES::RSA) {
-    mbedtls_rsa_context* rsa_ctx = mbedtls_pk_rsa(x509_cert_->pk);
-    return std::unique_ptr<RsaInfo>{new RsaInfo{rsa_ctx}};
+    mbedtls_rsa_context ctx_rsa;
+    mbedtls_rsa_init(&ctx_rsa);
+    rsa_from_pk(&x509_cert_->pk, &ctx_rsa);
+    auto info = std::unique_ptr<RsaInfo>{new RsaInfo{&ctx_rsa}};
+    mbedtls_rsa_free(&ctx_rsa);
+    return info;
   }
   return nullptr;
 }
@@ -537,7 +542,7 @@ bool x509::check_signature(const std::vector<uint8_t>& hash, const std::vector<u
     /* Signature provided */ signature.data(), signature.size());
 
   /* If the verification failed with mbedtls_pk_verify it
-   * does notnecessity means that the signatures don't match.
+   * does not necessarily means that the signatures don't match.
    *
    * For RSA public-key scheme, mbedtls encodes the hash with rsa_rsassa_pkcs1_v15_encode() so that it expands
    * the hash value with encoded data. On some samples, this encoding failed.
@@ -547,14 +552,18 @@ bool x509::check_signature(const std::vector<uint8_t>& hash, const std::vector<u
    */
   if (ret != 0) {
     if (mbedtls_pk_get_type(&ctx) == MBEDTLS_PK_RSA) {
-      auto* ctx_rsa = reinterpret_cast<mbedtls_rsa_context*>(ctx.private_pk_ctx);
-      if ((ctx_rsa->private_len * 8) < 100 || (ctx_rsa->private_len * 8) > 2048llu * 10) {
-        LIEF_INFO("RSA Key length is not valid ({} bits)", ctx_rsa->private_len * 8);
+      size_t bitlen = mbedtls_pk_get_bitlen(&ctx);
+      if ((bitlen * 8) < 100 || (bitlen * 8) > 2048llu * 10) {
+        LIEF_INFO("RSA Key length is not valid ({} bits)", bitlen * 8);
         return false;
       }
-      std::vector<uint8_t> decrypted(ctx_rsa->private_len);
+      std::vector<uint8_t> decrypted(bitlen);
+      mbedtls_rsa_context ctx_rsa;
+      rsa_from_pk(&ctx, &ctx_rsa);
 
-      int ret_rsa_public = mbedtls_rsa_public(ctx_rsa, signature.data(), decrypted.data());
+      int ret_rsa_public = mbedtls_rsa_public(&ctx_rsa, signature.data(), decrypted.data());
+      mbedtls_rsa_free(&ctx_rsa);
+
       if (ret_rsa_public != 0) {
         std::string strerr(1024, 0);
         mbedtls_strerror(ret_rsa_public, const_cast<char*>(strerr.data()), strerr.size());
@@ -674,7 +683,7 @@ std::vector<oid_t> x509::ext_key_usage() const {
   while (current != nullptr) {
     char oid_str[256] = {0};
     int ret = mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &current->buf);
-    if (ret != MBEDTLS_ERR_OID_BUF_TOO_SMALL) {
+    if (ret != MBEDTLS_ERR_ASN1_BUF_TOO_SMALL) {
       LIEF_DEBUG("OID: {}", oid_str);
       oids.emplace_back(oid_str);
     } else {
@@ -691,7 +700,7 @@ std::vector<oid_t> x509::ext_key_usage() const {
 }
 
 std::vector<oid_t> x509::certificate_policies() const {
-  if ((x509_cert_->private_ext_types & MBEDTLS_OID_X509_EXT_CERTIFICATE_POLICIES) == 0) {
+  if ((x509_cert_->private_ext_types & MBEDTLS_X509_EXT_CERTIFICATE_POLICIES) == 0) {
     return {};
   }
 
@@ -701,7 +710,7 @@ std::vector<oid_t> x509::certificate_policies() const {
   while (current != nullptr) {
     char oid_str[256] = {0};
     int ret = mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &current->buf);
-    if (ret != MBEDTLS_ERR_OID_BUF_TOO_SMALL) {
+    if (ret != MBEDTLS_ERR_ASN1_BUF_TOO_SMALL) {
       oids.emplace_back(oid_str);
     } else {
       std::string strerr(1024, 0);

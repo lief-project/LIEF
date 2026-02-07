@@ -107,6 +107,12 @@ result<Signature> SignatureParser::parse(BinaryStream& stream, bool skip_header)
 }
 
 result<Signature> SignatureParser::parse_signature(BinaryStream& stream) {
+  static psa_status_t PSA_STATUS = psa_crypto_init();
+
+  if (PSA_STATUS != PSA_SUCCESS) {
+    LIEF_WARN("psa_crypto_init() didn't succeed: {}", (int)PSA_STATUS);
+  }
+
   Signature signature;
   if (VectorStream::classof(stream)) {
     signature.original_raw_signature_ = static_cast<VectorStream&>(stream).content();
