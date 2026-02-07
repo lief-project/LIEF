@@ -175,8 +175,9 @@ class LIEF_API Section : public LIEF::Section {
   /// Whether there is a large number of relocations whose number need
   /// to be stored in the virtual address attribute
   bool has_extended_relocations() const {
+    static constexpr auto MAX_RELOC = /*uint16_t::max*/65535;
     return has_characteristic(CHARACTERISTICS::LNK_NRELOC_OVFL) &&
-           numberof_relocations() == std::numeric_limits<uint16_t>::max();
+           numberof_relocations() == MAX_RELOC;
   }
 
   void content(const std::vector<uint8_t>& data) override {
