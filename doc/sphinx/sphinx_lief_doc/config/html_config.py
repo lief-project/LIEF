@@ -13,8 +13,8 @@ def minify_option() -> dict[str, bool]:
         }
 
     return {
-        "html_minify": False,
-        "css_minify": False,
+        "html_minify": True,
+        "css_minify": True,
         "html_prettify": False,
     }
 

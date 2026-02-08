@@ -28,6 +28,7 @@ Welcome to LIEF's documentation!
   api/logging/index
   api/cpp/index
   api/rust/index
+
 .. toctree::
   :caption: <i class="fa-solid fa-hat-wizard">&nbsp;</i>LIEF Extended
   :maxdepth: 1

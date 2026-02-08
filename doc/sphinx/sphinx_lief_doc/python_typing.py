@@ -36,8 +36,13 @@ def process_function_signature(signature: inspect.Signature, has_overload: bool)
 
     return args, signature.return_annotation
 
-def process_property(name: str, obj, options, signature: str,
-                     return_annotation: str):
+def process_property(
+    name: str,
+    obj: Any,
+    _options: Any,
+    signature: str,
+    return_annotation: str
+) -> tuple[str | None, str | None] | None:
     """
     Get the nanobind typehint for a property
     """
@@ -53,21 +58,20 @@ def process_property(name: str, obj, options, signature: str,
 
     if len(lines) == 0:
         return signature, return_annotation
-
     try:
         hint = clean_nanobind_typehint(lines[0])
         sig = signature_from_str(hint)
+
         return_annotation = sig.return_annotation
         if return_annotation == inspect.Parameter.empty:
-            logger.warning(f"Can't generate annotation for {name}")
-            return_annotation = None
+            logger.warning("Can't generate annotation for '%s'", name)
+            return_annotation = ""
 
         return "()", return_annotation
-    except Exception:
-        logger.warning(f"Error with {name}: {lines[0]}")
+    except Exception as e:
+        logger.warning("Error: %s", name)
 
-    return signature, return_annotation
-
+    return "()", return_annotation
 
 def process_function(name: str, obj, options, signature: str,
                      return_annotation: str):
@@ -112,25 +116,34 @@ def process_function(name: str, obj, options, signature: str,
 
     return arg, " | ".join(rettypes)
 
-def on_process_signature(app, what: str, name: str, obj: Any,
-                         options, signature: str, return_annotation: str):
+
+def on_process_signature(
+    app: Sphinx,
+    what: str,
+    name: str,
+    obj: Any,
+    options: Any,
+    args: str,
+    retann: str,
+) -> tuple[str | None, str | None] | None:
 
     # autodoc is great for auto generating documentation of regular packages
     # but it has some limitation (like the properties) for native Python
     # bindings.
     #
     # This event listener generate the type hint for our nanobind-based bindings
-    if what == "property":
-        return process_property(name, obj, options, signature, return_annotation)
+    match what:
+        case 'property':
+            return process_property(name, obj, options, args, retann)
 
-    if what == "function":
-        return process_function(name, obj, options, signature, return_annotation)
+        case 'function':
+            return process_function(name, obj, options, args, retann)
 
-    if what == "attribute":
-        if hasattr(obj, "__call__"):
-            return process_function(name, obj, options, signature, return_annotation)
+        case 'attribute':
+            if hasattr(obj, "__call__"):
+                return process_function(name, obj, options, args, retann)
 
-    return signature, return_annotation
+    return args, retann
 
 def autodoc_process_docstring(app, what, name, obj, options, lines: list[str]):
     if len(lines) > 2 or len(lines) == 0:
@@ -144,4 +157,3 @@ def autodoc_process_docstring(app, what, name, obj, options, lines: list[str]):
 def setup(app: Sphinx):
     app.connect('autodoc-process-signature', on_process_signature)
     app.connect('autodoc-process-docstring', autodoc_process_docstring)
-
