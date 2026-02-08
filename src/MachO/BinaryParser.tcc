@@ -994,6 +994,7 @@ ok_error_t BinaryParser::parse_load_commands() {
           if (bp.binary_ != nullptr) {
             std::unique_ptr<Binary> filset_bin = std::move(bp.binary_);
             filset_bin->fileset_name_ = *entry_name;
+            filset_bin->in_memory_base_addr_ = fset->virtual_address();
             binary_->filesets_.push_back(std::move(filset_bin));
           }
           break;
