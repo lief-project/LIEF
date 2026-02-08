@@ -27,6 +27,8 @@ import ghidra.program.model.listing.Program;
 import ghidra.util.Msg;
 import lief.Utils;
 import lief.dwarf.Editor;
+import lief.dwarf.Editor.Arch;
+import lief.dwarf.Editor.Format;
 import lief.dwarf.editor.CompilationUnit;
 import lief.ghidra.core.FSRLHelper;
 import lief.ghidra.util.exception.Exception;
@@ -41,19 +43,24 @@ public class Manager {
     public void export(File output) throws Exception {
         FSRL fsrl = FSRL.fromProgram(currentProgram);
         Object bin = FSRLHelper.load(fsrl);
-        if (bin == null || !(bin instanceof lief.generic.Binary)) {
-            throw new Exception("Can't load: " + fsrl.toString());
+        Editor editor;
+        long imagebase = 0;
+
+        if (bin != null && (bin instanceof lief.generic.Binary)) {
+            lief.generic.Binary genericBinary = (lief.generic.Binary)bin;
+            editor = Editor.forBinary(genericBinary);
+            imagebase = genericBinary.getImageBase();
+            Msg.info(Manager.class, String.format(
+                "Imagebase: %#x (Ghidra: %#x)", imagebase, currentProgram.getImageBase().getOffset()
+            ));
+        } else {
+            editor = Editor.create(Format.ELF, Arch.Unknown);
         }
-        lief.generic.Binary genericBinary = (lief.generic.Binary)bin;
-        Editor editor = Editor.forBinary(genericBinary);
+
         if (editor == null) {
             throw new Exception("Can't instantiate the DWARF editor for " + fsrl.toString());
         }
 
-        long imagebase = genericBinary.getImageBase();
-        Msg.info(Manager.class, String.format(
-            "Imagebase: %#x (Ghidra: %#x)", imagebase, currentProgram.getImageBase().getOffset()
-        ));
 
         CompilationUnit unit = editor.createCompilationUnit();
         initMetadata(unit);

@@ -327,13 +327,15 @@ class DebugInfo(lief.DebugInfo):
 
 class Editor:
     class ARCH(enum.Enum):
-        X64 = 0
+        UNKNOWN = 0
 
-        X86 = 1
+        X64 = 1
 
-        AARCH64 = 2
+        X86 = 2
 
-        ARM = 3
+        AARCH64 = 3
+
+        ARM = 4
 
     class FORMAT(enum.Enum):
         ELF = 0

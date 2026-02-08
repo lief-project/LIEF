@@ -24,6 +24,7 @@ public class Editor extends lief.Base {
     }
 
     public enum Arch {
+        Unknown,
         X64,
         X86,
         AARCH64,

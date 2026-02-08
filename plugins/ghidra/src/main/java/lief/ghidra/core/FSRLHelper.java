@@ -125,9 +125,10 @@ public class FSRLHelper {
                     return cache(path, lief.macho.Binary.parse(path));
                 }
 
-                throw new Exception(String.format(
+                Msg.warn(FSRLHelper.class, String.format(
                     "DWARF exporter requires an ELF, PE or Mach-O (%s)", path
                 ));
+                return null;
             }
 
             case UNIVERSAL_BINARY: {
@@ -143,16 +144,18 @@ public class FSRLHelper {
                 String name = fsrl.getName();
                 String[] chunks = name.split("-");
                 if (chunks.length != 3 || !chunks[2].startsWith("cpu0x")) {
-                    throw new Exception(String.format(
+                    Msg.warn(FSRLHelper.class, String.format(
                         "Unsupported universal binary name: '%s'",
                         name
                     ));
+                    return null;
                 }
                 FatBinary fat = lief.macho.FatBinary.parse(path);
                 if (fat == null) {
-                    throw new Exception(String.format(
+                    Msg.warn(FSRLHelper.class, String.format(
                         "Can't parse %s with LIEF", path
                     ));
+                    return null;
                 }
 
                 for (lief.macho.Binary fit : fat) {
@@ -165,14 +168,16 @@ public class FSRLHelper {
                     }
                 }
 
-                throw new Exception(String.format(
+                Msg.warn(FSRLHelper.class, String.format(
                     "Could not find '%s' in '%s' with LIEF. Please open an issue",
                     name, path
                 ));
+                return null;
             }
         }
-        throw new Exception(String.format(
+        Msg.warn(FSRLHelper.class, String.format(
             "Protocol '%s' is not supported by LIEF", protocol
         ));
+        return null;
     }
 }

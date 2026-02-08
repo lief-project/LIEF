@@ -45,6 +45,7 @@ class LIEF_API Editor {
   };
 
   enum class ARCH : uint32_t {
+    UNKNOWN,
     X64,
     X86,
     AARCH64,

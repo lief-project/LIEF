@@ -10,6 +10,11 @@
 
   * Add :ref:`Android JNI Analyzer <plugins-binaryninja-analyzers-android-jni>`
 
+:Ghidra:
+
+  * Add support to generate DWARF from firmwares or binaries that don't have
+    a precise format and architecture (:issue:`1249`)
+
 :DWARF:
 
   * Add support to access bit size of bit-fields declaration (:issue:`1265`)

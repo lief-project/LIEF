@@ -82,10 +82,10 @@ pub enum Arch {
 impl From<u32> for Arch {
     fn from(value: u32) -> Self {
         match value {
-            0x00000000 => Arch::X64,
-            0x00000001 => Arch::X86,
-            0x00000002 => Arch::AARCH64,
-            0x00000003 => Arch::ARM,
+            0x00000001 => Arch::X64,
+            0x00000002 => Arch::X86,
+            0x00000003 => Arch::AARCH64,
+            0x00000004 => Arch::ARM,
             _ => Arch::UNKNOWN(value),
 
         }
@@ -94,10 +94,10 @@ impl From<u32> for Arch {
 impl From<Arch> for u32 {
     fn from(value: Arch) -> u32 {
         match value {
-            Arch::X64 => 0x00000000,
-            Arch::X86 => 0x00000001,
-            Arch::AARCH64 => 0x00000002,
-            Arch::ARM => 0x00000003,
+            Arch::X64 => 0x00000001,
+            Arch::X86 => 0x00000002,
+            Arch::AARCH64 => 0x00000003,
+            Arch::ARM => 0x00000004,
             Arch::UNKNOWN(_) => 0,
 
         }
