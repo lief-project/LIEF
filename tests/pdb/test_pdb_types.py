@@ -8,6 +8,9 @@ if not lief.__extended__:
 def test_lief():
     pdb = lief.pdb.load(get_sample("private/PDB/LIEF.pdb"))
 
+    assert pdb.find_type(400) is not None
+    assert pdb.find_type(400000000) is None
+
     types = list(pdb.types)
     assert len(types) == 116669
 

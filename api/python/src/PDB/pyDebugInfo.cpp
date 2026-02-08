@@ -35,10 +35,12 @@ void create<pdb::DebugInfo>(nb::module_& m) {
       )doc"_doc, "filepath"_a
     )
 
-    .def("find_type", &pdb::DebugInfo::find_type,
-      R"doc(
-      Find the type with the given name
-      )doc"_doc, "name"_a
+    .def("find_type", nb::overload_cast<const std::string&>(&pdb::DebugInfo::find_type, nb::const_),
+      "Find the type with the given name"_doc, "name"_a
+    )
+
+    .def("find_type", nb::overload_cast<uint32_t>(&pdb::DebugInfo::find_type, nb::const_),
+      "Find type at the given index"_doc, "index"_a
     )
 
     .def("find_public_symbol", &pdb::DebugInfo::find_public_symbol,

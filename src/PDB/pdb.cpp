@@ -83,6 +83,10 @@ std::unique_ptr<Type> DebugInfo::find_type(const std::string&/*name*/) const {
   return nullptr;
 }
 
+std::unique_ptr<Type> DebugInfo::find_type(uint32_t /*index*/) const {
+  return nullptr;
+}
+
 uint32_t DebugInfo::age() const {
   return 0;
 }

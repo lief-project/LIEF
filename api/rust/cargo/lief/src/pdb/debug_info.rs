@@ -76,6 +76,11 @@ impl DebugInfo<'_> {
     pub fn type_by_name(&self, name: &str) -> Option<Type<'_>> {
         into_optional(self.ptr.find_type(name))
     }
+
+    /// Try to find the type at the given index
+    pub fn type_by_index(&self, index: u32) -> Option<Type<'_>> {
+        into_optional(self.ptr.find_type_by_index(index))
+    }
 }
 
 impl generic::DebugInfo for DebugInfo<'_> {

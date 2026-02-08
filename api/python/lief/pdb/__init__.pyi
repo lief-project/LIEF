@@ -1,6 +1,6 @@
 import enum
 import os
-from typing import Iterator, Optional, Union
+from typing import Iterator, Optional, Union, overload
 
 from . import types as types
 import lief
@@ -275,7 +275,11 @@ class DebugInfo(lief.DebugInfo):
     @staticmethod
     def from_file(filepath: Union[str | os.PathLike]) -> Optional[DebugInfo]: ...
 
+    @overload
     def find_type(self, name: str) -> Optional[Type]: ...
+
+    @overload
+    def find_type(self, index: int) -> Optional[Type]: ...
 
     def find_public_symbol(self, name: str) -> Optional[PublicSymbol]: ...
 

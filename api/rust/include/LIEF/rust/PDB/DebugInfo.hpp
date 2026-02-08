@@ -82,6 +82,10 @@ class PDB_DebugInfo : public AbstracDebugInfo {
     return details::try_unique<PDB_Type>(impl().find_type(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
+  auto find_type_by_index(uint32_t index) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<PDB_Type>(impl().find_type(index)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+
   std::string to_string() const {
     return impl().to_string();
   }
