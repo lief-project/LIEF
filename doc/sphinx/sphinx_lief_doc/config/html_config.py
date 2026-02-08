@@ -4,16 +4,16 @@ import sphinx_lief
 from sphinx.application import Sphinx
 
 def minify_option() -> dict[str, bool]:
-    #return {
-    #    "html_minify": True,
-    #    "css_minify": True,
-    #    "html_prettify": False,
-    #}
     return {
-        "html_minify": False,
-        "css_minify": False,
+        "html_minify": True,
+        "css_minify": True,
         "html_prettify": False,
     }
+    #return {
+    #    "html_minify": False,
+    #    "css_minify": False,
+    #    "html_prettify": False,
+    #}
 
 
 def setup(app: Sphinx):

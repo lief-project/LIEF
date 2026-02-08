@@ -1,5 +1,5 @@
-requests==2.32.0
-sphinx==8.2.3
-Pygments==2.19.1
+requests==2.32.5
+sphinx==9.1.99
+Pygments==2.19.2
 breathe==4.36.0
-sphinx-tabs==3.4.7
+git+https://github.com/executablebooks/sphinx-tabs.git@d613cb7b6bff083227e35e9b3a4c56b24f6c6ad4
