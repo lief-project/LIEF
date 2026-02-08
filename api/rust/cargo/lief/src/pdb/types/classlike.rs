@@ -17,17 +17,6 @@ pub trait ClassLike {
         self.get_classlike().unique_name().to_string()
     }
 
-    /// Demangled type name
-    fn name(&self) -> String {
-        self.get_classlike().name().to_string()
-    }
-
-    /// Size of the type including all its attributes. This size should match
-    /// the `sizeof(...)` this type.
-    fn size(&self) -> u64 {
-        self.get_classlike().size()
-    }
-
     /// Iterator over the different [`crate::pdb::types::Attribute`] defined in this
     /// class-like type
     fn attributes(&self) -> Attributes<'_> {

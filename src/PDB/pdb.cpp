@@ -315,6 +315,14 @@ Type::KIND Type::kind() const {
   return Type::KIND::UNKNOWN;
 }
 
+optional<std::string> Type::name() const {
+  return nullopt();
+}
+
+optional<uint64_t> Type::size() const {
+  return nullopt();
+}
+
 Type::~Type() = default;
 
 
@@ -378,16 +386,8 @@ ClassLike::methods_iterator ClassLike::methods() const {
   return make_empty_iterator<Method>();
 }
 
-std::string ClassLike::name() const {
-  return "";
-}
-
 std::string ClassLike::unique_name() const {
   return "";
-}
-
-uint64_t ClassLike::size() const {
-  return 0;
 }
 
 ClassLike::~ClassLike() = default;

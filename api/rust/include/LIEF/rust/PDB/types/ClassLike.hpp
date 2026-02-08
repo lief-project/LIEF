@@ -42,9 +42,7 @@ class PDB_types_ClassLike : public PDB_Type {
     auto next() { return ForwardIterator::next(); }
   };
 
-  auto name() const { return impl().name(); }
   auto unique_name() const { return impl().unique_name(); }
-  auto size() const { return impl().size(); }
 
   auto attributes() const {
     return std::make_unique<it_attributes>(impl());

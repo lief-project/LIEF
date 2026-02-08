@@ -14,9 +14,12 @@
  */
 #ifndef LIEF_PDB_TYPE_H
 #define LIEF_PDB_TYPE_H
+#include <cstdint>
 #include <memory>
+#include <string>
 
 #include "LIEF/visibility.h"
+#include "LIEF/optional.hpp"
 
 namespace LIEF {
 namespace pdb {
@@ -96,6 +99,13 @@ class LIEF_API Type {
   };
 
   KIND kind() const;
+
+  /// Size of the type. This size should match the value of `sizeof(...)`
+  /// applied to this type.
+  optional<uint64_t> size() const;
+
+  /// Type's name (if present)
+  optional<std::string> name() const;
 
   template<class T>
   const T* as() const {

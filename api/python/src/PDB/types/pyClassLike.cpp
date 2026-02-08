@@ -43,19 +43,6 @@ void create<pdb::types::ClassLike>(nb::module_& m) {
       Mangled type name.
       )doc"_doc
     )
-
-    .def_prop_ro("name", &pdb::types::ClassLike::name,
-      R"doc(
-      Demangled type name
-      )doc"_doc
-    )
-
-    .def_prop_ro("size", &pdb::types::ClassLike::size,
-      R"doc(
-      Size of the type including all its attributes. This size should match
-      the ``sizeof(...)`` this type.
-      )doc"_doc
-    )
   ;
 
   nb::class_<pdb::types::Class, pdb::types::ClassLike> clazz(m, "Class",

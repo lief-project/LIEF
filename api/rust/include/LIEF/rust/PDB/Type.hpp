@@ -16,6 +16,7 @@
 #include "LIEF/PDB/Type.hpp"
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/helpers.hpp"
+#include "LIEF/rust/optional.hpp"
 
 class PDB_Type : public Mirror<LIEF::pdb::Type> {
   public:
@@ -23,4 +24,12 @@ class PDB_Type : public Mirror<LIEF::pdb::Type> {
   using lief_t = LIEF::pdb::Type;
 
   auto kind() const { return to_int(get().kind()); }
+
+  std::string name(uint32_t& is_set) const {
+    return details::make_optional(get().name(), is_set);
+  }
+
+  uint64_t size(uint32_t& is_set) const {
+    return details::make_optional(get().size(), is_set);
+  }
 };

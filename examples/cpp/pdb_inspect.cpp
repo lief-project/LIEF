@@ -34,7 +34,7 @@ int main(int argc, const char** argv) {
   for (std::unique_ptr<LIEF::pdb::Type> ty : pdb->types()) {
     if (LIEF::pdb::types::Class::classof(ty.get())) {
       auto* clazz = ty->as<LIEF::pdb::types::Class>();
-      log(LEVEL::INFO, "Class[name]={}", clazz->name());
+      log(LEVEL::INFO, "Class[name]={}", *clazz->name());
     }
   }
 

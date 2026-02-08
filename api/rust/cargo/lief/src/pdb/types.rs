@@ -1,6 +1,6 @@
 use lief_ffi as ffi;
 
-use crate::{common::FromFFI};
+use crate::{common::FromFFI, to_opt_trait, to_opt_trait_conv};
 
 use std::marker::PhantomData;
 use crate::declare_fwd_iterator;
@@ -193,6 +193,24 @@ impl FromFFI<ffi::PDB_Type> for Generic<'_> {
 pub trait PdbType {
     #[doc(hidden)]
     fn get_base(&self) -> &ffi::PDB_Type;
+
+    /// Size of the type. This size should match the value of `sizeof(...)`
+    /// applied to this type.
+    fn size(&self) -> Option<u64> {
+        to_opt_trait!(
+            &lief_ffi::PDB_Type::size,
+            self.get_base()
+        );
+    }
+
+    /// Type's name (if present)
+    fn name(&self) -> Option<String> {
+        to_opt_trait_conv!(
+            &lief_ffi::PDB_Type::name,
+            self.get_base(),
+            |e: cxx::UniquePtr<cxx::String>| e.to_string()
+        );
+    }
 }
 
 impl PdbType for Type<'_> {

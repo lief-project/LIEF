@@ -1,7 +1,7 @@
 /// This example shows how to inspect a PDB file using LIEF's API
 
 use std::process::{self, ExitCode};
-use lief::pdb::types::classlike::ClassLike;
+use lief::pdb::types::PdbType;
 
 fn main() -> ExitCode {
     if !lief::is_extended() {
@@ -27,7 +27,7 @@ fn main() -> ExitCode {
 
     for ty in pdb.types() {
         if let lief::pdb::Type::Class(clazz) = ty {
-            println!("Class[name]={}", clazz.name());
+            println!("Class[name]={}", clazz.name().unwrap());
         }
     }
 

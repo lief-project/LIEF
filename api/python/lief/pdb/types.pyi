@@ -22,12 +22,6 @@ class ClassLike(lief.pdb.Type):
     @property
     def unique_name(self) -> str: ...
 
-    @property
-    def name(self) -> str: ...
-
-    @property
-    def size(self) -> int: ...
-
 class Class(ClassLike):
     pass
 

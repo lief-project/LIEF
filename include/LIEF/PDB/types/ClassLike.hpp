@@ -42,18 +42,11 @@ class LIEF_API ClassLike : public Type {
   /// Mangled type name
   std::string unique_name() const;
 
-  /// Demangled type name
-  std::string name() const;
-
   /// Iterator over the different attributes defined in this class-like type
   attributes_iterator attributes() const;
 
   /// Iterator over the different methods implemented in this class-type type
   methods_iterator methods() const;
-
-  /// Size of the type including all its attributes. This size should match
-  /// the `sizeof(...)` this type.
-  uint64_t size() const;
 
   template <class T>
   static bool classof(const T*, typename std::enable_if<std::is_base_of<ClassLike, T>::value>::type* = 0)

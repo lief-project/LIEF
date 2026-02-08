@@ -5,11 +5,11 @@ use lief::pdb::types::classlike::ClassLike;
 use std::path::Path;
 
 fn explore_trait_type(ty: &dyn PdbType) {
-
+    println!("{} {}", ty.name().unwrap_or("".to_string()), ty.size().unwrap_or(0));
 }
 
 fn explore_trait_classlike(ty: &dyn ClassLike) {
-    println!("{} {} {}", ty.name(), ty.unique_name(), ty.size());
+    println!("{}", ty.unique_name());
     for meth in ty.methods() {
         println!("{}", meth.name());
     }

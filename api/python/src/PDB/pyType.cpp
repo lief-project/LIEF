@@ -1,6 +1,9 @@
 #include "PDB/pyPDB.hpp"
 #include "LIEF/PDB/Type.hpp"
 
+#include "nanobind/extra/stl/lief_optional.h"
+#include <nanobind/stl/string.h>
+
 namespace LIEF::pdb::types {
 class Simple;
 class Array;
@@ -41,6 +44,17 @@ void create<pdb::Type>(nb::module_& m) {
         R"doc(
         Discriminator for the type's subclasses
         )doc"_doc
+    )
+
+    .def_prop_ro("name", &pdb::Type::name,
+      "Type's name (if present)"_doc
+    )
+
+    .def_prop_ro("size", &pdb::Type::size,
+      R"doc(
+      Size of the type. This size should match the value of ``sizeof(...)``
+      applied to this type.
+      )doc"_doc
     )
   ;
 
