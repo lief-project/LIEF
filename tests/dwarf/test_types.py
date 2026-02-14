@@ -1,3 +1,4 @@
+from textwrap import dedent
 import lief
 import pytest
 from utils import get_sample, normalize_path
@@ -20,6 +21,7 @@ def test_vars_1():
     assert isinstance(main_ret_type, lief.dwarf.types.Base)
     assert main_ret_type.name == "int"
     assert main_ret_type.size == 4
+    assert main_ret_type.to_decl() == "int"
     assert main_ret_type.encoding == lief.dwarf.types.Base.ENCODING.SIGNED
 
     types = list(cu.types)
@@ -37,6 +39,7 @@ def test_vars_1():
     assert isinstance(underlying_ptr_type, lief.dwarf.types.Base)
     assert ptr_type.name is None
     assert ptr_type.size == 8
+    assert ptr_type.to_decl() == "signed char *"
 
     assert underlying_ptr_type.name == "char"
     assert underlying_ptr_type.size == 1
@@ -53,6 +56,21 @@ def test_vars_1():
     assert struct_type.size == 56
     assert normalize_path(struct_type.location.file) == "/usr/include/x86_64-linux-gnu/bits/types/struct_tm.h"
     assert struct_type.location.line == 7
+    assert struct_type.to_decl() == dedent("""\
+    struct tm {
+        int tm_sec;
+        int tm_min;
+        int tm_hour;
+        int tm_mday;
+        int tm_mon;
+        int tm_year;
+        int tm_wday;
+        int tm_yday;
+        int tm_isdst;
+        char __padding9__[4];
+        long long tm_gmtoff;
+        const signed char *tm_zone;
+    }""")
 
     members = struct_type.members
     assert len(members) == 11
@@ -92,6 +110,7 @@ def test_vars_1():
     assert array_type.kind == lief.dwarf.Type.KIND.ARRAY
     assert array_type.name is None
     assert array_type.size == 40
+    assert array_type.to_decl() == "unsigned char[40]"
     assert isinstance(array_type, lief.dwarf.types.Array)
 
     underlying_array_type = array_type.underlying_type
@@ -104,6 +123,7 @@ def test_vars_1():
 
     cst_type: lief.dwarf.types.Pointer = consts[137]
     assert cst_type.kind == lief.dwarf.Type.KIND.CONST_KIND
+    assert cst_type.to_decl() == "class new_allocator<std::__detail::_Hash_node_base*> *const"
     assert isinstance(cst_type, lief.dwarf.types.Const)
 
     underlying_cst_type = cst_type.underlying_type
@@ -150,6 +170,7 @@ def test_DW_TAG_reference_type():
     assert isinstance(ref, lief.dwarf.types.Reference)
 
     assert ref.underlying_type.name == "int"
+    assert ref.to_decl() == ""
 
 
 def test_DW_TAG_atomic_type():
@@ -164,6 +185,7 @@ def test_DW_TAG_atomic_type():
     assert isinstance(atomic, lief.dwarf.types.Atomic)
 
     assert atomic.underlying_type.name == "int"
+    assert atomic.to_decl() == "<unknown type>"
 
 def test_DW_TAG_template_alias():
     elf = lief.ELF.parse(get_sample("private/DWARF/types/DW_TAG_template_alias.o"))
@@ -174,6 +196,7 @@ def test_DW_TAG_template_alias():
     V = dbg_info.find_variable("a")
 
     template_alias: lief.dwarf.types.TemplateAlias = V.type
+    assert template_alias.to_decl() == "<unknown type>"
     assert isinstance(template_alias, lief.dwarf.types.TemplateAlias)
 
     assert template_alias.name == "A"
@@ -201,6 +224,7 @@ def test_DW_TAG_ptr_to_member_type():
     assert isinstance(ptr_member, lief.dwarf.types.PointerToMember)
     assert ptr_member.underlying_type.name == "int"
     assert ptr_member.containing_type.name == "S"
+    assert ptr_member.to_decl() == "<unknown type>"
     assert isinstance(ptr_member.containing_type, lief.dwarf.types.Structure)
 
 def test_DW_TAG_set_type():
@@ -216,6 +240,7 @@ def test_DW_TAG_set_type():
     set_type: lief.dwarf.types.SetTy = dbg_info.find_type("ST")
     assert isinstance(set_type, lief.dwarf.types.SetTy)
 
+    assert set_type.to_decl() == "<unknown type>"
     assert isinstance(set_type.underlying_type, lief.dwarf.types.Enum)
     assert set_type.underlying_type.name == "Enum"
 
@@ -239,6 +264,7 @@ def test_DW_TAG_rvalue_reference_type():
 
     rval_ref: lief.dwarf.types.RValueReference = parameters[1].type
     assert isinstance(rval_ref, lief.dwarf.types.RValueReference)
+    assert rval_ref.to_decl() == "<unknown type>"
     assert rval_ref.underlying_type.name == "deleted"
 
 
@@ -257,6 +283,7 @@ def test_DW_TAG_immutable_type():
     imm: lief.dwarf.types.Immutable = V.type
 
     assert isinstance(imm, lief.dwarf.types.Immutable)
+    assert imm.to_decl() == "<unknown type>"
     assert imm.underlying_type.name == "char"
 
 def test_DW_TAG_subroutine_type():
@@ -268,6 +295,7 @@ def test_DW_TAG_subroutine_type():
     V = dbg_info.find_variable("y")
 
     ptr_member: lief.dwarf.types.PointerToMember = V.type
+    assert ptr_member.to_decl() == "<unknown type>"
 
     subroutine_ty: lief.dwarf.types.Subroutine = ptr_member.underlying_type
     assert isinstance(subroutine_ty, lief.dwarf.types.Subroutine)
@@ -288,6 +316,17 @@ def test_DW_TAG_enumeration_type():
     assert isinstance(enum, lief.dwarf.types.Enum)
     assert enum.find_entry(4).name == "epsilon"
 
+    assert enum.to_decl() == dedent("""\
+    enum Enum {
+        alpha = 0i8,
+        beta = 1i8,
+        gamma = 2i8,
+        delta = 3i8,
+        epsilon = 4i8,
+        theta = 5i8,
+        psi = 6i8,
+        zeta = 7i8
+    }""")
     loc = enum.location
 
     assert normalize_path(loc.file) == "/home/cm3/settest/src/Main.m3"

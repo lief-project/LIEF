@@ -27,39 +27,10 @@ def test_dwo():
     assert ret_type.name == "int32_t"
     assert ret_type.size == 4
 
-    #parameters = dp_sys_readlinkat.parameters
-    #assert len(parameters) == 4
-    #assert parameters[0].name == "dirfd"
-    #assert parameters[0].type.name == "int32_t"
-
-    #assert parameters[1].name == "pathname"
-    #assert isinstance(parameters[1].type, lief.dwarf.types.Pointer)
-    #pointer = parameters[1].type
-    #assert pointer.underlying_type.name == "char[0x0]"
-    #assert pointer.underlying_type.size == 1
-
-    #assert parameters[2].name == "buf"
-
-    #assert parameters[3].name == "bufsiz"
-    #assert parameters[3].type.name == "size_t"
-
 def test_structures():
     binaryninja_dxp = lief.dwarf.load(get_sample("private/DWARF/binaryninja/dxp.debug"))
     CU = list(binaryninja_dxp.compilation_units)[0]
     dp_init_mp3_info = CU.find_function("dp_init_mp3_info")
-
-    #arg1 = dp_init_mp3_info.parameters[1]
-    #assert arg1.name == "classes"
-    #dp_mp3_class_t = arg1.type.underlying_type
-    #assert isinstance(dp_mp3_class_t, lief.dwarf.types.Structure)
-    #assert dp_mp3_class_t.name == "dp_mp3_class_t"
-    #assert dp_mp3_class_t.size == 4
-    #members = dp_mp3_class_t.members
-    #assert len(members) == 1
-    #assert members[0].name == "name_offset"
-    #assert members[0].offset == 0
-    #assert members[0].type.name == "uint32_t"
-
 
 def test_find():
     binaryninja_dxp = lief.dwarf.load(get_sample("private/DWARF/binaryninja/dxp.debug"))

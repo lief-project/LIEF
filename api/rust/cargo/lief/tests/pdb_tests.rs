@@ -112,6 +112,8 @@ fn explore_type(ty: &lief::pdb::Type) {
 
 fn explore_pdb(name: &str, pdb: &lief::pdb::DebugInfo) {
     println!("{} {}", pdb.age(), pdb.guid());
+    assert!(!pdb.type_by_index(3).is_none());
+    assert!(pdb.type_by_index(4000000000).is_none());
 
     pdb.public_symbol_by_name("foo");
     pdb.public_symbol_by_name("MiSyncSystemPdes");
