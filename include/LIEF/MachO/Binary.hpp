@@ -983,9 +983,15 @@ class LIEF_API Binary : public LIEF::Binary {
     return filesets_.empty();
   }
 
-  /// Name associated with the LC_FILESET_ENTRY binary
+  /// Name associated with the `LC_FILESET_ENTRY` for this MachO.
+  /// For instance: `com.apple.kec.corecrypto`
   const std::string& fileset_name() const {
-    return fileset_name_;
+    return fileset_info_.name;
+  }
+
+  /// Original address associated with the `LC_FILESET_ENTRY` for this MachO.
+  uint64_t  fileset_addr() const {
+    return fileset_info_.address;
   }
 
   /// Add a symbol to this binary
@@ -1110,12 +1116,16 @@ class LIEF_API Binary : public LIEF::Binary {
   std::map<uint64_t, SegmentCommand*> offset_seg_;
 
   protected:
+  struct fileset_info_t {
+    std::string name;
+    uint64_t address = 0;
+  };
+
   uint64_t fat_offset_ = 0;
-  uint64_t fileset_offset_ = 0;
   uint64_t in_memory_base_addr_ = 0;
-  std::string fileset_name_;
   std::vector<uint8_t> overlay_;
   std::vector<std::unique_ptr<IndirectBindingInfo>> indirect_bindings_;
+  fileset_info_t fileset_info_;
 };
 
 } // namespace MachO

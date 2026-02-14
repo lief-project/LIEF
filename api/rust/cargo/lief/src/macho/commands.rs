@@ -13,6 +13,7 @@ pub mod dylib;
 pub mod dylinker;
 pub mod dynamic_symbol_command;
 pub mod encryption_info;
+pub mod fileset;
 pub mod functionstarts;
 pub mod function_variants;
 pub mod function_variant_fixups;
@@ -96,6 +97,8 @@ pub use uuid::UUID;
 pub use version_min::VersionMin;
 #[doc(inline)]
 pub use note::Note;
+#[doc(inline)]
+pub use fileset::Fileset;
 #[doc(inline)]
 pub use unknown::Unknown;
 
@@ -313,6 +316,7 @@ pub enum Commands<'a> {
     Dylinker(Dylinker<'a>),
     DynamicSymbolCommand(DynamicSymbolCommand<'a>),
     EncryptionInfo(EncryptionInfo<'a>),
+    Fileset(Fileset<'a>),
     FunctionStarts(FunctionStarts<'a>),
     LinkerOptHint(LinkerOptHint<'a>),
     Main(Main<'a>),
@@ -382,6 +386,13 @@ impl<'a> Commands<'a> {
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Commands::Dylinker(Dylinker::from_ffi(raw))
+            } else if ffi::MachO_Fileset::classof(cmd_ref) {
+                let raw = {
+                    type From = cxx::UniquePtr<ffi::MachO_Command>;
+                    type To = cxx::UniquePtr<ffi::MachO_Fileset>;
+                    std::mem::transmute::<From, To>(ffi_entry)
+                };
+                Commands::Fileset(Fileset::from_ffi(raw))
             } else if ffi::MachO_FunctionStarts::classof(cmd_ref) {
                 let raw = {
                     type From = cxx::UniquePtr<ffi::MachO_Command>;
@@ -714,6 +725,9 @@ impl Command for Commands<'_> {
                 cmd.get_base()
             }
             Commands::FunctionVariantFixups(cmd) => {
+                cmd.get_base()
+            }
+            Commands::Fileset(cmd) => {
                 cmd.get_base()
             }
             Commands::Unknown(cmd) => {

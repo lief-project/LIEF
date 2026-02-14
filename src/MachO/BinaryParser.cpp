@@ -441,6 +441,11 @@ ok_error_t BinaryParser::parse_indirect_symbols(DynamicSymbolCommand& cmd,
                                                 std::vector<Symbol*>& symtab,
                                                 BinaryStream& indirect_stream)
 {
+  if (symtab.empty()) {
+    LIEF_WARN("Empty symtab: can't process indirect symbol");
+    return make_error_code(lief_errors::corrupted);
+  }
+
   for (size_t i = 0; i < cmd.nb_indirect_symbols(); ++i) {
     uint32_t index = 0;
     auto res = indirect_stream.read<uint32_t>();

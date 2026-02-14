@@ -962,7 +962,8 @@ ok_error_t BinaryParser::parse_load_commands() {
 
           // Fat binary
           if (type == MACHO_TYPES::MAGIC_FAT || type == MACHO_TYPES::CIGAM_FAT) {
-            LIEF_ERR("Mach-O is corrupted with a FAT Mach-O inside a fileset ?");
+            LIEF_ERR("Invalid MachO magic for fileset entry: offset={:#x}, "
+                      "magic={:#x}", cmd->fileoff, (int)type);
             break;
           }
 
@@ -993,7 +994,11 @@ ok_error_t BinaryParser::parse_load_commands() {
 
           if (bp.binary_ != nullptr) {
             std::unique_ptr<Binary> filset_bin = std::move(bp.binary_);
-            filset_bin->fileset_name_ = *entry_name;
+
+            filset_bin->fileset_info_.name = *entry_name;
+            filset_bin->fileset_info_.address = fset->virtual_address();
+
+            fset->binary_ = filset_bin.get();
             binary_->filesets_.push_back(std::move(filset_bin));
           }
           break;

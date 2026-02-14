@@ -156,11 +156,19 @@ fn explore_macho(_: &str, macho: &lief::macho::Binary) {
                 }
             }
 
+            Commands::Fileset(fileset) => {
+                println!("{fileset:?}");
+            }
+
             Commands::Unknown(ukn) => {
                 println!("Original: {:?}", ukn.original_command());
             }
             _ => {}
         }
+    }
+
+    for bin in macho.filesets() {
+        format!("{} - {}", bin.fileset_name(), bin.fileset_addr());
     }
 
     for segment in macho.segments() {
@@ -358,6 +366,7 @@ fn test_api() {
     test_with("binary.metallib");
     test_with("variants_alt.dylib");
     test_with_fullpath("CoreFoundation", "private/MachO/CoreFoundation");
+    test_with_fullpath("kernelcache.release.iPhone17.5", "private/MachO/kernelcache.release.iPhone17.5");
 }
 
 #[test]

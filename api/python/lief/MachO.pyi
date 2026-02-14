@@ -792,6 +792,9 @@ class Binary(lief.Binary):
     def fileset_name(self) -> str: ...
 
     @property
+    def fileset_addr(self) -> int: ...
+
+    @property
     def imagebase(self) -> int: ...
 
     @property

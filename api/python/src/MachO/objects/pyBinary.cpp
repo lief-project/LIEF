@@ -167,9 +167,14 @@ void create<Binary>(nb::module_& m) {
         &Binary::has_filesets,
         "Return ``True`` if the binary has filesets"_doc)
 
-    .def_prop_ro("fileset_name",
-        &Binary::fileset_name,
-        "Name associated with the LC_FILESET_ENTRY binary"_doc)
+    .def_prop_ro("fileset_name", &Binary::fileset_name,
+        R"doc(
+        Name associated with the ``LC_FILESET_ENTRY`` for this MachO.
+        For instance: ``com.apple.kec.corecrypto``
+        )doc"_doc)
+
+    .def_prop_ro("fileset_addr", &Binary::fileset_addr,
+      "Original address associated with the ``LC_FILESET_ENTRY`` for this MachO."_doc)
 
     .def_prop_ro("imagebase",
         &Binary::imagebase,

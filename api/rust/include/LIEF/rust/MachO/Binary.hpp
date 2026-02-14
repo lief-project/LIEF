@@ -166,6 +166,16 @@ class MachO_Binary : public AbstractBinary {
     auto size() const { return Iterator::size(); }
   };
 
+  class it_fileset_binaries :
+      public Iterator<MachO_Binary, LIEF::MachO::Binary::it_const_fileset_binaries>
+  {
+    public:
+    it_fileset_binaries(const MachO_Binary::lief_t& src)
+      : Iterator(std::move(src.filesets())) { }
+    auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
+  };
+
   MachO_Binary(const lief_t& bin) : AbstractBinary(bin) {}
   MachO_Binary(std::unique_ptr<lief_t> ptr) : AbstractBinary(std::move(ptr)) {}
 
@@ -332,6 +342,16 @@ class MachO_Binary : public AbstractBinary {
   static bool is_exported(const MachO_Symbol& symbol) {
     return lief_t::is_exported(static_cast<const LIEF::MachO::Symbol&>(symbol.get()));
   }
+
+  auto filesets() const {
+    return std::make_unique<it_fileset_binaries>(impl());
+  }
+
+  bool has_filesets() const { return impl().has_filesets(); }
+
+  std::string fileset_name() const { return impl().fileset_name(); }
+
+  auto fileset_addr() const { return impl().fileset_addr(); }
 
   private:
   const lief_t& impl() const { return as<lief_t>(this); }

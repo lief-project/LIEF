@@ -359,6 +359,23 @@ impl Binary {
     pub fn notes(&self) -> Notes<'_> {
         Notes::new(self.ptr.notes())
     }
+
+    /// Name associated with the `LC_FILESET_ENTRY` for this MachO.
+    /// For instance: `com.apple.kec.corecrypto`
+    pub fn fileset_name(&self) -> String {
+        self.ptr.fileset_name().to_string()
+    }
+
+    /// Original address associated with the `LC_FILESET_ENTRY` for this MachO.
+    pub fn fileset_addr(&self) -> u64 {
+        self.ptr.fileset_addr()
+    }
+
+
+    /// Return an iterator over the [`Binary`] associated with the `LC_FILESET_ENTRY` commands
+    pub fn filesets(&self) -> FilesetBinaries<'_> {
+        FilesetBinaries::new(self.ptr.filesets())
+    }
 }
 
 impl generic::Binary for Binary {
@@ -399,4 +416,12 @@ declare_iterator!(
     ffi::MachO_NoteCommand,
     ffi::MachO_Binary,
     ffi::MachO_Binary_it_notes
+);
+
+declare_iterator!(
+    FilesetBinaries,
+    Binary,
+    ffi::MachO_Binary,
+    ffi::MachO_Binary,
+    ffi::MachO_Binary_it_fileset_binaries
 );
