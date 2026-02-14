@@ -1842,7 +1842,9 @@ std::vector<uint8_t> Binary::raw() {
 
 result<uint64_t> Binary::virtual_address_to_offset(uint64_t virtual_address) const {
   const SegmentCommand* segment = segment_from_virtual_address(virtual_address);
-  if (segment == nullptr) {
+  // file_size() is 0 if segment is not file-backed, e.g. a `__DATA` segment that only has
+  // a ZEROFILL section.  In such case, there is no file offset available.
+  if (segment == nullptr || segment->file_size() == 0) {
     return make_error_code(lief_errors::conversion_error);
   }
   const uint64_t base_address = segment->virtual_address() - segment->file_offset();
