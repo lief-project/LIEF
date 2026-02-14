@@ -246,7 +246,7 @@ def test_threaded_opcodes(tmp_path):
 
 def test_shift_dyldinforeloc_taggedptr(tmp_path: pathlib.Path):
     # c.f. https://github.com/lief-project/LIEF/issues/1300
-    def check_relocation_value(macho: lief._lief.MachO.Binary, idx: int, expected_value: int):
+    def check_relocation_value(macho: lief.MachO.Binary, idx: int, expected_value: int):
         # See `src/MachO/Binary.tcc`: `patch_relocation()`
         reloc = macho.relocations[idx]
         segment = macho.segment_from_virtual_address(reloc.address)
