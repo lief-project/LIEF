@@ -411,8 +411,13 @@ void create<Binary>(nb::module_& m) {
         "DOS stub content as a ``list`` of bytes"_doc)
 
     .def("add_import", &Binary::add_import,
-        "Add an imported library (i.e. ``DLL``) to the binary"_doc,
-        "import_name"_a,
+        R"doc(
+        Add an imported library (i.e. ``DLL``) to the binary.
+
+        The second parameter ``pos`` defines where to insert the import.
+        If negative (default), the import is appended to the end of the list.
+        )doc"_doc,
+        "import_name"_a, "pos"_a = -1,
         nb::rv_policy::reference_internal)
 
     .def("remove_import", &Binary::remove_import,

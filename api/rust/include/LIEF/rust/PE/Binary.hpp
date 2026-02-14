@@ -461,6 +461,10 @@ class PE_Binary : public AbstractBinary {
     return std::make_unique<PE_Import>(impl().add_import(name));
   }
 
+  auto add_import_pos(std::string name, uint32_t pos) {
+    return std::make_unique<PE_Import>(impl().add_import(name, pos));
+  }
+
   void remove_import(std::string name) {
     impl().remove_import(name);
   }

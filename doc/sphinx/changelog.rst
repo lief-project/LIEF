@@ -46,6 +46,10 @@
 
   * Introduced an API to select a specific Mach-O binary by architecture from a FAT binary (:pr:`1283`)
 
+:PE:
+
+  * Add the support to add an |lief-pe-import| at a specific position: |lief-pe-binary-add-import| (:pr:`1298`)
+
 :Dependencies:
 
   * Update nanobind to version ``v2.11.x``

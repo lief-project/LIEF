@@ -390,6 +390,13 @@ impl Binary {
         Import::from_ffi(self.ptr.pin_mut().add_import(name))
     }
 
+    /// Add an imported library (i.e. `DLL`) to the binary.
+    ///
+    /// The second parameter `pos` defines where to insert the import.
+    pub fn add_import_at_pos<'a>(&'a mut self, name: &str, pos: u32) -> Import<'a> {
+        Import::from_ffi(self.ptr.pin_mut().add_import_pos(name, pos))
+    }
+
     /// Remove the imported library with the given `name`
     pub fn remove_import(&mut self, name: &str) {
         self.ptr.pin_mut().remove_import(name);

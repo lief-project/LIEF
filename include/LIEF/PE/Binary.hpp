@@ -616,10 +616,18 @@ class LIEF_API Binary : public LIEF::Binary {
     return get_delay_import(import_name) != nullptr;
   }
 
-  /// Add an imported library (i.e. `DLL`) to the binary
-  Import& add_import(const std::string& name) {
-    imports_.push_back(std::unique_ptr<Import>(new Import(name)));
-    return *imports_.back();
+  /// Add an imported library (i.e. `DLL`) to the binary.
+  ///
+  /// The second parameter `pos` defines where to insert the import.
+  /// If negative (default), the import is appended to the end of the list.
+  Import& add_import(const std::string& name, int32_t pos = -1) {
+    if (pos < 0) {
+      imports_.push_back(std::unique_ptr<Import>(new Import(name)));
+      return *imports_.back();
+    }
+    assert(pos >= 0);
+    return **imports_.insert(imports_.begin() + pos,
+                             std::unique_ptr<Import>(new Import(name)));
   }
 
   /// Remove the imported library with the given `name`

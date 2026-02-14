@@ -339,3 +339,23 @@ def test_issue_multiple(tmp_path: Path):
     imp = new.get_import("api-ms-win-crt-string-l1-1-0.dll")
     assert len(imp.entries) == 1
 
+
+def test_import_front(tmp_path: Path):
+    pe = lief.PE.parse(get_sample("PE/pe_reader.exe"))
+    assert pe.imports[0].name == "KERNEL32.dll"
+
+    pe.add_import("api-ms-win-crt-stdio-l1-1-0.dll", pos=0)
+
+    assert pe.imports[0].name == "api-ms-win-crt-stdio-l1-1-0.dll"
+
+    config = lief.PE.Builder.config_t()
+    config.exports = True
+    config.resources = False
+    config.imports = True
+
+    out = tmp_path / "out.exe"
+    pe.write(out, config)
+
+    new = lief.PE.parse(out)
+
+    assert new.imports[0].name == "api-ms-win-crt-stdio-l1-1-0.dll"

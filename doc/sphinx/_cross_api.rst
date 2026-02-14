@@ -482,6 +482,7 @@
 .. |lief-pe-binary-add-import| lief-api:: lief.PE.Binary.add_import()
 
     :rust:method:`lief::pe::Binary::add_import [struct]`
+    :rust:method:`lief::pe::Binary::add_import_at_pos [struct]`
     :py:func:`lief.PE.Binary.add_import`
     :cpp:func:`LIEF::PE::Binary::add_import`
 
