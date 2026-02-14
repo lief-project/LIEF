@@ -104,7 +104,7 @@ ok_error_t Binary::patch_relocation(Relocation& relocation, uint64_t from, uint6
   }
 
   auto* ptr_value = reinterpret_cast<T*>(segment_content.data() + relative_offset);
-  if (*ptr_value >= from && is_valid_addr(*ptr_value)) {
+  if (*ptr_value >= from) {
     *ptr_value += shift;
   }
   return ok();

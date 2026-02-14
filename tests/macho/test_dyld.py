@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import lief
 import pathlib
+from struct import unpack_from
 from utils import get_sample
 
 def test_exports_trie():
@@ -242,3 +243,30 @@ def test_threaded_opcodes(tmp_path):
     assert bindings[81].symbol.name == "_optind"
     assert bindings[81].segment.name == "__DATA_CONST"
     assert bindings[81].library.name == "/usr/lib/libSystem.B.dylib"
+
+def test_shift_dyldinforeloc_taggedptr(tmp_path: pathlib.Path):
+    # c.f. https://github.com/lief-project/LIEF/issues/1300
+    def check_relocation_value(macho: lief._lief.MachO.Binary, idx: int, expected_value: int):
+        # See `src/MachO/Binary.tcc`: `patch_relocation()`
+        reloc = macho.relocations[idx]
+        segment = macho.segment_from_virtual_address(reloc.address)
+        offset = macho.virtual_address_to_offset(reloc.address)
+        relative_offset = offset - segment.file_offset
+        (target,) = unpack_from('<Q', segment.content.tobytes(), relative_offset)
+        assert target == expected_value
+
+    output = f'{tmp_path}/libmamba.4.0.1.dylib'
+    shift_value = 0x4000
+
+    macho = lief.MachO.parse(get_sample('MachO/libmamba.4.0.1.dylib')).at(0)
+    assert macho.has_dyld_info
+    check_relocation_value(macho, 242, 0x8000000000305D78)
+    check_relocation_value(macho, 4619, 0x800000000030D7F9)
+    macho.shift(shift_value)
+    check_relocation_value(macho, 242, 0x8000000000305D78 + shift_value)
+    check_relocation_value(macho, 4619, 0x800000000030D7F9 + shift_value)
+    macho.write(output)
+
+    macho = lief.MachO.parse(output).at(0)
+    check_relocation_value(macho, 242, 0x8000000000305D78 + shift_value)
+    check_relocation_value(macho, 4619, 0x800000000030D7F9 + shift_value)
