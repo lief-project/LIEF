@@ -356,7 +356,7 @@ ok_error_t Builder::build_tls() {
       tls->addressof_callbacks(0);
     } else {
       binary_->patch_address(tls_callbacks_start, tls_data_.callbacks,
-                             Binary::VA_TYPES::VA);
+                             Binary::VA_TYPES::RVA);
     }
   }
 
