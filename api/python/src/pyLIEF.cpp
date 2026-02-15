@@ -280,7 +280,7 @@ void init(nb::module_& m) {
     "mangled"_a
   );
 
-  m.def("dump", [] (nb::memoryview view, const std::string& title,
+  m.def("dump", [] (nb::extra::memoryview view, const std::string& title,
                     const std::string& prefix, size_t limit)
     {
       return LIEF::dump(view.data(), view.size(), title, prefix, limit);

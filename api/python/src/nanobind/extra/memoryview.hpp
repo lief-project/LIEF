@@ -5,10 +5,12 @@
 
 NAMESPACE_BEGIN(NB_NAMESPACE)
 
-/* The current version of nanobind does not memoryview helper compared to
- * pybind11. So here is a minimal API needed by LIEF
+namespace extra {
+/* the memoryview wrapper class has been introduced in nanobind with the commit
+ * 7206bc2 but it misses important helpers like data().
  *
  * Tracked by the discussion: https://github.com/wjakob/nanobind/discussions/233
+ * PR: https://github.com/wjakob/nanobind/pull/1291
  */
 class memoryview : public object {
   using ssize_t = Py_ssize_t;
@@ -75,6 +77,8 @@ public:
 #endif
     }
 };
+
+} // namespace extra
 
 NAMESPACE_END(NB_NAMESPACE)
 

@@ -55,7 +55,7 @@ result<PyIOStream> PyIOStream::from_python(nb::object object) {
 
   seek(0, PY_SEEK_SET);
   if (nb::hasattr(object, "readinto")) {
-    auto view = nb::memoryview::from_memory(data.data(), size);
+    auto view = nb::extra::memoryview::from_memory(data.data(), size);
     object.attr("readinto")(view);
   }
   else if (nb::hasattr(object, "read")) {
