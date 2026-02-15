@@ -49,6 +49,7 @@
 :PE:
 
   * Add the support to add an |lief-pe-import| at a specific position: |lief-pe-binary-add-import| (:pr:`1298`)
+  * Better support for EFI binary like ``bzImage`` (:pr:`1293`)
 
 :Dependencies:
 

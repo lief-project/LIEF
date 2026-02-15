@@ -110,6 +110,11 @@ ok_error_t Builder::build_tls() {
   const bool is64_bit = binary_->optional_header().magic() == PE_TYPE::PE32_PLUS;
 
   DataDirectory* tls_dir = binary_->tls_dir();
+  DataDirectory* reloc_dir = binary_->relocation_dir();
+
+  if (tls_dir == nullptr || reloc_dir == nullptr) {
+    return ok();
+  }
 
   // True if the TLS object has been created and was not
   // originally present in the binary
@@ -303,9 +308,9 @@ ok_error_t Builder::build_tls() {
       rm_entries += count - parent->entries_.size();
     }
 
-    uint64_t reloc_size = binary_->relocation_dir()->size();
+    uint64_t reloc_size = reloc_dir->size();
     reloc_size -= rm_entries * sizeof(uint16_t);
-    binary_->relocation_dir()->size(reloc_size);
+    reloc_dir->size(reloc_size);
 
     // Relocation that need to be created:
     const size_t req_relocs = tls->callbacks().size();
@@ -346,9 +351,9 @@ ok_error_t Builder::build_tls() {
         const size_t S2 = R.entries_.size();
         size_t rm_count = S1 - S2;
         LIEF_DEBUG("#{} relocation deleted", rm_count);
-        uint64_t reloc_size = binary_->relocation_dir()->size();
+        uint64_t reloc_size = reloc_dir->size();
         reloc_size -= rm_count * sizeof(uint16_t);
-        binary_->relocation_dir()->size(reloc_size);
+        reloc_dir->size(reloc_size);
       }
 
       binary_->fill_address(tls_callbacks_start, original_callback_size, 0,
@@ -371,7 +376,7 @@ ok_error_t Builder::build_tls() {
   ;
 
   ios_header.move(tls_data_.header);
-  if (const DataDirectory* dir = binary_->tls_dir(); dir->RVA() > 0) {
+  if (const DataDirectory* dir = binary_->tls_dir(); dir != nullptr && dir->RVA() > 0) {
     if (dir->size() < tls_data_.header.size()) {
       LIEF_WARN("TLS Header is larger than the original. original=0x{:08x}, "
                 "new=0x{:08x}", dir->size(), tls_data_.header.size());
@@ -514,6 +519,11 @@ ok_error_t Builder::build_imports() {
   LIEF_DEBUG("Rebuilding imports");
 
   DataDirectory* import_dir = binary_->import_dir();
+
+  if (import_dir == nullptr) {
+    return ok();
+  }
+
   if (binary_->imports_.empty()) {
     import_dir->RVA(0);
     import_dir->size(0);
@@ -833,6 +843,9 @@ ok_error_t Builder::build_load_config() {
 
   DataDirectory* lconf_dir = binary_->load_config_dir();
   LoadConfiguration* lconf = binary_->load_configuration();
+  if (lconf_dir == nullptr) {
+    return ok();
+  }
 
   LIEF_DEBUG("Writing load config");
 

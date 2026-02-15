@@ -299,7 +299,10 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Check if the current binary has exceptions
   bool has_exceptions() const {
-    return exceptions_dir()->size() != 0;
+    if (const DataDirectory* dir = exceptions_dir()) {
+      return dir->size() > 0;
+    }
+    return false;
   }
 
   /// Check if the current binary has relocations

@@ -322,6 +322,10 @@ ok_error_t Builder::build_relocations() {
   vector_iostream ios;
   DataDirectory* reloc_dir = binary_->relocation_dir();
 
+  if (reloc_dir == nullptr) {
+    return ok();
+  }
+
   const uint32_t original_size = reloc_dir->size();
   ios.reserve(original_size);
 
@@ -380,6 +384,11 @@ ok_error_t Builder::build_relocations() {
 
 ok_error_t Builder::build_resources() {
   DataDirectory* rsrc_dir = binary_->rsrc_dir();
+
+  if (rsrc_dir == nullptr) {
+    return ok();
+  }
+
   ResourceNode* node = binary_->resources();
 
   if (node == nullptr) {
@@ -716,6 +725,10 @@ ok_error_t Builder::build_debug_info() {
   static constexpr auto FX_BASE_RVA = 0;
   static constexpr auto FX_BASE_OFFSET = 1;
   DataDirectory* debug_dir = binary_->debug_dir();
+
+  if (debug_dir == nullptr) {
+    return ok();
+  }
 
   if (binary_->debug_.empty()) {
     if (debug_dir->RVA() > 0 && debug_dir->size() > 0) {
@@ -1071,6 +1084,10 @@ ok_error_t Builder::build_exports() {
   // +-----------------------------+ <-------+              + Size
 
   DataDirectory* exp_dir = binary_->export_dir();
+  if (exp_dir == nullptr) {
+    return ok();
+  }
+
   Export* exp = binary_->get_export();
 
   if (exp == nullptr) {

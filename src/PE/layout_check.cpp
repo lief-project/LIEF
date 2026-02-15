@@ -474,6 +474,9 @@ bool LayoutChecker::check_imports() {
   }
 
   const DataDirectory* iat_dir = pe.iat_dir();
+  if (iat_dir == nullptr) {
+    return true;
+  }
 
   for (const Import& imp : imports) {
     for (const ImportEntry& entry : imp.entries()) {
@@ -555,7 +558,7 @@ bool LayoutChecker::check_tls() {
   const TLS* tls = pe.tls();
   const DataDirectory* tls_dir = pe.tls_dir();
 
-  if (tls == nullptr) {
+  if (tls == nullptr || tls_dir == nullptr) {
     return true;
   }
   const size_t ptr_size = this->ptr_size();

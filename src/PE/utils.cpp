@@ -105,7 +105,8 @@ result<PE_TYPE> get_type_from_stream(BinaryStream& stream) {
   const size_t sizeof_opt_header = header->SizeOfOptionalHeader;
   if (sizeof_opt_header != SIZEOF_OPT_HEADER_32 &&
       sizeof_opt_header != SIZEOF_OPT_HEADER_64) {
-    LIEF_WARN("The value of the SizeOfOptionalHeader in the PE header seems corrupted 0x{:x}", sizeof_opt_header);
+    LIEF_WARN("SizeOfOptionalHeader seems invalid: {:#x}. Expecting {:#x} or {:#x}",
+               sizeof_opt_header, SIZEOF_OPT_HEADER_32, SIZEOF_OPT_HEADER_64);
   }
 
   auto opt_hdr = stream.read<details::pe32_optional_header>();

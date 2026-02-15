@@ -226,22 +226,18 @@ ok_error_t Parser::parse_data_directories() {
   using pe_optional_header = typename PE_T::pe_optional_header;
   const uint32_t directories_offset = binary_->dos_header().addressof_new_exeheader() +
                                       sizeof(details::pe_header) + sizeof(pe_optional_header);
-  static constexpr auto NB_DIR = DataDirectory::DEFAULT_NB;
-  binary_->data_directories_.resize(NB_DIR);
-  // Make sure the data_directory array is correctly initialized
-  for (size_t i = 0; i < NB_DIR; ++i) {
-    binary_->data_directories_[i] = std::make_unique<DataDirectory>();
-  }
+  static constexpr auto DEFAULT_NB = DataDirectory::DEFAULT_NB;
+  binary_->data_directories_.reserve(DEFAULT_NB);
 
   stream_->setpos(directories_offset);
-
   // WARNING: The PE specifications require that the data directory table ends
   // with a null entry (RVA / Size, set to 0).
   //
   // Nevertheless it seems that this requirement is not enforced by the PE loader.
   // The binary bc203f2b6a928f1457e9ca99456747bcb7adbbfff789d1c47e9479aac11598af contains a non-null final
   // data directory (watermarking?)
-  for (size_t i = 0; i < NB_DIR; ++i) {
+  const uint32_t nb_dir = binary_->optional_header().numberof_rva_and_size();
+  for (size_t i = 0; i < nb_dir; ++i) {
     auto raw_dir = stream_->read<details::pe_data_directory>();
     if (!raw_dir) {
       LIEF_ERR("Can't read data directory at #{}", i);
@@ -258,7 +254,7 @@ ok_error_t Parser::parse_data_directories() {
                   to_string(dir_type));
       }
     }
-    binary_->data_directories_[i] = std::move(directory);
+    binary_->data_directories_.push_back(std::move(directory));
   }
 
   // Import Table
@@ -681,7 +677,9 @@ ok_error_t Parser::parse_tls() {
 template<typename PE_T>
 ok_error_t Parser::parse_load_config() {
   const DataDirectory* lconf_dir = bin().load_config_dir();
-  assert(lconf_dir != nullptr);
+  if (lconf_dir == nullptr) {
+    return ok();
+  }
 
   if (lconf_dir->RVA() == 0 || lconf_dir->size() == 0) {
     return ok();

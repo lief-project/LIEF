@@ -516,7 +516,7 @@ ok_error_t Parser::parse_debug() {
 
   DataDirectory* dir = binary_->debug_dir();
   if (dir == nullptr) {
-    return make_error_code(lief_errors::not_found);
+    return ok();
   }
 
   if (dir->RVA() == 0 || dir->size() == 0) {
@@ -630,6 +630,11 @@ ok_error_t Parser::parse_exceptions() {
   }
 
   const DataDirectory* exception_dir = binary_->exceptions_dir();
+
+  if (exception_dir == nullptr) {
+    return ok();
+  }
+
   if (exception_dir->RVA() == 0 || exception_dir->size() == 0) {
     return ok();
   }

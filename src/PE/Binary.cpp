@@ -119,6 +119,11 @@ void Binary::remove_tls() {
     return;
   }
   DataDirectory* tls_dir = this->tls_dir();
+
+  if (tls_dir == nullptr) {
+    return;
+  }
+
   const size_t ptr_size = optional_header().magic() == PE_TYPE::PE32 ?
                           sizeof(uint32_t) : sizeof(uint64_t);
 
@@ -1300,6 +1305,9 @@ bool Binary::remove_debug(const Debug& entry) {
 
 bool Binary::clear_debug() {
   DataDirectory* dbg_dir = this->debug_dir();
+  if (dbg_dir == nullptr) {
+    return false;
+  }
   for (std::unique_ptr<Debug>& dbg : debug_) {
     span<uint8_t> payload = dbg->payload();
     if (payload.empty()) {
