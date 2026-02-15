@@ -43,6 +43,7 @@ class BuildConfig(BaseModel):
     build_type: EnvString = Field("Release", alias="type")
     cache: bool = True
     ninja: bool = False
+    stable_abi: bool = Field(False, alias="stable-abi")
     default_target: str = Field("pyLIEF", alias="default-target")
     parallel_jobs: int = Field(0, alias="parallel-jobs")
     compilation_flags: List[str] = Field([], alias="compilation-flags")
@@ -101,6 +102,10 @@ class BuildConfig(BaseModel):
                 f'-DCMAKE_CXX_FLAGS={flags}',
                 f'-DCMAKE_C_FLAGS={flags}',
             ))
+
+        out.append(
+            f"-DLIEF_PYTHON_STABLE_ABI={cmake_serialize(self.stable_abi)}"
+        )
 
         return out
 

@@ -55,6 +55,9 @@ cmake_dependent_option(LIEF_PY_LIEF_EXT_SHARED
 cmake_dependent_option(LIEF_PYTHON_STATIC "Internal usage" OFF
                        "LIEF_PYTHON_API" OFF)
 
+cmake_dependent_option(LIEF_PYTHON_STABLE_ABI "Compile LIEF Python bindings with the stable ABI" OFF
+                       "LIEF_PYTHON_API" OFF)
+
 # OAT support relies on the ELF and DEX format.
 # Therefore, these options must be enabled to support this format
 cmake_dependent_option(LIEF_OAT "Build LIEF with OAT module" ON

@@ -52,6 +52,11 @@ if (LIEF_PYTHON_STATIC)
   list(APPEND NANOBIND_OPT NB_EXT_STATIC)
 endif()
 
+if (LIEF_PYTHON_STABLE_ABI)
+  message(STATUS "Stable ABI enabled")
+  list(APPEND NANOBIND_OPT STABLE_ABI)
+endif()
+
 nanobind_add_module(
   pyLIEF
   ${NANOBIND_OPT}
