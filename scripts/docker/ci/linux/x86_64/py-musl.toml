@@ -3,6 +3,7 @@ type             = "Release"
 cache            = true
 ninja            = true
 parallel-jobs    = 0
+stable-abi       = true
 cxx-compiler     = "clang++"
 c-compiler       = "clang"
 lief-install-dir = "/install"
@@ -39,4 +40,4 @@ debug   = false
 [lief.cross-compilation]
 platform  = "musllinux_1_2_x86_64"
 pyversion = "cp{python_version_alt}"
-abi       = "cp{python_version_alt}"
+abi       = "abi3"

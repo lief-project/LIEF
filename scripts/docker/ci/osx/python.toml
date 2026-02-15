@@ -4,6 +4,7 @@ cache         = true
 ninja         = true
 strip         = true
 parallel-jobs = 0
+stable-abi    = true
 cxx-compiler  = "clang++"
 c-compiler    = "clang"
 extra-targets = ["all"]
@@ -38,4 +39,4 @@ debug   = false
 [lief.cross-compilation]
 platform  = "macosx_11_0_{architecture}"
 pyversion = "cp{python_version_alt}"
-abi       = "cp{python_version_alt}"
+abi       = "abi3"

@@ -3,6 +3,7 @@ type             = "Release"
 cache            = true
 ninja            = true
 parallel-jobs    = 0
+stable-abi       = true
 cxx-compiler     = "clang++"
 c-compiler       = "clang"
 lief-install-dir = "{ci_project_dir}/lief-install/x86_64/static"
@@ -36,4 +37,4 @@ debug   = false
 [lief.cross-compilation]
 platform  = "manylinux_2_28_x86_64"
 pyversion = "cp{python_version_alt}"
-abi       = "cp{python_version_alt}"
+abi       = "abi3"
