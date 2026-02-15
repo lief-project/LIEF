@@ -104,10 +104,10 @@ class BuildConfig(BaseModel):
                 f'-DCMAKE_C_FLAGS={flags}',
             ))
 
-        out.append(
-            f"-DLIEF_PYTHON_STABLE_ABI={cmake_serialize(self.stable_abi)}"
+        out.extend([
+            f"-DLIEF_PYTHON_STABLE_ABI={cmake_serialize(self.stable_abi)}",
             f"-DLIEF_PYTHON_FREE_THREADED={cmake_serialize(self.free_threaded)}"
-        )
+        ])
 
         return out
 
