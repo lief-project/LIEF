@@ -57,6 +57,11 @@ if (LIEF_PYTHON_STABLE_ABI)
   list(APPEND NANOBIND_OPT STABLE_ABI)
 endif()
 
+if (LIEF_PYTHON_FREE_THREADED)
+  message(STATUS "Free threading enabled")
+  list(APPEND NANOBIND_OPT FREE_THREADED)
+endif()
+
 nanobind_add_module(
   pyLIEF
   ${NANOBIND_OPT}

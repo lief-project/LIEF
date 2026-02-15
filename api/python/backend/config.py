@@ -44,6 +44,7 @@ class BuildConfig(BaseModel):
     cache: bool = True
     ninja: bool = False
     stable_abi: bool = Field(False, alias="stable-abi")
+    free_threaded: bool = Field(False, alias="free-threaded")
     default_target: str = Field("pyLIEF", alias="default-target")
     parallel_jobs: int = Field(0, alias="parallel-jobs")
     compilation_flags: List[str] = Field([], alias="compilation-flags")
@@ -105,6 +106,7 @@ class BuildConfig(BaseModel):
 
         out.append(
             f"-DLIEF_PYTHON_STABLE_ABI={cmake_serialize(self.stable_abi)}"
+            f"-DLIEF_PYTHON_FREE_THREADED={cmake_serialize(self.free_threaded)}"
         )
 
         return out
