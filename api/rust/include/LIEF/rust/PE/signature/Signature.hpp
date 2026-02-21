@@ -52,12 +52,11 @@ class PE_Signature : private Mirror<LIEF::PE::Signature> {
   };
 
   static auto parse(std::string path) { // NOLINT(performance-unnecessary-value-param)
-    auto res = LIEF::PE::SignatureParser::parse(path);
     std::unique_ptr<LIEF::PE::Signature> sig;
-    if (res) {
+    if (auto res = LIEF::PE::SignatureParser::parse(path)) {
       sig = std::make_unique<LIEF::PE::Signature>(std::move(*res));
     }
-    return sig ? std::make_unique<PE_Signature>(std::move(sig)) : nullptr;
+    return details::try_unique<PE_Signature>(std::move(sig));
   }
 
   static auto from_raw(uint8_t* buffer, size_t size) {

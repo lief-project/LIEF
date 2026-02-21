@@ -67,7 +67,7 @@ class dsc_DyldSharedCache : private Mirror<LIEF::dsc::DyldSharedCache> {
   };
 
   static auto from_path(std::string file, std::string arch) { // NOLINT(performance-unnecessary-value-param)
-    return std::make_unique<dsc_DyldSharedCache>(LIEF::dsc::DyldSharedCache::from_path(file, arch));
+    return details::try_unique<dsc_DyldSharedCache>(LIEF::dsc::DyldSharedCache::from_path(file, arch));
   }
 
   static auto from_files(const char* ptr, size_t size) { // NOLINT(performance-unnecessary-value-param)
@@ -77,7 +77,7 @@ class dsc_DyldSharedCache : private Mirror<LIEF::dsc::DyldSharedCache> {
     for (size_t i = 0; i < size; ++i) {
       files_vec.push_back(files[i]);
     }
-    return std::make_unique<dsc_DyldSharedCache>(LIEF::dsc::DyldSharedCache::from_files(files_vec));
+    return details::try_unique<dsc_DyldSharedCache>(LIEF::dsc::DyldSharedCache::from_files(files_vec));
   }
 
   auto libraries() const { return std::make_unique<it_libraries>(get()); }
