@@ -97,3 +97,43 @@ pub fn set_path<P: AsRef<Path>>(path: P) {
 pub fn log(level: Level, message: &str) {
     ffi::LIEF_Logging::log(level.into(), message)
 }
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __lief_log {
+    ($level: expr) => {
+        lief::logging::log($level, "")
+    };
+    ($level: expr, $($arg:tt)*) => {{
+        lief::logging::log($level, &format!($($arg)*));
+    }};
+}
+
+#[macro_export]
+macro_rules! log_dbg {
+    ($($args:tt)*) => {
+        $crate::__lief_log!(lief::logging::Level::DEBUG, $($args)*)
+    };
+}
+
+#[macro_export]
+macro_rules! log_info {
+    ($($args:tt)*) => {
+        $crate::__lief_log!(lief::logging::Level::INFO, $($args)*)
+    };
+}
+
+#[macro_export]
+macro_rules! log_warn {
+    ($($args:tt)*) => {
+        $crate::__lief_log!(lief::logging::Level::WARN, $($args)*)
+    };
+}
+
+#[macro_export]
+macro_rules! log_err {
+    ($($args:tt)*) => {
+        $crate::__lief_log!(lief::logging::Level::ERR, $($args)*)
+    };
+}
+

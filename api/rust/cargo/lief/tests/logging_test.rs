@@ -12,4 +12,8 @@ fn test_api() {
     logging::set_path(dir.as_path());
     logging::log(logging::Level::INFO, "hi!");
     logging::reset();
+    lief::log_dbg!("dbg: {:?}", dir);
+    lief::log_info!("info: {:?}", dir);
+    lief::log_warn!("warn: {:?}", dir);
+    lief::log_err!("err: {dir:?}");
 }
