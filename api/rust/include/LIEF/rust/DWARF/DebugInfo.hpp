@@ -36,7 +36,7 @@ class DWARF_DebugInfo : public AbstracDebugInfo {
   DWARF_DebugInfo(std::unique_ptr<lief_t> bin) : AbstracDebugInfo(std::move(bin)) {}
 
   static auto from_file(std::string file) { // NOLINT(performance-unnecessary-value-param)
-    return std::make_unique<DWARF_DebugInfo>(LIEF::dwarf::DebugInfo::from_file(file));
+    return details::try_unique<DWARF_DebugInfo>(LIEF::dwarf::DebugInfo::from_file(file));
   }
 
   auto compilation_units() const {
