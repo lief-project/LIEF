@@ -68,6 +68,36 @@
 
   * Python 3.8 is no longer supported
 
+0.17.4 - February 21th, 2026
+----------------------------
+
+:PE:
+
+  * Fixed the address type in the TLS builder by :github_user:`Immortalety` in PR: :pr:`1296`
+
+:MachO:
+
+  * Fixed |lief-macho-binary-virtual_address_to_offset| to properly handle non-file-backed segments
+    (such as ``__DATA`` segments containing only ``ZEROFILL`` sections like `__bss`)
+    by :github_user:`jalopezg-git` in PR: :pr:`1301` fixing :issue:`1299`.
+
+  * Fixed ``patch_relocation()`` to correctly process tagged pointers.
+    By :github_user:`jalopezg-git` in PR: :pr:`1302` fixing :issue:`1300`
+
+:COFF:
+
+  * Resolved a compilation conflict with the Windows ``minwindef.h`` macro ``#define max``
+
+:CMake:
+
+  * Fixed compiler flag issues on Windows when compiling with ``clang-cl``. By
+    :github_user:`sigewinnefish` in PR: :pr:`1306`
+
+:Python:
+
+  * Bumped various Python backend build dependencies in ``api/python/build-requirements.txt``
+    to support Python ``3.14`` when compiling from sources (:issue:`1304`)
+
 0.17.3 - January 24th, 2026
 ---------------------------
 

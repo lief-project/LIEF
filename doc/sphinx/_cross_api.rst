@@ -401,6 +401,12 @@
     :py:meth:`lief.PE.Binary.write`
     :cpp:func:`LIEF::PE::Binary::write`
 
+.. |lief-macho-binary-virtual_address_to_offset| lief-api:: lief.MachO.Binary.virtual_address_to_offset()
+
+    :rust:method:`lief::macho::Binary::virtual_address_to_offset [struct]`
+    :py:meth:`lief.MachO.Binary.virtual_address_to_offset`
+    :cpp:func:`LIEF::MachO::Binary::virtual_address_to_offset`
+
 .. |lief-pe-binary-write_to_bytes| lief-api:: lief.PE.Binary.write_to_bytes()
 
     :py:meth:`lief.PE.Binary.write_to_bytes`
