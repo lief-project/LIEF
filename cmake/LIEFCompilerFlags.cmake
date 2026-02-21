@@ -21,7 +21,7 @@ if (MSVC)
   add_definitions(-DNOMINMAX)
 endif()
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+if((CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU") AND NOT MSVC)
   target_compile_options(LIB_LIEF PRIVATE
     -Wall
     -Wextra
@@ -48,7 +48,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
 
 endif()
 
-if(MSVC AND NOT CLANG_CL)
+if(MSVC)
   set(msvc_warning_flags
     # Disabled warnings.
     -wd4141 # Suppress ''modifier' : used more than once' (because of __forceinline combined with inline)
