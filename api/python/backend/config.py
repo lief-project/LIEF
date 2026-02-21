@@ -27,6 +27,8 @@ class EnvStringValidator:
                 architecture=os.getenv("LIEF_TARGET_ARCHITECTURE", ""),
                 winpy_architecture=winpy_architecture,
                 ci_project_dir=os.getenv("CI_PROJECT_DIR", ""),
+                stable_abi=os.getenv("LIEF_STABLE_ABI", ""),
+                free_threaded=os.getenv("LIEF_FREE_THREADED", "")
         )
         return formatted
 
@@ -43,8 +45,8 @@ class BuildConfig(BaseModel):
     build_type: EnvString = Field("Release", alias="type")
     cache: bool = True
     ninja: bool = False
-    stable_abi: bool = Field(False, alias="stable-abi")
-    free_threaded: bool = Field(False, alias="free-threaded")
+    stable_abi: Union[bool, EnvString] = Field(False, alias="stable-abi")
+    free_threaded: Union[bool, EnvString] = Field(False, alias="free-threaded")
     default_target: str = Field("pyLIEF", alias="default-target")
     parallel_jobs: int = Field(0, alias="parallel-jobs")
     compilation_flags: List[str] = Field([], alias="compilation-flags")
