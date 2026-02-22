@@ -155,7 +155,7 @@ that it is required to compile LIEF, but not to use it. ``external`` means that 
 +------------------------------------------+--------------+--------------------------------------------+
 | :github-ref:`serge-sans-paille/frozen`   | ``internal`` | ``constexpr`` containers                   |
 +------------------------------------------+--------------+--------------------------------------------+
-| :github-ref:`IOActive/Melkor_ELF_Fuzzer` | ``internal`` | Testing                                    |
+| :github-ref:`IOActive/Melkor_ELF_Fuzzer` | ``internal`` | ELF Fuzzing                                |
 +------------------------------------------+--------------+--------------------------------------------+
 | :github-ref:`catchorg/Catch2`            | ``internal`` | Unit Testing                               |
 +------------------------------------------+--------------+--------------------------------------------+
