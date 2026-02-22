@@ -2,13 +2,13 @@
 =====================================
 
 The purpose of this project is to provide a cross-platform library to parse,
-modify, and abstract :ref:`ELF <format-elf>`, :ref:`PE <format-pe>`, and
+modify, and abstract the :ref:`ELF <format-elf>`, :ref:`PE <format-pe>`, and
 :ref:`Mach-O <format-macho>` formats.
 
 From a technical standpoint, the library is written in C++ with a C++11 public
 interface and exposes bindings for Python and Rust.
 
-Hence, you can use LIEF with an idiomatic API in these languages:
+As a result, you can use LIEF through an idiomatic API in these languages:
 
 .. tabs::
 
@@ -44,7 +44,7 @@ Hence, you can use LIEF with an idiomatic API in these languages:
 
       for (const LIEF::MachO::Binary& macho : fat) {
         for (const LIEF::MachO::BindingInfo& binding : macho.bindings()) {
-          std::cout << binding.address() << ' ' << bindings.symbol()->name() << '\n';
+          std::cout << binding.address() << ' ' << binding.symbol()->name() << '\n';
         }
 
         if (macho.is_ios()) {
@@ -82,12 +82,12 @@ Hence, you can use LIEF with an idiomatic API in these languages:
           }
       }
 
-This project is also attached to provide comprehensive documentation as well
-as development best practices:
+The project is also dedicated to providing a comprehensive documentation and
+maintaining strong development standards, including:
 
-- A regular test suite associated with test coverage and non-regression testing
-- Address sanitizer checks (`ASAN <https://clang.llvm.org/docs/AddressSanitizer.html>`_)
-- CI for testing and releasing packages
+- A test suite with code coverage and non-regression testing
+- Address Sanitizer checks (`ASAN <https://clang.llvm.org/docs/AddressSanitizer.html>`_)
+- Continuous Integration or testing and releasing packages
 - Dockerization of the different CI steps
 - A comprehensive :ref:`changelog <changelog-ref>`
 - Nightly builds
@@ -97,10 +97,9 @@ as development best practices:
 
 |
 
-To get started with LIEF functionalities, you can check the documentation of one of these
-formats: :ref:`ELF <format-elf>`, :ref:`PE <format-pe>`, or :ref:`Mach-O <format-macho>`
-and to start integrating LIEF in your project it should be pretty
-straightforward:
+To get started with LIEF's features, you can check the documentation for specific
+formats: :ref:`ELF <format-elf>`, :ref:`PE <format-pe>`, or :ref:`Mach-O <format-macho>`.
+Integrating LIEF into your project is also straightforward:
 
 .. tabs::
 
@@ -112,7 +111,7 @@ straightforward:
 
         $ pip install lief
 
-      **Using a requirement.txt file**
+      **Using a requirements.txt file**
 
       .. code-block:: text
 
@@ -152,7 +151,7 @@ straightforward:
         [dependencies]
         lief = "0.17.4"
 
-You can also find additional content in the `LIEF's blog </blog/>`_ post among those:
+You can find additional content, including release notes, on the `LIEF blog </blog/>`_:
 
 - `LIEF 0.17.0 release info </blog/2025-09-14-lief-0-17-0/>`_
 - `LIEF 0.16.0 release info </blog/2024-12-10-lief-0-16-0/>`_
@@ -164,15 +163,15 @@ You can also find additional content in the `LIEF's blog </blog/>`_ post among t
 - `LIEF 0.11.0 release info </blog/2021-01-19-lief-0-11-0/>`_
 - `LIEF 0.9.0 release info </blog/2018-06-11-lief-0-9-0/>`_
 
-As well as in the `examples/ <https://github.com/lief-project/LIEF/tree/main/examples>`_
-directory
+Further practical examples are available in the
+`examples/ <https://github.com/lief-project/LIEF/tree/main/examples>`_ directory.
 
 :fa:`cubes` Extended Version
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For those who seek for enhanced support for :ref:`PDB <extended-pdb>`,
-:ref:`DWARF <extended-dwarf>` or :ref:`Objective-C <extended-objc>` (and more),
-you can check the :ref:`extended section <extended-intro>`.
+For those seeking enhanced support for :ref:`PDB <extended-pdb>`,
+:ref:`DWARF <extended-dwarf>`, or :ref:`Objective-C <extended-objc>` (and more),
+check out the :ref:`extended section <extended-intro>`.
 
 :fa:`solid fa-book` Additional Documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -182,5 +181,3 @@ you can check the :ref:`extended section <extended-intro>`.
 
   - Stable: |lief-rust-doc|
   - Nightly: |lief-rust-doc-nightly|
-
-
