@@ -4,7 +4,7 @@ use super::variable::Variables;
 use super::lexical_block::LexicalBlock;
 use super::{Scope, Type, Parameters};
 use crate::common::{into_optional, into_ranges, FromFFI};
-use crate::declare_fwd_iterator;
+use crate::{declare_fwd_iterator, declare_lazy_iterator};
 use crate::to_result;
 use crate::{DebugLocation, DeclOpt};
 use crate::Error;
@@ -163,7 +163,7 @@ declare_fwd_iterator!(
 );
 
 
-declare_fwd_iterator!(
+declare_lazy_iterator!(
     Instructions,
     assembly::Instructions,
     ffi::asm_Instruction,

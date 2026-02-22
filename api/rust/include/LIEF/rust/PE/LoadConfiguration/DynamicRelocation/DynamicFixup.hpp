@@ -231,6 +231,7 @@ class PE_FunctionOverride_image_bdd_info_t :
     it_relocations(container_t content)
       : ContainerIterator(std::move(content)) { }
     auto next() { return ContainerIterator::next(); }
+    auto size() const { return ContainerIterator::size(); }
   };
 
   auto version() const { return get().version; }

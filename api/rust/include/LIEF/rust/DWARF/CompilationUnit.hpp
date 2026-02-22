@@ -41,6 +41,7 @@ class DWARF_CompilationUnit : private Mirror<LIEF::dwarf::CompilationUnit> {
     it_functions(const DWARF_CompilationUnit::lief_t& src, imported_t)
       : ForwardIterator(src.imported_functions()) { }
     auto next() { return ForwardIterator::next(); }
+    auto size() const { return ForwardIterator::size(); }
   };
 
   class it_types :
@@ -50,6 +51,7 @@ class DWARF_CompilationUnit : private Mirror<LIEF::dwarf::CompilationUnit> {
     it_types(const DWARF_CompilationUnit::lief_t& src)
       : ForwardIterator(src.types()) { }
     auto next() { return ForwardIterator::next(); }
+    auto size() const { return ForwardIterator::size(); }
   };
 
   class it_variables :
@@ -59,6 +61,7 @@ class DWARF_CompilationUnit : private Mirror<LIEF::dwarf::CompilationUnit> {
     it_variables(const DWARF_CompilationUnit::lief_t& src)
       : ForwardIterator(src.variables()) { }
     auto next() { return ForwardIterator::next(); }
+    auto size() const { return ForwardIterator::size(); }
   };
 
   class Language {

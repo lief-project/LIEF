@@ -71,6 +71,7 @@ class DWARF_types_ClassLike : public DWARF_Type {
     it_members(container_t content)
       : ContainerIterator(std::move(content)) { }
     auto next() { return ContainerIterator::next(); }
+    auto size() const { return ContainerIterator::size(); }
   };
 
   class it_functions :
@@ -81,6 +82,7 @@ class DWARF_types_ClassLike : public DWARF_Type {
       : ForwardIterator(src.functions()) { }
 
     auto next() { return ForwardIterator::next(); }
+    auto size() const { return ForwardIterator::size(); }
   };
 
   static bool classof(const DWARF_Type& type) {

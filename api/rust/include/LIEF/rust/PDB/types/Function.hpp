@@ -31,6 +31,7 @@ class PDB_types_Function : public PDB_Type {
     it_parameters(container_t content)
       : ContainerIterator(std::move(content)) { }
     auto next() { return ContainerIterator::next(); }
+    auto size() const { return ContainerIterator::size(); }
   };
 
   auto return_type() const {

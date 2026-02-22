@@ -144,6 +144,7 @@ class MachO_Binary : public AbstractBinary {
     it_bindings_info(const MachO_Binary::lief_t& src)
       : ForwardIterator(src.bindings()) { }
     auto next() { return ForwardIterator::next(); }
+    auto size() const { return ForwardIterator::size(); }
   };
 
   class it_stubs :

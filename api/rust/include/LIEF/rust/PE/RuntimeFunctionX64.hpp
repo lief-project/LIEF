@@ -68,6 +68,7 @@ class PE_RuntimeFunctionX64_unwind_info_t :
     it_opcodes(container_t content)
       : ContainerIterator(std::move(content)) { }
     auto next() { return ContainerIterator::next(); }
+    auto size() const { return ContainerIterator::size(); }
   };
 
   auto version() const { return get().version; }

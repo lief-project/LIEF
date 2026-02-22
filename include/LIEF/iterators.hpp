@@ -506,7 +506,6 @@ class iterator_range {
   }
 
   std::ptrdiff_t size() const {
-    static_assert(IsRandomAccess, "size() needs random access iterator");
     return std::distance(begin_, end_);
   }
 

@@ -41,6 +41,7 @@ class PDB_CompilationUnit : private Mirror<LIEF::pdb::CompilationUnit> {
       }
       return *next_string;
     }
+    auto size() const { return ForwardIterator::size(); }
   };
 
   class it_functions :
@@ -50,6 +51,7 @@ class PDB_CompilationUnit : private Mirror<LIEF::pdb::CompilationUnit> {
     it_functions(const PDB_CompilationUnit::lief_t& src)
       : ForwardIterator(src.functions()) { }
     auto next() { return ForwardIterator::next(); }
+    auto size() const { return ForwardIterator::size(); }
   };
 
   auto module_name() const { return get().module_name(); }

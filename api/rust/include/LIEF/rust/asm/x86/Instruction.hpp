@@ -32,6 +32,7 @@ class asm_x86_Instruction : public asm_Instruction {
       : ForwardIterator(src.operands()) { }
 
     auto next() { return ForwardIterator::next(); }
+    auto size() const { return ForwardIterator::size(); }
   };
 
   uint64_t opcode() const { return to_int(impl().opcode()); }

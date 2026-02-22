@@ -34,6 +34,7 @@ class ObjC_Metadata : private Mirror<LIEF::objc::Metadata> {
     it_classes(const ObjC_Metadata::lief_t& src)
       : ForwardIterator(src.classes()) { }
     auto next() { return ForwardIterator::next(); }
+    auto size() const { return ForwardIterator::size(); }
   };
 
   class it_protocols :
@@ -43,6 +44,7 @@ class ObjC_Metadata : private Mirror<LIEF::objc::Metadata> {
     it_protocols(const ObjC_Metadata::lief_t& src)
       : ForwardIterator(src.protocols()) { }
     auto next() { return ForwardIterator::next(); }
+    auto size() const { return ForwardIterator::size(); }
   };
 
   auto get_class(std::string name) const { // NOLINT(performance-unnecessary-value-param)

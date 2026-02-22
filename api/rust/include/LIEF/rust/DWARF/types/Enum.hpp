@@ -43,6 +43,7 @@ class DWARF_types_Enum : public DWARF_Type {
     it_entries(container_t content)
       : ContainerIterator(std::move(content)) { }
     auto next() { return ContainerIterator::next(); }
+    auto size() const { return ContainerIterator::size(); }
   };
 
   auto entries() const {

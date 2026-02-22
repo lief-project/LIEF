@@ -33,6 +33,7 @@ class PDB_DebugInfo : public AbstracDebugInfo {
     it_compilation_units(const PDB_DebugInfo::lief_t& src)
       : ForwardIterator(src.compilation_units()) { }
     auto next() { return ForwardIterator::next(); }
+    auto size() const { return ForwardIterator::size(); }
   };
 
   class it_public_symbols :
@@ -42,6 +43,7 @@ class PDB_DebugInfo : public AbstracDebugInfo {
     it_public_symbols(const PDB_DebugInfo::lief_t& src)
       : ForwardIterator(src.public_symbols()) { }
     auto next() { return ForwardIterator::next(); }
+    auto size() const { return ForwardIterator::size(); }
   };
 
   class it_types :
@@ -51,6 +53,7 @@ class PDB_DebugInfo : public AbstracDebugInfo {
     it_types(const PDB_DebugInfo::lief_t& src)
       : ForwardIterator(src.types()) { }
     auto next() { return ForwardIterator::next(); }
+    auto size() const { return ForwardIterator::size(); }
   };
 
   PDB_DebugInfo(std::unique_ptr<lief_t> bin) : AbstracDebugInfo(std::move(bin)) {}

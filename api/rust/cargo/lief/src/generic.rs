@@ -1,6 +1,6 @@
 use lief_ffi as ffi;
 use bitflags::bitflags;
-use crate::{to_slice, declare_fwd_iterator, to_opt_trait};
+use crate::{to_slice, declare_fwd_iterator, to_opt_trait, declare_lazy_iterator};
 use crate::common::{into_optional, FromFFI};
 use crate::assembly::{Instructions, AssemblerConfig};
 
@@ -412,7 +412,7 @@ declare_fwd_iterator!(
     ffi::AbstractBinary_it_functions
 );
 
-declare_fwd_iterator!(
+declare_lazy_iterator!(
     InstructionsIt,
     Instructions,
     ffi::asm_Instruction,

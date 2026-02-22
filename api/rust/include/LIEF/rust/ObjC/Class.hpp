@@ -36,6 +36,7 @@ class ObjC_Class : private Mirror<LIEF::objc::Class> {
     it_methods(const ObjC_Class::lief_t& src)
       : ForwardIterator(src.methods()) { }
     auto next() { return ForwardIterator::next(); }
+    auto size() const { return ForwardIterator::size(); }
   };
 
   class it_protocols :
@@ -45,6 +46,7 @@ class ObjC_Class : private Mirror<LIEF::objc::Class> {
     it_protocols(const ObjC_Class::lief_t& src)
       : ForwardIterator(src.protocols()) { }
     auto next() { return ForwardIterator::next(); }
+    auto size() const { return ForwardIterator::size(); }
   };
 
   class it_properties :
@@ -54,6 +56,7 @@ class ObjC_Class : private Mirror<LIEF::objc::Class> {
     it_properties(const ObjC_Class::lief_t& src)
       : ForwardIterator(src.properties()) { }
     auto next() { return ForwardIterator::next(); }
+    auto size() const { return ForwardIterator::size(); }
   };
 
   class it_ivars :
@@ -63,6 +66,7 @@ class ObjC_Class : private Mirror<LIEF::objc::Class> {
     it_ivars(const ObjC_Class::lief_t& src)
       : ForwardIterator(src.ivars()) { }
     auto next() { return ForwardIterator::next(); }
+    auto size() const { return ForwardIterator::size(); }
   };
 
   auto name() const { return get().name(); }

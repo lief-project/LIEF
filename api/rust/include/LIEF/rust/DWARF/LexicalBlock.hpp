@@ -33,6 +33,7 @@ class DWARF_LexicalBlock : private Mirror<LIEF::dwarf::LexicalBlock> {
     it_sub_blocks(const DWARF_LexicalBlock::lief_t& src)
       : ForwardIterator(src.sub_blocks()) { }
     auto next() { return ForwardIterator::next(); }
+    auto size() const { return ForwardIterator::size(); }
   };
 
   auto name() const { return get().name(); }

@@ -3,7 +3,7 @@ use lief_ffi as ffi;
 use std::path::Path;
 use crate::Error;
 use crate::common::{FromFFI, into_optional};
-use crate::{declare_iterator, declare_fwd_iterator, to_result};
+use crate::{declare_iterator, declare_lazy_iterator, to_result};
 use super::{SubCache, Dylib, MappingInfo};
 
 use crate::assembly;
@@ -381,7 +381,7 @@ declare_iterator!(
     ffi::dsc_DyldSharedCache_it_subcaches
 );
 
-declare_fwd_iterator!(
+declare_lazy_iterator!(
     Instructions,
     assembly::Instructions,
     ffi::asm_Instruction,

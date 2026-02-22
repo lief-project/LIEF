@@ -57,6 +57,7 @@ class AbstractBinary : public Mirror<LIEF::Binary> {
     it_functions(LIEF::Binary::functions_t content)
       : ContainerIterator(std::move(content)) { }
     auto next() { return ContainerIterator::next(); }
+    auto size() const { return ContainerIterator::size(); }
   };
 
   uint64_t entrypoint() const { return get().entrypoint(); }

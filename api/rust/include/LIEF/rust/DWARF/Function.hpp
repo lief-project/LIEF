@@ -39,6 +39,7 @@ class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
     it_variables(const DWARF_Function::lief_t& src)
       : ForwardIterator(src.variables()) { }
     auto next() { return ForwardIterator::next(); }
+    auto size() const { return ForwardIterator::size(); }
   };
 
   class it_parameters :
@@ -50,6 +51,7 @@ class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
     it_parameters(container_t content)
       : ContainerIterator(std::move(content)) { }
     auto next() { return ContainerIterator::next(); }
+    auto size() const { return ContainerIterator::size(); }
   };
 
   class it_thrown_types :
@@ -61,6 +63,7 @@ class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
     it_thrown_types(container_t content)
       : ContainerIterator(std::move(content)) { }
     auto next() { return ContainerIterator::next(); }
+    auto size() const { return ContainerIterator::size(); }
   };
 
   class it_instructions :
@@ -79,6 +82,7 @@ class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
     it_lexical_blocks(const DWARF_Function::lief_t& src)
       : ForwardIterator(src.lexical_blocks()) { }
     auto next() { return ForwardIterator::next(); }
+    auto size() const { return ForwardIterator::size(); }
   };
 
   auto name() const { return get().name(); }

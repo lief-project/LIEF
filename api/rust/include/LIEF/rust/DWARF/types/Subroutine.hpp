@@ -30,6 +30,7 @@ class DWARF_types_Subroutine : public DWARF_Type {
     it_parameters(container_t content)
       : ContainerIterator(std::move(content)) { }
     auto next() { return ContainerIterator::next(); }
+    auto size() const { return ContainerIterator::size(); }
   };
 
   using lief_t = LIEF::dwarf::types::Subroutine;

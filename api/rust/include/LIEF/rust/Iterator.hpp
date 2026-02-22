@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #pragma  once
+#include <cstdint>
 #include <memory>
 #include "LIEF/iterators.hpp"
 
@@ -44,6 +45,15 @@ class ForwardIterator {
     ++begin_;
     return std::make_unique<T>(std::move(value));
   }
+
+  bool empty() const {
+    return begin_ == end_;
+  }
+
+  uint64_t size() const {
+    return std::distance(begin_, end_);
+  }
+
   protected:
   ForwardIterator(LIEF::iterator_range<V> range) :
     begin_(std::move(range.begin())),
@@ -72,6 +82,10 @@ class RandomRangeIterator {
     return std::distance(begin_, end_);
   }
 
+  bool empty() const {
+    return begin_ == end_;
+  }
+
   protected:
   RandomRangeIterator(LIEF::iterator_range<V> range) :
     begin_(std::move(range.begin())),
@@ -96,6 +110,14 @@ class ContainerIterator {
   std::unique_ptr<T> next() {
     if (begin_ == end_) return nullptr;
     return std::make_unique<T>(std::move(*begin_++));
+  }
+
+  uint64_t size() const {
+    return std::distance(begin_, end_);
+  }
+
+  bool empty() const {
+    return begin_ == end_;
   }
   protected:
   ContainerIterator(ContainerT&& C) :

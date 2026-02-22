@@ -1,9 +1,8 @@
 use lief_ffi as ffi;
 use std::path::Path;
 use crate::common::FromFFI;
-use crate::declare_fwd_iterator;
+use crate::{declare_lazy_iterator, declare_iterator};
 use crate::common::into_optional;
-use crate::declare_iterator;
 use crate::assembly::Instructions;
 use super::{Relocation, Symbol, Section, Header, String};
 
@@ -175,7 +174,7 @@ declare_iterator!(
 );
 
 
-declare_fwd_iterator!(
+declare_lazy_iterator!(
     InstructionsIt,
     Instructions,
     ffi::asm_Instruction,

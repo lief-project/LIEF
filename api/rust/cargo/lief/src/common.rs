@@ -123,6 +123,11 @@ macro_rules! declare_fwd_iterator_conv {
                     Some($conv(next))
                 }
             }
+
+            fn size_hint(&self) -> (usize, Option<usize>) {
+                let hint = self.it.as_ref().unwrap().size().try_into().unwrap();
+                (hint, Some(hint))
+            }
         }
     };
 }
@@ -132,6 +137,35 @@ macro_rules! declare_fwd_iterator_conv {
 macro_rules! declare_fwd_iterator {
     ($name:ident, $from:ty, $ffi:ty, $parent:ty, $ffi_iterator:ty) => {
         $crate::declare_fwd_iterator_conv!($name, $from, $ffi, $parent, $ffi_iterator, |n| {
+            Self::Item::from_ffi(n)
+        });
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! declare_lazy_iterator_conv {
+    ($name:ident, $from:ty, $ffi:ty, $parent:ty, $ffi_iterator:ty, $conv: expr) => {
+        pub type $name<'a> = $crate::common::ForwardIterator<'a, $parent, $ffi_iterator>;
+        impl<'a> Iterator for $name<'a> {
+            type Item = $from;
+            fn next(&mut self) -> Option<Self::Item> {
+                let next = self.it.as_mut().unwrap().next();
+                if next.is_null() {
+                    None
+                } else {
+                    Some($conv(next))
+                }
+            }
+        }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! declare_lazy_iterator {
+    ($name:ident, $from:ty, $ffi:ty, $parent:ty, $ffi_iterator:ty) => {
+        $crate::declare_lazy_iterator_conv!($name, $from, $ffi, $parent, $ffi_iterator, |n| {
             Self::Item::from_ffi(n)
         });
     };
