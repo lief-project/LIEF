@@ -1,36 +1,36 @@
 :fa:`solid fa-gears` Installation and Integration
-================================================================
+=================================================
 
 :fa:`regular fa-file-code` SDK
--------------------------------
+------------------------------
 
-For each platform supported by LIEF, SDK packages contain:
+For each platform supported by LIEF, the SDK packages contain:
 
 * static and shared libraries
 * headers
 * compiled examples
 
-Nightly build can be downloaded on: https://lief.s3-website.fr-par.scw.cloud/latest/sdk
-while releases are available on Github release page:
+Nightly builds can be downloaded at: https://lief.s3-website.fr-par.scw.cloud/latest/sdk,
+while official releases are available on the GitHub releases page:
 https://github.com/lief-project/LIEF/releases.
 
 :fa:`brands fa-python` Python
-------------------------------
+-----------------------------
 
-Nightly Python wheels are uploaded for **each commit** on the main branch in a
-S3 bucket. They can be installed through:
+Nightly Python wheels are uploaded for **each commit** on the main branch to an
+S3 bucket. They can be installed using:
 
 .. code-block:: console
 
   $ pip install [--user] --index-url https://lief.s3-website.fr-par.scw.cloud/latest lief
 
-For tagged releases, the wheels are uploaded on PyPI and can by installed through:
+For tagged releases, the wheels are uploaded to PyPI and can be installed using:
 
 .. code-block:: console
 
   $ pip install lief
 
-One can also compile and install from source as follows
+You can also compile and install from source as follows:
 
 .. code-block:: console
 
@@ -44,7 +44,7 @@ For more details about the compilation options, see the :ref:`compilation_ref` s
 :fa:`brands fa-rust` Rust
 -------------------------
 
-One can add LIEF as a dependency of a Rust project as follows:
+You can add LIEF as a dependency in a Rust project as follows:
 
 .. code-block:: toml
 
@@ -56,15 +56,15 @@ One can add LIEF as a dependency of a Rust project as follows:
   [dependencies]
   lief = "0.17.4"
 
-You can find more details in the :ref:`Rust API section <lief_rust_bindings>`
+You can find more details in the :ref:`Rust API section <lief_rust_bindings>`.
 
 CMake Integration
 -----------------
 
-There are a few ways to integrate LIEF as a dependency in another project.
-The different methods are listed in order of preference and CMake best practice.
-These listings are only to show basic examples. Please refer to the CMake
-documentation for questions related to more complex project setup.
+There are a few ways to integrate LIEF as a dependency into another project.
+The following methods are listed in order of preference according to CMake best practices.
+These snippets show basic examples; please refer to the official CMake documentation
+for questions related to more complex project setups.
 
 find_package()
 **************
@@ -75,7 +75,7 @@ Using `CMake find_package() <https://cmake.org/cmake/help/v3.0/command/find_pack
    :language: cmake
    :lines: 5-12
 
-And now, to be integrated within a project:
+To integrate this within a project:
 
 .. literalinclude:: ../../examples/cmake/find_package/CMakeLists.txt
    :language: cmake
@@ -97,19 +97,22 @@ First, set up the options you want to set as default for the LIEF project:
    :language: cmake
    :lines: 7-19
 
-Using `CMake add_subdirectory() <https://cmake.org/cmake/help/v3.0/command/add_subdirectory.html>`_ to add a submodule LIEF source directory:
+Using `CMake add_subdirectory() <https://cmake.org/cmake/help/v3.0/command/add_subdirectory.html>`_
+to add LIEF as a submodule from a source directory:
 
 .. literalinclude:: ../../examples/cmake/add_subdirectory/CMakeLists.txt
    :language: cmake
    :lines: 21-28
 
-If we are using a CMake version greater than or equal to 3.11, we can use `CMake FetchContent module <https://cmake.org/cmake/help/v3.11/module/FetchContent.html>`_ to download or specify a LIEF source directory outside of the current directory:
+If you are using CMake 3.11 or later, you can use the
+`CMake FetchContent module <https://cmake.org/cmake/help/v3.11/module/FetchContent.html>`_
+to download or specify a LIEF source directory outside the current directory:
 
 .. literalinclude:: ../../examples/cmake/add_subdirectory/CMakeLists.txt
    :language: cmake
    :lines: 33-61
 
-And now, to be integrated within a project:
+To integrate this within a project:
 
 .. literalinclude:: ../../examples/cmake/add_subdirectory/CMakeLists.txt
    :language: cmake
@@ -122,17 +125,19 @@ For the compilation:
 
 A *full* example is available in the ``examples/cmake/add_subdirectory`` directory.
 
-
 External Project
 ****************
 
-If you don't want to use LIEF as a submodule or upgrade to CMake 3.11, we can use `CMake External Project <https://cmake.org/cmake/help/v3.0/module/ExternalProject.html>`_ to set up a project as a `*superbuild* <https://www.kitware.com/cmake-superbuilds-git-submodules>`_:
+If you don't want to use LIEF as a submodule or upgrade to CMake 3.11,
+you can use `CMake External Project <https://cmake.org/cmake/help/v3.0/module/ExternalProject.html>`_
+to set up your project as a `*superbuild* <https://www.kitware.com/cmake-superbuilds-git-submodules>`_:
 
 .. literalinclude:: ../../examples/cmake/external_project/CMakeLists.txt
    :language: cmake
    :lines: 1-41
 
-And now, to be integrated with our main ``HelloLIEF`` project that is located in a subdirectory and looks exactly like the ``find_package()`` example shown earlier:
+To integrate this with a main ``HelloLIEF`` project located in a subdirectory
+(which looks exactly like the ``find_package()`` example shown earlier):
 
 .. literalinclude:: ../../examples/cmake/external_project/CMakeLists.txt
    :language: cmake
@@ -148,7 +153,7 @@ A *full* example is available in the ``examples/cmake/external_project`` directo
 Visual Studio Integration
 -------------------------
 
-Given a pre-compiled version of LIEF SDK (e.g. ``LIEF-0.14.1-win64.zip``):
+Given a pre-compiled version of the LIEF SDK (e.g., ``LIEF-0.17.4-win64.zip``):
 
 .. code-block:: text
 
@@ -165,9 +170,9 @@ Given a pre-compiled version of LIEF SDK (e.g. ``LIEF-0.14.1-win64.zip``):
   └── share
       └── LIEF
 
-One should add the ``include/`` directory in the compiler search path:
+You should add the ``include/`` directory to the compiler search path:
 ``Configuration Properties > C/C++ > General > Additional Include Directories``
-and add either ``LIEF.lib`` or ``LIEF.dll`` in the link step:
+and add either ``LIEF.lib`` or ``LIEF.dll`` during the linking step:
 
 ``Configuration Properties > Linker > Input > Additional Dependencies``
 
@@ -179,16 +184,15 @@ and add either ``LIEF.lib`` or ``LIEF.dll`` in the link step:
    If this configuration is not suitable for your project, you can compile LIEF
    with your required runtime.
 
-XCode Integration
+Xcode Integration
 -----------------
 
-Similarly to Visual Studio, one should configure the XCode project to include
-the ``include/`` directory of LIEF and the `lib/` directory:
+Similar to Visual Studio, you should configure the Xcode project to include
+LIEF's ``include/`` and ``lib/`` directories:
 
 - ``include/``:  ``Build Settings > Search Paths > Header Search Paths``
 - ``lib/``:  ``Build Settings > Search Paths > Library Search Paths``
 
-Then, we can add ``libLIEF.lib`` or ``libLIEF.dylib`` in the list of the libraries
-to link with:
+Then, you can add ``libLIEF.lib`` or ``libLIEF.dylib`` to the list of libraries to link against:
 
 ``Build Phases > Link Binary With Libraries``
