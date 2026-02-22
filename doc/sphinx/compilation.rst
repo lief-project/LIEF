@@ -8,7 +8,7 @@
 
 To compile **LIEF**, you need at least the following requirements:
 
-- C++17 compiler (GCC, Clang, MSVC..)
+- C++17 compiler (GCC, Clang, MSVC...)
 - CMake
 - Python >= 3.9 (for the bindings)
 
@@ -30,7 +30,7 @@ Libraries only (SDK)
 
 .. warning::
 
-   On Windows one can choose the CRT to use by setting the ``CMAKE_MSVC_RUNTIME_LIBRARY`` variable:
+   On Windows, you can choose the CRT to use by setting the ``CMAKE_MSVC_RUNTIME_LIBRARY`` variable:
 
    .. code-block:: console
 
@@ -38,7 +38,7 @@ Libraries only (SDK)
 
    For Debug, you should set the CRT to **MTd**:
 
-   .. code-block::
+   .. code-block:: console
 
       $ cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug ..
       $ cmake --build . --target LIB_LIEF --config Debug
@@ -48,7 +48,7 @@ Python bindings
 
 .. note::
 
-  Since LIEF 0.13.0 the `setup.py` has moved from the project root directory
+  Since LIEF 0.13.0, `setup.py` has moved from the project root directory
   to the `api/python` directory.
 
 .. code-block:: console
@@ -61,11 +61,11 @@ Python bindings
 
 .. note::
 
-  You can speed-up the compilation by installing `ccache <https://ccache.dev/>`_
-  or `sccache <https://github.com/mozilla/sccache>`_
+  You can speed up the compilation by installing `ccache <https://ccache.dev/>`_
+  or `sccache <https://github.com/mozilla/sccache>`_.
 
-One can tweak the compilation by setting the environment variable ``PYLIEF_CONF``
-to a Toml configuration file. By default, the Python bindings are using ``config-default.toml``
+You can tweak the compilation by setting the environment variable ``PYLIEF_CONF``
+to a TOML configuration file. By default, the Python bindings use ``config-default.toml``
 in the Python binding directory:
 
 
@@ -92,15 +92,15 @@ in the Python binding directory:
 Debugging
 ---------
 
-By default, LIEF is compiled with ``CMAKE_BUILD_TYPE`` set to ``Release``. One can change this behavior
-by setting either ``RelWithDebInfo`` or ``Debug`` during the cmake's configuration step:
+By default, LIEF is compiled with ``CMAKE_BUILD_TYPE`` set to ``Release``. You can change this behavior
+by setting it to either ``RelWithDebInfo`` or ``Debug`` during CMake's configuration step:
 
 .. code-block:: console
 
    $ cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo [...] ..
 
-On the other hand, Python bindings can also be compiled with debug information
-by changing the `type` in the section `[lief.build]` of `config-default.toml`:
+Alternatively, Python bindings can also be compiled with debug information
+by changing the ``type`` in the `[lief.build]` section of `config-default.toml`:
 
 .. code-block:: toml
 
@@ -109,7 +109,7 @@ by changing the `type` in the section `[lief.build]` of `config-default.toml`:
 
 .. note::
 
-  When developing on LIEF, you can use:
+  When developing LIEF, you can use:
 
   .. code-block:: console
 
@@ -132,15 +132,14 @@ by changing the `type` in the section `[lief.build]` of `config-default.toml`:
 Third Party
 -----------
 
-LIEF relies on few external projects and we try to limit as much as possible
-the dependencies in the public headers. This table summarizes these
-dependencies and their scope. ``internal`` means that it is required to compile
-LIEF but it is not required to use LIEF. ``external`` means that it is required for both.
+LIEF relies on a few external projects, and we try to limit the dependencies in the public headers
+as much as possible. This table summarizes these dependencies and their scope. ``internal`` means
+that it is required to compile LIEF, but not to use it. ``external`` means that it is required for both.
 
 +------------------------------------------+--------------+--------------------------------------------+
 | Dependency                               | Scope        | Purpose                                    |
 +==========================================+==============+============================================+
-| :github-ref:`tcb/span`                   | ``external`` | C++11 span interface                       |
+| :github-ref:`tcbrindle/span`             | ``external`` | C++11 span interface                       |
 +------------------------------------------+--------------+--------------------------------------------+
 | :github-ref:`TartanLlama/expected`       | ``external`` | Error handling (see: :ref:`err_handling` ) |
 +------------------------------------------+--------------+--------------------------------------------+
@@ -158,16 +157,17 @@ LIEF but it is not required to use LIEF. ``external`` means that it is required 
 +------------------------------------------+--------------+--------------------------------------------+
 | :github-ref:`IOActive/Melkor_ELF_Fuzzer` | ``internal`` | Testing                                    |
 +------------------------------------------+--------------+--------------------------------------------+
-| :github-ref:`catchorg/Catch2`            | ``internal`` | ELF Fuzzing                                |
+| :github-ref:`catchorg/Catch2`            | ``internal`` | Unit Testing                               |
 +------------------------------------------+--------------+--------------------------------------------+
 
-Except MbedTLS, all these dependencies are header-only and they are by default embedded/managed by LIEF such as it
-eases the compilation and the integration.
+With the exception of MbedTLS, all these dependencies are header-only. By default, they are embedded
+and managed by LIEF to ease compilation and integration.
 
-Nevertheless, packages manager might require to not self-use/embed external dependencies [#ref_issue]_ [#ref_vcpk]_.
+Nevertheless, package managers often require linking against system libraries rather than using
+vendored dependencies [#ref_issue]_ [#ref_vcpk]_.
 
-To address this requirement, the user can control the integration of LIEF's dependencies using the following
-cmake's options:
+To address this requirement, you can control the integration of LIEF's dependencies using the following
+CMake options:
 
   * ``LIEF_OPT_NLOHMANN_JSON_EXTERNAL``
   * ``LIEF_OPT_UTFCPP_EXTERNAL``
@@ -178,24 +178,24 @@ cmake's options:
   * ``LIEF_OPT_EXTERNAL_EXPECTED``
   * ``LIEF_OPT_NANOBIND_EXTERNAL``
 
-By setting these flags, LIEF resolves the dependencies with CMake ``find_package(...)`` which
-is aware of ``<DEPS>_DIR`` to find the package.
+By setting these flags, LIEF resolves the dependencies using CMake's ``find_package(...)``, which
+relies on ``<DEPS>_DIR`` to locate the package.
 
-As a result, LIEF can be, for instance, compiled with the following configuration:
+For example, LIEF can be compiled with the following configuration:
 
 .. code-block:: console
 
-   $ cmake .. -GNinja                                                                    \
-              -DLIEF_OPT_NLOHMANN_JSON_EXTERNAL=ON                                       \
+   $ cmake .. -GNinja                                                                        \
+              -DLIEF_OPT_NLOHMANN_JSON_EXTERNAL=ON                                           \
               -Dnlohmann_json_DIR=/lief-third-party/json/install/lib/cmake/nlohmann_json \
               -DLIEF_OPT_MBEDTLS_EXTERNAL=on                                             \
               -DMbedTLS_DIR=/lief-third-party/mbedtls/install/cmake
 
 .. warning::
 
-   As mentioned previously, MbedTLS is not header-only which means that if it is *externalized* the static
-   version of LIEF won't include the MbedTLS object files and the end user will have to link again ``LIEF.a``
-   with a provided version of MbedTLS.
+   As mentioned previously, MbedTLS is not header-only. This means that if it is *externalized*, the static
+   version of LIEF will not include the MbedTLS object files, and the end user will have to manually link
+   ``LIEF.a`` with a provided version of MbedTLS.
 
 .. [#ref_issue] https://github.com/lief-project/LIEF/issues/605
 .. [#ref_vcpk] https://learn.microsoft.com/en-us/vcpkg/contributing/maintainer-guide#do-not-use-vendored-dependencies
@@ -203,7 +203,7 @@ As a result, LIEF can be, for instance, compiled with the following configuratio
 Continuous Integration
 ----------------------
 
-LIEF uses CI Github Action to test and release nightly builds. The configuration
+LIEF uses GitHub Actions to test and release nightly builds. The configuration
 of this CI can also be a good source of information for the compilation process.
 In particular, `scripts/docker/linux-sdk-x64 <https://github.com/lief-project/LIEF/blob/main/scripts/docker/linux-sdk-x64>`_
 contains the build process to generate the **Linux x86-64 SDK**.
@@ -211,9 +211,9 @@ contains the build process to generate the **Linux x86-64 SDK**.
 On Windows, the SDK is built with the following Python script:
 `scripts/windows/package_sdk.py <https://github.com/lief-project/LIEF/blob/main/scripts/windows/package_sdk.py>`_
 
-For **OSX & iOS**, the CI configs `.github/workflows/ios.yml <https://github.com/lief-project/LIEF/blob/main/.github/workflows/ios.yml>`_
+For **OSX & iOS**, refer to the CI configs `.github/workflows/ios.yml <https://github.com/lief-project/LIEF/blob/main/.github/workflows/ios.yml>`_
 and `.github/workflows/osx.yml <https://github.com/lief-project/LIEF/blob/main/.github/workflows/osx.yml>`_
-to compile (and cross-compile) LIEF for these platforms.
+to see how LIEF is compiled (and cross-compiled) for these platforms.
 
 CMake Options
 -------------
