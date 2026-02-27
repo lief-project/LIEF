@@ -53,6 +53,10 @@ class LIEF_API Class : public Object {
   using it_named_fields = filter_iterator<fields_t&>;
   using it_const_named_fields = const_filter_iterator<const fields_t&>;
 
+  using interfaces_t = std::vector<std::string>;
+  using it_interfaces = ref_iterator<interfaces_t&>;
+  using it_const_interfaces = const_ref_iterator<const interfaces_t&>;
+
   public:
   static std::string package_normalized(const std::string& pkg_name);
   static std::string fullname_normalized(const std::string& pkg_cls);
@@ -109,6 +113,10 @@ class LIEF_API Class : public Object {
   it_named_fields fields(const std::string& name);
   it_const_named_fields fields(const std::string& name) const;
 
+  /// Name of the interfaces implemented by this class
+  it_interfaces interfaces();
+  it_const_interfaces interfaces() const;
+
   /// De-optimize information
   dex2dex_class_info_t dex2dex_info() const;
 
@@ -124,10 +132,11 @@ class LIEF_API Class : public Object {
 
   private:
   std::string fullname_;
-  uint32_t    access_flags_ = ACCESS_FLAGS::ACC_UNKNOWN;
-  Class*      parent_ = nullptr;
-  methods_t   methods_;
-  fields_t    fields_;
+  uint32_t     access_flags_ = ACCESS_FLAGS::ACC_UNKNOWN;
+  Class*       parent_ = nullptr;
+  methods_t    methods_;
+  fields_t     fields_;
+  interfaces_t interfaces_;
   std::string source_filename_;
 
   uint32_t original_index_ = UINT_MAX;
