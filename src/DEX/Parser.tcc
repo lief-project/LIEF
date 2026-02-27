@@ -674,6 +674,72 @@ void Parser::parse_code_info(uint32_t offset, Method& method) {
   if (bytecode != nullptr) {
     method.bytecode_ = {bytecode, bytecode + codeitem->insns_size * sizeof(uint16_t)};
   }
+
+  // Parse exception handlers if any
+  if (codeitem->tries_size > 0) {
+    // Calculate the offset of the try/catch block (after bytecode)
+    uint32_t tries_offset = method.code_offset_ + codeitem->insns_size * sizeof(uint16_t);
+    if (codeitem->insns_size % 2 != 0) {
+      tries_offset += sizeof(uint16_t);
+    }
+
+    // Read each try_item
+    struct try_item {
+      uint32_t start_addr;
+      uint16_t insn_count;
+      uint16_t handler_offset;
+    };
+    std::vector<try_item> tries;
+    tries.reserve(codeitem->tries_size);
+    for (uint16_t i = 0; i < codeitem->tries_size; ++i) {
+      const auto try_block = stream_->peek<try_item>(tries_offset);
+      if (!try_block) {
+        break;
+      }
+      tries.push_back(*try_block);
+      tries_offset += sizeof(try_item);
+    }
+
+    // Parse handler list
+    auto oldpos = stream_->pos();
+    for (const auto& try_block : tries) {
+      details::trycatch_item trycatch_item;
+      trycatch_item.start_addr = try_block.start_addr;
+      trycatch_item.insn_count = try_block.insn_count;
+
+      uint32_t handler_offset = tries_offset + try_block.handler_offset;
+      stream_->setpos(handler_offset);
+
+      auto size = stream_->read_sleb128();
+      if (!size) {
+        LIEF_WARN("Failed to read handler size");
+        continue;
+      }
+      int64_t size_value = *size;
+      int64_t num_catches = std::abs(size_value);
+      for (int64_t i = 0; i < num_catches; ++i) {
+        auto type_index = stream_->read_uleb128();
+        auto handler_addr = stream_->read_uleb128();
+        if (!type_index || !handler_addr) {
+          break;
+        }
+        trycatch_item.handlers.emplace_back(*type_index, *handler_addr);
+      }
+
+      if (size_value <= 0) {
+        // Handle the catch-all case
+        auto catch_all_addr = stream_->read_uleb128();
+        if (catch_all_addr) {
+          trycatch_item.catch_all_addr = *catch_all_addr;
+        } else {
+          trycatch_item.catch_all_addr = 0;
+        }
+      }
+      method.code_info_.trycatch_items_.push_back(trycatch_item);
+    }
+    // Restore the stream position
+    stream_->setpos(oldpos);
+  }
 }
 
 
