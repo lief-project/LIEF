@@ -1,33 +1,33 @@
 use lief_ffi as ffi;
 
-/// This structure is used to tweak the PE parser: [`crate::pe::Binary::parse_with_config`]
+/// This structure is used to configure the behavior of the PE Parser: [`crate::pe::Binary::parse_with_config`]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Config {
-    /// Parse PE authenticode signature
+    /// Whether to parse the PE Authenticode signature.
     pub parse_signature: bool,
 
-    /// Parse PE Exports Directory
+    /// Whether to parse the PE Export Directory.
     pub parse_exports: bool,
 
-    /// Parse PE Import Directory
+    /// Whether to parse the PE Import Directory.
     pub parse_imports: bool,
 
-    /// Parse PE resources tree
+    /// Whether to parse the PE resources tree.
     pub parse_rsrc: bool,
 
-    /// Parse PE relocations
+    /// Whether to parse PE relocations.
     pub parse_reloc: bool,
 
-    /// Whether it should parse in-depth exceptions metadata.
+    /// Whether to parse in-depth exception metadata.
     ///
-    /// This option is set to off by default since it can introduce a certain
-    /// overhead.
+    /// This option is disabled by default because it can introduce significant
+    /// parsing overhead.
     pub parse_exceptions: bool,
 
-    /// Whether it should parse nested ARM64X binary
+    /// Whether to parse nested ARM64X binaries.
     ///
-    /// This option is set to off by default since it can introduce a certain
-    /// overhead.
+    /// This option is disabled by default because it can introduce significant
+    /// parsing overhead.
     pub parse_arm64x_binary: bool,
 }
 
@@ -59,7 +59,7 @@ impl Config {
         ptr
     }
 
-    /// Configuration with **all** the options enabled
+    /// Configuration that enables all optional parsing features.
     pub fn with_all_options() -> Self {
         Self {
             parse_signature: true,

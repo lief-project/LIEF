@@ -28,49 +28,49 @@ void create<ParserConfig>(nb::module_& m) {
 
   nb::class_<ParserConfig>(m, "ParserConfig",
       R"delim(
-      This class is used to tweak the PE Parser (:func:`lief.PE.parse`)
+      This class is used to configure the behavior of the PE Parser (:func:`lief.PE.parse`)
       )delim"_doc)
 
     .def(nb::init<>())
     .def_rw("parse_signature", &ParserConfig::parse_signature,
-            "Parse PE Authenticode signature"_doc)
+            "Whether to parse the PE Authenticode signature."_doc)
 
     .def_rw("parse_exports", &ParserConfig::parse_exports,
-            "Parse PE Exports Directory"_doc)
+            "Whether to parse the PE Export Directory."_doc)
 
     .def_rw("parse_imports", &ParserConfig::parse_imports,
-            "Parse PE Import Directory"_doc)
+            "Whether to parse the PE Import Directory."_doc)
 
     .def_rw("parse_rsrc", &ParserConfig::parse_rsrc,
-            "Parse PE resources tree"_doc)
+            "Whether to parse the PE resources tree."_doc)
 
     .def_rw("parse_reloc", &ParserConfig::parse_reloc,
-             "Parse PE relocations"_doc)
+             "Whether to parse PE relocations."_doc)
 
     .def_rw("parse_exceptions", &ParserConfig::parse_exceptions,
       R"doc(
-      Whether it should parse in-depth exceptions metadata.
+      Whether to parse in-depth exception metadata.
 
-      This option is set to off by default since it can introduce a certain
-      overhead.
+      This option is disabled by default because it can introduce significant
+      parsing overhead.
       )doc"_doc
     )
 
     .def_rw("parse_arm64x_binary", &ParserConfig::parse_arm64x_binary,
       R"doc(
-      Whether it should parse nested ARM64X binary
+      Whether to parse nested ARM64X binaries.
 
-      This option is set to off by default since it can introduce a certain
-      overhead.
+      This option is disabled by default because it can introduce significant
+      parsing overhead.
       )doc"_doc)
 
     .def_prop_ro_static("default_conf",
       [] (const nb::object& /* self */) { return ParserConfig::default_conf(); },
-      "Default configuration"_doc)
+      "Default configuration for the PE Parser."_doc)
 
     .def_prop_ro_static("all",
       [] (const nb::object& /* self */) { return ParserConfig::all(); },
-      "Configuration with **all** the options enabled"_doc)
+      "Configuration that enables **all** optional parsing features."_doc)
 
     LIEF_DEFAULT_STR(ParserConfig);
 }

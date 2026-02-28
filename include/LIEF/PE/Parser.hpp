@@ -47,8 +47,8 @@ namespace details {
 struct pe_debug;
 }
 
-/// Main interface to parse PE binaries. In particular the **static** functions:
-/// Parser::parse should be used to get a LIEF::PE::Binary
+/// Main interface to parse PE binaries. In particular, the **static** Parser::parse
+/// functions should be used to get a LIEF::PE::Binary instance.
 class LIEF_API Parser : public LIEF::Parser {
   public:
 
@@ -66,7 +66,7 @@ class LIEF_API Parser : public LIEF::Parser {
   public:
   /// Check if the given name is a valid import.
   ///
-  /// This check verified that:
+  /// This check verifies that:
   ///   1. The name is not too large or empty (cf. https://stackoverflow.com/a/23340781)
   ///   2. All the characters are printable
   static bool is_valid_import_name(const std::string& name);
@@ -74,7 +74,7 @@ class LIEF_API Parser : public LIEF::Parser {
   /// Check if the given name is a valid DLL name.
   ///
   /// This check verifies that:
-  ///   1. The name of the DLL is at 4
+  ///   1. The name of the DLL is at least 4 characters long
   ///   2. All the characters are printable
   static bool is_valid_dll_name(const std::string& name);
 
