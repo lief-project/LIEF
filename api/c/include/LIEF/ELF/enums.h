@@ -702,6 +702,8 @@ enum LIEF_DYNAMIC_TAGS {
   LIEF_DT_HIPROC                     = 0x7FFFFFFF, /**< End of processor specific tags. */
 
   LIEF_DT_GNU_HASH                   = 0x6FFFFEF5, /**< Reference to the GNU hash table. */
+  LIEF_DT_TLSDESC_PLT                = 0x6FFFFEF6, /**< Location of PLT entry for TLS descriptor resolver calls. */
+  LIEF_DT_TLSDESC_GOT                = 0x6FFFFEF7, /**< Location of GOT entry for TLS descriptor resolver PLT entry. */
   LIEF_DT_RELACOUNT                  = 0x6FFFFFF9, /**< ELF32_Rela count. */
   LIEF_DT_RELCOUNT                   = 0x6FFFFFFA, /**< ELF32_Rel count. */
 
