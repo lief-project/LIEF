@@ -219,6 +219,8 @@ const char* to_string(DynamicEntry::TAG tag) {
     ENTRY(RELR),
     ENTRY(RELRENT),
     ENTRY(GNU_HASH),
+    ENTRY(TLSDESC_PLT),
+    ENTRY(TLSDESC_GOT),
     ENTRY(RELACOUNT),
     ENTRY(RELCOUNT),
     ENTRY(FLAGS_1),
