@@ -170,7 +170,7 @@ def test_DW_TAG_reference_type():
     assert isinstance(ref, lief.dwarf.types.Reference)
 
     assert ref.underlying_type.name == "int"
-    assert ref.to_decl() == ""
+    assert ref.to_decl() == "int &&"
 
 
 def test_DW_TAG_atomic_type():
