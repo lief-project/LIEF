@@ -4325,6 +4325,10 @@ class DynamicEntry(lief.Object):
 
         GNU_HASH = 1879047925
 
+        TLSDESC_PLT = 1879047926
+
+        TLSDESC_GOT = 1879047927
+
         RELACOUNT = 1879048185
 
         RELCOUNT = 1879048186
