@@ -1862,6 +1862,8 @@ void Binary::shift_dynamic_entries(uint64_t from, uint64_t shift) {
       case DynamicEntry::TAG::VERSYM:
       case DynamicEntry::TAG::VERDEF:
       case DynamicEntry::TAG::VERNEED:
+      case DynamicEntry::TAG::TLSDESC_PLT:
+      case DynamicEntry::TAG::TLSDESC_GOT:
         {
           if (entry->value() >= from) {
             entry->value(entry->value() + shift);
