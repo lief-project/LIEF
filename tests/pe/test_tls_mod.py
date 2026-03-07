@@ -1,6 +1,5 @@
 #!python
 import lief
-import pytest
 import ctypes
 
 from pathlib import Path

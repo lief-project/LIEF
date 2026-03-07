@@ -1,8 +1,6 @@
 #!/usr/bin/env python
-import pytest
 
 import lief
-import pathlib
 
 from utils import get_sample
 

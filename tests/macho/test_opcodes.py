@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import lief
-import os
 import pathlib
 
 from utils import get_sample

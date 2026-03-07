@@ -1,6 +1,6 @@
 import lief
 import pytest
-from utils import get_sample, is_64bits_platform, glibc_version, has_private_samples
+from utils import get_sample, is_64bits_platform, has_private_samples
 from pathlib import Path
 
 def test_symbol_count():

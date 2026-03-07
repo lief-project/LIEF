@@ -2,14 +2,13 @@
 import pytest
 import json
 import sys
-from itertools import chain
 
 import lief
 from utils import get_sample, has_private_samples
 
 try:
     sys.set_int_max_str_digits(0)
-except:
+except Exception:
     pass
 
 def from_hex(x):

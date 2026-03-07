@@ -10,7 +10,7 @@ from utils import get_sample, has_private_samples
 lief.logging.set_level(lief.logging.LEVEL.INFO)
 
 config = lief.ELF.Builder.config_t()
-config.notes = True;
+config.notes = True
 
 def test_change_note(tmp_path: Path):
     etterlog = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_etterlog.bin'))

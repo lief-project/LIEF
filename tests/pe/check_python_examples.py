@@ -44,4 +44,4 @@ def test_pe_authenticode_api(monkeypatch, pe):
 
     with monkeypatch.context() as m:
         m.setattr(sys, "argv", [target.name, sample.as_posix()])
-        api_example = import_from_file("api_example", target)
+        _api_example = import_from_file("api_example", target)

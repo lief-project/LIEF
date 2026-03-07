@@ -3,7 +3,7 @@ import pytest
 import lief
 import pathlib
 import re
-from utils import is_aarch64, is_osx, get_sample
+from utils import is_osx, get_sample
 
 from .test_builder import run_program
 

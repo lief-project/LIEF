@@ -2,7 +2,6 @@ import lief
 import pytest
 from shutil import which
 from pathlib import Path
-from utils import is_osx
 import subprocess
 from subprocess import Popen
 import ctypes

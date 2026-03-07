@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import sys
 import pytest
 
 import lief
@@ -19,7 +18,7 @@ def test_abstract_concrete():
 
 def test_invalid_enum():
     """From: issues/1128 """
-    with pytest.raises(ValueError) as error:
+    with pytest.raises(ValueError):
         lief.ELF.Header.VERSION.from_value(2)
 
     assert lief.ELF.Header.VERSION.from_value(0) == lief.ELF.Header.VERSION.NONE

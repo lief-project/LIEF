@@ -2,7 +2,6 @@
 import lief
 import pytest
 import ctypes
-import io
 import sys
 import subprocess
 

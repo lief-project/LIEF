@@ -2,7 +2,6 @@
 Tests related to ARM64X
 """
 import lief
-import pytest
 
 from pathlib import Path
 from textwrap import dedent

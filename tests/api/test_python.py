@@ -151,7 +151,7 @@ def test_iterator():
         for i in range(100):
             next(items)
 
-    with pytest.raises(IndexError) as e_info:
+    with pytest.raises(IndexError):
         items[100]
 
 

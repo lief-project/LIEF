@@ -1,7 +1,5 @@
 import lief
-import pytest
 from utils import get_sample
-from pathlib import Path
 from textwrap import dedent
 
 def test_simple_coff():

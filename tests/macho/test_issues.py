@@ -50,10 +50,10 @@ def test_1132():
     binary = lief.MachO.parse(get_sample('MachO/FAT_MachO_arm-arm64-binary-helloworld.bin')).take(lief.MachO.Header.CPU_TYPE.ARM64)
 
     text_segment = binary.get_segment("__TEXT")
-    shift_base = text_segment.file_offset
     binary.extend_segment(text_segment, 0x10000)
 
-    can_cache_segment = lambda seg: seg.file_offset > 0 or seg.file_size > 0 or seg.name == "__TEXT"
+    def can_cache_segment(seg):
+        return seg.file_offset > 0 or seg.file_size > 0 or seg.name == "__TEXT"
     for seg in binary.segments:
         if can_cache_segment(seg):
             assert binary.segment_from_offset(seg.file_offset) == seg

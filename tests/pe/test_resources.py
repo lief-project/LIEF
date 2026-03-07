@@ -9,7 +9,7 @@ import pytest
 from textwrap import dedent
 
 from utils import (
-    get_sample, is_64bits_platform, is_windows, win_exec, is_x86_64,
+    get_sample, is_windows, win_exec, is_x86_64,
     has_private_samples
 )
 

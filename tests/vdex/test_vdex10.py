@@ -36,9 +36,9 @@ def test_header():
 
 def test_dex_files():
     telecom = lief.VDEX.parse(get_sample('VDEX/VDEX_10_AArch64_Telecom.vdex'))
-    h           = hash(telecom.dex_files[0])
-    h_file      = lief.hash(telecom.dex_files[0].raw(False))
-    h_file_dopt = lief.hash(telecom.dex_files[0].raw(True))
+    _h           = hash(telecom.dex_files[0])
+    _h_file      = lief.hash(telecom.dex_files[0].raw(False))
+    _h_file_dopt = lief.hash(telecom.dex_files[0].raw(True))
 
     #assert h == 4434625889427456908
     #assert h_file == 18446744071715884987

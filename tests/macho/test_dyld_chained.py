@@ -267,7 +267,7 @@ def test_issue_804(tmp_path):
         sign(output)
         with subprocess.Popen([output], universal_newlines=True,
                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
-            stdout = proc.stdout.read()
+            _stdout = proc.stdout.read()
 
 
 def test_issue_853(tmp_path):

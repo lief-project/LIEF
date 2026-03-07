@@ -25,7 +25,7 @@ def test_simple(tmp_path: Path):
     target      = lief.ELF.parse(sample_path)
 
 
-    if not lief.ELF.Segment.TYPE.NOTE in target:
+    if lief.ELF.Segment.TYPE.NOTE not in target:
         print("Note not found!", file=sys.stderr)
         return
 
@@ -53,7 +53,7 @@ def test_gcc(tmp_path: Path):
     output      = tmp_path / "gcc.replace_segment"
     target      = lief.ELF.parse(sample_path)
 
-    if not lief.ELF.Segment.TYPE.NOTE in target:
+    if lief.ELF.Segment.TYPE.NOTE not in target:
         print("Note not found!", file=sys.stderr)
         return
 
@@ -87,7 +87,7 @@ def test_ssh(tmp_path: Path):
     output = tmp_path / "ssh.replace_segment"
     target = lief.ELF.parse("/usr/bin/ssh")
 
-    if not lief.ELF.Segment.TYPE.NOTE in target:
+    if lief.ELF.Segment.TYPE.NOTE not in target:
         print("Note not found!", file=sys.stderr)
         return
 

@@ -93,13 +93,13 @@ def test_kik_fields():
     assert if0.name == "value"
     assert if0.cls.pretty_name == "com.kik.video.mobile.KikVideoService$JoinConvoConferenceResponse$Result"
     assert if0.type.value == lief.DEX.Type.PRIMITIVES.INT
-    assert if0.is_static == False
+    assert not if0.is_static
     assert if0.access_flags == [lief.DEX.ACCESS_FLAGS.PRIVATE, lief.DEX.ACCESS_FLAGS.FINAL]
 
     assert sf0.name == "FULL"
     assert sf0.cls.pretty_name == "com.kik.video.mobile.KikVideoService$JoinConvoConferenceResponse$Result"
     assert sf0.type.value.pretty_name == "com.kik.video.mobile.KikVideoService$JoinConvoConferenceResponse$Result"
-    assert sf0.is_static == True
+    assert sf0.is_static
     assert sf0.access_flags == [lief.DEX.ACCESS_FLAGS.PUBLIC, lief.DEX.ACCESS_FLAGS.STATIC,
                                 lief.DEX.ACCESS_FLAGS.FINAL, lief.DEX.ACCESS_FLAGS.ENUM]
 

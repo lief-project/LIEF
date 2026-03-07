@@ -2,11 +2,10 @@
 Tests related to ARM64EC
 """
 import lief
-import pytest
 
 from pathlib import Path
 from textwrap import dedent
-from utils import get_sample, has_private_samples
+from utils import get_sample
 
 def test_chpe_simple():
     input_path = Path(get_sample("PE/arm64ec_hello_world_2025.exe"))

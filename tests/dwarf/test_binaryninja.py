@@ -30,7 +30,7 @@ def test_dwo():
 def test_structures():
     binaryninja_dxp = lief.dwarf.load(get_sample("private/DWARF/binaryninja/dxp.debug"))
     CU = list(binaryninja_dxp.compilation_units)[0]
-    dp_init_mp3_info = CU.find_function("dp_init_mp3_info")
+    _dp_init_mp3_info = CU.find_function("dp_init_mp3_info")
 
 def test_find():
     binaryninja_dxp = lief.dwarf.load(get_sample("private/DWARF/binaryninja/dxp.debug"))

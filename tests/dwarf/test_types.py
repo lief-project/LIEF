@@ -400,7 +400,7 @@ def test_DW_TAG_restrict_type():
 
     assert restrict.underlying_type.underlying_type.name == "double"
 
-def test_DW_TAG_reference_type():
+def test_DW_TAG_reference_type_alt():
     elf = lief.ELF.parse(get_sample("private/DWARF/types/DW_TAG_reference_type.o"))
 
     dbg_info: lief.dwarf.DebugInfo = elf.debug_info

@@ -8,7 +8,6 @@ from subprocess import Popen
 from pathlib import Path
 
 import lief
-from lief.ELF import Segment
 from utils import get_sample, has_recent_glibc, is_linux, is_x86_64, is_aarch64
 
 is_updated_linux = pytest.mark.skipif(not (is_linux() and is_x86_64() and has_recent_glibc()),

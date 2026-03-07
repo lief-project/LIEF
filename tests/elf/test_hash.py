@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import os
 import stat
-import re
 import pytest
 import subprocess
 from pathlib import Path

@@ -1,6 +1,5 @@
 import pytest
 import sys
-import time
 import argparse
 
 from typing import Optional

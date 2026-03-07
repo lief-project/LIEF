@@ -1,5 +1,5 @@
 import lief
-from utils import get_sample, is_64bits_platform
+from utils import get_sample
 
 def test_loongarch():
     elf = lief.ELF.parse(get_sample('ELF/art_reader.loongarch'))

@@ -19,10 +19,3 @@ def test_stderr(capsys):
     captured = capsys.readouterr()
     assert _remove_eol(captured.err) == "This is an errorThis is another error"
 
-def test_stderr(capsys):
-    lief.logging.log(lief.logging.LEVEL.ERROR, "This is an error")
-    lief.logging.log(lief.logging.LEVEL.ERROR, "This is another error")
-
-    captured = capsys.readouterr()
-    assert _remove_eol(captured.err) == "This is an errorThis is another error"
-

@@ -1,6 +1,5 @@
 import lief
 import pytest
-from pathlib import Path
 from utils import get_sample
 
 if not lief.__extended__:
