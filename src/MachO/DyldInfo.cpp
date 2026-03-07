@@ -743,11 +743,17 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
               }
             case BIND_SUBOPCODE_THREADED::SET_BIND_ORDINAL_TABLE_SIZE_ULEB:
               {
+                static constexpr size_t MAX_COUNT = 65535;
                 output << tab << std::string("[") + to_string(subopcode) + "]\n";
-                if (auto res = bind_stream.read_uleb128()) {
-                  count = *res;
-                } else {
+                auto val = bind_stream.read_uleb128();
+                if (!val) {
                   LIEF_ERR("Can't read BIND_SUBOPCODE_THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB count");
+                  break;
+                }
+                count = *val;
+                if (count > MAX_COUNT) {
+                  LIEF_ERR("BIND_SUBOPCODE_THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB"
+                           "count is too large ({})", *val);
                   break;
                 }
                 ordinal_table_size = count + 1; // the +1 comes from: 'ld64 wrote the wrong value here and we need to offset by 1 for now.'
