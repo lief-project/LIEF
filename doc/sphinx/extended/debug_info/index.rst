@@ -3,7 +3,7 @@
 :fa:`solid fa-magnifying-glass` Debug Info
 ------------------------------------------
 
-:ref:`PDB <extended-pdb>` and :ref:`DWARF <extended-dwarf>` shares similar
+:ref:`PDB <extended-pdb>` and :ref:`DWARF <extended-dwarf>` share similar
 traits which are abstracted by the following classes:
 
 :fa:`regular fa-file-code` C++

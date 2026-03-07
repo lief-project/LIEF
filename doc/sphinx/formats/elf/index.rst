@@ -58,11 +58,11 @@ ELF binaries can be parsed with LIEF using the |lief-elf-parse| function:
 
 .. note::
 
-  In Python, you can also use :py:func:`lief.parse` which returns a
+  In Python, you can also use :py:func:`lief.parse`, which returns a
   :class:`lief.ELF.Binary` object.
 
-From this parsed ELF binary you can use all the API exposed by the |lief-elf-binary|
-object to inspect or modify the binary itself.
+With the parsed ELF binary, you can use the |lief-elf-binary| API to
+inspect or modify the binary itself.
 
 .. tabs::
 
@@ -102,9 +102,8 @@ object to inspect or modify the binary itself.
             println!("{} {}", section.name(), section.content().len());
         }
 
-Upon a |lief-elf-binary| modification, one can use the method
-|lief-elf-binary-write| to write back the ELF binary object into a raw ELF
-file.
+After modifying a |lief-elf-binary| object, you can use the
+|lief-elf-binary-write| method to write it back to a raw ELF file.
 
 .. tabs::
 
@@ -135,7 +134,7 @@ as a buffer of bytes:
 
 .. note::
 
-   This API can also take an extra |lief-elf-builder-config| parameter
+   This API can also take an extra |lief-elf-builder-config| parameter.
 
 .. tabs::
 
@@ -156,7 +155,7 @@ as a buffer of bytes:
         elf->write(os);
         std::string buffer = os.str();
 
-        const auto* start = reinterpret_cast<const uint8_t>(buffer.data());
+        const auto* start = reinterpret_cast<const uint8_t*>(buffer.data());
         size_t size = buffer.size();
 
 .. _format-elf-section-segment:
@@ -164,20 +163,19 @@ as a buffer of bytes:
 Adding a Section/Segment
 ************************
 
-The ELF format uses two tables to represent the different slices of the binary:
+The ELF format uses two tables to represent different slices of the binary:
 
 1. The sections table
 2. The segments table
 
-While the sections table offers a detailed view of the binary,
-it is primarily needed by the **compiler** and the **linker**. In particular,
-this table is not required for **loading** and **executing** an ELF file.
-The Android loader enforces the existence of a sections table and requires
-certain specific sections but from a loading perspective, this table is not used.
+While the sections table offers a detailed view of the binary, it is primarily
+used by the **compiler** and the **linker**. In particular, this table is not required
+for **loading** and **executing** an ELF file. While the Android loader
+enforces the presence of a sections table and requires specific sections,
+this table is not used during the actual loading process.
 
-If you intend to modify an ELF file to load additional content into memory
-(such as code or data), it is recommended to add a |lief-elf-segment| instead of
-a section:
+To modify an ELF file to load additional content into memory (e.g., code or data),
+adding a |lief-elf-segment| is recommended over adding a section:
 
 .. tabs::
 
@@ -208,8 +206,8 @@ a section:
         LIEF::ELF::Segment* new_segment = elf.add(segment);
         elf.write("new.elf");
 
-You can also achieve this modification by creating a |lief-elf-section| that will
-**implicitly** create an associated ``PT_LOAD`` segment:
+Alternatively, you can create a |lief-elf-section|, which will **implicitly**
+create an associated ``PT_LOAD`` segment:
 
 .. tabs::
 
@@ -238,14 +236,13 @@ You can also achieve this modification by creating a |lief-elf-section| that wil
         LIEF::ELF::Section* new_section = elf.add(section, /*loaded=*/true);
         elf.write("new.elf");
 
-As mentioned above, the segments table matters from a loading perspective over
-the sections table. Therefore, it makes more sense to explicitly add a new
-segment rather than adding a section that implicitly adds a segment.
+As mentioned above, the segments table is more critical than the sections table
+from a loading perspective. Therefore, it is more appropriate to explicitly add
+a new segment rather than adding a section that implicitly adds a segment.
 
-On the other hand, for debugging purposes or specific
-tools, one might want to add a **non-loaded** section. In this case, the data
-of the section is inserted at the end of the binary right after all the data wrapped
-by the segments:
+On the other hand, for debugging purposes or specialized tools, you might want
+to add a **non-loaded** section. In this case, the section data is inserted at
+the end of the binary, immediately after the data wrapped by the segments:
 
 .. tabs::
 
@@ -276,21 +273,21 @@ by the segments:
         LIEF::ELF::Section* new_section = elf.add(section, /*loaded=*/false);
         elf.write("new.elf");
 
-See: |lief-elf-binary-add| for the details about the API
+See: |lief-elf-binary-add| for detailed API information.
 
-Advance Parsing/Writing
-***********************
+Advanced Parsing/Writing
+************************
 
 |lief-elf-parse| can take an extra |lief-elf-parser-config| parameter to specify
-some parts of the ELF format to skip during parsing.
+parts of the ELF format to skip during parsing.
 
 .. warning::
 
-   Generally speaking, |lief-elf-binary-write| requires a **complete** initial
+   Generally, |lief-elf-binary-write| requires a **complete** initial
    parsing of the ELF file.
 
 Similarly, |lief-elf-binary-write| can also take an extra |lief-elf-builder-config|
-to specify which parts of the ELF should be re-built or not.
+to specify which parts of the ELF should be rebuilt.
 
 .. tabs::
 
@@ -325,10 +322,11 @@ to specify which parts of the ELF should be re-built or not.
 DWARF Support
 *************
 
-If the binary embeds DWARF debug info, one can use |lief-dwarf-binary-debug-info|
-to access the underlying |lief-dwarf-debug-info| object.
+If the binary embeds DWARF debug information, you can use
+|lief-dwarf-binary-debug-info| to access the underlying |lief-dwarf-debug-info|
+object.
 
-Note that this support is only available in the :ref:`extended <extended-intro>`
+Note that this support is only available in the :ref:`Extended <extended-intro>`
 version of LIEF.
 
 .. _format-elf-rpath-modification:
@@ -336,26 +334,26 @@ version of LIEF.
 R[UN]PATH Modification
 **********************
 
-LIEF provides all the facilities to manipulate binary's RPATH/RUNPATH.
+LIEF provides comprehensive facilities for manipulating a binary's RPATH/RUNPATH.
 
 .. admonition:: DT_RPATH vs DT_RUNPATH
   :class: tip
 
-  ``DT_RPATH`` and ``DT_RUNPATH`` are both dynamic tags that are used to
+  ``DT_RPATH`` and ``DT_RUNPATH`` are both dynamic tags used to
   specify runtime library search paths.
 
-  The ``DT_RPATH`` is now considered as legacy since it does not respect the
+  ``DT_RPATH`` is now considered legacy because it does not respect the
   precedence of the ``LD_LIBRARY_PATH`` environment variable. This means that
-  if the ``LD_LIBRARY_PATH`` is set to a valid directory where the library can
+  if ``LD_LIBRARY_PATH`` is set to a valid directory where the library can
   be found, it will be ignored in favor of the ``DT_RPATH`` value.
-  Therefore, the ``DT_RUNPATH`` tag should be prefered ``DT_RPATH``.
+  Therefore, the ``DT_RUNPATH`` tag should be preferred over ``DT_RPATH``.
 
-  Please note that if both tags are present, the loader will use the ``DT_RUNPATH``
+  Note that if both tags are present, the loader will use the ``DT_RUNPATH``
   entry over the legacy ``DT_RPATH``.
 
 
 The ``DT_RPATH`` tag is represented by the |lief-elf-DynamicEntryRpath|
-interface and the ``DT_RUNPATH`` tag by |lief-elf-DynamicEntryRunPath|
+interface, and the ``DT_RUNPATH`` tag by |lief-elf-DynamicEntryRunPath|.
 
 The RPATH/RUNPATH modifications supported by LIEF include:
 
@@ -556,19 +554,19 @@ Symbol Versions
 The ELF format supports symbol versioning, allowing multiple versions of
 the same function or variable to coexist within a single shared object.
 
-During compilation, the linker selects the appropriate symbols and versions based
-on the libraries provided as input. For example, if the program uses
-the function ``printf`` and is linked with a version of ``libc.so`` that exposes
+During compilation, the linker selects the appropriate symbols and versions
+based on the libraries provided as input. For example, if a program uses the
+``printf`` function and is linked with a version of ``libc.so`` that exposes
 ``printf@@GLIBC_2.40``, the compiled executable will require at least that
 version of the ``libc`` to run.
 
-This requirement regarding versioning can be problematic if we want to create
-an executable or library compatible with a wide range of Linux distributions.
+These versioning requirements can be problematic when creating executables or
+libraries intended for a wide range of Linux distributions.
 
-The **best way** to ensure maximum compatibility is to provide the minimum supported version of
-the Glibc. For instance, if we aim to support Linux
-distributions with at least Glibc version ``2.28`` (released in 2018),
-we should specifically provide that version of ``libc.so``:
+The **best way** to ensure maximum compatibility is to target the minimum
+supported version of Glibc. For instance, if you aim to support Linux
+distributions with at least Glibc version ``2.28`` (released in 2018), you
+should specifically provide that version of ``libc.so`` during linking:
 
 .. code-block:: console
 
@@ -576,10 +574,9 @@ we should specifically provide that version of ``libc.so``:
    $ ld -L /sysroot/glibc-2.28/lib64/ my_program.o -o my_program.elf -lc
 
 
-There are situations where we don't have that control over the link step, and
-for which we want to change the versioning **post-compilation**. LIEF can be
-used in these situations to perform the following modifications on the symbol
-versions.
+In situations where you lack control over the link step, you may want to change
+the versioning **post-compilation**. LIEF can be used in these situations to
+perform the following modifications on symbol versions.
 
 **Remove the version for a specific symbol**
 

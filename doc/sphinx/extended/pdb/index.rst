@@ -16,15 +16,15 @@
 Introduction
 ************
 
-Compared to DWARF debug info, the PDB debug info are always externalized from
-the original binary. Nevertheless, the original binary keeps the
-path of the PDB file in the attribute |lief-pe-codeviewpdb-filename|.
+Unlike DWARF debug information, PDB debug information is always stored
+externally from the original binary. Nevertheless, the original binary keeps
+the path of the PDB file in the |lief-pe-codeviewpdb-filename| attribute.
 
-Based on this fact, |lief-pdb-binary-debug-info|
-tries to instantiate a |lief-pdb-debug-info| based on this file path. If it fails, it
-returns a nullptr or None.
+Based on this fact, |lief-pdb-binary-debug-info| tries to instantiate a
+|lief-pdb-debug-info| object using this file path. If it fails, it returns
+``nullptr`` or ``None``.
 
-One can also instantiate a |lief-pdb-debug-info| using |lief-pdb-load|:
+You can also instantiate a |lief-pdb-debug-info| object using |lief-pdb-load|:
 
 .. tabs::
 
@@ -68,7 +68,7 @@ One can also instantiate a |lief-pdb-debug-info| using |lief-pdb-load|:
 
 
 At this point, the PDB instance (|lief-pdb-debug-info|) can be used to explore
-the PDB debug info:
+the PDB debug information:
 
 .. tabs::
 
@@ -163,8 +163,8 @@ the PDB debug info:
 
 .. _extended-pdb-load-ext:
 
-You can also use the function |lief-abstract-binary-load_debug_info| to bind
-an PDB file to an existing |lief-abstract-binary|:
+You can also use the |lief-abstract-binary-load_debug_info| function to bind
+a PDB file to an existing |lief-abstract-binary|:
 
 .. tabs::
 
@@ -197,11 +197,10 @@ an PDB file to an existing |lief-abstract-binary|:
         bin.load_debug_info(&path);
 
 Note that |lief-abstract-binary-load_debug_info| can also attach an external
-DWARF file on a PE binary even if this is not the regular use case.
-For instance, :ref:`BinaryNinja <plugins-binaryninja-dwarf>` and
-:ref:`Ghidra <plugins-ghidra-dwarf>` DWARF export plugin can generate
-a DWARF file based on the analyses performed by these frameworks for a PE
-binary.
+DWARF file to a PE binary, even though this is not a typical use case.
+For instance, the :ref:`BinaryNinja <plugins-binaryninja-dwarf>` and
+:ref:`Ghidra <plugins-ghidra-dwarf>` DWARF export plugins can generate
+a DWARF file for a PE binary based on analyses performed by these frameworks.
 
 This external loading API is useful for adding debug information that might not
 already be present in the binary. For instance, the |lief-disassemble| function

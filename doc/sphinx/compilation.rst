@@ -6,15 +6,16 @@
 :fa:`solid fa-laptop-code` Compilation
 ======================================
 
-To compile **LIEF**, you need at least the following requirements:
+To compile **LIEF**, you need at least the following:
 
-- C++17 compiler (GCC, Clang, MSVC...)
+- C++17 compiler (GCC, Clang, MSVC, etc.)
 - CMake
 - Python >= 3.9 (for the bindings)
 
 .. note::
 
-  A compilation from scratch with all the options enabled can take ~20 minutes on a regular laptop.
+  Compiling from scratch with all options enabled can take approximately
+  20 minutes on a standard laptop.
 
 Libraries only (SDK)
 --------------------
@@ -30,7 +31,8 @@ Libraries only (SDK)
 
 .. warning::
 
-   On Windows, you can choose the CRT to use by setting the ``CMAKE_MSVC_RUNTIME_LIBRARY`` variable:
+   On Windows, you can choose which CRT to use by setting the
+   ``CMAKE_MSVC_RUNTIME_LIBRARY`` variable:
 
    .. code-block:: console
 
@@ -64,9 +66,9 @@ Python bindings
   You can speed up the compilation by installing `ccache <https://ccache.dev/>`_
   or `sccache <https://github.com/mozilla/sccache>`_.
 
-You can tweak the compilation by setting the environment variable ``PYLIEF_CONF``
-to a TOML configuration file. By default, the Python bindings use ``config-default.toml``
-in the Python binding directory:
+You can customize the compilation by setting the ``PYLIEF_CONF`` environment
+variable to the path of a TOML configuration file. By default, the Python
+bindings use ``config-default.toml`` in the Python binding directory:
 
 
 .. code-block:: toml
@@ -92,14 +94,15 @@ in the Python binding directory:
 Debugging
 ---------
 
-By default, LIEF is compiled with ``CMAKE_BUILD_TYPE`` set to ``Release``. You can change this behavior
-by setting it to either ``RelWithDebInfo`` or ``Debug`` during CMake's configuration step:
+By default, LIEF is compiled with ``CMAKE_BUILD_TYPE`` set to ``Release``.
+You can change this behavior by setting it to either ``RelWithDebInfo`` or
+``Debug`` during CMake's configuration step:
 
 .. code-block:: console
 
    $ cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo [...] ..
 
-Alternatively, Python bindings can also be compiled with debug information
+Alternatively, the Python bindings can also be compiled with debug information
 by changing the ``type`` in the `[lief.build]` section of `config-default.toml`:
 
 .. code-block:: toml
@@ -132,9 +135,10 @@ by changing the ``type`` in the `[lief.build]` section of `config-default.toml`:
 Third Party
 -----------
 
-LIEF relies on a few external projects, and we try to limit the dependencies in the public headers
-as much as possible. This table summarizes these dependencies and their scope. ``internal`` means
-that it is required to compile LIEF, but not to use it. ``external`` means that it is required for both.
+LIEF relies on several external projects, and we aim to limit dependencies in
+the public headers as much as possible. The following table summarizes these
+dependencies and their scopes. ``internal`` means that it is required to
+compile LIEF but not to use it. ``external`` means that it is required for both.
 
 +------------------------------------------+--------------+--------------------------------------------+
 | Dependency                               | Scope        | Purpose                                    |
@@ -149,7 +153,7 @@ that it is required to compile LIEF, but not to use it. ``external`` means that 
 +------------------------------------------+--------------+--------------------------------------------+
 | :github-ref:`nemtrif/utfcpp`             | ``internal`` | Unicode support (for PE and DEX files)     |
 +------------------------------------------+--------------+--------------------------------------------+
-| :github-ref:`nlohmann/json`              | ``internal`` | Serialize LIEF's object into JSON          |
+| :github-ref:`nlohmann/json`              | ``internal`` | Serialize LIEF objects into JSON           |
 +------------------------------------------+--------------+--------------------------------------------+
 | :github-ref:`wjakob/nanobind`            | ``internal`` | Python bindings                            |
 +------------------------------------------+--------------+--------------------------------------------+
@@ -160,14 +164,15 @@ that it is required to compile LIEF, but not to use it. ``external`` means that 
 | :github-ref:`catchorg/Catch2`            | ``internal`` | Unit Testing                               |
 +------------------------------------------+--------------+--------------------------------------------+
 
-With the exception of MbedTLS, all these dependencies are header-only. By default, they are embedded
-and managed by LIEF to ease compilation and integration.
+With the exception of MbedTLS, all of these dependencies are header-only.
+By default, they are embedded and managed by LIEF to simplify compilation and
+integration.
 
-Nevertheless, package managers often require linking against system libraries rather than using
-vendored dependencies [#ref_issue]_ [#ref_vcpk]_.
+Nevertheless, package managers often require linking against system libraries
+rather than using vendored dependencies [#ref_issue]_ [#ref_vcpk]_.
 
-To address this requirement, you can control the integration of LIEF's dependencies using the following
-CMake options:
+To address this requirement, you can control the integration of LIEF's
+dependencies using the following CMake options:
 
   * ``LIEF_OPT_NLOHMANN_JSON_EXTERNAL``
   * ``LIEF_OPT_UTFCPP_EXTERNAL``
@@ -178,10 +183,10 @@ CMake options:
   * ``LIEF_OPT_EXTERNAL_EXPECTED``
   * ``LIEF_OPT_NANOBIND_EXTERNAL``
 
-By setting these flags, LIEF resolves the dependencies using CMake's ``find_package(...)``, which
-relies on ``<DEPS>_DIR`` to locate the package.
+By setting these flags, LIEF will resolve dependencies using CMake's
+``find_package(...)``, which relies on ``<DEPS>_DIR`` to locate the package.
 
-For example, LIEF can be compiled with the following configuration:
+For example, LIEF can be compiled using the following configuration:
 
 .. code-block:: console
 

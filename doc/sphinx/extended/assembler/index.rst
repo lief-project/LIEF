@@ -16,9 +16,9 @@
 Introduction
 ************
 
-In addition to regular file formats modifications, we might want to patch code with
-custom assembly code. This functionality is available thanks to the |lief-assemble|
-function:
+In addition to standard file format modifications, it may be necessary to patch
+code with custom assembly. This functionality is available through the
+|lief-assemble| function:
 
 .. tabs::
 
@@ -84,31 +84,31 @@ function:
 
 .. warning::
 
-  The assembler is working decently for ``AArch64/ARM64E`` and ``x86/x86-64`` but
-  the support is highly limited for the other architectures.
+  The assembler works well for ``AArch64/ARM64E`` and ``x86/x86-64``, but
+  support for other architectures is currently limited.
 
 Technical Details
 *****************
 
-In the same way that the :ref:`disassembler <extended-disassembler>` is based on
-the LLVM MC layer, this assembler is also based on this component of LLVM.
+Similar to the :ref:`disassembler <extended-disassembler>`, this assembler is
+based on the LLVM MC layer.
 
-The assembly text is consumed by the ``llvm::MCAsmParser`` object, and we *intercept*
-the raw generated assembly bytes from the ``llvm::MCObjectWriter``.
+The assembly text is consumed by the ``llvm::MCAsmParser`` object, and we
+*intercept* the raw generated assembly bytes from the ``llvm::MCObjectWriter``.
 
 We also resolve ``llvm::MCFixup`` for a vast majority of the generated fixups.
-One important feature that has been introduced in LIEF 0.17.0 is the support
-for resolving symbols or label **on the fly**.
+An important feature introduced in LIEF 0.17.0 is support for resolving symbols
+or labels **on the fly**.
 
 .. _extended-assembler-contextual-patching:
 
 Contextual Assembly Patching
 ****************************
 
-Given an assembly code and an address to patch, we might want to use a **context**
-that is used to resolve symbols referenced in the assembly listing.
+Given assembly code and a target address, we might want to use a **context**
+to resolve symbols referenced in the assembly listing.
 
-For instance, let's consider the following patching:
+For example, consider the following patch:
 
 .. tabs::
 
@@ -147,8 +147,8 @@ For instance, let's consider the following patching:
           call a_custom_function;
         "#);
 
-In this example, ``a_custom_function`` is not defined so the assembler engine does not know
-how to resolve it and raises this error:
+In this example, ``a_custom_function`` is undefined, so the assembler engine
+cannot resolve it and raises the following error:
 
 .. code-block:: text
 
@@ -232,8 +232,8 @@ listing:
           call a_custom_function;
         "#, &config);
 
-This interface can be used to wrap a context which can be, for instance, a
-generic |lief-abstract-binary|:
+This interface can be used to wrap a context, such as a generic
+|lief-abstract-binary|:
 
 .. tabs::
 

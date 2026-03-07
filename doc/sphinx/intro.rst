@@ -82,13 +82,13 @@ As a result, you can use LIEF through an idiomatic API in these languages:
           }
       }
 
-The project is also dedicated to providing a comprehensive documentation and
+The project is also dedicated to providing comprehensive documentation and
 maintaining strong development standards, including:
 
 - A test suite with code coverage and non-regression testing
 - Address Sanitizer checks (`ASAN <https://clang.llvm.org/docs/AddressSanitizer.html>`_)
-- Continuous Integration or testing and releasing packages
-- Dockerization of the different CI steps
+- Continuous Integration for testing and releasing packages
+- Dockerization of various CI steps
 - A comprehensive :ref:`changelog <changelog-ref>`
 - Nightly builds
 
@@ -163,7 +163,7 @@ You can find additional content, including release notes, on the `LIEF blog </bl
 - `LIEF 0.11.0 release info </blog/2021-01-19-lief-0-11-0/>`_
 - `LIEF 0.9.0 release info </blog/2018-06-11-lief-0-9-0/>`_
 
-Further practical examples are available in the
+Additional practical examples are available in the
 `examples/ <https://github.com/lief-project/LIEF/tree/main/examples>`_ directory.
 
 :fa:`cubes` Extended Version

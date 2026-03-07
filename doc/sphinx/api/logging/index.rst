@@ -1,10 +1,10 @@
 :fa:`regular fa-rectangle-list` Logging
 ---------------------------------------
 
-This section details the API to interact with LIEF's logging engine.
+This section details the API for interacting with LIEF's logging engine.
 
-LIEF relies on `spdlog <https://github.com/gabime/spdlog>`_ for logging
-mechansim and this API provides an abstraction over the implementation.
+LIEF uses `spdlog <https://github.com/gabime/spdlog>`_ for its logging
+mechanism, and this API provides an abstraction over that implementation.
 
 
 :fa:`solid fa-code` API

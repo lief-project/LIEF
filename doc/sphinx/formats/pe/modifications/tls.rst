@@ -47,10 +47,10 @@ can adjust the TLS callbacks by removing, reordering, or adding addresses:
 
         std::vector<uint64_t> callbacks = pe->callbacks();
 
-        # Remove the last entry
+        // Remove the last entry
         callbacks.pop_back();
 
-        # Add an address
+        // Add an address
         callbacks.push_back(0x140001010);
 
         tls->callbacks(std::move(callbacks));
@@ -67,10 +67,10 @@ can adjust the TLS callbacks by removing, reordering, or adding addresses:
 
         let mut callbacks: Vec<u64> = tls.callbacks();
 
-        # Remove the last entry
+        // Remove the last entry
         callbacks.pop();
 
-        # Add an address
+        // Add an address
         callbacks.push(0x140001010);
 
         tls.set_callbacks(callbacks);
@@ -90,7 +90,7 @@ TLS Creation
 If a PE binary does not contain TLS metadata, LIEF can be used to create this
 structure.
 
-First, we can create and initiate a TLS instance:
+First, we can create and initialize a TLS instance:
 
 .. tabs::
 
@@ -170,9 +170,9 @@ And then, we can add this instance to a |lief-pe-binary|:
 .. admonition:: Relocations
   :class: tip
 
-  Similary to the TLS callbacks modifications, LIEF **automatically** manages the
-  relocations. In addition, it automatically initialize (if not set by the user)
-  ``AddressOfIndex`` which is mandatory when defining up TLS metadata.
+  Similar to TLS callback modifications, LIEF **automatically** manages
+  relocations. In addition, it automatically initializes (if not set by the
+  user) ``AddressOfIndex``, which is required when setting up TLS metadata.
 
 
 .. include:: ../../../_cross_api.rst

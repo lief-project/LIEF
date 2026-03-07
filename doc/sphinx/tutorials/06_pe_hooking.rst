@@ -1,20 +1,19 @@
+.. _06-pe-hooking:
+
 06 - PE Hooking (Deprecated)
 ----------------------------
 
 .. warning::
 
-  This tutorial is no longer working as the PE hooking functions has been removed from LIEF.
+  This tutorial is no longer functional as the PE hooking functions have been
+  removed from LIEF.
 
-The objective of this tutorial is show how we can hook imported functions
-
-Scripts and materials are available here: `materials <https://github.com/lief-project/tutorials/tree/master/06_PE_hooking>`_
-
-
-By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
+The objective of this tutorial is to show how to hook imported functions.
 
 ------
 
-The targeted binary is a simple ``PE64`` *HelloWorld* which prints the first argument in the console:
+The targeted binary is a simple ``PE64`` *HelloWorld* that prints the first
+argument to the console:
 
 .. code-block:: cpp
 
@@ -31,10 +30,12 @@ The targeted binary is a simple ``PE64`` *HelloWorld* which prints the first arg
   $ PE64_x86-64_binary_HelloWorld.exe World
   $ Hello: World
 
-Using LIEF, we will replace the function that prints the message in the console with a ``MessageBox``
+Using LIEF, we will replace the function that prints the message to the console
+with a ``MessageBox``.
 
-By disassembling the binary we can see that the *print* occurs in the function ``sub_140001030`` and it uses two
-external functions: ``__acrt_iob_func`` and ``__stdio_common_vfprintf``.
+By disassembling the binary, we can see that the *print* occurs in the function
+``sub_140001030``, which uses two external functions: ``__acrt_iob_func`` and
+``__stdio_common_vfprintf``.
 
 
 .. figure:: ../_static/tutorial/06/06_hooking_1.png
@@ -46,9 +47,11 @@ external functions: ``__acrt_iob_func`` and ``__stdio_common_vfprintf``.
   :scale: 80 %
   :align: center
 
-Due to the Microsoft x64 calling convention, the format is located in the ``rcx`` and the input message in the ``rdx`` register.
+According to the Microsoft x64 calling convention, the format string is located
+in the ``rcx`` register, and the input message is in the ``rdx`` register.
 
-Basically the :ref:`hooking-code` replaces the ``__acrt_iob_func`` function and shows a ``MessageBox`` with the ``rdx`` message.
+Basically, the :ref:`hooking-code` replaces the ``__acrt_iob_func`` function and
+displays a ``MessageBox`` with the ``rdx`` message.
 
 .. code-block:: nasm
   :caption: hooking code
@@ -68,10 +71,10 @@ Basically the :ref:`hooking-code` replaces the ``__acrt_iob_func`` function and 
 
 .. note::
 
-  As for tutorial :ref:`02-pe-from-scratch`, the address of ``MessageBoxA`` and ``ExitProcess`` can be found
-  with the function:
+  As in tutorial :ref:`02-pe-from-scratch`, the addresses of ``MessageBoxA``
+  and ``ExitProcess`` can be found using the function:
 
-First we create the ``.htext`` section which will hold the hooking code:
+First, we create the ``.htext`` section, which will hold the hooking code:
 
 .. code-block:: python
 
@@ -82,7 +85,7 @@ First we create the ``.htext`` section which will hold the hooking code:
 
   section_text = pe.add_section(section_text)
 
-Then the ``.hdata`` section for the ``MessageBox`` title:
+Next, we create the ``.hdata`` section for the ``MessageBox`` title:
 
 .. code-block:: python
 
@@ -96,27 +99,27 @@ Then the ``.hdata`` section for the ``MessageBox`` title:
 
   section_data = pe.add_section(section_data)
 
-As the ASLR is enabled we will disable it to avoid to deal with relocations:
+Since ASLR is enabled, we will disable it to avoid dealing with relocations:
 
 .. code-block:: python
 
   binary.optional_header.dll_characteristics &= ~lief.PE.DLL_CHARACTERISTICS.DYNAMIC_BASE
 
-We will also disable the ``NX`` protection:
+We will also disable ``NX`` protection:
 
 
 .. code-block:: python
 
   binary.optional_header.dll_characteristics &= ~lief.PE.DLL_CHARACTERISTICS.NX_COMPAT
 
-As ``ExitProcess`` is not imported in ``KERNEL32.dll`` we need to add it:
+As ``ExitProcess`` is not imported in ``KERNEL32.dll``, we need to add it:
 
 .. code-block:: python
 
   kernel32 = binary.get_import("KERNEL32.dll")
   kernel32.add_entry("ExitProcess")
 
-The ``MessageBoxA`` function is located in the ``user32.dll`` thus we have to add it:
+The ``MessageBoxA`` function is located in ``user32.dll``, so we must add it:
 
 
 .. code-block:: python
@@ -124,13 +127,14 @@ The ``MessageBoxA`` function is located in the ``user32.dll`` thus we have to ad
   user32 = binary.add_library("user32.dll")
   user32.add_entry("MessageBoxA")
 
-Then we proceed to the hook of the ``__acrt_iob_func`` function:
+Then, we proceed to hook the ``__acrt_iob_func`` function:
 
 .. code-block:: python
 
   pe.hook_function("__acrt_iob_func", binary.optional_header.imagebase + section_text.virtual_address)
 
-And finally we configure the :class:`~lief.PE.Builder` to create a new import table and to patch the original one with trampolines.
+Finally, we configure the :class:`~lief.PE.Builder` to create a new import
+table and patch the original one with trampolines.
 
 .. code-block:: python
 
@@ -155,3 +159,4 @@ Now we can run the final executable:
   :align: center
 
 
+.. include:: ../../../_cross_api.rst

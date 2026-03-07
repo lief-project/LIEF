@@ -16,8 +16,8 @@
 Introduction
 ************
 
-COFF object files can be parsed with using |lief-coff-parse| or the generic
-|lief-parse| functions:
+COFF object files can be parsed using |lief-coff-parse| or the generic
+|lief-parse| function:
 
 .. tabs::
 
@@ -55,7 +55,7 @@ COFF object files can be parsed with using |lief-coff-parse| or the generic
         let coff: lief::coff::Binary = lief::coff::Binary::parse("test.obj");
 
 These functions return a |lief-coff-Binary| instance that exposes the main API
-to process and access COFF information:
+for processing and accessing COFF information:
 
 .. tabs::
 
@@ -95,8 +95,8 @@ to process and access COFF information:
 Disassembler
 ************
 
-The |lief-coff-Binary| object exposes a disassembler API to iterate over
-the instructions of a COFF binary. One can disassemble a function with
+The |lief-coff-Binary| object exposes a disassembler API for iterating over
+the instructions of a COFF binary. One can disassemble a function using
 |lief-coff-binary-disassemble|:
 
 .. tabs::

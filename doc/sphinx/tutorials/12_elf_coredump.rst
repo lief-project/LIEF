@@ -1,37 +1,38 @@
 12 - ELF Coredump
 -----------------
 
-This tutorial introduces the API to analyze and manipulate ELF coredump
-
-Files and scripts used in this tutorial are available on the `tutorials repository <https://github.com/lief-project/tutorials/tree/master/12_elf_coredump>`_
+This tutorial introduces the API for analyzing and manipulating ELF coredumps.
 
 ------
 
 Introduction
 ~~~~~~~~~~~~
 
-ELF core [1]_ files provide information about the CPU state and the memory state of a program when the coredump
-has been generated. The memory state embeds
-a *snapshot* of all segments mapped in the memory space of the program. The CPU state contains register values
-when the core dump has been generated.
+ELF core [1]_ files provide information about the CPU state and memory state of
+a program at the time the coredump was generated. The memory state includes a
+*snapshot* of all segments mapped into the process's memory space. The CPU
+state contains register values from when the core dump was generated.
 
-Coredump files use a subset of the ELF structures to store this information. **Segments** are used for
-the memory state of the process while ELF notes (:class:`lief.ELF.Note`) are used for process metadata (pid, signal, ...)
-Especially, the CPU state is stored in a note with a special type.
+Coredump files use a subset of ELF structures to store this information.
+**Segments** are used for the memory state of the process, while ELF notes
+(:class:`lief.ELF.Note`) are used for process metadata (PID, signal, etc.).
+Notably, the CPU state is stored in a note with a specific type.
 
 
-Here is an overview of coredump layout :
+Here is an overview of the coredump layout:
 
 .. figure:: ../_static/tutorial/12/elf_notes.png
   :align: center
 
 
-For more details about coredump internal structure, one can look at the following blog post: `Anatomy of an ELF core file <https://www.gabriel.urdhr.fr/2015/05/29/core-file/>`_
+For more details about coredump internal structures, refer to the following
+blog post: `Anatomy of an ELF core file <https://www.gabriel.urdhr.fr/2015/05/29/core-file/>`_.
 
 Coredump Analysis
 ~~~~~~~~~~~~~~~~~
 
-As core files are effectively ELF, we can open these files using the :func:`lief.parse` function:
+Since core files are effectively ELF files, they can be opened using the
+|lief-abstract-parse| function:
 
 .. code-block:: python
 
@@ -39,7 +40,8 @@ As core files are effectively ELF, we can open these files using the :func:`lief
 
    core = lief.parse("ELF64_AArch64_core_hello.core")
 
-We can iterate over the :class:`~lief.ELF.Segment` objects to inspect the memory state of the program:
+We can iterate over the :class:`~lief.ELF.Segment` objects to inspect the
+memory state of the program:
 
 .. code-block:: python
 
@@ -49,15 +51,16 @@ We can iterate over the :class:`~lief.ELF.Segment` objects to inspect the memory
    for segment in segments:
       print(hex(segment.virtual_address))
 
-To resolve the relationship between libraries and segments, we can look at the special note :class:`lief.ELF.CoreFile`:
+To resolve the relationship between libraries and segments, we can examine the
+special note :class:`lief.ELF.CoreFile`:
 
 .. code-block:: python
 
    nt_core_file = core.get(lief.ELF.Note.TYPE.CORE.FILE)
 
-ELF notes are represented through the main :class:`lief.ELF.Note` interface. Some notes
-like (:class:`lief.ELF.CoreFile`) can expose additional API by extending the
-original :class:`lief.ELF.Note`.
+ELF notes are represented via the main :class:`lief.ELF.Note` interface. Some
+notes, such as :class:`lief.ELF.CoreFile`, expose additional APIs by extending
+the original :class:`lief.ELF.Note`.
 
 .. lief-inheritance:: lief._lief.ELF.Note
     :top-classes: lief._lief.ELF.Note
@@ -66,19 +69,20 @@ original :class:`lief.ELF.Note`.
 
 .. note::
 
-    All note details inherit from the base class :class:`lief.ELF.Note` (or :cpp:class:`LIEF::ELF::Note`)
+    All note details inherit from the base class :class:`lief.ELF.Note`
+    (or :cpp:class:`LIEF::ELF::Note`).
 
-    Especially, in C++ we must downcast according to the `classof` function:
+    Specifically, in C++, we must downcast using the `classof` function:
 
     .. code-block:: cpp
 
       for (const Note& note : binary->notes()) {
         if (CoreFile::classof(&note)) {
-          const auto& nt_core_file = static_cast<const CoreFile&(note);
+          const auto& nt_core_file = static_cast<const CoreFile&>(note);
         }
       }
 
-    Which is roughly equivalent in Python to:
+    This is roughly equivalent in Python to:
 
     .. code-block:: python
 
@@ -87,12 +91,13 @@ original :class:`lief.ELF.Note`.
               print("This is a CoreFile note")
 
 
-We can eventually use the attribute :attr:`lief.ELF.CoreFile.files` or directly iterate on
-the :class:`lief.ELF.CoreFile` object. Both give access to the :class:`lief.ELF.CoreFileEntry`: objects
+We can use the :attr:`lief.ELF.CoreFile.files` attribute or iterate directly
+over the :class:`lief.ELF.CoreFile` object. Both provide access to
+:class:`lief.ELF.CoreFileEntry` objects:
 
 .. code-block:: python
 
-   for file_entry in note_file:
+   for file_entry in nt_core_file:
       print(file_entry)
 
 .. code-block:: text
@@ -120,10 +125,12 @@ the :class:`lief.ELF.CoreFile` object. Both give access to the :class:`lief.ELF.
    /system/bin/linker64: [0x7fb7f88000, 0x7fb7f8c000]@0xf4000
    /system/bin/linker64: [0x7fb7f8c000, 0x7fb7f8d000]@0xf8000
 
-From this output, we can see that the :class:`~lief.ELF.Segment` of the main executable
-(``/data/local/tmp/hello-exe``), are mapped from address ``0x5580b86000`` to address ``0x5580b99000``.
+From this output, we can see that the :class:`~lief.ELF.Segment` entries of the
+main executable (``/data/local/tmp/hello-exe``) are mapped from address
+``0x5580b86000`` to ``0x5580b99000``.
 
-One can also access to the registers state by looking for the note: :class:`lief.ELF.CorePrStatus`.
+The register state can also be accessed by looking for the
+:class:`lief.ELF.CorePrStatus` note:
 
 .. code-block:: python
 
@@ -142,15 +149,15 @@ One can also access to the registers state by looking for the note: :class:`lief
    0x5580b86f50
 
 
-Coredump manipulation
+Coredump Manipulation
 ~~~~~~~~~~~~~~~~~~~~~
 
-LIEF enables, to a certain extent, to modify coredump. For instance,
-we can update the register values as follows:
+To a certain extent, LIEF enables the modification of coredumps. For instance,
+we can update register values as follows:
 
 .. code-block:: python
 
-   prstatus = elf_core.get(lief.ELF.Note.TYPE.CORE_PRSTATUS)
+   prstatus = core.get(lief.ELF.Note.TYPE.CORE_PRSTATUS)
    prstatus.set(lief.ELF.CorePrStatus.Registers.AARCH64.PC, 0xDEADC0DE)
 
    core.write("/tmp/new.core")
@@ -163,15 +170,17 @@ When opening ``/tmp/new.core`` in GDB, we can observe the modification:
 Final word
 ~~~~~~~~~~
 
-One advantage of the coredump over the raw binary
-is that **relocations** and **dependencies** are resolved inside the coredump.
+One advantage of a coredump over a raw binary is that **relocations** and
+**dependencies** are already resolved within the coredump.
 
-This API could be used in association with other tools. For instance, we could use `Triton <https://triton.quarkslab.com/>`_ API:
+This API can be used in conjunction with other tools. For example, we could use
+the `Triton <https://triton.quarkslab.com/>`_ API:
 
 - `AArch64Cpu::setConcreteRegisterValue() <https://github.com/JonathanSalwan/Triton/blob/a61651ce331ac53ec09e1d8fef5eab744e98c9de/src/libtriton/arch/architecture.cpp#L343>`_
 - `AArch64Cpu::setConcreteMemoryAreaValue() <https://github.com/JonathanSalwan/Triton/blob/a61651ce331ac53ec09e1d8fef5eab744e98c9de/src/libtriton/arch/architecture.cpp#L329-L340>`_
 
-to map the coredump in Triton and then use its engines: Taint analysis, symbolic execution.
+to map the coredump into Triton and then utilize its engines for taint
+analysis and symbolic execution.
 
 
 .. rubric:: References
@@ -190,3 +199,4 @@ to map the coredump in Triton and then use its engines: Taint analysis, symbolic
 * :class:`lief.ELF.CoreSigInfo`
 * :class:`lief.ELF.CoreAuxv`
 
+.. include:: ../_cross_api.rst

@@ -6,14 +6,14 @@
 Introduction
 ************
 
-*LIEF extended* is an enhanced version of LIEF that contains additional features
-like the support of Dyld shared cache, Objective-C metadata, PDB, and DWARF.
+*LIEF Extended* is an enhanced version of LIEF, providing additional features
+such as support for the Dyld shared cache, Objective-C metadata, PDB, and DWARF.
 
-Whilst the main version of LIEF is focused on (only) providing support for
-ELF, PE, and Mach-O, LIEF extended aims at providing other functionalities that
-were not originally designed to be integrated into LIEF.
+While the main version of LIEF focuses on providing support for
+ELF, PE, and Mach-O, LIEF Extended aims to provide functionality that
+was not originally intended for integration into the core LIEF project.
 
-You can find the differences between both versions in this table:
+You can find the differences between the two versions in this table:
 
 +---------------------------------------------+-------------------+-------------------+----------------------------------------------------+
 | Module                                      | Regular Version   | Extended Version  | Note                                               |
@@ -60,15 +60,14 @@ You can find the differences between both versions in this table:
 To access the extended version, you must **oauth-login** with **GitHub** here: |lief-extended-url|.
 
 Once logged in, you can download the package of your choice
-(e.g. LIEF Extended - Python 3.10 for macOS arm64)
+(e.g., LIEF Extended - Python 3.10 for macOS arm64).
 
 Versioning
 **********
 
-LIEF extended uses a slightly different versioning scheme compared to the
-regular LIEF packages.
+LIEF Extended uses a slightly different versioning scheme than regular LIEF packages.
 
-First off, **every extended package** is based on the current ``main`` branch
+First, **every extended package** is based on the current ``main`` branch
 of LIEF. If you need an (extended) build for a specific commit or tag,
 please contact |lief-extended-email|.
 
@@ -83,23 +82,23 @@ with:
   # Print LIEF's main commit
   $ python -c "import lief;print(lief.__LIEF_MAIN_COMMIT__)"
 
-With the C++/Rust SDK you can call: |lief-extended-version-info| to
+With the C++/Rust SDK, you can call |lief-extended-version-info| to
 get details about the current version.
 
-The additional features exposed by LIEF-extended are not always represented in
+Additional features exposed by LIEF Extended are not always represented in
 a public commit while still being git-versioned. An incremental build number is
-attached to represent instal changes not associated with a (public) commit.
+used to represent internal changes not associated with a public commit.
 
-For instance, the version ``0.16.0.2380`` contains 10 commits more compared to the
+For example, version ``0.16.0.2380`` includes 10 more commits than
 version ``0.16.0.2370``.
 
 Python Wheels
 *************
 
 Python packages are delivered as a wheel for the required platform/version
-(e.g. ``lief_extended-0.16.0.post2370-cp312-cp312-win_amd64.whl``).
+(e.g., ``lief_extended-0.16.0.post2370-cp312-cp312-win_amd64.whl``).
 
-One can install this wheel with pip using either:
+You can install this wheel using pip in one of the following ways:
 
 .. code-block:: console
 
@@ -111,7 +110,7 @@ Or
 
   $ venv\Scripts\python.exe -m pip install --find-links C:\Users\tmp\ lief_extended
 
-You can check that LIEF extended is correctly installed with:
+You can verify that LIEF Extended is correctly installed with:
 
 .. code-block:: console
 
@@ -121,16 +120,16 @@ You can check that LIEF extended is correctly installed with:
 C++ SDK
 *******
 
-The C++ SDK is delivered as a ``.zip/.tar.gz`` archive which contains:
+The C++ SDK is delivered as a ``.zip/.tar.gz`` archive containing:
 
 - A compiled shared library (``libLIEF.so``, ``LIEF.dll``, ``libLIEF.dylib``)
 - Header files
 - CMake helper files
 
 Compared to the regular version, this SDK **does not** ship a static version of
-LIEF, and the shared library is compiled with all the extended functionalities.
+LIEF, and the shared library is compiled with all extended features.
 
-Here is, for instance, the layout for the macOS arm64 SDK:
+Here is the layout for the macOS arm64 SDK, for example:
 
 .. code-block:: text
 
@@ -142,12 +141,12 @@ Here is, for instance, the layout for the macOS arm64 SDK:
 Rust SDK
 ********
 
-The Rust SDK is also delivered as a ``.zip/.tar.gz`` archive that contains all the
-files needed to be used with the :ref:`LIEF_RUST_PRECOMPILED <lief-rust-precompiled>`
-environment variable described in the :ref:`Rust <lief_rust_bindings>` section.
+The Rust SDK is also delivered as a ``.zip/.tar.gz`` archive containing all the
+files needed for use with the ``LIEF_RUST_PRECOMPILED`` environment variable,
+as described in the :ref:`Rust <lief_rust_bindings>` section.
 
-Once the archive is extracted, you just have to set the environment variable
-``LIEF_RUST_PRECOMPILED`` to the extracted path:
+Once the archive is extracted, you just have to set the ``LIEF_RUST_PRECOMPILED``
+environment variable to the extracted path:
 
 .. code-block:: console
 
@@ -160,7 +159,7 @@ Once the archive is extracted, you just have to set the environment variable
 
   $ export LIEF_RUST_PRECOMPILED=$(pwd)/LIEF-extended-rust-0.16.0.2378-Linux-x86_64
 
-Then, you can enjoy all extended features in Rust:
+You can then use all the extended features in Rust:
 
 .. code-block:: console
 
@@ -172,20 +171,20 @@ LIEF Extended & LLVM
 ********************
 
 
-LIEF extended relies on LLVM for some of its functionalities like the
-:ref:`disassembler <extended-disassembler>` and the
+LIEF Extended relies on LLVM for certain features, such as the
+:ref:`disassembler <extended-disassembler>` and
 :ref:`DWARF <extended-dwarf>`/:ref:`PDB <extended-pdb>` support.
 
-The LLVM version used by LIEF is fully based on the upstream version and integrated
-into LIEF extended such that users don't have to deal with the compilation of LLVM
-or its integration.
+The LLVM version used by LIEF is based on the upstream version and integrated
+into LIEF Extended so that users do not have to handle LLVM compilation or
+integration.
 
 .. note::
 
   LIEF is currently using LLVM |lief-llvm-version|.
 
-Whenever it's possible and suitable, bug fixes and enhancements have been
-PR-submitted to the LLVM project:
+Whenever possible and appropriate, bug fixes and enhancements have been
+submitted as PRs to the LLVM project:
 
 - :llvm-pr:`119057`
 - :llvm-pr:`119056`

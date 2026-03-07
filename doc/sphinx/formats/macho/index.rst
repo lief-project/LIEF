@@ -16,14 +16,14 @@
 Introduction
 ************
 
-Mach-O binaries can be parsed with LIEF using the |lief-macho-parse| function.
+Mach-O binaries can be parsed using the |lief-macho-parse| function.
 
 .. note::
 
-  The Mach-O format defines the notion of FAT binaries which can embed different
+  The Mach-O format defines FAT binaries, which can embed different
   architectures into a single file. |lief-macho-parse| always returns a
-  |lief-macho-fatbinary| with the assumption that a non-fat Mach-O can be
-  represented as a |lief-macho-fatbinary| with **one** architecture.
+  |lief-macho-fatbinary|, assuming that a non-FAT Mach-O can be represented as
+  a |lief-macho-fatbinary| containing a single architecture.
 
 .. tabs::
 
@@ -98,13 +98,13 @@ different |lief-macho-binary| or pick/take a specific one:
           std::cout << macho.commands().size() << '\n';
         }
 
-        // Pick one at the specified index (without take the ownership)
+        // Pick one at the specified index (without taking ownership)
         const LIEF::MachO::Binary* macho = fat->at(0);
 
-        // Pick one at the specified index and take the ownership
+        // Pick one at the specified index and taking ownership
         const LIEF::MachO::Binary* macho = fat->take(0);
 
-        // Pick one with the given arch and take the ownership
+        // Pick one with the given arch and taking ownership
         const LIEF::MachO::Binary* macho = fat->take(LIEF::MachO::Header::CPU_TYPE::ARM64);
 
   .. tab:: :fa:`brands fa-rust` Rust
@@ -118,9 +118,9 @@ different |lief-macho-binary| or pick/take a specific one:
             println!("{}", macho.entrypoint());
         }
 
-Upon a |lief-macho-binary| or |lief-macho-fatbinary| modification, one can use
-either |lief-macho-binary-write| or |lief-macho-fatbinary-write| to write back
-the (FAT) MachO binary object into a raw MachO file.
+After modifying a |lief-macho-binary| or |lief-macho-fatbinary| object, you can
+use either |lief-macho-binary-write| or |lief-macho-fatbinary-write| to write
+it back to a raw Mach-O file.
 
 .. tabs::
 
@@ -142,12 +142,12 @@ the (FAT) MachO binary object into a raw MachO file.
         macho->at(LIEF::MachO::Header::CPU_TYPE::ARM64)->write("fit.macho");
         macho->write("fat.macho");
 
-You can also use |lief-macho-binary-write_to_bytes| to get the new MachO binary
+You can also use |lief-macho-binary-write_to_bytes| to get the new Mach-O binary
 as a buffer of bytes:
 
 .. note::
 
-   This API can also take an extra |lief-macho-builder-config| parameter
+   This API can also take an extra |lief-macho-builder-config| parameter.
 
 .. tabs::
 
@@ -172,19 +172,19 @@ as a buffer of bytes:
         size_t size = buffer.size();
 
 
-Advance Parsing/Writing
-***********************
+Advanced Parsing/Writing
+************************
 
 |lief-macho-parse| can take an extra |lief-macho-parser-config| parameter to specify
-some parts of the MachO format to skip during parsing.
+parts of the Mach-O format to skip during parsing.
 
 .. warning::
 
-   Generally speaking, |lief-macho-binary-write| and |lief-macho-fatbinary-write|
-   require a **complete** initial parsing of the MachO file.
+   Generally, |lief-macho-binary-write| and |lief-macho-fatbinary-write|
+   require a **complete** initial parsing of the Mach-O file.
 
 Similarly, |lief-macho-binary-write| can also take an extra |lief-macho-builder-config|
-to specify which parts of the MachO should be re-built or not.
+to specify which parts of the Mach-O should be rebuilt.
 
 .. tabs::
 
@@ -225,11 +225,11 @@ to specify which parts of the MachO should be re-built or not.
 RPath and Library Path Modification
 ***********************************
 
-Sometimes, we need to modify the Mach-O rpath commands or the (absolute) path of
+Sometimes, we need to modify the Mach-O RPath commands or the (absolute) path of
 a linked library in an executable. When recompiling or linking the executable
 is not possible, LIEF can be used for these modifications.
 
-For instance, let's consider a binary with the following dependencies:
+For example, let's consider a binary with the following dependencies:
 
 .. code-block:: bash
 
@@ -265,13 +265,13 @@ One can change the directory of ``libmylib.dylib`` with the following code:
 
 .. note::
 
-   It is worth mentioning that LIEF does not have restrictions on the length of
-   the modified library path. LIEF manages all the internal modifications to
-   support both longer and shorter library paths.
+   It is worth mentioning that LIEF doesn't impose restrictions on the length of modified library
+   paths. LIEF manages all internal modifications to support both longer and
+   shorter library paths.
 
 
-This kind of modification can be used in pair with the ``@rpath`` feature of
-Mach-O binaries:
+This type of modification can be used in conjunction with the ``@rpath``
+feature of Mach-O binaries:
 
 1. We can add an extra ``LC_RPATH`` (|lief-macho-rpath|) command to ``hello.bin``:
 
@@ -293,7 +293,7 @@ Mach-O binaries:
         auto rpath = LIEF::MachO::RPathCommand::create("/opt/hombrew/my_package");
         macho->add(*rpath);
 
-2. Then, we can change the library path of ``libmylib.dylib`` to include the rpath prefix:
+2. Then, we can change the library path of ``libmylib.dylib`` to include the RPath prefix:
 
 .. tabs::
 
@@ -318,12 +318,12 @@ Mach-O binaries:
 Objective-C Support
 ********************
 
-If a Mach-O binary is compiled from Objetive-C sources, it could contain
-metadata which are represented by the |lief-objc-metadata| object.
+If a Mach-O binary is compiled from Objective-C sources, it may contain
+metadata represented by the |lief-objc-metadata| object.
 
-This metadata can help understand the underlying structures of the binary and
-:ref:`LIEF extended <extended-intro>` provides the support for accessing this
-information through: |lief-macho-binary-objc-metadata|.
+This metadata can help understand the underlying structures of the binary, and
+:ref:`LIEF Extended <extended-intro>` provides support for accessing this
+information through |lief-macho-binary-objc-metadata|.
 
 For more details, you can check the :ref:`Obj-C section <extended-objc>`.
 

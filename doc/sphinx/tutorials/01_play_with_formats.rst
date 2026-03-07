@@ -1,22 +1,24 @@
 01 - Parse and manipulate formats
 ---------------------------------
 
-The objective of this tutorial is to give an overview of the LIEF's API to parse and manipulate formats
-
-By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
+The objective of this tutorial is to provide an overview of LIEF's API for
+parsing and manipulating formats.
 
 -----
 
 ELF
 ~~~
 
-We start by the ``ELF`` format. To create an :class:`.ELF.Binary` from a file we just have to give its path to the :func:`lief.parse` or :func:`lief.ELF.parse` functions
+We'll start with the ``ELF`` format. To create an :class:`.ELF.Binary` from a
+file, simply pass its path to the |lief-abstract-parse| or |lief-elf-parse|
+functions.
 
 .. note::
 
-  With the Python API, these functions have the same behaviour but in C++, :cpp:func:`LIEF::Parser::parse` will
-  return a pointer to a :cpp:class:`LIEF::Binary` object whereas :cpp:func:`LIEF::ELF::Parser::parse` will return
-  a :cpp:class:`LIEF::ELF::Binary` object
+  With the Python API, these functions exhibit the same behavior, but in C++,
+  |lief-abstract-parse| will return a pointer to a
+  |lief-abstract-binary| object, whereas |lief-elf-parse|
+  will return a |lief-elf-binary| object.
 
 .. code-block:: python
 
@@ -29,26 +31,26 @@ Once the ELF file has been parsed, we can access its :class:`~lief.ELF.Header`:
 
   header = binary.header
 
-Change the entry point and the target architecture (:class:`~lief.ELF.ARCH`):
+To change the entry point and the target architecture (:class:`~lief.ELF.ARCH`):
 
 .. code-block:: python
 
   header.entrypoint = 0x123
   header.machine_type = lief.ELF.ARCH.AARCH64
 
-and then commit these changes into a new ELF binary:
+Then, write these changes to a new ELF binary:
 
 .. code-block:: python
 
   binary.write("ls.modified")
 
-We can also iterate over the :class:`~lief.ELF.Section`\s as follows:
+We can also iterate over the :class:`~lief.ELF.Section` entries as follows:
 
 .. code-block:: python
 
   for section in binary.sections:
-    print(section.name) # section's name
-    print(section.size) # section's size
+    print(section.name) # section name
+    print(section.size) # section size
     print(len(section.content)) # Should match the previous print
 
 
@@ -63,7 +65,8 @@ To modify the content of the ``.text`` section:
 PE
 ~~~
 
-As for the ``ELF`` part, we can use the :func:`lief.parse` or :func:`lief.PE.parse` functions to create a :class:`.PE.Binary`
+As with the ``ELF`` section, you can use the |lief-abstract-parse| or
+|lief-pe-parse| functions to create a :class:`.PE.Binary`
 
 
 .. code-block:: python
@@ -72,7 +75,8 @@ As for the ``ELF`` part, we can use the :func:`lief.parse` or :func:`lief.PE.par
   binary = lief.parse("C:\\Windows\\explorer.exe")
 
 
-To access the different PE headers (:class:`~lief.PE.DosHeader`, :class:`~lief.PE.Header` and :class:`~lief.PE.OptionalHeader`):
+To access the various PE headers (:class:`~lief.PE.DosHeader`,
+:class:`~lief.PE.Header`, and :class:`~lief.PE.OptionalHeader`):
 
 .. code-block:: python
 
@@ -80,7 +84,7 @@ To access the different PE headers (:class:`~lief.PE.DosHeader`, :class:`~lief.P
   print(binary.header)
   print(binary.optional_header)
 
-One can also access the imported functions in two ways:
+You can also access imported functions in two ways:
 
 1. Using the *abstract* layer
 2. Using the PE definition
@@ -95,9 +99,9 @@ One can also access the imported functions in two ways:
   for func in binary.imports:
     print(func)
 
-To have a better granularity on the location of the imported functions in
-libraries or to access to other fields of the PE imports, we can process the
-imports as follows:
+For finer granularity regarding the location of imported functions in libraries,
+or to access other fields of the PE imports, we can process the imports as
+follows:
 
 .. code-block:: python
 
@@ -107,3 +111,5 @@ imports as follows:
       if not func.is_ordinal:
         print(func.name)
       print(func.iat_address)
+
+.. include:: ../_cross_api.rst

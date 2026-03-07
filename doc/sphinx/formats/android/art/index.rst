@@ -12,5 +12,6 @@
 
 ----
 
-LIEF provides a **basic** support for Android's ART file. For the details about
-this format, please check the tutorial :ref:`Android Formats <tuto-android-formats>`.
+LIEF provides **basic** support for Android's ART files. For details about
+this format, please refer to the :ref:`Android Formats <tuto-android-formats>`
+tutorial.

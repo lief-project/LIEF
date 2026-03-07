@@ -1,22 +1,20 @@
 07 - PE Resources
 -----------------
 
-This tutorial gives an overview of the resource structure in a PE file and how they can be manipulated using LIEF
-
-Scripts and materials are available here: `materials <https://github.com/lief-project/tutorials/tree/master/07_PE_resource>`_
-
-
-By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
+This tutorial provides an overview of the resource structure in a PE file and
+explains how to manipulate it using LIEF.
 
 ------
 
-Unlike **ELF** and **Mach-O** formats, **PE** enables to embed *resources* (icons, images, raw, dialog ...) within an
-executable or a DLL.
+Unlike the **ELF** and **Mach-O** formats, **PE** enables embedding *resources*
+(icons, images, dialogs, etc.) within an executable or a DLL.
 
-These resources are usually located in the ``.rsrc`` section but this is not an absolute rule.
+These resources are usually located in the ``.rsrc`` section, but this is not
+an absolute rule.
 
-To retrieve the section in which resources are located, one can use the :attr:`~lief.PE.DataDirectory.section`
-attribute of the associated :class:`~lief.PE.DataDirectory`
+To retrieve the section where resources are located, you can use the
+:attr:`~lief.PE.DataDirectory.section` attribute of the associated
+:class:`~lief.PE.DataDirectory`:
 
 .. code-block:: python
 
@@ -30,7 +28,7 @@ attribute of the associated :class:`~lief.PE.DataDirectory`
 
   .rsrc     22e0d8    23f000    22e200    236c00    0         4.3596    CNT_INITIALIZED_DATA - MEM_READ
 
-Resource structure
+Resource Structure
 ******************
 
 The underlying structure used to represent resources is a tree:
@@ -38,24 +36,29 @@ The underlying structure used to represent resources is a tree:
 .. figure:: ../_static/tutorial/07/07_resource_tree.png
   :align: center
 
-In the resource tree we basically have two kinds of node:
+In the resource tree, there are basically two kinds of nodes:
 
-#. :class:`~lief.PE.ResourceDirectory`: Contains some information about the subtree.
-#. :class:`~lief.PE.ResourceData`: Used to store raw data. These nodes are the **leaf** of the tree
+#. :class:`~lief.PE.ResourceDirectory`: Contains information about the subtree.
+#. :class:`~lief.PE.ResourceData`: Used to store raw data. These nodes are the **leaves** of the tree.
 
-The first 3 levels of the tree have a special meaning:
+The first three levels of the tree have a special meaning:
 
-* Level 1: The :attr:`~lief.PE.ResourceDirectory.id` represents the :class:`~lief.PE.ResourcesManager.TYPE`
-* Level 2: The :attr:`~lief.PE.ResourceDirectory.id` represents an ID to access to the resource
+* Level 1: The :attr:`~lief.PE.ResourceDirectory.id` represents the :class:`~lief.PE.ResourcesManager.TYPE`.
+* Level 2: The :attr:`~lief.PE.ResourceDirectory.id` represents an ID for accessing the resource.
 * Level 3: The :attr:`~lief.PE.ResourceDirectory.id` represents the :class:`~lief.PE.RESOURCE_LANGS` / SUBLANG of the resource.
 
 
-We can check that a given binary embed resources with the :attr:`~lief.PE.Binary.has_resources` property, then we can access to this structure
-through the :attr:`~lief.PE.Binary.resources` property which returns a :class:`~lief.PE.ResourceDirectory` representing the **root** of the tree.
+You can check if a given binary embeds resources using the
+:attr:`~lief.PE.Binary.has_resources` property. You can then access this
+structure through the :attr:`~lief.PE.Binary.resources` property, which returns
+a :class:`~lief.PE.ResourceDirectory` representing the **root** of the tree.
 
-Given a :class:`~lief.PE.ResourceDirectory`, the :attr:`~lief.PE.ResourceDirectory.childs` property returns an **iterator** (quiet similar to a ``list``) over the sub tree associated with the node.
+Given a :class:`~lief.PE.ResourceDirectory`, the
+:attr:`~lief.PE.ResourceDirectory.childs` property returns an **iterator**
+(similar to a ``list``) over the subtree associated with the node.
 
-The following snippet retrieves the :attr:`~lief.PE.ResourcesManager.TYPE.MANIFEST` element and print it.
+The following snippet retrieves the :attr:`~lief.PE.ResourcesManager.TYPE.MANIFEST`
+element and prints it:
 
 .. code-block:: python
 
@@ -67,7 +70,7 @@ The following snippet retrieves the :attr:`~lief.PE.ResourcesManager.TYPE.MANIFE
 
   root = filezilla.resources
 
-  # First level => Type ((ResourceDirectory node)
+  # First level => Type (ResourceDirectory node)
   manifest_node = next(i for i in root.childs if i.id == lief.PE.ResourcesManager.TYPE.MANIFEST)
   print(manifest_node)
 
@@ -114,25 +117,31 @@ The following snippet retrieves the :attr:`~lief.PE.ResourcesManager.TYPE.MANIFE
   ...
 
 
-As manipulating a tree is not very convenient, LIEF exposes a :class:`~lief.PE.ResourcesManager` which provides an enhanced API to manipulate binary resources
+Since manipulating a tree directly can be inconvenient, LIEF exposes a
+:class:`~lief.PE.ResourcesManager`, which provides an enhanced API for
+manipulating binary resources.
 
 
 Resource Manager
 ****************
 
-As mentioned previously, the :class:`~lief.PE.ResourcesManager` is a kind of wrapper over the resource tree to:
+As mentioned previously, the :class:`~lief.PE.ResourcesManager` acts as a
+wrapper around the resource tree to:
 
-* Parse resources that have a predefined structures like
-  :attr:`~lief.PE.ResourcesManager.TYPE.MANIFEST`, :attr:`~lief.PE.ResourcesManager.TYPE.ICON`, :attr:`~lief.PE.ResourcesManager.TYPE.VERSION` ...
-* Access and modify these structures
+* Parse resources with predefined structures, such as
+  :attr:`~lief.PE.ResourcesManager.TYPE.MANIFEST`, :attr:`~lief.PE.ResourcesManager.TYPE.ICON`, :attr:`~lief.PE.ResourcesManager.TYPE.VERSION`, etc.
+* Access and modify these structures.
 
-This can be summarize with the following diagram:
+This can be summarized with the following diagram:
 
 .. figure:: ../_static/tutorial/07/07_pe_resource_manager.png
   :align: center
 
 
-The :class:`~lief.PE.ResourcesManager` can be accessed with the :attr:`~lief.PE.Binary.resources_manager` property. To have an overview of the binary's resources, we can simply *print* the :class:`~lief.PE.ResourcesManager` instance:
+The :class:`~lief.PE.ResourcesManager` can be accessed via the
+:attr:`~lief.PE.Binary.resources_manager` property. To get an overview of the
+binary's resources, you can simply *print* the :class:`~lief.PE.ResourcesManager`
+instance:
 
 
 .. code-block:: python
@@ -144,7 +153,8 @@ The :class:`~lief.PE.ResourcesManager` can be accessed with the :attr:`~lief.PE.
 
 .. literalinclude:: ../_static/tutorial/07/resource_manager_output.txt
 
-Similarly to the previous example, accessing to the :attr:`~lief.PE.ResourcesManager.TYPE.MANIFEST` element is as simple as:
+Similar to the previous example, accessing the
+:attr:`~lief.PE.ResourcesManager.TYPE.MANIFEST` element is as simple as:
 
 
 .. code-block:: python
@@ -161,14 +171,19 @@ Similarly to the previous example, accessing to the :attr:`~lief.PE.ResourcesMan
   print(manifest)
 
 
-Play with Manifest
-******************
+Playing with the Manifest
+*************************
 
-Now we will see how we can use practically the :class:`~lief.PE.ResourcesManager` to grant *Administrator* privilege to an executable thanks to the :attr:`~lief.PE.RESOURCE_TYPES.MANIFEST` element.
+Now we will see how to use the :class:`~lief.PE.ResourcesManager` to grant
+*Administrator* privileges to an executable using the
+:attr:`~lief.PE.RESOURCE_TYPES.MANIFEST` element.
 
-The application manifest is implement as an XML document for which the documentation is available here: `MSDN <https://docs.microsoft.com/en-us/windows/win32/sbscs/manifest-files-reference>`_
+The application manifest is implemented as an XML document; its documentation
+is available here: `MSDN <https://docs.microsoft.com/en-us/windows/win32/sbscs/manifest-files-reference>`_
 
-Among these tags, the ``requestedExecutionLevel`` tag *"describes the minimum security permissions required for the application to run on the client computer."* [#f1]_
+Among these tags, the ``requestedExecutionLevel`` tag *"describes the minimum
+security permissions required for the application to run on the client
+computer."* [#f1]_
 
 .. code-block:: xml
 
@@ -178,18 +193,19 @@ Among these tags, the ``requestedExecutionLevel`` tag *"describes the minimum se
 
 This tag has the following options:
 
-* **Level**: Indicates the security level the application is requesting
+* **Level**: Indicates the security level the application is requesting.
 
-  * ``asInvoker``: Same permission as the process that started it
-  * ``highestAvailable``: The application will run with the highest permission level that it can
-  * ``requireAdministrator``: The application will run with administrator permissions
+  * ``asInvoker``: Same permissions as the process that started it.
+  * ``highestAvailable``: The application will run with the highest permission level possible.
+  * ``requireAdministrator``: The application will run with administrator permissions.
 
-* **uiAccess** (Optional): Indicates whether the application requires access to protected user interface elements
+* **uiAccess** (Optional): Indicates whether the application requires access to protected user interface elements.
 
   * ``true``
   * ``false``
 
-Thanks to the :class:`~lief.PE.ResourcesManager` replacing the ``asInvoker`` value to ``requireAdministrator`` is as simple as:
+Using :class:`~lief.PE.ResourcesManager`, replacing the ``asInvoker`` value
+with ``requireAdministrator`` is straightforward:
 
 .. code-block:: python
 
@@ -205,11 +221,12 @@ Thanks to the :class:`~lief.PE.ResourcesManager` replacing the ``asInvoker`` val
   manifest = manifest.replace("asInvoker", "requireAdministrator")
   resources_manager.manifest = manifest
 
-The PE :class:`~lief.PE.Builder` can be configured to rebuild or not the resource tree. To take account of modifications we need to rebuild it:
+The PE :class:`~lief.PE.Builder` can be configured to rebuild the resource tree.
+To apply the modifications, we must rebuild it:
 
 .. warning::
 
-  By default the :class:`~lief.PE.Builder` doesn't rebuild the resource tree.
+  By default, the :class:`~lief.PE.Builder` does not rebuild the resource tree.
 
 .. code-block:: python
 
@@ -225,12 +242,14 @@ The PE :class:`~lief.PE.Builder` can be configured to rebuild or not the resourc
 
 
 
-Play with Icons
-***************
+Playing with Icons
+******************
 
-The :meth:`~lief.PE.ResourcesManager.change_icon` method switch icons from two applications.
+The :meth:`~lief.PE.ResourcesManager.change_icon` method switches icons between
+two applications.
 
-In the same way as the previous part, we get the :class:`~lief.PE.ResourcesManager` as follow:
+As in the previous section, obtain the :class:`~lief.PE.ResourcesManager` as
+follows:
 
 .. code-block:: python
 
@@ -240,7 +259,7 @@ In the same way as the previous part, we get the :class:`~lief.PE.ResourcesManag
   mfc_rsrc_manager = mfc.resources_manager
   cmd_rsrc_manager = cmd.resources_manager
 
-Then we can switch the first icons of the applications:
+Then, switch the first icons of the applications:
 
 .. code-block:: python
 
@@ -266,4 +285,3 @@ After the switch:
 .. rubric:: References
 
 .. [#f1] https://docs.microsoft.com/en-us/previous-versions/visualstudio/visual-studio-2015/deployment/trustinfo-element-clickonce-application
-

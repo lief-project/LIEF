@@ -6,7 +6,7 @@
   :scale: 50%
 
 
-LIEF allows to modify (or create) PE resources at different levels:
+LIEF allows you to modify (or create) PE resources at different levels:
 
 - Directly on the binary tree (|lief-pe-resource-node|)
 - Using the |lief-pe-resource-manager|.
@@ -14,7 +14,7 @@ LIEF allows to modify (or create) PE resources at different levels:
 Binary Tree Modifications
 *************************
 
-The resource's root node can be accessed using the |lief-pe-binary-resources|
+The resource root node can be accessed using the |lief-pe-binary-resources|
 function:
 
 .. tabs::
@@ -53,7 +53,7 @@ function:
 
         println!("{}", &rsrc as &dyn NodeBase);
 
-From this |lief-pe-resource-node| instance, one can use the
+From this |lief-pe-resource-node| instance, you can use the
 |lief-pe-resource-node-add-child| or |lief-pe-resource-node-remove-child|
 functions to add or delete nodes:
 
@@ -99,14 +99,14 @@ functions to add or delete nodes:
 
         pe.write("new.exe");
 
-This low-level API can be used to modify the tree or changing the data of a
+This low-level API can be used to modify the tree or change the data of a
 specific node.
 
 .. admonition:: Pretty Printing
   :class: tip
 
-  One can also *print* a node to get a pretty representation of the resources
-  tree:
+  You can also *print* a node to get a formatted representation of the
+  resource tree:
 
   .. code-block:: python
 
@@ -132,9 +132,9 @@ specific node.
 Resources Manager
 *****************
 
-The |lief-pe-resource-manager| is used to expose a higher-level API on
-the resource tree. It can also be used to set or change resource elements such
-as the manifest:
+The |lief-pe-resource-manager| provides a higher-level API for the resource
+tree. It can also be used to set or change resource elements such as the
+manifest:
 
 .. tabs::
 
@@ -217,7 +217,7 @@ Resource Tree Transfer between Binaries
 ***************************************
 
 LIEF can transfer the resource tree from one binary to another.
-This operation can be achieved by using the |lief-pe-binary-set_resources|
+This operation can be performed using the |lief-pe-binary-set_resources|
 function:
 
 .. tabs::

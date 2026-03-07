@@ -6,15 +6,15 @@
 Export as DWARF
 ~~~~~~~~~~~~~~~
 
-This functionality exports Ghidra's Program information into a DWARF file.
-This exported information include function's names, types, stack variables etc.
+This functionality exports Ghidra's program information into a DWARF file.
+This exported information includes function names, types, stack variables, etc.
 
 You can use this extension in different ways as documented below:
 
 Project Manager
 ###############
 
-This extension provides a DWARF exporter that can be used by right clicking
+This extension provides a DWARF exporter that can be used by right-clicking
 on the binary to export, then: ``Export > Format > DWARF``:
 
 .. raw:: html
@@ -26,7 +26,7 @@ on the binary to export, then: ``Export > Format > DWARF``:
 CodeBrowser
 ###########
 
-From the ``CodeBrowser`` tool, you can left click on the LIEF menu and select
+From the ``CodeBrowser`` tool, you can left-click on the LIEF menu and select
 ``Export as DWARF``:
 
 .. raw:: html
@@ -39,7 +39,7 @@ Scripts
 #######
 
 You can also use the Java API from a (headless) script to export a given
-Ghidra's Program:
+Ghidra program:
 
 .. code-block:: java
 
@@ -59,9 +59,9 @@ Ghidra's Program:
 Support & Limitations
 #####################
 
-This extension tries to convert as much as possible Ghidra's internal binary
-representation into DWARF structures, but this support can't be exhaustive
-so here is an overview of what is exported and what is not.
+This extension tries to convert as much as possible of Ghidra's internal binary
+representation into DWARF structures, but this support is not exhaustive; here is
+an overview of what is and is not exported.
 
 **ghidra.program.model.listing.Program**
 
@@ -73,7 +73,7 @@ so here is an overview of what is exported and what is not.
 **ghidra.program.model.listing.Function**
 
 - :fa-check:`check` Name
-- :fa-check:`check` Addresses range
+- :fa-check:`check` Address range
 - :fa-check:`check` Parameters
 - :fa-check:`check` Type of parameters
 - :fa-check:`check` Return type

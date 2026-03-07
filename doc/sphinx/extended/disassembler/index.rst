@@ -16,12 +16,12 @@
 Introduction
 ************
 
-LIEF extended exposes a user-friendly API to disassemble code in different
-places of executable formats for the following architectures:
-x86/x86-64, ARM, AArch64, RISC-V, Mips, PowerPC, eBPF.
+LIEF Extended provides a user-friendly API for disassembling code within various
+parts of executable formats for the following architectures:
+x86/x86-64, ARM, AArch64, RISC-V, MIPS, PowerPC, and eBPF.
 
-You can start disassembling code within a binary by using the |lief-disassemble|
-functions that is exposed in the abstraction layer:
+You can begin disassembling code within a binary using the |lief-disassemble|
+function, which is exposed in the abstraction layer:
 
 .. tabs::
 
@@ -59,15 +59,15 @@ functions that is exposed in the abstraction layer:
             println!("{}", inst.to_string());
         }
 
-From a design perspective, the disassembler returns a *lazy* iterator which
-outputs a |lief-asm-instruction| instance when it evaluates the
-instruction at the address associated with the iterator's position.
+From a design perspective, the disassembler returns a *lazy* iterator,
+yielding a |lief-asm-instruction| instance as it evaluates the
+instruction at each address.
 
-Thus, when calling ``elf.disassemble_address(0x400)``, nothing is disassembled
-until the iterator is processed.
+Consequently, when calling ``elf.disassemble_address(0x400)``, no disassembly
+occurs until the iterator is advanced.
 
-An instruction is represented by the object: |lief-asm-instruction| which is
-extended by the following objects for each supported architecture:
+Instructions are represented by the |lief-asm-instruction| object,
+which is extended by architecture-specific objects:
 
 - |lief-asm-x86-instruction|
 - |lief-asm-arm-instruction|
@@ -77,7 +77,7 @@ extended by the following objects for each supported architecture:
 - |lief-asm-riscv-instruction|
 - |lief-asm-ebpf-instruction|
 
-In Python, one can check the effective type of
+In Python, you can check the effective type of
 a :class:`lief.assembly.Instruction` with ``isinstance(...)``:
 
 .. code-block:: python
@@ -87,7 +87,7 @@ a :class:`lief.assembly.Instruction` with ``isinstance(...)``:
    if isinstance(inst, lief.assembly.riscv.Instruction):
       opcode: lief.assemble.riscv.OPCODE = inst.opcode
 
-In C++, downcasting can be done using the function:
+In C++, downcasting is performed using the function:
 :cpp:func:`LIEF::assembly::Instruction::as`:
 
 .. code-block:: cpp
@@ -114,8 +114,8 @@ Thus, you can write:
 
    You can also check the assembler documentation here: :ref:`Assembler <extended-assembler>`
 
-For the architectures ``x86/x86-64`` and ``AArch64`` we can also iterate over
-the instruction's operands:
+For the ``x86/x86-64`` and ``AArch64`` architectures, you can also iterate
+over an instruction's operands:
 
 .. tabs::
 
@@ -176,14 +176,16 @@ Use Cases
 DWARF Function
 ~~~~~~~~~~~~~~
 
-In addition to the regular |lief-disassemble| API, one can use |lief-dwarf-function-instructions|
-to disassemble a :ref:`DWARF <extended-dwarf>` function.
+In addition to the regular |lief-disassemble| API, you can use
+|lief-dwarf-function-instructions| to disassemble a :ref:`DWARF <extended-dwarf>`
+function.
 
 .. warning::
 
-  |lief-dwarf-function-instructions| is only working if the DWARF debug info
+  |lief-dwarf-function-instructions| only works if the DWARF debug info
   is **embedded** in the binary. This is the default behavior for
-  :ref:`ELF <format-elf>` binaries but this is not the case for Mach-O ``.dSYM`` files.
+  :ref:`ELF <format-elf>` binaries, but this is not the case for Mach-O
+  ``.dSYM`` files.
 
 .. tabs::
 
@@ -231,8 +233,8 @@ to disassemble a :ref:`DWARF <extended-dwarf>` function.
 Dyld Shared Cache
 ~~~~~~~~~~~~~~~~~
 
-A disassembling API is also provided for the |lief-dsc-dyldsharedcache| object:
-|lief-dsc-dyldsharedcache-disassemble|:
+A disassembly API is also provided for the |lief-dsc-dyldsharedcache| object
+via |lief-dsc-dyldsharedcache-disassemble|:
 
 .. tabs::
 
@@ -280,27 +282,28 @@ For more details, please check the :ref:`COFF Disassembler <format-coff-disassem
 Technical Details
 *****************
 
-The disassembler is based on the LLVM's MC layer which is known to be efficient and
-accurate for disassembling code. This LLVM's MC layer has already been used by
-other projects like `capstone <https://www.capstone-engine.org/>`_ or more
-recently `Nyxstone <https://github.com/emproof-com/nyxstone>`_.
+The disassembler is based on LLVM's MC layer, which is known to be efficient and
+accurate for disassembling code. This LLVM MC layer is already used by
+other projects like `capstone <https://www.capstone-engine.org/>`_ or, more
+recently, `Nyxstone <https://github.com/emproof-com/nyxstone>`_.
 
-Compared to Capstone, LIEF uses a mainstream LLVM version with limited modifications
-on the MC layer. On the other hand, it does not expose a C API, supports fewer
-architectures than Capstone, and does not expose a standalone API.
+Compared to Capstone, LIEF uses a mainstream LLVM version with limited
+modifications to the MC layer. On the other hand, it does not expose a C API,
+supports fewer architectures than Capstone, and does not expose a standalone API.
 
 .. note::
 
   The current LLVM version is |lief-llvm-version|.
 
-Compared to Nyxstone's disassembler, LLVM is *hidden* from the public API
-which means that LLVM does not need to be installed on the system. On the other
-hand, it does not expose a standalone API.
+Unlike Nyxstone's disassembler, LIEF hides LLVM from the public API,
+meaning that LLVM does not need to be installed on the system.
+On the other hand, it does not expose a standalone API.
 
-The major difference between LIEF's disassembler and the other projects is that
-it **does not expose a standalone API** to disassemble
-arbitrary code. The disassembler is bound to the object from which the API is
-exposed (|lief-abstract-binary|, |lief-dwarf-function|, |lief-dsc-dyldsharedcache-disassemble|, ...).
+The major difference between LIEF's disassembler and other projects is that
+it **does not expose a standalone API** for disassembling arbitrary code.
+The disassembler is bound to the object from which the API is
+exposed (|lief-abstract-binary|, |lief-dwarf-function|,
+|lief-dsc-dyldsharedcache-disassemble|, etc.).
 
 :fa:`brands fa-python` :doc:`Python API <python/index>`
 

@@ -1,50 +1,58 @@
-09 - How to use frida on a non-rooted device
+09 - How to use Frida on a non-rooted device
 --------------------------------------------
 
-In this tutorial we will see how to use Frida gadget on a non-rooted device.
-
-Scripts and materials are available here: `materials <https://github.com/lief-project/tutorials/tree/master/09_Frida_LIEF>`_
-
-
-By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
+In this tutorial, we will see how to use the Frida gadget on a non-rooted device.
 
 ------
 
-From the last few years, Frida became the tool of the trade to perform hooking. It supports various platforms and
-enables to write hooks quickly and dynamically.
+In recent years, Frida has become the standard tool for performing hooking. It
+supports various platforms and enables writing hooks quickly and dynamically.
 
-Most of the time there are no constraints to use Frida on a rooted device but in some scenario the application to analyze could
-check its environment.
+Most of the time, there are no constraints on using Frida on a rooted device,
+but in some scenarios, the application being analyzed might check its
+environment.
 
-A technique based on modifying the Dalvik bytecode has been well described by `@ikoz <https://twitter.com/ikoz>`_ in the post "`Using Frida on Android without root <https://koz.io/using-frida-on-android-without-root/>`_". In this tutorial we propose a new technique without modifying the Dalvik Bytecode (i.e. ``classes.dex``).
+A technique based on modifying the Dalvik bytecode has been well-described by
+`@ikoz <https://twitter.com/ikoz>`_ in the post "`Using Frida on Android without root <https://koz.io/using-frida-on-android-without-root/>`_". In this tutorial,
+we propose a new technique that does not require modifying the Dalvik
+bytecode (i.e., ``classes.dex``).
 
 Frida Gadget
 ~~~~~~~~~~~~
 
-In the default mode, Frida needs in a first step to inject an *agent* in the targeted application so that it is in the memory space of the process.
+In its default mode, Frida first needs to inject an *agent* into the targeted
+application so that it resides in the process's memory space.
 
-On Android and Linux such injection is done with ``ptrace`` by attaching or spawning a process and then injecting the agent.
-Once the agent is injected, it communicates with its server through a pipe.
+On Android and Linux, this injection is typically performed with ``ptrace`` by
+attaching to or spawning a process and then injecting the agent. Once the agent
+is injected, it communicates with its server through a pipe.
 
-Some kind of injection require privileges. For example, we can't use ``ptrace`` as a *normal* user. To address this constraint, Frida provides another
-mode of operation called "embedded". In this mode the user is responsible to inject the *frida-gadget* library.
+Some types of injection require privileges. For example, a *normal* user
+cannot use ``ptrace``. To address this constraint, Frida provides another mode
+of operation called "embedded". In this mode, the user is responsible for
+injecting the *frida-gadget* library.
 
-Such injection could be done with:
+Such injection can be performed using:
 
-* Environment variables: ``LD_PRELOAD``, ``DYLD_INSERT_LIBRARIES`` ...
-* Using ``dlopen``
-* In an open-source target, use the linker to link with frida-gadget.
+* Environment variables: ``LD_PRELOAD``, ``DYLD_INSERT_LIBRARIES``, etc.
+* Using ``dlopen``.
+* In an open-source target, using the linker to link with the Frida gadget.
 * ...
 
-For more information about Frida gadget, here is the documentation: `frida-gadget <https://frida.re/docs/gadget/>`_
+For more information about the Frida gadget, refer to the documentation:
+`frida-gadget <https://frida.re/docs/gadget/>`_
 
 Frida & LIEF
 ~~~~~~~~~~~~
 
-One less known injection technique but quite old is based on modifying the ELF format. It has been well explained by Mayhem in `Phrack <http://phrack.org/issues/61/8.html>`_ [1]_ and LIEF provides a user-friendly API [2]_ to do it.
+One less-known but established injection technique is based on modifying the
+ELF format. This was well-explained by Mayhem in
+`Phrack <http://phrack.org/issues/61/8.html>`_ [1]_, and LIEF provides a
+user-friendly API [2]_ to perform it.
 
-To summarize, executable formats include libraries that are linked with executable. We can have list of linked libraries with
-``ldd`` or ``readelf`` (Unix) or with `elf_reader.py <https://github.com/lief-project/LIEF/blob/main/examples/python/elf_reader.py>`_ (Linux, Windows, OSX):
+To summarize, executable formats include libraries that are linked with the
+executable. We can obtain a list of linked libraries using ``ldd`` or
+``readelf`` (Unix) or with `elf_reader.py <https://github.com/lief-project/LIEF/blob/main/examples/python/elf_reader.py>`_ (Linux, Windows, OSX):
 
 .. code-block:: console
 
@@ -56,16 +64,19 @@ To summarize, executable formats include libraries that are linked with executab
   |NEEDED | 0x1   | libcap.so.2 |
   |NEEDED | 0x80  | libc.so.6   |
 
-Here ``/bin/ls`` has two dependencies:
+Here, ``/bin/ls`` has two dependencies:
 
 * ``libcap.so.2``
 * ``libc.so.6``
 
-In the loading phase of the executable, the loader iterates over these libraries and map them in the memory space of the process. Once mapped it calls its constructor [3]_.
+During the loading phase of the executable, the loader iterates over these
+libraries and maps them into the process's memory space. Once mapped, it calls
+their constructors [3]_.
 
-The idea is to add ``frida-agent.so`` as a dependency of native libraries embedded in the APK.
+The idea is to add ``frida-agent.so`` as a dependency of native libraries
+embedded in the APK.
 
-Adding such dependencies is as simple as:
+Adding such a dependency is as simple as:
 
 .. code-block:: python
 
@@ -78,21 +89,26 @@ Adding such dependencies is as simple as:
 Telegram
 ~~~~~~~~
 
-To explain the process, we will inject frida gadget in the Telegram application. It's an interesting target because:
+To illustrate the process, we will inject the Frida gadget into the Telegram
+application. It is an interesting target because:
 
-* It contains only one native library so the library should be loaded early.
-* It shows the reliability of LIEF to modify ELF files
-* It's a real app
+* It contains only one native library, so the library will be loaded early.
+* It demonstrates LIEF's reliability in modifying ELF files.
+* It is a real-world application.
 
 
-Regarding the environment, we will use the version ``4.8.4-12207`` of Telegram (February 18, 2018) on an Android 6.0.1 device with an AArch64 architecture (Samsung Galaxy S6)
+Regarding the environment, we will use Telegram version ``4.8.4-12207``
+(February 18, 2018) on an Android 6.0.1 device with an AArch64 architecture
+(Samsung Galaxy S6).
 
 Injection with LIEF
 ###################
 
-As explained above, the injection is just a call to the :meth:`lief.ELF.Binary.add_library` on the ``libtmessages.28.so`` library.
+As explained above, the injection is simply a call to
+:meth:`lief.ELF.Binary.add_library` on the ``libtmessages.28.so`` library.
 
-Prior to the injection ``libtmessages.28.so`` is linked against the following libraries
+Prior to injection, ``libtmessages.28.so`` is linked against the following
+libraries:
 
 .. code-block:: bash
 
@@ -108,7 +124,8 @@ Prior to the injection ``libtmessages.28.so`` is linked against the following li
     0x0000000000000001 (NEEDED) Shared library: [libm.so]
     0x0000000000000001 (NEEDED) Shared library: [libc.so]
 
-After ``telegram.add_library("libgadget.so")`` we have the new dependency at the first position:
+After ``telegram.add_library("libgadget.so")``, the new dependency is at the
+first position:
 
 .. code-block:: bash
 
@@ -127,18 +144,23 @@ After ``telegram.add_library("libgadget.so")`` we have the new dependency at the
 
 
 
-Configuration of Frida Gadget
+Configuring the Frida Gadget
 #############################
 
-From the documentation, Frida gadget enables to use a configuration file to parametrize the interaction:
+According to the documentation, the Frida gadget allows the use of a
+configuration file to parameterize interaction:
 
-* **Listing**: Interaction is the same as frida-server
-* **Script**: Direct interaction with a JS script for which the path is specified in the configuration
-* **ScriptDirectory**: Same as *Script* but for multiple applications and multiple scripts
+* **Listing**: Interaction is the same as frida-server.
+* **Script**: Direct interaction with a JS script at a specified path.
+* **ScriptDirectory**: Same as *Script*, but for multiple applications and scripts.
 
-*Listing* interaction would require ``android.permission.INTERNET`` permission. We can add such permission by modifying the manifest. Instead, we will use the *Script* interaction which does not require permission.
+The *Listing* interaction would require the ``android.permission.INTERNET``
+permission. While we could add this permission by modifying the manifest,
+we will use the *Script* interaction instead, as it does not require additional
+permissions.
 
-The Frida payload will be located in ``/data/local/tmp/myscript.js`` file. The gadget configuration associated with context is given below
+The Frida payload will be located in the ``/data/local/tmp/myscript.js`` file.
+The gadget configuration for this context is provided below:
 
 .. code-block:: json
 
@@ -150,20 +172,24 @@ The Frida payload will be located in ``/data/local/tmp/myscript.js`` file. The g
     }
   }
 
-Use of configuration file must follow two requirements:
+Using a configuration file must follow two requirements:
 
-1. File must have the same name as the gadget library name (e.g. ``libgadget.so`` and ``libgadget.conf``)
-2. The configuration file must be located in the **same** directory as the gadget library
+1. The file must have the same name as the gadget library (e.g., ``libgadget.so`` and ``libgadget.conf``).
+2. The configuration file must be located in the **same** directory as the gadget library.
 
-The second requirement means that after the installation on the device, the gadget library will look for the config file in the ``/data/app/org.telegram.messenger-1/lib`` directory.
+The second requirement means that after installation on the device, the gadget
+library will look for the configuration file in the
+``/data/app/org.telegram.messenger-1/lib`` directory.
 
-When installing an application, the Android package manager will copy files from the ``lib/`` directory of the APK only if [4]_:
+When installing an application, the Android package manager copies files from
+the ``lib/`` directory of the APK only if [4]_:
 
-* It starts with the prefix ``lib``
-* It ends with the suffix ``.so``
-* It's ``gdbserver``
+* They start with the prefix ``lib``.
+* They end with the suffix ``.so``.
+* It is ``gdbserver``.
 
-Frida is aware of these requirements as illustrated in listing below. Hence we can simply add the suffix ``.so`` to ``libgadget.conf``
+Frida is aware of these requirements, as illustrated in the listing below.
+Hence, we can simply add the ``.so`` suffix to ``libgadget.conf``:
 
 .. code-block:: cpp
 
@@ -182,7 +208,8 @@ Frida is aware of these requirements as illustrated in listing below. Hence we c
 
 `lib/gadget/gadget.vala <https://github.com/frida/frida-core/blob/289a08b237eeab1fb8ec3e2f41ed726de44b5d66/lib/gadget/gadget.vala#L500-L509>`_
 
-Finally, the ``lib`` directory of the new Telegram ``.apk`` has the following structure:
+Finally, the ``lib`` directory of the new Telegram ``.apk`` has the following
+structure:
 
 .. code-block:: bash
 
@@ -193,7 +220,7 @@ Finally, the ``lib`` directory of the new Telegram ``.apk`` has the following st
       ├── libgadget.so
       └── libtmessages.28.so
 
-With ``libtmessages.28.so`` linked with ``libgadget.so``
+With ``libtmessages.28.so`` linked against ``libgadget.so``:
 
 .. code-block:: bash
 
@@ -208,11 +235,12 @@ Run
 
 Once:
 
-1. The injection done in ``libtmessages.28.so``
-2. The gadget library and its configuration placed in the ``/lib/ABI`` directory
-3. The application resigned
+1. The injection is performed in ``libtmessages.28.so``.
+2. The gadget library and its configuration are placed in the ``/lib/ABI`` directory.
+3. The application is resigned.
 
-We can install the repackaged APK ``new.apk`` and push ``myscript.js`` in ``/data/local/tmp``:
+We can install the repackaged APK (``new.apk``) and push ``myscript.js`` to
+``/data/local/tmp``:
 
 .. code-block:: console
 
@@ -220,7 +248,8 @@ We can install the repackaged APK ``new.apk`` and push ``myscript.js`` in ``/dat
   $ adb push myscript.js /data/local/tmp
   $ adb shell chmod 777 /data/local/tmp/myscript.js
 
-The Frida script ``myscript.js`` used in this tutorial is just a call to the Android log function:
+The Frida script ``myscript.js`` used in this tutorial simply calls the Android
+log function:
 
 .. code-block:: javascript
 
@@ -238,7 +267,7 @@ The Frida script ``myscript.js`` used in this tutorial is just a call to the And
 myscript.js
 
 
-Lastly, we can run the telegram application and observe the Android logs:
+Lastly, we can run the Telegram application and observe the Android logs:
 
 .. figure:: ../_static/tutorial/09/telegram.png
   :scale: 25%
@@ -249,28 +278,29 @@ Lastly, we can run the telegram application and observe the Android logs:
   $ adb logcat -s "frida-lief:V"
   --------- beginning of system
   --------- beginning of main
-  03-24 17:23:51.908 10243 10243 V frida-lief: Have Fun!
+  03-24 17:23:51.908 10243 10243 V frida-lief: Have fun!
 
 
 Conclusion
 ~~~~~~~~~~
 
-With this tutorial we demonstrated how format instrumentation and dynamic instrumentation can be combined.
+This tutorial demonstrated how static format instrumentation and dynamic
+instrumentation can be combined.
 
-Here is a quick summary of advantages/disadvantages of this technique
+Here is a quick summary of the advantages and disadvantages of this technique:
 
 :Advantages:
 
-  * Doesn't require rooted device
-  * Doesn't depend of frida-server
-  * Can be used to bypass some anti-frida
-  * Doesn't modify ``AndroidManifest.xml`` and DEX file(s)
+  * Does not require a rooted device.
+  * Does not depend on frida-server.
+  * Can be used to bypass some anti-Frida protections.
+  * Does not modify ``AndroidManifest.xml`` or DEX files.
 
 :Disadvantages:
 
-  * Require to add files in the APK
-  * Require that the application have at least one native library
-  * Hope that the library is loaded early in the application
+  * Requires adding files to the APK.
+  * Requires the application to have at least one native library.
+  * Relies on the library being loaded early in the application execution.
 
 
 
@@ -278,12 +308,12 @@ Here is a quick summary of advantages/disadvantages of this technique
 
 .. [1] Note that LIEF **does not** modify the :attr:`~lief.ELF.DynamicEntry.TAG.DEBUG` entry ...
 
-.. [2] Modification of the ELF Dynamic section is not as easy as the API looks like.
+.. [2] Modifying the ELF Dynamic section is not as simple as the API might suggest.
 
-.. [3] In the ELF format they are located in the :attr:`~lief.ELF.DynamicEntry.TAG.INIT_ARRAY` or :attr:`~lief.ELF.DynamicEntry.TAG.INIT` entries
+.. [3] In the ELF format, these are located in the :attr:`~lief.ELF.DynamicEntry.TAG.INIT_ARRAY` or :attr:`~lief.ELF.DynamicEntry.TAG.INIT` entries.
 
-.. [4] For those who are interested, checks are done in the ``framework_base/core/jni/com_android_internal_content_NativeLibraryHelper.cpp`` file.
-       Actually these checks on the prefix and suffix are only done if the application is not *debuggable*.
+.. [4] For those interested, checks are performed in the ``framework_base/core/jni/com_android_internal_content_NativeLibraryHelper.cpp`` file.
+       Notably, these checks on the prefix and suffix are only performed if the application is not *debuggable*.
 
 
 
@@ -291,12 +321,3 @@ Here is a quick summary of advantages/disadvantages of this technique
 .. rubric:: API
 
 * :meth:`lief.ELF.Binary.add_library`
-
-
-
-
-
-
-
-
-

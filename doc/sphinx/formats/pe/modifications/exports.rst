@@ -5,19 +5,19 @@
   :alt: PE Resources Overview
   :scale: 50%
 
-LIEF provides extensive support for modifying the PE's export table giving you the
-ability to add, remove, or modify export entries or to create the entire export
-table in a PE Binary.
+LIEF provides extensive support for modifying the PE export table, enabling you
+to add, remove, or modify export entries, or create an entire export table for
+a PE binary.
 
-In any case, this support requires enabling the |lief-pe-builder-config-exports|
-as the modified export table is **relocated** in a **new** section. The
-section's name can be controlled with |lief-pe-builder-config-export_section|.
+This functionality requires enabling |lief-pe-builder-config-exports|, as the
+modified export table is **relocated** to a **new** section. The section name
+can be controlled with |lief-pe-builder-config-export_section|.
 
 Creating Export Entries
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Creating a |lief-pe-export-entry| can be useful for exposing a "hidden" function
-based on its address and to leverage its functionality as a regular linker-generated export.
+Creating a |lief-pe-export-entry| is useful for exposing a "hidden" function by
+its address, allowing it to be used like a standard linker-generated export.
 
 This could be used for code lifting or fuzzing.
 
@@ -97,9 +97,9 @@ scenario where we want to convert a PE executable into a DLL.
 .. note::
 
   The process of converting an executable to a library is also detailed for ELF
-  binary in the tutorial: :ref:`tuto_elf_bin2lib`.
+  binaries in the tutorial: :ref:`tuto_elf_bin2lib`.
 
-First, we need to update PE headers to ensure they are compliant with the DLL
+First, we must update the PE headers to ensure they are compliant with the DLL
 format:
 
 .. tabs::
@@ -137,7 +137,7 @@ format:
         pe.header().add_characteristic(lief::pe::headers::Characteristics::DLL);
         pe.optional_header().set_addressof_entrypoint(0);
 
-Then, we can start creating and filling a new Export Table:
+Then, we can start creating and populating a new export table:
 
 .. tabs::
 
@@ -194,11 +194,11 @@ Then, we can start creating and filling a new Export Table:
 .. admonition:: Limitations
   :class: tip
 
-  This binary-to-library example assumes that the original executable has been
-  compiled to be position-independent which means that it contains relocations.
+  This binary-to-library example assumes that the original executable was
+  compiled to be position-independent, meaning it contains relocations.
 
 
-Within a Python environment, we can check that ``lib_exe2dll.dll``  can be
+Within a Python environment, we can verify that ``lib_exe2dll.dll`` can be
 loaded as a DLL and that we can call ``cbk1`` and ``cbk2``:
 
 .. code-block:: python

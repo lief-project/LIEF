@@ -12,5 +12,5 @@
 
 ----
 
-Android VDEX files are *partially* supported by LIEF and you can check the
-tutorial :ref:`Android Formats <tuto-android-formats>` for the details.
+Android VDEX files are *partially* supported by LIEF, and you can refer to the
+:ref:`Android Formats <tuto-android-formats>` tutorial for details.

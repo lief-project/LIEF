@@ -16,13 +16,12 @@
 Introduction
 ************
 
-DWARF debug information can be included directly in the binary
-(which is the default behavior for ELF binaries) or stored in a separate
-dedicated file.
+DWARF debug information can be embedded directly within a binary
+(the default for ELF files) or stored in a separate, dedicated file.
 
-When the DWARF debug information is embedded within the binary,
-you can access it using the following attribute: |lief-dwarf-binary-debug-info|.
-This attribute returns a |lief-dwarf-debug-info|:
+When DWARF debug information is embedded within the binary,
+you can access it using the |lief-dwarf-binary-debug-info| attribute.
+This attribute returns a |lief-dwarf-debug-info| object:
 
 .. tabs::
 
@@ -57,8 +56,8 @@ This attribute returns a |lief-dwarf-debug-info|:
             // DWARF debug info
         }
 
-Additionally, we can use the function: |lief-dwarf-load| to load a
-DWARF file, regardless of whether it is embedded or not:
+Additionally, the |lief-dwarf-load| function can be used to load a
+DWARF file, whether it is embedded or standalone:
 
 .. tabs::
 
@@ -88,8 +87,8 @@ DWARF file, regardless of whether it is embedded or not:
         let dbg = lief::dwarf::load("external_dwarf");
         let dbg = lief::dwarf::load("debug.dwo");
 
-At this point, one can use all the API exposed in |lief-dwarf-debug-info| on the
-instantiated debug info:
+Once loaded, you can use the |lief-dwarf-debug-info| API to interact with the
+debug information:
 
 .. tabs::
 
@@ -188,7 +187,8 @@ instantiated debug info:
 .. _extended-dwarf-load-ext:
 
 In the case of an external DWARF file, you can bind this debug file to
-a |lief-abstract-binary| by using the function: |lief-abstract-binary-load_debug_info|.
+a |lief-abstract-binary| using the |lief-abstract-binary-load_debug_info|
+function.
 
 Here's an example:
 
@@ -271,9 +271,9 @@ defined in the debug file previously loaded:
             println!("{inst}");
         }
 
-Additionally, you may want to check out the
+Additionally, you may also want to explore the
 :ref:`BinaryNinja <plugins-binaryninja-dwarf>` and
-:ref:`Ghidra <plugins-ghidra-dwarf>` DWARF export plugin which can generate
+:ref:`Ghidra <plugins-ghidra-dwarf>` DWARF export plugins, which generate
 debug information based on the analyses performed by these frameworks.
 
 .. _extended-dwarf-editor:
@@ -284,11 +284,11 @@ DWARF Editor
 .. admonition:: Editing Existing DWARF
   :class: warning
 
-  Currently, LIEF **does not** support modifying an **existing** DWARF file
+  LIEF does not currently support modifying an **existing** DWARF file.
 
-LIEF provides a comprehensive high-level API to create DWARF files programmatically.
-This works by using the |lief-dwarf-editor| interface that can be instantiated using
-|lief-dwarf-editor-from_binary|:
+LIEF provides a comprehensive high-level API for programmatically creating
+DWARF files. This works by using the |lief-dwarf-editor| interface, which can be
+instantiated using |lief-dwarf-editor-from_binary|:
 
 .. tabs::
 
@@ -320,8 +320,10 @@ This works by using the |lief-dwarf-editor| interface that can be instantiated u
         let editor = lief::dwarf::Editor::from_binary(&mut bin);
 
 
-Given this |lief-dwarf-editor|, one can create one or several |lief-dwarf-editor-CompilationUnit|
-that own the different |lief-dwarf-editor-Function|, |lief-dwarf-editor-Variable|, |lief-dwarf-editor-Type|
+Given this |lief-dwarf-editor|, you can create one or more
+|lief-dwarf-editor-CompilationUnit| entries, which own various
+|lief-dwarf-editor-Function|, |lief-dwarf-editor-Variable|, and
+|lief-dwarf-editor-Type| objects.
 
 .. tabs::
 
@@ -386,8 +388,8 @@ that own the different |lief-dwarf-editor-Function|, |lief-dwarf-editor-Variable
 .. admonition:: BinaryNinja & Ghidra
   :class: note
 
-  This feature is provided as a plugin for: :ref:`BinaryNinja <plugins-binaryninja-dwarf>`
-  and :ref:`Ghidra <plugins-binaryninja>`
+  This feature is provided as a plugin for :ref:`BinaryNinja <plugins-binaryninja-dwarf>`
+  and :ref:`Ghidra <plugins-ghidra-dwarf>`.
 
 ----
 

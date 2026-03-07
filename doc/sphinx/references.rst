@@ -1,4 +1,3 @@
-
 :fa:`fa-solid fa-book-bookmark` References
 ==========================================
 
@@ -29,17 +28,17 @@ Projects using LIEF
 -------------------
 
 +---------------------------------+------------+------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------------------------------------------------------------------------------+
-|    Name                         | Language   | Link                                                                                                                         | Topic                | Summarize                                                                                    |
+|    Name                         | Language   | Link                                                                                                                         | Topic                | Summary                                                                                      |
 +=================================+============+==============================================================================================================================+======================+==============================================================================================+
-| shrinkwrap                      | Python     | https://github.com/fzakaria/shrinkwrap                                                                                       | ELF                  | A tool that embosses the needed dependencies on the top level executable                     |
+| shrinkwrap                      | Python     | https://github.com/fzakaria/shrinkwrap                                                                                       | ELF                  | A tool that embeds required dependencies into top-level executables                          |
 +---------------------------------+------------+------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------------------------------------------------------------------------------+
 | sqlelf                          | Python     | https://github.com/fzakaria/sqlelf                                                                                           | ELF Analysis         | Explore ELF objects through the power of SQL                                                 |
 +---------------------------------+------------+------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------------------------------------------------------------------------------+
 | Maat                            | Python/C++ | https://maat.re/                                                                                                             | Symbolic Execution   | Symbolic Execution Framework based on Ghidra's sleigh                                        |
 +---------------------------------+------------+------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------------------------------------------------------------------------------+
-| QBDL                            | Python/C++ | https://github.com/quarkslab/QBDL                                                                                            | Binary Loader        | QBDI aims at providing a modular and portable way to dynamically load and link binaries.     |
+| QBDL                            | Python/C++ | https://github.com/quarkslab/QBDL                                                                                            | Binary Loader        | QBDI aims to provide a modular and portable way to dynamically load and link binaries.       |
 +---------------------------------+------------+------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------------------------------------------------------------------------------+
-| BLint                           | Python     | https://git.sr.ht/~prabhu/blint                                                                                              | Static Analysis      | Binary Linter to check the security properties, and capabilities in your executables         |
+| BLint                           | Python     | https://git.sr.ht/~prabhu/blint                                                                                              | Static Analysis      | A binary linter for checking security properties and capabilities in executables             |
 +---------------------------------+------------+------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------------------------------------------------------------------------------+
 | Datalog Disassembly             | C++        | https://github.com/GrammaTech/ddisasm                                                                                        | Binary Analysis      | DDisasm is a fast disassembler which is accurate enough for the resulting                    |
 |                                 |            |                                                                                                                              |                      | assembly code to be reassembled. DDisasm is implemented using the datalog                    |
@@ -51,10 +50,10 @@ Projects using LIEF
 +---------------------------------+------------+------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------------------------------------------------------------------------------+
 | checksec.py                     | Python     | https://github.com/Wenzel/checksec.py                                                                                        | Static Analysis      | A simple tool to verify the security properties of your binaries.                            |
 |                                 |            |                                                                                                                              |                      | These properties can be enabled by your compiler                                             |
-|                                 |            |                                                                                                                              |                      | to enforce the security of your executables, and mitigate exploits                           |
+|                                 |            |                                                                                                                              |                      | to enforce the security of your executables, and mitigate exploitation                       |
 +---------------------------------+------------+------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------------------------------------------------------------------------------+
 | youarespecial                   | Python     | https://github.com/endgameinc/youarespecial                                                                                  | Machine Learning     | Machine learning models on                                                                   |
-|                                 |            |                                                                                                                              |                      | Malwares                                                                                     |
+|                                 |            |                                                                                                                              |                      | malwares                                                                                     |
 +---------------------------------+------------+------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------------------------------------------------------------------------------+
 | gym-malware                     | Python     | https://github.com/endgameinc/gym-malware                                                                                    | Machine Learning     | Learn how to bypass AV through                                                               |
 |                                 |            |                                                                                                                              |                      | machine learning.                                                                            |
@@ -62,7 +61,7 @@ Projects using LIEF
 | MISP                            | Python     | https://github.com/MISP/MISP                                                                                                 | Malware              | Malware Information Sharing                                                                  |
 |                                 |            |                                                                                                                              |                      | Platform and Threat Sharing                                                                  |
 +---------------------------------+------------+------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------------------------------------------------------------------------------+
-| Virus Disinfector KIT           | Python     | https://github.com/Fare9/Virus_Disinfector_KIT                                                                               | Malware              | Tool to disinfect PE files                                                                   |
+| Virus Disinfector KIT           | Python     | https://github.com/Fare9/Virus_Disinfector_KIT                                                                               | Malware              | A tool for disinfecting PE files                                                             |
 +---------------------------------+------------+------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------------------------------------------------------------------------------+
 | lief-sys                        | Rust       | https://github.com/tathanhdinh/lief-sys                                                                                      | Binding              | Rust binding for LIEF                                                                        |
 +---------------------------------+------------+------------------------------------------------------------------------------------------------------------------------------+----------------------+----------------------------------------------------------------------------------------------+
@@ -228,21 +227,20 @@ Tools
 -----
 
 +--------------------+----------+--------------------------------------------------------+--------------+------------------------------------------------------+
-|    Name            | Language |   Link                                                 | Format       | Summarize                                            |
+|    Name            | Language |   Link                                                 | Format       | Summary                                              |
 +====================+==========+========================================================+==============+======================================================+
-| Dress              | Python   | https://github.com/docileninja/dress                   | ELF          | Add static symbols                                   |
+| Dress              | Python   | https://github.com/docileninja/dress                   | ELF          | Adds static symbols                                  |
 +--------------------+----------+--------------------------------------------------------+--------------+------------------------------------------------------+
 | objconv            | C++      | https://www.agner.org/optimize/#objconv                | ELF/PE/MachO | Format converter                                     |
 +--------------------+----------+--------------------------------------------------------+--------------+------------------------------------------------------+
 | PEDetour           | C++      | https://github.com/chen-charles/PEDetour               | PE           | Hook exported functions                              |
 +--------------------+----------+--------------------------------------------------------+--------------+------------------------------------------------------+
-| python-elf         | Python   | https://github.com/tbursztyka/python-elf               | ELF          | ELF binary format                                    |
-|                    |          |                                                        |              | manipulation                                         |
+| python-elf         | Python   | https://github.com/tbursztyka/python-elf               | ELF          | ELF binary format manipulation tool                  |
 +--------------------+----------+--------------------------------------------------------+--------------+------------------------------------------------------+
 | PEDetour           | C++      | https://github.com/chen-charles/PEDetour               | PE           | Hook exported functions                              |
 +--------------------+----------+--------------------------------------------------------+--------------+------------------------------------------------------+
-| libmaelf           | C        | https://github.com/tiago4orion/libmalelf               | ELF          | Library for Dissect and                              |
-|                    |          |                                                        |              | Infect ELF Binaries.                                 |
+| libmaelf           | C        | https://github.com/tiago4orion/libmalelf               | ELF          | A library for dissecting and                         |
+|                    |          |                                                        |              | infecting ELF binaries.                              |
 +--------------------+----------+--------------------------------------------------------+--------------+------------------------------------------------------+
 | peinjector         | C        | https://github.com/JonDoNym/peinjector                 | PE           | MITM PE file infector                                |
 +--------------------+----------+--------------------------------------------------------+--------------+------------------------------------------------------+
@@ -255,14 +253,13 @@ Tools
 +--------------------+----------+--------------------------------------------------------+--------------+------------------------------------------------------+
 | unstrip            | Python   | https://github.com/pzread/unstrip                      | ELF          | Unstrip static binary                                |
 +--------------------+----------+--------------------------------------------------------+--------------+------------------------------------------------------+
-| sym2elf            | Python   | https://github.com/danigargu/syms2elf                  | ELF          | Export IDA's symbols to                              |
+| sym2elf            | Python   | https://github.com/danigargu/syms2elf                  | ELF          | Exports IDA symbols to                               |
 |                    |          |                                                        |              | the original binary                                  |
 +--------------------+----------+--------------------------------------------------------+--------------+------------------------------------------------------+
 | elfhash            | C        | https://github.com/cjacker/elfhash                     | ELF          | Manipulate ELF's hash                                |
 +--------------------+----------+--------------------------------------------------------+--------------+------------------------------------------------------+
-| recomposer         | Python   | https://github.com/secretsquirrel/recomposer           | PE           | Change some parts of a                               |
-|                    |          |                                                        |              | PE ile in order to bypass                            |
-|                    |          |                                                        |              | Antivirus                                            |
+| recomposer         | Python   | https://github.com/secretsquirrel/recomposer           | PE           | Modifies parts of a PE file                          |
+|                    |          |                                                        |              | to bypass antivirus software                         |
 +--------------------+----------+--------------------------------------------------------+--------------+------------------------------------------------------+
 | bearparser         | C++      | https://github.com/hasherezade/bearparser              | PE           | Portable Executable parsing                          |
 |                    |          |                                                        |              | library with a GUI                                   |

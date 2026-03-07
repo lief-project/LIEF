@@ -5,21 +5,18 @@
 
 .. warning::
 
-  This tutorial is no longer working and accurate for LIEF version >= ``0.17.0``.
+  This tutorial is no longer functional or accurate for LIEF version >= ``0.17.0``.
 
-In this tutorial we introduce LIEF API to create a simple PE executable from scratch
-
-Scripts and materials are available here: `materials <https://github.com/lief-project/tutorials/tree/master/02_PE_from_Scratch>`_
-
-
-By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
+In this tutorial, we introduce the LIEF API for creating a simple PE executable
+from scratch.
 
 ----------
 
-LIEF enables creating a simple PE from scratch.
-The aim of this tutorial is to create an executable which shows a "Hello Word" ``MessageBoxA``.
+LIEF enables the creation of a simple PE from scratch.
+The aim of this tutorial is to create an executable that shows a
+"Hello World" ``MessageBoxA``.
 
-First, we have to create a :class:`~lief.PE.Binary` :
+First, we must create a :class:`~lief.PE.Binary`:
 
 
 .. code-block:: python
@@ -28,10 +25,15 @@ First, we have to create a :class:`~lief.PE.Binary` :
 
   binary32 = PE.Binary("pe_from_scratch", PE.PE_TYPE.PE32)
 
-The first parameter is the binary's name and the second, the binary's type: ``PE32`` or ``PE32_PLUS`` (see :class:`~lief.PE.PE_TYPE`).
-The :class:`~lief.PE.Binary`'s constructor creates automatically :class:`~lief.PE.DosHeader`, :class:`~lief.PE.Header`, :class:`~lief.PE.OptionalHeader` an empty :class:`~lief.PE.DataDirectory`.
+The first parameter is the binary name, and the second is the binary type:
+``PE32`` or ``PE32_PLUS`` (see :class:`~lief.PE.PE_TYPE`).
+The :class:`~lief.PE.Binary` constructor automatically creates
+:class:`~lief.PE.DosHeader`, :class:`~lief.PE.Header`,
+:class:`~lief.PE.OptionalHeader`, and an empty :class:`~lief.PE.DataDirectory`.
 
-Now that we have a minimal binary, we have to add sections. We will have a first section holding assembly code (``.text``) and a second one containing strings (``.data``):
+Now that we have a minimal binary, we must add sections. We will have a first
+section holding assembly code (``.text``) and a second one containing strings
+(``.data``):
 
 .. code-block:: python
 
@@ -43,7 +45,8 @@ Now that we have a minimal binary, we have to add sections. We will have a first
   section_data.content         = data
   section_data.virtual_address = 0x2000
 
-A ``MessageBoxA`` is composed of a title and a message. These two strings can be stored in the ``.data`` as follows:
+A ``MessageBoxA`` is composed of a title and a message. These two strings can
+be stored in the ``.data`` section as follows:
 
 .. code-block:: python
 
@@ -53,7 +56,8 @@ A ``MessageBoxA`` is composed of a title and a message. These two strings can be
   data =  list(map(ord, title))
   data += list(map(ord, message))
 
-The **pseudo** assembly code of the ``.text`` section is given in next listing:
+The **pseudo** assembly code of the ``.text`` section is provided in the
+following listing:
 
 .. code-block:: nasm
 
@@ -66,7 +70,11 @@ The **pseudo** assembly code of the ``.text`` section is given in next listing:
     call ExitProcess       ;
 
 
-Instead of pushing strings we have to push the **virtual address** of these strings. In the PE format a section's virtual address is in fact a **relative** virtual address (relative to :attr:`.OptionalHeader.imagebase` when the ASLR is not enabled). By default the :class:`~lief.PE.Binary`'s constructor sets the :attr:`~lief.PE.OptionalHeader.imagebase` to ``0x400000``.
+Instead of pushing strings, we must push the **virtual addresses** of these
+strings. In the PE format, a section's virtual address is actually a
+**relative** virtual address (relative to :attr:`.OptionalHeader.imagebase` when
+ASLR is not enabled). By default, the :class:`~lief.PE.Binary` constructor sets
+the :attr:`~lief.PE.OptionalHeader.imagebase` to ``0x400000``.
 
 As a result, the virtual addresses of the strings are:
 
@@ -83,24 +91,29 @@ As a result, the virtual addresses of the strings are:
     push 0                 ; uExitCode
     call ExitProcess       ;
 
-As the code uses ``MessageBoxA``, we need to import ``user32.dll`` into the binary's :class:`~lief.PE.Import`\s and the ``MessageBoxA`` :class:`~lief.PE.ImportEntry`.
-To do so, we can use the :meth:`~lief.PE.Binary.add_library` method combined with :meth:`~lief.PE.Import.add_entry`:
+As the code uses ``MessageBoxA``, we need to import ``user32.dll`` into the
+binary's :class:`~lief.PE.Import` entries and add the ``MessageBoxA``
+:class:`~lief.PE.ImportEntry`.
+To do so, we can use the :meth:`~lief.PE.Binary.add_library` method combined
+with :meth:`~lief.PE.Import.add_entry`:
 
 .. code-block:: python
 
   user32 = binary32.add_library("user32.dll")
   user32.add_entry("MessageBoxA")
 
-Same for ``ExitProcess`` (``kernel32.dll``):
+The same applies to ``ExitProcess`` (``kernel32.dll``):
 
 .. code-block:: python
 
   kernel32 = binary32.add_library("kernel32.dll")
   kernel32.add_entry("ExitProcess")
 
-Once needed libraries and functions are added to the binary, we have to determine their addresses (**I**\mport **A**\ddress **T**\able).
+Once the necessary libraries and functions have been added to the binary,
+we must determine their addresses (**I**\mport **A**\ddress **T**\able).
 
-For that, we can use the ``lief.PE.Binary.predict_function_rva`` method which will return the ``IAT`` address set by the :class:`~lief.PE.Builder`:
+To do so, we can use the ``lief.PE.Binary.predict_function_rva`` method, which
+returns the ``IAT`` address set by the :class:`~lief.PE.Builder`:
 
 
 .. code-block:: python
@@ -116,7 +129,8 @@ For that, we can use the ``lief.PE.Binary.predict_function_rva`` method which wi
   Address of 'ExitProcess': 0x00306a
   Address of 'MessageBoxA': 0x00305c
 
-Thus, the **absolute** virtual addresses of ``MessageBoxA`` and ``ExitProcess`` are:
+Thus, the **absolute** virtual addresses of ``MessageBoxA`` and
+``ExitProcess`` are:
 
   * ``MessageBoxA``: :attr:`~lief.PE.OptionalHeader.imagebase` + ``0x306a`` = ``0x40306a``
   * ``ExitProcess``: :attr:`~lief.PE.OptionalHeader.imagebase` + ``0x305c`` = ``0x40305c``
@@ -134,9 +148,11 @@ And the associated assembly code:
     call 0x40305c          ;
 
 
-The transformation of the :class:`~lief.PE.Binary` into an executable is performed by the :class:`~lief.PE.Builder` class.
+The transformation of the :class:`~lief.PE.Binary` into an executable is
+performed by the :class:`~lief.PE.Builder` class.
 
-By default the import table is not rebuilt so we have to configure the builder to rebuild it:
+By default, the import table is not rebuilt, so we must configure the builder
+to rebuild it:
 
 .. code-block:: python
 
@@ -146,16 +162,4 @@ By default the import table is not rebuilt so we have to configure the builder t
   builder.write("pe_from_scratch.exe")
 
 
-You can now enjoy the newly created binary.
-
-
-
-
-
-
-
-
-
-
-
-
+You can now use the newly created binary.

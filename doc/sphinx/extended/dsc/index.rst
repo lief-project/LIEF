@@ -16,8 +16,8 @@
 Introduction
 ************
 
-LIEF's dyld shared cache support allows the inspection and extraction of libraries
-from Apple dyld shared cache.
+LIEF's Dyld shared cache support enables the inspection and extraction of
+libraries from the Apple Dyld shared cache.
 
 One can load a shared cache using the |lief-dsc-load| function:
 
@@ -84,8 +84,8 @@ From this |lief-dsc-dyldsharedcache| object, we can inspect the embedded
         }
 
 It is worth mentioning that |lief-dsc-dylib| exposes the |lief-dsc-dylib-get|
-method which can be used to **extract** a |lief-macho-binary| instance from a
-dyld shared cache libraries:
+method, which can be used to **extract** a |lief-macho-binary| instance from
+Dyld shared cache libraries:
 
 .. tabs::
 
@@ -163,43 +163,42 @@ the |lief-macho-binary| object:
 
 .. warning::
 
-  By default, LIEF **does not** remove dyld shared cache optimizations.
+  By default, LIEF **does not** remove Dyld shared cache optimizations.
   To remove some of these optimizations, you can check the |lief-dsc-dylib-eopt|
   structure.
 
 :fa:`solid fa-stopwatch` Performance Considerations
 ****************************************************
 
-Dyld shared cache files are pretty large which means that they can't be
-processed in the same way as other regular |lief-macho-binary| or
-|lief-elf-binary| binaries.
+Dyld shared cache files are quite large, meaning they cannot be processed in
+the same way as standard |lief-macho-binary| or |lief-elf-binary| binaries.
 
-The dyld shared cache support in LIEF follows the principle:
+The Dyld shared cache support in LIEF follows the principle:
 *don't pay overhead for what you don't access*. This is the opposite of the
-implementation of |lief-pe-parse|, |lief-macho-parse| and |lief-elf-parse|.
+implementation of |lief-pe-parse|, |lief-macho-parse|, and |lief-elf-parse|.
 
 .. note::
 
-  These functions parse all the format structures (with decent performances)
+  These functions parse all format structures (with decent performance)
   because:
 
-  1. Most of the binary's sizes are less than gigabytes.
+  1. Most binary sizes are less than one gigabyte.
   2. A complete representation is required for modifying binaries.
 
-From a technical perspective, LIEF is using a :cpp:class:`LIEF::FileStream` to
-access (on-demand) dyld shared cache structures. Thus, the in-memory consumption
-is limited to the size of the structures being accessed. The drawback of this
-:cpp:class:`~LIEF::FileStream` is that since this is a file-based access, it takes
-more time compared to a :cpp:class:`LIEF::VectorStream`.
+From a technical perspective, LIEF uses a :cpp:class:`LIEF::FileStream` to
+access Dyld shared cache structures on demand. Thus, in-memory consumption
+is limited to the size of the structures being accessed. The drawback of
+using :cpp:class:`~LIEF::FileStream` is that because it uses file-based access,
+it takes more time compared to a :cpp:class:`LIEF::VectorStream`.
 
-Additionally, LIEF's dyld shared cache implementation **heavily** relies on
+Additionally, LIEF's Dyld shared cache implementation **heavily** relies on
 the iterator pattern to follow the principle: *don't pay overhead for what you don't access*.
 
-For instance, |lief-dsc-dyldsharedcache-libraries| is returning an **iterator**
+For instance, |lief-dsc-dyldsharedcache-libraries| returns an **iterator**
 over the |lief-dsc-dylib|. Therefore, if you don't iterate, you don't pay for the
-access and the parsing of the |lief-dsc-dylib| objects.
+access and parsing of the |lief-dsc-dylib| objects.
 
-When it is possible, LIEF implements the trait of a **random access** iterator [1]_
+Where possible, LIEF implements the random access iterator trait [1]_
 so that we can programmatically do:
 
 .. tabs::
@@ -237,19 +236,18 @@ so that we can programmatically do:
           std::cout << dylib.path() << '\n';
         }
 
-When extracting a |lief-macho-binary| from a |lief-dsc-dylib| object with
-|lief-dsc-dylib-get|, **the extraction can a substantial amount of time**,
-especially if some deoptimizations are turned on (c.f. |lief-dsc-dylib-eopt|).
+When extracting a |lief-macho-binary| from a |lief-dsc-dylib| object using
+|lief-dsc-dylib-get|, **the extraction can take a substantial amount of time**,
+especially if certain deoptimizations are enabled (c.f. |lief-dsc-dylib-eopt|).
 
-For instance, |lief-dsc-dylib-eopt-fix_branches| could require to iterate
-over the dyld shared cache's stub islands several times. To improve overall
-performances, LIEF provides a cache-based optimization that can be enabled
-and configured with:
+For instance, |lief-dsc-dylib-eopt-fix_branches| may require iterating over the
+Dyld shared cache's stub islands several times. To improve overall performance,
+LIEF provides a cache-based optimization that can be enabled and configured with:
 
 - |lief-dsc-enable_cache|
 - |lief-dsc-dyldsharedcache-enable_caching|
 
-.. admonition:: When you should turn caching on?
+.. admonition:: When should you turn caching on?
   :class: warning
 
   You can **skip** LIEF's caching if:
@@ -280,4 +278,3 @@ and configured with:
 :fa:`brands fa-rust` Rust API: :rust:module:`lief::dsc`
 
 .. include:: ../../_cross_api.rst
-

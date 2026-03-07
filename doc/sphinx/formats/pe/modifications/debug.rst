@@ -9,12 +9,12 @@ LIEF can create, modify, or delete PE debug information entries.
   :alt: PE Debug Overview
   :scale: 50%
 
-These debug information are located in the ``IMAGE_DIRECTORY_ENTRY_DEBUG`` and
-are represented in LIEF through the |lief-pe-debug| class.
+This debug information is located in the ``IMAGE_DIRECTORY_ENTRY_DEBUG`` and is
+represented in LIEF through the |lief-pe-debug| class.
 
-We can modify these entries by using the API exposed from these structures.
-For instance, we can change the PDB path referenced in a |lief-pe-codeviewpdb|
-entry as follows:
+These entries can be modified using the API exposed by these structures.
+For example, the PDB path referenced in a |lief-pe-codeviewpdb| entry can be
+changed as follows:
 
 .. tabs::
 
@@ -53,9 +53,9 @@ entry as follows:
         pe.write("out.exe");
 
 
-The function |lief-pe-binary-remove-debug| can be used to remove a specific
-entry while the function |lief-pe-binary-clear-debug| removes **all** the debug
-entries:
+The |lief-pe-binary-remove-debug| function can be used to remove a specific
+entry, whereas the |lief-pe-binary-clear-debug| function removes **all**
+debug entries:
 
 .. tabs::
 
@@ -106,9 +106,9 @@ entries:
         pe.write("out.exe");
 
 Finally, |lief-pe-binary-add-debug-info| can be used to add a crafted debug
-entry in an existing PE.
+entry to an existing PE.
 
-For instance, we can create a custom |lief-pe-codeviewpdb| as follows:
+For example, a custom |lief-pe-codeviewpdb| can be created as follows:
 
 .. tabs::
 

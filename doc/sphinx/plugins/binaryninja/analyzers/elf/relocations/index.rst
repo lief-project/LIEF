@@ -4,10 +4,10 @@
 -----------------------------------------
 
 This analyzer enhances support for binaries that use recent relocation formats
-not recognized by BinaryNinja (e.g. ``DT_ANDROID_RELA, DT_RELR``).
+not recognized by BinaryNinja (e.g., ``DT_ANDROID_RELA``, ``DT_RELR``).
 
 
-For instance, here is a LIEF-based processing of ``DT_ANDROID_RELA``
+For instance, here is LIEF-based processing of ``DT_ANDROID_RELA``
 relocations:
 
 .. img-comparison::

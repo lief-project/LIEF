@@ -12,6 +12,6 @@
 
 ----
 
-Android OAT files are essentially ELF and LIEF exposes specific API for
-them. You can checkout the tutorial :ref:`Android Formats <tuto-android-formats>`
-for more details.
+Android OAT files are essentially ELF files, and LIEF exposes a specific API for
+them. You can check out the :ref:`Android Formats <tuto-android-formats>`
+tutorial for more details.

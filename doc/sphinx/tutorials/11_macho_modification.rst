@@ -1,61 +1,86 @@
 11 - Mach-O Modification
--------------------------
+------------------------
 
-This tutorial deals with Mach-O format modification and introduces some internal aspects of the format.
+This tutorial covers Mach-O format modification and introduces some internal
+aspects of the format.
 
-Files and scripts used in this tutorial are available on the `tutorials repository <https://github.com/lief-project/tutorials/tree/master/11_macho_modification>`_
-
-By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
+Files and scripts used in this tutorial are available in the
+`tutorials repository <https://github.com/lief-project/tutorials/tree/master/11_macho_modification>`_.
 
 ------
 
 Introduction
 ~~~~~~~~~~~~
 
-A basic Mach-O binary (i.e. not FAT) can be represented in fours parts that are described in this diagram:
+A basic Mach-O binary (i.e., not FAT) can be represented in four parts, as
+described in this diagram:
 
 
 .. figure:: ../_static/tutorial/11/image1.png
   :align: center
 
 
-The first part begins with a header that can be accessed through the :attr:`lief.MachO.Binary.header` attribute. In the second part, we have the load commands table which can be iterated using :attr:`lief.MachO.Binary.load_commands`
-then, we can optionally have padding or free space. Finally, we have the raw data (assembly code, rebase bytecode, signature, ...)
+The first part begins with a header that can be accessed through the
+:attr:`lief.MachO.Binary.header` attribute. The second part contains the load
+commands table, which can be iterated over using
+:attr:`lief.MachO.Binary.load_commands`. This is optionally followed by padding
+or free space. Finally, the fourth part contains the raw data (assembly code,
+rebase bytecode, signatures, etc.).
 
-Load commands like :class:`~lief.MachO.SegmentCommand` or :class:`~lief.MachO.DyldInfo` can be associated with *raw data* that are located after the load command table and the padding section.
-The padding section is used by OSX to sign the binary after the compilation by adding a custom command. The ``codesign`` utility extends the *raw data* area with the signature and adds a ``LC_CODE_SIGNATURE`` or a ``LC_DYLIB_CODE_SIGN_DRS`` command in the padding area.
+Load commands such as :class:`~lief.MachO.SegmentCommand` or
+:class:`~lief.MachO.DyldInfo` can be associated with *raw data* located after
+the load command table and the padding section. The padding section is used by
+macOS to sign the binary after compilation by adding a custom command. The
+``codesign`` utility extends the *raw data* area with the signature and adds an
+``LC_CODE_SIGNATURE`` or ``LC_DYLIB_CODE_SIGN_DRS`` command in the padding
+area.
 
-Since load commands are the base unit of the Mach-O format -- segments, shared libraries, entry point, etc are somehow *commands* -- being able to add arbitrary commands in a binary
-enables interesting like code injection, anti-analysis, ...
+Since load commands are the base unit of the Mach-O format—segments, shared
+libraries, entry points, etc., are all *commands*—the ability to add arbitrary
+commands to a binary enables interesting possibilities such as code injection,
+anti-analysis, etc.
 
-Different techniques exist to add new command in a Mach-O binary:
+Different techniques exist for adding new commands to a Mach-O binary:
 
-* One can replace an existing load command that is not mandatory for the execution like :class:`~lief.MachO.UUIDCommand` or :class:`~lief.MachO.CodeSignature`.
-* One can use the padding area add to the command header.
+* Replacing an existing load command that is not mandatory for execution, such
+  as :class:`~lief.MachO.UUIDCommand` or :class:`~lief.MachO.CodeSignature`.
+* Using the padding area to expand the command header.
 
-The main limitation of these techniques is that the size and the number of commands that can be added are tied to the padding section size or to the size of the command replaced.
+The main limitation of these techniques is that the size and number of commands
+that can be added are tied to the padding section size or the size of the
+command replaced.
 
-If the padding size is tiny, we can't add a ``LOAD_DYLIB`` command with a *very long* library path. Moreover ``codesign`` may complain that there are not enough spaces to add the ``LC_CODE_SIGNATURE`` since we are using the space that was reserved for it.
+If the padding size is small, we cannot add a ``LOAD_DYLIB`` command with a
+very long library path. Moreover, ``codesign`` may complain if there is
+insufficient space to add the ``LC_CODE_SIGNATURE`` because we are using space
+that was reserved for it.
 
 
-Next parts are about format modifications and how we managed to address this limitation.
+The following sections discuss format modifications and how LIEF addresses
+these limitations.
 
-When PIE makes thing easier
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+When PIE Makes Things Easier
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-OSX and iOS executables are by default compiled with flags that make them position independent. Instructions generated by the compiler will use
-relative addressing associated with *rebase* information.
+macOS and iOS executables are typically compiled with flags that make them
+position-independent. Instructions generated by the compiler use relative
+addressing associated with *rebase* information.
 
-To simplify (not accurate), PIE binaries enable to *map* the raw data section at a random base address.
-The idea that is implemented in LIEF is that raw data section can be mapped at a random base address so it can also be shifted within the format.
+To simplify, PIE binaries allow the *raw data* section to be mapped at a random
+base address. LIEF leverages this by shifting the raw data section within the
+format.
 
 
 .. figure:: ../_static/tutorial/11/image2.png
   :align: center
 
 
-Such transformation also requires to keep a consistent state of the format metadata. Especially, when we shift the raw data we need to update relocations, segment offsets, virtual address, etc. Once the raw data shifted and
-the metadata updated, we have an arbitrary space between the load command table and the raw data section. Thus we can extend the load command table as shown in figure below:
+Such a transformation also requires maintaining consistent format metadata.
+Specifically, when we shift the raw data, we must update relocations, segment
+offsets, virtual addresses, etc. Once the raw data is shifted and the metadata
+updated, we have arbitrary space between the load command table and the raw
+data section. Thus, we can extend the load command table as shown in the
+figure below:
 
 
 .. figure:: ../_static/tutorial/11/image3.png
@@ -64,15 +89,18 @@ the metadata updated, we have an arbitrary space between the load command table 
 
 .. warning::
 
-  The size of the shift must be aligned on a page size to avoid issues with section and segment alignments.
+  The size of the shift must be aligned with the page size to avoid issues with
+  section and segment alignment.
 
 
-Keeping the format consistency after the shift transformation is not easy. The next part presents some parts of the Mach-O format that need to be updated in order to keep the consistency.
+Maintaining format consistency after a shift transformation is complex. The
+next section presents parts of the Mach-O format that must be updated to
+maintain consistency.
 
-When Mach-O makes thing harder
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+When Mach-O Makes Things Harder
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-After the shift operation, we need to update several load commands of the Mach-O format:
+After the shift operation, we must update several load commands:
 
 * :attr:`lief.MachO.SymbolCommand.symbol_offset` / :attr:`lief.MachO.SymbolCommand.strings_offset`
 * :attr:`lief.MachO.DataInCode.data_offset`, :attr:`lief.MachO.CodeSignature.data_offset`, :attr:`lief.MachO.SegmentSplitInfo.data_offset`
@@ -89,25 +117,36 @@ We also need to update:
 * Binding information
 * Export information
 
-Whereas ELF and PE formats use some kinds of ``struct`` for internal storage of relocations and exports, Mach-O format uses a bytecode to *rebase* the binary. Export information are stored in a  `trie <https://en.wikipedia.org/wiki/Trie>`_ data structure. The use of trie and bytecode reduces the binary size but it makes the update more difficult as we need to interpret and regenerate the bytecode.
+While the ELF and PE formats use structures for internal storage of
+relocations and exports, the Mach-O format uses bytecode to *rebase* the
+binary. Export information is stored in a `trie <https://en.wikipedia.org/wiki/Trie>`_
+data structure. The use of tries and bytecode reduces binary size but makes
+updates more difficult, as we must interpret and regenerate the bytecode.
 
-Rebase bytecode
+Rebase Bytecode
 ***************
 
-As mentioned in the previous part, recent Mach-O loader uses a bytecode to relocate (or rebase) the binary.
-Offset and size of the bytecode are given in :attr:`lief.MachO.DyldInfo.rebase` attribute. Basically, bytecode is compound of :class:`~lief.MachO.REBASE_OPCODES` that define addresses to relocate.
+As mentioned previously, recent Mach-O loaders use bytecode to relocate (or
+rebase) the binary. The offset and size of the bytecode are specified in the
+:attr:`lief.MachO.DyldInfo.rebase` attribute. Basically, the bytecode is
+composed of :class:`~lief.MachO.REBASE_OPCODES` that define addresses to
+relocate.
 
 .. warning::
 
-  One can notice that :class:`~lief.MachO.Section` object has a :attr:`~lief.MachO.Section.relocation_offset` attribute. Actually, it seems to be only
-  used for Mach-O object files (:attr:`lief.MachO.FILE_TYPES.OBJECT`) or with an executable that uses an old version of the Mach-O loader.
+  Note that the :class:`~lief.MachO.Section` object has a
+  :attr:`~lief.MachO.Section.relocation_offset` attribute. This appears to be
+  used only for Mach-O object files (:attr:`lief.MachO.FILE_TYPES.OBJECT`) or
+  executables using an old version of the Mach-O loader.
 
-  This offset points to a list of relocation structures (not bytecode) for which the number is defined by :attr:`~lief.MachO.Section.numberof_relocations`.
+  This offset points to a list of relocation structures (not bytecode), the
+  number of which is defined by :attr:`~lief.MachO.Section.numberof_relocations`.
 
 
-To know which addresses need to be relocated, we have to interpret the bytecode.
+To determine which addresses must be relocated, we must interpret the bytecode.
 
-The :attr:`lief.MachO.DyldInfo.show_rebases_opcodes` attribute returns the bytecode as *pseudo code*:
+The :attr:`lief.MachO.DyldInfo.show_rebases_opcodes` attribute returns the
+bytecode as *pseudo-code*:
 
 .. code-block:: python
 
@@ -138,12 +177,17 @@ The :attr:`lief.MachO.DyldInfo.show_rebases_opcodes` attribute returns the bytec
         ...
   [DONE]
 
-From the above output, we can see that the loader will rebase **pointer** in the ``__DATA`` segment at offset ``0x20, 0x28, 0x38, ...``.
+From the output above, we can see that the loader will rebase **pointers** in
+the ``__DATA`` segment at offsets ``0x20, 0x28, 0x38, ...``.
 
-For those who only care about which exact addresses are relocated, this output is not very user-friendly. LIEF also provides a **representation** of this bytecode by creating :class:`lief.MachO.Relocation` object.
-They are the result of the **interpretation** of the bytecode.
+For those who only care about the exact addresses being relocated, this output
+is not very user-friendly. LIEF also provides a **representation** of this
+bytecode by creating :class:`lief.MachO.Relocation` objects, which are the
+result of interpreting the bytecode.
 
-The :attr:`lief.MachO.Binary.relocations` attribute returns an iterator over :class:`lief.MachO.Relocation` objects that **model** a relocation in a similar object as :class:`lief.ELF.Relocation` and :class:`lief.PE.Relocation`.
+The :attr:`lief.MachO.Binary.relocations` attribute returns an iterator over
+:class:`lief.MachO.Relocation` objects that **model** a relocation, similar to
+:class:`lief.ELF.Relocation` and :class:`lief.PE.Relocation`.
 
 .. code-block:: python
 
@@ -160,24 +204,29 @@ The :attr:`lief.MachO.Binary.relocations` attribute returns an iterator over :cl
   100002048 POINTER 64 DYLDINFO  __DATA.__la_symbol_ptr _fwrite
   ...
 
-Using this representation, we can update relocations by adding the shift size to the :attr:`lief.MachO.Relocation.address` attribute.
+Using this representation, we can update relocations by adding the shift size
+to the :attr:`lief.MachO.Relocation.address` attribute.
 
-When the Mach-O builder reconstructs the final binary, it **regenerates** and optimize the rebase bytecode
-according to the current state of the relocations. The process can be summed up with the following diagram:
+When the Mach-O builder reconstructs the final binary, it **regenerates** and
+optimizes the rebase bytecode according to the current state of the
+relocations. The process can be summarized by the following diagram:
 
 .. figure:: ../_static/tutorial/11/lief_bytecode.png
   :align: center
 
-Binding bytecode
+Binding Bytecode
 ****************
 
-The Mach-O loader also uses a bytecode to bind imported functions or imported symbols. Actually, this bytecode is used in three different binding methods:
+The Mach-O loader also uses bytecode to bind imported functions or symbols.
+This bytecode is used in three different binding methods:
 
 * Normal binding
-* Weak binding -- Used when the same symbol is defined multiple times
-* Lazy binding -- Bound only when there is an access to the symbol
+* Weak binding (used when the same symbol is defined multiple times)
+* Lazy binding (bound only when the symbol is accessed)
 
-The bytecode can be pretty printed with the :attr:`~lief.MachO.DyldInfo.show_bind_opcodes`, :attr:`~lief.MachO.DyldInfo.show_weak_bind_opcodes` and :attr:`~lief.MachO.DyldInfo.show_lazy_bind_opcodes`:
+The bytecode can be pretty-printed with :attr:`~lief.MachO.DyldInfo.show_bind_opcodes`,
+:attr:`~lief.MachO.DyldInfo.show_weak_bind_opcodes`, and
+:attr:`~lief.MachO.DyldInfo.show_lazy_bind_opcodes`:
 
 .. code-block:: python
 
@@ -199,14 +248,19 @@ The bytecode can be pretty printed with the :attr:`~lief.MachO.DyldInfo.show_bin
       bind(POINTER, __DATA, 0x10, ___stderrp, library_ordinal=/usr/lib/libSystem.B.dylib, addend=0, is_weak_import=false)
       Segment Offset += 0x8 (0x18)
 
-The representation and the update process is the same as the one described in the section about *Rebase bytecode*
+The representation and update process are identical to those described in the
+*Rebase Bytecode* section.
 
 Export Trie
 ***********
 
-Regarding exported functions and exported symbols, Mach-O format uses a *trie* structure to store export information. Trie offset and size are given in the :attr:`~lief.MachO.DyldInfo.export_trie` attribute.
+For exported functions and symbols, the Mach-O format uses a *trie* structure
+to store export information. The trie offset and size are specified in the
+:attr:`~lief.MachO.DyldInfo.export_trie` attribute.
 
-Once parsed, trie entries are represented through the :class:`~lief.MachO.ExportInfo` object and can be retrieved with the :attr:`~lief.MachO.Symbol.export_info` attribute.
+Once parsed, trie entries are represented via the :class:`~lief.MachO.ExportInfo`
+object and can be retrieved using the :attr:`~lief.MachO.Symbol.export_info`
+attribute.
 
 .. code-block:: python
 
@@ -248,16 +302,22 @@ Once parsed, trie entries are represented through the :class:`~lief.MachO.Export
   Symbol:      _NSIsSymbolNameDefined
   ...
 
-After the shift operation, export information are patched by updating the :attr:`~lief.MachO.ExportInfo.address` attribute, then a new export trie is generated from the previous updates.
+After the shift operation, export information is patched by updating the
+:attr:`~lief.MachO.ExportInfo.address` attribute, and a new export trie is
+generated from the updated data.
 
 
-Removing signature
-~~~~~~~~~~~~~~~~~~
+Removing the Signature
+~~~~~~~~~~~~~~~~~~~~~~
 
-Removing the ``LC_CODE_SIGNATURE`` command is a basic modification that is pretty useful when modifying Mach-O file. Since the signature
-checks the integrity of the binary, we usually need to remove this command after modification on the file. We can still re-sign the binary once all modifications finished.
+Removing the ``LC_CODE_SIGNATURE`` command is a basic modification that is
+very useful when modifying Mach-O files. Since the signature verifies the
+integrity of the binary, this command typically needs to be removed after
+modifying the file. The binary can be re-signed once all modifications are
+finished.
 
-LIEF provides the :meth:`lief.MachO.Binary.remove_signature` function to remove this command:
+LIEF provides the :meth:`lief.MachO.Binary.remove_signature` function to
+remove this command:
 
 .. code-block:: python
 
@@ -267,18 +327,21 @@ LIEF provides the :meth:`lief.MachO.Binary.remove_signature` function to remove 
 
   ssh.write("ssh.nosigned")
 
-Code Injection with shared libraries
+Code Injection with Shared Libraries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-As explained in the talk about format modification [1]_, one way to inject code within the memory space of a program is to force the loader to load a library (that was not previously linked) that contains a constructor function.
+As explained in the talk on format modification [1]_, one way to inject code
+into a program's memory space is to force the loader to load a library
+(previously unlinked) that contains a constructor function.
 
-For a Mach-O binary, it can be achieved by adding one of these load commands:
+For a Mach-O binary, this can be achieved by adding one of these load commands:
 
 * :attr:`~lief.MachO.LoadCommand.TYPE.ID_DYLIB`
 * :attr:`~lief.MachO.LoadCommand.TYPE.LOAD_DYLIB`
 * ...
 
-Let's take an example with ``clang``. First, we need to create a tiny library which defines a constructor:
+Consider an example using ``clang``. First, we create a small library that
+defines a constructor:
 
 .. code-block:: cpp
 
@@ -290,13 +353,14 @@ Let's take an example with ``clang``. First, we need to create a tiny library wh
     printf("Hello World\n");
   }
 
-Which is complied with
+This is compiled with:
 
 .. code-block:: console
 
   $ clang -fPIC -shared libexample.c -o libexample.dylib
 
-Then we add a new :attr:`~lief.MachO.LoadCommand.TYPE.LOAD_DYLIB` using the :meth:`lief.MachO.Binary.add_library` function:
+Then, we add a new :attr:`~lief.MachO.LoadCommand.TYPE.LOAD_DYLIB` using the
+:meth:`lief.MachO.Binary.add_library` function:
 
 .. code-block:: python
 
@@ -307,7 +371,8 @@ Then we add a new :attr:`~lief.MachO.LoadCommand.TYPE.LOAD_DYLIB` using the :met
 
   clang.write("/tmp/clang.new")
 
-Finally, we run ``clang.new`` and see that ``Hello World`` is printed before the main execution of clang:
+Finally, we run ``clang.new`` and observe that ``Hello World`` is printed
+before the main execution of ``clang``:
 
 .. code-block:: console
 
@@ -317,7 +382,8 @@ Finally, we run ``clang.new`` and see that ``Hello World`` is printed before the
   Hello World
   clang: error: no input files
 
-We can also observe the new :attr:`~lief.MachO.LoadCommand.TYPE.LOAD_DYLIB` command with otool:
+We can also see the new :attr:`~lief.MachO.LoadCommand.TYPE.LOAD_DYLIB` command
+using ``otool``:
 
 .. code-block:: console
 
@@ -336,22 +402,29 @@ We can also observe the new :attr:`~lief.MachO.LoadCommand.TYPE.LOAD_DYLIB` comm
 
 
 
-Adding Section/Segment
-~~~~~~~~~~~~~~~~~~~~~~
+Adding a Section/Segment
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-As we can allocate arbitrary space between the load command table and the raw data, we can also extend an existing :class:`~lief.MachO.LoadCommand`.
-Especially, Mach-O segments are commands that are associated with the LIEF object :class:`lief.MachO.SegmentCommand`.
+Since we can allocate arbitrary space between the load command table and the
+raw data, we can also extend an existing :class:`~lief.MachO.LoadCommand`. In
+particular, Mach-O segments are commands associated with the LIEF object
+:class:`lief.MachO.SegmentCommand`.
 
-To add a new section in the ``__TEXT`` segment, we must extend the load command associated with this segment so that we can add a new section structure. We must also reserve space for the content of the section.
-As the content of the ``__TEXT`` segment begin at offset 0 and finish somewhere in the raw data, the right place to insert the new content is between the end of the load command table and the beginning of the raw data:
+To add a new section to the ``__TEXT`` segment, we must extend the load command
+associated with that segment to accommodate a new section structure. We must
+also reserve space for the section's content. Since the content of the
+``__TEXT`` segment begins at offset 0 and ends somewhere in the raw data, the
+appropriate place to insert the new content is between the end of the load
+command table and the beginning of the raw data:
 
 .. figure:: ../_static/tutorial/11/extendtxt.png
   :align: center
 
 
-The process described above is implemented through the :meth:`lief.MachO.Binary.add_section` method.
+The process described above is implemented via the
+:meth:`lief.MachO.Binary.add_section` method.
 
-Here is an example in which we will inject assembly code that executes ``/bin/sh``:
+In this example, we will inject assembly code that executes ``/bin/sh``:
 
 .. code-block:: python
 
@@ -368,7 +441,8 @@ Here is an example in which we will inject assembly code that executes ``/bin/sh
   section = app.add_section(section)
   print(section)
 
-Then we can change the entry point by setting the :attr:`lief.MachO.MainCommand.entrypoint` attribute:
+We can then change the entry point by setting the
+:attr:`lief.MachO.MainCommand.entrypoint` attribute:
 
 .. code-block:: python
 
@@ -382,14 +456,14 @@ Finally, we remove the signature and reconstruct the binary:
   app.remove_signature()
   app.write("./id.modified")
 
-The execution of ``id.modified`` should give a similar output:
+The execution of ``id.modified`` should yield a similar output:
 
 .. code-block:: console
 
   Mac-mini:tmp romain$ ./id.modified
   tmp @ [romain] $
 
-You can also check other tools such as optool [2]_ or insert_dylib [3]_
+You can also check other tools such as optool [2]_ or insert_dylib [3]_.
 
 .. rubric:: References
 

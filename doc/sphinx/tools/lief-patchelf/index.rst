@@ -4,7 +4,7 @@
 -----------------------------------------------
 
 ``lief-patchelf`` is an implementation of the original patchelf created by NixOS
-(`NixOS/patchelf <https://github.com/NixOS/patchelf>`_), based on the LIEF
+(`NixOS/patchelf <https://github.com/NixOS/patchelf>`_), based on LIEF.
 
 This LIEF-based version is written in Rust, offering a more robust, modern, and
 maintainable implementation compared to the original project.
@@ -12,9 +12,9 @@ maintainable implementation compared to the original project.
 .. admonition:: CLI
   :class: tip
 
-  It is worth mentioning that ``lief-patchelf`` maintains the same command-line
-  interface as the original NixOS implementation, allowing for a seamless transition
-  between the two versions.
+  It is worth mentioning that ``lief-patchelf`` maintains the same command-line interface as the
+  original NixOS implementation, allowing for a seamless transition between
+  the two versions.
 
 Compilation
 ~~~~~~~~~~~
@@ -39,12 +39,12 @@ For example, you can generate a Windows ARM64 executable as follows:
   ./target/{release,debug}/lief-patchelf.exe --version
 
 For more information about the supported platforms, please refer to the
-:ref:`Rust Bindings <lief_rust_bindings>` section
+:ref:`Rust Bindings <lief_rust_bindings>` section.
 
 Man Page
 ~~~~~~~~
 
-Given the ``lief-patchelf`` binary, you can generate a man page with the
+Given the ``lief-patchelf`` binary, you can generate a man page using the
 following command:
 
 .. code-block:: bash
@@ -52,16 +52,16 @@ following command:
    $ lief-patchelf --generate-manpage ./lief-patchelf.1
 
 
-This support is provided by the crate `clap_mangen <https://crates.io/crates/clap_mangen>`_
+This functionality is provided by the `clap_mangen <https://crates.io/crates/clap_mangen>`_
+crate.
 
 Shell Completion
 ~~~~~~~~~~~~~~~~
 
-Thanks to `clap <https://github.com/clap-rs/clap>`_ and its ``clap_complete`` extension to
-generate auto-completion in various shells, you can generate completion stubs for
-``lief-patchelf`` with:
+Thanks to `clap <https://github.com/clap-rs/clap>`_ and its ``clap_complete``
+extension, which generates auto-completion for various shells, you can generate
+completion stubs for ``lief-patchelf`` with:
 
 .. code-block:: bash
 
    $ ./lief-patchelf --generate {bash, elvish, fish, powershell, zsh}
-

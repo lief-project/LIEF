@@ -17,13 +17,13 @@ Introduction
 ************
 
 :ref:`ELF <format-elf>`, :ref:`PE <format-pe>`, :ref:`Mach-O <format-macho>`
-binaries share similar characteristics like an entrypoint, imported/exported
+binaries share similar characteristics, such as an entry point, imported/exported
 functions, etc.
 
-These shared characteristics are represented in an *abstract* layer that is
-represented by an inheritance relationship in C++/Python and by a trait in Rust.
+These shared characteristics are represented in an *abstract* layer, which is
+defined by an inheritance relationship in C++/Python and by a trait in Rust.
 
-Concretely |lief-elf-binary|, |lief-pe-binary| and |lief-macho-binary|,
+Specifically, |lief-elf-binary|, |lief-pe-binary|, and |lief-macho-binary|
 either inherit or implement the trait: |lief-abstract-binary|.
 
 In Python/C++, one can access an *abstract* binary object by using the generic
@@ -51,11 +51,11 @@ In Python/C++, one can access an *abstract* binary object by using the generic
 
         std::unique_ptr<LIEF::Binary> target = LIEF::Parser::parse("some.exe");
 
-Because of the dynamical polymorphism aspect of Python, the return value of
-:py:func:`lief.parse` is automatically casted into either:
-:class:`lief.ELF.Binary`, :class:`lief.PE.Binary` or :class:`lief.MachO.Binary`.
+Due to Python's dynamic polymorphism, the return value of
+:py:func:`lief.parse` is automatically cast into either:
+:class:`lief.ELF.Binary`, :class:`lief.PE.Binary`, or :class:`lief.MachO.Binary`.
 To **upcast** this object into a :class:`lief.Binary` object, one can use the
-attribute: :attr:`lief.Binary.abstract` which effectively returns a :class:`lief.Binary`
+:attr:`lief.Binary.abstract` attribute, which returns a :class:`lief.Binary`
 instance:
 
 .. code-block:: python
@@ -68,7 +68,7 @@ instance:
    abstract = target.abstract
    assert type(abstract) is lief.Binary
 
-In C++, one can **downcast** a :cpp:class:`LIEF::Binary` instance into its effective
+In C++, a :cpp:class:`LIEF::Binary` instance can be **downcast** to its underlying
 type using the ``classof`` idiom:
 
 .. code-block:: cpp

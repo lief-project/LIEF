@@ -6,21 +6,24 @@
 Introduction
 ~~~~~~~~~~~~~
 
-LIEF manages the errors using
+LIEF manages errors using:
 
-1. The exceptions (removed since LIEF 0.13.0)
+1. Exceptions (deprecated and removed since LIEF 0.13.0)
 2. `std::expected (tl::expected) <https://github.com/TartanLlama/expected>`_
 
-It turns out that using the C++ exceptions (and the RTTI) were not the better design choice as LIEF (as a
-library) can be used in ``-fno-exceptions`` context. This is why we are slowly moving to the second mechanism
-which is based on the ``ResultOrError`` idiom. We can find this kind idiom in LLVM with `llvm::ErrorOr <https://llvm.org/doxygen/classllvm_1_1ErrorOr.html>`_,
-in Rust with `std::result <https://doc.rust-lang.org/std/result/>`_.
-LIEF is using a `std::expected`-like to handle errors. Since this interface is
-only available in C++23, we rely on `TartanLlama/expected <https://github.com/TartanLlama/expected>`_ which
+It turns out that using C++ exceptions (and RTTI) was not the best design choice,
+as LIEF, as a library, can be used in a ``-fno-exceptions`` context.
+Consequently, we moved to a mechanism based on the ``ResultOrError``
+idiom. This idiom is similar to those found in LLVM with
+`llvm::ErrorOr <https://llvm.org/doxygen/classllvm_1_1ErrorOr.html>`_ and in Rust
+with `std::result <https://doc.rust-lang.org/std/result/>`_.
+LIEF uses a `std::expected`-like interface to handle errors. Since this
+interface is only available in C++23, we rely on
+`TartanLlama/expected <https://github.com/TartanLlama/expected>`_, which
 provides this interface for C++11/C++17.
 
-Basically, LIEF functions that use this idiom return a :cpp:type:`LIEF::result` which wraps the effective
-result or an error.
+Functions using this idiom return a :cpp:type:`LIEF::result`, which wraps either
+the successful result or an error.
 
 The user can process this result as follows:
 
@@ -33,9 +36,10 @@ The user can process this result as follows:
      lief_errors err = as_lief_err(pe_type);
    }
 
-In the case of Python, we leverage the *dynamic* features of the language to return either: the expected value
-or an error if the function failed. For instance, if we take the :func:`lief.PE.get_type` function,
-the former implementation of this function raised an exception to inform the user:
+In the case of Python, we leverage the *dynamic* features of the language to
+return either the expected value or an error if the function fails.
+For instance, in previous versions of :func:`lief.PE.get_type`, the
+implementation raised an exception to inform the user:
 
 .. code-block:: python
 
@@ -45,9 +49,9 @@ the former implementation of this function raised an exception to inform the use
   except Exception as e:
     print(f"Error: {e}")
 
-With the new implementation that relies on the ``ResultOrError`` idiom, the function returns the
-:class:`lief.PE.PE_TYPE` value is everything is ok and in the case of a processing error, it returns a
-:class:`lief.lief_errors`.
+With the new implementation that relies on the ``ResultOrError`` idiom, the
+function returns the :class:`lief.PE.PE_TYPE` value if everything is correct,
+and returns a :class:`lief.lief_errors` in case of a processing error.
 
 The user can handle this new interface by using the ``isinstance()`` function or by comparing the value with
 a :class:`lief.lief_errors` attribute:

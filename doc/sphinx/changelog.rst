@@ -12,30 +12,30 @@
 
 :Ghidra:
 
-  * Add support to generate DWARF from firmwares or binaries that don't have
-    a precise format and architecture (:issue:`1249`)
+  * Add support for generating DWARF from firmware or binaries without
+    a precise format or architecture (:issue:`1249`)
 
 :DWARF:
 
-  * Add support to access bit size of bit-fields declaration (:issue:`1265`)
-  * Add support to access Enum entries: |lief-dwarf-types-Enum-entries|
-  * Add support to read or assign a register to a function's parameter
-  * Add support to read or assign a description (``DW_AT_description``) to
-    a |lief-dwarf-function|, |lief-dwarf-variable|, |lief-dwarf-lexical-block|:
+  * Add support for accessing the bit size of bit-field declarations (:issue:`1265`)
+  * Add support for accessing Enum entries: |lief-dwarf-types-Enum-entries|
+  * Add support for reading from or assigning a register to a function parameter
+  * Add support for reading from or assigning a description (``DW_AT_description``)
+    to a |lief-dwarf-function|, |lief-dwarf-variable|, or |lief-dwarf-lexical-block|:
 
     - |lief-dwarf-function-description|
     - |lief-dwarf-variable-description|
     - |lief-dwarf-lexical-block-description|
 
-  * Enabled the creation of nested |lief-dwarf-editor-Function-lexical-block|
+  * Enable the creation of nested |lief-dwarf-editor-Function-lexical-block|
 
 :PDB:
 
-  * Improve the support and the API for ``LF_ENUM``: |lief-pdb-types-Enum|
-  * Improve the support and the API for ``LF_PROCEDURE``: |lief-pdb-types-Function|
-  * Improve the support and the API for ``LF_ARRAY``: |lief-pdb-types-Array|
-  * Improve the support and the API for *simple* types: |lief-pdb-types-Simple|
-  * Improve the support and the API for ``LF_ONEMETHOD``: |lief-pdb-types-Method|
+  * Improve support and the API for ``LF_ENUM``: |lief-pdb-types-Enum|
+  * Improve support and the API for ``LF_PROCEDURE``: |lief-pdb-types-Function|
+  * Improve support and the API for ``LF_ARRAY``: |lief-pdb-types-Array|
+  * Improve support and the API for *simple* types: |lief-pdb-types-Simple|
+  * Improve support and the API for ``LF_ONEMETHOD``: |lief-pdb-types-Method|
 
 :COFF:
 
@@ -44,12 +44,14 @@
 
 :Mach-O:
 
-  * Introduced an API to select a specific Mach-O binary by architecture from a FAT binary (:pr:`1283`)
+  * Introduce an API for selecting a specific Mach-O binary by architecture
+    from a FAT binary (:pr:`1283`)
 
 :PE:
 
-  * Add the support to add an |lief-pe-import| at a specific position: |lief-pe-binary-add-import| (:pr:`1298`)
-  * Better support for EFI binary like ``bzImage`` (:pr:`1293`)
+  * Add support for adding an |lief-pe-import| at a specific position:
+    |lief-pe-binary-add-import| (:pr:`1298`)
+  * Improve support for EFI binaries, such as ``bzImage`` (:pr:`1293`)
 
 :Dependencies:
 
@@ -68,81 +70,91 @@
 
   * Python 3.8 is no longer supported
 
-0.17.4 - February 21th, 2026
+0.17.4 - February 21st, 2026
 ----------------------------
 
 :PE:
 
-  * Fixed the address type in the TLS builder by :github_user:`Immortalety` in PR: :pr:`1296`
+  * Fixed the address type in the TLS builder (by :github_user:`Immortalety`
+    in PR :pr:`1296`)
 
 :MachO:
 
-  * Fixed |lief-macho-binary-virtual_address_to_offset| to properly handle non-file-backed segments
-    (such as ``__DATA`` segments containing only ``ZEROFILL`` sections like `__bss`)
-    by :github_user:`jalopezg-git` in PR: :pr:`1301` fixing :issue:`1299`.
+  * Fixed |lief-macho-binary-virtual_address_to_offset| to properly handle
+    non-file-backed segments, such as ``__DATA`` segments containing only
+    ``ZEROFILL`` sections like ``__bss`` (by :github_user:`jalopezg-git`
+    in PR :pr:`1301`, fixing :issue:`1299`).
 
-  * Fixed ``patch_relocation()`` to correctly process tagged pointers.
-    By :github_user:`jalopezg-git` in PR: :pr:`1302` fixing :issue:`1300`
+  * Fixed ``patch_relocation()`` to correctly process tagged pointers
+    (by :github_user:`jalopezg-git` in PR :pr:`1302`, fixing :issue:`1300`).
 
 :COFF:
 
-  * Resolved a compilation conflict with the Windows ``minwindef.h`` macro ``#define max``
+  * Resolved a compilation conflict with the Windows ``minwindef.h`` macro
+    ``#define max``.
 
 :CMake:
 
-  * Fixed compiler flag issues on Windows when compiling with ``clang-cl``. By
-    :github_user:`sigewinnefish` in PR: :pr:`1306`
+  * Fixed compiler flag issues on Windows when compiling with ``clang-cl``
+    (by :github_user:`sigewinnefish` in PR :pr:`1306`).
 
 :Python:
 
-  * Bumped various Python backend build dependencies in ``api/python/build-requirements.txt``
-    to support Python ``3.14`` when compiling from sources (:issue:`1304`)
+  * Bumped various Python backend build dependencies in
+    ``api/python/build-requirements.txt`` to support Python ``3.14`` when
+    compiling from sources (:issue:`1304`).
 
 0.17.3 - January 24th, 2026
 ---------------------------
 
 :PE:
 
-  * Fix bug with resources. (:issue:`1281`)
-  * Fix VA/RVA confusion in the PE's builder (:issue:`1284`)
+  * Fixed bug with resources (:issue:`1281`).
+  * Fixed VA/RVA confusion in the PE builder (:issue:`1284`).
 
 0.17.2 - January 3rd, 2026
 ---------------------------
 
 :Mach-O:
 
-  * Differentiate Mach-O FAT magic bytes and Java class (by :github_user:`wangmot`, :issue:`1215`)
+  * Differentiate Mach-O FAT magic bytes and Java classes
+    (by :github_user:`wangmot`, :issue:`1215`).
 
 :Compilation:
 
-  * Fix MinGW compilation for some configuration (by :github_user:`TheBrokenRail`, :commit:`dabbb72`)
+  * Fixed MinGW compilation for some configurations
+    (by :github_user:`TheBrokenRail`, :commit:`dabbb72`).
 
 :PE:
 
-  * Fix alignment issue when rebuilding PE relocations (:issue:`1261`)
-  * Fix infinite loop when processing v2 dynamic relocation (by :github_user:`chengyongru` fixing :issue:`1273`)
+  * Fixed alignment issue when rebuilding PE relocations (:issue:`1261`).
+  * Fixed infinite loop when processing v2 dynamic relocations
+    (by :github_user:`chengyongru`, fixing :issue:`1273`).
 
 :ELF:
 
-  * Ensure that added DYN ELF sections are properly aligned (by :github_user:`schmchrt` fixing :issue:`1261`)
-  * Fix GnuHash null dereference (:issue:`1277`)
+  * Ensure that added DYN ELF sections are properly aligned
+    (by :github_user:`schmchrt`, fixing :issue:`1261`).
+  * Fixed GnuHash null dereference (:issue:`1277`).
 
 :Mach-O:
 
-  * Fix strong performance issue when parsing certain Mach-O (by :github_user:`trevor-e` fixing :issue:`1262`)
+  * Fixed major performance issue when parsing certain Mach-O files
+    (by :github_user:`trevor-e`, fixing :issue:`1262`).
 
 0.17.1 - October 25th, 2025
 ---------------------------
 
 :ELF:
 
-  * Fix :issue:`1251`
+  * Fixed :issue:`1251`.
 
 :Compilation:
 
-  * Fix missing visibility (:pr:`1254`)
-  * Fix incorrect paging computations that occurred when only a subset of formats was enabled.
-  * Fix include issue with the COFF format
+  * Fixed missing visibility (:pr:`1254`).
+  * Fixed incorrect paging computations that occurred when only a subset
+    of formats was enabled.
+  * Fixed include issue with the COFF format.
 
 0.17.0 - September 14th, 2025
 -----------------------------

@@ -3,35 +3,35 @@
 13 - PE Authenticode
 --------------------
 
-This tutorial explains how to process and verify PE authenticode with LIEF
-
-By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
+This tutorial explains how to process and verify PE Authenticode with LIEF.
 
 ------
 
 Introduction
 ~~~~~~~~~~~~
 
-PE authenticode is the signature scheme used by Windows to sign and verify the integrity of PE executables.
-The signature is associated with the data directory :attr:`~lief.PE.DataDirectory.TYPES.CERTIFICATE_TABLE`
-that is not always tied to a section (it implies that the signature is not necessarily mapped in memory).
-In fact, the data directory entry points to a file offset, not a RVA.
-This signature is wrapped in a PKCS #7 container with custom object types as defined
-in the official documentation [#]_.
+PE Authenticode is the signature scheme used by Windows to sign and verify the
+integrity of PE executables. The signature is associated with the
+:attr:`~lief.PE.DataDirectory.TYPES.CERTIFICATE_TABLE` data directory, which is
+not always tied to a section (implying that the signature is not necessarily
+mapped into memory). In fact, the data directory entry points to a file offset,
+not an RVA. This signature is wrapped in a PKCS #7 container with custom object
+types, as defined in the official documentation [#]_.
 
-This signature is not new in PE files and since the beginning of LIEF, we aimed to parse it.
-Before the version :ref:`v0.11.0 <release-0110>`, the implementation was somehow incomplete and inaccurate but
-since the version :ref:`v0.11.0 <release-0110>` and thanks to the sponsoring of the `CERT Gouvernemental of Luxembourg <https://www.govcert.lu/en/>`_,
-we refactored the design of the authenticode parser [#]_ and we implemented functions to verify the signature.
+Parsing these signatures has been a goal since LIEF's inception. Before
+version :ref:`v0.11.0 <release-0110>`, the implementation was incomplete and
+sometimes inaccurate. Since version :ref:`v0.11.0 <release-0110>`, and thanks
+to sponsorship from the `CERT Gouvernemental of Luxembourg <https://www.govcert.lu/en/>`_,
+we have refactored the Authenticode parser [#]_ and implemented signature
+verification functions.
 
 
-Exploring PKCS #7 Signature
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Exploring the PKCS #7 Signature
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-LIEF API tries to expose most of the internal components of the PKCS #7 container associated with the
-Authenticode.
-First, we can access the PE's signature through the :attr:`lief.PE.Binary.signatures` attribute
-[#]_:
+The LIEF API exposes most internal components of the PKCS #7 container
+associated with Authenticode. First, we can access the PE signatures through
+the |lief-pe-binary-signatures| attribute [#]_:
 
 .. code-block:: python
 
@@ -41,29 +41,32 @@ First, we can access the PE's signature through the :attr:`lief.PE.Binary.signat
 
    signature = pe.signatures[0]
 
-Although we usually find only **one** signature, PE executables can embed multiple signatures thanks to
-the ``/as`` command of ``signtool.exe``. This is why the :attr:`~lief.PE.Binary.signatures` attribute returns an
-**iterator** over the signatures parsed by LIEF.
+Although we usually find only **one** signature, PE executables can embed
+multiple signatures using the ``/as`` command of ``signtool.exe``. This is why
+the :attr:`~lief.PE.Binary.signatures` attribute returns an **iterator** over
+the signatures parsed by LIEF.
 
-The :class:`signature <lief.PE.Signature>` variable is actually a :class:`lief.PE.Signature` object which basically
-mirrors the PKCS #7 container plus some method to verify its integrity.
+The :class:`signature <lief.PE.Signature>` variable is a
+|lief-pe-signature| object, which mirrors the PKCS #7 container and
+includes methods for verifying its integrity.
 
 Within this object, we can access the following attributes:
 
 * :class:`~lief.PE.x509` certificates used to sign the executable: :attr:`lief.PE.Signature.certificates`
-* The :class:`~lief.PE.ContentInfo` object that contains the authentihash value: :attr:`lief.PE.ContentInfo.digest`
-* The :class:`~lief.PE.SignerInfo` structure: :attr:`lief.PE.Signature.signers`
+* The :class:`~lief.PE.ContentInfo` object containing the authentihash: :attr:`lief.PE.ContentInfo.digest`
+* The :class:`~lief.PE.SignerInfo` structures: :attr:`lief.PE.Signature.signers`
 
   .. note::
 
-    While the PKCS #7 standard enables multiple signers, Microsoft specifications require **one** and **only one**
-    signer.
+    While the PKCS #7 standard supports multiple signers, Microsoft
+    specifications require **exactly one** signer.
 
-The ``__str__()`` functions of these objects are overloaded so that we can pretty-print the content of these objects easily:
+The ``__str__()`` methods of these objects are overloaded to facilitate
+pretty-printing their content:
 
 .. code-block:: python
 
-   # Print certificates information
+   # Print certificate information
    for crt in signature.certificates:
      print(crt)
 
@@ -102,11 +105,12 @@ The ``__str__()`` functions of these objects are overloaded so that we can prett
   a738da4446a4e78ab647db7e53427eb07961c994317f4c59d7edbea5cc786d80
   SHA_256/RSA - C=US, O=DigiCert Inc, OU=www.digicert.com, CN=DigiCert SHA2 Assured ID Code Signing CA - 4 auth attr - 1 unauth attr
 
-Regarding the PE files, the authentihash is computed through the function :meth:`lief.PE.Binary.authentihash`
-which takes a :class:`lief.PE.ALGORITHMS` enum as parameter to define which hash algorithm must be
-used to compute the digest.
+For PE files, the authentihash is computed using the
+:meth:`lief.PE.Binary.authentihash` function, which takes a
+:class:`lief.PE.ALGORITHMS` enum as a parameter to define the hash algorithm.
 
-For instance, to compute the SHA-256 value of the authenticode, we just have to pass :attr:`lief.PE.ALGORITHMS.SHA_256`:
+For instance, to compute the SHA-256 authentihash, pass
+:attr:`lief.PE.ALGORITHMS.SHA_256`:
 
 .. code-block:: python
 
@@ -118,13 +122,15 @@ For instance, to compute the SHA-256 value of the authenticode, we just have to 
 
 .. note::
 
-  To compare the :meth:`lief.PE.Binary.authentihash` value with the signed one (i.e. :attr:`lief.PE.ContentInfo.digest`)
-  we must use the same hash algorithm as defined by :attr:`lief.PE.Signature.digest_algorithm`
+  To compare the :meth:`lief.PE.Binary.authentihash` value with the signed one
+  (i.e., :attr:`lief.PE.ContentInfo.digest`), you must use the same hash
+  algorithm as defined by :attr:`lief.PE.Signature.digest_algorithm`.
 
-We also expose shortcut attributes in the Python API to compute the authentihash values for:
+We also provide shortcut attributes in the Python API to compute authentihash
+values:
 
 +----------------+---------------------------------------------+
-| Hash Algorithm | Binary's Attribute                          |
+| Hash Algorithm | Binary Attribute                            |
 +================+=============================================+
 | MD5            | :attr:`~lief.PE.Binary.authentihash_md5`    |
 +----------------+---------------------------------------------+
@@ -135,8 +141,9 @@ We also expose shortcut attributes in the Python API to compute the authentihash
 | SHA-512        | :attr:`~lief.PE.Binary.authentihash_sha512` |
 +----------------+---------------------------------------------+
 
-LIEF also exposes the original raw signature blob through the property :attr:`lief.PE.Signature.raw_der` which
-enables to export the signature:
+LIEF also exposes the original raw signature blob via the
+:attr:`lief.PE.Signature.raw_der` property, which allows for exporting the
+signature:
 
 .. code-block:: python
 
@@ -144,7 +151,7 @@ enables to export the signature:
 
   Path("/tmp/extracted.p7b").write_bytes(signature.raw_der)
 
-Then, we can use ``openssl`` to process its content:
+Then, you can use ``openssl`` to process its content:
 
 .. code-block:: text
 
@@ -190,7 +197,7 @@ Then, we can use ``openssl`` to process its content:
             object: undefined (1.3.6.1.4.1.311.2.1.11)
 
 The `authenticode_reader.py <https://github.com/lief-project/LIEF/blob/main/api/python/examples/authenticode/authenticode_reader.py>`_
-script located in the `examples/ <https://github.com/lief-project/LIEF/tree/main/examples/python/authenticode>`_ directory
+script in the `examples/ <https://github.com/lief-project/LIEF/tree/main/examples/python/authenticode>`_ directory
 can also be used to inspect the signature:
 
 .. code-block:: console
@@ -246,17 +253,21 @@ can also be used to inspect the signature:
 Verifying the Signature
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Besides the fact that LIEF can parse PE's authenticode signature, LIEF can also verify the integrity of the authentihash
-thanks to the method: :meth:`lief.PE.Binary.verify_signature` which outputs :attr:`lief.PE.Signature.VERIFICATION_FLAGS.OK`
-if the signature is valid or another enum (see: :attr:`lief.PE.Signature.VERIFICATION_FLAGS`) when it is invalid:
+In addition to parsing Authenticode signatures, LIEF can also verify the
+integrity of the authentihash using the
+|lief-pe-binary-verify_signature| method. This method returns
+:attr:`lief.PE.Signature.VERIFICATION_FLAGS.OK` if the signature is valid, or
+another enum value if it is invalid (see:
+:attr:`lief.PE.Signature.VERIFICATION_FLAGS`):
 
 .. code-block:: python
 
    pe = lief.parse("avast_free_antivirus_setup_online.exe")
    print(pe.verify_signature()) # lief.PE.Signature.VERIFICATION_FLAGS.OK
 
-We can also verify a PE binary with a **detached signature** by providing a :class:`signature <lief.PE.Signature>`
-object to :meth:`~lief.PE.Binary.verify_signature`:
+You can also verify a PE binary with a **detached signature** by providing a
+:class:`signature <lief.PE.Signature>` object to
+:meth:`~lief.PE.Binary.verify_signature`:
 
 .. code-block:: python
    :emphasize-lines: 3,4
@@ -266,36 +277,41 @@ object to :meth:`~lief.PE.Binary.verify_signature`:
    detached_sig = lief.PE.Signature.parse("/tmp/detached.p7b")
    print(pe.verify_signature(detached_sig))
 
-The verification process does not rely on an external component (i.e. neither openssl nor WinTrust API) but we try
-to reproduce the same checks as described in the RFC(s) and the official documentation of the Authenticode
-[#]_.
+The verification process does not rely on external components (i.e., neither
+OpenSSL nor the WinTrust API). Instead, we attempt to reproduce the same checks
+described in the RFCs and official Authenticode documentation [#]_.
 
 These checks include:
 
-A. Check the integrity of the signature (:meth:`lief.PE.Signature.check()`):
+A. Verifying the integrity of the signature (:meth:`lief.PE.Signature.check()`):
 
-   1. There is ONE and only ONE :class:`~lief.PE.SignerInfo`
-   2. Digest algorithms are consistent
-      (:attr:`Signature.digest_algorithm <lief.PE.Signature.digest_algorithm>` ``==`` :attr:`ContentInfo.digest_algorithm <lief.PE.ContentInfo.digest_algorithm>`  ``==`` :attr:`SignerInfo.digest_algorithm <lief.PE.SignerInfo.digest_algorithm>`)
-   3. If the :class:`~lief.PE.SignerInfo` has authenticated attributes, check their integrity. Otherwise, check
-      the integrity of the :class:`~lief.PE.ContentInfo` against the Signer's certificate.
-   4. If there are authenticated attributes, check that there is a
-      :class:`lief.PE.PKCS9MessageDigest` attribute for which the :attr:`~lief.PE.PKCS9MessageDigest.digest`
-      matches the hash of the :class:`~lief.PE.ContentInfo`
-   5. If there is a counter signature in the **un-authenticated attributes**, verify its integrity and check
-      that it wraps a valid *timestamping*.
-   6. Check the expiration of the certificates according to the potential *timestamping*
+   1. Ensuring there is exactly one :class:`~lief.PE.SignerInfo` structure.
+   2. Confirming that digest algorithms are consistent
+      (:attr:`Signature.digest_algorithm <lief.PE.Signature.digest_algorithm>` ``==`` :attr:`ContentInfo.digest_algorithm <lief.PE.ContentInfo.digest_algorithm>`  ``==`` :attr:`SignerInfo.digest_algorithm <lief.PE.SignerInfo.digest_algorithm>`).
+   3. If :class:`~lief.PE.SignerInfo` has authenticated attributes, verifying
+      their integrity. Otherwise, verifying the integrity of the
+      :class:`~lief.PE.ContentInfo` against the signer's certificate.
+   4. If authenticated attributes exist, confirming the presence of a
+      :class:`lief.PE.PKCS9MessageDigest` attribute whose
+      :attr:`~lief.PE.PKCS9MessageDigest.digest` matches the hash of the
+      :class:`~lief.PE.ContentInfo`.
+   5. If a countersignature exists in the **unauthenticated attributes**,
+      verifying its integrity and ensuring it includes a valid *timestamp*.
+   6. Checking certificate expiration relative to any *timestamp*.
 
-B. If the signature is valid, check that :attr:`lief.PE.ContentInfo.digest` matches the computed
-   :meth:`~lief.PE.Binary.authentihash`
+B. If the signature is valid, confirming that :attr:`lief.PE.ContentInfo.digest`
+   matches the computed :meth:`~lief.PE.Binary.authentihash`.
 
-These checks are the default behavior of the :meth:`~lief.PE.Binary.verify_signature`. Nevertheless, you could
-pass :class:`lief.PE.Signature.VERIFICATION_CHECKS` flags to customize its behavior:
+These checks represent the default behavior of
+:meth:`~lief.PE.Binary.verify_signature`. You can, however, pass
+:class:`lief.PE.Signature.VERIFICATION_CHECKS` flags to customize this
+behavior:
 
 :Hash Only:
 
-    By using :attr:`VERIFICATION_CHECKS.HASH_ONLY <lief.PE.Signature.VERIFICATION_CHECKS.HASH_ONLY>`, it only performs
-    step ``B)`` (i.e. check the authentihash values regardless of the signature integrity)
+    Using :attr:`VERIFICATION_CHECKS.HASH_ONLY <lief.PE.Signature.VERIFICATION_CHECKS.HASH_ONLY>`
+    only performs step ``B)`` (i.e., checks the authentihash values regardless
+    of signature integrity).
 
     .. code-block:: python
 
@@ -304,8 +320,9 @@ pass :class:`lief.PE.Signature.VERIFICATION_CHECKS` flags to customize its behav
 
 :Lifetime Signing:
 
-    By using :attr:`VERIFICATION_CHECKS.LIFETIME_SIGNING <lief.PE.Signature.VERIFICATION_CHECKS.LIFETIME_SIGNING>`, timestamped
-    signatures can expire if their certificate expired. It has the same meaning as `WTD_LIFETIME_SIGNING_FLAG <https://docs.microsoft.com/en-us/windows/win32/api/wintrust/ns-wintrust-wintrust_data#WTD_LIFETIME_SIGNING_FLAG>`_
+    Using :attr:`VERIFICATION_CHECKS.LIFETIME_SIGNING <lief.PE.Signature.VERIFICATION_CHECKS.LIFETIME_SIGNING>`
+    allows timestamped signatures to expire if their certificate has expired.
+    This corresponds to `WTD_LIFETIME_SIGNING_FLAG <https://docs.microsoft.com/en-us/windows/win32/api/wintrust/ns-wintrust-wintrust_data#WTD_LIFETIME_SIGNING_FLAG>`_.
 
     .. code-block:: python
 
@@ -313,37 +330,39 @@ pass :class:`lief.PE.Signature.VERIFICATION_CHECKS` flags to customize its behav
       signature.check(lief.PE.Signature.VERIFICATION_CHECKS.LIFETIME_SIGNING)
 
 
-:Skip Certificate Check Time:
+:Skip Certificate Time Check:
 
-    By using :attr:`VERIFICATION_CHECKS.SKIP_CERT_TIME <lief.PE.Signature.VERIFICATION_CHECKS.SKIP_CERT_TIME>`,
-    LIEF doesn't raise an error if the certificate(s) expired.
+    Using :attr:`VERIFICATION_CHECKS.SKIP_CERT_TIME <lief.PE.Signature.VERIFICATION_CHECKS.SKIP_CERT_TIME>`
+    prevents LIEF from raising an error if certificates have expired.
 
     .. code-block:: python
 
-      # Returns lief.PE.Signature.VERIFICATION_FLAGS.OK even though
-      # the certificates expired
+      # Returns lief.PE.Signature.VERIFICATION_FLAGS.OK even if
+      # the certificates have expired
       pe.verify_signature(lief.PE.Signature.VERIFICATION_CHECKS.SKIP_CERT_TIME)
       signature.check(lief.PE.Signature.VERIFICATION_CHECKS.SKIP_CERT_TIME)
 
 .. note::
 
   To verify the integrity of a :class:`~lief.PE.Signature` object, you can use
-  :meth:`lief.PE.Signature.check`
+  |lief-pe-signature-check|.
 
 
 Certificate Chain of Trust
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Last but not least, we can also verify the certificates chain thanks to:
+Finally, the certificate chain can be verified using:
 
 1. :meth:`lief.PE.x509.verify`
 2. :meth:`lief.PE.x509.is_trusted_by`
 
-:meth:`~lief.PE.x509.verify` aims to verify a signed certificate from its CA. Given a CA :class:`~lief.PE.x509`
-certificate, ``CA.verify(signed)`` verifies that the ``signed`` parameter has been signed by ``CA``.
+:meth:`~lief.PE.x509.verify` is used to verify a signed certificate against its
+CA. Given a CA :class:`~lief.PE.x509` certificate, ``CA.verify(signed)``
+confirms that the ``signed`` parameter was indeed signed by ``CA``.
 
-On the other hand, :meth:`~lief.PE.x509.is_trusted_by` can be used to check that a given :class:`~lief.PE.x509`
-certificate is verified against a **list of certificates**:
+Alternatively, :meth:`~lief.PE.x509.is_trusted_by` checks whether a given
+:class:`~lief.PE.x509` certificate can be verified against a **list of
+certificates**:
 
 .. code-block:: python
 
@@ -362,9 +381,10 @@ certificate is verified against a **list of certificates**:
 Limitations
 ~~~~~~~~~~~
 
-Regarding the PKCS #7 structure itself, LIEF is able to parse and process most of its elements. Nevertheless,
-the :class:`lief.PE.SignerInfo` structure can embed attributes (authenticated or not) for which the ASN.1 structure
-can be public or not. As of LIEF v0.11.0 we do not support yet the following OIDs:
+Regarding the PKCS #7 structure, LIEF can parse and process most of its
+elements. However, the :class:`lief.PE.SignerInfo` structure can embed
+attributes (authenticated or otherwise) whose ASN.1 structure may or may not
+be public. As of LIEF v0.11.0, the following OIDs are not yet supported:
 
 +----------------------------+--------------------------------------------------------------+
 | OID                        | Description                                                  |
@@ -378,21 +398,23 @@ can be public or not. As of LIEF v0.11.0 we do not support yet the following OID
 | 1.3.6.1.4.1.311.10.3.28    | szOID_PLATFORM_MANIFEST_BINARY_ID (supported in LIEF 0.15.0) |
 +----------------------------+--------------------------------------------------------------+
 
-These not-supported attributes are wrapped within the :class:`lief.PE.GenericType` that exposes the raw
-ASN.1 blob with the property :attr:`~lief.PE.GenericType.raw_content`.
+These unsupported attributes are wrapped in the :class:`lief.PE.GenericType`,
+which exposes the raw ASN.1 blob via the :attr:`~lief.PE.GenericType.raw_content`
+property.
 
 Conclusion
 ~~~~~~~~~~
 
-Under the hood, most of the work is done by `mbedtls <https://github.com/Mbed-TLS/mbedtls>`_ which provides the following primitive used
-by LIEF:
+Under the hood, most of the work is performed by
+`mbedtls <https://github.com/Mbed-TLS/mbedtls>`_, which provides the following
+primitives used by LIEF:
 
 - ASN.1 decoder
 - x509 certificate processing (parsing AND verification)
 - Hash algorithms
 - Public key algorithms
 
-We can also cross-compile a small C++ snippet for iOS:
+A small C++ snippet can also be cross-compiled for iOS:
 
 .. code-block:: cpp
 
@@ -408,7 +430,7 @@ We can also cross-compile a small C++ snippet for iOS:
      return 1;
    }
 
-So that we can verify the integrity of a PE executable on an iPhone:
+This allows for verifying the integrity of a PE executable on an iPhone:
 
 .. code-block:: console
 
@@ -420,11 +442,11 @@ So that we can verify the integrity of a PE executable on an iPhone:
   Signature ok!
   iPhone:~ root#
 
-Whilst this example is quite useless, it emphasizes the purpose of this project:
+While this example may seem niche, it highlights the project's purpose:
 
-- Provide a cross-platform and cross-format library
-- Expose a high-level API (Python) as well as a (more or less) low-level API (C++)
-- Few dependencies so that the static version of LIEF does not need external libraries [#]_.
+- Providing a cross-platform and cross-format library.
+- Exposing both a high-level API (Python) and a low-level API (C++).
+- Minimizing dependencies so that the static version of LIEF does not require external libraries [#]_.
 
 ..  code-block:: console
 
@@ -436,8 +458,8 @@ Whilst this example is quite useless, it emphasizes the purpose of this project:
    /usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1292.60.1)
 
 
-To complete these functionalities of LIEF, you might also be interested in the following projects
-that deal with Authenticode:
+In addition to LIEF, you may be interested in other projects that handle
+Authenticode:
 
 +------------------+------------------------------------------------------------------------------+
 | Project          | URL                                                                          |
@@ -455,22 +477,23 @@ that deal with Authenticode:
 | yara-x           | https://github.com/VirusTotal/yara-x (which has support for PE Authenticode) |
 +------------------+------------------------------------------------------------------------------+
 
-Finally, you can find additional information about the Authenticode in Trail of Bits blog post [#]_.
-If you are interested in Authenticode tricks used by Dropbox, you can take a look at Microsoft website [#]_ and
-if you are interested in understanding how the integrity of the PKCS #7 works, you can look at *Manual verify PKCS#7 signed data with OpenSSL* [#]_
+Finally, additional information about Authenticode can be found in the Trail of
+Bits blog post [#]_. For Authenticode techniques used by Dropbox, refer to the
+Microsoft website [#]_. If you are interested in how PKCS #7 integrity works,
+refer to *Manually verify PKCS#7 signed data with OpenSSL* [#]_.
 
 
 .. rubric:: References
 
 .. [#] http://download.microsoft.com/download/9/c/5/9c5b2167-8017-4bae-9fde-d599bac8184a/Authenticode_PE.docx
 
-.. [#] Which now exceptions-free
+.. [#] Which is now exception-free.
 
-.. [#] This tutorial uses the Python API but the C++ API is very similar
+.. [#] This tutorial uses the Python API, but the C++ API is very similar.
 
-.. [#] See: `src/PE/signature/Signature.cpp - check() <https://github.com/lief-project/LIEF/tree/master/src/PE/signature/Signature.cpp>`_ for the implementation
+.. [#] See `src/PE/signature/Signature.cpp - check() <https://github.com/lief-project/LIEF/tree/master/src/PE/signature/Signature.cpp>`_ for the implementation.
 
-.. [#] Except the C/C++ STL
+.. [#] Except for the C/C++ STL.
 
 .. [#] https://blog.trailofbits.com/2020/05/27/verifying-windows-binaries-without-windows/
 
@@ -482,15 +505,15 @@ if you are interested in understanding how the integrity of the PKCS #7 works, y
 
 .. rubric:: API
 
-* :meth:`lief.PE.Binary.verify_signature`
+* |lief-pe-binary-verify_signature|
 * :meth:`lief.PE.Binary.authentihash`
 * :attr:`lief.PE.Binary.authentihash_md5`
 * :attr:`lief.PE.Binary.authentihash_sha1`
 * :attr:`lief.PE.Binary.authentihash_sha256`
 * :attr:`lief.PE.Binary.authentihash_sha512`
-* :attr:`lief.PE.Binary.signatures`
+* |lief-pe-binary-signatures|
 
-* :class:`lief.PE.Signature`
+* |lief-pe-signature|
 * :class:`lief.PE.x509`
 * :class:`lief.PE.ContentInfo`
 * :class:`lief.PE.SignerInfo`
@@ -505,3 +528,5 @@ if you are interested in understanding how the integrity of the PKCS #7 works, y
 * :class:`lief.PE.PKCS9SigningTime`
 * :class:`lief.PE.SpcSpOpusInfo`
 
+
+.. include:: ../_cross_api.rst

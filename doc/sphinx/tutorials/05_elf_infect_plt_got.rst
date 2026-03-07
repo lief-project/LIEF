@@ -1,45 +1,43 @@
-05 - Infecting the plt/got
+05 - Infecting the PLT/GOT
 --------------------------
 
 The objective of this tutorial is to hook an imported function in an ELF binary.
 
-Scripts and materials are available here: `materials <https://github.com/lief-project/tutorials/tree/master/05_ELF_infect_plt-got>`_
-
-
-By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
-
 -----
 
-Hooking imported functions by infecting the ``.got`` section is a well-known technique [#f1]_ [#f2]_ and this tutorial will be focused
-on its implementation using LIEF.
+Hooking imported functions by infecting the ``.got`` section is a well-known
+technique [#f1]_ [#f2]_, and this tutorial focuses on its implementation using
+LIEF.
 
-These figures illustrate the ``plt/got`` mechanism:
+These figures illustrate the PLT/GOT mechanism:
 
 .. figure:: ../_static/tutorial/05/pltgot.png
   :align: center
 
-  With lazy binding, the first time that the function is called the ``got`` entry redirects to the plt instruction.
+  With lazy binding, the first time the function is called, the ``got`` entry
+  redirects to the PLT instruction.
 
 
 .. figure:: ../_static/tutorial/05/pltgot3.png
   :align: center
 
-  The Second time, ``got`` entry holds the address in the shared library.
+  The second time, the ``got`` entry holds the address in the shared library.
 
 
 
-Basically the infection is done in two steps:
+Basically, the infection is done in two steps:
 
-  * Firstly, we inject our hook
-  * Secondly, we redirect the targeted function to our hook by patching the ``got``
+  * First, we inject our hook.
+  * Second, we redirect the targeted function to our hook by patching the ``got``.
 
-It can be summed up by the following figure:
+This can be summarized by the following figure:
 
 .. figure:: ../_static/tutorial/05/pltgot2.png
   :align: center
 
 
-As example, we will use a basic *crackme* which performs a :manpage:`memcmp(3)` on the flag and user's input.
+As an example, we will use a basic *crackme* that performs a
+:manpage:`memcmp(3)` on the flag and user input.
 
 .. code-block:: cpp
 
@@ -75,7 +73,8 @@ As example, we will use a basic *crackme* which performs a :manpage:`memcmp(3)` 
 
   }
 
-The flag is *xored* with ``0x5C``. To validate the *crackme*, the user has to enter ``Damn_YoU_Got_The_Flag``:
+The flag is XORed with ``0x5C``. To validate the *crackme*, the user must
+enter ``Damn_YoU_Got_The_Flag``:
 
 .. code-block:: console
 
@@ -84,7 +83,8 @@ The flag is *xored* with ``0x5C``. To validate the *crackme*, the user has to en
   $ crackme.bin Damn_YoU_Got_The_Flag
   You got it !!
 
-The hook will consist in printing arguments of ``memcmp`` and returning ``0``:
+The hook will consist of printing the arguments of ``memcmp`` and returning
+``0``:
 
 .. code-block:: cpp
 
@@ -101,18 +101,21 @@ The hook will consist in printing arguments of ``memcmp`` and returning ``0``:
     return 0;
   }
 
-As the hook is going to be injected into the crackme, it must have the following requirements:
+Since the hook will be injected into the crackme, it must meet the following
+requirements:
 
-* Assembly code must be *position independant* (compiled with ``-fPIC`` or ``-pie/-fPIE`` flags)
-* Don't use external libraries such as ``libc.so`` (``-nostdlib -nodefaultlibs`` flags)
+* Assembly code must be *position-independent* (compiled with ``-fPIC`` or ``-pie/-fPIE`` flags).
+* It must not use external libraries such as ``libc.so`` (``-nostdlib -nodefaultlibs`` flags).
 
 
-Due to the requirements, the hook is compiled with: :code:`gcc -nostdlib -nodefaultlibs -fPIC -Wl,-shared hook.c -o hook`.
+Due to these requirements, the hook is compiled with:
+:code:`gcc -nostdlib -nodefaultlibs -fPIC -Wl,-shared hook.c -o hook`.
 
 Injecting the hook
 ~~~~~~~~~~~~~~~~~~
 
-The first step is to inject the hook into the binary. To do so we will add a :class:`~lief.ELF.Segment`:
+The first step is to inject the hook into the binary. To do so, we will add a
+:class:`~lief.ELF.Segment`:
 
 .. code-block:: python
 
@@ -123,29 +126,35 @@ The first step is to inject the hook into the binary. To do so we will add a :cl
 
   segment_added  = crackme.add(hook.segments[0])
 
-All assembly code of the hook stands in the first :attr:`~lief.ELF.Segment.TYPE.LOAD` segment of ``hook``.
+All assembly code for the hook is contained in the first
+:attr:`~lief.ELF.Segment.TYPE.LOAD` segment of ``hook``.
 
-Once the hook added, its virtual address is :attr:`~lief.ELF.Segment.virtual_address` of ``segment_added``  and we can processed to the ``got`` patching.
+Once the hook is added, its virtual address will be the
+:attr:`~lief.ELF.Segment.virtual_address` of ``segment_added``, and we can
+proceed with the ``got`` patching.
 
 Patching the ``got``
 ~~~~~~~~~~~~~~~~~~~~
 
-LIEF provides a function to easily patch the ``got`` entry associated with a :class:`~lief.ELF.Symbol`:
+LIEF provides a function to easily patch the ``got`` entry associated with a
+:class:`~lief.ELF.Symbol`:
 
 
 .. automethod:: lief.ELF.Binary.patch_pltgot
   :noindex:
 
-The offset of the ``memcmp`` function is stored in the :attr:`~lief.ELF.Symbol.value` attribute of the associated dynamic symbol. Thus its virtual address will be:
+The offset of the ``memcmp`` function is stored in the
+:attr:`~lief.ELF.Symbol.value` attribute of the associated dynamic symbol.
+Thus, its virtual address will be:
 
-* ``my_memcpy``: :attr:`~lief.ELF.Symbol.value` + ``segment_added.virtual_address``
+* ``my_memcmp``: :attr:`~lief.ELF.Symbol.value` + ``segment_added.virtual_address``
 
 .. code-block:: python
 
   my_memcmp      = hook.get_symbol("my_memcmp")
   my_memcmp_addr = segment_added.virtual_address + my_memcmp.value
 
-Finally we can patch the ``memcmp`` from the crakme with this value:
+Finally, we can patch ``memcmp`` from the crackme with this value:
 
 .. code-block:: python
 
@@ -161,12 +170,13 @@ And rebuild it:
 Run
 ~~~
 
-As a check on the input size is performed before checking the flag value, we have to provide an input with the correct length (no matter its content):
+Since a check on the input size is performed before checking the flag value, we
+must provide an input with the correct length (regardless of its content):
 
 .. code-block:: console
 
   $ crackme.hooked XXXXXXXXXXXXXXXXXXXXX
-  Hook add
+  Hook memcmp
   Damn_YoU_Got_The_Flag
   XXXXXXXXXXXXXXXXXXXXX
   You got it !!
@@ -179,5 +189,3 @@ As a check on the input size is performed before checking the flag value, we hav
 
 .. [#f1] :strike:`hxxp://vxheaven.org/lib/vrn00.html`
 .. [#f2] http://phrack.org/issues/56/7.html
-
-

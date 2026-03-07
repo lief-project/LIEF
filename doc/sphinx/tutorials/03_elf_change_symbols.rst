@@ -1,31 +1,30 @@
 03 - Play with ELF symbols
 --------------------------
 
-In this tutorial, we will see how to modify dynamic symbols in both an executable and a library.
-
-Scripts and materials are available here: `materials <https://github.com/lief-project/tutorials/tree/master/03_ELF_change_symbols>`_
-
-
-By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
+In this tutorial, we will see how to modify dynamic symbols in both an
+executable and a library.
 
 -----
 
-When a library is dynamically linked to an executable, the required libraries are referenced in the ``DT_NEEDED`` entries within the
-dynamic table (``PT_DYNAMIC``).
+When a library is dynamically linked to an executable, the required libraries
+are referenced in the ``DT_NEEDED`` entries within the dynamic table
+(``PT_DYNAMIC``).
 
-In addition, the functions imported from this library are referenced in the dynamic symbols table with the following attributes:
+Additionally, functions imported from this library are referenced in the
+dynamic symbols table with the following attributes:
 
 * :attr:`~lief.ELF.Symbol.value` set to ``0``
 * :attr:`~lief.ELF.Symbol.type` set to :attr:`~lief.ELF.Symbol.TYPE.FUNC`
 
-Similarly, when a library exports functions the exported functions
-are registered in the dynamic symbols table with the following attributes:
+Similarly, when a library exports functions, they are registered in the
+dynamic symbols table with the following attributes:
 
 * :attr:`~lief.ELF.Symbol.value` set to the address of the function in the library
 * :attr:`~lief.ELF.Symbol.type` set to :attr:`~lief.ELF.Symbol.TYPE.FUNC`
 
-Imported and exported functions are abstracted in LIEF and one can iterate over these elements through
-the properties: :attr:`~lief.Binary.exported_functions` and :attr:`~lief.Binary.imported_functions`
+Imported and exported functions are abstracted in LIEF, and you can iterate
+over these elements using the following properties:
+:attr:`~lief.Binary.exported_functions` and :attr:`~lief.Binary.imported_functions`
 
 .. code-block:: python
 
@@ -37,11 +36,13 @@ the properties: :attr:`~lief.Binary.exported_functions` and :attr:`~lief.Binary.
   print(library.exported_functions)
 
 
-When analyzing a binary, the imported functions can reveal information about the underlying functionalities of the binary.
-To avoid revealing the imported symbols, one solution could consist in statically linking the library with the executable.
-Another solution is to blow the reverser's mind by swapping these symbols which is the purpose of this tutorial.
+When analyzing a binary, imported functions can reveal information about its
+underlying functionality. To avoid revealing these symbols, one solution could
+be to statically link the library with the executable. Another solution is to
+confuse the reverse engineer by swapping these symbols, which is the purpose
+of this tutorial.
 
-Let's consider the following code:
+Consider the following code:
 
 .. code-block:: C
 
@@ -66,7 +67,8 @@ Let's consider the following code:
     return EXIT_SUCCESS;
   }
 
-Basically, this program takes an integer as a parameter and performs some computation on this value.
+Basically, this program takes an integer as a parameter and performs a
+computation on this value.
 
 .. code-block:: console
 
@@ -80,10 +82,10 @@ Basically, this program takes an integer as a parameter and performs some comput
 
 
 The ``pow`` and ``log`` functions are located in the ``libm.so.6`` library.
-Using LIEF, we can swap this function **name** with other functions **name**.
-For instance, let's swap ``pow`` and ``log`` with ``cos`` and ``sin``:
+Using LIEF, we can swap these function **names** with other function **names**.
+For example, let's swap ``pow`` and ``log`` with ``cos`` and ``sin``:
 
-First, we have to load both the library and the executable:
+First, we must load both the library and the executable:
 
 .. code-block:: python
 
@@ -94,7 +96,8 @@ First, we have to load both the library and the executable:
   libm  = lief.parse("/usr/lib/libm.so.6")
   # Note: the path to libm.so.6 might be different on your system.
 
-Then, we can change the name of the two imported functions in the **executable**:
+Then, we can change the names of the two imported functions in the
+**executable**:
 
 .. code-block:: python
 
@@ -105,7 +108,8 @@ Then, we can change the name of the two imported functions in the **executable**
   hashme_log_sym.name = "sin"
 
 
-And we need to do the same in the library: the ``log`` symbol's name is swapped with ``sin`` and ``pow`` with ``cos``:
+And we must do the same in the library: the ``log`` symbol name is swapped
+with ``sin``, and ``pow`` with ``cos``:
 
 .. code-block:: python
 
@@ -141,16 +145,18 @@ And we need to do the same in the library: the ``log`` symbol's name is swapped 
   :align: center
 
 
-At this point, we have a modified version of ``libm.so`` in the same directory as ``hashme.obf``.
-To force loading this modified version of ``libm.so``, we can set the environment variable ``LD_LIBRARY_PATH``:
+At this point, we have a modified version of ``libm.so`` in the same directory
+as ``hashme.obf``. To force the loading of this modified version of
+``libm.so``, we can set the ``LD_LIBRARY_PATH`` environment variable:
 
 .. code-block:: console
 
   $ LD_LIBRARY_PATH=. hashme.obf 123
   228886645.836282
 
-Without this environment variable, the Linux loader would resolve ``libm.so`` with the original path and the
-computation would be done with ``sin`` and ``cos``:
+Without this environment variable, the Linux loader would resolve ``libm.so``
+using the original path, and the computation would be performed using ``sin``
+and ``cos``:
 
 .. code-block:: console
 
@@ -158,6 +164,6 @@ computation would be done with ``sin`` and ``cos``:
   -0.557978
 
 
-One other more realistic use case could consist in swapping symbols in cryptographic libraries like OpenSSL.
-For instance, ``EVP_DecryptInit`` and ``EVP_EncryptInit`` have the same prototype and could be swapped.
-
+Another more realistic use case could involve swapping symbols in
+cryptographic libraries like OpenSSL. For example, ``EVP_DecryptInit`` and
+``EVP_EncryptInit`` have the same prototype and could be swapped.

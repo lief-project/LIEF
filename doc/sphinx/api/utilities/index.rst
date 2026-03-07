@@ -74,7 +74,7 @@ LIEF exposes a demangling API for the following formats:
 Extended Version
 ~~~~~~~~~~~~~~~~
 
-To check if the current build is an :ref:`extended <extended-intro>` version
+To check if the current build is an :ref:`extended <extended-intro>` version,
 you can use:
 
 .. doxygenfunction:: LIEF::is_extended
@@ -83,7 +83,7 @@ you can use:
 
 :rust:func:`lief::is_extended`
 
-In C++ you can also check if the ``LIEF_EXTENDED`` is defined:
+In C++, you can also check if ``LIEF_EXTENDED`` is defined:
 
 .. code-block:: cpp
 
@@ -125,9 +125,9 @@ Python Leaks
 Helpers
 ~~~~~~~
 
-The ``lief.dump()`` utility can be used to pretty dump a buffer.
+The ``lief.dump()`` utility can be used to pretty-print a buffer.
 
-For instance:
+For example:
 
 .. code-block:: python
 

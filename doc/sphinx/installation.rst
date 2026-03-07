@@ -17,8 +17,8 @@ https://github.com/lief-project/LIEF/releases.
 :fa:`brands fa-python` Python
 -----------------------------
 
-Nightly Python wheels are uploaded for **each commit** on the main branch to an
-S3 bucket. They can be installed using:
+Nightly Python wheels are uploaded to an S3 bucket for **each commit** on the
+main branch. They can be installed using:
 
 .. code-block:: console
 
@@ -61,7 +61,7 @@ You can find more details in the :ref:`Rust API section <lief_rust_bindings>`.
 CMake Integration
 -----------------
 
-There are a few ways to integrate LIEF as a dependency into another project.
+There are several ways to integrate LIEF as a dependency into another project.
 The following methods are listed in order of preference according to CMake best practices.
 These snippets show basic examples; please refer to the official CMake documentation
 for questions related to more complex project setups.
@@ -91,7 +91,7 @@ A *full* example is available in the ``examples/cmake/find_package`` directory.
 add_subdirectory() or FetchContent
 **********************************
 
-First, set up the options you want to set as default for the LIEF project:
+First, configure the options you want to use as defaults for the LIEF project:
 
 .. literalinclude:: ../../examples/cmake/add_subdirectory/CMakeLists.txt
    :language: cmake
@@ -170,15 +170,15 @@ Given a pre-compiled version of the LIEF SDK (e.g., ``LIEF-0.17.4-win64.zip``):
   └── share
       └── LIEF
 
-You should add the ``include/`` directory to the compiler search path:
+Add the ``include/`` directory to the compiler search path:
 ``Configuration Properties > C/C++ > General > Additional Include Directories``
-and add either ``LIEF.lib`` or ``LIEF.dll`` during the linking step:
+and include either ``LIEF.lib`` or ``LIEF.dll`` during the linking step:
 
 ``Configuration Properties > Linker > Input > Additional Dependencies``
 
 .. warning::
 
-   ``LIEF.dll`` is compiled with the ``/MD`` flag (``MultiThreadedDLL``) while
+   ``LIEF.dll`` is compiled with the ``/MD`` flag (``MultiThreadedDLL``), while
    ``LIEF.lib`` is compiled with the ``/MT`` flag (``MultiThreaded``).
 
    If this configuration is not suitable for your project, you can compile LIEF

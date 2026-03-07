@@ -10,11 +10,11 @@ Export as DWARF
   :class: tip
 
   Binary Ninja already embeds a DWARF export plugin that exposes
-  most of the functionalities provided by this plugin. However, this plugin
+  most of the functionality provided by this plugin. However, this plugin
   exports additional information, such as stack variables and basic blocks.
 
-To export DWARF information from a BinaryNinja's ``BinaryView`` representation,
-one can go in the menu: ``Plugins > LIEF > Export as DWARF``
+To export DWARF information from a BinaryNinja ``BinaryView`` representation,
+use the menu: ``Plugins > LIEF > Export as DWARF``
 
 .. raw:: html
 
@@ -26,8 +26,8 @@ Support & Limitations
 #####################
 
 This extension tries to convert most of the information registered in a
-BinaryView into DWARF structures, but this support can't be exhaustive
-so here is an overview of what is exported and what is not.
+BinaryView into DWARF structures, but this support is not exhaustive; here is an
+overview of what is and is not exported.
 
 **BinaryNinja::BinaryView**
 
@@ -39,7 +39,7 @@ so here is an overview of what is exported and what is not.
 **BinaryNinja::Function**
 
 - :fa-check:`check` Name
-- :fa-check:`check` Addresses range
+- :fa-check:`check` Address range
 - :fa-check:`check` Parameters
 - :fa-check:`check` Type of parameters
 - :fa-check:`check` Return type

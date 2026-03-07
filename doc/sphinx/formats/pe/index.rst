@@ -26,7 +26,7 @@
 Introduction
 ************
 
-PE binaries can be parsed with LIEF using the |lief-pe-parse| function.
+PE binaries can be parsed using the |lief-pe-parse| function.
 
 .. tabs::
 
@@ -68,11 +68,11 @@ PE binaries can be parsed with LIEF using the |lief-pe-parse| function.
 
 .. note::
 
-  In Python, you can also use the generic :py:func:`lief.parse` which returns a
+  In Python, you can also use the generic :py:func:`lief.parse`, which returns a
   :class:`lief.PE.Binary` object.
 
-From this parsed PE binary you can use all the API exposed by the |lief-pe-binary|
-object to inspect or modify the binary itself.
+With the parsed PE binary, you can use the |lief-pe-binary| API to
+inspect or modify the binary itself.
 
 .. tabs::
 
@@ -115,9 +115,8 @@ object to inspect or modify the binary itself.
             println!("{} {}", section.name(), section.content().len());
         }
 
-When |lief-pe-binary| modifications are done, one can commit the changes
-with |lief-pe-binary-write| to write back the PE binary object into a raw PE
-file.
+After modifying a |lief-pe-binary| object, you can use |lief-pe-binary-write| to
+write the changes back to a raw PE file.
 
 .. tabs::
 
@@ -150,8 +149,8 @@ file.
 
   :ref:`binary-abstraction`
 
-Advance Parsing/Writing
-***********************
+Advanced Parsing/Writing
+************************
 
 .. toctree::
   :caption: <i class="fa-solid fa-gears">&nbsp;</i>Modifications
@@ -162,15 +161,15 @@ Advance Parsing/Writing
   modifications/tls
 
 |lief-pe-parse| can take an extra |lief-pe-parser-config| parameter to specify
-some parts of the PE format to ignore during parsing.
+parts of the PE format to ignore during parsing.
 
 .. warning::
 
-   Generally speaking, |lief-pe-binary-write| requires a **complete** initial
+   Generally, |lief-pe-binary-write| requires a **complete** initial
    parsing of the PE file.
 
 Similarly, |lief-pe-binary-write| can take an extra |lief-pe-builder-config|
-parameter to include or ignore some parts of the PE binary during the build
+parameter to include or ignore parts of the PE binary during the build
 process.
 
 .. tabs::
@@ -218,7 +217,7 @@ as a buffer of bytes:
 
 .. note::
 
-   This API can also take an extra |lief-pe-builder-config| parameter
+   This API can also take an extra |lief-pe-builder-config| parameter.
 
 .. tabs::
 
@@ -245,26 +244,28 @@ as a buffer of bytes:
 PDB Support
 ***********
 
-Using :ref:`LIEF Extended <extended-intro>`, one can access PDB debug info
-(|lief-pdb-debug-info|) using the function: |lief-pdb-binary-debug-info|.
+Using :ref:`LIEF Extended <extended-intro>`, you can access PDB debug information
+(|lief-pdb-debug-info|) using the |lief-pdb-binary-debug-info| function.
 
-For more the details about the PDB support, please check the :ref:`PDB section <extended-pdb>`.
+For more details regarding PDB support, please refer to the
+:ref:`PDB section <extended-pdb>`.
 
 Authenticode
 ************
 
-LIEF supports PE authenticode by providing API to inspect and **verify** the
-signature of PE executables.
+LIEF supports PE Authenticode by providing an API for inspecting and
+**verifying** PE executable signatures.
 
-One can access PE authenticode signature(s) by iterating over the |lief-pe-binary-signatures|.
-The |lief-pe-binary-verify_signature| function can be used to verify that
-a PE binary is correctly signed.
+PE Authenticode signatures can be accessed by iterating over
+|lief-pe-binary-signatures|. The |lief-pe-binary-verify_signature| function can
+be used to verify that a PE binary is correctly signed.
 
 .. note::
 
-   Usually, a signed PE executable embeds only one signature but the format does
-   not limit the number of signature. Thus, |lief-pe-binary-signatures| returns
-   an iterator and not only one signature object.
+   Typically, a signed PE executable contains a single signature, but the
+   format allows for multiple signatures. Consequently,
+   |lief-pe-binary-signatures| returns an iterator rather than a single
+   signature object.
 
 .. tabs::
 
@@ -272,7 +273,7 @@ a PE binary is correctly signed.
 
       .. code-block:: python
 
-        import
+        import lief
 
         pe = lief.PE.parse("signed.exe")
         for signature in pe.signatures:
@@ -312,7 +313,7 @@ a PE binary is correctly signed.
             );
         }
 
-You can find additional details about the authenticode support in this tutorial:
+You can find additional details about Authenticode support in this tutorial:
 :ref:`PE Authenticode <pe-authenticode>`
 
 .. include:: ../../_cross_api.rst

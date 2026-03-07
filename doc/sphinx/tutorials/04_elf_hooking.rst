@@ -1,17 +1,17 @@
 04 - ELF Hooking
 ----------------
 
-The objective of this tutorial is to hook a library function
-
-Scripts and materials are available here: `materials <https://github.com/lief-project/tutorials/tree/master/04_ELF_hooking>`_
-
-By Romain Thomas - `@rh0main <https://twitter.com/rh0main>`_
+The objective of this tutorial is to hook a library function.
 
 ------
 
-In the previous tutorial we saw how to swap symbols names from a shared library, we will now see the mechanism to hook a function in a shared library.
+In the previous tutorial, we saw how to swap symbol names in a shared library.
+We will now see the mechanism for hooking a function in a shared library.
 
-The targeted library is the standard math library (``libm.so``) and we will insert a hook on the ``exp`` function so that :math:`\exp(x) = x + 1`. The source code of the sample that uses this function is given in the following listing:
+The targeted library is the standard math library (``libm.so``), and we will
+insert a hook on the ``exp`` function so that :math:`\exp(x) = x + 1`.
+The source code of the sample that uses this function is provided in the
+following listing:
 
 .. code-block:: cpp
 
@@ -31,7 +31,7 @@ The targeted library is the standard math library (``libm.so``) and we will inse
   }
 
 
-The hooking function is as simple as:
+The hook function is as follows:
 
 .. code-block:: cpp
 
@@ -41,12 +41,12 @@ The hooking function is as simple as:
 
 Compiled with :code:`gcc -Os -nostdlib -nodefaultlibs -fPIC -Wl,-shared hook.c -o hook`.
 
-To inject this hook into the library, we use the :meth:`~lief.ELF.Binary.add` (segment) method
+To inject this hook into the library, we use the :meth:`~lief.ELF.Binary.add` (segment) method:
 
 .. automethod:: lief.ELF.Binary.add
   :noindex:
 
-First, we find the code for our hook function, and add it to the library:
+First, we find the code for our hook function and add it to the library:
 
 .. code-block:: python
 
@@ -61,7 +61,8 @@ First, we find the code for our hook function, and add it to the library:
   code_segment = hook.segment_from_virtual_address(hook_symbol.value)
   segment_added = libm.add(code_segment)
 
-Once the stub is injected we have to calculate the new address for the ``exp`` symbol, and update it:
+Once the stub is injected, we must calculate the new address for the ``exp``
+symbol and update it:
 
 .. code-block:: python
 
@@ -69,14 +70,14 @@ Once the stub is injected we have to calculate the new address for the ``exp`` s
   exp_symbol.value = new_address
   exp_symbol.type  = lief.ELF.Symbol.TYPE.FUNC  # it might have been GNU_IFUNC
 
-Note that we have to update symbol's type to be regular `FUNC` because on many
-distributions `libm.so` is built with automatic hardware detection and exposes
-symbols as `GNU_IFUNC`__ that has different dynamic binding protocol compared
-to regular functions.
+Note that we must update the symbol type to a regular `FUNC` because, on many
+distributions, `libm.so` is built with automatic hardware detection and exposes
+symbols as `GNU_IFUNC`__, which uses a different dynamic binding protocol
+compared to regular functions.
 
 __ https://sourceware.org/glibc/wiki/GNU_IFUNC
 
-Finally, we write out the patched library to a file in the current folder:
+Finally, we write the patched library to a file in the current directory:
 
 .. code-block:: python
 
@@ -90,7 +91,3 @@ To test the patched library:
   exp(1) = 2.718282
   $ LD_LIBRARY_PATH=. ./do_math.bin 1
   exp(1) = 2.000000
-
-
-
-

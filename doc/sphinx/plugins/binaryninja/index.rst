@@ -8,7 +8,7 @@
   <hr />
   <img src="../../_static/lief_with_bn.webp" width=300px />
 
-Similarly to the :ref:`Ghidra plugin <plugins-ghidra>`, LIEF can be used
+Similar to the :ref:`Ghidra plugin <plugins-ghidra>`, LIEF can be used
 as a BinaryNinja plugin.
 
 .. toctree::
@@ -22,7 +22,7 @@ as a BinaryNinja plugin.
 .. plugin-package:: binaryninja
    :file: latest/plugins/index.json
 
-First, download the LIEF plugin package from here |lief-plugin-url| or
+First, download the LIEF plugin package from |lief-plugin-url| or
 from the packages listed above. Then, follow the official procedure to install
 plugins: https://docs.binary.ninja/guide/plugins.html
 
@@ -36,18 +36,18 @@ you should have this file installed:
 .. admonition:: Shared Library
   :class: warning
 
-  In addition to the previously installed library, the plugins require to
-  install ``LIEF.dll, libLIEF.dylib, or libLIEF.so`` next to the plugin
-  directory. You can download this library from the following list:
+  In addition to the previously installed library, the plugins require the
+  installation of ``LIEF.dll``, ``libLIEF.dylib``, or ``libLIEF.so`` next to the
+  plugin directory. You can download this library from the following list:
 
   .. sdk-package:: SDK
      :file: latest/sdk/index.json
      :filter: win64, linux-x86_64, darwin
 
-  or from here: |lief-sdk-url|. Some plugins (like: :ref:`DWARF Plugin <plugins-binaryninja-dwarf>`)
-  need the extended version that can be downloaded from |lief-extended-url|.
+  or from here: |lief-sdk-url|. Some plugins (like the :ref:`DWARF Plugin <plugins-binaryninja-dwarf>`)
+  require the extended version, which can be downloaded from |lief-extended-url|.
 
-  Given this shared library, you must copy it in the plugin directory (or its
+  Given this shared library, you must copy it into the plugin directory (or its
   parent for Linux and macOS).
 
   - **macOS**:
@@ -75,7 +75,7 @@ you should have this file installed:
   [:0 Default] Plugin module '~/.binaryninja/plugins/lief-dwarf-plugin-linux-x86_64.so' failed to load
   [:0 Default] dlerror() reports: libLIEF.so: cannot open shared object file: No such file or directory
 
-This means that ``libLIEF.so, libLIEF.dylib, or LIEF.dll`` is not correctly
+This means that ``libLIEF.so``, ``libLIEF.dylib``, or ``LIEF.dll`` is not correctly
 installed in the ``plugins/`` directory. Make sure that the LIEF shared library is
 next to the plugin that failed to load.
 
@@ -86,12 +86,12 @@ library. See the :ref:`extended section <extended-intro>` for more information.
 
 **libLIEF.dylib can't be opened because Apple cannot check it for malicious software**
 
-``libLIEF.dylib`` is self-signed and does not use an Apple certificate so it's
-considered as coming from an *unknown developer*.
+``libLIEF.dylib`` is self-signed and does not use an Apple certificate;
+therefore, it is considered as coming from an *unknown developer*.
 
 You can address this issue in different ways:
 
-1. You can compile ``libLIEF.dylib`` by yourself and sign the compiled library
+1. You can compile ``libLIEF.dylib`` yourself and sign the compiled library
    with your certificate.
 2. You can add a security exception as described here: https://support.apple.com/guide/mac-help/apple-cant-check-app-for-malicious-software-mchleab3a043/mac
 
