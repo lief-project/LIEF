@@ -3,7 +3,7 @@ use std::pin::Pin;
 use std::path::Path;
 use num_traits::{Num, cast};
 
-use crate::Error;
+use crate::{Error, to_result};
 use super::builder::Config;
 use super::commands::build_version::{BuildVersion, Platform};
 use super::commands::code_signature::CodeSignature;
@@ -26,7 +26,7 @@ use super::commands::main_cmd::Main;
 use super::commands::note::Note;
 use super::commands::rpath::RPath;
 use super::commands::routine::Routine;
-use super::commands::segment::Segments;
+use super::commands::segment::{Segments, Segment};
 use super::commands::segment_split_info::SegmentSplitInfo;
 use super::commands::source_version::SourceVersion;
 use super::commands::sub_framework::SubFramework;
@@ -39,7 +39,7 @@ use super::commands::version_min::VersionMin;
 use super::commands::{CommandsIter, Dylib};
 use super::header::Header;
 use super::relocation::Relocations;
-use super::section::Sections;
+use super::section::{Sections, Section};
 use super::symbol::Symbols;
 use super::binding_info::BindingInfo;
 use super::stub::Stub;
@@ -375,6 +375,36 @@ impl Binary {
     /// Return an iterator over the [`Binary`] associated with the `LC_FILESET_ENTRY` commands
     pub fn filesets(&self) -> FilesetBinaries<'_> {
         FilesetBinaries::new(self.ptr.filesets())
+    }
+
+
+    /// Convert the given virtual address into an offset
+    pub fn virtual_address_to_offset(&self, address: u64) -> Result<u64, Error> {
+        to_result!(ffi::MachO_Binary::virtual_address_to_offset, &self, address);
+    }
+    /// Return the [`Segment`] associated with the given offset
+    pub fn segment_from_offset(&self, offset: u64) -> Option<Segment<'_>> {
+        into_optional(self.ptr.segment_from_offset(offset))
+    }
+
+    /// Return the [`Segment`] associated with the given virtual address
+    pub fn segment_from_virtual_address(&self, va: u64) -> Option<Segment<'_>> {
+        into_optional(self.ptr.segment_from_virtual_address(va))
+    }
+
+    /// Return the [`Section`] associated with the given virtual address
+    pub fn section_from_virtual_address(&self, va: u64) -> Option<Section<'_>> {
+        into_optional(self.ptr.section_from_virtual_address(va))
+    }
+
+    /// Return the [`Segment`] matching the given name
+    pub fn get_segment(&self, name: String) -> Option<Segment<'_>> {
+        into_optional(self.ptr.get_segment(name))
+    }
+
+    /// Return the [`Section`] embedded in the given segment's name
+    pub fn get_section(&self, segment_name: String, section_name: String) -> Option<Section<'_>> {
+        into_optional(self.ptr.get_section(segment_name, section_name))
     }
 }
 

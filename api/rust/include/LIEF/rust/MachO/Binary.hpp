@@ -354,6 +354,32 @@ class MachO_Binary : public AbstractBinary {
 
   auto fileset_addr() const { return impl().fileset_addr(); }
 
+  uint64_t virtual_address_to_offset(uint64_t virtual_address, uint32_t& error) const {
+    return details::make_error<uint64_t>(
+      impl().virtual_address_to_offset(virtual_address), error
+    );
+  }
+
+  auto segment_from_offset(uint64_t offset) const {
+    return details::try_unique<MachO_SegmentCommand>(impl().segment_from_offset(offset));
+  }
+
+  auto segment_from_virtual_address(uint64_t va) const {
+    return details::try_unique<MachO_SegmentCommand>(impl().segment_from_virtual_address(va));
+  }
+
+  auto section_from_virtual_address(uint64_t va) const {
+    return details::try_unique<MachO_Section>(impl().section_from_virtual_address(va));
+  }
+
+  auto get_segment(std::string name) const {
+    return details::try_unique<MachO_SegmentCommand>(impl().get_segment(name));
+  }
+
+  auto get_section(std::string segname, std::string secname) const {
+    return details::try_unique<MachO_Section>(impl().get_section(segname, secname));
+  }
+
   private:
   const lief_t& impl() const { return as<lief_t>(this); }
   lief_t& impl() { return as<lief_t>(this); }
