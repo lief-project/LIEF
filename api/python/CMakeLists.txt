@@ -115,6 +115,10 @@ if (WIN32)
   target_link_libraries(pyLIEF PUBLIC ${PYTHON_LIBRARIES} bcrypt)
 endif()
 
+if (ANDROID)
+  target_link_libraries(pyLIEF PUBLIC Python::Module)
+endif()
+
 if(SKBUILD)
   if(LIEF_PYTHON_EDITABLE)
     install(TARGETS pyLIEF LIBRARY DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/lief)
