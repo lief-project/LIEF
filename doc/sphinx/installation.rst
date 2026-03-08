@@ -54,7 +54,7 @@ You can add LIEF as a dependency in a Rust project as follows:
 
   # For a tagged release
   [dependencies]
-  lief = "0.17.4"
+  lief = "0.17.5"
 
 You can find more details in the :ref:`Rust API section <lief_rust_bindings>`.
 
@@ -153,7 +153,7 @@ A *full* example is available in the ``examples/cmake/external_project`` directo
 Visual Studio Integration
 -------------------------
 
-Given a pre-compiled version of the LIEF SDK (e.g., ``LIEF-0.17.4-win64.zip``):
+Given a pre-compiled version of the LIEF SDK (e.g., ``LIEF-0.17.5-win64.zip``):
 
 .. code-block:: text
 
