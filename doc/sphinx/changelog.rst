@@ -3,6 +3,20 @@
 :fa:`solid fa-code-compare` Changelog
 =====================================
 
+
+0.17.5 - March 8th, 2026
+------------------------
+
+:ELF:
+
+  * Add missing segments in X86_64 coredump parser (:issue:`1278`)
+  * Add TLSDESC_PLT and TLSDESC_GOT to ELF dynamic tags (:issue:`1311`)
+  * Fix dynamic entry shifting for Android relocations (:issue:`1309`)
+
+:MachO:
+
+  * Fix ``DyldInfo::show_bindings`` integer overflow (:issue:`1313`)
+
 0.17.4 - February 21th, 2026
 ----------------------------
 
