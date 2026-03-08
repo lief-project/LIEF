@@ -37,6 +37,8 @@
 #include "LIEF/ELF/DynamicEntryRpath.hpp"
 #include "LIEF/ELF/DynamicEntryRunPath.hpp"
 #include "LIEF/ELF/DynamicSharedObject.hpp"
+#include "LIEF/ELF/DynamicEntryFilter.hpp"
+#include "LIEF/ELF/DynamicEntryAuxiliary.hpp"
 #include "LIEF/ELF/GnuHash.hpp"
 #include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/NoteDetails.hpp"

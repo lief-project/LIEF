@@ -88,6 +88,20 @@ Dynamic Entry Flags
 
 ----------
 
+Dynamic Entry Auxiliary
+***********************
+
+.. doxygenclass:: LIEF::ELF::DynamicEntryAuxiliary
+
+----------
+
+Dynamic Entry Filter
+***********************
+
+.. doxygenclass:: LIEF::ELF::DynamicEntryFilter
+
+----------
+
 Relocations
 ***********
 

@@ -4345,6 +4345,10 @@ class DynamicEntry(lief.Object):
 
         VERNEEDNUM = 1879048191
 
+        AUXILIARY = 2147483645
+
+        FILTER = 2147483647
+
         ANDROID_REL_OFFSET = 1610612749
 
         ANDROID_REL_SIZE = 1610612750
@@ -4573,6 +4577,20 @@ class DynamicEntryLibrary(DynamicEntry):
     def __str__(self) -> str: ...
 
 class DynamicSharedObject(DynamicEntry):
+    def __init__(self, library_name: str) -> None: ...
+
+    name: Union[str, bytes]
+
+    def __str__(self) -> str: ...
+
+class DynamicEntryAuxiliary(DynamicEntry):
+    def __init__(self, library_name: str) -> None: ...
+
+    name: Union[str, bytes]
+
+    def __str__(self) -> str: ...
+
+class DynamicEntryFilter(DynamicEntry):
     def __init__(self, library_name: str) -> None: ...
 
     name: Union[str, bytes]

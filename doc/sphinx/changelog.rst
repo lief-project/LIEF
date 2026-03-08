@@ -37,6 +37,12 @@
   * Improve support and the API for *simple* types: |lief-pdb-types-Simple|
   * Improve support and the API for ``LF_ONEMETHOD``: |lief-pdb-types-Method|
 
+:ELF:
+
+  * Add support for ``DT_AUXILIARY`` tag: |lief-elf-DynamicEntryAuxiliary|
+    (:issue:`1159`).
+  * Add support for ``DT_FILTER`` tag: |lief-elf-DynamicEntryFilter|
+
 :COFF:
 
   * Add |lief-coff-section-coff_string| for accessing the full section name when

@@ -714,6 +714,9 @@ enum LIEF_DYNAMIC_TAGS {
   LIEF_DT_VERNEED                    = 0x6FFFFFFE, /**< The address of the version Dependency table. */
   LIEF_DT_VERNEEDNUM                 = 0x6FFFFFFF, /**< The number of entries in DT_VERNEED. */
 
+  LIEF_DT_AUXILIARY                  = 0x7ffffffd, /**< Shared object to load before self */
+  LIEF_DT_FILTER                     = 0x7fffffff, /**< Shared object to filter from */
+
   /* Mips specific dynamic table entry tags. */
   LIEF_DT_MIPS_RLD_VERSION           = 0x70000001, /**< 32 bit version number for runtime linker interface. */
   LIEF_DT_MIPS_TIME_STAMP            = 0x70000002, /**< Time stamp. */

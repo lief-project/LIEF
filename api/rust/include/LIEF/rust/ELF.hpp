@@ -23,3 +23,5 @@
 #include "LIEF/rust/ELF/DynamicEntryRpath.hpp"
 #include "LIEF/rust/ELF/DynamicEntryRunPath.hpp"
 #include "LIEF/rust/ELF/DynamicSharedObject.hpp"
+#include "LIEF/rust/ELF/DynamicEntryAuxiliary.hpp"
+#include "LIEF/rust/ELF/DynamicEntryFilter.hpp"

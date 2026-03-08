@@ -24,6 +24,8 @@
 #include <LIEF/ELF/DynamicEntryRpath.hpp>
 #include <LIEF/ELF/DynamicEntryRunPath.hpp>
 #include <LIEF/ELF/DynamicSharedObject.hpp>
+#include <LIEF/ELF/DynamicEntryAuxiliary.hpp>
+#include <LIEF/ELF/DynamicEntryFilter.hpp>
 #include <LIEF/ELF/SymbolVersionDefinition.hpp>
 #include <LIEF/ELF/SymbolVersionAux.hpp>
 #include <LIEF/ELF/SymbolVersionRequirement.hpp>
@@ -136,6 +138,20 @@ class LIEF_LOCAL ExeLayout : public Layout {
       case DynamicEntry::TAG::SONAME:
         {
           const std::string& name = entry->as<DynamicSharedObject>()->name();
+          opt_list.push_back(name);
+          break;
+        }
+
+      case DynamicEntry::TAG::AUXILIARY:
+        {
+          const std::string& name = entry->as<DynamicEntryAuxiliary>()->name();
+          opt_list.push_back(name);
+          break;
+        }
+
+      case DynamicEntry::TAG::FILTER:
+        {
+          const std::string& name = entry->as<DynamicEntryFilter>()->name();
           opt_list.push_back(name);
           break;
         }

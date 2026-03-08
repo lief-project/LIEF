@@ -152,6 +152,12 @@ fn explore_elf(name: &str, elf: &lief::elf::Binary) {
             dynamic::Entries::SharedObject(shared) => {
                 format!("{:?}: {}", shared.tag(), shared.name());
             }
+            dynamic::Entries::Auxiliary(aux) => {
+                format!("{:?}: {}", aux.tag(), aux.name());
+            }
+            dynamic::Entries::Filter(filter) => {
+                format!("{:?}: {}", filter.tag(), filter.name());
+            }
             dynamic::Entries::Flags(flags) => {
                 format!("{:?}: {:?}", flags.tag(), flags.flags());
             }
@@ -226,6 +232,8 @@ fn test_api() {
     test_with("ELF64_x86-64_binary_systemd-resolve.bin");
     test_with("art_reader.loongarch");
     test_with("simple-gcc-c.bin");
+    test_with("libdt_auxiliary_filter.so");
+    test_with("libdt_auxiliary.so");
 }
 
 #[test]

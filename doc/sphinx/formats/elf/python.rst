@@ -120,6 +120,28 @@ Dynamic Entry Flags
 
 ----------
 
+Dynamic Entry Auxiliary
+***********************
+
+.. lief-inheritance:: lief._lief.ELF.DynamicEntryAuxiliary
+  :top-classes: lief._lief.ELF.DynamicEntry
+  :parts: 2
+
+.. autoclass:: lief.ELF.DynamicEntryAuxiliary
+
+----------
+
+Dynamic Entry Filter
+***********************
+
+.. lief-inheritance:: lief._lief.ELF.DynamicEntryFilter
+  :top-classes: lief._lief.ELF.DynamicEntry
+  :parts: 2
+
+.. autoclass:: lief.ELF.DynamicEntryFilter
+
+----------
+
 Relocations
 ***********
 

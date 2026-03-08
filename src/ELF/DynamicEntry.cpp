@@ -23,6 +23,8 @@
 #include "LIEF/ELF/DynamicEntryRpath.hpp"
 #include "LIEF/ELF/DynamicEntryRunPath.hpp"
 #include "LIEF/ELF/DynamicSharedObject.hpp"
+#include "LIEF/ELF/DynamicEntryAuxiliary.hpp"
+#include "LIEF/ELF/DynamicEntryFilter.hpp"
 
 #include <spdlog/fmt/fmt.h>
 
@@ -48,6 +50,14 @@ DynamicEntry::TAG DynamicEntry::from_value(uint64_t value, ARCH arch) {
   }
 
   if (is_proc_spec) {
+    if (value == static_cast<uint64_t>(TAG::AUXILIARY)) {
+      return TAG::AUXILIARY;
+    }
+
+    if (value == static_cast<uint64_t>(TAG::FILTER)) {
+      return TAG::FILTER;
+    }
+
     switch (arch) {
       case ARCH::AARCH64:
         return TAG(AARCH64_DISC + value);
@@ -86,6 +96,11 @@ DynamicEntry::TAG DynamicEntry::from_value(uint64_t value, ARCH arch) {
 
 uint64_t DynamicEntry::to_value(DynamicEntry::TAG tag) {
   auto raw_value = static_cast<uint64_t>(tag);
+
+  if (tag == TAG::AUXILIARY || tag == TAG::FILTER) {
+    return raw_value;
+  }
+
   if (MIPS_DISC <= raw_value && raw_value < AARCH64_DISC) {
     return raw_value - MIPS_DISC;
   }
@@ -131,6 +146,12 @@ std::unique_ptr<DynamicEntry> DynamicEntry::create(TAG tag, uint64_t value) {
 
     case TAG::SONAME:
       return std::make_unique<DynamicSharedObject>();
+
+    case TAG::AUXILIARY:
+      return std::make_unique<DynamicEntryAuxiliary>();
+
+    case TAG::FILTER:
+      return std::make_unique<DynamicEntryFilter>();
 
     case TAG::RUNPATH:
       return std::make_unique<DynamicEntryRunPath>();
@@ -229,6 +250,8 @@ const char* to_string(DynamicEntry::TAG tag) {
     ENTRY(VERDEFNUM),
     ENTRY(VERNEED),
     ENTRY(VERNEEDNUM),
+    ENTRY(AUXILIARY),
+    ENTRY(FILTER),
     ENTRY(ANDROID_REL_OFFSET),
     ENTRY(ANDROID_REL_SIZE),
     ENTRY(ANDROID_REL),

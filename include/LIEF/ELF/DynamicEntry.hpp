@@ -97,6 +97,9 @@ class LIEF_API DynamicEntry : public Object {
     VERNEED                    = 0x6FFFFFFE, /**< The address of the version Dependency table. */
     VERNEEDNUM                 = 0x6FFFFFFF, /**< The number of entries in DT_VERNEED. */
 
+    AUXILIARY                  = 0x7ffffffd, /**< Shared object to load before self */
+    FILTER                     = 0x7fffffff, /**< Shared object to filter from */
+
     // Android Extensions
     ANDROID_REL_OFFSET         = 0x6000000D, /**< The offset of packed relocation data (older version < M) (Android specific). */
     ANDROID_REL_SIZE           = 0x6000000E, /**< The size of packed relocation data in bytes (older version < M) (Android specific). */

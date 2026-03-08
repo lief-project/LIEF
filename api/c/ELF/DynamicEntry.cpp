@@ -17,6 +17,8 @@
 
 #include "LIEF/ELF/DynamicEntryFlags.hpp"
 #include "LIEF/ELF/DynamicSharedObject.hpp"
+#include "LIEF/ELF/DynamicEntryAuxiliary.hpp"
+#include "LIEF/ELF/DynamicEntryFilter.hpp"
 #include "LIEF/ELF/DynamicEntryLibrary.hpp"
 #include "LIEF/ELF/DynamicEntryRpath.hpp"
 #include "LIEF/ELF/DynamicEntryRunPath.hpp"
@@ -55,6 +57,32 @@ void init_c_dynamic_entries(Elf_Binary_t* c_binary, Binary* binary) {
           e->tag   = static_cast<uint64_t>(entry.tag());
           e->value = entry.value();
           e->name  = reinterpret_cast<DynamicSharedObject*>(&entry)->name().c_str();
+
+          c_binary->dynamic_entries[i] = reinterpret_cast<Elf_DynamicEntry_t*>(e);
+          break;
+        }
+
+      case DynamicEntry::TAG::AUXILIARY:
+        {
+          auto* e = static_cast<Elf_DynamicEntry_Auxiliary_t*>(
+              malloc(sizeof(Elf_DynamicEntry_Auxiliary_t)));
+
+          e->tag   = static_cast<uint64_t>(entry.tag());
+          e->value = entry.value();
+          e->name  = reinterpret_cast<DynamicEntryAuxiliary*>(&entry)->name().c_str();
+
+          c_binary->dynamic_entries[i] = reinterpret_cast<Elf_DynamicEntry_t*>(e);
+          break;
+        }
+
+      case DynamicEntry::TAG::FILTER:
+        {
+          auto* e = static_cast<Elf_DynamicEntry_Filter_t*>(
+              malloc(sizeof(Elf_DynamicEntry_Filter_t)));
+
+          e->tag   = static_cast<uint64_t>(entry.tag());
+          e->value = entry.value();
+          e->name  = reinterpret_cast<DynamicEntryFilter*>(&entry)->name().c_str();
 
           c_binary->dynamic_entries[i] = reinterpret_cast<Elf_DynamicEntry_t*>(e);
           break;
@@ -165,6 +193,18 @@ void destroy_dynamic_entries(Elf_Binary_t* c_binary) {
       case DynamicEntry::TAG::SONAME:
         {
           free(reinterpret_cast<Elf_DynamicEntry_SharedObject_t*>(dynamic_entries[idx]));
+          break;
+        }
+
+      case DynamicEntry::TAG::AUXILIARY:
+        {
+          free(reinterpret_cast<Elf_DynamicEntry_Auxiliary_t*>(dynamic_entries[idx]));
+          break;
+        }
+
+      case DynamicEntry::TAG::FILTER:
+        {
+          free(reinterpret_cast<Elf_DynamicEntry_Filter_t*>(dynamic_entries[idx]));
           break;
         }
 

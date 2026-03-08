@@ -29,6 +29,8 @@
 #include "LIEF/ELF/DynamicEntryRpath.hpp"
 #include "LIEF/ELF/DynamicEntryRunPath.hpp"
 #include "LIEF/ELF/DynamicSharedObject.hpp"
+#include "LIEF/ELF/DynamicEntryAuxiliary.hpp"
+#include "LIEF/ELF/DynamicEntryFilter.hpp"
 #include "LIEF/ELF/GnuHash.hpp"
 #include "LIEF/ELF/Header.hpp"
 #include "LIEF/ELF/Parser.hpp"
@@ -89,6 +91,8 @@ void init_objects(nb::module_& m) {
   CREATE(DynamicEntry, m);
   CREATE(DynamicEntryLibrary, m);
   CREATE(DynamicSharedObject, m);
+  CREATE(DynamicEntryAuxiliary, m);
+  CREATE(DynamicEntryFilter, m);
   CREATE(DynamicEntryArray, m);
   CREATE(DynamicEntryRpath, m);
   CREATE(DynamicEntryRunPath, m);

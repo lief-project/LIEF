@@ -13,6 +13,8 @@ target_sources(LIB_LIEF PRIVATE
   DynamicEntryRpath.cpp
   DynamicEntryRunPath.cpp
   DynamicSharedObject.cpp
+  DynamicEntryAuxiliary.cpp
+  DynamicEntryFilter.cpp
   EnumToString.cpp
   GnuHash.cpp
   Header.cpp

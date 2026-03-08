@@ -32,6 +32,8 @@
 #include "LIEF/ELF/DynamicEntryLibrary.hpp"
 #include "LIEF/ELF/DynamicEntryArray.hpp"
 #include "LIEF/ELF/DynamicSharedObject.hpp"
+#include "LIEF/ELF/DynamicEntryAuxiliary.hpp"
+#include "LIEF/ELF/DynamicEntryFilter.hpp"
 #include "LIEF/ELF/DynamicEntryRunPath.hpp"
 #include "LIEF/ELF/DynamicEntryRpath.hpp"
 #include "LIEF/ELF/SymbolVersionRequirement.hpp"
@@ -1328,6 +1330,30 @@ ok_error_t Parser::parse_dynamic_entries(BinaryStream& stream) {
             break;
           }
           dynamic_entry->as<DynamicSharedObject>()->name(std::move(*sharename));
+          break;
+        }
+
+      case DynamicEntry::TAG::AUXILIARY :
+        {
+          dynamic_entry = std::make_unique<DynamicEntryAuxiliary>(entry, arch);
+          auto name = stream_->peek_string_at(dynamic_string_offset + dynamic_entry->value());
+          if (!name) {
+            LIEF_ERR("Can't read library name for DT_AUXILIARY entry");
+            break;
+          }
+          dynamic_entry->as<DynamicEntryAuxiliary>()->name(std::move(*name));
+          break;
+        }
+
+      case DynamicEntry::TAG::FILTER :
+        {
+          dynamic_entry = std::make_unique<DynamicEntryFilter>(entry, arch);
+          auto name = stream_->peek_string_at(dynamic_string_offset + dynamic_entry->value());
+          if (!name) {
+            LIEF_ERR("Can't read library name for DT_FILTER entry");
+            break;
+          }
+          dynamic_entry->as<DynamicEntryFilter>()->name(std::move(*name));
           break;
         }
 

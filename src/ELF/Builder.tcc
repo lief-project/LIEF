@@ -35,6 +35,8 @@
 #include "LIEF/ELF/DynamicEntryArray.hpp"
 #include "LIEF/ELF/DynamicEntryLibrary.hpp"
 #include "LIEF/ELF/DynamicSharedObject.hpp"
+#include "LIEF/ELF/DynamicEntryAuxiliary.hpp"
+#include "LIEF/ELF/DynamicEntryFilter.hpp"
 #include "LIEF/ELF/DynamicEntryRunPath.hpp"
 #include "LIEF/ELF/DynamicEntryRpath.hpp"
 #include "LIEF/ELF/Relocation.hpp"
@@ -937,6 +939,30 @@ ok_error_t Builder::build_dynamic_section() {
       case DynamicEntry::TAG::SONAME:
         {
           const std::string& name = entry->as<DynamicSharedObject>()->name();
+          const auto& it = dynstr_map.find(name);
+          if (it == std::end(dynstr_map)) {
+            LIEF_ERR("Can't find string offset in .dynstr for {}", name);
+            break;
+          }
+          entry->value(it->second);
+          break;
+        }
+
+      case DynamicEntry::TAG::AUXILIARY:
+        {
+          const std::string& name = entry->as<DynamicEntryAuxiliary>()->name();
+          const auto& it = dynstr_map.find(name);
+          if (it == std::end(dynstr_map)) {
+            LIEF_ERR("Can't find string offset in .dynstr for {}", name);
+            break;
+          }
+          entry->value(it->second);
+          break;
+        }
+
+      case DynamicEntry::TAG::FILTER:
+        {
+          const std::string& name = entry->as<DynamicEntryFilter>()->name();
           const auto& it = dynstr_map.find(name);
           if (it == std::end(dynstr_map)) {
             LIEF_ERR("Can't find string offset in .dynstr for {}", name);

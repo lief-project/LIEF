@@ -1145,3 +1145,16 @@
     :py:meth:`lief.COFF.Binary.disassemble`
     :py:meth:`lief.COFF.Binary.disassemble_from_bytes`
     :cpp:func:`LIEF::COFF::Binary::disassemble`
+
+.. |lief-elf-DynamicEntryAuxiliary| lief-api:: lief.ELF.DynamicEntryAuxiliary
+
+    :py:class:`lief.ELF.DynamicEntryAuxiliary`
+    :cpp:class:`LIEF::ELF::DynamicEntryAuxiliary`
+    :rust:struct:`lief::elf::dynamic::Auxiliary`
+
+.. |lief-elf-DynamicEntryFilter| lief-api:: lief.ELF.DynamicEntryFilter
+
+    :py:class:`lief.ELF.DynamicEntryFilter`
+    :cpp:class:`LIEF::ELF::DynamicEntryFilter`
+    :rust:struct:`lief::elf::dynamic::Filter`
+

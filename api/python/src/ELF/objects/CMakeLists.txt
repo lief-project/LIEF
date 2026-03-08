@@ -9,6 +9,8 @@ target_sources(pyLIEF PRIVATE
   pyDynamicEntryRpath.cpp
   pyDynamicEntryRunPath.cpp
   pyDynamicSharedObject.cpp
+  pyDynamicEntryAuxiliary.cpp
+  pyDynamicEntryFilter.cpp
   pyGnuHash.cpp
   pyHeader.cpp
   pyParserConfig.cpp
