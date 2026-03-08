@@ -1,5 +1,5 @@
 use clap::Parser;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -20,6 +20,32 @@ struct Args {
     skip_compilation: bool,
 }
 
+/// This function checks if the provided `autocxx_ffi.rs` in the first parameter
+/// has changed to avoid running `autocxx_build::Builder` that is time-consuming.
+///
+/// It works by keeping the hash (SHA256) of autocxx_ffi.rs in the file autocxx_ffi.hash
+/// located in the same directory.
+fn should_generate(autocxx_ffi: &Path) -> miette::Result<bool> {
+    let autocxx_file = std::fs::read(autocxx_ffi)
+        .map_err(|e| miette::miette!("Failed to read {}: {}", autocxx_ffi.display(), e))?;
+
+    let hash_path = autocxx_ffi.parent()
+        .ok_or_else(|| miette::miette!("Failed to get parent directory of {}", autocxx_ffi.display()))?
+        .join("autocxx_ffi.hash");
+
+    let current_hash = std::fs::read_to_string(&hash_path).unwrap_or_default();
+    let new_hash = sha256::digest(&autocxx_file);
+
+    if new_hash == current_hash {
+        return Ok(false);
+    }
+
+    std::fs::write(&hash_path, &new_hash)
+        .map_err(|e| miette::miette!("Failed to write hash to {}: {}", hash_path.display(), e))?;
+
+    Ok(true)
+}
+
 fn main() -> miette::Result<()> {
     let args = Args::parse();
     std::env::set_var("PROFILE", "release");
@@ -37,6 +63,12 @@ fn main() -> miette::Result<()> {
     let lief_inc_dir = lief_dir.join("include");
 
     let autocxx_gen_dir = precompiled_dir.join("autocxx_builder");
+
+    // Optimization to avoid running autocxx_build::Builder if `autocxx_ffi.rs`
+    // hasn't change.
+    if !should_generate(&lief_ffi_file)? {
+        return Ok(());
+    }
 
     let autocxx_builder = autocxx_build::Builder::new(
         &lief_ffi_file, [&lief_inc_dir]

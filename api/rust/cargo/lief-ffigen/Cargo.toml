@@ -16,3 +16,4 @@ thiserror     = "=1.0"
 zip           = { version="=0.6.6", default-features = false, features = ["deflate","time"] }
 miette        = { version="=5.10", features = [ "fancy" ] }
 clap          = { version="=4.5.1", features = [ "derive" ] }
+sha256        = "=1.6.0"
