@@ -90,3 +90,13 @@ def test_issue_1097(tmp_path: Path):
 def test_issue_1277():
     elf = lief.ELF.parse(get_sample("ELF/issue_1277.elf"))
     assert elf is not None
+
+def test_issue_1309(tmp_path: Path):
+    elf = lief.ELF.parse(get_sample("ELF/issue_1309.so"))
+    elf[lief.ELF.DynamicEntry.TAG.SONAME].name = "lib" + "a" * 100 + ".so"
+
+    out = tmp_path / "new.so"
+    elf.write(out)
+
+    new = lief.ELF.parse(out)
+    assert list(new.dynamic_symbols)[129].name == "base64_decode_utf16le"

@@ -1248,6 +1248,7 @@ ok_error_t Builder::build_dynamic_symbols() {
 
   // Build symbols
   vector_iostream symbol_table_raw(should_swap());
+  symbol_table_raw.reserve(binary_->dynamic_symbols_.size() * sizeof(Elf_Sym));
   for (const std::unique_ptr<Symbol>& symbol : binary_->dynamic_symbols_) {
     const std::string& name = symbol->name();
     const auto& offset_it = dynstr_map.find(name);
