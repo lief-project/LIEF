@@ -916,6 +916,11 @@
     :cpp:func:`std::unique_ptr<Builder> LIEF::MachO::Binary::write(std::ostream &, const Builder::config_t &)`
 
 
+.. |lief-macho-fatbinary-create| lief-api:: lief.MachO.FatBinary.create()
+
+    :py:meth:`lief.MachO.FatBinary.create`
+    :cpp:func:`LIEF::MachO::FatBinary::create`
+
 .. |lief-macho-fatbinary-write| lief-api:: lief.MachO.FatBinary.write()
 
     :py:meth:`lief.FatBinary.Binary.write`

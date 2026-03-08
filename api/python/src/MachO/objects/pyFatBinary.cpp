@@ -40,6 +40,20 @@ void create<FatBinary>(nb::module_& m) {
     init_ref_iterator<FatBinary::it_binaries>(fat, "it_binaries");
 
   fat
+    .def_static("create",
+        [] (FatBinary::binaries_t binaries) {
+          return FatBinary::create(std::move(binaries));
+        },
+        R"delim(
+        Create a :class:`~lief.MachO.FatBinary` from the provided list of
+        :class:`~lief.MachO.Binary` objects.
+
+        The binaries **must** target different architectures (i.e. unique
+        cpu_type / cpu_subtype pairs). If a duplicate architecture is detected,
+        this function returns None.
+        )delim"_doc,
+        "binaries"_a)
+
     .def_prop_ro("size", &FatBinary::size,
       "Number of " RST_CLASS_REF(lief.MachO.Binary) " registred"_doc)
 

@@ -25,3 +25,18 @@ def test_all(tmp_path):
         stdout = run_program(output)
         print(stdout)
         assert re.search(r'Hello World', stdout) is not None
+
+def test_create_fat():
+    fat = lief.MachO.FatBinary.create([
+        lief.MachO.parse(get_sample("MachO/variants_alt.dylib")).take(lief.MachO.Header.CPU_TYPE.ARM64),
+        lief.MachO.parse(get_sample("MachO/IOKit")).take(lief.MachO.Header.CPU_TYPE.ARM),
+    ])
+
+    assert fat is not None
+    assert len(fat) == 2
+
+    fat = lief.MachO.FatBinary.create([
+        lief.MachO.parse(get_sample("MachO/variants_alt.dylib")).take(lief.MachO.Header.CPU_TYPE.ARM64),
+        lief.MachO.parse(get_sample("MachO/variants_alt.dylib")).take(lief.MachO.Header.CPU_TYPE.ARM64),
+    ])
+    assert fat is None

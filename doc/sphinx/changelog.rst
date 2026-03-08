@@ -52,6 +52,8 @@
 
   * Introduce an API for selecting a specific Mach-O binary by architecture
     from a FAT binary (:pr:`1283`)
+  * Add |lief-macho-fatbinary-create| to create a FAT binary from
+    a list of |lief-macho-binary| objects targeting different architectures
 
 :PE:
 

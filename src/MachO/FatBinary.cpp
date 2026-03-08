@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 #include <utility>
+#include <set>
 
 #include "LIEF/MachO/FatBinary.hpp"
 #include "LIEF/MachO/Builder.hpp"
 #include "LIEF/MachO/Binary.hpp"
+
+#include "logging.hpp"
 
 namespace LIEF {
 namespace MachO {
@@ -28,6 +31,23 @@ FatBinary::FatBinary() = default;
 FatBinary::FatBinary(binaries_t binaries) :
   binaries_{std::move(binaries)}
 {}
+
+std::unique_ptr<FatBinary> FatBinary::create(binaries_t binaries) {
+  std::set<uint64_t> seen;
+  for (const std::unique_ptr<Binary>& bin : binaries) {
+    if (bin == nullptr) {
+      continue;
+    }
+    const Header& hdr = bin->header();
+    uint64_t arch = (uint64_t(hdr.cpu_type()) << 32) | uint64_t(hdr.cpu_subtype());
+    if (!seen.insert(arch).second) {
+      LIEF_ERR("Duplicated architecture: {} (subtype: {:#x})",
+               to_string(hdr.cpu_type()), hdr.cpu_subtype());
+      return nullptr;
+    }
+  }
+  return std::unique_ptr<FatBinary>(new FatBinary(std::move(binaries)));
+}
 
 std::unique_ptr<Binary> FatBinary::pop_back() {
   if (binaries_.empty()) {

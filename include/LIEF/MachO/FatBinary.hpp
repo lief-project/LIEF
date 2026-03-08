@@ -52,6 +52,13 @@ class LIEF_API FatBinary {
   FatBinary(const FatBinary&) = delete;
   FatBinary& operator=(const FatBinary&) = delete;
 
+  /// Create a FatBinary object from the provided list of Binary objects.
+  ///
+  /// The binaries **must** target different architectures (i.e. unique
+  /// CPU type and subtype). If a duplicate architecture is detected,
+  /// this function returns a nullptr.
+  static std::unique_ptr<FatBinary> create(binaries_t binaries);
+
   virtual ~FatBinary();
 
   /// Number of MachO::Binary wrapped by this object
