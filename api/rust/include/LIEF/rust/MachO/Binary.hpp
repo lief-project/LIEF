@@ -356,6 +356,10 @@ class MachO_Binary : public AbstractBinary {
     return details::try_unique<MachO_Dylib>(impl().add_library(name)->cast<LIEF::MachO::DylibCommand>());
   }
 
+  auto remove_commands_by_type(uint64_t type) {
+    return impl().remove(std::move((LIEF::MachO::LoadCommand::TYPE)type));
+  }
+
   static bool is_exported(const MachO_Symbol& symbol) {
     return lief_t::is_exported(static_cast<const LIEF::MachO::Symbol&>(symbol.get()));
   }

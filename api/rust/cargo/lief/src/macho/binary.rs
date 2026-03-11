@@ -37,7 +37,7 @@ use super::commands::thread_command::ThreadCommand;
 use super::commands::two_level_hints::TwoLevelHints;
 use super::commands::uuid::UUID;
 use super::commands::version_min::VersionMin;
-use super::commands::{Command, Commands, CommandsIter, Dylib};
+use super::commands::{Command, Commands, CommandsIter, Dylib, LoadCommandTypes};
 use super::header::Header;
 use super::relocation::Relocations;
 use super::section::{Sections, Section};
@@ -365,6 +365,11 @@ impl Binary {
     /// Insert a new shared library through a `LC_LOAD_DYLIB` command
     pub fn add_library<'a>(&'a mut self, libname: &str) -> Dylib<'a> {
         Dylib::from_ffi(self.ptr.as_mut().unwrap().add_library(libname))
+    }
+    
+    /// Remove all commands that have the given type
+    pub fn remove_commands_by_type(&mut self, ty: LoadCommandTypes) -> bool {
+        self.ptr.as_mut().unwrap().remove_commands_by_type(ty.into())
     }
 
     pub fn functions(&self) -> generic::Functions<'_> {
