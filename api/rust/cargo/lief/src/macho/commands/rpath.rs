@@ -14,6 +14,11 @@ pub struct RPath<'a> {
 }
 
 impl RPath<'_> {
+    /// Create a new Rpath command with the given path
+    pub fn new(value: &str) -> RPath<'static> {
+        RPath::from_ffi(lief_ffi::MachO_RPathCommand::create(value.to_string()))
+    }
+
     /// The rpath value as a string
     pub fn path(&self) -> String {
         self.ptr.path().to_string()

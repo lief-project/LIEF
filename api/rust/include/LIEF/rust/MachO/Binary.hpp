@@ -348,6 +348,10 @@ class MachO_Binary : public AbstractBinary {
     });
   }
 
+  auto add_command(const MachO_Command& command) {
+    return details::try_unique<MachO_Command>(impl().add(command.get()));
+  }
+
   auto add_library(std::string name) {
     return details::try_unique<MachO_Dylib>(impl().add_library(name)->cast<LIEF::MachO::DylibCommand>());
   }

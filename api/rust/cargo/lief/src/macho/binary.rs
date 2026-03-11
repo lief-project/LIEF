@@ -37,7 +37,7 @@ use super::commands::thread_command::ThreadCommand;
 use super::commands::two_level_hints::TwoLevelHints;
 use super::commands::uuid::UUID;
 use super::commands::version_min::VersionMin;
-use super::commands::{CommandsIter, Dylib};
+use super::commands::{Command, Commands, CommandsIter, Dylib};
 use super::header::Header;
 use super::relocation::Relocations;
 use super::section::{Sections, Section};
@@ -350,6 +350,16 @@ impl Binary {
     /// configuration provided in the second parameter.
     pub fn write_with_config<P: AsRef<Path>>(&mut self, output: P, config: Config) {
         self.ptr.as_mut().unwrap().write_with_config(output.as_ref().to_str().unwrap(), config.to_ffi());
+    }
+
+    /// Insert a new command
+    pub fn add_command(&mut self, command: impl Command) -> Commands {
+        Commands::from_ffi(
+            self.ptr
+                .as_mut()
+                .unwrap()
+                .add_command(command.get_base()),
+        )
     }
 
     /// Insert a new shared library through a `LC_LOAD_DYLIB` command

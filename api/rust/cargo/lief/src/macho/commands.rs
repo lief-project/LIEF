@@ -340,7 +340,7 @@ pub enum Commands<'a> {
 }
 
 impl<'a> Commands<'a> {
-    fn from_ffi(ffi_entry: cxx::UniquePtr<ffi::MachO_Command>) -> Self {
+    pub fn from_ffi(ffi_entry: cxx::UniquePtr<ffi::MachO_Command>) -> Self {
         unsafe {
             let cmd_ref = ffi_entry.as_ref().unwrap();
 
