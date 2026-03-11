@@ -1246,9 +1246,6 @@ std::unique_ptr<Binary> Parser::parse(std::unique_ptr<BinaryStream> stream,
 
 bool Parser::is_valid_import_name(const std::string& name) {
 
-  // According to https://stackoverflow.com/a/23340781
-  static constexpr unsigned MAX_IMPORT_NAME_SIZE = 0x1000;
-
   if (name.empty() || name.size() > MAX_IMPORT_NAME_SIZE) {
     return false;
   }
