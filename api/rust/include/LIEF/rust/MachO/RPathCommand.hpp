@@ -26,10 +26,15 @@ class MachO_RPathCommand : public MachO_Command {
 
   auto path_offset() const { return impl().path_offset(); }
 
+  void set_path(std::string path) {
+    impl().path(std::move(path));
+  }
+
   static bool classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 
   private:
   const lief_t& impl() const { return as<lief_t>(this); }
+  lief_t& impl() { return as<lief_t>(this); }
 };
