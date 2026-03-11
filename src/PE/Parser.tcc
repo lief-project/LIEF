@@ -407,7 +407,7 @@ ok_error_t Parser::parse_import_table() {
 
     size_t idx = 0;
 
-    while (table != 0 || IAT != 0) {
+    while ((table != 0 || IAT != 0) && idx < Parser::MAX_IMPORT_ENTRIES) {
       auto entry = std::make_unique<ImportEntry>();
       entry->iat_value_ = IAT;
       entry->ilt_value_ = table;
@@ -420,7 +420,7 @@ ok_error_t Parser::parse_import_table() {
       if (!entry->is_ordinal()) {
         const size_t hint_off = binary_->rva_to_offset(entry->hint_name_rva());
         const size_t name_off = hint_off + sizeof(uint16_t);
-        if (auto entry_name = stream_->peek_string_at(name_off)) {
+        if (auto entry_name = stream_->peek_string_at(name_off, Parser::MAX_IMPORT_NAME_SIZE)) {
           entry->name_ = std::move(*entry_name);
         } else {
           LIEF_ERR("Can't read import entry name");
@@ -468,6 +468,12 @@ ok_error_t Parser::parse_import_table() {
         table = 0;
       }
     }
+
+    if (idx >= Parser::MAX_IMPORT_ENTRIES) {
+      LIEF_WARN("Import '{}' exceeded max entries ({}), IAT may lack null terminator",
+                import->name(), Parser::MAX_IMPORT_ENTRIES);
+    }
+
     import->nb_original_func_ = import->entries_.size();
     binary_->imports_.push_back(std::move(import));
   }

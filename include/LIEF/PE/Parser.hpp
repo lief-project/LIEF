@@ -57,6 +57,13 @@ class LIEF_API Parser : public LIEF::Parser {
 
   static constexpr size_t MAX_TLS_CALLBACKS = 3000;
 
+  // Bounds the import thunk loop to prevent hangs on malformed IATs
+  static constexpr size_t MAX_IMPORT_ENTRIES = 0x10000;
+
+  // Bounds peek_string_at to prevent multi-megabyte reads on invalid RVAs
+  // According to https://stackoverflow.com/a/23340781
+  static constexpr size_t MAX_IMPORT_NAME_SIZE = 0x1000;
+
   // According to https://stackoverflow.com/a/265782/87207
   static constexpr size_t MAX_DLL_NAME_SIZE = 255;
 
