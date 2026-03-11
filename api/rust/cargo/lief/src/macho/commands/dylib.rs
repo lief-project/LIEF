@@ -16,6 +16,10 @@ impl Dylib<'_> {
     pub fn name(&self) -> String {
         self.ptr.name().to_string()
     }
+    
+    pub fn set_name(&mut self, name: &str) {
+        self.ptr.pin_mut().set_name(name.to_string());
+    }
 
     /// Original string offset of the name
     pub fn name_offset(&self) -> u32 {
