@@ -230,8 +230,10 @@ impl LoadCommandTypes {
     const LC_TARGET_TRIPLE: u64 = 0x00000039;
 
     const LIEF_UNKNOWN: u64 = 0xffee0001;
+}
 
-    pub fn from_value(value: u64) -> Self {
+impl From<u64> for LoadCommandTypes {
+    fn from(value: u64) -> Self {
         match value {
             LoadCommandTypes::LC_BUILD_VERSION => LoadCommandTypes::BuildVersion,
             LoadCommandTypes::LC_CODE_SIGNATURE => LoadCommandTypes::CodeSignature,
@@ -688,7 +690,7 @@ pub trait Command {
 
     /// The command's type
     fn command_type(&self) -> LoadCommandTypes {
-        LoadCommandTypes::from_value(self.get_base().cmd_type())
+        LoadCommandTypes::from(self.get_base().cmd_type())
     }
 
     /// The raw command as a slice of bytes
