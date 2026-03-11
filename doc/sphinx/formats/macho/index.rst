@@ -269,7 +269,7 @@ One can change the directory of ``libmylib.dylib`` with the following code:
 
         // Please note that 'unwrap' should not be used in production.
         let macho: lief::macho::FatBinary = lief::macho::FatBinary::parse("hello.bin").unwrap();
-        let binary = macho.iter().next().unwrap();
+        let mut binary = macho.iter().next().unwrap();
 
         let mut lib = binary.find_library("libmylib.dylib").unwrap();
         lib.set_name("/opt/hombrew/my_package/libmylib.dylib");
@@ -312,7 +312,7 @@ feature of Mach-O binaries:
 
         // Please note that 'unwrap' should not be used in production.
         let macho: lief::macho::FatBinary = lief::macho::FatBinary::parse("hello.bin").unwrap();
-        let binary = macho.iter().next().unwrap();
+        let mut binary = macho.iter().next().unwrap();
 
         let rpath = RPath::new("/opt/hombrew/my_package");
         binary.add_command(rpath);
