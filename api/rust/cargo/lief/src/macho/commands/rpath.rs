@@ -1,6 +1,7 @@
 use super::Command;
 use lief_ffi as ffi;
 use crate::common::FromFFI;
+use crate::declare_iterator;
 use std::marker::PhantomData;
 
 /// Structure that represents the `LC_RPATH` command.
@@ -49,3 +50,10 @@ impl Command for RPath<'_> {
     }
 }
 
+declare_iterator!(
+    RPaths,
+    RPath<'a>,
+    ffi::MachO_RPathCommand,
+    ffi::MachO_Binary,
+    ffi::MachO_Binary_it_rpaths
+);

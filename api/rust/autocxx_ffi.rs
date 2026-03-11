@@ -549,6 +549,8 @@ include_cpp! {
     block_constructors!("MachO_Binary_it_sections")
     generate!("MachO_Binary_it_libraries")
     block_constructors!("MachO_Binary_it_libraries")
+    generate!("MachO_Binary_it_rpaths")
+    block_constructors!("MachO_Binary_it_rpaths")
     generate!("MachO_Binary_it_sub_clients")
     block_constructors!("MachO_Binary_it_sub_clients")
     generate!("MachO_Binary_it_fileset_binaries")

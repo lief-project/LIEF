@@ -24,6 +24,7 @@ use super::commands::function_variants::FunctionVariants;
 use super::commands::function_variant_fixups::FunctionVariantFixups;
 use super::commands::main_cmd::Main;
 use super::commands::note::Note;
+use super::commands::rpath::RPaths;
 use super::commands::rpath::RPath;
 use super::commands::routine::Routine;
 use super::commands::segment::{Segments, Segment};
@@ -100,6 +101,11 @@ impl Binary {
     /// Return an iterator over the different [`crate::macho::Relocation`] of this binary
     pub fn relocations(&self) -> Relocations<'_> {
         Relocations::new(self.ptr.relocations())
+    }
+
+    /// Return an iterator over the different [`crate::macho::commands::RPath`] of this binary
+    pub fn rpaths(&self) -> RPaths<'_> {
+        RPaths::new(self.ptr.rpaths())
     }
 
     /// Return an iterator over the different [`crate::macho::Symbol`] of this binary

@@ -127,6 +127,17 @@ class MachO_Binary : public AbstractBinary {
     auto size() const { return Iterator::size(); }
   };
 
+
+  class it_rpaths :
+      public Iterator<MachO_RPathCommand, LIEF::MachO::Binary::it_const_rpaths>
+  {
+    public:
+    it_rpaths(const MachO_Binary::lief_t& src)
+      : Iterator(std::move(src.rpaths())) { }
+    auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
+  };
+
   class it_sub_clients :
       public Iterator<MachO_SubClient, LIEF::MachO::Binary::it_const_sub_clients>
   {
@@ -190,6 +201,7 @@ class MachO_Binary : public AbstractBinary {
   auto segments() const { return std::make_unique<it_segments>(impl()); }
   auto libraries() const { return std::make_unique<it_libraries>(impl()); }
   auto relocations() const { return std::make_unique<it_relocations>(impl()); }
+  auto rpaths() const { return std::make_unique<it_rpaths>(impl()); }
   auto bindings() const { return std::make_unique<it_bindings_info>(impl()); }
   auto symbol_stubs() const { return std::make_unique<it_stubs>(impl()); }
   auto notes() const { return std::make_unique<it_notes>(impl()); }
