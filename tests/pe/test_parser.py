@@ -1,6 +1,9 @@
 import lief
 import hashlib
 import pytest
+import subprocess
+import sys
+from subprocess import Popen
 from hashlib import md5
 from pathlib import Path
 from textwrap import dedent
@@ -916,3 +919,13 @@ def test_chpe_x86():
            0x73a014 WowA64 dispatch leaf return function pointer
            0x73a018 WowA64 dispatch jump function pointer
       0x10c8f0[0x4] Hybrid code address range"""
+
+@pytest.mark.skipif(condition=not has_private_samples(), reason="needs private samples")
+def test_issue_iat_hang():
+    target_pe = Path(get_sample("private/PE/lief_hang_poc.exe")).resolve().absolute()
+
+    subprocess.check_call([
+        sys.executable,
+        '-c',
+        f'import lief; lief.parse("{target_pe}")'
+    ], timeout=10.)
