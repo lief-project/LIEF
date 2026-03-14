@@ -112,6 +112,11 @@ impl Import<'_> {
     pub fn add_entry_by_name<'a>(&'a mut self, name: &str) -> ImportEntry<'a> {
         ImportEntry::from_ffi(self.ptr.pin_mut().add_entry_by_name(name))
     }
+
+    /// Set the name of the import
+    pub fn set_name<'a>(&'a mut self, name: &str) {
+        self.ptr.pin_mut().set_name(name.to_string());
+    }
 }
 
 /// Structure that represents an entry (i.e. an import) in the regular import table.

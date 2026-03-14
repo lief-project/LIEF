@@ -74,4 +74,8 @@ class PE_Import : private Mirror<LIEF::PE::Import> {
     return std::make_unique<PE_ImportEntry>(get().add_entry(name));
   }
 
+  /// Set the name of the import
+  void set_name(std::string name) {
+    get().name(std::move(name));
+  }
 };
