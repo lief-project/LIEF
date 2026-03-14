@@ -79,6 +79,27 @@ impl std::fmt::Display for Characteristics {
 }
 
 impl Section<'_> {
+    /// Create a new Section
+    pub fn new() -> Section<'static> {
+        Section::from_ffi(lief_ffi::PE_Section::create())
+    }
+
+    /// Create a new Section with the given name
+    pub fn new_with_name(name: &str) -> Section<'static> {
+        Section::from_ffi(lief_ffi::PE_Section::create_with_name(name.to_string()))
+    }
+
+    /// Create a new Section with the given name and content
+    pub fn new_with_content(name: &str, content: &[u8]) -> Section<'static> {
+        unsafe {
+            Section::from_ffi(lief_ffi::PE_Section::create_with_content(
+                name.to_string(),
+                content.as_ptr(),
+                content.len(),
+            ))
+        }
+    }
+
     /// Return the size of the data in the section.
     pub fn sizeof_raw_data(&self) -> u32 {
         self.ptr.sizeof_raw_data()
@@ -148,6 +169,11 @@ impl Section<'_> {
     /// does not fit in the 8 bytes allocated by the PE format.
     pub fn coff_string(&self) -> Option<coff::String<'_>> {
         into_optional(self.ptr.coff_string())
+    }
+
+    #[doc(hidden)]
+    pub fn get_base(&self) -> &ffi::PE_Section {
+        self.ptr.as_ref().unwrap()
     }
 }
 

@@ -220,6 +220,16 @@ impl Binary {
         into_optional(self.ptr.section_by_name(name))
     }
 
+    /// Add a section to the binary and return the section added.
+    pub fn add_section(&mut self, section: Section) -> Section {
+        Section::from_ffi(
+            self.ptr
+                .as_mut()
+                .unwrap()
+                .add_section(section.get_base())
+        )
+    }
+
     /// Find the data directory with the given type
     pub fn data_directory_by_type(&self, dir_type: data_directory::Type) -> Option<DataDirectory<'_>> {
         into_optional(self.ptr.data_directory_by_type(dir_type.into()))
