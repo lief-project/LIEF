@@ -171,6 +171,11 @@ impl Section<'_> {
         into_optional(self.ptr.coff_string())
     }
 
+    /// Set the virtual size of the section
+    pub fn set_virtual_size(&mut self, virtual_size: u32) {
+        self.ptr.pin_mut().set_virtual_size(virtual_size);
+    }
+
     #[doc(hidden)]
     pub fn get_base(&self) -> &ffi::PE_Section {
         self.ptr.as_ref().unwrap()
@@ -206,6 +211,10 @@ impl<'a> FromFFI<ffi::PE_Section> for Section<'a> {
 impl generic::Section for Section<'_> {
     fn as_generic(&self) -> &ffi::AbstractSection {
         self.ptr.as_ref().unwrap().as_ref()
+    }
+    
+    fn as_generic_mut(&mut self) -> std::pin::Pin<&mut lief_ffi::AbstractSection> {
+        self.ptr.pin_mut().get_base()
     }
 }
 

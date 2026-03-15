@@ -316,6 +316,10 @@ impl generic::Section for Section<'_> {
     fn as_generic(&self) -> &ffi::AbstractSection {
         self.ptr.as_ref().unwrap().as_ref()
     }
+    
+    fn as_generic_mut(&mut self) -> std::pin::Pin<&mut lief_ffi::AbstractSection> {
+        self.ptr.pin_mut().get_base()
+    }
 }
 
 declare_iterator!(Sections, Section<'a>, ffi::ELF_Section, ffi::ELF_Binary, ffi::ELF_Binary_it_sections);

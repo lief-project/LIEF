@@ -395,7 +395,7 @@ class PE_Binary : public AbstractBinary {
 
   /// Add a section to the binary and return the section added.
   auto add_section(const PE_Section& section) {
-    return details::try_unique<PE_Section>(impl().add_section(section.get()));
+    return details::try_unique<PE_Section>(impl().add_section(section.get_pe()));
   }
 
   auto data_directory_by_type(uint32_t type) const {
