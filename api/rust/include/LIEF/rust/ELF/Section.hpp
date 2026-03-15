@@ -23,6 +23,9 @@ class ELF_Section : public AbstractSection {
   using lief_t = LIEF::ELF::Section;
   ELF_Section(const lief_t& section) : AbstractSection(section) {}
 
+  /// Get the base of the section as mutable
+  AbstractSection& get_base() { return static_cast<AbstractSection&>(*this); }
+
   uint64_t get_type() const { return to_int(impl().type()); }
   uint64_t flags() const { return impl().flags(); }
   uint64_t alignment() const { return impl().alignment(); }

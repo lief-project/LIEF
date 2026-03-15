@@ -38,6 +38,9 @@ class COFF_Section : public AbstractSection {
 
   COFF_Section(const lief_t& sec) : AbstractSection(sec) {}
 
+  /// Get the base of the section as mutable
+  AbstractSection& get_base() { return static_cast<AbstractSection&>(*this); }
+
   class it_relocations :
       public Iterator<COFF_Relocation, LIEF::COFF::Section::it_const_relocations>
   {

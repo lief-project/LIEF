@@ -21,6 +21,28 @@ class PE_Section : public AbstractSection {
   public:
   using lief_t = LIEF::PE::Section;
   PE_Section(const lief_t& sec) : AbstractSection(sec) {}
+  PE_Section(std::unique_ptr<lief_t> impl) : AbstractSection(std::move(impl)) {}
+
+  const lief_t& get_pe() const { return static_cast<const lief_t&>(AbstractSection::get()); }
+
+  /// Get the base of the section as mutable
+  AbstractSection& get_base() { return static_cast<AbstractSection&>(*this); }
+
+  static auto create() {
+    return std::make_unique<PE_Section>(std::make_unique<lief_t>());
+  }
+
+  static auto create_with_name(std::string name) {
+    return std::make_unique<PE_Section>(
+      std::make_unique<lief_t>(std::move(name))
+    );
+  }
+
+  static auto create_with_content(std::string name, const uint8_t* buffer, size_t size) {
+    return std::make_unique<PE_Section>(
+      std::make_unique<lief_t>(std::move(name), std::vector<uint8_t>{buffer, buffer + size})
+    );
+  }
 
   auto sizeof_raw_data() const { return impl().sizeof_raw_data(); }
   auto virtual_size() const { return impl().virtual_size(); }
@@ -39,6 +61,12 @@ class PE_Section : public AbstractSection {
     return details::try_unique<COFF_String>(impl().coff_string());
   }
 
+  /// Set the virtual size of the section
+  void set_virtual_size(uint32_t virtual_size) {
+    impl().virtual_size(virtual_size);
+  }
+
   private:
   const lief_t& impl() const { return as<lief_t>(this); }
+  lief_t& impl() { return as<lief_t>(this); }
 };
