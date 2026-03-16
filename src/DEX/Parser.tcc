@@ -453,6 +453,53 @@ void Parser::parse_classes() {
     Class& cls = *clazz;
     file_->add_class(std::move(clazz));
 
+    // Parse interfaces
+    if (item.interfaces_off > 0) {
+      uint32_t size = 0;
+      auto size_ptr = stream_->peek<uint32_t>(item.interfaces_off);
+      if (size_ptr) {
+        size = *size_ptr;
+      } else {
+        LIEF_WARN("Failed to read interface list size");
+      }
+      const uint64_t type_item_start = item.interfaces_off + sizeof(uint32_t);
+      for (uint32_t j = 0; j < size; ++j) {
+        auto type_idx_ptr = stream_->peek<uint16_t>(type_item_start + j * sizeof(uint16_t));
+        if (!type_idx_ptr) {
+          LIEF_WARN("Failed to read interface type_idx");
+          continue;
+        }
+        uint16_t type_idx = *type_idx_ptr;
+
+        if (type_idx >= types_location.second) {
+          LIEF_WARN("Interface type_idx out of range: {}", type_idx);
+          continue;
+        }
+
+        auto class_name_idx_ptr = stream_->peek<uint32_t>(types_location.first + type_idx * sizeof(uint32_t));
+        if (!class_name_idx_ptr) {
+          LIEF_WARN("Failed to read string index for interface");
+          continue;
+        }
+
+        uint32_t class_name_idx = *class_name_idx_ptr;
+        if (class_name_idx >= file_->strings_.size()) {
+          LIEF_WARN("Interface string index out of bounds: {}", class_name_idx);
+          continue;
+        }
+
+        const std::string& interface_name = *file_->strings_[class_name_idx];
+        // Remove leading 'L' and trailing ';'
+        std::string real_interface_name = interface_name;
+        if (!real_interface_name.empty() && real_interface_name.front() == 'L') {
+          real_interface_name = real_interface_name.substr(1);
+        }
+        if (!real_interface_name.empty() && real_interface_name.back() == ';') {
+          real_interface_name.pop_back();
+        }
+        cls.interfaces_.push_back(real_interface_name);
+      }
+    }
 
     // Parse class annotations
     if (item.annotations_off > 0) {
