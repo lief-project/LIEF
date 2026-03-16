@@ -17,16 +17,15 @@
 #include "LIEF/rust/COFF/String.hpp"
 #include "LIEF/rust/Abstract/Section.hpp"
 
+class PE_Binary;
+
 class PE_Section : public AbstractSection {
   public:
+  friend class PE_Binary;
+
   using lief_t = LIEF::PE::Section;
   PE_Section(const lief_t& sec) : AbstractSection(sec) {}
   PE_Section(std::unique_ptr<lief_t> impl) : AbstractSection(std::move(impl)) {}
-
-  const lief_t& get_pe() const { return static_cast<const lief_t&>(AbstractSection::get()); }
-
-  /// Get the base of the section as mutable
-  AbstractSection& get_base() { return static_cast<AbstractSection&>(*this); }
 
   static auto create() {
     return std::make_unique<PE_Section>(std::make_unique<lief_t>());
@@ -61,7 +60,6 @@ class PE_Section : public AbstractSection {
     return details::try_unique<COFF_String>(impl().coff_string());
   }
 
-  /// Set the virtual size of the section
   void set_virtual_size(uint32_t virtual_size) {
     impl().virtual_size(virtual_size);
   }

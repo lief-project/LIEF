@@ -3,13 +3,13 @@
 use std::marker::PhantomData;
 
 use lief_ffi as ffi;
-
+use std::pin::Pin;
 use crate::declare_iterator;
 use crate::to_slice;
-use crate::{common::FromFFI, generic};
+use crate::generic;
 use crate::coff;
 use bitflags::bitflags;
-use crate::common::into_optional;
+use crate::common::{into_optional, FromFFI, AsFFI};
 
 /// This structure defines a regular PE section.
 ///
@@ -175,11 +175,6 @@ impl Section<'_> {
     pub fn set_virtual_size(&mut self, virtual_size: u32) {
         self.ptr.pin_mut().set_virtual_size(virtual_size);
     }
-
-    #[doc(hidden)]
-    pub fn get_base(&self) -> &ffi::PE_Section {
-        self.ptr.as_ref().unwrap()
-    }
 }
 
 impl std::fmt::Debug for Section<'_> {
@@ -208,13 +203,31 @@ impl<'a> FromFFI<ffi::PE_Section> for Section<'a> {
     }
 }
 
+
+impl<'a> AsFFI<ffi::PE_Section> for Section<'a> {
+    fn as_ffi(&self) -> &ffi::PE_Section {
+        self.ptr.as_ref().unwrap()
+    }
+
+    fn as_mut_ffi(&mut self) -> std::pin::Pin<&mut ffi::PE_Section> {
+        self.ptr.pin_mut()
+    }
+}
+
 impl generic::Section for Section<'_> {
     fn as_generic(&self) -> &ffi::AbstractSection {
         self.ptr.as_ref().unwrap().as_ref()
     }
-    
-    fn as_generic_mut(&mut self) -> std::pin::Pin<&mut lief_ffi::AbstractSection> {
-        self.ptr.pin_mut().get_base()
+
+    fn as_generic_mut(&mut self) -> Pin<&mut ffi::AbstractSection> {
+        unsafe {
+            Pin::new_unchecked({
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::AbstractSection
+                    as *mut ffi::AbstractSection)
+                    .as_mut()
+                    .unwrap()
+            })
+        }
     }
 }
 

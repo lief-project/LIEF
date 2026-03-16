@@ -114,7 +114,7 @@ impl Import<'_> {
     }
 
     /// Set the name of the import
-    pub fn set_name<'a>(&'a mut self, name: &str) {
+    pub fn set_name(&mut self, name: &str) {
         self.ptr.pin_mut().set_name(name.to_string());
     }
 }

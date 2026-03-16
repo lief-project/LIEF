@@ -9,6 +9,7 @@ use crate::pe;
 use super::Relocation;
 use super::Symbol;
 use crate::declare_iterator;
+use std::pin::Pin;
 
 use lief_ffi as ffi;
 
@@ -120,9 +121,16 @@ impl generic::Section for Section<'_> {
     fn as_generic(&self) -> &ffi::AbstractSection {
         self.ptr.as_ref().unwrap().as_ref()
     }
-    
-    fn as_generic_mut(&mut self) -> std::pin::Pin<&mut lief_ffi::AbstractSection> {
-        self.ptr.pin_mut().get_base()
+
+    fn as_generic_mut(&mut self) -> Pin<&mut ffi::AbstractSection> {
+        unsafe {
+            Pin::new_unchecked({
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::AbstractSection
+                    as *mut ffi::AbstractSection)
+                    .as_mut()
+                    .unwrap()
+            })
+        }
     }
 }
 

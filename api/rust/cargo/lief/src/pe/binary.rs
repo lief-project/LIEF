@@ -221,13 +221,8 @@ impl Binary {
     }
 
     /// Add a section to the binary and return the section added.
-    pub fn add_section(&mut self, section: Section) -> Section {
-        Section::from_ffi(
-            self.ptr
-                .as_mut()
-                .unwrap()
-                .add_section(section.get_base())
-        )
+    pub fn add_section(&mut self, section: Section) -> Option<Section> {
+        into_optional(self.ptr.as_mut().unwrap().add_section(section.as_ffi()))
     }
 
     /// Find the data directory with the given type

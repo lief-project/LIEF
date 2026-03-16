@@ -26,9 +26,6 @@ class MachO_Section : public AbstractSection {
   using lief_t = LIEF::MachO::Section;
   MachO_Section(const lief_t& sec) : AbstractSection(sec) {}
 
-  /// Get the base of the section as mutable
-  AbstractSection& get_base() { return static_cast<AbstractSection&>(*this); }
-
   class it_relocations :
       public Iterator<MachO_Relocation, LIEF::MachO::Section::it_const_relocations>
   {

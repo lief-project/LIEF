@@ -150,8 +150,7 @@ write the changes back to a raw PE file.
 
       .. code-block:: rust
 
-        // Please note that 'unwrap' should not be used in production.
-        let mut pe: lief::pe::Binary = lief::pe::Binary::parse("some.exe").unwrap();
+        let mut pe = lief::pe::Binary::parse("some.exe").unwrap();
 
         let mut section = lief::pe::Section::new_with_name(".hello");
         section.set_content(&[0xCC; 0x100]);

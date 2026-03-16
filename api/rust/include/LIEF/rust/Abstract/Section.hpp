@@ -30,18 +30,11 @@ class AbstractSection : public Mirror<LIEF::Section> {
   uint64_t virtual_address() const { return get().virtual_address(); }
   Span content() const { return make_span(get().content()); }
 
-  /// Change the section's name
-  void set_name(std::string name) {
-    get().name(std::move(name));
-  }
+  void set_name(std::string name) { get().name(std::move(name)); }
 
-  /// Change section content
   void set_content(const uint8_t* buffer, size_t size) {
     get().content({buffer, buffer + size});
   }
 
-  /// Change the section size
-  void set_size(uint64_t size) {
-    get().size(size);
-  }
+  void set_size(uint64_t size) { get().size(size); }
 };
