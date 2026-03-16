@@ -357,7 +357,7 @@ class MachO_Binary : public AbstractBinary {
   }
 
   auto remove_commands_by_type(uint64_t type) {
-    return impl().remove(std::move((LIEF::MachO::LoadCommand::TYPE)type));
+    return impl().remove((LIEF::MachO::LoadCommand::TYPE)type);
   }
 
   static bool is_exported(const MachO_Symbol& symbol) {

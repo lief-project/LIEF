@@ -23,7 +23,7 @@ impl RPath<'_> {
     pub fn path(&self) -> String {
         self.ptr.path().to_string()
     }
-    
+
     /// Set the rpath value
     pub fn set_path(&mut self, path: &str) {
         self.ptr.pin_mut().set_path(path.to_string());

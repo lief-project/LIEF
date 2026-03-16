@@ -353,20 +353,15 @@ impl Binary {
     }
 
     /// Insert a new command
-    pub fn add_command(&mut self, command: impl Command) -> Commands {
-        Commands::from_ffi(
-            self.ptr
-                .as_mut()
-                .unwrap()
-                .add_command(command.get_base()),
-        )
+    pub fn add_command(&mut self, command: impl Command) -> Option<Commands<'_>> {
+        into_optional(self.ptr.as_mut().unwrap().add_command(command.get_base()))
     }
 
     /// Insert a new shared library through a `LC_LOAD_DYLIB` command
     pub fn add_library<'a>(&'a mut self, libname: &str) -> Dylib<'a> {
         Dylib::from_ffi(self.ptr.as_mut().unwrap().add_library(libname))
     }
-    
+
     /// Remove all commands that have the given type
     pub fn remove_commands_by_type(&mut self, ty: LoadCommandTypes) -> bool {
         self.ptr.as_mut().unwrap().remove_commands_by_type(ty.into())
