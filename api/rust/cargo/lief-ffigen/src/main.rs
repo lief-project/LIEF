@@ -18,6 +18,9 @@ struct Args {
 
     #[arg(long, action=clap::ArgAction::SetTrue)]
     skip_compilation: bool,
+
+    #[arg(long, action=clap::ArgAction::SetTrue)]
+    use_hash: bool,
 }
 
 /// This function checks if the provided `autocxx_ffi.rs` in the first parameter
@@ -66,7 +69,7 @@ fn main() -> miette::Result<()> {
 
     // Optimization to avoid running autocxx_build::Builder if `autocxx_ffi.rs`
     // hasn't change.
-    if !should_generate(&lief_ffi_file)? {
+    if args.use_hash && !should_generate(&lief_ffi_file)? {
         return Ok(());
     }
 
