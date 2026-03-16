@@ -145,6 +145,19 @@ write the changes back to a raw PE file.
 
         pe->write("new.exe");
 
+
+  .. tab:: :fa:`brands fa-rust` Rust
+
+      .. code-block:: rust
+
+        let mut pe = lief::pe::Binary::parse("some.exe").unwrap();
+
+        let mut section = lief::pe::Section::new_with_name(".hello");
+        section.set_content(&[0xCC; 0x100]);
+        pe.add_section(section);
+
+        pe.write("new.exe");
+
 .. seealso::
 
   :ref:`binary-abstraction`

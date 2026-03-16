@@ -56,6 +56,9 @@ pub trait Section {
     #[doc(hidden)]
     fn as_generic(&self) -> &ffi::AbstractSection;
 
+    #[doc(hidden)]
+    fn as_generic_mut(&mut self) -> Pin<&mut ffi::AbstractSection>;
+
     /// Name of the section
     fn name(&self) -> String {
         self.as_generic().name().to_string()
@@ -79,6 +82,26 @@ pub trait Section {
     /// Content of the section
     fn content(&self) -> &[u8] {
         to_slice!(self.as_generic().content());
+    }
+
+    /// Change the section's name
+    fn set_name(&mut self, name: &str) {
+        self.as_generic_mut().set_name(name.to_string());
+    }
+
+    /// Change section content
+    fn set_content(&mut self, data: &[u8]) {
+        unsafe {
+            self.as_generic_mut().set_content(
+                data.as_ptr(),
+                data.len(),
+            );
+        }
+    }
+
+    /// Change section size
+    fn set_size(&mut self, size: u64) {
+        self.as_generic_mut().set_size(size);
     }
 }
 

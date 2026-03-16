@@ -393,6 +393,10 @@ class PE_Binary : public AbstractBinary {
     return details::try_unique<PE_Section>(impl().get_section(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
+  auto add_section(const PE_Section& section) {
+    return details::try_unique<PE_Section>(impl().add_section(section.impl()));
+  }
+
   auto data_directory_by_type(uint32_t type) const {
     return details::try_unique<PE_DataDirectory>(impl().data_directory(LIEF::PE::DataDirectory::TYPES(type))); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }

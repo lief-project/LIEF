@@ -3,13 +3,13 @@
 use std::marker::PhantomData;
 
 use lief_ffi as ffi;
-
+use std::pin::Pin;
 use crate::declare_iterator;
 use crate::to_slice;
-use crate::{common::FromFFI, generic};
+use crate::generic;
 use crate::coff;
 use bitflags::bitflags;
-use crate::common::into_optional;
+use crate::common::{into_optional, FromFFI, AsFFI};
 
 /// This structure defines a regular PE section.
 ///
@@ -79,6 +79,27 @@ impl std::fmt::Display for Characteristics {
 }
 
 impl Section<'_> {
+    /// Create a new Section
+    pub fn new() -> Section<'static> {
+        Section::from_ffi(lief_ffi::PE_Section::create())
+    }
+
+    /// Create a new Section with the given name
+    pub fn new_with_name(name: &str) -> Section<'static> {
+        Section::from_ffi(lief_ffi::PE_Section::create_with_name(name.to_string()))
+    }
+
+    /// Create a new Section with the given name and content
+    pub fn new_with_content(name: &str, content: &[u8]) -> Section<'static> {
+        unsafe {
+            Section::from_ffi(lief_ffi::PE_Section::create_with_content(
+                name.to_string(),
+                content.as_ptr(),
+                content.len(),
+            ))
+        }
+    }
+
     /// Return the size of the data in the section.
     pub fn sizeof_raw_data(&self) -> u32 {
         self.ptr.sizeof_raw_data()
@@ -149,6 +170,11 @@ impl Section<'_> {
     pub fn coff_string(&self) -> Option<coff::String<'_>> {
         into_optional(self.ptr.coff_string())
     }
+
+    /// Set the virtual size of the section
+    pub fn set_virtual_size(&mut self, virtual_size: u32) {
+        self.ptr.pin_mut().set_virtual_size(virtual_size);
+    }
 }
 
 impl std::fmt::Debug for Section<'_> {
@@ -177,9 +203,31 @@ impl<'a> FromFFI<ffi::PE_Section> for Section<'a> {
     }
 }
 
+
+impl<'a> AsFFI<ffi::PE_Section> for Section<'a> {
+    fn as_ffi(&self) -> &ffi::PE_Section {
+        self.ptr.as_ref().unwrap()
+    }
+
+    fn as_mut_ffi(&mut self) -> std::pin::Pin<&mut ffi::PE_Section> {
+        self.ptr.pin_mut()
+    }
+}
+
 impl generic::Section for Section<'_> {
     fn as_generic(&self) -> &ffi::AbstractSection {
         self.ptr.as_ref().unwrap().as_ref()
+    }
+
+    fn as_generic_mut(&mut self) -> Pin<&mut ffi::AbstractSection> {
+        unsafe {
+            Pin::new_unchecked({
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::AbstractSection
+                    as *mut ffi::AbstractSection)
+                    .as_mut()
+                    .unwrap()
+            })
+        }
     }
 }
 
