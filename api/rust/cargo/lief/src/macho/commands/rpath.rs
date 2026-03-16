@@ -1,6 +1,7 @@
 use super::Command;
 use lief_ffi as ffi;
 use crate::common::FromFFI;
+use crate::declare_iterator;
 use std::marker::PhantomData;
 
 /// Structure that represents the `LC_RPATH` command.
@@ -13,9 +14,19 @@ pub struct RPath<'a> {
 }
 
 impl RPath<'_> {
+    /// Create a new Rpath command with the given path
+    pub fn new(value: &str) -> RPath<'static> {
+        RPath::from_ffi(lief_ffi::MachO_RPathCommand::create(value.to_string()))
+    }
+
     /// The rpath value as a string
     pub fn path(&self) -> String {
         self.ptr.path().to_string()
+    }
+
+    /// Set the rpath value
+    pub fn set_path(&mut self, path: &str) {
+        self.ptr.pin_mut().set_path(path.to_string());
     }
 
     /// Original string offset of the path
@@ -49,3 +60,10 @@ impl Command for RPath<'_> {
     }
 }
 
+declare_iterator!(
+    RPaths,
+    RPath<'a>,
+    ffi::MachO_RPathCommand,
+    ffi::MachO_Binary,
+    ffi::MachO_Binary_it_rpaths
+);

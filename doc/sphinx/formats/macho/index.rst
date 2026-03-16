@@ -263,6 +263,18 @@ One can change the directory of ``libmylib.dylib`` with the following code:
 
         macho->write("hello_fixed.bin");
 
+  .. tab:: :fa:`brands fa-rust` Rust
+
+      .. code-block:: rust
+
+        let fat = lief::macho::FatBinary::parse("hello.bin").unwrap();
+        let mut binary = fat.iter().next().unwrap();
+
+        let mut lib = binary.find_library("libmylib.dylib").unwrap();
+        lib.set_name("/opt/hombrew/my_package/libmylib.dylib");
+
+        binary.write("hello_fixed.bin");
+
 .. note::
 
    It is worth mentioning that LIEF doesn't impose restrictions on the length of modified library
@@ -293,6 +305,16 @@ feature of Mach-O binaries:
         auto rpath = LIEF::MachO::RPathCommand::create("/opt/hombrew/my_package");
         macho->add(*rpath);
 
+  .. tab:: :fa:`brands fa-rust` Rust
+
+      .. code-block:: rust
+
+        let fat = lief::macho::FatBinary::parse("hello.bin").unwrap();
+        let mut binary = fat.iter().next().unwrap();
+
+        let rpath = RPath::new("/opt/hombrew/my_package");
+        binary.add_command(rpath);
+
 2. Then, we can change the library path of ``libmylib.dylib`` to include the RPath prefix:
 
 .. tabs::
@@ -314,6 +336,15 @@ feature of Mach-O binaries:
         lib->name("@rpath/libmylib.dylib");
 
         macho->write("hello_fixed.bin");
+
+  .. tab:: :fa:`brands fa-rust` Rust
+
+      .. code-block:: rust
+
+        let mut lib = binary.find_library("libmylib.dylib").unwrap();
+        lib.set_name("@rpath/libmylib.dylib");
+
+        binary.write("hello_fixed.bin");
 
 Objective-C Support
 ********************

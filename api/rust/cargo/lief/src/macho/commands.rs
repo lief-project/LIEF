@@ -230,8 +230,10 @@ impl LoadCommandTypes {
     const LC_TARGET_TRIPLE: u64 = 0x00000039;
 
     const LIEF_UNKNOWN: u64 = 0xffee0001;
+}
 
-    pub fn from_value(value: u64) -> Self {
+impl From<u64> for LoadCommandTypes {
+    fn from(value: u64) -> Self {
         match value {
             LoadCommandTypes::LC_BUILD_VERSION => LoadCommandTypes::BuildVersion,
             LoadCommandTypes::LC_CODE_SIGNATURE => LoadCommandTypes::CodeSignature,
@@ -299,6 +301,75 @@ impl LoadCommandTypes {
     }
 }
 
+impl From<LoadCommandTypes> for u64 {
+    fn from(value: LoadCommandTypes) -> Self {
+        match value {
+            LoadCommandTypes::BuildVersion => LoadCommandTypes::LC_BUILD_VERSION,
+            LoadCommandTypes::CodeSignature => LoadCommandTypes::LC_CODE_SIGNATURE,
+            LoadCommandTypes::DataInCode => LoadCommandTypes::LC_DATA_IN_CODE,
+            LoadCommandTypes::DyldChainedFixups => LoadCommandTypes::LC_DYLD_CHAINED_FIXUPS,
+            LoadCommandTypes::DyldEnvironment => LoadCommandTypes::LC_DYLD_ENVIRONMENT,
+            LoadCommandTypes::DyldExportsTrie => LoadCommandTypes::LC_DYLD_EXPORTS_TRIE,
+            LoadCommandTypes::DyldInfo => LoadCommandTypes::LC_DYLD_INFO,
+            LoadCommandTypes::DyldInfoOnly => LoadCommandTypes::LC_DYLD_INFO_ONLY,
+            LoadCommandTypes::DylibCodeSignDrs => LoadCommandTypes::LC_DYLIB_CODE_SIGN_DRS,
+            LoadCommandTypes::Dysymtab => LoadCommandTypes::LC_DYSYMTAB,
+            LoadCommandTypes::EncryptionInfo => LoadCommandTypes::LC_ENCRYPTION_INFO,
+            LoadCommandTypes::EncryptionInfo64 => LoadCommandTypes::LC_ENCRYPTION_INFO_64,
+            LoadCommandTypes::FilesetEntry => LoadCommandTypes::LC_FILESET_ENTRY,
+            LoadCommandTypes::FunctionStarts => LoadCommandTypes::LC_FUNCTION_STARTS,
+            LoadCommandTypes::Fvmfile => LoadCommandTypes::LC_FVMFILE,
+            LoadCommandTypes::Ident => LoadCommandTypes::LC_IDENT,
+            LoadCommandTypes::Idfvmlib => LoadCommandTypes::LC_IDFVMLIB,
+            LoadCommandTypes::IdDylib => LoadCommandTypes::LC_ID_DYLIB,
+            LoadCommandTypes::IdDylinker => LoadCommandTypes::LC_ID_DYLINKER,
+            LoadCommandTypes::LazyLoadDylib => LoadCommandTypes::LC_LAZY_LOAD_DYLIB,
+            LoadCommandTypes::LinkerOptimizationHint => {
+                LoadCommandTypes::LC_LINKER_OPTIMIZATION_HINT
+            },
+            LoadCommandTypes::LinkerOption => LoadCommandTypes::LC_LINKER_OPTION,
+            LoadCommandTypes::LoadFvmLib => LoadCommandTypes::LC_LOADFVMLIB,
+            LoadCommandTypes::LoadDylib => LoadCommandTypes::LC_LOAD_DYLIB,
+            LoadCommandTypes::LoadDylinker => LoadCommandTypes::LC_LOAD_DYLINKER,
+            LoadCommandTypes::LoadUpwardDylib => LoadCommandTypes::LC_LOAD_UPWARD_DYLIB,
+            LoadCommandTypes::LoadWeakDylib => LoadCommandTypes::LC_LOAD_WEAK_DYLIB,
+            LoadCommandTypes::Main => LoadCommandTypes::LC_MAIN,
+            LoadCommandTypes::Note => LoadCommandTypes::LC_NOTE,
+            LoadCommandTypes::PrebindCksum => LoadCommandTypes::LC_PREBIND_CKSUM,
+            LoadCommandTypes::PreboundDylib => LoadCommandTypes::LC_PREBOUND_DYLIB,
+            LoadCommandTypes::Prepage => LoadCommandTypes::LC_PREPAGE,
+            LoadCommandTypes::ReExportDylib => LoadCommandTypes::LC_REEXPORT_DYLIB,
+            LoadCommandTypes::Routines => LoadCommandTypes::LC_ROUTINES,
+            LoadCommandTypes::Routines64 => LoadCommandTypes::LC_ROUTINES_64,
+            LoadCommandTypes::Rpath => LoadCommandTypes::LC_RPATH,
+            LoadCommandTypes::Segment => LoadCommandTypes::LC_SEGMENT,
+            LoadCommandTypes::Segment64 => LoadCommandTypes::LC_SEGMENT_64,
+            LoadCommandTypes::SegmentSplitInfo => LoadCommandTypes::LC_SEGMENT_SPLIT_INFO,
+            LoadCommandTypes::SourceVersion => LoadCommandTypes::LC_SOURCE_VERSION,
+            LoadCommandTypes::SubClient => LoadCommandTypes::LC_SUB_CLIENT,
+            LoadCommandTypes::SubFramework => LoadCommandTypes::LC_SUB_FRAMEWORK,
+            LoadCommandTypes::SubLibrary => LoadCommandTypes::LC_SUB_LIBRARY,
+            LoadCommandTypes::SubUmbrella => LoadCommandTypes::LC_SUB_UMBRELLA,
+            LoadCommandTypes::Symseg => LoadCommandTypes::LC_SYMSEG,
+            LoadCommandTypes::Symtab => LoadCommandTypes::LC_SYMTAB,
+            LoadCommandTypes::Thread => LoadCommandTypes::LC_THREAD,
+            LoadCommandTypes::TwoLevelHints => LoadCommandTypes::LC_TWOLEVEL_HINTS,
+            LoadCommandTypes::Unixthread => LoadCommandTypes::LC_UNIXTHREAD,
+            LoadCommandTypes::Uuid => LoadCommandTypes::LC_UUID,
+            LoadCommandTypes::VersionMinIphoneOS => LoadCommandTypes::LC_VERSION_MIN_IPHONEOS,
+            LoadCommandTypes::VersionMinMacOSX => LoadCommandTypes::LC_VERSION_MIN_MACOSX,
+            LoadCommandTypes::VersionMinTvOS => LoadCommandTypes::LC_VERSION_MIN_TVOS,
+            LoadCommandTypes::VersionMinWatchOS => LoadCommandTypes::LC_VERSION_MIN_WATCHOS,
+            LoadCommandTypes::AtomInfo => LoadCommandTypes::LC_ATOM_INFO,
+            LoadCommandTypes::FunctionVariants => LoadCommandTypes::LC_FUNCTION_VARIANTS,
+            LoadCommandTypes::FunctionVariantsFixups => LoadCommandTypes::LC_FUNCTION_VARIANT_FIXUPS,
+            LoadCommandTypes::TargetTriple => LoadCommandTypes::LC_TARGET_TRIPLE,
+            LoadCommandTypes::LiefUnknown => LoadCommandTypes::LIEF_UNKNOWN,
+            LoadCommandTypes::Unknown(value) => value,
+        }
+    }
+}
+
 #[derive(Debug)]
 /// Enum that wraps all the different Mach-O load commands (`LC_xxx`).
 /// Note that all these commands implements the trait: [`Command`]
@@ -339,7 +410,7 @@ pub enum Commands<'a> {
     Unknown(Unknown<'a>),
 }
 
-impl<'a> Commands<'a> {
+impl FromFFI<ffi::MachO_Command> for Commands<'_> {
     fn from_ffi(ffi_entry: cxx::UniquePtr<ffi::MachO_Command>) -> Self {
         unsafe {
             let cmd_ref = ffi_entry.as_ref().unwrap();
@@ -619,7 +690,7 @@ pub trait Command {
 
     /// The command's type
     fn command_type(&self) -> LoadCommandTypes {
-        LoadCommandTypes::from_value(self.get_base().cmd_type())
+        LoadCommandTypes::from(self.get_base().cmd_type())
     }
 
     /// The raw command as a slice of bytes

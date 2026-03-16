@@ -22,9 +22,20 @@ class MachO_RPathCommand : public MachO_Command {
   public:
   using lief_t = LIEF::MachO::RPathCommand;
   MachO_RPathCommand(const lief_t& base) : MachO_Command(base) {}
-  std::string path() const { return impl().path(); };
+  MachO_RPathCommand(std::unique_ptr<lief_t> impl) : MachO_Command(std::move(impl)) {}
 
+  static auto create(std::string path) {
+    return std::make_unique<MachO_RPathCommand>(
+        std::make_unique<lief_t>(std::move(path))
+    );
+  }
+
+  std::string path() const { return impl().path(); };
   auto path_offset() const { return impl().path_offset(); }
+
+  void set_path(std::string path) {
+    impl().path(std::move(path));
+  }
 
   static bool classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
@@ -32,4 +43,5 @@ class MachO_RPathCommand : public MachO_Command {
 
   private:
   const lief_t& impl() const { return as<lief_t>(this); }
+  lief_t& impl() { return as<lief_t>(this); }
 };
