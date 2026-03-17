@@ -1153,9 +1153,7 @@ Segment* Binary::replace(const Segment& new_segment, const Segment& original_seg
       });
 
   if (it_segment_phdr != std::end(segments_)) {
-    std::unique_ptr<Segment>& phdr_segment = *it_segment_phdr;
-    const size_t phdr_size = phdr_segment->content().size();
-    phdr_segment->content(std::vector<uint8_t>(phdr_size, 0));
+    (*it_segment_phdr)->clear();
   }
 
   // Remove
@@ -1908,6 +1906,10 @@ void Binary::shift_dynamic_entries(uint64_t from, uint64_t shift) {
 void Binary::shift_symbols(uint64_t from, uint64_t shift) {
   LIEF_DEBUG("Shift symbols by 0x{:x} from 0x{:x}", shift, from);
   for (Symbol& symbol : symbols()) {
+    if (symbol.type() == Symbol::TYPE::TLS) {
+      continue;
+    }
+
     if (symbol.value() >= from) {
       LIEF_DEBUG("[BEFORE] {}", to_string(symbol));
       symbol.value(symbol.value() + shift);
@@ -2937,7 +2939,7 @@ uint64_t Binary::relocate_phdr_table_v2() {
     phdr_segment->file_offset(nsegment_addr->file_offset());
     phdr_segment->virtual_address(nsegment_addr->virtual_address());
     phdr_segment->physical_address(nsegment_addr->physical_address());
-    phdr_segment->content(std::vector<uint8_t>(phdr_segment->physical_size(), 0));
+    phdr_segment->clear();
   }
 
 
@@ -3065,10 +3067,11 @@ uint64_t Binary::relocate_phdr_table_v1() {
 
   // New values
   const uint64_t new_phdr_offset = seg_to_extend->file_offset() + seg_to_extend->physical_size();
-  phdr_reloc_info_.new_offset = new_phdr_offset;
+  const size_t alignment = align(new_phdr_offset, ptr_size()) - new_phdr_offset;
 
-  header.program_headers_offset(new_phdr_offset);
+  phdr_reloc_info_.new_offset = new_phdr_offset + alignment;
 
+  header.program_headers_offset(phdr_reloc_info_.new_offset);
 
   phdr_reloc_info_.nb_segments = nb_segments;
   seg_to_extend->physical_size(seg_to_extend->physical_size() + delta);
@@ -3079,15 +3082,15 @@ uint64_t Binary::relocate_phdr_table_v1() {
     const std::unique_ptr<Segment>& phdr_segment = *it_segment_phdr;
     // Update the PHDR segment with our values
     const uint64_t base = seg_to_extend->virtual_address() - seg_to_extend->file_offset();
-    phdr_segment->file_offset(new_phdr_offset);
+    phdr_segment->file_offset(phdr_reloc_info_.new_offset);
     phdr_segment->virtual_address(base + phdr_segment->file_offset());
     phdr_segment->physical_address(phdr_segment->virtual_address());
     LIEF_DEBUG("{}@0x{:x}:0x{:x}", to_string(phdr_segment->type()),
                                    phdr_segment->virtual_address(), phdr_segment->virtual_size());
     // Clear PHDR segment
-    phdr_segment->physical_size(delta);
-    phdr_segment->virtual_size(delta);
-    phdr_segment->content(std::vector<uint8_t>(delta, 0));
+    phdr_segment->physical_size(delta - alignment);
+    phdr_segment->virtual_size(delta - alignment);
+    phdr_segment->clear();
   }
   return phdr_reloc_info_.new_offset;
 }

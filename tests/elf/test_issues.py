@@ -100,3 +100,18 @@ def test_issue_1309(tmp_path: Path):
 
     new = lief.ELF.parse(out)
     assert list(new.dynamic_symbols)[129].name == "base64_decode_utf16le"
+
+@pytest.mark.skipif(condition=not has_private_samples(), reason="needs private samples")
+def test_issue_1315(tmp_path: Path):
+    # NOTE(romain): there is an exhaustive test here: 'private/ELF/issue_1315'
+    #               that includes on-device testing.
+    elf = lief.ELF.parse(get_sample("private/ELF/rocksdb-native@3.bare"))
+    assert elf is not None
+    out = tmp_path / "lib.so"
+
+    config = lief.ELF.Builder.config_t()
+    config.force_relocate = True
+
+    elf.write(out, config)
+    new = lief.ELF.parse(out)
+    check_layout(new)
