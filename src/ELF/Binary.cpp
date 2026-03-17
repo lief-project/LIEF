@@ -1964,6 +1964,9 @@ uint64_t Binary::last_offset_section() const {
         if (section->is_frame()) {
           return offset;
         }
+        if (section->type() == Section::TYPE::NOBITS) {
+          return offset;
+        }
         return std::max<uint64_t>(section->file_offset() + section->size(), offset);
       });
 }
@@ -3190,7 +3193,8 @@ Section* Binary::add_section(std::unique_ptr<Section> sec) {
 
   const auto it_new_sec_place = std::find_if(
     sections_.begin(), sections_.end(), [sec_ptr] (const std::unique_ptr<Section>& S) {
-      return S->file_offset() > sec_ptr->file_offset();
+      return S->type() != Section::TYPE::NOBITS &&
+             S->file_offset() > sec_ptr->file_offset();
     });
 
   if (it_new_sec_place == sections_.end()) {

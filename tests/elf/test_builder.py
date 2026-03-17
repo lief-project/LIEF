@@ -300,7 +300,7 @@ def test_smart_insert_1(tmp_path: Path):
     new_elf = lief.ELF.parse(output)
 
     sec = new_elf.get_section(".lief_test")
-    assert new_elf.get_section_idx(sec) == 27
+    assert new_elf.get_section_idx(sec) == 28
 
     if is_linux():
         llvm_strip = shutil.which("llvm-strip")
@@ -344,7 +344,7 @@ def test_smart_insert_2(tmp_path: Path):
     new_elf = lief.ELF.parse(output)
 
     sec = new_elf.get_section(".lief_section_to_strip")
-    assert new_elf.get_section_idx(sec) == 25
+    assert new_elf.get_section_idx(sec) == 26
 
     if is_linux():
         llvm_strip = shutil.which("llvm-strip")
