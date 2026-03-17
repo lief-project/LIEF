@@ -225,3 +225,28 @@ def win_exec(executable: Path, timeout: int = 60,
 
 def normalize_path(path: str) -> str:
     return path.replace('\\', '/')
+
+def check_layout(target: str | Path | lief.Binary):
+    target_bin: lief.ELF.Binary | lief.PE.Binary | lief.MachO.Binary | None = None
+    if isinstance(target, (str, Path)):
+        target_bin = lief.parse(target)
+    else:
+        target_bin = target
+    assert target_bin is not None
+
+    if isinstance(target_bin, lief.ELF.Binary):
+        check, msg = lief.ELF.check_layout(target_bin)
+        assert check, msg
+        return
+
+    if isinstance(target_bin, lief.PE.Binary):
+        check, msg = lief.PE.check_layout(target_bin)
+        assert check, msg
+        return
+
+    if isinstance(target_bin, lief.MachO.Binary):
+        check, msg = lief.MachO.check_layout(target_bin)
+        assert check, msg
+        return
+
+    raise RuntimeError("Invalid binary")

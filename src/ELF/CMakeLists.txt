@@ -37,7 +37,8 @@ target_sources(LIB_LIEF PRIVATE
   SysvHash.cpp
   hash.cpp
   utils.cpp
-  json_api.cpp)
+  json_api.cpp
+  layout_check.cpp)
 
 add_subdirectory(NoteDetails)
 add_subdirectory(DataHandler)

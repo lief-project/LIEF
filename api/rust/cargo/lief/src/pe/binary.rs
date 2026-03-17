@@ -530,6 +530,17 @@ impl Binary {
     }
 }
 
+impl AsFFI<ffi::PE_Binary> for Binary {
+    fn as_ffi(&self) -> &ffi::PE_Binary {
+        self.ptr.as_ref().unwrap()
+    }
+
+    fn as_mut_ffi(&mut self) -> std::pin::Pin<&mut ffi::PE_Binary> {
+        self.ptr.pin_mut()
+    }
+}
+
+
 impl std::fmt::Debug for Binary {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("Binary").finish()

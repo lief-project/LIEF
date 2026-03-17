@@ -14,11 +14,16 @@
  */
 #pragma once
 #include <string>
+#include "LIEF/rust/PE/Binary.hpp"
 #include "LIEF/PE/utils.hpp"
 
 class PE_Utils {
   public:
   static bool is_pe(std::string file) { // NOLINT(performance-unnecessary-value-param)
     return LIEF::PE::is_pe(file);
+  }
+
+  static bool check_layout(const PE_Binary& bin, std::string* error) {
+    return LIEF::PE::check_layout(static_cast<const LIEF::PE::Binary&>(bin.get()), error);
   }
 };

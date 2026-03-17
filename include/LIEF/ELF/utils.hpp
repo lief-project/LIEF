@@ -26,6 +26,7 @@ namespace LIEF {
 class BinaryStream;
 
 namespace ELF {
+class Binary;
 
 /// Check if given stream wraps an ELF file
 LIEF_API bool is_elf(BinaryStream& stream);
@@ -35,6 +36,9 @@ LIEF_API bool is_elf(const std::string& file);
 
 /// check if the raw data is an ELF file
 LIEF_API bool is_elf(const std::vector<uint8_t>& raw);
+
+/// Check that the layout of the given Binary is correct
+LIEF_API bool check_layout(const Binary& bin, std::string* error_info = nullptr);
 
 LIEF_API unsigned long hash32(const char* name);
 LIEF_API unsigned long hash64(const char* name);

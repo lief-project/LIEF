@@ -37,6 +37,7 @@ pub mod stub;
 pub mod builder;
 
 use std::path::Path;
+use lief_ffi as ffi;
 
 #[doc(inline)]
 pub use binary::Binary;
@@ -59,7 +60,33 @@ pub use header::Header;
 #[doc(inline)]
 pub use stub::Stub;
 
+use crate::common::AsFFI;
+
 /// Parse a Mach-O file from the given file path
 pub fn parse<P: AsRef<Path>>(path: P) -> Option<FatBinary> {
     FatBinary::parse(path)
+}
+
+/// Check that the layout of the given binary is correct from the loader
+/// perspective
+pub fn check_layout(binary: &Binary) -> Result<(), String> {
+    cxx::let_cxx_string!(error = "");
+    unsafe {
+        if ffi::MachO_Utils::check_layout(binary.as_ffi(), error.as_mut().get_unchecked_mut()) {
+            return Ok(());
+        }
+    }
+    Err(error.to_string())
+}
+
+/// Check that the layout of the given FAT binary is correct from the loader
+/// perspective
+pub fn check_fat_layout(fat: &FatBinary) -> Result<(), String> {
+    cxx::let_cxx_string!(error = "");
+    unsafe {
+        if ffi::MachO_Utils::check_layout_fat(fat.as_ffi(), error.as_mut().get_unchecked_mut()) {
+            return Ok(());
+        }
+    }
+    Err(error.to_string())
 }

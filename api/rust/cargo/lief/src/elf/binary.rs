@@ -23,7 +23,7 @@ use super::{Segment, Symbol};
 use crate::elf::dynamic::DynamicEntry;
 use crate::Error;
 
-use crate::common::{into_optional, FromFFI};
+use crate::common::{into_optional, FromFFI, AsFFI};
 use crate::generic;
 use crate::{declare_iterator, to_conv_result, to_result, to_slice};
 
@@ -457,6 +457,16 @@ impl Binary {
     /// with zeros before removal.
     pub fn remove_segments_by_type(&mut self, ty: segment::Type, clear: bool) {
         self.ptr.pin_mut().remove_segments_by_type(ty.into(), clear)
+    }
+}
+
+impl AsFFI<ffi::ELF_Binary> for Binary {
+    fn as_ffi(&self) -> &ffi::ELF_Binary {
+        self.ptr.as_ref().unwrap()
+    }
+
+    fn as_mut_ffi(&mut self) -> std::pin::Pin<&mut ffi::ELF_Binary> {
+        self.ptr.pin_mut()
     }
 }
 

@@ -16,10 +16,15 @@
 #pragma once
 #include <string>
 #include "LIEF/ELF/utils.hpp"
+#include "LIEF/rust/ELF/Binary.hpp"
 
 class ELF_Utils {
   public:
   static bool is_elf(std::string file)  {
     return LIEF::ELF::is_elf(file);
+  }
+
+  static bool check_layout(const ELF_Binary& bin, std::string* error) {
+    return LIEF::ELF::check_layout(static_cast<const LIEF::ELF::Binary&>(bin.get()), error);
   }
 };

@@ -46,7 +46,7 @@ use super::binding_info::BindingInfo;
 use super::stub::Stub;
 use lief_ffi as ffi;
 
-use crate::common::{into_optional, FromFFI};
+use crate::common::{into_optional, FromFFI, AsFFI};
 use crate::{generic, declare_fwd_iterator, declare_iterator, to_conv_result};
 use crate::objc::Metadata;
 
@@ -421,6 +421,16 @@ impl Binary {
     /// Return the [`Section`] embedded in the given segment's name
     pub fn get_section(&self, segment_name: String, section_name: String) -> Option<Section<'_>> {
         into_optional(self.ptr.get_section(segment_name, section_name))
+    }
+}
+
+impl AsFFI<ffi::MachO_Binary> for Binary {
+    fn as_ffi(&self) -> &ffi::MachO_Binary {
+        self.ptr.as_ref().unwrap()
+    }
+
+    fn as_mut_ffi(&mut self) -> std::pin::Pin<&mut ffi::MachO_Binary> {
+        self.ptr.pin_mut()
     }
 }
 

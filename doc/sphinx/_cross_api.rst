@@ -1163,3 +1163,22 @@
     :cpp:class:`LIEF::ELF::DynamicEntryFilter`
     :rust:struct:`lief::elf::dynamic::Filter`
 
+.. |lief-pe-check_layout| lief-api:: lief.PE.check_layout()
+
+    :py:func:`lief.PE.check_layout`
+    :cpp:func:`LIEF::PE::check_layout`
+    :rust:func:`lief::pe::check_layout`
+
+.. |lief-macho-check_layout| lief-api:: lief.MachO.check_layout()
+
+    :py:func:`lief.MachO.check_layout`
+    :cpp:func:`LIEF::MachO::check_layout`
+    :rust:func:`lief::macho::check_layout`
+    :rust:func:`lief::macho::check_fat_layout`
+
+.. |lief-elf-check_layout| lief-api:: lief.ELF.check_layout()
+
+    :py:func:`lief.ELF.check_layout`
+    :cpp:func:`LIEF::ELF::check_layout`
+    :rust:func:`lief::elf::check_layout`
+

@@ -7,6 +7,8 @@ from typing import Iterator, Optional, Union, overload
 import lief
 
 
+def check_layout(binary: Binary) -> tuple[bool, str]: ...
+
 class ARCH(enum.Enum):
     @staticmethod
     def from_value(arg: int, /) -> ARCH: ...

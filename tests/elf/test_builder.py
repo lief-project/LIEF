@@ -15,7 +15,7 @@ from subprocess import Popen
 from utils import (
     is_linux, glibc_version, get_sample,
     has_private_samples, is_server_ci, ci_runner_arch, is_windows,
-    is_x86_64, is_github_ci
+    is_x86_64, is_github_ci, check_layout
 )
 
 # pyright: reportOptionalMemberAccess=false
@@ -52,7 +52,7 @@ def convert_size(size_bytes):
     i = int(math.floor(math.log(size_bytes, 1024)))
     p = math.pow(1024, i)
     s = round(size_bytes / p, 2)
-    return "%s %s" % (s, size_name[i])
+    return f"{s} {size_name[i]}"
 
 
 @pytest.mark.skipif(not is_linux() or glibc_too_old, reason="not linux or glibc too old")
@@ -71,7 +71,7 @@ def test_force_relocate(tmp_path):
         if not file.exists():
             print(f"{file} does not exist. Skipping ...", file=sys.stderr)
             continue
-        elf: lief.ELF.Binary = lief.ELF.parse(file.as_posix())
+        elf: lief.ELF.Binary = lief.ELF.parse(file)
         fsize = file.stat().st_size
 
         builder = lief.ELF.Builder(elf)
@@ -83,6 +83,7 @@ def test_force_relocate(tmp_path):
         print(f"File written in {out_path}")
         builder.write(out_path.as_posix())
 
+        check_layout(out_path)
         out_path.chmod(out_path.stat().st_mode | stat.S_IEXEC)
         delta_size = out_path.stat().st_size - fsize
         print(f"delta size: {convert_size(delta_size)}")
@@ -111,7 +112,7 @@ def test_symtab(tmp_path):
         tmp = pathlib.Path(tmp_path)
         out_path = tmp / TARGET.name
 
-        elf: lief.ELF.Binary = lief.ELF.parse(TARGET.as_posix())
+        elf: lief.ELF.Binary = lief.ELF.parse(TARGET)
 
         fsize = TARGET.stat().st_size
         for i in range(NB_SYMBOLS):
@@ -123,6 +124,7 @@ def test_symtab(tmp_path):
             sym.visibility = lief.ELF.Symbol.VISIBILITY.DEFAULT
             elf.add_symtab_symbol(sym)
         elf.write(out_path.as_posix())
+        check_layout(out_path)
 
         print(f"File written in {out_path}")
         out_path.chmod(out_path.stat().st_mode | stat.S_IEXEC)
@@ -147,12 +149,13 @@ def test_add_interpreter(tmp_path):
     tmp = pathlib.Path(tmp_path)
     out_path = tmp / TARGET.name
 
-    elf: lief.ELF.Binary = lief.ELF.parse(TARGET.as_posix())
+    elf: lief.ELF.Binary = lief.ELF.parse(TARGET)
     fsize = TARGET.stat().st_size
 
     elf.interpreter = "/lib64/ld-linux-x86-64.so.2"
 
     elf.write(out_path.as_posix())
+    check_layout(out_path)
 
     print(f"File written in {out_path}")
     out_path.chmod(out_path.stat().st_mode | stat.S_IEXEC)
@@ -172,12 +175,13 @@ def test_change_interpreter(tmp_path):
     tmp = pathlib.Path(tmp_path)
     out_path = tmp / TARGET.name
 
-    elf: lief.ELF.Binary = lief.ELF.parse(TARGET.as_posix())
+    elf: lief.ELF.Binary = lief.ELF.parse(TARGET)
     fsize = TARGET.stat().st_size
 
     elf.interpreter = "/lib64/ld-linux-x86-64.so.2"
 
     elf.write(out_path.as_posix())
+    check_layout(out_path)
 
     print(f"File written in {out_path}")
     out_path.chmod(out_path.stat().st_mode | stat.S_IEXEC)
@@ -198,7 +202,7 @@ def test_rust_files(tmp_path):
     tmp = pathlib.Path(tmp_path)
     out_path = tmp / TARGET.name
 
-    elf: lief.ELF.Binary = lief.ELF.parse(TARGET.as_posix())
+    elf: lief.ELF.Binary = lief.ELF.parse(TARGET)
     fsize = TARGET.stat().st_size
 
     builder = lief.ELF.Builder(elf)
@@ -206,6 +210,7 @@ def test_rust_files(tmp_path):
     builder.build()
 
     elf.write(out_path.as_posix())
+    check_layout(out_path)
 
     print(f"File written in {out_path}")
     out_path.chmod(out_path.stat().st_mode | stat.S_IEXEC)
@@ -229,7 +234,7 @@ def test_go_files(tmp_path):
         tmp = pathlib.Path(tmp_path)
         out_path = tmp / TARGET.name
 
-        elf: lief.ELF.Binary = lief.ELF.parse(TARGET.as_posix())
+        elf: lief.ELF.Binary = lief.ELF.parse(TARGET)
         fsize = TARGET.stat().st_size
 
         builder = lief.ELF.Builder(elf)
@@ -237,8 +242,8 @@ def test_go_files(tmp_path):
         builder.build()
 
         elf.write(out_path.as_posix())
-
         print(f"File written in {out_path}")
+        check_layout(out_path)
         out_path.chmod(out_path.stat().st_mode | stat.S_IEXEC)
         delta_size = out_path.stat().st_size - fsize
         print(f"delta size: {convert_size(delta_size)}")
@@ -256,6 +261,7 @@ def test_issue_970(tmp_path: Path):
 
     lib.write(out.as_posix())
     new = lief.ELF.parse(out.as_posix())
+    check_layout(new)
 
     assert len(new.symbols_version_definition) == 2
     svd_0 = new.symbols_version_definition[0]
@@ -275,6 +281,7 @@ def test_issue_1121(tmp_path: Path):
     elf.write(out.as_posix())
 
     new = lief.ELF.parse(out)
+    check_layout(new)
     assert new.has_symbol("main_test")
 
 
@@ -298,6 +305,7 @@ def test_smart_insert_1(tmp_path: Path):
     elf.write(output.as_posix())
 
     new_elf = lief.ELF.parse(output)
+    check_layout(new_elf)
 
     sec = new_elf.get_section(".lief_test")
     assert new_elf.get_section_idx(sec) == 27
@@ -343,8 +351,11 @@ def test_smart_insert_2(tmp_path: Path):
 
     new_elf = lief.ELF.parse(output)
 
+    check_layout(new_elf)
+
     sec = new_elf.get_section(".lief_section_to_strip")
     assert new_elf.get_section_idx(sec) == 25
+
 
     if is_linux():
         llvm_strip = shutil.which("llvm-strip")
@@ -384,6 +395,7 @@ def test_issue_1175_missing_segment(tmp_path: Path):
     elf.write(output.as_posix())
 
     new = lief.ELF.parse(output)
+    check_layout(new)
     assert new.get(lief.ELF.Segment.TYPE.RISCV_ATTRIBUTES) is not None
     stacksize_content = lief.dump(new.get_section(".stack_sizes").content)
     #print("\n" + stacksize_content)
@@ -405,6 +417,7 @@ def test_ld_relocations(tmp_path: Path):
     output.chmod(0o755)
 
     new = lief.ELF.parse(output)
+    check_layout(new)
     assert new.header.program_header_offset == 52
 
     if is_linux() and is_x86_64() and not is_github_ci():
@@ -431,10 +444,10 @@ def test_s390x(tmp_path: Path):
 
     elf.write(output.as_posix(), config)
     new = lief.ELF.parse(output)
+    check_layout(new)
 
     if is_github_ci() and is_windows():
         pytest.skip("Not supported")
-        return
 
     r = new.get_relocation("_dl_exception_create")
     assert r.address == 0x1c6008
@@ -454,6 +467,7 @@ def test_patchelf(tmp_path: Path):
 
     elf.write(output.as_posix(), config)
 
+    check_layout(output)
     output.chmod(0o755)
 
     if is_linux() and is_x86_64():
@@ -478,6 +492,7 @@ def test_remove_segment(tmp_path: Path):
     new = lief.ELF.parse(output)
 
     assert new.get(lief.ELF.Segment.TYPE.GNU_EH_FRAME) is None
+    check_layout(new)
 
     if is_linux() and is_x86_64():
         output.chmod(0o755)

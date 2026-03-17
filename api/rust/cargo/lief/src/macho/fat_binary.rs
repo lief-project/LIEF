@@ -2,7 +2,7 @@ use super::binary::Binary;
 use lief_ffi as ffi;
 
 use crate::{
-    common::{into_optional, FromFFI},
+    common::{into_optional, FromFFI, AsFFI},
     macho::header::CpuType,
 };
 use std::path::Path;
@@ -57,6 +57,16 @@ impl FatBinary {
             index: 0,
             fat: self,
         }
+    }
+}
+
+impl AsFFI<ffi::MachO_FatBinary> for FatBinary {
+    fn as_ffi(&self) -> &ffi::MachO_FatBinary {
+        self.ptr.as_ref().unwrap()
+    }
+
+    fn as_mut_ffi(&mut self) -> std::pin::Pin<&mut ffi::MachO_FatBinary> {
+        self.ptr.pin_mut()
     }
 }
 

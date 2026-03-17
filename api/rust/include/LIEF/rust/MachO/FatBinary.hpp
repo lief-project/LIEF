@@ -20,7 +20,7 @@
 #include "LIEF/rust/MachO/Binary.hpp"
 #include "LIEF/rust/Mirror.hpp"
 
-class MachO_FatBinary : private Mirror<LIEF::MachO::FatBinary> {
+class MachO_FatBinary : public Mirror<LIEF::MachO::FatBinary> {
   public:
   using Mirror::Mirror;
   static auto parse(std::string path) {

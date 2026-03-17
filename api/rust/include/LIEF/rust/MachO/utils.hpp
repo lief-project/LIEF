@@ -16,11 +16,21 @@
 #pragma once
 #include <string>
 #include "LIEF/MachO/utils.hpp"
+#include "LIEF/rust/MachO/Binary.hpp"
+#include "LIEF/rust/MachO/FatBinary.hpp"
 
 class MachO_Utils {
   public:
   inline static bool is_macho(std::string file)  {
     return LIEF::MachO::is_macho(file);
+  }
+
+  static bool check_layout(const MachO_Binary& bin, std::string* error) {
+    return LIEF::MachO::check_layout(static_cast<const LIEF::MachO::Binary&>(bin.get()), error);
+  }
+
+  static bool check_layout_fat(const MachO_FatBinary& bin, std::string* error) {
+    return LIEF::MachO::check_layout(static_cast<const LIEF::MachO::FatBinary&>(bin.get()), error);
   }
 };
 

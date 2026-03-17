@@ -11,6 +11,8 @@
 //! ```
 
 use std::path::Path;
+use lief_ffi as ffi;
+use crate::common::AsFFI;
 
 pub mod binary;
 pub mod builder;
@@ -72,4 +74,15 @@ pub fn parse<P: AsRef<Path>>(path: P) -> Option<Binary> {
 /// Parse an ELF file from the given file path and configuration
 pub fn parse_with_config<P: AsRef<Path>>(path: P, config: &ParserConfig) -> Option<Binary> {
     Binary::parse_with_config(path, config)
+}
+
+/// Check that the layout of the given binary is correct
+pub fn check_layout(binary: &Binary) -> Result<(), String> {
+    cxx::let_cxx_string!(error = "");
+    unsafe {
+        if ffi::ELF_Utils::check_layout(binary.as_ffi(), error.as_mut().get_unchecked_mut()) {
+            return Ok(());
+        }
+    }
+    Err(error.to_string())
 }

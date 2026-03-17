@@ -11,6 +11,7 @@
 //! ```
 
 use std::path::Path;
+use lief_ffi as ffi;
 
 pub mod binary;
 pub mod data_directory;
@@ -79,6 +80,8 @@ pub use enclave_configuration::{EnclaveConfiguration, EnclaveImport};
 pub use volatile_metadata::VolatileMetadata;
 #[doc(inline)]
 pub use parser_config::Config as ParserConfig;
+
+use crate::common::AsFFI;
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -170,4 +173,16 @@ pub fn parse<P: AsRef<Path>>(path: P) -> Option<Binary> {
 /// Parse a PE file from the given file path and configuration
 pub fn parse_with_config<P: AsRef<Path>>(path: P, config: &ParserConfig) -> Option<Binary> {
     Binary::parse_with_config(path, config)
+}
+
+/// Check that the layout of the given binary is correct from the Windows loader
+/// perspective
+pub fn check_layout(binary: &Binary) -> Result<(), String> {
+    cxx::let_cxx_string!(error = "");
+    unsafe {
+        if ffi::PE_Utils::check_layout(binary.as_ffi(), error.as_mut().get_unchecked_mut()) {
+            return Ok(());
+        }
+    }
+    Err(error.to_string())
 }
