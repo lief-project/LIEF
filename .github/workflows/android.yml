@@ -1,5 +1,10 @@
 name: 'Android'
-on: push
+on:
+  push:
+    branches:
+      - 'main'
+    tags-ignore:
+      - '**'
 
 jobs:
   build-sdk:

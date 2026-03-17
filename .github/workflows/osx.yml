@@ -1,5 +1,10 @@
 name: 'macOS'
-on: push
+on:
+  push:
+    branches:
+      - 'main'
+    tags-ignore:
+      - '**'
 
 env:
   python-test-version: '3.10'
