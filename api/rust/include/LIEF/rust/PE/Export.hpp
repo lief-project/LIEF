@@ -31,7 +31,7 @@ class PE_Export : public Mirror<LIEF::PE::Export>{
   {
     public:
     it_entries(const PE_Export::lief_t& src)
-      : Iterator(std::move(src.entries())) { }
+      : Iterator(src.entries()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

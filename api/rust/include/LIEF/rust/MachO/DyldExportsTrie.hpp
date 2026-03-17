@@ -29,7 +29,7 @@ class MachO_DyldExportsTrie : public MachO_Command {
   {
     public:
     it_exports(const MachO_DyldExportsTrie::lief_t& src)
-      : Iterator(std::move(src.exports())) { }
+      : Iterator(src.exports()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

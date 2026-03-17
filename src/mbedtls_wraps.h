@@ -21,6 +21,11 @@
 #define MBEDTLS_X509_USE_C
 #endif
 
+#ifndef MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
+#define MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
+#endif
+
+
 #if defined(__cplusplus)
 extern "C" {
 #endif

@@ -102,7 +102,7 @@ class Parser {
   std::map<size_t, Symbol*> symbol_idx_;
   SymSecMap symsec_;
 
-  ParserConfig config_;
+  [[maybe_unused]] ParserConfig config_;
 };
 }
 }

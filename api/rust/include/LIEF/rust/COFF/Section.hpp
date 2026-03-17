@@ -43,7 +43,7 @@ class COFF_Section : public AbstractSection {
   {
     public:
     it_relocations(const COFF_Section::lief_t& src)
-      : Iterator(std::move(src.relocations())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.relocations()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -53,7 +53,7 @@ class COFF_Section : public AbstractSection {
   {
     public:
     it_symbols(const COFF_Section::lief_t& src)
-      : Iterator(std::move(src.symbols())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.symbols()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

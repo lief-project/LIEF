@@ -52,7 +52,7 @@ struct ChainedPointer : public nanobind::object {
       "]",
       check)
 
-  static bool check(handle h) {
+  static bool check(handle) {
     return true;
   }
 };

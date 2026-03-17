@@ -78,7 +78,7 @@ TEST_CASE("lief.test.pe", "[lief][test][pe]") {
     PE::Debug Wrong(static_cast<PE::Debug::TYPES>(-1));
     REQUIRE_THAT(to_string(Wrong.type()), Equals("UNKNOWN"));
 
-    REQUIRE(!PE::CodeViewPDB::classof(&Wrong));
+    REQUIRE(!PE::CodeView::classof(&Wrong));
     REQUIRE(!PE::Pogo::classof(&Wrong));
 
     PE::CodeView CV(PE::CodeView::SIGNATURES::CV_50);

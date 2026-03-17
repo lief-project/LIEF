@@ -47,7 +47,7 @@ class PE_EnclaveConfiguration : public Mirror<LIEF::PE::EnclaveConfiguration> {
   {
     public:
     it_imports(const PE_EnclaveConfiguration::lief_t& src)
-      : Iterator(std::move(src.imports())) { }
+      : Iterator(src.imports()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

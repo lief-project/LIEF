@@ -75,7 +75,7 @@ class PE_CHPEMetadataARM64 : public PE_CHPEMetadata {
   {
     public:
     it_const_range_entries(const PE_CHPEMetadataARM64::lief_t& src)
-      : Iterator(std::move(src.code_ranges())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.code_ranges()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -85,7 +85,7 @@ class PE_CHPEMetadataARM64 : public PE_CHPEMetadata {
   {
     public:
     it_const_redirection_entries(const PE_CHPEMetadataARM64::lief_t& src)
-      : Iterator(std::move(src.redirections())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.redirections()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -95,7 +95,7 @@ class PE_CHPEMetadataARM64 : public PE_CHPEMetadata {
   {
     public:
     it_const_code_range_entry_point(const PE_CHPEMetadataARM64::lief_t& src)
-      : Iterator(std::move(src.code_range_entry_point())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.code_range_entry_point()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

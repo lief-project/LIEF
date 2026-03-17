@@ -24,7 +24,7 @@ struct safe_string_t : public nanobind::object {
 
   NB_OBJECT_DEFAULT(safe_string_t, object, "Union[str, bytes]", check)
 
-  static bool check(handle h) {
+  static bool check(handle /*h*/) {
     return true;
   }
 };

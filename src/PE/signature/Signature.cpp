@@ -15,6 +15,8 @@
  */
 #include "logging.hpp"
 
+#include "mbedtls_wraps.h"
+
 #include "LIEF/utils.hpp"
 #include "LIEF/Visitor.hpp"
 

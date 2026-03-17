@@ -57,7 +57,7 @@ void create<CoreFile>(nb::module_& m) {
         "Number of files mapped in core"_doc)
 
     .def("__iter__",
-        [&m] (const CoreFile& f) {
+        [] (const CoreFile& f) {
           return nb::make_iterator<nb::rv_policy::reference_internal>(nanobind::type<CoreFile>(), "corefile_it",
                                    std::begin(f), std::end(f));
         }, nb::keep_alive<0, 1>())

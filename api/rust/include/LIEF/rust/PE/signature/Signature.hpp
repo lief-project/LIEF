@@ -36,7 +36,7 @@ class PE_Signature : private Mirror<LIEF::PE::Signature> {
   {
     public:
     it_certificates(const PE_Signature::lief_t& src)
-      : Iterator(std::move(src.certificates())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.certificates()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -46,7 +46,7 @@ class PE_Signature : private Mirror<LIEF::PE::Signature> {
   {
     public:
     it_signers(const PE_Signature::lief_t& src)
-      : Iterator(std::move(src.signers())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.signers()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

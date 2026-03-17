@@ -13,7 +13,7 @@ template<>
 struct type_caster<LIEF::PE::ResourceDialog::ordinal_or_str_t> {
   NB_TYPE_CASTER(LIEF::PE::ResourceDialog::ordinal_or_str_t, const_name("Optional[Union[int, str]]"));
 
-  bool from_python(handle src, uint8_t, cleanup_list *) noexcept {
+  bool from_python(handle, uint8_t, cleanup_list *) noexcept {
     return false;
   }
 

@@ -29,7 +29,7 @@ class MachO_DynamicSymbolCommand : public MachO_Command {
   {
     public:
     it_indirect_symbols(const MachO_DynamicSymbolCommand::lief_t& src)
-      : Iterator(std::move(src.indirect_symbols())) { }
+      : Iterator(src.indirect_symbols()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

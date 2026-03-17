@@ -31,7 +31,7 @@ class MachO_DyldInfo : public MachO_Command {
   {
     public:
     it_bindings(const MachO_DyldInfo::lief_t& src)
-      : Iterator(std::move(src.bindings())) { }
+      : Iterator(src.bindings()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -41,7 +41,7 @@ class MachO_DyldInfo : public MachO_Command {
   {
     public:
     it_exports(const MachO_DyldInfo::lief_t& src)
-      : Iterator(std::move(src.exports())) { }
+      : Iterator(src.exports()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

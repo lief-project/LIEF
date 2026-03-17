@@ -54,7 +54,7 @@ class MachO_FunctionVariants_RuntimeTable :
   {
     public:
     it_entries(const MachO_FunctionVariants_RuntimeTable::lief_t& src)
-      : Iterator(std::move(src.entries())) { }
+      : Iterator(src.entries()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -75,7 +75,7 @@ class MachO_FunctionVariants : public MachO_Command {
   {
     public:
     it_runtime_table(const MachO_FunctionVariants::lief_t& src)
-      : Iterator(std::move(src.runtime_table())) { }
+      : Iterator(src.runtime_table()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

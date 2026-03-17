@@ -64,7 +64,7 @@ class PE_DynamicFixupARM64Kernel : public PE_DynamicFixup {
   {
     public:
     it_relocations(const PE_DynamicFixupARM64Kernel::lief_t& src)
-      : Iterator(std::move(src.relocations())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.relocations()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -105,7 +105,7 @@ class PE_DynamicFixupARM64X : public PE_DynamicFixup {
   {
     public:
     it_relocations(const PE_DynamicFixupARM64X::lief_t& src)
-      : Iterator(std::move(src.relocations())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.relocations()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -145,7 +145,7 @@ class PE_DynamicFixupControlTransfer : public PE_DynamicFixup {
   {
     public:
     it_relocations(const PE_DynamicFixupControlTransfer::lief_t& src)
-      : Iterator(std::move(src.relocations())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.relocations()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -171,7 +171,7 @@ class PE_DynamicFixupGeneric : public PE_DynamicFixup {
   {
     public:
     it_relocations(const PE_DynamicFixupGeneric::lief_t& src)
-      : Iterator(std::move(src.relocations())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.relocations()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -254,7 +254,7 @@ class PE_FunctionOverrideInfo : public Mirror<LIEF::PE::FunctionOverrideInfo> {
   {
     public:
     it_relocations(const PE_FunctionOverrideInfo::lief_t& src)
-      : Iterator(std::move(src.relocations())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.relocations()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -283,7 +283,7 @@ class PE_FunctionOverride : public PE_DynamicFixup {
   {
     public:
     it_func_overriding_info(const PE_FunctionOverride::lief_t& src)
-      : Iterator(std::move(src.func_overriding_info())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.func_overriding_info()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -293,7 +293,7 @@ class PE_FunctionOverride : public PE_DynamicFixup {
   {
     public:
     it_bdd_info(const PE_FunctionOverride::lief_t& src)
-      : Iterator(std::move(src.bdd_info())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.bdd_info()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

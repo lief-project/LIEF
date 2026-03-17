@@ -37,7 +37,7 @@ class PE_VolatileMetadata : public Mirror<LIEF::PE::VolatileMetadata> {
   {
     public:
     it_ranges(const PE_VolatileMetadata::lief_t& src)
-      : Iterator(std::move(src.info_ranges())) { }
+      : Iterator(src.info_ranges()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

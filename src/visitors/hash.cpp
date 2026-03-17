@@ -16,6 +16,7 @@
 #include <functional>
 #include <numeric>
 
+#include "mbedtls_wraps.h"
 #include "psa/crypto_builtin_primitives.h"
 
 #include "LIEF/hash.hpp"

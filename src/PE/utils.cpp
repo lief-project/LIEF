@@ -16,6 +16,10 @@
 #include <algorithm>
 #include <iterator>
 
+#ifndef MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
+#define MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
+#endif
+
 #include "logging.hpp"
 #include "psa/crypto_builtin_primitives.h"
 

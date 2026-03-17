@@ -42,7 +42,7 @@ struct relocations_typing : public nanobind::object {
     "lief.MachO.DyldInfo.REBASE_TYPE, "
   "]", check)
 
-  static bool check(handle h) {
+  static bool check(handle) {
     return true;
   }
 };

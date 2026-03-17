@@ -24,7 +24,7 @@
 
 namespace LIEF::dsc::py {
 
-void init_utils(nb::module_& m) {
+void init_utils(nb::module_&) {
   lief_mod->def("is_shared_cache",
     [] (nb::PathLike path) { return is_shared_cache(path); },
     "Check if the given file is a dyld shared cache"_doc,

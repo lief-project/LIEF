@@ -9,7 +9,7 @@ struct type_caster<LIEF::assembly::aarch64::operands::Register::reg_t> {
   NB_TYPE_CASTER(LIEF::assembly::aarch64::operands::Register::reg_t,
                  const_name("Optional[Union[lief.assembly.aarch64.REG, lief.assembly.aarch64.SYSREG]]"));
 
-  bool from_python(handle src, uint8_t, cleanup_list *) noexcept {
+  bool from_python(handle, uint8_t, cleanup_list *) noexcept {
     return false;
   }
 

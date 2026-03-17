@@ -41,7 +41,7 @@ using namespace std::string_literals;
 std::unique_ptr<MachO::Binary> reload(MachO::Binary& bin) {
   std::ostringstream oss;
   bin.write(oss);
-  std::string buffer = std::move(oss.str());
+  std::string buffer = oss.str();
 
   auto stream = std::make_unique<SpanStream>((const uint8_t*)buffer.data(), buffer.size());
   return MachO::Parser::parse(std::move(stream))->take(0);

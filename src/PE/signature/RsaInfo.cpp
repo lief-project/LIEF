@@ -16,6 +16,10 @@
 
 #include "LIEF/PE/signature/RsaInfo.hpp"
 
+#ifndef MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
+#define MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
+#endif
+
 #include <mbedtls/private/bignum.h>
 #include <mbedtls/md.h>
 #include <mbedtls/private/rsa.h>

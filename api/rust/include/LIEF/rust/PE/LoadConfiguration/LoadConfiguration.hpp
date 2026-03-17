@@ -42,7 +42,7 @@ class PE_LoadConfiguration : public Mirror<LIEF::PE::LoadConfiguration> {
   {
     public:
     it_guard_cf_functions(const PE_LoadConfiguration::lief_t& src)
-      : Iterator(std::move(src.guard_cf_functions())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.guard_cf_functions()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -52,7 +52,7 @@ class PE_LoadConfiguration : public Mirror<LIEF::PE::LoadConfiguration> {
   {
     public:
     it_guard_address_taken_iat_entries(const PE_LoadConfiguration::lief_t& src)
-      : Iterator(std::move(src.guard_address_taken_iat_entries())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.guard_address_taken_iat_entries()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -62,7 +62,7 @@ class PE_LoadConfiguration : public Mirror<LIEF::PE::LoadConfiguration> {
   {
     public:
     it_guard_long_jump_targets(const PE_LoadConfiguration::lief_t& src)
-      : Iterator(std::move(src.guard_long_jump_targets())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.guard_long_jump_targets()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -72,7 +72,7 @@ class PE_LoadConfiguration : public Mirror<LIEF::PE::LoadConfiguration> {
   {
     public:
     it_guard_eh_continuation(const PE_LoadConfiguration::lief_t& src)
-      : Iterator(std::move(src.guard_eh_continuation_functions())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.guard_eh_continuation_functions()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -82,7 +82,7 @@ class PE_LoadConfiguration : public Mirror<LIEF::PE::LoadConfiguration> {
   {
     public:
     it_dynamic_relocations(const PE_LoadConfiguration::lief_t& src)
-      : Iterator(std::move(src.dynamic_relocations())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.dynamic_relocations()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

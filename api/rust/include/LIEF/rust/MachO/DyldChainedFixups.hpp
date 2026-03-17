@@ -28,7 +28,7 @@ class MachO_DyldChainedFixups : public MachO_Command {
   {
     public:
     it_bindings(const MachO_DyldChainedFixups::lief_t& src)
-      : Iterator(std::move(src.bindings())) { }
+      : Iterator(src.bindings()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

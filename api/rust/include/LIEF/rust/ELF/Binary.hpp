@@ -126,7 +126,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_sections(const ELF_Binary::lief_t& src)
-      : Iterator(std::move(src.sections())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.sections()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -136,7 +136,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_segments(const ELF_Binary::lief_t& src)
-      : Iterator(std::move(src.segments())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.segments()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -146,7 +146,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_dynamic_entries(const ELF_Binary::lief_t& src)
-      : Iterator(std::move(src.dynamic_entries())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.dynamic_entries()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -156,7 +156,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_dynamic_symbols(const ELF_Binary::lief_t& src)
-      : Iterator(std::move(src.dynamic_symbols())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.dynamic_symbols()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -166,7 +166,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_exported_symbols(const ELF_Binary::lief_t& src)
-      : Iterator(std::move(src.exported_symbols())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.exported_symbols()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -176,7 +176,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_imported_symbols(const ELF_Binary::lief_t& src)
-      : Iterator(std::move(src.imported_symbols())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.imported_symbols()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -186,7 +186,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_notes(const ELF_Binary::lief_t& src)
-      : Iterator(std::move(src.notes())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.notes()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -196,7 +196,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_symtab_symbols(const ELF_Binary::lief_t& src)
-      : Iterator(std::move(src.symtab_symbols())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.symtab_symbols()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -206,7 +206,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_relocations(const ELF_Binary::lief_t& src)
-      : Iterator(std::move(src.relocations())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.relocations()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -216,7 +216,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_pltgot_relocations(const ELF_Binary::lief_t& src)
-      : Iterator(std::move(src.pltgot_relocations())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.pltgot_relocations()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -226,7 +226,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_dynamic_relocations(const ELF_Binary::lief_t& src)
-      : Iterator(std::move(src.dynamic_relocations())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.dynamic_relocations()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -236,7 +236,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_object_relocations(const ELF_Binary::lief_t& src)
-      : Iterator(std::move(src.object_relocations())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.object_relocations()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -246,7 +246,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_symbols_version(const ELF_Binary::lief_t& src)
-      : Iterator(std::move(src.symbols_version())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.symbols_version()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -256,7 +256,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_symbols_version_requirement(const ELF_Binary::lief_t& src)
-      : Iterator(std::move(src.symbols_version_requirement())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.symbols_version_requirement()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -266,7 +266,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_symbols_version_definition(const ELF_Binary::lief_t& src)
-      : Iterator(std::move(src.symbols_version_definition())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.symbols_version_definition()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

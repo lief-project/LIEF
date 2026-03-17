@@ -32,7 +32,7 @@ class PE_Import : private Mirror<LIEF::PE::Import> {
   {
     public:
     it_entries(const PE_Import::lief_t& src)
-      : Iterator(std::move(src.entries())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.entries()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

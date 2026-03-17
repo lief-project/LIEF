@@ -18,7 +18,7 @@ struct type_caster<LIEF::span<T>> {
 
   NB_TYPE_CASTER(LIEF::span<T>, const_name("memoryview"));
 
-  bool from_python(handle src, uint8_t, cleanup_list *) noexcept {
+  bool from_python(handle /*src*/, uint8_t, cleanup_list *) noexcept {
     return false;
   }
 

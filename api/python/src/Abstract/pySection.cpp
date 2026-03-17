@@ -35,7 +35,7 @@ struct search_result : public nanobind::object {
 
   NB_OBJECT_DEFAULT(search_result, object, "Optional[int]", check)
 
-  static bool check(handle h) {
+  static bool check(handle) {
     return true;
   }
 };

@@ -21,7 +21,7 @@
 
 namespace LIEF::pdb::py {
 
-void init_utils(nb::module_& m) {
+void init_utils(nb::module_&) {
   lief_mod->def("is_pdb", [] (nb::PathLike path) {
       return is_pdb(path);
     },

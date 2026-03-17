@@ -82,7 +82,7 @@ class PE_unwind_aarch64_UnpackedFunction : public PE_RuntimeFunctionAArch64 {
   {
     public:
     it_const_epilog_scopes(const PE_unwind_aarch64_UnpackedFunction::lief_t& src)
-      : Iterator(std::move(src.epilog_scopes())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(std::move(src.epilog_scopes())) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

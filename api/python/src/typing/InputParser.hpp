@@ -81,7 +81,7 @@ struct InputParser : public nanobind::object {
 
   std::unique_ptr<BinaryStream> into_stream();
 
-  static bool check(handle h) {
+  static bool check(handle /*h*/) {
     return true;
   }
 };
@@ -92,7 +92,7 @@ struct OutputParser : public nanobind::object {
   static constexpr auto Name = out_descr();
   NB_OBJECT_DEFAULT_NONAME(OutputParser, object, check);
 
-  static bool check(handle h) {
+  static bool check(handle  /*h*/) {
     return true;
   }
 };

@@ -27,6 +27,7 @@ if((CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU"
     -Wextra
     -Wpedantic
     -Wno-expansion-to-defined
+    -Wno-unused-lambda-capture
     # Promote this warning into an error as error management
     # where the result is 'result<void>' might miss the "return {}"
     -Werror=return-type

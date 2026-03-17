@@ -29,7 +29,7 @@ class MachO_DataInCode : public MachO_Command {
   {
     public:
     it_entries(const MachO_DataInCode::lief_t& src)
-      : Iterator(std::move(src.entries())) { }
+      : Iterator(src.entries()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

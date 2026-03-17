@@ -72,7 +72,7 @@ class MachO_Binary : public AbstractBinary {
   {
     public:
     it_commands(const MachO_Binary::lief_t& src)
-      : Iterator(std::move(src.commands())) { }
+      : Iterator(src.commands()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -82,7 +82,7 @@ class MachO_Binary : public AbstractBinary {
   {
     public:
     it_symbols(const MachO_Binary::lief_t& src)
-      : Iterator(std::move(src.symbols())) { }
+      : Iterator(src.symbols()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -92,7 +92,7 @@ class MachO_Binary : public AbstractBinary {
   {
     public:
     it_sections(const MachO_Binary::lief_t& src)
-      : Iterator(std::move(src.sections())) { }
+      : Iterator(src.sections()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -102,7 +102,7 @@ class MachO_Binary : public AbstractBinary {
   {
     public:
     it_segments(const MachO_Binary::lief_t& src)
-      : Iterator(std::move(src.segments())) { }
+      : Iterator(src.segments()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -112,7 +112,7 @@ class MachO_Binary : public AbstractBinary {
   {
     public:
     it_libraries(const MachO_Binary::lief_t& src)
-      : Iterator(std::move(src.libraries())) { }
+      : Iterator(src.libraries()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -122,7 +122,7 @@ class MachO_Binary : public AbstractBinary {
   {
     public:
     it_relocations(const MachO_Binary::lief_t& src)
-      : Iterator(std::move(src.relocations())) { }
+      : Iterator(src.relocations()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -143,7 +143,7 @@ class MachO_Binary : public AbstractBinary {
   {
     public:
     it_sub_clients(const MachO_Binary::lief_t& src)
-      : Iterator(std::move(src.subclients())) { }
+      : Iterator(src.subclients()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -173,7 +173,7 @@ class MachO_Binary : public AbstractBinary {
   {
     public:
     it_notes(const MachO_Binary::lief_t& src)
-      : Iterator(std::move(src.notes())) { }
+      : Iterator(src.notes()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -183,7 +183,7 @@ class MachO_Binary : public AbstractBinary {
   {
     public:
     it_fileset_binaries(const MachO_Binary::lief_t& src)
-      : Iterator(std::move(src.filesets())) { }
+      : Iterator(src.filesets()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

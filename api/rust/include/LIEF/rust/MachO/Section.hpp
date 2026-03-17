@@ -31,7 +31,7 @@ class MachO_Section : public AbstractSection {
   {
     public:
     it_relocations(const MachO_Section::lief_t& src)
-      : Iterator(std::move(src.relocations())) { }
+      : Iterator(src.relocations()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

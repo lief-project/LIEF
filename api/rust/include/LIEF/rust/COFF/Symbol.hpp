@@ -33,7 +33,7 @@ class COFF_Symbol : public AbstractSymbol {
   {
     public:
     it_auxiliary_symbols(const COFF_Symbol::lief_t& src)
-      : Iterator(std::move(src.auxiliary_symbols())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.auxiliary_symbols()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

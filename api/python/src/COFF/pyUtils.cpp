@@ -23,7 +23,7 @@
 
 namespace LIEF::COFF::py {
 
-void init_utils(nb::module_& m) {
+void init_utils(nb::module_&) {
   lief_mod->def("is_coff",
     [] (nb::PathLike path) { return is_coff(path); },
     "Check if the given file is a COFF"_doc,

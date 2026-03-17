@@ -162,7 +162,7 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_debug(const PE_Binary::lief_t& src)
-      : Iterator(std::move(src.debug())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.debug()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -172,7 +172,7 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_signatures(const PE_Binary::lief_t& src)
-      : Iterator(std::move(src.signatures())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.signatures()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -182,7 +182,7 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_sections(const PE_Binary::lief_t& src)
-      : Iterator(std::move(src.sections())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.sections()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -192,7 +192,7 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_relocations(const PE_Binary::lief_t& src)
-      : Iterator(std::move(src.relocations())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.relocations()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -202,7 +202,7 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_imports(const PE_Binary::lief_t& src)
-      : Iterator(std::move(src.imports())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.imports()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -212,7 +212,7 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_delay_imports(const PE_Binary::lief_t& src)
-      : Iterator(std::move(src.delay_imports())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.delay_imports()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -222,7 +222,7 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_data_directories(const PE_Binary::lief_t& src)
-      : Iterator(std::move(src.data_directories())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.data_directories()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -232,7 +232,7 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_strings_table(const PE_Binary::lief_t& src)
-      : Iterator(std::move(src.coff_string_table())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.coff_string_table()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -242,7 +242,7 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_symbols(const PE_Binary::lief_t& src)
-      : Iterator(std::move(src.symbols())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.symbols()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -252,7 +252,7 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_exceptions(const PE_Binary::lief_t& src)
-      : Iterator(std::move(src.exceptions())) { } // NOLINT(performance-move-const-arg)
+      : Iterator(src.exceptions()) { } 
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

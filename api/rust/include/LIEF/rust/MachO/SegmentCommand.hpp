@@ -27,7 +27,7 @@ class MachO_SegmentCommand : public MachO_Command {
   {
     public:
     it_relocations(const MachO_SegmentCommand::lief_t& src)
-      : Iterator(std::move(src.relocations())) { }
+      : Iterator(src.relocations()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -37,7 +37,7 @@ class MachO_SegmentCommand : public MachO_Command {
   {
     public:
     it_sections(const MachO_SegmentCommand::lief_t& src)
-      : Iterator(std::move(src.sections())) { }
+      : Iterator(src.sections()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

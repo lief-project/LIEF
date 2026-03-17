@@ -36,7 +36,7 @@ struct typing_error : public nanobind::object {
   LIEF_PY_DEFAULT_CTOR(typing_error, nanobind::object);
   NB_OBJECT_DEFAULT_NONAME(typing_error, object, check)
 
-  static bool check(handle h) {
+  static bool check(handle /*h*/) {
     return true;
   }
 };
@@ -51,7 +51,7 @@ struct value_or_none_t : public nanobind::object {
       nanobind::detail::const_name("]");
 
   NB_OBJECT_DEFAULT_NONAME(value_or_none_t, object, check)
-  static bool check(handle h) {
+  static bool check(handle /*h*/) {
     return true;
   }
 };

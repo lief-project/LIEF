@@ -29,7 +29,7 @@ class PE_ResourceNode : public Mirror<LIEF::PE::ResourceNode> {
   {
     public:
     it_childs(const PE_ResourceNode::lief_t& src)
-      : Iterator(std::move(src.childs())) { }
+      : Iterator(src.childs()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
