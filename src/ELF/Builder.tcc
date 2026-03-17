@@ -926,12 +926,8 @@ ok_error_t Builder::build_symtab_symbols() {
   content.reserve(layout->static_sym_size<ELF_T>());
 
   // On recent compilers, the symtab string table is merged with the section name table
-  const std::unordered_map<std::string, size_t>* str_map = nullptr;
-  if (layout->is_strtab_shared_shstrtab()) {
-    str_map = &layout->shstr_map();
-  } else {
-    str_map = &layout->strtab_map();
-  }
+  const std::unordered_map<std::string, size_t>* str_map =
+    layout->is_strtab_shared_shstrtab() ? &layout->shstr_map() : &layout->strtab_map();
 
   for (const std::unique_ptr<Symbol>& symbol : binary_->symtab_symbols_) {
     const std::string& name = symbol->name();

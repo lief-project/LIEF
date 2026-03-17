@@ -974,11 +974,13 @@ class LIEF_LOCAL ExeLayout : public Layout {
       binary_->remove(*string_names_section, /* clear */ true);
       Section sec_str_section(sec_name, Section::TYPE::STRTAB);
       sec_str_section.content(std::vector<uint8_t>(raw_shstrtab_.size()));
-      binary_->add(sec_str_section, /*loaded=*/false,
-                   /*pos=*/Binary::SEC_INSERT_POS::POST_SECTION);
-
-      // Default behavior: push_back => index = binary_->sections_.size() - 1
-      hdr.section_name_table_idx(binary_->sections_.size() - 1);
+      Section* sec = binary_->add(sec_str_section, /*loaded=*/false,
+                                  /*pos=*/Binary::SEC_INSERT_POS::POST_SECTION);
+      if (sec != nullptr) {
+        if (auto idx = binary_->get_section_idx(*sec)) {
+          hdr.section_name_table_idx(*idx);
+        }
+      }
     }
 
     for (std::unique_ptr<Relocation>& reloc : binary_->relocations_) {
