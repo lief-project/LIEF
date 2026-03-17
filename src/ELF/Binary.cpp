@@ -2613,7 +2613,7 @@ uint64_t Binary::relocate_phdr_table_pie() {
     return phdr_reloc_info_.new_offset;
   }
 
-
+  LIEF_DEBUG("Relocating PHDR Table (PIE)");
   // --------------------------------------
   // Part 1: Make spaces for a new PHDR
   // --------------------------------------

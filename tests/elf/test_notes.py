@@ -5,7 +5,7 @@ from io import StringIO
 from pathlib import Path
 
 import lief
-from utils import get_sample, has_private_samples
+from utils import get_sample, has_private_samples, check_layout
 
 lief.logging.set_level(lief.logging.LEVEL.INFO)
 
@@ -36,6 +36,7 @@ def test_remove_note(tmp_path: Path):
 
     etterlog.write(output.as_posix(), config)
     etterlog_updated = lief.ELF.parse(output.as_posix())
+    check_layout(etterlog_updated)
     assert lief.ELF.Note.TYPE.GNU_BUILD_ID not in etterlog_updated
 
 def test_add_note(tmp_path: Path):
@@ -49,7 +50,7 @@ def test_add_note(tmp_path: Path):
     etterlog.write(output.as_posix(), config)
 
     etterlog_updated = lief.ELF.parse(output.as_posix())
-
+    check_layout(etterlog_updated)
     assert lief.ELF.Note.TYPE.GNU_GOLD_VERSION in etterlog_updated
 
     # The string printed is largely irrelevant, but running print ensures no
@@ -82,6 +83,8 @@ def test_android_note(tmp_path: Path):
 
     ndkr15 = lief.ELF.parse(output.as_posix())
 
+    check_layout(ndkr15)
+
     note = ndkr15.get(lief.ELF.Note.TYPE.ANDROID_IDENT)
 
     assert note.sdk_version == 15
@@ -97,6 +100,7 @@ def test_issue_816(tmp_path: Path):
 
     elf.write(output.as_posix(), config)
     new = lief.ELF.parse(output.as_posix())
+    check_layout(new)
     assert len(new.notes) == 40
 
 def test_crashpad():

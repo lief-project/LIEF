@@ -4,7 +4,7 @@ import lief
 from pathlib import Path
 from subprocess import Popen
 
-from utils import get_sample, is_linux, is_x86_64
+from utils import get_sample, is_linux, is_x86_64, check_layout
 
 def test_issue_749():
     lib_path = get_sample('ELF/lib_symbol_versions.so')
@@ -59,6 +59,7 @@ def test_remove_symbol(tmp_path: Path):
     output = tmp_path / "lib_symbol_versions.so"
 
     elf.write(output.as_posix())
+    check_layout(elf)
 
     new = lief.ELF.parse(output)
     assert str(new.get_symbol("puts").symbol_version) == "* Global *"
@@ -85,6 +86,7 @@ def test_remove_all_version(tmp_path: Path):
     elf.write(out.as_posix())
 
     new = lief.ELF.parse(out)
+    check_layout(new)
     assert new.get_symbol("__libc_start_main").symbol_version.symbol_version_auxiliary is None
     assert new.find_version_requirement("libc.so.6") is None
     out.chmod(0o755)

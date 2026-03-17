@@ -9,7 +9,9 @@ import pathlib
 from subprocess import Popen
 from pathlib import Path
 
-from utils import get_sample, is_linux, is_x86_64, glibc_version
+from utils import (
+    get_sample, is_linux, is_x86_64, glibc_version, check_layout
+)
 
 def test_issue_872(tmp_path):
     tmp = pathlib.Path(tmp_path)
@@ -27,6 +29,8 @@ def test_issue_872(tmp_path):
 
     outpath = tmp / "i872_risv_modified.elf"
     elf.write(outpath.as_posix())
+
+    check_layout(outpath)
 
     modified: lief.ELF.Binary = lief.ELF.parse(outpath.as_posix())
     new_offset = modified.get_section(".payload").offset

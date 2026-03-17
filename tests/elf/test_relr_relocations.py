@@ -1,6 +1,6 @@
 import lief
 import ctypes
-from utils import get_sample, glibc_version
+from utils import get_sample, glibc_version, check_layout
 from pathlib import Path
 
 
@@ -28,6 +28,7 @@ def test_relr_relocations(tmp_path: Path):
 
     new = lief.ELF.parse(out.as_posix())
 
+    check_layout(new)
     new_relr_reloc = [r for r in new.relocations if r.encoding == lief.ELF.Relocation.ENCODING.RELR]
     assert len(new_relr_reloc) == 3
 
@@ -48,4 +49,5 @@ def test_relr_addend(tmp_path: Path):
     elf.write(out.as_posix())
 
     new_elf = lief.ELF.parse(out)
+    check_layout(new_elf)
     assert new_elf.get_int_from_virtual_address(0x21f40, 8) == 0xa680

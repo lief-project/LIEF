@@ -8,7 +8,7 @@ from pathlib import Path
 from subprocess import Popen
 
 import lief
-from utils import is_linux
+from utils import is_linux, check_layout
 
 lief.logging.set_level(lief.logging.LEVEL.INFO)
 
@@ -25,13 +25,15 @@ def test_change_interpreter(tmp_path: Path, target):
         return
 
     name = target.name
-    target = lief.parse(target.as_posix())
+    target = lief.ELF.parse(target.as_posix())
     new_interpreter = tmp_path / Path(target.interpreter).name
     if not new_interpreter.is_symlink():
         os.symlink(target.interpreter, new_interpreter)
     target.interpreter = new_interpreter.as_posix()
     output = tmp_path / f"{name}.interpreter"
-    target.write(output.as_posix())
+    target.write(output)
+
+    check_layout(output)
 
     if is_linux():
         st = os.stat(output)

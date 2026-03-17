@@ -924,12 +924,12 @@ class LIEF_LOCAL ExeLayout : public Layout {
       rsegment.add(Segment::FLAGS::R);
       rsegment.content(std::vector<uint8_t>(read_segment));
       new_rsegment = binary_->add(rsegment);
-      if (new_rsegment != nullptr) {
-        LIEF_DEBUG("R-Segment: 0x{:x}:0x{:x}", new_rsegment->virtual_address(), new_rsegment->virtual_size());
-      } else {
+      if (new_rsegment == nullptr) {
         LIEF_ERR("Can't add a new R-Segment");
         return make_error_code(lief_errors::build_error);
       }
+      LIEF_DEBUG("R-Segment: {:#06x}:{:#06x}",
+          new_rsegment->virtual_address(), new_rsegment->virtual_size());
     }
 
     /* Segment 2
@@ -985,8 +985,10 @@ class LIEF_LOCAL ExeLayout : public Layout {
       relocations_addresses_[reloc->address()] = reloc.get();
     }
 
-    [[maybe_unused]] uint64_t va_r_base  = new_rsegment  != nullptr ? new_rsegment->virtual_address() : 0;
-    [[maybe_unused]] uint64_t va_rw_base = new_rwsegment != nullptr ? new_rwsegment->virtual_address() : 0;
+    [[maybe_unused]] uint64_t va_r_base =
+      new_rsegment  != nullptr ? new_rsegment->virtual_address() : 0;
+    [[maybe_unused]] uint64_t va_rw_base =
+      new_rwsegment != nullptr ? new_rwsegment->virtual_address() : 0;
 
     if (interp_size_ > 0) {
       Segment* pt_interp = binary_->get(Segment::TYPE::INTERP);

@@ -7,7 +7,9 @@ from pathlib import Path
 from subprocess import Popen
 
 import lief
-from utils import get_sample, is_linux, is_x86_64, is_64bits_platform
+from utils import (
+    get_sample, is_linux, is_x86_64, is_64bits_platform, check_layout
+)
 
 lief.logging.set_level(lief.logging.LEVEL.INFO)
 
@@ -23,10 +25,11 @@ def test_issue_671(tmp_path: Path):
         target.add_dynamic_symbol(s)
 
     output = tmp_path / binary_name
-    target.write(output.as_posix())
+    target.write(output)
 
     # Make sure that the PHDR has been relocated at the end:
-    built = lief.ELF.parse(output.as_posix())
+    built = lief.ELF.parse(output)
+    check_layout(built)
     assert built[lief.ELF.Segment.TYPE.PHDR].file_offset == 0x3000
     assert built[lief.ELF.Segment.TYPE.PHDR].physical_size == 0x1f8
     assert built[lief.ELF.Segment.TYPE.PHDR].virtual_address == 0x403000
@@ -62,7 +65,9 @@ def test_all(tmp_path: Path):
     target.add(new_segment)
 
     output = tmp_path / f"{binary_name}.build"
-    target.write(output.as_posix())
+    target.write(output)
+
+    check_layout(output)
 
     if is_linux() and is_x86_64():
         st = os.stat(output)

@@ -8,7 +8,9 @@ from subprocess import Popen
 
 import lief
 
-from utils import get_sample, has_recent_glibc, is_linux, is_x86_64
+from utils import (
+    get_sample, has_recent_glibc, is_linux, is_x86_64, check_layout
+)
 
 is_updated_linux = is_linux() and is_x86_64() and has_recent_glibc()
 is_linux_x64 = is_linux() and is_x86_64()
@@ -29,7 +31,8 @@ def test_simple(tmp_path: Path):
 
     ls.add_pltgot_relocation(relocation)
 
-    ls.write(output.as_posix())
+    ls.write(output)
+    check_layout(output)
 
     if is_updated_linux:
         st = os.stat(output)
@@ -55,7 +58,9 @@ def test_all(tmp_path: Path):
     relocation.symbol = symbol
     target.add_pltgot_relocation(relocation)
 
-    target.write(output.as_posix())
+    target.write(output)
+
+    check_layout(output)
 
     if is_linux_x64:
         st = os.stat(output)
@@ -82,7 +87,8 @@ def test_all32(tmp_path: Path):
     relocation.symbol = symbol
     target.add_pltgot_relocation(relocation)
 
-    target.write(output.as_posix())
+    target.write(output)
+    check_layout(output)
 
     new = lief.ELF.parse(output.as_posix())
     assert new.has_symbol("printf123")

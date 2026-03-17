@@ -4,7 +4,7 @@ import pytest
 import lief
 from pathlib import Path
 
-from utils import get_sample, has_private_samples
+from utils import get_sample, has_private_samples, check_layout
 
 def test_issue_863(tmp_path: Path):
     elf = lief.ELF.parse(get_sample('ELF/issue_863.elf'))
@@ -15,6 +15,8 @@ def test_issue_863(tmp_path: Path):
 
     out = tmp_path / "issue_863.modified"
     elf.write(out.as_posix())
+
+    check_layout(elf)
 
     new = lief.ELF.parse(out.as_posix())
     assert new.sysv_hash.nchain == 6
@@ -69,6 +71,7 @@ def test_issue_1089(tmp_path: Path):
     elf.write(out.as_posix())
 
     new = lief.ELF.parse(out)
+    check_layout(new)
 
     assert new.get_symbol("iptc_read_counter") is None
     assert len(new.dynamic_relocations) == original_nb_relocations - 2
@@ -82,7 +85,7 @@ def test_issue_1097(tmp_path: Path):
     elf.write(out.as_posix())
 
     new = lief.ELF.parse(out)
-
+    check_layout(new)
     new_deps = [entry.name for entry in new.dynamic_entries if isinstance(entry, lief.ELF.DynamicEntryLibrary)]
 
     assert new_deps == deps
@@ -99,4 +102,5 @@ def test_issue_1309(tmp_path: Path):
     elf.write(out)
 
     new = lief.ELF.parse(out)
+    check_layout(new)
     assert list(new.dynamic_symbols)[129].name == "base64_decode_utf16le"

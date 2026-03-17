@@ -9,7 +9,7 @@ from subprocess import Popen
 
 import lief
 
-from utils import get_compiler, is_aarch64, is_x86_64, is_linux
+from utils import get_compiler, is_aarch64, is_x86_64, is_linux, check_layout
 
 if not is_linux():
     pytest.skip("requires Linux", allow_module_level=True)
@@ -111,7 +111,9 @@ def test_simple(tmp_path: Path):
             init = libadd.get(lief.ELF.DynamicEntry.TAG.INIT)
             init.value = new_ep
 
-    libadd.write(libadd_so.as_posix())
+    libadd.write(libadd_so)
+
+    check_layout(libadd_so)
 
     st = os.stat(libadd_so)
     os.chmod(libadd_so, st.st_mode | stat.S_IEXEC)

@@ -6,7 +6,7 @@ import pytest
 from pathlib import Path
 
 import lief
-from utils import get_compiler, is_linux, is_x86_64, is_aarch64
+from utils import get_compiler, is_linux, is_x86_64, is_aarch64, check_layout
 
 if not is_linux():
     pytest.skip("requires Linux", allow_module_level=True)
@@ -102,7 +102,8 @@ def modif_1(libadd: lief.ELF.Binary, output: Path):
     print(libadd_hidden)
 
     libadd.add(lief.ELF.DynamicSharedObject(output.name))
-    libadd.write(output.as_posix())
+    libadd.write(output)
+    check_layout(output)
 
 def modif_2(libadd: lief.ELF.Binary, output: Path):
     libadd.export_symbol("add_hidden")
@@ -112,7 +113,8 @@ def modif_2(libadd: lief.ELF.Binary, output: Path):
         if flags_1.has(lief.ELF.DynamicEntryFlags.FLAG.PIE):
             flags_1.remove(lief.ELF.DynamicEntryFlags.FLAG.PIE)
 
-    libadd.write(output.as_posix())
+    libadd.write(output)
+    check_layout(output)
 
 def modif_3(libadd: lief.ELF.Binary, output: Path):
     add_hidden_static = libadd.get_symtab_symbol("add_hidden")
@@ -124,7 +126,8 @@ def modif_3(libadd: lief.ELF.Binary, output: Path):
         if flags_1.has(lief.ELF.DynamicEntryFlags.FLAG.PIE):
             flags_1.remove(lief.ELF.DynamicEntryFlags.FLAG.PIE)
 
-    libadd.write(output.as_posix())
+    libadd.write(output)
+    check_layout(output)
 
 
 @pytest.mark.parametrize("modifier", [

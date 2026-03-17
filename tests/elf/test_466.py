@@ -8,7 +8,9 @@ import pytest
 import lief
 import pathlib
 
-from utils import get_sample, has_recent_glibc, is_linux, is_x86_64
+from utils import (
+    get_sample, has_recent_glibc, is_linux, is_x86_64, check_layout
+)
 
 @pytest.mark.skipif(not (is_linux() and is_x86_64() and has_recent_glibc()), reason="incompatible env")
 def test_freebl(tmp_path):
@@ -20,7 +22,7 @@ def test_freebl(tmp_path):
     output_libfreebl3 = tmp / "libfreebl3.so"
 
     libfreebl3 = lief.ELF.parse(libfreebl3_path)
-    ls: lief.ELF.Binary = lief.ELF.parse("/usr/bin/ls")
+    ls = lief.ELF.parse("/usr/bin/ls")
     if ls is None:
         ls = lief.ELF.parse("/bin/ls")
 
@@ -34,8 +36,11 @@ def test_freebl(tmp_path):
     ls += lief.ELF.DynamicEntryRunPath("$ORIGIN")
     libfreebl3 += lief.ELF.DynamicEntryRunPath("$ORIGIN")
 
-    ls.write(output_ls.as_posix())
-    libfreebl3.write(output_libfreebl3.as_posix())
+    ls.write(output_ls)
+    libfreebl3.write(output_libfreebl3)
+
+    check_layout(output_ls)
+    check_layout(output_libfreebl3)
 
     output_ls.chmod(output_ls.stat().st_mode | stat.S_IEXEC)
     output_libfreebl3.chmod(output_libfreebl3.stat().st_mode | stat.S_IEXEC)

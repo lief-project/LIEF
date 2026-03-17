@@ -3,7 +3,7 @@ import os
 import subprocess
 import pytest
 from subprocess import Popen
-from utils import get_sample, has_private_samples, is_linux, is_x86_64
+from utils import get_sample, has_private_samples, is_linux, is_x86_64, check_layout
 from pathlib import Path
 
 @pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
@@ -19,6 +19,8 @@ def test_parser_builder(tmp_path: Path):
     config = lief.ELF.Builder.config_t()
     config.force_relocate = True
     libc.write(output.as_posix(), config)
+
+    check_layout(output)
 
     if is_linux() and is_x86_64():
         ld = get_sample("private/ELF/x32/ld-linux-x32.so.2")

@@ -8,7 +8,9 @@ from subprocess import Popen
 from pathlib import Path
 
 import lief
-from utils import get_sample, has_recent_glibc, is_linux, is_x86_64, is_aarch64
+from utils import (
+    get_sample, has_recent_glibc, is_linux, is_x86_64, is_aarch64, check_layout
+)
 
 is_updated_linux = pytest.mark.skipif(not (is_linux() and is_x86_64() and has_recent_glibc()),
                                       reason="needs a recent x86-64 Linux system")
@@ -34,7 +36,8 @@ def test_simple(tmp_path: Path):
         new_ep                  = (stub.header.entrypoint - original_va) + segment.virtual_address
         target.header.entrypoint = new_ep
 
-    target.write(output.as_posix())
+    target.write(output)
+    check_layout(output)
 
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)
@@ -58,7 +61,8 @@ def test_gcc(tmp_path: Path):
     new_ep                  = (stub.header.entrypoint - original_va) + segment.virtual_address
 
     target.header.entrypoint = new_ep
-    target.write(output.as_posix())
+    target.write(output)
+    check_layout(output)
 
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)
@@ -82,7 +86,8 @@ def test_static(tmp_path: Path):
     new_ep                  = (stub.header.entrypoint - original_va) + segment.virtual_address
 
     target.header.entrypoint = new_ep
-    target.write(output.as_posix())
+    target.write(output)
+    check_layout(output)
 
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)
@@ -122,14 +127,15 @@ def test_add_segment(tmp_path: Path, binpath):
         segment           = lief.ELF.Segment()
         segment.content   = stub.segments[0].content
         segment.type      = stub_segment.type
-        segment.alignment = stub_segment.alignment
+        segment.alignment = 0x10000
         segment.flags     = stub_segment.flags
 
         new_segment       = elf.add(segment)
         new_ep            = (stub.header.entrypoint - stub.imagebase - stub_segment.file_offset) + new_segment.virtual_address
 
         elf.header.entrypoint = new_ep
-    elf.write(output.as_posix())
+    elf.write(output)
+    check_layout(output)
 
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)
@@ -165,3 +171,8 @@ def test_add_segment_alignment_dyn(tmp_path: Path):
     # To make sure that we don't misunderstand ELF, check that property for the input segment as well.
     assert old_segment.virtual_address % old_segment.alignment == old_segment.file_offset % old_segment.alignment
     assert new_segment.virtual_address % new_segment.alignment == new_segment.file_offset % new_segment.alignment
+
+    out = tmp_path / "hello_lief.bin"
+    dyn_elf.write(out)
+
+    check_layout(out)

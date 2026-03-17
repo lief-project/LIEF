@@ -8,7 +8,7 @@ from subprocess import Popen
 
 import lief
 
-from utils import get_sample, has_recent_glibc, is_linux, is_x86_64
+from utils import get_sample, has_recent_glibc, is_linux, is_x86_64, check_layout
 
 is_updated_linux = is_linux() and is_x86_64() and has_recent_glibc()
 
@@ -19,6 +19,7 @@ def test_simple(tmp_path: Path):
     ls = lief.ELF.parse(sample_path)
     ls.remove_section(".text", clear=False)
     ls.write(output.as_posix())
+    check_layout(ls)
 
     if is_updated_linux:
         st = os.stat(output)

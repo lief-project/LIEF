@@ -5,7 +5,9 @@ import ctypes
 import lief
 import pytest
 
-from utils import get_sample, has_recent_glibc, is_linux, is_x86_64
+from utils import (
+    get_sample, has_recent_glibc, is_linux, is_x86_64, check_layout
+)
 
 SYMBOLS = {
     "myinstance": 0x1159,
@@ -27,6 +29,8 @@ def test_gnu_hash(tmpdir):
     for name, addr in SYMBOLS.items():
         binary.add_exported_function(addr, name)
     binary.write(output)
+
+    check_layout(output)
 
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)

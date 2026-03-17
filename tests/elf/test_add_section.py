@@ -9,7 +9,9 @@ from pathlib import Path
 
 import lief
 
-from utils import get_sample, has_recent_glibc, is_linux, is_x86_64, is_aarch64
+from utils import (
+    get_sample, has_recent_glibc, is_linux, is_x86_64, is_aarch64, check_layout
+)
 
 CWD = Path(__file__).parent
 
@@ -40,7 +42,8 @@ def test_simple(tmp_path: Path):
         else:
             section = ls.add(section, loaded=False)
 
-    ls.write(output.as_posix())
+    ls.write(output)
+    check_layout(output)
 
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)
@@ -70,7 +73,8 @@ def test_gcc(tmp_path):
         else:
             section = gcc.add(section, loaded=False)
 
-    gcc.write(output.as_posix())
+    gcc.write(output)
+    check_layout(output)
 
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)

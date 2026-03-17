@@ -603,6 +603,8 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment, uin
   if (base == 0) {
     base = align(next_virtual_address(), new_segment->alignment());
   }
+  LIEF_DEBUG("Last offset: {:#010x}", last_offset_aligned);
+  LIEF_DEBUG("Base:        {:#010x}", base);
 
   uint64_t segmentsize = align(content.size(), 0x10);
 
@@ -620,7 +622,9 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment, uin
 
   // Patch SHDR
   Header& header = this->header();
-  header.section_headers_offset(header.section_headers_offset() + delta);
+  if (header.section_headers_offset() >= last_offset) {
+    header.section_headers_offset(header.section_headers_offset() + delta);
+  }
 
   auto alloc = datahandler_->make_hole(last_offset_aligned, new_segment->physical_size());
 

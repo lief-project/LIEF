@@ -143,7 +143,8 @@ ok_error_t Builder::build_exe_lib() {
     if (pt_interp != nullptr) {
       const size_t interpt_size = layout->interpreter_size<ELF_T>();
       const uint64_t osize = binary_->sizing_info_->interpreter;
-      if (interpt_size > osize || config_.force_relocate) {
+      const bool should_relocate = interpt_size > osize || config_.force_relocate;
+      if (should_relocate) {
         LIEF_DEBUG("[-] Need to relocate .interp section (0x{:x} new bytes)", interpt_size - osize);
         layout->relocate_interpreter(interpt_size);
       } else { LIEF_DEBUG(".interp: -0x{:x} bytes", osize - interpt_size); }
@@ -177,7 +178,12 @@ ok_error_t Builder::build_exe_lib() {
 
     Segment& note_segment = *note_segments.back();
 
-    if (notes_size > note_segment.physical_size() || nb_segment_notes > 1 || config_.force_relocate) {
+    const bool should_relocate =
+      notes_size > note_segment.physical_size() ||
+      nb_segment_notes > 1 ||
+      config_.force_relocate;
+
+    if (should_relocate) {
       LIEF_DEBUG("[-] Need to relocate .note.* segments (0x{:x} new bytes)",
           notes_size - note_segment.physical_size());
       layout->relocate_notes(true);
@@ -366,7 +372,8 @@ ok_error_t Builder::build_exe_lib() {
     } else {
       std::unique_ptr<Section>& string_names_section = binary_->sections_[header.section_name_table_idx()];
       const size_t shstr_size = layout->section_shstr_size();
-      if (shstr_size > string_names_section->size() || config_.force_relocate) {
+      const bool should_relocate = shstr_size > string_names_section->size() || config_.force_relocate;
+      if (should_relocate) {
         LIEF_DEBUG("[-] Need to relocate '{}' section (0x{:x} new bytes)",
                    string_names_section->name(), shstr_size - string_names_section->size());
         layout->relocate_shstr(true);
@@ -392,7 +399,8 @@ ok_error_t Builder::build_exe_lib() {
       } else {
         Section& strtab = sections[strtab_idx];
         const size_t strtab_needed_size = layout->section_strtab_size();
-        if (strtab_needed_size > strtab.size() || config_.force_relocate) {
+        const bool should_relocate = strtab_needed_size > strtab.size() || config_.force_relocate;
+        if (should_relocate) {
           LIEF_DEBUG("[-] Need to relocate .strtab section (0x{:x} new bytes)",
                      strtab_needed_size - strtab.size());
           layout->relocate_strtab(layout->section_strtab_size());
@@ -405,7 +413,8 @@ ok_error_t Builder::build_exe_lib() {
 
   if (sec_symtab != nullptr) {
     const size_t needed_size = layout->static_sym_size<ELF_T>();
-    if (needed_size > sec_symtab->size() || config_.force_relocate) {
+    const bool should_relocate = needed_size > sec_symtab->size() || config_.force_relocate;
+    if (should_relocate) {
       LIEF_DEBUG("[-] Need to relocate '{}' section (0x{:x} new bytes)",
                  sec_symtab->name(), needed_size - sec_symtab->size());
       layout->relocate_symtab(needed_size);
@@ -625,7 +634,8 @@ ok_error_t Builder::build_relocatable() {
     } else {
       Section& strtab = sections[strtab_idx];
       const size_t strtab_needed_size = layout->section_strtab_size();
-      if (strtab_needed_size > strtab.size() || config_.force_relocate) {
+      const bool should_relocate = strtab_needed_size > strtab.size() || config_.force_relocate;
+      if (should_relocate) {
         LIEF_DEBUG("[-] Need to relocate .strtab section (0x{:x} new bytes)",
                    strtab_needed_size - strtab.size());
         layout->relocate_section(strtab, strtab_needed_size);
@@ -707,30 +717,39 @@ ok_error_t Builder::build_sections() {
   }
 
 
-  LIEF_DEBUG("[+] Build sections");
+  LIEF_DEBUG("Build sections");
 
   const Header& header = binary_->header();
-  const Elf_Off section_headers_offset = header.section_headers_offset();
+  Elf_Off section_headers_offset = header.section_headers_offset();
   if (section_headers_offset == 0) {
     return ok();
   }
+
+  LIEF_DEBUG("section headers table at offset: {:#06x}", section_headers_offset);
 
   if (header.section_name_table_idx() < binary_->sections_.size()) {
     std::unique_ptr<Section>& string_names_section = binary_->sections_[header.section_name_table_idx()];
     string_names_section->content(layout_->raw_shstr());
   }
 
+  const size_t nb_sections = binary_->sections_.size();
+
+  vector_iostream section_headers(/*endian_swap=*/ios_.endian_swap());
+  section_headers.reserve(nb_sections * sizeof(Elf_Shdr));
+
   const std::unordered_map<std::string, size_t>& shstr_map = layout_->shstr_map();
-  for (size_t i = 0; i < binary_->sections_.size(); ++i) {
+  for (size_t i = 0; i < nb_sections; ++i) {
     const std::unique_ptr<Section>& section = binary_->sections_[i];
     LIEF_DEBUG("[FRAME  ] {}", section->is_frame());
-    if (!section->is_frame()       &&
+    const bool should_commit_data =
+       !section->is_frame()       &&
         section->size()        > 0 &&
         section->file_offset() > 0 &&
         // SHT_NOTBITS sections should not be considered.
         // Nevertheless, some (malformed or tricky) ELF binaries
         // might use this type to put content.
-        section->type() != Section::TYPE::NOBITS) {
+        section->type() != Section::TYPE::NOBITS;
+    if (should_commit_data) {
       span<const uint8_t> content = section->content();
       LIEF_DEBUG("[Content] {:20}: 0x{:010x} - 0x{:010x} (0x{:x})",
                  section->name(), section->file_offset(),
@@ -765,8 +784,38 @@ ok_error_t Builder::build_sections() {
       LIEF_DEBUG("[Header ] {:20}: 0x{:010x} - 0x{:010x}",
                  section->name(),
                  offset, offset + sizeof(Elf_Shdr));
-      ios_.seekp(offset);
-      ios_.write<Elf_Shdr>(shdr);
+      section_headers.write<Elf_Shdr>(shdr);
+    }
+  }
+
+  if (section_headers_offset > 0) {
+    ios_.seekp(section_headers_offset);
+    ios_.write(section_headers);
+
+    // Some binaries (e.g., 'ELF/test.go.pie.bin') might have their section
+    // header table at the **beginning** of the binary AND associated with a PT_LOAD
+    // segment. To ensure that build_segments() does not overwrite the table,
+    // we need to commit the content of `section_headers` to the associated
+    // PT_LOAD.
+    for (const std::unique_ptr<Segment>& segment : binary_->segments_) {
+      if (!segment->is_load()) {
+        continue;
+      }
+
+      bool in_segment =
+        segment->file_offset() <= section_headers_offset &&
+        section_headers_offset < (segment->file_offset() + segment->physical_size());
+
+      if (!in_segment) {
+        continue;
+      }
+
+      span<uint8_t> content = segment->writable_content();
+      uint64_t rel_offset = section_headers_offset - segment->file_offset();
+      LIEF_DEBUG("SHT found in {} - {:#010x} - [{:#010x}, {:#010x}]",
+                 to_string(segment->type()), segment->virtual_address(),
+                 segment->file_offset(), segment->file_offset() + content.size());
+      section_headers.copy_into(content.subspan(rel_offset));
     }
   }
   return ok();

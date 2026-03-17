@@ -1,6 +1,6 @@
 import lief
 from pathlib import Path
-from utils import get_sample
+from utils import get_sample, check_layout
 
 def test_dt_auxiliary(tmp_path: Path):
     lief.logging.enable_debug()
@@ -18,6 +18,7 @@ def test_dt_auxiliary(tmp_path: Path):
     elf.write(out)
 
     new = lief.ELF.parse(out)
+    check_layout(new)
     assert new.get(lief.ELF.DynamicEntry.TAG.AUXILIARY).name == new_name
 
 def test_dt_filter(tmp_path: Path):
@@ -37,4 +38,5 @@ def test_dt_filter(tmp_path: Path):
     elf.write(out)
 
     new = lief.ELF.parse(out)
+    check_layout(new)
     assert new.get(lief.ELF.DynamicEntry.TAG.FILTER).name == new_name

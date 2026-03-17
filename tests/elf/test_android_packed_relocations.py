@@ -1,5 +1,5 @@
 import lief
-from utils import get_sample
+from utils import get_sample, check_layout
 from pathlib import Path
 
 def test_chrome_arm64(tmp_path: Path):
@@ -25,7 +25,8 @@ def test_chrome_arm64(tmp_path: Path):
     assert packed_relocs[145598].type == lief.ELF.Relocation.TYPE.AARCH64_ABS64
 
     out_simple = tmp_path / "chrome_simple.so"
-    chrome.write(out_simple.as_posix())
+    chrome.write(out_simple)
+    check_layout(out_simple)
     original_size = chrome_sample.stat().st_size
     new_size = out_simple.stat().st_size
     assert new_size <= original_size
@@ -58,6 +59,7 @@ def test_chrome_arm64(tmp_path: Path):
     assert abs(chrome_mod_out.stat().st_size - original_size) < 0x5cf000
 
     chrome_mod = lief.ELF.parse(chrome_mod_out)
+    check_layout(chrome_mod)
 
     mod_packed_relocs = [r for r in chrome_mod.dynamic_relocations if r.is_android_packed]
     assert len(mod_packed_relocs) == 145599
@@ -99,7 +101,8 @@ def test_chrome_armv7(tmp_path: Path):
     assert packed_relocs[513896].type == lief.ELF.Relocation.TYPE.ARM_ABS32
 
     out_simple = tmp_path / "chrome_simple.so"
-    chrome.write(out_simple.as_posix())
+    chrome.write(out_simple)
+    check_layout(out_simple)
     original_size = chrome_sample.stat().st_size
     new_size = out_simple.stat().st_size
     assert new_size <= original_size
@@ -129,6 +132,7 @@ def test_chrome_armv7(tmp_path: Path):
     builder.config.force_relocate = True
     builder.build()
     builder.write(chrome_mod_out.as_posix())
+    check_layout(chrome_mod_out)
     assert abs(chrome_mod_out.stat().st_size - original_size) < 0x5cf000
 
     chrome_mod = lief.ELF.parse(chrome_mod_out)
