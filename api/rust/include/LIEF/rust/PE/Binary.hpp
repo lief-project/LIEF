@@ -162,7 +162,7 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_debug(const PE_Binary::lief_t& src)
-      : Iterator(src.debug()) { } 
+      : Iterator(src.debug()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -172,7 +172,7 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_signatures(const PE_Binary::lief_t& src)
-      : Iterator(src.signatures()) { } 
+      : Iterator(src.signatures()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -182,7 +182,7 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_sections(const PE_Binary::lief_t& src)
-      : Iterator(src.sections()) { } 
+      : Iterator(src.sections()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -192,7 +192,7 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_relocations(const PE_Binary::lief_t& src)
-      : Iterator(src.relocations()) { } 
+      : Iterator(src.relocations()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -202,7 +202,7 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_imports(const PE_Binary::lief_t& src)
-      : Iterator(src.imports()) { } 
+      : Iterator(src.imports()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -212,7 +212,7 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_delay_imports(const PE_Binary::lief_t& src)
-      : Iterator(src.delay_imports()) { } 
+      : Iterator(src.delay_imports()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -222,7 +222,7 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_data_directories(const PE_Binary::lief_t& src)
-      : Iterator(src.data_directories()) { } 
+      : Iterator(src.data_directories()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -232,7 +232,7 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_strings_table(const PE_Binary::lief_t& src)
-      : Iterator(src.coff_string_table()) { } 
+      : Iterator(src.coff_string_table()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -242,7 +242,7 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_symbols(const PE_Binary::lief_t& src)
-      : Iterator(src.symbols()) { } 
+      : Iterator(src.symbols()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -252,7 +252,7 @@ class PE_Binary : public AbstractBinary {
   {
     public:
     it_exceptions(const PE_Binary::lief_t& src)
-      : Iterator(src.exceptions()) { } 
+      : Iterator(src.exceptions()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -371,6 +371,10 @@ class PE_Binary : public AbstractBinary {
 
   auto va_to_offset(uint64_t rva) const {
     return impl().va_to_offset(rva);
+  }
+
+  uint64_t offset_to_rva(uint64_t offset) const {
+    return impl().offset_to_rva(offset);
   }
 
   uint64_t virtual_size() const {

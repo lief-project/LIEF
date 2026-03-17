@@ -57,6 +57,9 @@
 
 :PE:
 
+  * Add |lief-pe-binary-offset_to_rva| to convert a raw offset into a RVA
+  * Update |lief-binary-offset_to_virtual_address| for PE binaries to
+    return an **absolute** virtual address instead of a RVA (:issue:`1318`)
   * Add support for adding an |lief-pe-import| at a specific position:
     |lief-pe-binary-add-import| (:pr:`1298`)
   * Improve support for EFI binaries, such as ``bzImage`` (:pr:`1293`)

@@ -178,25 +178,16 @@ void Binary::remove_tls() {
 }
 
 result<uint64_t> Binary::offset_to_virtual_address(uint64_t offset, uint64_t slide) const {
-  const auto it_section = std::find_if(std::begin(sections_), std::end(sections_),
-      [offset] (const std::unique_ptr<Section>& section) {
-        return (offset >= section->offset() &&
-                offset < (section->offset() + section->sizeof_raw_data()));
-      });
+  const uint64_t imagebase = slide > 0 ? slide : optional_header().imagebase();
+  return imagebase + offset_to_rva(offset);
+}
 
-  if (it_section == std::end(sections_)) {
-    if (slide > 0) {
-      return slide + offset;
-    }
-    return offset;
+uint64_t Binary::offset_to_rva(uint64_t offset) const {
+  if (const Section* section = section_from_offset(offset)) {
+    const uint64_t base_rva = section->virtual_address() - section->offset();
+    return base_rva + offset;
   }
-  const std::unique_ptr<Section>& section = *it_section;
-  const uint64_t base_rva = section->virtual_address() - section->offset();
-  if (slide > 0) {
-    return slide + base_rva + offset;
-  }
-
-  return base_rva + offset;
+  return offset;
 }
 
 uint64_t Binary::rva_to_offset(uint64_t RVA) const {
@@ -231,7 +222,7 @@ uint64_t Binary::rva_to_offset(uint64_t RVA) const {
 
 const Section* Binary::section_from_offset(uint64_t offset) const {
   const auto it_section = std::find_if(std::begin(sections_), std::end(sections_),
-      [&offset] (const std::unique_ptr<Section>& section) {
+      [offset] (const std::unique_ptr<Section>& section) {
         return section->pointerto_raw_data() <= offset &&
                offset < (section->pointerto_raw_data() + section->sizeof_raw_data());
       });

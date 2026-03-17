@@ -304,6 +304,24 @@
     :py:class:`lief.PE.Binary`
     :cpp:class:`LIEF::PE::Binary`
 
+.. |lief-pe-binary-offset_to_rva| lief-api:: lief.PE.Binary.offset_to_rva()
+
+    :rust:method:`lief::pe::Binary::offset_to_rva [struct]`
+    :py:meth:`lief.PE.Binary.offset_to_rva`
+    :cpp:func:`LIEF::PE::Binary::offset_to_rva`
+
+.. |lief-pe-binary-rva_to_offset| lief-api:: lief.PE.Binary.rva_to_offset()
+
+    :rust:method:`lief::pe::Binary::rva_to_offset [struct]`
+    :py:meth:`lief.PE.Binary.rva_to_offset`
+    :cpp:func:`LIEF::PE::Binary::rva_to_offset`
+
+.. |lief-pe-binary-va_to_offset| lief-api:: lief.PE.Binary.va_to_offset()
+
+    :rust:method:`lief::pe::Binary::va_to_offset [struct]`
+    :py:meth:`lief.PE.Binary.va_to_offset`
+    :cpp:func:`LIEF::PE::Binary::va_to_offset`
+
 .. |lief-pe-tls| lief-api:: lief.PE.TLS
 
     :rust:struct:`lief::pe::TLS`
@@ -656,6 +674,12 @@
     :rust:trait:`lief::generic::Binary`
     :py:class:`lief.Binary`
     :cpp:class:`LIEF::Binary`
+
+.. |lief-binary-offset_to_virtual_address| lief-api:: lief.Binary.offset_to_virtual_address()
+
+    :rust:method:`lief::generic::Binary::offset_to_virtual_address [trait]`
+    :py:meth:`lief.Binary.offset_to_virtual_address`
+    :cpp:func:`LIEF::Binary::offset_to_virtual_address`
 
 .. |lief-abstract-parse| lief-api:: lief.abstract.parse
 

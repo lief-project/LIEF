@@ -278,13 +278,27 @@ pub trait Binary {
         Vec::from(self.as_pin_mut_generic().assemble_with_config(address, asm, ffi_config.as_ref()).as_slice())
     }
 
-    /// Get the default memory page size according to the architecture and the format of the
+    /// Default memory page size according to the architecture and the format of the
     /// current binary
     fn page_size(&self) -> u64 {
         self.as_generic().page_size()
     }
 
+    /// Convert the given offset into a virtual address.
+    ///
+    /// If the `slide` parameter is provided (non-zero), it will be used as the base address
+    /// instead of the binary's imagebase.
+    fn offset_to_virtual_address(&self, offset: u64, slide: u64) -> Result<u64, crate::Error> {
+        let mut err: u32 = 0;
+        let va = self.as_generic().offset_to_virtual_address(offset, slide, Pin::new(&mut err));
+        if err > 0 {
+            return Err(crate::Error::from(err));
+        }
+        Ok(va)
+    }
+
     /// Load and associate an external debug file (e.g., DWARF or PDB) with this binary.
+
     ///
     /// This method attempts to load the debug information from the file located at the given path,
     /// and binds it to the current binary instance. If successful, it returns the

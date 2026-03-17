@@ -30,6 +30,7 @@ use crate::common::{into_optional, FromFFI, AsFFI};
 use crate::declare_iterator;
 use crate::generic;
 use crate::to_conv_result;
+use crate::to_result;
 use crate::to_slice;
 use crate::Error;
 
@@ -193,6 +194,11 @@ impl Binary {
     /// Convert an **absolute** virtual address into an offset.
     pub fn va_to_offset(&self, va: u64) -> u64 {
         self.ptr.va_to_offset(va)
+    }
+
+    /// Convert the given offset into a relative virtual address (RVA).
+    pub fn offset_to_rva(&self, offset: u64) -> u64 {
+        self.ptr.offset_to_rva(offset)
     }
 
     /// Return the size of the current binary when loaded in memory.

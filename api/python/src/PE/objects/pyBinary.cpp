@@ -131,6 +131,11 @@ void create<Binary>(nb::module_& m) {
         See: :meth:`~lief.PE.Binary.rva_to_offset`
         )delim"_doc)
 
+    .def("offset_to_rva",
+        &Binary::offset_to_rva,
+        "offset"_a,
+        "Convert the given offset into a relative virtual address (RVA)."_doc)
+
     .def("section_from_offset",
         nb::overload_cast<uint64_t>(&Binary::section_from_offset),
         R"delim(

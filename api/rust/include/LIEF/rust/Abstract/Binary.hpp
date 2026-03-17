@@ -83,6 +83,10 @@ class AbstractBinary : public Mirror<LIEF::Binary> {
     return details::make_error(get().get_int_from_virtual_address<uint64_t>(addr), err);
   }
 
+  uint64_t offset_to_virtual_address(uint64_t offset, uint64_t slide, uint32_t& err) const {
+    return details::make_error(get().offset_to_virtual_address(offset, slide), err);
+  }
+
   auto debug_info() const {
     return details::try_unique<AbstracDebugInfo>(get().debug_info()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }

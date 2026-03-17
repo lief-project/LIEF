@@ -171,11 +171,14 @@ class LIEF_API Binary : public LIEF::Binary {
     return rva_to_offset(rva);
   }
 
-  /// Convert the given offset into a virtual address.
+  /// Convert the given offset into an absolute virtual address.
   ///
   /// @param[in] offset The offset to convert.
   /// @param[in] slide  If not 0, it will replace the default base address (if any)
   result<uint64_t> offset_to_virtual_address(uint64_t offset, uint64_t slide = 0) const override;
+
+  /// Convert the given offset into a relative virtual address (RVA).
+  uint64_t offset_to_rva(uint64_t offset) const;
 
   /// Return binary's imagebase. ``0`` if not relevant
   ///

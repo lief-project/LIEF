@@ -13,6 +13,7 @@ use lief::pe::signature::attributes::Attribute;
 use lief::pe::signature::Signature;
 use lief::generic::Symbol;
 use lief::generic::Binary as GenericBinary;
+use lief::generic::Section as GenericSection;
 use lief::Binary;
 
 fn get_leaf<'a>(node: &'a Node) -> Option<&'a Node<'a>> {
@@ -451,4 +452,43 @@ fn test_api() {
     test_signature("cert11.p7b");
     test_signature("cert9.p7b");
     test_signature("cert10.p7b");
+}
+
+#[test]
+fn test_offset_to_rva() {
+    let path = utils::get_pe_sample("pe_reader.exe").unwrap();
+    let pe = match Binary::parse(path.to_str().unwrap()) {
+        Some(Binary::PE(pe)) => pe,
+        _ => panic!("Expected PE binary"),
+    };
+
+    let section_text = pe.section_by_name(".text").expect("Error");
+    let offset = section_text.offset() + 0x100;
+    let rva = pe.offset_to_rva(offset);
+    let expected_rva = section_text.virtual_address() + 0x100;
+
+    assert_eq!(rva, expected_rva);
+}
+
+#[test]
+fn test_offset_to_va() {
+    let path = utils::get_pe_sample("pe_reader.exe").unwrap();
+    let pe = match Binary::parse(path.to_str().unwrap()) {
+        Some(Binary::PE(pe)) => pe,
+        _ => panic!("Expected PE binary"),
+    };
+
+    let section_text = pe.section_by_name(".text").expect("Error");
+    let offset = section_text.offset() + 0x100;
+    let va = pe.offset_to_virtual_address(offset, 0).expect("Error");
+    let expected_va = pe.optional_header().imagebase() + section_text.virtual_address() + 0x100;
+
+    assert_eq!(va, expected_va);
+
+    // Test with slide
+    let slide = 0x10000000;
+    let va_slide = pe.offset_to_virtual_address(offset, slide).expect("Error");
+    let expected_va_slide = slide + section_text.virtual_address() + 0x100;
+
+    assert_eq!(va_slide, expected_va_slide);
 }
