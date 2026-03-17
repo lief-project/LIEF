@@ -147,7 +147,7 @@ class Logger {
   Logger() = delete;
   private:
   Logger(std::shared_ptr<spdlog::logger> sink) :
-    sink_(sink)
+    sink_(std::move(sink))
   {}
   Logger(Logger&&) noexcept = default;
   Logger& operator=(Logger&&) noexcept = default;

@@ -147,8 +147,8 @@ class LIEF_API Import : public Object {
   }
 
   /// Add a new import entry (i.e. an imported function)
-  ImportEntry& add_entry(ImportEntry entry) {
-    entries_.emplace_back(new ImportEntry(std::move(entry)));
+  ImportEntry& add_entry(const ImportEntry& entry) {
+    entries_.emplace_back(new ImportEntry(entry));
     return *entries_.back();
   }
 

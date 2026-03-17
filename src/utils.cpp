@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include <algorithm>
+#include <cstddef>
 #include <iterator>
 #include <string>
 
@@ -46,7 +47,6 @@ result<uint32_t> next(octet_iterator& it, octet_iterator end) {
     case internal::INVALID_LEAD :
     case internal::INCOMPLETE_SEQUENCE :
     case internal::OVERLONG_SEQUENCE :
-      return make_error_code(lief_errors::read_error);
     case internal::INVALID_CODE_POINT :
       return make_error_code(lief_errors::read_error);
   }
@@ -109,7 +109,7 @@ std::string dump(const uint8_t* buffer, size_t size, const std::string& title,
   std::string banner;
 
   if (!title.empty()) {
-    banner  = prefix + "+" + std::string(22 * 3, '-') + "---+" + "\n" + prefix + "| ";
+    banner  = prefix + "+" + std::string(static_cast<size_t>(22 * 3), '-') + "---+" + "\n" + prefix + "| ";
     banner += title;
     if (title.size() < 68) {
       banner += std::string(68 - title.size(), ' ');
@@ -117,15 +117,15 @@ std::string dump(const uint8_t* buffer, size_t size, const std::string& title,
     banner += "|\n";
   }
 
-  out = std::string(22 * 3, '-') + "\n";
-  std::string lhs, rhs;
+  out = std::string(static_cast<size_t>(22 * 3), '-') + "\n";
+  std::string rhs;
   if (limit > 0) {
     size = std::min<size_t>(size, limit);
   }
 
   for (size_t i = 0; i < size; ++i) {
     if (i == 0) {
-      out = prefix + "+" + std::string(22 * 3, '-') + "---+" + "\n" + prefix + "| ";
+      out = prefix + "+" + std::string(static_cast<size_t>(22 * 3), '-') + "---+" + "\n" + prefix + "| ";
     }
 
     if (i > 0 && i % 16 == 0) {
@@ -147,7 +147,7 @@ std::string dump(const uint8_t* buffer, size_t size, const std::string& title,
 
   }
 
-  out += std::string("\n") + prefix + '+' + std::string(22 * 3, '-') + "---+";
+  out += std::string("\n") + prefix + '+' + std::string(static_cast<size_t>(22 * 3), '-') + "---+";
   return banner + out;
 }
 

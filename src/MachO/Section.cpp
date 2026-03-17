@@ -61,7 +61,7 @@ Section::Section(std::string name) {
 
 Section::Section(std::string name, content_t content) {
   this->name(std::move(name));
-  this->content(std::move(content));
+  this->content(content);
 }
 
 Section::Section(const Section& other) :
@@ -228,7 +228,7 @@ void Section::remove(FLAGS flag) {
 
 void Section::clear(uint8_t v) {
   content_t clear(size(), v);
-  content(std::move(clear));
+  content(clear);
 }
 
 void Section::accept(Visitor& visitor) const {

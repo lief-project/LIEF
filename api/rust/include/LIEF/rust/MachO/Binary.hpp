@@ -1,4 +1,4 @@
-/* Copyright 2024 - 2026 R. Thomas
+/* Copyright 2025 - 2026 R. Thomas
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -133,7 +133,7 @@ class MachO_Binary : public AbstractBinary {
   {
     public:
     it_rpaths(const MachO_Binary::lief_t& src)
-      : Iterator(std::move(src.rpaths())) { }
+      : Iterator(src.rpaths()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

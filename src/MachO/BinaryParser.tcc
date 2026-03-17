@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <cstddef>
 #include <memory>
 
 #include "logging.hpp"
@@ -2746,7 +2747,7 @@ ok_error_t BinaryParser::parse_fixup_seg(SpanStream& stream, uint32_t seg_info_o
         }
         chain_end      = overflow_val & DYLD_CHAINED_PTR_START_LAST;
         offset_in_page = overflow_val & ~DYLD_CHAINED_PTR_START_LAST;
-        uint64_t page_content_start = seg_info.segment_offset + (page_idx * seg_info.page_size);
+        uint64_t page_content_start = seg_info.segment_offset + (static_cast<uint64_t>(page_idx * seg_info.page_size));
         uint64_t chain_address = imagebase + page_content_start + offset_in_page;
         uint64_t chain_offset = (chain_address - segment->virtual_address()) + segment->file_offset();
         auto is_ok = walk_chain<MACHO_T>(*segment, chain_address, chain_offset, seg_info);
@@ -2757,7 +2758,7 @@ ok_error_t BinaryParser::parse_fixup_seg(SpanStream& stream, uint32_t seg_info_o
       }
 
     } else {
-      uint64_t page_content_start = seg_info.segment_offset + (page_idx * seg_info.page_size);
+      uint64_t page_content_start = seg_info.segment_offset + (static_cast<uint64_t>(page_idx * seg_info.page_size));
       uint64_t chain_address = imagebase + page_content_start + offset_in_page;
       uint64_t chain_offset = (chain_address - segment->virtual_address()) + segment->file_offset();
       auto is_ok = walk_chain<MACHO_T>(*segment, chain_address, chain_offset, seg_info);

@@ -44,7 +44,7 @@ std::unique_ptr<AuxiliarySymbol>
       return AuxiliaryFunctionDefinition::parse(payload);
 
     case TYPE::BF_AND_EF:
-      return AuxiliarybfAndefSymbol::parse(sym, std::move(payload));
+      return AuxiliarybfAndefSymbol::parse(sym, payload);
 
     case TYPE::WEAK_EXTERNAL:
       return AuxiliaryWeakExternal::parse(payload);

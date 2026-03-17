@@ -2760,7 +2760,7 @@ uint64_t Binary::relocate_phdr_table_v3() {
 
   DataHandler::Node new_node{phdr_reloc_info_.new_offset, new_segtbl_sz,
                              DataHandler::Node::SEGMENT};
-  datahandler_->add(std::move(new_node));
+  datahandler_->add(new_node);
 
   const auto it_new_place = std::find_if(
       segments_.rbegin(), segments_.rend(),

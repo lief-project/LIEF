@@ -176,7 +176,7 @@ ok_error_t Parser::build_fat() {
     }
 
     std::unique_ptr<Binary> bin = BinaryParser::parse(
-        std::move(macho_data), offset, config_
+        macho_data, offset, config_
     );
     if (bin == nullptr) {
       LIEF_ERR("Can't parse the binary at the index #{:d}", i);

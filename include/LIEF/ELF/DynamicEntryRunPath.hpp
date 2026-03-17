@@ -79,8 +79,8 @@ class LIEF_API DynamicEntryRunPath : public DynamicEntry {
   /// Remove the given ``path``
   DynamicEntryRunPath& remove(const std::string& path);
 
-  DynamicEntryRunPath& operator+=(std::string path) {
-    return append(std::move(path));
+  DynamicEntryRunPath& operator+=(const std::string &path) {
+    return append(path);
   }
 
   DynamicEntryRunPath& operator-=(const std::string& path) {

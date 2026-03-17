@@ -707,7 +707,7 @@ struct binding_instruction {
     opcode{opcode},
     op1{op1},
     op2{op2},
-    name{name}
+    name{std::move(name)}
   {}
   binding_instruction(const binding_instruction&) = default;
   binding_instruction& operator=(const binding_instruction&) = default;

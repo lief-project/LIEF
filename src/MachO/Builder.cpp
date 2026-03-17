@@ -39,7 +39,7 @@ Builder::~Builder() = default;
 
 Builder::Builder(Binary& binary, config_t config) :
   binary_{&binary},
-  config_{std::move(config)}
+  config_{config}
 {
   if (binary_->original_size() != (uint64_t)-1) {
     raw_.reserve(binary_->original_size());
@@ -49,7 +49,7 @@ Builder::Builder(Binary& binary, config_t config) :
 
 Builder::Builder(std::vector<Binary*> binaries, config_t config) :
   binaries_{std::move(binaries)},
-  config_{std::move(config)}
+  config_{config}
 {}
 
 ok_error_t Builder::build() {
@@ -310,11 +310,11 @@ const std::vector<uint8_t>& Builder::get_build() {
 
 ok_error_t Builder::write(Binary& binary, const std::string& filename) {
   config_t config;
-  return write(binary, filename, std::move(config));
+  return write(binary, filename, config);
 }
 
 ok_error_t Builder::write(Binary& binary, const std::string& filename, config_t config) {
-  Builder builder{binary, std::move(config)};
+  Builder builder{binary, config};
   builder.build();
   builder.write(filename);
   return ok();
@@ -322,11 +322,11 @@ ok_error_t Builder::write(Binary& binary, const std::string& filename, config_t 
 
 ok_error_t Builder::write(Binary& binary, std::ostream& out) {
   config_t config;
-  return write(binary, out, std::move(config));
+  return write(binary, out, config);
 }
 
 ok_error_t Builder::write(Binary& binary, std::ostream& out, config_t config) {
-  Builder builder{binary, std::move(config)};
+  Builder builder{binary, config};
   builder.build();
   builder.write(out);
   return ok();
@@ -344,7 +344,7 @@ ok_error_t Builder::write(Binary& binary, std::vector<uint8_t>& out, config_t co
 
 ok_error_t Builder::write(FatBinary& fat, const std::string& filename) {
   config_t config;
-  return write(fat, filename, std::move(config));
+  return write(fat, filename, config);
 }
 
 ok_error_t Builder::write(FatBinary& fat, const std::string& filename, config_t config) {
@@ -356,7 +356,7 @@ ok_error_t Builder::write(FatBinary& fat, const std::string& filename, config_t 
                    return bin.get();
                  });
 
-  Builder builder{std::move(binaries), std::move(config)};
+  Builder builder{std::move(binaries), config};
   builder.build_fat();
   builder.write(filename);
   return ok();
@@ -376,7 +376,7 @@ ok_error_t Builder::write(FatBinary& fat, std::vector<uint8_t>& out, config_t co
                    return bin.get();
                  });
 
-  Builder builder{std::move(binaries), std::move(config)};
+  Builder builder{std::move(binaries), config};
   builder.build_fat();
   out = builder.get_build();
   return ok();
@@ -384,7 +384,7 @@ ok_error_t Builder::write(FatBinary& fat, std::vector<uint8_t>& out, config_t co
 
 ok_error_t Builder::write(FatBinary& fat, std::ostream& out) {
   config_t config;
-  return write(fat, out, std::move(config));
+  return write(fat, out, config);
 }
 
 ok_error_t Builder::write(FatBinary& fat, std::ostream& out, config_t config) {
@@ -396,14 +396,14 @@ ok_error_t Builder::write(FatBinary& fat, std::ostream& out, config_t config) {
                    return bin.get();
                  });
 
-  Builder builder{std::move(binaries), std::move(config)};
+  Builder builder{std::move(binaries), config};
   builder.build_fat();
   builder.write(out);
   return ok();
 }
 
 std::vector<uint8_t> Builder::build_raw(Binary& binary, config_t config) {
-  Builder builder{binary, std::move(config)};
+  Builder builder{binary, config};
   builder.build();
   return builder.get_build();
 }

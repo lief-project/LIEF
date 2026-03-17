@@ -410,8 +410,8 @@ void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceI
   ResourceDirectory new_icon_dir_node(newone.id());
   ResourceData new_icon_data_node(as_vector(newone.pixels()));
   new_icon_data_node.id((int)encode_lang(newone.lang(), newone.sublang()));
-  new_icon_dir_node.add_child(std::move(new_icon_data_node));
-  icon_node->add_child(std::move(new_icon_dir_node));
+  new_icon_dir_node.add_child(new_icon_data_node);
+  icon_node->add_child(new_icon_dir_node);
 }
 
 ResourcesManager::it_const_dialogs ResourcesManager::dialogs() const {

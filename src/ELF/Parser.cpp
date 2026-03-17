@@ -49,18 +49,18 @@ Parser::~Parser() = default;
 Parser::Parser(const std::vector<uint8_t>& data, ParserConfig conf) :
   stream_{std::make_unique<VectorStream>(data)},
   binary_{new Binary{}},
-  config_{std::move(conf)}
+  config_{conf}
 {}
 
 Parser::Parser(std::unique_ptr<BinaryStream> stream, ParserConfig conf) :
   stream_{std::move(stream)},
   binary_{new Binary{}},
-  config_{std::move(conf)}
+  config_{conf}
 {}
 
 Parser::Parser(const std::string& file, ParserConfig conf) :
   binary_{new Binary{}},
-  config_{std::move(conf)}
+  config_{conf}
 {
   if (auto s = VectorStream::from_file(file)) {
     stream_ = std::make_unique<VectorStream>(std::move(*s));

@@ -26,6 +26,8 @@
 
 #include <spdlog/fmt/fmt.h>
 
+#include <cstddef>
+
 namespace LIEF {
 namespace PE {
 
@@ -302,7 +304,7 @@ bool LayoutChecker::check_sections() {
       return error("Invalid number of pages");
     }
 
-    next_va += nb_sec_pages * DEFAULT_PAGE_SIZE;
+    next_va += static_cast<uint64_t>(nb_sec_pages * DEFAULT_PAGE_SIZE);
   } else {
     nb_sec_pages = align(sizeof_image, DEFAULT_PAGE_SIZE) / DEFAULT_PAGE_SIZE;
   }
@@ -359,7 +361,7 @@ bool LayoutChecker::check_sections() {
         }
       }
 
-      next_va += nb_sec_pages * DEFAULT_PAGE_SIZE;
+      next_va += static_cast<uint64_t>(nb_sec_pages * DEFAULT_PAGE_SIZE);
     }
   }
 
