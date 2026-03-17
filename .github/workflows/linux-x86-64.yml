@@ -19,7 +19,7 @@ jobs:
         ACTIONS_CACHE_URL: "${{ env.ACTIONS_CACHE_URL }}"
       options: --user 1001:1001
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Get Date
@@ -32,7 +32,7 @@ jobs:
         run: |
           mkdir -p /home/pylief/.ccache/tmp
       - name: ccache cache files
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: /home/pylief/.ccache
           key: linux-x86-64-${{ runner.os }}-sdk-${{ steps.get-date.outputs.date }}
@@ -71,13 +71,13 @@ jobs:
           cd /tmp/build/linux-x86-64
           cpack --config $GITHUB_WORKSPACE/cmake/cpack.config.cmake
       - name: 'Upload SDK Artifact'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: linux-x86-64-sdk
           path: /tmp/build/linux-x86-64/*.tar.gz
           retention-days: 3
       - name: 'Upload Install Artifact'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: linux-x86-64-install
           path: /install
@@ -96,7 +96,7 @@ jobs:
         PYTEST_ADDOPTS: "--color=yes"
       options: --user 1001:1001
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Get Date
@@ -105,7 +105,7 @@ jobs:
           echo "date=$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")" >> $GITHUB_OUTPUT
         shell: bash
       - name: ccache cache files
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.ccache
           key: linux-x86-64-${{ runner.os }}-test-${{ steps.get-date.outputs.date }}
@@ -188,7 +188,7 @@ jobs:
       matrix:
         python-version: [3.9, '3.10', '3.11', '3.12', '3.13']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Get Date
@@ -201,14 +201,14 @@ jobs:
         run: |
           mkdir -p /home/pylief/.ccache/tmp
       - name: ccache cache files
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: /home/pylief/.ccache
           key: linux-x86-64-${{ runner.os }}-${{ matrix.python-version }}-${{ steps.get-date.outputs.date }}
           restore-keys: |
               linux-x86-64-${{ runner.os }}-${{ matrix.python-version }}
       - name: Download LIEF install dir
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: linux-x86-64-install
           path: /install
@@ -231,7 +231,7 @@ jobs:
                auditwheel repair -w $GITHUB_WORKSPACE/dist {} \;
           ls -alh $GITHUB_WORKSPACE/dist
       - name: 'Artifact'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: linux-x86-64-python${{ matrix.python-version }}-wheel
           path: dist/*.whl
@@ -241,11 +241,11 @@ jobs:
     if: ${{ always() }}
     needs: [pywheels]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: linux-x86-64-*
           merge-multiple: true

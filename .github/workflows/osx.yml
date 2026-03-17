@@ -8,7 +8,7 @@ jobs:
   osx-sdk:
     runs-on: macos-14
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Install system dependencies
@@ -24,7 +24,7 @@ jobs:
         run: |
           mkdir -p $RUNNER_TEMP/.ccache
       - name: ccache cache files
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ runner.temp }}/.ccache
           key: osx-${{ runner.os }}-sdk-${{ steps.get-date.outputs.date }}
@@ -42,19 +42,19 @@ jobs:
         run: |
           bash scripts/osx/package_sdk.sh
       - name: 'Upload SDK Artifact'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: osx-sdk
           path: build/*.tar.gz
           retention-days: 3
       - name: 'Upload install artifact [arm64]'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: osx-arm64-install
           path: install/arm64
           retention-days: 1
       - name: 'Upload install artifact [x64]'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: osx-x64-install
           path: install/x64
@@ -63,11 +63,11 @@ jobs:
     runs-on: macos-14
     if: "!contains(github.event.commits[0].message, '[skip-test]')"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Set up Python ${{ env.python-test-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ env.python-test-version }}
       - name: Install system dependencies
@@ -83,7 +83,7 @@ jobs:
         run: |
           mkdir -p $RUNNER_TEMP/.ccache
       - name: ccache cache files
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ runner.temp }}/.ccache
           key: osx-${{ runner.os }}-test-${{ steps.get-date.outputs.date }}
@@ -132,11 +132,11 @@ jobs:
         arch: ['x64', 'arm64']
       fail-fast: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install system dependencies
@@ -153,14 +153,14 @@ jobs:
         run: |
           mkdir -p $RUNNER_TEMP/.ccache
       - name: ccache cache files
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ runner.temp }}/.ccache
           key: osx-${{ runner.os }}-${{ matrix.arch }}-${{ matrix.python-version }}-${{ steps.get-date.outputs.date }}
           restore-keys: |
               osx-${{ runner.os }}-${{ matrix.arch }}-${{ matrix.python-version }}
       - name: Download LIEF install dir
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: osx-${{ matrix.arch }}-install
           path: ~/lief-${{ matrix.arch }}-install
@@ -178,7 +178,7 @@ jobs:
         run: |
           python -m pip -vv wheel --wheel-dir=dist/ api/python
       - name: 'Upload Python wheel artifact - ${{ matrix.python-version }}'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: osx-wheel-${{ matrix.arch }}-${{ matrix.python-version }}
           path: dist/*.whl
@@ -188,11 +188,11 @@ jobs:
     if: ${{ always() }}
     needs: [wheels]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: osx-*
           merge-multiple: true
