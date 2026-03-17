@@ -42,8 +42,8 @@ def test_issue_1014(tmp_path: Path):
     check_lib(lib)
 
     out = tmp_path / "libfoo_issue_1014.so"
-    lib.write(out.as_posix())
-    new_lib = lief.ELF.parse(out.as_posix())
+    lib.write(out)
+    new_lib = lief.ELF.parse(out)
     check_lib(new_lib)
 
 def test_remove_symbol(tmp_path: Path):
@@ -58,7 +58,7 @@ def test_remove_symbol(tmp_path: Path):
 
     output = tmp_path / "lib_symbol_versions.so"
 
-    elf.write(output.as_posix())
+    elf.write(output)
     check_layout(elf)
 
     new = lief.ELF.parse(output)
@@ -83,7 +83,7 @@ def test_remove_all_version(tmp_path: Path):
             req.remove_aux_requirement(version)
 
     out = tmp_path / "out.elf"
-    elf.write(out.as_posix())
+    elf.write(out)
 
     new = lief.ELF.parse(out)
     check_layout(new)
@@ -108,7 +108,7 @@ def test_remove_req(tmp_path: Path):
     assert elf.remove_version_requirement("libm.so.6")
 
     out = tmp_path / "out.elf"
-    elf.write(out.as_posix())
+    elf.write(out)
 
     new = lief.ELF.parse(out)
 

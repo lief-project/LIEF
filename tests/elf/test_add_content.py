@@ -23,7 +23,7 @@ elif is_aarch64():
 
 assert STUB_FILE is not None
 
-STUB = lief.ELF.parse((CURRENT_DIRECTORY / STUB_FILE).as_posix())
+STUB = lief.ELF.parse(CURRENT_DIRECTORY / STUB_FILE)
 
 COMPILER = get_compiler()
 
@@ -93,7 +93,7 @@ def test_simple(tmp_path: Path):
     libadd_so  = compile_libadd(tmp_path)
     binadd_bin = compile_binadd(tmp_path)
 
-    libadd = lief.ELF.parse(libadd_so.as_posix())
+    libadd = lief.ELF.parse(libadd_so)
     for _ in range(10):
         segment = libadd.add(STUB.segments[0])
         segment.alignment = 0x1000

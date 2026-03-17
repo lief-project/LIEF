@@ -22,6 +22,7 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
 #include <nanobind/extra/memoryview.hpp>
+#include "nanobind/extra/stl/pathlike.h"
 
 #include "LIEF/utils.hpp"
 #include "LIEF/hash.hpp"
@@ -133,7 +134,7 @@ void init_logger(nb::module_& m) {
   logging.def("get_level", nb::overload_cast<>(&logging::get_level),
               "Get current logging level");
 
-  logging.def("set_path", nb::overload_cast<const std::string&>(&logging::set_path),
+  logging.def("set_path", [] (nb::PathLike path) { logging::set_path(path); },
               "Change the logger as a file-base logging and set its path"_doc,
               "path"_a);
 

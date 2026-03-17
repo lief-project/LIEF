@@ -162,7 +162,7 @@ def test_libadd(tmp_path: Path, modifier):
                            output=libadd_so, input=libadd_src))
     assert r
 
-    libadd = lief.ELF.parse(libadd_so.as_posix())
+    libadd = lief.ELF.parse(libadd_so)
     modifier(libadd, libadd2_so)
 
     lib_directory = libadd2_so.parent

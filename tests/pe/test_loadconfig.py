@@ -87,7 +87,7 @@ def test_winapp(tmp_path: Path):
     assert print(lconf) is None
 
     output = tmp_path / "winapp.exe"
-    winapp.write(output.as_posix(), _get_default_config())
+    winapp.write(output, _get_default_config())
 
     new = lief.PE.parse(output)
     assert new.load_configuration == lconf
@@ -103,7 +103,7 @@ def test_v8(tmp_path: Path):
     assert print(lconf) is None
 
     output = tmp_path / "ANCUtility.dll"
-    pe.write(output.as_posix(), _get_default_config())
+    pe.write(output, _get_default_config())
 
     new = lief.PE.parse(output)
     assert new.load_configuration == lconf
@@ -120,7 +120,7 @@ def test_v9(tmp_path: Path):
     assert print(lconf) is None
 
     output = tmp_path / "ucrtbase.dll"
-    pe.write(output.as_posix())
+    pe.write(output)
 
     new = lief.PE.parse(output)
     assert new.load_configuration == lconf
@@ -141,7 +141,7 @@ def test_v11(tmp_path: Path):
     assert lconf.copy() == lconf
 
     output = tmp_path / "hostfxr.dll"
-    pe.write(output.as_posix(), _get_default_config())
+    pe.write(output, _get_default_config())
 
     new = lief.PE.parse(output)
     assert new.load_configuration == lconf
@@ -152,7 +152,7 @@ def test_pgo(tmp_path: Path):
     lconf = pe.load_configuration
     lconf.security_cookie = 0xdeadc0de
     output = tmp_path / input_path.name
-    pe.write(output.as_posix(), _get_default_config())
+    pe.write(output, _get_default_config())
 
     new = lief.PE.parse(output)
     assert new.load_configuration.security_cookie == 0xdeadc0de

@@ -7,7 +7,7 @@ def _remove_eol(string: str):
 def test_filesink(tmp_path: Path):
     lief.logging.log(lief.logging.LEVEL.ERROR, "hello from default sink")
     out_log = tmp_path / "lief.log"
-    lief.logging.set_path(out_log.as_posix())
+    lief.logging.set_path(out_log)
     lief.logging.log(lief.logging.LEVEL.ERROR, "hello")
     assert out_log.read_text() == "hello\n"
     lief.logging.reset()

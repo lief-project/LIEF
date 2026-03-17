@@ -68,7 +68,7 @@ def test_parse_in_memory(tmp_path: Path, version):
     libadd_so = tmp_path / "libadd.so"
     compile(libadd_src, libadd_so, version)
 
-    libadd = lief.parse(libadd_so.as_posix())
+    libadd = lief.parse(libadd_so)
     lib = ctypes.cdll.LoadLibrary(libadd_so.as_posix())
     base_address = get_address(lib.do_add) - libadd.get_symbol("_do_add").value
     assert base_address > 0
@@ -83,7 +83,7 @@ def test_parse_in_memory(tmp_path: Path, version):
 
     # Write the library loaded in memory
     libadd_mem_so = tmp_path / "libadd_mem.so"
-    libadd_mem.write(libadd_mem_so.as_posix())
+    libadd_mem.write(libadd_mem_so)
 
     # Load the written library
     lib_mem = ctypes.cdll.LoadLibrary(libadd_mem_so.as_posix())

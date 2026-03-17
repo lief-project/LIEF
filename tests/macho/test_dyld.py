@@ -188,7 +188,7 @@ def test_rebases():
 
 def test_threaded_opcodes(tmp_path):
     bin_path = pathlib.Path(get_sample('MachO/FatMachO64_x86-64_arm64_binary_ls.bin'))
-    fat = lief.MachO.parse(bin_path.as_posix())
+    fat = lief.MachO.parse(bin_path)
     target = fat.take(lief.MachO.Header.CPU_TYPE.ARM64)
     assert target.has_dyld_info
 

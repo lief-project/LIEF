@@ -25,7 +25,7 @@ def test_change_interpreter(tmp_path: Path, target):
         return
 
     name = target.name
-    target = lief.ELF.parse(target.as_posix())
+    target = lief.ELF.parse(target)
     new_interpreter = tmp_path / Path(target.interpreter).name
     if not new_interpreter.is_symlink():
         os.symlink(target.interpreter, new_interpreter)

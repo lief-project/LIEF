@@ -10,7 +10,7 @@ from utils import is_osx, get_sample, is_apple_m1, is_github_ci
 from .test_builder import run_program
 
 def patch(tmp_path: str, bin_path: pathlib.Path) -> str:
-    original = lief.parse(bin_path.as_posix())
+    original = lief.parse(bin_path)
     shellcode_path = None
 
     output = f"{tmp_path}/{bin_path.name}"
@@ -25,7 +25,7 @@ def patch(tmp_path: str, bin_path: pathlib.Path) -> str:
         sys.exit(1)
 
 
-    shellcode = lief.parse(shellcode_path.as_posix())
+    shellcode = lief.parse(shellcode_path)
 
     #lief.logging.set_level(lief.logging.LEVEL.DEBUG)
 

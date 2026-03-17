@@ -9,7 +9,7 @@ from .test_builder import run_program
 
 def test_unexport(tmp_path):
     bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_sym2remove.bin"))
-    original = lief.parse(bin_path.as_posix())
+    original = lief.parse(bin_path)
     output = f"{tmp_path}/{bin_path.name}"
     exported = {s.name for s in original.symbols if s.has_export_info}
 
@@ -27,7 +27,7 @@ def test_unexport(tmp_path):
     assert checked, err
 
     if is_osx():
-        assert run_program(bin_path.as_posix())
+        assert run_program(bin_path)
         stdout = run_program(output)
 
         print(stdout)
@@ -36,7 +36,7 @@ def test_unexport(tmp_path):
 
 def test_rm_symbols(tmp_path):
     bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_sym2remove.bin"))
-    original = lief.parse(bin_path.as_posix())
+    original = lief.parse(bin_path)
     output = f"{tmp_path}/{bin_path.name}"
 
     for s in ["__ZL6BANNER", "_remove_me"]:
@@ -54,7 +54,7 @@ def test_rm_symbols(tmp_path):
     assert new.get_symbol("_remove_me") is None
 
     if is_osx():
-        assert run_program(bin_path.as_posix())
+        assert run_program(bin_path)
         stdout = run_program(output)
 
         print(stdout)
@@ -133,7 +133,7 @@ def test_demangling():
 
 def test_symbol_shift():
     bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_sym2remove.bin"))
-    macho = lief.MachO.parse(bin_path.as_posix()).at(0)
+    macho = lief.MachO.parse(bin_path).at(0)
 
     shift = 0x4000
     loadcommands_end = macho.imagebase + 32 + macho.header.sizeof_cmds # sizeof(mach_header_64) + size of load command table
@@ -151,7 +151,7 @@ def test_symbol_shift():
 
 def test_exports_after_shift(tmp_path):
     bin_path = pathlib.Path(get_sample("MachO/MachO64_AArch64_weak-sym.bin"))
-    macho = lief.MachO.parse(bin_path.as_posix()).at(0)
+    macho = lief.MachO.parse(bin_path).at(0)
     assert macho.dyld_info
 
     shift = 0x10000
@@ -169,7 +169,7 @@ def test_exports_after_shift(tmp_path):
 
 def test_chained_exports_after_shift(tmp_path):
     bin_path = pathlib.Path(get_sample("MachO/MachO64_AArch64_weak-sym-fc.bin"))
-    macho = lief.MachO.parse(bin_path.as_posix()).at(0)
+    macho = lief.MachO.parse(bin_path).at(0)
     assert macho.dyld_exports_trie
 
     shift = 0x10000

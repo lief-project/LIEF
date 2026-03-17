@@ -18,6 +18,7 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/unique_ptr.h>
+#include "nanobind/extra/stl/pathlike.h"
 
 #include "LIEF/MachO/FatBinary.hpp"
 #include "LIEF/MachO/Binary.hpp"
@@ -69,7 +70,7 @@ void create<FatBinary>(nb::module_& m) {
         "given " RST_CLASS_REF(lief.MachO.Header.CPU_TYPE) ""_doc,
         "cpu"_a, nb::rv_policy::take_ownership)
 
-    .def("write", &FatBinary::write,
+    .def("write", [] (FatBinary& fat, nb::PathLike path) { fat.write(path); },
         "Build a Mach-O universal binary"_doc,
         "filename"_a)
 

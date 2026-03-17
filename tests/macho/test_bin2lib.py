@@ -7,7 +7,7 @@ from utils import is_osx, get_sample, is_aarch64, sign
 def test_bin2lib(tmp_path):
     file_path = "MachO/mbedtls_selftest_arm64.bin" if is_aarch64() else "MachO/mbedtls_selftest_x86_64.bin"
     bin_path = pathlib.Path(get_sample(file_path))
-    original = lief.MachO.parse(bin_path.as_posix()).at(0)
+    original = lief.MachO.parse(bin_path).at(0)
     output = f"{tmp_path}/libtest.dylib"
 
     header: lief.MachO.Header = original.header

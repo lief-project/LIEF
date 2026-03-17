@@ -566,7 +566,7 @@ def test_notepadpp_resource_builder(tmp_path):
     with zipfile.ZipFile(sample_file, 'r') as zip_ref:
         zip_ref.extractall(tmp_path)
 
-    notepadpp = lief.PE.parse(sample.as_posix())
+    notepadpp = lief.PE.parse(sample)
 
     new = lief.PE.parse(list(notepadpp.write_to_bytes()))
 
@@ -581,7 +581,7 @@ def test_filezilla_resource_builder(tmp_path):
     with zipfile.ZipFile(sample_file, 'r') as zip_ref:
         zip_ref.extractall(tmp_path)
 
-    filezilla = lief.PE.parse(sample.as_posix())
+    filezilla = lief.PE.parse(sample)
     new = lief.PE.parse(list(filezilla.write_to_bytes()))
 
     assert filezilla.resources == new.resources
@@ -596,7 +596,7 @@ def test_resource_directory_add_directory_node(tmp_path):
         zip_ref.extractall(tmp_path)
 
     for seed in (5, 20, 99):
-        app = lief.PE.parse(sample.as_posix())
+        app = lief.PE.parse(sample)
         assert [child.id for child in app.resources.childs] == [1, 2, 3, 4, 5, 6, 12, 14, 16, 24]
         nodes = []
 
@@ -623,7 +623,7 @@ def test_resource_directory_add_directory_node(tmp_path):
         assert [child.id for child in app.resources.childs] == [1, 2, 3, 4, 5, 6, 8, 10, 12, 14, 16, 23, 24]
 
     for seed in (7, 23, 91):
-        app = lief.PE.parse(sample.as_posix())
+        app = lief.PE.parse(sample)
         assert lief.PE.ResourcesManager.TYPE.RCDATA.value not in [child.id for child in app.resources.childs]
 
         node = lief.PE.ResourceDirectory()
@@ -771,7 +771,7 @@ def test_add_node(tmp_path: Path):
     root.add_child(dir_node)
 
     output = tmp_path / "pe_reader.exe"
-    pe.write(output.as_posix())
+    pe.write(output)
 
     new = lief.PE.parse(output)
     checked, err = lief.PE.check_layout(new)
@@ -784,7 +784,7 @@ def test_add_node(tmp_path: Path):
     assert bytes(children[0].childs[0].content) == b"Hello World"
 
     if is_windows() and is_x86_64():
-        ret = win_exec(output, gui=False, args=[output.as_posix(), ])
+        ret = win_exec(output, gui=False, args=[output, ])
         assert ret is not None
 
         retcode, stdout = ret
@@ -809,7 +809,7 @@ def test_transfer_resources(tmp_path: Path):
     assert len(pe_reader.resources.childs) == 7
 
     output = tmp_path / target_input.name
-    pe_reader.write(output.as_posix())
+    pe_reader.write(output)
 
     new_pe_reader = lief.PE.parse(output)
 
@@ -819,7 +819,7 @@ def test_transfer_resources(tmp_path: Path):
 
     if is_windows() and is_x86_64():
         ret = win_exec(output, gui=False, universal_newlines=False,
-                       args=[output.as_posix(), ])
+                       args=[output, ])
         assert ret is not None
 
         retcode, stdout = ret
@@ -904,7 +904,7 @@ def test_add_icon(tmp_path: Path):
     manager.add_icon(new_icon)
     print(pe.resources)
     out = tmp_path / target_input.name
-    pe.write(out.as_posix())
+    pe.write(out)
 
 @pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
 def test_driver_rsrc():

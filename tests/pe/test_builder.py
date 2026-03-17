@@ -59,7 +59,7 @@ def test_add_sections(tmp_path: Path, sample: str):
         pe.add_section(section)
 
     output = tmp_path / input_path.name
-    pe.write(output.as_posix())
+    pe.write(output)
 
     new = lief.PE.parse(output)
     assert len([s for s in new.sections if s.name.startswith(".lief_")]) == 20
@@ -87,9 +87,9 @@ def test_issue_952(tmp_path: Path):
     assert not all(x == 0 for x in stub)
 
     out = tmp_path / "out.exe"
-    pe.write(out.as_posix())
+    pe.write(out)
 
-    new = lief.PE.parse(out.as_posix())
+    new = lief.PE.parse(out)
     assert bytes(new.dos_stub) == stub
 
     checked, msg = lief.PE.check_layout(new)
@@ -180,7 +180,7 @@ def test_code_injection(tmp_path: Path):
 
     output = tmp_path / input_path.name
 
-    pe.write(output.as_posix(), config)
+    pe.write(output, config)
 
     new = lief.PE.parse(output)
     err, msg = lief.PE.check_layout(new)

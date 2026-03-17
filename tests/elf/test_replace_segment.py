@@ -20,7 +20,7 @@ CWD = Path(__file__).parent
 
 def test_simple(tmp_path: Path):
     sample_path = get_sample('ELF/ELF64_x86-64_binary_ls.bin')
-    stub        = lief.ELF.parse((CWD / "hello_lief.bin").as_posix())
+    stub        = lief.ELF.parse(CWD / "hello_lief.bin")
     output      = tmp_path / "ls.replace_segment"
     target      = lief.ELF.parse(sample_path)
 
@@ -36,7 +36,7 @@ def test_simple(tmp_path: Path):
     new_ep                  = (stub.header.entrypoint - original_va) + segment.virtual_address
 
     target.header.entrypoint = new_ep
-    target.write(output.as_posix())
+    target.write(output)
 
     if is_updated_linux:
         st = os.stat(output)
@@ -49,7 +49,7 @@ def test_simple(tmp_path: Path):
 
 def test_gcc(tmp_path: Path):
     sample_path = get_sample('ELF/ELF64_x86-64_binary_gcc.bin')
-    stub        = lief.ELF.parse((CWD / "hello_lief.bin").as_posix())
+    stub        = lief.ELF.parse(CWD / "hello_lief.bin")
     output      = tmp_path / "gcc.replace_segment"
     target      = lief.ELF.parse(sample_path)
 
@@ -64,7 +64,7 @@ def test_gcc(tmp_path: Path):
     new_ep                  = (stub.header.entrypoint - original_va) + segment.virtual_address
 
     target.header.entrypoint = new_ep
-    target.write(output.as_posix())
+    target.write(output)
 
     if is_updated_linux:
         st = os.stat(output)
@@ -80,9 +80,9 @@ def test_gcc(tmp_path: Path):
 def test_ssh(tmp_path: Path):
     stub = None
     if is_x86_64():
-        stub = lief.ELF.parse((CWD / "hello_lief.bin").as_posix())
+        stub = lief.ELF.parse(CWD / "hello_lief.bin")
     elif is_aarch64():
-        stub = lief.ELF.parse((CWD / "hello_lief_aarch64.bin").as_posix())
+        stub = lief.ELF.parse(CWD / "hello_lief_aarch64.bin")
 
     output = tmp_path / "ssh.replace_segment"
     target = lief.ELF.parse("/usr/bin/ssh")
@@ -98,7 +98,7 @@ def test_ssh(tmp_path: Path):
     new_ep                  = (stub.header.entrypoint - original_va) + segment.virtual_address
 
     target.header.entrypoint = new_ep
-    target.write(output.as_posix())
+    target.write(output)
 
     if is_linux() and has_recent_glibc():
         st = os.stat(output)

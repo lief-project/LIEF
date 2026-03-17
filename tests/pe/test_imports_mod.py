@@ -100,7 +100,7 @@ def test_import_simple(tmp_path: Path, sample: str):
     config.idata_section = ".myidata"
 
     output = tmp_path / input_path.name
-    pe.write(output.as_posix(), config)
+    pe.write(output, config)
 
     new = lief.PE.parse(output)
     assert new.get_section(config.idata_section) is not None
@@ -151,7 +151,7 @@ def test_remove_entry(tmp_path: Path, sample: str):
     config.idata_section = ".myidata"
 
     output = tmp_path / input_path.name
-    pe.write(output.as_posix(), config)
+    pe.write(output, config)
 
     new = lief.PE.parse(output)
 
@@ -198,7 +198,7 @@ def test_rename(tmp_path: Path, sample: str):
     config.idata_section = ".myidata"
 
     output = tmp_path / input_path.name
-    pe.write(output.as_posix(), config)
+    pe.write(output, config)
 
     new = lief.PE.parse(output)
 
@@ -258,7 +258,7 @@ def test_add_import(tmp_path: Path, sample: str):
     config.idata_section = ".myidata"
 
     output = tmp_path / input_path.name
-    pe.write(output.as_posix(), config)
+    pe.write(output, config)
     assert count == nb_entries
 
     new = lief.PE.parse(output)
@@ -303,7 +303,7 @@ def test_remove_import(tmp_path: Path, sample: str):
     config.idata_section = ".myidata"
 
     output = tmp_path / input_path.name
-    pe.write(output.as_posix(), config)
+    pe.write(output, config)
 
     new = lief.PE.parse(output)
 
@@ -328,7 +328,7 @@ def test_issue_multiple(tmp_path: Path):
     config.imports = True
 
     out = tmp_path / "out.exe"
-    pe.write(out.as_posix(), config)
+    pe.write(out, config)
 
     new = lief.PE.parse(out)
     assert lief.PE.check_layout(new)

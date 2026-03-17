@@ -73,11 +73,11 @@ def test_all(tmp_path: Path):
         st = os.stat(output)
         os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-        with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
+        with Popen(output, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
             stdout = P.stdout.read().decode("utf8")
             print(stdout)
             assert len(stdout) > 0
 
     # Check that the written binary contains our modifications
-    new: lief.ELF.Binary = lief.ELF.parse(output.as_posix())
+    new: lief.ELF.Binary = lief.ELF.parse(output)
     assert new.get_library("libcap.so.2").name == "libcap.so.2"

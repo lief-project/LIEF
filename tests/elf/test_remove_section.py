@@ -18,7 +18,7 @@ def test_simple(tmp_path: Path):
 
     ls = lief.ELF.parse(sample_path)
     ls.remove_section(".text", clear=False)
-    ls.write(output.as_posix())
+    ls.write(output)
     check_layout(ls)
 
     if is_updated_linux:

@@ -17,9 +17,9 @@ def test_remove_symbol(tmp_path: Path):
     target.remove_dynamic_symbol("puts")
 
     output = tmp_path / "test_sym_removed.elf"
-    target.write(output.as_posix())
+    target.write(output)
 
-    new = lief.ELF.parse(output.as_posix())
+    new = lief.ELF.parse(output)
 
     assert "puts" not in {s.name for s in new.dynamic_symbols}
 

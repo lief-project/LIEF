@@ -18,7 +18,7 @@ def test_parser_builder(tmp_path: Path):
     libc.relocate_phdr_table()
     config = lief.ELF.Builder.config_t()
     config.force_relocate = True
-    libc.write(output.as_posix(), config)
+    libc.write(output, config)
 
     check_layout(output)
 

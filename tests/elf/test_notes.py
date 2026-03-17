@@ -19,9 +19,9 @@ def test_change_note(tmp_path: Path):
     new_desc = [i & 0xFF for i in range(500)]
     build_id.description = new_desc
     output = tmp_path / "etterlog"
-    etterlog.write(output.as_posix(), config)
+    etterlog.write(output, config)
 
-    etterlog_updated = lief.ELF.parse(output.as_posix())
+    etterlog_updated = lief.ELF.parse(output)
 
     assert etterlog[lief.ELF.Note.TYPE.GNU_BUILD_ID] == etterlog_updated[lief.ELF.Note.TYPE.GNU_BUILD_ID]
 
@@ -34,8 +34,8 @@ def test_remove_note(tmp_path: Path):
     assert build_id is not None
     etterlog -= build_id
 
-    etterlog.write(output.as_posix(), config)
-    etterlog_updated = lief.ELF.parse(output.as_posix())
+    etterlog.write(output, config)
+    etterlog_updated = lief.ELF.parse(output)
     check_layout(etterlog_updated)
     assert lief.ELF.Note.TYPE.GNU_BUILD_ID not in etterlog_updated
 
@@ -47,9 +47,9 @@ def test_add_note(tmp_path: Path):
 
     etterlog += note
 
-    etterlog.write(output.as_posix(), config)
+    etterlog.write(output, config)
 
-    etterlog_updated = lief.ELF.parse(output.as_posix())
+    etterlog_updated = lief.ELF.parse(output)
     check_layout(etterlog_updated)
     assert lief.ELF.Note.TYPE.GNU_GOLD_VERSION in etterlog_updated
 
@@ -79,9 +79,9 @@ def test_android_note(tmp_path: Path):
     assert note.ndk_version[:4] == "r15c"
     assert note.ndk_build_number[:6] == "123456"
 
-    ndkr16.write(output.as_posix(), config)
+    ndkr16.write(output, config)
 
-    ndkr15 = lief.ELF.parse(output.as_posix())
+    ndkr15 = lief.ELF.parse(output)
 
     check_layout(ndkr15)
 
@@ -98,8 +98,8 @@ def test_issue_816(tmp_path: Path):
 
     assert len(elf.notes) == 40
 
-    elf.write(output.as_posix(), config)
-    new = lief.ELF.parse(output.as_posix())
+    elf.write(output, config)
+    new = lief.ELF.parse(output)
     check_layout(new)
     assert len(new.notes) == 40
 
@@ -243,9 +243,9 @@ def test_create_custom_note(tmp_path: Path):
 
     config = lief.ELF.Builder.config_t()
     config.notes = True
-    elf.write(out.as_posix(), config)
+    elf.write(out, config)
 
-    new = lief.ELF.parse(out.as_posix())
+    new = lief.ELF.parse(out)
     assert new.get_section(".lief.note.1") is not None
     assert new.get_section(".lief.note.alternative") is not None
 

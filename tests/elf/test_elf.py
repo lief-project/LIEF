@@ -90,11 +90,9 @@ def test_permutation(tmp_path: Path, sample: str):
     permutation = [0] + permutation
     binary.permute_dynamic_symbols(permutation)
 
-    builder = lief.ELF.Builder(binary)
-    builder.build()
     output = tmp_path / "out.permutated"
     print(f"Output: {output}")
-    builder.write(output.as_posix())
+    binary.write(output)
 
     if not is_updated_linux:
         return

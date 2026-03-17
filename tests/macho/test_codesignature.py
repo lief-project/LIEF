@@ -6,7 +6,7 @@ import hashlib
 
 def test_code_signature():
     bin_path = Path(get_sample('MachO/MachO64_x86-64_binary_id.bin'))
-    original: lief.MachO.Binary = lief.MachO.parse(bin_path.as_posix()).at(0)
+    original: lief.MachO.Binary = lief.MachO.parse(bin_path).at(0)
 
     assert original[lief.MachO.LoadCommand.TYPE.CODE_SIGNATURE] is not None
     code_signature: lief.MachO.CodeSignature = original[lief.MachO.LoadCommand.TYPE.CODE_SIGNATURE] # type: ignore[assignment]
@@ -16,7 +16,7 @@ def test_code_signature():
 
 def test_code_signature_dir():
     bin_path = Path(get_sample('MachO/python3_issue_476.bin'))
-    python3: lief.MachO.Binary = lief.MachO.parse(bin_path.as_posix()).at(0)
+    python3: lief.MachO.Binary = lief.MachO.parse(bin_path).at(0)
 
     assert python3[lief.MachO.LoadCommand.TYPE.DYLIB_CODE_SIGN_DRS] is not None
     code_signature_dirs: lief.MachO.CodeSignatureDir = python3[lief.MachO.LoadCommand.TYPE.DYLIB_CODE_SIGN_DRS] # type: ignore[assignment]

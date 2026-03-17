@@ -327,8 +327,8 @@ def test_core_write(tmp_path: Path):
     output = tmp_path / "elf.core"
 
     #  Cannot re-open a file on Windows, so handle it by hand
-    core.write(output.as_posix())
-    core_new = lief.ELF.parse(output.as_posix())
+    core.write(output)
+    core_new = lief.ELF.parse(output)
     assert core_new is not None
 
     note = core_new.notes[1]

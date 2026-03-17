@@ -18,7 +18,7 @@ def test_945():
 def test_993(tmp_path):
     target = lief.MachO.parse(get_sample("MachO/alivcffmpeg_armv7.dylib"))
     out = Path(tmp_path) / "issue_993.dylib"
-    target.write(out.as_posix())
+    target.write(out)
 
     new = lief.MachO.parse(out)
     not_err, msg = lief.MachO.check_layout(new)
@@ -38,7 +38,7 @@ def test_1130(tmp_path: Path):
     target.shift(0x4000)
 
     output = tmp_path / "new.macho"
-    target.write(output.as_posix())
+    target.write(output)
 
     new = lief.MachO.parse(output).at(0)
     assert lief.MachO.check_layout(new)[0]
@@ -65,6 +65,6 @@ def test_issue_ntype(tmp_path: Path):
 
     assert macho.symbols[0].raw_type == 60
 
-    macho.write(output.as_posix())
+    macho.write(output)
     new = lief.MachO.parse(output).at(0)
     assert new.symbols[0].raw_type == 60

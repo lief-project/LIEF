@@ -90,5 +90,5 @@ def test_all32(tmp_path: Path):
     target.write(output)
     check_layout(output)
 
-    new = lief.ELF.parse(output.as_posix())
+    new = lief.ELF.parse(output)
     assert new.has_symbol("printf123")

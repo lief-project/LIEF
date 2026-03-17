@@ -13,8 +13,8 @@ def test_equal(tmp_path: Path, elf):
     infile = get_sample(elf)
     inelf = lief.ELF.parse(infile)
     output = tmp_path / Path(infile).name
-    inelf.write(output.as_posix())
-    newelf = lief.ELF.parse(output.as_posix())
+    inelf.write(output)
+    newelf = lief.ELF.parse(output)
 
     assert inelf.header == newelf.header
 

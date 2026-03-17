@@ -172,7 +172,7 @@ def test_pdbchecksum(tmp_path: Path):
     pdbchecksum.hash = [1] * len(pdbchecksum.hash)
 
     output_path = tmp_path / input_path.name
-    pe.write(output_path.as_posix())
+    pe.write(output_path)
 
     new_pe = lief.PE.parse(output_path)
     pdbchecksum: lief.PE.PDBChecksum = new_pe.debug[1]
@@ -217,7 +217,7 @@ def test_vc_features(tmp_path: Path):
 
     vcfeat.gs = 39
     output_path = tmp_path / input_path.name
-    pe.write(output_path.as_posix())
+    pe.write(output_path)
 
     new_pe = lief.PE.parse(output_path)
     vcfeat: lief.PE.VCFeature = new_pe.debug[1]
@@ -248,7 +248,7 @@ def test_ex_dll_characteristics(tmp_path: Path):
         lief.PE.ExDllCharacteristics.CHARACTERISTICS.HOTPATCH_COMPATIBLE
     )
     output_path = tmp_path / input_path.name
-    pe.write(output_path.as_posix())
+    pe.write(output_path)
 
     new_pe = lief.PE.parse(output_path)
     entry: lief.PE.ExDllCharacteristics = new_pe.debug[3]
@@ -285,7 +285,7 @@ def test_fpo(tmp_path: Path):
     assert fpo.entries[246].parameters_size == 8
 
     output_path = tmp_path / input_path.name
-    pe.write(output_path.as_posix())
+    pe.write(output_path)
 
     new_pe = lief.PE.parse(output_path)
     fpo: lief.PE.FPO = new_pe.debug[1]

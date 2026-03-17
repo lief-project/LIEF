@@ -44,7 +44,7 @@ def test_func_variants(tmp_path: Path):
         assert runtime_table[1].entries[2].flags == []
 
     bin_path = Path(get_sample('MachO/variants_alt.dylib'))
-    macho = lief.MachO.parse(bin_path.as_posix()).at(0)
+    macho = lief.MachO.parse(bin_path).at(0)
 
     checked, err = lief.MachO.check_layout(macho)
     assert checked, err
@@ -60,7 +60,7 @@ def test_func_variants(tmp_path: Path):
     check_variant(func_variants)
 
     output = tmp_path / bin_path.name
-    macho.write(output.as_posix())
+    macho.write(output)
 
     new = lief.MachO.parse(output).at(0)
     checked, err = lief.MachO.check_layout(new)

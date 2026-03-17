@@ -28,11 +28,11 @@ def test_issue_872(tmp_path):
     elf.add(new_section)
 
     outpath = tmp / "i872_risv_modified.elf"
-    elf.write(outpath.as_posix())
+    elf.write(outpath)
 
     check_layout(outpath)
 
-    modified: lief.ELF.Binary = lief.ELF.parse(outpath.as_posix())
+    modified: lief.ELF.Binary = lief.ELF.parse(outpath)
     new_offset = modified.get_section(".payload").offset
 
     new_section = modified.get_section(".new_section")
@@ -61,7 +61,7 @@ def test_static_musl(tmp_path, mode):
 
     elf.add(segment)
     outpath = tmp_path / "modified.elf"
-    elf.write(outpath.as_posix())
+    elf.write(outpath)
     outpath.chmod(outpath.stat().st_mode | stat.S_IEXEC)
 
     popen_args = {
@@ -92,7 +92,7 @@ def test_static_musl_bss(tmp_path, mode):
 
     elf.add(segment)
     outpath = tmp_path / "modified.elf"
-    elf.write(outpath.as_posix())
+    elf.write(outpath)
     outpath.chmod(outpath.stat().st_mode | stat.S_IEXEC)
 
     popen_args = {
@@ -122,7 +122,7 @@ def test_static(tmp_path, mode):
 
     elf.add(segment)
     outpath = tmp_path / "modified.elf"
-    elf.write(outpath.as_posix())
+    elf.write(outpath)
     outpath.chmod(outpath.stat().st_mode | stat.S_IEXEC)
 
     popen_args = {
@@ -153,7 +153,7 @@ def test_static_bss(tmp_path, mode):
 
     elf.add(segment)
     outpath = tmp_path / "modified.elf"
-    elf.write(outpath.as_posix())
+    elf.write(outpath)
     outpath.chmod(outpath.stat().st_mode | stat.S_IEXEC)
 
     popen_args = {
@@ -183,7 +183,7 @@ def test_docker_init(tmp_path, mode):
 
     elf.add(segment)
     outpath = tmp_path / "modified.elf"
-    elf.write(outpath.as_posix())
+    elf.write(outpath)
     outpath.chmod(outpath.stat().st_mode | stat.S_IEXEC)
 
     popen_args = {
@@ -213,7 +213,7 @@ def test_python312d(tmp_path: Path, mode: lief.ELF.Binary.PHDR_RELOC):
 
     elf.add(segment)
     outpath = tmp_path / "modified.elf"
-    elf.write(outpath.as_posix())
+    elf.write(outpath)
 
     delta_size = outpath.stat().st_size - sample.stat().st_size
 

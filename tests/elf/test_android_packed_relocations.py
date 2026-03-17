@@ -31,7 +31,7 @@ def test_chrome_arm64(tmp_path: Path):
     new_size = out_simple.stat().st_size
     assert new_size <= original_size
 
-    new = lief.ELF.parse(out_simple.as_posix())
+    new = lief.ELF.parse(out_simple)
 
     new_packed_relocs = [r for r in new.dynamic_relocations if r.is_android_packed]
     assert len(new_packed_relocs) == 145599
@@ -52,10 +52,9 @@ def test_chrome_arm64(tmp_path: Path):
 
     chrome_mod = lief.ELF.parse(chrome_sample)
     chrome_mod_out = tmp_path / "chrome_mod.so"
-    builder = lief.ELF.Builder(chrome_mod)
-    builder.config.force_relocate = True
-    builder.build()
-    builder.write(chrome_mod_out.as_posix())
+    config = lief.ELF.Builder.config_t()
+    config.force_relocate = True
+    chrome_mod.write(chrome_mod_out, config)
     assert abs(chrome_mod_out.stat().st_size - original_size) < 0x5cf000
 
     chrome_mod = lief.ELF.parse(chrome_mod_out)
@@ -107,7 +106,7 @@ def test_chrome_armv7(tmp_path: Path):
     new_size = out_simple.stat().st_size
     assert new_size <= original_size
 
-    new = lief.ELF.parse(out_simple.as_posix())
+    new = lief.ELF.parse(out_simple)
 
     new_packed_relocs = [r for r in new.dynamic_relocations if r.is_android_packed]
     assert len(new_packed_relocs) == 513897
@@ -128,10 +127,9 @@ def test_chrome_armv7(tmp_path: Path):
 
     chrome_mod = lief.ELF.parse(chrome_sample)
     chrome_mod_out = tmp_path / "chrome_mod.so"
-    builder = lief.ELF.Builder(chrome_mod)
-    builder.config.force_relocate = True
-    builder.build()
-    builder.write(chrome_mod_out.as_posix())
+    config = lief.ELF.Builder.config_t()
+    config.force_relocate = True
+    chrome_mod.write(chrome_mod_out, config)
     check_layout(chrome_mod_out)
     assert abs(chrome_mod_out.stat().st_size - original_size) < 0x5cf000
 

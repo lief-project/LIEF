@@ -29,9 +29,9 @@ def test_add_ordinal(tmp_path, test_exe):
 
     config = lief.PE.Builder.config_t()
     config.imports = True
-    binary.write(new_path.as_posix(), config)
+    binary.write(new_path, config)
 
-    new_binary = lief.parse(new_path.as_posix())
+    new_binary = lief.parse(new_path)
     assert new_binary.has_import(lib_name)
     new_lib = binary.get_import(lib_name)
     first_ord = next(iter([e for e in new_lib.entries if e.is_ordinal]))

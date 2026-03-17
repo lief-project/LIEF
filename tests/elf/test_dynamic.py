@@ -89,7 +89,7 @@ def test_add_dynamic_symbols(tmp_path: Path, style):
     compile_libadd(libadd_so, libadd_c, [link_opt])
     compile_binadd(binadd_bin, binadd_c, [link_opt])
 
-    libadd = lief.ELF.parse(libadd_so.as_posix())
+    libadd = lief.ELF.parse(libadd_so)
 
     dynamic_symbols = list(libadd.dynamic_symbols)
     for sym in dynamic_symbols:
@@ -99,7 +99,7 @@ def test_add_dynamic_symbols(tmp_path: Path, style):
     if hash_style != "gnu":
         hash_section = libadd.get_section(".hash")
         libadd.extend(hash_section, hash_section.entry_size * len(dynamic_symbols))
-    libadd.write(libadd_so.as_posix())
+    libadd.write(libadd_so)
 
     opt = {
       'stdout': subprocess.PIPE,
@@ -113,7 +113,7 @@ def test_add_dynamic_symbols(tmp_path: Path, style):
         assert P.returncode == 0
         assert "From myLIb, a + b = 3" in stdout
 
-    libadd = lief.ELF.parse(libadd_so.as_posix())
+    libadd = lief.ELF.parse(libadd_so)
     dynamic_section = libadd.get_section(".dynsym")
     # TODO: Size of libadd.dynamic_symbols is larger than  dynamic_symbols_size.
     dynamic_symbols_size = int(dynamic_section.size / dynamic_section.entry_size)
@@ -144,7 +144,7 @@ def test_remove_library(tmp_path: Path):
     compile_libadd(libadd_so, libadd_c, [])
     compile_binadd(binadd_bin, binadd_c, [])
 
-    binadd = lief.ELF.parse(binadd_bin.as_posix())
+    binadd = lief.ELF.parse(binadd_bin)
 
     libadd_needed = binadd.get_library("libadd.so")
     binadd -= libadd_needed
@@ -165,7 +165,7 @@ def test_remove_tag(tmp_path: Path):
     compile_libadd(libadd_so, libadd_c, [])
     compile_binadd(binadd_bin, binadd_c, [])
 
-    binadd = lief.ELF.parse(binadd_bin.as_posix())
+    binadd = lief.ELF.parse(binadd_bin)
 
     binadd -= lief.ELF.DynamicEntry.TAG.NEEDED
     assert all(e.tag != lief.ELF.DynamicEntry.TAG.NEEDED for e in binadd.dynamic_entries)
@@ -184,7 +184,7 @@ def test_runpath_api(tmp_path: Path):
     compile_libadd(libadd_so, libadd_c, [])
     compile_binadd(binadd_bin, binadd_c, [])
 
-    binadd = lief.ELF.parse(binadd_bin.as_posix())
+    binadd = lief.ELF.parse(binadd_bin)
 
     rpath = lief.ELF.DynamicEntryRunPath()
     rpath = binadd.add(rpath)
@@ -223,8 +223,8 @@ def test_change_libname(tmp_path: Path):
     compile_libadd(libadd_so, libadd_c, [])
     compile_binadd(binadd_bin, binadd_c, [])
 
-    libadd = lief.ELF.parse(libadd_so.as_posix())
-    binadd = lief.ELF.parse(binadd_bin.as_posix())
+    libadd = lief.ELF.parse(libadd_so)
+    binadd = lief.ELF.parse(binadd_bin)
 
     new_name = "libwhichhasalongverylongname.so"
 
@@ -233,9 +233,9 @@ def test_change_libname(tmp_path: Path):
     soname_entry.name = new_name
 
     libfoo_path = tmp_path / new_name
-    libadd.write(libfoo_path.as_posix())
+    libadd.write(libfoo_path)
 
-    libfoo = lief.ELF.parse(libfoo_path.as_posix())
+    libfoo = lief.ELF.parse(libfoo_path)
 
     new_so_name = libfoo[lief.ELF.DynamicEntry.TAG.SONAME]
     assert isinstance(new_so_name, lief.ELF.DynamicSharedObject)
@@ -250,7 +250,7 @@ def test_change_libname(tmp_path: Path):
     rpath = binadd.add(rpath)
 
     new_binadd_path = tmp_path / "binadd_updated.bin"
-    binadd.write(new_binadd_path.as_posix())
+    binadd.write(new_binadd_path)
 
     # Run the new executable
     st = os.stat(libfoo_path)

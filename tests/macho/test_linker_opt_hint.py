@@ -6,7 +6,7 @@ import hashlib
 
 def test_simple():
     bin_path = Path(get_sample('MachO/json_api.cpp_1.o'))
-    original: lief.MachO.Binary = lief.parse(bin_path.as_posix())
+    original: lief.MachO.Binary = lief.parse(bin_path)
 
     assert original[lief.MachO.LoadCommand.TYPE.LINKER_OPTIMIZATION_HINT] is not None
     opthint: lief.MachO.LinkerOptHint = original[lief.MachO.LoadCommand.TYPE.LINKER_OPTIMIZATION_HINT]

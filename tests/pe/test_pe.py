@@ -21,7 +21,7 @@ def test_remove_section(tmp_path):
     output = tmp_path / "section_removed.exe"
 
     sample.remove_section("lief")
-    sample.write(output.as_posix())
+    sample.write(output)
 
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)

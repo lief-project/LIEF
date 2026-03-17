@@ -23,6 +23,6 @@ def test_binary_metallib(tmp_path: Path):
 
     out_path = tmp_path / "out.macho"
 
-    macho.write(out_path.as_posix())
+    macho.write(out_path)
     new = lief.MachO.parse(out_path).at(0)
     assert len(new.notes) == 8

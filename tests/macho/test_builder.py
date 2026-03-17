@@ -19,18 +19,18 @@ def align_to(value, alignment):
     assert (alignment & (alignment - 1)) == 0 # is power of two
     return (value + alignment - 1) & ~(alignment - 1)
 
-def dyld_check(path: str):
-    dyld_info_path = "/usr/bin/dyld_info"
-    if not pathlib.Path(dyld_info_path).exists():
+def dyld_check(path: Path):
+    dyld_info_path = Path("/usr/bin/dyld_info")
+    if not dyld_info_path.exists():
         dyld_info_path = shutil.which("dyld_info")
 
     if dyld_info_path is None:
         return
 
     cmd = [
-        dyld_info_path,
+        str(dyld_info_path),
         "-validate_only",
-        path
+        str(path)
     ]
     kwargs = {
         "universal_newlines": True,
@@ -43,7 +43,7 @@ def dyld_check(path: str):
         proc.poll()
         assert proc.returncode == 0, f"Return code: {proc.returncode}"
 
-def run_program(path, args=None):
+def run_program(path: Path, args=None):
     if is_apple_m1():
         sign(path)
 
@@ -68,9 +68,9 @@ def run_program(path, args=None):
         print(f"{path} exited with {proc.returncode}")
         return proc.stdout.read()
 
-def test_id(tmp_path):
+def test_id(tmp_path: Path):
     original = lief.MachO.parse(get_sample('MachO/MachO64_x86-64_binary_id.bin')).at(0)
-    output = f"{tmp_path}/test_id.bin"
+    output = tmp_path / "test_id.bin"
     original.write(output)
     modified = lief.MachO.parse(output).at(0)
 
@@ -78,11 +78,11 @@ def test_id(tmp_path):
     assert checked, err
 
 
-def test_add_command(tmp_path):
+def test_add_command(tmp_path: Path):
     bin_path = pathlib.Path(get_sample('MachO/MachO64_x86-64_binary_id.bin'))
-    original = lief.MachO.parse(bin_path.as_posix()).at(0)
+    original = lief.MachO.parse(bin_path).at(0)
 
-    output = f"{tmp_path}/test_add_command.id.bin"
+    output = tmp_path / "test_add_command.id.bin"
 
     LIB_NAME = "/usr/lib/libSystem.B.dylib"
 
@@ -104,18 +104,18 @@ def test_add_command(tmp_path):
     assert len([lib for lib in new.libraries if lib.name == LIB_NAME]) > 0
 
     if is_osx() and is_x86_64():
-        assert run_program(bin_path.as_posix())
+        assert run_program(bin_path)
 
         stdout = run_program(output)
         print(stdout)
         assert re.search(r'uid=', stdout) is not None
 
 
-def test_remove_cmd(tmp_path):
+def test_remove_cmd(tmp_path: Path):
     bin_path = pathlib.Path(get_sample('MachO/MachO64_x86-64_binary_id.bin'))
-    original = lief.MachO.parse(bin_path.as_posix()).at(0)
+    original = lief.MachO.parse(bin_path).at(0)
 
-    output = f"{tmp_path}/test_remove_cmd.id.bin"
+    output = tmp_path / "test_remove_cmd.id.bin"
 
     uuid_cmd = original[lief.MachO.LoadCommand.TYPE.UUID]
     original.remove(uuid_cmd)
@@ -133,17 +133,17 @@ def test_remove_cmd(tmp_path):
     assert lief.MachO.LoadCommand.TYPE.CODE_SIGNATURE not in new
 
     if is_osx() and is_x86_64():
-        assert run_program(bin_path.as_posix())
+        assert run_program(bin_path)
 
         stdout = run_program(output)
         print(stdout)
         assert re.search(r'uid=', stdout) is not None
 
-def test_extend_cmd(tmp_path):
+def test_extend_cmd(tmp_path: Path):
     bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_id.bin"))
-    original = lief.MachO.parse(bin_path.as_posix()).at(0)
+    original = lief.MachO.parse(bin_path).at(0)
 
-    output = f"{tmp_path}/test_extend_cmd.id.bin"
+    output = tmp_path / "test_extend_cmd.id.bin"
 
     # Extend UUID
     uuid_cmd = original[lief.MachO.LoadCommand.TYPE.UUID]
@@ -162,7 +162,7 @@ def test_extend_cmd(tmp_path):
 
 def test_add_section_id(tmp_path):
     bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_id.bin"))
-    original = lief.MachO.parse(bin_path.as_posix()).at(0)
+    original = lief.MachO.parse(bin_path).at(0)
     output = f"{tmp_path}/test_add_section_id.id.bin"
 
     checked, err = lief.MachO.check_layout(original)
@@ -182,18 +182,18 @@ def test_add_section_id(tmp_path):
     assert checked, err
 
     if is_osx() and is_x86_64():
-        assert run_program(bin_path.as_posix())
+        assert run_program(bin_path)
         stdout = run_program(output)
 
         print(stdout)
         assert re.search(r'uid=', stdout) is not None
 
-def test_extend_section_1(tmp_path):
+def test_extend_section_1(tmp_path: Path):
     """ This test calls add_section followed by extend_section repeatedly.
     """
     bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_id.bin"))
-    original = lief.MachO.parse(bin_path.as_posix()).at(0)
-    output = f"{tmp_path}/test_extend_section.bin"
+    original = lief.MachO.parse(bin_path).at(0)
+    output = tmp_path / "test_extend_section.bin"
 
     text_segment = original.get_segment("__TEXT")
 
@@ -209,13 +209,13 @@ def test_extend_section_1(tmp_path):
     checked, err = lief.MachO.check_layout(new)
     assert checked, err
 
-def test_extend_section_2(tmp_path):
+def test_extend_section_2(tmp_path: Path):
     """ This test makes multiple calls to add_section, and then it
         extends each added section using extend_section.
     """
     bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_id.bin"))
-    original = lief.MachO.parse(bin_path.as_posix()).at(0)
-    output = f"{tmp_path}/test_extend_section.bin"
+    original = lief.MachO.parse(bin_path).at(0)
+    output = tmp_path / "test_extend_section.bin"
 
     text_segment = original.get_segment("__TEXT")
 
@@ -235,10 +235,10 @@ def test_extend_section_2(tmp_path):
     assert checked, err
 
 @pytest.mark.skipif(is_github_ci(), reason="sshd does not work on Github Action")
-def test_add_section_ssh(tmp_path):
+def test_add_section_ssh(tmp_path: Path):
     bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_sshd.bin"))
-    original = lief.MachO.parse(bin_path.as_posix()).at(0)
-    output = f"{tmp_path}/test_add_section_sshd.sshd.bin"
+    original = lief.MachO.parse(bin_path).at(0)
+    output = tmp_path / "test_add_section_sshd.sshd.bin"
     page_size = original.page_size
 
     # Add 3 section into __TEXT
@@ -260,17 +260,17 @@ def test_add_section_ssh(tmp_path):
     assert checked, err
 
     if is_osx() and is_x86_64():
-        assert run_program(bin_path.as_posix(), args=["--help"])
+        assert run_program(bin_path, args=["--help"])
         stdout = run_program(output, args=["--help"])
 
         print(stdout)
         assert re.search(r'OpenSSH_6.9p1, LibreSSL 2.1.8', stdout) is not None
 
 
-def test_add_segment_nm(tmp_path):
+def test_add_segment_nm(tmp_path: Path):
     bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_nm.bin"))
-    original = lief.MachO.parse(bin_path.as_posix()).at(0)
-    output = f"{tmp_path}/test_add_segment_nm.nm.bin"
+    original = lief.MachO.parse(bin_path).at(0)
+    output = tmp_path / "test_add_segment_nm.nm.bin"
 
     # Add segment without section
     segment = lief.MachO.SegmentCommand("__LIEF", [0x60] * 0x100)
@@ -284,15 +284,15 @@ def test_add_segment_nm(tmp_path):
     assert checked, err
 
     if is_osx() and is_x86_64():
-        assert run_program(bin_path.as_posix())
+        assert run_program(bin_path)
         stdout = run_program(output, ["-version"])
         print(stdout)
         assert re.search(r'Default target:', stdout) is not None
 
-def test_add_segment_all(tmp_path):
+def test_add_segment_all(tmp_path: Path):
     bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_all.bin"))
-    original = lief.MachO.parse(bin_path.as_posix()).at(0)
-    output = f"{tmp_path}/test_add_segment_all.all.bin"
+    original = lief.MachO.parse(bin_path).at(0)
+    output = tmp_path / "test_add_segment_all.all.bin"
 
     # Add segment with sections
     segment = lief.MachO.SegmentCommand("__LIEF_2")
@@ -308,16 +308,16 @@ def test_add_segment_all(tmp_path):
     assert checked, err
 
     if is_osx() and is_x86_64():
-        assert run_program(bin_path.as_posix())
+        assert run_program(bin_path)
         stdout = run_program(output)
         print(stdout)
         assert re.search(r'Hello World: 1', stdout) is not None
 
 @pytest.mark.skipif(is_github_ci(), reason="sshd does not work on Github Action")
-def test_ssh_segments(tmp_path):
+def test_ssh_segments(tmp_path: Path):
     bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_sshd.bin"))
-    original = lief.MachO.parse(bin_path.as_posix()).at(0)
-    output = f"{tmp_path}/ssh_with_segments.bin"
+    original = lief.MachO.parse(bin_path).at(0)
+    output = tmp_path / "ssh_with_segments.bin"
 
     # Add segment with sections
     for i in range(10):
@@ -333,16 +333,16 @@ def test_ssh_segments(tmp_path):
     assert len(new.segments) == len(original.segments)
 
     if is_osx() and is_x86_64():
-        assert run_program(bin_path.as_posix(), args=["--help"])
+        assert run_program(bin_path, args=["--help"])
         stdout = run_program(output, args=["--help"])
 
         print(stdout)
         assert re.search(r'OpenSSH_6.9p1, LibreSSL 2.1.8', stdout) is not None
 
-def test_remove_section(tmp_path):
+def test_remove_section(tmp_path: Path):
     bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_section_to_remove.bin"))
-    original = lief.MachO.parse(bin_path.as_posix()).at(0)
-    output = f"{tmp_path}/{bin_path.name}"
+    original = lief.MachO.parse(bin_path).at(0)
+    output = tmp_path / bin_path.name
 
     original.remove_section("__to_remove")
 
@@ -355,16 +355,16 @@ def test_remove_section(tmp_path):
     assert new.get_section("__to_remove") is None
 
     if is_osx() and is_x86_64():
-        assert run_program(bin_path.as_posix())
+        assert run_program(bin_path)
         stdout = run_program(output)
 
         print(stdout)
         assert re.search(r'Hello World', stdout) is not None
 
-def test_remove_section_with_segment_name(tmp_path):
+def test_remove_section_with_segment_name(tmp_path: Path):
     bin_path = pathlib.Path(get_sample("MachO/MachO64_x86-64_binary_section_to_remove.bin"))
-    original = lief.MachO.parse(bin_path.as_posix()).at(0)
-    output = f"{tmp_path}/{bin_path.name}"
+    original = lief.MachO.parse(bin_path).at(0)
+    output = tmp_path / bin_path.name
 
     original.remove_section("__DATA", "__to_remove")
 
@@ -377,16 +377,16 @@ def test_remove_section_with_segment_name(tmp_path):
     assert new.get_section("__DATA", "__to_remove") is None
 
     if is_osx() and is_x86_64():
-        assert run_program(bin_path.as_posix())
+        assert run_program(bin_path)
         stdout = run_program(output)
 
         print(stdout)
         assert re.search(r'Hello World', stdout) is not None
 
-def test_objc_arm64(tmp_path):
+def test_objc_arm64(tmp_path: Path):
     bin_path = pathlib.Path(get_sample("MachO/test_objc_arm64.macho"))
-    original = lief.MachO.parse(bin_path.as_posix()).at(0)
-    output = f"{tmp_path}/{bin_path.name}"
+    original = lief.MachO.parse(bin_path).at(0)
+    output = tmp_path / bin_path.name
 
     for i in range(50):
         segment = lief.MachO.SegmentCommand(f"__LIEF_{i}", [i] * (0x457 + i))
@@ -412,17 +412,17 @@ def test_objc_arm64(tmp_path):
     assert checked, err
 
     if is_apple_m1():
-        assert run_program(bin_path.as_posix())
+        assert run_program(bin_path)
         stdout = run_program(output)
 
         print(stdout)
         assert re.search(r'Printing Process Completed', stdout) is not None
 
 
-def test_objc_x86_64(tmp_path):
+def test_objc_x86_64(tmp_path: Path):
     bin_path = pathlib.Path(get_sample("MachO/test_objc_x86_64.macho"))
-    original = lief.MachO.parse(bin_path.as_posix()).at(0)
-    output = f"{tmp_path}/{bin_path.name}"
+    original = lief.MachO.parse(bin_path).at(0)
+    output = tmp_path / bin_path.name
 
     for i in range(50):
         segment = lief.MachO.SegmentCommand(f"__LIEF_{i}", [i] * (0x457 + i))
@@ -448,13 +448,13 @@ def test_objc_x86_64(tmp_path):
     assert checked, err
 
     if is_osx() and is_x86_64():
-        assert run_program(bin_path.as_posix())
+        assert run_program(bin_path)
         stdout = run_program(output)
 
         print(stdout)
         assert re.search(r'Printing Process Completed', stdout) is not None
 
-def test_break(tmp_path):
+def test_break(tmp_path: Path):
     FILES = [
         "MachO/mbedtls_selftest_arm64.bin",
         "MachO/mbedtls_selftest_x86_64.bin"
@@ -570,8 +570,8 @@ def test_break(tmp_path):
 
     for file in FILES:
         bin_path = pathlib.Path(get_sample(file))
-        original = lief.MachO.parse(bin_path.as_posix()).at(0)
-        output = f"{tmp_path}/{bin_path.name}"
+        original = lief.MachO.parse(bin_path).at(0)
+        output = tmp_path / bin_path.name
 
         SWAP_LIST = [
             ("__text", "__stubs"),
@@ -593,17 +593,17 @@ def test_break(tmp_path):
                      (original.header.cpu_type == lief.MachO.Header.CPU_TYPE.ARM64 and is_apple_m1())
 
         if should_run:
-            assert run_program(bin_path.as_posix())
+            assert run_program(bin_path)
             stdout = run_program(output)
 
             print(stdout)
             assert re.search(r'All tests PASS', stdout) is not None
 
-def test_issue_726(tmp_path):
+def test_issue_726(tmp_path: Path):
     for filename in ("MachO/mbedtls_selftest_arm64.bin", "MachO/mbedtls_selftest_x86_64.bin"):
         bin_path = pathlib.Path(get_sample(filename))
-        original = lief.MachO.parse(bin_path.as_posix()).at(0)
-        output = f"{tmp_path}/{bin_path.name}"
+        original = lief.MachO.parse(bin_path).at(0)
+        output = tmp_path / bin_path.name
 
         original.write(output)
         new = lief.MachO.parse(output).at(0)
@@ -612,7 +612,7 @@ def test_issue_726(tmp_path):
             assert parsed.get_segment("__LINKEDIT").virtual_size % parsed.page_size == 0
 
 
-def test_rpath(tmp_path):
+def test_rpath(tmp_path: Path):
     # c.f. https://github.com/lief-project/LIEF/issues/1074
     macho = lief.MachO.parse(get_sample("MachO/rpath_291.bin")).at(0)
     rpaths = list(macho.rpaths)
@@ -623,7 +623,7 @@ def test_rpath(tmp_path):
     rpaths[0].path = "/foo"
     rpaths[1].path = "/bar"
 
-    output = f"{tmp_path}/rpath.bin"
+    output = tmp_path / "rpath.bin"
 
     macho.write(output)
 
@@ -642,7 +642,7 @@ def test_encryption_info(tmp_path: Path):
     macho.encryption_info.crypt_size = 0
     macho.encryption_info.crypt_id = 0
 
-    output = f"{tmp_path.as_posix()}/new.macho"
+    output = tmp_path / "new.macho"
     macho.write(output)
 
     new = lief.MachO.parse(output).at(0)
@@ -656,7 +656,7 @@ def test_issue_1206(tmp_path: Path):
     # c.f. https://github.com/lief-project/LIEF/issues/1173
     macho = lief.MachO.parse(get_sample("MachO/issue_1206.bin")).at(0)
 
-    output = f"{tmp_path.as_posix()}/new.macho"
+    output = tmp_path / "new.macho"
     macho.write(output)
 
     new = lief.MachO.parse(output).at(0)
@@ -666,7 +666,7 @@ def test_issue_1204(tmp_path: Path):
     macho = lief.MachO.parse(get_sample("MachO/lief-dwarf-plugin-darwin-arm64.dylib")).at(0)
     macho.rpath.path += '/a/very/long/path/that/needs/expansion'
     out = tmp_path / "out.macho"
-    macho.write(out.as_posix())
+    macho.write(out)
 
     new = lief.MachO.parse(out).at(0)
     lief.MachO.check_layout(new)
@@ -676,7 +676,7 @@ def test_issue_1204(tmp_path: Path):
     macho.rpath.path += '/a/very/long/path/that/needs/expansion/' + 'a' * (macho.available_command_space + 10)
     rpath = macho.rpath.path
     out = tmp_path / "out2.macho"
-    macho.write(out.as_posix())
+    macho.write(out)
 
     new = lief.MachO.parse(out).at(0)
     lief.MachO.check_layout(new)
@@ -693,7 +693,7 @@ def test_issue_1236(tmp_path: Path):
             cmd.name = "/Users/random" + cmd.name
 
     output = tmp_path / "out.macho"
-    macho.write(output.as_posix())
+    macho.write(output)
     new = lief.MachO.parse(output)
 
     checked, err = lief.MachO.check_layout(new)

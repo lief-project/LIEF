@@ -21,7 +21,7 @@ if is_x86_64():
 elif is_aarch64():
     STUB_FILE = "hello_lief_aarch64.bin"
 
-STUB = lief.ELF.parse((CWD / STUB_FILE).as_posix())
+STUB = lief.ELF.parse(CWD / STUB_FILE)
 
 is_updated_linux = pytest.mark.skipif(not (is_linux() and is_x86_64() and has_recent_glibc()),
                                       reason="needs a recent system")

@@ -74,14 +74,13 @@ def test_force_relocate(tmp_path):
         elf: lief.ELF.Binary = lief.ELF.parse(file)
         fsize = file.stat().st_size
 
-        builder = lief.ELF.Builder(elf)
-        builder.config.force_relocate = True
-        builder.build()
+        config = lief.ELF.Builder.config_t()
+        config.force_relocate = True
 
         out_path = tmp / file.name
 
         print(f"File written in {out_path}")
-        builder.write(out_path.as_posix())
+        elf.write(out_path, config)
 
         check_layout(out_path)
         out_path.chmod(out_path.stat().st_mode | stat.S_IEXEC)
@@ -123,7 +122,7 @@ def test_symtab(tmp_path):
             sym.binding = lief.ELF.Symbol.BINDING.LOCAL
             sym.visibility = lief.ELF.Symbol.VISIBILITY.DEFAULT
             elf.add_symtab_symbol(sym)
-        elf.write(out_path.as_posix())
+        elf.write(out_path)
         check_layout(out_path)
 
         print(f"File written in {out_path}")
@@ -139,7 +138,7 @@ def test_symtab(tmp_path):
             assert normalize(OUTPUT) == normalize(stdout)
 
 
-        out = lief.ELF.parse(out_path.as_posix())
+        out = lief.ELF.parse(out_path)
         sym_names = [s.name for s in out.symtab_symbols]
         assert "test_sym_029" in sym_names
 
@@ -154,7 +153,7 @@ def test_add_interpreter(tmp_path):
 
     elf.interpreter = "/lib64/ld-linux-x86-64.so.2"
 
-    elf.write(out_path.as_posix())
+    elf.write(out_path)
     check_layout(out_path)
 
     print(f"File written in {out_path}")
@@ -180,7 +179,7 @@ def test_change_interpreter(tmp_path):
 
     elf.interpreter = "/lib64/ld-linux-x86-64.so.2"
 
-    elf.write(out_path.as_posix())
+    elf.write(out_path)
     check_layout(out_path)
 
     print(f"File written in {out_path}")
@@ -205,11 +204,10 @@ def test_rust_files(tmp_path):
     elf: lief.ELF.Binary = lief.ELF.parse(TARGET)
     fsize = TARGET.stat().st_size
 
-    builder = lief.ELF.Builder(elf)
-    builder.config.force_relocate = True
-    builder.build()
+    config = lief.ELF.Builder.config_t()
+    config.force_relocate = True
 
-    elf.write(out_path.as_posix())
+    elf.write(out_path, config)
     check_layout(out_path)
 
     print(f"File written in {out_path}")
@@ -237,11 +235,10 @@ def test_go_files(tmp_path):
         elf: lief.ELF.Binary = lief.ELF.parse(TARGET)
         fsize = TARGET.stat().st_size
 
-        builder = lief.ELF.Builder(elf)
-        builder.config.force_relocate = True
-        builder.build()
+        config = lief.ELF.Builder.config_t()
+        config.force_relocate = True
 
-        elf.write(out_path.as_posix())
+        elf.write(out_path, config)
         print(f"File written in {out_path}")
         check_layout(out_path)
         out_path.chmod(out_path.stat().st_mode | stat.S_IEXEC)
@@ -259,8 +256,8 @@ def test_issue_970(tmp_path: Path):
     lib = lief.ELF.parse(get_sample("ELF/libcudart.so.12"))
     out = tmp_path / "libcudart.so"
 
-    lib.write(out.as_posix())
-    new = lief.ELF.parse(out.as_posix())
+    lib.write(out)
+    new = lief.ELF.parse(out)
     check_layout(new)
 
     assert len(new.symbols_version_definition) == 2
@@ -278,7 +275,7 @@ def test_issue_1121(tmp_path: Path):
     elf.get_symbol("main").name = "main_test"
 
     out = tmp_path / "main_test.new"
-    elf.write(out.as_posix())
+    elf.write(out)
 
     new = lief.ELF.parse(out)
     check_layout(new)
@@ -302,7 +299,7 @@ def test_smart_insert_1(tmp_path: Path):
     elf.add(section)
 
     output = tmp_path / input_path.name
-    elf.write(output.as_posix())
+    elf.write(output)
 
     new_elf = lief.ELF.parse(output)
     check_layout(new_elf)
@@ -347,7 +344,7 @@ def test_smart_insert_2(tmp_path: Path):
     elf.add(section, loaded=False)
 
     output = tmp_path / input_path.name
-    elf.write(output.as_posix())
+    elf.write(output)
 
     new_elf = lief.ELF.parse(output)
 
@@ -370,8 +367,8 @@ def test_smart_insert_2(tmp_path: Path):
         }
 
         args = [
-            llvm_strip,
-            output.as_posix()
+        llvm_strip,
+        output
         ]
 
         with Popen(args, **popen_args) as proc: # type: ignore[call-overload]
@@ -392,7 +389,7 @@ def test_issue_1175_missing_segment(tmp_path: Path):
         elf.add(section)
 
     output = tmp_path / "issue_1175.elf"
-    elf.write(output.as_posix())
+    elf.write(output)
 
     new = lief.ELF.parse(output)
     check_layout(new)
@@ -413,7 +410,7 @@ def test_ld_relocations(tmp_path: Path):
     config = lief.ELF.Builder.config_t()
     config.force_relocate = True
     output = tmp_path / "ld.so"
-    elf.write(output.as_posix(), config)
+    elf.write(output, config)
     output.chmod(0o755)
 
     new = lief.ELF.parse(output)
@@ -442,7 +439,7 @@ def test_s390x(tmp_path: Path):
     config = lief.ELF.Builder.config_t()
     config.force_relocate = True
 
-    elf.write(output.as_posix(), config)
+    elf.write(output, config)
     new = lief.ELF.parse(output)
     check_layout(new)
 
@@ -465,7 +462,7 @@ def test_patchelf(tmp_path: Path):
 
     output = tmp_path / "lief-patchelf"
 
-    elf.write(output.as_posix(), config)
+    elf.write(output, config)
 
     check_layout(output)
     output.chmod(0o755)
@@ -487,7 +484,7 @@ def test_remove_segment(tmp_path: Path):
 
     output = tmp_path / "lief-patchelf"
 
-    elf.write(output.as_posix())
+    elf.write(output)
 
     new = lief.ELF.parse(output)
 

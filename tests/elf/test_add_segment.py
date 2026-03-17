@@ -24,7 +24,7 @@ CWD = Path(__file__).parent
 @is_updated_linux
 def test_simple(tmp_path: Path):
     sample_path = get_sample('ELF/ELF64_x86-64_binary_ls.bin')
-    stub        = lief.ELF.parse((CWD / "hello_lief.bin").as_posix())
+    stub        = lief.ELF.parse(CWD / "hello_lief.bin")
     output      = tmp_path / "ls.segment"
 
     target = lief.ELF.parse(sample_path)
@@ -50,7 +50,7 @@ def test_simple(tmp_path: Path):
 @is_updated_linux
 def test_gcc(tmp_path: Path):
     sample_path = get_sample('ELF/ELF64_x86-64_binary_gcc.bin')
-    stub        = lief.ELF.parse((CWD / "hello_lief.bin").as_posix())
+    stub        = lief.ELF.parse(CWD / "hello_lief.bin")
     output      = tmp_path / "gcc.segment"
 
     target                  = lief.ELF.parse(sample_path)
@@ -75,7 +75,7 @@ def test_gcc(tmp_path: Path):
 @is_linux_x64
 def test_static(tmp_path: Path):
     sample_path = get_sample('ELF/ELF64_x86-64_binary_static-binary.bin')
-    stub        = lief.ELF.parse((CWD / "hello_lief.bin").as_posix())
+    stub        = lief.ELF.parse(CWD / "hello_lief.bin")
     output      = tmp_path / "static.segment"
 
     target                  = lief.ELF.parse(sample_path)
@@ -115,12 +115,12 @@ def test_add_segment(tmp_path: Path, binpath):
 
     stub = None
     if is_x86_64():
-        stub = lief.ELF.parse((CWD / "hello_lief.bin").as_posix())
+        stub = lief.ELF.parse(CWD / "hello_lief.bin")
     elif is_aarch64():
-        stub = lief.ELF.parse((CWD / "hello_lief_aarch64.bin").as_posix())
+        stub = lief.ELF.parse(CWD / "hello_lief_aarch64.bin")
 
     name = target.name
-    elf = lief.ELF.parse(target.as_posix())
+    elf = lief.ELF.parse(target)
     output = tmp_path / f"{name}.segment"
     for _ in range(6):
         stub_segment      = stub.segments[0]
@@ -146,7 +146,7 @@ def test_add_segment(tmp_path: Path, binpath):
         assert re.search(r'LIEF is Working', stdout) is not None
 
 def test_add_segment_alignment_dyn(tmp_path: Path):
-    dyn_elf = lief.ELF.parse((CWD / "hello_lief.bin").as_posix())
+    dyn_elf = lief.ELF.parse(CWD / "hello_lief.bin")
 
     # For ease of testing, just try to duplicate the second segment.
     # It is a LOAD segment with an alignment of 0x200000 and a non-zero page offset, so the result should be similarly aligned.

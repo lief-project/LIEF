@@ -117,7 +117,7 @@ def test_exports_simple(tmp_path: Path, sample: str):
     config.export_section = ".myedata"
 
     output = tmp_path / input_path.name
-    pe.write(output.as_posix(), config)
+    pe.write(output, config)
 
     new = lief.PE.parse(output)
     assert new.get_section(config.export_section) is not None
@@ -159,7 +159,7 @@ def test_exports_creation(tmp_path: Path, sample: str):
     config.export_section = ".myedata"
 
     output = tmp_path / input_path.name
-    pe.write(output.as_posix(), config)
+    pe.write(output, config)
 
     new = lief.PE.parse(output)
     assert new.get_section(config.export_section) is not None
@@ -199,7 +199,7 @@ def test_add_export_entry(tmp_path: Path):
     config.export_section = ".myedata"
 
     output = tmp_path / input_path.name
-    pe.write(output.as_posix(), config)
+    pe.write(output, config)
 
     new = lief.PE.parse(output)
     assert new.get_section(config.export_section) is not None
@@ -238,7 +238,7 @@ def test_remove_entry(tmp_path: Path):
     config.export_section = ".myedata"
 
     output = tmp_path / input_path.name
-    pe.write(output.as_posix(), config)
+    pe.write(output, config)
 
     new = lief.PE.parse(output)
     check, msg = lief.PE.check_layout(new)
@@ -283,7 +283,7 @@ def test_exe2dll(tmp_path: Path):
 
     output = tmp_path / exp.name
     print(output)
-    pe.write(output.as_posix(), config)
+    pe.write(output, config)
 
     new = lief.PE.parse(output)
 
@@ -324,7 +324,7 @@ def test_feat_1238(tmp_path: Path):
     config.export_section = ".myedata"
 
     output = tmp_path / input_path.name
-    pe.write(output.as_posix(), config)
+    pe.write(output, config)
 
 
     new = lief.PE.parse(output)

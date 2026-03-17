@@ -86,8 +86,8 @@ def test_simple(tmp_path: Path, flag: str):
     libadd_so  = compile_libadd(tmp_path, flag)
     binadd_bin = compile_binadd(tmp_path, flag)
 
-    libadd = lief.ELF.parse(libadd_so.as_posix())
-    binadd = lief.ELF.parse(binadd_bin.as_posix())
+    libadd = lief.ELF.parse(libadd_so)
+    binadd = lief.ELF.parse(binadd_bin)
 
     libadd_dynsym = libadd.dynamic_symbols
     binadd_dynsym = binadd.dynamic_symbols
@@ -114,8 +114,8 @@ def test_simple(tmp_path: Path, flag: str):
     libadd_modified = tmp_path / "libabc.so"
     binadd_modified = tmp_path / "binadd_obf.bin"
 
-    libadd.write(libadd_modified.as_posix())
-    binadd.write(binadd_modified.as_posix())
+    libadd.write(libadd_modified)
+    binadd.write(binadd_modified)
 
     st = os.stat(libadd_modified)
     os.chmod(libadd_modified, st.st_mode | stat.S_IEXEC)

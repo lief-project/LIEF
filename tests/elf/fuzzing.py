@@ -39,7 +39,7 @@ def fuzz(melkor, seed, nb):
     outputdir: Path = generate_samples(melkor, seed, nb)
     print(outputdir)
     for file in outputdir.iterdir():
-        if not lief.is_elf(file.as_posix()):
+        if not lief.is_elf(file):
             continue
 
         print(f"Trying to parse {file!s}")
@@ -47,7 +47,7 @@ def fuzz(melkor, seed, nb):
             subprocess.check_call(
                 (
                     sys.executable, "-c",
-                    f"import lief;lief.logging.disable();lief.parse('{file.as_posix()}')"
+                    f"import lief;lief.logging.disable();lief.parse('{file}')"
                 ),
                 timeout=DEFAULT_TIMEOUT,
                 env=os.environ.copy()

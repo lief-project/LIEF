@@ -62,7 +62,7 @@ def test_remove_tls_callback(tmp_path: Path):
     assert len(tls.callbacks) == 0
 
     output = tmp_path / input_path.name
-    pe.write(output.as_posix())
+    pe.write(output)
 
     new = lief.PE.parse(output)
 
@@ -107,7 +107,7 @@ def test_add_callback(tmp_path: Path):
     tls.callbacks = callbacks
 
     output = tmp_path / input_path.name
-    pe.write(output.as_posix())
+    pe.write(output)
 
     new = lief.PE.parse(output)
 
@@ -158,7 +158,7 @@ def test_remove_tls(tmp_path: Path):
     pe.remove_tls()
 
     output = tmp_path / input_path.name
-    pe.write(output.as_posix())
+    pe.write(output)
 
     new = lief.PE.parse(output)
 
@@ -193,7 +193,7 @@ def test_create_tls(tmp_path: Path):
     pe.remove_tls()
 
     empty_tls_path = tmp_path / "empty_tls.exe"
-    pe.write(empty_tls_path.as_posix())
+    pe.write(empty_tls_path)
 
     empty_tls = lief.PE.parse(empty_tls_path)
 
@@ -211,7 +211,7 @@ def test_create_tls(tmp_path: Path):
     empty_tls.tls = tls
     output = tmp_path / "crafted_tls.exe"
     lief.logging.enable_debug()
-    empty_tls.write(output.as_posix())
+    empty_tls.write(output)
 
     new = lief.PE.parse(output)
 

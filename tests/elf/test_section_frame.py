@@ -29,9 +29,9 @@ def test_frame(tmp_path):
     elf.add_library(elf.libraries[0]) # type: ignore
 
     out = pathlib.Path(tmp_path) / "mbedtls_selftest.elf64"
-    elf.write(out.as_posix())
+    elf.write(out)
 
-    new = lief.ELF.parse(out.as_posix())
+    new = lief.ELF.parse(out)
 
     out.chmod(out.stat().st_mode | stat.S_IEXEC)
     assert len(new.dynamic_entries) == 27 # Make sure our modifications has been committed
@@ -50,19 +50,19 @@ def test_sectionless(tmp_path):
     header.section_header_offset = 0
 
     out = pathlib.Path(tmp_path) / "mbedtls_selftest.sectionless"
-    elf.write(out.as_posix())
+    elf.write(out)
 
-    sectionless = lief.ELF.parse(out.as_posix())
+    sectionless = lief.ELF.parse(out)
     out = pathlib.Path(tmp_path) / "mbedtls_selftest.sectionless.built"
 
     assert len(sectionless.dynamic_symbols) == 40
 
     sectionless.add_library(sectionless.libraries[0]) # type: ignore
-    sectionless.write(out.as_posix())
+    sectionless.write(out)
 
     out.chmod(out.stat().st_mode | stat.S_IEXEC)
 
-    new = lief.ELF.parse(out.as_posix())
+    new = lief.ELF.parse(out)
     assert len(new.dynamic_entries) == 27 # Make sure our modifications has been committed
 
     if is_linux():

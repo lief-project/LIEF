@@ -11,7 +11,7 @@ def test_linkedit(tmp_path):
     config = lief.MachO.Builder.config_t()
     config.linkedit = False
 
-    lief.MachO.Builder.write(original, output, config)
+    original.write(output, config)
 
     modified = lief.MachO.parse(output).at(0)
 
@@ -25,7 +25,7 @@ def test_fat(tmp_path):
     config = lief.MachO.Builder.config_t()
     config.linkedit = False
 
-    lief.MachO.Builder.write(original, output, config)
+    original.write(output, config)
 
     modified = lief.MachO.parse(output).at(0)
 

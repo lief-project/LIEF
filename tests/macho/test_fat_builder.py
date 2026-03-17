@@ -10,7 +10,7 @@ lief.logging.set_level(lief.logging.LEVEL.INFO)
 
 def test_all(tmp_path):
     bin_path = pathlib.Path(get_sample("MachO/FAT_MachO_x86-x86-64-binary_fatall.bin"))
-    original = lief.MachO.parse(bin_path.as_posix())
+    original = lief.MachO.parse(bin_path)
     output = f"{tmp_path}/{bin_path.name}"
 
     assert len(original) == 2

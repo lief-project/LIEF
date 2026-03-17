@@ -21,12 +21,11 @@ def test_relr_relocations(tmp_path: Path):
 
     out = tmp_path / "libm.so.6"
 
-    builder = lief.ELF.Builder(elf)
-    builder.config.force_relocate = True
-    builder.build()
-    builder.write(out.as_posix())
+    config = lief.ELF.Builder.config_t()
+    config.force_relocate = True
+    elf.write(out, config)
 
-    new = lief.ELF.parse(out.as_posix())
+    new = lief.ELF.parse(out)
 
     check_layout(new)
     new_relr_reloc = [r for r in new.relocations if r.encoding == lief.ELF.Relocation.ENCODING.RELR]
@@ -46,7 +45,7 @@ def test_relr_addend(tmp_path: Path):
     elf = lief.ELF.parse(get_sample("ELF/ls-glibc2.40-relr.elf"))
     elf.relocate_phdr_table()
     out = tmp_path / "out.elf"
-    elf.write(out.as_posix())
+    elf.write(out)
 
     new_elf = lief.ELF.parse(out)
     check_layout(new_elf)

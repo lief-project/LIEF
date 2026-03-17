@@ -12,7 +12,7 @@ def test_1124(tmp_path: Path):
 
     elf = lief.ELF.parse(get_sample("ELF/cordic.ko"))
     out = tmp_path / "cordic.ko"
-    elf.write(out.as_posix())
+    elf.write(out)
 
     cordic = lief.ELF.parse(out)
     symtab = cordic.symtab_symbols

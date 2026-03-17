@@ -14,11 +14,11 @@ def test_issue_863(tmp_path: Path):
     elf.remove_dynamic_symbol("puts")
 
     out = tmp_path / "issue_863.modified"
-    elf.write(out.as_posix())
+    elf.write(out)
 
     check_layout(elf)
 
-    new = lief.ELF.parse(out.as_posix())
+    new = lief.ELF.parse(out)
     assert new.sysv_hash.nchain == 6
 
 def test_pr_968():
@@ -68,7 +68,7 @@ def test_issue_1089(tmp_path: Path):
     elf.remove_dynamic_symbol("iptc_read_counter")
 
     out = tmp_path / "libip4tc.so.2.0.0"
-    elf.write(out.as_posix())
+    elf.write(out)
 
     new = lief.ELF.parse(out)
     check_layout(new)
@@ -82,7 +82,7 @@ def test_issue_1097(tmp_path: Path):
     deps = [entry.name for entry in elf.dynamic_entries if isinstance(entry, lief.ELF.DynamicEntryLibrary)]
 
     out = tmp_path / "libhwui.so"
-    elf.write(out.as_posix())
+    elf.write(out)
 
     new = lief.ELF.parse(out)
     check_layout(new)

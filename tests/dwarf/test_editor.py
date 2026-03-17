@@ -71,7 +71,7 @@ def test_simple(tmp_path: Path):
     var.set_addr(0x400)
 
     output = tmp_path / "simple.dwarf"
-    editor.write(output.as_posix())
+    editor.write(output)
 
 
 def test_register_param(tmp_path: Path):
@@ -86,7 +86,7 @@ def test_register_param(tmp_path: Path):
     param.assign_register("r15")
 
     output = tmp_path / "reg.dwarf"
-    editor.write(output.as_posix())
+    editor.write(output)
 
     dbg = lief.dwarf.load(output)
     func = dbg.find_function("test_func_1")

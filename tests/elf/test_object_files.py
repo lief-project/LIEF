@@ -66,16 +66,15 @@ def test_force_relocate(tmp_path):
         if not file.exists():
             print(f"{file} does not exist. Skipping ...", file=sys.stderr)
             continue
-        elf: lief.ELF.Binary = lief.ELF.parse(file.as_posix())
+        elf: lief.ELF.Binary = lief.ELF.parse(file)
 
-        builder = lief.ELF.Builder(elf)
-        builder.config.force_relocate = True
-        builder.build()
+        config = lief.ELF.Builder.config_t()
+        config.force_relocate = True
 
         out_path = tmp / Path(file.name).name
 
         print(f"File written in {out_path}")
-        builder.write(out_path.as_posix())
+        elf.write(out_path, config)
         build_run_check(file, out_path)
 
 
@@ -88,17 +87,14 @@ def test_object_files_section(tmp_path):
         if not file.exists():
             print(f"{file} does not exist. Skipping ...", file=sys.stderr)
             continue
-        elf: lief.ELF.Binary = lief.ELF.parse(file.as_posix())
+        elf: lief.ELF.Binary = lief.ELF.parse(file)
 
         elf.get_section(".symtab").name = ".foooooootab"
-
-        builder = lief.ELF.Builder(elf)
-        builder.build()
 
         out_path = tmp / file.name
 
         print(f"File written in {out_path}")
-        builder.write(out_path.as_posix())
+        elf.write(out_path)
         build_run_check(file, out_path)
 
 @pytest.mark.skipif(not is_linux() or glibc_too_old, reason="not linux or glibc too old")
@@ -110,7 +106,7 @@ def test_object_files_symbols(tmp_path):
         if not file.exists():
             print(f"{file} does not exist. Skipping ...", file=sys.stderr)
             continue
-        elf: lief.ELF.Binary = lief.ELF.parse(file.as_posix())
+        elf: lief.ELF.Binary = lief.ELF.parse(file)
 
         sym = lief.ELF.Symbol()
         sym.name       = "LIEF_CUSTOM_SYMBOL"
@@ -125,13 +121,10 @@ def test_object_files_symbols(tmp_path):
         file_sym = elf.get_symtab_symbol("test.cpp")
         file_sym.name = "/tmp/foobar.cpp"
 
-        builder = lief.ELF.Builder(elf)
-        builder.build()
-
         out_path = tmp / file.name
 
         print(f"File written in {out_path}")
-        builder.write(out_path.as_posix())
+        elf.write(out_path)
         build_run_check(file, out_path)
 
 
@@ -144,7 +137,7 @@ def test_relocations(tmp_path):
         if not file.exists():
             print(f"{file} does not exist. Skipping ...", file=sys.stderr)
             continue
-        elf: lief.ELF.Binary = lief.ELF.parse(file.as_posix())
+        elf: lief.ELF.Binary = lief.ELF.parse(file)
 
         # Add a relocation that do "nothing"
         rel = lief.ELF.Relocation(lief.ELF.ARCH.X86_64)
@@ -154,13 +147,10 @@ def test_relocations(tmp_path):
         rel.purpose = lief.ELF.Relocation.PURPOSE.OBJECT
         elf.add_object_relocation(rel, elf.get_section(".text"))
 
-        builder = lief.ELF.Builder(elf)
-        builder.build()
-
         out_path = tmp / file.name
 
         print(f"File written in {out_path}")
-        builder.write(out_path.as_posix())
+        elf.write(out_path)
         build_run_check(file, out_path)
 
 def test_relocation_resolve():

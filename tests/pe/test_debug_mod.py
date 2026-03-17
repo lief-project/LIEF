@@ -56,7 +56,7 @@ def test_dbg_mod_idempotency(tmp_path: Path, sample: str):
     pe = lief.PE.parse(input_path)
 
     output = tmp_path / input_path.name
-    pe.write(output.as_posix(), _get_default_config())
+    pe.write(output, _get_default_config())
 
     new = lief.PE.parse(output)
     check, msg = lief.PE.check_layout(new)
@@ -79,7 +79,7 @@ def test_dbg_modify_entry(tmp_path: Path):
     cv_pdb.age = 3
 
     output = tmp_path / input_path.name
-    pe.write(output.as_posix(), _get_default_config())
+    pe.write(output, _get_default_config())
     new = lief.PE.parse(output)
     check, msg = lief.PE.check_layout(new)
 
@@ -99,7 +99,7 @@ def test_dbg_modify_entry(tmp_path: Path):
     cv_pdb.age = 3
 
     output = tmp_path / input_path.name
-    pe.write(output.as_posix(), _get_default_config())
+    pe.write(output, _get_default_config())
     new = lief.PE.parse(output)
     check, msg = lief.PE.check_layout(new)
     assert check, msg
@@ -119,7 +119,7 @@ def test_dbg_delete_add(tmp_path: Path):
     assert pe.codeview_pdb is None
 
     output = tmp_path / input_path.name
-    pe.write(output.as_posix(), _get_default_config())
+    pe.write(output, _get_default_config())
 
     new = lief.PE.parse(output)
     assert new.codeview_pdb is None
@@ -140,7 +140,7 @@ def test_dbg_delete_add(tmp_path: Path):
     assert new.codeview_pdb.age == 33
 
     output = tmp_path / f"bis_{input_path.name}"
-    new.write(output.as_posix(), _get_default_config())
+    new.write(output, _get_default_config())
 
     new = lief.PE.parse(output)
 
@@ -159,7 +159,7 @@ def test_clear_debug(tmp_path: Path):
     pe.clear_debug()
 
     output = tmp_path / input_path.name
-    pe.write(output.as_posix(), _get_default_config())
+    pe.write(output, _get_default_config())
 
     delta = output.stat().st_size - input_path.stat().st_size
     assert delta <= 0
