@@ -1293,7 +1293,10 @@ class LIEF_LOCAL ExeLayout : public Layout {
     if (relocate_relr_) {
       DynamicEntry* dt_relr = binary_->get(DynamicEntry::TAG::RELR);
       if (dt_relr == nullptr) {
-        LIEF_ERR("Can't find DT_RELR");
+        dt_relr = binary_->get(DynamicEntry::TAG::ANDROID_RELR);
+      }
+      if (dt_relr == nullptr) {
+        LIEF_ERR("Can't find DT_RELR/DT_ANDROID_RELR");
         return make_error_code(lief_errors::file_format_error);
       }
 

@@ -17,6 +17,7 @@
 #include "LIEF/ELF/Header.hpp"
 #include "LIEF/ELF/Segment.hpp"
 #include "LIEF/ELF/Section.hpp"
+#include "LIEF/ELF/Symbol.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
 #include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/utils.hpp"
@@ -43,6 +44,7 @@ class LayoutChecker {
   bool check_sections();
   bool check_dynamic();
   bool check_notes();
+  bool check_tls();
 
   bool check() {
     if (!check_header()) return false;
@@ -50,6 +52,7 @@ class LayoutChecker {
     if (!check_sections()) return false;
     if (!check_dynamic()) return false;
     if (!check_notes()) return false;
+    if (!check_tls()) return false;
     return true;
   }
 
@@ -112,6 +115,11 @@ bool LayoutChecker::check_header() {
           phoff, pht_size);
     }
 
+    // Required by Android
+    if (phoff % elf.ptr_size() != 0) {
+      return error("phoff offset ({:#010x}) misaligned", phoff);
+    }
+
     if (phnum > (std::numeric_limits<uint16_t>::max() / phdr_size)) {
         return error("Too many program headers: {}", phnum);
     }
@@ -127,6 +135,12 @@ bool LayoutChecker::check_header() {
       return error("Section header table (offset: {:#x}, size: {:#x}) is beyond file size",
                    shoff, sht_size);
     }
+
+    // Required by Android
+    if (shoff % elf.ptr_size() != 0) {
+      return error("shdr offset ({:#010x}) misaligned", shoff);
+    }
+
     if (hdr.section_name_table_idx() >= shnum) {
        return error("Invalid section name table index: {}",
                     hdr.section_name_table_idx());
@@ -516,6 +530,37 @@ bool LayoutChecker::check_notes() {
                    seg.physical_size(), seg.virtual_size());
     }
   }
+  return true;
+}
+
+bool LayoutChecker::check_tls() {
+  const Segment* tls_seg = nullptr;
+  for (const Segment& seg : elf.segments()) {
+    if (seg.type() == Segment::TYPE::TLS) {
+      if (tls_seg != nullptr) {
+        return error("Multiple PT_TLS segments");
+      }
+      tls_seg = &seg;
+    }
+  }
+
+  if (tls_seg == nullptr) {
+    return true;
+  }
+
+  for (const Symbol& sym : elf.symbols()) {
+    if (sym.type() != Symbol::TYPE::TLS) {
+      continue;
+    }
+
+    uint64_t addr = sym.value();
+    if (addr > tls_seg->virtual_size() || (addr + sym.size()) > tls_seg->virtual_size()) {
+      return error("TLS symbol {:#010}: {} out of PT_TLS segment range"
+                   "([{:#010x}, {:#010x}])", sym.value(), sym.name(),
+                   0, tls_seg->virtual_size());
+    }
+  }
+
   return true;
 }
 

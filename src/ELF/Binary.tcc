@@ -557,7 +557,8 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment, ui
   new_segment->content(content);
 
   if (header.section_headers_offset() <= new_segment->file_offset() + new_segment->physical_size()) {
-    header.section_headers_offset(new_segment->file_offset() + new_segment->physical_size());
+    header.section_headers_offset(
+        align(new_segment->file_offset() + new_segment->physical_size(), ptr_size()));
   }
 
   const auto it_new_segment_place = std::find_if(segments_.rbegin(), segments_.rend(),
@@ -623,7 +624,7 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment, uin
   // Patch SHDR
   Header& header = this->header();
   if (header.section_headers_offset() >= last_offset) {
-    header.section_headers_offset(header.section_headers_offset() + delta);
+    header.section_headers_offset(align(header.section_headers_offset() + delta, ptr_size));
   }
 
   auto alloc = datahandler_->make_hole(last_offset_aligned, new_segment->physical_size());
@@ -702,7 +703,8 @@ Segment* Binary::extend_segment<Segment::TYPE::LOAD>(const Segment& segment, uin
   segment_to_extend->content(segment_content);
 
   // Patches
-  header().section_headers_offset(header().section_headers_offset() + shift);
+  header().section_headers_offset(
+      align(header().section_headers_offset() + shift, ptr_size()));
 
   shift_dynamic_entries(from_address, shift);
   shift_symbols(from_address, shift);
@@ -830,7 +832,7 @@ Section* Binary::add_section</*loaded=*/false>(const Section& section,
   Header& header = this->header();
   header.numberof_sections(header.numberof_sections() + 1);
   const uint64_t new_section_hdr_offset = header.section_headers_offset() + delta;
-  header.section_headers_offset(new_section_hdr_offset);
+  header.section_headers_offset(align(new_section_hdr_offset, ptr_size()));
   return add_section(std::move(new_section));
 }
 
