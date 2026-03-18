@@ -127,7 +127,7 @@ def test_add_segment(tmp_path: Path, binpath):
         segment           = lief.ELF.Segment()
         segment.content   = stub.segments[0].content
         segment.type      = stub_segment.type
-        segment.alignment = 0x10000
+        segment.alignment = 0x1000
         segment.flags     = stub_segment.flags
 
         new_segment       = elf.add(segment)
