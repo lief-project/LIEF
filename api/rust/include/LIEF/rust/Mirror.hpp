@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#pragma once
 #include <string>
 #include <sstream>
 #include <vector>
@@ -20,7 +21,6 @@
 #include "LIEF/optional.hpp"
 #include "LIEF/canbe_unique.hpp"
 
-#pragma once
 template<class T>
 class Mirror {
   public:
