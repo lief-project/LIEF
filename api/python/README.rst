@@ -62,4 +62,4 @@ Romain Thomas `@rh0main <https://x.com/rh0main>`_
 
 ----
 
-LIEF is provided under the `Apache 2.0 license <https://github.com/lief-project/LIEF/blob/0.17.5/LICENSE>`_
+LIEF is provided under the `Apache 2.0 license <https://github.com/lief-project/LIEF/blob/0.17.6/LICENSE>`_
