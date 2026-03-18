@@ -81,6 +81,20 @@
 
   * Python 3.8 is no longer supported
 
+
+0.17.6 - March 18th, 2026
+-------------------------
+
+:ELF:
+
+  * Fix alignment for ``PHDR/SHDR`` and improve ``TLS/RELR`` handling (:issue:`1315`)
+  * Skip ``NOBITS`` sections in layout calculations and improve index retrieval
+    (related to :issue:`1315`)
+
+:PE:
+
+  * Fix IAT parsing issue by :github_user:`itamarga` in PR :pr:`1314`)
+
 0.17.5 - March 8th, 2026
 ------------------------
 
