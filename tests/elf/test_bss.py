@@ -42,6 +42,7 @@ def test_issue_671(tmp_path: Path):
             assert len(stdout) > 0
 
 
+@pytest.mark.slow
 def test_all(tmp_path: Path):
     if not is_64bits_platform():
         pytest.skip("requires a 64-bits platform")

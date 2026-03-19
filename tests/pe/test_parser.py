@@ -921,6 +921,7 @@ def test_chpe_x86():
       0x10c8f0[0x4] Hybrid code address range"""
 
 @pytest.mark.skipif(condition=not has_private_samples(), reason="needs private samples")
+@pytest.mark.slow
 def test_issue_iat_hang():
     target_pe = Path(get_sample("private/PE/lief_hang_poc.exe")).resolve().absolute()
 

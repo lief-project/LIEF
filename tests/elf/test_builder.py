@@ -56,6 +56,7 @@ def convert_size(size_bytes):
 
 
 @pytest.mark.skipif(not is_linux() or glibc_too_old, reason="not linux or glibc too old")
+@pytest.mark.slow
 def test_force_relocate(tmp_path):
     SKIP_LIST = {
         "test.clang.gold.wronglinker.bin", "test.android.bin", "test.android.aarch64.bin",
@@ -223,6 +224,7 @@ def test_rust_files(tmp_path):
         assert "thisisthreadnumber9" in normalize(stdout)
 
 @pytest.mark.skipif(not is_linux() or glibc_too_old, reason="not linux or glibc too old")
+@pytest.mark.slow
 def test_go_files(tmp_path):
     TARGETS = [
         SAMPLE_DIR / "ELF" / "batch-x86-64" / "test.go.pie.bin",
@@ -252,6 +254,7 @@ def test_go_files(tmp_path):
             proc.poll()
             assert "done" in normalize(stdout)
 
+@pytest.mark.slow
 def test_issue_970(tmp_path: Path):
     lib = lief.ELF.parse(get_sample("ELF/libcudart.so.12"))
     out = tmp_path / "libcudart.so"
@@ -283,6 +286,7 @@ def test_issue_1121(tmp_path: Path):
 
 
 @pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+@pytest.mark.slow
 def test_smart_insert_1(tmp_path: Path):
     """
     The purpose of this test is to make sure that when we have a binary with debug

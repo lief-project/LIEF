@@ -110,6 +110,7 @@ def test_issue_1309(tmp_path: Path):
     assert list(new.dynamic_symbols)[129].name == "base64_decode_utf16le"
 
 @pytest.mark.skipif(condition=not has_private_samples(), reason="needs private samples")
+@pytest.mark.slow
 def test_issue_1315(tmp_path: Path):
     # NOTE(romain): there is an exhaustive test here: 'private/ELF/issue_1315'
     #               that includes on-device testing.

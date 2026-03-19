@@ -1,7 +1,9 @@
 import lief
+import pytest
 from utils import get_sample, check_layout
 from pathlib import Path
 
+@pytest.mark.slow
 def test_chrome_arm64(tmp_path: Path):
     chrome_sample = Path(get_sample("ELF/libmonochrome-arm64.so"))
     chrome = lief.ELF.parse(chrome_sample)
@@ -78,6 +80,7 @@ def test_chrome_arm64(tmp_path: Path):
     assert mod_packed_relocs[145598].type == lief.ELF.Relocation.TYPE.AARCH64_ABS64
 
 
+@pytest.mark.slow
 def test_chrome_armv7(tmp_path: Path):
     chrome_sample = Path(get_sample("ELF/libmonochrome-armv7.so"))
     chrome = lief.ELF.parse(chrome_sample)

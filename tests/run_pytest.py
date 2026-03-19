@@ -7,7 +7,7 @@ from pathlib import Path
 
 CWD = Path(__file__).parent
 
-def run(junit_xml: Optional[str] = None):
+def run(junit_xml: Optional[str] = None, skip_slow: bool = False):
     args = [
         (CWD / "macho"),
         (CWD / "pe"),
@@ -29,6 +29,9 @@ def run(junit_xml: Optional[str] = None):
     if junit_xml is not None:
         args.append(f"--junit-xml={junit_xml}")
 
+    if skip_slow:
+        args.append("--skip-slow")
+
     retcode = pytest.main(args)
 
     print(f"Retcode: {retcode}")
@@ -43,8 +46,15 @@ def main():
         default=None,
         type=str
     )
+
+    parser.add_argument(
+        "--skip-slow",
+        action="store_true",
+        dest="skip_slow",
+        help="Skip slow tests",
+    )
     args = parser.parse_args()
-    run(args.junit_xml)
+    run(args.junit_xml, args.skip_slow)
 
 if __name__ == "__main__":
     main()

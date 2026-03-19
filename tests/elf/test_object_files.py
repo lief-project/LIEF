@@ -58,6 +58,7 @@ def build_run_check(obj: pathlib.Path, new_object: pathlib.Path):
             assert normalize(OUTPUT) == normalize(stdout)
 
 @pytest.mark.skipif(not is_linux() or glibc_too_old, reason="not linux or glibc too old")
+@pytest.mark.slow
 def test_force_relocate(tmp_path):
     BINS = SAMPLE_DIR / "ELF" / "batch-x86-64"
     tmp = pathlib.Path(tmp_path)
