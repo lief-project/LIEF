@@ -8,11 +8,14 @@ import subprocess
 import stat
 import time
 import json
-from typing import Optional, Tuple, List
+from typing import Optional, Tuple, List, TypeAlias
 from pathlib import Path
 from subprocess import Popen
 
 import importlib.util
+
+CheckLayoutInput: TypeAlias = \
+    str | Path | lief.ELF.Binary | lief.PE.Binary | lief.MachO.Binary | None
 
 def check_objc_dump(metadata: lief.objc.Metadata, file: Path) -> bool:
     decl_opt = lief.objc.DeclOpt()
@@ -226,8 +229,11 @@ def win_exec(executable: Path, timeout: int = 60,
 def normalize_path(path: str) -> str:
     return path.replace('\\', '/')
 
-def check_layout(target: str | Path | lief.Binary):
-    target_bin: lief.ELF.Binary | lief.PE.Binary | lief.MachO.Binary | None = None
+def check_layout(target: CheckLayoutInput):
+    target_bin: CheckLayoutInput = None
+    if target is None:
+        return
+
     if isinstance(target, (str, Path)):
         target_bin = lief.parse(target)
     else:
