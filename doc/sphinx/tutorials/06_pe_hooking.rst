@@ -159,4 +159,4 @@ Now we can run the final executable:
   :align: center
 
 
-.. include:: ../../../_cross_api.rst
+.. include:: ../_cross_api.rst
