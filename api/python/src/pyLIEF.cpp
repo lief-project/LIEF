@@ -21,6 +21,7 @@
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
+#include <nanobind/stl/unique_ptr.h>
 #include <nanobind/extra/memoryview.hpp>
 #include "nanobind/extra/stl/pathlike.h"
 
@@ -122,6 +123,15 @@ void init_logger(nb::module_& m) {
     .value(PY_ENUM(logging::LEVEL::INFO));
   #undef PY_ENUM
 
+  nb::class_<logging::Scoped>(logging, "Scoped")
+    .def("__enter__", [] (logging::Scoped& self) {
+      return &self;
+    }, nb::rv_policy::reference)
+
+    .def("__exit__", [] (logging::Scoped& self, const nb::args& /*args*/) {
+      self.reset();
+    });
+
   logging.def("disable", nb::overload_cast<>(&logging::disable),
               "Disable the logger globally"_doc);
 
@@ -130,6 +140,14 @@ void init_logger(nb::module_& m) {
 
   logging.def("set_level", nb::overload_cast<logging::LEVEL>(&logging::set_level),
               "Change logging level", "level"_a);
+
+  logging.def("level_scope", [] (logging::LEVEL lvl) {
+      return std::make_unique<logging::Scoped>(lvl);
+  }, "level"_a, nb::rv_policy::take_ownership);
+
+  logging.def("level_scope", [] (const std::string& name, logging::LEVEL lvl) {
+      return std::make_unique<logging::Scoped>(lvl, name);
+  }, "name"_a, "lvl"_a, nb::rv_policy::take_ownership);
 
   logging.def("get_level", nb::overload_cast<>(&logging::get_level),
               "Get current logging level");

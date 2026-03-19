@@ -1,6 +1,6 @@
 import enum
 import os
-from typing import Iterator, Optional, Union
+from typing import Iterator, Optional, Union, overload
 
 
 class LEVEL(enum.Enum):
@@ -18,11 +18,22 @@ class LEVEL(enum.Enum):
 
     INFO = 3
 
+class Scoped:
+    def __enter__(self) -> Scoped | None: ...
+
+    def __exit__(self, *args) -> None: ...
+
 def disable() -> None: ...
 
 def enable() -> None: ...
 
 def set_level(level: LEVEL) -> None: ...
+
+@overload
+def level_scope(level: LEVEL) -> Optional[Scoped]: ...
+
+@overload
+def level_scope(name: str, lvl: LEVEL) -> Optional[Scoped]: ...
 
 def get_level() -> LEVEL: ...
 

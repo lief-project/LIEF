@@ -236,17 +236,33 @@ class Scoped {
     set_level(level);
   }
 
+  explicit Scoped(LEVEL level, std::string name) :
+    level_(get_level()),
+    name_(std::move(name))
+  {
+    set_level(level);
+  }
+
   const Scoped& set_level(LEVEL lvl) const {
-    logging::set_level(lvl);
+    if (name_.empty()) {
+      logging::set_level(lvl);
+    } else {
+      logging::named::set_level(name_.c_str(), lvl);
+    }
     return *this;
   }
 
-  ~Scoped() {
+  void reset() {
     set_level(level_);
+  }
+
+  ~Scoped() {
+    reset();
   }
 
   private:
   LEVEL level_ = LEVEL::INFO;
+  std::string name_;
 };
 
 

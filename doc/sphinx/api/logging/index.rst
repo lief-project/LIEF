@@ -33,6 +33,22 @@ C++
 
 .. doxygenclass:: LIEF::logging::Scoped
 
+Example
+~~~~~~~
+
+.. code-block:: cpp
+
+  #include <LIEF/logging.hpp>
+
+  // Set global level to ERROR
+  LIEF::logging::set_level(LIEF::logging::LEVEL::ERROR);
+
+  {
+    // Temporarily set global level to DEBUG (RAII)
+    LIEF::logging::Scoped _(LIEF::logging::LEVEL::DEBUG);
+    LIEF::logging::log(LIEF::logging::LEVEL::DEBUG, "This is a debug message");
+  }
+
 Python
 ++++++++
 
@@ -46,4 +62,23 @@ Python
 
 .. autofunction:: lief.logging.log
 
+.. autofunction:: lief.logging.level_scope
+
+.. autoclass:: lief.logging.Scoped
+  :members:
+
 .. autoclass:: lief.logging.LEVEL
+
+Example
+~~~~~~~
+
+.. code-block:: python
+
+  import lief
+
+  # Set global level to ERROR
+  lief.logging.set_level(lief.logging.LEVEL.ERROR)
+
+  # Temporarily set global level to DEBUG
+  with lief.logging.level_scope(lief.logging.LEVEL.DEBUG):
+      lief.logging.log(lief.logging.LEVEL.DEBUG, "This is a debug message")
