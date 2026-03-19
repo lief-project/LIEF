@@ -20,10 +20,12 @@ def test_stderr(capsys):
     assert _remove_eol(captured.err) == "This is an errorThis is another error"
 
 def test_context_manager(capsys):
+    lief.logging.reset()
     lief.logging.set_level(lief.logging.LEVEL.ERROR)
     assert lief.logging.get_level() == lief.logging.LEVEL.ERROR
-    with lief.logging.level_scope(lief.logging.LEVEL.DEBUG):
-        lief.logging.log(lief.logging.LEVEL.DEBUG, "This is a debug message")
+    with lief.logging.level_scope(lief.logging.LEVEL.INFO):
+        assert lief.logging.get_level() == lief.logging.LEVEL.INFO
+        lief.logging.log(lief.logging.LEVEL.INFO, "This is an info message")
     captured = capsys.readouterr()
-    assert _remove_eol(captured.err) == "This is a debug message"
+    assert _remove_eol(captured.err) == "This is an info message"
     assert lief.logging.get_level() == lief.logging.LEVEL.ERROR
