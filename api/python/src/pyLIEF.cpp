@@ -141,13 +141,20 @@ void init_logger(nb::module_& m) {
   logging.def("set_level", nb::overload_cast<logging::LEVEL>(&logging::set_level),
               "Change logging level", "level"_a);
 
-  logging.def("level_scope", [] (logging::LEVEL lvl) {
+  logging.def("level_scope",
+    [] (logging::LEVEL lvl) {
       return std::make_unique<logging::Scoped>(lvl);
-  }, "level"_a, nb::rv_policy::take_ownership);
+    },
+    "level"_a, nb::rv_policy::take_ownership,
+    nb::sig("def level_scope(level: LEVEL) -> Scoped")
+  );
 
-  logging.def("level_scope", [] (const std::string& name, logging::LEVEL lvl) {
+  logging.def("level_scope",
+    [] (const std::string& name, logging::LEVEL lvl) {
       return std::make_unique<logging::Scoped>(lvl, name);
-  }, "name"_a, "lvl"_a, nb::rv_policy::take_ownership);
+    }, "name"_a, "lvl"_a, nb::rv_policy::take_ownership,
+    nb::sig("def level_scope(name: str, lvl: LEVEL) -> Scoped")
+  );
 
   logging.def("get_level", nb::overload_cast<>(&logging::get_level),
               "Get current logging level");
