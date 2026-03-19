@@ -146,7 +146,7 @@ def test_code_injection(tmp_path: Path):
         )
         fixup_location.content = content
 
-        print(f"{entry.name}: IAT: 0x{rva:08x}")
+        lief.logging.info(f"{entry.name}: IAT: 0x{rva:08x}")
 
     input_path = Path(get_sample("PE/LIEF-win64.dll"))
     pe = lief.PE.parse(input_path)
@@ -202,7 +202,7 @@ def test_code_injection(tmp_path: Path):
         ]
         with Popen(args, **popen_args) as proc: # type: ignore[call-overload]
             stdout, _ = proc.communicate(10)
-            print("stdout:", stdout)
+            lief.logging.info(stdout)
             assert proc.returncode == 0
             assert "Hello World" in stdout
 

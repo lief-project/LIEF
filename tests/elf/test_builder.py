@@ -39,7 +39,7 @@ glibc_too_old = False
 
 if version < (2, 32):
     glibc_too_old = True
-    print(f"glibc version is too old: {version}")
+    lief.logging.info(f"glibc version is too old: {version}")
 
 def normalize(instr: str) -> str:
     instr = instr.replace("\n", "").replace(" ", "").strip()
@@ -67,9 +67,9 @@ def test_force_relocate(tmp_path):
     for file in BINS.rglob("*.bin"):
         if file.name in SKIP_LIST:
             continue
-        print(f"Dealing with {file}")
+        lief.logging.info(f"Dealing with {file}")
         if not file.exists():
-            print(f"{file} does not exist. Skipping ...", file=sys.stderr)
+            lief.logging.warn(f"{file} does not exist. Skipping ...")
             continue
         elf: lief.ELF.Binary = lief.ELF.parse(file)
         fsize = file.stat().st_size
@@ -79,13 +79,13 @@ def test_force_relocate(tmp_path):
 
         out_path = tmp / file.name
 
-        print(f"File written in {out_path}")
+        lief.logging.info(f"File written in {out_path}")
         elf.write(out_path, config)
 
         check_layout(out_path)
         out_path.chmod(out_path.stat().st_mode | stat.S_IEXEC)
         delta_size = out_path.stat().st_size - fsize
-        print(f"delta size: {convert_size(delta_size)}")
+        lief.logging.info(f"delta size: {convert_size(delta_size)}")
 
         env = os.environ
         with Popen(out_path.as_posix(), universal_newlines=True, env=env,
@@ -125,10 +125,10 @@ def test_symtab(tmp_path):
         elf.write(out_path)
         check_layout(out_path)
 
-        print(f"File written in {out_path}")
+        lief.logging.info(f"File written in {out_path}")
         out_path.chmod(out_path.stat().st_mode | stat.S_IEXEC)
         delta_size = out_path.stat().st_size - fsize
-        print(f"delta size: {convert_size(delta_size)}")
+        lief.logging.info(f"delta size: {convert_size(delta_size)}")
 
         env = os.environ
         with Popen(out_path.as_posix(), universal_newlines=True, env=env,
@@ -156,10 +156,10 @@ def test_add_interpreter(tmp_path):
     elf.write(out_path)
     check_layout(out_path)
 
-    print(f"File written in {out_path}")
+    lief.logging.info(f"File written in {out_path}")
     out_path.chmod(out_path.stat().st_mode | stat.S_IEXEC)
     delta_size = out_path.stat().st_size - fsize
-    print(f"delta size: {convert_size(delta_size)}")
+    lief.logging.info(f"delta size: {convert_size(delta_size)}")
 
     env = os.environ
     with Popen(out_path.as_posix(), universal_newlines=True, env=env,
@@ -182,10 +182,10 @@ def test_change_interpreter(tmp_path):
     elf.write(out_path)
     check_layout(out_path)
 
-    print(f"File written in {out_path}")
+    lief.logging.info(f"File written in {out_path}")
     out_path.chmod(out_path.stat().st_mode | stat.S_IEXEC)
     delta_size = out_path.stat().st_size - fsize
-    print(f"delta size: {convert_size(delta_size)}")
+    lief.logging.info(f"delta size: {convert_size(delta_size)}")
 
     env = os.environ
     with Popen(out_path.as_posix(), universal_newlines=True, env=env,
@@ -210,10 +210,10 @@ def test_rust_files(tmp_path):
     elf.write(out_path, config)
     check_layout(out_path)
 
-    print(f"File written in {out_path}")
+    lief.logging.info(f"File written in {out_path}")
     out_path.chmod(out_path.stat().st_mode | stat.S_IEXEC)
     delta_size = out_path.stat().st_size - fsize
-    print(f"delta size: {convert_size(delta_size)}")
+    lief.logging.info(f"delta size: {convert_size(delta_size)}")
 
     env = os.environ
     with Popen(out_path.as_posix(), universal_newlines=True, env=env,
@@ -239,11 +239,11 @@ def test_go_files(tmp_path):
         config.force_relocate = True
 
         elf.write(out_path, config)
-        print(f"File written in {out_path}")
+        lief.logging.info(f"File written in {out_path}")
         check_layout(out_path)
         out_path.chmod(out_path.stat().st_mode | stat.S_IEXEC)
         delta_size = out_path.stat().st_size - fsize
-        print(f"delta size: {convert_size(delta_size)}")
+        lief.logging.info(f"delta size: {convert_size(delta_size)}")
 
         env = os.environ
         with Popen(out_path.as_posix(), universal_newlines=True, env=env,
@@ -311,7 +311,7 @@ def test_smart_insert_1(tmp_path: Path):
         llvm_strip = shutil.which("llvm-strip")
         if llvm_strip is None:
             pytest.skip("skipping: missing 'llvm-strip'")
-        print(f"Using llvm-strip: {llvm_strip}")
+        lief.logging.info(f"Using llvm-strip: {llvm_strip}")
         popen_args = {
             "universal_newlines": True,
             "stdout": subprocess.PIPE,
@@ -324,14 +324,13 @@ def test_smart_insert_1(tmp_path: Path):
         ]
         with Popen(args, **popen_args) as proc: # type: ignore[call-overload]
             stdout, _ = proc.communicate(timeout=10)
-            print("stdout:", stdout)
+            lief.logging.info(stdout)
             assert proc.returncode == 0
             assert len(stdout) == 0
 
         elf_strip = lief.ELF.parse(output)
         lief_test_section: lief.ELF.Section = elf_strip.get_section(".lief_test")
         assert lief_test_section is not None
-        print(bytes(lief_test_section.content))
         assert bytes(lief_test_section.content) == b'This is a test\x00\x00'
 
 @pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
@@ -359,7 +358,7 @@ def test_smart_insert_2(tmp_path: Path):
         if llvm_strip is None:
             pytest.skip("skipping: missing 'llvm-strip'")
 
-        print(f"Using llvm-strip: {llvm_strip}")
+        lief.logging.info(f"Using llvm-strip: {llvm_strip}")
         popen_args = {
             "universal_newlines": True,
             "stdout": subprocess.PIPE,
@@ -373,7 +372,7 @@ def test_smart_insert_2(tmp_path: Path):
 
         with Popen(args, **popen_args) as proc: # type: ignore[call-overload]
             stdout, _ = proc.communicate(timeout=10)
-            print("stdout:", stdout)
+            lief.logging.info(stdout)
             assert proc.returncode == 0
             assert len(stdout) == 0
 

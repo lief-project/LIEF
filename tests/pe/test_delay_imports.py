@@ -63,7 +63,7 @@ def test_simple():
     assert messageboxa.iat_value == 0x140001a08
     assert messageboxa.data == 0x23f72
     assert messageboxa.hint == 0x285
-    print(messageboxa)
+    lief.logging.info(messageboxa)
 
 def test_cmd():
     """

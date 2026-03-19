@@ -121,7 +121,7 @@ def test_json_serialization():
     avast = lief.PE.parse(get_sample("PE/PE32_x86-64_binary_avast-free-antivirus-setup-online.exe"))
     with open(get_sample("PE/PE32_x86-64_binary_avast-free-antivirus-setup-online-signature.json"), "rb") as f:
         json_sig = json.load(f)
-    print(lief.to_json(avast.signatures[0]))
+    lief.logging.info(lief.to_json(avast.signatures[0]))
     assert json.loads(lief.to_json(avast.signatures[0])) == json_sig
 
 def test_fail():
@@ -195,7 +195,7 @@ def test_ms_spc_nested_signature():
 
     content_info = nested_sig.content_info
     spc_indirect_data = content_info.value
-    print(spc_indirect_data)
+    lief.logging.info(spc_indirect_data)
 
 
     assert spc_indirect_data.content_type == "1.3.6.1.4.1.311.2.1.4"
@@ -232,7 +232,7 @@ def test_ms_spc_nested_signature():
     assert nested_sig.check() == lief.PE.Signature.VERIFICATION_FLAGS.OK
 
     signer = nested_sig.signers[0]
-    print(signer)
+    lief.logging.info(signer)
 
 def test_self_signed():
     selfsigned = lief.parse(get_sample("PE/PE32_x86-64_binary_self-signed.exe"))
@@ -292,7 +292,6 @@ def test_ms_manifest_binary_id():
     assert attr.manifest_id == "Q3XarTZK62/v5aPftDNzWYB5ybbMDvHGQIYjVa+ja+0="
 
 def test_ms_counter_signature():
-    #lief.logging.set_level(lief.logging.LEVEL.DEBUG)
     acres = lief.PE.parse(get_sample("PE/AppVClient.exe"))
     sig = acres.signatures[0]
     ms_counter_sig: lief.PE.MsCounterSign = sig.signers[0].get_unauth_attribute(lief.PE.Attribute.TYPE.MS_COUNTER_SIGN)

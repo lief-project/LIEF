@@ -1,7 +1,6 @@
 import lief
 import pytest
 from utils import get_sample, has_private_samples
-#lief.logging.set_level(lief.logging.LEVEL.DEBUG)
 
 def test_simple():
     macho = lief.MachO.parse(get_sample("MachO/liblog_srp.dylib")).at(0)

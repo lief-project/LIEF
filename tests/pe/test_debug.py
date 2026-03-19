@@ -1,6 +1,6 @@
 import lief
 import json
-from utils import get_sample
+from utils import get_sample, lief_logging
 from typing import cast
 from pathlib import Path
 from hashlib import md5
@@ -28,13 +28,13 @@ def test_pgo():
     assert vc_feature.addressof_rawdata == 0x7f54
     assert vc_feature.pointerto_rawdata == 0x6754
     assert vc_feature.timestamp == 0x5c16251a
-    print(vc_feature)
+    lief.logging.info(vc_feature)
 
     assert debugs[2].copy() == debugs[2]
     assert debugs[1] != debugs[0]
 
     pgo = cast(lief.PE.Pogo, debugs[-1])
-    print(pgo)
+    lief.logging.info(pgo)
     assert isinstance(pgo, lief.PE.Pogo)
     assert len(pgo.entries) == 33
     assert pgo.signature == lief.PE.Pogo.SIGNATURES.LCTG
@@ -71,7 +71,7 @@ def test_code_view_pdb():
     assert sample.has_debug
 
     for d in sample.debug:
-        print(d)
+        lief.logging.info(d)
 
     debug_code_view = list(filter(lambda deb: isinstance(deb, lief.PE.CodeViewPDB), sample.debug))
     assert len(debug_code_view) == 1
@@ -109,13 +109,13 @@ def test_code_view_pdb():
     cv2 = lief.PE.CodeView(lief.PE.CodeView.SIGNATURES.CV_50)
     assert cv1.copy() != cv2
 
+@lief_logging(lief.logging.LEVEL.DEBUG)
 def test_repro():
-    lief.logging.set_level(lief.logging.LEVEL.DEBUG)
     path = get_sample('PE/test.debug.repro.exe')
 
     sample = lief.PE.parse(path)
     for d in sample.debug:
-        print(d)
+        lief.logging.info(d)
 
     assert len(sample.debug) == 2
 
@@ -129,7 +129,7 @@ def test_repro():
     assert repro.type == lief.PE.Debug.TYPES.REPRO
     assert repro.copy() == repro
     assert bytes(repro.hash).hex() == "09ba3f4077f89b528d07513e6c58d0b0fb10aacb9add786f79b2265695da5ebe"
-    print(repro)
+    lief.logging.info(repro)
     json_view = json.loads(lief.to_json(repro))
     assert json_view == {
         "addressof_rawdata": 157856,
@@ -184,7 +184,7 @@ def test_empty_repro():
 
     assert len(pe.debug) == 3
     for d in pe.debug:
-        print(d)
+        lief.logging.info(d)
 
     assert pe.debug[2].type == lief.PE.Debug.TYPES.REPRO
 

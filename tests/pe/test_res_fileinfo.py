@@ -1,8 +1,6 @@
 import lief
 import utils
 
-#lief.logging.set_level(lief.logging.LEVEL.DEBUG)
-
 def test_issue_686():
     """
     https://github.com/lief-project/LIEF/issues/686

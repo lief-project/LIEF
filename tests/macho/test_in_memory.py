@@ -49,7 +49,7 @@ def compile(src: Path, dst: Path, extra_flags = None):
 
     with Popen(cmd, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
         output = proc.stdout.read()
-        print(output)
+        lief.logging.info(output)
         return output
 
     return None

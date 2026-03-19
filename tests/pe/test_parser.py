@@ -36,7 +36,7 @@ def test_dos_header():
     assert dos_header.used_bytes_in_last_page == 0x90
 
     assert hashlib.sha256(atapi.dos_stub).hexdigest() == "2e6296653faf1fd51d875fab7e08c38f06f9a7eccb718c569dee5e3041075a6a"
-    print(dos_header)
+    lief.logging.info(dos_header)
 
 def test_header():
     header = atapi.header
@@ -53,13 +53,13 @@ def test_header():
             lief.PE.Header.CHARACTERISTICS.EXECUTABLE_IMAGE,
             lief.PE.Header.CHARACTERISTICS.LARGE_ADDRESS_AWARE,
             ]
-    print(header)
+    lief.logging.info(header)
     assert header.copy() == header
 
 
 def test_optional_header():
     header = atapi.optional_header
-    print(header)
+    lief.logging.info(header)
 
     assert header.copy() == header
 
@@ -198,7 +198,7 @@ def test_data_directories():
     assert not dirs[15].has_section
 
     assert dirs[1].copy() == dirs[1]
-    print(dirs[1])
+    lief.logging.info(dirs[1])
 
 
 def test_sections():
@@ -327,7 +327,7 @@ def test_tls():
     assert tls.addressof_raw_data == (0x40a000, 0x40a060)
     assert tls.section.name == ".tls"
     assert tls.copy() == tls
-    print(tls)
+    lief.logging.info(tls)
 
     assert tls.directory is not None
     assert tls.directory.type == lief.PE.DataDirectory.TYPES.TLS_TABLE
@@ -454,9 +454,9 @@ def test_rich_header():
     assert sha256 == "1bda7d55023ff27b0ea1c9f56d53ca77ca4264ac58fdee8daac58cdc060bf2da"
 
     assert rheader.copy() == rheader
-    print(rheader)
+    lief.logging.info(rheader)
     new_entry = lief.PE.RichEntry(1, 2, 3)
-    print(new_entry)
+    lief.logging.info(new_entry)
     rheader.add_entry(new_entry)
     assert rheader.entries[-1] == new_entry
     assert rheader.entries[-1].copy() == new_entry

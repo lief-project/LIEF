@@ -34,10 +34,10 @@ def test_gnu_hash(tmpdir):
 
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)
-    print(output)
+    lief.logging.info(output)
 
     lib = ctypes.cdll.LoadLibrary(output)
 
     # Raise 'AttributeError' if not exported
-    print(lib.myinstance)
+    lief.logging.info(lib.myinstance)
     assert lib.myinstance is not None

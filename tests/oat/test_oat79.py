@@ -2,9 +2,6 @@ import lief
 import json
 from utils import get_sample
 
-lief.logging.set_level(lief.logging.LEVEL.INFO)
-
-
 def test_multidex():
     hangout = lief.OAT.parse(get_sample("OAT/OAT_079_AArch64_Hangouts.oat"))
 

@@ -109,6 +109,23 @@ void init_python_sink() {
   LIEF::logging::set_logger(std::move(logger));
 }
 
+template<LIEF::logging::LEVEL lvl>
+void log_impl(nb::args args) {
+  std::string msg;
+  for (size_t i = 0; i < args.size(); ++i) {
+    nb::handle arg = args[i];
+    if (i > 0) {
+      msg.push_back(' ');
+    }
+    if (nb::isinstance<nb::str>(arg)) {
+      msg.append(nb::cast<std::string>(arg));
+    } else {
+      msg.append(nb::cast<std::string>(arg.attr("__str__")()));
+    }
+  }
+  LIEF::logging::log(lvl, msg);
+}
+
 void init_logger(nb::module_& m) {
   nb::module_ logging = m.def_submodule("logging");
 
@@ -168,25 +185,20 @@ void init_logger(nb::module_& m) {
               "Log a message with the LIEF's logger"_doc,
               "level"_a, "msg"_a);
 
-  logging.def("debug",
-              static_cast<void(*)(const std::string&)>(&logging::debug),
-              "Log a :attr:`~.LEVEL.DEBUG` message"_doc, "msg"_a);
+  logging.def("debug", &log_impl<logging::LEVEL::DEBUG>,
+    "Log a :attr:`~.LEVEL.DEBUG` message"_doc, "msg"_a);
 
-  logging.def("info",
-              static_cast<void(*)(const std::string&)>(&logging::info),
-              "Log an :attr:`~.LEVEL.INFO` message"_doc, "msg"_a);
+  logging.def("info", &log_impl<logging::LEVEL::INFO>,
+      "Log an :attr:`~.LEVEL.INFO` message"_doc, "args"_a);
 
-  logging.def("warn",
-              static_cast<void(*)(const std::string&)>(&logging::warn),
-              "Log a :attr:`~.LEVEL.WARN` message"_doc, "msg"_a);
+  logging.def("warn", &log_impl<logging::LEVEL::WARN>,
+    "Log a :attr:`~.LEVEL.WARN` message"_doc, "msg"_a);
 
-  logging.def("err",
-              static_cast<void(*)(const std::string&)>(&logging::err),
-              "Log an :attr:`~.LEVEL.ERROR` message"_doc, "msg"_a);
+  logging.def("err", &log_impl<logging::LEVEL::ERR>,
+    "Log an :attr:`~.LEVEL.ERROR` message"_doc, "msg"_a);
 
-  logging.def("critical",
-              static_cast<void(*)(const std::string&)>(&logging::critical),
-              "Log an :attr:`~.LEVEL.CRITICAL` message"_doc, "msg"_a);
+  logging.def("critical", &log_impl<logging::LEVEL::CRITICAL>,
+    "Log an :attr:`~.LEVEL.CRITICAL` message"_doc, "msg"_a);
 
   logging.def("enable_debug", nb::overload_cast<>(&logging::enable_debug),
               "Enable :attr:`~.LEVEL.DEBUG` log level"_doc);

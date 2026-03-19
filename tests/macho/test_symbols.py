@@ -30,7 +30,7 @@ def test_unexport(tmp_path):
         assert run_program(bin_path)
         stdout = run_program(output)
 
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'Hello World', stdout) is not None
 
 
@@ -57,7 +57,7 @@ def test_rm_symbols(tmp_path):
         assert run_program(bin_path)
         stdout = run_program(output)
 
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'Hello World', stdout) is not None
 
 def test_dynsym_command():
@@ -88,7 +88,7 @@ def test_dynsym_command():
     assert dynsym.nb_local_relocations == 0
 
     for sym in dynsym.indirect_symbols:
-        print(sym)
+        lief.logging.info(sym)
 
     indirect_symbols = dynsym.indirect_symbols
     assert len(indirect_symbols) == 4

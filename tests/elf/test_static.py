@@ -12,8 +12,6 @@ if not is_linux():
 
 COMPILER = get_compiler()
 
-lief.logging.set_level(lief.logging.LEVEL.INFO)
-
 BINADD_C = """\
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,18 +38,18 @@ int add(int a, int b) {
 
 def compile_obj(out: Path, infile: Path):
     cmd = [COMPILER, '-c', '-o', out, infile]
-    print("Compile 'binadd' with: {}".format(" ".join(map(str, cmd))))
+    lief.logging.info("Compile 'binadd' with: {}".format(" ".join(map(str, cmd))))
 
     with Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=out.parent) as P:
         stdout = P.stdout.read().decode('utf8')
-        print(stdout)
+        lief.logging.info(stdout)
 
 def compile_bin(out: Path, obj: Path, add_c: Path):
     cmd = [COMPILER, '-o', out, obj, add_c]
-    print("Compile 'binadd' with: {}".format(" ".join(map(str, cmd))))
+    lief.logging.info("Compile 'binadd' with: {}".format(" ".join(map(str, cmd))))
     with Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=out.parent) as P:
         stdout = P.stdout.read().decode('utf8')
-        print(stdout)
+        lief.logging.info(stdout)
 
 
 @pytest.mark.skipif(not is_linux(), reason="requires Linux")

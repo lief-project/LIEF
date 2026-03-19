@@ -21,18 +21,13 @@ def patch(tmp_path: str, bin_path: pathlib.Path) -> str:
     elif cpu == lief.MachO.Header.CPU_TYPE.X86_64:
         shellcode_path = pathlib.Path(get_sample("MachO/shellcode-stub/lief_hello_darwin_x86_64.bin"))
     else:
-        print(f"Unsupported architecture {cpu!s} for {bin_path}")
-        sys.exit(1)
-
+        raise RuntimeError(f"Unsupported architecture {cpu} for {bin_path}")
 
     shellcode = lief.parse(shellcode_path)
-
-    #lief.logging.set_level(lief.logging.LEVEL.DEBUG)
 
     __TEXT  = shellcode.get_segment("__TEXT")
     __STEXT = lief.MachO.SegmentCommand("__STEXT", list(__TEXT.content))
     __STEXT = original.add(__STEXT)
-    print(__STEXT)
 
     __STEXT.init_protection = __TEXT.init_protection
     __STEXT.max_protection  = __TEXT.max_protection
@@ -46,12 +41,9 @@ def patch(tmp_path: str, bin_path: pathlib.Path) -> str:
 
     shellcode_ep = shellcode.entrypoint - shellcode.imagebase
     new_ep = shellcode_ep + __STEXT.virtual_address - original.imagebase
-    print(f"New entrypoint: 0x{new_ep:x}")
 
     original.main_command.entrypoint = new_ep
-    print(original.main_command)
 
-    print(f"Written in {output}")
     original.write(output)
     return output
 
@@ -66,7 +58,7 @@ def test_crypt_and_hash(tmp_path):
 
     if is_apple_m1():
         stdout = run_program(output)
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'LIEF says hello :\)', stdout) is not None
 
 def test_all(tmp_path):
@@ -79,7 +71,7 @@ def test_all(tmp_path):
 
     if is_osx():
         stdout = run_program(output)
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'LIEF says hello :\)', stdout) is not None
 
 @pytest.mark.skipif(is_github_ci(), reason="sshd does not work on Github Action")
@@ -93,7 +85,7 @@ def test_ssh(tmp_path):
 
     if is_osx():
         stdout = run_program(output, args=["--help"])
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'LIEF says hello :\)', stdout) is not None
 
 def test_nm(tmp_path):
@@ -106,7 +98,7 @@ def test_nm(tmp_path):
 
     if is_osx():
         stdout = run_program(output)
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'LIEF says hello :\)', stdout) is not None
 
 def test_arm64_all(tmp_path):
@@ -119,5 +111,5 @@ def test_arm64_all(tmp_path):
 
     if is_apple_m1():
         stdout = run_program(output)
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'LIEF says hello :\)', stdout) is not None

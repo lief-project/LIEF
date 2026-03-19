@@ -8,10 +8,8 @@ from subprocess import Popen
 
 import lief
 from utils import (
-    get_sample, is_linux, is_x86_64, is_64bits_platform, check_layout
+    get_sample, is_linux, is_x86_64, is_64bits_platform, check_layout,
 )
-
-lief.logging.set_level(lief.logging.LEVEL.INFO)
 
 def test_issue_671(tmp_path: Path):
     """
@@ -40,7 +38,7 @@ def test_issue_671(tmp_path: Path):
 
         with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
             stdout = P.stdout.read().decode("utf8")
-            print(stdout)
+            lief.logging.info(stdout)
             assert len(stdout) > 0
 
 
@@ -75,7 +73,7 @@ def test_all(tmp_path: Path):
 
         with Popen(output, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
             stdout = P.stdout.read().decode("utf8")
-            print(stdout)
+            lief.logging.info(stdout)
             assert len(stdout) > 0
 
     # Check that the written binary contains our modifications

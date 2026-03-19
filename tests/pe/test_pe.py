@@ -59,7 +59,7 @@ def test_sections():
     assert text.copy() == text
     text.name = ".foo"
     assert text.name == ".foo"
-    print(text)
+    lief.logging.info(text)
 
 def test_utils():
     assert lief.PE.get_type(get_sample("PE/PE32_x86_binary_PGO-LTCG.exe")) == lief.PE.PE_TYPE.PE32

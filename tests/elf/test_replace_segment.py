@@ -10,9 +10,6 @@ from pathlib import Path
 
 import lief
 from utils import get_sample, has_recent_glibc, is_linux, is_x86_64, is_aarch64
-
-lief.logging.set_level(lief.logging.LEVEL.INFO)
-
 is_updated_linux = is_linux() and is_x86_64() and has_recent_glibc()
 is_linux_x64 = is_linux() and is_x86_64()
 
@@ -26,7 +23,7 @@ def test_simple(tmp_path: Path):
 
 
     if lief.ELF.Segment.TYPE.NOTE not in target:
-        print("Note not found!", file=sys.stderr)
+        lief.logging.err("Note not found!")
         return
 
     segment                 = stub.segments[0]
@@ -44,7 +41,7 @@ def test_simple(tmp_path: Path):
 
         with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
             stdout = P.stdout.read().decode("utf8")
-            print(stdout)
+            lief.logging.info(stdout)
             assert re.search(r'LIEF is Working', stdout) is not None
 
 def test_gcc(tmp_path: Path):
@@ -54,7 +51,7 @@ def test_gcc(tmp_path: Path):
     target      = lief.ELF.parse(sample_path)
 
     if lief.ELF.Segment.TYPE.NOTE not in target:
-        print("Note not found!", file=sys.stderr)
+        lief.logging.err("Note not found!")
         return
 
     segment                 = stub.segments[0]
@@ -72,7 +69,7 @@ def test_gcc(tmp_path: Path):
 
         with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
             stdout = P.stdout.read().decode("utf8")
-            print(stdout)
+            lief.logging.info(stdout)
             assert re.search(r'LIEF is Working', stdout) is not None
 
 @pytest.mark.skipif(not is_linux(), reason="requires Linux")
@@ -88,7 +85,7 @@ def test_ssh(tmp_path: Path):
     target = lief.ELF.parse("/usr/bin/ssh")
 
     if lief.ELF.Segment.TYPE.NOTE not in target:
-        print("Note not found!", file=sys.stderr)
+        lief.logging.warn("Note not found!")
         return
 
     segment                 = stub.segments[0]
@@ -106,5 +103,5 @@ def test_ssh(tmp_path: Path):
 
         with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
             stdout = P.stdout.read().decode("utf8")
-            print(stdout)
+            lief.logging.info(stdout)
             assert re.search(r'LIEF is Working', stdout) is not None

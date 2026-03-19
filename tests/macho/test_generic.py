@@ -275,15 +275,15 @@ def test_twolevel_hints():
     sample = lief.MachO.parse(get_sample("MachO/ios1-expr.bin"))[0]
     tw_hints: lief.MachO.TwoLevelHints = sample[lief.MachO.LoadCommand.TYPE.TWOLEVEL_HINTS]
     assert tw_hints is not None
-    print(tw_hints)
+    lief.logging.info(tw_hints)
     hints = tw_hints.hints
     assert len(hints) == 26
-    print(hints[0])
+    lief.logging.info(hints[0])
     assert sum(hints) == 10854400
     assert hints[0] == 54528
     assert hashlib.sha256(tw_hints.data).hexdigest() == "e44cef3a83eb89954557a9ad2a36ebf4794ce0385da5a39381fdadc3e6037beb"
     assert tw_hints.command_offset == 1552
-    print(lief.to_json(tw_hints))
+    lief.logging.info(lief.to_json(tw_hints))
 
 def test_overlay():
     sample = lief.MachO.parse(get_sample("MachO/overlay_data.bin")).at(0)
@@ -300,8 +300,8 @@ def test_unknown_command():
     unknown_cmd = sample.commands[15]
     assert isinstance(unknown_cmd, lief.MachO.UnknownCommand)
     assert unknown_cmd.original_command == 0x3333
-    print(hash(unknown_cmd))
-    print(unknown_cmd)
+    lief.logging.info(hash(unknown_cmd))
+    lief.logging.info(unknown_cmd)
 
 def test_subclients():
     macho = lief.MachO.parse(get_sample("MachO/StocksAnalytics")).at(0)

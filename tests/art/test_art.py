@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 import lief
 from utils import get_sample
-
-lief.logging.set_level(lief.logging.LEVEL.INFO)
-
 def test_art17():
     boot = lief.ART.parse(get_sample("ART/ART_017_AArch64_boot.art"))
     assert boot.header is not None

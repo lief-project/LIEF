@@ -50,7 +50,7 @@ def test_simple(tmp_path: Path):
 
     with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
         stdout = P.stdout.read().decode("utf8")
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'LIEF is Working', stdout) is not None
 
 
@@ -81,5 +81,5 @@ def test_gcc(tmp_path):
 
     with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
         stdout = P.stdout.read().decode("utf8")
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'LIEF is Working', stdout) is not None

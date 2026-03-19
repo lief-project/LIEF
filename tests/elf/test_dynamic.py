@@ -8,12 +8,9 @@ from typing import List
 from pathlib import Path
 
 import lief
-from utils import get_compiler, is_linux
-
+from utils import get_compiler, is_linux, lief_logging
 if not is_linux():
     pytest.skip("requires Linux", allow_module_level=True)
-
-lief.logging.set_level(lief.logging.LEVEL.WARN)
 
 COMPILER = get_compiler()
 
@@ -51,20 +48,20 @@ int main(int argc, char **argv) {
 def compile_libadd(out: Path, infile: Path, extra_flags: List[str]):
     CC_FLAGS = ['-fPIC', '-shared', '-Wl,-soname,libadd.so'] + extra_flags
     cmd = [COMPILER, '-o', out] + CC_FLAGS + [infile]
-    print("Compile 'libadd' with: {}".format(" ".join(map(str, cmd))))
+    lief.logging.info("Compile 'libadd' with: {}".format(" ".join(map(str, cmd))))
 
     with Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=out.parent) as P:
         stdout = P.stdout.read().decode('utf8')
-        print(stdout)
+        lief.logging.info(stdout)
 
 def compile_binadd(out: Path, infile: Path, extra_flags: List[str]):
     CC_FLAGS = ['-fPIC', '-pie', '-L', out.parent] + extra_flags
     cmd = [COMPILER, '-o', out] + CC_FLAGS + [infile, '-ladd']
-    print("Compile 'libadd' with: {}".format(" ".join(map(str, cmd))))
+    lief.logging.info("Compile 'libadd' with: {}".format(" ".join(map(str, cmd))))
 
     with Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=out.parent) as P:
         stdout = P.stdout.read().decode('utf8')
-        print(stdout)
+        lief.logging.info(stdout)
 
 
 @pytest.mark.skipif(not is_linux(), reason="requires Linux")
@@ -262,6 +259,6 @@ def test_change_libname(tmp_path: Path):
     with Popen([new_binadd_path, '1', '2'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
         stdout = P.stdout.read().decode("utf8")
         P.communicate()
-        print(stdout)
+        lief.logging.info(stdout)
         assert P.returncode == 0
         assert "From myLIb, a + b = 3" in stdout

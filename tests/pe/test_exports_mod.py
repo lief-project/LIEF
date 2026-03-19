@@ -282,7 +282,7 @@ def test_exe2dll(tmp_path: Path):
     config.export_section = ".myedata"
 
     output = tmp_path / exp.name
-    print(output)
+    lief.logging.info(output)
     pe.write(output, config)
 
     new = lief.PE.parse(output)

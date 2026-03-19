@@ -61,7 +61,7 @@ def test_winapp(tmp_path: Path):
     assert code_integrity.catalog_offset == 0
     assert code_integrity.reserved == 0
 
-    assert print(code_integrity) is None
+    lief.logging.info(code_integrity)
 
     # V3
     assert lconf.guard_address_taken_iat_entry_table == 0
@@ -84,7 +84,7 @@ def test_winapp(tmp_path: Path):
     assert lconf.guard_rf_verify_stackpointer_function_pointer == 0x140012030
     assert lconf.hotpatch_table_offset == 0
 
-    assert print(lconf) is None
+    lief.logging.info(lconf)
 
     output = tmp_path / "winapp.exe"
     winapp.write(output, _get_default_config())
@@ -100,7 +100,7 @@ def test_v8(tmp_path: Path):
 
     assert lconf.volatile_metadata_pointer == 0
 
-    assert print(lconf) is None
+    lief.logging.info(lconf)
 
     output = tmp_path / "ANCUtility.dll"
     pe.write(output, _get_default_config())
@@ -117,7 +117,7 @@ def test_v9(tmp_path: Path):
     assert lconf.guard_eh_continuation_table == 0x1800b9770
     assert lconf.guard_eh_continuation_count == 34
 
-    assert print(lconf) is None
+    lief.logging.info(lconf)
 
     output = tmp_path / "ucrtbase.dll"
     pe.write(output)
@@ -136,7 +136,7 @@ def test_v11(tmp_path: Path):
     assert lconf.guard_xfg_table_dispatch_function_pointer == 0x1800414f0
     assert lconf.cast_guard_os_determined_failure_mode == 0x180057e18
 
-    assert print(lconf) is None
+    lief.logging.info(lconf)
 
     assert lconf.copy() == lconf
 

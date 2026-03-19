@@ -36,7 +36,7 @@ def test_relr_relocations(tmp_path: Path):
     assert new_relr_reloc[2].address == 0x1000 + 0xea000
 
     if (2, 38) <= glibc_version():
-        print("Trying to load libm.so")
+        lief.logging.info("Trying to load libm.so")
         out.chmod(0o755)
         lib = ctypes.cdll.LoadLibrary(out.as_posix())
         assert lib.cos is not None

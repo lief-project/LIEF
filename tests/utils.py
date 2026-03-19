@@ -8,6 +8,7 @@ import subprocess
 import stat
 import time
 import json
+from functools import wraps
 from typing import Optional, Tuple, List, TypeAlias
 from pathlib import Path
 from subprocess import Popen
@@ -256,3 +257,25 @@ def check_layout(target: CheckLayoutInput):
         return
 
     raise RuntimeError("Invalid binary")
+
+def disable_logging(func):
+    """
+    Decorator to disable LIEF logger for the whole function
+    """
+    @wraps(func)
+    def without_logging(*args, **kwargs):
+        with lief.logging.level_scope(lief.logging.LEVEL.OFF):
+            return func(*args, **kwargs)
+    return without_logging
+
+def lief_logging(level: lief.logging.LEVEL):
+    """
+    Decorator to change the log level within the scope of the function
+    """
+    def decorator(func):
+        @wraps(func)
+        def with_level(*args, **kwargs):
+            with lief.logging.level_scope(level):
+                return func(*args, **kwargs)
+        return with_level
+    return decorator

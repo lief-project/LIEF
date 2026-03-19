@@ -8,9 +8,6 @@ from subprocess import Popen
 
 import lief
 from utils import get_sample, is_linux, is_x86_64
-
-lief.logging.set_level(lief.logging.LEVEL.INFO)
-
 def test_remove_symbol(tmp_path: Path):
     target = lief.ELF.parse(get_sample("ELF/test_dyn_syms.elf"))
 
@@ -29,7 +26,7 @@ def test_remove_symbol(tmp_path: Path):
 
         with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
             stdout = P.stdout.read().decode("utf8")
-            print(stdout)
+            lief.logging.info(stdout)
             assert len(stdout) > 0
             assert "Hello world" in stdout
 
@@ -38,7 +35,7 @@ def test_remove_symbol(tmp_path: Path):
         env["LD_BIND_NOW"] = "1"
         with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=env) as P:
             stdout = P.stdout.read().decode("utf8")
-            print(stdout)
+            lief.logging.info(stdout)
             assert len(stdout) > 0
             assert "Hello world" in stdout
 

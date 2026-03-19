@@ -140,7 +140,7 @@ def test_984():
 def test_975():
     elf = lief.ELF.parse(get_sample('ELF/issue_975_aarch64.o'))
     for note in elf.notes:
-        print(note)
+        lief.logging.info(note)
 
 @pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
 def test_1058():

@@ -8,9 +8,6 @@ from pathlib import Path
 import lief
 from utils import get_sample, is_x86_64
 
-lief.logging.set_level(lief.logging.LEVEL.INFO)
-
-
 def test_wrong_obj(capsys):
     class Empty:
         pass

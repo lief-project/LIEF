@@ -31,7 +31,7 @@ glibc_too_old = False
 
 if version < (2, 32):
     glibc_too_old = True
-    print(f"glibc version is too old: {version}")
+    lief.logging.warn(f"glibc version is too old: {version}")
 
 def normalize(instr: str) -> str:
     instr = instr.replace("\n", "").replace(" ", "").strip()
@@ -39,7 +39,7 @@ def normalize(instr: str) -> str:
 
 def build_run_check(obj: pathlib.Path, new_object: pathlib.Path):
     out_bin = new_object.parent / f"{new_object.name}.bin"
-    print(f"Executable: {out_bin}")
+    lief.logging.info(f"Executable: {out_bin}")
     CXX = os.getenv("CXX", "g++")
 
     extra_flags = []
@@ -62,9 +62,9 @@ def test_force_relocate(tmp_path):
     BINS = SAMPLE_DIR / "ELF" / "batch-x86-64"
     tmp = pathlib.Path(tmp_path)
     for file in BINS.rglob("*.o"):
-        print(f"Dealing with {file}")
+        lief.logging.info(f"Dealing with {file}")
         if not file.exists():
-            print(f"{file} does not exist. Skipping ...", file=sys.stderr)
+            lief.logging.warn(f"{file} does not exist. Skipping ...")
             continue
         elf: lief.ELF.Binary = lief.ELF.parse(file)
 
@@ -73,7 +73,7 @@ def test_force_relocate(tmp_path):
 
         out_path = tmp / Path(file.name).name
 
-        print(f"File written in {out_path}")
+        lief.logging.info(f"File written in {out_path}")
         elf.write(out_path, config)
         build_run_check(file, out_path)
 
@@ -83,9 +83,9 @@ def test_object_files_section(tmp_path):
     BINS = SAMPLE_DIR / "ELF" / "batch-x86-64"
     tmp = pathlib.Path(tmp_path)
     for file in BINS.rglob("*.o"):
-        print(f"Dealing with {file}")
+        lief.logging.info(f"Dealing with {file}")
         if not file.exists():
-            print(f"{file} does not exist. Skipping ...", file=sys.stderr)
+            lief.logging.warn(f"{file} does not exist. Skipping ...")
             continue
         elf: lief.ELF.Binary = lief.ELF.parse(file)
 
@@ -93,7 +93,7 @@ def test_object_files_section(tmp_path):
 
         out_path = tmp / file.name
 
-        print(f"File written in {out_path}")
+        lief.logging.info(f"File written in {out_path}")
         elf.write(out_path)
         build_run_check(file, out_path)
 
@@ -102,9 +102,9 @@ def test_object_files_symbols(tmp_path):
     BINS = SAMPLE_DIR / "ELF" / "batch-x86-64"
     tmp = pathlib.Path(tmp_path)
     for file in BINS.rglob("*.o"):
-        print(f"Dealing with {file}")
+        lief.logging.info(f"Dealing with {file}")
         if not file.exists():
-            print(f"{file} does not exist. Skipping ...", file=sys.stderr)
+            lief.logging.warn(f"{file} does not exist. Skipping ...")
             continue
         elf: lief.ELF.Binary = lief.ELF.parse(file)
 
@@ -123,7 +123,7 @@ def test_object_files_symbols(tmp_path):
 
         out_path = tmp / file.name
 
-        print(f"File written in {out_path}")
+        lief.logging.info(f"File written in {out_path}")
         elf.write(out_path)
         build_run_check(file, out_path)
 
@@ -133,9 +133,9 @@ def test_relocations(tmp_path):
     BINS = SAMPLE_DIR / "ELF" / "batch-x86-64"
     tmp = pathlib.Path(tmp_path)
     for file in BINS.rglob("*.o"):
-        print(f"Dealing with {file}")
+        lief.logging.info(f"Dealing with {file}")
         if not file.exists():
-            print(f"{file} does not exist. Skipping ...", file=sys.stderr)
+            lief.logging.warn(f"{file} does not exist. Skipping ...")
             continue
         elf: lief.ELF.Binary = lief.ELF.parse(file)
 
@@ -149,7 +149,7 @@ def test_relocations(tmp_path):
 
         out_path = tmp / file.name
 
-        print(f"File written in {out_path}")
+        lief.logging.info(f"File written in {out_path}")
         elf.write(out_path)
         build_run_check(file, out_path)
 

@@ -9,15 +9,13 @@ from pathlib import Path
 
 import lief
 from utils import (
-    get_sample, has_recent_glibc, is_linux, is_x86_64, is_aarch64, check_layout
+    get_sample, has_recent_glibc, is_linux, is_x86_64, is_aarch64, check_layout,
 )
 
 is_updated_linux = pytest.mark.skipif(not (is_linux() and is_x86_64() and has_recent_glibc()),
                                       reason="needs a recent x86-64 Linux system")
 
 is_linux_x64 = pytest.mark.skipif(not (is_linux() and is_x86_64()), reason="needs a Linux x86-64")
-
-lief.logging.set_level(lief.logging.LEVEL.INFO)
 
 CWD = Path(__file__).parent
 
@@ -44,7 +42,7 @@ def test_simple(tmp_path: Path):
 
     with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
         stdout = P.stdout.read().decode("utf8")
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'LIEF is Working', stdout) is not None
 
 @is_updated_linux
@@ -69,7 +67,7 @@ def test_gcc(tmp_path: Path):
 
     with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
         stdout = P.stdout.read().decode("utf8")
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'LIEF is Working', stdout) is not None
 
 @is_linux_x64
@@ -94,7 +92,7 @@ def test_static(tmp_path: Path):
 
     with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
         stdout = P.stdout.read().decode("utf8")
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'LIEF is Working', stdout) is not None
 
 
@@ -110,7 +108,7 @@ def test_static(tmp_path: Path):
 def test_add_segment(tmp_path: Path, binpath):
     target = Path(binpath)
     if not target.is_file():
-        print(f"{target} does not exists. Skip!")
+        lief.logging.info(f"{target} does not exists. Skip!")
         return
 
     stub = None
@@ -142,7 +140,7 @@ def test_add_segment(tmp_path: Path, binpath):
 
     with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
         stdout = P.stdout.read().decode("utf8")
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'LIEF is Working', stdout) is not None
 
 def test_add_segment_alignment_dyn(tmp_path: Path):

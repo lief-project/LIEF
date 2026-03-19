@@ -34,11 +34,11 @@ def compile(output, extra_flags=None):
     CC_FLAGS = ['-fPIC', '-shared']
     extra_flags = [] if extra_flags is None else extra_flags
     cmd = [COMPILER] + extra_flags + CC_FLAGS + ['-o', output] + [ftmp.name]
-    print("Compile 'libexample' with: {}".format(" ".join(cmd)))
+    lief.logging.info("Compile 'libexample' with: {}".format(" ".join(cmd)))
 
     with Popen(cmd, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
         output = proc.stdout.read()
-        print(output)
+        lief.logging.info(output)
         return output
     return None
 
@@ -60,7 +60,7 @@ def test_ssh(tmp_path):
     assert checked, err
 
     stdout = run_program(output, ["--help"])
-    print(stdout)
+    lief.logging.info(stdout)
 
     assert re.search(r'CTOR CALLED', stdout) is not None
 
@@ -82,7 +82,7 @@ def test_crypt_and_hash(tmp_path):
     assert checked, err
 
     stdout = run_program(output)
-    print(stdout)
+    lief.logging.info(stdout)
 
     assert re.search(r'CTOR CALLED', stdout) is not None
 
@@ -104,7 +104,7 @@ def test_all_arm64(tmp_path):
     assert checked, err
 
     stdout = run_program(output)
-    print(stdout)
+    lief.logging.info(stdout)
 
     assert re.search(r'CTOR CALLED', stdout) is not None
 
@@ -126,7 +126,7 @@ def test_all_x86_64(tmp_path):
     assert checked, err
 
     stdout = run_program(output)
-    print(stdout)
+    lief.logging.info(stdout)
 
     assert re.search(r'CTOR CALLED', stdout) is not None
 

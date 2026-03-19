@@ -55,7 +55,7 @@ def test_macho_x86():
     instructions = list(macho.disassemble(0x1141))
 
     for idx, inst in enumerate(instructions):
-        print(idx, inst)
+        lief.logging.info(f"{idx} {inst}")
 
     assert len(instructions) == 6946
     assert instructions[0].to_string() == "0x001141: push ebp"
@@ -68,7 +68,7 @@ def test_macho_x86_64():
     instructions = list(macho.disassemble(0x00001108))
 
     for idx, inst in enumerate(instructions):
-        print(idx, inst)
+        lief.logging.info(f"{idx} {inst}")
 
     assert len(instructions) == 4903
     assert instructions[0].to_string() == "0x001108: push rbp"

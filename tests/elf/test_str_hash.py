@@ -73,47 +73,47 @@ def test_str(capsys):
     lib_symbol_versions = lief.ELF.parse(get_sample('ELF/lib_symbol_versions.so'))
     elf32_bin_all = lief.ELF.parse(get_sample('ELF/ELF32_x86_binary_all.bin'))
 
-    print(issue_863)
+    lief.logging.info(issue_863)
     assert issue_863.sysv_hash is not None
-    print(issue_863.sysv_hash)
+    lief.logging.info(issue_863.sysv_hash)
 
     assert hello_c_debug.gnu_hash is not None
-    print(hello_c_debug.gnu_hash)
+    lief.logging.info(hello_c_debug.gnu_hash)
 
     assert empty_gnu_hash[lief.ELF.DynamicEntry.TAG.FLAGS_1] is not None
-    print(empty_gnu_hash[lief.ELF.DynamicEntry.TAG.FLAGS_1])
+    lief.logging.info(empty_gnu_hash[lief.ELF.DynamicEntry.TAG.FLAGS_1])
 
     assert arm_ls[lief.ELF.DynamicEntry.TAG.FLAGS] is not None
-    print(arm_ls[lief.ELF.DynamicEntry.TAG.FLAGS])
+    lief.logging.info(arm_ls[lief.ELF.DynamicEntry.TAG.FLAGS])
 
     assert libfreebl3[lief.ELF.DynamicEntry.TAG.SONAME] is not None
-    print(libfreebl3[lief.ELF.DynamicEntry.TAG.SONAME])
+    lief.logging.info(libfreebl3[lief.ELF.DynamicEntry.TAG.SONAME])
 
     assert hello_c_debug[lief.ELF.DynamicEntry.TAG.GNU_HASH] is not None
-    print(hello_c_debug[lief.ELF.DynamicEntry.TAG.GNU_HASH])
+    lief.logging.info(hello_c_debug[lief.ELF.DynamicEntry.TAG.GNU_HASH])
 
 
     assert hello_c_debug[lief.ELF.DynamicEntry.TAG.INIT_ARRAY] is not None
-    print(hello_c_debug[lief.ELF.DynamicEntry.TAG.INIT_ARRAY])
+    lief.logging.info(hello_c_debug[lief.ELF.DynamicEntry.TAG.INIT_ARRAY])
 
     assert hello_c_debug[lief.ELF.DynamicEntry.TAG.NEEDED] is not None
-    print(hello_c_debug[lief.ELF.DynamicEntry.TAG.NEEDED])
+    lief.logging.info(hello_c_debug[lief.ELF.DynamicEntry.TAG.NEEDED])
 
     assert etterlog[lief.ELF.DynamicEntry.TAG.RPATH] is not None
-    print(etterlog[lief.ELF.DynamicEntry.TAG.RPATH])
+    lief.logging.info(etterlog[lief.ELF.DynamicEntry.TAG.RPATH])
 
     assert resolve[lief.ELF.DynamicEntry.TAG.RUNPATH] is not None
-    print(resolve[lief.ELF.DynamicEntry.TAG.RUNPATH])
+    lief.logging.info(resolve[lief.ELF.DynamicEntry.TAG.RUNPATH])
 
-    print(resolve.header)
-    print(etterlog.notes[0])
-    print(etterlog.relocations[0])
-    print(etterlog.sections[0])
-    print(etterlog.segments[0])
-    print(etterlog.symbols_version[0])
-    print(lief.ELF.SymbolVersion.local)
+    lief.logging.info(resolve.header)
+    lief.logging.info(etterlog.notes[0])
+    lief.logging.info(etterlog.relocations[0])
+    lief.logging.info(etterlog.sections[0])
+    lief.logging.info(etterlog.segments[0])
+    lief.logging.info(etterlog.symbols_version[0])
+    lief.logging.info(lief.ELF.SymbolVersion.local)
 
-    print(lib_symbol_versions.get_dynamic_symbol("foo").symbol_version.symbol_version_auxiliary)
-    print(lib_symbol_versions.symbols_version_definition[0])
-    print(elf32_bin_all.symbols_version_requirement[0])
-    print(elf32_bin_all.symbols_version_requirement[0].get_auxiliary_symbols()[0])
+    lief.logging.info(lib_symbol_versions.get_dynamic_symbol("foo").symbol_version.symbol_version_auxiliary)
+    lief.logging.info(lib_symbol_versions.symbols_version_definition[0])
+    lief.logging.info(elf32_bin_all.symbols_version_requirement[0])
+    lief.logging.info(elf32_bin_all.symbols_version_requirement[0].get_auxiliary_symbols()[0])

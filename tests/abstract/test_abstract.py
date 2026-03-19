@@ -2,8 +2,6 @@ import lief
 from ctypes import sizeof, c_uint8, c_uint16, c_int32, c_uint64
 from utils import get_sample
 
-lief.logging.set_level(lief.logging.LEVEL.INFO)
-
 def test_endianness():
     elf = lief.parse(get_sample('ELF/ELF32_x86_binary_ls.bin'))
     binary = elf.abstract

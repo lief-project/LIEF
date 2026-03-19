@@ -9,9 +9,6 @@ from subprocess import Popen
 
 import lief
 from utils import is_linux, check_layout
-
-lief.logging.set_level(lief.logging.LEVEL.INFO)
-
 @pytest.mark.skipif(not is_linux(), reason="requires Linux")
 @pytest.mark.parametrize("target", [
     '/bin/ls',      '/usr/bin/ls',
@@ -41,6 +38,6 @@ def test_change_interpreter(tmp_path: Path, target):
 
         with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
             stdout = P.stdout.read().decode("utf8")
-            print(stdout)
+            lief.logging.info(stdout)
             P.communicate()
             assert P.returncode != -signal.SIGSEGV

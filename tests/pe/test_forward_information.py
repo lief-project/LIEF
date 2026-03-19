@@ -13,9 +13,9 @@ def test_basic():
     assert forwarded_exports[0].forward_information.function == "RtlInterlockedPushListSList"
     assert forwarded_exports[0].forward_information.library == "NTDLL"
 
-    print(exports)
-    print(exports.entries[0])
-    print(forwarded_exports)
+    lief.logging.info(exports)
+    lief.logging.info(exports.entries[0])
+    lief.logging.info(forwarded_exports)
 
     # Test JSON Serialization
     json_serialized = json.loads(lief.to_json(forwarded_exports[0]))

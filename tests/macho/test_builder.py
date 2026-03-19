@@ -12,8 +12,6 @@ from subprocess import Popen
 import lief
 from utils import get_sample, is_apple_m1, is_osx, is_x86_64, sign, chmod_exe, is_github_ci
 
-lief.logging.set_level(lief.logging.LEVEL.INFO)
-
 def align_to(value, alignment):
     # llvm::alignTo
     assert (alignment & (alignment - 1)) == 0 # is power of two
@@ -37,9 +35,9 @@ def dyld_check(path: Path):
         "stdout": subprocess.PIPE,
         "stderr": subprocess.STDOUT
     }
-    print("Running {}".format(" ".join(cmd))) # pylint: disable=consider-using-f-string
+    lief.logging.info("Running {}".format(" ".join(cmd))) # pylint: disable=consider-using-f-string
     with Popen(cmd, **kwargs) as proc: # type: ignore[call-overload]
-        print(proc.stdout.read())
+        lief.logging.info(proc.stdout.read())
         proc.poll()
         assert proc.returncode == 0, f"Return code: {proc.returncode}"
 
@@ -65,7 +63,7 @@ def run_program(path: Path, args=None):
     prog_args = path if args is None else [path] + args
     with Popen(prog_args, **kwargs) as proc: # type: ignore[call-overload]
         proc.poll()
-        print(f"{path} exited with {proc.returncode}")
+        lief.logging.info(f"{path} exited with {proc.returncode}")
         return proc.stdout.read()
 
 def test_id(tmp_path: Path):
@@ -107,7 +105,7 @@ def test_add_command(tmp_path: Path):
         assert run_program(bin_path)
 
         stdout = run_program(output)
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'uid=', stdout) is not None
 
 
@@ -136,7 +134,7 @@ def test_remove_cmd(tmp_path: Path):
         assert run_program(bin_path)
 
         stdout = run_program(output)
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'uid=', stdout) is not None
 
 def test_extend_cmd(tmp_path: Path):
@@ -185,7 +183,7 @@ def test_add_section_id(tmp_path):
         assert run_program(bin_path)
         stdout = run_program(output)
 
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'uid=', stdout) is not None
 
 def test_extend_section_1(tmp_path: Path):
@@ -263,7 +261,7 @@ def test_add_section_ssh(tmp_path: Path):
         assert run_program(bin_path, args=["--help"])
         stdout = run_program(output, args=["--help"])
 
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'OpenSSH_6.9p1, LibreSSL 2.1.8', stdout) is not None
 
 
@@ -286,7 +284,7 @@ def test_add_segment_nm(tmp_path: Path):
     if is_osx() and is_x86_64():
         assert run_program(bin_path)
         stdout = run_program(output, ["-version"])
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'Default target:', stdout) is not None
 
 def test_add_segment_all(tmp_path: Path):
@@ -310,7 +308,7 @@ def test_add_segment_all(tmp_path: Path):
     if is_osx() and is_x86_64():
         assert run_program(bin_path)
         stdout = run_program(output)
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'Hello World: 1', stdout) is not None
 
 @pytest.mark.skipif(is_github_ci(), reason="sshd does not work on Github Action")
@@ -336,7 +334,7 @@ def test_ssh_segments(tmp_path: Path):
         assert run_program(bin_path, args=["--help"])
         stdout = run_program(output, args=["--help"])
 
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'OpenSSH_6.9p1, LibreSSL 2.1.8', stdout) is not None
 
 def test_remove_section(tmp_path: Path):
@@ -358,7 +356,7 @@ def test_remove_section(tmp_path: Path):
         assert run_program(bin_path)
         stdout = run_program(output)
 
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'Hello World', stdout) is not None
 
 def test_remove_section_with_segment_name(tmp_path: Path):
@@ -380,7 +378,7 @@ def test_remove_section_with_segment_name(tmp_path: Path):
         assert run_program(bin_path)
         stdout = run_program(output)
 
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'Hello World', stdout) is not None
 
 def test_objc_arm64(tmp_path: Path):
@@ -415,7 +413,7 @@ def test_objc_arm64(tmp_path: Path):
         assert run_program(bin_path)
         stdout = run_program(output)
 
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'Printing Process Completed', stdout) is not None
 
 
@@ -451,7 +449,7 @@ def test_objc_x86_64(tmp_path: Path):
         assert run_program(bin_path)
         stdout = run_program(output)
 
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'Printing Process Completed', stdout) is not None
 
 def test_break(tmp_path: Path):
@@ -462,11 +460,11 @@ def test_break(tmp_path: Path):
     def swap(target: lief.MachO.Binary, lhs: str, rhs: str):
         lhs_sec = target.get_section(lhs)
         if lhs_sec is None:
-            print(f"Can't find section '{lhs_sec}'")
+            lief.logging.info(f"Can't find section '{lhs_sec}'")
             return
         rhs_sec = target.get_section(rhs)
         if rhs_sec is None:
-            print(f"Can't find section '{rhs_sec}'")
+            lief.logging.info(f"Can't find section '{rhs_sec}'")
             return
 
         tmp = lhs_sec.name
@@ -476,7 +474,7 @@ def test_break(tmp_path: Path):
         section = target.get_section(name)
         if section is None:
             return
-        print(f"[+] Shuffling '{name}'")
+        lief.logging.info(f"[+] Shuffling '{name}'")
         section_content = list(section.content)
         random.shuffle(section_content)
         section.content = section_content # type: ignore[assignment]
@@ -596,7 +594,7 @@ def test_break(tmp_path: Path):
             assert run_program(bin_path)
             stdout = run_program(output)
 
-            print(stdout)
+            lief.logging.info(stdout)
             assert re.search(r'All tests PASS', stdout) is not None
 
 def test_issue_726(tmp_path: Path):

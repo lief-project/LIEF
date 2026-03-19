@@ -40,7 +40,7 @@ def test_simple(tmp_path: Path):
 
         with Popen([output, "--version"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
             stdout = P.stdout.read().decode("utf8")
-            print(stdout)
+            lief.logging.info(stdout)
             assert re.search(r'ls \(GNU coreutils\) ', stdout) is not None
 
 def test_all(tmp_path: Path):
@@ -68,7 +68,7 @@ def test_all(tmp_path: Path):
 
         with Popen([output], stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
             stdout = P.stdout.read().decode("utf8")
-            print(stdout)
+            lief.logging.info(stdout)
             assert re.search(r'Hello World: 1', stdout) is not None
 
 

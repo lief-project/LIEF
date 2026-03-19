@@ -6,9 +6,6 @@ from pathlib import Path
 
 import lief
 from utils import get_sample, has_private_samples, check_layout
-
-lief.logging.set_level(lief.logging.LEVEL.INFO)
-
 config = lief.ELF.Builder.config_t()
 config.notes = True
 
@@ -28,7 +25,7 @@ def test_change_note(tmp_path: Path):
 def test_remove_note(tmp_path: Path):
     etterlog = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_etterlog.bin'))
     output = tmp_path / "etterlog"
-    print(output)
+    lief.logging.info(output)
 
     build_id = etterlog[lief.ELF.Note.TYPE.GNU_BUILD_ID]
     assert build_id is not None
@@ -58,7 +55,7 @@ def test_add_note(tmp_path: Path):
     # https://github.com/lief-project/LIEF/issues/300
     with StringIO() as temp_stdout:
         with redirect_stdout(temp_stdout):
-            print(etterlog)
+            lief.logging.info(etterlog)
 
 def test_android_note(tmp_path: Path):
     ndkr16 = lief.ELF.parse(get_sample('ELF/ELF64_AArch64_piebinary_ndkr16.bin'))
@@ -123,8 +120,8 @@ def test_note_aarch64_features():
     assert note.properties[0].features == [lief.ELF.AArch64Feature.FEATURE.BTI]
     assert note.properties[0].type == lief.ELF.NoteGnuProperty.Property.TYPE.AARCH64_FEATURES
     assert str(note.properties[0])
-    print(note.properties[0])
-    print(note)
+    lief.logging.info(note.properties[0])
+    lief.logging.info(note)
 
 def test_note_aarch_pauth():
     GNU_PROPERTY_AARCH64_FEATURE_PAUTH = "040000001800000005000000474e5500010000c0100000002a000000000000000100000000000000"
@@ -140,8 +137,8 @@ def test_note_aarch_pauth():
     assert note.properties[0].platform == 42
     assert note.properties[0].version == 1
     assert str(note.properties[0])
-    print(note.properties[0])
-    print(note)
+    lief.logging.info(note.properties[0])
+    lief.logging.info(note)
 
 
 
@@ -156,7 +153,7 @@ def test_note_x86_isa():
     assert note.properties[0].values == [(lief.ELF.X86ISA.FLAG.NEEDED, lief.ELF.X86ISA.ISA.BASELINE)]
     assert note.properties[0].type == lief.ELF.NoteGnuProperty.Property.TYPE.X86_ISA
     assert str(note.properties[0])
-    print(note)
+    lief.logging.info(note)
 
     GNU_PROPERTY_X86_ISA_1_NEEDED = "040000001800000005000000474e5500020001c0040000000a000000028000c00400000003000000040000001800000005000000474e5500020001c004000000a0000000028000c00400000030000000"
     note: lief.ELF.NoteGnuProperty = lief.ELF.Note.create(raw=bytes.fromhex(GNU_PROPERTY_X86_ISA_1_NEEDED),
@@ -171,7 +168,7 @@ def test_note_x86_isa():
     ]
     assert note.properties[0].type == lief.ELF.NoteGnuProperty.Property.TYPE.X86_ISA
     assert str(note.properties[0])
-    print(note)
+    lief.logging.info(note)
 
     GNU_PROPERTY_X86_ISA_1_NEEDED = "040000001800000005000000474e5500000001c0040000000a000000008000c00400000003000000040000001800000005000000474e5500000001c004000000a0000000008000c00400000030000000"
     note: lief.ELF.NoteGnuProperty = lief.ELF.Note.create(raw=bytes.fromhex(GNU_PROPERTY_X86_ISA_1_NEEDED),
@@ -185,7 +182,7 @@ def test_note_x86_isa():
         (lief.ELF.X86ISA.FLAG.USED, lief.ELF.X86ISA.ISA.SSE3),
     ]
     assert str(note.properties[0])
-    print(note)
+    lief.logging.info(note)
 
 def test_note_properties():
     GNU_PROPERTY_C = "040000004800000005000000474e5500010000000800000000111100000000000200000000000000020001c0040000001110000000000000028000c0040000001110000000000000020000c0040000000100000000000000"
@@ -216,7 +213,7 @@ def test_note_properties():
 def test_qnx_note():
     qnx = lief.ELF.parse(get_sample("private/ELF/qnx_aarch64le_bsdtar"))
     stack_info: lief.ELF.QNXStack = qnx.get(lief.ELF.Note.TYPE.QNX_STACK)
-    print(stack_info)
+    lief.logging.info(stack_info)
     assert stack_info.stack_size == 0
     assert stack_info.stack_allocated == 0x1000
     assert not stack_info.is_executable

@@ -3,9 +3,6 @@ from pathlib import Path
 
 import lief
 from utils import get_sample
-
-lief.logging.set_level(lief.logging.LEVEL.INFO)
-
 def test_core_arm():
     core: lief.ELF.Binary = lief.ELF.parse(get_sample('ELF/ELF32_ARM_core_hello.core'))
 

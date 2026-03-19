@@ -212,15 +212,14 @@ def test_threaded_opcodes(tmp_path):
     assert bindings[81].library.name == "/usr/lib/libSystem.B.dylib"
 
     output_path = f"{tmp_path}/{bin_path.name}"
-    lief.logging.set_level(lief.logging.LEVEL.DEBUG)
-    target.write(output_path)
-    lief.logging.set_level(lief.logging.LEVEL.INFO)
+    with lief.logging.level_scope(lief.logging.LEVEL.DEBUG):
+        target.write(output_path)
 
-    print(output_path)
+    lief.logging.info(output_path)
     fat_written_target = lief.MachO.parse(output_path)
     written_target = fat_written_target.take(lief.MachO.Header.CPU_TYPE.ARM64)
     for r in written_target.relocations:
-        print(r)
+        lief.logging.info(r)
 
     relocations = written_target.relocations
     bindings = written_target.dyld_info.bindings

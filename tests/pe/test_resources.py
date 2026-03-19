@@ -36,7 +36,7 @@ def _dump_icon(icon: lief.PE.ResourceIcon):
         lines.append(tmp)
 
     for line in lines:
-        print(":".join(line))
+        lief.logging.info(":".join(line))
 
 def quick_hash(content: memoryview) -> str:
     return md5(content).hexdigest()
@@ -53,11 +53,11 @@ def test_change_icons():
     assert isinstance(cmd_resources_manger, lief.PE.ResourcesManager)
 
     if not mfc_resources_manger.has_icons:
-        print(f"'{mfc_path.name}' has no manifest. Abort!")
+        lief.logging.info(f"'{mfc_path.name}' has no manifest. Abort!")
         sys.exit(1)
 
     if not cmd_resources_manger.has_icons:
-        print(f"'{mfc_path.name}' has no manifest. Abort!")
+        lief.logging.info(f"'{mfc_path.name}' has no manifest. Abort!")
         sys.exit(1)
 
     mfc_icons = mfc_resources_manger.icons
@@ -732,7 +732,7 @@ def test_nodes(tmp_path):
     assert node.name == "Hello"
     assert node.copy() == node
     assert hash(node.copy()) == hash(node)
-    print(node)
+    lief.logging.info(node)
 
     # Find data node
     current = node
@@ -747,7 +747,7 @@ def test_nodes(tmp_path):
     assert isinstance(current, lief.PE.ResourceData)
     assert current.is_data
     data_node: lief.PE.ResourceData = current
-    print(data_node)
+    lief.logging.info(data_node)
     assert data_node.reserved == 0
     assert data_node.offset == 204224
     assert data_node.code_page == 0
@@ -902,7 +902,7 @@ def test_add_icon(tmp_path: Path):
     new_icon = lief.PE.ResourceIcon.from_serialization(raw_icon)
     lief.logging.enable_debug()
     manager.add_icon(new_icon)
-    print(pe.resources)
+    lief.logging.info(pe.resources)
     out = tmp_path / target_input.name
     pe.write(out)
 
@@ -938,7 +938,7 @@ def test_issue_1282(tmp_path: Path):
 
     node = lief.PE.ResourceData([1,2,3])
     pe.set_resources(node)
-    print(pe.resources)
+    lief.logging.info(pe.resources)
 
     out_path = tmp_path/ input_file.name
     pe.write(out_path)

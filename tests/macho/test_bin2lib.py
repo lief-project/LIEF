@@ -27,7 +27,7 @@ def test_bin2lib(tmp_path):
     assert checked, err
     if is_osx():
         sign(output)
-        print(f"Loading {output}")
+        lief.logging.info(f"Loading {output}")
         lib = ctypes.cdll.LoadLibrary(output)
         assert lib
         assert lib.lief_test_export

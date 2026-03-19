@@ -7,11 +7,8 @@ from pathlib import Path
 
 import lief
 from utils import get_compiler, is_linux, is_x86_64, is_aarch64, check_layout
-
 if not is_linux():
     pytest.skip("requires Linux", allow_module_level=True)
-
-lief.logging.set_level(lief.logging.LEVEL.INFO)
 
 class CommandResult:
     def __init__(self, output, error, retcode, process=None):
@@ -75,16 +72,16 @@ int main(int argc, char **argv) {
 
 
 def run_cmd(cmd):
-    print(f"Running: '{cmd}'")
+    lief.logging.info(f"Running: '{cmd}'")
     cmd = shlex.split(cmd)
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
     stdout, stderr = p.communicate()
 
     if stdout:
-        print(stdout)
+        lief.logging.info(stdout)
 
     if stderr:
-        print(stderr)
+        lief.logging.info(stderr)
 
     return CommandResult(stdout, stderr, p.returncode)
 
@@ -99,7 +96,7 @@ def modif_1(libadd: lief.ELF.Binary, output: Path):
         if flags_1.has(lief.ELF.DynamicEntryFlags.FLAG.PIE):
             flags_1.remove(lief.ELF.DynamicEntryFlags.FLAG.PIE)
 
-    print(libadd_hidden)
+    lief.logging.info(libadd_hidden)
 
     libadd.add(lief.ELF.DynamicSharedObject(output.name))
     libadd.write(output)

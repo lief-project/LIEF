@@ -62,10 +62,10 @@ def compile_libadd(tmp_path: Path):
     outfile = "libadd.so"
     CC_FLAGS = ['-fPIC', '-shared']
     cmd = [COMPILER, '-o', outfile] + CC_FLAGS + ["libadd.c"]
-    print("Compile 'libadd' with: {}".format(" ".join(cmd)))
+    lief.logging.info("Compile 'libadd' with: {}".format(" ".join(cmd)))
     with Popen(cmd, cwd=tmp_path, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
         stdout = P.stdout.read()
-        print(stdout)
+        lief.logging.info(stdout)
         return tmp_path / outfile
 
 
@@ -73,10 +73,10 @@ def compile_binadd(tmp_path: Path):
     outfile = "binadd.bin"
     CC_FLAGS = ['-L', tmp_path.as_posix()]
     cmd = [COMPILER, '-o', outfile] + CC_FLAGS + ["binadd.c", '-ladd']
-    print("Compile 'binadd' with: {}".format(" ".join(cmd)))
+    lief.logging.info("Compile 'binadd' with: {}".format(" ".join(cmd)))
     with Popen(cmd, cwd=tmp_path, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
         stdout = P.stdout.read()
-        print(stdout)
+        lief.logging.info(stdout)
         return tmp_path / outfile
 
 
@@ -125,5 +125,5 @@ def test_simple(tmp_path: Path):
 
     with Popen([binadd_bin, '1', '2'], **popen_args) as P: # type: ignore
         stdout = P.stdout.read().decode("utf8")
-        print(stdout)
+        lief.logging.info(stdout)
         assert re.search(r'LIEF is Working', stdout) is not None

@@ -42,12 +42,12 @@ def test_order():
     kernel32_lhs = binary_lhs.add_import("kernel32.dll")
     random.shuffle(fonctions)
     list(map(kernel32_lhs.add_entry, fonctions))
-    print(kernel32_lhs)
+    lief.logging.info(kernel32_lhs)
 
     kernel32_rhs = binary_rhs.add_import("kernel32.dll")
     random.shuffle(fonctions)
     list(map(kernel32_rhs.add_entry, fonctions))
-    print(kernel32_rhs)
+    lief.logging.info(kernel32_rhs)
 
     assert lief.PE.get_imphash(binary_lhs) == lief.PE.get_imphash(binary_rhs)
 

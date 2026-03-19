@@ -10,10 +10,7 @@ from subprocess import Popen
 
 import lief
 from utils import get_sample, has_recent_glibc, is_linux, is_x86_64, has_private_samples
-
 is_updated_linux = is_linux() and is_x86_64() and has_recent_glibc()
-
-lief.logging.set_level(lief.logging.LEVEL.INFO)
 
 
 def test_rpath():
@@ -91,7 +88,7 @@ def test_permutation(tmp_path: Path, sample: str):
     binary.permute_dynamic_symbols(permutation)
 
     output = tmp_path / "out.permutated"
-    print(f"Output: {output}")
+    lief.logging.info(f"Output: {output}")
     binary.write(output)
 
     if not is_updated_linux:
@@ -102,7 +99,7 @@ def test_permutation(tmp_path: Path, sample: str):
 
     with Popen([output, "--help"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
         stdout = P.stdout.read().decode('utf8')
-        print(stdout)
+        lief.logging.info(stdout)
         P.communicate()
         assert P.returncode == 0
 
