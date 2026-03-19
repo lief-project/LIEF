@@ -2,9 +2,13 @@
 import pytest
 
 import lief
+import subprocess
+from subprocess import Popen
 from pathlib import Path
-
-from utils import get_sample, has_private_samples, check_layout
+from utils import (
+    get_sample, has_private_samples, check_layout,
+    is_linux, is_x86_64, check_layout
+)
 
 def test_issue_863(tmp_path: Path):
     elf = lief.ELF.parse(get_sample('ELF/issue_863.elf'))
@@ -119,3 +123,23 @@ def test_issue_1315(tmp_path: Path):
     elf.write(out, config)
     new = lief.ELF.parse(out)
     check_layout(new)
+
+
+def test_issue_743(tmp_path: Path):
+    elf = lief.ELF.parse(get_sample('ELF/ld-linux-x86-64.so.2'))
+
+    out = tmp_path / "ld-linux-x86-64.so.2"
+    config = lief.ELF.Builder.config_t()
+    config.force_relocate = True
+
+    elf.write(out, config)
+    new = lief.ELF.parse(out)
+    check_layout(new)
+
+    if is_linux() and is_x86_64():
+        out.chmod(0o755)
+        with Popen([out.as_posix(), "--version"], universal_newlines=True,
+                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
+            stdout = proc.stdout.read()
+            proc.poll()
+            assert "Debian GLIBC 2.36-9+deb12u8" in stdout
