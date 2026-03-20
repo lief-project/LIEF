@@ -22,6 +22,7 @@ option(LIEF_DISABLE_EXCEPTIONS         "Disable C++ exceptions on the core libra
 option(LIEF_SO_VERSION                 "Embed versioning for LIEF shared library target" OFF)
 
 option(LIEF_DISABLE_FROZEN "Disable Frozen even if it is supported"     OFF)
+option(LIEF_RUNTIME        "Enable runtime features" OFF)
 
 option(LIEF_ELF            "Build LIEF with ELF module"                 ON)
 option(LIEF_PE             "Build LIEF with PE module"                  ON)
@@ -121,6 +122,7 @@ option(LIEF_USE_MELKOR "Build Melkor for testing" ON)
 
 # This option enables the install target in the cmake
 option(LIEF_INSTALL "Generate the install target." ON)
+set(LIEF_RUNTIME_SUPPORT 0)
 
 set(LIEF_ELF_SUPPORT 0)
 set(LIEF_PE_SUPPORT 0)
@@ -149,6 +151,10 @@ set(LIEF_OBJC_SUPPORT 0)
 set(LIEF_DYLD_SHARED_CACHE_SUPPORT 0)
 set(LIEF_ASM_SUPPORT 0)
 set(LIEF_EXTENDED 0)
+
+if(LIEF_RUNTIME)
+  set(LIEF_RUNTIME_SUPPORT 1)
+endif()
 
 if(LIEF_ELF)
   set(LIEF_ELF_SUPPORT 1)
@@ -248,4 +254,8 @@ endif()
 
 if (LIEF_DEBUG_INFO OR LIEF_OBJC OR LIEF_DYLD_SHARED_CACHE OR LIEF_ASM) # or any other extended feature
   set(LIEF_EXTENDED 1)
+endif()
+
+if (LIEF_RUNTIME)
+  include(LIEFRuntime)
 endif()

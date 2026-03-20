@@ -172,6 +172,23 @@ else()
   set(LIEF_CORE_EXTENDED FALSE)
 endif()
 
+
+if (@LIEF_RUNTIME@)
+  set(LIEF_RUNTIME 1)
+  set(LIEF_RUNTIME_PLATFORM "@LIEF_RUNTIME_PLATFORM@")
+  set(LIEF_RUNTIME_ARCH "@LIEF_RUNTIME_ARCH@")
+  set(LIEF_RUNTIME_PLATFORM_LINUX @LIEF_RUNTIME_PLATFORM_LINUX@)
+  set(LIEF_RUNTIME_PLATFORM_WINDOWS @LIEF_RUNTIME_PLATFORM_WINDOWS@)
+  set(LIEF_RUNTIME_PLATFORM_ANDROID @LIEF_RUNTIME_PLATFORM_ANDROID@)
+  set(LIEF_RUNTIME_PLATFORM_OSX @LIEF_RUNTIME_PLATFORM_OSX@)
+  set(LIEF_RUNTIME_PLATFORM_IOS @LIEF_RUNTIME_PLATFORM_IOS@)
+
+  set(LIEF_RUNTIME_ARCH_ARM64 @LIEF_RUNTIME_ARCH_ARM64@)
+  set(LIEF_RUNTIME_ARCH_X86_64 @LIEF_RUNTIME_ARCH_X86_64@)
+else()
+  set(LIEF_RUNTIME 0)
+endif()
+
 # Set this for backwards compatibility. This isn't quite the path to the
 # actual library file, but using the target is strictly better because it
 # includes all other information needed to correctly link and use LIEF

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from pydantic_core import ErrorDetails, core_schema, CoreSchema
 from pydantic import BaseModel, ValidationError, Field, GetCoreSchemaHandler
-from typing import Any, Optional, Union, List
+from typing import Any, Optional, Union, List, Literal
 from pathlib import Path
 import tomli
 import os
@@ -28,7 +28,8 @@ class EnvStringValidator:
                 winpy_architecture=winpy_architecture,
                 ci_project_dir=os.getenv("CI_PROJECT_DIR", ""),
                 stable_abi=os.getenv("LIEF_STABLE_ABI", ""),
-                free_threaded=os.getenv("LIEF_FREE_THREADED", "")
+                free_threaded=os.getenv("LIEF_FREE_THREADED", ""),
+                runtime=os.getenv("LIEF_RUNTIME", "false"),
         )
         return formatted
 
@@ -183,12 +184,30 @@ class Features(BaseModel):
     # json is an attribute already defined in BaseModel
     json_support: bool = Field(True, alias="json")
     frozen: bool = True
+    runtime: Union[bool, EnvString] = Field(False)
 
     def cmake_dump(self) -> List[str]:
         return [
+            f"-DLIEF_RUNTIME={cmake_serialize(self.runtime)}",
             f"-DLIEF_ENABLE_JSON={cmake_serialize(self.json_support)}",
             f"-DLIEF_DISABLE_FROZEN={cmake_serialize(not self.frozen)}",
         ]
+
+class Runtime(BaseModel):
+    platform: Optional[Literal['linux', 'windows', 'android', 'osx', 'ios']] = None
+    architecture: Optional[Union[EnvString, Literal['arm64', 'x86_64']]] = None
+
+    def cmake_dump(self) -> List[str]:
+        out: List[str] = []
+
+        if self.platform is not None:
+            out.append(f"-DLIEF_RUNTIME_PLATFORM={self.platform}")
+
+        if self.architecture is not None:
+            out.append(f"-DLIEF_RUNTIME_ARCH={self.architecture}")
+
+        return out
+
 
 class ConfigT(BaseModel):
     build: BuildConfig = BuildConfig()
@@ -196,6 +215,7 @@ class ConfigT(BaseModel):
     third_party: ThirdParty = Field(ThirdParty(), alias="third-party")
     features: Features = Features()
     logging: Logging = Logging()
+    runtime: Runtime = Runtime()
     cross_compilation: CrossCompilation = Field(CrossCompilation(),
                                                 alias="cross-compilation")
 
@@ -214,6 +234,7 @@ class ConfigT(BaseModel):
             *self.third_party.cmake_dump(),
             *self.features.cmake_dump(),
             *self.logging.cmake_dump(),
+            *self.runtime.cmake_dump(),
             *self.cross_compilation.cmake_dump(),
         ]
 
