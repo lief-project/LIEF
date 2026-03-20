@@ -64,6 +64,10 @@
     |lief-pe-binary-add-import| (:pr:`1298`)
   * Improve support for EFI binaries, such as ``bzImage`` (:pr:`1293`)
 
+:Rust:
+
+  * Add support for the ``aarch64-linux-android/x86_64-linux-android`` targets
+
 :Dependencies:
 
   * Update nanobind to version ``v2.11.x``
