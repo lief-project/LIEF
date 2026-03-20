@@ -45,8 +45,8 @@ class LayoutChecker {
     section_alignment(bin.optional_header().section_alignment()),
     file_alignment(bin.optional_header().file_alignment()),
     sizeof_headers(bin.optional_header().sizeof_headers()),
-    va_start(bin.imagebase()),
-    va_end(bin.imagebase() + bin.virtual_size())
+    vaddr_start(bin.imagebase()),
+    vaddr_end(bin.imagebase() + bin.virtual_size())
   {}
 
   bool check_dos_header();
@@ -137,7 +137,7 @@ class LayoutChecker {
   }
 
   bool contains(uint64_t va) const {
-    return va_start <= va && va < va_end;
+    return vaddr_start <= va && va < vaddr_end;
   }
 
   bool contains(optional<uint64_t> va) const {
@@ -156,8 +156,8 @@ class LayoutChecker {
   uint32_t section_alignment = 0;
   uint32_t file_alignment = 0;
   uint64_t sizeof_headers = 0;
-  uint64_t va_start = 0;
-  uint64_t va_end = 0;
+  uint64_t vaddr_start = 0;
+  uint64_t vaddr_end = 0;
 };
 
 
@@ -483,107 +483,107 @@ bool LayoutChecker::check_load_config() {
 
   if (!contains(config->security_cookie())) {
     return error("Security cookie out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->security_cookie(), va_start, va_end);
+                 config->security_cookie(), vaddr_start, vaddr_end);
   }
 
   if (!contains(config->lock_prefix_table())) {
     return error("Lock prefix table out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->lock_prefix_table(), va_start, va_end);
+                 config->lock_prefix_table(), vaddr_start, vaddr_end);
   }
 
   if (!contains(config->se_handler_table())) {
     return error("SE handler table out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->se_handler_table().value_or(0), va_start, va_end);
+                 config->se_handler_table().value_or(0), vaddr_start, vaddr_end);
   }
 
   if (!contains(config->guard_cf_check_function_pointer())) {
     return error("Guard CF check function pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_cf_check_function_pointer().value_or(0), va_start, va_end);
+                 config->guard_cf_check_function_pointer().value_or(0), vaddr_start, vaddr_end);
   }
 
   if (!contains(config->guard_cf_dispatch_function_pointer())) {
     return error("Guard CF dispatch function pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_cf_dispatch_function_pointer().value_or(0), va_start, va_end);
+                 config->guard_cf_dispatch_function_pointer().value_or(0), vaddr_start, vaddr_end);
   }
 
   if (!contains(config->guard_address_taken_iat_entry_table())) {
     return error("Guard address taken IAT entry table out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_address_taken_iat_entry_table().value_or(0), va_start, va_end);
+                 config->guard_address_taken_iat_entry_table().value_or(0), vaddr_start, vaddr_end);
   }
 
   if (!contains(config->guard_long_jump_target_table())) {
     return error("Guard long jump target table out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_long_jump_target_table().value_or(0), va_start, va_end);
+                 config->guard_long_jump_target_table().value_or(0), vaddr_start, vaddr_end);
   }
 
   if (!contains(config->dynamic_value_reloc_table())) {
     return error("Dynamic value reloc table out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->dynamic_value_reloc_table().value_or(0), va_start, va_end);
+                 config->dynamic_value_reloc_table().value_or(0), vaddr_start, vaddr_end);
   }
 
   if (!contains(config->hybrid_metadata_pointer())) {
     return error("Hybrid metadata pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->hybrid_metadata_pointer().value_or(0), va_start, va_end);
+                 config->hybrid_metadata_pointer().value_or(0), vaddr_start, vaddr_end);
   }
 
   if (!contains(config->guard_rf_failure_routine())) {
     return error("Guard RF failure routine out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_rf_failure_routine().value_or(0), va_start, va_end);
+                 config->guard_rf_failure_routine().value_or(0), vaddr_start, vaddr_end);
   }
 
   if (!contains(config->guard_rf_failure_routine_function_pointer())) {
     return error("Guard RF failure routine function pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_rf_failure_routine_function_pointer().value_or(0), va_start, va_end);
+                 config->guard_rf_failure_routine_function_pointer().value_or(0), vaddr_start, vaddr_end);
   }
 
   if (!contains(config->guard_rf_verify_stackpointer_function_pointer())) {
     return error("Guard RF verify stack pointer function pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_rf_verify_stackpointer_function_pointer().value_or(0), va_start, va_end);
+                 config->guard_rf_verify_stackpointer_function_pointer().value_or(0), vaddr_start, vaddr_end);
   }
 
   if (!contains(config->enclave_configuration_ptr())) {
     return error("Enclave configuration pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->enclave_configuration_ptr().value_or(0), va_start, va_end);
+                 config->enclave_configuration_ptr().value_or(0), vaddr_start, vaddr_end);
   }
 
   if (!contains(config->volatile_metadata_pointer())) {
     return error("Volatile metadata pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->volatile_metadata_pointer().value_or(0), va_start, va_end);
+                 config->volatile_metadata_pointer().value_or(0), vaddr_start, vaddr_end);
   }
 
   if (!contains(config->guard_eh_continuation_table())) {
     return error("Guard EH continuation table out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_eh_continuation_table().value_or(0), va_start, va_end);
+                 config->guard_eh_continuation_table().value_or(0), vaddr_start, vaddr_end);
   }
 
   if (!contains(config->guard_xfg_check_function_pointer())) {
     return error("Guard XFG check function pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_xfg_check_function_pointer().value_or(0), va_start, va_end);
+                 config->guard_xfg_check_function_pointer().value_or(0), vaddr_start, vaddr_end);
   }
 
   if (!contains(config->guard_xfg_dispatch_function_pointer())) {
     return error("Guard XFG dispatch function pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_xfg_dispatch_function_pointer().value_or(0), va_start, va_end);
+                 config->guard_xfg_dispatch_function_pointer().value_or(0), vaddr_start, vaddr_end);
   }
 
   if (!contains(config->guard_xfg_table_dispatch_function_pointer())) {
     return error("Guard XFG table dispatch function pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_xfg_table_dispatch_function_pointer().value_or(0), va_start, va_end);
+                 config->guard_xfg_table_dispatch_function_pointer().value_or(0), vaddr_start, vaddr_end);
   }
 
   if (!contains(config->cast_guard_os_determined_failure_mode())) {
     return error("Cast guard OS determined failure mode out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->cast_guard_os_determined_failure_mode().value_or(0), va_start, va_end);
+                 config->cast_guard_os_determined_failure_mode().value_or(0), vaddr_start, vaddr_end);
   }
 
   if (!contains(config->guard_memcpy_function_pointer())) {
     return error("Guard memcpy function pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_memcpy_function_pointer().value_or(0), va_start, va_end);
+                 config->guard_memcpy_function_pointer().value_or(0), vaddr_start, vaddr_end);
   }
 
   if (!contains(config->uma_function_pointers())) {
     return error("UMA function pointers out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->uma_function_pointers().value_or(0), va_start, va_end);
+                 config->uma_function_pointers().value_or(0), vaddr_start, vaddr_end);
   }
 
   return true;
