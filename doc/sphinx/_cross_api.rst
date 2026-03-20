@@ -528,6 +528,18 @@
     :py:class:`lief.PE.ImportEntry`
     :cpp:class:`LIEF::PE::ImportEntry`
 
+.. |lief-pe-importentry-iat-value| lief-api:: lief.PE.ImportEntry.iat_value
+
+    :rust:method:`lief::pe::import::ImportEntry::iat_value [struct]`
+    :py:attr:`lief.PE.ImportEntry.iat_value`
+    :cpp:func:`LIEF::PE::ImportEntry::iat_value`
+
+.. |lief-pe-importentry-ilt-value| lief-api:: lief.PE.ImportEntry.ilt_value
+
+    :rust:method:`lief::pe::import::ImportEntry::ilt_value [struct]`
+    :py:attr:`lief.PE.ImportEntry.ilt_value`
+    :cpp:func:`LIEF::PE::ImportEntry::ilt_value`
+
 .. |lief-pe-importentry-iat-address| lief-api:: lief.PE.ImportEntry.iat_address()
 
     :rust:method:`lief::pe::import::ImportEntry::iat_address [struct]`

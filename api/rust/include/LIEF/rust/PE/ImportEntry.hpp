@@ -33,6 +33,10 @@ class PE_ImportEntry : public AbstractSymbol {
 
   auto demangled_name() const { return impl().demangled_name(); }
 
+  void set_iat_value(uint64_t value) { impl().iat_value(value); }
+  void set_ilt_value(uint64_t value) { impl().ilt_value(value); }
+
   private:
   const lief_t& impl() const { return as<lief_t>(this); }
+  lief_t& impl() { return as<lief_t>(this); }
 };

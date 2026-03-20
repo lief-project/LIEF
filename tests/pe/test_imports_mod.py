@@ -340,6 +340,29 @@ def test_issue_multiple(tmp_path: Path):
     assert len(imp.entries) == 1
 
 
+def test_set_iat_ilt_value():
+    pe = lief.PE.parse(get_sample("PE/PE64_x86-64_binary_winhello64-mingw.exe"))
+
+    kernel32 = pe.get_import("KERNEL32.dll")
+    assert kernel32 is not None
+
+    entry = kernel32.entries[0]
+    original_iat = entry.iat_value
+    original_ilt = entry.ilt_value
+
+    entry.iat_value = 0xDEADBEEF
+    entry.ilt_value = 0xCAFEBABE
+
+    assert entry.iat_value == 0xDEADBEEF
+    assert entry.ilt_value == 0xCAFEBABE
+
+    entry.iat_value = original_iat
+    entry.ilt_value = original_ilt
+
+    assert entry.iat_value == original_iat
+    assert entry.ilt_value == original_ilt
+
+
 def test_import_front(tmp_path: Path):
     pe = lief.PE.parse(get_sample("PE/pe_reader.exe"))
     assert pe.imports[0].name == "KERNEL32.dll"

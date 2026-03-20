@@ -57,6 +57,7 @@
 
 :PE:
 
+  * Add setters for |lief-pe-importentry-iat-value| and |lief-pe-importentry-ilt-value|
   * Add |lief-pe-binary-offset_to_rva| to convert a raw offset into a RVA
   * Update |lief-binary-offset_to_virtual_address| for PE binaries to
     return an **absolute** virtual address instead of a RVA (:issue:`1318`)

@@ -82,10 +82,18 @@ class LIEF_API ImportEntry : public LIEF::Symbol {
     return iat_value_;
   }
 
+  void iat_value(uint64_t value) {
+    iat_value_ = value;
+  }
+
   /// Original value in the import lookup table.
   /// This value should match the iat_value().
   uint64_t ilt_value() const {
     return ilt_value_;
+  }
+
+  void ilt_value(uint64_t value) {
+    ilt_value_ = value;
   }
 
   /// Raw value

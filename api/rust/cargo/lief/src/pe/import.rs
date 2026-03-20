@@ -160,6 +160,18 @@ impl ImportEntry<'_> {
         self.ptr.ilt_value()
     }
 
+    /// Set the value of the current entry in the Import Address Table.
+    pub fn set_iat_value(&mut self, value: u64) -> &mut Self {
+        self.ptr.pin_mut().set_iat_value(value);
+        self
+    }
+
+    /// Set the original value in the Import Lookup Table.
+    pub fn set_ilt_value(&mut self, value: u64) -> &mut Self {
+        self.ptr.pin_mut().set_ilt_value(value);
+        self
+    }
+
     /// Raw value
     pub fn data(&self) -> u64 {
         self.ptr.data()

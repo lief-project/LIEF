@@ -75,11 +75,14 @@ void create<ImportEntry>(nb::module_& m) {
         &ImportEntry::hint,
         "Index into the :attr:`lief.PE.Export.entries` that is used to speed-up the symbol resolution"_doc)
 
-    .def_prop_ro("iat_value",
-        &ImportEntry::iat_value,
+    .def_prop_rw("iat_value",
+        nb::overload_cast<>(&ImportEntry::iat_value, nb::const_),
+        nb::overload_cast<uint64_t>(&ImportEntry::iat_value),
         "Value of the current entry in the Import Address Table. It should match the lookup table value."_doc)
 
-    .def_prop_ro("ilt_value", &ImportEntry::ilt_value,
+    .def_prop_rw("ilt_value",
+        nb::overload_cast<>(&ImportEntry::ilt_value, nb::const_),
+        nb::overload_cast<uint64_t>(&ImportEntry::ilt_value),
       R"doc(
       Original value in the import lookup table.
 
