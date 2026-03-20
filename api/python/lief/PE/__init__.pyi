@@ -1014,11 +1014,9 @@ class ImportEntry(lief.Symbol):
     @property
     def hint(self) -> int: ...
 
-    @property
-    def iat_value(self) -> int: ...
+    iat_value: int
 
-    @property
-    def ilt_value(self) -> int: ...
+    ilt_value: int
 
     @property
     def iat_address(self) -> int: ...
