@@ -137,14 +137,14 @@ class LayoutChecker {
   }
 
   bool contains(uint64_t va) const {
+    if (va == 0) {
+      return true;
+    }
     return vaddr_start <= va && va < vaddr_end;
   }
 
   bool contains(optional<uint64_t> va) const {
-    if (va.value_or(0) == 0) {
-      return true;
-    }
-    return contains(*va);
+    return contains(va.value_or(0));
   }
 
   private:
