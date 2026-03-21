@@ -133,7 +133,6 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
       std::end(sig),
       std::string{},
       [] (const std::string& s, uint8_t c) {
-        std::stringstream ss;
         return s + hex_str(c);
       });
 

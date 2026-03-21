@@ -594,7 +594,8 @@ x509::VERIFICATION_FLAGS x509::is_trusted_by(const std::vector<x509>& ca) const 
     LIEF_WARN("Certificate chain is empty");
     return VERIFICATION_FLAGS::BADCERT_MISSING;
   }
-  std::vector<x509> ca_list = ca; // Explicit copy since we will modify mbedtls_x509_crt->next
+  std::vector<x509> ca_list = ca; // NOLINT(performance-unnecessary-copy-initialization)
+                                  // Explicit copy since we will modify mbedtls_x509_crt->next
   for (size_t i = 0; i < ca_list.size() - 1; ++i) {
     ca_list[i].x509_cert_->next = ca_list[i + 1].x509_cert_;
   }

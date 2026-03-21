@@ -121,7 +121,7 @@ parse_property(ARCH arch, SpanStream& stream) {
         )
         {
           switch (type) {
-            case GNU_PROPERTY_1_NEEDED: /* TODO(romain) */ return Generic::create(type);
+            // TODO(romain): We need to support GNU_PROPERTY_1_NEEDED
             default: return Generic::create(type);
           }
 

@@ -245,7 +245,6 @@ result<uint64_t> Relocation::resolve(uint64_t base_address) const {
       case TYPE::X86_64_JUMP_SLOT:
         return S;
       case TYPE::X86_64_RELATIVE:
-        return B + A;
       case TYPE::X86_64_RELATIVE64:
         return B + A;
     /* } */

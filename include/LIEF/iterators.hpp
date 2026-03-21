@@ -486,6 +486,7 @@ template <typename IteratorT>
 class iterator_range {
   public:
   using IteratorTy = IteratorT;
+  using IteratorDecayTy = typename std::decay<IteratorT>::type;
   iterator_range(IteratorT&& it_begin, IteratorT&& it_end)
       : begin_(std::forward<IteratorT>(it_begin)),
         end_(std::forward<IteratorT>(it_end)) {}
@@ -494,14 +495,14 @@ class iterator_range {
   IteratorT end() const { return end_; }
   bool empty() const { return begin_ == end_; }
 
-  typename IteratorT::value_type at(typename IteratorT::difference_type pos) const {
+  typename IteratorDecayTy::value_type at(typename IteratorDecayTy::difference_type pos) const {
     static_assert(IsRandomAccess, "at() needs random access iterator");
     auto it = begin_;
     std::advance(it, pos);
     return *it;
   }
 
-  typename IteratorT::value_type operator[](typename IteratorT::difference_type pos) const {
+  typename IteratorDecayTy::value_type operator[](typename IteratorDecayTy::difference_type pos) const {
     return at(pos);
   }
 
@@ -512,9 +513,9 @@ class iterator_range {
   protected:
   enum {
     IsRandomAccess = std::is_base_of<std::random_access_iterator_tag,
-                                      typename IteratorT::iterator_category>::value,
+                                      typename IteratorDecayTy::iterator_category>::value,
     IsBidirectional = std::is_base_of<std::bidirectional_iterator_tag,
-                                      typename IteratorT::iterator_category>::value,
+                                      typename IteratorDecayTy::iterator_category>::value,
   };
   private:
   IteratorT begin_;

@@ -2428,19 +2428,19 @@ Binary::it_bindings Binary::bindings() const {
   if (const DyldInfo* dyld = dyld_info()) {
     auto begin = BindingInfoIterator(*dyld, 0);
     auto end = BindingInfoIterator(*dyld, dyld->binding_info_.size());
-    return make_range(std::move(begin), std::move(end));
+    return make_range(std::move(begin), std::move(end)); // NOLINT(performance-move-const-arg)
   }
 
   if (const DyldChainedFixups* fixup = dyld_chained_fixups()) {
     auto begin = BindingInfoIterator(*fixup, 0);
     auto end = BindingInfoIterator(*fixup, fixup->all_bindings_.size());
-    return make_range(std::move(begin), std::move(end));
+    return make_range(std::move(begin), std::move(end)); // NOLINT(performance-move-const-arg)
   }
 
   auto begin = BindingInfoIterator(*this, 0);
   auto end = BindingInfoIterator(*this, indirect_bindings_.size());
 
-  return make_range(std::move(begin), std::move(end));
+  return make_range(std::move(begin), std::move(end)); // NOLINT(performance-move-const-arg)
 }
 
 result<uint64_t> Binary::get_function_address(const std::string& name) const {
