@@ -41,6 +41,9 @@ uint16_t CodeInfo::nb_registers() const {
   return nb_registers_;
 }
 
+const std::vector<details::trycatch_item>& CodeInfo::exceptions() const {
+  return trycatch_items_;
+}
 
 std::ostream& operator<<(std::ostream& os, const CodeInfo& /*cinfo*/) {
 
