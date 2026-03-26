@@ -1,4 +1,4 @@
-requests==2.32.5
+requests==2.33.0
 sphinx==9.1.99
 Pygments==2.19.2
 breathe==4.36.0
