@@ -97,11 +97,11 @@ result<uint64_t> Stub::target() const {
 
 std::ostream& operator<<(std::ostream& os, const Stub& stub) {
   if (is_extended()) {
-    os << fmt::format("0x{:010x}: 0x{:010x} ({} bytes)",
+    os << fmt::format("{:#012x}: {:#012x} ({} bytes)",
                        stub.address(), stub.target().value_or(0),
                        stub.raw().size());
   } else {
-    os << fmt::format("0x{:010x} ({} bytes)", stub.address(), stub.raw().size());
+    os << fmt::format("{:#012x} ({} bytes)", stub.address(), stub.raw().size());
   }
   return os;
 }

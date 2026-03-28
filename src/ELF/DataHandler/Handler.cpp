@@ -85,7 +85,7 @@ result<std::unique_ptr<Handler>> Handler::from_stream(std::unique_ptr<BinaryStre
     return make_error_code(lief_errors::not_implemented);
   }
 
-  LIEF_ERR("Unknown stream for Handler");
+  LIEF_ERR("Unknown stream type for Handler");
   return make_error_code(lief_errors::not_supported);
 }
 
@@ -123,7 +123,7 @@ void Handler::remove(uint64_t offset, uint64_t size, Node::Type type) {
                                     });
 
   if (it_node == std::end(nodes_)) {
-    LIEF_ERR("Unable to find the node");
+    LIEF_ERR("Node not found");
   }
 
    nodes_.erase(it_node);

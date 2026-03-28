@@ -31,37 +31,37 @@ std::unique_ptr<AuxiliarySectionDefinition>
   SpanStream stream(payload);
   auto Length = stream.read<uint32_t>();
   if (!Length) {
-    LIEF_WARN("AuxiliarySectionDefinition error (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})", __LINE__);
     return std::make_unique<AuxiliarySectionDefinition>();
   }
 
   auto NumberOfRelocations = stream.read<uint16_t>();
   if (!NumberOfRelocations) {
-    LIEF_WARN("AuxiliarySectionDefinition error (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})", __LINE__);
     return std::make_unique<AuxiliarySectionDefinition>();
   }
 
   auto NumberOfLinenumbers = stream.read<uint16_t>();
   if (!NumberOfLinenumbers) {
-    LIEF_WARN("AuxiliarySectionDefinition error (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})", __LINE__);
     return std::make_unique<AuxiliarySectionDefinition>();
   }
 
   auto CheckSum = stream.read<uint32_t>();
   if (!CheckSum) {
-    LIEF_WARN("AuxiliarySectionDefinition error (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})", __LINE__);
     return std::make_unique<AuxiliarySectionDefinition>();
   }
 
   auto Number = stream.read<uint16_t>();
   if (!Number) {
-    LIEF_WARN("AuxiliarySectionDefinition error (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})", __LINE__);
     return std::make_unique<AuxiliarySectionDefinition>();
   }
 
   auto Selection = stream.read<uint8_t>();
   if (!Selection) {
-    LIEF_WARN("AuxiliarySectionDefinition error (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})", __LINE__);
     return std::make_unique<AuxiliarySectionDefinition>();
   }
 
@@ -75,13 +75,13 @@ std::unique_ptr<AuxiliarySectionDefinition>
 
   auto bReserved = stream.read<uint8_t>();
   if (!bReserved) {
-    LIEF_WARN("AuxiliarySectionDefinition error (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})", __LINE__);
     return std::make_unique<AuxiliarySectionDefinition>();
   }
 
   auto HighNumber = stream.read<uint16_t>();
   if (!HighNumber) {
-    LIEF_WARN("AuxiliarySectionDefinition error (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})", __LINE__);
     return std::make_unique<AuxiliarySectionDefinition>();
   }
 
@@ -96,10 +96,10 @@ std::unique_ptr<AuxiliarySectionDefinition>
 std::string AuxiliarySectionDefinition::to_string() const {
   std::ostringstream oss;
   oss << "AuxiliarySectionDefinition {\n";
-  oss << fmt::format("  Length: 0x{:06x}\n", length());
+  oss << fmt::format("  Length: {:#08x}\n", length());
   oss << fmt::format("  Number of relocations: {}\n", nb_relocs());
   oss << fmt::format("  Number of line numbers: {}\n", nb_line_numbers());
-  oss << fmt::format("  Checksum: 0x{:08x}\n", checksum());
+  oss << fmt::format("  Checksum: {:#010x}\n", checksum());
   oss << fmt::format("  Section index: {}\n", section_idx());
   oss << fmt::format("  Selection: {}\n", COFF::to_string(selection()));
   oss << fmt::format("  Reserved: {}\n", reserved());

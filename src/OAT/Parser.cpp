@@ -38,7 +38,7 @@ Parser::Parser()  = default;
 
 std::unique_ptr<Binary> Parser::parse(const std::string& oat_file) {
   if (!is_oat(oat_file)) {
-    LIEF_ERR("{} is not an OAT", oat_file);
+    LIEF_ERR("'{}' is not an OAT file", oat_file);
     return nullptr;
   }
 
@@ -63,7 +63,7 @@ std::unique_ptr<Binary> Parser::parse(const std::string& oat_file, const std::st
   if (std::unique_ptr<VDEX::File> vdex = VDEX::Parser::parse(vdex_file)) {
     parser.vdex_file_ = std::move(vdex);
   } else {
-    LIEF_WARN("Can't parse the VDEX file '{}'", vdex_file);
+    LIEF_WARN("Failed to parse VDEX file '{}'", vdex_file);
   }
   parser.init();
   std::unique_ptr<Binary> oat_binary{static_cast<Binary*>(parser.binary_.release())};
@@ -110,7 +110,7 @@ void Parser::init() {
   oat_bin.vdex_ = std::move(vdex_file_);
 
   if (!oat_bin.has_vdex() && version > details::OAT_088::oat_version) {
-    LIEF_INFO("No VDEX provided with this OAT file. Parsing will be incomplete");
+    LIEF_INFO("No VDEX provided, OAT parsing will be incomplete");
   }
 
   if (version <= details::OAT_064::oat_version) {

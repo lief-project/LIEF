@@ -29,7 +29,7 @@ std::string to_json_from_abstract([[maybe_unused]] const Object& v) {
   v.accept(visitor);
   return visitor.get().dump();
 #else
-  LIEF_WARN("JSON support is not enabled");
+  LIEF_WARN("JSON support not enabled");
   return "";
 #endif
 }

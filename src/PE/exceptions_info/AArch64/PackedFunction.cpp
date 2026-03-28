@@ -26,16 +26,16 @@ std::unique_ptr<PackedFunction> PackedFunction::parse(
   static constexpr auto WIDTH = 20;
   auto packed_info = details::arm64_packed_t{unwind_data};
 
-  LIEF_DEBUG("Parsing packed function 0x{:08x}", rva);
+  LIEF_DEBUG("Parsing packed function {:#010x}", rva);
   const auto flag = PACKED_FLAGS(unwind_data & 0x3);
   auto func = std::make_unique<PackedFunction>(
     rva, packed_info.function_length(), flag
   );
 
-  LIEF_DEBUG("  {:{}}: 0x{:08x}", "Raw Data", WIDTH, unwind_data);
-  LIEF_DEBUG("  {:{}}: 0x{:04x}", "Function RVA", WIDTH, rva);
-  LIEF_DEBUG("  {:{}}: 0x{:04x}", "Function Length", WIDTH, packed_info.function_length());
-  LIEF_DEBUG("  {:{}}: 0x{:04x}", "Frame size", WIDTH, packed_info.frame_size());
+  LIEF_DEBUG("  {:{}}: {:#010x}", "Raw Data", WIDTH, unwind_data);
+  LIEF_DEBUG("  {:{}}: {:#010x}", "Function RVA", WIDTH, rva);
+  LIEF_DEBUG("  {:{}}: {:#010x}", "Function Length", WIDTH, packed_info.function_length());
+  LIEF_DEBUG("  {:{}}: {:#010x}", "Frame size", WIDTH, packed_info.frame_size());
 
   (*func)
     .reg_F(packed_info.RF())
@@ -51,8 +51,8 @@ std::string PackedFunction::to_string() const {
   using namespace fmt;
   std::ostringstream oss;
   oss << "Runtime Packed AArch64 Function {\n"
-      << format("  Range(RVA): 0x{:08x} - 0x{:08x}\n", rva_start(), rva_end())
-      << format("  Length={} FrameSize=0x{:02x} RegF={} RegI={} H={} CR={}\n",
+      << format("  Range(RVA): {:#010x} - {:#010x}\n", rva_start(), rva_end())
+      << format("  Length={} FrameSize={:#04x} RegF={} RegI={} H={} CR={}\n",
                 length(), frame_size(), reg_F(), reg_I(), H(), CR());
   oss << '}';
   return oss.str();

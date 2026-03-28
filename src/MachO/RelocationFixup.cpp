@@ -99,7 +99,7 @@ void RelocationFixup::accept(Visitor& visitor) const {
 
 
 std::ostream& RelocationFixup::print(std::ostream& os) const {
-  os << fmt::format("0x{:08x}: 0x{:08x}", address(), target());
+  os << fmt::format("{:#010x}: {:#010x}", address(), target());
   if (const Symbol* sym = symbol()) {
     os << fmt::format("({})", sym->name());
   }
@@ -145,7 +145,7 @@ uint64_t RelocationFixup::target() const {
 
     case REBASE_TYPES::UNKNOWN:
       {
-        LIEF_ERR("Can't get target: unknown rebase type");
+        LIEF_ERR("Unknown rebase type");
         break;
       }
   }
@@ -186,7 +186,7 @@ void RelocationFixup::target(uint64_t target) {
 
     case REBASE_TYPES::PTR32_REBASE:
       {
-        LIEF_WARN("Updating a dyld_chained_ptr_generic32 is not supported yet");
+        LIEF_WARN("Updating dyld_chained_ptr_generic32 is not yet supported");
         return;
       }
 
@@ -199,7 +199,7 @@ void RelocationFixup::target(uint64_t target) {
 
     case REBASE_TYPES::UNKNOWN:
       {
-        LIEF_ERR("Can't set target: unknown rebase type");
+        LIEF_ERR("Unknown rebase type");
         break;
       }
   }

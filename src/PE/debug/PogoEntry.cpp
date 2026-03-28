@@ -26,7 +26,7 @@ void PogoEntry::accept(Visitor& visitor) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const PogoEntry& entry) {
-  os << fmt::format("[0x{:06x}, 0x{:06x}] {:20} ({} bytes)",
+  os << fmt::format("[{:#08x}, {:#08x}] {:20} ({} bytes)",
                     entry.start_rva(), entry.start_rva() + entry.size(),
                     entry.name(), entry.size());
   return os;

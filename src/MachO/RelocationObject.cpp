@@ -68,7 +68,7 @@ uint64_t RelocationObject::address() const {
 
 int32_t RelocationObject::value() const {
   if (!is_scattered()) {
-    LIEF_ERR("This relocation is not a 'scattered' one");
+    LIEF_ERR("Relocation is not scattered");
     return -1;
   }
   return value_;
@@ -79,13 +79,13 @@ void RelocationObject::size(size_t size) {
     case 8:  size_ = 0; break;
     case 16: size_ = 1; break;
     case 32: size_ = 2; break;
-    default: LIEF_ERR("Size must not be bigger than 32 bits");
+    default: LIEF_ERR("Size exceeds 32 bits");
   }
 }
 
 void RelocationObject::value(int32_t value) {
   if (!is_scattered()) {
-    LIEF_ERR("This relocation is not a 'scattered' one");
+    LIEF_ERR("Relocation is not scattered");
     return;
   }
   value_ = value;

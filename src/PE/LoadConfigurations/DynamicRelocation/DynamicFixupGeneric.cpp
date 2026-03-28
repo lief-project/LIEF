@@ -80,7 +80,7 @@ std::string DynamicFixupGeneric::to_string() const {
   size_t idx = 0;
   for (const Relocation& R : relocations()) {
     for (const RelocationEntry& E : R.entries()) {
-      oss << format("  [{:04d}] RVA: 0x{:08x} Type: {}\n", idx++, E.address(),
+      oss << format("  [{:04d}] RVA: {:#010x} Type: {}\n", idx++, E.address(),
                     PE::to_string(E.type()));
     }
   }

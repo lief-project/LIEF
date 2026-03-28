@@ -79,12 +79,12 @@ std::string FunctionOverride::to_string() const {
   for (const FunctionOverrideInfo& info : func_overriding_info()) {
     oss << indent(info.to_string(), 2);
     if (const image_bdd_info_t* bdd_info = find_bdd_info(info)) {
-      oss << format("  BDD Version: {} ({} bytes, offset=0x{:08x})\n",
+      oss << format("  BDD Version: {} ({} bytes, offset={:#010x})\n",
                     bdd_info->version, bdd_info->original_size,
                     bdd_info->original_offset);
       for (size_t i = 0; i < bdd_info->relocations.size(); ++i) {
         const image_bdd_dynamic_relocation_t& R = bdd_info->relocations[i];
-        oss << format("    [{:04d}] L={:04d}, R={:04d}, V=0x{:08x}\n", i,
+        oss << format("    [{:04d}] L={:04d}, R={:04d}, V={:#010x}\n", i,
                       R.left, R.right, R.value);
       }
     } else {
@@ -108,14 +108,14 @@ std::unique_ptr<FunctionOverride>
   if (FuncOverrideInfo) {
     strm.increment_pos(*FuncOverrideSize);
   } else {
-    LIEF_WARN("Can't slice FuncOverrideInfo");
+    LIEF_WARN("Failed to slice FuncOverrideInfo");
   }
 
   auto BDDInfo = strm.slice(strm.pos());
   if (BDDInfo) {
     strm.increment_pos(BDDInfo->size());
   } else {
-    LIEF_WARN("Can't slice BDDInfo");
+    LIEF_WARN("Failed to slice BDDInfo");
   }
 
   auto func = std::make_unique<FunctionOverride>();
@@ -145,22 +145,22 @@ ok_error_t FunctionOverride::parse_bdd_info(
 
   auto Version = strm.read<uint32_t>();
   if (!Version) {
-    LIEF_WARN("Can't read IMAGE_BDD_INFO.Version");
+    LIEF_WARN("Failed to read IMAGE_BDD_INFO.Version");
     return make_error_code(Version.error());
   }
   bdd_info.version = *Version;
 
   auto BDDSize = strm.read<uint32_t>();
   if (!BDDSize) {
-    LIEF_WARN("Can't read IMAGE_BDD_INFO.BDDSize");
+    LIEF_WARN("Failed to read IMAGE_BDD_INFO.BDDSize");
     return make_error_code(BDDSize.error());
   }
 
   if (*Version != 1) {
-    LIEF_DEBUG("IMAGE_BDD_INFO unsupported version: {}", *Version);
+    LIEF_DEBUG("Unsupported IMAGE_BDD_INFO version: {}", *Version);
 
     if (!strm.read_data(bdd_info.payload, *BDDSize)) {
-      LIEF_WARN("Can't read IMAGE_BDD_INFO payload");
+      LIEF_WARN("Failed to read IMAGE_BDD_INFO payload");
     }
     return ok();
   }
@@ -171,7 +171,7 @@ ok_error_t FunctionOverride::parse_bdd_info(
 
   auto payload = strm.slice(strm.pos(), *BDDSize);
   if (!payload) {
-    LIEF_WARN("Can't slice IMAGE_BDD_INFO payload");
+    LIEF_WARN("Failed to slice IMAGE_BDD_INFO payload");
     return make_error_code(payload.error());
   }
 

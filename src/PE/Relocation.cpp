@@ -89,7 +89,7 @@ void Relocation::accept(LIEF::Visitor& visitor) const {
 
 std::ostream& operator<<(std::ostream& os, const Relocation& relocation) {
   using namespace fmt;
-  os << format("Page RVA: 0x{:08x} (SizeOfBlock: {} bytes)\n",
+  os << format("Page RVA: {:#010x} (SizeOfBlock: {} bytes)\n",
                relocation.virtual_address(), relocation.block_size());
   for (const RelocationEntry& entry : relocation.entries()) {
     os << "  " << entry << '\n';
@@ -104,13 +104,13 @@ Relocation::relocations_t Relocation::parse(Parser& ctx, BinaryStream& stream) {
   while (stream) {
     auto PageRVA = stream.read<uint32_t>();
     if (!PageRVA) {
-      LIEF_DEBUG("Error: {}:{}", __FUNCTION__, __LINE__);
+      LIEF_DEBUG("Failed to read page RVA at {}:{}", __FUNCTION__, __LINE__);
       return relocs;
     }
 
     auto BlockSize = stream.read<uint32_t>();
     if (!BlockSize) {
-      LIEF_DEBUG("Error: {}:{}", __FUNCTION__, __LINE__);
+      LIEF_DEBUG("Failed to read block size at {}:{}", __FUNCTION__, __LINE__);
       return relocs;
     }
 
@@ -127,7 +127,7 @@ Relocation::relocations_t Relocation::parse(Parser& ctx, BinaryStream& stream) {
       for (size_t i = 0; i < nb_entries; ++i) {
         auto data = block_strm->read<uint16_t>();
         if (!data) {
-          LIEF_DEBUG("Error: {}:{} (entry: {})", __FUNCTION__, __LINE__, i);
+          LIEF_DEBUG("Failed to read entry at {}:{} (entry: {})", __FUNCTION__, __LINE__, i);
           break;
         }
 

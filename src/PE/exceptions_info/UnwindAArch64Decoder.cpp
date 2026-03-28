@@ -491,7 +491,7 @@ ok_error_t Decoder::run(bool prologue) {
 
       found = true;
 
-      lognf("0x{:04x} ", start_pos);
+      lognf("{:#06x} ", start_pos);
       {
         ScopedStream scoped(*stream_);
         std::vector<uint8_t> bytes;

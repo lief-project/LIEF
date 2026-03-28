@@ -39,7 +39,7 @@ static_assert(sizeof(control_transfer_reloc_t) == sizeof(uint32_t));
 
 std::string DynamicFixupControlTransfer::reloc_entry_t::to_string() const {
   using namespace fmt;
-  return format("RVA: 0x{:08x} Instr: {:6} IAT index: {:04d}",
+  return format("RVA: {:#010x} Instr: {:6} IAT index: {:04d}",
                 rva, is_call ? "call" : "branch", iat_index);
 }
 

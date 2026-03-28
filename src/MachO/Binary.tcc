@@ -81,7 +81,7 @@ ok_error_t Binary::patch_relocation(Relocation& relocation, uint64_t from, uint6
 
   SegmentCommand* segment = segment_from_virtual_address(relocation.address());
   if (segment == nullptr) {
-    LIEF_DEBUG("Can't find the segment associated with the relocation: 0x{:x}",
+    LIEF_DEBUG("Can't find the segment associated with the relocation: {:#x}",
                relocation.address());
     return make_error_code(lief_errors::not_found);
   }

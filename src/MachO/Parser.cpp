@@ -46,7 +46,7 @@ Parser::Parser(const std::string& file, const ParserConfig& conf) :
 {
   auto stream = VectorStream::from_file(file);
   if (!stream) {
-    LIEF_ERR("Can't create the stream");
+    LIEF_ERR("Failed to create stream");
   } else {
     stream_ = std::make_unique<VectorStream>(std::move(*stream));
   }
@@ -61,7 +61,7 @@ std::unique_ptr<FatBinary> Parser::parse(const std::string& filename,
   }
 
   Parser parser{filename, conf};
-  parser.build();
+  parser.parse();
   return std::unique_ptr<FatBinary>(new FatBinary{std::move(parser.binaries_)});
 }
 
@@ -75,12 +75,12 @@ Parser::Parser(std::vector<uint8_t> data, const ParserConfig& conf) :
 std::unique_ptr<FatBinary> Parser::parse(const std::vector<uint8_t>& data,
                                          const ParserConfig& conf) {
   if (!is_macho(data)) {
-    LIEF_ERR("The provided data seem not being related to a MachO binary");
+    LIEF_ERR("Provided data does not appear to be a Mach-O binary");
     return nullptr;
   }
 
   Parser parser{data, conf};
-  parser.build();
+  parser.parse();
   return std::unique_ptr<FatBinary>(new FatBinary{std::move(parser.binaries_)});
 }
 
@@ -101,7 +101,7 @@ std::unique_ptr<FatBinary> Parser::parse(std::unique_ptr<BinaryStream> stream,
   parser.config_ = conf;
   parser.stream_ = std::move(stream);
 
-  if (!parser.build()) {
+  if (!parser.parse()) {
     return nullptr;
   }
 
@@ -109,15 +109,15 @@ std::unique_ptr<FatBinary> Parser::parse(std::unique_ptr<BinaryStream> stream,
 }
 
 std::unique_ptr<FatBinary> Parser::parse_from_memory(uintptr_t address, size_t size, const ParserConfig& conf) {
-  if (conf.fix_from_memory && (!conf.parse_dyld_rebases || !conf.parse_dyld_rebases)) {
-    LIEF_WARN("fix_from_memory requires both: parse_dyld_rebases and parse_dyld_rebases");
+  if (conf.fix_from_memory && (!conf.parse_dyld_rebases || !conf.parse_dyld_bindings)) {
+    LIEF_WARN("fix_from_memory requires both parse_dyld_rebases and parse_dyld_bindings");
     return nullptr;
   }
   Parser parser;
   parser.stream_ = std::make_unique<MemoryStream>(address, size);
   parser.config_ = conf;
-  if (!parser.build()) {
-    LIEF_WARN("Errors when parsing the Mach-O at the address 0x{:x} (size: 0{:x})", address, size);
+  if (!parser.parse()) {
+    LIEF_WARN("Parsing errors at address {:#x} (size: {:#x})", address, size);
   }
   if (parser.binaries_.empty()) {
     return nullptr;
@@ -138,12 +138,12 @@ std::unique_ptr<FatBinary> Parser::parse_from_memory(uintptr_t address, const Pa
   return parse_from_memory(address, MAX_SIZE, conf);
 }
 
-ok_error_t Parser::build_fat() {
+ok_error_t Parser::parse_fat() {
   static constexpr size_t MAX_FAT_ARCH = 30;
   stream_->setpos(0);
   const auto header = stream_->read<details::fat_header>();
   if (!header) {
-    LIEF_ERR("Can't read the FAT header");
+    LIEF_ERR("Failed to read FAT header");
     return make_error_code(lief_errors::read_error);
   }
   uint32_t nb_arch = Swap4Bytes(header->nfat_arch);
@@ -157,7 +157,7 @@ ok_error_t Parser::build_fat() {
   for (size_t i = 0; i < nb_arch; ++i) {
     auto res_arch = stream_->read<details::fat_arch>();
     if (!res_arch) {
-      LIEF_ERR("Can't read arch #{}", i);
+      LIEF_ERR("Failed to read arch #{}", i);
       break;
     }
     const auto arch = *res_arch;
@@ -166,12 +166,12 @@ ok_error_t Parser::build_fat() {
     const uint32_t size   = get_swapped_endian(arch.size);
 
     LIEF_DEBUG("Dealing with arch[{:d}]", i);
-    LIEF_DEBUG("    [{:d}].offset: 0x{:06x}", i, offset);
-    LIEF_DEBUG("    [{:d}].size  : 0x{:06x}", i, size);
+    LIEF_DEBUG("    [{:d}].offset: {:#06x}", i, offset);
+    LIEF_DEBUG("    [{:d}].size  : {:#06x}", i, size);
 
     std::vector<uint8_t> macho_data;
     if (!stream_->peek_data(macho_data, offset, size)) {
-      LIEF_ERR("MachO #{:d} is corrupted!", i);
+      LIEF_ERR("Mach-O #{:d} is corrupted", i);
       continue;
     }
 
@@ -179,7 +179,7 @@ ok_error_t Parser::build_fat() {
         macho_data, offset, config_
     );
     if (bin == nullptr) {
-      LIEF_ERR("Can't parse the binary at the index #{:d}", i);
+      LIEF_ERR("Failed to parse binary at index {:d}", i);
       continue;
     }
     binaries_.push_back(std::move(bin));
@@ -187,7 +187,7 @@ ok_error_t Parser::build_fat() {
   return ok();
 }
 
-ok_error_t Parser::build() {
+ok_error_t Parser::parse() {
   auto res_type = stream_->peek<uint32_t>();
   if (!res_type) {
     return make_error_code(lief_errors::parsing_error);
@@ -196,18 +196,19 @@ ok_error_t Parser::build() {
 
   // Fat binary
   if (type == MACHO_TYPES::MAGIC_FAT || type == MACHO_TYPES::CIGAM_FAT) {
-    if (!build_fat()) {
-      LIEF_WARN("Errors while parsing the Fat MachO");
+    if (!parse_fat()) {
+      LIEF_WARN("Errors while parsing Fat Mach-O");
     }
-  } else { // fit binary
-    const size_t original_size = stream_->size();
-    std::unique_ptr<Binary> bin = BinaryParser::parse(std::move(stream_), 0, config_);
-    bin->original_size_ = original_size;
-    if (bin == nullptr) {
-      return make_error_code(lief_errors::parsing_error);
-    }
-    binaries_.push_back(std::move(bin));
+    return ok();
   }
+
+  const size_t original_size = stream_->size();
+  std::unique_ptr<Binary> bin = BinaryParser::parse(std::move(stream_), 0, config_);
+  bin->original_size_ = original_size;
+  if (bin == nullptr) {
+    return make_error_code(lief_errors::parsing_error);
+  }
+  binaries_.push_back(std::move(bin));
 
   return ok();
 }
@@ -226,7 +227,7 @@ ok_error_t Parser::undo_reloc_bindings(uintptr_t base_address) {
       else if (RelocationDyld::classof(reloc)) {
         span<const uint8_t> content = bin->get_content_from_virtual_address(reloc.address(), sizeof(uintptr_t));
         if (content.empty() || content.size() != sizeof(uintptr_t)) {
-          LIEF_WARN("Can't access relocation data @0x{:x}", reloc.address());
+          LIEF_WARN("Failed to access relocation data at {:#x}", reloc.address());
           continue;
         }
         const auto value = *reinterpret_cast<const uintptr_t*>(content.data());

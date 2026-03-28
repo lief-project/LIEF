@@ -59,7 +59,7 @@ result<ResourceVarFileInfo> ResourceVarFileInfo::parse(BinaryStream& stream) {
     stream.align(sizeof(uint32_t));
     auto var = ResourceVar::parse(stream);
     if (!var) {
-      LIEF_WARN("Can't parse resource var #{}", info.vars_.size());
+      LIEF_WARN("Failed to parse resource var #{}", info.vars_.size());
       return info;
     }
     info.add_var(std::move(*var));

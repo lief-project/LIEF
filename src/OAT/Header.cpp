@@ -189,7 +189,7 @@ std::string* Header::get(HEADER_KEYS key) {
 Header& Header::set(HEADER_KEYS key, const std::string& value) {
   const auto it = dex2oat_context_.find(key);
   if (it == std::end(dex2oat_context_)) {
-    LIEF_WARN("Can't find the key {}", to_string(key));
+    LIEF_WARN("Key {} not found", to_string(key));
     return *this;
   }
 

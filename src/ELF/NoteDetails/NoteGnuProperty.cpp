@@ -42,13 +42,13 @@ parse_property(ARCH arch, SpanStream& stream) {
 
   auto res_type = stream.read<uint32_t>();
   if (!res_type) {
-    LIEF_DEBUG("Can't read type at offset: 0x{:04x}", stream.pos());
+    LIEF_DEBUG("Failed to read type at offset {:#06x}", stream.pos());
     return nullptr;
   }
 
   auto data_size = stream.read<uint32_t>();
   if (!data_size) {
-    LIEF_DEBUG("Can't read data size at offset: 0x{:04x}", stream.pos());
+    LIEF_DEBUG("Failed to read data size at offset {:#06x}", stream.pos());
     return nullptr;
   }
 
@@ -109,7 +109,7 @@ parse_property(ARCH arch, SpanStream& stream) {
         if (csize == sizeof(uint8_t)) {
           return StackSize::create(content.read<uint8_t>().value_or(0));
         }
-        LIEF_ERR("Wrong stack size: {}", csize);
+        LIEF_ERR("Invalid stack size: {}", csize);
         return StackSize::create(0);
       }
     case GNU_PROPERTY_NO_COPY_ON_PROTECTED: return NoteNoCopyOnProtected::create();
@@ -134,7 +134,7 @@ parse_property(ARCH arch, SpanStream& stream) {
 NoteGnuProperty::properties_t NoteGnuProperty::properties() const {
   auto stream = SpanStream::from_vector(description_);
   if (!stream) {
-    LIEF_WARN("Can't create stream");
+    LIEF_WARN("Failed to create stream");
     return {};
   }
   const bool is64 = arch_ == ARCH::IA_64 || arch_ == ARCH::AARCH64 ||

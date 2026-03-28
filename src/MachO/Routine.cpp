@@ -43,7 +43,7 @@ void Routine::accept(Visitor& visitor) const {
 
 std::ostream& Routine::print(std::ostream& os) const {
   LoadCommand::print(os) << '\n';
-  os << fmt::format("init_address=0x{:06x} init_module=0x{:06x}",
+  os << fmt::format("init_address={:#08x} init_module={:#08x}",
                     init_address(), init_module());
   return os;
 }

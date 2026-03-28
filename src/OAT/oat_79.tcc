@@ -41,7 +41,7 @@ void Parser::parse_dex_files<details::OAT79_t>() {
 
   uint64_t dexfiles_offset = sizeof(oat_header) + oat.header_.key_value_size();
 
-  LIEF_DEBUG("OAT DEX file located at offset: 0x{:x}", dexfiles_offset);
+  LIEF_DEBUG("OAT DEX files offset: {:#x}", dexfiles_offset);
 
   std::vector<uint32_t> classes_offsets_offset;
   classes_offsets_offset.reserve(nb_dex_files);
@@ -51,7 +51,7 @@ void Parser::parse_dex_files<details::OAT79_t>() {
 
   for (size_t i = 0; i < nb_dex_files; ++i ) {
 
-    LIEF_DEBUG("Dealing with OAT DEX file #{:d}", i);
+    LIEF_DEBUG("Processing OAT DEX file #{:d}", i);
     std::unique_ptr<DexFile> dex_file{new DexFile{}};
     auto location_size = stream_->read<uint32_t>();
     if (!location_size) {
@@ -97,12 +97,12 @@ void Parser::parse_dex_files<details::OAT79_t>() {
 
   for (size_t i = 0; i < nb_dex_files; ++i) {
     if (i >= oat.oat_dex_files_.size()) {
-      LIEF_WARN("DEX file #{} is out of bound", i);
+      LIEF_WARN("DEX file #{} out of bounds", i);
       break;
     }
     uint64_t offset = oat.oat_dex_files_[i]->dex_offset();
 
-    LIEF_DEBUG("Dealing with DEX file #{:d} at offset 0x{:x}", i, offset);
+    LIEF_DEBUG("Processing DEX file #{:d} at offset {:#x}", i, offset);
 
     const auto res_dex_hdr = stream_->peek<dex35_header_t>(offset);
     if (!res_dex_hdr) {
@@ -142,7 +142,7 @@ void Parser::parse_dex_files<details::OAT79_t>() {
         }
       }
     } else {
-      LIEF_WARN("{} ({}) at  0x{:x} is not a DEX file", name, oat_dex_file->location(), stream_->pos());
+      LIEF_WARN("{} ({}) at {:#x} is not a DEX file", name, oat_dex_file->location(), stream_->pos());
     }
   }
 }

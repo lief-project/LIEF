@@ -182,7 +182,7 @@ bool LayoutChecker::check_initializers() {
 
     uint64_t init_addr = routines->init_address();
     if (!ranges.contain(init_addr)) {
-      return error("LC_ROUTINE/64 initializer 0x{:016x} is not an offset "
+      return error("LC_ROUTINE/64 initializer {:#018x} is not an offset "
                    "to an executable segment", init_addr);
     }
   }
@@ -197,12 +197,12 @@ bool LayoutChecker::check_initializers() {
     }
 
     if (section.size() % ptr_size != 0) {
-      return error("Section '{}' size (0x{:08x}) is not a multiple of pointer-size",
+      return error("Section '{}' size ({:#010x}) is not a multiple of pointer-size",
                    section.name(), section.size());
     }
 
     if (section.address() % ptr_size != 0) {
-      return error("Section '{}' address (0x{:08x}) is not pointer aligned",
+      return error("Section '{}' address ({:#010x}) is not pointer aligned",
                    section.name(), section.address());
     }
 
@@ -212,7 +212,7 @@ bool LayoutChecker::check_initializers() {
       if (ptr_size == sizeof(uint32_t)) {
         auto res = stream.read<uint32_t>();
         if (!res) {
-          return error("Can't read pointer at 0x{:04x} in {}",
+          return error("Can't read pointer at {:#06x} in {}",
                        stream.pos(), section.name());
         }
 
@@ -223,7 +223,7 @@ bool LayoutChecker::check_initializers() {
       } else {
         auto res = stream.read<uint64_t>();
         if (!res) {
-          return error("Can't read pointer at 0x{:04x} in {}",
+          return error("Can't read pointer at {:#06x} in {}",
                        stream.pos(), section.name());
         }
         // As mentioned in the dyld documentation:
@@ -232,7 +232,7 @@ bool LayoutChecker::check_initializers() {
         ptr = *res & 0x03FFFFFF;
       }
       if (!ranges.contain(imagebase + ptr)) {
-        return error("initializer at 0x{:06x} in {} is not in an executable segment",
+        return error("initializer at {:#08x} in {} is not in an executable segment",
                      stream.pos(), section.name());
       }
     }
@@ -263,12 +263,12 @@ bool LayoutChecker::check_initializers() {
     while (stream) {
       auto res = stream.read<uint32_t>();
       if (!res) {
-        return error("Can't read pointer at 0x{:04} in {}",
+        return error("Can't read pointer at {:#06x} in {}",
                      stream.pos(), section.name());
       }
 
       if (!ranges.contain(imagebase + *res)) {
-        return error("initializer 0x{:08x} is not an offset to an executable "
+        return error("initializer {:#010x} is not an offset to an executable "
                      "segment", *res);
       }
     }
@@ -292,7 +292,7 @@ bool LayoutChecker::check_segments() {
     }
 
     if ((section_space % sizeof_section_hdr) != 0) {
-      return error("segment load command size {}: 0x{:04x} will not fit "
+      return error("segment load command size {}: {:#06x} will not fit "
                    "whole number of sections", segment.name(), segment.size());
     }
 
@@ -346,7 +346,7 @@ bool LayoutChecker::check_overlapping() {
       if (vm_overalp) {
         error(R"delim(
               Segments '{}' and '{}' overlap (virtual addresses):
-              [0x{:08x}, 0x{:08x}] [0x{:08x}, 0x{:08x}]
+              [{:#010x}, {:#010x}] [{:#010x}, {:#010x}]
               )delim", lhs.name(), rhs.name(),
               lhs.virtual_address(), lhs_vm_end, rhs.virtual_address(), rhs_vm_end);
         return true;
@@ -356,7 +356,7 @@ bool LayoutChecker::check_overlapping() {
       if (file_overlap) {
         error(R"delim(
               Segments '{}' and '{}' overlap (file offsets):
-              [0x{:08x}, 0x{:08x}] [0x{:08x}, 0x{:08x}]
+              [{:#010x}, {:#010x}] [{:#010x}, {:#010x}]
               )delim", lhs.name(), rhs.name(),
               lhs.file_offset(), lhs_file_end, rhs.file_offset(), rhs_file_end);
         return true;
@@ -501,7 +501,7 @@ bool LayoutChecker::check_valid_paths() {
       case LoadCommand::TYPE::LOAD_UPWARD_DYLIB:
         {
           if (!DylibCommand::classof(&cmd)) {
-            LIEF_ERR("{} is not associated with a DylibCommand which should be the case",
+            LIEF_ERR("{} is not associated with a DylibCommand",
                      to_string(cmd.command()));
             break;
           }
@@ -932,7 +932,7 @@ bool LayoutChecker::check_section_contiguity() {
                                    section->name(), section->offset(),
                                    next_expected_offset, alignment);
         if (it != sections_vec.begin() && is_gap_reversed(*std::prev(it), *it) && section->name() == "__text") {
-          LIEF_WARN("Permitting section gap which could be caused by LIEF add_section/extend_section: {}", message);
+          LIEF_WARN("Permitting section gap (possibly caused by add_section/extend_section): {}", message);
           next_expected_offset = section->offset();
         } else {
           return error(message);
@@ -1013,7 +1013,7 @@ bool LayoutChecker::check() {
       if (dyld_info->rebase().first != offset) {
         return error(R"delim(
         __LINKEDIT does not start with LC_DYLD_INFO.rebase:
-          Expecting offset: 0x{:x} while it is 0x{:x}
+          Expecting offset: {:#x} while it is {:#x}
         )delim", offset, dyld_info->rebase().first);
       }
     }
@@ -1022,7 +1022,7 @@ bool LayoutChecker::check() {
       if (dyld_info->bind().first != offset) {
         return error(R"delim(
         __LINKEDIT does not start with LC_DYLD_INFO.bind:
-          Expecting offset: 0x{:x} while it is 0x{:x}
+          Expecting offset: {:#x} while it is {:#x}
         )delim", offset, dyld_info->bind().first);
       }
     }
@@ -1034,7 +1034,7 @@ bool LayoutChecker::check() {
       {
         return error(R"delim(
                      LC_DYLD_INFO.exports out of place:
-                     Expecting offset: 0x{:x} while it is 0x{:x}
+                     Expecting offset: {:#x} while it is {:#x}
                      )delim", offset, dyld_info->export_info().first);
       }
     }
@@ -1067,7 +1067,7 @@ bool LayoutChecker::check() {
       if (fixups->data_offset() != offset) {
         return error(R"delim(
         __LINKEDIT does not start with LC_DYLD_CHAINED_FIXUPS:
-          Expecting offset: 0x{:x} while it is 0x{:x}
+          Expecting offset: {:#x} while it is {:#x}
         )delim", offset, fixups->data_offset());
       }
       offset += fixups->data_size();
@@ -1079,7 +1079,7 @@ bool LayoutChecker::check() {
       if (exports->data_offset() != offset) {
         return error(R"delim(
         LC_DYLD_EXPORTS_TRIE out of place in __LINKEDIT:
-          Expecting offset: 0x{:x} while it is 0x{:x}
+          Expecting offset: {:#x} while it is {:#x}
         )delim", offset, exports->data_offset());
       }
     }
@@ -1091,7 +1091,7 @@ bool LayoutChecker::check() {
       if (variants->data_offset() != offset) {
         return error(R"delim(
         LC_FUNCTION_VARIANTS out of place in __LINKEDIT:
-          Expecting offset: 0x{:x} while it is 0x{:x}
+          Expecting offset: {:#x} while it is {:#x}
         )delim", offset, variants->data_offset());
       }
     }
@@ -1103,7 +1103,7 @@ bool LayoutChecker::check() {
       if (fixups->data_offset() != offset) {
         return error(R"delim(
         LC_FUNCTION_VARIANT_FIXUPS out of place in __LINKEDIT:
-          Expecting offset: 0x{:x} while it is 0x{:x}
+          Expecting offset: {:#x} while it is {:#x}
         )delim", offset, fixups->data_offset());
       }
     }
@@ -1119,7 +1119,7 @@ bool LayoutChecker::check() {
     if (dyst->local_relocation_offset() != offset) {
       return error(R"delim(
       LC_DYSYMTAB local relocations out of place:
-        Expecting offset: 0x{:x} while it is 0x{:x}
+        Expecting offset: {:#x} while it is {:#x}
       )delim", offset, dyst->local_relocation_offset());
     }
     offset += dyst->nb_local_relocations() * sizeof(details::relocation_info);
@@ -1130,7 +1130,7 @@ bool LayoutChecker::check() {
     if (spi->data_offset() != 0 && spi->data_offset() != offset) {
       return error(R"delim(
       LC_SEGMENT_SPLIT_INFO out of place:
-        Expecting offset: 0x{:x} while it is 0x{:x}
+        Expecting offset: {:#x} while it is {:#x}
       )delim", offset, spi->data_offset());
     }
     offset += spi->data_size();
@@ -1141,7 +1141,7 @@ bool LayoutChecker::check() {
     if (fs->data_offset() != 0 && fs->data_offset() != offset) {
       return error(R"delim(
       LC_FUNCTION_STARTS out of place:
-        Expecting offset: 0x{:x} while it is 0x{:x}
+        Expecting offset: {:#x} while it is {:#x}
       )delim", offset, fs->data_offset());
     }
     offset += fs->data_size();
@@ -1152,7 +1152,7 @@ bool LayoutChecker::check() {
     if (dic->data_offset() != 0 && dic->data_offset() != offset) {
       return error(R"delim(
       LC_DATA_IN_CODE out of place:
-        Expecting offset: 0x{:x} while it is 0x{:x}
+        Expecting offset: {:#x} while it is {:#x}
       )delim", offset, dic->data_offset());
     }
     offset += dic->data_size();
@@ -1162,7 +1162,7 @@ bool LayoutChecker::check() {
     if (info->data_offset() != 0 && info->data_offset() != offset) {
       return error(R"delim(
       LC_ATOM_INFO out of place:
-        Expecting offset: 0x{:x} while it is 0x{:x}
+        Expecting offset: {:#x} while it is {:#x}
       )delim", offset, info->data_offset());
     }
     offset += info->data_size();
@@ -1172,7 +1172,7 @@ bool LayoutChecker::check() {
     if (cs->data_offset() != 0 && cs->data_offset() != offset) {
       return error(R"delim(
       LC_DYLIB_CODE_SIGN_DRS out of place:
-        Expecting offset: 0x{:x} while it is 0x{:x}
+        Expecting offset: {:#x} while it is {:#x}
       )delim", offset, cs->data_offset());
     }
     offset += cs->data_size();
@@ -1182,7 +1182,7 @@ bool LayoutChecker::check() {
     if (opt->data_offset() != 0 && opt->data_offset() != offset) {
       return error(R"delim(
       LC_LINKER_OPTIMIZATION_HINT out of place:
-        Expecting offset: 0x{:x} while it is 0x{:x}
+        Expecting offset: {:#x} while it is {:#x}
       )delim", offset, opt->data_offset());
     }
     offset += opt->data_size();
@@ -1198,7 +1198,7 @@ bool LayoutChecker::check() {
     if (st->symbol_offset() != offset) {
       return error(R"delim(
       LC_SYMTAB.nlist out of place:
-        Expecting offset: 0x{:x} while it is 0x{:x}
+        Expecting offset: {:#x} while it is {:#x}
       )delim", offset, st->symbol_offset());
     }
     offset += st->numberof_symbols() * (is64 ? sizeof(details::nlist_64) : sizeof(details::nlist_32));
@@ -1242,7 +1242,7 @@ bool LayoutChecker::check() {
     if (two->offset() != 0 && two->offset() != offset) {
       return error(R"delim(
       LC_TWOLEVEL_HINTS out of place:
-        Expecting offset: 0x{:x} while it is 0x{:x}
+        Expecting offset: {:#x} while it is {:#x}
       )delim", offset, two->offset());
     }
     offset += two->hints().size() * sizeof(details::twolevel_hint);
@@ -1253,7 +1253,7 @@ bool LayoutChecker::check() {
     if (dyst->external_relocation_offset() != offset) {
       return error(R"delim(
       LC_DYSYMTAB.extrel out of place:
-        Expecting offset: 0x{:x} while it is 0x{:x}
+        Expecting offset: {:#x} while it is {:#x}
       )delim", offset, dyst->external_relocation_offset());
     }
 
@@ -1265,7 +1265,7 @@ bool LayoutChecker::check() {
     if (dyst->indirect_symbol_offset() != offset) {
       return error(R"delim(
       LC_DYSYMTAB.nindirect out of place:
-        Expecting offset: 0x{:x} while it is 0x{:x}
+        Expecting offset: {:#x} while it is {:#x}
       )delim", offset, dyst->indirect_symbol_offset());
     }
 
@@ -1282,7 +1282,7 @@ bool LayoutChecker::check() {
     if (dyst->toc_offset() != offset && dyst->toc_offset() != rounded_offset) {
       return error(R"delim(
       LC_DYSYMTAB.toc out of place:
-        Expecting offsets: 0x{:x} or 0x{:x} while it is 0x{:x}
+        Expecting offsets: {:#x} or {:#x} while it is {:#x}
       )delim", offset, rounded_offset, dyst->toc_offset());
     }
     if (dyst->toc_offset() == offset) {
@@ -1302,7 +1302,7 @@ bool LayoutChecker::check() {
     if (dyst->module_table_offset() != offset && dyst->module_table_offset() != rounded_offset) {
       return error(R"delim(
       LC_DYSYMTAB.modtab out of place:
-        Expecting offsets: 0x{:x} or 0x{:x} while it is 0x{:x}
+        Expecting offsets: {:#x} or {:#x} while it is {:#x}
       )delim", offset, rounded_offset, dyst->module_table_offset());
     }
 
@@ -1327,7 +1327,7 @@ bool LayoutChecker::check() {
     if (dyst->external_reference_symbol_offset() != offset && dyst->external_reference_symbol_offset() != rounded_offset) {
       return error(R"delim(
       LC_DYSYMTAB.extrefsym out of place:
-        Expecting offsets: 0x{:x} or 0x{:x} while it is 0x{:x}
+        Expecting offsets: {:#x} or {:#x} while it is {:#x}
       )delim", offset, rounded_offset, dyst->external_reference_symbol_offset());
     }
 
@@ -1347,7 +1347,7 @@ bool LayoutChecker::check() {
     if (st->strings_offset() != offset && st->strings_offset() != rounded_offset) {
       return error(R"delim(
       LC_SYMTAB.strings out of place:
-        Expecting offsets: 0x{:x} or 0x{:x} while it is 0x{:x}
+        Expecting offsets: {:#x} or {:#x} while it is {:#x}
       )delim", offset, rounded_offset, st->strings_offset());
     }
 
@@ -1368,7 +1368,7 @@ bool LayoutChecker::check() {
     if (cs->data_offset() != rounded_offset) {
       return error(R"delim(
       LC_CODE_SIGNATURE out of place:
-        Expecting offsets: 0x{:x} while it is 0x{:x}
+        Expecting offsets: {:#x} while it is {:#x}
       )delim", offset, cs->data_offset());
     }
     rounded_offset += cs->data_size();
@@ -1379,7 +1379,7 @@ bool LayoutChecker::check() {
   const uint64_t object_size = linkedit->file_offset() + linkedit->file_size();
   if (offset != object_size && rounded_offset != object_size) {
     return error(R"delim(
-    __LINKEDIT.end (0x{:x}) does not match 0x{:x} nor 0x{:x}
+    __LINKEDIT.end ({:#x}) does not match {:#x} nor {:#x}
     )delim", object_size, offset, rounded_offset);
   }
   return true;
@@ -1464,7 +1464,7 @@ bool LayoutChecker::check_chained_fixups() {
 
     if (seg_start.page_size != 0x1000 && seg_start.page_size != 0x4000) {
       return error("chained fixups, page_size not 4KB or 16KB in segment "
-                   "#{} (page_size: 0x{:04x})", idx, seg_start.page_size);
+                   "#{} (page_size: {:#06x})", idx, seg_start.page_size);
     }
 
     if ((int)seg_start.pointer_format > (int)DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_SHARED_CACHE) {
@@ -1503,7 +1503,7 @@ bool LayoutChecker::check_chained_fixups() {
 
       if ((offset_in_page & DYLD_CHAINED_PTR_START_MULTI) == 0) {
         if (offset_in_page > seg_start.page_size) {
-          return error("chained fixups, in segment #{} page_start[{}]=0x{:04x} exceeds page size",
+          return error("chained fixups, in segment #{} page_start[{}]={:#06x} exceeds page size",
                        idx, page_idx, offset_in_page);
         }
       }
@@ -1539,7 +1539,7 @@ bool LayoutChecker::check_function_variants() {
     // Check that the last entry is "default"
     auto entries = entry.entries();
     if (entries.empty()) {
-      return error("Missing entries in FunctionVariants::RuntimeTable (offset=0x{:06x})", entry.offset());
+      return error("Missing entries in FunctionVariants::RuntimeTable (offset={:#08x})", entry.offset());
     }
 
     const FunctionVariants::RuntimeTableEntry& last = entries[entries.size() - 1];

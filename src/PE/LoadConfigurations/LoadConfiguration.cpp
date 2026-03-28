@@ -526,7 +526,7 @@ ok_error_t LoadConfiguration::parse_guard_functions(
   for (size_t i = 0; i < count; ++i) {
     auto rva = stream.read<uint32_t>();
     if (!rva) {
-      LIEF_DEBUG("Can't read RVA index {} ({}:{})", i,
+      LIEF_DEBUG("Failed to read RVA at index {} ({}:{})", i,
                  __FUNCTION__, __LINE__);
       return make_error_code(rva.error());
     }
@@ -536,7 +536,7 @@ ok_error_t LoadConfiguration::parse_guard_functions(
     if (stride == 1) {
       auto value = stream.read<uint8_t>();
       if (!value) {
-        LIEF_WARN("Can't read stride for RVA: {:#x}", *rva);
+        LIEF_WARN("Failed to read stride for RVA: {:#x}", *rva);
         return make_error_code(value.error());
       }
       extra = *value;
@@ -630,7 +630,7 @@ ok_error_t LoadConfiguration::parse_dyn_relocs_entries(
     if constexpr (version == 1) {
       auto v1 = DynamicRelocationV1::parse<PE_T>(ctx, stream);
       if (v1 == nullptr) {
-        LIEF_WARN("Dynamic (v1) relocation parsing failed at offset=0x{:04x}",
+        LIEF_WARN("Dynamic (v1) relocation parsing failed at offset={:#06x}",
                   stream.pos());
         break;
       }
@@ -874,7 +874,7 @@ std::string LoadConfiguration::to_string() const {
   using namespace fmt;
   static constexpr auto WIDTH = 65;
   std::ostringstream oss;
-  oss << format("{:{}} 0x{:06x}\n", "Size:", WIDTH, size())
+  oss << format("{:{}} {:#08x}\n", "Size:", WIDTH, size())
       << format("{:{}} {}\n", "Timestamp:", WIDTH, timedatestamp())
       << format("{:{}} {}.{}\n", "version:", WIDTH, major_version(), minor_version())
       << format("{:{}} {}\n", "GlobalFlags Clear:", WIDTH, global_flags_clear())
@@ -890,10 +890,10 @@ std::string LoadConfiguration::to_string() const {
       << format("{:{}} {}\n", "CSD Version:", WIDTH, csd_version())
       << format("{:{}} {}\n", "Dependent Load Flag:", WIDTH, dependent_load_flags())
       << format("{:{}} {}\n", "Edit List:", WIDTH, editlist())
-      << format("{:{}} 0x{:016x}\n", "Security Cookie:", WIDTH, security_cookie());
+      << format("{:{}} {:#018x}\n", "Security Cookie:", WIDTH, security_cookie());
 
   if (auto val = se_handler_table()) {
-    oss << format("{:{}} 0x{:06x}\n", "SEH Table:", WIDTH, *val);
+    oss << format("{:{}} {:#08x}\n", "SEH Table:", WIDTH, *val);
   }
 
   if (auto val = se_handler_count()) {
@@ -901,15 +901,15 @@ std::string LoadConfiguration::to_string() const {
   }
 
   if (auto val = guard_cf_check_function_pointer()) {
-    oss << format("{:{}} 0x{:016x}\n", "Guard CF address of check-function pointer:", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "Guard CF address of check-function pointer:", WIDTH, *val);
   }
 
   if (auto val = guard_cf_dispatch_function_pointer()) {
-    oss << format("{:{}} 0x{:016x}\n", "Guard CF address of dispatch-function pointer:", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "Guard CF address of dispatch-function pointer:", WIDTH, *val);
   }
 
   if (auto val = guard_cf_function_table()) {
-    oss << format("{:{}} 0x{:016x}\n", "Guard CF function table:", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "Guard CF function table:", WIDTH, *val);
   }
 
   if (auto val = guard_cf_function_count()) {
@@ -923,13 +923,13 @@ std::string LoadConfiguration::to_string() const {
 
   if (const CodeIntegrity* CI = code_integrity()) {
     oss << format("{:{}} {}\n", "Code Integrity Flags:", WIDTH, CI->flags())
-        << format("{:{}} 0x{:08x}\n", "Code Integrity Catalog:", WIDTH, CI->catalog())
-        << format("{:{}} 0x{:08x}\n", "Code Integrity Catalog Offset:", WIDTH, CI->catalog_offset())
+        << format("{:{}} {:#010x}\n", "Code Integrity Catalog:", WIDTH, CI->catalog())
+        << format("{:{}} {:#010x}\n", "Code Integrity Catalog Offset:", WIDTH, CI->catalog_offset())
         << format("{:{}} {}\n", "Code Integrity Reserved:", WIDTH, CI->reserved());
   }
 
   if (auto val = guard_address_taken_iat_entry_table()) {
-    oss << format("{:{}} 0x{:016x}\n", "Guard CF address taken IAT entry table:", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "Guard CF address taken IAT entry table:", WIDTH, *val);
   }
 
   if (auto val = guard_address_taken_iat_entry_count()) {
@@ -937,7 +937,7 @@ std::string LoadConfiguration::to_string() const {
   }
 
   if (auto val = guard_long_jump_target_table()) {
-    oss << format("{:{}} 0x{:016x}\n", "Guard CF long jump target table:", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "Guard CF long jump target table:", WIDTH, *val);
   }
 
   if (auto val = guard_long_jump_target_count()) {
@@ -945,23 +945,23 @@ std::string LoadConfiguration::to_string() const {
   }
 
   if (auto val = dynamic_value_reloc_table()) {
-    oss << format("{:{}} 0x{:016x}\n", "Dynamic value relocation table:", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "Dynamic value relocation table:", WIDTH, *val);
   }
 
   if (auto val = hybrid_metadata_pointer()) {
-    oss << format("{:{}} 0x{:016x}\n", "Hybrid metadata pointer:", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "Hybrid metadata pointer:", WIDTH, *val);
   }
 
   if (auto val = guard_rf_failure_routine()) {
-    oss << format("{:{}} 0x{:016x}\n", "Guard RF address of failure-function:", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "Guard RF address of failure-function:", WIDTH, *val);
   }
 
   if (auto val = guard_rf_failure_routine_function_pointer()) {
-    oss << format("{:{}} 0x{:016x}\n", "Guard RF address of failure-function pointer:", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "Guard RF address of failure-function pointer:", WIDTH, *val);
   }
 
   if (auto val = dynamic_value_reloctable_offset()) {
-    oss << format("{:{}} 0x{:016x}\n", "Dynamic value relocation table offset:", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "Dynamic value relocation table offset:", WIDTH, *val);
   }
 
   if (auto val = dynamic_value_reloctable_section()) {
@@ -973,11 +973,11 @@ std::string LoadConfiguration::to_string() const {
   }
 
   if (auto val = guard_rf_verify_stackpointer_function_pointer()) {
-    oss << format("{:{}} 0x{:016x}\n", "Guard RF address of stack pointer verification function pointer:", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "Guard RF address of stack pointer verification function pointer:", WIDTH, *val);
   }
 
   if (auto val = hotpatch_table_offset()) {
-    oss << format("{:{}} 0x{:08}\n", "Hot patching table offset:", WIDTH, *val);
+    oss << format("{:{}} {:#010x}\n", "Hot patching table offset:", WIDTH, *val);
   }
 
   if (auto val = reserved3()) {
@@ -985,15 +985,15 @@ std::string LoadConfiguration::to_string() const {
   }
 
   if (auto val = enclave_configuration_ptr()) {
-    oss << format("{:{}} 0x{:016x}\n", "Enclave configuration pointer", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "Enclave configuration pointer", WIDTH, *val);
   }
 
   if (auto val = volatile_metadata_pointer()) {
-    oss << format("{:{}} 0x{:016x}\n", "Volatile metadata pointer", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "Volatile metadata pointer", WIDTH, *val);
   }
 
   if (auto val = guard_eh_continuation_table()) {
-    oss << format("{:{}} 0x{:016x}\n", "Guard EH continuation table", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "Guard EH continuation table", WIDTH, *val);
   }
 
   if (auto val = guard_eh_continuation_count()) {
@@ -1001,27 +1001,27 @@ std::string LoadConfiguration::to_string() const {
   }
 
   if (auto val = guard_xfg_check_function_pointer()) {
-    oss << format("{:{}} 0x{:016x}\n", "Guard XFG address of check-function pointer", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "Guard XFG address of check-function pointer", WIDTH, *val);
   }
 
   if (auto val = guard_xfg_dispatch_function_pointer()) {
-    oss << format("{:{}} 0x{:016x}\n", "Guard XFG address of dispatch-function pointer", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "Guard XFG address of dispatch-function pointer", WIDTH, *val);
   }
 
   if (auto val = guard_xfg_table_dispatch_function_pointer()) {
-    oss << format("{:{}} 0x{:016x}\n", "Guard XFG address of dispatch-table-function pointer", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "Guard XFG address of dispatch-table-function pointer", WIDTH, *val);
   }
 
   if (auto val = cast_guard_os_determined_failure_mode()) {
-    oss << format("{:{}} 0x{:016x}\n", "CastGuard OS determined failure mode", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "CastGuard OS determined failure mode", WIDTH, *val);
   }
 
   if (auto val = guard_memcpy_function_pointer()) {
-    oss << format("{:{}} 0x{:016x}\n", "Guard memcpy function pointer", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "Guard memcpy function pointer", WIDTH, *val);
   }
 
   if (auto val = uma_function_pointers()) {
-    oss << format("{:{}} 0x{:016x}\n", "UMA function pointers", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "UMA function pointers", WIDTH, *val);
   }
 
   if (const CHPEMetadata* metadata = chpe_metadata()) {
@@ -1032,7 +1032,7 @@ std::string LoadConfiguration::to_string() const {
   if (!seh_rva_.empty()) {
     oss << format("  SEH Table ({}) {{\n", seh_rva_.size()) ;
     for (uint32_t RVA : seh_rva_) {
-      oss << format("    0x{:08x}\n", RVA);
+      oss << format("    {:#010x}\n", RVA);
     }
     oss << "}\n";
   }
@@ -1040,7 +1040,7 @@ std::string LoadConfiguration::to_string() const {
   if (!guard_cf_functions_.empty()) {
     oss << format("  Guard CF Function ({}) {{\n", guard_cf_functions_.size()) ;
     for (const guard_function_t& F : guard_cf_functions_) {
-      oss << format("    0x{:08x} ({})\n", F.rva, F.extra);
+      oss << format("    {:#010x} ({})\n", F.rva, F.extra);
     }
     oss << "}\n";
   }
@@ -1048,7 +1048,7 @@ std::string LoadConfiguration::to_string() const {
   if (!guard_address_taken_iat_entries_.empty()) {
     oss << format("  Guard CF Address Taken IAT ({}) {{\n", guard_address_taken_iat_entries_.size()) ;
     for (const guard_function_t& F : guard_address_taken_iat_entries_) {
-      oss << format("    0x{:08x} ({})\n", F.rva, F.extra);
+      oss << format("    {:#010x} ({})\n", F.rva, F.extra);
     }
     oss << "}\n";
   }
@@ -1056,7 +1056,7 @@ std::string LoadConfiguration::to_string() const {
   if (!guard_long_jump_targets_.empty()) {
     oss << format("  Guard CF Long Jump Target ({}) {{\n", guard_long_jump_targets_.size()) ;
     for (const guard_function_t& F : guard_long_jump_targets_) {
-      oss << format("    0x{:08x} ({})\n", F.rva, F.extra);
+      oss << format("    {:#010x} ({})\n", F.rva, F.extra);
     }
     oss << "}\n";
   }
@@ -1064,7 +1064,7 @@ std::string LoadConfiguration::to_string() const {
   if (!guard_eh_continuation_functions_.empty()) {
     oss << format("  Guard EH Continuation ({}) {{\n", guard_eh_continuation_functions_.size()) ;
     for (const guard_function_t& F : guard_eh_continuation_functions_) {
-      oss << format("    0x{:08x} ({})\n", F.rva, F.extra);
+      oss << format("    {:#010x} ({})\n", F.rva, F.extra);
     }
     oss << "}\n";
   }

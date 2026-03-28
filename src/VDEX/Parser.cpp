@@ -51,7 +51,7 @@ Parser::Parser(const std::vector<uint8_t>& data, const std::string& name) :
   stream_{std::make_unique<VectorStream>(data)}
 {
   if (!is_vdex(data)) {
-    LIEF_ERR("{} is not a VDEX file!", name);
+    LIEF_ERR("'{}' is not a VDEX file", name);
     delete file_;
     file_ = nullptr;
     return;
@@ -65,7 +65,7 @@ Parser::Parser(const std::string& file) :
   file_{new File{}}
 {
   if (!is_vdex(file)) {
-    LIEF_ERR("{} is not a VDEX file!", file);
+    LIEF_ERR("'{}' is not a VDEX file", file);
     delete file_;
     file_ = nullptr;
     return;

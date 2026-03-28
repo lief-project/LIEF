@@ -87,7 +87,7 @@ span<uint8_t> DataDirectory::content() {
 }
 
 std::ostream& operator<<(std::ostream& os, const DataDirectory& entry) {
-  os << fmt::format("[{:>24}] [0x{:08x}, 0x{:08x}] ({} bytes)",
+  os << fmt::format("[{:>24}] [{:#010x}, {:#010x}] ({} bytes)",
                     to_string(entry.type()), entry.RVA(), entry.RVA() + entry.size(),
                     entry.size());
   if (const Section* section = entry.section()) {

@@ -172,7 +172,7 @@ std::ostream& operator<<(std::ostream& os, const Export& exp) {
   using namespace fmt;
   static constexpr auto WIDTH = 20;
   os << format("DLL Name: {}\n", exp.name())
-     << format("  {:{}} 0x{:08x}\n", "Characteristics", WIDTH, exp.export_flags())
+     << format("  {:{}} {:#010x}\n", "Characteristics", WIDTH, exp.export_flags())
      << format("  {:{}} {} ({})\n", "Timestamp", WIDTH,
                exp.timestamp(), ts_to_str(exp.timestamp()))
      << format("  {:{}} {}.{}\n", "Version", WIDTH, exp.major_version(),

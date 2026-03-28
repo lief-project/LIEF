@@ -80,14 +80,14 @@ hashstream::hashstream(HASH type) :
   }
   mbedtls_md_starts(cast(this->ctx_));
   if (ret != 0) {
-    LIEF_WARN("Error while setting up hash function");
+    LIEF_WARN("Failed to set up hash function");
   }
 }
 
 hashstream& hashstream::write(const uint8_t* s, size_t n) {
   int ret = mbedtls_md_update(cast(this->ctx_), s, n);
   if (ret != 0) {
-    LIEF_WARN("mbedtls_md_update(0x{}, 0x{:x}) failed with retcode: 0x{:x}", reinterpret_cast<uintptr_t>(s), n, ret);
+    LIEF_WARN("mbedtls_md_update(0x{}, {:#x}) failed with return code {:#x}", reinterpret_cast<uintptr_t>(s), n, ret);
   }
   return *this;
 }
@@ -95,7 +95,7 @@ hashstream& hashstream::write(const uint8_t* s, size_t n) {
 hashstream& hashstream::flush() {
   int ret = mbedtls_md_finish(cast(this->ctx_), this->output_.data());
   if (ret != 0) {
-    LIEF_WARN("mbedtls_md_finish() failed with retcode: 0x{:x}", ret);
+    LIEF_WARN("mbedtls_md_finish() failed with return code {:#x}", ret);
   }
   return *this;
 }

@@ -160,7 +160,7 @@ Parser::Parser(const std::string& filename) {
   std::ifstream file(filename, std::ios::in | std::ios::binary);
 
   if (!file) {
-    LIEF_ERR("Can't open '{}'", filename);
+    LIEF_ERR("Failed to open '{}'", filename);
     return;
   }
   file.unsetf(std::ios::skipws);

@@ -26,26 +26,26 @@
 
 #if !defined(DEBUG_FMT_NOT_SUPPORTED)
 #define DEBUG_FMT_NOT_SUPPORTED                                         \
-  "DebugInfo are not available for this build.\n"                       \
+  "Debug info not available for this build.\n"                       \
   "Please checkout " LIEF_DOC_PREFIX "/latest/extended/intro.html for the details"
 #endif
 
 #if !defined(OBJC_NOT_SUPPORTED)
 #define OBJC_NOT_SUPPORTED                                         \
-  "ObjC metadata are not available for this build.\n"                       \
+  "ObjC metadata not available for this build.\n"                       \
   "Please checkout " LIEF_DOC_PREFIX "/latest/extended/intro.html for the details"
 #endif
 
 #if !defined(DSC_NOT_SUPPORTED)
 #define DSC_NOT_SUPPORTED                                         \
-  "Dyld shared cache is not available for this build.\n"                       \
+  "Dyld shared cache not available for this build.\n"                       \
   "Please checkout " LIEF_DOC_PREFIX "/latest/extended/intro.html for the details"
 #endif
 
 
 #if !defined(ASSEMBLY_NOT_SUPPORTED)
 #define ASSEMBLY_NOT_SUPPORTED                                         \
-  "Assembler/disassembler is not available for this build.\n"                       \
+  "Assembler/disassembler not available for this build.\n"                       \
   "Please checkout " LIEF_DOC_PREFIX "/latest/extended/intro.html for the details"
 #endif
 

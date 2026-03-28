@@ -84,7 +84,7 @@ Section::Section(const details::pe_section& header) :
 
 void Section::name(std::string name) {
   if (name.size() > MAX_SECTION_NAME) {
-    LIEF_ERR("The max size of a section's name is {} vs {}", MAX_SECTION_NAME,
+    LIEF_ERR("Section name too long: max {} vs {}", MAX_SECTION_NAME,
              name.size());
     return;
   }
@@ -148,18 +148,18 @@ std::ostream& operator<<(std::ostream& os, const Section& section) {
                  join(fullname_hex, " "));
   }
 
-  os << format("{:{}} 0x{:x}\n", "Virtual Size", WIDTH, section.virtual_size())
-     << format("{:{}} 0x{:x}\n", "Virtual Address", WIDTH, section.virtual_address())
-     << format("{:{}} [0x{:08x}, 0x{:08x}]\n", "Range", WIDTH,
+  os << format("{:{}} {:#x}\n", "Virtual Size", WIDTH, section.virtual_size())
+     << format("{:{}} {:#x}\n", "Virtual Address", WIDTH, section.virtual_address())
+     << format("{:{}} [{:#010x}, {:#010x}]\n", "Range", WIDTH,
                section.virtual_address(), section.virtual_address() + section.virtual_size())
-     << format("{:{}} 0x{:x}\n", "Size of raw data", WIDTH, section.sizeof_raw_data())
-     << format("{:{}} 0x{:x}\n", "Pointer to raw data", WIDTH, section.pointerto_raw_data())
-     << format("{:{}} [0x{:08x}, 0x{:08x}]\n", "Range", WIDTH,
+     << format("{:{}} {:#x}\n", "Size of raw data", WIDTH, section.sizeof_raw_data())
+     << format("{:{}} {:#x}\n", "Pointer to raw data", WIDTH, section.pointerto_raw_data())
+     << format("{:{}} [{:#010x}, {:#010x}]\n", "Range", WIDTH,
                section.pointerto_raw_data(), section.pointerto_raw_data() + section.sizeof_raw_data())
-     << format("{:{}} 0x{:x}\n", "Pointer to relocations", WIDTH, section.pointerto_relocation())
-     << format("{:{}} 0x{:x}\n", "Pointer to line numbers", WIDTH, section.pointerto_line_numbers())
-     << format("{:{}} 0x{:x}\n", "Number of relocations", WIDTH, section.numberof_relocations())
-     << format("{:{}} 0x{:x}\n", "Number of lines", WIDTH, section.numberof_line_numbers())
+     << format("{:{}} {:#x}\n", "Pointer to relocations", WIDTH, section.pointerto_relocation())
+     << format("{:{}} {:#x}\n", "Pointer to line numbers", WIDTH, section.pointerto_line_numbers())
+     << format("{:{}} {:#x}\n", "Number of relocations", WIDTH, section.numberof_relocations())
+     << format("{:{}} {:#x}\n", "Number of lines", WIDTH, section.numberof_line_numbers())
      << format("{:{}} {}", "Characteristics", WIDTH, join(list_str, ", "));
   return os;
 }

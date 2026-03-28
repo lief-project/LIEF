@@ -364,7 +364,7 @@ void Binary::remove_section(const std::string& name, bool clear) {
   Section* sec = get_section(name);
 
   if (sec == nullptr) {
-    LIEF_ERR("Unable to find the section: '{}'", name);
+    LIEF_ERR("Section '{}' not found", name);
     return;
   }
 
@@ -378,7 +378,7 @@ void Binary::remove(const Section& section, bool clear) {
       });
 
   if (it_section == std::end(sections_)) {
-    LIEF_ERR("Unable to find section: '{}'", section.name());
+    LIEF_ERR("Section '{}' not found", section.name());
     return;
   }
 
@@ -458,7 +458,7 @@ Section* Binary::add_section(const Section& section) {
   uint64_t new_section_offset = align(
       last_section_offset(), optional_header().file_alignment());
 
-  LIEF_DEBUG("New section offset: 0x{:010x}", new_section_offset);
+  LIEF_DEBUG("New section offset: {:#012x}", new_section_offset);
 
   // Compute new section Virtual address
   const auto section_align = static_cast<uint64_t>(optional_header().section_alignment());
@@ -468,7 +468,7 @@ Section* Binary::add_section(const Section& section) {
         return std::max<uint64_t>(s->virtual_address() + s->virtual_size(), va);
       }), section_align);
 
-  LIEF_DEBUG("New section VA: 0x{:010x}", new_section_va);
+  LIEF_DEBUG("New section VA: {:#012x}", new_section_va);
 
   if (new_section->pointerto_raw_data() == 0) {
     new_section->pointerto_raw_data(new_section_offset);
@@ -487,7 +487,7 @@ Section* Binary::add_section(const Section& section) {
   }
 
   if (sections_.size() >= std::numeric_limits<uint16_t>::max()) {
-    LIEF_INFO("Binary reachs its maximum number of sections");
+    LIEF_INFO("Binary reached maximum number of sections");
     return nullptr;
   }
 
@@ -690,7 +690,7 @@ uint32_t Binary::compute_checksum() const {
           .write(content.data() + start_p, size)
           .write(pad);
       } else {
-        LIEF_WARN("Overlapping in the padding area");
+        LIEF_WARN("Overlap detected in padding area");
       }
     } else {
       cs
@@ -816,7 +816,7 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
       .write(sec->numberof_line_numbers())
       .write(static_cast<uint32_t>(sec->characteristics()));
   }
-  //LIEF_DEBUG("Section padding at 0x{:x}", ios.tellp());
+  //LIEF_DEBUG("Section padding at {:#x}", ios.tellp());
   ios.write(section_offset_padding_);
 
   std::vector<Section*> sections;
@@ -840,8 +840,8 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
     }
     span<const uint8_t> pad = sec->padding();
     span<const uint8_t> content = sec->content();
-    LIEF_DEBUG("Authentihash:  Append section {:<8}: [0x{:04x}, 0x{:04x}] + "
-               "[0x{:04x}] = [0x{:04x}, 0x{:04x}]",
+    LIEF_DEBUG("Authentihash:  Append section {:<8}: [{:#06x}, {:#06x}] + "
+               "[{:#06x}] = [{:#06x}, {:#06x}]",
                sec->name(),
                sec->offset(), sec->offset() + content.size(), pad.size(),
                sec->offset(), sec->offset() + content.size() + pad.size());
@@ -854,7 +854,7 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
           .write(content.data() + start_p, size)
           .write(pad);
       } else {
-        LIEF_WARN("Overlapping in the padding area");
+        LIEF_WARN("Overlap detected in padding area");
       }
     } else {
       ios
@@ -866,17 +866,17 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
   if (!overlay_.empty()) {
     const DataDirectory* cert_dir = this->cert_dir();
     if (cert_dir == nullptr) {
-      LIEF_ERR("Can't find the data directory for CERTIFICATE_TABLE");
+      LIEF_ERR("CERTIFICATE_TABLE data directory not found");
       return {};
     }
-    LIEF_DEBUG("Add overlay and omit 0x{:08x} - 0x{:08x}",
+    LIEF_DEBUG("Add overlay and omit {:#010x} - {:#010x}",
                cert_dir->RVA(), cert_dir->RVA() + cert_dir->size());
     if (cert_dir->RVA() > 0 && cert_dir->size() > 0 && cert_dir->RVA() >= overlay_offset_) {
       const uint64_t start_cert_offset = cert_dir->RVA() - overlay_offset_;
       const uint64_t end_cert_offset   = start_cert_offset + cert_dir->size();
       if (end_cert_offset <= overlay_.size()) {
-        LIEF_DEBUG("Add [0x{:x}, 0x{:x}]", overlay_offset_, overlay_offset_ + start_cert_offset);
-        LIEF_DEBUG("Add [0x{:x}, 0x{:x}]",
+        LIEF_DEBUG("Add [{:#x}, {:#x}]", overlay_offset_, overlay_offset_ + start_cert_offset);
+        LIEF_DEBUG("Add [{:#x}, {:#x}]",
                    overlay_offset_ + end_cert_offset,
                    overlay_offset_ + end_cert_offset + overlay_.size() - end_cert_offset);
         ios
@@ -936,7 +936,7 @@ Signature::VERIFICATION_FLAGS Binary::verify_signature(const Signature& sig, Sig
   const ContentInfo::Content& content = sig.content_info().value();
 
   if (!SpcIndirectData::classof(&content)) {
-    LIEF_INFO("Expecting SpcIndirectData");
+    LIEF_INFO("Expected SpcIndirectData content");
     flags |= Signature::VERIFICATION_FLAGS::CORRUPTED_CONTENT_INFO;
     return flags;
   }
@@ -946,7 +946,7 @@ Signature::VERIFICATION_FLAGS Binary::verify_signature(const Signature& sig, Sig
   const std::vector<uint8_t>& authhash = authentihash(sig.digest_algorithm());
   const span<const uint8_t> chash = spc_indirect_data.digest();
   if (authhash != std::vector<uint8_t>(chash.begin(), chash.end())) {
-    LIEF_INFO("Authentihash and Content info's digest does not match:\n  {}\n  {}",
+    LIEF_INFO("Authentihash and content info digest mismatch:\n  {}\n  {}",
               hex_dump(authhash), hex_dump(chash));
     flags |= Signature::VERIFICATION_FLAGS::BAD_DIGEST;
   }
@@ -1027,13 +1027,13 @@ void Binary::fill_address(uint64_t address, size_t size, uint8_t value,
 
   Section* section_topatch = section_from_rva(rva);
   if (section_topatch == nullptr) {
-    LIEF_ERR("Can't find section with the rva: 0x{:x}", rva);
+    LIEF_ERR("Section not found for RVA {:#x}", rva);
     return;
   }
   const uint64_t offset = rva - section_topatch->virtual_address();
   span<uint8_t> content = section_topatch->writable_content();
   if (offset + size > content.size()) {
-    LIEF_ERR("Can't write {} bytes at 0x{:x} (limit: 0x{:x})",
+    LIEF_ERR("Cannot write {} bytes at {:#x} (limit: {:#x})",
              size, offset, content.size());
     return;
   }
@@ -1056,14 +1056,14 @@ void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_v
   // Find the section associated with the virtual address
   Section* section_topatch = section_from_rva(rva);
   if (section_topatch == nullptr) {
-    LIEF_ERR("Can't find section with the rva: 0x{:x}", rva);
+    LIEF_ERR("Section not found for RVA {:#x}", rva);
     return;
   }
   const uint64_t offset = rva - section_topatch->virtual_address();
 
   span<uint8_t> content = section_topatch->writable_content();
   if (offset + patch_value.size() > content.size()) {
-    LIEF_ERR("The patch value ({} bytes @0x{:x}) is out of bounds of the section (limit: 0x{:x})",
+    LIEF_ERR("Patch value ({} bytes @{:#x}) out of section bounds (limit: {:#x})",
              patch_value.size(), offset, content.size());
     return;
   }
@@ -1075,7 +1075,7 @@ void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_v
 void Binary::patch_address(uint64_t address, uint64_t patch_value,
                            size_t size, LIEF::Binary::VA_TYPES addr_type) {
   if (size > sizeof(patch_value)) {
-    LIEF_ERR("Invalid size (0x{:x})", size);
+    LIEF_ERR("Invalid size ({:#x})", size);
     return;
   }
 
@@ -1091,13 +1091,13 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value,
 
   Section* section_topatch = section_from_rva(rva);
   if (section_topatch == nullptr) {
-    LIEF_ERR("Can't find section with the rva: 0x{:x}", rva);
+    LIEF_ERR("Section not found for RVA {:#x}", rva);
     return;
   }
   const uint64_t offset = rva - section_topatch->virtual_address();
   span<uint8_t> content = section_topatch->writable_content();
   if (offset > content.size() || (offset + size) > content.size()) {
-    LIEF_ERR("The patch value ({} bytes @0x{:x}) is out of bounds of the section (limit: 0x{:x})",
+    LIEF_ERR("Patch value ({} bytes @{:#x}) out of section bounds (limit: {:#x})",
              size, offset, content.size());
   }
   switch (size) {
@@ -1131,7 +1131,7 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value,
 
     default:
       {
-        LIEF_ERR("The provided size ({}) does not match the size of an integer", size);
+        LIEF_ERR("Provided size ({}) does not match integer size", size);
         return;
       }
   }
@@ -1151,7 +1151,7 @@ span<const uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_ad
   }
   const Section* section = section_from_rva(rva);
   if (section == nullptr) {
-    LIEF_ERR("Can't find the section with the rva 0x{:x}", rva);
+    LIEF_ERR("Section not found for RVA {:#x}", rva);
     return {};
   }
   span<const uint8_t> content = section->content();
@@ -1160,7 +1160,7 @@ span<const uint8_t> Binary::get_content_from_virtual_address(uint64_t virtual_ad
   if ((offset + checked_size) > content.size()) {
     uint64_t delta_off = offset + checked_size - content.size();
     if (checked_size < delta_off) {
-        LIEF_ERR("Can't access section data due to a section end overflow.");
+        LIEF_ERR("Section end overflow prevents data access");
         return {};
     }
     checked_size = checked_size - delta_off;

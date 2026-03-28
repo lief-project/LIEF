@@ -137,7 +137,7 @@ void CoreAuxv::dump(std::ostream& os) const {
 
   os << '\n';
   for (const auto& [type, val] : aux_vals) {
-    os << fmt::format("  {}: 0x{:08x}\n", to_string(type), val);
+    os << fmt::format("  {}: {:#010x}\n", to_string(type), val);
   }
 }
 

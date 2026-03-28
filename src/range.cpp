@@ -17,7 +17,7 @@
 namespace LIEF {
 
 std::ostream& operator<<(std::ostream& os, const range_t& range) {
-  os << fmt::format("[0x{:06x}, 0x{:06x}]", range.low, range.high);
+  os << fmt::format("[{:#08x}, {:#08x}]", range.low, range.high);
   return os;
 }
 

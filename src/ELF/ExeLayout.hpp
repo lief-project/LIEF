@@ -288,7 +288,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     }
     nchain_ = sysv_hash->nchain();
     if (nchain_ != binary_->dynamic_symbols_.size()) {
-      LIEF_DEBUG("nchain of .hash section changes from {:d} to {:d}",
+      LIEF_DEBUG("nchain of .hash section changed from {:d} to {:d}",
                  nchain_, binary_->dynamic_symbols_.size());
       nchain_ = binary_->dynamic_symbols_.size();
     }
@@ -341,10 +341,10 @@ class LIEF_LOCAL ExeLayout : public Layout {
       LIEF_DEBUG("Shift2 is null");
     }
 
-    LIEF_DEBUG("Number of buckets       : 0x{:x}", nb_buckets);
-    LIEF_DEBUG("First symbol idx        : 0x{:x}", symndx);
-    LIEF_DEBUG("Number of bloom filters : 0x{:x}", maskwords);
-    LIEF_DEBUG("Shift                   : 0x{:x}", shift2);
+    LIEF_DEBUG("Number of buckets       : {:#x}", nb_buckets);
+    LIEF_DEBUG("First symbol idx        : {:#x}", symndx);
+    LIEF_DEBUG("Number of bloom filters : {:#x}", maskwords);
+    LIEF_DEBUG("Shift                   : {:#x}", shift2);
 
     // MANDATORY !
     std::stable_sort(
@@ -383,7 +383,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       bloom_filters[pos] |= V;
     }
     for (size_t idx = 0; idx < bloom_filters.size(); ++idx) {
-     LIEF_DEBUG("Bloom filter [{:d}]: 0x{:x}", idx, bloom_filters[idx]);
+     LIEF_DEBUG("Bloom filter [{:d}]: {:#x}", idx, bloom_filters[idx]);
     }
 
     raw_gnuhash.write(bloom_filters);
@@ -396,7 +396,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     std::vector<uint32_t> hash_values(dynamic_symbols.size() - symndx, 0);
 
     for (size_t i = symndx; i < dynamic_symbols.size(); ++i) {
-      LIEF_DEBUG("Dealing with symbol {}", to_string(dynamic_symbols[i]));
+      LIEF_DEBUG("Processing symbol {}", to_string(dynamic_symbols[i]));
       const uint32_t hash = dl_new_hash(dynamic_symbols[i].name().c_str());
       int bucket = hash % nb_buckets;
 
@@ -872,9 +872,9 @@ class LIEF_LOCAL ExeLayout : public Layout {
       interp_segment.add(Segment::FLAGS::R);
       interp_segment.content(std::vector<uint8_t>(interp_size_));
       if (Segment* interp = binary_->add(interp_segment)) {
-        LIEF_DEBUG("Interp Segment: 0x{:x}:0x{:x}", interp->virtual_address(), interp->virtual_size());
+        LIEF_DEBUG("Interp Segment: {:#x}:{:#x}", interp->virtual_address(), interp->virtual_size());
       } else {
-        LIEF_ERR("Can't add a new PT_INTERP");
+        LIEF_ERR("Failed to add PT_INTERP segment");
       }
     }
 
@@ -925,7 +925,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       rsegment.content(std::vector<uint8_t>(read_segment));
       new_rsegment = binary_->add(rsegment);
       if (new_rsegment == nullptr) {
-        LIEF_ERR("Can't add a new R-Segment");
+        LIEF_ERR("Failed to add R-segment");
         return make_error_code(lief_errors::build_error);
       }
       LIEF_DEBUG("R-Segment: {:#06x}:{:#06x}",
@@ -953,20 +953,20 @@ class LIEF_LOCAL ExeLayout : public Layout {
       rwsegment.content(std::vector<uint8_t>(read_write_segment));
       new_rwsegment = binary_->add(rwsegment);
       if (new_rwsegment != nullptr) {
-        LIEF_DEBUG("RW-Segment: 0x{:x}:0x{:x}", new_rwsegment->virtual_address(), new_rwsegment->virtual_size());
+        LIEF_DEBUG("RW-Segment: {:#x}:{:#x}", new_rwsegment->virtual_address(), new_rwsegment->virtual_size());
       } else {
-        LIEF_ERR("Can't add a new RW-Segment");
+        LIEF_ERR("Failed to add RW-segment");
         return make_error_code(lief_errors::build_error);
       }
     }
 
     if (relocate_shstrtab_) {
-      LIEF_DEBUG("[-] Relocate .shstrtab");
+      LIEF_DEBUG("Relocating .shstrtab");
 
       // Remove the current .shstrtab section
       Header& hdr = binary_->header();
       if (hdr.section_name_table_idx() >= binary_->sections_.size()) {
-        LIEF_ERR("Sections' names table index is out of range");
+        LIEF_ERR("Section names table index out of range");
         return make_error_code(lief_errors::file_format_error);
       }
       std::unique_ptr<Section>& string_names_section = binary_->sections_[hdr.section_name_table_idx()];
@@ -995,7 +995,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     if (interp_size_ > 0) {
       Segment* pt_interp = binary_->get(Segment::TYPE::INTERP);
       if (pt_interp == nullptr) {
-        LIEF_ERR("Can't find the PT_INTERP segment.");
+        LIEF_ERR("PT_INTERP segment not found");
         return make_error_code(lief_errors::file_format_error);
       }
 
@@ -1030,7 +1030,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     if (relocate_notes_) {
       Segment* note_segment = binary_->get(Segment::TYPE::NOTE);
       if (note_segment == nullptr) {
-        LIEF_ERR("Can't find the PT_NOTE segment");
+        LIEF_ERR("PT_NOTE segment not found");
         return make_error_code(lief_errors::file_format_error);
       }
       note_segment->virtual_address(va_r_base);
@@ -1054,7 +1054,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       // Update relocations associated with .init_array etc
       Segment* dynamic_segment = binary_->get(Segment::TYPE::DYNAMIC);
       if (dynamic_segment == nullptr) {
-        LIEF_ERR("Can't find the dynamic section/segment");
+        LIEF_ERR("Dynamic section/segment not found");
         return make_error_code(lief_errors::file_format_error);
       }
 
@@ -1086,7 +1086,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       DynamicEntry* dt_symtab = binary_->get(DynamicEntry::TAG::SYMTAB);
 
       if (dt_symtab == nullptr) {
-        LIEF_ERR("Can't find DT_SYMTAB");
+        LIEF_ERR("DT_SYMTAB not found");
         return make_error_code(lief_errors::file_format_error);
       }
 
@@ -1115,7 +1115,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       DynamicEntry* dt_strsize = binary_->get(DynamicEntry::TAG::STRSZ);
 
       if (dt_strtab == nullptr || dt_strsize == nullptr) {
-        LIEF_ERR("Can't find DT_STRTAB/DT_STRSZ");
+        LIEF_ERR("DT_STRTAB/DT_STRSZ not found");
         return make_error_code(lief_errors::file_format_error);
       }
 
@@ -1143,7 +1143,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     if (sver_size_ > 0) {
       DynamicEntry* dt_versym = binary_->get(DynamicEntry::TAG::VERSYM);
       if (dt_versym == nullptr) {
-        LIEF_ERR("Can't find DT_VERSYM");
+        LIEF_ERR("DT_VERSYM not found");
         return make_error_code(lief_errors::file_format_error);
       }
 
@@ -1170,7 +1170,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       DynamicEntry* dt_verdef = binary_->get(DynamicEntry::TAG::VERDEF);
 
       if (dt_verdef == nullptr) {
-        LIEF_ERR("Can't find DT_VERDEF");
+        LIEF_ERR("DT_VERDEF not found");
         return make_error_code(lief_errors::file_format_error);
       }
 
@@ -1197,7 +1197,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       DynamicEntry* dt_verreq = binary_->get(DynamicEntry::TAG::VERNEED);
 
       if (dt_verreq == nullptr) {
-        LIEF_ERR("Can't find DT_VERNEED");
+        LIEF_ERR("DT_VERNEED not found");
         return make_error_code(lief_errors::file_format_error);
       }
 
@@ -1234,7 +1234,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
                                            binary_->get(DynamicEntry::TAG::RELSZ);
 
       if (dt_reloc == nullptr || dt_relocsz == nullptr) {
-        LIEF_ERR("Can't find DT_REL(A) / DT_REL(A)SZ");
+        LIEF_ERR("DT_REL(A)/DT_REL(A)SZ not found");
         return make_error_code(lief_errors::file_format_error);
       }
 
@@ -1267,7 +1267,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       DynamicEntry* dt_relocsz = binary_->get(DynamicEntry::TAG::PLTRELSZ);
 
       if (dt_reloc == nullptr || dt_relocsz == nullptr) {
-        LIEF_ERR("Can't find DT_JMPREL, DT_PLTRELSZ");
+        LIEF_ERR("DT_JMPREL/DT_PLTRELSZ not found");
         return make_error_code(lief_errors::file_format_error);
       }
 
@@ -1298,7 +1298,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
         dt_relr = binary_->get(DynamicEntry::TAG::ANDROID_RELR);
       }
       if (dt_relr == nullptr) {
-        LIEF_ERR("Can't find DT_RELR/DT_ANDROID_RELR");
+        LIEF_ERR("DT_RELR/DT_ANDROID_RELR not found");
         return make_error_code(lief_errors::file_format_error);
       }
 
@@ -1327,7 +1327,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       }
 
       if (dt_rel == nullptr) {
-        LIEF_ERR("Can't find DT_ANDROID_REL[A]");
+        LIEF_ERR("DT_ANDROID_REL[A] not found");
         return make_error_code(lief_errors::file_format_error);
       }
 
@@ -1354,7 +1354,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       DynamicEntry* dt_gnu_hash = binary_->get(DynamicEntry::TAG::GNU_HASH);
 
       if (dt_gnu_hash == nullptr) {
-        LIEF_ERR("Can't find DT_GNU_HASH");
+        LIEF_ERR("DT_GNU_HASH not found");
         return make_error_code(lief_errors::file_format_error);
       }
 
@@ -1382,7 +1382,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       DynamicEntry* dt_hash = binary_->get(DynamicEntry::TAG::HASH);
 
       if (dt_hash == nullptr) {
-        LIEF_ERR("Can't find DT_HASH");
+        LIEF_ERR("DT_HASH not found");
         return make_error_code(lief_errors::file_format_error);
       }
 
@@ -1418,14 +1418,14 @@ class LIEF_LOCAL ExeLayout : public Layout {
       DynamicEntry* dt_init_arraysz = binary_->get(DynamicEntry::TAG::INIT_ARRAYSZ);
 
       if (dt_init_arraysz == nullptr) {
-        LIEF_ERR("Can't find DT_INIT_ARRAYSZ");
+        LIEF_ERR("DT_INIT_ARRAYSZ not found");
         return make_error_code(lief_errors::file_format_error);
       }
 
 
       // Update relocation range
       if (binary_->header().file_type() == Header::FILE_TYPE::DYN) {
-        LIEF_WARN("Relocating .init_array might not work on Linux.");
+        LIEF_WARN("Relocating .init_array may not work on Linux");
         const std::vector<uint64_t>& array = dt_init_array->array();
         const size_t sizeof_p = binary_->type() == Header::CLASS::ELF32 ?
                                 sizeof(uint32_t) : sizeof(uint64_t);
@@ -1436,7 +1436,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
         for (size_t i = 0; i < array.size(); ++i) {
           auto it_reloc = relocations_addresses_.find(array_base_address + i * sizeof_p);
           if (it_reloc == std::end(relocations_addresses_)) {
-            LIEF_ERR("Missing relocation for .init_array[{:d}]: 0x{:x}", i, array[i]);
+            LIEF_ERR("Missing relocation for .init_array[{:d}]: {:#x}", i, array[i]);
             continue;
           }
           Relocation* reloc = it_reloc->second;
@@ -1474,7 +1474,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       DynamicEntry* dt_preinit_arraysz = binary_->get(DynamicEntry::TAG::PREINIT_ARRAYSZ);
 
       if (dt_preinit_array == nullptr) {
-        LIEF_ERR("Can't find DT_PREINIT_ARRAYSZ");
+        LIEF_ERR("DT_PREINIT_ARRAYSZ not found");
         return make_error_code(lief_errors::file_format_error);
       }
 
@@ -1482,13 +1482,13 @@ class LIEF_LOCAL ExeLayout : public Layout {
         const std::vector<uint64_t>& array = dt_preinit_array->array();
         const size_t sizeof_p = binary_->type() == Header::CLASS::ELF32 ?
                                 sizeof(uint32_t) : sizeof(uint64_t);
-        LIEF_WARN("Relocating .preinit_array might not work on Linux.");
+        LIEF_WARN("Relocating .preinit_array may not work on Linux");
 
         const uint64_t array_base_address = dt_preinit_array->value();
         for (size_t i = 0; i < array.size(); ++i) {
           auto it_reloc = relocations_addresses_.find(array_base_address + i * sizeof_p);
           if (it_reloc == std::end(relocations_addresses_)) {
-            LIEF_ERR("Missing relocation for .preinit_array[{:d}]: 0x{:x}", i, array[i]);
+            LIEF_ERR("Missing relocation for .preinit_array[{:d}]: {:#x}", i, array[i]);
             continue;
           }
           Relocation* reloc = it_reloc->second;
@@ -1527,7 +1527,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       DynamicEntry* dt_fini_arraysz = binary_->get(DynamicEntry::TAG::FINI_ARRAYSZ);
 
       if (dt_fini_arraysz == nullptr) {
-        LIEF_ERR("Can't find DT_FINI_ARRAYSZ");
+        LIEF_ERR("DT_FINI_ARRAYSZ not found");
         return make_error_code(lief_errors::file_format_error);
       }
 
@@ -1536,13 +1536,13 @@ class LIEF_LOCAL ExeLayout : public Layout {
         const size_t sizeof_p = binary_->type() == Header::CLASS::ELF32 ?
                                 sizeof(uint32_t) : sizeof(uint64_t);
 
-        LIEF_WARN("Relocating .fini_array might not work on Linux.");
+        LIEF_WARN("Relocating .fini_array may not work on Linux");
 
         const uint64_t array_base_address = dt_fini_array->value();
         for (size_t i = 0; i < array.size(); ++i) {
           auto it_reloc = relocations_addresses_.find(array_base_address + i * sizeof_p);
           if (it_reloc == std::end(relocations_addresses_)) {
-            LIEF_ERR("Missing relocation for .fini_array[{:d}]: 0x{:x}", i, array[i]);
+            LIEF_ERR("Missing relocation for .fini_array[{:d}]: {:#x}", i, array[i]);
             continue;
           }
           Relocation* reloc = it_reloc->second;
@@ -1573,13 +1573,13 @@ class LIEF_LOCAL ExeLayout : public Layout {
     // symbol's names associated with debug symbol (not mandatory)
     size_t strtab_idx = 0;
     if (relocate_strtab_) {
-      LIEF_DEBUG("Relocate .strtab");
+      LIEF_DEBUG("Relocating .strtab");
       if (is_strtab_shared_shstrtab()) {
-        LIEF_ERR("Inconsistency"); // The strtab should be located in the .shstrtab section
+        LIEF_ERR("Strtab inconsistency"); // The strtab should be located in the .shstrtab section
         return make_error_code(lief_errors::file_format_error);
       }
       if (strtab_section_ != nullptr) {
-        LIEF_DEBUG("Removing the old section: {} 0x{:x} (size: 0x{:x})",
+        LIEF_DEBUG("Removing the old section: {} {:#x} (size: {:#x})",
                    strtab_section_->name(), strtab_section_->file_offset(),
                    strtab_section_->size());
         binary_->remove(*strtab_section_, /* clear */ true);
@@ -1593,16 +1593,16 @@ class LIEF_LOCAL ExeLayout : public Layout {
       strtab_idx = binary_->sections().size() - 1;
 
       if (new_strtab == nullptr) {
-        LIEF_ERR("Can't add a new .strtab section");
+        LIEF_ERR("Failed to add .strtab section");
         return make_error_code(lief_errors::build_error);
       }
 
-      LIEF_DEBUG("New .strtab section: #{:d} {} 0x{:x} (size: {:x})",
+      LIEF_DEBUG("New .strtab section: #{:d} {} {:#x} (size: {:x})",
                  strtab_idx, new_strtab->name(), new_strtab->file_offset(), new_strtab->size());
 
       Section* sec_symtab = binary_->get(Section::TYPE::SYMTAB);
       if (sec_symtab != nullptr) {
-        LIEF_DEBUG("Link section {} with the new .strtab (idx: #{:d})", sec_symtab->name(), strtab_idx);
+        LIEF_DEBUG("Linking section {} with new .strtab (idx: #{:d})", sec_symtab->name(), strtab_idx);
         sec_symtab->link(strtab_idx);
       }
       set_strtab_section(*new_strtab);
@@ -1615,7 +1615,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     // Sections that are not associated with segments (mostly debug information)
     // currently we only handle the symtab symbol table: .symtab
     if (symtab_size_ > 0) {
-      LIEF_DEBUG("Relocate .symtab");
+      LIEF_DEBUG("Relocating .symtab");
 
       const auto sections = binary_->sections();
       auto it_sec_symtab = std::find_if(sections.begin(), sections.end(),
@@ -1629,7 +1629,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
           strtab_idx = it_sec_symtab->link();
         }
 
-        LIEF_DEBUG("Removing the old section: {} 0x{:x} (size: 0x{:x})",
+        LIEF_DEBUG("Removing the old section: {} {:#x} (size: {:#x})",
                    it_sec_symtab->name(), it_sec_symtab->file_offset(), it_sec_symtab->size());
         binary_->remove(*it_sec_symtab, /* clear */ true);
         if (pos < strtab_idx) {
@@ -1648,10 +1648,10 @@ class LIEF_LOCAL ExeLayout : public Layout {
       Section* new_symtab = binary_->add(
         symtab, /*loaded=*/false, /*pos=*/Binary::SEC_INSERT_POS::POST_SECTION);
       if (new_symtab == nullptr) {
-        LIEF_ERR("Can't add a new .symbtab section");
+        LIEF_ERR("Failed to add .symtab section");
         return make_error_code(lief_errors::build_error);
       }
-      LIEF_DEBUG("New .symtab section: {} 0x{:x} (size: {:x})",
+      LIEF_DEBUG("New .symtab section: {} {:#x} (size: {:x})",
                  new_symtab->name(), new_symtab->file_offset(), new_symtab->size());
     }
 
@@ -1663,7 +1663,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
         if (!section_res) {
           if (binary_->header().file_type() != Header::FILE_TYPE::CORE) {
-            LIEF_ERR("Note type: {} ('{}') is not supported",
+            LIEF_ERR("Unsupported note type {} ('{}') for section",
                      to_string(note.type()), note.name());
           }
           continue;
@@ -1678,7 +1678,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
             nsec == nullptr)
         {
           if (it_offset == std::end(notes_off_map_)) {
-            LIEF_ERR("Can't find raw data for note: '{}'", to_string(note.type()));
+            LIEF_ERR("Raw data not found for note '{}'", to_string(note.type()));
             continue;
           }
           const size_t note_offset = it_offset->second;
@@ -1689,7 +1689,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
           Section* section_added = binary_->add(
             section, /*loaded=*/false, /*pos=*/Binary::SEC_INSERT_POS::POST_SECTION);
           if (section_added == nullptr) {
-            LIEF_ERR("Can't add SHT_NOTE section");
+            LIEF_ERR("Failed to add SHT_NOTE section");
             return make_error_code(lief_errors::build_error);
           }
           section_added->offset(segment_note->file_offset() + note_offset);

@@ -40,7 +40,7 @@ void show_trie(std::ostream& output, std::string output_prefix,
   if (auto res = stream.read<uint8_t>()) {
     terminal_size = *res;
   } else {
-    LIEF_ERR("Can't read terminal size");
+    LIEF_ERR("Failed to read terminal size");
     return;
   }
 
@@ -51,7 +51,7 @@ void show_trie(std::ostream& output, std::string output_prefix,
     if (auto res = stream.read_uleb128()) {
       flags = ExportInfo::FLAGS(*res);
     } else {
-      LIEF_ERR("Can't read flags");
+      LIEF_ERR("Failed to read flags");
       return;
     }
     uint64_t address = 0;

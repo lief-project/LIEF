@@ -24,7 +24,7 @@ void Relocation::accept(Visitor& visitor) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Relocation& entry) {
-  os << fmt::format("0x{:010x} ({} bits)", entry.address(), entry.size());
+  os << fmt::format("{:#012x} ({} bits)", entry.address(), entry.size());
   return os;
 }
 

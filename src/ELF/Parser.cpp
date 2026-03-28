@@ -164,8 +164,8 @@ Header::ELF_DATA determine_elf_endianess(BinaryStream& stream) {
       }
     }
 
-    LIEF_DEBUG("Machine      '{}' (0x{:x})", to_string(machine), (int)machine);
-    LIEF_DEBUG("Machine Swap '{}' (0x{:x})", to_string(machine_swap), (int)machine);
+    LIEF_DEBUG("Machine:      '{}' ({:#x})", to_string(machine), (int)machine);
+    LIEF_DEBUG("Machine swap: '{}' ({:#x})", to_string(machine_swap), (int)machine);
 
     const Header::ELF_DATA endian      = determine_elf_endianess(machine);
     const Header::ELF_DATA endian_swap = determine_elf_endianess(machine_swap);
@@ -291,7 +291,7 @@ Target determine_elf_target(BinaryStream& stream) {
     }
 
     LIEF_WARN("ELF class from machine type ('{}') does not match ELF class from "
-              "e_ident ('{}'). The binary has been likely modified.",
+              "e_ident ('{}'). The binary may have been modified.",
               to_string(from_e_machine), to_string(from_ei_class));
     // Make the priority on Elf_Ehdr.e_machine as it is
     // this value that is used by the kernel.
@@ -316,7 +316,7 @@ ok_error_t Parser::init() {
 
   auto res = DataHandler::Handler::from_stream(stream_);
   if (!res) {
-    LIEF_ERR("The provided stream is not supported by the ELF DataHandler");
+    LIEF_ERR("Unsupported stream type for the ELF DataHandler");
     return make_error_code(lief_errors::not_supported);
   }
 
@@ -324,7 +324,7 @@ ok_error_t Parser::init() {
 
   auto res_ident = stream_->peek<Header::identity_t>();
   if (!res_ident) {
-    LIEF_ERR("Can't read ELF identity. Nothing to parse");
+    LIEF_ERR("Failed to read ELF identity");
     return make_error_code(res_ident.error());
   }
 
@@ -349,7 +349,7 @@ ok_error_t Parser::init() {
     case Header::CLASS::ELF64: return parse_binary<details::ELF64>();
     case Header::CLASS::NONE:
       {
-        LIEF_ERR("Can't determine the ELF class ({})",
+        LIEF_ERR("Failed to determine ELF class ({})",
                   static_cast<size_t>(binary_->type_));
         return make_error_code(lief_errors::corrupted);
       }
@@ -398,7 +398,7 @@ std::unique_ptr<Binary> Parser::parse(std::unique_ptr<BinaryStream> stream,
 
 ok_error_t Parser::parse_symbol_version(uint64_t symbol_version_offset) {
   LIEF_DEBUG("== Parsing symbol version ==");
-  LIEF_DEBUG("Symbol version offset: 0x{:x}", symbol_version_offset);
+  LIEF_DEBUG("Symbol version offset: {:#x}", symbol_version_offset);
 
   const auto nb_entries = static_cast<uint32_t>(binary_->dynamic_symbols_.size());
 
@@ -464,7 +464,7 @@ result<uint64_t> Parser::get_dynamic_string_table_from_segments(BinaryStream* st
     for (size_t i = 0; i < nb_entries; ++i) {
       auto res = stream_->read<details::Elf32_Dyn>();
       if (!res) {
-        LIEF_ERR("Can't read dynamic entry #{}", i);
+        LIEF_ERR("Failed to read dynamic entry #{}", i);
         return 0;
       }
       auto dt = *res;
@@ -479,7 +479,7 @@ result<uint64_t> Parser::get_dynamic_string_table_from_segments(BinaryStream* st
     for (size_t i = 0; i < nb_entries; ++i) {
       auto res = stream_->read<details::Elf64_Dyn>();
       if (!res) {
-        LIEF_ERR("Can't read dynamic entry #{}", i);
+        LIEF_ERR("Failed to read dynamic entry #{}", i);
         return 0;
       }
       const auto dt = *res;
@@ -525,20 +525,20 @@ void Parser::link_symbol_version() {
 }
 
 ok_error_t Parser::parse_symbol_sysv_hash(uint64_t offset) {
-  LIEF_DEBUG("== Parse SYSV hash table ==");
+  LIEF_DEBUG("== Parsing SYSV hash table ==");
   auto sysvhash = std::make_unique<SysvHash>();
 
   stream_->setpos(offset);
 
   auto res_nbucket = stream_->read<uint32_t>();
   if (!res_nbucket) {
-    LIEF_ERR("Can't read the number of buckets");
+    LIEF_ERR("Failed to read bucket count");
     return make_error_code(lief_errors::read_error);
   }
 
   auto res_nchains = stream_->read<uint32_t>();
   if (!res_nchains) {
-    LIEF_ERR("Can't read the number of chains");
+    LIEF_ERR("Failed to read chain count");
     return make_error_code(lief_errors::read_error);
   }
 
@@ -551,7 +551,7 @@ ok_error_t Parser::parse_symbol_sysv_hash(uint64_t offset) {
     if (auto bucket = stream_->read<uint32_t>()) {
       sysvhash->buckets_.push_back(*bucket);
     } else {
-      LIEF_ERR("Can't read bucket #{}", i);
+      LIEF_ERR("Failed to read bucket #{}", i);
       break;
     }
   }
@@ -561,7 +561,7 @@ ok_error_t Parser::parse_symbol_sysv_hash(uint64_t offset) {
     if (auto chain = stream_->read<uint32_t>()) {
       sysvhash->chains_.push_back(*chain);
     } else {
-      LIEF_ERR("Can't read chain #{}", i);
+      LIEF_ERR("Failed to read chain #{}", i);
       break;
     }
   }
@@ -579,7 +579,7 @@ std::unique_ptr<Note> Parser::get_note(uint32_t type, std::string name,
 
   auto conv = Note::convert_type(ftype, type, name);
   if (!conv) {
-    LIEF_WARN("Note type: 0x{:x} is not supported for owner: '{}'", type, name);
+    LIEF_WARN("Unsupported note type {:#x} for owner '{}'", type, name);
     return std::make_unique<Note>(std::move(name), Note::TYPE::UNKNOWN, type,
                                   std::move(desc_bytes));
   }
@@ -661,12 +661,12 @@ ok_error_t Parser::parse_notes(uint64_t offset, uint64_t size) {
         binary_->notes_.push_back(std::move(note));
       }
     } else {
-      LIEF_WARN("Note not parsed!");
+      LIEF_WARN("Failed to parse note");
       ++error_count;
     }
 
     if (error_count > ERROR_THRESHOLD) {
-      LIEF_ERR("Too many errors while trying to parse notes");
+      LIEF_ERR("Too many errors while parsing notes");
       return make_error_code(lief_errors::corrupted);
     }
 
@@ -690,10 +690,10 @@ ok_error_t Parser::parse_overlay() {
     return ok();
   }
 
-  LIEF_INFO("Overlay detected at 0x{:x} ({} bytes)", last_offset, overlay_size);
+  LIEF_INFO("Overlay detected at {:#x} ({} bytes)", last_offset, overlay_size);
 
   if (!stream_->peek_data(binary_->overlay_, last_offset, overlay_size)) {
-    LIEF_WARN("Can't read overlay data");
+    LIEF_WARN("Failed to read overlay data");
     return make_error_code(lief_errors::read_error);
   }
   return ok();
@@ -738,7 +738,7 @@ bool Parser::bind_symbol(Relocation& R) {
   }
   const uint32_t idx = R.info();
   if (idx >= binary_->dynamic_symbols_.size()) {
-    LIEF_DEBUG("Index #{} is out of range for reloc: {}", idx, to_string(R));
+    LIEF_DEBUG("Symbol index #{} out of range for relocation: {}", idx, to_string(R));
     return false;
   }
 

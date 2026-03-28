@@ -67,7 +67,7 @@ std::unique_ptr<DynamicRelocationV1>
 
   SpanStream payload_strm(buffer);
   if (!DynamicFixup::parse(ctx, payload_strm, *dyn_reloc)) {
-    LIEF_WARN("Dynamic relocation failed to parse fixup (Symbol=0x{:016x})",
+    LIEF_WARN("Dynamic relocation failed to parse fixup (Symbol={:#018x})",
               dyn_reloc->symbol());
   }
   return dyn_reloc;
@@ -78,10 +78,10 @@ std::string DynamicRelocationV1::to_string() const {
   std::ostringstream oss;
   oss << "Dynamic Value Relocation Table (version: 1)\n";
   if (symbol() < IMAGE_DYNAMIC_RELOCATION::_RELOC_LAST_ENTRY) {
-    oss << format("Symbol VA: 0x{:016x} ({})\n", symbol(),
+    oss << format("Symbol VA: {:#018x} ({})\n", symbol(),
                   PE::to_string((IMAGE_DYNAMIC_RELOCATION)symbol()));
   } else {
-    oss << format("Symbol VA: 0x{:016x}\n", symbol());
+    oss << format("Symbol VA: {:#018x}\n", symbol());
   }
 
   if (const DynamicFixup* F = fixups()) {

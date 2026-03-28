@@ -145,9 +145,9 @@ ok_error_t Builder::build_exe_lib() {
       const uint64_t osize = binary_->sizing_info_->interpreter;
       const bool should_relocate = interpt_size > osize || config_.force_relocate;
       if (should_relocate) {
-        LIEF_DEBUG("[-] Need to relocate .interp section (0x{:x} new bytes)", interpt_size - osize);
+        LIEF_DEBUG("[-] Need to relocate .interp section ({:#x} new bytes)", interpt_size - osize);
         layout->relocate_interpreter(interpt_size);
-      } else { LIEF_DEBUG(".interp: -0x{:x} bytes", osize - interpt_size); }
+      } else { LIEF_DEBUG(".interp: -{:#x} bytes", osize - interpt_size); }
     } else if (!binary_->interpreter_.empty()) { // Directly access private field as we want to avoid
                                                  // has_interpreter() check
 
@@ -184,10 +184,10 @@ ok_error_t Builder::build_exe_lib() {
       config_.force_relocate;
 
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate .note.* segments (0x{:x} new bytes)",
+      LIEF_DEBUG("[-] Need to relocate .note.* segments ({:#x} new bytes)",
           notes_size - note_segment.physical_size());
       layout->relocate_notes(true);
-    } else { /*LIEF_DEBUG(".notes: -0x{:x} bytes", note_segment.physical_size() - notes_size);*/ }
+    } else { /*LIEF_DEBUG(".notes: -{:#x} bytes", note_segment.physical_size() - notes_size);*/ }
   }
 
   if (binary_->has(DynamicEntry::TAG::GNU_HASH) && config_.gnu_hash) {
@@ -195,9 +195,9 @@ ok_error_t Builder::build_exe_lib() {
     const uint64_t osize = binary_->sizing_info_->gnu_hash;
     const bool should_relocate = needed_size > osize || config_.force_relocate;
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate DT_GNU_HASH (0x{:x} new bytes)", needed_size - osize);
+      LIEF_DEBUG("[-] Need to relocate DT_GNU_HASH ({:#x} new bytes)", needed_size - osize);
       layout->relocate_gnu_hash(true);
-    } else { LIEF_DEBUG("DT_GNU_HASH: -0x{:x} bytes", osize - needed_size); }
+    } else { LIEF_DEBUG("DT_GNU_HASH: -{:#x} bytes", osize - needed_size); }
   }
 
   if (binary_->has(DynamicEntry::TAG::HASH) && config_.dt_hash) {
@@ -205,9 +205,9 @@ ok_error_t Builder::build_exe_lib() {
     const uint64_t osize = binary_->sizing_info_->hash;
     const bool should_relocate = needed_size > osize || config_.force_relocate;
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate DT_HASH (0x{:x} new bytes)", needed_size - osize);
+      LIEF_DEBUG("[-] Need to relocate DT_HASH ({:#x} new bytes)", needed_size - osize);
       layout->relocate_sysv_hash(needed_size);
-    } else { LIEF_DEBUG("DT_HASH: -0x{:x} bytes", osize - needed_size); }
+    } else { LIEF_DEBUG("DT_HASH: -{:#x} bytes", osize - needed_size); }
   }
 
   if (binary_->has(Segment::TYPE::DYNAMIC) && config_.dynamic_section) {
@@ -216,9 +216,9 @@ ok_error_t Builder::build_exe_lib() {
     const bool should_relocate = dynamic_needed_size > osize ||
                                  (config_.force_relocate && !config_.skip_dynamic);
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate .dynamic section (0x{:x} new bytes)", dynamic_needed_size - osize);
+      LIEF_DEBUG("[-] Need to relocate .dynamic section ({:#x} new bytes)", dynamic_needed_size - osize);
       layout->relocate_dynamic(dynamic_needed_size);
-    } else { LIEF_DEBUG("PT_DYNAMIC: -0x{:x} bytes", osize - dynamic_needed_size); }
+    } else { LIEF_DEBUG("PT_DYNAMIC: -{:#x} bytes", osize - dynamic_needed_size); }
   }
 
   if (binary_->has(DynamicEntry::TAG::RELA) ||
@@ -229,9 +229,9 @@ ok_error_t Builder::build_exe_lib() {
       const uint64_t osize = binary_->sizing_info_->rela;
       const bool should_relocate = dyn_reloc_needed_size > osize || config_.force_relocate;
       if (should_relocate) {
-        LIEF_DEBUG("[-] Need to relocate DT_REL(A) (0x{:x} new bytes)", dyn_reloc_needed_size - osize);
+        LIEF_DEBUG("[-] Need to relocate DT_REL(A) ({:#x} new bytes)", dyn_reloc_needed_size - osize);
         layout->relocate_dyn_reloc(dyn_reloc_needed_size);
-      } else { LIEF_DEBUG("DT_REL(A): -0x{:x} bytes", osize - dyn_reloc_needed_size); }
+      } else { LIEF_DEBUG("DT_REL(A): -{:#x} bytes", osize - dyn_reloc_needed_size); }
     }
   }
 
@@ -242,9 +242,9 @@ ok_error_t Builder::build_exe_lib() {
     const uint64_t osize = binary_->sizing_info_->relr;
     const bool should_relocate = relr_reloc_size > osize || config_.force_relocate;
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate DT_RELR (0x{:x} new bytes)", relr_reloc_size - osize);
+      LIEF_DEBUG("[-] Need to relocate DT_RELR ({:#x} new bytes)", relr_reloc_size - osize);
       layout->relocate_relr(true);
-    } else { LIEF_DEBUG("DT_RELR: -0x{:x} bytes", osize - relr_reloc_size); }
+    } else { LIEF_DEBUG("DT_RELR: -{:#x} bytes", osize - relr_reloc_size); }
   }
 
   if ((binary_->has(DynamicEntry::TAG::ANDROID_RELA) ||
@@ -254,10 +254,10 @@ ok_error_t Builder::build_exe_lib() {
     const uint64_t osize = binary_->sizing_info_->android_rela;
     const bool should_relocate = android_rela_sz > osize || config_.force_relocate;
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate DT_ANDROID_REL[A] (0x{:x} new bytes)",
+      LIEF_DEBUG("[-] Need to relocate DT_ANDROID_REL[A] ({:#x} new bytes)",
                  android_rela_sz - osize);
       layout->relocate_android_rela(true);
-    } else { LIEF_DEBUG("DT_ANDROID_REL[A]: -0x{:x} bytes", osize - android_rela_sz); }
+    } else { LIEF_DEBUG("DT_ANDROID_REL[A]: -{:#x} bytes", osize - android_rela_sz); }
   }
 
   if (config_.jmprel && binary_->has(DynamicEntry::TAG::JMPREL)) {
@@ -265,9 +265,9 @@ ok_error_t Builder::build_exe_lib() {
     const uint64_t osize = binary_->sizing_info_->jmprel;
     const bool should_relocate = plt_reloc_needed_size > osize || config_.force_relocate;
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate DT_JMPREL section (0x{:x} new bytes)", plt_reloc_needed_size - osize);
+      LIEF_DEBUG("[-] Need to relocate DT_JMPREL section ({:#x} new bytes)", plt_reloc_needed_size - osize);
       layout->relocate_plt_reloc(plt_reloc_needed_size);
-    } else { LIEF_DEBUG("DT_JMPREL: -0x{:x} bytes", osize - plt_reloc_needed_size); }
+    } else { LIEF_DEBUG("DT_JMPREL: -{:#x} bytes", osize - plt_reloc_needed_size); }
   }
 
   if (config_.dyn_str && binary_->has(DynamicEntry::TAG::STRTAB)) {
@@ -275,9 +275,9 @@ ok_error_t Builder::build_exe_lib() {
     const uint64_t osize  = binary_->sizing_info_->dynstr;
     const bool should_relocate = needed_size > osize || config_.force_relocate;
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate DT_STRTAB (0x{:x} new bytes)", needed_size - osize);
+      LIEF_DEBUG("[-] Need to relocate DT_STRTAB ({:#x} new bytes)", needed_size - osize);
       layout->relocate_dynstr(true);
-    } else { LIEF_DEBUG("DT_STRTAB: -0x{:x} bytes", osize - needed_size); }
+    } else { LIEF_DEBUG("DT_STRTAB: -{:#x} bytes", osize - needed_size); }
   }
 
   if (config_.symtab && binary_->has(DynamicEntry::TAG::SYMTAB)) {
@@ -285,9 +285,9 @@ ok_error_t Builder::build_exe_lib() {
     const uint64_t osize = binary_->sizing_info_->dynsym;
     const bool should_relocate = dynsym_needed_size > osize || config_.force_relocate;
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate DT_SYMTAB (0x{:x} new bytes)", dynsym_needed_size - osize);
+      LIEF_DEBUG("[-] Need to relocate DT_SYMTAB ({:#x} new bytes)", dynsym_needed_size - osize);
       layout->relocate_dynsym(dynsym_needed_size);
-    } else { LIEF_DEBUG("DT_SYMTAB: -0x{:x} bytes", osize - dynsym_needed_size); }
+    } else { LIEF_DEBUG("DT_SYMTAB: -{:#x} bytes", osize - dynsym_needed_size); }
   }
 
   if (binary_->has(DynamicEntry::TAG::INIT_ARRAY) &&
@@ -301,9 +301,9 @@ ok_error_t Builder::build_exe_lib() {
       if (binary_->has_symbol("__libc_start_main")) {
         LIEF_WARN("Relocating DT_INIT_ARRAY on Linux may corrupt the final binary");
       }
-      LIEF_DEBUG("[-] Need to relocate DT_INIT_ARRAY (0x{:x} new bytes)", osize - needed_size);
+      LIEF_DEBUG("[-] Need to relocate DT_INIT_ARRAY ({:#x} new bytes)", osize - needed_size);
       layout->relocate_init_array(needed_size);
-    } else { LIEF_DEBUG("DT_INIT_ARRAY: -0x{:x} bytes", osize - needed_size); }
+    } else { LIEF_DEBUG("DT_INIT_ARRAY: -{:#x} bytes", osize - needed_size); }
   }
 
   if (binary_->has(DynamicEntry::TAG::PREINIT_ARRAY) &&
@@ -314,9 +314,9 @@ ok_error_t Builder::build_exe_lib() {
     const uint64_t osize = binary_->sizing_info_->preinit_array;
     const bool should_relocate = needed_size > osize;
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate DT_PREINIT_ARRAY (0x{:x} new bytes)", osize - needed_size);
+      LIEF_DEBUG("[-] Need to relocate DT_PREINIT_ARRAY ({:#x} new bytes)", osize - needed_size);
       layout->relocate_preinit_array(needed_size);
-    } else { LIEF_DEBUG("DT_PREINIT_ARRAY: -0x{:x} bytes", osize - needed_size); }
+    } else { LIEF_DEBUG("DT_PREINIT_ARRAY: -{:#x} bytes", osize - needed_size); }
   }
 
   if (binary_->has(DynamicEntry::TAG::FINI_ARRAY) &&
@@ -330,9 +330,9 @@ ok_error_t Builder::build_exe_lib() {
       if (binary_->has_symbol("__libc_start_main")) {
         LIEF_WARN("Relocating .fini_array on Linux may corrupt the final binary");
       }
-      LIEF_DEBUG("[-] Need to relocate DT_FINI_ARRAY (0x{:x} new bytes)", osize - needed_size);
+      LIEF_DEBUG("[-] Need to relocate DT_FINI_ARRAY ({:#x} new bytes)", osize - needed_size);
       layout->relocate_fini_array(needed_size);
-    } else { LIEF_DEBUG("DT_FINI_ARRAY: -0x{:x} bytes", osize - needed_size); }
+    } else { LIEF_DEBUG("DT_FINI_ARRAY: -{:#x} bytes", osize - needed_size); }
   }
 
   if (binary_->has(DynamicEntry::TAG::VERSYM) && config_.sym_versym) {
@@ -340,9 +340,9 @@ ok_error_t Builder::build_exe_lib() {
     const uint64_t osize       = binary_->sizing_info_->versym;
     const bool should_relocate = symver_needed_size > osize || config_.force_relocate;
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate DT_VERSYM (0x{:x} new bytes)", symver_needed_size - osize);
+      LIEF_DEBUG("[-] Need to relocate DT_VERSYM ({:#x} new bytes)", symver_needed_size - osize);
       layout->relocate_symver(symver_needed_size);
-    } else { LIEF_DEBUG("DT_VERSYM: -0x{:x} bytes", osize - symver_needed_size); }
+    } else { LIEF_DEBUG("DT_VERSYM: -{:#x} bytes", osize - symver_needed_size); }
   }
 
   if (binary_->has(DynamicEntry::TAG::VERDEF) && config_.sym_verdef) {
@@ -350,9 +350,9 @@ ok_error_t Builder::build_exe_lib() {
     const uint64_t osize       = binary_->sizing_info_->verdef;
     const bool should_relocate = symvdef_needed_size > osize || config_.force_relocate;
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate DT_VERDEF (0x{:x} new bytes)", symvdef_needed_size - osize);
+      LIEF_DEBUG("[-] Need to relocate DT_VERDEF ({:#x} new bytes)", symvdef_needed_size - osize);
       layout->relocate_symverd(symvdef_needed_size);
-    } else { LIEF_DEBUG("DT_VERDEF: -0x{:x} bytes", osize - symvdef_needed_size); }
+    } else { LIEF_DEBUG("DT_VERDEF: -{:#x} bytes", osize - symvdef_needed_size); }
   }
 
   if (binary_->has(DynamicEntry::TAG::VERNEED) && config_.sym_verneed) {
@@ -360,21 +360,21 @@ ok_error_t Builder::build_exe_lib() {
     const uint64_t osize       = binary_->sizing_info_->verneed;
     const bool should_relocate = symvreq_needed_size > osize || config_.force_relocate;
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate DT_VERNEED (0x{:x} new bytes)", symvreq_needed_size - osize);
+      LIEF_DEBUG("[-] Need to relocate DT_VERNEED ({:#x} new bytes)", symvreq_needed_size - osize);
       layout->relocate_symverr(symvreq_needed_size);
-    } else { LIEF_DEBUG("DT_VERNEED: -0x{:x} bytes", osize - symvreq_needed_size); }
+    } else { LIEF_DEBUG("DT_VERNEED: -{:#x} bytes", osize - symvreq_needed_size); }
   }
 
   const Header& header = binary_->header();
   if (header.section_name_table_idx() > 0 && !binary_->sections_.empty() ) {
     if (header.section_name_table_idx() >= binary_->sections_.size()) {
-      LIEF_ERR("Section string table out of bound");
+      LIEF_ERR("Section string table out of bounds");
     } else {
       std::unique_ptr<Section>& string_names_section = binary_->sections_[header.section_name_table_idx()];
       const size_t shstr_size = layout->section_shstr_size();
       const bool should_relocate = shstr_size > string_names_section->size() || config_.force_relocate;
       if (should_relocate) {
-        LIEF_DEBUG("[-] Need to relocate '{}' section (0x{:x} new bytes)",
+        LIEF_DEBUG("[-] Need to relocate '{}' section ({:#x} new bytes)",
                    string_names_section->name(), shstr_size - string_names_section->size());
         layout->relocate_shstr(true);
       }
@@ -401,7 +401,7 @@ ok_error_t Builder::build_exe_lib() {
         const size_t strtab_needed_size = layout->section_strtab_size();
         const bool should_relocate = strtab_needed_size > strtab.size() || config_.force_relocate;
         if (should_relocate) {
-          LIEF_DEBUG("[-] Need to relocate .strtab section (0x{:x} new bytes)",
+          LIEF_DEBUG("[-] Need to relocate .strtab section ({:#x} new bytes)",
                      strtab_needed_size - strtab.size());
           layout->relocate_strtab(layout->section_strtab_size());
         }
@@ -415,7 +415,7 @@ ok_error_t Builder::build_exe_lib() {
     const size_t needed_size = layout->static_sym_size<ELF_T>();
     const bool should_relocate = needed_size > sec_symtab->size() || config_.force_relocate;
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate '{}' section (0x{:x} new bytes)",
+      LIEF_DEBUG("[-] Need to relocate '{}' section ({:#x} new bytes)",
                  sec_symtab->name(), needed_size - sec_symtab->size());
       layout->relocate_symtab(needed_size);
     }
@@ -559,10 +559,10 @@ ok_error_t Builder::process_object_relocations() {
   for (Relocation& reloc : it_relocations) {
     Section* sec = reloc.section();
     if (sec == nullptr) {
-      LIEF_WARN("Relocation @0x{:x} misses a section", reloc.address());
+      LIEF_WARN("Relocation @{:#x} misses a section", reloc.address());
       continue;
     }
-    LIEF_DEBUG("Section for reloc 0x{:x} -> {}", reloc.address(), sec->name());
+    LIEF_DEBUG("Section for reloc {:#x} -> {}", reloc.address(), sec->name());
     relocations_map[sec].push_back(&reloc);
     auto it_reloc_sec = sections_reloc_map.find(sec);
     if (it_reloc_sec == std::end(sections_reloc_map)) {
@@ -595,13 +595,13 @@ ok_error_t Builder::build_relocatable() {
   // Check if we should relocate the .shstrtab
   if (header.section_name_table_idx() > 0) {
     if (header.section_name_table_idx() >= binary_->sections_.size()) {
-      LIEF_ERR("Section string table out of bound");
+      LIEF_ERR("Section string table out of bounds");
       return make_error_code(lief_errors::file_format_error);
     }
     std::unique_ptr<Section>& string_names_section = binary_->sections_[header.section_name_table_idx()];
     const size_t shstr_size = layout->section_shstr_size();
     if (shstr_size > string_names_section->size() || config_.force_relocate) {
-      LIEF_DEBUG("[-] Need to relocate '{}' section (0x{:x} new bytes)",
+      LIEF_DEBUG("[-] Need to relocate '{}' section ({:#x} new bytes)",
                  string_names_section->name(), shstr_size - string_names_section->size());
       layout->relocate_section(*string_names_section, shstr_size);
     }
@@ -612,7 +612,7 @@ ok_error_t Builder::build_relocatable() {
   if (symtab != nullptr) {
     const size_t needed_size = layout->symtab_size<ELF_T>();
     if (needed_size > symtab->size() || config_.force_relocate) {
-      LIEF_DEBUG("[-] Need to relocate '{}' section (0x{:x} new bytes)",
+      LIEF_DEBUG("[-] Need to relocate '{}' section ({:#x} new bytes)",
                  symtab->name(), symtab->size() - needed_size);
       layout->relocate_section(*symtab, needed_size);
     }
@@ -636,7 +636,7 @@ ok_error_t Builder::build_relocatable() {
       const size_t strtab_needed_size = layout->section_strtab_size();
       const bool should_relocate = strtab_needed_size > strtab.size() || config_.force_relocate;
       if (should_relocate) {
-        LIEF_DEBUG("[-] Need to relocate .strtab section (0x{:x} new bytes)",
+        LIEF_DEBUG("[-] Need to relocate .strtab section ({:#x} new bytes)",
                    strtab_needed_size - strtab.size());
         layout->relocate_section(strtab, strtab_needed_size);
       }
@@ -751,7 +751,7 @@ ok_error_t Builder::build_sections() {
         section->type() != Section::TYPE::NOBITS;
     if (should_commit_data) {
       span<const uint8_t> content = section->content();
-      LIEF_DEBUG("[Content] {:20}: 0x{:010x} - 0x{:010x} (0x{:x})",
+      LIEF_DEBUG("[Content] {:20}: {:#012x} - {:#012x} ({:#x})",
                  section->name(), section->file_offset(),
                  section->file_offset() + content.size(), content.size());
       ios_.seekp(section->file_offset());
@@ -781,7 +781,7 @@ ok_error_t Builder::build_sections() {
     // Write Section'header
     if (section_headers_offset > 0) {
       const uint64_t offset = section_headers_offset + i * sizeof(Elf_Shdr);
-      LIEF_DEBUG("[Header ] {:20}: 0x{:010x} - 0x{:010x}",
+      LIEF_DEBUG("[Header ] {:20}: {:#012x} - {:#012x}",
                  section->name(),
                  offset, offset + sizeof(Elf_Shdr));
       section_headers.write<Elf_Shdr>(shdr);
@@ -834,7 +834,7 @@ ok_error_t Builder::build_segments() {
 
   vector_iostream pheaders(should_swap());
   pheaders.reserve(binary_->segments_.size() * sizeof(Elf_Phdr));
-  LIEF_DEBUG("sizeof(PHDR): 0x{:x}", binary_->segments_.size() * sizeof(Elf_Phdr));
+  LIEF_DEBUG("sizeof(PHDR): {:#x}", binary_->segments_.size() * sizeof(Elf_Phdr));
 
   for (const std::unique_ptr<Segment>& segment : binary_->segments_) {
     Elf_Phdr phdr;
@@ -858,7 +858,7 @@ ok_error_t Builder::build_segments() {
   for (const std::unique_ptr<Segment>& segment : binary_->segments_) {
     if (segment->physical_size() > 0) {
       span<const uint8_t> content = segment->content();
-      LIEF_DEBUG("[W] {:<13} 0x{:016x}: 0x{:010x} - 0x{:010x} (0x{:x})",
+      LIEF_DEBUG("[W] {:<13} {:#018x}: {:#012x} - {:#012x} ({:#x})",
                  to_string(segment->type()), segment->virtual_address(),
                  segment->file_offset(), segment->file_offset() + content.size(),
                  content.size());
@@ -870,7 +870,7 @@ ok_error_t Builder::build_segments() {
 
   const Elf_Off segment_header_offset = binary_->header().program_headers_offset();
 
-  LIEF_DEBUG("Write segments header 0x{:010x} -> 0x{:010x}",
+  LIEF_DEBUG("Write segments header {:#012x} -> {:#012x}",
              segment_header_offset, segment_header_offset + pheaders.size());
   ios_.seekp(segment_header_offset);
   ios_.write(std::move(pheaders.raw()));
@@ -1420,7 +1420,7 @@ ok_error_t Builder::build_section_relocations() {
   }
 
   for (const auto& [sec, ios] : section_content) {
-    LIEF_DEBUG("Fill section {} with 0x{:x} bytes", sec->name(), ios.raw().size());
+    LIEF_DEBUG("Fill section {} with {:#x} bytes", sec->name(), ios.raw().size());
     sec->content(ios.raw());
   }
   return ok();

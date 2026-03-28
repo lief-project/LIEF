@@ -76,11 +76,11 @@ ok_error_t Parser::parse() {
   }
 
   if (!parse_exceptions()) {
-    LIEF_WARN("Failed to parse exceptions entries");
+    LIEF_WARN("Failed to parse exception entries");
   }
 
   if (!parse_overlay()) {
-    LIEF_WARN("Failed to parse the overlay");
+    LIEF_WARN("Failed to parse overlay");
   }
 
   if (!parse_debug()) {
@@ -192,7 +192,7 @@ ok_error_t Parser::parse_headers() {
 
   auto dos_hdr = stream_->peek<details::pe_dos_header>(0);
   if (!dos_hdr) {
-    LIEF_ERR("Can't read the DOS Header");
+    LIEF_ERR("Failed to read DOS header");
     return make_error_code(dos_hdr.error());
   }
 
@@ -202,7 +202,7 @@ ok_error_t Parser::parse_headers() {
   {
     auto pe_header = stream_->peek<details::pe_header>(addr_new_exe);
     if (!pe_header) {
-      LIEF_ERR("Can't read the PE header");
+      LIEF_ERR("Failed to read PE header");
       return make_error_code(pe_header.error());
     }
     binary_->header_ = *pe_header;
@@ -212,7 +212,7 @@ ok_error_t Parser::parse_headers() {
     const uint64_t offset = addr_new_exe + sizeof(details::pe_header);
     auto opt_header = stream_->peek<pe_optional_header>(offset);
     if (!opt_header) {
-      LIEF_ERR("Can't read the optional header");
+      LIEF_ERR("Failed to read optional header");
       return make_error_code(opt_header.error());
     }
     binary_->optional_header_ = *opt_header;
@@ -240,7 +240,7 @@ ok_error_t Parser::parse_data_directories() {
   for (size_t i = 0; i < nb_dir; ++i) {
     auto raw_dir = stream_->read<details::pe_data_directory>();
     if (!raw_dir) {
-      LIEF_ERR("Can't read data directory at #{}", i);
+      LIEF_ERR("Failed to read data directory #{}", i);
       return make_error_code(lief_errors::read_error);
     }
     const auto dir_type = DataDirectory::TYPES(i);
@@ -250,7 +250,7 @@ ok_error_t Parser::parse_data_directories() {
       const uint64_t offset = binary_->rva_to_offset(directory->RVA());
       directory->section_   = binary_->section_from_offset(offset);
       if (directory->section_ == nullptr && warn_missing_section(*directory)) {
-        LIEF_WARN("Unable to find the section associated with {}",
+        LIEF_WARN("Section not found for {}",
                   to_string(dir_type));
       }
     }
@@ -304,7 +304,7 @@ ok_error_t Parser::parse_data_directories() {
     if (dir->RVA() > 0) {
       auto is_ok = parse_delay_imports<PE_T>();
       if (!is_ok) {
-        LIEF_WARN("The parsing of delay imports has failed or is incomplete ('{}')",
+        LIEF_WARN("Delay imports parsing failed or incomplete ('{}')",
                   to_string(get_error(is_ok)));
       }
     }
@@ -345,7 +345,7 @@ ok_error_t Parser::parse_import_table() {
     import->type_            = type_;
 
     if (import->name_rva_ == 0) {
-      LIEF_DEBUG("Name's RVA is null");
+      LIEF_DEBUG("Name RVA is null");
       break;
     }
 
@@ -355,7 +355,7 @@ ok_error_t Parser::parse_import_table() {
     if (auto res_name = stream_->peek_string_at(offset_name))  {
       import->name_ = std::move(*res_name);
     } else {
-      LIEF_ERR("Can't read the import name (offset: 0x{:x})", offset_name);
+      LIEF_ERR("Failed to read import name (offset: {:#x})", offset_name);
       continue;
     }
 
@@ -364,7 +364,7 @@ ok_error_t Parser::parse_import_table() {
     const std::string& imp_name = import->name();
     if (!is_valid_dll_name(imp_name)) {
       if (!imp_name.empty()) {
-        LIEF_WARN("'{}' is not a valid import name and will be discarded", imp_name);
+        LIEF_WARN("Invalid import name '{}', discarding", imp_name);
         continue;
       }
       continue; // skip
@@ -382,10 +382,10 @@ ok_error_t Parser::parse_import_table() {
     uint64_t IAT_offset = import->import_address_table_rva() > 0 ?
                           binary_->rva_to_offset(import->import_address_table_rva()) :
                           0;
-    LIEF_DEBUG("IAT Offset: 0x{:08x}", IAT_offset);
-    LIEF_DEBUG("IAT RVA:    0x{:08x}", import->import_address_table_rva());
-    LIEF_DEBUG("ILT Offset: 0x{:08x}", LT_offset);
-    LIEF_DEBUG("ILT RVA:    0x{:08x}", import->import_lookup_table_rva());
+    LIEF_DEBUG("IAT Offset: {:#010x}", IAT_offset);
+    LIEF_DEBUG("IAT RVA:    {:#010x}", import->import_address_table_rva());
+    LIEF_DEBUG("ILT Offset: {:#010x}", LT_offset);
+    LIEF_DEBUG("ILT RVA:    {:#010x}", import->import_lookup_table_rva());
 
     uint IAT = 0;
     uint table = 0;
@@ -415,7 +415,7 @@ ok_error_t Parser::parse_import_table() {
       entry->type_      = type_;
       entry->rva_       = import->iat_rva_ + sizeof(uint) * (idx++);
 
-      LIEF_DEBUG("IAT: 0x{:08x} | ILT: 0x{:08x}", IAT, table);
+      LIEF_DEBUG("IAT: {:#010x} | ILT: {:#010x}", IAT, table);
 
       if (!entry->is_ordinal()) {
         const size_t hint_off = binary_->rva_to_offset(entry->hint_name_rva());
@@ -423,12 +423,12 @@ ok_error_t Parser::parse_import_table() {
         if (auto entry_name = stream_->peek_string_at(name_off, MAX_IMPORT_NAME_SIZE)) {
           entry->name_ = std::move(*entry_name);
         } else {
-          LIEF_ERR("Can't read import entry name");
+          LIEF_ERR("Failed to read import entry name");
         }
         if (auto hint = stream_->peek<uint16_t>(hint_off)) {
           entry->hint_ = *hint;
         } else {
-          LIEF_INFO("Can't read hint value @0x{:x}", hint_off);
+          LIEF_INFO("Failed to read hint value @{:#x}", hint_off);
         }
 
         last_imp_offset = std::max<uint64_t>(last_imp_offset, name_off + entry->name().size() + 1);
@@ -437,7 +437,7 @@ ok_error_t Parser::parse_import_table() {
         if (is_valid_import_name(entry->name())) {
           import->entries_.push_back(std::move(entry));
         } else if (!entry->name().empty()){
-          LIEF_INFO("'{}' is an invalid import name and will be discarded", entry->name());
+          LIEF_INFO("Invalid import name '{}', discarding", entry->name());
         }
       } else {
         import->entries_.push_back(std::move(entry));
@@ -448,7 +448,7 @@ ok_error_t Parser::parse_import_table() {
           IAT = *iat;
           IAT_offset += sizeof(uint);
         } else {
-          LIEF_ERR("Can't read the IAT value at 0x{:x}", IAT_offset);
+          LIEF_ERR("Failed to read IAT value at {:#x}", IAT_offset);
           IAT = 0;
         }
       } else {
@@ -461,7 +461,7 @@ ok_error_t Parser::parse_import_table() {
           table = *lt;
           LT_offset += sizeof(uint);
         } else {
-          LIEF_ERR("Can't read the Lookup Table value at 0x{:x}", LT_offset);
+          LIEF_ERR("Failed to read lookup table value at {:#x}", LT_offset);
           table = 0;
         }
       } else {
@@ -492,7 +492,7 @@ ok_error_t Parser::parse_delay_names_table(DelayImport& import,
 
   auto entry_val = nstream->read<ptr_t>();
   if (!entry_val) {
-    LIEF_ERR("Can't read delay_imports.names_table[0]");
+    LIEF_ERR("Failed to read delay_imports.names_table[0]");
     return make_error_code(entry_val.error());
   }
 
@@ -505,7 +505,7 @@ ok_error_t Parser::parse_delay_names_table(DelayImport& import,
     if (auto iat_value = stream_->peek<ptr_t>(iat_offset + iat_pos)) {
       entry->value_ =import.iat() + iat_pos; // Symbol's value for the base class
       entry->iat_value_ = *iat_value;
-      LIEF_DEBUG("  [{}].iat : 0x{:010x}", index, entry->iat_value_);
+      LIEF_DEBUG("  [{}].iat : {:#012x}", index, entry->iat_value_);
     }
 
     if (!entry->is_ordinal()) {
@@ -556,7 +556,7 @@ ok_error_t Parser::parse_delay_imports() {
   while (stream) {
     auto import = stream->read<details::delay_imports>();
     if (!import) {
-      LIEF_DEBUG("Error: {}:{}", __FUNCTION__, __LINE__);
+      LIEF_DEBUG("Failed to read delay import at {}:{}", __FUNCTION__, __LINE__);
       return make_error_code(import.error());
     }
 
@@ -575,12 +575,12 @@ ok_error_t Parser::parse_delay_imports() {
 
     LIEF_DEBUG("  delay_imports.name:       {}",       imp->name_);
     LIEF_DEBUG("  delay_imports.attribute:  {}",       import->attribute);
-    LIEF_DEBUG("  delay_imports.handle:     0x{:04x}", import->handle);
-    LIEF_DEBUG("  delay_imports.iat:        0x{:04x}", import->iat);
-    LIEF_DEBUG("  delay_imports.name_table: 0x{:04x}", import->name_table);
-    LIEF_DEBUG("  delay_imports.bound_iat:  0x{:04x}", import->bound_iat);
-    LIEF_DEBUG("  delay_imports.unload_iat: 0x{:04x}", import->unload_iat);
-    LIEF_DEBUG("  delay_imports.timestamp:  0x{:04x}", import->timestamp);
+    LIEF_DEBUG("  delay_imports.handle:     {:#06x}", import->handle);
+    LIEF_DEBUG("  delay_imports.iat:        {:#06x}", import->iat);
+    LIEF_DEBUG("  delay_imports.name_table: {:#06x}", import->name_table);
+    LIEF_DEBUG("  delay_imports.bound_iat:  {:#06x}", import->bound_iat);
+    LIEF_DEBUG("  delay_imports.unload_iat: {:#06x}", import->unload_iat);
+    LIEF_DEBUG("  delay_imports.timestamp:  {:#06x}", import->timestamp);
 
     // Offset to Delay Import Name Table
     uint64_t names_offset =
@@ -590,8 +590,8 @@ ok_error_t Parser::parse_delay_imports() {
     uint64_t IAT_offset =
       import->iat > 0 ? binary_->rva_to_offset(import->iat) : 0;
 
-    LIEF_DEBUG("  [IAT  ]: 0x{:04x}", IAT_offset);
-    LIEF_DEBUG("  [Names]: 0x{:04x}", names_offset);
+    LIEF_DEBUG("  [IAT  ]: {:#06x}", IAT_offset);
+    LIEF_DEBUG("  [Names]: {:#06x}", names_offset);
 
     if (names_offset > 0) {
       auto is_ok = parse_delay_names_table<PE_T>(*imp, names_offset,
@@ -645,10 +645,10 @@ ok_error_t Parser::parse_tls() {
     const size_t size_to_read = end_template_offset - start_template_offset;
 
     if (size_to_read > Parser::MAX_DATA_SIZE) {
-      LIEF_DEBUG("TLS's template is too large!");
+      LIEF_DEBUG("TLS template is too large");
     } else {
       if (!stream_->peek_data(tls->data_template_, start_template_offset, size_to_read)) {
-        LIEF_WARN("TLS's template corrupted");
+        LIEF_WARN("TLS template corrupted");
       }
     }
   }

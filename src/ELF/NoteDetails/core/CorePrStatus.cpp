@@ -138,7 +138,7 @@ get_reg_impl(REG_T reg, const Note::description_t& description,
     }
   }
   else {
-    LIEF_WARN("Architecture not supported");
+    LIEF_WARN("Unsupported architecture");
     return make_error_code(lief_errors::not_found);
   }
 
@@ -205,7 +205,7 @@ set_reg_impl(REG_T reg, uint64_t value, Note::description_t& description,
     }
   }
   else {
-    LIEF_WARN("Architecture not supported");
+    LIEF_WARN("Unsupported architecture");
     return make_error_code(lief_errors::not_found);
   }
 
@@ -389,9 +389,9 @@ template<class REG>
 void dump_impl(std::ostream& os, const std::vector<uint64_t>& reg_vals) {
   for (size_t i = 0; i < reg_vals.size(); ++i) {
     if constexpr (std::is_void_v<REG>) {
-      os << fmt::format("   0x{:08x}\n", reg_vals[i]);
+      os << fmt::format("   {:#010x}\n", reg_vals[i]);
     } else {
-      os << fmt::format("   {}: 0x{:08x}\n", to_string(REG(i)), reg_vals[i]);
+      os << fmt::format("   {}: {:#010x}\n", to_string(REG(i)), reg_vals[i]);
     }
   }
 }
@@ -406,7 +406,7 @@ void CorePrStatus::dump(std::ostream& os) const {
                     status.sid, status.info.signo, status.info.code)
      << fmt::format("  SIGERR: {:04d} SIGPEND: {:04d} SIGHOLD: {:04d}\n",
                     status.info.err, status.sigpend, status.sighold)
-     << fmt::format("  CURRSIG: 0x{:04d} reserved: {}\n",
+     << fmt::format("  CURRSIG: {:#06x} reserved: {}\n",
                     status.cursig, status.reserved);
   const std::vector<uint64_t>& reg_vals = register_values();
   switch (architecture()) {

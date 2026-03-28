@@ -70,7 +70,7 @@ DynamicEntryRpath& DynamicEntryRpath::insert(size_t pos, const std::string& path
   }
 
   if (pos > paths.size()) {
-    LIEF_ERR("pos: {:d} is out of range", pos);
+    LIEF_ERR("Position {:d} is out of range", pos);
     return *this;
   }
   paths.insert(std::begin(paths) + pos, path);

@@ -35,7 +35,7 @@ void DataCodeEntry::accept(Visitor& visitor) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const DataCodeEntry& entry) {
-  os << fmt::format("{}: offset=0x{:06x}, size=0x{:x}",
+  os << fmt::format("{}: offset={:#08x}, size={:#x}",
                      to_string(entry.type()), entry.offset(), entry.length());
   return os;
 }

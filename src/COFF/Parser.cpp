@@ -57,12 +57,12 @@ ok_error_t Parser::process() {
   }
 
   if (!parse_optional_header()) {
-    LIEF_WARN("Failed to parse optional header");
+    LIEF_WARN("Failed to parse COFF optional header");
     return make_error_code(lief_errors::parsing_error);
   }
 
   if (!parse_string_table()) {
-    LIEF_WARN("Failed to parse the string table");
+    LIEF_WARN("Failed to parse string table");
     return make_error_code(lief_errors::parsing_error);
   }
 
@@ -83,7 +83,7 @@ ok_error_t Parser::parse_header() {
   LIEF_DEBUG("Parsing COFF header ({})", to_string(kind_));
   std::unique_ptr<Header> hdr = Header::create(*stream_, kind_);
   if (hdr == nullptr) {
-    LIEF_DEBUG("Error: {}:{}", __FUNCTION__, __LINE__);
+    LIEF_DEBUG("Failed to create header at {}:{}", __FUNCTION__, __LINE__);
     return make_error_code(lief_errors::parsing_error);
   }
   bin_->header_ = std::move(hdr);
@@ -105,7 +105,7 @@ ok_error_t Parser::parse_optional_header() {
 
   std::vector<uint8_t> raw_opt_hdr;
   if (!stream_->read_data(raw_opt_hdr, sz)) {
-    LIEF_ERR("Can't read COFF optional header");
+    LIEF_ERR("Failed to read COFF optional header");
     return make_error_code(lief_errors::parsing_error);
   }
 
@@ -114,16 +114,16 @@ ok_error_t Parser::parse_optional_header() {
 
 ok_error_t Parser::parse_sections() {
   const size_t nb_sections = bin_->header().nb_sections();
-  LIEF_DEBUG("Parsing #{} section (offset=0x{:08x})", nb_sections,
+  LIEF_DEBUG("Parsing {} sections (offset={:#010x})", nb_sections,
               (uint32_t)stream_->pos());
   for (size_t i = 0; i < nb_sections; ++i) {
     std::unique_ptr<Section> sec = Section::parse(*stream_);
     if (sec == nullptr) {
-      LIEF_WARN("Can't parse section #{}", i);
+      LIEF_WARN("Failed to parse section #{}", i);
       break;
     }
     if (!parse_relocations(*sec)) {
-      LIEF_INFO("Failed to parse relocation of section #{}", i);
+      LIEF_INFO("Failed to parse relocations for section #{}", i);
     }
 
     // Resolve symbols associated with this section
@@ -159,7 +159,7 @@ ok_error_t Parser::parse_relocations(Section& section) {
     return ok();
   }
 
-  LIEF_DEBUG("Parsing #{} relocations at offset: {:#x} (section: '{}')",
+  LIEF_DEBUG("Parsing {} relocations at offset {:#x} (section: '{}')",
              nb_relocations, reloc_offset, section.name());
 
   ScopedStream strm(*stream_, reloc_offset);
@@ -169,12 +169,12 @@ ok_error_t Parser::parse_relocations(Section& section) {
       Relocation::parse(*strm, bin_->header().machine());
 
     if (reloc == nullptr) {
-      LIEF_ERR("Can't parse the first relocations");
+      LIEF_ERR("Failed to parse first relocation");
       return ok();
     }
 
     if (reloc->address() < 1) {
-      LIEF_ERR("Invalid number of relocations");
+      LIEF_ERR("Invalid relocation count");
       return ok();
     }
 
@@ -192,7 +192,7 @@ ok_error_t Parser::parse_relocations(Section& section) {
       Relocation::parse(*strm, bin_->header().machine());
 
     if (reloc == nullptr) {
-      LIEF_WARN("Can't parse relocation #{} in section: '{}'", i, section.name());
+      LIEF_WARN("Failed to parse relocation #{} in section '{}'", i, section.name());
       break;
     }
 
@@ -231,14 +231,14 @@ ok_error_t Parser::parse_symbols() {
     },
     /*is_bigobj=*/kind_ == Header::KIND::BIGOBJ
   };
-  LIEF_DEBUG("Parsing #{} symbols at {:#x}", nb_symbols, symbols_offset);
+  LIEF_DEBUG("Parsing {} symbols at {:#x}", nb_symbols, symbols_offset);
 
   std::vector<AuxiliaryCLRToken*> pending_resolution;
   for (size_t idx = 0; idx < nb_symbols;) {
     size_t current_idx = idx;
     std::unique_ptr<Symbol> sym = Symbol::parse(ctx, *strm, &idx);
     if (sym == nullptr) {
-      LIEF_WARN("Can't parse symbol #{}", idx);
+      LIEF_WARN("Failed to parse symbol #{}", idx);
       break;
     }
 
@@ -287,7 +287,7 @@ ok_error_t Parser::parse_string_table() {
 
   const uint32_t string_tbl_offset = symbols_offset + nb_symbols * sizeof_sym;
 
-  LIEF_DEBUG("Parsing string table (offset: {:#x})", string_tbl_offset);
+  LIEF_DEBUG("Parsing string table (offset {:#x})", string_tbl_offset);
 
   ScopedStream scoped(*stream_, string_tbl_offset);
   auto table_sz = scoped->read<uint32_t>();
@@ -313,10 +313,10 @@ ok_error_t Parser::parse_string_table() {
       break;
     }
 
-    LIEF_DEBUG("string[0x{:06x}]: {}", pos, *str);
+    LIEF_DEBUG("string[{:#08x}]: {}", pos, *str);
     memoize(String(pos, std::move(*str)));
   }
-  LIEF_DEBUG("#{} strings found", bin_->strings_table_.size());
+  LIEF_DEBUG("{} strings found", bin_->strings_table_.size());
 
   return ok();
 }

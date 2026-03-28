@@ -125,7 +125,7 @@ std::ostream& Relocation::print(std::ostream& os) const {
   }
 
   os << fmt::format(
-    "address=0x{:x}, type={}, size={}, origin={} ",
+    "address={:#x}, type={}, size={}, origin={} ",
     address(), relocation_type, size(), to_string(origin())
   );
   if (!segment_section_name.empty()) {

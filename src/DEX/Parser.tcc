@@ -56,7 +56,7 @@ void Parser::parse_file() {
 template<typename DEX_T>
 void Parser::parse_header() {
   using header_t = typename DEX_T::dex_header;
-  LIEF_DEBUG("Parsing Header");
+  LIEF_DEBUG("Parsing DEX header");
 
   const auto res_hdr = stream_->peek<header_t>(0);
   if (!res_hdr) {
@@ -98,18 +98,18 @@ void Parser::parse_strings() {
     return;
   }
 
-  LIEF_DEBUG("Parsing #{:d} STRINGS at 0x{:x}",
+  LIEF_DEBUG("Parsing #{:d} STRINGS at {:#x}",
              strings_location.second, strings_location.first);
 
   MapList& map = file_->map();
   if (map.has(MapItem::TYPES::STRING_ID)) {
     const MapItem& string_item = map[MapItem::TYPES::STRING_ID];
     if (string_item.offset() != strings_location.first) {
-      LIEF_WARN("Different values for string offset between map and header");
+      LIEF_WARN("String offset mismatch between map and header");
     }
 
     if (string_item.size() != strings_location.second) {
-      LIEF_WARN("Different values for string size between map and header");
+      LIEF_WARN("String count mismatch between map and header");
     }
   }
 
@@ -138,7 +138,7 @@ template<typename DEX_T>
 void Parser::parse_types() {
   Header::location_t types_location = file_->header().types();
 
-  LIEF_DEBUG("Parsing #{:d} TYPES at 0x{:x}", types_location.second, types_location.first);
+  LIEF_DEBUG("Parsing #{:d} TYPES at {:#x}", types_location.second, types_location.first);
 
   if (types_location.first == 0) {
     return;
@@ -181,7 +181,7 @@ void Parser::parse_fields() {
 
   const uint64_t fields_offset = fields_location.first;
 
-  LIEF_DEBUG("Parsing #{:d} FIELDS at 0x{:x}", fields_location.second, fields_location.first);
+  LIEF_DEBUG("Parsing #{:d} FIELDS at {:#x}", fields_location.second, fields_location.first);
 
   for (size_t i = 0; i < fields_location.second; ++i) {
     const auto res_item = stream_->peek<details::field_id_item>(fields_offset + i * sizeof(details::field_id_item));
@@ -192,7 +192,7 @@ void Parser::parse_fields() {
 
     // Class name in which the field is defined
     if (item.class_idx > types_location.second) {
-      LIEF_WARN("Type index for field name is corrupted");
+      LIEF_WARN("Corrupted type index for field name");
       continue;
     }
 
@@ -202,7 +202,7 @@ void Parser::parse_fields() {
     }
 
     if (*class_name_idx >= file_->strings_.size()) {
-      LIEF_WARN("String index for class name is corrupted");
+      LIEF_WARN("Corrupted string index for field class name");
       continue;
     }
     std::string clazz = *file_->strings_[*class_name_idx];
@@ -214,14 +214,14 @@ void Parser::parse_fields() {
     // Type
     // =======================
     if (item.type_idx >= file_->types_.size()) {
-      LIEF_WARN("Type #{:d} out of bound ({:d})", item.type_idx, file_->types_.size());
+      LIEF_WARN("Type #{:d} out of bounds ({:d})", item.type_idx, file_->types_.size());
       break;
     }
     std::unique_ptr<Type>& type = file_->types_[item.type_idx];
 
     // Field Name
     if (item.name_idx >= file_->strings_.size()) {
-      LIEF_WARN("Name of field #{:d} is out of bound!", i);
+      LIEF_WARN("Field #{:d} name out of bounds", i);
       continue;
     }
 
@@ -248,27 +248,27 @@ void Parser::parse_prototypes() {
     return;
   }
 
-  LIEF_DEBUG("Parsing #{:d} PROTYPES at 0x{:x}",
+  LIEF_DEBUG("Parsing #{:d} PROTOTYPES at {:#x}",
              prototypes_locations.second, prototypes_locations.first);
 
   stream_->setpos(prototypes_locations.first);
   for (size_t i = 0; i < prototypes_locations.second; ++i) {
     const auto res_item = stream_->read<details::proto_id_item>();
     if (!res_item) {
-      LIEF_WARN("Prototype #{:d} corrupted", i);
+      LIEF_WARN("Corrupted prototype #{:d}", i);
       break;
     }
     const auto item = *res_item;
 
     if (item.shorty_idx >= file_->strings_.size()) {
-      LIEF_WARN("prototype.shorty_idx corrupted ({:d})", item.shorty_idx);
+      LIEF_WARN("Corrupted prototype shorty index ({:d})", item.shorty_idx);
       break;
     }
     //std::string* shorty_str = file_->strings_[item.shorty_idx];
 
     // Type object that is returned
     if (item.return_type_idx >= file_->types_.size()) {
-      LIEF_WARN("prototype.return_type_idx corrupted ({:d})", item.return_type_idx);
+      LIEF_WARN("Corrupted prototype return type index ({:d})", item.return_type_idx);
       break;
     }
     auto prototype = std::make_unique<Prototype>();
@@ -308,7 +308,7 @@ void Parser::parse_methods() {
 
   const uint64_t methods_offset = methods_location.first;
 
-  LIEF_DEBUG("Parsing #{:d} METHODS at 0x{:x}", methods_location.second, methods_location.first);
+  LIEF_DEBUG("Parsing #{:d} METHODS at {:#x}", methods_location.second, methods_location.first);
 
   for (size_t i = 0; i < methods_location.second; ++i) {
     const auto res_item = stream_->peek<details::method_id_item>(methods_offset + i * sizeof(details::method_id_item));
@@ -319,7 +319,7 @@ void Parser::parse_methods() {
 
     // Class name in which the method is defined
     if (item.class_idx > types_location.second) {
-      LIEF_WARN("Type index for class name is corrupted");
+      LIEF_WARN("Corrupted type index for method class name");
       continue;
     }
     const auto class_name_idx = stream_->peek<uint32_t>(types_location.first + item.class_idx * sizeof(uint32_t));
@@ -328,7 +328,7 @@ void Parser::parse_methods() {
     }
 
     if (*class_name_idx >= file_->strings_.size()) {
-      LIEF_WARN("String index for class name is corrupted");
+      LIEF_WARN("Corrupted string index for method class name");
       continue;
     }
 
@@ -344,14 +344,14 @@ void Parser::parse_methods() {
     // Prototype
     // =======================
     if (item.proto_idx >= file_->prototypes_.size()) {
-      LIEF_WARN("Prototype #{:d} out of bound ({:d})", item.proto_idx, file_->prototypes_.size());
+      LIEF_WARN("Prototype #{:d} out of bounds ({:d})", item.proto_idx, file_->prototypes_.size());
       break;
     }
     std::unique_ptr<Prototype>& pt = file_->prototypes_[item.proto_idx];
 
     // Method Name
     if (item.name_idx >= file_->strings_.size()) {
-      LIEF_WARN("Name of method #{:d} is out of bound!", i);
+      LIEF_WARN("Method #{:d} name out of bounds", i);
       continue;
     }
 
@@ -381,7 +381,7 @@ void Parser::parse_classes() {
 
   const uint64_t classes_offset = classes_location.first;
 
-  LIEF_DEBUG("Parsing #{:d} CLASSES at 0x{:x}", classes_location.second, classes_offset);
+  LIEF_DEBUG("Parsing #{:d} CLASSES at {:#x}", classes_location.second, classes_offset);
 
   for (size_t i = 0; i < classes_location.second; ++i) {
     const auto res_item = stream_->peek<details::class_def_item>(classes_offset + i * sizeof(details::class_def_item));
@@ -395,14 +395,14 @@ void Parser::parse_classes() {
 
     std::string name;
     if (type_idx > types_location.second) {
-      LIEF_ERR("Type Corrupted");
+      LIEF_ERR("Corrupted type");
     } else {
       auto class_name_idx = stream_->peek<uint32_t>(types_location.first + type_idx * sizeof(uint32_t));
       if (!class_name_idx) {
         break;
       }
       if (*class_name_idx >= file_->strings_.size()) {
-        LIEF_WARN("String index for class name corrupted");
+        LIEF_WARN("Corrupted string index for class name");
       } else {
         name = *file_->strings_[*class_name_idx];
       }
@@ -413,7 +413,7 @@ void Parser::parse_classes() {
     Class* parent_ptr = nullptr;
     if (item.superclass_idx != details::NO_INDEX) {
       if (item.superclass_idx > types_location.second) {
-        LIEF_WARN("Type index for super class name corrupted");
+        LIEF_WARN("Corrupted type index for superclass name");
         continue;
       }
       auto super_class_name_idx = stream_->peek<uint32_t>(types_location.first + item.superclass_idx * sizeof(uint32_t));
@@ -421,7 +421,7 @@ void Parser::parse_classes() {
         break;
       }
       if (*super_class_name_idx >= file_->strings_.size()) {
-        LIEF_WARN("String index for super class name corrupted");
+        LIEF_WARN("Corrupted string index for superclass name");
       } else {
         parent_name = *file_->strings_[*super_class_name_idx];
       }
@@ -437,7 +437,7 @@ void Parser::parse_classes() {
     std::string source_filename;
     if (item.source_file_idx != details::NO_INDEX) {
       if (item.source_file_idx >= file_->strings_.size()) {
-        LIEF_WARN("String index for source filename corrupted");
+        LIEF_WARN("Corrupted string index for source filename");
       } else {
         source_filename = *file_->strings_[item.source_file_idx];
       }
@@ -597,7 +597,7 @@ void Parser::parse_field(size_t index, Class& cls, bool is_static) {
   field->set_static(is_static);
 
   if (field->index() != index) {
-    LIEF_WARN("field->index() is not consistent");
+    LIEF_WARN("Inconsistent field index");
     return;
   }
 
@@ -638,7 +638,7 @@ void Parser::parse_method(size_t index, Class& cls, bool is_virtual) {
   method->set_virtual(is_virtual);
 
   if (method->index() != index) {
-    LIEF_WARN("method->index() is not consistent");
+    LIEF_WARN("Inconsistent method index");
     return;
   }
 

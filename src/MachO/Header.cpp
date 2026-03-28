@@ -100,12 +100,12 @@ void Header::accept(Visitor& visitor) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Header& hdr) {
-  os << fmt::format("Magic: 0x{:08x}\n", uint32_t(hdr.magic()));
+  os << fmt::format("Magic: {:#010x}\n", uint32_t(hdr.magic()));
   os << fmt::format("CPU: {}\n", to_string(hdr.cpu_type()));
-  os << fmt::format("CPU subtype: 0x{:08x}\n", hdr.cpu_subtype());
+  os << fmt::format("CPU subtype: {:#010x}\n", hdr.cpu_subtype());
   os << fmt::format("File type: {} ({:#x})\n", to_string(hdr.file_type()), (uint32_t)hdr.file_type());
   os << fmt::format("Flags: {}\n", hdr.flags());
-  os << fmt::format("Reserved: 0x{:x}\n", hdr.reserved());
+  os << fmt::format("Reserved: {:#x}\n", hdr.reserved());
   os << fmt::format("Nb cmds: {}\n", hdr.nb_cmds());
   os << fmt::format("Sizeof cmds: {}", hdr.sizeof_cmds());
   return os;

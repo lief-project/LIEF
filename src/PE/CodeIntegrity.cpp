@@ -59,10 +59,10 @@ void CodeIntegrity::accept(LIEF::Visitor& visitor) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const CodeIntegrity& entry) {
-  os << fmt::format("Flags          0x{:x}\n", entry.flags())
-     << fmt::format("Catalog        0x{:x}\n", entry.catalog())
-     << fmt::format("Catalog offset 0x{:x}\n", entry.catalog_offset())
-     << fmt::format("Reserved       0x{:x}\n", entry.reserved());
+  os << fmt::format("Flags          {:#x}\n", entry.flags())
+     << fmt::format("Catalog        {:#x}\n", entry.catalog())
+     << fmt::format("Catalog offset {:#x}\n", entry.catalog_offset())
+     << fmt::format("Reserved       {:#x}\n", entry.reserved());
   return os;
 }
 

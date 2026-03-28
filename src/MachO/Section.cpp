@@ -158,7 +158,7 @@ span<const uint8_t> Section::content() const {
   }
   span<const uint8_t> content = segment_->content();
   if (relative_offset > (int64_t)content.size() || (relative_offset + size_) > content.size()) {
-    LIEF_ERR("Section's size is bigger than segment's size");
+    LIEF_ERR("Section size exceeds segment size");
     return {};
   }
   return content.subspan(relative_offset, size_);
@@ -171,7 +171,7 @@ void Section::content(const content_t& data) {
   }
 
   if (size_ == 0 || offset_ == 0) { // bss section for instance
-    LIEF_ERR("Offset or size is null");
+    LIEF_ERR("Offset or size is zero");
     return;
   }
 
@@ -180,7 +180,7 @@ void Section::content(const content_t& data) {
   span<uint8_t> content = segment_->writable_content();
 
   if (relative_offset > content.size() || (relative_offset + data.size()) > content.size()) {
-    LIEF_ERR("New data are bigger than the original one");
+    LIEF_ERR("New data exceeds original size");
     return;
   }
 
@@ -242,8 +242,8 @@ std::unique_ptr<SpanStream> Section::stream() const {
 std::ostream& operator<<(std::ostream& os, const Section& section) {
   const auto& flags = section.flags_list();
   os << fmt::format(
-    "name={}, segment={}, address=0x{:06x}, size=0x{:04x} "
-    "offset=0x{:06x}, align={}, type={}, reloc_offset={}, nb_reloc={} "
+    "name={}, segment={}, address={:#08x}, size={:#06x} "
+    "offset={:#08x}, align={}, type={}, reloc_offset={}, nb_reloc={} "
     "reserved1={}, reserved2={}, reserved3={}, flags={}",
     section.name(), section.segment_name(), section.address(),
     section.size(), section.offset(), section.alignment(), section.type(),

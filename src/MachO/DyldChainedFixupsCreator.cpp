@@ -64,7 +64,7 @@ DYLD_CHAINED_PTR_FORMAT
   DyldChainedFixupsCreator::pointer_format(const Binary& bin, size_t imp_count)
 {
   if (imp_count > MAX_IMPORTS) {
-    LIEF_ERR("Too many imports (0x{:06x})", imp_count);
+    LIEF_ERR("Too many imports ({:#08x})", imp_count);
     return DYLD_CHAINED_PTR_FORMAT::NONE;
   }
   // Logic taken from ld64 -- OutputFile::chainedPointerFormat()
@@ -99,7 +99,7 @@ result<size_t> DyldChainedFixupsCreator::lib2ord(
   }
 
   if (lib.empty()) {
-    LIEF_ERR("No library for the symbol: '{}'", sym.name());
+    LIEF_ERR("No library found for symbol '{}'", sym.name());
     return make_error_code(lief_errors::not_found);
   }
 
@@ -112,7 +112,7 @@ result<size_t> DyldChainedFixupsCreator::lib2ord(
   );
 
   if (it == libs.end()) {
-    LIEF_ERR("Library '{}' not found!", lib);
+    LIEF_ERR("Library '{}' not found", lib);
     return make_error_code(lief_errors::not_found);
   }
 
@@ -153,7 +153,7 @@ ok_error_t DyldChainedFixupsCreator::process_relocations(
     fixup->address_ = info.addr;
     SegmentCommand* segment = target.segment_from_virtual_address(fixup->address());
     if (segment == nullptr) {
-      LIEF_WARN("Can't find segment for the relocation: 0x{:016x}", fixup->address());
+      LIEF_WARN("Segment not found for relocation at {:#018x}", fixup->address());
       continue;
     }
 
@@ -177,7 +177,7 @@ ok_error_t DyldChainedFixupsCreator::process_relocations(
         }
       default:
         {
-          LIEF_WARN("Chained ptr format: {} is not supported", to_string(ptr_fmt));
+          LIEF_WARN("Unsupported chained pointer format: {}", to_string(ptr_fmt));
           break;
         }
     }
@@ -198,7 +198,7 @@ ok_error_t DyldChainedFixupsCreator::process_bindings(
     const Symbol* sym = find_symbol(target, info.symbol);
 
     if (sym == nullptr) {
-      LIEF_ERR("Can't resolve symbol: '{}", info.symbol);
+      LIEF_ERR("Failed to resolve symbol: '{}'", info.symbol);
       continue;
     }
 
@@ -209,7 +209,7 @@ ok_error_t DyldChainedFixupsCreator::process_bindings(
 
     SegmentCommand* segment = target.segment_from_virtual_address(info.address);
     if (segment == nullptr) {
-      LIEF_ERR("Can't find segment associated with address: 0x{:016x}", info.address);
+      LIEF_ERR("Segment not found for address {:#018x}", info.address);
       continue;
     }
 
@@ -295,20 +295,20 @@ DyldChainedFixups* DyldChainedFixupsCreator::create(Binary& target) {
       for (size_t i = 0; i < chains.size(); ++i) {
         uint32_t next = 0;
         binding_rebase_t& element = chains[i];
-        //LIEF_DEBUG("    0x{:016x}: {}", binding->address(), binding->symbol()->name());
+        //LIEF_DEBUG("    {:#018x}: {}", binding->address(), binding->symbol()->name());
         uint64_t address = element.addr();
         uint64_t target_offset = address - imagebase;
-        LIEF_DEBUG("      address:        0x{:016x}", address);
-        LIEF_DEBUG("      target  offset: 0x{:016x}", target_offset);
-        LIEF_DEBUG("      segment offset: 0x{:016x}", segment_offset);
+        LIEF_DEBUG("      address:        {:#018x}", address);
+        LIEF_DEBUG("      target  offset: {:#018x}", target_offset);
+        LIEF_DEBUG("      segment offset: {:#018x}", segment_offset);
         assert (target_offset >= segment_offset);
         uint64_t offset = target_offset - segment_offset;
 
         uint32_t page_idx = offset / page_size;
         uint32_t delta = offset % page_size;
         LIEF_DEBUG("      page_idx: {}", page_idx);
-        LIEF_DEBUG("      delta: 0x{:016x}", delta);
-        LIEF_DEBUG("      offset: 0x{:016x}" , offset);
+        LIEF_DEBUG("      delta: {:#018x}", delta);
+        LIEF_DEBUG("      offset: {:#018x}" , offset);
 
         if (i < chains.size() - 1) {
           binding_rebase_t& next_element = chains[i + 1];
@@ -319,12 +319,12 @@ DyldChainedFixups* DyldChainedFixupsCreator::create(Binary& target) {
 
           uint32_t next_page_idx = next_offset / page_size;
           uint32_t next_delta = next_offset % page_size;
-          LIEF_DEBUG("        [next]address:        0x{:016x}", address);
-          LIEF_DEBUG("        [next]target  offset: 0x{:016x}", next_target_offset);
+          LIEF_DEBUG("        [next]address:        {:#018x}", address);
+          LIEF_DEBUG("        [next]target  offset: {:#018x}", next_target_offset);
 
           LIEF_DEBUG("        [next]page_idx: {}", next_page_idx);
-          LIEF_DEBUG("        [next]delta: 0x{:016x}", next_delta);
-          LIEF_DEBUG("        [next]offset: 0x{:016x}" , next_offset);
+          LIEF_DEBUG("        [next]delta: {:#018x}", next_delta);
+          LIEF_DEBUG("        [next]offset: {:#018x}" , next_offset);
 
           if (next_page_idx == page_idx) {
             assert((next_delta - delta) % stride == 0);
@@ -374,7 +374,7 @@ DyldChainedFixups* DyldChainedFixupsCreator::create(Binary& target) {
               }
             default:
               {
-                LIEF_WARN("Chained ptr format: {} is not supported", to_string(import_ptr_fmt));
+                LIEF_WARN("Unsupported chained pointer format: {}", to_string(import_ptr_fmt));
                 break;
               }
           }

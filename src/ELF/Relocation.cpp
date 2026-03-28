@@ -68,7 +68,7 @@ Relocation::TYPE Relocation::type_from(uint32_t value, ARCH arch) {
     default:
       {
         if (ERR.insert(arch).second) {
-          LIEF_ERR("LIEF does not support relocation for '{}'", to_string(arch));
+          LIEF_ERR("Unsupported relocation architecture '{}'", to_string(arch));
         }
         return TYPE::UNKNOWN;
       }
@@ -171,7 +171,7 @@ result<uint64_t> Relocation::resolve(uint64_t base_address) const {
 
   auto Q = [&] () -> int64_t {
     if (RSZ < 0) {
-      LIEF_ERR("Missing size support for {}", to_string(type()));
+      LIEF_ERR("Missing size info for relocation {}", to_string(type()));
       return 0;
     }
 
@@ -180,7 +180,7 @@ result<uint64_t> Relocation::resolve(uint64_t base_address) const {
         {
           auto V = binary_->get_int_from_virtual_address<uint8_t>(P);
           if (!V) {
-            LIEF_ERR("{}: Can't access relocation data at offset: 0x{:06x} (8-bit)",
+            LIEF_ERR("{}: Failed to access relocation data at offset {:#08x} (8-bit)",
                      to_string(type()),P);
             return 0;
           }
@@ -191,7 +191,7 @@ result<uint64_t> Relocation::resolve(uint64_t base_address) const {
         {
           auto V = binary_->get_int_from_virtual_address<uint16_t>(P);
           if (!V) {
-            LIEF_ERR("{}: Can't access relocation data at offset: 0x{:06x} (16-bit)",
+            LIEF_ERR("{}: Failed to access relocation data at offset {:#08x} (16-bit)",
                      to_string(type()),P);
             return 0;
           }
@@ -201,7 +201,7 @@ result<uint64_t> Relocation::resolve(uint64_t base_address) const {
         {
           auto V = binary_->get_int_from_virtual_address<uint32_t>(P);
           if (!V) {
-            LIEF_ERR("{}: Can't access relocation data at offset: 0x{:06x} (32-bit)",
+            LIEF_ERR("{}: Failed to access relocation data at offset {:#08x} (32-bit)",
                      to_string(type()),P);
             return 0;
           }
@@ -211,14 +211,14 @@ result<uint64_t> Relocation::resolve(uint64_t base_address) const {
         {
           auto V = binary_->get_int_from_virtual_address<uint64_t>(P);
           if (!V) {
-            LIEF_ERR("{}: Can't access relocation data at offset: 0x{:06x} (64-bit)",
+            LIEF_ERR("{}: Failed to access relocation data at offset {:#08x} (64-bit)",
                      to_string(type()),P);
             return 0;
           }
           return (int64_t)*V;
         }
       default:
-        LIEF_ERR("Invalid size of {} (sz: {})", to_string(type()), RSZ);
+        LIEF_ERR("Invalid relocation size {} (sz: {})", to_string(type()), RSZ);
         return 0;
     }
   };
@@ -402,7 +402,7 @@ result<uint64_t> Relocation::resolve(uint64_t base_address) const {
       break;
   }
 
-  LIEF_DEBUG("Relocation {} is not supported", to_string(type()));
+  LIEF_DEBUG("Unsupported relocation type: {}", to_string(type()));
   return make_error_code(lief_errors::not_supported);
 }
 
@@ -424,13 +424,13 @@ std::ostream& operator<<(std::ostream& os, const Relocation& entry) {
     }
   }
   if (entry.size() == uint64_t(-1)) {
-    os << fmt::format("0x{:06x} {} 0x{:04x} 0x{:02x} {}",
+    os << fmt::format("{:#08x} {} {:#06x} {:#04x} {}",
                       entry.address(), to_string(entry.type()),
                       entry.addend(), entry.info(), symbol_name);
     return os;
   }
 
-  os << fmt::format("0x{:06x} {} ({}) 0x{:04x} 0x{:02x} {}",
+  os << fmt::format("{:#08x} {} ({}) {:#06x} {:#04x} {}",
                     entry.address(), to_string(entry.type()),
                     entry.size(), entry.addend(), entry.info(), symbol_name);
   return os;

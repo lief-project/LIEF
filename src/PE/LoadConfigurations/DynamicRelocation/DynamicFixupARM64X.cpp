@@ -100,7 +100,7 @@ std::unique_ptr<DynamicFixupARM64X>
             std::vector<uint8_t> data;
             const size_t size = 1 << record->size;
             if (!block_strm->read_data(data, size)) {
-              LIEF_WARN("Can't read data associated with 'IMAGE_DVRT_ARM64X_FIXUP_TYPE_VALUE");
+              LIEF_WARN("Failed to read data for IMAGE_DVRT_ARM64X_FIXUP_TYPE_VALUE");
               break;
             }
             arm64x->entries_.push_back({
@@ -120,7 +120,7 @@ std::unique_ptr<DynamicFixupARM64X>
           {
             auto value = block_strm->read<uint16_t>();
             if (!value) {
-              LIEF_WARN("Can't read value for IMAGE_DVRT_ARM64X_FIXUP_TYPE_DELTA");
+              LIEF_WARN("Failed to read value for IMAGE_DVRT_ARM64X_FIXUP_TYPE_DELTA");
               break;
             }
 
@@ -141,7 +141,7 @@ std::unique_ptr<DynamicFixupARM64X>
 
         default:
           {
-            LIEF_WARN("Unsupported fixup type: {} (0x{:06x})",
+            LIEF_WARN("Unsupported fixup type: {} ({:#08x})",
                       (int)record->type, (int)record->type);
             break;
           }
@@ -156,14 +156,14 @@ std::string DynamicFixupARM64X::reloc_entry_t::to_string() const {
   using namespace fmt;
   switch (type) {
     case FIXUP_TYPE::ZEROFILL:
-      return format("RVA 0x{:08x}, {} bytes, zero fill", rva, size);
+      return format("RVA {:#010x}, {} bytes, zero fill", rva, size);
 
     case FIXUP_TYPE::VALUE:
-      return format("RVA 0x{:08x}, {} bytes, target value {}",
+      return format("RVA {:#010x}, {} bytes, target value {}",
                     rva, bytes.size(), hex_dump(bytes));
 
     case FIXUP_TYPE::DELTA:
-      return format("RVA 0x{:08x}, {} bytes, delta 0x{:08x}",
+      return format("RVA {:#010x}, {} bytes, delta {:#010x}",
                     rva, size, value);
   }
   return "<unknown>";

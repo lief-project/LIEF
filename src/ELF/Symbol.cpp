@@ -180,7 +180,7 @@ std::ostream& operator<<(std::ostream& os, const Symbol& entry) {
     name = entry.name();
   }
 
-  os << fmt::format("{} ({}/{}): 0x{:06x} (0x{:02x})",
+  os << fmt::format("{} ({}/{}): {:#08x} ({:#04x})",
                     name, to_string(entry.type()), to_string(entry.binding()),
                     entry.value(), entry.size());
 

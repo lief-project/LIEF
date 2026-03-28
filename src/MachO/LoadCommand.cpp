@@ -68,8 +68,8 @@ bool LoadCommand::is_linkedit_data(const LoadCommand& cmd) {
 
 std::ostream& LoadCommand::print(std::ostream& os) const {
   os << fmt::format("Command: {}", to_string(command())) << '\n'
-     << fmt::format("Offset:  0x{:x}", command_offset()) << '\n'
-     << fmt::format("Size:    0x{:x}", size());
+     << fmt::format("Offset:  {:#x}", command_offset()) << '\n'
+     << fmt::format("Size:    {:#x}", size());
 
   return os;
 }

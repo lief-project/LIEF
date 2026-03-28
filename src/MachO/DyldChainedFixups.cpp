@@ -96,7 +96,7 @@ std::ostream& DyldChainedFixups::print(std::ostream& os) const {
 
     for (const Relocation& reloc : info.segment.relocations()) {
       if (const auto* r = reloc.cast<RelocationFixup>()) {
-        os << fmt::format("[RELOC] 0x{:08x}: 0x{:08x}\n", r->address(), r->target());
+        os << fmt::format("[RELOC] {:#010x}: {:#010x}\n", r->address(), r->target());
       }
     }
     os << "\n";
@@ -124,7 +124,7 @@ std::ostream& DyldChainedFixups::print(std::ostream& os) const {
       symbol = sym->name();
     }
 
-    os << fmt::format("{}0x{:08x}: {} ({}) addend: 0x{:x}\n",
+    os << fmt::format("{}{:#010x}: {} ({}) addend: {:#x}\n",
                       segment_name, bind.address(), symbol, libname, bind.sign_extended_addend());
 
 
@@ -145,10 +145,10 @@ DyldChainedFixups::chained_starts_in_segment::chained_starts_in_segment(uint32_t
 
 std::ostream& operator<<(std::ostream& os, const DyldChainedFixups::chained_starts_in_segment& info) {
   os << fmt::format("size              = {}\n",     info.size);
-  os << fmt::format("page_size         = 0x{:x}\n", info.page_size);
+  os << fmt::format("page_size         = {:#x}\n", info.page_size);
   os << fmt::format("pointer_format    = {}\n",     to_string(info.pointer_format));
-  os << fmt::format("segment_offset    = 0x{:x}\n", info.segment_offset);
-  os << fmt::format("max_valid_pointer = 0x{:x}\n", info.max_valid_pointer);
+  os << fmt::format("segment_offset    = {:#x}\n", info.segment_offset);
+  os << fmt::format("max_valid_pointer = {:#x}\n", info.max_valid_pointer);
   os << fmt::format("page_count        = {}\n",     info.page_count());
 
   for (size_t i = 0; i < info.page_count(); ++i) {

@@ -260,7 +260,7 @@ ok_error_t BinaryParser::parse_load_commands() {
     std::unique_ptr<LoadCommand> load_command;
     const auto cmd_type = static_cast<LoadCommand::TYPE>(command->cmd);
 
-    LIEF_DEBUG("Parsing command #{:02d}: {} (0x{:04x})",
+    LIEF_DEBUG("Parsing command #{:02d}: {} ({:#06x})",
                i, to_string(cmd_type), (uint64_t)cmd_type);
 
     switch (cmd_type) {
@@ -324,7 +324,7 @@ ok_error_t BinaryParser::parse_load_commands() {
                                       segment->file_size(),
                                       segment->virtual_address()))
               {
-                LIEF_ERR("Segment {}: content corrupted!", segment->name());
+                LIEF_ERR("Segment {}: content corrupted", segment->name());
               }
             }
           }
@@ -605,10 +605,10 @@ ok_error_t BinaryParser::parse_load_commands() {
           }
 
 
-          LIEF_DEBUG("LC_SYMTAB.symoff:  0x{:016x}", cmd->symoff);
-          LIEF_DEBUG("LC_SYMTAB.nsyms:   0x{:016x}", cmd->nsyms);
-          LIEF_DEBUG("LC_SYMTAB.stroff:  0x{:016x}", cmd->stroff);
-          LIEF_DEBUG("LC_SYMTAB.strsize: 0x{:016x}", cmd->strsize);
+          LIEF_DEBUG("LC_SYMTAB.symoff:  {:#018x}", cmd->symoff);
+          LIEF_DEBUG("LC_SYMTAB.nsyms:   {:#018x}", cmd->nsyms);
+          LIEF_DEBUG("LC_SYMTAB.stroff:  {:#018x}", cmd->stroff);
+          LIEF_DEBUG("LC_SYMTAB.strsize: {:#018x}", cmd->strsize);
 
           load_command = std::make_unique<SymbolCommand>(*cmd);
           break;
@@ -668,7 +668,7 @@ ok_error_t BinaryParser::parse_load_commands() {
             break;
           }
           load_command = std::make_unique<SourceVersion>(*cmd);
-          LIEF_DEBUG("Version: 0x{:x}", cmd->version);
+          LIEF_DEBUG("Version: {:#x}", cmd->version);
           break;
         }
 
@@ -687,7 +687,7 @@ ok_error_t BinaryParser::parse_load_commands() {
             LIEF_ERR("Can't parse version_min_command");
             break;
           }
-          LIEF_DEBUG("Version: 0x{:x} | SDK: 0x{:x}", cmd->version, cmd->sdk);
+          LIEF_DEBUG("Version: {:#x} | SDK: {:#x}", cmd->version, cmd->sdk);
 
           load_command = std::make_unique<VersionMin>(*cmd);
           break;
@@ -1012,8 +1012,8 @@ ok_error_t BinaryParser::parse_load_commands() {
             break;
           }
 
-          LIEF_DEBUG("[*] dataoff:  0x{:x}", cmd->dataoff);
-          LIEF_DEBUG("[*] datasize: 0x{:x}", cmd->datasize);
+          LIEF_DEBUG("[*] dataoff:  {:#x}", cmd->dataoff);
+          LIEF_DEBUG("[*] datasize: {:#x}", cmd->datasize);
 
           load_command = std::make_unique<DyldChainedFixups>(*cmd);
           auto* chained = load_command->as<DyldChainedFixups>();
@@ -1023,7 +1023,7 @@ ok_error_t BinaryParser::parse_load_commands() {
 
           if (lnk == nullptr) {
             LIEF_WARN("Can't find the segment associated with "
-                      "the LC_DYLD_CHAINED_FIXUPS payload (offset: 0x{:x})", chained->data_offset());
+                      "the LC_DYLD_CHAINED_FIXUPS payload (offset: {:#x})", chained->data_offset());
             break;
           }
           LIEF_DEBUG("LC_DYLD_CHAINED_FIXUPS payload in '{}'", lnk->name());
@@ -1038,7 +1038,7 @@ ok_error_t BinaryParser::parse_load_commands() {
           if ((chained->data_offset() + chained->data_size()) > (lnk->file_offset() + content.size())) {
             LIEF_WARN("LC_DYLD_CHAINED_FIXUPS payload does not fit in the '{}' segments",
                       lnk->name());
-            LIEF_DEBUG("{}.file_size: 0x{:x}", lnk->name(), lnk->file_size());
+            LIEF_DEBUG("{}.file_size: {:#x}", lnk->name(), lnk->file_size());
             break;
           }
           const uint64_t rel_offset = chained->data_offset() - lnk->file_offset();
@@ -1049,8 +1049,8 @@ ok_error_t BinaryParser::parse_load_commands() {
       case LoadCommand::TYPE::DYLD_EXPORTS_TRIE:
         {
           if (const auto cmd = stream_->peek<details::linkedit_data_command>(loadcommands_offset)) {
-            LIEF_DEBUG("[*] dataoff:  0x{:x}", cmd->dataoff);
-            LIEF_DEBUG("[*] datasize: 0x{:x}", cmd->datasize);
+            LIEF_DEBUG("[*] dataoff:  {:#x}", cmd->dataoff);
+            LIEF_DEBUG("[*] datasize: {:#x}", cmd->datasize);
 
             load_command = std::make_unique<DyldExportsTrie>(*cmd);
           } else {
@@ -1088,8 +1088,8 @@ ok_error_t BinaryParser::parse_load_commands() {
       case LoadCommand::TYPE::LINKER_OPTIMIZATION_HINT:
         {
           if (const auto cmd = stream_->peek<details::linkedit_data_command>(loadcommands_offset)) {
-            LIEF_DEBUG("  [*] dataoff:  0x{:x}", cmd->dataoff);
-            LIEF_DEBUG("  [*] datasize: 0x{:x}", cmd->datasize);
+            LIEF_DEBUG("  [*] dataoff:  {:#x}", cmd->dataoff);
+            LIEF_DEBUG("  [*] datasize: {:#x}", cmd->datasize);
 
             load_command = std::make_unique<LinkerOptHint>(*cmd);
           } else {
@@ -1141,7 +1141,7 @@ ok_error_t BinaryParser::parse_load_commands() {
       default:
         {
           if (not_parsed.insert(cmd_type).second) {
-            LIEF_WARN("Command '{}' ({}) not parsed (size=0x{:04x})!",
+            LIEF_WARN("Command '{}' ({}) not parsed (size={:#06x})",
                       to_string(cmd_type), static_cast<uint64_t>(cmd_type),
                       command->cmdsize);
           }
@@ -1192,7 +1192,7 @@ ok_error_t BinaryParser::parse_relocations(Section& section) {
     if (auto res = stream_->peek<int32_t>(current_reloc_offset)) {
       address = *res;
     } else {
-      LIEF_INFO("Can't read relocation address for #{}@0x{:x}", i, address);
+      LIEF_INFO("Can't read relocation address for #{}@{:#x}", i, address);
       break;
     }
     bool is_scattered = static_cast<bool>(address & Relocation::R_SCATTERED);
@@ -1202,7 +1202,7 @@ ok_error_t BinaryParser::parse_relocations(Section& section) {
         reloc = std::make_unique<RelocationObject>(*res);
         reloc->section_ = &section;
       } else {
-        LIEF_INFO("Can't read scattered_relocation_info for #{}@0x{:x}", i, current_reloc_offset);
+        LIEF_INFO("Can't read scattered_relocation_info for #{}@{:#x}", i, current_reloc_offset);
         break;
       }
     } else {
@@ -1212,7 +1212,7 @@ ok_error_t BinaryParser::parse_relocations(Section& section) {
         reloc = std::make_unique<RelocationObject>(*res);
         reloc->section_ = &section;
       } else {
-        LIEF_INFO("Can't read relocation_info for #{}@0x{:x}", i, current_reloc_offset);
+        LIEF_INFO("Can't read relocation_info for #{}@{:#x}", i, current_reloc_offset);
         break;
       }
 
@@ -1236,7 +1236,7 @@ ok_error_t BinaryParser::parse_relocations(Section& section) {
           if (it_sym != std::end(memoized_symbols_by_address_)) {
             reloc->symbol_ = it_sym->second;
           } else {
-            LIEF_WARN("Can't find memoized symbol for the address: 0x{:x}", reloc_info.r_address);
+            LIEF_WARN("Can't find memoized symbol for the address: {:#x}", reloc_info.r_address);
           }
         }
         else if (sec_num < sections.size()) {
@@ -1385,7 +1385,7 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
             LIEF_WARN("REBASE_OPCODE_ADD_ADDR_ULEB: the current segment is null");
           }
           else if (segment_offset > current_segment->file_size()) {
-            LIEF_WARN("REBASE_OPCODE_ADD_ADDR_ULEB: Bad offset (0x{:x} > 0x{:x})",
+            LIEF_WARN("REBASE_OPCODE_ADD_ADDR_ULEB: Bad offset ({:#x} > {:#x})",
                       segment_offset, current_segment->file_size());
           }
           break;
@@ -1398,7 +1398,7 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
             LIEF_WARN("REBASE_OPCODE_ADD_ADDR_IMM_SCALED: the current segment is null");
           }
           else if (segment_offset > current_segment->file_size()) {
-            LIEF_WARN("REBASE_OPCODE_ADD_ADDR_IMM_SCALED: Bad offset (0x{:x} > 0x{:x})",
+            LIEF_WARN("REBASE_OPCODE_ADD_ADDR_IMM_SCALED: Bad offset ({:#x} > {:#x})",
                       segment_offset, current_segment->file_size());
           }
           break;
@@ -1413,7 +1413,7 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
               LIEF_WARN("REBASE_OPCODE_DO_REBASE_IMM_TIMES: the current segment is null");
             }
             else if (segment_offset > current_segment->file_size()) {
-              LIEF_WARN("REBASE_OPCODE_DO_REBASE_IMM_TIMES: Bad offset (0x{:x} > 0x{:x})",
+              LIEF_WARN("REBASE_OPCODE_DO_REBASE_IMM_TIMES: Bad offset ({:#x} > {:#x})",
                         segment_offset, current_segment->file_size());
             }
           }
@@ -1432,7 +1432,7 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
               LIEF_WARN("REBASE_OPCODE_DO_REBASE_ULEB_TIMES: the current segment is null");
             }
             else if (segment_offset > current_segment->file_size()) {
-              LIEF_WARN("REBASE_OPCODE_DO_REBASE_ULEB_TIMES: Bad offset (0x{:x} > 0x{:x})",
+              LIEF_WARN("REBASE_OPCODE_DO_REBASE_ULEB_TIMES: Bad offset ({:#x} > {:#x})",
                         segment_offset, current_segment->file_size());
             }
 
@@ -1448,7 +1448,7 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
             LIEF_WARN("REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB: the current segment is null");
           }
           else if (segment_offset > current_segment->file_size()) {
-            LIEF_WARN("REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB: Bad offset (0x{:x} > 0x{:x})",
+            LIEF_WARN("REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB: Bad offset ({:#x} > {:#x})",
                       segment_offset, current_segment->file_size());
           }
           do_rebase<MACHO_T>(type, segment_index, segment_offset, &segments);
@@ -1486,7 +1486,7 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
               LIEF_WARN("REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB: the current segment is null");
             }
             else if (segment_offset > current_segment->file_size()) {
-              LIEF_WARN("REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB: Bad offset (0x{:x} > 0x{:x})",
+              LIEF_WARN("REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB: Bad offset ({:#x} > {:#x})",
                         segment_offset, current_segment->file_size());
             }
             do_rebase<MACHO_T>(type, segment_index, segment_offset, &segments);
@@ -1498,7 +1498,7 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
 
       default:
         {
-          LIEF_ERR("Unsupported opcode: 0x{:x}", static_cast<uint32_t>(opcode));
+          LIEF_ERR("Unsupported opcode: {:#x}", static_cast<uint32_t>(opcode));
           break;
         }
     }
@@ -1801,7 +1801,7 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
                   const uint64_t address = current_segment.virtual_address() + segment_offset;
                   span<const uint8_t> content = current_segment.content();
                   if (segment_offset >= content.size() || segment_offset + sizeof(uint64_t) >= content.size()) {
-                    LIEF_WARN("Bad segment offset (0x{:x})", segment_offset);
+                    LIEF_WARN("Bad segment offset ({:#x})", segment_offset);
                     delta = 0; // exit from de do ... while
                     break;
                   }
@@ -1809,14 +1809,14 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
                   bool is_rebase = (value & (static_cast<uint64_t>(1) << 62)) == 0;
 
                   if (is_rebase) {
-                    //LIEF_WARN("do rebase for addr: 0x{:x} vs 0x{:x}", address, current_segment)
+                    //LIEF_WARN("do rebase for addr: {:#x} vs {:#x}", address, current_segment)
                     do_rebase<MACHO_T>(static_cast<uint8_t>(DyldInfo::REBASE_TYPE::POINTER),
                                        segment_idx, segment_offset, &segments);
                   } else {
                     uint16_t ordinal = value & 0xFFFF;
                     if (ordinal >= ordinal_table_size || ordinal >= ordinal_table.size()) {
-                      LIEF_WARN("bind ordinal ({:d}) is out of range (max={:d}) for disk pointer 0x{:04x} in "
-                                "segment '{}' (segment offset: 0x{:04x})", ordinal, ordinal_table_size, value,
+                      LIEF_WARN("bind ordinal ({:d}) is out of range (max={:d}) for disk pointer {:#06x} in "
+                                "segment '{}' (segment offset: {:#06x})", ordinal, ordinal_table_size, value,
                                 current_segment.name(), segment_offset);
                       break;
                     }
@@ -1872,7 +1872,7 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
         }
       default:
         {
-          LIEF_ERR("Unsupported opcode: 0x{:x}", static_cast<uint32_t>(opcode));
+          LIEF_ERR("Unsupported opcode: {:#x}", static_cast<uint32_t>(opcode));
           break;
         }
       }
@@ -2127,7 +2127,7 @@ ok_error_t BinaryParser::parse_dyldinfo_weak_bind() {
 
       default:
         {
-          LIEF_ERR("Unsupported opcode: 0x{:x}", static_cast<uint32_t>(opcode));
+          LIEF_ERR("Unsupported opcode: {:#x}", static_cast<uint32_t>(opcode));
           break;
         }
       }
@@ -2297,7 +2297,7 @@ ok_error_t BinaryParser::parse_dyldinfo_lazy_bind() {
 
       default:
         {
-          LIEF_ERR("Unsupported opcode: 0x{:x}", static_cast<uint32_t>(opcode));
+          LIEF_ERR("Unsupported opcode: {:#x}", static_cast<uint32_t>(opcode));
           break;
         }
       }
@@ -2328,7 +2328,7 @@ ok_error_t BinaryParser::do_bind(DyldBindingInfo::CLASS cls,
   uint64_t address = segment.virtual_address() + segment_offset;
 
   if (address > (segment.virtual_address() + segment.virtual_size())) {
-    LIEF_ERR("Bad address: 0x{:x}", address);
+    LIEF_ERR("Bad address: {:#x}", address);
     return make_error_code(lief_errors::corrupted);
   }
 
@@ -2396,7 +2396,7 @@ ok_error_t BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t s
   uint64_t address = segment.virtual_address() + segment_offset;
 
   if (address > (segment.virtual_address() + segment.virtual_size())) {
-    LIEF_ERR("Bad rebase address: 0x{:x}", address);
+    LIEF_ERR("Bad rebase address: {:#x}", address);
     return make_error_code(lief_errors::corrupted);
   }
 
@@ -2409,7 +2409,7 @@ ok_error_t BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t s
   reloc->segment_ = &segment;
   Section* section = binary_->section_from_virtual_address(address);
   if (section == nullptr) {
-    LIEF_ERR("Can't find the section associated with the virtual address 0x{:x}", address);
+    LIEF_ERR("Can't find the section associated with the virtual address {:#x}", address);
     return make_error_code(lief_errors::not_found);
   }
   reloc->section_ = section;
@@ -2443,14 +2443,14 @@ ok_error_t BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t s
 
     default:
       {
-        LIEF_ERR("Unsuported relocation type: 0x{:x}", type);
+        LIEF_ERR("Unsuported relocation type: {:#x}", type);
       }
   }
   // Check if a relocation already exists:
   if (dyld_reloc_addrs_.insert(address).second) {
     segment.relocations_.push_back(std::move(reloc));
   } else {
-    LIEF_DEBUG("[!] Duplicated symbol address in the dyld rebase: 0x{:x}", address);
+    LIEF_DEBUG("[!] Duplicated symbol address in the dyld rebase: {:#x}", address);
   }
   return ok();
 }
@@ -2658,7 +2658,7 @@ ok_error_t BinaryParser::parse_chained_fixup(const details::dyld_chained_fixups_
       break;
     }
 
-    LIEF_DEBUG("    0x{:06x} seg_offset[{}] = {} ({})",
+    LIEF_DEBUG("    {:#08x} seg_offset[{}] = {} ({})",
                stream.pos() - sizeof(uint32_t),
                seg_idx, seg_info_offset, binary_->segments_[seg_idx]->name());
     if (seg_info_offset == 0) {
@@ -2706,9 +2706,9 @@ ok_error_t BinaryParser::parse_fixup_seg(SpanStream& stream, uint32_t seg_info_o
   seg_stream.read<details::dyld_chained_starts_in_segment>();
 
   LIEF_DEBUG("{}size              = {}",      DPREFIX, seg_info.size);
-  LIEF_DEBUG("{}page_size         = 0x{:x}",  DPREFIX, seg_info.page_size);
+  LIEF_DEBUG("{}page_size         = {:#x}",  DPREFIX, seg_info.page_size);
   LIEF_DEBUG("{}pointer_format    = {} ({})", DPREFIX, seg_info.pointer_format, to_string(static_cast<DYLD_CHAINED_PTR_FORMAT>(seg_info.pointer_format)));
-  LIEF_DEBUG("{}segment_offset    = 0x{:x}",  DPREFIX, seg_info.segment_offset);
+  LIEF_DEBUG("{}segment_offset    = {:#x}",  DPREFIX, seg_info.segment_offset);
   LIEF_DEBUG("{}max_valid_pointer = {}",      DPREFIX, seg_info.max_valid_pointer);
   LIEF_DEBUG("{}page_count        = {}",      DPREFIX, seg_info.page_count);
 
@@ -2831,13 +2831,13 @@ ok_error_t BinaryParser::walk_chain(SegmentCommand& segment,
   bool chain_end = false;
   while (!stop && !chain_end) {
     if (!process_fixup<MACHO_T>(segment, chain_address, chain_offset, seg_info)) {
-      LIEF_WARN("Error while processing the chain at offset: 0x{:x}", chain_offset);
+      LIEF_WARN("Error while processing the chain at offset: {:#x}", chain_offset);
       return make_error_code(lief_errors::parsing_error);
     }
     if (auto res = next_chain<MACHO_T>(/* in,out */chain_address, chain_offset, seg_info)) {
       chain_offset = *res;
     } else {
-      LIEF_WARN("Error while computing the next chain for the offset: 0x{:x}", chain_offset);
+      LIEF_WARN("Error while computing the next chain for the offset: {:#x}", chain_offset);
       return make_error_code(lief_errors::parsing_error);
     }
 
@@ -2869,7 +2869,7 @@ result<uint64_t> BinaryParser::next_chain(uint64_t& chain_address, uint64_t chai
         if (auto res = stream_->peek<decltype(chain)>(chain_offset)) {
           chain = *res;
         } else {
-          LIEF_ERR("Can't read the dyld chain at 0x{:x}", chain_offset);
+          LIEF_ERR("Can't read the dyld chain at {:#x}", chain_offset);
           return make_error_code(res.error());
         }
 
@@ -2888,7 +2888,7 @@ result<uint64_t> BinaryParser::next_chain(uint64_t& chain_address, uint64_t chai
         if (auto res = stream_->peek<decltype(chain)>(chain_offset)) {
           chain = *res;
         } else {
-          LIEF_ERR("Can't read the dyld chain at 0x{:x}", chain_offset);
+          LIEF_ERR("Can't read the dyld chain at {:#x}", chain_offset);
           return make_error_code(res.error());
         }
 
@@ -2906,7 +2906,7 @@ result<uint64_t> BinaryParser::next_chain(uint64_t& chain_address, uint64_t chai
         if (auto res = stream_->peek<decltype(chain)>(chain_offset)) {
           chain = *res;
         } else {
-          LIEF_ERR("Can't read the dyld chain at 0x{:x}", chain_offset);
+          LIEF_ERR("Can't read the dyld chain at {:#x}", chain_offset);
           return make_error_code(res.error());
         }
 
@@ -2921,7 +2921,7 @@ result<uint64_t> BinaryParser::next_chain(uint64_t& chain_address, uint64_t chai
         if (auto res = stream_->peek<decltype(chain)>(chain_offset)) {
           chain = *res;
         } else {
-          LIEF_ERR("Can't read the dyld chain at 0x{:x}", chain_offset);
+          LIEF_ERR("Can't read the dyld chain at {:#x}", chain_offset);
           return CHAIN_END;
         }
 
@@ -2932,7 +2932,7 @@ result<uint64_t> BinaryParser::next_chain(uint64_t& chain_address, uint64_t chai
           if (auto res = stream_->peek<decltype(chain)>(chain_offset)) {
             chain = *res;
           } else {
-            LIEF_ERR("Can't read the dyld chain at 0x{:x}", chain_offset);
+            LIEF_ERR("Can't read the dyld chain at {:#x}", chain_offset);
             return CHAIN_END;
           }
         }
@@ -2946,7 +2946,7 @@ result<uint64_t> BinaryParser::next_chain(uint64_t& chain_address, uint64_t chai
         if (auto res = stream_->peek<decltype(chain)>(chain_offset)) {
           chain = *res;
         } else {
-          LIEF_ERR("Can't read the dyld chain at 0x{:x}", chain_offset);
+          LIEF_ERR("Can't read the dyld chain at {:#x}", chain_offset);
           return make_error_code(res.error());
         }
 
@@ -2965,7 +2965,7 @@ result<uint64_t> BinaryParser::next_chain(uint64_t& chain_address, uint64_t chai
         if (auto res = stream_->peek<decltype(chain)>(chain_offset)) {
           chain = *res;
         } else {
-          LIEF_ERR("Can't read the dyld chain at 0x{:x}", chain_offset);
+          LIEF_ERR("Can't read the dyld chain at {:#x}", chain_offset);
           return make_error_code(res.error());
         }
 
@@ -2984,7 +2984,7 @@ result<uint64_t> BinaryParser::next_chain(uint64_t& chain_address, uint64_t chai
         if (auto res = stream_->peek<decltype(chain)>(chain_offset)) {
           chain = *res;
         } else {
-          LIEF_ERR("Can't read the dyld chain at 0x{:x}", chain_offset);
+          LIEF_ERR("Can't read the dyld chain at {:#x}", chain_offset);
           return make_error_code(res.error());
         }
 
@@ -2999,7 +2999,7 @@ result<uint64_t> BinaryParser::next_chain(uint64_t& chain_address, uint64_t chai
 
     default:
       {
-        LIEF_ERR("Unknown pointer format: 0x{:04x}", seg_info.pointer_format);
+        LIEF_ERR("Unknown pointer format: {:#06x}", seg_info.pointer_format);
         return make_error_code(lief_errors::not_supported);
       }
   }
@@ -3013,7 +3013,7 @@ ok_error_t BinaryParser::process_fixup(SegmentCommand& segment,
                                        const details::dyld_chained_starts_in_segment& seg_info)
 {
   const auto ptr_fmt = static_cast<DYLD_CHAINED_PTR_FORMAT>(seg_info.pointer_format);
-  //LIEF_DEBUG("0x{:04x}: {}", chain_offset, to_string(ptr_fmt));
+  //LIEF_DEBUG("{:#06x}: {}", chain_offset, to_string(ptr_fmt));
   switch (ptr_fmt) {
     case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E:
     case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_KERNEL:
@@ -3025,13 +3025,13 @@ ok_error_t BinaryParser::process_fixup(SegmentCommand& segment,
         if (auto res = stream_->peek<decltype(fixup)>(chain_offset)) {
           fixup = *res;
         } else {
-          LIEF_ERR("Can't read the dyld chain at 0x{:x}", chain_offset);
+          LIEF_ERR("Can't read the dyld chain at {:#x}", chain_offset);
           return make_error_code(res.error());
         }
 
         auto is_ok = do_chained_fixup(segment, chain_address, chain_offset, seg_info, fixup);
         if (!is_ok) {
-          LIEF_WARN("Can't process the fixup {} - 0x{:x}", segment.name(), chain_offset);
+          LIEF_WARN("Can't process the fixup {} - {:#x}", segment.name(), chain_offset);
           return make_error_code(is_ok.error());
         }
         return ok();
@@ -3043,12 +3043,12 @@ ok_error_t BinaryParser::process_fixup(SegmentCommand& segment,
         if (auto res = stream_->peek<decltype(fixup)>(chain_offset)) {
           fixup = *res;
         } else {
-          LIEF_ERR("Can't read the dyld chain at 0x{:x}", chain_offset);
+          LIEF_ERR("Can't read the dyld chain at {:#x}", chain_offset);
           return make_error_code(res.error());
         }
         auto is_ok = do_chained_fixup(segment, chain_address, chain_offset, seg_info, fixup);
         if (!is_ok) {
-          LIEF_WARN("Can't process the fixup {} - 0x{:x}", segment.name(), chain_offset);
+          LIEF_WARN("Can't process the fixup {} - {:#x}", segment.name(), chain_offset);
           return make_error_code(is_ok.error());
         }
         return ok();
@@ -3059,12 +3059,12 @@ ok_error_t BinaryParser::process_fixup(SegmentCommand& segment,
         if (auto res = stream_->peek<decltype(fixup)>(chain_offset)) {
           fixup = *res;
         } else {
-          LIEF_ERR("Can't read the dyld chain at 0x{:x}", chain_offset);
+          LIEF_ERR("Can't read the dyld chain at {:#x}", chain_offset);
           return make_error_code(res.error());
         }
         auto is_ok = do_chained_fixup(segment, chain_address, chain_offset, seg_info, fixup);
         if (!is_ok) {
-          LIEF_WARN("Can't process the fixup {} - 0x{:x}", segment.name(), chain_offset);
+          LIEF_WARN("Can't process the fixup {} - {:#x}", segment.name(), chain_offset);
           return make_error_code(is_ok.error());
         }
         return ok();
@@ -3083,13 +3083,13 @@ ok_error_t BinaryParser::process_fixup(SegmentCommand& segment,
         if (auto res = stream_->peek<decltype(fixup)>(chain_offset)) {
           fixup = *res;
         } else {
-          LIEF_ERR("Can't read the dyld chain at 0x{:x}", chain_offset);
+          LIEF_ERR("Can't read the dyld chain at {:#x}", chain_offset);
           return make_error_code(res.error());
         }
 
         auto is_ok = do_chained_fixup(segment, chain_address, chain_offset, seg_info, fixup);
         if (!is_ok) {
-          LIEF_WARN("Can't process the fixup {} - 0x{:x}", segment.name(), chain_offset);
+          LIEF_WARN("Can't process the fixup {} - {:#x}", segment.name(), chain_offset);
           return make_error_code(is_ok.error());
         }
         return ok();
@@ -3097,7 +3097,7 @@ ok_error_t BinaryParser::process_fixup(SegmentCommand& segment,
 
     default:
       {
-        LIEF_ERR("Unknown pointer format: 0x{:04x}", seg_info.pointer_format);
+        LIEF_ERR("Unknown pointer format: {:#06x}", seg_info.pointer_format);
         return make_error_code(lief_errors::not_supported);
       }
   }
@@ -3143,11 +3143,11 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
       local_binding->elements_.push_back(binding_extra_info.get());
 
       if (Symbol* sym = binding_extra_info->symbol()) {
-        LIEF_DEBUG("{}[  BIND] {}@0x{:x}: {} / sign ext: {:x}",
+        LIEF_DEBUG("{}[  BIND] {}@{:#x}: {} / sign ext: {:x}",
                    DPREFIX, segment.name(), address, sym->name(), fixup.sign_extended_addend());
         return ok();
       }
-      LIEF_DEBUG("{}[  BIND] {}@0x{:x}: <missing symbol> / sign ext: {:x}",
+      LIEF_DEBUG("{}[  BIND] {}@{:#x}: <missing symbol> / sign ext: {:x}",
                  DPREFIX, segment.name(), address, fixup.sign_extended_addend());
       LIEF_ERR("Missing symbol for binding at ordinal {}", bind_ordinal);
       return make_error_code(lief_errors::not_found);
@@ -3167,7 +3167,7 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
     if (Section* section = binary_->section_from_virtual_address(address)) {
       reloc->section_ = section;
     } else {
-      LIEF_ERR("Can't find the section associated with the virtual address 0x{:x}", address);
+      LIEF_ERR("Can't find the section associated with the virtual address {:#x}", address);
     }
 
     const auto it_symbol = memoized_symbols_by_address_.find(address);
@@ -3175,7 +3175,7 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
       reloc->symbol_ = it_symbol->second;
     }
 
-    LIEF_DEBUG("{}[REBASE] {}@0x{:x}: 0x{:x}",
+    LIEF_DEBUG("{}[REBASE] {}@{:#x}: {:#x}",
                DPREFIX, segment.name(), address, target);
 
     segment.relocations_.push_back(std::move(reloc));
@@ -3210,12 +3210,12 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
       local_binding->elements_.push_back(binding_extra_info.get());
 
       if (Symbol* sym = binding_extra_info->symbol()) {
-        LIEF_DEBUG("{}[  BIND] {}@0x{:x}: {} / sign ext: {:x}",
+        LIEF_DEBUG("{}[  BIND] {}@{:#x}: {} / sign ext: {:x}",
                    DPREFIX, segment.name(), address, sym->name(), fixup.sign_extended_addend());
         return ok();
       }
 
-      LIEF_DEBUG("{}[  BIND] {}@0x{:x}: <missing symbol> / sign ext: {:x}",
+      LIEF_DEBUG("{}[  BIND] {}@{:#x}: <missing symbol> / sign ext: {:x}",
                  DPREFIX, segment.name(), address, fixup.sign_extended_addend());
       LIEF_ERR("Missing symbol for binding at ordinal {}", bind_ordinal);
       return make_error_code(lief_errors::not_found);
@@ -3238,7 +3238,7 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
   if (Section* section = binary_->section_from_virtual_address(address)) {
     reloc->section_ = section;
   } else {
-    LIEF_ERR("Can't find the section associated with the virtual address 0x{:x}", address);
+    LIEF_ERR("Can't find the section associated with the virtual address {:#x}", address);
   }
 
   const auto it_symbol = memoized_symbols_by_address_.find(address);
@@ -3246,7 +3246,7 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
     reloc->symbol_ = it_symbol->second;
   }
 
-  LIEF_DEBUG("{}[REBASE] {}@0x{:x}: 0x{:x}",
+  LIEF_DEBUG("{}[REBASE] {}@{:#x}: {:#x}",
              DPREFIX, segment.name(), address, target);
 
   segment.relocations_.push_back(std::move(reloc));
@@ -3288,11 +3288,11 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
     local_binding->elements_.push_back(binding_extra_info.get());
 
     if (Symbol* sym = binding_extra_info->symbol()) {
-      LIEF_DEBUG("{}[  BIND] {}@0x{:x}: {} / sign ext: {:x}",
+      LIEF_DEBUG("{}[  BIND] {}@{:#x}: {} / sign ext: {:x}",
                  DPREFIX, segment.name(), address, sym->name(), fixup.sign_extended_addend());
       return ok();
     }
-    LIEF_DEBUG("{}[  BIND] {}@0x{:x}: <missing symbol> / sign ext: {:x}",
+    LIEF_DEBUG("{}[  BIND] {}@{:#x}: <missing symbol> / sign ext: {:x}",
                DPREFIX, segment.name(), address, fixup.sign_extended_addend());
     LIEF_ERR("Missing symbol for binding at ordinal {}", ordinal);
     return make_error_code(lief_errors::not_found);
@@ -3326,7 +3326,7 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
   if (Section* section = binary_->section_from_virtual_address(address)) {
     reloc->section_ = section;
   } else {
-    LIEF_ERR("Can't find the section associated with the virtual address 0x{:x}", address);
+    LIEF_ERR("Can't find the section associated with the virtual address {:#x}", address);
   }
 
   const auto it_symbol = memoized_symbols_by_address_.find(address);
@@ -3334,7 +3334,7 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
     reloc->symbol_ = it_symbol->second;
   }
 
-  LIEF_DEBUG("{}[REBASE] {}@0x{:x}: 0x{:x}",
+  LIEF_DEBUG("{}[REBASE] {}@{:#x}: {:#x}",
              DPREFIX, segment.name(), address, target);
 
   segment.relocations_.push_back(std::move(reloc));
@@ -3375,11 +3375,11 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
     local_binding->elements_.push_back(binding_extra_info.get());
 
     if (Symbol* sym = binding_extra_info->symbol()) {
-      LIEF_DEBUG("{}[  BIND] {}@0x{:x}: {} / sign ext: {:x}",
+      LIEF_DEBUG("{}[  BIND] {}@{:#x}: {} / sign ext: {:x}",
                  DPREFIX, segment.name(), address, sym->name(), fixup.bind.addend);
       return ok();
     }
-    LIEF_DEBUG("{}[  BIND] {}@0x{:x}: <missing symbol> / sign ext: {:x}",
+    LIEF_DEBUG("{}[  BIND] {}@{:#x}: <missing symbol> / sign ext: {:x}",
                DPREFIX, segment.name(), address, fixup.bind.addend);
     LIEF_ERR("Missing symbol for binding at ordinal {}", ordinal);
     return make_error_code(lief_errors::not_found);
@@ -3410,7 +3410,7 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
   if (Section* section = binary_->section_from_virtual_address(address)) {
     reloc->section_ = section;
   } else {
-    LIEF_ERR("Can't find the section associated with the virtual address 0x{:x}", address);
+    LIEF_ERR("Can't find the section associated with the virtual address {:#x}", address);
   }
 
   const auto it_symbol = memoized_symbols_by_address_.find(address);
@@ -3418,7 +3418,7 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
     reloc->symbol_ = it_symbol->second;
   }
 
-  LIEF_DEBUG("{}[REBASE] {}@0x{:x}: 0x{:x}",
+  LIEF_DEBUG("{}[REBASE] {}@{:#x}: {:#x}",
              DPREFIX, segment.name(), address, reloc->target());
 
   segment.relocations_.push_back(std::move(reloc));
@@ -3462,7 +3462,7 @@ ok_error_t BinaryParser::post_process(SymbolCommand& cmd) {
     strings_buffer.resize(cmd.strings_size());
 
     if (!stream_->peek_data(nlist_buffer, cmd.symbol_offset(), nlist_size)) {
-      LIEF_ERR("Can't read nlist buffer at: 0x{:010x}", cmd.symbol_offset());
+      LIEF_ERR("Can't read nlist buffer at: {:#012x}", cmd.symbol_offset());
       return make_error_code(lief_errors::read_error);
     }
 
@@ -3534,7 +3534,7 @@ ok_error_t BinaryParser::post_process(FunctionStarts& cmd) {
                              binary_->segment_from_offset(cmd.data_offset());
 
   if (linkedit == nullptr) {
-    LIEF_WARN("Can't find the segment that contains the LC_FUNCTION_STARTS (offset=0x{:016x})", cmd.data_offset());
+    LIEF_WARN("Can't find the segment that contains the LC_FUNCTION_STARTS (offset={:#018x})", cmd.data_offset());
     return make_error_code(lief_errors::not_found);
   }
 
@@ -3561,7 +3561,7 @@ ok_error_t BinaryParser::post_process(FunctionStarts& cmd) {
   do {
     auto val = stream.read_uleb128();
     if (!val) {
-      LIEF_WARN("Can't read value at offset: 0x{:010x} (#{} read)",
+      LIEF_WARN("Can't read value at offset: {:#012x} (#{} read)",
                 stream.pos(), cmd.functions_.size()
       );
       return make_error_code(lief_errors::read_error);
@@ -3970,7 +3970,7 @@ ok_error_t BinaryParser::post_process(FunctionVariants& cmd) {
                              binary_->segment_from_offset(cmd.data_offset());
 
   if (linkedit == nullptr) {
-    LIEF_WARN("Can't find the segment that contains the LC_FUNCTION_VARIANTS (offset=0x{:016x})", cmd.data_offset());
+    LIEF_WARN("Can't find the segment that contains the LC_FUNCTION_VARIANTS (offset={:#018x})", cmd.data_offset());
     return make_error_code(lief_errors::not_found);
   }
 
@@ -4005,7 +4005,7 @@ ok_error_t BinaryParser::post_process(FunctionVariantFixups& cmd) {
                              binary_->segment_from_offset(cmd.data_offset());
 
   if (linkedit == nullptr) {
-    LIEF_WARN("Can't find the segment that contains the LC_FUNCTION_VARIANT_FIXUPS (offset=0x{:016x})", cmd.data_offset());
+    LIEF_WARN("Can't find the segment that contains the LC_FUNCTION_VARIANT_FIXUPS (offset={:#018x})", cmd.data_offset());
     return make_error_code(lief_errors::not_found);
   }
 

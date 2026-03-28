@@ -37,7 +37,7 @@ void NoteCommand::accept(Visitor& visitor) const {
 
 std::ostream& NoteCommand::print(std::ostream& os) const {
   LoadCommand::print(os) << '\n';
-  os << fmt::format("owner={} offset=0x{:x}, size=0x{:x}",
+  os << fmt::format("owner={} offset={:#x}, size={:#x}",
                     owner_str(), note_offset(), note_size());
   return os;
 }

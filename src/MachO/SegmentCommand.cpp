@@ -234,8 +234,8 @@ void SegmentCommand::accept(Visitor& visitor) const {
 std::ostream& SegmentCommand::print(std::ostream& os) const {
   LoadCommand::print(os) << '\n';
   os << fmt::format(
-    "name={}, vaddr=0x{:06x}, vsize=0x{:04x} "
-    "offset=0x{:06x}, size={}, max protection={}, init protection={} "
+    "name={}, vaddr={:#08x}, vsize={:#06x} "
+    "offset={:#08x}, size={}, max protection={}, init protection={} "
     "flags={}",
     name(), virtual_address(), virtual_size(),
     file_offset(), file_size(), max_protection(), init_protection(),

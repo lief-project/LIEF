@@ -130,7 +130,7 @@ std::string FunctionVariants::RuntimeTableEntry::to_string() const {
   if (another_table()) {
     oss << fmt::format("Table: #{}", impl());
   } else {
-    oss << fmt::format("Function: 0x{:08x}", impl());
+    oss << fmt::format("Function: {:#010x}", impl());
   }
   std::vector<FLAGS> flags = this->flags();
   if (flags.empty()) {
@@ -162,14 +162,14 @@ std::vector<FunctionVariants::RuntimeTable> FunctionVariants::parse_payload(Span
 
   auto tableCount = stream.read<uint32_t>();
   if (!tableCount) {
-    LIEF_DEBUG("Error: Failed to read FunctionVariants.OnDiskFormat.tableCount");
+    LIEF_DEBUG("Failed to read FunctionVariants.OnDiskFormat.tableCount");
     return result;
   }
 
   for (size_t i = 0; i < *tableCount; ++i) {
     auto tableOffset = stream.read<uint32_t>();
     if (!tableOffset) {
-      LIEF_DEBUG("Error: Failed to read FunctionVariants.OnDiskFormat.tableOffsets[{}]", i);
+      LIEF_DEBUG("Failed to read FunctionVariants.OnDiskFormat.tableOffsets[{}]", i);
       return result;
     }
 
@@ -178,7 +178,7 @@ std::vector<FunctionVariants::RuntimeTable> FunctionVariants::parse_payload(Span
       if (auto entry = parse_entry(*runtime_table_strm)) {
         result.push_back(std::move(*entry));
       } else {
-        LIEF_DEBUG("Failed to parse entry #{} at offset: 0x{:06x}", i, *tableOffset);
+        LIEF_DEBUG("Failed to parse entry #{} at offset: {:#08x}", i, *tableOffset);
       }
     }
   }
@@ -189,7 +189,7 @@ result<FunctionVariants::RuntimeTable> FunctionVariants::parse_entry(BinaryStrea
   auto kind = stream.read<uint32_t>();
 
   if (!kind) {
-    LIEF_DEBUG("Error: Failed to read FunctionVariantsRuntimeTable.kind");
+    LIEF_DEBUG("Failed to read FunctionVariantsRuntimeTable.kind");
     return make_error_code(kind.error());
   }
 
@@ -198,14 +198,14 @@ result<FunctionVariants::RuntimeTable> FunctionVariants::parse_entry(BinaryStrea
   auto count = stream.read<uint32_t>();
 
   if (!count) {
-    LIEF_DEBUG("Error: Failed to read FunctionVariantsRuntimeTable.count");
+    LIEF_DEBUG("Failed to read FunctionVariantsRuntimeTable.count");
     return make_error_code(count.error());
   }
 
   for (size_t i = 0; i < *count; ++i) {
     auto raw_entry = stream.read<details::runtime_table_entry_t>();
     if (!raw_entry) {
-      LIEF_DEBUG("Error: Failed to read FunctionVariantsRuntimeTable.entries[{}]", i);
+      LIEF_DEBUG("Failed to read FunctionVariantsRuntimeTable.entries[{}]", i);
       return runtime_table;
     }
 

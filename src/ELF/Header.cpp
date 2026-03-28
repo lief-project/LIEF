@@ -239,7 +239,7 @@ bool Header::has(PROCESSOR_FLAGS flag) const {
   }
 
   if (ID != 0) {
-    LIEF_WARN("Architecture {} is not yet supported for this flag",
+    LIEF_WARN("Unsupported architecture {} for this flag",
               to_string(arch));
     return false;
   }
@@ -278,10 +278,10 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
      << fmt::format("{:<{}} {}\n", "Type:", PADDING, to_string(hdr.file_type()))
      << fmt::format("{:<{}} {}\n", "Machine:", PADDING, to_string(hdr.machine_type()))
      << fmt::format("{:<{}} {}\n", "Version:", PADDING, to_string(hdr.object_file_version()))
-     << fmt::format("{:<{}} 0x{:08x}\n", "Entry point address:", PADDING, hdr.entrypoint())
+     << fmt::format("{:<{}} {:#010x}\n", "Entry point address:", PADDING, hdr.entrypoint())
      << fmt::format("{:<{}} {} (bytes into file)\n", "Start of program headers:", PADDING, hdr.program_headers_offset())
      << fmt::format("{:<{}} {} (bytes into file)\n", "Start of section headers:", PADDING, hdr.section_headers_offset())
-     << fmt::format("{:<{}} 0x{:x} {}\n", "Flags:", PADDING, hdr.processor_flag(), fmt::to_string(fmt::join(flags_str, ", ")))
+     << fmt::format("{:<{}} {:#x} {}\n", "Flags:", PADDING, hdr.processor_flag(), fmt::to_string(fmt::join(flags_str, ", ")))
      << fmt::format("{:<{}} {} (bytes)\n", "Size of this header:", PADDING, hdr.header_size())
      << fmt::format("{:<{}} {} (bytes)\n", "Size of program headers:", PADDING, hdr.program_header_size())
      << fmt::format("{:<{}} {}\n", "Number of program headers:", PADDING, hdr.numberof_segments())

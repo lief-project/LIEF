@@ -116,7 +116,7 @@ bool Class::is_quickened(const DEX::Method& m) const {
       });
 
   if (it_method_index == std::end(methods)) {
-    LIEF_ERR("Can't find '{}' in {}", m.name(), cls.fullname());
+    LIEF_ERR("Method '{}' not found in {}", m.name(), cls.fullname());
     return false;
   }
 
@@ -138,7 +138,7 @@ bool Class::is_quickened(uint32_t relative_index) const {
     const uint32_t bitmap_idx  = relative_index >> 5;
     const uint32_t bitmap_mask = 1 << (relative_index & 0x1F);
     if (bitmap_idx > method_bitmap_.size()) {
-      LIEF_ERR("bitmap_idx: 0x{:x} is corrupted", bitmap_idx);
+      LIEF_ERR("Corrupted bitmap index: {:#x}", bitmap_idx);
       return false;
     }
 
@@ -160,7 +160,7 @@ uint32_t Class::method_offsets_index(const DEX::Method& m) const {
       });
 
   if (it_method_index == std::end(methods)) {
-    LIEF_ERR("Can't find '{}' in {}", m.name(), cls.fullname());
+    LIEF_ERR("Method '{}' not found in {}", m.name(), cls.fullname());
     return UINT_MAX;
   }
 
@@ -209,7 +209,7 @@ uint32_t Class::relative_index(const DEX::Method& m) const {
       });
 
   if (it_method_index == std::end(methods)) {
-    LIEF_ERR("Can't find '{}' in {}", m.name(), cls.fullname());
+    LIEF_ERR("Method '{}' not found in {}", m.name(), cls.fullname());
     return UINT_MAX;
   }
 
@@ -229,7 +229,7 @@ uint32_t Class::relative_index(uint32_t method_absolute_index) const {
       });
 
   if (it_method_index == std::end(methods)) {
-    LIEF_ERR("Can't find find method with index {:d} in {}", method_absolute_index, cls.fullname());
+    LIEF_ERR("Method index {:d} not found in {}", method_absolute_index, cls.fullname());
     return UINT_MAX;
   }
 

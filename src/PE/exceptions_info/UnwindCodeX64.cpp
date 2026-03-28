@@ -135,7 +135,7 @@ std::unique_ptr<Code> Code::create_from(
 }
 
 std::string Code::to_string() const {
-  return fmt::format("0x{:02x} {}", pos_, LIEF::PE::to_string(opcode_));
+  return fmt::format("{:#04x} {}", pos_, LIEF::PE::to_string(opcode_));
 }
 
 std::string Alloc::to_string() const {
@@ -158,12 +158,12 @@ std::string SetFPReg::to_string() const {
 }
 
 std::string SaveNonVolatile::to_string() const {
-  return fmt::format("{} reg={}, offset=0x{:06x}", Code::to_string(),
+  return fmt::format("{} reg={}, offset={:#08x}", Code::to_string(),
                      LIEF::PE::to_string(reg()), offset());
 }
 
 std::string SaveXMM128::to_string() const {
-  return fmt::format("{} reg=XMM{}, offset=0x{:06x}", Code::to_string(),
+  return fmt::format("{} reg=XMM{}, offset={:#08x}", Code::to_string(),
                      num(), offset());
 }
 

@@ -73,7 +73,7 @@ result<ResourceVar> ResourceVar::parse(BinaryStream& stream) {
   for (size_t i = 0; i < nb_values; ++i) {
     auto value = stream.read<uint32_t>();
     if (!value) {
-      LIEF_WARN("Can't parse value #{:02}", i);
+      LIEF_WARN("Failed to parse value #{:02}", i);
       return var;
     }
 
@@ -93,7 +93,7 @@ std::ostream& operator<<(std::ostream& os, const ResourceVar& var) {
   std::vector<std::string> values;
   values.reserve(var.values_.size());
   for (uint32_t val : var.values()) {
-    values.push_back(fmt::format("0x{:08x}", val));
+    values.push_back(fmt::format("{:#010x}", val));
   }
 
   os << fmt::format("{}: {}", var.key_u8(), fmt::join(values, ", "));

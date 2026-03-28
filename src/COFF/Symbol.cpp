@@ -107,7 +107,7 @@ std::unique_ptr<Symbol> Symbol::parse_impl(
 
     auto aux = AuxiliarySymbol::parse(*sym, std::move(raw_aux));
     if (aux == nullptr) {
-      LIEF_WARN("Failed to parse auxiliary symbols #{}", i);
+      LIEF_WARN("Failed to parse auxiliary symbol #{}", i);
       continue;
     }
 

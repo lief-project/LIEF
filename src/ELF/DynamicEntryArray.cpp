@@ -36,7 +36,7 @@ DynamicEntryArray& DynamicEntryArray::insert(size_t pos, uint64_t function) {
   }
 
   if (pos > array_.size()) {
-    LIEF_ERR("pos: {:d} is out of range", pos);
+    LIEF_ERR("Position {:d} is out of range", pos);
     return *this;
   }
 
@@ -47,7 +47,7 @@ DynamicEntryArray& DynamicEntryArray::insert(size_t pos, uint64_t function) {
 const uint64_t& DynamicEntryArray::operator[](size_t idx) const {
   static uint64_t GARBAGE = 0;
   if (idx >= array_.size()) {
-    LIEF_WARN("DynamicEntryArray[{}] is out-of-range", idx);
+    LIEF_WARN("DynamicEntryArray[{}] out of range", idx);
     return GARBAGE;
   }
   return array_[idx];
@@ -64,7 +64,7 @@ void DynamicEntryArray::accept(Visitor& visitor) const {
 std::ostream& DynamicEntryArray::print(std::ostream& os) const {
   const array_t& array = this->array();
   DynamicEntry::print(os);
-  os << '[' << fmt::format("0x{:04x}", fmt::join(array, ", ")) << ']';
+  os << '[' << fmt::format("{:#06x}", fmt::join(array, ", ")) << ']';
   return os;
 }
 

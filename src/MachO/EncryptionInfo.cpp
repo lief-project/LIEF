@@ -35,7 +35,7 @@ void EncryptionInfo::accept(Visitor& visitor) const {
 
 std::ostream& EncryptionInfo::print(std::ostream& os) const {
   LoadCommand::print(os) << '\n';
-  os << fmt::format("crypt offset=0x{:06x}, crypt size=0x{:06x}, crypt id={}",
+  os << fmt::format("crypt offset={:#08x}, crypt size={:#08x}, crypt id={}",
                      crypt_offset(), crypt_size(), crypt_id());
   return os;
 }

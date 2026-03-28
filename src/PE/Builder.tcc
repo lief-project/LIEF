@@ -120,7 +120,7 @@ ok_error_t Builder::build_tls() {
   // originally present in the binary
   const bool is_created = tls_dir->RVA() == 0 || tls_dir->size() == 0;
 
-  LIEF_DEBUG("TLS: [0x{:08x}, 0x{:08x}]", tls_dir->RVA(),
+  LIEF_DEBUG("TLS: [{:#010x}, {:#010x}]", tls_dir->RVA(),
              tls_dir->RVA() + tls_dir->size());
 
   vector_iostream ios_callbacks;
@@ -189,7 +189,7 @@ ok_error_t Builder::build_tls() {
 
     if (tls->addressof_callbacks() != 0) {
       LIEF_WARN("Replacing existing address of callbacks from "
-                "0x{:016x} to 0x{:016x}", tls->addressof_callbacks(),
+                "{:#018x} to {:#018x}", tls->addressof_callbacks(),
                 new_tls_section->virtual_address());
     }
     tls->addressof_callbacks(imagebase + new_tls_section->virtual_address());
@@ -236,7 +236,7 @@ ok_error_t Builder::build_tls() {
   }
   // User added new callbacks
   else if (tls_data_.callbacks.size() > original_callback_size || config_.force_relocating) {
-    LIEF_DEBUG("Need to relocated TLS Callbacks (0x{:06x} new bytes)",
+    LIEF_DEBUG("Need to relocate TLS callbacks ({:#08x} new bytes)",
                tls_data_.callbacks.size() - original_callback_size);
     Section tls_section(config_.tls_section);
 
@@ -256,7 +256,7 @@ ok_error_t Builder::build_tls() {
     Section* new_tls_section = binary_->add_section(tls_section);
     new_tls_section->edit().write(tls_data_.callbacks);
     tls->addressof_callbacks(imagebase + new_tls_section->virtual_address());
-    LIEF_DEBUG("TLS new callbacks address: 0x{:08x} (0x{:016x})",
+    LIEF_DEBUG("TLS new callbacks address: {:#010x} ({:#018x})",
                new_tls_section->virtual_address(), tls->addressof_callbacks());
 
     // Process relocations to make sure they are consistent with the new
@@ -274,13 +274,13 @@ ok_error_t Builder::build_tls() {
         bool in_cbk = tls_callbacks_start <= addr && addr < tls_callbacks_end;
 
         if (in_hdr) {
-          LIEF_DEBUG("{:16}: 0x{:04x} ({})", "TLS reloc header", addr,
+          LIEF_DEBUG("{:16}: {:#06x} ({})", "TLS reloc header", addr,
                      to_string(E->type()));
           hdr_relocations.push_back(E.get());
         }
 
         if (in_cbk) {
-          LIEF_DEBUG("{:16}: 0x{:04x} ({})", "TLS reloc cbk", addr,
+          LIEF_DEBUG("{:16}: {:#06x} ({})", "TLS reloc cbk", addr,
                      to_string(E->type()));
           cbk_relocations.push_back(E.get());
         }
@@ -332,7 +332,7 @@ ok_error_t Builder::build_tls() {
   } else /* We can write the TLS callbacks without relocating the table */ {
     [[maybe_unused]]
       int64_t delta_size = original_callback_size - tls_data_.callbacks.size();
-    LIEF_DEBUG("TLS Callbacks -0x{:06x}", delta_size);
+    LIEF_DEBUG("TLS Callbacks -{:#08x}", delta_size);
     if (tls_data_.callbacks.empty() && original_callback_size != 0) {
       // The callbacks have been removed. In this case, we need to remove any
       // relocation pointing in the current callback section, set addressof_callbacks
@@ -378,8 +378,8 @@ ok_error_t Builder::build_tls() {
   ios_header.move(tls_data_.header);
   if (const DataDirectory* dir = binary_->tls_dir(); dir != nullptr && dir->RVA() > 0) {
     if (dir->size() < tls_data_.header.size()) {
-      LIEF_WARN("TLS Header is larger than the original. original=0x{:08x}, "
-                "new=0x{:08x}", dir->size(), tls_data_.header.size());
+      LIEF_WARN("TLS header larger than original (original={:#010x}, "
+                "new={:#010x})", dir->size(), tls_data_.header.size());
     }
     binary_->patch_address(dir->RVA(), tls_data_.header, Binary::VA_TYPES::RVA);
   }
@@ -575,7 +575,7 @@ ok_error_t Builder::build_imports() {
     const auto it = names_offset.find(imp_name);
 
     if (it == names_offset.end()) {
-      LIEF_ERR("Can't find offset for name: {}", imp_name);
+      LIEF_ERR("Offset not found for name: {}", imp_name);
       return make_error_code(lief_errors::build_error);
     }
     uint32_t iat_rva = has_existing_iat ? imp.import_address_table_rva() :
@@ -609,7 +609,7 @@ ok_error_t Builder::build_imports() {
           LIEF_DEBUG("padding count: {}", delta / sizeof(uint__));
         } else {
           LIEF_WARN("IAT location mismatch for {}:{} "
-                    "(RVA=0x{:08x}, Expected=0x{:08x})",
+                    "(RVA={:#010x}, Expected={:#010x})",
                     imp_name, entry.is_ordinal() ?
                     '#' + std::to_string(entry.ordinal()) : entry.name(),
                     IAT_pos, entry.iat_address());
@@ -620,7 +620,7 @@ ok_error_t Builder::build_imports() {
       if (!entry.is_ordinal()) {
         auto it_name = names_offset.find(entry.name());
         if (it_name == names_offset.end()) {
-          LIEF_ERR("Can't find name offset for the function: {}", entry.name());
+          LIEF_ERR("Name offset not found for function: {}", entry.name());
         }
         ilt_value = strings_offset + it_name->second;
       }
@@ -729,7 +729,7 @@ ok_error_t Builder::build_imports() {
 
   Section* new_idata_section = binary_->add_section(idata_section);
   if (new_idata_section == nullptr) {
-    LIEF_ERR("Can't add a new idata section");
+    LIEF_ERR("Failed to add new idata section");
     return make_error_code(lief_errors::build_error);
   }
   import_dir->RVA(new_idata_section->virtual_address());
@@ -863,10 +863,10 @@ ok_error_t Builder::build_load_config() {
     /* Not supported yet since relocating this structure also means
      * patching relocations.
      */
-    LIEF_DEBUG("LoadConfiguration.size:           0x{:08x}", lconf->size());
-    LIEF_DEBUG("IMAGE_DIRECTORY_LOAD_CONFIG.size: 0x{:08x}", lconf_dir->size());
+    LIEF_DEBUG("LoadConfiguration.size:           {:#010x}", lconf->size());
+    LIEF_DEBUG("IMAGE_DIRECTORY_LOAD_CONFIG.size: {:#010x}", lconf_dir->size());
 
-    LIEF_WARN("Larger load config directory is not supported");
+    LIEF_WARN("Larger load config directory not supported");
     return make_error_code(lief_errors::not_supported);
   }
 

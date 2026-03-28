@@ -178,7 +178,7 @@ void foreach_segment(BinaryStream& stream, const segment_callback_t cbk) {
   const MACHO_TYPES magic = *magic_res;
 
   if (magic == MACHO_TYPES::MAGIC_FAT || magic == MACHO_TYPES::CIGAM_FAT) {
-    LIEF_WARN("Can't get the file size of a FAT Macho-O");
+    LIEF_WARN("Cannot determine file size of a FAT Mach-O");
     return;
   }
 

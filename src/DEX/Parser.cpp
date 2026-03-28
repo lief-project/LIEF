@@ -36,7 +36,7 @@ Parser::Parser()  = default;
 
 std::unique_ptr<File> Parser::parse(const std::string& filename) {
   if (!is_dex(filename)) {
-    LIEF_ERR("'{}' is not a DEX File", filename);
+    LIEF_ERR("'{}' is not a DEX file", filename);
     return nullptr;
   }
   Parser parser{filename};
@@ -47,7 +47,7 @@ std::unique_ptr<File> Parser::parse(const std::string& filename) {
 
 std::unique_ptr<File> Parser::parse(std::vector<uint8_t> data, const std::string& name) {
   if (!is_dex(data)) {
-    LIEF_ERR("'{}' is not a DEX File", name);
+    LIEF_ERR("'{}' is not a DEX file", name);
     return nullptr;
   }
   dex_version_t version = DEX::version(data);
@@ -68,7 +68,7 @@ Parser::Parser(const std::string& file) :
 {
   auto stream = VectorStream::from_file(file);
   if (!stream) {
-    LIEF_ERR("Can't create the stream");
+    LIEF_ERR("Failed to create stream");
   } else {
     stream_ = std::make_unique<VectorStream>(std::move(*stream));
   }
@@ -96,7 +96,7 @@ void Parser::init(const std::string& name, dex_version_t version) {
 }
 
 void Parser::resolve_inheritance() {
-  LIEF_DEBUG("Resolving inheritance relationship for #{:d} classes", inheritance_.size());
+  LIEF_DEBUG("Resolving inheritance for #{:d} classes", inheritance_.size());
 
   for (const std::pair<const std::string, Class*>& p : inheritance_) {
     const std::string& parent_name = p.first;

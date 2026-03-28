@@ -45,7 +45,7 @@ static_assert(sizeof(arm64e_kernel_reloc_t) == sizeof(uint32_t));
 
 std::string DynamicFixupARM64Kernel::reloc_entry_t::to_string() const {
   using namespace fmt;
-  return format("RVA: 0x{:08x} Instr: {:8} delayload: {} IAT index: {:04d}",
+  return format("RVA: {:#010x} Instr: {:8} delayload: {} IAT index: {:04d}",
     rva, format("{} x{}", indirect_call ? "blr" : "br", register_index),
     import_type == IMPORT_TYPE::DELAYED, iat_index);
 }
@@ -93,7 +93,7 @@ std::unique_ptr<DynamicFixupARM64Kernel>
         /* iat_index */(uint16_t)value->iat_index,
       });
 
-      LIEF_DEBUG("PAGE=0x{:010x} RVA: 0x{:06x} IndirectCall: {}, RegIndex: {}, ImportType: {}, "
+      LIEF_DEBUG("PAGE={:#012x} RVA: {:#08x} IndirectCall: {}, RegIndex: {}, ImportType: {}, "
                  "IATIndex: {}", *PageRVA, *PageRVA + (value->page_relative_offset << 2), value->indirect_call,
                  value->register_index, value->import_type, value->iat_index);
     }

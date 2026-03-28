@@ -161,7 +161,7 @@ result<std::string> ASN1Reader::read_oid() {
 
   int ret = mbedtls_oid_get_numeric_string(oid_str.data(), oid_str.size(), &buf);
   if (ret == MBEDTLS_ERR_ASN1_BUF_TOO_SMALL) {
-    LIEF_DEBUG("asn1_read_oid: mbedtls_oid_get_numeric_string return MBEDTLS_ERR_OID_BUF_TOO_SMALL");
+    LIEF_DEBUG("asn1_read_oid: mbedtls_oid_get_numeric_string returned MBEDTLS_ERR_OID_BUF_TOO_SMALL");
     return make_error_code(lief_errors::read_error);
   }
 
@@ -261,7 +261,7 @@ result<int64_t> ASN1Reader::read_int64() {
 
   if (mbedtls_mpi_size(&mpi) > sizeof(uint64_t)) {
     mbedtls_mpi_free(&mpi);
-    LIEF_INFO("MPI value can be stored on a 64-bit integer");
+    LIEF_INFO("MPI value does not fit in a 64-bit integer");
     return make_error_code(lief_errors::read_error);
   }
 
@@ -372,7 +372,7 @@ result<std::string> ASN1Reader::x509_read_names() {
   auto tag = read_tag(/* Name */
                       MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE);
   if (!tag) {
-    LIEF_INFO("Wrong tag: 0x{:x} for x509_read_names (pos: {:d})",
+    LIEF_INFO("Unexpected tag {:#x} for x509_read_names (pos: {:d})",
               *stream_.peek<uint8_t>(), stream_.pos());
     return make_error_code(tag.error());
   }

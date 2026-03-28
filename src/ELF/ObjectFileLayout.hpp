@@ -70,8 +70,8 @@ class LIEF_LOCAL ObjectFileLayout : public Layout {
       last_offset_sections = std::max<uint64_t>(section->file_offset() + section->size(),
                                                 last_offset_sections);
     }
-    LIEF_DEBUG("Sections' last offset: 0x{:x}", last_offset_sections);
-    LIEF_DEBUG("SHDR Table:            0x{:x}", binary_->header().section_headers_offset());
+    LIEF_DEBUG("Sections' last offset: {:#x}", last_offset_sections);
+    LIEF_DEBUG("SHDR Table:            {:#x}", binary_->header().section_headers_offset());
 
     Header& hdr = binary_->header();
     for (Section& sec : binary_->sections()) {
@@ -80,7 +80,7 @@ class LIEF_LOCAL ObjectFileLayout : public Layout {
       }
 
       const size_t needed_size = sec_reloc_info_[&sec];
-      LIEF_DEBUG("Need to relocate: '{}' (0x{:x} bytes)", sec.name(), needed_size);
+      LIEF_DEBUG("Need to relocate '{}' ({:#x} bytes)", sec.name(), needed_size);
 
       DataHandler::Node new_node{last_offset_sections, needed_size,
                                  DataHandler::Node::SECTION};

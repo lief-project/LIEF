@@ -119,14 +119,14 @@ std::unique_ptr<ResourceNode> TreeParser::parse_resource_node(
     if ((id & 0x80000000) != 0u) {
       uint32_t offset        = id & (~ 0x80000000);
       uint32_t string_offset = base_offset + offset;
-      LIEF_DEBUG("base_offset=0x{:04x}, string_offset=0x{:04x}",
+      LIEF_DEBUG("base_offset={:#06x}, string_offset={:#06x}",
                  base_offset, string_offset);
 
       auto res_length = stream_.peek<uint16_t>(string_offset);
       if (res_length && *res_length <= 100) {
         name = stream_.peek_u16string_at(string_offset + sizeof(uint16_t), *res_length);
         if (!name) {
-          LIEF_ERR("Node's name for the node id: {} is corrupted", id);
+          LIEF_ERR("Corrupted node name for node id {}", id);
         }
       }
     }
@@ -138,7 +138,7 @@ std::unique_ptr<ResourceNode> TreeParser::parse_resource_node(
       if (!visited_.insert(offset).second) {
         if (visited_.size() == 1) {
           // Only print once
-          LIEF_WARN("Infinite loop detected on resources");
+          LIEF_WARN("Infinite loop detected in resources");
         }
         break;
       }
@@ -170,7 +170,7 @@ std::unique_ptr<ResourceNode> TreeParser::parse_resource_node(
 
         directory->push_child(std::move(node));
       } else {
-        LIEF_DEBUG("The leaf of the node id {} is corrupted", id);
+        LIEF_DEBUG("Corrupted leaf for node id {}", id);
         break;
       }
     } else { // We are on a directory
@@ -179,7 +179,7 @@ std::unique_ptr<ResourceNode> TreeParser::parse_resource_node(
       if (!visited_.insert(offset).second) {
         if (visited_.size() == 1) {
           // Only print once
-          LIEF_WARN("Infinite loop detected on resources");
+          LIEF_WARN("Infinite loop detected in resources");
         }
         break;
       }
@@ -196,7 +196,7 @@ std::unique_ptr<ResourceNode> TreeParser::parse_resource_node(
           continue;
         }
       } else {
-        LIEF_WARN("The directory of the node id {} is corrupted", id);
+        LIEF_WARN("Corrupted directory for node id {}", id);
         break;
       }
     }
@@ -289,7 +289,7 @@ void ResourceNode::delete_child(uint32_t id) {
       });
 
   if (it_node == std::end(childs_)) {
-    LIEF_ERR("Unable to find the node with the id {:d}", id);
+    LIEF_ERR("Node with id {:d} not found", id);
     return;
   }
 
@@ -303,7 +303,7 @@ void ResourceNode::delete_child(const ResourceNode& node) {
       });
 
   if (it_node == std::end(childs_)) {
-    LIEF_ERR("Unable to find the node with id: {}", node.id());
+    LIEF_ERR("Node with id {} not found", node.id());
     return;
   }
 
@@ -324,7 +324,7 @@ void ResourceNode::name(const std::string& name) {
   if (auto res = u8tou16(name)) {
     return this->name(std::move(*res));
   }
-  LIEF_WARN("{} can't be converted to a UTF-16 string", name);
+  LIEF_WARN("{} cannot be converted to UTF-16", name);
 }
 
 

@@ -71,7 +71,7 @@ std::string FPO::entry_t::to_string() const {
   using namespace fmt;
   std::ostringstream os;
   os << format("{:10} {:<13} {:<9} {:<8} {:<9} {:<5} {:<6} {:<8} {}",
-    format("0x{:08x}", rva),
+    format("{:#010x}", rva),
     proc_size, nb_locals, nb_saved_regs, prolog_size, use_bp ? 'Y' : 'N',
     use_seh ? 'Y' : 'N', PE::to_string(type), parameters_size
   );

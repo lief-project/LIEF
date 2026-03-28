@@ -81,7 +81,7 @@ result<ResourceStringFileInfo> ResourceStringFileInfo::parse(BinaryStream& strea
   while (stream) {
     auto item = ResourceStringTable::parse(stream);
     if (!item) {
-      LIEF_WARN("Can't parse StringFileInfo.Children[{}]", info.children_.size());
+      LIEF_WARN("Failed to parse StringFileInfo.Children[{}]", info.children_.size());
       break;
     }
     info.add_child(std::move(*item));

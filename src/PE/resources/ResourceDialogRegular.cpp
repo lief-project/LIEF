@@ -183,11 +183,11 @@ std::unique_ptr<ResourceDialogRegular>
     return dialog;
   }
 
-  LIEF_DEBUG("Dialog nb item: #{}", *nb_items);
+  LIEF_DEBUG("Dialog item count: {}", *nb_items);
   for (size_t i = 0; i < *nb_items; ++i) {
     auto item = ResourceDialogRegular::Item::parse(stream);
     if (!item) {
-      LIEF_INFO("Can't parse (regular) Dialog item #{:02d}", i);
+      LIEF_INFO("Failed to parse dialog item #{:02d}", i);
       return dialog;
     }
 
@@ -222,7 +222,7 @@ std::string ResourceDialogRegular::Item::to_string() const {
           win_class_str = "Combo box";
           break;
         default:
-          win_class_str = fmt::format("unknown (0x{:04x})", *ord);
+          win_class_str = fmt::format("unknown ({:#06x})", *ord);
           break;
       }
     } else {

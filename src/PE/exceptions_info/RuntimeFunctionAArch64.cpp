@@ -33,13 +33,13 @@ std::unique_ptr<RuntimeFunctionAArch64>
 {
   auto rva_start = strm.read<uint32_t>();
   if (!rva_start) {
-    LIEF_WARN("Can't read exception info RVA start (line: {})", __LINE__);
+    LIEF_WARN("Failed to read exception info RVA start (line: {})", __LINE__);
     return nullptr;
   }
 
   auto unwind_data = strm.read<uint32_t>();
   if (!unwind_data) {
-    LIEF_DEBUG("Can't read exception info unwind data (line: {}, RVA=0x{:08x}, pos={}, size={})",
+    LIEF_DEBUG("Failed to read exception info unwind data (line: {}, RVA={:#010x}, pos={}, size={})",
                __LINE__, *rva_start, strm.pos(), strm.size());
     return nullptr;
   }
@@ -66,7 +66,7 @@ std::string RuntimeFunctionAArch64::to_string() const {
   using namespace fmt;
   std::ostringstream oss;
   oss << "Runtime Unpacked AArch64 Function {\n"
-      << format("  Start (RVA): 0x{:08x}\n", rva_start())
+      << format("  Start (RVA): {:#010x}\n", rva_start())
       << format("  Flag: {}\n", (int)flag());
   oss << "}\n";
   return oss.str();

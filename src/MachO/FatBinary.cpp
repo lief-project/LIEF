@@ -41,7 +41,7 @@ std::unique_ptr<FatBinary> FatBinary::create(binaries_t binaries) {
     const Header& hdr = bin->header();
     uint64_t arch = (uint64_t(hdr.cpu_type()) << 32) | uint64_t(hdr.cpu_subtype());
     if (!seen.insert(arch).second) {
-      LIEF_ERR("Duplicated architecture: {} (subtype: {:#x})",
+      LIEF_ERR("Duplicate architecture: {} (subtype: {:#x})",
                to_string(hdr.cpu_type()), hdr.cpu_subtype());
       return nullptr;
     }

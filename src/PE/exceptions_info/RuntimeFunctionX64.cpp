@@ -44,19 +44,19 @@ std::unique_ptr<RuntimeFunctionX64>
 
   auto rva_start = strm.read<uint32_t>();
   if (!rva_start) {
-    LIEF_WARN("Can't read exception info RVA start (line: {})", __LINE__);
+    LIEF_WARN("Failed to read exception info RVA start (line: {})", __LINE__);
     return nullptr;
   }
 
   auto rva_end = strm.read<uint32_t>();
   if (!rva_end) {
-    LIEF_WARN("Can't read exception info RVA end (line: {})", __LINE__);
+    LIEF_WARN("Failed to read exception info RVA end (line: {})", __LINE__);
     return nullptr;
   }
 
   auto unwind_rva = strm.read<uint32_t>();
   if (!unwind_rva) {
-    LIEF_WARN("Can't read exception info unwind rva (line: {})", __LINE__);
+    LIEF_WARN("Failed to read exception info unwind RVA (line: {})", __LINE__);
     return nullptr;
   }
 
@@ -75,7 +75,7 @@ std::unique_ptr<RuntimeFunctionX64>
   {
     ScopedStream unwind_strm(ctx.stream(), unwind_off);
     if (auto is_ok = parse_unwind(ctx, *unwind_strm, *rfunc); !is_ok) {
-      LIEF_DEBUG("Failed to parse unwind data for function: 0x{:06x}",
+      LIEF_DEBUG("Failed to parse unwind data for function: {:#08x}",
                  rfunc->rva_start());
       return rfunc;
     }
@@ -113,7 +113,7 @@ ok_error_t RuntimeFunctionX64::parse_unwind(Parser& ctx, BinaryStream& strm,
   const uint8_t frame_reg = *FrameInfo & 0x0f;
   const uint8_t frame_off = (*VersionFlags >> 4) & 0x0f;
 
-  LIEF_DEBUG("Parsing unwind info for function 0x{:08x}", func.rva_start());
+  LIEF_DEBUG("Parsing unwind info for function {:#010x}", func.rva_start());
   LIEF_DEBUG("  Version: {}", version);
   LIEF_DEBUG("  Flags: {}", flags);
   LIEF_DEBUG("  SizeOfProlog: {}", *SizeOfProlog);
@@ -143,30 +143,30 @@ ok_error_t RuntimeFunctionX64::parse_unwind(Parser& ctx, BinaryStream& strm,
     if (!handler) {
       return make_error_code(handler.error());
     }
-    LIEF_DEBUG("  Handler: 0x{:06x}", *handler);
+    LIEF_DEBUG("  Handler: {:#08x}", *handler);
     info.handler = *handler;
   }
 
   if (info.has(UNWIND_FLAGS::CHAIN_INFO)) {
-    LIEF_DEBUG("  Chained!");
+    LIEF_DEBUG("  Chained");
     std::unique_ptr<RuntimeFunctionX64> chained = parse(ctx, strm, /*skip_unwind=*/true);
     if (chained != nullptr) {
-      LIEF_DEBUG("    chain: 0x{:08x} - 0x{:08x} - 0x{:08x}",
+      LIEF_DEBUG("    chain: {:#010x} - {:#010x} - {:#010x}",
                  chained->rva_start(), chained->rva_end(), chained->unwind_rva());
       ExceptionInfo* link = ctx.find_exception_info(chained->rva_start());
       if (link != nullptr) {
-        LIEF_DEBUG("    chain (found): 0x{:08x} - 0x{:08x} - 0x{:08x}",
+        LIEF_DEBUG("    chain (found): {:#010x} - {:#010x} - {:#010x}",
                    link->rva_start(), link->as<RuntimeFunctionX64>()->rva_end(),
                    link->as<RuntimeFunctionX64>()->unwind_rva());
         assert(link->arch() == ExceptionInfo::ARCH::X86_64);
         info.chained = link->as<RuntimeFunctionX64>();
       } else {
-        LIEF_DEBUG("RuntimeFunctionX64 0x{:06x}: Can't find linked chained info",
+        LIEF_DEBUG("RuntimeFunctionX64 {:#08x}: Failed to find linked chained info",
                    func.rva_start());
         ctx.add_non_resolved(func, chained->rva_start());
       }
     } else {
-      LIEF_WARN("RuntimeFunctionX64 0x{:06x}: chained info corrupted",
+      LIEF_WARN("RuntimeFunctionX64 {:#08x}: chained info corrupted",
                 func.rva_start());
     }
   }
@@ -224,14 +224,14 @@ std::string RuntimeFunctionX64::unwind_info_t::to_string() const {
 
   if (chained != nullptr) {
     oss << "  Chained: {\n"
-        << fmt::format("    RVA: [0x{:06x}, 0x{:06x}]\n", chained->rva_start(),
+        << fmt::format("    RVA: [{:#08x}, {:#08x}]\n", chained->rva_start(),
                        chained->rva_end())
-        << fmt::format("    Unwind RVA: 0x{:06x}\n", chained->unwind_rva())
+        << fmt::format("    Unwind RVA: {:#08x}\n", chained->unwind_rva())
         << "  }\n";
   }
 
   if (handler) {
-    oss << fmt::format("  Handler: 0x{:06x}\n", *handler);
+    oss << fmt::format("  Handler: {:#08x}\n", *handler);
   }
   oss << "}";
   return oss.str();
@@ -240,9 +240,9 @@ std::string RuntimeFunctionX64::unwind_info_t::to_string() const {
 std::string RuntimeFunctionX64::to_string() const {
   std::ostringstream oss;
   oss << "RuntimeFunctionX64 {\n";
-  oss << fmt::format("  RVA: [0x{:06x}, 0x{:06x}] ({} bytes)\n",
+  oss << fmt::format("  RVA: [{:#08x}, {:#08x}] ({} bytes)\n",
                      rva_start(), rva_end(), rva_end() - rva_start())
-      << fmt::format("  Unwind info RVA: 0x{:06x}\n", unwind_rva());
+      << fmt::format("  Unwind info RVA: {:#08x}\n", unwind_rva());
   if (const unwind_info_t* info = unwind_info()) {
     oss << indent(info->to_string(), 2);
   }

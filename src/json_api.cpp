@@ -123,7 +123,7 @@ std::string to_json([[maybe_unused]] const Object& v) {
 
   return node.dump();
 #else /* JSON not enabled */
-  LIEF_WARN("JSON support is not enabled");
+  LIEF_WARN("JSON support not enabled");
   return "";
 #endif
 }

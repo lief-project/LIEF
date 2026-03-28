@@ -107,7 +107,7 @@ void DyldInfo::swap(DyldInfo& other) noexcept {
 
 void DyldInfo::rebase_opcodes(buffer_t raw) {
   if (raw.size() > rebase_opcodes_.size()) {
-    LIEF_WARN("Can't update rebase opcodes. The provided data is larger than the original ones");
+    LIEF_WARN("Rebase opcodes update failed: data exceeds original size");
     return;
   }
   std::move(std::begin(raw), std::end(raw), rebase_opcodes_.data());
@@ -118,7 +118,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
   static constexpr char tab[] = "    ";
 
   if (binary_ == nullptr) {
-    LIEF_WARN("Can't print rebase opcode");
+    LIEF_WARN("Failed to print rebase opcode");
     return "";
   }
 
@@ -165,7 +165,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
           if (auto val = rebase_stream.read_uleb128()) {
             segment_offset = *val;
           } else {
-            LIEF_ERR("Can't read REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB segment offset");
+            LIEF_ERR("Failed to read REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB segment offset");
             break;
           }
 
@@ -185,7 +185,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
           if (auto res = rebase_stream.read_uleb128()) {
             val = *res;
           } else {
-            LIEF_ERR("Can't read REBASE_OPCODE_ADD_ADDR_ULEB segment offset");
+            LIEF_ERR("Failed to read REBASE_OPCODE_ADD_ADDR_ULEB segment offset");
             break;
           }
 
@@ -236,7 +236,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
           if (auto res = rebase_stream.read_uleb128()) {
             count = *res;
           } else {
-            LIEF_ERR("Can't read REBASE_OPCODE_DO_REBASE_ULEB_TIMES count");
+            LIEF_ERR("Failed to read REBASE_OPCODE_DO_REBASE_ULEB_TIMES count");
             break;
           }
 
@@ -282,7 +282,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
           if (auto res = rebase_stream.read_uleb128()) {
             val = *res;
           } else {
-            LIEF_ERR("Can't read REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB value");
+            LIEF_ERR("Failed to read REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB value");
             break;
           }
           segment_offset += val + pint_v;
@@ -304,7 +304,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
           if (auto res = rebase_stream.read_uleb128()) {
             count = *res;
           } else {
-            LIEF_ERR("Can't read REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB count");
+            LIEF_ERR("Failed to read REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB count");
             break;
           }
 
@@ -312,7 +312,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
           if (auto res = rebase_stream.read_uleb128()) {
             skip = *res;
           } else {
-            LIEF_ERR("Can't read REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB skip");
+            LIEF_ERR("Failed to read REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB skip");
             break;
           }
 
@@ -350,7 +350,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
 
 void DyldInfo::bind_opcodes(buffer_t raw) {
   if (raw.size() > bind_opcodes_.size()) {
-    LIEF_WARN("Can't update bind opcodes. The provided data is larger than the original ones");
+    LIEF_WARN("Bind opcodes update failed: data exceeds original size");
     return;
   }
   std::move(std::begin(raw), std::end(raw), bind_opcodes_.data());
@@ -366,7 +366,7 @@ std::string DyldInfo::show_bind_opcodes() const {
 void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opcodes, bool is_lazy) const {
 
   if (binary_ == nullptr) {
-    LIEF_WARN("Can't print bind opcodes");
+    LIEF_WARN("Failed to print bind opcodes");
     return;
   }
 
@@ -434,7 +434,7 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           if (auto res = bind_stream.read_uleb128()) {
             library_ordinal = *res;
           } else {
-            LIEF_ERR("Can't read BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB library ordinal value");
+            LIEF_ERR("Failed to read BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB library ordinal value");
             break;
           }
 
@@ -467,7 +467,7 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           if (auto res = bind_stream.read_string()) {
             symbol_name = std::move(*res);
           } else {
-            LIEF_ERR("Can't read BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM symbol's name");
+            LIEF_ERR("Failed to read BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM symbol name");
             break;
           }
           symbol_flags = imm;
@@ -497,7 +497,7 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           if (auto res = bind_stream.read_sleb128()) {
             addend = *res;
           } else {
-            LIEF_ERR("Can't read BIND_OPCODE_SET_ADDEND_SLEB addend");
+            LIEF_ERR("Failed to read BIND_OPCODE_SET_ADDEND_SLEB addend");
             break;
           }
 
@@ -514,7 +514,7 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           if (auto res = bind_stream.read_uleb128()) {
             segment_offset = *res;
           } else {
-            LIEF_ERR("Can't read BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB segment offset");
+            LIEF_ERR("Failed to read BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB segment offset");
             break;
           }
 
@@ -533,7 +533,7 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           if (auto res = bind_stream.read_uleb128()) {
             val = *res;
           } else {
-            LIEF_ERR("Can't read BIND_OPCODE_ADD_ADDR_ULEB val");
+            LIEF_ERR("Failed to read BIND_OPCODE_ADD_ADDR_ULEB value");
             break;
           }
           segment_offset += val;
@@ -599,7 +599,7 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           if (auto res = bind_stream.read_uleb128()) {
             v = *res;
           } else {
-            LIEF_ERR("Can't read BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB val");
+            LIEF_ERR("Failed to read BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB value");
             break;
           }
           segment_offset += v + pint_v;
@@ -645,7 +645,7 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           if (auto res = bind_stream.read_uleb128()) {
             count = *res;
           } else {
-            LIEF_ERR("Can't read BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB count");
+            LIEF_ERR("Failed to read BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB count");
             break;
           }
 
@@ -653,7 +653,7 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
           if (auto res = bind_stream.read_uleb128()) {
             skip = *res;
           } else {
-            LIEF_ERR("Can't read BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB skip");
+            LIEF_ERR("Failed to read BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB skip");
             break;
           }
 
@@ -701,31 +701,31 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
                   if (segment_offset >= content.size() ||
                       (segment_offset + sizeof(uint64_t)) >= content.size())
                   {
-                    LIEF_WARN("Bad segment offset (0x{:x})", segment_offset);
+                    LIEF_WARN("Invalid segment offset: {:#x}", segment_offset);
                     break;
                   }
                   auto value = *reinterpret_cast<const uint64_t*>(content.data() + segment_offset);
                   bool is_rebase = (value & (static_cast<uint64_t>(1) << 62)) == 0;
 
                   if (is_rebase) {
-                    output << tab << tab << fmt::format("rebase({}, {}, 0x{:x})\n",
+                    output << tab << tab << fmt::format("rebase({}, {}, {:#x})\n",
                         "THREADED_REBASE", current_segment.name(), segment_offset);
                   } else {
                     uint16_t ordinal = value & 0xFFFF;
                     if (ordinal >= ordinal_table_size || ordinal >= ordinal_table.size()) {
-                      LIEF_WARN("bind ordinal ({:d}) is out of range (max={:d}) for disk pointer 0x{:04x} in "
-                                "segment '{}' (segment offset: 0x{:04x})", ordinal, ordinal_table_size, value,
+                      LIEF_WARN("Bind ordinal {:d} out of range (max {:d}) at {:#06x} in "
+                                "segment '{}' (offset: {:#06x})", ordinal, ordinal_table_size, value,
                                 current_segment.name(), segment_offset);
                       break;
                     }
                     if (address < current_segment.virtual_address() ||
                         address >= (current_segment.virtual_address() + current_segment.virtual_size())) {
-                      LIEF_WARN("Bad binding address");
+                      LIEF_WARN("Invalid binding address");
                       break;
                     }
                     const ThreadedBindData& th_bind_data = ordinal_table[ordinal];
                     const int64_t library_ordinal = th_bind_data.library_ordinal;
-                    output << tab << tab << fmt::format("threaded_bind({}/{}, 0x{:x}, {}, {}, library_ordinal={}, "
+                    output << tab << tab << fmt::format("threaded_bind({}/{}, {:#x}, {}, {}, library_ordinal={}, "
                                                         "addend={}, is_weak_import={})\n",
                         "THREADED_BIND", to_string(DyldBindingInfo::TYPE(th_bind_data.type)), segment_offset,
                         current_segment.name(), th_bind_data.symbol_name,
@@ -737,7 +737,7 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
                   value &= ~(1ull << 62);
                   delta = (value & 0x3FF8000000000000) >> 51;
                   segment_offset += delta * sizeof(pint_v);
-                  output << tab << tab << fmt::format("Segment Offset += 0x{:x} (0x{:x})\n", delta * sizeof(pint_v), segment_offset);
+                  output << tab << tab << fmt::format("Segment Offset += {:#x} ({:#x})\n", delta * sizeof(pint_v), segment_offset);
                 } while (delta != 0);
                 break;
               }
@@ -747,13 +747,13 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
                 output << tab << std::string("[") + to_string(subopcode) + "]\n";
                 auto val = bind_stream.read_uleb128();
                 if (!val) {
-                  LIEF_ERR("Can't read BIND_SUBOPCODE_THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB count");
+                  LIEF_ERR("Failed to read BIND_SUBOPCODE_THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB count");
                   break;
                 }
                 count = *val;
                 if (count > MAX_COUNT) {
-                  LIEF_ERR("BIND_SUBOPCODE_THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB"
-                           "count is too large ({})", *val);
+                  LIEF_ERR("BIND_SUBOPCODE_THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB "
+                           "count too large: {}", *val);
                   break;
                 }
                 ordinal_table_size = count + 1; // the +1 comes from: 'ld64 wrote the wrong value here and we need to offset by 1 for now.'
@@ -768,8 +768,8 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
 
       default:
         {
-          LIEF_ERR("Unsupported opcode: 0x{:x}", static_cast<uint32_t>(opcode));
-          output << fmt::format("[UNKNOWN OP 0x{:x}]\n", static_cast<uint32_t>(opcode));
+          LIEF_ERR("Unsupported opcode: {:#x}", static_cast<uint32_t>(opcode));
+          output << fmt::format("[UNKNOWN OP {:#x}]\n", static_cast<uint32_t>(opcode));
           break;
         }
       }
@@ -781,7 +781,7 @@ void DyldInfo::show_bindings(std::ostream& output, span<const uint8_t> bind_opco
 
 void DyldInfo::weak_bind_opcodes(buffer_t raw) {
   if (raw.size() > weak_bind_opcodes_.size()) {
-    LIEF_WARN("Can't update weak bind opcodes. The provided data is larger than the original ones");
+    LIEF_WARN("Weak bind opcodes update failed: data exceeds original size");
     return;
   }
   std::move(std::begin(raw), std::end(raw), weak_bind_opcodes_.data());
@@ -798,7 +798,7 @@ std::string DyldInfo::show_weak_bind_opcodes() const {
 // ============
 void DyldInfo::lazy_bind_opcodes(buffer_t raw) {
   if (raw.size() > lazy_bind_opcodes_.size()) {
-    LIEF_WARN("Can't update lazy bind opcodes. The provided data is larger than the original ones");
+    LIEF_WARN("Lazy bind opcodes update failed: data exceeds original size");
     return;
   }
   std::move(std::begin(raw), std::end(raw), lazy_bind_opcodes_.data());
@@ -814,7 +814,7 @@ std::string DyldInfo::show_lazy_bind_opcodes() const {
 // ===========
 std::string DyldInfo::show_export_trie() const {
   if (binary_ == nullptr) {
-    LIEF_WARN("Can't print bind opcodes");
+    LIEF_WARN("Failed to print bind opcodes");
     return "";
   }
 
@@ -835,7 +835,7 @@ void DyldInfo::show_trie(std::ostream& output, std::string output_prefix, Binary
 
 void DyldInfo::export_trie(buffer_t raw) {
   if (raw.size() > export_trie_.size()) {
-    LIEF_WARN("Can't update the export trie. The provided data is larger than the original ones");
+    LIEF_WARN("Export trie update failed: data exceeds original size");
     return;
   }
   std::move(std::begin(raw), std::end(raw), export_trie_.data());
@@ -889,7 +889,7 @@ DyldInfo& DyldInfo::update_rebase_info(vector_iostream& stream) {
       if (rebase->address() < current_segment_start || rebase->address() >= current_segment_end) {
         SegmentCommand* segment = rebase->segment();
         if (segment == nullptr) {
-          LIEF_ERR("No segment associated with the RebaseInfo. Can't update!");
+          LIEF_ERR("No segment associated with RebaseInfo");
           return *this;
         }
         size_t index = segment->index();
@@ -1086,14 +1086,14 @@ DyldInfo& DyldInfo::update_rebase_info(vector_iostream& stream) {
 
       default:
         {
-          LIEF_ERR("Unknown opcode: 0x{:x}", static_cast<uint32_t>(inst.opcode));
+          LIEF_ERR("Unknown opcode: {:#x}", static_cast<uint32_t>(inst.opcode));
         }
     }
 
   }
   raw_output.align(pint_size);
   if (raw_output.size() > rebase_opcodes_.size()) {
-    LIEF_INFO("New rebase opcodes are larger than the original ones: 0x{:06x} -> 0x{:06x}",
+    LIEF_INFO("New rebase opcodes exceed original size: {:#08x} -> {:#08x}",
               rebase_opcodes_.size(), raw_output.size());
   }
   stream.write(std::move(raw_output.raw()));
@@ -1178,9 +1178,9 @@ DyldInfo& DyldInfo::update_binding_info(vector_iostream& stream, details::dyld_i
     }
     cmd.bind_size = stream.size() - cmd.bind_off;
 
-    // LIEF_DEBUG("LC_DYLD_INFO.bind_off : 0x{:06x} -> 0x{:06x}",
+    // LIEF_DEBUG("LC_DYLD_INFO.bind_off : {:#08x} -> {:#08x}",
     //            this->bind().first, cmd.bind_off);
-    // LIEF_DEBUG("LC_DYLD_INFO.bind_off : 0x{:06x} -> 0x{:06x}",
+    // LIEF_DEBUG("LC_DYLD_INFO.bind_off : {:#08x} -> {:#08x}",
     //            this->bind().second, cmd.bind_size);
   }
   if (!weak_binds.empty()) {
@@ -1243,7 +1243,7 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
       if (info->address() < current_segment_start || current_segment_end <= info->address()) {
         SegmentCommand* segment = info->segment();
         if (segment == nullptr) {
-          LIEF_ERR("No segment associated the weak binding information. Can't update");
+          LIEF_ERR("No segment associated with weak binding info");
           return *this;
         }
 
@@ -1441,7 +1441,7 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
 
       default:
         {
-          LIEF_WARN("Opcode {} ({:d}) is not processed for weak bindings",
+          LIEF_WARN("Unhandled opcode {} ({:d}) for weak bindings",
               to_string(static_cast<BIND_OPCODES>(inst.opcode)), inst.opcode);
           break;
         }
@@ -1449,7 +1449,7 @@ DyldInfo& DyldInfo::update_weak_bindings(const DyldInfo::bind_container_t& bindi
   }
   raw_output.align(pint_size);
   if (raw_output.size() > weak_bind_opcodes_.size()) {
-    LIEF_INFO("New WEAK bind opcodes are larger than the original ones: 0x{:06x} -> 0x{:06x}",
+    LIEF_INFO("New weak bind opcodes exceed original size: {:#08x} -> {:#08x}",
               weak_bind_opcodes_.size(), raw_output.size());
   }
   stream.write(std::move(raw_output.raw()));
@@ -1462,7 +1462,7 @@ DyldInfo& DyldInfo::update_lazy_bindings(const DyldInfo::bind_container_t& bindi
   for (DyldBindingInfo* info : bindings) {
     SegmentCommand* segment = info->segment();
     if (segment == nullptr) {
-      LIEF_ERR("No segment associated with the lazy binding info. Can't update");
+      LIEF_ERR("No segment associated with lazy binding info");
       return *this;
     }
     size_t index = segment->index();
@@ -1491,7 +1491,7 @@ DyldInfo& DyldInfo::update_lazy_bindings(const DyldInfo::bind_container_t& bindi
     uint64_t flags = info->is_weak_import() ? BIND_SYMBOL_FLAGS::WEAK_IMPORT : 0;
     flags |= info->is_non_weak_definition() ? BIND_SYMBOL_FLAGS::NON_WEAK_DEFINITION : 0;
     if (!info->has_symbol()) {
-      LIEF_ERR("Missing symbol. Can't update");
+      LIEF_ERR("Missing symbol for update");
       return *this;
     }
     raw_output
@@ -1505,10 +1505,10 @@ DyldInfo& DyldInfo::update_lazy_bindings(const DyldInfo::bind_container_t& bindi
 
   raw_output.align(binary_->pointer_size());
 
-  LIEF_DEBUG("size: 0x{:x} vs 0x{:x}", raw_output.size(), lazy_bind_opcodes_.size());
+  LIEF_DEBUG("Lazy bind size: {:#x} vs {:#x}", raw_output.size(), lazy_bind_opcodes_.size());
 
   if (raw_output.size() > lazy_bind_opcodes_.size()) {
-    LIEF_INFO("New LAZY bind opcodes are larger than the original ones: 0x{:06x} -> 0x{:06x}",
+    LIEF_INFO("New lazy bind opcodes exceed original size: {:#08x} -> {:#08x}",
               lazy_bind_opcodes_.size(), raw_output.size());
   }
   stream.write(std::move(raw_output.raw()));
@@ -1595,7 +1595,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
       if (info->address() < current_segment_start || info->address() >= current_segment_end) {
         SegmentCommand* segment = info->segment();
         if (segment == nullptr) {
-          LIEF_ERR("Can't find the segment. Can't update binding v1");
+          LIEF_ERR("Segment not found for v1 binding update");
           return *this;
         }
         size_t index = segment->index();
@@ -1792,7 +1792,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
 
       default:
         {
-          LIEF_WARN("Opcode {} ({:d}) is not processed for weak bindings",
+          LIEF_WARN("Unhandled opcode {} ({:d}) for weak bindings",
               to_string(static_cast<BIND_OPCODES>(inst.opcode)), inst.opcode);
           break;
         }
@@ -1800,7 +1800,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(const DyldInfo::bind_container_t
   }
   raw_output.align(pint_size);
   if (raw_output.size() > bind_opcodes_.size()) {
-    LIEF_INFO("New REGULAR bind opcodes are larger than the original ones: 0x{:06x} -> 0x{:06x}",
+    LIEF_INFO("New regular bind opcodes exceed original size: {:#08x} -> {:#08x}",
               bind_opcodes_.size(), raw_output.size());
   }
   stream.write(std::move(raw_output.raw()));
@@ -1867,7 +1867,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(const DyldInfo::bind_container_t
       address = info->address();
       SegmentCommand* segment = info->segment();
       if (segment == nullptr) {
-        LIEF_ERR("Can't find the segment associated with the binding info. Can't udpate binding v2");
+        LIEF_ERR("Segment not found for v2 binding update");
         return *this;
       }
       size_t index = segment->index();
@@ -1942,7 +1942,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(const DyldInfo::bind_container_t
       return *this;
     }
     if (address % 8 != 0) {
-      LIEF_WARN("Address not aligned!");
+      LIEF_WARN("Address not aligned");
     }
 
     bool new_segment = false;
@@ -2099,7 +2099,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(const DyldInfo::bind_container_t
   raw_output.align(pint_size);
 
   if (raw_output.size() > bind_opcodes_.size()) {
-    LIEF_INFO("New REGULAR V2 bind opcodes are larger than the original ones: 0x{:06x} -> 0x{:06x}",
+    LIEF_INFO("New regular v2 bind opcodes exceed original size: {:#08x} -> {:#08x}",
               bind_opcodes_.size(), raw_output.size());
   }
   stream.write(std::move(raw_output.raw()));
@@ -2110,7 +2110,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(const DyldInfo::bind_container_t
 DyldInfo& DyldInfo::update_export_trie(vector_iostream& stream) {
   std::vector<uint8_t> raw_output = create_trie(export_info_, binary_->pointer_size());
   if (raw_output.size() > export_trie_.size()) {
-    LIEF_INFO("New EXPORTS TRIE is larger than the original one: 0x{:06x} -> 0x{:06x}",
+    LIEF_INFO("New export trie exceeds original size: {:#08x} -> {:#08x}",
               export_trie_.size(), raw_output.size());
   }
   stream.write(std::move(raw_output));

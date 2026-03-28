@@ -89,13 +89,13 @@ void RelocationEntry::address(uint64_t address) {
   }
   int32_t delta = address - relocation_->virtual_address();
   if (delta < 0) {
-    LIEF_ERR("Invalid address: 0x{:04x} (base address=0x{:04x})",
+    LIEF_ERR("Invalid address: {:#06x} (base address={:#06x})",
              address, relocation_->virtual_address());
     return;
   }
 
   if (delta > MAX_ADDR) {
-    LIEF_ERR("0x{:04x} does not fit in a 12-bit encoding");
+    LIEF_ERR("{:#06x} does not fit in a 12-bit encoding");
     return;
   }
 
@@ -123,7 +123,7 @@ size_t RelocationEntry::size() const {
 }
 
 void RelocationEntry::size(size_t /*size*/) {
-  LIEF_WARN("Setting size of a PE relocation is not supported!");
+  LIEF_WARN("Setting PE relocation size is not supported");
 }
 
 void RelocationEntry::accept(Visitor& visitor) const {
@@ -131,7 +131,7 @@ void RelocationEntry::accept(Visitor& visitor) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const RelocationEntry& entry) {
-  os << fmt::format("0x{:04x} {:14} 0x{:08x}",
+  os << fmt::format("{:#06x} {:14} {:#010x}",
                     entry.data(), PE::to_string(entry.type()), entry.address());
   return os;
 }

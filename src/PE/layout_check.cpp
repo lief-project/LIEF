@@ -608,7 +608,7 @@ bool LayoutChecker::check_imports() {
                                entry.name();
       // 2 bytes alignment seems sufficient
       if (iat_address % sizeof(uint16_t) != 0) {
-        return error("{}:{} IAT is wrongly aligned: 0x{:08x}",
+        return error("{}:{} IAT is wrongly aligned: {:#010x}",
                      imp.name(), entry_name, entry.iat_address());
       }
 
@@ -623,50 +623,50 @@ bool LayoutChecker::check_imports() {
         const Section* section = pe.section_from_rva(iat_address);
         if (section == nullptr) {
           return error("Can't find section associated with the IAT "
-                       "address: 0x{:08x}", iat_address);
+                       "address: {:#010x}", iat_address);
         }
         /* Not a requirement (even though most of the PE have it)
          * if (!section->has_characteristic(Section::CHARACTERISTICS::CNT_INITIALIZED_DATA)) {
          *   return error(R"err(
-         *     {}:{} IAT: 0x{:08x} -- Missing CNT_INITIALIZED_DATA in the pointed section ('{}')
+         *     {}:{} IAT: {:#010x} -- Missing CNT_INITIALIZED_DATA in the pointed section ('{}')
          *   )err", imp.name(), entry_name, iat_address, section->name());
          * }
          */
 
         if (!section->has_characteristic(Section::CHARACTERISTICS::MEM_READ)) {
           return error(R"err(
-            {}:{} IAT: 0x{:08x} -- Missing MEM_READ in the pointed section ('{}')
+            {}:{} IAT: {:#010x} -- Missing MEM_READ in the pointed section ('{}')
           )err", imp.name(), entry_name, iat_address, section->name());
         }
       } else {
         const Section* section = pe.section_from_rva(iat_address);
         if (section == nullptr) {
           return error("Can't find section associated with the IAT "
-                       "address: 0x{:08x}", iat_address);
+                       "address: {:#010x}", iat_address);
         }
         /*
          * if (!section->has_characteristic(Section::CHARACTERISTICS::CNT_INITIALIZED_DATA)) {
          *   return error(R"err(
-         *     {}:{} IAT: 0x{:08x} -- Missing CNT_INITIALIZED_DATA in the pointed section ('{}')
+         *     {}:{} IAT: {:#010x} -- Missing CNT_INITIALIZED_DATA in the pointed section ('{}')
          *   )err", imp.name(), entry_name, iat_address, section->name());
          * }
          */
 
         if (!section->has_characteristic(Section::CHARACTERISTICS::MEM_READ)) {
           return error(R"err(
-            {}:{} IAT: 0x{:08x} -- Missing MEM_READ in the pointed section ('{}')
+            {}:{} IAT: {:#010x} -- Missing MEM_READ in the pointed section ('{}')
           )err", imp.name(), entry_name, iat_address, section->name());
         }
 
         if (!section->has_characteristic(Section::CHARACTERISTICS::MEM_WRITE)) {
           return error(R"err(
-            {}:{} IAT: 0x{:08x} -- Missing MEM_WRITE in the pointed section ('{}')
+            {}:{} IAT: {:#010x} -- Missing MEM_WRITE in the pointed section ('{}')
           )err", imp.name(), entry_name, iat_address, section->name());
         }
 
         if (!section->has_characteristic(Section::CHARACTERISTICS::CNT_CODE)) {
           return error(R"err(
-            {}:{} IAT: 0x{:08x} -- Missing CNT_CODE in the pointed section ('{}')
+            {}:{} IAT: {:#010x} -- Missing CNT_CODE in the pointed section ('{}')
           )err", imp.name(), entry_name, iat_address, section->name());
         }
       }
@@ -705,21 +705,21 @@ bool LayoutChecker::check_tls() {
 
   for (uint64_t addr : tls->callbacks()) {
     if (addr <= imagebase) {
-      return error("TLS callback: 0x{:016x} not in imagebase range", addr);
+      return error("TLS callback: {:#018x} not in imagebase range", addr);
     }
     const uint64_t rva = addr - imagebase;
     const Section* sec = pe.section_from_rva(rva);
     if (sec == nullptr) {
-      return error("Can't find section associated with TLS callback: 0x{:016x}", addr);
+      return error("Can't find section associated with TLS callback: {:#018x}", addr);
     }
 
     if (!sec->has_characteristic(Section::CHARACTERISTICS::MEM_READ)) {
-      return error("Missing MEM_READ for TLS callback: 0x{:016x} ('{}')", addr,
+      return error("Missing MEM_READ for TLS callback: {:#018x} ('{}')", addr,
                    sec->name());
     }
 
     if (!sec->has_characteristic(Section::CHARACTERISTICS::MEM_EXECUTE)) {
-      return error("Missing MEM_EXECUTE for TLS callback: 0x{:016x} ('{}')", addr,
+      return error("Missing MEM_EXECUTE for TLS callback: {:#018x} ('{}')", addr,
                    sec->name());
     }
   }
@@ -728,8 +728,8 @@ bool LayoutChecker::check_tls() {
   int64_t addr_cbk_rva = addr_cbk - imagebase;
 
   if (addr_cbk > 0 && addr_cbk_rva < 0) {
-    return error("TLS's address of callbacks should be a VA. Addr=0x{:06x}, "
-                 "Imagebase=0x{:016x}", addr_cbk, imagebase);
+    return error("TLS's address of callbacks should be a VA. Addr={:#08x}, "
+                 "Imagebase={:#018x}", addr_cbk, imagebase);
   }
 
   // If the binary is pie, make sure it has relocations for the TLS structures

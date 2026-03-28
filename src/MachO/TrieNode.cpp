@@ -29,7 +29,7 @@ namespace MachO {
 // Mainly inspired from LLVM: lld/lib/ReaderWriter/MachO/MachONormalizedFileBinaryWriter.cpp
 TrieNode& TrieNode::add_symbol(const ExportInfo& info, TrieNode::node_list_t& nodes) {
   if (!info.has_symbol()) {
-    LIEF_ERR("Missing symbol in the Trie node");
+    LIEF_ERR("Missing symbol in trie node");
     return *this;
   }
   const Symbol& sym = *info.symbol();
@@ -111,7 +111,7 @@ TrieNode& TrieNode::add_ordered_nodes(const ExportInfo& info, std::vector<TrieNo
   }
 
   if (!info.has_symbol()) {
-    LIEF_ERR("Missing symbol can process add_ordered_nodes");
+    LIEF_ERR("Missing symbol for add_ordered_nodes");
     return *this;
   }
 

@@ -91,18 +91,18 @@ result<PE_TYPE> get_type_from_stream(BinaryStream& stream) {
   stream.setpos(0);
   auto dos_hdr = stream.read<details::pe_dos_header>();
   if (!dos_hdr) {
-    LIEF_ERR("Can't read the DOS Header structure");
+    LIEF_ERR("Failed to read the DOS header structure");
     return make_error_code(dos_hdr.error());
   }
   stream.setpos(dos_hdr->AddressOfNewExeHeader);
   if (!stream.can_read<details::pe_header>()) {
-    LIEF_ERR("Can't read the PE header");
+    LIEF_ERR("Failed to read the PE header");
     return make_error_code(lief_errors::read_error);
   }
 
   auto header = stream.read<details::pe_header>();
   if (!header) {
-    LIEF_ERR("Can't read the PE header");
+    LIEF_ERR("Failed to read the PE header");
     return make_error_code(header.error());
   }
 
@@ -115,7 +115,7 @@ result<PE_TYPE> get_type_from_stream(BinaryStream& stream) {
 
   auto opt_hdr = stream.read<details::pe32_optional_header>();
   if (!opt_hdr) {
-    LIEF_ERR("Can't read the PE optional header");
+    LIEF_ERR("Failed to read the PE optional header");
     return make_error_code(opt_hdr.error());
   }
   const auto type = static_cast<PE_TYPE>(opt_hdr->Magic);
@@ -141,7 +141,7 @@ result<PE_TYPE> get_type_from_stream(BinaryStream& stream) {
     return PE_TYPE::PE32_PLUS;
   }
 
-  LIEF_ERR("Can't determine the PE's type (PE32 / PE32+)");
+  LIEF_ERR("Failed to determine PE type (PE32 / PE32+)");
   return make_error_code(lief_errors::file_format_error);
 }
 
@@ -349,7 +349,7 @@ result<Import> resolve_ordinals(const Import& import, bool strict, bool use_std)
         if (strict) {
           return make_error_code(lief_errors::not_supported);
         }
-        LIEF_DEBUG("Unable to resolve ordinal: #{:d}", entry.ordinal());
+        LIEF_DEBUG("Failed to resolve ordinal: #{:d}", entry.ordinal());
         continue;
       }
       entry.data(0);

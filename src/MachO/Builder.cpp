@@ -61,7 +61,7 @@ ok_error_t Builder::build() {
 template <typename T>
 ok_error_t Builder::build() {
   if (binaries_.size() > 1) {
-    LIEF_ERR("More than one binary!");
+    LIEF_ERR("More than one binary");
     return make_error_code(lief_errors::build_error);
   }
 
@@ -76,10 +76,10 @@ ok_error_t Builder::build() {
 
     int32_t delta = required_size - original_size;
 
-    LIEF_DEBUG("Original commands size:   0x{:08x}", original_size);
-    LIEF_DEBUG("Required commands size:   0x{:08x}", required_size);
-    LIEF_DEBUG("Delta:                    0x{:08x}", delta);
-    LIEF_DEBUG("available_command_space:  0x{:08x}", binary_->available_command_space_);
+    LIEF_DEBUG("Original commands size:   {:#010x}", original_size);
+    LIEF_DEBUG("Required commands size:   {:#010x}", required_size);
+    LIEF_DEBUG("Delta:                    {:#010x}", delta);
+    LIEF_DEBUG("available_command_space:  {:#010x}", binary_->available_command_space_);
     if (delta > 0) {
       ok_error_t is_ok = binary_->ensure_command_space(delta);
       if (!is_ok) {
@@ -245,7 +245,7 @@ ok_error_t Builder::build_load_commands() {
   const auto& binary = binaries_.back();
   // Check if the number of segments is correct
   if (binary->header().nb_cmds() != binary->commands_.size()) {
-    LIEF_WARN("Error: header.nb_cmds = {:d} vs number of commands #{:d}",
+    LIEF_WARN("Header nb_cmds mismatch: {:d} vs #{:d}",
               binary->header().nb_cmds(), binary->commands_.size());
     return make_error_code(lief_errors::build_error);
   }
@@ -268,7 +268,7 @@ ok_error_t Builder::build_load_commands() {
     const std::unique_ptr<LoadCommand>& command = binary_->commands_[i];
     span<const uint8_t> data = command->data();
 
-    LIEF_DEBUG("Writing command #{:02d} {:30} offset=0x{:08x} size=0x{:08x}",
+    LIEF_DEBUG("Writing command #{:02d} {:30} offset={:#010x} size={:#010x}",
                i, to_string(command->command()), (uint64_t)raw_.tellp(),
                data.size());
 
@@ -294,7 +294,7 @@ ok_error_t Builder::build_uuid() {
   std::copy(std::begin(uuid), std::end(uuid), raw_cmd.uuid);
 
   if (uuid_cmd->size() < sizeof(details::uuid_command)) {
-    LIEF_WARN("Size of original data is different for '{}' -> Skip!", to_string(uuid_cmd->command()));
+    LIEF_WARN("Original data size mismatch for '{}', skipping", to_string(uuid_cmd->command()));
     return make_error_code(lief_errors::build_error);
   }
 
@@ -411,7 +411,7 @@ std::vector<uint8_t> Builder::build_raw(Binary& binary, config_t config) {
 ok_error_t Builder::write(const std::string& filename) const {
   std::ofstream output_file{filename, std::ios::out | std::ios::binary | std::ios::trunc};
   if (!output_file) {
-    LIEF_ERR("Can't write back the LIEF Mach-O object into '{}'", filename);
+    LIEF_ERR("Failed to write Mach-O object to '{}'", filename);
     return make_error_code(lief_errors::build_error);
   }
   return write(output_file);

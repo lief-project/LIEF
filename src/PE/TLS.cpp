@@ -48,9 +48,9 @@ void TLS::accept(LIEF::Visitor& visitor) const {
 
 std::ostream& operator<<(std::ostream& os, const TLS& entry) {
   using namespace fmt;
-  os << format("Address of index:     0x{:016x}\n", entry.addressof_index())
-     << format("Address of callbacks: 0x{:016x}\n", entry.addressof_callbacks())
-     << format("Address of raw data:  [0x{:016x}, 0x{:016x}] ({} bytes)\n",
+  os << format("Address of index:     {:#018x}\n", entry.addressof_index())
+     << format("Address of callbacks: {:#018x}\n", entry.addressof_callbacks())
+     << format("Address of raw data:  [{:#018x}, {:#018x}] ({} bytes)\n",
                entry.addressof_raw_data().first,
                entry.addressof_raw_data().second,
                entry.addressof_raw_data().second -
@@ -65,7 +65,7 @@ std::ostream& operator<<(std::ostream& os, const TLS& entry) {
   if (const std::vector<uint64_t>& cbk = entry.callbacks(); !cbk.empty()) {
      os << format("Callbacks (#{}):\n", cbk.size());
      for (size_t i = 0; i < cbk.size(); ++i) {
-       os << format("  [{:02d}]: 0x{:016x}\n", i, cbk[i]);
+       os << format("  [{:02d}]: {:#018x}\n", i, cbk[i]);
      }
   }
 

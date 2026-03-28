@@ -47,7 +47,7 @@ void Function::accept(Visitor& visitor) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Function& entry) {
-  os << fmt::format("0x{:010x}: {} (0x{:04x} bytes)",
+  os << fmt::format("{:#012x}: {} ({:#06x} bytes)",
                     entry.address(), printable_string(entry.name()),
                     entry.size());
   return os;

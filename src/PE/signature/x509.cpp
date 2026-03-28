@@ -204,7 +204,7 @@ x509::certificates_t x509::parse(const std::string& path) {
 
   std::ifstream cert_fs(path);
   if (!cert_fs) {
-    LIEF_WARN("Can't open {}", path);
+    LIEF_WARN("Failed to open {}", path);
     return {};
   }
   cert_fs.unsetf(std::ios::skipws);
@@ -230,7 +230,7 @@ x509::certificates_t x509::parse(const std::vector<uint8_t>& content) {
     }
     // If ret > 0, it contains the number of certificates that the parser did not
     // manage to parse
-    LIEF_WARN("{} certificates are not parsed", ret);
+    LIEF_WARN("{} certificates were not parsed", ret);
   }
   std::vector<x509> crts;
 
@@ -532,7 +532,7 @@ bool x509::check_signature(const std::vector<uint8_t>& hash, const std::vector<u
 
   auto it_md = LIEF2MBED_MD.find(algo);
   if (it_md == std::end(LIEF2MBED_MD)) {
-    LIEF_ERR("Can't find algorithm {}", to_string(algo));
+    LIEF_ERR("Unsupported algorithm {}", to_string(algo));
     return false;
   }
   mbedtls_pk_context& ctx = x509_cert_->pk;
@@ -554,7 +554,7 @@ bool x509::check_signature(const std::vector<uint8_t>& hash, const std::vector<u
     if (mbedtls_pk_get_type(&ctx) == MBEDTLS_PK_RSA) {
       size_t bitlen = mbedtls_pk_get_bitlen(&ctx);
       if ((bitlen * 8) < 100 || (bitlen * 8) > 2048llu * 10) {
-        LIEF_INFO("RSA Key length is not valid ({} bits)", bitlen * 8);
+        LIEF_INFO("Invalid RSA key length ({} bits)", bitlen * 8);
         return false;
       }
       std::vector<uint8_t> decrypted(bitlen);
@@ -629,7 +629,7 @@ x509::VERIFICATION_FLAGS x509::is_trusted_by(const std::vector<x509>& ca) const 
     mbedtls_strerror(ret, const_cast<char*>(strerr.data()), strerr.size());
     std::string out(1024, 0);
     mbedtls_x509_crt_verify_info(const_cast<char*>(out.data()), out.size(), "", flags);
-    LIEF_WARN("X509 verify failed with: {} (0x{:x})\n{}", strerr, ret, out);
+    LIEF_WARN("X509 verify failed with: {} ({:#x})\n{}", strerr, ret, out);
     result = from_mbedtls_err(flags);
   }
 
@@ -669,7 +669,7 @@ x509::VERIFICATION_FLAGS x509::verify(const x509& ca) const {
     mbedtls_strerror(ret, const_cast<char*>(strerr.data()), strerr.size());
     std::string out(1024, 0);
     mbedtls_x509_crt_verify_info(const_cast<char*>(out.data()), out.size(), "", flags);
-    LIEF_WARN("X509 verify failed with: {} (0x{:x})\n{}", strerr, ret, out);
+    LIEF_WARN("X509 verify failed with: {} ({:#x})\n{}", strerr, ret, out);
     result = from_mbedtls_err(flags);
   }
   return result;

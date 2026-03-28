@@ -76,7 +76,7 @@ Signature::VERIFICATION_FLAGS verify_ts_counter_signature(const SignerInfo& sign
   Signature::VERIFICATION_FLAGS flags = Signature::VERIFICATION_FLAGS::OK;
    const SignerInfo& cs_signer = cs.signer();
   if (cs_signer.cert() == nullptr) {
-    LIEF_WARN("Can't find x509 certificate associated with Counter Signature's signer");
+    LIEF_WARN("Failed to find x509 certificate for counter signature's signer");
     return flags | Signature::VERIFICATION_FLAGS::CERT_NOT_FOUND;
   }
   const x509& cs_cert = *cs_signer.cert();
@@ -167,7 +167,7 @@ std::vector<uint8_t> Signature::hash(const uint8_t* buffer, size_t size, ALGORIT
         std::vector<uint8_t> out(64);
         int ret = mbedtls_sha512(buffer, size, out.data(), /* is384 */ 0);
         if (ret != 0) {
-          LIEF_ERR("Hashing {} bytes with SHA-512 failed! (ret: 0x{:x})", size, ret);
+          LIEF_ERR("Hashing {} bytes with SHA-512 failed (ret: {:#x})", size, ret);
           return {};
         }
         return out;
@@ -178,7 +178,7 @@ std::vector<uint8_t> Signature::hash(const uint8_t* buffer, size_t size, ALGORIT
         std::vector<uint8_t> out(64);
         int ret = mbedtls_sha512(buffer, size, out.data(), /* is384 */ 1);
         if (ret != 0) {
-          LIEF_ERR("Hashing {} bytes with SHA-384 failed! (ret: 0x{:x})", size, ret);
+          LIEF_ERR("Hashing {} bytes with SHA-384 failed (ret: {:#x})", size, ret);
           return {};
         }
         out.resize(48);
@@ -190,7 +190,7 @@ std::vector<uint8_t> Signature::hash(const uint8_t* buffer, size_t size, ALGORIT
         std::vector<uint8_t> out(32);
         int ret = mbedtls_sha256(buffer, size, out.data(), /* is224 */ 0);
         if (ret != 0) {
-          LIEF_ERR("Hashing {} bytes with SHA-256 failed! (ret: 0x{:x})", size, ret);
+          LIEF_ERR("Hashing {} bytes with SHA-256 failed (ret: {:#x})", size, ret);
           return {};
         }
         return out;
@@ -201,7 +201,7 @@ std::vector<uint8_t> Signature::hash(const uint8_t* buffer, size_t size, ALGORIT
         std::vector<uint8_t> out(20);
         int ret = mbedtls_sha1(buffer, size, out.data());
         if (ret != 0) {
-          LIEF_ERR("Hashing {} bytes with SHA-1 failed! (ret: 0x{:x})", size, ret);
+          LIEF_ERR("Hashing {} bytes with SHA-1 failed (ret: {:#x})", size, ret);
           return {};
         }
         return out;
@@ -212,7 +212,7 @@ std::vector<uint8_t> Signature::hash(const uint8_t* buffer, size_t size, ALGORIT
         std::vector<uint8_t> out(16);
         int ret = mbedtls_md5(buffer, size, out.data());
         if (ret != 0) {
-          LIEF_ERR("Hashing {} bytes with MD5 failed! (ret: 0x{:x})", size, ret);
+          LIEF_ERR("Hashing {} bytes with MD5 failed (ret: {:#x})", size, ret);
           return {};
         }
         return out;
@@ -237,7 +237,7 @@ Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const
   }
 
   if (nb_signers > 1) {
-    LIEF_WARN("More than ONE signer ({:d} signers)", nb_signers);
+    LIEF_WARN("More than one signer ({:d} signers)", nb_signers);
     return flags | VERIFICATION_FLAGS::INVALID_SIGNER;
   }
   const SignerInfo& signer = signers_.back();
@@ -270,7 +270,7 @@ Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const
   const ALGORITHMS digest_algo = spc_indirect_data.digest_algorithm();
 
   if (signer.cert() == nullptr) {
-    LIEF_WARN("Can't find certificate for which the issuer is {}", signer.issuer());
+    LIEF_WARN("Failed to find certificate for issuer {}", signer.issuer());
     return flags | VERIFICATION_FLAGS::CERT_NOT_FOUND;
   }
   const x509& cert = *signer.cert();
@@ -332,7 +332,7 @@ Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const
         });
 
     if (it_pkcs9_digest == std::end(auth_attrs)) {
-      LIEF_WARN("Can't find the authenticated attribute: 'pkcs9-message-digest'");
+      LIEF_WARN("Missing authenticated attribute 'pkcs9-message-digest'");
       return flags | VERIFICATION_FLAGS::MISSING_PKCS9_MESSAGE_DIGEST;
     }
 

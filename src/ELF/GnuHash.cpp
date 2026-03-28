@@ -72,7 +72,7 @@ std::unique_ptr<GnuHash> GnuHash::parse(SpanStream& strm, uint64_t dynsymcount) 
   // See: https://github.com/lattera/glibc/blob/master/elf/dl-lookup.c#L860
   // and  https://github.com/lattera/glibc/blob/master/elf/dl-lookup.c#L226
   using uint__  = typename ELF_T::uint;
-  LIEF_DEBUG("== Parse symbol GNU hash ==");
+  LIEF_DEBUG("== Parsing GNU hash ==");
   const uint64_t opos = strm.pos();
 
   auto gnuhash = std::make_unique<GnuHash>();
@@ -81,13 +81,13 @@ std::unique_ptr<GnuHash> GnuHash::parse(SpanStream& strm, uint64_t dynsymcount) 
 
   auto nbuckets = strm.read<uint32_t>();
   if (!nbuckets) {
-    LIEF_ERR("Can't read the number of buckets");
+    LIEF_ERR("Failed to read bucket count");
     return nullptr;
   }
 
   auto symidx = strm.read<uint32_t>();
   if (!symidx) {
-    LIEF_ERR("Can't read the symndx");
+    LIEF_ERR("Failed to read symndx");
     return nullptr;
   }
 
@@ -95,13 +95,13 @@ std::unique_ptr<GnuHash> GnuHash::parse(SpanStream& strm, uint64_t dynsymcount) 
 
   auto maskwords = strm.read<uint32_t>();
   if (!maskwords) {
-    LIEF_ERR("Can't read the maskwords");
+    LIEF_ERR("Failed to read maskwords");
     return nullptr;
   }
 
   auto shift2 = strm.read<uint32_t>();
   if (!shift2) {
-    LIEF_ERR("Can't read the shift2");
+    LIEF_ERR("Failed to read shift2");
     return nullptr;
   }
   gnuhash->shift2_ = *shift2;
@@ -115,17 +115,17 @@ std::unique_ptr<GnuHash> GnuHash::parse(SpanStream& strm, uint64_t dynsymcount) 
     std::copy(bloom_filters.begin(), bloom_filters.end(),
               std::back_inserter(gnuhash->bloom_filters_));
   } else {
-    LIEF_ERR("GNU Hash, maskwords corrupted");
+    LIEF_ERR("GNU hash maskwords corrupted");
   }
 
   if (!strm.read_objects(gnuhash->buckets_, *nbuckets)) {
-    LIEF_ERR("GNU Hash, buckets corrupted");
+    LIEF_ERR("GNU hash buckets corrupted");
   }
 
   if (dynsymcount > 0 && dynsymcount >= gnuhash->symbol_index_) {
     const uint32_t nb_hash = dynsymcount - gnuhash->symbol_index_;
     if (!strm.read_objects(gnuhash->hash_values_, nb_hash)) {
-      LIEF_ERR("Can't read hash values (count={})", nb_hash);
+      LIEF_ERR("Failed to read hash values (count={})", nb_hash);
     }
   }
 

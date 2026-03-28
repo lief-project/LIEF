@@ -120,7 +120,7 @@ const Symbol& Symbol::indirect_abs_local() {
 
 std::ostream& operator<<(std::ostream& os, const Symbol& symbol) {
   os << fmt::format(
-    "name={}, type={}, desc={}, value=0x{:08x}, origin={}",
+    "name={}, type={}, desc={}, value={:#010x}, origin={}",
     symbol.name(), symbol.raw_type(), symbol.description(), symbol.value(),
     to_string(symbol.origin())
   );

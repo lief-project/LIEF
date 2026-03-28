@@ -47,7 +47,7 @@ void ResourceAccelerator::accept(Visitor& visitor) const {
 
 std::ostream& operator<<(std::ostream& os, const ResourceAccelerator& acc) {
   const auto& flags = acc.flags_list();
-  os << fmt::format("{} (0x{:04x}) id: 0x{:04x}, flags: {}",
+  os << fmt::format("{} ({:#06x}) id: {:#06x}, flags: {}",
                     acc.ansi_str(), acc.ansi(), acc.id(),
                     fmt::to_string(flags));
   return os;

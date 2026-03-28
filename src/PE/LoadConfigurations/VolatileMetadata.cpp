@@ -30,16 +30,16 @@ std::string VolatileMetadata::to_string() const {
   using namespace fmt;
   static constexpr auto WIDTH = 30;
   std::ostringstream os;
-  os << format("{:{}}: 0x{:08x}\n", "Size", WIDTH, size())
-     << format("{:{}}: {} (0x{:04x})\n", "Min version", WIDTH,
+  os << format("{:{}}: {:#010x}\n", "Size", WIDTH, size())
+     << format("{:{}}: {} ({:#06x})\n", "Min version", WIDTH,
                min_version() & 0x7FFF, min_version())
-     << format("{:{}}: {} (0x{:04x})\n", "Max version", WIDTH,
+     << format("{:{}}: {} ({:#06x})\n", "Max version", WIDTH,
                max_version() & 0x7FFF, max_version())
-     << format("{:{}}: 0x{:08x}\n", "Volatile access table RVA", WIDTH,
+     << format("{:{}}: {:#010x}\n", "Volatile access table RVA", WIDTH,
                access_table_rva())
      << format("{:{}}: {}\n", "Volatile access table size", WIDTH,
                access_table_size())
-     << format("{:{}}: 0x{:08x}\n", "Volatile range info table RVA", WIDTH,
+     << format("{:{}}: {:#010x}\n", "Volatile range info table RVA", WIDTH,
                info_range_rva())
      << format("{:{}}: {}\n", "Volatile range info table size", WIDTH,
                info_ranges_size());
@@ -47,7 +47,7 @@ std::string VolatileMetadata::to_string() const {
   if (const auto& rva_table = access_table(); !rva_table.empty()) {
     os << "\nVolatile Access RVA Table: {\n";
     for (uint32_t rva : rva_table) {
-      os << format("  0x{:08x}\n", rva);
+      os << format("  {:#010x}\n", rva);
     }
     os << "}\n";
   }
@@ -55,7 +55,7 @@ std::string VolatileMetadata::to_string() const {
   if (auto ranges = info_ranges(); !ranges.empty()) {
     os << "\nVolatile Info Range Table: {\n";
     for (const range_t& range : ranges) {
-      os << format("  [0x{:08x}, 0x{:08x}] ({} bytes)\n", range.start,
+      os << format("  [{:#010x}, {:#010x}] ({} bytes)\n", range.start,
                    range.end(), range.size);
     }
     os << "}\n";

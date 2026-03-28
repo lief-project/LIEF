@@ -38,7 +38,7 @@ void AtomInfo::accept(Visitor& visitor) const {
 
 std::ostream& AtomInfo::print(std::ostream& os) const {
   LoadCommand::print(os) << '\n';
-  os << fmt::format("offset=0x{:06}, size=0x{:06x}",
+  os << fmt::format("offset={:#08x}, size={:#08x}",
                      data_offset(), data_size()) << '\n';
   return os;
 }

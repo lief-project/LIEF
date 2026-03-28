@@ -397,7 +397,7 @@ Note::create(BinaryStream& stream, std::string section_name,
   }
 
   const auto namesz = *res_namesz;
-  LIEF_DEBUG("[0x{:06x}] Name size: 0x{:x}", pos, namesz);
+  LIEF_DEBUG("[{:#08x}] Name size: {:#x}", pos, namesz);
 
   auto res_descz = stream.read<uint32_t>();
   if (!res_descz) {
@@ -405,7 +405,7 @@ Note::create(BinaryStream& stream, std::string section_name,
   }
 
   uint32_t descsz = std::min(*res_descz, MAX_NOTE_DESCRIPTION);
-  LIEF_DEBUG("Description size: 0x{:x}", descsz);
+  LIEF_DEBUG("Description size: {:#x}", descsz);
 
   auto res_type = stream.read<uint32_t>();
   if (!res_type) {
@@ -413,14 +413,14 @@ Note::create(BinaryStream& stream, std::string section_name,
   }
 
   uint32_t type = *res_type;
-  LIEF_DEBUG("Type: 0x{:x}", type);
+  LIEF_DEBUG("Type: {:#x}", type);
 
   if (namesz == 0) { // System reserves
     return nullptr;
   }
   std::vector<uint8_t> name_buffer(namesz, 0);
   if (!stream.read_data(name_buffer, namesz)) {
-    LIEF_ERR("Can't read note name");
+    LIEF_ERR("Failed to read note name");
     return nullptr;
   }
 
@@ -462,7 +462,7 @@ Note::create(const std::string& name, Note::TYPE ntype, description_t descriptio
   auto res_owner = type_owner(ntype);
   if (res_owner) {
     if (!name.empty() && strip_zero(name) != *res_owner) {
-      LIEF_WARN("The note owner of '{}' should be '{}' while '{}' is provided",
+      LIEF_WARN("Note owner for '{}' should be '{}' but '{}' was provided",
                  to_string(ntype), *res_owner, name);
     }
     owner = *res_owner;
@@ -470,14 +470,14 @@ Note::create(const std::string& name, Note::TYPE ntype, description_t descriptio
     if (!name.empty()) {
       owner = name;
     } else {
-      LIEF_ERR("Note owner name can't be resolved!");
+      LIEF_ERR("Failed to resolve note owner name");
       return nullptr;
     }
   }
 
   auto int_type = raw_type(owner, ntype);
   if (!int_type) {
-    LIEF_ERR("Can't determine the raw type of note '{}' for the owner '{}'",
+    LIEF_ERR("Failed to determine raw type for note '{}' with owner '{}'",
              to_string(ntype), owner);
     return nullptr;
   }
@@ -606,7 +606,7 @@ Note::create(const std::string& name, uint32_t type, description_t description,
 {
   auto conv = Note::convert_type(ftype, type, name);
   if (!conv) {
-    LIEF_DEBUG("Note type: 0x{:x} is not supported for owner: '{}'", type, name);
+    LIEF_DEBUG("Unsupported note type {:#x} for owner '{}'", type, name);
     return std::unique_ptr<Note>(new Note(name, Note::TYPE::UNKNOWN, type,
                                   std::move(description), std::move(section_name)));
   }
@@ -631,7 +631,7 @@ void Note::accept(Visitor& visitor) const {
 
 void Note::dump(std::ostream& os) const {
   std::string note_name = printable_string(name());
-  os << fmt::format("{}(0x{:04x}) '{}' [{}]",
+  os << fmt::format("{}({:#06x}) '{}' [{}]",
                     to_string(type()), original_type(), note_name,
                     to_hex(description(), 10));
 }

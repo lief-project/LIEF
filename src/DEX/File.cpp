@@ -124,9 +124,9 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
         case OPCODES::OP_IGET_QUICK:
           {
             LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
-            LIEF_TRACE("[{:06x}] iget-quick -> iget@0x{:x}", dex_pc, value);
+            LIEF_TRACE("[{:06x}] iget-quick -> iget@{:#x}", dex_pc, value);
             if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iget-quick)",
+              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iget-quick)",
                         method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
@@ -140,7 +140,7 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
             LIEF_TRACE("[{:06x}] iget-wide-quick -> iget-wide@{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iget-wide-quick)",
+              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iget-wide-quick)",
                         method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
@@ -153,7 +153,7 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
             LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
             LIEF_TRACE("[{:06x}] iget-object-quick -> iget-object@{:d}", dex_pc, value);
             if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iget-object-quick)",
+              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iget-object-quick)",
                         method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
@@ -166,7 +166,7 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
             LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
             LIEF_TRACE("[{:06x}] iput-quick -> iput@{:d}", dex_pc, value);
             if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iput-quick)",
+              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iput-quick)",
                   method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
@@ -179,7 +179,7 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
             LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
             LIEF_TRACE("[{:06x}] iput-wide-quick -> iput-wide@{:d}", dex_pc, value);
             if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iput-wide-quick)",
+              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iput-wide-quick)",
                         method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
@@ -192,7 +192,7 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
             LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
             LIEF_TRACE("[{:06x}] iput-object-quick -> iput-objecte@{:d}", dex_pc, value);
             if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iput-object-quick)",
+              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iput-object-quick)",
                         method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
@@ -206,7 +206,7 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
             LIEF_TRACE("[{:06x}] invoke-virtual-quick -> invoke-virtual@{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (invoke-virtual-quick)",
+              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (invoke-virtual-quick)",
                   method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
@@ -220,7 +220,7 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
             LIEF_TRACE("[{:06x}] invoke-virtual-quick/range -> invoke-virtual/range @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (invoke-virtual-quick/range)",
+              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (invoke-virtual-quick/range)",
                         method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
@@ -234,7 +234,7 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
             LIEF_TRACE("[{:06x}] iput-boolean-quick -> iput-boolean@{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iput-boolean-quick)",
+              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iput-boolean-quick)",
                         method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
@@ -248,7 +248,7 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
             LIEF_TRACE("[{:06x}] iput-byte-quick -> iput-byte @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iput-byte-quick)",
+              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iput-byte-quick)",
                   method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
@@ -262,7 +262,7 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
             LIEF_TRACE("[{:06x}] iput-char-quick -> iput-char @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iput-char-quick)",
+              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iput-char-quick)",
                         method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
@@ -276,7 +276,7 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
             LIEF_TRACE("[{:06x}] iput-short-quick -> iput-short @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iput-short)",
+              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iput-short)",
                         method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
@@ -290,7 +290,7 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
             LIEF_TRACE("[{:06x}] iget-boolean-quick -> iget-boolean @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iget-boolean-quick)",
+              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iget-boolean-quick)",
                         method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
@@ -304,7 +304,7 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
             LIEF_TRACE("[{:06x}] iget-byte-quick -> iget-byte @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iget-byte-quick)",
+              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iget-byte-quick)",
                         method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
@@ -318,7 +318,7 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
             LIEF_TRACE("[{:06x}] iget-char-quick -> iget-char @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iget-char-quick)",
+              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iget-char-quick)",
                         method->cls()->fullname(), method->name(), dex_pc);
               break;
             }
@@ -332,7 +332,7 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
             LIEF_TRACE("[{:06x}] iget-short-quick -> iget-short @{:d}", dex_pc, value);
 
             if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unable to resolve instruction: {}.{} at 0x{:04x} (iget-short-quick)",
+              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iget-short-quick)",
                         method->cls()->fullname(), method->name(), dex_pc);
               break;
             }

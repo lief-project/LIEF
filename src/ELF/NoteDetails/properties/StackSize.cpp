@@ -20,7 +20,7 @@ namespace LIEF {
 namespace ELF {
 
 void StackSize::dump(std::ostream &os) const {
-  os << fmt::format("Size: 0x{:04x}", stack_size());
+  os << fmt::format("Size: {:#06x}", stack_size());
 }
 }
 }

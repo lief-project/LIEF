@@ -41,7 +41,7 @@ size_t Parser::parse_header() {
   imagebase_ = hdr.image_begin;
 
   if (hdr.pointer_size != sizeof(uint32_t) && hdr.pointer_size != sizeof(uint64_t)) {
-    LIEF_WARN("ART Header pointer_size is not consistent");
+    LIEF_WARN("Inconsistent ART header pointer size");
     return 0;
   }
   file_->header_ = &hdr;

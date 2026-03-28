@@ -81,7 +81,7 @@ void ExportInfo::accept(Visitor& visitor) const {
 std::ostream& operator<<(std::ostream& os, const ExportInfo& info) {
   const ExportInfo::flag_list_t& flags = info.flags_list();
   os << fmt::format(
-    "offset=0x{:x}, flags={}, address=0x{:x}, kind={}",
+    "offset={:#x}, flags={}, address={:#x}, kind={}",
     info.node_offset(), flags, info.address(), info.kind()
   );
   if (const Symbol* sym = info.symbol()) {

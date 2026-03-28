@@ -79,7 +79,7 @@ void Parser::parse_dex_files() {
     const auto dex_hdr = *res_dex_hdr;
     const auto* data = stream_->peek_array<uint8_t>(current_offset, dex_hdr.file_size);
     if (data == nullptr) {
-      LIEF_WARN("File #{:d} is corrupted!", i);
+      LIEF_WARN("File #{:d} is corrupted", i);
       continue;
     }
 
@@ -90,7 +90,7 @@ void Parser::parse_dex_files() {
       dexfile->name(name);
       file_->dex_files_.push_back(std::move(dexfile));
     } else {
-      LIEF_WARN("File #{:d} is not a dex file!", i);
+      LIEF_WARN("File #{:d} is not a DEX file", i);
     }
     current_offset += dex_hdr.file_size;
     current_offset = align(current_offset, sizeof(uint32_t));
@@ -104,7 +104,7 @@ void Parser::parse_verifier_deps() {
 
   uint64_t deps_offset = align(sizeof(vdex_header) + file_->header().dex_size(), sizeof(uint32_t));
 
-  LIEF_DEBUG("Parsing Verifier deps at 0x{:x}", deps_offset);
+  LIEF_DEBUG("Parsing verifier deps at {:#x}", deps_offset);
 
   // 1. String table
   // ===============
@@ -124,7 +124,7 @@ void Parser::parse_quickening_info<details::VDEX6>() {
   quickening_offset += file_->header().verifier_deps_size();
   quickening_offset = align(quickening_offset, sizeof(uint32_t));
 
-  LIEF_DEBUG("Parsing Quickening Info at 0x{:x}", quickening_offset);
+  LIEF_DEBUG("Parsing quickening info at {:#x}", quickening_offset);
 
   if (file_->header().quickening_info_size() == 0) {
     LIEF_DEBUG("No quickening info");
@@ -137,7 +137,7 @@ void Parser::parse_quickening_info<details::VDEX6>() {
     for (size_t i = 0; i < dex_file.header().nb_classes(); ++i) {
       DEX::Class* cls = dex_file.get_class(i);
       if (cls == nullptr) {
-        LIEF_WARN("Class is null!");
+        LIEF_WARN("Null class reference");
         continue;
       }
       for (DEX::Method& method : cls->methods()) {
@@ -230,7 +230,7 @@ void Parser::parse_quickening_info<details::VDEX10>() {
   quickening_base += file_->header().verifier_deps_size();
   quickening_base = align(quickening_base, sizeof(uint32_t));
 
-  LIEF_DEBUG("Parsing Quickening Info at 0x{:x}", quickening_base);
+  LIEF_DEBUG("Parsing quickening info at {:#x}", quickening_base);
 
   if (quickening_size == 0) {
     LIEF_DEBUG("No quickening info");
@@ -242,7 +242,7 @@ void Parser::parse_quickening_info<details::VDEX10>() {
   uint64_t dex_file_indices_off = quickening_base + quickening_size - nb_dex_files * sizeof(uint32_t);
 
   if (nb_dex_files > file_->dex_files_.size()) {
-    LIEF_WARN("Inconsistent number of dex files");
+    LIEF_WARN("Inconsistent DEX file count");
     return;
   }
 

@@ -87,8 +87,8 @@ class LIEF_API Parser : public LIEF::Parser {
   LIEF_LOCAL Parser(std::vector<uint8_t> data, const ParserConfig& conf);
   LIEF_LOCAL Parser();
 
-  LIEF_LOCAL ok_error_t build();
-  LIEF_LOCAL ok_error_t build_fat();
+  LIEF_LOCAL ok_error_t parse();
+  LIEF_LOCAL ok_error_t parse_fat();
 
   LIEF_LOCAL ok_error_t undo_reloc_bindings(uintptr_t base_address);
 

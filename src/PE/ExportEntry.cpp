@@ -40,7 +40,7 @@ void ExportEntry::accept(LIEF::Visitor& visitor) const {
 
 std::ostream& operator<<(std::ostream& os, const ExportEntry& entry) {
   using namespace fmt;
-  os << format("{:04d} {:5} 0x{:08x} {}",
+  os << format("{:04d} {:5} {:#010x} {}",
                entry.ordinal(), entry.is_extern() ? "[EXT]" : "",
                entry.address(), entry.name());
   if (entry.is_forwarded()) {

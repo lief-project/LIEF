@@ -82,7 +82,7 @@ std::vector<uint8_t> RichHeader::hash(ALGORITHMS algo, uint32_t xor_key) const {
 
 std::ostream& operator<<(std::ostream& os, const RichHeader& rich_header) {
   using namespace fmt;
-  os << format("Key: 0x{:08x} ({} entries)\n", rich_header.key(),
+  os << format("Key: {:#010x} ({} entries)\n", rich_header.key(),
                rich_header.entries().size());
   for (const RichEntry& entry : rich_header.entries()) {
     os << "  " << entry << '\n';

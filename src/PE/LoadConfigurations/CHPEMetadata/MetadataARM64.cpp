@@ -384,7 +384,7 @@ std::string CHPEMetadataARM64::to_string() const {
   if (!range_entries_.empty()) {
     oss << "Address Range:\n";
     for (const range_entry_t& entry : code_ranges()) {
-      oss << format("{:>10} [0x{:08x}, 0x{:08x}]\n",
+      oss << format("{:>10} [{:#010x}, {:#010x}]\n",
                     LIEF::PE::to_string(entry.type()), entry.start(), entry.end());
     }
   }
@@ -392,14 +392,14 @@ std::string CHPEMetadataARM64::to_string() const {
   if (!redirection_entries_.empty()) {
     oss << "Arm64X Redirection Metadata Table:\n";
     for (const redirection_entry_t& entry : redirections()) {
-      oss << format("  0x{:08x} --> 0x{:08x}\n", entry.src, entry.dst);
+      oss << format("  {:#010x} --> {:#010x}\n", entry.src, entry.dst);
     }
   }
 
   if (!code_range_entry_point_entries_.empty()) {
     oss << "Arm64X X64 Code Ranges to Entrypoint:\n";
     for (const code_range_entry_point_t& entry : code_range_entry_point()) {
-      oss << format("  [0x{:08x}, 0x{:08x}] --> 0x{:08x}\n",
+      oss << format("  [{:#010x}, {:#010x}] --> {:#010x}\n",
           entry.start_rva, entry.end_rva, entry.entrypoint);
     }
   }

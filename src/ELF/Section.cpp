@@ -78,7 +78,7 @@ Section::TYPE Section::type_from(uint32_t value, ARCH arch) {
 
       default:
         {
-          LIEF_ERR("Arch-specific section: 0x{:08x} is not recognized for {}",
+          LIEF_ERR("Unrecognized arch-specific section {:#010x} for {}",
                    value, to_string(arch));
           return TYPE::SHT_NULL_;
         }
@@ -155,7 +155,7 @@ void Section::size(uint64_t size) {
       node->get().size(size);
     } else {
       if (type() != TYPE::NOBITS) {
-        LIEF_ERR("Node not found. Can't resize the section {}", name());
+        LIEF_ERR("Node not found, cannot resize section '{}'", name());
         std::abort();
       }
     }
@@ -170,7 +170,7 @@ void Section::offset(uint64_t offset) {
       node->get().offset(offset);
     } else {
       if (type() != TYPE::NOBITS) {
-        LIEF_WARN("Node not found. Can't change the offset of the section {}", name());
+        LIEF_WARN("Node not found, cannot change offset of section '{}'", name());
       }
     }
   }
@@ -193,7 +193,7 @@ span<const uint8_t> Section::content() const {
   auto res = datahandler_->get(offset(), size(), DataHandler::Node::SECTION);
   if (!res) {
     if (type() != TYPE::NOBITS) {
-      LIEF_WARN("Section '{}' does not have content", name());
+      LIEF_WARN("Section '{}' has no content", name());
     }
     return {};
   }
@@ -222,24 +222,24 @@ void Section::content(const std::vector<uint8_t>& data) {
   }
 
   if (!data.empty() && type() == TYPE::NOBITS) {
-    LIEF_INFO("You inserted 0x{:x} bytes in section '{}' which has SHT_NOBITS type",
+    LIEF_INFO("Inserted {:#x} bytes in SHT_NOBITS section '{}'",
               data.size(), name());
   }
 
   if (datahandler_ == nullptr) {
-    LIEF_DEBUG("Set 0x{:x} bytes in the cache of section '{}'", data.size(), name());
+    LIEF_DEBUG("Setting {:#x} bytes in cache of section '{}'", data.size(), name());
     content_c_ = data;
     size(data.size());
     return;
   }
 
-  LIEF_DEBUG("Set 0x{:x} bytes in the data handler@0x{:x} of section '{}'",
+  LIEF_DEBUG("Setting {:#x} bytes in data handler@{:#x} of section '{}'",
              data.size(), file_offset(), name());
 
 
   auto res = datahandler_->get(file_offset(), size(), DataHandler::Node::SECTION);
   if (!res) {
-    LIEF_ERR("Can't find the node. The section's content can't be updated");
+    LIEF_ERR("Node not found, section content cannot be updated");
     return;
   }
 
@@ -249,7 +249,7 @@ void Section::content(const std::vector<uint8_t>& data) {
   datahandler_->reserve(node.offset(), data.size());
 
   if (node.size() < data.size()) {
-    LIEF_INFO("You inserted 0x{:x} bytes in the section '{}' which is 0x{:x} wide",
+    LIEF_INFO("Inserted {:#x} bytes in section '{}' which is {:#x} wide",
               data.size(), name(), node.size());
   }
 
@@ -272,23 +272,23 @@ void Section::content(std::vector<uint8_t>&& data) {
     return;
   }
   if (!data.empty() && type() == TYPE::NOBITS) {
-    LIEF_INFO("You inserted 0x{:x} bytes in section '{}' which has SHT_NOBITS type",
+    LIEF_INFO("Inserted {:#x} bytes in SHT_NOBITS section '{}'",
               data.size(), name());
   }
 
   if (datahandler_ == nullptr) {
-    LIEF_DEBUG("Set 0x{:x} bytes in the cache of section '{}'", data.size(), name());
+    LIEF_DEBUG("Setting {:#x} bytes in cache of section '{}'", data.size(), name());
     size(data.size());
     content_c_ = std::move(data);
     return;
   }
 
-  LIEF_DEBUG("Set 0x{:x} bytes in the data handler@0x{:x} of section '{}'",
+  LIEF_DEBUG("Setting {:#x} bytes in data handler@{:#x} of section '{}'",
              data.size(), file_offset(), name());
 
   auto res = datahandler_->get(file_offset(), size(), DataHandler::Node::SECTION);
   if (!res) {
-    LIEF_ERR("Can't find the node. The section's content can't be updated");
+    LIEF_ERR("Node not found, section content cannot be updated");
     return;
   }
   DataHandler::Node& node = res.value();
@@ -297,7 +297,7 @@ void Section::content(std::vector<uint8_t>&& data) {
   datahandler_->reserve(node.offset(), data.size());
 
   if (node.size() < data.size()) {
-    LIEF_INFO("You inserted 0x{:x} bytes in the section '{}' which is 0x{:x} wide",
+    LIEF_INFO("Inserted {:#x} bytes in section '{}' which is {:#x} wide",
               data.size(), name(), node.size());
   }
 
@@ -322,7 +322,7 @@ bool Section::has(Section::FLAGS flag) const {
   size_t id = raw_flag >> uint8_t(FLAGS::_ID_SHIFT_);
 
   if (id > 0 && arch_ == ARCH::NONE) {
-    LIEF_WARN("Missing architecture. Can't determine whether the flag is present");
+    LIEF_WARN("Missing architecture, cannot determine flag presence");
     return false;
   }
 
@@ -370,7 +370,7 @@ Section& Section::clear(uint8_t value) {
   std::vector<uint8_t>& binary_content = datahandler_->content();
   auto res = datahandler_->get(file_offset(), size(), DataHandler::Node::SECTION);
   if (!res) {
-    LIEF_ERR("Can't find the node. The section's content can't be cleared");
+    LIEF_ERR("Node not found, section content cannot be cleared");
     return *this;
   }
   DataHandler::Node& node = res.value();
@@ -398,7 +398,7 @@ std::unique_ptr<SpanStream> Section::stream() const {
 std::ostream& operator<<(std::ostream& os, const Section& section) {
   const auto& flags = section.flags_list();
 
-  os << fmt::format("{} ({}) 0x{:08x}/0x{:08x} 0x{:04x} {} {}",
+  os << fmt::format("{} ({}) {:#010x}/{:#010x} {:#06x} {} {}",
                     section.name(), section.type(), section.virtual_address(),
                     section.file_offset(), section.size(),
                     section.entropy(), fmt::to_string(flags));

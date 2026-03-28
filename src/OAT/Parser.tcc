@@ -290,7 +290,7 @@ void Parser::parse_binary<details::OAT131_t>() {
     parse_type_lookup_table<details::OAT131_t>();
     parse_oat_classes<details::OAT131_t>();
   } else {
-    LIEF_WARN("No VDEX found. Can't parse the OAT Classes and the Lookup Table");
+    LIEF_WARN("No VDEX found, cannot parse OAT classes and lookup table");
   }
 }
 
@@ -314,7 +314,7 @@ void Parser::parse_header() {
   }
   const auto oat_hdr = std::move(*res_oat_hdr);
   oat.header_ = &oat_hdr;
-  LIEF_DEBUG("Nb dex files: #{:d}", oat.header_.nb_dex_files());
+  LIEF_DEBUG("DEX file count: #{:d}", oat.header_.nb_dex_files());
   //LIEF_DEBUG("OAT version: {}", oat_hdr.oat_version);
 
   parse_header_keys<OAT_T>();
@@ -384,13 +384,13 @@ void Parser::parse_type_lookup_table() {
 
 template<typename OAT_T>
 void Parser::parse_oat_classes() {
-  LIEF_DEBUG("Parsing OAT Classes");
+  LIEF_DEBUG("Parsing OAT classes");
   auto& oat = oat_binary();
   for (size_t dex_idx = 0; dex_idx < oat.oat_dex_files_.size(); ++dex_idx) {
     std::unique_ptr<DexFile>& oat_dex_file = oat.oat_dex_files_[dex_idx];
     const DEX::File* dex_file_ptr = oat_dex_file->dex_file();
     if (dex_file_ptr == nullptr) {
-      LIEF_ERR("Can't find the original DEX File associated with the OAT DEX File #{}", dex_idx);
+      LIEF_ERR("Original DEX file not found for OAT DEX file #{}", dex_idx);
       continue;
     }
 
@@ -398,16 +398,16 @@ void Parser::parse_oat_classes() {
 
     const std::vector<uint32_t>& classes_offsets = oat_dex_file->classes_offsets();
     uint32_t nb_classes = dex_file.header().nb_classes();
-    LIEF_DEBUG("Dealing with DexFile #{:d} (#classes: {:d})", dex_idx, nb_classes);
+    LIEF_DEBUG("Processing DEX file #{:d} ({:d} classes)", dex_idx, nb_classes);
 
     for (size_t class_idx = 0; class_idx < nb_classes; ++class_idx) {
       const DEX::Class* cls = dex_file.get_class(class_idx);
       if (cls == nullptr) {
-        LIEF_ERR("Can't find the class at index #{}", class_idx);
+        LIEF_ERR("Class not found at index #{}", class_idx);
         continue;
       }
       if (cls->index() >= classes_offsets.size()) {
-        LIEF_WARN("cls.index() is not valid");
+        LIEF_WARN("Invalid class index");
         continue;
       }
       uint32_t oat_class_offset = classes_offsets[cls->index()];

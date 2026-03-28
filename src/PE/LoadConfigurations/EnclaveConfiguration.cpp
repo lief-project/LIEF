@@ -31,22 +31,22 @@ std::string EnclaveConfiguration::to_string() const {
   using namespace fmt;
   static constexpr auto WIDTH = 39;
   std::ostringstream os;
-  os << format("{:>{}}: 0x{:08x}\n", "Size", WIDTH, size())
-     << format("{:>{}}: 0x{:08x}\n", "Minimum Required Config Size", WIDTH,
+  os << format("{:>{}}: {:#010x}\n", "Size", WIDTH, size())
+     << format("{:>{}}: {:#010x}\n", "Minimum Required Config Size", WIDTH,
                min_required_config_size())
-     << format("{:>{}}: 0x{:08x} (debuggable={})\n", "Policy Flags", WIDTH,
+     << format("{:>{}}: {:#010x} (debuggable={})\n", "Policy Flags", WIDTH,
                policy_flags(), is_debuggable())
      << format("{:>{}}: {}\n", "Number of Enclave Import Descriptors", WIDTH,
                nb_imports())
-     << format("{:>{}}: 0x{:08x}\n", "RVA to enclave imports", WIDTH,
+     << format("{:>{}}: {:#010x}\n", "RVA to enclave imports", WIDTH,
                import_list_rva())
-     << format("{:>{}}: 0x{:04x}\n", "Size of enclave import", WIDTH,
+     << format("{:>{}}: {:#06x}\n", "Size of enclave import", WIDTH,
                import_entry_size())
      << format("{:>{}}: {}\n", "Image version", WIDTH, image_version())
      << format("{:>{}}: {}\n", "Security version", WIDTH, security_version())
-     << format("{:>{}}: 0x{:016x}\n", "Enclave Size", WIDTH, enclave_size())
+     << format("{:>{}}: {:#018x}\n", "Enclave Size", WIDTH, enclave_size())
      << format("{:>{}}: {}\n", "Number of Threads", WIDTH, nb_threads())
-     << format("{:>{}}: 0x{:08x}\n", "Enclave flags", WIDTH, enclave_flags());
+     << format("{:>{}}: {:#010x}\n", "Enclave flags", WIDTH, enclave_flags());
 
   os << format("{:>{}}: {}\n", "Image ID", WIDTH,
                hex_dump(image_id(), /*sep=*/" "));

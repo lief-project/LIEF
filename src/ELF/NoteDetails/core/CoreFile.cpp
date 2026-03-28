@@ -41,7 +41,7 @@ void CoreFile::read_files() {
   }
 
   if (*count > MAX_ENTRIES) {
-    LIEF_ERR("Too many entries ({} while limited at {})", *count, MAX_ENTRIES);
+    LIEF_ERR("Too many entries ({}, limit {})", *count, MAX_ENTRIES);
     return;
   }
 
@@ -128,7 +128,7 @@ void CoreFile::dump(std::ostream& os) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const CoreFile::entry_t& entry) {
-  os << fmt::format("{}: [0x{:04x}, 0x{:04x}]@0x{:x}",
+  os << fmt::format("{}: [{:#06x}, {:#06x}]@{:#x}",
                     entry.path, entry.start, entry.end, entry.file_ofs);
   return os;
 }

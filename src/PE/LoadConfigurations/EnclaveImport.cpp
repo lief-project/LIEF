@@ -30,7 +30,7 @@ std::string EnclaveImport::to_string() const {
 
   std::ostringstream os;
 
-  os << format("{} (RVA: 0x{:08x})\n", import_name(), import_name_rva())
+  os << format("{} (RVA: {:#010x})\n", import_name(), import_name_rva())
      << format("  {:{}}: {}\n", "Minimum Security Version", WIDTH, min_security_version())
      << format("  {:{}}: {}\n", "Reserved", WIDTH, reserved())
      << format("  {:{}}: {}\n", "Type", WIDTH, PE::to_string(type()))

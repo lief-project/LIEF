@@ -27,19 +27,19 @@ std::unique_ptr<AuxiliaryWeakExternal>
 
   auto TagIndex = stream.read<uint32_t>();
   if (!TagIndex) {
-    LIEF_WARN("AuxiliaryWeakExternal error (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliaryWeakExternal field (line: {})", __LINE__);
     return std::make_unique<AuxiliaryWeakExternal>();
   }
 
   auto Characteristics = stream.read<uint32_t>();
   if (!Characteristics) {
-    LIEF_WARN("AuxiliaryWeakExternal error (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliaryWeakExternal field (line: {})", __LINE__);
     return std::make_unique<AuxiliaryWeakExternal>();
   }
 
   std::vector<uint8_t> padding;
   if (!stream.read_data(padding, 10)) {
-    LIEF_WARN("AuxiliaryWeakExternal error (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliaryWeakExternal field (line: {})", __LINE__);
     return std::make_unique<AuxiliaryWeakExternal>();
   }
 

@@ -212,7 +212,7 @@ void Binary::patch_relocations<ARCH::I386>(uint64_t from, uint64_t shift) {
 
       default:
         {
-          LIEF_WARN("Relocation {} not supported!", to_string(type));
+          LIEF_WARN("Relocation {} not supported", to_string(type));
         }
     }
   }
@@ -225,7 +225,7 @@ template<>
 void Binary::patch_relocations<ARCH::X86_64>(uint64_t from, uint64_t shift) {
   for (Relocation& relocation : relocations()) {
     if (relocation.address() >= from) {
-      LIEF_DEBUG("{:23}: 0x{:010x} -> 0x{:010x}",
+      LIEF_DEBUG("{:23}: {:#012x} -> {:#012x}",
           to_string(relocation.type()), relocation.address(),
           relocation.address() + shift);
       relocation.address(relocation.address() + shift);
@@ -433,7 +433,7 @@ void Binary::patch_relocations<ARCH::S390>(uint64_t from, uint64_t shift) {
 template<class T>
 void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift) {
   if (static_cast<uint64_t>(relocation.addend()) >= from) {
-    LIEF_DEBUG("(addend) {:23}: 0x{:010x} -> 0x{:010x}",
+    LIEF_DEBUG("(addend) {:23}: {:#012x} -> {:#012x}",
         to_string(relocation.type()), relocation.addend(),
         relocation.addend() + shift);
     relocation.addend(relocation.addend() + shift);
@@ -442,12 +442,12 @@ void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift)
   const uint64_t address = relocation.address();
   Segment* segment = segment_from_virtual_address(address);
   if (segment == nullptr) {
-    LIEF_ERR("Can't find segment with the virtual address 0x{:x}", address);
+    LIEF_ERR("Can't find segment with the virtual address {:#x}", address);
   }
 
   auto res_offset = virtual_address_to_offset(address);
   if (!res_offset) {
-    LIEF_ERR("Can't convert the virtual address 0x{:06x} into an offset", address);
+    LIEF_ERR("Can't convert the virtual address {:#08x} into an offset", address);
     return;
   }
   const uint64_t relative_offset = *res_offset - segment->file_offset();
@@ -766,7 +766,7 @@ Section* Binary::add_section</*loaded=*/true>(const Section& section,
     return nullptr;
   }
 
-  LIEF_DEBUG("Segment associated: {}@0x{:x}",
+  LIEF_DEBUG("Segment associated: {}@{:#x}",
              to_string(segment_added->type()), segment_added->virtual_address());
 
   auto new_section = std::make_unique<Section>(section);
@@ -848,7 +848,7 @@ void Binary::fix_got_entries(uint64_t from, uint64_t shift) {
   span<const uint8_t> content = get_content_from_virtual_address(addr, 3 * sizeof(ptr_t));
   std::vector<uint8_t> content_vec(content.begin(), content.end());
   if (content.size() != 3 * sizeof(ptr_t)) {
-    LIEF_ERR("Can't read got entries!");
+    LIEF_ERR("Failed to read GOT entries");
     return;
   }
 

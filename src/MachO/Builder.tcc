@@ -206,11 +206,11 @@ ok_error_t Builder::build_segments() {
     segment_header.initprot = static_cast<uint32_t>(segment.init_protection());
     segment_header.nsects   = static_cast<uint32_t>(segment.numberof_sections());
     segment_header.flags    = static_cast<uint32_t>(segment.flags());
-    LIEF_DEBUG("  - Command offset: 0x{:x}", segment.command_offset());
+    LIEF_DEBUG("  - Command offset: {:#x}", segment.command_offset());
 
     span<const uint8_t> content = segment.content();
     if (content.size() != segment.file_size() && !LinkEdit::segmentof(segment)) {
-      LIEF_ERR("{} content size and file_size are differents: 0x{:x} vs 0x{:x}",
+      LIEF_ERR("{} content size and file_size are differents: {:#x} vs {:#x}",
                segment.name(), content.size(), segment.file_size());
 
       return make_error_code(lief_errors::build_error);
@@ -284,7 +284,7 @@ ok_error_t Builder::build(DylibCommand& library) {
   if (library.original_data_.size() < size_needed ||
       library.size() < size_needed)
   {
-    LIEF_WARN("Not enough spaces to rebuild {}. Size required: 0x{:x} vs 0x{:x}",
+    LIEF_WARN("Not enough spaces to rebuild {}. Size required: {:#x} vs {:#x}",
               library.name(),  library.original_data_.size(), size_needed);
   }
 
@@ -329,7 +329,7 @@ ok_error_t Builder::build(DylinkerCommand& linker) {
   if (linker.original_data_.size() < size_needed ||
       linker.size() < size_needed)
   {
-    LIEF_WARN("Not enough spaces to rebuild {}. Size required: 0x{:x} vs 0x{:x}",
+    LIEF_WARN("Not enough spaces to rebuild {}. Size required: {:#x} vs {:#x}",
               linker.name(),  linker.original_data_.size(), size_needed);
   }
 
@@ -430,7 +430,7 @@ ok_error_t Builder::build(RPathCommand& rpath_cmd) {
       rpath_cmd.size() < size_needed)
   {
     LIEF_WARN("Not enough room left to rebuild {}."
-              "required=0x{:x} available=0x{:x}",
+              "required={:#x} available={:#x}",
               rpath_cmd.path(), size_needed, rpath_cmd.original_data_.size());
   }
 
@@ -559,10 +559,10 @@ ok_error_t Builder::build(DyldInfo& dyld_info) {
       raw_cmd.rebase_off += linkedit_offset_;
     }
 
-    LIEF_DEBUG("LC_DYLD_INFO.rebase_off : 0x{:06x} -> 0x{:06x}",
+    LIEF_DEBUG("LC_DYLD_INFO.rebase_off : {:#08x} -> {:#08x}",
                dyld_info.rebase().first, raw_cmd.rebase_off);
 
-    LIEF_DEBUG("LC_DYLD_INFO.rebase_size: 0x{:06x} -> 0x{:06x}",
+    LIEF_DEBUG("LC_DYLD_INFO.rebase_size: {:#08x} -> {:#08x}",
                dyld_info.rebase().second, raw_cmd.rebase_size);
   }
   {
@@ -570,30 +570,30 @@ ok_error_t Builder::build(DyldInfo& dyld_info) {
     if (raw_cmd.bind_size > 0) {
       raw_cmd.bind_off += linkedit_offset_;
 
-      LIEF_DEBUG("LC_DYLD_INFO.bind_off : 0x{:06x} -> 0x{:06x}",
+      LIEF_DEBUG("LC_DYLD_INFO.bind_off : {:#08x} -> {:#08x}",
                  dyld_info.bind().first, raw_cmd.bind_off);
 
-      LIEF_DEBUG("LC_DYLD_INFO.bind_size: 0x{:06x} -> 0x{:06x}",
+      LIEF_DEBUG("LC_DYLD_INFO.bind_size: {:#08x} -> {:#08x}",
                  dyld_info.bind().second, raw_cmd.bind_size);
     }
 
     if (raw_cmd.weak_bind_size > 0) {
       raw_cmd.weak_bind_off += linkedit_offset_;
 
-      LIEF_DEBUG("LC_DYLD_INFO.weak_bind_off : 0x{:06x} -> 0x{:06x}",
+      LIEF_DEBUG("LC_DYLD_INFO.weak_bind_off : {:#08x} -> {:#08x}",
                  dyld_info.weak_bind().first, raw_cmd.weak_bind_off);
 
-      LIEF_DEBUG("LC_DYLD_INFO.weak_bind_size: 0x{:06x} -> 0x{:06x}",
+      LIEF_DEBUG("LC_DYLD_INFO.weak_bind_size: {:#08x} -> {:#08x}",
                  dyld_info.weak_bind().second, raw_cmd.weak_bind_size);
     }
 
     if (raw_cmd.lazy_bind_size > 0) {
       raw_cmd.lazy_bind_off += linkedit_offset_;
 
-      LIEF_DEBUG("LC_DYLD_INFO.lazy_bind_off : 0x{:06x} -> 0x{:06x}",
+      LIEF_DEBUG("LC_DYLD_INFO.lazy_bind_off : {:#08x} -> {:#08x}",
                  dyld_info.lazy_bind().first, raw_cmd.lazy_bind_off);
 
-      LIEF_DEBUG("LC_DYLD_INFO.lazy_bind_size: 0x{:06x} -> 0x{:06x}",
+      LIEF_DEBUG("LC_DYLD_INFO.lazy_bind_size: {:#08x} -> {:#08x}",
                  dyld_info.lazy_bind().second, raw_cmd.lazy_bind_size);
     }
   }
@@ -606,10 +606,10 @@ ok_error_t Builder::build(DyldInfo& dyld_info) {
     if (raw_cmd.export_size > 0) {
       raw_cmd.export_off += linkedit_offset_;
     }
-    LIEF_DEBUG("LC_DYLD_INFO.exports_off : 0x{:06x} -> 0x{:06x}",
+    LIEF_DEBUG("LC_DYLD_INFO.exports_off : {:#08x} -> {:#08x}",
                dyld_info.export_info().first, raw_cmd.export_off);
 
-    LIEF_DEBUG("LC_DYLD_INFO.exports_size: 0x{:06x} -> 0x{:06x}",
+    LIEF_DEBUG("LC_DYLD_INFO.exports_size: {:#08x} -> {:#08x}",
                dyld_info.export_info().second, raw_cmd.export_size);
   }
 
@@ -645,9 +645,9 @@ ok_error_t Builder::build(FunctionStarts& function_starts) {
   raw_cmd.dataoff   += linkedit_offset_;
 
 
-  LIEF_DEBUG("LC_FUNCTION_STARTS.offset: 0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_FUNCTION_STARTS.offset: {:#08x} -> {:#x}",
              function_starts.data_offset(), raw_cmd.dataoff);
-  LIEF_DEBUG("LC_FUNCTION_STARTS.size:   0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_FUNCTION_STARTS.size:   {:#08x} -> {:#x}",
              function_starts.data_size(), raw_cmd.datasize);
 
   function_starts.size_ = sizeof(details::linkedit_data_command);
@@ -819,9 +819,9 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
     raw_nlist_table = nlist_table.raw();
     symtab.symoff = linkedit_offset_ + linkedit_.size();
     symtab.nsyms  = nb_symbols;
-    LIEF_DEBUG("LC_SYMTAB.nlist:      0x{:06x} -> 0x{:x}",
+    LIEF_DEBUG("LC_SYMTAB.nlist:      {:#08x} -> {:#x}",
                symbol_command.symbol_offset(), symtab.symoff);
-    LIEF_DEBUG("LC_SYMTAB.nb_symbols: 0x{:06x} -> 0x{:x}",
+    LIEF_DEBUG("LC_SYMTAB.nb_symbols: {:#08x} -> {:#x}",
                symbol_command.numberof_symbols(), symtab.nsyms);
     linkedit_.write(std::move(raw_nlist_table));
   }
@@ -835,7 +835,7 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
    * Indirect symbol table
    */
   if (dynsym != nullptr) {
-    LIEF_DEBUG("LC_DYSYMTAB.indirectsymoff: 0x{:06x} -> 0x{:x}",
+    LIEF_DEBUG("LC_DYSYMTAB.indirectsymoff: {:#08x} -> {:#x}",
                dynsym->indirect_symbol_offset(), linkedit_offset_ + linkedit_.size());
     dynsym->indirect_symbol_offset(linkedit_offset_ + linkedit_.size());
     size_t count = 0;
@@ -866,16 +866,16 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
         LIEF_ERR("Can't find the symbol index");
       }
     }
-    LIEF_DEBUG("LC_DYSYMTAB.nindirectsyms:    0x{:06x} -> 0x{:x}",
+    LIEF_DEBUG("LC_DYSYMTAB.nindirectsyms:    {:#08x} -> {:#x}",
                dynsym->nb_indirect_symbols(), count);
     dynsym->nb_indirect_symbols(count);
   }
 
   symtab.stroff  = linkedit_offset_ + linkedit_.size();
   symtab.strsize = strtab.size();
-  LIEF_DEBUG("LC_SYMTAB.strtab.offset: 0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_SYMTAB.strtab.offset: {:#08x} -> {:#x}",
              symbol_command.strings_offset(), symtab.stroff);
-  LIEF_DEBUG("LC_SYMTAB.strtab.size:   0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_SYMTAB.strtab.size:   {:#08x} -> {:#x}",
              symbol_command.strings_size(), symtab.strsize);
 
   linkedit_.write(std::move(strtab));
@@ -952,9 +952,9 @@ ok_error_t Builder::build(DataInCode& datacode) {
   raw_cmd.datasize = linkedit_.size() - raw_cmd.dataoff;
   raw_cmd.dataoff  += linkedit_offset_;
 
-  LIEF_DEBUG("LC_DATA_IN_CODE.offset: 0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_DATA_IN_CODE.offset: {:#08x} -> {:#x}",
              datacode.data_offset(), raw_cmd.dataoff);
-  LIEF_DEBUG("LC_DATA_IN_CODE.size:   0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_DATA_IN_CODE.size:   {:#08x} -> {:#x}",
              datacode.data_size(), raw_content.size());
 
   datacode.size_ = sizeof(details::linkedit_data_command);
@@ -984,9 +984,9 @@ ok_error_t Builder::build(CodeSignature& code_signature) {
   raw_cmd.dataoff   = linkedit_offset_ + linkedit_.size();
   raw_cmd.datasize  = sp.size();
 
-  LIEF_DEBUG("LC_CODE_SIGNATURE.offset: 0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_CODE_SIGNATURE.offset: {:#08x} -> {:#x}",
              code_signature.data_offset(), raw_cmd.dataoff);
-  LIEF_DEBUG("LC_CODE_SIGNATURE.size:   0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_CODE_SIGNATURE.size:   {:#08x} -> {:#x}",
              code_signature.data_size(), raw_cmd.datasize);
   linkedit_.write(sp.data(), sp.size());
 
@@ -1007,9 +1007,9 @@ ok_error_t Builder::build(SegmentSplitInfo& ssi) {
 
   span<const uint8_t> raw_content = ssi.content();
 
-  LIEF_DEBUG("LC_SEGMENT_SPLIT_INFO.offset: 0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_SEGMENT_SPLIT_INFO.offset: {:#08x} -> {:#x}",
              ssi.data_offset(), linkedit_offset_ + linkedit_.size());
-  LIEF_DEBUG("LC_SEGMENT_SPLIT_INFO.size:   0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_SEGMENT_SPLIT_INFO.size:   {:#08x} -> {:#x}",
              ssi.data_size(), raw_content.size());
 
   raw_cmd.cmd       = static_cast<uint32_t>(ssi.command());
@@ -1043,7 +1043,7 @@ ok_error_t Builder::build(SubFramework& sf) {
   const uint32_t padding = size_needed - raw_size;
 
   if (sf.original_data_.size() < size_needed || sf.size() < size_needed) {
-    LIEF_WARN("Not enough spaces to rebuild '{}'. Size required: 0x{:x} vs 0x{:x}",
+    LIEF_WARN("Not enough spaces to rebuild '{}'. Size required: {:#x} vs {:#x}",
               sf.umbrella(),  size_needed, sf.original_data_.size());
   }
 
@@ -1082,7 +1082,7 @@ ok_error_t Builder::build(SubClient& sc) {
   const uint32_t padding = size_needed - raw_size;
 
   if (sc.original_data_.size() < size_needed || sc.size() < size_needed) {
-    LIEF_WARN("Not enough spaces to rebuild '{}'. Size required: 0x{:x} vs 0x{:x}",
+    LIEF_WARN("Not enough spaces to rebuild '{}'. Size required: {:#x} vs {:#x}",
               sc.client(),  size_needed, sc.original_data_.size());
   }
 
@@ -1121,7 +1121,7 @@ ok_error_t Builder::build(DyldEnvironment& de) {
 
   if (de.original_data_.size() < size_needed ||
       de.size() < size_needed) {
-    LIEF_WARN("Not enough spaces to rebuild {}. Size required: 0x{:x} vs 0x{:x}",
+    LIEF_WARN("Not enough spaces to rebuild {}. Size required: {:#x} vs {:#x}",
               de.value(),  de.original_data_.size(), size_needed);
   }
 
@@ -1159,14 +1159,14 @@ ok_error_t Builder::build(ThreadCommand& tc) {
   const uint32_t padding = size_needed - raw_size;
 
   if (tc.original_data_.size() < size_needed || tc.size() < size_needed) {
-    LIEF_WARN("Not enough spaces to rebuild 'ThreadCommand'. Size required: 0x{:x} vs 0x{:x}",
+    LIEF_WARN("Not enough spaces to rebuild 'ThreadCommand'. Size required: {:#x} vs {:#x}",
               tc.original_data_.size(), size_needed);
   }
 
   const uint32_t state_size_needed = tc.count() * sizeof(uint32_t);
   if (state.size() < state_size_needed) {
 
-    LIEF_WARN("Not enough spaces to rebuild 'ThreadCommand'. Size required: 0x{:x} vs 0x{:x}",
+    LIEF_WARN("Not enough spaces to rebuild 'ThreadCommand'. Size required: {:#x} vs {:#x}",
               state.size(), state_size_needed);
   }
 
@@ -1225,7 +1225,7 @@ ok_error_t Builder::update_fixups(DyldChainedFixups& command) {
       span<uint8_t> sdata = seg_info.segment.writable_content();
       const uint64_t seg_off = seg_info.segment.file_offset();
 
-      LIEF_DEBUG("0x{:010x}: 0x{:010x} Offset: 0x{:x}", fixup.address(), fixup.target(), fixup.offset_);
+      LIEF_DEBUG("{:#012x}: {:#012x} Offset: {:#x}", fixup.address(), fixup.target(), fixup.offset_);
       const uint64_t rel_offset = fixup.offset_ - seg_off;
       switch (fixup.rtypes_) {
         case RelocationFixup::REBASE_TYPES::ARM64E_AUTH_REBASE:
@@ -1313,7 +1313,7 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
 
   const size_t segs_header_off = lnk_data.size();
   if (fixups.starts_offset() > 0 && segs_header_off != fixups.starts_offset()) {
-    LIEF_INFO("segs_header_off could be wrong!");
+    LIEF_INFO("segs_header_off may be incorrect");
   }
   auto starts_in_segment = fixups.chained_starts_in_segments();
   lnk_data.write<uint32_t>(starts_in_segment.size());
@@ -1369,7 +1369,7 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
     lnk_data.align(8);
     auto* seg_info_offsets = reinterpret_cast<uint32_t*>(lnk_data.raw().data() + segs_info_off);
     seg_info_offsets[seg_idx] = lnk_data.size() - segs_header_off;
-    LIEF_DEBUG("0x{:06x} seg_info_offsets[{}] = 0x{:016x}",
+    LIEF_DEBUG("{:#08x} seg_info_offsets[{}] = {:#018x}",
                segs_info_off + sizeof(uint32_t) * seg_idx,
                seg_idx, seg_info_offsets[seg_idx]);
     lnk_data.write(seg);
@@ -1464,7 +1464,7 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
     for (ChainedBindingInfo* binding : info->elements_) {
       const uint64_t rel_offset = binding->offset_ - binding->segment()->file_offset();
       uint8_t* data_ptr = binding->segment_->writable_content().data() + rel_offset;
-      LIEF_DEBUG("Write binding (offset=0x{:010x}): 0x{:016x} {} in {} offset=0x{:010x}",
+      LIEF_DEBUG("Write binding (offset={:#012x}): {:#018x} {} in {} offset={:#012x}",
                  binding->offset_, binding->address(), binding->symbol()->name(),
                  binding->segment_->name(),
                  binding->segment()->file_offset() + rel_offset);
@@ -1550,16 +1550,16 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
     .align(sizeof(pin_t));
 
   const std::vector<uint8_t>& raw = lnk_data.raw();
-  LIEF_DEBUG("__chainfixups.old_size: 0x{:06x}", fixups.data_size());
-  LIEF_DEBUG("__chainfixups.new_size: 0x{:06x}", raw.size());
+  LIEF_DEBUG("__chainfixups.old_size: {:#08x}", fixups.data_size());
+  LIEF_DEBUG("__chainfixups.new_size: {:#08x}", raw.size());
 
   if (fixups.data_size() > 0 && fixups.data_size() < raw.size()) {
     LIEF_WARN("New chained fixups size is larger than the original one");
   }
 
-  LIEF_DEBUG("LC_DYLD_CHAINED_FIXUPS.offset: 0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_DYLD_CHAINED_FIXUPS.offset: {:#08x} -> {:#x}",
              fixups.data_offset(), linkedit_offset_ + linkedit_.size());
-  LIEF_DEBUG("LC_DYLD_CHAINED_FIXUPS.size:   0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_DYLD_CHAINED_FIXUPS.size:   {:#08x} -> {:#x}",
              fixups.data_size(), lnk_data.size());
 
   // Write back the 'linkedit' structure
@@ -1588,12 +1588,12 @@ ok_error_t Builder::build(DyldExportsTrie& exports) {
   if (exports.data_size() > 0 && raw.size() > exports.content_.size()) {
     const uint64_t delta = raw.size() - exports.content_.size();
     LIEF_INFO("The export trie is larger than the original "
-              "LC_DYLD_EXPORTS_TRIE (+0x{:x} bytes)", delta);
+              "LC_DYLD_EXPORTS_TRIE (+{:#x} bytes)", delta);
   }
 
-  LIEF_DEBUG("LC_DYLD_EXPORTS_TRIE.offset: 0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_DYLD_EXPORTS_TRIE.offset: {:#08x} -> {:#x}",
              exports.data_offset(), linkedit_offset_ + linkedit_.size());
-  LIEF_DEBUG("LC_DYLD_EXPORTS_TRIE.size:   0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_DYLD_EXPORTS_TRIE.size:   {:#08x} -> {:#x}",
              exports.data_size(), raw.size());
 
   // Write back the 'linkedit' structure
@@ -1626,7 +1626,7 @@ ok_error_t Builder::build(BuildVersion& bv) {
   const uint32_t padding     = size_needed - raw_size;
 
   if (bv.original_data_.size() < size_needed || bv.size() < size_needed) {
-    LIEF_WARN("Not enough spaces to rebuild 'BuildVersion'. Size required: 0x{:x} vs 0x{:x}",
+    LIEF_WARN("Not enough spaces to rebuild 'BuildVersion'. Size required: {:#x} vs {:#x}",
                bv.original_data_.size(), size_needed);
   }
 
@@ -1674,9 +1674,9 @@ ok_error_t Builder::build(CodeSignatureDir& sig) {
   raw_cmd.dataoff   = linkedit_offset_ + linkedit_.size();
   raw_cmd.datasize  = sp.size();
 
-  LIEF_DEBUG("LC_DYLIB_CODE_SIGN_DRS.offset: 0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_DYLIB_CODE_SIGN_DRS.offset: {:#08x} -> {:#x}",
              sig.data_offset(), raw_cmd.dataoff);
-  LIEF_DEBUG("LC_DYLIB_CODE_SIGN_DRS.size:   0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_DYLIB_CODE_SIGN_DRS.size:   {:#08x} -> {:#x}",
              sig.data_size(), raw_cmd.datasize);
 
   linkedit_.write(sp.data(), sp.size());
@@ -1701,9 +1701,9 @@ ok_error_t Builder::build(LinkerOptHint& opt) {
   raw_cmd.dataoff   = linkedit_offset_ + linkedit_.size();
   raw_cmd.datasize  = sp.size();
 
-  LIEF_DEBUG("LC_LINKER_OPTIMIZATION_HINT.offset: 0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_LINKER_OPTIMIZATION_HINT.offset: {:#08x} -> {:#x}",
              opt.data_offset(), raw_cmd.dataoff);
-  LIEF_DEBUG("LC_LINKER_OPTIMIZATION_HINT.size:   0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_LINKER_OPTIMIZATION_HINT.size:   {:#08x} -> {:#x}",
              opt.data_size(), raw_cmd.datasize);
 
   linkedit_.write(sp.data(), sp.size());
@@ -1728,9 +1728,9 @@ ok_error_t Builder::build(AtomInfo& atom) {
   raw_cmd.dataoff   = linkedit_offset_ + linkedit_.size();
   raw_cmd.datasize  = sp.size();
 
-  LIEF_DEBUG("LC_ATOM_INFO.offset: 0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_ATOM_INFO.offset: {:#08x} -> {:#x}",
              atom.data_offset(), raw_cmd.dataoff);
-  LIEF_DEBUG("LC_ATOM_INFO.size:   0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_ATOM_INFO.size:   {:#08x} -> {:#x}",
              atom.data_size(), raw_cmd.datasize);
 
   linkedit_.write(sp.data(), sp.size());
@@ -1756,9 +1756,9 @@ ok_error_t Builder::build(TwoLevelHints& two) {
   raw_cmd.offset  = linkedit_offset_ + linkedit_.size();
   raw_cmd.nhints  = it_hints.size();
 
-  LIEF_DEBUG("LC_TWOLEVEL_HINTS.offset: 0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_TWOLEVEL_HINTS.offset: {:#08x} -> {:#x}",
              two.offset(), raw_cmd.offset);
-  LIEF_DEBUG("LC_TWOLEVEL_HINTS.nhints: 0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_TWOLEVEL_HINTS.nhints: {:#08x} -> {:#x}",
              two.original_nb_hints(), raw_cmd.nhints);
 
   for (uint32_t value : it_hints) {
@@ -1790,9 +1790,9 @@ ok_error_t Builder::build(FunctionVariants& func_variants) {
   raw_cmd.datasize  = linkedit_.size() - raw_cmd.dataoff;
   raw_cmd.dataoff   += linkedit_offset_;
 
-  LIEF_DEBUG("LC_FUNCTION_VARIANTS.offset: 0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_FUNCTION_VARIANTS.offset: {:#08x} -> {:#x}",
              func_variants.data_offset(), raw_cmd.dataoff);
-  LIEF_DEBUG("LC_FUNCTION_VARIANTS.size:   0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_FUNCTION_VARIANTS.size:   {:#08x} -> {:#x}",
              func_variants.data_size(), raw_cmd.datasize);
 
   func_variants.size_ = sizeof(details::linkedit_data_command);
@@ -1820,9 +1820,9 @@ ok_error_t Builder::build(FunctionVariantFixups& func_variant_fixups) {
   raw_cmd.dataoff   += linkedit_offset_;
 
 
-  LIEF_DEBUG("LC_FUNCTION_VARIANT_FIXUPS.offset: 0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_FUNCTION_VARIANT_FIXUPS.offset: {:#08x} -> {:#x}",
              func_variant_fixups.data_offset(), raw_cmd.dataoff);
-  LIEF_DEBUG("LC_FUNCTION_VARIANT_FIXUPS.size:   0x{:06x} -> 0x{:x}",
+  LIEF_DEBUG("LC_FUNCTION_VARIANT_FIXUPS.size:   {:#08x} -> {:#x}",
              func_variant_fixups.data_size(), raw_cmd.datasize);
 
   func_variant_fixups.size_ = sizeof(details::linkedit_data_command);
@@ -1852,7 +1852,7 @@ ok_error_t Builder::build_header() {
     header.reserved = static_cast<uint32_t>(binary_header.reserved());
   }
 
-  LIEF_DEBUG("Writing header at: 0 (size: 0x{:04x})", sizeof(header));
+  LIEF_DEBUG("Writing header at: 0 (size: {:#06x})", sizeof(header));
 
   raw_
     .seekp(0)

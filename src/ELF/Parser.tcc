@@ -93,7 +93,7 @@ ok_error_t Parser::parse_binary() {
 
   if (const Section* sec_symbtab = binary_->get(Section::TYPE::SYMTAB)) {
     if (sec_symbtab->link() == 0 || sec_symbtab->link() >= binary_->sections_.size()) {
-      LIEF_WARN("section->link() is not valid !");
+      LIEF_WARN("Invalid section link");
     } else {
       if (config_.parse_symtab_symbols) {
         // We should have:
@@ -112,7 +112,7 @@ ok_error_t Parser::parse_binary() {
     if (auto res = binary_->virtual_address_to_offset(dt_hash->value())) {
       parse_symbol_sysv_hash(*res);
     } else {
-      LIEF_WARN("Can't convert DT_HASH.virtual_address into an offset (0x{:x})", dt_hash->value());
+      LIEF_WARN("Can't convert DT_HASH.virtual_address into an offset ({:#x})", dt_hash->value());
     }
   }
 
@@ -229,8 +229,8 @@ ok_error_t Parser::parse_dyn_table(Segment& pt_dyn) {
     return parse_dynamic_entries<ELF_T>(*scoped);
   }
   const Segment& load_seg = *segments.back();
-  LIEF_DEBUG("Dynamic content wrapped by segment LOAD: [0x{:016x}, 0x{:016x}] "
-             "[0x{:016x}, 0x{:016x}]", load_seg.virtual_address(),
+  LIEF_DEBUG("Dynamic content wrapped by segment LOAD: [{:#018x}, {:#018x}] "
+             "[{:#018x}, {:#018x}]", load_seg.virtual_address(),
              load_seg.virtual_address() + load_seg.virtual_size(),
              load_seg.file_offset(), load_seg.file_offset() + load_seg.physical_size());
 
@@ -265,7 +265,7 @@ ok_error_t Parser::process_dynamic_table() {
       if (auto res = binary_->virtual_address_to_offset(virtual_address)) {
         parse_dynamic_symbols<ELF_T>(*res);
       } else {
-        LIEF_WARN("Can't convert DT_SYMTAB.virtual_address into an offset (0x{:x})", virtual_address);
+        LIEF_WARN("Can't convert DT_SYMTAB.virtual_address into an offset ({:#x})", virtual_address);
       }
     }
   }
@@ -280,7 +280,7 @@ ok_error_t Parser::process_dynamic_table() {
         parse_dynamic_relocations<ELF_T, typename ELF_T::Elf_Rela>(*res, size);
         binary_->sizing_info_->rela = size;
       } else {
-        LIEF_WARN("Can't convert DT_RELA.virtual_address into an offset (0x{:x})", virtual_address);
+        LIEF_WARN("Can't convert DT_RELA.virtual_address into an offset ({:#x})", virtual_address);
       }
     }
   }
@@ -295,7 +295,7 @@ ok_error_t Parser::process_dynamic_table() {
         parse_dynamic_relocations<ELF_T, typename ELF_T::Elf_Rel>(*res, size);
         binary_->sizing_info_->rela = size;
       } else {
-        LIEF_WARN("Can't convert DT_REL.virtual_address into an offset (0x{:x})", virtual_address);
+        LIEF_WARN("Can't convert DT_REL.virtual_address into an offset ({:#x})", virtual_address);
       }
     }
   }
@@ -310,7 +310,7 @@ ok_error_t Parser::process_dynamic_table() {
         parse_relative_relocations<ELF_T>(*res, size);
         binary_->sizing_info_->relr = size;
       } else {
-        LIEF_WARN("Can't convert DT_RELR.virtual_address into an offset (0x{:x})", virtual_address);
+        LIEF_WARN("Can't convert DT_RELR.virtual_address into an offset ({:#x})", virtual_address);
       }
     }
   }
@@ -325,7 +325,7 @@ ok_error_t Parser::process_dynamic_table() {
         parse_relative_relocations<ELF_T>(*res, size);
         binary_->sizing_info_->relr = size;
       } else {
-        LIEF_WARN("Can't convert (Android)DT_RELR.virtual_address into an offset (0x{:x})", virtual_address);
+        LIEF_WARN("Can't convert (Android)DT_RELR.virtual_address into an offset ({:#x})", virtual_address);
       }
     }
   }
@@ -344,7 +344,7 @@ ok_error_t Parser::process_dynamic_table() {
         parse_packed_relocations<ELF_T>(*res, size);
         binary_->sizing_info_->android_rela = size;
       } else {
-        LIEF_WARN("Can't convert DT_ANDROID_REL[A].virtual_address into an offset (0x{:x})", virtual_address);
+        LIEF_WARN("Can't convert DT_ANDROID_REL[A].virtual_address into an offset ({:#x})", virtual_address);
       }
     }
   }
@@ -374,7 +374,7 @@ ok_error_t Parser::process_dynamic_table() {
                 parse_pltgot_relocations<ELF_T, typename ELF_T::Elf_Rel>(*res, size);
         binary_->sizing_info_->jmprel = size;
       } else {
-        LIEF_WARN("Can't convert DT_JMPREL.virtual_address into an offset (0x{:x})", virtual_address);
+        LIEF_WARN("Can't convert DT_JMPREL.virtual_address into an offset ({:#x})", virtual_address);
       }
     }
   }
@@ -385,7 +385,7 @@ ok_error_t Parser::process_dynamic_table() {
         parse_symbol_version(*res);
         binary_->sizing_info_->versym = binary_->dynamic_symbols_.size() * sizeof(uint16_t);
       } else {
-        LIEF_WARN("Can't convert DT_VERSYM.virtual_address into an offset (0x{:x})", virtual_address);
+        LIEF_WARN("Can't convert DT_VERSYM.virtual_address into an offset ({:#x})", virtual_address);
       }
     }
   }
@@ -402,7 +402,7 @@ ok_error_t Parser::process_dynamic_table() {
       if (auto res = binary_->virtual_address_to_offset(virtual_address)) {
         parse_symbol_version_requirement<ELF_T>(*res, nb_entries);
       } else {
-        LIEF_WARN("Can't convert DT_VERNEED.virtual_address into an offset (0x{:x})", virtual_address);
+        LIEF_WARN("Can't convert DT_VERNEED.virtual_address into an offset ({:#x})", virtual_address);
       }
     }
   }
@@ -417,7 +417,7 @@ ok_error_t Parser::process_dynamic_table() {
       if (auto res = binary_->virtual_address_to_offset(virtual_address)) {
         parse_symbol_version_definition<ELF_T>(*res, size);
       } else {
-        LIEF_WARN("Can't convert DT_VERDEF.virtual_address into an offset (0x{:x})", virtual_address);
+        LIEF_WARN("Can't convert DT_VERDEF.virtual_address into an offset ({:#x})", virtual_address);
       }
     }
   }
@@ -782,7 +782,7 @@ ok_error_t Parser::parse_sections() {
   DataHandler::Handler& handler = *binary_->datahandler_;
   const ARCH arch = binary_->header().machine_type();
   for (size_t i = 0; i < numberof_sections; ++i) {
-    LIEF_DEBUG("  Elf_Shdr#{:02d}.offset: 0x{:x} ", i, stream_->pos());
+    LIEF_DEBUG("  Elf_Shdr#{:02d}.offset: {:#x} ", i, stream_->pos());
     const auto shdr = stream_->read<Elf_Shdr>();
     if (!shdr) {
       LIEF_ERR("  Can't parse section #{:02d}", i);
@@ -864,13 +864,13 @@ ok_error_t Parser::parse_sections() {
   for (std::unique_ptr<Section>& section : binary_->sections_) {
     const auto it_name_idx = sections_names.find(section.get());
     if (it_name_idx == std::end(sections_names)) {
-      LIEF_WARN("Missing name_idx for section at offset 0x{:x}", section->file_offset());
+      LIEF_WARN("Missing name_idx for section at offset {:#x}", section->file_offset());
       continue;
     }
     const size_t name_offset = it_name_idx->second;
     auto name = stream_->peek_string_at(string_section->file_offset() + name_offset);
     if (!name) {
-      LIEF_ERR("Can't read section name for section 0x{:x}", section->file_offset());
+      LIEF_ERR("Can't read section name for section {:#x}", section->file_offset());
       break;
     }
     section->name(*name);
@@ -1238,8 +1238,8 @@ ok_error_t Parser::parse_dynamic_symbols(uint64_t offset) {
   const Elf_Off string_offset          = get_dynamic_string_table();
 
   LIEF_DEBUG("    - Number of symbols counted: {:d}", nb_symbols);
-  LIEF_DEBUG("    - Table Offset:              0x{:x}", dynamic_symbols_offset);
-  LIEF_DEBUG("    - String Table Offset:       0x{:x}", string_offset);
+  LIEF_DEBUG("    - Table Offset:              {:#x}", dynamic_symbols_offset);
+  LIEF_DEBUG("    - String Table Offset:       {:#x}", string_offset);
 
   if (string_offset == 0) {
     LIEF_WARN("Unable to find the .dynstr section");
@@ -1266,7 +1266,7 @@ ok_error_t Parser::parse_dynamic_symbols(uint64_t offset) {
       }
 
       if (name->empty() && i > 0) {
-        LIEF_DEBUG("Symbol's name #{:d} is empty!", i);
+        LIEF_DEBUG("Symbol name #{:d} is empty", i);
       }
 
       symbol->name(std::move(*name));
@@ -1431,7 +1431,7 @@ ok_error_t Parser::parse_dynamic_entries(BinaryStream& stream) {
     if (dynamic_entry != nullptr) {
       binary_->dynamic_entries_.push_back(std::move(dynamic_entry));
     } else {
-      LIEF_WARN("dynamic_entry is nullptr !");
+      LIEF_WARN("Null dynamic_entry");
     }
 
     if (end_of_dynamic) {
@@ -1630,7 +1630,7 @@ ok_error_t Parser::parse_section_relocations(const Section& section) {
   while (reloc_stream) {
     auto rel_hdr = reloc_stream.read<REL_T>();
     if (!rel_hdr) {
-      LIEF_WARN("Can't parse relocation at offset: 0x{:04x} in {}",
+      LIEF_WARN("Can't parse relocation at offset: {:#06x} in {}",
                 reloc_stream.pos(), section.name());
       break;
     }
@@ -1677,7 +1677,7 @@ ok_error_t Parser::parse_symbol_version_requirement(uint64_t offset, uint32_t nb
 
   const uint64_t svr_offset = offset;
 
-  LIEF_DEBUG("svr offset: 0x{:x}", svr_offset);
+  LIEF_DEBUG("svr offset: {:#x}", svr_offset);
 
   const uint64_t string_offset = get_dynamic_string_table();
 

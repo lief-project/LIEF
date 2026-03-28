@@ -26,7 +26,7 @@ std::unique_ptr<AuxiliaryFile>
   SpanStream stream(payload);
   auto file = stream.read_string();
   if (!file) {
-    LIEF_WARN("Can't parse AuxiliaryFile.file");
+    LIEF_WARN("Failed to parse AuxiliaryFile.file");
     return std::make_unique<AuxiliaryFile>();
   }
   return std::make_unique<AuxiliaryFile>(std::move(*file));

@@ -158,7 +158,7 @@ void Binary::remove(const DynamicEntry& entry) {
       });
 
   if (it_entry == std::end(dynamic_entries_)) {
-    LIEF_WARN("Can't find {} in the dynamic table. This entry can't be removed",
+    LIEF_WARN("{} not found in dynamic table, cannot remove",
               to_string(entry));
     return;
   }
@@ -179,7 +179,7 @@ void Binary::remove(const Section& section, bool clear) {
       });
 
   if (it_section == std::end(sections_)) {
-    LIEF_WARN("Can't find the section '{}'. It can't be removed!", section.name());
+    LIEF_WARN("Section '{}' not found, cannot remove", section.name());
     return;
   }
 
@@ -231,7 +231,7 @@ void Binary::remove(const Note& note) {
                                     });
 
   if (it_note == std::end(notes_)) {
-    LIEF_WARN("Can't find the note with the type {}. It can't be removed!",
+    LIEF_WARN("Note type {} not found, cannot remove",
               to_string(static_cast<Note::TYPE>(note.type())));
     return;
   }
@@ -521,7 +521,7 @@ void Binary::remove_symbol(const std::string& name) {
 void Binary::remove_symtab_symbol(const std::string& name) {
   Symbol* sym = get_symtab_symbol(name);
   if (sym == nullptr) {
-    LIEF_WARN("Can't find the symtab symbol '{}'. It won't be removed", name);
+    LIEF_WARN("Symtab symbol '{}' not found, cannot remove", name);
     return;
   }
   remove_symtab_symbol(sym);
@@ -540,7 +540,7 @@ void Binary::remove_symtab_symbol(Symbol* symbol) {
   );
 
   if (it_symbol == std::end(symtab_symbols_)) {
-    LIEF_WARN("Can't find the symtab symbol '{}'. It won't be removed", symbol->name());
+    LIEF_WARN("Symtab symbol '{}' not found, cannot remove", symbol->name());
     return;
   }
 
@@ -550,7 +550,7 @@ void Binary::remove_symtab_symbol(Symbol* symbol) {
 void Binary::remove_dynamic_symbol(const std::string& name) {
   Symbol* sym = get_dynamic_symbol(name);
   if (sym == nullptr) {
-    LIEF_WARN("Can't find the dynamic symbol '{}'. It won't be removed", name);
+    LIEF_WARN("Dynamic symbol '{}' not found, cannot remove", name);
     return;
   }
   remove_dynamic_symbol(sym);
@@ -569,7 +569,7 @@ void Binary::remove_dynamic_symbol(Symbol* symbol) {
   );
 
   if (it_symbol == std::end(dynamic_symbols_)) {
-    LIEF_WARN("Can't find the dynamic symbol '{}'. It won't be removed", symbol->name());
+    LIEF_WARN("Dynamic symbol '{}' not found, cannot remove", symbol->name());
     return;
   }
 
@@ -684,7 +684,7 @@ Binary::it_const_dynamic_relocations Binary::dynamic_relocations() const {
 
 Relocation& Binary::add_dynamic_relocation(const Relocation& relocation) {
   if (!relocation.is_rel() && !relocation.is_rela()) {
-    LIEF_WARN("LIEF only supports regulard rel/rela relocations");
+    LIEF_WARN("Only regular REL/RELA relocations are supported");
     static Relocation None;
     return None;
   }
@@ -769,7 +769,7 @@ Relocation* Binary::add_object_relocation(const Relocation& relocation, const Se
       });
 
   if (it_section == std::end(sections_)) {
-    LIEF_ERR("Can't find section '{}'", section.name());
+    LIEF_ERR("Section '{}' not found", section.name());
     return nullptr;
   }
 
@@ -1075,7 +1075,7 @@ Segment* Binary::add(const Segment& segment, uint64_t base) {
       return add_segment<Header::FILE_TYPE::DYN>(segment, new_base);
     default:
       {
-        LIEF_WARN("Adding segment for {} is not implemented", to_string(header().file_type()));
+        LIEF_WARN("Adding segment not implemented for {}", to_string(header().file_type()));
         return nullptr;
       }
   }
@@ -1092,7 +1092,7 @@ Segment* Binary::replace(const Segment& new_segment, const Segment& original_seg
   );
 
   if (it_original_segment == std::end(segments_)) {
-    LIEF_WARN("Unable to find the segment in the current binary");
+    LIEF_WARN("Segment not found in binary");
     return nullptr;
   }
 
@@ -1180,7 +1180,7 @@ void Binary::remove(const Segment& segment, bool clear) {
       });
 
   if (it_segment == std::end(segments_)) {
-    LIEF_ERR("Can't find the provided segment");
+    LIEF_ERR("Provided segment not found");
     return;
   }
 
@@ -1243,7 +1243,7 @@ Section* Binary::extend(const Section& section, uint64_t size) {
   );
 
   if (it_section == std::end(sections_)) {
-    LIEF_WARN("Unable to find the section '{}' in the current binary", section.name());
+    LIEF_WARN("Section '{}' not found in binary", section.name());
     return nullptr;
   }
 
@@ -1317,14 +1317,14 @@ void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_v
   if (header().file_type() == Header::FILE_TYPE::REL) {
     Section* section = section_from_offset(address);
     if (section == nullptr) {
-      LIEF_ERR("Can't find a section associated with the virtual address 0x{:x}", address);
+      LIEF_ERR("No section found at virtual address {:#x}", address);
       return;
     }
     span<uint8_t> content = section->writable_content();
     const uint64_t offset = address - section->file_offset();
 
     if (offset + patch_value.size() > content.size()) {
-      LIEF_ERR("The patch value ({} bytes @0x{:x}) is out of bounds of the segment (limit: 0x{:x})",
+      LIEF_ERR("Patch value ({} bytes @{:#x}) exceeds segment bounds (limit: {:#x})",
                patch_value.size(), offset, content.size());
       return;
     }
@@ -1336,14 +1336,14 @@ void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_v
   // Find the segment associated with the virtual address
   Segment* segment_topatch = segment_from_virtual_address(address);
   if (segment_topatch == nullptr) {
-    LIEF_ERR("Can't find a segment associated with the virtual address 0x{:x}", address);
+    LIEF_ERR("No segment found at virtual address {:#x}", address);
     return;
   }
   const uint64_t offset = address - segment_topatch->virtual_address();
   span<uint8_t> content_ref = segment_topatch->writable_content();
 
   if (offset + patch_value.size() > content_ref.size()) {
-    LIEF_ERR("The patch value ({} bytes @0x{:x}) is out of bounds of the segment (limit: 0x{:x})",
+    LIEF_ERR("Patch value ({} bytes @{:#x}) exceeds segment bounds (limit: {:#x})",
              patch_value.size(), offset, content_ref.size());
     return;
   }
@@ -1354,7 +1354,7 @@ void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_v
 
 void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size, LIEF::Binary::VA_TYPES) {
   if (size > sizeof(patch_value)) {
-    LIEF_ERR("The size of the patch value (0x{:x}) is larger that sizeof(uint64_t) which is not supported",
+    LIEF_ERR("Patch size ({:#x}) exceeds sizeof(uint64_t)",
              size);
     return;
   }
@@ -1363,14 +1363,14 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size, 
   if (header().file_type() == Header::FILE_TYPE::REL) {
     Section* section = section_from_offset(address);
     if (section == nullptr) {
-      LIEF_ERR("Can't find a section associated with the address 0x{:x}", address);
+      LIEF_ERR("No section found at address {:#x}", address);
       return;
     }
 
     span<uint8_t> content = section->writable_content();
     const uint64_t offset = address - section->file_offset();
     if (offset > content.size() || (offset + size) > content.size()) {
-      LIEF_ERR("The patch value ({} bytes @0x{:x}) is out of bounds of the segment (limit: 0x{:x})",
+      LIEF_ERR("Patch value ({} bytes @{:#x}) exceeds segment bounds (limit: {:#x})",
                size, offset, content.size());
     }
 
@@ -1405,7 +1405,7 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size, 
 
       default:
         {
-          LIEF_ERR("The provided size ({}) does not match the size of an integer", size);
+          LIEF_ERR("Provided size ({}) does not match an integer size", size);
           return;
         }
     }
@@ -1416,14 +1416,14 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size, 
 
   Segment* segment_topatch = segment_from_virtual_address(address);
   if (segment_topatch == nullptr) {
-    LIEF_ERR("Can't find a segment associated with the virtual address 0x{:x}", address);
+    LIEF_ERR("No segment found at virtual address {:#x}", address);
     return;
   }
 
   const uint64_t offset = address - segment_topatch->virtual_address();
   span<uint8_t> content = segment_topatch->writable_content();
   if (offset > content.size() || (offset + size) > content.size()) {
-    LIEF_ERR("The patch value ({} bytes @0x{:x}) is out of bounds of the segment (limit: 0x{:x})",
+    LIEF_ERR("Patch value ({} bytes @{:#x}) exceeds segment bounds (limit: {:#x})",
              size, offset, content.size());
   }
   switch (size) {
@@ -1457,7 +1457,7 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size, 
 
     default:
       {
-        LIEF_ERR("The provided size ({}) does not match the size of an integer", size);
+        LIEF_ERR("Provided size ({}) does not match an integer size", size);
         return;
       }
   }
@@ -1472,7 +1472,7 @@ void Binary::patch_pltgot(const Symbol& symbol, uint64_t address) {
       });
 
   if (it_relocation == std::end(pltgot_relocations)) {
-    LIEF_ERR("Unable to find the relocation associated with the symbol {}",
+    LIEF_ERR("Relocation not found for symbol {}",
              symbol.name());
     return;
   }
@@ -1603,7 +1603,7 @@ result<uint64_t> Binary::virtual_address_to_offset(uint64_t virtual_address) con
       });
 
   if (it_segment == std::end(segments_)) {
-    LIEF_DEBUG("Address: 0x{:x}", virtual_address);
+    LIEF_DEBUG("Address: {:#x}", virtual_address);
     return make_error_code(lief_errors::conversion_error);
   }
 
@@ -1788,7 +1788,7 @@ void Binary::permute_dynamic_symbols(const std::vector<size_t>& permutation) {
       done.insert(permutation[i]);
       done.insert(i);
     } else {
-      LIEF_ERR("Can't apply permutation at index #{:d}", i);
+      LIEF_ERR("Failed to apply permutation at index #{:d}", i);
     }
 
   }
@@ -1827,7 +1827,7 @@ void Binary::shift_sections(uint64_t from, uint64_t shift) {
 
 void Binary::shift_segments(uint64_t from, uint64_t shift) {
 
-  LIEF_DEBUG("Shift segments by 0x{:x} from 0x{:x}", shift, from);
+  LIEF_DEBUG("Shifting segments by {:#x} from {:#x}", shift, from);
 
   for (std::unique_ptr<Segment>& segment : segments_) {
     if (segment->file_offset() >= from) {
@@ -1841,7 +1841,7 @@ void Binary::shift_segments(uint64_t from, uint64_t shift) {
 }
 
 void Binary::shift_dynamic_entries(uint64_t from, uint64_t shift) {
-  LIEF_DEBUG("Shift dynamic entries by 0x{:x} from 0x{:x}", shift, from);
+  LIEF_DEBUG("Shifting dynamic entries by {:#x} from {:#x}", shift, from);
 
   for (std::unique_ptr<DynamicEntry>& entry : dynamic_entries_) {
     LIEF_DEBUG("[BEFORE] {}", to_string(*entry));
@@ -1904,7 +1904,7 @@ void Binary::shift_dynamic_entries(uint64_t from, uint64_t shift) {
 
 
 void Binary::shift_symbols(uint64_t from, uint64_t shift) {
-  LIEF_DEBUG("Shift symbols by 0x{:x} from 0x{:x}", shift, from);
+  LIEF_DEBUG("Shifting symbols by {:#x} from {:#x}", shift, from);
   for (Symbol& symbol : symbols()) {
     if (symbol.type() == Symbol::TYPE::TLS) {
       continue;
@@ -1920,7 +1920,7 @@ void Binary::shift_symbols(uint64_t from, uint64_t shift) {
 
 void Binary::shift_relocations(uint64_t from, uint64_t shift) {
   const ARCH arch = header().machine_type();
-  LIEF_DEBUG("Shift relocations for {} by 0x{:x} from 0x{:x}", to_string(arch), shift, from);
+  LIEF_DEBUG("Shift relocations for {} by {:#x} from {:#x}", to_string(arch), shift, from);
 
   switch(arch) {
     case ARCH::ARM:
@@ -1952,7 +1952,7 @@ void Binary::shift_relocations(uint64_t from, uint64_t shift) {
 
     default:
       {
-        LIEF_DEBUG("Relocations for architecture {} are not supported", to_string(arch));
+        LIEF_DEBUG("Unsupported relocation architecture: {}", to_string(arch));
       }
   }
 }
@@ -2007,7 +2007,7 @@ DynamicEntryLibrary& Binary::add_library(const std::string& library_name) {
 void Binary::remove_library(const std::string& library_name) {
   DynamicEntryLibrary* lib = get_library(library_name);
   if (lib == nullptr) {
-    LIEF_ERR("Can't find a library with the name '{}'", library_name);
+    LIEF_ERR("Library '{}' not found", library_name);
     return;
   }
   remove(*lib);
@@ -2185,14 +2185,14 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
   if (auto res = virtual_address_to_offset(eh_frame_addr)) {
     eh_frame_off = *res;
   } else {
-    LIEF_WARN("Can't convert the PT_GNU_EH_FRAME virtual address into an offset (0x{:x})", eh_frame_addr);
+    LIEF_WARN("Failed to convert PT_GNU_EH_FRAME virtual address to offset ({:#x})", eh_frame_addr);
     return functions;
   }
 
   const Segment* load_segment = segment_from_virtual_address(Segment::TYPE::LOAD, eh_frame_addr);
 
   if (load_segment == nullptr) {
-    LIEF_ERR("Unable to find the LOAD segment associated with PT_GNU_EH_FRAME");
+    LIEF_ERR("LOAD segment for PT_GNU_EH_FRAME not found");
     return functions;
   }
 
@@ -2203,7 +2203,7 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
   vs.setpos(eh_frame_off);
 
   if (vs.size() < 4 * sizeof(uint8_t)) {
-    LIEF_WARN("Unable to read EH frame header");
+    LIEF_WARN("Failed to read EH frame header");
     return functions;
   }
 
@@ -2215,7 +2215,7 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
 
   auto res_eh_frame_ptr = vs.read_dwarf_encoded(eh_frame_ptr_enc);
   if (!res_eh_frame_ptr) {
-    LIEF_ERR("Can't decode eh_frame_ptr_enc");
+    LIEF_ERR("Failed to decode eh_frame_ptr_enc");
     return functions;
   }
   auto eh_frame_ptr = *res_eh_frame_ptr;
@@ -2230,7 +2230,7 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
   }
 
   if (version != 1) {
-    LIEF_WARN("EH Frame header version is not 1 ({:d}) structure may have been corrupted!", version);
+    LIEF_WARN("EH frame header version is not 1 ({:d}), structure may be corrupted", version);
   }
 
   if (fde_count < 0) {
@@ -2239,11 +2239,11 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
   }
 
 
-  LIEF_DEBUG("  eh_frame_ptr_enc: 0x{:x}", static_cast<uint32_t>(eh_frame_ptr_enc));
-  LIEF_DEBUG("  fde_count_enc:    0x{:x}", static_cast<uint32_t>(fde_count_enc));
-  LIEF_DEBUG("  table_enc:        0x{:x}", static_cast<uint32_t>(table_enc));
-  LIEF_DEBUG("  eh_frame_ptr:     0x{:x}", static_cast<uint32_t>(eh_frame_ptr));
-  LIEF_DEBUG("  fde_count:        0x{:x}", static_cast<uint32_t>(fde_count));
+  LIEF_DEBUG("  eh_frame_ptr_enc: {:#x}", static_cast<uint32_t>(eh_frame_ptr_enc));
+  LIEF_DEBUG("  fde_count_enc:    {:#x}", static_cast<uint32_t>(fde_count_enc));
+  LIEF_DEBUG("  table_enc:        {:#x}", static_cast<uint32_t>(table_enc));
+  LIEF_DEBUG("  eh_frame_ptr:     {:#x}", static_cast<uint32_t>(eh_frame_ptr));
+  LIEF_DEBUG("  fde_count:        {:#x}", static_cast<uint32_t>(fde_count));
 
   auto table_bias = static_cast<dwarf::EH_ENCODING>(table_enc & 0xF0);
 
@@ -2253,13 +2253,13 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
     // Binary search table
     auto res_init_loc = vs.read_dwarf_encoded(table_enc);
     if (!res_init_loc) {
-      LIEF_ERR("Can't read Dwarf initial_location");
+      LIEF_ERR("Failed to read DWARF initial_location");
       return functions;
     }
     uint32_t initial_location = *res_init_loc;
     auto res_address = vs.read_dwarf_encoded(table_enc);
     if (!res_address) {
-      LIEF_ERR("Can't read Dwarf address");
+      LIEF_ERR("Failed to read DWARF address");
       return functions;
     }
     uint32_t address = *res_address;
@@ -2274,7 +2274,7 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
 
       case dwarf::EH_ENCODING::TEXTREL:
         {
-          LIEF_WARN("EH_ENCODING::TEXTREL is not supported");
+          LIEF_WARN("Unsupported EH_ENCODING::TEXTREL");
           break;
         }
 
@@ -2286,19 +2286,19 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
 
       case dwarf::EH_ENCODING::FUNCREL:
         {
-          LIEF_WARN("EH_ENCODING::FUNCREL is not supported");
+          LIEF_WARN("Unsupported EH_ENCODING::FUNCREL");
           break;
         }
 
       case dwarf::EH_ENCODING::ALIGNED:
         {
-          LIEF_WARN("EH_ENCODING::ALIGNED is not supported");
+          LIEF_WARN("Unsupported EH_ENCODING::ALIGNED");
           break;
         }
 
       default:
         {
-          LIEF_WARN("Encoding not supported!");
+          LIEF_WARN("Unsupported encoding");
           break;
         }
     }
@@ -2311,18 +2311,18 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
     initial_location += bias;
     address          += bias;
 
-    LIEF_DEBUG("Initial location: 0x{:x}", initial_location);
-    LIEF_DEBUG("Address: 0x{:x}", address);
-    LIEF_DEBUG("Bias: 0x{:x}", bias);
+    LIEF_DEBUG("Initial location: {:#x}", initial_location);
+    LIEF_DEBUG("Address: {:#x}", address);
+    LIEF_DEBUG("Bias: {:#x}", bias);
     const size_t saved_pos = vs.pos();
-    LIEF_DEBUG("Go to eh_frame_off + address - bias: 0x{:x}", eh_frame_off + address - bias);
+    LIEF_DEBUG("Navigating to eh_frame_off + address - bias: {:#x}", eh_frame_off + address - bias);
     // Go to the FDE structure
     vs.setpos(eh_frame_off + address - bias);
     {
       // Beginning of the FDE structure (to continue)
       auto res_fde_length = vs.read<uint32_t>();
       if (!res_fde_length) {
-        LIEF_ERR("Can't read FDE length");
+        LIEF_ERR("Failed to read FDE length");
         vs.setpos(saved_pos);
         continue;
       }
@@ -2334,22 +2334,22 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
       }
       auto cie_pointer = vs.read<uint32_t>();
       if (!cie_pointer) {
-        LIEF_ERR("Can't read cie pointer");
+        LIEF_ERR("Failed to read CIE pointer");
         vs.setpos(saved_pos);
         continue;
       }
 
       if (*cie_pointer == 0) {
-        LIEF_DEBUG("cie_pointer is null!");
+        LIEF_DEBUG("CIE pointer is null");
         vs.setpos(saved_pos);
         continue;
       }
 
       const uint32_t cie_offset = vs.pos() - *cie_pointer - sizeof(uint32_t);
 
-      LIEF_DEBUG("fde_length@0x{:x}: 0x{:x}", address - bias, fde_length);
-      LIEF_DEBUG("cie_pointer 0x{:x}", *cie_pointer);
-      LIEF_DEBUG("cie_offset 0x{:x}", cie_offset);
+      LIEF_DEBUG("fde_length@{:#x}: {:#x}", address - bias, fde_length);
+      LIEF_DEBUG("cie_pointer {:#x}", *cie_pointer);
+      LIEF_DEBUG("cie_offset {:#x}", cie_offset);
 
 
       // Go to CIE structure
@@ -2361,7 +2361,7 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
       {
         auto res_cie_length = vs.read<uint32_t>();
         if (!res_cie_length) {
-          LIEF_ERR("Can't read cie_length");
+          LIEF_ERR("Failed to read CIE length");
           return functions;
         }
         uint64_t cie_length = *res_cie_length;
@@ -2374,36 +2374,36 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
 
         auto cie_id = vs.read<uint32_t>();
         if (!cie_id) {
-          LIEF_ERR("Can't read cie_id");
+          LIEF_ERR("Failed to read CIE ID");
           return functions;
         }
 
         auto version = vs.read<uint8_t>();
         if (!version) {
-          LIEF_ERR("Can't read version");
+          LIEF_ERR("Failed to read CIE version");
           return functions;
         }
 
         if (*cie_id != 0) {
-          LIEF_WARN("CIE ID is not 0 ({:d})", *cie_id);
+          LIEF_WARN("Unexpected CIE ID ({:d}), expected 0", *cie_id);
         }
 
         if (*version != 1) {
-          LIEF_WARN("CIE ID is not 1 ({:d})", *version);
+          LIEF_WARN("Unexpected CIE version ({:d}), expected 1", *version);
         }
 
-        LIEF_DEBUG("cie_length: 0x{:x}", cie_length);
+        LIEF_DEBUG("cie_length: {:#x}", cie_length);
         LIEF_DEBUG("ID: {:d}", *cie_id);
         LIEF_DEBUG("Version: {:d}", *version);
 
         auto res_cie_augmentation_string = vs.read_string();
         if (!res_cie_augmentation_string) {
-          LIEF_ERR("Can't read cie_augmentation_string");
+          LIEF_ERR("Failed to read CIE augmentation string");
           return functions;
         }
         std::string cie_augmentation_string = std::move(*res_cie_augmentation_string);
 
-        LIEF_DEBUG("CIE Augmentation {}", cie_augmentation_string);
+        LIEF_DEBUG("CIE augmentation: {}", cie_augmentation_string);
         if (cie_augmentation_string.find("eh") != std::string::npos) {
           if (is64) {
             /* uint64_t eh_data = */ vs.read<uint64_t>();
@@ -2425,28 +2425,28 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
           if (cie_augmentation_string.find('R') != std::string::npos) {
             auto aug_data = vs.read<uint8_t>();
             if (!aug_data) {
-              LIEF_ERR("Can't read augmentation data");
+              LIEF_ERR("Failed to read augmentation data");
               return functions;
             }
             augmentation_data = *aug_data;
           } else {
-            LIEF_WARN("Augmentation string '{}' is not supported", cie_augmentation_string);
+            LIEF_WARN("Unsupported augmentation string '{}'", cie_augmentation_string);
           }
         }
       }
-      LIEF_DEBUG("Augmentation data 0x{:x}", static_cast<uint32_t>(augmentation_data));
+      LIEF_DEBUG("Augmentation data: {:#x}", static_cast<uint32_t>(augmentation_data));
 
       // Go back to FDE Structure
       vs.setpos(saved_pos);
       auto res = vs.read_dwarf_encoded(augmentation_data);
       if (!res) {
-        LIEF_ERR("Can't read Dwarf encoded function begin");
+        LIEF_ERR("Failed to read DWARF-encoded function begin");
         return functions;
       }
       int32_t function_begin = eh_frame_rva + vs.pos() + *res;
       res = vs.read_dwarf_encoded(augmentation_data);
       if (!res) {
-        LIEF_ERR("Can't read dward encoded size");
+        LIEF_ERR("Failed to read DWARF-encoded size");
         return functions;
       }
       int32_t size = *res;
@@ -2455,7 +2455,7 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
       Function f{static_cast<uint64_t>(initial_location + imagebase())};
       f.size(size);
       functions.push_back(std::move(f));
-      LIEF_DEBUG("PC@0x{:x}:0x{:x}", function_begin, size);
+      LIEF_DEBUG("PC@{:#x}:{:#x}", function_begin, size);
     }
     vs.setpos(saved_pos);
   }
@@ -2576,7 +2576,7 @@ uint64_t Binary::relocate_phdr_table_auto() {
     if (offset = relocate_phdr_table_pie(); offset > 0) {
       return offset;
     }
-    LIEF_ERR("Can't relocated phdr table for this PIE binary");
+    LIEF_ERR("Failed to relocate PHDR table for this PIE binary");
   }
 
   if (is_dyn && !(has_phdr_s || has_interp_s) && !has_ep) {
@@ -2602,7 +2602,7 @@ uint64_t Binary::relocate_phdr_table_auto() {
   if (offset = relocate_phdr_table_v1(); offset == 0) {
     LIEF_DEBUG("Try v2 relocator");
     if (offset = relocate_phdr_table_v2(); offset == 0) {
-      LIEF_ERR("Can't relocate the phdr table for this binary. "
+      LIEF_ERR("Failed to relocate the PHDR table. "
                 "Please consider opening an issue");
       return 0;
     }
@@ -2663,7 +2663,7 @@ uint64_t Binary::relocate_phdr_table_pie() {
     return 0;
   }
 
-  LIEF_DEBUG("Header shift: 0x{:x}", shift);
+  LIEF_DEBUG("Header shift: {:#x}", shift);
 
   header().section_headers_offset(header().section_headers_offset() + shift);
 
@@ -2725,7 +2725,7 @@ uint64_t Binary::relocate_phdr_table_v3() {
   const uint64_t phdr_size =
     type() == Header::CLASS::ELF32 ? sizeof(details::ELF32::Elf_Phdr) :
                                      sizeof(details::ELF64::Elf_Phdr);
-  LIEF_DEBUG("Moving segment table at the end of the binary (0x{:010x})",
+  LIEF_DEBUG("Moving segment table at the end of the binary ({:#012x})",
              last_off_aligned);
 
   phdr_reloc_info_.new_offset = last_off_aligned;
@@ -2821,7 +2821,7 @@ uint64_t Binary::relocate_phdr_table_v2() {
   }
 
   if (bss_cnt != 1 || bss_segment == nullptr) {
-    LIEF_ERR("Zero or more than 1 bss-like segment!");
+    LIEF_ERR("Expected exactly 1 BSS-like segment");
     return 0;
   }
 
@@ -3014,7 +3014,7 @@ uint64_t Binary::relocate_phdr_table_v1() {
     Segment* current = load_seg[i];
     // Skip bss-like segments
     if (current->virtual_size() != current->physical_size()) {
-      LIEF_DEBUG("Skipping .bss like segment: {}@0x{:x}:0x{:x}",
+      LIEF_DEBUG("Skipping .bss like segment: {}@{:#x}:{:#x}",
                  to_string(current->type()), current->virtual_address(), current->virtual_size());
       continue;
     }
@@ -3034,21 +3034,21 @@ uint64_t Binary::relocate_phdr_table_v1() {
   }
 
   if (seg_to_extend == nullptr || next_to_extend == nullptr) {
-    LIEF_DEBUG("Can't find a suitable segment (v1)");
+    LIEF_DEBUG("No suitable segment found (v1)");
     return 0;
   }
 
   if (potential_size < (header.numberof_segments() + MIN_POTENTIAL_SIZE)) {
-    LIEF_DEBUG("The number of available segments is too small ({} vs {})",
+    LIEF_DEBUG("Available segment count too small ({} vs {})",
                potential_size, header.numberof_segments() + MIN_POTENTIAL_SIZE);
     return 0;
   }
 
-  LIEF_DEBUG("Segment selected for the extension: {}@0x{:x}:0x{:x}",
+  LIEF_DEBUG("Segment selected for the extension: {}@{:#x}:{:#x}",
              to_string(seg_to_extend->type()), seg_to_extend->virtual_address(),
              seg_to_extend->virtual_size());
 
-  LIEF_DEBUG("Adjacent segment selected for the extension: {}@0x{:x}:0x{:x}",
+  LIEF_DEBUG("Adjacent segment selected for the extension: {}@{:#x}:{:#x}",
              to_string(next_to_extend->type()), next_to_extend->virtual_address(),
              next_to_extend->virtual_size());
 
@@ -3060,8 +3060,8 @@ uint64_t Binary::relocate_phdr_table_v1() {
   }
   const size_t nb_segments = delta / phdr_size - header.numberof_segments();
   if (nb_segments < header.numberof_segments()) {
-    LIEF_DEBUG("The layout of this binary does not enable relocating the segment table (v1)\n"
-               "We would need at least {} segments while only {} are available.",
+    LIEF_DEBUG("Binary layout prevents segment table relocation (v1). "
+               "Need at least {} segments but only {} available.",
                header.numberof_segments(), nb_segments);
     phdr_reloc_info_.clear();
     return 0;
@@ -3088,7 +3088,7 @@ uint64_t Binary::relocate_phdr_table_v1() {
     phdr_segment->file_offset(phdr_reloc_info_.new_offset);
     phdr_segment->virtual_address(base + phdr_segment->file_offset());
     phdr_segment->physical_address(phdr_segment->virtual_address());
-    LIEF_DEBUG("{}@0x{:x}:0x{:x}", to_string(phdr_segment->type()),
+    LIEF_DEBUG("{}@{:#x}:{:#x}", to_string(phdr_segment->type()),
                                    phdr_segment->virtual_address(), phdr_segment->virtual_size());
     // Clear PHDR segment
     phdr_segment->physical_size(delta - alignment);

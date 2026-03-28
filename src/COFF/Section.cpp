@@ -54,7 +54,7 @@ std::unique_ptr<Section> Section::parse(BinaryStream& stream) {
 
 void Section::name(std::string name) {
   if (name.size() > LIEF::PE::Section::MAX_SECTION_NAME) {
-    LIEF_ERR("The max size of a section's name is {} vs {}",
+    LIEF_ERR("Section name exceeds max size: {} vs {}",
              LIEF::PE::Section::MAX_SECTION_NAME, name.size());
     return;
   }
@@ -130,16 +130,16 @@ std::string Section::to_string() const {
                  join(fullname_hex, " "));
   }
 
-  os << format("{:{}} 0x{:x}\n", "Virtual Size", WIDTH, virtual_size())
-     << format("{:{}} 0x{:x}\n", "Virtual Address", WIDTH, virtual_address())
-     << format("{:{}} 0x{:x}\n", "Size of raw data", WIDTH, sizeof_raw_data())
-     << format("{:{}} 0x{:x}\n", "Pointer to raw data", WIDTH, pointerto_raw_data())
-     << format("{:{}} [0x{:08x}, 0x{:08x}]\n", "Range", WIDTH,
+  os << format("{:{}} {:#x}\n", "Virtual Size", WIDTH, virtual_size())
+     << format("{:{}} {:#x}\n", "Virtual Address", WIDTH, virtual_address())
+     << format("{:{}} {:#x}\n", "Size of raw data", WIDTH, sizeof_raw_data())
+     << format("{:{}} {:#x}\n", "Pointer to raw data", WIDTH, pointerto_raw_data())
+     << format("{:{}} [{:#010x}, {:#010x}]\n", "Range", WIDTH,
                pointerto_raw_data(), pointerto_raw_data() + sizeof_raw_data())
-     << format("{:{}} 0x{:x}\n", "Pointer to relocations", WIDTH, pointerto_relocation())
-     << format("{:{}} 0x{:x}\n", "Pointer to line numbers", WIDTH, pointerto_line_numbers())
-     << format("{:{}} 0x{:x}\n", "Number of relocations", WIDTH, numberof_relocations())
-     << format("{:{}} 0x{:x}\n", "Number of lines", WIDTH, numberof_line_numbers())
+     << format("{:{}} {:#x}\n", "Pointer to relocations", WIDTH, pointerto_relocation())
+     << format("{:{}} {:#x}\n", "Pointer to line numbers", WIDTH, pointerto_line_numbers())
+     << format("{:{}} {:#x}\n", "Number of relocations", WIDTH, numberof_relocations())
+     << format("{:{}} {:#x}\n", "Number of lines", WIDTH, numberof_line_numbers())
      << format("{:{}} {}", "Characteristics", WIDTH, join(list_str, ", "));
 
   return os.str();

@@ -124,9 +124,9 @@ void CorePrPsInfo::dump(std::ostream& os) const {
                     info_res->uid, info_res->gid, info_res->pid)
      << fmt::format("  PPID: {:04d} PGRP: {:04d} SID: {:04d}\n",
                     info_res->ppid, info_res->pgrp, info_res->sid)
-     << fmt::format("  Flag: 0x{:04x} Nice: {} Zombie: {}\n",
+     << fmt::format("  Flag: {:#06x} Nice: {} Zombie: {}\n",
                     info_res->flag, info_res->nice, info_res->zombie)
-     << fmt::format("  State: 0x{:x} State Name: {}\n",
+     << fmt::format("  State: {:#x} State Name: {}\n",
                     info_res->state, info_res->sname);
 }
 

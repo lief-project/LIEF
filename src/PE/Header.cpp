@@ -107,9 +107,9 @@ std::ostream& operator<<(std::ostream& os, const Header& entry) {
   os << fmt::format("Signature:               {}\n", signature_str)
      << fmt::format("Machine:                 {}\n", to_string(entry.machine()))
      << fmt::format("Number of sections:      {}\n", entry.numberof_sections())
-     << fmt::format("Pointer to symbol table: 0x{:x}\n", entry.pointerto_symbol_table())
+     << fmt::format("Pointer to symbol table: {:#x}\n", entry.pointerto_symbol_table())
      << fmt::format("Number of symbols:       {}\n", entry.numberof_symbols())
-     << fmt::format("Size of optional header: 0x{:x}\n", entry.sizeof_optional_header())
+     << fmt::format("Size of optional header: {:#x}\n", entry.sizeof_optional_header())
      << fmt::format("Characteristics:         {}\n", fmt::join(list_str, ", "))
      << fmt::format("Timtestamp:              {} ({})\n",
                     entry.time_date_stamp(), ts_to_str(entry.time_date_stamp()));

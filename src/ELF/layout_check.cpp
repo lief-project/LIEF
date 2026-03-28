@@ -170,7 +170,7 @@ bool LayoutChecker::check_segments() {
     const Segment& seg = segments[i];
 
     if (seg.file_offset() + seg.physical_size() > filesz) {
-      return error("Segment[{}] offset ({:#x}) + filesz ({:#x}) is beyond file size (0x{:x})",
+      return error("Segment[{}] offset ({:#x}) + filesz ({:#x}) is beyond file size ({:#x})",
                    i, seg.file_offset(), seg.physical_size(), filesz);
     }
 
@@ -193,8 +193,8 @@ bool LayoutChecker::check_segments() {
       has_pt_load = true;
       if (alignment > 1) {
         if ((seg.virtual_address() % alignment) != (seg.file_offset() % alignment)) {
-          return error("Segment[{}] (PT_LOAD) p_vaddr (0x{:x}) and p_offset (0x{:x}) "
-                       "are not congruent modulo p_align (0x{:x})",
+          return error("Segment[{}] (PT_LOAD) p_vaddr ({:#x}) and p_offset ({:#x}) "
+                       "are not congruent modulo p_align ({:#x})",
                        i, seg.virtual_address(), seg.file_offset(), alignment);
         }
       }
@@ -526,7 +526,7 @@ bool LayoutChecker::check_notes() {
       return error("PT_NOTE segment runs off end of file");
     }
     if (seg.physical_size() != seg.virtual_size()) {
-      return error("PT_NOTE segment p_filesz (0x{:x}) != p_memsz (0x{:x})",
+      return error("PT_NOTE segment p_filesz ({:#x}) != p_memsz ({:#x})",
                    seg.physical_size(), seg.virtual_size());
     }
   }

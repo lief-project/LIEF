@@ -30,7 +30,7 @@ std::unique_ptr<AArch64PAuth> AArch64PAuth::create(BinaryStream& stream) {
 }
 
 void AArch64PAuth::dump(std::ostream &os) const {
-  os << fmt::format("Platform: 0x{:04x}, Version: 0x{:04x}",
+  os << fmt::format("Platform: {:#06x}, Version: {:#06x}",
                     platform(), version());
 }
 

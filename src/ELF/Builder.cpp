@@ -59,7 +59,7 @@ Builder::Builder(Binary& binary, const config_t& config) :
 
     default:
       {
-        LIEF_ERR("ELF {} are not supported", to_string(type));
+        LIEF_ERR("Unsupported ELF type: {}", to_string(type));
         std::abort();
       }
   }
@@ -106,7 +106,7 @@ const std::vector<uint8_t>& Builder::get_build() {
 void Builder::write(const std::string& filename) const {
   std::ofstream output_file{filename, std::ios::out | std::ios::binary | std::ios::trunc};
   if (!output_file) {
-    LIEF_ERR("Can't open {}!", filename);
+    LIEF_ERR("Failed to open {}", filename);
     return;
   }
   write(output_file);
@@ -135,7 +135,7 @@ uint32_t Builder::sort_dynamic_symbols() {
       // TODO: Erase null entries of dynamic symbol table and symbol version
       // table if information of .dynsym section is smaller than null entries
       // num.
-      LIEF_DEBUG("information of {} section changes from {:d} to {:d}",
+      LIEF_DEBUG("Info field of {} section changed from {:d} to {:d}",
                  section->name(), section->information(), first_non_local_symbol_index);
 
       section->information(first_non_local_symbol_index);
@@ -153,11 +153,11 @@ uint32_t Builder::sort_dynamic_symbols() {
 
 
 ok_error_t Builder::build_empty_symbol_gnuhash() {
-  LIEF_DEBUG("Build empty GNU Hash");
+  LIEF_DEBUG("Building empty GNU hash");
   Section* gnu_hash_section = binary_->get(Section::TYPE::GNU_HASH);
 
   if (gnu_hash_section == nullptr) {
-    LIEF_ERR("Can't find section with type SHT_GNU_HASH");
+    LIEF_ERR("SHT_GNU_HASH section not found");
     return make_error_code(lief_errors::not_found);
   }
 
@@ -190,32 +190,32 @@ ok_error_t Builder::update_note_section(const Note& note,
 {
   Segment* segment_note = binary_->get(Segment::TYPE::NOTE);
   if (segment_note == nullptr) {
-    LIEF_ERR("Can't find the PT_NOTE segment");
+    LIEF_ERR("PT_NOTE segment not found");
     return make_error_code(lief_errors::not_found);
   }
 
   auto res_secname = Note::type_to_section(note.type());
   if (!res_secname) {
-    LIEF_ERR("LIEF doesn't know the section name for note: '{}'",
+    LIEF_ERR("Unknown section name for note '{}'",
              to_string(note.type()));
     return make_error_code(lief_errors::not_supported);
   }
 
   Section* note_sec = binary_->get_section(*res_secname);
   if (!note_sec) {
-    LIEF_ERR("Section {} not present", *res_secname);
+    LIEF_ERR("Section '{}' not found", *res_secname);
     return make_error_code(lief_errors::not_found);
   }
 
   const auto& offset_map = static_cast<ExeLayout*>(layout_.get())->note_off_map();
   auto it_offset = offset_map.find(&note);
   if (it_offset == offset_map.end()) {
-    LIEF_ERR("Can't find offset for note '{}'", to_string(note.type()));
+    LIEF_ERR("Offset not found for note '{}'", to_string(note.type()));
     return make_error_code(lief_errors::not_found);
   }
 
   if (!notes.insert(&note).second) {
-    LIEF_DEBUG("Note '{}' has already been processed", to_string(note.type()));
+    LIEF_DEBUG("Note '{}' already processed", to_string(note.type()));
     note_sec->virtual_address(0);
     note_sec->size(note_sec->size() + note.size());
     return ok_t();

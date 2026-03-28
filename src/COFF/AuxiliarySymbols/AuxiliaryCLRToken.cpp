@@ -39,25 +39,25 @@ std::unique_ptr<AuxiliaryCLRToken>
 
   auto bAuxType = stream.read<uint8_t>();
   if (!bAuxType) {
-    LIEF_WARN("AuxiliaryCLRToken error (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliaryCLRToken field (line: {})", __LINE__);
     return std::make_unique<AuxiliaryCLRToken>();
   }
 
   auto bReserved = stream.read<uint8_t>();
   if (!bReserved) {
-    LIEF_WARN("AuxiliaryCLRToken error (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliaryCLRToken field (line: {})", __LINE__);
     return std::make_unique<AuxiliaryCLRToken>();
   }
 
   auto SymbolTableIndex = stream.read<uint32_t>();
   if (!SymbolTableIndex) {
-    LIEF_WARN("AuxiliaryCLRToken error (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliaryCLRToken field (line: {})", __LINE__);
     return std::make_unique<AuxiliaryCLRToken>();
   }
 
   std::vector<uint8_t> rgbReserved;
   if (!stream.read_data(rgbReserved, 12)) {
-    LIEF_WARN("AuxiliaryCLRToken error (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliaryCLRToken field (line: {})", __LINE__);
     return std::make_unique<AuxiliaryCLRToken>();
   }
   return std::make_unique<AuxiliaryCLRToken>(

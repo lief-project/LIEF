@@ -10,14 +10,14 @@ def test_debug_info(capsys):
     info = elf.debug_info
     assert info is None
     captured = capsys.readouterr()
-    assert captured.err.startswith("DebugInfo are not available for this build.")
+    assert captured.err.startswith("Debug info not available for this build")
 
     pdb = lief.pdb.load(get_sample("PDB/libobjc2.pdb"))
     assert pdb is None
     captured = capsys.readouterr()
-    assert captured.err.startswith("DebugInfo are not available for this build.")
+    assert captured.err.startswith("Debug info not available for this build")
 
     pdb = lief.pdb.DebugInfo.from_file(get_sample("PDB/libobjc2.pdb"))
     assert pdb is None
     captured = capsys.readouterr()
-    assert captured.err.startswith("DebugInfo are not available for this build.")
+    assert captured.err.startswith("Debug info not available for this build")

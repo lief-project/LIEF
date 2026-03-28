@@ -44,7 +44,7 @@ std::unique_ptr<Relocation> Relocation::parse(
 std::string Relocation::to_string() const {
   using fmt::format;
   std::ostringstream oss;
-  oss << format("0x{:08x} {:>26} 0x{:08x}", address(),
+  oss << format("{:#010x} {:>26} {:#010x}", address(),
     COFF::to_string(type()), symbol_idx()
   );
   if (const Symbol* sym = symbol()) {

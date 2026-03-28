@@ -47,7 +47,7 @@ ResourceDialog::dialogs_t ResourceDialog::parse(const uint8_t* buffer, size_t si
   dialogs_t dialogs;
 
   SpanStream strm(buffer, size);
-  LIEF_DEBUG("Parsing dialogs from stream size: 0x{:08x}", size);
+  LIEF_DEBUG("Parsing dialogs from stream size: {:#010x}", size);
   while (strm) {
     std::unique_ptr<ResourceDialog> dia;
     if (is_extended(strm)) {

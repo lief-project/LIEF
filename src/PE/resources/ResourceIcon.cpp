@@ -126,7 +126,7 @@ void ResourceIcon::save(const std::string& filename) const {
                             std::ios::out | std::ios::binary |
                             std::ios::trunc);
   if (!output_file) {
-    LIEF_ERR("Can't open {} for writing", filename);
+    LIEF_ERR("Failed to open {} for writing", filename);
     return;
   }
   std::vector<uint8_t> raw = serialize();
@@ -139,13 +139,13 @@ void ResourceIcon::accept(Visitor& visitor) const {
 
 std::ostream& operator<<(std::ostream& os, const ResourceIcon& icon) {
   static constexpr auto DEFAULT_ALIGN = 13;
-  os << fmt::format("Icon id=0x{:04x}\n", icon.id());
+  os << fmt::format("Icon id={:#06x}\n", icon.id());
   os << fmt::format("  {:{}}: {}x{}\n", "size", DEFAULT_ALIGN, icon.width(), icon.height());
   os << fmt::format("  {:{}}: {}\n", "color count", DEFAULT_ALIGN, icon.color_count());
   os << fmt::format("  {:{}}: {}\n", "reserved", DEFAULT_ALIGN, icon.reserved());
   os << fmt::format("  {:{}}: {}\n", "planes", DEFAULT_ALIGN, icon.planes());
   os << fmt::format("  {:{}}: {}\n", "bit count", DEFAULT_ALIGN, icon.bit_count());
-  os << fmt::format("  {:{}}: 0x{:08x}\n", "pixel (hash)", DEFAULT_ALIGN, Hash::hash(icon.pixels()));
+  os << fmt::format("  {:{}}: {:#010x}\n", "pixel (hash)", DEFAULT_ALIGN, Hash::hash(icon.pixels()));
   return os;
 }
 

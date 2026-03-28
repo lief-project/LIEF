@@ -23,7 +23,7 @@ namespace LIEF::MachO {
 std::ostream& operator<<(std::ostream& os,
     const ChainedPointerAnalysis::dyld_chained_ptr_arm64e_rebase_t& chain)
 {
-  os << fmt::format("target: 0x{:010x} high8: 0x{:02x}, next: 0x{:03x}, "
+  os << fmt::format("target: {:#012x} high8: {:#04x}, next: {:#05x}, "
                     "bind: {}, auth: {}",
     chain.target, chain.high8, chain.next, (bool)chain.bind, (bool)chain.auth
   );
@@ -33,8 +33,8 @@ std::ostream& operator<<(std::ostream& os,
 std::ostream& operator<<(std::ostream& os,
     const ChainedPointerAnalysis::dyld_chained_ptr_arm64e_bind_t& chain)
 {
-  os << fmt::format("ordinal: 0x{:04x} zero: 0x{:04x}, addend: 0x{:05x}, "
-                    "next: 0x{:03x} bind: {}, auth: {}",
+  os << fmt::format("ordinal: {:#06x} zero: {:#06x}, addend: {:#07x}, "
+                    "next: {:#05x} bind: {}, auth: {}",
     chain.ordinal, chain.zero, chain.addend, chain.next,
     (bool)chain.bind, (bool)chain.auth
   );
@@ -44,8 +44,8 @@ std::ostream& operator<<(std::ostream& os,
 std::ostream& operator<<(std::ostream& os,
     const ChainedPointerAnalysis::dyld_chained_ptr_arm64e_auth_rebase_t& chain)
 {
-  os << fmt::format("target: 0x{:08x} diversity: 0x{:04x}, addr_div: {}, "
-                    "key: 0x{:x} next: 0x{:03x} bind: {}, auth: {}",
+  os << fmt::format("target: {:#010x} diversity: {:#06x}, addr_div: {}, "
+                    "key: {:#x} next: {:#05x} bind: {}, auth: {}",
     chain.target, chain.diversity, chain.addr_div, chain.key, chain.next,
     (bool)chain.bind, (bool)chain.auth
   );
@@ -55,8 +55,8 @@ std::ostream& operator<<(std::ostream& os,
 std::ostream& operator<<(std::ostream& os,
     const ChainedPointerAnalysis::dyld_chained_ptr_arm64e_auth_bind_t& chain)
 {
-  os << fmt::format("ordinal: 0x{:04x} zero: 0x{:04x}, diversity: 0x{:04x}, "
-                    "addr_div: {} key: 0x{:x} next: 0x{:03x} bind: {}, auth: {}",
+  os << fmt::format("ordinal: {:#06x} zero: {:#06x}, diversity: {:#06x}, "
+                    "addr_div: {} key: {:#x} next: {:#05x} bind: {}, auth: {}",
     chain.ordinal, chain.zero, chain.diversity, chain.addr_div, chain.key,
     chain.next, (bool)chain.bind, (bool)chain.auth
   );
@@ -66,8 +66,8 @@ std::ostream& operator<<(std::ostream& os,
 std::ostream& operator<<(std::ostream& os,
     const ChainedPointerAnalysis::dyld_chained_ptr_64_rebase_t& chain)
 {
-  os << fmt::format("target: 0x{:010x} high8: 0x{:02x}, reserved: 0x{:02x}, "
-                    "next: 0x{:04x} bind: {}",
+  os << fmt::format("target: {:#012x} high8: {:#04x}, reserved: {:#04x}, "
+                    "next: {:#06x} bind: {}",
     chain.target, chain.high8, chain.reserved, chain.next, (bool)chain.bind);
   return os;
 }
@@ -75,8 +75,8 @@ std::ostream& operator<<(std::ostream& os,
     const ChainedPointerAnalysis::dyld_chained_ptr_arm64e_bind24_t& chain)
 {
 
-  os << fmt::format("ordinal: 0x{:06x} zero: 0x{:02x}, addend: 0x{:05x}, "
-                    "next: 0x{:03x} bind: {}, auth: {}",
+  os << fmt::format("ordinal: {:#08x} zero: {:#04x}, addend: {:#07x}, "
+                    "next: {:#05x} bind: {}, auth: {}",
     chain.ordinal, chain.zero, chain.addend, chain.next, (bool)chain.bind,
     (bool)chain.auth);
   return os;
@@ -84,8 +84,8 @@ std::ostream& operator<<(std::ostream& os,
 std::ostream& operator<<(std::ostream& os,
     const ChainedPointerAnalysis::dyld_chained_ptr_arm64e_auth_bind24_t& chain)
 {
-  os << fmt::format("ordinal: 0x{:06x} zero: 0x{:02x}, diversity: 0x{:04x}, "
-                    "addr_div: {}, key: 0x{:x}, next: 0x{:03x} bind: {}, auth: {}",
+  os << fmt::format("ordinal: {:#08x} zero: {:#04x}, diversity: {:#06x}, "
+                    "addr_div: {}, key: {:#x}, next: {:#05x} bind: {}, auth: {}",
     chain.ordinal, chain.zero, chain.diversity, chain.addr_div, chain.key,
     chain.next, (bool)chain.bind, (bool)chain.auth);
   return os;
@@ -94,8 +94,8 @@ std::ostream& operator<<(std::ostream& os,
 std::ostream& operator<<(std::ostream& os,
     const ChainedPointerAnalysis::dyld_chained_ptr_64_bind_t& chain)
 {
-  os << fmt::format("ordinal: 0x{:06x} addend: 0x{:04x}, reserved: 0x{:05x}, "
-                    "next: 0x{:04x} bind: {}",
+  os << fmt::format("ordinal: {:#08x} addend: {:#06x}, reserved: {:#07x}, "
+                    "next: {:#06x} bind: {}",
     chain.ordinal, chain.addend, chain.reserved, chain.next, (bool)chain.bind);
   return os;
 }
@@ -103,8 +103,8 @@ std::ostream& operator<<(std::ostream& os,
 std::ostream& operator<<(std::ostream& os,
     const ChainedPointerAnalysis::dyld_chained_ptr_64_kernel_cache_rebase_t& chain)
 {
-  os << fmt::format("target: 0x{:08x} cache_level: {}, diversity: 0x{:04x}, "
-                    "addr_div: {} key: {} next: 0x{:03x}, auth: {}",
+  os << fmt::format("target: {:#010x} cache_level: {}, diversity: {:#06x}, "
+                    "addr_div: {} key: {} next: {:#05x}, auth: {}",
     chain.target, chain.cache_level, chain.diversity, chain.addr_div,
     chain.key, chain.next, (bool)chain.is_auth);
   return os;
@@ -113,7 +113,7 @@ std::ostream& operator<<(std::ostream& os,
 std::ostream& operator<<(std::ostream& os,
     const ChainedPointerAnalysis::dyld_chained_ptr_32_rebase_t& chain)
 {
-  os << fmt::format("target: 0x{:08x} next: 0x{:02x}, bind: {}",
+  os << fmt::format("target: {:#010x} next: {:#04x}, bind: {}",
     chain.target, chain.next, (bool)chain.bind);
   return os;
 }
@@ -121,7 +121,7 @@ std::ostream& operator<<(std::ostream& os,
 std::ostream& operator<<(std::ostream& os,
     const ChainedPointerAnalysis::dyld_chained_ptr_32_bind_t& chain)
 {
-  os << fmt::format("ordinal: 0x{:05x} addend: 0x{:02x}, next: 0x{:x}, bind: {}",
+  os << fmt::format("ordinal: {:#07x} addend: {:#04x}, next: {:#x}, bind: {}",
     chain.ordinal, chain.addend, chain.next, (bool)chain.bind);
   return os;
 }
@@ -129,7 +129,7 @@ std::ostream& operator<<(std::ostream& os,
 std::ostream& operator<<(std::ostream& os,
     const ChainedPointerAnalysis::dyld_chained_ptr_32_cache_rebase_t& chain)
 {
-  os << fmt::format("target: 0x{:06x}, next: 0x{:x}",
+  os << fmt::format("target: {:#08x}, next: {:#x}",
                      chain.target, chain.next);
   return os;
 }
@@ -137,7 +137,7 @@ std::ostream& operator<<(std::ostream& os,
 std::ostream& operator<<(std::ostream& os,
     const ChainedPointerAnalysis::dyld_chained_ptr_32_firmware_rebase_t& chain)
 {
-  os << fmt::format("target: 0x{:06x}, next: 0x{:x}",
+  os << fmt::format("target: {:#08x}, next: {:#x}",
                      chain.target, chain.next);
   return os;
 }
@@ -145,7 +145,7 @@ std::ostream& operator<<(std::ostream& os,
 std::ostream& operator<<(std::ostream& os,
     const ChainedPointerAnalysis::dyld_chained_ptr_arm64e_segmented_rebase_t& chain)
 {
-  os << fmt::format("segment offset: 0x{:06x}, segment index: {}, next: 0x{:x}",
+  os << fmt::format("segment offset: {:#08x}, segment index: {}, next: {:#x}",
                      chain.target_seg_offset, chain.target_seg_index, chain.next);
   return os;
 }
@@ -153,7 +153,7 @@ std::ostream& operator<<(std::ostream& os,
 std::ostream& operator<<(std::ostream& os,
     const ChainedPointerAnalysis::dyld_chained_ptr_arm64e_auth_segmented_rebase_t& chain)
 {
-  os << fmt::format("segment offset: 0x{:06x}, segment index: {}, next: 0x{:x}, "
+  os << fmt::format("segment offset: {:#08x}, segment index: {}, next: {:#x}, "
                     "addr_div: {} key: {} diversity: {}, auth: {}",
                      chain.target_seg_offset, chain.target_seg_index, chain.next,
                      chain.addr_div, chain.key, chain.diversity, chain.auth);

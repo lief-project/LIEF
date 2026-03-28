@@ -55,8 +55,8 @@ void QNXStack::accept(Visitor& visitor) const {
 void QNXStack::dump(std::ostream& os) const {
   Note::dump(os);
   os << '\n';
-  os << fmt::format("  Stack Size:      0x{:x}\n", stack_size())
-     << fmt::format("  Stack allocated: 0x{:x}\n", stack_allocated())
+  os << fmt::format("  Stack Size:      {:#x}\n", stack_size())
+     << fmt::format("  Stack allocated: {:#x}\n", stack_allocated())
      << fmt::format("  Executable:      {}\n", is_executable());
 }
 

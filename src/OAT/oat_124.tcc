@@ -43,7 +43,7 @@ void Parser::parse_dex_files<details::OAT124_t>() {
 
   uint64_t dexfiles_offset = sizeof(oat_header) + oat.header_.key_value_size();
 
-  LIEF_DEBUG("OAT DEX file located at offset: 0x{:x}", dexfiles_offset);
+  LIEF_DEBUG("OAT DEX files offset: {:#x}", dexfiles_offset);
 
   std::vector<uint32_t> classes_offsets_offset;
   classes_offsets_offset.reserve(nb_dex_files);
@@ -51,7 +51,7 @@ void Parser::parse_dex_files<details::OAT124_t>() {
   stream_->setpos(dexfiles_offset);
   for (size_t i = 0; i < nb_dex_files; ++i ) {
 
-    LIEF_DEBUG("Dealing with OAT DEX file #{:d}", i);
+    LIEF_DEBUG("Processing OAT DEX file #{:d}", i);
 
     std::unique_ptr<DexFile> dex_file{new DexFile{}};
 
@@ -99,7 +99,7 @@ void Parser::parse_dex_files<details::OAT124_t>() {
   if (oat_binary().has_vdex()) {
     VDEX::File::it_dex_files dexfiles = oat_binary().vdex_->dex_files();
     if (dexfiles.size() != oat.oat_dex_files_.size()) {
-      LIEF_WARN("Inconsistent number of vdex files");
+      LIEF_WARN("Inconsistent VDEX file count");
       return;
     }
     for (size_t i = 0; i < dexfiles.size(); ++i) {

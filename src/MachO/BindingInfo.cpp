@@ -60,7 +60,7 @@ void BindingInfo::accept(Visitor& visitor) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const BindingInfo& info) {
-  os << fmt::format("address=0x{:08x}, addend=0x{:x}",
+  os << fmt::format("address={:#010x}, addend={:#x}",
                     info.address(), info.addend());
   if (const Symbol* sym = info.symbol()) {
     os << fmt::format("  symbol={}", sym->name());

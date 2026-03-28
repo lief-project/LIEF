@@ -65,7 +65,7 @@ void DynamicSymbolCommand::accept(Visitor& visitor) const {
 
 std::ostream& DynamicSymbolCommand::print(std::ostream& os) const {
   LoadCommand::print(os) << '\n';
-  static constexpr auto DEFAULT_FMT = "{:36}: 0x{:x}\n";
+  static constexpr auto DEFAULT_FMT = "{:36}: {:#x}\n";
   os << fmt::format(DEFAULT_FMT, "First local symbol index", idx_local_symbol());
   os << fmt::format(DEFAULT_FMT, "Number of local symbols", nb_local_symbols());
   os << fmt::format(DEFAULT_FMT, "External symbol index", idx_external_define_symbol());

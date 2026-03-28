@@ -70,7 +70,7 @@ Parser::Parser(const std::string& file) :
 {
   auto stream = VectorStream::from_file(file);
   if (!stream) {
-    LIEF_ERR("Can't create the stream");
+    LIEF_ERR("Failed to create stream");
     return;
   }
   stream_ = std::make_unique<VectorStream>(std::move(*stream));

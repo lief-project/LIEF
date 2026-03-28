@@ -124,7 +124,7 @@ result<ResourceVersion> ResourceVersion::parse(BinaryStream& stream) {
   }
 
   if (*wType != 0 && *wType != 1) {
-    LIEF_WARN("VS_VERSIONINFO.wType should be 0 or 1. Got: {}", *wType);
+    LIEF_WARN("VS_VERSIONINFO.wType should be 0 or 1, got {}", *wType);
     return make_error_code(lief_errors::corrupted);
   }
 
@@ -136,7 +136,7 @@ result<ResourceVersion> ResourceVersion::parse(BinaryStream& stream) {
 
   std::string szKey_u8 = u16tou8(*szKey);
   if (szKey_u8 != "VS_VERSION_INFO") {
-    LIEF_WARN("VS_VERSIONINFO.szKey should be 'VS_VERSION_INFO'. Got: {}",
+    LIEF_WARN("VS_VERSIONINFO.szKey should be 'VS_VERSION_INFO', got {}",
               szKey_u8);
     return make_error_code(lief_errors::corrupted);
   }
@@ -155,7 +155,7 @@ result<ResourceVersion> ResourceVersion::parse(BinaryStream& stream) {
     }
     SpanStream fixed_strm(Value);
     if (auto is_ok = parse_fixed_file_info(version, fixed_strm); !is_ok) {
-      LIEF_WARN("Failed to parse the 'VS_FIXEDFILEINFO' structure");
+      LIEF_WARN("Failed to parse VS_FIXEDFILEINFO structure");
     }
   }
 
@@ -173,7 +173,7 @@ result<ResourceVersion> ResourceVersion::parse(BinaryStream& stream) {
   // VarFileInfo structures that are children of the current VS_VERSIONINFO
   // structure.
   if (auto is_ok = parse_children(version, stream); !is_ok) {
-    LIEF_WARN("Failed to parse 'VS_VERSIONINFO' children");
+    LIEF_WARN("Failed to parse VS_VERSIONINFO children");
   }
 
   LIEF_DEBUG("Bytes left: {}", stream.size() - stream.pos());
@@ -206,7 +206,7 @@ ok_error_t ResourceVersion::parse_fixed_file_info(ResourceVersion& version,
   if (!dwSignature) { return make_error_code(dwSignature.error()); }
 
   if (*dwSignature != fixed_file_info_t::SIGNATURE_VALUE) {
-    LIEF_WARN("VS_FIXEDFILEINFO.dwSignature: expecting 0x{:08x}, got: 0x{:08x}",
+    LIEF_WARN("VS_FIXEDFILEINFO.dwSignature: expecting {:#010x}, got: {:#010x}",
               fixed_file_info_t::SIGNATURE_VALUE, *dwSignature);
   }
 
@@ -272,7 +272,7 @@ inline std::string version_to_str(uint32_t lsb, uint32_t msb) {
 std::string ResourceVersion::fixed_file_info_t::to_string() const {
   static constexpr auto WIDTH = 20;
   std::ostringstream oss;
-  oss << fmt::format("{:{}}: 0x{:06x}\n", "Struct Version", WIDTH, struct_version);
+  oss << fmt::format("{:{}}: {:#08x}\n", "Struct Version", WIDTH, struct_version);
   oss << fmt::format("{:{}}: {}\n", "File version", WIDTH,
                      version_to_str(file_version_ls, file_version_ms));
 
@@ -280,17 +280,17 @@ std::string ResourceVersion::fixed_file_info_t::to_string() const {
                      version_to_str(product_version_ls, product_version_ms));
 
   if (file_flags != 0) {
-    oss << fmt::format("{:{}}: {} (0x{:08x})\n", "Flags", WIDTH,
+    oss << fmt::format("{:{}}: {} ({:#010x})\n", "Flags", WIDTH,
                        fmt::to_string(flags()), file_flags);
   }
-  oss << fmt::format("{:{}}: {} (0x{:08x})\n", "File OS", WIDTH,
+  oss << fmt::format("{:{}}: {} ({:#010x})\n", "File OS", WIDTH,
                      VERSION_OS(file_os), file_os);
 
-  oss << fmt::format("{:{}}: {} (0x{:08x})\n", "File Type", WIDTH,
+  oss << fmt::format("{:{}}: {} ({:#010x})\n", "File Type", WIDTH,
                      FILE_TYPE(file_type), file_type);
 
   if (file_subtype > 0) {
-    oss << fmt::format("{:{}}: {} (0x{:08x})\n", "File Subtype", WIDTH,
+    oss << fmt::format("{:{}}: {} ({:#010x})\n", "File Subtype", WIDTH,
                        file_type_details(), file_subtype);
   }
 
@@ -332,7 +332,7 @@ ok_error_t ResourceVersion::parse_children(ResourceVersion& version,
 
     SpanStream child_strm(payload);
     if (auto is_ok = parse_child(version, child_strm); !is_ok) {
-      LIEF_WARN("Failed to parse the first child");
+      LIEF_WARN("Failed to parse first child");
     }
   }
 
@@ -350,7 +350,7 @@ ok_error_t ResourceVersion::parse_children(ResourceVersion& version,
     }
     SpanStream child_strm(payload);
     if (auto is_ok = parse_child(version, child_strm); !is_ok) {
-      LIEF_WARN("Failed to parse the second child");
+      LIEF_WARN("Failed to parse second child");
     }
   }
   return ok();

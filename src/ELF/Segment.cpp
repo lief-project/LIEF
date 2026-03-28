@@ -43,7 +43,7 @@ Segment::TYPE Segment::type_from(uint64_t value, ARCH arch, Header::OS_ABI os) {
   using OS_ABI = Header::OS_ABI;
   if (PT_LOPROC <= value && value <= PT_HIPROC) {
     if (arch == ARCH::NONE) {
-      LIEF_WARN("Segment type 0x{:08x} requires to know the architecture", value);
+      LIEF_WARN("Segment type {:#010x} requires a known architecture", value);
       return TYPE::UNKNOWN;
     }
     switch (arch) {
@@ -64,7 +64,7 @@ Segment::TYPE Segment::type_from(uint64_t value, ARCH arch, Header::OS_ABI os) {
 
       default:
         {
-          LIEF_WARN("Segment type 0x{:08x} is unknown for the architecture {}",
+          LIEF_WARN("Unknown segment type {:#010x} for architecture {}",
                      value, to_string(arch));
           return TYPE::UNKNOWN;
         }
@@ -138,7 +138,7 @@ result<Segment> Segment::from_raw(const uint8_t* ptr, size_t size) {
   if (size != sizeof(details::Elf32_Phdr) &&
       size != sizeof(details::Elf64_Phdr))
   {
-    LIEF_ERR("The size of the provided data does not match a valid header size");
+    LIEF_ERR("Provided data size does not match a valid header size");
     return make_error_code(lief_errors::corrupted);
   }
 
@@ -155,14 +155,14 @@ result<Segment> Segment::from_raw(const uint8_t* ptr, size_t size) {
 
 span<const uint8_t> Segment::content() const {
   if (datahandler_ == nullptr) {
-    LIEF_DEBUG("Get content of segment {}@0x{:x} from cache",
+    LIEF_DEBUG("Getting content of segment {}@{:#x} from cache",
                to_string(type()), virtual_address());
     return content_c_;
   }
 
   auto res = datahandler_->get(file_offset(), handler_size(), DataHandler::Node::SEGMENT);
   if (!res) {
-    LIEF_ERR("Can't find the node. The segment's content can't be accessed");
+    LIEF_ERR("Node not found, segment content inaccessible");
     return {};
   }
   DataHandler::Node& node = res.value();
@@ -171,7 +171,7 @@ span<const uint8_t> Segment::content() const {
   const std::vector<uint8_t>& binary_content = datahandler_->content();
   const size_t size = binary_content.size();
   if (node.offset() >= size) {
-    LIEF_ERR("Can't access content of segment {}:0x{:x}",
+    LIEF_ERR("Failed to access segment content {}:{:#x}",
              to_string(type()), virtual_address());
     return {};
   }
@@ -187,7 +187,7 @@ span<const uint8_t> Segment::content() const {
     if ((node.offset() + handler_size()) <= size) {
       return {ptr, static_cast<size_t>(handler_size())};
     }
-    LIEF_ERR("Can't access content of segment {}:0x{:x}",
+    LIEF_ERR("Failed to access segment content {}:{:#x}",
              to_string(type()), virtual_address());
     return {};
   }
@@ -201,7 +201,7 @@ size_t Segment::get_content_size() const {
   }
   auto res = datahandler_->get(file_offset(), handler_size(), DataHandler::Node::SEGMENT);
   if (!res) {
-    LIEF_ERR("Can't find the node");
+    LIEF_ERR("Node not found");
     return 0;
   }
   DataHandler::Node& node = res.value();
@@ -212,13 +212,13 @@ template<typename T>
 T Segment::get_content_value(size_t offset) const {
   T ret;
   if (datahandler_ == nullptr) {
-    LIEF_DEBUG("Get content of segment {}@0x{:x} from cache",
+    LIEF_DEBUG("Getting content of segment {}@{:#x} from cache",
                to_string(type()), virtual_address());
     memcpy(&ret, content_c_.data() + offset, sizeof(T));
   } else {
     auto res = datahandler_->get(file_offset(), handler_size(), DataHandler::Node::SEGMENT);
     if (!res) {
-      LIEF_ERR("Can't find the node associated with this segment");
+      LIEF_ERR("Node not found for this segment");
       memset(&ret, 0, sizeof(T));
       return ret;
     }
@@ -237,7 +237,7 @@ template unsigned long long Segment::get_content_value<unsigned long long>(size_
 template<typename T>
 void Segment::set_content_value(size_t offset, T value) {
   if (datahandler_ == nullptr) {
-    LIEF_DEBUG("Set content of segment {}@0x{:x}:0x{:x} in cache (0x{:x} bytes)",
+    LIEF_DEBUG("Setting content of segment {}@{:#x}:{:#x} in cache ({:#x} bytes)",
         to_string(type()), virtual_address(), offset, sizeof(T));
     if (offset + sizeof(T) > content_c_.size()) {
       content_c_.resize(offset + sizeof(T));
@@ -247,7 +247,7 @@ void Segment::set_content_value(size_t offset, T value) {
   } else {
     auto res = datahandler_->get(file_offset(), handler_size(), DataHandler::Node::SEGMENT);
     if (!res) {
-      LIEF_ERR("Can't find the node associated with this segment. The content can't be updated");
+      LIEF_ERR("Node not found for this segment, content cannot be updated");
       return;
     }
     DataHandler::Node& node = res.value();
@@ -295,7 +295,7 @@ void Segment::file_offset(uint64_t file_offset) {
     if (res) {
       res->get().offset(file_offset);
     } else {
-      LIEF_ERR("Can't find the node. The file offset can't be updated");
+      LIEF_ERR("Node not found, file offset cannot be updated");
       return;
     }
   }
@@ -309,7 +309,7 @@ void Segment::physical_size(uint64_t physical_size) {
       node->get().size(physical_size);
       handler_size_ = physical_size;
     } else {
-      LIEF_ERR("Can't find the node. The physical size can't be updated");
+      LIEF_ERR("Node not found, physical size cannot be updated");
     }
   }
   size_ = physical_size;
@@ -317,19 +317,19 @@ void Segment::physical_size(uint64_t physical_size) {
 
 void Segment::content(std::vector<uint8_t> content) {
   if (datahandler_ == nullptr) {
-    LIEF_DEBUG("Set content of segment {}@0x{:x} in cache (0x{:x} bytes)",
+    LIEF_DEBUG("Setting content of segment {}@{:#x} in cache ({:#x} bytes)",
                to_string(type()), virtual_address(), content.size());
     physical_size(content.size());
     content_c_ = std::move(content);
     return;
   }
 
-  LIEF_DEBUG("Set content of segment {}@0x{:x} in data handler @0x{:x} (0x{:x} bytes)",
+  LIEF_DEBUG("Setting content of segment {}@{:#x} in data handler @{:#x} ({:#x} bytes)",
              to_string(type()), virtual_address(), file_offset(), content.size());
 
   auto res = datahandler_->get(file_offset(), handler_size(), DataHandler::Node::SEGMENT);
   if (!res) {
-    LIEF_ERR("Can't find the node for updating content");
+    LIEF_ERR("Node not found for content update");
     return;
   }
   DataHandler::Node& node = res.value();
@@ -338,7 +338,7 @@ void Segment::content(std::vector<uint8_t> content) {
   datahandler_->reserve(node.offset(), content.size());
 
   if (node.size() < content.size()) {
-      LIEF_INFO("You inserted 0x{:x} bytes in the segment {}@0x{:x} which is 0x{:x} wide",
+      LIEF_INFO("Inserted {:#x} bytes in segment {}@{:#x} which is {:#x} wide",
                 content.size(), to_string(type()), virtual_size(), node.size());
   }
 
@@ -391,10 +391,10 @@ std::ostream& operator<<(std::ostream& os, const Segment& segment) {
 
   std::string segment_ty = to_string(segment.type());
   if (segment_ty == "UNKNOWN") {
-    segment_ty = fmt::format("UNKNOWN[0x{:08x}]", (uint32_t)segment.type());
+    segment_ty = fmt::format("UNKNOWN[{:#010x}]", (uint32_t)segment.type());
   }
 
-  os << fmt::format("{} 0x{:08x}/0x{:06x} 0x{:06x} 0x{:04x}/0x{:04x} {} {}",
+  os << fmt::format("{} {:#010x}/{:#08x} {:#08x} {:#06x}/{:#06x} {} {}",
                     segment_ty, segment.virtual_address(),
                     segment.file_offset(), segment.physical_address(),
                     segment.physical_size(), segment.virtual_size(),

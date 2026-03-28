@@ -101,13 +101,13 @@ void Binary::patch_address(uint64_t address,
   // Find the segment associated with the virtual address
   SegmentCommand* segment_topatch = segment_from_virtual_address(address);
   if (segment_topatch == nullptr) {
-    LIEF_ERR("Unable to find segment associated with address: 0x{:x}", address);
+    LIEF_ERR("Unable to find segment associated with address: {:#x}", address);
     return;
   }
   const uint64_t offset = address - segment_topatch->virtual_address();
   span<uint8_t> content = segment_topatch->writable_content();
   if (offset > content.size() || (offset + patch_value.size()) > content.size()) {
-    LIEF_ERR("The patch value ({} bytes @0x{:x}) is out of bounds of the segment (limit: 0x{:x})",
+    LIEF_ERR("Patch value ({} bytes @{:#x}) out of segment bounds (limit: {:#x})",
              patch_value.size(), offset, content.size());
     return;
   }
@@ -116,21 +116,21 @@ void Binary::patch_address(uint64_t address,
 
 void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size, LIEF::Binary::VA_TYPES) {
   if (size > sizeof(patch_value)) {
-    LIEF_ERR("Invalid size: 0x{:x}", size);
+    LIEF_ERR("Invalid size: {:#x}", size);
     return;
   }
 
   SegmentCommand* segment_topatch = segment_from_virtual_address(address);
 
   if (segment_topatch == nullptr) {
-    LIEF_ERR("Unable to find segment associated with address: 0x{:x}", address);
+    LIEF_ERR("Unable to find segment associated with address: {:#x}", address);
     return;
   }
   const uint64_t offset = address - segment_topatch->virtual_address();
   span<uint8_t> content = segment_topatch->writable_content();
 
   if (offset > content.size() || (offset + size) > content.size()) {
-    LIEF_ERR("The patch value ({} bytes @0x{:x}) is out of bounds of the segment (limit: 0x{:x})",
+    LIEF_ERR("Patch value ({} bytes @{:#x}) out of segment bounds (limit: {:#x})",
              size, offset, content.size());
     return;
   }
@@ -166,7 +166,7 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size, 
 
     default:
       {
-        LIEF_ERR("The provided size ({}) does not match the size of an integer", size);
+        LIEF_ERR("Provided size ({}) does not match integer size", size);
         return;
       }
   }
@@ -178,7 +178,7 @@ span<const uint8_t> Binary::get_content_from_virtual_address(
   const SegmentCommand* segment = segment_from_virtual_address(virtual_address);
 
   if (segment == nullptr) {
-    LIEF_ERR("Unable to find segment associated with address: 0x{:x}", virtual_address);
+    LIEF_ERR("Unable to find segment associated with address: {:#x}", virtual_address);
     return {};
   }
 
@@ -208,7 +208,7 @@ uint64_t Binary::entrypoint() const {
     return imagebase() + cmd->pc();
   }
 
-  LIEF_WARN("Can't find LC_MAIN nor LC_THREAD/LC_UNIXTHREAD");
+  LIEF_WARN("Neither LC_MAIN nor LC_THREAD/LC_UNIXTHREAD found");
   return 0;
 }
 
@@ -448,7 +448,7 @@ const SegmentCommand* Binary::segment_from_offset(uint64_t offset) const {
 ok_error_t Binary::shift_linkedit(size_t width) {
   SegmentCommand* linkedit = get_segment("__LINKEDIT");
   if (linkedit == nullptr) {
-    LIEF_INFO("Can't find __LINKEDIT");
+    LIEF_INFO("__LINKEDIT segment not found");
     return make_error_code(lief_errors::not_found);
   }
   const uint64_t lnk_offset = linkedit->file_offset();
@@ -604,7 +604,7 @@ void Binary::sort_segments() {
   });
 
   if (!all_segments) {
-    LIEF_ERR("Segment commands non contiguous. Sort aborted!");
+    LIEF_ERR("Non-contiguous segment commands, sort aborted");
     return;
   }
 
@@ -915,10 +915,10 @@ ok_error_t Binary::shift(size_t value) {
   // Segment that wraps this load command table
   SegmentCommand* load_cmd_segment = segment_from_offset(loadcommands_end);
   if (load_cmd_segment == nullptr) {
-    LIEF_ERR("Can't find segment associated with load command space");
+    LIEF_ERR("Segment for load command space not found");
     return make_error_code(lief_errors::file_format_error);
   }
-  LIEF_DEBUG("LC Table wrapped by {} / End offset: 0x{:x} (size: {:x})",
+  LIEF_DEBUG("LC Table wrapped by {} / End offset: {:#x} (size: {:x})",
              load_cmd_segment->name(), loadcommands_end, load_cmd_segment->data_.size());
   load_cmd_segment->content_insert(loadcommands_end, value);
 
@@ -933,8 +933,8 @@ ok_error_t Binary::shift(size_t value) {
   shift_command(value, loadcommands_end);
   const uint64_t loadcommands_end_va = loadcommands_end + load_cmd_segment->virtual_address();
 
-  LIEF_DEBUG("loadcommands_end:    0x{:016x}", loadcommands_end);
-  LIEF_DEBUG("loadcommands_end_va: 0x{:016x}", loadcommands_end_va);
+  LIEF_DEBUG("loadcommands_end:    {:#018x}", loadcommands_end);
+  LIEF_DEBUG("loadcommands_end_va: {:#018x}", loadcommands_end_va);
 
   // Shift Segment and sections
   // ==========================
@@ -1002,7 +1002,7 @@ LoadCommand* Binary::add(std::unique_ptr<LoadCommand> command) {
   // Get the segment handling the LC table
   SegmentCommand* load_cmd_segment = segment_from_offset(loadcommands_end);
   if (load_cmd_segment == nullptr) {
-    LIEF_WARN("Can't get the last load command");
+    LIEF_WARN("Failed to get last load command");
     return nullptr;
   }
 
@@ -1039,7 +1039,7 @@ LoadCommand* Binary::add(const LoadCommand& command, size_t index) {
   }
 
   const size_t size_aligned = align(command.size(), pointer_size());
-  LIEF_DEBUG("available_command_space_: 0x{:06x} (required: 0x{:06x})",
+  LIEF_DEBUG("available_command_space_: {:#08x} (required: {:#08x})",
              available_command_space_, size_aligned);
 
   if (auto result = ensure_command_space(size_aligned); is_err(result)) {
@@ -1098,7 +1098,7 @@ bool Binary::remove(const LoadCommand& command) {
   if (auto* lib = cmd_rm->cast<DylibCommand>()) {
     auto it_cache = std::find(std::begin(libraries_), std::end(libraries_), cmd_rm);
     if (it_cache == std::end(libraries_)) {
-      LIEF_WARN("Library {} not found in cache. The binary object is likely in an inconsistent state", lib->name());
+      LIEF_WARN("Library {} not found in cache; binary may be inconsistent", lib->name());
     } else {
       libraries_.erase(it_cache);
     }
@@ -1107,7 +1107,7 @@ bool Binary::remove(const LoadCommand& command) {
   if (const auto* seg = cmd_rm->cast<const SegmentCommand>()) {
     auto it_cache = std::find(std::begin(segments_), std::end(segments_), cmd_rm);
     if (it_cache == std::end(segments_)) {
-      LIEF_WARN("Segment {} not found in cache. The binary object is likely in an inconsistent state", seg->name());
+      LIEF_WARN("Segment {} not found in cache; binary may be inconsistent", seg->name());
     } else {
       // Update the indexes to keep a consistent state
       for (auto it = it_cache; it != std::end(segments_); ++it) {
@@ -1282,12 +1282,12 @@ bool Binary::extend_section(Section& section, size_t size) {
   const uint64_t loadcommands_end = loadcommands_start + header().sizeof_cmds();
   SegmentCommand* load_cmd_segment = segment_from_offset(loadcommands_end);
   if (load_cmd_segment == nullptr) {
-    LIEF_ERR("Can't find segment associated with load command space");
+    LIEF_ERR("Segment for load command space not found");
     return false;
   }
 
   if (section.segment() != load_cmd_segment) {
-    LIEF_ERR("Can't extend section that belongs to segment '{}' which is not the first one", section.segment_name());
+    LIEF_ERR("Cannot extend section in non-first segment '{}'", section.segment_name());
     return false;
   }
 
@@ -1345,12 +1345,12 @@ bool Binary::extend_section(Section& section, size_t size) {
 void Binary::remove_section(const std::string& name, bool clear) {
   Section* sec_to_delete = get_section(name);
   if (sec_to_delete == nullptr) {
-    LIEF_ERR("Can't find section '{}'", name);
+    LIEF_ERR("Section '{}' not found", name);
     return;
   }
   SegmentCommand* segment = sec_to_delete->segment();
   if (segment == nullptr) {
-    LIEF_ERR("The section {} is in an inconsistent state (missing segment). Can't remove it",
+    LIEF_ERR("Section {} has no associated segment, cannot remove",
              sec_to_delete->name());
     return;
   }
@@ -1361,12 +1361,12 @@ void Binary::remove_section(const std::string& name, bool clear) {
 void Binary::remove_section(const std::string& segname, const std::string& secname, bool clear) {
   Section* sec_to_delete = get_section(segname, secname);
   if (sec_to_delete == nullptr) {
-    LIEF_ERR("Can't find section '{}' in segment '{}'", secname, segname);
+    LIEF_ERR("Section '{}' not found in segment '{}'", secname, segname);
     return;
   }
   SegmentCommand* segment = sec_to_delete->segment();
   if (segment == nullptr) {
-    LIEF_ERR("The section {} is in an inconsistent state (missing segment). Can't remove it",
+    LIEF_ERR("Section {} has no associated segment, cannot remove",
              sec_to_delete->name());
     return;
   }
@@ -1383,7 +1383,7 @@ void Binary::remove_section(const std::string& segname, const std::string& secna
       });
 
   if (it_section == std::end(segment->sections_)) {
-    LIEF_WARN("Can't find the section");
+    LIEF_WARN("Section not found");
     return;
   }
 
@@ -1410,7 +1410,7 @@ void Binary::remove_section(const std::string& segname, const std::string& secna
       });
 
   if (it_cache == std::end(sections_)) {
-    LIEF_WARN("Can find the section {} in the cache. The binary object is likely in an inconsistent state",
+    LIEF_WARN("Section {} not found in cache; binary may be inconsistent",
               section->name());
   } else {
     sections_.erase(it_cache);
@@ -1422,7 +1422,7 @@ void Binary::remove_section(const std::string& segname, const std::string& secna
 Section* Binary::add_section(const Section& section) {
   SegmentCommand* _TEXT_segment = get_segment("__TEXT");
   if (_TEXT_segment == nullptr) {
-    LIEF_ERR("Unable to get '__TEXT' segment");
+    LIEF_ERR("__TEXT segment not found");
     return nullptr;
   }
   return add_section(*_TEXT_segment, section);
@@ -1462,7 +1462,7 @@ Section* Binary::add_section(const SegmentCommand& segment, const Section& secti
     }
 
     if (!extend(*target_segment, hdr_size)) { // adjusts available_command_space_
-      LIEF_ERR("Unable to extend segment '{}' by 0x{:x}", segment.name(), hdr_size);
+      LIEF_ERR("Unable to extend segment '{}' by {:#x}", segment.name(), hdr_size);
       return nullptr;
     }
 
@@ -1599,7 +1599,7 @@ LoadCommand* Binary::add(const SegmentCommand& segment) {
   auto* new_cmd = add(new_segment, pos);
 
   if (new_cmd == nullptr) {
-    LIEF_WARN("Fail to insert new '{}' segment", segment.name());
+    LIEF_WARN("Failed to insert segment '{}'", segment.name());
     return nullptr;
   }
 
@@ -1644,8 +1644,8 @@ LoadCommand* Binary::add(const SegmentCommand& segment) {
 
   // Make space for the content of the new segment
   shift_linkedit(new_fsize);
-  LIEF_DEBUG(" -> offset         : 0x{:06x}", lnk_offset);
-  LIEF_DEBUG(" -> virtual address: 0x{:06x}", lnk_va);
+  LIEF_DEBUG(" -> offset         : {:#08x}", lnk_offset);
+  LIEF_DEBUG(" -> virtual address: {:#08x}", lnk_va);
 
   segment_added->virtual_address(lnk_va);
   segment_added->virtual_size(segment_added->virtual_size());
@@ -1678,7 +1678,7 @@ size_t Binary::add_cached_segment(SegmentCommand& segment) {
       [] (SegmentCommand* cmd) { return cmd->name() == "__LINKEDIT"; });
 
   if (it_linkedit == std::end(segments_)) {
-    LIEF_DEBUG("No __LINKEDIT segment found!");
+    LIEF_DEBUG("No __LINKEDIT segment found");
     segment.index_ = segments_.size();
     segments_.push_back(&segment);
   } else {
@@ -1744,7 +1744,7 @@ bool Binary::unexport(const Symbol& sym) {
     return true;
   }
 
-  LIEF_INFO("Can't find neither LC_DYLD_INFO / LC_DYLD_CHAINED_FIXUPS");
+  LIEF_INFO("Neither LC_DYLD_INFO nor LC_DYLD_CHAINED_FIXUPS found");
   return false;
 }
 
@@ -2039,7 +2039,7 @@ LIEF::Binary::functions_t Binary::unwind_functions() const {
   // Get section content
   const auto hdr = vs.read<details::unwind_info_section_header>();
   if (!hdr) {
-    LIEF_ERR("Can't read unwind section header!");
+    LIEF_ERR("Failed to read unwind section header");
     return {};
   }
   vs.setpos(hdr->index_section_offset);
@@ -2049,7 +2049,7 @@ LIEF::Binary::functions_t Binary::unwind_functions() const {
   for (size_t i = 0; i < hdr->index_count; ++i) {
     const auto section_hdr = vs.read<details::unwind_info_section_header_index_entry>();
     if (!section_hdr) {
-      LIEF_ERR("Can't read function information at index #{:d}", i);
+      LIEF_ERR("Failed to read function info at index {:d}", i);
       break;
     }
 
@@ -2071,7 +2071,7 @@ LIEF::Binary::functions_t Binary::unwind_functions() const {
         if (lvl_hdr->kind == UNWIND_COMPRESSED) {
           const auto lvl_compressed_hdr = vs.read<details::unwind_info_compressed_second_level_page_header>();
           if (!lvl_compressed_hdr) {
-            LIEF_ERR("Can't read lvl_compressed_hdr");
+            LIEF_ERR("Failed to read lvl_compressed_hdr");
             break;
           }
 
@@ -2086,7 +2086,7 @@ LIEF::Binary::functions_t Binary::unwind_functions() const {
           }
         }
         else if (lvl_hdr->kind == UNWIND_UNCOMPRESSED) {
-          LIEF_WARN("UNWIND_UNCOMPRESSED is not supported yet!");
+          LIEF_WARN("UNWIND_UNCOMPRESSED is not yet supported");
         }
         else {
           LIEF_WARN("Unknown 2nd level kind: {:d}", lvl_hdr->kind);
@@ -2102,7 +2102,7 @@ LIEF::Binary::functions_t Binary::unwind_functions() const {
   for (size_t i = 0; i < nb_lsda; ++i) {
     const auto hdr = vs.read<details::unwind_info_section_header_lsda_index_entry>();
     if (!hdr) {
-      LIEF_ERR("Can't read LSDA at index #{:d}", i);
+      LIEF_ERR("Failed to read LSDA at index {:d}", i);
       break;
     }
     functions.emplace(hdr->function_offset);

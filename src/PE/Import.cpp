@@ -150,11 +150,11 @@ std::ostream& operator<<(std::ostream& os, const Import& entry) {
   os << fmt::format(
   R"delim(
   Name: {} {{
-    Name(RVA): 0x{:06x}
-    IAT(RVA):  0x{:06x}
-    ILT(RVA):  0x{:06x}
-    FWD Chain: 0x{:06x}
-    Timestamp: 0x{:06x}
+    Name(RVA): {:#08x}
+    IAT(RVA):  {:#08x}
+    ILT(RVA):  {:#08x}
+    FWD Chain: {:#08x}
+    Timestamp: {:#08x}
   }}
   )delim",
   entry.name(), entry.name_rva_, entry.import_address_table_rva(),

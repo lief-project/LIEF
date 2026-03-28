@@ -36,9 +36,9 @@ void SymbolCommand::accept(Visitor& visitor) const {
 
 std::ostream& SymbolCommand::print(std::ostream& os) const {
   LoadCommand::print(os) << '\n';
-  os << fmt::format("symbol offset=0x{:06x}, nb symbols={}",
+  os << fmt::format("symbol offset={:#08x}, nb symbols={}",
                      symbol_offset(), numberof_symbols()) << '\n'
-     << fmt::format("string offset=0x{:06x}, string size={}",
+     << fmt::format("string offset={:#08x}, string size={}",
                      strings_offset(), strings_size());
   return os;
 }

@@ -54,7 +54,7 @@ void Builder::write(const std::string& filename) const {
                                        std::ios::trunc;
   std::ofstream output_file(filename, DEFAULT_MODE);
   if (!output_file) {
-    LIEF_ERR("Can't write in {}", filename);
+    LIEF_ERR("Failed to write to {}", filename);
     return;
   }
   write(output_file);
@@ -77,7 +77,7 @@ ok_error_t Builder::build() {
     auto res = is_64bit ? build_tls<details::PE64>() :
                           build_tls<details::PE32>();
     if (!res) {
-      LIEF_WARN("Something went wrong while re-building TLS: {}",
+      LIEF_WARN("Failed to rebuild TLS: {}",
                 to_string(res.error()));
     }
   }
@@ -85,7 +85,7 @@ ok_error_t Builder::build() {
   if (config_.resources) {
     auto is_ok = build_resources();
     if (!is_ok) {
-      LIEF_WARN("Something went wrong while re-building resource tree: {}",
+      LIEF_WARN("Failed to rebuild resource tree: {}",
                 to_string(is_ok.error()));
     }
   }
@@ -93,7 +93,7 @@ ok_error_t Builder::build() {
   if (config_.relocations) {
     auto is_ok = build_relocations();
     if (!is_ok) {
-      LIEF_WARN("Something went wrong while re-building relocations: {}",
+      LIEF_WARN("Failed to rebuild relocations: {}",
                 to_string(is_ok.error()));
     }
   }
@@ -103,7 +103,7 @@ ok_error_t Builder::build() {
                             build_imports<details::PE32>();
 
     if (!is_ok) {
-      LIEF_WARN("Something went wrong while re-building imports: {}",
+      LIEF_WARN("Failed to rebuild imports: {}",
                 to_string(is_ok.error()));
     }
   }
@@ -111,7 +111,7 @@ ok_error_t Builder::build() {
   if (config_.exports) {
     auto is_ok = build_exports();
     if (!is_ok) {
-      LIEF_WARN("Something went wrong while re-building exports: {}",
+      LIEF_WARN("Failed to rebuild exports: {}",
                 to_string(is_ok.error()));
     }
   }
@@ -121,7 +121,7 @@ ok_error_t Builder::build() {
                             build_load_config<details::PE32>();
 
     if (!is_ok) {
-      LIEF_WARN("Something went wrong while re-building load config: {}",
+      LIEF_WARN("Failed to rebuild load config: {}",
                 to_string(is_ok.error()));
     }
   }
@@ -129,34 +129,34 @@ ok_error_t Builder::build() {
   if (config_.debug) {
     auto is_ok = build_debug_info();
     if (!is_ok) {
-      LIEF_WARN("Something went wrong while re-building debug entries: {}",
+      LIEF_WARN("Failed to rebuild debug entries: {}",
                 to_string(is_ok.error()));
     }
   }
 
   auto is_ok = build(binary_->dos_header());
   if (!is_ok) {
-    LIEF_WARN("Something went wrong while re-building DOS header: {}",
+    LIEF_WARN("Failed to rebuild DOS header: {}",
               to_string(is_ok.error()));
   }
   is_ok = build(binary_->header());
 
   if (!is_ok) {
-    LIEF_WARN("Something went wrong while re-building regular header: {}",
+    LIEF_WARN("Failed to rebuild header: {}",
               to_string(is_ok.error()));
   }
 
   is_ok = build(binary_->optional_header());
 
   if (!is_ok) {
-    LIEF_WARN("Something went wrong while re-building optional header: {}",
+    LIEF_WARN("Failed to rebuild optional header: {}",
               to_string(is_ok.error()));
   }
 
   for (const DataDirectory& dir : binary_->data_directories()) {
     auto is_ok = build(dir);
     if (!is_ok) {
-      LIEF_WARN("Something went wrong while re-building data directory '{}': {}",
+      LIEF_WARN("Failed to rebuild data directory '{}': {}",
                 to_string(dir.type()), to_string(is_ok.error()));
     }
   }
@@ -164,7 +164,7 @@ ok_error_t Builder::build() {
   for (const Section& sec : binary_->sections()) {
     auto is_ok = build(sec);
     if (!is_ok) {
-      LIEF_WARN("Something went wrong while re-building section '{}': {}",
+      LIEF_WARN("Failed to rebuild section '{}': {}",
                 sec.name(), to_string(is_ok.error()));
     }
   }
@@ -213,7 +213,7 @@ ok_error_t Builder::build(const DosHeader& dos_header) {
     const uint64_t e_lfanew = sizeof(details::pe_dos_header) +
                               binary_->dos_stub().size();
     if (e_lfanew > dos_header.addressof_new_exeheader()) {
-      LIEF_WARN("Inconsistent 'addressof_new_exeheader': 0x{:x}",
+      LIEF_WARN("Inconsistent 'addressof_new_exeheader': {:#x}",
                 dos_header.addressof_new_exeheader());
     } else {
       ios_.write(binary_->dos_stub());
@@ -287,7 +287,7 @@ ok_error_t Builder::build(const Section& section) {
 
   size_t pad_length = 0;
   if (section.content().size() > section.size()) {
-    LIEF_WARN("{} content size is bigger than section's header size",
+    LIEF_WARN("{} content size exceeds section header size",
               section.name());
   }
   else {
@@ -308,8 +308,8 @@ ok_error_t Builder::build(const Section& section) {
 ok_error_t Builder::build_overlay() {
   const uint64_t last_section_offset = binary_->last_section_offset();
 
-  LIEF_DEBUG("Overlay offset: 0x{:x}", last_section_offset);
-  LIEF_DEBUG("Overlay size: 0x{:x}", binary_->overlay().size());
+  LIEF_DEBUG("Overlay offset: {:#x}", last_section_offset);
+  LIEF_DEBUG("Overlay size: {:#x}", binary_->overlay().size());
 
   ScopeOStream scoped(ios_, last_section_offset);
   (*scoped)
@@ -355,7 +355,7 @@ ok_error_t Builder::build_relocations() {
     .move(reloc_data_);
 
   if (reloc_data_.size() > original_size || config_.force_relocating) {
-    LIEF_DEBUG("Need to relocated BASE_RELOCATION_TABLE (0x{:06x} new bytes)",
+    LIEF_DEBUG("Need to relocate BASE_RELOCATION_TABLE ({:#08x} new bytes)",
                reloc_data_.size() - original_size);
 
     Section reloc_section(config_.reloc_section);
@@ -373,7 +373,7 @@ ok_error_t Builder::build_relocations() {
     reloc_dir->RVA(new_reloc_section->virtual_address());
     reloc_dir->size(reloc_data_.size());
   } else {
-    LIEF_DEBUG("BASE_RELOCATION_TABLE -0x{:06x}",
+    LIEF_DEBUG("BASE_RELOCATION_TABLE -{:#08x}",
                original_size - reloc_data_.size());
 
     binary_->patch_address(reloc_dir->RVA(), reloc_data_, Binary::VA_TYPES::RVA);
@@ -418,9 +418,9 @@ ok_error_t Builder::build_resources() {
   ctx.offset_name = ctx.offset_header + sizes_info.header_size;
   ctx.offset_data = align(ctx.offset_name + sizes_info.name_size, 4);
 
-  LIEF_DEBUG(".rsrc[header].offset: 0x{:04x}", ctx.offset_header);
-  LIEF_DEBUG(".rsrc[names].offset:  0x{:04x}", ctx.offset_name);
-  LIEF_DEBUG(".rsrc[data].offset:   0x{:04x}", ctx.offset_data);
+  LIEF_DEBUG(".rsrc[header].offset: {:#06x}", ctx.offset_header);
+  LIEF_DEBUG(".rsrc[names].offset:  {:#06x}", ctx.offset_name);
+  LIEF_DEBUG(".rsrc[data].offset:   {:#06x}", ctx.offset_data);
 
   construct_resource(rsrc_stream, *node, ctx);
   rsrc_stream.align(sizeof(uint32_t));
@@ -428,11 +428,11 @@ ok_error_t Builder::build_resources() {
   const uint32_t original_size = rsrc_dir->size();
   const uint32_t new_size = rsrc_stream.size();
   const uint32_t expected_size = align(sizes_info.data_size + sizes_info.header_size + sizes_info.name_size, 4);
-  LIEF_DEBUG("New size: new_size=0x{:016x} vs original_size=0x{:016x} vs expected_size=0x{:016x}", new_size, original_size, expected_size);
+  LIEF_DEBUG("New size: new_size={:#018x} vs original_size={:#018x} vs expected_size={:#018x}", new_size, original_size, expected_size);
 
   if (new_size > original_size || config_.force_relocating) {
     const uint64_t delta = new_size - original_size;
-    LIEF_DEBUG("Need to relocate RESOURCE_TABLE (0x{:06x} new bytes)", delta);
+    LIEF_DEBUG("Need to relocate RESOURCE_TABLE ({:#08x} new bytes)", delta);
 
     // Note(romain): We could/should leverage this optimization:
     //
@@ -463,7 +463,7 @@ ok_error_t Builder::build_resources() {
     // MEM_DISCARDABLE section.
     Section* new_rsrc_section = binary_->add_section(rsrc_section);
     if (new_rsrc_section == nullptr) {
-      LIEF_ERR("Can't add a new rsrc section");
+      LIEF_ERR("Failed to add new rsrc section");
       return make_error_code(lief_errors::build_error);
     }
 
@@ -480,7 +480,7 @@ ok_error_t Builder::build_resources() {
     return ok();
   }
 
-  LIEF_DEBUG("RESOURCE_TABLE: -0x{:06x}", original_size - new_size);
+  LIEF_DEBUG("RESOURCE_TABLE: -{:#08x}", original_size - new_size);
   // Fill the original content with 0
   const uint64_t rva = rsrc_dir->RVA();
   binary_->patch_address(
@@ -527,7 +527,7 @@ ok_error_t Builder::compute_resources_size(
 ok_error_t Builder::construct_resource(
     vector_iostream& ios, ResourceDirectory& dir, rsrc_build_context_t& ctx)
 {
-  LIEF_DEBUG("[rsrc] writing directory header at 0x{:04x} (depth={}, id={}, #children={})",
+  LIEF_DEBUG("[rsrc] writing directory header at {:#06x} (depth={}, id={}, #children={})",
              ctx.offset_header, dir.depth(), dir.id(), dir.childs().size());
   ios
     .seekp(ctx.offset_header)
@@ -548,7 +548,7 @@ ok_error_t Builder::construct_resource(
     if (child.has_name() || !child.name().empty()) {
       const std::u16string& name = child.name();
       child.id(0x80000000 | ctx.offset_name);
-      LIEF_DEBUG("[rsrc] writing name '{}' at 0x{:04x} (depth={}, id={})",
+      LIEF_DEBUG("[rsrc] writing name '{}' at {:#06x} (depth={}, id={})",
                  u16tou8(child.name()), ctx.offset_name,
                  dir.depth(), dir.id());
       ios
@@ -580,7 +580,7 @@ ok_error_t Builder::construct_resource(
   span<const uint8_t> content = data.content();
 
   ctx.rva_fixups.push_back(ctx.offset_header);
-  LIEF_DEBUG("[rsrc] writing data header at 0x{:04x} (depth={}, id={})",
+  LIEF_DEBUG("[rsrc] writing data header at {:#06x} (depth={}, id={})",
              ctx.offset_header, data.depth(), data.id());
 
   ios
@@ -593,7 +593,7 @@ ok_error_t Builder::construct_resource(
   ;
   ctx.offset_header = ios.tellp();
 
-  LIEF_DEBUG("[rsrc] writing data content at 0x{:04x} (depth={}, id={}, size=0x{:04x})",
+  LIEF_DEBUG("[rsrc] writing data content at {:#06x} (depth={}, id={}, size={:#06x})",
              ctx.offset_data, data.depth(), data.id(), content.size());
   ios
     .seekp(ctx.offset_data)
@@ -768,14 +768,14 @@ ok_error_t Builder::build_debug_info() {
       .write<uint16_t>(dbg->minor_version())
       .write<uint32_t>((uint32_t)dbg->type())
     ;
-    LIEF_DEBUG("  - Header pos:  0x{:06x}", hdr_pos);
-    LIEF_DEBUG("  - Payload pos: 0x{:06x}", payload_offset);
+    LIEF_DEBUG("  - Header pos:  {:#08x}", hdr_pos);
+    LIEF_DEBUG("  - Payload pos: {:#08x}", payload_offset);
 
     const bool has_offset_rva = dbg->addressof_rawdata() != 0 ||
                                 dbg->pointerto_rawdata() != 0;
 
     if (payload.empty() && has_offset_rva) {
-      LIEF_INFO("Empty payload. Can't rebuild the content of {}",
+      LIEF_INFO("Empty payload, cannot rebuild content of {}",
                 to_string(dbg->type()));
       header_stream
         .write<uint32_t>(dbg->sizeof_data())
@@ -793,8 +793,8 @@ ok_error_t Builder::build_debug_info() {
       }
       header_stream.write<uint32_t>(ios_cv.size());
 
-      LIEF_DEBUG("codeview - original size 0x{:06x}", dbg->sizeof_data());
-      LIEF_DEBUG("codeview - new size      0x{:06x}", ios_cv.size());
+      LIEF_DEBUG("codeview - original size {:#08x}", dbg->sizeof_data());
+      LIEF_DEBUG("codeview - new size      {:#08x}", ios_cv.size());
 
       const int32_t delta = (int32_t)ios_cv.size() - dbg->sizeof_data();
 
@@ -827,8 +827,8 @@ ok_error_t Builder::build_debug_info() {
       }
       header_stream.write<uint32_t>(ios_pogo.size());
 
-      LIEF_DEBUG("pogo - original size 0x{:06x}", dbg->sizeof_data());
-      LIEF_DEBUG("pogo - new size      0x{:06x}", ios_pogo.size());
+      LIEF_DEBUG("pogo - original size {:#08x}", dbg->sizeof_data());
+      LIEF_DEBUG("pogo - new size      {:#08x}", ios_pogo.size());
 
       const int32_t delta = (int32_t)ios_pogo.size() - dbg->sizeof_data();
 
@@ -861,8 +861,8 @@ ok_error_t Builder::build_debug_info() {
       }
       header_stream.write<uint32_t>(ios_repro.size());
 
-      LIEF_DEBUG("repro - original size 0x{:06x}", dbg->sizeof_data());
-      LIEF_DEBUG("repro - new size      0x{:06x}", ios_repro.size());
+      LIEF_DEBUG("repro - original size {:#08x}", dbg->sizeof_data());
+      LIEF_DEBUG("repro - new size      {:#08x}", ios_repro.size());
 
       const int32_t delta = (int32_t)ios_repro.size() - dbg->sizeof_data();
 
@@ -895,8 +895,8 @@ ok_error_t Builder::build_debug_info() {
       }
       header_stream.write<uint32_t>(ios_repro.size());
 
-      LIEF_DEBUG("pdbchecksum - original size 0x{:06x}", dbg->sizeof_data());
-      LIEF_DEBUG("pdbchecksum - new size      0x{:06x}", ios_repro.size());
+      LIEF_DEBUG("pdbchecksum - original size {:#08x}", dbg->sizeof_data());
+      LIEF_DEBUG("pdbchecksum - new size      {:#08x}", ios_repro.size());
 
       const int32_t delta = (int32_t)ios_repro.size() - dbg->sizeof_data();
 
@@ -929,8 +929,8 @@ ok_error_t Builder::build_debug_info() {
       }
       header_stream.write<uint32_t>(ios_vcfeat.size());
 
-      LIEF_DEBUG("vcfeature - original size 0x{:06x}", dbg->sizeof_data());
-      LIEF_DEBUG("vcfeature - new size      0x{:06x}", ios_vcfeat.size());
+      LIEF_DEBUG("vcfeature - original size {:#08x}", dbg->sizeof_data());
+      LIEF_DEBUG("vcfeature - new size      {:#08x}", ios_vcfeat.size());
 
       const int32_t delta = (int32_t)ios_vcfeat.size() - dbg->sizeof_data();
 
@@ -963,8 +963,8 @@ ok_error_t Builder::build_debug_info() {
       }
       header_stream.write<uint32_t>(ios_exdll.size());
 
-      LIEF_DEBUG("ExDllCharacteristics - original size 0x{:06x}", dbg->sizeof_data());
-      LIEF_DEBUG("ExDllCharacteristics - new size      0x{:06x}", ios_exdll.size());
+      LIEF_DEBUG("ExDllCharacteristics - original size {:#08x}", dbg->sizeof_data());
+      LIEF_DEBUG("ExDllCharacteristics - new size      {:#08x}", ios_exdll.size());
 
       const int32_t delta = (int32_t)ios_exdll.size() - dbg->sizeof_data();
 
@@ -989,8 +989,8 @@ ok_error_t Builder::build_debug_info() {
       continue;
     }
 
-    LIEF_DEBUG("original size 0x{:06x}", dbg->sizeof_data());
-    LIEF_DEBUG("new size      0x{:06x}", payload.size());
+    LIEF_DEBUG("original size {:#08x}", dbg->sizeof_data());
+    LIEF_DEBUG("new size      {:#08x}", payload.size());
     header_stream.write<uint32_t>(payload.size());
     header_stream
       .write<uint32_t>(dbg->addressof_rawdata())
@@ -1012,7 +1012,7 @@ ok_error_t Builder::build_debug_info() {
   }
 
   if (hdr_size > debug_dir->size()) {
-    LIEF_DEBUG("Need to relocated debug directory (for headers)");
+    LIEF_DEBUG("Need to relocate debug directory (for headers)");
     relocated_size += header_stream.size();
     relocate_hdr = true;
   }
@@ -1030,13 +1030,13 @@ ok_error_t Builder::build_debug_info() {
 
     Section* new_dbg_section = binary_->add_section(dbg_section);
     if (new_dbg_section == nullptr) {
-      LIEF_ERR("Can't add a new dbg section");
+      LIEF_ERR("Failed to add new dbg section");
       return make_error_code(lief_errors::build_error);
     }
 
-    LIEF_DEBUG("{:10}: VA:  0x{:08x}", new_dbg_section->name(),
+    LIEF_DEBUG("{:10}: VA:  {:#010x}", new_dbg_section->name(),
                new_dbg_section->virtual_address());
-    LIEF_DEBUG("{:10}: OFF: 0x{:08x}", new_dbg_section->name(),
+    LIEF_DEBUG("{:10}: OFF: {:#010x}", new_dbg_section->name(),
                new_dbg_section->offset());
 
     header_stream.apply_fixup<uint32_t>(FX_BASE_RVA, new_dbg_section->virtual_address());
@@ -1120,7 +1120,7 @@ ok_error_t Builder::build_exports() {
   );
 
   for (const ExportEntry* entry : entries) {
-    LIEF_DEBUG("{}: 0x{:06x} (ord={})", entry->name(), entry->function_rva(), entry->ordinal());
+    LIEF_DEBUG("{}: {:#08x} (ord={})", entry->name(), entry->function_rva(), entry->ordinal());
     base_ord = std::min<uint32_t>(entry->ordinal(), base_ord);
     max_ord = std::max<uint32_t>(entry->ordinal(), max_ord);
     bool has_name = false;
@@ -1155,16 +1155,16 @@ ok_error_t Builder::build_exports() {
   LIEF_DEBUG("Name table count:    #{:03d}", name_table_cnt);
   LIEF_DEBUG("Base ordinal:        #{:03d}", base_ord);
   LIEF_DEBUG("Max ordinal:         #{:03d}", max_ord);
-  LIEF_DEBUG("String table size:   0x{:06x}", offset_counter);
-  LIEF_DEBUG("Original size:       0x{:06x}", exp_dir->size());
-  LIEF_DEBUG("New size:            0x{:06x}", tail_off);
+  LIEF_DEBUG("String table size:   {:#08x}", offset_counter);
+  LIEF_DEBUG("Original size:       {:#08x}", exp_dir->size());
+  LIEF_DEBUG("New size:            {:#08x}", tail_off);
   LIEF_DEBUG("Delta size:          {:d}", (int32_t)tail_off - (int32_t)exp_dir->size());
   LIEF_DEBUG("Offsets");
-  LIEF_DEBUG("  - Header:        [0x{:04x}, 0x{:08x}]", head_off, addr_table_off);
-  LIEF_DEBUG("  - Address Table: [0x{:04x}, 0x{:08x}]", addr_table_off, names_table_off);
-  LIEF_DEBUG("  - Names Table:   [0x{:04x}, 0x{:08x}]", names_table_off, ord_table_off);
-  LIEF_DEBUG("  - Ord Table:     [0x{:04x}, 0x{:08x}]", ord_table_off, str_table_off);
-  LIEF_DEBUG("  - Str Table:     [0x{:04x}, 0x{:08x}]", str_table_off, tail_off);
+  LIEF_DEBUG("  - Header:        [{:#06x}, {:#010x}]", head_off, addr_table_off);
+  LIEF_DEBUG("  - Address Table: [{:#06x}, {:#010x}]", addr_table_off, names_table_off);
+  LIEF_DEBUG("  - Names Table:   [{:#06x}, {:#010x}]", names_table_off, ord_table_off);
+  LIEF_DEBUG("  - Ord Table:     [{:#06x}, {:#010x}]", ord_table_off, str_table_off);
+  LIEF_DEBUG("  - Str Table:     [{:#06x}, {:#010x}]", str_table_off, tail_off);
 
   vector_iostream ios;
   static constexpr auto FX_BASE_RVA = 0;
@@ -1173,7 +1173,7 @@ ok_error_t Builder::build_exports() {
   if (auto it = strmap_offset.find(exp->name()); it != strmap_offset.end()) {
     name_off = str_table_off + it->second;
   } else {
-    LIEF_ERR("Can't find '{}' in the optimized string table");
+    LIEF_ERR("Entry '{}' not found in optimized string table");
     return make_error_code(lief_errors::build_error);
   }
 
@@ -1209,14 +1209,14 @@ ok_error_t Builder::build_exports() {
       LIEF_DEBUG("Writing back fwd: {}", fwd_key);
       auto it = strmap_offset.find(fwd_key);
       if (it == strmap_offset.end()) {
-        LIEF_ERR("Can't find forwarded key '{}' in the optimized string table",
+        LIEF_ERR("Forwarded key '{}' not found in optimized string table",
                  fwd_key);
         return make_error_code(lief_errors::build_error);
       }
 
       auto it_name = strmap_offset.find(E->name());
       if (it_name == strmap_offset.end()) {
-        LIEF_ERR("Can't find name '{}' in the optimized string table", E->name());
+        LIEF_ERR("Name '{}' not found in optimized string table", E->name());
         return make_error_code(lief_errors::build_error);
       }
       ios
@@ -1236,7 +1236,7 @@ ok_error_t Builder::build_exports() {
       auto it = strmap_offset.find(name);
 
       if (it == strmap_offset.end()) {
-        LIEF_ERR("Can't find '{}' in the optimized string table", name);
+        LIEF_ERR("Entry '{}' not found in optimized string table", name);
         return make_error_code(lief_errors::build_error);
       }
 
@@ -1273,7 +1273,7 @@ ok_error_t Builder::build_exports() {
 
   Section* new_edata_section = binary_->add_section(edata_section);
   if (new_edata_section == nullptr) {
-    LIEF_ERR("Can't add a new edata section");
+    LIEF_ERR("Failed to add new edata section");
     return make_error_code(lief_errors::build_error);
   }
   exp_dir->RVA(new_edata_section->virtual_address());
