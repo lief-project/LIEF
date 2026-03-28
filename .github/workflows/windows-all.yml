@@ -9,6 +9,12 @@ on:
 env:
   python-test-version: '3.10'
   python-version: '3.9'
+  CLICOLOR_FORCE: "1"
+  FORCE_COLOR: "1"
+  GCC_COLORS: "yes"
+  COLORTERM: "truecolor"
+  TERM: "screen-256color"
+  CLICOLOR: "1"
 
 jobs:
   build-sdk:
@@ -138,13 +144,19 @@ jobs:
         run: |
           python -m pip install -r tests/requirements.txt
           python tests/dl_samples.py $env:LIEF_SAMPLES_DIR
-      - name: Run tests
+      - name: Run unittests
+        shell: pwsh
+        run: |
+          cd $env:GITHUB_WORKSPACE
+          ctest --output-on-failure --test-dir $env:LIEF_BUILD_DIR
+          Exit $LASTEXITCODE
+      - name: Run Python tests
         timeout-minutes: 20
         shell: pwsh
         run: |
           cd $env:GITHUB_WORKSPACE
           python tests/run_pytest.py
-          ctest --output-on-failure --test-dir $env:LIEF_BUILD_DIR
+          Exit $LASTEXITCODE
       - name: sccache stats
         run: sccache --show-stats
       - name: stop sccache server
