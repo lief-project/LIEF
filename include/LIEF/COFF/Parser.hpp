@@ -16,6 +16,7 @@
 #ifndef LIEF_COFF_PARSER_H
 #define LIEF_COFF_PARSER_H
 #include <map>
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
@@ -103,7 +104,7 @@ class Parser {
   std::map<size_t, Symbol*> symbol_idx_;
   SymSecMap symsec_;
 
-  [[maybe_unused]] ParserConfig config_;
+  LIEF_MAYBE_UNUSED ParserConfig config_;
 };
 }
 }

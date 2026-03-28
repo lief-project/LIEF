@@ -18,6 +18,7 @@
 
 #include <ostream>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/ELF/enums.hpp"
 #include "LIEF/ELF/Note.hpp"
@@ -85,7 +86,7 @@ class LIEF_API CorePrPsInfo : public Note {
   }
 
   private:
-  [[maybe_unused]] ARCH arch_ = ARCH::NONE;
+  LIEF_MAYBE_UNUSED ARCH arch_ = ARCH::NONE;
   Header::CLASS class_ = Header::CLASS::NONE;
 };
 

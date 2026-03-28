@@ -51,4 +51,14 @@
   #define LIEF_DEPRECATED(reason) __attribute__((deprecated(reason)))
 #endif
 
+#if defined(LIEF_CPP17)
+  #define LIEF_MAYBE_UNUSED [[maybe_unused]]
+#elif defined(__GNUC__) || defined(__clang__)
+  #define LIEF_MAYBE_UNUSED __attribute__((unused))
+#elif defined(_MSC_VER)
+  #define LIEF_MAYBE_UNUSED __pragma(warning(suppress: 4100 4101))
+#else
+  #define LIEF_MAYBE_UNUSED
+#endif
+
 #endif

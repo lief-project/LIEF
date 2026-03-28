@@ -16,8 +16,9 @@
 #ifndef LIEF_ERROR_H
 #define LIEF_ERROR_H
 #include <cstdint>
-#include <LIEF/third-party/expected.hpp>
 #include <cstdint>
+#include <LIEF/compiler_attributes.hpp>
+#include <LIEF/third-party/expected.hpp>
 
 /// LIEF error codes definition
 enum class lief_errors : uint32_t {
@@ -73,7 +74,7 @@ namespace LIEF {
 ///
 /// See https://tl.tartanllama.xyz/en/latest/api/expected.html for more details
 template<typename T>
-class [[maybe_unused]] result : public tl::expected<T, lief_errors> {
+class LIEF_MAYBE_UNUSED result : public tl::expected<T, lief_errors> {
   public:
   using tl::expected<T, lief_errors>::expected;
 };
@@ -110,7 +111,7 @@ inline ok_t ok() {
 ///   return ok();
 /// }
 /// \endcode
-class [[maybe_unused]] ok_error_t : public result<ok_t> {
+class LIEF_MAYBE_UNUSED ok_error_t : public result<ok_t> {
   public:
   using result<ok_t>::result;
 };

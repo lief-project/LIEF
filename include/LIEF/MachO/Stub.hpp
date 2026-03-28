@@ -15,7 +15,9 @@
  */
 #ifndef LIEF_MACHO_STUB_H
 #define LIEF_MACHO_STUB_H
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
+
 #include "LIEF/span.hpp"
 #include "LIEF/iterators.hpp"
 #include "LIEF/errors.hpp"
@@ -156,7 +158,7 @@ class LIEF_API Stub {
   private:
   target_info_t target_info_;
   uint64_t address_ = 0;
-  [[maybe_unused]] mutable uint64_t target_addr_ = 0;
+  LIEF_MAYBE_UNUSED mutable uint64_t target_addr_ = 0;
   std::vector<uint8_t> raw_;
 };
 
