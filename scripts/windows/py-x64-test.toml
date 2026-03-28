@@ -6,8 +6,13 @@ parallel-jobs   = 0
 extra-cmake-opt = [
   "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded",
   "-DLIEF_TESTS=on",
+  "-DLIEF_C_API=on",
+  "-DLIEF_RUST_API=ON",
+  "-DLIEF_PROFILING=on",
+  "-DCMAKE_COLOR_DIAGNOSTICS=ON",
 ]
-extra-targets   = ["all"]
+
+extra-targets = ["all"]
 
 [lief.formats]
 elf     = true
