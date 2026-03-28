@@ -20,6 +20,7 @@ option(LIEF_PY_LIEF_EXT                "Use a pre-installed version of LIEF for 
 option(LIEF_RUST_API                   "Generate the C++ bridge for Rust's cxx" OFF)
 option(LIEF_DISABLE_EXCEPTIONS         "Disable C++ exceptions on the core library" ON)
 option(LIEF_SO_VERSION                 "Embed versioning for LIEF shared library target" OFF)
+option(LIEF_USE_PCH                    "Enable precompiled headers" ON)
 
 option(LIEF_DISABLE_FROZEN "Disable Frozen even if it is supported"     OFF)
 option(LIEF_RUNTIME        "Enable runtime features" OFF)
