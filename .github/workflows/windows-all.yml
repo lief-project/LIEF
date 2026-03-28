@@ -139,6 +139,7 @@ jobs:
           python -m pip install -r tests/requirements.txt
           python tests/dl_samples.py $env:LIEF_SAMPLES_DIR
           python -m pip -vvv install --user api/python
+          Exit $LASTEXITCODE
       - name: Download samples
         shell: pwsh
         run: |

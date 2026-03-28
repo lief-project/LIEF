@@ -78,10 +78,15 @@ jobs:
         python -m pip install -r tests/requirements.txt
         python -m pip install api/python
         python tests/dl_samples.py $env:LIEF_SAMPLES_DIR
-    - name: Run tests
-      timeout-minutes: 20
+    - name: Run tests - unittests
+      shell: pwsh
+      run: |
+        cd $env:GITHUB_WORKSPACE
+        ctest --output-on-failure --test-dir $env:LIEF_BUILD_DIR
+        Exit $LASTEXITCODE
+    - name: Run tests - python
       shell: pwsh
       run: |
         cd $env:GITHUB_WORKSPACE
         python tests/run_pytest.py
-        ctest --output-on-failure --test-dir $env:LIEF_BUILD_DIR
+        Exit $LASTEXITCODE
