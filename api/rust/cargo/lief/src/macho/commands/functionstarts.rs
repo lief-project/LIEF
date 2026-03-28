@@ -38,6 +38,11 @@ impl FunctionStarts<'_> {
     pub fn content(&self) -> &[u8] {
         to_slice!(self.ptr.content());
     }
+
+    /// Add a function address to the list of function starts
+    pub fn add_function(&mut self, address: u64) {
+        self.ptr.pin_mut().add_function(address);
+    }
 }
 
 impl std::fmt::Debug for FunctionStarts<'_> {

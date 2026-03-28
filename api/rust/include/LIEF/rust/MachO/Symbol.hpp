@@ -44,6 +44,8 @@ class MachO_Symbol : public AbstractSymbol {
     return details::try_unique<MachO_Dylib>(impl().library());
   }
 
+  int32_t library_ordinal() const { return impl().library_ordinal(); }
+
   private:
   const lief_t& impl() const { return as<lief_t>(this); }
 };

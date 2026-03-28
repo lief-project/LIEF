@@ -18,6 +18,7 @@
 #include "LIEF/rust/PE/debug/Debug.hpp"
 #include "LIEF/rust/PE/debug/PogoEntry.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 #include "LIEF/PE/debug/Pogo.hpp"
 
@@ -37,6 +38,8 @@ class PE_Pogo : public PE_Debug {
   auto entries() const {
     return std::make_unique<it_entries>(impl());
   }
+
+  uint32_t pogo_signature() const { return to_int(impl().signature()); }
 
   static bool classof(const PE_Debug& entry) {
     return lief_t::classof(&entry.get());

@@ -30,7 +30,6 @@ use crate::common::{into_optional, FromFFI, AsFFI};
 use crate::declare_iterator;
 use crate::generic;
 use crate::to_conv_result;
-use crate::to_result;
 use crate::to_slice;
 use crate::Error;
 
@@ -533,6 +532,41 @@ impl Binary {
     /// Set or change the export table
     pub fn set_export(&mut self, export: &Export) {
         self.ptr.pin_mut().set_export(export.as_ffi());
+    }
+
+    /// Whether the current binary is a reproducible build
+    pub fn is_reproducible_build(&self) -> bool {
+        self.ptr.is_reproducible_build()
+    }
+
+    /// Check if the binary imports the given library name
+    pub fn has_import(&self, name: &str) -> bool {
+        self.ptr.has_import(name.to_string())
+    }
+
+    /// Check if the binary has a delay import with the given name
+    pub fn has_delay_import(&self, name: &str) -> bool {
+        self.ptr.has_delay_import(name.to_string())
+    }
+
+    /// Return the exception functions (from the exception directory)
+    pub fn exception_functions(&self) -> generic::Functions<'_> {
+        generic::Functions::new(self.ptr.exception_functions())
+    }
+
+    /// Remove the section with the given name
+    pub fn remove_section(&mut self, name: &str, clear: bool) {
+        self.ptr.pin_mut().remove_section(name.to_string(), clear);
+    }
+
+    /// Fill the content at the given virtual address with the specified value
+    pub fn fill_address(&mut self, address: u64, size: u64, value: u8) {
+        self.ptr.pin_mut().fill_address(address, size, value);
+    }
+
+    /// Remove all relocations
+    pub fn remove_all_relocations(&mut self) {
+        self.ptr.pin_mut().remove_all_relocations();
     }
 }
 

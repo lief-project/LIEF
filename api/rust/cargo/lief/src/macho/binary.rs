@@ -3,7 +3,7 @@ use std::pin::Pin;
 use std::path::Path;
 use num_traits::{Num, cast};
 
-use crate::{Error, to_result};
+use crate::Error;
 use super::builder::Config;
 use super::commands::build_version::{BuildVersion, Platform};
 use super::commands::code_signature::CodeSignature;
@@ -41,13 +41,14 @@ use super::commands::{Command, Commands, CommandsIter, Dylib, LoadCommandTypes};
 use super::header::Header;
 use super::relocation::Relocations;
 use super::section::{Sections, Section};
-use super::symbol::Symbols;
+use super::symbol::{Symbols, Symbol};
 use super::binding_info::BindingInfo;
+use super::export_info::ExportInfo;
 use super::stub::Stub;
 use lief_ffi as ffi;
 
 use crate::common::{into_optional, FromFFI, AsFFI};
-use crate::{generic, declare_fwd_iterator, declare_iterator, to_conv_result};
+use crate::{generic, declare_fwd_iterator, declare_iterator, to_conv_result, to_result, to_slice};
 use crate::objc::Metadata;
 
 /// This is the main interface to read and write Mach-O binary attributes.
@@ -421,6 +422,123 @@ impl Binary {
     /// Return the [`Section`] embedded in the given segment's name
     pub fn get_section(&self, segment_name: String, section_name: String) -> Option<Section<'_>> {
         into_optional(self.ptr.get_section(segment_name, section_name))
+    }
+
+    /// Return the offset of this binary in the FAT binary
+    pub fn fat_offset(&self) -> u64 {
+        self.ptr.fat_offset()
+    }
+
+    /// Return the overlay data (if any)
+    pub fn overlay(&self) -> &[u8] {
+        to_slice!(self.ptr.overlay());
+    }
+
+    /// Check if the given address is valid for this binary
+    pub fn is_valid_addr(&self, address: u64) -> bool {
+        self.ptr.is_valid_addr(address)
+    }
+
+    /// Check if the binary contains a symbol with the given name
+    pub fn has_symbol(&self, name: &str) -> bool {
+        self.ptr.has_symbol(name.to_string())
+    }
+
+    /// Return the symbol with the given name (if any)
+    pub fn get_symbol(&self, name: &str) -> Option<Symbol<'_>> {
+        into_optional(self.ptr.get_symbol(name.to_string()))
+    }
+
+    /// Check if the binary contains a section with the given name
+    pub fn has_section(&self, name: &str) -> bool {
+        self.ptr.has_section(name.to_string())
+    }
+
+    /// Return the [`Section`] associated with the given offset
+    pub fn section_from_offset(&self, offset: u64) -> Option<Section<'_>> {
+        into_optional(self.ptr.section_from_offset(offset))
+    }
+
+    /// Check if the binary contains a segment with the given name
+    pub fn has_segment(&self, name: &str) -> bool {
+        self.ptr.has_segment(name.to_string())
+    }
+
+    /// Check if the binary has a command with the given type
+    pub fn has_command_type(&self, ty: LoadCommandTypes) -> bool {
+        self.ptr.has_command_type(ty.into())
+    }
+
+    /// Get a command with the given type
+    pub fn get_command_type(&self, ty: LoadCommandTypes) -> Option<Commands<'_>> {
+        into_optional(self.ptr.get_command_type(ty.into()))
+    }
+
+    /// Remove the command at the given index
+    pub fn remove_command(&mut self, index: u32) -> bool {
+        self.ptr.as_mut().unwrap().remove_command(index)
+    }
+
+    /// Remove a section by name
+    pub fn remove_section(&mut self, name: &str, clear: bool) {
+        self.ptr.as_mut().unwrap().remove_section(name.to_string(), clear);
+    }
+
+    /// Remove a section by segment name and section name
+    pub fn remove_section_from_segment(&mut self, segname: &str, secname: &str, clear: bool) {
+        self.ptr.as_mut().unwrap().remove_section_seg(
+            segname.to_string(), secname.to_string(), clear
+        );
+    }
+
+    /// Remove the `LC_CODE_SIGNATURE` command
+    pub fn remove_signature(&mut self) -> bool {
+        self.ptr.as_mut().unwrap().remove_signature()
+    }
+
+    /// Remove a symbol by name
+    pub fn remove_symbol(&mut self, name: &str) -> bool {
+        self.ptr.as_mut().unwrap().remove_symbol(name.to_string())
+    }
+
+    /// Check if the given symbol can be safely removed
+    pub fn can_remove(&self, sym: &Symbol<'_>) -> bool {
+        self.ptr.can_remove(sym.as_ffi())
+    }
+
+    /// Check if the symbol with the given name can be safely removed
+    pub fn can_remove_symbol(&self, name: &str) -> bool {
+        self.ptr.can_remove_symbol(name.to_string())
+    }
+
+    /// Unexport the symbol with the given name
+    pub fn unexport_name(&mut self, name: &str) -> bool {
+        self.ptr.as_mut().unwrap().unexport_name(name.to_string())
+    }
+
+    /// Unexport the given symbol
+    pub fn unexport_symbol(&mut self, sym: &super::Symbol<'_>) -> bool {
+        self.ptr.as_mut().unwrap().unexport_symbol(sym.as_ffi())
+    }
+
+    /// Add a new exported function
+    pub fn add_exported_function(&mut self, address: u64, name: &str) -> Option<ExportInfo<'_>> {
+        into_optional(self.ptr.as_mut().unwrap().add_exported_function(address, name.to_string()))
+    }
+
+    /// Add a new local symbol
+    pub fn add_local_symbol(&mut self, address: u64, name: &str) -> Option<Symbol<'_>> {
+        into_optional(self.ptr.as_mut().unwrap().add_local_symbol(address, name.to_string()))
+    }
+
+    /// Shift the content of the binary
+    pub fn shift(&mut self, value: u64) -> Result<(), Error> {
+        to_conv_result!(ffi::MachO_Binary::shift, self.ptr.pin_mut(), |_| (), value);
+    }
+
+    /// Shift the __LINKEDIT segment
+    pub fn shift_linkedit(&mut self, width: u64) -> Result<(), Error> {
+        to_conv_result!(ffi::MachO_Binary::shift_linkedit, self.ptr.pin_mut(), |_| (), width);
     }
 }
 

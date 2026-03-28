@@ -4,6 +4,103 @@ use lief_ffi as ffi;
 
 use super::Command;
 use crate::common::FromFFI;
+use crate::declare_iterator;
+
+/// Tool used during the build
+#[allow(non_camel_case_types)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum Tool {
+    CLANG,
+    SWIFT,
+    LD,
+    LLD,
+    METAL,
+    AIRLLD,
+    AIRNT,
+    AIRNT_PLUGIN,
+    AIRPACK,
+    GPUARCHIVER,
+    METAL_FRAMEWORK,
+    UNKNOWN(u32),
+}
+
+impl From<u32> for Tool {
+    fn from(value: u32) -> Self {
+        match value {
+            1 => Tool::CLANG,
+            2 => Tool::SWIFT,
+            3 => Tool::LD,
+            4 => Tool::LLD,
+            1024 => Tool::METAL,
+            1025 => Tool::AIRLLD,
+            1026 => Tool::AIRNT,
+            1027 => Tool::AIRNT_PLUGIN,
+            1028 => Tool::AIRPACK,
+            1031 => Tool::GPUARCHIVER,
+            1032 => Tool::METAL_FRAMEWORK,
+            _ => Tool::UNKNOWN(value),
+        }
+    }
+}
+
+impl From<Tool> for u32 {
+    fn from(value: Tool) -> u32 {
+        match value {
+            Tool::CLANG => 1,
+            Tool::SWIFT => 2,
+            Tool::LD => 3,
+            Tool::LLD => 4,
+            Tool::METAL => 1024,
+            Tool::AIRLLD => 1025,
+            Tool::AIRNT => 1026,
+            Tool::AIRNT_PLUGIN => 1027,
+            Tool::AIRPACK => 1028,
+            Tool::GPUARCHIVER => 1031,
+            Tool::METAL_FRAMEWORK => 1032,
+            Tool::UNKNOWN(v) => v,
+        }
+    }
+}
+
+/// Represents a tool version used during the build
+pub struct BuildToolVersion<'a> {
+    ptr: cxx::UniquePtr<ffi::MachO_BuildToolVersion>,
+    _owner: PhantomData<&'a ffi::MachO_BuildVersion>,
+}
+
+impl BuildToolVersion<'_> {
+    /// The tool used
+    pub fn tool(&self) -> Tool {
+        Tool::from(self.ptr.tool())
+    }
+
+    /// Version associated with the tool
+    pub fn version(&self) -> (u64, u64, u64) {
+        let vec = Vec::from(self.ptr.version().as_slice());
+        if vec.len() != 3 {
+            return (0, 0, 0);
+        }
+        (vec[0], vec[1], vec[2])
+    }
+}
+
+impl std::fmt::Debug for BuildToolVersion<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("BuildToolVersion")
+            .field("tool", &self.tool())
+            .field("version", &self.version())
+            .finish()
+    }
+}
+
+impl<'a> FromFFI<ffi::MachO_BuildToolVersion> for BuildToolVersion<'a> {
+    fn from_ffi(ptr: cxx::UniquePtr<ffi::MachO_BuildToolVersion>) -> Self {
+        Self {
+            ptr,
+            _owner: PhantomData,
+        }
+    }
+}
 
 /// Structure that represents the `LC_BUILD_VERSION` command
 pub struct BuildVersion<'a> {
@@ -95,6 +192,11 @@ impl BuildVersion<'_> {
     pub fn platform(&self) -> Platform {
         Platform::from(self.ptr.platform())
     }
+
+    /// Return an iterator over the [`BuildToolVersion`] entries
+    pub fn tools(&self) -> BuildTools<'_> {
+        BuildTools::new(self.ptr.tools())
+    }
 }
 
 impl std::fmt::Debug for BuildVersion<'_> {
@@ -123,3 +225,11 @@ impl Command for BuildVersion<'_> {
         self.ptr.as_ref().unwrap().as_ref()
     }
 }
+
+declare_iterator!(
+    BuildTools,
+    BuildToolVersion<'a>,
+    ffi::MachO_BuildToolVersion,
+    ffi::MachO_BuildVersion,
+    ffi::MachO_BuildVersion_it_tools
+);

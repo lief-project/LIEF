@@ -18,10 +18,12 @@
 #include "LIEF/rust/Abstract/Section.hpp"
 
 class PE_Binary;
+class PE_Factory;
 
 class PE_Section : public AbstractSection {
   public:
   friend class PE_Binary;
+  friend class PE_Factory;
 
   using lief_t = LIEF::PE::Section;
   PE_Section(const lief_t& sec) : AbstractSection(sec) {}

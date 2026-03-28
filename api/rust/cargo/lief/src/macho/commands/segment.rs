@@ -1,12 +1,68 @@
 use super::Command;
 use lief_ffi as ffi;
-use crate::common::FromFFI;
+use crate::common::{into_optional, FromFFI};
 use crate::declare_iterator;
 use std::marker::PhantomData;
 use crate::to_slice;
 
 use crate::macho::section::Section;
 use crate::macho::relocation::Relocation;
+
+use bitflags::bitflags;
+
+bitflags! {
+    /// Segment flags
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+    pub struct Flags: u64 {
+        const HIGHVM = 0x1;
+        const FVMLIB = 0x2;
+        const NORELOC = 0x4;
+        const PROTECTED_VERSION_1 = 0x8;
+        const READ_ONLY = 0x10;
+    }
+}
+
+impl From<u64> for Flags {
+    fn from(value: u64) -> Self {
+        Flags::from_bits_truncate(value)
+    }
+}
+impl From<Flags> for u64 {
+    fn from(value: Flags) -> Self {
+        value.bits()
+    }
+}
+impl std::fmt::Display for Flags {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        bitflags::parser::to_writer(self, f)
+    }
+}
+
+bitflags! {
+    /// VM protection flags
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+    pub struct VmProtections: u32 {
+        const READ = 0x1;
+        const WRITE = 0x2;
+        const EXECUTE = 0x4;
+    }
+}
+
+impl From<u32> for VmProtections {
+    fn from(value: u32) -> Self {
+        VmProtections::from_bits_truncate(value)
+    }
+}
+impl From<VmProtections> for u32 {
+    fn from(value: VmProtections) -> Self {
+        value.bits()
+    }
+}
+impl std::fmt::Display for VmProtections {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        bitflags::parser::to_writer(self, f)
+    }
+}
 
 /// Class which represents a `LC_SEGMENT/LC_SEGMENT_64` command
 pub struct Segment<'a> {
@@ -77,6 +133,17 @@ impl Segment<'_> {
     /// On the other hand, for object files (`.o`) this iterator should not be empty.
     pub fn relocations(&self) -> Relocations<'_> {
         Relocations::new(self.ptr.relocations())
+    }
+
+    /// The original index of this segment or -1 if not defined
+    pub fn index(&self) -> Option<u8> {
+        let idx = self.ptr.index();
+        if idx < 0 { None } else { Some(idx as u8) }
+    }
+
+    /// Return the [`Section`] with the given name (if any)
+    pub fn get_section(&self, name: &str) -> Option<Section<'_>> {
+        into_optional(self.ptr.get_section(name.to_string()))
     }
 }
 

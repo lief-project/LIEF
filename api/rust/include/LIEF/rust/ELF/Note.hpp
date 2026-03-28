@@ -23,6 +23,8 @@ class ELF_Note : private Mirror<LIEF::ELF::Note> {
   using lief_t = LIEF::ELF::Note;
   using Mirror::Mirror;
 
+  friend class ELF_Binary;
+
   std::string name() const { return get().name(); }
   uint32_t get_type() const { return to_int(get().type()); }
   uint32_t original_type() const { return get().original_type(); }

@@ -26,6 +26,7 @@ class MachO_ChainedBindingInfo : public MachO_BindingInfo {
   auto format() const { return to_int(impl().format()); };
   auto ptr_format() const { return to_int(impl().ptr_format()); };
   uint32_t offset() const { return impl().offset(); };
+  auto sign_extended_addend() const { return impl().sign_extended_addend(); }
 
   static bool classof(const MachO_BindingInfo& binding) {
     return lief_t::classof(&binding.get());

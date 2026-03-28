@@ -1,12 +1,13 @@
 use std::marker::PhantomData;
 
+use bitflags::bitflags;
 use lief_ffi as ffi;
 
 use crate::common::{into_optional, FromFFI};
 use crate::declare_iterator;
 use crate::pe::Algorithms;
 
-use super::{RsaInfo, VerificationFlags};
+use super::RsaInfo;
 
 /// Structure for a x509 certificate
 pub struct X509<'a> {
@@ -77,6 +78,117 @@ impl From<u32> for KeyType {
             0x00000006 => KeyType::RSASSA_PSS,
             _ => KeyType::UNKNOWN(value),
         }
+    }
+}
+
+/// Key usage as defined in RFC #5280 - section-4.2.1.3
+#[allow(non_camel_case_types)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum KeyUsage {
+    /// The key is used for digital signature
+    DIGITAL_SIGNATURE,
+    /// The key is used for digital signature and to protect against falsely denying some action
+    NON_REPUDIATION,
+    /// The key is used for enciphering private or secret keys
+    KEY_ENCIPHERMENT,
+    /// The key is used for directly enciphering raw user data without an intermediate symmetric cipher
+    DATA_ENCIPHERMENT,
+    /// The key is used for key agreement (e.g. with Diffie-Hellman)
+    KEY_AGREEMENT,
+    /// The key is used for verifying signatures on public key certificates
+    KEY_CERT_SIGN,
+    /// The key is used for verifying signatures on certificate revocation lists
+    CRL_SIGN,
+    /// In association with KEY_AGREEMENT, the key is only used for enciphering data
+    ENCIPHER_ONLY,
+    /// In association with KEY_AGREEMENT, the key is only used for deciphering data
+    DECIPHER_ONLY,
+    UNKNOWN(u32),
+}
+
+impl From<u32> for KeyUsage {
+    fn from(value: u32) -> Self {
+        match value {
+            0x00000000 => KeyUsage::DIGITAL_SIGNATURE,
+            0x00000001 => KeyUsage::NON_REPUDIATION,
+            0x00000002 => KeyUsage::KEY_ENCIPHERMENT,
+            0x00000003 => KeyUsage::DATA_ENCIPHERMENT,
+            0x00000004 => KeyUsage::KEY_AGREEMENT,
+            0x00000005 => KeyUsage::KEY_CERT_SIGN,
+            0x00000006 => KeyUsage::CRL_SIGN,
+            0x00000007 => KeyUsage::ENCIPHER_ONLY,
+            0x00000008 => KeyUsage::DECIPHER_ONLY,
+            _ => KeyUsage::UNKNOWN(value),
+        }
+    }
+}
+
+impl From<KeyUsage> for u32 {
+    fn from(value: KeyUsage) -> u32 {
+        match value {
+            KeyUsage::DIGITAL_SIGNATURE => 0x00000000,
+            KeyUsage::NON_REPUDIATION => 0x00000001,
+            KeyUsage::KEY_ENCIPHERMENT => 0x00000002,
+            KeyUsage::DATA_ENCIPHERMENT => 0x00000003,
+            KeyUsage::KEY_AGREEMENT => 0x00000004,
+            KeyUsage::KEY_CERT_SIGN => 0x00000005,
+            KeyUsage::CRL_SIGN => 0x00000006,
+            KeyUsage::ENCIPHER_ONLY => 0x00000007,
+            KeyUsage::DECIPHER_ONLY => 0x00000008,
+            KeyUsage::UNKNOWN(v) => v,
+        }
+    }
+}
+
+bitflags! {
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+    /// Mirror of mbedtls X509 verification flags for certificate verification
+    pub struct VerificationFlags: u32 {
+        const OK = 0;
+        const BADCERT_EXPIRED = 1 << 0;
+        const BADCERT_REVOKED = 1 << 1;
+        const BADCERT_CN_MISMATCH = 1 << 2;
+        const BADCERT_NOT_TRUSTED = 1 << 3;
+        const BADCRL_NOT_TRUSTED = 1 << 4;
+        const BADCRL_EXPIRED = 1 << 5;
+        const BADCERT_MISSING = 1 << 6;
+        const BADCERT_SKIP_VERIFY = 1 << 7;
+        const BADCERT_OTHER = 1 << 8;
+        const BADCERT_FUTURE = 1 << 9;
+        const BADCRL_FUTURE = 1 << 10;
+        const BADCERT_KEY_USAGE = 1 << 11;
+        const BADCERT_EXT_KEY_USAGE = 1 << 12;
+        const BADCERT_NS_CERT_TYPE = 1 << 13;
+        const BADCERT_BAD_MD = 1 << 14;
+        const BADCERT_BAD_PK = 1 << 15;
+        const BADCERT_BAD_KEY = 1 << 16;
+        const BADCRL_BAD_MD = 1 << 17;
+        const BADCRL_BAD_PK = 1 << 18;
+        const BADCRL_BAD_KEY = 1 << 19;
+    }
+}
+
+impl std::fmt::Display for VerificationFlags {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        bitflags::parser::to_writer(self, f)
+    }
+}
+
+impl From<u32> for VerificationFlags {
+    fn from(value: u32) -> Self {
+        VerificationFlags::from_bits_truncate(value)
+    }
+}
+
+impl From<VerificationFlags> for u32 {
+    fn from(value: VerificationFlags) -> Self {
+        value.bits()
+    }
+}
+
+impl VerificationFlags {
+    pub fn is_ok(self) -> bool {
+        self == VerificationFlags::OK
     }
 }
 
@@ -156,6 +268,21 @@ impl X509<'_> {
     /// Verify that this certificate has been used **to trust** the given certificate
     pub fn verify(&self, ca: &X509) -> VerificationFlags {
         VerificationFlags::from(self.ptr.verify(ca.ptr.as_ref().unwrap()))
+    }
+
+    /// Return the key usage extensions of this certificate
+    pub fn key_usage(&self) -> Vec<KeyUsage> {
+        self.ptr.key_usage().into_iter().map(|e| KeyUsage::from(*e)).collect()
+    }
+
+    /// Return the extended key usage OIDs of this certificate
+    pub fn ext_key_usage(&self) -> Vec<String> {
+        self.ptr.ext_key_usage().into_iter().map(|e| e.to_string()).collect()
+    }
+
+    /// Return the certificate policies OIDs of this certificate
+    pub fn certificate_policies(&self) -> Vec<String> {
+        self.ptr.certificate_policies().into_iter().map(|e| e.to_string()).collect()
     }
 }
 

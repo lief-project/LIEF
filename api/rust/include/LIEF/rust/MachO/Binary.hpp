@@ -53,6 +53,7 @@
 #include "LIEF/rust/MachO/TwoLevelHints.hpp"
 #include "LIEF/rust/MachO/UUIDCommand.hpp"
 #include "LIEF/rust/MachO/VersionMin.hpp"
+#include "LIEF/rust/MachO/ExportInfo.hpp"
 
 #include "LIEF/rust/Abstract/Binary.hpp"
 
@@ -398,6 +399,89 @@ class MachO_Binary : public AbstractBinary {
 
   auto get_section(std::string segname, std::string secname) const {
     return details::try_unique<MachO_Section>(impl().get_section(segname, secname));
+  }
+
+  auto fat_offset() const { return impl().fat_offset(); }
+
+  auto overlay() const { return make_span(impl().overlay()); }
+
+  bool is_valid_addr(uint64_t address) const { return impl().is_valid_addr(address); }
+
+  bool has_symbol(std::string name) const { return impl().has_symbol(name); }
+
+  auto get_symbol(std::string name) const {
+    return details::try_unique<MachO_Symbol>(impl().get_symbol(name));
+  }
+
+  bool has_section(std::string name) const { return impl().has_section(name); }
+
+  auto section_from_offset(uint64_t offset) const {
+    return details::try_unique<MachO_Section>(impl().section_from_offset(offset));
+  }
+
+  bool has_segment(std::string name) const { return impl().has_segment(name); }
+
+  bool has_command_type(uint64_t type) const {
+    return impl().has((LIEF::MachO::LoadCommand::TYPE)type);
+  }
+
+  auto get_command_type(uint64_t type) const {
+    return details::try_unique<MachO_Command>(impl().get((LIEF::MachO::LoadCommand::TYPE)type));
+  }
+
+  bool remove_command(uint32_t index) { return impl().remove_command(index); }
+
+  void remove_section(std::string name, bool clear) {
+    impl().remove_section(name, clear);
+  }
+
+  void remove_section_seg(std::string segname, std::string secname, bool clear) {
+    impl().remove_section(segname, secname, clear);
+  }
+
+  bool remove_signature() { return impl().remove_signature(); }
+
+  bool remove_symbol(std::string name) { return impl().remove_symbol(name); }
+
+  bool can_remove(const MachO_Symbol& sym) const {
+    return impl().can_remove(as<LIEF::MachO::Symbol>(&sym));
+  }
+
+  bool can_remove_symbol(std::string name) const { return impl().can_remove_symbol(name); }
+
+  bool unexport_name(std::string name) { return impl().unexport(name); }
+
+  bool unexport_symbol(const MachO_Symbol& sym) {
+    return impl().unexport(as<LIEF::MachO::Symbol>(&sym));
+  }
+
+  bool extend(const MachO_Command& command, uint64_t size) {
+    return impl().extend(command.get(), size);
+  }
+
+  bool extend_segment(const MachO_SegmentCommand& segment, uint64_t size) {
+    return impl().extend_segment(as<LIEF::MachO::SegmentCommand>(&segment), size);
+  }
+
+  auto add_section_default(const MachO_Section& section) {
+    return details::try_unique<MachO_Section>(
+      impl().add_section(as<LIEF::MachO::Section>(&section)));
+  }
+
+  auto add_exported_function(uint64_t address, std::string name) {
+    return details::try_unique<MachO_ExportInfo>(impl().add_exported_function(address, name));
+  }
+
+  auto add_local_symbol(uint64_t address, std::string name) {
+    return details::try_unique<MachO_Symbol>(impl().add_local_symbol(address, name));
+  }
+
+  auto shift(uint64_t value, uint32_t& err) {
+    return details::make_ok_error(impl().shift(value), err);
+  }
+
+  auto shift_linkedit(uint64_t width, uint32_t& err) {
+    return details::make_ok_error(impl().shift_linkedit(width), err);
   }
 
   private:

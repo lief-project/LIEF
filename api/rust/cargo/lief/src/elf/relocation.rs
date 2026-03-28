@@ -3591,6 +3591,16 @@ impl FromFFI<ffi::ELF_Relocation> for Relocation<'_> {
     }
 }
 
+impl crate::common::AsFFI<ffi::ELF_Relocation> for Relocation<'_> {
+    fn as_ffi(&self) -> &ffi::ELF_Relocation {
+        self.ptr.as_ref().unwrap()
+    }
+
+    fn as_mut_ffi(&mut self) -> std::pin::Pin<&mut ffi::ELF_Relocation> {
+        self.ptr.pin_mut()
+    }
+}
+
 impl generic::Relocation for Relocation<'_> {
     fn as_generic(&self) -> &ffi::AbstractRelocation {
         self.ptr.as_ref().unwrap().as_ref()

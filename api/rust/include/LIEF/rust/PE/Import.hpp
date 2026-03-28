@@ -22,7 +22,10 @@
 
 #include <memory>
 
+class PE_Utils;
+
 class PE_Import : private Mirror<LIEF::PE::Import> {
+  friend class PE_Utils;
   public:
   using lief_t = LIEF::PE::Import;
   using Mirror::Mirror;
@@ -32,7 +35,7 @@ class PE_Import : private Mirror<LIEF::PE::Import> {
   {
     public:
     it_entries(const PE_Import::lief_t& src)
-      : Iterator(src.entries()) { } 
+      : Iterator(src.entries()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };

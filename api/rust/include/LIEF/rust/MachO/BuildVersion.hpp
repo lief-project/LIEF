@@ -15,22 +15,30 @@
 
 #pragma once
 #include "LIEF/MachO/BuildVersion.hpp"
+#include "LIEF/rust/MachO/BuildToolVersion.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
+#include "LIEF/rust/Iterator.hpp"
 
 class MachO_BuildVersion : public MachO_Command {
   public:
   using lief_t = LIEF::MachO::BuildVersion;
+
+  class it_tools :
+      public ContainerIterator<MachO_BuildToolVersion, std::vector<LIEF::MachO::BuildToolVersion>>
+  {
+    public:
+    it_tools(const MachO_BuildVersion::lief_t& src)
+      : ContainerIterator(std::vector<LIEF::MachO::BuildToolVersion>(src.tools())) { }
+    auto next() { return ContainerIterator::next(); }
+    auto size() const { return ContainerIterator::size(); }
+  };
+
   MachO_BuildVersion(const lief_t& base) : MachO_Command(base) {}
 
-  auto sdk() const {
-    return details::make_vector(impl().sdk());
-  }
-
-  auto minos() const {
-    return details::make_vector(impl().minos());
-  }
-
+  auto sdk() const { return details::make_vector(impl().sdk()); }
+  auto minos() const { return details::make_vector(impl().minos()); }
   auto platform() const { return to_int(impl().platform()); };
+  auto tools() const { return std::make_unique<it_tools>(impl()); }
 
   static bool classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());

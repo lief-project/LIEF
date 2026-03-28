@@ -193,7 +193,7 @@ macro_rules! __to_result {
     ($func: expr, $self: expr, $conv: expr $(, $args:tt)*) => {
         let mut err: u32 = 0;
 
-        let value = $func(&$self, $($args,)* std::pin::Pin::new(&mut err));
+        let value = $func($self, $($args,)* std::pin::Pin::new(&mut err));
         if err > 0 {
             return Err($crate::Error::from(err));
         }
@@ -205,7 +205,7 @@ macro_rules! __to_result {
 #[macro_export]
 macro_rules! to_result {
     ($func: expr, $self: expr $(, $args:tt)*) => {
-        $crate::__to_result!($func, $self.ptr, |x| x $(, $args)*)
+        $crate::__to_result!($func, &$self.ptr, |x| x $(, $args)*)
     };
 }
 

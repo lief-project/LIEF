@@ -58,6 +58,12 @@ class MachO_SegmentCommand : public MachO_Command {
   auto sections() const { return std::make_unique<it_sections>(impl()); }
   auto relocations() const { return std::make_unique<it_relocations>(impl()); }
 
+  auto index() const { return impl().index(); }
+
+  auto get_section(std::string name) const {
+    return details::try_unique<MachO_Section>(impl().get_section(name));
+  }
+
   static bool classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }

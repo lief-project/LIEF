@@ -13,25 +13,21 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/errors.hpp"
-namespace details {
-template<class T>
-inline auto make_error(LIEF::result<T>&& result, uint32_t& err) {
-  if (result) {
-    err = 0;
-    return *result;
-  }
-  err = static_cast<uint32_t>(LIEF::get_error(result));
-  return T{};
-}
+#include <cstdint>
+#include <string>
 
-inline bool make_ok_error(LIEF::ok_error_t ok_err, uint32_t& err) {
-  if (ok_err) {
-    err = 0;
-    return true;
-  }
-  err = static_cast<uint32_t>(LIEF::get_error(ok_err));
-  return false;
-}
+#include "LIEF/PE/resources/ResourceAccelerator.hpp"
+#include "LIEF/rust/Mirror.hpp"
 
-}
+class PE_ResourceAccelerator : private Mirror<LIEF::PE::ResourceAccelerator> {
+  public:
+  using lief_t = LIEF::PE::ResourceAccelerator;
+  using Mirror::Mirror;
+
+  auto flags() const { return get().flags(); }
+  auto ansi() const { return get().ansi(); }
+  auto id() const { return get().id(); }
+  auto padding() const { return get().padding(); }
+
+  std::string ansi_str() const { return get().ansi_str(); }
+};

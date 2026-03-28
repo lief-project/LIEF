@@ -29,6 +29,7 @@ pub mod signature;
 pub mod tls;
 pub mod code_integrity;
 pub mod builder;
+pub mod factory;
 pub mod exception;
 pub mod exception_x64;
 pub mod exception_aarch64;
@@ -57,6 +58,14 @@ pub use resources::Manager as ResourcesManager;
 #[doc(inline)]
 pub use resources::Node as ResourceNode;
 #[doc(inline)]
+pub use resources::Icon as ResourceIcon;
+#[doc(inline)]
+pub use resources::Version as ResourceVersion;
+#[doc(inline)]
+pub use resources::Accelerator as ResourceAccelerator;
+#[doc(inline)]
+pub use resources::StringEntry as ResourceStringEntry;
+#[doc(inline)]
 pub use rich_header::{RichEntry, RichHeader};
 #[doc(inline)]
 pub use section::Section;
@@ -80,8 +89,41 @@ pub use enclave_configuration::{EnclaveConfiguration, EnclaveImport};
 pub use volatile_metadata::VolatileMetadata;
 #[doc(inline)]
 pub use parser_config::Config as ParserConfig;
+#[doc(inline)]
+pub use factory::Factory;
 
 use crate::common::AsFFI;
+
+/// PE type: 32-bit or 64-bit
+#[allow(non_camel_case_types)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum PE_TYPE {
+    /// 32-bit PE
+    PE32,
+    /// 64-bit PE
+    PE32_PLUS,
+    UNKNOWN(u32),
+}
+
+impl From<u32> for PE_TYPE {
+    fn from(value: u32) -> Self {
+        match value {
+            0x10b => PE_TYPE::PE32,
+            0x20b => PE_TYPE::PE32_PLUS,
+            _ => PE_TYPE::UNKNOWN(value),
+        }
+    }
+}
+
+impl From<PE_TYPE> for u32 {
+    fn from(value: PE_TYPE) -> u32 {
+        match value {
+            PE_TYPE::PE32 => 0x10b,
+            PE_TYPE::PE32_PLUS => 0x20b,
+            PE_TYPE::UNKNOWN(v) => v,
+        }
+    }
+}
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -185,4 +227,59 @@ pub fn check_layout(binary: &Binary) -> Result<(), String> {
         }
     }
     Err(error.to_string())
+}
+
+/// Determine the PE type (PE32 or PE32+) of the given file
+pub fn get_type<P: AsRef<Path>>(path: P) -> Option<PE_TYPE> {
+    let val = ffi::PE_Utils::get_type(path.as_ref().to_str().unwrap_or("").to_string());
+    if val == 0 {
+        return None;
+    }
+    Some(PE_TYPE::from(val))
+}
+
+/// Compute the import hash of the given binary
+pub fn get_imphash(binary: &Binary, mode: ImphashMode) -> String {
+    ffi::PE_Utils::get_imphash(binary.as_ffi(), mode.into()).to_string()
+}
+
+/// Convert an OID string to a human-readable string
+pub fn oid_to_string(oid: &str) -> String {
+    ffi::PE_Utils::oid_to_string(oid.to_string()).to_string()
+}
+
+/// Try to resolve import ordinals using the well-known ordinal lookup table
+pub fn resolve_ordinals<'a>(imp: &'a Import<'a>, strict: bool, use_std: bool) -> Option<Import<'a>> {
+    crate::common::into_optional(ffi::PE_Utils::resolve_ordinals(imp.as_ffi(), strict, use_std))
+}
+
+/// Mode used for computing the import hash
+#[allow(non_camel_case_types)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum ImphashMode {
+    /// Default LIEF implementation
+    DEFAULT,
+    /// Use pefile algorithm (same as VirusTotal)
+    PEFILE,
+    UNKNOWN(u32),
+}
+
+impl From<u32> for ImphashMode {
+    fn from(value: u32) -> Self {
+        match value {
+            0x00000000 => ImphashMode::DEFAULT,
+            0x00000001 => ImphashMode::PEFILE,
+            _ => ImphashMode::UNKNOWN(value),
+        }
+    }
+}
+
+impl From<ImphashMode> for u32 {
+    fn from(value: ImphashMode) -> u32 {
+        match value {
+            ImphashMode::DEFAULT => 0x00000000,
+            ImphashMode::PEFILE => 0x00000001,
+            ImphashMode::UNKNOWN(v) => v,
+        }
+    }
 }

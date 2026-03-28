@@ -129,6 +129,63 @@ impl Type {
     }
 }
 
+impl From<u32> for Type {
+    fn from(value: u32) -> Self {
+        Type::from_value(value)
+    }
+}
+
+impl From<Type> for u32 {
+    fn from(value: Type) -> u32 {
+        match value {
+            Type::GNU_ABI_TAG => 0x00000001,
+            Type::GNU_HWCAP => 0x00000002,
+            Type::GNU_BUILD_ID => 0x00000003,
+            Type::GNU_GOLD_VERSION => 0x00000004,
+            Type::GNU_PROPERTY_TYPE_0 => 0x00000005,
+            Type::GNU_BUILD_ATTRIBUTE_OPEN => 0x00000006,
+            Type::GNU_BUILD_ATTRIBUTE_FUNC => 0x00000007,
+            Type::CRASHPAD => 0x00000008,
+            Type::CORE_PRSTATUS => 0x00000009,
+            Type::CORE_FPREGSET => 0x0000000a,
+            Type::CORE_PRPSINFO => 0x0000000b,
+            Type::CORE_TASKSTRUCT => 0x0000000c,
+            Type::CORE_AUXV => 0x0000000d,
+            Type::CORE_PSTATUS => 0x0000000e,
+            Type::CORE_FPREGS => 0x0000000f,
+            Type::CORE_PSINFO => 0x00000010,
+            Type::CORE_LWPSTATUS => 0x00000011,
+            Type::CORE_LWPSINFO => 0x00000012,
+            Type::CORE_WIN32PSTATUS => 0x00000013,
+            Type::CORE_FILE => 0x00000014,
+            Type::CORE_PRXFPREG => 0x00000015,
+            Type::CORE_SIGINFO => 0x00000016,
+            Type::CORE_ARM_VFP => 0x00000017,
+            Type::CORE_ARM_TLS => 0x00000018,
+            Type::CORE_ARM_HW_BREAK => 0x00000019,
+            Type::CORE_ARM_HW_WATCH => 0x0000001a,
+            Type::CORE_ARM_SYSTEM_CALL => 0x0000001b,
+            Type::CORE_ARM_SVE => 0x0000001c,
+            Type::CORE_ARM_PAC_MASK => 0x0000001d,
+            Type::CORE_ARM_PACA_KEYS => 0x0000001e,
+            Type::CORE_ARM_PACG_KEYS => 0x0000001f,
+            Type::CORE_TAGGED_ADDR_CTRL => 0x00000020,
+            Type::CORE_PAC_ENABLED_KEYS => 0x00000021,
+            Type::CORE_X86_TLS => 0x00000022,
+            Type::CORE_X86_IOPERM => 0x00000023,
+            Type::CORE_X86_XSTATE => 0x00000024,
+            Type::CORE_X86_CET => 0x00000025,
+            Type::ANDROID_IDENT => 0x00000026,
+            Type::ANDROID_MEMTAG => 0x00000027,
+            Type::ANDROID_KUSER => 0x00000028,
+            Type::GO_BUILDID => 0x00000029,
+            Type::STAPSDT => 0x0000002a,
+            Type::QNX_STACK => 0x0000002b,
+            Type::UNKNOWN(value) => value,
+        }
+    }
+}
+
 /// Trait shared by all [`Notes`]
 pub trait NoteBase {
     #[doc(hidden)]
@@ -165,6 +222,20 @@ pub trait NoteBase {
 impl NoteBase for Generic<'_> {
     fn get_base(&self) -> &ffi::ELF_Note {
         self.ptr.as_ref().unwrap()
+    }
+}
+
+impl crate::common::AsFFI<ffi::ELF_Note> for Notes<'_> {
+    fn as_ffi(&self) -> &ffi::ELF_Note {
+        match self {
+            Notes::Generic(g) => g.ptr.as_ref().unwrap(),
+        }
+    }
+
+    fn as_mut_ffi(&mut self) -> std::pin::Pin<&mut ffi::ELF_Note> {
+        match self {
+            Notes::Generic(g) => g.ptr.pin_mut(),
+        }
     }
 }
 

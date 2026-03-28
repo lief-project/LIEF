@@ -313,6 +313,16 @@ impl FromFFI<ffi::ELF_Section> for Section<'_> {
     }
 }
 
+impl crate::common::AsFFI<ffi::ELF_Section> for Section<'_> {
+    fn as_ffi(&self) -> &ffi::ELF_Section {
+        self.ptr.as_ref().unwrap()
+    }
+
+    fn as_mut_ffi(&mut self) -> Pin<&mut ffi::ELF_Section> {
+        self.ptr.pin_mut()
+    }
+}
+
 impl generic::Section for Section<'_> {
     fn as_generic(&self) -> &ffi::AbstractSection {
         self.ptr.as_ref().unwrap().as_ref()

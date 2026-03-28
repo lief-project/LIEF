@@ -37,6 +37,16 @@ impl<'a> FromFFI<ffi::PE_Import> for Import<'a> {
     }
 }
 
+impl<'a> crate::common::AsFFI<ffi::PE_Import> for Import<'a> {
+    fn as_ffi(&self) -> &ffi::PE_Import {
+        self.ptr.as_ref().unwrap()
+    }
+
+    fn as_mut_ffi(&mut self) -> Pin<&mut ffi::PE_Import> {
+        self.ptr.pin_mut()
+    }
+}
+
 impl Import<'_> {
     /// Iterator over the [`ImportEntry`]
     pub fn entries(&self) -> ImportEntries<'_> {

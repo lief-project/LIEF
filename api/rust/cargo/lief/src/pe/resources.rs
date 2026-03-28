@@ -469,6 +469,31 @@ impl Manager<'_> {
         self.ptr.get_types().iter().map(|v| Types::from(*v)).collect()
     }
 
+    /// Return the HTML resources as a list of strings
+    pub fn html(&self) -> Vec<String> {
+        self.ptr.html().iter().map(|s| s.to_string()).collect()
+    }
+
+    /// Return an iterator over the resource icons
+    pub fn icons(&self) -> Icons<'_> {
+        Icons::new(self.ptr.icons())
+    }
+
+    /// Return an iterator over the resource version entries
+    pub fn version(&self) -> Versions<'_> {
+        Versions::new(self.ptr.version())
+    }
+
+    /// Return an iterator over the resource accelerator entries
+    pub fn accelerator(&self) -> Accelerators<'_> {
+        Accelerators::new(self.ptr.accelerator())
+    }
+
+    /// Return an iterator over the string table entries
+    pub fn string_table(&self) -> StringTableEntries<'_> {
+        StringTableEntries::new(self.ptr.string_table())
+    }
+
     /// Print the current resources a tree in a pretty representation.
     ///
     /// ```text
@@ -494,10 +519,544 @@ impl Manager<'_> {
     }
 }
 
+/// Represents a PE icon resource
+pub struct Icon<'a> {
+    ptr: cxx::UniquePtr<ffi::PE_ResourceIcon>,
+    _owner: PhantomData<&'a ffi::PE_ResourcesManager>,
+}
+
+impl Icon<'_> {
+    /// ID of the icon
+    pub fn id(&self) -> u32 {
+        self.ptr.id()
+    }
+
+    /// Language of the icon
+    pub fn lang(&self) -> u32 {
+        self.ptr.lang()
+    }
+
+    /// Sublanguage of the icon
+    pub fn sublang(&self) -> u32 {
+        self.ptr.sublang()
+    }
+
+    /// Width in pixels
+    pub fn width(&self) -> u8 {
+        self.ptr.width()
+    }
+
+    /// Height in pixels
+    pub fn height(&self) -> u8 {
+        self.ptr.height()
+    }
+
+    /// Number of colors in the palette (0 if more than 256)
+    pub fn color_count(&self) -> u8 {
+        self.ptr.color_count()
+    }
+
+    /// Reserved (should be 0)
+    pub fn reserved(&self) -> u8 {
+        self.ptr.reserved()
+    }
+
+    /// Number of color planes
+    pub fn planes(&self) -> u16 {
+        self.ptr.planes()
+    }
+
+    /// Bits per pixel
+    pub fn bit_count(&self) -> u16 {
+        self.ptr.bit_count()
+    }
+
+    /// Size of the icon pixel data
+    pub fn size(&self) -> u32 {
+        self.ptr.size()
+    }
+
+    /// Raw pixel data of the icon
+    pub fn pixels(&self) -> &[u8] {
+        to_slice!(self.ptr.pixels());
+    }
+}
+
+impl fmt::Debug for Icon<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Icon")
+            .field("id", &self.id())
+            .field("width", &self.width())
+            .field("height", &self.height())
+            .field("color_count", &self.color_count())
+            .field("bit_count", &self.bit_count())
+            .finish()
+    }
+}
+
+impl<'a> FromFFI<ffi::PE_ResourceIcon> for Icon<'a> {
+    fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_ResourceIcon>) -> Self {
+        Self {
+            ptr,
+            _owner: PhantomData,
+        }
+    }
+}
+
+
+/// Represents fixed file information from a version resource
+#[derive(Debug, Clone)]
+pub struct FixedFileInfo {
+    /// Contains the value `0xFEEF04BD`. This is used with the `szKey` member of
+    /// the `VS_VERSIONINFO` structure when searching a file for the
+    /// `VS_FIXEDFILEINFO` structure.
+    pub signature: u32,
+
+    /// The binary version number of this structure. The high-order word of
+    /// this member contains the major version number, and the low-order word
+    /// contains the minor version number.
+    pub struct_version: u32,
+
+    /// The most significant 32 bits of the file's binary version number.
+    /// This member is used with file_version_ls to form a 64-bit value used
+    /// for numeric comparisons.
+    pub file_version_ms: u32,
+
+    /// The least significant 32 bits of the file's binary version number.
+    /// This member is used with file_version_ms to form a 64-bit value used for
+    /// numeric comparisons.
+    pub file_version_ls: u32,
+
+    /// The most significant 32 bits of the binary version number of the product
+    /// with which this file was distributed. This member is used with
+    /// product_version_ls to form a 64-bit value used for numeric comparisons.
+    pub product_version_ms: u32,
+
+    /// The least significant 32 bits of the binary version number of the product
+    /// with which this file was distributed. This member is used with
+    /// product_version_ms to form a 64-bit value used for numeric comparisons.
+    pub product_version_ls: u32,
+
+    /// Contains a bitmask that specifies the valid bits in file_flags.
+    /// A bit is valid only if it was defined when the file was created.
+    pub file_flags_mask: u32,
+
+    /// Contains a bitmask that specifies the Boolean attributes of the file.
+    /// This member can include one or more of the values specified in FILE_FLAGS
+    pub file_flags: u32,
+
+    /// The operating system for which this file was designed. This member can
+    /// be one of the values specified in VERSION_OS.
+    pub file_os: u32,
+
+    /// The general type of file. This member can be one of the values specified
+    /// in FILE_TYPE. All other values are reserved.
+    pub file_type: u32,
+
+    /// The function of the file. The possible values depend on the value of
+    /// file_type.
+    pub file_subtype: u32,
+
+    /// The most significant 32 bits of the file's 64-bit binary creation date
+    /// and time stamp.
+    pub file_date_ms: u32,
+
+    /// The least significant 32 bits of the file's 64-bit binary creation date
+    /// and time stamp.
+    pub file_date_ls: u32,
+}
+
+/// Represents a string table entry (key/value) from a StringFileInfo
+#[derive(Debug, Clone)]
+pub struct VersionStringTableEntry {
+    /// Key of the entry
+    pub key: String,
+    /// Value of the entry
+    pub value: String,
+}
+
+impl FromFFI<ffi::PE_ResourceStringTable_entry_t> for VersionStringTableEntry {
+    fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_ResourceStringTable_entry_t>) -> Self {
+        Self {
+            key: ptr.key().to_string(),
+            value: ptr.value().to_string(),
+        }
+    }
+}
+
+/// Represents a string table within a StringFileInfo
+pub struct VersionStringTable<'a> {
+    ptr: cxx::UniquePtr<ffi::PE_ResourceStringTable>,
+    _owner: PhantomData<&'a ffi::PE_ResourceVersion>,
+}
+
+impl VersionStringTable<'_> {
+    /// Type of the string table
+    pub fn get_type(&self) -> u16 {
+        self.ptr.get_type()
+    }
+
+    /// Key identifying the string table (typically a language/codepage pair)
+    pub fn key(&self) -> String {
+        self.ptr.key().to_string()
+    }
+
+    /// Return an iterator over the key/value entries
+    pub fn entries(&self) -> VersionStringTableEntries<'_> {
+        VersionStringTableEntries::new(self.ptr.entries())
+    }
+}
+
+impl fmt::Debug for VersionStringTable<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("VersionStringTable")
+            .field("key", &self.key())
+            .finish()
+    }
+}
+
+impl<'a> FromFFI<ffi::PE_ResourceStringTable> for VersionStringTable<'a> {
+    fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_ResourceStringTable>) -> Self {
+        Self {
+            ptr,
+            _owner: PhantomData,
+        }
+    }
+}
+
+/// Represents a Var entry within VarFileInfo
+pub struct ResourceVar<'a> {
+    ptr: cxx::UniquePtr<ffi::PE_ResourceVar>,
+    _owner: PhantomData<&'a ffi::PE_ResourceVersion>,
+}
+
+impl ResourceVar<'_> {
+    /// Type of the var entry
+    pub fn get_type(&self) -> u16 {
+        self.ptr.get_type()
+    }
+
+    /// Key of the var entry
+    pub fn key(&self) -> String {
+        self.ptr.key().to_string()
+    }
+
+    /// Values of the var entry (language/codepage pairs)
+    pub fn values(&self) -> Vec<u32> {
+        self.ptr.values().iter().map(|&v| v as u32).collect()
+    }
+}
+
+impl fmt::Debug for ResourceVar<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("ResourceVar")
+            .field("key", &self.key())
+            .field("values", &self.values())
+            .finish()
+    }
+}
+
+impl<'a> FromFFI<ffi::PE_ResourceVar> for ResourceVar<'a> {
+    fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_ResourceVar>) -> Self {
+        Self {
+            ptr,
+            _owner: PhantomData,
+        }
+    }
+}
+
+/// Represents a StringFileInfo structure from a version resource
+pub struct StringFileInfo<'a> {
+    ptr: cxx::UniquePtr<ffi::PE_ResourceStringFileInfo>,
+    _owner: PhantomData<&'a ffi::PE_ResourceVersion>,
+}
+
+impl StringFileInfo<'_> {
+    /// Type of the StringFileInfo
+    pub fn get_type(&self) -> u16 {
+        self.ptr.get_type()
+    }
+
+    /// Key of the StringFileInfo
+    pub fn key(&self) -> String {
+        self.ptr.key().to_string()
+    }
+
+    /// Return an iterator over the child string tables
+    pub fn children(&self) -> StringFileInfoChildren<'_> {
+        StringFileInfoChildren::new(self.ptr.children())
+    }
+}
+
+impl fmt::Debug for StringFileInfo<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("StringFileInfo")
+            .field("key", &self.key())
+            .finish()
+    }
+}
+
+impl<'a> FromFFI<ffi::PE_ResourceStringFileInfo> for StringFileInfo<'a> {
+    fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_ResourceStringFileInfo>) -> Self {
+        Self {
+            ptr,
+            _owner: PhantomData,
+        }
+    }
+}
+
+/// Represents a VarFileInfo structure from a version resource
+pub struct VarFileInfo<'a> {
+    ptr: cxx::UniquePtr<ffi::PE_ResourceVarFileInfo>,
+    _owner: PhantomData<&'a ffi::PE_ResourceVersion>,
+}
+
+impl VarFileInfo<'_> {
+    /// Type of the VarFileInfo
+    pub fn get_type(&self) -> u16 {
+        self.ptr.get_type()
+    }
+
+    /// Key of the VarFileInfo
+    pub fn key(&self) -> String {
+        self.ptr.key().to_string()
+    }
+
+    /// Return an iterator over the Var entries
+    pub fn vars(&self) -> VarFileInfoVars<'_> {
+        VarFileInfoVars::new(self.ptr.vars())
+    }
+}
+
+impl fmt::Debug for VarFileInfo<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("VarFileInfo")
+            .field("key", &self.key())
+            .finish()
+    }
+}
+
+impl<'a> FromFFI<ffi::PE_ResourceVarFileInfo> for VarFileInfo<'a> {
+    fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_ResourceVarFileInfo>) -> Self {
+        Self {
+            ptr,
+            _owner: PhantomData,
+        }
+    }
+}
+
+/// Represents a PE version resource
+pub struct Version<'a> {
+    ptr: cxx::UniquePtr<ffi::PE_ResourceVersion>,
+    _owner: PhantomData<&'a ffi::PE_ResourcesManager>,
+}
+
+impl Version<'_> {
+    /// Type of the version resource
+    pub fn get_type(&self) -> u16 {
+        self.ptr.get_type()
+    }
+
+    /// Key of the version resource
+    pub fn key(&self) -> String {
+        self.ptr.key().to_string()
+    }
+
+    /// Return the fixed file information if present
+    pub fn file_info(&self) -> FixedFileInfo {
+        FixedFileInfo {
+            signature: self.ptr.file_info_signature(),
+            struct_version: self.ptr.file_info_struct_version(),
+            file_version_ms: self.ptr.file_info_file_version_ms(),
+            file_version_ls: self.ptr.file_info_file_version_ls(),
+            product_version_ms: self.ptr.file_info_product_version_ms(),
+            product_version_ls: self.ptr.file_info_product_version_ls(),
+            file_flags_mask: self.ptr.file_info_file_flags_mask(),
+            file_flags: self.ptr.file_info_file_flags(),
+            file_os: self.ptr.file_info_file_os(),
+            file_type: self.ptr.file_info_file_type(),
+            file_subtype: self.ptr.file_info_file_subtype(),
+            file_date_ms: self.ptr.file_info_file_date_ms(),
+            file_date_ls: self.ptr.file_info_file_date_ls(),
+        }
+    }
+
+    /// Return the StringFileInfo if present
+    pub fn string_file_info(&self) -> Option<StringFileInfo<'_>> {
+        into_optional(self.ptr.string_file_info())
+    }
+
+    /// Return the VarFileInfo if present
+    pub fn var_file_info(&self) -> Option<VarFileInfo<'_>> {
+        into_optional(self.ptr.var_file_info())
+    }
+}
+
+impl fmt::Debug for Version<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Version")
+            .field("key", &self.key())
+            .finish()
+    }
+}
+
+impl<'a> FromFFI<ffi::PE_ResourceVersion> for Version<'a> {
+    fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_ResourceVersion>) -> Self {
+        Self {
+            ptr,
+            _owner: PhantomData,
+        }
+    }
+}
+
+/// Represents a PE accelerator resource entry
+pub struct Accelerator<'a> {
+    ptr: cxx::UniquePtr<ffi::PE_ResourceAccelerator>,
+    _owner: PhantomData<&'a ffi::PE_ResourcesManager>,
+}
+
+impl Accelerator<'_> {
+    /// Flags for the accelerator
+    pub fn flags(&self) -> i16 {
+        self.ptr.flags()
+    }
+
+    /// ANSI code of the accelerator key
+    pub fn ansi(&self) -> i16 {
+        self.ptr.ansi()
+    }
+
+    /// ID of the accelerator
+    pub fn id(&self) -> u16 {
+        self.ptr.id()
+    }
+
+    /// Padding value
+    pub fn padding(&self) -> i16 {
+        self.ptr.padding()
+    }
+
+    /// Return the ANSI string representation of the accelerator key
+    pub fn ansi_str(&self) -> String {
+        self.ptr.ansi_str().to_string()
+    }
+}
+
+impl fmt::Debug for Accelerator<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Accelerator")
+            .field("id", &self.id())
+            .field("flags", &self.flags())
+            .field("ansi", &self.ansi())
+            .finish()
+    }
+}
+
+impl<'a> FromFFI<ffi::PE_ResourceAccelerator> for Accelerator<'a> {
+    fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_ResourceAccelerator>) -> Self {
+        Self {
+            ptr,
+            _owner: PhantomData,
+        }
+    }
+}
+
+/// Represents a string table entry from the ResourcesManager
+pub struct StringEntry<'a> {
+    ptr: cxx::UniquePtr<ffi::PE_ResourcesManager_string_entry_t>,
+    _owner: PhantomData<&'a ffi::PE_ResourcesManager>,
+}
+
+impl StringEntry<'_> {
+    /// The string value
+    pub fn string(&self) -> String {
+        self.ptr.string().to_string()
+    }
+
+    /// The ID associated with this string
+    pub fn id(&self) -> u32 {
+        self.ptr.id()
+    }
+}
+
+impl fmt::Debug for StringEntry<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("StringEntry")
+            .field("id", &self.id())
+            .field("string", &self.string())
+            .finish()
+    }
+}
+
+impl<'a> FromFFI<ffi::PE_ResourcesManager_string_entry_t> for StringEntry<'a> {
+    fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_ResourcesManager_string_entry_t>) -> Self {
+        Self {
+            ptr,
+            _owner: PhantomData,
+        }
+    }
+}
+
 declare_iterator!(
     Children,
     Node<'a>,
     ffi::PE_ResourceNode,
     ffi::PE_Binary,
     ffi::PE_ResourceNode_it_childs
+);
+
+declare_iterator!(
+    Icons,
+    Icon<'a>,
+    ffi::PE_ResourceIcon,
+    ffi::PE_ResourcesManager,
+    ffi::PE_ResourcesManager_it_icons
+);
+
+declare_iterator!(
+    Versions,
+    Version<'a>,
+    ffi::PE_ResourceVersion,
+    ffi::PE_ResourcesManager,
+    ffi::PE_ResourcesManager_it_version
+);
+
+declare_iterator!(
+    Accelerators,
+    Accelerator<'a>,
+    ffi::PE_ResourceAccelerator,
+    ffi::PE_ResourcesManager,
+    ffi::PE_ResourcesManager_it_accelerator
+);
+
+declare_iterator!(
+    StringTableEntries,
+    StringEntry<'a>,
+    ffi::PE_ResourcesManager_string_entry_t,
+    ffi::PE_ResourcesManager,
+    ffi::PE_ResourcesManager_it_string_table_entry
+);
+
+declare_iterator!(
+    VersionStringTableEntries,
+    VersionStringTableEntry,
+    ffi::PE_ResourceStringTable_entry_t,
+    ffi::PE_ResourceStringTable,
+    ffi::PE_ResourceStringTable_it_entries
+);
+
+declare_iterator!(
+    StringFileInfoChildren,
+    VersionStringTable<'a>,
+    ffi::PE_ResourceStringTable,
+    ffi::PE_ResourceStringFileInfo,
+    ffi::PE_ResourceStringFileInfo_it_children
+);
+
+declare_iterator!(
+    VarFileInfoVars,
+    ResourceVar<'a>,
+    ffi::PE_ResourceVar,
+    ffi::PE_ResourceVarFileInfo,
+    ffi::PE_ResourceVarFileInfo_it_vars
 );

@@ -52,6 +52,9 @@ class MachO_Section : public AbstractSection {
   auto segment() const { return details::try_unique<MachO_SegmentCommand>(impl().segment()); }
   auto relocations() const { return std::make_unique<it_relocations>(impl()); }
 
+  bool has_segment() const { return impl().has_segment(); }
+
   private:
   const lief_t& impl() const { return as<lief_t>(this); }
+  lief_t& impl() { return as<lief_t>(this); }
 };

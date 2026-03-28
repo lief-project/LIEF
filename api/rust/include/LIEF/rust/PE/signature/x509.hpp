@@ -60,4 +60,14 @@ class PE_x509 : private Mirror<LIEF::PE::x509> {
   auto verify(const PE_x509& ca) const {
     return to_int(get().verify(ca.get()));
   }
+
+  auto key_usage() const {
+    std::vector<uint32_t> result;
+    for (LIEF::PE::x509::KEY_USAGE ku : get().key_usage()) {
+      result.push_back(to_int(ku));
+    }
+    return result;
+  }
+  auto ext_key_usage() const { return get().ext_key_usage(); }
+  auto certificate_policies() const { return get().certificate_policies(); }
 };

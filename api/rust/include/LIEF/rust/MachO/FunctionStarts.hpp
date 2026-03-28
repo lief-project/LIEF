@@ -29,10 +29,13 @@ class MachO_FunctionStarts : public MachO_Command {
 
   auto content() const { return make_span(impl().content()); }
 
+  void add_function(uint64_t address) { impl().add_function(address); }
+
   static bool classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 
   private:
   const lief_t& impl() const { return as<lief_t>(this); }
+  lief_t& impl() { return as<lief_t>(this); }
 };

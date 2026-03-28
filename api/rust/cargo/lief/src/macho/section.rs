@@ -201,7 +201,7 @@ impl Section<'_> {
         into_optional(self.ptr.segment())
     }
 
-    /// Iterator over the [`crate::macho::Relocation`] associated with thi section
+    /// Iterator over the [`crate::macho::Relocation`] associated with this section
     pub fn relocations(&self) -> Relocations<'_> {
         Relocations::new(self.ptr.relocations())
     }

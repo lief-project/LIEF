@@ -31,6 +31,9 @@
 #include "LIEF/rust/PE/ResourceDirectory.hpp"
 #include "LIEF/rust/PE/ResourceNode.hpp"
 #include "LIEF/rust/PE/ResourcesManager.hpp"
+#include "LIEF/rust/PE/ResourceIcon.hpp"
+#include "LIEF/rust/PE/ResourceVersion.hpp"
+#include "LIEF/rust/PE/ResourceAccelerator.hpp"
 #include "LIEF/rust/PE/RichEntry.hpp"
 #include "LIEF/rust/PE/RichHeader.hpp"
 #include "LIEF/rust/PE/Section.hpp"
@@ -82,4 +85,6 @@
 #include "LIEF/rust/PE/LoadConfiguration/EnclaveConfiguration.hpp"
 #include "LIEF/rust/PE/LoadConfiguration/DynamicRelocation/DynamicRelocation.hpp"
 #include "LIEF/rust/PE/LoadConfiguration/DynamicRelocation/DynamicFixup.hpp"
+
+#include "LIEF/rust/PE/Factory.hpp"
 

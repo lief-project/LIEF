@@ -69,6 +69,11 @@ impl FatBinary {
             fat: self,
         }
     }
+
+    /// Reconstruct the FAT binary object and write it to the given path
+    pub fn write<P: AsRef<Path>>(&mut self, output: P) {
+        self.ptr.as_mut().unwrap().write(output.as_ref().to_str().unwrap());
+    }
 }
 
 impl AsFFI<ffi::MachO_FatBinary> for FatBinary {

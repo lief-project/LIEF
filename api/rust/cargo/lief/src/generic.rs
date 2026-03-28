@@ -298,7 +298,6 @@ pub trait Binary {
     }
 
     /// Load and associate an external debug file (e.g., DWARF or PDB) with this binary.
-
     ///
     /// This method attempts to load the debug information from the file located at the given path,
     /// and binds it to the current binary instance. If successful, it returns the

@@ -168,7 +168,7 @@ pub fn version() -> Version {
 pub fn demangle(mangled: &str) -> Result<String, Error> {
     to_conv_result!(
         lief_ffi::demangle,
-        *mangled,
+        mangled,
         |e: cxx::UniquePtr<cxx::String>| { e.to_string() }
     );
 }

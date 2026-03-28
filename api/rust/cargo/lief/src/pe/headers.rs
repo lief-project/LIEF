@@ -99,7 +99,7 @@ impl<'a> DosHeader<'a> {
     }
 
     pub fn reserved2(&self) -> Vec<u16> {
-        Vec::from_iter(self.ptr.reserved().iter().map(|x| *x as u16))
+        Vec::from_iter(self.ptr.reserved2().iter().map(|x| *x as u16))
     }
 
     /// Return the offset to the [`Header`] structure.
@@ -378,6 +378,11 @@ impl From<Characteristics> for u32 {
 }
 
 impl Header<'_> {
+    /// PE signature (should be `PE\0\0`)
+    pub fn signature(&self) -> Vec<u8> {
+        Vec::from(self.ptr.signature().as_slice()).iter().map(|&v: &u64| v as u8).collect()
+    }
+
     /// The targeted machine architecture like ARM, x86, AMD64, ...
     pub fn machine(&self) -> MachineType {
         MachineType::from(self.ptr.machine())
@@ -650,6 +655,11 @@ impl From<Subsystem> for u64 {
 }
 
 impl OptionalHeader<'_> {
+    /// Magic number identifying PE32 (0x10b) or PE32+ (0x20b)
+    pub fn magic(&self) -> u32 {
+        self.ptr.magic() as u32
+    }
+
     /// The linker major version
     pub fn major_linker_version(&self) -> u8 {
         self.ptr.major_linker_version()
@@ -826,6 +836,16 @@ impl OptionalHeader<'_> {
 
     pub fn set_imagebase(&mut self, value: u64) {
         self.ptr.pin_mut().set_imagebase(value)
+    }
+
+    /// Add a DLL characteristic
+    pub fn add_dll_characteristic(&mut self, c: DllCharacteristics) {
+        self.ptr.pin_mut().add_dll_characteristic(c.bits());
+    }
+
+    /// Remove a DLL characteristic
+    pub fn remove_dll_characteristic(&mut self, c: DllCharacteristics) {
+        self.ptr.pin_mut().remove_dll_characteristic(c.bits());
     }
 }
 

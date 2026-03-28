@@ -187,6 +187,16 @@ impl FromFFI<ffi::ELF_Symbol> for Symbol<'_> {
     }
 }
 
+impl crate::common::AsFFI<ffi::ELF_Symbol> for Symbol<'_> {
+    fn as_ffi(&self) -> &ffi::ELF_Symbol {
+        self.ptr.as_ref().unwrap()
+    }
+
+    fn as_mut_ffi(&mut self) -> Pin<&mut ffi::ELF_Symbol> {
+        self.ptr.pin_mut()
+    }
+}
+
 impl generic::Symbol for Symbol<'_> {
     fn as_generic(&self) -> &ffi::AbstractSymbol {
         self.ptr.as_ref().unwrap().as_ref()

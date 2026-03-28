@@ -24,6 +24,8 @@ class PE_OptionalHeader : private Mirror<LIEF::PE::OptionalHeader>  {
   using lief_t = LIEF::PE::OptionalHeader;
   using Mirror::Mirror;
 
+  auto magic() const { return to_int(get().magic()); }
+
   auto major_linker_version() const { return get().major_linker_version(); }
   auto minor_linker_version() const { return get().minor_linker_version(); }
   auto sizeof_code() const { return get().sizeof_code(); }
@@ -60,5 +62,13 @@ class PE_OptionalHeader : private Mirror<LIEF::PE::OptionalHeader>  {
 
   void set_imagebase(uint64_t value) {
     get().imagebase(value);
+  }
+
+  void add_dll_characteristic(uint32_t value) {
+    get().add(LIEF::PE::OptionalHeader::DLL_CHARACTERISTICS(value));
+  }
+
+  void remove_dll_characteristic(uint32_t value) {
+    get().remove(LIEF::PE::OptionalHeader::DLL_CHARACTERISTICS(value));
   }
 };

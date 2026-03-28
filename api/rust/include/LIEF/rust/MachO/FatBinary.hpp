@@ -84,4 +84,9 @@ class MachO_FatBinary : public Mirror<LIEF::MachO::FatBinary> {
     }
     return nullptr;
   }
+
+  void write(std::string output) { impl().write(output); }
+
+  private:
+  LIEF::MachO::FatBinary& impl() { return const_cast<LIEF::MachO::FatBinary&>(get()); }
 };

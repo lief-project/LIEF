@@ -14,9 +14,9 @@ pub use content_info::ContentInfo;
 #[doc(inline)]
 pub use rsa_info::RsaInfo;
 #[doc(inline)]
-pub use signer_info::{SignerInfo, Signers};
+pub use signer_info::{AttributeType, SignerInfo, Signers};
 #[doc(inline)]
-pub use x509::{Certificates, X509};
+pub use x509::{VerificationFlags as CertVerificationFlags, Certificates, KeyUsage, X509};
 
 use std::io::{Read, Seek};
 

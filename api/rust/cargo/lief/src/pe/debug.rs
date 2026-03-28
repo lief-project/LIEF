@@ -349,10 +349,47 @@ pub struct Pogo<'a> {
     _owner: PhantomData<&'a ffi::PE_Binary>,
 }
 
+/// Signature type for [`Pogo`] debug entries
+#[allow(non_camel_case_types)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum PogoSignature {
+    ZERO,
+    LCTG,
+    PGI,
+    UNKNOWN(u32),
+}
+
+impl From<u32> for PogoSignature {
+    fn from(value: u32) -> Self {
+        match value {
+            0x00000000 => PogoSignature::ZERO,
+            0x4C544347 => PogoSignature::LCTG,
+            0x50474900 => PogoSignature::PGI,
+            _ => PogoSignature::UNKNOWN(value),
+        }
+    }
+}
+
+impl From<PogoSignature> for u32 {
+    fn from(value: PogoSignature) -> u32 {
+        match value {
+            PogoSignature::ZERO => 0x00000000,
+            PogoSignature::LCTG => 0x4C544347,
+            PogoSignature::PGI => 0x50474900,
+            PogoSignature::UNKNOWN(v) => v,
+        }
+    }
+}
+
 impl Pogo<'_> {
     /// An iterator over the different POGO elements: [`PogoEntry`]
     pub fn entries(&self) -> PogoEntries<'_> {
         PogoEntries::new(self.ptr.entries())
+    }
+
+    /// The POGO signature
+    pub fn signature(&self) -> PogoSignature {
+        PogoSignature::from(self.ptr.pogo_signature())
     }
 }
 
@@ -431,6 +468,52 @@ pub struct CodeView<'a> {
     _owner: PhantomData<&'a ffi::PE_Binary>,
 }
 
+/// Signature type for [`CodeView`] debug entries
+#[allow(non_camel_case_types)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum CodeViewSignature {
+    /// PDB 7.0 signature
+    PDB_70,
+    /// PDB 2.0 signature
+    PDB_20,
+    /// CodeView 5.0 signature
+    CV_50,
+    /// CodeView 4.1 signature
+    CV_41,
+    UNKNOWN(u32),
+}
+
+impl From<u32> for CodeViewSignature {
+    fn from(value: u32) -> Self {
+        match value {
+            0x53445352 => CodeViewSignature::PDB_70,
+            0x3031424e => CodeViewSignature::PDB_20,
+            0x3131424e => CodeViewSignature::CV_50,
+            0x3930424e => CodeViewSignature::CV_41,
+            _ => CodeViewSignature::UNKNOWN(value),
+        }
+    }
+}
+
+impl From<CodeViewSignature> for u32 {
+    fn from(value: CodeViewSignature) -> u32 {
+        match value {
+            CodeViewSignature::PDB_70 => 0x53445352,
+            CodeViewSignature::PDB_20 => 0x3031424e,
+            CodeViewSignature::CV_50 => 0x3131424e,
+            CodeViewSignature::CV_41 => 0x3930424e,
+            CodeViewSignature::UNKNOWN(v) => v,
+        }
+    }
+}
+
+impl CodeView<'_> {
+    /// The CodeView signature that defines the type of the CodeView entry
+    pub fn cv_signature(&self) -> CodeViewSignature {
+        CodeViewSignature::from(self.ptr.signature())
+    }
+}
+
 impl<'a> FromFFI<ffi::PE_CodeView> for CodeView<'a> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_CodeView>) -> Self {
         Self {
@@ -458,7 +541,11 @@ impl DebugEntry for CodeView<'_> {
 
 impl std::fmt::Debug for CodeView<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("CodeView").finish()
+        let base = self as &dyn DebugEntry;
+        f.debug_struct("CodeView")
+            .field("base", &base)
+            .field("cv_signature", &self.cv_signature())
+            .finish()
     }
 }
 

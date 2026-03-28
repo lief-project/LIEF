@@ -47,6 +47,85 @@ impl ElfClass {
     }
 }
 
+
+/// Strategy used for relocating the PHDR table
+#[allow(non_camel_case_types)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum PhdrReloc {
+    /// Let LIEF choose the best strategy
+    AUTO,
+    /// Shift content after the PHDR table (PIE binaries only)
+    PIE_SHIFT,
+    /// Relocate the PHDR after the first BSS-like segment
+    BSS_END,
+    /// Relocate at the end of the binary
+    BINARY_END,
+    /// Relocate between two LOAD segments
+    SEGMENT_GAP,
+    UNKNOWN(u32),
+}
+
+impl From<u32> for PhdrReloc {
+    fn from(value: u32) -> Self {
+        match value {
+            0 => PhdrReloc::AUTO,
+            1 => PhdrReloc::PIE_SHIFT,
+            2 => PhdrReloc::BSS_END,
+            3 => PhdrReloc::BINARY_END,
+            4 => PhdrReloc::SEGMENT_GAP,
+            _ => PhdrReloc::UNKNOWN(value),
+        }
+    }
+}
+
+impl From<PhdrReloc> for u32 {
+    fn from(value: PhdrReloc) -> u32 {
+        match value {
+            PhdrReloc::AUTO => 0,
+            PhdrReloc::PIE_SHIFT => 1,
+            PhdrReloc::BSS_END => 2,
+            PhdrReloc::BINARY_END => 3,
+            PhdrReloc::SEGMENT_GAP => 4,
+            PhdrReloc::UNKNOWN(v) => v,
+        }
+    }
+}
+
+/// Strategy for inserting a new section
+#[allow(non_camel_case_types)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum SecInsertPos {
+    /// Let LIEF choose the best strategy
+    AUTO,
+    /// Insert after the last segment offset, before debug info
+    POST_SEGMENT,
+    /// Insert after the last section offset, at binary end
+    POST_SECTION,
+    UNKNOWN(u32),
+}
+
+impl From<u32> for SecInsertPos {
+    fn from(value: u32) -> Self {
+        match value {
+            0 => SecInsertPos::AUTO,
+            1 => SecInsertPos::POST_SEGMENT,
+            2 => SecInsertPos::POST_SECTION,
+            _ => SecInsertPos::UNKNOWN(value),
+        }
+    }
+}
+
+impl From<SecInsertPos> for u32 {
+    fn from(value: SecInsertPos) -> u32 {
+        match value {
+            SecInsertPos::AUTO => 0,
+            SecInsertPos::POST_SEGMENT => 1,
+            SecInsertPos::POST_SECTION => 2,
+            SecInsertPos::UNKNOWN(v) => v,
+        }
+    }
+}
+
 /// This is the main interface to read and write ELF binary attributes.
 ///
 /// Note that this structure implements the [`generic::Binary`] trait from which other generic
@@ -458,6 +537,268 @@ impl Binary {
     pub fn remove_segments_by_type(&mut self, ty: segment::Type, clear: bool) {
         self.ptr.pin_mut().remove_segments_by_type(ty.into(), clear)
     }
+
+    /// Return an iterator over all symbols (combined dynamic + symtab)
+    pub fn symbols(&self) -> AllSymbols<'_> {
+        AllSymbols::new(self.ptr.symbols())
+    }
+
+    /// Return all printable strings from the binary with a minimum length
+    pub fn strings(&self, min_size: u64) -> Vec<String> {
+        self.ptr.strings(min_size)
+            .iter()
+            .map(|s| s.to_string())
+            .collect()
+    }
+
+    /// Return the last offset used in binary according to sections table
+    pub fn last_offset_section(&self) -> u64 {
+        self.ptr.last_offset_section()
+    }
+
+    /// Return the last offset used in binary according to segments table
+    pub fn last_offset_segment(&self) -> u64 {
+        self.ptr.last_offset_segment()
+    }
+
+    /// Return the next virtual address available
+    pub fn next_virtual_address(&self) -> u64 {
+        self.ptr.next_virtual_address()
+    }
+
+    /// Return the offset of the end of the binary on disk
+    pub fn eof_offset(&self) -> u64 {
+        self.ptr.eof_offset()
+    }
+
+    /// Return the destructor functions (from `.fini_array`, `.dtors`, etc.)
+    pub fn dtor_functions(&self) -> generic::Functions<'_> {
+        generic::Functions::new(self.ptr.dtor_functions())
+    }
+
+    /// Return the overlay data
+    pub fn overlay(&self) -> &[u8] {
+        to_slice!(self.ptr.get_overlay());
+    }
+
+    /// Set the overlay data
+    pub fn set_overlay(&mut self, data: &[u8]) {
+        unsafe {
+            self.ptr.pin_mut().set_overlay(data.as_ptr(), data.len() as u64);
+        }
+    }
+
+    /// Check if the binary has a dynamic entry with the given tag
+    pub fn has_dynamic_entry_tag(&self, tag: dynamic::Tag) -> bool {
+        self.ptr.has_dynamic_entry_tag(tag.into())
+    }
+
+    /// Check if the binary has a segment with the given type
+    pub fn has_segment_type(&self, ty: segment::Type) -> bool {
+        self.ptr.has_segment_type(ty.into())
+    }
+
+    /// Check if the binary has a note with the given type
+    pub fn has_note_type(&self, ty: super::note::Type) -> bool {
+        self.ptr.has_note_type(ty.into())
+    }
+
+    /// Check if the binary has a section with the given type
+    pub fn has_section_type(&self, ty: super::section::Type) -> bool {
+        self.ptr.has_section_type(ty.into())
+    }
+
+    /// Try to find a note by its type
+    pub fn note_by_type(&self, ty: super::note::Type) -> Option<super::note::Notes<'_>> {
+        into_optional(self.ptr.get_note_by_type(ty.into()))
+    }
+
+    /// Try to find a section by its type
+    pub fn section_by_type(&self, ty: super::section::Type) -> Option<Section<'_>> {
+        into_optional(self.ptr.get_section_by_type(ty.into()))
+    }
+
+    /// Check if the binary has a section with the given name
+    pub fn has_section(&self, name: &str) -> bool {
+        self.ptr.has_section(name.to_string())
+    }
+
+    /// Check if the binary has a section that spans the given offset
+    pub fn has_section_with_offset(&self, offset: u64) -> bool {
+        self.ptr.has_section_with_offset(offset)
+    }
+
+    /// Check if the binary has a section that spans the given virtual address
+    pub fn has_section_with_va(&self, va: u64) -> bool {
+        self.ptr.has_section_with_va(va)
+    }
+
+    /// Check if the binary has a library dependency with the given name
+    pub fn has_library(&self, name: &str) -> bool {
+        self.ptr.has_library(name.to_string())
+    }
+
+    /// Check if the binary has a dynamic symbol with the given name
+    pub fn has_dynamic_symbol(&self, name: &str) -> bool {
+        self.ptr.has_dynamic_symbol(name.to_string())
+    }
+
+    /// Check if the binary has a symtab symbol with the given name
+    pub fn has_symtab_symbol(&self, name: &str) -> bool {
+        self.ptr.has_symtab_symbol(name.to_string())
+    }
+
+    /// Return the index of the given name in the dynamic symbol table
+    pub fn dynsym_idx(&self, name: &str) -> Option<u64> {
+        let idx = self.ptr.dynsym_idx(name.to_string());
+        if idx < 0 {
+            return None;
+        }
+        Some(idx as u64)
+    }
+
+    /// Return the index of the given name in the symtab symbol table, or -1
+    pub fn symtab_idx(&self, name: &str) -> Option<u64> {
+        let idx = self.ptr.symtab_idx(name.to_string());
+        if idx < 0 {
+            return None;
+        }
+        Some(idx as u64)
+    }
+
+    /// Patch the GOT/PLT entry for the given symbol name
+    pub fn patch_pltgot(&mut self, symbol_name: &str, address: u64) {
+        self.ptr.pin_mut().patch_pltgot_by_name(symbol_name.to_string(), address);
+    }
+
+    /// Add a section to the binary. If `loaded` is true, the section will be
+    /// added in a way that it is loaded in memory. `pos` controls where the
+    /// section is inserted.
+    pub fn add_section(&mut self, section: &Section, loaded: bool, pos: SecInsertPos) -> Option<Section<'_>> {
+        into_optional(
+            self.ptr
+                .pin_mut()
+                .add_section(section.as_ffi(), loaded, pos.into()),
+        )
+    }
+
+    /// Add a note to the binary
+    pub fn add_note(&mut self, note: &super::note::Notes) -> super::note::Notes<'_> {
+        super::note::Notes::from_ffi(
+            self.ptr.pin_mut().add_note(note.as_ffi()),
+        )
+    }
+
+    /// Add a dynamic relocation
+    pub fn add_dynamic_relocation(&mut self, reloc: &Relocation) -> Relocation<'_> {
+        Relocation::from_ffi(
+            self.ptr.pin_mut().add_dynamic_relocation(reloc.as_ffi()),
+        )
+    }
+
+    /// Add a `.plt.got` relocation
+    pub fn add_pltgot_relocation(&mut self, reloc: &Relocation) -> Relocation<'_> {
+        Relocation::from_ffi(
+            self.ptr.pin_mut().add_pltgot_relocation(reloc.as_ffi()),
+        )
+    }
+
+    /// Add a symbol to the `.symtab` table
+    pub fn add_symtab_symbol(&mut self, symbol: &Symbol) -> Symbol<'_> {
+        Symbol::from_ffi(
+            self.ptr.pin_mut().add_symtab_symbol(symbol.as_ffi()),
+        )
+    }
+
+    /// Add a symbol to the dynamic symbol table (`.dynsym`)
+    pub fn add_dynamic_symbol(&mut self, symbol: &Symbol) -> Symbol<'_> {
+        Symbol::from_ffi(
+            self.ptr.pin_mut().add_dynamic_symbol(symbol.as_ffi()),
+        )
+    }
+
+    /// Add an exported function with the given address and name
+    pub fn add_exported_function(&mut self, address: u64, name: &str) -> Symbol<'_> {
+        Symbol::from_ffi(
+            self.ptr.pin_mut().add_exported_function(address, name.to_string()),
+        )
+    }
+
+    /// Export the symbol with the given name, optionally setting its value (can be 0)
+    pub fn export_symbol_by_name(&mut self, symbol_name: &str, value: u64) -> Symbol<'_> {
+        Symbol::from_ffi(
+            self.ptr.pin_mut().export_symbol_by_name(symbol_name.to_string(), value),
+        )
+    }
+
+    /// Export an existing symbol
+    pub fn export_symbol(&mut self, symbol: &Symbol) -> Symbol<'_> {
+        Symbol::from_ffi(
+            self.ptr.pin_mut().export_symbol_obj(symbol.as_ffi()),
+        )
+    }
+
+    /// Remove the symtab symbol with the given name
+    pub fn remove_symtab_symbol(&mut self, name: &str) {
+        self.ptr.pin_mut().remove_symtab_symbol_by_name(name.to_string());
+    }
+
+    /// Remove the dynamic symbol with the given name
+    pub fn remove_dynamic_symbol(&mut self, name: &str) {
+        self.ptr.pin_mut().remove_dynamic_symbol_by_name(name.to_string());
+    }
+
+    /// Remove the given section. If `clear` is set, the section content will be
+    /// filled with zeros before removal.
+    pub fn remove_section(&mut self, section: &Section, clear: bool) {
+        self.ptr.pin_mut().remove_section(section.as_ffi(), clear);
+    }
+
+    /// Remove the given note
+    pub fn remove_note(&mut self, note: &super::note::Notes) {
+        self.ptr.pin_mut().remove_note(note.as_ffi());
+    }
+
+    /// Extend the given segment by `size` bytes
+    pub fn extend_segment(&mut self, segment: &Segment, size: u64) -> Option<Segment<'_>> {
+        into_optional(
+            self.ptr
+                .pin_mut()
+                .extend_segment(segment.ptr.as_ref().unwrap(), size),
+        )
+    }
+
+    /// Extend the given section by `size` bytes
+    pub fn extend_section(&mut self, section: &Section, size: u64) -> Option<Section<'_>> {
+        into_optional(
+            self.ptr
+                .pin_mut()
+                .extend_section(section.as_ffi(), size),
+        )
+    }
+
+    /// Strip all debug symbols from the binary
+    pub fn strip(&mut self) {
+        self.ptr.pin_mut().strip();
+    }
+
+    /// Get the index of a section by its name. Returns `None` if not found.
+    pub fn section_idx_by_name(&self, name: &str) -> Option<usize> {
+        let idx = self.ptr.get_section_idx_by_name(name.to_string());
+        if idx < 0 { None } else { Some(idx as usize) }
+    }
+
+    /// Get the index of the given section. Returns `None` if not found.
+    pub fn section_idx(&self, section: &Section) -> Option<usize> {
+        let idx = self.ptr.get_section_idx_by_section(section.as_ffi());
+        if idx < 0 { None } else { Some(idx as usize) }
+    }
+
+    /// Relocate the PHDR table using the given strategy.
+    /// Returns the new offset of the PHDR table.
+    pub fn relocate_phdr_table(&mut self, reloc_type: PhdrReloc) -> u64 {
+        self.ptr.pin_mut().relocate_phdr_table(reloc_type.into())
+    }
 }
 
 impl AsFFI<ffi::ELF_Binary> for Binary {
@@ -507,4 +848,11 @@ declare_iterator!(
     ffi::ELF_SymbolVersionDefinition,
     ffi::ELF_Binary,
     ffi::ELF_Binary_it_symbols_version_definition
+);
+declare_iterator!(
+    AllSymbols,
+    Symbol<'a>,
+    ffi::ELF_Symbol,
+    ffi::ELF_Binary,
+    ffi::ELF_Binary_it_symbols
 );

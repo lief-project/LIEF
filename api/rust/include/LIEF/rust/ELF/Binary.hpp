@@ -126,7 +126,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_sections(const ELF_Binary::lief_t& src)
-      : Iterator(src.sections()) { } 
+      : Iterator(src.sections()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -136,7 +136,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_segments(const ELF_Binary::lief_t& src)
-      : Iterator(src.segments()) { } 
+      : Iterator(src.segments()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -146,7 +146,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_dynamic_entries(const ELF_Binary::lief_t& src)
-      : Iterator(src.dynamic_entries()) { } 
+      : Iterator(src.dynamic_entries()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -156,7 +156,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_dynamic_symbols(const ELF_Binary::lief_t& src)
-      : Iterator(src.dynamic_symbols()) { } 
+      : Iterator(src.dynamic_symbols()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -166,7 +166,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_exported_symbols(const ELF_Binary::lief_t& src)
-      : Iterator(src.exported_symbols()) { } 
+      : Iterator(src.exported_symbols()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -176,7 +176,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_imported_symbols(const ELF_Binary::lief_t& src)
-      : Iterator(src.imported_symbols()) { } 
+      : Iterator(src.imported_symbols()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -186,7 +186,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_notes(const ELF_Binary::lief_t& src)
-      : Iterator(src.notes()) { } 
+      : Iterator(src.notes()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -196,7 +196,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_symtab_symbols(const ELF_Binary::lief_t& src)
-      : Iterator(src.symtab_symbols()) { } 
+      : Iterator(src.symtab_symbols()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -206,7 +206,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_relocations(const ELF_Binary::lief_t& src)
-      : Iterator(src.relocations()) { } 
+      : Iterator(src.relocations()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -216,7 +216,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_pltgot_relocations(const ELF_Binary::lief_t& src)
-      : Iterator(src.pltgot_relocations()) { } 
+      : Iterator(src.pltgot_relocations()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -226,7 +226,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_dynamic_relocations(const ELF_Binary::lief_t& src)
-      : Iterator(src.dynamic_relocations()) { } 
+      : Iterator(src.dynamic_relocations()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -236,7 +236,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_object_relocations(const ELF_Binary::lief_t& src)
-      : Iterator(src.object_relocations()) { } 
+      : Iterator(src.object_relocations()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -246,7 +246,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_symbols_version(const ELF_Binary::lief_t& src)
-      : Iterator(src.symbols_version()) { } 
+      : Iterator(src.symbols_version()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -256,7 +256,7 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_symbols_version_requirement(const ELF_Binary::lief_t& src)
-      : Iterator(src.symbols_version_requirement()) { } 
+      : Iterator(src.symbols_version_requirement()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -266,7 +266,17 @@ class ELF_Binary : public AbstractBinary {
   {
     public:
     it_symbols_version_definition(const ELF_Binary::lief_t& src)
-      : Iterator(src.symbols_version_definition()) { } 
+      : Iterator(src.symbols_version_definition()) { }
+    auto next() { return Iterator::next(); }
+    auto size() const { return Iterator::size(); }
+  };
+
+  class it_symbols :
+      public Iterator<ELF_Symbol, LIEF::ELF::Binary::it_const_symbols>
+  {
+    public:
+    it_symbols(const ELF_Binary::lief_t& src)
+      : Iterator(src.symbols()) { }
     auto next() { return Iterator::next(); }
     auto size() const { return Iterator::size(); }
   };
@@ -469,6 +479,187 @@ class ELF_Binary : public AbstractBinary {
 
   void remove_segments_by_type(uint64_t ty, bool clear) {
     impl().remove(LIEF::ELF::Segment::TYPE(ty), clear);
+  }
+
+  auto symbols() const { return std::make_unique<it_symbols>(impl()); }
+
+  auto strings(uint64_t min_size) const { return impl().strings(min_size); }
+
+  auto last_offset_section() const { return impl().last_offset_section(); }
+  auto last_offset_segment() const { return impl().last_offset_segment(); }
+  auto next_virtual_address() const { return impl().next_virtual_address(); }
+  auto eof_offset() const { return impl().eof_offset(); }
+
+  auto dtor_functions() const {
+    return std::make_unique<AbstractBinary::it_functions>(impl().dtor_functions());
+  }
+
+  Span get_overlay() const { return make_span(impl().overlay()); }
+
+  void set_overlay(const uint8_t* data, uint64_t size) {
+    impl().overlay(std::vector<uint8_t>(data, data + size));
+  }
+
+  bool has_dynamic_entry_tag(uint64_t tag) const {
+    return impl().has(LIEF::ELF::DynamicEntry::TAG(tag));
+  }
+
+  bool has_segment_type(uint64_t ty) const {
+    return impl().has(LIEF::ELF::Segment::TYPE(ty));
+  }
+
+  bool has_note_type(uint32_t ty) const {
+    return impl().has(LIEF::ELF::Note::TYPE(ty));
+  }
+
+  bool has_section_type(uint64_t ty) const {
+    return impl().has(LIEF::ELF::Section::TYPE(ty));
+  }
+
+  auto get_note_by_type(uint32_t ty) const {
+    return details::try_unique<ELF_Note>(impl().get(LIEF::ELF::Note::TYPE(ty)));
+  }
+
+  auto get_section_by_type(uint64_t ty) const {
+    return details::try_unique<ELF_Section>(impl().get(LIEF::ELF::Section::TYPE(ty)));
+  }
+
+  bool has_section(std::string name) const {
+    return impl().has_section(name);
+  }
+
+  bool has_section_with_offset(uint64_t offset) const {
+    return impl().has_section_with_offset(offset);
+  }
+
+  bool has_section_with_va(uint64_t va) const {
+    return impl().has_section_with_va(va);
+  }
+
+  bool has_library(std::string name) const {
+    return impl().has_library(name);
+  }
+
+  bool has_dynamic_symbol(std::string name) const {
+    return impl().has_dynamic_symbol(name);
+  }
+
+  bool has_symtab_symbol(std::string name) const {
+    return impl().has_symtab_symbol(name);
+  }
+
+  int64_t dynsym_idx(std::string name) const {
+    return impl().dynsym_idx(name);
+  }
+
+  int64_t symtab_idx(std::string name) const {
+    return impl().symtab_idx(name);
+  }
+
+  void patch_pltgot_by_name(std::string symbol_name, uint64_t address) {
+    impl().patch_pltgot(symbol_name, address);
+  }
+
+  auto add_section(const ELF_Section& section, bool loaded, uint32_t pos) {
+    return details::try_unique<ELF_Section>(
+      impl().add(as<LIEF::ELF::Section>(&section), loaded,
+                 LIEF::ELF::Binary::SEC_INSERT_POS(pos))
+    );
+  }
+
+  auto add_note(const ELF_Note& note) {
+    return std::make_unique<ELF_Note>(impl().add(note.get()));
+  }
+
+  auto add_dynamic_relocation(const ELF_Relocation& reloc) {
+    return std::make_unique<ELF_Relocation>(
+      impl().add_dynamic_relocation(as<LIEF::ELF::Relocation>(&reloc))
+    );
+  }
+
+  auto add_pltgot_relocation(const ELF_Relocation& reloc) {
+    return std::make_unique<ELF_Relocation>(
+      impl().add_pltgot_relocation(as<LIEF::ELF::Relocation>(&reloc))
+    );
+  }
+
+  auto add_symtab_symbol(const ELF_Symbol& symbol) {
+    return std::make_unique<ELF_Symbol>(
+      impl().add_symtab_symbol(as<LIEF::ELF::Symbol>(&symbol))
+    );
+  }
+
+  auto add_dynamic_symbol(const ELF_Symbol& symbol) {
+    return std::make_unique<ELF_Symbol>(
+      impl().add_dynamic_symbol(as<LIEF::ELF::Symbol>(&symbol))
+    );
+  }
+
+  auto add_exported_function(uint64_t address, std::string name) {
+    return std::make_unique<ELF_Symbol>(
+      impl().add_exported_function(address, name)
+    );
+  }
+
+  auto export_symbol_by_name(std::string symbol_name, uint64_t value) {
+    return std::make_unique<ELF_Symbol>(
+      impl().export_symbol(symbol_name, value)
+    );
+  }
+
+  auto export_symbol_obj(const ELF_Symbol& symbol) {
+    return std::make_unique<ELF_Symbol>(
+      impl().export_symbol(as<LIEF::ELF::Symbol>(&symbol))
+    );
+  }
+
+  void remove_symtab_symbol_by_name(std::string name) {
+    impl().remove_symtab_symbol(name);
+  }
+
+  void remove_dynamic_symbol_by_name(std::string name) {
+    impl().remove_dynamic_symbol(name);
+  }
+
+  void remove_section(const ELF_Section& section, bool clear) {
+    impl().remove(as<LIEF::ELF::Section>(&section), clear);
+  }
+
+  void remove_note(const ELF_Note& note) {
+    impl().remove(note.get());
+  }
+
+  auto extend_segment(const ELF_Segment& segment, uint64_t size) {
+    return details::try_unique<ELF_Segment>(
+      impl().extend(segment.get(), size)
+    );
+  }
+
+  auto extend_section(const ELF_Section& section, uint64_t size) {
+    return details::try_unique<ELF_Section>(
+      impl().extend(as<LIEF::ELF::Section>(&section), size)
+    );
+  }
+
+  void strip() { impl().strip(); }
+
+
+  int64_t get_section_idx_by_name(std::string name) const {
+    if (auto res = impl().get_section_idx(name)) {
+      return static_cast<int64_t>(*res);
+    }
+    return -1;
+  }
+
+  int64_t get_section_idx_by_section(const ELF_Section& section) const {
+    if (auto res = impl().get_section_idx(as<LIEF::ELF::Section>(&section))) {
+      return *res;
+    }
+    return -1;
+  }
+
+  uint64_t relocate_phdr_table(uint32_t type) {
+    return impl().relocate_phdr_table(LIEF::ELF::Binary::PHDR_RELOC(type));
   }
 
   void write(std::string output) { impl().write(output); }

@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 use std::pin::Pin;
 
-use crate::common::{into_optional, FromFFI};
+use crate::common::{into_optional, FromFFI, AsFFI};
 use crate::declare_iterator;
 use crate::generic;
 use lief_ffi as ffi;
@@ -68,6 +68,49 @@ impl From<u32> for Origin {
     }
 }
 
+/// Symbol type as defined by `nlist_xx.n_type & N_TYPE`
+#[allow(non_camel_case_types)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum Type {
+    /// The symbol is undefined
+    UNDEFINED,
+    /// The symbol is absolute
+    ABSOLUTE_SYM,
+    /// The symbol is defined in a specific section
+    SECTION,
+    /// The symbol is undefined and the image is using a prebound value
+    PREBOUND,
+    /// The symbol is defined to be the same as another symbol
+    INDIRECT,
+    UNKNOWN(u32),
+}
+
+impl From<u32> for Type {
+    fn from(value: u32) -> Self {
+        match value {
+            0x0 => Type::UNDEFINED,
+            0x2 => Type::ABSOLUTE_SYM,
+            0xe => Type::SECTION,
+            0xc => Type::PREBOUND,
+            0xa => Type::INDIRECT,
+            _ => Type::UNKNOWN(value),
+        }
+    }
+}
+
+impl From<Type> for u32 {
+    fn from(value: Type) -> u32 {
+        match value {
+            Type::UNDEFINED => 0x0,
+            Type::ABSOLUTE_SYM => 0x2,
+            Type::SECTION => 0xe,
+            Type::PREBOUND => 0xc,
+            Type::INDIRECT => 0xa,
+            Type::UNKNOWN(v) => v,
+        }
+    }
+}
+
 impl Symbol<'_> {
     pub fn get_type(&self) -> u8 {
         self.ptr.get_type()
@@ -109,6 +152,17 @@ impl Symbol<'_> {
         into_optional(self.ptr.library())
     }
 
+    /// Whether this symbol is external
+    pub fn is_external(&self) -> bool {
+        self.ptr.is_external()
+    }
+
+    /// Return the library ordinal for this symbol. A negative ordinal indicates
+    /// a special value (e.g., -1 for `SELF_LIBRARY`, -2 for `MAIN_EXECUTABLE`)
+    pub fn library_ordinal(&self) -> i32 {
+        self.ptr.library_ordinal()
+    }
+
     /// Try to demangle the symbol or return an empty string if it is not possible
     pub fn demangled_name(&self) -> String {
         self.ptr.demangled_name().to_string()
@@ -138,6 +192,16 @@ impl<'a> FromFFI<ffi::MachO_Symbol> for Symbol<'a> {
             ptr,
             _owner: PhantomData,
         }
+    }
+}
+
+impl AsFFI<ffi::MachO_Symbol> for Symbol<'_> {
+    fn as_ffi(&self) -> &ffi::MachO_Symbol {
+        self.ptr.as_ref().unwrap()
+    }
+
+    fn as_mut_ffi(&mut self) -> Pin<&mut ffi::MachO_Symbol> {
+        self.ptr.pin_mut()
     }
 }
 

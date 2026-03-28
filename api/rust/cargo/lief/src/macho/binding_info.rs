@@ -286,6 +286,11 @@ impl Chained<'_> {
     pub fn offset(&self) -> u32 {
         self.ptr.offset()
     }
+
+    /// Sign-extended addend for this chained binding
+    pub fn sign_extended_addend(&self) -> u64 {
+        self.ptr.sign_extended_addend()
+    }
 }
 
 impl fmt::Debug for Chained<'_> {

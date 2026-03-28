@@ -72,6 +72,16 @@ pub trait RelocationBase {
         self.get_base().is_pc_relative()
     }
 
+    /// CPU architecture targeted by this relocation
+    fn architecture(&self) -> u32 {
+        self.get_base().architecture()
+    }
+
+    /// Origin of the relocation
+    fn origin(&self) -> Origin {
+        Origin::from(self.get_base().origin())
+    }
+
     /// Symbol associated with the relocation (if any)
     fn symbol(&self) -> Option<Symbol<'_>> {
         into_optional(self.get_base().symbol())
@@ -85,6 +95,28 @@ pub trait RelocationBase {
     /// Segment command associated with the relocation (if any)
     fn segment(&self) -> Option<Segment<'_>> {
         into_optional(self.get_base().segment())
+    }
+}
+
+/// Origin of a Mach-O relocation
+#[allow(non_camel_case_types)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum Origin {
+    UNKNOWN,
+    DYLDINFO,
+    RELOC_TABLE,
+    CHAINED_FIXUPS,
+}
+
+impl From<u32> for Origin {
+    fn from(value: u32) -> Self {
+        match value {
+            0 => Origin::UNKNOWN,
+            1 => Origin::DYLDINFO,
+            2 => Origin::RELOC_TABLE,
+            3 => Origin::CHAINED_FIXUPS,
+            _ => Origin::UNKNOWN,
+        }
     }
 }
 

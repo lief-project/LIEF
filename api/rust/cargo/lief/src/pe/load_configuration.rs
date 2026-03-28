@@ -418,6 +418,261 @@ impl LoadConfiguration<'_> {
             &self
         );
     }
+
+    /// Set the characteristics value
+    pub fn set_characteristics(&mut self, value: u32) {
+        self.ptr.pin_mut().set_characteristics(value);
+    }
+
+    /// Set the size value
+    pub fn set_size(&mut self, value: u32) {
+        self.ptr.pin_mut().set_size(value);
+    }
+
+    /// Set the timedatestamp value
+    pub fn set_timedatestamp(&mut self, value: u32) {
+        self.ptr.pin_mut().set_timedatestamp(value);
+    }
+
+    /// Set the major version
+    pub fn set_major_version(&mut self, value: u16) {
+        self.ptr.pin_mut().set_major_version(value);
+    }
+
+    /// Set the minor version
+    pub fn set_minor_version(&mut self, value: u16) {
+        self.ptr.pin_mut().set_minor_version(value);
+    }
+
+    /// Set the global flags to clear
+    pub fn set_global_flags_clear(&mut self, value: u32) {
+        self.ptr.pin_mut().set_global_flags_clear(value);
+    }
+
+    /// Set the global flags to set
+    pub fn set_global_flags_set(&mut self, value: u32) {
+        self.ptr.pin_mut().set_global_flags_set(value);
+    }
+
+    /// Set the critical section default timeout
+    pub fn set_critical_section_default_timeout(&mut self, value: u32) {
+        self.ptr.pin_mut().set_critical_section_default_timeout(value);
+    }
+
+    /// Set the decommit free block threshold
+    pub fn set_decommit_free_block_threshold(&mut self, value: u64) {
+        self.ptr.pin_mut().set_decommit_free_block_threshold(value);
+    }
+
+    /// Set the decommit total free threshold
+    pub fn set_decommit_total_free_threshold(&mut self, value: u64) {
+        self.ptr.pin_mut().set_decommit_total_free_threshold(value);
+    }
+
+    /// Set the lock prefix table VA
+    pub fn set_lock_prefix_table(&mut self, value: u64) {
+        self.ptr.pin_mut().set_lock_prefix_table(value);
+    }
+
+    /// Set the maximum allocation size
+    pub fn set_maximum_allocation_size(&mut self, value: u64) {
+        self.ptr.pin_mut().set_maximum_allocation_size(value);
+    }
+
+    /// Set the virtual memory threshold
+    pub fn set_virtual_memory_threshold(&mut self, value: u64) {
+        self.ptr.pin_mut().set_virtual_memory_threshold(value);
+    }
+
+    /// Set the process affinity mask
+    pub fn set_process_affinity_mask(&mut self, value: u64) {
+        self.ptr.pin_mut().set_process_affinity_mask(value);
+    }
+
+    /// Set the process heap flags
+    pub fn set_process_heap_flags(&mut self, value: u32) {
+        self.ptr.pin_mut().set_process_heap_flags(value);
+    }
+
+    /// Set the CSD version
+    pub fn set_csd_version(&mut self, value: u16) {
+        self.ptr.pin_mut().set_csd_version(value);
+    }
+
+    /// Set reserved1
+    pub fn set_reserved1(&mut self, value: u16) {
+        self.ptr.pin_mut().set_reserved1(value);
+    }
+
+    /// Set the dependent load flags
+    pub fn set_dependent_load_flags(&mut self, value: u16) {
+        self.ptr.pin_mut().set_dependent_load_flags(value);
+    }
+
+    /// Set the editlist VA
+    pub fn set_editlist(&mut self, value: u32) {
+        self.ptr.pin_mut().set_editlist(value);
+    }
+
+    /// Set the security cookie VA
+    pub fn set_security_cookie(&mut self, value: u64) {
+        self.ptr.pin_mut().set_security_cookie(value);
+    }
+
+    /// Set the SE handler table VA
+    pub fn set_se_handler_table(&mut self, value: u64) {
+        self.ptr.pin_mut().set_se_handler_table(value);
+    }
+
+    /// Set the SE handler count
+    pub fn set_se_handler_count(&mut self, value: u64) {
+        self.ptr.pin_mut().set_se_handler_count(value);
+    }
+
+    /// Set the guard CF check function pointer VA
+    pub fn set_guard_cf_check_function_pointer(&mut self, value: u64) {
+        self.ptr.pin_mut().set_guard_cf_check_function_pointer(value);
+    }
+
+    /// Set the guard CF dispatch function pointer VA
+    pub fn set_guard_cf_dispatch_function_pointer(&mut self, value: u64) {
+        self.ptr.pin_mut().set_guard_cf_dispatch_function_pointer(value);
+    }
+
+    /// Set the guard CF function table VA
+    pub fn set_guard_cf_function_table(&mut self, value: u64) {
+        self.ptr.pin_mut().set_guard_cf_function_table(value);
+    }
+
+    /// Set the guard CF function count
+    pub fn set_guard_cf_function_count(&mut self, value: u64) {
+        self.ptr.pin_mut().set_guard_cf_function_count(value);
+    }
+
+    /// Set the guard flags
+    pub fn set_guard_flags(&mut self, flags: ImageGuardFlags) {
+        self.ptr.pin_mut().set_guard_flags(flags.bits());
+    }
+
+    /// Set the guard address taken IAT entry table VA
+    pub fn set_guard_address_taken_iat_entry_table(&mut self, value: u64) {
+        self.ptr.pin_mut().set_guard_address_taken_iat_entry_table(value);
+    }
+
+    /// Set the guard address taken IAT entry count
+    pub fn set_guard_address_taken_iat_entry_count(&mut self, value: u64) {
+        self.ptr.pin_mut().set_guard_address_taken_iat_entry_count(value);
+    }
+
+    /// Set the guard long jump target table VA
+    pub fn set_guard_long_jump_target_table(&mut self, value: u64) {
+        self.ptr.pin_mut().set_guard_long_jump_target_table(value);
+    }
+
+    /// Set the guard long jump target count
+    pub fn set_guard_long_jump_target_count(&mut self, value: u64) {
+        self.ptr.pin_mut().set_guard_long_jump_target_count(value);
+    }
+
+    /// Set the dynamic value relocation table VA
+    pub fn set_dynamic_value_reloc_table(&mut self, value: u64) {
+        self.ptr.pin_mut().set_dynamic_value_reloc_table(value);
+    }
+
+    /// Set the hybrid metadata pointer VA
+    pub fn set_hybrid_metadata_pointer(&mut self, value: u64) {
+        self.ptr.pin_mut().set_hybrid_metadata_pointer(value);
+    }
+
+    /// Set the guard RF failure routine VA
+    pub fn set_guard_rf_failure_routine(&mut self, value: u64) {
+        self.ptr.pin_mut().set_guard_rf_failure_routine(value);
+    }
+
+    /// Set the guard RF failure routine function pointer VA
+    pub fn set_guard_rf_failure_routine_function_pointer(&mut self, value: u64) {
+        self.ptr.pin_mut().set_guard_rf_failure_routine_function_pointer(value);
+    }
+
+    /// Set the dynamic value relocation table offset
+    pub fn set_dynamic_value_reloctable_offset(&mut self, value: u32) {
+        self.ptr.pin_mut().set_dynamic_value_reloctable_offset(value);
+    }
+
+    /// Set the dynamic value relocation table section
+    pub fn set_dynamic_value_reloctable_section(&mut self, value: u16) {
+        self.ptr.pin_mut().set_dynamic_value_reloctable_section(value);
+    }
+
+    /// Set reserved2
+    pub fn set_reserved2(&mut self, value: u16) {
+        self.ptr.pin_mut().set_reserved2(value);
+    }
+
+    /// Set the guard RF verify stack pointer function pointer VA
+    pub fn set_guard_rf_verify_stackpointer_function_pointer(&mut self, value: u64) {
+        self.ptr.pin_mut().set_guard_rf_verify_stackpointer_function_pointer(value);
+    }
+
+    /// Set the hotpatch table offset
+    pub fn set_hotpatch_table_offset(&mut self, value: u32) {
+        self.ptr.pin_mut().set_hotpatch_table_offset(value);
+    }
+
+    /// Set reserved3
+    pub fn set_reserved3(&mut self, value: u32) {
+        self.ptr.pin_mut().set_reserved3(value);
+    }
+
+    /// Set the enclave configuration pointer VA
+    pub fn set_enclave_configuration_ptr(&mut self, value: u64) {
+        self.ptr.pin_mut().set_enclave_configuration_ptr(value);
+    }
+
+    /// Set the volatile metadata pointer VA
+    pub fn set_volatile_metadata_pointer(&mut self, value: u64) {
+        self.ptr.pin_mut().set_volatile_metadata_pointer(value);
+    }
+
+    /// Set the guard EH continuation table VA
+    pub fn set_guard_eh_continuation_table(&mut self, value: u64) {
+        self.ptr.pin_mut().set_guard_eh_continuation_table(value);
+    }
+
+    /// Set the guard EH continuation count
+    pub fn set_guard_eh_continuation_count(&mut self, value: u64) {
+        self.ptr.pin_mut().set_guard_eh_continuation_count(value);
+    }
+
+    /// Set the guard XFG check function pointer VA
+    pub fn set_guard_xfg_check_function_pointer(&mut self, value: u64) {
+        self.ptr.pin_mut().set_guard_xfg_check_function_pointer(value);
+    }
+
+    /// Set the guard XFG dispatch function pointer VA
+    pub fn set_guard_xfg_dispatch_function_pointer(&mut self, value: u64) {
+        self.ptr.pin_mut().set_guard_xfg_dispatch_function_pointer(value);
+    }
+
+    /// Set the guard XFG table dispatch function pointer VA
+    pub fn set_guard_xfg_table_dispatch_function_pointer(&mut self, value: u64) {
+        self.ptr.pin_mut().set_guard_xfg_table_dispatch_function_pointer(value);
+    }
+
+    /// Set the CastGuard OS determined failure mode VA
+    pub fn set_cast_guard_os_determined_failure_mode(&mut self, value: u64) {
+        self.ptr.pin_mut().set_cast_guard_os_determined_failure_mode(value);
+    }
+
+    /// Set the guard memcpy function pointer VA
+    pub fn set_guard_memcpy_function_pointer(&mut self, value: u64) {
+        self.ptr.pin_mut().set_guard_memcpy_function_pointer(value);
+    }
+
+    /// Set the UMA function pointers VA
+    pub fn set_uma_function_pointers(&mut self, value: u64) {
+        self.ptr.pin_mut().set_uma_function_pointers(value);
+    }
 }
 
 impl<'a> FromFFI<ffi::PE_LoadConfiguration> for LoadConfiguration<'a> {

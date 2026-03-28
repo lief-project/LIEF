@@ -40,6 +40,16 @@ impl<'a> RichHeader<'a> {
         self.ptr.key()
     }
 
+    /// Return the raw bytes of the Rich header (decoded, without xor-encoding)
+    pub fn raw(&self) -> Vec<u8> {
+        Vec::from(self.ptr.raw().as_slice())
+    }
+
+    /// Return the raw bytes of the Rich header XOR-ed with the given key
+    pub fn raw_with_key(&self, xor_key: u32) -> Vec<u8> {
+        Vec::from(self.ptr.raw_with_key(xor_key).as_slice())
+    }
+
     /// Return an iterator over the [`RichEntry`] within the header
     pub fn entries(&self) -> Entries<'_> {
         Entries::new(self.ptr.entries())
