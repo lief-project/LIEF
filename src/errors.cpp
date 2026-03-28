@@ -13,7 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#define LIEF_ERRORS_IMPL
 #include "LIEF/errors.hpp"
+
+template class tl::expected<LIEF::ok_t, lief_errors>;
+template class LIEF::result<LIEF::ok_t>;
+template class tl::expected<uint64_t, lief_errors>;
+template class LIEF::result<uint64_t>;
+template class tl::expected<uint32_t, lief_errors>;
+template class LIEF::result<uint32_t>;
+template class tl::expected<std::string, lief_errors>;
+template class LIEF::result<std::string>;
 
 const char* to_string(lief_errors err) {
   switch (err) {

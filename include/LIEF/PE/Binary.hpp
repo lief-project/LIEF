@@ -24,7 +24,6 @@
 #include "LIEF/PE/DataDirectory.hpp"
 #include "LIEF/PE/Builder.hpp"
 #include "LIEF/PE/ResourcesManager.hpp"
-#include "LIEF/PE/ExceptionInfo.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
 
 #include "LIEF/COFF/Symbol.hpp"

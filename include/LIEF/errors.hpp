@@ -16,7 +16,7 @@
 #ifndef LIEF_ERROR_H
 #define LIEF_ERROR_H
 #include <cstdint>
-#include <cstdint>
+#include <string>
 #include <LIEF/compiler_attributes.hpp>
 #include <LIEF/third-party/expected.hpp>
 
@@ -126,5 +126,13 @@ inline bool is_err(const ok_error_t& val) {
 
 }
 
+extern template class tl::expected<LIEF::ok_t, lief_errors>;
+extern template class LIEF::result<LIEF::ok_t>;
+extern template class tl::expected<uint64_t, lief_errors>;
+extern template class LIEF::result<uint64_t>;
+extern template class tl::expected<uint32_t, lief_errors>;
+extern template class LIEF::result<uint32_t>;
+extern template class tl::expected<std::string, lief_errors>;
+extern template class LIEF::result<std::string>;
 
 #endif
